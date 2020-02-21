@@ -8,6 +8,7 @@
  * Copyright (C) 2016      Florian Henry        <florian.henry@atm-consulting.fr>
  * Copyright (C) 2017      Ferran Marcet        <fmarcet@2byte.es>
  * Copyright (C) 2018      Frédéric France      <frederic.france@netlogic.fr>
+ * Copyright (C) 2019      Christophe Battarel	<christophe@altairis.fr>
  *
  * This	program	is free	software; you can redistribute it and/or modify
  * it under the	terms of the GNU General Public	License	as published by
@@ -51,6 +52,8 @@ $id = GETPOST("id", 'int');
 $ref = GETPOST('ref');
 $lineid = GETPOST('lineid', 'int');
 $action = GETPOST('action', 'aZ09');
+$fk_default_warehouse = GETPOST('fk_default_warehouse', 'int');
+
 if ($user->socid)
 	$socid = $user->socid;
 $result = restrictedArea($user, 'fournisseur', $id, 'commande_fournisseur', 'commande');
@@ -236,6 +239,7 @@ if ($action == 'dispatch' && $user->rights->fournisseur->commande->receptionner)
 			$prod = "product_".$reg[1].'_'.$reg[2];
 			$qty = "qty_".$reg[1].'_'.$reg[2];
 			$ent = "entrepot_".$reg[1].'_'.$reg[2];
+			if (empty(GETPOST($ent))) $ent = $fk_default_warehouse;
 			$pu = "pu_".$reg[1].'_'.$reg[2]; // This is unit price including discount
 			$fk_commandefourndet = "fk_commandefourndet_".$reg[1].'_'.$reg[2];
 
@@ -269,7 +273,7 @@ if ($action == 'dispatch' && $user->rights->fournisseur->commande->receptionner)
 						if (empty($conf->multicurrency->enabled) && empty($conf->dynamicprices->enabled)) {
 							$dto = GETPOST("dto_".$reg[1].'_'.$reg[2]);
 							//update supplier price
-							if (isset($_POST[$saveprice])) {
+							if (GETPOSTISSET($saveprice)) {
 								// TODO Use class
 								$sql = "UPDATE ".MAIN_DB_PREFIX."product_fournisseur_price";
 								$sql .= " SET unitprice='".GETPOST($pu)."'";
@@ -484,9 +488,11 @@ if ($id > 0 || !empty($ref)) {
 
 	if ($object->statut == CommandeFournisseur::STATUS_ORDERSENT
 		|| $object->statut == CommandeFournisseur::STATUS_RECEIVED_PARTIALLY
-		|| $object->statut == CommandeFournisseur::STATUS_RECEIVED_COMPLETELY) {
-		$entrepot = new Entrepot($db);
-		$listwarehouses = $entrepot->list_array(1);
+		|| $object->statut == CommandeFournisseur::STATUS_RECEIVED_COMPLETELY)
+	{
+		require_once DOL_DOCUMENT_ROOT.'/product/class/html.formproduct.class.php';
+		$formproduct = new FormProduct($db);
+		$formproduct->loadWarehouses();
 
 		if (empty($conf->reception->enabled))print '<form method="POST" action="dispatch.php?id='.$object->id.'">';
         else print '<form method="post" action="'.dol_buildpath('/reception/card.php', 1).'?originid='.$object->id.'&origin=supplierorder">';
@@ -561,6 +567,9 @@ if ($id > 0 || !empty($ref)) {
 			$i = 0;
 
 			if ($num) {
+				$entrepot = new Entrepot($db);
+				$listwarehouses=$entrepot->list_array(1);
+
 				print '<tr class="liste_titre">';
 
 				print '<td>'.$langs->trans("Description").'</td>';
@@ -590,7 +599,19 @@ if ($id > 0 || !empty($ref)) {
 					}
 				}
 
-				print '<td align="right">'.$langs->trans("Warehouse").'</td>';
+				print '<td align="right">'.$langs->trans("Warehouse");
+
+				// Select warehouse to force it everywhere
+				if (count($listwarehouses)>1)
+				{
+					print '<br>'.$langs->trans("ForceTo").' '.$form->selectarray('fk_default_warehouse', $listwarehouses, $fk_default_warehouse, 1, 0, 0, '', 0, 0, $disabled);
+				}
+				elseif  (count($listwarehouses)==1)
+				{
+					print '<br>'.$langs->trans("ForceTo").' '.$form->selectarray('fk_default_warehouse', $listwarehouses, $fk_default_warehouse, 0, 0, 0, '', 0, 0, $disabled);
+				}
+
+				print '</td>';
 
                 // Enable hooks to append additional columns
                 $parameters = array();
@@ -897,6 +918,15 @@ if ($id > 0 || !empty($ref)) {
 
 	dol_fiche_end();
 
+	// traitement entrepot par défaut
+	print '<script type="text/javascript">
+			$(document).ready(function () {
+				$("select[name=fk_default_warehouse]").change(function() {
+					var fk_default_warehouse = $("option:selected", this).val();
+					$("select[name^=entrepot_]").val(fk_default_warehouse).change();
+				});
+			});
+		</script>';
 
 	// List of lines already dispatched
 	$sql = "SELECT p.ref, p.label,";

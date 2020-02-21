@@ -331,7 +331,7 @@ if (empty($reshook))
             {
                 for ($i = 2; $i <= $conf->global->PRODUIT_MULTIPRICES_LIMIT; $i++)
                 {
-                    if (isset($_POST["price_".$i]))
+                    if (GETPOSTISSET("price_".$i))
                     {
                         $object->multiprices["$i"] = price2num($_POST["price_".$i], 'MU');
                         $object->multiprices_base_type["$i"] = $_POST["multiprices_base_type_".$i];
@@ -1992,7 +1992,7 @@ else
 			// Categories
 			if ($conf->categorie->enabled) {
 				print '<tr><td class="valignmiddle">'.$langs->trans("Categories").'</td><td colspan="3">';
-				print $form->showCategories($object->id, 'product', 1);
+				print $form->showCategories($object->id, Categorie::TYPE_PRODUCT, 1);
 				print "</td></tr>";
 			}
 

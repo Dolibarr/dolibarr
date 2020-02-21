@@ -23,7 +23,7 @@
  * For Stripe test: Use credit card 4242424242424242 .More example on https://stripe.com/docs/testing
  *
  * Variants:
- * - When option STRIPE_USE_INTENT_WITH_AUTOMATIC_CONFIRMATION is on, we use the new checkout API
+ * - When option STRIPE_USE_INTENT_WITH_AUTOMATIC_CONFIRMATION is on, we use the new PaymentIntent API
  * - When option STRIPE_USE_NEW_CHECKOUT is on, we use the new checkout API
  * - If no option set, we use old APIS (charge)
  */
@@ -484,7 +484,7 @@ if ($action == 'charge' && !empty($conf->stripe->enabled))
 	    					'metadata' => $metadata,
 	    					'customer' => $customer->id,
 	    					'source' => $card,
-	    				    'statement_descriptor' => dol_trunc($FULLTAG, 10, 'right', 'UTF-8', 1), // 22 chars that appears on bank receipt (company + description)
+	    				  'statement_descriptor_suffix' => dol_trunc($FULLTAG, 10, 'right', 'UTF-8', 1),     // 22 chars that appears on bank receipt (company + description)
 	    				), array("idempotency_key" => "$FULLTAG", "stripe_account" => "$stripeacc"));
 	    				// Return $charge = array('id'=>'ch_XXXX', 'status'=>'succeeded|pending|failed', 'failure_code'=>, 'failure_message'=>...)
 	    				if (empty($charge))

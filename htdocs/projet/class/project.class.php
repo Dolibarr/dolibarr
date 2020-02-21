@@ -700,7 +700,7 @@ class Project extends CommonObject
         		'propal'=>'fk_projet', 'commande'=>'fk_projet', 'facture'=>'fk_projet',
         		'supplier_proposal'=>'fk_projet', 'commande_fournisseur'=>'fk_projet', 'facture_fourn'=>'fk_projet',
         		'expensereport_det'=>'fk_projet', 'contrat'=>'fk_projet', 'fichinter'=>'fk_projet', 'don'=>'fk_projet',
-        		'actioncomm'=>'fk_project'
+        		'actioncomm'=>'fk_project', 'mo'=>'fk_project'
         		);
         foreach ($listoftables as $key => $value)
         {
@@ -1815,6 +1815,72 @@ class Project extends CommonObject
                 return -1;
         }
     }
+	/**
+	 * Load time spent into this->weekWorkLoad and this->weekWorkLoadPerTask for all day of a week of project.
+	 * Note: array weekWorkLoad and weekWorkLoadPerTask are reset and filled at each call.
+	 *
+	 * @param 	int		$datestart		First day of week (use dol_get_first_day to find this date)
+	 * @param 	int		$taskid			Filter on a task id
+	 * @param 	int		$userid			Time spent by a particular user
+	 * @return 	int						<0 if OK, >0 if KO
+	 */
+	public function loadTimeSpentMonth($datestart, $taskid = 0, $userid = 0)
+	{
+		$error=0;
+
+		$this->monthWorkLoad=array();
+		$this->monthWorkLoadPerTask=array();
+
+		if (empty($datestart)) dol_print_error('', 'Error datestart parameter is empty');
+
+		$sql = "SELECT ptt.rowid as taskid, ptt.task_duration, ptt.task_date, ptt.task_datehour, ptt.fk_task";
+		$sql.= " FROM ".MAIN_DB_PREFIX."projet_task_time AS ptt, ".MAIN_DB_PREFIX."projet_task as pt";
+		$sql.= " WHERE ptt.fk_task = pt.rowid";
+		$sql.= " AND pt.fk_projet = ".$this->id;
+		$sql.= " AND (ptt.task_date >= '".$this->db->idate($datestart)."' ";
+		$sql.= " AND ptt.task_date <= '".$this->db->idate(dol_time_plus_duree($datestart, 1, 'm') - 1)."')";
+		if ($task_id) $sql.= " AND ptt.fk_task=".$taskid;
+		if (is_numeric($userid)) $sql.= " AND ptt.fk_user=".$userid;
+
+		//print $sql;
+		$resql=$this->db->query($sql);
+		if ($resql)
+		{
+			$weekalreadyfound=array();
+
+			$num = $this->db->num_rows($resql);
+			$i = 0;
+			// Loop on each record found, so each couple (project id, task id)
+			while ($i < $num)
+			{
+				$obj=$this->db->fetch_object($resql);
+				if(!empty($obj->task_date)) {
+					$date = explode('-', $obj->task_date);
+					$week_number = getWeekNumber($date[2], $date[1], $date[0]);
+				}
+				if (empty($weekalreadyfound[$week_number]))
+				{
+					$this->monthWorkLoad[$week_number] = $obj->task_duration;
+					$this->monthWorkLoadPerTask[$week_number][$obj->fk_task] = $obj->task_duration;
+				}
+				else
+				{
+					$this->monthWorkLoad[$week_number] += $obj->task_duration;
+					$this->monthWorkLoadPerTask[$week_number][$obj->fk_task] += $obj->task_duration;
+				}
+				$weekalreadyfound[$week_number]=1;
+				$i++;
+			}
+			$this->db->free($resql);
+			return 1;
+		}
+		else
+		{
+			$this->error="Error ".$this->db->lasterror();
+			dol_syslog(get_class($this)."::fetch ".$this->error, LOG_ERR);
+			return -1;
+		}
+	}
 
 
     // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps

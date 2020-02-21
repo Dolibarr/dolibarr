@@ -291,14 +291,15 @@ function GETPOSTISSET($paramname)
  *                               'array'=check it's array
  *                               'san_alpha'=Use filter_var with FILTER_SANITIZE_STRING (do not use this for free text string)
  *                               'nohtml', 'alphanohtml'=check there is no html content
+ *                               'restricthtml'=check html content is restricted to some tags only
  *                               'custom'= custom filter specify $filter and $options)
  *  @param	int		$method	     Type of method (0 = get then post, 1 = only get, 2 = only post, 3 = post then get)
  *  @param  int     $filter      Filter to apply when $check is set to 'custom'. (See http://php.net/manual/en/filter.filters.php for détails)
  *  @param  mixed   $options     Options to pass to filter_var when $check is set to 'custom'
  *  @param	string	$noreplace	 Force disable of replacement of __xxx__ strings.
- *  @return string|string[]      Value found (string or array), or '' if check fails
+ *  @return string|array         Value found (string or array), or '' if check fails
  */
-function GETPOST($paramname, $check = 'none', $method = 0, $filter = null, $options = null, $noreplace = 0)
+function GETPOST($paramname, $check = 'alphanohtml', $method = 0, $filter = null, $options = null, $noreplace = 0)
 {
 	global $mysoc, $user, $conf;
 
@@ -558,11 +559,9 @@ function GETPOST($paramname, $check = 'none', $method = 0, $filter = null, $opti
 		case 'alpha':
 			if (!is_array($out))
 			{
-				$out = trim($out);
 				// '"' is dangerous because param in url can close the href= or src= and add javascript functions.
 				// '../' is dangerous because it allows dir transversals
-				if (preg_match('/"/', $out)) $out = '';
-				elseif (preg_match('/\.\.\//', $out)) $out = '';
+				$out = str_replace(array('"', '../'), '', trim($out));
 			}
 			break;
 		case 'san_alpha':
@@ -592,17 +591,15 @@ function GETPOST($paramname, $check = 'none', $method = 0, $filter = null, $opti
 		case 'array':
 			if (!is_array($out) || empty($out)) $out = array();
 			break;
-		case 'nohtml':		// Recommended for most scalar parameters
+		case 'nohtml':
 			$out = dol_string_nohtmltag($out, 0);
 			break;
-		case 'alphanohtml':	// Recommended for search parameters
+		case 'alphanohtml':	// Recommended for most scalar parameters and search parameters
 			if (!is_array($out))
 			{
-				$out = trim($out);
 				// '"' is dangerous because param in url can close the href= or src= and add javascript functions.
 				// '../' is dangerous because it allows dir transversals
-				if (preg_match('/"/', $out)) $out = '';
-				elseif (preg_match('/\.\.\//', $out)) $out = '';
+				$out = str_replace(array('"', '../'), '', trim($out));
 				$out = dol_string_nohtmltag($out);
 			}
 			break;
@@ -885,7 +882,7 @@ function dol_sanitizeFileName($str, $newstr = '_', $unaccent = 1)
 function dol_sanitizePathName($str, $newstr = '_', $unaccent = 1)
 {
 	$filesystem_forbidden_chars = array('<', '>', '?', '*', '|', '"', '°');
-	return dol_string_nospecial($unaccent ?dol_string_unaccent($str) : $str, $newstr, $filesystem_forbidden_chars);
+	return dol_string_nospecial($unaccent ? dol_string_unaccent($str) : $str, $newstr, $filesystem_forbidden_chars);
 }
 
 /**
@@ -1105,8 +1102,8 @@ function dol_syslog($message, $level = LOG_INFO, $ident = 0, $suffixinfilename =
 			'ip' => false
 		);
 
-		$remoteip = getUserRemoteIP();	// Get ip when page run on a web server
-		if (! empty($remoteip)) {
+		$remoteip = getUserRemoteIP(); // Get ip when page run on a web server
+		if (!empty($remoteip)) {
 			$data['ip'] = $remoteip;
 			// This is when server run behind a reverse proxy
 			if (!empty($_SERVER['HTTP_X_FORWARDED_FOR']) && $_SERVER['HTTP_X_FORWARDED_FOR'] != $remoteip) $data['ip'] = $_SERVER['HTTP_X_FORWARDED_FOR'].' -> '.$data['ip'];
@@ -2105,8 +2102,6 @@ function dol_now($mode = 'gmt')
 {
 	$ret = 0;
 
-	// Note that gmmktime and mktime return same value (GMT) when used without parameters
-	//if ($mode == 'gmt') $ret=gmmktime(); // Strict Standards: gmmktime(): You should be using the time() function instead
 	if ($mode == 'gmt') $ret = time(); // Time for now at greenwich.
 	elseif ($mode == 'tzserver')		// Time for now with PHP server timezone added
 	{
@@ -2114,7 +2109,7 @@ function dol_now($mode = 'gmt')
 		$tzsecond = getServerTimeZoneInt('now'); // Contains tz+dayling saving time
 		$ret = (int) (dol_now('gmt') + ($tzsecond * 3600));
 	}
-	/*else if ($mode == 'tzref')				// Time for now with parent company timezone is added
+	/*elseif ($mode == 'tzref')				// Time for now with parent company timezone is added
 	{
 		require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 		$tzsecond=getParentCompanyTimeZoneInt();    // Contains tz+dayling saving time
@@ -2122,7 +2117,7 @@ function dol_now($mode = 'gmt')
 	}*/
 	elseif ($mode == 'tzuser')				// Time for now with user timezone added
 	{
-		//print 'time: '.time().'-'.mktime().'-'.gmmktime();
+		//print 'time: '.time();
 		$offsettz = (empty($_SESSION['dol_tz']) ? 0 : $_SESSION['dol_tz']) * 60 * 60;
 		$offsetdst = (empty($_SESSION['dol_dst']) ? 0 : $_SESSION['dol_dst']) * 60 * 60;
 		$ret = (int) (dol_now('gmt') + ($offsettz + $offsetdst));
@@ -3165,7 +3160,6 @@ function img_picto($titlealt, $picto, $moreatt = '', $pictoisfullpath = false, $
 			}
 			elseif ($pictowithouttext == 'bank') {
 				$fakey = 'fa-'.$arrayconvpictotofa[$pictowithouttext];
-				$facolor = '#444';
 			}
 			elseif ($pictowithouttext == 'stats') {
 				$fakey = 'fa-'.$arrayconvpictotofa[$pictowithouttext];
@@ -3823,23 +3817,44 @@ function img_searchclear($titlealt = 'default', $other = '')
 /**
  *	Show information for admin users or standard users
  *
- *	@param	string	$text			Text info
- *	@param  integer	$infoonimgalt	Info is shown only on alt of star picto, otherwise it is show on output after the star picto
- *	@param	int		$nodiv			No div
- *  @param  string  $admin          '1'=Info for admin users. '0'=Info for standard users (change only the look), 'error','xxx'=Other
- *  @param	string	$morecss		More CSS ('', 'warning', 'error')
- *	@return	string					String with info text
+ *	@param	string	$text				Text info
+ *	@param  integer	$infoonimgalt		Info is shown only on alt of star picto, otherwise it is show on output after the star picto
+ *	@param	int		$nodiv				No div
+ *  @param  string  $admin      	    '1'=Info for admin users. '0'=Info for standard users (change only the look), 'error','xxx'=Other
+ *  @param	string	$morecss			More CSS ('', 'warning', 'error')
+ *  @param	string	$textfordropdown	Show a text to click to dropdown the info box.
+ *	@return	string						String with info text
  */
-function info_admin($text, $infoonimgalt = 0, $nodiv = 0, $admin = '1', $morecss = '')
+function info_admin($text, $infoonimgalt = 0, $nodiv = 0, $admin = '1', $morecss = '', $textfordropdown = '')
 {
 	global $conf, $langs;
 
 	if ($infoonimgalt)
 	{
-		return img_picto($text, 'info', 'class="hideonsmartphone'.($morecss ? ' '.$morecss : '').'"');
+		$result = img_picto($text, 'info', 'class="hideonsmartphone'.($morecss ? ' '.$morecss : '').'"');
+	}
+	else {
+		if (empty($conf->use_javascript_ajax)) $textfordropdown = '';
+
+		$class = (empty($admin) ? 'undefined' : ($admin == '1' ? 'info' : $admin));
+		$result = ($nodiv ? '' : '<div class="'.$class.' hideonsmartphone'.($morecss ? ' '.$morecss : '').($textfordropdown ? ' hidden' : '').'">').'<span class="fa fa-info-circle" title="'.dol_escape_htmltag($admin ? $langs->trans('InfoAdmin') : $langs->trans('Note')).'"></span> '.$text.($nodiv ? '' : '</div>');
+
+		if ($textfordropdown) {
+			$tmpresult .= '<span class="'.$class.'text opacitymedium">'.$langs->trans($textfordropdown).' '.img_picto($langs->trans($textfordropdown), '1downarrow').'</span>';
+			$tmpresult .= '<script type="text/javascript" language="javascript">
+				jQuery(document).ready(function() {
+					jQuery(".'.$class.'text").click(function() {
+						console.log("toggle text");
+						jQuery(".'.$class.'").toggle();
+					});
+				});
+				</script>';
+
+			$result = $tmpresult.$result;
+		}
 	}
 
-	return ($nodiv ? '' : '<div class="'.(empty($admin) ? '' : ($admin == '1' ? 'info' : $admin)).' hideonsmartphone'.($morecss ? ' '.$morecss : '').'">').'<span class="fa fa-info-circle" title="'.dol_escape_htmltag($admin ? $langs->trans('InfoAdmin') : $langs->trans('Note')).'"></span> '.$text.($nodiv ? '' : '</div>');
+	return $result;
 }
 
 
@@ -4202,7 +4217,8 @@ function load_fiche_titre($titre, $morehtmlright = '', $picto = 'generic', $pict
 	if ($picto == 'setup') $picto = 'generic';
 
 	$return .= "\n";
-	$return .= '<table '.($id ? 'id="'.$id.'" ' : '').'class="centpercent notopnoleftnoright table-fiche-title '.($morecssontable ? ' '.$morecssontable : '').'"><tr>'; // maring bottom must be same than into print_barre_list
+	$return .= '<table '.($id ? 'id="'.$id.'" ' : '').'class="centpercent notopnoleftnoright table-fiche-title'.($morecssontable ? ' '.$morecssontable : '').'">'; // maring bottom must be same than into print_barre_list
+	$return .= '<tr class="titre">';
 	if ($picto) $return .= '<td class="nobordernopadding widthpictotitle opacityhigh valignmiddle col-picto">'.img_picto('', $picto, 'class="valignmiddle widthpictotitle pictotitle"', $pictoisfullpath).'</td>';
 	$return .= '<td class="nobordernopadding valignmiddle col-title">';
 	$return .= '<div class="titre inline-block">'.$titre.'</div>';
@@ -4267,8 +4283,9 @@ function print_barre_liste($titre, $page, $file, $options = '', $sortfield = '',
 	print '<table class="centpercent notopnoleftnoright table-fiche-title'.($morecss ? ' '.$morecss : '').'"><tr>'; // maring bottom must be same than into load_fiche_tire
 
 	// Left
+
+	if ($picto && $titre) print '<td class="nobordernopadding widthpictotitle opacityhigh valignmiddle col-picto">'.img_picto('', $picto, 'class="valignmiddle pictotitle widthpictotitle"', $pictoisfullpath).'</td>';
 	print '<td class="nobordernopadding valignmiddle col-title">';
-	if ($picto && $titre) print img_picto('', $picto, 'class="hideonsmartphone valignmiddle opacityhigh pictotitle widthpictotitle"', $pictoisfullpath);
 	print '<div class="titre inline-block">'.$titre;
 	if (!empty($titre) && $savtotalnboflines >= 0 && (string) $savtotalnboflines != '') print ' ('.$totalnboflines.')';
 	print '</div></td>';
@@ -5568,8 +5585,8 @@ function dol_string_nohtmltag($stringtoclean, $removelinefeed = 1, $pagecodeto =
 function dol_string_onlythesehtmltags($stringtoclean, $cleanalsosomestyles = 1)
 {
 	$allowed_tags = array(
-		"html", "head", "meta", "body", "article", "a", "b", "br", "div", "dl", "dd", "dt", "em", "font", "img", "ins", "hr", "i", "li", "link",
-		"ol", "p", "s", "section", "span", "strong", "title",
+		"html", "head", "meta", "body", "article", "a", "abbr", "b", "blockquote", "br", "cite", "div", "dl", "dd", "dt", "em", "font", "img", "ins", "hr", "i", "li", "link",
+		"ol", "p", "q", "s", "section", "span", "strike", "strong", "title",
 		"table", "tr", "th", "td", "u", "ul"
 	);
 	$allowed_tags_string = join("><", $allowed_tags);
@@ -5578,7 +5595,7 @@ function dol_string_onlythesehtmltags($stringtoclean, $cleanalsosomestyles = 1)
 	$allowed_tags_string = '<'.$allowed_tags_string.'>';
 
 	if ($cleanalsosomestyles) {
-		$stringtoclean = preg_replace('/position\s*:\s*(absolute|fixed)\s*!\s*important/', '', $stringtoclean);	// Note: If hacker try to introduce css comment into string to avoid this, string should be encoded by the dol_htmlentitiesbr so be harmless
+		$stringtoclean = preg_replace('/position\s*:\s*(absolute|fixed)\s*!\s*important/', '', $stringtoclean); // Note: If hacker try to introduce css comment into string to avoid this, string should be encoded by the dol_htmlentitiesbr so be harmless
 	}
 
 	$temp = strip_tags($stringtoclean, $allowed_tags_string);
@@ -5607,7 +5624,7 @@ function dol_string_neverthesehtmltags($stringtoclean, $disallowed_tags = array(
 	}
 
 	if ($cleanalsosomestyles) {
-		$temp = preg_replace('/position\s*:\s*(absolute|fixed)\s*!\s*important/', '', $temp);	// Note: If hacker try to introduce css comment into string to avoid this, string should be encoded by the dol_htmlentitiesbr so be harmless
+		$temp = preg_replace('/position\s*:\s*(absolute|fixed)\s*!\s*important/', '', $temp); // Note: If hacker try to introduce css comment into string to avoid this, string should be encoded by the dol_htmlentitiesbr so be harmless
 	}
 
 	return $temp;
@@ -6107,7 +6124,7 @@ function getCommonSubstitutionArray($outputlangs, $onlykey = 0, $exclude = null,
 			$substitutionarray['__REFCLIENT__'] = (isset($object->ref_client) ? $object->ref_client : (isset($object->ref_customer) ? $object->ref_customer : null));
 			$substitutionarray['__REFSUPPLIER__'] = (isset($object->ref_supplier) ? $object->ref_supplier : null);
 			$substitutionarray['__SUPPLIER_ORDER_DATE_DELIVERY__'] = (isset($object->date_livraison) ? dol_print_date($object->date_livraison, 'day', 0, $outputlangs) : '');
-			$substitutionarray['__SUPPLIER_ORDER_DELAY_DELIVERY__'] = $outputlangs->transnoentities("AvailabilityType".$object->availability_code)!=('AvailabilityType'.$object->availability_code)?$outputlangs->transnoentities("AvailabilityType".$object->availability_code):$outputlangs->convToOutputCharset(isset($object->availability)?$object->availability:'');
+			$substitutionarray['__SUPPLIER_ORDER_DELAY_DELIVERY__'] = $outputlangs->transnoentities("AvailabilityType".$object->availability_code) != ('AvailabilityType'.$object->availability_code) ? $outputlangs->transnoentities("AvailabilityType".$object->availability_code) : $outputlangs->convToOutputCharset(isset($object->availability) ? $object->availability : '');
 
 			$birthday = dol_print_date($object->birth, 'day');
 
@@ -6152,6 +6169,8 @@ function getCommonSubstitutionArray($outputlangs, $onlykey = 0, $exclude = null,
 				$substitutionarray['__THIRDPARTY_ADDRESS__'] = (is_object($object) ? $object->address : '');
 				$substitutionarray['__THIRDPARTY_ZIP__'] = (is_object($object) ? $object->zip : '');
 				$substitutionarray['__THIRDPARTY_TOWN__'] = (is_object($object) ? $object->town : '');
+				$substitutionarray['__THIRDPARTY_COUNTRY_ID__'] = (is_object($object) ? $object->country_id : '');
+				$substitutionarray['__THIRDPARTY_COUNTRY_CODE__'] = (is_object($object) ? $object->country_code : '');
 				$substitutionarray['__THIRDPARTY_IDPROF1__'] = (is_object($object) ? $object->idprof1 : '');
 				$substitutionarray['__THIRDPARTY_IDPROF2__'] = (is_object($object) ? $object->idprof2 : '');
 				$substitutionarray['__THIRDPARTY_IDPROF3__'] = (is_object($object) ? $object->idprof3 : '');
@@ -6175,6 +6194,8 @@ function getCommonSubstitutionArray($outputlangs, $onlykey = 0, $exclude = null,
 				$substitutionarray['__THIRDPARTY_ADDRESS__'] = (is_object($object->thirdparty) ? $object->thirdparty->address : '');
 				$substitutionarray['__THIRDPARTY_ZIP__'] = (is_object($object->thirdparty) ? $object->thirdparty->zip : '');
 				$substitutionarray['__THIRDPARTY_TOWN__'] = (is_object($object->thirdparty) ? $object->thirdparty->town : '');
+				$substitutionarray['__THIRDPARTY_COUNTRY_ID__'] = (is_object($object->thirdparty) ? $object->thirdparty->country_id : '');
+				$substitutionarray['__THIRDPARTY_COUNTRY_CODE__'] = (is_object($object->thirdparty) ? $object->thirdparty->country_code : '');
 				$substitutionarray['__THIRDPARTY_IDPROF1__'] = (is_object($object->thirdparty) ? $object->thirdparty->idprof1 : '');
 				$substitutionarray['__THIRDPARTY_IDPROF2__'] = (is_object($object->thirdparty) ? $object->thirdparty->idprof2 : '');
 				$substitutionarray['__THIRDPARTY_IDPROF3__'] = (is_object($object->thirdparty) ? $object->thirdparty->idprof3 : '');
@@ -6915,6 +6936,24 @@ function utf8_check($str)
 			return false;
 		}
 	}
+	return true;
+}
+
+/**
+ *      Check if a string is in ASCII
+ *
+ *      @param	string	$str        String to check
+ * 		@return	boolean				True if string is ASCII, False if not (byte value > 0x7F)
+ */
+function ascii_check($str)
+{
+	if (function_exists('mb_check_encoding')) {
+		//if (mb_detect_encoding($str, 'ASCII', true) return false;
+		if (!mb_check_encoding($str, 'ASCII')) return false;
+	} else {
+		if (preg_match('/[^\x00-\x7f]/', $str)) return false; // Contains a byte > 7f
+	}
+
 	return true;
 }
 
@@ -8000,7 +8039,7 @@ function dol_mimetype($file, $default = 'application/octet-stream', $mode = 0)
 	if (preg_match('/\.bas$/i', $tmpfile)) { $mime = 'text/plain'; $imgmime = 'text.png'; $srclang = 'bas'; $famime = 'file-code-o'; }
 	if (preg_match('/\.(c)$/i', $tmpfile)) { $mime = 'text/plain'; $imgmime = 'text.png'; $srclang = 'c'; $famime = 'file-code-o'; }
 	if (preg_match('/\.(cpp)$/i', $tmpfile)) { $mime = 'text/plain'; $imgmime = 'text.png'; $srclang = 'cpp'; $famime = 'file-code-o'; }
-    if (preg_match('/\.cs$/i', $tmpfile)) { $mime = 'text/plain'; $imgmime = 'text.png'; $srclang = 'cs';  $famime = 'file-code-o'; }
+    if (preg_match('/\.cs$/i', $tmpfile)) { $mime = 'text/plain'; $imgmime = 'text.png'; $srclang = 'cs'; $famime = 'file-code-o'; }
 	if (preg_match('/\.(h)$/i', $tmpfile)) { $mime = 'text/plain'; $imgmime = 'text.png'; $srclang = 'h'; $famime = 'file-code-o'; }
 	if (preg_match('/\.(java|jsp)$/i', $tmpfile)) { $mime = 'text/plain'; $imgmime = 'text.png'; $srclang = 'java'; $famime = 'file-code-o'; }
 	if (preg_match('/\.php([0-9]{1})?$/i', $tmpfile)) { $mime = 'text/plain'; $imgmime = 'php.png'; $srclang = 'php'; $famime = 'file-code-o'; }

@@ -43,6 +43,11 @@ class Subscription extends CommonObject
     public $table_element='subscription';
 
     /**
+     * @var int  Does myobject support multicompany module ? 0=No test on entity, 1=Test with field entity, 2=Test with link by fk_soc, 'field@table'=Test with link by field@table
+     */
+    public $ismultientitymanaged = 'fk_adherent@adherent';
+
+    /**
      * @var string String with name of icon for myobject. Must be the part after the 'object_' into object_myobject.png
      */
     public $picto='payment';
@@ -87,6 +92,21 @@ class Subscription extends CommonObject
      * @var int ID
      */
     public $fk_bank;
+
+    public $fields=array(
+    	'rowid' =>array('type'=>'integer', 'label'=>'TechnicalID', 'enabled'=>1, 'visible'=>-1, 'notnull'=>1, 'position'=>10),
+    	'tms' =>array('type'=>'timestamp', 'label'=>'DateModification', 'enabled'=>1, 'visible'=>-1, 'notnull'=>1, 'position'=>15),
+    	'datec' =>array('type'=>'datetime', 'label'=>'DateCreation', 'enabled'=>1, 'visible'=>-1, 'position'=>20),
+    	'fk_adherent' =>array('type'=>'integer', 'label'=>'Member', 'enabled'=>1, 'visible'=>-1, 'position'=>25),
+    	'dateadh' =>array('type'=>'datetime', 'label'=>'DateSubscription', 'enabled'=>1, 'visible'=>-1, 'position'=>30),
+    	'datef' =>array('type'=>'date', 'label'=>'DateEndSubscription', 'enabled'=>1, 'visible'=>-1, 'position'=>35),
+    	'subscription' =>array('type'=>'double(24,8)', 'label'=>'Amount', 'enabled'=>1, 'visible'=>-1, 'position'=>40, 'isameasure'=>1),
+    	'fk_bank' =>array('type'=>'integer', 'label'=>'BankId', 'enabled'=>1, 'visible'=>-1, 'position'=>45),
+    	'note' =>array('type'=>'text', 'label'=>'Note', 'enabled'=>1, 'visible'=>-1, 'position'=>50),
+    	'fk_type' =>array('type'=>'integer', 'label'=>'MemberType', 'enabled'=>1, 'visible'=>-1, 'position'=>55),
+    	'fk_user_creat' =>array('type'=>'integer:User:user/class/user.class.php', 'label'=>'UserAuthor', 'enabled'=>1, 'visible'=>-2, 'position'=>60),
+    	'fk_user_valid' =>array('type'=>'integer:User:user/class/user.class.php', 'label'=>'UserValidation', 'enabled'=>1, 'visible'=>-1, 'position'=>65),
+    );
 
 
     /**

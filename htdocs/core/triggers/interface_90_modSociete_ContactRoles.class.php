@@ -26,7 +26,7 @@
  * \ingroup agenda
  * \brief Trigger file for company - contactroles
  */
-require_once DOL_DOCUMENT_ROOT . '/core/triggers/dolibarrtriggers.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/triggers/dolibarrtriggers.class.php';
 
 /**
  * Class of triggered functions for agenda module
@@ -71,23 +71,23 @@ class InterfaceContactRoles extends DolibarrTriggers
 		if ($action === 'PROPAL_CREATE' || $action === 'ORDER_CREATE' || $action === 'BILL_CREATE'
 			|| $action === 'ORDER_SUPPLIER_CREATE' || $action === 'BILL_SUPPLIER_CREATE' || $action === 'PROPOSAL_SUPPLIER_CREATE'
 			|| $action === 'CONTRACT_CREATE' || $action === 'FICHINTER_CREATE' || $action === 'PROJECT_CREATE' || $action === 'TICKET_CREATE') {
-			dol_syslog("Trigger '" . $this->name . "' for action '$action' launched by " . __FILE__ . ". id=" . $object->id);
+			dol_syslog("Trigger '".$this->name."' for action '$action' launched by ".__FILE__.". id=".$object->id);
 
 			$socid = (property_exists($object, 'socid') ? $object->socid : $object->fk_soc);
 
-			if (! empty($socid) && $socid > 0) {
-				require_once DOL_DOCUMENT_ROOT . '/contact/class/contact.class.php';
+			if (!empty($socid) && $socid > 0) {
+				require_once DOL_DOCUMENT_ROOT.'/contact/class/contact.class.php';
 				$contactdefault = new Contact($this->db);
 				$contactdefault->socid = $socid;
 				$TContact = $contactdefault->getContactRoles($object->element);
 
-				if (is_array($TContact) && ! empty($TContact)) {
+				if (is_array($TContact) && !empty($TContact)) {
 					$TContactAlreadyLinked = array();
 					if ($object->id > 0) {
 						$cloneFrom = dol_clone($object, 1);
 
-						if (! empty($cloneFrom->id)) {
-							$TContactAlreadyLinked = array_merge($cloneFrom->liste_contact(- 1, 'external'), $cloneFrom->liste_contact(- 1, 'internal'));
+						if (!empty($cloneFrom->id)) {
+							$TContactAlreadyLinked = array_merge($cloneFrom->liste_contact(-1, 'external'), $cloneFrom->liste_contact(-1, 'internal'));
 						}
 					}
 
@@ -102,7 +102,7 @@ class InterfaceContactRoles extends DolibarrTriggers
 					foreach ($TContact as $infos) {
 						$res = $object->add_contact($infos['fk_socpeople'], $infos['type_contact']);
 						if ($res > 0)
-							$nb ++;
+							$nb++;
 					}
 
 					if ($nb > 0) {

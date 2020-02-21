@@ -241,11 +241,11 @@ if (empty($reshook))
 
 			if ($objectsrc->lines[$i]->product_tobatch)      // If product need a batch number
 			{
-			    if (isset($_POST[$batch]))
+			    if (GETPOSTISSET($batch))
 			    {
     				//shipment line with batch-enable product
     				$qty .= '_'.$j;
-    				while (isset($_POST[$batch]))
+    				while (GETPOSTISSET($batch))
     				{
     					// save line of detail into sub_qty
     				    $sub_qty[$j]['q'] = GETPOST($qty, 'int'); // the qty we want to move for this stock record
@@ -277,11 +277,11 @@ if (empty($reshook))
 			        }
 			    }
 			}
-			elseif (isset($_POST[$stockLocation]))
+			elseif (GETPOSTISSET($stockLocation))
 			{
 			    //shipment line from multiple stock locations
 			    $qty .= '_'.$j;
-			    while (isset($_POST[$stockLocation]))
+			    while (GETPOSTISSET($stockLocation))
 			    {
 			        // save sub line of warehouse
 			        $stockLine[$i][$j]['qty'] = GETPOST($qty, 'int');
@@ -1578,7 +1578,7 @@ if ($action == 'create')
 						//$line->fetch_optionals($line->id);
 						$line->array_options = array_merge($line->array_options, $srcLine->array_options);
 
-						print $expLine->showOptionals($extrafields, 'edit', array('style'=>'class="drag drop oddeven"', 'colspan'=>$colspan), $indiceAsked, '', empty($conf->global->MAIN_EXTRAFIELDS_IN_ONE_TD) ? 0 : 1);
+						print $expLine->showOptionals($extrafields, 'edit', array('style'=>'class="drag drop oddeven"', 'colspan'=>$colspan), $indiceAsked, '', 1);
 					}
                 }
 

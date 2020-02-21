@@ -43,9 +43,10 @@ class CompanyPaymentMode extends CommonObject
 	public $table_element = 'societe_rib';
 
 	/**
-	 * @var int  Does companypaymentmode support multicompany module ? 0=No test on entity, 1=Test with field entity, 2=Test with link by societe
+	 * @var int  Does this object support multicompany module ?
+	 * 0=No test on entity, 1=Test with field entity, 'field@table'=Test with link by field@table
 	 */
-	public $ismultientitymanaged = 2;
+	public $ismultientitymanaged = 'fk_soc@societe';
 
 	/**
 	 * @var int  Does companypaymentmode support extrafields ? 0=No, 1=Yes
@@ -114,6 +115,7 @@ class CompanyPaymentMode extends CommonObject
 		'preapproval_key' =>array('type'=>'varchar(255)', 'label'=>'Preapproval key', 'enabled'=>1, 'visible'=>-2, 'position'=>160),
 		'total_amount_of_all_payments' =>array('type'=>'double(24,8)', 'label'=>'Total amount of all payments', 'enabled'=>1, 'visible'=>-2, 'position'=>165),
 		'stripe_card_ref' =>array('type'=>'varchar(128)', 'label'=>'Stripe card ref', 'enabled'=>1, 'visible'=>-2, 'position'=>170),
+		'stripe_account' =>array('type'=>'varchar(128)', 'label'=>'Stripe account', 'enabled'=>1, 'visible'=>-2, 'position'=>171),
 		'status' =>array('type'=>'integer', 'label'=>'Status', 'enabled'=>1, 'visible'=>-2, 'notnull'=>1, 'position'=>175),
 		'starting_date' =>array('type'=>'date', 'label'=>'Starting date', 'enabled'=>1, 'visible'=>-2, 'position'=>180),
 		'ending_date' =>array('type'=>'date', 'label'=>'Ending date', 'enabled'=>1, 'visible'=>-2, 'position'=>185),
@@ -165,6 +167,7 @@ class CompanyPaymentMode extends CommonObject
 	public $preapproval_key;
 	public $total_amount_of_all_payments;
 	public $stripe_card_ref;
+	public $stripe_account;
 
 	/**
 	 * @var int Status
@@ -446,7 +449,7 @@ class CompanyPaymentMode extends CommonObject
 
 				$this->db->begin();
 
-				$sql2 = "UPDATE ".MAIN_DB_PREFIX."societe_rib SET default_rib = 0";
+				$sql2 = "UPDATE ".MAIN_DB_PREFIX."societe_rib SET default_rib = 0, tms = tms";
 				$sql2.= " WHERE default_rib <> 0 AND fk_soc = ".$obj->fk_soc;
 				if ($type) $sql2.= " AND type = '".$this->db->escape($type)."'";
 				dol_syslog(get_class($this).'::setAsDefault', LOG_DEBUG);

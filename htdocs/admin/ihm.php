@@ -83,7 +83,7 @@ if ($action == 'update')
 {
 	dolibarr_set_const($db, "MAIN_LANG_DEFAULT", $_POST["MAIN_LANG_DEFAULT"], 'chaine', 0, '', $conf->entity);
 	dolibarr_set_const($db, "MAIN_IHM_PARAMS_REV", (int) $conf->global->MAIN_IHM_PARAMS_REV+1, 'chaine', 0, '', $conf->entity);
-	dolibarr_set_const($db, "MAIN_MULTILANGS", $_POST["MAIN_MULTILANGS"], 'chaine', 0, '', $conf->entity);
+	//dolibarr_set_const($db, "MAIN_MULTILANGS", $_POST["MAIN_MULTILANGS"], 'chaine', 0, '', $conf->entity);
 
 	dolibarr_set_const($db, "MAIN_THEME", $_POST["main_theme"], 'chaine', 0, '', $conf->entity);
 
@@ -241,13 +241,14 @@ print '</tr>';
 // Default language
 print '<tr class="oddeven"><td class="titlefield">'.$langs->trans("DefaultLanguage").'</td><td>';
 print $formadmin->select_language($conf->global->MAIN_LANG_DEFAULT, 'MAIN_LANG_DEFAULT', 1, 0, 0, 0, 0, 'minwidth300', 2);
+print '<input class="button" type="submit" name="submit" value="'.$langs->trans("Save").'">';
 print '</td>';
 print '<td width="20">&nbsp;</td>';
 print '</tr>';
 
 // Multilingual GUI
 print '<tr class="oddeven"><td class="titlefield">'.$langs->trans("EnableMultilangInterface").'</td><td>';
-print $form->selectyesno('MAIN_MULTILANGS', $conf->global->MAIN_MULTILANGS, 1);
+print ajax_constantonoff('MAIN_MULTILANGS');
 print '</td>';
 print '<td width="20">&nbsp;</td>';
 print '</tr>';

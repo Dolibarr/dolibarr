@@ -659,7 +659,7 @@ if ($user->rights->agenda->myactions->read)
 
 
 /*
- * Last contracts
+ * Latest contracts
  */
 if (!empty($conf->contrat->enabled) && $user->rights->contrat->lire && 0) // TODO A REFAIRE DEPUIS NOUVEAU CONTRAT
 {
@@ -667,9 +667,9 @@ if (!empty($conf->contrat->enabled) && $user->rights->contrat->lire && 0) // TOD
 
 	$sql = "SELECT s.nom as name, s.rowid, s.canvas, ";
     $sql .= ", s.code_client";
-	$sql .= ", s.entity";
+    $sql .= ", s.entity";
     $sql .= ", s.email";
-	$sql .= " c.statut, c.rowid as contratid, p.ref, c.mise_en_service as datemes, c.fin_validite as datefin, c.date_cloture as dateclo";
+    $sql .= ", c.statut, c.rowid as contratid, p.ref, c.fin_validite as datefin, c.date_cloture as dateclo";
 	$sql .= " FROM ".MAIN_DB_PREFIX."societe as s";
 	$sql .= ", ".MAIN_DB_PREFIX."contrat as c";
 	$sql .= ", ".MAIN_DB_PREFIX."product as p";

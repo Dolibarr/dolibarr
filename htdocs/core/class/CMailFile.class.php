@@ -82,15 +82,15 @@ class CMailFile
     public $headers;
     public $message;
     /**
-	 * @var array fullfilenames list
+	 * @var array fullfilenames list (full path of filename on file system)
 	 */
 	public $filename_list = array();
 	/**
-	 * @var array mimetypes of files list
+	 * @var array mimetypes of files list (List of MIME type of attached files)
 	 */
 	public $mimetype_list = array();
 	/**
-	 * @var array filenames list
+	 * @var array filenames list (List of attached file name in message)
 	 */
 	public $mimefilename_list = array();
 
@@ -165,7 +165,6 @@ class CMailFile
 		$this->filename_list = $filename_list;
 		$this->mimetype_list = $mimetype_list;
 		$this->mimefilename_list = $mimefilename_list;
-
 
 		// Define this->sendmode
 		$this->sendmode = '';
@@ -330,7 +329,13 @@ class CMailFile
 			$smtps = new SMTPs();
 			$smtps->setCharSet($conf->file->character_set_client);
 
-			$smtps->setSubject($this->encodetorfc2822($subject));
+			// Encode subject if required.
+			$subjecttouse = $subject;
+			if (! ascii_check($subjecttouse)) {
+				$subjecttouse = $this->encodetorfc2822($subjecttouse);
+			}
+
+			$smtps->setSubject($subjecttouse);
 			$smtps->setTO($this->getValidAddress($to, 0, 1));
 			$smtps->setFrom($this->getValidAddress($from, 0, 1));
 			$smtps->setTrackId($trackid);
@@ -679,8 +684,14 @@ class CMailFile
 
 					if (!empty($conf->global->MAIN_MAIL_DEBUG)) $this->dump_mail();
 
-					if (!empty($additionnalparam)) $res = mail($dest, $this->encodetorfc2822($this->subject), $this->message, $this->headers, $additionnalparam);
-					else $res = mail($dest, $this->encodetorfc2822($this->subject), $this->message, $this->headers);
+					// Encode subject if required.
+					$subjecttouse = $this->subject;
+					if (! ascii_check($subjecttouse)) {
+						$subjecttouse = $this->encodetorfc2822($subjecttouse);
+					}
+
+					if (!empty($additionnalparam)) $res = mail($dest, $subjecttouse, $this->message, $this->headers, $additionnalparam);
+					else $res = mail($dest, $subjecttouse, $this->message, $this->headers);
 
 					if (!$res)
 					{

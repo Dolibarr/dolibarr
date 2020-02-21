@@ -112,7 +112,7 @@ body {
 th a { font-weight: <?php echo ($useboldtitle ? 'bold' : 'normal'); ?> !important; }
 a.tab { font-weight: 500 !important; }
 
-a:link, a:visited, a:hover, a:active { font-family: <?php print $fontlist ?>; font-weight: normal; color: var(--colortextlink); text-decoration: none;  }
+a:link, a:visited, a:hover, a:active { font-family: <?php print $fontlist ?>; color: var(--colortextlink); text-decoration: none;  }
 a:hover { text-decoration: underline; color: var(--colortextlink); }
 a.commonlink { color: var(--colortextlink) !important; text-decoration: none; }
 th.liste_titre a div div:hover, th.liste_titre_sel a div div:hover { text-decoration: underline; }
@@ -122,14 +122,6 @@ input, input.flat, textarea, textarea.flat, form.flat select, select, select.fla
 }
 select.vmenusearchselectcombo {
 	background-color: unset;
-}
-
-input.select2-input {
-	border-bottom: none ! important;
-}
-.select2-choice {
-	border: none;
-	border-bottom:  solid 1px rgba(0,0,0,.2) !important;	/* required to avoid to lose bottom line when focus is lost on select2. */
 }
 
 .liste_titre input[name=month_date_when], .liste_titre input[name=monthvalid], .liste_titre input[name=search_ordermonth], .liste_titre input[name=search_deliverymonth],
@@ -320,9 +312,6 @@ select.flat, form.flat select {
 }
 .optionblue {
 	color: var(--colortextlink);
-}
-.select2-results .select2-highlighted.optionblue {
-	color: #FFF !important;
 }
 .optiongrey, .opacitymedium {
 	opacity: 0.4;
@@ -567,6 +556,18 @@ textarea.centpercent {
 .paddingright2 {
 	padding-<?php print $right; ?>: 2px;
 }
+.paddingtop {
+	padding-bottom: 4px;
+}
+.paddingtop2 {
+	padding-bottom: 2px;
+}
+.paddingbottom {
+	padding-bottom: 4px;
+}
+.paddingbottom2 {
+	padding-bottom: 2px;
+}
 .marginleft2 {
 	margin-<?php print $left; ?>: 2px;
 }
@@ -620,14 +621,20 @@ body[class*="colorblind-"] .text-success{
     color: var(--colortexttitle) !important;
 }
 
+.floatnone {
+	float: none !important;
+}
+
 .fa-toggle-on, .fa-toggle-off { font-size: 2em; }
 .websiteselectionsection .fa-toggle-on, .websiteselectionsection .fa-toggle-off,
 .asetresetmodule .fa-toggle-on, .asetresetmodule .fa-toggle-off {
 	font-size: 1.5em; vertical-align: text-bottom;
 }
 
+
 /* Themes for badges */
-<?php include dol_buildpath($path.'/theme/'.$theme.'/badges.inc.php', 0); ?>
+
+    <?php include dol_buildpath($path.'/theme/'.$theme.'/badges.inc.php', 0); ?>
 
 .borderrightlight
 {
@@ -659,6 +666,32 @@ div.divsearchfield {
     overflow: auto;
     padding-bottom: 5px;
     opacity: 0.6;
+}
+.divadvancedsearchfield:first-child {
+    margin-top: 3px;
+}
+.divadvancedsearchfield {
+    float: left;
+    padding-left: 15px;
+    padding-right: 15px;
+    padding-bottom: 2px;
+    padding-top: 2px;
+}
+.divadvancedsearchfield span.select2.select2-container.select2-container--default {
+	padding-bottom: 4px;
+}
+.search_component_params {
+	/*display: flex; */
+    -webkit-flex-flow: row wrap;
+    flex-flow: row wrap;
+    background: #fff;
+    padding: 3px;
+}
+.search_component_params_input, .search_component_params_input:focus {
+	border-bottom: none;
+	width: auto;
+	margin: 0 !important;
+	padding: 3px;
 }
 <?php
 // Add a nowrap on smartphone, so long list of field used for filter are overflowed with clip
@@ -716,6 +749,12 @@ select.flat.selectlimit {
 }
 .marginbottomonly {
 	margin-bottom: 10px !important;
+}
+.nomargintop {
+    margin-top: 0 !important;
+}
+.nomarginbottom {
+    margin-bottom: 0 !important;
 }
 .selectlimit, .selectlimit:focus {
     border-left: none !important;
@@ -1020,6 +1059,10 @@ table[summary="list_of_modules"] .fa-cog {
 	div.refidno {
 		font-size: <?php print is_numeric($fontsize) ? ($fontsize + 3).'px' : $fontsize; ?> !important;
 	}
+	.divadvancedsearchfield {
+    	padding-left: 5px;
+    	padding-right: 5px;
+    }
 }
 
 /* Force values for small screen 570 */
@@ -1190,7 +1233,7 @@ td.showDragHandle {
 #id-left {
 	padding-top: 20px;
 	padding-bottom: 5px;
-	<?php if (!empty($conf->global->MAIN_USE_TOP_MENU_SEARCH_DROPDOWN) && !empty($conf->global->MAIN_USE_TOP_MENU_BOOKMARK_DROPDOWN)) { ?>
+	<?php if (!empty($conf->global->MAIN_USE_TOP_MENU_SEARCH_DROPDOWN)) { ?>
 	padding-top: 8px;
 	<?php } ?>
 }
@@ -1475,9 +1518,19 @@ div.nopadding {
 	margin : 0px auto;
 }
 
+td.nobordernopadding.widthpictotitle.opacityhigh.valignmiddle.col-picto {
+    color: rgb(<?php print $colortexttitlenotab; ?>);
+    opacity: 0.5;
+}
 .pictotitle {
 	margin-<?php echo $right; ?>: 8px;
 	margin-bottom: 4px;
+}
+@media only screen and (max-width: 767px)
+{
+	span.pictotitle {
+		margin-<?php echo $left; ?>: 0 !important;
+	}
 }
 .pictoobjectwidth {
 	width: 14px;
@@ -1622,6 +1675,7 @@ div#id-top {
 <?php } else { ?>
 	background: var(--colorbackhmenu1);
 	background-image: linear-gradient(-45deg, <?php echo colorAdjustBrightness(colorArrayToHex(colorStringToArray($colorbackhmenu1)), '5'); ?>, var(--colorbackhmenu1));
+	/* box-shadow: 0px 0px 5px #eee; */
 <?php } ?>
 }
 
@@ -2135,6 +2189,9 @@ div.login_block a {
 	color: var(--colortextbackhmenu);
 	display: inline-block;
 }
+div.login_block span.aversion {
+	color: <?php echo colorAgressiveness($colortextbackhmenu, -40); ?>;
+}
 div.login_block table {
 	display: inline;
 }
@@ -2155,19 +2212,28 @@ div.login a:hover {
 }
 div.login_block_user {
 	display: inline-block;
+    vertical-align: middle;
+	line-height: <?php echo $disableimages ? '25' : '50'; ?>px;
+	height: <?php echo $disableimages ? '25' : '50'; ?>px;
 }
 div.login_block_other {
 	display: inline-block;
+    vertical-align: middle;
 	clear: <?php echo $disableimages ? 'none' : 'both'; ?>;
+	padding-top: 0;
+	text-align: right;
+	margin-right: 8px;
+	max-width: 200px;
 }
-div.login_block_other { padding-top: 0; text-align: right; margin-right: 8px; }
 
 .login_block_elem {
 	float: right;
 	vertical-align: top;
 	padding: 0px 3px 0px 4px !important;
-	line-height: <?php echo $disableimages ? '25' : '48'; ?>px;
-	height: <?php echo $disableimages ? '25' : '50'; ?>px;
+}
+.login_block_other .login_block_elem {
+	line-height: 25px;
+	height: 25px;
 }
 .atoplogin, .atoplogin:hover {
 	color: #<?php echo $colortextbackhmenu; ?> !important;
@@ -2284,11 +2350,10 @@ a.vmenu:link, a.vmenu:visited { color: var(--colortextbackvmenu); }
 a.vsmenu:link, a.vsmenu:visited, a.vsmenu:hover, a.vsmenu:active, span.vsmenu { 
 	font-family: <?php print $fontlist ?>; 
 	text-align: <?php print $left; ?>; 
-	font-weight: normal; 
 	color: #202020; 
 	margin: 1px 1px 1px 6px; 
 }
-font.vsmenudisabled { font-family: <?php print $fontlist ?>; text-align: <?php print $left; ?>; font-weight: normal; color: #aaa; }
+font.vsmenudisabled { font-family: <?php print $fontlist ?>; text-align: <?php print $left; ?>; color: #aaa; }
 a.vsmenu:link, a.vsmenu:visited { 
 	color: var(--colortextbackvmenu); 
 	white-space: nowrap; 
@@ -2296,7 +2361,7 @@ a.vsmenu:link, a.vsmenu:visited {
 font.vsmenudisabledmargin { margin: 1px 1px 1px 6px; }
 li a.vsmenudisabled, li.vsmenudisabled { color: #aaa !important; }
 
-a.help:link, a.help:visited, a.help:hover, a.help:active, span.help { font-size:<?php print is_numeric($fontsizesmaller) ? ($fontsizesmaller.'px') : $fontsizesmaller; ?>; font-family: <?php print $fontlist ?>; text-align: <?php print $left; ?>; font-weight: normal; color: #aaa; text-decoration: none; }
+a.help:link, a.help:visited, a.help:hover, a.help:active, span.help { text-align: <?php print $left; ?>; color: #aaa; text-decoration: none; }
 
 .vmenu div.blockvmenufirst, .vmenu div.blockvmenulogo, .vmenu div.blockvmenusearchphone, .vmenu div.blockvmenubookmarks
 {
@@ -2492,8 +2557,11 @@ div.tabBar {
 	width: auto;
 	background: var(--colorbacktabcard1);
 }
-div.tabBar div.titre {
+div.tabBar tr.titre td {
 	padding-top: 20px;
+}
+div.fiche tr.titre td {
+	padding-top: 10px;
 }
 
 div.tabBar.tabBarNoTop {
@@ -2669,6 +2737,15 @@ tr.nocellnopadd td.nobordernopadding, tr.nocellnopadd td.nocellnopadd
 	border: 0px;
 }
 
+.unsetcolor {
+	color: unset !important;
+}
+.nopaddingleft {
+	padding-<?php print $left; ?>: 0px;
+}
+.nopaddingright {
+	padding-<?php print $right; ?>: 0px;
+}
 .notopnoleft {
 	border-collapse: collapse;
 	border: 0px;
@@ -3692,8 +3769,8 @@ div.boximport {
 
 .fieldrequired { font-weight: bold; color: var(--fieldrequiredcolor); }
 
-.widthpictotitle { width: 44px; text-align: <?php echo $left; ?>; }
-span.widthpictotitle { font-size: 2.5em; };
+.widthpictotitle { width: 32px; text-align: <?php echo $left; ?>; }
+span.widthpictotitle { font-size: 2.1em; };
 
 .dolgraphtitle { margin-top: 6px; margin-bottom: 4px; }
 .dolgraphtitlecssboxes { /* margin: 0px; */ }
@@ -4478,6 +4555,18 @@ pre#editfilecontentaceeditorid {
 
 
 /* ============================================================================== */
+/*  Custom reports                                                                */
+/* ============================================================================== */
+
+.customreportsoutput, .customreportsoutputnotdata {
+	padding-top: 20px;
+}
+.customreportsoutputnotdata {
+	text-align: center;
+}
+
+
+/* ============================================================================== */
 /*  Holiday                                                                       */
 /* ============================================================================== */
 
@@ -4856,6 +4945,33 @@ div.dataTables_length select {
 /*  Select2                                                                       */
 /* ============================================================================== */
 
+.select2-container--default .select2-results__option--highlighted[aria-selected] {
+    background-color: rgb(<?php echo $colorbackhmenu1 ?>);
+    color: #<?php echo $colortextbackhmenu; ?>;
+}
+
+span.select2.select2-container.select2-container--default {
+    border-left: none;
+    border-top: none;
+    border-right: none;
+}
+input.select2-input {
+	border-bottom: none ! important;
+}
+.select2-choice {
+	border: none;
+	border-bottom:  solid 1px rgba(0,0,0,.2) !important;	/* required to avoid to lose bottom line when focus is lost on select2. */
+}
+.select2-results .select2-highlighted.optionblue {
+	color: #FFF !important;
+}
+.select2-container .select2-selection--multiple {
+	min-height: 30px !important;
+}
+.select2-container--default .select2-selection--multiple .select2-selection__choice {
+	margin-top: 5px !important;
+	border: none;
+}
 .select2-container--focus span.select2-selection.select2-selection--single {
     border-bottom: 1px solid #666 !important;
 }
@@ -4924,8 +5040,16 @@ div.dataTables_length select {
 	box-shadow: none !important;
 	border-radius: 0 !important;
 }
+.select2-container--default.select2-container--focus .select2-selection--multiple {
+	border-top: none;
+	border-left: none;
+	border-right: none;
+}
 .select2-container--default .select2-selection--multiple {
-	border: solid 1px rgba(0,0,0,.2);
+	border-bottom: solid 1px rgba(0,0,0,.2);
+	border-top: none;
+	border-left: none;
+	border-right: none;
 	border-radius: 0 !important;
 	background: var(--inputbackgroundcolor);
 }
@@ -5025,7 +5149,7 @@ a span.select2-chosen
 	opacity: 0.4;
 }
 .select2-container-multi .select2-choices .select2-search-choice {
-  margin-bottom: 3px;
+	margin-bottom: 3px;
 }
 .select2-dropdown-open.select2-drop-above .select2-choice, .select2-dropdown-open.select2-drop-above .select2-choices, .select2-container-multi .select2-choices,
 .select2-container-multi.select2-container-active .select2-choices
@@ -5606,6 +5730,11 @@ div.tabsElem a.tab {
 /* ============================================================================== */
 /* Ticket module                                                                  */
 /* ============================================================================== */
+
+.ticketpublictable td {
+	height: 28px;
+}
+
 .ticketpublicarea {
 	width: 70%;
 }
@@ -5922,11 +6051,6 @@ div.tabsElem a.tab {
         border-right: none;
         border-left: none;
     }
-
-	.box-flex-container {
-	    margin: 0 0 0 -8px !important;
-	}
-
 }
 
 @media only screen and (max-width: 1024px)

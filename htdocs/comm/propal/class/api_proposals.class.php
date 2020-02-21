@@ -377,8 +377,9 @@ class Proposals extends DolibarrApi
 	 * @url	DELETE {id}/lines/{lineid}
 	 *
 	 * @return int
-     * @throws 401
-     * @throws 404
+	 *
+     * @throws RestException 401
+     * @throws RestException 404
 	 */
     public function deleteLine($id, $lineid)
     {
@@ -417,8 +418,9 @@ class Proposals extends DolibarrApi
 	 * @url	POST {id}/contact/{contactid}/{type}
 	 *
 	 * @return int
-     * @throws 401
-     * @throws 404
+	 *
+     * @throws RestException 401
+     * @throws RestException 404
 	 */
     public function postContact($id, $contactid, $type)
     {
@@ -458,9 +460,10 @@ class Proposals extends DolibarrApi
 	 * @url	DELETE {id}/contact/{rowid}
 	 *
 	 * @return int
-     * @throws 401
-     * @throws 404
-     * @throws 500
+	 *
+     * @throws RestException 401
+     * @throws RestException 404
+     * @throws RestException 500
 	 */
     public function deleteContact($id, $rowid)
     {
@@ -629,10 +632,10 @@ class Proposals extends DolibarrApi
 	 *
 	 * @url POST    {id}/validate
 	 *
-	 * @throws 304
-     * @throws 401
-     * @throws 404
-     * @throws 500
+	 * @throws RestException 304
+     * @throws RestException 401
+     * @throws RestException 404
+     * @throws RestException 500
      *
      * @return array
      */

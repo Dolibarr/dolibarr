@@ -28,6 +28,8 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
 // Load translation files required by the page
 $langs->loadLangs(array("companies", "admin", "products", "sms", "other", "errors"));
 
+$cancel = GETPOST('cancel', 'alpha'); // We click on a Cancel button
+
 if (!$user->admin)
 accessforbidden();
 
@@ -46,14 +48,13 @@ $action = GETPOST('action', 'aZ09');
  * Actions
  */
 
-if ($action == 'update' && empty($_POST["cancel"]))
+if ($action == 'update' && !$cancel)
 {
-	dolibarr_set_const($db, "MAIN_DISABLE_ALL_SMS", $_POST["MAIN_DISABLE_ALL_SMS"], 'chaine', 0, '', $conf->entity);
+	dolibarr_set_const($db, "MAIN_DISABLE_ALL_SMS", GETPOST("MAIN_DISABLE_ALL_SMS", 'alphanohtml'), 'chaine', 0, '', $conf->entity);
 
-	dolibarr_set_const($db, "MAIN_SMS_SENDMODE", $_POST["MAIN_SMS_SENDMODE"], 'chaine', 0, '', $conf->entity);
+	dolibarr_set_const($db, "MAIN_SMS_SENDMODE", GETPOST("MAIN_SMS_SENDMODE", 'alphahtml'), 'chaine', 0, '', $conf->entity);
 
-	dolibarr_set_const($db, "MAIN_MAIL_SMS_FROM", $_POST["MAIN_MAIL_SMS_FROM"], 'chaine', 0, '', $conf->entity);
-	//dolibarr_set_const($db, "MAIN_MAIL_AUTOCOPY_TO", $_POST["MAIN_MAIL_AUTOCOPY_TO"], 'chaine', 0, '', $conf->entity);
+	dolibarr_set_const($db, "MAIN_MAIL_SMS_FROM", GETPOST("MAIN_MAIL_SMS_FROM", 'alphanohtml'), 'chaine', 0, '', $conf->entity);
 
 	header("Location: ".$_SERVER["PHP_SELF"]."?mainmenu=home&leftmenu=setup");
 	exit;
@@ -68,15 +69,15 @@ if ($action == 'send' && !$_POST['cancel'])
 	$error = 0;
 
 	$smsfrom = '';
-	if (!empty($_POST["fromsms"])) $smsfrom = GETPOST("fromsms");
-	if (empty($smsfrom)) $smsfrom = GETPOST("fromname");
-	$sendto     = GETPOST("sendto");
-	$body       = GETPOST('message');
-	$deliveryreceipt = GETPOST("deliveryreceipt");
-    $deferred   = GETPOST('deferred');
-    $priority   = GETPOST('priority');
-    $class      = GETPOST('class');
-    $errors_to  = GETPOST("errorstosms");
+	if (!empty($_POST["fromsms"])) $smsfrom = GETPOST("fromsms", 'alphanohtml');
+	if (empty($smsfrom)) $smsfrom = GETPOST("fromname", 'alphanohtml');
+	$sendto     = GETPOST("sendto", 'alphanohtml');
+	$body       = GETPOST('message', 'alphanohtml');
+	$deliveryreceipt = GETPOST("deliveryreceipt", 'alphanohtml');
+	$deferred   = GETPOST('deferred', 'alphanohtml');
+	$priority   = GETPOST('priority', 'alphanohtml');
+	$class      = GETPOST('class', 'alphanohtml');
+	$errors_to  = GETPOST("errorstosms", 'alphanohtml');
 
 	// Create form object
 	include_once DOL_DOCUMENT_ROOT.'/core/class/html.formsms.class.php';

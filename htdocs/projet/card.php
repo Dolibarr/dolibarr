@@ -27,6 +27,7 @@ require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
 require_once DOL_DOCUMENT_ROOT.'/projet/class/task.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/project.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formprojet.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/modules/project/modules_project.php';
@@ -262,8 +263,8 @@ if (empty($reshook))
 			$object->socid        = GETPOST('socid', 'int');
 			$object->description  = GETPOST('description', 'none'); // Do not use 'alpha' here, we want field as it is
 			$object->public       = GETPOST('public', 'alpha');
-			$object->date_start   = (! GETPOST('projectstart')) ? '' : $date_start;
-			$object->date_end     = (! GETPOST('projectend')) ? '' : $date_end;
+			$object->date_start   = (!GETPOST('projectstart')) ? '' : $date_start;
+			$object->date_end     = (!GETPOST('projectend')) ? '' : $date_end;
 			if (GETPOSTISSET('opp_amount'))    $object->opp_amount   = price2num(GETPOST('opp_amount', 'alpha'));
 			if (GETPOSTISSET('budget_amount')) $object->budget_amount = price2num(GETPOST('budget_amount', 'alpha'));
 			if (GETPOSTISSET('opp_status'))    $object->opp_status   = $opp_status;
@@ -657,7 +658,8 @@ if ($action == 'create' && $user->rights->projet->creer)
 	// Description
 	print '<tr><td class="tdtop">'.$langs->trans("Description").'</td>';
 	print '<td>';
-	print '<textarea name="description" wrap="soft" class="centpercent" rows="'.ROWS_3.'">'.dol_escape_htmltag(GETPOST("description", 'none'), 0, 1).'</textarea>';
+	$doleditor = new DolEditor('description', GETPOST("description", 'none'), '', 90, 'dolibarr_notes', '', false, true, $conf->global->FCKEDITOR_ENABLE_SOCIETE, ROWS_3, '90%');
+	$doleditor->Create();
 	print '</td></tr>';
 
 	if ($conf->categorie->enabled) {
@@ -927,7 +929,8 @@ elseif ($object->id > 0)
 		// Description
 		print '<tr><td class="tdtop">'.$langs->trans("Description").'</td>';
 		print '<td>';
-		print '<textarea name="description" wrap="soft" class="centpercent" rows="'.ROWS_3.'">'.$object->description.'</textarea>';
+		$doleditor = new DolEditor('description', $object->description, '', 90, 'dolibarr_notes', '', false, true, $conf->global->FCKEDITOR_ENABLE_SOCIETE, ROWS_3, '90%');
+		$doleditor->Create();
 		print '</td></tr>';
 
 		// Tags-Categories
@@ -1045,6 +1048,11 @@ elseif ($object->id > 0)
 	        }*/
 			if (strcmp($object->opp_amount, '')) print price($object->opp_amount, 0, $langs, 1, 0, -1, $conf->currency);
 			print '</td></tr>';
+
+            // Opportunity Weighted Amount
+            print '<tr><td>'.$langs->trans('OpportunityWeightedAmount').'</td><td>';
+            if (strcmp($object->opp_amount, '') && strcmp($object->opp_percent, '')) print price($object->opp_amount * $object->opp_percent / 100, 0, $langs, 1, 0, -1, $conf->currency);
+            print '</td></tr>';
 		}
 
 		// Date start - end
@@ -1083,7 +1091,7 @@ elseif ($object->id > 0)
 		// Categories
 		if ($conf->categorie->enabled) {
 			print '<tr><td class="valignmiddle">'.$langs->trans("Categories").'</td><td>';
-			print $form->showCategories($object->id, 'project', 1);
+			print $form->showCategories($object->id, Categorie::TYPE_PROJECT, 1);
 			print "</td></tr>";
 		}
 

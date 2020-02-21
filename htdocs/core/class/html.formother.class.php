@@ -73,7 +73,7 @@ class FormOther
         // phpcs:enable
         global $conf, $langs, $user;
 
-        $sql = "SELECT rowid, label, fk_user";
+    	$sql = "SELECT rowid, label, fk_user";
         $sql .= " FROM ".MAIN_DB_PREFIX."export_model";
         $sql .= " WHERE type = '".$this->db->escape($type)."'";
 		if (!empty($fk_user)) $sql .= " AND fk_user IN (0, ".$fk_user.")"; // An export model

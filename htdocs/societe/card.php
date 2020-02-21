@@ -965,7 +965,7 @@ else
         if (!empty($conf->fournisseur->enabled) && (GETPOST("type") == 'f' || (GETPOST("type") == '' && !empty($conf->global->THIRDPARTY_SUPPLIER_BY_DEFAULT)))) { $object->fournisseur = 1; }
 
         $object->name = GETPOST('name', 'alpha');
-        $object->name_alias	= GETPOST('name_alias', 'alpha');
+        $object->name_alias = GETPOST('name_alias', 'alpha');
         $object->firstname = GETPOST('firstname', 'alpha');
         $object->particulier		= $private;
         $object->prefix_comm		= GETPOST('prefix_comm', 'alpha');
@@ -1073,11 +1073,11 @@ else
 
         if (!empty($conf->use_javascript_ajax)) {
 			if (!empty($conf->global->THIRDPARTY_SUGGEST_ALSO_ADDRESS_CREATION)) {
-				print "\n" . '<script type="text/javascript">';
+				print "\n".'<script type="text/javascript">';
 				print '$(document).ready(function () {
 						id_te_private=8;
                         id_ef15=1;
-                        is_private=' . $private . ';
+                        is_private=' . $private.';
 						if (is_private) {
 							$(".individualline").show();
 						} else {
@@ -1104,7 +1104,7 @@ else
 						});
 						function init_customer_categ() {
 								console.log("is customer or prospect = "+jQuery("#customerprospect").val());
-								if (jQuery("#customerprospect").val() == 0 && (jQuery("#fournisseur").val() == 0 || ' . (empty($conf->global->THIRDPARTY_CAN_HAVE_CATEGORY_EVEN_IF_NOT_CUSTOMER_PROSPECT_SUPPLIER) ? '1' : '0') . '))
+								if (jQuery("#customerprospect").val() == 0 && (jQuery("#fournisseur").val() == 0 || ' . (empty($conf->global->THIRDPARTY_CAN_HAVE_CATEGORY_EVEN_IF_NOT_CUSTOMER_PROSPECT_SUPPLIER) ? '1' : '0').'))
 								{
 									jQuery(".visibleifcustomer").hide();
 								}
@@ -1135,20 +1135,20 @@ else
                         	document.formsoc.submit();
                         });
                      });';
-				print '</script>' . "\n";
+				print '</script>'."\n";
 
 				print '<div id="selectthirdpartytype">';
 				print '<div class="hideonsmartphone float">';
-				print $langs->trans("ThirdPartyType") . ': &nbsp; &nbsp; ';
+				print $langs->trans("ThirdPartyType").': &nbsp; &nbsp; ';
 				print '</div>';
 				print '<label for="radiocompany" class="radiocompany">';
-				print '<input type="radio" id="radiocompany" class="flat" name="private"  value="0"' . ($private ? '' : ' checked') . '>';
+				print '<input type="radio" id="radiocompany" class="flat" name="private"  value="0"'.($private ? '' : ' checked').'>';
 				print '&nbsp;';
 				print $langs->trans("CreateThirdPartyOnly");
 				print '</label>';
 				print ' &nbsp; &nbsp; ';
 				print '<label for="radioprivate" class="radioprivate">';
-				$text = '<input type="radio" id="radioprivate" class="flat" name="private" value="1"' . ($private ? ' checked' : '') . '>';
+				$text = '<input type="radio" id="radioprivate" class="flat" name="private" value="1"'.($private ? ' checked' : '').'>';
 				$text .= '&nbsp;';
 				$text .= $langs->trans("CreateThirdPartyAndContact");
 				$htmltext = $langs->trans("ToCreateContactWithSameName");
@@ -1164,7 +1164,7 @@ else
                         	document.formsoc.submit();
                         });
                      });';
-				print '</script>' . "\n";
+				print '</script>'."\n";
 			}
 		}
 
@@ -2569,7 +2569,7 @@ else
 			if ($object->prospect || $object->client || (!$object->fournisseur && !empty($conf->global->THIRDPARTY_CAN_HAVE_CATEGORY_EVEN_IF_NOT_CUSTOMER_PROSPECT_SUPPLIER))) {
 				print '<tr><td>'.$langs->trans("CustomersCategoriesShort").'</td>';
 				print '<td>';
-				print $form->showCategories($object->id, 'customer', 1);
+				print $form->showCategories($object->id, Categorie::TYPE_CUSTOMER, 1);
 				print "</td></tr>";
 			}
 
@@ -2577,7 +2577,7 @@ else
 			if ($object->fournisseur) {
 				print '<tr><td>'.$langs->trans("SuppliersCategoriesShort").'</td>';
 				print '<td>';
-				print $form->showCategories($object->id, 'supplier', 1);
+				print $form->showCategories($object->id, Categorie::TYPE_SUPPLIER, 1);
 				print "</td></tr>";
 			}
 		}

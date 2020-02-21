@@ -90,7 +90,7 @@ if ($action == 'specimen')  // For invoices
     $dirmodels = array_merge(array('/'), (array) $conf->modules_parts['models']);
     foreach ($dirmodels as $reldir)
     {
-    	$file = dol_buildpath($reldir."core/modules/supplier_invoice/pdf/pdf_".$modele.".modules.php", 0);
+    	$file = dol_buildpath($reldir."core/modules/supplier_invoice/doc/pdf_".$modele.".modules.php", 0);
     	if (file_exists($file))
     	{
     		$filefound = 1;
@@ -171,7 +171,7 @@ if ($action == 'setmod')
 if ($action == 'addcat')
 {
     $fourn = new Fournisseur($db);
-    $fourn->CreateCategory($user, $_POST["cat"]);
+    $fourn->CreateCategory($user, GETPOST('cat', 'alphanohtml'));
 }
 
 if ($action == 'set_SUPPLIER_INVOICE_FREE_TEXT')
@@ -230,7 +230,7 @@ clearstatcache();
 
 foreach ($dirmodels as $reldir)
 {
-	$dir = dol_buildpath($reldir."core/modules/supplier_invoice/");
+	$dir = dol_buildpath($reldir."core/modules/supplier_invoice");
 
     if (is_dir($dir))
     {
@@ -243,7 +243,7 @@ foreach ($dirmodels as $reldir)
                 {
                     $file = substr($file, 0, dol_strlen($file) - 4);
 
-                    require_once $dir.$file.'.php';
+                    require_once $dir.'/'.$file.'.php';
 
                     $module = new $file;
 
@@ -360,7 +360,8 @@ clearstatcache();
 
 foreach ($dirmodels as $reldir)
 {
-	$dir = dol_buildpath($reldir."core/modules/supplier_invoice/pdf/");
+	$realpath = $reldir."core/modules/supplier_invoice/doc";
+	$dir = dol_buildpath($realpath);
 
     if (is_dir($dir))
     {
@@ -385,7 +386,7 @@ foreach ($dirmodels as $reldir)
 	                print (empty($module->name) ? $name : $module->name);
 	                print "</td>\n";
                     print "<td>\n";
-                    require_once $dir.$file;
+                    require_once $dir.'/'.$file;
                     $module = new $classname($db, $specimenthirdparty);
                     if (method_exists($module, 'info')) print $module->info($langs);
 	                else print $module->description;
@@ -434,6 +435,8 @@ foreach ($dirmodels as $reldir)
                     $htmltooltip = ''.$langs->trans("Name").': '.$module->name;
                     $htmltooltip .= '<br>'.$langs->trans("Type").': '.($module->type ? $module->type : $langs->trans("Unknown"));
                     $htmltooltip .= '<br>'.$langs->trans("Width").'/'.$langs->trans("Height").': '.$module->page_largeur.'/'.$module->page_hauteur;
+                    $htmltooltip .= '<br>'.$langs->trans("Path").': '.preg_replace('/^\//', '', $realpath).'/'.$file;
+
                     $htmltooltip .= '<br><br><u>'.$langs->trans("FeaturesSupported").':</u>';
                     $htmltooltip .= '<br>'.$langs->trans("Logo").': '.yn($module->option_logo, 1, 1);
                     $htmltooltip .= '<br>'.$langs->trans("PaymentMode").': '.yn($module->option_modereg, 1, 1);

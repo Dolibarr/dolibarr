@@ -59,8 +59,7 @@ class Setup extends DolibarrApi
      *
      * @return array [List of ordering methods]
      *
-     * @throws 400 RestException
-     * @throws 200 OK
+     * @throws RestException 400
      */
     public function getOrderingMethods($sortfield = "code", $sortorder = 'ASC', $limit = 100, $page = 0, $active = 1, $sqlfilters = '')
     {
@@ -121,8 +120,7 @@ class Setup extends DolibarrApi
      *
      * @return array [List of payment types]
      *
-     * @throws 400 RestException
-     * @throws 200 OK
+     * @throws RestException 400
      */
     public function getPaymentTypes($sortfield = "code", $sortorder = 'ASC', $limit = 100, $page = 0, $active = 1, $sqlfilters = '')
     {
@@ -339,8 +337,7 @@ class Setup extends DolibarrApi
      *
      * @return array [List of availability]
      *
-     * @throws 400 RestException
-     * @throws 200 OK
+     * @throws RestException 400
      */
     public function getAvailability($sortfield = "code", $sortorder = 'ASC', $limit = 100, $page = 0, $active = 1, $sqlfilters = '')
     {
@@ -908,8 +905,7 @@ class Setup extends DolibarrApi
      *
      * @return array List of payment terms
      *
-     * @throws 400 RestException
-     * @throws 200 OK
+     * @throws RestException 400
      */
     public function getPaymentTerms($sortfield = "sortorder", $sortorder = 'ASC', $limit = 100, $page = 0, $active = 1, $sqlfilters = '')
     {
@@ -969,8 +965,7 @@ class Setup extends DolibarrApi
      *
      * @return array List of shipping methods
      *
-     * @throws 400 RestException
-     * @throws 200 OK
+     * @throws RestException 400
      */
     public function getShippingModes($limit = 100, $page = 0, $active = 1, $sqlfilters = '')
     {

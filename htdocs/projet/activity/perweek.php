@@ -36,58 +36,58 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/html.formcompany.class.php';
 require_once DOL_DOCUMENT_ROOT.'/holiday/class/holiday.class.php';
 
 // Load translation files required by the page
-$langs->loadLangs(array('projects','users','companies'));
+$langs->loadLangs(array('projects', 'users', 'companies'));
 
-$action=GETPOST('action', 'aZ09');
-$mode=GETPOST("mode", 'alpha');
-$id=GETPOST('id', 'int');
-$taskid=GETPOST('taskid', 'int');
+$action = GETPOST('action', 'aZ09');
+$mode = GETPOST("mode", 'alpha');
+$id = GETPOST('id', 'int');
+$taskid = GETPOST('taskid', 'int');
 
-$contextpage=GETPOST('contextpage', 'aZ')?GETPOST('contextpage', 'aZ'):'perweekcard';
+$contextpage = GETPOST('contextpage', 'aZ') ?GETPOST('contextpage', 'aZ') : 'perweekcard';
 
-$mine=0;
-if ($mode == 'mine') $mine=1;
+$mine = 0;
+if ($mode == 'mine') $mine = 1;
 
-$projectid='';
-$projectid=isset($_GET["id"])?$_GET["id"]:$_POST["projectid"];
+$projectid = '';
+$projectid = isset($_GET["id"]) ? $_GET["id"] : $_POST["projectid"];
 
 $hookmanager->initHooks(array('timesheetperweekcard'));
 
 // Security check
-$socid=0;
+$socid = 0;
 // For external user, no check is done on company because readability is managed by public status of project and assignement.
 // if ($user->socid > 0) $socid=$user->socid;
 $result = restrictedArea($user, 'projet', $projectid);
 
-$now=dol_now();
-$nowtmp=dol_getdate($now);
-$nowday=$nowtmp['mday'];
-$nowmonth=$nowtmp['mon'];
-$nowyear=$nowtmp['year'];
+$now = dol_now();
+$nowtmp = dol_getdate($now);
+$nowday = $nowtmp['mday'];
+$nowmonth = $nowtmp['mon'];
+$nowyear = $nowtmp['year'];
 
-$year=GETPOST('reyear', 'int')?GETPOST('reyear', 'int'):(GETPOST("year", 'int')?GETPOST("year", "int"):date("Y"));
-$month=GETPOST('remonth', 'int')?GETPOST('remonth', 'int'):(GETPOST("month", 'int')?GETPOST("month", "int"):date("m"));
-$day=GETPOST('reday', 'int')?GETPOST('reday', 'int'):(GETPOST("day", 'int')?GETPOST("day", "int"):date("d"));
-$week=GETPOST("week", "int")?GETPOST("week", "int"):date("W");
+$year = GETPOST('reyear', 'int') ?GETPOST('reyear', 'int') : (GETPOST("year", 'int') ?GETPOST("year", "int") : date("Y"));
+$month = GETPOST('remonth', 'int') ?GETPOST('remonth', 'int') : (GETPOST("month", 'int') ?GETPOST("month", "int") : date("m"));
+$day = GETPOST('reday', 'int') ?GETPOST('reday', 'int') : (GETPOST("day", 'int') ?GETPOST("day", "int") : date("d"));
+$week = GETPOST("week", "int") ?GETPOST("week", "int") : date("W");
 
 $day = (int) $day;
 
-$search_categ=GETPOST("search_categ", 'alpha');
-$search_usertoprocessid=GETPOST('search_usertoprocessid', 'int');
-$search_task_ref=GETPOST('search_task_ref', 'alpha');
-$search_task_label=GETPOST('search_task_label', 'alpha');
-$search_project_ref=GETPOST('search_project_ref', 'alpha');
-$search_thirdparty=GETPOST('search_thirdparty', 'alpha');
-$search_declared_progress=GETPOST('search_declared_progress', 'alpha');
+$search_categ = GETPOST("search_categ", 'alpha');
+$search_usertoprocessid = GETPOST('search_usertoprocessid', 'int');
+$search_task_ref = GETPOST('search_task_ref', 'alpha');
+$search_task_label = GETPOST('search_task_label', 'alpha');
+$search_project_ref = GETPOST('search_project_ref', 'alpha');
+$search_thirdparty = GETPOST('search_thirdparty', 'alpha');
+$search_declared_progress = GETPOST('search_declared_progress', 'alpha');
 
-$startdayarray=dol_get_first_day_week($day, $month, $year);
+$startdayarray = dol_get_first_day_week($day, $month, $year);
 
 $prev = $startdayarray;
 $prev_year  = $prev['prev_year'];
 $prev_month = $prev['prev_month'];
 $prev_day   = $prev['prev_day'];
 $first_day  = $prev['first_day'];
-$first_month= $prev['first_month'];
+$first_month = $prev['first_month'];
 $first_year = $prev['first_year'];
 $week = $prev['week'];
 
@@ -162,7 +162,9 @@ $search_array_options_task = $extrafields->getOptionalsFromPost('projet_task', '
 /*
  * Actions
  */
-
+$parameters = array('id' => $id, 'taskid' => $taskid, 'projectid' => $projectid);
+$reshook=$hookmanager->executeHooks('doActions', $parameters, $object, $action);    // Note that $action and $object may have been modified by some hooks
+if ($reshook < 0) setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
 // Purge criteria
 if (GETPOST('button_removefilter_x', 'alpha') || GETPOST('button_removefilter.x', 'alpha') || GETPOST('button_removefilter', 'alpha')) // All tests are required to be compatible with all browsers
 {
@@ -808,27 +810,27 @@ if (count($tasksarray) > 0)
 	if ($conf->use_javascript_ajax)
 	{
 		print '<tr class="liste_total">
-                <td class="liste_total" colspan="'.($colspan+$addcolspan).'">';
+                <td class="liste_total" colspan="'.($colspan + $addcolspan).'">';
 				print $langs->trans("Total");
 				print '<span class="opacitymediumbycolor">  - '.$langs->trans("ExpectedWorkedHours").': <strong>'.price($usertoprocess->weeklyhours, 1, $langs, 0, 0).'</strong></span>';
 				print '</td>';
 
 		for ($idw = 0; $idw < 7; $idw++)
 				{
-			$cssweekend='';
+			$cssweekend = '';
 			if (($idw + 1) < $numstartworkingday || ($idw + 1) > $numendworkingday)	// This is a day is not inside the setup of working days, so we use a week-end css.
 			{
-				$cssweekend='weekend';
+				$cssweekend = 'weekend';
 			}
 
-			$tmpday=dol_time_plus_duree($firstdaytoshow, $idw, 'd');
+			$tmpday = dol_time_plus_duree($firstdaytoshow, $idw, 'd');
 
-			$cssonholiday='';
-			if (! $isavailable[$tmpday]['morning'] && ! $isavailable[$tmpday]['afternoon'])   $cssonholiday.='onholidayallday ';
-			elseif (! $isavailable[$tmpday]['morning'])   $cssonholiday.='onholidaymorning ';
-			elseif (! $isavailable[$tmpday]['afternoon']) $cssonholiday.='onholidayafternoon ';
+			$cssonholiday = '';
+			if (!$isavailable[$tmpday]['morning'] && !$isavailable[$tmpday]['afternoon'])   $cssonholiday .= 'onholidayallday ';
+			elseif (!$isavailable[$tmpday]['morning'])   $cssonholiday .= 'onholidaymorning ';
+			elseif (!$isavailable[$tmpday]['afternoon']) $cssonholiday .= 'onholidayafternoon ';
 
-			print '<td class="liste_total hide'.$idw.($cssonholiday?' '.$cssonholiday:'').($cssweekend?' '.$cssweekend:'').'" align="center"><div class="totalDay'.$idw.'">&nbsp;</div></td>';
+			print '<td class="liste_total hide'.$idw.($cssonholiday ? ' '.$cssonholiday : '').($cssweekend ? ' '.$cssweekend : '').'" align="center"><div class="totalDay'.$idw.'">&nbsp;</div></td>';
 		}
                 print '<td class="liste_total center"><div class="totalDayAll">&nbsp;</div></td>
     	</tr>';

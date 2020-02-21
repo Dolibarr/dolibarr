@@ -32,17 +32,17 @@ class ExpenseReportRule extends CoreObject
 	/**
 	 * @var string ID to identify managed object
 	 */
-	public $element='expenserule';
+	public $element = 'expenserule';
 
 	/**
 	 * @var string Name of table without prefix where object is stored
 	 */
-	public $table_element='expensereport_rules';
+	public $table_element = 'expensereport_rules';
 
 	/**
 	 * @var int Field with ID of parent key if this field has a parent
 	 */
-	public $fk_element='fk_expense_rule';
+	public $fk_element = 'fk_expense_rule';
 
 	/**
 	 * date start
@@ -111,8 +111,8 @@ class ExpenseReportRule extends CoreObject
 	 * Attribute object linked with database
 	 * @var array
 	 */
-	protected $fields=array(
-		'rowid'=>array('type'=>'integer','index'=>true)
+	public $fields = array(
+		'rowid'=>array('type'=>'integer', 'index'=>true)
 		,'dates'=>array('type'=>'date')
 		,'datee'=>array('type'=>'date')
 		,'amount'=>array('type'=>'double')
@@ -154,25 +154,25 @@ class ExpenseReportRule extends CoreObject
 
 		$rules = array();
 		$sql = 'SELECT er.rowid';
-		$sql.= ' FROM '.MAIN_DB_PREFIX.'expensereport_rules er';
-		$sql.= ' WHERE er.entity IN (0,'. getEntity('').')';
+		$sql .= ' FROM '.MAIN_DB_PREFIX.'expensereport_rules er';
+		$sql .= ' WHERE er.entity IN (0,'.getEntity('').')';
 		if (!empty($fk_c_type_fees))
 		{
-			$sql.= ' AND er.fk_c_type_fees IN (-1, '.$fk_c_type_fees.')';
+			$sql .= ' AND er.fk_c_type_fees IN (-1, '.$fk_c_type_fees.')';
 		}
 		if (!empty($date))
 		{
 			$date = dol_print_date($date, '%Y-%m-%d');
-			$sql.= ' AND er.dates <= \''.$date.'\'';
-			$sql.= ' AND er.datee >= \''.$date.'\'';
+			$sql .= ' AND er.dates <= \''.$date.'\'';
+			$sql .= ' AND er.datee >= \''.$date.'\'';
 		}
 		if ($fk_user > 0)
 		{
-			$sql.= ' AND (er.is_for_all = 1';
-			$sql.= ' OR er.fk_user = '.$fk_user;
-			$sql.= ' OR er.fk_usergroup IN (SELECT ugu.fk_usergroup FROM '.MAIN_DB_PREFIX.'usergroup_user ugu WHERE ugu.fk_user = '.$fk_user.') )';
+			$sql .= ' AND (er.is_for_all = 1';
+			$sql .= ' OR er.fk_user = '.$fk_user;
+			$sql .= ' OR er.fk_usergroup IN (SELECT ugu.fk_usergroup FROM '.MAIN_DB_PREFIX.'usergroup_user ugu WHERE ugu.fk_user = '.$fk_user.') )';
 		}
-		$sql.= ' ORDER BY er.is_for_all, er.fk_usergroup, er.fk_user';
+		$sql .= ' ORDER BY er.is_for_all, er.fk_usergroup, er.fk_user';
 
 		dol_syslog("ExpenseReportRule::getAllRule sql=".$sql);
 

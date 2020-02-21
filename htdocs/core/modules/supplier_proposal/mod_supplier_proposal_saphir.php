@@ -47,7 +47,7 @@ class mod_supplier_proposal_saphir extends ModeleNumRefSupplierProposal
 	/**
 	 * @var string Nom du modele
 	 * @deprecated
-	 * @see name
+	 * @see $name
 	 */
 	public $nom='Saphir';
 

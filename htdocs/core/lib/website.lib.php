@@ -239,15 +239,15 @@ function dolWebsiteOutput($content, $contenttype = 'html', $containerid = '')
 	{
 		global $website;
 
+		$content = str_replace('<link rel="stylesheet" href="/styles.css', '<link rel="stylesheet" href="styles.css', $content);
+
 		// Protect the link styles.css.php to any replacement that we make after.
 		$content = str_replace('href="styles.css.php', 'href="!~!~!~styles.css.php', $content);
 		$content = str_replace('href="http', 'href="!~!~!~http', $content);
 		$content = str_replace('href="//', 'href="!~!~!~//', $content);
-		$content = str_replace('src="viewimage.php', 'src="!~!~!~/viewimage.php', $content);
-		$content = str_replace('src="/viewimage.php', 'src="!~!~!~/viewimage.php', $content);
+		$content = str_replace(array('src="viewimage.php', 'src="/viewimage.php'), 'src="!~!~!~/viewimage.php', $content);
 		$content = str_replace('src="'.DOL_URL_ROOT.'/viewimage.php', 'src="!~!~!~'.DOL_URL_ROOT.'/viewimage.php', $content);
-		$content = str_replace('href="document.php', 'href="!~!~!~/document.php', $content);
-		$content = str_replace('href="/document.php', 'href="!~!~!~/document.php', $content);
+		$content = str_replace(array('href="document.php','href="/document.php'), 'href="!~!~!~/document.php', $content);
 		$content = str_replace('href="'.DOL_URL_ROOT.'/document.php', 'href="!~!~!~'.DOL_URL_ROOT.'/document.php', $content);
 
 		// Replace relative link / with dolibarr URL:  ...href="/"...
@@ -286,6 +286,7 @@ function dolWebsiteOutput($content, $contenttype = 'html', $containerid = '')
 		// Fix relative URL
 		$content = str_replace('src="!~!~!~/viewimage.php', 'src="!~!~!~'.DOL_URL_ROOT.'/viewimage.php', $content);
 		$content = str_replace('href="!~!~!~/document.php', 'href="!~!~!~'.DOL_URL_ROOT.'/document.php', $content);
+
 		// Remove the protection tag !~!~!~
 		$content = str_replace('!~!~!~', '', $content);
 	}

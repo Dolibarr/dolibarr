@@ -565,6 +565,7 @@ if (!defined('NOLOGIN'))
 				$dol_tz_string = preg_replace('/,/', '/', $dol_tz_string);
 				$dol_tz_string = preg_replace('/\s/', '_', $dol_tz_string);
 				$dol_dst = 0;
+				// Keep $_POST here. Do not use GETPOSTISSET
 				if (isset($_POST["dst_first"]) && isset($_POST["dst_second"]))
 				{
 					include_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
@@ -1345,7 +1346,7 @@ function top_htmlhead($head, $title = '', $disablejs = 0, $disablehead = 0, $arr
 		{
 			foreach ($arrayofcss as $cssfile)
 			{
-			    if (preg_match('/^http/i', $cssfile))
+			    if (preg_match('/^(http|\/\/)/i', $cssfile))
 			    {
 			        $urltofile = $cssfile;
 			    }
@@ -1391,9 +1392,20 @@ function top_htmlhead($head, $title = '', $disablejs = 0, $disablehead = 0, $arr
 				}
 				else
 				{
-					print '<script src="'.DOL_URL_ROOT.'/includes/jquery/plugins/flot/jquery.flot.min.js'.($ext ? '?'.$ext : '').'"></script>'."\n";
-					print '<script src="'.DOL_URL_ROOT.'/includes/jquery/plugins/flot/jquery.flot.pie.min.js'.($ext ? '?'.$ext : '').'"></script>'."\n";
-					print '<script src="'.DOL_URL_ROOT.'/includes/jquery/plugins/flot/jquery.flot.stack.min.js'.($ext ? '?'.$ext : '').'"></script>'."\n";
+					print '<script src="'.DOL_URL_ROOT.'/includes/jquery/plugins/flot/jquery.flot.js'.($ext ? '?'.$ext : '').'"></script>'."\n";
+					print '<script src="'.DOL_URL_ROOT.'/includes/jquery/plugins/flot/jquery.flot.pie.js'.($ext ? '?'.$ext : '').'"></script>'."\n";
+					print '<script src="'.DOL_URL_ROOT.'/includes/jquery/plugins/flot/jquery.flot.stack.js'.($ext ? '?'.$ext : '').'"></script>'."\n";
+					/* Test for jflot 4.2 -> not better than current
+					print '<script language="javascript" type="text/javascript" src="'.DOL_URL_ROOT.'/includes/jquery/plugins/flot/jquery.canvaswrapper.js"></script>'."\n";
+					print '<script language="javascript" type="text/javascript" src="'.DOL_URL_ROOT.'/includes/jquery/plugins/flot/jquery.colorhelpers.js"></script>'."\n";
+					print '<script language="javascript" type="text/javascript" src="'.DOL_URL_ROOT.'/includes/jquery/plugins/flot/jquery.flot.js"></script>'."\n";
+					print '<script language="javascript" type="text/javascript" src="'.DOL_URL_ROOT.'/includes/jquery/plugins/flot/jquery.flot.pie.js"></script>'."\n";
+					print '<script language="javascript" type="text/javascript" src="'.DOL_URL_ROOT.'/includes/jquery/plugins/flot/jquery.flot.stack.js"></script>'."\n";
+					print '<script language="javascript" type="text/javascript" src="'.DOL_URL_ROOT.'/includes/jquery/plugins/flot/jquery.flot.saturated.js"></script>'."\n";
+					print '<script language="javascript" type="text/javascript" src="'.DOL_URL_ROOT.'/includes/jquery/plugins/flot/jquery.flot.browser.js"></script>'."\n";
+					print '<script language="javascript" type="text/javascript" src="'.DOL_URL_ROOT.'/includes/jquery/plugins/flot/jquery.flot.drawSeries.js"></script>'."\n";
+					print '<script language="javascript" type="text/javascript" src="'.DOL_URL_ROOT.'/includes/jquery/plugins/flot/jquery.flot.uiConstants.js"></script>'."\n";
+					*/
 				}
 			}
 			// jQuery jeditable
@@ -1497,7 +1509,7 @@ function top_htmlhead($head, $title = '', $disablejs = 0, $disablehead = 0, $arr
                 print '<!-- Includes JS added by page -->'."\n";
                 foreach ($arrayofjs as $jsfile)
                 {
-                    if (preg_match('/^http/i', $jsfile))
+                    if (preg_match('/^(http|\/\/)/i', $jsfile))
                     {
                         print '<script src="'.$jsfile.'"></script>'."\n";
                     }
@@ -1611,31 +1623,6 @@ function top_menu($head, $title = '', $target = '', $disablejs = 0, $disablehead
 
 		print '<div class="login_block usedropdown">'."\n";
 
-
-		// Add login user link
-		$toprightmenu .= '<div class="login_block_user">';
-
-		// Login name with photo and tooltip
-		$mode = -1;
-		$toprightmenu .= '<div class="inline-block nowrap"><div class="inline-block login_block_elem login_block_elem_name" style="padding: 0px;">';
-
-        if (!empty($conf->global->MAIN_USE_TOP_MENU_SEARCH_DROPDOWN)) {
-            // Add search dropdown
-            $toprightmenu .= top_menu_search();
-        }
-
-        if (!empty($conf->global->MAIN_USE_TOP_MENU_BOOKMARK_DROPDOWN)) {
-            // Add bookmark dropdown
-            $toprightmenu .= top_menu_bookmark();
-        }
-
-        // Add user dropdown
-	    $toprightmenu .= top_menu_user();
-
-		$toprightmenu .= '</div></div>';
-
-		$toprightmenu .= '</div>'."\n";
-
 		$toprightmenu .= '<div class="login_block_other">';
 
 		// Execute hook printTopRightMenu (hooks should output string like '<div class="login"><a href="">mylink</a></div>')
@@ -1703,13 +1690,8 @@ function top_menu($head, $title = '', $target = '', $disablejs = 0, $disablehead
 			if ($helpbaseurl && $helppage)
 			{
 				$text = '';
-	            if (!empty($conf->global->MAIN_SHOWDATABASENAMEINHELPPAGESLINK)) {
-                    $langs->load('admin');
-                    $appli .= '<br>'.$langs->trans("Database").': '.$db->database_name;
-                }
-				$title = $appli.'<br>';
-				$title .= $langs->trans($mode == 'wiki' ? 'GoToWikiHelpPage' : 'GoToHelpPage');
-				if ($mode == 'wiki') $title .= ' - '.$langs->trans("PageWiki").' &quot;'.dol_escape_htmltag(strtr($helppage, '_', ' ')).'&quot;';
+				$title = $langs->trans($mode == 'wiki' ? 'GoToWikiHelpPage' : 'GoToHelpPage');
+				if ($mode == 'wiki') $title .= ' - '.$langs->trans("PageWiki").' &quot;'.dol_escape_htmltag(strtr($helppage, '_', ' ')).'&quot;'."";
 				$text .= '<a class="help" target="_blank" rel="noopener" href="';
 				if ($mode == 'wiki') $text .= sprintf($helpbaseurl, urlencode(html_entity_decode($helppage)));
 				else $text .= sprintf($helpbaseurl, $helppage);
@@ -1718,13 +1700,45 @@ function top_menu($head, $title = '', $target = '', $disablejs = 0, $disablehead
 				$text .= '</a>';
 				$toprightmenu .= @Form::textwithtooltip('', $title, 2, 1, $text, 'login_block_elem', 2);
 			}
+
+			// Version
+			if (!empty($conf->global->MAIN_SHOWDATABASENAMEINHELPPAGESLINK)) {
+				$langs->load('admin');
+				$appli .= '<br>'.$langs->trans("Database").': '.$db->database_name;
+			}
+			$text = '<span href="#" class="aversion"><span class="hideonsmartphone small">'.DOL_VERSION.'</span></span>';
+			$toprightmenu .= @Form::textwithtooltip('', $appli, 2, 1, $text, 'login_block_elem', 2);
 		}
 
 
 		// Logout link
 		$toprightmenu .= @Form::textwithtooltip('', $logouthtmltext, 2, 1, $logouttext, 'login_block_elem logout-btn', 2);
 
-		$toprightmenu .= '</div>';
+		$toprightmenu .= '</div>';	// end div class="login_block_other"
+
+
+		// Add login user link
+		$toprightmenu .= '<div class="login_block_user">';
+
+		// Login name with photo and tooltip
+		$mode = -1;
+		$toprightmenu .= '<div class="inline-block nowrap"><div class="inline-block login_block_elem login_block_elem_name" style="padding: 0px;">';
+
+		if (!empty($conf->global->MAIN_USE_TOP_MENU_SEARCH_DROPDOWN)) {
+			// Add search dropdown
+			$toprightmenu .= top_menu_search();
+		}
+
+		// Add bookmark dropdown
+		$toprightmenu .= top_menu_bookmark();
+
+		// Add user dropdown
+		$toprightmenu .= top_menu_user();
+
+		$toprightmenu .= '</div></div>';
+
+		$toprightmenu .= '</div>'."\n";
+
 
 		print $toprightmenu;
 
@@ -1925,7 +1939,7 @@ function top_menu_bookmark()
         $langs->load("bookmarks");
 
         $html .= '<!-- div for bookmark link -->
-        <div id="topmenu-bookmark-dropdown" class="atoplogin dropdown inline-block">
+        <div id="topmenu-bookmark-dropdown" class="dropdown inline-block">
             <a class="dropdown-toggle login-dropdown-a" data-toggle="dropdown" href="#" title="'.$langs->trans('Bookmarks').' ('.$langs->trans('BookmarksMenuShortCut').')">
                 <i class="fa fa-star" ></i>
             </a>
@@ -1934,21 +1948,21 @@ function top_menu_bookmark()
             </div>
         </div>';
 
-
-
         $html .= '
         <!-- Code to show/hide the user drop-down -->
         <script>
         $( document ).ready(function() {
             $(document).on("click", function(event) {
                 if (!$(event.target).closest("#topmenu-bookmark-dropdown").length) {
+					console.log("close");
                     // Hide the menus.
                     $("#topmenu-bookmark-dropdown").removeClass("open");
                 }
             });
 
             $("#topmenu-bookmark-dropdown .dropdown-toggle").on("click", function(event) {
-                openBookMarkDropDown();
+				console.log("toggle");
+				openBookMarkDropDown();
             });
 
             // Key map shortcut
@@ -2172,15 +2186,6 @@ function left_menu($menu_array_before, $helppagename = '', $notused = '', $menu_
                 $searchform .= '</div>';
             }
         }
-
-		// Define $bookmarks
-		if (!empty($conf->bookmark->enabled) && $user->rights->bookmark->lire && empty($conf->global->MAIN_USE_TOP_MENU_BOOKMARK_DROPDOWN))
-		{
-			include_once DOL_DOCUMENT_ROOT.'/bookmarks/bookmarks.lib.php';
-			$langs->load("bookmarks");
-
-			$bookmarks = printBookmarksList();
-		}
 
 		// Left column
 		print '<!-- Begin left menu -->'."\n";

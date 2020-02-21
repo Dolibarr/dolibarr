@@ -1486,7 +1486,7 @@ class ExpenseReport extends CommonObject
     {
         // phpcs:enable
 		$error = 0;
-        $this->date_cancel = $this->db->idate(gmmktime());
+        $this->date_cancel = $this->db->idate(dol_now());
         if ($this->fk_statut != self::STATUS_CANCELED)
         {
 			$this->db->begin();

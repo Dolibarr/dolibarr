@@ -43,7 +43,7 @@ class mod_ticket_universal extends ModeleNumRefTicket
     /**
 	 * @var string Nom du modele
 	 * @deprecated
-	 * @see name
+	 * @see $name
 	 */
 	public $nom='Universal';
 

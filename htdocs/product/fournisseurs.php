@@ -170,6 +170,7 @@ if (empty($reshook))
 		$supplier_description = GETPOST('supplier_description', 'alpha');
         $barcode = GETPOST('barcode', 'alpha');
         $fk_barcode_type = GETPOST('fk_barcode_type', 'int');
+		$packaging = GETPOST('packaging', 'int');
 
 		if ($tva_tx == '')
 		{
@@ -231,6 +232,12 @@ if (empty($reshook))
                 setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentities("PriceCurrency")), null, 'errors');
             }
         }
+
+		if (empty($packaging)) $packaging = 1;
+
+		if ($packaging < $quantity) $packaging = $quantity;
+
+		$object->packaging = $packaging;
 
 		if (!$error)
 		{
@@ -882,6 +889,7 @@ SCRIPT;
                     print_liste_field_titre("BarcodeValue", $_SERVER["PHP_SELF"], "pfp.barcode", "", $param, '', $sortfield, $sortorder, 'center ');
                     print_liste_field_titre("BarcodeType", $_SERVER["PHP_SELF"], "pfp.fk_barcode_type", "", $param, '', $sortfield, $sortorder, 'center ');
                 }
+				if (!empty($conf->global->PRODUCT_USE_SUPPLIER_PACKAGING)) print_liste_field_titre("PackagingForThisProduct", $_SERVER["PHP_SELF"], "pfp.packaging", "", $param, 'align="center"', $sortfield, $sortorder);
 				print_liste_field_titre("DateModification", $_SERVER["PHP_SELF"], "pfp.tms", "", $param, '', $sortfield, $sortorder, 'right ');
 
 				// fetch optionals attributes and labels
@@ -1010,6 +1018,14 @@ SCRIPT;
                             $productfourn->fetch_barcode();
                             print $productfourn->barcode_type_label ? $productfourn->barcode_type_label : ($productfourn->barcode ? '<div class="warning">'.$langs->trans("SetDefaultBarcodeType").'<div>' : '');
                             print '</td>';
+						}
+
+						// Packaging
+						if (!empty($conf->global->PRODUCT_USE_SUPPLIER_PACKAGING))
+						{
+							print '<td align="center">';
+							print price2num($productfourn->packaging);
+							print '</td>';
 						}
 
 						// Date

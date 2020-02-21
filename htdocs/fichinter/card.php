@@ -96,6 +96,8 @@ if ($id > 0 || !empty($ref))
 $permissionnote = $user->rights->ficheinter->creer; // Used by the include of actions_setnotes.inc.php
 $permissiondellink = $user->rights->ficheinter->creer; // Used by the include of actions_dellink.inc.php
 
+$error = 0;
+
 
 /*
  * Actions
@@ -351,7 +353,7 @@ if (empty($reshook))
 								$desc .= '<br>';
 								$desc .= ' ('.$langs->trans('Quantity').': '.$lines[$i]->qty.')';
 
-								$timearray = dol_getdate(mktime());
+								$timearray = dol_getdate(dol_now());
 								$date_intervention = dol_mktime(0, 0, 0, $timearray['mon'], $timearray['mday'], $timearray['year']);
 
 								if ($product_type == Product::TYPE_PRODUCT) {
@@ -1074,6 +1076,7 @@ if ($action == 'create')
 		print '<table class="border centpercent">';
 		print '<tr><td class="fieldrequired">'.$langs->trans("ThirdParty").'</td><td>';
 		print $form->select_company('', 'socid', '', 'SelectThirdParty', 1, 0, null, 0, 'minwidth300');
+		print ' <a href="'.DOL_URL_ROOT.'/societe/card.php?action=create&backtopage='.urlencode($_SERVER["PHP_SELF"].'?action=create').'"><span class="fa fa-plus-circle valignmiddle paddingleft" title="'.$langs->trans("AddThirdParty").'"></span></a>';
 		print '</td></tr>';
 		print '</table>';
 

@@ -75,6 +75,8 @@ if ($facid > 0)
 // Initialize technical object to manage hooks of paiements. Note that conf->hooks_modules contains array array
 $hookmanager->initHooks(array('paiementcard', 'globalcard'));
 
+$formquestion = array();
+
 
 /*
  * Actions
@@ -264,8 +266,8 @@ if (empty($reshook))
 	    $paiement->paiementid   = dol_getIdFromCode($db, GETPOST('paiementcode'), 'c_paiement', 'code', 'id', 1);
 	    $paiement->num_payment  = GETPOST('num_paiement', 'alpha');
 	    $paiement->note_private = GETPOST('comment', 'alpha');
-	    $paiement->num_paiement = $paiement->num_payment;		// For bacward compatibility
-	    $paiement->note         = $paiement->note_private;		// For bacward compatibility
+	    $paiement->num_paiement = $paiement->num_payment; // For bacward compatibility
+	    $paiement->note         = $paiement->note_private; // For bacward compatibility
 
 	    if (!$error)
 	    {
@@ -863,7 +865,7 @@ if (!GETPOST('action', 'aZ09'))
     if (!$sortorder) $sortorder = 'DESC';
     if (!$sortfield) $sortfield = 'p.datep';
 
-    $sql = 'SELECT p.datep as dp, p.amount, f.amount as fa_amount, f.ref';
+    $sql = 'SELECT p.datep as dp, p.amount, f.total_ttc as fa_amount, f.ref';
     $sql .= ', f.rowid as facid, c.libelle as paiement_type, p.num_paiement';
     $sql .= ' FROM '.MAIN_DB_PREFIX.'paiement as p LEFT JOIN '.MAIN_DB_PREFIX.'c_paiement as c ON p.fk_paiement = c.id';
     $sql .= ', '.MAIN_DB_PREFIX.'facture as f';
@@ -886,10 +888,10 @@ if (!GETPOST('action', 'aZ09'))
         print_barre_liste($langs->trans('Payments'), $page, $_SERVER["PHP_SELF"], '', $sortfield, $sortorder, '', $num);
         print '<table class="noborder centpercent">';
         print '<tr class="liste_titre">';
-        print_liste_field_titre('Invoice', $_SERVER["PHP_SELF"], 'ref', '', '', '', $sortfield, $sortorder);
-        print_liste_field_titre('Date', $_SERVER["PHP_SELF"], 'dp', '', '', '', $sortfield, $sortorder);
-        print_liste_field_titre('Type', $_SERVER["PHP_SELF"], 'libelle', '', '', '', $sortfield, $sortorder);
-        print_liste_field_titre('Amount', $_SERVER["PHP_SELF"], 'fa_amount', '', '', '', $sortfield, $sortorder, 'right ');
+        print_liste_field_titre('Invoice', $_SERVER["PHP_SELF"], 'f.ref', '', '', '', $sortfield, $sortorder);
+        print_liste_field_titre('Date', $_SERVER["PHP_SELF"], 'p.datep', '', '', '', $sortfield, $sortorder);
+        print_liste_field_titre('Type', $_SERVER["PHP_SELF"], 'c.libelle', '', '', '', $sortfield, $sortorder);
+        print_liste_field_titre('Amount', $_SERVER["PHP_SELF"], 'p.amount', '', '', '', $sortfield, $sortorder, 'right ');
 		print_liste_field_titre('', $_SERVER["PHP_SELF"], "", '', '', '', $sortfield, $sortorder, 'maxwidthsearch ');
         print "</tr>\n";
 

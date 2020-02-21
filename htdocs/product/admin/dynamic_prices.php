@@ -63,9 +63,9 @@ if ($action == 'edit_updater') {
 if (!empty($action) && empty($cancel)) {
     //Global variable actions
     if ($action == 'create_variable' || $action == 'edit_variable') {
-        $price_globals->code = isset($_POST['code'])?GETPOST('code', 'alpha'):$price_globals->code;
-        $price_globals->description = isset($_POST['description'])?GETPOST('description', 'alpha'):$price_globals->description;
-        $price_globals->value = isset($_POST['value'])?GETPOST('value', 'int'):$price_globals->value;
+        $price_globals->code = GETPOSTISSET('code') ?GETPOST('code', 'alpha') : $price_globals->code;
+        $price_globals->description = GETPOSTISSET('description') ?GETPOST('description', 'alpha') : $price_globals->description;
+        $price_globals->value = GETPOSTISSET('value') ?GETPOST('value', 'int') : $price_globals->value;
         //Check if record already exists only when saving
         if (!empty($save)) {
             foreach ($price_globals->listGlobalVariables() as $entry) {
@@ -101,11 +101,11 @@ if (!empty($action) && empty($cancel)) {
 
     //Updaters actions
     if ($action == 'create_updater' || $action == 'edit_updater') {
-        $price_updaters->type = isset($_POST['type'])?GETPOST('type', 'int'):$price_updaters->type;
-        $price_updaters->description = isset($_POST['description'])?GETPOST('description', 'alpha'):$price_updaters->description;
-        $price_updaters->parameters = isset($_POST['parameters'])?GETPOST('parameters'):$price_updaters->parameters;
-        $price_updaters->fk_variable = isset($_POST['fk_variable'])?GETPOST('fk_variable', 'int'):$price_updaters->fk_variable;
-        $price_updaters->update_interval = isset($_POST['update_interval'])?GETPOST('update_interval', 'int'):$price_updaters->update_interval;
+        $price_updaters->type = GETPOSTISSET('type') ?GETPOST('type', 'int') : $price_updaters->type;
+        $price_updaters->description = GETPOSTISSET('description') ?GETPOST('description', 'alpha') : $price_updaters->description;
+        $price_updaters->parameters = GETPOSTISSET('parameters') ?GETPOST('parameters') : $price_updaters->parameters;
+        $price_updaters->fk_variable = GETPOSTISSET('fk_variable') ?GETPOST('fk_variable', 'int') : $price_updaters->fk_variable;
+        $price_updaters->update_interval = GETPOSTISSET('update_interval') ?GETPOST('update_interval', 'int') : $price_updaters->update_interval;
     }
     if ($action == 'create_updater' && !empty($save)) {
         //Verify if process() works
@@ -150,7 +150,7 @@ $form = new Form($db);
 
 llxHeader("", "", $langs->trans("CardProduct".$product->type));
 
-$linkback='<a href="'.DOL_URL_ROOT.'/admin/modules.php?restore_lastsearch_values=1">'.$langs->trans("BackToModuleList").'</a>';
+$linkback = '<a href="'.DOL_URL_ROOT.'/admin/modules.php?restore_lastsearch_values=1">'.$langs->trans("BackToModuleList").'</a>';
 print load_fiche_titre($langs->trans("DynamicPriceConfiguration"), $linkback, 'title_setup');
 
 print '<span class="opacitymedium">'.$langs->trans("DynamicPriceDesc").'</span><br>';
@@ -169,8 +169,8 @@ if ($action != 'create_updater' && $action != 'edit_updater')
     print '<td width="80">&nbsp;</td>'; //Space for buttons
     print '</tr>';
 
-    $arrayglobalvars=$price_globals->listGlobalVariables();
-    if (! empty($arrayglobalvars))
+    $arrayglobalvars = $price_globals->listGlobalVariables();
+    if (!empty($arrayglobalvars))
     {
 	    foreach ($arrayglobalvars as $i=>$entry) {
 	        $var = !$var;
@@ -215,17 +215,17 @@ if ($action == 'create_variable' || $action == 'edit_variable') {
     //Code
     print '<tr>';
     print '<td class="fieldrequired">'.$langs->trans("Variable").'</td>';
-    print '<td class="valeur"><input type="text" name="code" size="20" value="'.(empty($price_globals->code)?'':$price_globals->code).'"></td>';
+    print '<td class="valeur"><input type="text" name="code" size="20" value="'.(empty($price_globals->code) ? '' : $price_globals->code).'"></td>';
     print '</tr>';
     //Description
     print '<tr>';
     print '<td>'.$langs->trans("Description").'</td>';
-    print '<td class="valeur"><input type="text" name="description" size="50" value="'.(empty($price_globals->description)?'':$price_globals->description).'"></td>';
+    print '<td class="valeur"><input type="text" name="description" size="50" value="'.(empty($price_globals->description) ? '' : $price_globals->description).'"></td>';
     print '</tr>';
     //Value
     print '<tr>';
     print '<td class="fieldrequired">'.$langs->trans("Value").'</td>';
-    print '<td class="valeur"><input type="text" name="value" size="10" value="'.(empty($price_globals->value)?'':$price_globals->value).'"></td>';
+    print '<td class="valeur"><input type="text" name="value" size="10" value="'.(empty($price_globals->value) ? '' : $price_globals->value).'"></td>';
     print '</tr>';
     print '</table>';
 
@@ -254,7 +254,7 @@ if ($action != 'create_variable' && $action != 'edit_variable')
     print '</tr>';
 
     $arraypriceupdaters = $price_updaters->listUpdaters();
-    if (! empty($arraypriceupdaters))
+    if (!empty($arraypriceupdaters))
     {
 	    foreach ($arraypriceupdaters as $i=>$entry) {
 	        $code = "";
@@ -308,19 +308,19 @@ if ($action == 'create_updater' || $action == 'edit_updater') {
     print '<td class="fieldrequired">'.$langs->trans("VariableToUpdate").'</td><td>';
     $globals_list = array();
     foreach ($price_globals->listGlobalVariables() as $entry) {
-        $globals_list[$entry->id]=$entry->code;
+        $globals_list[$entry->id] = $entry->code;
     }
-    print $form->selectarray('fk_variable', $globals_list, (empty($price_updaters->fk_variable)?0:$price_updaters->fk_variable));
+    print $form->selectarray('fk_variable', $globals_list, (empty($price_updaters->fk_variable) ? 0 : $price_updaters->fk_variable));
     print '</td></tr>';
     //Description
     print '<tr>';
     print '<td>'.$langs->trans("Description").'</td>';
-    print '<td class="valeur"><input type="text" name="description" size="50" value="'.(empty($price_updaters->description)?'':$price_updaters->description).'"></td>';
+    print '<td class="valeur"><input type="text" name="description" size="50" value="'.(empty($price_updaters->description) ? '' : $price_updaters->description).'"></td>';
     print '</tr>';
     //Type
     print '<tr>';
     print '<td class="fieldrequired">'.$langs->trans("Type").'</td><td>';
-    $type = empty($price_updaters->type)?0:$price_updaters->type;
+    $type = empty($price_updaters->type) ? 0 : $price_updaters->type;
     $type_list = array();
     foreach ($price_updaters->types as $val) {
         $type_list[$val] = $langs->trans("GlobalVariableUpdaterType".$val);
@@ -342,14 +342,14 @@ if ($action == 'create_updater' || $action == 'edit_updater') {
     $help = $langs->trans("GlobalVariableUpdaterHelp".$type).'<br><b>'.$langs->trans("GlobalVariableUpdaterHelpFormat".$type).'</b>';
     print '<td class="fieldrequired">'.$form->textwithpicto($langs->trans("Parameters"), $help, 1).'</td><td>';
     require_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
-    $doleditor=new DolEditor('parameters', empty($price_updaters->parameters)?'':$price_updaters->parameters, '', 300, '', '', false, false, false, ROWS_8, '90%');
+    $doleditor = new DolEditor('parameters', empty($price_updaters->parameters) ? '' : $price_updaters->parameters, '', 300, '', '', false, false, false, ROWS_8, '90%');
     $doleditor->Create();
     print '</td></tr>';
     print '</tr>';
     //Interval
     print '<tr>';
     print '<td class="fieldrequired">'.$langs->trans("UpdateInterval").'</td>';
-    print '<td class="valeur"><input type="text" name="update_interval" size="10" value="'.(empty($price_updaters->update_interval)?'':$price_updaters->update_interval).'"></td>';
+    print '<td class="valeur"><input type="text" name="update_interval" size="10" value="'.(empty($price_updaters->update_interval) ? '' : $price_updaters->update_interval).'"></td>';
     print '</tr>';
     print '</table>';
 

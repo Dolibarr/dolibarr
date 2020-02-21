@@ -20,7 +20,7 @@
  */
 
 /**
- *	\file       htdocs/core/modules/supplier_invoice/pdf/pdf_canelle.modules.php
+ *	\file       htdocs/core/modules/supplier_invoice/doc/pdf_canelle.modules.php
  *	\ingroup    fournisseur
  *	\brief      Class file to generate the supplier invoices with the canelle model
  */
@@ -151,8 +151,6 @@ class pdf_canelle extends ModelePDFSuppliersInvoices
 		$this->option_condreg = 1; // Affiche conditions reglement
 		$this->option_codeproduitservice = 1; // Affiche code produit-service
 		$this->option_multilang = 1; // Dispo en plusieurs langues
-
-		$this->franchise = !$mysoc->tva_assuj;
 
         // Define column position
 		$this->posxdesc = $this->marge_gauche + 1;
@@ -430,7 +428,6 @@ class pdf_canelle extends ModelePDFSuppliersInvoices
 						else
 						{
 							// We found a page break
-
 							// Allows data in the first page if description is long enough to break in multiples pages
 							if(!empty($conf->global->MAIN_PDF_DATA_ON_FIRST_PAGE))
 								$showpricebeforepagebreak = 1;

@@ -810,7 +810,7 @@ class Propal extends CommonObject
 
 			if (is_array($array_options) && count($array_options) > 0) {
 				// We replace values in this->line->array_options only for entries defined into $array_options
-				foreach($array_options as $key => $value) {
+				foreach ($array_options as $key => $value) {
 					$this->line->array_options[$key] = $array_options[$key];
 				}
 			}
@@ -1365,7 +1365,7 @@ class Propal extends CommonObject
 	}
 
 	/**
-	 *	Load a proposal from database and its ligne array
+	 *	Load a proposal from database. Get also lines.
 	 *
 	 *	@param      int			$rowid		id of object to load
 	 *	@param		string		$ref		Ref of proposal
@@ -1373,7 +1373,6 @@ class Propal extends CommonObject
 	 */
     public function fetch($rowid, $ref = '')
 	{
-
 		$sql = "SELECT p.rowid, p.ref, p.entity, p.remise, p.remise_percent, p.remise_absolue, p.fk_soc";
 		$sql .= ", p.total, p.tva, p.localtax1, p.localtax2, p.total_ht";
 		$sql .= ", p.datec";
@@ -1437,8 +1436,13 @@ class Propal extends CommonObject
 				$this->total_localtax1		= $obj->localtax1;
 				$this->total_localtax2		= $obj->localtax2;
 				$this->total_ttc            = $obj->total;
-				$this->socid                = $obj->fk_soc;
-				$this->fk_project           = $obj->fk_project;
+
+				$this->socid = $obj->fk_soc;
+				$this->thirdparty = null; // Clear if another value was already set by fetch_thirdparty
+
+				$this->fk_project = $obj->fk_project;
+				$this->project = null; // Clear if another value was already set by fetch_projet
+
 				$this->modelpdf             = $obj->model_pdf;
 				$this->last_main_doc = $obj->last_main_doc;
 				$this->note                 = $obj->note_private; // TODO deprecated
@@ -1506,9 +1510,7 @@ class Propal extends CommonObject
 
 				$this->lines = array();
 
-				/*
-                 * Lines
-                 */
+				// Lines
 				$result = $this->fetch_lines();
 				if ($result < 0)
 				{
@@ -3549,10 +3551,10 @@ class Propal extends CommonObject
 	 *	@param      string	$get_params    	          Parametres added to url
 	 *  @param	    int   	$notooltip		          1=Disable tooltip
 	 *  @param      int     $save_lastsearch_value    -1=Auto, 0=No save of lastsearch_values when clicking, 1=Save lastsearch_values whenclicking
-	 *  @param		int		$addlinktonotes			  Add linkt to notes
+     *  @param      int     $addlinktonotes           -1=Disable, 0=Just add label show notes, 1=Add private note (only internal user), 2=Add public note (internal or external user), 3=Add private (internal user) and public note (internal and external user)
 	 *	@return     string          		          String with URL
 	 */
-    public function getNomUrl($withpicto = 0, $option = '', $get_params = '', $notooltip = 0, $save_lastsearch_value = -1, $addlinktonotes = 0)
+    public function getNomUrl($withpicto = 0, $option = '', $get_params = '', $notooltip = 0, $save_lastsearch_value = -1, $addlinktonotes = -1)
 	{
 		global $langs, $conf, $user;
 
@@ -3618,21 +3620,45 @@ class Propal extends CommonObject
 		if ($withpicto != 2) $result .= $this->ref;
 		$result .= $linkend;
 
-		if ($addlinktonotes)
-		{
-			$txttoshow = ($user->socid > 0 ? $this->note_public : $this->note_private);
-			if ($txttoshow)
-			{
-				$notetoshow = $langs->trans("ViewPrivateNote").':<br>'.dol_string_nohtmltag($txttoshow, 1);
-				$result .= ' <span class="note inline-block">';
-				$result .= '<a href="'.DOL_URL_ROOT.'/comm/propal/note.php?id='.$this->id.'" class="classfortooltip" title="'.dol_escape_htmltag($notetoshow).'">';
-				$result .= img_picto('', 'note');
-				$result .= '</a>';
-				//$result.=img_picto($langs->trans("ViewNote"),'object_generic');
-				//$result.='</a>';
-				$result .= '</span>';
-			}
-		}
+        if ($addlinktonotes >= 0) {
+            $txttoshow = '';
+
+            if ($addlinktonotes == 0) {
+                if (!empty($this->note_private) || !empty($this->note_public)) {
+                    $txttoshow = $langs->trans('ViewPrivateNote');
+                }
+            } elseif ($addlinktonotes == 1) {
+                if (!empty($this->note_private)) {
+                    $txttoshow .= ($user->socid > 0 ? '' : dol_string_nohtmltag($this->note_private, 1));
+                }
+            } elseif ($addlinktonotes == 2) {
+                if (!empty($this->note_public)) {
+                    $txttoshow .= dol_string_nohtmltag($this->note_public, 1);
+                }
+            } elseif ($addlinktonotes == 3) {
+                if ($user->socid > 0) {
+                    if (!empty($this->note_public)) {
+                        $txttoshow .= dol_string_nohtmltag($this->note_public, 1);
+                    }
+                } else {
+                    if (!empty($this->note_public)) {
+                        $txttoshow .= dol_string_nohtmltag($this->note_public, 1);
+                    }
+                    if (!empty($this->note_private)) {
+                        if (!empty($txttoshow)) $txttoshow .= '<br><br>';
+                        $txttoshow .= dol_string_nohtmltag($this->note_private, 1);
+                    }
+                }
+            }
+
+            if ($txttoshow) {
+                $result .= ' <span class="note inline-block">';
+                $result .= '<a href="'.DOL_URL_ROOT.'/comm/propal/note.php?id='.$this->id.'" class="classfortooltip" title="'.dol_escape_htmltag($txttoshow).'">';
+                $result .= img_picto('', 'note');
+                $result .= '</a>';
+                $result .= '</span>';
+            }
+        }
 
 		return $result;
 	}
