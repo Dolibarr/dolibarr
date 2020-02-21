@@ -860,7 +860,7 @@ if ($action == 'addcontainer')
 			$result = dolSavePageAlias($filealias, $object, $objectpage);
 			if (!$result)
 			{
-				setEventMessages('Failed to write file '.$filealias, null, 'errors');
+				setEventMessages('Failed to write file '.basename($filealias), null, 'errors');
 			}
 
 			// Save page of content
@@ -1499,8 +1499,9 @@ if ($action == 'updatemeta')
 				{
 					if (trim($tmpaliasalt))
 					{
-						$result = dolSavePageAlias($pathofwebsite.'/'.trim($tmpaliasalt).'.php', $object, $objectpage);
-						if (!$result) setEventMessages('Failed to write file '.$pathofwebsite.'/'.trim($tmpaliasalt).'.php', null, 'errors');
+						$filealias = $pathofwebsite.'/'.trim($tmpaliasalt).'.php';
+						$result = dolSavePageAlias($filealias, $object, $objectpage);
+						if (!$result) setEventMessages('Failed to write file '.basename($filealias), null, 'errors');
 					}
 				}
 			}
@@ -1756,7 +1757,7 @@ if (($action == 'updatesource' || $action == 'updatecontent' || $action == 'conf
 
 				// Save page alias
 				$result = dolSavePageAlias($filealias, $object, $objectpage);
-				if (!$result) setEventMessages('Failed to write file '.$filealias, null, 'errors');
+				if (!$result) setEventMessages('Failed to write file '.basename($filealias), null, 'errors');
 
 				// Save page content
 				$result = dolSavePageContent($filetpl, $object, $objectpage);
@@ -2702,7 +2703,7 @@ if ($action == 'editcss')
 	$htmltext='';
 	print $form->textwithpicto($langs->trans('MainLanguage'), $htmltext, 1, 'help', '', 0, 2, 'WEBSITE_LANG');
 	print '</td><td>';
-	print $formadmin->select_language((GETPOSTISSET('WEBSITE_LANG') ? GETPOST('WEBSITE_LANG', 'aZ09comma') : ($object->lang ? $object->lang : '0')), 'WEBSITE_LANG', 0, null, 1, 0, 0, 'minwidth300', 2);
+	print $formadmin->select_language((GETPOSTISSET('WEBSITE_LANG') ? GETPOST('WEBSITE_LANG', 'aZ09comma') : ($object->lang ? $object->lang : '0')), 'WEBSITE_LANG', 0, null, 1, 0, 0, 'minwidth300', 2, 0, 0, array(), 1);
 	print '</td>';
 	print '</tr>';
 
@@ -2861,7 +2862,7 @@ if ($action == 'createsite')
 	print '<tr><td>';
 	print $langs->trans('MainLanguage');
 	print '</td><td>';
-	print $formadmin->select_language((GETPOSTISSET('WEBSITE_LANG') ? GETPOST('WEBSITE_LANG', 'aZ09comma') : '0'), 'WEBSITE_LANG', 0, null, 1, 0, 0, 'minwidth300', 2);
+	print $formadmin->select_language((GETPOSTISSET('WEBSITE_LANG') ? GETPOST('WEBSITE_LANG', 'aZ09comma') : '0'), 'WEBSITE_LANG', 0, null, 1, 0, 0, 'minwidth300', 2, 0, 0, array(), 1);
 	print '</td></tr>';
 
 	print '<tr><td>';
@@ -3104,7 +3105,7 @@ if ($action == 'editmeta' || $action == 'createcontainer')
 		foreach($tmparray as $key) {
 			$tmpkey = trim($key);
 			if (strlen($key) == 2) {
-				$tmpkey = strtolower($key).'_'.strtoupper($tmpkey);
+				$tmpkey = strtolower($key);
 			}
 			$onlykeys[$tmpkey] = $tmpkey;
 		}
@@ -3112,7 +3113,7 @@ if ($action == 'editmeta' || $action == 'createcontainer')
 	if (empty($object->lang) && empty($object->otherlang)) {
 		$onlykeys = null;	// We keep full list of languages
 	}
-	print $formadmin->select_language($pagelang ? $pagelang : '', 'WEBSITE_LANG', 0, null, '1', 0, 0, 'minwidth200', 0, 0, 0, $onlykeys);
+	print $formadmin->select_language($pagelang ? $pagelang : '', 'WEBSITE_LANG', 0, null, '1', 0, 0, 'minwidth200', 0, 0, 0, $onlykeys, 1);
 	$htmltext = $langs->trans("AvailableLanguagesAreDefinedIntoWebsiteProperties");
 	print $form->textwithpicto('', $htmltext);
 	print '</td></tr>';

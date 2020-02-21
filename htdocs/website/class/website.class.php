@@ -170,6 +170,15 @@ class Website extends CommonObject
         if (empty($this->date_modification)) {
             $this->date_modification = $now;
         }
+        // Remove spaces and be sure we have main language only
+        $this->lang = preg_replace('/[_-].*$/', '', trim($this->lang)); // en_US or en-US -> en
+        $tmparray = explode(',', $this->otherlang);
+		if (is_array($tmparray)) {
+			foreach($tmparray as $key => $val) {
+				$tmparray[$key] = preg_replace('/[_-].*$/', '', trim($val)); // en_US or en-US -> en
+			}
+			$this->otherlang = join(',', $tmparray);
+		}
 
         // Check parameters
         if (empty($this->entity)) {
@@ -454,6 +463,16 @@ class Website extends CommonObject
 		}
 		if (isset($this->status)) {
 			 $this->status = (int) $this->status;
+		}
+
+		// Remove spaces and be sure we have main language only
+		$this->lang = preg_replace('/[_-].*$/', '', trim($this->lang)); // en_US or en-US -> en
+		$tmparray = explode(',', $this->otherlang);
+		if (is_array($tmparray)) {
+			foreach($tmparray as $key => $val) {
+				$tmparray[$key] = preg_replace('/[_-].*$/', '', trim($val)); // en_US or en-US -> en
+			}
+			$this->otherlang = join(',', $tmparray);
 		}
 
 		// Check parameters
@@ -837,7 +856,7 @@ class Website extends CommonObject
 		$this->ref = 'myspecimenwebsite';
 		$this->description = 'A specimen website';
 		$this->lang = 'en';
-		$this->otherlang = 'fr,es_MX';
+		$this->otherlang = 'fr,es';
 		$this->status = '';
 		$this->fk_default_home = null;
 		$this->virtualhost = 'http://myvirtualhost';
@@ -1178,7 +1197,11 @@ class Website extends CommonObject
 
 					// The move is not enough, so we regenerate page
 					$filetpl = $conf->website->dir_output.'/'.$object->ref.'/page'.$newid.'.tpl.php';
-					dolSavePageContent($filetpl, $object, $objectpagestatic);
+					$result = dolSavePageContent($filetpl, $object, $objectpagestatic);
+					if (!$result) {
+						$this->errors[] = 'Failed to write file '.basename($filetpl);
+						$error++;
+					}
 
 					// Regenerate alternative aliases pages
 					if (is_array($aliasesarray))
@@ -1188,7 +1211,11 @@ class Website extends CommonObject
 							if (trim($aliasshortcuttocreate))
 							{
 								$filealias = $conf->website->dir_output.'/'.$object->ref.'/'.trim($aliasshortcuttocreate).'.php';
-								dolSavePageAlias($filealias, $object, $objectpagestatic);
+								$result = dolSavePageAlias($filealias, $object, $objectpagestatic);
+								if (!$result) {
+									$this->errors[] = 'Failed to write file '.basename($filealias);
+									$error++;
+								}
 							}
 						}
 					}

@@ -59,16 +59,17 @@ class FormAdmin
      *  @param		int			$forcecombo		Force to use combo box (so no ajax beautify effect)
      *  @param		int			$multiselect	Make the combo a multiselect
      *  @param		array		$onlykeys		Show only the following keys (opposite of $filter)
+     *  @param		int			$mainlangonly	1=Show only main languages ('fr_FR' no' fr_BE', 'es_ES' not 'es_MX', ...)
      *  @return		string						Return HTML select string with list of languages
      */
-    public function select_language($selected = '', $htmlname = 'lang_id', $showauto = 0, $filter = null, $showempty = '', $showwarning = 0, $disabled = 0, $morecss = '', $showcode = 0, $forcecombo = 0, $multiselect = 0, $onlykeys = array())
+    public function select_language($selected = '', $htmlname = 'lang_id', $showauto = 0, $filter = null, $showempty = '', $showwarning = 0, $disabled = 0, $morecss = '', $showcode = 0, $forcecombo = 0, $multiselect = 0, $onlykeys = array(), $mainlangonly = 0)
 	{
 		// phpcs:enable
 		global $conf, $langs;
 
 		if (!empty($conf->global->MAIN_DEFAULT_LANGUAGE_FILTER)) $filter[$conf->global->MAIN_DEFAULT_LANGUAGE_FILTER] = 1;
 
-		$langs_available=$langs->get_available_languages(DOL_DOCUMENT_ROOT, 12);
+		$langs_available=$langs->get_available_languages(DOL_DOCUMENT_ROOT, 12, 0, $mainlangonly);
 
 		$out='';
 
@@ -95,21 +96,28 @@ class FormAdmin
 		{
 			$valuetoshow=$value;
 			if ($showcode == 1) $valuetoshow=$key.' - '.$value;
-			if ($showcode == 2) $valuetoshow=$value.' ('.$key.')';
+			if ($showcode == 2) {
+				if ($mainlangonly) $valuetoshow=$value.' ('.preg_replace('/[_-].*$/', '', $key).')';
+				else $valuetoshow=$value.' ('.$key.')';
+			}
 
-			if ($filter && is_array($filter) && array_key_exists($key, $filter)) {
+			$keytouse = $key;
+			if ($mainlangonly) $keytouse = preg_replace('/[_-].*$/', '', $key);
+
+			if ($filter && is_array($filter) && array_key_exists($keytouse, $filter)) {
 				continue;
 			}
-			if ($onlykeys && is_array($onlykeys) && ! array_key_exists($key, $onlykeys)) {
+			if ($onlykeys && is_array($onlykeys) && ! array_key_exists($keytouse, $onlykeys)) {
 				continue;
 			}
-			if ($selected == $key)
+
+			if ($selected == $keytouse)
 			{
-				$out.= '<option value="'.$key.'" selected>'.$valuetoshow.'</option>';
+				$out.= '<option value="'.$keytouse.'" selected>'.$valuetoshow.'</option>';
 			}
 			else
 			{
-				$out.= '<option value="'.$key.'">'.$valuetoshow.'</option>';
+				$out.= '<option value="'.$keytouse.'">'.$valuetoshow.'</option>';
 			}
 		}
 		$out.= '</select>';
