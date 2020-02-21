@@ -30,7 +30,7 @@ require_once DOL_DOCUMENT_ROOT.'/compta/sociales/class/chargesociales.class.php'
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formsocialcontrib.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
-if (! empty($conf->projet->enabled)) require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
+if (!empty($conf->projet->enabled)) require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
 
 // Load translation files required by the page
 $langs->loadLangs(array('compta', 'banks', 'bills'));
@@ -97,8 +97,8 @@ if (GETPOST('button_removefilter_x', 'alpha') || GETPOST('button_removefilter.x'
 	$search_day_lim = '';
 	$search_year_lim = '';
 	$search_month_lim = '';
-	$search_project_ref='';
-	$search_project='';
+	$search_project_ref = '';
+	$search_project = '';
 	$toselect = '';
 	$search_array_options = array();
 }
@@ -112,25 +112,25 @@ $form = new Form($db);
 $formother = new FormOther($db);
 $formsocialcontrib = new FormSocialContrib($db);
 $chargesociale_static = new ChargeSociales($db);
-if (! empty($conf->projet->enabled)) $projectstatic=new Project($db);
+if (!empty($conf->projet->enabled)) $projectstatic = new Project($db);
 
 llxHeader('', $langs->trans("SocialContributions"));
 
 $sql = "SELECT cs.rowid as id, cs.fk_type as type, ";
 $sql .= " cs.amount, cs.date_ech, cs.libelle as label, cs.paye, cs.periode,";
-if (! empty($conf->projet->enabled)) $sql .= " p.rowid as project_id, p.ref as project_ref, p.title as project_label,";
+if (!empty($conf->projet->enabled)) $sql .= " p.rowid as project_id, p.ref as project_ref, p.title as project_label,";
 $sql .= " c.libelle as type_label,";
 $sql .= " SUM(pc.amount) as alreadypayed";
 $sql .= " FROM ".MAIN_DB_PREFIX."c_chargesociales as c,";
 $sql .= " ".MAIN_DB_PREFIX."chargesociales as cs";
-if (! empty($conf->projet->enabled)) $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."projet as p ON p.rowid = cs.fk_projet";
+if (!empty($conf->projet->enabled)) $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."projet as p ON p.rowid = cs.fk_projet";
 $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."paiementcharge as pc ON pc.fk_charge = cs.rowid";
 $sql .= " WHERE cs.fk_type = c.id";
 $sql .= " AND cs.entity = ".$conf->entity;
 // Search criteria
 if ($search_ref)	$sql .= " AND cs.rowid=".$db->escape($search_ref);
 if ($search_label) 	$sql .= natural_search("cs.libelle", $search_label);
-if (! empty($conf->projet->enabled)) if ($search_project_ref != '') $sql.= natural_search("p.ref", $search_project_ref);
+if (!empty($conf->projet->enabled)) if ($search_project_ref != '') $sql .= natural_search("p.ref", $search_project_ref);
 if ($search_amount) $sql .= natural_search("cs.amount", $search_amount, 1);
 if ($search_status != '' && $search_status >= 0) $sql .= " AND cs.paye = ".$db->escape($search_status);
 $sql .= dolSqlDateFilter("cs.periode", $search_day_lim, $search_month_lim, $search_year_lim);
@@ -173,7 +173,7 @@ if ($resql)
 	if ($limit > 0 && $limit != $conf->liste_limit) $param .= '&limit='.urlencode($limit);
 	if ($search_ref)    $param .= '&search_ref='.urlencode($search_ref);
 	if ($search_label)  $param .= '&search_label='.urlencode($search_label);
-	if ($search_project_ref >= 0) $param.="&search_project_ref=".urlencode($search_project_ref);
+	if ($search_project_ref >= 0) $param .= "&search_project_ref=".urlencode($search_project_ref);
 	if ($search_amount) $param .= '&search_amount='.urlencode($search_amount);
 	if ($search_typeid) $param .= '&search_typeid='.urlencode($search_typeid);
 	if ($search_status != '' && $search_status != '-1') $param .= '&search_status='.urlencode($search_status);
@@ -229,7 +229,7 @@ if ($resql)
 	    $formsocialcontrib->select_type_socialcontrib($search_typeid, 'search_typeid', 1, 0, 0, 'maxwidth100onsmartphone');
 	    print '</td>';
 		// Ref Project
-	   	if (! empty($conf->projet->enabled)) print '<td class="liste_titre"><input type="text" class="flat" size="6" name="search_project_ref" value="'.$search_project_ref.'"></td>';
+	   	if (!empty($conf->projet->enabled)) print '<td class="liste_titre"><input type="text" class="flat" size="6" name="search_project_ref" value="'.$search_project_ref.'"></td>';
 	    // Date
 	    print '<td class="liste_titre">&nbsp;</td>';
 	    // Period end date
@@ -258,7 +258,7 @@ if ($resql)
 		print_liste_field_titre("Ref", $_SERVER["PHP_SELF"], "id", "", $param, "", $sortfield, $sortorder);
 		print_liste_field_titre("Label", $_SERVER["PHP_SELF"], "cs.libelle", "", $param, 'class="left"', $sortfield, $sortorder);
 		print_liste_field_titre("Type", $_SERVER["PHP_SELF"], "type", "", $param, 'class="left"', $sortfield, $sortorder);
-		if (! empty($conf->projet->enabled)) print_liste_field_titre('ProjectRef', $_SERVER["PHP_SELF"], "p.ref", "", $param, '', $sortfield, $sortorder);
+		if (!empty($conf->projet->enabled)) print_liste_field_titre('ProjectRef', $_SERVER["PHP_SELF"], "p.ref", "", $param, '', $sortfield, $sortorder);
 		print_liste_field_titre("Date", $_SERVER["PHP_SELF"], "cs.date_ech", "", $param, 'align="center"', $sortfield, $sortorder);
 		print_liste_field_titre("PeriodEndDate", $_SERVER["PHP_SELF"], "periode", "", $param, 'align="center"', $sortfield, $sortorder);
 		print_liste_field_titre("Amount", $_SERVER["PHP_SELF"], "cs.amount", "", $param, 'class="right"', $sortfield, $sortorder);
@@ -276,10 +276,10 @@ if ($resql)
 			$chargesociale_static->ref = $obj->id;
 			$chargesociale_static->label = $obj->label;
 			$chargesociale_static->type_label = $obj->type_label;
-			if (! empty($conf->projet->enabled)) {
-				$projectstatic->id=$obj->project_id;
-				$projectstatic->ref=$obj->project_ref;
-				$projectstatic->title=$obj->project_label;
+			if (!empty($conf->projet->enabled)) {
+				$projectstatic->id = $obj->project_id;
+				$projectstatic->ref = $obj->project_ref;
+				$projectstatic->title = $obj->project_label;
 			}
 
 			print '<tr class="oddeven">';
@@ -297,7 +297,7 @@ if ($resql)
 			if (!$i) $totalarray['nbfield']++;
 
 			// Project Ref
-			if (! empty($conf->projet->enabled)) {
+			if (!empty($conf->projet->enabled)) {
 				print '<td class="nowrap">';
 				if ($obj->project_id > 0)
 				{

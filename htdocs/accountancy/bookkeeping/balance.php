@@ -268,11 +268,11 @@ if ($action != 'export_csv')
 	$displayed_account = "";
 
 	$sql = "select t.numero_compte, (SUM(t.debit) - SUM(t.credit)) as opening_balance from ".MAIN_DB_PREFIX."accounting_bookkeeping as t where entity in ".$conf->entity;
-	$sql.= " AND t.doc_date < '".$db->idate($search_date_start)."' GROUP BY t.numero_compte";
+	$sql .= " AND t.doc_date < '".$db->idate($search_date_start)."' GROUP BY t.numero_compte";
 	$resql = $db->query($sql);
 	$nrows = $resql->num_rows;
 	$opening_balances = Array();
-	for($i = 0; $i < $nrows; $i++) {
+	for ($i = 0; $i < $nrows; $i++) {
 		$arr = $resql->fetch_array();
 		$opening_balances["'".$arr['numero_compte']."'"] = $arr['opening_balance'];
 	}
@@ -294,14 +294,14 @@ if ($action != 'export_csv')
 		{
 			// Affiche un Sous-Total par compte comptable
 			if ($displayed_account != "") {
-				print '<tr class="liste_total"><td class="right" colspan="2">' . $langs->trans("SubTotal") . ':</td><td class="nowrap right">' . price($sous_total_debit) . '</td><td class="nowrap right">' . price($sous_total_credit) . '</td><td class="nowrap right">' . price(price2num($sous_total_credit - $sous_total_debit)) . '</td>';
+				print '<tr class="liste_total"><td class="right" colspan="2">'.$langs->trans("SubTotal").':</td><td class="nowrap right">'.price($sous_total_debit).'</td><td class="nowrap right">'.price($sous_total_credit).'</td><td class="nowrap right">'.price(price2num($sous_total_credit - $sous_total_debit)).'</td>';
 				print "<td>&nbsp;</td>\n";
 				print '</tr>';
 			}
 
 			// Show first line of a break
 			print '<tr class="trforbreak">';
-			print '<td colspan="7" style="font-weight:bold; border-bottom: 1pt solid black;">' . $line->numero_compte . ($root_account_description ? ' - ' . $root_account_description : '') . '</td>';
+			print '<td colspan="7" style="font-weight:bold; border-bottom: 1pt solid black;">'.$line->numero_compte.($root_account_description ? ' - '.$root_account_description : '').'</td>';
 			print '</tr>';
 
 			$displayed_account = $root_account_description;

@@ -166,7 +166,7 @@ $sql .= " FROM ".MAIN_DB_PREFIX."societe as s";
 $sql .= ", ".MAIN_DB_PREFIX."commande_fournisseur as cf";
 if (!$user->rights->societe->client->voir && !$socid) $sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
 $sql .= " WHERE cf.fk_soc = s.rowid";
-$sql.= " AND cf.entity IN (".getEntity("supplier_order").")"; // Thirdparty sharing is mandatory with supplier order sharing
+$sql .= " AND cf.entity IN (".getEntity("supplier_order").")"; // Thirdparty sharing is mandatory with supplier order sharing
 if ($user->socid) $sql .= ' AND cf.fk_soc = '.$user->socid;
 if (!$user->rights->societe->client->voir && !$socid) $sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".$user->id;
 $sql .= " GROUP BY cf.fk_statut";
@@ -253,23 +253,23 @@ if (!empty($conf->fournisseur->enabled))
  */
 
 $sql = "SELECT";
-if (! empty($conf->multicompany->enabled) && ! empty($conf->global->MULTICOMPANY_TRANSVERSE_MODE)) {
+if (!empty($conf->multicompany->enabled) && !empty($conf->global->MULTICOMPANY_TRANSVERSE_MODE)) {
 	$sql .= " DISTINCT";
 }
-$sql.= " u.rowid, u.lastname, u.firstname, u.email, u.statut";
-$sql.= " FROM ".MAIN_DB_PREFIX."user as u";
-if (! empty($conf->multicompany->enabled) && ! empty($conf->global->MULTICOMPANY_TRANSVERSE_MODE))
+$sql .= " u.rowid, u.lastname, u.firstname, u.email, u.statut";
+$sql .= " FROM ".MAIN_DB_PREFIX."user as u";
+if (!empty($conf->multicompany->enabled) && !empty($conf->global->MULTICOMPANY_TRANSVERSE_MODE))
 {
-	$sql.= ",".MAIN_DB_PREFIX."usergroup_user as ug";
-	$sql.= " WHERE ((ug.fk_user = u.rowid";
-	$sql.= " AND ug.entity IN (".getEntity('usergroup')."))";
-	$sql.= " OR u.entity = 0)"; // Show always superadmin
+	$sql .= ",".MAIN_DB_PREFIX."usergroup_user as ug";
+	$sql .= " WHERE ((ug.fk_user = u.rowid";
+	$sql .= " AND ug.entity IN (".getEntity('usergroup')."))";
+	$sql .= " OR u.entity = 0)"; // Show always superadmin
 }
 else
 {
-	$sql.= " WHERE (u.entity IN (".getEntity('user').")";
+	$sql .= " WHERE (u.entity IN (".getEntity('user').")";
 }
-$sql.= " AND u.fk_soc IS NULL"; // An external user can not approved
+$sql .= " AND u.fk_soc IS NULL"; // An external user can not approved
 
 $resql = $db->query($sql);
 if ($resql)
@@ -290,7 +290,7 @@ if ($resql)
 		$userstatic->id = $obj->rowid;
 		$userstatic->getrights('fournisseur');
 
-		if (! empty($userstatic->rights->fournisseur->commande->approuver))
+		if (!empty($userstatic->rights->fournisseur->commande->approuver))
 		{
 			print '<tr class="oddeven">';
 			print '<td>';

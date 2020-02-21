@@ -85,7 +85,7 @@ if (!empty($conf->multicompany->enabled) && is_object($mc)) {
 
 $entity = (GETPOSTISSET('entity') ? GETPOST('entity', 'int') : (GETPOSTISSET('search_entity') ? GETPOST('search_entity', 'int') : $conf->entity));
 if (!empty($conf->multicompany->enabled) && is_object($mc)) {
-	if (empty($entity) && ! empty($conf->global->MULTICOMPANY_ALLOW_EXPORT_ACCOUNTING_DOC_FOR_ALL_ENTITIES)) {
+	if (empty($entity) && !empty($conf->global->MULTICOMPANY_ALLOW_EXPORT_ACCOUNTING_DOC_FOR_ALL_ENTITIES)) {
 		$entity = '0,'.join(',', array_keys($arrayofentities));
 	}
 }
@@ -376,7 +376,7 @@ if ($result && $action == "dl" && !$error)
     {
         foreach ($filesarray as $key => $file)
         {
-        	foreach($file['files'] as $filecursor) {
+        	foreach ($file['files'] as $filecursor) {
         		if (file_exists($filecursor["fullname"])) {
         			$zip->addFile($filecursor["fullname"], $filecursor["relpathnamelang"]);
         		}
@@ -454,7 +454,7 @@ if (!empty($conf->multicompany->enabled) && is_object($mc))
 	$mc->getInfo($conf->entity);
 	print '<span class="marginleftonly marginrightonly">('.$langs->trans("Entity").' : ';
 	print "<td>";
-	if (! empty($conf->global->MULTICOMPANY_ALLOW_EXPORT_ACCOUNTING_DOC_FOR_ALL_ENTITIES)) {
+	if (!empty($conf->global->MULTICOMPANY_ALLOW_EXPORT_ACCOUNTING_DOC_FOR_ALL_ENTITIES)) {
 		print $mc->select_entities(GETPOSTISSET('search_entity') ? GETPOST('search_entity', 'int') : $mc->id, 'search_entity', '', false, false, false, false, true);
 	} else {
 		print $mc->label;
@@ -567,9 +567,9 @@ if (!empty($date_start) && !empty($date_stop))
 
                 // File link
                 print '<td>';
-                if (! empty($data['files']))
+                if (!empty($data['files']))
                 {
-                	foreach($data['files'] as $filecursor) {
+                	foreach ($data['files'] as $filecursor) {
                 		print '<a href='.DOL_URL_ROOT.'/'.$filecursor['link'].' target="_blank">'.($filecursor['name'] ? $filecursor['name'] : $filecursor['ref']).'</a><br>';
                 	}
                 }

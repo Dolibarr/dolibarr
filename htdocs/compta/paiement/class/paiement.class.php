@@ -594,43 +594,43 @@ class Paiement extends CommonObject
     {
         global $conf, $langs, $user;
 
-        $error=0;
-        $bank_line_id=0;
+        $error = 0;
+        $bank_line_id = 0;
 
-        if (! empty($conf->banque->enabled))
+        if (!empty($conf->banque->enabled))
         {
         	if ($accountid <= 0)
         	{
-        		$this->error='Bad value for parameter accountid='.$accountid;
+        		$this->error = 'Bad value for parameter accountid='.$accountid;
         		dol_syslog(get_class($this).'::addPaymentToBank '.$this->error, LOG_ERR);
         		return -1;
         	}
 
         	$this->db->begin();
 
-        	$this->fk_account=$accountid;
+        	$this->fk_account = $accountid;
 
         	include_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
 
             dol_syslog("$user->id, $mode, $label, $this->fk_account, $emetteur_nom, $emetteur_banque");
 
             $acc = new Account($this->db);
-            $result=$acc->fetch($this->fk_account);
+            $result = $acc->fetch($this->fk_account);
 
-			$totalamount=$this->amount;
-            if (empty($totalamount)) $totalamount=$this->total; // For backward compatibility
+			$totalamount = $this->amount;
+            if (empty($totalamount)) $totalamount = $this->total; // For backward compatibility
 
             // if dolibarr currency != bank currency then we received an amount in customer currency (currently I don't manage the case : my currency is USD, the customer currency is EUR and he paid me in GBP. Seems no sense for me)
-            if (!empty($conf->multicurrency->enabled) && $conf->currency != $acc->currency_code) $totalamount=$this->multicurrency_amount;
+            if (!empty($conf->multicurrency->enabled) && $conf->currency != $acc->currency_code) $totalamount = $this->multicurrency_amount;
 
-            if ($mode == 'payment_supplier') $totalamount=-$totalamount;
+            if ($mode == 'payment_supplier') $totalamount = -$totalamount;
 
             // Insert payment into llx_bank
             $bank_line_id = $acc->addline(
                 $this->datepaye,
-                $this->paiementid,  // Payment mode id or code ("CHQ or VIR for example")
+                $this->paiementid, // Payment mode id or code ("CHQ or VIR for example")
                 $label,
-                $totalamount,		// Sign must be positive when we receive money (customer payment), negative when you give money (supplier invoice or credit note)
+                $totalamount, // Sign must be positive when we receive money (customer payment), negative when you give money (supplier invoice or credit note)
                 $this->num_payment,
                 '',
                 $user,
