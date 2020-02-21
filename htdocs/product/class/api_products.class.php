@@ -631,6 +631,73 @@ class Products extends DolibarrApi
     }
 
     /**
+     * Add/Update purchase prices for a product.
+     *
+     * @param   int         $id                             ID of Product
+     * @param  	float		$qty				            Min quantity for which price is valid
+     * @param  	float		$buyprice			            Purchase price for the quantity min
+     * @param  	string		$price_base_type	            HT or TTC
+     * @param  	int		    $fourn_id                       Supplier ID
+     * @param  	int			$availability		            Product availability
+     * @param	string		$ref_fourn			            Supplier ref
+     * @param	float		$tva_tx				            New VAT Rate (For example 8.5. Should not be a string)
+     * @param  	string		$charges			            costs affering to product
+	 * @param  	float		$remise_percent		            Discount  regarding qty (percent)
+	 * @param  	float		$remise				            Discount  regarding qty (amount)
+	 * @param  	int			$newnpr				            Set NPR or not
+	 * @param	int			$delivery_time_days	            Delay in days for delivery (max). May be '' if not defined.
+	 * @param   string      $supplier_reputation            Reputation with this product to the defined supplier (empty, FAVORITE, DONOTORDER)
+     * @param   array		$localtaxes_array	            Array with localtaxes info array('0'=>type1,'1'=>rate1,'2'=>type2,'3'=>rate2) (loaded by getLocalTaxesFromRate(vatrate, 0, ...) function).
+     * @param   string  	$newdefaultvatcode              Default vat code
+     * @param  	float		$multicurrency_buyprice 	    Purchase price for the quantity min in currency
+     * @param  	string		$multicurrency_price_base_type	HT or TTC in currency
+     * @param  	float		$multicurrency_tx	            Rate currency
+     * @param  	string		$multicurrency_code	            Currency code
+     * @param  	string		$desc_fourn     	            Custom description for product_fourn_price
+     * @param  	string		$barcode     	                Barcode
+     * @param  	int		    $fk_barcode_type     	        Barcode type
+     * @return int
+     *
+     * @throws RestException 500
+     * @throws RestException 401
+     *
+     * @url POST {id}/purchase_prices
+     */
+    public function addPurchasePrice($id, $qty, $buyprice, $price_base_type, $fourn_id, $availability, $ref_fourn, $tva_tx, $charges = 0, $remise_percent = 0, $remise = 0, $newnpr = 0, $delivery_time_days = 0, $supplier_reputation = '', $localtaxes_array = array(), $newdefaultvatcode = '', $multicurrency_buyprice = 0, $multicurrency_price_base_type = 'HT', $multicurrency_tx = 1, $multicurrency_code = '', $desc_fourn = '', $barcode = '', $fk_barcode_type = null)
+    {
+        if(! DolibarrApiAccess::$user->rights->produit->creer) {
+            throw new RestException(401);
+        }
+
+        $result = $this->productsupplier->fetch($id);
+        if (!$result) {
+            throw new RestException(404, 'Product not found');
+        }
+
+        if (!DolibarrApi::_checkAccessToResource('product', $this->productsupplier->id)) {
+            throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
+        }
+
+        $result = $this->productsupplier->add_fournisseur(DolibarrApiAccess::$user, $fourn_id, $ref_fourn, $qty);
+        if ($result < 0) {
+            throw new RestException(500, "Error adding supplier to product : ".$this->db->lasterror());
+        }
+
+        $fourn = new Fournisseur($this->db);
+        $result = $fourn->fetch($fourn_id);
+        if ($result <= 0) {
+            throw new RestException(404, 'Supplier not found');
+        }
+
+        $result = $this->productsupplier->update_buyprice($qty, $buyprice, DolibarrApiAccess::$user, $price_base_type, $fourn, $availability, $ref_fourn, $tva_tx, $charges, $remise_percent, $remise, $newnpr, $delivery_time_days, $supplier_reputation, $localtaxes_array, $newdefaultvatcode, $multicurrency_buyprice, $multicurrency_price_base_type, $multicurrency_tx, $multicurrency_code, $desc_fourn, $barcode, $fk_barcode_type);
+
+        if ($result <= 0) {
+            throw new RestException(500, "Error updating buy price : ".$this->db->lasterror());
+        }
+        return (int) $this->productsupplier->product_fourn_price_id;
+    }
+
+    /**
      * Delete purchase price for a product
      *
      * @param  int $id Product ID
@@ -1325,11 +1392,12 @@ class Products extends DolibarrApi
      *
      * "features" is a list of attributes pairs id_attribute=>id_value. Example: array(id_color=>id_Blue, id_size=>id_small, id_option=>id_val_a, ...)
      *
-     * @param  int    $id                       ID of Product
-     * @param  float  $weight_impact            Weight impact of variant
-     * @param  float  $price_impact             Price impact of variant
-     * @param  bool   $price_impact_is_percent  Price impact in percent (true or false)
-     * @param  array  $features                 List of attributes pairs id_attribute->id_value. Example: array(id_color=>id_Blue, id_size=>id_small, id_option=>id_val_a, ...)
+     * @param  int $id ID of Product
+     * @param  float $weight_impact Weight impact of variant
+     * @param  float $price_impact Price impact of variant
+     * @param  bool $price_impact_is_percent Price impact in percent (true or false)
+     * @param  array $features List of attributes pairs id_attribute->id_value. Example: array(id_color=>id_Blue, id_size=>id_small, id_option=>id_val_a, ...)
+     * @param  bool|string $reference Customized reference of variant
      * @return int
      *
      * @throws RestException 500
@@ -1338,7 +1406,7 @@ class Products extends DolibarrApi
      *
      * @url POST {id}/variants
      */
-    public function addVariant($id, $weight_impact, $price_impact, $price_impact_is_percent, $features)
+    public function addVariant($id, $weight_impact, $price_impact, $price_impact_is_percent, $features, $reference = false)
     {
         if (!DolibarrApiAccess::$user->rights->produit->creer) {
             throw new RestException(401);
@@ -1368,17 +1436,13 @@ class Products extends DolibarrApi
         }
 
         $prodcomb = new ProductCombination($this->db);
-        if (!$prodcomb->fetchByProductCombination2ValuePairs($id, $features))
+
+        $result = $prodcomb->createProductCombination(DolibarrApiAccess::$user, $this->product, $features, array(), $price_impact_is_percent, $price_impact, $weight_impact, $reference);
+        if ($result > 0)
         {
-            $result = $prodcomb->createProductCombination(DolibarrApiAccess::$user, $this->product, $features, array(), $price_impact_is_percent, $price_impact, $weight_impact);
-            if ($result > 0)
-            {
-                return $result;
-            } else {
-                throw new RestException(500, "Error creating new product variant");
-            }
+			return $result;
         } else {
-            return $prodcomb->id;
+			throw new RestException(500, "Error creating new product variant");
         }
     }
 
