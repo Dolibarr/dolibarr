@@ -4,7 +4,6 @@
  * Copyright (C) 2005-2012	Regis Houssin			<regis.houssin@inodbox.com>
  * Copyright (C) 2005		Eric Seigne				<eric.seigne@ryxeo.com>
  * Copyright (C) 2013		Juanjo Menent			<jmenent@2byte.es>
- * Copyright (C) 2019		Thibault FOUCART		<support@ptibogxiv.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -161,8 +160,13 @@ if (empty($id) & empty($ref))
     }
 
     $head[$h][0] = DOL_URL_ROOT.'/product/popuprop.php'.($type != '' ? '?type='.$type : '');
-    $head[$h][1] = $title;
+    $head[$h][1] = $langs->trans("PopuProp");
     $head[$h][2] = 'popularityprop';
+    $h++;
+	
+	    $head[$h][0] = DOL_URL_ROOT.'/product/popucom.php'.($type != '' ? '?type='.$type : '');
+    $head[$h][1] = $langs->trans("PopuCom");
+    $head[$h][2] = 'popularitycommande';
     $h++;
 
     dol_fiche_head($head, 'chart', $langs->trans("Statistics"), -1);
@@ -352,7 +356,6 @@ if ($result || empty($id))
 					$url = DOL_URL_ROOT.'/viewimage.php?modulepart='.$graphfiles[$key]['modulepart'].'&entity='.$object->entity.'&file='.urlencode($graphfiles[$key]['file']);
 					$px->draw($dir."/".$graphfiles[$key]['file'], $url);
 
-					$graphfiles[$key]['total'] = $px->total();
 					$graphfiles[$key]['output'] = $px->show();
 				}
 				else
@@ -407,7 +410,7 @@ if ($result || empty($id))
 			// Label
 			print '<tr class="liste_titre"><td>';
 			print $graphfiles[$key]['label'];
-			print ' ('.$graphfiles[$key]['total'].')</td>';
+			print '</td>';
 			print '<td align="right">'.$linktoregenerate.'</td>';
 			print '</tr>';
 			// Image
