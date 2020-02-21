@@ -144,7 +144,7 @@ class Website extends CommonObject
 	 */
 	public function create(User $user, $notrigger = false)
 	{
-		global $conf;
+		global $conf, $langs;
 
 		dol_syslog(__METHOD__, LOG_DEBUG);
 
@@ -183,6 +183,10 @@ class Website extends CommonObject
         // Check parameters
         if (empty($this->entity)) {
             $this->entity = $conf->entity;
+        }
+        if (empty($this->lang)) {
+        	$this->error = $langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("MainLanguage"));
+        	return -1;
         }
 
 		// Insert request
@@ -444,7 +448,7 @@ class Website extends CommonObject
 	 */
 	public function update(User $user, $notrigger = false)
 	{
-		global $conf;
+		global $conf, $langs;
 
 		$error = 0;
 
@@ -473,6 +477,10 @@ class Website extends CommonObject
 				$tmparray[$key] = preg_replace('/[_-].*$/', '', trim($val)); // en_US or en-US -> en
 			}
 			$this->otherlang = join(',', $tmparray);
+		}
+		if (empty($this->lang)) {
+			$this->error = $langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("MainLanguage"));
+			return -1;
 		}
 
 		// Check parameters

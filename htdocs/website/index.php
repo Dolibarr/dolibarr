@@ -2692,14 +2692,14 @@ if ($action == 'editcss')
 	print '<table class="border centpercent">';
 
 	// Website
-	print '<tr><td class="titlefieldcreate">';
+	print '<tr><td class="titlefieldcreate fieldrequired">';
 	print $langs->trans('WebSite');
 	print '</td><td>';
 	print $websitekey;
 	print '</td></tr>';
 
 	// Main language
-	print '<tr><td class="tdtop">';
+	print '<tr><td class="tdtop fieldrequired">';
 	$htmltext='';
 	print $form->textwithpicto($langs->trans('MainLanguage'), $htmltext, 1, 'help', '', 0, 2, 'WEBSITE_LANG');
 	print '</td><td>';
@@ -2853,16 +2853,17 @@ if ($action == 'createsite')
 	print '<input type="text" class="flat maxwidth300" name="WEBSITE_REF" value="'.dol_escape_htmltag($siteref).'" autofocus>';
 	print '</td></tr>';
 
+	print '<tr><td class="fieldrequired">';
+	print $langs->trans('MainLanguage');
+	print '</td><td>';
+	$shortlangcode = preg_replace('/[_-].*$/', '', trim($langs->defaultlang));
+	print $formadmin->select_language((GETPOSTISSET('WEBSITE_LANG') ? GETPOST('WEBSITE_LANG', 'aZ09comma') : $shortlangcode), 'WEBSITE_LANG', 0, null, 1, 0, 0, 'minwidth300', 2, 0, 0, array(), 1);
+	print '</td></tr>';
+
 	print '<tr><td>';
 	print $langs->trans('Description');
 	print '</td><td>';
 	print '<input type="text" class="flat minwidth500" name="WEBSITE_DESCRIPTION" value="'.dol_escape_htmltag($sitedesc).'">';
-	print '</td></tr>';
-
-	print '<tr><td>';
-	print $langs->trans('MainLanguage');
-	print '</td><td>';
-	print $formadmin->select_language((GETPOSTISSET('WEBSITE_LANG') ? GETPOST('WEBSITE_LANG', 'aZ09comma') : '0'), 'WEBSITE_LANG', 0, null, 1, 0, 0, 'minwidth300', 2, 0, 0, array(), 1);
 	print '</td></tr>';
 
 	print '<tr><td>';
