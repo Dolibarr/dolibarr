@@ -660,8 +660,8 @@ class Products extends DolibarrApi
      * @param  	int		    $fk_barcode_type     	        Barcode type
      * @return int
      *
-     * @throws RestException
-     * @throws 401
+     * @throws RestException 500
+     * @throws RestException 401
      *
      * @url POST {id}/purchase_prices
      */
