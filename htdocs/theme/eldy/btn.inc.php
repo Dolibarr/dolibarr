@@ -2,29 +2,28 @@
 if (!defined('ISLOADEDBYSTEELSHEET')) die('Must be call by steelsheet'); ?>
 /* <style type="text/css" > */
 
-
-    :root {
+:root {
             --btncolortext:rgb(<?php print $colortextlink; ?>);
             --btncolorbg: #fbfbfb;
             --btncolorborderhover: none;
             --btncolorborder: #FFF;
             --butactionbg:rgb(225, 231, 225);
             --butactiondeletebg: rgb(234,228,225);
+}
 
-        }
 <?php
-if (!empty($conf->global->DMAIN_THEME_DARKMODEENABLED)) {
+if (!empty($conf->global->MAIN_THEME_DARKMODEENABLED)) {
 	print "
     @media (prefers-color-scheme: dark) {
       :root {
-        
+
             --btncolortext: ;
             --btncolorbg: rgb(26,27,27);
             --btncolorborderhover: #ffffff;
             --btncolorborder: #2b2c2e;
             --butactionbg:rgb(173,140,79);
             --butactiondeletebg: rgb(252,84,91);
- 
+
       }
     }";
 }
@@ -252,7 +251,7 @@ TITLE BUTTON
 }
 
 .btnTitle:hover .btnTitle-label{
-     color: var(--btncolorborderhover); 
+     color: var(--btncolorborderhover);
 }
 
 .btnTitle.refused .btnTitle-label, .btnTitle.refused:hover .btnTitle-label{
