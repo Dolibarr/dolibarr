@@ -163,7 +163,7 @@ if (empty($id) & empty($ref))
     $head[$h][1] = $langs->trans("PopuProp");
     $head[$h][2] = 'popularityprop';
     $h++;
-	
+
 	    $head[$h][0] = DOL_URL_ROOT.'/product/popucom.php'.($type != '' ? '?type='.$type : '');
     $head[$h][1] = $langs->trans("PopuCom");
     $head[$h][2] = 'popularitycommande';
