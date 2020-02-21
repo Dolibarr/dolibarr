@@ -86,6 +86,7 @@ class box_task extends ModeleBoxes
 		$form = new Form($this->db);
         $cookie_name = 'boxfilter_task';
         $boxcontent = '';
+        $socid = $user->socid;
 
         $textHead = $langs->trans("CurentlyOpenedTasks");
 
@@ -96,7 +97,6 @@ class box_task extends ModeleBoxes
         elseif (!empty($_COOKIE[$cookie_name])) {
             $filterValue = $_COOKIE[$cookie_name];
         }
-
 
         if ($filterValue == 'im_task_contact') {
             $textHead .= ' : '.$langs->trans("WhichIamLinkedTo");
@@ -118,16 +118,16 @@ class box_task extends ModeleBoxes
 
 		// list the summary of the orders
 		if ($user->rights->projet->lire) {
-            $boxcontent.= '<div id="ancor-idfilter'.$this->boxcode.'" style="display: block; position: absolute; margin-top: -100px"></div>'."\n";
-            $boxcontent.= '<div id="idfilter'.$this->boxcode.'" class="center" >'."\n";
-            $boxcontent.= '<form class="flat " method="POST" action="'.$_SERVER["PHP_SELF"].'#ancor-idfilter'.$this->boxcode.'">'."\n";
-            $boxcontent.= '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">'."\n";
+            $boxcontent .= '<div id="ancor-idfilter'.$this->boxcode.'" style="display: block; position: absolute; margin-top: -100px"></div>'."\n";
+            $boxcontent .= '<div id="idfilter'.$this->boxcode.'" class="center" >'."\n";
+            $boxcontent .= '<form class="flat " method="POST" action="'.$_SERVER["PHP_SELF"].'#ancor-idfilter'.$this->boxcode.'">'."\n";
+            $boxcontent .= '<input type="hidden" name="token" value="'.newToken().'">'."\n";
             $selectArray = array('all' => $langs->trans("NoFilter"), 'im_task_contact' => $langs->trans("WhichIamLinkedTo"), 'im_project_contact' => $langs->trans("WhichIamLinkedToProject"));
-            $boxcontent.= $form->selectArray($cookie_name, $selectArray, $filterValue);
-            $boxcontent.= '<button type="submit" class="button">'.$langs->trans("Refresh").'</button>';
-            $boxcontent.= '</form>'."\n";
-            $boxcontent.= '</div>'."\n";
-            $boxcontent.= '<script type="text/javascript" language="javascript">
+            $boxcontent .= $form->selectArray($cookie_name, $selectArray, $filterValue);
+            $boxcontent .= '<button type="submit" class="button">'.$langs->trans("Refresh").'</button>';
+            $boxcontent .= '</form>'."\n";
+            $boxcontent .= '</div>'."\n";
+            $boxcontent .= '<script type="text/javascript" language="javascript">
 					jQuery(document).ready(function() {
 						jQuery("#idsubimg'.$this->boxcode.'").click(function() {
 							jQuery(".showiffilter'.$this->boxcode.'").toggle();
@@ -142,6 +142,10 @@ class box_task extends ModeleBoxes
                 'textnoformat' => $boxcontent,
             );
 
+
+            // Get list of project id allowed to user (in a string list separated by coma)
+            $projectsListId = '';
+            if (!$user->rights->projet->all->lire) $projectsListId = $projectstatic->getProjectsAuthorizedForUser($user, 0, 1, $socid);
 
             $sql = "SELECT pt.rowid, pt.ref, pt.fk_projet, pt.fk_task_parent, pt.datec, pt.dateo, pt.datee, pt.datev, pt.label, pt.description, pt.duration_effective, pt.planned_workload, pt.progress";
 			$sql .= ", p.rowid project_id, p.ref project_ref, p.title project_title";
@@ -163,7 +167,7 @@ class box_task extends ModeleBoxes
 			$sql .= " AND p.fk_statut = ".Project::STATUS_VALIDATED;
 			$sql .= " AND (pt.progress < 100 OR pt.progress IS NULL ) "; // 100% is done and not displayed
             $sql .= " AND p.usage_task = 1 ";
-
+            if (!$user->rights->projet->all->lire) $sql .= " AND p.rowid IN (".$projectsListId.")"; // public and assigned to, or restricted to company for external users
 
 			$sql .= " ORDER BY pt.datee ASC, pt.dateo ASC";
 			$sql .= $this->db->plimit($max, 0);

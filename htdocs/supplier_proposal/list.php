@@ -399,7 +399,7 @@ if ($resql)
 	// Fields title search
 	print '<form method="POST" id="searchFormList" action="'.$_SERVER["PHP_SELF"].'">';
 	if ($optioncss != '') print '<input type="hidden" name="optioncss" value="'.$optioncss.'">';
-	print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+	print '<input type="hidden" name="token" value="'.newToken().'">';
 	print '<input type="hidden" name="formfilteraction" id="formfilteraction" value="list">';
 	print '<input type="hidden" name="action" value="list">';
 	print '<input type="hidden" name="sortfield" value="'.$sortfield.'">';
@@ -628,6 +628,8 @@ if ($resql)
 
 		$objectstatic->id = $obj->rowid;
 		$objectstatic->ref = $obj->ref;
+		$objectstatic->note_public = $obj->note_public;
+		$objectstatic->note_private = $obj->note_private;
 
 		print '<tr class="oddeven">';
 
@@ -638,18 +640,11 @@ if ($resql)
 			print '<table class="nobordernopadding"><tr class="nocellnopadd">';
 			// Picto + Ref
 			print '<td class="nobordernopadding nowrap">';
-			print $objectstatic->getNomUrl(1);
+			print $objectstatic->getNomUrl(1, '', '', 0, -1, 1);
 			print '</td>';
 			// Warning
 			$warnornote = '';
 			//if ($obj->fk_statut == 1 && $db->jdate($obj->date_valid) < ($now - $conf->supplier_proposal->warning_delay)) $warnornote .= img_warning($langs->trans("Late"));
-			if (!empty($obj->note_private))
-			{
-				$warnornote .= ($warnornote ? ' ' : '');
-				$warnornote .= '<span class="note">';
-				$warnornote .= '<a href="note.php?id='.$obj->rowid.'">'.img_picto($langs->trans("ViewPrivateNote"), 'object_generic').'</a>';
-				$warnornote .= '</span>';
-			}
 			if ($warnornote)
 			{
 				print '<td style="min-width: 20px" class="nobordernopadding nowrap">';

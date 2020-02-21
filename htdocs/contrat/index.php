@@ -84,7 +84,7 @@ if (!empty($conf->global->MAIN_SEARCH_FORM_ON_HOME_AREAS))     // This is useles
     if (!empty($conf->contrat->enabled))
     {
     	print '<form method="post" action="'.DOL_URL_ROOT.'/contrat/list.php">';
-    	print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+    	print '<input type="hidden" name="token" value="'.newToken().'">';
 
 		print '<div class="div-table-responsive-no-min">';
     	print '<table class="noborder nohover centpercent">';
@@ -260,7 +260,7 @@ if (!empty($conf->contrat->enabled) && $user->rights->contrat->lire)
 		print '<div class="div-table-responsive-no-min">';
 		print '<table class="noborder centpercent">';
 		print '<tr class="liste_titre">';
-		print '<th colspan="3">'.$langs->trans("DraftContracts").($num ? ' <span class="badge">'.$num.'</span>' : '').'</th></tr>';
+		print '<th colspan="3">'.$langs->trans("DraftContracts").($num ? '<span class="badge marginleftonlyshort">'.$num.'</span>' : '').'</th></tr>';
 		if ($num)
 		{
 			$companystatic = new Societe($db);

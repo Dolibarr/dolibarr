@@ -360,12 +360,13 @@ class Livraison extends CommonObject
 	}
 
 	/**
-	 *        Validate object and update stock if option enabled
+	 *  Validate object and update stock if option enabled
 	 *
-     *        @param 	User	$user        Object user that validate
-     *        @return   int
+     *  @param  User    $user       Object user that validate
+     *  @param  int     $notrigger  1=Does not execute triggers, 0= execute triggers
+     *  @return int
 	 */
-    public function valid($user)
+    public function valid($user, $notrigger = 0)
 	{
 		global $conf, $langs;
         require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
@@ -837,8 +838,8 @@ class Livraison extends CommonObject
 	/**
 	 *	Renvoi le libelle d'un statut donne
 	 *
-	 *  @param	int			$status     Id status
-	 *  @param  int			$mode       0=libelle long, 1=libelle court, 2=Picto + Libelle court, 3=Picto, 4=Picto + Libelle long, 5=Libelle court + Picto
+	 *  @param	int		$status     	Id status
+	 *  @param  int		$mode          	0=long label, 1=short label, 2=Picto + short label, 3=Picto, 4=Picto + long label, 5=Short label + Picto, 6=Long label + Picto
 	 *  @return string					Label
 	 */
     public function LibStatut($status, $mode)
@@ -846,36 +847,23 @@ class Livraison extends CommonObject
         // phpcs:enable
 		global $langs;
 
-		if ($mode==0)
+		if (empty($this->labelStatus) || empty($this->labelStatusShort))
 		{
-			if ($status==-1) return $langs->trans('StatusDeliveryCanceled');
-			elseif ($status==0)  return $langs->trans('StatusDeliveryDraft');
-			elseif ($status==1)  return $langs->trans('StatusDeliveryValidated');
+			global $langs;
+			//$langs->load("mymodule");
+			$this->labelStatus[-1] = $langs->trans('StatusDeliveryCanceled');
+			$this->labelStatus[0] = $langs->trans('StatusDeliveryDraft');
+			$this->labelStatus[1] = $langs->trans('StatusDeliveryValidated');
+			$this->labelStatusShort[-1] = $langs->trans('StatusDeliveryCanceled');
+			$this->labelStatusShort[0] = $langs->trans('StatusDeliveryDraft');
+			$this->labelStatusShort[1] = $langs->trans('StatusDeliveryValidated');
 		}
-		elseif ($mode==1)
-		{
-			if ($status==-1) return $langs->trans($this->statuts[$status]);
-			elseif ($status==0)  return $langs->trans($this->statuts[$status]);
-			elseif ($status==1)  return $langs->trans($this->statuts[$status]);
-		}
-		elseif ($mode == 3)
-		{
-			if ($status==-1) return img_picto($langs->trans('StatusDeliveryCanceled'), 'statut5');
-			if ($status==0)  return img_picto($langs->trans('StatusDeliveryDraft'), 'statut0');
-			if ($status==1)  return img_picto($langs->trans('StatusDeliveryValidated'), 'statut4');
-		}
-		elseif ($mode == 4)
-		{
-			if ($status==-1) return img_picto($langs->trans('StatusDeliveryCanceled'), 'statut5').' '.$langs->trans('StatusDeliveryCanceled');
-			elseif ($status==0)  return img_picto($langs->trans('StatusDeliveryDraft'), 'statut0').' '.$langs->trans('StatusDeliveryDraft');
-			elseif ($status==1)  return img_picto($langs->trans('StatusDeliveryValidated'), 'statut4').' '.$langs->trans('StatusDeliveryValidated');
-		}
-		elseif ($mode == 6)
-		{
-			if ($status==-1) return $langs->trans('StatusDeliveryCanceled').' '.img_picto($langs->trans('StatusDeliveryCanceled'), 'statut5');
-			elseif ($status==0)  return $langs->trans('StatusDeliveryDraft').' '.img_picto($langs->trans('StatusDeliveryDraft'), 'statut0');
-			elseif ($status==1)  return $langs->trans('StatusDeliveryValidated').' '.img_picto($langs->trans('StatusDeliveryValidated'), 'statut4');
-		}
+
+		$statusType = 'status0';
+		if ($status == -1) $statusType = 'status5';
+		if ($status == 1) $statusType = 'status4';
+
+		return dolGetStatus($this->labelStatus[$status], $this->labelStatusShort[$status], '', $statusType, $mode);
 	}
 
 

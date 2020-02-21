@@ -73,9 +73,9 @@ class Products extends DolibarrApi
      * @param  bool   $includesubproducts  Load information about subproducts
      * @return array|mixed                 Data without useless information
      *
-     * @throws 401
-     * @throws 403
-     * @throws 404
+     * @throws RestException 401
+     * @throws RestException 403
+     * @throws RestException 404
      */
     public function get($id, $includestockdata = 0, $includesubproducts = false)
     {
@@ -95,9 +95,9 @@ class Products extends DolibarrApi
      *
      * @url GET ref/{ref}
      *
-     * @throws 401
-     * @throws 403
-     * @throws 404
+     * @throws RestException 401
+     * @throws RestException 403
+     * @throws RestException 404
      */
     public function getByRef($ref, $includestockdata = 0, $includesubproducts = false)
     {
@@ -117,9 +117,9 @@ class Products extends DolibarrApi
      *
      * @url GET ref_ext/{ref_ext}
      *
-     * @throws 401
-     * @throws 403
-     * @throws 404
+     * @throws RestException 401
+     * @throws RestException 403
+     * @throws RestException 404
      */
     public function getByRefExt($ref_ext, $includestockdata = 0, $includesubproducts = false)
     {
@@ -139,9 +139,9 @@ class Products extends DolibarrApi
      *
      * @url GET barcode/{barcode}
      *
-     * @throws 401
-     * @throws 403
-     * @throws 404
+     * @throws RestException 401
+     * @throws RestException 403
+     * @throws RestException 404
      */
     public function getByBarcode($barcode, $includestockdata = 0, $includesubproducts = false)
     {
@@ -263,9 +263,8 @@ class Products extends DolibarrApi
      * @param  array $request_data Datas
      * @return int
      *
-     * @throws RestException
-     * @throws 401
-     * @throws 404
+     * @throws RestException 401
+     * @throws RestException 404
      */
     public function put($id, $request_data = null)
     {
@@ -385,8 +384,8 @@ class Products extends DolibarrApi
      * @return array
      *
      * @throws RestException
-     * @throws 401
-     * @throws 404
+     * @throws RestException 401
+     * @throws RestException 404
      *
      * @url GET {id}/subproducts
      */
@@ -423,8 +422,8 @@ class Products extends DolibarrApi
      * @return int
      *
      * @throws RestException
-     * @throws 401
-     * @throws 404
+     * @throws RestException 401
+     * @throws RestException 404
      *
      * @url POST {id}/subproducts/add
      */
@@ -454,9 +453,8 @@ class Products extends DolibarrApi
      * @param  int $subproduct_id  Id of child product/service
      * @return int
      *
-     * @throws RestException
-     * @throws 401
-     * @throws 404
+     * @throws RestException 401
+     * @throws RestException 404
      *
      * @url DELETE {id}/subproducts/remove
      */
@@ -709,8 +707,8 @@ class Products extends DolibarrApi
      *
      * @return int
      *
-     * @throws 401
-     * @throws 404
+     * @throws RestException 401
+     * @throws RestException 404
      *
      */
     public function deletePurchasePrice($id, $priceid)
@@ -836,9 +834,9 @@ class Products extends DolibarrApi
      *
      * @url GET {id}/purchase_prices
      *
-     * @throws 401
-     * @throws 403
-     * @throws 404
+     * @throws RestException 401
+     * @throws RestException 403
+     * @throws RestException 404
      *
      */
     public function getPurchasePrices($id, $ref = '', $ref_ext = '', $barcode = '')
@@ -896,8 +894,8 @@ class Products extends DolibarrApi
      * @return array
      *
      * @throws RestException
-     * @throws 401
-     * @throws 404
+     * @throws RestException 401
+     * @throws RestException 404
      *
      * @url GET attributes/{id}
      */
@@ -923,8 +921,8 @@ class Products extends DolibarrApi
      * @param  string $ref Reference of Attribute
      * @return array
      *
-     * @throws RestException
-     * @throws 401
+     * @throws RestException 500
+     * @throws RestException 401
      *
      * @url GET attributes/ref/{ref}
      */
@@ -960,8 +958,8 @@ class Products extends DolibarrApi
      * @param  string $label Label of Attribute
      * @return int
      *
-     * @throws RestException
-     * @throws 401
+     * @throws RestException 500
+     * @throws RestException 401
      *
      * @url POST attributes
      */
@@ -990,8 +988,8 @@ class Products extends DolibarrApi
      * @return array
      *
      * @throws RestException
-     * @throws 401
-     * @throws 404
+     * @throws RestException 401
+     * @throws RestException 404
      *
      * @url PUT attributes/{id}
      */
@@ -1035,8 +1033,8 @@ class Products extends DolibarrApi
      * @param  int $id 	ID of Attribute
      * @return int		Result of deletion
      *
-     * @throws RestException
-     * @throws 401
+     * @throws RestException 500
+     * @throws RestException 401
      *
      * @url DELETE attributes/{id}
      */
@@ -1063,8 +1061,8 @@ class Products extends DolibarrApi
      * @param  int $id ID of Attribute value
      * @return array
      *
-     * @throws RestException
-     * @throws 401
+     * @throws RestException 500
+     * @throws RestException 401
      *
      * @url GET attributes/values/{id}
      */
@@ -1104,8 +1102,8 @@ class Products extends DolibarrApi
      * @param  string $ref Ref of Attribute value
      * @return array
      *
-     * @throws RestException
-     * @throws 401
+     * @throws RestException 500
+     * @throws RestException 401
      *
      * @url GET attributes/{id}/values/ref/{ref}
      */
@@ -1145,8 +1143,7 @@ class Products extends DolibarrApi
      * @param  string $ref Ref of Attribute value
      * @return int
      *
-     * @throws RestException
-     * @throws 401
+     * @throws RestException 401
      *
      * @url DELETE attributes/{id}/values/ref/{ref}
      */
@@ -1171,8 +1168,8 @@ class Products extends DolibarrApi
      * @param  int $id ID of an Attribute
      * @return array
      *
-     * @throws RestException
-     * @throws 401
+     * @throws RestException 401
+     * @throws RestException 500
      *
      * @url GET attributes/{id}/values
      */
@@ -1192,8 +1189,7 @@ class Products extends DolibarrApi
      * @param  string $ref Ref of an Attribute
      * @return array
      *
-     * @throws RestException
-     * @throws 401
+     * @throws RestException 401
      *
      * @url GET attributes/ref/{ref}/values
      */
@@ -1232,8 +1228,8 @@ class Products extends DolibarrApi
      * @param  string $value Value of Attribute value
      * @return int
      *
-     * @throws RestException
-     * @throws 401
+     * @throws RestException 500
+     * @throws RestException 401
      *
      * @url POST attributes/{id}/values
      */
@@ -1265,8 +1261,8 @@ class Products extends DolibarrApi
      * @param  array $request_data Datas
      * @return array
      *
-     * @throws RestException
-     * @throws 401
+     * @throws RestException 401
+     * @throws RestException 500
      *
      * @url PUT attributes/values/{id}
      */
@@ -1310,8 +1306,8 @@ class Products extends DolibarrApi
      * @param  int $id ID of Attribute value
      * @return int
      *
-     * @throws RestException
-     * @throws 401
+     * @throws RestException 500
+     * @throws RestException 401
      *
      * @url DELETE attributes/values/{id}
      */
@@ -1336,8 +1332,8 @@ class Products extends DolibarrApi
      * @param  int $id ID of Product
      * @return array
      *
-     * @throws RestException
-     * @throws 401
+     * @throws RestException 500
+     * @throws RestException 401
      *
      * @url GET {id}/variants
      */
@@ -1364,8 +1360,8 @@ class Products extends DolibarrApi
      * @param  string $ref Ref of Product
      * @return array
      *
-     * @throws RestException
-     * @throws 401
+     * @throws RestException 500
+     * @throws RestException 401
      *
      * @url GET ref/{ref}/variants
      */
@@ -1404,9 +1400,9 @@ class Products extends DolibarrApi
      * @param  bool|string $reference Customized reference of variant
      * @return int
      *
-     * @throws RestException
-     * @throws 401
-     * @throws 404
+     * @throws RestException 500
+     * @throws RestException 401
+     * @throws RestException 404
      *
      * @url POST {id}/variants
      */
@@ -1462,9 +1458,9 @@ class Products extends DolibarrApi
      * @param  array  $features                 List of attributes pairs id_attribute->id_value. Example: array(id_color=>id_Blue, id_size=>id_small, id_option=>id_val_a, ...)
      * @return int
      *
-     * @throws RestException
-     * @throws 401
-     * @throws 404
+     * @throws RestException 500
+     * @throws RestException 401
+     * @throws RestException 404
      *
      * @url POST ref/{ref}/variants
      */
@@ -1519,8 +1515,8 @@ class Products extends DolibarrApi
      * @param  array $request_data Datas
      * @return int
      *
-     * @throws RestException
-     * @throws 401
+     * @throws RestException 500
+     * @throws RestException 401
      *
      * @url PUT variants/{id}
      */
@@ -1553,8 +1549,8 @@ class Products extends DolibarrApi
      * @param  int $id 	ID of Variant
      * @return int		Result of deletion
      *
-     * @throws RestException
-     * @throws 401
+     * @throws RestException 500
+     * @throws RestException 401
      *
      * @url DELETE variants/{id}
      */
@@ -1634,9 +1630,9 @@ class Products extends DolibarrApi
      * @param  bool   $includesubproducts Load information about subproducts
      * @return array|mixed                Data without useless information
      *
-     * @throws 401
-     * @throws 403
-     * @throws 404
+     * @throws RestException 401
+     * @throws RestException 403
+     * @throws RestException 404
      */
     private function _fetch($id, $ref = '', $ref_ext = '', $barcode = '', $includestockdata = 0, $includesubproducts = false)
     {
@@ -1660,10 +1656,18 @@ class Products extends DolibarrApi
         }
 
         if ($includestockdata) {
-               $this->product->load_stock();
+        	$this->product->load_stock();
+
+        	if (is_array($this->product->stock_warehouse)) {
+        		foreach($this->product->stock_warehouse as $keytmp => $valtmp) {
+        			if (is_array($this->product->stock_warehouse[$keytmp]->detail_batch)) {
+        				foreach($this->product->stock_warehouse[$keytmp]->detail_batch as $keytmp2 => $valtmp2) {
+        					unset($this->product->stock_warehouse[$keytmp]->detail_batch[$keytmp2]->db);
+        				}
+        			}
+        		}
+        	}
         }
-
-
 
         if ($includesubproducts) {
             $childsArbo = $this->product->getChildsArbo($id, 1);

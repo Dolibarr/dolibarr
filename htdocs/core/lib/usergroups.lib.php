@@ -255,6 +255,7 @@ function user_admin_prepare_head()
 
 	$langs->load("users");
 	$h = 0;
+    $head = array();
 
 	$head[$h][0] = DOL_URL_ROOT.'/admin/user.php';
 	$head[$h][1] = $langs->trans("Parameters");
@@ -447,7 +448,8 @@ function showSkins($fuser, $edit = 0, $foruserprofile = false)
 		print '<tr class="oddeven"><td class="titlefield">'.$langs->trans("EnableShowLogo").'</td><td>';
 		if ($edit)
 		{
-			print $form->selectyesno('MAIN_SHOW_LOGO', $conf->global->MAIN_SHOW_LOGO, 1);
+			print ajax_constantonoff('MAIN_SHOW_LOGO', array(), null, 0, 0, 1);
+			//print $form->selectyesno('MAIN_SHOW_LOGO', $conf->global->MAIN_SHOW_LOGO, 1);
 		}
 		else
 		{
@@ -493,7 +495,8 @@ function showSkins($fuser, $edit = 0, $foruserprofile = false)
 		print '<td colspan="'.($colspan - 1).'">';
 		if ($edit)
 		{
-			print $form->selectyesno('THEME_TOPMENU_DISABLE_IMAGE', $conf->global->THEME_TOPMENU_DISABLE_IMAGE, 1);
+			print ajax_constantonoff('THEME_TOPMENU_DISABLE_IMAGE', array(), null, 0, 0, 1);
+			//print $form->selectyesno('THEME_TOPMENU_DISABLE_IMAGE', $conf->global->THEME_TOPMENU_DISABLE_IMAGE, 1);
 		}
 		else
 		{

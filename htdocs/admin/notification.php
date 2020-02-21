@@ -53,6 +53,7 @@ if ($action == 'setvalue' && $user->admin)
     if (!$error && is_array($_POST))
     {
     	//var_dump($_POST);
+    	$reg = array();
 	    foreach ($_POST as $key => $val)
 	    {
 	    	if (!preg_match('/^NOTIF_(.*)_key$/', $key, $reg)) continue;
@@ -113,14 +114,16 @@ llxHeader('', $langs->trans("NotificationSetup"));
 $linkback = '<a href="'.DOL_URL_ROOT.'/admin/modules.php?restore_lastsearch_values=1">'.$langs->trans("BackToModuleList").'</a>';
 print load_fiche_titre($langs->trans("NotificationSetup"), $linkback, 'title_setup');
 
+print '<span class="opacitymedium">';
 print $langs->trans("NotificationsDesc").'<br>';
 print $langs->trans("NotificationsDescUser").'<br>';
 if (!empty($conf->societe->enabled)) print $langs->trans("NotificationsDescContact").'<br>';
 print $langs->trans("NotificationsDescGlobal").'<br>';
+print '</span>';
 print '<br>';
 
 print '<form method="post" action="'.$_SERVER["PHP_SELF"].'">';
-print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+print '<input type="hidden" name="token" value="'.newToken().'">';
 print '<input type="hidden" name="action" value="setvalue">';
 
 print '<table class="noborder centpercent">';

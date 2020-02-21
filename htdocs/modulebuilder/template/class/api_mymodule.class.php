@@ -63,6 +63,7 @@ class MyModuleApi extends DolibarrApi
      * @return 	array|mixed data without useless information
      *
      * @url	GET myobjects/{id}
+     *
      * @throws 	RestException
      */
     public function get($id)
@@ -186,6 +187,8 @@ class MyModuleApi extends DolibarrApi
      * @param array $request_data   Request datas
      * @return int  ID of myobject
      *
+     * @throws RestException
+     *
      * @url	POST myobjects/
      */
     public function post($request_data = null)
@@ -211,6 +214,8 @@ class MyModuleApi extends DolibarrApi
      * @param int   $id             Id of myobject to update
      * @param array $request_data   Datas
      * @return int
+     *
+     * @throws RestException
      *
      * @url	PUT myobjects/{id}
      */
@@ -249,6 +254,8 @@ class MyModuleApi extends DolibarrApi
      *
      * @param   int     $id   MyObject ID
      * @return  array
+     *
+     * @throws RestException
      *
      * @url	DELETE myobjects/{id}
      */

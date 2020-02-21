@@ -271,7 +271,7 @@ if ($action == 'create')
     print dol_set_focus('#nom');
 
     print '<form action="'.$_SERVER["PHP_SELF"].'" method="post">';
-    print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+    print '<input type="hidden" name="token" value="'.newToken().'">';
     print '<input type="hidden" name="action" value="add">';
 
     dol_fiche_head('', '', '', 0, '');
@@ -386,7 +386,9 @@ else
 
 			// Note
 			print '<tr><td class="titlefield tdtop">'.$langs->trans("Description").'</td>';
-			print '<td class="valeur">'.dol_htmlentitiesbr($object->note).'&nbsp;</td>';
+			print '<td class="valeur sensiblehtmlcontent"">';
+			print dol_string_onlythesehtmltags(dol_htmlentitiesbr($object->note));
+			print '</td>';
 			print "</tr>\n";
 
 			// Other attributes
@@ -441,7 +443,7 @@ else
 				if ($caneditperms)
 				{
 					print '<form action="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'" method="POST">'."\n";
-					print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+					print '<input type="hidden" name="token" value="'.newToken().'">';
 					print '<input type="hidden" name="action" value="adduser">';
 					print '<table class="noborder centpercent">'."\n";
 					print '<tr class="liste_titre"><td class="titlefield liste_titre">'.$langs->trans("NonAffectedUsers").'</td>'."\n";
@@ -539,7 +541,7 @@ else
         if ($action == 'edit' && $caneditperms)
         {
             print '<form action="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'" method="post" name="updategroup" enctype="multipart/form-data">';
-            print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+            print '<input type="hidden" name="token" value="'.newToken().'">';
             print '<input type="hidden" name="action" value="update">';
 
             dol_fiche_head($head, 'group', $title, 0, 'group');

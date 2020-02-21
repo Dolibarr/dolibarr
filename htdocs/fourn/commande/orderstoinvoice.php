@@ -323,7 +323,7 @@ if ($action == 'create' && !$error) {
     }
 
 	print '<form name="add" action="'.$_SERVER["PHP_SELF"].'" method="POST">';
-	print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+	print '<input type="hidden" name="token" value="'.newToken().'">';
 	print '<input type="hidden" name="action" value="add">';
 	print '<input type="hidden" name="socid" value="'.$soc->id.'">'."\n";
 	print '<input name="ref" type="hidden" value="provisoire">';
@@ -511,7 +511,7 @@ if (($action != 'create' && $action != 'add') && !$error) {
 		$periodely = $html->selectDate($date_starty, 'date_start_dely', 0, 0, 1, '', 1, 0).' - '.$html->selectDate($date_endy, 'date_end_dely', 0, 0, 1, '', 1, 0);
 
 		print '<form name="orders2invoice" method="GET" action="orderstoinvoice.php">';
-		print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+		print '<input type="hidden" name="token" value="'.newToken().'">';
 		print '<input type="hidden" name="socid" value="'.$socid.'">';
 
 

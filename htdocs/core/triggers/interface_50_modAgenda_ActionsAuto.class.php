@@ -954,8 +954,7 @@ class InterfaceActionsAuto extends DolibarrTriggers
 		}
 		else
 		{
-            $error ="Failed to insert event : ".$actioncomm->error." ".join(',', $actioncomm->errors);
-            $this->error=$error;
+            $this->error="Failed to insert event : ".$actioncomm->error." ".join(',', $actioncomm->errors);
             $this->errors=$actioncomm->errors;
 
             dol_syslog("interface_modAgenda_ActionsAuto.class.php: ".$this->error, LOG_ERR);

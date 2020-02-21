@@ -663,7 +663,7 @@ if (! $error && $action == 'writebookkeeping') {
 						} elseif ($tabtype[$key] == 'payment_various') {
 							$bookkeeping->subledger_account = $k;
                             $bookkeeping->subledger_label = $tabcompany[$key]['name'];
-							$bookkeeping->numero_compte = $tabpay[$obj->rowid]["account_various"];
+							$bookkeeping->numero_compte = $tabpay[$key]["account_various"];
 
 							$accountingaccount->fetch(null, $bookkeeping->numero_compte, true);
 							$bookkeeping->label_compte = $accountingaccount->label;
@@ -968,8 +968,8 @@ if (empty($action) || $action == 'view') {
 	journalHead($nom, '', $period, $periodlink, $description, $builddate, $exportlink, array('action' => ''), '', $varlink);
 
 
-	// Test that setup is complete
-	$sql = 'SELECT COUNT(rowid) as nb FROM '.MAIN_DB_PREFIX.'bank_account WHERE fk_accountancy_journal IS NULL AND clos=0';
+	// Test that setup is complete (we are in accounting, so test on entity is always on $conf->entity only, no sharing allowed)
+	$sql = 'SELECT COUNT(rowid) as nb FROM '.MAIN_DB_PREFIX.'bank_account WHERE entity = '.$conf->entity.' AND fk_accountancy_journal IS NULL AND clos=0';
 	$resql = $db->query($sql);
 	if ($resql)
 	{
@@ -1155,9 +1155,9 @@ if (empty($action) || $action == 'view') {
 					}
 					else print $accounttoshow;
 					print "</td>";
+
 					// Subledger account
 					print "<td>";
-
 					if (in_array($tabtype[$key], array('payment', 'payment_supplier', 'payment_expensereport', 'payment_salary', 'payment_various')))	// Type of payment with subledger
 					{
 						$accounttoshowsubledger = length_accounta($k);
@@ -1171,7 +1171,12 @@ if (empty($action) || $action == 'view') {
 								//print '<span class="error">'.$langs->trans("ThirdpartyAccountNotDefined").'</span>';
 								if (! empty($tabcompany[$key]['code_compta']))
 								{
-									print '<span class="warning">'.$langs->trans("ThirdpartyAccountNotDefinedOrThirdPartyUnknown", $tabcompany[$key]['code_compta']).'</span>';
+									if (in_array($tabtype[$key], array('payment_various'))) {
+										// For such case, if subledger is not defined, we won't use subledger accounts.
+										print '<span class="warning">'.$langs->trans("ThirdpartyAccountNotDefinedOrThirdPartyUnknownSubledgerIgnored").'</span>';
+									} else {
+										print '<span class="warning">'.$langs->trans("ThirdpartyAccountNotDefinedOrThirdPartyUnknown", $tabcompany[$key]['code_compta']).'</span>';
+									}
 								}
 								else
 								{

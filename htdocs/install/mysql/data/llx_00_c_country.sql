@@ -276,3 +276,6 @@ INSERT INTO llx_c_country (rowid,code,code_iso,label,active,favorite) VALUES (24
 INSERT INTO llx_c_country (rowid,code,code_iso,label,active,favorite) VALUES (246,'MF','MAF','Saint-Martin',1,0);
 INSERT INTO llx_c_country (rowid,code,code_iso,label,active,favorite) VALUES (247,'XK','XKX','Kosovo',1,0);
 
+
+-- Set field eec
+UPDATE llx_c_country SET eec = 1 WHERE code IN ('AT','BE','BG','CY','CZ','DE','DK','EE','ES','FI','FR','GB','GR','HR','NL','HU','IE','IM','IT','LT','LU','LV','MC','MT','PL','PT','RO','SE','SK','SI','UK');

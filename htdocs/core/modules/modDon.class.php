@@ -91,10 +91,10 @@ class modDon extends DolibarrModules
 		$this->const[$r][4] = 0;
 
 		$r++;
-		$this->const[$r][0] = "DONATION_ART885";
+		$this->const[$r][0] = "DONATION_ART978";
 		$this->const[$r][1] = "yesno";
 		$this->const[$r][2] = "0";
-		$this->const[$r][3] = 'Option Française - Eligibilité Art885-0 V bis du CGI';
+		$this->const[$r][3] = 'Option Française - Eligibilité Art978 du CGI';
 		$this->const[$r][4] = 0;
 
 		$r++;

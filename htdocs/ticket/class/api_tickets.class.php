@@ -68,9 +68,9 @@ class Tickets extends DolibarrApi
      * @param	int 			$id 		ID of ticket
      * @return 	array|mixed 				Data without useless information
      *
-     * @throws 	401
-     * @throws 	403
-     * @throws 	404
+     * @throws RestException 401
+     * @throws RestException 403
+     * @throws RestException 404
      */
     public function get($id)
     {
@@ -87,9 +87,9 @@ class Tickets extends DolibarrApi
      *
      * @url GET track_id/{track_id}
      *
-     * @throws 	401
-     * @throws 	403
-     * @throws 	404
+     * @throws RestException 	401
+     * @throws RestException 	403
+     * @throws RestException 	404
      */
     public function getByTrackId($track_id)
     {
@@ -106,9 +106,9 @@ class Tickets extends DolibarrApi
      *
      * @url GET ref/{ref}
      *
-     * @throws 	401
-     * @throws 	403
-     * @throws 	404
+     * @throws RestException 401
+     * @throws RestException 403
+     * @throws RestException 404
      */
     public function getByRef($ref)
     {
@@ -291,6 +291,7 @@ class Tickets extends DolibarrApi
         $result = $db->query($sql);
         if ($result) {
             $num = $db->num_rows($result);
+            $i = 0;
             while ($i < $num) {
                 $obj = $db->fetch_object($result);
                 $ticket_static = new Ticket($db);

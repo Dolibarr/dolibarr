@@ -135,11 +135,11 @@ if ($conf->global->TAKEPOS_CUSTOM_RECEIPT && $conf->global->TAKEPOS_SHOW_CUSTOME
     <tr>
         <td>
 		<?php if (!empty($line->product_label)) echo $line->product_label;
-        else echo $line->description;?>
+        else echo $line->description; ?>
         </td>
-        <td class="right"><?php echo $line->qty;?></td>
-        <td class="right"><?php echo $line->total_ttc/$line->qty;?></td>
-        <td class="right"><?php echo price($line->total_ttc);?></td>
+        <td class="right"><?php echo $line->qty; ?></td>
+        <td class="right"><?php echo price(price2num($line->total_ttc / $line->qty, 'MT'), 1); ?></td>
+        <td class="right"><?php echo price($line->total_ttc, 1); ?></td>
     </tr>
         <?php
     }
@@ -149,33 +149,33 @@ if ($conf->global->TAKEPOS_CUSTOM_RECEIPT && $conf->global->TAKEPOS_SHOW_CUSTOME
 <br>
 <table class="right">
 <tr>
-    <th class="right"><?php echo $langs->trans("TotalHT");?></th>
-    <td class="right"><?php echo price($object->total_ht, 1, '', 1, - 1, - 1, $conf->currency)."\n";?></td>
+    <th class="right"><?php echo $langs->trans("TotalHT"); ?></th>
+    <td class="right"><?php echo price($object->total_ht, 1, '', 1, - 1, - 1, $conf->currency)."\n"; ?></td>
 </tr>
-<?php if($conf->global->TAKEPOS_TICKET_VAT_GROUPPED) {
+<?php if ($conf->global->TAKEPOS_TICKET_VAT_GROUPPED) {
 	$vat_groups = array();
 	foreach ($object->lines as $line)
 	{
-		if(!array_key_exists($line->tva_tx, $vat_groups)) {
+		if (!array_key_exists($line->tva_tx, $vat_groups)) {
 			$vat_groups[$line->tva_tx] = 0;
 		}
 		$vat_groups[$line->tva_tx] += $line->total_tva;
 	}
-	foreach($vat_groups as $key => $val) {
+	foreach ($vat_groups as $key => $val) {
 	    ?>
 	<tr>
-		<th align="right"><?php echo $langs->trans("VAT").' '.vatrate($key, 1);?></th>
-		<td align="right"><?php echo price($val, 1, '', 1, - 1, - 1, $conf->currency)."\n";?></td>
+		<th align="right"><?php echo $langs->trans("VAT").' '.vatrate($key, 1); ?></th>
+		<td align="right"><?php echo price($val, 1, '', 1, - 1, - 1, $conf->currency)."\n"; ?></td>
 	</tr>
         <?php
 	}
 } else { ?>
 <tr>
-	<th class="right"><?php echo $langs->trans("TotalVAT").'</th><td class="right">'.price($object->total_tva, 1, '', 1, - 1, - 1, $conf->currency)."\n";?></td>
+	<th class="right"><?php echo $langs->trans("TotalVAT").'</th><td class="right">'.price($object->total_tva, 1, '', 1, - 1, - 1, $conf->currency)."\n"; ?></td>
 </tr>
 <?php } ?>
 <tr>
-	<th class="right"><?php echo ''.$langs->trans("TotalTTC").'</th><td class="right">'.price($object->total_ttc, 1, '', 1, - 1, - 1, $conf->currency)."\n";?></td>
+	<th class="right"><?php echo ''.$langs->trans("TotalTTC").'</th><td class="right">'.price($object->total_ttc, 1, '', 1, - 1, - 1, $conf->currency)."\n"; ?></td>
 </tr>
 </table>
 <div style="border-top-style: double;">

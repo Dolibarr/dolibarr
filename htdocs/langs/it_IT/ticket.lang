@@ -33,7 +33,10 @@ TicketDictSeverity=Ticket - Severities
 TicketTypeShortBUGSOFT=Dysfonctionnement logiciel
 TicketTypeShortBUGHARD=Dysfonctionnement matériel
 TicketTypeShortCOM=Commercial question
-TicketTypeShortINCIDENT=Richiesta di assistenza
+
+TicketTypeShortHELP=Request for functionnal help
+TicketTypeShortISSUE=Issue, bug or problem
+TicketTypeShortREQUEST=Change or enhancement request
 TicketTypeShortPROJET=Progetto
 TicketTypeShortOTHER=Altro
 
@@ -137,6 +140,10 @@ NoUnreadTicketsFound=No unread ticket found
 TicketViewAllTickets=View all tickets
 TicketViewNonClosedOnly=View only open tickets
 TicketStatByStatus=Tickets by status
+OrderByDateAsc=Ordina per data crescente
+OrderByDateDesc=Ordina per data decrescente
+ShowAsConversation=Mostra come elenco di conversazioni
+MessageListViewType=Mostra come elenco di tabelle
 
 #
 # Ticket card
@@ -222,6 +229,9 @@ TicketConfirmChangeStatus=Confirm the status change: %s ?
 TicketLogStatusChanged=Status changed: %s to %s
 TicketNotNotifyTiersAtCreate=Not notify company at create
 Unread=Unread
+TicketNotCreatedFromPublicInterface=Non disponibile. Il ticket non è stato creato dall'interfaccia pubblica.
+PublicInterfaceNotEnabled=L'interfaccia pubblica non è stata abilitata
+ErrorTicketRefRequired=È richiesto il nome di riferimento del biglietto
 
 #
 # Logs

@@ -269,6 +269,7 @@ if ($search_all || $search_product_category > 0) $sql = 'SELECT DISTINCT';
 $sql .= " f.rowid as facid, f.ref, f.ref_supplier, f.type, f.datef, f.date_lim_reglement as datelimite, f.fk_mode_reglement,";
 $sql .= " f.total_ht, f.total_ttc, f.total_tva as total_vat, f.paye as paye, f.fk_statut as fk_statut, f.libelle as label, f.datec as date_creation, f.tms as date_update,";
 $sql .= " f.localtax1 as total_localtax1, f.localtax2 as total_localtax2,";
+$sql .= " f.note_public, f.note_private,";
 $sql .= " s.rowid as socid, s.nom as name, s.email, s.town, s.zip, s.fk_pays, s.client, s.fournisseur, s.code_client, s.code_fournisseur, s.code_compta as code_compta_client, s.code_compta_fournisseur,";
 $sql .= " typent.code as typent_code,";
 $sql .= " state.code_departement as state_code, state.nom as state_name,";
@@ -371,6 +372,7 @@ if (!$search_all)
 	$sql .= " GROUP BY f.rowid, f.ref, f.ref_supplier, f.type, f.datef, f.date_lim_reglement, f.fk_mode_reglement,";
 	$sql .= " f.total_ht, f.total_ttc, f.total_tva, f.paye, f.fk_statut, f.libelle, f.datec, f.tms,";
 	$sql .= " f.localtax1, f.localtax2,";
+	$sql .= " f.note_public, f.note_private,";
 	$sql .= ' s.rowid, s.nom, s.email, s.town, s.zip, s.fk_pays, s.client, s.fournisseur, s.code_client, s.code_fournisseur, s.code_compta, s.code_compta_fournisseur,';
 	$sql .= " typent.code,";
 	$sql .= " state.code_departement, state.nom,";
@@ -431,8 +433,8 @@ if ($resql)
 	}
 
 	$param = '&socid='.$socid;
-	if (!empty($contextpage) && $contextpage != $_SERVER["PHP_SELF"]) $param .= '&contextpage='.$contextpage;
-	if ($limit > 0 && $limit != $conf->liste_limit) $param .= '&limit='.$limit;
+	if (!empty($contextpage) && $contextpage != $_SERVER["PHP_SELF"]) $param .= '&contextpage='.urlencode($contextpage);
+	if ($limit > 0 && $limit != $conf->liste_limit) $param .= '&limit='.urlencode($limit);
 	if ($search_all)			$param .= '&search_all='.urlencode($search_all);
 	if ($day) 					$param .= '&day='.urlencode($day);
 	if ($month) 				$param .= '&month='.urlencode($month);
@@ -453,9 +455,9 @@ if ($resql)
 	if ($search_amount_no_tax)	$param .= '&search_amount_no_tax='.urlencode($search_amount_no_tax);
 	if ($search_amount_all_tax)	$param .= '&search_amount_all_tax='.urlencode($search_amount_all_tax);
 	if ($search_status >= 0)  	$param .= "&search_status=".urlencode($search_status);
-	if ($show_files)            $param .= '&show_files='.$show_files;
-	if ($option)                $param .= "&option=".$option;
-	if ($optioncss != '')       $param .= '&optioncss='.$optioncss;
+	if ($show_files)            $param .= '&show_files='.urlencode($show_files);
+	if ($option)                $param .= "&option=".urlencode($option);
+	if ($optioncss != '')       $param .= '&optioncss='.urlencode($optioncss);
 	// Add $param from extra fields
 	include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_param.tpl.php';
 
@@ -480,7 +482,7 @@ if ($resql)
 	$i = 0;
 	print '<form method="POST" name="searchFormList" action="'.$_SERVER["PHP_SELF"].'">'."\n";
 	if ($optioncss != '') print '<input type="hidden" name="optioncss" value="'.$optioncss.'">';
-	print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+	print '<input type="hidden" name="token" value="'.newToken().'">';
 	print '<input type="hidden" name="formfilteraction" id="formfilteraction" value="list">';
 	print '<input type="hidden" name="action" value="list">';
 	print '<input type="hidden" name="sortfield" value="'.$sortfield.'">';
@@ -827,7 +829,8 @@ if ($resql)
 			$facturestatic->ref_supplier = $obj->ref_supplier;
 			$facturestatic->date_echeance = $db->jdate($obj->datelimite);
 			$facturestatic->statut = $obj->fk_statut;
-
+			$facturestatic->note_public = $obj->note_public;
+			$facturestatic->note_private = $obj->note_private;
 
 			$thirdparty->id = $obj->socid;
 			$thirdparty->name = $obj->name;
@@ -861,13 +864,8 @@ if ($resql)
 				print '<table class="nobordernopadding"><tr class="nocellnopadd">';
 				// Picto + Ref
 				print '<td class="nobordernopadding nowrap">';
-				print $facturestatic->getNomUrl(1);
-				print '</td>';
-				// Warning
-				//print '<td style="min-width: 20px" class="nobordernopadding nowrap">';
-				//print '</td>';
-				// Other picto tool
-				print '<td width="16" class="right nobordernopadding hideonsmartphone">';
+				print $facturestatic->getNomUrl(1, '', 0, 0, '', 0, -1, 1);
+
 				$filename = dol_sanitizeFileName($obj->ref);
 				$filedir = $conf->fournisseur->facture->dir_output.'/'.get_exdir($obj->facid, 2, 0, 0, $facturestatic, 'invoice_supplier').dol_sanitizeFileName($obj->ref);
 				$subdir = get_exdir($obj->facid, 2, 0, 0, $facturestatic, 'invoice_supplier').dol_sanitizeFileName($obj->ref);
@@ -881,7 +879,7 @@ if ($resql)
 			// Supplier ref
 			if (!empty($arrayfields['f.ref_supplier']['checked']))
 			{
-				print '<td class="nowrap">';
+				print '<td class="nowrap tdoverflowmax200">';
 				print $obj->ref_supplier;
 				print '</td>';
 				if (!$i) $totalarray['nbfield']++;

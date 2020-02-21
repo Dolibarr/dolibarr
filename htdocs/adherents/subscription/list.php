@@ -35,8 +35,8 @@ $action = GETPOST('action', 'aZ09');
 $massaction = GETPOST('massaction', 'alpha');
 $confirm = GETPOST('confirm', 'alpha');
 $toselect = GETPOST('toselect', 'array');
+$contextpage = GETPOST('contextpage', 'aZ') ? GETPOST('contextpage', 'aZ') : 'myobjectlist'; // To manage different context of search
 
-$filter = GETPOST("filter", "alpha");
 $statut = (GETPOSTISSET("statut") ?GETPOST("statut", "alpha") : 1);
 $search_ref = GETPOST('search_ref', 'alpha');
 $search_type = GETPOST('search_type', 'alpha');
@@ -47,6 +47,7 @@ $search_note = GETPOST('search_note', 'alpha');
 $search_account = GETPOST('search_account', 'int');
 $search_amount = GETPOST('search_amount', 'alpha');
 $optioncss = GETPOST('optioncss', 'alpha');
+$sall = '';
 
 $date_select = GETPOST("date_select", 'alpha');
 
@@ -76,21 +77,21 @@ $search_array_options = $extrafields->getOptionalsFromPost($object->table_elemen
 $fieldstosearchall = array(
 );
 $arrayfields = array(
-	'd.ref'=>array('label'=>$langs->trans("Ref"), 'checked'=>1),
-	'd.fk_type'=>array('label'=>$langs->trans("Type"), 'checked'=>1),
-	'd.lastname'=>array('label'=>$langs->trans("Lastname"), 'checked'=>1),
-	'd.firstname'=>array('label'=>$langs->trans("Firstname"), 'checked'=>1),
-	'd.login'=>array('label'=>$langs->trans("Login"), 'checked'=>1),
-	't.libelle'=>array('label'=>$langs->trans("Label"), 'checked'=>1),
-	'd.bank'=>array('label'=>$langs->trans("BankAccount"), 'checked'=>1, 'enabled'=>(!empty($conf->banque->enabled))),
-	/*'d.note_public'=>array('label'=>$langs->trans("NotePublic"), 'checked'=>0),
-	 'd.note_private'=>array('label'=>$langs->trans("NotePrivate"), 'checked'=>0),*/
-	'c.dateadh'=>array('label'=>$langs->trans("DateSubscription"), 'checked'=>1, 'position'=>100),
-	'c.datef'=>array('label'=>$langs->trans("EndSubscription"), 'checked'=>1, 'position'=>101),
-	'd.amount'=>array('label'=>$langs->trans("Amount"), 'checked'=>1, 'position'=>102),
-	'c.datec'=>array('label'=>$langs->trans("DateCreation"), 'checked'=>0, 'position'=>500),
-	'c.tms'=>array('label'=>$langs->trans("DateModificationShort"), 'checked'=>0, 'position'=>500),
-//	'd.statut'=>array('label'=>$langs->trans("Status"), 'checked'=>1, 'position'=>1000)
+	'd.ref'=>array('label'=>"Ref", 'checked'=>1),
+	'd.fk_type'=>array('label'=>"Type", 'checked'=>1),
+	'd.lastname'=>array('label'=>"Lastname", 'checked'=>1),
+	'd.firstname'=>array('label'=>"Firstname", 'checked'=>1),
+	'd.login'=>array('label'=>"Login", 'checked'=>1),
+	't.libelle'=>array('label'=>"Label", 'checked'=>1),
+	'd.bank'=>array('label'=>"BankAccount", 'checked'=>1, 'enabled'=>(!empty($conf->banque->enabled))),
+	/*'d.note_public'=>array('label'=>"NotePublic", 'checked'=>0),
+	 'd.note_private'=>array('label'=>"NotePrivate", 'checked'=>0),*/
+	'c.dateadh'=>array('label'=>"DateSubscription", 'checked'=>1, 'position'=>100),
+	'c.datef'=>array('label'=>"EndSubscription", 'checked'=>1, 'position'=>101),
+	'd.amount'=>array('label'=>"Amount", 'checked'=>1, 'position'=>102),
+	'c.datec'=>array('label'=>"DateCreation", 'checked'=>0, 'position'=>500),
+	'c.tms'=>array('label'=>"DateModificationShort", 'checked'=>0, 'position'=>500),
+//	'd.statut'=>array('label'=>"Status", 'checked'=>1, 'position'=>1000)
 );
 
 // Security check
@@ -253,10 +254,9 @@ if ($user->rights->adherent->cotisation->creer)
 
 print '<form method="POST" id="searchFormList" action="'.$_SERVER["PHP_SELF"].'">';
 if ($optioncss != '') print '<input type="hidden" name="optioncss" value="'.$optioncss.'">';
-print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+print '<input type="hidden" name="token" value="'.newToken().'">';
 print '<input type="hidden" name="formfilteraction" id="formfilteraction" value="list">';
 print '<input type="hidden" name="action" value="list">';
-print '<input type="hidden" name="view" value="'.dol_escape_htmltag($view).'">';
 print '<input type="hidden" name="sortfield" value="'.$sortfield.'">';
 print '<input type="hidden" name="sortorder" value="'.$sortorder.'">';
 print '<input type="hidden" name="page" value="'.$page.'">';
@@ -388,46 +388,17 @@ print "</tr>\n";
 
 
 print '<tr class="liste_titre">';
-if (!empty($arrayfields['d.ref']['checked']))
-{
-	print_liste_field_titre("Ref", $_SERVER["PHP_SELF"], "c.rowid", $param, "", "", $sortfield, $sortorder);
-}
-if (!empty($arrayfields['d.fk_type']['checked']))
-{
-	print_liste_field_titre("Type", $_SERVER["PHP_SELF"], "c.fk_type", $param, "", "", $sortfield, $sortorder);
-}
-if (!empty($arrayfields['d.lastname']['checked']))
-{
-	print_liste_field_titre("LastName", $_SERVER["PHP_SELF"], "d.lastname", $param, "", "", $sortfield, $sortorder);
-}
-if (!empty($arrayfields['d.firstname']['checked']))
-{
-	print_liste_field_titre("FirstName", $_SERVER["PHP_SELF"], "d.firstname", $param, "", "", $sortfield, $sortorder);
-}
-if (!empty($arrayfields['d.login']['checked']))
-{
-	print_liste_field_titre("Login", $_SERVER["PHP_SELF"], "d.login", $param, "", "", $sortfield, $sortorder);
-}
-if (!empty($arrayfields['t.libelle']['checked']))
-{
-	print_liste_field_titre("Label", $_SERVER["PHP_SELF"], "c.note", $param, "", '', $sortfield, $sortorder);
-}
-if (!empty($arrayfields['d.bank']['checked']))
-{
-	print_liste_field_titre("Account", $_SERVER["PHP_SELF"], "b.fk_account", $param, "", "", $sortfield, $sortorder);
-}
-if (!empty($arrayfields['c.dateadh']['checked']))
-{
-	print_liste_field_titre("DateStart", $_SERVER["PHP_SELF"], "c.dateadh", $param, "", '', $sortfield, $sortorder, 'center nowraponall ');
-}
-if (!empty($arrayfields['c.datef']['checked']))
-{
-	print_liste_field_titre("DateEnd", $_SERVER["PHP_SELF"], "c.datef", $param, "", '', $sortfield, $sortorder, 'center nowraponall ');
-}
-if (!empty($arrayfields['d.amount']['checked']))
-{
-	print_liste_field_titre("Amount", $_SERVER["PHP_SELF"], "c.subscription", $param, "", '', $sortfield, $sortorder, 'right ');
-}
+if (!empty($arrayfields['d.ref']['checked']))          print_liste_field_titre($arrayfields['d.ref']['label'], $_SERVER["PHP_SELF"], "c.rowid", $param, "", "", $sortfield, $sortorder);
+if (!empty($arrayfields['d.fk_type']['checked']))      print_liste_field_titre($arrayfields['d.fk_type']['label'], $_SERVER["PHP_SELF"], "c.fk_type", $param, "", "", $sortfield, $sortorder);
+if (!empty($arrayfields['d.lastname']['checked']))     print_liste_field_titre($arrayfields['d.lastname']['label'], $_SERVER["PHP_SELF"], "d.lastname", $param, "", "", $sortfield, $sortorder);
+if (!empty($arrayfields['d.firstname']['checked']))    print_liste_field_titre($arrayfields['d.firstname']['label'], $_SERVER["PHP_SELF"], "d.firstname", $param, "", "", $sortfield, $sortorder);
+if (!empty($arrayfields['d.login']['checked']))        print_liste_field_titre($arrayfields['d.login']['label'], $_SERVER["PHP_SELF"], "d.login", $param, "", "", $sortfield, $sortorder);
+if (!empty($arrayfields['t.libelle']['checked']))      print_liste_field_titre($arrayfields['t.libelle']['label'], $_SERVER["PHP_SELF"], "c.note", $param, "", '', $sortfield, $sortorder);
+if (!empty($arrayfields['d.bank']['checked']))         print_liste_field_titre($arrayfields['d.bank']['label'], $_SERVER["PHP_SELF"], "b.fk_account", $param, "", "", $sortfield, $sortorder);
+if (!empty($arrayfields['c.dateadh']['checked']))      print_liste_field_titre($arrayfields['c.dateadh']['label'], $_SERVER["PHP_SELF"], "c.dateadh", $param, "", '', $sortfield, $sortorder, 'center nowraponall ');
+if (!empty($arrayfields['c.datef']['checked']))        print_liste_field_titre($arrayfields['c.datef']['label'], $_SERVER["PHP_SELF"], "c.datef", $param, "", '', $sortfield, $sortorder, 'center nowraponall ');
+if (!empty($arrayfields['d.amount']['checked']))       print_liste_field_titre($arrayfields['d.amount']['label'], $_SERVER["PHP_SELF"], "c.subscription", $param, "", '', $sortfield, $sortorder, 'right ');
+
 // Extra fields
 include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_title.tpl.php';
 
@@ -441,12 +412,10 @@ print_liste_field_titre($selectedfields, $_SERVER["PHP_SELF"], '', '', '', 'alig
 print "</tr>\n";
 
 
-$total = 0;
 $totalarray = array();
 while ($i < min($num, $limit))
 {
 	$obj = $db->fetch_object($result);
-	$total += $obj->subscription;
 
 	$subscription->ref = $obj->crowid;
 	$subscription->id = $obj->crowid;

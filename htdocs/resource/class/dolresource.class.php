@@ -16,7 +16,7 @@
  */
 
 /**
- *  \file      	resource/class/resource.class.php
+ *  \file      	htdocs/resource/class/dolresource.class.php
  *  \ingroup    resource
  *  \brief      Class file for resource object
  */
@@ -615,7 +615,7 @@ class Dolresource extends CommonObject
    					$sql .= ' AND '.$key.' = \''.$this->db->idate($value).'\'';
    				}
    				else {
-   					$sql .= ' AND '.$key.' LIKE \'%'.$value.'%\'';
+   					$sql .= ' AND '.$key.' LIKE \'%'.$this->db->escape($value).'%\'';
    				}
    			}
    		}
@@ -697,7 +697,7 @@ class Dolresource extends CommonObject
     				$sql .= ' AND '.$key.' = \''.$this->db->idate($value).'\'';
     			}
     			else {
-    				$sql .= ' AND '.$key.' LIKE \'%'.$value.'%\'';
+    				$sql .= ' AND '.$key.' LIKE \'%'.$this->db->escape($value).'%\'';
     			}
     		}
     	}
@@ -938,28 +938,57 @@ class Dolresource extends CommonObject
     /**
      *	Return clicable link of object (with eventually picto)
      *
-     *	@param      int		$withpicto		Add picto into link
-     *	@param      string	$option			Where point the link ('compta', 'expedition', 'document', ...)
-     *	@param      string	$get_params    	Parametres added to url
-     *	@param		int  	$notooltip		1=Disable tooltip
-     *	@return     string          		String with URL
+     *	@param      int		$withpicto					Add picto into link
+     *	@param      string	$option						Where point the link ('compta', 'expedition', 'document', ...)
+     *	@param      string	$get_params    				Parametres added to url
+     *	@param		int  	$notooltip					1=Disable tooltip
+     *  @param  	string  $morecss                    Add more css on link
+     *  @param  	int     $save_lastsearch_value      -1=Auto, 0=No save of lastsearch_values when clicking, 1=Save lastsearch_values whenclicking
+     *	@return     string          					String with URL
      */
-    public function getNomUrl($withpicto = 0, $option = '', $get_params = '', $notooltip = 0)
+    public function getNomUrl($withpicto = 0, $option = '', $get_params = '', $notooltip = 0, $morecss = '', $save_lastsearch_value = -1)
     {
-        global $langs;
+        global $conf, $langs;
 
         $result = '';
-        $label = $langs->trans("ShowResource").': '.$this->ref;
-
-        $linkstart = '';
-        $linkend = '';
-        if ($option == '')
-        {
-            $linkstart = '<a href="'.dol_buildpath('/resource/card.php', 1).'?id='.$this->id.$get_params.'" title="'.dol_escape_htmltag($label, 1).'" class="classfortooltip">';
-            $picto = 'resource';
-            $label = $langs->trans("ShowResource").': '.$this->ref;
-            $linkend = '</a>';
+        $label = '<u>'.$langs->trans("ShowResource").'</u>';
+        $label .= '<br>';
+        $label .= '<b>'.$langs->trans('Ref').':</b> '.$this->ref;
+        /*if (isset($this->status)) {
+        	$label.= '<br><b>' . $langs->trans("Status").":</b> ".$this->getLibStatut(5);
+        }*/
+        if (isset($this->type_label)) {
+        	$label .= '<br><b>'.$langs->trans("ResourceType").":</b> ".$this->type_label;
         }
+
+        $url = DOL_URL_ROOT.'/resource/card.php?id='.$this->id;
+
+        if ($option != 'nolink')
+        {
+        	// Add param to save lastsearch_values or not
+        	$add_save_lastsearch_values = ($save_lastsearch_value == 1 ? 1 : 0);
+        	if ($save_lastsearch_value == -1 && preg_match('/list\.php/', $_SERVER["PHP_SELF"])) $add_save_lastsearch_values = 1;
+        	if ($add_save_lastsearch_values) $url .= '&save_lastsearch_values=1';
+        }
+
+        $linkclose = '';
+        if (empty($notooltip))
+        {
+        	if (!empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER))
+        	{
+        		$label = $langs->trans("ShowMyObject");
+        		$linkclose .= ' alt="'.dol_escape_htmltag($label, 1).'"';
+        	}
+        	$linkclose .= ' title="'.dol_escape_htmltag($label, 1).'"';
+        	$linkclose .= ' class="classfortooltip'.($morecss ? ' '.$morecss : '').'"';
+        }
+        else $linkclose = ($morecss ? ' class="'.$morecss.'"' : '');
+
+        $linkstart = '<a href="'.$url.$get_params.'"';
+        $linkstart .= $linkclose.'>';
+        $linkend = '</a>';
+        /*$linkstart = '<a href="'.dol_buildpath('/resource/card.php', 1).'?id='.$this->id.$get_params.'" title="'.dol_escape_htmltag($label, 1).'" class="classfortooltip">';
+        $linkend = '</a>';*/
 
         $result .= $linkstart;
         if ($withpicto) $result .= img_object(($notooltip ? '' : $label), ($this->picto ? $this->picto : 'generic'), ($notooltip ? (($withpicto != 2) ? 'class="paddingright"' : '') : 'class="'.(($withpicto != 2) ? 'paddingright ' : '').'classfortooltip"'), 0, 0, $notooltip ? 0 : 1);

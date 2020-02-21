@@ -37,13 +37,13 @@ include_once DOL_DOCUMENT_ROOT.'/core/class/html.formactions.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
 
 // Load translation files required by the page
-$langs->loadLangs(array("users", "companies", "agenda", "commercial"));
+$langs->loadLangs(array("users", "companies", "agenda", "commercial", "other"));
 
 $action = GETPOST('action', 'alpha');
 $contextpage = GETPOST('contextpage', 'aZ') ?GETPOST('contextpage', 'aZ') : 'actioncommlist'; // To manage different context of search
 $resourceid = GETPOST("search_resourceid", "int") ?GETPOST("search_resourceid", "int") : GETPOST("resourceid", "int");
 $pid = GETPOST("search_projectid", 'int', 3) ?GETPOST("search_projectid", 'int', 3) : GETPOST("projectid", 'int', 3);
-$status = (GETPOST("search_status", 'alpha') != '') ?GETPOST("search_status", 'alpha') : GETPOST("status", 'alpha');
+$search_status = (GETPOST("search_status", 'alpha') != '') ?GETPOST("search_status", 'alpha') : GETPOST("status", 'alpha');
 $type = GETPOST('search_type', 'alphanohtml') ?GETPOST('search_type', 'alphanohtml') : GETPOST('type', 'alphanohtml');
 $optioncss = GETPOST('optioncss', 'alpha');
 $year = GETPOST("year", 'int');
@@ -67,8 +67,8 @@ $search_note = GETPOST('search_note', 'alpha');
 $dateselect = dol_mktime(0, 0, 0, GETPOST('dateselectmonth', 'int'), GETPOST('dateselectday', 'int'), GETPOST('dateselectyear', 'int'));
 $datestart = dol_mktime(0, 0, 0, GETPOST('datestartmonth', 'int'), GETPOST('datestartday', 'int'), GETPOST('datestartyear', 'int'));
 $dateend = dol_mktime(0, 0, 0, GETPOST('dateendmonth', 'int'), GETPOST('dateendday', 'int'), GETPOST('dateendyear', 'int'));
-if ($status == '' && !isset($_GET['status']) && !isset($_POST['status'])) $status = (empty($conf->global->AGENDA_DEFAULT_FILTER_STATUS) ? '' : $conf->global->AGENDA_DEFAULT_FILTER_STATUS);
-if (empty($action) && !isset($_GET['action']) && !isset($_POST['action'])) $action = (empty($conf->global->AGENDA_DEFAULT_VIEW) ? 'show_month' : $conf->global->AGENDA_DEFAULT_VIEW);
+if ($search_status == '' && !GETPOSTISSET('search_status')) $search_status = (empty($conf->global->AGENDA_DEFAULT_FILTER_STATUS) ? '' : $conf->global->AGENDA_DEFAULT_FILTER_STATUS);
+if (empty($action) && !GETPOSTISSET('action')) $action = (empty($conf->global->AGENDA_DEFAULT_VIEW) ? 'show_month' : $conf->global->AGENDA_DEFAULT_VIEW);
 
 $filter = GETPOST("search_filter", 'alpha', 3) ?GETPOST("search_filter", 'alpha', 3) : GETPOST("filter", 'alpha', 3);
 $filtert = GETPOST("search_filtert", "int", 3) ?GETPOST("search_filtert", "int", 3) : GETPOST("filtert", "int", 3);
@@ -100,12 +100,12 @@ $offset = $limit * $page;
 if (!$sortorder)
 {
 	$sortorder = "DESC,DESC";
-	if ($status == 'todo') $sortorder = "DESC,DESC";
+	if ($search_status == 'todo') $sortorder = "DESC,DESC";
 }
 if (!$sortfield)
 {
 	$sortfield = "a.datep,a.id";
-	if ($status == 'todo') $sortfield = "a.datep,a.id";
+	if ($search_status == 'todo') $sortfield = "a.datep,a.id";
 }
 
 // Security check
@@ -184,7 +184,7 @@ if (GETPOST('button_removefilter_x', 'alpha') || GETPOST('button_removefilter.x'
     $search_note = '';
     $datestart = '';
     $dateend = '';
-    $status = '';
+    $search_status = '';
     $search_array_options = array();
 }
 
@@ -218,7 +218,7 @@ if ($actioncode != '') {
 	} else $param .= "&search_actioncode=".urlencode($actioncode);
 }
 if ($resourceid > 0) $param .= "&search_resourceid=".urlencode($resourceid);
-if ($status != '' && $status > -1) $param .= "&search_status=".urlencode($status);
+if ($search_status != '' && $search_status > -1) $param .= "&search_status=".urlencode($search_status);
 if ($filter) $param .= "&search_filter=".urlencode($filter);
 if ($filtert) $param .= "&search_filtert=".urlencode($filtert);
 if ($socid) $param .= "&search_socid=".urlencode($socid);
@@ -308,13 +308,13 @@ if (!$user->rights->societe->client->voir && !$socid) $sql .= " AND (a.fk_soc IS
 if ($socid > 0) $sql .= " AND s.rowid = ".$socid;
 // We must filter on assignement table
 if ($filtert > 0 || $usergroup > 0) $sql .= " AND ar.fk_actioncomm = a.id AND ar.element_type='user'";
-if ($type) $sql .= " AND c.id = ".$type;
-if ($status == '0') { $sql .= " AND a.percent = 0"; }
-if ($status == '-1') { $sql .= " AND a.percent = -1"; }	// Not applicable
-if ($status == '50') { $sql .= " AND (a.percent > 0 AND a.percent < 100)"; }	// Running already started
-if ($status == '100') { $sql .= " AND a.percent = 100"; }
-if ($status == 'done') { $sql .= " AND (a.percent = 100)"; }
-if ($status == 'todo') { $sql .= " AND (a.percent >= 0 AND a.percent < 100)"; }
+if ($type) $sql .= " AND c.id = ".(int) $type;
+if ($search_status == '0') { $sql .= " AND a.percent = 0"; }
+if ($search_status == '-1') { $sql .= " AND a.percent = -1"; }	// Not applicable
+if ($search_status == '50') { $sql .= " AND (a.percent > 0 AND a.percent < 100)"; }	// Running already started
+if ($search_status == '100') { $sql .= " AND a.percent = 100"; }
+if ($search_status == 'done') { $sql .= " AND (a.percent = 100)"; }
+if ($search_status == 'todo') { $sql .= " AND (a.percent >= 0 AND a.percent < 100)"; }
 if ($search_id) $sql .= natural_search("a.id", $search_id, 1);
 if ($search_title) $sql .= natural_search("a.label", $search_title);
 if ($search_note) $sql .= natural_search('a.note', $search_note);
@@ -377,7 +377,7 @@ if ($resql)
 	print '<form method="POST" id="searchFormList" class="listactionsfilter" action="'.$_SERVER["PHP_SELF"].'">'."\n";
 
 	if ($optioncss != '') print '<input type="hidden" name="optioncss" value="'.$optioncss.'">';
-	print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+	print '<input type="hidden" name="token" value="'.newToken().'">';
 	print '<input type="hidden" name="action" value="list">';
 	print '<input type="hidden" name="formfilteraction" id="formfilteraction" value="list">';
 	print '<input type="hidden" name="sortfield" value="'.$sortfield.'">';
@@ -397,7 +397,7 @@ if ($resql)
 	print $nav;
 
     dol_fiche_head($head, $tabactive, $langs->trans('Agenda'), 0, 'action');
-    print_actions_filter($form, $canedit, $status, $year, $month, $day, $showbirthday, 0, $filtert, 0, $pid, $socid, $action, -1, $actioncode, $usergroup, '', $resourceid);
+    print_actions_filter($form, $canedit, $search_status, $year, $month, $day, $showbirthday, 0, $filtert, 0, $pid, $socid, $action, -1, $actioncode, $usergroup, '', $resourceid);
     dol_fiche_end();
 
     // Add link to show birthdays
@@ -488,8 +488,8 @@ if ($resql)
 	if (!empty($arrayfields['a.tms']['checked']))		print '<td class="liste_titre"></td>';
 	if (!empty($arrayfields['a.percent']['checked'])) {
 		print '<td class="liste_titre center">';
-        $formactions->form_select_status_action('formaction', $status, 1, 'status', 1, 2, 'minwidth100imp maxwidth125');
-    	print ajax_combobox('selectstatus');
+        $formactions->form_select_status_action('formaction', $search_status, 1, 'search_status', 1, 2, 'minwidth100imp maxwidth125');
+    	print ajax_combobox('selectsearch_status');
     	print '</td>';
     }
 	// Action column
@@ -554,7 +554,10 @@ if ($resql)
 		$actionstatic->type_picto = $obj->type_picto;
 		$actionstatic->label = $obj->label;
 		$actionstatic->location = $obj->location;
-		$actionstatic->note = dol_htmlentitiesbr($obj->note);
+		$actionstatic->note = dol_htmlentitiesbr($obj->note); // deprecated
+		$actionstatic->note_public = dol_htmlentitiesbr($obj->note);
+
+		$actionstatic->fetchResources();
 
 		print '<tr class="oddeven">';
 
@@ -618,7 +621,7 @@ if ($resql)
 		$formatToUse = $obj->fulldayevent ? 'day' : 'dayhour';
 		// Start date
 		if (!empty($arrayfields['a.datep']['checked'])) {
-			print '<td align="center">';
+			print '<td class="center">';
 			print dol_print_date($db->jdate($obj->dp), $formatToUse);
 			$late = 0;
 			if ($obj->percent == 0 && $obj->dp && $db->jdate($obj->dp) < ($now - $delay_warning)) $late = 1;
@@ -631,7 +634,7 @@ if ($resql)
 
 		// End date
 		if (!empty($arrayfields['a.datep2']['checked'])) {
-			print '<td align="center">';
+			print '<td class="center">';
 			print dol_print_date($db->jdate($obj->dp2), $formatToUse);
 			print '</td>';
 		}
@@ -656,7 +659,6 @@ if ($resql)
 		if (!empty($arrayfields['a.fk_contact']['checked'])) {
 			print '<td>';
 
-            $actionstatic->fetchResources();
             if (!empty($actionstatic->socpeopleassigned))
             {
                 $contactList = array();

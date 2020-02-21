@@ -250,7 +250,7 @@ foreach ($dirmodels as $reldir)
 						else print $tmp;
 						print '</td>'."\n";
 
-						print '<td align="center">';
+						print '<td class="center">';
 						if ($conf->global->HOLIDAY_ADDON == "$file")
 						{
 							print img_picto($langs->trans("Activated"), 'switch_on');
@@ -281,7 +281,7 @@ foreach ($dirmodels as $reldir)
                             }
                         }
 
-						print '<td align="center">';
+						print '<td class="center">';
 						print $form->textwithpicto('', $htmltooltip, 1, 0);
 						print '</td>';
 
@@ -355,7 +355,8 @@ foreach ($dirmodels as $reldir)
 {
     foreach (array('', '/doc') as $valdir)
     {
-    	$dir = dol_buildpath($reldir."core/modules/holiday".$valdir);
+    	$realpath = $reldir."core/modules/holiday".$valdir;
+    	$dir = dol_buildpath($realpath);
 
         if (is_dir($dir))
         {
@@ -397,7 +398,7 @@ foreach ($dirmodels as $reldir)
 	                            // Active
 	                            if (in_array($name, $def))
 	                            {
-	                            	print '<td align="center">'."\n";
+	                            	print '<td class="center">'."\n";
 	                            	print '<a href="'.$_SERVER["PHP_SELF"].'?action=del&value='.$name.'">';
 	                            	print img_picto($langs->trans("Enabled"), 'switch_on');
 	                            	print '</a>';
@@ -405,13 +406,13 @@ foreach ($dirmodels as $reldir)
 	                            }
 	                            else
 	                            {
-	                                print '<td align="center">'."\n";
+	                                print '<td class="center">'."\n";
 	                                print '<a href="'.$_SERVER["PHP_SELF"].'?action=set&value='.$name.'&amp;scan_dir='.$module->scandir.'&amp;label='.urlencode($module->name).'">'.img_picto($langs->trans("Disabled"), 'switch_off').'</a>';
 	                                print "</td>";
 	                            }
 
 	                            // Default
-	                            print '<td align="center">';
+	                            print '<td class="center">';
 	                            if ($conf->global->HOLIDAY_ADDON_PDF == $name)
 	                            {
 	                                print img_picto($langs->trans("Default"), 'on');
@@ -429,7 +430,9 @@ foreach ($dirmodels as $reldir)
 			                    {
 			                        $htmltooltip .= '<br>'.$langs->trans("Width").'/'.$langs->trans("Height").': '.$module->page_largeur.'/'.$module->page_hauteur;
 			                    }
-					    		$htmltooltip .= '<br><br><u>'.$langs->trans("FeaturesSupported").':</u>';
+			                    $htmltooltip .= '<br>'.$langs->trans("Path").': '.preg_replace('/^\//', '', $realpath).'/'.$file;
+
+			                    $htmltooltip .= '<br><br><u>'.$langs->trans("FeaturesSupported").':</u>';
 					    		$htmltooltip .= '<br>'.$langs->trans("Logo").': '.yn($module->option_logo, 1, 1);
 					    		$htmltooltip .= '<br>'.$langs->trans("PaymentMode").': '.yn($module->option_modereg, 1, 1);
 					    		$htmltooltip .= '<br>'.$langs->trans("PaymentConditions").': '.yn($module->option_condreg, 1, 1);
@@ -437,12 +440,12 @@ foreach ($dirmodels as $reldir)
 					    		$htmltooltip .= '<br>'.$langs->trans("WatermarkOnDraftOrders").': '.yn($module->option_draft_watermark, 1, 1);
 
 
-	                            print '<td align="center">';
+	                            print '<td class="center">';
 	                            print $form->textwithpicto('', $htmltooltip, 1, 0);
 	                            print '</td>';
 
 	                            // Preview
-	                            print '<td align="center">';
+	                            print '<td class="center">';
 	                            if ($module->type == 'pdf')
 	                            {
 	                                print '<a href="'.$_SERVER["PHP_SELF"].'?action=specimen&module='.$name.'">'.img_object($langs->trans("Preview"), 'contract').'</a>';
@@ -473,7 +476,7 @@ print "<br>";
  */
 
 print '<form action="'.$_SERVER["PHP_SELF"].'" method="post">';
-print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+print '<input type="hidden" name="token" value="'.newToken().'">';
 print '<input type="hidden" name="action" value="set_other">';
 
 print load_fiche_titre($langs->trans("OtherOptions"), '', '');

@@ -194,8 +194,8 @@ class SupplierInvoices extends DolibarrApi
      *
      * @return int  ID of supplier invoice
      *
-     * @throws 401
-     * @throws 500
+     * @throws RestException 401
+     * @throws RestException 500
      */
     public function post($request_data = null)
     {
@@ -208,7 +208,7 @@ class SupplierInvoices extends DolibarrApi
         foreach($request_data as $field => $value) {
             $this->invoice->$field = $value;
         }
-        if(! array_keys($request_data, 'date')) {
+        if(! array_key_exists('date', $request_data)) {
             $this->invoice->date = dol_now();
         }
 
@@ -226,8 +226,8 @@ class SupplierInvoices extends DolibarrApi
      *
      * @return int
      *
-     * @throws 401
-     * @throws 404
+     * @throws RestException 401
+     * @throws RestException 404
      */
     public function put($id, $request_data = null)
     {
@@ -262,9 +262,9 @@ class SupplierInvoices extends DolibarrApi
      *
      * @return array
      *
-     * @throws 401
-     * @throws 404
-     * @throws 500
+     * @throws RestException 401
+     * @throws RestException 404
+     * @throws RestException 500
      */
     public function delete($id)
     {
@@ -304,11 +304,11 @@ class SupplierInvoices extends DolibarrApi
      *
      * @return  array
      *
-     * @throws 304
-     * @throws 401
-     * @throws 404
-     * @throws 405
-     * @throws 500
+     * @throws RestException 304
+     * @throws RestException 401
+     * @throws RestException 404
+     * @throws RestException 405
+     * @throws RestException 500
      */
     public function validate($id, $idwarehouse = 0, $notrigger = 0)
     {
@@ -348,10 +348,10 @@ class SupplierInvoices extends DolibarrApi
      * @url     GET {id}/payments
      *
      * @return array
-     * @throws 400
-     * @throws 401
-     * @throws 404
-     * @throws 405
+     * @throws RestException 400
+     * @throws RestException 401
+     * @throws RestException 404
+     * @throws RestException 405
      */
     public function getPayments($id)
     {
@@ -396,9 +396,9 @@ class SupplierInvoices extends DolibarrApi
      * @url     POST {id}/payments
      *
      * @return int  Payment ID
-     * @throws 400
-     * @throws 401
-     * @throws 404
+     * @throws RestException 400
+     * @throws RestException 401
+     * @throws RestException 404
      */
     public function addPayment($id, $datepaye, $paiementid, $closepaidinvoices, $accountid, $num_paiement = '', $comment = '', $chqemetteur = '', $chqbank = '')
     {

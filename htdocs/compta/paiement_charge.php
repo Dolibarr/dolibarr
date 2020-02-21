@@ -192,7 +192,7 @@ if ($action == 'create')
 	}
 
 	print '<form name="add_payment" action="'.$_SERVER['PHP_SELF'].'" method="post">';
-	print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+	print '<input type="hidden" name="token" value="'.newToken().'">';
 	print '<input type="hidden" name="id" value="'.$chid.'">';
 	print '<input type="hidden" name="chid" value="'.$chid.'">';
 	print '<input type="hidden" name="action" value="add_payment">';
@@ -267,7 +267,7 @@ if ($action == 'create')
 	print '<td class="right">'.$langs->trans("Amount").'</td>';
 	print '<td class="right">'.$langs->trans("AlreadyPaid").'</td>';
 	print '<td class="right">'.$langs->trans("RemainderToPay").'</td>';
-	print '<td align="center">'.$langs->trans("Amount").'</td>';
+	print '<td class="center">'.$langs->trans("Amount").'</td>';
 	print "</tr>\n";
 
 	$total = 0;
@@ -294,7 +294,7 @@ if ($action == 'create')
 
 		print '<td class="right">'.price($objp->amount - $sumpaid)."</td>";
 
-		print '<td align="center">';
+		print '<td class="center">';
 		if ($sumpaid < $objp->amount)
 		{
 			$namef = "amount_".$objp->id;

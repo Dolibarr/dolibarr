@@ -53,9 +53,9 @@ $theme_bgcolor = array(hexdec('F4'), hexdec('F4'), hexdec('F4'));
 $theme_bgcoloronglet = array(hexdec('DE'), hexdec('E7'), hexdec('EC'));
 
 // Colors
-$colorbackhmenu1 = '60,70,100'; // topmenu
+$colorbackhmenu1 = '55,61,90'; // topmenu
 $colorbackvmenu1 = '250,250,250'; // vmenu
-$colortopbordertitle1 = '200,200,200'; // top border of title
+$colortopbordertitle1 = '215,215,215'; // top border of title
 $colorbacktitle1 = '233,234,237'; // title of tables,list
 $colorbacktabcard1 = '255,255,255'; // card
 $colorbacktabactive = '234,234,234';
@@ -67,7 +67,7 @@ $colorbacklinepairhover = '230,237,244'; // line hover
 $colorbacklinepairchecked = '230,237,244'; // line checked
 $colorbacklinebreak = '233,228,230'; // line break
 $colorbackbody = '255,255,255';
-$colortexttitlenotab = '140,80,10'; // 140,80,10 or 10,140,80
+$colortexttitlenotab = '0,113,121'; // 140,80,10 or 10,140,80
 $colortexttitle = '0,0,0';
 $colortext = '0,0,0';
 $colortextlink = '10, 20, 100';
@@ -80,17 +80,17 @@ $toolTipFontColor = '#333';
 // text color
 $textSuccess   = '#28a745';
 $colorblind_deuteranopes_textSuccess = '#37de5d';
-$textDanger    = '#dc3545';
-$textWarning   = '#bc9526';
+$textWarning   = '#a37c0d'; // See $badgeWarning
+$textDanger    = '#9f4705'; // See $badgeDanger
 $colorblind_deuteranopes_textWarning = $textWarning; // currently not tested with a color blind people so use default color
 
 
 // Badges colors
 $badgePrimary   = '#007bff';
 $badgeSecondary = '#cccccc';
-$badgeSuccess   = '#28a745';
-$badgeDanger    = '#9f4705';
-$badgeWarning   = '#ffc107';
+$badgeSuccess   = '#55a580';
+$badgeWarning   = '#a37c0d'; // See $textDanger bc9526
+$badgeDanger    = '#9f4705'; // See $textDanger
 $badgeInfo      = '#aaaabb';
 $badgeDark      = '#343a40';
 $badgeLight     = '#f8f9fa';
@@ -108,11 +108,11 @@ $badgeStatus0 = '#cbd3d3';
 $badgeStatus1 = '#bc9526';
 $badgeStatus2 = '#e6f0f0';
 $badgeStatus3 = '#bca52b';
-$badgeStatus4 = '#277d1e';
+$badgeStatus4 = '#55a580'; // Color ok
 $badgeStatus5 = '#cad2d2';
 $badgeStatus6 = '#cad2d2';
 $badgeStatus7 = '#baa32b';
-$badgeStatus8 = '#be3013';
+$badgeStatus8 = '#993013';
 $badgeStatus9 = '#e7f0f0';
 
 // status color ajustement for color blind

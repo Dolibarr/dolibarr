@@ -53,35 +53,34 @@ class Setup extends DolibarrApi
      * @param int       $limit      Number of items per page
      * @param int       $page       Page number {@min 0}
      * @param int       $active     Payment type is active or not {@min 0} {@max 1}
-     * @param string    $sqlfilters SQL criteria to filter with. Syntax example "(t.code:=:'CHQ')"
+     * @param string    $sqlfilters SQL criteria to filter with. Syntax example "(t.code:=:'OrderByWWW')"
      *
      * @url     GET dictionary/ordering_methods
      *
      * @return array [List of ordering methods]
      *
-     * @throws 400 RestException
-     * @throws 200 OK
+     * @throws RestException 400
      */
     public function getOrderingMethods($sortfield = "code", $sortorder = 'ASC', $limit = 100, $page = 0, $active = 1, $sqlfilters = '')
     {
         $list = array();
 
         $sql = "SELECT rowid, code, libelle as label, module";
-        $sql.= " FROM ".MAIN_DB_PREFIX."c_input_method as t";
-        $sql.= " WHERE t.active = ".$active;
+        $sql .= " FROM ".MAIN_DB_PREFIX."c_input_method as t";
+        $sql .= " WHERE t.active = ".$active;
         // Add sql filters
         if ($sqlfilters)
         {
-            if (! DolibarrApi::_checkFilters($sqlfilters))
+            if (!DolibarrApi::_checkFilters($sqlfilters))
             {
                 throw new RestException(400, 'error when validating parameter sqlfilters '.$sqlfilters);
             }
-            $regexstring='\(([^:\'\(\)]+:[^:\'\(\)]+:[^:\(\)]+)\)';
-            $sql.=" AND (".preg_replace_callback('/'.$regexstring.'/', 'DolibarrApi::_forge_criteria_callback', $sqlfilters).")";
+            $regexstring = '\(([^:\'\(\)]+:[^:\'\(\)]+:[^:\(\)]+)\)';
+            $sql .= " AND (".preg_replace_callback('/'.$regexstring.'/', 'DolibarrApi::_forge_criteria_callback', $sqlfilters).")";
         }
 
 
-        $sql.= $this->db->order($sortfield, $sortorder);
+        $sql .= $this->db->order($sortfield, $sortorder);
 
         if ($limit) {
             if ($page < 0) {
@@ -121,8 +120,7 @@ class Setup extends DolibarrApi
      *
      * @return array [List of payment types]
      *
-     * @throws 400 RestException
-     * @throws 200 OK
+     * @throws RestException 400
      */
     public function getPaymentTypes($sortfield = "code", $sortorder = 'ASC', $limit = 100, $page = 0, $active = 1, $sqlfilters = '')
     {
@@ -339,8 +337,7 @@ class Setup extends DolibarrApi
      *
      * @return array [List of availability]
      *
-     * @throws 400 RestException
-     * @throws 200 OK
+     * @throws RestException 400
      */
     public function getAvailability($sortfield = "code", $sortorder = 'ASC', $limit = 100, $page = 0, $active = 1, $sqlfilters = '')
     {
@@ -453,21 +450,21 @@ class Setup extends DolibarrApi
     {
         $list = array();
         $sql = "SELECT t.rowid, t.code, t.libelle, t.description, t.tracking";
-        $sql.= " FROM ".MAIN_DB_PREFIX."c_shipment_mode as t";
-        $sql.= " WHERE t.active = ".$active;
+        $sql .= " FROM ".MAIN_DB_PREFIX."c_shipment_mode as t";
+        $sql .= " WHERE t.active = ".$active;
         // Add sql filters
         if ($sqlfilters)
         {
-            if (! DolibarrApi::_checkFilters($sqlfilters))
+            if (!DolibarrApi::_checkFilters($sqlfilters))
             {
                 throw new RestException(503, 'Error when validating parameter sqlfilters '.$sqlfilters);
             }
-            $regexstring='\(([^:\'\(\)]+:[^:\'\(\)]+:[^:\(\)]+)\)';
-            $sql.=" AND (".preg_replace_callback('/'.$regexstring.'/', 'DolibarrApi::_forge_criteria_callback', $sqlfilters).")";
+            $regexstring = '\(([^:\'\(\)]+:[^:\'\(\)]+:[^:\(\)]+)\)';
+            $sql .= " AND (".preg_replace_callback('/'.$regexstring.'/', 'DolibarrApi::_forge_criteria_callback', $sqlfilters).")";
         }
 
 
-        $sql.= $this->db->order($sortfield, $sortorder);
+        $sql .= $this->db->order($sortfield, $sortorder);
 
         if ($limit) {
             if ($page < 0) {
@@ -908,8 +905,7 @@ class Setup extends DolibarrApi
      *
      * @return array List of payment terms
      *
-     * @throws 400 RestException
-     * @throws 200 OK
+     * @throws RestException 400
      */
     public function getPaymentTerms($sortfield = "sortorder", $sortorder = 'ASC', $limit = 100, $page = 0, $active = 1, $sqlfilters = '')
     {
@@ -969,8 +965,7 @@ class Setup extends DolibarrApi
      *
      * @return array List of shipping methods
      *
-     * @throws 400 RestException
-     * @throws 200 OK
+     * @throws RestException 400
      */
     public function getShippingModes($limit = 100, $page = 0, $active = 1, $sqlfilters = '')
     {
@@ -1104,22 +1099,22 @@ class Setup extends DolibarrApi
 		$list = array();
         //TODO link with multicurrency module
         $sql = "SELECT t.rowid, t.entity, t.code, t.label, t.url, t.icon, t.active";
-        $sql.= " FROM ".MAIN_DB_PREFIX."c_socialnetworks as t";
-        $sql.= " WHERE t.entity IN (".getEntity('c_socialnetworks').")";
-        $sql.= " AND t.active = ".$active;
+        $sql .= " FROM ".MAIN_DB_PREFIX."c_socialnetworks as t";
+        $sql .= " WHERE t.entity IN (".getEntity('c_socialnetworks').")";
+        $sql .= " AND t.active = ".$active;
         // Add sql filters
         if ($sqlfilters)
         {
-            if (! DolibarrApi::_checkFilters($sqlfilters))
+            if (!DolibarrApi::_checkFilters($sqlfilters))
             {
                 throw new RestException(503, 'Error when validating parameter sqlfilters '.$sqlfilters);
             }
-	        $regexstring='\(([^:\'\(\)]+:[^:\'\(\)]+:[^:\(\)]+)\)';
-            $sql.=" AND (".preg_replace_callback('/'.$regexstring.'/', 'DolibarrApi::_forge_criteria_callback', $sqlfilters).")";
+	        $regexstring = '\(([^:\'\(\)]+:[^:\'\(\)]+:[^:\(\)]+)\)';
+            $sql .= " AND (".preg_replace_callback('/'.$regexstring.'/', 'DolibarrApi::_forge_criteria_callback', $sqlfilters).")";
         }
 
 
-        $sql.= $this->db->order($sortfield, $sortorder);
+        $sql .= $this->db->order($sortfield, $sortorder);
 
         if ($limit) {
             if ($page < 0) {
@@ -1286,9 +1281,9 @@ class Setup extends DolibarrApi
 
     	$sql = "SELECT rowid, code, pos,  label, use_default, description";
     	$sql .= " FROM ".MAIN_DB_PREFIX."c_ticket_type as t";
-        $sql .= " WHERE t.active = ".$active;
-    	if ($type) $sql .= " AND t.type LIKE '%".$this->db->escape($type)."%'";
-    	if ($module)    $sql .= " AND t.module LIKE '%".$this->db->escape($module)."%'";
+        $sql .= " WHERE t.active = ".(int) $active;
+    	// if ($type) $sql .= " AND t.type LIKE '%".$this->db->escape($type)."%'";
+    	// if ($module)    $sql .= " AND t.module LIKE '%".$this->db->escape($module)."%'";
     	// Add sql filters
     	if ($sqlfilters)
     	{
@@ -1430,8 +1425,8 @@ class Setup extends DolibarrApi
     			$out .= '<tr class="liste_titre">';
     			$out .= '<td>#</td>';
     			$out .= '<td>'.$langs->trans("Constant").'</td>';
-    			$out .= '<td align="center">'.$langs->trans("ExpectedValue").'</td>';
-    			$out .= '<td align="center">'.$langs->trans("Value").'</td>';
+    			$out .= '<td class="center">'.$langs->trans("ExpectedValue").'</td>';
+    			$out .= '<td class="center">'.$langs->trans("Value").'</td>';
     			$out .= '</tr>'."\n";
 
     			$i = 0;
@@ -1451,8 +1446,8 @@ class Setup extends DolibarrApi
     				$out .= '<tr class="oddeven">';
     				$out .= '<td>'.$i.'</td>'."\n";
     				$out .= '<td>'.$constname.'</td>'."\n";
-    				$out .= '<td align="center">'.$constvalue.'</td>'."\n";
-    				$out .= '<td align="center">'.$valueforchecksum.'</td>'."\n";
+    				$out .= '<td class="center">'.$constvalue.'</td>'."\n";
+    				$out .= '<td class="center">'.$valueforchecksum.'</td>'."\n";
     				$out .= "</tr>\n";
     			}
 
@@ -1473,7 +1468,7 @@ class Setup extends DolibarrApi
     			$includecustom = (empty($xml->dolibarr_htdocs_dir[0]['includecustom']) ? 0 : $xml->dolibarr_htdocs_dir[0]['includecustom']);
 
     			// Defined qualified files (must be same than into generate_filelist_xml.php)
-    			$regextoinclude = '\.(php|css|html|js|json|tpl|jpg|png|gif|sql|lang)$';
+    			$regextoinclude = '\.(php|php3|php4|php5|phtml|phps|phar|inc|css|scss|html|xml|js|json|tpl|jpg|jpeg|png|gif|ico|sql|lang|txt|yml|bak|md|mp3|mp4|wav|mkv|z|gz|zip|rar|tar|less|svg|eot|woff|woff2|ttf|manifest)$';
     			$regextoexclude = '('.($includecustom ? '' : 'custom|').'documents|conf|install|public\/test|Shared\/PCLZip|nusoap\/lib\/Mail|php\/example|php\/test|geoip\/sample.*\.php|ckeditor\/samples|ckeditor\/adapters)$'; // Exclude dirs
     			$scanfiles = dol_dir_list(DOL_DOCUMENT_ROOT, 'files', 1, $regextoinclude, $regextoexclude);
 
@@ -1498,7 +1493,7 @@ class Setup extends DolibarrApi
     			$out .= '<tr class="liste_titre">';
     			$out .= '<td>#</td>';
     			$out .= '<td>'.$langs->trans("Filename").'</td>';
-    			$out .= '<td align="center">'.$langs->trans("ExpectedChecksum").'</td>';
+    			$out .= '<td class="center">'.$langs->trans("ExpectedChecksum").'</td>';
     			$out .= '</tr>'."\n";
     			$tmpfilelist = dol_sort_array($file_list['missing'], 'filename');
     			if (is_array($tmpfilelist) && count($tmpfilelist))
@@ -1510,7 +1505,7 @@ class Setup extends DolibarrApi
     					$out .= '<tr class="oddeven">';
     					$out .= '<td>'.$i.'</td>'."\n";
     					$out .= '<td>'.$file['filename'].'</td>'."\n";
-    					$out .= '<td align="center">'.$file['expectedmd5'].'</td>'."\n";
+    					$out .= '<td class="center">'.$file['expectedmd5'].'</td>'."\n";
     					$out .= "</tr>\n";
     				}
     			}
@@ -1532,8 +1527,8 @@ class Setup extends DolibarrApi
     			$out .= '<tr class="liste_titre">';
     			$out .= '<td>#</td>';
     			$out .= '<td>'.$langs->trans("Filename").'</td>';
-    			$out .= '<td align="center">'.$langs->trans("ExpectedChecksum").'</td>';
-    			$out .= '<td align="center">'.$langs->trans("CurrentChecksum").'</td>';
+    			$out .= '<td class="center">'.$langs->trans("ExpectedChecksum").'</td>';
+    			$out .= '<td class="center">'.$langs->trans("CurrentChecksum").'</td>';
     			$out .= '<td class="right">'.$langs->trans("Size").'</td>';
     			$out .= '<td class="right">'.$langs->trans("DateModification").'</td>';
     			$out .= '</tr>'."\n";
@@ -1547,8 +1542,8 @@ class Setup extends DolibarrApi
     					$out .= '<tr class="oddeven">';
     					$out .= '<td>'.$i.'</td>'."\n";
     					$out .= '<td>'.$file['filename'].'</td>'."\n";
-    					$out .= '<td align="center">'.$file['expectedmd5'].'</td>'."\n";
-    					$out .= '<td align="center">'.$file['md5'].'</td>'."\n";
+    					$out .= '<td class="center">'.$file['expectedmd5'].'</td>'."\n";
+    					$out .= '<td class="center">'.$file['md5'].'</td>'."\n";
     					$size = dol_filesize(DOL_DOCUMENT_ROOT.'/'.$file['filename']);
     					$totalsize += $size;
     					$out .= '<td class="right">'.dol_print_size($size).'</td>'."\n";
@@ -1582,8 +1577,8 @@ class Setup extends DolibarrApi
     			$out .= '<tr class="liste_titre">';
     			$out .= '<td>#</td>';
     			$out .= '<td>'.$langs->trans("Filename").'</td>';
-    			$out .= '<td align="center">'.$langs->trans("ExpectedChecksum").'</td>';
-    			$out .= '<td align="center">'.$langs->trans("CurrentChecksum").'</td>';
+    			$out .= '<td class="center">'.$langs->trans("ExpectedChecksum").'</td>';
+    			$out .= '<td class="center">'.$langs->trans("CurrentChecksum").'</td>';
     			$out .= '<td class="right">'.$langs->trans("Size").'</td>';
     			$out .= '<td class="right">'.$langs->trans("DateModification").'</td>';
     			$out .= '</tr>'."\n";
@@ -1597,8 +1592,8 @@ class Setup extends DolibarrApi
     					$out .= '<tr class="oddeven">';
     					$out .= '<td>'.$i.'</td>'."\n";
     					$out .= '<td>'.$file['filename'].'</td>'."\n";
-    					$out .= '<td align="center">'.$file['expectedmd5'].'</td>'."\n";
-    					$out .= '<td align="center">'.$file['md5'].'</td>'."\n";
+    					$out .= '<td class="center">'.$file['expectedmd5'].'</td>'."\n";
+    					$out .= '<td class="center">'.$file['md5'].'</td>'."\n";
     					$size = dol_filesize(DOL_DOCUMENT_ROOT.'/'.$file['filename']);
     					$totalsize += $size;
     					$out .= '<td class="right">'.dol_print_size($size).'</td>'."\n";

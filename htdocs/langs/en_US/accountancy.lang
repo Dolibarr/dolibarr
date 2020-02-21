@@ -160,7 +160,7 @@ ACCOUNTING_RESULT_PROFIT=Result accounting account (Profit)
 ACCOUNTING_RESULT_LOSS=Result accounting account (Loss)
 ACCOUNTING_CLOSURE_DEFAULT_JOURNAL=Journal of closure
 
-ACCOUNTING_ACCOUNT_TRANSFER_CASH=Accounting account of transitional bank transfer 
+ACCOUNTING_ACCOUNT_TRANSFER_CASH=Accounting account of transitional bank transfer
 TransitionalAccount=Transitional bank transfer account
 
 ACCOUNTING_ACCOUNT_SUSPENSE=Accounting account of wait
@@ -197,9 +197,10 @@ ByPersonalizedAccountGroups=By personalized groups
 ByYear=By year
 NotMatch=Not Set
 DeleteMvt=Delete Ledger lines
+DelMonth=Month to delete
 DelYear=Year to delete
 DelJournal=Journal to delete
-ConfirmDeleteMvt=This will delete all lines of the Ledger for year and/or from a specific journal. At least one criterion is required.
+ConfirmDeleteMvt=This will delete all lines of the Ledger for the year/month and/or from a specific journal (At least one criterion is required). You will have to reuse the feature 'Registration in accounting' to have the deleted record back in the ledger.
 ConfirmDeleteMvtPartial=This will delete the transaction from the Ledger (all lines related to same transaction will be deleted)
 FinanceJournal=Finance journal
 ExpenseReportsJournal=Expense reports journal
@@ -223,9 +224,12 @@ ListAccounts=List of the accounting accounts
 UnknownAccountForThirdparty=Unknown third-party account. We will use %s
 UnknownAccountForThirdpartyBlocking=Unknown third-party account. Blocking error
 ThirdpartyAccountNotDefinedOrThirdPartyUnknown=Third-party account not defined or third party unknown. We will use %s
+ThirdpartyAccountNotDefinedOrThirdPartyUnknownSubledgerIgnored=Third-party unknown and subledger not defined on the payment. We will keep the subledger account value empty.
 ThirdpartyAccountNotDefinedOrThirdPartyUnknownBlocking=Third-party account not defined or third party unknown. Blocking error.
 UnknownAccountForThirdpartyAndWaitingAccountNotDefinedBlocking=Unknown third-party account and waiting account not defined. Blocking error
 PaymentsNotLinkedToProduct=Payment not linked to any product / service
+ShowOpeningBalance=Show opening balance
+HideOpeningBalance=Hide opening balance
 
 Pcgtype=Group of account
 Pcgsubtype=Subgroup of account
@@ -240,7 +244,7 @@ DescVentilDoneCustomer=Consult here the list of the lines of invoices customers 
 DescVentilTodoCustomer=Bind invoice lines not already bound with a product accounting account
 ChangeAccount=Change the product/service accounting account for selected lines with the following accounting account:
 Vide=-
-DescVentilSupplier=Consult here the list of vendor invoice lines bound or not yet bound to a product accounting account
+DescVentilSupplier=Consult here the list of vendor invoice lines bound or not yet bound to a product accounting account (only record not already transfered in accountancy are visible)
 DescVentilDoneSupplier=Consult here the list of the lines of vendor invoices and their accounting account
 DescVentilTodoExpenseReport=Bind expense report lines not already bound with a fee accounting account
 DescVentilExpenseReport=Consult here the list of expense report lines bound (or not) to a fee accounting account
@@ -268,6 +272,7 @@ ChangeBinding=Change the binding
 Accounted=Accounted in ledger
 NotYetAccounted=Not yet accounted in ledger
 ShowTutorial=Show Tutorial
+NotReconciled=Not reconciled
 
 ## Admin
 ApplyMassCategories=Apply mass categories

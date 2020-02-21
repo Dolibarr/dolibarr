@@ -230,7 +230,7 @@ if (!$rowid && $action != 'create' && $action != 'edit')
 
 		print '<form method="POST" action="'.$_SERVER["PHP_SELF"].'">';
 		if ($optioncss != '') print '<input type="hidden" name="optioncss" value="'.$optioncss.'">';
-		print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+		print '<input type="hidden" name="token" value="'.newToken().'">';
 		print '<input type="hidden" name="formfilteraction" id="formfilteraction" value="list">';
 		print '<input type="hidden" name="action" value="list">';
 		print '<input type="hidden" name="sortfield" value="'.$sortfield.'">';
@@ -338,7 +338,7 @@ if ($action == 'create')
 	print load_fiche_titre($langs->trans("NewAssetType"));
 
 	print '<form action="'.$_SERVER['PHP_SELF'].'" method="POST">';
-	print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+	print '<input type="hidden" name="token" value="'.newToken().'">';
 	print '<input type="hidden" name="action" value="add">';
 
 	dol_fiche_head('');
@@ -547,7 +547,7 @@ if ($rowid > 0)
 		$head = asset_type_prepare_head($object);
 
 		print '<form method="post" action="'.$_SERVER["PHP_SELF"].'?rowid='.$object->id.'">';
-		print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+		print '<input type="hidden" name="token" value="'.newToken().'">';
 		print '<input type="hidden" name="rowid" value="'.$object->id.'">';
 		print '<input type="hidden" name="action" value="update">';
 
@@ -609,37 +609,15 @@ if ($rowid > 0)
 			print $object->showOptionals($extrafields, 'edit', $parameters);
 		}
 
-		print '</table>';
+		// Other attributes
+		include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_edit.tpl.php';
 
-		// Extra field
-		if (empty($reshook))
-		{
-			print '<br><br><table class="border centpercent">';
-			foreach ($extrafields->attributes[$object->element]['label'] as $key=>$label)
-			{
-				if (isset($_POST["options_".$key])) {
-					if (is_array($_POST["options_".$key])) {
-						// $_POST["options"] is an array but following code expects a comma separated string
-						$value = implode(",", $_POST["options_".$key]);
-					} else {
-						$value = $_POST["options_".$key];
-					}
-				} else {
-					$value = $adht->array_options["options_".$key];
-				}
-				print '<tr><td width="30%">'.$label.'</td><td>';
-				print $extrafields->showInputField($key, $value);
-				print "</td></tr>\n";
-			}
-			print '</table><br><br>';
-		}
+		print '</table>';
 
 		dol_fiche_end();
 
-		print '<div class="center">';
-		print '<input type="submit" class="button" value="'.$langs->trans("Save").'">';
-		print '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;';
-		print '<input type="submit" name="cancel" class="button" value="'.$langs->trans("Cancel").'">';
+		print '<div class="center"><input type="submit" class="button" name="save" value="'.$langs->trans("Save").'">';
+		print ' &nbsp; <input type="submit" class="button" name="cancel" value="'.$langs->trans("Cancel").'">';
 		print '</div>';
 
 		print "</form>";

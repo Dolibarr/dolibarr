@@ -52,6 +52,8 @@ function print_auguria_menu($db, $atarget, $type_user, &$tabMenu, &$menu, $noout
 	$menuArbo = new Menubase($db, 'auguria');
 	$newTabMenu = $menuArbo->menuTopCharger('', '', $type_user, 'auguria', $tabMenu);
 
+	$substitarray = getCommonSubstitutionArray($langs, 0, null, null);
+
 	if (empty($noout)) print_start_menu_array_auguria();
 
 	global $usemenuhider;
@@ -75,8 +77,6 @@ function print_auguria_menu($db, $atarget, $type_user, &$tabMenu, &$menu, $noout
 		$showmode=dol_auguria_showmenu($type_user, $newTabMenu[$i], $listofmodulesforexternal);
 		if ($showmode == 1)
 		{
-			$substitarray = array('__LOGIN__' => $user->login, '__USER_ID__' => $user->id, '__USER_SUPERVISOR_ID__' => $user->fk_user);
-			$substitarray['__USERID__'] = $user->id;	// For backward compatibility
 			$newTabMenu[$i]['url'] = make_substitutions($newTabMenu[$i]['url'], $substitarray);
 
 			$url = $shorturl = $newTabMenu[$i]['url'];
@@ -314,6 +314,8 @@ function print_left_auguria_menu($db, $menu_array_before, $menu_array_after, &$t
 	    print "<!-- End Bookmarks -->\n";
 	}
 
+	$substitarray = getCommonSubstitutionArray($langs, 0, null, null);
+
 	// We update newmenu with entries found into database
 	$menuArbo = new Menubase($db, 'auguria');
 	$newmenu = $menuArbo->menuLeftCharger($newmenu, $mainmenu, $leftmenu, ($user->socid?1:0), 'auguria', $tabMenu);
@@ -512,8 +514,7 @@ function print_left_auguria_menu($db, $menu_array_before, $menu_array_after, &$t
 			}
 
 			// $menu_array[$i]['url'] can be a relative url, a full external url. We try substitution
-			$substitarray = array('__LOGIN__' => $user->login, '__USER_ID__' => $user->id, '__USER_SUPERVISOR_ID__' => $user->fk_user);
-			$substitarray['__USERID__'] = $user->id; // For backward compatibility
+
 			$menu_array[$i]['url'] = make_substitutions($menu_array[$i]['url'], $substitarray);
 
 			$url = $shorturl = $shorturlwithoutparam = $menu_array[$i]['url'];
@@ -547,7 +548,7 @@ function print_left_auguria_menu($db, $menu_array_before, $menu_array_after, &$t
 				if ($menu_array[$i]['enabled'])     // Enabled so visible
 				{
 					print '<div class="menu_titre">'.$tabstring;
-					if ($shorturlwithoutparam) print '<a class="vmenu" href="'.$url.'"'.($menu_array[$i]['target'] ? ' target="'.$menu_array[$i]['target'].'"' : '').'>';
+					if ($shorturlwithoutparam) print '<a class="vmenu" title="'.dol_escape_htmltag($menu_array[$i]['titre']).'" href="'.$url.'"'.($menu_array[$i]['target'] ? ' target="'.$menu_array[$i]['target'].'"' : '').'>';
 					else print '<span class="vmenu">';
 					print ($menu_array[$i]['prefix'] ? $menu_array[$i]['prefix'] : '').$menu_array[$i]['titre'];
 					if ($shorturlwithoutparam) print '</a>';
@@ -579,7 +580,7 @@ function print_left_auguria_menu($db, $menu_array_before, $menu_array_after, &$t
 				if ($menu_array[$i]['enabled'] && $lastlevel0 == 'enabled')     // Enabled so visible, except if parent was not enabled.
 				{
 					print '<div class="menu_contenu'.$cssmenu.'">'.$tabstring;
-					if ($shorturlwithoutparam) print '<a class="vsmenu" href="'.$url.'"'.($menu_array[$i]['target'] ? ' target="'.$menu_array[$i]['target'].'"' : '').'>';
+					if ($shorturlwithoutparam) print '<a class="vsmenu" title="'.dol_escape_htmltag($menu_array[$i]['titre']).'" href="'.$url.'"'.($menu_array[$i]['target'] ? ' target="'.$menu_array[$i]['target'].'"' : '').'>';
 					else print '<span class="vsmenu">';
 					print $menu_array[$i]['titre'];
 					if ($shorturlwithoutparam) print '</a>';

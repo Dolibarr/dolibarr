@@ -16,7 +16,7 @@
  */
 
 /**
- * \file        htdocs/modulebuilder/template/class/hook.class.php
+ * \file        htdocs/zapier/class/hook.class.php
  * \ingroup     zapier
  * \brief       This file is a CRUD class file for Hook (Create/Read/Update/Delete)
  */

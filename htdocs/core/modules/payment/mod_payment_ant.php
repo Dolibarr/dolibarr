@@ -44,7 +44,7 @@ class mod_payment_ant extends ModeleNumRefPayments
 	/**
 	 * @var string Nom du modele
 	 * @deprecated
-	 * @see name
+	 * @see $name
 	 */
 	public $nom='Ant';
 
@@ -69,7 +69,7 @@ class mod_payment_ant extends ModeleNumRefPayments
 
 		$texte = $langs->trans('GenericNumRefModelDesc')."<br>\n";
 		$texte.= '<form action="'.$_SERVER["PHP_SELF"].'" method="POST">';
-		$texte.= '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+		$texte.= '<input type="hidden" name="token" value="'.newToken().'">';
 		$texte.= '<input type="hidden" name="action" value="updateMask">';
 		$texte.= '<input type="hidden" name="maskconstpayment" value="PAYMENT_ANT_MASK">';
 		$texte.= '<table class="nobordernopadding" width="100%">';

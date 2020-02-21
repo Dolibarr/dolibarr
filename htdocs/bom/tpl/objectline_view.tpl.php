@@ -72,6 +72,7 @@ $coldisplay++;
 $tmpproduct = new Product($object->db);
 $tmpproduct->fetch($line->fk_product);
 print $tmpproduct->getNomUrl(1);
+print ' - '.$tmpproduct->label;
 print '</td>';
 print '<td class="linecolqty nowrap right">';
 $coldisplay++;
@@ -155,7 +156,7 @@ print '</tr>';
 //Line extrafield
 if (!empty($extrafields))
 {
-	print $line->showOptionals($extrafields, 'view', array('style'=>'class="drag drop oddeven"', 'colspan'=>$coldisplay), '', '', empty($conf->global->MAIN_EXTRAFIELDS_IN_ONE_TD) ? 0 : 1);
+	print $line->showOptionals($extrafields, 'view', array('style'=>'class="drag drop oddeven"', 'colspan'=>$coldisplay), '', '', 1);
 }
 
 print "<!-- END PHP TEMPLATE objectline_view.tpl.php -->\n";

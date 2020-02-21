@@ -80,7 +80,7 @@ else $titleall=$langs->trans("AllAllowedProjects").'<br><br>';
 
 $morehtml='';
 $morehtml.='<form name="projectform" method="POST">';
-$morehtml.='<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+$morehtml.='<input type="hidden" name="token" value="'.newToken().'">';
 $morehtml.='<SELECT name="search_project_user">';
 $morehtml.='<option name="all" value="0"'.($mine?'':' selected').'>'.$titleall.'</option>';
 $morehtml.='<option name="mine" value="'.$user->id.'"'.(($search_project_user == $user->id)?' selected':'').'>'.$langs->trans("ProjectsImContactFor").'</option>';
@@ -138,7 +138,7 @@ if (!empty($conf->global->MAIN_SEARCH_FORM_ON_HOME_AREAS))     // This is useles
     if (count($listofsearchfields))
     {
     	print '<form method="post" action="'.DOL_URL_ROOT.'/core/search.php">';
-    	print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+    	print '<input type="hidden" name="token" value="'.newToken().'">';
         print '<div class="div-table-responsive-no-min">';
     	print '<table class="noborder nohover centpercent">';
     	$i = 0;
@@ -166,7 +166,7 @@ include DOL_DOCUMENT_ROOT.'/projet/graph_opportunities.inc.php';
 
 
 // List of draft projects
-print_projecttasks_array($db, $form, $socid, $projectsListId, 0, 0, $listofoppstatus, array('projectlabel', 'plannedworkload', 'declaredprogress'));
+print_projecttasks_array($db, $form, $socid, $projectsListId, 0, 0, $listofoppstatus, array('projectlabel', 'plannedworkload', 'declaredprogress', 'prospectionstatus', 'projectstatus'));
 
 
 print '</div><div class="fichetwothirdright"><div class="ficheaddleft">';
@@ -274,16 +274,24 @@ if ($mine || empty($user->rights->projet->all->lire)) $sql .= " AND p.rowid IN (
 if ($socid)	$sql .= " AND (p.fk_soc IS NULL OR p.fk_soc = 0 OR p.fk_soc = ".$socid.")";
 $sql .= " GROUP BY s.nom, s.rowid";
 $sql .= $db->order($sortfield, $sortorder);
+//$sql .= $db->plimit($max + 1, 0);
 
 $resql = $db->query($sql);
 if ($resql)
 {
 	$num = $db->num_rows($resql);
 	$i = 0;
+	$othernb = 0;
 
 	while ($i < $num)
 	{
 		$obj = $db->fetch_object($resql);
+
+		if ($i >= $max) {
+			$othernb += $obj->nb;
+			$i++;
+			continue;
+		}
 
 		print '<tr class="oddeven">';
 		print '<td class="nowrap">';
@@ -296,6 +304,7 @@ if ($resql)
 		else
 		{
 			print $langs->trans("OthersNotLinkedToThirdParty");
+			$i--;
 		}
 		print '</td>';
 		print '<td class="right">';
@@ -305,6 +314,16 @@ if ($resql)
 		print "</tr>\n";
 
 		$i++;
+	}
+	if ($othernb) {
+		print '<tr class="oddeven">';
+		print '<td class="nowrap">';
+		print '...';
+		print '</td>';
+		print '<td class="nowrap right">';
+		print $othernb;
+		print '</td>';
+		print "</tr>\n";
 	}
 
 	$db->free($resql);
@@ -316,10 +335,10 @@ else
 print "</table>";
 print '</div>';
 
-if (!empty($conf->global->PROJECT_SHOW_PROJECT_LIST_ON_PROJECT_AREA))
+if (empty($conf->global->PROJECT_HIDE_PROJECT_LIST_ON_PROJECT_AREA))
 {
-    // This list can be very long, so we don't show it by default on task area. We prefer to use the list page.
-    // Add constant PROJECT_SHOW_PROJECT_LIST_ON_PROJECT_AREA to show this list
+    // This list can be very long, so we allow to hide it to prefer to use the list page.
+    // Add constant PROJECT_HIDE_PROJECT_LIST_ON_PROJECT_AREA to show this list
 
     print '<br>';
 
@@ -329,7 +348,7 @@ if (!empty($conf->global->PROJECT_SHOW_PROJECT_LIST_ON_PROJECT_AREA))
 print '</div></div></div>';
 
 $parameters = array('user' => $user);
-$reshook = $hookmanager->executeHooks('dashboardProjects', $parameters, $object); // Note that $action and $object may have been modified by hook
+$reshook = $hookmanager->executeHooks('dashboardProjects', $parameters, $projectstatic); // Note that $action and $object may have been modified by hook
 
 // End of page
 llxFooter();

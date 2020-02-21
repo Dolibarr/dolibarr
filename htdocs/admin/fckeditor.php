@@ -239,13 +239,6 @@ else
 	    jsdump(CKEDITOR.env, "divforlog");
 	    </script>';
     }
-
-    /*
-     print '<!-- Result -->';
-     print $_POST["formtestfield"];
-     print '<!-- Result -->';
-     print $conf->global->FCKEDITOR_TEST;
-     */
 }
 
 // End of page

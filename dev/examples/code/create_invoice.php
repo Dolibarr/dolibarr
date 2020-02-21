@@ -66,8 +66,9 @@ $obj = new Facture($db);
 
 $obj->ref            = 'ABCDE';
 $obj->socid          = 4;	// Put id of third party (rowid in llx_societe table)
-$obj->date           = mktime();
-$obj->note           = 'A comment';
+$obj->date           = dol_now();
+$obj->note_public    = 'A public comment';
+$obj->note_private   = 'A private comment';
 $obj->cond_reglement_id = 1;
 
 $line1=new FactureLigne($db);

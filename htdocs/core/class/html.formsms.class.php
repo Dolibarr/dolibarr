@@ -53,6 +53,11 @@ class FormSms
     public $withtopic;
     public $withbody;
 
+    /**
+     * @var int 	Id of company
+     */
+    public $withtosocid;
+
     public $withfromreadonly;
     public $withreplytoreadonly;
     public $withtoreadonly;
@@ -135,7 +140,7 @@ function limitChars(textarea, limit, infodiv)
 
         if ($showform) print "<form method=\"POST\" name=\"smsform\" enctype=\"multipart/form-data\" action=\"".$this->param["returnurl"]."\">\n";
 
-        print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+        print '<input type="hidden" name="token" value="'.newToken().'">';
         foreach ($this->param as $key=>$value)
         {
             print "<input type=\"hidden\" name=\"$key\" value=\"$value\">\n";

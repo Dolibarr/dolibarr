@@ -2,7 +2,7 @@
 Delivery=Envío
 DeliveryRef=Ref. envío
 DeliveryCard=Ficha nota de recepción
-DeliveryOrder=Nota de recepción
+DeliveryOrder=Nota de entrega
 DeliveryDate=Fecha de entrega
 CreateDeliveryOrder=Generar nota de entrega
 DeliveryStateSaved=Estado de entrega guardado

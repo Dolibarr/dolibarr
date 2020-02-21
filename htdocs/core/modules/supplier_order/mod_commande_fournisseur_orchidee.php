@@ -46,7 +46,7 @@ class mod_commande_fournisseur_orchidee extends ModeleNumRefSuppliersOrders
 	/**
 	 * @var string Nom du modele
 	 * @deprecated
-	 * @see name
+	 * @see $name
 	 */
 	public $nom='Orchidee';
 
@@ -72,7 +72,7 @@ class mod_commande_fournisseur_orchidee extends ModeleNumRefSuppliersOrders
 
 		$texte = $langs->trans('GenericNumRefModelDesc')."<br>\n";
 		$texte.= '<form action="'.$_SERVER["PHP_SELF"].'" method="POST">';
-		$texte.= '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+		$texte.= '<input type="hidden" name="token" value="'.newToken().'">';
 		$texte.= '<input type="hidden" name="action" value="updateMask">';
 		$texte.= '<input type="hidden" name="maskconstorder" value="COMMANDE_FOURNISSEUR_ORCHIDEE_MASK">';
 		$texte.= '<table class="nobordernopadding" width="100%">';

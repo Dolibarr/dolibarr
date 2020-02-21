@@ -16,7 +16,7 @@
  */
 
 /**
- *	\file       htdocs/mrp/ajax/ajax.php
+ *	\file       htdocs/mrp/ajax/ajax_bom.php
  *	\brief      Ajax search component for Mrp. It get BOM content.
  */
 

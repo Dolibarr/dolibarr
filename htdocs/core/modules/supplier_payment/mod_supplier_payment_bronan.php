@@ -17,7 +17,7 @@
  */
 
 /**
- * \file       htdocs/core/modules/payment/mod_payment_bronan.php
+ * \file       htdocs/core/modules/supplier_payment/mod_supplier_payment_bronan.php
  * \ingroup    supplier_payment
  * \brief      File containing class for numbering module Bronan
  */
@@ -45,7 +45,7 @@ class mod_supplier_payment_bronan extends ModeleNumRefSupplierPayments
 	/**
 	 * @var string Nom du modele
 	 * @deprecated
-	 * @see name
+	 * @see $name
 	 */
 	public $nom='Bronan';
 

@@ -10,8 +10,8 @@
 */
 
 /**
- *	\file       advtargetingemaling/modules/mailings/advthirdparties.modules.php
- *	\ingroup    advtargetingemaling
+ *	\file       htdocs/core/modules/mailings/advthirdparties.modules.php
+ *	\ingroup    mailing
  *	\brief      Example file to provide a list of recipients for mailing module
  */
 

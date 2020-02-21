@@ -249,7 +249,7 @@ if ($action == 'create')
 	dol_set_focus('input[name="libelle"]');
 
 	print '<form action="'.$_SERVER["PHP_SELF"].'" method="post">'."\n";
-	print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+	print '<input type="hidden" name="token" value="'.newToken().'">';
 	print '<input type="hidden" name="action" value="add">';
 	print '<input type="hidden" name="backtopage" value="'.$backtopage.'">';
 
@@ -362,7 +362,7 @@ else
 			}
 
 			// Call Hook formConfirm
-			$parameters = array();
+			$parameters = array('formConfirm' => $formconfirm);
 			$reshook = $hookmanager->executeHooks('formConfirm', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
 			if (empty($reshook)) $formconfirm .= $hookmanager->resPrint;
 			elseif ($reshook > 0) $formconfirm = $hookmanager->resPrint;
@@ -371,14 +371,14 @@ else
 			print $formconfirm;
 
 			// Warehouse card
-			$linkback = '<a href="'.DOL_URL_ROOT.'/product/stock/list.php">'.$langs->trans("BackToList").'</a>';
+			$linkback = '<a href="'.DOL_URL_ROOT.'/product/stock/list.php?restore_lastsearch_values=1">'.$langs->trans("BackToList").'</a>';
 
-			$morehtmlref='<div class="refidno">';
-			$morehtmlref.=$langs->trans("LocationSummary").' : '.$object->lieu;
-        	$morehtmlref.='</div>';
+			$morehtmlref = '<div class="refidno">';
+			$morehtmlref .= $langs->trans("LocationSummary").' : '.$object->lieu;
+        	$morehtmlref .= '</div>';
 
             $shownav = 1;
-            if ($user->socid && ! in_array('stock', explode(',', $conf->global->MAIN_MODULES_FOR_EXTERNAL))) $shownav=0;
+            if ($user->socid && !in_array('stock', explode(',', $conf->global->MAIN_MODULES_FOR_EXTERNAL))) $shownav = 0;
 
         	dol_banner_tab($object, 'ref', $linkback, $shownav, 'ref', 'ref', $morehtmlref);
 
@@ -390,7 +390,7 @@ else
 
 			// Parent entrepot
 			$parentwarehouse = new Entrepot($db);
-			if(!empty($object->fk_parent) && $parentwarehouse->fetch($object->fk_parent) > 0) {
+			if (!empty($object->fk_parent) && $parentwarehouse->fetch($object->fk_parent) > 0) {
 				print '<tr><td>'.$langs->trans("ParentWarehouse").'</td><td>';
 				print $parentwarehouse->getNomUrl(3);
 				print '</td></tr>';
@@ -430,8 +430,8 @@ else
 			// Last movement
 			if (!empty($user->rights->stock->mouvement->lire)) {
 				$sql = "SELECT max(m.datem) as datem";
-				$sql .= " FROM " . MAIN_DB_PREFIX . "stock_mouvement as m";
-				$sql .= " WHERE m.fk_entrepot = '" . $object->id . "'";
+				$sql .= " FROM ".MAIN_DB_PREFIX."stock_mouvement as m";
+				$sql .= " WHERE m.fk_entrepot = '".$object->id."'";
 				$resqlbis = $db->query($sql);
 				if ($resqlbis) {
 					$obj = $db->fetch_object($resqlbis);
@@ -439,10 +439,10 @@ else
 				} else {
 					dol_print_error($db);
 				}
-				print '<tr><td>' . $langs->trans("LastMovement") . '</td><td>';
+				print '<tr><td>'.$langs->trans("LastMovement").'</td><td>';
 				if ($lastmovementdate) {
-					print dol_print_date($lastmovementdate, 'dayhour') . ' ';
-					print '(<a href="' . DOL_URL_ROOT . '/product/stock/movement_list.php?id=' . $object->id . '">' . $langs->trans("FullList") . '</a>)';
+					print dol_print_date($lastmovementdate, 'dayhour').' ';
+					print '(<a href="'.DOL_URL_ROOT.'/product/stock/movement_list.php?id='.$object->id.'">'.$langs->trans("FullList").'</a>)';
 				} else {
 					print $langs->trans("None");
 				}
@@ -454,7 +454,7 @@ else
 			// Categories
 			if ($conf->categorie->enabled) {
 				print '<tr><td valign="middle">'.$langs->trans("Categories").'</td><td colspan="3">';
-				print $form->showCategories($object->id, 'warehouse', 1);
+				print $form->showCategories($object->id, Categorie::TYPE_WAREHOUSE, 1);
 				print "</td></tr>";
 			}
 			print "</table>";
@@ -657,7 +657,7 @@ else
 			$langs->trans("WarehouseEdit");
 
 			print '<form action="card.php" method="POST">';
-			print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+			print '<input type="hidden" name="token" value="'.newToken().'">';
 			print '<input type="hidden" name="action" value="update">';
 			print '<input type="hidden" name="id" value="'.$object->id.'">';
 

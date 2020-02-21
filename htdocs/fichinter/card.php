@@ -96,6 +96,8 @@ if ($id > 0 || !empty($ref))
 $permissionnote = $user->rights->ficheinter->creer; // Used by the include of actions_setnotes.inc.php
 $permissiondellink = $user->rights->ficheinter->creer; // Used by the include of actions_dellink.inc.php
 
+$error = 0;
+
 
 /*
  * Actions
@@ -351,7 +353,7 @@ if (empty($reshook))
 								$desc .= '<br>';
 								$desc .= ' ('.$langs->trans('Quantity').': '.$lines[$i]->qty.')';
 
-								$timearray = dol_getdate(mktime());
+								$timearray = dol_getdate(dol_now());
 								$date_intervention = dol_mktime(0, 0, 0, $timearray['mon'], $timearray['mday'], $timearray['year']);
 
 								if ($product_type == Product::TYPE_PRODUCT) {
@@ -721,7 +723,7 @@ if (empty($reshook))
 	include DOL_DOCUMENT_ROOT.'/core/actions_printing.inc.php';
 
 	// Actions to send emails
-	$trigger_name = 'FICHINTER_SENTBYMAIL';
+	$triggersendname = 'FICHINTER_SENTBYMAIL';
 	$autocopy = 'MAIN_MAIL_AUTOCOPY_FICHINTER_TO';
 	$trackid = 'int'.$object->id;
 	include DOL_DOCUMENT_ROOT.'/core/actions_sendmails.inc.php';
@@ -818,10 +820,7 @@ llxHeader('', $langs->trans("Intervention"));
 
 if ($action == 'create')
 {
-	/*
-	 * Mode creation
-	 * Creation d'une nouvelle fiche d'intervention
-	 */
+	// Create new intervention
 
 	$soc = new Societe($db);
 
@@ -831,11 +830,12 @@ if ($action == 'create')
 
 	if ($socid) $res = $soc->fetch($socid);
 
-	if (GETPOST('origin') && GETPOST('originid'))
+	if (GETPOST('origin', 'alphanohtml') && GETPOST('originid', 'int'))
 	{
 		// Parse element/subelement (ex: project_task)
-		$element = $subelement = GETPOST('origin');
-		if (preg_match('/^([^_]+)_([^_]+)/i', GETPOST('origin'), $regs))
+		$regs = array();
+		$element = $subelement = GETPOST('origin', 'alphanohtml');
+		if (preg_match('/^([^_]+)_([^_]+)/i', GETPOST('origin', 'alphanohtml'), $regs))
 		{
 			$element = $regs[1];
 			$subelement = $regs[2];
@@ -843,7 +843,7 @@ if ($action == 'create')
 
         if ($element == 'project')
         {
-            $projectid = GETPOST('originid');
+            $projectid = GETPOST('originid', 'int');
         }
         else
 		{
@@ -905,7 +905,7 @@ if ($action == 'create')
 		$soc->fetch($socid);
 
 		print '<form name="fichinter" action="'.$_SERVER['PHP_SELF'].'" method="POST">';
-		print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+		print '<input type="hidden" name="token" value="'.newToken().'">';
 		print '<input type="hidden" name="socid" value='.$soc->id.'>';
 		print '<input type="hidden" name="action" value="add">';
 
@@ -941,7 +941,7 @@ if ($action == 'create')
             $numprojet = $formproject->select_projects($soc->id, $projectid, 'projectid');
             if ($numprojet == 0)
             {
-                print ' &nbsp; <a href="'.DOL_URL_ROOT.'/projet/card.php?socid='.$soc->id.'&action=create"><span class="valignmiddle text-plus-circle">'.$langs->trans("AddProject").'</span><span class="fa fa-plus-circle valignmiddle"></span></a>';
+                print ' &nbsp; <a href="'.DOL_URL_ROOT.'/projet/card.php?socid='.$soc->id.'&action=create"><span class="fa fa-plus-circle valignmiddle paddingleft" title="'.$langs->trans("AddProject").'"></span></a>';
             }
             print '</td></tr>';
         }
@@ -954,7 +954,7 @@ if ($action == 'create')
 			$numcontrat = $formcontract->select_contract($soc->id, GETPOST('contratid', 'int'), 'contratid', 0, 1);
 			if ($numcontrat == 0)
 			{
-				print ' &nbsp; <a href="'.DOL_URL_ROOT.'/contrat/card.php?socid='.$soc->id.'&action=create"><span class="valignmiddle text-plus-circle">'.$langs->trans("AddContract").'</span><span class="fa fa-plus-circle valignmiddle"></span></a>';
+				print ' &nbsp; <a href="'.DOL_URL_ROOT.'/contrat/card.php?socid='.$soc->id.'&action=create"><span class="fa fa-plus-circle valignmiddle paddingleft" title="'.$langs->trans("AddContract").'"></span></a>';
 			}
 			print '</td></tr>';
 		}
@@ -1076,6 +1076,7 @@ if ($action == 'create')
 		print '<table class="border centpercent">';
 		print '<tr><td class="fieldrequired">'.$langs->trans("ThirdParty").'</td><td>';
 		print $form->select_company('', 'socid', '', 'SelectThirdParty', 1, 0, null, 0, 'minwidth300');
+		print ' <a href="'.DOL_URL_ROOT.'/societe/card.php?action=create&backtopage='.urlencode($_SERVER["PHP_SELF"].'?action=create').'"><span class="fa fa-plus-circle valignmiddle paddingleft" title="'.$langs->trans("AddThirdParty").'"></span></a>';
 		print '</td></tr>';
 		print '</table>';
 
@@ -1168,7 +1169,7 @@ elseif ($id > 0 || !empty($ref))
 
 	if (!$formconfirm)
 	{
-		$parameters = array('lineid'=>$lineid);
+		$parameters = array('formConfirm' => $formconfirm, 'lineid'=>$lineid);
 		$reshook = $hookmanager->executeHooks('formConfirm', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
 		if (empty($reshook)) $formconfirm .= $hookmanager->resPrint;
 		elseif ($reshook > 0) $formconfirm = $hookmanager->resPrint;
@@ -1202,7 +1203,7 @@ elseif ($id > 0 || !empty($ref))
                 //$morehtmlref.=$form->form_project($_SERVER['PHP_SELF'] . '?id=' . $object->id, $object->socid, $object->fk_project, 'projectid', 0, 0, 1, 1);
                 $morehtmlref .= '<form method="post" action="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'">';
                 $morehtmlref .= '<input type="hidden" name="action" value="classin">';
-                $morehtmlref .= '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+                $morehtmlref .= '<input type="hidden" name="token" value="'.newToken().'">';
                 $morehtmlref .= $formproject->select_projects($object->socid, $object->fk_project, 'projectid', $maxlength, 0, 1, 0, 1, 0, 0, '', 1);
                 $morehtmlref .= '<input type="submit" class="button valignmiddle" value="'.$langs->trans("Modify").'">';
                 $morehtmlref .= '</form>';
@@ -1353,7 +1354,7 @@ elseif ($id > 0 || !empty($ref))
  	if (empty($conf->global->FICHINTER_DISABLE_DETAILS))
  	{
 		print '<form action="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'" name="addinter" method="post">';
-		print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+		print '<input type="hidden" name="token" value="'.newToken().'">';
 		print '<input type="hidden" name="id" value="'.$object->id.'">';
 		if ($action == 'editline')
 		{

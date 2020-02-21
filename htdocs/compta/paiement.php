@@ -75,6 +75,8 @@ if ($facid > 0)
 // Initialize technical object to manage hooks of paiements. Note that conf->hooks_modules contains array array
 $hookmanager->initHooks(array('paiementcard', 'globalcard'));
 
+$formquestion = array();
+
 
 /*
  * Actions
@@ -95,6 +97,8 @@ if (empty($reshook))
 	    $totalpayment = 0;
 		$multicurrency_totalpayment = 0;
 	    $atleastonepaymentnotnull = 0;
+		$formquestion = array();
+		$i = 0;
 
 	    // Generate payment array and check if there is payment higher than invoice and payment date before invoice date
 	    $tmpinvoice = new Facture($db);
@@ -214,7 +218,7 @@ if (empty($reshook))
 	{
 	    $error = 0;
 
-	    $datepaye = dol_mktime(12, 0, 0, GETPOST('remonth'), GETPOST('reday'), GETPOST('reyear'));
+	    $datepaye = dol_mktime(12, 0, 0, GETPOST('remonth', 'int'), GETPOST('reday', 'int'), GETPOST('reyear', 'int'));
 
 	    $db->begin();
 
@@ -260,8 +264,10 @@ if (empty($reshook))
 	    $paiement->amounts      = $amounts; // Array with all payments dispatching with invoice id
 	    $paiement->multicurrency_amounts = $multicurrency_amounts; // Array with all payments dispatching
 	    $paiement->paiementid   = dol_getIdFromCode($db, GETPOST('paiementcode'), 'c_paiement', 'code', 'id', 1);
-	    $paiement->num_paiement = GETPOST('num_paiement', 'alpha');
-	    $paiement->note         = GETPOST('comment', 'alpha');
+	    $paiement->num_payment  = GETPOST('num_paiement', 'alpha');
+	    $paiement->note_private = GETPOST('comment', 'alpha');
+	    $paiement->num_paiement = $paiement->num_payment; // For bacward compatibility
+	    $paiement->note         = $paiement->note_private; // For bacward compatibility
 
 	    if (!$error)
 	    {
@@ -461,7 +467,7 @@ if ($action == 'create' || $action == 'confirm_paiement' || $action == 'add_paie
 		}
 
 		print '<form id="payment_form" name="add_paiement" action="'.$_SERVER["PHP_SELF"].'" method="POST">';
-		print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+		print '<input type="hidden" name="token" value="'.newToken().'">';
 		print '<input type="hidden" name="action" value="add_paiement">';
 		print '<input type="hidden" name="facid" value="'.$facture->id.'">';
 		print '<input type="hidden" name="socid" value="'.$facture->socid.'">';
@@ -584,8 +590,8 @@ if ($action == 'create' || $action == 'confirm_paiement' || $action == 'add_paie
 
                 print '<tr class="liste_titre">';
                 print '<td>'.$arraytitle.'</td>';
-                print '<td align="center">'.$langs->trans('Date').'</td>';
-                print '<td align="center">'.$langs->trans('DateMaxPayment').'</td>';
+                print '<td class="center">'.$langs->trans('Date').'</td>';
+                print '<td class="center">'.$langs->trans('DateMaxPayment').'</td>';
                 if (!empty($conf->multicurrency->enabled)) {
                 	print '<td>'.$langs->trans('Currency').'</td>';
                 	print '<td class="right">'.$langs->trans('MulticurrencyAmountTTC').'</td>';
@@ -637,7 +643,7 @@ if ($action == 'create' || $action == 'confirm_paiement' || $action == 'add_paie
 					}
 
 
-					print '<tr class="oddeven">';
+					print '<tr class="oddeven'.(($invoice->id == $facid) ? ' highlight' : '').'">';
 
 					print '<td class="nowraponall">';
                     print $invoice->getNomUrl(1, '');
@@ -645,7 +651,7 @@ if ($action == 'create' || $action == 'confirm_paiement' || $action == 'add_paie
                     print "</td>\n";
 
                     // Date
-                   	print '<td align="center">'.dol_print_date($db->jdate($objp->df), 'day')."</td>\n";
+                   	print '<td class="center">'.dol_print_date($db->jdate($objp->df), 'day')."</td>\n";
 
                     // Due date
                     if ($objp->dlr > 0)
@@ -666,7 +672,7 @@ if ($action == 'create' || $action == 'confirm_paiement' || $action == 'add_paie
                     }
 
                     // Currency
-                    if (!empty($conf->multicurrency->enabled)) print '<td align="center">'.$objp->multicurrency_code."</td>\n";
+                    if (!empty($conf->multicurrency->enabled)) print '<td class="center">'.$objp->multicurrency_code."</td>\n";
 
 					// Multicurrency Price
 					if (!empty($conf->multicurrency->enabled))
@@ -715,7 +721,7 @@ if ($action == 'create' || $action == 'confirm_paiement' || $action == 'add_paie
 					}
 
 					// Price
-                    print '<td class="right" '.(($invoice->id == $facid) ? ' style="font-weight: bold" ' : '').'>'.price($sign * $objp->total_ttc).'</td>';
+                    print '<td class="right">'.price($sign * $objp->total_ttc).'</td>';
 
                     // Received or paid back
                     print '<td class="right">'.price($sign * $paiement);
@@ -859,7 +865,7 @@ if (!GETPOST('action', 'aZ09'))
     if (!$sortorder) $sortorder = 'DESC';
     if (!$sortfield) $sortfield = 'p.datep';
 
-    $sql = 'SELECT p.datep as dp, p.amount, f.amount as fa_amount, f.ref';
+    $sql = 'SELECT p.datep as dp, p.amount, f.total_ttc as fa_amount, f.ref';
     $sql .= ', f.rowid as facid, c.libelle as paiement_type, p.num_paiement';
     $sql .= ' FROM '.MAIN_DB_PREFIX.'paiement as p LEFT JOIN '.MAIN_DB_PREFIX.'c_paiement as c ON p.fk_paiement = c.id';
     $sql .= ', '.MAIN_DB_PREFIX.'facture as f';
@@ -882,10 +888,10 @@ if (!GETPOST('action', 'aZ09'))
         print_barre_liste($langs->trans('Payments'), $page, $_SERVER["PHP_SELF"], '', $sortfield, $sortorder, '', $num);
         print '<table class="noborder centpercent">';
         print '<tr class="liste_titre">';
-        print_liste_field_titre('Invoice', $_SERVER["PHP_SELF"], 'ref', '', '', '', $sortfield, $sortorder);
-        print_liste_field_titre('Date', $_SERVER["PHP_SELF"], 'dp', '', '', '', $sortfield, $sortorder);
-        print_liste_field_titre('Type', $_SERVER["PHP_SELF"], 'libelle', '', '', '', $sortfield, $sortorder);
-        print_liste_field_titre('Amount', $_SERVER["PHP_SELF"], 'fa_amount', '', '', '', $sortfield, $sortorder, 'right ');
+        print_liste_field_titre('Invoice', $_SERVER["PHP_SELF"], 'f.ref', '', '', '', $sortfield, $sortorder);
+        print_liste_field_titre('Date', $_SERVER["PHP_SELF"], 'p.datep', '', '', '', $sortfield, $sortorder);
+        print_liste_field_titre('Type', $_SERVER["PHP_SELF"], 'c.libelle', '', '', '', $sortfield, $sortorder);
+        print_liste_field_titre('Amount', $_SERVER["PHP_SELF"], 'p.amount', '', '', '', $sortfield, $sortorder, 'right ');
 		print_liste_field_titre('', $_SERVER["PHP_SELF"], "", '', '', '', $sortfield, $sortorder, 'maxwidthsearch ');
         print "</tr>\n";
 

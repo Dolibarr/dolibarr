@@ -132,7 +132,7 @@ class Account extends CommonObject
 
 	/**
 	 * IBAN number (International Bank Account Number). Stored into iban_prefix field into database
-	 * @var
+	 * @var string
 	 */
 	public $iban;
 
@@ -1427,6 +1427,7 @@ class Account extends CommonObject
 		if (!empty($this->iban))
 		{
 			// If IBAN defined, we can know country of account from it
+			$reg = array();
 			if (preg_match("/^([a-zA-Z][a-zA-Z])/i", $this->iban, $reg)) return $reg[1];
 		}
 
@@ -1882,13 +1883,15 @@ class AccountLine extends CommonObject
 	}
 
 	/**
-	 *      Delete transaction bank line record
+	 *      Delete bank transaction record
 	 *
 	 *		@param	User	$user	User object that delete
 	 *      @return	int 			<0 if KO, >0 if OK
 	 */
     public function delete(User $user = null)
 	{
+    	global $conf;
+
 		$nbko = 0;
 
 		if ($this->rappro)
@@ -1899,6 +1902,26 @@ class AccountLine extends CommonObject
 		}
 
 		$this->db->begin();
+
+		// Protection to avoid any delete of accounted lines. Protection on by default
+		if (empty($conf->global->BANK_ALLOW_TRANSACTION_DELETION_EVEN_IF_IN_ACCOUNTING))
+		{
+			$sql = "SELECT COUNT(rowid) as nb FROM ".MAIN_DB_PREFIX."accounting_bookkeeping WHERE doc_type = 'bank' AND fk_doc = ".$this->id;
+			$resql = $this->db->query($sql);
+			if ($resql) {
+				$obj = $this->db->fetch_object($resql);
+				if ($obj && $obj->nb) {
+					$this->error = 'ErrorRecordAlreadyInAccountingDeletionNotPossible';
+					$this->db->rollback();
+					return -1;
+				}
+			}
+			else {
+				$this->error = $this->db->lasterror();
+				$this->db->rollback();
+				return -1;
+			}
+		}
 
 		// Delete urls
 		$result = $this->delete_urls($user);
@@ -2249,11 +2272,11 @@ class AccountLine extends CommonObject
 
 
 	/**
-	 *    	Return clicable name (with picto eventually)
+	 *    	Return clickable name (with picto eventually)
 	 *
 	 *		@param	int		$withpicto		0=No picto, 1=Include picto into link, 2=Only picto
 	 *		@param	int		$maxlen			Longueur max libelle
-	 *		@param	string	$option			Option ('showall')
+	 *		@param	string	$option			Option ('', 'showall', 'showconciliated', 'showconciliatedandaccounted'). Options may be slow.
 	 * 		@param	int     $notooltip		1=Disable tooltip
 	 *		@return	string					Chaine avec URL
 	 */
@@ -2271,7 +2294,7 @@ class AccountLine extends CommonObject
 		if ($withpicto != 2) $result .= ($this->ref ? $this->ref : $this->rowid);
 		$result .= $linkend;
 
-		if ($option == 'showall' || $option == 'showconciliated') $result .= ' (';
+		if ($option == 'showall' || $option == 'showconciliated' || $option == 'showconciliatedandaccounted') $result .= ' <span class="opacitymedium">(';
 		if ($option == 'showall')
 		{
 			$result .= $langs->trans("BankAccount").': ';
@@ -2281,12 +2304,25 @@ class AccountLine extends CommonObject
 			$accountstatic->label = $this->bank_account_label;
 			$result .= $accountstatic->getNomUrl(0).', ';
 		}
-		if ($option == 'showall' || $option == 'showconciliated')
+		if ($option == 'showall' || $option == 'showconciliated' || $option == 'showconciliatedandaccounted')
 		{
 			$result .= $langs->trans("BankLineConciliated").': ';
 			$result .= yn($this->rappro);
 		}
-		if ($option == 'showall' || $option == 'showconciliated') $result .= ')';
+		if ($option == 'showall' || $option == 'showconciliatedandaccounted')
+		{
+			$sql = "SELECT COUNT(rowid) as nb FROM ".MAIN_DB_PREFIX."accounting_bookkeeping WHERE doc_type = 'bank' AND fk_doc = ".$this->id;
+			$resql = $this->db->query($sql);
+			if ($resql) {
+				$obj = $this->db->fetch_object($resql);
+				if ($obj && $obj->nb) {
+					$result .= ' - '.$langs->trans("Accounted").': '.yn(1);
+				} else {
+					$result .= ' - '.$langs->trans("Accounted").': '.yn(0);
+				}
+			}
+		}
+		if ($option == 'showall' || $option == 'showconciliated' || $option == 'showconciliatedandaccounted') $result .= ')</span>';
 
 		return $result;
 	}

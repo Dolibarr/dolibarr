@@ -93,7 +93,6 @@ $search_req_nb = GETPOST("req_nb", 'alpha');
 $search_num_releve = GETPOST("search_num_releve", 'alpha');
 $search_conciliated = GETPOST("search_conciliated", 'int');
 $num_releve = GETPOST("num_releve", "alpha");
-$cat = GETPOST("cat");
 if (empty($dateop)) $dateop = -1;
 
 $limit = GETPOST('limit', 'int') ?GETPOST('limit', 'int') : $conf->liste_limit;
@@ -354,8 +353,13 @@ if (GETPOST('save') && !$cancel && $user->rights->banque->modifier)
 if ($action == 'confirm_delete' && $confirm == 'yes' && $user->rights->banque->modifier)
 {
     $accline = new AccountLine($db);
-    $result = $accline->fetch(GETPOST("rowid"));
+    $result = $accline->fetch(GETPOST("rowid", "int"));
     $result = $accline->delete($user);
+    if ($result <= 0) {
+    	setEventMessages($accline->error, $accline->errors, 'errors');
+    } else {
+    	setEventMessages('RecordDeleted', null, 'mesgs');
+    }
 }
 
 
@@ -420,6 +424,7 @@ include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_param.tpl.php';
 $options = array();
 
 $buttonreconcile = '';
+$morehtmlref = '';
 
 if ($id > 0 || !empty($ref))
 {
@@ -458,9 +463,9 @@ if ($id > 0 || !empty($ref))
             if ($user->rights->banque->consolidate) {
             	$newparam = $param;
             	$newparam = preg_replace('/search_conciliated=\d+/i', '', $newparam);
-            	$buttonreconcile = '<a class="butActionNew" style="margin-bottom: 5px !important; margin-top: 5px !important" href="'.DOL_URL_ROOT.'/compta/bank/bankentries_list.php?action=reconcile&sortfield=b.datev,b.dateo,b.rowid&amp;sortorder=asc,asc,asc&search_conciliated=0'.$newparam.'">'.$langs->trans("Conciliate").'</a>';
+            	$buttonreconcile = '<a class="butAction" style="margin-bottom: 5px !important; margin-top: 5px !important" href="'.DOL_URL_ROOT.'/compta/bank/bankentries_list.php?action=reconcile&sortfield=b.datev,b.dateo,b.rowid&amp;sortorder=asc,asc,asc&search_conciliated=0'.$newparam.'">'.$langs->trans("Conciliate").'</a>';
             } else {
-            	$buttonreconcile = '<a class="butActionNewRefused" style="margin-bottom: 5px !important; margin-top: 5px !important" title="'.$langs->trans("NotEnoughPermissions").'" href="#">'.$langs->trans("Conciliate").'</a>';
+            	$buttonreconcile = '<a class="butActionRefused" style="margin-bottom: 5px !important; margin-top: 5px !important" title="'.$langs->trans("NotEnoughPermissions").'" href="#">'.$langs->trans("Conciliate").'</a>';
             }
         }
     }
@@ -573,11 +578,13 @@ if ($page >= $nbtotalofpages)
 if (empty($search_account)) $mode_balance_ok = false;
 // If a search is done $mode_balance_ok=false
 if (!empty($search_ref)) $mode_balance_ok = false;
-if (!empty($req_nb)) $mode_balance_ok = false;
+if (!empty($search_description)) $mode_balance_ok = false;
 if (!empty($search_type)) $mode_balance_ok = false;
-if (!empty($debit)) $mode_balance_ok = false;
-if (!empty($credit)) $mode_balance_ok = false;
-if (!empty($thirdparty)) $mode_balance_ok = false;
+if (!empty($search_debit)) $mode_balance_ok = false;
+if (!empty($search_credit)) $mode_balance_ok = false;
+if (!empty($search_thirdparty)) $mode_balance_ok = false;
+if ($search_conciliated != '') $mode_balance_ok = false;
+if (!empty($search_num_releve)) $mode_balance_ok = false;
 
 $sql .= $db->plimit($limit + 1, $offset);
 //print $sql;
@@ -608,7 +615,7 @@ if ($resql)
     // Lines of title fields
 	print '<form method="post" action="'.$_SERVER["PHP_SELF"].'" name="search_form">'."\n";
 	if ($optioncss != '') print '<input type="hidden" name="optioncss" value="'.$optioncss.'">';
-	print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+	print '<input type="hidden" name="token" value="'.newToken().'">';
 	print '<input type="hidden" name="formfilteraction" id="formfilteraction" value="list">';
 	print '<input type="hidden" name="action" value="'.($action ? $action : 'search').'">';
 	print '<input type="hidden" name="view" value="'.dol_escape_htmltag($view).'">';
@@ -703,7 +710,7 @@ if ($resql)
 		print '<td class=right>'.$langs->trans("Credit").'</td>';
 		/*if (! empty($conf->accounting->enabled))
 		{
-			print '<td align="center">';
+			print '<td class="center">';
 			print $langs->trans("AccountAccounting");
 			print '</td>';
 		}*/
@@ -739,11 +746,11 @@ if ($resql)
 		print '<td class="right"><input name="addcredit" class="flat" type="text" size="4" value="'.GETPOST("addcredit", "alpha").'"></td>';
 		/*if (! empty($conf->accounting->enabled))
 		{
-			print '<td align="center">';
+			print '<td class="center">';
 			print $formaccounting->select_account($search_accountancy_code, 'search_accountancy_code', 1, null, 1, 1, '');
 			print '</td>';
 		}*/
-		print '<td align="center">';
+		print '<td class="center">';
 		print '<input type="submit" name="save" class="button" value="'.$langs->trans("Add").'"><br>';
 		print '<input type="submit" name="cancel" class="button" value="'.$langs->trans("Cancel").'">';
 		print '</td></tr>';
@@ -1101,7 +1108,7 @@ if ($resql)
 					print '</td>';
             	}
 
-				print '<td align="center">';
+				print '<td class="center">';
 				print '<input type="checkbox" id="selectAll" />';
 				print ' <script type="text/javascript">
 						$("input#selectAll").change(function() {

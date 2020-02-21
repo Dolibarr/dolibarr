@@ -132,15 +132,15 @@ class Users extends DolibarrApi
 
 	/**
 	 * Get properties of an user object
-	 *
 	 * Return an array with user informations
 	 *
-	 * @param 	int 	$id ID of user
+	 * @param 	int 	$id 					ID of user
+	 * @param	int		$includepermissions	Set this to 1 to have the array of permissions loaded (not done by default for performance purpose)
 	 * @return 	array|mixed data without useless information
 	 *
 	 * @throws 	RestException
 	 */
-    public function get($id)
+    public function get($id, $includepermissions = 0)
     {
 		//if (!DolibarrApiAccess::$user->rights->user->user->lire) {
 			//throw new RestException(401);
@@ -157,6 +157,10 @@ class Users extends DolibarrApi
 			throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
 		}
 
+		if ($includepermissions) {
+			$this->useraccount->getRights();
+		}
+
 		return $this->_cleanObjectDatas($this->useraccount);
 	}
 
@@ -167,9 +171,8 @@ class Users extends DolibarrApi
      *
      * @return  array|mixed Data without useless information
      *
-     * @throws  401     RestException       Insufficient rights
-     * @throws  404     RestException       User not found
-     * @throws  404     RestException       User group not found
+     * @throws RestException 401     Insufficient rights
+     * @throws RestException 404     User or group not found
      */
     public function getInfo()
     {
@@ -504,7 +507,7 @@ class Users extends DolibarrApi
 	 * Clean sensible object datas
 	 *
 	 * @param   object  $object    Object to clean
-	 * @return    array    Array of cleaned object properties
+	 * @return  array    			Array of cleaned object properties
 	 */
 	protected function _cleanObjectDatas($object)
 	{
@@ -544,6 +547,12 @@ class Users extends DolibarrApi
 	    unset($object->clicktodial_password);
 	    unset($object->openid);
 
+	    unset($object->lines);
+	    unset($object->modelpdf);
+	    unset($object->skype);
+	    unset($object->twitter);
+	    unset($object->facebook);
+	    unset($object->linkedin);
 
 	    $canreadsalary = ((!empty($conf->salaries->enabled) && !empty(DolibarrApiAccess::$user->rights->salaries->read))
 	    	|| (!empty($conf->hrm->enabled) && !empty(DolibarrApiAccess::$user->rights->hrm->employee->read)));

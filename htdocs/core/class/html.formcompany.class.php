@@ -135,7 +135,7 @@ class FormCompany extends Form
 
 		print '<form method="post" action="'.$page.'">';
 		print '<input type="hidden" name="action" value="setprospectlevel">';
-		print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+		print '<input type="hidden" name="token" value="'.newToken().'">';
 
 		dol_syslog(get_class($this).'::form_prospect_level', LOG_DEBUG);
 		$sql = "SELECT code, label";
@@ -767,7 +767,7 @@ class FormCompany extends Form
 
 		if ($rendermode === 'edit')
 		{
-			$contactType = $contact->listeTypeContacts('external', '', 1);
+			$contactType = $contact->listeTypeContacts('external', '', 1, '', '', 'agenda'); // We exclude agenda as there is no contact on such element
 			if (count($selected) > 0) {
 				$newselected = array();
 				foreach ($selected as $key=>$val) {

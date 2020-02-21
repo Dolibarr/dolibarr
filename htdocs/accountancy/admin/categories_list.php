@@ -153,7 +153,7 @@ if (GETPOST('actionadd', 'alpha') || GETPOST('actionmodify', 'alpha'))
 		if ($value == 'formula' && empty($_POST['formula'])) continue;
 		if ($value == 'range_account' && empty($_POST['range_account'])) continue;
 		if ($value == 'country' || $value == 'country_id') continue;
-		if (!isset($_POST[$value]) || $_POST[$value] == '')
+		if (!GETPOSTISSET($value) || GETPOST($value) == '')
         {
             $ok = 0;
             $fieldnamekey = $listfield[$f];
@@ -445,7 +445,7 @@ if ($id)
     $fieldlist = explode(',', $tabfield[$id]);
 
     print '<form action="'.$_SERVER['PHP_SELF'].'?id='.$id.'" method="POST">';
-    print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+    print '<input type="hidden" name="token" value="'.newToken().'">';
     print '<input type="hidden" name="from" value="'.dol_escape_htmltag(GETPOST('from', 'alpha')).'">';
 
 	print '<div class="div-table-responsive">';

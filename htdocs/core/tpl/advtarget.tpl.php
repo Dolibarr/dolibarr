@@ -51,31 +51,34 @@ print load_fiche_titre($langs->trans("AdvTgtTitle"));
 
 print '<div class="tabBar">'."\n";
 print '<form name="find_customer" id="find_customer" action="'.$_SERVER['PHP_SELF'].'?id='.$id.'"  method="POST">'."\n";
-print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">'."\n";
+print '<input type="hidden" name="token" value="'.newToken().'">'."\n";
 print '<input type="hidden" name="action" value="">'."\n";
 print '<table class="border centpercent">'."\n";
 
 print '<tr>'."\n";
 print '<td colspan="3" class="right">'."\n";
 
-print '<input type="button" name="addcontact" id="addcontact" value="'.$langs->trans('AdvTgtAddContact').'" class="butAction"/>'."\n";
+print '<input type="button" name="addcontact" id="addcontact" value="'.$langs->trans('AdvTgtAddContact').'" class="button"/>'."\n";
 
 print '</td>'."\n";
 print '</tr>'."\n";
 
-print '<tr><td>'.$langs->trans('AdvTgtNameTemplate').'</td><td>';
+print '<tr><td>'.$langs->trans('AdvTgtNameTemplate').'</td><td class="valignmiddle">';
 if (!empty($template_id)) {
 	$default_template = $template_id;
 } else {
 	$default_template = $advTarget->id;
 }
-print $formadvtargetemaling->selectAdvtargetemailingTemplate('template_id', $default_template, 0, $advTarget->type_element);
-print '<input type="button" name="loadfilter" id="loadfilter" value="'.$langs->trans('AdvTgtLoadFilter').'" class="butAction"/>';
-print '<input type="button" name="deletefilter" id="deletefilter" value="'.$langs->trans('AdvTgtDeleteFilter').'" class="butAction"/>';
-print '<input type="button" name="savefilter" id="savefilter" value="'.$langs->trans('AdvTgtSaveFilter').'" class="butAction"/>';
-print $langs->trans('AdvTgtOrCreateNewFilter');
+print $formadvtargetemaling->selectAdvtargetemailingTemplate('template_id', $default_template, 0, $advTarget->type_element, 'valignmiddle');
+print '<input type="button" name="loadfilter" id="loadfilter" value="'.$langs->trans('AdvTgtLoadFilter').'" class="button"/>';
+print '<input type="button" name="deletefilter" id="deletefilter" value="'.$langs->trans('AdvTgtDeleteFilter').'" class="button"/>';
+print '<input type="button" name="savefilter" id="savefilter" value="'.$langs->trans('AdvTgtSaveFilter').'" class="button"/>';
+print '</td><td>' . "\n";
+print '</td></tr>' . "\n";
+
+print '<tr><td>' . $langs->trans('AdvTgtOrCreateNewFilter') . '</td><td>';
 print '<input type="text" name="template_name" id="template_name" value=""/>';
-print '<input type="button" name="createfilter" id="createfilter" value="'.$langs->trans('AdvTgtCreateFilter').'" class="butAction"/>';
+print '<input type="button" name="createfilter" id="createfilter" value="'.$langs->trans('AdvTgtCreateFilter').'" class="button"/>';
 print '</td><td>'."\n";
 print '</td></tr>'."\n";
 
@@ -527,7 +530,7 @@ print '</table>'."\n";
 print '</form>'."\n";
 print '</div>'."\n";
 print '<form action="'.$_SERVER['PHP_SELF'].'?action=clear&id='.$object->id.'" method="POST">';
-print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+print '<input type="hidden" name="token" value="'.newToken().'">';
 print load_fiche_titre($langs->trans("ToClearAllRecipientsClickHere"));
 print '<table class="noborder centpercent">';
 print '<tr class="liste_titre">';

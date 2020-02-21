@@ -95,7 +95,7 @@ $head = member_admin_prepare_head();
 
 print '<form action="'.$_SERVER["PHP_SELF"].'" method="post">';
 print '<input type="hidden" name="action" value="update">';
-print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+print '<input type="hidden" name="token" value="'.newToken().'">';
 
 dol_fiche_head($head, 'website', $langs->trans("Members"), -1, 'user');
 
@@ -142,14 +142,14 @@ $enabledisablehtml = $langs->trans("EnablePublicSubscriptionForm").' ';
 if (empty($conf->global->MEMBER_ENABLE_PUBLIC))
 {
 	// Button off, click to enable
-	$enabledisablehtml .= '<a class="reposition" href="'.$_SERVER["PHP_SELF"].'?action=setMEMBER_ENABLE_PUBLIC&value=1'.$param.'">';
+	$enabledisablehtml .= '<a class="reposition valignmiddle" href="'.$_SERVER["PHP_SELF"].'?action=setMEMBER_ENABLE_PUBLIC&value=1'.$param.'">';
 	$enabledisablehtml .= img_picto($langs->trans("Disabled"), 'switch_off');
 	$enabledisablehtml .= '</a>';
 }
 else
 {
 	// Button on, click to disable
-	$enabledisablehtml .= '<a class="reposition" href="'.$_SERVER["PHP_SELF"].'?action=setMEMBER_ENABLE_PUBLIC&value=0'.$param.'">';
+	$enabledisablehtml .= '<a class="reposition valignmiddle" href="'.$_SERVER["PHP_SELF"].'?action=setMEMBER_ENABLE_PUBLIC&value=0'.$param.'">';
 	$enabledisablehtml .= img_picto($langs->trans("Activated"), 'switch_on');
 	$enabledisablehtml .= '</a>';
 }
@@ -174,8 +174,8 @@ if (!empty($conf->global->MEMBER_ENABLE_PUBLIC))
 	$adht = new AdherentType($db);
 	print '<tr class="oddeven drag" id="trforcetype"><td>';
 	print $langs->trans("ForceMemberType");
-	print '</td><td width="60" class="right">';
-	$listofval = array(-1 => $langs->trans("Undefined"));
+	print '</td><td class="right">';
+	$listofval = array();
 	$listofval += $adht->liste_array();
 	$forcetype = $conf->global->MEMBER_NEWFORM_FORCETYPE ?: -1;
 	print $form->selectarray("MEMBER_NEWFORM_FORCETYPE", $listofval, $forcetype, count($listofval)>1?1:0);

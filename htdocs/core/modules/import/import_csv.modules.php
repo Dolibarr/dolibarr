@@ -123,7 +123,7 @@ class ImportCsv extends ModeleImports
 	 * 	Output header of an example file for this format
 	 *
 	 * 	@param	Translate	$outputlangs		Output language
-	 *  @return	string
+	 *  @return	string							Empty string
 	 */
     public function write_header_example($outputlangs)
 	{
@@ -137,7 +137,7 @@ class ImportCsv extends ModeleImports
 	 *
 	 * 	@param	Translate	$outputlangs		Output language
 	 *  @param	array		$headerlinefields	Array of fields name
-	 * 	@return	string$limittoachartaccount
+	 * 	@return	string							String output
 	 */
     public function write_title_example($outputlangs, $headerlinefields)
 	{
@@ -152,7 +152,7 @@ class ImportCsv extends ModeleImports
 	 *
 	 * 	@param	Translate	$outputlangs		Output language
 	 * 	@param	array		$contentlinevalues	Array of lines
-	 * 	@return	string
+	 * 	@return	string							String output
 	 */
     public function write_record_example($outputlangs, $contentlinevalues)
 	{
@@ -166,14 +166,13 @@ class ImportCsv extends ModeleImports
 	 * 	Output footer of an example file for this format
 	 *
 	 * 	@param	Translate	$outputlangs		Output language
-	 *  @return	string
+	 *  @return	string							Empty string
 	 */
     public function write_footer_example($outputlangs)
 	{
         // phpcs:enable
 		return '';
 	}
-
 
 
     // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
@@ -426,6 +425,7 @@ class ImportCsv extends ModeleImports
                                     // New val can be an id or ref. If it start with id: it is forced to id, if it start with ref: it is forced to ref. It not, we try to guess.
                                     $isidorref = 'id';
                                     if (!is_numeric($newval) && $newval != '' && !preg_match('/^id:/i', $newval)) $isidorref = 'ref';
+
                                     $newval = preg_replace('/^(id|ref):/i', '', $newval); // Remove id: or ref: that was used to force if field is id or ref
                                     //print 'Val is now '.$newval.' and is type '.$isidorref."<br>\n";
 
@@ -449,8 +449,7 @@ class ImportCsv extends ModeleImports
                                             $classinstance = new $class($this->db);
                                             // Try the fetch from code or ref
                                             $param_array = array('', $newval);
-                                            if ($class == 'AccountingAccount')
-                                            {
+                                            if ($class == 'AccountingAccount') {
                                                 //var_dump($arrayrecord[0]['val']);
                                                 /*include_once DOL_DOCUMENT_ROOT.'/accountancy/class/accountancysystem.class.php';
                                                  $tmpchartofaccount = new AccountancySystem($this->db);
@@ -465,6 +464,7 @@ class ImportCsv extends ModeleImports
                                                  }*/
                                                 $param_array = array('', $newval, 0, $arrayrecord[0]['val']);       // Param to fetch parent from account, in chart.
                                             }
+
                                             call_user_func_array(array($classinstance, $method), $param_array);
                                             // If not found, try the fetch from label
                                             if (! ($classinstance->id != '') && $objimport->array_import_convertvalue[0][$val]['rule']=='fetchidfromcodeorlabel')

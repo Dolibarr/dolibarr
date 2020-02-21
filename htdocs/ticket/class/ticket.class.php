@@ -200,7 +200,8 @@ class Ticket extends CommonObject
         'message' => array('type'=>'text', 'label'=>'Message', 'visible'=>-2, 'enabled'=>1, 'position'=>540, 'notnull'=>-1,),
         'progress' => array('type'=>'varchar(100)', 'label'=>'Progression', 'visible'=>-1, 'enabled'=>1, 'position'=>540, 'notnull'=>-1, 'css'=>'right', 'help'=>""),
         'resolution' => array('type'=>'integer', 'label'=>'Resolution', 'visible'=>-1, 'enabled'=>1, 'position'=>550, 'notnull'=>1),
-        'fk_statut' => array('type'=>'integer', 'label'=>'Status', 'visible'=>1, 'enabled'=>1, 'position'=>600, 'notnull'=>1, 'index'=>1, 'arrayofkeyval'=>array(0 => 'Unread', 1 => 'Read', 3 => 'Answered', 4 => 'Assigned', 5 => 'InProgress', 6 => 'Waiting', 8 => 'Closed', 9 => 'Deleted'))
+        'fk_statut' => array('type'=>'integer', 'label'=>'Status', 'visible'=>1, 'enabled'=>1, 'position'=>600, 'notnull'=>1, 'index'=>1, 'arrayofkeyval'=>array(0 => 'Unread', 1 => 'Read', 3 => 'Answered', 4 => 'Assigned', 5 => 'InProgress', 6 => 'Waiting', 8 => 'Closed', 9 => 'Deleted')),
+    	'import_key' =>array('type'=>'varchar(14)', 'label'=>'ImportId', 'enabled'=>1, 'visible'=>-2, 'position'=>900),
     );
 
     /**
@@ -1368,6 +1369,8 @@ class Ticket extends CommonObject
     {
         global $conf, $langs;
 
+        $error = 0;
+
         if ($this->statut != self::STATUS_CANCELED) { // no closed
             $this->db->begin();
 
@@ -1420,6 +1423,7 @@ class Ticket extends CommonObject
     {
         global $conf, $langs;
 
+        $error = 0;
         $this->db->begin();
 
         $this->oldcopy = dol_clone($this);
@@ -2750,7 +2754,8 @@ class Ticket extends CommonObject
                     $conf->global->MAIN_MAIL_AUTOCOPY_TO = '';
                 }
                 include_once DOL_DOCUMENT_ROOT.'/core/class/CMailFile.class.php';
-                $mailfile = new CMailFile($subject, $receiver, $from, $message_to_send, $filepath, $mimetype, $filename, $sendtocc, '', $deliveryreceipt, -1);
+				$trackid = "tic".$this->id;
+                $mailfile = new CMailFile($subject, $receiver, $from, $message_to_send, $filepath, $mimetype, $filename, $sendtocc, '', $deliveryreceipt, -1, '', '', $trackid);
                 if ($mailfile->error) {
                     setEventMessages($mailfile->error, null, 'errors');
                 } else {

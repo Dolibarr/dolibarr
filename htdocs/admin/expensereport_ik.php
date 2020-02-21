@@ -108,7 +108,7 @@ if ($action == 'edit')
 	echo '<input type="hidden" name="action" value="updateik" />';
 }
 
-echo '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'" />';
+echo '<input type="hidden" name="token" value="'.newToken().'" />';
 
 echo '<table class="noborder centpercent">';
 

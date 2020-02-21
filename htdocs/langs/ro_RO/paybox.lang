@@ -11,17 +11,8 @@ YourEMail=E-mail de confirmare de plată
 Creditor=Creditor
 PaymentCode=Cod Plata
 PayBoxDoPayment=Pay with Paybox
-ToPay=Emite plata
 YouWillBeRedirectedOnPayBox=Veţi fi redirecţionat pe pagina Paybox securizat la intrare ai card de credit Informatii
 Continue=Următorul
-ToOfferALinkForOnlinePayment=URL-ul pentru plata %s
-ToOfferALinkForOnlinePaymentOnOrder=URL pentru a oferi o  %s interfață utilizator de plată online pentru o comandă de vânzări
-ToOfferALinkForOnlinePaymentOnInvoice=URL-ul pentru a oferi un %s plata online interfaţă de utilizator pentru o factură
-ToOfferALinkForOnlinePaymentOnContractLine=URL-ul pentru a oferi un %s plata online interfaţă cu utilizatorul pentru un contract de linie
-ToOfferALinkForOnlinePaymentOnFreeAmount=URL-ul pentru a oferi un %s plata online interfaţă de utilizator pentru o suma de liber
-ToOfferALinkForOnlinePaymentOnMemberSubscription=URL-ul pentru a oferi o plată %s interfata online pentru un abonament de membru
-ToOfferALinkForOnlinePaymentOnDonation=URL pentru a oferi o  %s plată online, interfața cu utilizatorul pentru plata donației
-YouCanAddTagOnUrl=Puteţi, de asemenea, să adăugaţi URL-ul parametru <b>& tag= <i>valoarea</i></b> la oricare dintre aceste URL-ul (necesar doar pentru liber de plată) pentru a adăuga propriul plată comentariu tag.
 SetupPayBoxToHavePaymentCreatedAutomatically=Configurați-vă caseta de plată cu url <b> %s </b> pentru a avea o plată creată automat când este validată de Paybox.
 YourPaymentHasBeenRecorded=Această pagină confirmă faptul că plata dvs. a fost înregistrată. Mulţumesc.
 YourPaymentHasNotBeenRecorded=Plata dvs. NU a fost înregistrată și tranzacția a fost anulată. Mulțumesc.

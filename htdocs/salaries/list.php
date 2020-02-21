@@ -26,20 +26,22 @@
 require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/salaries/class/paymentsalary.class.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
-if (! empty($conf->accounting->enabled)) require_once DOL_DOCUMENT_ROOT . '/accountancy/class/accountingjournal.class.php';
+if (!empty($conf->accounting->enabled)) require_once DOL_DOCUMENT_ROOT.'/accountancy/class/accountingjournal.class.php';
 
 // Load translation files required by the page
-$langs->loadLangs(array("compta","salaries","bills","hrm"));
+$langs->loadLangs(array("compta", "salaries", "bills", "hrm"));
 
 // Security check
 $socid = GETPOST("socid", "int");
-if ($user->socid) $socid=$user->socid;
+if ($user->socid) $socid = $user->socid;
 $result = restrictedArea($user, 'salaries', '', '', '');
 
-$limit = GETPOST('limit', 'int')?GETPOST('limit', 'int'):$conf->liste_limit;
+$limit = GETPOST('limit', 'int') ?GETPOST('limit', 'int') : $conf->liste_limit;
 $search_ref = GETPOST('search_ref', 'int');
 $search_user = GETPOST('search_user', 'alpha');
 $search_label = GETPOST('search_label', 'alpha');
+$search_date_start = dol_mktime(0, 0, 0, GETPOST('search_date_startmonth', 'int'), GETPOST('search_date_startday', 'int'), GETPOST('search_date_startyear', 'int'));
+$search_date_end = dol_mktime(23, 59, 59, GETPOST('search_date_endmonth', 'int'), GETPOST('search_date_endday', 'int'), GETPOST('search_date_endyear', 'int'));
 $search_amount = GETPOST('search_amount', 'alpha');
 $search_account = GETPOST('search_account', 'int');
 
@@ -50,25 +52,25 @@ if (empty($page) || $page == -1) { $page = 0; }     // If $page is not defined, 
 $offset = $conf->liste_limit * $page;
 $pageprev = $page - 1;
 $pagenext = $page + 1;
-if (! $sortfield) $sortfield="s.datep,s.rowid";
-if (! $sortorder) $sortorder="DESC,DESC";
+if (!$sortfield) $sortfield = "s.datep,s.rowid";
+if (!$sortorder) $sortorder = "DESC,DESC";
 $optioncss = GETPOST('optioncss', 'alpha');
 
-$filtre=$_GET["filtre"];
+$filtre = $_GET["filtre"];
 
 if (empty($_REQUEST['typeid']))
 {
-	$newfiltre=str_replace('filtre=', '', $filtre);
-	$filterarray=explode('-', $newfiltre);
-	foreach($filterarray as $val)
+	$newfiltre = str_replace('filtre=', '', $filtre);
+	$filterarray = explode('-', $newfiltre);
+	foreach ($filterarray as $val)
 	{
-		$part=explode(':', $val);
-		if ($part[0] == 's.fk_typepayment') $typeid=$part[1];
+		$part = explode(':', $val);
+		if ($part[0] == 's.fk_typepayment') $typeid = $part[1];
 	}
 }
 else
 {
-	$typeid=$_REQUEST['typeid'];
+	$typeid = $_REQUEST['typeid'];
 }
 
 
@@ -79,11 +81,14 @@ else
 
 if (GETPOST('button_removefilter_x', 'alpha') || GETPOST('button_removefilter.x', 'alpha') || GETPOST('button_removefilter', 'alpha')) // All test are required to be compatible with all browsers
 {
-	$search_ref="";
-	$search_label="";
-	$search_amount="";
-	$search_account='';
-    $typeid="";
+	$search_ref = "";
+	$search_user = "";
+	$search_label = "";
+	$search_date_start = '';
+	$search_date_end = '';
+	$search_amount = "";
+	$search_account = '';
+    $typeid = "";
 }
 
 
@@ -99,63 +104,65 @@ $userstatic = new User($db);
 $accountstatic = new Account($db);
 
 $sql = "SELECT u.rowid as uid, u.lastname, u.firstname, u.login, u.email, u.admin, u.salary as current_salary, u.fk_soc as fk_soc, u.statut as status,";
-$sql.= " s.rowid, s.fk_user, s.amount, s.salary, s.label, s.datep as datep, s.datev as datev, s.fk_typepayment as type, s.num_payment, s.fk_bank,";
-$sql.= " ba.rowid as bid, ba.ref as bref, ba.number as bnumber, ba.account_number, ba.fk_accountancy_journal, ba.label as blabel,";
-$sql.= " pst.code as payment_code";
-$sql.= " FROM ".MAIN_DB_PREFIX."payment_salary as s";
-$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."c_paiement as pst ON s.fk_typepayment = pst.id";
-$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."bank as b ON s.fk_bank = b.rowid";
-$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."bank_account as ba ON b.fk_account = ba.rowid,";
-$sql.= " ".MAIN_DB_PREFIX."user as u";
-$sql.= " WHERE u.rowid = s.fk_user";
-$sql.= " AND s.entity = ".$conf->entity;
+$sql .= " s.rowid, s.fk_user, s.amount, s.salary, s.label, s.datep as datep, s.datev as datev, s.fk_typepayment as type, s.num_payment, s.fk_bank,";
+$sql .= " ba.rowid as bid, ba.ref as bref, ba.number as bnumber, ba.account_number, ba.fk_accountancy_journal, ba.label as blabel,";
+$sql .= " pst.code as payment_code";
+$sql .= " FROM ".MAIN_DB_PREFIX."payment_salary as s";
+$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."c_paiement as pst ON s.fk_typepayment = pst.id";
+$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."bank as b ON s.fk_bank = b.rowid";
+$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."bank_account as ba ON b.fk_account = ba.rowid,";
+$sql .= " ".MAIN_DB_PREFIX."user as u";
+$sql .= " WHERE u.rowid = s.fk_user";
+$sql .= " AND s.entity = ".$conf->entity;
 
 // Search criteria
-if ($search_ref)	$sql.=" AND s.rowid=".$search_ref;
-if ($search_user)   $sql.=natural_search(array('u.login', 'u.lastname', 'u.firstname', 'u.email'), $search_user);
-if ($search_label) 	$sql.=natural_search(array('s.label'), $search_label);
-if ($search_amount) $sql.=natural_search("s.amount", $search_amount, 1);
-if ($search_account > 0) $sql .=" AND b.fk_account=".$search_account;
+if ($search_ref)			$sql .= " AND s.rowid=".$search_ref;
+if ($search_user)			$sql .= natural_search(array('u.login', 'u.lastname', 'u.firstname', 'u.email'), $search_user);
+if ($search_label)			$sql .= natural_search(array('s.label'), $search_label);
+if ($search_date_start)     $sql .= " AND s.datep >= '".$db->idate($search_date_start)."'";
+if ($search_date_end)		$sql .= " AND s.datep <= '".$db->idate($search_date_end)."'";
+if ($search_amount)			$sql .= natural_search("s.amount", $search_amount, 1);
+if ($search_account > 0)	$sql .= " AND b.fk_account=".$search_account;
 if ($filtre) {
-    $filtre=str_replace(":", "=", $filtre);
+    $filtre = str_replace(":", "=", $filtre);
     $sql .= " AND ".$filtre;
 }
 if ($typeid) {
     $sql .= " AND s.fk_typepayment=".$typeid;
 }
-$sql.= $db->order($sortfield, $sortorder);
+$sql .= $db->order($sortfield, $sortorder);
 
 //$sql.= " GROUP BY u.rowid, u.lastname, u.firstname, s.rowid, s.fk_user, s.amount, s.label, s.datev, s.fk_typepayment, s.num_payment, pst.code";
-$totalnboflines=0;
-$result=$db->query($sql);
+$totalnboflines = 0;
+$result = $db->query($sql);
 if ($result)
 {
     $totalnboflines = $db->num_rows($result);
 }
-$sql.= $db->plimit($limit+1, $offset);
+$sql .= $db->plimit($limit + 1, $offset);
 
 $result = $db->query($sql);
 if ($result)
 {
     $num = $db->num_rows($result);
     $i = 0;
-    $total = 0 ;
+    $total = 0;
 
-	$param='';
-    if (! empty($contextpage) && $contextpage != $_SERVER["PHP_SELF"]) $param.='&contextpage='.$contextpage;
-	if ($limit > 0 && $limit != $conf->liste_limit) $param.='&limit='.$limit;
-	if ($typeid) $param.='&amp;typeid='.$typeid;
-	if ($optioncss != '') $param.='&amp;optioncss='.$optioncss;
+	$param = '';
+    if (!empty($contextpage) && $contextpage != $_SERVER["PHP_SELF"]) $param .= '&contextpage='.$contextpage;
+	if ($limit > 0 && $limit != $conf->liste_limit) $param .= '&limit='.$limit;
+	if ($typeid) $param .= '&amp;typeid='.$typeid;
+	if ($optioncss != '') $param .= '&amp;optioncss='.$optioncss;
 
-	$newcardbutton='';
-	if (! empty($user->rights->salaries->write))
+	$newcardbutton = '';
+	if (!empty($user->rights->salaries->write))
 	{
 		$newcardbutton .= dolGetButtonTitle($langs->trans('NewSalaryPayment'), '', 'fa fa-plus-circle', DOL_URL_ROOT.'/salaries/card.php?action=create');
 	}
 
 	print '<form method="POST" action="'.$_SERVER["PHP_SELF"].'">';
     if ($optioncss != '') print '<input type="hidden" name="optioncss" value="'.$optioncss.'">';
-    print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+    print '<input type="hidden" name="token" value="'.newToken().'">';
 	print '<input type="hidden" name="formfilteraction" id="formfilteraction" value="list">';
     print '<input type="hidden" name="action" value="list">';
     print '<input type="hidden" name="sortfield" value="'.$sortfield.'">';
@@ -165,11 +172,11 @@ if ($result)
     print_barre_liste($langs->trans("SalariesPayments"), $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, '', $num, $totalnboflines, 'title_accountancy.png', 0, $newcardbutton, '', $limit);
 
     print '<div class="div-table-responsive">';
-    print '<table class="tagtable liste'.($moreforfilter?" listwithfilterbefore":"").'">'."\n";
+    print '<table class="tagtable liste'.($moreforfilter ? " listwithfilterbefore" : "").'">'."\n";
 
 	print '<tr class="liste_titre_filter">';
 	// Ref
-	print '<td class="liste_titre" align="left">';
+	print '<td class="liste_titre left">';
 	print '<input class="flat" type="text" size="3" name="search_ref" value="'.$db->escape($search_ref).'">';
 	print '</td>';
 	// Employee
@@ -179,13 +186,22 @@ if ($result)
 	// Label
 	print '<td class="liste_titre"><input type="text" class="flat" size="10" name="search_label" value="'.$db->escape($search_label).'"></td>';
 	// Date
-	print '<td class="liste_titre">&nbsp;</td>';
+	print '<td class="liste_titre center">';
+	print '<div class="nowrap">';
+	print $langs->trans('From').' ';
+	print $form->selectDate($search_date_start ? $search_date_start : -1, 'search_date_start', 0, 0, 1);
+	print '</div>';
+	print '<div class="nowrap">';
+	print $langs->trans('to').' ';
+	print $form->selectDate($search_date_end ? $search_date_end : -1, 'search_date_end', 0, 0, 1);
+	print '</div>';
+	print '</td>';
 	// Type
-	print '<td class="liste_titre" align="left">';
+	print '<td class="liste_titre left">';
 	$form->select_types_paiements($typeid, 'typeid', '', 0, 1, 1, 16);
 	print '</td>';
 	// Account
-	if (! empty($conf->banque->enabled))
+	if (!empty($conf->banque->enabled))
     {
 	    print '<td class="liste_titre">';
 	    $form->select_comptes($search_account, 'search_account', 0, '', 1);
@@ -195,7 +211,7 @@ if ($result)
 	print '<td class="liste_titre right"><input name="search_amount" class="flat" type="text" size="8" value="'.$db->escape($search_amount).'"></td>';
 
     print '<td class="liste_titre maxwidthsearch">';
-    $searchpicto=$form->showFilterAndCheckAddButtons(0);
+    $searchpicto = $form->showFilterAndCheckAddButtons(0);
     print $searchpicto;
     print '</td>';
 
@@ -205,7 +221,7 @@ if ($result)
     print_liste_field_titre("Label", $_SERVER["PHP_SELF"], "s.label", "", $param, 'class="left"', $sortfield, $sortorder);
     print_liste_field_titre("DatePayment", $_SERVER["PHP_SELF"], "s.datep,s.rowid", "", $param, 'align="center"', $sortfield, $sortorder);
     print_liste_field_titre("PaymentMode", $_SERVER["PHP_SELF"], "type", "", $param, 'class="left"', $sortfield, $sortorder);
-    if (! empty($conf->banque->enabled)) print_liste_field_titre("BankAccount", $_SERVER["PHP_SELF"], "ba.label", "", $param, "", $sortfield, $sortorder);
+    if (!empty($conf->banque->enabled)) print_liste_field_titre("BankAccount", $_SERVER["PHP_SELF"], "ba.label", "", $param, "", $sortfield, $sortorder);
     print_liste_field_titre("PayedByThisPayment", $_SERVER["PHP_SELF"], "s.amount", "", $param, 'class="right"', $sortfield, $sortorder);
     print_liste_field_titre('', $_SERVER["PHP_SELF"], "", '', '', '', $sortfield, $sortorder, 'maxwidthsearch ');
     print "</tr>\n";
@@ -218,75 +234,75 @@ if ($result)
 
         print '<tr class="oddeven">';
 
-        $userstatic->id=$obj->uid;
-        $userstatic->lastname=$obj->lastname;
-        $userstatic->firstname=$obj->firstname;
-        $userstatic->admin=$obj->admin;
-        $userstatic->login=$obj->login;
-        $userstatic->email=$obj->email;
-        $userstatic->socid=$obj->fk_soc;
-        $userstatic->statut=$obj->status;
+        $userstatic->id = $obj->uid;
+        $userstatic->lastname = $obj->lastname;
+        $userstatic->firstname = $obj->firstname;
+        $userstatic->admin = $obj->admin;
+        $userstatic->login = $obj->login;
+        $userstatic->email = $obj->email;
+        $userstatic->socid = $obj->fk_soc;
+        $userstatic->statut = $obj->status;
 
-        $salstatic->id=$obj->rowid;
-		$salstatic->ref=$obj->rowid;
+        $salstatic->id = $obj->rowid;
+		$salstatic->ref = $obj->rowid;
 
         // Ref
 		print "<td>".$salstatic->getNomUrl(1)."</td>\n";
-		if (! $i) $totalarray['nbfield']++;
+		if (!$i) $totalarray['nbfield']++;
 
 		// Employee
 		print "<td>".$userstatic->getNomUrl(1)."</td>\n";
-		if (! $i) $totalarray['nbfield']++;
+		if (!$i) $totalarray['nbfield']++;
 
 		// Label payment
         print "<td>".dol_trunc($obj->label, 40)."</td>\n";
-		if (! $i) $totalarray['nbfield']++;
+		if (!$i) $totalarray['nbfield']++;
 
 		// Date payment
-        print '<td align="center">'.dol_print_date($db->jdate($obj->datep), 'day')."</td>\n";
-		if (! $i) $totalarray['nbfield']++;
+        print '<td class="center">'.dol_print_date($db->jdate($obj->datep), 'day')."</td>\n";
+		if (!$i) $totalarray['nbfield']++;
 
         // Type
         print '<td>'.$langs->trans("PaymentTypeShort".$obj->payment_code).' '.$obj->num_payment.'</td>';
-		if (! $i) $totalarray['nbfield']++;
+		if (!$i) $totalarray['nbfield']++;
 
 		// Account
-    	if (! empty($conf->banque->enabled))
+    	if (!empty($conf->banque->enabled))
 	    {
 	        print '<td>';
 	        if ($obj->fk_bank > 0)
 	        {
 	        	//$accountstatic->fetch($obj->fk_bank);
-	            $accountstatic->id=$obj->bid;
-	            $accountstatic->ref=$obj->bref;
-	            $accountstatic->number=$obj->bnumber;
+	            $accountstatic->id = $obj->bid;
+	            $accountstatic->ref = $obj->bref;
+	            $accountstatic->number = $obj->bnumber;
 
-				if (! empty($conf->accounting->enabled))
+				if (!empty($conf->accounting->enabled))
 				{
-					$accountstatic->account_number=$obj->account_number;
+					$accountstatic->account_number = $obj->account_number;
 
 					$accountingjournal = new AccountingJournal($db);
 					$accountingjournal->fetch($obj->fk_accountancy_journal);
 
 					$accountstatic->accountancy_journal = $accountingjournal->getNomUrl(0, 1, 1, '', 1);
 				}
-	            $accountstatic->label=$obj->blabel;
+	            $accountstatic->label = $obj->blabel;
 	        	print $accountstatic->getNomUrl(1);
 	        }
 	        else print '&nbsp;';
 	        print '</td>';
-			if (! $i) $totalarray['nbfield']++;
+			if (!$i) $totalarray['nbfield']++;
 	    }
 
         // Amount
         print '<td class="nowrap right">'.price($obj->amount).'</td>';
-		if (! $i) $totalarray['nbfield']++;
-		if (! $i) $totalarray['pos'][$totalarray['nbfield']]='totalttcfield';
+		if (!$i) $totalarray['nbfield']++;
+		if (!$i) $totalarray['pos'][$totalarray['nbfield']] = 'totalttcfield';
 		$totalarray['val']['totalttcfield'] += $obj->amount;
 
         print '<td></td>';
 
-		if (! $i) $totalarray['nbfield']++;
+		if (!$i) $totalarray['nbfield']++;
 
         print "</tr>\n";
 

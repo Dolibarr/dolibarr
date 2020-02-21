@@ -218,6 +218,8 @@ if (empty($reshook))
         $object->priv = GETPOST("priv", 'int');
         $object->note_public = GETPOST("note_public", 'none');
         $object->note_private = GETPOST("note_private", 'none');
+        $object->roles = GETPOST("roles", 'array');
+
         $object->statut			= 1; //Defult status to Actif
 
         // Note: Correct date should be completed with location to have exact GM time of birth.
@@ -482,7 +484,7 @@ if (empty($reshook))
     }
 
     // Actions to send emails
-	$trigger_name = 'CONTACT_SENTBYMAIL';
+	$triggersendname = 'CONTACT_SENTBYMAIL';
 	$paramname = 'id';
 	$mode = 'emailfromcontact';
 	include DOL_DOCUMENT_ROOT.'/core/actions_sendmails.inc.php';
@@ -552,6 +554,8 @@ else
         	setEventMessages($object->error, $object->errors, 'errors');
         }
 
+        $object->fetchRoles();
+
         // Show tabs
         $head = contact_prepare_head($object);
 
@@ -578,7 +582,7 @@ else
                 $object->country      = $tmparray['label'];
             }
 
-            $title = $addcontact = (!empty($conf->global->SOCIETE_ADDRESSES_MANAGEMENT) ? $langs->trans("AddContact") : $langs->trans("AddContactAddress"));
+            $title = (!empty($conf->global->SOCIETE_ADDRESSES_MANAGEMENT) ? $langs->trans("AddContact") : $langs->trans("AddContactAddress"));
             $linkback = '';
             print load_fiche_titre($title, $linkback, 'address');
 
@@ -609,7 +613,7 @@ else
             }
 
             print '<form method="post" name="formsoc" action="'.$_SERVER["PHP_SELF"].'">';
-            print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+            print '<input type="hidden" name="token" value="'.newToken().'">';
             print '<input type="hidden" name="action" value="add">';
             print '<input type="hidden" name="backtopage" value="'.$backtopage.'">';
 			if (!empty($objsoc)) {
@@ -652,7 +656,7 @@ else
 
             // Civility
             print '<tr><td><label for="civility_code">'.$langs->trans("UserTitle").'</label></td><td colspan="3">';
-            print $formcompany->select_civility(GETPOSTISSET("civility_code") ?GETPOST("civility_code", 'alpha') : $object->civility_code, 'civility_code');
+            print $formcompany->select_civility(GETPOSTISSET("civility_code") ? GETPOST("civility_code", 'alpha') : $object->civility_code, 'civility_code');
             print '</td></tr>';
 
             print '<tr><td><label for="title">'.$langs->trans("PostOrFunction").'</label></td>';
@@ -681,13 +685,13 @@ else
             if (($objsoc->typent_code == 'TE_PRIVATE' || !empty($conf->global->CONTACT_USE_COMPANY_ADDRESS)) && dol_strlen(trim($object->zip)) == 0) $object->zip = $objsoc->zip; // Predefined with third party
             if (($objsoc->typent_code == 'TE_PRIVATE' || !empty($conf->global->CONTACT_USE_COMPANY_ADDRESS)) && dol_strlen(trim($object->town)) == 0) $object->town = $objsoc->town; // Predefined with third party
             print '<tr><td><label for="zipcode">'.$langs->trans("Zip").'</label> / <label for="town">'.$langs->trans("Town").'</label></td><td colspan="'.$colspan.'" class="maxwidthonsmartphone">';
-            print $formcompany->select_ziptown((GETPOST("zipcode", 'alpha') ?GETPOST("zipcode", 'alpha') : $object->zip), 'zipcode', array('town', 'selectcountry_id', 'state_id'), 6).'&nbsp;';
-            print $formcompany->select_ziptown((GETPOST("town", 'alpha') ?GETPOST("town", 'alpha') : $object->town), 'town', array('zipcode', 'selectcountry_id', 'state_id'));
+            print $formcompany->select_ziptown((GETPOST("zipcode", 'alpha') ? GETPOST("zipcode", 'alpha') : $object->zip), 'zipcode', array('town', 'selectcountry_id', 'state_id'), 6).'&nbsp;';
+            print $formcompany->select_ziptown((GETPOST("town", 'alpha') ? GETPOST("town", 'alpha') : $object->town), 'town', array('zipcode', 'selectcountry_id', 'state_id'));
             print '</td></tr>';
 
             // Country
             print '<tr><td><label for="selectcountry_id">'.$langs->trans("Country").'</label></td><td colspan="'.$colspan.'" class="maxwidthonsmartphone">';
-            print $form->select_country((GETPOST("country_id", 'alpha') ?GETPOST("country_id", 'alpha') : $object->country_id), 'country_id');
+            print $form->select_country((GETPOST("country_id", 'alpha') ? GETPOST("country_id", 'alpha') : $object->country_id), 'country_id');
             if ($user->admin) print info_admin($langs->trans("YouCanChangeValuesForThisListFromDictionarySetup"), 1);
             print '</td></tr>';
 
@@ -705,7 +709,7 @@ else
 
                 if ($object->country_id)
                 {
-                    print $formcompany->select_state(GETPOST("state_id", 'alpha') ?GETPOST("state_id", 'alpha') : $object->state_id, $object->country_code, 'state_id');
+                    print $formcompany->select_state(GETPOST("state_id", 'alpha') ? GETPOST("state_id", 'alpha') : $object->state_id, $object->country_code, 'state_id');
                 }
                 else
                 {
@@ -719,23 +723,23 @@ else
 
             // Phone / Fax
             print '<tr><td>'.img_picto('', 'object_phoning').' '.$form->editfieldkey('PhonePro', 'phone_pro', '', $object, 0).'</td>';
-            print '<td><input type="text" name="phone_pro" id="phone_pro" class="maxwidth200" value="'.(GETPOSTISSET('phone_pro') ?GETPOST('phone_pro', 'alpha') : $object->phone_pro).'"></td>';
+            print '<td><input type="text" name="phone_pro" id="phone_pro" class="maxwidth200" value="'.(GETPOSTISSET('phone_pro') ? GETPOST('phone_pro', 'alpha') : $object->phone_pro).'"></td>';
             if ($conf->browser->layout == 'phone') print '</tr><tr>';
             print '<td>'.img_picto('', 'object_phoning').' '.$form->editfieldkey('PhonePerso', 'phone_perso', '', $object, 0).'</td>';
-            print '<td><input type="text" name="phone_perso" id="phone_perso" class="maxwidth200" value="'.(GETPOSTISSET('phone_perso') ?GETPOST('phone_perso', 'alpha') : $object->phone_perso).'"></td></tr>';
+            print '<td><input type="text" name="phone_perso" id="phone_perso" class="maxwidth200" value="'.(GETPOSTISSET('phone_perso') ? GETPOST('phone_perso', 'alpha') : $object->phone_perso).'"></td></tr>';
 
             print '<tr><td>'.img_picto('', 'object_phoning_mobile').' '.$form->editfieldkey('PhoneMobile', 'phone_mobile', '', $object, 0).'</td>';
-            print '<td><input type="text" name="phone_mobile" id="phone_mobile" class="maxwidth200" value="'.(GETPOSTISSET('phone_mobile') ?GETPOST('phone_mobile', 'alpha') : $object->phone_mobile).'"></td>';
+            print '<td><input type="text" name="phone_mobile" id="phone_mobile" class="maxwidth200" value="'.(GETPOSTISSET('phone_mobile') ? GETPOST('phone_mobile', 'alpha') : $object->phone_mobile).'"></td>';
             if ($conf->browser->layout == 'phone') print '</tr><tr>';
             print '<td>'.img_picto('', 'object_phoning_fax').' '.$form->editfieldkey('Fax', 'fax', '', $object, 0).'</td>';
-            print '<td><input type="text" name="fax" id="fax" class="maxwidth200" value="'.(GETPOSTISSET('fax') ?GETPOST('fax', 'alpha') : $object->fax).'"></td>';
+            print '<td><input type="text" name="fax" id="fax" class="maxwidth200" value="'.(GETPOSTISSET('fax') ? GETPOST('fax', 'alpha') : $object->fax).'"></td>';
             print '</tr>';
 
             if (($objsoc->typent_code == 'TE_PRIVATE' || !empty($conf->global->CONTACT_USE_COMPANY_ADDRESS)) && dol_strlen(trim($object->email)) == 0) $object->email = $objsoc->email; // Predefined with third party
 
             // Email
             print '<tr><td>'.img_picto('', 'object_email').' '.$form->editfieldkey('EMail', 'email', '', $object, 0, 'string', '').'</td>';
-            print '<td><input type="text" name="email" id="email" value="'.(GETPOSTISSET('email') ?GETPOST('email', 'alpha') : $object->email).'"></td>';
+            print '<td><input type="text" name="email" id="email" value="'.(GETPOSTISSET('email') ? GETPOST('email', 'alpha') : $object->email).'"></td>';
 			print '</tr>';
 
             if (!empty($conf->mailing->enabled))
@@ -755,7 +759,7 @@ else
 
             	print '<tr>';
             	print '<td><label for="no_email">'.$langs->trans("No_Email").'</label></td>';
-	            print '<td>'.$form->selectyesno('no_email', (GETPOSTISSET("no_email") ?GETPOST("no_email", 'alpha') : $noemail), 1).'</td>';
+	            print '<td>'.$form->selectyesno('no_email', (GETPOSTISSET("no_email") ? GETPOST("no_email", 'alpha') : $noemail), 1).'</td>';
 	            print '</tr>';
             }
             print '</tr>';
@@ -938,7 +942,7 @@ else
             }
 
             print '<form enctype="multipart/form-data" method="post" action="'.$_SERVER["PHP_SELF"].'?id='.$id.'" name="formsoc">';
-            print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+            print '<input type="hidden" name="token" value="'.newToken().'">';
             print '<input type="hidden" name="id" value="'.$id.'">';
             print '<input type="hidden" name="action" value="update">';
             print '<input type="hidden" name="contactid" value="'.$object->id.'">';
@@ -1020,7 +1024,7 @@ else
                     print '<tr><td><label for="state_id">'.$langs->trans('State').'</label></td><td colspan="3" class="maxwidthonsmartphone">';
                 }
 
-                print $formcompany->select_state(GETPOSTISSET('state_id') ?GETPOST('state_id', 'alpha') : $object->state_id, $object->country_code, 'state_id');
+                print $formcompany->select_state(GETPOSTISSET('state_id') ? GETPOST('state_id', 'alpha') : $object->state_id, $object->country_code, 'state_id');
                 print '</td></tr>';
             }
 
@@ -1364,7 +1368,7 @@ else
 		if (!empty($conf->categorie->enabled) && !empty($user->rights->categorie->lire)) {
 			print '<tr><td class="titlefield">'.$langs->trans("Categories").'</td>';
 			print '<td colspan="3">';
-			print $form->showCategories($object->id, 'contact', 1);
+			print $form->showCategories($object->id, Categorie::TYPE_CONTACT, 1);
 			print '</td></tr>';
 		}
 

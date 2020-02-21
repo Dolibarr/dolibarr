@@ -99,7 +99,7 @@ $arrayfields = array(
     'p.ref'=>array('label'=>$langs->trans("ProductRef"), 'checked'=>1, 'css'=>'maxwidth100'),
     'p.label'=>array('label'=>$langs->trans("ProductLabel"), 'checked'=>1),
     'm.batch'=>array('label'=>$langs->trans("BatchNumberShort"), 'checked'=>1, 'enabled'=>(!empty($conf->productbatch->enabled))),
-    'pl.eatby'=>array('label'=>$langs->trans("EatByDate"), 'checked'=>0, 'enabled'=>(!empty($conf->productbatch->enabled))),
+	'pl.eatby'=>array('label'=>$langs->trans("EatByDate"), 'checked'=>0, 'position'=>10, 'enabled'=>(!empty($conf->productbatch->enabled))),
     'pl.sellby'=>array('label'=>$langs->trans("SellByDate"), 'checked'=>0, 'position'=>10, 'enabled'=>(!empty($conf->productbatch->enabled))),
     'e.ref'=>array('label'=>$langs->trans("Warehouse"), 'checked'=>1, 'enabled'=>(!$id > 0)), // If we are on specific warehouse, we hide it
     'm.fk_user_author'=>array('label'=>$langs->trans("Author"), 'checked'=>0),
@@ -113,15 +113,15 @@ $arrayfields = array(
     //'m.tms'=>array('label'=>$langs->trans("DateModificationShort"), 'checked'=>0, 'position'=>500)
 );
 
+$usercanread = (($user->rights->stock->mouvement->lire));
+$usercancreate = (($user->rights->stock->mouvement->creer));
+$usercandelete = (($user->rights->stock->mouvement->supprimer));
+
 
 
 /*
  * Actions
  */
-
-$usercanread = (($user->rights->stock->mouvement->lire));
-$usercancreate = (($user->rights->stock->mouvement->creer));
-$usercandelete = (($user->rights->stock->mouvement->supprimer));
 
 if (GETPOST('cancel', 'alpha')) { $action = 'list'; $massaction = ''; }
 if (!GETPOST('confirmmassaction', 'alpha') && $massaction != 'presend' && $massaction != 'confirm_presend') { $massaction = ''; }
@@ -560,7 +560,7 @@ if ($resql)
         dol_fiche_head($head, 'movements', $langs->trans("Warehouse"), -1, 'stock');
 
 
-        $linkback = '<a href="'.DOL_URL_ROOT.'/product/stock/list.php">'.$langs->trans("BackToList").'</a>';
+        $linkback = '<a href="'.DOL_URL_ROOT.'/product/stock/list.php?restore_lastsearch_values=1">'.$langs->trans("BackToList").'</a>';
 
         $morehtmlref = '<div class="refidno">';
         $morehtmlref .= $langs->trans("LocationSummary").' : '.$object->lieu;
@@ -702,8 +702,6 @@ if ($resql)
     if ($search_product)         $param .= '&search_product='.urlencode($search_product);
     if ($search_batch)           $param .= '&search_batch='.urlencode($search_batch);
     if ($search_warehouse > 0)   $param .= '&search_warehouse='.urlencode($search_warehouse);
-    if (!empty($sref))           $param .= '&sref='.urlencode($sref); // FIXME $sref is not defined
-    if (!empty($snom))           $param .= '&snom='.urlencode($snom); // FIXME $snom is not defined
     if ($search_user)            $param .= '&search_user='.urlencode($search_user);
     if ($idproduct > 0)          $param .= '&idproduct='.urlencode($idproduct);
     // Add $param from extra fields
@@ -720,13 +718,12 @@ if ($resql)
 
     print '<form method="POST" action="'.$_SERVER["PHP_SELF"].'">';
     if ($optioncss != '') print '<input type="hidden" name="optioncss" value="'.$optioncss.'">';
-    print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+    print '<input type="hidden" name="token" value="'.newToken().'">';
     print '<input type="hidden" name="formfilteraction" id="formfilteraction" value="list">';
     print '<input type="hidden" name="action" value="list">';
     print '<input type="hidden" name="sortfield" value="'.$sortfield.'">';
     print '<input type="hidden" name="sortorder" value="'.$sortorder.'">';
     print '<input type="hidden" name="page" value="'.$page.'">';
-    print '<input type="hidden" name="type" value="'.$type.'">';
     print '<input type="hidden" name="contextpage" value="'.$contextpage.'">';
     if ($id > 0) print '<input type="hidden" name="id" value="'.$id.'">';
 
@@ -956,7 +953,7 @@ if ($resql)
 
     $arrayofuniqueproduct = array();
 
-    while ($i < min($num, $limit)) {
+    while ($i < ($limit ? min($num, $limit) : $num)) {
         $objp = $db->fetch_object($resql);
 
         $userstatic->id = $objp->fk_user_author;

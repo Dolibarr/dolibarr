@@ -155,6 +155,9 @@ function html_print_stripe_footer($fromcompany, $langs)
 	{
 		$line1 .= ($line1 ? " - " : "").$langs->transnoentities("CapitalOf", $fromcompany->capital)." ".$langs->transnoentities("Currency".$conf->currency);
 	}
+
+	$reg = array();
+
 	// Prof Id 1
 	if ($fromcompany->idprof1 && ($fromcompany->country_code != 'FR' || !$fromcompany->idprof2))
 	{
