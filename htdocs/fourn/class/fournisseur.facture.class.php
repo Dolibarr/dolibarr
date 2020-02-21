@@ -218,7 +218,7 @@ class FactureFournisseur extends CommonInvoice
     public $fk_facture_source;
 
 
-    public $fields=array(
+    public $fields = array(
     	'rowid' =>array('type'=>'integer', 'label'=>'TechnicalID', 'enabled'=>1, 'visible'=>-1, 'notnull'=>1, 'position'=>10),
     	'ref' =>array('type'=>'varchar(255)', 'label'=>'Ref', 'enabled'=>1, 'visible'=>-1, 'notnull'=>1, 'showoncombobox'=>1, 'position'=>15),
     	'ref_supplier' =>array('type'=>'varchar(255)', 'label'=>'RefSupplier', 'enabled'=>1, 'visible'=>-1, 'position'=>20),
@@ -2287,7 +2287,7 @@ class FactureFournisseur extends CommonInvoice
 
                 if ($facturestatic->hasDelay()) {
 	                $response->nbtodolate++;
-					$response->url_late=DOL_URL_ROOT.'/fourn/facture/list.php?option=late&mainmenu=billing&leftmenu=suppliers_bills';
+					$response->url_late = DOL_URL_ROOT.'/fourn/facture/list.php?option=late&mainmenu=billing&leftmenu=suppliers_bills';
                 }
             }
             $this->db->free($resql);

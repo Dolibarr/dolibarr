@@ -185,7 +185,7 @@ class CommandeFournisseur extends CommonOrder
 
 
 
-    public $fields=array(
+    public $fields = array(
     	'rowid' =>array('type'=>'integer', 'label'=>'TechnicalID', 'enabled'=>1, 'visible'=>-1, 'notnull'=>1, 'position'=>10),
     	'tms' =>array('type'=>'timestamp', 'label'=>'DateModification', 'enabled'=>1, 'visible'=>-1, 'notnull'=>1, 'position'=>15),
     	'fk_soc' =>array('type'=>'integer:Societe:societe/class/societe.class.php', 'label'=>'ThirdParty', 'enabled'=>1, 'visible'=>-1, 'notnull'=>1, 'position'=>20),
@@ -455,11 +455,11 @@ class CommandeFournisseur extends CommonOrder
     	$sql .= " l.date_start, l.date_end,";
     	$sql .= ' l.fk_multicurrency, l.multicurrency_code, l.multicurrency_subprice, l.multicurrency_total_ht, l.multicurrency_total_tva, l.multicurrency_total_ttc';
 		if (!empty($conf->global->PRODUCT_USE_SUPPLIER_PACKAGING))
-			$sql.= ", pfp.rowid as fk_pfp, pfp.packaging";
+			$sql .= ", pfp.rowid as fk_pfp, pfp.packaging";
     	$sql .= " FROM ".MAIN_DB_PREFIX."commande_fournisseurdet	as l";
     	$sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'product as p ON l.fk_product = p.rowid';
 		if (!empty($conf->global->PRODUCT_USE_SUPPLIER_PACKAGING))
-			$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."product_fournisseur_price as pfp ON l.fk_product = pfp.fk_product and l.ref = pfp.ref_fourn";
+			$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."product_fournisseur_price as pfp ON l.fk_product = pfp.fk_product and l.ref = pfp.ref_fourn";
     	$sql .= " WHERE l.fk_commande = ".$this->id;
     	if ($only_product) $sql .= ' AND p.fk_product_type = 0';
     	$sql .= " ORDER BY l.rang, l.rowid";
@@ -516,7 +516,7 @@ class CommandeFournisseur extends CommonOrder
 					$line->packaging     = $objp->packaging;
 				}
 
-				$line->date_start          = $this->db->jdate($objp->date_start);
+				$line->date_start = $this->db->jdate($objp->date_start);
     			$line->date_end            = $this->db->jdate($objp->date_end);
     			$line->fk_unit             = $objp->fk_unit;
 
@@ -1701,7 +1701,7 @@ class CommandeFournisseur extends CommonOrder
 				if (!empty($conf->global->PRODUCT_USE_SUPPLIER_PACKAGING))
 				{
 					$prod = new Product($this->db, $fk_product);
-					$prod->get_buyprice($fk_prod_fourn_price, $qty, $fk_product, 'none', ($this->fk_soc?$this->fk_soc:$this->socid));
+					$prod->get_buyprice($fk_prod_fourn_price, $qty, $fk_product, 'none', ($this->fk_soc ? $this->fk_soc : $this->socid));
 					if ($qty < $prod->packaging)
 					{
 						$qty = $prod->packaging;
@@ -1710,7 +1710,7 @@ class CommandeFournisseur extends CommonOrder
 					{
 						if (($qty % $prod->packaging) > 0)
 						{
-							$coeff = intval($qty/$prod->packaging) + 1;
+							$coeff = intval($qty / $prod->packaging) + 1;
 							$qty = $prod->packaging * $coeff;
 							setEventMessage($langs->trans('QtyRecalculatedWithPackaging'), 'mesgs');
 						}
@@ -2679,7 +2679,7 @@ class CommandeFournisseur extends CommonOrder
 				{
 					if (($qty % $this->line->packaging) > 0)
 					{
-						$coeff = intval($qty/$this->line->packaging) + 1;
+						$coeff = intval($qty / $this->line->packaging) + 1;
 						$qty = $this->line->packaging * $coeff;
 						setEventMessage($langs->trans('QtyRecalculatedWithPackaging'), 'mesgs');
 					}
@@ -3451,11 +3451,11 @@ class CommandeFournisseurLigne extends CommonOrderLine
         $sql .= ' cd.date_start, cd.date_end, cd.fk_unit,';
 		$sql .= ' cd.multicurrency_subprice, cd.multicurrency_total_ht, cd.multicurrency_total_tva, cd.multicurrency_total_ttc';
 		if (!empty($conf->global->PRODUCT_USE_SUPPLIER_PACKAGING))
-			$sql.= ", pfp.rowid as fk_pfp, pfp.packaging";
+			$sql .= ", pfp.rowid as fk_pfp, pfp.packaging";
         $sql .= ' FROM '.MAIN_DB_PREFIX.'commande_fournisseurdet as cd';
         $sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'product as p ON cd.fk_product = p.rowid';
 		if (!empty($conf->global->PRODUCT_USE_SUPPLIER_PACKAGING))
-			$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."product_fournisseur_price as pfp ON cd.fk_product = pfp.fk_product and cd.ref = pfp.ref_fourn";
+			$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."product_fournisseur_price as pfp ON cd.fk_product = pfp.fk_product and cd.ref = pfp.ref_fourn";
         $sql .= ' WHERE cd.rowid = '.$rowid;
         $result = $this->db->query($sql);
         if ($result)

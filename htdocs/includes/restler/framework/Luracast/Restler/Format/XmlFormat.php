@@ -221,7 +221,7 @@ class XmlFormat extends Format
                 $namespaces = $xml->getNamespaces();
                 if (count($namespaces)) {
                     $p = strpos($data, $xml->getName());
-                    if ($p && $data{$p - 1} == ':') {
+                    if ($p && $data[$p - 1] == ':') {
                         $s = strpos($data, '<') + 1;
                         $prefix = substr($data, $s, $p - $s - 1);
                         static::$namespacedProperties[static::$rootName] = $prefix;
