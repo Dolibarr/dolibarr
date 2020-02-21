@@ -4,6 +4,7 @@
  * Copyright (C) 2009-2010  Regis Houssin           <regis.houssin@inodbox.com>
  * Copyright (C) 2015       Raphaël Doursenaud      <rdoursenaud@gpcsolutions.fr>
  * Copyright (C) 2015-2016	Marcos García			<marcosgdf@gmail.com>
+ * Copyright (C) 2020		Thibault FOUCART		<support@ptibogxiv.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -425,24 +426,6 @@ function show_stats_for_company($product, $socid)
 		print '</td>';
 		print '</tr>';
 	}
-	// MO
-	if (!empty($conf->mrp->enabled) && $user->rights->mrp->read)
-	{
-		$nblines++;
-		//$ret = $product->load_stats_mo($socid);
-		if ($ret < 0) dol_print_error($db);
-		$langs->load("orders");
-		print '<tr><td>';
-		print '<a href="mo.php?id='.$product->id.'">'.img_object('', 'mrp').' '.$langs->trans("MO").'</a>';
-		print '</td><td class="right">';
-		print $product->stats_mo['suppliers'];
-		print '</td><td class="right">';
-		print $product->stats_mo['nb'];
-		print '</td><td class="right">';
-		print $product->stats_mo['qty'];
-		print '</td>';
-		print '</tr>';
-	}
 	// Customer invoices
 	if (!empty($conf->facture->enabled) && $user->rights->facture->lire)
 	{
@@ -523,7 +506,7 @@ function measuring_units_string($scale = '', $measuring_style = '', $unit = 0, $
  *
  *	@param	int		$unit                ID of unit (rowid in llx_c_units table)
  *	@param  string	$measuring_style     Style of unit: 'weight', 'volume', ..., '' = 'net_measure' for option PRODUCT_ADD_NET_MEASURE
- *  @param	string  $scale				 Scale of unit: '0', '-3', '6', ...
+ *	@param	string  $scale				 Scale of unit: '0', '-3', '6', ...
  *  @param	int		$use_short_label	 1=Use short label ('g' instead of 'gram'). Short labels are not translated.
  *	@return	string	   			         Unit string
  * 	@see	formproduct->selectMeasuringUnits()
