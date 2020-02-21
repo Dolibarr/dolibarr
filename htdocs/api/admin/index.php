@@ -96,7 +96,7 @@ llxHeader();
 $linkback = '<a href="'.DOL_URL_ROOT.'/admin/modules.php?restore_lastsearch_values=1">'.$langs->trans("BackToModuleList").'</a>';
 print load_fiche_titre($langs->trans("ApiSetup"), $linkback, 'title_setup');
 
-print $langs->trans("ApiDesc")."<br>\n";
+print '<span class="opacitymedium">'.$langs->trans("ApiDesc")."</span><br>\n";
 print "<br>\n";
 
 print '<form method="POST" action="'.$_SERVER["PHP_SELF"].'">';
