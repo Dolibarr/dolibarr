@@ -13,7 +13,7 @@ if (!defined('ISLOADEDBYSTEELSHEET')) die('Must be call by steelsheet'); ?>
 
         }
 <?php
-if (!empty($conf->global->MAIN_THEME_DARKMODEENABLEDMAIN_THEME_DARKMODEENABLED)) {
+if (!empty($conf->global->DMAIN_THEME_DARKMODEENABLED)) {
 	print "
     @media (prefers-color-scheme: dark) {
       :root {
