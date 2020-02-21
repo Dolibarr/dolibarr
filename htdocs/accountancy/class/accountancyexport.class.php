@@ -239,7 +239,7 @@ class AccountancyExport
 		$filename = 'general_ledger-'.$this->getFormatCode($formatexportset);
 		$type_export = 'general_ledger';
 
-		global $db; 	// The tpl file use $db
+		global $db; // The tpl file use $db
 		include DOL_DOCUMENT_ROOT.'/accountancy/tpl/export_journal.tpl.php';
 
 
@@ -983,7 +983,7 @@ class AccountancyExport
 			$racine_subledger_account = ''; // for records of type E leave this field blank
 			//          }
 
-			print $racine_subledger_account . $separator; // deprecated CPTG & CPTA use instead
+			print $racine_subledger_account.$separator; // deprecated CPTG & CPTA use instead
 			// MONT
 			print price(abs($line->montant), 0, '', 1, 2).$separator;
 			// CODC

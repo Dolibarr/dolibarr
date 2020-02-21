@@ -266,8 +266,8 @@ if (empty($reshook))
 	    $paiement->paiementid   = dol_getIdFromCode($db, GETPOST('paiementcode'), 'c_paiement', 'code', 'id', 1);
 	    $paiement->num_payment  = GETPOST('num_paiement', 'alpha');
 	    $paiement->note_private = GETPOST('comment', 'alpha');
-	    $paiement->num_paiement = $paiement->num_payment;		// For bacward compatibility
-	    $paiement->note         = $paiement->note_private;		// For bacward compatibility
+	    $paiement->num_paiement = $paiement->num_payment; // For bacward compatibility
+	    $paiement->note         = $paiement->note_private; // For bacward compatibility
 
 	    if (!$error)
 	    {

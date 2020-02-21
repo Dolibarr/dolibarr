@@ -167,12 +167,12 @@ if (empty($reshook))
 
     	// Line to produce
     	$moline->fk_mo = $object->id;
-    	$moline->qty = GETPOST('qtytoadd', 'int');;
+    	$moline->qty = GETPOST('qtytoadd', 'int'); ;
     	$moline->fk_product = GETPOST('productidtoadd', 'int');
     	$moline->role = 'toconsume';
     	$moline->position = 0;
 
-    	$resultline = $moline->create($user, false);	// Never use triggers here
+    	$resultline = $moline->create($user, false); // Never use triggers here
     	if ($resultline <= 0) {
     		$error++;
     		setEventMessages($moline->error, $molines->errors, 'errors');
@@ -546,7 +546,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 	dol_fiche_end();
 
 
-	if (! in_array($action, array('consumeorproduce', 'consumeandproduceall')))
+	if (!in_array($action, array('consumeorproduce', 'consumeandproduceall')))
 	{
 		print '<div class="tabsAction">';
 
@@ -700,14 +700,14 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
     	if (!empty($object->lines))
     	{
     		$nblinetoconsume = 0;
-    		foreach($object->lines as $line) {
+    		foreach ($object->lines as $line) {
     			if ($line->role == 'toconsume') {
     				$nblinetoconsume++;
     			}
     		}
 
     		$nblinetoconsumecursor = 0;
-    		foreach($object->lines as $line) {
+    		foreach ($object->lines as $line) {
     	    	if ($line->role == 'toconsume') {
     	    		$nblinetoconsumecursor++;
 
@@ -716,7 +716,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 
     	    		$arrayoflines = $object->fetchLinesLinked('consumed', $line->id);
     	    		$alreadyconsumed = 0;
-    	    		foreach($arrayoflines as $line2) {
+    	    		foreach ($arrayoflines as $line2) {
     	    			$alreadyconsumed += $line2['qty'];
     	    		}
 
@@ -756,7 +756,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
     	    		}
     	    		print ' '.$alreadyconsumed;
     	    		print '</td>';
-    	    		print '<td>';	// Warehouse
+    	    		print '<td>'; // Warehouse
     	    		print '</td>';
     	    		if ($conf->productbatch->enabled) {
     	    			print '<td></td>'; // Lot
@@ -764,7 +764,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
     	    		print '</tr>';
 
     	    		// Show detailed of already consumed with js code to collapse
-    	    		foreach($arrayoflines as $line2) {
+    	    		foreach ($arrayoflines as $line2) {
     	    			print '<tr class="expanddetail'.$line->id.' hideobject opacitylow">';
     	    			print '<td>';
     	    			print dol_print_date($line2['date'], 'dayhour');
@@ -792,7 +792,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
     	    			print '<tr>';
     	    			print '<td>'.$langs->trans("ToConsume").'</td>';
     	    			$preselected = (GETPOSTISSET('qty-'.$line->id.'-'.$i) ? GETPOST('qty-'.$line->id.'-'.$i) : max(0, $line->qty - $alreadyconsumed));
-    	    			if ($action == 'consumeorproduce' && ! GETPOSTISSET('qty-'.$line->id.'-'.$i)) $preselected = 0;
+    	    			if ($action == 'consumeorproduce' && !GETPOSTISSET('qty-'.$line->id.'-'.$i)) $preselected = 0;
     	    			print '<td class="right"><input type="text" class="width50" name="qty-'.$line->id.'-'.$i.'" value="'.$preselected.'"></td>';
     	    			print '<td></td>';
     	    			print '<td>';
@@ -851,14 +851,14 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
     	if (!empty($object->lines))
     	{
     		$nblinetoproduce = 0;
-    		foreach($object->lines as $line) {
+    		foreach ($object->lines as $line) {
     			if ($line->role == 'toproduce') {
     				$nblinetoproduce++;
     			}
     		}
 
     		$nblinetoproducecursor = 0;
-    		foreach($object->lines as $line) {
+    		foreach ($object->lines as $line) {
     			if ($line->role == 'toproduce') {
     				$nblinetoproducecursor++;
 
@@ -867,7 +867,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 
     				$arrayoflines = $object->fetchLinesLinked('produced', $line->id);
     				$alreadyproduced = 0;
-    				foreach($arrayoflines as $line2) {
+    				foreach ($arrayoflines as $line2) {
     					$alreadyproduced += $line2['qty'];
     				}
 
@@ -894,7 +894,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
     				}
     				print ' '.$alreadyproduced;
     				print '</td>';
-    				print '<td>';	// Warehouse
+    				print '<td>'; // Warehouse
     				print '</td>';
     				if ($conf->productbatch->enabled) {
     					print '<td></td>'; // Lot
@@ -902,7 +902,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
     				print '</tr>';
 
     				// Show detailed of already consumed with js code to collapse
-    				foreach($arrayoflines as $line2) {
+    				foreach ($arrayoflines as $line2) {
     					print '<tr class="expanddetailtoproduce'.$line->id.' hideobject opacitylow">';
     					print '<td>';
     					print dol_print_date($line2['date'], 'dayhour');
@@ -928,7 +928,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
     					print '<tr>';
     					print '<td>'.$langs->trans("ToProduce").'</td>';
     					$preselected = (GETPOSTISSET('qtytoproduce-'.$line->id.'-'.$i) ? GETPOST('qtytoproduce-'.$line->id.'-'.$i) : max(0, $line->qty - $alreadyproduced));
-    					if ($action == 'consumeorproduce' && ! GETPOSTISSET('qtytoproduce-'.$line->id.'-'.$i)) $preselected = 0;
+    					if ($action == 'consumeorproduce' && !GETPOSTISSET('qtytoproduce-'.$line->id.'-'.$i)) $preselected = 0;
     					print '<td class="right"><input type="text" class="width50" name="qtytoproduce-'.$line->id.'-'.$i.'" value="'.$preselected.'"></td>';
     					print '<td></td>';
     					print '<td>';

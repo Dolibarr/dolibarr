@@ -232,7 +232,7 @@ class Website extends CommonObject
 			$tmplangarray = explode(',', $this->otherlang);
 			if (is_array($tmplangarray)) {
 				dol_mkdir($conf->website->dir_output.'/'.$this->ref);
-				foreach($tmplangarray as $val) {
+				foreach ($tmplangarray as $val) {
 					if (trim($val) == $this->lang) continue;
 					dol_mkdir($conf->website->dir_output.'/'.$this->ref.'/'.trim($val));
 				}
@@ -519,7 +519,7 @@ class Website extends CommonObject
 			$tmplangarray = explode(',', $this->otherlang);
 			if (is_array($tmplangarray)) {
 				dol_mkdir($conf->website->dir_output.'/'.$this->ref);
-				foreach($tmplangarray as $val) {
+				foreach ($tmplangarray as $val) {
 					if (trim($val) == $this->lang) continue;
 					dol_mkdir($conf->website->dir_output.'/'.$this->ref.'/'.trim($val));
 				}

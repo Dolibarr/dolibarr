@@ -624,7 +624,7 @@ class Mo extends CommonObject
 			$moline->role = 'toproduce';
 			$moline->position = 1;
 
-			$resultline = $moline->create($user, false);	// Never use triggers here
+			$resultline = $moline->create($user, false); // Never use triggers here
 			if ($resultline <= 0) {
 				$error++;
 				$this->error = $moline->error;
@@ -639,14 +639,14 @@ class Mo extends CommonObject
 				if ($bom->id > 0)
 				{
 					// Lines to consume
-					if (! $error) {
+					if (!$error) {
 						foreach ($bom->lines as $line)
 						{
 							$moline = new MoLine($this->db);
 
 							$moline->fk_mo = $this->id;
 							if ($line->qty_frozen) {
-								$moline->qty = $line->qty;		// Qty to consume does not depends on quantity to produce
+								$moline->qty = $line->qty; // Qty to consume does not depends on quantity to produce
 							} else {
 								$moline->qty = round($line->qty * $this->qty / $bom->efficiency, 2);
 							}
@@ -662,7 +662,7 @@ class Mo extends CommonObject
 								$moline->qty_frozen = $line->qty_frozen;
 								$moline->disable_stock_change = $line->disable_stock_change;
 
-								$resultline = $moline->create($user, false);	// Never use triggers here
+								$resultline = $moline->create($user, false); // Never use triggers here
 								if ($resultline <= 0) {
 									$error++;
 									$this->error = $moline->error;
