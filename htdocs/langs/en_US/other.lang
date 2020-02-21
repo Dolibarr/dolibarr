@@ -30,10 +30,6 @@ PreviousYearOfInvoice=Previous year of invoice date
 NextYearOfInvoice=Following year of invoice date
 DateNextInvoiceBeforeGen=Date of next invoice (before generation)
 DateNextInvoiceAfterGen=Date of next invoice (after generation)
-GraphInBarsAreLimitedTo3Measures=Grapics are limited to 3 measures in 'Bars' mode. The mode 'Lines' was automatically selected instead.
-OnlyOneFieldForXAxisIsPossible=Only 1 field is currently possible as X-Axis. Only the first selected field has been selected. 
-AtLeastOneMeasureIsRequired=At least 1 field for measure is required
-AtLeastOneXAxisIsRequired=At least 1 field for X-Axis is required
 
 Notify_ORDER_VALIDATE=Sales order validated
 Notify_ORDER_SENTBYMAIL=Sales order sent by mail
@@ -258,6 +254,10 @@ ContactCreatedByEmailCollector=Contact/address created by email collector from e
 ProjectCreatedByEmailCollector=Project created by email collector from email MSGID %s
 TicketCreatedByEmailCollector=Ticket created by email collector from email MSGID %s
 OpeningHoursFormatDesc=Use a - to separate opening and closing hours.<br>Use a space to enter different ranges.<br>Example: 8-12 14-18
+PopuProp=Products/Services by popularity in Proposals
+PopuCom=Products/Services by popularity in Orders
+ProductStatistics=Products/Services Statistics
+NbOfQtyInOrders=Qty in orders
 
 ##### Export #####
 ExportsArea=Exports area
