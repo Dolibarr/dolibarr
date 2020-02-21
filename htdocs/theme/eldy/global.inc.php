@@ -3454,7 +3454,7 @@ ul.noborder li:nth-child(even):not(.liste_titre) {
     margin-bottom: 5px;
     text-align: center;
 
-    background: var(--colorbacktitle1);
+    background: var(--colorbackbody);
     border: 1px solid var(--colorboxstatsborder);
     border-left: 6px solid var(--colorboxstatsborder);
     box-shadow: 1px 1px 8px var(--colorboxstatsborder);
