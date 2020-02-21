@@ -12,10 +12,9 @@ if (!defined('ISLOADEDBYSTEELSHEET')) die('Must be call by steelsheet'); ?>
             --butactiondeletebg: rgb(234,228,225);
 
         }
-<?php 
-    if (!empty($conf->global->MAIN_THEME_DARKMODEENABLEDMAIN_THEME_DARKMODEENABLED)) {
-
-        print "
+<?php
+if (!empty($conf->global->MAIN_THEME_DARKMODEENABLEDMAIN_THEME_DARKMODEENABLED)) {
+	print "
     @media (prefers-color-scheme: dark) {
       :root {
         
@@ -28,7 +27,7 @@ if (!defined('ISLOADEDBYSTEELSHEET')) die('Must be call by steelsheet'); ?>
  
       }
     }";
-    }
+}
 ?>
 
 

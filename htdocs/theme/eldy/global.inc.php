@@ -43,10 +43,9 @@
 			--amountremaintopaybackcolor:none;
 
 		}
-<?php 
-	if (!empty($conf->global->MAIN_THEME_DARKMODEENABLED)) {
-
-	    print "@media (prefers-color-scheme: dark) {
+<?php
+if (!empty($conf->global->MAIN_THEME_DARKMODEENABLED)) {
+	print "@media (prefers-color-scheme: dark) {
 	      :root {
 	        
 	            --colorbackhmenu1: #1d1e20;
@@ -85,7 +84,7 @@
 	            --amountremaintopaybackcolor:rbg(245,130,46);
 	      }
 	    }";
-	}
+}
 ?>
 
 body {
