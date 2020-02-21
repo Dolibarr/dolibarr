@@ -41,7 +41,7 @@ class doc_generic_invoice_odt extends ModelePDFFactures
 {
 	/**
 	 * Issuer
-	 * @var Company object that emits
+	 * @var Societe Object that emits
 	 */
 	public $emetteur;
 

@@ -57,7 +57,7 @@ class doc_generic_task_odt extends ModelePDFTask
 {
 	/**
 	 * Issuer
-	 * @var Company object that emits
+	 * @var Societe Object that emits
 	 */
 	public $emetteur;
 

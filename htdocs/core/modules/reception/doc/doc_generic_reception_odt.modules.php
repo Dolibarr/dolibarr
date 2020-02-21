@@ -37,7 +37,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/doc.lib.php';
 class doc_generic_reception_odt extends ModelePdfReception
 {
     /**
-     * @var Company Issuer object that emits
+     * @var Societe Issuer object that emits
      */
     public $emetteur; // Objet societe qui emet
 

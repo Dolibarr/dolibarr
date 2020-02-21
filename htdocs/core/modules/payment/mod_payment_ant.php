@@ -44,7 +44,7 @@ class mod_payment_ant extends ModeleNumRefPayments
 	/**
 	 * @var string Nom du modele
 	 * @deprecated
-	 * @see name
+	 * @see $name
 	 */
 	public $nom='Ant';
 
