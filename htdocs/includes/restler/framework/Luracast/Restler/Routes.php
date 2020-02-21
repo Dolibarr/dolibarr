@@ -87,7 +87,7 @@ class Routes
         foreach ($methods as $method) {
             $methodUrl = strtolower($method->getName());
             //method name should not begin with _
-            if ($methodUrl{0} == '_') {
+            if ($methodUrl[0] == '_') {
                 continue;
             }
             $doc = $method->getDocComment();
@@ -330,7 +330,7 @@ class Routes
         if (!$type) {
             return 's';
         }
-        switch ($type{0}) {
+        switch ($type[0]) {
             case 'i':
             case 'f':
                 return 'n';
@@ -428,7 +428,7 @@ class Routes
                     }
                     $index = intval(substr($k, 1));
                     $details = $value[$httpMethod]['metadata']['param'][$index];
-                    if ($k{0} == 's' || strpos($k, static::pathVarTypeOf($v)) === 0) {
+                    if ($k[0] == 's' || strpos($k, static::pathVarTypeOf($v)) === 0) {
                         //remove the newlines
                         $data[$details['name']] = trim($v, PHP_EOL);
                     } else {

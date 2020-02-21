@@ -2,6 +2,7 @@
 <!DOCTYPE ruleset SYSTEM "ruleset.dtd">
 <ruleset name="Dolibarr">
 	<description>Dolibarr coding standard.</description>
+	<arg name="tab-width" value="4"/>
 
 	<exclude-pattern type="relative">build/html</exclude-pattern>
 	<exclude-pattern type="relative">build/aps</exclude-pattern>
@@ -188,7 +189,6 @@
 	<!-- Disabled as this does not support tab -->
 	<!-- <rule ref="Generic.WhiteSpace.ScopeIndent" /> -->
 
-	<arg name="tab-width" value="4"/>
 	<rule ref="Generic.WhiteSpace.ScopeIndent">
 	  <properties>
 	    <property name="indent" value="4"/>

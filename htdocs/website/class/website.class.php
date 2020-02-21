@@ -144,7 +144,7 @@ class Website extends CommonObject
 	 */
 	public function create(User $user, $notrigger = false)
 	{
-		global $conf;
+		global $conf, $langs;
 
 		dol_syslog(__METHOD__, LOG_DEBUG);
 
@@ -170,10 +170,23 @@ class Website extends CommonObject
         if (empty($this->date_modification)) {
             $this->date_modification = $now;
         }
+        // Remove spaces and be sure we have main language only
+        $this->lang = preg_replace('/[_-].*$/', '', trim($this->lang)); // en_US or en-US -> en
+        $tmparray = explode(',', $this->otherlang);
+		if (is_array($tmparray)) {
+			foreach($tmparray as $key => $val) {
+				$tmparray[$key] = preg_replace('/[_-].*$/', '', trim($val)); // en_US or en-US -> en
+			}
+			$this->otherlang = join(',', $tmparray);
+		}
 
         // Check parameters
         if (empty($this->entity)) {
             $this->entity = $conf->entity;
+        }
+        if (empty($this->lang)) {
+        	$this->error = $langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("MainLanguage"));
+        	return -1;
         }
 
 		// Insert request
@@ -219,7 +232,7 @@ class Website extends CommonObject
 			$tmplangarray = explode(',', $this->otherlang);
 			if (is_array($tmplangarray)) {
 				dol_mkdir($conf->website->dir_output.'/'.$this->ref);
-				foreach($tmplangarray as $val) {
+				foreach ($tmplangarray as $val) {
 					if (trim($val) == $this->lang) continue;
 					dol_mkdir($conf->website->dir_output.'/'.$this->ref.'/'.trim($val));
 				}
@@ -435,7 +448,7 @@ class Website extends CommonObject
 	 */
 	public function update(User $user, $notrigger = false)
 	{
-		global $conf;
+		global $conf, $langs;
 
 		$error = 0;
 
@@ -454,6 +467,20 @@ class Website extends CommonObject
 		}
 		if (isset($this->status)) {
 			 $this->status = (int) $this->status;
+		}
+
+		// Remove spaces and be sure we have main language only
+		$this->lang = preg_replace('/[_-].*$/', '', trim($this->lang)); // en_US or en-US -> en
+		$tmparray = explode(',', $this->otherlang);
+		if (is_array($tmparray)) {
+			foreach($tmparray as $key => $val) {
+				$tmparray[$key] = preg_replace('/[_-].*$/', '', trim($val)); // en_US or en-US -> en
+			}
+			$this->otherlang = join(',', $tmparray);
+		}
+		if (empty($this->lang)) {
+			$this->error = $langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("MainLanguage"));
+			return -1;
 		}
 
 		// Check parameters
@@ -492,7 +519,7 @@ class Website extends CommonObject
 			$tmplangarray = explode(',', $this->otherlang);
 			if (is_array($tmplangarray)) {
 				dol_mkdir($conf->website->dir_output.'/'.$this->ref);
-				foreach($tmplangarray as $val) {
+				foreach ($tmplangarray as $val) {
 					if (trim($val) == $this->lang) continue;
 					dol_mkdir($conf->website->dir_output.'/'.$this->ref.'/'.trim($val));
 				}
@@ -837,7 +864,7 @@ class Website extends CommonObject
 		$this->ref = 'myspecimenwebsite';
 		$this->description = 'A specimen website';
 		$this->lang = 'en';
-		$this->otherlang = 'fr,es_MX';
+		$this->otherlang = 'fr,es';
 		$this->status = '';
 		$this->fk_default_home = null;
 		$this->virtualhost = 'http://myvirtualhost';
@@ -975,7 +1002,7 @@ class Website extends CommonObject
 			fputs($fp, $line);
 
 			// Warning: We must keep llx_ here. It is a generic SQL.
-			$line = 'INSERT INTO llx_website_page(rowid, fk_page, fk_website, pageurl, aliasalt, title, description, lang, otherlang, image, keywords, status, date_creation, tms, lang, import_key, grabbed_from, type_container, htmlheader, content)';
+			$line = 'INSERT INTO llx_website_page(rowid, fk_page, fk_website, pageurl, aliasalt, title, description, lang, otherlang, image, keywords, status, date_creation, tms, import_key, grabbed_from, type_container, htmlheader, content)';
 
 			$line .= " VALUES(";
 			$line .= $objectpageold->newid."__+MAX_llx_website_page__, ";
@@ -992,7 +1019,6 @@ class Website extends CommonObject
 			$line .= "'".$this->db->escape($objectpageold->status)."', ";
 			$line .= "'".$this->db->idate($objectpageold->date_creation)."', ";
 			$line .= "'".$this->db->idate($objectpageold->date_modification)."', ";
-			$line .= "'".$this->db->escape($objectpageold->lang)."', ";
 			$line .= ($objectpageold->import_key ? "'".$this->db->escape($objectpageold->import_key)."'" : "null").", ";
 			$line .= "'".$this->db->escape($objectpageold->grabbed_from)."', ";
 			$line .= "'".$this->db->escape($objectpageold->type_container)."', ";
@@ -1178,7 +1204,11 @@ class Website extends CommonObject
 
 					// The move is not enough, so we regenerate page
 					$filetpl = $conf->website->dir_output.'/'.$object->ref.'/page'.$newid.'.tpl.php';
-					dolSavePageContent($filetpl, $object, $objectpagestatic);
+					$result = dolSavePageContent($filetpl, $object, $objectpagestatic);
+					if (!$result) {
+						$this->errors[] = 'Failed to write file '.basename($filetpl);
+						$error++;
+					}
 
 					// Regenerate alternative aliases pages
 					if (is_array($aliasesarray))
@@ -1188,7 +1218,11 @@ class Website extends CommonObject
 							if (trim($aliasshortcuttocreate))
 							{
 								$filealias = $conf->website->dir_output.'/'.$object->ref.'/'.trim($aliasshortcuttocreate).'.php';
-								dolSavePageAlias($filealias, $object, $objectpagestatic);
+								$result = dolSavePageAlias($filealias, $object, $objectpagestatic);
+								if (!$result) {
+									$this->errors[] = 'Failed to write file '.basename($filealias);
+									$error++;
+								}
 							}
 						}
 					}

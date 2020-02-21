@@ -1704,7 +1704,7 @@ else
 					if (is_array($extralabelslines) && count($extralabelslines) > 0) {
 						$line = new ContratLigne($db);
 						$line->fetch_optionals($objp->rowid);
-						print $line->showOptionals($extrafields, 'view', array('style'=>'class="oddeven"', 'colspan'=>$colspan), '', '', empty($conf->global->MAIN_EXTRAFIELDS_IN_ONE_TD) ? 0 : 1);
+						print $line->showOptionals($extrafields, 'view', array('style'=>'class="oddeven"', 'colspan'=>$colspan), '', '', 1);
 					}
 				}
 				// Line in mode update
@@ -1794,7 +1794,7 @@ else
 					if (is_array($extralabelslines) && count($extralabelslines) > 0) {
 						$line = new ContratLigne($db);
 						$line->fetch_optionals($objp->rowid);
-						print $line->showOptionals($extrafields, 'edit', array('style'=>'class="oddeven"', 'colspan'=>$colspan), '', '', empty($conf->global->MAIN_EXTRAFIELDS_IN_ONE_TD) ? 0 : 1);
+						print $line->showOptionals($extrafields, 'edit', array('style'=>'class="oddeven"', 'colspan'=>$colspan), '', '', 1);
 					}
 				}
 

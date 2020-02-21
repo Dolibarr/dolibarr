@@ -1841,6 +1841,8 @@ ul.tmenu {	/* t r b l */
     margin: 0px 0px 0px 0px;
 	list-style: none;
 	display: table;
+    margin-right: 65px;		/* to keep space for bookmark */
+    padding-left: 5px;
 }
 ul.tmenu li {
 	background: rgb(<?php echo $colorbackhmenu1 ?>);
@@ -2278,7 +2280,7 @@ div.login_block_other { padding-top: 3px; }
 	float: right;
 	vertical-align: top;
 	padding: 0px 0px 0px 2px !important;
-	height: 16px;
+	height: 18px;
 }
 .login_block_elem_name {
 	margin-top: 1px;
@@ -6163,22 +6165,6 @@ border-top-right-radius: 6px;
 
 
 
-/* This must be at end */
-::-webkit-scrollbar {
-    width: 12px;
-}
-::-webkit-scrollbar-button {
-    background: #aaa;
-}
-::-webkit-scrollbar-track-piece {
-    background: #fff;
-}
-::-webkit-scrollbar-thumb {
-    background: #ddd;
-}​
-
-
-
 <?php
 include dol_buildpath($path.'/theme/'.$theme.'/dropdown.inc.php', 0);
 include dol_buildpath($path.'/theme/'.$theme.'/info-box.inc.php', 0);
@@ -6188,3 +6174,23 @@ include dol_buildpath($path.'/theme/eldy/timeline.inc.php', 0); // actually md u
 if (!empty($conf->global->THEME_CUSTOM_CSS)) print $conf->global->THEME_CUSTOM_CSS;
 
 if (is_object($db)) $db->close();
+?>
+
+/* This must be at end */
+::-webkit-scrollbar {
+	width: 12px;
+}
+::-webkit-scrollbar-button {
+	background: #aaa;
+}
+::-webkit-scrollbar-track-piece {
+	background: #fff;
+}
+::-webkit-scrollbar-thumb {
+	background: #ddd;
+}​
+
+div#topmenu-bookmark-dropdown {
+position: fixed;
+right: 20px;
+}

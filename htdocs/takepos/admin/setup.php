@@ -265,17 +265,17 @@ print $langs->trans("SortProductField");
 print '<td colspan="2">';
 $prod = new Product($db);
 $array = [];
-foreach($prod->fields as $k => $v) {
-	$array[$k]=$k;
+foreach ($prod->fields as $k => $v) {
+	$array[$k] = $k;
 }
-print $form->selectarray('TAKEPOS_SORTPRODUCTFIELD', $array, (empty($conf->global->TAKEPOS_SORTPRODUCTFIELD)?'rowid':$conf->global->TAKEPOS_SORTPRODUCTFIELD), 0);
+print $form->selectarray('TAKEPOS_SORTPRODUCTFIELD', $array, (empty($conf->global->TAKEPOS_SORTPRODUCTFIELD) ? 'rowid' : $conf->global->TAKEPOS_SORTPRODUCTFIELD), 0);
 print "</td></tr>\n";
 
-$substitutionarray=pdf_getSubstitutionArray($langs, null, null, 2);
-$substitutionarray['__(AnyTranslationKey)__']=$langs->trans("Translation");
+$substitutionarray = pdf_getSubstitutionArray($langs, null, null, 2);
+$substitutionarray['__(AnyTranslationKey)__'] = $langs->trans("Translation");
 $htmltext = '<i>'.$langs->trans("AvailableVariables").':<br>';
-foreach($substitutionarray as $key => $val)	$htmltext.=$key.'<br>';
-$htmltext.='</i>';
+foreach ($substitutionarray as $key => $val)	$htmltext .= $key.'<br>';
+$htmltext .= '</i>';
 // Color theme
 print '<tr class="oddeven"><td>';
 print $langs->trans("ColorTheme");

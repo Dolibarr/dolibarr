@@ -1150,7 +1150,7 @@ td.showDragHandle {
 #id-left {
 	padding-top: 20px;
 	padding-bottom: 5px;
-	<?php if (!empty($conf->global->MAIN_USE_TOP_MENU_SEARCH_DROPDOWN) && !empty($conf->global->MAIN_USE_TOP_MENU_BOOKMARK_DROPDOWN)) { ?>
+	<?php if (!empty($conf->global->MAIN_USE_TOP_MENU_SEARCH_DROPDOWN)) { ?>
 	padding-top: 8px;
 	<?php } ?>
 }
@@ -1340,7 +1340,7 @@ div.fichetwothirdright {
 	<?php if ($conf->browser->layout == 'phone') { print "padding-bottom: 6px\n"; } ?>
 }
 div.fichetwothirdright div.ficheaddleft {
-    padding-left: 20px;
+    padding-<?php echo $left ?>: 20px;
 }
 div.fichehalfleft {
 	<?php if ($conf->browser->layout != 'phone') { print "float: ".$left.";\n"; } ?>

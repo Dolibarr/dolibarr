@@ -670,57 +670,57 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 	print "</tr>\n";
 
 	print '<tr class="liste_titre">';
-	if (! empty($arrayfields['m.rowid']['checked']))
+	if (!empty($arrayfields['m.rowid']['checked']))
 		print_liste_field_titre($arrayfields['m.rowid']['label'], $_SERVER["PHP_SELF"], 'm.rowid', '', $param, '', $sortfield, $sortorder);
-	if (! empty($arrayfields['m.datem']['checked']))
+	if (!empty($arrayfields['m.datem']['checked']))
 		print_liste_field_titre($arrayfields['m.datem']['label'], $_SERVER["PHP_SELF"], 'm.datem', '', $param, '', $sortfield, $sortorder);
-	if (! empty($arrayfields['p.ref']['checked']))
+	if (!empty($arrayfields['p.ref']['checked']))
 		print_liste_field_titre($arrayfields['p.ref']['label'], $_SERVER["PHP_SELF"], 'p.ref', '', $param, '', $sortfield, $sortorder);
-	if (! empty($arrayfields['p.label']['checked']))
+	if (!empty($arrayfields['p.label']['checked']))
 		print_liste_field_titre($arrayfields['p.label']['label'], $_SERVER["PHP_SELF"], 'p.label', '', $param, '', $sortfield, $sortorder);
-	if (! empty($arrayfields['m.batch']['checked']))
+	if (!empty($arrayfields['m.batch']['checked']))
 		print_liste_field_titre($arrayfields['m.batch']['label'], $_SERVER["PHP_SELF"], 'm.batch', '', $param, '', $sortfield, $sortorder, 'center ');
-	if (! empty($arrayfields['pl.eatby']['checked']))
+	if (!empty($arrayfields['pl.eatby']['checked']))
 		print_liste_field_titre($arrayfields['pl.eatby']['label'], $_SERVER["PHP_SELF"], 'pl.eatby', '', $param, '', $sortfield, $sortorder, 'center ');
-	if (! empty($arrayfields['pl.sellby']['checked']))
+	if (!empty($arrayfields['pl.sellby']['checked']))
 		print_liste_field_titre($arrayfields['pl.sellby']['label'], $_SERVER["PHP_SELF"], 'pl.sellby', '', $param, '', $sortfield, $sortorder, 'center ');
-	if (! empty($arrayfields['e.ref']['checked'])) {
+	if (!empty($arrayfields['e.ref']['checked'])) {
 		// We are on a specific warehouse card, no filter on other should be possible
 		print_liste_field_titre($arrayfields['e.ref']['label'], $_SERVER["PHP_SELF"], "e.ref", "", $param, "", $sortfield, $sortorder);
 	}
-	if (! empty($arrayfields['m.fk_user_author']['checked']))
+	if (!empty($arrayfields['m.fk_user_author']['checked']))
 		print_liste_field_titre($arrayfields['m.fk_user_author']['label'], $_SERVER["PHP_SELF"], "m.fk_user_author", "", $param, "", $sortfield, $sortorder);
-	if (! empty($arrayfields['m.inventorycode']['checked']))
+	if (!empty($arrayfields['m.inventorycode']['checked']))
 		print_liste_field_titre($arrayfields['m.inventorycode']['label'], $_SERVER["PHP_SELF"], "m.inventorycode", "", $param, "", $sortfield, $sortorder);
-	if (! empty($arrayfields['m.label']['checked']))
+	if (!empty($arrayfields['m.label']['checked']))
 		print_liste_field_titre($arrayfields['m.label']['label'], $_SERVER["PHP_SELF"], "m.label", "", $param, "", $sortfield, $sortorder);
-	if (! empty($arrayfields['m.type_mouvement']['checked']))
+	if (!empty($arrayfields['m.type_mouvement']['checked']))
 		print_liste_field_titre($arrayfields['m.type_mouvement']['label'], $_SERVER["PHP_SELF"], "m.type_mouvement", "", $param, '', $sortfield, $sortorder, 'center ');
-	if (! empty($arrayfields['origin']['checked']))
+	if (!empty($arrayfields['origin']['checked']))
 		print_liste_field_titre($arrayfields['origin']['label'], $_SERVER["PHP_SELF"], "", "", $param, "", $sortfield, $sortorder);
-	if (! empty($arrayfields['m.value']['checked']))
+	if (!empty($arrayfields['m.value']['checked']))
 		print_liste_field_titre($arrayfields['m.value']['label'], $_SERVER["PHP_SELF"], "m.value", "", $param, '', $sortfield, $sortorder, 'right ');
-	if (! empty($arrayfields['m.price']['checked']))
+	if (!empty($arrayfields['m.price']['checked']))
 		print_liste_field_titre($arrayfields['m.price']['label'], $_SERVER["PHP_SELF"], "m.price", "", $param, '', $sortfield, $sortorder, 'right ');
 
 	// Extra fields
-	include DOL_DOCUMENT_ROOT . '/core/tpl/extrafields_list_search_title.tpl.php';
+	include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_title.tpl.php';
 
 	// Hook fields
-	$parameters = array('arrayfields' => $arrayfields,'param' => $param,'sortfield' => $sortfield,'sortorder' => $sortorder);
+	$parameters = array('arrayfields' => $arrayfields, 'param' => $param, 'sortfield' => $sortfield, 'sortorder' => $sortorder);
 	$reshook = $hookmanager->executeHooks('printFieldListTitle', $parameters); // Note that $action and $object may have been modified by hook
 	print $hookmanager->resPrint;
-	if (! empty($arrayfields['m.datec']['checked'])) {
+	if (!empty($arrayfields['m.datec']['checked'])) {
 		print_liste_field_titre($arrayfields['p.datec']['label'], $_SERVER["PHP_SELF"], "p.datec", "", $param, '', $sortfield, $sortorder, 'center nowrap ');
 	}
-	if (! empty($arrayfields['m.tms']['checked'])) {
+	if (!empty($arrayfields['m.tms']['checked'])) {
 		print_liste_field_titre($arrayfields['p.tms']['label'], $_SERVER["PHP_SELF"], "p.tms", "", $param, '', $sortfield, $sortorder, 'center nowrap ');
 	}
 	print_liste_field_titre($selectedfields, $_SERVER["PHP_SELF"], "", '', '', '', $sortfield, $sortorder, 'center maxwidthsearch ');
 	print "</tr>\n";
 
 	$resql = $db->query($sql);
-	if (! $resql) {
+	if (!$resql) {
 		dol_print_error($db);
 	}
 	$num = $db->num_rows($resql);
@@ -752,7 +752,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 		$warehousestatic->label = $objp->warehouse_ref;
 		$warehousestatic->lieu = $objp->lieu;
 
-		if (! empty($objp->fk_origin)) {
+		if (!empty($objp->fk_origin)) {
 			$origin = $objectlist->get_origin($objp->fk_origin, $objp->origintype);
 		} else {
 			$origin = '';
@@ -760,21 +760,21 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 
 		print '<tr class="oddeven">';
 		// Id movement
-		if (! empty($arrayfields['m.rowid']['checked'])) {
+		if (!empty($arrayfields['m.rowid']['checked'])) {
 			// This is primary not movement id
-			print '<td>' . $objp->mid . '</td>';
+			print '<td>'.$objp->mid.'</td>';
 		}
-		if (! empty($arrayfields['m.datem']['checked'])) {
+		if (!empty($arrayfields['m.datem']['checked'])) {
 			// Date
-			print '<td>' . dol_print_date($db->jdate($objp->datem), 'dayhour') . '</td>';
+			print '<td>'.dol_print_date($db->jdate($objp->datem), 'dayhour').'</td>';
 		}
-		if (! empty($arrayfields['p.ref']['checked'])) {
+		if (!empty($arrayfields['p.ref']['checked'])) {
 			// Product ref
 			print '<td class="nowraponall">';
 			print $productstatic->getNomUrl(1, 'stock', 16);
 			print "</td>\n";
 		}
-		if (! empty($arrayfields['p.label']['checked'])) {
+		if (!empty($arrayfields['p.label']['checked'])) {
 			// Product label
 			print '<td>';
 			/*
@@ -786,7 +786,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 			print $productstatic->label;
 			print "</td>\n";
 		}
-		if (! empty($arrayfields['m.batch']['checked'])) {
+		if (!empty($arrayfields['m.batch']['checked'])) {
 			print '<td class="center nowraponall">';
 			if ($productlot->id > 0)
 				print $productlot->getNomUrl(1);
@@ -794,25 +794,25 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 				print $productlot->batch; // the id may not be defined if movement was entered when lot was not saved or if lot was removed after movement.
 			print '</td>';
 		}
-		if (! empty($arrayfields['pl.eatby']['checked'])) {
-			print '<td class="center">' . dol_print_date($objp->eatby, 'day') . '</td>';
+		if (!empty($arrayfields['pl.eatby']['checked'])) {
+			print '<td class="center">'.dol_print_date($objp->eatby, 'day').'</td>';
 		}
-		if (! empty($arrayfields['pl.sellby']['checked'])) {
-			print '<td class="center">' . dol_print_date($objp->sellby, 'day') . '</td>';
+		if (!empty($arrayfields['pl.sellby']['checked'])) {
+			print '<td class="center">'.dol_print_date($objp->sellby, 'day').'</td>';
 		}
 		// Warehouse
-		if (! empty($arrayfields['e.ref']['checked'])) {
+		if (!empty($arrayfields['e.ref']['checked'])) {
 			print '<td>';
 			print $warehousestatic->getNomUrl(1);
 			print "</td>\n";
 		}
 		// Author
-		if (! empty($arrayfields['m.fk_user_author']['checked'])) {
+		if (!empty($arrayfields['m.fk_user_author']['checked'])) {
 			print '<td class="tdoverflowmax100">';
-			print $userstatic->getNomUrl(- 1);
+			print $userstatic->getNomUrl(-1);
 			print "</td>\n";
 		}
-		if (! empty($arrayfields['m.inventorycode']['checked'])) {
+		if (!empty($arrayfields['m.inventorycode']['checked'])) {
 			// Inventory code
 			print '<td>';
 			//print '<a href="' . DOL_URL_ROOT . '/product/stock/movement_card.php' . '?id=' . $objp->entrepot_id . '&amp;search_inventorycode=' . $objp->inventorycode . '&amp;search_type_mouvement=' . $objp->type_mouvement . '">';
@@ -820,32 +820,32 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 			//print '</a>';
 			print '</td>';
 		}
-		if (! empty($arrayfields['m.label']['checked'])) {
+		if (!empty($arrayfields['m.label']['checked'])) {
 			// Label of movement
-			print '<td class="tdoverflowmax100aaa">' . $objp->label . '</td>';
+			print '<td class="tdoverflowmax100aaa">'.$objp->label.'</td>';
 		}
-		if (! empty($arrayfields['m.type_mouvement']['checked'])) {
+		if (!empty($arrayfields['m.type_mouvement']['checked'])) {
 			// Type of movement
 			switch ($objp->type_mouvement) {
 				case "0":
-					print '<td class="center">' . $langs->trans('StockIncreaseAfterCorrectTransfer') . '</td>';
+					print '<td class="center">'.$langs->trans('StockIncreaseAfterCorrectTransfer').'</td>';
 					break;
 				case "1":
-					print '<td class="center">' . $langs->trans('StockDecreaseAfterCorrectTransfer') . '</td>';
+					print '<td class="center">'.$langs->trans('StockDecreaseAfterCorrectTransfer').'</td>';
 					break;
 				case "2":
-					print '<td class="center">' . $langs->trans('StockDecrease') . '</td>';
+					print '<td class="center">'.$langs->trans('StockDecrease').'</td>';
 					break;
 				case "3":
-					print '<td class="center">' . $langs->trans('StockIncrease') . '</td>';
+					print '<td class="center">'.$langs->trans('StockIncrease').'</td>';
 					break;
 			}
 		}
-		if (! empty($arrayfields['origin']['checked'])) {
+		if (!empty($arrayfields['origin']['checked'])) {
 			// Origin of movement
-			print '<td class="nowraponall">' . $origin . '</td>';
+			print '<td class="nowraponall">'.$origin.'</td>';
 		}
-		if (! empty($arrayfields['m.value']['checked'])) {
+		if (!empty($arrayfields['m.value']['checked'])) {
 			// Qty
 			print '<td class="right">';
 			if ($objp->qt > 0)
@@ -853,7 +853,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 			print $objp->qty;
 			print '</td>';
 		}
-		if (! empty($arrayfields['m.price']['checked'])) {
+		if (!empty($arrayfields['m.price']['checked'])) {
 			// Price
 			print '<td class="right">';
 			if ($objp->price != 0)
@@ -867,11 +867,11 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 			$selected = 0;
 			if (in_array($obj->rowid, $arrayofselected))
 				$selected = 1;
-			print '<input id="cb' . $obj->rowid . '" class="flat checkforselect" type="checkbox" name="toselect[]" value="' . $obj->rowid . '"' . ($selected ? ' checked="checked"' : '') . '>';
+			print '<input id="cb'.$obj->rowid.'" class="flat checkforselect" type="checkbox" name="toselect[]" value="'.$obj->rowid.'"'.($selected ? ' checked="checked"' : '').'>';
 		}
 		print '</td>';
-		if (! $i)
-			$totalarray['nbfield'] ++;
+		if (!$i)
+			$totalarray['nbfield']++;
 
 		print "</tr>\n";
 		$i++;

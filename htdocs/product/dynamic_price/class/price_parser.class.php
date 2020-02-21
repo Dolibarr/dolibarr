@@ -181,7 +181,7 @@ class PriceParser
             //Do processing
             $res = $entry->process();
             //Store any error or clear status if OK
-            $entry->update_status($res < 1?$entry->error:'', $user);
+            $entry->update_status($res < 1 ? $entry->error : '', $user);
         }
 
         //Get all global values
@@ -216,7 +216,7 @@ class PriceParser
         {
             $data = explode($this->special_chr, $expression);
             $variable = $this->special_chr.$data[1];
-            if (isset($data[2])) $variable.= $this->special_chr;
+            if (isset($data[2])) $variable .= $this->special_chr;
             $this->error_parser = array(23, array($variable, $expression));
             return -6;
         }
@@ -276,7 +276,7 @@ class PriceParser
 		if ($res < 0) {
 			$this->error_parser = array(25, null);
 			return -1;
-		}  elseif($res == 0){
+		}  elseif ($res == 0) {
 			$supplier_min_price = 0;
 		} else {
 			 $supplier_min_price = $productFournisseur->fourn_unitprice;
