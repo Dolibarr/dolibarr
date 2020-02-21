@@ -5,8 +5,7 @@
 /* Default styles                                                                 */
 /* ============================================================================== */
 
-    :root {
-
+:root {
             --colorbackhmenu1: rgb(<?php print $colorbackhmenu1; ?>);
             --colorbackvmenu1: rgb(<?php print $colorbackvmenu1; ?>);
             --colorbacktitle1: rgb(<?php print $colorbacktitle1; ?>);
@@ -42,12 +41,13 @@
 			--amountpaymentcomplete:#008800;
 			--amountremaintopaybackcolor:none;
 
-		}
+}
+
 <?php
 if (!empty($conf->global->MAIN_THEME_DARKMODEENABLED)) {
 	print "@media (prefers-color-scheme: dark) {
 	      :root {
-	        
+
 	            --colorbackhmenu1: #1d1e20;
 	            --colorbackvmenu1: #2b2c2e;
 	            --colorbacktitle1: #2b2d2f;
@@ -60,7 +60,7 @@ if (!empty($conf->global->MAIN_THEME_DARKMODEENABLED)) {
 	            --colorbacklinepairhover: #2b2d2f;
 	            --colorbacklinepairchecked: #0e5ccd;
 	            --colorbackbody: #1d1e20;
-	            --tooltipbgcolor: #2b2d2f; 
+	            --tooltipbgcolor: #2b2d2f;
 	            --colortexttitlenotab: rgb(220,220,220);
 	            --colortexttitle: rgb(220,220,220);
 	            --colortext: rgb(220,220,220);
@@ -2347,16 +2347,16 @@ a.vmenu:link, a.vmenu:visited, a.vmenu:hover, a.vmenu:active, span.vmenu, span.v
 font.vmenudisabled  { font-family: <?php print $fontlist ?>; text-align: <?php print $left; ?>; font-weight: bold; color: #aaa; margin-left: 4px; }												/* bold = 600, 500 is ko with Edge on 1200x960 */
 a.vmenu:link, a.vmenu:visited { color: var(--colortextbackvmenu); }
 
-a.vsmenu:link, a.vsmenu:visited, a.vsmenu:hover, a.vsmenu:active, span.vsmenu { 
-	font-family: <?php print $fontlist ?>; 
-	text-align: <?php print $left; ?>; 
-	color: #202020; 
-	margin: 1px 1px 1px 6px; 
+a.vsmenu:link, a.vsmenu:visited, a.vsmenu:hover, a.vsmenu:active, span.vsmenu {
+	font-family: <?php print $fontlist ?>;
+	text-align: <?php print $left; ?>;
+	color: #202020;
+	margin: 1px 1px 1px 6px;
 }
 font.vsmenudisabled { font-family: <?php print $fontlist ?>; text-align: <?php print $left; ?>; color: #aaa; }
-a.vsmenu:link, a.vsmenu:visited { 
-	color: var(--colortextbackvmenu); 
-	white-space: nowrap; 
+a.vsmenu:link, a.vsmenu:visited {
+	color: var(--colortextbackvmenu);
+	white-space: nowrap;
 }
 font.vsmenudisabledmargin { margin: 1px 1px 1px 6px; }
 li a.vsmenudisabled, li.vsmenudisabled { color: #aaa !important; }
