@@ -768,13 +768,13 @@ if ($conf->global->TAKEPOS_BAR_RESTAURANT)
 	//add temp ticket button
 	if ($conf->global->TAKEPOS_BAR_RESTAURANT)
 	{
-	    if ($conf->global->TAKEPOSCONNECTOR) {
+	    if ($conf->global->TAKEPOS_PRINT_METHOD == "takeposconnector"){
 			$menus[$r++] = array('title'=>'<span class="fa fa-receipt paddingrightonly"></span><div class="trunc">'.$langs->trans("Receipt").'</div>', 'action'=>'TakeposPrinting(placeid);');
 		} else {
 			$menus[$r++] = array('title'=>'<span class="fa fa-receipt paddingrightonly"></span><div class="trunc">'.$langs->trans("Receipt").'</div>', 'action'=>'Print(placeid);');
 		}
 	}
-	if ($conf->global->TAKEPOSCONNECTOR && $conf->global->TAKEPOS_ORDER_NOTES == 1)
+	if ($conf->global->TAKEPOS_PRINT_METHOD == "takeposconnector" && $conf->global->TAKEPOS_ORDER_NOTES == 1)
 	{
 	    $menus[$r++] = array('title'=>'<span class="fa fa-receipt paddingrightonly"></span><div class="trunc">'.$langs->trans("OrderNotes").'</div>', 'action'=>'TakeposOrderNotes();');
 	}
@@ -784,10 +784,10 @@ if ($conf->global->TAKEPOS_BAR_RESTAURANT)
 	}
 }
 
-if ($conf->global->TAKEPOSCONNECTOR) {
+if ($conf->global->TAKEPOS_PRINT_METHOD == "takeposconnector"){
     $menus[$r++] = array('title'=>'<span class="fa fa-receipt paddingrightonly"></span><div class="trunc">'.$langs->trans("DOL_OPEN_DRAWER").'</div>', 'action'=>'OpenDrawer();');
 }
-if ($conf->global->TAKEPOS_DOLIBARR_PRINTER) {
+if ($conf->global->TAKEPOS_PRINT_METHOD == "receiptprinter") {
     $menus[$r++] = array(
 		'title' => '<span class="fa fa-receipt paddingrightonly"></span><div class="trunc">'.$langs->trans("DOL_OPEN_DRAWER").'</div>',
 		'action' => 'DolibarrOpenDrawer();',

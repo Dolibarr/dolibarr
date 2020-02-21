@@ -209,7 +209,7 @@ if (!empty($conf->stock->enabled))
 	print '</td></tr>';
 }
 
-if ($conf->receiptprinter->enabled) {
+if ($conf->global->TAKEPOS_PRINT_METHOD == "receiptprinter") {
 	// Select printer to use with terminal
 	require_once DOL_DOCUMENT_ROOT.'/core/class/dolreceiptprinter.class.php';
 	$printer = new dolReceiptPrinter($db);

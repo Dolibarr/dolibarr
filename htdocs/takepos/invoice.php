@@ -504,9 +504,9 @@ if ($action == "valid" || $action == "history")
         else $sectionwithinvoicelink .= $langs->trans('BillShortStatusValidated');
     }
     $sectionwithinvoicelink .= '</span>';
-    if ($conf->global->TAKEPOSCONNECTOR) {
+    if ($conf->global->TAKEPOS_PRINT_METHOD == "takeposconnector"){
          $sectionwithinvoicelink .= ' <button id="buttonprint" type="button" onclick="TakeposPrinting('.$placeid.');">'.$langs->trans('PrintTicket').'</button>';
-    } elseif ($conf->global->TAKEPOS_DOLIBARR_PRINTER) {
+    } elseif ($conf->global->TAKEPOS_PRINT_METHOD == "receiptprinter"){
         $sectionwithinvoicelink .= ' <button id="buttonprint" type="button" onclick="DolibarrTakeposPrinting('.$placeid.');">'.$langs->trans('PrintTicket').'</button>';
     } else {
         $sectionwithinvoicelink .= ' <button id="buttonprint" type="button" onclick="Print('.$placeid.');">'.$langs->trans('PrintTicket').'</button>';
