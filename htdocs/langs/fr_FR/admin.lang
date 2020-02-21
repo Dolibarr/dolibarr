@@ -1683,6 +1683,8 @@ CashDeskIdWareHouse=Forcer et restreindre l'emplacement/entrepôt à utiliser po
 StockDecreaseForPointOfSaleDisabled=Réduction de stock lors de l'utilisation du Point de Vente désactivée
 StockDecreaseForPointOfSaleDisabledbyBatch=La décrémentation de stock depuis ce module Point de Vente n'est pas encore compatible avec la gestion des numéros de lots/série.
 CashDeskYouDidNotDisableStockDecease=Vous n'avez pas désactivé la réduction de stock lors d'une vente depuis le Point de vente. Par conséquent, un entrepôt est nécessaire.
+CashDeskForceDecreaseStockLabel=Décrémentation des stocks pour les lots a été forcé.
+CashDeskForceDecreaseStockDesc=Décrémentation des lots par DLC et DLUO les plus anciennes.
 ##### Bookmark #####
 BookmarkSetup=Configuration du module Marque-pages
 BookmarkDesc=Ce module vous permet de gérer des liens et raccourcis. Il permet aussi d'ajouter n'importe quelle page de Dolibarr ou lien web dans le menu d'accès rapide sur la gauche.
