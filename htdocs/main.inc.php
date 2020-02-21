@@ -1623,31 +1623,6 @@ function top_menu($head, $title = '', $target = '', $disablejs = 0, $disablehead
 
 		print '<div class="login_block usedropdown">'."\n";
 
-
-		// Add login user link
-		$toprightmenu .= '<div class="login_block_user">';
-
-		// Login name with photo and tooltip
-		$mode = -1;
-		$toprightmenu .= '<div class="inline-block nowrap"><div class="inline-block login_block_elem login_block_elem_name" style="padding: 0px;">';
-
-        if (!empty($conf->global->MAIN_USE_TOP_MENU_SEARCH_DROPDOWN)) {
-            // Add search dropdown
-            $toprightmenu .= top_menu_search();
-        }
-
-        if (!empty($conf->global->MAIN_USE_TOP_MENU_BOOKMARK_DROPDOWN)) {
-            // Add bookmark dropdown
-            $toprightmenu .= top_menu_bookmark();
-        }
-
-        // Add user dropdown
-	    $toprightmenu .= top_menu_user();
-
-		$toprightmenu .= '</div></div>';
-
-		$toprightmenu .= '</div>'."\n";
-
 		$toprightmenu .= '<div class="login_block_other">';
 
 		// Execute hook printTopRightMenu (hooks should output string like '<div class="login"><a href="">mylink</a></div>')
@@ -1739,7 +1714,31 @@ function top_menu($head, $title = '', $target = '', $disablejs = 0, $disablehead
 		// Logout link
 		$toprightmenu .= @Form::textwithtooltip('', $logouthtmltext, 2, 1, $logouttext, 'login_block_elem logout-btn', 2);
 
-		$toprightmenu .= '</div>';
+		$toprightmenu .= '</div>';	// end div class="login_block_other"
+
+
+		// Add login user link
+		$toprightmenu .= '<div class="login_block_user">';
+
+		// Login name with photo and tooltip
+		$mode = -1;
+		$toprightmenu .= '<div class="inline-block nowrap"><div class="inline-block login_block_elem login_block_elem_name" style="padding: 0px;">';
+
+		if (!empty($conf->global->MAIN_USE_TOP_MENU_SEARCH_DROPDOWN)) {
+			// Add search dropdown
+			$toprightmenu .= top_menu_search();
+		}
+
+		// Add bookmark dropdown
+		$toprightmenu .= top_menu_bookmark();
+
+		// Add user dropdown
+		$toprightmenu .= top_menu_user();
+
+		$toprightmenu .= '</div></div>';
+
+		$toprightmenu .= '</div>'."\n";
+
 
 		print $toprightmenu;
 

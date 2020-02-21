@@ -16,7 +16,9 @@ div#topmenu-bookmark-dropdown {
     top: 0px;
 }
 
-
+#topmenu-login-dropdown .dropdown-toggle:after {
+	display: none;
+}
 
 
 button.dropdown-item.global-search-item {

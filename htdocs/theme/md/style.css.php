@@ -2280,7 +2280,7 @@ div.login_block_other { padding-top: 3px; }
 	float: right;
 	vertical-align: top;
 	padding: 0px 0px 0px 2px !important;
-	height: 16px;
+	height: 18px;
 }
 .login_block_elem_name {
 	margin-top: 1px;

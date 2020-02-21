@@ -124,7 +124,7 @@ button.dropdown-item.global-search-item {
 }
 .tmenu .dropdown-menu, .login_block .dropdown-menu {
     position: absolute;
-    right: 0;
+    right: 2px;
     <?php echo $left; ?>: auto;
     line-height:1.3em;
 }
