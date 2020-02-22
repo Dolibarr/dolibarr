@@ -116,7 +116,7 @@ class mod_myobject_standard extends ModeleNumRefMyObject
 	{
 		global $db, $conf;
 
-		// D'abord on recupere la valeur max
+		// First we get the max value
 		$posindice = 9;
 		$sql = "SELECT MAX(CAST(SUBSTRING(ref FROM ".$posindice.") AS SIGNED)) as max";
 		$sql .= " FROM ".MAIN_DB_PREFIX."mymodule_myobject";
