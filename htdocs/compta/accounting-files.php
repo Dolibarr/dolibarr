@@ -453,7 +453,7 @@ print ' - '.$form->selectDate($date_stop, 'date_stop', 0, 0, 0, "", 1, 1, 0)."\n
 if (!empty($conf->multicompany->enabled) && is_object($mc))
 {
 	$mc->getInfo($conf->entity);
-	print '<span class="marginleftonly marginrightonly">('.$langs->trans("Entity").' : ';
+	print '<span class="marginleftonly marginrightonly'.(empty($conf->global->MULTICOMPANY_ALLOW_EXPORT_ACCOUNTING_DOC_FOR_ALL_ENTITIES)?' opacitymedium':'').'">('.$langs->trans("Entity").' : ';
 	print "<td>";
 	if (!empty($conf->global->MULTICOMPANY_ALLOW_EXPORT_ACCOUNTING_DOC_FOR_ALL_ENTITIES)) {
 		print $mc->select_entities(GETPOSTISSET('search_entity') ? GETPOST('search_entity', 'int') : $mc->id, 'search_entity', '', false, false, false, false, true);
