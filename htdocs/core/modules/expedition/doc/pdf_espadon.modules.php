@@ -558,7 +558,17 @@ class pdf_espadon extends ModelePdfExpedition
 					    $nexY = max($pdf->GetY(), $nexY);
 					}
 
-
+                    // Extrafields
+                    if(!empty($object->lines[$i]->array_options)){
+                        foreach ($object->lines[$i]->array_options as $extrafieldColKey => $extrafieldValue){
+                            if ($this->getColumnStatus($extrafieldColKey))
+                            {
+                                $extrafieldValue = $this->getExtrafieldContent($object->lines[$i], $extrafieldColKey);
+                                $this->printStdColumnContent($pdf, $curY, $extrafieldColKey, $extrafieldValue);
+                                $nexY = max($pdf->GetY(), $nexY);
+                            }
+                        }
+                    }
 
 					$nexY += 3;
 					if ($weighttxt && $voltxt) $nexY += 2;
@@ -1225,6 +1235,11 @@ class pdf_espadon extends ModelePdfExpedition
 	        ),
 	    );
 
+        // Add extrafields cols
+        if(!empty($object->lines)) {
+            $line = reset($object->lines);
+            $this->defineColumnExtrafield($line, $outputlangs, $hidedetails);
+        }
 
 	    $parameters = array(
 	        'object' => $object,

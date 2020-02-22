@@ -702,6 +702,17 @@ class pdf_eratosthene extends ModelePDFCommandes
 					    $nexY = max($pdf->GetY(), $nexY);
 					}
 
+                    // Extrafields
+                    if(!empty($object->lines[$i]->array_options)){
+                        foreach ($object->lines[$i]->array_options as $extrafieldColKey => $extrafieldValue){
+                            if ($this->getColumnStatus($extrafieldColKey))
+                            {
+                                $extrafieldValue = $this->getExtrafieldContent($object->lines[$i], $extrafieldColKey);
+                                $this->printStdColumnContent($pdf, $curY, $extrafieldColKey, $extrafieldValue);
+                                $nexY = max($pdf->GetY(), $nexY);
+                            }
+                        }
+                    }
 
 					$parameters = array(
 					    'object' => $object,
@@ -1804,7 +1815,7 @@ class pdf_eratosthene extends ModelePDFCommandes
 	        $this->cols['discount']['status'] = true;
 	    }
 
-	    $rank = $rank + 10;
+	    $rank = $rank + 1000; // add a big offset to be sure is the last col because default extrafield rank is 100
 	    $this->cols['totalexcltax'] = array(
 	        'rank' => $rank,
 	        'width' => 26, // in mm
@@ -1815,6 +1826,11 @@ class pdf_eratosthene extends ModelePDFCommandes
 	        'border-left' => true, // add left line separator
 	    );
 
+        // Add extrafields cols
+        if(!empty($object->lines)) {
+            $line = reset($object->lines);
+            $this->defineColumnExtrafield($line, $outputlangs, $hidedetails);
+        }
 
 	    $parameters = array(
 	        'object' => $object,
