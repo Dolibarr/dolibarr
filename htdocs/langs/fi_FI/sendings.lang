@@ -36,7 +36,7 @@ StatusSendingProcessed=Jalostettu
 StatusSendingDraftShort=Vedos
 StatusSendingValidatedShort=Validoidut
 StatusSendingProcessedShort=Jalostettu
-SendingSheet=Shipment sheet
+SendingSheet=Lähetyslista
 ConfirmDeleteSending=Are you sure you want to delete this shipment?
 ConfirmValidateSending=Are you sure you want to validate this shipment with reference <b>%s</b>?
 ConfirmCancelSending=Are you sure you want to cancel this shipment?
@@ -59,7 +59,7 @@ ProductQtyInSuppliersOrdersRunning=Product quantity from open purchase orders
 ProductQtyInShipmentAlreadySent=Product quantity from open sales order already sent
 ProductQtyInSuppliersShipmentAlreadyRecevied=Product quantity from open purchase orders already received
 NoProductToShipFoundIntoStock=No product to ship found in warehouse <b>%s</b>. Correct stock or go back to choose another warehouse.
-WeightVolShort=Weight/Vol.
+WeightVolShort=Til./paino
 ValidateOrderFirstBeforeShipment=You must first validate the order before being able to make shipments.
 
 # Sending methods

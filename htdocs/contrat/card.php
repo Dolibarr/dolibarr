@@ -724,7 +724,7 @@ if (empty($reshook))
 
 			if (is_array($array_options) && count($array_options) > 0) {
 				// We replace values in this->line->array_options only for entries defined into $array_options
-				foreach($array_options as $key => $value) {
+				foreach ($array_options as $key => $value) {
 					$objectline->array_options[$key] = $array_options[$key];
 				}
 			}
@@ -1356,6 +1356,7 @@ else
 
         // Call Hook formConfirm
         $parameters = array(
+        	'formConfirm' => $formconfirm,
             'id' => $id,
             //'lineid' => $lineid,
         );
@@ -1703,7 +1704,7 @@ else
 					if (is_array($extralabelslines) && count($extralabelslines) > 0) {
 						$line = new ContratLigne($db);
 						$line->fetch_optionals($objp->rowid);
-						print $line->showOptionals($extrafields, 'view', array('style'=>'class="oddeven"', 'colspan'=>$colspan), '', '', empty($conf->global->MAIN_EXTRAFIELDS_IN_ONE_TD) ? 0 : 1);
+						print $line->showOptionals($extrafields, 'view', array('style'=>'class="oddeven"', 'colspan'=>$colspan), '', '', 1);
 					}
 				}
 				// Line in mode update
@@ -1793,7 +1794,7 @@ else
 					if (is_array($extralabelslines) && count($extralabelslines) > 0) {
 						$line = new ContratLigne($db);
 						$line->fetch_optionals($objp->rowid);
-						print $line->showOptionals($extrafields, 'edit', array('style'=>'class="oddeven"', 'colspan'=>$colspan), '', '', empty($conf->global->MAIN_EXTRAFIELDS_IN_ONE_TD) ? 0 : 1);
+						print $line->showOptionals($extrafields, 'edit', array('style'=>'class="oddeven"', 'colspan'=>$colspan), '', '', 1);
 					}
 				}
 

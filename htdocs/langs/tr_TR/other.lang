@@ -24,7 +24,7 @@ MessageOK=Message on the return page for a validated payment
 MessageKO=Message on the return page for a canceled payment
 ContentOfDirectoryIsNotEmpty=Content of this directory is not empty.
 DeleteAlsoContentRecursively=Check to delete all content recursively
-
+PoweredBy=Powered by
 YearOfInvoice=Fatura tarihi yılı
 PreviousYearOfInvoice=Fatura tarihinden önceki yıl
 NextYearOfInvoice=Fatura tarihinden sonraki yıl 
@@ -104,7 +104,8 @@ DemoFundation=Bir derneğin üyelerini yönet
 DemoFundation2=Bir derneğin üyelerini ve banka hesabını yönet
 DemoCompanyServiceOnly=Yalnızca şirket veya serbest satış hizmeti
 DemoCompanyShopWithCashDesk=Kasası olan bir mağazayı yönet
-DemoCompanyProductAndStocks=Bir mağazayla ürün satan şirket
+DemoCompanyProductAndStocks=Shop selling products with Point Of Sales
+DemoCompanyManufacturing=Company manufacturing products
 DemoCompanyAll=Birden fazla faaliyet gösteren şirket (tüm ana modüller)
 CreatedBy=Oluşturan %s
 ModifiedBy=Düzenleyen %s 
@@ -267,7 +268,7 @@ WEBSITE_PAGEURL=Sayfanın URL si
 WEBSITE_TITLE=Unvan
 WEBSITE_DESCRIPTION=Açıklama
 WEBSITE_IMAGE=Görüntü
-WEBSITE_IMAGEDesc=Relative path of the image media. You can keep this empty as this is rarely used (it can be used by dynamic content to show a preview of a list of blog posts).
+WEBSITE_IMAGEDesc=Relative path of the image media. You can keep this empty as this is rarely used (it can be used by dynamic content to show a thumbnail in a list of blog posts). Use __WEBSITEKEY__ in the path if path depends on website name.
 WEBSITE_KEYWORDS=Anahtar kelimeler
 LinesToImport=Lines to import
 

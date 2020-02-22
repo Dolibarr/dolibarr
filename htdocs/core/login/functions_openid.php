@@ -36,26 +36,26 @@ include_once DOL_DOCUMENT_ROOT.'/core/class/openid.class.php';
  */
 function check_user_password_openid($usertotest, $passwordtotest, $entitytotest)
 {
-    global $_POST,$db,$conf,$langs;
+    global $_POST, $db, $conf, $langs;
 
     dol_syslog("functions_openid::check_user_password_openid usertotest=".$usertotest);
 
-    $login='';
+    $login = '';
 
     // Get identity from user and redirect browser to OpenID Server
-    if (isset($_POST['username']))
+    if (GETPOSISSET('username'))
     {
         $openid = new SimpleOpenID();
         $openid->SetIdentity($_POST['username']);
         $protocol = ($conf->file->main_force_https ? 'https://' : 'http://');
-        $openid->SetTrustRoot($protocol . $_SERVER["HTTP_HOST"]);
-        $openid->SetRequiredFields(array('email','fullname'));
+        $openid->SetTrustRoot($protocol.$_SERVER["HTTP_HOST"]);
+        $openid->SetRequiredFields(array('email', 'fullname'));
         $_SESSION['dol_entity'] = $_POST["entity"];
         //$openid->SetOptionalFields(array('dob','gender','postcode','country','language','timezone'));
         if ($openid->sendDiscoveryRequestToGetXRDS())
         {
-            $openid->SetApprovedURL($protocol . $_SERVER["HTTP_HOST"] . $_SERVER["SCRIPT_NAME"]);      // Send Response from OpenID server to this script
-            $openid->Redirect();     // This will redirect user to OpenID Server
+            $openid->SetApprovedURL($protocol.$_SERVER["HTTP_HOST"].$_SERVER["SCRIPT_NAME"]); // Send Response from OpenID server to this script
+            $openid->Redirect(); // This will redirect user to OpenID Server
         }
         else
         {
@@ -65,7 +65,7 @@ function check_user_password_openid($usertotest, $passwordtotest, $entitytotest)
         return false;
     }
     // Perform HTTP Request to OpenID server to validate key
-    elseif($_GET['openid_mode'] == 'id_res')
+    elseif ($_GET['openid_mode'] == 'id_res')
     {
         $openid = new SimpleOpenID();
         $openid->SetIdentity($_GET['openid_identity']);
@@ -74,23 +74,23 @@ function check_user_password_openid($usertotest, $passwordtotest, $entitytotest)
         {
             // OK HERE KEY IS VALID
 
-            $sql ="SELECT login";
-            $sql.=" FROM ".MAIN_DB_PREFIX."user";
-            $sql.=" WHERE openid = '".$db->escape($_GET['openid_identity'])."'";
-            $sql.=" AND entity IN (0," . ($_SESSION["dol_entity"] ? $_SESSION["dol_entity"] : 1) . ")";
+            $sql = "SELECT login";
+            $sql .= " FROM ".MAIN_DB_PREFIX."user";
+            $sql .= " WHERE openid = '".$db->escape($_GET['openid_identity'])."'";
+            $sql .= " AND entity IN (0,".($_SESSION["dol_entity"] ? $_SESSION["dol_entity"] : 1).")";
 
             dol_syslog("functions_openid::check_user_password_openid", LOG_DEBUG);
-            $resql=$db->query($sql);
+            $resql = $db->query($sql);
             if ($resql)
             {
-                $obj=$db->fetch_object($resql);
+                $obj = $db->fetch_object($resql);
                 if ($obj)
                 {
-                    $login=$obj->login;
+                    $login = $obj->login;
                 }
             }
         }
-        elseif($openid->IsError() === true)
+        elseif ($openid->IsError() === true)
         {
             // ON THE WAY, WE GOT SOME ERROR
             $error = $openid->GetError();

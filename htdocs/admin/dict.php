@@ -58,6 +58,7 @@ if ($id == 10 && !empty($user->rights->accounting->chartofaccount)) $allowed = 1
 if ($id == 17 && !empty($user->rights->accounting->chartofaccount)) $allowed = 1; // Dictionary with type of expense report and accounting account allowed to manager of chart account
 if (!$allowed) accessforbidden();
 
+$acts =array(); $actl =array();
 $acts[0] = "activate";
 $acts[1] = "disable";
 $actl[0] = img_picto($langs->trans("Disabled"), 'switch_off');
@@ -76,7 +77,7 @@ $pageprev = $page - 1;
 $pagenext = $page + 1;
 
 $search_country_id = GETPOST('search_country_id', 'int');
-if ($search_country_id == '' && ($id == 2 || $id == 3 || $id == 10))	// Not a so good idea to force on current country for all dictionaries. Some tables have entries that are for all countries, we must be able to see them, so this is done for dedicated dictionaries only.
+if (! GETPOSTISSET('search_country_id') && $search_country_id == '' && ($id == 2 || $id == 3 || $id == 10))	// Not a so good idea to force on current country for all dictionaries. Some tables have entries that are for all countries, we must be able to see them, so this is done for dedicated dictionaries only.
 {
 	$search_country_id = $mysoc->country_id;
 }
@@ -178,7 +179,7 @@ $tablib[38] = "DictionarySocialNetworks";
 $tabsql = array();
 $tabsql[1] = "SELECT f.rowid as rowid, f.code, f.libelle, c.code as country_code, c.label as country, f.active FROM ".MAIN_DB_PREFIX."c_forme_juridique as f, ".MAIN_DB_PREFIX."c_country as c WHERE f.fk_pays=c.rowid";
 $tabsql[2] = "SELECT d.rowid as rowid, d.code_departement as code, d.nom as libelle, d.fk_region as region_id, r.nom as region, c.code as country_code, c.label as country, d.active FROM ".MAIN_DB_PREFIX."c_departements as d, ".MAIN_DB_PREFIX."c_regions as r, ".MAIN_DB_PREFIX."c_country as c WHERE d.fk_region=r.code_region and r.fk_pays=c.rowid and r.active=1 and c.active=1";
-$tabsql[3] = "SELECT r.rowid as rowid, r.code_region as code, r.nom as libelle, r.fk_pays as country_id, c.code as country_code, c.label as country, r.active FROM ".MAIN_DB_PREFIX."c_regions as r, ".MAIN_DB_PREFIX."c_country as c WHERE r.fk_pays=c.rowid and c.active=1";
+$tabsql[3] = "SELECT r.rowid as rowid, r.code_region as state_code, r.nom as libelle, r.fk_pays as country_id, c.code as country_code, c.label as country, r.active FROM ".MAIN_DB_PREFIX."c_regions as r, ".MAIN_DB_PREFIX."c_country as c WHERE r.fk_pays=c.rowid and c.active=1";
 $tabsql[4] = "SELECT c.rowid as rowid, c.code, c.label, c.active, c.favorite FROM ".MAIN_DB_PREFIX."c_country AS c";
 $tabsql[5] = "SELECT c.rowid as rowid, c.code as code, c.label, c.active FROM ".MAIN_DB_PREFIX."c_civility AS c";
 $tabsql[6] = "SELECT a.id    as rowid, a.code as code, a.libelle AS libelle, a.type, a.active, a.module, a.color, a.position FROM ".MAIN_DB_PREFIX."c_actioncomm AS a";
@@ -677,9 +678,9 @@ if (GETPOST('actionadd') || GETPOST('actionmodify'))
         $ok = 0;
         setEventMessages($langs->transnoentities('ErrorReservedTypeSystemSystemAuto'), null, 'errors');
     }
-    if (isset($_POST["code"]))
+    if (GETPOSTISSET("code"))
     {
-    	if ($_POST["code"] == '0')
+    	if (GETPOST("code") == '0')
     	{
         	$ok = 0;
     		setEventMessages($langs->transnoentities('ErrorCodeCantContainZero'), null, 'errors');
@@ -690,7 +691,7 @@ if (GETPOST('actionadd') || GETPOST('actionmodify'))
 	    	$msg .= $langs->transnoentities('ErrorFieldFormat', $langs->transnoentities('Code')).'<br>';
 	    }*/
     }
-    if (isset($_POST["country"]) && ($_POST["country"] == '0') && ($id != 2))
+    if (GETPOSTISSET("country") && ($_POST["country"] == '0') && ($id != 2))
     {
     	if (in_array($tablib[$id], array('DictionaryCompanyType', 'DictionaryHolidayTypes')))	// Field country is no mandatory for such dictionaries
     	{
@@ -752,19 +753,33 @@ if (GETPOST('actionadd') || GETPOST('actionmodify'))
         $i = 0;
         foreach ($listfieldinsert as $f => $value)
         {
+        	$keycode = $listfieldvalue[$i];
+        	if (empty($keycode)) $keycode = $value;
+
             if ($value == 'price' || preg_match('/^amount/i', $value) || $value == 'taux') {
-            	$_POST[$listfieldvalue[$i]] = price2num($_POST[$listfieldvalue[$i]], 'MU');
+            	$_POST[$keycode] = price2num($_POST[$keycode], 'MU');
             }
             elseif ($value == 'entity') {
-            	$_POST[$listfieldvalue[$i]] = getEntity($tabname[$id]);
+            	$_POST[$keycode] = getEntity($tabname[$id]);
             }
+
             if ($i) $sql .= ",";
-            if ($listfieldvalue[$i] == 'sortorder')		// For column name 'sortorder', we use the field name 'position'
+
+            if ($keycode == 'sortorder')		// For column name 'sortorder', we use the field name 'position'
             {
-            	$sql .= "'".(int) $db->escape($_POST['position'])."'";
+            	$sql .= "'".(int) GETPOST('position', 'int');
             }
-            elseif ($_POST[$listfieldvalue[$i]] == '' && !($listfieldvalue[$i] == 'code' && $id == 10)) $sql .= "null"; // For vat, we want/accept code = ''
-            else $sql .= "'".$db->escape($_POST[$listfieldvalue[$i]])."'";
+            elseif ($_POST[$keycode] == '' && !($keycode == 'code' && $id == 10)) $sql .= "null"; // For vat, we want/accept code = ''
+            elseif ($keycode == 'content') {
+            	$sql .= "'".$db->escape(GETPOST($keycode, 'restricthtml'))."'";
+            }
+            elseif (in_array($keycode, array('joinfile', 'private', 'position', 'scale'))) {
+            	$sql .= (int) GETPOST($keycode, 'int');
+            }
+            else {
+            	$sql .= "'".$db->escape(GETPOST($keycode, 'nohtml'))."'";
+            }
+
             $i++;
         }
         $sql .= ",1)";
@@ -804,23 +819,36 @@ if (GETPOST('actionadd') || GETPOST('actionmodify'))
         $i = 0;
         foreach ($listfieldmodify as $field)
         {
+        	$keycode = $listfieldvalue[$i];
+        	if (empty($keycode)) $keycode = $field;
+
             if ($field == 'price' || preg_match('/^amount/i', $field) || $field == 'taux') {
-            	$_POST[$listfieldvalue[$i]] = price2num($_POST[$listfieldvalue[$i]], 'MU');
+            	$_POST[$keycode] = price2num($_POST[$keycode], 'MU');
             }
             elseif ($field == 'entity') {
-            	$_POST[$listfieldvalue[$i]] = getEntity($tabname[$id]);
+            	$_POST[$keycode] = getEntity($tabname[$id]);
             }
+
             if ($i) $sql .= ",";
             $sql .= $field."=";
             if ($listfieldvalue[$i] == 'sortorder')		// For column name 'sortorder', we use the field name 'position'
             {
-            	$sql .= "'".(int) $db->escape($_POST['position'])."'";
+            	$sql .= (int) GETPOST('position', 'int');
             }
-            elseif ($_POST[$listfieldvalue[$i]] == '' && !($listfieldvalue[$i] == 'code' && $id == 10)) $sql .= "null"; // For vat, we want/accept code = ''
-            else $sql .= "'".$db->escape($_POST[$listfieldvalue[$i]])."'";
+            elseif ($_POST[$keycode] == '' && !($keycode == 'code' && $id == 10)) $sql .= "null"; // For vat, we want/accept code = ''
+            elseif ($keycode == 'content') {
+            	$sql .= "'".$db->escape(GETPOST($keycode, 'restricthtml'))."'";
+            }
+            elseif (in_array($keycode, array('private', 'position', 'scale'))) {
+            	$sql .= (int) GETPOST($keycode, 'int');
+            }
+            else {
+            	$sql .= "'".$db->escape(GETPOST($keycode, 'nohtml'))."'";
+            }
+
             $i++;
         }
-        $sql .= " WHERE ".$rowidcol." = '".$db->escape($rowid)."'";
+        $sql .= " WHERE ".$rowidcol." = ".(int) $db->escape($rowid);
         if (in_array('entity', $listfieldmodify)) $sql .= " AND entity = '".getEntity($tabname[$id])."'";
 
         dol_syslog("actionmodify", LOG_DEBUG);
@@ -1011,6 +1039,7 @@ if ($id)
     if ($search_code != '' && $id == 9)     $sql .= natural_search("code_iso", $search_code);
     elseif ($search_code != '' && $id == 28)    $sql .= natural_search("h.code", $search_code);
     elseif ($search_code != '' && $id == 32)    $sql .= natural_search("a.code", $search_code);
+    elseif ($search_code != '' && $id == 3)     $sql .= natural_search("r.code_region", $search_code);
     elseif ($search_code != '' && $id != 9)     $sql .= natural_search("code", $search_code);
 
     if ($sortfield)
@@ -1146,7 +1175,7 @@ if ($id)
 			if ($fieldlist[$field] == 'revenuestamp_type') { $valuetoshow = $langs->trans('TypeOfRevenueStamp'); }
 			if ($fieldlist[$field] == 'use_default') { $valuetoshow = $langs->trans('Default'); }
 
-            if ($id == 2)	// Special cas for state page
+            if ($id == 2)	// Special case for state page
             {
                 if ($fieldlist[$field] == 'region_id') { $valuetoshow = '&nbsp;'; $showfield = 1; }
                 if ($fieldlist[$field] == 'region') { $valuetoshow = $langs->trans("Country").'/'.$langs->trans("Region"); $showfield = 1; }
@@ -1228,6 +1257,7 @@ if ($id)
 
     // List of available record in database
     dol_syslog("htdocs/admin/dict", LOG_DEBUG);
+
     $resql = $db->query($sql);
     if ($resql)
     {
@@ -1620,7 +1650,9 @@ if ($id)
 								$key = $langs->trans($obj->label);
 								$valuetoshow = ($obj->label && $key != strtoupper($obj->label) ? $key : $obj->{$fieldlist[$field]});
 							}
-
+							elseif ($fieldlist[$field] == 'code' && $id == 3) {
+								$valuetoshow = $obj->state_code;
+							}
                             $class .= ($class ? ' ' : '').'tddict';
                             if ($fieldlist[$field] == 'note' && $id == 10) $class .= ' tdoverflowmax200';
                             if ($fieldlist[$field] == 'tracking') $class .= ' tdoverflowauto';

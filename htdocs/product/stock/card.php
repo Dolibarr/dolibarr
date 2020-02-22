@@ -362,7 +362,7 @@ else
 			}
 
 			// Call Hook formConfirm
-			$parameters = array();
+			$parameters = array('formConfirm' => $formconfirm);
 			$reshook = $hookmanager->executeHooks('formConfirm', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
 			if (empty($reshook)) $formconfirm .= $hookmanager->resPrint;
 			elseif ($reshook > 0) $formconfirm = $hookmanager->resPrint;
@@ -454,7 +454,7 @@ else
 			// Categories
 			if ($conf->categorie->enabled) {
 				print '<tr><td valign="middle">'.$langs->trans("Categories").'</td><td colspan="3">';
-				print $form->showCategories($object->id, 'warehouse', 1);
+				print $form->showCategories($object->id, Categorie::TYPE_WAREHOUSE, 1);
 				print "</td></tr>";
 			}
 			print "</table>";

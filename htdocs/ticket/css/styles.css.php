@@ -146,5 +146,9 @@ div.ticketform .blue:hover {
     background-color: #f8f8f8;
 }
 
-#form_create_ticket input.text,
-#form_create_ticket textarea { width:450px;}
+#form_create_ticket input.text, #form_create_ticket textarea { width:450px;}
+
+@media only screen and (max-width: 767px)
+{
+	#form_create_ticket input.text,	#form_create_ticket textarea { width: unset;}
+}

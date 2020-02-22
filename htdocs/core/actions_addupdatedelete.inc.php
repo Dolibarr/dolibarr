@@ -76,7 +76,7 @@ if ($action == 'add' && !empty($permissiontoadd))
 		} elseif (preg_match('/^(integer|price|real|double)/', $object->fields[$key]['type'])) {
 			$value = price2num(GETPOST($key, 'none')); // To fix decimal separator according to lang setup
 		} else {
-			$value = GETPOST($key, 'alpha');
+			$value = GETPOST($key, 'alphanohtml');
 		}
 		if (preg_match('/^integer:/i', $object->fields[$key]['type']) && $value == '-1') $value = ''; // This is an implicit foreign key field
 		if (!empty($object->fields[$key]['foreignkey']) && $value == '-1') $value = ''; // This is an explicit foreign key field

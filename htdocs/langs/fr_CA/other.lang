@@ -38,7 +38,6 @@ DemoFundation=Gérer les membres d'une fondation
 DemoFundation2=Gérer les membres et le compte bancaire d'une fondation
 DemoCompanyServiceOnly=Société ou service de vente indépendant uniquement
 DemoCompanyShopWithCashDesk=Gérer un magasin avec une caisse
-DemoCompanyProductAndStocks=Société vendant des produits avec un magasin
 DemoCompanyAll=Entreprise avec plusieurs activités (tous les modules principaux)
 ValidatedBy=Valider par %s
 ClosedBy=Fermé par %s

@@ -146,7 +146,9 @@ $search_array_options_task = $extrafields->getOptionalsFromPost($object->table_e
 /*
  * Actions
  */
-
+$parameters = array('id' => $id, 'taskid' => $taskid, 'projectid' => $projectid);
+$reshook=$hookmanager->executeHooks('doActions', $parameters, $object, $action);    // Note that $action and $object may have been modified by some hooks
+if ($reshook < 0) setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
 // Purge criteria
 if (GETPOST('button_removefilter_x', 'alpha') || GETPOST('button_removefilter.x', 'alpha') || GETPOST('button_removefilter', 'alpha')) // All tests are required to be compatible with all browsers
 {

@@ -389,7 +389,7 @@ if (empty($reshook))
 
     			// CONTENT
     			$link = $urlwithroot.'/expensereport/card.php?id='.$object->id;
-				$link = '<a href="' . $link . '">' . $link . '</a>';
+				$link = '<a href="'.$link.'">'.$link.'</a>';
     			$message = $langs->transnoentities("ExpenseReportWaitingForApprovalMessage", $expediteur->getFullName($langs), get_date_range($object->date_debut, $object->date_fin, '', $langs), $link);
 
     			// Rebuild pdf
@@ -509,7 +509,7 @@ if (empty($reshook))
 
     			// CONTENT
     			$link = $urlwithroot.'/expensereport/card.php?id='.$object->id;
-				$link = '<a href="' . $link . '">' . $link . '</a>';
+				$link = '<a href="'.$link.'">'.$link.'</a>';
 				$dateRefusEx = explode(" ", $object->date_refuse);
     			$message = $langs->transnoentities("ExpenseReportWaitingForReApprovalMessage", $dateRefusEx[0], $object->detail_refuse, $expediteur->getFullName($langs), $link);
 
@@ -635,7 +635,7 @@ if (empty($reshook))
 
        			// CONTENT
        			$link = $urlwithroot.'/expensereport/card.php?id='.$object->id;
-				$link = '<a href="' . $link . '">' . $link . '</a>';
+				$link = '<a href="'.$link.'">'.$link.'</a>';
        			$message = $langs->transnoentities("ExpenseReportApprovedMessage", $object->ref, $destinataire->getFullName($langs), $expediteur->getFullName($langs), $link);
 
        			// Rebuilt pdf
@@ -755,7 +755,7 @@ if (empty($reshook))
 
        			// CONTENT
        			$link = $urlwithroot.'/expensereport/card.php?id='.$object->id;
-				$link = '<a href="' . $link . '">' . $link . '</a>';
+				$link = '<a href="'.$link.'">'.$link.'</a>';
     			$message = $langs->transnoentities("ExpenseReportRefusedMessage", $object->ref, $destinataire->getFullName($langs), $expediteur->getFullName($langs), $detailRefuse, $link);
 
        			// Rebuilt pdf
@@ -885,7 +885,7 @@ if (empty($reshook))
 
 	    				// CONTENT
 	    				$link = $urlwithroot.'/expensereport/card.php?id='.$object->id;
-						$link = '<a href="' . $link . '">' . $link . '</a>';
+						$link = '<a href="'.$link.'">'.$link.'</a>';
 	    				$message = $langs->transnoentities("ExpenseReportCanceledMessage", $object->ref, $destinataire->getFullName($langs), $expediteur->getFullName($langs), $detailCancel, $link);
 
 	    				// Rebuilt pdf
@@ -1111,7 +1111,7 @@ if (empty($reshook))
 
     			// CONTENT
     			$link = $urlwithroot.'/expensereport/card.php?id='.$object->id;
-				$link = '<a href="' . $link . '">' . $link . '</a>';
+				$link = '<a href="'.$link.'">'.$link.'</a>';
     			$message = $langs->transnoentities("ExpenseReportPaidMessage", $object->ref, $destinataire->getFullName($langs), $expediteur->getFullName($langs), $link);
 
         		// Generate pdf before attachment

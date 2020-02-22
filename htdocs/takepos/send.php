@@ -68,7 +68,7 @@ else
 $langs->loadLangs(array("main", "bills", "cashdesk"));
 
 ?>
-<link rel="stylesheet" href="css/pos.css">
+<link rel="stylesheet" href="css/pos.css.php">
 </head>
 <body class="center">
 

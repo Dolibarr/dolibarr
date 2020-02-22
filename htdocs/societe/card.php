@@ -965,7 +965,7 @@ else
         if (!empty($conf->fournisseur->enabled) && (GETPOST("type") == 'f' || (GETPOST("type") == '' && !empty($conf->global->THIRDPARTY_SUPPLIER_BY_DEFAULT)))) { $object->fournisseur = 1; }
 
         $object->name = GETPOST('name', 'alpha');
-        $object->name_alias	= GETPOST('name_alias', 'alpha');
+        $object->name_alias = GETPOST('name_alias', 'alpha');
         $object->firstname = GETPOST('firstname', 'alpha');
         $object->particulier		= $private;
         $object->prefix_comm		= GETPOST('prefix_comm', 'alpha');
@@ -1073,11 +1073,11 @@ else
 
         if (!empty($conf->use_javascript_ajax)) {
 			if (!empty($conf->global->THIRDPARTY_SUGGEST_ALSO_ADDRESS_CREATION)) {
-				print "\n" . '<script type="text/javascript">';
+				print "\n".'<script type="text/javascript">';
 				print '$(document).ready(function () {
 						id_te_private=8;
                         id_ef15=1;
-                        is_private=' . $private . ';
+                        is_private=' . $private.';
 						if (is_private) {
 							$(".individualline").show();
 						} else {
@@ -1104,7 +1104,7 @@ else
 						});
 						function init_customer_categ() {
 								console.log("is customer or prospect = "+jQuery("#customerprospect").val());
-								if (jQuery("#customerprospect").val() == 0 && (jQuery("#fournisseur").val() == 0 || ' . (empty($conf->global->THIRDPARTY_CAN_HAVE_CATEGORY_EVEN_IF_NOT_CUSTOMER_PROSPECT_SUPPLIER) ? '1' : '0') . '))
+								if (jQuery("#customerprospect").val() == 0 && (jQuery("#fournisseur").val() == 0 || ' . (empty($conf->global->THIRDPARTY_CAN_HAVE_CATEGORY_EVEN_IF_NOT_CUSTOMER_PROSPECT_SUPPLIER) ? '1' : '0').'))
 								{
 									jQuery(".visibleifcustomer").hide();
 								}
@@ -1135,20 +1135,20 @@ else
                         	document.formsoc.submit();
                         });
                      });';
-				print '</script>' . "\n";
+				print '</script>'."\n";
 
 				print '<div id="selectthirdpartytype">';
 				print '<div class="hideonsmartphone float">';
-				print $langs->trans("ThirdPartyType") . ': &nbsp; &nbsp; ';
+				print $langs->trans("ThirdPartyType").': &nbsp; &nbsp; ';
 				print '</div>';
 				print '<label for="radiocompany" class="radiocompany">';
-				print '<input type="radio" id="radiocompany" class="flat" name="private"  value="0"' . ($private ? '' : ' checked') . '>';
+				print '<input type="radio" id="radiocompany" class="flat" name="private"  value="0"'.($private ? '' : ' checked').'>';
 				print '&nbsp;';
 				print $langs->trans("CreateThirdPartyOnly");
 				print '</label>';
 				print ' &nbsp; &nbsp; ';
 				print '<label for="radioprivate" class="radioprivate">';
-				$text = '<input type="radio" id="radioprivate" class="flat" name="private" value="1"' . ($private ? ' checked' : '') . '>';
+				$text = '<input type="radio" id="radioprivate" class="flat" name="private" value="1"'.($private ? ' checked' : '').'>';
 				$text .= '&nbsp;';
 				$text .= $langs->trans("CreateThirdPartyAndContact");
 				$htmltext = $langs->trans("ToCreateContactWithSameName");
@@ -1164,7 +1164,7 @@ else
                         	document.formsoc.submit();
                         });
                      });';
-				print '</script>' . "\n";
+				print '</script>'."\n";
 			}
 		}
 
@@ -1903,30 +1903,27 @@ else
                 	print $form->editfieldkey('SupplierCode', 'supplier_code', '', $object, 0);
                 }
                 print '</td><td>';
-                if (!empty($conf->fournisseur->enabled) && !empty($user->rights->fournisseur->lire))
+                print '<table class="nobordernopadding"><tr><td>';
+                if ((!$object->code_fournisseur || $object->code_fournisseur == -1) && $modCodeFournisseur->code_auto)
                 {
-	                print '<table class="nobordernopadding"><tr><td>';
-	                if ((!$object->code_fournisseur || $object->code_fournisseur == -1) && $modCodeFournisseur->code_auto)
-	                {
-	                    $tmpcode = $object->code_fournisseur;
-	                    if (empty($tmpcode) && !empty($object->oldcopy->code_fournisseur)) $tmpcode = $object->oldcopy->code_fournisseur; // When there is an error to update a thirdparty, the number for supplier and customer code is kept to old value.
-	                    if (empty($tmpcode) && !empty($modCodeFournisseur->code_auto)) $tmpcode = $modCodeFournisseur->getNextValue($object, 1);
-	                    print '<input type="text" name="supplier_code" id="supplier_code" size="16" value="'.dol_escape_htmltag($tmpcode).'" maxlength="15">';
-	                }
-	                elseif ($object->codefournisseur_modifiable())
-	                {
-	                    print '<input type="text" name="supplier_code" id="supplier_code" size="16" value="'.$object->code_fournisseur.'" maxlength="15">';
-	                }
-	                else
-	                {
-	                    print $object->code_fournisseur;
-	                    print '<input type="hidden" name="supplier_code" value="'.$object->code_fournisseur.'">';
-	                }
-	                print '</td><td>';
-	                $s = $modCodeFournisseur->getToolTip($langs, $object, 1);
-	                print $form->textwithpicto('', $s, 1);
-	                print '</td></tr></table>';
+                    $tmpcode = $object->code_fournisseur;
+                    if (empty($tmpcode) && !empty($object->oldcopy->code_fournisseur)) $tmpcode = $object->oldcopy->code_fournisseur; // When there is an error to update a thirdparty, the number for supplier and customer code is kept to old value.
+                    if (empty($tmpcode) && !empty($modCodeFournisseur->code_auto)) $tmpcode = $modCodeFournisseur->getNextValue($object, 1);
+                    print '<input type="text" name="supplier_code" id="supplier_code" size="16" value="'.dol_escape_htmltag($tmpcode).'" maxlength="15">';
                 }
+                elseif ($object->codefournisseur_modifiable())
+                {
+                    print '<input type="text" name="supplier_code" id="supplier_code" size="16" value="'.$object->code_fournisseur.'" maxlength="15">';
+                }
+                else
+                {
+                    print $object->code_fournisseur;
+                    print '<input type="hidden" name="supplier_code" value="'.$object->code_fournisseur.'">';
+                }
+                print '</td><td>';
+                $s = $modCodeFournisseur->getToolTip($langs, $object, 1);
+                print $form->textwithpicto('', $s, 1);
+                print '</td></tr></table>';
                 print '</td></tr>';
             }
 
@@ -1988,7 +1985,7 @@ else
             print '<tr><td>'.img_picto('', 'object_email').' '.$form->editfieldkey('EMail', 'email', GETPOST('email', 'alpha'), $object, 0, 'string', '', (!empty($conf->global->SOCIETE_EMAIL_MANDATORY))).'</td>';
             print '<td colspan="3"><input type="text" name="email" id="email" class="maxwidth100onsmartphone quatrevingtpercent" value="'.(GETPOSTISSET('email') ?GETPOST('email', 'alpha') : $object->email).'"></td></tr>';
 	        print '<tr><td>'.img_picto('', 'globe').' '.$form->editfieldkey('Web', 'url', GETPOST('url', 'alpha'), $object, 0).'</td>';
-	        print '<td colspan="3"><input type="text" name="url" id="url" class="maxwidth100onsmartphone quatrevingtpercent" value="'.(GETPOSTISSET('url') ?GETPOST('url', 'alpha') : $object->irl).'"></td></tr>';
+	        print '<td colspan="3"><input type="text" name="url" id="url" class="maxwidth100onsmartphone quatrevingtpercent" value="'.(GETPOSTISSET('url') ?GETPOST('url', 'alpha') : $object->url).'"></td></tr>';
 
             if (!empty($conf->socialnetworks->enabled)) {
                 foreach ($socialnetworks as $key => $value) {
@@ -2572,7 +2569,7 @@ else
 			if ($object->prospect || $object->client || (!$object->fournisseur && !empty($conf->global->THIRDPARTY_CAN_HAVE_CATEGORY_EVEN_IF_NOT_CUSTOMER_PROSPECT_SUPPLIER))) {
 				print '<tr><td>'.$langs->trans("CustomersCategoriesShort").'</td>';
 				print '<td>';
-				print $form->showCategories($object->id, 'customer', 1);
+				print $form->showCategories($object->id, Categorie::TYPE_CUSTOMER, 1);
 				print "</td></tr>";
 			}
 
@@ -2580,7 +2577,7 @@ else
 			if ($object->fournisseur) {
 				print '<tr><td>'.$langs->trans("SuppliersCategoriesShort").'</td>';
 				print '<td>';
-				print $form->showCategories($object->id, 'supplier', 1);
+				print $form->showCategories($object->id, Categorie::TYPE_SUPPLIER, 1);
 				print "</td></tr>";
 			}
 		}

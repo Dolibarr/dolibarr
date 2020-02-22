@@ -134,9 +134,8 @@ $head = email_admin_prepare_head();
 // List of sending methods
 $listofmethods = array();
 $listofmethods['mail'] = 'PHP mail function';
-//$listofmethods['simplemail']='Simplemail class';
 $listofmethods['smtps'] = 'SMTP/SMTPS socket library';
-$listofmethods['swiftmailer'] = 'Swift Mailer socket library';
+if (version_compare(phpversion(), '7.0', '>=')) $listofmethods['swiftmailer'] = 'Swift Mailer socket library';
 
 
 if ($action == 'edit')
@@ -638,7 +637,7 @@ else
 	$liste['user'] = $langs->trans('UserEmail');
 	$liste['company'] = $langs->trans('CompanyEmail').' ('.(empty($conf->global->MAIN_INFO_SOCIETE_MAIL) ? $langs->trans("NotDefined") : $conf->global->MAIN_INFO_SOCIETE_MAIL).')';
 	$sql = 'SELECT rowid, label, email FROM '.MAIN_DB_PREFIX.'c_email_senderprofile';
-	$sql.= ' WHERE active = 1 AND (private = 0 OR private = '.$user->id.')';
+	$sql .= ' WHERE active = 1 AND (private = 0 OR private = '.$user->id.')';
 	$resql = $db->query($sql);
 	if ($resql)
 	{
@@ -758,13 +757,31 @@ else
 		$text = '';
 		if ($conf->global->MAIN_MAIL_SENDMODE == 'mail')
 		{
-			$text .= $langs->trans("WarningPHPMail");
+			$text .= $langs->trans("WarningPHPMail");	// To encourage to use SMTPS
 		}
-		//$conf->global->MAIN_EXTERNAL_SMTP_CLIENT_IP_ADDRESS='1.2.3.4';
-		if (!empty($conf->global->MAIN_EXTERNAL_SMTP_CLIENT_IP_ADDRESS))
+
+		if ($conf->global->MAIN_MAIL_SENDMODE == 'mail')
 		{
-			$text .= ($text ? '<br>' : '').$langs->trans("WarningPHPMail2", $conf->global->MAIN_EXTERNAL_SMTP_CLIENT_IP_ADDRESS);
+			// MAIN_EXTERNAL_SMTP_CLIENT_IP_ADDRESS is list of IPs where email is sent from. Example: '1.2.3.4, [aaaa:bbbb:cccc:dddd]'.
+			if (!empty($conf->global->MAIN_EXTERNAL_SMTP_CLIENT_IP_ADDRESS))
+			{
+				// List of IP show as record to add in SPF if we use the mail method
+				$text .= ($text ? '<br><br>' : '').$langs->trans("WarningPHPMailSPF", $conf->global->MAIN_EXTERNAL_SMTP_CLIENT_IP_ADDRESS);
+			}
+		} else {
+			if (!empty($conf->global->MAIN_EXTERNAL_SMTP_CLIENT_IP_ADDRESS))
+			{
+				// List of IP show as record to add as allowed IP if we use the smtp method
+				$text .= ($text ? '<br><br>' : '').$langs->trans("WarningPHPMail2", $conf->global->MAIN_EXTERNAL_SMTP_CLIENT_IP_ADDRESS);
+			}
+			if (!empty($conf->global->MAIN_EXTERNAL_SMTP_SPF_STRING_TO_ADD))
+			{
+				// List of string to add in SPF if we use the smtp method
+				$text .= ($text ? '<br><br>' : '').$langs->trans("WarningPHPMailSPF", $conf->global->MAIN_EXTERNAL_SMTP_SPF_STRING_TO_ADD);
+			}
 		}
+
+
 		if ($text) print info_admin($text);
 	}
 
@@ -840,6 +857,11 @@ else
 		print $formmail->get_form('addfile', 'removefile');
 
 		dol_fiche_end();
+
+		// References
+		print '<span class="opacitymedium">'.$langs->trans("EMailsWillHaveMessageID").': ';
+		print dol_escape_htmltag('<timestamp.*@'.dol_getprefix('email').'>');
+		print '</span>';
 	}
 }
 

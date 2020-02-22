@@ -247,6 +247,10 @@ body {
     <?php print 'direction: '.$langs->trans("DIRECTION").";\n"; ?>
 }
 
+.sensiblehtmlcontent * {
+	position: static !important;
+}
+
 .thumbstat { font-weight: bold !important; }
 th a { font-weight: <?php echo ($useboldtitle ? 'bold' : 'normal'); ?> !important; }
 a.tab { font-weight: 500 !important; }
@@ -268,13 +272,6 @@ textarea:focus, button:focus {
 }
 input:focus, textarea:focus, button:focus, select:focus {
 	border-bottom: 1px solid #666;
-}
-input.select2-input {
-	border-bottom: none ! important;
-}
-.select2-choice {
-	border: none;
-	border-bottom: 1px solid #ccc !important;
 }
 
 textarea.cke_source:focus
@@ -452,9 +449,6 @@ select.flat, form.flat select {
 }
 .optionblue {
 	color: rgb(<?php echo $colortextlink; ?>);
-}
-.select2-results .select2-highlighted.optionblue {
-	color: #FFF !important;
 }
 .optiongrey, .opacitymedium {
 	opacity: 0.5;
@@ -763,6 +757,10 @@ body[class*="colorblind-"] .text-success{
 	font-size: 1.5em; vertical-align: text-bottom;
 }
 
+.floatnone {
+	float: none !important;
+}
+
 
 /* Themes for badges */
 <?php include dol_buildpath($path.'/theme/'.$theme.'/badges.inc.php', 0); ?>
@@ -798,6 +796,19 @@ div.divsearchfield {
     white-space: nowrap;
     padding-bottom: 5px;
     opacity: 0.6;
+}
+.divadvancedsearchfield:first-child {
+    margin-top: 3px;
+}
+.divadvancedsearchfield {
+    float: left;
+    padding-left: 15px;
+    padding-right: 15px;
+    padding-bottom: 2px;
+    padding-top: 2px;
+}
+.divadvancedsearchfield span.select2.select2-container.select2-container--default {
+	padding-bottom: 4px;
 }
 <?php
 // Add a nowrap on smartphone, so long list of field used for filter are overflowed with clip
@@ -857,6 +868,13 @@ select.flat.selectlimit {
 .marginbottomonly {
 	margin-bottom: 10px !important;
 }
+.nomargintop {
+    margin-top: 0 !important;
+}
+.nomarginbottom {
+    margin-bottom: 0 !important;
+}
+
 .selectlimit, .selectlimit:focus {
     border-left: none !important;
     border-top: none !important;
@@ -1012,7 +1030,8 @@ div.fiche>form>div.div-table-responsive {
     flex-grow: 1;
     flex-shrink: 1;
     /* flex-basis: 140px; */
-    min-width: 150px;
+    /* min-width: 150px; */
+    width: 158px;
     justify-content: flex-start;
     align-self: flex-start;
 }
@@ -1822,6 +1841,8 @@ ul.tmenu {	/* t r b l */
     margin: 0px 0px 0px 0px;
 	list-style: none;
 	display: table;
+    margin-right: 65px;		/* to keep space for bookmark */
+    padding-left: 5px;
 }
 ul.tmenu li {
 	background: rgb(<?php echo $colorbackhmenu1 ?>);
@@ -2228,7 +2249,6 @@ div.login_block {
 <?php } else { ?>
 	position: fixed;
 <?php } ?>
-	font-weight: bold;
 	z-index: 10;
 	text-align: center;
 	vertical-align: middle;
@@ -2259,12 +2279,20 @@ div.login_block_other { padding-top: 3px; }
 .login_block_elem {
 	float: right;
 	vertical-align: top;
-	padding: 0px 0px 0px 4px !important;
-	height: 16px;
+	padding: 0px 0px 0px 2px !important;
+	height: 18px;
 }
 .login_block_elem_name {
 	margin-top: 1px;
 }
+a.aversion {
+    white-space: nowrap;
+    width: 48px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    display: block;
+}
+
 .atoplogin, .atoplogin:hover {
 	color: #<?php echo $colortextbackvmenu; ?> !important;
 }
@@ -2362,7 +2390,7 @@ font.vsmenudisabled { font-size:<?php print $fontsize ?>px; font-family: <?php p
 a.vsmenu:link, a.vsmenu:visited { color: #<?php echo $colortextbackvmenu; ?>; white-space: nowrap; }
 font.vsmenudisabledmargin { margin: 1px 1px 1px 8px; }
 
-a.help:link, a.help:visited, a.help:hover, a.help:active, span.help { font-size:<?php print $fontsizesmaller ?>px; font-family: <?php print $fontlist ?>; text-align: <?php print $left; ?>; font-weight: normal; color: #999; text-decoration: none; }
+a.help:link, a.help:visited, a.help:hover, a.help:active, span.help { text-align: <?php print $left; ?>; font-weight: normal; color: #999; text-decoration: none; }
 
 div.blockvmenulogo
 {
@@ -2578,7 +2606,8 @@ div.tabBar {
 	background: rgb(<?php echo $colorbacktabcard1; ?>);
 	border-bottom: 1px solid #aaa;
 }
-div.tabBar div.titre {
+
+div.tabBar tr.titre td {
 	padding-top: 10px;
 }
 
@@ -2749,6 +2778,15 @@ tr.nocellnopadd td.nobordernopadding, tr.nocellnopadd td.nocellnopadd
 	border: 0px;
 }
 
+.unsetcolor {
+	color: unset !important;
+}
+.nopaddingleft {
+	padding-<?php print $left; ?>: 0px;
+}
+.nopaddingright {
+	padding-<?php print $right; ?>: 0px;
+}
 .notopnoleft {
 	border-collapse: collapse;
 	border: 0px;
@@ -4519,6 +4557,18 @@ pre#editfilecontentaceeditorid {
 
 
 /* ============================================================================== */
+/*  Custom reports                                                                */
+/* ============================================================================== */
+
+.customreportsoutput, .customreportsoutputnotdata {
+	padding-top: 20px;
+}
+.customreportsoutputnotdata {
+	text-align: center;
+}
+
+
+/* ============================================================================== */
 /*  Holiday                                                                       */
 /* ============================================================================== */
 
@@ -4898,6 +4948,17 @@ div.dataTables_length select {
 /*  Select2                                                                       */
 /* ============================================================================== */
 
+input.select2-input {
+	border-bottom: none ! important;
+}
+.select2-choice {
+	border: none;
+	border-bottom: 1px solid #ccc !important;
+}
+.select2-results .select2-highlighted.optionblue {
+	color: #FFF !important;
+}
+
 .blockvmenusearch .select2-container--default .select2-selection--single,
 .blockvmenubookmarks .select2-container--default .select2-selection--single
 {
@@ -4959,8 +5020,16 @@ div.dataTables_length select {
 	box-shadow: none !important;
 	border-radius: 0 !important;
 }
+.select2-container--default.select2-container--focus .select2-selection--multiple {
+	border-top: none;
+	border-left: none;
+	border-right: none;
+}
 .select2-container--default .select2-selection--multiple {
-	border: solid 1px rgba(0,0,0,.2);
+	border-bottom: solid 1px rgba(0,0,0,.2);
+	border-top: none;
+	border-left: none;
+	border-right: none;
 	border-radius: 0 !important;
 }
 .select2-search__field
@@ -5649,11 +5718,12 @@ border-top-right-radius: 6px;
 	width: 70%;
 }
 .publicnewticketform {
-	margin-top: 25px !important;
+	/* margin-top: 25px !important; */
 }
 .ticketlargemargin {
 	padding-left: 50px;
 	padding-right: 50px;
+	padding-top: 10px;
 }
 @media only screen and (max-width: 767px)
 {
@@ -6095,22 +6165,6 @@ border-top-right-radius: 6px;
 
 
 
-/* This must be at end */
-::-webkit-scrollbar {
-    width: 12px;
-}
-::-webkit-scrollbar-button {
-    background: #aaa;
-}
-::-webkit-scrollbar-track-piece {
-    background: #fff;
-}
-::-webkit-scrollbar-thumb {
-    background: #ddd;
-}​
-
-
-
 <?php
 include dol_buildpath($path.'/theme/'.$theme.'/dropdown.inc.php', 0);
 include dol_buildpath($path.'/theme/'.$theme.'/info-box.inc.php', 0);
@@ -6120,3 +6174,23 @@ include dol_buildpath($path.'/theme/eldy/timeline.inc.php', 0); // actually md u
 if (!empty($conf->global->THEME_CUSTOM_CSS)) print $conf->global->THEME_CUSTOM_CSS;
 
 if (is_object($db)) $db->close();
+?>
+
+/* This must be at end */
+::-webkit-scrollbar {
+	width: 12px;
+}
+::-webkit-scrollbar-button {
+	background: #aaa;
+}
+::-webkit-scrollbar-track-piece {
+	background: #fff;
+}
+::-webkit-scrollbar-thumb {
+	background: #ddd;
+}​
+
+div#topmenu-bookmark-dropdown {
+position: fixed;
+right: 20px;
+}

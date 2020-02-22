@@ -65,7 +65,7 @@ $subscription = GETPOST("subscription", "int");
 $duration_value = GETPOST('duration_value', 'int');
 $duration_unit = GETPOST('duration_unit', 'alpha');
 $vote = GETPOST("vote", "int");
-$comment = GETPOST("comment", 'alphanohtml');
+$comment = GETPOST("comment", 'none');
 $mail_valid = GETPOST("mail_valid", 'none');
 
 // Security check
@@ -364,7 +364,9 @@ if ($action == 'create')
 	print '</td></tr>';
 
 	print '<tr><td class="tdtop">'.$langs->trans("Description").'</td><td>';
-	print '<textarea name="comment" wrap="soft" class="centpercent" rows="3"></textarea></td></tr>';
+	require_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
+	$doleditor = new DolEditor('comment', $object->note, '', 280, 'dolibarr_notes', '', false, true, $conf->fckeditor->enabled, 15, '90%');
+	$doleditor->Create();
 
 	print '<tr><td class="tdtop">'.$langs->trans("WelcomeEMail").'</td><td>';
 	require_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
@@ -790,7 +792,7 @@ if ($rowid > 0)
         $morphys["phy"] = $langs->trans("Physical");
         $morphys["mor"] = $langs->trans("Moral");
         print '<tr><td><span>'.$langs->trans("MemberNature").'</span></td><td>';
-        print $form->selectarray("morphy", $morphys, isset($_POST["morphy"]) ? $_POST["morphy"] : $object->morphy);
+        print $form->selectarray("morphy", $morphys, GETPOSTISSET("morphy") ? GETPOST("morphy") : $object->morphy);
         print "</td></tr>";
 
     	print '<tr><td>'.$langs->trans("SubscriptionRequired").'</td><td>';
@@ -807,10 +809,12 @@ if ($rowid > 0)
 		print '</td></tr>';
 
 		print '<tr><td class="tdtop">'.$langs->trans("Description").'</td><td>';
-		print '<textarea name="comment" wrap="soft" class="centpercent" rows="3">'.$object->note.'</textarea></td></tr>';
+		require_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
+		$doleditor = new DolEditor('comment', $object->note, '', 280, 'dolibarr_notes', '', false, true, $conf->fckeditor->enabled, 15, '90%');
+		$doleditor->Create();
+		print "</td></tr>";
 
 		print '<tr><td class="tdtop">'.$langs->trans("WelcomeEMail").'</td><td>';
-		require_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
 		$doleditor = new DolEditor('mail_valid', $object->mail_valid, '', 280, 'dolibarr_notes', '', false, true, $conf->fckeditor->enabled, 15, '90%');
 		$doleditor->Create();
 		print "</td></tr>";

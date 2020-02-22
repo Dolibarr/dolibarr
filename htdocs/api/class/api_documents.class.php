@@ -60,10 +60,9 @@ class Documents extends DolibarrApi
 	 * @param   string  $original_file  Relative path with filename, relative to modulepart (for example: IN201701-999/IN201701-999.pdf)
 	 * @return  array                   List of documents
 	 *
-	 * @throws 400
-	 * @throws 401
-	 * @throws 404
-	 * @throws 200
+	 * @throws RestException 400
+	 * @throws RestException 401
+	 * @throws RestException 404
 	 *
 	 * @url GET /download
 	 */
@@ -118,12 +117,11 @@ class Documents extends DolibarrApi
 	 * @param	string	$langcode		Language code like 'en_US', 'fr_FR', 'es_ES', ... (If not set, use the default language).
 	 * @return  array                   List of documents
 	 *
-	 * @throws 500
-	 * @throws 501
-	 * @throws 400
-	 * @throws 401
-	 * @throws 404
-	 * @throws 200
+	 * @throws RestException 500
+	 * @throws RestException 501
+	 * @throws RestException 400
+	 * @throws RestException 401
+	 * @throws RestException 404
 	 *
 	 * @url PUT /builddoc
 	 */
@@ -237,11 +235,10 @@ class Documents extends DolibarrApi
 	 * @param	string	$sortorder		Sort order ('asc' or 'desc')
 	 * @return	array					Array of documents with path
 	 *
-	 * @throws 200
-	 * @throws 400
-	 * @throws 401
-	 * @throws 404
-	 * @throws 500
+	 * @throws RestException 400
+	 * @throws RestException 401
+	 * @throws RestException 404
+	 * @throws RestException 500
 	 *
 	 * @url GET /
 	 */
@@ -274,6 +271,23 @@ class Documents extends DolibarrApi
 			}
 
 			$upload_dir = $conf->societe->multidir_output[$object->entity]."/".$object->id;
+		}
+		elseif ($modulepart == 'user')
+		{
+			require_once DOL_DOCUMENT_ROOT.'/user/class/user.class.php';
+
+			// Can get doc if has permission to read all user or if it is user itself
+			if (!DolibarrApiAccess::$user->rights->user->user->lire && DolibarrApiAccess::$user->id != $id) {
+				throw new RestException(401);
+			}
+
+			$object = new User($this->db);
+			$result = $object->fetch($id, $ref);
+			if (!$result) {
+				throw new RestException(404, 'User not found');
+			}
+
+			$upload_dir = $conf->user->dir_output.'/'.get_exdir(0, 0, 0, 0, $object, 'user').'/'.$object->id;
 		}
 		elseif ($modulepart == 'adherent' || $modulepart == 'member')
 		{
@@ -430,11 +444,10 @@ class Documents extends DolibarrApi
 	 * @param   int 	$overwriteifexists  Overwrite file if exists (1 by default)
      * @return  string
 	 *
-	 * @throws 200
-	 * @throws 400
-	 * @throws 401
-	 * @throws 404
-	 * @throws 500
+	 * @throws RestException 400
+	 * @throws RestException 401
+	 * @throws RestException 404
+	 * @throws RestException 500
 	 *
 	 * @url POST /upload
 	 */
@@ -610,10 +623,9 @@ class Documents extends DolibarrApi
 	 * @param   string  $original_file  Relative path with filename, relative to modulepart (for example: PRODUCT-REF-999/IMAGE-999.jpg)
 	 * @return  array                   List of documents
 	 *
-	 * @throws 400
-	 * @throws 401
-	 * @throws 404
-	 * @throws 200
+	 * @throws RestException 400
+	 * @throws RestException 401
+	 * @throws RestException 404
 	 *
 	 * @url DELETE /
 	 */

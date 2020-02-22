@@ -519,7 +519,7 @@ Module25Desc=مدیریت سفارشات فروش
 Module30Name=صورت‌حساب‌
 Module30Desc=مدیریت صورت‌حساب‌ها و یادداشت‌های اعتباری برای مشتریان.\nمدیریت صورت‌حساب‌ها و یادداشت‌های اعتباری برای تامین‌کنندگان
 Module40Name=فروشندگان
-Module40Desc=مدیریت فروشندگان و خریدها ( سفارشات خرید و صورت‌حساب‌ها)
+Module40Desc=Vendors and purchase management (purchase orders and billing of supplier invoices)
 Module42Name=گزارش‌کار اشکال‌یابی
 Module42Desc=امکانات گزارش‌برداری (فایل، گزارش‌کار سامانه، ...). این گزارش کارها مربوط به مقاصد فنی/اشکال‌یابی هستند.
 Module49Name=ویراستاران
@@ -561,9 +561,9 @@ Module200Desc=همگام‌سازی پوشۀ LDAP
 Module210Name=PostNuke
 Module210Desc=یکپارچه‌سازی با PostNuke
 Module240Name=صادرات داده‌ها
-Module240Desc=ابزار صادرات داده‌های Dolibarr (به‌همراه کمک‌کننده‌ها)
+Module240Desc=Tool to export Dolibarr data (with assistance)
 Module250Name=واردات داده‌ها
-Module250Desc=ابزار وارد کردن داده به Dolibarr (به‌همراه کمک‌کننده‌ها)
+Module250Desc=Tool to import data into Dolibarr (with assistance)
 Module310Name=عضوها
 Module310Desc=مدیریت اعضای مؤسسه
 Module320Name=خوراک RSS
@@ -878,7 +878,7 @@ Permission1251=اجرای واردات گستردۀ داده‌های خارجی
 Permission1321=صادرکردن صورت‌حساب‌های مشتریان، صفت‌ها و پرداخت‌ها
 Permission1322=بازکردن دوبارۀ یک صورت‌حساب پرداخت‌شده
 Permission1421=صادرکردن سفارش‌های فروش و صفات
-Permission2401=Read actions (events or tasks) linked to his user account (if owner of event)
+Permission2401=Read actions (events or tasks) linked to his user account (if owner of event or just assigned to)
 Permission2402=Create/modify actions (events or tasks) linked to his user account (if owner of event)
 Permission2403=Delete actions (events or tasks) linked to his user account (if owner of event)
 Permission2411=ملاحظۀ فعالیت‌ها (رخدادها یا وظایف) پیوند شده به دیگران
@@ -1156,7 +1156,7 @@ NoEventOrNoAuditSetup=هیچ رخداد امنیتی گزارش نشده است.
 NoEventFoundWithCriteria=با توجه به شرایط جستجو، هیچ رخداد امنیتی یافت نشد.
 SeeLocalSendMailSetup=تنظیمات محلی ارسال رایانامۀ خود را بررسی کنید
 BackupDesc=یک پشتیبان‌گیری <b>کامل</b> از نسخۀ نصب‌شدۀ Dolibarr نیازمند دو گام است.
-BackupDesc2=پشتیبان‌گیری از محتوای پوشۀ "documents" (<b>%s</b>) که دربردارندۀ همۀ فایل‌های ارسال شده و مستندات تولید شده است. که این البته شامل همۀ فایل‌ها نسخه‌برداری-dump که در گام 1 تولید شده نیز هست.
+BackupDesc2=Backup the contents of the "documents" directory (<b>%s</b>) containing all uploaded and generated files. This will also include all the dump files generated in Step 1. This operation may last several minutes.
 BackupDesc3=پشتیبان‌گیر از ساختار و ومحتوای پایگاه‌دادۀ شما (<b>%s</b>) در یک فایل dump. برای این کار دستیار زیر را استفاده نمائید.
 BackupDescX=پوشۀ بایگانی شده باید در یک مکان امن نگهداری شود.
 BackupDescY=فایل رونوشت-dump باید در یک محل امن ذخیره شود.
@@ -1167,6 +1167,7 @@ RestoreDesc3=بازآوری ساختار و داده‌های پایگاه دا�
 RestoreMySQL=وارد‌کردن MySQL
 ForcedToByAModule= این مقررات برای <b>%s</b> توسط یک واحد فعال، الزام شده است
 PreviousDumpFiles=فایل‌های موجود پشتیبان
+PreviousArchiveFiles=Existing archive files
 WeekStartOnDay=اولین روز هفته
 RunningUpdateProcessMayBeRequired=به نظر لازم است روند به‌هنگام‌سازی اجرا شود (نسخۀ برنامه %s از نسخۀ پایگاه‌داده %s متفاوت است)
 YouMustRunCommandFromCommandLineAfterLoginToUser=شما باید این سطر دستور را پس از ورود به خط فرمان با کاربر <b>%s</b> اجرا کنید یا این‌که گزینۀ -W را در انتهای فرمان برای اعلام گذرواژۀ <b>%s</b> به‌کار گیرید.
@@ -1248,6 +1249,7 @@ AskForPreferredShippingMethod=پرسش برای روش ارسال ترجیحی �
 FieldEdition=ویرایش بخش %s
 FillThisOnlyIfRequired=مثال: +2 (تنها در صورتی که با مشکل ناحیۀ زمانی مواجه شوید)
 GetBarCode=دریافت بارکد
+NumberingModules=Numbering models
 ##### Module password generation
 PasswordGenerationStandard=بازگرداندن یک گذرواژه که با توجه به الگوریتم‌ Dolibarr تولید شده است: 8 نویسه، متشکل از اعداد و حروف کوچک.
 PasswordGenerationNone=گذرواژۀ پیشنهادی ارائه نشود. گذرواژه‌ها باید به شکل دستی وارد شوند.
@@ -1711,8 +1713,9 @@ ChequeReceiptsNumberingModule=واحد شماره‌گذاری رسیدهای چ
 MultiCompanySetup=برپاسازی واحد چندشرکتی
 ##### Suppliers #####
 SuppliersSetup=برپاسازی واحد فروشندگان
-SuppliersCommandModel=قالب کامل سفارش خرید (نشان...)
-SuppliersInvoiceModel=قالب کامل صورت‌حساب فروشنده (نشان...)
+SuppliersCommandModel=Complete template of Purchase Order
+SuppliersCommandModelMuscadet=Complete template of Purchase Order 
+SuppliersInvoiceModel=Complete template of Vendor Invoice
 SuppliersInvoiceNumberingModel=روش‌های شماره‌گذاری صورت‌حساب فروشندگان
 IfSetToYesDontForgetPermission=If set to a non null value, don't forget to provide permissions to groups or users allowed for the second approval
 ##### GeoIPMaxmind #####
@@ -1762,9 +1765,10 @@ ListOfNotificationsPerUser=فهرست اطلاع‌رسانی‌های خودک�
 ListOfNotificationsPerUserOrContact=فهرست اطلاع‌رسانی‌های خودکار قابل استفاده (مربوط به روی‌دادی تجاری) فعال برای کاربر* یا بر حسب طرف‌تماس**
 ListOfFixedNotifications=فهرست اطلاع‌رسانی‌های خودکار ثابت
 GoOntoUserCardToAddMore=به زبانۀ "آگاهی‌رسانی" یک کاربر رفته تا آگاهی‌رسانی‌های مربوط به کاربران را اضافه یا حذف نمائید
-GoOntoContactCardToAddMore=به زبانۀ "آگاهی رسانی" یک طرف‌سوم رفته تا آگاهی‌رسانی‌های مربوط به یک طرف تماس/نشانی‌ها را اضافه یا حذف نمائید
+GoOntoContactCardToAddMore=Go to the tab "Notifications" of a third party to add or remove notifications for contacts/addresses
 Threshold=آستانه
-BackupDumpWizard=جادوهای ساخت فایل پشتیبانی
+BackupDumpWizard=Wizard to build the database dump file
+BackupZipWizard=Wizard to build the archive of documents directory
 SomethingMakeInstallFromWebNotPossible=نصب یک واحد خارجی از طریق رابط وب به دلایل ذیل ممکن نیست:
 SomethingMakeInstallFromWebNotPossible2=به این دلیل، روند به‌هنگام‌سازی توضیح داده شده تنها به صورت دستی ممکن خواهد بود که تنها یک کاربر مجاز امکان انجام آن را دارد.
 InstallModuleFromWebHasBeenDisabledByFile=نصب یک واحد خارجی از داخل برنامه توسط مدیر شما غیرفعال شده است. می‌توانید از وی بخواهید فایل <strong>%s</strong> را برای ایجاد اجازۀ نصب حذف نماید.
@@ -1953,6 +1957,8 @@ SmallerThan=کوچک‌تر از
 LargerThan=بزرگتر از
 IfTrackingIDFoundEventWillBeLinked=توجه کنید در صورتی که یک شناسۀ ره‌گیری در یک رایانامۀ دریافتی یافت شود، روی‌داد به طور خودکار به اشیاء مربوطه متصل خواهد شد
 WithGMailYouCanCreateADedicatedPassword=با یک حساب GMail در صورتی که تائید 2 گامی را انتخاب کرده باشید، پیشنهاد می‌شود یک گذرواژۀ دوم برای استفادۀ برنامه به‌جای گذرواژۀ خودتان برای حساب بسازید. این کار از https://myaccount.google.com/ قابل انجام است.
+EmailCollectorTargetDir=It may be a desired behaviour to move the email into another tag/directory when it was processed successfully. Just set a value here to use this feature. Note that you must also use a read/write login account.
+EmailCollectorLoadThirdPartyHelp=You can use this action to use the email content to find and load an existing thirdparty in your database. The found (or created) thirdparty will be used for following actions that need it. In the parameter field you can use for example 'EXTRACT:BODY:Name:\\s([^\\s]*)' if you want to extract the name of the thirdparty from a string 'Name: name to find' found into the body.
 EndPointFor=نقطۀ آخر برای %s : %s
 DeleteEmailCollector=حذف جمع‌آورندۀ رایانامه
 ConfirmDeleteEmailCollector=آیا مطمئن هستید می‌خواهید این جمع‌آورندۀ رایانامه را حذف کنید؟

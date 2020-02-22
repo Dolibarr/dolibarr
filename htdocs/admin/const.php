@@ -40,7 +40,7 @@ $update=GETPOST('update', 'alpha');
 $delete=GETPOST('delete', 'none');	// Do not use alpha here
 $debug=GETPOST('debug', 'int');
 $consts=GETPOST('const', 'array');
-$constname=GETPOST('constname', 'alpha');
+$constname=GETPOST('constname', 'alphanohtml');
 $constvalue=GETPOST('constvalue', 'none');	// We shoul dbe able to send everything here
 $constnote=GETPOST('constnote', 'alpha');
 

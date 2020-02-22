@@ -229,7 +229,7 @@ if ($user->rights->adherent->cotisation->creer && $action == 'subscription' && !
     // Payment informations
     $accountid = $_POST["accountid"];
     $operation = $_POST["operation"]; // Payment mode
-    $num_chq = $_POST["num_chq"];
+    $num_chq = GETPOST("num_chq", "alphanohtml");
     $emetteur_nom = $_POST["chqemetteur"];
     $emetteur_banque = $_POST["chqbank"];
     $option = $_POST["paymentsave"];
@@ -531,7 +531,7 @@ if ($rowid > 0)
 	{
 		print '<tr><td>'.$langs->trans("Categories").'</td>';
 		print '<td colspan="2">';
-		print $form->showCategories($object->id, 'member', 1);
+		print $form->showCategories($object->id, Categorie::TYPE_MEMBER, 1);
 		print '</td></tr>';
 	}
 

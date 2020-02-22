@@ -24,7 +24,7 @@ MessageOK=Mensaje en la página de retorno de pago confirmado
 MessageKO=Mensaje en la página de retorno de pago cancelado
 ContentOfDirectoryIsNotEmpty=Este directorio no está vacío
 DeleteAlsoContentRecursively=Compruebe para eliminar todo el contenido recursivamente
-
+PoweredBy=Powered by
 YearOfInvoice=Año de la fecha de la factura
 PreviousYearOfInvoice=Año anterior de la fecha de la factura
 NextYearOfInvoice=Mes siguiente de la fecha de la factura
@@ -104,7 +104,8 @@ DemoFundation=Gestión de miembros de una asociación
 DemoFundation2=Gestión de miembros y tesorería de una asociación
 DemoCompanyServiceOnly=Empresa o trabajador por cuenta propia realizando servicios
 DemoCompanyShopWithCashDesk=Gestión de una tienda con caja
-DemoCompanyProductAndStocks=Empresa con venta de productos
+DemoCompanyProductAndStocks=Tienda de venta de productos con punto de venta
+DemoCompanyManufacturing=Empresa de fabricación de productos
 DemoCompanyAll=Empresa con actividades múltiples (todos los módulos principales)
 CreatedBy=Creado por %s
 ModifiedBy=Modificado por %s
@@ -267,7 +268,7 @@ WEBSITE_PAGEURL=URL de la página
 WEBSITE_TITLE=Título
 WEBSITE_DESCRIPTION=Descripción
 WEBSITE_IMAGE=Imagen
-WEBSITE_IMAGEDesc=Ruta relativa de las imágenes. Puede mantenerla vacío, ya que rara vez se usa (puede ser usada por el contenido dinámico para mostrar una vista previa de una lista de publicaciones de blog).
+WEBSITE_IMAGEDesc=Ruta relativa de las imágenes. Puede mantenerla vacía, ya que rara vez se usa (puede ser usada por el contenido dinámico para mostrar una vista previa de una lista de publicaciones de blog). Use __WEBSITEKEY__ en la ruta si depende del nombre del sitio web.
 WEBSITE_KEYWORDS=Claves
 LinesToImport=Líneas a importar
 

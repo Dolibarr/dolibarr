@@ -26,6 +26,8 @@ CREATE TABLE llx_website
 	description   varchar(255),
 	maincolor     varchar(16),
 	maincolorbis  varchar(16),
+	lang          varchar(8),
+	otherlang     varchar(255),
 	status		  integer DEFAULT 1,
 	fk_default_home integer,
 	use_manifest integer,

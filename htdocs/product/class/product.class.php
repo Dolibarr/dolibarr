@@ -844,10 +844,10 @@ class Product extends CommonObject
         $this->height_units = trim($this->height_units);
         // set unit not defined
         if (is_numeric($this->length_units)) {
-        	$this->width_units = $this->length_units;    // Not used yet
+        	$this->width_units = $this->length_units; // Not used yet
         }
         if (is_numeric($this->length_units)) {
-        	$this->height_units = $this->length_units;    // Not used yet
+        	$this->height_units = $this->length_units; // Not used yet
         }
         // Automated compute surface and volume if not filled
         if (empty($this->surface) && !empty($this->length) && !empty($this->width) && $this->length_units == $this->width_units) {
@@ -1457,7 +1457,7 @@ class Product extends CommonObject
         $sql .= "$field = '".$this->db->escape($value)."'";
         $sql .= " WHERE rowid = ".$this->id;
 
-        dol_syslog(get_class($this)."::".__FUNCTION__." sql=".$sql, LOG_DEBUG);
+        dol_syslog(__METHOD__." sql=".$sql, LOG_DEBUG);
         $resql = $this->db->query($sql);
 
         if ($resql) {
@@ -1724,6 +1724,7 @@ class Product extends CommonObject
         $sql .= " pfp.fk_product, pfp.ref_fourn, pfp.desc_fourn, pfp.fk_soc, pfp.tva_tx, pfp.fk_supplier_price_expression";
         $sql .= " ,pfp.default_vat_code";
         $sql .= " ,pfp.multicurrency_price, pfp.multicurrency_unitprice, pfp.multicurrency_tx, pfp.fk_multicurrency, pfp.multicurrency_code";
+		if (!empty($conf->global->PRODUCT_USE_SUPPLIER_PACKAGING)) $sql .= ", pfp.packaging";
         $sql .= " FROM ".MAIN_DB_PREFIX."product_fournisseur_price as pfp";
         $sql .= " WHERE pfp.rowid = ".$prodfournprice;
         if ($qty > 0) { $sql .= " AND pfp.quantity <= ".$qty;
@@ -1766,6 +1767,7 @@ class Product extends CommonObject
                 $this->fourn_multicurrency_tx          = $obj->multicurrency_tx;
                 $this->fourn_multicurrency_id          = $obj->fk_multicurrency;
                 $this->fourn_multicurrency_code        = $obj->multicurrency_code;
+				if (!empty($conf->global->PRODUCT_USE_SUPPLIER_PACKAGING)) $this->packaging = $obj->packaging;
                 $result = $obj->fk_product;
                 return $result;
             }
@@ -1776,6 +1778,7 @@ class Product extends CommonObject
                 $sql .= " pfp.fk_product, pfp.ref_fourn as ref_supplier, pfp.desc_fourn as desc_supplier, pfp.tva_tx, pfp.fk_supplier_price_expression";
                 $sql .= " ,pfp.default_vat_code";
                 $sql .= " ,pfp.multicurrency_price, pfp.multicurrency_unitprice, pfp.multicurrency_tx, pfp.fk_multicurrency, pfp.multicurrency_code";
+				if (!empty($conf->global->PRODUCT_USE_SUPPLIER_PACKAGING)) $sql .= ", pfp.packaging";
                 $sql .= " FROM ".MAIN_DB_PREFIX."product_fournisseur_price as pfp";
                 $sql .= " WHERE pfp.fk_product = ".$product_id;
                 if ($fourn_ref != 'none') { $sql .= " AND pfp.ref_fourn = '".$fourn_ref."'";
@@ -1824,7 +1827,8 @@ class Product extends CommonObject
                         $this->fourn_multicurrency_tx          = $obj->multicurrency_tx;
                         $this->fourn_multicurrency_id          = $obj->fk_multicurrency;
                         $this->fourn_multicurrency_code        = $obj->multicurrency_code;
-                        $result = $obj->fk_product;
+						if (!empty($conf->global->PRODUCT_USE_SUPPLIER_PACKAGING)) $this->packaging = $obj->packaging;
+						$result = $obj->fk_product;
                         return $result;
                     }
                     else
@@ -1882,7 +1886,7 @@ class Product extends CommonObject
         	$newminprice = 0;
         }
         if (empty($newminprice)) {
-        	$newminprice=0;
+        	$newminprice = 0;
         }
 
         // Check parameters
@@ -4305,6 +4309,9 @@ class Product extends CommonObject
         if (!empty($this->label)) {
             $label .= '<br><b>'.$langs->trans('ProductLabel').':</b> '.$this->label;
         }
+        if (!empty($conf->barcode->enabled)) {
+        	$label .= '<br><b>'.$langs->trans('BarCode').':</b> '.$this->barcode;
+        }
 
         if ($this->type == Product::TYPE_PRODUCT)
         {
@@ -4348,8 +4355,8 @@ class Product extends CommonObject
             $label .= '<br><b>'.$langs->trans('ProductAccountancyBuyCode').':</b> '.length_accountg($this->accountancy_code_buy);
         }
         if (isset($this->status) && isset($this->status_buy)) {
-        	$label.= '<br><b>' . $langs->trans("Status").":</b> ".$this->getLibStatut(5, 0);
-        	$label.= ' '.$this->getLibStatut(5, 1);
+        	$label .= '<br><b>'.$langs->trans("Status").":</b> ".$this->getLibStatut(5, 0);
+        	$label .= ' '.$this->getLibStatut(5, 1);
         }
 
         if (!empty($this->entity)) {
@@ -4801,7 +4808,7 @@ class Product extends CommonObject
 		}
 		if (!empty($conf->fournisseur->enabled) && !empty($conf->reception->enabled))
 		{
-			$result = $this->load_stats_reception(0, '4', 1);			// Use same tables than when module reception is not used.
+			$result = $this->load_stats_reception(0, '4', 1); // Use same tables than when module reception is not used.
 			if ($result < 0) dol_print_error($this->db, $this->error);
 			$stock_reception_fournisseur = $this->stats_reception['qty'];
 		}

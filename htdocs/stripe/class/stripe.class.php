@@ -139,7 +139,8 @@ class Stripe extends CommonObject
 
 
 	/**
-	 * Get the Stripe customer of a thirdparty (with option to create it if not linked yet)
+	 * Get the Stripe customer of a thirdparty (with option to create it if not linked yet).
+	 * Search on site_account = 0 or = $stripearrayofkeysbyenv[$status]['publishable_key']
 	 *
 	 * @param	Societe	$object							Object thirdparty to check, or create on stripe (create on stripe also update the stripe_account table for current entity)
 	 * @param	string	$key							''=Use common API. If not '', it is the Stripe connect account 'acc_....' to use Stripe connect
@@ -325,7 +326,7 @@ class Stripe extends CommonObject
 	 */
 	public function getPaymentIntent($amount, $currency_code, $tag, $description = '', $object = null, $customer = null, $key = null, $status = 0, $usethirdpartyemailforreceiptemail = 0, $mode = 'automatic', $confirmnow = false, $payment_method = null, $off_session = 0, $noidempotency_key = 0)
 	{
-		global $conf;
+		global $conf, $user;
 
 		dol_syslog("getPaymentIntent", LOG_INFO, 1);
 
@@ -416,7 +417,8 @@ class Stripe extends CommonObject
     			"currency" => $currency_code,
     		    "payment_method_types" => array("card"),
     		    "description" => $description,
-    		    "statement_descriptor" => dol_trunc($tag, 10, 'right', 'UTF-8', 1), // 22 chars that appears on bank receipt (company + description)
+    		    "statement_descriptor_suffix" => dol_trunc($tag, 10, 'right', 'UTF-8', 1),     // 22 chars that appears on bank receipt (company + description)
+    			//"save_payment_method" => true,
 				"setup_future_usage" => "on_session",
     			"metadata" => $metadata
     		);
@@ -486,8 +488,8 @@ class Stripe extends CommonObject
     				if (!$paymentintentalreadyexists)
     				{
 	    				$now = dol_now();
-	    				$sql = "INSERT INTO ".MAIN_DB_PREFIX."prelevement_facture_demande (date_demande, fk_user_demande, ext_payment_id, fk_facture, sourcetype, entity, ext_payment_site)";
-	    				$sql .= " VALUES ('".$this->db->idate($now)."', '0', '".$this->db->escape($paymentintent->id)."', ".$object->id.", '".$this->db->escape($object->element)."', ".$conf->entity.", '".$service."')";
+	    				$sql = "INSERT INTO ".MAIN_DB_PREFIX."prelevement_facture_demande (date_demande, fk_user_demande, ext_payment_id, fk_facture, sourcetype, entity, ext_payment_site, amount)";
+	    				$sql .= " VALUES ('".$this->db->idate($now)."', ".$user->id.", '".$this->db->escape($paymentintent->id)."', ".$object->id.", '".$this->db->escape($object->element)."', ".$conf->entity.", '".$service."', ".$amount.")";
 	    				$resql = $this->db->query($sql);
 	    				if (!$resql)
 	    				{
@@ -559,7 +561,7 @@ class Stripe extends CommonObject
 	{
 		global $conf;
 
-		dol_syslog("getSetupIntent", LOG_INFO, 1);
+		dol_syslog("getSetupIntent description=".$description.' confirmnow='.$confirmnow, LOG_INFO, 1);
 
 		$error = 0;
 
@@ -601,6 +603,8 @@ class Stripe extends CommonObject
 				global $stripearrayofkeysbyenv;
 				\Stripe\Stripe::setApiKey($stripearrayofkeysbyenv[$status]['secret_key']);
 
+				dol_syslog("getSetupIntent ".$stripearrayofkeysbyenv[$status]['publishable_key'], LOG_DEBUG);
+
 				// Note: If all data for payment intent are same than a previous on, even if we use 'create', Stripe will return ID of the old existing payment intent.
 				if (empty($key)) {				// If the Stripe connect account not set, we use common API usage
 					//$setupintent = \Stripe\SetupIntent::create($dataforintent, array("idempotency_key" => "$description"));
@@ -639,7 +643,7 @@ class Stripe extends CommonObject
 					{
 						$now=dol_now();
 						$sql = "INSERT INTO " . MAIN_DB_PREFIX . "prelevement_facture_demande (date_demande, fk_user_demande, ext_payment_id, fk_facture, sourcetype, entity, ext_payment_site)";
-						$sql .= " VALUES ('".$this->db->idate($now)."', '0', '".$this->db->escape($setupintent->id)."', ".$object->id.", '".$this->db->escape($object->element)."', " . $conf->entity . ", '" . $service . "')";
+						$sql .= " VALUES ('".$this->db->idate($now)."', ".$user->id.", '".$this->db->escape($setupintent->id)."', ".$object->id.", '".$this->db->escape($object->element)."', " . $conf->entity . ", '" . $service . "', ".$amount.")";
 						$resql = $this->db->query($sql);
 						if (! $resql)
 						{
@@ -666,32 +670,32 @@ class Stripe extends CommonObject
 			}
 		}
 
-		dol_syslog("getSetupIntent return error=".$error, LOG_INFO, -1);
-
 		if (!$error)
 		{
+			dol_syslog("getSetupIntent ".(is_object($setupintent) ? $setupintent->id : ''), LOG_INFO, -1);
 			return $setupintent;
 		}
 		else
 		{
+			dol_syslog("getSetupIntent return error=".$error, LOG_INFO, -1);
 			return null;
 		}
 	}
 
 
 	/**
-	 * Get the Stripe card of a company payment mode (with option to create it on Stripe if not linked yet)
+	 * Get the Stripe card of a company payment mode (option to create it on Stripe if not linked yet is no more available on new Stripe API)
 	 *
 	 * @param	\Stripe\StripeCustomer	$cu								Object stripe customer
 	 * @param	CompanyPaymentMode		$object							Object companypaymentmode to check, or create on stripe (create on stripe also update the societe_rib table for current entity)
 	 * @param	string					$stripeacc						''=Use common API. If not '', it is the Stripe connect account 'acc_....' to use Stripe connect
 	 * @param	int						$status							Status (0=test, 1=live)
-	 * @param	int						$createifnotlinkedtostripe		1=Create the stripe card and the link if the card is not yet linked to a stripe card
+	 * @param	int						$createifnotlinkedtostripe		1=Create the stripe card and the link if the card is not yet linked to a stripe card. Deprecated with new Stripe API and SCA.
 	 * @return 	\Stripe\StripeCard|\Stripe\PaymentMethod|null 			Stripe Card or null if not found
 	 */
 	public function cardStripe($cu, CompanyPaymentMode $object, $stripeacc = '', $status = 0, $createifnotlinkedtostripe = 0)
 	{
-		global $conf, $user;
+		global $conf, $user, $langs;
 
 		$card = null;
 
@@ -754,27 +758,54 @@ class Stripe extends CommonObject
 
 					//$a = \Stripe\Stripe::getApiKey();
 					//var_dump($a);var_dump($stripeacc);exit;
-					dol_syslog("Try to create card with dataforcard = ".json_encode($dataforcard));
 					try {
 						if (empty($stripeacc)) {				// If the Stripe connect account not set, we use common API usage
 							if (empty($conf->global->STRIPE_USE_INTENT_WITH_AUTOMATIC_CONFIRMATION))
 							{
+								dol_syslog("Try to create card with dataforcard = ".json_encode($dataforcard));
 								$card = $cu->sources->create($dataforcard);
+								if (! $card)
+								{
+									$this->error = 'Creation of card on Stripe has failed';
+								}
 							}
 							else
 							{
-								// TODO
-								dol_syslog("Error: This case is not supported", LOG_ERR);
+								$connect = '';
+								if (!empty($stripeacc)) $connect = $stripeacc.'/';
+								$url = 'https://dashboard.stripe.com/'.$connect.'test/customers/'.$cu->id;
+								if ($status)
+								{
+									$url = 'https://dashboard.stripe.com/'.$connect.'customers/'.$cu->id;
+								}
+								$urtoswitchonstripe = ' <a href="'.$url.'" target="_stripe">'.img_picto($langs->trans('ShowInStripe'), 'globe').'</a>';
+
+								//dol_syslog("Error: This case is not supported", LOG_ERR);
+								$this->error = $langs->trans('CreationOfPaymentModeMustBeDoneFromStripeInterface', $urtoswitchonstripe);
 							}
 						} else {
 							if (empty($conf->global->STRIPE_USE_INTENT_WITH_AUTOMATIC_CONFIRMATION))
 							{
+								dol_syslog("Try to create card with dataforcard = ".json_encode($dataforcard));
 								$card = $cu->sources->create($dataforcard, array("stripe_account" => $stripeacc));
+								if (! $card)
+								{
+									$this->error = 'Creation of card on Stripe has failed';
+								}
 							}
 							else
 							{
-								// TODO
-								dol_syslog("Error: This case is not supported", LOG_ERR);
+								$connect = '';
+								if (!empty($stripeacc)) $connect = $stripeacc.'/';
+								$url = 'https://dashboard.stripe.com/'.$connect.'test/customers/'.$cu->id;
+								if ($status)
+								{
+									$url = 'https://dashboard.stripe.com/'.$connect.'customers/'.$cu->id;
+								}
+								$urtoswitchonstripe = ' <a href="'.$url.'" target="_stripe">'.img_picto($langs->trans('ShowInStripe'), 'globe').'</a>';
+
+								//dol_syslog("Error: This case is not supported", LOG_ERR);
+								$this->error = $langs->trans('CreationOfPaymentModeMustBeDoneFromStripeInterface', $urtoswitchonstripe);
 							}
 						}
 
@@ -791,10 +822,6 @@ class Stripe extends CommonObject
 							{
 								$this->error = $this->db->lasterror();
 							}
-						}
-						else
-						{
-							$this->error = 'Call to cu->source->create return empty card';
 						}
 					}
 					catch (Exception $e)
@@ -933,7 +960,7 @@ class Stripe extends CommonObject
                     $charge = \Stripe\Charge::create(array(
 						"amount" => "$stripeamount",
 						"currency" => "$currency",
-                        "statement_descriptor" => dol_trunc($description, 10, 'right', 'UTF-8', 1), // 22 chars that appears on bank receipt (company + description)
+                        "statement_descriptor_suffix" => dol_trunc($description, 10, 'right', 'UTF-8', 1),     // 22 chars that appears on bank receipt (company + description)
 						"description" => "Stripe payment: ".$description,
 						"capture"  => $capture,
 						"metadata" => $metadata,
@@ -943,7 +970,7 @@ class Stripe extends CommonObject
 					$paymentarray = array(
 						"amount" => "$stripeamount",
 						"currency" => "$currency",
-					    "statement_descriptor" => dol_trunc($description, 10, 'right', 'UTF-8', 1), // 22 chars that appears on bank receipt (company + description)
+					    "statement_descriptor_suffix" => dol_trunc($description, 10, 'right', 'UTF-8', 1),     // 22 chars that appears on bank receipt (company + description)
 						"description" => "Stripe payment: ".$description,
 						"capture"  => $capture,
 						"metadata" => $metadata,
@@ -970,10 +997,10 @@ class Stripe extends CommonObject
 				if (!in_array($currency, $arrayzerounitcurrency)) $stripefee = round($fee * 100);
 				else $stripefee = round($fee);
 
-        		$paymentarray = array(
+				$paymentarray = array(
 					"amount" => "$stripeamount",
 					"currency" => "$currency",
-        		    "statement_descriptor" => dol_trunc($description, 10, 'right', 'UTF-8', 1), // 22 chars that appears on bank receipt (company + description)
+				"statement_descriptor_suffix" => dol_trunc($description, 10, 'right', 'UTF-8', 1),     // 22 chars that appears on bank receipt (company + description)
 					"description" => "Stripe payment: ".$description,
 					"capture"  => $capture,
 					"metadata" => $metadata,

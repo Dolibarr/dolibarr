@@ -248,7 +248,7 @@ if ($id > 0 || $ref)
 	}
 
 	// Call Hook formConfirm
-	/*$parameters = array();
+	/*$parameters = array('formConfirm' => $formconfirm);
 	$reshook = $hookmanager->executeHooks('formConfirm', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
 	if (empty($reshook)) $formconfirm.=$hookmanager->resPrint;
 	elseif ($reshook > 0) $formconfirm=$hookmanager->resPrint;*/
@@ -362,14 +362,14 @@ if ($id > 0 || $ref)
 
 		$urladd = "&amp;id=".$id;
 
-		print '<form method="get" action="' . $_SERVER ['PHP_SELF'] . '" name="search_form">' . "\n";
-		print '<input type="hidden" name="id" value="' . $id . '"/>';
-		print '<input type="hidden" name="socid" value="' . $socid . '"/>';
-		if (! empty($page)) {
-			print '<input type="hidden" name="page" value="' . $page . '"/>';
+		print '<form method="get" action="'.$_SERVER ['PHP_SELF'].'" name="search_form">'."\n";
+		print '<input type="hidden" name="id" value="'.$id.'"/>';
+		print '<input type="hidden" name="socid" value="'.$socid.'"/>';
+		if (!empty($page)) {
+			print '<input type="hidden" name="page" value="'.$page.'"/>';
 		}
-		if (! empty($limit)) {
-			print '<input type="hidden" name="limit" value="' . $limit . '"/>';
+		if (!empty($limit)) {
+			print '<input type="hidden" name="limit" value="'.$limit.'"/>';
 		}
 		print_barre_liste($langs->trans("Lines"), $page, $_SERVER["PHP_SELF"], $urladd, $sortfield, $sortorder, '', $num, $nbtotalofrecords, '', 0, '', '', $limit);
 

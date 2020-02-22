@@ -416,7 +416,7 @@ PaymentConditionShort14D=14天
 PaymentCondition14D=14天
 PaymentConditionShort14DENDMONTH=月末14天
 PaymentCondition14DENDMONTH=在月底之后的14天内
-FixAmount=Fixed amount
+FixAmount=Fixed amount - 1 line with label '%s'
 VarAmount=可变金额(%% tot.)
 VarAmountOneLine=可变金额（%% tot。） -  1行标签'%s'
 # PaymentType
@@ -512,7 +512,7 @@ RevenueStamp=印花税票
 YouMustCreateInvoiceFromThird=This option is only available when creating an invoice from tab "Customer" of third party
 YouMustCreateInvoiceFromSupplierThird=This option is only available when creating an invoice from tab "Vendor" of third party
 YouMustCreateStandardInvoiceFirstDesc=您必须先创建标准发票并将其转换为“模板”以创建新模板发票
-PDFCrabeDescription=发票模板Crabe。一个完整的发票模板(支援增值税选项，折扣，付款条件，标识等..)
+PDFCrabeDescription=Invoice PDF template Crabe. A complete invoice template 
 PDFSpongeDescription=Invoice PDF template Sponge. A complete invoice template
 PDFCrevetteDescription=发票PDF模板Crevette。情况发票的完整发票模板
 TerreNumRefModelDesc1=Return number with format %syymm-nnnn for standard invoices and %syymm-nnnn for credit notes where yy is year, mm is month and nnnn is a sequence with no break and no return to 0

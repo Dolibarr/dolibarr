@@ -155,6 +155,8 @@ if (empty($reshook))
 
 		if (!$error)
 		{
+			$lastposition = 0;
+
     		$bomline = new BOMLine($db);
     		$bomline->fk_bom = $id;
     		$bomline->fk_product = $idprod;
@@ -162,6 +164,12 @@ if (empty($reshook))
     		$bomline->qty_frozen = (int) $qty_frozen;
     		$bomline->disable_stock_change = (int) $disable_stock_change;
     		$bomline->efficiency = $efficiency;
+
+    		// Rang to use
+   			$rangmax = $object->line_max(0);
+   			$ranktouse = $rangmax + 1;
+
+   			$bomline->position = ($ranktouse + 1);
 
     		$result = $bomline->create($user);
     		if ($result <= 0)
@@ -449,7 +457,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 	}
 
 	// Call Hook formConfirm
-	$parameters = array('lineid' => $lineid);
+	$parameters = array('formConfirm' => $formconfirm, 'lineid' => $lineid);
 	$reshook = $hookmanager->executeHooks('formConfirm', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
 	if (empty($reshook)) $formconfirm .= $hookmanager->resPrint;
 	elseif ($reshook > 0) $formconfirm = $hookmanager->resPrint;

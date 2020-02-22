@@ -44,6 +44,7 @@ require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
 require_once DOL_DOCUMENT_ROOT.'/projet/class/task.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formprojet.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
+require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
 
 // Load translation files required by the page
 $langs->loadLangs(array("companies", "other", "commercial", "bills", "orders", "agenda"));
@@ -374,6 +375,10 @@ if (empty($reshook) && $action == 'add')
 		{
 			if (!$object->error)
 			{
+				// Category association
+				$categories = GETPOST('categories', 'array');
+				$object->setCategories($categories);
+
 				unset($_SESSION['assignedtouser']);
 
 				$moreparam = '';
@@ -595,6 +600,10 @@ if (empty($reshook) && $action == 'update')
 
 			if ($result > 0)
 			{
+				// Category association
+				$categories = GETPOST('categories', 'array');
+				$object->setCategories($categories);
+
 				unset($_SESSION['assignedtouser']);
 
 				$db->commit();
@@ -831,7 +840,7 @@ if ($action == 'create')
 	print '<input type="hidden" name="token" value="'.newToken().'">';
 	print '<input type="hidden" name="action" value="add">';
 	print '<input type="hidden" name="donotclearsession" value="1">';
-	if ($backtopage) print '<input type="hidden" name="backtopage" value="'.($backtopage != '1' ? $backtopage : $_SERVER["HTTP_REFERER"]).'">';
+	if ($backtopage) print '<input type="hidden" name="backtopage" value="'.($backtopage != '1' ? $backtopage : htmlentities($_SERVER["HTTP_REFERER"])).'">';
 	if (empty($conf->global->AGENDA_USE_EVENT_TYPE)) print '<input type="hidden" name="actioncode" value="'.dol_getIdFromCode($db, 'AC_OTH', 'c_actioncomm').'">';
 
 	if (GETPOST("actioncode", 'aZ09') == 'AC_RDV') print load_fiche_titre($langs->trans("AddActionRendezVous"), '', 'title_agenda');
@@ -1000,6 +1009,14 @@ if ($action == 'create')
 		print '</td></tr>';
 	}
 
+	if ($conf->categorie->enabled) {
+		// Categories
+		print '<tr><td>'.$langs->trans("Categories").'</td><td colspan="3">';
+		$cate_arbo = $form->select_all_categories(Categorie::TYPE_ACTIONCOMM, '', 'parent', 64, 0, 1);
+		print $form->multiselectarray('categories', $cate_arbo, GETPOST('categories', 'array'), '', 0, '', 0, '100%');
+		print "</td></tr>";
+	}
+
 	print '</table>';
 
 
@@ -1053,7 +1070,7 @@ if ($action == 'create')
 		$numproject = $formproject->select_projects((!empty($societe->id) ? $societe->id : -1), $projectid, 'projectid', 0, 0, 1, 1);
 
 		print ' <a href="'.DOL_URL_ROOT.'/projet/card.php?socid='.$societe->id.'&action=create"><span class="fa fa-plus-circle valignmiddle paddingleft" title="'.$langs->trans("AddProject").'"></span></a>';
-		$urloption = '?action=create';
+		$urloption = '?action=create&donotclearsession=1';
 		$url = dol_buildpath('comm/action/card.php', 2).$urloption;
 
 		// update task list
@@ -1232,7 +1249,7 @@ if ($id > 0)
 		print '<input type="hidden" name="action" value="update">';
 		print '<input type="hidden" name="id" value="'.$id.'">';
 		print '<input type="hidden" name="ref_ext" value="'.$object->ref_ext.'">';
-		if ($backtopage) print '<input type="hidden" name="backtopage" value="'.($backtopage != '1' ? $backtopage : $_SERVER["HTTP_REFERER"]).'">';
+		if ($backtopage) print '<input type="hidden" name="backtopage" value="'.($backtopage != '1' ? $backtopage : htmlentities($_SERVER["HTTP_REFERER"])).'">';
 		if (empty($conf->global->AGENDA_USE_EVENT_TYPE)) print '<input type="hidden" name="actioncode" value="'.$object->type_code.'">';
 
 		dol_fiche_head($head, 'card', $langs->trans("Action"), 0, 'action');
@@ -1411,6 +1428,19 @@ if ($id > 0)
 			print $form->select_dolusers($object->userdoneid > 0 ? $object->userdoneid : -1, 'doneby', 1);
 			print '</td></tr>';
 		}
+		// Tags-Categories
+        if ($conf->categorie->enabled) {
+			print '<tr><td>'.$langs->trans("Categories").'</td><td colspan="3">';
+			$cate_arbo = $form->select_all_categories(Categorie::TYPE_ACTIONCOMM, '', 'parent', 64, 0, 1);
+			$c = new Categorie($db);
+			$cats = $c->containing($object->id, Categorie::TYPE_ACTIONCOMM);
+			$arrayselected = array();
+			foreach ($cats as $cat) {
+				$arrayselected[] = $cat->id;
+			}
+			print $form->multiselectarray('categories', $cate_arbo, $arrayselected, '', 0, '', 0, '100%');
+			print "</td></tr>";
+		}
 
 		print '</table>';
 
@@ -1449,10 +1479,10 @@ if ($id > 0)
 			$langs->load("projects");
 
 			print '<tr><td class="titlefieldcreate">'.$langs->trans("Project").'</td><td>';
-			$numprojet = $formproject->select_projects(($object->socid > 0 ? $object->socid : -1), $object->fk_project, 'projectid', 0, 0, 1, 0, 0, 0, 0, '', 0);
+			$numprojet = $formproject->select_projects(($object->socid > 0 ? $object->socid : -1), $object->fk_project, 'projectid', 0, 0, 1, 0, 0, 0, 0, '', 0, 0, 'maxwidth500');
 			if ($numprojet == 0)
 			{
-				print ' &nbsp; <a href="'.DOL_URL_ROOT.'/projet/card.php?socid='.$object->socid.'&action=create&backtopage='.urlencode($_SERVER["PHP_SELF"].'?id='.$object->id.'&action=edit').'"><span class="valignmiddle text-plus-circle">'.$langs->trans("AddProject").'</span><span class="fa fa-plus-circle valignmiddle paddingleft"></span></a>';
+				print ' &nbsp; <a href="'.DOL_URL_ROOT.'/projet/card.php?socid='.$object->socid.'&action=create&backtopage='.urlencode($_SERVER["PHP_SELF"].'?id='.$object->id.'&action=edit').'"><span class="fa fa-plus-circle valignmiddle paddingleft" title="'.$langs->trans("AddProject").'"></span></a>';
 			}
 			print '</td></tr>';
 		}
@@ -1473,7 +1503,7 @@ if ($id > 0)
 			{
 			    print '<td id="project-task-input-container" >';
 
-			    $urloption = '?action=create'; // we use create not edit for more flexibility
+				$urloption = '?action=create&donotclearsession=1'; // we use create not edit for more flexibility
 			    $url = DOL_URL_ROOT.'/comm/action/card.php'.$urloption;
 
 			    // update task list
@@ -1717,6 +1747,12 @@ if ($id > 0)
 			}
 			print '</td></tr>';
 		}
+		// Categories
+		if ($conf->categorie->enabled) {
+			print '<tr><td class="valignmiddle">'.$langs->trans("Categories").'</td><td colspan="3">';
+			print $form->showCategories($object->id, Categorie::TYPE_ACTIONCOMM, 1);
+			print "</td></tr>";
+		}
 
 		print '</table>';
 
@@ -1789,7 +1825,7 @@ if ($id > 0)
 
 		// Description
 		print '<tr><td class="tdtop">'.$langs->trans("Description").'</td><td colspan="3">';
-		print dol_htmlentitiesbr($object->note);
+		print dol_string_onlythesehtmltags(dol_htmlentitiesbr($object->note_private));
 		print '</td></tr>';
 
         // Other attributes

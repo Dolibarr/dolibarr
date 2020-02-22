@@ -183,10 +183,10 @@ class BankAccounts extends DolibarrApi
      *
      * @status 201
      *
-     * @throws 401 Unauthorized: User does not have permission to configure bank accounts
-	 * @throws 404 Not Found: Either the source or the destination bankaccount for the provided id does not exist
-     * @throws 422 Unprocessable Entity: Refer to detailed exception message for the cause
-	 * @throws 500 Internal Server Error: Error(s) returned by the RDBMS
+     * @throws RestException 401 Unauthorized: User does not have permission to configure bank accounts
+	 * @throws RestException 404 Not Found: Either the source or the destination bankaccount for the provided id does not exist
+     * @throws RestException 422 Unprocessable Entity: Refer to detailed exception message for the cause
+	 * @throws RestException 500 Internal Server Error: Error(s) returned by the RDBMS
      */
     public function transfer($bankaccount_from_id = 0, $bankaccount_to_id = 0, $date = null, $description = "", $amount = 0.0, $amount_to = 0.0)
     {
@@ -411,8 +411,9 @@ class BankAccounts extends DolibarrApi
      * @throws RestException
      *
      * @url GET {id}/lines
+	 * @param string    $sqlfilters Other criteria to filter answers separated by a comma. Syntax example "(t.ref:like:'SO-%') and (t.import_key:<:'20160101')"
      */
-    public function getLines($id)
+    public function getLines($id, $sqlfilters = '')
     {
         $list = array();
 
@@ -428,6 +429,18 @@ class BankAccounts extends DolibarrApi
 
         $sql = "SELECT rowid FROM ".MAIN_DB_PREFIX."bank ";
         $sql .= " WHERE fk_account = ".$id;
+
+		// Add sql filters
+		if ($sqlfilters)
+		{
+			if (! DolibarrApi::_checkFilters($sqlfilters))
+			{
+				throw new RestException(503, 'Error when validating parameter sqlfilters '.$sqlfilters);
+			}
+			$regexstring='\(([^:\'\(\)]+:[^:\'\(\)]+:[^:\(\)]+)\)';
+			$sql.=" AND (".preg_replace_callback('/'.$regexstring.'/', 'DolibarrApi::_forge_criteria_callback', $sqlfilters).")";
+		}
+
         $sql .= " ORDER BY rowid";
 
         $result = $this->db->query($sql);

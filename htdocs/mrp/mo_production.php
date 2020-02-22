@@ -47,6 +47,7 @@ require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formcompany.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formprojet.class.php';
+require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
 require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
 require_once DOL_DOCUMENT_ROOT.'/product/class/html.formproduct.class.php';
 require_once DOL_DOCUMENT_ROOT.'/product/stock/class/entrepot.class.php';
@@ -159,6 +160,25 @@ if (empty($reshook))
 
     if ($action == 'confirm_reopen') {
     	$result = $object->setStatut($object::STATUS_INPROGRESS, 0, '', 'MRP_REOPEN');
+    }
+
+    if ($action == 'confirm_addconsumeline' && GETPOST('addconsumelinebutton')) {
+    	$moline = new MoLine($db);
+
+    	// Line to produce
+    	$moline->fk_mo = $object->id;
+    	$moline->qty = GETPOST('qtytoadd', 'int'); ;
+    	$moline->fk_product = GETPOST('productidtoadd', 'int');
+    	$moline->role = 'toconsume';
+    	$moline->position = 0;
+
+    	$resultline = $moline->create($user, false); // Never use triggers here
+    	if ($resultline <= 0) {
+    		$error++;
+    		setEventMessages($moline->error, $molines->errors, 'errors');
+    	}
+
+    	$action = '';
     }
 
     if (in_array($action, array('confirm_consumeorproduce', 'confirm_consumeandproduceall'))) {
@@ -379,23 +399,6 @@ $tmpbatch = new Productlot($db);
 
 llxHeader('', $langs->trans('Mo'), '');
 
-// Example : Adding jquery code
-print '<script type="text/javascript" language="javascript">
-jQuery(document).ready(function() {
-	function init_myfunc()
-	{
-		jQuery("#myid").removeAttr(\'disabled\');
-		jQuery("#myid").attr(\'disabled\',\'disabled\');
-	}
-	init_myfunc();
-	jQuery("#mybutton").click(function() {
-		init_myfunc();
-	});
-});
-</script>';
-
-
-
 // Part to show record
 if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'create')))
 {
@@ -424,25 +427,47 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 		$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"].'?id='.$object->id, $langs->trans('ToClone'), $langs->trans('ConfirmCloneMo', $object->ref), 'confirm_clone', $formquestion, 'yes', 1);
 	}
 
-	// Confirmation of action xxxx
-	if ($action == 'xxx')
+	// Confirmation of validation
+	if ($action == 'validate')
 	{
+		// We check that object has a temporary ref
+		$ref = substr($object->ref, 1, 4);
+		if ($ref == 'PROV') {
+			$object->fetch_product();
+			$numref = $object->getNextNumRef($object->fk_product);
+		} else {
+			$numref = $object->ref;
+		}
+
+		$text = $langs->trans('ConfirmValidateMo', $numref);
+		/*if (! empty($conf->notification->enabled))
+		 {
+		 require_once DOL_DOCUMENT_ROOT . '/core/class/notify.class.php';
+		 $notify = new Notify($db);
+		 $text .= '<br>';
+		 $text .= $notify->confirmMessage('BOM_VALIDATE', $object->socid, $object);
+		 }*/
+
 		$formquestion = array();
-	    /*
-		$forcecombo=0;
-		if ($conf->browser->name == 'ie') $forcecombo = 1;	// There is a bug in IE10 that make combo inside popup crazy
-	    $formquestion = array(
-	        // 'text' => $langs->trans("ConfirmClone"),
-	        // array('type' => 'checkbox', 'name' => 'clone_content', 'label' => $langs->trans("CloneMainAttributes"), 'value' => 1),
-	        // array('type' => 'checkbox', 'name' => 'update_prices', 'label' => $langs->trans("PuttingPricesUpToDate"), 'value' => 1),
-	        // array('type' => 'other',    'name' => 'idwarehouse',   'label' => $langs->trans("SelectWarehouseForStockDecrease"), 'value' => $formproduct->selectWarehouses(GETPOST('idwarehouse')?GETPOST('idwarehouse'):'ifone', 'idwarehouse', '', 1, 0, 0, '', 0, $forcecombo))
-        );
-	    */
-	    $formconfirm = $form->formconfirm($_SERVER["PHP_SELF"].'?id='.$object->id, $langs->trans('XXX'), $text, 'confirm_xxx', $formquestion, 0, 1, 220);
+		if (!empty($conf->mrp->enabled))
+		{
+			$langs->load("mrp");
+			require_once DOL_DOCUMENT_ROOT.'/product/class/html.formproduct.class.php';
+			$formproduct = new FormProduct($db);
+			$forcecombo = 0;
+			if ($conf->browser->name == 'ie') $forcecombo = 1; // There is a bug in IE10 that make combo inside popup crazy
+			$formquestion = array(
+				// 'text' => $langs->trans("ConfirmClone"),
+				// array('type' => 'checkbox', 'name' => 'clone_content', 'label' => $langs->trans("CloneMainAttributes"), 'value' => 1),
+				// array('type' => 'checkbox', 'name' => 'update_prices', 'label' => $langs->trans("PuttingPricesUpToDate"), 'value' => 1),
+			);
+		}
+
+		$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"].'?id='.$object->id, $langs->trans('Validate'), $text, 'confirm_validate', $formquestion, 0, 1, 220);
 	}
 
 	// Call Hook formConfirm
-	$parameters = array('lineid' => $lineid);
+	$parameters = array('formConfirm' => $formconfirm, 'lineid' => $lineid);
 	$reshook = $hookmanager->executeHooks('formConfirm', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
 	if (empty($reshook)) $formconfirm .= $hookmanager->resPrint;
 	elseif ($reshook > 0) $formconfirm = $hookmanager->resPrint;
@@ -521,7 +546,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 	dol_fiche_end();
 
 
-	if (! in_array($action, array('consumeorproduce', 'consumeandproduceall')))
+	if (!in_array($action, array('consumeorproduce', 'consumeandproduceall')))
 	{
 		print '<div class="tabsAction">';
 
@@ -529,6 +554,23 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 		// Note that $action and $object may be modified by hook
 		$reshook = $hookmanager->executeHooks('addMoreActionsButtons', $parameters, $object, $action);
 		if (empty($reshook)) {
+			// Validate
+			if ($object->status == $object::STATUS_DRAFT)
+			{
+				if ($permissiontoadd)
+				{
+					if (empty($object->table_element_line) || (is_array($object->lines) && count($object->lines) > 0))
+					{
+						print '<a class="butAction" href="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'&action=validate">'.$langs->trans("Validate").'</a>';
+					}
+					else
+					{
+						$langs->load("errors");
+						print '<a class="butActionRefused" href="" title="'.$langs->trans("ErrorAddAtLeastOneLineFirst").'">'.$langs->trans("Validate").'</a>';
+					}
+				}
+			}
+
 			// Consume or produce
 			if ($object->status == Mo::STATUS_VALIDATED || $object->status == Mo::STATUS_INPROGRESS) {
 				if ($permissiontoproduce) {
@@ -551,12 +593,25 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 				print '<a class="butActionRefused classfortooltip" href="#" title="'.$langs->trans("ValidateBefore").'">'.$langs->trans('ConsumeAndProduceAll').'</a>';
 			}
 
-			// Reopen
-			if ($object->status == Mo::STATUS_PRODUCED) {
-				if ($permissiontoproduce) {
-					print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=confirm_reopen">'.$langs->trans('ReOpen').'</a>';
-				} else {
-					print '<a class="butActionRefused classfortooltip" href="#" title="'.$langs->trans("NotEnoughPermissions").'">'.$langs->trans('ReOpen').'</a>';
+			// Cancel - Reopen
+			if ($permissiontoadd)
+			{
+				if ($object->status == $object::STATUS_VALIDATED || $object->status == $object::STATUS_INPROGRESS)
+				{
+					print '<a class="butActionDelete" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=confirm_close&confirm=yes">'.$langs->trans("Cancel").'</a>'."\n";
+				}
+
+				if ($object->status == $object::STATUS_CANCELED)
+				{
+					print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=confirm_reopen&confirm=yes">'.$langs->trans("Re-Open").'</a>'."\n";
+				}
+
+				if ($object->status == $object::STATUS_PRODUCED) {
+					if ($permissiontoproduce) {
+						print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=confirm_reopen">'.$langs->trans('ReOpen').'</a>';
+					} else {
+						print '<a class="butActionRefused classfortooltip" href="#" title="'.$langs->trans("NotEnoughPermissions").'">'.$langs->trans('ReOpen').'</a>';
+					}
 				}
 			}
 		}
@@ -564,7 +619,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 		print '</div>';
 	}
 
-	if (in_array($action, array('consumeorproduce', 'consumeandproduceall')))
+	if (in_array($action, array('consumeorproduce', 'consumeandproduceall', 'addconsumeline')))
 	{
 		print '<form method="POST" action="'.$_SERVER["PHP_SELF"].'">';
 		print '<input type="hidden" name="token" value="'.newToken().'">';
@@ -572,20 +627,22 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 		print '<input type="hidden" name="backtopage" value="'.$backtopage.'">';
 		print '<input type="hidden" name="id" value="'.$id.'">';
 
-		$defaultstockmovementlabel = GETPOST('inventorylabel', 'alphanohtml') ? GETPOST('inventorylabel', 'alphanohtml') : $langs->trans("ProductionForRef", $object->ref);
-		//$defaultstockmovementcode = GETPOST('inventorycode', 'alphanohtml') ? GETPOST('inventorycode', 'alphanohtml') : $object->ref.'_'.dol_print_date(dol_now(), 'dayhourlog');
-		$defaultstockmovementcode = GETPOST('inventorycode', 'alphanohtml') ? GETPOST('inventorycode', 'alphanohtml') : $langs->trans("ProductionForRef", $object->ref);
+		if (in_array($action, array('consumeorproduce', 'consumeandproduceall'))) {
+			$defaultstockmovementlabel = GETPOST('inventorylabel', 'alphanohtml') ? GETPOST('inventorylabel', 'alphanohtml') : $langs->trans("ProductionForRef", $object->ref);
+			//$defaultstockmovementcode = GETPOST('inventorycode', 'alphanohtml') ? GETPOST('inventorycode', 'alphanohtml') : $object->ref.'_'.dol_print_date(dol_now(), 'dayhourlog');
+			$defaultstockmovementcode = GETPOST('inventorycode', 'alphanohtml') ? GETPOST('inventorycode', 'alphanohtml') : $langs->trans("ProductionForRef", $object->ref);
 
-		print '<div class="center">';
-		print '<span class="opacitymedium hideonsmartphone">'.$langs->trans("ConfirmProductionDesc", $langs->transnoentitiesnoconv("Confirm")).'<br></span>';
-		print $langs->trans("MovementLabel").': <input type="text" class="minwidth300" name="inventorylabel" value="'.$defaultstockmovementlabel.'"> &nbsp; ';
-		print $langs->trans("InventoryCode").': <input type="text" class="maxwidth200" name="inventorycode" value="'.$defaultstockmovementcode.'"><br><br>';
-		print '<input type="checkbox" id="autoclose" name="autoclose" value="1"'.(GETPOSTISSET('inventorylabel') ? (GETPOST('autoclose') ? ' checked="checked"' : '') : ' checked="checked"').'> <label for="autoclose">'.$langs->trans("AutoCloseMO").'</label><br>';
-		print '<input class="button" type="submit" value="'.$langs->trans("Confirm").'" name="confirm">';
-		print ' &nbsp; ';
-		print '<input class="button" type="submit" value="'.$langs->trans("Cancel").'" name="cancel">';
-		print '</div>';
-		print '<br>';
+			print '<div class="center">';
+			print '<span class="opacitymedium hideonsmartphone">'.$langs->trans("ConfirmProductionDesc", $langs->transnoentitiesnoconv("Confirm")).'<br></span>';
+			print $langs->trans("MovementLabel").': <input type="text" class="minwidth300" name="inventorylabel" value="'.$defaultstockmovementlabel.'"> &nbsp; ';
+			print $langs->trans("InventoryCode").': <input type="text" class="maxwidth200" name="inventorycode" value="'.$defaultstockmovementcode.'"><br><br>';
+			print '<input type="checkbox" id="autoclose" name="autoclose" value="1"'.(GETPOSTISSET('inventorylabel') ? (GETPOST('autoclose') ? ' checked="checked"' : '') : ' checked="checked"').'> <label for="autoclose">'.$langs->trans("AutoCloseMO").'</label><br>';
+			print '<input class="button" type="submit" value="'.$langs->trans("Confirm").'" name="confirm">';
+			print ' &nbsp; ';
+			print '<input class="button" type="submit" value="'.$langs->trans("Cancel").'" name="cancel">';
+			print '</div>';
+			print '<br>';
+		}
 	}
 
 
@@ -604,10 +661,11 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
     	print '<div class="fichehalfleft">';
     	print '<div class="clearboth"></div>';
 
-    	print load_fiche_titre($langs->trans('Consumption'), '', '');
+    	$newlinetext = '<a href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=addconsumeline">'.$langs->trans("AddNewConsumeLines").'</a>';
+    	print load_fiche_titre($langs->trans('Consumption'), '', '', 0, '', '', $newlinetext);
 
     	print '<div class="div-table-responsive-no-min">';
-    	print '<table id="tablelines" class="noborder noshadow centpercent'.' nobottom'.'">';
+    	print '<table class="noborder noshadow centpercent'.' nobottom'.'">';
 
     	print '<tr class="liste_titre">';
     	print '<td>'.$langs->trans("Product").'</td>';
@@ -623,17 +681,33 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
     	}
     	print '</tr>';
 
+    	if ($action == 'addconsumeline') {
+    		print '<tr class="liste_titre">';
+    		print '<td>';
+    		print $form->select_produits('', 'productidtoadd', '', 0, 0, -1, 2, '', 0, array(), 0, '1', 0, 'maxwidth300');
+    		print '</td>';
+    		print '<td class="right"><input type="text" name="qtytoadd" value="1" class="width50"></td>';
+    		print '<td class="right"></td>';
+    		print '<td>';
+    		print '<input type="submit" class="button" name="addconsumelinebutton" value="'.$langs->trans("Add").'">';
+    		print '</td>';
+    		if ($conf->productbatch->enabled) {
+    			print '<td></td>';
+    		}
+    		print '</tr>';
+    	}
+
     	if (!empty($object->lines))
     	{
     		$nblinetoconsume = 0;
-    		foreach($object->lines as $line) {
+    		foreach ($object->lines as $line) {
     			if ($line->role == 'toconsume') {
     				$nblinetoconsume++;
     			}
     		}
 
     		$nblinetoconsumecursor = 0;
-    		foreach($object->lines as $line) {
+    		foreach ($object->lines as $line) {
     	    	if ($line->role == 'toconsume') {
     	    		$nblinetoconsumecursor++;
 
@@ -642,7 +716,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 
     	    		$arrayoflines = $object->fetchLinesLinked('consumed', $line->id);
     	    		$alreadyconsumed = 0;
-    	    		foreach($arrayoflines as $line2) {
+    	    		foreach ($arrayoflines as $line2) {
     	    			$alreadyconsumed += $line2['qty'];
     	    		}
 
@@ -682,7 +756,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
     	    		}
     	    		print ' '.$alreadyconsumed;
     	    		print '</td>';
-    	    		print '<td>';	// Warehouse
+    	    		print '<td>'; // Warehouse
     	    		print '</td>';
     	    		if ($conf->productbatch->enabled) {
     	    			print '<td></td>'; // Lot
@@ -690,7 +764,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
     	    		print '</tr>';
 
     	    		// Show detailed of already consumed with js code to collapse
-    	    		foreach($arrayoflines as $line2) {
+    	    		foreach ($arrayoflines as $line2) {
     	    			print '<tr class="expanddetail'.$line->id.' hideobject opacitylow">';
     	    			print '<td>';
     	    			print dol_print_date($line2['date'], 'dayhour');
@@ -718,7 +792,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
     	    			print '<tr>';
     	    			print '<td>'.$langs->trans("ToConsume").'</td>';
     	    			$preselected = (GETPOSTISSET('qty-'.$line->id.'-'.$i) ? GETPOST('qty-'.$line->id.'-'.$i) : max(0, $line->qty - $alreadyconsumed));
-    	    			if ($action == 'consumeorproduce' && ! GETPOSTISSET('qty-'.$line->id.'-'.$i)) $preselected = 0;
+    	    			if ($action == 'consumeorproduce' && !GETPOSTISSET('qty-'.$line->id.'-'.$i)) $preselected = 0;
     	    			print '<td class="right"><input type="text" class="width50" name="qty-'.$line->id.'-'.$i.'" value="'.$preselected.'"></td>';
     	    			print '<td></td>';
     	    			print '<td>';
@@ -777,14 +851,14 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
     	if (!empty($object->lines))
     	{
     		$nblinetoproduce = 0;
-    		foreach($object->lines as $line) {
+    		foreach ($object->lines as $line) {
     			if ($line->role == 'toproduce') {
     				$nblinetoproduce++;
     			}
     		}
 
     		$nblinetoproducecursor = 0;
-    		foreach($object->lines as $line) {
+    		foreach ($object->lines as $line) {
     			if ($line->role == 'toproduce') {
     				$nblinetoproducecursor++;
 
@@ -793,7 +867,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 
     				$arrayoflines = $object->fetchLinesLinked('produced', $line->id);
     				$alreadyproduced = 0;
-    				foreach($arrayoflines as $line2) {
+    				foreach ($arrayoflines as $line2) {
     					$alreadyproduced += $line2['qty'];
     				}
 
@@ -820,7 +894,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
     				}
     				print ' '.$alreadyproduced;
     				print '</td>';
-    				print '<td>';	// Warehouse
+    				print '<td>'; // Warehouse
     				print '</td>';
     				if ($conf->productbatch->enabled) {
     					print '<td></td>'; // Lot
@@ -828,7 +902,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
     				print '</tr>';
 
     				// Show detailed of already consumed with js code to collapse
-    				foreach($arrayoflines as $line2) {
+    				foreach ($arrayoflines as $line2) {
     					print '<tr class="expanddetailtoproduce'.$line->id.' hideobject opacitylow">';
     					print '<td>';
     					print dol_print_date($line2['date'], 'dayhour');
@@ -854,7 +928,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
     					print '<tr>';
     					print '<td>'.$langs->trans("ToProduce").'</td>';
     					$preselected = (GETPOSTISSET('qtytoproduce-'.$line->id.'-'.$i) ? GETPOST('qtytoproduce-'.$line->id.'-'.$i) : max(0, $line->qty - $alreadyproduced));
-    					if ($action == 'consumeorproduce' && ! GETPOSTISSET('qtytoproduce-'.$line->id.'-'.$i)) $preselected = 0;
+    					if ($action == 'consumeorproduce' && !GETPOSTISSET('qtytoproduce-'.$line->id.'-'.$i)) $preselected = 0;
     					print '<td class="right"><input type="text" class="width50" name="qtytoproduce-'.$line->id.'-'.$i.'" value="'.$preselected.'"></td>';
     					print '<td></td>';
     					print '<td>';
@@ -886,7 +960,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
     	print '</div>';
 	}
 
-	if (in_array($action, array('consumeorproduce', 'consumeandproduceall')))
+	if (in_array($action, array('consumeorproduce', 'consumeandproduceall', 'addconsumeline')))
 	{
 		print "</form>\n";
 	}

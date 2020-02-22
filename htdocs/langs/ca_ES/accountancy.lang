@@ -224,6 +224,7 @@ ListAccounts=Llistat dels comptes comptables
 UnknownAccountForThirdparty=Compte comptable de tercer desconeguda, utilitzarem %s
 UnknownAccountForThirdpartyBlocking=Compte comptable de tercer desconegut. Error de bloqueig
 ThirdpartyAccountNotDefinedOrThirdPartyUnknown=Compte de tercers no definit o tercer desconegut. Utilitzarem %s
+ThirdpartyAccountNotDefinedOrThirdPartyUnknownSubledgerIgnored=Tercer desconegut i subcompte comptable no definit al pagament. Es manté buit el valor del subcompte comptable.
 ThirdpartyAccountNotDefinedOrThirdPartyUnknownBlocking=Compte de tercers no definit o tercer desconegut. Error de bloqueig.
 UnknownAccountForThirdpartyAndWaitingAccountNotDefinedBlocking=Compte de tercers desconegut i compte d'espera no definit. Error de bloqueig
 PaymentsNotLinkedToProduct=Pagament no vinculat a cap producte / servei
@@ -355,7 +356,7 @@ UseMenuToSetBindindManualy=Línies encara no enllaçades, utilitzeu el menú <a 
 
 ## Import
 ImportAccountingEntries=Entrades de comptabilitat
-DateExport=Data d&#39;exportació
+DateExport=Data d'exportació
 WarningReportNotReliable=Avís, aquest informe no està basat en el Llibre Major, de manera que no conté assentaments modificats manualment en el Llibre Major. Si el registre diari està actualitzat, la vista de comptes és més precisa.
 ExpenseReportJournal=Diari d'informe de despeses
 InventoryJournal=Diari d'inventari

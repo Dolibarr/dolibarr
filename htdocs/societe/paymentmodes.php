@@ -222,7 +222,7 @@ if (empty($reshook))
 
 			if (GETPOST('stripe_card_ref', 'alpha') && GETPOST('stripe_card_ref', 'alpha') != $companypaymentmode->stripe_card_ref) {
 				// If we set a stripe value that is different than previous one, we also set the stripe account
-				$companypaymentmode->stripe_account = $site_account;
+				$companypaymentmode->stripe_account = $stripecu.'@'.$site_account;
 			}
 			$companypaymentmode->stripe_card_ref = GETPOST('stripe_card_ref', 'alpha');
 
@@ -383,7 +383,7 @@ if (empty($reshook))
 
 			if (GETPOST('stripe_card_ref', 'alpha')) {
 				// If we set a stripe value, we also set the stripe account
-				$companypaymentmode->stripe_account = $site_account;
+				$companypaymentmode->stripe_account = $stripecu.'@'.$site_account;
 			}
 			$companypaymentmode->stripe_card_ref = GETPOST('stripe_card_ref', 'alpha');
 
@@ -554,15 +554,13 @@ if (empty($reshook))
 				if (!$error)
 				{
 					// Creation of Stripe card + update of societe_account
+					// Note that with the new Stripe API, option to create a card is no more available, instead an error message will be returned to
+					// ask to create the crdit card from Stripe backoffice.
 					$card = $stripe->cardStripe($cu, $companypaymentmode, $stripeacc, $servicestatus, 1);
 					if (!$card)
 					{
 						$error++;
 						setEventMessages($stripe->error, $stripe->errors, 'errors');
-					}
-					else
-					{
-						$stripecard = $card->id;
 					}
 				}
 			}
@@ -577,30 +575,38 @@ if (empty($reshook))
 			$db->begin();
 
             if (empty($newcu)) {
-                $sql = "DELETE FROM ".MAIN_DB_PREFIX."societe_account WHERE site = 'stripe' AND fk_soc = ".$object->id." AND status = ".$servicestatus." AND entity = ".$conf->entity;
+                $sql = "DELETE FROM ".MAIN_DB_PREFIX."societe_account WHERE site = 'stripe' AND (site_account IS NULL or site_account = '' or site_account = '".$site_account."') AND fk_soc = ".$object->id." AND status = ".$servicestatus." AND entity = ".$conf->entity;
             } else {
-                $sql = 'UPDATE '.MAIN_DB_PREFIX."societe_account";
-                $sql .= " SET key_account = '".$db->escape(GETPOST('key_account', 'alpha'))."'";
-                $sql .= " WHERE site = 'stripe' AND fk_soc = ".$object->id." AND status = ".$servicestatus." AND entity = ".$conf->entity; // Keep = here for entity. Only 1 record must be modified !
+                $sql = 'SELECT rowid FROM '.MAIN_DB_PREFIX."societe_account";
+                $sql .= " WHERE site = 'stripe' AND (site_account IS NULL or site_account = '' or site_account = '".$site_account."') AND fk_soc = ".$object->id." AND status = ".$servicestatus." AND entity = ".$conf->entity; // Keep = here for entity. Only 1 record must be modified !
             }
 
 			$resql = $db->query($sql);
-			$num = $db->num_rows($resql);
-			if (empty($num) && !empty($newcu))
-			{
-				$societeaccount = new SocieteAccount($db);
-				$societeaccount->fk_soc = $object->id;
-				$societeaccount->login = '';
-				$societeaccount->pass_encoding = '';
-				$societeaccount->site = 'stripe';
-				$societeaccount->status = $servicestatus;
-				$societeaccount->key_account = $newcu;
-				$result = $societeaccount->create($user);
-				if ($result < 0)
+			$num = $db->num_rows($resql); // Note: $num is always 0 on an update and delete, it is defined for select only.
+			if (!empty($newcu)) {
+				if (empty($num))
 				{
-					$error++;
+					$societeaccount = new SocieteAccount($db);
+					$societeaccount->fk_soc = $object->id;
+					$societeaccount->login = '';
+					$societeaccount->pass_encoding = '';
+					$societeaccount->site = 'stripe';
+					$societeaccount->status = $servicestatus;
+					$societeaccount->key_account = $newcu;
+					$societeaccount->site_account = $site_account;
+					$result = $societeaccount->create($user);
+					if ($result < 0)
+					{
+						$error++;
+					}
+				} else {
+					$sql = 'UPDATE '.MAIN_DB_PREFIX."societe_account";
+					$sql .= " SET key_account = '".$db->escape(GETPOST('key_account', 'alpha'))."', site_account = '".$site_account."'";
+					$sql .= " WHERE site = 'stripe' AND (site_account IS NULL or site_account = '' or site_account = '".$site_account."') AND fk_soc = ".$object->id." AND status = ".$servicestatus." AND entity = ".$conf->entity; // Keep = here for entity. Only 1 record must be modified !
+					$resql = $db->query($sql);
 				}
 			}
+			//var_dump($sql);	var_dump($newcu);		var_dump($num); exit;
 
 			if (!$error)
 			{
@@ -623,6 +629,8 @@ if (empty($reshook))
 
             if (empty($newsup)) {
                 $sql = "DELETE FROM ".MAIN_DB_PREFIX."oauth_token WHERE fk_soc = ".$object->id." AND service = '".$service."' AND entity = ".$conf->entity;
+                // TODO Add site and site_account on oauth_token table
+                //$sql = "DELETE FROM ".MAIN_DB_PREFIX."oauth_token WHERE site = 'stripe' AND (site_account IS NULL or site_account = '".$site_account."') AND fk_soc = ".$object->id." AND service = '".$service."' AND entity = ".$conf->entity;
             } else {
                 try {
                     $stripesup = \Stripe\Account::retrieve($db->escape(GETPOST('key_account_supplier', 'alpha')));
@@ -630,6 +638,8 @@ if (empty($reshook))
                     $tokenstring['type'] = $stripesup->type;
                     $sql = "UPDATE ".MAIN_DB_PREFIX."oauth_token";
                     $sql .= " SET tokenstring = '".dol_json_encode($tokenstring)."'";
+                    $sql .= " WHERE site = 'stripe' AND (site_account IS NULL or site_account = '".$site_account."') AND fk_soc = ".$object->id." AND service = '".$service."' AND entity = ".$conf->entity; // Keep = here for entity. Only 1 record must be modified !
+                    // TODO Add site and site_account on oauth_token table
                     $sql .= " WHERE fk_soc = ".$object->id." AND service = '".$service."' AND entity = ".$conf->entity; // Keep = here for entity. Only 1 record must be modified !
                 } catch (Exception $e) {
 					$error++;
@@ -647,6 +657,7 @@ if (empty($reshook))
                     $tokenstring['type'] = $stripesup->type;
                     $sql = "INSERT INTO ".MAIN_DB_PREFIX."oauth_token (service, fk_soc, entity, tokenstring)";
                     $sql .= " VALUES ('".$service."', ".$object->id.", ".$conf->entity.", '".dol_json_encode($tokenstring)."')";
+                    // TODO Add site and site_account on oauth_token table
                 } catch (Exception $e) {
 					$error++;
 					setEventMessages($e->getMessage(), null, 'errors');
@@ -867,7 +878,7 @@ if ($socid && $action != 'edit' && $action != 'create' && $action != 'editcard' 
 				{
 					$url = 'https://dashboard.stripe.com/'.$connect.'customers/'.$stripecu;
 				}
-				print ' <a href="'.$url.'" target="_stripe">'.img_picto($langs->trans('ShowInStripe').' - Publishable key '.$site_account, 'globe').'</a>';
+				print ' <a href="'.$url.'" target="_stripe">'.img_picto($langs->trans('ShowInStripe').' - Publishable key = '.$site_account, 'globe').'</a>';
 			}
 			print '</td><td class="right">';
 			if (empty($stripecu))
@@ -996,17 +1007,17 @@ if ($socid && $action != 'edit' && $action != 'create' && $action != 'editcard' 
 					}
 				}
 			}
-			catch(Exception $e)
+			catch (Exception $e)
 			{
 				dol_syslog("Error when searching/loading Stripe customer for thirdparty id =".$object->id);
 			}
 		}
 
 		print '<!-- List of stripe payments -->'."\n";
-		print '<div class="div-table-responsive-no-min">';		// You can use div-table-responsive-no-min if you dont need reserved height for your table
+		print '<div class="div-table-responsive-no-min">'; // You can use div-table-responsive-no-min if you dont need reserved height for your table
 		print '<table class="liste centpercent">'."\n";
 		print '<tr class="liste_titre">';
-		if (! empty($conf->global->STRIPE_ALLOW_LOCAL_CARD))
+		if (!empty($conf->global->STRIPE_ALLOW_LOCAL_CARD))
 		{
 			print '<td>'.$langs->trans('LocalID').'</td>';
 		}
@@ -1077,7 +1088,7 @@ if ($socid && $action != 'edit' && $action != 'create' && $action != 'editcard' 
 								{
 									$url = 'https://dashboard.stripe.com/'.$connect.'search?query='.$companypaymentmodetemp->stripe_card_ref;
 								}
-								print ' <a href="'.$url.'" target="_stripe">'.img_picto($langs->trans('ShowInStripe').' - Publishable key '.$companypaymentmodetemp->stripe_account, 'globe').'</a>';
+								print ' <a href="'.$url.'" target="_stripe">'.img_picto($langs->trans('ShowInStripe').' - Customer and Publishable key = '.$companypaymentmodetemp->stripe_account, 'globe').'</a>';
 							}
 							print '</td>';
 							print '<td>';
@@ -1333,7 +1344,7 @@ if ($socid && $action != 'edit' && $action != 'create' && $action != 'editcard' 
 		{
 			foreach ($balance->available as $cpt)
 			{
-		        $arrayzerounitcurrency=array('BIF', 'CLP', 'DJF', 'GNF', 'JPY', 'KMF', 'KRW', 'MGA', 'PYG', 'RWF', 'VND', 'VUV', 'XAF', 'XOF', 'XPF');
+		        $arrayzerounitcurrency = array('BIF', 'CLP', 'DJF', 'GNF', 'JPY', 'KMF', 'KRW', 'MGA', 'PYG', 'RWF', 'VND', 'VUV', 'XAF', 'XOF', 'XPF');
 		        if (!in_array($cpt->currency, $arrayzerounitcurrency)) {
     					$currencybalance[$cpt->currency]['available'] = $cpt->amount / 100;
 				} else {
@@ -1347,11 +1358,11 @@ if ($socid && $action != 'edit' && $action != 'create' && $action != 'editcard' 
 		{
 			foreach ($balance->pending as $cpt)
 			{
-				$arrayzerounitcurrency=array('BIF', 'CLP', 'DJF', 'GNF', 'JPY', 'KMF', 'KRW', 'MGA', 'PYG', 'RWF', 'VND', 'VUV', 'XAF', 'XOF', 'XPF');
+				$arrayzerounitcurrency = array('BIF', 'CLP', 'DJF', 'GNF', 'JPY', 'KMF', 'KRW', 'MGA', 'PYG', 'RWF', 'VND', 'VUV', 'XAF', 'XOF', 'XPF');
 				if (!in_array($cpt->currency, $arrayzerounitcurrency)) {
-					$currencybalance[$cpt->currency]['pending'] = $currencybalance[$cpt->currency]['available']+$cpt->amount / 100;
+					$currencybalance[$cpt->currency]['pending'] = $currencybalance[$cpt->currency]['available'] + $cpt->amount / 100;
 				} else {
-					$currencybalance[$cpt->currency]['pending'] = $currencybalance[$cpt->currency]['available']+$cpt->amount;
+					$currencybalance[$cpt->currency]['pending'] = $currencybalance[$cpt->currency]['available'] + $cpt->amount;
 				}
 			}
         }
@@ -1360,7 +1371,7 @@ if ($socid && $action != 'edit' && $action != 'create' && $action != 'editcard' 
 		{
 			foreach ($currencybalance as $cpt)
 			{
-				print '<tr><td>'.$langs->trans("Currency".strtoupper($cpt['currency'])).'</td><td>'.price($cpt['available'], 0, '', 1, - 1, - 1, strtoupper($cpt['currency'])).'</td><td>'.price($cpt->pending, 0, '', 1, - 1, - 1, strtoupper($cpt['currency'])).'</td><td>'.price($cpt['available']+$cpt->pending, 0, '', 1, - 1, - 1, strtoupper($cpt['currency'])).'</td></tr>';
+				print '<tr><td>'.$langs->trans("Currency".strtoupper($cpt['currency'])).'</td><td>'.price($cpt['available'], 0, '', 1, - 1, - 1, strtoupper($cpt['currency'])).'</td><td>'.price($cpt->pending, 0, '', 1, - 1, - 1, strtoupper($cpt['currency'])).'</td><td>'.price($cpt['available'] + $cpt->pending, 0, '', 1, - 1, - 1, strtoupper($cpt['currency'])).'</td></tr>';
 			}
 		}
 
@@ -1370,14 +1381,14 @@ if ($socid && $action != 'edit' && $action != 'create' && $action != 'editcard' 
 
 	// List of bank accounts
 
-    $morehtmlright= dolGetButtonTitle($langs->trans('Add'), '', 'fa fa-plus-circle', $_SERVER["PHP_SELF"].'?socid='.$object->id.'&amp;action=create');
+    $morehtmlright = dolGetButtonTitle($langs->trans('Add'), '', 'fa fa-plus-circle', $_SERVER["PHP_SELF"].'?socid='.$object->id.'&amp;action=create');
 
 	print load_fiche_titre($langs->trans("BankAccounts"), $morehtmlright, '');
 
 	$rib_list = $object->get_all_rib();
 	if (is_array($rib_list))
 	{
-		print '<div class="div-table-responsive-no-min">';		// You can use div-table-responsive-no-min if you dont need reserved height for your table
+		print '<div class="div-table-responsive-no-min">'; // You can use div-table-responsive-no-min if you dont need reserved height for your table
 		print '<table class="liste centpercent">';
 
 		print '<tr class="liste_titre">';
@@ -1863,7 +1874,7 @@ if ($socid && $action == 'create' && $user->rights->societe->creer)
 
 		print '<tr><td>'.$langs->trans("WithdrawMode").'</td><td>';
 		$tblArraychoice = array("FRST" => $langs->trans("FRST"), "RECUR" => $langs->trans("RECUR"));
-		print $form->selectarray("frstrecur", $tblArraychoice, (isset($_POST['frstrecur']) ?GETPOST('frstrecur') : 'FRST'), 0);
+		print $form->selectarray("frstrecur", $tblArraychoice, (GETPOSTISSET('frstrecur') ? GETPOST('frstrecur') : 'FRST'), 0);
 		print '</td></tr>';
 
 		print '</table>';

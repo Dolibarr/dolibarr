@@ -137,7 +137,6 @@ NoContactForAnyContract=Kein Kontakt für Verträge
 NoContactForAnyInvoice=Dieser Kontakt ist kein Kontakt für jegliche Rechnung
 NewContactAddress=Neuer Kontakt / Adresse
 MyContacts=Meine Kontakte
-ThisUserIsNot=Dieser Benutzer ist weder ein Lead, Kunde, noch Lieferant
 VATIntraCheckDesc=Der Link <b>%s</b> frägt die MWST - Nummer im Europäischen Verzeichnis (VIES) ab. Deshalb muss die MWST Nummer das Länderprefix haben.
 VATIntraCheckableOnEUSite=Innergemeinschaftliche MWST Nummer überprüfen (EU Website)
 VATIntraManualCheck=MWST - Nummer manuell überprüfen lassen: <a href="%s" target="_blank">%s</a>.

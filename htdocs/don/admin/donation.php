@@ -2,9 +2,9 @@
 /* Copyright (C) 2005-2010  Laurent Destailleur  	<eldy@users.sourceforge.net>
  * Copyright (C) 2012-2015  Juanjo Menent			<jmenent@2byte.es>
  * Copyright (C) 2013-2017  Philippe Grand			<philippe.grand@atoo-net.com>
- * Copyright (C) 2015-2017  Alexandre Spangaro		<aspangaro@open-dsi.fr>
+ * Copyright (C) 2015-2020  Alexandre Spangaro		<aspangaro@open-dsi.fr>
  * Copyright (C) 2015       Benoit Bruchard			<benoitb21@gmail.com>
- * Copyright (C) 2019       Thibault FOUCART			<support@ptibogxiv.net>
+ * Copyright (C) 2019       Thibault FOUCART		<support@ptibogxiv.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -431,13 +431,13 @@ if (preg_match('/fr/i', $conf->global->MAIN_INFO_SOCIETE_COUNTRY))
 	print '</td></tr>';
 
 	print '<tr class="oddeven">';
-	print '<td width="80%">'.$langs->trans("DONATION_ART885").'</td>';
+	print '<td width="80%">'.$langs->trans("DONATION_ART978").'</td>';
 	print '<td class="center">';
     if ($conf->use_javascript_ajax) {
-        print ajax_constantonoff('DONATION_ART885');
+        print ajax_constantonoff('DONATION_ART978');
     } else {
         $arrval = array('0' => $langs->trans("No"), '1' => $langs->trans("Yes"));
-        print $form->selectarray("DONATION_ART885", $arrval, $conf->global->DONATION_ART885);
+        print $form->selectarray("DONATION_ART978", $arrval, $conf->global->DONATION_ART978);
     }
 	print '</td></tr>';
 	print "</table>\n";

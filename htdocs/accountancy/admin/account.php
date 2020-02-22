@@ -49,10 +49,10 @@ $search_pcgsubtype = GETPOST('search_pcgsubtype', 'alpha');
 
 // Security check
 if ($user->socid > 0) accessforbidden();
-if (! $user->rights->accounting->chartofaccount) accessforbidden();
+if (!$user->rights->accounting->chartofaccount) accessforbidden();
 
 // Load variable for pagination
-$limit = GETPOST('limit', 'int')?GETPOST('limit', 'int'):$conf->liste_limit;
+$limit = GETPOST('limit', 'int') ?GETPOST('limit', 'int') : $conf->liste_limit;
 $sortfield = GETPOST('sortfield', 'alpha');
 $sortorder = GETPOST('sortorder', 'alpha');
 $page = GETPOST('page', 'int');
@@ -211,7 +211,7 @@ if (strlen(trim($search_account))) {
 	$search_account_tmp = $search_account;
 	$weremovedsomezero = 0;
 	if (strlen($search_account_tmp) <= $lengthpaddingaccount) {
-		for($i = 0; $i < $lengthpaddingaccount; $i++) {
+		for ($i = 0; $i < $lengthpaddingaccount; $i++) {
 			if (preg_match('/0$/', $search_account_tmp)) {
 				$weremovedsomezero++;
 				$search_account_tmp = preg_replace('/0$/', '', $search_account_tmp);
@@ -238,6 +238,7 @@ if (strlen(trim($search_account))) {
 	}
 }
 if (strlen(trim($search_label)))			$sql .= natural_search("aa.label", $search_label);
+if (strlen(trim($search_labelshort)))       $sql .= natural_search("aa.labelshort", $search_labelshort);
 if (strlen(trim($search_accountparent)) && $search_accountparent != '-1')	$sql .= natural_search("aa.account_parent", $search_accountparent, 2);
 if (strlen(trim($search_pcgtype)))			$sql .= natural_search("aa.pcg_type", $search_pcgtype);
 if (strlen(trim($search_pcgsubtype)))		$sql .= natural_search("aa.pcg_subtype", $search_pcgsubtype);
@@ -271,11 +272,16 @@ if ($resql)
 	if ($search_account) $param .= '&search_account='.urlencode($search_account);
 	if ($search_label) $param .= '&search_label='.urlencode($search_label);
 <<<<<<< HEAD
+<<<<<<< HEAD
 	if ($search_labelshort) $param.= '&search_labelshort='.urlencode($search_labelshort);
 	if ($search_accountparent) $param .= '&search_accountparent='.urlencode($search_accountparent);
 =======
 	if ($search_accountparent > 0 || $search_accountparent == '0') $param .= '&search_accountparent='.urlencode($search_accountparent);
 >>>>>>> upstream/11.0
+=======
+	if ($search_labelshort) $param .= '&search_labelshort='.urlencode($search_labelshort);
+	if ($search_accountparent > 0 || $search_accountparent == '0') $param .= '&search_accountparent='.urlencode($search_accountparent);
+>>>>>>> upstream/develop
 	if ($search_pcgtype) $param .= '&search_pcgtype='.urlencode($search_pcgtype);
 	if ($search_pcgsubtype) $param .= '&search_pcgsubtype='.urlencode($search_pcgsubtype);
     if ($optioncss != '') $param .= '&optioncss='.$optioncss;
@@ -360,17 +366,24 @@ if ($resql)
 	if (!empty($arrayfields['aa.account_number']['checked']))	print '<td class="liste_titre"><input type="text" class="flat" size="10" name="search_account" value="'.$search_account.'"></td>';
 	if (!empty($arrayfields['aa.label']['checked']))			print '<td class="liste_titre"><input type="text" class="flat" size="20" name="search_label" value="'.$search_label.'"></td>';
 <<<<<<< HEAD
+<<<<<<< HEAD
 	if (!empty($arrayfields['aa.labelshort']['checked']))		print '<td class="liste_titre"><input type="text" class="flat" size="20" name="search_labelshort" value="' . $search_labelshort . '"></td>';
 	if (!empty($arrayfields['aa.account_parent']['checked']))	print '<td class="liste_titre"><input type="text" class="flat" size="10" name="search_accountparent" value="'.$search_accountparent.'"></td>';
 	if (!empty($arrayfields['aa.pcg_type']['checked']))			print '<td class="liste_titre"><input type="text" class="flat" size="6" name="search_pcgtype" value="'.$search_pcgtype.'"></td>';
 =======
+=======
+	if (!empty($arrayfields['aa.labelshort']['checked']))		print '<td class="liste_titre"><input type="text" class="flat" size="20" name="search_labelshort" value="'.$search_labelshort.'"></td>';
+>>>>>>> upstream/develop
 	if (!empty($arrayfields['aa.account_parent']['checked'])) {
 		print '<td class="liste_titre">';
 		print $formaccounting->select_account($search_accountparent, 'search_accountparent', 2);
 		print '</td>';
 	}
 	if (!empty($arrayfields['aa.pcg_type']['checked']))		    print '<td class="liste_titre"><input type="text" class="flat" size="6" name="search_pcgtype" value="'.$search_pcgtype.'"></td>';
+<<<<<<< HEAD
 >>>>>>> upstream/11.0
+=======
+>>>>>>> upstream/develop
 	if (!empty($arrayfields['aa.pcg_subtype']['checked']))		print '<td class="liste_titre"><input type="text" class="flat" size="6" name="search_pcgsubtype" value="'.$search_pcgsubtype.'"></td>';
 	if (!empty($arrayfields['aa.active']['checked']))			print '<td class="liste_titre">&nbsp;</td>';
 	print '<td class="liste_titre maxwidthsearch">';
@@ -424,12 +437,12 @@ if ($resql)
 		}
 
 		// Account label to show (label short)
-		if (! empty($arrayfields['aa.labelshort']['checked']))
+		if (!empty($arrayfields['aa.labelshort']['checked']))
 		{
 			print "<td>";
 			print $obj->labelshort;
 			print "</td>\n";
-			if (! $i) $totalarray['nbfield']++;
+			if (!$i) $totalarray['nbfield']++;
 		}
 
 		// Account parent

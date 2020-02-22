@@ -65,7 +65,7 @@ if ($conf->global->TAKEPOS_PHONE_BASIC_LAYOUT == 1 && $conf->browser->layout == 
 	<meta name="mobile-web-app-capable" content="yes">
 	<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"/>';
 	top_htmlhead($head, $title, $disablejs, $disablehead, $arrayofjs, $arrayofcss);
-	print '<link rel="stylesheet" href="css/pos.css">
+	print '<link rel="stylesheet" href="css/pos.css.php">
 	<link rel="stylesheet" href="css/colorbox.css" type="text/css" media="screen" />
 	<script type="text/javascript" src="js/jquery.colorbox-min.js"></script>';
 }
@@ -392,10 +392,24 @@ if ($action == "updateprice")
 {
     foreach ($invoice->lines as $line)
     {
-        if ($line->id == $idline) { $result = $invoice->updateline($line->id, $line->desc, $number, $line->qty, $line->remise_percent, $line->date_start, $line->date_end, $line->tva_tx, $line->localtax1_tx, $line->localtax2_tx, 'TTC', $line->info_bits, $line->product_type, $line->fk_parent_line, 0, $line->fk_fournprice, $line->pa_ht, $line->label, $line->special_code, $line->array_options, $line->situation_percent, $line->fk_unit);
+        if ($line->id == $idline)
+		{
+			$prod = new Product($db);
+			$prod->fetch($line->fk_product);
+			$customer = new Societe($db);
+			$customer->fetch($invoice->socid);
+			$datapriceofproduct = $prod->getSellPrice($mysoc, $customer, 0);
+			$price_min = $datapriceofproduct['price_min'];
+			$usercanproductignorepricemin = ((!empty($conf->global->MAIN_USE_ADVANCED_PERMS) && empty($user->rights->produit->ignore_price_min_advance)) || empty($conf->global->MAIN_USE_ADVANCED_PERMS));
+			$pu_ht = price2num($number / (1 + ($line->tva_tx / 100)), 'MU');
+			//Check min price
+			if ($usercanproductignorepricemin && (!empty($price_min) && (price2num($pu_ht) * (1 - price2num($line->remise_percent) / 100) < price2num($price_min))))
+			{
+				echo $langs->trans("CantBeLessThanMinPrice");
+			}
+			else $result = $invoice->updateline($line->id, $line->desc, $number, $line->qty, $line->remise_percent, $line->date_start, $line->date_end, $line->tva_tx, $line->localtax1_tx, $line->localtax2_tx, 'TTC', $line->info_bits, $line->product_type, $line->fk_parent_line, 0, $line->fk_fournprice, $line->pa_ht, $line->label, $line->special_code, $line->array_options, $line->situation_percent, $line->fk_unit);
         }
     }
-
     $invoice->fetch($placeid);
 }
 
@@ -403,11 +417,25 @@ if ($action == "updatereduction")
 {
     foreach ($invoice->lines as $line)
     {
-        if ($line->id == $idline) { $result = $invoice->updateline($line->id, $line->desc, $line->subprice, $line->qty, $number, $line->date_start, $line->date_end, $line->tva_tx, $line->localtax1_tx, $line->localtax2_tx, 'HT', $line->info_bits, $line->product_type, $line->fk_parent_line, 0, $line->fk_fournprice, $line->pa_ht, $line->label, $line->special_code, $line->array_options, $line->situation_percent, $line->fk_unit);
-        }
+		if ($line->id == $idline)
+		{
+			$prod = new Product($db);
+			$prod->fetch($line->fk_product);
+			$customer = new Societe($db);
+			$customer->fetch($invoice->socid);
+			$datapriceofproduct = $prod->getSellPrice($mysoc, $customer, 0);
+			$price_min = $datapriceofproduct['price_min'];
+			$usercanproductignorepricemin = ((!empty($conf->global->MAIN_USE_ADVANCED_PERMS) && empty($user->rights->produit->ignore_price_min_advance)) || empty($conf->global->MAIN_USE_ADVANCED_PERMS));
+			$pu_ht = price2num($line->multicurrency_subprice / (1 + ($line->tva_tx / 100)), 'MU');
+			//Check min price
+			if ($usercanproductignorepricemin && (!empty($price_min) && (price2num($line->multicurrency_subprice) * (1 - price2num($number) / 100) < price2num($price_min))))
+			{
+				echo $langs->trans("CantBeLessThanMinPrice");
+			}
+			else $result = $invoice->updateline($line->id, $line->desc, $line->multicurrency_subprice, $line->qty, $number, $line->date_start, $line->date_end, $line->tva_tx, $line->localtax1_tx, $line->localtax2_tx, 'HT', $line->info_bits, $line->product_type, $line->fk_parent_line, 0, $line->fk_fournprice, $line->pa_ht, $line->label, $line->special_code, $line->array_options, $line->situation_percent, $line->fk_unit);
+		}
     }
-
-    $invoice->fetch($placeid);
+	$invoice->fetch($placeid);
 }
 
 if ($action == "order" and $placeid != 0)
@@ -476,9 +504,9 @@ if ($action == "valid" || $action == "history")
         else $sectionwithinvoicelink .= $langs->trans('BillShortStatusValidated');
     }
     $sectionwithinvoicelink .= '</span>';
-    if ($conf->global->TAKEPOSCONNECTOR) {
+    if ($conf->global->TAKEPOS_PRINT_METHOD == "takeposconnector"){
          $sectionwithinvoicelink .= ' <button id="buttonprint" type="button" onclick="TakeposPrinting('.$placeid.');">'.$langs->trans('PrintTicket').'</button>';
-    } elseif ($conf->global->TAKEPOS_DOLIBARR_PRINTER) {
+    } elseif ($conf->global->TAKEPOS_PRINT_METHOD == "receiptprinter"){
         $sectionwithinvoicelink .= ' <button id="buttonprint" type="button" onclick="DolibarrTakeposPrinting('.$placeid.');">'.$langs->trans('PrintTicket').'</button>';
     } else {
         $sectionwithinvoicelink .= ' <button id="buttonprint" type="button" onclick="Print('.$placeid.');">'.$langs->trans('PrintTicket').'</button>';

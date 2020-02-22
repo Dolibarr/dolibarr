@@ -263,7 +263,7 @@ if (strlen(trim($search_country))) {
 	elseif ($search_country == 'special_eec')      $sql .= " AND co.code IN (".$country_code_in_EEC.")";
 	elseif ($search_country == 'special_eecnotme') $sql .= " AND co.code IN (".$country_code_in_EEC_without_me.")";
 	elseif ($search_country == 'special_noteec')   $sql .= " AND co.code NOT IN (".$country_code_in_EEC.")";
-	else $sql .= natural_search(array("co.code", "co.label"), $search_country);
+	else $sql .= natural_search("co.code", $search_country);
 }
 if (strlen(trim($search_tvaintra))) {
 	$sql .= natural_search("s.tva_intra", $search_tvaintra);

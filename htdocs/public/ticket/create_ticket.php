@@ -28,6 +28,7 @@ if (!defined('NOREQUIREMENU'))  define('NOREQUIREMENU', '1');
 if (!defined('NOREQUIREHTML'))  define('NOREQUIREHTML', '1');
 if (!defined('NOLOGIN'))        define("NOLOGIN", 1); // This means this output page does not require to be logged.
 if (!defined('NOCSRFCHECK'))    define("NOCSRFCHECK", 1); // We accept to go on this page from external web site.
+if (!defined('NOIPCHECK'))		define('NOIPCHECK', '1'); // Do not check IP defined into conf $dolibarr_main_restrict_ip
 
 require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/ticket/class/actions_ticket.class.php';
@@ -52,6 +53,7 @@ $object = new Ticket($db);
 $extrafields = new ExtraFields($db);
 
 $extrafields->fetch_name_optionals_label($object->table_element);
+
 
 /*
  * Actions
@@ -203,7 +205,7 @@ if ($action == 'create_ticket' && GETPOST('add', 'alpha')) {
 
                 // Send email to customer
 
-                $subject = '['.$conf->global->MAIN_INFO_SOCIETE_NOM.'] '.$langs->transnoentities('TicketNewEmailSubject', $object->ref);
+                $subject = '['.$conf->global->MAIN_INFO_SOCIETE_NOM.'] '.$langs->transnoentities('TicketNewEmailSubject', $object->ref, $object->track_id);
                 $message .= ($conf->global->TICKET_MESSAGE_MAIL_NEW ? $conf->global->TICKET_MESSAGE_MAIL_NEW : $langs->transnoentities('TicketNewEmailBody'))."\n\n";
                 $message .= $langs->transnoentities('TicketNewEmailBodyInfosTicket')."\n";
 
@@ -245,7 +247,7 @@ if ($action == 'create_ticket' && GETPOST('add', 'alpha')) {
 
                 if ($sendto)
                 {
-	                $subject = '['.$conf->global->MAIN_INFO_SOCIETE_NOM.'] '.$langs->transnoentities('TicketNewEmailSubjectAdmin', $object->ref);
+	                $subject = '['.$conf->global->MAIN_INFO_SOCIETE_NOM.'] '.$langs->transnoentities('TicketNewEmailSubjectAdmin', $object->ref, $object->track_id);
 	                $message_admin = $langs->transnoentities('TicketNewEmailBodyAdmin', $object->track_id)."\n\n";
 	                $message_admin .= '<ul><li>'.$langs->trans('Title').' : '.$object->subject.'</li>';
 	                $message_admin .= '<li>'.$langs->trans('Type').' : '.$object->type_label.'</li>';

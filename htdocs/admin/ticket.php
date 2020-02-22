@@ -209,7 +209,7 @@ print "</tr>\n";
 clearstatcache();
 
 foreach ($dirmodels as $reldir) {
-    $dir = dol_buildpath($reldir."core/modules/ticket/");
+    $dir = dol_buildpath($reldir."core/modules/ticket");
 
     if (is_dir($dir)) {
         $handle = opendir($dir);
@@ -219,7 +219,7 @@ foreach ($dirmodels as $reldir) {
                     $file = $reg[1];
                     $classname = substr($file, 4);
 
-                    include_once $dir.$file.'.php';
+                    include_once $dir.'/'.$file.'.php';
 
                     $module = new $file;
 

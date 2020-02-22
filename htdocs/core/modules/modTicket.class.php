@@ -120,16 +120,16 @@ class modTicket extends DolibarrModules
         }
         $this->dictionaries = array(
             'langs' => 'ticket',
-            'tabname' => array(MAIN_DB_PREFIX . "c_ticket_type", MAIN_DB_PREFIX . "c_ticket_severity", MAIN_DB_PREFIX . "c_ticket_category"),
-            'tablib' => array("TicketDictType", "TicketDictSeverity", "TicketDictCategory"),
-            'tabsql' => array('SELECT f.rowid as rowid, f.code, f.pos, f.label, f.active, f.use_default FROM ' . MAIN_DB_PREFIX . 'c_ticket_type as f', 'SELECT f.rowid as rowid, f.code, f.pos, f.label, f.active, f.use_default FROM ' . MAIN_DB_PREFIX . 'c_ticket_severity as f', 'SELECT f.rowid as rowid, f.code, f.pos, f.label, f.active, f.use_default FROM ' . MAIN_DB_PREFIX . 'c_ticket_category as f'),
-            'tabsqlsort' => array("pos ASC", "pos ASC", "pos ASC"),
-            'tabfield' => array("pos,code,label,use_default", "pos,code,label,use_default", "pos,code,label,use_default"),
-            'tabfieldvalue' => array("pos,code,label,use_default", "pos,code,label,use_default", "pos,code,label,use_default"),
-            'tabfieldinsert' => array("pos,code,label,use_default", "pos,code,label,use_default", "pos,code,label,use_default"),
-            'tabrowid' => array("rowid", "rowid", "rowid"),
-            'tabcond' => array($conf->ticket->enabled, $conf->ticket->enabled, $conf->ticket->enabled),
-            'tabhelp' => array(array('code'=>$langs->trans("EnterAnyCode"), 'use_default'=>$langs->trans("Enter0or1")), array('code'=>$langs->trans("EnterAnyCode"), 'use_default'=>$langs->trans("Enter0or1")), array('code'=>$langs->trans("EnterAnyCode"), 'use_default'=>$langs->trans("Enter0or1"))),
+        	'tabname' => array(MAIN_DB_PREFIX."c_ticket_type", MAIN_DB_PREFIX."c_ticket_severity", MAIN_DB_PREFIX."c_ticket_category", MAIN_DB_PREFIX."c_ticket_resolution"),
+        	'tablib' => array("TicketDictType", "TicketDictSeverity", "TicketDictCategory", "TicketDictResolution"),
+        	'tabsql' => array('SELECT f.rowid as rowid, f.code, f.pos, f.label, f.active, f.use_default FROM '.MAIN_DB_PREFIX.'c_ticket_type as f', 'SELECT f.rowid as rowid, f.code, f.pos, f.label, f.active, f.use_default FROM '.MAIN_DB_PREFIX.'c_ticket_severity as f', 'SELECT f.rowid as rowid, f.code, f.pos, f.label, f.active, f.use_default FROM '.MAIN_DB_PREFIX.'c_ticket_category as f', 'SELECT f.rowid as rowid, f.code, f.pos, f.label, f.active, f.use_default FROM '.MAIN_DB_PREFIX.'c_ticket_resolution as f'),
+        	'tabsqlsort' => array("pos ASC", "pos ASC", "pos ASC", "pos ASC"),
+        	'tabfield' => array("pos,code,label,use_default", "pos,code,label,use_default", "pos,code,label,use_default", "pos,code,label,use_default"),
+        	'tabfieldvalue' => array("pos,code,label,use_default", "pos,code,label,use_default", "pos,code,label,use_default", "pos,code,label,use_default"),
+        	'tabfieldinsert' => array("pos,code,label,use_default", "pos,code,label,use_default", "pos,code,label,use_default", "pos,code,label,use_default"),
+            'tabrowid' => array("rowid", "rowid", "rowid", "rowid"),
+        	'tabcond' => array($conf->ticket->enabled, $conf->ticket->enabled, $conf->ticket->enabled, $conf->ticket->enabled),
+        	'tabhelp' => array(array('code'=>$langs->trans("EnterAnyCode"), 'use_default'=>$langs->trans("Enter0or1")), array('code'=>$langs->trans("EnterAnyCode"), 'use_default'=>$langs->trans("Enter0or1")), array('code'=>$langs->trans("EnterAnyCode"), 'use_default'=>$langs->trans("Enter0or1")), array('code'=>$langs->trans("EnterAnyCode"), 'use_default'=>$langs->trans("Enter0or1"))),
         );
 
         // Boxes

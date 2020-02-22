@@ -75,7 +75,7 @@ UPDATE llx_holiday SET ref = rowid WHERE ref IS NULL;
 -- VPGSQL8.2 ALTER TABLE llx_holiday ALTER COLUMN ref SET NOT NULL;
 
 ALTER TABLE llx_c_email_senderprofile MODIFY COLUMN active tinyint DEFAULT 1 NOT NULL;
- 
+
 insert into llx_c_type_container (code,label,module,active) values ('menu',     'Menu',     'system', 1);
 
 INSERT INTO llx_c_ticket_type (code, pos, label, active, use_default, description) VALUES('HELP',    '15', 'Request for functionnal help',  1, 0, NULL);
@@ -206,7 +206,9 @@ ALTER TABLE llx_societe_contacts ADD CONSTRAINT fk_societe_contacts_fk_c_type_co
 ALTER TABLE llx_societe_contacts ADD CONSTRAINT fk_societe_contacts_fk_soc FOREIGN KEY (fk_soc)  REFERENCES llx_societe(rowid);
 ALTER TABLE llx_societe_contacts ADD CONSTRAINT fk_societe_contacts_fk_socpeople FOREIGN KEY (fk_socpeople)  REFERENCES llx_socpeople(rowid);
 
-ALTER TABLE llx_accounting_account MODIFY COLUMN rowid bigint AUTO_INCREMENT;
+-- VMYSQL4.3 ALTER TABLE llx_accounting_account MODIFY COLUMN rowid bigint AUTO_INCREMENT;
+-- VPGSQL8.2 ALTER TABLE llx_accounting_account MODIFY COLUMN rowid bigint;
+
 
 
 ALTER TABLE llx_supplier_proposaldet ADD COLUMN  date_start	datetime   DEFAULT NULL;
@@ -532,22 +534,22 @@ ALTER TABLE llx_comment ADD COLUMN fk_user_modif  integer DEFAULT NULL;
 
 
 CREATE TABLE llx_mrp_production(
-	rowid integer AUTO_INCREMENT PRIMARY KEY NOT NULL, 
-	fk_mo integer NOT NULL, 
+	rowid integer AUTO_INCREMENT PRIMARY KEY NOT NULL,
+	fk_mo integer NOT NULL,
 	position integer NOT NULL DEFAULT 0,
-	fk_product integer NOT NULL, 
+	fk_product integer NOT NULL,
 	fk_warehouse integer,
 	qty real NOT NULL DEFAULT 1,
     qty_frozen smallint DEFAULT 0,
-    disable_stock_change smallint DEFAULT 0, 
+    disable_stock_change smallint DEFAULT 0,
 	batch varchar(30),
 	role varchar(10),      			-- 'toconsume' or 'toproduce' (initialized at MO creation), 'consumed' or 'produced' (added after MO validation)
 	fk_mrp_production integer,		-- if role = 'consumed', id of line with role 'toconsume', if role = 'produced' id of line with role 'toproduce'
 	fk_stock_movement integer,		-- id of stock movement when movements are validated
-	date_creation datetime NOT NULL, 
-	tms timestamp, 
-	fk_user_creat integer NOT NULL, 
-	fk_user_modif integer, 
+	date_creation datetime NOT NULL,
+	tms timestamp,
+	fk_user_creat integer NOT NULL,
+	fk_user_modif integer,
 	import_key varchar(14)
 ) ENGINE=innodb;
 ALTER TABLE llx_mrp_production MODIFY COLUMN qty real NOT NULL DEFAULT 1;
@@ -566,3 +568,14 @@ ALTER TABLE llx_emailcollector_emailcollector ADD UNIQUE INDEX uk_emailcollector
 ALTER TABLE llx_website ADD COLUMN use_manifest integer;
 
 ALTER TABLE llx_facture_rec MODIFY COLUMN fk_cond_reglement integer NOT NULL DEFAULT 1;
+
+create table llx_commande_fournisseur_dispatch_extrafields
+(
+  rowid            integer AUTO_INCREMENT PRIMARY KEY,
+  tms              timestamp,
+  fk_object        integer NOT NULL,    -- object id
+  import_key       varchar(14)      	-- import key
+)ENGINE=innodb;
+
+ALTER TABLE llx_commande_fournisseur_dispatch_extrafields ADD INDEX idx_commande_fournisseur_dispatch_extrafields (fk_object);
+

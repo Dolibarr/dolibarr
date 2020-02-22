@@ -23,7 +23,7 @@
  * For Stripe test: Use credit card 4242424242424242 .More example on https://stripe.com/docs/testing
  *
  * Variants:
- * - When option STRIPE_USE_INTENT_WITH_AUTOMATIC_CONFIRMATION is on, we use the new checkout API
+ * - When option STRIPE_USE_INTENT_WITH_AUTOMATIC_CONFIRMATION is on, we use the new PaymentIntent API
  * - When option STRIPE_USE_NEW_CHECKOUT is on, we use the new checkout API
  * - If no option set, we use old APIS (charge)
  */
@@ -34,8 +34,9 @@
  *		\brief      File to offer a way to make a payment for a particular Dolibarr object
  */
 
-define("NOLOGIN", 1); // This means this output page does not require to be logged.
-define("NOCSRFCHECK", 1); // We accept to go on this page from external web site.
+if (!defined('NOLOGIN'))		define("NOLOGIN", 1); // This means this output page does not require to be logged.
+if (!defined('NOCSRFCHECK'))	define("NOCSRFCHECK", 1); // We accept to go on this page from external web site.
+if (!defined('NOIPCHECK'))		define('NOIPCHECK', '1'); // Do not check IP defined into conf $dolibarr_main_restrict_ip
 
 // For MultiCompany module.
 // Do not use GETPOST here, function is not defined and get of entity must be done before including main.inc.php
@@ -49,10 +50,11 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
 require_once DOL_DOCUMENT_ROOT.'/societe/class/societeaccount.class.php';
 
+// Load translation files
+$langs->loadLangs(array("main", "other", "dict", "bills", "companies", "errors", "paybox", "paypal", "stripe")); // File with generic data
+
 // Security check
 // No check on module enabled. Done later according to $validpaymentmethod
-
-$langs->loadLangs(array("main", "other", "dict", "bills", "companies", "errors", "paybox", "paypal", "stripe")); // File with generic data
 
 $action = GETPOST('action', 'aZ09');
 
@@ -482,7 +484,7 @@ if ($action == 'charge' && !empty($conf->stripe->enabled))
 	    					'metadata' => $metadata,
 	    					'customer' => $customer->id,
 	    					'source' => $card,
-	    				    'statement_descriptor' => dol_trunc($FULLTAG, 10, 'right', 'UTF-8', 1), // 22 chars that appears on bank receipt (company + description)
+	    				  'statement_descriptor_suffix' => dol_trunc($FULLTAG, 10, 'right', 'UTF-8', 1),     // 22 chars that appears on bank receipt (company + description)
 	    				), array("idempotency_key" => "$FULLTAG", "stripe_account" => "$stripeacc"));
 	    				// Return $charge = array('id'=>'ch_XXXX', 'status'=>'succeeded|pending|failed', 'failure_code'=>, 'failure_message'=>...)
 	    				if (empty($charge))

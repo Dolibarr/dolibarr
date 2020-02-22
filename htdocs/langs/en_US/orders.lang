@@ -141,10 +141,10 @@ OrderByEMail=Email
 OrderByWWW=Online
 OrderByPhone=Phone
 # Documents models
-PDFEinsteinDescription=A complete order model (logo...)
-PDFEratostheneDescription=A complete order model (logo...)
+PDFEinsteinDescription=A complete order model (old implementation of Eratosthene template)
+PDFEratostheneDescription=A complete order model
 PDFEdisonDescription=A simple order model
-PDFProformaDescription=A complete proforma invoice (logo…)
+PDFProformaDescription=A complete Proforma invoice template
 CreateInvoiceForThisCustomer=Bill orders
 NoOrdersToInvoice=No orders billable
 CloseProcessedOrdersAutomatically=Classify "Processed" all selected orders.

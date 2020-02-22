@@ -48,7 +48,7 @@ function check_user_password_googleoauth($usertotest, $passwordtotest, $entityto
     $login = '';
 
     // Get identity from user and redirect browser to Google OAuth Server
-    if (isset($_POST['username']))
+    if (GETPOSTISSET('username'))
     {
         /*$openid = new SimpleOpenID();
         $openid->SetIdentity($_POST['username']);

@@ -239,11 +239,20 @@ function print_eldy_menu($db, $atarget, $type_user, &$tabMenu, &$menu, $noout = 
 				  !empty($user->rights->contrat->lire) ||
 				  !empty($user->rights->ficheinter->lire)
 			),
-	    'module'=>'propal|commande|supplier_order|contrat|ficheinter'
+	    'module'=>'propal|commande|supplier_order|supplier_proposal|contrat|ficheinter'
 	);
+
+	$onlysupplierorder = ! empty($user->rights->fournisseur->commande->lire) &&
+		empty($user->rights->propal->lire) &&
+		empty($user->rights->commande->lire) &&
+		empty($user->rights->supplier_order->lire) &&
+		empty($user->rights->supplier_proposal->lire) &&
+		empty($user->rights->contrat->lire) &&
+		empty($user->rights->ficheinter->lire);
+
 	$menu_arr[] = array(
 		'name' => 'Commercial',
-		'link' => '/comm/index.php?mainmenu=commercial&amp;leftmenu=',
+		'link' => ($onlysupplierorder ? '/fourn/commande/index.php?mainmenu=commercial&amp;leftmenu=' : '/comm/index.php?mainmenu=commercial&amp;leftmenu='),
 		'title' => "Commercial",
 		'level' => 0,
 	    'enabled' => $showmode = isVisibleToUserType($type_user, $tmpentry, $listofmodulesforexternal),
@@ -1674,11 +1683,11 @@ function print_left_eldy_menu($db, $menu_array_before, $menu_array_after, &$tabM
 				elseif ($conf->global->PROJECT_USE_OPPORTUNITIES == 1)
 				{
 					$newmenu->add("/projet/list.php?leftmenu=projets".($search_project_user ? '&search_project_user='.$search_project_user : ''), $langs->trans("List"), 1, $showmode, '', 'project', 'list');
-					$newmenu->add('/projet/list.php?mainmenu=project&amp;leftmenu=list&search_opp_status=openedopp&search_status=99&contextpage=lead', $langs->trans("ListOpenLeads"), 2, $showmode);
+					$newmenu->add('/projet/list.php?mainmenu=project&amp;leftmenu=list&search_usage_opportunity=1&search_status=99&contextpage=lead', $langs->trans("ListOpenLeads"), 2, $showmode);
 					$newmenu->add('/projet/list.php?mainmenu=project&amp;leftmenu=list&search_opp_status=notopenedopp&search_status=99&contextpage=project', $langs->trans("ListOpenProjects"), 2, $showmode);
 				}
 				elseif ($conf->global->PROJECT_USE_OPPORTUNITIES == 2) {	// 2 = leads only
-					$newmenu->add('/projet/list.php?mainmenu=project&amp;leftmenu=list&search_opp_status=openedopp&search_status=99', $langs->trans("List"), 2, $showmode);
+					$newmenu->add('/projet/list.php?mainmenu=project&amp;leftmenu=list&search_usage_opportunity=1&search_status=99', $langs->trans("List"), 2, $showmode);
 				}
 
 				$newmenu->add("/projet/stats/index.php?leftmenu=projects", $langs->trans("Statistics"), 1, $user->rights->projet->lire);
@@ -2018,7 +2027,7 @@ function print_left_eldy_menu($db, $menu_array_before, $menu_array_after, &$tabM
 				if ($menu_array[$i]['enabled'])     // Enabled so visible
 				{
 					print '<div class="menu_titre">'.$tabstring;
-					if ($shorturlwithoutparam) print '<a class="vmenu" href="'.$url.'"'.($menu_array[$i]['target'] ? ' target="'.$menu_array[$i]['target'].'"' : '').'>';
+					if ($shorturlwithoutparam) print '<a class="vmenu" title="'.dol_escape_htmltag($menu_array[$i]['titre']).'" href="'.$url.'"'.($menu_array[$i]['target'] ? ' target="'.$menu_array[$i]['target'].'"' : '').'>';
 					else print '<span class="vmenu">';
 					print ($menu_array[$i]['prefix'] ? $menu_array[$i]['prefix'] : '').$menu_array[$i]['titre'];
 					if ($shorturlwithoutparam) print '</a>';
@@ -2050,7 +2059,7 @@ function print_left_eldy_menu($db, $menu_array_before, $menu_array_after, &$tabM
 				if ($menu_array[$i]['enabled'] && $lastlevel0 == 'enabled')     // Enabled so visible, except if parent was not enabled.
 				{
 					print '<div class="menu_contenu'.$cssmenu.'">'.$tabstring;
-					if ($shorturlwithoutparam) print '<a class="vsmenu" href="'.$url.'"'.($menu_array[$i]['target'] ? ' target="'.$menu_array[$i]['target'].'"' : '').'>';
+					if ($shorturlwithoutparam) print '<a class="vsmenu" title="'.dol_escape_htmltag($menu_array[$i]['titre']).'" href="'.$url.'"'.($menu_array[$i]['target'] ? ' target="'.$menu_array[$i]['target'].'"' : '').'>';
 					else print '<span class="vsmenu">';
 					print $menu_array[$i]['titre'];
 					if ($shorturlwithoutparam) print '</a>';

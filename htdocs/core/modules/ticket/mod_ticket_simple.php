@@ -46,7 +46,7 @@ class mod_ticket_simple extends ModeleNumRefTicket
     /**
 	 * @var string Nom du modele
 	 * @deprecated
-	 * @see name
+	 * @see $name
 	 */
 	public $nom='Simple';
 

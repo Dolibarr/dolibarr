@@ -211,7 +211,7 @@ if ($id > 0 || !empty($ref))
     //print '<div class="fichehalfleft">';
 	print '<div class="underbanner clearboth"></div>';
 
-    print '<table class="border centpercent">';
+    print '<table class="border centpercent tableforfield">';
 
     // Linked documents
 	if ($typeobject == 'commande' && $object->$typeobject->id && !empty($conf->commande->enabled))

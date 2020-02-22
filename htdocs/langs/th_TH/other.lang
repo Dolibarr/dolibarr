@@ -24,7 +24,7 @@ MessageOK=Message on the return page for a validated payment
 MessageKO=Message on the return page for a canceled payment
 ContentOfDirectoryIsNotEmpty=Content of this directory is not empty.
 DeleteAlsoContentRecursively=Check to delete all content recursively
-
+PoweredBy=Powered by
 YearOfInvoice=Year of invoice date
 PreviousYearOfInvoice=Previous year of invoice date
 NextYearOfInvoice=Following year of invoice date
@@ -104,7 +104,8 @@ DemoFundation=จัดการสมาชิกของมูลนิธิ
 DemoFundation2=จัดการสมาชิกและบัญชีธนาคารของมูลนิธิ
 DemoCompanyServiceOnly=Company or freelance selling service only
 DemoCompanyShopWithCashDesk=บริหารจัดการร้านค้าพร้อมโต๊ะเงินสด
-DemoCompanyProductAndStocks=Company selling products with a shop
+DemoCompanyProductAndStocks=Shop selling products with Point Of Sales
+DemoCompanyManufacturing=Company manufacturing products
 DemoCompanyAll=Company with multiple activities (all main modules)
 CreatedBy=สร้างโดย% s
 ModifiedBy=ดัดแปลงโดย% s
@@ -267,7 +268,7 @@ WEBSITE_PAGEURL=URL of page
 WEBSITE_TITLE=ชื่อเรื่อง
 WEBSITE_DESCRIPTION=ลักษณะ
 WEBSITE_IMAGE=Image
-WEBSITE_IMAGEDesc=Relative path of the image media. You can keep this empty as this is rarely used (it can be used by dynamic content to show a preview of a list of blog posts).
+WEBSITE_IMAGEDesc=Relative path of the image media. You can keep this empty as this is rarely used (it can be used by dynamic content to show a thumbnail in a list of blog posts). Use __WEBSITEKEY__ in the path if path depends on website name.
 WEBSITE_KEYWORDS=Keywords
 LinesToImport=Lines to import
 

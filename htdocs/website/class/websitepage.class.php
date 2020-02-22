@@ -158,6 +158,9 @@ class WebsitePage extends CommonObject
 		$this->keywords = dol_trunc($this->keywords, 255, 'right', 'utf-8', 1);
 		if ($this->aliasalt) $this->aliasalt = ','.preg_replace('/,+$/', '', preg_replace('/^,+/', '', $this->aliasalt)).','; // content in database must be ',xxx,...,yyy,'
 
+		// Remove spaces and be sure we have main language only
+		$this->lang = preg_replace('/[_-].*$/', '', trim($this->lang)); // en_US or en-US -> en
+
 		return $this->createCommon($user, $notrigger);
 	}
 
@@ -377,6 +380,22 @@ class WebsitePage extends CommonObject
 		$this->keywords = dol_trunc($this->keywords, 255, 'right', 'utf-8', 1);
 		if ($this->aliasalt) $this->aliasalt = ','.preg_replace('/,+$/', '', preg_replace('/^,+/', '', $this->aliasalt)).','; // content in database must be ',xxx,...,yyy,'
 
+		// Remove spaces and be sure we have main language only
+		$this->lang = preg_replace('/[_-].*$/', '', trim($this->lang)); // en_US or en-US -> en
+
+		if ($this->fk_page > 0) {
+			if (empty($this->lang)) {
+				$this->error = "ErrorLanguageMandatoryIfPageSetAsTranslationOfAnother";
+				return -1;
+			}
+			$tmppage = new WebsitePage($this->db);
+			$tmppage->fetch($this->fk_page);
+			if ($tmppage->lang == $this->lang) {
+				$this->error = "ErrorLanguageOfTranslatedPageIsSameThanThisPage";
+				return -1;
+			}
+		}
+
 		return $this->updateCommon($user, $notrigger);
 	}
 
@@ -436,14 +455,14 @@ class WebsitePage extends CommonObject
 		$object = new self($this->db);
 
 		// Clean parameters
-		if (empty($newref) && ! empty($newtitle)) {
-			$newref=strtolower(dol_sanitizeFileName(preg_replace('/\s+/', '-', $newtitle), '-', 1));
+		if (empty($newref) && !empty($newtitle)) {
+			$newref = strtolower(dol_sanitizeFileName(preg_replace('/\s+/', '-', $newtitle), '-', 1));
 		}
 
 		// Check parameters
 		if (empty($newref)) {
 			$langs->load("errors");
-			$this->error=$langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("WEBSITE_TITLE"));
+			$this->error = $langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("WEBSITE_TITLE"));
 			return -1;
 		}
 
@@ -513,7 +532,8 @@ class WebsitePage extends CommonObject
         $label .= '<br>';
         $label .= '<b>'.$langs->trans('Ref').':</b> '.$this->ref.'<br>';
         $label .= '<b>'.$langs->trans('ID').':</b> '.$this->id.'<br>';
-        $label .= '<b>'.$langs->trans('Title').':</b> '.$this->title;
+        $label .= '<b>'.$langs->trans('Title').':</b> '.$this->title.'<br>';
+        $label .= '<b>'.$langs->trans('Language').':</b> '.$this->lang;
 
         $url = DOL_URL_ROOT.'/website/index.php?websiteid='.$this->fk_website.'&pageid='.$this->id;
 

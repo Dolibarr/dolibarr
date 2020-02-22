@@ -63,9 +63,48 @@ with
 
             if (isset($this->imagekeys)) {
                 foreach($this->imagekeys as $file) {
-//                  unlink($file);
+				// DOL CHANGE If we keep this, source image files are physically destroyed
+				// unlink($file);
                 }
             }
+
+* Replace in tcpdf.php
+
+		$preserve = array(
+			'file_id',
+			'internal_encoding',
+			'state',
+			'bufferlen',
+			'buffer',
+			'cached_files',
+
+with
+
+		$preserve = array(
+			'file_id',
+			'internal_encoding',
+			'state',
+			'bufferlen',
+			'buffer',
+			'cached_files',
+			// @CHANGE DOL
+			'imagekeys',
+
+* Replace in tcpdf.php
+
+			if (!@TCPDF_STATIC::file_exists($file)) {
+				return false;	
+			}
+
+with
+
+			if (!@TCPDF_STATIC::file_exists($file)) {
+				// DOL CHANGE If we keep this, the image is not visible on pages after the first one.
+				//var_dump($file.' '.(!@TCPDF_STATIC::file_exists($file)));
+				//return false;	
+			}
+			
+
 
 * In tecnickcom/tcpdf/include/tcpdf_static, in function fopenLocal, replace
 
@@ -102,7 +141,7 @@ In htdocs/includes/tecnickcom/tcpdf/tcpdf.php
 +       protected $default_monospaced_font = 'freemono';
 
 
-		
+
 
 TCPDI:
 ------
@@ -212,6 +251,24 @@ PARSEDOWN
 	if (function_exists('mb_strlen')) $len = mb_strlen($line, 'utf-8');
 	else $len = strlen($line);
 	$shortage = 4 - $len % 4;
+
+
+
+OAUTH
+-----
+Add into Class Google of file OAuth2/Service/Google:
+
+    // LDR CHANGE Add approval_prompt to force the prompt if value is set to 'force' so it force return of a "refresh token" in addition to "standard token"
+    public $approvalPrompt='auto';
+    public function setApprouvalPrompt($prompt)
+    {
+        if (!in_array($prompt, array('auto', 'force'), true)) {
+            // @todo Maybe could we rename this exception
+            throw new InvalidAccessTypeException('Invalid approuvalPrompt, expected either auto or force.');
+        }
+        $this->approvalPrompt = $prompt;
+    }
+    
 
 
 JEDITABLE.JS

@@ -263,13 +263,7 @@ class AutoLoader
      * @return bool false unless className now exists
      */
     private function loadLastResort($className, $loader = null) {
-    	// @CHANGE LDR Add protection to avoid conflict with other autoloader
-    	/*print 'Try to load '.$className."\n";
-    	 if (in_array($className, array('Google_Client')))
-    	 {
-    	 return false;
-    	 }*/
-    	$loaders = array_unique(static::$rogueLoaders);
+        $loaders = array_unique(static::$rogueLoaders);
         if (isset($loader)) {
             if (false === array_search($loader, $loaders))
                 static::$rogueLoaders[] = $loader;

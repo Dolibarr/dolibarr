@@ -1397,7 +1397,8 @@ class Ldap
 
 		//Parse flags to text
 		$retval = array();
-		while (list($flag, $val) = each($flags)) {
+		//while (list($flag, $val) = each($flags)) {
+		foreach ($flags as $flag => $val) {
 			if ($uacf >= $val) {
 				$uacf -= $val;
 				$retval[$val] = $flag;

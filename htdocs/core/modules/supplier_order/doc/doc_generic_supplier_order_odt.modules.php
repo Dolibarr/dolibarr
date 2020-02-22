@@ -23,7 +23,7 @@
  */
 
 /**
- *	\file       htdocs/core/modules/supplier_order/pdf/doc_generic_supplier_order_odt.modules.php
+ *	\file       htdocs/core/modules/supplier_order/doc/doc_generic_supplier_order_odt.modules.php
  *	\ingroup    commande
  *	\brief      File of class to build ODT documents for supplier orders
  */

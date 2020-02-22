@@ -181,7 +181,7 @@ class pdf_standard extends ModelePDFStock
 	/**
 	 *	Function to build a document on disk using the generic odt module.
 	 *
-	 *	@param		Stock		$object				Object source to build document
+	 *	@param		Entrepot	$object				Object source to build document
 	 *	@param		Translate	$outputlangs		Lang output object
 	 * 	@param		string		$srctemplatepath	Full path of source filename for generator using a template file
 	 *  @param		int			$hidedetails		Do not show line details
@@ -383,7 +383,12 @@ class pdf_standard extends ModelePDFStock
 							else
 							{
 								// We found a page break
-								$showpricebeforepagebreak=0;
+
+								// Allows data in the first page if description is long enough to break in multiples pages
+								if(!empty($conf->global->MAIN_PDF_DATA_ON_FIRST_PAGE))
+									$showpricebeforepagebreak = 1;
+								else
+									$showpricebeforepagebreak = 0;
 							}
 						}
 						else	// No pagebreak

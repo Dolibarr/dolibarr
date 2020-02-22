@@ -309,7 +309,7 @@ class FormAccounting extends Form
     			return -1;
     		}
 
-    		$selected = $selectid;	// selectid can be -1, 0, 123
+    		$selected = $selectid; // selectid can be -1, 0, 123
     		while ($obj = $this->db->fetch_object($resql))
     		{
 				if (empty($obj->labelshort))
@@ -321,7 +321,7 @@ class FormAccounting extends Form
 					$labeltoshow = $obj->labelshort;
 				}
 
-				$label = length_accountg($obj->account_number) . ' - ' . $labeltoshow;
+				$label = length_accountg($obj->account_number).' - '.$labeltoshow;
 				$label = dol_trunc($label, $trunclength);
 
     			$select_value_in = $obj->rowid;
@@ -459,14 +459,14 @@ class FormAccounting extends Form
 
 		$sql = "SELECT DISTINCT date_format(doc_date, '%Y') as dtyear";
 		$sql .= " FROM ".MAIN_DB_PREFIX."accounting_bookkeeping";
-	    $sql .= " WHERE entity IN (" . getEntity('accountancy') . ")";
+	    $sql .= " WHERE entity IN (".getEntity('accountancy').")";
 		$sql .= " ORDER BY date_format(doc_date, '%Y')";
-		dol_syslog(get_class($this)."::".__METHOD__, LOG_DEBUG);
+		dol_syslog(__METHOD__, LOG_DEBUG);
 		$resql = $this->db->query($sql);
 
 		if (!$resql) {
 			$this->error = "Error ".$this->db->lasterror();
-			dol_syslog(get_class($this)."::".__METHOD__.$this->error, LOG_ERR);
+			dol_syslog(__METHOD__.$this->error, LOG_ERR);
 			return -1;
 		}
 		while ($obj = $this->db->fetch_object($resql)) {

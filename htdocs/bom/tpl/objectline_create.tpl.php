@@ -109,7 +109,7 @@ if (!empty($conf->product->enabled) || !empty($conf->service->enabled))
 }
 
 $coldisplay++;
-print '<td class="bordertop nobottom linecolqty right"><input type="text" size="2" name="qty" id="qty" class="flat right" value="'.(isset($_POST["qty"]) ?GETPOST("qty", 'alpha', 2) : 1).'">';
+print '<td class="bordertop nobottom linecolqty right"><input type="text" size="2" name="qty" id="qty" class="flat right" value="'.(GETPOSTISSET("qty") ? GETPOST("qty", 'alpha', 2) : 1).'">';
 print '</td>';
 
 if ($conf->global->PRODUCT_USE_UNITS)
@@ -141,7 +141,7 @@ print '</td>';
 print '</tr>';
 
 if (is_object($objectline)) {
-	print $objectline->showOptionals($extrafields, 'edit', array('style'=>$bcnd[$var], 'colspan'=>$coldisplay), '', '', empty($conf->global->MAIN_EXTRAFIELDS_IN_ONE_TD) ? 0 : 1);
+	print $objectline->showOptionals($extrafields, 'edit', array('style'=>$bcnd[$var], 'colspan'=>$coldisplay), '', '', 1);
 }
 ?>
 
