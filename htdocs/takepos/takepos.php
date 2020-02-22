@@ -381,10 +381,15 @@ function ClickProduct(position) {
 
 function deleteline() {
 	console.log("Delete line");
-	$("#poslines").load("invoice.php?action=deleteline&place="+place+"&idline="+selectedline, function() {
-		//$('#poslines').scrollTop($('#poslines')[0].scrollHeight);
-	});
-	ClearSearch();
+	if (editaction=="qty" && editnumber!=""){ // If qty mode this button is "-"
+		Edit('-');
+	}
+	else{
+		$("#poslines").load("invoice.php?action=deleteline&place="+place+"&idline="+selectedline, function() {
+			//$('#poslines').scrollTop($('#poslines')[0].scrollHeight);
+		});
+		ClearSearch();
+	}
 }
 
 function Customer() {
@@ -473,6 +478,7 @@ function Edit(number) {
     if (number=='c'){
         editnumber="";
         Refresh();
+		$("#delete").html('<span class="fa fa-trash"></span>');
         return;
     }
     else if (number=='qty'){
@@ -491,6 +497,9 @@ function Edit(number) {
             editaction="qty";
         }
     }
+	else if (number=='-'){
+		if (!editnumber.includes('-')) editnumber="-"+editnumber;
+	}
     else if (number=='p'){
     	console.log("Edit "+number);
         if (editaction=='p' && editnumber!=""){
@@ -531,18 +540,21 @@ function Edit(number) {
         $("#qty").html("OK");
         $("#price").html("<?php echo $langs->trans("Price"); ?>");
         $("#reduction").html("<?php echo $langs->trans("ReductionShort"); ?>");
+		$("#delete").html('<span class="fa fa-minus"></span>');
     }
     if (editaction=='p'){
         text=text+"<?php echo $langs->trans("Modify")." -> ".$langs->trans("Price").": "; ?>";
         $("#qty").html("<?php echo $langs->trans("Qty"); ?>");
         $("#price").html("OK");
         $("#reduction").html("<?php echo $langs->trans("ReductionShort"); ?>");
+		$("#delete").html('<span class="fa fa-trash"></span>');
     }
     if (editaction=='r'){
         text=text+"<?php echo $langs->trans("Modify")." -> ".$langs->trans("ReductionShort").": "; ?>";
         $("#qty").html("<?php echo $langs->trans("Qty"); ?>");
         $("#price").html("<?php echo $langs->trans("Price"); ?>");
         $("#reduction").html("OK");
+		$("#delete").html('<span class="fa fa-trash"></span>');
     }
     $('#'+selectedline).find("td:first").html(text+editnumber);
 }
