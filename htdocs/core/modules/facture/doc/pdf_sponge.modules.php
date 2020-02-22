@@ -126,10 +126,11 @@ class pdf_sponge extends ModelePDFFactures
 	 */
 	public $situationinvoice;
 
+
 	/**
-	 * @var float X position for the situation progress column
+	 * @var array of document table collumns
 	 */
-	public $posxprogress;
+	public $cols;
 
 
 	/**
@@ -407,6 +408,8 @@ class pdf_sponge extends ModelePDFFactures
 	            $tab_height_newpage = 150;
 	            if (empty($conf->global->MAIN_PDF_DONOTREPEAT_HEAD)) $tab_height_newpage -= $top_shift;
 
+                $nexY = $tab_top - 1;
+
 	            // Incoterm
 	            $height_incoterms = 0;
 	            if ($conf->incoterm->enabled)
@@ -632,8 +635,6 @@ class pdf_sponge extends ModelePDFFactures
     	                if ($pageposafter > $pageposbefore)	// There is a pagebreak
     	                {
     	                    $pdf->rollbackTransaction(true);
-    	                    $pageposafter = $pageposbefore;
-    	                    //print $pageposafter.'-'.$pageposbefore;exit;
     	                    $pdf->setPageOrientation('', 1, $heightforfooter); // The only function to edit the bottom margin of current page to set it.
     	                    pdf_writelinedesc($pdf, $object, $i, $outputlangs, $this->getColumnContentWidth('desc'), 3, $this->getColumnContentXStart('desc'), $curY, $hideref, $hidedesc);
     	                    $pageposafter = $pdf->getPage();
@@ -1052,7 +1053,7 @@ class pdf_sponge extends ModelePDFFactures
 	/**
 	 *   Show miscellaneous information (payment mode, payment term, ...)
 	 *
-	 *   @param		PDF			$pdf     		Object PDF
+	 *   @param		tcpdf			$pdf     		Object PDF
 	 *   @param		Object		$object			Object to show
 	 *   @param		int			$posy			Y
 	 *   @param		Translate	$outputlangs	Langs object
@@ -1223,7 +1224,7 @@ class pdf_sponge extends ModelePDFFactures
 	/**
 	 *  Show total to pay
 	 *
-	 *  @param	PDF			$pdf            Object PDF
+	 *  @param	TCPDI			$pdf            Object PDF
 	 *	@param  Facture		$object         Object invoice
 	 *	@param  int			$deja_regle     Amount already paid (in the currency of invoice)
 	 *	@param	int			$posy			Position depart
@@ -1789,7 +1790,7 @@ class pdf_sponge extends ModelePDFFactures
 	/**
 	 *   Show table for lines
 	 *
-	 *   @param		PDF			$pdf     		Object PDF
+	 *   @param		tcpdf			$pdf     		Object PDF
 	 *   @param		string		$tab_top		Top position of table
 	 *   @param		string		$tab_height		Height of table (rectangle)
 	 *   @param		int			$nexY			Y (not used)
@@ -1849,7 +1850,7 @@ class pdf_sponge extends ModelePDFFactures
 	/**
 	 *  Show top header of page.
 	 *
-	 *  @param	PDF			$pdf     		Object PDF
+	 *  @param	Tcpdf			$pdf     		Object PDF
 	 *  @param  Object		$object     	Object to show
 	 *  @param  int	    	$showaddress    0=no, 1=yes
 	 *  @param  Translate	$outputlangs	Object lang for output
