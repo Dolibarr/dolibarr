@@ -1115,7 +1115,7 @@ abstract class CommonDocGenerator
         // Cleanup extrafield key to remove prefix if present
         $pos = strpos($extrafieldKey, $extrafieldsKeyPrefix);
         if($pos===0){
-            $extrafieldKey = substr($extrafieldKey, strlen ( $extrafieldsKeyPrefix));
+            $extrafieldKey = substr($extrafieldKey, strlen($extrafieldsKeyPrefix));
         }
 
         $extrafieldOptionsKey = $extrafieldsKeyPrefix.$extrafieldKey;
@@ -1300,7 +1300,6 @@ abstract class CommonDocGenerator
 
 
         if (is_array($extrafields->attributes[$object->table_element]['label'])) {
-
             // For cache on lines loop
             if(!isset($this->extrafieldsCache)){ $this->extrafieldsCache = array(); }
             $this->extrafieldsCache[$object->table_element] = $extrafields;
