@@ -1074,7 +1074,7 @@ abstract class CommonDocGenerator
      *  @param	float		$curY    	curent Y position
      *  @param	string		$colKey    	the column key
      *  @param	string		$columnText   column text
-     *  @return	int         new rank on success and -1 on error
+     *  @return	null
      */
     public function printStdColumnContent($pdf, &$curY, $colKey, $columnText = '')
     {
@@ -1094,6 +1094,111 @@ abstract class CommonDocGenerator
             $colDef = $this->cols[$colKey];
             $pdf->writeHTMLCell($this->getColumnContentWidth($colKey) + 2, 2, $this->getColumnContentXStart($colKey) - 1, $curY, $columnText, 0, 0, 0, true, $colDef['content']['align']);
         }
+    }
+
+    /**
+     *  get extrafield content for pdf writeHtmlCell compatibility
+     *  usage for PDF line columns and object note block
+     *
+     *  @param	object		$object     common object
+     *  @param	string		$extrafieldKey    	the extrafield key
+     *  @return	null
+     */
+    public function getExtrafieldContent($object, $extrafieldKey)
+    {
+        global $hookmanager;
+
+        if(empty($object->table_element)){ return; }
+
+        $extrafieldsKeyPrefix = "options_";
+
+        // Cleanup extrafield key to remove prefix if present
+        $pos = strpos($extrafieldKey, $extrafieldsKeyPrefix);
+        if($pos===0){
+            $extrafieldKey = substr($extrafieldKey, strlen ( $extrafieldsKeyPrefix));
+        }
+
+        $extrafieldOptionsKey = $extrafieldsKeyPrefix.$extrafieldKey;
+
+
+        // Load extrafiels if not allready does
+        if(!isset($this->extrafieldsCache)){ $this->extrafieldsCache = array(); }
+        if(!isset($this->extrafieldsCache[$object->table_element])){
+            $extrafields = new ExtraFields($this->db);
+            $extrafields->fetch_name_optionals_label($object->table_element);
+        }
+        else{
+            $extrafields = $this->extrafieldsCache[$object->table_element];
+        }
+
+        $extrafieldOutputContent = $extrafields->showOutputField($extrafieldKey, $object->array_options[$extrafieldOptionsKey], '', $object->table_element);
+
+        // TODO : allow showOutputField to be pdf public friendly, ex: in a link to object, clean getNomUrl to remove link and images... like a getName methode ...
+        if($extrafields->attributes[$object->table_element]['type'][$extrafieldKey] == 'link'){
+            // for lack of anything better we cleanup all html tags
+            $extrafieldOutputContent = dol_string_nohtmltag($extrafieldOutputContent);
+        }
+
+        $parameters = array(
+            'object' => $object,
+            'extrafields' => $extrafields,
+            'extrafieldKey' => $extrafieldKey,
+            'extrafieldOutputContent' =>& $extrafieldOutputContent
+        );
+        $reshook = $hookmanager->executeHooks('getPDFExtrafieldContent', $parameters, $this); // Note that $action and $object may have been modified by hook
+        if ($reshook < 0) setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
+        if ($reshook)
+        {
+            $extrafieldOutputContent = $hookmanager->resPrint;
+        }
+
+        return $extrafieldOutputContent;
+    }
+
+
+    /**
+     *  print extrafields columns content
+     *
+     *  @param	Tcpdf		    $pdf    	pdf object
+     *  @param	float		$curY    	curent Y position
+     *  @param	object		$object    	line of common object
+     *  @return	double  max y value
+     */
+    public function printLineExtrafieldsColumnsContent($pdf, &$curY, $object)
+    {
+        global $hookmanager;
+
+        if(empty($object->table_element) || !isset($this->extrafieldsCache[$object->table_element])){
+            return;
+        }
+
+        $nextY = $curY;
+
+        // get extrafield config from cache
+        $extrafields =& $this->extrafieldsCache[$object->table_element];
+
+        /**
+         * @var $extrafields ExtraFields
+         */
+
+        if (is_array($extrafields->attributes[$object->table_element]['label'])) {
+            foreach ($extrafields->attributes[$object->table_element]['label'] as $key => $label)
+            {
+                $extrafieldColKey = "options_".$key;
+
+                if ($this->getColumnStatus($extrafieldColKey) && isset($object->array_options[$extrafieldColKey]))
+                {
+                    // TODO : allow showOutputField to be pdf public friendly, ex: in a link to object, clean getNomUrl to remove link and images...
+                    $columnText = $extrafields->showOutputField($key, $object->array_options[$extrafieldColKey], '', $object->table_element);
+
+
+                    $this->printStdColumnContent($pdf, $curY, $extrafieldColKey, $columnText);
+                    $nextY = max($pdf->GetY(), $nextY);
+                }
+            }
+        }
+
+        return $nextY;
     }
 
 
@@ -1166,5 +1271,92 @@ abstract class CommonDocGenerator
             }
         }
         return $this->tabTitleHeight;
+    }
+
+
+
+    /**
+     *  Define Array Column Field for extrafields
+     *
+     *  @param	object			$object    		common object det
+     *  @param	Translate		$outputlangs    langs
+     *  @param	int			   $hidedetails		Do not show line details
+     *  @return	null
+     */
+    public function defineColumnExtrafield($object, $outputlangs, $hidedetails = 0)
+    {
+        global $conf;
+
+        if(!empty($hidedetails)){
+            return;
+        }
+
+        if(empty($object->table_element)){
+            return;
+        }
+
+        $extrafields = new ExtraFields($this->db);
+        $extralabels = $extrafields->fetch_name_optionals_label($object->table_element);
+
+
+        if (is_array($extrafields->attributes[$object->table_element]['label'])) {
+
+            // For cache on lines loop
+            if(!isset($this->extrafieldsCache)){ $this->extrafieldsCache = array(); }
+            $this->extrafieldsCache[$object->table_element] = $extrafields;
+
+            foreach ($extrafields->attributes[$object->table_element]['label'] as $key => $label)
+            {
+                // Dont display separator yet even is set to be displayed (not compatible yet)
+                if ($extrafields->attributes[$object->table_element]['type'][$key] == 'separate')
+                {
+                    continue;
+                }
+
+                // Enable extrafield ?
+                $enabled = 1;
+                if ($enabled && isset($extrafields->attributes[$object->table_element]['enabled'][$key]))
+                {
+                    $enabled = dol_eval($extrafields->attributes[$object->table_element]['enabled'][$key], 1);
+                }
+                if ($enabled && isset($extrafields->attributes[$object->table_element]['list'][$key]))
+                {
+                    $enabled = dol_eval($extrafields->attributes[$object->table_element]['list'][$key], 1);
+                }
+
+                // Load language if required
+                if (!empty($extrafields->attributes[$object->table_element]['langfile'][$key])) $outputlangs->load($extrafields->attributes[$object->table_element]['langfile'][$key]);
+
+                // TODO : add more extrafield customisation capacities for PDF like width, rank...
+
+                // set column definition
+                $def = array(
+                    'rank' => intval($extrafields->attributes[$object->table_element]['pos'][$key]),
+                    'width' => 25, // in mm
+                    'status' => boolval($enabled),
+                    'title' => array(
+                        'label' => $outputlangs->transnoentities($label)
+                    ),
+                    'content' => array(
+                        'align' => 'C'
+                    ),
+                    'border-left' => true, // add left line separator
+                );
+
+                $alignTypeRight = array('double', 'int', 'price');
+                if(in_array($extrafields->attributes[$object->table_element]['type'][$key], $alignTypeRight)){
+                    $def['content']['align'] = 'R';
+                }
+
+                $alignTypeLeft  = array('text', 'html');
+                if(in_array($extrafields->attributes[$object->table_element]['type'][$key], $alignTypeLeft)){
+                    $def['content']['align'] = 'L';
+                }
+
+
+                // for extrafields we use rank of extrafield to place it on PDF
+                $this->insertNewColumnDef("options_".$key, $def);
+            }
+        }
     }
 }
