@@ -1623,31 +1623,6 @@ function top_menu($head, $title = '', $target = '', $disablejs = 0, $disablehead
 
 		print '<div class="login_block usedropdown">'."\n";
 
-
-		// Add login user link
-		$toprightmenu .= '<div class="login_block_user">';
-
-		// Login name with photo and tooltip
-		$mode = -1;
-		$toprightmenu .= '<div class="inline-block nowrap"><div class="inline-block login_block_elem login_block_elem_name" style="padding: 0px;">';
-
-        if (!empty($conf->global->MAIN_USE_TOP_MENU_SEARCH_DROPDOWN)) {
-            // Add search dropdown
-            $toprightmenu .= top_menu_search();
-        }
-
-        if (!empty($conf->global->MAIN_USE_TOP_MENU_BOOKMARK_DROPDOWN)) {
-            // Add bookmark dropdown
-            $toprightmenu .= top_menu_bookmark();
-        }
-
-        // Add user dropdown
-	    $toprightmenu .= top_menu_user();
-
-		$toprightmenu .= '</div></div>';
-
-		$toprightmenu .= '</div>'."\n";
-
 		$toprightmenu .= '<div class="login_block_other">';
 
 		// Execute hook printTopRightMenu (hooks should output string like '<div class="login"><a href="">mylink</a></div>')
@@ -1739,7 +1714,31 @@ function top_menu($head, $title = '', $target = '', $disablejs = 0, $disablehead
 		// Logout link
 		$toprightmenu .= @Form::textwithtooltip('', $logouthtmltext, 2, 1, $logouttext, 'login_block_elem logout-btn', 2);
 
-		$toprightmenu .= '</div>';
+		$toprightmenu .= '</div>';	// end div class="login_block_other"
+
+
+		// Add login user link
+		$toprightmenu .= '<div class="login_block_user">';
+
+		// Login name with photo and tooltip
+		$mode = -1;
+		$toprightmenu .= '<div class="inline-block nowrap"><div class="inline-block login_block_elem login_block_elem_name" style="padding: 0px;">';
+
+		if (!empty($conf->global->MAIN_USE_TOP_MENU_SEARCH_DROPDOWN)) {
+			// Add search dropdown
+			$toprightmenu .= top_menu_search();
+		}
+
+		// Add bookmark dropdown
+		$toprightmenu .= top_menu_bookmark();
+
+		// Add user dropdown
+		$toprightmenu .= top_menu_user();
+
+		$toprightmenu .= '</div></div>';
+
+		$toprightmenu .= '</div>'."\n";
+
 
 		print $toprightmenu;
 
@@ -1940,7 +1939,7 @@ function top_menu_bookmark()
         $langs->load("bookmarks");
 
         $html .= '<!-- div for bookmark link -->
-        <div id="topmenu-bookmark-dropdown" class="atoplogin dropdown inline-block">
+        <div id="topmenu-bookmark-dropdown" class="dropdown inline-block">
             <a class="dropdown-toggle login-dropdown-a" data-toggle="dropdown" href="#" title="'.$langs->trans('Bookmarks').' ('.$langs->trans('BookmarksMenuShortCut').')">
                 <i class="fa fa-star" ></i>
             </a>
@@ -1949,21 +1948,21 @@ function top_menu_bookmark()
             </div>
         </div>';
 
-
-
         $html .= '
         <!-- Code to show/hide the user drop-down -->
         <script>
         $( document ).ready(function() {
             $(document).on("click", function(event) {
                 if (!$(event.target).closest("#topmenu-bookmark-dropdown").length) {
+					console.log("close");
                     // Hide the menus.
                     $("#topmenu-bookmark-dropdown").removeClass("open");
                 }
             });
 
             $("#topmenu-bookmark-dropdown .dropdown-toggle").on("click", function(event) {
-                openBookMarkDropDown();
+				console.log("toggle");
+				openBookMarkDropDown();
             });
 
             // Key map shortcut
@@ -2046,7 +2045,7 @@ function top_menu_search()
         <a class="dropdown-toggle login-dropdown-a" data-toggle="dropdown" href="#" title="'.$langs->trans('Search').' ('.$langs->trans('SearchMenuShortCut').')">
             <i class="fa fa-search" ></i>
         </a>
-        <div class="dropdown-menu">
+        <div class="dropdown-search">
             '.$dropDownHtml.'
         </div>
     </div>';
@@ -2077,7 +2076,8 @@ function top_menu_search()
 
         // close drop down
         $(document).on("click", function(event) {
-            if (!$(event.target).closest("#topmenu-global-search-dropdown").length) {
+			if (!$(event.target).closest("#topmenu-global-search-dropdown").length) {
+				console.log("click close");
                 // Hide the menus.
                 $("#topmenu-global-search-dropdown").removeClass("open");
             }
@@ -2085,6 +2085,7 @@ function top_menu_search()
 
         // Open drop down
         $("#topmenu-global-search-dropdown .dropdown-toggle").on("click", function(event) {
+			console.log("click open");
             openGlobalSearchDropDown();
         });
 
@@ -2185,15 +2186,6 @@ function left_menu($menu_array_before, $helppagename = '', $notused = '', $menu_
                 $searchform .= '</div>';
             }
         }
-
-		// Define $bookmarks
-		if (!empty($conf->bookmark->enabled) && $user->rights->bookmark->lire && empty($conf->global->MAIN_USE_TOP_MENU_BOOKMARK_DROPDOWN))
-		{
-			include_once DOL_DOCUMENT_ROOT.'/bookmarks/bookmarks.lib.php';
-			$langs->load("bookmarks");
-
-			$bookmarks = printBookmarksList();
-		}
 
 		// Left column
 		print '<!-- Begin left menu -->'."\n";

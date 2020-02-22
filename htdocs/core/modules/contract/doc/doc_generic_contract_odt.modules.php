@@ -185,7 +185,7 @@ class doc_generic_contract_odt extends ModelePDFContract
 	/**
 	 *  Function to build a document on disk using the generic odt module.
 	 *
-	 *  @param		Contract		$object				Object source to build document
+	 *  @param		Contrat		$object				Object source to build document
 	 *  @param		Translate	$outputlangs		Lang output object
 	 *  @param		string		$srctemplatepath	Full path of source filename for generator using a template file
 	 *  @param		int			$hidedetails		Do not show line details

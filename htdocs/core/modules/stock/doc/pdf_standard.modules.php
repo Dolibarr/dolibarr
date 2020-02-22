@@ -181,7 +181,7 @@ class pdf_standard extends ModelePDFStock
 	/**
 	 *	Function to build a document on disk using the generic odt module.
 	 *
-	 *	@param		Stock		$object				Object source to build document
+	 *	@param		Entrepot	$object				Object source to build document
 	 *	@param		Translate	$outputlangs		Lang output object
 	 * 	@param		string		$srctemplatepath	Full path of source filename for generator using a template file
 	 *  @param		int			$hidedetails		Do not show line details

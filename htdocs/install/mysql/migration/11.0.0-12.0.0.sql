@@ -44,6 +44,22 @@ ALTER TABLE llx_commande_fournisseur_dispatch_extrafields ADD INDEX idx_commande
 
 -- For v12
 
+UPDATE llx_website SET lang = 'en' WHERE lang like 'en_%';
+UPDATE llx_website SET lang = 'fr' WHERE lang like 'fr_%';
+UPDATE llx_website SET lang = 'es' WHERE lang like 'es_%';
+UPDATE llx_website SET lang = 'de' WHERE lang like 'de_%';
+UPDATE llx_website SET lang = 'it' WHERE lang like 'it_%';
+UPDATE llx_website SET lang = 'pt' WHERE lang like 'pt_%';
+UPDATE llx_website_page SET lang = 'en' WHERE lang like 'en_%';
+UPDATE llx_website_page SET lang = 'fr' WHERE lang like 'fr_%';
+UPDATE llx_website_page SET lang = 'es' WHERE lang like 'es_%';
+UPDATE llx_website_page SET lang = 'de' WHERE lang like 'de_%';
+UPDATE llx_website_page SET lang = 'it' WHERE lang like 'it_%';
+UPDATE llx_website_page SET lang = 'pt' WHERE lang like 'pt_%';
+
+ALTER TABLE llx_website ADD COLUMN lang varchar(8);
+ALTER TABLE llx_website ADD COLUMN otherlang varchar(255); 
+
 ALTER TABLE llx_holiday_users DROP INDEX uk_holiday_users;
 ALTER TABLE llx_holiday_users ADD UNIQUE INDEX uk_holiday_users(fk_user, fk_type);
 

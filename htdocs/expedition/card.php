@@ -1578,7 +1578,7 @@ if ($action == 'create')
 						//$line->fetch_optionals($line->id);
 						$line->array_options = array_merge($line->array_options, $srcLine->array_options);
 
-						print $expLine->showOptionals($extrafields, 'edit', array('style'=>'class="drag drop oddeven"', 'colspan'=>$colspan), $indiceAsked, '', empty($conf->global->MAIN_EXTRAFIELDS_IN_ONE_TD) ? 0 : 1);
+						print $expLine->showOptionals($extrafields, 'edit', array('style'=>'class="drag drop oddeven"', 'colspan'=>$colspan), $indiceAsked, '', 1);
 					}
                 }
 

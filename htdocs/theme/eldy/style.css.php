@@ -204,7 +204,7 @@ if (!empty($conf->global->THEME_TOPMENU_DISABLE_IMAGE)) { $disableimages = 1; $m
 
 
 if (!empty($conf->global->MAIN_USE_TOP_MENU_SEARCH_DROPDOWN)) { $maxwidthloginblock = $maxwidthloginblock + 55; }
-if (!empty($conf->bookmark->enabled) && !empty($conf->global->MAIN_USE_TOP_MENU_BOOKMARK_DROPDOWN)) { $maxwidthloginblock = $maxwidthloginblock + 55; }
+if (!empty($conf->bookmark->enabled)) { $maxwidthloginblock = $maxwidthloginblock + 55; }
 
 
 print '/*'."\n";

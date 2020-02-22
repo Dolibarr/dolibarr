@@ -1,4 +1,6 @@
+# See syntax file on https://help.github.com/en/actions/reference/workflow-syntax-for-github-actions
 name: "Close stale issues (bugs and feature requests)"
+
 on:
   schedule:
   - cron: "0 0 * * *"

@@ -131,7 +131,7 @@ $arrayfields = array(
 	'p.opp_amount'=>array('label'=>$langs->trans("OpportunityAmountShort"), 'checked'=>1, 'enabled'=>($conf->global->PROJECT_USE_OPPORTUNITIES ? 1 : 0), 'position'=>103),
 	'p.fk_opp_status'=>array('label'=>$langs->trans("OpportunityStatusShort"), 'checked'=>1, 'enabled'=>($conf->global->PROJECT_USE_OPPORTUNITIES ? 1 : 0), 'position'=>104),
 	'p.opp_percent'=>array('label'=>$langs->trans("OpportunityProbabilityShort"), 'checked'=>1, 'enabled'=>($conf->global->PROJECT_USE_OPPORTUNITIES ? 1 : 0), 'position'=>105),
-    'opp_weighted_amount'=>array('label'=>$langs->trans('OpportunityWeightedAmountShort'), 'checked'=>0, 'enabled'=>($conf->global->PROJECT_USE_OPPORTUNITIES?1:0), 'position'=>106),
+    'opp_weighted_amount'=>array('label'=>$langs->trans('OpportunityWeightedAmountShort'), 'checked'=>0, 'enabled'=>($conf->global->PROJECT_USE_OPPORTUNITIES ? 1 : 0), 'position'=>106),
     'p.budget_amount'=>array('label'=>$langs->trans("Budget"), 'checked'=>0, 'position'=>110),
 	'p.usage_opportunity'=>array('label'=>$langs->trans("UsageOpportunity"), 'checked'=>0, 'enabled'=>($conf->global->PROJECT_USE_OPPORTUNITIES ? 1 : 0), 'position'=>115),
 	'p.usage_task'=>array('label'=>$langs->trans("UsageTasks"), 'checked'=>0, 'enabled'=>($conf->global->PROJECT_HIDE_TASKS ? 0 : 1), 'position'=>116),
@@ -847,16 +847,16 @@ while ($i < min($num, $limit))
 				$totalarray['val']['p.opp_amount'] += $obj->opp_amount;
 			}
 			print '</td>';
-			if (! $i) $totalarray['nbfield']++;
-			if (! $i) $totalarray['pos'][$totalarray['nbfield']]='p.opp_amount';
+			if (!$i) $totalarray['nbfield']++;
+			if (!$i) $totalarray['pos'][$totalarray['nbfield']] = 'p.opp_amount';
 		}
 		// Opp percent
-		if (! empty($arrayfields['p.opp_percent']['checked']))
+		if (!empty($arrayfields['p.opp_percent']['checked']))
 		{
 			print '<td class="right">';
 			if ($obj->opp_percent) print price($obj->opp_percent, 1, $langs, 1, 0).'%';
 			print '</td>';
-			if (! $i) $totalarray['nbfield']++;
+			if (!$i) $totalarray['nbfield']++;
 		}
         // Opp weighted amount
         if (!empty($arrayfields['opp_weighted_amount']['checked']))
@@ -868,11 +868,11 @@ while ($i < min($num, $limit))
                 $totalarray['val']['opp_weighted_amount'] += $obj->opp_weighted_amount;
             }
             print '</td>';
-            if (! $i) $totalarray['nbfield']++;
-            if (! $i) $totalarray['pos'][$totalarray['nbfield']] = 'opp_weighted_amount';
+            if (!$i) $totalarray['nbfield']++;
+            if (!$i) $totalarray['pos'][$totalarray['nbfield']] = 'opp_weighted_amount';
         }
 		// Budget
-		if (! empty($arrayfields['p.budget_amount']['checked']))
+		if (!empty($arrayfields['p.budget_amount']['checked']))
 		{
 			print '<td class="right">';
 			if ($obj->budget_amount != '')
@@ -881,11 +881,11 @@ while ($i < min($num, $limit))
 				$totalarray['val']['p.budget_amount'] += $obj->budget_amount;
 			}
 			print '</td>';
-			if (! $i) $totalarray['nbfield']++;
-			if (! $i) $totalarray['pos'][$totalarray['nbfield']]='p.budget_amount';
+			if (!$i) $totalarray['nbfield']++;
+			if (!$i) $totalarray['pos'][$totalarray['nbfield']] = 'p.budget_amount';
 		}
 		// Usage opportunity
-		if (! empty($arrayfields['p.usage_opportunity']['checked']))
+		if (!empty($arrayfields['p.usage_opportunity']['checked']))
 		{
 			print '<td class="right">';
 			if ($obj->usage_opportunity)

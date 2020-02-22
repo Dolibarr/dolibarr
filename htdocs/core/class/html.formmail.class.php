@@ -112,14 +112,7 @@ class FormMail extends Form
 	public $withfrom;
 
 	/**
-	 * @var int
-	 * @deprecated Fill withto with array before calling method.
-	 * @see $withto
-	 */
-	public $withtosocid;
-
-	/**
-	 * @var int|int[]
+	 * @var int|string|array
 	 */
 	public $withto; // Show recipient emails
 

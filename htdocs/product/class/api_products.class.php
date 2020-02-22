@@ -73,9 +73,9 @@ class Products extends DolibarrApi
      * @param  bool   $includesubproducts  Load information about subproducts
      * @return array|mixed                 Data without useless information
      *
-     * @throws 401
-     * @throws 403
-     * @throws 404
+     * @throws RestException 401
+     * @throws RestException 403
+     * @throws RestException 404
      */
     public function get($id, $includestockdata = 0, $includesubproducts = false)
     {
@@ -95,9 +95,9 @@ class Products extends DolibarrApi
      *
      * @url GET ref/{ref}
      *
-     * @throws 401
-     * @throws 403
-     * @throws 404
+     * @throws RestException 401
+     * @throws RestException 403
+     * @throws RestException 404
      */
     public function getByRef($ref, $includestockdata = 0, $includesubproducts = false)
     {
@@ -117,9 +117,9 @@ class Products extends DolibarrApi
      *
      * @url GET ref_ext/{ref_ext}
      *
-     * @throws 401
-     * @throws 403
-     * @throws 404
+     * @throws RestException 401
+     * @throws RestException 403
+     * @throws RestException 404
      */
     public function getByRefExt($ref_ext, $includestockdata = 0, $includesubproducts = false)
     {
@@ -139,9 +139,9 @@ class Products extends DolibarrApi
      *
      * @url GET barcode/{barcode}
      *
-     * @throws 401
-     * @throws 403
-     * @throws 404
+     * @throws RestException 401
+     * @throws RestException 403
+     * @throws RestException 404
      */
     public function getByBarcode($barcode, $includestockdata = 0, $includesubproducts = false)
     {
@@ -263,9 +263,8 @@ class Products extends DolibarrApi
      * @param  array $request_data Datas
      * @return int
      *
-     * @throws RestException
-     * @throws 401
-     * @throws 404
+     * @throws RestException 401
+     * @throws RestException 404
      */
     public function put($id, $request_data = null)
     {
@@ -385,8 +384,8 @@ class Products extends DolibarrApi
      * @return array
      *
      * @throws RestException
-     * @throws 401
-     * @throws 404
+     * @throws RestException 401
+     * @throws RestException 404
      *
      * @url GET {id}/subproducts
      */
@@ -423,8 +422,8 @@ class Products extends DolibarrApi
      * @return int
      *
      * @throws RestException
-     * @throws 401
-     * @throws 404
+     * @throws RestException 401
+     * @throws RestException 404
      *
      * @url POST {id}/subproducts/add
      */
@@ -454,9 +453,8 @@ class Products extends DolibarrApi
      * @param  int $subproduct_id  Id of child product/service
      * @return int
      *
-     * @throws RestException
-     * @throws 401
-     * @throws 404
+     * @throws RestException 401
+     * @throws RestException 404
      *
      * @url DELETE {id}/subproducts/remove
      */
@@ -633,6 +631,73 @@ class Products extends DolibarrApi
     }
 
     /**
+     * Add/Update purchase prices for a product.
+     *
+     * @param   int         $id                             ID of Product
+     * @param  	float		$qty				            Min quantity for which price is valid
+     * @param  	float		$buyprice			            Purchase price for the quantity min
+     * @param  	string		$price_base_type	            HT or TTC
+     * @param  	int		    $fourn_id                       Supplier ID
+     * @param  	int			$availability		            Product availability
+     * @param	string		$ref_fourn			            Supplier ref
+     * @param	float		$tva_tx				            New VAT Rate (For example 8.5. Should not be a string)
+     * @param  	string		$charges			            costs affering to product
+	 * @param  	float		$remise_percent		            Discount  regarding qty (percent)
+	 * @param  	float		$remise				            Discount  regarding qty (amount)
+	 * @param  	int			$newnpr				            Set NPR or not
+	 * @param	int			$delivery_time_days	            Delay in days for delivery (max). May be '' if not defined.
+	 * @param   string      $supplier_reputation            Reputation with this product to the defined supplier (empty, FAVORITE, DONOTORDER)
+     * @param   array		$localtaxes_array	            Array with localtaxes info array('0'=>type1,'1'=>rate1,'2'=>type2,'3'=>rate2) (loaded by getLocalTaxesFromRate(vatrate, 0, ...) function).
+     * @param   string  	$newdefaultvatcode              Default vat code
+     * @param  	float		$multicurrency_buyprice 	    Purchase price for the quantity min in currency
+     * @param  	string		$multicurrency_price_base_type	HT or TTC in currency
+     * @param  	float		$multicurrency_tx	            Rate currency
+     * @param  	string		$multicurrency_code	            Currency code
+     * @param  	string		$desc_fourn     	            Custom description for product_fourn_price
+     * @param  	string		$barcode     	                Barcode
+     * @param  	int		    $fk_barcode_type     	        Barcode type
+     * @return int
+     *
+     * @throws RestException 500
+     * @throws RestException 401
+     *
+     * @url POST {id}/purchase_prices
+     */
+    public function addPurchasePrice($id, $qty, $buyprice, $price_base_type, $fourn_id, $availability, $ref_fourn, $tva_tx, $charges = 0, $remise_percent = 0, $remise = 0, $newnpr = 0, $delivery_time_days = 0, $supplier_reputation = '', $localtaxes_array = array(), $newdefaultvatcode = '', $multicurrency_buyprice = 0, $multicurrency_price_base_type = 'HT', $multicurrency_tx = 1, $multicurrency_code = '', $desc_fourn = '', $barcode = '', $fk_barcode_type = null)
+    {
+        if(! DolibarrApiAccess::$user->rights->produit->creer) {
+            throw new RestException(401);
+        }
+
+        $result = $this->productsupplier->fetch($id);
+        if (!$result) {
+            throw new RestException(404, 'Product not found');
+        }
+
+        if (!DolibarrApi::_checkAccessToResource('product', $this->productsupplier->id)) {
+            throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
+        }
+
+        $result = $this->productsupplier->add_fournisseur(DolibarrApiAccess::$user, $fourn_id, $ref_fourn, $qty);
+        if ($result < 0) {
+            throw new RestException(500, "Error adding supplier to product : ".$this->db->lasterror());
+        }
+
+        $fourn = new Fournisseur($this->db);
+        $result = $fourn->fetch($fourn_id);
+        if ($result <= 0) {
+            throw new RestException(404, 'Supplier not found');
+        }
+
+        $result = $this->productsupplier->update_buyprice($qty, $buyprice, DolibarrApiAccess::$user, $price_base_type, $fourn, $availability, $ref_fourn, $tva_tx, $charges, $remise_percent, $remise, $newnpr, $delivery_time_days, $supplier_reputation, $localtaxes_array, $newdefaultvatcode, $multicurrency_buyprice, $multicurrency_price_base_type, $multicurrency_tx, $multicurrency_code, $desc_fourn, $barcode, $fk_barcode_type);
+
+        if ($result <= 0) {
+            throw new RestException(500, "Error updating buy price : ".$this->db->lasterror());
+        }
+        return (int) $this->productsupplier->product_fourn_price_id;
+    }
+
+    /**
      * Delete purchase price for a product
      *
      * @param  int $id Product ID
@@ -642,8 +707,8 @@ class Products extends DolibarrApi
      *
      * @return int
      *
-     * @throws 401
-     * @throws 404
+     * @throws RestException 401
+     * @throws RestException 404
      *
      */
     public function deletePurchasePrice($id, $priceid)
@@ -769,9 +834,9 @@ class Products extends DolibarrApi
      *
      * @url GET {id}/purchase_prices
      *
-     * @throws 401
-     * @throws 403
-     * @throws 404
+     * @throws RestException 401
+     * @throws RestException 403
+     * @throws RestException 404
      *
      */
     public function getPurchasePrices($id, $ref = '', $ref_ext = '', $barcode = '')
@@ -829,8 +894,8 @@ class Products extends DolibarrApi
      * @return array
      *
      * @throws RestException
-     * @throws 401
-     * @throws 404
+     * @throws RestException 401
+     * @throws RestException 404
      *
      * @url GET attributes/{id}
      */
@@ -856,8 +921,8 @@ class Products extends DolibarrApi
      * @param  string $ref Reference of Attribute
      * @return array
      *
-     * @throws RestException
-     * @throws 401
+     * @throws RestException 500
+     * @throws RestException 401
      *
      * @url GET attributes/ref/{ref}
      */
@@ -893,8 +958,8 @@ class Products extends DolibarrApi
      * @param  string $label Label of Attribute
      * @return int
      *
-     * @throws RestException
-     * @throws 401
+     * @throws RestException 500
+     * @throws RestException 401
      *
      * @url POST attributes
      */
@@ -923,8 +988,8 @@ class Products extends DolibarrApi
      * @return array
      *
      * @throws RestException
-     * @throws 401
-     * @throws 404
+     * @throws RestException 401
+     * @throws RestException 404
      *
      * @url PUT attributes/{id}
      */
@@ -968,8 +1033,8 @@ class Products extends DolibarrApi
      * @param  int $id 	ID of Attribute
      * @return int		Result of deletion
      *
-     * @throws RestException
-     * @throws 401
+     * @throws RestException 500
+     * @throws RestException 401
      *
      * @url DELETE attributes/{id}
      */
@@ -996,8 +1061,8 @@ class Products extends DolibarrApi
      * @param  int $id ID of Attribute value
      * @return array
      *
-     * @throws RestException
-     * @throws 401
+     * @throws RestException 500
+     * @throws RestException 401
      *
      * @url GET attributes/values/{id}
      */
@@ -1037,8 +1102,8 @@ class Products extends DolibarrApi
      * @param  string $ref Ref of Attribute value
      * @return array
      *
-     * @throws RestException
-     * @throws 401
+     * @throws RestException 500
+     * @throws RestException 401
      *
      * @url GET attributes/{id}/values/ref/{ref}
      */
@@ -1078,8 +1143,7 @@ class Products extends DolibarrApi
      * @param  string $ref Ref of Attribute value
      * @return int
      *
-     * @throws RestException
-     * @throws 401
+     * @throws RestException 401
      *
      * @url DELETE attributes/{id}/values/ref/{ref}
      */
@@ -1104,8 +1168,8 @@ class Products extends DolibarrApi
      * @param  int $id ID of an Attribute
      * @return array
      *
-     * @throws RestException
-     * @throws 401
+     * @throws RestException 401
+     * @throws RestException 500
      *
      * @url GET attributes/{id}/values
      */
@@ -1125,8 +1189,7 @@ class Products extends DolibarrApi
      * @param  string $ref Ref of an Attribute
      * @return array
      *
-     * @throws RestException
-     * @throws 401
+     * @throws RestException 401
      *
      * @url GET attributes/ref/{ref}/values
      */
@@ -1165,8 +1228,8 @@ class Products extends DolibarrApi
      * @param  string $value Value of Attribute value
      * @return int
      *
-     * @throws RestException
-     * @throws 401
+     * @throws RestException 500
+     * @throws RestException 401
      *
      * @url POST attributes/{id}/values
      */
@@ -1198,8 +1261,8 @@ class Products extends DolibarrApi
      * @param  array $request_data Datas
      * @return array
      *
-     * @throws RestException
-     * @throws 401
+     * @throws RestException 401
+     * @throws RestException 500
      *
      * @url PUT attributes/values/{id}
      */
@@ -1243,8 +1306,8 @@ class Products extends DolibarrApi
      * @param  int $id ID of Attribute value
      * @return int
      *
-     * @throws RestException
-     * @throws 401
+     * @throws RestException 500
+     * @throws RestException 401
      *
      * @url DELETE attributes/values/{id}
      */
@@ -1269,8 +1332,8 @@ class Products extends DolibarrApi
      * @param  int $id ID of Product
      * @return array
      *
-     * @throws RestException
-     * @throws 401
+     * @throws RestException 500
+     * @throws RestException 401
      *
      * @url GET {id}/variants
      */
@@ -1297,8 +1360,8 @@ class Products extends DolibarrApi
      * @param  string $ref Ref of Product
      * @return array
      *
-     * @throws RestException
-     * @throws 401
+     * @throws RestException 500
+     * @throws RestException 401
      *
      * @url GET ref/{ref}/variants
      */
@@ -1329,20 +1392,21 @@ class Products extends DolibarrApi
      *
      * "features" is a list of attributes pairs id_attribute=>id_value. Example: array(id_color=>id_Blue, id_size=>id_small, id_option=>id_val_a, ...)
      *
-     * @param  int    $id                       ID of Product
-     * @param  float  $weight_impact            Weight impact of variant
-     * @param  float  $price_impact             Price impact of variant
-     * @param  bool   $price_impact_is_percent  Price impact in percent (true or false)
-     * @param  array  $features                 List of attributes pairs id_attribute->id_value. Example: array(id_color=>id_Blue, id_size=>id_small, id_option=>id_val_a, ...)
+     * @param  int $id ID of Product
+     * @param  float $weight_impact Weight impact of variant
+     * @param  float $price_impact Price impact of variant
+     * @param  bool $price_impact_is_percent Price impact in percent (true or false)
+     * @param  array $features List of attributes pairs id_attribute->id_value. Example: array(id_color=>id_Blue, id_size=>id_small, id_option=>id_val_a, ...)
+     * @param  bool|string $reference Customized reference of variant
      * @return int
      *
-     * @throws RestException
-     * @throws 401
-     * @throws 404
+     * @throws RestException 500
+     * @throws RestException 401
+     * @throws RestException 404
      *
      * @url POST {id}/variants
      */
-    public function addVariant($id, $weight_impact, $price_impact, $price_impact_is_percent, $features)
+    public function addVariant($id, $weight_impact, $price_impact, $price_impact_is_percent, $features, $reference = false)
     {
         if (!DolibarrApiAccess::$user->rights->produit->creer) {
             throw new RestException(401);
@@ -1372,17 +1436,13 @@ class Products extends DolibarrApi
         }
 
         $prodcomb = new ProductCombination($this->db);
-        if (!$prodcomb->fetchByProductCombination2ValuePairs($id, $features))
+
+        $result = $prodcomb->createProductCombination(DolibarrApiAccess::$user, $this->product, $features, array(), $price_impact_is_percent, $price_impact, $weight_impact, $reference);
+        if ($result > 0)
         {
-            $result = $prodcomb->createProductCombination(DolibarrApiAccess::$user, $this->product, $features, array(), $price_impact_is_percent, $price_impact, $weight_impact);
-            if ($result > 0)
-            {
-                return $result;
-            } else {
-                throw new RestException(500, "Error creating new product variant");
-            }
+			return $result;
         } else {
-            return $prodcomb->id;
+			throw new RestException(500, "Error creating new product variant");
         }
     }
 
@@ -1398,9 +1458,9 @@ class Products extends DolibarrApi
      * @param  array  $features                 List of attributes pairs id_attribute->id_value. Example: array(id_color=>id_Blue, id_size=>id_small, id_option=>id_val_a, ...)
      * @return int
      *
-     * @throws RestException
-     * @throws 401
-     * @throws 404
+     * @throws RestException 500
+     * @throws RestException 401
+     * @throws RestException 404
      *
      * @url POST ref/{ref}/variants
      */
@@ -1455,8 +1515,8 @@ class Products extends DolibarrApi
      * @param  array $request_data Datas
      * @return int
      *
-     * @throws RestException
-     * @throws 401
+     * @throws RestException 500
+     * @throws RestException 401
      *
      * @url PUT variants/{id}
      */
@@ -1489,8 +1549,8 @@ class Products extends DolibarrApi
      * @param  int $id 	ID of Variant
      * @return int		Result of deletion
      *
-     * @throws RestException
-     * @throws 401
+     * @throws RestException 500
+     * @throws RestException 401
      *
      * @url DELETE variants/{id}
      */
@@ -1570,9 +1630,9 @@ class Products extends DolibarrApi
      * @param  bool   $includesubproducts Load information about subproducts
      * @return array|mixed                Data without useless information
      *
-     * @throws 401
-     * @throws 403
-     * @throws 404
+     * @throws RestException 401
+     * @throws RestException 403
+     * @throws RestException 404
      */
     private function _fetch($id, $ref = '', $ref_ext = '', $barcode = '', $includestockdata = 0, $includesubproducts = false)
     {
