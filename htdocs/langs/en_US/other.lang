@@ -31,7 +31,7 @@ NextYearOfInvoice=Following year of invoice date
 DateNextInvoiceBeforeGen=Date of next invoice (before generation)
 DateNextInvoiceAfterGen=Date of next invoice (after generation)
 GraphInBarsAreLimitedTo3Measures=Grapics are limited to 3 measures in 'Bars' mode. The mode 'Lines' was automatically selected instead.
-OnlyOneFieldForXAxisIsPossible=Only 1 field is currently possible as X-Axis. Only the first selected field has been selected. 
+OnlyOneFieldForXAxisIsPossible=Only 1 field is currently possible as X-Axis. Only the first selected field has been selected.
 AtLeastOneMeasureIsRequired=At least 1 field for measure is required
 AtLeastOneXAxisIsRequired=At least 1 field for X-Axis is required
 
@@ -278,3 +278,7 @@ LinesToImport=Lines to import
 
 MemoryUsage=Memory usage
 RequestDuration=Duration of request
+PopuProp=Products/Services by popularity in Proposals
+PopuCom=Products/Services by popularity in Orders
+ProductStatistics=Products/Services Statistics
+NbOfQtyInOrders=Qty in orders
