@@ -118,10 +118,10 @@ if (($action == "searchfiles" || $action == "dl")) {
 		$error++;
 	}
 
-	$sql = '';
-
 	if (!$error)
 	{
+		$sql = '';
+
 		$wheretail = " '".$db->idate($date_start)."' AND '".$db->idate($date_stop)."'";
 
 		// Customer invoices
@@ -178,152 +178,153 @@ if (($action == "searchfiles" || $action == "dl")) {
 		    $sql .= " AND t.entity IN (".($entity == 1 ? '0,1' : $entity).')';
 		    //$sql.=" AND fk_statut <> ".ChargeSociales::STATUS_DRAFT;
 		}
-	}
 
-	if ($sql) {
-	    $sql .= $db->order($sortfield, $sortorder);
-		//print $sql;
+		if ($sql) {
+		    $sql .= $db->order($sortfield, $sortorder);
+			//print $sql;
 
-	    $resd = $db->query($sql);
-	    $files = array();
-	    $link = '';
+		    $resd = $db->query($sql);
+		    $files = array();
+		    $link = '';
 
-	    if ($resd)
-	    {
-	        $numd = $db->num_rows($resd);
+		    if ($resd)
+		    {
+		        $numd = $db->num_rows($resd);
 
-	        $tmpinvoice = new Facture($db);
-	        $tmpinvoicesupplier = new FactureFournisseur($db);
-	        $tmpdonation = new Don($db);
+		        $tmpinvoice = new Facture($db);
+		        $tmpinvoicesupplier = new FactureFournisseur($db);
+		        $tmpdonation = new Don($db);
 
-	        $upload_dir = '';
-	        $i = 0;
-	        while ($i < $numd)
-	        {
-	            $objd = $db->fetch_object($resd);
+		        $upload_dir = '';
+		        $i = 0;
+		        while ($i < $numd)
+		        {
+		            $objd = $db->fetch_object($resd);
 
-	            switch ($objd->item)
-	            {
-	                case "Invoice":
-	                	$subdir = '';
-	                	$subdir .= ($subdir ? '/' : '').dol_sanitizeFileName($objd->ref);
-	                	$upload_dir = $conf->facture->dir_output.'/'.$subdir;
-	                	$link = "document.php?modulepart=facture&file=".str_replace('/', '%2F', $subdir).'%2F';
-	                	break;
-	                case "SupplierInvoice":
-	                	$tmpinvoicesupplier->fetch($objd->id);
-	                	$subdir = get_exdir($tmpinvoicesupplier->id, 2, 0, 1, $tmpinvoicesupplier, 'invoice_supplier'); // TODO Use first file
-	                	$subdir .= ($subdir ? '/' : '').dol_sanitizeFileName($objd->ref);
-	                	$upload_dir = $conf->fournisseur->facture->dir_output.'/'.$subdir;
-	                	$link = "document.php?modulepart=facture_fournisseur&file=".str_replace('/', '%2F', $subdir).'%2F';
-	                	break;
-	                case "ExpenseReport":
-	                	$subdir = '';
-	                	$subdir .= ($subdir ? '/' : '').dol_sanitizeFileName($objd->ref);
-	                	$upload_dir = $conf->expensereport->dir_output.'/'.$subdir;
-	                	$link = "document.php?modulepart=expensereport&file=".str_replace('/', '%2F', $subdir).'%2F';
-	                	break;
-	                case "SalaryPayment":
-	                	$subdir = '';
-	                	$subdir .= ($subdir ? '/' : '').dol_sanitizeFileName($objd->id);
-	                	$upload_dir = $conf->salaries->dir_output.'/'.$subdir;
-	                	$link = "document.php?modulepart=salaries&file=".str_replace('/', '%2F', $subdir).'%2F';
-	                	break;
-	                case "Donation":
-	                	$tmpdonation->fetch($objp->id);
-	                	$subdir = get_exdir(0, 0, 0, 0, $tmpdonation, 'donation');
-	                	$subdir .= ($subdir ? '/' : '').dol_sanitizeFileName($objd->id);
-	                	$upload_dir = $conf->don->dir_output.'/'.$subdir;
-	                	$link = "document.php?modulepart=don&file=".str_replace('/', '%2F', $subdir).'%2F';
-	                	break;
-	                case "SocialContributions":
-	                	$subdir = '';
-	                	$subdir .= ($subdir ? '/' : '').dol_sanitizeFileName($objd->id);
-	                	$upload_dir = $conf->tax->dir_output.'/'.$subdir;
-	                	$link = "document.php?modulepart=tax&file=".str_replace('/', '%2F', $subdir).'%2F';
-	                	break;
-	                default:
-	                    $subdir = '';
-	                    $upload_dir = '';
-	                    $link = '';
-	                    break;
-	            }
+		            switch ($objd->item)
+		            {
+		                case "Invoice":
+		                	$subdir = '';
+		                	$subdir .= ($subdir ? '/' : '').dol_sanitizeFileName($objd->ref);
+		                	$upload_dir = $conf->facture->dir_output.'/'.$subdir;
+		                	$link = "document.php?modulepart=facture&file=".str_replace('/', '%2F', $subdir).'%2F';
+		                	break;
+		                case "SupplierInvoice":
+		                	$tmpinvoicesupplier->fetch($objd->id);
+		                	$subdir = get_exdir($tmpinvoicesupplier->id, 2, 0, 1, $tmpinvoicesupplier, 'invoice_supplier'); // TODO Use first file
+		                	$subdir .= ($subdir ? '/' : '').dol_sanitizeFileName($objd->ref);
+		                	$upload_dir = $conf->fournisseur->facture->dir_output.'/'.$subdir;
+		                	$link = "document.php?modulepart=facture_fournisseur&file=".str_replace('/', '%2F', $subdir).'%2F';
+		                	break;
+		                case "ExpenseReport":
+		                	$subdir = '';
+		                	$subdir .= ($subdir ? '/' : '').dol_sanitizeFileName($objd->ref);
+		                	$upload_dir = $conf->expensereport->dir_output.'/'.$subdir;
+		                	$link = "document.php?modulepart=expensereport&file=".str_replace('/', '%2F', $subdir).'%2F';
+		                	break;
+		                case "SalaryPayment":
+		                	$subdir = '';
+		                	$subdir .= ($subdir ? '/' : '').dol_sanitizeFileName($objd->id);
+		                	$upload_dir = $conf->salaries->dir_output.'/'.$subdir;
+		                	$link = "document.php?modulepart=salaries&file=".str_replace('/', '%2F', $subdir).'%2F';
+		                	break;
+		                case "Donation":
+		                	$tmpdonation->fetch($objp->id);
+		                	$subdir = get_exdir(0, 0, 0, 0, $tmpdonation, 'donation');
+		                	$subdir .= ($subdir ? '/' : '').dol_sanitizeFileName($objd->id);
+		                	$upload_dir = $conf->don->dir_output.'/'.$subdir;
+		                	$link = "document.php?modulepart=don&file=".str_replace('/', '%2F', $subdir).'%2F';
+		                	break;
+		                case "SocialContributions":
+		                	$subdir = '';
+		                	$subdir .= ($subdir ? '/' : '').dol_sanitizeFileName($objd->id);
+		                	$upload_dir = $conf->tax->dir_output.'/'.$subdir;
+		                	$link = "document.php?modulepart=tax&file=".str_replace('/', '%2F', $subdir).'%2F';
+		                	break;
+		                default:
+		                    $subdir = '';
+		                    $upload_dir = '';
+		                    $link = '';
+		                    break;
+		            }
 
-	            if (!empty($upload_dir))
-	            {
-	                $result = true;
+		            if (!empty($upload_dir))
+		            {
+		                $result = true;
 
-	                $files = dol_dir_list($upload_dir, "files", 0, '', '(\.meta|_preview\.png)$', '', SORT_ASC, 1);
-	                //var_dump($upload_dir);
-	                //var_dump($files);
-	                if (count($files) < 1)
-	                {
-	                	$nofile = array();
-	                	$nofile['id'] = $objd->id;
-	                	$nofile['entity'] = $objd->entity;
-	                	$nofile['date'] = $db->idate($objd->date);
-	                    $nofile['paid'] = $objd->paid;
-	                    $nofile['amount_ht'] = $objd->total_ht;
-	                    $nofile['amount_ttc'] = $objd->total_ttc;
-	                    $nofile['amount_vat'] = $objd->total_vat;
-	                    $nofile['ref'] = ($objd->ref ? $objd->ref : $objd->id);
-	                    $nofile['fk'] = $objd->fk_soc;
-	                    $nofile['item'] = $objd->item;
-	                    $nofile['thirdparty_name'] = $objd->thirdparty_name;
-	                    $nofile['thirdparty_code'] = $objd->thirdparty_code;
-	                    $nofile['country_code'] = $objd->country_code;
-	                    $nofile['vatnum'] = $objd->vatnum;
+		                $files = dol_dir_list($upload_dir, "files", 0, '', '(\.meta|_preview\.png)$', '', SORT_ASC, 1);
+		                //var_dump($upload_dir);
+		                //var_dump($files);
+		                if (count($files) < 1)
+		                {
+		                	$nofile = array();
+		                	$nofile['id'] = $objd->id;
+		                	$nofile['entity'] = $objd->entity;
+		                	$nofile['date'] = $db->idate($objd->date);
+		                    $nofile['paid'] = $objd->paid;
+		                    $nofile['amount_ht'] = $objd->total_ht;
+		                    $nofile['amount_ttc'] = $objd->total_ttc;
+		                    $nofile['amount_vat'] = $objd->total_vat;
+		                    $nofile['ref'] = ($objd->ref ? $objd->ref : $objd->id);
+		                    $nofile['fk'] = $objd->fk_soc;
+		                    $nofile['item'] = $objd->item;
+		                    $nofile['thirdparty_name'] = $objd->thirdparty_name;
+		                    $nofile['thirdparty_code'] = $objd->thirdparty_code;
+		                    $nofile['country_code'] = $objd->country_code;
+		                    $nofile['vatnum'] = $objd->vatnum;
 
-	                    $filesarray[$nofile['item'].'_'.$nofile['id']] = $nofile;
-	                }
-	                else
-	                {
-	                    foreach ($files as $key => $file)
-	                    {
-	                    	$file['id'] = $objd->id;
-	                    	$file['entity'] = $objd->entity;
-	                    	$file['date'] = $db->idate($objd->date);
-	                        $file['paid'] = $objd->paid;
-	                        $file['amount_ht'] = $objd->total_ht;
-	                        $file['amount_ttc'] = $objd->total_ttc;
-	                        $file['amount_vat'] = $objd->total_vat;
-	                        $file['ref'] = ($objd->ref ? $objd->ref : $objd->id);
-	                        $file['fk'] = $objd->fk_soc;
-	                        $file['item'] = $objd->item;
+		                    $filesarray[$nofile['item'].'_'.$nofile['id']] = $nofile;
+		                }
+		                else
+		                {
+		                    foreach ($files as $key => $file)
+		                    {
+		                    	$file['id'] = $objd->id;
+		                    	$file['entity'] = $objd->entity;
+		                    	$file['date'] = $db->idate($objd->date);
+		                        $file['paid'] = $objd->paid;
+		                        $file['amount_ht'] = $objd->total_ht;
+		                        $file['amount_ttc'] = $objd->total_ttc;
+		                        $file['amount_vat'] = $objd->total_vat;
+		                        $file['ref'] = ($objd->ref ? $objd->ref : $objd->id);
+		                        $file['fk'] = $objd->fk_soc;
+		                        $file['item'] = $objd->item;
 
-	                        $file['thirdparty_name'] = $objd->thirdparty_name;
-	                        $file['thirdparty_code'] = $objd->thirdparty_code;
-	                        $file['country_code'] = $objd->country_code;
-	                        $file['vatnum'] = $objd->vatnum;
+		                        $file['thirdparty_name'] = $objd->thirdparty_name;
+		                        $file['thirdparty_code'] = $objd->thirdparty_code;
+		                        $file['country_code'] = $objd->country_code;
+		                        $file['vatnum'] = $objd->vatnum;
 
-	                        // Save record into array (only the first time it is found)
-	                        if (empty($filesarray[$file['item'].'_'.$file['id']])) {
-	                        	$filesarray[$file['item'].'_'.$file['id']] = $file;
-	                        }
+		                        // Save record into array (only the first time it is found)
+		                        if (empty($filesarray[$file['item'].'_'.$file['id']])) {
+		                        	$filesarray[$file['item'].'_'.$file['id']] = $file;
+		                        }
 
-	                        // Add or concat file
-	                        if (empty($filesarray[$file['item'].'_'.$file['id']]['files'])) {
-	                        	$filesarray[$file['item'].'_'.$file['id']]['files'] = array();
-	                        }
-	                        $filesarray[$file['item'].'_'.$file['id']]['files'][] = array('link' => $link.$file['name'], 'name'=>$file['name'], 'ref'=>$file['ref'], 'fullname' => $file['fullname'], 'relpathnamelang' => $langs->trans($file['item']).'/'.$file['name']);
-	                        //var_dump($file['item'].'_'.$file['id']);
-	                        //var_dump($filesarray[$file['item'].'_'.$file['id']]['files']);
-	                    }
-	                }
-	            }
+		                        // Add or concat file
+		                        if (empty($filesarray[$file['item'].'_'.$file['id']]['files'])) {
+		                        	$filesarray[$file['item'].'_'.$file['id']]['files'] = array();
+		                        }
+		                        $filesarray[$file['item'].'_'.$file['id']]['files'][] = array('link' => $link.$file['name'], 'name'=>$file['name'], 'ref'=>$file['ref'], 'fullname' => $file['fullname'], 'relpathnamelang' => $langs->trans($file['item']).'/'.$file['name']);
+		                        //var_dump($file['item'].'_'.$file['id']);
+		                        //var_dump($filesarray[$file['item'].'_'.$file['id']]['files']);
+		                    }
+		                }
+		            }
 
-	            $i++;
-	        }
-	    }
-	    else
-	    {
-	        dol_print_error($db);
-	    }
+		            $i++;
+		        }
+		    }
+		    else
+		    {
+		        dol_print_error($db);
+		    }
 
-	    $db->free($resd);
-	}
-	else {
-		setEventMessages($langs->trans("ErrorAtLeastOneObjectMustBeSelected"), null, 'errors');
+		    $db->free($resd);
+		}
+		else {
+			setEventMessages($langs->trans("ErrorSelectAtLeastOne"), null, 'errors');
+			$error++;
+		}
 	}
 }
 
