@@ -1297,7 +1297,7 @@ div.fichetwothirdright {
 	<?php if ($conf->browser->layout == 'phone') { print "padding-bottom: 6px\n"; } ?>
 }
 div.fichetwothirdright div.ficheaddleft {
-    padding-left: 20px;
+    padding-<?php echo $left; ?>: 20px;
 }
 div.fichehalfleft {
 	<?php if ($conf->browser->layout != 'phone') { print "float: ".$left.";\n"; } ?>

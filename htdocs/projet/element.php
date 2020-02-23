@@ -606,7 +606,7 @@ foreach ($listofreferent as $key => $value)
 
 		$elementarray = $object->get_element_list($key, $tablename, $datefieldname, $dates, $datee, !empty($project_field)?$project_field:'fk_projet');
 
-		if (count($elementarray)>0 && is_array($elementarray))
+		if (is_array($elementarray) && count($elementarray) > 0)
 		{
 			$total_ht = 0;
 			$total_ttc = 0;
