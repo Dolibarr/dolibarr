@@ -184,7 +184,7 @@ if ($action == 'add')
                     GETPOST('langfile', 'alpha'),
                     1,
                     (GETPOST('totalizable', 'alpha')?1:0),
-                    (GETPOST('documentpdf', 'alpha')?1:0)
+                    GETPOST('documentpdf', 'alpha')
                 );
     			if ($result > 0)
     			{
@@ -354,7 +354,7 @@ if ($action == 'update')
                     GETPOST('langfile'),
                     1,
                     (GETPOST('totalizable', 'alpha')?1:0),
-                    (GETPOST('documentpdf', 'alpha')?1:0)
+                    GETPOST('documentpdf', 'alpha')
     			);
     			if ($result > 0)
     			{

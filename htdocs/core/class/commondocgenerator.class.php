@@ -1074,7 +1074,7 @@ abstract class CommonDocGenerator
     /**
      *  print standard column content
      *
-     *  @param	PDF		    $pdf    	pdf object
+     *  @param	TCPDF		    $pdf    	pdf object
      *  @param	float		$curY    	curent Y position
      *  @param	string		$colKey    	the column key
      *  @param	string		$columnText   column text
@@ -1179,6 +1179,8 @@ abstract class CommonDocGenerator
         $defaultParams = array(
             'style'         => '',
             'display'         => 'auto', // auto, table, list
+            'documentpdfEnable' => array(1),
+            'documentpdfEnableNotEmpty' => array(2),
 
             'table'         => array(
                 'maxItemsInRow' => 2,
@@ -1213,7 +1215,18 @@ abstract class CommonDocGenerator
             foreach ($extrafields->attributes[$object->table_element]['label'] as $key => $label)
             {
                 // Enable extrafield ?
-                $enabled = !empty($extrafields->attributes[$object->table_element]['documentpdf'][$key]);
+                $enabled = 0;
+                $disableOnEmpty = 0;
+                if(!empty($extrafields->attributes[$object->table_element]['documentpdf'][$key])) {
+                    $documentpdf = intval($extrafields->attributes[$object->table_element]['documentpdf'][$key]);
+                    if(in_array($documentpdf,$params['documentpdfEnable']) || in_array($documentpdf,$params['documentpdfEnableNotEmpty']) ) {
+                        $enabled = 1;
+                    }
+
+                    if (in_array($documentpdf,$params['documentpdfEnableNotEmpty'])) {
+                        $disableOnEmpty = 1;
+                    }
+                }
 
                 if(empty($enabled)){
                     continue;
@@ -1225,6 +1238,11 @@ abstract class CommonDocGenerator
                 $field->label = $outputlangs->transnoentities($label);
                 $field->type = $extrafields->attributes[$object->table_element]['type'][$key];
 
+                // dont display if empty
+                if($disableOnEmpty && empty($field->content)) {
+                    continue;
+                }
+
                 $fields[] = $field;
             }
         }
@@ -1234,10 +1252,7 @@ abstract class CommonDocGenerator
             // Sort extrafields by rank
             uasort($fields, function ($a, $b) {
                 return  ($a->rank > $b->rank) ? -1 : 1;
-			}
-            );
-
-
+			});
 
             // define some HTML content with style
             $html.= '<style>'.$params['style'].'</style>';
@@ -1425,8 +1440,16 @@ abstract class CommonDocGenerator
                 }
 
                 // Enable extrafield ?
-                $enabled = !empty($extrafields->attributes[$object->table_element]['documentpdf'][$key]);
+                $enabled = 0;
+                if(!empty($extrafields->attributes[$object->table_element]['documentpdf'][$key])) {
+                    $documentpdf = intval($extrafields->attributes[$object->table_element]['documentpdf'][$key]);
+                    if($documentpdf === 1 || $documentpdf === 2) {
+                        $enabled = 1;
+                    }
+                    // Note : if $documentpdf === 3 or 4 so, it's displayed after line description not in cols
+                }
 
+                if (!$enabled){ continue; } // don't wast resourses if we don't need them...
 
                 // Load language if required
                 if (!empty($extrafields->attributes[$object->table_element]['langfile'][$key])) $outputlangs->load($extrafields->attributes[$object->table_element]['langfile'][$key]);
