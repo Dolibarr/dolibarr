@@ -1328,7 +1328,6 @@ abstract class CommonDocGenerator
 
 
         if (!empty($extrafields->attributes[$object->table_element]) && is_array($extrafields->attributes[$object->table_element]['label'])) {
-
             foreach ($extrafields->attributes[$object->table_element]['label'] as $key => $label)
             {
                 // Dont display separator yet even is set to be displayed (not compatible yet)
