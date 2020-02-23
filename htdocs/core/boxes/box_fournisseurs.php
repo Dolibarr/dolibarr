@@ -2,6 +2,7 @@
 /* Copyright (C) 2004-2006 Destailleur Laurent  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2009 Regis Houssin        <regis.houssin@inodbox.com>
  * Copyright (C) 2015      Frederic France      <frederic.france@free.fr>
+ * Copyright (C) 2020      Pierre Ardoin      <mapiolca@me.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -86,7 +87,7 @@ class box_fournisseurs extends ModeleBoxes
         {
             $sql = "SELECT s.nom as name, s.rowid as socid, s.datec, s.tms, s.status,";
             $sql.= " s.code_fournisseur,";
-            $sql.= " s.logo";
+            $sql.= " s.logo, s.email, s.code_compta_fournisseur, s.entity";
             $sql .= " FROM ".MAIN_DB_PREFIX."societe as s";
             if (!$user->rights->societe->client->voir && !$user->societe_id) $sql.= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
             $sql.= " WHERE s.fournisseur = 1";
@@ -111,6 +112,9 @@ class box_fournisseurs extends ModeleBoxes
                     $thirdpartytmp->name = $objp->name;
                     $thirdpartytmp->code_client = $objp->code_client;
                     $thirdpartytmp->logo = $objp->logo;
+					$thirdpartytmp->email = $objp->email;
+                    $thirdpartytmp->code_compta_fournisseur = $objp->code_compta_fournisseur;
+                    $thirdpartytmp->entity = $objp->entity;
 
                    	$this->info_box_contents[$line][] = array(
                         'td' => '',

@@ -95,7 +95,7 @@ class box_clients extends ModeleBoxes
             $sql.= ", s.code_compta_fournisseur";
             $sql.= ", s.logo";
             $sql.= ", s.email";
-            $sql.= ", s.datec, s.tms, s.status";
+            $sql.= ", s.datec, s.tms, s.status, s.entity";
 			$sql.= " FROM ".MAIN_DB_PREFIX."societe as s";
 			if (!$user->rights->societe->client->voir && !$user->societe_id) $sql.= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
 			$sql.= " WHERE s.client IN (1, 3)";
@@ -127,6 +127,7 @@ class box_clients extends ModeleBoxes
                     $thirdpartystatic->fournisseur = $objp->fournisseur;
                     $thirdpartystatic->logo = $objp->logo;
                     $thirdpartystatic->email = $objp->email;
+					$thirdpartystatic->entity = $objp->entity;
 
                     $this->info_box_contents[$line][] = array(
                         'td' => '',
