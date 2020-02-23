@@ -49,6 +49,10 @@ abstract class CommonDocGenerator
      */
 	protected $db;
 
+    /**
+     * @var Extrafields object
+     */
+	public $extrafieldsCache;
 
 	/**
 	 *	Constructor
@@ -1122,14 +1126,9 @@ abstract class CommonDocGenerator
 
 
         // Load extrafiels if not allready does
-        if(!isset($this->extrafieldsCache)){ $this->extrafieldsCache = array(); }
-        if(!isset($this->extrafieldsCache[$object->table_element])){
-            $extrafields = new ExtraFields($this->db);
-            $extrafields->fetch_name_optionals_label($object->table_element);
-        }
-        else{
-            $extrafields = $this->extrafieldsCache[$object->table_element];
-        }
+        if(empty($this->extrafieldsCache)){ $this->extrafieldsCache = new ExtraFields($this->db); }
+        if(empty($this->extrafieldsCache->attributes[$object->table_element])){ $this->extrafieldsCache->fetch_name_optionals_label($object->table_element); }
+        $extrafields = $this->extrafieldsCache;
 
         $extrafieldOutputContent = $extrafields->showOutputField($extrafieldKey, $object->array_options[$extrafieldOptionsKey], '', $object->table_element);
 
@@ -1172,14 +1171,9 @@ abstract class CommonDocGenerator
         }
 
         // Load extrafiels if not allready does
-        if(!isset($this->extrafieldsCache)){ $this->extrafieldsCache = array(); }
-        if(!isset($this->extrafieldsCache[$object->table_element])){
-            $extrafields = new ExtraFields($this->db);
-            $extrafields->fetch_name_optionals_label($object->table_element);
-        }
-        else{
-            $extrafields = $this->extrafieldsCache[$object->table_element];
-        }
+        if(empty($this->extrafieldsCache)){ $this->extrafieldsCache = new ExtraFields($this->db); }
+        if(empty($this->extrafieldsCache->attributes[$object->table_element])){ $this->extrafieldsCache->fetch_name_optionals_label($object->table_element); }
+        $extrafields = $this->extrafieldsCache;
 
 
         /**
@@ -1327,14 +1321,13 @@ abstract class CommonDocGenerator
             return;
         }
 
-        $extrafields = new ExtraFields($this->db);
-        $extralabels = $extrafields->fetch_name_optionals_label($object->table_element);
+        // Load extrafiels if not allready does
+        if(empty($this->extrafieldsCache)){ $this->extrafieldsCache = new ExtraFields($this->db); }
+        if(empty($this->extrafieldsCache->attributes[$object->table_element])){ $this->extrafieldsCache->fetch_name_optionals_label($object->table_element); }
+        $extrafields = $this->extrafieldsCache;
 
 
-        if (is_array($extrafields->attributes[$object->table_element]['label'])) {
-            // For cache on lines loop
-            if(!isset($this->extrafieldsCache)){ $this->extrafieldsCache = array(); }
-            $this->extrafieldsCache[$object->table_element] = $extrafields;
+        if (!empty($extrafields->attributes[$object->table_element]) && is_array($extrafields->attributes[$object->table_element]['label'])) {
 
             foreach ($extrafields->attributes[$object->table_element]['label'] as $key => $label)
             {
