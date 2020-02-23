@@ -1219,11 +1219,11 @@ abstract class CommonDocGenerator
                 $disableOnEmpty = 0;
                 if(!empty($extrafields->attributes[$object->table_element]['printable'][$key])) {
                     $printable = intval($extrafields->attributes[$object->table_element]['printable'][$key]);
-                    if(in_array($printable,$params['printableEnable']) || in_array($printable,$params['printableEnableNotEmpty']) ) {
+                    if(in_array($printable, $params['printableEnable']) || in_array($printable, $params['printableEnableNotEmpty']) ) {
                         $enabled = 1;
                     }
 
-                    if (in_array($printable,$params['printableEnableNotEmpty'])) {
+                    if (in_array($printable, $params['printableEnableNotEmpty'])) {
                         $disableOnEmpty = 1;
                     }
                 }
