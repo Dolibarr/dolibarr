@@ -1278,7 +1278,6 @@ abstract class CommonDocGenerator
 
                     // for some type we need line break
                     if (in_array($field->type, $params['table']['arrayOfLineBreakType'])) {
-
                         if ($itemsInRow > 0) {
                             // close table row and empty cols
                             for ($i = $itemsInRow; $i <= $maxItemsInRow; $i++) {
@@ -1295,7 +1294,6 @@ abstract class CommonDocGenerator
                         $html .= '<strong>' . $field->label . ' :</strong> ';
                         $html .= $field->content;
                         $html .= "</td>";
-
                     } else {
                         $itemsInRow++;
                         $html .= '<td width="'.$params['table']['labelcolwidth'].'" class="extrafield-label">';
