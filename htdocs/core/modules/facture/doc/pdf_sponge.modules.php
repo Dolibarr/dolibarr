@@ -639,10 +639,13 @@ class pdf_sponge extends ModelePDFFactures
     	                $pdf->startTransaction();
     	                pdf_writelinedesc($pdf, $object, $i, $outputlangs, $this->getColumnContentWidth('desc'), 3, $this->getColumnContentXStart('desc'), $curY, $hideref, $hidedesc);
                         $posYAfterDescription = $pdf->GetY();
+
+                        // Display extrafield if needed
+
                         $params = array(
                             'display'         => 'list',
-                            'documentpdfEnable' => array(3),
-                            'documentpdfEnableNotEmpty' => array(4)
+                            'printableEnable' => array(3),
+                            'printableEnableNotEmpty' => array(4)
                         );
                         $extrafieldDesc = $this->getExtrafieldsInHtml($object->lines[$i], $outputlangs, $params);
                         if(!empty($extrafieldDesc)){
@@ -658,8 +661,8 @@ class pdf_sponge extends ModelePDFFactures
                             $posYAfterDescription = $pdf->GetY();
                             $params = array(
                                 'display'         => 'list',
-                                'documentpdfEnable' => array(3),
-                                'documentpdfEnableNotEmpty' => array(4)
+                                'printableEnable' => array(3),
+                                'printableEnableNotEmpty' => array(4)
                             );
                             $extrafieldDesc = $this->getExtrafieldsInHtml($object->lines[$i], $outputlangs, $params);
                             if(!empty($extrafieldDesc)){

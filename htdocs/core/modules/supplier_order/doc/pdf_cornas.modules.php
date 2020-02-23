@@ -556,6 +556,19 @@ class pdf_cornas extends ModelePDFSuppliersOrders
 					{
 					    $pdf->startTransaction();
 					    pdf_writelinedesc($pdf, $object, $i, $outputlangs, $this->getColumnContentWidth('desc'), 3, $this->getColumnContentXStart('desc'), $curY, $hideref, $hidedesc);
+                        $posYAfterDescription = $pdf->GetY();
+
+                        // Display extrafield if needed
+                        $params = array(
+                            'display'         => 'list',
+                            'printableEnable' => array(3),
+                            'printableEnableNotEmpty' => array(4)
+                        );
+                        $extrafieldDesc = $this->getExtrafieldsInHtml($object->lines[$i], $outputlangs, $params);
+                        if(!empty($extrafieldDesc)){
+                            $this->printStdColumnContent($pdf, $posYAfterDescription, 'desc', $extrafieldDesc);
+                        }
+
 					    $pageposafter = $pdf->getPage();
 					    if ($pageposafter > $pageposbefore)	// There is a pagebreak
 					    {
@@ -564,6 +577,19 @@ class pdf_cornas extends ModelePDFSuppliersOrders
 					        //print $pageposafter.'-'.$pageposbefore;exit;
 					        $pdf->setPageOrientation('', 1, $heightforfooter); // The only function to edit the bottom margin of current page to set it.
 					        pdf_writelinedesc($pdf, $object, $i, $outputlangs, $this->getColumnContentWidth('desc'), 3, $this->getColumnContentXStart('desc'), $curY, $hideref, $hidedesc);
+                            $posYAfterDescription = $pdf->GetY();
+
+                            // Display extrafield if needed
+                            $params = array(
+                                'display'         => 'list',
+                                'printableEnable' => array(3),
+                                'printableEnableNotEmpty' => array(4)
+                            );
+                            $extrafieldDesc = $this->getExtrafieldsInHtml($object->lines[$i], $outputlangs, $params);
+                            if(!empty($extrafieldDesc)){
+                                $this->printStdColumnContent($pdf, $posYAfterDescription, 'desc', $extrafieldDesc);
+                            }
+
 					        $pageposafter = $pdf->getPage();
 					        $posyafter = $pdf->GetY();
 					        if ($posyafter > ($this->page_hauteur - ($heightforfooter + $heightforfreetext + $heightforinfotot)))	// There is no space left for total+free text

@@ -474,7 +474,20 @@ class pdf_espadon extends ModelePdfExpedition
 					{
 					    $pdf->startTransaction();
 					    pdf_writelinedesc($pdf, $object, $i, $outputlangs, $this->getColumnContentWidth('desc'), 3, $this->getColumnContentXStart('desc'), $curY, $hideref, $hidedesc);
-					    $pageposafter = $pdf->getPage();
+                        $posYAfterDescription = $pdf->GetY();
+
+                        // Display extrafield if needed
+                        $params = array(
+                            'display'         => 'list',
+                            'printableEnable' => array(3),
+                            'printableEnableNotEmpty' => array(4)
+                        );
+                        $extrafieldDesc = $this->getExtrafieldsInHtml($object->lines[$i], $outputlangs, $params);
+                        if(!empty($extrafieldDesc)){
+                            $this->printStdColumnContent($pdf, $posYAfterDescription, 'desc', $extrafieldDesc);
+                        }
+
+                        $pageposafter = $pdf->getPage();
 					    if ($pageposafter > $pageposbefore)	// There is a pagebreak
 					    {
 					        $pdf->rollbackTransaction(true);
@@ -482,6 +495,18 @@ class pdf_espadon extends ModelePdfExpedition
 					        //print $pageposafter.'-'.$pageposbefore;exit;
 					        $pdf->setPageOrientation('', 1, $heightforfooter); // The only function to edit the bottom margin of current page to set it.
 					        pdf_writelinedesc($pdf, $object, $i, $outputlangs, $this->getColumnContentWidth('desc'), 3, $this->getColumnContentXStart('desc'), $curY, $hideref, $hidedesc);
+					        $posYAfterDescription = $pdf->GetY();
+
+                            // Display extrafield if needed
+                            $params = array(
+                                'display'         => 'list',
+                                'printableEnable' => array(3),
+                                'printableEnableNotEmpty' => array(4)
+                            );
+                            $extrafieldDesc = $this->getExtrafieldsInHtml($object->lines[$i], $outputlangs, $params);
+                            if(!empty($extrafieldDesc)){
+                                $this->printStdColumnContent($pdf, $posYAfterDescription, 'desc', $extrafieldDesc);
+                            }
 
 					        $pageposafter = $pdf->getPage();
 					        $posyafter = $pdf->GetY();
