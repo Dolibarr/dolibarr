@@ -7618,15 +7618,12 @@ function printCommonFooter($zone = 'private')
 					$micro_end_time = microtime(true);
 					print ' - Build time: '.ceil(1000 * ($micro_end_time - $micro_start_time)).' ms';
 				}
-				if (function_exists("memory_get_usage"))
-				{
-					print ' - Mem: '.memory_get_usage();
+
+				if (function_exists("memory_get_usage")) {
+					print ' - Mem: '.memory_get_usage();	// Do not use true here, it seems it takes the peak amount
 				}
-				if (function_exists("xdebug_memory_usage"))
-				{
-					print ' - XDebug time: '.ceil(1000 * xdebug_time_index()).' ms';
-					print ' - XDebug mem: '.xdebug_memory_usage();
-					print ' - XDebug mem peak: '.xdebug_peak_memory_usage();
+				if (function_exists("memory_get_peak_usage")) {
+					print ' - Real mem peak: '.memory_get_peak_usage(true);
 				}
 				if (function_exists("zend_loader_file_encoded"))
 				{
