@@ -9,7 +9,7 @@ button.dropdown-item.global-search-item {
     outline: none;
 }
 
-.open>.dropdown-search, .open>.dropdown-bookmark, .open>.dropdown-menu{
+.open>.dropdown-search, .open>.dropdown-bookmark, .open>.dropdown-menu, .dropdown dd ul.open {
     display: block;
 }
 
