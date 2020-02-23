@@ -1255,7 +1255,7 @@ abstract class CommonDocGenerator
 			});
 
             // define some HTML content with style
-            $html.= '<style>'.$params['style'].'</style>';
+            $html.= !empty($params['style'])?'<style>'.$params['style'].'</style>':'';
 
             // auto select display format
             if($params['display'] == 'auto') {
@@ -1270,10 +1270,12 @@ abstract class CommonDocGenerator
 
             if($params['display'] == 'list') {
                 // Display in list format
+                $i=0;
                 foreach ($fields as $field) {
-                    $html .= !empty($html)?$params['list']['separator']:'';
+                    $html .= !empty($i)?$params['list']['separator']:'';
                     $html .= '<strong>' . $field->label . ' : </strong>';
                     $html .= $field->content;
+                    $i++;
                 }
             }
             elseif($params['display'] == 'table') {
