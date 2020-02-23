@@ -75,7 +75,7 @@ if ($id)
 
 	$linkback = '<a href="'.DOL_URL_ROOT.'/adherents/list.php?restore_lastsearch_values=1">'.$langs->trans("BackToList").'</a>';
 
-	dol_banner_tab($object, 'rowid', $linkback);
+	dol_banner_tab($object, 'id', $linkback);
 
     print '<div class="fichecenter">';
 
