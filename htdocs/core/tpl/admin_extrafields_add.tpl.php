@@ -198,7 +198,7 @@ $langs->load("modulebuilder");
 </td><td class="valeur"><input id="list" class="minwidth100" type="text" name="list" value="<?php echo GETPOST('list', 'int')!='' ? GETPOST('list', 'int') : '1'; ?>"></td></tr>
 <!-- Visibility for PDF-->
 <tr><td class="extra_pdf"><?php echo $form->textwithpicto($langs->trans("DisplayOnPdf"), $langs->trans("DisplayOnPdfDesc")); ?>
-</td><td class="valeur"><input id="documentpdf" type="checkbox" name="documentpdf"<?php echo GETPOST('documentpdf', 'alpha')?' checked':''; ?>></td></tr>
+</td><td class="valeur"><input id="printable" type="checkbox" name="printable"<?php echo GETPOST('printable', 'alpha')?' checked':''; ?>></td></tr>
 <!-- Totalizable -->
 <tr class="extra_totalizable"><td><?php echo $langs->trans("Totalizable"); ?></td><td class="valeur"><input id="totalizable" type="checkbox" name="totalizable"<?php echo ((GETPOST('totalizable', 'alpha') || GETPOST('button', 'alpha'))?' checked':''); ?>></td></tr>
 <!-- Help tooltip -->

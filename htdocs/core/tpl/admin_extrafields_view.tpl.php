@@ -93,7 +93,7 @@ if (is_array($extrafields->attributes[$elementtype]['type']) && count($extrafiel
 		print '<td class="center">'.yn($extrafields->attributes[$elementtype]['required'][$key])."</td>\n";
 		print '<td class="center">'.yn($extrafields->attributes[$elementtype]['alwayseditable'][$key])."</td>\n";
 		print '<td class="center">'.$extrafields->attributes[$elementtype]['list'][$key]."</td>\n";
-		print '<td class="center">'.yn($extrafields->attributes[$elementtype]['documentpdf'][$key])."</td>\n";
+		print '<td class="center">'.yn($extrafields->attributes[$elementtype]['printable'][$key])."</td>\n";
 		print '<td class="center">'.yn($extrafields->attributes[$elementtype]['totalizable'][$key])."</td>\n";
 		if (! empty($conf->multicompany->enabled))  {
 			print '<td class="center">';

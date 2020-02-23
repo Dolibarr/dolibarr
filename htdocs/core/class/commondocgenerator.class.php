@@ -1213,7 +1213,7 @@ abstract class CommonDocGenerator
             foreach ($extrafields->attributes[$object->table_element]['label'] as $key => $label)
             {
                 // Enable extrafield ?
-                $enabled = !empty($extrafields->attributes[$object->table_element]['documentpdf'][$key]);
+                $enabled = !empty($extrafields->attributes[$object->table_element]['printable'][$key]);
 
                 if(empty($enabled)){
                     continue;
@@ -1425,7 +1425,7 @@ abstract class CommonDocGenerator
                 }
 
                 // Enable extrafield ?
-                $enabled = !empty($extrafields->attributes[$object->table_element]['documentpdf'][$key]);
+                $enabled = !empty($extrafields->attributes[$object->table_element]['printable'][$key]);
 
 
                 // Load language if required
