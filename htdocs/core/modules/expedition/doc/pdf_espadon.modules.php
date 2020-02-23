@@ -313,6 +313,8 @@ class pdf_espadon extends ModelePdfExpedition
 				$tab_height = 130;
 				$tab_height_newpage = 150;
 
+                $this->posxdesc = $this->marge_gauche + 1;
+
 				// Incoterm
 				$height_incoterms = 0;
 				if ($conf->incoterm->enabled)
