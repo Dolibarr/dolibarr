@@ -225,9 +225,10 @@ class ExtraFields
 	 *  @param  string  		$langfile  		 	Language file
 	 *  @param  string  		$enabled  		 	Condition to have the field enabled or not
 	 *  @param	int				$totalizable		Is a measure. Must show a total on lists
+     *  @param  int             $documentpdf        Is extrafield displayed on PDF
 	 *  @return int      							<=0 if KO, >0 if OK
 	 */
-	public function addExtraField($attrname, $label, $type, $pos, $size, $elementtype, $unique = 0, $required = 0, $default_value = '', $param = '', $alwayseditable = 0, $perms = '', $list = '-1', $help = '', $computed = '', $entity = '', $langfile = '', $enabled = '1', $totalizable = 0)
+	public function addExtraField($attrname, $label, $type, $pos, $size, $elementtype, $unique = 0, $required = 0, $default_value = '', $param = '', $alwayseditable = 0, $perms = '', $list = '-1', $help = '', $computed = '', $entity = '', $langfile = '', $enabled = '1', $totalizable = 0, $documentpdf = 0)
 	{
 		if (empty($attrname)) return -1;
 		if (empty($label)) return -1;
@@ -245,7 +246,7 @@ class ExtraFields
 		if ($result > 0 || $err1 == 'DB_ERROR_COLUMN_ALREADY_EXISTS' || $type == 'separate')
 		{
 			// Add declaration of field into table
-			$result2 = $this->create_label($attrname, $label, $type, $pos, $size, $elementtype, $unique, $required, $param, $alwayseditable, $perms, $list, $help, $default_value, $computed, $entity, $langfile, $enabled, $totalizable);
+			$result2 = $this->create_label($attrname, $label, $type, $pos, $size, $elementtype, $unique, $required, $param, $alwayseditable, $perms, $list, $help, $default_value, $computed, $entity, $langfile, $enabled, $totalizable, $documentpdf);
 			$err2 = $this->errno;
 			if ($result2 > 0 || ($err1 == 'DB_ERROR_COLUMN_ALREADY_EXISTS' && $err2 == 'DB_ERROR_RECORD_ALREADY_EXISTS'))
 			{
