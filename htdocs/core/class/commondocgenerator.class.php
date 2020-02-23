@@ -1179,8 +1179,8 @@ abstract class CommonDocGenerator
         $defaultParams = array(
             'style'         => '',
             'display'         => 'auto', // auto, table, list
-            'documentpdfEnable' => array(1),
-            'documentpdfEnableNotEmpty' => array(2),
+            'printableEnable' => array(1),
+            'printableEnableNotEmpty' => array(2),
 
             'table'         => array(
                 'maxItemsInRow' => 2,
@@ -1217,13 +1217,13 @@ abstract class CommonDocGenerator
                 // Enable extrafield ?
                 $enabled = 0;
                 $disableOnEmpty = 0;
-                if(!empty($extrafields->attributes[$object->table_element]['documentpdf'][$key])) {
-                    $documentpdf = intval($extrafields->attributes[$object->table_element]['documentpdf'][$key]);
-                    if(in_array($documentpdf,$params['documentpdfEnable']) || in_array($documentpdf,$params['documentpdfEnableNotEmpty']) ) {
+                if(!empty($extrafields->attributes[$object->table_element]['printable'][$key])) {
+                    $printable = intval($extrafields->attributes[$object->table_element]['printable'][$key]);
+                    if(in_array($printable,$params['printableEnable']) || in_array($printable,$params['printableEnableNotEmpty']) ) {
                         $enabled = 1;
                     }
 
-                    if (in_array($documentpdf,$params['documentpdfEnableNotEmpty'])) {
+                    if (in_array($printable,$params['printableEnableNotEmpty'])) {
                         $disableOnEmpty = 1;
                     }
                 }
@@ -1443,12 +1443,12 @@ abstract class CommonDocGenerator
 
                 // Enable extrafield ?
                 $enabled = 0;
-                if(!empty($extrafields->attributes[$object->table_element]['documentpdf'][$key])) {
-                    $documentpdf = intval($extrafields->attributes[$object->table_element]['documentpdf'][$key]);
-                    if($documentpdf === 1 || $documentpdf === 2) {
+                if(!empty($extrafields->attributes[$object->table_element]['printable'][$key])) {
+                    $printable = intval($extrafields->attributes[$object->table_element]['printable'][$key]);
+                    if($printable === 1 || $printable === 2) {
                         $enabled = 1;
                     }
-                    // Note : if $documentpdf === 3 or 4 so, it's displayed after line description not in cols
+                    // Note : if $printable === 3 or 4 so, it's displayed after line description not in cols
                 }
 
                 if (!$enabled){ continue; } // don't wast resourses if we don't need them...

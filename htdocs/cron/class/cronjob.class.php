@@ -1094,7 +1094,7 @@ class Cronjob extends CommonObject
 
 				    $errmsg = '';
 				    if (!is_array($object->errors) || !in_array($object->error, $object->errors)) $errmsg .= $object->error;
-				    if (is_array($object->errors) && count($object->errors)) $errmsg .= ($errmsg ? ', '.$errmsg : '').join(', ', $object->errors);
+				    if (is_array($object->errors) && count($object->errors)) $errmsg .= (($errmsg ? ', ' : '').join(', ', $object->errors));
 				    if (empty($errmsg)) $errmsg = $langs->trans('ErrorUnknown');
 
 				    dol_syslog(get_class($this)."::run_jobs END result=".$result." error=".$errmsg, LOG_ERR);

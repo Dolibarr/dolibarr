@@ -21,8 +21,8 @@
  */
 
 /**
- * \file       htdocs/product/popuprop.php
- * \ingroup    propal, produit
+ * \file       htdocs/product/popucom.php
+ * \ingroup    commande, produit
  * \brief      Liste des produits/services par popularite
  */
 
@@ -30,8 +30,8 @@ require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
 
 // Load translation files required by the page
-//Required to translate NbOfProposals
-$langs->load('propal');
+//Required to translate NbOfCommande
+$langs->load('commande');
 
 $type=GETPOST("type", "int");
 
@@ -109,16 +109,16 @@ $head[$h][1] = $langs->trans("PopuCom");
 $head[$h][2] = 'popularitycommande';
 $h++;
 
-dol_fiche_head($head, 'popularityprop', $langs->trans("Statistics"), -1);
+dol_fiche_head($head, 'popularitycommande', $langs->trans("Statistics"), -1);
 
 
 // Array of liens to show
 $infoprod=array();
 
 
-// Add lines for proposals
+// Add lines for commande
 $sql  = "SELECT p.rowid, p.label, p.ref, p.fk_product_type as type, SUM(pd.qty) as c";
-$sql.= " FROM ".MAIN_DB_PREFIX."propaldet as pd";
+$sql.= " FROM ".MAIN_DB_PREFIX."commandedet as pd";
 $sql.= ", ".MAIN_DB_PREFIX."product as p";
 $sql.= ' WHERE p.entity IN ('.getEntity('product').')';
 $sql.= " AND p.rowid = pd.fk_product";
@@ -147,7 +147,7 @@ if ($resql)
         $objp = $db->fetch_object($resql);
 
         $infoprod[$objp->rowid]=array('type'=>$objp->type, 'ref'=>$objp->ref, 'label'=>$objp->label);
-        $infoprod[$objp->rowid]['nblineproposal']=$objp->c;
+        $infoprod[$objp->rowid]['nblinecommande']=$objp->c;
 
         $i++;
     }
@@ -168,7 +168,7 @@ print "<tr class=\"liste_titre\">";
 print_liste_field_titre('Ref', $_SERVER["PHP_SELF"], 'p.ref', '', $param, '', $sortfield, $sortorder);
 print_liste_field_titre('Type', $_SERVER["PHP_SELF"], 'p.fk_product_type', '', $param, '', $sortfield, $sortorder);
 print_liste_field_titre('Label', $_SERVER["PHP_SELF"], 'p.label', '', $param, '', $sortfield, $sortorder);
-print_liste_field_titre('NbOfQtyInProposals', $_SERVER["PHP_SELF"], 'c', '', $param, '', $sortfield, $sortorder, 'right ');
+print_liste_field_titre('NbOfQtyInOrders', $_SERVER["PHP_SELF"], 'c', '', $param, '', $sortfield, $sortorder, 'right ');
 print "</tr>\n";
 
 foreach($infoprod as $prodid => $vals)
@@ -201,7 +201,7 @@ foreach($infoprod as $prodid => $vals)
 	else print $langs->trans("Product");
 	print '</td>';
 	print '<td>'.$vals['label'].'</td>';
-	print '<td class="right">'.$vals['nblineproposal'].'</td>';
+	print '<td class="right">'.$vals['nblinecommande'].'</td>';
 	print "</tr>\n";
 	$i++;
 }

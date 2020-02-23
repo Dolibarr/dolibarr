@@ -165,7 +165,7 @@ $list=$extrafields->attributes[$elementtype]['list'][$attrname];
 $totalizable = $extrafields->attributes[$elementtype]['totalizable'][$attrname];
 $help=$extrafields->attributes[$elementtype]['help'][$attrname];
 $entitycurrentorall=$extrafields->attributes[$elementtype]['entityid'][$attrname];
-$documentpdf=$extrafields->attributes[$elementtype]['documentpdf'][$attrname];
+$printable=$extrafields->attributes[$elementtype]['printable'][$attrname];
 
 if((($type == 'select') || ($type == 'checkbox') || ($type == 'radio')) && is_array($param))
 {
@@ -267,7 +267,7 @@ else
 </td><td class="valeur"><input id="list" class="minwidth100" type="text" name="list" value="<?php echo ($list!=''?$list:'1'); ?>"></td></tr>
 <!-- Visibility for PDF-->
 <tr><td class="extra_pdf"><?php echo $form->textwithpicto($langs->trans("DisplayOnPdf"), $langs->trans("DisplayOnPdfDesc")); ?>
-</td><td class="valeur"><input id="documentpdf" class="minwidth100" type="text" name="documentpdf" value="<?php echo dol_escape_htmltag($documentpdf); ?>"></td></tr>
+</td><td class="valeur"><input id="printable" class="minwidth100" type="text" name="printable" value="<?php echo dol_escape_htmltag($printable); ?>"></td></tr>
 <tr class="extra_totalizable"><td><?php echo $form->textwithpicto($langs->trans("Totalizable"), $langs->trans("TotalizableDesc")); ?></td><td class="valeur"><input id="totalizable" type="checkbox" name="totalizable"<?php echo ($totalizable?' checked':''); ?>></td></tr>
 <!-- Help tooltip -->
 <tr class="help"><td><?php echo $form->textwithpicto($langs->trans("HelpOnTooltip"), $langs->trans("HelpOnTooltipDesc")); ?></td><td class="valeur"><input id="help" class="quatrevingtpercent" type="text" name="help" value="<?php echo dol_escape_htmltag($help); ?>"></td></tr>
