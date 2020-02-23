@@ -1219,11 +1219,11 @@ abstract class CommonDocGenerator
                 $disableOnEmpty = 0;
                 if(!empty($extrafields->attributes[$object->table_element]['documentpdf'][$key])) {
                     $documentpdf = intval($extrafields->attributes[$object->table_element]['documentpdf'][$key]);
-                    if(in_array($documentpdf,$params['documentpdfEnable']) || in_array($documentpdf,$params['documentpdfEnableNotEmpty']) ) {
+                    if(in_array($documentpdf, $params['documentpdfEnable']) || in_array($documentpdf, $params['documentpdfEnableNotEmpty']) ) {
                         $enabled = 1;
                     }
 
-                    if (in_array($documentpdf,$params['documentpdfEnableNotEmpty'])) {
+                    if (in_array($documentpdf, $params['documentpdfEnableNotEmpty'])) {
                         $disableOnEmpty = 1;
                     }
                 }
