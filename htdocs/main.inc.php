@@ -1898,13 +1898,15 @@ function top_menu_user()
         $( document ).ready(function() {
             $(document).on("click", function(event) {
                 if (!$(event.target).closest("#topmenu-login-dropdown").length) {
-                    // Hide the menus.
+					//console.log("close login dropdown");
+					// Hide the menus.
                     $("#topmenu-login-dropdown").removeClass("open");
                 }
             });
 
             $("#topmenu-login-dropdown .dropdown-toggle").on("click", function(event) {
-                event.preventDefault();
+				console.log("toggle login dropdown");
+				event.preventDefault();
                 $("#topmenu-login-dropdown").toggleClass("open");
             });
 
@@ -1954,14 +1956,14 @@ function top_menu_bookmark()
         $( document ).ready(function() {
             $(document).on("click", function(event) {
                 if (!$(event.target).closest("#topmenu-bookmark-dropdown").length) {
-					console.log("close");
+					//console.log("close bookmark dropdown - we click outside");
                     // Hide the menus.
                     $("#topmenu-bookmark-dropdown").removeClass("open");
                 }
             });
 
             $("#topmenu-bookmark-dropdown .dropdown-toggle").on("click", function(event) {
-				console.log("toggle");
+				console.log("toggle bookmark dropdown");
 				openBookMarkDropDown();
             });
 
@@ -2077,7 +2079,7 @@ function top_menu_search()
         // close drop down
         $(document).on("click", function(event) {
 			if (!$(event.target).closest("#topmenu-global-search-dropdown").length) {
-				console.log("click close");
+				console.log("click close search - we click outside");
                 // Hide the menus.
                 $("#topmenu-global-search-dropdown").removeClass("open");
             }
@@ -2085,7 +2087,7 @@ function top_menu_search()
 
         // Open drop down
         $("#topmenu-global-search-dropdown .dropdown-toggle").on("click", function(event) {
-			console.log("click open");
+			console.log("toggle search dropdown");
             openGlobalSearchDropDown();
         });
 

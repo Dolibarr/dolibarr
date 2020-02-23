@@ -1298,7 +1298,7 @@ function dol_get_fiche_head($links = array(), $active = '', $title = '', $notab 
 		$tabsname = str_replace("@", "", $picto);
 		$out .= '<div id="moretabs'.$tabsname.'" class="inline-block tabsElem">';
 		$out .= '<a href="#" class="tab moretab inline-block tabunactive reposition">'.$langs->trans("More").'... ('.$nbintab.')</a>';
-		$out .= '<div id="moretabsList'.$tabsname.'" style="position: absolute; '.$left.': -999em; text-align: '.$left.'; margin:0px; padding:2px">';
+		$out .= '<div id="moretabsList'.$tabsname.'" style="position: absolute; '.$left.': -999em; text-align: '.$left.'; margin:0px; padding:2px; z-index:10;">';
 		$out .= $outmore;
 		$out .= '</div>';
 		$out .= '<div></div>';
@@ -7618,15 +7618,12 @@ function printCommonFooter($zone = 'private')
 					$micro_end_time = microtime(true);
 					print ' - Build time: '.ceil(1000 * ($micro_end_time - $micro_start_time)).' ms';
 				}
-				if (function_exists("memory_get_usage"))
-				{
-					print ' - Mem: '.memory_get_usage();
+
+				if (function_exists("memory_get_usage")) {
+					print ' - Mem: '.memory_get_usage();	// Do not use true here, it seems it takes the peak amount
 				}
-				if (function_exists("xdebug_memory_usage"))
-				{
-					print ' - XDebug time: '.ceil(1000 * xdebug_time_index()).' ms';
-					print ' - XDebug mem: '.xdebug_memory_usage();
-					print ' - XDebug mem peak: '.xdebug_peak_memory_usage();
+				if (function_exists("memory_get_peak_usage")) {
+					print ' - Real mem peak: '.memory_get_peak_usage(true);
 				}
 				if (function_exists("zend_loader_file_encoded"))
 				{

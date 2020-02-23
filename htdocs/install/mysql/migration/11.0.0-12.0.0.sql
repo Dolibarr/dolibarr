@@ -181,4 +181,7 @@ INSERT INTO llx_c_ticket_resolution (code, pos, label, active, use_default, desc
 
 DELETE FROM llx_const WHERE name = __ENCRYPT('DONATION_ART885')__;
 
+ALTER TABLE llx_extrafields MODIFY COLUMN printable integer DEFAULT 0;
+ALTER TABLE llx_extrafields ADD COLUMN printable integer DEFAULT 0;
+
 UPDATE llx_const SET name = 'INVOICE_USE_RETAINED_WARRANTY' WHERE name = 'INVOICE_USE_SITUATION_RETAINED_WARRANTY'

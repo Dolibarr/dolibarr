@@ -183,7 +183,8 @@ if ($action == 'add')
                 	(GETPOST('entitycurrentorall', 'alpha')?0:''),
                     GETPOST('langfile', 'alpha'),
                     1,
-                    (GETPOST('totalizable', 'alpha')?1:0)
+                    (GETPOST('totalizable', 'alpha')?1:0),
+                    (GETPOST('printable', 'alpha')?1:0)
                 );
     			if ($result > 0)
     			{
@@ -352,7 +353,8 @@ if ($action == 'update')
     				(GETPOST('entitycurrentorall', 'alpha')?0:''),
                     GETPOST('langfile'),
                     1,
-                    (GETPOST('totalizable', 'alpha')?1:0)
+                    (GETPOST('totalizable', 'alpha')?1:0),
+                    (GETPOST('printable', 'alpha')?1:0)
     			);
     			if ($result > 0)
     			{
