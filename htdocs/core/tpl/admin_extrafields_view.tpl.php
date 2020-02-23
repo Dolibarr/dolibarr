@@ -64,8 +64,9 @@ print '<td class="center">'.$langs->trans("Unique").'</td>';
 print '<td class="center">'.$langs->trans("Required").'</td>';
 print '<td class="center">'.$langs->trans("AlwaysEditable").'</td>';
 print '<td class="center">'.$form->textwithpicto($langs->trans("Visible"), $langs->trans("VisibleDesc")).'</td>';
+print '<td class="center">'.$form->textwithpicto($langs->trans("DisplayOnPdf"), $langs->trans("DisplayOnPdfDesc")).'</td>';
 print '<td class="center">'.$form->textwithpicto($langs->trans("Totalizable"), $langs->trans("TotalizableDesc")).'</td>';
-if ($conf->multicompany->enabled)  {
+if ($conf->multicompany->enabled){
 	print '<td class="center">'.$langs->trans("Entities").'</td>';
 }
 print '<td width="80">&nbsp;</td>';
@@ -92,6 +93,7 @@ if (is_array($extrafields->attributes[$elementtype]['type']) && count($extrafiel
 		print '<td class="center">'.yn($extrafields->attributes[$elementtype]['required'][$key])."</td>\n";
 		print '<td class="center">'.yn($extrafields->attributes[$elementtype]['alwayseditable'][$key])."</td>\n";
 		print '<td class="center">'.$extrafields->attributes[$elementtype]['list'][$key]."</td>\n";
+		print '<td class="center">'.yn($extrafields->attributes[$elementtype]['documentpdf'][$key])."</td>\n";
 		print '<td class="center">'.yn($extrafields->attributes[$elementtype]['totalizable'][$key])."</td>\n";
 		if (! empty($conf->multicompany->enabled))  {
 			print '<td class="center">';

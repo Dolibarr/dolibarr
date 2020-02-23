@@ -180,3 +180,5 @@ INSERT INTO llx_c_ticket_resolution (code, pos, label, active, use_default, desc
 INSERT INTO llx_c_ticket_resolution (code, pos, label, active, use_default, description) VALUES('OTHER',    '90', 'Other',     1, 0, NULL);
 
 DELETE FROM llx_const WHERE name = __ENCRYPT('DONATION_ART885')__;
+
+ALTER TABLE llx_extrafields ADD COLUMN documentpdf integer DEFAULT 0;

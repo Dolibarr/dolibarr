@@ -165,6 +165,7 @@ $list=$extrafields->attributes[$elementtype]['list'][$attrname];
 $totalizable = $extrafields->attributes[$elementtype]['totalizable'][$attrname];
 $help=$extrafields->attributes[$elementtype]['help'][$attrname];
 $entitycurrentorall=$extrafields->attributes[$elementtype]['entityid'][$attrname];
+$documentpdf=$extrafields->attributes[$elementtype]['documentpdf'][$attrname];
 
 if((($type == 'select') || ($type == 'checkbox') || ($type == 'radio')) && is_array($param))
 {
@@ -261,8 +262,12 @@ else
 <tr class="extra_required"><td><?php echo $langs->trans("Required"); ?></td><td class="valeur"><input id="required" type="checkbox" name="required"<?php echo ($required?' checked':''); ?>></td></tr>
 <!-- Always editable -->
 <tr class="extra_alwayseditable"><td><?php echo $langs->trans("AlwaysEditable"); ?></td><td class="valeur"><input id="alwayseditable" type="checkbox" name="alwayseditable"<?php echo ($alwayseditable?' checked':''); ?>></td></tr>
+<!-- Visibility -->
 <tr><td class="extra_list"><?php echo $form->textwithpicto($langs->trans("Visibility"), $langs->trans("VisibleDesc")); ?>
 </td><td class="valeur"><input id="list" class="minwidth100" type="text" name="list" value="<?php echo ($list!=''?$list:'1'); ?>"></td></tr>
+<!-- Visibility for PDF-->
+<tr><td class="extra_pdf"><?php echo $form->textwithpicto($langs->trans("DisplayOnPdf"), $langs->trans("DisplayOnPdfDesc")); ?>
+</td><td class="valeur"><input id="documentpdf" type="checkbox" name="documentpdf"<?php echo !empty($documentpdf)?' checked':''; ?>></td></tr>
 <tr class="extra_totalizable"><td><?php echo $form->textwithpicto($langs->trans("Totalizable"), $langs->trans("TotalizableDesc")); ?></td><td class="valeur"><input id="totalizable" type="checkbox" name="totalizable"<?php echo ($totalizable?' checked':''); ?>></td></tr>
 <!-- Help tooltip -->
 <tr class="help"><td><?php echo $form->textwithpicto($langs->trans("HelpOnTooltip"), $langs->trans("HelpOnTooltipDesc")); ?></td><td class="valeur"><input id="help" class="quatrevingtpercent" type="text" name="help" value="<?php echo dol_escape_htmltag($help); ?>"></td></tr>
@@ -270,7 +275,6 @@ else
 	<!-- Multicompany entity -->
     <tr><td><?php echo $langs->trans("AllEntities"); ?></td><td class="valeur"><input id="entitycurrentorall" type="checkbox" name="entitycurrentorall"<?php echo (empty($entitycurrentorall) ?' checked':''); ?>></td></tr>
 <?php } ?>
-<!-- Visibility -->
 </table>
 
 <?php dol_fiche_end(); ?>
