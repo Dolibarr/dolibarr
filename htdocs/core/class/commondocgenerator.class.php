@@ -1102,7 +1102,7 @@ abstract class CommonDocGenerator
      *
      *  @param	object		$object     common object
      *  @param	string		$extrafieldKey    	the extrafield key
-     *  @return	null
+     *  @return	string
      */
     public function getExtrafieldContent($object, $extrafieldKey)
     {
@@ -1157,48 +1157,80 @@ abstract class CommonDocGenerator
 
 
     /**
-     *  print extrafields columns content
+     *  display extrafields columns content
      *
-     *  @param	Tcpdf		    $pdf    	pdf object
-     *  @param	float		$curY    	curent Y position
      *  @param	object		$object    	line of common object
+     *  @param Translate $outputlangs    Output language
      *  @return	double  max y value
      */
-    public function printLineExtrafieldsColumnsContent($pdf, &$curY, $object)
+    public function getExtrafieldsInHtml($object, $outputlangs)
     {
         global $hookmanager;
 
-        if(empty($object->table_element) || !isset($this->extrafieldsCache[$object->table_element])){
+        if(empty($object->table_element)){
             return;
         }
 
-        $nextY = $curY;
+        // Load extrafiels if not allready does
+        if(!isset($this->extrafieldsCache)){ $this->extrafieldsCache = array(); }
+        if(!isset($this->extrafieldsCache[$object->table_element])){
+            $extrafields = new ExtraFields($this->db);
+            $extrafields->fetch_name_optionals_label($object->table_element);
+        }
+        else{
+            $extrafields = $this->extrafieldsCache[$object->table_element];
+        }
 
-        // get extrafield config from cache
-        $extrafields =& $this->extrafieldsCache[$object->table_element];
 
         /**
          * @var $extrafields ExtraFields
          */
 
+        $html = '';
+        $fields = array();
+
         if (is_array($extrafields->attributes[$object->table_element]['label'])) {
             foreach ($extrafields->attributes[$object->table_element]['label'] as $key => $label)
             {
-                $extrafieldColKey = "options_".$key;
-
-                if ($this->getColumnStatus($extrafieldColKey) && isset($object->array_options[$extrafieldColKey]))
-                {
-                    // TODO : allow showOutputField to be pdf public friendly, ex: in a link to object, clean getNomUrl to remove link and images...
-                    $columnText = $extrafields->showOutputField($key, $object->array_options[$extrafieldColKey], '', $object->table_element);
-
-
-                    $this->printStdColumnContent($pdf, $curY, $extrafieldColKey, $columnText);
-                    $nextY = max($pdf->GetY(), $nextY);
+                // Enable extrafield ?
+                $enabled = 1;
+                if ($enabled && isset($extrafields->attributes[$object->table_element]['enabled'][$key])){
+                    $enabled = dol_eval($extrafields->attributes[$object->table_element]['enabled'][$key], 1);
                 }
+
+                if ($enabled && isset($extrafields->attributes[$object->table_element]['list'][$key])){
+                    $enabled = dol_eval($extrafields->attributes[$object->table_element]['list'][$key], 1);
+                }
+
+                // TODO : add extrafields enabled for display from extrafield config panel
+
+                if(empty($enabled)){
+                    continue;
+                }
+
+                $field = new stdClass();
+                $field->rank = intval($extrafields->attributes[$object->table_element]['pos'][$key]);
+                $field->content = $this->getExtrafieldContent($object, $key);
+                $field->label = $outputlangs->transnoentities($label);
+
+                $fields[] = $field;
             }
         }
 
-        return $nextY;
+        if(!empty($fields))
+        {
+            uasort($fields, function($a, $b){
+                return  ($a->rank > $b->rank) ? -1 : 1;
+                }
+            );
+
+            foreach ($fields as $field){
+                $html.= !empty($html)?'<br/>':'';
+                $html.= $field->label.' : '.$field->content;
+            }
+        }
+
+        return $html;
     }
 
 
@@ -1314,14 +1346,15 @@ abstract class CommonDocGenerator
 
                 // Enable extrafield ?
                 $enabled = 1;
-                if ($enabled && isset($extrafields->attributes[$object->table_element]['enabled'][$key]))
-                {
+                if ($enabled && isset($extrafields->attributes[$object->table_element]['enabled'][$key])){
                     $enabled = dol_eval($extrafields->attributes[$object->table_element]['enabled'][$key], 1);
                 }
-                if ($enabled && isset($extrafields->attributes[$object->table_element]['list'][$key]))
-                {
+
+                if ($enabled && isset($extrafields->attributes[$object->table_element]['list'][$key])){
                     $enabled = dol_eval($extrafields->attributes[$object->table_element]['list'][$key], 1);
                 }
+
+                // TODO : add extrafields $enabled from extrafield config panel
 
                 // Load language if required
                 if (!empty($extrafields->attributes[$object->table_element]['langfile'][$key])) $outputlangs->load($extrafields->attributes[$object->table_element]['langfile'][$key]);

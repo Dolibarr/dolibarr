@@ -418,6 +418,14 @@ class pdf_cyan extends ModelePDFPropales
 						if (!empty($salerepobj->signature)) $notetoshow = dol_concatdesc($notetoshow, $salerepobj->signature);
 					}
 				}
+
+                // Extrafields in note
+                $extranote = $this->getExtrafieldsInHtml($object, $outputlangs);
+                if (!empty($extranote))
+                {
+                    $notetoshow = dol_concatdesc($notetoshow, $extranote);
+                }
+
 				if (!empty($conf->global->MAIN_ADD_CREATOR_IN_NOTE) && $object->user_author_id > 0)
 				{
 				    $tmpuser = new User($this->db);

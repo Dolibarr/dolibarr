@@ -447,6 +447,13 @@ class pdf_sponge extends ModelePDFFactures
 	                }
 	            }
 
+	            // Extrafields in note
+                $extranote = $this->getExtrafieldsInHtml($object, $outputlangs);
+                if (!empty($extranote))
+                {
+                    $notetoshow = dol_concatdesc($notetoshow, $extranote);
+                }
+
 	            $pagenb = $pdf->getPage();
 	            if ($notetoshow)
 	            {

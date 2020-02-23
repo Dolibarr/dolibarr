@@ -369,6 +369,13 @@ class pdf_cornas extends ModelePDFSuppliersOrders
 				// Affiche notes
 				$notetoshow = empty($object->note_public) ? '' : $object->note_public;
 
+                // Extrafields in note
+                $extranote = $this->getExtrafieldsInHtml($object, $outputlangs);
+                if (!empty($extranote))
+                {
+                    $notetoshow = dol_concatdesc($notetoshow, $extranote);
+                }
+
 				$pagenb = $pdf->getPage();
 				if ($notetoshow)
 				{

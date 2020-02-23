@@ -336,7 +336,17 @@ class pdf_espadon extends ModelePdfExpedition
 					}
 				}
 
-				if (!empty($object->note_public) || !empty($object->tracking_number))
+                // display note
+                $notetoshow = empty($object->note_public) ? '' : $object->note_public;
+
+                // Extrafields in note
+                $extranote = $this->getExtrafieldsInHtml($object, $outputlangs);
+                if (!empty($extranote))
+                {
+                    $notetoshow = dol_concatdesc($notetoshow, $extranote);
+                }
+
+				if (!empty($notetoshow) || !empty($object->tracking_number))
 				{
 					$tab_top = 88 + $height_incoterms;
 					$tab_top_alt = $tab_top;
@@ -375,10 +385,10 @@ class pdf_espadon extends ModelePdfExpedition
 					}
 
 					// Notes
-					if (!empty($object->note_public))
+					if (!empty($notetoshow))
 					{
 					    $pdf->SetFont('', '', $default_font_size - 1); // In loop to manage multi-page
-						$pdf->writeHTMLCell(190, 3, $this->posxdesc - 1, $tab_top_alt, dol_htmlentitiesbr($object->note_public), 0, 1);
+						$pdf->writeHTMLCell(190, 3, $this->posxdesc - 1, $tab_top_alt, dol_htmlentitiesbr($notetoshow), 0, 1);
 					}
 
 					$nexY = $pdf->GetY();
