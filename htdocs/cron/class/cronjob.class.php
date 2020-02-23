@@ -1320,9 +1320,9 @@ class Cronjob extends CommonObject
 			if ($processing) $moretext = ' ('.$langs->trans("Running").')';
 			elseif ($lastresult) $moretext .= ' ('.$langs->trans("Error").')';
 
-			$this->labelStatus[self::STATUS_DISABLED] = $langs->trans('Draft').$moretext;
+			$this->labelStatus[self::STATUS_DISABLED] = $langs->trans('Disabled').$moretext;
 			$this->labelStatus[self::STATUS_ENABLED] = $langs->trans('Enabled').$moretext;
-			$this->labelStatusShort[self::STATUS_DISABLED] = $langs->trans('Draft');
+			$this->labelStatusShort[self::STATUS_DISABLED] = $langs->trans('Disabled');
 			$this->labelStatusShort[self::STATUS_ENABLED] = $langs->trans('Enabled');
 		}
 

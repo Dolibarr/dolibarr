@@ -393,6 +393,7 @@ class ExtraFields
 		if (empty($required)) $required = 0;
 		if (empty($unique)) $unique = 0;
 		if (empty($alwayseditable)) $alwayseditable = 0;
+		if (empty($totalizable)) $totalizable = 0;
 
 		if (!empty($attrname) && preg_match("/^\w[a-zA-Z0-9-_]*$/", $attrname) && !is_numeric($attrname))
 		{
@@ -456,7 +457,7 @@ class ExtraFields
 			$sql .= "'".$this->db->idate(dol_now())."',";
 			$sql .= " ".($enabled ? "'".$this->db->escape($enabled)."'" : "1").",";
 			$sql .= " ".($help ? "'".$this->db->escape($help)."'" : "null").",";
-			$sql .= " ".($totalizable ? '1' : '0');
+			$sql .= " ".($totalizable ? 'TRUE' : 'FALSE');
 			$sql .= ')';
 
 			dol_syslog(get_class($this)."::create_label", LOG_DEBUG);
@@ -805,7 +806,7 @@ class ExtraFields
 			$sql .= " '".$this->db->escape($params)."',";
 			$sql .= " '".$this->db->escape($list)."', ";
 			$sql .= " '".$this->db->escape($printable)."', ";
-            $sql .= " ".$totalizable.",";
+            $sql .= " ".($totalizable ? 'TRUE' : 'FALSE').",";
 			$sql .= " ".(($default != '') ? "'".$this->db->escape($default)."'" : "null").",";
 			$sql .= " ".($computed ? "'".$this->db->escape($computed)."'" : "null").",";
 			$sql .= " ".$user->id.",";
@@ -945,7 +946,7 @@ class ExtraFields
 					$this->attributes[$tab->elementtype]['langfile'][$tab->name] = $tab->langs;
 					$this->attributes[$tab->elementtype]['list'][$tab->name] = $tab->list;
 					$this->attributes[$tab->elementtype]['printable'][$tab->name] = $tab->printable;
-                    $this->attributes[$tab->elementtype]['totalizable'][$tab->name] = $tab->totalizable;
+                    $this->attributes[$tab->elementtype]['totalizable'][$tab->name] = ($tab->totalizable ? 1 : 0);
 					$this->attributes[$tab->elementtype]['entityid'][$tab->name] = $tab->entity;
 					$this->attributes[$tab->elementtype]['enabled'][$tab->name] = $tab->enabled;
 					$this->attributes[$tab->elementtype]['help'][$tab->name] = $tab->help;
