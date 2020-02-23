@@ -190,7 +190,12 @@ if ($action == 'valid' && $user->rights->facture->creer)
 
 		$constantforkey = 'CASHDESK_ID_WAREHOUSE'.$_SESSION["takeposterminal"];
 		dol_syslog("Validate invoice with stock change into warehouse defined into constant ".$constantforkey." = ".$conf->global->$constantforkey);
-		$res = $invoice->validate($user, '', $conf->global->$constantforkey);
+		$batch_rule = 0;
+		if (!empty($conf->productbatch->enabled) && !empty($conf->global->CASHDESK_FORCE_DECREASE_STOCK)) {
+			require_once DOL_DOCUMENT_ROOT . '/product/class/productbatch.class.php';
+			$batch_rule = Productbatch::BATCH_RULE_SELLBY_EATBY_DATES_FIRST;
+		}
+		$res = $invoice->validate($user, '', $conf->global->$constantforkey, 0, $batch_rule);
 
 		$conf->global->STOCK_CALCULATE_ON_BILL = $savconst;
 	}
