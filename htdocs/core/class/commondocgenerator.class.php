@@ -1160,9 +1160,10 @@ abstract class CommonDocGenerator
      *
      *  @param	object		$object    	line of common object
      *  @param Translate $outputlangs    Output language
+     *  @param array $params    array of additionals parameters
      *  @return	double  max y value
      */
-    public function getExtrafieldsInHtml($object, $outputlangs)
+    public function getExtrafieldsInHtml($object, $outputlangs, $params = array())
     {
         global $hookmanager;
 
@@ -1174,6 +1175,31 @@ abstract class CommonDocGenerator
         if(empty($this->extrafieldsCache)){ $this->extrafieldsCache = new ExtraFields($this->db); }
         if(empty($this->extrafieldsCache->attributes[$object->table_element])){ $this->extrafieldsCache->fetch_name_optionals_label($object->table_element); }
         $extrafields = $this->extrafieldsCache;
+
+        $defaultParams = array(
+            'style'         => '',
+            'display'         => 'auto', // auto, table, list
+
+            'table'         => array(
+                'maxItemsInRow' => 2,
+                'cellspacing'   => 0,
+                'cellpadding'   => 0,
+                'border'        => 0,
+                'labelcolwidth' => '25%',
+                'arrayOfLineBreakType' => array('text', 'html')
+            ),
+
+            'list'         => array(
+                'separator' => '<br/>'
+            ),
+
+            'auto'         => array(
+                'list' => 0, // 0 for default
+                'table' => 4 // if there more than x extrafield to display
+            ),
+        );
+
+        $params = $params + $defaultParams;
 
 
         /**
@@ -1197,6 +1223,7 @@ abstract class CommonDocGenerator
                 $field->rank = intval($extrafields->attributes[$object->table_element]['pos'][$key]);
                 $field->content = $this->getExtrafieldContent($object, $key);
                 $field->label = $outputlangs->transnoentities($label);
+                $field->type = $extrafields->attributes[$object->table_element]['type'][$key];
 
                 $fields[] = $field;
             }
@@ -1204,14 +1231,86 @@ abstract class CommonDocGenerator
 
         if(!empty($fields))
         {
+            // Sort extrafields by rank
             uasort($fields, function ($a, $b) {
                 return  ($a->rank > $b->rank) ? -1 : 1;
 			}
             );
 
-            foreach ($fields as $field){
-                $html.= !empty($html)?'<br/>':'';
-                $html.= $field->label.' : '.$field->content;
+
+
+            // define some HTML content with style
+            $html.= '<style>'.$params['style'].'</style>';
+
+            // auto select display format
+            if($params['display'] == 'auto') {
+                $lastNnumbItems = 0;
+                foreach ($params['auto'] as $display => $numbItems){
+                    if($lastNnumbItems <= $numbItems && count($fields) > $numbItems){
+                        $lastNnumbItems = $numbItems;
+                        $params['display'] = $display;
+                    }
+                }
+            }
+
+            if($params['display'] == 'list') {
+                // Display in list format
+                foreach ($fields as $field) {
+                    $html .= !empty($html)?$params['list']['separator']:'';
+                    $html .= '<strong>' . $field->label . ' : </strong>';
+                    $html .= $field->content;
+                }
+            }
+            elseif($params['display'] == 'table') {
+                // Display in table format
+                $html .= '<table class="extrafield-table" cellspacing="' . $params['table']['cellspacing'] . '" cellpadding="' . $params['table']['cellpadding'] . '" border="' . $params['table']['border'] . '">';
+
+                $html .= "<tr>";
+                $itemsInRow = 0;
+                $maxItemsInRow = $params['table']['maxItemsInRow'];
+                foreach ($fields as $field) {
+                    //$html.= !empty($html)?'<br/>':'';
+                    if ($itemsInRow >= $maxItemsInRow) {
+                        // start a new line
+                        $html .= "</tr><tr>";
+                        $itemsInRow = 0;
+                    }
+
+                    // for some type we need line break
+                    if (in_array($field->type, $params['table']['arrayOfLineBreakType'])) {
+
+                        if ($itemsInRow > 0) {
+                            // close table row and empty cols
+                            for ($i = $itemsInRow; $i <= $maxItemsInRow; $i++) {
+                                $html .= "<td ></td><td></td>";
+                            }
+                            $html .= "</tr>";
+
+                            // start a new line
+                            $html .= "<tr>";
+                        }
+
+                        $itemsInRow = $maxItemsInRow;
+                        $html .= '<td colspan="' . ($maxItemsInRow * 2 - 1) . '">';
+                        $html .= '<strong>' . $field->label . ' :</strong> ';
+                        $html .= $field->content;
+                        $html .= "</td>";
+
+                    } else {
+                        $itemsInRow++;
+                        $html .= '<td width="'.$params['table']['labelcolwidth'].'" class="extrafield-label">';
+                        $html .= '<strong>' . $field->label . ' :</strong>';
+                        $html .= "</td>";
+
+
+                        $html .= '<td  class="extrafield-content">';
+                        $html .= $field->content;
+                        $html .= "</td>";
+                    }
+                }
+                $html .= "</tr>";
+
+                $html .= '</table>';
             }
         }
 
