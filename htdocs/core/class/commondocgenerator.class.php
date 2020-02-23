@@ -1187,16 +1187,7 @@ abstract class CommonDocGenerator
             foreach ($extrafields->attributes[$object->table_element]['label'] as $key => $label)
             {
                 // Enable extrafield ?
-                $enabled = 1;
-                if ($enabled && isset($extrafields->attributes[$object->table_element]['enabled'][$key])){
-                    $enabled = dol_eval($extrafields->attributes[$object->table_element]['enabled'][$key], 1);
-                }
-
-                if ($enabled && isset($extrafields->attributes[$object->table_element]['list'][$key])){
-                    $enabled = dol_eval($extrafields->attributes[$object->table_element]['list'][$key], 1);
-                }
-
-                // TODO : add extrafields enabled for display from extrafield config panel
+                $enabled = !empty($extrafields->attributes[$object->table_element]['documentpdf'][$key]);
 
                 if(empty($enabled)){
                     continue;
@@ -1338,16 +1329,8 @@ abstract class CommonDocGenerator
                 }
 
                 // Enable extrafield ?
-                $enabled = 1;
-                if ($enabled && isset($extrafields->attributes[$object->table_element]['enabled'][$key])){
-                    $enabled = dol_eval($extrafields->attributes[$object->table_element]['enabled'][$key], 1);
-                }
+                $enabled = !empty($extrafields->attributes[$object->table_element]['documentpdf'][$key]);
 
-                if ($enabled && isset($extrafields->attributes[$object->table_element]['list'][$key])){
-                    $enabled = dol_eval($extrafields->attributes[$object->table_element]['list'][$key], 1);
-                }
-
-                // TODO : add extrafields $enabled from extrafield config panel
 
                 // Load language if required
                 if (!empty($extrafields->attributes[$object->table_element]['langfile'][$key])) $outputlangs->load($extrafields->attributes[$object->table_element]['langfile'][$key]);
