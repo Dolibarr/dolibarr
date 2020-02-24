@@ -3392,7 +3392,7 @@ abstract class CommonObject
 						$classfile = 'subscription'; $classname = 'Subscription';
 					}
 					elseif ($objecttype == 'project' || $objecttype == 'projet') {
-						$classfile = 'project'; $classname = 'Project';
+						$classpath = 'projet/class'; $classfile = 'project'; $classname = 'Project';
 					}
 
 					// Here $module, $classfile and $classname are set
