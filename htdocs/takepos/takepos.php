@@ -455,7 +455,7 @@ function Search2() {
 			$("#prodesc"+i).text(data[i]['label']);
 			$("#prodivdesc"+i).show();
 			$("#proimg"+i).attr("title", titlestring);
-			$("#proimg"+i).attr("src", "genimg/?query=pro&id="+data[i]['rowid']);
+			$("#proimg"+i).attr("src", "genimg/index.php?query=pro&id="+data[i]['rowid']);
 			$("#prodiv"+i).data("rowid", data[i]['rowid']);
 			$("#prodiv"+i).data("iscat", 0);
 		}
@@ -658,7 +658,7 @@ if (empty($conf->global->TAKEPOS_HIDE_HEAD_BAR)) {
 	<div class="header">
 		<div class="topnav">
 			<div class="topnav-left">
-			<a onclick="TerminalsDialog();">
+			<a class="topnav-terminalhour" onclick="TerminalsDialog();">
 			<?php echo $langs->trans("Terminal")." ";
 			if ($_SESSION["takeposterminal"] == "") echo "1";
 			else echo $_SESSION["takeposterminal"];
@@ -808,8 +808,6 @@ if (!empty($reshook)) {
 }
 
 if ($r % 3 == 2) $menus[$r++] = array('title'=>'', 'style'=>'visibility: hidden;');
-
-$menus[$r++] = array('title'=>'<span class="fa fa-home paddingrightonly"></span><div class="trunc">'.$langs->trans("BackOffice").'</div>', 'action'=>'window.open(\''.(DOL_URL_ROOT ? DOL_URL_ROOT : '/').'\', \'_backoffice\');');
 
 if (!empty($conf->global->TAKEPOS_HIDE_HEAD_BAR)) {
 	$menus[$r++] = array('title'=>'<span class="fa fa-sign-out-alt paddingrightonly"></span><div class="trunc">'.$langs->trans("Logout").'</div>', 'action'=>'window.location.href=\''.DOL_URL_ROOT.'/user/logout.php\';');

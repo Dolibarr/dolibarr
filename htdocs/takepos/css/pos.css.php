@@ -535,6 +535,10 @@ div.description_content {
 	    z-index: 10;
 	}
 
+	.topnav input[type="text"] {
+		max-width: 100px;
+	}
+
 	.topnav-right {
 		float: unset;
 	}
