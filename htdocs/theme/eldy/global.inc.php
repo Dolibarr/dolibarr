@@ -1519,7 +1519,7 @@ div.nopadding {
 }
 
 td.nobordernopadding.widthpictotitle.opacityhigh.valignmiddle.col-picto {
-    color: rgb(<?php print $colortexttitlenotab; ?>);
+    color: var(--colortexttitlenotab);
     opacity: 0.5;
 }
 .pictotitle {
