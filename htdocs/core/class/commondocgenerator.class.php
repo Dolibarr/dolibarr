@@ -1096,7 +1096,11 @@ abstract class CommonDocGenerator
             if (empty($columnText)) return;
             $pdf->SetXY($this->getColumnContentXStart($colKey), $curY); // Set curent position
             $colDef = $this->cols[$colKey];
+			$curentCellPaddinds = $pdf->getCellPaddings();
+			$pdf->setCellPadding(0);
             $pdf->writeHTMLCell($this->getColumnContentWidth($colKey), 2, $this->getColumnContentXStart($colKey), $curY, $columnText, 0, 1, 0, true, $colDef['content']['align']);
+			$curentCellPaddinds = $pdf->getCellPaddings();
+			$pdf->setCellPaddings( $curentCellPaddinds['L'], $curentCellPaddinds['T'], $curentCellPaddinds['R'], $curentCellPaddinds['B']);
         }
     }
 
