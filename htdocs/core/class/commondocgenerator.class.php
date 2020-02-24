@@ -1436,7 +1436,6 @@ abstract class CommonDocGenerator
                 }
 
                 if (empty($hidetop)) {
-
                     // save curent cell padding
                     $curentCellPaddinds = $pdf->getCellPaddings();
                     // set cell padding with column content definition
