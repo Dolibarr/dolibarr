@@ -40,6 +40,8 @@ create table llx_commande_fournisseur_dispatch_extrafields
 
 ALTER TABLE llx_commande_fournisseur_dispatch_extrafields ADD INDEX idx_commande_fournisseur_dispatch_extrafields (fk_object);
 
+UPDATE llx_accounting_system SET fk_country = NULL, active = 0 WHERE pcg_version = 'SYSCOHADA';
+
 
 
 -- For v12
