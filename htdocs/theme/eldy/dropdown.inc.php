@@ -122,7 +122,7 @@ button.dropdown-item.global-search-item {
 .tmenu .open.dropdown, .tmenu .open.dropdown {
     background: rgba(0, 0, 0, 0.1);
 }
-.tmenu .dropdown-menu, .login_block .dropdown-menu {
+.tmenu .dropdown-menu, .login_block .dropdown-menu, .topnav .dropdown-menu {
     position: absolute;
     right: 2px;
     <?php echo $left; ?>: auto;
@@ -135,20 +135,23 @@ button.dropdown-item.global-search-item {
 .user-body {
     color: #333;
 }
-.side-nav-vert .user-menu .dropdown-menu {
+.side-nav-vert .user-menu .dropdown-menu, .topnav .user-menu .dropdown-menu {
     border-top-right-radius: 0;
     border-top-left-radius: 0;
     padding: 1px 0 0 0;
     border-top-width: 0;
     width: 300px;
 }
-.side-nav-vert .user-menu .dropdown-menu {
+.topnav .user-menu .dropdown-menu {
+	top: 50px;
+}
+.side-nav-vert .user-menu .dropdown-menu, .topnav .user-menu .dropdown-menu {
     margin-top: 0;
     border-top-left-radius: 0;
     border-top-right-radius: 0;
 }
 
-.side-nav-vert .user-menu .dropdown-menu > .user-header {
+.side-nav-vert .user-menu .dropdown-menu > .user-header, .topnav .user-menu .dropdown-menu > .user-header {
     min-height: 100px;
     padding: 10px;
     text-align: center;

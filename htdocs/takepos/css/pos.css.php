@@ -233,8 +233,10 @@ table.postablelines tr td {
     padding-top: 3px;
     padding-bottom: 3px;
 }
+
 .posinvoiceline td {
     height: 40px !important;
+    background-color: var(--colorbacklineimpair1);
 }
 
 div.paymentbordline
@@ -268,7 +270,7 @@ div.paymentbordline
 .row1withhead{
 	margin: 0 auto;
 	width: 100%;
-	height: calc(50% - 35px);
+	height: calc(40% - 50px);
 	padding-top: 5px;
 }
 
@@ -281,7 +283,7 @@ div.paymentbordline
 .row2withhead{
 	margin: 0 auto;
 	width: 100%;
-	height: 50%;
+	height: 60%;
 }
 
 .div1{
@@ -401,26 +403,51 @@ div.description_content {
 .header{
 	margin: 0 auto;
 	width: 100%;
-	height: 35px;
+	height: 50px;
 	background: rgb(60,70,100);
 }
 
+.topnav-left {
+	float: left;
+}
+.topnav-right {
+
+}
+
+.topnav div.login_block_other, .topnav div.login_block_user {
+	max-width: unset;
+	width: unset;
+}
 .topnav{
 	background: rgb(<?php echo $colorbackhmenu1 ?>);
 	background-image: linear-gradient(-45deg, <?php echo colorAdjustBrightness(colorArrayToHex(colorStringToArray($colorbackhmenu1)), '5'); ?>, rgb(<?php echo $colorbackhmenu1 ?>));
 	overflow: hidden;
 	height: 100%;
 }
+.topnav .tmenu {
+    display: block;
+}
 
 .topnav a{
 	float: left;
 	color: #f2f2f2;
-	padding: 6px 16px;
 	text-decoration: none;
+}
+.topnav .login_block_other a {
+	padding: 5px 10px;
+    margin-left: 4px;
+    font-size: 1.3em;
+}
+.topnav-right > a {
 	font-size: 17px;
 }
 
-.topnav a:hover{
+.topnav-left a {
+	padding: 7px 4px 7px 4px;
+    margin: 8px;
+    margin-left: 4px;
+}
+.topnav-left a:hover, .topnav .login_block_other a:hover {
 	background-color: #ddd;
 	color: black;
 }
@@ -434,8 +461,9 @@ div.description_content {
 	color: #000;
 	float: left;
 	border-bottom: none !important;
-	margin-top: 4px;
 	margin-left: 6px;
+	font-size: 1.3em;
+    max-width: 250px;
 }
 
 @media screen and (min-width: 892px) {
@@ -494,7 +522,19 @@ div.description_content {
 
 /* For small screens */
 
+@media screen and (max-width: 1024px) {
+	.topnav input[type="text"] {
+		max-width: 150px;
+	}
+}
+
 @media screen and (max-width: 767px) {
+	.header {
+	    position: sticky;
+	    top: 0;
+	    z-index: 10;
+	}
+
 	.topnav-right {
 		float: unset;
 	}
@@ -510,6 +550,11 @@ div.description_content {
 	div.wrapper2 {
 		width: 25%;
 	}
+
+	.row1withhead{
+		height: calc(40% - 100px);
+	}
+
 
 	div.div1 {
 		padding-bottom: 0;
@@ -528,6 +573,7 @@ div.description_content {
 	}
 
 	div.div3 {
+		margin-top: 8px;
 		height: unset;
 	}
 

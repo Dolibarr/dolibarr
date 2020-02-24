@@ -660,18 +660,25 @@ if (empty($conf->global->TAKEPOS_HIDE_HEAD_BAR)) {
 			<div class="topnav-left">
 			<a onclick="TerminalsDialog();">
 			<?php echo $langs->trans("Terminal")." ";
-			if ($_SESSION["takeposterminal"] == "") echo "1"; else echo $_SESSION["takeposterminal"];
-			echo " - ".dol_print_date(dol_now(), "dayhour");
+			if ($_SESSION["takeposterminal"] == "") echo "1";
+			else echo $_SESSION["takeposterminal"];
+			echo '<span class="hideonsmartphone"> - '.dol_print_date(dol_now(), "dayhour").'</span>';
 			?>
 			</a>
 			<a onclick="Customer();"><?php echo $langs->trans("Customer"); ?></a>
 			</div>
 			<div class="topnav-right">
+				<div class="login_block_other">
 				<input type="text" id="search" name="search" onkeyup="Search2();"  placeholder="<?php echo $langs->trans("Search"); ?>" autofocus>
 				<a onclick="ClearSearch();"><span class="fa fa-backspace"></span></a>
-				<a onclick="window.location.href='<?php echo DOL_URL_ROOT; ?>';"><span class="fas fa-sign-out-alt"></span></a>
-				<a onclick="window.location.href='<?php echo DOL_URL_ROOT; ?>/user/logout.php';"><span class="fas fa-user"></span></a>
+				<a onclick="window.location.href='<?php echo DOL_URL_ROOT; ?>';"><span class="fas fa-home"></span></a>
 				<a onclick="FullScreen();"><span class="fa fa-expand-arrows-alt"></span></a>
+				</div>
+				<div class="login_block_user">
+				<?php
+				print top_menu_user(1, DOL_URL_ROOT.'/user/logout.php');
+				?>
+				</div>
 			</div>
 		</div>
 	</div>
