@@ -1121,7 +1121,8 @@ abstract class CommonDocGenerator
      *  @param $hidedesc
      *  @param $issupplierline
      */
-    function printColDescContent($pdf, &$curY, $colKey, $object, $i, $outputlangs, $hideref = 0, $hidedesc = 0, $issupplierline = 0){
+    function printColDescContent($pdf, &$curY, $colKey, $object, $i, $outputlangs, $hideref = 0, $hidedesc = 0, $issupplierline = 0)
+	{
         // load desc col params
         $colDef = $this->cols[$colKey];
         // save curent cell padding

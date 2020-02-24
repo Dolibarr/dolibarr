@@ -2405,5 +2405,4 @@ class pdf_sponge extends ModelePDFFactures
 	        $this->cols = $hookmanager->resArray;
 	    }
 	}
-
 }
