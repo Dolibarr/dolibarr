@@ -1983,13 +1983,7 @@ a.tmenuimage:hover{
         $found = 0; $url = '';
         foreach ($conf->file->dol_document_root as $dirroot)
         {
-            if (file_exists($dirroot."/".$val."/img/".$val."_over.png"))
-            {
-                $url = dol_buildpath('/'.$val.'/img/'.$val.'_over.png', 1);
-                $found = 1;
-                break;
-            }
-    		elseif (file_exists($dirroot."/".$val."/img/".$val.".png"))    // Retro compatibilité
+    		if (file_exists($dirroot."/".$val."/img/".$val.".png"))
     		{
     			$url = dol_buildpath('/'.$val.'/img/'.$val.'.png', 1);
     			$found = 1;
@@ -2000,10 +1994,11 @@ a.tmenuimage:hover{
         if (!$found)
         {
             if (!defined('DISABLE_FONT_AWSOME')) {
-                print "/* A mainmenu entry was found but img file ".$val.".png not found (check /".$val."/img/".$val.".png), so we use a generic one */\n";
+                print "/* A mainmenu entry was found but img file ".$val.".png not found (check /".$val."/img/".$val.".png), so we use a generic one. */\n";
+ 				print "/* Overwrite this definition in your own css with a different content to use your own font awesome icon. */\n";
                 print 'div.mainmenu.'.$val.'::before {
                     content: "\f249";
-                }';
+                }'."\n";
             }
             else
             {

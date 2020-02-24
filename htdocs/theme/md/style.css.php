@@ -2051,13 +2051,7 @@ div.mainmenu.website {
 		$found = 0; $url = '';
 		foreach ($conf->file->dol_document_root as $dirroot)
 		{
-		    if (file_exists($dirroot."/".$val."/img/".$val."_over.png"))
-		    {
-		        $url = dol_buildpath('/'.$val.'/img/'.$val.'_over.png', 1);
-		        $found = 1;
-		        break;
-		    }
-		    elseif (file_exists($dirroot."/".$val."/img/".$val.".png"))    // Retro compatibilité
+		    if (file_exists($dirroot."/".$val."/img/".$val.".png"))
 			{
 			    $url = dol_buildpath('/'.$val.'/img/'.$val.'.png', 1);
 			    $found = 1;
@@ -2075,7 +2069,8 @@ div.mainmenu.website {
 		    }
 		    else
 		    {
-		        print "/* A mainmenu entry was found but img file ".$val.".png not found (check /".$val."/img/".$val.".png), so we use a generic one */\n";
+		    	print "/* A mainmenu entry was found but img file ".$val.".png not found (check /".$val."/img/".$val.".png), so we use a generic one. */\n";
+		    	print "/* Overwrite this definition in your own css with a different content to use your own font awesome icon. */\n";
 		        $url = dol_buildpath($path.'/theme/'.$theme.'/img/menus/generic'.(min($generic, 4))."_over.png", 1);
 		        print "div.mainmenu.".$val." {\n";
 		        print "	background-image: url(".$url.");\n";

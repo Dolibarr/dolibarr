@@ -464,6 +464,7 @@ div.description_content {
 	margin-left: 6px;
 	font-size: 1.3em;
     max-width: 250px;
+    border-radius: 5px;
 }
 
 @media screen and (min-width: 892px) {
