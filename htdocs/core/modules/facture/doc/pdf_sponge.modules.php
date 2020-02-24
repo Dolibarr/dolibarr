@@ -584,7 +584,7 @@ class pdf_sponge extends ModelePDFFactures
 
 			    $iniY = $tab_top + $this->tabTitleHeight + 2;
 			    $curY = $tab_top + $this->tabTitleHeight + 2;
-			    $nexY = $tab_top + $this->tabTitleHeight + 2;
+			    $nexY = $tab_top + $this->tabTitleHeight + 0;
 
 	            // Loop on each lines
 	            $pageposbeforeprintlines = $pdf->getPage();
@@ -637,37 +637,15 @@ class pdf_sponge extends ModelePDFFactures
 	                if ($this->getColumnStatus('desc'))
 	                {
     	                $pdf->startTransaction();
-    	                pdf_writelinedesc($pdf, $object, $i, $outputlangs, $this->getColumnContentWidth('desc'), 3, $this->getColumnContentXStart('desc'), $curY, $hideref, $hidedesc);
-                        $posYAfterDescription = $pdf->GetY();
 
-                        // Display extrafield if needed
-
-                        $params = array(
-                            'display'         => 'list',
-                            'printableEnable' => array(3),
-                            'printableEnableNotEmpty' => array(4)
-                        );
-                        $extrafieldDesc = $this->getExtrafieldsInHtml($object->lines[$i], $outputlangs, $params);
-                        if(!empty($extrafieldDesc)){
-                            $this->printStdColumnContent($pdf, $posYAfterDescription, 'desc', $extrafieldDesc);
-                        }
-
+                        $this->printColDescContent($pdf, $curY, 'desc', $object, $i, $outputlangs, $hideref, $hidedesc);
     	                $pageposafter = $pdf->getPage();
     	                if ($pageposafter > $pageposbefore)	// There is a pagebreak
     	                {
     	                    $pdf->rollbackTransaction(true);
     	                    $pdf->setPageOrientation('', 1, $heightforfooter); // The only function to edit the bottom margin of current page to set it.
-    	                    pdf_writelinedesc($pdf, $object, $i, $outputlangs, $this->getColumnContentWidth('desc'), 3, $this->getColumnContentXStart('desc'), $curY, $hideref, $hidedesc);
-                            $posYAfterDescription = $pdf->GetY();
-                            $params = array(
-                                'display'         => 'list',
-                                'printableEnable' => array(3),
-                                'printableEnableNotEmpty' => array(4)
-                            );
-                            $extrafieldDesc = $this->getExtrafieldsInHtml($object->lines[$i], $outputlangs, $params);
-                            if(!empty($extrafieldDesc)){
-                                $this->printStdColumnContent($pdf, $posYAfterDescription, 'desc', $extrafieldDesc);
-                            }
+
+                            $this->printColDescContent($pdf, $curY, 'desc', $object, $i, $outputlangs, $hideref, $hidedesc);
 
     	                    $pageposafter = $pdf->getPage();
     	                    $posyafter = $pdf->GetY();
@@ -695,7 +673,6 @@ class pdf_sponge extends ModelePDFFactures
     	                {
     	                    $pdf->commitTransaction();
     	                }
-    	                $posYAfterDescription = $pdf->GetY();
 	                }
 
                     $nexY = $pdf->GetY();
@@ -848,11 +825,9 @@ class pdf_sponge extends ModelePDFFactures
                         $pdf->setPage($pageposafter);
                         $pdf->SetLineStyle(array('dash'=>'1,1', 'color'=>array(80, 80, 80)));
                         //$pdf->SetDrawColor(190,190,200);
-                        $pdf->line($this->marge_gauche, $nexY + 1, $this->page_largeur - $this->marge_droite, $nexY + 1);
+                        $pdf->line($this->marge_gauche, $nexY, $this->page_largeur - $this->marge_droite, $nexY);
                         $pdf->SetLineStyle(array('dash'=>0));
                     }
-
-                    $nexY += 2; // Add space between lines
 
                     // Detect if some page were added automatically and output _tableau for past pages
                     while ($pagenb < $pageposafter) {
@@ -2242,7 +2217,7 @@ class pdf_sponge extends ModelePDFFactures
 	    // Default field style for content
 	    $this->defaultContentsFieldsStyle = array(
 	        'align' => 'R', // R,C,L
-	        'padding' => array(0.5, 1, 0.5, 1), // Like css 0 => top , 1 => right, 2 => bottom, 3 => left
+	        'padding' => array(1, 0.5, 1, 0.5), // Like css 0 => top , 1 => right, 2 => bottom, 3 => left
 	    );
 
 	    // Default field style for content
@@ -2279,10 +2254,11 @@ class pdf_sponge extends ModelePDFFactures
 	            'align' => 'L',
 	            // 'textkey' => 'yourLangKey', // if there is no label, yourLangKey will be translated to replace label
 	            // 'label' => ' ', // the final label
-	            'padding' => array(0.5, 1, 0.5, 1), // Like css 0 => top , 1 => right, 2 => bottom, 3 => left
+	            'padding' => array(0.5, 0.5, 0.5, 0.5), // Like css 0 => top , 1 => right, 2 => bottom, 3 => left
 	        ),
 	        'content' => array(
 	            'align' => 'L',
+                'padding' => array(1, 0.5, 1, 1.5), // Like css 0 => top , 1 => right, 2 => bottom, 3 => left
 	        ),
 	    );
 
@@ -2429,4 +2405,5 @@ class pdf_sponge extends ModelePDFFactures
 	        $this->cols = $hookmanager->resArray;
 	    }
 	}
+
 }

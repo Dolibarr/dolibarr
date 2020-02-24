@@ -1096,11 +1096,55 @@ abstract class CommonDocGenerator
             if (empty($columnText)) return;
             $pdf->SetXY($this->getColumnContentXStart($colKey), $curY); // Set curent position
             $colDef = $this->cols[$colKey];
+            // save curent cell padding
 			$curentCellPaddinds = $pdf->getCellPaddings();
-			$pdf->setCellPadding(0);
-            $pdf->writeHTMLCell($this->getColumnContentWidth($colKey), 2, $this->getColumnContentXStart($colKey), $curY, $columnText, 0, 1, 0, true, $colDef['content']['align']);
-			$curentCellPaddinds = $pdf->getCellPaddings();
+            // set cell padding with column content definition
+			$pdf->setCellPaddings($colDef['content']['padding'][3], $colDef['content']['padding'][0], $colDef['content']['padding'][1], $colDef['content']['padding'][2]);
+            $pdf->writeHTMLCell($colDef['width'], 2, $colDef['xStartPos'], $curY, $columnText, 0, 1, 0, true, $colDef['content']['align']);
+
+            // restore cell padding
 			$pdf->setCellPaddings($curentCellPaddinds['L'], $curentCellPaddinds['T'], $curentCellPaddinds['R'], $curentCellPaddinds['B']);
+        }
+    }
+
+
+    /**
+     *  print standard column content
+     *
+     *  @param	TCPDF		$pdf    	pdf object
+     *  @param  object      $object CommonObject
+     *  @param	string		$colKey    	the column key
+     *  @param  $i
+     *  @param  $outputlangs
+     *  @param	float		$curY    	curent Y position
+     *  @param $hideref
+     *  @param $hidedesc
+     *  @param $issupplierline
+     */
+    function printColDescContent($pdf, &$curY, $colKey, $object, $i, $outputlangs, $hideref = 0, $hidedesc = 0, $issupplierline = 0){
+        // load desc col params
+        $colDef = $this->cols[$colKey];
+        // save curent cell padding
+        $curentCellPaddinds = $pdf->getCellPaddings();
+        // set cell padding with column content definition
+        $pdf->setCellPaddings($colDef['content']['padding'][3], $colDef['content']['padding'][0], $colDef['content']['padding'][1], $colDef['content']['padding'][2]);
+
+        // line description
+        pdf_writelinedesc($pdf, $object, $i, $outputlangs, $colDef['width'], 3, $colDef['xStartPos'], $curY, $hideref, $hidedesc, $issupplierline);
+        $posYAfterDescription = $pdf->GetY() - $colDef['content']['padding'][0];
+
+        // restore cell padding
+        $pdf->setCellPaddings($curentCellPaddinds['L'], $curentCellPaddinds['T'], $curentCellPaddinds['R'], $curentCellPaddinds['B']);
+
+        // Display extrafield if needed
+        $params = array(
+            'display'         => 'list',
+            'printableEnable' => array(3),
+            'printableEnableNotEmpty' => array(4)
+        );
+        $extrafieldDesc = $this->getExtrafieldsInHtml($object->lines[$i], $outputlangs, $params);
+        if(!empty($extrafieldDesc)){
+            $this->printStdColumnContent($pdf, $posYAfterDescription, $colKey, $extrafieldDesc);
         }
     }
 
