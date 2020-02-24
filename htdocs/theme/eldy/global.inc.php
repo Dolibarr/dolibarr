@@ -1520,7 +1520,7 @@ div.nopadding {
 
 td.nobordernopadding.widthpictotitle.opacityhigh.valignmiddle.col-picto {
     color: var(--colortexttitlenotab);
-    opacity: 0.5;
+    opacity: 0.75;
 }
 .pictotitle {
 	margin-<?php echo $right; ?>: 8px;
