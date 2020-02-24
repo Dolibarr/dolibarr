@@ -3597,7 +3597,7 @@ span.dashboardlineko {
 .boxtable {
     margin-bottom: 25px !important;
     border-bottom-width: 1px;
-
+	background: var(--colorbackbody);
     border-top: <?php echo $borderwidth ?>px solid rgb(<?php echo $colortopbordertitle1 ?>);
 	/* border-top: 2px solid var(--colorbackhmenu1) !important; */
 }
