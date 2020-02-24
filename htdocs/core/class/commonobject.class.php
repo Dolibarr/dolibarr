@@ -3391,6 +3391,9 @@ abstract class CommonObject
 					elseif ($objecttype == 'subscription') {
 						$classfile = 'subscription'; $classname = 'Subscription';
 					}
+					elseif ($objecttype == 'project' || $objecttype == 'projet') {
+						$classfile = 'project'; $classname = 'Project';
+					}
 
 					// Here $module, $classfile and $classname are set
 					if ($conf->$module->enabled && (($element != $this->element) || $alsosametype))
