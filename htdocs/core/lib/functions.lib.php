@@ -1145,15 +1145,16 @@ function dol_syslog($message, $level = LOG_INFO, $ident = 0, $suffixinfilename =
  *	@param	int		$pictoisfullpath	If 1, image path is a full path. If you set this to 1, you can use url returned by dol_buildpath('/mymodyle/img/myimg.png',1) for $picto.
  *  @param	string	$morehtmlright		Add more html content on right of tabs title
  *  @param	string	$morecss			More Css
+ *  @param	int		$limittoshow		Limit number of tabs to show. Use 0 to use automatic default value.
  * 	@return	void
  */
-function dol_fiche_head($links = array(), $active = '0', $title = '', $notab = 0, $picto = '', $pictoisfullpath = 0, $morehtmlright = '', $morecss = '')
+function dol_fiche_head($links = array(), $active = '0', $title = '', $notab = 0, $picto = '', $pictoisfullpath = 0, $morehtmlright = '', $morecss = '', $limittoshow = 0)
 {
-	print dol_get_fiche_head($links, $active, $title, $notab, $picto, $pictoisfullpath, $morehtmlright, $morecss);
+	print dol_get_fiche_head($links, $active, $title, $notab, $picto, $pictoisfullpath, $morehtmlright, $morecss, $limittoshow);
 }
 
 /**
- *  Show tab header of a card
+ *  Show tabs of a record
  *
  *	@param	array	$links				Array of tabs
  *	@param	string	$active     		Active tab name
@@ -1163,9 +1164,10 @@ function dol_fiche_head($links = array(), $active = '0', $title = '', $notab = 0
  *	@param	int		$pictoisfullpath	If 1, image path is a full path. If you set this to 1, you can use url returned by dol_buildpath('/mymodyle/img/myimg.png',1) for $picto.
  *  @param	string	$morehtmlright		Add more html content on right of tabs title
  *  @param	string	$morecss			More Css
+ *  @param	int		$limittoshow		Limit number of tabs to show. Use 0 to use automatic default value.
  * 	@return	string
  */
-function dol_get_fiche_head($links = array(), $active = '', $title = '', $notab = 0, $picto = '', $pictoisfullpath = 0, $morehtmlright = '', $morecss = '')
+function dol_get_fiche_head($links = array(), $active = '', $title = '', $notab = 0, $picto = '', $pictoisfullpath = 0, $morehtmlright = '', $morecss = '', $limittoshow = 0)
 {
 	global $conf, $langs, $hookmanager;
 
@@ -1202,11 +1204,13 @@ function dol_get_fiche_head($links = array(), $active = '', $title = '', $notab 
 		if (count($keys)) $maxkey = max($keys);
 	}
 
-	if (!empty($conf->dol_optimize_smallscreen)) $conf->global->MAIN_MAXTABS_IN_CARD = 2;
-
 	// Show tabs
 	// if =0 we don't use the feature
-	$limittoshow = (empty($conf->global->MAIN_MAXTABS_IN_CARD) ? 99 : $conf->global->MAIN_MAXTABS_IN_CARD);
+	if (empty($limittoshow)) {
+		$limittoshow = (empty($conf->global->MAIN_MAXTABS_IN_CARD) ? 99 : $conf->global->MAIN_MAXTABS_IN_CARD);
+	}
+	if (!empty($conf->dol_optimize_smallscreen)) $limittoshow = 2;
+
 	$displaytab = 0;
 	$nbintab = 0;
 	$popuptab = 0;
