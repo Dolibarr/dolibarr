@@ -1400,7 +1400,7 @@ abstract class CommonDocGenerator
     /**
      * Print standard column content
      *
-     * @param PDF	    $pdf            Pdf object
+     * @param TCPDI	    $pdf            Pdf object
      * @param float     $tab_top        Tab top position
      * @param float     $tab_height     Default tab height
      * @param Translate $outputlangs    Output language
@@ -1436,18 +1436,27 @@ abstract class CommonDocGenerator
                 }
 
                 if (empty($hidetop)) {
-                    $pdf->SetXY($colDef['xStartPos'] + $colDef['title']['padding'][3], $tab_top + $colDef['title']['padding'][0]);
-                    $textWidth = $colDef['width'] - $colDef['title']['padding'][3] - $colDef['title']['padding'][1];
+
+                    // save curent cell padding
+                    $curentCellPaddinds = $pdf->getCellPaddings();
+                    // set cell padding with column content definition
+                    $pdf->setCellPaddings($colDef['content']['padding'][3], $colDef['content']['padding'][0], $colDef['content']['padding'][1], $colDef['content']['padding'][2]);
+
+                    $pdf->SetXY($colDef['xStartPos'], $tab_top);
+                    $textWidth = $colDef['width'];
                     $pdf->MultiCell($textWidth, 2, $colDef['title']['label'], '', $colDef['title']['align']);
 
                     global $outputlangsbis;
                     if (is_object($outputlangsbis)) {
-                    	$pdf->SetXY($colDef['xStartPos'] + $colDef['title']['padding'][3], $tab_top + $colDef['title']['padding'][0] + 4);
+                    	$pdf->SetXY($colDef['xStartPos'], $pdf->GetY() - $colDef['content']['padding'][0]);
                     	$textbis = $outputlangsbis->transnoentities($colDef['title']['textkey']);
                     	$pdf->MultiCell($textWidth, 2, $textbis, '', $colDef['title']['align']);
                     }
 
-                    $this->tabTitleHeight = max($pdf->GetY() - $tab_top + $colDef['title']['padding'][2], $this->tabTitleHeight);
+                    $this->tabTitleHeight = max($pdf->GetY() - $tab_top, $this->tabTitleHeight);
+
+                    // restore cell padding
+                    $pdf->setCellPaddings($curentCellPaddinds['L'], $curentCellPaddinds['T'], $curentCellPaddinds['R'], $curentCellPaddinds['B']);
                 }
             }
         }
