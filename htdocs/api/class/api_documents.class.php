@@ -418,8 +418,9 @@ class Documents extends DolibarrApi
 	/**
 	 * Upload a file.
 	 *
-	 * Test sample 1: { "filename": "mynewfile.txt", "modulepart": "facture", "ref": "FA1701-001", "subdir": "", "filecontent": "content text", "fileencoding": "", "overwriteifexists": "0" }.
-	 * Test sample 2: { "filename": "mynewfile.txt", "modulepart": "medias", "ref": "", "subdir": "image/mywebsite", "filecontent": "Y29udGVudCB0ZXh0Cg==", "fileencoding": "base64", "overwriteifexists": "0" }.
+	 * Test sample for invoice: { "filename": "mynewfile.txt", "modulepart": "invoice", "ref": "FA1701-001", "subdir": "", "filecontent": "content text", "fileencoding": "", "overwriteifexists": "0" }.
+	 * Test sample for supplier invoice: { "filename": "mynewfile.txt", "modulepart": "supplier_invoice", "ref": "FA1701-001", "subdir": "", "filecontent": "content text", "fileencoding": "", "overwriteifexists": "0" }.
+	 * Test sample for medias file: { "filename": "mynewfile.txt", "modulepart": "medias", "ref": "", "subdir": "image/mywebsite", "filecontent": "Y29udGVudCB0ZXh0Cg==", "fileencoding": "base64", "overwriteifexists": "0" }.
 	 *
 	 * @param   string  $filename           Name of file to create ('FA1705-0123.txt')
 	 * @param   string  $modulepart         Name of module or area concerned by file upload ('facture', 'project', 'project_task', ...)
@@ -475,6 +476,13 @@ class Documents extends DolibarrApi
 
 				require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
 				$object = new Facture($this->db);
+			}
+			elseif ($modulepart == 'facture_fournisseur' || $modulepart == 'supplier_invoice')
+			{
+				$modulepart = 'supplier_invoice';
+
+				require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.facture.class.php';
+				$object = new FactureFournisseur($this->db);
 			}
 			elseif ($modulepart == 'project')
 			{
@@ -533,6 +541,12 @@ class Documents extends DolibarrApi
 			if (!($object->id > 0))
 			{
    				throw new RestException(404, 'The object '.$modulepart." with ref '".$ref."' was not found.");
+			}
+
+			// Special cases that need to use get_exdir to get real dir of object
+			// If future, all object should use this to define path of documents.
+			if ($modulepart == 'supplier_invoice') {
+				$tmpreldir = get_exdir($object->id, 2, 0, 0, $object, 'invoice_supplier');
 			}
 
 			$relativefile = $tmpreldir.dol_sanitizeFileName($object->ref);
