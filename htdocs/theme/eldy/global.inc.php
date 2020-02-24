@@ -124,7 +124,7 @@ select.vmenusearchselectcombo {
 	background-color: unset;
 }
 
-th.wrapcolumntitle.liste_titre.right, td.wrapcolumntitle.liste_titre.right {
+th.wrapcolumntitle.liste_titre:not(.maxwidthsearch), td.wrapcolumntitle.liste_titre:not(.maxwidthsearch) {
     overflow: hidden;
     white-space: nowrap;
     max-width: 120px;
