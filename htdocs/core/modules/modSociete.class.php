@@ -712,7 +712,7 @@ class modSociete extends DolibarrModules
             'sr.domiciliation' => 'bank branch address eg. "PARIS"',
             'sr.proprio' => 'name on the bank account',
             'sr.owner_address' => 'address of account holder',
-            'sr.default_rib' => '1 (default account) / 0 (not default)'
+            'sr.default_rib' => '1 (default account) / 0 (not default)',
             'sr.rum' => 'RUM code'
         );
 
