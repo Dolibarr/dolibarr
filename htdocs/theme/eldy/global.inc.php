@@ -334,6 +334,13 @@ select.flat, form.flat select {
 .opacitytransp {
 	opacity: 0;
 }
+.colorwhite {
+	color: #fff;
+}
+.colorblack {
+	color: #000;
+}
+
 select:invalid {
 	color: gray;
 }
@@ -367,6 +374,7 @@ fieldset { border: 1px solid #AAAAAA !important; }
 input#onlinepaymenturl, input#directdownloadlink {
 	opacity: 0.7;
 }
+
 
 div#moretabsList, div#moretabsListaction {
     z-index: 5;

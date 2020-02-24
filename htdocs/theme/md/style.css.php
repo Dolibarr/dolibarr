@@ -279,6 +279,12 @@ textarea.cke_source:focus
 	box-shadow: none;
 }
 
+th.wrapcolumntitle.liste_titre:not(.maxwidthsearch), td.wrapcolumntitle.liste_titre:not(.maxwidthsearch) {
+    overflow: hidden;
+    white-space: nowrap;
+    max-width: 120px;
+    text-overflow: ellipsis;
+}
 .liste_titre input[name=month_date_when], .liste_titre input[name=monthvalid], .liste_titre input[name=search_ordermonth], .liste_titre input[name=search_deliverymonth],
 .liste_titre input[name=search_smonth], .liste_titre input[name=search_month], .liste_titre input[name=search_emonth], .liste_titre input[name=smonth], .liste_titre input[name=month],
 .liste_titre input[name=month_lim], .liste_titre input[name=month_start], .liste_titre input[name=month_end], .liste_titre input[name=month_create],
@@ -465,6 +471,13 @@ select.flat, form.flat select {
 .opacitytransp {
 	opacity: 0;
 }
+.colorwhite {
+	color: #fff;
+}
+.colorblack {
+	color: #000;
+}
+
 select:invalid {
 	color: gray;
 }
