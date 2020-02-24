@@ -102,7 +102,7 @@ if (empty($reshook))
 		$search_array_options = array();
     }
 
-    if (GETPOST('change_chart', 'alpha') && (GETPOST('valid_change_chart', 'int') || empty($conf->use_javascript_ajax)))
+    if (GETPOST('change_chart', 'alpha') /*&& (GETPOST('valid_change_chart', 'int') || empty($conf->use_javascript_ajax))*/)
     {
         $chartofaccounts = GETPOST('chartofaccounts', 'int');
 
@@ -272,6 +272,7 @@ if ($resql)
 	if ($search_pcgsubtype) $param .= '&search_pcgsubtype='.urlencode($search_pcgsubtype);
     if ($optioncss != '') $param .= '&optioncss='.$optioncss;
 
+    /*
     if (!empty($conf->use_javascript_ajax))
     {
 	    print '<!-- Add javascript to update a flag when we select "Change plan" -->
@@ -293,6 +294,7 @@ if ($resql)
 			});
 	    	</script>';
     }
+    */
 
 	print '<form method="POST" id="searchFormList" action="'.$_SERVER["PHP_SELF"].'">';
 	if ($optioncss != '') print '<input type="hidden" name="optioncss" value="'.$optioncss.'">';
