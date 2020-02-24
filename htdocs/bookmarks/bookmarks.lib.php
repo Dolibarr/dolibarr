@@ -65,7 +65,7 @@ function printDropdownBookmarksList()
 
     // Url to list bookmark
     $listbtn = '<a class="top-menu-dropdown-link" title="'.$langs->trans('AddThisPageToBookmarks').'" href="'.DOL_URL_ROOT.'/bookmarks/list.php" >';
-    $listbtn .= '<span class="fa fa-list"></span> '.$langs->trans('Bookmarks').'</a>';
+    $listbtn .= '<span class="fa fa-list paddingright"></span>'.$langs->trans('Bookmarks').'</a>';
 
     // Url to go on create new bookmark page
     $newbtn = '';
@@ -74,7 +74,7 @@ function printDropdownBookmarksList()
         //$urltoadd=DOL_URL_ROOT.'/bookmarks/card.php?action=create&amp;urlsource='.urlencode($url).'&amp;url='.urlencode($url);
         $urltoadd = DOL_URL_ROOT.'/bookmarks/card.php?action=create&amp;url='.urlencode($url);
         $newbtn .= '<a class="top-menu-dropdown-link" title="'.$langs->trans('AddThisPageToBookmarks').'" href="'.dol_escape_htmltag($urltoadd).'" >';
-        $newbtn .= img_picto('', 'bookmark').' '.dol_escape_htmltag($langs->trans('AddThisPageToBookmarks')).'</a>';
+        $newbtn .= img_picto('', 'bookmark', '', false, 0, 0, '', 'paddingright').dol_escape_htmltag($langs->trans('AddThisPageToBookmarks')).'</a>';
     }
 
     $bookmarkList = '<div id="dropdown-bookmarks-list" >';
