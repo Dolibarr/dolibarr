@@ -1438,16 +1438,25 @@ abstract class CommonDocGenerator
                 if (empty($hidetop)) {
                     // save curent cell padding
                     $curentCellPaddinds = $pdf->getCellPaddings();
-                    // set cell padding with column content definition
-                    $pdf->setCellPaddings($colDef['content']['padding'][3], $colDef['content']['padding'][0], $colDef['content']['padding'][1], $colDef['content']['padding'][2]);
+
+                    global $outputlangsbis;
+                    if (is_object($outputlangsbis)) {
+                        // set cell padding with column title definition
+                        $pdf->setCellPaddings($colDef['title']['padding'][3], $colDef['title']['padding'][0], $colDef['title']['padding'][1], 0.5);
+                    }
+                    else{
+                        // set cell padding with column title definition
+                        $pdf->setCellPaddings($colDef['title']['padding'][3], $colDef['title']['padding'][0], $colDef['title']['padding'][1], $colDef['title']['padding'][2]);
+                    }
 
                     $pdf->SetXY($colDef['xStartPos'], $tab_top);
                     $textWidth = $colDef['width'];
                     $pdf->MultiCell($textWidth, 2, $colDef['title']['label'], '', $colDef['title']['align']);
 
-                    global $outputlangsbis;
+
                     if (is_object($outputlangsbis)) {
-                    	$pdf->SetXY($colDef['xStartPos'], $pdf->GetY() - $colDef['content']['padding'][0]);
+                        $pdf->setCellPaddings($colDef['title']['padding'][3], 0, $colDef['title']['padding'][1], $colDef['title']['padding'][2]);
+                    	$pdf->SetXY($colDef['xStartPos'], $pdf->GetY());
                     	$textbis = $outputlangsbis->transnoentities($colDef['title']['textkey']);
                     	$pdf->MultiCell($textWidth, 2, $textbis, '', $colDef['title']['align']);
                     }
