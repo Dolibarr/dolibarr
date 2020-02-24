@@ -4086,11 +4086,22 @@ function getTitleFieldOfList($name, $thead = 0, $file = "", $field = "", $begin 
 	$tmpfield = explode(',', $field);
 	$field1 = trim($tmpfield[0]); // If $field is 'd.datep,d.id', it becomes 'd.datep'
 
+	if (empty($conf->global->MAIN_DISABLE_WRAPPING_ON_COLUMN_TITLE)) {
+		$prefix = 'wrapcolumntitle '.$prefix;
+	}
 	//var_dump('field='.$field.' field1='.$field1.' sortfield='.$sortfield.' sortfield1='.$sortfield1);
 	// If field is used as sort criteria we use a specific css class liste_titre_sel
 	// Example if (sortfield,field)=("nom","xxx.nom") or (sortfield,field)=("nom","nom")
-	if ($field1 && ($sortfield1 == $field1 || $sortfield1 == preg_replace("/^[^\.]+\./", "", $field1))) $out .= '<'.$tag.' class="'.$prefix.'liste_titre_sel" '.$moreattrib.'>';
-	else $out .= '<'.$tag.' class="'.$prefix.'liste_titre" '.$moreattrib.'>';
+	if ($field1 && ($sortfield1 == $field1 || $sortfield1 == preg_replace("/^[^\.]+\./", "", $field1))) {
+		$out .= '<'.$tag.' class="'.$prefix.'liste_titre_sel" '.$moreattrib;
+		$out .= (empty($conf->global->MAIN_DISABLE_WRAPPING_ON_COLUMN_TITLE) ? ' title="'.dol_escape_htmltag($langs->trans($name)).'"' : '');
+		$out .= '>';
+	}
+	else {
+		$out .= '<'.$tag.' class="'.$prefix.'liste_titre" '.$moreattrib;
+		$out .= (empty($conf->global->MAIN_DISABLE_WRAPPING_ON_COLUMN_TITLE) ? ' title="'.dol_escape_htmltag($langs->trans($name)).'"' : '');
+		$out .= '>';
+	}
 
 	if (empty($thead) && $field && empty($disablesortlink))    // If this is a sort field
 	{
@@ -4123,7 +4134,9 @@ function getTitleFieldOfList($name, $thead = 0, $file = "", $field = "", $begin 
 			}
 		}
 		$sortordertouseinlink = preg_replace('/,$/', '', $sortordertouseinlink);
-		$out .= '<a class="reposition" href="'.$file.'?sortfield='.$field.'&sortorder='.$sortordertouseinlink.'&begin='.$begin.$options.'">';
+		$out .= '<a class="reposition" href="'.$file.'?sortfield='.$field.'&sortorder='.$sortordertouseinlink.'&begin='.$begin.$options.'"';
+		//$out .= (empty($conf->global->MAIN_DISABLE_WRAPPING_ON_COLUMN_TITLE) ? ' title="'.dol_escape_htmltag($langs->trans($name)).'"' : '');
+		$out .= '>';
 	}
 
 	if ($tooltip) $out .= $form->textwithpicto($langs->trans($name), $langs->trans($tooltip));

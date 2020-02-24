@@ -1863,7 +1863,7 @@ function top_menu_user($hideloginname = 0, $urllogout = '')
         <a href="'.DOL_URL_ROOT.'/user/card.php?id='.$user->id.'" class="dropdown-toggle login-dropdown-a" data-toggle="dropdown">';
     $btnUser .= $userImage;
     if (empty($hideloginname)) {
-    	$btnUser .= '<span class="hidden-xs maxwidth200 atoploginusername hideonsmartphone">'.dol_trunc($user->firstname ? $user->firstname : $user->login, 10).'</span>';
+    	$btnUser .= '<span class="hidden-xs maxwidth200 atoploginusername hideonsmartphone paddingleft">'.dol_trunc($user->firstname ? $user->firstname : $user->login, 10).'</span>';
     }
     $btnUser .= '
         </a>
