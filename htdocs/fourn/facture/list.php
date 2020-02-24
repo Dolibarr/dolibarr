@@ -849,6 +849,9 @@ if ($resql)
 			$totalpay = $paiement + $totalcreditnotes + $totaldeposits;
 			$remaintopay = $obj->total_ttc - $totalpay;
 
+			$facturestatic->alreadypaid = ($paiement ? $paiement : 0);
+
+
             //If invoice has been converted and the conversion has been used, we dont have remain to pay on invoice
             if ($facturestatic->type == FactureFournisseur::TYPE_CREDIT_NOTE) {
                 if ($facturestatic->isCreditNoteUsed()) {
@@ -1081,7 +1084,6 @@ if ($resql)
 			if (!empty($arrayfields['f.fk_statut']['checked']))
 			{
 				print '<td class="right nowrap">';
-				// TODO $paiement is not yet defined
 				print $facturestatic->LibStatut($obj->paye, $obj->fk_statut, 5, $paiement, $obj->type);
 				print "</td>";
 				if (!$i) $totalarray['nbfield']++;

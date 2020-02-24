@@ -1397,6 +1397,9 @@ class Facture extends CommonInvoice
             if (!empty($this->total_ttc))
                 $label .= '<br><b>'.$langs->trans('AmountTTC').':</b> '.price($this->total_ttc, 0, $langs, 0, -1, -1, $conf->currency);
     		if ($moretitle) $label .= ' - '.$moretitle;
+    		if (isset($this->statut) && isset($this->alreadypaid)) {
+    			$label .= '<br><b>'.$langs->trans("Status").":</b> ".$this->getLibStatut(5, $this->alreadypaid);
+    		}
         }
 
 		$linkclose = ($target ? ' target="'.$target.'"' : '');

@@ -2417,7 +2417,9 @@ class Societe extends CommonObject
 			$label .= '<br><b>'.$langs->trans('CustomerAccountancyCode').':</b> '.($this->code_compta ? $this->code_compta : $this->code_compta_client);
 		if (!empty($conf->accounting->enabled) && $this->fournisseur)
 			$label .= '<br><b>'.$langs->trans('SupplierAccountancyCode').':</b> '.$this->code_compta_fournisseur;
-
+		if (isset($this->status)) {
+			$label .= '<br><b>'.$langs->trans("Status").":</b> ".$this->getLibStatut(5);
+		}
 		$label .= '</div>';
 
 		// Add type of canvas

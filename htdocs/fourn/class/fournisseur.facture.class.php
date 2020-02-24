@@ -2358,6 +2358,9 @@ class FactureFournisseur extends CommonInvoice
         elseif ($this->type == self::TYPE_CREDIT_NOTE) $label = $langs->transnoentitiesnoconv("ShowInvoiceAvoir").': '.$this->ref;
         elseif ($this->type == self::TYPE_DEPOSIT)     $label = $langs->transnoentitiesnoconv("ShowInvoiceDeposit").': '.$this->ref;
         if ($moretitle) $label .= ' - '.$moretitle;
+        if (isset($this->statut) && isset($this->alreadypaid)) {
+        	$label .= '<br><b>'.$langs->trans("Status").":</b> ".$this->getLibStatut(5, $this->alreadypaid);
+        }
 
         $ref = $this->ref;
         if (empty($ref)) $ref = $this->id;
