@@ -1112,16 +1112,17 @@ abstract class CommonDocGenerator
      *  print standard column content
      *
      *  @param	TCPDF		$pdf    	pdf object
-     *  @param  object      $object CommonObject
+     *  @param	float		$curY    	curent Y position
      *  @param	string		$colKey    	the column key
+     *  @param  object      $object CommonObject
      *  @param  $i
      *  @param  $outputlangs
-     *  @param	float		$curY    	curent Y position
      *  @param $hideref
      *  @param $hidedesc
      *  @param $issupplierline
+     *  @return null
      */
-    function printColDescContent($pdf, &$curY, $colKey, $object, $i, $outputlangs, $hideref = 0, $hidedesc = 0, $issupplierline = 0)
+    public function printColDescContent($pdf, &$curY, $colKey, $object, $i, $outputlangs, $hideref = 0, $hidedesc = 0, $issupplierline = 0)
 	{
         // load desc col params
         $colDef = $this->cols[$colKey];

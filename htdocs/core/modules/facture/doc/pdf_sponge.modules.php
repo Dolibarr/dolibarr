@@ -582,9 +582,7 @@ class pdf_sponge extends ModelePDFFactures
 			    $this->pdfTabTitles($pdf, $tab_top, $tab_height, $outputlangs, $hidetop);
 			    $pdf->rollbackTransaction(true);
 
-			    $iniY = $tab_top + $this->tabTitleHeight + 2;
-			    $curY = $tab_top + $this->tabTitleHeight + 2;
-			    $nexY = $tab_top + $this->tabTitleHeight + 0;
+			    $nexY = $tab_top + $this->tabTitleHeight;
 
 	            // Loop on each lines
 	            $pageposbeforeprintlines = $pdf->getPage();
@@ -605,7 +603,6 @@ class pdf_sponge extends ModelePDFFactures
 
 	                $showpricebeforepagebreak = 1;
 	                $posYAfterImage = 0;
-	                $posYAfterDescription = 0;
 
 	                if ($this->getColumnStatus('photo'))
 	                {
@@ -640,6 +637,7 @@ class pdf_sponge extends ModelePDFFactures
 
                         $this->printColDescContent($pdf, $curY, 'desc', $object, $i, $outputlangs, $hideref, $hidedesc);
     	                $pageposafter = $pdf->getPage();
+
     	                if ($pageposafter > $pageposbefore)	// There is a pagebreak
     	                {
     	                    $pdf->rollbackTransaction(true);
