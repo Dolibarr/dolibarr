@@ -1115,7 +1115,7 @@ abstract class CommonDocGenerator
      *  @param	float		$curY    	curent Y position
      *  @param	string		$colKey    	the column key
      *  @param  object      $object CommonObject
-     *  @param  int $i
+     *  @param  int         $i  the $object->lines array key
      *  @param  Translate $outputlangs    Output language
      *  @param  int $hideref hide ref
      *  @param  int $hidedesc hide desc
