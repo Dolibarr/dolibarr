@@ -1397,6 +1397,9 @@ class Facture extends CommonInvoice
             if (!empty($this->total_ttc))
                 $label .= '<br><b>'.$langs->trans('AmountTTC').':</b> '.price($this->total_ttc, 0, $langs, 0, -1, -1, $conf->currency);
     		if ($moretitle) $label .= ' - '.$moretitle;
+    		if (isset($this->statut) && isset($this->alreadypaid)) {
+    			$label .= '<br><b>'.$langs->trans("Status").":</b> ".$this->getLibStatut(5, $this->alreadypaid);
+    		}
         }
 
 		$linkclose = ($target ? ' target="'.$target.'"' : '');
@@ -2419,12 +2422,23 @@ class Facture extends CommonInvoice
 	 * @param   string	$force_number	Reference to force on invoice
 	 * @param	int		$idwarehouse	Id of warehouse to use for stock decrease if option to decreasenon stock is on (0=no decrease)
 	 * @param	int		$notrigger		1=Does not execute triggers, 0= execute triggers
+	 * @param	int		$batch_rule		[=0] 0 not decrement batch, else batch rule to use
+	 *                                 	1=take in batches ordered by sellby and eatby dates
      * @return	int						<0 if KO, 0=Nothing done because invoice is not a draft, >0 if OK
 	 */
-    public function validate($user, $force_number = '', $idwarehouse = 0, $notrigger = 0)
+    public function validate($user, $force_number = '', $idwarehouse = 0, $notrigger = 0, $batch_rule = 0)
 	{
 		global $conf, $langs;
 		require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
+		$productStatic = null;
+		$warehouseStatic = null;
+		if ($batch_rule > 0) {
+			require_once DOL_DOCUMENT_ROOT . '/product/class/product.class.php';
+			require_once DOL_DOCUMENT_ROOT . '/product/class/productbatch.class.php';
+			require_once DOL_DOCUMENT_ROOT . '/product/stock/class/entrepot.class.php';
+			$productStatic = new Product($this->db);
+			$warehouseStatic = new Entrepot($this->db);
+		}
 
 		$now = dol_now();
 
@@ -2566,11 +2580,94 @@ class Facture extends CommonInvoice
 							$mouvP = new MouvementStock($this->db);
 							$mouvP->origin = &$this;
 							// We decrease stock for product
-							if ($this->type == self::TYPE_CREDIT_NOTE) $result = $mouvP->reception($user, $this->lines[$i]->fk_product, $idwarehouse, $this->lines[$i]->qty, 0, $langs->trans("InvoiceValidatedInDolibarr", $num));
-							else $result = $mouvP->livraison($user, $this->lines[$i]->fk_product, $idwarehouse, $this->lines[$i]->qty, $this->lines[$i]->subprice, $langs->trans("InvoiceValidatedInDolibarr", $num));
-							if ($result < 0) {
-								$error++;
-								$this->error = $mouvP->error;
+							if ($this->type == self::TYPE_CREDIT_NOTE) {
+								$result = $mouvP->reception($user, $this->lines[$i]->fk_product, $idwarehouse, $this->lines[$i]->qty, 0, $langs->trans("InvoiceValidatedInDolibarr", $num));
+								if ($result < 0) {
+									$error++;
+									$this->error = $mouvP->error;
+								}
+							} else {
+								$is_batch_line = false;
+								if ($batch_rule > 0) {
+									$productStatic->fetch($this->lines[$i]->fk_product);
+									if ($productStatic->hasbatch()) {
+										$is_batch_line = true;
+										$product_qty_remain = $this->lines[$i]->qty;
+
+										$sortfield = null;
+										$sortorder = null;
+										// find all batch order by sellby (DLC) and eatby dates (DLUO) first
+										if ($batch_rule == Productbatch::BATCH_RULE_SELLBY_EATBY_DATES_FIRST) {
+											$sortfield = 'pl.sellby,pl.eatby,pb.qty,pl.rowid';
+											$sortorder = 'ASC,ASC,ASC,ASC';
+										}
+
+										$resBatchList = Productbatch::findAllForProduct($this->db, $productStatic->id, $idwarehouse, (!empty($conf->global->STOCK_ALLOW_NEGATIVE_TRANSFER) ? null : 0), $sortfield, $sortorder);
+										if (!is_array($resBatchList)) {
+											$error++;
+											$this->error = $this->db->lasterror();
+										}
+
+										if (!$error) {
+											$batchList = $resBatchList;
+											if (empty($batchList)) {
+												$error++;
+												$langs->load('errors');
+												$warehouseStatic->fetch($idwarehouse);
+												$this->error = $langs->trans('ErrorBatchNoFoundForProductInWarehouse', $productStatic->label, $warehouseStatic->ref);
+												dol_syslog(__METHOD__ . ' Error: ' . $langs->transnoentitiesnoconv('ErrorBatchNoFoundForProductInWarehouse', $productStatic->label, $warehouseStatic->ref), LOG_ERR);
+											}
+
+											foreach ($batchList as $batch) {
+												if ($batch->qty <= 0) continue; // try to decrement only batches have positive quantity first
+
+												// enough quantity in this batch
+												if ($batch->qty >= $product_qty_remain) {
+													$product_batch_qty = $product_qty_remain;
+												} // not enough (take all in batch)
+												else {
+													$product_batch_qty = $batch->qty;
+												}
+												$result = $mouvP->livraison($user, $productStatic->id, $idwarehouse, $product_batch_qty, $this->lines[$i]->subprice, $langs->trans('InvoiceValidatedInDolibarr', $num), '', '', '', $batch->batch);
+												if ($result < 0) {
+													$error++;
+													$this->error = $mouvP->error;
+													break;
+												}
+
+												$product_qty_remain -= $product_batch_qty;
+												// all product quantity was decremented
+												if ($product_qty_remain <= 0) break;
+											}
+
+											if (!$error && $product_qty_remain > 0) {
+												if ($conf->global->STOCK_ALLOW_NEGATIVE_TRANSFER) {
+													// take in the first batch
+													$batch = $batchList[0];
+													$result = $mouvP->livraison($user, $productStatic->id, $idwarehouse, $product_qty_remain, $this->lines[$i]->subprice, $langs->trans('InvoiceValidatedInDolibarr', $num), '', '', '', $batch->batch);
+													if ($result < 0) {
+														$error++;
+														$this->error = $mouvP->error;
+													}
+												} else {
+													$error++;
+													$langs->load('errors');
+													$warehouseStatic->fetch($idwarehouse);
+													$this->error = $langs->trans('ErrorBatchNoFoundEnoughQuantityForProductInWarehouse', $productStatic->label, $warehouseStatic->ref);
+													dol_syslog(__METHOD__ . ' Error: ' . $langs->transnoentitiesnoconv('ErrorBatchNoFoundEnoughQuantityForProductInWarehouse', $productStatic->label, $warehouseStatic->ref), LOG_ERR);
+												}
+											}
+										}
+									}
+								}
+
+								if (!$is_batch_line) {
+									$result = $mouvP->livraison($user, $this->lines[$i]->fk_product, $idwarehouse, $this->lines[$i]->qty, $this->lines[$i]->subprice, $langs->trans("InvoiceValidatedInDolibarr", $num));
+									if ($result < 0) {
+										$error++;
+										$this->error = $mouvP->error;
+									}
+								}
 							}
 						}
 					}

@@ -313,6 +313,8 @@ class pdf_espadon extends ModelePdfExpedition
 				$tab_height = 130;
 				$tab_height_newpage = 150;
 
+                $this->posxdesc = $this->marge_gauche + 1;
+
 				// Incoterm
 				$height_incoterms = 0;
 				if ($conf->incoterm->enabled)
@@ -336,7 +338,17 @@ class pdf_espadon extends ModelePdfExpedition
 					}
 				}
 
-				if (!empty($object->note_public) || !empty($object->tracking_number))
+                // display note
+                $notetoshow = empty($object->note_public) ? '' : $object->note_public;
+
+                // Extrafields in note
+                $extranote = $this->getExtrafieldsInHtml($object, $outputlangs);
+                if (!empty($extranote))
+                {
+                    $notetoshow = dol_concatdesc($notetoshow, $extranote);
+                }
+
+				if (!empty($notetoshow) || !empty($object->tracking_number))
 				{
 					$tab_top = 88 + $height_incoterms;
 					$tab_top_alt = $tab_top;
@@ -375,10 +387,10 @@ class pdf_espadon extends ModelePdfExpedition
 					}
 
 					// Notes
-					if (!empty($object->note_public))
+					if (!empty($notetoshow))
 					{
 					    $pdf->SetFont('', '', $default_font_size - 1); // In loop to manage multi-page
-						$pdf->writeHTMLCell(190, 3, $this->posxdesc - 1, $tab_top_alt, dol_htmlentitiesbr($object->note_public), 0, 1);
+						$pdf->writeHTMLCell(190, 3, $this->posxdesc - 1, $tab_top_alt, dol_htmlentitiesbr($notetoshow), 0, 1);
 					}
 
 					$nexY = $pdf->GetY();
@@ -558,7 +570,17 @@ class pdf_espadon extends ModelePdfExpedition
 					    $nexY = max($pdf->GetY(), $nexY);
 					}
 
-
+                    // Extrafields
+                    if(!empty($object->lines[$i]->array_options)){
+                        foreach ($object->lines[$i]->array_options as $extrafieldColKey => $extrafieldValue){
+                            if ($this->getColumnStatus($extrafieldColKey))
+                            {
+                                $extrafieldValue = $this->getExtrafieldContent($object->lines[$i], $extrafieldColKey);
+                                $this->printStdColumnContent($pdf, $curY, $extrafieldColKey, $extrafieldValue);
+                                $nexY = max($pdf->GetY(), $nexY);
+                            }
+                        }
+                    }
 
 					$nexY += 3;
 					if ($weighttxt && $voltxt) $nexY += 2;
@@ -1225,6 +1247,11 @@ class pdf_espadon extends ModelePdfExpedition
 	        ),
 	    );
 
+        // Add extrafields cols
+        if(!empty($object->lines)) {
+            $line = reset($object->lines);
+            $this->defineColumnExtrafield($line, $outputlangs, $hidedetails);
+        }
 
 	    $parameters = array(
 	        'object' => $object,

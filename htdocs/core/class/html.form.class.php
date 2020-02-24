@@ -6693,8 +6693,10 @@ class Form
         <script type="text/javascript">
           jQuery(document).ready(function () {
               $(\'.multiselectcheckbox'.$htmlname.' input[type="checkbox"]\').on(\'click\', function () {
-                  console.log("A new field was added/removed")
-                  $("input:hidden[name=formfilteraction]").val(\'listafterchangingselectedfields\')
+                  console.log("A new field was added/removed, we edit field input[name=formfilteraction]");
+
+                  $("input:hidden[name=formfilteraction]").val(\'listafterchangingselectedfields\');	// Update field so we know we changed something on selected fields after POST
+
                   var title = $(this).val() + ",";
                   if ($(this).is(\':checked\')) {
                       $(\'.'.$htmlname.'\').val(title + $(\'.'.$htmlname.'\').val());
@@ -6703,8 +6705,10 @@ class Form
                       $(\'.'.$htmlname.'\').val( $(\'.'.$htmlname.'\').val().replace(title, \'\') )
                   }
                   // Now, we submit page
-                  $(this).parents(\'form:first\').submit();
+                  //$(this).parents(\'form:first\').submit();
               });
+
+
            });
         </script>
 
@@ -7070,7 +7074,6 @@ class Form
 					jQuery(".linkto").click(function() {
 						console.log("We choose to show/hide link for rel="+jQuery(this).attr(\'rel\'));
 					    jQuery("#"+jQuery(this).attr(\'rel\')+"list").toggle();
-						jQuery(this).toggle();
 					});
 				});
 				</script>

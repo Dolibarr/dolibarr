@@ -80,7 +80,7 @@ $arrayoftype = array(
 	'contact' => array('label' => 'Contacts', 'ObjectClassName' => 'Contact', 'enabled' => $conf->societe->enabled, 'ClassPath' => DOL_DOCUMENT_ROOT."/contact/class/contact.class.php"),
 	'contract' => array('label' => 'Contracts', 'ObjectClassName' => 'Contrat', 'enabled' => $conf->contrat->enabled, 'ClassPath' => DOL_DOCUMENT_ROOT."/contrat/class/contrat.class.php", 'langs'=>'contract'),
 	'invoice' => array('label' => 'Invoices', 'ObjectClassName' => 'Facture', 'enabled' => $conf->facture->enabled, 'ClassPath' => DOL_DOCUMENT_ROOT."/compta/facture/class/facture.class.php"),
-	'invoice_template'=>array('label' => 'PredefinedInvoices', 'ObjectClassName' => 'FactureRec', 'enabled' => $conf->facture->enabled, 'ClassPath' => DOL_DOCUMENT_ROOT."/compta/class/facturerec.class.php"),
+	'invoice_template'=>array('label' => 'PredefinedInvoices', 'ObjectClassName' => 'FactureRec', 'enabled' => $conf->facture->enabled, 'ClassPath' => DOL_DOCUMENT_ROOT."/compta/class/facturerec.class.php", 'langs'=>'bills'),
 	'bom' => array('label' => 'BOM', 'ObjectClassName' => 'Bom', 'enabled' => $conf->bom->enabled),
 	'mo' => array('label' => 'MO', 'ObjectClassName' => 'Mo', 'enabled' => $conf->mo->enabled, 'ClassPath' => DOL_DOCUMENT_ROOT."/mrp/class/mo.class.php"),
 	'ticket' => array('label' => 'Ticket', 'ObjectClassName' => 'Ticket', 'enabled' => $conf->ticket->enabled),
@@ -114,9 +114,6 @@ elseif (is_array($hookmanager->resArray)) {
 
 if ($objecttype) {
     try {
-    	if ($arrayoftype[$objecttype]['langs']) {
-    		$langs->load($arrayoftype[$objecttype]['langs']);
-    	}
     	if ($arrayoftype[$objecttype]['ClassPath']) {
     		include_once $arrayoftype[$objecttype]['ClassPath'];
     	} else {
@@ -210,6 +207,9 @@ $newarrayoftype = array();
 foreach ($arrayoftype as $key => $val) {
 	if (dol_eval($val['enabled'], 1)) {
 		$newarrayoftype[$key] = $arrayoftype[$key];
+	}
+	if ($val['langs']) {
+		$langs->load($val['langs']);
 	}
 }
 print $form->selectarray('objecttype', $newarrayoftype, $objecttype, 0, 0, 0, '', 1, 0, 0, '', '', 1);

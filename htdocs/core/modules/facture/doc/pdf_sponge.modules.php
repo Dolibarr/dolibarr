@@ -126,10 +126,11 @@ class pdf_sponge extends ModelePDFFactures
 	 */
 	public $situationinvoice;
 
+
 	/**
-	 * @var float X position for the situation progress column
+	 * @var array of document table collumns
 	 */
-	public $posxprogress;
+	public $cols;
 
 
 	/**
@@ -407,6 +408,8 @@ class pdf_sponge extends ModelePDFFactures
 	            $tab_height_newpage = 150;
 	            if (empty($conf->global->MAIN_PDF_DONOTREPEAT_HEAD)) $tab_height_newpage -= $top_shift;
 
+                $nexY = $tab_top - 1;
+
 	            // Incoterm
 	            $height_incoterms = 0;
 	            if ($conf->incoterm->enabled)
@@ -443,6 +446,13 @@ class pdf_sponge extends ModelePDFFactures
 	                    if (!empty($salerepobj->signature)) $notetoshow = dol_concatdesc($notetoshow, $salerepobj->signature);
 	                }
 	            }
+
+	            // Extrafields in note
+                $extranote = $this->getExtrafieldsInHtml($object, $outputlangs);
+                if (!empty($extranote))
+                {
+                    $notetoshow = dol_concatdesc($notetoshow, $extranote);
+                }
 
 	            $pagenb = $pdf->getPage();
 	            if ($notetoshow)
@@ -632,8 +642,6 @@ class pdf_sponge extends ModelePDFFactures
     	                if ($pageposafter > $pageposbefore)	// There is a pagebreak
     	                {
     	                    $pdf->rollbackTransaction(true);
-    	                    $pageposafter = $pageposbefore;
-    	                    //print $pageposafter.'-'.$pageposbefore;exit;
     	                    $pdf->setPageOrientation('', 1, $heightforfooter); // The only function to edit the bottom margin of current page to set it.
     	                    pdf_writelinedesc($pdf, $object, $i, $outputlangs, $this->getColumnContentWidth('desc'), 3, $this->getColumnContentXStart('desc'), $curY, $hideref, $hidedesc);
     	                    $pageposafter = $pdf->getPage();
@@ -734,6 +742,18 @@ class pdf_sponge extends ModelePDFFactures
 	                    $this->printStdColumnContent($pdf, $curY, 'totalexcltax', $total_excl_tax);
 	                    $nexY = max($pdf->GetY(), $nexY);
 	                }
+
+                    // Extrafields
+	                if(!empty($object->lines[$i]->array_options)){
+	                    foreach ($object->lines[$i]->array_options as $extrafieldColKey => $extrafieldValue){
+                            if ($this->getColumnStatus($extrafieldColKey))
+                            {
+                                $extrafieldValue = $this->getExtrafieldContent($object->lines[$i], $extrafieldColKey);
+                                $this->printStdColumnContent($pdf, $curY, $extrafieldColKey, $extrafieldValue);
+                                $nexY = max($pdf->GetY(), $nexY);
+                            }
+                        }
+                    }
 
 
 	                $parameters = array(
@@ -1052,7 +1072,7 @@ class pdf_sponge extends ModelePDFFactures
 	/**
 	 *   Show miscellaneous information (payment mode, payment term, ...)
 	 *
-	 *   @param		PDF			$pdf     		Object PDF
+	 *   @param		tcpdf			$pdf     		Object PDF
 	 *   @param		Object		$object			Object to show
 	 *   @param		int			$posy			Y
 	 *   @param		Translate	$outputlangs	Langs object
@@ -1199,10 +1219,9 @@ class pdf_sponge extends ModelePDFFactures
 			// If payment mode not forced or forced to VIR, show payment with BAN
 			if (empty($object->mode_reglement_code) || $object->mode_reglement_code == 'VIR')
 			{
-				if (!empty($object->fk_account) || !empty($object->fk_bank) || !empty($conf->global->FACTURE_RIB_NUMBER))
-				{
-					$bankid = (empty($object->fk_account) ? $conf->global->FACTURE_RIB_NUMBER : $object->fk_account);
-					if (!empty($object->fk_bank)) $bankid = $object->fk_bank; // For backward compatibility when object->fk_account is forced with object->fk_bank
+				if ($object->fk_account > 0 || $object->fk_bank > 0 || !empty($conf->global->FACTURE_RIB_NUMBER)) {
+					$bankid = ($object->fk_account <= 0 ? $conf->global->FACTURE_RIB_NUMBER : $object->fk_account);
+					if ($object->fk_bank > 0) $bankid = $object->fk_bank; // For backward compatibility when object->fk_account is forced with object->fk_bank
 					$account = new Account($this->db);
 					$account->fetch($bankid);
 
@@ -1223,7 +1242,7 @@ class pdf_sponge extends ModelePDFFactures
 	/**
 	 *  Show total to pay
 	 *
-	 *  @param	PDF			$pdf            Object PDF
+	 *  @param	TCPDI			$pdf            Object PDF
 	 *	@param  Facture		$object         Object invoice
 	 *	@param  int			$deja_regle     Amount already paid (in the currency of invoice)
 	 *	@param	int			$posy			Position depart
@@ -1789,7 +1808,7 @@ class pdf_sponge extends ModelePDFFactures
 	/**
 	 *   Show table for lines
 	 *
-	 *   @param		PDF			$pdf     		Object PDF
+	 *   @param		tcpdf			$pdf     		Object PDF
 	 *   @param		string		$tab_top		Top position of table
 	 *   @param		string		$tab_height		Height of table (rectangle)
 	 *   @param		int			$nexY			Y (not used)
@@ -1849,7 +1868,7 @@ class pdf_sponge extends ModelePDFFactures
 	/**
 	 *  Show top header of page.
 	 *
-	 *  @param	PDF			$pdf     		Object PDF
+	 *  @param	Tcpdf			$pdf     		Object PDF
 	 *  @param  Object		$object     	Object to show
 	 *  @param  int	    	$showaddress    0=no, 1=yes
 	 *  @param  Translate	$outputlangs	Object lang for output
@@ -2345,7 +2364,7 @@ class pdf_sponge extends ModelePDFFactures
 	        $this->cols['discount']['status'] = true;
 	    }
 
-	    $rank = $rank + 10;
+	    $rank = $rank + 1000; // add a big offset to be sure is the last col because default extrafield rank is 100
 	    $this->cols['totalexcltax'] = array(
 	        'rank' => $rank,
 	        'width' => 26, // in mm
@@ -2356,6 +2375,11 @@ class pdf_sponge extends ModelePDFFactures
 	        'border-left' => true, // add left line separator
 	    );
 
+	    // Add extrafields cols
+        if(!empty($object->lines)) {
+            $line = reset($object->lines);
+            $this->defineColumnExtrafield($line, $outputlangs, $hidedetails);
+        }
 
 	    $parameters = array(
 	        'object' => $object,

@@ -91,7 +91,7 @@ class box_services_contracts extends ModeleBoxes
 			$sql = "SELECT s.nom as name, s.rowid as socid, s.email, s.client, s.fournisseur, s.code_client, s.code_fournisseur, s.code_compta, s.code_compta_fournisseur,";
 			$sql.= " c.rowid, c.ref, c.statut as contract_status, c.ref_customer, c.ref_supplier,";
 			$sql.= " cd.rowid as cdid, cd.label, cd.description, cd.tms as datem, cd.statut, cd.product_type as type,";
-			$sql.= " p.rowid as product_id, p.ref as product_ref, p.label as plabel, p.fk_product_type as ptype, p.entity";
+			$sql.= " p.rowid as product_id, p.ref as product_ref, p.label as plabel, p.fk_product_type as ptype, p.entity, p.tobuy, p.tosell";
 			$sql.= " FROM (".MAIN_DB_PREFIX."societe as s";
 			$sql.= " INNER JOIN ".MAIN_DB_PREFIX."contrat as c ON s.rowid = c.fk_soc";
 			$sql.= " INNER JOIN ".MAIN_DB_PREFIX."contratdet as cd ON c.rowid = cd.fk_contrat";
@@ -165,6 +165,9 @@ class box_services_contracts extends ModeleBoxes
 						$productstatic->ref=$objp->product_ref;
 						$productstatic->entity=$objp->pentity;
 						$productstatic->label=$objp->plabel;
+						$productstatic->status = $objp->tosell;
+						$productstatic->status_buy = $objp->tobuy;
+
 						$text = $productstatic->getNomUrl(1, '', 20);
 						if ($objp->plabel)
 						{

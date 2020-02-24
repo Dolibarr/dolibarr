@@ -179,7 +179,7 @@ if (!empty($conf->stock->enabled))
 {
 	print '<tr class="oddeven"><td>'.$langs->trans("CashDeskDoNotDecreaseStock").'</td>'; // Force warehouse (this is not a default value)
 	print '<td>';
-	if (empty($conf->productbatch->enabled)) {
+	if (empty($conf->productbatch->enabled) || !empty($conf->global->CASHDESK_FORCE_DECREASE_STOCK)) {
 	    print $form->selectyesno('CASHDESK_NO_DECREASE_STOCK'.$terminal, $conf->global->{'CASHDESK_NO_DECREASE_STOCK'.$terminal}, 1);
 	}
 	else
@@ -207,6 +207,13 @@ if (!empty($conf->stock->enabled))
 		print '<span class="opacitymedium">'.$langs->trans("StockDecreaseForPointOfSaleDisabled").'</span>';
 	}
 	print '</td></tr>';
+
+	if (!empty($conf->productbatch->enabled) && !empty($conf->global->CASHDESK_FORCE_DECREASE_STOCK) && !$conf->global->{'CASHDESK_NO_DECREASE_STOCK'.$terminal}) {
+		print '<tr class="oddeven"><td>' . $langs->trans('CashDeskForceDecreaseStockLabel') . '</td>';
+		print '<td>';
+		print '<span class="opacitymedium">' . $langs->trans('CashDeskForceDecreaseStockDesc') . '</span>';
+		print '</td></tr>';
+	}
 }
 
 if ($conf->global->TAKEPOS_PRINT_METHOD == "receiptprinter") {

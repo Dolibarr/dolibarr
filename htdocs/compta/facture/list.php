@@ -1041,6 +1041,8 @@ if ($resql)
 				$totalpay = price2num($facturestatic->total_ttc - $remaintopay);
 			}
 
+			$facturestatic->alreadypaid = $paiement;
+
             print '<tr class="oddeven"';
             if ($contextpage == 'poslist')
             {

@@ -206,7 +206,7 @@ input:-webkit-autofill {
 
 table.listofchoices, table.listofchoices tr, table.listofchoices td {
 	border-collapse: collapse;
-    padding: 4px;
+    padding: 8px;
     color: #000000;
 	border: 1px solid #ccc !important;
 	line-height: 18px;
@@ -275,6 +275,7 @@ div.header {
 
 a:link,a:visited,a:active {
 	text-decoration:none;
+	color: #114466;
 }
 a:hover {
 	text-decoration:underline;
@@ -344,9 +345,20 @@ ul {
 	padding-bottom: 0;
 }
 
+tr.choiceselected td.listofchoicesdesc {
+    color: #000 !important;
+}
 
-.button {
+tr.choiceselected td .button {
     background: rgb(0,113,121);
+    color: #fff;
+}
+
+a.button:link,a.button:visited,a.button:active {
+    color: #888;
+}
+.button {
+    background: #ddd;
     color: #fff;
     /* border: 1px solid #e0e0e0; */
     padding: 0.3em 0.7em;
@@ -363,7 +375,7 @@ a.button:hover {
 }
 
 .choiceselected {
-	background-color: #f4fcf4;
+	background-color: #f4f6f4;
 	background-repeat: repeat-x;
 	background-position: top left;
 }

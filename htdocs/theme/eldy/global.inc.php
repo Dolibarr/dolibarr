@@ -1519,8 +1519,8 @@ div.nopadding {
 }
 
 td.nobordernopadding.widthpictotitle.opacityhigh.valignmiddle.col-picto {
-    color: rgb(<?php print $colortexttitlenotab; ?>);
-    opacity: 0.5;
+    color: var(--colortexttitlenotab);
+    opacity: 0.75;
 }
 .pictotitle {
 	margin-<?php echo $right; ?>: 8px;
@@ -3597,7 +3597,7 @@ span.dashboardlineko {
 .boxtable {
     margin-bottom: 25px !important;
     border-bottom-width: 1px;
-
+	background: var(--colorbackbody);
     border-top: <?php echo $borderwidth ?>px solid rgb(<?php echo $colortopbordertitle1 ?>);
 	/* border-top: 2px solid var(--colorbackhmenu1) !important; */
 }
@@ -4983,7 +4983,7 @@ input.select2-input {
 }
 .select2-container--default .select2-selection--single .select2-selection__rendered {
     color: var(--colortext);
-    background-color: var(--colorbackvmenu1);
+    /* background-color: var(--colorbackvmenu1); */
 }
 .select2-default {
     color: #999 !important;
@@ -5079,8 +5079,8 @@ input.select2-input {
 	box-shadow: none !important;
 }
 .select2-dropdown {
-	background-color: var(--colorbackvmenu1);
-	border: 1px solid var(--colorbackvmenu1);;
+	/*background-color: var(--colorbackvmenu1);
+	border: 1px solid var(--colorbackvmenu1); */
 	box-shadow: 1px 2px 10px var(--colorbackvmenu1);
 }
 .select2-dropdown-open {
@@ -5405,9 +5405,9 @@ dl.dropdown {
 .dropdown dd ul li span {
 	color: #888;
 }
-.dropdown dd ul li a:hover {
+/*.dropdown dd ul li a:hover {
     background-color: var(--inputbackgroundcolor);
-}
+}*/
 dd.dropdowndd ul li {
     text-overflow: ellipsis;
     overflow: hidden;
