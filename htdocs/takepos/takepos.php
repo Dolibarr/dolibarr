@@ -438,9 +438,15 @@ function New() {
 	}
 }
 
-function Search2() {
+/**
+ * Search products
+ *
+ * @param   {int}			keyCodeForEnter     Key code for "enter"
+ * return   {void}
+ */
+function Search2(keyCodeForEnter) {
 	console.log("Search2 Call ajax search to replace products");
-	if(window.event.keyCode == 13) var key=13;
+	if(window.event.keyCode == keyCodeForEnter) var key=13;
 	pageproducts=0;
 	jQuery(".wrapper2 .catwatermark").hide();
 	$.getJSON('<?php echo DOL_URL_ROOT ?>/takepos/ajax/ajax.php?action=search&term='+$('#search').val(), function(data) {
@@ -459,8 +465,8 @@ function Search2() {
 			$("#prodiv"+i).data("rowid", data[i]['rowid']);
 			$("#prodiv"+i).data("iscat", 0);
 		}
-	}).always(function() {
-		if(key==13) ClickProduct(0);
+	}).always(function(data) {
+		if(key==13 && data.length==1) ClickProduct(0);
   });
 }
 
@@ -649,6 +655,7 @@ $( document ).ready(function() {
 <body class="bodytakepos" style="overflow: hidden;">
 <?php
 if ($conf->global->TAKEPOS_NUM_TERMINALS != "1" && $_SESSION["takeposterminal"] == "") print '<div id="dialog-info" title="TakePOS">'.$langs->trans('TerminalSelect').'</div>';
+$keyCodeForEnter = $conf->global->{'CASHDESK_READER_KEYCODE_FOR_ENTER'.$_SESSION['takeposterminal']} > 0 ? $conf->global->{'CASHDESK_READER_KEYCODE_FOR_ENTER'.$_SESSION['takeposterminal']} : 13;
 ?>
 <div class="container">
 
@@ -667,7 +674,7 @@ if (empty($conf->global->TAKEPOS_HIDE_HEAD_BAR)) {
 			<a onclick="Customer();"><?php echo $langs->trans("Customer"); ?></a>
 			</div>
 			<div class="topnav-right">
-				<input type="text" id="search" name="search" onkeyup="Search2();"  placeholder="<?php echo $langs->trans("Search"); ?>" autofocus>
+				<input type="text" id="search" name="search" onkeyup="Search2(<?php echo $keyCodeForEnter; ?>);"  placeholder="<?php echo $langs->trans("Search"); ?>" autofocus>
 				<a onclick="ClearSearch();"><span class="fa fa-backspace"></span></a>
 				<a onclick="window.location.href='<?php echo DOL_URL_ROOT; ?>';"><span class="fas fa-sign-out-alt"></span></a>
 				<a onclick="window.location.href='<?php echo DOL_URL_ROOT; ?>/user/logout.php';"><span class="fas fa-user"></span></a>
@@ -828,7 +835,7 @@ if (!empty($conf->global->TAKEPOS_HIDE_HEAD_BAR)) {
 		if (!empty($conf->global->TAKEPOS_HIDE_HEAD_BAR)) {
 			print '<!-- Show the search input text -->'."\n";
 			print '<div class="margintoponly">';
-			print '<input type="text" id="search" name="search" onkeyup="Search2();" style="width:80%;width:calc(100% - 51px);font-size: 150%;" placeholder="'.$langs->trans("Search").'" autofocus> ';
+			print '<input type="text" id="search" name="search" onkeyup="Search2('.$keyCodeForEnter.');" style="width:80%;width:calc(100% - 51px);font-size: 150%;" placeholder="'.$langs->trans("Search").'" autofocus> ';
 			print '<a class="marginleftonly hideonsmartphone" onclick="ClearSearch();">'.img_picto('', 'searchclear').'</a>';
 			print '</div>';
 		}
