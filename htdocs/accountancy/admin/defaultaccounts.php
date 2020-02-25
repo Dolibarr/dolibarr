@@ -161,6 +161,7 @@ print '<input type="hidden" name="action" value="update">';
 // Define main accounts for thirdparty
 
 print '<table class="noborder centpercent">';
+print '<tr class="liste_titre"><td>'.$langs->trans("ThirdParties").' | '.$langs->trans("Users").'</td><td></td></tr>';
 
 foreach ($list_account_main as $key) {
     print '<tr class="oddeven value">';
@@ -179,15 +180,6 @@ foreach ($list_account_main as $key) {
     print '</tr>';
 }
 
-
-print "</table>\n";
-
-
-print '<br>';
-
-// Define default accounts
-
-print '<table class="noborder centpercent">';
 
 foreach ($list_account as $key) {
 	$reg=array();

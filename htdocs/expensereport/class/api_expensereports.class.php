@@ -384,6 +384,10 @@ class ExpenseReports extends DolibarrApi
      * @param array $request_data   Datas
      *
      * @return int
+     *
+     * @throws	RestException	401		Not allowed
+     * @throws  RestException	404		Expense report not found
+     * @throws	RestException	500
      */
     public function put($id, $request_data = null)
     {
