@@ -102,7 +102,7 @@ if (empty($reshook))
 		$search_array_options = array();
     }
 
-    if (GETPOST('change_chart', 'alpha') /*&& (GETPOST('valid_change_chart', 'int') || empty($conf->use_javascript_ajax))*/)
+    if (GETPOST('change_chart', 'alpha'))
     {
         $chartofaccounts = GETPOST('chartofaccounts', 'int');
 
@@ -272,42 +272,10 @@ if ($resql)
 	if ($search_pcgsubtype) $param .= '&search_pcgsubtype='.urlencode($search_pcgsubtype);
     if ($optioncss != '') $param .= '&optioncss='.$optioncss;
 
-    /*
-    if (!empty($conf->use_javascript_ajax))
-    {
-	    print '<!-- Add javascript to update a flag when we select "Change plan" -->
-			<script type="text/javascript">
-			$(document).ready(function () {
-		    	$("#searchFormList").on("submit", function (e) {
-					//event.preventDefault();
-				    //var form = this;
-					console.log("chartofaccounts focus = "+$("#chartofaccounts").is(":focus"));
-					console.log("change_chart focus = "+$("#change_chart").is(":focus"));
-					if ($("#change_chart").is(":focus"))
-					{
-						console.log("We set valid_change_chart to 1");
-						$("#valid_change_chart").val(1);
-					}
-					//form.submit();
-					return true;
-			    });
-			});
-	    	</script>';
-    }
-    */
-
-	print '<form method="POST" id="searchFormList" action="'.$_SERVER["PHP_SELF"].'">';
-	if ($optioncss != '') print '<input type="hidden" name="optioncss" value="'.$optioncss.'">';
+	print '<form method="POST" id="changeChartOfAccountForm" action="'.$_SERVER["PHP_SELF"].'">';
 	print '<input type="hidden" name="token" value="'.newToken().'">';
-	print '<input type="hidden" name="formfilteraction" id="formfilteraction" value="list">';
-	print '<input type="hidden" name="action" value="list">';
-	print '<input type="hidden" name="sortfield" value="'.$sortfield.'">';
-	print '<input type="hidden" name="sortorder" value="'.$sortorder.'">';
-	print '<input type="hidden" name="page" value="'.$page.'">';
-	print '<input type="hidden" name="contextpage" value="'.$contextpage.'">';
 
     $newcardbutton .= dolGetButtonTitle($langs->trans("New"), $langs->trans("Addanaccount"), 'fa fa-plus-circle', './card.php?action=create');
-
 
     print_barre_liste($langs->trans('ListAccounts'), $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, '', $num, $nbtotalofrecords, 'title_accountancy', 0, $newcardbutton, '', $limit);
 
@@ -338,10 +306,21 @@ if ($resql)
     print "</select>";
     print ajax_combobox("chartofaccounts");
     print '<input type="submit" class="button" name="change_chart" id="change_chart" value="'.dol_escape_htmltag($langs->trans("ChangeAndLoad")).'">';
-    /*print '<input type="hidden" name="valid_change_chart" id="valid_change_chart" value="0">';*/
+
+    print '</form>';
 
     print '<br>';
 	print '<br>';
+
+	print '<form method="POST" id="searchFormList" action="'.$_SERVER["PHP_SELF"].'">';
+	if ($optioncss != '') print '<input type="hidden" name="optioncss" value="'.$optioncss.'">';
+	print '<input type="hidden" name="token" value="'.newToken().'">';
+	print '<input type="hidden" name="formfilteraction" id="formfilteraction" value="list">';
+	print '<input type="hidden" name="action" value="list">';
+	print '<input type="hidden" name="sortfield" value="'.$sortfield.'">';
+	print '<input type="hidden" name="sortorder" value="'.$sortorder.'">';
+	print '<input type="hidden" name="page" value="'.$page.'">';
+	print '<input type="hidden" name="contextpage" value="'.$contextpage.'">';
 
 	$varpage = empty($contextpage) ? $_SERVER["PHP_SELF"] : $contextpage;
     $selectedfields = $form->multiSelectArrayWithCheckbox('selectedfields', $arrayfields, $varpage); // This also change content of $arrayfields
