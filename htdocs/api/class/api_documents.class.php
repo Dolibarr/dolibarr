@@ -228,7 +228,7 @@ class Documents extends DolibarrApi
 	/**
 	 * Return the list of documents of a dedicated element (from its ID or Ref)
 	 *
-	 * @param   string 	$modulepart		Name of module or area concerned ('thirdparty', 'member', 'proposal', 'order', 'invoice', 'shipment', 'project',  ...)
+	 * @param   string 	$modulepart		Name of module or area concerned ('thirdparty', 'member', 'proposal', 'order', 'invoice', 'supplier_invoice', 'shipment', 'project',  ...)
 	 * @param	int		$id				ID of element
 	 * @param	string	$ref			Ref of element
 	 * @param	string	$sortfield		Sort criteria ('','fullname','relativename','name','date','size')
@@ -368,6 +368,24 @@ class Documents extends DolibarrApi
 			}
 
 			$upload_dir = $conf->facture->dir_output."/".get_exdir(0, 0, 0, 1, $object, 'invoice');
+		}
+		elseif ($modulepart == 'facture_fournisseur' || $modulepart == 'supplier_invoice')
+		{
+			$modulepart = 'supplier_invoice';
+
+			require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.facture.class.php';
+
+			if (!DolibarrApiAccess::$user->rights->fournisseur->facture->lire) {
+				throw new RestException(401);
+			}
+
+			$object = new FactureFournisseur($this->db);
+			$result = $object->fetch($id, $ref);
+			if (!$result) {
+				throw new RestException(404, 'Invoice not found');
+			}
+
+			$upload_dir = $conf->fournisseur->dir_output."/facture/".get_exdir($object->id, 2, 0, 0, $object, 'invoice_supplier').dol_sanitizeFileName($object->ref);
 		}
         elseif ($modulepart == 'produit' || $modulepart == 'product')
 		{
