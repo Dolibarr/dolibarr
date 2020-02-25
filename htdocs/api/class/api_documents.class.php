@@ -401,6 +401,22 @@ class Documents extends DolibarrApi
 
 			$upload_dir = $conf->agenda->dir_output.'/'.dol_sanitizeFileName($object->ref);
 		}
+		elseif ($modulepart == 'expensereport')
+		{
+			require_once DOL_DOCUMENT_ROOT.'/expensereport/class/expensereport.class.php';
+
+			if (!DolibarrApiAccess::$user->rights->expensereport->read && !DolibarrApiAccess::$user->rights->expensereport->read) {
+				throw new RestException(401);
+			}
+
+			$object = new ExpenseReport($this->db);
+			$result = $object->fetch($id, $ref);
+			if (!$result) {
+				throw new RestException(404, 'Expense report not found');
+			}
+
+			$upload_dir = $conf->expensereport->dir_output.'/'.dol_sanitizeFileName($object->ref);
+		}
 		else
 		{
 			throw new RestException(500, 'Modulepart '.$modulepart.' not implemented yet.');
@@ -522,6 +538,11 @@ class Documents extends DolibarrApi
 			{
 				require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
 				$object = new Product($this->db);
+			}
+			elseif ($modulepart == 'expensereport')
+			{
+				require_once DOL_DOCUMENT_ROOT.'/expensereport/class/expensereport.class.php';
+				$object = new ExpenseReport($this->db);
 			}
 			// TODO Implement additional moduleparts
 			else
