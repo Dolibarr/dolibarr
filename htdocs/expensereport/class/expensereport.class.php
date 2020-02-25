@@ -58,18 +58,19 @@ class ExpenseReport extends CommonObject
 
     public $date_fin;
 
+    /**
+     * 0=draft, 2=validated (attente approb), 4=canceled, 5=approved, 6=payed, 99=denied
+     *
+     * @var int		Status
+     */
     public $status;
-    public $fk_statut; // -- 0=draft, 2=validated (attente approb), 4=canceled, 5=approved, 6=payed, 99=denied
+    public $fk_statut;
+
     public $fk_c_paiement;
     public $paid;
 
     public $user_author_infos;
     public $user_validator_infos;
-
-    public $fk_typepayment;
-	public $num_payment;
-    public $code_paiement;
-    public $code_statut;
 
     // ACTIONS
 
@@ -285,10 +286,33 @@ class ExpenseReport extends CommonObject
             {
                 if (is_array($this->lines) && count($this->lines) > 0)
                 {
-    	            foreach ($this->lines as $i => $val)
+    	            foreach ($this->lines as $line)
     	            {
+    	            	// Test and convert into object this->lines[$i]. When coming from REST API, we may still have an array
+    	            	//if (! is_object($line)) $line=json_decode(json_encode($line), false);  // convert recursively array into object.
+    	            	if (!is_object($line)) {
+    	            		$line = (object) $line;
+    	            		$newndfline = new ExpenseReportLine($this->db);
+    	            		$newndfline->fk_expensereport = $line->fk_expensereport;
+    	            		$newndfline->fk_c_type_fees = $line->fk_c_type_fees;
+    	            		$newndfline->fk_project = $line->fk_project;
+    	            		$newndfline->vatrate = $line->vatrate;
+    	            		$newndfline->vat_src_code = $line->vat_src_code;
+    	            		$newndfline->comments = $line->comments;
+    	            		$newndfline->qty = $line->qty;
+    	            		$newndfline->value_unit = $line->value_unit;
+    	            		$newndfline->total_ht = $line->total_ht;
+    	            		$newndfline->total_ttc = $line->total_ttc;
+    	            		$newndfline->total_tva = $line->total_tva;
+    	            		$newndfline->date = $line->date;
+    	            		$newndfline->rule_warning_message = $line->rule_warning_message;
+    	            		$newndfline->fk_c_exp_tax_cat = $line->fk_c_exp_tax_cat;
+    	            		$newndfline->fk_ecm_files = $line->fk_ecm_files;
+    	            	}
+    	            	else {
+    	            		$newndfline = $line;
+    	            	}
     	                //$newndfline=new ExpenseReportLine($this->db);
-    	                $newndfline = $this->lines[$i];
     	                $newndfline->fk_expensereport = $this->id;
     	                $result = $newndfline->insert();
         	            if ($result < 0)
@@ -514,10 +538,8 @@ class ExpenseReport extends CommonObject
         $sql .= " d.date_debut, d.date_fin, d.date_create, d.tms as date_modif, d.date_valid, d.date_approve,"; // DATES (datetime)
         $sql .= " d.fk_user_author, d.fk_user_modif, d.fk_user_validator,";
         $sql .= " d.fk_user_valid, d.fk_user_approve,";
-        $sql .= " d.fk_statut as status, d.fk_c_paiement, d.paid,";
-        $sql .= " dp.libelle as label_payment, dp.code as code_paiement"; // INNER JOIN paiement
+        $sql .= " d.fk_statut as status, d.fk_c_paiement, d.paid";
         $sql .= " FROM ".MAIN_DB_PREFIX.$this->table_element." as d";
-        $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."c_paiement as dp ON d.fk_c_paiement = dp.id";
         if ($ref) $sql .= " WHERE d.ref = '".$this->db->escape($ref)."'";
         else $sql .= " WHERE d.rowid = ".$id;
         //$sql.= $restrict;
@@ -566,7 +588,7 @@ class ExpenseReport extends CommonObject
                 elseif ($this->fk_user_validator > 0) $user_approver->fetch($this->fk_user_validator); // For backward compatibility
                 $this->user_validator_infos = dolGetFirstLastname($user_approver->firstname, $user_approver->lastname);
 
-                $this->fk_statut                = $obj->status;
+                $this->fk_statut                = $obj->status;		// deprecated
                 $this->status                   = $obj->status;
                 $this->fk_c_paiement            = $obj->fk_c_paiement;
                 $this->paid                     = $obj->paid;
@@ -577,9 +599,6 @@ class ExpenseReport extends CommonObject
                     if ($this->fk_user_valid > 0) $user_valid->fetch($this->fk_user_valid);
                     $this->user_valid_infos = dolGetFirstLastname($user_valid->firstname, $user_valid->lastname);
                 }
-
-                $this->code_statut      = $obj->code_statut;
-                $this->code_paiement    = $obj->code_paiement;
 
                 $this->lines = array();
 
@@ -2650,7 +2669,7 @@ class ExpenseReportLine
         $sql .= " ".$this->db->escape($this->total_ht).",";
         $sql .= " ".$this->db->escape($this->total_tva).",";
         $sql .= " ".$this->db->escape($this->total_ttc).",";
-        $sql .= "'".$this->db->idate($this->date)."',";
+        $sql .= " '".$this->db->idate($this->date)."',";
 		$sql .= " '".$this->db->escape($this->rule_warning_message)."',";
 		$sql .= " ".$this->db->escape($this->fk_c_exp_tax_cat).",";
 		$sql .= " ".($this->fk_ecm_files > 0 ? $this->fk_ecm_files : 'null');
