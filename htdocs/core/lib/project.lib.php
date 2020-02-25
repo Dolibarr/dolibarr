@@ -2454,7 +2454,7 @@ function getTaskProgressView($task, $label = true, $progressNumber = true, $hide
  */
 function getTaskProgressBadge($task, $label = '', $tooltip = '')
 {
-    global $conf;
+    global $conf, $langs;
 
     $out = '';
     $badgeClass = '';
@@ -2472,12 +2472,15 @@ function getTaskProgressBadge($task, $label = '', $tooltip = '')
 
             if (doubleval($progressCalculated) > doubleval($task->progress * $warningRatio)) {
                 $badgeClass .= 'badge-danger';
+                if (empty($tooltip)) $tooltip = $task->progress.'% < '.$langs->trans("Expected").' '.$progressCalculated.'%';
             }
             elseif (doubleval($progressCalculated) > doubleval($task->progress)) { // warning if close at 10%
                 $badgeClass .= 'badge-warning';
+                if (empty($tooltip)) $tooltip = $task->progress.'% < '.$langs->trans("Expected").' '.$progressCalculated.'%';
             }
             else {
                 $badgeClass .= 'badge-success';
+                if (empty($tooltip)) $tooltip = $task->progress.'% >= '.$langs->trans("Expected").' '.$progressCalculated.'%';
             }
         }
     }

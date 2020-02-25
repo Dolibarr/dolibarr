@@ -536,14 +536,16 @@ abstract class CommonDocGenerator
 	 *
 	 *	@param  Object			$line				Object line
 	 *	@param  Translate		$outputlangs        Lang object to use for output
+	 *  @param  int				$linenumber			The number of the line for the substitution of "object_line_pos"
 	 *  @return	array								Return a substitution array
 	 */
-	public function get_substitutionarray_lines($line, $outputlangs)
+	public function get_substitutionarray_lines($line, $outputlangs, $linenumber = 0)
 	{
         // phpcs:enable
 		global $conf;
 
 		$resarray = array(
+			'line_pos' => $linenumber,
 			'line_fulldesc'=>doc_getlinedesc($line, $outputlangs),
 			'line_product_ref'=>$line->product_ref,
 			'line_product_ref_fourn'=>$line->ref_fourn, // for supplier doc lines

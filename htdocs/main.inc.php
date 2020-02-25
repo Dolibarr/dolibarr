@@ -1757,9 +1757,11 @@ function top_menu($head, $title = '', $target = '', $disablejs = 0, $disablehead
 /**
  * Build the tooltip on user login
  *
- * @return  string                  HTML content
+ * @param	int			$hideloginname		Hide login name. Show only the image.
+ * @param	string		$urllogout			URL for logout
+ * @return  string                  		HTML content
  */
-function top_menu_user()
+function top_menu_user($hideloginname = 0, $urllogout = '')
 {
     global $langs, $conf, $db, $hookmanager, $user;
     global $dolibarr_main_authentication, $dolibarr_main_demo;
@@ -1830,9 +1832,10 @@ function top_menu_user()
         }
     }
 
-
-
-    $logoutLink = '<a accesskey="l" href="'.DOL_URL_ROOT.'/user/logout.php" class="button-top-menu-dropdown" ><i class="fa fa-sign-out-alt"></i> '.$langs->trans("Logout").'</a>';
+    if (empty($urllogout)) {
+    	$urllogout = DOL_URL_ROOT.'/user/logout.php';
+    }
+    $logoutLink = '<a accesskey="l" href="'.$urllogout.'" class="button-top-menu-dropdown" ><i class="fa fa-sign-out-alt"></i> '.$langs->trans("Logout").'</a>';
     $profilLink = '<a accesskey="l" href="'.DOL_URL_ROOT.'/user/card.php?id='.$user->id.'" class="button-top-menu-dropdown" ><i class="fa fa-user"></i>  '.$langs->trans("Card").'</a>';
 
 
@@ -1857,9 +1860,12 @@ function top_menu_user()
 
     $btnUser = '<!-- div for user link -->
     <div id="topmenu-login-dropdown" class="userimg atoplogin dropdown user user-menu  inline-block">
-        <a href="'.DOL_URL_ROOT.'/user/card.php?id='.$user->id.'" class="dropdown-toggle login-dropdown-a" data-toggle="dropdown">
-            '.$userImage.'
-            <span class="hidden-xs maxwidth200 atoploginusername hideonsmartphone">'.dol_trunc($user->firstname ? $user->firstname : $user->login, 10).'</span>
+        <a href="'.DOL_URL_ROOT.'/user/card.php?id='.$user->id.'" class="dropdown-toggle login-dropdown-a" data-toggle="dropdown">';
+    $btnUser .= $userImage;
+    if (empty($hideloginname)) {
+    	$btnUser .= '<span class="hidden-xs maxwidth200 atoploginusername hideonsmartphone paddingleft">'.dol_trunc($user->firstname ? $user->firstname : $user->login, 10).'</span>';
+    }
+    $btnUser .= '
         </a>
         <div class="dropdown-menu">
             <!-- User image -->
