@@ -1688,7 +1688,7 @@ StockDecreaseForPointOfSaleDisabledbyBatch=Stock decrease in POS is not compatib
 CashDeskYouDidNotDisableStockDecease=You did not disable stock decrease when making a sale from Point of Sale. Hence a warehouse is required.
 CashDeskForceDecreaseStockLabel=Stock decrease for batch products was forced.
 CashDeskForceDecreaseStockDesc=Decrease first by the oldest eatby and sellby dates.
-CashDeskReaderKeyCodeForEnter=Key code for "Enter" defined in barcode reader.
+CashDeskReaderKeyCodeForEnter=Key code for "Enter" defined in barcode reader (Example: 13)
 ##### Bookmark #####
 BookmarkSetup=Bookmark module setup
 BookmarkDesc=This module allows you to manage bookmarks. You can also add shortcuts to any Dolibarr pages or external web sites on your left menu.
