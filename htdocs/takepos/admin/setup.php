@@ -175,11 +175,8 @@ print '<tr class="oddeven"><td>';
 print $langs->trans("SortProductField");
 print '<td colspan="2">';
 $prod = new Product($db);
-$array = [];
-foreach ($prod->fields as $k => $v) {
-	$array[$k] = $k;
-}
-print $form->selectarray('TAKEPOS_SORTPRODUCTFIELD', $array, (empty($conf->global->TAKEPOS_SORTPRODUCTFIELD) ? 'rowid' : $conf->global->TAKEPOS_SORTPRODUCTFIELD), 0);
+$array = array('rowid' => 'ID', 'ref' => 'Ref', 'datec' => 'DateCreation', 'tms' => 'DateModification');
+print $form->selectarray('TAKEPOS_SORTPRODUCTFIELD', $array, (empty($conf->global->TAKEPOS_SORTPRODUCTFIELD) ? 'rowid' : $conf->global->TAKEPOS_SORTPRODUCTFIELD), 0, 0, 0, '', 1);
 print "</td></tr>\n";
 
 $substitutionarray = pdf_getSubstitutionArray($langs, null, null, 2);
@@ -342,43 +339,6 @@ print '<br>';
 print '<div class="center"><input type="submit" class="button" value="'.$langs->trans("Save").'"></div>';
 
 print "</form>\n";
-
-
-print '<br><br>';
-
-// Marketplace
-print "<table summary=\"list_of_modules\" class=\"noborder\" width=\"100%\">\n";
-print "<tr class=\"liste_titre\">\n";
-print '<td colspan="2">'.$langs->trans("WebSiteDesc").'</td>';
-print '<td>'.$langs->trans("URL").'</td>';
-print '</tr>';
-
-print "<tr class=\"oddeven\">\n";
-$url = 'https://www.dolistore.com/45-pos';
-    print '<td class="left"><a href="'.$url.'" target="_blank" rel="external"><img border="0" class="imgautosize imgmaxwidth180" src="'.DOL_URL_ROOT.'/theme/dolistore_logo.png"></a></td>';
-print '<td>'.$langs->trans("DolistorePosCategory").'</td>';
-print '<td><a href="'.$url.'" target="_blank" rel="external">'.$url.'</a></td>';
-print '</tr>';
-
-print "</table>\n";
-print '<br>';
-
-// Support
-print "<table summary=\"list_of_modules\" class=\"noborder\" width=\"100%\">\n";
-print "<tr class=\"liste_titre\">\n";
-print '<td colspan="2">TakePOS Support</td>';
-print '<td>'.$langs->trans("URL").'</td>';
-print '</tr>';
-
-print "<tr class=\"oddeven\">\n";
-$url = 'http://www.takepos.com';
-print '<td class="left"><a href="'.$url.'" target="_blank" rel="external"><img border="0" class="imgautosize imgmaxwidth180" src="../img/takepos.png"></a></td>';
-print '<td>TakePOS original developers</td>';
-print '<td><a href="'.$url.'" target="_blank" rel="external">'.$url.'</a></td>';
-print '</tr>';
-
-print "</table>\n";
-print '<br>';
 
 llxFooter();
 $db->close();
