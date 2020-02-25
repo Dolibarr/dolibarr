@@ -80,7 +80,18 @@ class Documents extends DolibarrApi
 		//--- Finds and returns the document
 		$entity = $conf->entity;
 
-		$check_access = dol_check_secure_access_document($modulepart, $original_file, $entity, DolibarrApiAccess::$user, '', 'read');
+		// Special cases that need to use get_exdir to get real dir of object
+		// If future, all object should use this to define path of documents.
+		/*
+		$tmpreldir = '';
+		if ($modulepart == 'supplier_invoice') {
+			$tmpreldir = get_exdir($object->id, 2, 0, 0, $object, 'invoice_supplier');
+		}
+
+		$relativefile = $tmpreldir.dol_sanitizeFileName($object->ref); */
+		$relativefile = $original_file;
+
+		$check_access = dol_check_secure_access_document($modulepart, $relativefile, $entity, DolibarrApiAccess::$user, '', 'read');
 		$accessallowed = $check_access['accessallowed'];
 		$sqlprotectagainstexternals = $check_access['sqlprotectagainstexternals'];
 		$original_file = $check_access['original_file'];
@@ -146,7 +157,18 @@ class Documents extends DolibarrApi
 		//--- Finds and returns the document
 		$entity = $conf->entity;
 
-		$check_access = dol_check_secure_access_document($modulepart, $original_file, $entity, DolibarrApiAccess::$user, '', 'write');
+		// Special cases that need to use get_exdir to get real dir of object
+		// If future, all object should use this to define path of documents.
+		/*
+		$tmpreldir = '';
+		if ($modulepart == 'supplier_invoice') {
+			$tmpreldir = get_exdir($object->id, 2, 0, 0, $object, 'invoice_supplier');
+		}
+
+		$relativefile = $tmpreldir.dol_sanitizeFileName($object->ref); */
+		$relativefile = $original_file;
+
+		$check_access = dol_check_secure_access_document($modulepart, $relativefile, $entity, DolibarrApiAccess::$user, '', 'write');
 		$accessallowed              = $check_access['accessallowed'];
 		$sqlprotectagainstexternals = $check_access['sqlprotectagainstexternals'];
 		$original_file              = $check_access['original_file'];
@@ -696,7 +718,18 @@ class Documents extends DolibarrApi
 	    //--- Finds and returns the document
 	    $entity = $conf->entity;
 
-	    $check_access = dol_check_secure_access_document($modulepart, $original_file, $entity, DolibarrApiAccess::$user, '', 'read');
+	    // Special cases that need to use get_exdir to get real dir of object
+	    // If future, all object should use this to define path of documents.
+	    /*
+	    $tmpreldir = '';
+	    if ($modulepart == 'supplier_invoice') {
+	    	$tmpreldir = get_exdir($object->id, 2, 0, 0, $object, 'invoice_supplier');
+	    }
+
+	    $relativefile = $tmpreldir.dol_sanitizeFileName($object->ref); */
+	    $relativefile = $original_file;
+
+	    $check_access = dol_check_secure_access_document($modulepart, $relativefile, $entity, DolibarrApiAccess::$user, '', 'read');
 	    $accessallowed = $check_access['accessallowed'];
 	    $sqlprotectagainstexternals = $check_access['sqlprotectagainstexternals'];
 	    $original_file = $check_access['original_file'];
