@@ -2175,7 +2175,8 @@ function print_projecttasks_array($db, $form, $socid, $projectsListId, $mytasks 
 			if ($userAccess >= 0)
 			{
 				$projectstatic->ref = $objp->ref;
-				$projectstatic->statut = $objp->status;
+				$projectstatic->statut = $objp->status;		// deprecated
+				$projectstatic->status = $objp->status;
 				$projectstatic->title = $objp->title;
 				$projectstatic->datee = $db->jdate($objp->datee);
 				$projectstatic->dateo = $db->jdate($objp->dateo);

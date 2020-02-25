@@ -172,8 +172,8 @@ print_projecttasks_array($db, $form, $socid, $projectsListId, 0, 0, $listofoppst
 print '</div><div class="fichetwothirdright"><div class="ficheaddleft">';
 
 // Latest modified projects
-$sql = "SELECT p.rowid, p.ref, p.title, p.fk_statut, p.tms as datem,";
-$sql .= " s.rowid as socid, s.nom as name, s.email, s.client, s.fournisseur, s.code_client, s.code_fournisseur, s.canvas";
+$sql = "SELECT p.rowid, p.ref, p.title, p.fk_statut as status, p.tms as datem,";
+$sql .= " s.rowid as socid, s.nom as name, s.email, s.client, s.fournisseur, s.code_client, s.code_fournisseur, s.canvas, s.status as thirdpartystatus";
 $sql .= " FROM ".MAIN_DB_PREFIX."projet as p";
 $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s on p.fk_soc = s.rowid";
 $sql .= " WHERE p.entity IN (".getEntity('project').")";
@@ -208,6 +208,7 @@ if ($resql)
 			$projectstatic->dateo = $obj->dateo;
 			$projectstatic->datep = $obj->datep;
 			$projectstatic->thirdparty_name = $obj->name;
+			$projectstatic->status = $obj->status;
 
 			$companystatic->id = $obj->socid;
 			$companystatic->name = $obj->name;
@@ -217,6 +218,7 @@ if ($resql)
 			$companystatic->code_client = $obj->code_client;
 			$companystatic->code_fournisseur = $obj->code_fournisseur;
 			$companystatic->canvas = $obj->canvas;
+			$companystatic->status = $obj->thirdpartystatus;
 
 			print '<table class="nobordernopadding"><tr class="nocellnopadd">';
 			print '<td width="96" class="nobordernopadding nowrap">';
@@ -243,7 +245,7 @@ if ($resql)
 			}
 			print '</td>';
 			print '<td>'.dol_print_date($db->jdate($obj->datem), 'day').'</td>';
-			print '<td class="right">'.$projectstatic->LibStatut($obj->fk_statut, 3).'</td>';
+			print '<td class="right">'.$projectstatic->LibStatut($obj->status, 3).'</td>';
 			print '</tr>';
 			$i++;
 		}
@@ -265,14 +267,14 @@ print_liste_field_titre("NbOfProjects", "", "", "", "", '', $sortfield, $sortord
 print "</tr>\n";
 
 $sql = "SELECT COUNT(p.rowid) as nb, SUM(p.opp_amount)";
-$sql .= ", s.nom as name, s.rowid as socid";
+$sql .= ", s.rowid as socid, s.nom as name, s.email, s.client, s.fournisseur, s.code_client, s.code_fournisseur, s.canvas, s.status";
 $sql .= " FROM ".MAIN_DB_PREFIX."projet as p";
 $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s on p.fk_soc = s.rowid";
 $sql .= " WHERE p.entity IN (".getEntity('project').")";
 $sql .= " AND p.fk_statut = 1";
 if ($mine || empty($user->rights->projet->all->lire)) $sql .= " AND p.rowid IN (".$projectsListId.")"; // If we have this test true, it also means projectset is not 2
 if ($socid)	$sql .= " AND (p.fk_soc IS NULL OR p.fk_soc = 0 OR p.fk_soc = ".$socid.")";
-$sql .= " GROUP BY s.nom, s.rowid";
+$sql .= " GROUP BY s.rowid, s.nom, s.email, s.client, s.fournisseur, s.code_client, s.code_fournisseur, s.canvas, s.status";
 $sql .= $db->order($sortfield, $sortorder);
 //$sql .= $db->plimit($max + 1, 0);
 
@@ -299,6 +301,9 @@ if ($resql)
 		{
 			$companystatic->id = $obj->socid;
 			$companystatic->name = $obj->name;
+			$companystatic->email = $obj->email;
+			$companystatic->status = $obj->status;
+
 			print $companystatic->getNomUrl(1);
 		}
 		else
