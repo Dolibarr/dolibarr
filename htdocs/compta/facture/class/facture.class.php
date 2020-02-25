@@ -4713,7 +4713,7 @@ class Facture extends CommonInvoice
 	 * Currently used for documents generation : to know if retained warranty need to be displayed
 	 * @return bool
 	 */
-	function displayRetainedWarranty()
+	public function displayRetainedWarranty()
 	{
 		global $conf;
 
