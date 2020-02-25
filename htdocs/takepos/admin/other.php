@@ -21,17 +21,15 @@
  *	\ingroup    takepos
  *	\brief      Setup page for TakePos module
  */
-
 require '../../main.inc.php'; // Load $user and permissions
-require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
-require_once DOL_DOCUMENT_ROOT.'/product/class/html.formproduct.class.php';
-require_once DOL_DOCUMENT_ROOT.'/core/lib/pdf.lib.php';
-require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
-require_once DOL_DOCUMENT_ROOT."/core/lib/takepos.lib.php";
+require_once DOL_DOCUMENT_ROOT . '/core/lib/admin.lib.php';
+require_once DOL_DOCUMENT_ROOT . '/product/class/html.formproduct.class.php';
+require_once DOL_DOCUMENT_ROOT . '/core/lib/pdf.lib.php';
+require_once DOL_DOCUMENT_ROOT . '/categories/class/categorie.class.php';
+require_once DOL_DOCUMENT_ROOT . "/core/lib/takepos.lib.php";
 
 // If socid provided by ajax company selector
-if (!empty($_REQUEST['CASHDESK_ID_THIRDPARTY_id']))
-{
+if (!empty($_REQUEST['CASHDESK_ID_THIRDPARTY_id'])) {
 	$_GET['CASHDESK_ID_THIRDPARTY'] = GETPOST('CASHDESK_ID_THIRDPARTY_id', 'alpha');
 	$_POST['CASHDESK_ID_THIRDPARTY'] = GETPOST('CASHDESK_ID_THIRDPARTY_id', 'alpha');
 	$_REQUEST['CASHDESK_ID_THIRDPARTY'] = GETPOST('CASHDESK_ID_THIRDPARTY_id', 'alpha');
@@ -44,8 +42,8 @@ $langs->loadLangs(array("admin", "cashdesk"));
 
 global $db;
 
-$sql = "SELECT code, libelle FROM ".MAIN_DB_PREFIX."c_paiement";
-$sql .= " WHERE entity IN (".getEntity('c_paiement').")";
+$sql = "SELECT code, libelle FROM " . MAIN_DB_PREFIX . "c_paiement";
+$sql .= " WHERE entity IN (" . getEntity('c_paiement') . ")";
 $sql .= " AND active = 1";
 $sql .= " ORDER BY libelle";
 $resql = $db->query($sql);
@@ -56,11 +54,12 @@ if ($resql) {
 	}
 }
 
+
 /*
  * Actions
  */
-if (GETPOST('action', 'alpha') == 'set')
-{
+
+if (GETPOST('action', 'alpha') == 'set') {
 	$db->begin();
 	if (GETPOST('socid', 'int') < 0) $_POST["socid"] = '';
 
@@ -80,52 +79,46 @@ if (GETPOST('action', 'alpha') == 'set')
 	$res = dolibarr_set_const($db, "TAKEPOS_DIRECT_PAYMENT", GETPOST('TAKEPOS_DIRECT_PAYMENT', 'int'), 'int', 0, '', $conf->entity);
 	$res = dolibarr_set_const($db, "TAKEPOS_CUSTOM_RECEIPT", GETPOST('TAKEPOS_CUSTOM_RECEIPT', 'int'), 'int', 0, '', $conf->entity);
 	//$res = dolibarr_set_const($db, "TAKEPOS_HEAD_BAR", GETPOST('TAKEPOS_HEAD_BAR', 'int'), 'int', 0, '', $conf->entity);
-    $res = dolibarr_set_const($db, "TAKEPOS_EMAIL_TEMPLATE_INVOICE", GETPOST('TAKEPOS_EMAIL_TEMPLATE_INVOICE', 'alpha'), 'chaine', 0, '', $conf->entity);
+	$res = dolibarr_set_const($db, "TAKEPOS_EMAIL_TEMPLATE_INVOICE", GETPOST('TAKEPOS_EMAIL_TEMPLATE_INVOICE', 'alpha'), 'chaine', 0, '', $conf->entity);
 	if (!empty($conf->global->TAKEPOS_ENABLE_SUMUP)) {
 		$res = dolibarr_set_const($db, "TAKEPOS_SUMUP_AFFILIATE", GETPOST('TAKEPOS_SUMUP_AFFILIATE', 'alpha'), 'chaine', 0, '', $conf->entity);
 		$res = dolibarr_set_const($db, "TAKEPOS_SUMUP_APPID", GETPOST('TAKEPOS_SUMUP_APPID', 'alpha'), 'chaine', 0, '', $conf->entity);
 	}
-	if ($conf->global->TAKEPOS_ORDER_NOTES == 1)
-	{
+	if ($conf->global->TAKEPOS_ORDER_NOTES == 1) {
 		$extrafields = new ExtraFields($db);
 		$extrafields->addExtraField('order_notes', 'Order notes', 'varchar', 0, 255, 'facturedet', 0, 0, '', '', 0, '', 0, 1);
 	}
 
-	dol_syslog("admin/cashdesk: level ".GETPOST('level', 'alpha'));
+	dol_syslog("admin/cashdesk: level " . GETPOST('level', 'alpha'));
 
 	if (!$res > 0) $error++;
 
- 	if (!$error)
-    {
-        $db->commit();
-	    setEventMessages($langs->trans("SetupSaved"), null, 'mesgs');
-    }
-    else
-    {
-        $db->rollback();
-	    setEventMessages($langs->trans("Error"), null, 'errors');
-    }
+	if (!$error) {
+		$db->commit();
+		setEventMessages($langs->trans("SetupSaved"), null, 'mesgs');
+	} else {
+		$db->rollback();
+		setEventMessages($langs->trans("Error"), null, 'errors');
+	}
 }
+
 
 /*
  * View
  */
 
-$form = new Form($db);
-$formproduct = new FormProduct($db);
-
 llxHeader('', $langs->trans("CashDeskSetup"));
 
-$linkback = '<a href="'.DOL_URL_ROOT.'/admin/modules.php">'.$langs->trans("BackToModuleList").'</a>';
-print load_fiche_titre($langs->trans("CashDeskSetup").' (TakePOS)', $linkback, 'title_setup');
+$linkback = '<a href="' . DOL_URL_ROOT . '/admin/modules.php">' . $langs->trans("BackToModuleList") . '</a>';
+print load_fiche_titre($langs->trans("CashDeskSetup") . ' (TakePOS)', $linkback, 'title_setup');
 $head = takepos_prepare_head();
 dol_fiche_head($head, 'other', 'TakePOS', -1);
 print '<br>';
 
 
 // Mode
-print '<form action="'.$_SERVER["PHP_SELF"].'" method="post">';
-print '<input type="hidden" name="token" value="'.newToken().'">';
+print '<form action="' . $_SERVER["PHP_SELF"] . '" method="post">';
+print '<input type="hidden" name="token" value="' . newToken() . '">';
 print '<input type="hidden" name="action" value="set">';
 
 
@@ -133,16 +126,17 @@ print '<div class="div-table-responsive-no-min">';
 
 // Marketplace
 print "<table summary=\"list_of_modules\" class=\"noborder\" width=\"100%\">\n";
-print "<tr class=\"liste_titre\">\n";
-print '<td colspan="2">'.$langs->trans("WebSiteDesc").'</td>';
-print '<td>'.$langs->trans("URL").'</td>';
+print '<tr class="liste_titre">' . "\n";
+print '<td class="titlefield" colspan="2">' . $langs->trans("WebSiteDesc") . '</td>';
+print '<td>' . $langs->trans("URL") . '</td>';
 print '</tr>';
 
-print "<tr class=\"oddeven\">\n";
 $url = 'https://www.dolistore.com/45-pos';
-print '<td class="left"><a href="'.$url.'" target="_blank" rel="external"><img border="0" class="imgautosize imgmaxwidth180" src="'.DOL_URL_ROOT.'/theme/dolistore_logo.png"></a></td>';
-print '<td>'.$langs->trans("DolistorePosCategory").'</td>';
-print '<td><a href="'.$url.'" target="_blank" rel="external">'.$url.'</a></td>';
+
+print '<tr class="oddeven">' . "\n";
+print '<td class="titlefield"><a href="' . $url . '" target="_blank" rel="external"><img border="0" class="imgautosize imgmaxwidth180" src="' . DOL_URL_ROOT . '/theme/dolistore_logo.png"></a></td>';
+print '<td>' . $langs->trans("DolistorePosCategory") . '</td>';
+print '<td><a href="' . $url . '" target="_blank" rel="external">' . $url . '</a></td>';
 print '</tr>';
 
 print "</table>\n";
@@ -152,22 +146,21 @@ print '</div>';
 print '<br>';
 
 
-
-
 print '<div class="div-table-responsive-no-min">';
 
 // Support
 print "<table summary=\"list_of_modules\" class=\"noborder\" width=\"100%\">\n";
-print "<tr class=\"liste_titre\">\n";
+print '<tr class="liste_titre">' . "\n";
 print '<td colspan="2">TakePOS Support</td>';
-print '<td>'.$langs->trans("URL").'</td>';
+print '<td>' . $langs->trans("URL") . '</td>';
 print '</tr>';
 
-print "<tr class=\"oddeven\">\n";
 $url = 'http://www.takepos.com';
-print '<td class="left"><a href="'.$url.'" target="_blank" rel="external"><img border="0" class="imgautosize imgmaxwidth180" src="../img/takepos.png"></a></td>';
+
+print '<tr class="oddeven">' . "\n";
+print '<td class="left"><a href="' . $url . '" target="_blank" rel="external"><img border="0" class="imgautosize imgmaxwidth180" src="../img/takepos.png"></a></td>';
 print '<td>TakePOS original developers</td>';
-print '<td><a href="'.$url.'" target="_blank" rel="external">'.$url.'</a></td>';
+print '<td><a href="' . $url . '" target="_blank" rel="external">' . $url . '</a></td>';
 print '</tr>';
 
 print "</table>\n";
