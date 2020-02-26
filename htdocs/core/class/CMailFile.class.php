@@ -124,6 +124,13 @@ class CMailFile
 	{
 		global $conf, $dolibarr_main_data_root;
 
+		// Clean values of $mimefilename_list
+		if (is_array($mimefilename_list)) {
+			foreach($mimefilename_list as $key => $val) {
+				$mimefilename_list[$key] = dol_string_unaccent($mimefilename_list[$key]);
+			}
+		}
+
 		$this->sendcontext = $sendcontext;
 
 		if (empty($replyto)) $replyto=$from;
@@ -169,7 +176,7 @@ class CMailFile
 		if (empty($msg))
 		{
 		    dol_syslog("CMailFile::CMailfile: Try to send an email with empty body");
-		    $msg='.';     // Avoid empty message (with empty message conten show a multipart structure)
+		    $msg = '.'; // Avoid empty message (with empty message content, you will see a multipart structure)
 		}
 
 		// Detect if message is HTML (use fast method)
@@ -191,7 +198,7 @@ class CMailFile
 		//$urlwithroot=DOL_MAIN_URL_ROOT;					// This is to use same domain name than current
 
 		// Replace relative /viewimage to absolute path
-		$msg = preg_replace('/src="'.preg_quote(DOL_URL_ROOT, '/').'\/viewimage\.php/ims', 'src="'.$urlwithroot.'/viewimage.php', $msg, -1, $nbrep);
+		$msg = preg_replace('/src="'.preg_quote(DOL_URL_ROOT, '/').'\/viewimage\.php/ims', 'src="'.$urlwithroot.'/viewimage.php', $msg, -1);
 
 		if (! empty($conf->global->MAIN_MAIL_FORCE_CONTENT_TYPE_TO_HTML)) $this->msgishtml=1; // To force to send everything with content type html.
 
@@ -322,6 +329,9 @@ class CMailFile
 				$msg = $this->html;
 				$msg = $this->checkIfHTML($msg);
 			}
+
+			// Replace . alone on a new line with .. to avoid to have SMTP interpret this as end of message
+			$msg = preg_replace('/(\r|\n)\.(\r|\n)/ims', '\1..\2', $msg);
 
 			if ($this->msgishtml) $smtps->setBodyContent($msg, 'html');
 			else $smtps->setBodyContent($msg, 'plain');
@@ -485,7 +495,7 @@ class CMailFile
 
 		$res=false;
 
-		if (empty($conf->global->MAIN_DISABLE_ALL_MAILS) || !empty($conf->global->MAIN_MAIL_FORCE_SENDTO))
+		if (empty($conf->global->MAIN_DISABLE_ALL_MAILS))
 		{
 			require_once DOL_DOCUMENT_ROOT . '/core/class/hookmanager.class.php';
 			$hookmanager = new HookManager($db);

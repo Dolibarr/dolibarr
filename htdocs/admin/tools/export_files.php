@@ -165,9 +165,6 @@ if ($errormsg)
 	setEventMessages($langs->trans("Error")." : ".$errormsg, null, 'errors');
 }
 
-print '<br>';
-
-
 // Redirect t backup page
 header("Location: dolibarr_export.php");
 

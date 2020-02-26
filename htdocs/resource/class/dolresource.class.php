@@ -533,7 +533,7 @@ class Dolresource extends CommonObject
     				$sql.= $value;
     			}
     			else {
-    				$sql.= ' AND '.$key.' LIKE \'%'.$value.'%\'';
+    				$sql.= ' AND '.$key.' LIKE \'%'.$this->db->escape($value).'%\'';
     			}
     		}
     	}
@@ -617,7 +617,7 @@ class Dolresource extends CommonObject
    					$sql.= ' AND '.$key.' = \''.$this->db->idate($value).'\'';
    				}
    				else {
-   					$sql.= ' AND '.$key.' LIKE \'%'.$value.'%\'';
+   					$sql.= ' AND '.$key.' LIKE \'%'.$this->db->escape($value).'%\'';
    				}
    			}
    		}
@@ -699,7 +699,7 @@ class Dolresource extends CommonObject
     				$sql.= ' AND '.$key.' = \''.$this->db->idate($value).'\'';
     			}
     			else {
-    				$sql.= ' AND '.$key.' LIKE \'%'.$value.'%\'';
+    				$sql.= ' AND '.$key.' LIKE \'%'.$this->db->escape($value).'%\'';
     			}
     		}
     	}

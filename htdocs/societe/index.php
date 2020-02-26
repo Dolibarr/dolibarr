@@ -267,7 +267,10 @@ $max=15;
 $sql = "SELECT s.rowid, s.nom as name, s.email, s.client, s.fournisseur";
 $sql.= ", s.code_client";
 $sql.= ", s.code_fournisseur";
+$sql.= ", s.code_compta_fournisseur";
+$sql.= ", s.code_compta";
 $sql.= ", s.logo";
+$sql.= ", s.entity";
 $sql.= ", s.canvas, s.tms as datem, s.status as status";
 $sql.= " FROM ".MAIN_DB_PREFIX."societe as s";
 if (! $user->rights->societe->client->voir && ! $socid) $sql.= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
@@ -314,6 +317,9 @@ if ($result)
             $thirdparty_static->code_fournisseur = $objp->code_fournisseur;
             $thirdparty_static->canvas=$objp->canvas;
             $thirdparty_static->email = $objp->email;
+			$thirdparty_static->entity = $objp->entity;
+            $thirdparty_static->code_compta_fournisseur = $objp->code_compta_fournisseur;
+            $thirdparty_static->code_compta = $objp->code_compta;
 
             print '<tr class="oddeven">';
             // Name

@@ -449,7 +449,7 @@ if (! empty($conf->fournisseur->enabled) && $user->rights->fournisseur->facture-
 	$sql = "SELECT ff.rowid, ff.ref, ff.fk_statut, ff.libelle, ff.total_ht, ff.total_tva, ff.total_ttc, ff.tms, ff.paye";
 	$sql.= ", s.nom as name";
     $sql.= ", s.rowid as socid";
-    $sql.= ", s.code_fournisseur, s.code_compta_fournisseur";
+    $sql.= ", s.code_fournisseur, s.code_compta_fournisseur, s.email";
 	$sql.= ", SUM(pf.amount) as am";
 	$sql.= " FROM ".MAIN_DB_PREFIX."societe as s, ".MAIN_DB_PREFIX."facture_fourn as ff";
 	$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."paiementfourn_facturefourn as pf on ff.rowid=pf.fk_facturefourn";
@@ -497,10 +497,14 @@ if (! empty($conf->fournisseur->enabled) && $user->rights->fournisseur->facture-
 
 				$thirdpartystatic->id=$obj->socid;
 				$thirdpartystatic->name=$obj->name;
+				$thirdpartystatic->email=$obj->email;
+				$thirdpartystatic->country_id=0;
+				$thirdpartystatic->country_code='';
+				$thirdpartystatic->client=0;
 				$thirdpartystatic->fournisseur=1;
-				//$thirdpartystatic->code_client = $obj->code_client;
+				$thirdpartystatic->code_client = '';
 				$thirdpartystatic->code_fournisseur = $obj->code_fournisseur;
-				//$thirdpartystatic->code_compta = $obj->code_compta;
+				$thirdpartystatic->code_compta = '';
 				$thirdpartystatic->code_compta_fournisseur = $obj->code_compta_fournisseur;
 
 				print '<tr class="oddeven"><td>';
