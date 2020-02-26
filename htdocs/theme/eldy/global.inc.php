@@ -1537,7 +1537,7 @@ td.nobordernopadding.widthpictotitle.opacityhigh.valignmiddle.col-picto {
 }
 .pictotitle {
 	margin-<?php echo $right; ?>: 8px;
-	margin-bottom: 4px;
+	/* margin-bottom: 4px; */
 }
 @media only screen and (max-width: 767px)
 {
