@@ -1841,40 +1841,50 @@ function top_menu_user()
     }
     else $appli .= " ".DOL_VERSION;
 
-    $btnUser = '<!-- div for user link -->
-    <div id="topmenu-login-dropdown" class="userimg atoplogin dropdown user user-menu  inline-block">
-        <a href="'.DOL_URL_ROOT.'/user/card.php?id='.$user->id.'" class="dropdown-toggle login-dropdown-a" data-toggle="dropdown">
-            '.$userImage.'
-            <span class="hidden-xs maxwidth200 atoploginusername hideonsmartphone">'.dol_trunc($user->firstname ? $user->firstname : $user->login, 10).'</span>
-        </a>
-        <div class="dropdown-menu">
-            <!-- User image -->
-            <div class="user-header">
-                '.$userDropDownImage.'
+    if (empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER)) {
+	    $btnUser = '<!-- div for user link -->
+	    <div id="topmenu-login-dropdown" class="userimg atoplogin dropdown user user-menu  inline-block">
+	        <a href="'.DOL_URL_ROOT.'/user/card.php?id='.$user->id.'" class="dropdown-toggle login-dropdown-a" data-toggle="dropdown">
+	            '.$userImage.'
+	            <span class="hidden-xs maxwidth200 atoploginusername hideonsmartphone">'.dol_trunc($user->firstname ? $user->firstname : $user->login, 10).'</span>
+	        </a>
+	        <div class="dropdown-menu">
+	            <!-- User image -->
+	            <div class="user-header">
+	                '.$userDropDownImage.'
 
-                <p>
-                    '.$profilName.'<br>
-					<small class="classfortooltip" title="'.$langs->trans("PreviousConnexion").'" ><i class="fa fa-user-clock"></i> '.dol_print_date($user->datepreviouslogin, "dayhour", 'tzuser').'</small><br>
-					<small class="classfortooltip"><i class="fa fa-cog"></i> '.$langs->trans("Version").' '.$appli.'</small>
-                </p>
-            </div>
+	                <p>
+	                    '.$profilName.'<br>
+						<small class="classfortooltip" title="'.$langs->trans("PreviousConnexion").'" ><i class="fa fa-user-clock"></i> '.dol_print_date($user->datepreviouslogin, "dayhour", 'tzuser').'</small><br>
+						<small class="classfortooltip"><i class="fa fa-cog"></i> '.$langs->trans("Version").' '.$appli.'</small>
+	                </p>
+	            </div>
 
-            <!-- Menu Body -->
-            <div class="user-body">'.$dropdownBody.'</div>
+	            <!-- Menu Body -->
+	            <div class="user-body">'.$dropdownBody.'</div>
 
-            <!-- Menu Footer-->
-            <div class="user-footer">
-                <div class="pull-left">
-                    '.$profilLink.'
-                </div>
-                <div class="pull-right">
-                    '.$logoutLink.'
-                </div>
-                <div style="clear:both;"></div>
-            </div>
+	            <!-- Menu Footer-->
+	            <div class="user-footer">
+	                <div class="pull-left">
+	                    '.$profilLink.'
+	                </div>
+	                <div class="pull-right">
+	                    '.$logoutLink.'
+	                </div>
+	                <div style="clear:both;"></div>
+	            </div>
 
-        </div>
-    </div>';
+	        </div>
+	    </div>';
+    } else {
+    	$btnUser = '<!-- div for user link -->
+	    <div id="topmenu-login-dropdown" class="userimg atoplogin dropdown user user-menu  inline-block">
+	    	<a href="'.DOL_URL_ROOT.'/user/card.php?id='.$user->id.'">
+	    	'.$userImage.'
+	    		<span class="hidden-xs maxwidth200 atoploginusername hideonsmartphone">'.dol_trunc($user->firstname ? $user->firstname : $user->login, 10).'</span>
+	    		</a>
+		</div>';
+    }
 
     if (!defined('JS_JQUERY_DISABLE_DROPDOWN') && !empty($conf->use_javascript_ajax))    // This may be set by some pages that use different jquery version to avoid errors
     {
