@@ -88,6 +88,8 @@ if (GETPOST('action', 'alpha') == 'set')
     $res = dolibarr_set_const($db, "TAKEPOS_TEMPLATE_TO_USE_FOR_INVOICES".$terminaltouse, GETPOST('TAKEPOS_TEMPLATE_TO_USE_FOR_INVOICES'.$terminaltouse, 'alpha'), 'chaine', 0, '', $conf->entity);
     $res = dolibarr_set_const($db, "TAKEPOS_TEMPLATE_TO_USE_FOR_ORDERS".$terminaltouse, GETPOST('TAKEPOS_TEMPLATE_TO_USE_FOR_ORDERS'.$terminaltouse, 'alpha'), 'chaine', 0, '', $conf->entity);
 
+	$res = dolibarr_set_const($db, 'CASHDESK_READER_KEYCODE_FOR_ENTER'.$terminaltouse, (GETPOST('CASHDESK_READER_KEYCODE_FOR_ENTER'.$terminaltouse, 'int') > 0 ? GETPOST('CASHDESK_READER_KEYCODE_FOR_ENTER'.$terminaltouse, 'int') : ''), 'chaine', 0, '', $conf->entity);
+
 	dol_syslog("admin/cashdesk: level ".GETPOST('level', 'alpha'));
 
 	if (!$res > 0) $error++;
@@ -243,6 +245,11 @@ if ($conf->global->TAKEPOS_PRINT_METHOD == "receiptprinter") {
 	print $form->selectarray('TAKEPOS_TEMPLATE_TO_USE_FOR_ORDERS'.$terminal, $templates, (empty($conf->global->{'TAKEPOS_TEMPLATE_TO_USE_FOR_ORDERS'.$terminal}) ? '0' : $conf->global->{'TAKEPOS_TEMPLATE_TO_USE_FOR_ORDERS'.$terminal}), 1);
 	print '</td></tr>';
 }
+
+print '<tr class="oddeven"><td>' . $langs->trans('CashDeskReaderKeyCodeForEnter') . '</td>';
+print '<td>';
+print '<input type="text" name="' . 'CASHDESK_READER_KEYCODE_FOR_ENTER'.$terminaltouse . '" value="' . $conf->global->{'CASHDESK_READER_KEYCODE_FOR_ENTER'.$terminaltouse} . '" />';
+print '</td></tr>';
 
 print '</table>';
 print '</div>';

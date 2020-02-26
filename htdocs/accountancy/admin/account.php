@@ -283,6 +283,8 @@ if ($resql)
 			<script type="text/javascript">
 			$(document).ready(function () {
 		    	$("#searchFormList").on("submit", function (e) {
+					//event.preventDefault();
+				    //var form = this;
 					console.log("chartofaccounts focus = "+$("#chartofaccounts").is(":focus"));
 					console.log("change_chart focus = "+$("#change_chart").is(":focus"));
 					if ($("#change_chart").is(":focus"))
@@ -290,6 +292,7 @@ if ($resql)
 						console.log("We set valid_change_chart to 1");
 						$("#valid_change_chart").val(1);
 					}
+					//form.submit();
 					return true;
 			    });
 			});

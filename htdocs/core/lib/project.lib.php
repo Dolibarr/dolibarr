@@ -2035,15 +2035,19 @@ function print_projecttasks_array($db, $form, $socid, $projectsListId, $mytasks 
 	require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
 
 	$listofstatus = array_keys($listofoppstatus);
-	$statusOppList = array();
-	$themeColorId = 0;
-	foreach ($listofstatus as $oppStatus) {
-		$oppStatusCode = dol_getIdFromCode($db, $oppStatus, 'c_lead_status', 'rowid', 'code');
-		if ($oppStatusCode) {
-			$statusOppList[$oppStatus]['code'] = $oppStatusCode;
-			$statusOppList[$oppStatus]['color'] = isset($theme_datacolor[$themeColorId]) ? implode(', ', $theme_datacolor[$themeColorId]) : '';
+
+	if (is_array($listofstatus) && ! empty($conf->global->USE_COLOR_FOR_PROSPECTION_STATUS)) {
+		// Define $themeColorId and array $statusOppList for each $listofstatus
+		$themeColorId = 0;
+		$statusOppList = array();
+		foreach ($listofstatus as $oppStatus) {
+			$oppStatusCode = dol_getIdFromCode($db, $oppStatus, 'c_lead_status', 'rowid', 'code');
+			if ($oppStatusCode) {
+				$statusOppList[$oppStatus]['code'] = $oppStatusCode;
+				$statusOppList[$oppStatus]['color'] = isset($theme_datacolor[$themeColorId]) ? implode(', ', $theme_datacolor[$themeColorId]) : '';
+			}
+			$themeColorId++;
 		}
-		$themeColorId++;
 	}
 
 	$projectstatic = new Project($db);
@@ -2175,7 +2179,8 @@ function print_projecttasks_array($db, $form, $socid, $projectsListId, $mytasks 
 			if ($userAccess >= 0)
 			{
 				$projectstatic->ref = $objp->ref;
-				$projectstatic->statut = $objp->status;
+				$projectstatic->statut = $objp->status;		// deprecated
+				$projectstatic->status = $objp->status;
 				$projectstatic->title = $objp->title;
 				$projectstatic->datee = $db->jdate($objp->datee);
 				$projectstatic->dateo = $db->jdate($objp->dateo);
@@ -2202,6 +2207,7 @@ function print_projecttasks_array($db, $form, $socid, $projectsListId, $mytasks 
 						print '<td class="right">';
 						// Because color of prospection status has no meaning yet, it is used if hidden constant is set
 						if (empty($conf->global->USE_COLOR_FOR_PROSPECTION_STATUS)) {
+							$oppStatusCode = dol_getIdFromCode($db, $objp->opp_status, 'c_lead_status', 'rowid', 'code');
 							if ($langs->trans("OppStatus".$oppStatusCode) != "OppStatus".$oppStatusCode) {
 								print $langs->trans("OppStatus".$oppStatusCode);
 							}
@@ -2454,7 +2460,7 @@ function getTaskProgressView($task, $label = true, $progressNumber = true, $hide
  */
 function getTaskProgressBadge($task, $label = '', $tooltip = '')
 {
-    global $conf;
+    global $conf, $langs;
 
     $out = '';
     $badgeClass = '';
@@ -2472,12 +2478,15 @@ function getTaskProgressBadge($task, $label = '', $tooltip = '')
 
             if (doubleval($progressCalculated) > doubleval($task->progress * $warningRatio)) {
                 $badgeClass .= 'badge-danger';
+                if (empty($tooltip)) $tooltip = $task->progress.'% < '.$langs->trans("Expected").' '.$progressCalculated.'%';
             }
             elseif (doubleval($progressCalculated) > doubleval($task->progress)) { // warning if close at 10%
                 $badgeClass .= 'badge-warning';
+                if (empty($tooltip)) $tooltip = $task->progress.'% < '.$langs->trans("Expected").' '.$progressCalculated.'%';
             }
             else {
                 $badgeClass .= 'badge-success';
+                if (empty($tooltip)) $tooltip = $task->progress.'% >= '.$langs->trans("Expected").' '.$progressCalculated.'%';
             }
         }
     }

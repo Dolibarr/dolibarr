@@ -132,7 +132,7 @@ print '<div class="div-table-responsive-no-min">';
 print '<table class="noborder centpercent">';
 
 print '<tr class="liste_titre">';
-print '<td>'.$langs->trans("Parameters").'</td><td>'.$langs->trans("Value").'</td>';
+print '<td class="titlefield">'.$langs->trans("Parameters").'</td><td>'.$langs->trans("Value").'</td>';
 print "</tr>\n";
 
 // Terminals
@@ -149,7 +149,8 @@ if (!empty($conf->service->enabled))
 	print '<tr class="oddeven"><td>';
 	print $langs->trans("CashdeskShowServices");
 	print '<td colspan="2">';
-	print $form->selectyesno("CASHDESK_SERVICES", $conf->global->CASHDESK_SERVICES, 1);
+	print ajax_constantonoff("CASHDESK_SERVICES", array(), $conf->entity, 0, 0, 1, 0);
+	//print $form->selectyesno("CASHDESK_SERVICES", $conf->global->CASHDESK_SERVICES, 1);
 	print "</td></tr>\n";
 }
 
@@ -161,65 +162,12 @@ print $form->select_all_categories(Categorie::TYPE_PRODUCT, $conf->global->TAKEP
 print ajax_combobox('TAKEPOS_ROOT_CATEGORY_ID');
 print "</td></tr>\n";
 
-// Bar Restaurant mode
-print '<tr class="oddeven"><td>';
-print $langs->trans("EnableBarOrRestaurantFeatures");
-print '</td>';
-print '<td colspan="2">';
-print $form->selectyesno("TAKEPOS_BAR_RESTAURANT", $conf->global->TAKEPOS_BAR_RESTAURANT, 1);
-print "</td></tr>\n";
-
-if ($conf->global->TAKEPOS_BAR_RESTAURANT && $conf->global->TAKEPOS_PRINT_METHOD != "browser") {
-	print '<tr class="oddeven value"><td>';
-	print $langs->trans("OrderPrinters").' (<a href="'.DOL_URL_ROOT.'/takepos/admin/orderprinters.php?leftmenu=setup">'.$langs->trans("Setup").'</a>)';
-	print '<td colspan="2">';
-	print $form->selectyesno("TAKEPOS_ORDER_PRINTERS", $conf->global->TAKEPOS_ORDER_PRINTERS, 1);
-	print '</td></tr>';
-
-	print '<tr class="oddeven value"><td>';
-	print $langs->trans("OrderNotes");
-	print '<td colspan="2">';
-	print $form->selectyesno("TAKEPOS_ORDER_NOTES", $conf->global->TAKEPOS_ORDER_NOTES, 1);
-	print '</td></tr>';
-}
-
-if ($conf->global->TAKEPOS_BAR_RESTAURANT)
-{
-	print '<tr class="oddeven value"><td>';
-	print $langs->trans("BasicPhoneLayout");
-	print '<td colspan="2">';
-	print $form->selectyesno("TAKEPOS_PHONE_BASIC_LAYOUT", $conf->global->TAKEPOS_PHONE_BASIC_LAYOUT, 1);
-	print '</td></tr>';
-
-	print '<tr class="oddeven value"><td>';
-	print $langs->trans("ProductSupplements");
-	print '<td colspan="2">';
-	print $form->selectyesno("TAKEPOS_SUPPLEMENTS", $conf->global->TAKEPOS_SUPPLEMENTS, 1);
-	print '</td></tr>';
-
-	if ($conf->global->TAKEPOS_SUPPLEMENTS)
-	{
-		print '<tr class="oddeven"><td>';
-		print $langs->trans("SupplementCategory");
-		print '<td colspan="2">';
-		print $form->select_all_categories(Categorie::TYPE_PRODUCT, $conf->global->TAKEPOS_SUPPLEMENTS_CATEGORY, 'TAKEPOS_SUPPLEMENTS_CATEGORY', 64, 0, 0);
-		print ajax_combobox('TAKEPOS_SUPPLEMENTS_CATEGORY');
-		print "</td></tr>\n";
-	}
-}
-
+// VAT Grouped on ticket
 print '<tr class="oddeven"><td>';
 print $langs->trans('TicketVatGrouped');
 print '<td colspan="2">';
-print $form->selectyesno("TAKEPOS_TICKET_VAT_GROUPPED", $conf->global->TAKEPOS_TICKET_VAT_GROUPPED, 1);
-print "</td></tr>\n";
-
-// Payment numpad
-print '<tr class="oddeven"><td>';
-print $langs->trans("Paymentnumpad");
-print '<td colspan="2">';
-$array = array(0=>$langs->trans("Numberspad"), 1=>$langs->trans("BillsCoinsPad"));
-print $form->selectarray('TAKEPOS_NUMPAD', $array, (empty($conf->global->TAKEPOS_NUMPAD) ? '0' : $conf->global->TAKEPOS_NUMPAD), 0);
+print ajax_constantonoff("TAKEPOS_TICKET_VAT_GROUPPED", array(), $conf->entity, 0, 0, 1, 0);
+//print $form->selectyesno("TAKEPOS_TICKET_VAT_GROUPPED", $conf->global->TAKEPOS_TICKET_VAT_GROUPPED, 1);
 print "</td></tr>\n";
 
 // Sort product
@@ -227,11 +175,8 @@ print '<tr class="oddeven"><td>';
 print $langs->trans("SortProductField");
 print '<td colspan="2">';
 $prod = new Product($db);
-$array = [];
-foreach ($prod->fields as $k => $v) {
-	$array[$k] = $k;
-}
-print $form->selectarray('TAKEPOS_SORTPRODUCTFIELD', $array, (empty($conf->global->TAKEPOS_SORTPRODUCTFIELD) ? 'rowid' : $conf->global->TAKEPOS_SORTPRODUCTFIELD), 0);
+$array = array('rowid' => 'ID', 'ref' => 'Ref', 'datec' => 'DateCreation', 'tms' => 'DateModification');
+print $form->selectarray('TAKEPOS_SORTPRODUCTFIELD', $array, (empty($conf->global->TAKEPOS_SORTPRODUCTFIELD) ? 'rowid' : $conf->global->TAKEPOS_SORTPRODUCTFIELD), 0, 0, 0, '', 1);
 print "</td></tr>\n";
 
 $substitutionarray = pdf_getSubstitutionArray($langs, null, null, 2);
@@ -248,11 +193,20 @@ $array = array(0=>"eldy", 1=>$langs->trans("Colorful"));
 print $form->selectarray('TAKEPOS_COLOR_THEME', $array, (empty($conf->global->TAKEPOS_COLOR_THEME) ? '0' : $conf->global->TAKEPOS_COLOR_THEME), 0);
 print "</td></tr>\n";
 
+// Payment numpad
+print '<tr class="oddeven"><td>';
+print $langs->trans("Paymentnumpad");
+print '<td colspan="2">';
+$array = array(0=>$langs->trans("Numberspad"), 1=>$langs->trans("BillsCoinsPad"));
+print $form->selectarray('TAKEPOS_NUMPAD', $array, (empty($conf->global->TAKEPOS_NUMPAD) ? '0' : $conf->global->TAKEPOS_NUMPAD), 0);
+print "</td></tr>\n";
+
 // Direct Payment
 print '<tr class="oddeven"><td>';
 print $langs->trans('DirectPaymentButton');
 print '<td colspan="2">';
-print $form->selectyesno("TAKEPOS_DIRECT_PAYMENT", $conf->global->TAKEPOS_DIRECT_PAYMENT, 1);
+print ajax_constantonoff("TAKEPOS_DIRECT_PAYMENT", array(), $conf->entity, 0, 0, 1, 0);
+//print $form->selectyesno("TAKEPOS_DIRECT_PAYMENT", $conf->global->TAKEPOS_DIRECT_PAYMENT, 1);
 print "</td></tr>\n";
 
 // Head Bar
@@ -290,6 +244,70 @@ print "</td></tr>\n";
 print '</table>';
 print '</div>';
 
+print '<br>';
+
+// Bar Restaurant mode
+print '<div class="div-table-responsive-no-min">';
+print '<table class="noborder centpercent">';
+
+print '<tr class="liste_titre">';
+print '<td class="titlefield">'.$langs->trans("Other").'</td><td>'.$langs->trans("Value").'</td>';
+print "</tr>\n";
+
+print '<tr class="oddeven"><td>';
+print $langs->trans("EnableBarOrRestaurantFeatures");
+print '</td>';
+print '<td colspan="2">';
+print ajax_constantonoff("TAKEPOS_BAR_RESTAURANT", array(), $conf->entity, 0, 0, 1, 0);
+//print $form->selectyesno("TAKEPOS_BAR_RESTAURANT", $conf->global->TAKEPOS_BAR_RESTAURANT, 1);
+print "</td></tr>\n";
+
+if ($conf->global->TAKEPOS_BAR_RESTAURANT && $conf->global->TAKEPOS_PRINT_METHOD != "browser") {
+	print '<tr class="oddeven value"><td>';
+	print $langs->trans("OrderPrinters").' (<a href="'.DOL_URL_ROOT.'/takepos/admin/orderprinters.php?leftmenu=setup">'.$langs->trans("Setup").'</a>)';
+	print '<td colspan="2">';
+	print ajax_constantonoff("TAKEPOS_ORDER_PRINTERS", array(), $conf->entity, 0, 0, 1, 0);
+	//print $form->selectyesno("TAKEPOS_ORDER_PRINTERS", $conf->global->TAKEPOS_ORDER_PRINTERS, 1);
+	print '</td></tr>';
+
+	print '<tr class="oddeven value"><td>';
+	print $langs->trans("OrderNotes");
+	print '<td colspan="2">';
+	print ajax_constantonoff("TAKEPOS_ORDER_NOTES", array(), $conf->entity, 0, 0, 1, 0);
+	//print $form->selectyesno("TAKEPOS_ORDER_NOTES", $conf->global->TAKEPOS_ORDER_NOTES, 1);
+	print '</td></tr>';
+}
+
+if ($conf->global->TAKEPOS_BAR_RESTAURANT)
+{
+	print '<tr class="oddeven value"><td>';
+	print $langs->trans("BasicPhoneLayout");
+	print '<td colspan="2">';
+	//print $form->selectyesno("TAKEPOS_PHONE_BASIC_LAYOUT", $conf->global->TAKEPOS_PHONE_BASIC_LAYOUT, 1);
+	print ajax_constantonoff("TAKEPOS_PHONE_BASIC_LAYOUT", array(), $conf->entity, 0, 0, 1, 0);
+	print '</td></tr>';
+
+	print '<tr class="oddeven value"><td>';
+	print $langs->trans("ProductSupplements");
+	print '<td colspan="2">';
+	//print $form->selectyesno("TAKEPOS_SUPPLEMENTS", $conf->global->TAKEPOS_SUPPLEMENTS, 1);
+	print ajax_constantonoff("TAKEPOS_SUPPLEMENTS", array(), $conf->entity, 0, 0, 1, 0);
+	print '</td></tr>';
+
+	if ($conf->global->TAKEPOS_SUPPLEMENTS)
+	{
+		print '<tr class="oddeven"><td>';
+		print $langs->trans("SupplementCategory");
+		print '<td colspan="2">';
+		print $form->select_all_categories(Categorie::TYPE_PRODUCT, $conf->global->TAKEPOS_SUPPLEMENTS_CATEGORY, 'TAKEPOS_SUPPLEMENTS_CATEGORY', 64, 0, 0);
+		print ajax_combobox('TAKEPOS_SUPPLEMENTS_CATEGORY');
+		print "</td></tr>\n";
+	}
+}
+print '</table>';
+print '</div>';
+
+
 // Sumup options
 if ($conf->global->TAKEPOS_ENABLE_SUMUP) {
 	print '<br>';
@@ -298,7 +316,7 @@ if ($conf->global->TAKEPOS_ENABLE_SUMUP) {
 	print '<table class="noborder centpercent">';
 
 	print '<tr class="liste_titre">';
-	print '<td>'.$langs->trans("Parameters").'</td><td>'.$langs->trans("Value").'</td>';
+	print '<td class="titlefield">'.$langs->trans("Sumup").'</td><td>'.$langs->trans("Value").'</td>';
 	print "</tr>\n";
 
 	print '<tr class="oddeven"><td>';
@@ -321,43 +339,6 @@ print '<br>';
 print '<div class="center"><input type="submit" class="button" value="'.$langs->trans("Save").'"></div>';
 
 print "</form>\n";
-
-
-print '<br><br>';
-
-// Marketplace
-print "<table summary=\"list_of_modules\" class=\"noborder\" width=\"100%\">\n";
-print "<tr class=\"liste_titre\">\n";
-print '<td colspan="2">'.$langs->trans("WebSiteDesc").'</td>';
-print '<td>'.$langs->trans("URL").'</td>';
-print '</tr>';
-
-print "<tr class=\"oddeven\">\n";
-$url = 'https://www.dolistore.com/45-pos';
-    print '<td class="left"><a href="'.$url.'" target="_blank" rel="external"><img border="0" class="imgautosize imgmaxwidth180" src="'.DOL_URL_ROOT.'/theme/dolistore_logo.png"></a></td>';
-print '<td>'.$langs->trans("DolistorePosCategory").'</td>';
-print '<td><a href="'.$url.'" target="_blank" rel="external">'.$url.'</a></td>';
-print '</tr>';
-
-print "</table>\n";
-print '<br>';
-
-// Support
-print "<table summary=\"list_of_modules\" class=\"noborder\" width=\"100%\">\n";
-print "<tr class=\"liste_titre\">\n";
-print '<td colspan="2">TakePOS Support</td>';
-print '<td>'.$langs->trans("URL").'</td>';
-print '</tr>';
-
-print "<tr class=\"oddeven\">\n";
-$url = 'http://www.takepos.com';
-print '<td class="left"><a href="'.$url.'" target="_blank" rel="external"><img border="0" class="imgautosize imgmaxwidth180" src="../img/takepos.png"></a></td>';
-print '<td>TakePOS original developers</td>';
-print '<td><a href="'.$url.'" target="_blank" rel="external">'.$url.'</a></td>';
-print '</tr>';
-
-print "</table>\n";
-print '<br>';
 
 llxFooter();
 $db->close();

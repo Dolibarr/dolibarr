@@ -6,41 +6,40 @@
 /* ============================================================================== */
 
 :root {
-            --colorbackhmenu1: rgb(<?php print $colorbackhmenu1; ?>);
-            --colorbackvmenu1: rgb(<?php print $colorbackvmenu1; ?>);
-            --colorbacktitle1: rgb(<?php print $colorbacktitle1; ?>);
-            --colorbacktabcard1: rgb(<?php print $colorbacktabcard1; ?>);
-            --colorbacktabactive: rgb(<?php print $colorbacktabactive; ?>);
-            --colorbacklineimpair1: rgb(<?php print $colorbacklineimpair1; ?>);
-            --colorbacklineimpair2: rgb(<?php print $colorbacklineimpair2; ?>);
-            --colorbacklinepair1: rgb(<?php print $colorbacklinepair1; ?>);
-            --colorbacklinepair2: rgb(<?php print $colorbacklinepair2; ?>);
-            --colorbacklinepairhover: rgb(<?php print $colorbacklinepairhover; ?>);
-            --colorbacklinepairchecked: rgb(<?php print $colorbacklinepairchecked; ?>);
-            --colorbackbody: rgb(<?php print $colorbackbody; ?>);
-            --colortexttitlenotab: rgb(<?php print $colortexttitlenotab; ?>);
-            --colortexttitle: rgb(<?php print $colortexttitle; ?>);
-            --colortext: rgb(<?php print $colortext; ?>);
-            --colortextlink: rgb(<?php print $colortextlink; ?>);
-            --colortextbackhmenu: #<?php echo $colortextbackhmenu; ?>;
-            --colortextbackvmenu: #<?php print $colortextbackvmenu; ?>) ;
-            --listetotal: #551188;
-            --inputbackgroundcolor: #FFF;
-            --inputbordercolor: rgba(0,0,0,.2);
-            --tooltipbgcolor: <?php print $toolTipBgColor; ?>;
-			--tooltipfontcolor : <?php print $toolTipFontColor; ?>;
-			--oddevencolor: #202020;
-			--colorboxstatsborder: #ddd;
-			--dolgraphbg: rgba(255,255,255,0);
-			--fieldrequiredcolor: #000055;
-			--colortextbacktab: #<?php print $colortextbacktab; ?>) ;
-			--colorboxiconbg: #eee;
-			--refidnocolor:#444;
-			--tableforfieldcolor:#666;
-			--amountremaintopaycolor:#880000;
-			--amountpaymentcomplete:#008800;
-			--amountremaintopaybackcolor:none;
-
+	--colorbackhmenu1: rgb(<?php print $colorbackhmenu1; ?>);
+	--colorbackvmenu1: rgb(<?php print $colorbackvmenu1; ?>);
+	--colorbacktitle1: rgb(<?php print $colorbacktitle1; ?>);
+	--colorbacktabcard1: rgb(<?php print $colorbacktabcard1; ?>);
+	--colorbacktabactive: rgb(<?php print $colorbacktabactive; ?>);
+	--colorbacklineimpair1: rgb(<?php print $colorbacklineimpair1; ?>);
+	--colorbacklineimpair2: rgb(<?php print $colorbacklineimpair2; ?>);
+	--colorbacklinepair1: rgb(<?php print $colorbacklinepair1; ?>);
+	--colorbacklinepair2: rgb(<?php print $colorbacklinepair2; ?>);
+	--colorbacklinepairhover: rgb(<?php print $colorbacklinepairhover; ?>);
+	--colorbacklinepairchecked: rgb(<?php print $colorbacklinepairchecked; ?>);
+	--colorbackbody: rgb(<?php print $colorbackbody; ?>);
+	--colortexttitlenotab: rgb(<?php print $colortexttitlenotab; ?>);
+	--colortexttitle: rgb(<?php print $colortexttitle; ?>);
+	--colortext: rgb(<?php print $colortext; ?>);
+	--colortextlink: rgb(<?php print $colortextlink; ?>);
+	--colortextbackhmenu: #<?php echo $colortextbackhmenu; ?>;
+	--colortextbackvmenu: #<?php print $colortextbackvmenu; ?>) ;
+	--listetotal: #551188;
+	--inputbackgroundcolor: #FFF;
+	--inputbordercolor: rgba(0,0,0,.2);
+	--tooltipbgcolor: <?php print $toolTipBgColor; ?>;
+	--tooltipfontcolor : <?php print $toolTipFontColor; ?>;
+	--oddevencolor: #202020;
+	--colorboxstatsborder: #ddd;
+	--dolgraphbg: rgba(255,255,255,0);
+	--fieldrequiredcolor: #000055;
+	--colortextbacktab: #<?php print $colortextbacktab; ?>) ;
+	--colorboxiconbg: #eee;
+	--refidnocolor:#444;
+	--tableforfieldcolor:#666;
+	--amountremaintopaycolor:#880000;
+	--amountpaymentcomplete:#008800;
+	--amountremaintopaybackcolor:none;
 }
 
 <?php
@@ -124,6 +123,12 @@ select.vmenusearchselectcombo {
 	background-color: unset;
 }
 
+table.liste th.wrapcolumntitle.liste_titre:not(.maxwidthsearch), table.liste td.wrapcolumntitle.liste_titre:not(.maxwidthsearch) {
+    overflow: hidden;
+    white-space: nowrap;
+    max-width: 120px;
+    text-overflow: ellipsis;
+}
 .liste_titre input[name=month_date_when], .liste_titre input[name=monthvalid], .liste_titre input[name=search_ordermonth], .liste_titre input[name=search_deliverymonth],
 .liste_titre input[name=search_smonth], .liste_titre input[name=search_month], .liste_titre input[name=search_emonth], .liste_titre input[name=smonth], .liste_titre input[name=month], .liste_titre select[name=month],
 .liste_titre input[name=month_lim], .liste_titre input[name=month_start], .liste_titre input[name=month_end], .liste_titre input[name=month_create],
@@ -328,6 +333,13 @@ select.flat, form.flat select {
 .opacitytransp {
 	opacity: 0;
 }
+.colorwhite {
+	color: #fff;
+}
+.colorblack {
+	color: #000;
+}
+
 select:invalid {
 	color: gray;
 }
@@ -361,6 +373,7 @@ fieldset { border: 1px solid #AAAAAA !important; }
 input#onlinepaymenturl, input#directdownloadlink {
 	opacity: 0.7;
 }
+
 
 div#moretabsList, div#moretabsListaction {
     z-index: 5;
@@ -1983,13 +1996,7 @@ a.tmenuimage:hover{
         $found = 0; $url = '';
         foreach ($conf->file->dol_document_root as $dirroot)
         {
-            if (file_exists($dirroot."/".$val."/img/".$val."_over.png"))
-            {
-                $url = dol_buildpath('/'.$val.'/img/'.$val.'_over.png', 1);
-                $found = 1;
-                break;
-            }
-    		elseif (file_exists($dirroot."/".$val."/img/".$val.".png"))    // Retro compatibilité
+    		if (file_exists($dirroot."/".$val."/img/".$val.".png"))
     		{
     			$url = dol_buildpath('/'.$val.'/img/'.$val.'.png', 1);
     			$found = 1;
@@ -2000,10 +2007,11 @@ a.tmenuimage:hover{
         if (!$found)
         {
             if (!defined('DISABLE_FONT_AWSOME')) {
-                print "/* A mainmenu entry was found but img file ".$val.".png not found (check /".$val."/img/".$val.".png), so we use a generic one */\n";
+                print "/* A mainmenu entry was found but img file ".$val.".png not found (check /".$val."/img/".$val.".png), so we use a generic one. */\n";
+ 				print "/* Overwrite this definition in your own css with a different content to use your own font awesome icon. */\n";
                 print 'div.mainmenu.'.$val.'::before {
                     content: "\f249";
-                }';
+                }'."\n";
             }
             else
             {
