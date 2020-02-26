@@ -330,7 +330,7 @@ if ($resql)
     else dol_print_error($db);
     print "</select>";
     print ajax_combobox("chartofaccounts");
-    print '<input type="submit" onclick="change_chart.focus();change_chart.select();" class="button" name="change_chart" id="change_chart" value="'.dol_escape_htmltag($langs->trans("ChangeAndLoad")).'">';
+    print '<input type="submit" class="button" name="change_chart" id="change_chart" value="'.dol_escape_htmltag($langs->trans("ChangeAndLoad")).'">';
     print '<input type="hidden" name="valid_change_chart" id="valid_change_chart" value="0">';
 
     print '<br>';
