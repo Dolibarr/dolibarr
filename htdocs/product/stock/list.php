@@ -443,10 +443,6 @@ if (!empty($arrayfields['sellvalue']['checked']))
 {
 	print_liste_field_titre($arrayfields['sellvalue']['label'], $_SERVER["PHP_SELF"], "sellvalue", '', $param, '', $sortfield, $sortorder, 'right ');
 }
-if (!empty($arrayfields['e.statut']['checked']))
-{
-	print_liste_field_titre($arrayfields['e.statut']['label'], $_SERVER["PHP_SELF"], "e.statut", '', $param, '', $sortfield, $sortorder, 'right ');
-}
 
 // Extra fields
 include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_title.tpl.php';
@@ -455,6 +451,11 @@ include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_title.tpl.php';
 $parameters = array('arrayfields'=>$arrayfields, 'param'=>$param, 'sortfield'=>$sortfield, 'sortorder'=>$sortorder);
 $reshook = $hookmanager->executeHooks('printFieldListTitle', $parameters, $object); // Note that $action and $object may have been modified by hook
 print $hookmanager->resPrint;
+
+if (!empty($arrayfields['e.statut']['checked']))
+{
+	print_liste_field_titre($arrayfields['e.statut']['label'], $_SERVER["PHP_SELF"], "e.statut", '', $param, '', $sortfield, $sortorder, 'right ');
+}
 
 // Action column
 print getTitleFieldOfList($selectedfields, 0, $_SERVER["PHP_SELF"], '', '', '', '', $sortfield, $sortorder, 'center maxwidthsearch ')."\n";
@@ -649,6 +650,20 @@ if ($num)
 				print $form->textwithtooltip($langs->trans("Variable"), $htmltext);
 			}
 			print '</td>';
+		}
+
+		if (empty($extrafieldsobjectkey) && is_object($object)) $extrafieldsobjectkey = $object->table_element;
+		if (is_array($extrafields->attributes[$extrafieldsobjectkey]['label']) && count($extrafields->attributes[$extrafieldsobjectkey]['label']))
+		{
+			if (empty($extrafieldsobjectprefix)) $extrafieldsobjectprefix = 'ef.';
+
+			foreach ($extrafields->attributes[$extrafieldsobjectkey]['label'] as $key => $val)
+			{
+				if (!empty($arrayfields[$extrafieldsobjectprefix.$key]['checked']))
+				{
+					print '<td></td>';
+				}
+			}
 		}
 
 		if (!empty($arrayfields['e.statut']['checked']))
