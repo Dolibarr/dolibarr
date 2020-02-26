@@ -87,15 +87,18 @@ $fieldstosearchall = array(
 
 // Definition of fields for list
 $arrayfields = array(
-	'stockqty'=>array('type'=>'float', 'label'=>'PhysicalStock', 'enabled'=>1, 'visible'=>-2, 'position'=>70),
-	'estimatedvalue'=>array('type'=>'float', 'label'=>'EstimatedStockValue', 'enabled'=>1, 'visible'=>-2, 'position'=>71),
-	'sellvalue'=>array('type'=>'float', 'label'=>'EstimatedStockValueSell', 'enabled'=>1, 'visible'=>-2, 'position'=>72),
+	'e.ref'=>array('label'=>$langs->trans("Ref"), 'checked'=>1),
+	'e.lieu'=>array('label'=>$langs->trans("LocationSummary"), 'checked'=>1),
+	'e.description'=>array('label'=>$langs->trans("Description"), 'checked'=>0),
+	'e.address'=>array('label'=>$langs->trans("Address"), 'checked'=>0),
+	'e.zip'=>array('label'=>$langs->trans("Zip"), 'checked'=>0),
+	'e.town'=>array('label'=>$langs->trans("Town"), 'checked'=>0),
+	'stockqty'=>array('type'=>'float', 'label'=>$langs->trans("PhysicalStock"), 'enabled'=>1, 'visible'=>-2, 'position'=>70),
+	'estimatedvalue'=>array('type'=>'float', 'label'=>$langs->trans("EstimatedStockValue"), 'enabled'=>1, 'visible'=>-2, 'position'=>71),
+	'sellvalue'=>array('type'=>'float', 'label'=>$langs->trans("EstimatedStockValueSell"), 'enabled'=>1, 'visible'=>-2, 'position'=>72),
+	'e.statut'=>array('label'=>$langs->trans("Status"), 'checked'=>1, 'position'=>100),
 );
-foreach ($object->fields as $key => $val)
-{
-	// If $val['visible']==0, then we never show the field
-	if (!empty($val['visible'])) $arrayfields['t.'.$key] = array('label'=>$val['label'], 'checked'=>(($val['visible'] < 0) ? 0 : 1), 'enabled'=>($val['enabled'] && ($val['visible'] != 3)), 'position'=>$val['position']);
-}
+
 // Extra fields
 if (is_array($extrafields->attributes[$object->table_element]['label']) && count($extrafields->attributes[$object->table_element]['label']) > 0)
 {
@@ -337,17 +340,46 @@ print '<table class="tagtable liste'.($moreforfilter ? " listwithfilterbefore" :
 // --------------------------------------------------------------------
 print '<tr class="liste_titre_filter">';
 
-print '<td class="liste_titre left">';
-print '<input class="flat" type="text" name="search_ref" size="6" value="'.dol_escape_htmltag($search_ref).'">';
-print '</td>';
-
-print '<td class="liste_titre left">';
-print '<input class="flat" type="text" name="search_label" size="10" value="'.dol_escape_htmltag($search_label).'">';
-print '</td>';
-
-print '<td class="liste_titre"></td>';
-print '<td class="liste_titre"></td>';
-print '<td class="liste_titre"></td>';
+if (!empty($arrayfields['e.ref']['checked']))
+{
+	print '<td class="liste_titre left">';
+	print '<input class="flat" type="text" name="search_ref" size="6" value="'.dol_escape_htmltag($search_ref).'">';
+	print '</td>';
+}
+if (!empty($arrayfields['e.lieu']['checked']))
+{
+	print '<td class="liste_titre left">';
+	print '<input class="flat" type="text" name="search_label" size="10" value="'.dol_escape_htmltag($search_label).'">';
+	print '</td>';
+}
+if (!empty($arrayfields['e.description']['checked']))
+{
+	print '<td class="liste_titre"></td>';
+}
+if (!empty($arrayfields['e.address']['checked']))
+{
+	print '<td class="liste_titre"></td>';
+}
+if (!empty($arrayfields['e.zip']['checked']))
+{
+	print '<td class="liste_titre"></td>';
+}
+if (!empty($arrayfields['e.town']['checked']))
+{
+	print '<td class="liste_titre"></td>';
+}
+if (!empty($arrayfields['stockqty']['checked']))
+{
+	print '<td class="liste_titre"></td>';
+}
+if (!empty($arrayfields['estimatedvalue']['checked']))
+{
+	print '<td class="liste_titre"></td>';
+}
+if (!empty($arrayfields['sellvalue']['checked']))
+{
+	print '<td class="liste_titre"></td>';
+}
 
 // Extra fields
 include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_input.tpl.php';
@@ -357,9 +389,12 @@ $reshook = $hookmanager->executeHooks('printFieldListOption', $parameters, $obje
 print $hookmanager->resPrint;
 
 // Status
-print '<td class="liste_titre right">';
-print $form->selectarray('search_status', $warehouse->statuts, $search_status, 1, 0, 0, '', 1);
-print '</td>';
+if (!empty($arrayfields['e.statut']['checked']))
+{
+	print '<td class="liste_titre right">';
+	print $form->selectarray('search_status', $warehouse->statuts, $search_status, 1, 0, 0, '', 1);
+	print '</td>';
+}
 
 // Action column
 print '<td class="liste_titre maxwidthsearch">';
@@ -371,18 +406,56 @@ print '</tr>'."\n";
 // Fields title label
 // --------------------------------------------------------------------
 print '<tr class="liste_titre">';
-print_liste_field_titre("Ref", $_SERVER["PHP_SELF"], "e.ref", "", $param, "", $sortfield, $sortorder);
-print_liste_field_titre("LocationSummary", $_SERVER["PHP_SELF"], "e.lieu", "", $param, "", $sortfield, $sortorder);
-print_liste_field_titre("PhysicalStock", $_SERVER["PHP_SELF"], "stockqty", '', $param, '', $sortfield, $sortorder, 'right ');
-print_liste_field_titre("EstimatedStockValue", $_SERVER["PHP_SELF"], "estimatedvalue", '', $param, '', $sortfield, $sortorder, 'right ');
-print_liste_field_titre("EstimatedStockValueSell", $_SERVER["PHP_SELF"], "", '', $param, '', $sortfield, $sortorder, 'right ');
+
+if (!empty($arrayfields['e.ref']['checked']))
+{
+	print_liste_field_titre($arrayfields['e.ref']['label'], $_SERVER["PHP_SELF"], "e.ref", "", $param, "", $sortfield, $sortorder);
+}
+if (!empty($arrayfields['e.lieu']['checked']))
+{
+	print_liste_field_titre($arrayfields['e.lieu']['label'], $_SERVER["PHP_SELF"], "e.lieu", "", $param, "", $sortfield, $sortorder);
+}
+if (!empty($arrayfields['e.description']['checked']))
+{
+	print_liste_field_titre($arrayfields['e.description']['label'], $_SERVER["PHP_SELF"], "e.description", "", $param, "", $sortfield, $sortorder);
+}
+if (!empty($arrayfields['e.address']['checked']))
+{
+	print_liste_field_titre($arrayfields['e.address']['label'], $_SERVER["PHP_SELF"], "e.address", "", $param, "", $sortfield, $sortorder);
+}
+if (!empty($arrayfields['e.zip']['checked']))
+{
+	print_liste_field_titre($arrayfields['e.zip']['label'], $_SERVER["PHP_SELF"], "e.zip", "", $param, "", $sortfield, $sortorder);
+}
+if (!empty($arrayfields['e.town']['checked']))
+{
+	print_liste_field_titre($arrayfields['e.town']['label'], $_SERVER["PHP_SELF"], "e.town", "", $param, "", $sortfield, $sortorder);
+}
+if (!empty($arrayfields['stockqty']['checked']))
+{
+	print_liste_field_titre($arrayfields['stockqty']['label'], $_SERVER["PHP_SELF"], "stockqty", '', $param, '', $sortfield, $sortorder, 'right ');
+}
+if (!empty($arrayfields['estimatedvalue']['checked']))
+{
+	print_liste_field_titre($arrayfields['estimatedvalue']['label'], $_SERVER["PHP_SELF"], "estimatedvalue", '', $param, '', $sortfield, $sortorder, 'right ');
+}
+if (!empty($arrayfields['sellvalue']['checked']))
+{
+	print_liste_field_titre($arrayfields['sellvalue']['label'], $_SERVER["PHP_SELF"], "sellvalue", '', $param, '', $sortfield, $sortorder, 'right ');
+}
+if (!empty($arrayfields['e.statut']['checked']))
+{
+	print_liste_field_titre($arrayfields['e.statut']['label'], $_SERVER["PHP_SELF"], "e.statut", '', $param, '', $sortfield, $sortorder, 'right ');
+}
+
 // Extra fields
 include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_title.tpl.php';
+
 // Hook fields
 $parameters = array('arrayfields'=>$arrayfields, 'param'=>$param, 'sortfield'=>$sortfield, 'sortorder'=>$sortorder);
 $reshook = $hookmanager->executeHooks('printFieldListTitle', $parameters, $object); // Note that $action and $object may have been modified by hook
 print $hookmanager->resPrint;
-print_liste_field_titre("Status", $_SERVER["PHP_SELF"], "e.statut", '', $param, '', $sortfield, $sortorder, 'right ');
+
 // Action column
 print getTitleFieldOfList($selectedfields, 0, $_SERVER["PHP_SELF"], '', '', '', '', $sortfield, $sortorder, 'center maxwidthsearch ')."\n";
 print '</tr>'."\n";
@@ -410,33 +483,84 @@ if ($num)
 
 		// Show here line of result
 		print '<tr class="oddeven">';
-		print '<td>'.$warehouse->getNomUrl(1).'</td>';
-		if (!$i) $totalarray['nbfield']++;
+
+		//print_r($arrayfields[]);
+
+		// Label (ref)
+		if (!empty($arrayfields['e.ref']['checked']))
+		{
+			print '<td>'.$warehouse->getNomUrl(1).'</td>';
+		}
+
 		// Location
-		print '<td>'.$obj->lieu.'</td>';
-		if (!$i) $totalarray['nbfield']++;
+		if (!empty($arrayfields['e.lieu']['checked']))
+		{
+			print '<td>'.$obj->lieu.'</td>';
+		}
+
+		// Description
+		if (!empty($arrayfields['e.description']['checked']))
+		{
+			print '<td>'.$obj->description.'</td>';
+		}
+
+		// Address
+		if (!empty($arrayfields['e.address']['checked']))
+		{
+			print '<td>'.$obj->address.'</td>';
+		}
+
+		// Zip
+		if (!empty($arrayfields['e.zip']['checked']))
+		{
+			print '<td>'.$obj->zip.'</td>';
+		}
+
+		if (!empty($arrayfields['e.town']['checked']))
+		{
+			print '<td>'.$obj->town.'</td>';
+		}
 
 		// Stock qty
-		print '<td class="right">'.price2num($obj->stockqty, 5).'</td>';
-		if (!$i) $totalarray['nbfield']++;
+		if (!empty($arrayfields['stockqty']['checked']))
+		{
+			print '<td class="right">'.price2num($obj->stockqty, 5).'</td>';
+		}
 
 		// PMP value
-		print '<td class="right">';
-		if (price2num($obj->estimatedvalue, 'MT')) print price(price2num($obj->estimatedvalue, 'MT'), 1);
-		else print '';
-		print '</td>';
-		if (!$i) $totalarray['nbfield']++;
+		if (!empty($arrayfields['estimatedvalue']['checked']))
+		{
+			print '<td class="right">';
+
+			if (price2num($obj->estimatedvalue, 'MT'))
+			{
+				print price(price2num($obj->estimatedvalue, 'MT'), 1);
+			}
+			else
+			{
+				print '';
+			}
+
+			print '</td>';
+		}
 
 		// Selling value
-		print '<td class="right">';
-		if (empty($conf->global->PRODUIT_MULTIPRICES)) print price(price2num($obj->sellvalue, 'MT'), 1);
-		else
+		if (!empty($arrayfields['sellvalue']['checked']))
 		{
-			$htmltext = $langs->trans("OptionMULTIPRICESIsOn");
-			print $form->textwithtooltip($langs->trans("Variable"), $htmltext);
+			print '<td class="right">';
+
+			if (empty($conf->global->PRODUIT_MULTIPRICES))
+			{
+				print price(price2num($obj->sellvalue, 'MT'), 1);
+			}
+			else
+			{
+				$htmltext = $langs->trans("OptionMULTIPRICESIsOn");
+				print $form->textwithtooltip($langs->trans("Variable"), $htmltext);
+			}
+
+			print '</td>';
 		}
-		print '</td>';
-		if (!$i) $totalarray['nbfield']++;
 
 		// Extra fields
 		include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_print_fields.tpl.php';
@@ -446,8 +570,10 @@ if ($num)
 		print $hookmanager->resPrint;
 
 		// Status
-		print '<td class="right">'.$warehouse->LibStatut($obj->statut, 5).'</td>';
-		if (!$i) $totalarray['nbfield']++;
+		if (!empty($arrayfields['e.statut']['checked']))
+		{
+			print '<td class="right">'.$warehouse->LibStatut($obj->statut, 5).'</td>';
+		}
 
 		// Action column
 		print '<td class="nowrap center">';
@@ -469,18 +595,67 @@ if ($num)
 	if ($totalnboflines - $offset <= $limit)
 	{
 		print '<tr class="liste_total">';
-		print '<td colspan="2" class="right">'.$langs->trans("Total").'</td>';
-		print '<td class="right">'.price2num($totalStock, 5).'</td>';
-		print '<td class="right">'.price(price2num($total, 'MT'), 1, $langs, 0, 0, -1, $conf->currency).'</td>';
-		print '<td class="right">';
-		if (empty($conf->global->PRODUIT_MULTIPRICES)) print price(price2num($totalsell, 'MT'), 1, $langs, 0, 0, -1, $conf->currency);
-		else
+
+		$emptyColumn = -1;
+
+		if (!empty($arrayfields['e.ref']['checked']))
 		{
-			$htmltext = $langs->trans("OptionMULTIPRICESIsOn");
-			print $form->textwithtooltip($langs->trans("Variable"), $htmltext);
+			$emptyColumn++;
 		}
-		print '</td>';
-		print '<td></td>';
+		if (!empty($arrayfields['e.lieu']['checked']))
+		{
+			$emptyColumn++;
+		}
+		if (!empty($arrayfields['e.description']['checked']))
+		{
+			$emptyColumn++;
+		}
+		if (!empty($arrayfields['e.address']['checked']))
+		{
+			$emptyColumn++;
+		}
+		if (!empty($arrayfields['e.zip']['checked']))
+		{
+			$emptyColumn++;
+		}
+		if (!empty($arrayfields['e.town']['checked']))
+		{
+			$emptyColumn++;
+		}
+
+		for ($i=0; $i < $emptyColumn; $i++)
+		{
+			print '<td></td>';
+		}
+
+		print '<td class="right">'.$langs->trans("Total").'</td>';
+
+		if (!empty($arrayfields['stockqty']['checked']))
+		{
+			print '<td class="right">'.price2num($totalStock, 5).'</td>';
+		}
+		if (!empty($arrayfields['estimatedvalue']['checked']))
+		{
+			print '<td class="right">'.price(price2num($total, 'MT'), 1, $langs, 0, 0, -1, $conf->currency).'</td>';
+		}
+
+		if (!empty($arrayfields['sellvalue']['checked']))
+		{
+			print '<td class="right">';
+			if (empty($conf->global->PRODUIT_MULTIPRICES)) print price(price2num($totalsell, 'MT'), 1, $langs, 0, 0, -1, $conf->currency);
+			else
+			{
+				$htmltext = $langs->trans("OptionMULTIPRICESIsOn");
+				print $form->textwithtooltip($langs->trans("Variable"), $htmltext);
+			}
+			print '</td>';
+		}
+
+		if (!empty($arrayfields['e.statut']['checked']))
+		{
+			print '<td></td>';
+		}
+
 		print '<td></td>';
 		print "</tr>\n";
 	}
