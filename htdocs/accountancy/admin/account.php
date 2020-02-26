@@ -282,16 +282,9 @@ if ($resql)
 	    print '<!-- Add javascript to update a flag when we select "Change plan" -->
 			<script type="text/javascript">
 			$(document).ready(function () {
-		    	$("#searchFormList").on("submit", function (e) {
-					console.log("chartofaccounts focus = "+$("#chartofaccounts").is(":focus"));
-					console.log("change_chart focus = "+$("#change_chart").is(":focus"));
-					if ($("#change_chart").is(":focus"))
-					{
-						console.log("We set valid_change_chart to 1");
-						$("#valid_change_chart").val(1);
-					}
-					return true;
-			    });
+        $("#change_chart").mousedown( function (e) {
+            $("#valid_change_chart").val(1);
+          });
 			});
 	    	</script>';
     }
