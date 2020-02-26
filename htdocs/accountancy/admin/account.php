@@ -47,6 +47,8 @@ $search_accountparent = GETPOST('search_accountparent', 'alpha');
 $search_pcgtype = GETPOST('search_pcgtype', 'alpha');
 $search_pcgsubtype = GETPOST('search_pcgsubtype', 'alpha');
 
+$chartofaccounts = GETPOST('chartofaccounts', 'int');
+
 // Security check
 if ($user->socid > 0) accessforbidden();
 if (!$user->rights->accounting->chartofaccount) accessforbidden();
@@ -104,11 +106,9 @@ if (empty($reshook))
     	$search_pcgsubtype = "";
 		$search_array_options = array();
     }
-
-    if (GETPOST('change_chart', 'alpha') && (GETPOST('valid_change_chart', 'int') || empty($conf->use_javascript_ajax)))
+    if ((GETPOST('valid_change_chart', 'alpha') && GETPOST('chartofaccounts', 'int') > 0)	// explicit click on button 'Change and load' with js on
+    	|| (GETPOST('chartofaccounts', 'int') > 0 && GETPOST('chartofaccounts', 'int') != $conf->global->CHARTOFACCOUNTS))	// a submit of form is done and chartofaccounts combo has been modified
     {
-        $chartofaccounts = GETPOST('chartofaccounts', 'int');
-
         if ($chartofaccounts > 0)
         {
 			// Get language code for this $chartofaccounts
@@ -279,21 +279,13 @@ if ($resql)
 
     if (!empty($conf->use_javascript_ajax))
     {
-	    print '<!-- Add javascript to update a flag when we select "Change plan" -->
+	    print '<!-- Add javascript to reload page when we click "Change plan" -->
 			<script type="text/javascript">
 			$(document).ready(function () {
-		    	$("#searchFormList").on("submit", function (e) {
-					//event.preventDefault();
-				    //var form = this;
-					console.log("chartofaccounts focus = "+$("#chartofaccounts").is(":focus"));
-					console.log("change_chart focus = "+$("#change_chart").is(":focus"));
-					if ($("#change_chart").is(":focus"))
-					{
-						console.log("We set valid_change_chart to 1");
-						$("#valid_change_chart").val(1);
-					}
-					//form.submit();
-					return true;
+		    	$("#change_chart").on("click", function (e) {
+					console.log("chartofaccounts seleted = "+$("#chartofaccounts").val());
+					// reload page
+					window.location.href = "'.$_SERVER["PHP_SELF"].'?valid_change_chart=1&chartofaccounts="+$("#chartofaccounts").val();
 			    });
 			});
 	    	</script>';
@@ -340,8 +332,7 @@ if ($resql)
     else dol_print_error($db);
     print "</select>";
     print ajax_combobox("chartofaccounts");
-    print '<input type="submit" class="button" name="change_chart" id="change_chart" value="'.dol_escape_htmltag($langs->trans("ChangeAndLoad")).'">';
-    print '<input type="hidden" name="valid_change_chart" id="valid_change_chart" value="0">';
+    print '<input type="'.(empty($conf->use_javascript_ajax)?'submit':'button').'" class="button" name="change_chart" id="change_chart" value="'.dol_escape_htmltag($langs->trans("ChangeAndLoad")).'">';
 
     print '<br>';
 	print '<br>';
