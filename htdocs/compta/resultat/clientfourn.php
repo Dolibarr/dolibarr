@@ -192,7 +192,7 @@ if (!empty($conf->accounting->enabled) && $modecompta != 'BOOKKEEPING')
 }
 
 // Show report array
-$param = '&modecompta='.$modecompta;
+$param = '&modecompta='.urlencode($modecompta).'&showaccountdetail='.urlencode($showaccountdetail);
 if ($date_startday) $param .= '&date_startday='.$date_startday;
 if ($date_startmonth) $param .= '&date_startmonth='.$date_startmonth;
 if ($date_startyear) $param .= '&date_startyear='.$date_startyear;
