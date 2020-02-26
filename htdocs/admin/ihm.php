@@ -58,6 +58,13 @@ if (GETPOST('cancel', 'alpha'))
 	$action='';
 }
 
+// Convert action set_XXX and del_XXX to set var (this is used when no javascript on for ajax_constantonoff)
+$regs = array();
+if (preg_match('/^(set|del)_([A-Z_]+)$/', $action, $regs)) {
+	if ($regs[1] == 'set') dolibarr_set_const($db, $regs[2], 1, 'chaine', 0, '', $conf->entity);
+	else dolibarr_del_const($db, $regs[2], $conf->entity);
+}
+
 if ($action == 'removebackgroundlogin' && ! empty($conf->global->MAIN_LOGIN_BACKGROUND))
 {
 	dolibarr_set_const($db, "MAIN_IHM_PARAMS_REV", (int) $conf->global->MAIN_IHM_PARAMS_REV+1, 'chaine', 0, '', $conf->entity);
@@ -81,15 +88,15 @@ if ($action == 'removebackgroundlogin' && ! empty($conf->global->MAIN_LOGIN_BACK
 
 if ($action == 'update')
 {
-	dolibarr_set_const($db, "MAIN_LANG_DEFAULT", $_POST["MAIN_LANG_DEFAULT"], 'chaine', 0, '', $conf->entity);
+	dolibarr_set_const($db, "MAIN_LANG_DEFAULT", GETPOST("MAIN_LANG_DEFAULT", 'aZ09'), 'chaine', 0, '', $conf->entity);
 	dolibarr_set_const($db, "MAIN_IHM_PARAMS_REV", (int) $conf->global->MAIN_IHM_PARAMS_REV+1, 'chaine', 0, '', $conf->entity);
 	dolibarr_set_const($db, "MAIN_MULTILANGS", $_POST["MAIN_MULTILANGS"], 'chaine', 0, '', $conf->entity);
 
-	dolibarr_set_const($db, "MAIN_THEME", $_POST["main_theme"], 'chaine', 0, '', $conf->entity);
+	dolibarr_set_const($db, "MAIN_THEME", GETPOST("main_theme", 'aZ09'), 'chaine', 0, '', $conf->entity);
 
-	$val=GETPOST('THEME_TOPMENU_DISABLE_IMAGE');
+	/*$val=GETPOST('THEME_TOPMENU_DISABLE_IMAGE');
 	if (! $val) dolibarr_del_const($db, 'THEME_TOPMENU_DISABLE_IMAGE', $conf->entity);
-	else dolibarr_set_const($db, 'THEME_TOPMENU_DISABLE_IMAGE', GETPOST('THEME_TOPMENU_DISABLE_IMAGE'), 'chaine', 0, '', $conf->entity);
+	else dolibarr_set_const($db, 'THEME_TOPMENU_DISABLE_IMAGE', GETPOST('THEME_TOPMENU_DISABLE_IMAGE'), 'chaine', 0, '', $conf->entity);*/
 
 	$val=(implode(',', (colorStringToArray(GETPOST('THEME_ELDY_BACKBODY'), array()))));
 	if ($val == '') dolibarr_del_const($db, 'THEME_ELDY_BACKBODY', $conf->entity);
@@ -141,25 +148,27 @@ if ($action == 'update')
 	if ($val == '') dolibarr_del_const($db, 'THEME_ELDY_USE_CHECKED', $conf->entity);
 	else dolibarr_set_const($db, "THEME_ELDY_USE_CHECKED", $val, 'chaine', 0, '', $conf->entity);
 
-	dolibarr_set_const($db, "MAIN_SIZE_LISTE_LIMIT", $_POST["main_size_liste_limit"], 'chaine', 0, '', $conf->entity);
-	dolibarr_set_const($db, "MAIN_SIZE_SHORTLIST_LIMIT", $_POST["main_size_shortliste_limit"], 'chaine', 0, '', $conf->entity);
-	dolibarr_set_const($db, "MAIN_DISABLE_JAVASCRIPT", $_POST["MAIN_DISABLE_JAVASCRIPT"], 'chaine', 0, '', $conf->entity);
-	dolibarr_set_const($db, "MAIN_BUTTON_HIDE_UNAUTHORIZED", $_POST["MAIN_BUTTON_HIDE_UNAUTHORIZED"], 'chaine', 0, '', $conf->entity);
-	dolibarr_set_const($db, "MAIN_START_WEEK", $_POST["MAIN_START_WEEK"], 'chaine', 0, '', $conf->entity);
-	dolibarr_set_const($db, "MAIN_DEFAULT_WORKING_DAYS", $_POST["MAIN_DEFAULT_WORKING_DAYS"], 'chaine', 0, '', $conf->entity);
-	dolibarr_set_const($db, "MAIN_DEFAULT_WORKING_HOURS", $_POST["MAIN_DEFAULT_WORKING_HOURS"], 'chaine', 0, '', $conf->entity);
-	dolibarr_set_const($db, "MAIN_SHOW_LOGO", $_POST["MAIN_SHOW_LOGO"], 'chaine', 0, '', $conf->entity);
-	dolibarr_set_const($db, "MAIN_FIRSTNAME_NAME_POSITION", $_POST["MAIN_FIRSTNAME_NAME_POSITION"], 'chaine', 0, '', $conf->entity);
+	dolibarr_set_const($db, "MAIN_SIZE_LISTE_LIMIT", GETPOST("main_size_liste_limit", 'int'), 'chaine', 0, '', $conf->entity);
+	dolibarr_set_const($db, "MAIN_SIZE_SHORTLIST_LIMIT", GETPOST("main_size_shortliste_limit", 'int'), 'chaine', 0, '', $conf->entity);
 
-	dolibarr_set_const($db, "MAIN_HELPCENTER_DISABLELINK", $_POST["MAIN_HELPCENTER_DISABLELINK"], 'chaine', 0, '', 0);	// Param for all entities
-	dolibarr_set_const($db, "MAIN_MOTD", dol_htmlcleanlastbr($_POST["main_motd"]), 'chaine', 0, '', $conf->entity);
-	dolibarr_set_const($db, "MAIN_HOME", dol_htmlcleanlastbr($_POST["main_home"]), 'chaine', 0, '', $conf->entity);
-	dolibarr_set_const($db, "MAIN_HELP_DISABLELINK", $_POST["MAIN_HELP_DISABLELINK"], 'chaine', 0, '', 0);	    // Param for all entities
-	dolibarr_set_const($db, "MAIN_BUGTRACK_ENABLELINK", $_POST["MAIN_BUGTRACK_ENABLELINK"], 'chaine', 0, '', $conf->entity);
+	//dolibarr_set_const($db, "MAIN_DISABLE_JAVASCRIPT", GETPOST("MAIN_DISABLE_JAVASCRIPT", 'aZ09'), 'chaine', 0, '', $conf->entity);
+	dolibarr_set_const($db, "MAIN_BUTTON_HIDE_UNAUTHORIZED", GETPOST("MAIN_BUTTON_HIDE_UNAUTHORIZED", 'aZ09'), 'chaine', 0, '', $conf->entity);
+	dolibarr_set_const($db, "MAIN_START_WEEK", GETPOST("MAIN_START_WEEK", 'int'), 'chaine', 0, '', $conf->entity);
+	dolibarr_set_const($db, "MAIN_DEFAULT_WORKING_DAYS", GETPOST("MAIN_DEFAULT_WORKING_DAYS", 'int'), 'chaine', 0, '', $conf->entity);
+	dolibarr_set_const($db, "MAIN_DEFAULT_WORKING_HOURS", GETPOST("MAIN_DEFAULT_WORKING_HOURS", 'int'), 'chaine', 0, '', $conf->entity);
+	//dolibarr_set_const($db, "MAIN_SHOW_LOGO", GETPOST("MAIN_SHOW_LOGO", 'aZ09'), 'chaine', 0, '', $conf->entity);
+	dolibarr_set_const($db, "MAIN_FIRSTNAME_NAME_POSITION", GETPOST("MAIN_FIRSTNAME_NAME_POSITION", 'aZ09'), 'chaine', 0, '', $conf->entity);
+
+	dolibarr_set_const($db, "MAIN_HELPCENTER_DISABLELINK", GETPOST('MAIN_HELPCENTER_DISABLELINK', 'aZ09'), 'chaine', 0, '', 0);	// Param for all entities
+	dolibarr_set_const($db, "MAIN_MOTD", dol_htmlcleanlastbr(GETPOST("main_motd", 'none')), 'chaine', 0, '', $conf->entity);
+	dolibarr_set_const($db, "MAIN_HOME", dol_htmlcleanlastbr(GETPOST("main_home", 'none')), 'chaine', 0, '', $conf->entity);
+	dolibarr_set_const($db, "MAIN_HELP_DISABLELINK", GETPOST("MAIN_HELP_DISABLELINK", 'aZ09'), 'chaine', 0, '', 0);	    // Param for all entities
+	dolibarr_set_const($db, "MAIN_BUGTRACK_ENABLELINK", GETPOST('MAIN_BUGTRACK_ENABLELINK', 'aZ09'), 'chaine', 0, '', $conf->entity);
 
 	$varforimage='imagebackground'; $dirforimage=$conf->mycompany->dir_output.'/logos/';
 	if ($_FILES[$varforimage]["tmp_name"])
 	{
+		$reg = array();
 		if (preg_match('/([^\\/:]+)$/i', $_FILES[$varforimage]["name"], $reg))
 		{
 			$original_file=$reg[1];
@@ -247,7 +256,7 @@ print '</tr>';
 
 // Multilingual GUI
 print '<tr class="oddeven"><td class="titlefield">'.$langs->trans("EnableMultilangInterface").'</td><td>';
-print $form->selectyesno('MAIN_MULTILANGS', $conf->global->MAIN_MULTILANGS, 1);
+print ajax_constantonoff("MAIN_MULTILANGS");
 print '</td>';
 print '<td width="20">&nbsp;</td>';
 print '</tr>';
@@ -266,7 +275,7 @@ print '</tr>';
 
 // Disable javascript and ajax
 print '<tr class="oddeven"><td>'.$langs->trans("DisableJavascript").'</td><td>';
-print $form->selectyesno('MAIN_DISABLE_JAVASCRIPT', isset($conf->global->MAIN_DISABLE_JAVASCRIPT)?$conf->global->MAIN_DISABLE_JAVASCRIPT:0, 1);
+print ajax_constantonoff("MAIN_DISABLE_JAVASCRIPT");
 print '</td>';
 print '<td width="20">&nbsp;</td>';
 print '</tr>';
