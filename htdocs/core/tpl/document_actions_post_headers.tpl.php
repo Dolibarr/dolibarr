@@ -23,6 +23,7 @@
 // $permissiontoadd = permission or not to add a file (can use also $permission) and permission or not to edit file name or crop file (can use also $permtoedit)
 // $modulepart  = for download
 // $param       = param to add to download links
+// $moreparam   = param to add to download link for the form_attach_new_file function
 // $upload_dir
 // $object
 // $filearray
@@ -109,7 +110,7 @@ if (!isset($savingdocmask) || !empty($conf->global->MAIN_DISABLE_SUGGEST_REF_AS_
 
 // Show upload form (document and links)
 $formfile->form_attach_new_file(
-    $_SERVER["PHP_SELF"].'?id='.$object->id.(empty($withproject)?'':'&withproject=1'),
+    $_SERVER["PHP_SELF"].'?id='.$object->id.(empty($withproject)?'':'&withproject=1').(empty($moreparam)?'':$moreparam),
     '',
     0,
     0,
