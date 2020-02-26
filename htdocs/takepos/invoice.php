@@ -168,6 +168,8 @@ if ($action == 'valid' && $user->rights->facture->creer)
 		$invoice->update($user);
 	}
 
+	if ($conf->global->TAKEPOS_NUMBERING_PREFIX) $conf->global->FACTURE_ADDON = $conf->global->TAKEPOS_NUMBERING_PREFIX;
+
 	$constantforkey = 'CASHDESK_NO_DECREASE_STOCK'.$_SESSION["takeposterminal"];
 	if ($invoice->statut != Facture::STATUS_DRAFT)
 	{
