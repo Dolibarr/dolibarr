@@ -67,8 +67,7 @@ if (!$sortorder) $sortorder = 'ASC';
 
 // Date range
 $year = GETPOST('year', 'int');
-if (empty($year))
-{
+if (empty($year)) {
     $year_current = strftime("%Y", dol_now());
     $month_current = strftime("%m", dol_now());
     $year_start = $year_current;
@@ -114,7 +113,7 @@ $tmps = dol_getdate($date_start);
 $year_start = $tmps['year'];
 $tmpe = dol_getdate($date_end);
 $year_end = $tmpe['year'];
-$nbofyear = ($year_end - $start_year) + 1;
+$nbofyear = ($year_end - $year_start) + 1;
 //var_dump("year_start=".$year_start." year_end=".$year_end." nbofyear=".$nbofyear." date_start=".dol_print_date($date_start, 'dayhour')." date_end=".dol_print_date($date_end, 'dayhour'));
 
 // Define modecompta ('CREANCES-DETTES' or 'RECETTES-DEPENSES' or 'BOOKKEEPING')
@@ -199,11 +198,15 @@ if ($date_startmonth) $param .= '&date_startmonth='.$date_startmonth;
 if ($date_startyear) $param .= '&date_startyear='.$date_startyear;
 if ($date_endday) $param .= '&date_endday='.$date_endday;
 if ($date_endmonth) $param .= '&date_endmonth='.$date_endmonth;
-if ($date_endyear) $param .= '&date_endyear='.$date_startyear;
+if ($date_endyear) $param .= '&date_endyear='.$date_endyear;
 
 print '<table class="noborder centpercent">';
 print '<tr class="liste_titre">';
-print_liste_field_titre("PredefinedGroups", $_SERVER["PHP_SELF"], 'f.thirdparty_code,f.rowid', '', $param, '', $sortfield, $sortorder, 'width200 ');
+if ($modecompta == 'BOOKKEEPING') {
+	print_liste_field_titre("PredefinedGroups", $_SERVER["PHP_SELF"], 'f.thirdparty_code,f.rowid', '', $param, '', $sortfield, $sortorder, 'width200 ');
+} else {
+	print_liste_field_titre("", $_SERVER["PHP_SELF"], '', '', $param, '', $sortfield, $sortorder, 'width200 ');
+}
 print_liste_field_titre('');
 if ($modecompta == 'BOOKKEEPING')
 {
