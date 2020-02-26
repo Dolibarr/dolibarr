@@ -1876,7 +1876,7 @@ function top_menu_user()
         </div>
     </div>';
 
-    if (!defined('JS_JQUERY_DISABLE_DROPDOWN'))    // This may be set by some pages that use different jquery version to avoid errors
+    if (!defined('JS_JQUERY_DISABLE_DROPDOWN') && !empty($conf->use_javascript_ajax))    // This may be set by some pages that use different jquery version to avoid errors
     {
         $btnUser .= '
         <!-- Code to show/hide the user drop-down -->
@@ -1919,7 +1919,9 @@ function top_menu_bookmark()
 	$html = '';
 
     // Define $bookmarks
-    if (!empty($conf->bookmark->enabled) && $user->rights->bookmark->lire)
+	if (empty($conf->bookmark->enabled) || empty($user->rights->bookmark->lire)) return $html;
+
+	if (!defined('JS_JQUERY_DISABLE_DROPDOWN') && !empty($conf->use_javascript_ajax))	    // This may be set by some pages that use different jquery version to avoid errors
     {
         include_once DOL_DOCUMENT_ROOT.'/bookmarks/bookmarks.lib.php';
         $langs->load("bookmarks");
