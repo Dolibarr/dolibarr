@@ -274,6 +274,11 @@ if ($resql)
 
 	print '<form method="POST" id="changeChartOfAccountForm" action="'.$_SERVER["PHP_SELF"].'">';
 	print '<input type="hidden" name="token" value="'.newToken().'">';
+	print '<input type="hidden" name="action" value="changechartofaccount">';
+	print '<input type="hidden" name="sortfield" value="'.$sortfield.'">';
+	print '<input type="hidden" name="sortorder" value="'.$sortorder.'">';
+	print '<input type="hidden" name="page" value="'.$page.'">';
+	print '<input type="hidden" name="contextpage" value="'.$contextpage.'">';
 
     $newcardbutton .= dolGetButtonTitle($langs->trans("New"), $langs->trans("Addanaccount"), 'fa fa-plus-circle', './card.php?action=create');
 
