@@ -742,7 +742,7 @@ class FormOther
         if (!is_array($arrayofcolors) || count($arrayofcolors) < 1)
         {
             $langs->load("other");
-            if (empty($conf->dol_use_jmobile))
+            if (empty($conf->dol_use_jmobile) && !empty($conf->use_javascript_ajax))
             {
 	            $out .= '<link rel="stylesheet" media="screen" type="text/css" href="'.DOL_URL_ROOT.'/includes/jquery/plugins/jpicker/css/jPicker-1.1.6.css" />';
 	            $out .= '<script type="text/javascript" src="'.DOL_URL_ROOT.'/includes/jquery/plugins/jpicker/jpicker-1.1.6.js"></script>';
@@ -788,7 +788,7 @@ class FormOther
         }
         else  // In most cases, this is not used. We used instead function with no specific list of colors
         {
-            if (empty($conf->dol_use_jmobile))
+        	if (empty($conf->dol_use_jmobile) && !empty($conf->use_javascript_ajax))
             {
 	        	$out .= '<link rel="stylesheet" href="'.DOL_URL_ROOT.'/includes/jquery/plugins/colorpicker/jquery.colorpicker.css" type="text/css" media="screen" />';
 	            $out .= '<script src="'.DOL_URL_ROOT.'/includes/jquery/plugins/colorpicker/jquery.colorpicker.js" type="text/javascript"></script>';
