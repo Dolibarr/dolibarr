@@ -1793,6 +1793,40 @@ class EmailCollector extends CommonObject
                             }
                             $tickettocreate->ref = $defaultref;
                         }
+						 // Create event specific on hook
+                    // this code action is hook..... for support this call
+                    elseif (substr($operation['type'],0,4)  == 'hook'){
+						global $hookmanager; 
+
+						if(!is_object($hookmanager)) 
+							$hookmanager->initHooks(array('emailcollectorcard'));
+
+						$parameters = array( 
+							'connection'=>  $connection,
+							'imapemail'=>$imapemail,
+							'overview'=>$overview, 
+							
+							'from' => $from ,
+							'fromtext' => $fromtext,
+							
+							'actionparam'=>  $operation['actionparam'],
+							
+							
+							
+							'thirdpartyid' => $thirdpartyid ,
+							'objectid'=>@$objectid,
+							'objectemail'=>@$objectemail,
+							
+							'messagetext'=>$messagetext,
+							'subject'=>$subject,
+							'header'=>$header,
+							) ;
+						$res = $hookmanager->executeHooks('doCollectOneCollector', $parameters, $this, $operation['type']);
+						
+						if($res < 0 )
+							 $this->error = $hookmanager->resPrint; 
+
+                    }
 
                         if ($errorforthisaction)
                         {
