@@ -3369,6 +3369,9 @@ abstract class CommonObject
 					elseif ($objecttype == 'subscription') {
 						$classpath = 'adherents/class'; $module = 'adherent';
 					}
+					elseif ($objecttype == 'contact') {
+						 $module = 'societe';
+					}
 
 					// Set classfile
 					$classfile = strtolower($subelement); $classname = ucfirst($subelement);
