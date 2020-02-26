@@ -745,7 +745,7 @@ while ($i < min($num, $limit))
 	// Date
 	if (! empty($arrayfields['c.date_contrat']['checked']))
 	{
-		print '<td class="center">'.dol_print_date($db->jdate($obj->date_contrat), 'day', 'tzuser').'</td>';
+		print '<td class="center">'.dol_print_date($db->jdate($obj->date_contrat), 'day', 'tzserver').'</td>';
 	}
 	// Extra fields
 	include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_print_fields.tpl.php';
