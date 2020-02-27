@@ -3,6 +3,7 @@
 # For syntax, see http://about.travis-ci.org/docs/user/languages/php/
 
 # We use dist: trusty to have php 5.4+ available
+os: linux
 dist: trusty
 sudo: required
 
@@ -42,7 +43,7 @@ env:
   global:
   # Set to true for very verbose output
   - DEBUG=false
-  matrix:
+  jobs:
   # MariaDB overrides MySQL installation so it's not possible to test both yet
   #- DB=mysql
   - DB=mariadb
@@ -54,7 +55,7 @@ env:
   # See https://github.com/DracoBlue/travis-ci-nginx-php-fpm-test
   #- WS=nginx
 
-matrix:
+jobs:
   fast_finish: true
   allow_failures:
   - php: nightly
