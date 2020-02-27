@@ -828,7 +828,7 @@ class FormCompany
         		if (isset($idprof)) {
         			if ($idprof==1) $formlength=9;
         			elseif ($idprof==2) $formlength=14;
-        			elseif ($idprof==3 AND !empty($conf->global->MAIN_USE_IDPROF3_DICTIONNARY)) {
+        			elseif ($idprof==3 AND !empty($conf->global->MAIN_USE_IDPROF3_DICTIONARY)) {
         				        // phpcs:enable
 						global $conf,$langs;
 						$langs->load("dict");
