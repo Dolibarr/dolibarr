@@ -70,8 +70,8 @@ if (!$sortfield) $sortfield = "name";
 $object = new Tva($db);
 if ($id > 0) $object->fetch($id);
 
-$upload_dir = $conf->tax->dir_output.'/'.dol_sanitizeFileName($object->ref);
-$modulepart = 'tax';
+$upload_dir = $conf->tax->dir_output.'/vat/'.dol_sanitizeFileName($object->ref);
+$modulepart = 'tax-vat';
 
 
 /*
@@ -144,7 +144,6 @@ if ($object->id)
 
     dol_fiche_end();
 
-    $modulepart = 'tax';
     $permission = $user->rights->tax->charges->creer;
     $permtoedit = $user->rights->fournisseur->facture->creer;
     $param = '&id='.$object->id;
