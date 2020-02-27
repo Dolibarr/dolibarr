@@ -1190,24 +1190,18 @@ if ($resql)
 		{
 			  print '<td class="right nowrap">'.price($obj->multicurrency_total_ht)."</td>\n";
 			  if (!$i) $totalarray['nbfield']++;
-			  if (!$i) $totalarray['pos'][$totalarray['nbfield']] = 'c.multicurrency_total_ht';
-			  $totalarray['val']['c.multicurrency_total_ht'] += $obj->multicurrency_total_ht;
 		}
 		// Amount VAT
 		if (!empty($arrayfields['c.multicurrency_total_vat']['checked']))
 		{
 			print '<td class="right nowrap">'.price($obj->multicurrency_total_vat)."</td>\n";
 			if (!$i) $totalarray['nbfield']++;
-			if (!$i) $totalarray['pos'][$totalarray['nbfield']] = 'c.multicurrency_total_vat';
-			$totalarray['val']['c.multicurrency_total_vat'] += $obj->multicurrency_total_vat;
 		}
 		// Amount TTC
 		if (!empty($arrayfields['c.multicurrency_total_ttc']['checked']))
 		{
 			print '<td class="right nowrap">'.price($obj->multicurrency_total_ttc)."</td>\n";
 			if (!$i) $totalarray['nbfield']++;
-			if (!$i) $totalarray['pos'][$totalarray['nbfield']] = 'c.multicurrency_total_ttc';
-			$totalarray['val']['c.multicurrency_total_ttc'] += $obj->multicurrency_total_ttc;
 		}
 
 		$userstatic->id = $obj->fk_user_author;
