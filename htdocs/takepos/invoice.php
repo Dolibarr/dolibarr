@@ -167,6 +167,13 @@ if ($action == 'valid' && $user->rights->facture->creer)
 		$invoice->fk_facture_source = $fk_source;
 		$invoice->update($user);
 	}
+	
+	$sav_FACTURE_ADDON='';
+	if (! empty($conf->global->TAKEPOS_ADDON))
+	{
+		$sav_FACTURE_ADDON = $conf->global->FACTURE_ADDON;
+		$conf->global->FACTURE_ADDON = $conf->global->TAKEPOS_ADDON;
+	}
 
 	$constantforkey = 'CASHDESK_NO_DECREASE_STOCK'.$_SESSION["takeposterminal"];
 	if ($invoice->statut != Facture::STATUS_DRAFT)
@@ -204,6 +211,12 @@ if ($action == 'valid' && $user->rights->facture->creer)
 	    $res = $invoice->validate($user);
 	}
 
+	// Restore save values
+	if (! empty($sav_FACTURE_ADDON))
+	{
+		$conf->global->FACTURE_ADDON = $sav_FACTURE_ADDON;
+	}
+	
 	$remaintopay = $invoice->getRemainToPay();
 
 	// Add the payment
