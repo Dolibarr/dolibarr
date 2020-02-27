@@ -784,7 +784,32 @@ class Translate
 			{
 				// We must keep only main languages
 				if ($mainlangonly) {
-					$arrayofspecialmainlanguages = array('en_US', 'sq_AL', 'ar_SA', 'eu_ES', 'bn_DB', 'bs_BA', 'ca_ES', 'zh_TW', 'cs_CZ', 'da_DK', 'et_EE', 'ka_GE', 'el_GR', 'he_IL', 'kn_IN', 'km_KH', 'ko_KR', 'lo_LA', 'nb_NO', 'fa_IR', 'sr_RS', 'sl_SI', 'uk_UA', 'vi_VN');
+					$arrayofspecialmainlanguages = array(
+						'en'=>'en_US',
+						'sq'=>'sq_AL',
+						'ar'=>'ar_SA',
+						'eu'=>'eu_ES',
+						'bn'=>'bn_DB',
+						'bs'=>'bs_BA',
+						'ca'=>'ca_ES',
+						'zh'=>'zh_TW',
+						'cs'=>'cs_CZ',
+						'da'=>'da_DK',
+						'et'=>'et_EE',
+						'ka'=>'ka_GE',
+						'el'=>'el_GR',
+						'he'=>'he_IL',
+						'kn'=>'kn_IN',
+						'km'=>'km_KH',
+						'ko'=>'ko_KR',
+						'lo'=>'lo_LA',
+						'nb'=>'nb_NO',
+						'fa'=>'fa_IR',
+						'sr'=>'sr_RS',
+						'sl'=>'sl_SI',
+						'uk'=>'uk_UA',
+						'vi'=>'vi_VN'
+					);
 					if (strtolower($regs[1]) != strtolower($regs[2]) && ! in_array($dir, $arrayofspecialmainlanguages)) continue;
 				}
 				// We must keep only languages into MAIN_LANGUAGES_ALLOWED
