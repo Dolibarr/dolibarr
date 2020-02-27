@@ -396,11 +396,16 @@ if ($action == 'addsite')
 
 	if (!$error)
 	{
+		$arrayotherlang=explode(',', GETPOST('WEBSITE_OTHERLANG', 'alphanohtml'));
+		foreach($arrayotherlang as $key => $val) {
+			$arrayotherlang[$key] = substr(trim($val), 0, 2);	// Kept short language code only
+		}
+
 		$tmpobject = new Website($db);
 		$tmpobject->ref = GETPOST('WEBSITE_REF', 'alpha');
 		$tmpobject->description = GETPOST('WEBSITE_DESCRIPTION', 'alphanohtml');
 		$tmpobject->lang = GETPOST('WEBSITE_LANG', 'aZ09');
-		$tmpobject->otherlang = GETPOST('WEBSITE_OTHERLANG', 'aZ09comma');
+		$tmpobject->otherlang = join(',', $arrayotherlang);
 		$tmpobject->virtualhost = GETPOST('virtualhost', 'alpha');
 
 		$result = $tmpobject->create($user);
@@ -1038,7 +1043,7 @@ if ($action == 'delete')
 	}
 }
 
-// Update css
+// Update css Update site properties
 if ($action == 'updatecss')
 {
 	// If we tried to reload another site/page, we stay on editcss mode.
@@ -1062,9 +1067,14 @@ if ($action == 'updatecss')
 
     		if (!$error)
     		{
+    			$arrayotherlang=explode(',', GETPOST('WEBSITE_OTHERLANG', 'alphanohtml'));
+    			foreach($arrayotherlang as $key => $val) {
+    				$arrayotherlang[$key] = substr(trim($val), 0, 2);	// Kept short language code only
+    			}
+
     		    $object->virtualhost = GETPOST('virtualhost', 'alpha');
     		    $object->lang = GETPOST('WEBSITE_LANG', 'aZ09');
-    		    $object->otherlang = GETPOST('WEBSITE_OTHERLANG', 'aZ09comma');
+    		    $object->otherlang = join(',', $arrayotherlang);
     		    $object->use_manifest = GETPOST('use_manifest', 'alpha');
 
     		    $result = $object->update($user);
