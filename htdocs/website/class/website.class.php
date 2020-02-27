@@ -1396,7 +1396,7 @@ class Website extends CommonObject
 		ul.componentSelectLang'.$htmlname.' { width: 150px; }
 		ul.componentSelectLang'.$htmlname.':hover .fa { visibility: hidden; }
 		.componentSelectLang'.$htmlname.' a { text-decoration: none; width: 100%; }
-		.componentSelectLang'.$htmlname.' li { display: block; padding: 0px 20px; }
+		.componentSelectLang'.$htmlname.' li { display: block; padding: 0px 15px; margin-left: 0; margin-right: 0; }
 		.componentSelectLang'.$htmlname.' li:hover { background-color: #EEE; }
 		';
 		$out .= '</style>';
