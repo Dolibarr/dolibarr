@@ -182,23 +182,17 @@ foreach ($fulltree as $key => $val)
 	$li = $categstatic->getNomUrl(1, '', 60);
 	$desc = dol_htmlcleanlastbr($val['description']);
 
+	$counter = "";
+
 	if($conf->global->CATEGORY_SHOW_COUNTS)
 	{
 		// we need only a count of the elements, so it is enough to consume only the id's from the database
-		if ($type == Categorie::TYPE_PRODUCT)	$elements = $categstatic->getObjectsInCateg("product", 1);
-		if ($type == Categorie::TYPE_SUPPLIER)	$elements = $categstatic->getObjectsInCateg("supplier", 1);
-		if ($type == Categorie::TYPE_CUSTOMER)	$elements = $categstatic->getObjectsInCateg("customer", 1);
-		if ($type == Categorie::TYPE_MEMBER)	$elements = $categstatic->getObjectsInCateg("member", 1);
-		if ($type == Categorie::TYPE_CONTACT)	$elements = $categstatic->getObjectsInCateg("contact", 1);
-		if ($type == Categorie::TYPE_ACCOUNT)	$elements = $categstatic->getObjectsInCateg("account", 1);
-		if ($type == Categorie::TYPE_PROJECT)	$elements = $categstatic->getObjectsInCateg("project", 1);
-		if ($type == Categorie::TYPE_USER)		$elements = $categstatic->getObjectsInCateg("user", 1);
 
-		$counter = "<td class='left' width='40px;'>".count($elements)."</td>";
-	}
-	else
-	{
-		$counter = "";
+		$elements = $type == Categorie::TYPE_ACCOUNT
+			? $categstatic->getObjectsInCateg("account", 1)			// Categorie::TYPE_ACCOUNT is "bank_account" instead of "account"
+			: $categstatic->getObjectsInCateg($type, 1);
+
+		$counter = "<td class='left' width='40px;'>".(is_countable($elements) ? count($elements) : "0")."</td>";
 	}
 
 	$data[] = array(
