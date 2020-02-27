@@ -811,6 +811,14 @@ class FormCompany
     {
         // phpcs:enable
         global $conf,$langs;
+		
+		$selected=$preselected;
+        if (! $selected && isset($idprof)) {
+        	if ($idprof==1 && ! empty($this->idprof1)) $selected=$this->idprof1;
+        	elseif ($idprof==2 && ! empty($this->idprof2)) $selected=$this->idprof2;
+        	elseif ($idprof==3 && ! empty($this->idprof3)) $selected=$this->idprof3;
+        	elseif ($idprof==4 && ! empty($this->idprof4)) $selected=$this->idprof4;
+        }
 
         $formlength=0;
         if (empty($conf->global->MAIN_DISABLEPROFIDRULES)) {
@@ -819,7 +827,95 @@ class FormCompany
         		if (isset($idprof)) {
         			if ($idprof==1) $formlength=9;
         			elseif ($idprof==2) $formlength=14;
-        			elseif ($idprof==3) $formlength=5;      // 4 chiffres et 1 lettre depuis janvier
+        			elseif ($idprof==3 AND !empty($conf->global->MAIN_USE_IDPROF3_DICTIONNARY)) {
+        				        // phpcs:enable
+						global $conf,$langs;
+						$langs->load("dict");
+						$sql = "SELECT r.rowid, r.idprof3 as code, r.activity as label, r.active, c.code as country_code, c.label as country";
+						$sql.= " FROM ".MAIN_DB_PREFIX."c_idprof3 as r, ".MAIN_DB_PREFIX."c_country as c";
+						$sql.= " WHERE r.country_code=c.code";
+						$sql.= " COLLATE utf8_general_ci AND r.active = 1 and c.active = 1";
+						if ($country_code && ! is_numeric($country_code)) $sql .= " AND c.code = '".$this->db->escape($country_code)."'";
+						$sql.= " ORDER BY r.country_code, code, label ASC";
+
+						dol_syslog(get_class($this)."::select_idprof3", LOG_DEBUG);
+						$resql=$this->db->query($sql);
+						if ($resql)
+						{	
+							$moreattrib.=' autocomplete="off"';
+							$out = '<select class="flat'.($morecss?' '.$morecss:'').'"'.($moreattrib?' '.$moreattrib:'').' name="'.$htmlname.'" id="'.$htmlname.'" maxlength="'.$maxlength.'" value="'.$selected.'">';
+							$num = $this->db->num_rows($resql);
+							$i = 0;
+							if ($num)
+							{
+								$country='';
+								while ($i < $num)
+								{
+									$obj = $this->db->fetch_object($resql);
+									if ($obj->code == 0) {
+										$out.= '<option value="0">&nbsp;</option>';
+									}
+									else {
+										if ($country_code == '' || $country_code != $obj->country_code)
+										{
+											// Show break
+											$key=$langs->trans("Country".strtoupper($obj->country_code));
+											$valuetoshow=($key != "Country".strtoupper($obj->country_code))?$obj->country_code." - ".$key:$obj->country_code;
+											$out.= '<option value="-1" disabled>----- '.$valuetoshow." -----</option>\n";
+											$country=$obj->country;
+										}
+
+										if ($selected > 0 && $selected == $obj->code)
+										{
+											$out.= '<option value="'.$obj->code.'" selected>'.$obj->code.' - '.$obj->label.'</option>';
+										}
+										else
+										{
+											$out.= '<option value="'.$obj->code.'">'.$obj->code.' - '.$obj->label.'</option>';
+										}
+									}
+									$i++;
+								}
+							}
+							$out.= '</select>';
+
+							$out.='
+								<script>
+								        	$(document).ready(function () {
+								        		$("#'.$htmlname.'").select2({
+								        		    dir: "ltr",
+								        			width: "resolve",		/* off or resolve */
+													minimumInputLength: 0,
+													language: select2arrayoflanguage,
+								    				containerCssClass: ":all:",					/* Line to add class of origin SELECT propagated to the new <span class="select2-selection...> tag */
+													templateResult: function (data, container) {	/* Format visible output into combo list */
+									 					/* Code to add class of origin OPTION propagated to the new select2 <li> tag */
+														if (data.element) { $(container).addClass($(data.element).attr("class")); }
+													    //console.log(data.html);
+														if ($(data.element).attr("data-html") != undefined) return htmlEntityDecodeJs($(data.element).attr("data-html"));		// If property html set, we decode html entities and use this
+													    return data.text;
+													},
+													templateSelection: function (selection) {		/* Format visible output of selected value */
+														return selection.text;
+													},
+													escapeMarkup: function(markup) {
+														return markup;
+													},
+													dropdownCssClass: "ui-dialog"
+												});
+								});
+								</script>
+
+
+							';
+						}
+						else
+						{
+							dol_print_error($this->db);
+						}
+					
+        			}
+        			elseif ($idprof==3 AND empty($conf->global->MAIN_USE_IDPROF3_DICTIONNARY) ) $formlength=5;      // 4 chiffres et 1 lettre depuis janvier
         			elseif ($idprof==4) $formlength=32;     // No maximum as we need to include a town name in this id
         		}
         	}
@@ -830,14 +926,6 @@ class FormCompany
         		if ($idprof==3) $formlength=5;  //CNAE 5 digits
         		if ($idprof==4) $formlength=32; //depend of college
         	}
-        }
-
-        $selected=$preselected;
-        if (! $selected && isset($idprof)) {
-        	if ($idprof==1 && ! empty($this->idprof1)) $selected=$this->idprof1;
-        	elseif ($idprof==2 && ! empty($this->idprof2)) $selected=$this->idprof2;
-        	elseif ($idprof==3 && ! empty($this->idprof3)) $selected=$this->idprof3;
-        	elseif ($idprof==4 && ! empty($this->idprof4)) $selected=$this->idprof4;
         }
 
         $maxlength=$formlength;
