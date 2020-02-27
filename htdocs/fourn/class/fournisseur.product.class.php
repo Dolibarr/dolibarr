@@ -1,12 +1,13 @@
 <?php
-/* Copyright (C) 2005		Rodolphe Quiedeville	<rodolphe@quiedeville.org>
- * Copyright (C) 2006-2011	Laurent Destailleur	<eldy@users.sourceforge.net>
- * Copyright (C) 2009-2014	Regis Houssin		<regis.houssin@inodbox.com>
- * Copyright (C) 2011		Juanjo Menent		<jmenent@2byte.es>
- * Copyright (C) 2012		Christophe Battarel	<christophe.battarel@altairis.fr>
- * Copyright (C) 2015		Marcos García           <marcosgdf@gmail.com>
- * Copyright (C) 2016		Charlie Benke           <charlie@patas-monkey.com>
- * Copyright (C) 2019       Frédéric France         <frederic.france@netlogic.fr>
+/* Copyright (C) 2005		Rodolphe Quiedeville  <rodolphe@quiedeville.org>
+ * Copyright (C) 2006-2011	Laurent Destailleur	  <eldy@users.sourceforge.net>
+ * Copyright (C) 2009-2014	Regis Houssin		  <regis.houssin@inodbox.com>
+ * Copyright (C) 2011		Juanjo Menent		  <jmenent@2byte.es>
+ * Copyright (C) 2012		Christophe Battarel	  <christophe.battarel@altairis.fr>
+ * Copyright (C) 2015		Marcos García         <marcosgdf@gmail.com>
+ * Copyright (C) 2016		Charlie Benke         <charlie@patas-monkey.com>
+ * Copyright (C) 2019       Frédéric France       <frederic.france@netlogic.fr>
+ * Copyright (C) 2020       Pierre Ardoin         <mapiolca@me.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -590,7 +591,7 @@ class ProductFournisseur extends Product
         global $conf;
 
         $sql = "SELECT s.nom as supplier_name, s.rowid as fourn_id,";
-        $sql.= " pfp.rowid as product_fourn_pri_id, pfp.ref_fourn, pfp.desc_fourn, pfp.fk_product as product_fourn_id, pfp.fk_supplier_price_expression,";
+        $sql.= " pfp.rowid as product_fourn_pri_id, pfp.entity, pfp.ref_fourn, pfp.desc_fourn, pfp.fk_product as product_fourn_id, pfp.fk_supplier_price_expression,";
         $sql.= " pfp.price, pfp.quantity, pfp.unitprice, pfp.remise_percent, pfp.remise, pfp.tva_tx, pfp.fk_availability, pfp.charges, pfp.info_bits, pfp.delivery_time_days, pfp.supplier_reputation,";
         $sql.= " pfp.multicurrency_price, pfp.multicurrency_unitprice, pfp.multicurrency_tx, pfp.fk_multicurrency, pfp.multicurrency_code, pfp.datec, pfp.tms,";
         $sql.= " pfp.barcode, pfp.fk_barcode_type";
@@ -616,6 +617,7 @@ class ProductFournisseur extends Product
 
                 $prodfourn->product_fourn_price_id	= $record["product_fourn_pri_id"];
                 $prodfourn->product_fourn_id		= $record["product_fourn_id"];
+				$prodfourn->product_fourn_entity    = $record["entity"];
                 $prodfourn->fourn_ref				= $record["ref_fourn"];
                 $prodfourn->ref_supplier			= $record["ref_fourn"];
                 $prodfourn->desc_supplier           = $record["desc_fourn"];
