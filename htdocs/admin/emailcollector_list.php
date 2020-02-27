@@ -170,10 +170,7 @@ if (empty($reshook))
 
 $form = new Form($db);
 
-$now = dol_now();
-
-//$help_url="EN:Module_EmailCollector|FR:Module_EmailCollector_FR|ES:Módulo_EmailCollector";
-$help_url = '';
+$help_url="EN:Module_EMail_Collector|FR:Module_Collecteur_de_courrier_électronique|ES:Module_EMail_Collector";
 $title = $langs->trans('ListOf', $langs->transnoentitiesnoconv("EmailCollector"));
 
 

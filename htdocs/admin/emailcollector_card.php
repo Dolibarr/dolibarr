@@ -231,7 +231,9 @@ if ($action == 'confirm_collect')
 $form = new Form($db);
 $formfile = new FormFile($db);
 
-llxHeader('', 'EmailCollector', '');
+$help_url="EN:Module_EMail_Collector|FR:Module_Collecteur_de_courrier_électronique|ES:Module_EMail_Collector";
+
+llxHeader('', 'EmailCollector', $help_url);
 
 // Example : Adding jquery code
 print '<script type="text/javascript" language="javascript">
