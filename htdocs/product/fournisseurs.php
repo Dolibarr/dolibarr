@@ -1,14 +1,15 @@
 <?php
-/* Copyright (C) 2001-2007 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2013 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2004      Eric Seigne          <eric.seigne@ryxeo.com>
- * Copyright (C) 2005-2012 Regis Houssin        <regis.houssin@inodbox.com>
- * Copyright (C) 2010-2012 Juanjo Menent        <jmenent@2byte.es>
- * Copyright (C) 2012      Christophe Battarel  <christophe.battarel@altairis.fr>
- * Copyright (C) 2014      Ion Agorria          <ion@agorria.com>
- * Copyright (C) 2015      Alexandre Spangaro   <aspangaro@open-dsi.fr>
- * Copyright (C) 2016      Ferran Marcet		<fmarcet@2byte.es>
- * Copyright (C) 2019       Frédéric France         <frederic.france@netlogic.fr>
+/* Copyright (C) 2001-2007  Rodolphe Quiedeville <rodolphe@quiedeville.org>
+ * Copyright (C) 2004-2013  Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004       Eric Seigne          <eric.seigne@ryxeo.com>
+ * Copyright (C) 2005-2012  Regis Houssin        <regis.houssin@inodbox.com>
+ * Copyright (C) 2010-2012  Juanjo Menent        <jmenent@2byte.es>
+ * Copyright (C) 2012       Christophe Battarel  <christophe.battarel@altairis.fr>
+ * Copyright (C) 2014       Ion Agorria          <ion@agorria.com>
+ * Copyright (C) 2015       Alexandre Spangaro   <aspangaro@open-dsi.fr>
+ * Copyright (C) 2016       Ferran Marcet		 <fmarcet@2byte.es>
+ * Copyright (C) 2019       Frédéric France      <frederic.france@netlogic.fr>
+ * Copyright (C) 2020       Pierre Ardoin        <mapiolca@me.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -933,7 +934,14 @@ SCRIPT;
 
 						// Modify-Remove
 						print '<td class="center nowraponall">';
-						if ($usercancreate)
+						
+						if (!empty($conf->global->NOTMODIFYOTHERENTITYFOURNPRICE) && $productfourn->product_fourn_entity!=$conf->entity) {
+							$canmodifyotherentityfournprice = 0;
+						}else{
+							$canmodifyotherentityfournprice = 1;
+						}
+						
+						if ($usercancreate && $canmodifyotherentityfournprice == 1)
 						{
 							print '<a href="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'&amp;socid='.$productfourn->fourn_id.'&amp;action=add_price&amp;rowid='.$productfourn->product_fourn_price_id.'">'.img_edit()."</a>";
 							print ' &nbsp; ';
