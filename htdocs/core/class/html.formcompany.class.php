@@ -842,7 +842,7 @@ class FormCompany
 						dol_syslog(get_class($this)."::select_idprof3", LOG_DEBUG);
 						$resql=$this->db->query($sql);
 						if ($resql)
-						{	
+						{
 							$moreattrib.=' autocomplete="off"';
 							$out = '<select class="flat'.($morecss?' '.$morecss:'').'"'.($moreattrib?' '.$moreattrib:'').' name="'.$htmlname.'" id="'.$htmlname.'" maxlength="'.$maxlength.'" value="'.$selected.'">';
 							$num = $this->db->num_rows($resql);
@@ -914,7 +914,6 @@ class FormCompany
 						{
 							dol_print_error($this->db);
 						}
-					
         			}
         			elseif ($idprof==3 AND empty($conf->global->MAIN_USE_IDPROF3_DICTIONNARY) ) $formlength=5;      // 4 chiffres et 1 lettre depuis janvier
         			elseif ($idprof==4) $formlength=32;     // No maximum as we need to include a town name in this id
