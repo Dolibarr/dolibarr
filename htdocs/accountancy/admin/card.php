@@ -92,7 +92,6 @@ if ($action == 'add' && $user->rights->accounting->chartofaccount)
 
 		$object->fk_pcg_version = $obj->pcg_version;
 		$object->pcg_type = GETPOST('pcg_type', 'alpha');
-		$object->pcg_subtype = GETPOST('pcg_subtype', 'alpha');
 		$object->account_number = $account_number;
 		$object->account_parent = $account_parent;
 		$object->account_category = GETPOST('account_category', 'alpha');
@@ -158,7 +157,6 @@ if ($action == 'add' && $user->rights->accounting->chartofaccount)
 
 		$object->fk_pcg_version = $obj->pcg_version;
 		$object->pcg_type = GETPOST('pcg_type', 'alpha');
-		$object->pcg_subtype = GETPOST('pcg_subtype', 'alpha');
 		$object->account_number = $account_number;
 		$object->account_parent = $account_parent;
 		$object->account_category = GETPOST('account_category', 'alpha');
@@ -260,12 +258,6 @@ if ($action == 'create') {
 	print '<input type="text" name="pcg_type" value="'.dol_escape_htmltag(isset($_POST['pcg_type']) ?GETPOST('pcg_type', 'alpha') : $object->pcg_type).'">';
 	print '</td></tr>';
 
-	// Chart of accounts subtype
-	print '<tr><td>'.$langs->trans("Pcgsubtype").'</td>';
-	print '<td>';
-	print '<input type="text" name="pcg_subtype" value="'.dol_escape_htmltag(isset($_POST['pcg_subtype']) ?GETPOST('pcg_subtype', 'alpha') : $object->pcg_subtype).'">';
-	print '</td></tr>';
-
 	print '</table>';
 
 	dol_fiche_end();
@@ -329,12 +321,6 @@ elseif ($id > 0 || $ref) {
 			print '<input type="text" name="pcg_type" value="'.dol_escape_htmltag(isset($_POST['pcg_type']) ?GETPOST('pcg_type', 'alpha') : $object->pcg_type).'">';
 			print '</td></tr>';
 
-			// Chart of accounts subtype
-			print '<tr><td>'.$langs->trans("Pcgsubtype").'</td>';
-			print '<td>';
-			print '<input type="text" name="pcg_subtype" value="'.dol_escape_htmltag(isset($_POST['pcg_subtype']) ?GETPOST('pcg_subtype', 'alpha') : $object->pcg_subtype).'">';
-			print '</td></tr>';
-
 			print '</table>';
 
 			dol_fiche_end();
@@ -382,10 +368,6 @@ elseif ($id > 0 || $ref) {
 			// Chart of accounts type
 			print '<tr><td>'.$langs->trans("Pcgtype").'</td>';
 			print '<td colspan="2">'.$object->pcg_type.'</td></tr>';
-
-			// Chart of accounts subtype
-			print '<tr><td>'.$langs->trans("Pcgsubtype").'</td>';
-			print '<td colspan="2">'.$object->pcg_subtype.'</td></tr>';
 
 			print '</table>';
 

@@ -243,7 +243,7 @@ if ($modecompta == 'BOOKKEEPING')
 	$sql .= " AND f.entity = ".$conf->entity;
 	if (!empty($date_start) && !empty($date_end))
 		$sql .= " AND f.doc_date >= '".$db->idate($date_start)."' AND f.doc_date <= '".$db->idate($date_end)."'";
-	$sql .= " GROUP BY pcg_type, pcg_subtype, name, socid";
+	$sql .= " GROUP BY pcg_type, name, socid";
 	$sql .= $db->order($sortfield, $sortorder);
 
 	$oldpcgtype = '';

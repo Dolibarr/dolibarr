@@ -678,9 +678,6 @@ if ($id)
             if ($fieldlist[$field] == 'pcg_type') {
                 $valuetoshow = $langs->trans("Pcg_type");
             }
-            if ($fieldlist[$field] == 'pcg_subtype') {
-                $valuetoshow = $langs->trans("Pcg_subtype");
-            }
         	if ($fieldlist[$field] == 'type_template') {
                 $valuetoshow = $langs->trans("TypeOfTemplate");
             }
