@@ -1961,10 +1961,10 @@ class Categorie extends CommonObject
 	/**
 	 * Return a list with all selected categories of a category filter box
 	 *
-	 * @param string	$type			The categorie type (e.g Categorie::TYPE_WAREHOUSE)
+	 * @param string	$type			The category type (e.g Categorie::TYPE_WAREHOUSE)
 	 * @return Array					A list with all selected categories (Note: "-2" is typical "without category")
 	 */
-	public static function GetPost($type)
+	public static function getPost($type)
 	{
 		return GETPOST("search_category_".$type."_list", "array");
 	}
@@ -1972,11 +1972,11 @@ class Categorie extends CommonObject
 	/**
 	 * Return the addtional SQL JOIN query for filtering a list by a category
 	 *
-	 * @param string	$type			The categorie type (e.g Categorie::TYPE_WAREHOUSE)
+	 * @param string	$type			The category type (e.g Categorie::TYPE_WAREHOUSE)
 	 * @param string	$rowIdName		The name of the row id inside the whole sql query (e.g. "e.rowid")
 	 * @return string					A additional SQL JOIN query
 	 */
-	public static function GetFilterJoinQuery($type, $rowIdName)
+	public static function getFilterJoinQuery($type, $rowIdName)
 	{
 		return " LEFT JOIN ".MAIN_DB_PREFIX."categorie_".$type." as cp"
 			 . " ON ".$rowIdName." = cp.fk_".$type;
@@ -1985,12 +1985,12 @@ class Categorie extends CommonObject
 	/**
 	 * Return the addtional SQL SELECT query for filtering a list by a category
 	 *
-	 * @param string	$type			The categorie type (e.g Categorie::TYPE_WAREHOUSE)
+	 * @param string	$type			The category type (e.g Categorie::TYPE_WAREHOUSE)
 	 * @param Array		$searchList		A list with the selected categories
 	 * @param string	$rowIdName		The name of the row id inside the whole sql query (e.g. "e.rowid")
 	 * @return string					A additional SQL SELECT query
 	 */
-	public static function GetFilterSelectQuery($type, $searchList, $rowIdName)
+	public static function getFilterSelectQuery($type, $searchList, $rowIdName)
 	{
 		if (empty($searchList) && !is_array($searchList))
 		{
@@ -2024,13 +2024,13 @@ class Categorie extends CommonObject
 	/**
 	 * Return a HTML filter box for a list filter view
 	 *
-	 * @param string $type			The categorie type (e.g Categorie::TYPE_WAREHOUSE)
+	 * @param string $type			The category type (e.g Categorie::TYPE_WAREHOUSE)
 	 * @param Array $preSelected	A list with the elements that should pre-selected
 	 * @param Form $form			The form object (need for access form functions)
 	 * @param Translate $langs		The translate object (need for access translations)
 	 * @return string				A HTML filter box (Note: selected results can get with GETPOST("search_category_".$type."_list"))
 	 */
-	public static function GetFilterBox($type, $preSelected, $form, $langs)
+	public static function getFilterBox($type, $preSelected, $form, $langs)
 	{
 		if (empty($preSelected) || !is_array($preSelected))
 		{
