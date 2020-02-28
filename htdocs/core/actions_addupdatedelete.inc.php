@@ -130,8 +130,8 @@ if ($action == 'update' && !empty($permissiontoadd))
 		}
 		elseif ($object->fields[$key]['type'] == 'boolean') {
 			if (!GETPOSTISSET($key)) {
-				$object->$key = null;
-				continue; // The field was not submited to be edited
+				$object->$key = 0; // use 0 instead null if the field is defined as not null 
+				continue; 
 			}
 		}
 
