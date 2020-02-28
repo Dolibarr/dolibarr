@@ -1384,10 +1384,6 @@ div.blockvmenulogo
 {
 	border-bottom: 0 !important;
 }
-/*div.blockvmenusearch {
-	padding-bottom: 12px !important;
-	border-bottom: 1px solid #e0e0e0;
-}*/
 div.blockvmenupair, div.blockvmenuimpair, div.blockvmenubookmarks, div.blockvmenuend {
 	border-top: none !important;
 	border-left: none !important;
@@ -2388,8 +2384,7 @@ div.blockvmenusearchphone
 }
 .vmenu div.blockvmenusearch
 {
-	padding-bottom: 4px;
-/*	border-bottom: 1px solid #e0e0e0;  */
+	padding-bottom: 13px;
 }
 .vmenu div.blockvmenuend
 {
