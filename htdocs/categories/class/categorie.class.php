@@ -1957,4 +1957,97 @@ class Categorie extends CommonObject
 
         return CommonObject::commonReplaceThirdparty($db, $origin_id, $dest_id, $tables, 1);
     }
+	
+	/**
+	 * Return a list with all selected categories of a category filter box
+	 *
+	 * @param string	$type			The categorie type (e.g Categorie::TYPE_WAREHOUSE)
+	 * @return Array					A list with all selected categories (Note: "-2" is typical "without category")
+	 */
+	public static function GetPost($type)
+	{
+		return GETPOST("search_category_".$type."_list", "array");
+	}
+
+	/**
+	 * Return the addtional SQL JOIN query for filtering a list by a category
+	 *
+	 * @param string	$type			The categorie type (e.g Categorie::TYPE_WAREHOUSE)
+	 * @param string	$rowIdName		The name of the row id inside the whole sql query (e.g. "e.rowid")
+	 * @return string					A additional SQL JOIN query
+	 */
+	public static function GetFilterJoinQuery($type, $rowIdName)
+	{
+		return " LEFT JOIN ".MAIN_DB_PREFIX."categorie_".$type." as cp"
+			 . " ON ".$rowIdName." = cp.fk_".$type;
+	}
+
+	/**
+	 * Return the addtional SQL SELECT query for filtering a list by a category
+	 *
+	 * @param string	$type			The categorie type (e.g Categorie::TYPE_WAREHOUSE)
+	 * @param Array		$searchList		A list with the selected categories
+	 * @param string	$rowIdName		The name of the row id inside the whole sql query (e.g. "e.rowid")
+	 * @return string					A additional SQL SELECT query
+	 */
+	public static function GetFilterSelectQuery($type, $searchList, $rowIdName)
+	{
+		if (empty($searchList) && !is_array($searchList))
+		{
+			return "";
+		}
+
+		foreach ($searchList as $searchCategory)
+		{
+			if (intval($searchCategory) == -2)
+			{
+				$searchCategorySqlList[] = " cp.fk_categorie IS NULL";
+			}
+			elseif (intval($searchCategory) > 0)
+			{
+				$searchCategorySqlList[] = " ".$rowIdName
+										." IN (SELECT fk_".$type." FROM ".MAIN_DB_PREFIX."categorie_".$type
+										." WHERE fk_categorie = ".$searchCategory.")";
+			}
+		}
+
+		if (!empty($searchCategorySqlList))
+		{
+			return " AND (".implode(' AND ', $searchCategorySqlList).")";
+		}
+		else
+		{
+			return "";
+		}
+	}
+
+	/**
+	 * Return a HTML filter box for a list filter view
+	 *
+	 * @param string $type			The categorie type (e.g Categorie::TYPE_WAREHOUSE)
+	 * @param Array $preSelected	A list with the elements that should pre-selected
+	 * @param Form $form			The form object (need for access form functions)
+	 * @param Translate $langs		The translate object (need for access translations)
+	 * @return string				A HTML filter box (Note: selected results can get with GETPOST("search_category_".$type."_list"))
+	 */
+	public static function GetFilterBox($type, $preSelected, $form, $langs)
+	{
+		if (empty($preSelected) || !is_array($preSelected))
+		{
+			$preSelected = array();
+		}
+
+		$htmlName = "search_category_".$type."_list";
+
+		$categoryArray = $form->select_all_categories($type, "", "", 64, 0, 1);
+		$categoryArray[-2] = "- ".$langs->trans('NotCategorized')." -";
+
+		$filter = '';
+		$filter .= '<div class="divsearchfield">';
+		$filter .= $langs->trans('Categories').": ";
+		$filter .= Form::multiselectarray($htmlName, $categoryArray, $preSelected, 0, 0, "minwidth300");
+		$filter .= "</div>";
+
+		return $filter;
+	}
 }
