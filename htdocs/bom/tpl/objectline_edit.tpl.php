@@ -124,9 +124,9 @@ $coldisplay++;
 print '<td class="nobottom linecoldisablestockchange right"><input type="checkbox" name="disable_stock_change" id="disable_stock_change" class="flat right" value="1"'.(GETPOSTISSET('disablestockchange')?(GETPOST("disable_stock_change", 'int')?' checked="checked"':''):($line->disable_stock_change?' checked="checked"':'')).'">';
 print '</td>';
 
-//$coldisplay++;
-//print '<td class="nobottom nowrap linecollost right">';
-//print '<input type="text" size="1" name="efficiency" id="efficiency" class="flat right" value="'.$line->efficiency.'"></td>';
+$coldisplay++;
+print '<td class="nobottom nowrap linecollost right">';
+print '<input type="text" size="1" name="efficiency" id="efficiency" class="flat right" value="'.$line->efficiency.'"></td>';
 
 $coldisplay+=$colspan;
 print '<td class="nobottom linecoledit center valignmiddle" colspan="'.$colspan.'">';

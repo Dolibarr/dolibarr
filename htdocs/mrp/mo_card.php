@@ -287,7 +287,7 @@ if ($action == 'create')
 	print '</div>';
 
 	if (GETPOST('fk_bom', 'int') > 0) {
-		print load_fiche_titre($langs->trans("ToConsume").' ('.$langs->trans("ForAQuantityOf1").')');
+		print load_fiche_titre($langs->trans("ToConsume"));
 
 		print '<div class="div-table-responsive-no-min">';
 		print '<table class="noborder centpercent">';

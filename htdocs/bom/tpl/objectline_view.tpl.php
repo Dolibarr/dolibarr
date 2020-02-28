@@ -98,10 +98,10 @@ $coldisplay++;
 echo $line->disable_stock_change ? yn($line->disable_stock_change) : '';  // Yes, it is a quantity, not a price, but we just want the formating role of function price
 print '</td>';
 
-//print '<td class="linecolqty nowrap right">';
-//$coldisplay++;
-//echo $line->efficiency;
-//print '</td>';
+print '<td class="linecolefficiency nowrap right">';
+$coldisplay++;
+echo $line->efficiency;
+print '</td>';
 
 if ($this->status == 0 && ($object_rights->write) && $action != 'selectlines' ) {
 	print '<td class="linecoledit center">';

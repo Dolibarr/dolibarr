@@ -648,7 +648,7 @@ class Mo extends CommonObject
 							if ($line->qty_frozen) {
 								$moline->qty = $line->qty; // Qty to consume does not depends on quantity to produce
 							} else {
-								$moline->qty = round($line->qty * $this->qty / $bom->efficiency, 2);
+								$moline->qty = round($line->qty * $this->qty / $line->efficiency, 2);
 							}
 							if ($moline->qty <= 0) {
 								$error++;
@@ -1268,7 +1268,7 @@ class Mo extends CommonObject
 
 		print '<tr class="liste_titre">';
 		print '<td>'.$langs->trans('Ref').'</td>';
-		print '<td class="right">'.$langs->trans('Qty').'</td>';
+		print '<td class="right">'.$langs->trans('Qty').' <span class="opacitymedium">('.$langs->trans("ForAQuantityOf1").')</span></td>';
 		print '<td class="center">'.$langs->trans('QtyFrozen').'</td>';
 		print '<td class="center">'.$langs->trans('DisableStockChange').'</td>';
 		//print '<td class="right">'.$langs->trans('Efficiency').'</td>';
@@ -1337,7 +1337,7 @@ class Mo extends CommonObject
 		$this->tpl['qty'] = $line->qty;
 		$this->tpl['qty_frozen'] = $line->qty_frozen;
 		$this->tpl['disable_stock_change'] = $line->disable_stock_change;
-		//$this->tpl['efficiency'] = $line->efficiency;
+		$this->tpl['efficiency'] = $line->efficiency;
 
 		$tpl = DOL_DOCUMENT_ROOT.'/mrp/tpl/originproductline.tpl.php';
 		$res = include $tpl;

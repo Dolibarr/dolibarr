@@ -4775,6 +4775,8 @@ class Product extends CommonObject
 		$stock_reception_fournisseur = 0;
 		$stock_inproduction = 0;
 
+		//dol_syslog("load_virtual_stock");
+
 		if (!empty($conf->commande->enabled))
 		{
 			$result = $this->load_stats_commande(0, '1,2', 1);
