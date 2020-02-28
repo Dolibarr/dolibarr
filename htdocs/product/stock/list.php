@@ -45,6 +45,11 @@ $search_ref = GETPOST("sref", "alpha") ?GETPOST("sref", "alpha") : GETPOST("sear
 $search_label = GETPOST("snom", "alpha") ?GETPOST("snom", "alpha") : GETPOST("search_label", "alpha");
 $search_status = GETPOST("search_status", "int");
 
+if (!empty($conf->categorie->enabled))
+{
+	$search_category_list = Categorie::GetPost(Categorie::TYPE_WAREHOUSE);
+}
+
 // Load variable for pagination
 $limit = GETPOST('limit', 'int') ?GETPOST('limit', 'int') : $conf->liste_limit;
 $sortfield = GETPOST('sortfield', 'alpha');
@@ -137,6 +142,7 @@ if (empty($reshook))
 	    $search_status = "";
 	    $toselect = '';
 	    $search_array_options = array();
+		$search_category_list = array();
 	}
 	if (GETPOST('button_removefilter_x', 'alpha') || GETPOST('button_removefilter.x', 'alpha') || GETPOST('button_removefilter', 'alpha')
 		|| GETPOST('button_search_x', 'alpha') || GETPOST('button_search.x', 'alpha') || GETPOST('button_search', 'alpha'))
@@ -183,10 +189,22 @@ $reshook = $hookmanager->executeHooks('printFieldListSelect', $parameters, $obje
 $sql .= $hookmanager->resPrint;
 $sql = preg_replace('/,\s*$/', '', $sql);
 $sql .= " FROM ".MAIN_DB_PREFIX.$object->table_element." as e";
+
+if (!empty($conf->categorie->enabled))
+{
+	$sql .= Categorie::GetFilterJoinQuery(Categorie::TYPE_WAREHOUSE, "e.rowid");
+}
+
 if (is_array($extrafields->attributes[$object->table_element]['label']) && count($extrafields->attributes[$object->table_element]['label'])) $sql .= " LEFT JOIN ".MAIN_DB_PREFIX.$object->table_element."_extrafields as ef on (e.rowid = ef.fk_object)";
 $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."product_stock as ps ON e.rowid = ps.fk_entrepot";
 $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."product as p ON ps.fk_product = p.rowid";
 $sql .= " WHERE e.entity IN (".getEntity('stock').")";
+
+if (!empty($conf->categorie->enabled))
+{
+	$sql .= Categorie::GetFilterSelectQuery(Categorie::TYPE_WAREHOUSE, $search_category_list, "e.rowid");
+}
+
 if ($search_ref) $sql .= natural_search("e.ref", $search_ref); // ref
 if ($search_label) $sql .= natural_search("e.lieu", $search_label); // label
 if ($search_status != '' && $search_status >= 0) $sql .= " AND e.statut = ".$search_status;
@@ -313,6 +331,12 @@ if ($search_all)
 }
 
 $moreforfilter = '';
+
+if (!empty($conf->categorie->enabled))
+{
+	$moreforfilter .= Categorie::GetFilterBox(Categorie::TYPE_WAREHOUSE, $search_category_list, $form, $langs);
+}
+
 /*$moreforfilter.='<div class="divsearchfield">';
  $moreforfilter.= $langs->trans('MyFilter') . ': <input type="text" name="search_myfield" value="'.dol_escape_htmltag($search_myfield).'">';
  $moreforfilter.= '</div>';*/
