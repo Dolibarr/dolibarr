@@ -5057,7 +5057,7 @@ input.select2-input {
 	background: var(--inputbackgroundcolor);
 }
 .select2-container--default .select2-selection--multiple .select2-selection__choice{
-	background-color: var(--inputbackgroundcolor);
+	background-color: #ddd;
 }
 
 .select2-search__field

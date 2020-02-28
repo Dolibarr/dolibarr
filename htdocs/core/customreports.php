@@ -88,7 +88,7 @@ $arrayoftype = array(
 	'cotisation' => array('label' => 'Subscriptions', 'ObjectClassName' => 'Subscription', 'enabled' => $conf->adherent->enabled, 'ClassPath' => DOL_DOCUMENT_ROOT."/adherents/class/subscription.class.php", 'langs'=>'members'),
 );
 
-// Complete $arrayoftype
+// Complete $arrayoftype by external modules
 $parameters = array('objecttype'=>$objecttype, 'tabfamily'=>$tabfamily);
 $reshook = $hookmanager->executeHooks('loadDataForCustomReports', $parameters, $object, $action); // Note that $action and $object may have been modified by some hooks
 if ($reshook < 0) setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
@@ -279,9 +279,7 @@ foreach ($object->fields as $key => $val) {
     // Add measure from extrafields
     if ($object->isextrafieldmanaged) {
         foreach ($extrafields->attributes[$object->table_element]['label'] as $key => $val) {
-            if (!empty($extrafields->attributes[$object->table_element]['totalizable'][$key])) {
-                $arrayofxaxis['te.'.$key] = array('label' => $extrafields->attributes[$object->table_element]['label'][$key], 'position' => (int) $extrafields->attributes[$object->table_element]['pos'][$key]);
-            }
+            $arrayofxaxis['te.'.$key] = array('label' => $extrafields->attributes[$object->table_element]['label'][$key], 'position' => (int) $extrafields->attributes[$object->table_element]['pos'][$key]);
         }
     }
 }
