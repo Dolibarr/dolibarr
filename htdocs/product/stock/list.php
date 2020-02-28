@@ -47,7 +47,7 @@ $search_status = GETPOST("search_status", "int");
 
 if (!empty($conf->categorie->enabled))
 {
-	$search_category_list = Categorie::GetPost(Categorie::TYPE_WAREHOUSE);
+	$search_category_list = Categorie::getPost(Categorie::TYPE_WAREHOUSE);
 }
 
 // Load variable for pagination
@@ -192,7 +192,7 @@ $sql .= " FROM ".MAIN_DB_PREFIX.$object->table_element." as e";
 
 if (!empty($conf->categorie->enabled))
 {
-	$sql .= Categorie::GetFilterJoinQuery(Categorie::TYPE_WAREHOUSE, "e.rowid");
+	$sql .= Categorie::getFilterJoinQuery(Categorie::TYPE_WAREHOUSE, "e.rowid");
 }
 
 if (is_array($extrafields->attributes[$object->table_element]['label']) && count($extrafields->attributes[$object->table_element]['label'])) $sql .= " LEFT JOIN ".MAIN_DB_PREFIX.$object->table_element."_extrafields as ef on (e.rowid = ef.fk_object)";
@@ -202,7 +202,7 @@ $sql .= " WHERE e.entity IN (".getEntity('stock').")";
 
 if (!empty($conf->categorie->enabled))
 {
-	$sql .= Categorie::GetFilterSelectQuery(Categorie::TYPE_WAREHOUSE, $search_category_list, "e.rowid");
+	$sql .= Categorie::getFilterSelectQuery(Categorie::TYPE_WAREHOUSE, $search_category_list, "e.rowid");
 }
 
 if ($search_ref) $sql .= natural_search("e.ref", $search_ref); // ref
@@ -334,7 +334,7 @@ $moreforfilter = '';
 
 if (!empty($conf->categorie->enabled))
 {
-	$moreforfilter .= Categorie::GetFilterBox(Categorie::TYPE_WAREHOUSE, $search_category_list, $form, $langs);
+	$moreforfilter .= Categorie::getFilterBox(Categorie::TYPE_WAREHOUSE, $search_category_list, $form, $langs);
 }
 
 /*$moreforfilter.='<div class="divsearchfield">';
