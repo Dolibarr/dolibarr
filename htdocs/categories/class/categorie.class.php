@@ -1957,7 +1957,7 @@ class Categorie extends CommonObject
 
         return CommonObject::commonReplaceThirdparty($db, $origin_id, $dest_id, $tables, 1);
     }
-	
+
 	/**
 	 * Return a list with all selected categories of a category filter box
 	 *
