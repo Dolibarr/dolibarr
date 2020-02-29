@@ -833,7 +833,7 @@ class FormCompany extends Form
     public function get_input_id_prof($idprof, $htmlname, $preselected, $country_code, $morecss = 'maxwidth100onsmartphone quatrevingtpercent')
     {
         // phpcs:enable
-        global $conf, $langs;
+        global $conf, $langs, $hookmanager;
 
         $formlength = 0;
         if (empty($conf->global->MAIN_DISABLEPROFIDRULES)) {
@@ -866,7 +866,16 @@ class FormCompany extends Form
         $maxlength = $formlength;
         if (empty($formlength)) { $formlength = 24; $maxlength = 128; }
 
-        $out = '<input type="text" '.($morecss ? 'class="'.$morecss.'" ' : '').'name="'.$htmlname.'" id="'.$htmlname.'" maxlength="'.$maxlength.'" value="'.$selected.'">';
+        $out = '';
+
+        // Execute hook getInputIdProf to complete or replace $out
+        $parameters=array('formlength'=>$formlength, 'selected'=>$preselected, 'idprof'=>$idprof, 'htmlname'=>$htmlname, 'country_code'=>$country_code);
+        $reshook=$hookmanager->executeHooks('getInputIdProf', $parameters);
+        if (empty($reshook))
+        {
+        	$out .= '<input type="text" '.($morecss ? 'class="'.$morecss.'" ' : '').'name="'.$htmlname.'" id="'.$htmlname.'" maxlength="'.$maxlength.'" value="'.$selected.'">';
+        }
+        $out .= $hookmanager->resPrint;
 
         return $out;
     }
