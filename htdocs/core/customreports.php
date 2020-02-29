@@ -82,7 +82,7 @@ $arrayoftype = array(
 	'invoice' => array('label' => 'Invoices', 'ObjectClassName' => 'Facture', 'enabled' => $conf->facture->enabled, 'ClassPath' => DOL_DOCUMENT_ROOT."/compta/facture/class/facture.class.php"),
 	'invoice_template'=>array('label' => 'PredefinedInvoices', 'ObjectClassName' => 'FactureRec', 'enabled' => $conf->facture->enabled, 'ClassPath' => DOL_DOCUMENT_ROOT."/compta/class/facturerec.class.php", 'langs'=>'bills'),
 	'bom' => array('label' => 'BOM', 'ObjectClassName' => 'Bom', 'enabled' => $conf->bom->enabled),
-	'mo' => array('label' => 'MO', 'ObjectClassName' => 'Mo', 'enabled' => $conf->mo->enabled, 'ClassPath' => DOL_DOCUMENT_ROOT."/mrp/class/mo.class.php"),
+	'mo' => array('label' => 'MO', 'ObjectClassName' => 'Mo', 'enabled' => $conf->mrp->enabled, 'ClassPath' => DOL_DOCUMENT_ROOT."/mrp/class/mo.class.php"),
 	'ticket' => array('label' => 'Ticket', 'ObjectClassName' => 'Ticket', 'enabled' => $conf->ticket->enabled),
 	'member' => array('label' => 'Adherent', 'ObjectClassName' => 'Adherent', 'enabled' => $conf->adherent->enabled, 'ClassPath' => DOL_DOCUMENT_ROOT."/adherents/class/adherent.class.php", 'langs'=>'members'),
 	'cotisation' => array('label' => 'Subscriptions', 'ObjectClassName' => 'Subscription', 'enabled' => $conf->adherent->enabled, 'ClassPath' => DOL_DOCUMENT_ROOT."/adherents/class/subscription.class.php", 'langs'=>'members'),
@@ -269,9 +269,9 @@ foreach ($object->fields as $key => $val) {
         if (preg_match('/^pass/', $key)) continue;
         if (in_array($val['type'], array('html', 'text'))) continue;
         if (in_array($val['type'], array('timestamp', 'date', 'datetime'))) {
-            $arrayofxaxis['t.'.$key.'-year'] = array('label' => $langs->trans($val['label']).' ('.$langs->trans("Year").')', 'position' => $val['position']);
-            $arrayofxaxis['t.'.$key.'-month'] = array('label' => $langs->trans($val['label']).' ('.$langs->trans("Month").')', 'position' => $val['position']);
-            $arrayofxaxis['t.'.$key.'-day'] = array('label' => $langs->trans($val['label']).' ('.$langs->trans("Day").')', 'position' => $val['position']);
+            $arrayofxaxis['t.'.$key.'-year'] = array('label' => $langs->trans($val['label']).' ('.$langs->trans("Year").')', 'position' => $val['position'].'-y');
+            $arrayofxaxis['t.'.$key.'-month'] = array('label' => $langs->trans($val['label']).' ('.$langs->trans("Month").')', 'position' => $val['position'].'-m');
+            $arrayofxaxis['t.'.$key.'-day'] = array('label' => $langs->trans($val['label']).' ('.$langs->trans("Day").')', 'position' => $val['position'].'-d');
         } else {
             $arrayofxaxis['t.'.$key] = array('label' => $val['label'], 'position' => (int) $val['position']);
         }
@@ -283,7 +283,8 @@ foreach ($object->fields as $key => $val) {
         }
     }
 }
-$arrayofxaxis = dol_sort_array($arrayofxaxis, 'position');
+
+$arrayofxaxis = dol_sort_array($arrayofxaxis, 'position', 'asc', 1);
 $arrayofxaxislabel = array();
 foreach ($arrayofxaxis as $key => $val) {
     $arrayofxaxislabel[$key] = $val['label'];

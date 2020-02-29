@@ -6024,6 +6024,18 @@ div.tabsElem a.tab {
 }
 
 
+/* ============================================================================== */
+/* CSS style used for jFlot                                                       */
+/* ============================================================================== */
+
+.dol-xaxis-vertical .flot-x-axis .flot-tick-label.tickLabel {
+    text-orientation: sideways;
+    font-weight: 400;
+    writing-mode: vertical-rl;
+    white-space: nowrap;
+}
+
+
 
 /* ============================================================================== */
 /* CSS style used for small screen                                                */
@@ -6259,6 +6271,7 @@ if (!empty($conf->global->THEME_CUSTOM_CSS)) print $conf->global->THEME_CUSTOM_C
 
 ?>
 
-div.flot-text .flot-tick-label .tickLabel{
+/* Must be at end */
+div.flot-text .flot-tick-label .tickLabel {
 	color: unset;
 }

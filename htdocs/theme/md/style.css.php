@@ -6008,6 +6008,17 @@ border-top-right-radius: 6px;
 }
 
 
+/* ============================================================================== */
+/* CSS style used for jFlot                                                       */
+/* ============================================================================== */
+
+.dol-xaxis-vertical .flot-x-axis .flot-tick-label.tickLabel {
+    text-orientation: sideways;
+    font-weight: 400;
+    writing-mode: vertical-rl;
+    white-space: nowrap;
+}
+
 
 /* ============================================================================== */
 /* CSS style used for small screen                                                */
@@ -6170,7 +6181,6 @@ border-top-right-radius: 6px;
 		width: 95%;
 	}
 }
-
 
 
 <?php
