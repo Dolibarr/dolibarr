@@ -182,17 +182,13 @@ foreach ($fulltree as $key => $val)
 	$li = $categstatic->getNomUrl(1, '', 60);
 	$desc = dol_htmlcleanlastbr($val['description']);
 
-	$counter = "";
+	$counter = '';
 
 	if($conf->global->CATEGORY_SHOW_COUNTS)
 	{
 		// we need only a count of the elements, so it is enough to consume only the id's from the database
-
-		$elements = $type == Categorie::TYPE_ACCOUNT
-			? $categstatic->getObjectsInCateg("account", 1)			// Categorie::TYPE_ACCOUNT is "bank_account" instead of "account"
-			: $categstatic->getObjectsInCateg($type, 1);
-
-		$counter = "<td class='left' width='40px;'>".(is_countable($elements) ? count($elements) : "0")."</td>";
+		$elements = $categstatic->getObjectsInCateg($type, 1);
+		$counter = "<td class='left' width='40px;'>".(is_countable($elements) ? count($elements) : '0')."</td>";
 	}
 
 	$data[] = array(
