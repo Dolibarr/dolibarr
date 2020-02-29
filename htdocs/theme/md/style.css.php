@@ -6080,7 +6080,8 @@ border-top-right-radius: 6px;
   		color: #<?php echo $colortextbackhmenu; ?>;
 	}
 	.mainmenuaspan {
-  		font-size: 12px;
+  		font-size: 0.9em;
+  		/* font-weight: 300; */
     }
     .topmenuimage {
     	background-size: 24px auto;
