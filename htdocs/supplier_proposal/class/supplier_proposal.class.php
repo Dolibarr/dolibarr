@@ -2372,21 +2372,21 @@ class SupplierProposal extends CommonObject
             $line->desc = $langs->trans("Description")." ".$xnbp;
             $line->qty = 1;
             $line->subprice = 100;
-            $line->tva_tx = 19.6;
+            $line->tva_tx = 20.0;
             $line->localtax1_tx = 0;
             $line->localtax2_tx = 0;
             if ($xnbp == 2)
             {
                 $line->total_ht = 50;
-                $line->total_ttc = 59.8;
-                $line->total_tva = 9.8;
+                $line->total_ttc = 60.0;
+                $line->total_tva = 10.0;
                 $line->remise_percent = 50;
             }
             else
             {
                 $line->total_ht = 100;
-                $line->total_ttc = 119.6;
-                $line->total_tva = 19.6;
+                $line->total_ttc = 120.0;
+                $line->total_tva = 20.0;
                 $line->remise_percent = 00;
             }
 

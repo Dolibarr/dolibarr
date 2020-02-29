@@ -733,9 +733,9 @@ class DiscountAbsolute
 
 		$this->fk_soc         = 1;
 		$this->amount_ht      = 10;
-		$this->amount_tva     = 1.96;
-		$this->amount_ttc     = 11.96;
-		$this->tva_tx         = 19.6;
+		$this->amount_tva     = 2.00;
+		$this->amount_ttc     = 12.00;
+		$this->tva_tx         = 20.0;
 		$this->description    = 'Specimen discount';
 	}
 }

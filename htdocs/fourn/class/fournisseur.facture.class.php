@@ -2524,21 +2524,21 @@ class FactureFournisseur extends CommonInvoice
 	            $line->subprice = 100;
 	            $line->pu_ht = 100; // the canelle template use pu_ht and not subprice
 	            $line->price = 100;
-	            $line->tva_tx = 19.6;
+	            $line->tva_tx = 20.0;
 	            $line->localtax1_tx = 0;
 	            $line->localtax2_tx = 0;
 				if ($xnbp == 2)
 				{
 				    $line->total_ht = 50;
-				    $line->total_ttc = 59.8;
-				    $line->total_tva = 9.8;
+				    $line->total_ttc = 60.0;
+				    $line->total_tva = 10.0;
 	    			$line->remise_percent = 50;
 				}
 				else
 				{
 				    $line->total_ht = 100;
-				    $line->total_ttc = 119.6;
-				    $line->total_tva = 19.6;
+				    $line->total_ttc = 120.0;
+				    $line->total_tva = 20.0;
 	    			$line->remise_percent = 0;
 				}
 
@@ -2561,8 +2561,8 @@ class FactureFournisseur extends CommonInvoice
 
         $this->amount_ht      = $xnbp * 100;
         $this->total_ht       = $xnbp * 100;
-        $this->total_tva      = $xnbp * 19.6;
-        $this->total_ttc      = $xnbp * 119.6;
+        $this->total_tva      = $xnbp * 20.0;
+        $this->total_ttc      = $xnbp * 120.0;
     }
 
     // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps

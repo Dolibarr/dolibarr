@@ -2409,11 +2409,11 @@ class Contrat extends CommonObject
 			$line->qty = 1;
 			$line->subprice = 100;
 			$line->price = 100;
-			$line->tva_tx = 19.6;
+			$line->tva_tx = 20.0;
 			$line->remise_percent = 10;
 			$line->total_ht = 90;
-			$line->total_ttc = 107.64; // 90 * 1.196
-			$line->total_tva = 17.64;
+			$line->total_ttc = 108.00; // 90 * 1.2
+			$line->total_tva = 18.00;
 			$line->date_start = dol_now() - 500000;
 			$line->date_start_real = dol_now() - 200000;
 			$line->date_end = dol_now() + 500000;

@@ -4322,7 +4322,7 @@ class Facture extends CommonInvoice
 				$line->desc = $langs->trans("Description")." ".$xnbp;
 				$line->qty = 1;
 				$line->subprice = 100;
-				$line->tva_tx = 19.6;
+				$line->tva_tx = 20.0;
 				$line->localtax1_tx = 0;
 				$line->localtax2_tx = 0;
 				$line->remise_percent = 0;
@@ -4332,33 +4332,33 @@ class Facture extends CommonInvoice
 					$line->fk_product = $prodids[$prodid];
 					$line->qty = -1;
 					$line->total_ht = -100;
-					$line->total_ttc = -119.6;
-					$line->total_tva = -19.6;
+					$line->total_ttc = -120.0;
+					$line->total_tva = -20.0;
 					$line->multicurrency_total_ht = -200;
-					$line->multicurrency_total_ttc = -239.2;
-					$line->multicurrency_total_tva = -39.2;
+					$line->multicurrency_total_ttc = -240.0;
+					$line->multicurrency_total_tva = -40.0;
 				}
 				elseif ($xnbp == 2)    // UP is negative (free line)
 				{
 					$line->subprice = -100;
 					$line->total_ht = -100;
-					$line->total_ttc = -119.6;
-					$line->total_tva = -19.6;
+					$line->total_ttc = -120.0;
+					$line->total_tva = -20.0;
 					$line->remise_percent = 0;
 					$line->multicurrency_total_ht = -200;
-					$line->multicurrency_total_ttc = -239.2;
-					$line->multicurrency_total_tva = -39.2;
+					$line->multicurrency_total_ttc = -240.0;
+					$line->multicurrency_total_tva = -40.0;
 				}
 				elseif ($xnbp == 3)    // Discount is 50% (product line)
 				{
 					$prodid = mt_rand(1, $num_prods);
 					$line->fk_product = $prodids[$prodid];
 					$line->total_ht = 50;
-					$line->total_ttc = 59.8;
-					$line->total_tva = 9.8;
+					$line->total_ttc = 60.0;
+					$line->total_tva = 10.0;
 					$line->multicurrency_total_ht = 100;
-					$line->multicurrency_total_ttc = 119.6;
-					$line->multicurrency_total_tva = 19.6;
+					$line->multicurrency_total_ttc = 120.0;
+					$line->multicurrency_total_tva = 20.0;
 					$line->remise_percent = 50;
 				}
 				else    // (product line)
@@ -4366,11 +4366,11 @@ class Facture extends CommonInvoice
 					$prodid = mt_rand(1, $num_prods);
 					$line->fk_product = $prodids[$prodid];
 					$line->total_ht = 100;
-					$line->total_ttc = 119.6;
-					$line->total_tva = 19.6;
+					$line->total_ttc = 120.0;
+					$line->total_tva = 20.0;
 					$line->multicurrency_total_ht = 200;
-					$line->multicurrency_total_ttc = 239.2;
-					$line->multicurrency_total_tva = 39.2;
+					$line->multicurrency_total_ttc = 240.0;
+					$line->multicurrency_total_tva = 40.0;
 					$line->remise_percent = 0;
 				}
 
@@ -4394,7 +4394,7 @@ class Facture extends CommonInvoice
 			$line->desc = $langs->trans("Description")." (offered line)";
 			$line->qty = 1;
 			$line->subprice = 100;
-			$line->tva_tx = 19.6;
+			$line->tva_tx = 20.0;
 			$line->localtax1_tx = 0;
 			$line->localtax2_tx = 0;
 			$line->remise_percent = 100;

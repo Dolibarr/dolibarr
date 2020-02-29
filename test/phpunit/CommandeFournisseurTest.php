@@ -142,7 +142,7 @@ class CommandeFournisseurTest extends PHPUnit\Framework\TestCase
 
         $quantity=10;
         $ref_fourn='SUPPLIER_REF_PHPUNIT';
-        $tva_tx=19.6;
+        $tva_tx=20.0;
 
         // Delete existing supplier prices
         // TODO

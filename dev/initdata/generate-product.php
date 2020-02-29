@@ -95,7 +95,7 @@ for ($s = 0 ; $s < GEN_NUMBER_PRODUIT ; $s++)
     $produit->label = 'Label '.time().$s;
     $produit->description = 'Description '.time().$s;
     $produit->price = mt_rand(1, 1000);
-    $produit->tva_tx = "19.6";
+    $produit->tva_tx = "20.0";
     $ret=$produit->create($user);
     if ($ret < 0) print "Error $ret - ".$produit->error."\n";
 	else print " OK with ref ".$produit->ref."\n";
