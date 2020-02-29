@@ -45,7 +45,6 @@ $search_label = GETPOST('search_label', 'alpha');
 $search_labelshort = GETPOST('search_labelshort', 'alpha');
 $search_accountparent = GETPOST('search_accountparent', 'alpha');
 $search_pcgtype = GETPOST('search_pcgtype', 'alpha');
-$search_pcgsubtype = GETPOST('search_pcgsubtype', 'alpha');
 
 $chartofaccounts = GETPOST('chartofaccounts', 'int');
 
@@ -71,8 +70,7 @@ $arrayfields = array(
 	'aa.labelshort'=>array('label'=>$langs->trans("LabelToShow"), 'checked'=>1),
 	'aa.account_parent'=>array('label'=>$langs->trans("Accountparent"), 'checked'=>1),
     'aa.pcg_type'=>array('label'=>$langs->trans("Pcgtype"), 'checked'=>1, 'help'=>'PcgtypeDesc'),
-    'aa.pcg_subtype'=>array('label'=>$langs->trans("Pcgsubtype"), 'checked'=>0, 'help'=>'PcgtypeDesc'),
-	'aa.active'=>array('label'=>$langs->trans("Activated"), 'checked'=>1)
+    'aa.active'=>array('label'=>$langs->trans("Activated"), 'checked'=>1)
 );
 
 $accounting = new AccountingAccount($db);
@@ -103,7 +101,6 @@ if (empty($reshook))
 		$search_labelshort = "";
 		$search_accountparent = "";
     	$search_pcgtype = "";
-    	$search_pcgsubtype = "";
 		$search_array_options = array();
     }
     if ((GETPOST('valid_change_chart', 'alpha') && GETPOST('chartofaccounts', 'int') > 0)	// explicit click on button 'Change and load' with js on
@@ -195,7 +192,7 @@ if ($action == 'delete') {
 
 $pcgver = $conf->global->CHARTOFACCOUNTS;
 
-$sql = "SELECT aa.rowid, aa.fk_pcg_version, aa.pcg_type, aa.pcg_subtype, aa.account_number, aa.account_parent , aa.label, aa.labelshort, aa.active, ";
+$sql = "SELECT aa.rowid, aa.fk_pcg_version, aa.pcg_type, aa.account_number, aa.account_parent , aa.label, aa.labelshort, aa.active, ";
 $sql .= " a2.rowid as rowid2, a2.label as label2, a2.account_number as account_number2";
 $sql .= " FROM ".MAIN_DB_PREFIX."accounting_account as aa";
 $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."accounting_system as asy ON aa.fk_pcg_version = asy.pcg_version AND aa.entity = ".$conf->entity;
@@ -241,7 +238,6 @@ if (strlen(trim($search_label)))			$sql .= natural_search("aa.label", $search_la
 if (strlen(trim($search_labelshort)))       $sql .= natural_search("aa.labelshort", $search_labelshort);
 if (strlen(trim($search_accountparent)) && $search_accountparent != '-1')	$sql .= natural_search("aa.account_parent", $search_accountparent, 2);
 if (strlen(trim($search_pcgtype)))			$sql .= natural_search("aa.pcg_type", $search_pcgtype);
-if (strlen(trim($search_pcgsubtype)))		$sql .= natural_search("aa.pcg_subtype", $search_pcgsubtype);
 $sql .= $db->order($sortfield, $sortorder);
 
 // Count total nb of records
@@ -274,8 +270,7 @@ if ($resql)
 	if ($search_labelshort) $param .= '&search_labelshort='.urlencode($search_labelshort);
 	if ($search_accountparent > 0 || $search_accountparent == '0') $param .= '&search_accountparent='.urlencode($search_accountparent);
 	if ($search_pcgtype) $param .= '&search_pcgtype='.urlencode($search_pcgtype);
-	if ($search_pcgsubtype) $param .= '&search_pcgsubtype='.urlencode($search_pcgsubtype);
-    if ($optioncss != '') $param .= '&optioncss='.$optioncss;
+	if ($optioncss != '') $param .= '&optioncss='.$optioncss;
 
     if (!empty($conf->use_javascript_ajax))
     {
@@ -357,7 +352,6 @@ if ($resql)
 		print '</td>';
 	}
 	if (!empty($arrayfields['aa.pcg_type']['checked']))		    print '<td class="liste_titre"><input type="text" class="flat" size="6" name="search_pcgtype" value="'.$search_pcgtype.'"></td>';
-	if (!empty($arrayfields['aa.pcg_subtype']['checked']))		print '<td class="liste_titre"><input type="text" class="flat" size="6" name="search_pcgsubtype" value="'.$search_pcgsubtype.'"></td>';
 	if (!empty($arrayfields['aa.active']['checked']))			print '<td class="liste_titre">&nbsp;</td>';
 	print '<td class="liste_titre maxwidthsearch">';
 	$searchpicto = $form->showFilterAndCheckAddButtons($massactionbutton ? 1 : 0, 'checkforselect', 1);
@@ -371,7 +365,6 @@ if ($resql)
 	if (!empty($arrayfields['aa.labelshort']['checked']))		print_liste_field_titre($arrayfields['aa.labelshort']['label'], $_SERVER["PHP_SELF"], "aa.labelshort", "", $param, '', $sortfield, $sortorder);
 	if (!empty($arrayfields['aa.account_parent']['checked']))	print_liste_field_titre($arrayfields['aa.account_parent']['label'], $_SERVER["PHP_SELF"], "aa.account_parent", "", $param, '', $sortfield, $sortorder, 'left ');
 	if (!empty($arrayfields['aa.pcg_type']['checked']))			print_liste_field_titre($arrayfields['aa.pcg_type']['label'], $_SERVER["PHP_SELF"], 'aa.pcg_type', '', $param, '', $sortfield, $sortorder, '', $arrayfields['aa.pcg_type']['help']);
-	if (!empty($arrayfields['aa.pcg_subtype']['checked']))		print_liste_field_titre($arrayfields['aa.pcg_subtype']['label'], $_SERVER["PHP_SELF"], 'aa.pcg_subtype', '', $param, '', $sortfield, $sortorder, '', $arrayfields['aa.pcg_subtype']['help']);
 	if (!empty($arrayfields['aa.active']['checked']))			print_liste_field_titre($arrayfields['aa.active']['label'], $_SERVER["PHP_SELF"], 'aa.active', '', $param, '', $sortfield, $sortorder);
 	print_liste_field_titre($selectedfields, $_SERVER["PHP_SELF"], "", '', '', '', $sortfield, $sortorder, 'center maxwidthsearch ');
 	print "</tr>\n";
@@ -444,15 +437,6 @@ if ($resql)
 		{
 			print "<td>";
 			print $obj->pcg_type;
-			print "</td>\n";
-			if (!$i) $totalarray['nbfield']++;
-		}
-
-		// Chart of accounts subtype
-		if (!empty($arrayfields['aa.pcg_subtype']['checked']))
-		{
-			print "<td>";
-			print $obj->pcg_subtype;
 			print "</td>\n";
 			if (!$i) $totalarray['nbfield']++;
 		}
