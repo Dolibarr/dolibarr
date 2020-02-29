@@ -719,7 +719,7 @@ if (! $error && $action == 'writebookkeeping') {
 			}
 		}
 
-		if (price2num($totaldebit) != price2num($totalcredit))
+		if (price2num($totaldebit, 'MT') != price2num($totalcredit, 'MT'))
 		{
 			$error++;
 			$errorforline++;
