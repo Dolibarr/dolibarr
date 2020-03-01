@@ -66,7 +66,7 @@ class Invoices extends DolibarrApi
 	{
         return $this->_fetch($id, '', '', '', $contact_list);
 	}
-  
+
     /**
      * Get properties of an invoice object by ref
      *
@@ -102,7 +102,7 @@ class Invoices extends DolibarrApi
     {
         return $this->_fetch('', '', $ref_ext, '', $contact_list);
     }
-  
+
     /**
      * Get properties of an order object
      *
