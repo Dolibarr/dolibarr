@@ -79,7 +79,7 @@ if (GETPOST('action', 'alpha') == 'set')
 	$res = dolibarr_set_const($db, "TAKEPOS_NUM_TERMINALS", GETPOST('TAKEPOS_NUM_TERMINALS', 'alpha'), 'chaine', 0, '', $conf->entity);
 	$res = dolibarr_set_const($db, "TAKEPOS_DIRECT_PAYMENT", GETPOST('TAKEPOS_DIRECT_PAYMENT', 'int'), 'int', 0, '', $conf->entity);
 	$res = dolibarr_set_const($db, "TAKEPOS_CUSTOM_RECEIPT", GETPOST('TAKEPOS_CUSTOM_RECEIPT', 'int'), 'int', 0, '', $conf->entity);
-	//$res = dolibarr_set_const($db, "TAKEPOS_HEAD_BAR", GETPOST('TAKEPOS_HEAD_BAR', 'int'), 'int', 0, '', $conf->entity);
+	$res = dolibarr_set_const($db, "TAKEPOS_ADDON", GETPOST('TAKEPOS_ADDON', 'alpha'), 'int', 0, '', $conf->entity);
     $res = dolibarr_set_const($db, "TAKEPOS_EMAIL_TEMPLATE_INVOICE", GETPOST('TAKEPOS_EMAIL_TEMPLATE_INVOICE', 'alpha'), 'chaine', 0, '', $conf->entity);
 	if (!empty($conf->global->TAKEPOS_ENABLE_SUMUP)) {
 		$res = dolibarr_set_const($db, "TAKEPOS_SUMUP_AFFILIATE", GETPOST('TAKEPOS_SUMUP_AFFILIATE', 'alpha'), 'chaine', 0, '', $conf->entity);
@@ -241,6 +241,13 @@ if (is_array($formmail->lines_model)) {
 print $form->selectarray('TAKEPOS_EMAIL_TEMPLATE_INVOICE', $arrayofmessagename, $conf->global->TAKEPOS_EMAIL_TEMPLATE_INVOICE, 'None', 1, 0, '', 0, 0, 0, '', '', 1);
 print "</td></tr>\n";
 
+// Numbering module
+print '<tr class="oddeven"><td>';
+print $langs->trans("BillsNumberingModule");
+print '<td colspan="2">';
+$array = array(0=>$langs->trans("Default"), "terminal"=>$langs->trans("ByTerminal"), "mod_facture_mars"=>"mars", "mod_facture_mercure"=>"mercure", "mod_facture_terre"=>"terre");
+print $form->selectarray('TAKEPOS_ADDON', $array, (empty($conf->global->TAKEPOS_ADDON) ? '0' : $conf->global->TAKEPOS_ADDON), 0);
+print "</td></tr>\n";
 print '</table>';
 print '</div>';
 
