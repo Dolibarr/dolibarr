@@ -1,5 +1,6 @@
 <?php
 /* Copyright (C) 2015   Jean-François Ferry     <jfefe@aternatik.fr>
+/* Copyright (C) 2020   Thibault FOUCART     	<support@ptibogxiv.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -63,11 +64,66 @@ class Invoices extends DolibarrApi
      */
 	public function get($id, $contact_list = 1)
 	{
+        return $this->_fetch($id, '', '', '', $contact_list);
+	}
+  
+    /**
+     * Get properties of an invoice object by ref
+     *
+     * Return an array with invoice informations
+     *
+     * @param       string		$ref			Ref of object
+     * @param       int         $contact_list  0: Returned array of contacts/addresses contains all properties, 1: Return array contains just id
+     * @return 	array|mixed data without useless information
+     *
+     * @url GET    ref/{ref}
+     *
+     * @throws 	RestException
+     */
+    public function getByRef($ref, $contact_list = 1)
+    {
+        return $this->_fetch('', $ref, '', '', $contact_list);
+    }
+
+    /**
+     * Get properties of an invoice object by ref_ext
+     *
+     * Return an array with invoice informations
+     *
+     * @param       string		$ref_ext			External reference of object
+     * @param       int         $contact_list  0: Returned array of contacts/addresses contains all properties, 1: Return array contains just id
+     * @return 	array|mixed data without useless information
+     *
+     * @url GET    ref_ext/{ref_ext}
+     *
+     * @throws 	RestException
+     */
+    public function getByRefExt($ref_ext, $contact_list = 1)
+    {
+        return $this->_fetch('', '', $ref_ext, '', $contact_list);
+    }
+  
+    /**
+     * Get properties of an order object
+     *
+     * Return an array with order informations
+     *
+     * @param       int         $id            ID of order
+	 * @param		string		$ref			Ref of object
+	 * @param		string		$ref_ext		External reference of object
+	 * @param		string		$ref_int		Internal reference of other objec
+     * @param       int         $contact_list  0: Returned array of contacts/addresses contains all properties, 1: Return array contains just id
+     * @return 	array|mixed data without useless information
+     *
+     * @throws 	RestException
+     */
+    private function _fetch($id, $ref = '', $ref_ext = '', $ref_int = '', $contact_list = 1)
+    {
 		if (!DolibarrApiAccess::$user->rights->facture->lire) {
 			throw new RestException(401);
 		}
 
-		$result = $this->invoice->fetch($id);
+		$result = $this->invoice->fetch($id, $ref, $ref_ext, $ref_int);
 		if (!$result) {
 			throw new RestException(404, 'Invoice not found');
 		}
@@ -87,7 +143,7 @@ class Invoices extends DolibarrApi
 
 		$this->invoice->fetchObjectLinked();
 		return $this->_cleanObjectDatas($this->invoice);
-	}
+    }
 
     /**
      * List invoices
@@ -242,10 +298,10 @@ class Invoices extends DolibarrApi
      * @url     POST /createfromorder/{orderid}
      *
      * @return int
-     * @throws RestException 400
-     * @throws RestException 401
-     * @throws RestException 404
-     * @throws RestException 405
+     * @throws 400
+     * @throws 401
+     * @throws 404
+     * @throws 405
      */
     public function createInvoiceFromOrder($orderid)
     {
@@ -318,9 +374,10 @@ class Invoices extends DolibarrApi
      *
      * @return array
      *
-     * @throws RestException 304
-     * @throws RestException 401
-     * @throws RestException 404 Invoice not found
+     * @throws 200
+     * @throws 304
+     * @throws 401
+     * @throws 404
      */
     public function putLine($id, $lineid, $request_data = null)
     {
@@ -382,9 +439,8 @@ class Invoices extends DolibarrApi
 	 * @url	POST {id}/contact/{contactid}/{type}
 	 *
 	 * @return int
-	 *
-     * @throws RestException 401
-     * @throws RestException 404
+     * @throws 401
+     * @throws 404
 	 */
     public function postContact($id, $contactid, $type)
     {
@@ -424,10 +480,9 @@ class Invoices extends DolibarrApi
 	 * @url	DELETE {id}/contact/{rowid}
 	 *
 	 * @return array
-	 *
-     * @throws RestException 401
-     * @throws RestException 404
-     * @throws RestException 500
+     * @throws 401
+     * @throws 404
+     * @throws 500
 	 */
     public function deleteContact($id, $rowid)
     {
@@ -464,10 +519,10 @@ class Invoices extends DolibarrApi
      *
      * @return array
      *
-     * @throws RestException 400
-     * @throws RestException 401
-     * @throws RestException 404
-     * @throws RestException 405
+     * @throws 400
+     * @throws 401
+     * @throws 404
+     * @throws 405
      */
     public function deleteLine($id, $lineid)
     {
@@ -592,9 +647,10 @@ class Invoices extends DolibarrApi
      *
      * @return int
      *
-     * @throws RestException 401
-     * @throws RestException 404
-     * @throws RestException 400
+     * @throws 200
+     * @throws 401
+     * @throws 404
+     * @throws 400
      */
     public function postLine($id, $request_data = null)
     {
@@ -673,10 +729,11 @@ class Invoices extends DolibarrApi
      *
      * @return  array
      *
-     * @throws RestException 304
-     * @throws RestException 401
-     * @throws RestException 404
-     * @throws RestException 500
+     * @throws 200
+     * @throws 304
+     * @throws 401
+     * @throws 404
+     * @throws 500
      *
      */
     public function addContact($id, $fk_socpeople, $type_contact, $source, $notrigger = 0)
@@ -722,10 +779,11 @@ class Invoices extends DolibarrApi
      *
      * @return  array
      *
-     * @throws RestException 304
-     * @throws RestException 401
-     * @throws RestException 404
-     * @throws RestException 500
+     * @throws 200
+     * @throws 304
+     * @throws 401
+     * @throws 404
+     * @throws 500
      *
      */
     public function settodraft($id, $idwarehouse = -1)
@@ -825,10 +883,11 @@ class Invoices extends DolibarrApi
      *
      * @return  array 	An invoice object
      *
-     * @throws RestException 304
-     * @throws RestException 401
-     * @throws RestException 404
-     * @throws RestException 500
+     * @throws 200
+     * @throws 304
+     * @throws 401
+     * @throws 404
+     * @throws 500
      */
     public function settopaid($id, $close_code = '', $close_note = '')
     {
@@ -875,10 +934,11 @@ class Invoices extends DolibarrApi
      *
      * @return  array   An invoice object
      *
-     * @throws RestException 304
-     * @throws RestException 401
-     * @throws RestException 404
-     * @throws RestException 500
+     * @throws 200
+     * @throws 304
+     * @throws 401
+     * @throws 404
+     * @throws 500
      */
     public function settounpaid($id)
     {
@@ -923,10 +983,11 @@ class Invoices extends DolibarrApi
      *
      * @return  array 	An invoice object
      *
-     * @throws RestException 304
-     * @throws RestException 401
-     * @throws RestException 404
-     * @throws RestException 500
+     * @throws 200
+     * @throws 304
+     * @throws 401
+     * @throws 404
+     * @throws 500
      */
     public function markAsCreditAvailable($id)
     {
@@ -1098,10 +1159,10 @@ class Invoices extends DolibarrApi
      * @url     POST {id}/usediscount/{discountid}
      *
      * @return int
-     * @throws RestException 400
-     * @throws RestException 401
-     * @throws RestException 404
-     * @throws RestException 405
+     * @throws 400
+     * @throws 401
+     * @throws 404
+     * @throws 405
      */
     public function useDiscount($id, $discountid)
     {
@@ -1144,10 +1205,10 @@ class Invoices extends DolibarrApi
      * @url     POST {id}/usecreditnote/{discountid}
      *
      * @return int
-     * @throws RestException 400
-     * @throws RestException 401
-     * @throws RestException 404
-     * @throws RestException 405
+     * @throws 400
+     * @throws 401
+     * @throws 404
+     * @throws 405
      */
     public function useCreditNote($id, $discountid)
     {
@@ -1189,11 +1250,10 @@ class Invoices extends DolibarrApi
      * @url     GET {id}/payments
      *
      * @return array
-     *
-     * @throws RestException 400
-     * @throws RestException 401
-     * @throws RestException 404
-     * @throws RestException 405
+     * @throws 400
+     * @throws 401
+     * @throws 404
+     * @throws 405
      */
     public function getPayments($id)
     {
@@ -1239,9 +1299,9 @@ class Invoices extends DolibarrApi
      * @url     POST {id}/payments
      *
      * @return int  Payment ID
-     * @throws RestException 400
-     * @throws RestException 401
-     * @throws RestException 404
+     * @throws 400
+     * @throws 401
+     * @throws 404
      */
     public function addPayment($id, $datepaye, $paiementid, $closepaidinvoices, $accountid, $num_paiement = '', $comment = '', $chqemetteur = '', $chqbank = '')
     {
@@ -1358,10 +1418,10 @@ class Invoices extends DolibarrApi
      * @url     POST /paymentsdistributed
      *
      * @return int  Payment ID
-     * @throws RestException 400
-     * @throws RestException 401
-     * @throws RestException 403
-     * @throws RestException 404
+     * @throws 400
+     * @throws 401
+     * @throws 403
+     * @throws 404
      */
     public function addPaymentDistributed($arrayofamounts, $datepaye, $paiementid, $closepaidinvoices, $accountid, $num_paiement = '', $comment = '', $chqemetteur = '', $chqbank = '')
     {
