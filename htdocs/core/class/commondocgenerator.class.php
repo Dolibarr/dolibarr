@@ -788,81 +788,84 @@ abstract class CommonDocGenerator
     {
         // phpcs:enable
 		global $conf;
-		foreach($extrafields->attributes[$object->table_element]['label'] as $key=>$label)
-		{
-			if($extrafields->attributes[$object->table_element]['type'][$key] == 'price')
+
+		if (is_array($extrafields->attributes[$object->table_element]['label'])) {
+			foreach($extrafields->attributes[$object->table_element]['label'] as $key=>$label)
 			{
-				$object->array_options['options_'.$key] = price2num($object->array_options['options_'.$key]);
-				$object->array_options['options_'.$key.'_currency'] = price($object->array_options['options_'.$key], 0, $outputlangs, 0, 0, -1, $conf->currency);
-				//Add value to store price with currency
-				$array_to_fill=array_merge($array_to_fill, array($array_key.'_options_'.$key.'_currency' => $object->array_options['options_'.$key.'_currency']));
-			}
-			elseif($extrafields->attributes[$object->table_element]['type'][$key] == 'select')
-			{
-				$object->array_options['options_'.$key] = $extrafields->attributes[$object->table_element]['param'][$key]['options'][$object->array_options['options_'.$key]];
-			}
-			elseif($extrafields->attributes[$object->table_element]['type'][$key] == 'checkbox') {
-				$valArray=explode(',', $object->array_options['options_'.$key]);
-				$output=array();
-				foreach($extrafields->attributes[$object->table_element]['param'][$key]['options'] as $keyopt=>$valopt) {
-					if  (in_array($keyopt, $valArray)) {
-						$output[]=$valopt;
+				if($extrafields->attributes[$object->table_element]['type'][$key] == 'price')
+				{
+					$object->array_options['options_'.$key] = price2num($object->array_options['options_'.$key]);
+					$object->array_options['options_'.$key.'_currency'] = price($object->array_options['options_'.$key], 0, $outputlangs, 0, 0, -1, $conf->currency);
+					//Add value to store price with currency
+					$array_to_fill=array_merge($array_to_fill, array($array_key.'_options_'.$key.'_currency' => $object->array_options['options_'.$key.'_currency']));
+				}
+				elseif($extrafields->attributes[$object->table_element]['type'][$key] == 'select')
+				{
+					$object->array_options['options_'.$key] = $extrafields->attributes[$object->table_element]['param'][$key]['options'][$object->array_options['options_'.$key]];
+				}
+				elseif($extrafields->attributes[$object->table_element]['type'][$key] == 'checkbox') {
+					$valArray=explode(',', $object->array_options['options_'.$key]);
+					$output=array();
+					foreach($extrafields->attributes[$object->table_element]['param'][$key]['options'] as $keyopt=>$valopt) {
+						if  (in_array($keyopt, $valArray)) {
+							$output[]=$valopt;
+						}
 					}
+					$object->array_options['options_'.$key] = implode(', ', $output);
 				}
-				$object->array_options['options_'.$key] = implode(', ', $output);
-			}
-			elseif($extrafields->attributes[$object->table_element]['type'][$key] == 'date')
-			{
-				if (strlen($object->array_options['options_'.$key])>0)
+				elseif($extrafields->attributes[$object->table_element]['type'][$key] == 'date')
 				{
-					$date = $object->array_options['options_'.$key];
-					$object->array_options['options_'.$key] = dol_print_date($date, 'day');                                       // using company output language
-					$object->array_options['options_'.$key.'_locale'] = dol_print_date($date, 'day', 'tzserver', $outputlangs);     // using output language format
-					$object->array_options['options_'.$key.'_rfc'] = dol_print_date($date, 'dayrfc');                             // international format
-				}
-				else
-				{
-					$object->array_options['options_'.$key] = '';
-					$object->array_options['options_'.$key.'_locale'] = '';
-					$object->array_options['options_'.$key.'_rfc'] = '';
-				}
-				$array_to_fill=array_merge($array_to_fill, array($array_key.'_options_'.$key.'_locale' => $object->array_options['options_'.$key.'_locale']));
-				$array_to_fill=array_merge($array_to_fill, array($array_key.'_options_'.$key.'_rfc' => $object->array_options['options_'.$key.'_rfc']));
-			}
-			elseif($extrafields->attributes[$object->table_element]['label'][$key] == 'datetime')
-			{
-				$datetime = $object->array_options['options_'.$key];
-				$object->array_options['options_'.$key] = ($datetime!="0000-00-00 00:00:00"?dol_print_date($object->array_options['options_'.$key], 'dayhour'):'');                            // using company output language
-				$object->array_options['options_'.$key.'_locale'] = ($datetime!="0000-00-00 00:00:00"?dol_print_date($object->array_options['options_'.$key], 'dayhour', 'tzserver', $outputlangs):'');    // using output language format
-				$object->array_options['options_'.$key.'_rfc'] = ($datetime!="0000-00-00 00:00:00"?dol_print_date($object->array_options['options_'.$key], 'dayhourrfc'):'');                             // international format
-				$array_to_fill=array_merge($array_to_fill, array($array_key.'_options_'.$key.'_locale' => $object->array_options['options_'.$key.'_locale']));
-				$array_to_fill=array_merge($array_to_fill, array($array_key.'_options_'.$key.'_rfc' => $object->array_options['options_'.$key.'_rfc']));
-			}
-			elseif($extrafields->attributes[$object->table_element]['type'][$key] == 'link')
-			{
-				$id = $object->array_options['options_'.$key];
-				if ($id != "")
-				{
-					$param = $extrafields->attributes[$object->table_element]['param'][$key];
-					$param_list=array_keys($param['options']);              // $param_list='ObjectName:classPath'
-					$InfoFieldList = explode(":", $param_list[0]);
-					$classname=$InfoFieldList[0];
-					$classpath=$InfoFieldList[1];
-					if (! empty($classpath))
+					if (strlen($object->array_options['options_'.$key])>0)
 					{
-						dol_include_once($InfoFieldList[1]);
-						if ($classname && class_exists($classname))
+						$date = $object->array_options['options_'.$key];
+						$object->array_options['options_'.$key] = dol_print_date($date, 'day');                                       // using company output language
+						$object->array_options['options_'.$key.'_locale'] = dol_print_date($date, 'day', 'tzserver', $outputlangs);     // using output language format
+						$object->array_options['options_'.$key.'_rfc'] = dol_print_date($date, 'dayrfc');                             // international format
+					}
+					else
+					{
+						$object->array_options['options_'.$key] = '';
+						$object->array_options['options_'.$key.'_locale'] = '';
+						$object->array_options['options_'.$key.'_rfc'] = '';
+					}
+					$array_to_fill=array_merge($array_to_fill, array($array_key.'_options_'.$key.'_locale' => $object->array_options['options_'.$key.'_locale']));
+					$array_to_fill=array_merge($array_to_fill, array($array_key.'_options_'.$key.'_rfc' => $object->array_options['options_'.$key.'_rfc']));
+				}
+				elseif($extrafields->attributes[$object->table_element]['label'][$key] == 'datetime')
+				{
+					$datetime = $object->array_options['options_'.$key];
+					$object->array_options['options_'.$key] = ($datetime!="0000-00-00 00:00:00"?dol_print_date($object->array_options['options_'.$key], 'dayhour'):'');                            // using company output language
+					$object->array_options['options_'.$key.'_locale'] = ($datetime!="0000-00-00 00:00:00"?dol_print_date($object->array_options['options_'.$key], 'dayhour', 'tzserver', $outputlangs):'');    // using output language format
+					$object->array_options['options_'.$key.'_rfc'] = ($datetime!="0000-00-00 00:00:00"?dol_print_date($object->array_options['options_'.$key], 'dayhourrfc'):'');                             // international format
+					$array_to_fill=array_merge($array_to_fill, array($array_key.'_options_'.$key.'_locale' => $object->array_options['options_'.$key.'_locale']));
+					$array_to_fill=array_merge($array_to_fill, array($array_key.'_options_'.$key.'_rfc' => $object->array_options['options_'.$key.'_rfc']));
+				}
+				elseif($extrafields->attributes[$object->table_element]['type'][$key] == 'link')
+				{
+					$id = $object->array_options['options_'.$key];
+					if ($id != "")
+					{
+						$param = $extrafields->attributes[$object->table_element]['param'][$key];
+						$param_list=array_keys($param['options']);              // $param_list='ObjectName:classPath'
+						$InfoFieldList = explode(":", $param_list[0]);
+						$classname=$InfoFieldList[0];
+						$classpath=$InfoFieldList[1];
+						if (! empty($classpath))
 						{
-							$tmpobject = new $classname($this->db);
-							$tmpobject->fetch($id);
-							// completely replace the id with the linked object name
-							$object->array_options['options_'.$key] = $tmpobject->name;
+							dol_include_once($InfoFieldList[1]);
+							if ($classname && class_exists($classname))
+							{
+								$tmpobject = new $classname($this->db);
+								$tmpobject->fetch($id);
+								// completely replace the id with the linked object name
+								$object->array_options['options_'.$key] = $tmpobject->name;
+							}
 						}
 					}
 				}
-			}
 
-			$array_to_fill = array_merge($array_to_fill, array($array_key.'_options_'.$key => $object->array_options['options_'.$key]));
+				$array_to_fill = array_merge($array_to_fill, array($array_key.'_options_'.$key => $object->array_options['options_'.$key]));
+			}
 		}
 
 		return $array_to_fill;

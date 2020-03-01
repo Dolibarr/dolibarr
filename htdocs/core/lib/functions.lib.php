@@ -7804,12 +7804,11 @@ function natural_search($fields, $value, $mode = 0, $nofirstand = 0)
 			}
 			else    // $mode=0
 			{
-				$textcrit = '';
 				$tmpcrits = explode('|', $crit);
 				$i3 = 0;
 				foreach ($tmpcrits as $tmpcrit)
 				{
-					if (empty($tmpcrit)) continue;
+                    if ($tmpcrit !== '0' && empty($tmpcrit)) continue;
 
 					$newres .= (($i2 > 0 || $i3 > 0) ? ' OR ' : '');
 
