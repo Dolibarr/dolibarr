@@ -7,6 +7,15 @@ if (!defined('ISLOADEDBYSTEELSHEET')) die('Must be call by steelsheet'); ?>
  */
 
 
+button.dropdown-item.global-search-item {
+    outline: none;
+}
+
+.open>.dropdown-search, .open>.dropdown-bookmark, .open>.dropdown-menu, .dropdown dd ul.open {
+    display: block;
+}
+
+
 #topmenu-bookmark-dropdown a.login-dropdown-a {
 	color: #fff;
 }
