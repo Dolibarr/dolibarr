@@ -29,6 +29,7 @@ require_once DOL_DOCUMENT_ROOT.'/accountancy/class/accountancyexport.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/accounting.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/accountancy/class/bookkeeping.class.php';
 require_once DOL_DOCUMENT_ROOT.'/accountancy/class/accountingjournal.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formaccounting.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
@@ -538,6 +539,7 @@ if ($action == 'export_file' && $user->rights->accounting->mouvements->export) {
  */
 
 $formother = new FormOther($db);
+$formfile = new FormFile($db);
 
 $title_page = $langs->trans("Bookkeeping");
 
@@ -914,7 +916,59 @@ while ($i < min($num, $limit))
 	// Document ref
 	if (!empty($arrayfields['t.doc_ref']['checked']))
 	{
-		print '<td class="nowrap">'.$line->doc_ref.'</td>';
+        if ($line->doc_type == 'customer_invoice')
+        {
+            $langs->loadLangs(array('bills'));
+
+            require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
+            $objectstatic = new Facture($db);
+            $modulepart = 'facture';
+
+            $filename = dol_sanitizeFileName($line->doc_ref);
+            $filedir = $conf->facture->dir_output.'/'.dol_sanitizeFileName($line->doc_ref);
+            $urlsource = $_SERVER['PHP_SELF'].'?id='.$line->fk_doc;
+            $documentlink = $formfile->getDocumentsLink($modulepart, $filename, $filedir);
+        }
+        elseif ($line->doc_type == 'supplier_invoice')
+        {
+            require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.facture.class.php';
+            $objectstatic = new FactureFournisseur($db);
+            $modulepart = 'invoice_supplier';
+
+            $filename = dol_sanitizeFileName($line->doc_ref);
+            $filedir = $conf->fournisseur->facture->dir_output.'/'.get_exdir($line->fk_doc, 2, 0, 0, $objectstatic, $modulepart).dol_sanitizeFileName($line->doc_ref);
+            $subdir = get_exdir($line->fk_doc, 2, 0, 0, $objectstatic, $modulepart).dol_sanitizeFileName($line->doc_ref);
+            $documentlink = $formfile->getDocumentsLink($modulepart, $subdir, $filedir);
+        }
+        elseif ($line->doc_type == 'expense_report')
+        {
+            require_once DOL_DOCUMENT_ROOT.'/expensereport/class/expensereport.class.php';
+            $objectstatic = new ExpenseReport($db);
+            $modulepart = 'expensereport';
+
+            $filename=dol_sanitizeFileName($line->doc_ref);
+            $filedir=$conf->expensereport->dir_output . '/' . dol_sanitizeFileName($line->doc_ref);
+            $urlsource=$_SERVER['PHP_SELF'].'?id='.$line->fk_doc;
+            $documentlink = $formfile->getDocumentsLink($modulepart, $filename, $filedir);
+        }
+
+        print '<td class="nowrap">';
+
+        print '<table class="nobordernopadding"><tr class="nocellnopadd">';
+        // Picto + Ref
+        print '<td class="nobordernopadding nowrap">';
+
+        if(! empty($objectstatic->id))
+        {
+            print $objectstatic->getNomUrl(1, '', 0, 0, '', 0, -1, 1);
+        } else {
+            print $line->doc_ref;
+        }
+
+		print $documentlink;
+        print '</td></tr></table>';
+
+        print "</td>\n";
 		if (!$i) $totalarray['nbfield']++;
 	}
 
