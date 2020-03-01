@@ -90,3 +90,4 @@ BrowserMethodDescription=Simple and easy receipt printing. Only a few parameters
 TakeposConnectorMethodDescription=External module with extra features. Posibility to print from de cloud.
 PrintMethod=Print method
 ReceiptPrinterMethodDescription=Powerful method with a lot of parameters. Full customizable with templates. Cannot print from the cloud.
+ByTerminal=By terminal
