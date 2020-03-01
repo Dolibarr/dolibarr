@@ -90,6 +90,8 @@ if (GETPOST('action', 'alpha') == 'set')
 
 	$res = dolibarr_set_const($db, 'CASHDESK_READER_KEYCODE_FOR_ENTER'.$terminaltouse, (GETPOST('CASHDESK_READER_KEYCODE_FOR_ENTER'.$terminaltouse, 'int') > 0 ? GETPOST('CASHDESK_READER_KEYCODE_FOR_ENTER'.$terminaltouse, 'int') : ''), 'chaine', 0, '', $conf->entity);
 
+	$res = dolibarr_set_const($db, "TAKEPOS_ADDON".$terminaltouse, GETPOST('TAKEPOS_ADDON'.$terminaltouse, 'alpha'), 'chaine', 0, '', $conf->entity);
+
 	dol_syslog("admin/cashdesk: level ".GETPOST('level', 'alpha'));
 
 	if (!$res > 0) $error++;
@@ -250,6 +252,18 @@ print '<tr class="oddeven"><td>' . $langs->trans('CashDeskReaderKeyCodeForEnter'
 print '<td>';
 print '<input type="text" name="' . 'CASHDESK_READER_KEYCODE_FOR_ENTER'.$terminaltouse . '" value="' . $conf->global->{'CASHDESK_READER_KEYCODE_FOR_ENTER'.$terminaltouse} . '" />';
 print '</td></tr>';
+
+// Numbering module
+if ($conf->global->TAKEPOS_ADDON=="terminal"){
+	print '<tr class="oddeven"><td>';
+	print $langs->trans("BillsNumberingModule");
+	print '<td colspan="2">';
+	$array = array(0=>$langs->trans("Default"), "mod_facture_mars"=>"mars", "mod_facture_mercure"=>"mercure", "mod_facture_terre"=>"terre");
+	print $form->selectarray('TAKEPOS_ADDON'.$terminaltouse, $array, (empty($conf->global->{'TAKEPOS_ADDON'.$terminaltouse}) ? '0' : $conf->global->{'TAKEPOS_ADDON'.$terminaltouse}), 0);
+	print "</td></tr>\n";
+	print '</table>';
+	print '</div>';
+}
 
 print '</table>';
 print '</div>';
