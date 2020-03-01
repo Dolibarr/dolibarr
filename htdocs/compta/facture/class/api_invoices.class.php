@@ -651,7 +651,7 @@ class Invoices extends DolibarrApi
      * @throws RestException 304
      * @throws RestException 401
      * @throws RestException 404
-     * @throws RestException 500
+     * @throws RestException 400
      */
     public function postLine($id, $request_data = null)
     {
@@ -980,10 +980,10 @@ class Invoices extends DolibarrApi
      *
      * @return  array 	An invoice object
      *
-     * @throws RestException 400
+     * @throws RestException 304
      * @throws RestException 401
      * @throws RestException 404
-     * @throws RestException 405
+     * @throws RestException 500
      */
     public function markAsCreditAvailable($id)
     {
@@ -1155,10 +1155,11 @@ class Invoices extends DolibarrApi
      * @url     POST {id}/usediscount/{discountid}
      *
      * @return int
-     * @throws 400
-     * @throws 401
-     * @throws 404
-     * @throws 405
+	 *
+     * @throws RestException 400
+     * @throws RestException 401
+     * @throws RestException 404
+     * @throws RestException 405
      */
     public function useDiscount($id, $discountid)
     {
