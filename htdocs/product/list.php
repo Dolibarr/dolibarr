@@ -11,6 +11,7 @@
  * Copyright (C) 2013       Adolfo segura           <adolfo.segura@gmail.com>
  * Copyright (C) 2015       Jean-François Ferry     <jfefe@aternatik.fr>
  * Copyright (C) 2016       Ferran Marcet		    <fmarcet@2byte.es>
+ * Copyright (C) 2020	    Alexandre Spangaro		<aspangaro@open-dsi.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by

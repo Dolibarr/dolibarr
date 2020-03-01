@@ -8,7 +8,7 @@
  * Copyright (C) 2012       Cedric Salvador         <csalvador@gpcsolutions.fr>
  * Copyright (C) 2013-2014	Cedric GROSS			<c.gross@kreiz-it.fr>
  * Copyright (C) 2013-2016	Marcos García			<marcosgdf@gmail.com>
- * Copyright (C) 2011-2017	Alexandre Spangaro		<aspangaro@open-dsi.fr>
+ * Copyright (C) 2011-2020	Alexandre Spangaro		<aspangaro@open-dsi.fr>
  * Copyright (C) 2014		Henry Florian			<florian.henry@open-concept.pro>
  * Copyright (C) 2014-2016	Philippe Grand			<philippe.grand@atoo-net.com>
  * Copyright (C) 2014		Ion agorria			    <ion@agorria.com>
@@ -4423,7 +4423,7 @@ class Product extends CommonObject
         if (!empty($conf->accounting->enabled) && $this->status_buy) {
             include_once DOL_DOCUMENT_ROOT.'/core/lib/accounting.lib.php';
             $label .= '<br><b>'.$langs->trans('ProductAccountancyBuyCode').':</b> '.length_accountg($this->accountancy_code_buy);
-			$label .= '<br><b>'.$langs->trans('ProductAccountancyBuyIntraCode').':</b> '.length_accountg($this->accountancy_code_buy_intra;
+			$label .= '<br><b>'.$langs->trans('ProductAccountancyBuyIntraCode').':</b> '.length_accountg($this->accountancy_code_buy_intra);
 			$label .= '<br><b>'.$langs->trans('ProductAccountancyBuyExportCode').':</b> '.length_accountg($this->accountancy_code_buy_export);
 		}
         if (isset($this->status) && isset($this->status_buy)) {

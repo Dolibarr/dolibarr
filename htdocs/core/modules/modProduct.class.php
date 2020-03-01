@@ -7,6 +7,7 @@
  * Copyright (C) 2012-2013 Juanjo Menent		<jmenent@2byte.es>
  * Copyright (C) 2014      Christophe Battarel	<contact@altairis.fr>
  * Copyright (C) 2014      Cedric Gross			<c.gross@kreiz-it.fr>
+ * Copyright (C) 2020	   Alexandre Spangaro	<aspangaro@open-dsi.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
