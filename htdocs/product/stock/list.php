@@ -3,6 +3,7 @@
  * Copyright (C) 2004-2016	Laurent Destailleur		<eldy@users.sourceforge.net>
  * Copyright (C) 2005-2014	Regis Houssin			<regis.houssin@inodbox.com>
  * Copyright (C) 2015       Juanjo Menent           <jmenent@2byte.es>
+ * Copyright (C) 2020       Tobias Sekan            <tobias.sekan@startmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -26,6 +27,12 @@
 
 require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/product/stock/class/entrepot.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/class/html.formcategory.class.php';
+
+if (!empty($conf->categorie->enabled))
+{
+	require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
+}
 
 // Load translation files required by the page
 $langs->loadLangs(array("stocks", "other"));
@@ -47,7 +54,7 @@ $search_status = GETPOST("search_status", "int");
 
 if (!empty($conf->categorie->enabled))
 {
-	$search_category_list = Categorie::getPost(Categorie::TYPE_WAREHOUSE);
+	$search_category_list = GETPOST("search_category_".Categorie::TYPE_WAREHOUSE."_list", "array");
 }
 
 // Load variable for pagination
@@ -164,7 +171,7 @@ if (empty($reshook))
  *	View
  */
 
-$form = new Form($db);
+$form = new FormCategory($db);
 $warehouse = new Entrepot($db);
 
 $now = dol_now();
@@ -202,7 +209,7 @@ $sql .= " WHERE e.entity IN (".getEntity('stock').")";
 
 if (!empty($conf->categorie->enabled))
 {
-	$sql .= Categorie::getFilterSelectQuery(Categorie::TYPE_WAREHOUSE, $search_category_list, "e.rowid");
+	$sql .= Categorie::getFilterSelectQuery(Categorie::TYPE_WAREHOUSE, "e.rowid", $search_category_list);
 }
 
 if ($search_ref) $sql .= natural_search("e.ref", $search_ref); // ref
@@ -334,7 +341,7 @@ $moreforfilter = '';
 
 if (!empty($conf->categorie->enabled))
 {
-	$moreforfilter .= Categorie::getFilterBox(Categorie::TYPE_WAREHOUSE, $search_category_list, $form, $langs);
+	$moreforfilter .= $form->GetFilterBox(Categorie::TYPE_WAREHOUSE, $search_category_list);
 }
 
 /*$moreforfilter.='<div class="divsearchfield">';
