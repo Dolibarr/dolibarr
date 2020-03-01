@@ -1979,7 +1979,7 @@ class Categorie extends CommonObject
 	 * @param Array		$searchList		A list with the selected categories
 	 * @return string					A additional SQL SELECT query
 	 */
-	public static function getFilterSelectQuery($type,  $rowIdName, $searchList)
+	public static function getFilterSelectQuery($type, $rowIdName, $searchList)
 	{
 		if (empty($searchList) && !is_array($searchList))
 		{
