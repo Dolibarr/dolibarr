@@ -298,10 +298,10 @@ class Invoices extends DolibarrApi
      * @url     POST /createfromorder/{orderid}
      *
      * @return int
-     * @throws 400
-     * @throws 401
-     * @throws 404
-     * @throws 405
+     * @throws RestException 400
+     * @throws RestException 401
+     * @throws RestException 404
+     * @throws RestException 405
      */
     public function createInvoiceFromOrder($orderid)
     {
@@ -374,10 +374,9 @@ class Invoices extends DolibarrApi
      *
      * @return array
      *
-     * @throws 200
-     * @throws 304
-     * @throws 401
-     * @throws 404
+     * @throws RestException 304
+     * @throws RestException 401
+     * @throws RestException 404 Invoice not found
      */
     public function putLine($id, $lineid, $request_data = null)
     {
@@ -439,8 +438,9 @@ class Invoices extends DolibarrApi
 	 * @url	POST {id}/contact/{contactid}/{type}
 	 *
 	 * @return int
-     * @throws 401
-     * @throws 404
+	 *
+     * @throws RestException 401
+     * @throws RestException 404
 	 */
     public function postContact($id, $contactid, $type)
     {
@@ -480,9 +480,10 @@ class Invoices extends DolibarrApi
 	 * @url	DELETE {id}/contact/{rowid}
 	 *
 	 * @return array
-     * @throws 401
-     * @throws 404
-     * @throws 500
+  	 *
+     * @throws RestException 401
+     * @throws RestException 404
+     * @throws RestException 500
 	 */
     public function deleteContact($id, $rowid)
     {
@@ -519,10 +520,10 @@ class Invoices extends DolibarrApi
      *
      * @return array
      *
-     * @throws 400
-     * @throws 401
-     * @throws 404
-     * @throws 405
+     * @throws RestException 400
+     * @throws RestException 401
+     * @throws RestException 404
+     * @throws RestException 405
      */
     public function deleteLine($id, $lineid)
     {
@@ -647,10 +648,10 @@ class Invoices extends DolibarrApi
      *
      * @return int
      *
-     * @throws 200
-     * @throws 401
-     * @throws 404
-     * @throws 400
+     * @throws RestException 304
+     * @throws RestException 401
+     * @throws RestException 404
+     * @throws RestException 500
      */
     public function postLine($id, $request_data = null)
     {
@@ -729,11 +730,10 @@ class Invoices extends DolibarrApi
      *
      * @return  array
      *
-     * @throws 200
-     * @throws 304
-     * @throws 401
-     * @throws 404
-     * @throws 500
+     * @throws RestException 304
+     * @throws RestException 401
+     * @throws RestException 404
+     * @throws RestException 500
      *
      */
     public function addContact($id, $fk_socpeople, $type_contact, $source, $notrigger = 0)
@@ -779,11 +779,10 @@ class Invoices extends DolibarrApi
      *
      * @return  array
      *
-     * @throws 200
-     * @throws 304
-     * @throws 401
-     * @throws 404
-     * @throws 500
+     * @throws RestException 304
+     * @throws RestException 401
+     * @throws RestException 404
+     * @throws RestException 500
      *
      */
     public function settodraft($id, $idwarehouse = -1)
@@ -883,11 +882,10 @@ class Invoices extends DolibarrApi
      *
      * @return  array 	An invoice object
      *
-     * @throws 200
-     * @throws 304
-     * @throws 401
-     * @throws 404
-     * @throws 500
+     * @throws RestException 304
+     * @throws RestException 401
+     * @throws RestException 404
+     * @throws RestException 500
      */
     public function settopaid($id, $close_code = '', $close_note = '')
     {
@@ -934,11 +932,10 @@ class Invoices extends DolibarrApi
      *
      * @return  array   An invoice object
      *
-     * @throws 200
-     * @throws 304
-     * @throws 401
-     * @throws 404
-     * @throws 500
+     * @throws RestException 304
+     * @throws RestException 401
+     * @throws RestException 404
+     * @throws RestException 500
      */
     public function settounpaid($id)
     {
@@ -983,11 +980,10 @@ class Invoices extends DolibarrApi
      *
      * @return  array 	An invoice object
      *
-     * @throws 200
-     * @throws 304
-     * @throws 401
-     * @throws 404
-     * @throws 500
+     * @throws RestException 400
+     * @throws RestException 401
+     * @throws RestException 404
+     * @throws RestException 405
      */
     public function markAsCreditAvailable($id)
     {
@@ -1205,10 +1201,11 @@ class Invoices extends DolibarrApi
      * @url     POST {id}/usecreditnote/{discountid}
      *
      * @return int
-     * @throws 400
-     * @throws 401
-     * @throws 404
-     * @throws 405
+     *
+     * @throws RestException 400
+     * @throws RestException 401
+     * @throws RestException 404
+     * @throws RestException 405
      */
     public function useCreditNote($id, $discountid)
     {
@@ -1250,10 +1247,11 @@ class Invoices extends DolibarrApi
      * @url     GET {id}/payments
      *
      * @return array
-     * @throws 400
-     * @throws 401
-     * @throws 404
-     * @throws 405
+	 *
+     * @throws RestException 400
+     * @throws RestException 401
+     * @throws RestException 404
+     * @throws RestException 405
      */
     public function getPayments($id)
     {
@@ -1299,9 +1297,10 @@ class Invoices extends DolibarrApi
      * @url     POST {id}/payments
      *
      * @return int  Payment ID
-     * @throws 400
-     * @throws 401
-     * @throws 404
+	 *
+     * @throws RestException 400
+     * @throws RestException 401
+     * @throws RestException 404
      */
     public function addPayment($id, $datepaye, $paiementid, $closepaidinvoices, $accountid, $num_paiement = '', $comment = '', $chqemetteur = '', $chqbank = '')
     {
@@ -1418,10 +1417,11 @@ class Invoices extends DolibarrApi
      * @url     POST /paymentsdistributed
      *
      * @return int  Payment ID
-     * @throws 400
-     * @throws 401
-     * @throws 403
-     * @throws 404
+	 *
+     * @throws RestException 400
+     * @throws RestException 401
+     * @throws RestException 403
+     * @throws RestException 404
      */
     public function addPaymentDistributed($arrayofamounts, $datepaye, $paiementid, $closepaidinvoices, $accountid, $num_paiement = '', $comment = '', $chqemetteur = '', $chqbank = '')
     {
