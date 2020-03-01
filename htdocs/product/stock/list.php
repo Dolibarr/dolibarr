@@ -341,7 +341,7 @@ $moreforfilter = '';
 
 if (!empty($conf->categorie->enabled))
 {
-	$moreforfilter .= $form->GetFilterBox(Categorie::TYPE_WAREHOUSE, $search_category_list);
+	$moreforfilter .= $form->getFilterBox(Categorie::TYPE_WAREHOUSE, $search_category_list);
 }
 
 /*$moreforfilter.='<div class="divsearchfield">';

@@ -32,7 +32,7 @@ class FormCategory extends Form
 	 * @param Array $preSelected	A list with the elements that should pre-selected
 	 * @return string				A HTML filter box (Note: selected results can get with GETPOST("search_category_".$type."_list"))
 	 */
-	public function GetFilterBox($type, $preSelected)
+	public function getFilterBox($type, $preSelected)
 	{
 		// phpcs:enable
 		global $langs;
