@@ -68,6 +68,8 @@ create table llx_product
   accountancy_code_sell_intra   varchar(32),                        -- Selling accountancy code for vat intracommunity
   accountancy_code_sell_export  varchar(32),                        -- Selling accountancy code for vat export
   accountancy_code_buy          varchar(32),                        -- Buying accountancy code
+  accountancy_code_buy_intra    varchar(32),                        -- Buying accountancy code for vat intracommunity
+  accountancy_code_buy_export   varchar(32),                        -- Buying accountancy code for vat export
   partnumber                    varchar(32),                        -- Part/Serial number. TODO To use it into screen if not a duplicate of barcode.
   net_measure                   float        DEFAULT NULL,
   net_measure_units             tinyint      DEFAULT NULL,

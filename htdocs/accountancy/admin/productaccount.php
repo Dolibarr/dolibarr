@@ -117,7 +117,9 @@ if ($action == 'update') {
 				'ACCOUNTANCY_SELL',
                 'ACCOUNTANCY_SELL_INTRA',
                 'ACCOUNTANCY_SELL_EXPORT',
-				'ACCOUNTANCY_BUY'
+				'ACCOUNTANCY_BUY',
+				'ACCOUNTANCY_BUY_INTRA',
+				'ACCOUNTANCY_BUY_EXPORT'
 		);
 
 		if (in_array($accounting_product_mode, $accounting_product_modes)) {
@@ -157,6 +159,12 @@ if ($action == 'update') {
 
 					$sql = " UPDATE ".MAIN_DB_PREFIX."product";
 					if ($accounting_product_mode == 'ACCOUNTANCY_BUY') {
+						$sql .= " SET accountancy_code_buy = ".$accounting->account_number;
+					}
+					if ($accounting_product_mode == 'ACCOUNTANCY_BUY_INTRA') {
+						$sql .= " SET accountancy_code_buy = ".$accounting->account_number;
+					}
+					if ($accounting_product_mode == 'ACCOUNTANCY_BUY_EXPORT') {
 						$sql .= " SET accountancy_code_buy = ".$accounting->account_number;
 					}
 					if ($accounting_product_mode == 'ACCOUNTANCY_SELL') {
@@ -204,7 +212,11 @@ $form = new FormAccounting($db);
 $accounting = new AccountingAccount($db);
 // TODO: we should need to check if result is already exists accountaccount rowid.....
 $aarowid_servbuy            = $accounting->fetch('', $conf->global->ACCOUNTING_SERVICE_BUY_ACCOUNT, 1);
+$aarowid_servbuy_intra      = $accounting->fetch('', $conf->global->ACCOUNTING_SERVICE_BUY_INTRA_ACCOUNT, 1);
+$aarowid_servbuy_export     = $accounting->fetch('', $conf->global->ACCOUNTING_SERVICE_BUY_EXPORT_ACCOUNT, 1);
 $aarowid_prodbuy            = $accounting->fetch('', $conf->global->ACCOUNTING_PRODUCT_BUY_ACCOUNT, 1);
+$aarowid_prodbuy_intra      = $accounting->fetch('', $conf->global->ACCOUNTING_PRODUCT_BUY_INTRA_ACCOUNT, 1);
+$aarowid_prodbuy_export     = $accounting->fetch('', $conf->global->ACCOUNTING_PRODUCT_BUY_EXPORT_ACCOUNT, 1);
 $aarowid_servsell           = $accounting->fetch('', $conf->global->ACCOUNTING_SERVICE_SOLD_ACCOUNT, 1);
 $aarowid_servsell_intra     = $accounting->fetch('', $conf->global->ACCOUNTING_SERVICE_SOLD_INTRA_ACCOUNT, 1);
 $aarowid_servsell_export    = $accounting->fetch('', $conf->global->ACCOUNTING_SERVICE_SOLD_EXPORT_ACCOUNT, 1);
@@ -213,7 +225,11 @@ $aarowid_prodsell_intra     = $accounting->fetch('', $conf->global->ACCOUNTING_P
 $aarowid_prodsell_export    = $accounting->fetch('', $conf->global->ACCOUNTING_PRODUCT_SOLD_EXPORT_ACCOUNT, 1);
 
 $aacompta_servbuy           = (! empty($conf->global->ACCOUNTING_SERVICE_BUY_ACCOUNT) ? $conf->global->ACCOUNTING_SERVICE_BUY_ACCOUNT : $langs->trans("CodeNotDef"));
+$aacompta_servbuy_intra     = (! empty($conf->global->ACCOUNTING_SERVICE_BUY_INTRA_ACCOUNT) ? $conf->global->ACCOUNTING_SERVICE_BUY_INTRA_ACCOUNT : $langs->trans("CodeNotDef"));
+$aacompta_servbuy_export    = (! empty($conf->global->ACCOUNTING_SERVICE_BUY_EXPORT_ACCOUNT) ? $conf->global->ACCOUNTING_SERVICE_BUY_EXPORT_ACCOUNT : $langs->trans("CodeNotDef"));
 $aacompta_prodbuy           = (! empty($conf->global->ACCOUNTING_PRODUCT_BUY_ACCOUNT) ? $conf->global->ACCOUNTING_PRODUCT_BUY_ACCOUNT : $langs->trans("CodeNotDef"));
+$aacompta_prodbuy_intra     = (! empty($conf->global->ACCOUNTING_PRODUCT_BUY_INTRA_ACCOUNT) ? $conf->global->ACCOUNTING_PRODUCT_BUY_INTRA_ACCOUNT : $langs->trans("CodeNotDef"));
+$aacompta_prodbuy_export    = (! empty($conf->global->ACCOUNTING_PRODUCT_BUY_EXPORT_ACCOUNT) ? $conf->global->ACCOUNTING_PRODUCT_BUY_EXPORT_ACCOUNT : $langs->trans("CodeNotDef"));
 $aacompta_servsell          = (! empty($conf->global->ACCOUNTING_SERVICE_SOLD_ACCOUNT) ? $conf->global->ACCOUNTING_SERVICE_SOLD_ACCOUNT : $langs->trans("CodeNotDef"));
 $aacompta_servsell_intra    = (! empty($conf->global->ACCOUNTING_SERVICE_SOLD_INTRA_ACCOUNT) ? $conf->global->ACCOUNTING_SERVICE_SOLD_INTRA_ACCOUNT : $langs->trans("CodeNotDef"));
 $aacompta_servsell_export   = (! empty($conf->global->ACCOUNTING_SERVICE_SOLD_EXPORT_ACCOUNT) ? $conf->global->ACCOUNTING_SERVICE_SOLD_EXPORT_ACCOUNT : $langs->trans("CodeNotDef"));
@@ -228,13 +244,22 @@ $pcgvercode = dol_getIdFromCode($db, $pcgverid, 'accounting_system', 'rowid', 'p
 if (empty($pcgvercode)) $pcgvercode=$pcgverid;
 
 $sql = "SELECT p.rowid, p.ref, p.label, p.description, p.tosell, p.tobuy,";
-$sql.= " p.accountancy_code_sell, p.accountancy_code_sell_intra, p.accountancy_code_sell_export, p.accountancy_code_buy,";
+$sql.= " p.accountancy_code_sell, p.accountancy_code_sell_intra, p.accountancy_code_sell_export,";
+$sql.= " p.accountancy_code_buy, p.accountancy_code_buy_intra, p.accountancy_code_buy_export,";
 $sql.= " p.tms, p.fk_product_type as product_type,";
 $sql.= " aa.rowid as aaid";
 $sql.= " FROM " . MAIN_DB_PREFIX . "product as p";
 $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."accounting_account as aa ON";
 if ($accounting_product_mode == 'ACCOUNTANCY_BUY') {
     $sql.=" p.accountancy_code_buy = aa.account_number AND aa.fk_pcg_version = '" . $pcgvercode . "'";
+}
+elseif ($accounting_product_mode == 'ACCOUNTANCY_BUY_INTRA')
+{
+	$sql.=" p.accountancy_code_buy_intra = aa.account_number AND aa.fk_pcg_version = '" . $pcgvercode . "'";
+}
+elseif ($accounting_product_mode == 'ACCOUNTANCY_BUY_EXPORT')
+{
+	$sql.=" p.accountancy_code_buy_export = aa.account_number AND aa.fk_pcg_version = '" . $pcgvercode . "'";
 }
 elseif ($accounting_product_mode == 'ACCOUNTANCY_SELL')
 {
@@ -253,6 +278,14 @@ if ($accounting_product_mode == 'ACCOUNTANCY_BUY') {
     if (strlen(trim($search_current_account))) {
         $sql .= natural_search("p.accountancy_code_buy", $search_current_account);
     }
+} elseif ($accounting_product_mode == 'ACCOUNTANCY_BUY_INTRA') {
+	if (strlen(trim($search_current_account))) {
+		$sql .= natural_search("p.accountancy_code_buy_intra", $search_current_account);
+	}
+} elseif ($accounting_product_mode == 'ACCOUNTANCY_BUY_EXPORT') {
+	if (strlen(trim($search_current_account))) {
+		$sql .= natural_search("p.accountancy_code_buy_export", $search_current_account);
+	}
 } elseif ($accounting_product_mode == 'ACCOUNTANCY_SELL') {
     if (strlen(trim($search_current_account))) {
         $sql .= natural_search("p.accountancy_code_sell", $search_current_account);
@@ -356,6 +389,13 @@ if ($result)
     print "</td></tr>\n";
 	print '<tr class="oddeven"><td class="titlefield"><input type="radio" name="accounting_product_mode" value="ACCOUNTANCY_BUY"' . ($accounting_product_mode == 'ACCOUNTANCY_BUY' ? ' checked' : '') . '> ' . $langs->trans('OptionModeProductBuy') . '</td>';
 	print '<td>'.$langs->trans('OptionModeProductBuyDesc')."</td></tr>\n";
+	if ($mysoc->isInEEC())
+	{
+		print '<tr class="oddeven"><td class="titlefield"><input type="radio" name="accounting_product_mode" value="ACCOUNTANCY_BUY_INTRA"' . ($accounting_product_mode == 'ACCOUNTANCY_BUY_INTRA' ? ' checked' : '') . '> ' . $langs->trans('OptionModeProductBuyIntra') . '</td>';
+		print '<td>' . $langs->trans('OptionModeProductBuyDesc') . "</td></tr>\n";
+	}
+	print '<tr class="oddeven"><td class="titlefield"><input type="radio" name="accounting_product_mode" value="ACCOUNTANCY_BUY_EXPORT"' . ($accounting_product_mode == 'ACCOUNTANCY_BUY_EXPORT' ? ' checked' : '') . '> ' . $langs->trans('OptionModeProductBuyExport') . '</td>';
+	print '<td>'.$langs->trans('OptionModeProductBuyDesc')."</td></tr>\n";
 	print "</table>\n";
 
 	print '<div class="center"><input type="submit" class="button" value="' . $langs->trans('Refresh') . '" name="changetype"></div>';
@@ -386,7 +426,7 @@ if ($result)
 		print '<td class="liste_titre center">'.$form->selectyesno('search_onsell', $search_onsell, 1, false, 1).'</td>';
 	}
 	// On buy
-	elseif ($accounting_product_mode == 'ACCOUNTANCY_BUY') {
+	elseif ($accounting_product_mode == 'ACCOUNTANCY_BUY' || $accounting_product_mode == 'ACCOUNTANCY_BUY_INTRA' || $accounting_product_mode == 'ACCOUNTANCY_BUY_EXPORT') {
 		print '<td class="liste_titre center">'.$form->selectyesno('search_onpurchase', $search_onpurchase, 1, false, 1).'</td>';
 	}
 	// Current account
@@ -416,10 +456,16 @@ if ($result)
     } elseif ($accounting_product_mode == 'ACCOUNTANCY_SELL_EXPORT') {
         print_liste_field_titre("OnSell", $_SERVER["PHP_SELF"], "p.tosell", "", $param, '', $sortfield, $sortorder, 'center ');
         $fieldtosortaccount="p.accountancy_code_sell_export";
-    } else {
-        if ($accounting_product_mode == 'ACCOUNTANCY_BUY')  print_liste_field_titre("OnBuy", $_SERVER["PHP_SELF"], "p.tobuy", "", $param, '', $sortfield, $sortorder, 'center ');
+    } elseif ($accounting_product_mode == 'ACCOUNTANCY_BUY') {
+    	print_liste_field_titre("OnBuy", $_SERVER["PHP_SELF"], "p.tobuy", "", $param, '', $sortfield, $sortorder, 'center ');
         $fieldtosortaccount="p.accountancy_code_buy";
-    }
+    } elseif ($accounting_product_mode == 'ACCOUNTANCY_BUY_INTRA') {
+		print_liste_field_titre("OnBuy", $_SERVER["PHP_SELF"], "p.tobuy", "", $param, '', $sortfield, $sortorder, 'center ');
+		$fieldtosortaccount="p.accountancy_code_buy_intra";
+	} elseif ($accounting_product_mode == 'ACCOUNTANCY_BUY_EXPORT') {
+		print_liste_field_titre("OnBuy", $_SERVER["PHP_SELF"], "p.tobuy", "", $param, '', $sortfield, $sortorder, 'center ');
+		$fieldtosortaccount="p.accountancy_code_buy_export";
+	}
    	print_liste_field_titre("CurrentDedicatedAccountingAccount", $_SERVER["PHP_SELF"], $fieldtosortaccount, "", $param, '', $sortfield, $sortorder);
 	print_liste_field_titre("AssignDedicatedAccountingAccount");
 	$clickpitco=$form->showCheckAddButtons('checkforselect', 1);
@@ -482,11 +528,40 @@ if ($result)
 
 		// Purchases
 		if ($obj->product_type == 0) {
-			$compta_prodbuy = (! empty($conf->global->ACCOUNTING_PRODUCT_BUY_ACCOUNT) ? $conf->global->ACCOUNTING_PRODUCT_BUY_ACCOUNT : $langs->trans("CodeNotDef"));
-			$compta_prodbuy_id = $aarowid_prodbuy;
-		} else {
-			$compta_prodbuy = (! empty($conf->global->ACCOUNTING_SERVICE_BUY_ACCOUNT) ? $conf->global->ACCOUNTING_SERVICE_BUY_ACCOUNT : $langs->trans("CodeNotDef"));
-			$compta_prodbuy_id = $aarowid_servbuy;
+			if ($accounting_product_mode == 'ACCOUNTANCY_BUY') {
+				$compta_prodbuy = (! empty($conf->global->ACCOUNTING_PRODUCT_BUY_ACCOUNT) ? $conf->global->ACCOUNTING_PRODUCT_BUY_ACCOUNT : $langs->trans("CodeNotDef"));
+				$compta_prodbuy_id = $aarowid_prodbuy;
+			}
+			elseif ($accounting_product_mode == 'ACCOUNTANCY_BUY_INTRA') {
+				$compta_prodbuy = (! empty($conf->global->ACCOUNTING_PRODUCT_BUY_INTRA_ACCOUNT) ? $conf->global->ACCOUNTING_PRODUCT_BUY_INTRA_ACCOUNT : $langs->trans("CodeNotDef"));
+				$compta_prodbuy_id = $aarowid_prodbuy_intra;
+			}
+			elseif ($accounting_product_mode == 'ACCOUNTANCY_BUY_EXPORT') {
+				$compta_prodbuy = (! empty($conf->global->ACCOUNTING_PRODUCT_BUY_EXPORT_ACCOUNT) ? $conf->global->ACCOUNTING_PRODUCT_BUY_EXPORT_ACCOUNT : $langs->trans("CodeNotDef"));
+				$compta_prodbuy_id = $aarowid_prodbuy_export;
+			}
+			else {
+				$compta_prodbuy = (! empty($conf->global->ACCOUNTING_SERVICE_BUY_ACCOUNT) ? $conf->global->ACCOUNTING_SERVICE_BUY_ACCOUNT : $langs->trans("CodeNotDef"));
+				$compta_prodbuy_id = $aarowid_servbuy;
+			}
+		}
+		else {
+			if ($accounting_product_mode == 'ACCOUNTANCY_BUY') {
+				$compta_prodbuy = (! empty($conf->global->ACCOUNTING_SERVICE_BUY_ACCOUNT) ? $conf->global->ACCOUNTING_SERVICE_BUY_ACCOUNT : $langs->trans("CodeNotDef"));
+				$compta_prodbuy_id = $aarowid_prodbuy;
+			}
+			elseif ($accounting_product_mode == 'ACCOUNTANCY_BUY_INTRA') {
+				$compta_prodbuy = (! empty($conf->global->ACCOUNTING_SERVICE_BUY_INTRA_ACCOUNT) ? $conf->global->ACCOUNTING_SERVICE_BUY_INTRA_ACCOUNT : $langs->trans("CodeNotDef"));
+				$compta_prodbuy_id = $aarowid_prodbuy_intra;
+			}
+			elseif ($accounting_product_mode == 'ACCOUNTANCY_BUY_EXPORT') {
+				$compta_prodbuy = (! empty($conf->global->ACCOUNTING_SERVICE_BUY_EXPORT_ACCOUNT) ? $conf->global->ACCOUNTING_SERVICE_BUY_EXPORT_ACCOUNT : $langs->trans("CodeNotDef"));
+				$compta_prodbuy_id = $aarowid_prodbuy_export;
+			}
+			else {
+				$compta_prodbuy = (! empty($conf->global->ACCOUNTING_SERVICE_BUY_ACCOUNT) ? $conf->global->ACCOUNTING_SERVICE_BUY_ACCOUNT : $langs->trans("CodeNotDef"));
+				$compta_prodbuy_id = $aarowid_servbuy;
+			}
 		}
 
 		print '<tr class="oddeven">';
@@ -509,7 +584,7 @@ if ($result)
 		if ($accounting_product_mode == 'ACCOUNTANCY_SELL' || $accounting_product_mode == 'ACCOUNTANCY_SELL_INTRA' || $accounting_product_mode == 'ACCOUNTANCY_SELL_EXPORT')
 			print '<td class="center">'.$product_static->getLibStatut(3, 0).'</td>';
 
-		if ($accounting_product_mode == 'ACCOUNTANCY_BUY')
+		if ($accounting_product_mode == 'ACCOUNTANCY_BUY' || $accounting_product_mode == 'ACCOUNTANCY_BUY_INTRA' || $accounting_product_mode == 'ACCOUNTANCY_BUY_EXPORT')
 			print '<td class="center">'.$product_static->getLibStatut(3, 1).'</td>';
 
 		// Current accounting account
@@ -517,6 +592,12 @@ if ($result)
 		if ($accounting_product_mode == 'ACCOUNTANCY_BUY') {
 		    print length_accountg($obj->accountancy_code_buy);
 		    if ($obj->accountancy_code_buy && empty($obj->aaid)) print ' '.img_warning($langs->trans("ValueNotIntoChartOfAccount"));
+		} elseif ($accounting_product_mode == 'ACCOUNTANCY_BUY_INTRA') {
+			print length_accountg($obj->accountancy_code_buy_intra);
+			if ($obj->accountancy_code_sell && empty($obj->aaid)) print ' '.img_warning($langs->trans("ValueNotIntoChartOfAccount"));
+		} elseif ($accounting_product_mode == 'ACCOUNTANCY_BUY_EXPORT') {
+			print length_accountg($obj->accountancy_code_buy_export);
+			if ($obj->accountancy_code_sell && empty($obj->aaid)) print ' '.img_warning($langs->trans("ValueNotIntoChartOfAccount"));
 		} elseif ($accounting_product_mode == 'ACCOUNTANCY_SELL') {
             print length_accountg($obj->accountancy_code_sell);
             if ($obj->accountancy_code_sell && empty($obj->aaid)) print ' '.img_warning($langs->trans("ValueNotIntoChartOfAccount"));
@@ -537,6 +618,26 @@ if ($result)
 			//$defaultvalue=GETPOST('codeventil_' . $product_static->id,'alpha');        This is id and we need a code
 			if (empty($defaultvalue)) $defaultvalue=$compta_prodbuy;
 			$codesell=length_accountg($obj->accountancy_code_buy);
+			if (! empty($obj->aaid)) $defaultvalue = '';     // Do not suggest default new value is code is already valid
+			print $form->select_account($defaultvalue, 'codeventil_' . $product_static->id, 1, array(), 1);
+			print '</td>';
+		}  elseif ($accounting_product_mode == 'ACCOUNTANCY_BUY_INTRA') {
+			// Accounting account buy intra (In EEC)
+			print '<td class="left">';
+			//$defaultvalue=GETPOST('codeventil_' . $product_static->id,'alpha');        This is id and we need a code
+			if (empty($defaultvalue)) $defaultvalue=$compta_prodbuy_intra;
+			$codesell=length_accountg($obj->accountancy_code_buy_intra);
+			//var_dump($defaultvalue.' - '.$codesell.' - '.$compta_prodsell);
+			if (! empty($obj->aaid)) $defaultvalue = '';     // Do not suggest default new value is code is already valid
+			print $form->select_account($defaultvalue, 'codeventil_' . $product_static->id, 1, array(), 1);
+			print '</td>';
+		}  elseif ($accounting_product_mode == 'ACCOUNTANCY_BUY_EXPORT') {
+			// Accounting account buy export (Out of EEC)
+			print '<td class="left">';
+			//$defaultvalue=GETPOST('codeventil_' . $product_static->id,'alpha');        This is id and we need a code
+			if (empty($defaultvalue)) $defaultvalue=$compta_prodbuy_export;
+			$codesell=length_accountg($obj->accountancy_code_buy_export);
+			//var_dump($defaultvalue.' - '.$codesell.' - '.$compta_prodsell);
 			if (! empty($obj->aaid)) $defaultvalue = '';     // Do not suggest default new value is code is already valid
 			print $form->select_account($defaultvalue, 'codeventil_' . $product_static->id, 1, array(), 1);
 			print '</td>';

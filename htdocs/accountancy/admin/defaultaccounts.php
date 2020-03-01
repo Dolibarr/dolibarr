@@ -54,19 +54,27 @@ $list_account_main = array (
 
 $list_account = array ();
 $list_account[] = '---Product---';
-$list_account[] = 'ACCOUNTING_PRODUCT_BUY_ACCOUNT';
 $list_account[] = 'ACCOUNTING_PRODUCT_SOLD_ACCOUNT';
 if ($mysoc->isInEEC()) {
 	$list_account[] = 'ACCOUNTING_PRODUCT_SOLD_INTRA_ACCOUNT';
 }
 $list_account[] = 'ACCOUNTING_PRODUCT_SOLD_EXPORT_ACCOUNT';
+$list_account[] = 'ACCOUNTING_PRODUCT_BUY_ACCOUNT';
+if ($mysoc->isInEEC()) {
+	$list_account[] = 'ACCOUNTING_PRODUCT_BUY_INTRA_ACCOUNT';
+}
+$list_account[] = 'ACCOUNTING_PRODUCT_BUY_EXPORT_ACCOUNT';
 $list_account[] = '---Service---';
-$list_account[] = 'ACCOUNTING_SERVICE_BUY_ACCOUNT';
 $list_account[] = 'ACCOUNTING_SERVICE_SOLD_ACCOUNT';
 if ($mysoc->isInEEC()) {
 	$list_account[] = 'ACCOUNTING_SERVICE_SOLD_INTRA_ACCOUNT';
 }
 $list_account[] = 'ACCOUNTING_SERVICE_SOLD_EXPORT_ACCOUNT';
+$list_account[] = 'ACCOUNTING_SERVICE_BUY_ACCOUNT';
+if ($mysoc->isInEEC()) {
+	$list_account[] = 'ACCOUNTING_SERVICE_BUY_INTRA_ACCOUNT';
+}
+$list_account[] = 'ACCOUNTING_SERVICE_BUY_EXPORT_ACCOUNT';
 $list_account[] = '---Other---';
 $list_account[] = 'ACCOUNTING_VAT_BUY_ACCOUNT';
 $list_account[] = 'ACCOUNTING_VAT_SOLD_ACCOUNT';

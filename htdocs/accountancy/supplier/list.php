@@ -211,7 +211,8 @@ if (empty($chartaccountcode))
 $sql = "SELECT f.rowid as facid, f.ref, f.ref_supplier, f.libelle as invoice_label, f.datef, f.type as ftype,";
 $sql .= " l.rowid, l.fk_product, l.description, l.total_ht, l.fk_code_ventilation, l.product_type as type_l, l.tva_tx as tva_tx_line, l.vat_src_code,";
 $sql .= " p.rowid as product_id, p.ref as product_ref, p.label as product_label, p.fk_product_type as type, p.accountancy_code_buy as code_buy, p.tva_tx as tva_tx_prod,";
-$sql .= " aa.rowid as aarowid,";
+$sql .= " p.accountancy_code_buy_intra as code_buy_intra, p.accountancy_code_buy_export as code_buy_export,";
+$sql .= " aa.rowid as aarowid, aa2.rowid as aarowid_intra, aa3.rowid as aarowid_export,";
 $sql .= " co.code as country_code, co.label as country_label,";
 $sql .= " s.tva_intra";
 $parameters = array();
@@ -222,7 +223,9 @@ $sql .= " INNER JOIN ".MAIN_DB_PREFIX."societe as s ON s.rowid = f.fk_soc";
 $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."c_country as co ON co.rowid = s.fk_pays ";
 $sql .= " INNER JOIN ".MAIN_DB_PREFIX."facture_fourn_det as l ON f.rowid = l.fk_facture_fourn";
 $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."product as p ON p.rowid = l.fk_product";
-$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."accounting_account as aa ON p.accountancy_code_buy = aa.account_number AND aa.active = 1 AND aa.fk_pcg_version = '".$chartaccountcode."' AND aa.entity = ".$conf->entity;
+$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."accounting_account as aa  ON p.accountancy_code_sell = aa.account_number         AND aa.active = 1  AND aa.fk_pcg_version = '".$chartaccountcode."' AND aa.entity = ".$conf->entity;
+$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."accounting_account as aa2 ON p.accountancy_code_sell_intra = aa2.account_number  AND aa2.active = 1 AND aa2.fk_pcg_version = '".$chartaccountcode."' AND aa2.entity = ".$conf->entity;
+$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."accounting_account as aa3 ON p.accountancy_code_sell_export = aa3.account_number AND aa3.active = 1 AND aa3.fk_pcg_version = '".$chartaccountcode."' AND aa3.entity = ".$conf->entity;
 $sql .= " WHERE f.fk_statut > 0 AND l.fk_code_ventilation <= 0";
 $sql .= " AND l.product_type <= 2";
 // Add search filter like
@@ -414,7 +417,6 @@ if ($result) {
 		// issue : if we change product_type value in product DB it should differ from the value stored in facturedet DB !
 		$objp->code_buy_l = '';
 		$objp->code_buy_p = '';
-		$objp->aarowid_suggest = '';
 
 		$product_static->ref = $objp->product_ref;
 		$product_static->id = $objp->product_id;
@@ -426,28 +428,67 @@ if ($result) {
 		$facturefourn_static->type = $objp->type;
 
 		$code_buy_p_notset = '';
-		$objp->aarowid_suggest = $objp->aarowid;
+		$objp->aarowid_suggest = ''; // Will be set later
 
+		$isBuyerInEEC = isInEEC($objp);
+
+		$suggestedaccountingaccountbydefaultfor = '';
 		if ($objp->type_l == 1) {
-			$objp->code_buy_l = (!empty($conf->global->ACCOUNTING_SERVICE_BUY_ACCOUNT) ? $conf->global->ACCOUNTING_SERVICE_BUY_ACCOUNT : '');
-			if ($objp->aarowid == '')
-				$objp->aarowid_suggest = $aarowid_s;
+			if ($objp->country_code == $mysoc->country_code || empty($objp->country_code)) {  // If buyer in same country than seller (if not defined, we assume it is same country)
+				$objp->code_buy_l = (!empty($conf->global->ACCOUNTING_SERVICE_BUY_ACCOUNT) ? $conf->global->ACCOUNTING_SERVICE_BUY_ACCOUNT : '');
+				$suggestedaccountingaccountbydefaultfor = '';
+			} else {
+				if ($isSellerInEEC && $isBuyerInEEC) {          // European intravat sale
+					$objp->code_buy_l = (!empty($conf->global->ACCOUNTING_SERVICE_BUY_INTRA_ACCOUNT) ? $conf->global->ACCOUNTING_SERVICE_BUY_INTRA_ACCOUNT : '');
+					$suggestedaccountingaccountbydefaultfor = 'eec';
+				} else {                                        // Foreign sale
+					$objp->code_buy_l = (!empty($conf->global->ACCOUNTING_SERVICE_BUY_EXPORT_ACCOUNT) ? $conf->global->ACCOUNTING_SERVICE_BUY_EXPORT_ACCOUNT : '');
+					$suggestedaccountingaccountbydefaultfor = 'export';
+				}
+			}
 		} elseif ($objp->type_l == 0) {
-			$objp->code_buy_l = (!empty($conf->global->ACCOUNTING_PRODUCT_BUY_ACCOUNT) ? $conf->global->ACCOUNTING_PRODUCT_BUY_ACCOUNT : '');
-			if ($objp->aarowid == '')
-				$objp->aarowid_suggest = $aarowid_p;
+			if ($objp->country_code == $mysoc->country_code || empty($objp->country_code)) {  // If buyer in same country than seller (if not defined, we assume it is same country)
+				$objp->code_buy_l = (!empty($conf->global->ACCOUNTING_PRODUCT_SOLD_ACCOUNT) ? $conf->global->ACCOUNTING_PRODUCT_SOLD_ACCOUNT : '');
+				$suggestedaccountingaccountbydefaultfor = '';
+			} else {
+				if ($isSellerInEEC && $isBuyerInEEC) {          // European intravat sale
+					$objp->code_buy_l = (!empty($conf->global->ACCOUNTING_PRODUCT_BUY_INTRA_ACCOUNT) ? $conf->global->ACCOUNTING_PRODUCT_BUY_INTRA_ACCOUNT : '');
+					$suggestedaccountingaccountbydefaultfor = 'eec';
+				} else {
+					$objp->code_buy_l = (!empty($conf->global->ACCOUNTING_PRODUCT_BUY_EXPORT_ACCOUNT) ? $conf->global->ACCOUNTING_PRODUCT_BUY_EXPORT_ACCOUNT : '');
+					$suggestedaccountingaccountbydefaultfor = 'export';
+				}
+			}
 		}
-		if ($objp->code_buy_l == -1) $objp->code_buy_l = '';
+		if ($objp->code_sell_l == -1) $objp->code_sell_l = '';
 
-		if (!empty($objp->code_buy)) {
-			$objp->code_buy_p = $objp->code_buy; // Code on product
+		// Search suggested account for product/service
+		$suggestedaccountingaccountfor = '';
+		if (($objp->country_code == $mysoc->country_code) || empty($objp->country_code)) {  // If buyer in same country than seller (if not defined, we assume it is same country)
+			$objp->code_buy_p = $objp->code_buy;
+			$objp->aarowid_suggest = $objp->aarowid;
+			$suggestedaccountingaccountfor = '';
+		} else {
+			if ($isSellerInEEC && $isBuyerInEEC) {          // European intravat sale
+				$objp->code_buy_p = $objp->code_buy_intra;
+				$objp->aarowid_suggest = $objp->aarowid_intra;
+				$suggestedaccountingaccountfor = 'eec';
+			} else {                                        // Foreign sale
+				$objp->code_buy_p = $objp->code_buy_export;
+				$objp->aarowid_suggest = $objp->aarowid_export;
+				$suggestedaccountingaccountfor = 'export';
+			}
+		}
+
+		if (! empty($objp->code_buy_p)) {
+			// Value was defined previously
 		} else {
 			$code_buy_p_notset = 'color:orange';
 		}
 		if (empty($objp->code_buy_l) && empty($objp->code_buy_p)) $code_buy_p_notset = 'color:red';
 
-		// $objp->code_buy_p is now code of product/service
-		// $objp->code_buy_l is now default code of product/service
+		// $objp->code_sell_l is now default code of product/service
+		// $objp->code_sell_p is now code of product/service
 
 		print '<tr class="oddeven">';
 
@@ -520,6 +561,21 @@ if ($result) {
 		// Suggested accounting account
 		print '<td>';
 		$suggestedid = $objp->aarowid_suggest;
+		if (empty($suggestedid) && empty($objp->code_buy_p) && ! empty($objp->code_buy_l) && empty($conf->global->ACCOUNTANCY_DO_NOT_AUTOFILL_ACCOUNT_WITH_GENERIC))
+		{
+			if (empty($accountingaccount_codetotid_cache[$objp->code_buy_l]))
+			{
+				$tmpaccount = new AccountingAccount($db);
+				$tmpaccount->fetch(0, $objp->code_buy_l, 1);
+				if ($tmpaccount->id > 0) {
+					$suggestedid = $tmpaccount->id;
+				}
+				$accountingaccount_codetotid_cache[$objp->code_buy_l] = $tmpaccount->id;
+			}
+			else {
+				$suggestedid = $accountingaccount_codetotid_cache[$objp->code_buy_l];
+			}
+		}
 		print $formaccounting->select_account($suggestedid, 'codeventil'.$objp->rowid, 1, array(), 0, 0, 'codeventil maxwidth200 maxwidthonsmartphone', 'cachewithshowemptyone');
 		print '</td>';
 
@@ -539,6 +595,9 @@ if ($result) {
 	print '</form>';
 } else {
 	print $db->error();
+}
+if ($db->type == 'mysqli') {
+	$db->query("SET SQL_BIG_SELECTS=0");  // Enable MAX_JOIN_SIZE limitation
 }
 
 // Add code to auto check the box when we select an account

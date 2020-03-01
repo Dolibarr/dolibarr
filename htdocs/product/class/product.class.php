@@ -284,6 +284,8 @@ class Product extends CommonObject
     public $accountancy_code_sell_intra;
     public $accountancy_code_sell_export;
     public $accountancy_code_buy;
+	public $accountancy_code_buy_intra;
+	public $accountancy_code_buy_export;
 
     /**
      * Main Barcode value
@@ -544,7 +546,9 @@ class Product extends CommonObject
             $price_min_ttc = price2num($this->price_min * (1 + ($this->tva_tx / 100)), 'MU');
         }
 
-        $this->accountancy_code_buy = trim($this->accountancy_code_buy);
+		$this->accountancy_code_buy = trim($this->accountancy_code_buy);
+		$this->accountancy_code_buy_intra = trim($this->accountancy_code_buy_intra);
+		$this->accountancy_code_buy_export = trim($this->accountancy_code_buy_export);
         $this->accountancy_code_sell = trim($this->accountancy_code_sell);
         $this->accountancy_code_sell_intra = trim($this->accountancy_code_sell_intra);
         $this->accountancy_code_sell_export = trim($this->accountancy_code_sell_export);
@@ -622,6 +626,8 @@ class Product extends CommonObject
                     $sql .= ", tobuy";
                     $sql .= ", tosell";
                     $sql .= ", accountancy_code_buy";
+                    $sql .= ", accountancy_code_buy_intra";
+                    $sql .= ", accountancy_code_buy_export";
                     $sql .= ", accountancy_code_sell";
                     $sql .= ", accountancy_code_sell_intra";
                     $sql .= ", accountancy_code_sell_export";
@@ -645,6 +651,8 @@ class Product extends CommonObject
                     $sql .= ", ".$this->status;
                     $sql .= ", ".$this->status_buy;
                     $sql .= ", '".$this->db->escape($this->accountancy_code_buy)."'";
+                    $sql .= ", '".$this->db->escape($this->accountancy_code_buy_intra)."'";
+                    $sql .= ", '".$this->db->escape($this->accountancy_code_buy_export)."'";
                     $sql .= ", '".$this->db->escape($this->accountancy_code_sell)."'";
                     $sql .= ", '".$this->db->escape($this->accountancy_code_sell_intra)."'";
                     $sql .= ", '".$this->db->escape($this->accountancy_code_sell_export)."'";
@@ -896,6 +904,8 @@ class Product extends CommonObject
         $this->barcode = trim($this->barcode);
 
         $this->accountancy_code_buy = trim($this->accountancy_code_buy);
+        $this->accountancy_code_buy_intra = trim($this->accountancy_code_buy_intra);
+        $this->accountancy_code_buy_export = trim($this->accountancy_code_buy_export);
         $this->accountancy_code_sell = trim($this->accountancy_code_sell);
         $this->accountancy_code_sell_intra = trim($this->accountancy_code_sell_intra);
         $this->accountancy_code_sell_export = trim($this->accountancy_code_sell_export);
@@ -1010,6 +1020,8 @@ class Product extends CommonObject
             $sql .= ", note = ".(isset($this->note) ? "'".$this->db->escape($this->note)."'" : 'null');
             $sql .= ", duration = '".$this->db->escape($this->duration_value.$this->duration_unit)."'";
             $sql .= ", accountancy_code_buy = '".$this->db->escape($this->accountancy_code_buy)."'";
+            $sql .= ", accountancy_code_buy_intra = '".$this->db->escape($this->accountancy_code_buy_intra)."'";
+            $sql .= ", accountancy_code_buy_export = '".$this->db->escape($this->accountancy_code_buy_export)."'";
             $sql .= ", accountancy_code_sell= '".$this->db->escape($this->accountancy_code_sell)."'";
             $sql .= ", accountancy_code_sell_intra= '".$this->db->escape($this->accountancy_code_sell_intra)."'";
             $sql .= ", accountancy_code_sell_export= '".$this->db->escape($this->accountancy_code_sell_export)."'";
@@ -1431,7 +1443,7 @@ class Product extends CommonObject
     * Sets an accountancy code for a product.
     * Also calls PRODUCT_MODIFY trigger when modified
     *
-    * @param string $type It can be 'buy', 'sell', 'sell_intra' or 'sell_export'
+    * @param string $type It can be 'buy', 'buy_intra', 'buy_export', 'sell', 'sell_intra' or 'sell_export'
     * @param string $value Accountancy code
     * @return int <0 KO >0 OK
     */
@@ -1443,7 +1455,11 @@ class Product extends CommonObject
 
         if ($type == 'buy') {
             $field = 'accountancy_code_buy';
-        } elseif ($type == 'sell') {
+        } elseif ($type == 'buy_intra') {
+			$field = 'accountancy_code_buy_intra';
+		} elseif ($type == 'buy_export') {
+			$field = 'accountancy_code_buy_export';
+		} elseif ($type == 'sell') {
             $field = 'accountancy_code_sell';
         } elseif ($type == 'sell_intra') {
             $field = 'accountancy_code_sell_intra';
@@ -2082,7 +2098,8 @@ class Product extends CommonObject
         $sql .= " tobuy, fk_product_type, duration, fk_default_warehouse, seuil_stock_alerte, canvas, net_measure, net_measure_units, weight, weight_units,";
         $sql .= " length, length_units, width, width_units, height, height_units,";
         $sql .= " surface, surface_units, volume, volume_units, barcode, fk_barcode_type, finished,";
-        $sql .= " accountancy_code_buy, accountancy_code_sell, accountancy_code_sell_intra, accountancy_code_sell_export, stock, pmp,";
+        $sql .= " accountancy_code_buy, accountancy_code_buy_intra, accountancy_code_buy_export,";
+        $sql .= " accountancy_code_sell, accountancy_code_sell_intra, accountancy_code_sell_export, stock, pmp,";
         $sql .= " datec, tms, import_key, entity, desiredstock, tobatch, fk_unit,";
         $sql .= " fk_price_expression, price_autogen";
         $sql .= " FROM ".MAIN_DB_PREFIX."product";
@@ -2163,10 +2180,12 @@ class Product extends CommonObject
                 $this->barcode = $obj->barcode;
                 $this->barcode_type                    = $obj->fk_barcode_type;
 
-                $this->accountancy_code_buy            = $obj->accountancy_code_buy;
-                $this->accountancy_code_sell = $obj->accountancy_code_sell;
-                $this->accountancy_code_sell_intra = $obj->accountancy_code_sell_intra;
-                $this->accountancy_code_sell_export    = $obj->accountancy_code_sell_export;
+                $this->accountancy_code_buy				= $obj->accountancy_code_buy;
+                $this->accountancy_code_buy_intra		= $obj->accountancy_code_buy_intra;
+                $this->accountancy_code_buy_export		= $obj->accountancy_code_buy_export;
+                $this->accountancy_code_sell			= $obj->accountancy_code_sell;
+                $this->accountancy_code_sell_intra		= $obj->accountancy_code_sell_intra;
+                $this->accountancy_code_sell_export		= $obj->accountancy_code_sell_export;
 
                 $this->fk_default_warehouse            = $obj->fk_default_warehouse;
                 $this->seuil_stock_alerte            = $obj->seuil_stock_alerte;
@@ -4398,15 +4417,15 @@ class Product extends CommonObject
         if (!empty($conf->accounting->enabled) && $this->status) {
             include_once DOL_DOCUMENT_ROOT.'/core/lib/accounting.lib.php';
             $label .= '<br><b>'.$langs->trans('ProductAccountancySellCode').':</b> '.length_accountg($this->accountancy_code_sell);
-            if (!empty($conf->global->MAIN_FEATURES_LEVEL)) {
-                $label .= '<br><b>'.$langs->trans('ProductAccountancySellIntraCode').':</b> '.length_accountg($this->accountancy_code_sell_export);
-                $label .= '<br><b>'.$langs->trans('ProductAccountancySellExportCode').':</b> '.length_accountg($this->accountancy_code_sell_intra);
-            }
+            $label .= '<br><b>'.$langs->trans('ProductAccountancySellIntraCode').':</b> '.length_accountg($this->accountancy_code_sell_intra);
+            $label .= '<br><b>'.$langs->trans('ProductAccountancySellExportCode').':</b> '.length_accountg($this->accountancy_code_sell_export);
         }
         if (!empty($conf->accounting->enabled) && $this->status_buy) {
             include_once DOL_DOCUMENT_ROOT.'/core/lib/accounting.lib.php';
             $label .= '<br><b>'.$langs->trans('ProductAccountancyBuyCode').':</b> '.length_accountg($this->accountancy_code_buy);
-        }
+			$label .= '<br><b>'.$langs->trans('ProductAccountancyBuyIntraCode').':</b> '.length_accountg($this->accountancy_code_buy_intra;
+			$label .= '<br><b>'.$langs->trans('ProductAccountancyBuyExportCode').':</b> '.length_accountg($this->accountancy_code_buy_export);
+		}
         if (isset($this->status) && isset($this->status_buy)) {
         	$label .= '<br><b>'.$langs->trans("Status").":</b> ".$this->getLibStatut(5, 0);
         	$label .= ' '.$this->getLibStatut(5, 1);
