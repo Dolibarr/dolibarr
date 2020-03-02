@@ -28,6 +28,7 @@ require_once DOL_DOCUMENT_ROOT.'/product/class/html.formproduct.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/pdf.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
 require_once DOL_DOCUMENT_ROOT."/core/lib/takepos.lib.php";
+require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
 
 // If socid provided by ajax company selector
 if (!empty($_REQUEST['CASHDESK_ID_THIRDPARTY_id']))
@@ -245,9 +246,59 @@ print "</td></tr>\n";
 print '<tr class="oddeven"><td>';
 print $langs->trans("BillsNumberingModule");
 print '<td colspan="2">';
-$array = array(0=>$langs->trans("Default"), "terminal"=>$langs->trans("ByTerminal"), "mod_facture_mars"=>"mars", "mod_facture_mercure"=>"mercure", "mod_facture_terre"=>"terre");
+$array = array(0=>$langs->trans("Default"), "terminal"=>$langs->trans("ByTerminal"));
+$dirmodels = array_merge(array('/'), (array) $conf->modules_parts['models']);
+foreach ($dirmodels as $reldir)
+{
+	$dir = dol_buildpath($reldir."core/modules/facture/");
+    if (is_dir($dir))
+    {
+        $handle = opendir($dir);
+        if (is_resource($handle))
+        {
+            while (($file = readdir($handle)) !== false)
+            {
+                if (!is_dir($dir.$file) || (substr($file, 0, 1) <> '.' && substr($file, 0, 3) <> 'CVS'))
+                {
+                    $filebis = $file;
+                    $classname = preg_replace('/\.php$/', '', $file);
+                    // For compatibility
+                    if (!is_file($dir.$filebis))
+                    {
+                        $filebis = $file."/".$file.".modules.php";
+                        $classname = "mod_facture_".$file;
+                    }
+                    // Check if there is a filter on country
+                    preg_match('/\-(.*)_(.*)$/', $classname, $reg);
+                    if (!empty($reg[2]) && $reg[2] != strtoupper($mysoc->country_code)) continue;
+
+                    $classname = preg_replace('/\-.*$/', '', $classname);
+                    if (!class_exists($classname) && is_readable($dir.$filebis) && (preg_match('/mod_/', $filebis) || preg_match('/mod_/', $classname)) && substr($filebis, dol_strlen($filebis) - 3, 3) == 'php')
+                    {
+                        // Charging the numbering class
+                        require_once $dir.$filebis;
+
+                        $module = new $classname($db);
+
+                        // Show modules according to features level
+                        if ($module->version == 'development' && $conf->global->MAIN_FEATURES_LEVEL < 2) continue;
+                        if ($module->version == 'experimental' && $conf->global->MAIN_FEATURES_LEVEL < 1) continue;
+
+                        if ($module->isEnabled())
+                        {
+							$array[preg_replace('/\-.*$/', '', preg_replace('/\.php$/', '', $file))]=preg_replace('/\-.*$/', '', preg_replace('/mod_facture_/', '', preg_replace('/\.php$/', '', $file)));
+                        }
+                    }
+                }
+            }
+            closedir($handle);
+        }
+    }
+}
+
 print $form->selectarray('TAKEPOS_ADDON', $array, (empty($conf->global->TAKEPOS_ADDON) ? '0' : $conf->global->TAKEPOS_ADDON), 0);
 print "</td></tr>\n";
+
 print '</table>';
 print '</div>';
 
