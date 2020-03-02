@@ -14,8 +14,8 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
- * or see http://www.gnu.org/
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
+ * or see https://www.gnu.org/
  */
 
 /**
@@ -523,14 +523,16 @@ function hideMessage(fieldId,message) {
  * @param	string	intput		Input
  * @param	int		entity		Entity
  * @param	int		strict		Strict
+ * @param   int     forcereload Force reload
  */
-function setConstant(url, code, input, entity, strict) {
+function setConstant(url, code, input, entity, strict, forcereload) {
 	$.get( url, {
 		action: "set",
 		name: code,
 		entity: entity
 	},
 	function() {
+		console.log("url request success forcereload="+forcereload);
 		$("#set_" + code).hide();
 		$("#del_" + code).show();
 		$.each(input, function(type, data) {
@@ -576,6 +578,9 @@ function setConstant(url, code, input, entity, strict) {
 				});
 			}
 		});
+		if (forcereload) {
+			location.reload();
+		}
 	});
 }
 
@@ -587,14 +592,16 @@ function setConstant(url, code, input, entity, strict) {
  * @param	string	intput		Input
  * @param	int		entity		Entity
  * @param	int		strict		Strict
+ * @param   int     forcereload Force reload
  */
-function delConstant(url, code, input, entity, strict) {
+function delConstant(url, code, input, entity, strict, forcereload) {
 	$.get( url, {
 		action: "del",
 		name: code,
 		entity: entity
 	},
 	function() {
+		console.log("url request success forcereload="+forcereload);
 		$("#del_" + code).hide();
 		$("#set_" + code).show();
 		$.each(input, function(type, data) {
@@ -636,6 +643,9 @@ function delConstant(url, code, input, entity, strict) {
 				});
 			}
 		});
+		if (forcereload) {
+			location.reload();
+		}
 	});
 }
 
@@ -856,7 +866,8 @@ function newpopup(url, title) {
 }
 
 /**
- * Function show document preview. Use the "dialog" function.
+ * Function show document preview. It uses the "dialog" function.
+ * The a tag around the img must have the src='', class='documentpreview', mime='image/xxx', target='_blank' from getAdvancedPreviewUrl().
  *
  * @param 	string file 		Url
  * @param 	string type 		Mime file type ("image/jpeg", "application/pdf", "text/html")
@@ -1038,16 +1049,16 @@ function price2numjs(amount) {
 	if (amount == '') return '';
 
 	<?php
-		$dec = ',';
-		$thousand = ' ';
-		if ($langs->transnoentitiesnoconv("SeparatorDecimal") != "SeparatorDecimal") {
-			$dec = $langs->transnoentitiesnoconv("SeparatorDecimal");
-		}
-		if ($langs->transnoentitiesnoconv("SeparatorThousand") != "SeparatorThousand") {
-			$thousand = $langs->transnoentitiesnoconv("SeparatorThousand");
-		}
-		if ($thousand == 'Space') $thousand=' ';
-		print "var dec='" . dol_escape_js($dec) . "'; var thousand='" . dol_escape_js($thousand) . "';\n";    // Set var in javascript
+	$dec = ',';
+	$thousand = ' ';
+	if ($langs->transnoentitiesnoconv("SeparatorDecimal") != "SeparatorDecimal") {
+		$dec = $langs->transnoentitiesnoconv("SeparatorDecimal");
+	}
+	if ($langs->transnoentitiesnoconv("SeparatorThousand") != "SeparatorThousand") {
+		$thousand = $langs->transnoentitiesnoconv("SeparatorThousand");
+	}
+	if ($thousand == 'Space') $thousand=' ';
+	print "var dec='" . dol_escape_js($dec) . "'; var thousand='" . dol_escape_js($thousand) . "';\n";    // Set var in javascript
 	?>
 
 	var main_max_dec_shown = <?php echo (int) str_replace('.', '', $conf->global->MAIN_MAX_DECIMALS_SHOWN); ?>;
@@ -1080,7 +1091,7 @@ function price2numjs(amount) {
 
 <?php
 if (empty($conf->global->MAIN_DISABLE_JQUERY_JNOTIFY) && ! defined('DISABLE_JQUERY_JNOTIFY')) {
-?>
+    ?>
 // Defined properties for JNotify
 $(document).ready(function() {
 	if (typeof $.jnotify == 'function')

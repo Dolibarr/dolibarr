@@ -16,16 +16,16 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
- * 		\file		htdocs/societe/class/companybankaccount.class.php
- *		\ingroup    societe
- *		\brief      File of class to manage bank accounts description of third parties
+ *  \file		htdocs/societe/class/companybankaccount.class.php
+ *  \ingroup    societe
+ *  \brief      File of class to manage bank accounts description of third parties
  */
 
-require_once DOL_DOCUMENT_ROOT .'/compta/bank/class/account.class.php';
+require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
 
 
 /**
@@ -46,7 +46,7 @@ class CompanyBankAccount extends Account
      * @var integer
      */
     public $datec;
-    
+
 	/**
      * Date modification record (tms)
      *
@@ -81,34 +81,34 @@ class CompanyBankAccount extends Account
     public function create(User $user = null, $notrigger = 0)
 	{
 		$now	= dol_now();
-		$error	= 0;
+		$error = 0;
 		// Correct default_rib to be sure to have always one default
 		$sql = "SELECT rowid FROM ".MAIN_DB_PREFIX."societe_rib where fk_soc = ".$this->socid." AND default_rib = 1 AND type = 'ban'";
    		$result = $this->db->query($sql);
 		if ($result)
 		{
-			$numrows=$this->db->num_rows($result);
+			$numrows = $this->db->num_rows($result);
 			if ($this->default_rib && $numrows > 0) $this->default_rib = 0;
 			if (empty($this->default_rib) && $numrows == 0) $this->default_rib = 1;
 		}
 
 		$sql = "INSERT INTO ".MAIN_DB_PREFIX."societe_rib (fk_soc, type, datec)";
-		$sql.= " VALUES (".$this->socid.", 'ban', '".$this->db->idate($now)."')";
-		$resql=$this->db->query($sql);
+		$sql .= " VALUES (".$this->socid.", 'ban', '".$this->db->idate($now)."')";
+		$resql = $this->db->query($sql);
 		if ($resql)
 		{
 			if ($this->db->affected_rows($resql))
 			{
 				$this->id = $this->db->last_insert_id(MAIN_DB_PREFIX."societe_rib");
 
-				if (! $notrigger)
+				if (!$notrigger)
 				{
 				   	// Call trigger
-					$result=$this->call_trigger('COMPANY_RIB_CREATE', $user);
+					$result = $this->call_trigger('COMPANY_RIB_CREATE', $user);
 					if ($result < 0) $error++;
 					// End call triggers
 
-					if (! $error)
+					if (!$error)
 					{
 						return 1;
 					}
@@ -174,27 +174,25 @@ class CompanyBankAccount extends Account
 		$result = $this->db->query($sql);
 		if ($result)
 		{
-
-
-		if (! $notrigger)
-		{
-			// Call trigger
-			$result=$this->call_trigger('COMPANY_RIB_MODIFY', $user);
-			if ($result < 0) $error++;
-			// End call triggers
-			if(! $error )
+			if (! $notrigger)
 			{
-				return 1;
+				// Call trigger
+				$result=$this->call_trigger('COMPANY_RIB_MODIFY', $user);
+				if ($result < 0) $error++;
+				// End call triggers
+				if(! $error )
+				{
+					return 1;
+				}
+				else
+				{
+					return -1;
+				}
 			}
 			else
 			{
-				return -1;
+				return 1;
 			}
-		}
-		else
-		{
-			return 1;
-		}
 		}
 		else
 		{
@@ -217,14 +215,14 @@ class CompanyBankAccount extends Account
 		if (empty($id) && empty($socid)) return -1;
 
 		$sql = "SELECT rowid, type, fk_soc, bank, number, code_banque, code_guichet, cle_rib, bic, iban_prefix as iban, domiciliation, proprio,";
-		$sql.= " owner_address, default_rib, label, datec, tms as datem, rum, frstrecur";
-		$sql.= " FROM ".MAIN_DB_PREFIX."societe_rib";
-		if ($id)    $sql.= " WHERE rowid = ".$id;
+		$sql .= " owner_address, default_rib, label, datec, tms as datem, rum, frstrecur, date_rum";
+		$sql .= " FROM ".MAIN_DB_PREFIX."societe_rib";
+		if ($id)    $sql .= " WHERE rowid = ".$id;
 		if ($socid)
 		{
-			$sql.= " WHERE fk_soc  = ".$socid;
-			if ($default > -1) $sql.=" AND default_rib = ".$this->db->escape($default);
-			if ($type) $sql.= " AND type ='".$this->db->escape($type)."'";
+			$sql .= " WHERE fk_soc  = ".$socid;
+			if ($default > -1) $sql .= " AND default_rib = ".$this->db->escape($default);
+			if ($type) $sql .= " AND type ='".$this->db->escape($type)."'";
 		}
 
 		$resql = $this->db->query($sql);
@@ -234,10 +232,10 @@ class CompanyBankAccount extends Account
 			{
 				$obj = $this->db->fetch_object($resql);
 
-				$this->ref             = $obj->fk_soc.'-'.$obj->label;      // Generate an artificial ref
+				$this->ref = $obj->fk_soc.'-'.$obj->label; // Generate an artificial ref
 
-				$this->id			   = $obj->rowid;
-				$this->type			   = $obj->type;
+				$this->id = $obj->rowid;
+				$this->type = $obj->type;
 				$this->socid           = $obj->fk_soc;
 				$this->bank            = $obj->bank;
 				$this->code_banque     = $obj->code_banque;
@@ -245,7 +243,7 @@ class CompanyBankAccount extends Account
 				$this->number          = $obj->number;
 				$this->cle_rib         = $obj->cle_rib;
 				$this->bic             = $obj->bic;
-				$this->iban		       = $obj->iban;
+				$this->iban = $obj->iban;
 				$this->domiciliation   = $obj->domiciliation;
 				$this->proprio         = $obj->proprio;
 				$this->owner_address   = $obj->owner_address;
@@ -255,6 +253,7 @@ class CompanyBankAccount extends Account
 				$this->datem           = $this->db->jdate($obj->datem);
 				$this->rum             = $obj->rum;
 				$this->frstrecur       = $obj->frstrecur;
+				$this->date_rum        = $this->db->jdate($obj->date_rum);
 			}
 			$this->db->free($resql);
 
@@ -280,31 +279,31 @@ class CompanyBankAccount extends Account
 
 		$error = 0;
 
-		dol_syslog(get_class($this) . "::delete ".$this->id, LOG_DEBUG);
+		dol_syslog(get_class($this)."::delete ".$this->id, LOG_DEBUG);
 
 		$this->db->begin();
 
-		if (! $error && ! $notrigger)
+		if (!$error && !$notrigger)
 		{
 			// Call trigger
-			$result=$this->call_trigger('COMPANY_RIB_DELETE', $user);
+			$result = $this->call_trigger('COMPANY_RIB_DELETE', $user);
 			if ($result < 0) $error++;
 			// End call triggers
 		}
 
-		if (! $error)
+		if (!$error)
 		{
-			$sql = "DELETE FROM " . MAIN_DB_PREFIX . "societe_rib";
-			$sql .= " WHERE rowid  = " . $this->id;
+			$sql = "DELETE FROM ".MAIN_DB_PREFIX."societe_rib";
+			$sql .= " WHERE rowid  = ".$this->id;
 
-			if (! $this->db->query($sql))
+			if (!$this->db->query($sql))
 			{
 				$error++;
-				$this->errors[]=$this->db->lasterror();
+				$this->errors[] = $this->db->lasterror();
 			}
 		}
 
-		if (! $error)
+		if (!$error)
 		{
 			$this->db->commit();
 			return 1;
@@ -312,7 +311,7 @@ class CompanyBankAccount extends Account
 		else
 		{
 			$this->db->rollback();
-			return -1*$error;
+			return -1 * $error;
 		}
 	}
 
@@ -326,8 +325,7 @@ class CompanyBankAccount extends Account
 	{
 		$rib = '';
 
-		if ($this->code_banque || $this->code_guichet || $this->number || $this->cle_rib || $this->iban || $this->bic ) {
-
+		if ($this->code_banque || $this->code_guichet || $this->number || $this->cle_rib || $this->iban || $this->bic) {
 			if ($this->label && $displayriblabel) {
 				$rib = $this->label." : ";
 			}
@@ -347,7 +345,7 @@ class CompanyBankAccount extends Account
     public function setAsDefault($rib = 0)
 	{
 		$sql1 = "SELECT rowid as id, fk_soc  FROM ".MAIN_DB_PREFIX."societe_rib";
-		$sql1.= " WHERE rowid = ".($rib?$rib:$this->id);
+		$sql1 .= " WHERE rowid = ".($rib ? $rib : $this->id);
 
 		dol_syslog(get_class($this).'::setAsDefault', LOG_DEBUG);
 		$result1 = $this->db->query($sql1);
@@ -364,12 +362,12 @@ class CompanyBankAccount extends Account
 				$this->db->begin();
 
 				$sql2 = "UPDATE ".MAIN_DB_PREFIX."societe_rib SET default_rib = 0";
-				$sql2.= " WHERE type = 'ban' AND fk_soc = ".$obj->fk_soc;
+				$sql2 .= " WHERE type = 'ban' AND fk_soc = ".$obj->fk_soc;
 				dol_syslog(get_class($this).'::setAsDefault', LOG_DEBUG);
 				$result2 = $this->db->query($sql2);
 
 				$sql3 = "UPDATE ".MAIN_DB_PREFIX."societe_rib SET default_rib = 1";
-				$sql3.= " WHERE rowid = ".$obj->id;
+				$sql3 .= " WHERE rowid = ".$obj->id;
 				dol_syslog(get_class($this).'::setAsDefault', LOG_DEBUG);
 				$result3 = $this->db->query($sql3);
 

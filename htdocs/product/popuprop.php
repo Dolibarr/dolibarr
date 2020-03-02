@@ -17,7 +17,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -36,7 +36,7 @@ $langs->load('propal');
 $type=GETPOST("type", "int");
 
 // Security check
-if (! empty($user->societe_id)) $socid=$user->societe_id;
+if (! empty($user->socid)) $socid=$user->socid;
 $result=restrictedArea($user, 'produit|service');
 
 $limit = GETPOST('limit', 'int')?GETPOST('limit', 'int'):$conf->liste_limit;
@@ -76,7 +76,7 @@ $title=$langs->trans("Statistics");
 
 llxHeader('', $title, $helpurl);
 
-print load_fiche_titre($title, $mesg, 'title_products.png');
+print load_fiche_titre($title, $mesg, 'products');
 
 
 $param = '';
@@ -99,9 +99,14 @@ $head[$h][1] = $langs->trans("Chart");
 $head[$h][2] = 'chart';
 $h++;
 
-$head[$h][0] = $_SERVER['PHP_SELF'];
-$head[$h][1] = $title;
+$head[$h][0] = DOL_URL_ROOT.'/product/popuprop.php';
+$head[$h][1] = $langs->trans("PopuProp");
 $head[$h][2] = 'popularityprop';
+$h++;
+
+$head[$h][0] = DOL_URL_ROOT.'/product/popucom.php';
+$head[$h][1] = $langs->trans("PopuCom");
+$head[$h][2] = 'popularitycommande';
 $h++;
 
 dol_fiche_head($head, 'popularityprop', $langs->trans("Statistics"), -1);
@@ -157,7 +162,7 @@ else
 
 print_barre_liste($title, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, "", $num, $totalnboflines, '');
 
-print '<table class="noborder" width="100%">';
+print '<table class="noborder centpercent">';
 
 print "<tr class=\"liste_titre\">";
 print_liste_field_titre('Ref', $_SERVER["PHP_SELF"], 'p.ref', '', $param, '', $sortfield, $sortorder);

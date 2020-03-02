@@ -13,7 +13,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
  use Luracast\Restler\RestException;
@@ -33,7 +33,7 @@ class ExpenseReports extends DolibarrApi
      * @var array   $FIELDS     Mandatory fields, checked when create and update object
      */
     static $FIELDS = array(
-        'socid'
+        'fk_user_author'
     );
 
     /**
@@ -101,7 +101,7 @@ class ExpenseReports extends DolibarrApi
         $obj_ret = array();
 
         // case of external user, $societe param is ignored and replaced by user's socid
-        //$socid = DolibarrApiAccess::$user->societe_id ? DolibarrApiAccess::$user->societe_id : $societe;
+        //$socid = DolibarrApiAccess::$user->socid ? DolibarrApiAccess::$user->socid : $societe;
 
         $sql = "SELECT t.rowid";
         $sql.= " FROM ".MAIN_DB_PREFIX."expensereport as t";
@@ -384,6 +384,10 @@ class ExpenseReports extends DolibarrApi
      * @param array $request_data   Datas
      *
      * @return int
+     *
+     * @throws	RestException	401		Not allowed
+     * @throws  RestException	404		Expense report not found
+     * @throws	RestException	500
      */
     public function put($id, $request_data = null)
     {
@@ -501,10 +505,44 @@ class ExpenseReports extends DolibarrApi
         // phpcs:enable
         $object = parent::_cleanObjectDatas($object);
 
+        unset($object->fk_statut);
+        unset($object->statut);
+        unset($object->user);
+        unset($object->thirdparty);
+
+        unset($object->cond_reglement);
+        unset($object->shipping_method_id);
+
         unset($object->barcode_type);
         unset($object->barcode_type_code);
         unset($object->barcode_type_label);
         unset($object->barcode_type_coder);
+
+        unset($object->code_paiement);
+        unset($object->code_statut);
+        unset($object->fk_c_paiement);
+        unset($object->fk_incoterms);
+        unset($object->label_incoterms);
+        unset($object->location_incoterms);
+        unset($object->mode_reglement_id);
+        unset($object->cond_reglement_id);
+
+        unset($object->name);
+        unset($object->lastname);
+        unset($object->firstname);
+        unset($object->civility_id);
+        unset($object->cond_reglement_id);
+        unset($object->contact);
+        unset($object->contact_id);
+
+        unset($object->state);
+        unset($object->state_id);
+        unset($object->state_code);
+        unset($object->country);
+        unset($object->country_id);
+        unset($object->country_code);
+
+        unset($object->note);	// We already use note_public and note_pricate
 
         return $object;
     }

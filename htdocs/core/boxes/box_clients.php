@@ -15,7 +15,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -32,9 +32,9 @@ include_once DOL_DOCUMENT_ROOT.'/core/boxes/modules_boxes.php';
  */
 class box_clients extends ModeleBoxes
 {
-    public $boxcode="lastcustomers";
-    public $boximg="object_company";
-    public $boxlabel="BoxLastCustomers";
+    public $boxcode = "lastcustomers";
+    public $boximg = "object_company";
+    public $boxlabel = "BoxLastCustomers";
     public $depends = array("societe");
 
 	/**
@@ -61,9 +61,9 @@ class box_clients extends ModeleBoxes
 		$this->db = $db;
 
 		// disable box for such cases
-		if (! empty($conf->global->SOCIETE_DISABLE_CUSTOMERS)) $this->enabled=0;	// disabled by this option
+		if (!empty($conf->global->SOCIETE_DISABLE_CUSTOMERS)) $this->enabled = 0; // disabled by this option
 
-		$this->hidden = ! ($user->rights->societe->lire && empty($user->socid));
+		$this->hidden = !($user->rights->societe->lire && empty($user->socid));
 	}
 
 	/**
@@ -74,49 +74,49 @@ class box_clients extends ModeleBoxes
 	 */
 	public function loadBox($max = 5)
 	{
-		global $user, $langs, $db, $conf;
+		global $user, $langs, $conf;
 		$langs->load("boxes");
 
-		$this->max=$max;
+		$this->max = $max;
 
         include_once DOL_DOCUMENT_ROOT.'/societe/class/societe.class.php';
-        $thirdpartystatic=new Societe($db);
+        $thirdpartystatic = new Societe($this->db);
 
         $this->info_box_head = array('text' => $langs->trans("BoxTitleLastModifiedCustomers", $max));
 
 		if ($user->rights->societe->lire)
 		{
 			$sql = "SELECT s.nom as name, s.rowid as socid";
-            $sql.= ", s.code_client";
-            $sql.= ", s.client";
-            $sql.= ", s.code_fournisseur";
-            $sql.= ", s.fournisseur";
-            $sql.= ", s.code_compta";
-            $sql.= ", s.code_compta_fournisseur";
-            $sql.= ", s.logo";
-            $sql.= ", s.email";
-            $sql.= ", s.datec, s.tms, s.status";
-			$sql.= " FROM ".MAIN_DB_PREFIX."societe as s";
-			if (!$user->rights->societe->client->voir && !$user->societe_id) $sql.= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
-			$sql.= " WHERE s.client IN (1, 3)";
-			$sql.= " AND s.entity IN (".getEntity('societe').")";
-			if (!$user->rights->societe->client->voir && !$user->societe_id) $sql.= " AND s.rowid = sc.fk_soc AND sc.fk_user = " .$user->id;
-			if ($user->societe_id) $sql.= " AND s.rowid = $user->societe_id";
-			$sql.= " ORDER BY s.tms DESC";
-			$sql.= $db->plimit($max, 0);
+            $sql .= ", s.code_client";
+            $sql .= ", s.client";
+            $sql .= ", s.code_fournisseur";
+            $sql .= ", s.fournisseur";
+            $sql .= ", s.code_compta";
+            $sql .= ", s.code_compta_fournisseur";
+            $sql .= ", s.logo";
+            $sql .= ", s.email";
+            $sql .= ", s.datec, s.tms, s.status, s.entity";
+			$sql .= " FROM ".MAIN_DB_PREFIX."societe as s";
+			if (!$user->rights->societe->client->voir && !$user->socid) $sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
+			$sql .= " WHERE s.client IN (1, 3)";
+			$sql .= " AND s.entity IN (".getEntity('societe').")";
+			if (!$user->rights->societe->client->voir && !$user->socid) $sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".$user->id;
+			if ($user->socid) $sql .= " AND s.rowid = $user->socid";
+			$sql .= " ORDER BY s.tms DESC";
+			$sql .= $this->db->plimit($max, 0);
 
 			dol_syslog(get_class($this)."::loadBox", LOG_DEBUG);
-			$result = $db->query($sql);
+			$result = $this->db->query($sql);
 			if ($result)
 			{
-				$num = $db->num_rows($result);
+				$num = $this->db->num_rows($result);
 
 				$line = 0;
 				while ($line < $num)
 				{
-					$objp = $db->fetch_object($result);
-					$datec=$db->jdate($objp->datec);
-					$datem=$db->jdate($objp->tms);
+					$objp = $this->db->fetch_object($result);
+					$datec = $this->db->jdate($objp->datec);
+					$datem = $this->db->jdate($objp->tms);
                     $thirdpartystatic->id = $objp->socid;
                     $thirdpartystatic->name = $objp->name;
                     $thirdpartystatic->code_client = $objp->code_client;
@@ -127,6 +127,7 @@ class box_clients extends ModeleBoxes
                     $thirdpartystatic->fournisseur = $objp->fournisseur;
                     $thirdpartystatic->logo = $objp->logo;
                     $thirdpartystatic->email = $objp->email;
+					$thirdpartystatic->entity = $objp->entity;
 
                     $this->info_box_contents[$line][] = array(
                         'td' => '',
@@ -147,15 +148,15 @@ class box_clients extends ModeleBoxes
 					$line++;
 				}
 
-				if ($num==0) $this->info_box_contents[$line][0] = array('td' => 'class="center"','text'=>$langs->trans("NoRecordedCustomers"));
+				if ($num == 0) $this->info_box_contents[$line][0] = array('td' => 'class="center"', 'text'=>$langs->trans("NoRecordedCustomers"));
 
-				$db->free($result);
+				$this->db->free($result);
 			}
 			else {
 				$this->info_box_contents[0][0] = array(
                     'td' => '',
                     'maxlength'=>500,
-                    'text' => ($db->error().' sql='.$sql)
+                    'text' => ($this->db->error().' sql='.$sql)
                 );
 			}
 		}

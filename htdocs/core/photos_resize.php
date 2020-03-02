@@ -15,7 +15,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -29,82 +29,74 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/product.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/images.lib.php';
 
 // Load translation files required by the page
-$langs->loadLangs(array("products","other"));
+$langs->loadLangs(array("products", "other"));
 
-$id=GETPOST('id', 'int');
-$action=GETPOST('action', 'alpha');
-$modulepart=GETPOST('modulepart', 'alpha')?GETPOST('modulepart', 'alpha'):'produit|service';
+$id = GETPOST('id', 'int');
+$action = GETPOST('action', 'alpha');
+$modulepart = GETPOST('modulepart', 'alpha') ?GETPOST('modulepart', 'alpha') : 'produit|service';
 $original_file = GETPOST("file");
-$backtourl=GETPOST('backtourl');
-$cancel=GETPOST('cancel', 'alpha');
+$backtourl = GETPOST('backtourl');
+$cancel = GETPOST('cancel', 'alpha');
+
+$file = GETPOST('file', 'alpha');
+$num = GETPOST('num', 'alpha');		// Used for document on bank statement
+
 
 // Security check
 if (empty($modulepart)) accessforbidden('Bad value for modulepart');
-$accessallowed=0;
+$accessallowed = 0;
 if ($modulepart == 'produit' || $modulepart == 'product' || $modulepart == 'service' || $modulepart == 'produit|service')
 {
-	$result=restrictedArea($user, 'produit|service', $id, 'product&product');
-	if ($modulepart=='produit|service' && (! $user->rights->produit->lire && ! $user->rights->service->lire)) accessforbidden();
-	$accessallowed=1;
+	$result = restrictedArea($user, 'produit|service', $id, 'product&product');
+	if ($modulepart == 'produit|service' && (!$user->rights->produit->lire && !$user->rights->service->lire)) accessforbidden();
+	$accessallowed = 1;
 }
 elseif ($modulepart == 'project')
 {
-    $result=restrictedArea($user, 'projet', $id);
-	if (! $user->rights->projet->lire) accessforbidden();
-	$accessallowed=1;
+    $result = restrictedArea($user, 'projet', $id);
+	if (!$user->rights->projet->lire) accessforbidden();
+	$accessallowed = 1;
 }
 elseif ($modulepart == 'bom')
 {
-	$result=restrictedArea($user, 'bom', $id, 'bom_bom');
-	if (! $user->rights->bom->read) accessforbidden();
-	$accessallowed=1;
-}
-elseif ($modulepart == 'expensereport')
-{
-	$result=restrictedArea($user, 'expensereport', $id, 'expensereport');
-	if (! $user->rights->expensereport->lire) accessforbidden();
-	$accessallowed=1;
-}
-elseif ($modulepart == 'holiday')
-{
-	$result=restrictedArea($user, 'holiday', $id, 'holiday');
-	if (! $user->rights->holiday->read) accessforbidden();
-	$accessallowed=1;
+	$result = restrictedArea($user, $modulepart, $id, 'bom_bom');
+	if (!$user->rights->bom->read) accessforbidden();
+	$accessallowed = 1;
 }
 elseif ($modulepart == 'member')
 {
-	$result=restrictedArea($user, 'adherent', $id, '', '', 'fk_soc', 'rowid');
-	if (! $user->rights->adherent->lire) accessforbidden();
-	$accessallowed=1;
+	$result = restrictedArea($user, 'adherent', $id, '', '', 'fk_soc', 'rowid');
+	if (!$user->rights->adherent->lire) accessforbidden();
+	$accessallowed = 1;
 }
 elseif ($modulepart == 'user')
 {
-	$result=restrictedArea($user, 'user', $id, 'user');
-	if (! $user->rights->user->user->lire) accessforbidden();
-	$accessallowed=1;
-}
-elseif ($modulepart == 'societe')
-{
-	$result=restrictedArea($user, 'societe', $id, 'societe');
-	if (! $user->rights->societe->lire) accessforbidden();
-	$accessallowed=1;
+	$result = restrictedArea($user, $modulepart, $id, $modulepart);
+	if (!$user->rights->user->user->lire) accessforbidden();
+	$accessallowed = 1;
 }
 elseif ($modulepart == 'tax')
 {
-	$result=restrictedArea($user, 'tax', $id, 'chargesociales', 'charges');
-	if (! $user->rights->tax->charges->lire) accessforbidden();
-	$accessallowed=1;
+	$result = restrictedArea($user, $modulepart, $id, 'chargesociales', 'charges');
+	if (!$user->rights->tax->charges->lire) accessforbidden();
+	$accessallowed = 1;
 }
-elseif ($modulepart == 'ticket')
+elseif ($modulepart == 'bank')
 {
-	$result=restrictedArea($user, 'ticket', $id, 'ticket');
-	if (! $user->rights->ticket->read) accessforbidden();
-	$accessallowed=1;
+	$result = restrictedArea($user, 'banque', $id, 'bank_account');
+	if (!$user->rights->banque->lire) accessforbidden();
+	$accessallowed = 1;
+}
+else	// ticket, holiday, expensereport, societe...
+{
+	$result = restrictedArea($user, $modulepart, $id, $modulepart);
+	if (empty($user->rights->$modulepart->read) && empty($user->rights->$modulepart->lire)) accessforbidden();
+	$accessallowed = 1;
 }
 
 // Security:
 // Limit access if permissions are wrong
-if (! $accessallowed)
+if (!$accessallowed)
 {
 	accessforbidden();
 }
@@ -118,9 +110,9 @@ if ($modulepart == 'produit' || $modulepart == 'product' || $modulepart == 'serv
 	{
 		$result = $object->fetch($id);
 		if ($result <= 0) dol_print_error($db, 'Failed to load object');
-		$dir=$conf->product->multidir_output[$object->entity];	// By default
-		if ($object->type == Product::TYPE_PRODUCT) $dir=$conf->product->multidir_output[$object->entity];
-		if ($object->type == Product::TYPE_SERVICE) $dir=$conf->service->multidir_output[$object->entity];
+		$dir = $conf->product->multidir_output[$object->entity]; // By default
+		if ($object->type == Product::TYPE_PRODUCT) $dir = $conf->product->multidir_output[$object->entity];
+		if ($object->type == Product::TYPE_SERVICE) $dir = $conf->service->multidir_output[$object->entity];
 	}
 }
 elseif ($modulepart == 'project')
@@ -131,8 +123,19 @@ elseif ($modulepart == 'project')
     {
         $result = $object->fetch($id);
         if ($result <= 0) dol_print_error($db, 'Failed to load object');
-        $dir=$conf->projet->dir_output;	// By default
+        $dir = $conf->project->multidir_output[$object->entity]; // By default
     }
+}
+elseif ($modulepart == 'propal')
+{
+	require_once DOL_DOCUMENT_ROOT.'/comm/propal/class/propal.class.php';
+	$object = new Propal($db);
+	if ($id > 0)
+	{
+		$result = $object->fetch($id);
+		if ($result <= 0) dol_print_error($db, 'Failed to load object');
+		$dir = $conf->propal->multidir_output[$object->entity]; // By default
+	}
 }
 elseif ($modulepart == 'holiday')
 {
@@ -142,7 +145,7 @@ elseif ($modulepart == 'holiday')
 	{
 		$result = $object->fetch($id);
 		if ($result <= 0) dol_print_error($db, 'Failed to load object');
-		$dir=$conf->holiday->dir_output;	// By default
+		$dir = $conf->$modulepart->dir_output; // By default
 	}
 }
 elseif ($modulepart == 'member')
@@ -153,7 +156,7 @@ elseif ($modulepart == 'member')
 	{
 		$result = $object->fetch($id);
 		if ($result <= 0) dol_print_error($db, 'Failed to load object');
-		$dir=$conf->adherent->dir_output;	// By default
+		$dir = $conf->adherent->dir_output; // By default
 	}
 }
 elseif ($modulepart == 'societe')
@@ -164,7 +167,7 @@ elseif ($modulepart == 'societe')
     {
         $result = $object->fetch($id);
         if ($result <= 0) dol_print_error($db, 'Failed to load object');
-        $dir=$conf->societe->dir_output;
+        $dir = $conf->$modulepart->dir_output;
     }
 }
 elseif ($modulepart == 'user')
@@ -175,7 +178,7 @@ elseif ($modulepart == 'user')
     {
         $result = $object->fetch($id);
         if ($result <= 0) dol_print_error($db, 'Failed to load object');
-        $dir=$conf->user->dir_output;	// By default
+        $dir = $conf->$modulepart->dir_output; // By default
     }
 }
 elseif ($modulepart == 'expensereport')
@@ -186,7 +189,7 @@ elseif ($modulepart == 'expensereport')
     {
         $result = $object->fetch($id);
         if ($result <= 0) dol_print_error($db, 'Failed to load object');
-        $dir=$conf->expensereport->dir_output;	// By default
+        $dir = $conf->expensereport->dir_output; // By default
     }
 }
 elseif ($modulepart == 'tax')
@@ -197,7 +200,7 @@ elseif ($modulepart == 'tax')
 	{
 		$result = $object->fetch($id);
 		if ($result <= 0) dol_print_error($db, 'Failed to load object');
-		$dir=$conf->tax->dir_output;	// By default
+		$dir = $conf->$modulepart->dir_output; // By default
 	}
 }
 elseif ($modulepart == 'ticket')
@@ -208,7 +211,7 @@ elseif ($modulepart == 'ticket')
 	{
 		$result = $object->fetch($id);
 		if ($result <= 0) dol_print_error($db, 'Failed to load object');
-		$dir=$conf->ticket->dir_output;	// By default
+		$dir = $conf->$modulepart->dir_output; // By default
 	}
 }
 elseif ($modulepart == 'bom')
@@ -219,25 +222,56 @@ elseif ($modulepart == 'bom')
 	{
 		$result = $object->fetch($id);
 		if ($result <= 0) dol_print_error($db, 'Failed to load object');
-		$dir=$conf->bom->dir_output;	// By default
+		$dir = $conf->$modulepart->dir_output; // By default
+	}
+}
+elseif ($modulepart == 'mrp')
+{
+	require_once DOL_DOCUMENT_ROOT.'/mrp/class/mo.class.php';
+	$object = new MO($db);
+	if ($id > 0)
+	{
+		$result = $object->fetch($id);
+		if ($result <= 0) dol_print_error($db, 'Failed to load object');
+		$dir = $conf->$modulepart->dir_output; // By default
+	}
+}
+elseif ($modulepart == 'bank')
+{
+	require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
+	$object = new Account($db);
+	if ($id > 0)
+	{
+		$result = $object->fetch($id);
+		if ($result <= 0) dol_print_error($db, 'Failed to load object');
+		$dir = $conf->bank->dir_output; // By default
 	}
 }
 else {
-	print 'Action crop for modulepart = '.$modulepart.' is not supported yet.';
+	print 'Action crop for modulepart = '.$modulepart.' is not supported yet by photos_resize.php.';
 }
 
 if (empty($backtourl))
 {
-    if (in_array($modulepart, array('product','produit','service','produit|service'))) $backtourl=DOL_URL_ROOT."/product/document.php?id=".$id.'&file='.urldecode($_POST["file"]);
-    elseif (in_array($modulepart, array('expensereport'))) $backtourl=DOL_URL_ROOT."/expensereport/document.php?id=".$id.'&file='.urldecode($_POST["file"]);
-    elseif (in_array($modulepart, array('holiday')))       $backtourl=DOL_URL_ROOT."/holiday/document.php?id=".$id.'&file='.urldecode($_POST["file"]);
-    elseif (in_array($modulepart, array('member')))        $backtourl=DOL_URL_ROOT."/adherents/document.php?id=".$id.'&file='.urldecode($_POST["file"]);
-    elseif (in_array($modulepart, array('project')))       $backtourl=DOL_URL_ROOT."/projet/document.php?id=".$id.'&file='.urldecode($_POST["file"]);
-    elseif (in_array($modulepart, array('societe')))       $backtourl=DOL_URL_ROOT."/societe/document.php?id=".$id.'&file='.urldecode($_POST["file"]);
-    elseif (in_array($modulepart, array('tax')))           $backtourl=DOL_URL_ROOT."/compta/sociales/document.php?id=".$id.'&file='.urldecode($_POST["file"]);
-    elseif (in_array($modulepart, array('ticket')))        $backtourl=DOL_URL_ROOT."/ticket/document.php?id=".$id.'&file='.urldecode($_POST["file"]);
-    elseif (in_array($modulepart, array('user')))          $backtourl=DOL_URL_ROOT."/user/document.php?id=".$id.'&file='.urldecode($_POST["file"]);
-    else $backtourl=DOL_URL_ROOT."/".$modulepart."/".$modulepart."_document.php?id=".$id.'&file='.urldecode($_POST["file"]);
+	$regs = array();
+
+    if (in_array($modulepart, array('product', 'produit', 'service', 'produit|service'))) $backtourl = DOL_URL_ROOT."/product/document.php?id=".$id.'&file='.urldecode($file);
+    elseif (in_array($modulepart, array('expensereport'))) $backtourl = DOL_URL_ROOT."/expensereport/document.php?id=".$id.'&file='.urldecode($file);
+    elseif (in_array($modulepart, array('holiday')))       $backtourl = DOL_URL_ROOT."/holiday/document.php?id=".$id.'&file='.urldecode($file);
+    elseif (in_array($modulepart, array('member')))        $backtourl = DOL_URL_ROOT."/adherents/document.php?id=".$id.'&file='.urldecode($file);
+    elseif (in_array($modulepart, array('project')))       $backtourl = DOL_URL_ROOT."/projet/document.php?id=".$id.'&file='.urldecode($file);
+    elseif (in_array($modulepart, array('propal')))        $backtourl = DOL_URL_ROOT."/comm/propal/document.php?id=".$id.'&file='.urldecode($file);
+    elseif (in_array($modulepart, array('societe')))       $backtourl = DOL_URL_ROOT."/societe/document.php?id=".$id.'&file='.urldecode($file);
+    elseif (in_array($modulepart, array('tax')))           $backtourl = DOL_URL_ROOT."/compta/sociales/document.php?id=".$id.'&file='.urldecode($file);
+    elseif (in_array($modulepart, array('ticket')))        $backtourl = DOL_URL_ROOT."/ticket/document.php?id=".$id.'&file='.urldecode($file);
+    elseif (in_array($modulepart, array('user')))          $backtourl = DOL_URL_ROOT."/user/document.php?id=".$id.'&file='.urldecode($file);
+    elseif (in_array($modulepart, array('bank')) && preg_match('/\/statement\/([^\/]+)\//', $file, $regs)) {
+    	$num = $regs[1];
+    	$backtourl = DOL_URL_ROOT."/compta/bank/account_statement_document.php?id=".$id.'&num='.urlencode($num).'&file='.urldecode($file);
+    }
+    elseif (in_array($modulepart, array('bank')))          $backtourl = DOL_URL_ROOT."/compta/bank/document.php?id=".$id.'&file='.urldecode($file);
+    elseif (in_array($modulepart, array('mrp')))           $backtourl = DOL_URL_ROOT."/mrp/mo_document.php?id=".$id.'&file='.urldecode($file);
+    else $backtourl = DOL_URL_ROOT."/".$modulepart."/".$modulepart."_document.php?id=".$id.'&file='.urldecode($file);
 }
 
 
@@ -259,11 +293,11 @@ if ($cancel)
 	}
 }
 
-if ($action == 'confirm_resize' && (isset($_POST["file"]) != "") && (isset($_POST["sizex"]) != "") && (isset($_POST["sizey"]) != ""))
+if ($action == 'confirm_resize' && GETPOSTISSET("file") && GETPOSTISSET("sizex") && GETPOSTISSET("sizey"))
 {
-	$fullpath=$dir."/".$original_file;
+	$fullpath = $dir."/".$original_file;
 
-	$result=dol_imageResizeOrCrop($fullpath, 0, $_POST['sizex'], $_POST['sizey']);
+	$result = dol_imageResizeOrCrop($fullpath, 0, GETPOST('sizex', 'int'), GETPOST('sizey', 'int'));
 
 	if ($result == $fullpath)
 	{
@@ -274,7 +308,7 @@ if ($action == 'confirm_resize' && (isset($_POST["file"]) != "") && (isset($_POS
 		$rel_filename = preg_replace('/^[\\/]/', '', $rel_filename);
 
 		include_once DOL_DOCUMENT_ROOT.'/ecm/class/ecmfiles.class.php';
-		$ecmfile=new EcmFiles($db);
+		$ecmfile = new EcmFiles($db);
 		$result = $ecmfile->fetch(0, '', $rel_filename);
 		if ($result > 0)   // If found
 		{
@@ -295,11 +329,11 @@ if ($action == 'confirm_resize' && (isset($_POST["file"]) != "") && (isset($_POS
 
 		    $ecmfile->filepath = $rel_dir;
 		    $ecmfile->filename = $filename;
-		    $ecmfile->label = md5_file(dol_osencode($fullpath));        // $fullpath is a full path to file
+		    $ecmfile->label = md5_file(dol_osencode($fullpath)); // $fullpath is a full path to file
 		    $ecmfile->fullpath_orig = $fullpath;
 		    $ecmfile->gen_or_uploaded = 'unknown';
-		    $ecmfile->description = '';    // indexed content
-		    $ecmfile->keyword = '';        // keyword content
+		    $ecmfile->description = ''; // indexed content
+		    $ecmfile->keyword = ''; // keyword content
 		    $result = $ecmfile->create($user);
 		    if ($result < 0)
 		    {
@@ -322,18 +356,18 @@ if ($action == 'confirm_resize' && (isset($_POST["file"]) != "") && (isset($_POS
 	else
 	{
 		setEventMessages($result, null, 'errors');
-		$_GET['file']=$_POST["file"];
-		$action='';
+		$_GET['file'] = $_POST["file"];
+		$action = '';
 	}
 }
 
 // Crop d'une image
 if ($action == 'confirm_crop')
 {
-	$fullpath=$dir."/".$original_file;
+	$fullpath = $dir."/".$original_file;
 
 	//var_dump($_POST['w'].'x'.$_POST['h'].'-'.$_POST['x'].'x'.$_POST['y']);exit;
-	$result=dol_imageResizeOrCrop($fullpath, 1, $_POST['w'], $_POST['h'], $_POST['x'], $_POST['y']);
+	$result = dol_imageResizeOrCrop($fullpath, 1, GETPOST('w', 'int'), GETPOST('h', 'int'), GETPOST('x', 'int'), GETPOST('y', 'int'));
 
 	if ($result == $fullpath)
 	{
@@ -344,7 +378,7 @@ if ($action == 'confirm_crop')
 		$rel_filename = preg_replace('/^[\\/]/', '', $rel_filename);
 
 		include_once DOL_DOCUMENT_ROOT.'/ecm/class/ecmfiles.class.php';
-		$ecmfile=new EcmFiles($db);
+		$ecmfile = new EcmFiles($db);
 		$result = $ecmfile->fetch(0, '', $rel_filename);
 		if ($result > 0)   // If found
 		{
@@ -365,11 +399,11 @@ if ($action == 'confirm_crop')
 
 		    $ecmfile->filepath = $rel_dir;
 		    $ecmfile->filename = $filename;
-		    $ecmfile->label = md5_file(dol_osencode($fullpath));        // $fullpath is a full path to file
+		    $ecmfile->label = md5_file(dol_osencode($fullpath)); // $fullpath is a full path to file
 		    $ecmfile->fullpath_orig = $fullpath;
 		    $ecmfile->gen_or_uploaded = 'unknown';
-		    $ecmfile->description = '';    // indexed content
-		    $ecmfile->keyword = '';        // keyword content
+		    $ecmfile->description = ''; // indexed content
+		    $ecmfile->keyword = ''; // keyword content
 		    $result = $ecmfile->create($user);
 		    if ($result < 0)
 		    {
@@ -392,8 +426,8 @@ if ($action == 'confirm_crop')
 	else
 	{
 		setEventMessages($result, null, 'errors');
-		$_GET['file']=$_POST["file"];
-		$action='';
+		$_GET['file'] = $_POST["file"];
+		$action = '';
 	}
 }
 
@@ -402,14 +436,14 @@ if ($action == 'confirm_crop')
  * View
  */
 
-llxHeader($head, $langs->trans("Image"), '', '', 0, 0, array('/includes/jquery/plugins/jcrop/js/jquery.Jcrop.min.js','/core/js/lib_photosresize.js'), array('/includes/jquery/plugins/jcrop/css/jquery.Jcrop.css'));
+llxHeader($head, $langs->trans("Image"), '', '', 0, 0, array('/includes/jquery/plugins/jcrop/js/jquery.Jcrop.min.js', '/core/js/lib_photosresize.js'), array('/includes/jquery/plugins/jcrop/css/jquery.Jcrop.css'));
 
 
 print load_fiche_titre($langs->trans("ImageEditor"));
 
-$infoarray=dol_getImageSize($dir."/".GETPOST("file", 'alpha'));
-$height=$infoarray['height'];
-$width=$infoarray['width'];
+$infoarray = dol_getImageSize($dir."/".GETPOST("file", 'alpha'));
+$height = $infoarray['height'];
+$width = $infoarray['width'];
 print $langs->trans("CurrentInformationOnImage").': ';
 print $langs->trans("Width").': <strong>'.$width.'</strong> x '.$langs->trans("Height").': <strong>'.$height.'</strong><br>';
 
@@ -421,7 +455,8 @@ print '<br>'."\n";
  */
 
 print '<!-- Form to resize -->'."\n";
-print '<form name="redim_file" action="'.$_SERVER["PHP_SELF"].'?id='.$id.'" method="POST">';
+print '<form name="redim_file" action="'.$_SERVER["PHP_SELF"].'?id='.$id.($num ? '&num='.$num : '').'" method="POST">';
+print '<input type="hidden" name="token" value="'.newToken().'">';
 
 print '<fieldset id="redim_file">';
 print '<legend>'.$langs->trans("Resize").'</legend>';
@@ -429,7 +464,7 @@ print $langs->trans("ResizeDesc").'<br>';
 print $langs->trans("NewLength").': <input name="sizex" type="number" class="flat maxwidth50"> px  &nbsp; '.$langs->trans("or").' &nbsp; ';
 print $langs->trans("NewHeight").': <input name="sizey" type="number" class="flat maxwidth50"> px &nbsp; <br>';
 
-print '<input type="hidden" name="file" value="'.dol_escape_htmltag(GETPOST('file')).'" />';
+print '<input type="hidden" name="file" value="'.dol_escape_htmltag($file).'" />';
 print '<input type="hidden" name="action" value="confirm_resize" />';
 print '<input type="hidden" name="product" value="'.$id.'" />';
 print '<input type="hidden" name="modulepart" value="'.dol_escape_htmltag($modulepart).'" />';
@@ -449,18 +484,18 @@ print '<br>'."\n";
 
 print '<br>'."\n";
 
-if (! empty($conf->use_javascript_ajax))
+if (!empty($conf->use_javascript_ajax))
 {
-	$infoarray=dol_getImageSize($dir."/".GETPOST("file"));
-	$height=$infoarray['height'];
-	$width=$infoarray['width'];
-	$widthforcrop=$width; $refsizeforcrop='orig'; $ratioforcrop=1;
+	$infoarray = dol_getImageSize($dir."/".GETPOST("file"));
+	$height = $infoarray['height'];
+	$width = $infoarray['width'];
+	$widthforcrop = $width; $refsizeforcrop = 'orig'; $ratioforcrop = 1;
 	// If image is too large, we use another scale.
-	if (! empty($_SESSION['dol_screenwidth']) && ($widthforcrop > round($_SESSION['dol_screenwidth']/2)))
+	if (!empty($_SESSION['dol_screenwidth']) && ($widthforcrop > round($_SESSION['dol_screenwidth'] / 2)))
 	{
-		$ratioforcrop=2;
-		$widthforcrop=round($_SESSION['dol_screenwidth'] / $ratioforcrop);
-		$refsizeforcrop='screenwidth';
+		$ratioforcrop = 2;
+		$widthforcrop = round($_SESSION['dol_screenwidth'] / $ratioforcrop);
+		$refsizeforcrop = 'screenwidth';
 	}
 
 	print '<!-- Form to crop -->'."\n";
@@ -472,7 +507,10 @@ if (! empty($conf->use_javascript_ajax))
 	print '<img src="'.DOL_URL_ROOT.'/viewimage.php?modulepart='.$modulepart.'&entity='.$object->entity.'&file='.urlencode($original_file).'" alt="" id="cropbox" width="'.$widthforcrop.'px"/>';
 	print '</div>';
 	print '</div><br>';
-	print '<form action="'.$_SERVER["PHP_SELF"].'?id='.$id.'" method="POST">
+
+	print '<form action="'.$_SERVER["PHP_SELF"].'?id='.$id.($num ? '&num='.$num : '').'" method="POST">';
+	print '<input type="hidden" name="token" value="'.newToken().'">';
+	print '
 	      <div class="jc_coords">
 	         '.$langs->trans("NewSizeAfterCropping").':
 	         <label>X1 <input type="number" class="flat maxwidth50" id="x" name="x" /></label>

@@ -12,8 +12,8 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
- * or see http://www.gnu.org/
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
+ * or see https://www.gnu.org/
  */
 
 /**
@@ -38,7 +38,13 @@ function takepos_prepare_head()
 	$head[$h][2] = 'setup';
 	$h++;
 
-	for ($i = 1; $i <= $conf->global->TAKEPOS_NUM_TERMINALS; $i++)
+	$head[$h][0] = DOL_URL_ROOT.'/takepos/admin/receipt.php';
+	$head[$h][1] = $langs->trans("Receipt");
+	$head[$h][2] = 'receipt';
+	$h++;
+
+	$numterminals = max(1, $conf->global->TAKEPOS_NUM_TERMINALS);
+	for ($i = 1; $i <= $numterminals; $i++)
 	{
 		$head[$h][0] = DOL_URL_ROOT.'/takepos/admin/terminal.php?terminal='.$i;
 		$head[$h][1] = $langs->trans("Terminal"). " ".$i;
@@ -46,7 +52,12 @@ function takepos_prepare_head()
 		$h++;
 	}
 
-    complete_head_from_modules($conf, $langs, null, $head, $h, 'takepos');
+	$head[$h][0] = DOL_URL_ROOT.'/takepos/admin/other.php';
+	$head[$h][1] = $langs->trans("Other");
+	$head[$h][2] = 'other';
+	$h++;
+
+	complete_head_from_modules($conf, $langs, null, $head, $h, 'takepos');
 
     return $head;
 }

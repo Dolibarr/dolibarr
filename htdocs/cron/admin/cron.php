@@ -16,7 +16,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -72,13 +72,13 @@ print load_fiche_titre($langs->trans("CronSetup"), $linkback, 'title_setup');
 $head = cronadmin_prepare_head();
 
 print '<form name="agendasetupform" action="'.$_SERVER["PHP_SELF"].'" method="post">';
-print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+print '<input type="hidden" name="token" value="'.newToken().'">';
 
 dol_fiche_head($head, 'setup', $langs->trans("Module2300Name"), -1, 'cron');
 
 print "<br>\n";
 
-print '<table class="noborder" width="100%">';
+print '<table class="noborder centpercent">';
 
 print '<tr class="liste_titre">';
 print "<td>".$langs->trans("Parameter")."</td>";
@@ -119,7 +119,7 @@ print '</form>';
 
 print '<br><br><br>';
 
-print $langs->trans("UseMenuModuleToolsToAddCronJobs").'<br>';
+print $langs->trans("UseMenuModuleToolsToAddCronJobs", dol_buildpath('/cron/list.php?leftmenu=admintools', 1)).'<br>';
 if (! empty($conf->global->CRON_WARNING_DELAY_HOURS)) print info_admin($langs->trans("WarningCronDelayed", $conf->global->CRON_WARNING_DELAY_HOURS)).'<br>';
 
 print '<br>';

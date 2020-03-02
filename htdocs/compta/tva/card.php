@@ -16,7 +16,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -38,9 +38,13 @@ $action=GETPOST("action", "alpha");
 $refund=GETPOST("refund", "int");
 if (empty($refund)) $refund=0;
 
+$datev=dol_mktime(12, 0, 0, GETPOST("datevmonth", 'int'), GETPOST("datevday", 'int'), GETPOST("datevyear", 'int'));
+$datep=dol_mktime(12, 0, 0, GETPOST("datepmonth", 'int'), GETPOST("datepday", 'int'), GETPOST("datepyear", 'int'));
+
+
 // Security check
 $socid = GETPOST('socid', 'int');
-if ($user->societe_id) $socid=$user->societe_id;
+if ($user->socid) $socid=$user->socid;
 $result = restrictedArea($user, 'tax', '', '', 'charges');
 
 $object = new Tva($db);
@@ -70,7 +74,7 @@ if ($action == 'setlib' && $user->rights->tax->charges->creer)
 if ($action == 'setdatev' && $user->rights->tax->charges->creer)
 {
     $object->fetch($id);
-    $object->datev=dol_mktime(12, 0, 0, GETPOST('datevmonth', 'int'), GETPOST('datevday', 'int'), GETPOST('datevyear', 'int'));
+    $object->datev = $datev;
     $result=$object->update($user);
     if ($result < 0) dol_print_error($db, $object->error);
 
@@ -81,14 +85,12 @@ if ($action == 'add' && $_POST["cancel"] <> $langs->trans("Cancel"))
 {
     $error=0;
 
-	$datev=dol_mktime(12, 0, 0, $_POST["datevmonth"], $_POST["datevday"], $_POST["datevyear"]);
-    $datep=dol_mktime(12, 0, 0, $_POST["datepmonth"], $_POST["datepday"], $_POST["datepyear"]);
+    $object->accountid = GETPOST("accountid", 'int');
+    $object->type_payment = GETPOST("type_payment", 'alphanohtml');
+	$object->num_payment = GETPOST("num_payment", 'alphanohtml');
 
-    $object->accountid=GETPOST("accountid");
-    $object->type_payment=GETPOST("type_payment");
-	$object->num_payment=GETPOST("num_payment");
-    $object->datev=$datev;
-    $object->datep=$datep;
+	$object->datev = $datev;
+    $object->datep = $datep;
 
 	$amount = price2num(GETPOST("amount", 'alpha'));
 	if ($refund == 1) {
@@ -229,7 +231,7 @@ if ($action == 'create')
 	}
 
     print '<form name="add" action="'.$_SERVER["PHP_SELF"].'" name="formvat" method="post">';
-    print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+    print '<input type="hidden" name="token" value="'.newToken().'">';
     print '<input type="hidden" name="action" value="add">';
 
     print '<div id="selectmethod">';
@@ -252,7 +254,7 @@ if ($action == 'create')
 
     dol_fiche_head();
 
-    print '<table class="border" width="100%">';
+    print '<table class="border centpercent">';
 
     print "<tr>";
     print '<td class="titlefieldcreate fieldrequired">'.$langs->trans("DatePayment").'</td><td>';
@@ -277,7 +279,7 @@ if ($action == 'create')
     if (! empty($conf->banque->enabled))
     {
 		print '<tr><td class="fieldrequired">'.$langs->trans("BankAccount").'</td><td>';
-        $form->select_comptes($_POST["accountid"], "accountid", 0, "courant=1", 1);  // Affiche liste des comptes courant
+		$form->select_comptes(GETPOST("accountid", 'int'), "accountid", 0, "courant=1", 2);  // List of bank account available
         print '</td></tr>';
     }
 
@@ -331,7 +333,7 @@ if ($id)
 	print '<div class="fichecenter">';
 	print '<div class="underbanner clearboth"></div>';
 
-	print '<table class="border" width="100%">';
+	print '<table class="border centpercent">';
 
 	// Label
 	//print '<tr><td class="titlefield">'.$langs->trans("Label").'</td><td>'.$object->label.'</td></tr>';
@@ -385,16 +387,16 @@ if ($id)
 	{
 		if (! empty($user->rights->tax->charges->supprimer))
 		{
-			print '<a class="butActionDelete" href="card.php?id='.$object->id.'&action=delete">'.$langs->trans("Delete").'</a>';
+			print '<div class="inline-block divButAction"><a class="butActionDelete" href="card.php?id='.$object->id.'&action=delete">'.$langs->trans("Delete").'</a></div>';
 		}
 		else
 		{
-			print '<a class="butActionRefused classfortooltip" href="#" title="'.(dol_escape_htmltag($langs->trans("NotAllowed"))).'">'.$langs->trans("Delete").'</a>';
+			print '<div class="inline-block divButAction"><a class="butActionRefused classfortooltip" href="#" title="'.(dol_escape_htmltag($langs->trans("NotAllowed"))).'">'.$langs->trans("Delete").'</a></div>';
 		}
 	}
 	else
 	{
-		print '<a class="butActionRefused classfortooltip" href="#" title="'.$langs->trans("LinkedToAConciliatedTransaction").'">'.$langs->trans("Delete").'</a>';
+		print '<div class="inline-block divButAction"><a class="butActionRefused classfortooltip" href="#" title="'.$langs->trans("LinkedToAConciliatedTransaction").'">'.$langs->trans("Delete").'</a></div>';
 	}
 	print "</div>";
 }

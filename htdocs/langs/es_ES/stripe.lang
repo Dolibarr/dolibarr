@@ -12,16 +12,17 @@ YourEMail=E-Mail de confirmación de pago
 STRIPE_PAYONLINE_SENDEMAIL=E-Mail a avisar en caso de pago (con éxito o no)
 Creditor=Beneficiario
 PaymentCode=Código de pago
-StripeDoPayment=Pague con Tarjeta de Crédito o Débito (Stripe)
+StripeDoPayment=Pagar con Stripe
 YouWillBeRedirectedOnStripe=Se le redirigirá a la página de Stripe protegida para indicar la información de su tarjeta de crédito
 Continue=Continuar
 ToOfferALinkForOnlinePayment=URL de pago %s
-ToOfferALinkForOnlinePaymentOnOrder=URL que ofrece una interfaz de pago en línea %s basada en el importe de un pedido de cliente
-ToOfferALinkForOnlinePaymentOnInvoice=URL que ofrece una interfaz de pago en línea %s basada en el importe de una factura a client
-ToOfferALinkForOnlinePaymentOnContractLine=URL que ofrece una interfaz de pago en línea %s basada en el importe de una línea de contrato
-ToOfferALinkForOnlinePaymentOnFreeAmount=URL que ofrece una interfaz de pago en línea %s basada en un importe libre
-ToOfferALinkForOnlinePaymentOnMemberSubscription=URL que ofrece una interfaz de pago en línea %s basada en la cotización de un miembro
-YouCanAddTagOnUrl=También puede añadir el parámetro url <b>&tag=<i>value</i></b>  para cualquiera de estas direcciones (obligatorio solamente para el pago libre) para ver su propio código de comentario de pago.
+ToOfferALinkForOnlinePaymentOnOrder=URL para ofrecer una página de pago en línea %s para un pedido de cliente
+ToOfferALinkForOnlinePaymentOnInvoice=URL para ofrecer una página de pago en línea %s para una factura de cliente
+ToOfferALinkForOnlinePaymentOnContractLine=URL para ofrecer una página de pago en línea %s para una línea de contrato
+ToOfferALinkForOnlinePaymentOnFreeAmount=URL para ofrecer una página de pago en línea %s de cualquier importe sin objeto existente
+ToOfferALinkForOnlinePaymentOnMemberSubscription=URL para ofrecer una página de pago en línea %s para una suscripción de miembro
+ToOfferALinkForOnlinePaymentOnDonation=URL para ofrecer una página de pago en línea %s para el pago de una donación
+YouCanAddTagOnUrl=También puede agregar el parámetro url <b>&tag = <i>value</i></b> a cualquiera de esas URL (obligatorio solo para el pago no vinculado a un objeto) para agregar su propia etiqueta de comentario de pago. <br> Para la URL de pagos sin objeto existente, también puede agregar el parámetro <strong>&noidempotency = 1</strong> para que el mismo enlace con la misma etiqueta se pueda usar varias veces (algún modo de pago puede limitar el pago a 1 para cada enlace diferente sin este parámetro)
 SetupStripeToHavePaymentCreatedAutomatically=Configure su Stripe con la url <b>%s</b> para crear un pago automáticament al validarse por Stripe.
 AccountParameter=Parámetros de la cuenta
 UsageParameter=Parámetros de uso
@@ -40,7 +41,7 @@ STRIPE_LIVE_WEBHOOK_KEY=Webhook live key
 ONLINE_PAYMENT_WAREHOUSE=Stock para usar para la disminución de stock cuando se realiza el pago en línea <br> (TODO Cuando la opción para disminuir stock se realiza en una acción en la factura y el pago en línea se genera la factura?)
 StripeLiveEnabled=Stripe live activado (de lo contrario en modo test/sandbox)
 StripeImportPayment=Importar pagos Stripe
-ExampleOfTestCreditCard=Ejemplo de tarjeta de crédito para pruebas: %s(válido),%s (error CVC), %s (caducada), %s (la carga falla)
+ExampleOfTestCreditCard=Ejemplo de tarjeta de crédito para pruebas: %s=> válida,%s => error CVC, %s => caducada, %s => la carga falla
 StripeGateways=Pasarelas de Stripe
 OAUTH_STRIPE_TEST_ID=Stripe Connect Client ID (ca _...)
 OAUTH_STRIPE_LIVE_ID=Stripe Connect Client ID (ca _...)
@@ -63,3 +64,7 @@ CreateCardOnStripe=Crea una tarjeta en Stripe
 ShowInStripe=Mostrar en Stripe
 StripeUserAccountForActions=Cuenta de usuario para usar en algunos e-mails de notificación de eventos Stripe (pagos de Stripe)
 StripePayoutList=Lista de pagos de Stripe
+ToOfferALinkForTestWebhook=Enlace para configurar Stripe WebHook para llamar a la IPN (modo de prueba)
+ToOfferALinkForLiveWebhook=Enlace para configurar Stripe WebHook para llamar a la IPN (modo real)
+PaymentWillBeRecordedForNextPeriod=El pago se registrará para el próximo período.
+ClickHereToTryAgain=<a href="%s">Haga clic aquí para volver a intentarlo ...</a>

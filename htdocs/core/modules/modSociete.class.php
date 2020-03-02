@@ -17,7 +17,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -27,7 +27,7 @@
  *	\ingroup    societe
  *	\brief      Fichier de description et activation du module Societe
  */
-include_once DOL_DOCUMENT_ROOT .'/core/modules/DolibarrModules.class.php';
+include_once DOL_DOCUMENT_ROOT.'/core/modules/DolibarrModules.class.php';
 
 
 /**
@@ -49,7 +49,7 @@ class modSociete extends DolibarrModules
 		$this->numero = 1;
 
 		$this->family = "crm";
-		$this->module_position = '10';
+		$this->module_position = '09';
 		// Module label (no space allowed), used if translation string 'ModuleXXXName' not found (where XXX is value of numeric property 'numero' of module)
 		$this->name = preg_replace('/^mod/i', '', get_class($this));
 		$this->description = "Gestion des sociétés et contacts";
@@ -60,22 +60,22 @@ class modSociete extends DolibarrModules
 		$this->const_name = 'MAIN_MODULE_'.strtoupper($this->name);
 		$this->config_page_url = array("societe.php@societe");
 		// Name of image file used for this module.
-		$this->picto='company';
+		$this->picto = 'company';
 
 		// Data directories to create when module is enabled
 		$this->dirs = array("/societe/temp");
 
 		// Dependencies
-		$this->hidden = false;			// A condition to hide module
-		$this->depends = array();		// List of module class names as string that must be enabled if this module is enabled
-		$this->requiredby = array("modExpedition","modFacture","modFournisseur","modFicheinter","modPropale","modContrat","modCommande");	// List of module ids to disable if this one is disabled
-		$this->conflictwith = array();	// List of module class names as string this module is in conflict with
-		$this->phpmin = array(5,4);		// Minimum version of PHP required by module
-		$this->langfiles = array("companies",'bills');
+		$this->hidden = false; // A condition to hide module
+		$this->depends = array(); // List of module class names as string that must be enabled if this module is enabled
+		$this->requiredby = array("modExpedition", "modFacture", "modFournisseur", "modFicheinter", "modPropale", "modContrat", "modCommande"); // List of module ids to disable if this one is disabled
+		$this->conflictwith = array(); // List of module class names as string this module is in conflict with
+		$this->phpmin = array(5, 4); // Minimum version of PHP required by module
+		$this->langfiles = array("companies", 'bills', "compta", "admin", "banks");
 
 		// Constants
 		$this->const = array();
-		$r=0;
+		$r = 0;
 
 		$this->const[$r][0] = "SOCIETE_CODECLIENT_ADDON";
 		$this->const[$r][1] = "chaine";
@@ -123,7 +123,7 @@ class modSociete extends DolibarrModules
 
 		// Boxes
 		$this->boxes = array();
-		$r=0;
+		$r = 0;
 		$this->boxes[$r][1] = "box_clients.php";
 		$r++;
 		$this->boxes[$r][1] = "box_prospect.php";
@@ -139,7 +139,7 @@ class modSociete extends DolibarrModules
 		// Permissions
 		$this->rights = array();
 		$this->rights_class = 'societe';
-		$r=0;
+		$r = 0;
 
 		$r++;
 		$this->rights[$r][0] = 121; // id de la permission
@@ -148,7 +148,7 @@ class modSociete extends DolibarrModules
 		$this->rights[$r][3] = 0; // La permission est-elle une permission par defaut
 		$this->rights[$r][4] = 'lire';
 
-/*		$r++;
+        /*$r++;
 		$this->rights[$r][0] = 241;
 		$this->rights[$r][1] = 'Read thirdparties customers';
 		$this->rights[$r][2] = 'r';
@@ -163,7 +163,7 @@ class modSociete extends DolibarrModules
 		$this->rights[$r][3] = 0;
 		$this->rights[$r][4] = 'thirdparty_supplier_advance';      // Visible if option MAIN_USE_ADVANCED_PERMS is on
 		$this->rights[$r][5] = 'read';
-*/
+        */
 
 		$r++;
 		$this->rights[$r][0] = 122; // id de la permission
@@ -172,8 +172,8 @@ class modSociete extends DolibarrModules
 		$this->rights[$r][3] = 0; // La permission est-elle une permission par defaut
 		$this->rights[$r][4] = 'creer';
 
-/*		$r++;
-		 $this->rights[$r][0] = 251;
+        /* $r++;
+		$this->rights[$r][0] = 251;
 		$this->rights[$r][1] = 'Create thirdparties customers';
 		$this->rights[$r][2] = 'r';
 		$this->rights[$r][3] = 0;
@@ -187,7 +187,7 @@ class modSociete extends DolibarrModules
 		$this->rights[$r][3] = 0;
 		$this->rights[$r][4] = 'thirdparty_supplier_advance';      // Visible if option MAIN_USE_ADVANCED_PERMS is on
 		$this->rights[$r][5] = 'read';
-*/
+        */
 
 		$r++;
 		$this->rights[$r][0] = 125; // id de la permission
@@ -247,38 +247,39 @@ class modSociete extends DolibarrModules
 
 		// Menus
 		//-------
-		$this->menu = 1;        // This module add menu entries. They are coded into menu manager.
+		$this->menu = 1; // This module add menu entries. They are coded into menu manager.
 
 
 		// Exports
 		//--------
-		$r=0;
+		$r = 0;
 
 		// Export list of third parties and attributes
 		$r++;
-		$this->export_code[$r]=$this->rights_class.'_'.$r;
-		$this->export_label[$r]='ExportDataset_company_1';
-		$this->export_icon[$r]='company';
-		$this->export_permission[$r]=array(array("societe","export"));
-		$this->export_fields_array[$r]=array(
-			's.rowid'=>"Id",'s.nom'=>"Name",'s.name_alias'=>"AliasNameShort",'s.status'=>"Status",'s.client'=>"Customer",'s.fournisseur'=>"Supplier",'s.datec'=>"DateCreation",'s.tms'=>"DateLastModification",
-			's.code_client'=>"CustomerCode",'s.code_fournisseur'=>"SupplierCode",'s.code_compta'=>"AccountancyCode",'s.code_compta_fournisseur'=>"SupplierAccountancyCode",
-			's.address'=>"Address",'s.zip'=>"Zip",'s.town'=>"Town",'d.nom'=>'State','c.label'=>"Country",'c.code'=>"CountryCode",'s.phone'=>"Phone",'s.fax'=>"Fax",
-			's.url'=>"Url",'s.email'=>"Email",'s.default_lang'=>"DefaultLang",'s.siren'=>"ProfId1",'s.siret'=>"ProfId2",'s.ape'=>"ProfId3",'s.idprof4'=>"ProfId4",
-			's.idprof5'=>"ProfId5",'s.idprof6'=>"ProfId6",'s.tva_intra'=>"VATIntraShort",'s.capital'=>"Capital",'s.note_private'=>"NotePrivate",'s.note_public'=>"NotePublic",
-			't.libelle'=>"ThirdPartyType",'ce.code'=>"Staff","cfj.libelle"=>"JuridicalStatus",'s.fk_prospectlevel'=>'ProspectLevel',
-			'st.code'=>'ProspectStatus','payterm.libelle'=>'PaymentConditions','paymode.libelle'=>'PaymentMode'
+		$this->export_code[$r] = $this->rights_class.'_'.$r;
+		$this->export_label[$r] = 'ExportDataset_company_1';
+		$this->export_icon[$r] = 'company';
+		$this->export_permission[$r] = array(array("societe", "export"));
+		$this->export_fields_array[$r] = array(
+			's.rowid'=>"Id", 's.nom'=>"Name", 's.name_alias'=>"AliasNameShort", 's.status'=>"Status", 's.client'=>"Customer", 's.fournisseur'=>"Supplier", 's.datec'=>"DateCreation", 's.tms'=>"DateLastModification",
+			's.code_client'=>"CustomerCode", 's.code_fournisseur'=>"SupplierCode", 's.code_compta'=>"AccountancyCode", 's.code_compta_fournisseur'=>"SupplierAccountancyCode",
+			's.address'=>"Address", 's.zip'=>"Zip", 's.town'=>"Town", 'd.nom'=>'State', 'c.label'=>"Country", 'c.code'=>"CountryCode", 's.phone'=>"Phone", 's.fax'=>"Fax",
+			's.url'=>"Url", 's.email'=>"Email", 's.default_lang'=>"DefaultLang", 's.siren'=>"ProfId1", 's.siret'=>"ProfId2", 's.ape'=>"ProfId3", 's.idprof4'=>"ProfId4",
+			's.idprof5'=>"ProfId5", 's.idprof6'=>"ProfId6", 's.tva_intra'=>"VATIntraShort", 's.capital'=>"Capital", 's.note_private'=>"NotePrivate", 's.note_public'=>"NotePublic",
+			't.libelle'=>"ThirdPartyType", 'ce.code'=>"Staff", "cfj.libelle"=>"JuridicalStatus", 's.fk_prospectlevel'=>'ProspectLevel',
+			'st.code'=>'ProspectStatus', 'payterm.libelle'=>'PaymentConditions', 'paymode.libelle'=>'PaymentMode'
 		);
-		if (! empty($conf->global->SOCIETE_USEPREFIX)) $this->export_fields_array[$r]['s.prefix']='Prefix';
+		if (!empty($conf->global->SOCIETE_USEPREFIX)) $this->export_fields_array[$r]['s.prefix'] = 'Prefix';
+		if (!empty($conf->global->PRODUIT_MULTIPRICES)) $this->export_fields_array[$r]['s.price_level'] = 'PriceLevel';
 		// Add multicompany field
-		if (! empty($conf->global->MULTICOMPANY_ENTITY_IN_EXPORT_IF_SHARED))
+		if (!empty($conf->global->MULTICOMPANY_ENTITY_IN_EXPORT_IF_SHARED))
 		{
-		    $nbofallowedentities=count(explode(',', getEntity('societe')));    // If project are shared, nb will be > 1
-		    if (! empty($conf->multicompany->enabled) && $nbofallowedentities > 1) $this->export_fields_array[$r]+=array('s.entity'=>'Entity');
+		    $nbofallowedentities = count(explode(',', getEntity('societe'))); // If project are shared, nb will be > 1
+		    if (!empty($conf->multicompany->enabled) && $nbofallowedentities > 1) $this->export_fields_array[$r] += array('s.entity'=>'Entity');
 		}
-		$keyforselect='societe'; $keyforelement='company'; $keyforaliasextra='extra';
+		$keyforselect = 'societe'; $keyforelement = 'company'; $keyforaliasextra = 'extra';
 		include DOL_DOCUMENT_ROOT.'/core/extrafieldsinexport.inc.php';
-		$this->export_fields_array[$r]+=array('u.login'=>'SaleRepresentativeLogin','u.firstname'=>'SaleRepresentativeFirstname', 'u.lastname'=>'SaleRepresentativeLastname');
+		$this->export_fields_array[$r] += array('u.login'=>'SaleRepresentativeLogin', 'u.firstname'=>'SaleRepresentativeFirstname', 'u.lastname'=>'SaleRepresentativeLastname');
 		//$this->export_TypeFields_array[$r]=array(
 		//	's.rowid'=>"List:societe:nom",'s.nom'=>"Text",'s.status'=>"Text",'s.client'=>"Boolean",'s.fournisseur'=>"Boolean",'s.datec'=>"Date",'s.tms'=>"Date",
 		//	's.code_client'=>"Text",'s.code_fournisseur'=>"Text",'s.address'=>"Text",'s.zip'=>"Text",'s.town'=>"Text",'c.label'=>"List:c_country:label:label",
@@ -287,100 +288,104 @@ class modSociete extends DolibarrModules
 		//	't.libelle'=>"Text",'ce.code'=>"List:c_effectif:libelle:code","cfj.libelle"=>"Text",'s.fk_prospectlevel'=>'List:c_prospectlevel:label:code',
 		//	's.fk_stcomm'=>'List:c_stcomm:libelle:code','d.nom'=>'List:c_departements:nom:rowid'
 		//);
-		$this->export_TypeFields_array[$r]=array(
-			's.rowid'=>"Numeric", 's.nom'=>"Text",'s.name_alias'=>"Text",'s.status'=>"Numeric",'s.client'=>"Numeric",'s.fournisseur'=>"Boolean",'s.datec'=>"Date",'s.tms'=>"Date",
-			's.code_client'=>"Text",'s.code_fournisseur'=>"Text",'s.code_compta'=>"Text",'s.code_compta_fournisseur'=>"Text",'s.address'=>"Text",'s.zip'=>"Text",
-			's.town'=>"Text",'c.label'=>"List:c_country:label:label",'c.code'=>"Text",'s.phone'=>"Text",'s.fax'=>"Text",'s.url'=>"Text",'s.email'=>"Text",
-			's.default_lang'=>"Text",'s.siret'=>"Text",'s.siren'=>"Text",'s.ape'=>"Text",'s.idprof4'=>"Text",'s.idprof5'=>"Text",'s.idprof6'=>"Text",
-			's.tva_intra'=>"Text",'s.capital'=>"Numeric",'s.note_private'=>"Text",'s.note_public'=>"Text",'t.libelle'=>"Text",
-			'ce.code'=>"List:c_effectif:libelle:code","cfj.libelle"=>"Text",'s.fk_prospectlevel'=>'List:c_prospectlevel:label:code',
-			'st.code'=>'List:c_stcomm:libelle:code','d.nom'=>'Text','u.login'=>'Text','u.firstname'=>'Text','u.lastname'=>'Text','payterm.libelle'=>'Text',
-			'paymode.libelle'=>'Text','s.entity'=>'Numeric'
+		$this->export_TypeFields_array[$r] = array(
+			's.rowid'=>"Numeric", 's.nom'=>"Text", 's.name_alias'=>"Text", 's.status'=>"Numeric", 's.client'=>"Numeric", 's.fournisseur'=>"Boolean", 's.datec'=>"Date", 's.tms'=>"Date",
+			's.code_client'=>"Text", 's.code_fournisseur'=>"Text", 's.code_compta'=>"Text", 's.code_compta_fournisseur'=>"Text", 's.address'=>"Text", 's.zip'=>"Text",
+			's.town'=>"Text", 'c.label'=>"List:c_country:label:label", 'c.code'=>"Text", 's.phone'=>"Text", 's.fax'=>"Text", 's.url'=>"Text", 's.email'=>"Text",
+			's.default_lang'=>"Text", 's.siret'=>"Text", 's.siren'=>"Text", 's.ape'=>"Text", 's.idprof4'=>"Text", 's.idprof5'=>"Text", 's.idprof6'=>"Text",
+			's.tva_intra'=>"Text", 's.capital'=>"Numeric", 's.note_private'=>"Text", 's.note_public'=>"Text", 't.libelle'=>"Text",
+			'ce.code'=>"List:c_effectif:libelle:code", "cfj.libelle"=>"Text", 's.fk_prospectlevel'=>'List:c_prospectlevel:label:code',
+			'st.code'=>'List:c_stcomm:libelle:code', 'd.nom'=>'Text', 'u.login'=>'Text', 'u.firstname'=>'Text', 'u.lastname'=>'Text', 'payterm.libelle'=>'Text',
+			'paymode.libelle'=>'Text', 's.entity'=>'Numeric',
+			's.price_level'=>'Numeric'
 		);
 
-		$this->export_entities_array[$r]=array('u.login'=>'user','u.firstname'=>'user','u.lastname'=>'user');	// We define here only fields that use another picto
-		$this->export_examplevalues_array[$r]=array('s.client'=>'0 (no customer no prospect)/1 (customer)/2 (prospect)/3 (customer and prospect)','s.fournisseur'=>'0 (not a supplier) or 1 (supplier)');
-		$this->export_sql_start[$r]='SELECT DISTINCT ';
-		$this->export_sql_end[$r]  =' FROM '.MAIN_DB_PREFIX.'societe as s';
-        $this->export_sql_end[$r] .=' LEFT JOIN '.MAIN_DB_PREFIX.'societe_extrafields as extra ON s.rowid = extra.fk_object';
-		$this->export_sql_end[$r] .=' LEFT JOIN '.MAIN_DB_PREFIX.'c_typent as t ON s.fk_typent = t.id';
-		$this->export_sql_end[$r] .=' LEFT JOIN '.MAIN_DB_PREFIX.'c_country as c ON s.fk_pays = c.rowid';
-		$this->export_sql_end[$r] .=' LEFT JOIN '.MAIN_DB_PREFIX.'c_effectif as ce ON s.fk_effectif = ce.id';
-		$this->export_sql_end[$r] .=' LEFT JOIN '.MAIN_DB_PREFIX.'c_forme_juridique as cfj ON s.fk_forme_juridique = cfj.code';
-		$this->export_sql_end[$r] .=' LEFT JOIN '.MAIN_DB_PREFIX.'c_departements as d ON s.fk_departement = d.rowid';
-		$this->export_sql_end[$r] .=' LEFT JOIN '.MAIN_DB_PREFIX.'c_stcomm as st ON s.fk_stcomm = st.id';
-		$this->export_sql_end[$r] .=' LEFT JOIN '.MAIN_DB_PREFIX.'societe_commerciaux as sc ON sc.fk_soc = s.rowid LEFT JOIN '.MAIN_DB_PREFIX.'user as u ON sc.fk_user = u.rowid';
-		$this->export_sql_end[$r] .=' LEFT JOIN '.MAIN_DB_PREFIX.'c_payment_term as payterm ON s.cond_reglement = payterm.rowid';
-		$this->export_sql_end[$r] .=' LEFT JOIN '.MAIN_DB_PREFIX.'c_paiement as paymode ON s.mode_reglement = paymode.id';
-		$this->export_sql_end[$r] .=' WHERE s.entity IN ('.getEntity('societe').')';
+		$this->export_entities_array[$r] = array('u.login'=>'user', 'u.firstname'=>'user', 'u.lastname'=>'user'); // We define here only fields that use another picto
+		$this->export_examplevalues_array[$r] = array('s.client'=>'0 (no customer no prospect)/1 (customer)/2 (prospect)/3 (customer and prospect)', 's.fournisseur'=>'0 (not a supplier) or 1 (supplier)');
+		$this->export_sql_start[$r] = 'SELECT DISTINCT ';
+		$this->export_sql_end[$r]  = ' FROM '.MAIN_DB_PREFIX.'societe as s';
+        $this->export_sql_end[$r] .= ' LEFT JOIN '.MAIN_DB_PREFIX.'societe_extrafields as extra ON s.rowid = extra.fk_object';
+		$this->export_sql_end[$r] .= ' LEFT JOIN '.MAIN_DB_PREFIX.'c_typent as t ON s.fk_typent = t.id';
+		$this->export_sql_end[$r] .= ' LEFT JOIN '.MAIN_DB_PREFIX.'c_country as c ON s.fk_pays = c.rowid';
+		$this->export_sql_end[$r] .= ' LEFT JOIN '.MAIN_DB_PREFIX.'c_effectif as ce ON s.fk_effectif = ce.id';
+		$this->export_sql_end[$r] .= ' LEFT JOIN '.MAIN_DB_PREFIX.'c_forme_juridique as cfj ON s.fk_forme_juridique = cfj.code';
+		$this->export_sql_end[$r] .= ' LEFT JOIN '.MAIN_DB_PREFIX.'c_departements as d ON s.fk_departement = d.rowid';
+		$this->export_sql_end[$r] .= ' LEFT JOIN '.MAIN_DB_PREFIX.'c_stcomm as st ON s.fk_stcomm = st.id';
+		$this->export_sql_end[$r] .= ' LEFT JOIN '.MAIN_DB_PREFIX.'societe_commerciaux as sc ON sc.fk_soc = s.rowid LEFT JOIN '.MAIN_DB_PREFIX.'user as u ON sc.fk_user = u.rowid';
+		$this->export_sql_end[$r] .= ' LEFT JOIN '.MAIN_DB_PREFIX.'c_payment_term as payterm ON s.cond_reglement = payterm.rowid';
+		$this->export_sql_end[$r] .= ' LEFT JOIN '.MAIN_DB_PREFIX.'c_paiement as paymode ON s.mode_reglement = paymode.id';
+		$this->export_sql_end[$r] .= ' WHERE s.entity IN ('.getEntity('societe').')';
 		if (is_object($user) && empty($user->rights->societe->client->voir)) {
-			$this->export_sql_end[$r] .=' AND (sc.fk_user = '.$user->id.' ';
-			if (! empty($conf->global->SOCIETE_EXPORT_SUBORDINATES_CHILDS)) {
+			$this->export_sql_end[$r] .= ' AND (sc.fk_user = '.$user->id.' ';
+			if (!empty($conf->global->SOCIETE_EXPORT_SUBORDINATES_CHILDS)) {
 				$subordinatesids = $user->getAllChildIds();
-				$this->export_sql_end[$r] .=count($subordinatesids)>0 ? ' OR (sc.fk_user IN ('.implode(',', $subordinatesids).')' : '';
+				$this->export_sql_end[$r] .= count($subordinatesids) > 0 ? ' OR (sc.fk_user IN ('.implode(',', $subordinatesids).')' : '';
 			}
-			$this->export_sql_end[$r] .=')';
+			$this->export_sql_end[$r] .= ')';
 		}
 
 		// Export list of contacts and attributes
 		$r++;
-		$this->export_code[$r]=$this->rights_class.'_'.$r;
-		$this->export_label[$r]='ExportDataset_company_2';
-		$this->export_icon[$r]='contact';
-		$this->export_permission[$r]=array(array("societe","contact","export"));
-		$this->export_fields_array[$r]=array(
-			'c.rowid'=>"IdContact",'c.civility'=>"CivilityCode",'c.lastname'=>'Lastname','c.firstname'=>'Firstname','c.poste'=>'PostOrFunction',
-			'c.datec'=>"DateCreation",'c.tms'=>"DateLastModification",'c.priv'=>"ContactPrivate",'c.address'=>"Address",'c.zip'=>"Zip",'c.town'=>"Town",
-			'd.nom'=>'State','co.label'=>"Country",'co.code'=>"CountryCode",'c.phone'=>"Phone",'c.fax'=>"Fax",'c.phone_mobile'=>"Mobile",'c.email'=>"EMail",
+		$this->export_code[$r] = $this->rights_class.'_'.$r;
+		$this->export_label[$r] = 'ExportDataset_company_2';
+		$this->export_icon[$r] = 'contact';
+		$this->export_permission[$r] = array(array("societe", "contact", "export"));
+		$this->export_fields_array[$r] = array(
+			'c.rowid'=>"IdContact", 'c.civility'=>"CivilityCode", 'c.lastname'=>'Lastname', 'c.firstname'=>'Firstname', 'c.poste'=>'PostOrFunction',
+			'c.datec'=>"DateCreation", 'c.tms'=>"DateLastModification", 'c.priv'=>"ContactPrivate", 'c.address'=>"Address", 'c.zip'=>"Zip", 'c.town'=>"Town",
+			'd.nom'=>'State', 'co.label'=>"Country", 'co.code'=>"CountryCode", 'c.phone'=>"Phone", 'c.fax'=>"Fax", 'c.phone_mobile'=>"Mobile", 'c.email'=>"EMail",
 			'c.statut'=>"Status",
-			's.rowid'=>"IdCompany",'s.nom'=>"CompanyName",'s.status'=>"Status",'s.code_client'=>"CustomerCode",'s.code_fournisseur'=>"SupplierCode",
-			's.client'=>'Customer','s.fournisseur'=>'Supplier',
-            's.address'=>'Address','s.zip'=>"Zip",'s.town'=>"Town",'s.phone'=>'Phone','s.email'=>"Email",
+			's.rowid'=>"IdCompany", 's.nom'=>"CompanyName", 's.status'=>"Status", 's.code_client'=>"CustomerCode", 's.code_fournisseur'=>"SupplierCode",
+			's.code_compta'=>"AccountancyCode", 's.code_compta_fournisseur'=>"SupplierAccountancyCode",
+			's.client'=>'Customer', 's.fournisseur'=>'Supplier',
+            's.address'=>'Address', 's.zip'=>"Zip", 's.town'=>"Town", 's.phone'=>'Phone', 's.email'=>"Email",
             't.libelle'=>"ThirdPartyType"
 		);
-		$this->export_examplevalues_array[$r]=array('s.client'=>'0 (no customer no prospect)/1 (customer)/2 (prospect)/3 (customer and prospect)','s.fournisseur'=>'0 (not a supplier) or 1 (supplier)');
-		$this->export_TypeFields_array[$r]=array(
-			'c.civility'=>"List:c_civility:label:code",'c.lastname'=>'Text','c.firstname'=>'Text','c.poste'=>'Text','c.datec'=>"Date",'c.priv'=>"Boolean",
-			'c.address'=>"Text",'c.zip'=>"Text",'c.town'=>"Text",'d.nom'=>'Text','co.label'=>"List:c_country:label:rowid",'co.code'=>"Text",'c.phone'=>"Text",
-			'c.fax'=>"Text",'c.email'=>"Text",
+		$this->export_examplevalues_array[$r] = array('s.client'=>'0 (no customer no prospect)/1 (customer)/2 (prospect)/3 (customer and prospect)', 's.fournisseur'=>'0 (not a supplier) or 1 (supplier)');
+		$this->export_TypeFields_array[$r] = array(
+			'c.civility'=>"List:c_civility:label:code", 'c.lastname'=>'Text', 'c.firstname'=>'Text', 'c.poste'=>'Text', 'c.datec'=>"Date", 'c.priv'=>"Boolean",
+			'c.address'=>"Text", 'c.zip'=>"Text", 'c.town'=>"Text", 'd.nom'=>'Text', 'co.label'=>"List:c_country:label:rowid", 'co.code'=>"Text", 'c.phone'=>"Text",
+			'c.fax'=>"Text", 'c.email'=>"Text",
             'c.statut'=>"Status",
-            's.rowid'=>"List:societe:nom::thirdparty",'s.nom'=>"Text",'s.status'=>"Status",'s.code_client'=>"Text",'s.code_fournisseur'=>"Text",
-			's.client'=>"Text",'s.fournisseur'=>"Text",
-            's.address'=>"Text",'s.zip'=>"Text",'s.town'=>"Text",'s.phone'=>"Text",'s.email'=>"Text",
+            's.rowid'=>"List:societe:nom::thirdparty", 's.nom'=>"Text", 's.status'=>"Status", 's.code_client'=>"Text", 's.code_fournisseur'=>"Text",
+			's.code_compta'=>"Text", 's.code_compta_fournisseur'=>"Text",
+			's.client'=>"Text", 's.fournisseur'=>"Text",
+            's.address'=>"Text", 's.zip'=>"Text", 's.town'=>"Text", 's.phone'=>"Text", 's.email'=>"Text",
             't.libelle'=>"Text"
 		);
-		$this->export_entities_array[$r]=array(
-			's.rowid'=>"company",'s.nom'=>"company", 's.status'=>'company', 's.code_client'=>"company",'s.code_fournisseur'=>"company", 's.client'=>"company",
-			's.fournisseur'=>"company",
+		$this->export_entities_array[$r] = array(
+			's.rowid'=>"company", 's.nom'=>"company", 's.status'=>'company', 's.code_client'=>"company", 's.code_fournisseur'=>"company",
+			's.code_compta'=>"company", 's.code_compta_fournisseur'=>"company",
+			's.client'=>"company", 's.fournisseur'=>"company",
             's.address'=>"company", 's.zip'=>"company", 's.town'=>"company", 's.phone'=>"company", 's.email'=>"company",
             't.libelle'=>"company"
-		);	// We define here only fields that use another picto
+		); // We define here only fields that use another picto
         if (empty($conf->fournisseur->enabled))
         {
             unset($this->export_fields_array[$r]['s.code_fournisseur']);
             unset($this->export_entities_array[$r]['s.code_fournisseur']);
         }
-        $keyforselect='socpeople'; $keyforelement='contact'; $keyforaliasextra='extra';
+        $keyforselect = 'socpeople'; $keyforelement = 'contact'; $keyforaliasextra = 'extra';
         include DOL_DOCUMENT_ROOT.'/core/extrafieldsinexport.inc.php';
-        $keyforselect='societe'; $keyforelement='company'; $keyforaliasextra='extrasoc';
+        $keyforselect = 'societe'; $keyforelement = 'company'; $keyforaliasextra = 'extrasoc';
         include DOL_DOCUMENT_ROOT.'/core/extrafieldsinexport.inc.php';
-        $this->export_sql_start[$r]='SELECT DISTINCT ';
-		$this->export_sql_end[$r]  =' FROM '.MAIN_DB_PREFIX.'socpeople as c';
-		$this->export_sql_end[$r] .=' LEFT JOIN '.MAIN_DB_PREFIX.'societe as s ON c.fk_soc = s.rowid';
-		$this->export_sql_end[$r] .=' LEFT JOIN '.MAIN_DB_PREFIX.'societe_extrafields as extrasoc ON s.rowid = extrasoc.fk_object';
-		if (is_object($user) && empty($user->rights->societe->client->voir)) $this->export_sql_end[$r] .=' LEFT JOIN '.MAIN_DB_PREFIX.'societe_commerciaux as sc ON sc.fk_soc = s.rowid';
-		$this->export_sql_end[$r] .=' LEFT JOIN '.MAIN_DB_PREFIX.'c_departements as d ON c.fk_departement = d.rowid';
-		$this->export_sql_end[$r] .=' LEFT JOIN '.MAIN_DB_PREFIX.'c_country as co ON c.fk_pays = co.rowid';
-		$this->export_sql_end[$r] .=' LEFT JOIN '.MAIN_DB_PREFIX.'socpeople_extrafields as extra ON extra.fk_object = c.rowid';
-        $this->export_sql_end[$r] .=' LEFT JOIN '.MAIN_DB_PREFIX.'c_typent as t ON s.fk_typent = t.id';
-		$this->export_sql_end[$r] .=' WHERE c.entity IN ('.getEntity('socpeople').')';
+        $this->export_sql_start[$r] = 'SELECT DISTINCT ';
+		$this->export_sql_end[$r]  = ' FROM '.MAIN_DB_PREFIX.'socpeople as c';
+		$this->export_sql_end[$r] .= ' LEFT JOIN '.MAIN_DB_PREFIX.'societe as s ON c.fk_soc = s.rowid';
+		$this->export_sql_end[$r] .= ' LEFT JOIN '.MAIN_DB_PREFIX.'societe_extrafields as extrasoc ON s.rowid = extrasoc.fk_object';
+		if (is_object($user) && empty($user->rights->societe->client->voir)) $this->export_sql_end[$r] .= ' LEFT JOIN '.MAIN_DB_PREFIX.'societe_commerciaux as sc ON sc.fk_soc = s.rowid';
+		$this->export_sql_end[$r] .= ' LEFT JOIN '.MAIN_DB_PREFIX.'c_departements as d ON c.fk_departement = d.rowid';
+		$this->export_sql_end[$r] .= ' LEFT JOIN '.MAIN_DB_PREFIX.'c_country as co ON c.fk_pays = co.rowid';
+		$this->export_sql_end[$r] .= ' LEFT JOIN '.MAIN_DB_PREFIX.'socpeople_extrafields as extra ON extra.fk_object = c.rowid';
+        $this->export_sql_end[$r] .= ' LEFT JOIN '.MAIN_DB_PREFIX.'c_typent as t ON s.fk_typent = t.id';
+		$this->export_sql_end[$r] .= ' WHERE c.entity IN ('.getEntity('socpeople').')';
 		if (is_object($user) && empty($user->rights->societe->client->voir)) {
-			$this->export_sql_end[$r] .=' AND (sc.fk_user = '.$user->id.' ';
-			if (! empty($conf->global->SOCIETE_EXPORT_SUBORDINATES_CHILDS)) {
+			$this->export_sql_end[$r] .= ' AND (sc.fk_user = '.$user->id.' ';
+			if (!empty($conf->global->SOCIETE_EXPORT_SUBORDINATES_CHILDS)) {
 				$subordinatesids = $user->getAllChildIds();
-				$this->export_sql_end[$r] .=count($subordinatesids)>0 ? ' OR (sc.fk_user IN ('.implode(',', $subordinatesids).')' : '';
+				$this->export_sql_end[$r] .= count($subordinatesids) > 0 ? ' OR (sc.fk_user IN ('.implode(',', $subordinatesids).')' : '';
 			}
-			$this->export_sql_end[$r] .=')';
+			$this->export_sql_end[$r] .= ')';
 		}
 
 
@@ -391,14 +396,14 @@ class modSociete extends DolibarrModules
         // Import list of third parties and attributes
 
         $r++;
-        $this->import_code[$r] = $this->rights_class . '_' . $r;
+        $this->import_code[$r] = $this->rights_class.'_'.$r;
         $this->import_label[$r] = 'ImportDataset_company_1';
         $this->import_icon[$r] = 'company';
-        $this->import_entities_array[$r] = array();        // We define here only fields that use a different icon from the one defined in import_icon
+        $this->import_entities_array[$r] = array(); // We define here only fields that use a different icon from the one defined in import_icon
         $this->import_tables_array[$r] = array(
-            's' => MAIN_DB_PREFIX . 'societe',
-            'extra' => MAIN_DB_PREFIX . 'societe_extrafields'
-        );    // List of tables to insert into (insert done in same order)
+            's' => MAIN_DB_PREFIX.'societe',
+            'extra' => MAIN_DB_PREFIX.'societe_extrafields'
+        ); // List of tables to insert into (insert done in same order)
         $this->import_fields_array[$r] = array(//field order as per structure of table llx_societe
             's.nom' => "Name*",
             's.name_alias' => "AliasNameShort",
@@ -410,7 +415,7 @@ class modSociete extends DolibarrModules
             's.address' => "Address",
             's.zip' => "Zip",
             's.town' => "Town",
-            's.fk_departement' => "StateId",
+            's.fk_departement' => "StateCode",
             's.fk_pays' => "CountryCode",
             's.phone' => "Phone",
             's.fax' => "Fax",
@@ -447,21 +452,21 @@ class modSociete extends DolibarrModules
             's.multicurrency_code' => 'MulticurrencyCurrency'
         );
         // Add extra fields
-        $sql = "SELECT name, label, fieldrequired FROM " . MAIN_DB_PREFIX . "extrafields WHERE elementtype = 'societe' AND entity = " . $conf->entity;
+        $sql = "SELECT name, label, fieldrequired FROM ".MAIN_DB_PREFIX."extrafields WHERE elementtype = 'societe' AND entity IN (0, ".$conf->entity.")";
         $resql = $this->db->query($sql);
         if ($resql)    // This can fail when class is used on old database (during migration for example)
         {
             while ($obj = $this->db->fetch_object($resql)) {
-                $fieldname = 'extra.' . $obj->name;
+                $fieldname = 'extra.'.$obj->name;
                 $fieldlabel = ucfirst($obj->label);
-                $this->import_fields_array[$r][$fieldname] = $fieldlabel . ($obj->fieldrequired ? '*' : '');
+                $this->import_fields_array[$r][$fieldname] = $fieldlabel.($obj->fieldrequired ? '*' : '');
             }
         }
         // End add extra fields
         $this->import_fieldshidden_array[$r] = array(
             's.fk_user_creat' => 'user->id',
-            'extra.fk_object' => 'lastrowid-' . MAIN_DB_PREFIX . 'societe'
-        );    // aliastable.field => ('user->id' or 'lastrowid-'.tableparent)
+            'extra.fk_object' => 'lastrowid-'.MAIN_DB_PREFIX.'societe'
+        ); // aliastable.field => ('user->id' or 'lastrowid-'.tableparent)
         $this->import_convertvalue_array[$r] = array(//field order as per structure of table llx_societe
             's.code_client' => array('rule' => 'getcustomercodeifauto'),
             's.code_fournisseur' => array('rule' => 'getsuppliercodeifauto'),
@@ -494,17 +499,17 @@ class modSociete extends DolibarrModules
         //$this->import_convertvalue_array[$r]=array('s.fk_soc'=>array('rule'=>'lastrowid',table='t');
         $this->import_regex_array[$r] = array(//field order as per structure of table llx_societe
             's.status' => '^[0|1]',
-            's.fk_typent' => 'id@' . MAIN_DB_PREFIX . 'c_typent',
+            's.fk_typent' => 'id@'.MAIN_DB_PREFIX.'c_typent',
             's.client' => '^[0|1|2|3]',
             's.fournisseur' => '^[0|1]',
-            's.mode_reglement' => 'id@' . MAIN_DB_PREFIX . 'c_paiement',
-            's.cond_reglement' => 'rowid@' . MAIN_DB_PREFIX . 'c_payment_term',
-            's.mode_reglement_supplier' => 'id@' . MAIN_DB_PREFIX . 'c_paiement',
-            's.cond_reglement_supplier' => 'rowid@' . MAIN_DB_PREFIX . 'c_payment_term',
+            's.mode_reglement' => 'id@'.MAIN_DB_PREFIX.'c_paiement',
+            's.cond_reglement' => 'rowid@'.MAIN_DB_PREFIX.'c_payment_term',
+            's.mode_reglement_supplier' => 'id@'.MAIN_DB_PREFIX.'c_paiement',
+            's.cond_reglement_supplier' => 'rowid@'.MAIN_DB_PREFIX.'c_payment_term',
             's.tva_assuj' => '^[0|1]',
             's.fk_multicurrency' => '^[0|1]',
             's.datec' => '^[0-9][0-9][0-9][0-9]-[0-9][0-9]-[0-9][0-9]( [0-9][0-9]:[0-9][0-9]:[0-9][0-9])?$',
-            's.multicurrency_code' => 'code_iso@' . MAIN_DB_PREFIX . 'c_currencies'
+            's.multicurrency_code' => 'code_iso@'.MAIN_DB_PREFIX.'c_currencies'
         );
 
         $this->import_examplevalues_array[$r] = array(//field order as per structure of table llx_societe
@@ -518,16 +523,16 @@ class modSociete extends DolibarrModules
             's.address' => "61 Jump Street",
             's.zip' => "123456",
             's.town' => "Bigtown",
-            's.fk_departement' => 'matches field "code_departement" in table "' . MAIN_DB_PREFIX . 'c_departements"',
-            's.fk_pays' => 'US/FR/DE etc. matches field "code" in table "' . MAIN_DB_PREFIX . 'c_country"',
+            's.fk_departement' => 'matches field "code_departement" in table "'.MAIN_DB_PREFIX.'c_departements"',
+            's.fk_pays' => 'US/FR/DE etc. matches field "code" in table "'.MAIN_DB_PREFIX.'c_country"',
             's.phone' => "eg: +34123456789",
             's.fax' => "eg. +34987654321",
             's.url' => "e.g. https://www.mybigcompany.com",
             's.email' => "e.g. test@mybigcompany.com",
             's.skype' => "Skype name",
             's.fk_effectif' => "1/2/3/5: represents one of the five ranges of employees",
-            's.fk_typent' => 'matches field "id" (1-9 etc.) OR "code" (TE_SMALL etc.) in table "' . MAIN_DB_PREFIX . 'c_typent"',
-            's.fk_forme_juridique' => '1/2/3 etc...matches field "code" in table "' . MAIN_DB_PREFIX . 'c_forme_juridique"',
+            's.fk_typent' => 'matches field "id" (1-9 etc.) OR "code" (TE_SMALL etc.) in table "'.MAIN_DB_PREFIX.'c_typent"',
+            's.fk_forme_juridique' => '1/2/3 etc...matches field "code" in table "'.MAIN_DB_PREFIX.'c_forme_juridique"',
             's.siret' => "",
             's.siren' => "",
             's.ape' => "",
@@ -536,23 +541,23 @@ class modSociete extends DolibarrModules
             's.idprof6' => "",
             's.tva_intra' => 'VAT number e.g."FR0123456789"',
             's.capital' => "10000",
-            's.fk_stcomm' => '-1/0/1/2 etc... matches field "id" in table "' . MAIN_DB_PREFIX . 'c_stcomm"',
+            's.fk_stcomm' => '-1/0/1/2 etc... matches field "id" in table "'.MAIN_DB_PREFIX.'c_stcomm"',
             's.note_private' => "Example of a PRIVATE note.",
             's.note_public' => "Example of a PUBLIC note.",
             's.client' => '0 (no customer no prospect) / 1 (customer) / 2 (prospect)/ 3 (customer and prospect)',
             's.fournisseur' => '0 (not supplier) / 1 (supplier)',
-            's.fk_prospectlevel' => 'eg. "PL_MEDIUM" matches field "code" in table "' . MAIN_DB_PREFIX . 'c_prospectlevel"',
-            's.mode_reglement' => '1/2/3...matches field "id" in table "' . MAIN_DB_PREFIX . 'c_paiement"',
-            's.cond_reglement' => '1/2/3...matches field "rowid" in table "' . MAIN_DB_PREFIX . 'c_payment_term"',
-            's.mode_reglement_supplier' => '1/2/3...matches field "id" in table "' . MAIN_DB_PREFIX . 'c_paiement"',
-            's.cond_reglement_supplier' => '1/2/3...matches field "rowid" in table "' . MAIN_DB_PREFIX . 'c_payment_term"',
+            's.fk_prospectlevel' => 'eg. "PL_MEDIUM" matches field "code" in table "'.MAIN_DB_PREFIX.'c_prospectlevel"',
+            's.mode_reglement' => '1/2/3...matches field "id" in table "'.MAIN_DB_PREFIX.'c_paiement"',
+            's.cond_reglement' => '1/2/3...matches field "rowid" in table "'.MAIN_DB_PREFIX.'c_payment_term"',
+            's.mode_reglement_supplier' => '1/2/3...matches field "id" in table "'.MAIN_DB_PREFIX.'c_paiement"',
+            's.cond_reglement_supplier' => '1/2/3...matches field "rowid" in table "'.MAIN_DB_PREFIX.'c_payment_term"',
             's.tva_assuj' => '0 (VAT not used) / 1 (VAT used)',
             's.barcode' => '123456789',
             's.default_lang' => 'en_US / es_ES etc...matches a language directory in htdocs/langs/',
             's.canvas' => "empty / a custom canvas form layout url e.g. mycanvas@mymodule",
-            's.datec' => 'formatted as ' . dol_print_date(dol_now(), '%Y-%m-%d'),
+            's.datec' => 'formatted as '.dol_print_date(dol_now(), '%Y-%m-%d'),
             's.fk_multicurrency' => '0 (use system default currency) / 1 (use local currency)',
-            's.multicurrency_code' => 'GBP/USD etc... matches field "code_iso" in table "' . MAIN_DB_PREFIX . 'c_currencies"'
+            's.multicurrency_code' => 'GBP/USD etc... matches field "code_iso" in table "'.MAIN_DB_PREFIX.'c_currencies"'
         );
         $this->import_updatekeys_array[$r] = array(
             's.nom' => 'Name',
@@ -564,14 +569,14 @@ class modSociete extends DolibarrModules
 
         // Import list of contacts/additional addresses and attributes
         $r++;
-        $this->import_code[$r] = $this->rights_class . '_' . $r;
+        $this->import_code[$r] = $this->rights_class.'_'.$r;
         $this->import_label[$r] = 'ImportDataset_company_2';
         $this->import_icon[$r] = 'contact';
-        $this->import_entities_array[$r] = array('s.fk_soc' => 'company');    // We define here only fields that use a different icon than the one defined in import_icon
+        $this->import_entities_array[$r] = array('s.fk_soc' => 'company'); // We define here only fields that use a different icon than the one defined in import_icon
         $this->import_tables_array[$r] = array(
-            's' => MAIN_DB_PREFIX . 'socpeople',
-            'extra' => MAIN_DB_PREFIX . 'socpeople_extrafields'
-        );    // List of tables to insert into (insert done in same order)
+            's' => MAIN_DB_PREFIX.'socpeople',
+            'extra' => MAIN_DB_PREFIX.'socpeople_extrafields'
+        ); // List of tables to insert into (insert done in same order)
         $this->import_fields_array[$r] = array(//field order as per structure of table llx_socpeople
             's.datec' => "DateCreation",
             's.fk_soc' => 'ThirdPartyName',
@@ -581,7 +586,7 @@ class modSociete extends DolibarrModules
             's.address' => "Address",
             's.zip' => "Zip",
             's.town' => "Town",
-            's.fk_departement' => "StateId",
+            's.fk_departement' => "StateCode",
             's.fk_pays' => "CountryCode",
             's.birthday' => "BirthdayDate",
             's.poste' => "Role",
@@ -595,21 +600,21 @@ class modSociete extends DolibarrModules
             's.note_public' => "NotePublic"
         );
         // Add extra fields
-        $sql = "SELECT name, label, fieldrequired FROM " . MAIN_DB_PREFIX . "extrafields WHERE elementtype = 'socpeople' AND entity = " . $conf->entity;
+        $sql = "SELECT name, label, fieldrequired FROM ".MAIN_DB_PREFIX."extrafields WHERE elementtype = 'socpeople' AND entity IN (0, ".$conf->entity.")";
         $resql = $this->db->query($sql);
         if ($resql)    // This can fail when class is used on an old database (during a migration for example)
         {
             while ($obj = $this->db->fetch_object($resql)) {
-                $fieldname = 'extra.' . $obj->name;
+                $fieldname = 'extra.'.$obj->name;
                 $fieldlabel = ucfirst($obj->label);
-                $this->import_fields_array[$r][$fieldname] = $fieldlabel . ($obj->fieldrequired ? '*' : '');
+                $this->import_fields_array[$r][$fieldname] = $fieldlabel.($obj->fieldrequired ? '*' : '');
             }
         }
         // End add extra fields
         $this->import_fieldshidden_array[$r] = array(
             's.fk_user_creat' => 'user->id',
-            'extra.fk_object' => 'lastrowid-' . MAIN_DB_PREFIX . 'socpeople'
-        );    // aliastable.field => ('user->id' or 'lastrowid-'.tableparent)
+            'extra.fk_object' => 'lastrowid-'.MAIN_DB_PREFIX.'socpeople'
+        ); // aliastable.field => ('user->id' or 'lastrowid-'.tableparent)
         $this->import_convertvalue_array[$r] = array(
             's.fk_soc' => array(
                 'rule' => 'fetchidfromref',
@@ -639,17 +644,17 @@ class modSociete extends DolibarrModules
             's.datec' => '^[0-9][0-9][0-9][0-9]-[0-9][0-9]-[0-9][0-9]( [0-9][0-9]:[0-9][0-9]:[0-9][0-9])?$'
         );
         $this->import_examplevalues_array[$r] = array(//field order as per structure of table llx_socpeople
-            's.datec' => 'formatted as ' . dol_print_date(dol_now(), '%Y-%m-%d'),
+            's.datec' => 'formatted as '.dol_print_date(dol_now(), '%Y-%m-%d'),
             's.fk_soc' => 'Third Party name eg. TPBigCompany',
-            's.civility' => 'Title of civility eg: MR...matches field "code" in table "' . MAIN_DB_PREFIX . 'c_civility"',
+            's.civility' => 'Title of civility eg: MR...matches field "code" in table "'.MAIN_DB_PREFIX.'c_civility"',
             's.lastname' => "lastname or label",
             's.firstname' => 'John',
             's.address' => '61 Jump street',
             's.zip' => '75000',
             's.town' => 'Bigtown',
-            's.fk_departement' => 'matches field "code_departement" in table "' . MAIN_DB_PREFIX . 'c_departements"',
-            's.fk_pays' => 'US/FR/DE etc. matches field "code" in table "' . MAIN_DB_PREFIX . 'c_country"',
-            's.birthday' => 'formatted as ' . dol_print_date(dol_now(), '%Y-%m-%d'),
+            's.fk_departement' => 'matches field "code_departement" in table "'.MAIN_DB_PREFIX.'c_departements"',
+            's.fk_pays' => 'US/FR/DE etc. matches field "code" in table "'.MAIN_DB_PREFIX.'c_country"',
+            's.birthday' => 'formatted as '.dol_print_date(dol_now(), '%Y-%m-%d'),
             's.poste' => "Director",
             's.phone' => "5551122",
             's.phone_perso' => "5551133",
@@ -663,11 +668,11 @@ class modSociete extends DolibarrModules
 
         // Import Bank Accounts
         $r++;
-        $this->import_code[$r] = $this->rights_class . '_' . $r;
-        $this->import_label[$r] = "ImportDataset_company_3";    // Translation key
+        $this->import_code[$r] = $this->rights_class.'_'.$r;
+        $this->import_label[$r] = "ImportDataset_company_3"; // Translation key
         $this->import_icon[$r] = 'company';
-        $this->import_entities_array[$r] = array();        // We define here only fields that use a different icon to the one defined in import_icon
-        $this->import_tables_array[$r] = array('sr' => MAIN_DB_PREFIX . 'societe_rib');
+        $this->import_entities_array[$r] = array(); // We define here only fields that use a different icon to the one defined in import_icon
+        $this->import_tables_array[$r] = array('sr' => MAIN_DB_PREFIX.'societe_rib');
         $this->import_fields_array[$r] = array(//field order as per structure of table llx_societe_rib
             'sr.label' => "Label*",
             'sr.fk_soc' => "ThirdPartyName*",
@@ -682,7 +687,9 @@ class modSociete extends DolibarrModules
             'sr.domiciliation' => "BankAccountDomiciliation",
             'sr.proprio' => "BankAccountOwner",
             'sr.owner_address' => "BankAccountOwnerAddress",
-            'sr.default_rib' => 'Default'
+            'sr.default_rib' => 'Default',
+            'sr.rum' => 'RUM',
+			'sr.type' => "Type ban is defaut",
         );
 
         $this->import_convertvalue_array[$r] = array(
@@ -697,7 +704,7 @@ class modSociete extends DolibarrModules
         $this->import_examplevalues_array[$r] = array(//field order as per structure of table llx_societe_rib
             'sr.label' => 'eg. "account1"',
             'sr.fk_soc' => 'eg. "TPBigCompany"',
-            'sr.datec' => 'date used for creating direct debit UMR formatted as ' . dol_print_date(dol_now(),
+            'sr.datec' => 'date used for creating direct debit UMR formatted as '.dol_print_date(dol_now(),
                     '%Y-%m-%d'),
             'sr.bank' => 'bank name eg: "ING-Direct"',
             'sr.code_banque' => 'account sort code (GB)/Routing number (US) eg. "8456"',
@@ -709,23 +716,25 @@ class modSociete extends DolibarrModules
             'sr.domiciliation' => 'bank branch address eg. "PARIS"',
             'sr.proprio' => 'name on the bank account',
             'sr.owner_address' => 'address of account holder',
-            'sr.default_rib' => '1 (default account) / 0 (not default)'
+            'sr.default_rib' => '1 (default account) / 0 (not default)',
+            'sr.rum' => 'RUM code',
+			'sr.type' => 'ban',
         );
 
 		// Import Company Sales representatives
 		$r++;
-		$this->import_code[$r]=$this->rights_class.'_'.$r;
-		$this->import_label[$r]="ImportDataset_company_4";	// Translation key
-		$this->import_icon[$r]='company';
-		$this->import_entities_array[$r]=array('sr.fk_user'=>'user');		// We define here only fields that use another icon that the one defined into import_icon
-		$this->import_tables_array[$r]=array('sr'=>MAIN_DB_PREFIX.'societe_commerciaux');
-		$this->import_fields_array[$r]=array('sr.fk_soc'=>"ThirdPartyName*",'sr.fk_user'=>"User*");
+		$this->import_code[$r] = $this->rights_class.'_'.$r;
+		$this->import_label[$r] = "ImportDataset_company_4"; // Translation key
+		$this->import_icon[$r] = 'company';
+		$this->import_entities_array[$r] = array('sr.fk_user'=>'user'); // We define here only fields that use another icon that the one defined into import_icon
+		$this->import_tables_array[$r] = array('sr'=>MAIN_DB_PREFIX.'societe_commerciaux');
+		$this->import_fields_array[$r] = array('sr.fk_soc'=>"ThirdPartyName*", 'sr.fk_user'=>"User*");
 
-		$this->import_convertvalue_array[$r]=array(
-				'sr.fk_soc'=>array('rule'=>'fetchidfromref','classfile'=>'/societe/class/societe.class.php','class'=>'Societe','method'=>'fetch','element'=>'ThirdParty'),
-				'sr.fk_user'=>array('rule'=>'fetchidfromref','classfile'=>'/user/class/user.class.php','class'=>'User','method'=>'fetch','element'=>'User')
+		$this->import_convertvalue_array[$r] = array(
+				'sr.fk_soc'=>array('rule'=>'fetchidfromref', 'classfile'=>'/societe/class/societe.class.php', 'class'=>'Societe', 'method'=>'fetch', 'element'=>'ThirdParty'),
+				'sr.fk_user'=>array('rule'=>'fetchidfromref', 'classfile'=>'/user/class/user.class.php', 'class'=>'User', 'method'=>'fetch', 'element'=>'User')
 		);
-		$this->import_examplevalues_array[$r]=array('sr.fk_soc'=>"MyBigCompany",'sr.fk_user'=>"login");
+		$this->import_examplevalues_array[$r] = array('sr.fk_soc'=>"MyBigCompany", 'sr.fk_user'=>"login");
 	}
 
 
@@ -745,19 +754,19 @@ class modSociete extends DolibarrModules
 		//$this->remove($options);
 
 		//ODT template
-		$src=DOL_DOCUMENT_ROOT.'/install/doctemplates/thirdparties/template_thirdparty.odt';
-		$dirodt=DOL_DATA_ROOT.'/doctemplates/thirdparties';
-		$dest=$dirodt.'/template_thirdparty.odt';
+		$src = DOL_DOCUMENT_ROOT.'/install/doctemplates/thirdparties/template_thirdparty.odt';
+		$dirodt = DOL_DATA_ROOT.'/doctemplates/thirdparties';
+		$dest = $dirodt.'/template_thirdparty.odt';
 
-		if (file_exists($src) && ! file_exists($dest))
+		if (file_exists($src) && !file_exists($dest))
 		{
 			require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 			dol_mkdir($dirodt);
-			$result=dol_copy($src, $dest, 0, 0);
+			$result = dol_copy($src, $dest, 0, 0);
 			if ($result < 0)
 			{
 				$langs->load("errors");
-				$this->error=$langs->trans('ErrorFailToCopyFile', $src, $dest);
+				$this->error = $langs->trans('ErrorFailToCopyFile', $src, $dest);
 				return 0;
 			}
 		}

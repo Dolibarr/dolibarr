@@ -13,7 +13,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -32,28 +32,28 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
 require_once DOL_DOCUMENT_ROOT.'/product/stock/class/productlot.class.php';
 
 // Load translation files required by the page
-$langs->loadLangs(array('stock', 'other', 'productbatch'));
+$langs->loadLangs(array('stocks', 'other', 'productbatch'));
 
 // Get parameters
-$id			= GETPOST('id', 'int');
+$id = GETPOST('id', 'int');
 $action		= GETPOST('action', 'alpha');
 $backtopage = GETPOST('backtopage', 'alpha');
 $batch  	= GETPOST('batch', 'alpha');
 $productid  = GETPOST('productid', 'int');
-$ref        = GETPOST('ref', 'alpha');       // ref is productid_batch
+$ref        = GETPOST('ref', 'alpha'); // ref is productid_batch
 
-$search_entity=GETPOST('search_entity', 'int');
-$search_fk_product=GETPOST('search_fk_product', 'int');
-$search_batch=GETPOST('search_batch', 'alpha');
-$search_fk_user_creat=GETPOST('search_fk_user_creat', 'int');
-$search_fk_user_modif=GETPOST('search_fk_user_modif', 'int');
-$search_import_key=GETPOST('search_import_key', 'int');
+$search_entity = GETPOST('search_entity', 'int');
+$search_fk_product = GETPOST('search_fk_product', 'int');
+$search_batch = GETPOST('search_batch', 'alpha');
+$search_fk_user_creat = GETPOST('search_fk_user_creat', 'int');
+$search_fk_user_modif = GETPOST('search_fk_user_modif', 'int');
+$search_import_key = GETPOST('search_import_key', 'int');
 
-if (empty($action) && empty($id) && empty($ref)) $action='list';
+if (empty($action) && empty($id) && empty($ref)) $action = 'list';
 
 
 // Protection if external user
-if ($user->societe_id > 0)
+if ($user->socid > 0)
 {
     //accessforbidden();
 }
@@ -65,7 +65,7 @@ $extrafields = new ExtraFields($db);
 $formfile = new FormFile($db);
 
 // fetch optionals attributes and labels
-$extralabels = $extrafields->fetch_name_optionals_label($object->table_element);
+$extrafields->fetch_name_optionals_label($object->table_element);
 
 // Load object
 //include DOL_DOCUMENT_ROOT.'/core/actions_fetchobject.inc.php';  // Must be include, not include_once. Include fetch and fetch_thirdparty but not fetch_optionals
@@ -73,21 +73,21 @@ if ($id || $ref)
 {
     if ($ref)
     {
-        $tmp=explode('_', $ref);
-        $productid=$tmp[0];
-        $batch=$tmp[1];
+        $tmp = explode('_', $ref);
+        $productid = $tmp[0];
+        $batch = $tmp[1];
     }
 	$object->fetch($id, $productid, $batch);
 	$object->ref = $object->batch; // For document management ( it use $object->ref)
 }
 
 // Initialize technical object to manage hooks of modules. Note that conf->hooks_modules contains array array
-$hookmanager->initHooks(array('productlotcard','globalcard'));
+$hookmanager->initHooks(array('productlotcard', 'globalcard'));
 
 
-$permissionnote = $user->rights->stock->creer; 		// Used by the include of actions_setnotes.inc.php
-$permissiondellink = $user->rights->stock->creer; 	// Used by the include of actions_dellink.inc.php
-$permissionedit = $user->rights->stock->creer; 		// Used by the include of actions_lineupdown.inc.php
+$permissionnote = $user->rights->stock->creer; // Used by the include of actions_setnotes.inc.php
+$permissiondellink = $user->rights->stock->creer; // Used by the include of actions_dellink.inc.php
+$permissiontoadd = $user->rights->stock->creer; // Used by the include of actions_addupdatedelete.inc.php and actions_lineupdown.inc.php
 
 $usercanread = $user->rights->produit->lire;
 $usercancreate = $user->rights->produit->creer;
@@ -97,8 +97,8 @@ $usercandelete = $user->rights->produit->supprimer;
  * Actions
  */
 
-$parameters=array();
-$reshook=$hookmanager->executeHooks('doActions', $parameters, $object, $action);    // Note that $action and $object may have been modified by some hooks
+$parameters = array();
+$reshook = $hookmanager->executeHooks('doActions', $parameters, $object, $action); // Note that $action and $object may have been modified by some hooks
 if ($reshook < 0) setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
 
 if (empty($reshook))
@@ -112,7 +112,7 @@ if (empty($reshook))
 
 	if ($action == 'setsellby' && $user->rights->stock->creer)
 	{
-	    $newvalue=dol_mktime(12, 0, 0, $_POST['sellbymonth'], $_POST['sellbyday'], $_POST['sellbyyear']);
+	    $newvalue = dol_mktime(12, 0, 0, $_POST['sellbymonth'], $_POST['sellbyday'], $_POST['sellbyyear']);
 		$result = $object->setValueFrom('sellby', $newvalue, '', null, 'date', '', $user, 'PRODUCTLOT_MODIFY');
 		if ($result < 0) dol_print_error($db, $object->error);
 	}
@@ -122,11 +122,10 @@ if (empty($reshook))
     	$object->oldcopy = dol_clone($object);
 
     	// Fill array 'array_options' with data from update form
-        $extralabels = $extrafields->fetch_name_optionals_label($object->table_element);
-        $ret = $extrafields->setOptionalsFromPost($extralabels, $object, GETPOST('attribute', 'none'));
+        $ret = $extrafields->setOptionalsFromPost(null, $object, GETPOST('attribute', 'none'));
         if ($ret < 0) $error++;
 
-        if (! $error)
+        if (!$error)
         {
             // Actions on extra fields
             $result = $object->insertExtraFields('PRODUCT_LOT_MODIFY');
@@ -146,21 +145,21 @@ if (empty($reshook))
 	{
 		if (GETPOST('cancel', 'alpha'))
 		{
-			$urltogo=$backtopage?$backtopage:dol_buildpath('/stock/list.php', 1);
+			$urltogo = $backtopage ? $backtopage : dol_buildpath('/stock/list.php', 1);
 			header("Location: ".$urltogo);
 			exit;
 		}
 
-		$error=0;
+		$error = 0;
 
 		/* object_prop_getpost_prop */
 
-    	$object->entity=GETPOST('entity', 'int');
-    	$object->fk_product=GETPOST('fk_product', 'int');
-    	$object->batch=GETPOST('batch', 'alpha');
-    	$object->fk_user_creat=GETPOST('fk_user_creat', 'int');
-    	$object->fk_user_modif=GETPOST('fk_user_modif', 'int');
-    	$object->import_key=GETPOST('import_key', 'int');
+    	$object->entity = GETPOST('entity', 'int');
+    	$object->fk_product = GETPOST('fk_product', 'int');
+    	$object->batch = GETPOST('batch', 'alpha');
+    	$object->fk_user_creat = GETPOST('fk_user_creat', 'int');
+    	$object->fk_user_modif = GETPOST('fk_user_modif', 'int');
+    	$object->import_key = GETPOST('import_key', 'int');
 
 		if (empty($object->ref))
 		{
@@ -168,43 +167,43 @@ if (empty($reshook))
 			setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Ref")), null, 'errors');
 		}
 
-		if (! $error)
+		if (!$error)
 		{
-			$result=$object->create($user);
+			$result = $object->create($user);
 			if ($result > 0)
 			{
 				// Creation OK
-				$urltogo=$backtopage?$backtopage:dol_buildpath('/stock/list.php', 1);
+				$urltogo = $backtopage ? $backtopage : dol_buildpath('/stock/list.php', 1);
 				header("Location: ".$urltogo);
 				exit;
 			}
 			{
 				// Creation KO
-				if (! empty($object->errors)) setEventMessages(null, $object->errors, 'errors');
-				else  setEventMessages($object->error, null, 'errors');
-				$action='create';
+				if (!empty($object->errors)) setEventMessages(null, $object->errors, 'errors');
+			else  setEventMessages($object->error, null, 'errors');
+				$action = 'create';
 			}
 		}
 		else
 		{
-			$action='create';
+			$action = 'create';
 		}
 	}
 
 	// Cancel
-	if ($action == 'update' && GETPOST('cancel', 'alpha')) $action='view';
+	if ($action == 'update' && GETPOST('cancel', 'alpha')) $action = 'view';
 
 	// Action to update record
-	if ($action == 'update' && ! GETPOST('cancel', 'alpha'))
+	if ($action == 'update' && !GETPOST('cancel', 'alpha'))
 	{
-		$error=0;
+		$error = 0;
 
-    	$object->entity=GETPOST('entity', 'int');
-    	$object->fk_product=GETPOST('fk_product', 'int');
-    	$object->batch=GETPOST('batch', 'alpha');
-    	$object->fk_user_creat=GETPOST('fk_user_creat', 'int');
-    	$object->fk_user_modif=GETPOST('fk_user_modif', 'int');
-    	$object->import_key=GETPOST('import_key', 'int');
+    	$object->entity = GETPOST('entity', 'int');
+    	$object->fk_product = GETPOST('fk_product', 'int');
+    	$object->batch = GETPOST('batch', 'alpha');
+    	$object->fk_user_creat = GETPOST('fk_user_creat', 'int');
+    	$object->fk_user_modif = GETPOST('fk_user_modif', 'int');
+    	$object->import_key = GETPOST('import_key', 'int');
 
 		if (empty($object->ref))
 		{
@@ -212,31 +211,31 @@ if (empty($reshook))
 			setEventMessages($langs->transnoentitiesnoconv("ErrorFieldRequired", $langs->transnoentitiesnoconv("Ref")), null, 'errors');
 		}
 
-		if (! $error)
+		if (!$error)
 		{
-			$result=$object->update($user);
+			$result = $object->update($user);
 			if ($result > 0)
 			{
-				$action='view';
+				$action = 'view';
 			}
 			else
 			{
 				// Creation KO
-				if (! empty($object->errors)) setEventMessages(null, $object->errors, 'errors');
+				if (!empty($object->errors)) setEventMessages(null, $object->errors, 'errors');
 				else setEventMessages($object->error, null, 'errors');
-				$action='edit';
+				$action = 'edit';
 			}
 		}
 		else
 		{
-			$action='edit';
+			$action = 'edit';
 		}
 	}
 
 	// Action to delete
 	if ($action == 'confirm_delete')
 	{
-		$result=$object->delete($user);
+		$result = $object->delete($user);
 		if ($result > 0)
 		{
 			// Delete OK
@@ -246,14 +245,14 @@ if (empty($reshook))
 		}
 		else
 		{
-			if (! empty($object->errors)) setEventMessages(null, $object->errors, 'errors');
+			if (!empty($object->errors)) setEventMessages(null, $object->errors, 'errors');
 			else setEventMessages($object->error, null, 'errors');
 		}
 	}
 
 	// Actions to build doc
     $upload_dir = $conf->productbatch->multidir_output[$conf->entity];
-    $permissioncreate = $usercancreate;
+    $permissiontoadd = $usercancreate;
     include DOL_DOCUMENT_ROOT.'/core/actions_builddoc.inc.php';
 }
 
@@ -266,7 +265,7 @@ if (empty($reshook))
 
 llxHeader('', 'ProductLot', '');
 
-$form=new Form($db);
+$form = new Form($db);
 
 
 // Part to create
@@ -311,15 +310,15 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 
 
 	if ($action == 'delete') {
-		$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"] . '?id=' . $object->id, $langs->trans('DeleteBatch'), $langs->trans('ConfirmDeleteBatch'), 'confirm_delete', '', 0, 1);
+		$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"].'?id='.$object->id, $langs->trans('DeleteBatch'), $langs->trans('ConfirmDeleteBatch'), 'confirm_delete', '', 0, 1);
 		print $formconfirm;
 	}
 
 
-	$linkback = '<a href="' . DOL_URL_ROOT . '/product/stock/productlot_list.php?restore_lastsearch_values=1">' . $langs->trans("BackToList") . '</a>';
+	$linkback = '<a href="'.DOL_URL_ROOT.'/product/stock/productlot_list.php?restore_lastsearch_values=1">'.$langs->trans("BackToList").'</a>';
 
     $shownav = 1;
-    if ($user->societe_id && ! in_array('batch', explode(',', $conf->global->MAIN_MODULES_FOR_EXTERNAL))) $shownav=0;
+    if ($user->socid && !in_array('batch', explode(',', $conf->global->MAIN_MODULES_FOR_EXTERNAL))) $shownav = 0;
 
 	dol_banner_tab($object, 'id', $linkback, $shownav, 'rowid', 'batch');
 
@@ -337,23 +336,23 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 
     // Eat by
     print '<tr><td>';
-    print $form->editfieldkey($langs->trans('Eatby'), 'eatby', $object->eatby, $object, $user->rights->stock->creer, 'datepicker');
+    print $form->editfieldkey($langs->trans('EatByDate'), 'eatby', $object->eatby, $object, $user->rights->stock->creer, 'datepicker');
     print '</td><td>';
-    print $form->editfieldval($langs->trans('Eatby'), 'eatby', $object->eatby, $object, $user->rights->stock->creer, 'datepicker');
+    print $form->editfieldval($langs->trans('EatByDate'), 'eatby', $object->eatby, $object, $user->rights->stock->creer, 'datepicker');
     print '</td>';
     print '</tr>';
 
     // Sell by
     print '<tr><td>';
-    print $form->editfieldkey($langs->trans('Sellby'), 'sellby', $object->sellby, $object, $user->rights->stock->creer, 'datepicker');
+    print $form->editfieldkey($langs->trans('SellByDate'), 'sellby', $object->sellby, $object, $user->rights->stock->creer, 'datepicker');
     print '</td><td>';
-    print $form->editfieldval($langs->trans('Sellby'), 'sellby', $object->sellby, $object, $user->rights->stock->creer, 'datepicker');
+    print $form->editfieldval($langs->trans('SellByDate'), 'sellby', $object->sellby, $object, $user->rights->stock->creer, 'datepicker');
     print '</td>';
     print '</tr>';
 
     // Other attributes
     $cols = 2;
-    include DOL_DOCUMENT_ROOT . '/core/tpl/extrafields_view.tpl.php';
+    include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_view.tpl.php';
 
 	print '</table>';
 
@@ -364,13 +363,13 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 
 	// Buttons
 	print '<div class="tabsAction">'."\n";
-	$parameters=array();
-	$reshook=$hookmanager->executeHooks('addMoreActionsButtons', $parameters, $object, $action);    // Note that $action and $object may have been modified by hook
+	$parameters = array();
+	$reshook = $hookmanager->executeHooks('addMoreActionsButtons', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
 	if ($reshook < 0) setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
 
 	if (empty($reshook))
 	{
-/*TODO 		if ($user->rights->stock->lire)
+		/*TODO      if ($user->rights->stock->lire)
 		{
 			print '<div class="inline-block divButAction"><a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=edit">'.$langs->trans("Modify").'</a></div>'."\n";
 		}
@@ -379,7 +378,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 		{
 			print '<div class="inline-block divButAction"><a class="butActionDelete" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=delete">'.$langs->trans('Delete').'</a></div>'."\n";
 		}
-*/
+		*/
 	}
 	print '</div>'."\n";
 
@@ -404,12 +403,12 @@ if (empty($action))
 
     // Documents
 	$filedir = $conf->productbatch->multidir_output[$object->entity].'/'.get_exdir(0, 0, 0, 0, $object, 'product_batch').dol_sanitizeFileName($object->ref);
-    $urlsource=$_SERVER["PHP_SELF"]."?id=".$object->id;
-    $genallowed=$usercanread;
-    $delallowed=$usercancreate;
+    $urlsource = $_SERVER["PHP_SELF"]."?id=".$object->id;
+    $genallowed = $usercanread;
+    $delallowed = $usercancreate;
 
     print $formfile->showdocuments('product_batch', dol_sanitizeFileName($object->ref), $filedir, $urlsource, $genallowed, $delallowed, '', 0, 0, 0, 28, 0, '', 0, '', $object->default_lang, '', $object);
-    $somethingshown=$formfile->numoffiles;
+    $somethingshown = $formfile->numoffiles;
 
     print '</div>';
 }

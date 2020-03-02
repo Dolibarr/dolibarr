@@ -28,7 +28,7 @@ AliasNames=سایر اسامی (نام تجاری، علامت‌تجاری و �
 AliasNameShort=سایر اسامی
 Companies=شرکت
 CountryIsInEEC=کشور مربوطه داخل جامعۀ اقتصادی اروپاست
-PriceFormatInCurrentLanguage=شکل مبالغ در زبان کنونی
+PriceFormatInCurrentLanguage=چگونگی نمایش قیمت در زبان و واحدپولی فعلی
 ThirdPartyName=نام شخص‌سوم
 ThirdPartyEmail=رایانامۀ شخص‌سوم
 ThirdParty=شخص‌سوم
@@ -54,8 +54,10 @@ Firstname=نام
 PostOrFunction=مرتبۀ شغلی
 UserTitle=عنوان
 NatureOfThirdParty=طبیعت شخص‌سوم
+NatureOfContact=Nature of Contact
 Address=نشانی
 State=ایالت / استان
+StateCode=State/Province code
 StateShort=استان
 Region=منطقه
 Region-State=منطقه - استان
@@ -95,8 +97,6 @@ LocalTax1IsNotUsedES= RE استفاده نمی‌شود
 LocalTax2IsUsed=استفاده از مالیات سوم
 LocalTax2IsUsedES= IRPF استفاده شده است
 LocalTax2IsNotUsedES= IRPF استفاده نمی شود
-LocalTax1ES=RE
-LocalTax2ES=IRPF
 WrongCustomerCode=کد مشتری نامعتبر است
 WrongSupplierCode=کد فروشنده نامعتبر است
 CustomerCodeModel=شکل کد مشتری
@@ -247,6 +247,12 @@ ProfId3US=-
 ProfId4US=-
 ProfId5US=-
 ProfId6US=-
+ProfId1RO=Prof Id 1 (CUI)
+ProfId2RO=Prof Id 2 (Nr. Înmatriculare)
+ProfId3RO=Prof Id 3 (CAEN)
+ProfId4RO=-
+ProfId5RO=Prof Id 5 (EUID)
+ProfId6RO=-
 ProfId1RU=شناسۀ کاری 1 (OGRN)
 ProfId2RU=شناسۀ کاری 2 (INN)
 ProfId3RU=شناسۀ کاری 3 (KPP)
@@ -287,6 +293,7 @@ SupplierAbsoluteDiscountAllUsers=تخفیف مطلق فروشندگان(وارد
 SupplierAbsoluteDiscountMy=تخفیف مطلق فروشندگان(واردشدۀ خودشما)
 DiscountNone=هیچ‌یک
 Vendor=فروشنده
+Supplier=فروشنده
 AddContact=ساخت طرف‌تماس
 AddContactAddress=ساخت طرف‌تماس/نشانی
 EditContact=ویرایش طرف‌تماس
@@ -298,6 +305,7 @@ FromContactName=نام:
 NoContactDefinedForThirdParty=طرف‌تماسی برای این شخص‌سوم تعریف نشده است
 NoContactDefined=طرف‌تماسی تعریف نشده است
 DefaultContact=طرف‌تماس/نشانی پیش‌فرض
+ContactByDefaultFor=Default contact/address for
 AddThirdParty=ساخت شخص‌سوم
 DeleteACompany=حذف یک شرکت
 PersonalInformations=اطلاعات شخصی
@@ -337,7 +345,7 @@ MyContacts=طرف‌تماس‌های من
 Capital=سرمایه
 CapitalOf=سرمایۀ %s
 EditCompany=ویرایش شرکت
-ThisUserIsNot=این کاربر یک مشتری‌احتمالی، مشتری یا فروشنده نیست
+ThisUserIsNot=This user is not a prospect, customer or vendor
 VATIntraCheck=چک
 VATIntraCheckDesc=شناسۀ م‌.ب.ا.ا. باید با پیش‌وند کشور بیاید. پیوند <b>%s</b> از خدمات European VAT checker service (VIES) استفاده می‌کند که نیاز به اتصال اینترنتی از سرور Dolibarr دارد
 VATIntraCheckURL=http://ec.europa.eu/taxation_customs/vies/vieshome.do
@@ -404,6 +412,13 @@ AllocateCommercial=به‌عنوان نمایندۀ فروش نسبت‌داده
 Organization=سازمان
 FiscalYearInformation=سال مالی
 FiscalMonthStart=ماه شروع سال مالی
+SocialNetworksInformation=Social networks
+SocialNetworksFacebookURL=Facebook URL
+SocialNetworksTwitterURL=Twitter URL
+SocialNetworksLinkedinURL=Linkedin URL
+SocialNetworksInstagramURL=Instagram URL
+SocialNetworksYoutubeURL=Youtube URL
+SocialNetworksGithubURL=Github URL
 YouMustAssignUserMailFirst=برای این‌که بتوانید به این کاربر یادآورندۀ از طریق رایانامه بفرستید شما باید برای این کاربر یک رایانامه بسازید
 YouMustCreateContactFirst=برای افزودن یادآورنده از طریق رایانامه، شما ابتدا باید برای این شخص سوم طرف‌تماس با رایانامۀ معتبر بسازید
 ListSuppliersShort=فهرست فروشندگان
@@ -437,5 +452,6 @@ PaymentTypeCustomer=نوع پرداخت - مشتری
 PaymentTermsCustomer=شرایط پرداخت - مشتری
 PaymentTypeSupplier=نوع پرداخت - فروشنده
 PaymentTermsSupplier=شرایط پرداخت - فروشنده
+PaymentTypeBoth=Payment Type - Customer and Vendor
 MulticurrencyUsed=استفادۀ چند‌واحدپولی
 MulticurrencyCurrency=واحد‌پولی

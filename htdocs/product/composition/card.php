@@ -18,7 +18,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -45,7 +45,7 @@ $key=GETPOST('key');
 $parent=GETPOST('parent');
 
 // Security check
-if (! empty($user->societe_id)) $socid=$user->societe_id;
+if (! empty($user->socid)) $socid=$user->socid;
 $fieldvalue = (! empty($id) ? $id : (! empty($ref) ? $ref : ''));
 $fieldtype = (! empty($ref) ? 'ref' : 'rowid');
 $result=restrictedArea($user, 'produit|service', $fieldvalue, 'product&product', '', '', $fieldtype);
@@ -205,7 +205,7 @@ if ($id > 0 || ! empty($ref))
         $linkback = '<a href="'.DOL_URL_ROOT.'/product/list.php?restore_lastsearch_values=1">'.$langs->trans("BackToList").'</a>';
 
         $shownav = 1;
-        if ($user->societe_id && ! in_array('product', explode(',', $conf->global->MAIN_MODULES_FOR_EXTERNAL))) $shownav=0;
+        if ($user->socid && ! in_array('product', explode(',', $conf->global->MAIN_MODULES_FOR_EXTERNAL))) $shownav=0;
 
         dol_banner_tab($object, 'ref', $linkback, $shownav, 'ref', '', '', '', 0, '', '', 0);
 
@@ -499,7 +499,7 @@ if ($id > 0 || ! empty($ref))
 			print '<input type="hidden" name="action" value="search">';
 			print '<input type="hidden" name="id" value="'.$id.'">';
 			print '<div class="inline-block">';
-			print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+			print '<input type="hidden" name="token" value="'.newToken().'">';
 			print $langs->trans("KeywordFilter").': ';
 			print '<input type="text" name="key" value="'.$key.'"> &nbsp; ';
 			print '</div>';
@@ -522,7 +522,7 @@ if ($id > 0 || ! empty($ref))
 		{
 			print '<br>';
 			print '<form action="'.DOL_URL_ROOT.'/product/composition/card.php?id='.$id.'" method="post">';
-			print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+			print '<input type="hidden" name="token" value="'.newToken().'">';
 			print '<input type="hidden" name="action" value="add_prod">';
 			print '<input type="hidden" name="id" value="'.$id.'">';
 			print '<table class="noborder centpercent">';

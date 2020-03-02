@@ -3,6 +3,10 @@ README (English)
 This directory contains unit tests and docs for Dolibarr quality analysis.
 
 
+- PHPUnit          -  https://phpunit.de
+- PHP_CodeSniffer  -  https://pear.php.net/package/PHP_CodeSniffer/ 
+- PHP Depend       -  https://pdepend.org/ 
+
 
 PHPUNIT
 -------

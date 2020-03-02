@@ -96,6 +96,8 @@ ALTER TABLE llx_adherent ADD gender VARCHAR(10);
 ALTER TABLE llx_adherent_type ADD morphy VARCHAR(3);
 ALTER TABLE llx_subscription ADD fk_type integer;
 
+UPDATE llx_subscription as s SET fk_type = (SELECT fk_adherent_type FROM llx_adherent as a where a.rowid = s.fk_adherent) where fk_type IS NULL;
+
 -- Add url_id into unique index of bank_url
 ALTER TABLE llx_bank_url DROP INDEX uk_bank_url;
 ALTER TABLE llx_bank_url ADD UNIQUE INDEX uk_bank_url (fk_bank, url_id, type);
@@ -176,14 +178,14 @@ INSERT INTO llx_c_units (code, scale, label, short_label, unit_type, active) VAL
 INSERT INTO llx_c_units (code, scale, label, short_label, unit_type, active) VALUES ('Y','31557600','year','y', 'time', 1);
 
 UPDATE llx_c_units SET short_label = 'i' WHERE code = 'MI';
-UPDATE llx_c_units SET unit_type = 'weight', short_label = 'kg' WHERE code = 'KG';
-UPDATE llx_c_units SET unit_type = 'weight', short_label = 'g' WHERE code = 'G';
+UPDATE llx_c_units SET unit_type = 'weight', short_label = 'kg', scale = 0 WHERE code = 'KG';
+UPDATE llx_c_units SET unit_type = 'weight', short_label = 'g', scale = -3 WHERE code = 'G';
 UPDATE llx_c_units SET unit_type = 'time' WHERE code IN ('S','H','D');
 UPDATE llx_c_units SET unit_type = 'size' WHERE code IN ('M','LM');
-UPDATE llx_c_units SET label = 'SizeUnitm' WHERE code IN ('M');
-UPDATE llx_c_units SET active = 0 WHERE code IN ('LM');
-UPDATE llx_c_units SET unit_type = 'surface' WHERE code IN ('M2');
-UPDATE llx_c_units SET unit_type = 'volume' WHERE code IN ('M3','L');
+UPDATE llx_c_units SET label = 'SizeUnitm', scale = 0 WHERE code IN ('M');
+UPDATE llx_c_units SET active = 0, scale = 0 WHERE code IN ('LM');
+UPDATE llx_c_units SET unit_type = 'surface', scale = 0 WHERE code IN ('M2');
+UPDATE llx_c_units SET unit_type = 'volume', scale = 0 WHERE code IN ('M3','L');
 UPDATE llx_c_units SET scale = -3, active = 0 WHERE code IN ('L');
 UPDATE llx_c_units SET label = 'VolumeUnitm3' WHERE code IN ('M3');
 UPDATE llx_c_units SET label = 'SurfaceUnitm2' WHERE code IN ('M2');
@@ -204,6 +206,9 @@ ALTER TABLE llx_user ADD COLUMN linkedin  varchar(255) after whatsapp;
 
 ALTER TABLE llx_expensereport_det ADD COLUMN fk_ecm_files integer DEFAULT NULL;
 
+ALTER TABLE llx_expensereport ADD COLUMN paid smallint default 0 NOT NULL;
+UPDATE llx_expensereport set paid = 1 WHERE fk_statut = 6 and paid = 0;
+
 
 CREATE TABLE llx_bom_bom(
 	-- BEGIN MODULEBUILDER FIELDS
@@ -214,17 +219,17 @@ CREATE TABLE llx_bom_bom(
 	description text, 
 	note_public text, 
 	note_private text, 
-	fk_product integer, 
+	fk_product integer,
 	qty double(24,8),
 	efficiency double(8,4),
-	date_creation datetime NOT NULL, 
-	tms timestamp, 
+	date_creation datetime NOT NULL,
+	tms timestamp,
 	date_valid datetime, 
 	fk_user_creat integer NOT NULL, 
 	fk_user_modif integer, 
 	fk_user_valid integer, 
 	import_key varchar(14), 
-	status integer NOT NULL 
+	status integer NOT NULL
 	-- END MODULEBUILDER FIELDS
 ) ENGINE=innodb;
 
@@ -243,19 +248,20 @@ create table llx_bom_bom_extrafields
 CREATE TABLE llx_bom_bomline(
 	-- BEGIN MODULEBUILDER FIELDS
 	rowid integer AUTO_INCREMENT PRIMARY KEY NOT NULL, 
-	fk_bom integer NOT NULL, 
+	fk_bom integer NOT NULL,
 	fk_product integer NOT NULL,
-	fk_bom_child integer NULL, 
-	description text, 
+	fk_bom_child integer NULL,
+	description text,
 	import_key varchar(14), 
-	qty double(24,8) NOT NULL, 
+	qty double(24,8) NOT NULL,
 	efficiency double(8,4) NOT NULL DEFAULT 1,
-	rank integer NOT NULL
+	position integer NOT NULL
 	-- END MODULEBUILDER FIELDS
 ) ENGINE=innodb;
 
 ALTER TABLE llx_bom_bomline ADD COLUMN efficiency double(8,4) DEFAULT 1;
 ALTER TABLE llx_bom_bomline ADD COLUMN fk_bom_child integer NULL;
+ALTER TABLE llx_bom_bomline ADD COLUMN position integer NOT NULL;
 
 create table llx_bom_bomline_extrafields
 (
@@ -322,6 +328,9 @@ UPDATE llx_c_shipment_mode SET label = 'https://www.laposte.fr/outils/suivre-vos
 UPDATE llx_c_shipment_mode SET label = 'https://www.laposte.fr/outils/suivre-vos-envois?code={TRACKID}' WHERE code IN ('LETTREMAX');
 
 
+-- VMYSQL4.3 ALTER TABLE llx_holiday MODIFY COLUMN ref varchar(30) NULL;
+-- VPGSQL8.2 ALTER TABLE llx_holiday ALTER COLUMN ref DROP NOT NULL;
+
 
 create table llx_reception
 (
@@ -331,23 +340,23 @@ create table llx_reception
   entity                integer  DEFAULT 1 NOT NULL,	-- multi company id
   fk_soc                integer            NOT NULL,
   fk_projet  		integer  DEFAULT NULL,
-  
+
   ref_ext               varchar(30),					-- reference into an external system (not used by dolibarr)
   ref_int				varchar(30),					-- reference into an internal system (used by dolibarr to store extern id like paypal info)
   ref_supplier          varchar(30),					-- customer number
-  
+
   date_creation         datetime,						-- date de creation
   fk_user_author        integer,						-- author of creation
   fk_user_modif         integer,						-- author of last change
   date_valid            datetime,						-- date de validation
   fk_user_valid         integer,						-- valideur
   date_delivery			datetime	DEFAULT NULL,		-- date planned of delivery
-  date_reception       datetime,						
+  date_reception       datetime,
   fk_shipping_method    integer,
   tracking_number       varchar(50),
   fk_statut             smallint	DEFAULT 0,			-- 0 = draft, 1 = validated, 2 = billed or closed depending on WORKFLOW_BILL_ON_SHIPMENT option
   billed                smallint    DEFAULT 0,
-  
+
   height                float,							-- height
   width                 float,							-- with
   size_units            integer,						-- unit of all sizes (height, width, depth)
@@ -359,7 +368,7 @@ create table llx_reception
   model_pdf             varchar(255),
   fk_incoterms          integer,						-- for incoterms
   location_incoterms    varchar(255),					-- for incoterms
-  
+
   import_key			varchar(14),
   extraparams			varchar(255)							-- for other parameters with json format
 )ENGINE=innodb;
@@ -392,3 +401,9 @@ insert into llx_c_type_contact(rowid, element, source, code, libelle, active ) v
 insert into llx_c_type_contact(rowid, element, source, code, libelle, active ) values (113, 'supplier_proposal', 'external', 'SERVICE',       'Contact fournisseur prestation', 1);
 
 ALTER TABLE llx_ticket_extrafields ADD INDEX idx_ticket_extrafields (fk_object);
+
+-- Use special_code=3 in Takepos
+-- VMYSQL4.1 UPDATE llx_facturedet AS fd LEFT JOIN llx_facture AS f ON f.rowid = fd.fk_facture SET fd.special_code = 4 WHERE f.module_source = 'takepos' AND fd.special_code = 3;
+
+UPDATE llx_website_page set fk_user_creat = fk_user_modif WHERE fk_user_creat IS NULL and fk_user_modif IS NOT NULL;
+

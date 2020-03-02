@@ -13,7 +13,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -33,7 +33,7 @@ require_once DOL_DOCUMENT_ROOT.'/multicurrency/class/multicurrency.class.php';
 $langs->loadLangs(array('admin', 'multicurrency'));
 
 // Access control
-if (! $user->admin) {
+if (!$user->admin) {
     accessforbidden();
 }
 
@@ -48,8 +48,8 @@ $action = GETPOST('action', 'alpha');
 
 if (preg_match('/set_([a-z0-9_\-]+)/i', $action, $reg))
 {
-	$code=$reg[1];
-	$value=GETPOST($code, 'alpha');
+	$code = $reg[1];
+	$value = GETPOST($code, 'alpha');
 	if (dolibarr_set_const($db, $code, $value, 'chaine', 0, '', $conf->entity) > 0)
 	{
         setEventMessages($langs->trans("SetupSaved"), null, 'mesgs');
@@ -62,7 +62,7 @@ if (preg_match('/set_([a-z0-9_\-]+)/i', $action, $reg))
 
 if (preg_match('/del_([a-z0-9_\-]+)/i', $action, $reg))
 {
-	$code=$reg[1];
+	$code = $reg[1];
 	if (dolibarr_del_const($db, $code, 0) > 0)
 	{
         setEventMessages($langs->trans("SetupSaved"), null, 'mesgs');
@@ -75,7 +75,7 @@ if (preg_match('/del_([a-z0-9_\-]+)/i', $action, $reg))
 
 if ($action == 'add_currency')
 {
-	$error=0;
+	$error = 0;
 
 	$langs->loadCacheCurrencies('');
 
@@ -90,7 +90,7 @@ if ($action == 'add_currency')
 		setEventMessages($langs->trans('ErrorFieldRequired', $langs->transnoentitiesnoconv("Rate")), null, 'errors');
 		$error++;
 	}
-	if (! $error)
+	if (!$error)
 	{
 		if ($currency->create($user) > 0)
 		{
@@ -115,12 +115,12 @@ elseif ($action == 'update_currency')
 			setEventMessages($langs->trans('ErrorFieldRequired', $langs->transnoentitiesnoconv("Rate")), null, 'errors');
 			$error++;
 		}
-		if (! $error)
+		if (!$error)
 		{
 			if ($currency->fetch($fk_multicurrency) > 0)
 			{
-				$result=$currency->updateRate($rate);
-				if ($result<0) {
+				$result = $currency->updateRate($rate);
+				if ($result < 0) {
 					setEventMessages(null, $currency->errors, 'errors');
 				}
 			}
@@ -171,14 +171,14 @@ if ($resql)
  * View
  */
 
-$form=new Form($db);
+$form = new Form($db);
 
 $page_name = "MultiCurrencySetup";
 
 llxHeader('', $langs->trans($page_name));
 
 // Subheader
-$linkback = '<a href="' . DOL_URL_ROOT . '/admin/modules.php?restore_lastsearch_values=1">' . $langs->trans("BackToModuleList") . '</a>';
+$linkback = '<a href="'.DOL_URL_ROOT.'/admin/modules.php?restore_lastsearch_values=1">'.$langs->trans("BackToModuleList").'</a>';
 print load_fiche_titre($langs->trans($page_name), $linkback);
 
 // Configuration header
@@ -186,15 +186,15 @@ $head = multicurrencyAdminPrepareHead();
 dol_fiche_head($head, 'settings', $langs->trans("ModuleSetup"), -1, "multicurrency");
 
 
-print '<table class="noborder" width="100%">';
+print '<table class="noborder centpercent">';
 print '<tr class="liste_titre">';
 print '<td>'.$langs->trans("Parameters").'</td>'."\n";
-print '<td align="center">'.$langs->trans("Status").'</td>'."\n";
+print '<td class="center">'.$langs->trans("Status").'</td>'."\n";
 print '</tr>';
 
 print '<tr class="oddeven">';
 print '<td>'.$langs->transnoentitiesnoconv("MULTICURRENCY_USE_RATE_ON_DOCUMENT_DATE").'</td>';
-print '<td align="center">';
+print '<td class="center">';
 if ($conf->use_javascript_ajax) {
     print ajax_constantonoff('MULTICURRENCY_USE_RATE_ON_DOCUMENT_DATE');
 } else {
@@ -206,7 +206,7 @@ print '</td></tr>';
 
 print '<tr class="oddeven">';
 print '<td>'.$langs->transnoentitiesnoconv("multicurrency_useOriginTx").'</td>';
-print '<td align="center">';
+print '<td class="center">';
 if ($conf->use_javascript_ajax) {
     print ajax_constantonoff('MULTICURRENCY_USE_ORIGIN_TX');
 } else {
@@ -220,7 +220,7 @@ if ($conf->global->MAIN_FEATURES_LEVEL >= 2)
 {
     print '<tr class="oddeven">';
     print '<td>'.$langs->transnoentitiesnoconv("MULTICURRENCY_USE_CURRENCY_ON_DOCUMENT").'</td>';
-    print '<td align="center">';
+    print '<td class="center">';
     if ($conf->use_javascript_ajax) {
         print ajax_constantonoff('MULTICURRENCY_USE_CURRENCY_ON_DOCUMENT');
     } else {
@@ -236,7 +236,7 @@ print '<tr class="oddeven">';
 print '<td>'.$langs->transnoentitiesnoconv("multicurrency_buyPriceInCurrency").'</td>';
 print '<td class="right">';
 print '<form method="POST" action="'.$_SERVER['PHP_SELF'].'">';
-print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+print '<input type="hidden" name="token" value="'.newToken().'">';
 print '<input type="hidden" name="action" value="set_MULTICURRENCY_BUY_PRICE_IN_CURRENCY">';
 print $form->selectyesno("MULTICURRENCY_BUY_PRICE_IN_CURRENCY",$conf->global->MULTICURRENCY_BUY_PRICE_IN_CURRENCY,1);
 print '<input type="submit" class="button" value="'.$langs->trans("Modify").'">';
@@ -250,7 +250,7 @@ print '<tr class="oddeven">';
 print '<td>'.$langs->transnoentitiesnoconv("multicurrency_modifyRateApplication").'</td>';
 print '<td class="right">';
 print '<form method="POST" action="'.$_SERVER['PHP_SELF'].'">';
-print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+print '<input type="hidden" name="token" value="'.newToken().'">';
 print '<input type="hidden" name="action" value="set_MULTICURRENCY_MODIFY_RATE_APPLICATION">';
 print $form->selectarray('MULTICURRENCY_MODIFY_RATE_APPLICATION', array('PU_DOLIBARR' => 'PU_DOLIBARR', 'PU_CURRENCY' => 'PU_CURRENCY'), $conf->global->MULTICURRENCY_MODIFY_RATE_APPLICATION);
 print '<input type="submit" class="button" value="'.$langs->trans("Modify").'">';
@@ -266,13 +266,13 @@ print '<br>';
 if (!empty($conf->global->MAIN_MULTICURRENCY_ALLOW_SYNCHRONIZATION))
 {
     print '<form method="POST" action="'.$_SERVER['PHP_SELF'].'" id="form_sync">';
-    print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+    print '<input type="hidden" name="token" value="'.newToken().'">';
     print '<input type="hidden" name="action" value="setapilayer">';
 
 	print '<div class="div-table-responsive-no-min">';
-	print '<table class="noborder" width="100%">';
+	print '<table class="noborder centpercent">';
 
-	$urlforapilayer='https://currencylayer.com';   //https://apilayer.net
+	$urlforapilayer = 'https://currencylayer.com'; //https://apilayer.net
 
 	print '<tr class="liste_titre">';
 	print '<td>'.$form->textwithpicto($langs->trans("CurrencyLayerAccount"), $langs->trans("CurrencyLayerAccount_help_to_synchronize", $urlforapilayer)).'</td>'."\n";
@@ -309,15 +309,15 @@ if (!empty($conf->global->MAIN_MULTICURRENCY_ALLOW_SYNCHRONIZATION))
 }
 
 print '<div class="div-table-responsive-no-min">';
-print '<table class="noborder" width="100%">';
+print '<table class="noborder centpercent">';
 
 print '<tr class="liste_titre">';
 print '<td>'.$form->textwithpicto($langs->trans("CurrenciesUsed"), $langs->transnoentitiesnoconv("CurrenciesUsed_help_to_add")).'</td>'."\n";
-print '<td align="center">'.$langs->trans("Rate").'</td>'."\n";
+print '<td class="center">'.$langs->trans("Rate").'</td>'."\n";
 print '</tr>';
 
 print '<form method="POST" action="'.$_SERVER['PHP_SELF'].'">';
-print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+print '<input type="hidden" name="token" value="'.newToken().'">';
 print '<input type="hidden" name="action" value="add_currency">';
 
 print '<tr class="oddeven">';
@@ -343,7 +343,7 @@ foreach ($TCurrency as &$currency)
 	print '<td>'.$currency->code.' - '.$currency->name.'</td>';
 	print '<td class="right">';
 	print '<form method="POST" action="'.$_SERVER['PHP_SELF'].'">';
-	print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+	print '<input type="hidden" name="token" value="'.newToken().'">';
 	print '<input type="hidden" name="action" value="update_currency">';
 	print '<input type="hidden" name="fk_multicurrency" value="'.$currency->id.'">';
 	print '1 '.$conf->currency.' = ';

@@ -60,6 +60,7 @@ InterDateCreation=Data di creazione intervento
 InterDuration=Durata intervento
 InterStatus=Stato dell'intervento
 InterNote=Note intervento
+InterLine=Linea di intervento
 InterLineId=Line id intervention
 InterLineDate=Line date intervention
 InterLineDuration=Line duration intervention

@@ -15,7 +15,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -32,19 +32,19 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
 // Load translation files required by the page
 $langs->load("categories");
 
-$id=GETPOST('id', 'int');
-$ref=GETPOST('ref');
-$type=GETPOST('type');
-$action=(GETPOST('action', 'aZ09')?GETPOST('action', 'aZ09'):'edit');
-$confirm=GETPOST('confirm');
-$cancel=GETPOST('cancel', 'alpha');
+$id = GETPOST('id', 'int');
+$ref = GETPOST('ref');
+$type = GETPOST('type');
+$action = (GETPOST('action', 'aZ09') ?GETPOST('action', 'aZ09') : 'edit');
+$confirm = GETPOST('confirm');
+$cancel = GETPOST('cancel', 'alpha');
 
-$socid=GETPOST('socid', 'int');
-$label=GETPOST('label');
-$description=GETPOST('description');
-$color=GETPOST('color', 'alpha');
-$visible=GETPOST('visible');
-$parent=GETPOST('parent');
+$socid = GETPOST('socid', 'int');
+$label = GETPOST('label');
+$description = GETPOST('description');
+$color = GETPOST('color', 'alpha');
+$visible = GETPOST('visible');
+$parent = GETPOST('parent');
 
 if ($id == "")
 {
@@ -58,11 +58,11 @@ $result = restrictedArea($user, 'categorie', $id, '&category');
 $object = new Categorie($db);
 if ($id > 0)
 {
-    $result=$object->fetch($id);
+    $result = $object->fetch($id);
 }
 
 $extrafields = new ExtraFields($db);
-$extralabels=$extrafields->fetch_name_optionals_label($object->table_element);
+$extrafields->fetch_name_optionals_label($object->table_element);
 
 // Initialize technical object to manage hooks. Note that conf->hooks_modules contains array array
 $hookmanager->initHooks(array('categorycard'));
@@ -100,12 +100,12 @@ if ($action == 'update' && $user->rights->categorie->creer)
 		$action = 'edit';
 		setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentities("Label")), null, 'errors');
 	}
-	if (! $error && empty($object->error))
+	if (!$error && empty($object->error))
 	{
-		$ret = $extrafields->setOptionalsFromPost($extralabels, $object);
+		$ret = $extrafields->setOptionalsFromPost(null, $object);
 		if ($ret < 0) $error++;
 
-		if (! $error && $object->update($user) > 0)
+		if (!$error && $object->update($user) > 0)
 		{
 			header('Location: '.DOL_URL_ROOT.'/categories/viewcat.php?id='.$object->id.'&type='.$type);
 			exit;
@@ -139,14 +139,14 @@ $object->fetch($id);
 
 print "\n";
 print '<form method="post" action="'.$_SERVER['PHP_SELF'].'">';
-print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+print '<input type="hidden" name="token" value="'.newToken().'">';
 print '<input type="hidden" name="action" value="update">';
 print '<input type="hidden" name="id" value="'.$object->id.'">';
 print '<input type="hidden" name="type" value="'.$type.'">';
 
 dol_fiche_head('');
 
-print '<table class="border" width="100%">';
+print '<table class="border centpercent">';
 
 // Ref
 print '<tr><td class="titlefieldcreate fieldrequired">';
@@ -159,7 +159,7 @@ print '<tr>';
 print '<td>'.$langs->trans("Description").'</td>';
 print '<td >';
 require_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
-$doleditor=new DolEditor('description', $object->description, '', 200, 'dolibarr_notes', '', false, true, $conf->fckeditor->enabled, ROWS_6, '90%');
+$doleditor = new DolEditor('description', $object->description, '', 200, 'dolibarr_notes', '', false, true, $conf->fckeditor->enabled, ROWS_6, '90%');
 $doleditor->Create();
 print '</td></tr>';
 
@@ -175,12 +175,12 @@ print '<tr><td>'.$langs->trans("In").'</td><td>';
 print $form->select_all_categories($type, $object->fk_parent, 'parent', 64, $object->id);
 print '</td></tr>';
 
-$parameters=array();
-$reshook=$hookmanager->executeHooks('formObjectOptions', $parameters, $object, $action);    // Note that $action and $object may have been modified by hook
+$parameters = array();
+$reshook = $hookmanager->executeHooks('formObjectOptions', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
 print $hookmanager->resPrint;
 if (empty($reshook))
 {
-	print $object->showOptionals($extrafields, 'edit');
+	print $object->showOptionals($extrafields, 'edit', $parameters);
 }
 
 print '</table>';

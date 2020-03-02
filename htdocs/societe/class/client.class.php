@@ -13,7 +13,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -63,7 +63,7 @@ class Client extends Societe
 
         $sql = "SELECT count(s.rowid) as nb, s.client";
         $sql.= " FROM ".MAIN_DB_PREFIX."societe as s";
-        if (!$user->rights->societe->client->voir && !$user->societe_id)
+        if (!$user->rights->societe->client->voir && !$user->socid)
         {
         	$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."societe_commerciaux as sc ON s.rowid = sc.fk_soc";
         	$sql.= " WHERE sc.fk_user = " .$user->id;

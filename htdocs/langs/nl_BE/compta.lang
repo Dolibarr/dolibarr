@@ -28,7 +28,6 @@ RulesResultDue=- Dit omvat openstaande facturen, uitgaven, BTW, donaties, zowel 
 RulesResultInOut=- Dit omvat alle betalingen van facturen, uitgaven, BTW en lonen. <br>- Dit is gebaseerd op de betalingsdata van de facturen, uitgaven, BTW en lonen. De donatiedatum voor donaties.
 PurchasesJournal=Inkoopdagboek
 DescPurchasesJournal=Inkoopdagboek
-SimpleReport=Eenvoudig rapport
 OtherCountriesCustomersReport=Buitenlands klantenrapport
 BasedOnTwoFirstLettersOfVATNumberBeingDifferentFromYourCompanyCountry=Gebaseerd op de eerste 2 letters van het BTW-nummer, anders dan die van uw eigen landcode
 SameCountryCustomersWithVAT=Nationaal klantenrapport

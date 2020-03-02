@@ -15,7 +15,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -28,6 +28,8 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
 
 $langs->load("admin");
+$langs->load("install");
+$langs->load("errors");
 
 if (! $user->admin)
 	accessforbidden();
@@ -48,21 +50,140 @@ if (isset($title))
 }
 
 
+// Check PHP setup is OK
+$maxphp=@ini_get('upload_max_filesize');	// In unknown
+if (preg_match('/k$/i', $maxphp)) $maxphp=$maxphp*1;
+if (preg_match('/m$/i', $maxphp)) $maxphp=$maxphp*1024;
+if (preg_match('/g$/i', $maxphp)) $maxphp=$maxphp*1024*1024;
+if (preg_match('/t$/i', $maxphp)) $maxphp=$maxphp*1024*1024*1024;
+$maxphp2=@ini_get('post_max_size');			// In unknown
+if (preg_match('/k$/i', $maxphp2)) $maxphp2=$maxphp2*1;
+if (preg_match('/m$/i', $maxphp2)) $maxphp2=$maxphp2*1024;
+if (preg_match('/g$/i', $maxphp2)) $maxphp2=$maxphp2*1024*1024;
+if (preg_match('/t$/i', $maxphp2)) $maxphp2=$maxphp2*1024*1024*1024;
+if ($maxphp > 0 && $maxphp2 > 0 && $maxphp > $maxphp2)
+{
+	$langs->load("errors");
+	print info_admin($langs->trans("WarningParamUploadMaxFileSizeHigherThanPostMaxSize", @ini_get('upload_max_filesize'), @ini_get('post_max_size')), 0, 0, 0, 'warning');
+	print '<br>';
+}
 
-print '<table class="noborder" width="100%">';
+print '<table class="noborder centpercent">';
 print '<tr class="liste_titre"><td>'.$langs->trans("Parameter").'</td><td>'.$langs->trans("Value").'</td></tr>';
 print "\n";
 
-$var=false;
+$ErrorPicturePath = "../../theme/eldy/img/error.png";
+$WarningPicturePath = "../../theme/eldy/img/warning.png";
+$OkayPicturePath = "../../theme/eldy/img/tick.png";
 
-// Recupere la version de PHP
-$phpversion=version_php();
-print '<tr class="oddeven"><td  width="220px">'.$langs->trans("Version")."</td><td>".$phpversion."</td></tr>\n";
+print '<tr><td width="220">'.$langs->trans("Version").'</td><td>';
 
+$arrayphpminversionerror = array(5,5,0);
+$arrayphpminversionwarning = array(5,5,0);
+if (versioncompare(versionphparray(), $arrayphpminversionerror) < 0)
+{
+    print '<img src="'.$ErrorPicturePath.'" alt="Error"> '.$langs->trans("ErrorPHPVersionTooLow", versiontostring($arrayphpminversionerror));
+}
+elseif (versioncompare(versionphparray(), $arrayphpminversionwarning) < 0)
+{
+    print '<img src="'.$WarningPicturePath.'" alt="Warning"> '.$langs->trans("ErrorPHPVersionTooLow", versiontostring($arrayphpminversionwarning));
+}
+else
+{
+    print '<img src="'.$OkayPicturePath.'" alt="Ok"> '.versiontostring(versionphparray());
+}
+
+print '</td></tr>';
+print '<tr><td>GET and POST support</td><td>';
+
+if (! isset($_GET["testget"]) && ! isset($_POST["testpost"]) && ! isset($_GET["mainmenu"]))
+{
+    print '<img src="'.$WarningPicturePath.'" alt="Warning"> '.$langs->trans("PHPSupportPOSTGETKo");
+    print ' (<a href="'.$_SERVER["PHP_SELF"].'?testget=ok">'.$langs->trans("Recheck").'</a>)';
+}
+else
+{
+    print '<img src="'.$OkayPicturePath.'" alt="Ok"> '.$langs->trans("PHPSupportPOSTGETOk");
+}
+
+print '</td></tr>';
+print '<tr><td>Sessions support</td><td>';
+
+if (! function_exists("session_id"))
+{
+    print '<img src="'.$ErrorPicturePath.'" alt="Error"> '.$langs->trans("ErrorPHPDoesNotSupportSessions");
+}
+else
+{
+    print '<img src="'.$OkayPicturePath.'" alt="Ok"> '.$langs->trans("PHPSupportSessions");
+}
+
+print '</td></tr>';
+print '<tr><td>GD support</td><td>';
+
+if (! function_exists("imagecreate"))
+{
+    print '<img src="'.$WarningPicturePath.'" alt="Warning"> '.$langs->trans("ErrorPHPDoesNotSupportGD");
+}
+else
+{
+    print '<img src="'.$OkayPicturePath.'" alt="Ok"> '.$langs->trans("PHPSupportGD");
+}
+
+print '</td></tr>';
+print '<tr><td>Curl support</td><td>';
+
+if (! function_exists("curl_init"))
+{
+    print '<img src="'.$WarningPicturePath.'" alt="Warning"> '.$langs->trans("ErrorPHPDoesNotSupportCurl");
+}
+else
+{
+    print '<img src="'.$OkayPicturePath.'" alt="Ok"> '.$langs->trans("PHPSupportCurl");
+}
+
+print '</td></tr>';
+print '<tr><td>UTF-8 support</td><td>';
+
+if (! function_exists("utf8_encode"))
+{
+    print '<img src="'.$WarningPicturePath.'" alt="Warning"> '.$langs->trans("ErrorPHPDoesNotSupportUTF8");
+}
+else
+{
+    print '<img src="'.$OkayPicturePath.'" alt="Ok"> '.$langs->trans("PHPSupportUTF8");
+}
+
+print '</td></tr>';
+print '<tr><td>Intl support</td><td>';
+
+if (empty($_SERVER["SERVER_ADMIN"]) || $_SERVER["SERVER_ADMIN"] != 'doliwamp@localhost')
+{
+	if (! function_exists("locale_get_primary_language") || ! function_exists("locale_get_region"))
+	{
+        print '<img src="'.$WarningPicturePath.'" alt="Warning"> '.$langs->trans("ErrorPHPDoesNotSupportIntl");
+	}
+	else
+	{
+        print '<img src="'.$OkayPicturePath.'" alt="Ok"> '.$langs->trans("PHPSupportIntl");
+	}
+}
+
+print '<tr><td>Zip support</td><td>';
+
+if (!class_exists('ZipArchive'))
+{
+	print '<img src="'.$WarningPicturePath.'" alt="Warning"> '.$langs->trans("ErrorPHPDoesNotSupport", "Zip");
+}
+else
+{
+	print '<img src="'.$OkayPicturePath.'" alt="Ok"> '.$langs->trans("PHPSupport", "Zip");
+}
+
+print '</td></tr>';
 print '</table>';
+
 print '<br>';
-
-
 
 // Get php_info array
 $phparray=phpinfo_array();

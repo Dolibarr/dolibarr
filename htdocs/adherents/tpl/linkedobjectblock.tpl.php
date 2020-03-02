@@ -14,21 +14,17 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 // Protection to avoid direct call of template
-if (empty($conf) || ! is_object($conf))
+if (empty($conf) || !is_object($conf))
 {
 	print "Error, template page can't be called as URL";
 	exit;
 }
 
-?>
-
-<!-- BEGIN PHP TEMPLATE -->
-
-<?php
+echo "<!-- BEGIN PHP TEMPLATE -->\n";
 
 global $user;
 
@@ -36,26 +32,23 @@ $langs = $GLOBALS['langs'];
 $linkedObjectBlock = $GLOBALS['linkedObjectBlock'];
 $langs->load("members");
 
-$total=0;
-foreach($linkedObjectBlock as $key => $objectlink)
+$total = 0;
+foreach ($linkedObjectBlock as $key => $objectlink)
 {
-
-?>
-<tr class="oddeven" >
-    <td><?php echo $langs->trans("Subscription"); ?></td>
-    <td><?php echo $objectlink->getNomUrl(1); ?></td>
-	<td class="center"></td>
-	<td class="center"><?php echo dol_print_date($objectlink->dateh, 'day'); ?></td>
-	<td class="right"><?php
+    echo '<tr class="oddeven">';
+    echo '<td>'.$langs->trans("Subscription").'</td>';
+    echo '<td>'.$objectlink->getNomUrl(1).'</td>';
+    echo '<td class="center"></td>';
+    echo '<td class="center">'.dol_print_date($objectlink->dateh, 'day').'</td>';
+    echo '<td class="right">';
 	if ($user->rights->adherent->lire) {
 		$total = $total + $objectlink->amount;
 		echo price($objectlink->amount);
-	} ?></td>
-	<td class="right"></td>
-	<td class="right"><a href="<?php echo $_SERVER["PHP_SELF"].'?id='.$object->id.'&action=dellink&dellinkid='.$key; ?>"><?php echo img_picto($langs->transnoentitiesnoconv("RemoveLink"), 'unlink'); ?></a></td>
-</tr>
-<?php
+	}
+	echo '</td>';
+	echo '<td class="right"></td>';
+	echo '<td class="right"><a class="reposition" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=dellink&dellinkid='.$key.'">'.img_picto($langs->transnoentitiesnoconv("RemoveLink"), 'unlink').'</a></td>';
+    echo '</tr>';
 }
-?>
 
-<!-- END PHP TEMPLATE -->
+echo "<!-- END PHP TEMPLATE -->\n";

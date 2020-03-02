@@ -21,11 +21,11 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
- *      \file       htdocs/admin/commandefournisseurdispatch_extrafields.php
+ *      \file       htdocs/admin/commande_fournisseur_dispatch_extrafields.php
  *		\ingroup    reception
  *		\brief      Page to setup extra fields of reception
  */

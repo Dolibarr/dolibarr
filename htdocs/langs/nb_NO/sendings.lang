@@ -21,6 +21,7 @@ QtyShipped=Ant. levert
 QtyShippedShort=Antall sendt
 QtyPreparedOrShipped=Antall klargjort eller sendt
 QtyToShip=Ant. å levere
+QtyToReceive=Antall å motta
 QtyReceived=Ant. mottatt
 QtyInOtherShipments=Antall i andre forsendelser
 KeepToShip=Gjenstår å sende
@@ -46,17 +47,18 @@ DateDeliveryPlanned=Planlagt leveringsdato
 RefDeliveryReceipt=Ref. leveringskvittering
 StatusReceipt=Status leveringskvittering
 DateReceived=Dato levering mottatt
+ClassifyReception=Klassifiser mottak
 SendShippingByEMail=Send forsendelse via e-post
 SendShippingRef=Innsending av forsendelse %s
 ActionsOnShipping=Hendelser for forsendelse
 LinkToTrackYourPackage=Lenke for å spore pakken
 ShipmentCreationIsDoneFromOrder=For øyeblikket er opprettelsen av en ny forsendelse gjort fra ordrekortet.
 ShipmentLine=Forsendelseslinje
-ProductQtyInCustomersOrdersRunning=Varekvantum i åpne kundeordrer
-ProductQtyInSuppliersOrdersRunning=Varekvantum i åpne innkjøpsordrer
-ProductQtyInShipmentAlreadySent=Varekvantitet fra åpen kundeordre som allerede er sendt
-ProductQtyInSuppliersShipmentAlreadyRecevied=Varekvantitet fra åpen leverandørordre som allerede er mottatt
-NoProductToShipFoundIntoStock=Ingen varer for utsendelse funnet på lager <b>%s</b>. Korriger varebeholdning eller gå tilbake for å velge et annet lager.
+ProductQtyInCustomersOrdersRunning=Varemengde fra åpne salgsordrer
+ProductQtyInSuppliersOrdersRunning=Varemengde fra åpne innkjøpsordrer
+ProductQtyInShipmentAlreadySent=Produktkvantitet fra åpne salgsordre som allerede er sendt
+ProductQtyInSuppliersShipmentAlreadyRecevied=Varemengde fra åpne mottatte bestillinger
+NoProductToShipFoundIntoStock=Ingen varer som skal sendes i lager <b> %s </b>. Korriger lager eller gå tilbake for å velge et annet lager.
 WeightVolShort=Vekt/volum
 ValidateOrderFirstBeforeShipment=Du må validere ordren før du kan utføre forsendelser
 
@@ -69,4 +71,4 @@ SumOfProductWeights=Sum varevekt
 
 # warehouse details
 DetailWarehouseNumber= Lagerdetaljer
-DetailWarehouseFormat= W:%s (Ant : %d)
+DetailWarehouseFormat= W:%s (Qty: %d)

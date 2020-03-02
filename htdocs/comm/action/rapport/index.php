@@ -15,7 +15,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -49,7 +49,7 @@ if (! $sortfield) $sortfield="a.datep";
 
 // Security check
 $socid = GETPOST('socid', 'int');
-if ($user->societe_id) $socid=$user->societe_id;
+if ($user->socid) $socid=$user->socid;
 $result = restrictedArea($user, 'agenda', $socid, '', 'myactions');
 
 
@@ -114,7 +114,7 @@ if ($resql)
 
 	print '<form method="POST" id="searchFormList" action="'.$_SERVER["PHP_SELF"].'">';
     if ($optioncss != '') print '<input type="hidden" name="optioncss" value="'.$optioncss.'">';
-	print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+	print '<input type="hidden" name="token" value="'.newToken().'">';
 	print '<input type="hidden" name="formfilteraction" id="formfilteraction" value="list">';
 	print '<input type="hidden" name="action" value="list">';
 	print '<input type="hidden" name="sortfield" value="'.$sortfield.'">';
@@ -131,11 +131,11 @@ if ($resql)
 
     print '<tr class="liste_titre">';
 	print '<td>'.$langs->trans("Period").'</td>';
-	print '<td align="center">'.$langs->trans("EventsNb").'</td>';
-	print '<td align="center">'.$langs->trans("Action").'</td>';
+	print '<td class="center">'.$langs->trans("EventsNb").'</td>';
+	print '<td class="center">'.$langs->trans("Action").'</td>';
 	print '<td>'.$langs->trans("PDF").'</td>';
-	print '<td align="center">'.$langs->trans("Date").'</td>';
-	print '<td align="center">'.$langs->trans("Size").'</td>';
+	print '<td class="center">'.$langs->trans("Date").'</td>';
+	print '<td class="center">'.$langs->trans("Size").'</td>';
 	print "</tr>\n";
 
 	while ($i < min($num, $limit))
@@ -144,17 +144,16 @@ if ($resql)
 
 		if ($obj)
 		{
-
 			print '<tr class="oddeven">';
 
 			// Date
 			print "<td>".$obj->df."</td>\n";
 
 			// Nb of events
-			print '<td align="center">'.$obj->cc.'</td>';
+			print '<td class="center">'.$obj->cc.'</td>';
 
 			// Button to build doc
-			print '<td align="center">';
+			print '<td class="center">';
 			print '<a href="'.$_SERVER["PHP_SELF"].'?action=builddoc&amp;page='.$page.'&amp;month='.$obj->month.'&amp;year='.$obj->year.'">'.img_picto($langs->trans('BuildDoc'), 'filenew').'</a>';
 			print '</td>';
 
@@ -185,8 +184,8 @@ if ($resql)
 				print $out;
 
 				print '</td>';
-				print '<td align="center">'.dol_print_date(dol_filemtime($file), 'dayhour').'</td>';
-				print '<td align="center">'.dol_print_size(dol_filesize($file)).'</td>';
+				print '<td class="center">'.dol_print_date(dol_filemtime($file), 'dayhour').'</td>';
+				print '<td class="center">'.dol_print_size(dol_filesize($file)).'</td>';
 			}
 			else {
 				print '<td>&nbsp;</td>';

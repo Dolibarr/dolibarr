@@ -12,8 +12,8 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
- * or see http://www.gnu.org/
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
+ * or see https://www.gnu.org/
  *
  * $elementype must be defined.
  */
@@ -27,7 +27,7 @@ $maxsizestring=255;
 $maxsizeint=10;
 $mesg=array();
 
-$extrasize=GETPOST('size', 'int');
+$extrasize=GETPOST('size', 'intcomma');
 $type=GETPOST('type', 'alpha');
 $param=GETPOST('param', 'alpha');
 
@@ -183,7 +183,8 @@ if ($action == 'add')
                 	(GETPOST('entitycurrentorall', 'alpha')?0:''),
                     GETPOST('langfile', 'alpha'),
                     1,
-                    (GETPOST('totalizable', 'alpha')?1:0)
+                    (GETPOST('totalizable', 'alpha')?1:0),
+                    (GETPOST('printable', 'alpha')?1:0)
                 );
     			if ($result > 0)
     			{
@@ -352,7 +353,8 @@ if ($action == 'update')
     				(GETPOST('entitycurrentorall', 'alpha')?0:''),
                     GETPOST('langfile'),
                     1,
-                    (GETPOST('totalizable', 'alpha')?1:0)
+                    (GETPOST('totalizable', 'alpha')?1:0),
+                    (GETPOST('printable', 'alpha')?1:0)
     			);
     			if ($result > 0)
     			{

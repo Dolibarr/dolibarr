@@ -13,8 +13,8 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
- * or see http://www.gnu.org/
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
+ * or see https://www.gnu.org/
  */
 
 /**
@@ -53,6 +53,9 @@ class mod_holiday_immaculate extends ModelNumRefHolidays
 	 */
 	public $name='Immaculate';
 
+	/**
+	 * @var int Automatic numbering
+	 */
 	public $code_auto=1;
 
 	/**
@@ -70,7 +73,7 @@ class mod_holiday_immaculate extends ModelNumRefHolidays
 
 		$texte = $langs->trans('GenericNumRefModelDesc')."<br>\n";
 		$texte.= '<form action="'.$_SERVER["PHP_SELF"].'" method="POST">';
-		$texte.= '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+		$texte.= '<input type="hidden" name="token" value="'.newToken().'">';
 		$texte.= '<input type="hidden" name="action" value="updateMask">';
 		$texte.= '<input type="hidden" name="maskconstholiday" value="HOLIDAY_IMMACULATE_MASK">';
 		$texte.= '<table class="nobordernopadding" width="100%">';

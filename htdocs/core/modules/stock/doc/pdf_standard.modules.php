@@ -12,8 +12,8 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
- * or see http://www.gnu.org/
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
+ * or see https://www.gnu.org/
  */
 
 /**
@@ -119,14 +119,14 @@ class pdf_standard extends ModelePDFStock
 	{
 		global $conf,$langs,$mysoc;
 
-		// Load traductions files requiredby by page
+		// Load traductions files required by page
 		$langs->loadLangs(array("main", "companies"));
 
 		$this->db = $db;
 		$this->name = "standard";
 		$this->description = $langs->trans("DocumentModelStandardPDF");
 
-		// Dimension page pour format A4
+		// Page size for A4 format
 		$this->type = 'pdf';
 		$formatarray=pdf_getFormat();
 		$this->page_largeur = $formatarray['width'];
@@ -181,7 +181,7 @@ class pdf_standard extends ModelePDFStock
 	/**
 	 *	Function to build a document on disk using the generic odt module.
 	 *
-	 *	@param		Stock		$object				Object source to build document
+	 *	@param		Entrepot	$object				Object source to build document
 	 *	@param		Translate	$outputlangs		Lang output object
 	 * 	@param		string		$srctemplatepath	Full path of source filename for generator using a template file
 	 *  @param		int			$hidedetails		Do not show line details
@@ -198,10 +198,10 @@ class pdf_standard extends ModelePDFStock
 		// For backward compatibility with FPDF, force output charset to ISO, because FPDF expect text to be encoded in ISO
 		if (! empty($conf->global->MAIN_USE_FPDF)) $outputlangs->charset_output='ISO-8859-1';
 
-		// Load traductions files requiredby by page
+		// Load traductions files required by page
 		$outputlangs->loadLangs(array("main", "dict", "companies", "bills", "stocks", "orders", "deliveries"));
 
-		$nblignes = count($object->lines);
+		$nblines = count($object->lines);
 
 		if ($conf->stock->dir_output)
 		{
@@ -276,7 +276,7 @@ class pdf_standard extends ModelePDFStock
 				$pdf->SetSubject($outputlangs->transnoentities("Stock"));
 				$pdf->SetCreator("Dolibarr ".DOL_VERSION);
 				$pdf->SetAuthor($outputlangs->convToOutputCharset($user->getFullName($outputlangs)));
-				$pdf->SetKeyWords($outputlangs->convToOutputCharset($object->ref)." ".$outputlangs->transnoentities("Stock")." ".$outputlangs->convToOutputCharset($object->libelle));
+				$pdf->SetKeyWords($outputlangs->convToOutputCharset($object->ref)." ".$outputlangs->transnoentities("Stock")." ".$outputlangs->convToOutputCharset($object->label));
 				if (! empty($conf->global->MAIN_DISABLE_PDF_COMPRESSION)) $pdf->SetCompression(false);
 
 				$pdf->SetMargins($this->marge_gauche, $this->marge_haute, $this->marge_droite);   // Left, Top, Right
@@ -323,8 +323,8 @@ class pdf_standard extends ModelePDFStock
 				{
 					$num = $db->num_rows($resql);
 					$i = 0;
-					$nblignes = $num;
-					for ($i = 0 ; $i < $nblignes ; $i++)
+					$nblines = $num;
+					for ($i = 0 ; $i < $nblines ; $i++)
 					{
 						$objp = $db->fetch_object($resql);
 
@@ -334,7 +334,7 @@ class pdf_standard extends ModelePDFStock
 							$sql = "SELECT label";
 							$sql.= " FROM ".MAIN_DB_PREFIX."product_lang";
 							$sql.= " WHERE fk_product=".$objp->rowid;
-							$sql.= " AND lang='". $langs->getDefaultLang() ."'";
+							$sql.= " AND lang='". $db->escape($langs->getDefaultLang()) ."'";
 							$sql.= " LIMIT 1";
 
 							$result = $db->query($sql);
@@ -372,7 +372,7 @@ class pdf_standard extends ModelePDFStock
 							$posyafter=$pdf->GetY();
 							if ($posyafter > ($this->page_hauteur - ($heightforfooter+$heightforfreetext+$heightforinfotot)))	// There is no space left for total+free text
 							{
-								if ($i == ($nblignes-1))	// No more lines, and no space left to show total, so we create a new page
+								if ($i == ($nblines-1))	// No more lines, and no space left to show total, so we create a new page
 								{
 									$pdf->AddPage('', '', true);
 									if (! empty($tplidx)) $pdf->useTemplate($tplidx);
@@ -383,7 +383,12 @@ class pdf_standard extends ModelePDFStock
 							else
 							{
 								// We found a page break
-								$showpricebeforepagebreak=0;
+
+								// Allows data in the first page if description is long enough to break in multiples pages
+								if(!empty($conf->global->MAIN_PDF_DATA_ON_FIRST_PAGE))
+									$showpricebeforepagebreak = 1;
+								else
+									$showpricebeforepagebreak = 0;
 							}
 						}
 						else	// No pagebreak
@@ -452,7 +457,7 @@ class pdf_standard extends ModelePDFStock
 						$totalvaluesell+=price2num($pricemin*$objp->value, 'MT');
 
 						// Add line
-						if (! empty($conf->global->MAIN_PDF_DASH_BETWEEN_LINES) && $i < ($nblignes - 1))
+						if (! empty($conf->global->MAIN_PDF_DASH_BETWEEN_LINES) && $i < ($nblines - 1))
 						{
 							$pdf->setPage($pageposafter);
 							$pdf->SetLineStyle(array('dash'=>'1,1','color'=>array(80,80,80)));
@@ -461,7 +466,7 @@ class pdf_standard extends ModelePDFStock
 							$pdf->SetLineStyle(array('dash'=>0));
 						}
 
-						$nexY+=2;    // Passe espace entre les lignes
+						$nexY+=2;    // Add space between lines
 
 						// Detect if some page were added automatically and output _tableau for past pages
 						while ($pagenb < $pageposafter)
@@ -550,7 +555,7 @@ class pdf_standard extends ModelePDFStock
 					complete_substitutions_array($substitutionarray, $outputlangs, $object);
 					$notetoshow = make_substitutions($notetoshow, $substitutionarray, $outputlangs);
 					$notetoshow = convertBackOfficeMediasLinksToPublicLinks($notetoshow);
-					
+
 					$tab_top = 88;
 
 					$pdf->SetFont('', '', $default_font_size - 1);
@@ -558,7 +563,7 @@ class pdf_standard extends ModelePDFStock
 					$nexY = $pdf->GetY();
 					$height_note=$nexY-$tab_top;
 
-					// Rect prend une longueur en 3eme param
+					// Rect takes a length in 3rd parameter
 					$pdf->SetDrawColor(192, 192, 192);
 					$pdf->Rect($this->marge_gauche, $tab_top-1, $this->page_largeur-$this->marge_gauche-$this->marge_droite, $height_note+1);
 
@@ -576,7 +581,7 @@ class pdf_standard extends ModelePDFStock
 
 				// Loop on each lines
 				/*
-				for ($i = 0 ; $i < $nblignes ; $i++)
+				for ($i = 0 ; $i < $nblines ; $i++)
 				{
 					$curY = $nexY;
 					$pdf->SetFont('','', $default_font_size - 1);   // Into loop to work with multipage
@@ -605,7 +610,7 @@ class pdf_standard extends ModelePDFStock
 						$posyafter=$pdf->GetY();
 						if ($posyafter > ($this->page_hauteur - ($heightforfooter+$heightforfreetext+$heightforinfotot)))	// There is no space left for total+free text
 						{
-							if ($i == ($nblignes-1))	// No more lines, and no space left to show total, so we create a new page
+							if ($i == ($nblines-1))	// No more lines, and no space left to show total, so we create a new page
 							{
 								$pdf->AddPage('','',true);
 								if (! empty($tplidx)) $pdf->useTemplate($tplidx);
@@ -644,7 +649,7 @@ class pdf_standard extends ModelePDFStock
 					$pdf->MultiCell($this->posxdiscount-$this->posxqty-0.8, 4, $qty, 0, 'R');
 
 					// Add line
-					if (! empty($conf->global->MAIN_PDF_DASH_BETWEEN_LINES) && $i < ($nblignes - 1))
+					if (! empty($conf->global->MAIN_PDF_DASH_BETWEEN_LINES) && $i < ($nblines - 1))
 					{
 						$pdf->setPage($pageposafter);
 						$pdf->SetLineStyle(array('dash'=>'1,1','color'=>array(80,80,80)));
@@ -653,7 +658,7 @@ class pdf_standard extends ModelePDFStock
 						$pdf->SetLineStyle(array('dash'=>0));
 					}
 
-					$nexY+=2;    // Passe espace entre les lignes
+					$nexY+=2;    // Add space between lines
 
 					// Detect if some page were added automatically and output _tableau for past pages
 					while ($pagenb < $pageposafter)
@@ -738,7 +743,7 @@ class pdf_standard extends ModelePDFStock
 
 				$this->result = array('fullpath'=>$file);
 
-				return 1;   // Pas d'erreur
+				return 1;   // No error
 			}
 			else
 			{
@@ -753,7 +758,7 @@ class pdf_standard extends ModelePDFStock
 		}
 	}
 
-
+	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.PublicUnderscore
 	/**
 	 *   Show table for lines
 	 *
@@ -767,7 +772,7 @@ class pdf_standard extends ModelePDFStock
 	 *   @param     string		$currency		Currency code
 	 *   @return    void
 	 */
-	private function _tableau(&$pdf, $tab_top, $tab_height, $nexY, $outputlangs, $hidetop = 0, $hidebottom = 0, $currency = '')
+	protected function _tableau(&$pdf, $tab_top, $tab_height, $nexY, $outputlangs, $hidetop = 0, $hidebottom = 0, $currency = '')
 	{
 	    global $conf;
 
@@ -796,7 +801,7 @@ class pdf_standard extends ModelePDFStock
 	    $pdf->SetFont('', 'B', $default_font_size - 3);
 
 	    // Output Rect
-	    //$this->printRect($pdf,$this->marge_gauche, $tab_top, $this->page_largeur-$this->marge_gauche-$this->marge_droite, $tab_height, $hidetop, $hidebottom);	// Rect prend une longueur en 3eme param et 4eme param
+	    //$this->printRect($pdf,$this->marge_gauche, $tab_top, $this->page_largeur-$this->marge_gauche-$this->marge_droite, $tab_height, $hidetop, $hidebottom);	// Rect takes a length in 3rd parameter and 4th parameter
 
 		$pdf->SetLineStyle(array('dash'=>'0','color'=>array(220,26,26)));
 		$pdf->SetDrawColor(220, 26, 26);
@@ -807,7 +812,7 @@ class pdf_standard extends ModelePDFStock
 
 	    if (empty($hidetop))
 	    {
-	        //$pdf->line($this->marge_gauche, $tab_top+5, $this->page_largeur-$this->marge_droite, $tab_top+5);	// line prend une position y en 2eme param et 4eme param
+	        //$pdf->line($this->marge_gauche, $tab_top+5, $this->page_largeur-$this->marge_droite, $tab_top+5);	// line takes a position y in 2nd parameter and 4th parameter
 	        $pdf->SetXY($this->posxdesc-1, $tab_top+1);
 	        $pdf->MultiCell($this->wref, 3, $outputlangs->transnoentities("Ref"), '', 'L');
 	    }
@@ -860,6 +865,7 @@ class pdf_standard extends ModelePDFStock
 		$pdf->SetLineStyle(array('dash'=>0));
 	}
 
+	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.PublicUnderscore
 	/**
 	 *  Show top header of page.
 	 *
@@ -870,11 +876,11 @@ class pdf_standard extends ModelePDFStock
 	 *  @param	string		$titlekey		Translation key to show as title of document
 	 *  @return	void
 	 */
-	private function _pagehead(&$pdf, $object, $showaddress, $outputlangs, $titlekey = "")
+	protected function _pagehead(&$pdf, $object, $showaddress, $outputlangs, $titlekey = "")
 	{
 	    global $conf,$langs,$db,$hookmanager;
 
-	    // Load traductions files requiredby by page
+	    // Load traductions files required by page
 		$outputlangs->loadLangs(array("main", "propal", "companies", "bills", "orders", "stocks"));
 
 	    $default_font_size = pdf_getPDFFontSize($outputlangs);
@@ -933,7 +939,7 @@ class pdf_standard extends ModelePDFStock
 	    $pdf->SetXY($posx, $posy);
 	    $pdf->SetTextColor(0, 0, 60);
 
-	    $pdf->MultiCell(100, 4, $outputlangs->transnoentities("Ref")." : " . $outputlangs->convToOutputCharset($object->libelle), '', 'R');
+	    $pdf->MultiCell(100, 4, $outputlangs->transnoentities("Ref")." : " . $outputlangs->convToOutputCharset($object->label), '', 'R');
 
 	    $posy+=5;
 	    $pdf->SetFont('', '', $default_font_size - 1);
@@ -957,7 +963,7 @@ class pdf_standard extends ModelePDFStock
 		$e = new Entrepot($db);
 		if(!empty($object->fk_parent) && $e->fetch($object->fk_parent) > 0)
 		{
-			$pdf->MultiCell(150, 3, $e->libelle, '', 'R');
+			$pdf->MultiCell(150, 3, $e->label, '', 'R');
 		}
 		else
 		{
@@ -1089,6 +1095,7 @@ class pdf_standard extends ModelePDFStock
 	    $pdf->SetTextColor(0, 0, 0);
 	}
 
+	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.PublicUnderscore
 	/**
 	 *   	Show footer of page. Need this->emetteur object
 	 *
@@ -1098,7 +1105,7 @@ class pdf_standard extends ModelePDFStock
 	 *      @param	int			$hidefreetext		1=Hide free text
 	 *      @return	int								Return height of bottom margin including footer text
 	 */
-	private function _pagefoot(&$pdf, $object, $outputlangs, $hidefreetext = 0)
+	protected function _pagefoot(&$pdf, $object, $outputlangs, $hidefreetext = 0)
 	{
 	    global $conf;
 	    $showdetails=$conf->global->MAIN_GENERATE_DOCUMENTS_SHOW_FOOT_DETAILS;

@@ -12,8 +12,8 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
- * or see http://www.gnu.org/
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
+ * or see https://www.gnu.org/
  */
 
 /**
@@ -57,7 +57,7 @@ $conf->global->MAIN_DISABLE_ALL_MAILS=1;
  * @backupStaticAttributes enabled
  * @remarks	backupGlobals must be disabled to have db,conf,user and lang not erased.
  */
-class SecurityTest extends PHPUnit_Framework_TestCase
+class SecurityTest extends PHPUnit\Framework\TestCase
 {
 	protected $savconf;
 	protected $savuser;
@@ -131,6 +131,24 @@ class SecurityTest extends PHPUnit_Framework_TestCase
     }
 
     /**
+     * testSetLang
+     *
+     * @return string
+     */
+    public function testSetLang()
+    {
+    	global $conf;
+    	$conf=$this->savconf;
+
+    	$tmplangs = new Translate('', $conf);
+
+    	$_SERVER['HTTP_ACCEPT_LANGUAGE'] = "' malicious text with quote";
+    	$tmplangs->setDefaultLang('auto');
+    	print __METHOD__.' $tmplangs->defaultlang='.$tmplangs->defaultlang."\n";
+    	$this->assertEquals($tmplangs->defaultlang, 'malicioustextwithquote_MALICIOUSTEXTWITHQUOTE');
+    }
+
+    /**
      * testGETPOST
      *
      * @return string
@@ -169,28 +187,28 @@ class SecurityTest extends PHPUnit_Framework_TestCase
         print __METHOD__." result=".$result."\n";
         $this->assertEquals($result, $_GET["param2"]);
 
-        $result=GETPOST("param3", 'alpha');  // Must return '' as there is a forbidden char "
+        $result=GETPOST("param3", 'alpha');  // Must return string sanitized from char "
         print __METHOD__." result=".$result."\n";
-        $this->assertEquals($result, '');
+        $this->assertEquals($result, 'a/b#e(pr)qq-rr\cc');
 
-        $result=GETPOST("param4", 'alpha');  // Must return '' as there is a forbidden char ../
+        $result=GETPOST("param4", 'alpha');  // Must return string sanitized from ../
         print __METHOD__." result=".$result."\n";
-        $this->assertEquals($result, '');
+        $this->assertEquals($result, 'dir');
 
         // Test aZ09
-        $result=GETPOST("param1", 'aZ09');  // Must return '' as there is a forbidden char ../
+        $result=GETPOST("param1", 'aZ09');
         print __METHOD__." result=".$result."\n";
         $this->assertEquals($result, $_GET["param1"]);
 
-        $result=GETPOST("param2", 'aZ09');  // Must return '' as there is a forbidden char ../
+        $result=GETPOST("param2", 'aZ09');  // Must return '' as string contains car not in aZ09 definition
         print __METHOD__." result=".$result."\n";
         $this->assertEquals($result, '');
 
-        $result=GETPOST("param3", 'aZ09');  // Must return '' as there is a forbidden char ../
+        $result=GETPOST("param3", 'aZ09');  // Must return '' as string contains car not in aZ09 definition
         print __METHOD__." result=".$result."\n";
         $this->assertEquals($result, '');
 
-        $result=GETPOST("param4", 'aZ09');  // Must return '' as there is a forbidden char ../
+        $result=GETPOST("param4", 'aZ09');  // Must return '' as string contains car not in aZ09 definition
         print __METHOD__." result=".$result."\n";
         $this->assertEquals($result, '');
 

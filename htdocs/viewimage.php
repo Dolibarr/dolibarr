@@ -14,8 +14,8 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
- * or see http://www.gnu.org/
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
+ * or see https://www.gnu.org/
  */
 
 /**
@@ -66,6 +66,7 @@ if (is_numeric($entity)) define("DOLENTITY", $entity);
 /**
  * Header empty
  *
+ * @ignore
  * @return	void
  */
 function llxHeader()
@@ -74,6 +75,7 @@ function llxHeader()
 /**
  * Footer empty
  *
+ * @ignore
  * @return	void
  */
 function llxFooter()
@@ -92,7 +94,7 @@ $entity=GETPOST('entity', 'int')?GETPOST('entity', 'int'):$conf->entity;
 
 // Security check
 if (empty($modulepart) && empty($hashp)) accessforbidden('Bad link. Bad value for parameter modulepart', 0, 0, 1);
-if (empty($original_file) && empty($hashp) && $modulepart != 'barcode') accessforbidden('Bad link. Missing identification to find file (original_file or hashp)', 0, 0, 1);
+if (empty($original_file) && empty($hashp) && $modulepart != 'barcode') accessforbidden('Bad link. Missing identification to find file (param file or hashp)', 0, 0, 1);
 if ($modulepart == 'fckeditor') $modulepart='medias';   // For backward compatibility
 
 
@@ -170,7 +172,9 @@ if (GETPOST('type', 'alpha')) $type=GETPOST('type', 'alpha');
 else $type=dol_mimetype($original_file);
 
 // Security: This wrapper is for images. We do not allow type/html
-if (preg_match('/html/', $type)) accessforbidden('Error: Using the image wrapper to output a file with a mime type HTML is not possible.', 0, 0, 1);
+if (preg_match('/html/i', $type)) accessforbidden('Error: Using the image wrapper to output a file with a mime type HTML is not possible.', 0, 0, 1);
+// Security: This wrapper is for images. We do not allow files ending with .noexe
+if (preg_match('/\.noexe$/i', $original_file)) accessforbidden('Error: Using the image wrapper to output a file ending with .noexe is not allowed.', 0, 0, 1);
 
 // Security: Delete string ../ into $original_file
 $original_file = str_replace("../", "/", $original_file);
@@ -194,7 +198,7 @@ if (! empty($hashp))
 else
 {
 	// Basic protection (against external users only)
-	if ($user->societe_id > 0)
+	if ($user->socid > 0)
 	{
 		if ($sqlprotectagainstexternals)
 		{
@@ -206,7 +210,7 @@ else
 				while ($i < $num)
 				{
 					$obj = $db->fetch_object($resql);
-					if ($user->societe_id != $obj->fk_soc)
+					if ($user->socid != $obj->fk_soc)
 					{
 						$accessallowed=0;
 						break;

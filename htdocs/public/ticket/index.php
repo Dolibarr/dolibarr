@@ -13,7 +13,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -25,6 +25,7 @@
 if (!defined('NOCSRFCHECK'))   define('NOCSRFCHECK', '1');
 if (!defined('NOREQUIREMENU')) define('NOREQUIREMENU', '1');
 if (!defined("NOLOGIN"))       define("NOLOGIN", '1');				// If this page is public (can be called outside logged session)
+if (!defined('NOIPCHECK'))		define('NOIPCHECK', '1'); // Do not check IP defined into conf $dolibarr_main_restrict_ip
 
 // For MultiCompany module.
 // Do not use GETPOST here, function is not defined and define must be done before including main.inc.php
@@ -55,18 +56,18 @@ $action = GETPOST('action', 'alpha');
 $form = new Form($db);
 $formticket = new FormTicket($db);
 
-$arrayofjs = array();
-$arrayofcss = array('/ticket/css/styles.css.php');
-
 if (empty($conf->global->TICKET_ENABLE_PUBLIC_INTERFACE))
 {
 	print $langs->trans('TicketPublicInterfaceForbidden');
 	exit;
 }
 
+$arrayofjs = array();
+$arrayofcss = array('/ticket/css/styles.css.php');
+
 llxHeaderTicket($langs->trans("Tickets"), "", 0, 0, $arrayofjs, $arrayofcss);
 
-print '<div style="margin: 0 auto; width:60%">';
+print '<div style="margin: 0 auto; width:60%" class="ticketpublicarea">';
 print '<p style="text-align: center">' . ($conf->global->TICKET_PUBLIC_TEXT_HOME ? $conf->global->TICKET_PUBLIC_TEXT_HOME : $langs->trans("TicketPublicDesc")) . '</p>';
 print '<div class="ticketform">';
 print '<a href="create_ticket.php" class=""><div class="index_create orange bigrounded">' . dol_escape_htmltag($langs->trans("CreateTicket")) . '</div></a>';
@@ -77,7 +78,7 @@ print '</div>';
 print '</div>';
 
 // End of page
-htmlPrintOnlinePaymentFooter($mysoc, $langs, 1, $suffix, $object);
+htmlPrintOnlinePaymentFooter($mysoc, $langs, 0, $suffix, $object);
 
 llxFooter('', 'public');
 

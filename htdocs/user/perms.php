@@ -17,7 +17,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -56,9 +56,10 @@ if (! empty($conf->global->MAIN_USE_ADVANCED_PERMS))
 
 // Security check
 $socid=0;
-if (isset($user->societe_id) && $user->societe_id > 0) $socid = $user->societe_id;
+if (isset($user->socid) && $user->socid > 0) $socid = $user->socid;
 $feature2 = (($socid && $user->rights->user->self->creer)?'':'user');
-if ($user->id == $id && (! empty($conf->global->MAIN_USE_ADVANCED_PERMS) && empty($user->rights->user->self_advance->readperms)))	// A user can always read its own card if not advanced perms enabled, or if he has advanced perms
+// A user can always read its own card if not advanced perms enabled, or if he has advanced perms, except for admin
+if ($user->id == $id && (! empty($conf->global->MAIN_USE_ADVANCED_PERMS) && empty($user->rights->user->self_advance->readperms) && empty($user->admin)))
 {
 	accessforbidden();
 }
@@ -76,7 +77,7 @@ $entity=$conf->entity;
 $hookmanager->initHooks(array('usercard','userperms','globalcard'));
 
 
-/**
+/*
  * Actions
  */
 
@@ -88,9 +89,13 @@ if (empty($reshook)) {
 	if ($action == 'addrights' && $caneditperms) {
 		$edituser = new User($db);
 		$edituser->fetch($object->id);
-		$edituser->addrights($rights, $module, '', $entity);
+		$result = $edituser->addrights($rights, $module, '', $entity);
+		if ($result < 0)
+		{
+			setEventMessages($edituser->error, $edituser->errors, 'errors');
+		}
 
-		// Si on a touche a ses propres droits, on recharge
+		// If we are changing our own permissions, we reload
 		if ($object->id == $user->id) {
 			$user->clearrights();
 			$user->getrights();
@@ -104,9 +109,13 @@ if (empty($reshook)) {
 	if ($action == 'delrights' && $caneditperms) {
 		$edituser = new User($db);
 		$edituser->fetch($object->id);
-		$edituser->delrights($rights, $module, '', $entity);
+		$result = $edituser->delrights($rights, $module, '', $entity);
+		if ($result < 0)
+		{
+			setEventMessages($edituser->error, $edituser->errors, 'errors');
+		}
 
-		// Si on a touche a ses propres droits, on recharge
+		// If we are changing our own permissions, we reload
 		if ($object->id == $user->id) {
 			$user->clearrights();
 			$user->getrights();
@@ -119,7 +128,7 @@ if (empty($reshook)) {
 }
 
 
-/**
+/*
  *	View
  */
 
@@ -166,7 +175,7 @@ foreach($modulesdir as $dir)
     	            // Load all permissions
     	            if ($objMod->rights_class)
     	            {
-    	                $ret=$objMod->insert_permissions(0, $entity);
+    	                $ret = $objMod->insert_permissions(0, $entity);
     	                $modules[$objMod->rights_class]=$objMod;
     	                //print "modules[".$objMod->rights_class."]=$objMod;";
     	            }
@@ -254,7 +263,7 @@ print '<div class="underbanner clearboth"></div>';
 
 if ($user->admin) print info_admin($langs->trans("WarningOnlyPermissionOfActivatedModules"));
 // Show warning about external users
-if (empty($user->societe_id)) print info_admin(showModulesExludedForExternal($modules))."\n";
+if (empty($user->socid)) print info_admin(showModulesExludedForExternal($modules))."\n";
 
 $parameters=array('permsgroupbyentity'=>$permsgroupbyentity);
 $reshook=$hookmanager->executeHooks('insertExtraHeader', $parameters, $object, $action);    // Note that $action and $object may have been modified by some hooks
@@ -262,8 +271,9 @@ if ($reshook < 0) setEventMessages($hookmanager->error, $hookmanager->errors, 'e
 
 
 print "\n";
-print '<div class="div-table-responsive">';
-print '<table width="100%" class="noborder">';
+print '<div class="div-table-responsive-no-min">';
+print '<table class="noborder centpercent">';
+
 print '<tr class="liste_titre">';
 print '<td>'.$langs->trans("Module").'</td>';
 if (($caneditperms && empty($objMod->rights_admin_allowed)) || empty($object->admin))
@@ -282,12 +292,12 @@ print '<td>'.$langs->trans("Permissions").'</td>';
 print '</tr>'."\n";
 
 //print "xx".$conf->global->MAIN_USE_ADVANCED_PERMS;
-$sql = "SELECT r.id, r.libelle, r.module";
+$sql = "SELECT r.id, r.libelle as label, r.module, r.module_position";
 $sql.= " FROM ".MAIN_DB_PREFIX."rights_def as r";
 $sql.= " WHERE r.libelle NOT LIKE 'tou%'";    // On ignore droits "tous"
 $sql.= " AND r.entity = " . $entity;
-if (empty($conf->global->MAIN_USE_ADVANCED_PERMS)) $sql.= " AND r.perms NOT LIKE '%_advance'";  // Hide advanced perms if option is disable
-$sql.= " ORDER BY r.module, r.id";
+if (empty($conf->global->MAIN_USE_ADVANCED_PERMS)) $sql.= " AND r.perms NOT LIKE '%_advance'";  // Hide advanced perms if option is not enabled
+$sql.= " ORDER BY r.family_position, r.module_position, r.module, r.id";
 
 $result=$db->query($sql);
 if ($result)
@@ -300,12 +310,28 @@ if ($result)
 	{
 		$obj = $db->fetch_object($result);
 
-		// Si la ligne correspond a un module qui n'existe plus (absent de includes/module), on l'ignore
+		// If line is for a module that doe snot existe anymore (absent of includes/module), we ignore it
 		if (empty($modules[$obj->module]))
 		{
 			$i++;
 			continue;
 		}
+
+		// Save field module_position in database if value is still zero
+		if (empty($obj->module_position))
+		{
+			if (is_object($modules[$obj->module]) && ($modules[$obj->module]->module_position > 0))
+			{
+				// TODO Define familyposition
+				$family = $modules[$obj->module]->family_position;
+				$familyposition = 0;
+				$sqlupdate = 'UPDATE '.MAIN_DB_PREFIX."rights_def SET module_position = ".$modules[$obj->module]->module_position.",";
+				$sqlupdate.= " family_position = ".$familyposition;
+				$sqlupdate.= " WHERE module_position = 0 AND module = '".$db->escape($obj->module)."'";
+				$db->query($sqlupdate);
+			}
+		}
+
 		if (isset($obj->module) && ($oldmod <> $obj->module))
 		{
 			$oldmod = $obj->module;
@@ -330,18 +356,24 @@ if ($result)
     				print '<a class="reposition" title="'.dol_escape_htmltag($langs->trans("None")).'" alt="'.dol_escape_htmltag($langs->trans("None")).'" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=delrights&amp;entity='.$entity.'&amp;module='.$obj->module.'">'.$langs->trans("None")."</a>";
     				print '</td>';
     			}
-    			print '<td></td>';
-    		}else {
-			    print '<td></td><td></td>';
+    			print '<td>&nbsp;</td>';
+    		} else {
+    			if ($caneditperms)
+    			{
+			    	print '<td>&nbsp;</td>';
+    			}
+    			print '<td>&nbsp;</td>';
 		    }
-    		print '<td></td>';
+    		print '<td>&nbsp;</td>';
     		print '</tr>'."\n";
         }
 
 		print '<tr class="oddeven">';
 
 		// Picto and label of module
-		print '<td class="maxwidthonsmartphone tdoverflowonsmartphone">'.img_object('', $picto, 'class="pictoobjectwidth"').' '.$objMod->getName().'</td>';
+		print '<td class="maxwidthonsmartphone tdoverflowonsmartphone">';
+		//print img_object('', $picto, 'class="pictoobjectwidth"').' '.$objMod->getName();
+		print '</td>';
 
         // Permission and tick
         if (! empty($object->admin) && ! empty($objMod->rights_admin_allowed))    // Permission granted because admin
@@ -364,7 +396,6 @@ if ($result)
         	print img_picto($langs->trans("Active"), 'tick');
         	print '</td>';
         }
-
         elseif (is_array($permsgroupbyentity[$entity]))
         {
         	if (in_array($obj->id, $permsgroupbyentity[$entity]))	// Permission granted by group
@@ -400,7 +431,7 @@ if ($result)
         }
 
         // Label
-		$permlabel=($conf->global->MAIN_USE_ADVANCED_PERMS && ($langs->trans("PermissionAdvanced".$obj->id)!=("PermissionAdvanced".$obj->id))?$langs->trans("PermissionAdvanced".$obj->id):(($langs->trans("Permission".$obj->id)!=("Permission".$obj->id))?$langs->trans("Permission".$obj->id):$langs->trans($obj->libelle)));
+		$permlabel=($conf->global->MAIN_USE_ADVANCED_PERMS && ($langs->trans("PermissionAdvanced".$obj->id)!=("PermissionAdvanced".$obj->id))?$langs->trans("PermissionAdvanced".$obj->id):(($langs->trans("Permission".$obj->id)!=("Permission".$obj->id))?$langs->trans("Permission".$obj->id):$langs->trans($obj->label)));
 		print '<td class="maxwidthonsmartphone">'.$permlabel.'</td>';
 
 		print '</tr>'."\n";

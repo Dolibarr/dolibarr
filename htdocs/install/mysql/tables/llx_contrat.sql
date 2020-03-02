@@ -14,7 +14,7 @@
 -- GNU General Public License for more details.
 --
 -- You should have received a copy of the GNU General Public License
--- along with this program. If not, see <http://www.gnu.org/licenses/>.
+-- along with this program. If not, see <https://www.gnu.org/licenses/>.
 --
 -- ============================================================================
 
@@ -30,7 +30,6 @@ create table llx_contrat
   datec						datetime,                   	-- creation date
   date_contrat				datetime,
   statut					smallint DEFAULT 0,				-- not used. deprecated
-  mise_en_service			datetime,
   fin_validite				datetime,
   date_cloture				datetime,
   fk_soc					integer NOT NULL,
@@ -39,7 +38,6 @@ create table llx_contrat
   fk_commercial_suivi 		integer, -- obsolete
   fk_user_author			integer NOT NULL default 0,
   fk_user_modif				integer,
-  fk_user_mise_en_service	integer,
   fk_user_cloture			integer,
   note_private				text,
   note_public				text,

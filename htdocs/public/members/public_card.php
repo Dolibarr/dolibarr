@@ -16,7 +16,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -25,14 +25,14 @@
  * 	\brief      File to show a public card of a member
  */
 
-if (! defined('NOLOGIN'))		define("NOLOGIN", 1);		// This means this output page does not require to be logged.
-if (! defined('NOCSRFCHECK'))	define("NOCSRFCHECK", 1);	// We accept to go on this page from external web site.
-if (! defined('NOIPCHECK'))		define('NOIPCHECK', '1');	// Do not check IP defined into conf $dolibarr_main_restrict_ip
+if (!defined('NOLOGIN'))		define("NOLOGIN", 1); // This means this output page does not require to be logged.
+if (!defined('NOCSRFCHECK'))	define("NOCSRFCHECK", 1); // We accept to go on this page from external web site.
+if (!defined('NOIPCHECK'))		define('NOIPCHECK', '1'); // Do not check IP defined into conf $dolibarr_main_restrict_ip
 
 // For MultiCompany module.
 // Do not use GETPOST here, function is not defined and define must be done before including main.inc.php
 // TODO This should be useless. Because entity must be retreive from object ref and not from url.
-$entity=(! empty($_GET['entity']) ? (int) $_GET['entity'] : (! empty($_POST['entity']) ? (int) $_POST['entity'] : 1));
+$entity = (!empty($_GET['entity']) ? (int) $_GET['entity'] : (!empty($_POST['entity']) ? (int) $_POST['entity'] : 1));
 if (is_numeric($entity)) define("DOLENTITY", $entity);
 
 require '../../main.inc.php';
@@ -46,7 +46,7 @@ if (empty($conf->adherent->enabled)) accessforbidden('', 0, 0, 1);
 
 $langs->loadLangs(array("main", "members", "companies", "other"));
 
-$id=GETPOST('id', 'int');
+$id = GETPOST('id', 'int');
 $object = new Adherent($db);
 $extrafields = new ExtraFields($db);
 
@@ -64,19 +64,20 @@ $extrafields = new ExtraFields($db);
  * View
  */
 
-$morehead='';
-if (! empty($conf->global->MEMBER_PUBLIC_CSS)) $morehead='<link rel="stylesheet" type="text/css" href="'.$conf->global->MEMBER_PUBLIC_CSS.'">';
-else $morehead='<link rel="stylesheet" type="text/css" href="'.DOL_URL_ROOT.'/theme/eldy/style.css.php'.'">';
+$morehead = '';
+if (!empty($conf->global->MEMBER_PUBLIC_CSS)) $morehead = '<link rel="stylesheet" type="text/css" href="'.$conf->global->MEMBER_PUBLIC_CSS.'">';
+else $morehead = '<link rel="stylesheet" type="text/css" href="'.DOL_URL_ROOT.'/theme/eldy/style.css.php'.'">';
 
 llxHeaderVierge($langs->trans("MemberCard"), $morehead);
 
 // fetch optionals attributes and labels
-$extralabels=$extrafields->fetch_name_optionals_label('adherent');
+$extrafields->fetch_name_optionals_label($object->table_element);
+
 if ($id > 0)
 {
-	$res=$object->fetch($id);
+	$res = $object->fetch($id);
 	if ($res < 0) { dol_print_error($db, $object->error); exit; }
-	$res=$object->fetch_optionals();
+	$res = $object->fetch_optionals();
 
 	print load_fiche_titre($langs->trans("MemberCard"), '', '');
 
@@ -100,7 +101,7 @@ if ($id > 0)
 		print '<tr><td>'.$langs->trans("EMail").'</td><td class="valeur">'.$object->email.'&nbsp;</td></tr>';
 		print '<tr><td>'.$langs->trans("Birthday").'</td><td class="valeur">'.dol_print_date($object->birth, 'day').'</td></tr>';
 
-		if (isset($object->photo) && $object->photo !='')
+		if (isset($object->photo) && $object->photo != '')
 		{
 			$form = new Form($db);
 			print '<tr><td>URL Photo</td><td class="valeur">';

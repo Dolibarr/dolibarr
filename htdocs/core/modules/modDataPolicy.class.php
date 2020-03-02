@@ -14,14 +14,14 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
  * 	\defgroup   datapolicy     Module datapolicy
  *  \brief      datapolicy module descriptor.
  *
- *  \file       htdocs/datapolicy/core/modules/modDataPolicy.class.php
+ *  \file       htdocs/core/modules/modDataPolicy.class.php
  *  \ingroup    datapolicy
  *  \brief      Description and activation file for module DATAPOLICY
  */
@@ -59,7 +59,7 @@ class modDataPolicy extends DolibarrModules {
         // It is used to group modules by family in module setup page
         $this->family = "technic";
         // Module position in the family on 2 digits ('01', '10', '20', ...)
-        $this->module_position = '81';
+        $this->module_position = '78';
         // Gives the possibility to the module, to provide his own family info and position of this family (Overwrite $this->family and $this->module_position. Avoid this)
         //$this->familyinfo = array('myownfamily' => array('position' => '01', 'label' => $langs->trans("MyOwnFamily")));
         // Module label (no space allowed), used if translation string 'ModuledatapolicyName' not found (MyModue is name of module).
@@ -187,8 +187,7 @@ class modDataPolicy extends DolibarrModules {
         // Cronjobs (List of cron jobs entries to add when module is enabled)
         // unit_frequency must be 60 for minute, 3600 for hour, 86400 for day, 604800 for week
         $this->cronjobs = array(
-            0 => array('label' => 'DATAPOLICY Cron', 'jobtype' => 'method', 'class' => '/datapolicy/class/datapolicyCron.class.php', 'objectname' => 'DataPolicyCron', 'method' => 'exec', 'parameters' => '', 'comment' => 'Clean data', 'frequency' => 1, 'unitfrequency' => 86400, 'status' => 1, 'test' => '$conf->datapolicy->enabled'),
-            //1 => array('label' => 'DATAPOLICY Mailing', 'jobtype' => 'method', 'class' => '/datapolicy/class/datapolicyCron.class.php', 'objectname' => 'RgpdCron', 'method' => 'sendMailing', 'parameters' => '', 'comment' => 'Comment', 'frequency' => 1, 'unitfrequency' => 86400, 'status' => 0, 'test' => true)
+            0 => array('label' => 'DATAPOLICYJob', 'jobtype' => 'method', 'class' => 'datapolicy/class/datapolicycron.class.php', 'objectname' => 'DataPolicyCron', 'method' => 'cleanDataForDataPolicy', 'parameters' => '', 'comment' => 'Clean data', 'frequency' => 1, 'unitfrequency' => 86400, 'status' => 1, 'test' => '$conf->datapolicy->enabled'),
         );
         // Example: $this->cronjobs=array(0=>array('label'=>'My label', 'jobtype'=>'method', 'class'=>'/dir/class/file.class.php', 'objectname'=>'MyClass', 'method'=>'myMethod', 'parameters'=>'param1, param2', 'comment'=>'Comment', 'frequency'=>2, 'unitfrequency'=>3600, 'status'=>0, 'test'=>true),
         //                                1=>array('label'=>'My label', 'jobtype'=>'command', 'command'=>'', 'parameters'=>'param1, param2', 'comment'=>'Comment', 'frequency'=>1, 'unitfrequency'=>3600*24, 'status'=>0, 'test'=>true)

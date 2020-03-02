@@ -19,7 +19,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -29,7 +29,7 @@
  *      \ingroup    member
  *      \brief      File descriptor or module Member
  */
-include_once DOL_DOCUMENT_ROOT .'/core/modules/DolibarrModules.class.php';
+include_once DOL_DOCUMENT_ROOT.'/core/modules/DolibarrModules.class.php';
 
 /**
  *  Class to describe and enable module Adherent
@@ -57,7 +57,7 @@ class modAdherent extends DolibarrModules
         // Possible values for version are: 'development', 'experimental', 'dolibarr' or version
         $this->version = 'dolibarr';
         $this->const_name = 'MAIN_MODULE_'.strtoupper($this->name);
-        $this->picto='user';
+        $this->picto = 'user';
 
         // Data directories to create when module is enabled
         $this->dirs = array("/adherent/temp");
@@ -66,16 +66,16 @@ class modAdherent extends DolibarrModules
         $this->config_page_url = array("adherent.php@adherents");
 
         // Dependencies
-        $this->hidden = false;			// A condition to hide module
-        $this->depends = array();		// List of module class names as string that must be enabled if this module is enabled
-        $this->requiredby = array();	// List of module ids to disable if this one is disabled
-        $this->conflictwith = array('modMailmanSpip');	// List of module class names as string this module is in conflict with
-        $this->langfiles = array("members","companies");
-        $this->phpmin = array(5,4);		// Minimum version of PHP required by module
+        $this->hidden = false; // A condition to hide module
+        $this->depends = array(); // List of module class names as string that must be enabled if this module is enabled
+        $this->requiredby = array(); // List of module ids to disable if this one is disabled
+        $this->conflictwith = array('modMailmanSpip'); // List of module class names as string this module is in conflict with
+        $this->langfiles = array("members", "companies");
+        $this->phpmin = array(5, 4); // Minimum version of PHP required by module
 
         // Constants
         $this->const = array();
-        $r=0;
+        $r = 0;
 
         $this->const[$r][0] = "ADHERENT_ADDON_PDF";
         $this->const[$r][1] = "chaine";
@@ -181,7 +181,10 @@ class modAdherent extends DolibarrModules
 
         // Boxes
         //-------
-        $this->boxes = array(0=>array('file'=>'box_members.php','enabledbydefaulton'=>'Home'));
+        $this->boxes = array(
+			0=>array('file'=>'box_members.php','enabledbydefaulton'=>'Home'),
+			2=>array('file'=>'box_birthdays_members.php','enabledbydefaulton'=>'Home')
+		);
 
         // Permissions
         //------------
@@ -250,12 +253,12 @@ class modAdherent extends DolibarrModules
 
         // Menus
         //-------
-        $this->menu = 1;        // This module add menu entries. They are coded into menu manager.
+        $this->menu = 1; // This module add menu entries. They are coded into menu manager.
 
 
         // Exports
         //--------
-        $r=0;
+        $r = 0;
 
         // $this->export_code[$r]          Unique code identifying the export (all modules combined)
         // $this->export_label[$r]         Libelle by default if translation of key "ExportXXX" not found (XXX = Code)
@@ -274,20 +277,22 @@ class modAdherent extends DolibarrModules
             'a.phone'=>"PhonePro",'a.phone_perso'=>"PhonePerso",'a.phone_mobile'=>"PhoneMobile",'a.email'=>"Email",'a.birth'=>"Birthday",'a.statut'=>"Status",
             'a.photo'=>"Photo",'a.note_public'=>"NotePublic",'a.note_private'=>"NotePrivate",'a.datec'=>'DateCreation','a.datevalid'=>'DateValidation',
             'a.tms'=>'DateLastModification','a.datefin'=>'DateEndSubscription','ta.rowid'=>'MemberTypeId','ta.libelle'=>'MemberTypeLabel',
-            'c.rowid'=>'SubscriptionId','c.dateadh'=>'DateSubscription','c.subscription'=>'Amount'
+            'c.rowid'=>'SubscriptionId','c.dateadh'=>'DateSubscription','c.datef'=>'DateEndSubscription','c.subscription'=>'Amount'
         );
         $this->export_TypeFields_array[$r]=array(
             'a.civility'=>"Text",'a.lastname'=>"Text",'a.firstname'=>"Text",'a.login'=>"Text",'a.gender'=>'Text','a.morphy'=>'Text','a.societe'=>'Text','a.address'=>"Text",
             'a.zip'=>"Text",'a.town'=>"Text",'d.nom'=>"Text",'co.code'=>'Text','co.label'=>"Text",'a.phone'=>"Text",'a.phone_perso'=>"Text",'a.phone_mobile'=>"Text",
             'a.email'=>"Text",'a.birth'=>"Date",'a.statut'=>"Status",'a.note_public'=>"Text",'a.note_private'=>"Text",'a.datec'=>'Date','a.datevalid'=>'Date',
-            'a.tms'=>'Date','a.datefin'=>'Date','ta.rowid'=>'List:adherent_type:libelle::member_type','ta.libelle'=>'Text','c.rowid'=>'Numeric','c.dateadh'=>'Date','c.subscription'=>'Numeric'
+            'a.tms'=>'Date','a.datefin'=>'Date','ta.rowid'=>'List:adherent_type:libelle::member_type','ta.libelle'=>'Text',
+			'c.rowid'=>'Numeric','c.dateadh'=>'Date','c.datef'=>'Date','c.subscription'=>'Numeric'
         );
         $this->export_entities_array[$r]=array(
             'a.rowid'=>'member','a.civility'=>"member",'a.lastname'=>"member",'a.firstname'=>"member",'a.login'=>"member",'a.gender'=>'member','a.morphy'=>'member',
             'a.societe'=>'member','a.address'=>"member",'a.zip'=>"member",'a.town'=>"member",'d.nom'=>"member",'co.code'=>"member",'co.label'=>"member",
             'a.phone'=>"member",'a.phone_perso'=>"member",'a.phone_mobile'=>"member",'a.email'=>"member",'a.birth'=>"member",'a.statut'=>"member",
             'a.photo'=>"member",'a.note_public'=>"member",'a.note_private'=>"member",'a.datec'=>'member','a.datevalid'=>'member','a.tms'=>'member',
-            'a.datefin'=>'member','ta.rowid'=>'member_type','ta.libelle'=>'member_type','c.rowid'=>'subscription','c.dateadh'=>'subscription','c.subscription'=>'subscription'
+            'a.datefin'=>'member','ta.rowid'=>'member_type','ta.libelle'=>'member_type',
+			'c.rowid'=>'subscription','c.dateadh'=>'subscription','c.datef'=>'subscription','c.subscription'=>'subscription'
         );
         // Add extra fields
         $keyforselect='adherent'; $keyforelement='member'; $keyforaliasextra='extra';
@@ -379,7 +384,7 @@ class modAdherent extends DolibarrModules
      */
     public function init($options = '')
     {
-        global $conf,$langs;
+        global $conf, $langs;
 
         // Permissions
         $this->remove($options);

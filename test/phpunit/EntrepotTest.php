@@ -12,8 +12,8 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
- * or see http://www.gnu.org/
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
+ * or see https://www.gnu.org/
  */
 
 /**
@@ -45,7 +45,7 @@ $conf->global->MAIN_DISABLE_ALL_MAILS=1;
  * @backupStaticAttributes enabled
  * @remarks	backupGlobals must be disabled to have db,conf,user and lang not erased.
  */
-class EntrepotTest extends PHPUnit_Framework_TestCase
+class EntrepotTest extends PHPUnit\Framework\TestCase
 {
 	protected $savconf;
 	protected $savuser;
@@ -238,7 +238,7 @@ class EntrepotTest extends PHPUnit_Framework_TestCase
 
     	$result=$localobject->delete($user);
 		print __METHOD__." id=".$id." result=".$result."\n";
-    	$this->assertLessThan($result, 0);
+    	$this->assertLessThan($result, 0, $localobject->errorsToString());
 
     	return $result;
     }

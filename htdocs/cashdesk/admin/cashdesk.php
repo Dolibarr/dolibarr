@@ -13,7 +13,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -27,7 +27,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/product/class/html.formproduct.class.php';
 
 // If socid provided by ajax company selector
-if (! empty($_REQUEST['CASHDESK_ID_THIRDPARTY_id']))
+if (!empty($_REQUEST['CASHDESK_ID_THIRDPARTY_id']))
 {
 	$_GET['CASHDESK_ID_THIRDPARTY'] = GETPOST('CASHDESK_ID_THIRDPARTY_id', 'alpha');
 	$_POST['CASHDESK_ID_THIRDPARTY'] = GETPOST('CASHDESK_ID_THIRDPARTY_id', 'alpha');
@@ -49,7 +49,7 @@ if (GETPOST('action', 'alpha') == 'set')
 {
 	$db->begin();
 
-	if (GETPOST('socid', 'int') < 0) $_POST["socid"]='';
+	if (GETPOST('socid', 'int') < 0) $_POST["socid"] = '';
 
 	$res = dolibarr_set_const($db, "CASHDESK_ID_THIRDPARTY", (GETPOST('socid', 'int') > 0 ? GETPOST('socid', 'int') : ''), 'chaine', 0, '', $conf->entity);
 	$res = dolibarr_set_const($db, "CASHDESK_ID_BANKACCOUNT_CASH", (GETPOST('CASHDESK_ID_BANKACCOUNT_CASH', 'alpha') > 0 ? GETPOST('CASHDESK_ID_BANKACCOUNT_CASH', 'alpha') : ''), 'chaine', 0, '', $conf->entity);
@@ -62,9 +62,9 @@ if (GETPOST('action', 'alpha') == 'set')
 
 	dol_syslog("admin/cashdesk: level ".GETPOST('level', 'alpha'));
 
-	if (! $res > 0) $error++;
+	if (!$res > 0) $error++;
 
- 	if (! $error)
+ 	if (!$error)
     {
         $db->commit();
 	    setEventMessages($langs->trans("SetupSaved"), null, 'mesgs');
@@ -80,24 +80,24 @@ if (GETPOST('action', 'alpha') == 'set')
  * View
  */
 
-$form=new Form($db);
-$formproduct=new FormProduct($db);
+$form = new Form($db);
+$formproduct = new FormProduct($db);
 
 llxHeader('', $langs->trans("CashDeskSetup"));
 
-$linkback='<a href="'.DOL_URL_ROOT.'/admin/modules.php?restore_lastsearch_values=1">'.$langs->trans("BackToModuleList").'</a>';
+$linkback = '<a href="'.DOL_URL_ROOT.'/admin/modules.php?restore_lastsearch_values=1">'.$langs->trans("BackToModuleList").'</a>';
 print load_fiche_titre($langs->trans("CashDeskSetup").' (SimplePOS)', $linkback, 'title_setup');
 print '<br>';
 
 
 // Mode
 print '<form action="'.$_SERVER["PHP_SELF"].'" method="post">';
-print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+print '<input type="hidden" name="token" value="'.newToken().'">';
 print '<input type="hidden" name="action" value="set">';
 
-if (! empty($conf->service->enabled))
+if (!empty($conf->service->enabled))
 {
-	print '<table class="noborder" width="100%">';
+	print '<table class="noborder centpercent">';
 	print '<tr class="liste_titre">';
 	print '<td>'.$langs->trans("Parameters").'</td><td>'.$langs->trans("Value").'</td>';
 	print "</tr>\n";
@@ -114,7 +114,7 @@ if (! empty($conf->service->enabled))
 }
 
 
-print '<table class="noborder" width="100%">';
+print '<table class="noborder centpercent">';
 print '<tr class="liste_titre">';
 print '<td>'.$langs->trans("Terminal").' 0</td><td>'.$langs->trans("Value").'</td>';
 print "</tr>\n";
@@ -123,9 +123,8 @@ print '<tr class="oddeven"><td width=\"50%\">'.$langs->trans("CashDeskThirdParty
 print '<td colspan="2">';
 print $form->select_company($conf->global->CASHDESK_ID_THIRDPARTY, 'socid', '(s.client in (1,3) AND s.status = 1)', 1, 0, 0, array(), 0);
 print '</td></tr>';
-if (! empty($conf->banque->enabled))
+if (!empty($conf->banque->enabled))
 {
-
 	print '<tr class="oddeven"><td>'.$langs->trans("CashDeskBankAccountForSell").'</td>';
 	print '<td colspan="2">';
 	$form->select_comptes($conf->global->CASHDESK_ID_BANKACCOUNT_CASH, 'CASHDESK_ID_BANKACCOUNT_CASH', 0, "courant=2", 1);
@@ -144,30 +143,29 @@ if (! empty($conf->banque->enabled))
 	print '</td></tr>';
 }
 
-if (! empty($conf->stock->enabled))
+if (!empty($conf->stock->enabled))
 {
-
-	print '<tr class="oddeven"><td>'.$langs->trans("CashDeskDoNotDecreaseStock").'</td>';	// Force warehouse (this is not a default value)
+	print '<tr class="oddeven"><td>'.$langs->trans("CashDeskDoNotDecreaseStock").'</td>'; // Force warehouse (this is not a default value)
 	print '<td colspan="2">';
 	if (empty($conf->productbatch->enabled)) {
-	   print $form->selectyesno('CASHDESK_NO_DECREASE_STOCK', $conf->global->CASHDESK_NO_DECREASE_STOCK, 1);
+	    print $form->selectyesno('CASHDESK_NO_DECREASE_STOCK', $conf->global->CASHDESK_NO_DECREASE_STOCK, 1);
 	}
 	else
 	{
 	    if (!$conf->global->CASHDESK_NO_DECREASE_STOCK) {
-	       $res = dolibarr_set_const($db, "CASHDESK_NO_DECREASE_STOCK", 1, 'chaine', 0, '', $conf->entity);
+	        $res = dolibarr_set_const($db, "CASHDESK_NO_DECREASE_STOCK", 1, 'chaine', 0, '', $conf->entity);
 	    }
 	    print $langs->trans("Yes").'<br>';
 	    print '<span class="opacitymedium">'.$langs->trans('StockDecreaseForPointOfSaleDisabledbyBatch').'</span>';
 	}
 	print '</td></tr>';
 
-	$disabled=$conf->global->CASHDESK_NO_DECREASE_STOCK;
+	$disabled = $conf->global->CASHDESK_NO_DECREASE_STOCK;
 
 
-	print '<tr class="oddeven"><td>'.$langs->trans("CashDeskIdWareHouse").'</td>';	// Force warehouse (this is not a default value)
+	print '<tr class="oddeven"><td>'.$langs->trans("CashDeskIdWareHouse").'</td>'; // Force warehouse (this is not a default value)
 	print '<td colspan="2">';
-	if (! $disabled)
+	if (!$disabled)
 	{
 		print $formproduct->selectWarehouses($conf->global->CASHDESK_ID_WAREHOUSE, 'CASHDESK_ID_WAREHOUSE', '', 1, $disabled);
 		print ' <a href="'.DOL_URL_ROOT.'/product/stock/card.php?action=create&backtopage='.urlencode($_SERVER["PHP_SELF"]).'">('.$langs->trans("Create").')</a>';
@@ -180,7 +178,7 @@ if (! empty($conf->stock->enabled))
 }
 
 // Use Dolibarr Receipt Printer
-if (! empty($conf->receiptprinter->enabled))
+if (!empty($conf->receiptprinter->enabled))
 {
     print '<tr class="oddeven"><td>';
     print $langs->trans("DolibarrReceiptPrinter").' ('.$langs->trans("FeatureNotYetAvailable").')';

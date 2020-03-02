@@ -15,7 +15,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -157,7 +157,7 @@ function length_accounta($accounta)
 
 
 /**
- *	Show header of a VAT report
+ *	Show header of a page used to transfer/dispatch data in accounting
  *
  *	@param	string				$nom            Name of report
  *	@param 	string				$variante       Link for alternate report
@@ -175,7 +175,7 @@ function journalHead($nom, $variante, $period, $periodlink, $description, $build
 {
     global $langs;
 
-    print "\n\n<!-- debut cartouche journal -->\n";
+    print "\n\n<!-- start banner journal -->\n";
 
     if(! is_empty($varlink)) $varlink = '?'.$varlink;
 
@@ -186,6 +186,7 @@ function journalHead($nom, $variante, $period, $periodlink, $description, $build
     $head[$h][2] = 'journal';
 
     print '<form method="POST" action="'.$_SERVER["PHP_SELF"].$varlink.'">';
+    print '<input type="hidden" name="token" value="'.newToken().'">';
 
     dol_fiche_head($head, 'journal');
 
@@ -240,5 +241,5 @@ function journalHead($nom, $variante, $period, $periodlink, $description, $build
 
     print '</form>';
 
-    print "\n<!-- fin cartouche journal -->\n\n";
+    print "\n<!-- end banner journal -->\n\n";
 }

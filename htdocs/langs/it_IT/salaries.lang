@@ -1,18 +1,21 @@
 # Dolibarr language file - Source file is en_US - salaries
 SALARIES_ACCOUNTING_ACCOUNT_PAYMENT=Piano dei conti usato per utenti di soggetti terzi
-SALARIES_ACCOUNTING_ACCOUNT_PAYMENT_Desc=Il codice contabile dedicato definito sulla scheda utente verrà utilizzato solo per il registro contabile secondario. Questo verrà utilizzato per il libro mastro e come valore predefinito del registro contabile secondario se il codice contabile utente dedicato non è stato definito per l'utente.
+SALARIES_ACCOUNTING_ACCOUNT_PAYMENT_Desc=The dedicated accounting account defined on user card will be used for Subledger accounting only. This one will be used for General Ledger and as default value of Subledger accounting if dedicated user accounting account on user is not defined.
 SALARIES_ACCOUNTING_ACCOUNT_CHARGE=Codice contabile predefinito per i pagamenti degli stipendi
 Salary=Stipendio
 Salaries=Stipendi
 NewSalaryPayment=Nuovo pagamento stipendio
+AddSalaryPayment=Add salary payment
 SalaryPayment=Pagamento stipendio
 SalariesPayments=Pagamento stipendi
 ShowSalaryPayment=Mostra i pagamenti stipendio
 THM=€/h
 TJM=€/g
 CurrentSalary=Stipendio attuale
-THMDescription=Questo valore viene usato per calcolare il costo delle ore spese in un progetto inserite dagli utenti se il modulo progetti è attivo
-TJMDescription=Attualmente il valore è solo un dato informativo e non viene usato per alcun calcolo automatico
+THMDescription=This value may be used to calculate the cost of time consumed on a project entered by users if module project is used
+TJMDescription=This value is currently for information only and is not used for any calculation
 LastSalaries=Ultimo %s pagamento dello stipendio
 AllSalaries=Tutti i pagamenti degli stipendi
-SalariesStatistics=Statistiche stipendi
+SalariesStatistics=Salary statistics
+# Export
+SalariesAndPayments=Salaries and payments

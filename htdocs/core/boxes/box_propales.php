@@ -2,7 +2,8 @@
 /* Copyright (C) 2003-2007 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2007 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2009 Regis Houssin        <regis.houssin@inodbox.com>
- * Copyright (C) 2015      Frederic France      <frederic.france@free.fr>
+ * Copyright (C) 2015-2019 Frederic France      <frederic.france@netlogic.fr>
+ * Copyright (C) 2020      Pierre Ardoin        <mapiolca@me.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -15,7 +16,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -32,10 +33,10 @@ include_once DOL_DOCUMENT_ROOT.'/core/boxes/modules_boxes.php';
  */
 class box_propales extends ModeleBoxes
 {
-    public $boxcode="lastpropals";
-    public $boximg="object_propal";
-    public $boxlabel="BoxLastProposals";
-    public $depends = array("propal");	// conf->propal->enabled
+    public $boxcode = "lastpropals";
+    public $boximg = "object_propal";
+    public $boxlabel = "BoxLastProposals";
+    public $depends = array("propal"); // conf->propal->enabled
 
     /**
      * @var DoliDB Database handler.
@@ -58,9 +59,9 @@ class box_propales extends ModeleBoxes
     {
         global $user;
 
-        $this->db=$db;
+        $this->db = $db;
 
-        $this->hidden=! ($user->rights->propale->lire);
+        $this->hidden = !($user->rights->propale->lire);
     }
 
     /**
@@ -71,47 +72,47 @@ class box_propales extends ModeleBoxes
      */
     public function loadBox($max = 5)
     {
-    	global $user, $langs, $db, $conf;
+    	global $user, $langs, $conf;
 
-    	$this->max=$max;
+    	$this->max = $max;
 
     	include_once DOL_DOCUMENT_ROOT.'/comm/propal/class/propal.class.php';
         include_once DOL_DOCUMENT_ROOT.'/societe/class/societe.class.php';
-    	$propalstatic=new Propal($db);
-        $societestatic = new Societe($db);
+    	$propalstatic = new Propal($this->db);
+        $societestatic = new Societe($this->db);
 
-        $this->info_box_head = array('text' => $langs->trans("BoxTitleLast".($conf->global->MAIN_LASTBOX_ON_OBJECT_DATE?"":"Modified")."Propals", $max));
+        $this->info_box_head = array('text' => $langs->trans("BoxTitleLast".($conf->global->MAIN_LASTBOX_ON_OBJECT_DATE ? "" : "Modified")."Propals", $max));
 
     	if ($user->rights->propale->lire)
     	{
-    		$sql = "SELECT s.nom as name, s.rowid as socid, s.code_client, s.logo,";
-    		$sql.= " p.rowid, p.ref, p.fk_statut, p.datep as dp, p.datec, p.fin_validite, p.date_cloture, p.total_ht, p.tva as total_tva, p.total as total_ttc, p.tms";
-    		$sql.= " FROM ".MAIN_DB_PREFIX."societe as s";
-    		$sql.= ", ".MAIN_DB_PREFIX."propal as p";
-    		if (!$user->rights->societe->client->voir && !$user->societe_id) $sql.= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
-    		$sql.= " WHERE p.fk_soc = s.rowid";
-    		$sql.= " AND p.entity = ".$conf->entity;
-    		if (!$user->rights->societe->client->voir && !$user->societe_id) $sql.= " AND s.rowid = sc.fk_soc AND sc.fk_user = " .$user->id;
-    		if($user->societe_id) $sql.= " AND s.rowid = ".$user->societe_id;
-            if ($conf->global->MAIN_LASTBOX_ON_OBJECT_DATE) $sql.= " ORDER BY p.datep DESC, p.ref DESC ";
-            else $sql.= " ORDER BY p.tms DESC, p.ref DESC ";
-    		$sql.= $db->plimit($max, 0);
+    		$sql = "SELECT s.nom as name, s.rowid as socid, s.code_client, s.logo, s.entity, s.email,";
+    		$sql .= " p.rowid, p.ref, p.fk_statut, p.datep as dp, p.datec, p.fin_validite, p.date_cloture, p.total_ht, p.tva as total_tva, p.total as total_ttc, p.tms";
+    		$sql .= " FROM ".MAIN_DB_PREFIX."societe as s";
+    		$sql .= ", ".MAIN_DB_PREFIX."propal as p";
+    		if (!$user->rights->societe->client->voir && !$user->socid) $sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
+    		$sql .= " WHERE p.fk_soc = s.rowid";
+    		$sql .= " AND p.entity = ".$conf->entity;
+    		if (!$user->rights->societe->client->voir && !$user->socid) $sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".$user->id;
+    		if ($user->socid) $sql .= " AND s.rowid = ".$user->socid;
+            if ($conf->global->MAIN_LASTBOX_ON_OBJECT_DATE) $sql .= " ORDER BY p.datep DESC, p.ref DESC ";
+            else $sql .= " ORDER BY p.tms DESC, p.ref DESC ";
+    		$sql .= $this->db->plimit($max, 0);
 
-    		$result = $db->query($sql);
+    		$result = $this->db->query($sql);
     		if ($result)
     		{
-    			$num = $db->num_rows($result);
-    			$now=dol_now();
+    			$num = $this->db->num_rows($result);
+    			$now = dol_now();
 
     			$line = 0;
 
                 while ($line < $num) {
-    				$objp = $db->fetch_object($result);
-    				$date=$db->jdate($objp->dp);
-    				$datec=$db->jdate($objp->datec);
-    				$datem=$db->jdate($objp->tms);
-    				$dateterm=$db->jdate($objp->fin_validite);
-    				$dateclose=$db->jdate($objp->date_cloture);
+    				$objp = $this->db->fetch_object($result);
+    				$date = $this->db->jdate($objp->dp);
+    				$datec = $this->db->jdate($objp->datec);
+    				$datem = $this->db->jdate($objp->tms);
+    				$dateterm = $this->db->jdate($objp->fin_validite);
+    				$dateclose = $this->db->jdate($objp->date_cloture);
                     $propalstatic->id = $objp->rowid;
                     $propalstatic->ref = $objp->ref;
                     $propalstatic->total_ht = $objp->total_ht;
@@ -121,6 +122,8 @@ class box_propales extends ModeleBoxes
                     $societestatic->name = $objp->name;
                     $societestatic->code_client = $objp->code_client;
                     $societestatic->logo = $objp->logo;
+                    $societestatic->email = $objp->email;
+					$societestatic->entity = $objp->entity;
 
     				$late = '';
     				if ($objp->fk_statut == 1 && $dateterm < ($now - $conf->propal->cloture->warning_delay)) {
@@ -128,7 +131,7 @@ class box_propales extends ModeleBoxes
     				}
 
                     $this->info_box_contents[$line][] = array(
-                        'td' => '',
+                        'td' => 'class="nowraponall"',
                         'text' => $propalstatic->getNomUrl(1),
                         'text2'=> $late,
                         'asis' => 1,
@@ -158,18 +161,18 @@ class box_propales extends ModeleBoxes
                     $line++;
                 }
 
-                if ($num==0)
+                if ($num == 0)
                     $this->info_box_contents[$line][0] = array(
                         'td' => 'class="center"',
                         'text'=>$langs->trans("NoRecordedProposals"),
                     );
 
-                $db->free($result);
+                $this->db->free($result);
             } else {
                 $this->info_box_contents[0][0] = array(
                     'td' => '',
                     'maxlength'=>500,
-                    'text' => ($db->error().' sql='.$sql),
+                    'text' => ($this->db->error().' sql='.$sql),
                 );
             }
         } else {

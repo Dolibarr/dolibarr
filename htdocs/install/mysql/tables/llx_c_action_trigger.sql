@@ -12,7 +12,7 @@
 -- GNU General Public License for more details.
 --
 -- You should have received a copy of the GNU General Public License
--- along with this program. If not, see <http://www.gnu.org/licenses/>.
+-- along with this program. If not, see <https://www.gnu.org/licenses/>.
 --
 -- This table is a list of all available possible automatic actions
 -- It is read only by admin page to select action code and save them 
@@ -22,7 +22,7 @@
 create table llx_c_action_trigger
 (
   rowid			integer AUTO_INCREMENT PRIMARY KEY,
-  elementtype	varchar(32) 			NOT NULL,
+  elementtype	varchar(64) 			NOT NULL,
   code			varchar(32)				NOT NULL,
   label			varchar(128)			NOT NULL,
   description	varchar(255),

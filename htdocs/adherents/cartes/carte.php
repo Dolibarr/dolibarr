@@ -14,7 +14,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -31,7 +31,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/modules/printsheet/modules_labels.php';
 
 $langs->loadLangs(array("members","errors"));
 
-// Choix de l'annee d'impression ou annee courante.
+// Choice of printing year or current year.
 $now = dol_now();
 $year=dol_print_date($now, '%Y');
 $month=dol_print_date($now, '%m');
@@ -47,8 +47,8 @@ $adherentstatic=new Adherent($db);
 $object=new Adherent($db);
 
 $extrafields = new ExtraFields($db);
-// fetch optionals attributes and labels
-$extralabels = $extrafields->fetch_name_optionals_label('adherent');
+// Fetch optionals attributes and labels
+$extrafields->fetch_name_optionals_label($object->table_element);
 
 
 /*
@@ -97,7 +97,7 @@ if ((! empty($foruserid) || ! empty($foruserlogin) || ! empty($mode)) && ! $mesg
     		$adherentstatic->lastname=$objp->lastname;
     		$adherentstatic->firstname=$objp->firstname;
 
-            // format extrafiled so they can be parsed in function complete_substitutions_array
+            // Format extrafield so they can be parsed in function complete_substitutions_array
     		if (is_array($extrafields->attributes[$object->table_element]['label']) && count($extrafields->attributes[$object->table_element]['label']))
             {
                 $adherentstatic->array_options = array();
@@ -248,7 +248,7 @@ $form=new Form($db);
 
 llxHeader('', $langs->trans("MembersCards"));
 
-print load_fiche_titre($langs->trans("LinkToGeneratedPages"));
+print load_fiche_titre($langs->trans("LinkToGeneratedPages"), '', 'members');
 
 print '<span class="opacitymedium">'.$langs->trans("LinkToGeneratedPagesDesc").'</span><br>';
 print '<br>';
@@ -259,6 +259,7 @@ print '<br>';
 
 print img_picto('', 'puce').' '.$langs->trans("DocForAllMembersCards", ($conf->global->ADHERENT_CARD_TYPE?$conf->global->ADHERENT_CARD_TYPE:$langs->transnoentitiesnoconv("None"))).' ';
 print '<form action="'.$_SERVER["PHP_SELF"].'" method="POST">';
+print '<input type="hidden" name="token" value="' . $_SESSION ['newtoken'] . '">';
 print '<input type="hidden" name="foruserid" value="all">';
 print '<input type="hidden" name="mode" value="card">';
 print '<input type="hidden" name="action" value="builddoc">';
@@ -278,6 +279,7 @@ print '<br><br>';
 
 print img_picto('', 'puce').' '.$langs->trans("DocForOneMemberCards", ($conf->global->ADHERENT_CARD_TYPE?$conf->global->ADHERENT_CARD_TYPE:$langs->transnoentitiesnoconv("None"))).' ';
 print '<form action="'.$_SERVER["PHP_SELF"].'" method="POST">';
+print '<input type="hidden" name="token" value="' . $_SESSION ['newtoken'] . '">';
 print '<input type="hidden" name="mode" value="cardlogin">';
 print '<input type="hidden" name="action" value="builddoc">';
 print $langs->trans("DescADHERENT_CARD_TYPE").' ';
@@ -297,6 +299,7 @@ print '<br><br>';
 
 print img_picto('', 'puce').' '.$langs->trans("DocForLabels", $conf->global->ADHERENT_ETIQUETTE_TYPE).' ';
 print '<form action="'.$_SERVER["PHP_SELF"].'" method="POST">';
+print '<input type="hidden" name="token" value="' . $_SESSION ['newtoken'] . '">';
 print '<input type="hidden" name="mode" value="label">';
 print '<input type="hidden" name="action" value="builddoc">';
 print $langs->trans("DescADHERENT_ETIQUETTE_TYPE").' ';
