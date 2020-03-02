@@ -654,7 +654,7 @@ $( document ).ready(function() {
 
 <body class="bodytakepos" style="overflow: hidden;">
 <?php
-if ($conf->global->TAKEPOS_NUM_TERMINALS != "1" && $_SESSION["takeposterminal"] == "") print '<div id="dialog-info" title="TakePOS">'.$langs->trans('TerminalSelect').'</div>';
+print '<div class="hidden" id="dialog-info" title="TakePOS">'.$langs->trans('TerminalSelect').'</div>';
 $keyCodeForEnter = $conf->global->{'CASHDESK_READER_KEYCODE_FOR_ENTER'.$_SESSION['takeposterminal']} > 0 ? $conf->global->{'CASHDESK_READER_KEYCODE_FOR_ENTER'.$_SESSION['takeposterminal']} : 13;
 ?>
 <div class="container">
@@ -669,7 +669,7 @@ if (empty($conf->global->TAKEPOS_HIDE_HEAD_BAR)) {
 			<?php echo $langs->trans("Terminal")." ";
 			if ($_SESSION["takeposterminal"] == "") echo "1";
 			else echo $_SESSION["takeposterminal"];
-			echo '<span class="hideonsmartphone"> - '.dol_print_date(dol_now(), "dayhour").'</span>';
+			echo '<span class="hideonsmartphone"> - '.dol_print_date(dol_now(), "day").'</span>';
 			?>
 			</a>
 			<a onclick="Customer();"><?php echo $langs->trans("Customer"); ?></a>
