@@ -922,34 +922,45 @@ while ($i < min($num, $limit))
 
             require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
             $objectstatic = new Facture($db);
-            $modulepart = 'facture';
+            $objectstatic->fetch($line->fk_doc);
+            //$modulepart = 'facture';
 
             $filename = dol_sanitizeFileName($line->doc_ref);
             $filedir = $conf->facture->dir_output.'/'.dol_sanitizeFileName($line->doc_ref);
-            $urlsource = $_SERVER['PHP_SELF'].'?id='.$line->fk_doc;
-            $documentlink = $formfile->getDocumentsLink($modulepart, $filename, $filedir);
+            $urlsource = $_SERVER['PHP_SELF'].'?id='.$objectstatic->id;
+            $documentlink = $formfile->getDocumentsLink($objectstatic->element, $filename, $filedir);
         }
         elseif ($line->doc_type == 'supplier_invoice')
         {
+            $langs->loadLangs(array('bills'));
+
             require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.facture.class.php';
             $objectstatic = new FactureFournisseur($db);
-            $modulepart = 'invoice_supplier';
+            $objectstatic->fetch($line->fk_doc);
+            //$modulepart = 'invoice_supplier';
 
             $filename = dol_sanitizeFileName($line->doc_ref);
             $filedir = $conf->fournisseur->facture->dir_output.'/'.get_exdir($line->fk_doc, 2, 0, 0, $objectstatic, $modulepart).dol_sanitizeFileName($line->doc_ref);
-            $subdir = get_exdir($line->fk_doc, 2, 0, 0, $objectstatic, $modulepart).dol_sanitizeFileName($line->doc_ref);
-            $documentlink = $formfile->getDocumentsLink($modulepart, $subdir, $filedir);
+            $subdir = get_exdir($objectstatic->id, 2, 0, 0, $objectstatic, $modulepart).dol_sanitizeFileName($line->doc_ref);
+            $documentlink = $formfile->getDocumentsLink($objectstatic->element, $subdir, $filedir);
         }
         elseif ($line->doc_type == 'expense_report')
         {
+            $langs->loadLangs(array('trips'));
+
             require_once DOL_DOCUMENT_ROOT.'/expensereport/class/expensereport.class.php';
             $objectstatic = new ExpenseReport($db);
-            $modulepart = 'expensereport';
+            $objectstatic->fetch($line->fk_doc);
+            //$modulepart = 'expensereport';
 
             $filename=dol_sanitizeFileName($line->doc_ref);
             $filedir=$conf->expensereport->dir_output . '/' . dol_sanitizeFileName($line->doc_ref);
-            $urlsource=$_SERVER['PHP_SELF'].'?id='.$line->fk_doc;
-            $documentlink = $formfile->getDocumentsLink($modulepart, $filename, $filedir);
+            $urlsource=$_SERVER['PHP_SELF'].'?id='.$objectstatic->id;
+            $documentlink = $formfile->getDocumentsLink($objectstatic->element, $filename, $filedir);
+        }
+        else
+        {
+            // Other type
         }
 
         print '<td class="nowrap">';
@@ -958,14 +969,13 @@ while ($i < min($num, $limit))
         // Picto + Ref
         print '<td class="nobordernopadding nowrap">';
 
-        if(! empty($objectstatic->id))
+        if($line->doc_type == 'customer_invoice' || $line->doc_type == 'supplier_invoice' || $line->doc_type == 'expense_report')
         {
             print $objectstatic->getNomUrl(1, '', 0, 0, '', 0, -1, 1);
+            print $documentlink;
         } else {
             print $line->doc_ref;
         }
-
-		print $documentlink;
         print '</td></tr></table>';
 
         print "</td>\n";
