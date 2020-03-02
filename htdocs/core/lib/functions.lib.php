@@ -6317,6 +6317,8 @@ function getCommonSubstitutionArray($outputlangs, $onlykey = 0, $exclude = null,
 					$substitutionarray['__DIRECTDOWNLOAD_URL_INVOICE__'] = $object->getLastMainDocLink($object->element);
 				}
 				else $substitutionarray['__DIRECTDOWNLOAD_URL_INVOICE__'] = '';
+				
+				$substitutionarray['__URL__'] = DOL_MAIN_URL_ROOT . "/".$object->element . "/card.php?id=" . $object->id;
 			}
 		}
 	}
