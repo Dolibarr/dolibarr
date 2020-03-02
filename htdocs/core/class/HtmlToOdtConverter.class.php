@@ -77,6 +77,7 @@ class HtmlToOdtConverter {
                         $odtResult .= '<text:span text:style-name="boldText">' . ($tag['children'] != null ? self::replaceHtmlWithOdtTag($tag['children'], $customStyles) : $tag['innerText']) . '</text:span>';
                         break;
                     case 'i':
+                    case 'em':
                         $odtResult .= '<text:span text:style-name="italicText">' . ($tag['children'] != null ? self::replaceHtmlWithOdtTag($tag['children'], $customStyles) : $tag['innerText']) . '</text:span>';
                         break;
                     case 'u':
@@ -144,7 +145,8 @@ class HtmlToOdtConverter {
      * @param string    $text   The text to check
      */
     public static function hasHtmlTag($text) {
-        return preg_match_all(HTML_REGEX_PATTERN, $text);
+        $result = preg_match_all(HTML_REGEX_PATTERN, $text);
+        return is_numeric($result) && $result > 0;
     }
 
     /**

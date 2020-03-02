@@ -1,7 +1,7 @@
 <?php
 
 require 'Segment.php';
-require_once __DIR__ . '/../../core/class/HtmlToOdtConverter.php';
+require_once __DIR__ . '/../../core/class/HtmlToOdtConverter.class.php';
 
 class OdfException extends Exception
 {
