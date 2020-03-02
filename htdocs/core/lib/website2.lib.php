@@ -147,7 +147,6 @@ function dolSavePageContent($filetpl, Website $object, WebsitePage $objectpage)
 	$tplcontent .= '<meta name="dolibarr:pageid" content="'.dol_string_nohtmltag($objectpage->id).'" />'."\n";
 	// Add translation reference (main language)
 	if ($object->isMultiLang()) {
-
 		// Add myself
 		$tplcontent .= '<link rel="alternate" hreflang="'.$shortlangcode.'" href="'.(($object->fk_default_home == $objectpage->id) ? '/' : (($shortlangcode != substr($object->lang, 0, 2) ? '/'.$shortlangcode : '')).'/'.$objectpage->pageurl.'.php').'" />'."\n";
 
