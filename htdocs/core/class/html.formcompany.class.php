@@ -249,8 +249,7 @@ class FormCompany extends Form
 							}
 						}
 
-						if ((!empty($selected) && $selected == $obj->rowid)
-						 || (empty($selected) && !empty($conf->global->MAIN_FORCE_DEFAULT_STATE_ID) && $conf->global->MAIN_FORCE_DEFAULT_STATE_ID == $obj->rowid))
+						if (!empty($selected) && $selected == $obj->rowid)
 						{
 							$out .= '<option value="'.$obj->rowid.'" selected>';
 						}
