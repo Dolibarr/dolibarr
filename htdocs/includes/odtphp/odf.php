@@ -1,6 +1,7 @@
 <?php
 
 require 'Segment.php';
+require_once __DIR__ . '/../../core/class/HtmlToOdtConverter.php';
 
 class OdfException extends Exception
 {
@@ -141,14 +142,25 @@ class Odf
 			//}
 		}
 
-		$value=$this->htmlToUTFAndPreOdf($value);
-
-		$value = $encode ? htmlspecialchars($value) : $value;
 		$value = ($charset == 'ISO-8859') ? utf8_encode($value) : $value;
 
-		$value=$this->preOdfToOdf($value);
-
-		$this->vars[$tag] = $value;
+		// Check if the value includes html tags
+		if (HtmlToOdtConverter::hasHtmlTag($value) === true) {
+			// Convert the value to an odt compatible value
+			$result = HtmlToOdtConverter::htmlToOdt($value);
+			// Join the styles and add them to the content xml
+			$styles = '';
+			foreach ($result['automaticStyles'] as $style) {
+				if (strpos($this->contentXml, $style) === false) {
+					$styles .= $style;
+				}
+			}
+			$this->contentXml = str_replace('</office:automatic-styles>', $styles . '</office:automatic-styles>', $this->contentXml);
+			// Set the var to the converted odt value
+			$this->vars[$tag] = $result['content'];
+		}
+		else $this->vars[$tag] = $value;
+		
 		return $this;
 	}
 
