@@ -6319,7 +6319,7 @@ function getCommonSubstitutionArray($outputlangs, $onlykey = 0, $exclude = null,
 				else $substitutionarray['__DIRECTDOWNLOAD_URL_INVOICE__'] = '';
 
 				$substitutionarray['__URL_PROPOSAL__'] = DOL_MAIN_URL_ROOT . "/comm/propal/card.php?id=" . $object->id;
-				$substitutionarray['__URL_ORDER__'] = DOL_MAIN_URL_ROOT . "/order/card.php?id=" . $object->id;
+				$substitutionarray['__URL_ORDER__'] = DOL_MAIN_URL_ROOT . "/commande/card.php?id=" . $object->id;
 				$substitutionarray['__URL_INVOICE__'] = DOL_MAIN_URL_ROOT . "/compta/facture/card.php?facid=" . $object->id;
 			}
 		}
