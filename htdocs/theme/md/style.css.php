@@ -2280,6 +2280,23 @@ div.login a:hover {
 }
 div.login_block_user, div.login_block_other { clear: both; }
 div.login_block_other { padding-top: 3px; }
+
+.topnav div.login_block_user {
+	display: inline-block;
+    vertical-align: middle;
+	line-height: <?php echo $disableimages ? '25' : '50'; ?>px;
+	height: <?php echo $disableimages ? '25' : '50'; ?>px;
+}
+.topnav div.login_block_other {
+	display: inline-block;
+    vertical-align: middle;
+	clear: <?php echo $disableimages ? 'none' : 'both'; ?>;
+	padding-top: 0;
+	text-align: right;
+	margin-right: 8px;
+	max-width: 200px;
+}
+
 .login_block_elem {
 	float: right;
 	vertical-align: top;
