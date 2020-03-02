@@ -171,7 +171,8 @@ if ($action == 'valid' && $user->rights->facture->creer)
 	$sav_FACTURE_ADDON='';
 	if (! empty($conf->global->TAKEPOS_ADDON)) {
 		$sav_FACTURE_ADDON = $conf->global->FACTURE_ADDON;
-		$conf->global->FACTURE_ADDON = $conf->global->TAKEPOS_ADDON;
+		if ($conf->global->TAKEPOS_ADDON=="terminal") $conf->global->FACTURE_ADDON = $conf->global->{'TAKEPOS_ADDON'.$_SESSION["takeposterminal"]};
+		else $conf->global->FACTURE_ADDON = $conf->global->TAKEPOS_ADDON;
 	}
 
 	$constantforkey = 'CASHDESK_NO_DECREASE_STOCK'.$_SESSION["takeposterminal"];
