@@ -1974,3 +1974,4 @@ MakeAnonymousPing=Make an anonymous Ping '+1' to the Dolibarr foundation server 
 FeatureNotAvailableWithReceptionModule=Feature not available when module Reception is enabled
 EmailTemplate=Template for email
 EMailsWillHaveMessageID=Emails will have a tag 'References' matching this syntax
+FafaIconSocialNetworksDesc=Enter here the code of a FontAwesome icon. If you don't know what is FontAwesome, you can use the generic value fa-address-book.

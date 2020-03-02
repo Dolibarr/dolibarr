@@ -49,7 +49,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/functions.lib.php';
 $langs->loadLangs(array("banks", "categories", "companies", "bills", "trips", "donations", "loan"));
 
 $action = GETPOST('action', 'alpha');
-$id = GETPOST('account', 'int');
+$id = GETPOST('account', 'int') ? GETPOST('account', 'int') : GETPOST('id', 'int');
 $ref = GETPOST('ref', 'alpha');
 $dvid = GETPOST('dvid', 'alpha');
 $numref = GETPOST('num', 'alpha');

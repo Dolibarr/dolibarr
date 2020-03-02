@@ -101,6 +101,9 @@ $usehm = (!empty($conf->global->MAIN_USE_HOURMIN_IN_DATE_RANGE) ? $conf->global-
 $object = new Facture($db);
 $extrafields = new ExtraFields($db);
 
+// Fetch optionals attributes and labels
+$extrafields->fetch_name_optionals_label($object->table_element);
+
 // Load object
 if ($id > 0 || !empty($ref)) {
 	if ($action != 'add') {
@@ -135,6 +138,7 @@ $fieldid = (!empty($ref) ? 'ref' : 'rowid');
 if ($user->socid) $socid = $user->socid;
 $isdraft = (($object->statut == Facture::STATUS_DRAFT) ? 1 : 0);
 $result = restrictedArea($user, 'facture', $id, '', '', 'fk_soc', $fieldid, $isdraft);
+
 
 
 

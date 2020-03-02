@@ -5,10 +5,60 @@ if (! defined('ISLOADEDBYSTEELSHEET')) die('Must be call by steelsheet'); ?>
  * Dropdown of user popup
  */
 
-.open>.dropdown-menu{
+button.dropdown-item.global-search-item {
+    outline: none;
+}
+
+.open>.dropdown-search, .open>.dropdown-bookmark, .open>.dropdown-menu{
     display: block;
 }
 
+.dropdown-search {
+    border-color: #eee;
+
+    position: absolute;
+    top: 100%;
+    left: 0;
+    z-index: 1000;
+    display: none;
+    float: left;
+    min-width: 160px;
+    margin: 2px 0 0;
+    font-size: 14px;
+    text-align: left;
+    list-style: none;
+    background-color: #fff;
+    -webkit-background-clip: padding-box;
+    background-clip: padding-box;
+    border: 1px solid #ccc;
+    border: 1px solid rgba(0,0,0,.15);
+    border-radius: 4px;
+    -webkit-box-shadow: 0 6px 12px rgba(0,0,0,.175);
+    box-shadow: 0 6px 12px rgba(0,0,0,.175);
+}
+.dropdown-bookmark {
+    border-color: #eee;
+
+    position: absolute;
+    top: 100%;
+    left: 0;
+    z-index: 1000;
+    display: none;
+    float: left;
+    min-width: 160px;
+    margin: 2px 0 0;
+    font-size: 14px;
+    text-align: left;
+    list-style: none;
+    background-color: #fff;
+    -webkit-background-clip: padding-box;
+    background-clip: padding-box;
+    border: 1px solid #ccc;
+    border: 1px solid rgba(0,0,0,.15);
+    border-radius: 4px;
+    -webkit-box-shadow: 0 6px 12px rgba(0,0,0,.175);
+    box-shadow: 0 6px 12px rgba(0,0,0,.175);
+}
 .dropdown-menu {
     border-color: #eee;
 
@@ -32,7 +82,6 @@ if (! defined('ISLOADEDBYSTEELSHEET')) die('Must be call by steelsheet'); ?>
     -webkit-box-shadow: 0 6px 12px rgba(0,0,0,.175);
     box-shadow: 0 6px 12px rgba(0,0,0,.175);
 }
-
 
 
 .dropdown-toggle{
@@ -177,7 +226,8 @@ a.top-menu-dropdown-link {
 .dropdown-body::-webkit-scrollbar-thumb {
     -webkit-border-radius: 0;
     border-radius: 0;
-    background: rgb(<?php echo $colorbackhmenu1 ?>);
+    /* background: rgb(<?php echo $colorbackhmenu1 ?>); */
+    background: #aaa;
 }
 .dropdown-body::-webkit-scrollbar-track {
     -webkit-box-shadow: inset 0 0 6px rgba(0,0,0,0.3);

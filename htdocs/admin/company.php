@@ -408,7 +408,7 @@ print '<tr class="liste_titre"><th class="titlefield wordbreak">'.$langs->trans(
 
 // Name
 
-print '<tr class="oddeven"><td class="fieldrequired"><label for="name">'.$langs->trans("CompanyName").'</label></td><td>';
+print '<tr class="oddeven"><td class="fieldrequired wordbreak"><label for="name">'.$langs->trans("CompanyName").'</label></td><td>';
 print '<input name="nom" id="name" class="minwidth200" value="'. dol_escape_htmltag($conf->global->MAIN_INFO_SOCIETE_NOM?$conf->global->MAIN_INFO_SOCIETE_NOM: GETPOST("nom", 'nohtml')) . '"'.(empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER) ? '' : ' autofocus="autofocus"').'></td></tr>'."\n";
 
 // Addresse
@@ -477,36 +477,36 @@ if (!empty($conf->barcode->enabled)) {
 
 // Logo
 print '<tr class="oddeven"><td><label for="logo">'.$form->textwithpicto($langs->trans("Logo"), 'png, jpg').'</label></td><td>';
-print '<table width="100%" class="nobordernopadding"><tr class="nocellnopadd"><td valign="middle" class="nocellnopadd">';
+print '<div class="centpertent nobordernopadding valignmiddle "><div class="inline-block marginrightonly">';
 print '<input type="file" class="flat minwidth200" name="logo" id="logo" accept="image/*">';
-print '</td><td class="nocellnopadd right" valign="middle">';
+print '</div><div class="inline-block valignmiddle marginrightonly">';
 if (!empty($mysoc->logo_mini)) {
 	print '<a class="reposition" href="'.$_SERVER["PHP_SELF"].'?action=removelogo">'.img_delete($langs->trans("Delete")).'</a>';
 	if (file_exists($conf->mycompany->dir_output.'/logos/thumbs/'.$mysoc->logo_mini)) {
-		print ' &nbsp; ';
+		print '</div><div class="inline-block valignmiddle">';
 		print '<img src="'.DOL_URL_ROOT.'/viewimage.php?modulepart=mycompany&amp;file='.urlencode('logos/thumbs/'.$mysoc->logo_mini).'">';
 	}
 } else {
 	print '<img height="30" src="'.DOL_URL_ROOT.'/public/theme/common/nophoto.png">';
 }
-print '</td></tr></table>';
+print '</div>';
 print '</td></tr>';
 
 // Logo (squarred)
 print '<tr class="oddeven"><td><label for="logo_squarred">'.$form->textwithpicto($langs->trans("LogoSquarred"), 'png, jpg').'</label></td><td>';
-print '<table width="100%" class="nobordernopadding"><tr class="nocellnopadd"><td valign="middle" class="nocellnopadd">';
+print '<div class="centpertent nobordernopadding valignmiddle"><div class="inline-block marginrightonly">';
 print '<input type="file" class="flat minwidth200" name="logo_squarred" id="logo_squarred" accept="image/*">';
-print '</td><td class="nocellnopadd right" valign="middle">';
+print '</div><div class="inline-block valignmiddle marginrightonly">';
 if (!empty($mysoc->logo_squarred_mini)) {
 	print '<a class="reposition" href="'.$_SERVER["PHP_SELF"].'?action=removelogosquarred">'.img_delete($langs->trans("Delete")).'</a>';
 	if (file_exists($conf->mycompany->dir_output.'/logos/thumbs/'.$mysoc->logo_squarred_mini)) {
-		print ' &nbsp; ';
+		print '</div><div class="inline-block valignmiddle marginrightonly">';
 		print '<img src="'.DOL_URL_ROOT.'/viewimage.php?modulepart=mycompany&amp;file='.urlencode('logos/thumbs/'.$mysoc->logo_squarred_mini).'">';
 	}
 } else {
 	print '<img height="30" src="'.DOL_URL_ROOT.'/public/theme/common/nophoto.png">';
 }
-print '</td></tr></table>';
+print '</div>';
 print '</td></tr>';
 
 // Note
