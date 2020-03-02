@@ -59,7 +59,7 @@ $pageprev = $page - 1;
 $pagenext = $page + 1;
 if (! $sortorder) $sortorder="DESC";
 if (! $sortfield) $sortfield="c.date_commande";
-$search_month = GETPOST('search_month', 'aplha');
+$search_month = GETPOST('search_month', 'alpha');
 $search_year = GETPOST('search_year', 'int');
 
 if (GETPOST('button_removefilter_x', 'alpha') || GETPOST('button_removefilter', 'alpha')) {
