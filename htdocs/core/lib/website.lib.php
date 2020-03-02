@@ -171,7 +171,7 @@ function dolWebsiteReplacementOfLinks($website, $content, $removephppart = 0, $c
 
 	// Fix relative link into medias with correct URL after the DOL_URL_ROOT: ../url("medias/
 	$content = preg_replace('/url\((["\']?)\/?medias\//', 'url(\1!~!~!~'.DOL_URL_ROOT.'/viewimage.php?modulepart=medias&file=', $content, -1, $nbrep);
-	$content = preg_replace('/data-slide-bg=(["\']?)medias\//', 'data-slide-bg=\1!~!~!~'.DOL_URL_ROOT.'/viewimage.php?modulepart=medias&file=', $content, -1, $nbrep);
+	$content = preg_replace('/data-slide-bg=(["\']?)\/?medias\//', 'data-slide-bg=\1!~!~!~'.DOL_URL_ROOT.'/viewimage.php?modulepart=medias&file=', $content, -1, $nbrep);
 
 	// <img src="medias/...image.png... => <img src="dolibarr/viewimage.php/modulepart=medias&file=image.png...
 	// <img src="...image.png... => <img src="dolibarr/viewimage.php/modulepart=medias&file=image.png...
@@ -270,7 +270,7 @@ function dolWebsiteOutput($content, $contenttype = 'html', $containerid = '')
 
 		// Fix relative link into medias with correct URL after the DOL_URL_ROOT: ../url("medias/
 		$content = preg_replace('/url\((["\']?)\/?medias\//', 'url(\1!~!~!~'.DOL_URL_ROOT.'/viewimage.php?modulepart=medias&file=', $content, -1, $nbrep);
-		$content = preg_replace('/data-slide-bg=(["\']?)medias\//', 'data-slide-bg=\1!~!~!~'.DOL_URL_ROOT.'/viewimage.php?modulepart=medias&file=', $content, -1, $nbrep);
+		$content = preg_replace('/data-slide-bg=(["\']?)\/?medias\//', 'data-slide-bg=\1!~!~!~'.DOL_URL_ROOT.'/viewimage.php?modulepart=medias&file=', $content, -1, $nbrep);
 
 		// <img src="medias/...image.png... => <img src="dolibarr/viewimage.php/modulepart=medias&file=image.png...
 		// <img src="...image.png... => <img src="dolibarr/viewimage.php/modulepart=medias&file=image.png...
