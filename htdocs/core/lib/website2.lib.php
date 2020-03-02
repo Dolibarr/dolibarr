@@ -185,7 +185,7 @@ function dolSavePageContent($filetpl, Website $object, WebsitePage $objectpage)
 		else dol_print_error($db);
 	}
 	// Add canonical reference
-	$tplcontent .= '<link href="/'.(($objectpage->id == $object->fk_default_home) ? '' : $shortlangcode.'/'.($objectpage->pageurl.'.php')).'" rel="canonical" />'."\n";
+	$tplcontent .= '<link href="/'.(($objectpage->id == $object->fk_default_home) ? '' : ($shortlangcode != substr($object->lang, 0, 2) ? '/'.$shortlangcode : '') .'/'.($objectpage->pageurl.'.php')).'" rel="canonical" />'."\n";
 	// Add manifest.json on homepage
 	$tplcontent .= '<?php if ($website->use_manifest) { print \'<link rel="manifest" href="/manifest.json.php" />\'."\n"; } ?>'."\n";
 	$tplcontent .= '<!-- Include link to CSS file -->'."\n";
