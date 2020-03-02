@@ -951,8 +951,8 @@ class Commande extends CommonOrder
 						$line->label,
 						$line->array_options,
 						$line->fk_unit,
-						$this->element,
-						$line->id
+						$line->origin,
+						$line->origin_id
 					);
 					if ($result < 0)
 					{
