@@ -156,6 +156,14 @@ class Odf
 				}
 			}
 			$this->contentXml = str_replace('</office:automatic-styles>', $styles . '</office:automatic-styles>', $this->contentXml);
+			// Join the font declarations and add them to the content xml
+			$fonts = '';
+			foreach ($result['fonts'] as $font) {
+				if (strpos($this->contentXml, 'style:name="' . $font . '"') === false) {
+					$fonts .= '<style:font-face style:name="' . $font . '" svg:font-family="\'' . $font . '\'" />';
+				}
+			}
+			$this->contentXml = str_replace('</office:font-face-decls>', $fonts . '</office:font-face-decls>', $this->contentXml);
 			// Set the var to the converted odt value
 			$this->vars[$tag] = $result['content'];
 		}
