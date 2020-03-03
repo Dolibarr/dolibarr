@@ -2530,7 +2530,7 @@ class Facture extends CommonInvoice
 		{
 			$num = $this->ref;
 		}
-		$this->newref = $num;
+		$this->newref = dol_sanitizeFileName($num);
 
 		if ($num)
 		{
