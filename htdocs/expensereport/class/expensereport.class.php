@@ -969,6 +969,8 @@ class ExpenseReport extends CommonObject
     public function fetch_lines()
     {
         // phpcs:enable
+		global $conf;
+		
         $this->lines=array();
 
         $sql = ' SELECT de.rowid, de.comments, de.qty, de.value_unit, de.date, de.rang,';
