@@ -162,10 +162,10 @@ if ($action == 'update') {
 						$sql .= " SET accountancy_code_buy = ".$accounting->account_number;
 					}
 					if ($accounting_product_mode == 'ACCOUNTANCY_BUY_INTRA') {
-						$sql .= " SET accountancy_code_buy = ".$accounting->account_number;
+						$sql .= " SET accountancy_code_buy_intra = ".$accounting->account_number;
 					}
 					if ($accounting_product_mode == 'ACCOUNTANCY_BUY_EXPORT') {
-						$sql .= " SET accountancy_code_buy = ".$accounting->account_number;
+						$sql .= " SET accountancy_code_buy_export = ".$accounting->account_number;
 					}
 					if ($accounting_product_mode == 'ACCOUNTANCY_SELL') {
 						$sql .= " SET accountancy_code_sell = ".$accounting->account_number;
@@ -593,12 +593,12 @@ if ($result)
 		    print length_accountg($obj->accountancy_code_buy);
 		    if ($obj->accountancy_code_buy && empty($obj->aaid)) print ' '.img_warning($langs->trans("ValueNotIntoChartOfAccount"));
 		} elseif ($accounting_product_mode == 'ACCOUNTANCY_BUY_INTRA') {
-			print length_accountg($obj->accountancy_code_buy_intra);
-			if ($obj->accountancy_code_sell && empty($obj->aaid)) print ' '.img_warning($langs->trans("ValueNotIntoChartOfAccount"));
-		} elseif ($accounting_product_mode == 'ACCOUNTANCY_BUY_EXPORT') {
-			print length_accountg($obj->accountancy_code_buy_export);
-			if ($obj->accountancy_code_sell && empty($obj->aaid)) print ' '.img_warning($langs->trans("ValueNotIntoChartOfAccount"));
-		} elseif ($accounting_product_mode == 'ACCOUNTANCY_SELL') {
+            print length_accountg($obj->accountancy_code_buy_intra);
+            if ($obj->accountancy_code_buy_intra && empty($obj->aaid)) print ' '.img_warning($langs->trans("ValueNotIntoChartOfAccount"));
+        } elseif ($accounting_product_mode == 'ACCOUNTANCY_BUY_EXPORT') {
+            print length_accountg($obj->accountancy_code_buy_export);
+            if ($obj->accountancy_code_buy_export && empty($obj->aaid)) print ' '.img_warning($langs->trans("ValueNotIntoChartOfAccount"));
+        } elseif ($accounting_product_mode == 'ACCOUNTANCY_SELL') {
             print length_accountg($obj->accountancy_code_sell);
             if ($obj->accountancy_code_sell && empty($obj->aaid)) print ' '.img_warning($langs->trans("ValueNotIntoChartOfAccount"));
         } elseif ($accounting_product_mode == 'ACCOUNTANCY_SELL_INTRA') {

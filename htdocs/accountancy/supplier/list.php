@@ -487,8 +487,8 @@ if ($result) {
 		}
 		if (empty($objp->code_buy_l) && empty($objp->code_buy_p)) $code_buy_p_notset = 'color:red';
 
-		// $objp->code_sell_l is now default code of product/service
-		// $objp->code_sell_p is now code of product/service
+		// $objp->code_buy_l is now default code of product/service
+		// $objp->code_buy_p is now code of product/service
 
 		print '<tr class="oddeven">';
 
