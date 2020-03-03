@@ -1369,7 +1369,7 @@ class FactureFournisseur extends CommonInvoice
 		{
             $num = $this->ref;
         }
-        $this->newref = $num;
+        $this->newref = dol_sanitizeFileName($num);
 
         $sql = "UPDATE ".MAIN_DB_PREFIX."facture_fourn";
         $sql.= " SET ref='".$num."', fk_statut = 1, fk_user_valid = ".$user->id.", date_valid = '".$this->db->idate($now)."'";

@@ -361,7 +361,7 @@ class Commande extends CommonOrder
 		{
 			$num = $this->ref;
 		}
-		$this->newref = $num;
+		$this->newref = dol_sanitizeFileName($num);
 
 		// Validate
 		$sql = "UPDATE ".MAIN_DB_PREFIX."commande";

@@ -688,7 +688,7 @@ class Holiday extends CommonObject
 		{
 			$num = $this->ref;
 		}
-		$this->newref = $num;
+		$this->newref = dol_sanitizeFileName($num);
 
 		// Update status
 		$sql = "UPDATE ".MAIN_DB_PREFIX."holiday SET";

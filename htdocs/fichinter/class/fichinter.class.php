@@ -540,7 +540,7 @@ class Fichinter extends CommonObject
 			{
 				$num = $this->ref;
 			}
-			$this->newref = $num;
+			$this->newref = dol_sanitizeFileName($num);
 
 			$sql = "UPDATE ".MAIN_DB_PREFIX."fichinter";
 			$sql.= " SET fk_statut = 1";

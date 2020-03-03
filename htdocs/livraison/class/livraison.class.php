@@ -391,7 +391,7 @@ class Livraison extends CommonObject
 					{
 		                $numref = $this->ref;
 		            }
-            		$this->newref = $numref;
+            		$this->newref = dol_sanitizeFileName($numref);
 
 					// Test if is not already in valid status. If so, we stop to avoid decrementing the stock twice.
 					$sql = "SELECT ref";

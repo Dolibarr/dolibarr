@@ -693,7 +693,7 @@ class Expedition extends CommonObject
 		{
 			$numref = "EXP".$this->id;
 		}
-		$this->newref = $numref;
+		$this->newref = dol_sanitizeFileName($numref);
 
 		$now=dol_now();
 

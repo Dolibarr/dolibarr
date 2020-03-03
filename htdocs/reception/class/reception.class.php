@@ -529,7 +529,7 @@ class Reception extends CommonObject
 			$numref = $this->ref;
 		}
 
-        $this->newref = $numref;
+        $this->newref = dol_sanitizeFileName($numref);
 
 		$now=dol_now();
 
