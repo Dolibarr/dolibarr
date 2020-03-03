@@ -225,7 +225,7 @@ class doc_generic_supplier_proposal_odt extends ModelePDFSupplierProposal
 	/**
 	 *	Function to build a document on disk using the generic odt module.
 	 *
-	 *	@param		Propale		$object				Object source to build document
+	 *	@param		Propal		$object				Object source to build document
 	 *	@param		Translate	$outputlangs		Lang output object
 	 * 	@param		string		$srctemplatepath	Full path of source filename for generator using a template file
 	 *  @param		int			$hidedetails		Do not show line details
@@ -445,9 +445,11 @@ class doc_generic_supplier_proposal_odt extends ModelePDFSupplierProposal
 					}
 					if ($foundtagforlines)
 					{
+						$linenumber = 0;
 						foreach ($object->lines as $line)
 						{
-							$tmparray = $this->get_substitutionarray_lines($line, $outputlangs);
+							$linenumber++;
+							$tmparray = $this->get_substitutionarray_lines($line, $outputlangs, $linenumber);
 							complete_substitutions_array($tmparray, $outputlangs, $object, $line, "completesubstitutionarray_lines");
 							// Call the ODTSubstitutionLine hook
 							$parameters = array('odfHandler'=>&$odfHandler, 'file'=>$file, 'object'=>$object, 'outputlangs'=>$outputlangs, 'substitutionarray'=>&$tmparray, 'line'=>$line);

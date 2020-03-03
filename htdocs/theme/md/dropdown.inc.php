@@ -1,10 +1,19 @@
 <?php
-if (! defined('ISLOADEDBYSTEELSHEET')) die('Must be call by steelsheet'); ?>
+if (!defined('ISLOADEDBYSTEELSHEET')) die('Must be call by steelsheet'); ?>
 
 /* <style type="text/css" > dont remove this line it's an ide hack */
 /*
  * Dropdown of user popup
  */
+
+
+button.dropdown-item.global-search-item {
+    outline: none;
+}
+
+.open>.dropdown-search, .open>.dropdown-bookmark, .open>.dropdown-menu, .dropdown dd ul.open {
+    display: block;
+}
 
 
 #topmenu-bookmark-dropdown a.login-dropdown-a {
@@ -16,8 +25,13 @@ div#topmenu-bookmark-dropdown {
     top: 0px;
 }
 
+#topmenu-login-dropdown .dropdown-toggle:after {
+	display: none;
+}
 
-
+#topmenu-bookmark-dropdown .dropdown-menu {
+    width: 300px;
+}
 
 button.dropdown-item.global-search-item {
     outline: none;
@@ -384,6 +398,32 @@ a.top-menu-dropdown-link {
     transform-style: preserve-3d;
 
 }
+
+
+/* smartphone */
+@media only screen and (max-width: 767px)
+{
+	#topmenu-bookmark-dropdown a.login-dropdown-a {
+		color: #000;
+	}
+
+	#topmenu-bookmark-dropdown .dropdown-menu {
+		width: 230px;
+	}
+
+	div#topmenu-bookmark-dropdown {
+		position: unset;
+	}
+
+	div#topmenu-global-search-dropdown, div#topmenu-bookmark-dropdown {
+    	line-height: unset;
+	}
+
+	ul.tmenu {
+	    margin-right: 2px;
+	}
+}
+
 
 .dropdown-search-input::placeholder {
     color: color(#575756 a(0.8));

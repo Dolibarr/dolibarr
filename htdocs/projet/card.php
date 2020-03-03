@@ -263,8 +263,8 @@ if (empty($reshook))
 			$object->socid        = GETPOST('socid', 'int');
 			$object->description  = GETPOST('description', 'none'); // Do not use 'alpha' here, we want field as it is
 			$object->public       = GETPOST('public', 'alpha');
-			$object->date_start   = (! GETPOST('projectstart')) ? '' : $date_start;
-			$object->date_end     = (! GETPOST('projectend')) ? '' : $date_end;
+			$object->date_start   = (!GETPOST('projectstart')) ? '' : $date_start;
+			$object->date_end     = (!GETPOST('projectend')) ? '' : $date_end;
 			if (GETPOSTISSET('opp_amount'))    $object->opp_amount   = price2num(GETPOST('opp_amount', 'alpha'));
 			if (GETPOSTISSET('budget_amount')) $object->budget_amount = price2num(GETPOST('budget_amount', 'alpha'));
 			if (GETPOSTISSET('opp_status'))    $object->opp_status   = $opp_status;
@@ -546,7 +546,7 @@ if ($action == 'create' && $user->rights->projet->creer)
 	print '</td></tr>';
 
 	// Label
-	print '<tr><td><span class="fieldrequired">'.$langs->trans("Label").'</span></td><td><input size="80" type="text" name="title" value="'.dol_escape_htmltag(GETPOST("title", 'none')).'" autofocus></td></tr>';
+	print '<tr><td><span class="fieldrequired">'.$langs->trans("Label").'</span></td><td><input class="minwidth500" type="text" name="title" value="'.dol_escape_htmltag(GETPOST("title", 'none')).'" autofocus></td></tr>';
 
 	// Usage (opp, task, bill time, ...)
 	print '<tr><td class="tdtop">';

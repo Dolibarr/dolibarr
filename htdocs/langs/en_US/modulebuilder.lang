@@ -84,6 +84,8 @@ ListOfPermissionsDefined=List of defined permissions
 SeeExamples=See examples here
 EnabledDesc=Condition to have this field active (Examples: 1 or $conf->global->MYMODULE_MYOPTION)
 VisibleDesc=Is the field visible ? (Examples: 0=Never visible, 1=Visible on list and create/update/view forms, 2=Visible on list only, 3=Visible on create/update/view form only (not list), 4=Visible on list and update/view form only (not create), 5=Visible on list end view form only (not create, not update). Using a negative value means field is not shown by default on list but can be selected for viewing). It can be an expression, for example:<br>preg_match('/public/', $_SERVER['PHP_SELF'])?0:1<br>($user->rights->holiday->define_holiday ? 1 : 0)
+DisplayOnPdfDesc=Display this field on compatible PDF documents, you can manage position with "Position" field.<br/>Currently, known compatibles PDF models are : eratostene (order), espadon (ship), sponge (invoices), cyan (propal/quotation), cornas (supplier order)
+DisplayOnPdf=Display on PDF
 IsAMeasureDesc=Can the value of field be cumulated to get a total into list? (Examples: 1 or 0)
 SearchAllDesc=Is the field used to make a search from the quick search tool? (Examples: 1 or 0)
 SpecDefDesc=Enter here all documentation you want to provide with your module that is not already defined by other tabs. You can use .md or better, the rich .asciidoc syntax.

@@ -5024,7 +5024,7 @@ function migrate_users_socialnetworks()
                 $obj->socialnetworks = '[]';
             }
             $socialnetworks = array_merge($arraysocialnetworks, json_decode($obj->socialnetworks, true));
-            $sqlupd = 'UPDATE '.MAIN_DB_PREFIX.'user SET socialnetworks="'.$db->escape(json_encode($socialnetworks, true)).'"';
+            $sqlupd = 'UPDATE '.MAIN_DB_PREFIX."user SET socialnetworks='".$db->escape(json_encode($socialnetworks, true))."'";
             $sqlupd.= ', skype=null';
             $sqlupd.= ', twitter=null';
             $sqlupd.= ', facebook=null';

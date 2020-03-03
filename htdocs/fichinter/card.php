@@ -286,99 +286,100 @@ if (empty($reshook))
 							$lines = $srcobject->lines;
 						}
 
-						$fk_parent_line = 0;
-						$num = count($lines);
+						if (is_array($lines)) {
+							$num = count($lines);
 
-						for ($i = 0; $i < $num; $i++)
-						{
-							$product_type = ($lines[$i]->product_type ? $lines[$i]->product_type : Product::TYPE_PRODUCT);
+							for ($i = 0; $i < $num; $i++)
+							{
+								$product_type = ($lines[$i]->product_type ? $lines[$i]->product_type : Product::TYPE_PRODUCT);
 
-							if ($product_type == Product::TYPE_SERVICE || !empty($conf->global->FICHINTER_PRINT_PRODUCTS)) { //only services except if config includes products
-								$duration = 3600; // Default to one hour
+								if ($product_type == Product::TYPE_SERVICE || !empty($conf->global->FICHINTER_PRINT_PRODUCTS)) { //only services except if config includes products
+									$duration = 3600; // Default to one hour
 
-								// Predefined products & services
-								if ($lines[$i]->fk_product > 0)
-								{
-									$prod = new Product($db);
-									$prod->id = $lines[$i]->fk_product;
+									// Predefined products & services
+									if ($lines[$i]->fk_product > 0)
+									{
+										$prod = new Product($db);
+										$prod->id = $lines[$i]->fk_product;
 
-									// Define output language
-									if (!empty($conf->global->MAIN_MULTILANGS) && !empty($conf->global->PRODUIT_TEXTS_IN_THIRDPARTY_LANGUAGE)) {
-										$prod->getMultiLangs();
-										// We show if duration is present on service (so we get it)
-										$prod->fetch($lines[$i]->fk_product);
-										$outputlangs = $langs;
-										$newlang = '';
-										if (empty($newlang) && GETPOST('lang_id', 'aZ09')) $newlang = GETPOST('lang_id', 'aZ09');
-										if (empty($newlang)) $newlang = $srcobject->thirdparty->default_lang;
-										if (!empty($newlang)) {
-											$outputlangs = new Translate("", $conf);
-											$outputlangs->setDefaultLang($newlang);
+										// Define output language
+										if (!empty($conf->global->MAIN_MULTILANGS) && !empty($conf->global->PRODUIT_TEXTS_IN_THIRDPARTY_LANGUAGE)) {
+											$prod->getMultiLangs();
+											// We show if duration is present on service (so we get it)
+											$prod->fetch($lines[$i]->fk_product);
+											$outputlangs = $langs;
+											$newlang = '';
+											if (empty($newlang) && GETPOST('lang_id', 'aZ09')) $newlang = GETPOST('lang_id', 'aZ09');
+											if (empty($newlang)) $newlang = $srcobject->thirdparty->default_lang;
+											if (!empty($newlang)) {
+												$outputlangs = new Translate("", $conf);
+												$outputlangs->setDefaultLang($newlang);
+											}
+											$label = (!empty($prod->multilangs[$outputlangs->defaultlang]["libelle"])) ? $prod->multilangs[$outputlangs->defaultlang]["libelle"] : $lines[$i]->product_label;
+										} else {
+											$prod->fetch($lines[$i]->fk_product);
+											$label = $lines[$i]->product_label;
 										}
-										$label = (!empty($prod->multilangs[$outputlangs->defaultlang]["libelle"])) ? $prod->multilangs[$outputlangs->defaultlang]["libelle"] : $lines[$i]->product_label;
-									} else {
-										$prod->fetch($lines[$i]->fk_product);
-										$label = $lines[$i]->product_label;
-									}
 
-									if ($prod->duration_value && $conf->global->FICHINTER_USE_SERVICE_DURATION) {
-										switch ($prod->duration_unit) {
-											default:
-											case 'h':
-												$mult = 3600;
-												break;
-											case 'd':
-												$mult = 3600 * 24;
-												break;
-											case 'w':
-												$mult = 3600 * 24 * 7;
-												break;
-											case 'm':
-												$mult = (int) 3600 * 24 * (365 / 12); // Average month duration
-												break;
-											case 'y':
-												$mult = 3600 * 24 * 365;
-												break;
+										if ($prod->duration_value && $conf->global->FICHINTER_USE_SERVICE_DURATION) {
+											switch ($prod->duration_unit) {
+												default:
+												case 'h':
+													$mult = 3600;
+													break;
+												case 'd':
+													$mult = 3600 * 24;
+													break;
+												case 'w':
+													$mult = 3600 * 24 * 7;
+													break;
+												case 'm':
+													$mult = (int) 3600 * 24 * (365 / 12); // Average month duration
+													break;
+												case 'y':
+													$mult = 3600 * 24 * 365;
+													break;
+											}
+											$duration = $prod->duration_value * $mult * $lines[$i]->qty;
 										}
-										$duration = $prod->duration_value * $mult * $lines[$i]->qty;
-									}
 
-									$desc = $lines[$i]->product_ref;
-									$desc .= ' - ';
-									$desc .= $label;
+										$desc = $lines[$i]->product_ref;
+										$desc .= ' - ';
+										$desc .= $label;
+										$desc .= '<br>';
+									}
+									// Common part (predefined or free line)
+									$desc .= dol_htmlentitiesbr($lines[$i]->desc);
 									$desc .= '<br>';
-								}
-								// Common part (predefined or free line)
-								$desc .= dol_htmlentitiesbr($lines[$i]->desc);
-								$desc .= '<br>';
-								$desc .= ' ('.$langs->trans('Quantity').': '.$lines[$i]->qty.')';
+									$desc .= ' ('.$langs->trans('Quantity').': '.$lines[$i]->qty.')';
 
-								$timearray = dol_getdate(dol_now());
-								$date_intervention = dol_mktime(0, 0, 0, $timearray['mon'], $timearray['mday'], $timearray['year']);
+									$timearray = dol_getdate(dol_now());
+									$date_intervention = dol_mktime(0, 0, 0, $timearray['mon'], $timearray['mday'], $timearray['year']);
 
-								if ($product_type == Product::TYPE_PRODUCT) {
-									$duration = 0;
-								}
+									if ($product_type == Product::TYPE_PRODUCT) {
+										$duration = 0;
+									}
 
-								$predef = '';
+									$predef = '';
 
-								// Extrafields
-								$extrafields->fetch_name_optionals_label($object->table_element_line);
-								$array_options = $extrafields->getOptionalsFromPost($object->table_element_line, $predef);
+									// Extrafields
+									$extrafields->fetch_name_optionals_label($object->table_element_line);
+									$array_options = $extrafields->getOptionalsFromPost($object->table_element_line, $predef);
 
-								$result = $object->addline(
-									$user,
-			                        $id,
-			                        $desc,
-						            $date_intervention,
-	                 				$duration,
-	                 				$array_options
-			                    );
+									$result = $object->addline(
+										$user,
+				                        $id,
+				                        $desc,
+							            $date_intervention,
+		                 				$duration,
+		                 				$array_options
+				                    );
 
-								if ($result < 0)
-								{
-									$error++;
-									break;
+									if ($result < 0)
+									{
+										$error++;
+										break;
+									}
 								}
 							}
 						}

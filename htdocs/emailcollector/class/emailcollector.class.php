@@ -812,9 +812,9 @@ class EmailCollector extends CommonObject
                         //var_dump($tmpproperty.' - '.$regexstring.' - '.$regexoptions.' - '.$sourcestring);
                         if (preg_match('/'.$regexstring.'/'.$regexoptions, $sourcestring, $regforval))
                         {
-                            //var_dump($regforval[1]);exit;
+                            //var_dump($regforval[count($regforval)-1]);exit;
                             // Overwrite param $tmpproperty
-                            $object->$tmpproperty = isset($regforval[1]) ?trim($regforval[1]) : null;
+                            $object->$tmpproperty = isset($regforval[count($regforval)-1]) ?trim($regforval[count($regforval)-1]) : null;
                         }
                         else
                         {
@@ -1423,9 +1423,9 @@ class EmailCollector extends CommonObject
                                         //var_dump($regexstring);var_dump($sourcestring);
                                         if (preg_match('/'.$regexstring.'/ms', $sourcestring, $regforval))
                                         {
-                                            //var_dump($regforval[1]);exit;
+                                            //var_dump($regforval[count($regforval)-1]);exit;
                                             // Overwrite param $tmpproperty
-                                            $nametouseforthirdparty = isset($regforval[1]) ?trim($regforval[1]) : null;
+                                            $nametouseforthirdparty = isset($regforval[count($regforval)-1]) ?trim($regforval[count($regforval)-1]) : null;
                                         }
                                         else
                                         {
@@ -1793,6 +1793,39 @@ class EmailCollector extends CommonObject
                             }
                             $tickettocreate->ref = $defaultref;
                         }
+						 // Create event specific on hook
+						// this code action is hook..... for support this call
+						elseif (substr($operation['type'], 0, 4)  == 'hook'){
+							global $hookmanager;
+
+							if(!is_object($hookmanager))
+							$hookmanager->initHooks(array('emailcollectorcard'));
+
+							$parameters = array(
+							'connection'=>  $connection,
+							'imapemail'=>$imapemail,
+							'overview'=>$overview,
+
+							'from' => $from ,
+							'fromtext' => $fromtext,
+
+							'actionparam'=>  $operation['actionparam'],
+
+
+
+							'thirdpartyid' => $thirdpartyid ,
+							'objectid'=>@$objectid,
+							'objectemail'=>@$objectemail,
+
+							'messagetext'=>$messagetext,
+							'subject'=>$subject,
+							'header'=>$header,
+							) ;
+							$res = $hookmanager->executeHooks('doCollectOneCollector', $parameters, $this, $operation['type']);
+
+							if($res < 0 )
+							 $this->error = $hookmanager->resPrint;
+						}
 
                         if ($errorforthisaction)
                         {

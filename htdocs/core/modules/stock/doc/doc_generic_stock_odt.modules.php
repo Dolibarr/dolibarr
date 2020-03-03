@@ -209,7 +209,7 @@ class doc_generic_stock_odt extends ModelePDFStock
 	/**
 	 *	Function to build a document on disk using the generic odt module.
 	 *
-	 *	@param		Stock		$object				Object source to build document
+	 *	@param		Entrepot	$object				Object source to build document
 	 *	@param		Translate	$outputlangs		Lang output object
 	 * 	@param		string		$srctemplatepath	Full path of source filename for generator using a template file
 	 *  @param		int			$hidedetails		Do not show line details
@@ -250,7 +250,7 @@ class doc_generic_stock_odt extends ModelePDFStock
 			if (!is_object($object))
 			{
 				$id = $object;
-				$object = new Stock($this->db);
+				$object = new Entrepot($this->db);
 				$result = $object->fetch($id);
 				if ($result < 0)
 				{
@@ -258,7 +258,8 @@ class doc_generic_stock_odt extends ModelePDFStock
 					return -1;
 				}
 			}
-			$stockFournisseur = new StockFournisseur($this->db);
+
+			$stockFournisseur = new ProductFournisseur($this->db);
 			$supplierprices = $stockFournisseur->list_stock_fournisseur_price($object->id);
 			$object->supplierprices = $supplierprices;
 

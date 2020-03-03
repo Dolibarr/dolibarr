@@ -77,7 +77,7 @@ class MouvementStock extends CommonObject
 	public $batch;
 
 
-	public $fields=array(
+	public $fields = array(
 		'rowid' =>array('type'=>'integer', 'label'=>'TechnicalID', 'enabled'=>1, 'visible'=>-1, 'notnull'=>1, 'position'=>10, 'showoncombobox'=>1),
 		'tms' =>array('type'=>'timestamp', 'label'=>'DateModification', 'enabled'=>1, 'visible'=>-1, 'notnull'=>1, 'position'=>15),
 		'datem' =>array('type'=>'datetime', 'label'=>'Datem', 'enabled'=>1, 'visible'=>-1, 'position'=>20),
@@ -376,8 +376,8 @@ class MouvementStock extends CommonObject
 		if ($movestock && $entrepot_id > 0)	// Change stock for current product, change for subproduct is done after
 		{
 			$fk_project = 0;
-			if(!empty($this->origin)) {			// This is set by caller for tracking reason
-				$origintype = empty($this->origin->origin_type)?$this->origin->element:$this->origin->origin_type;
+			if (!empty($this->origin)) {			// This is set by caller for tracking reason
+				$origintype = empty($this->origin->origin_type) ? $this->origin->element : $this->origin->origin_type;
 				$fk_origin = $this->origin->id;
 				if ($origintype == 'project') $fk_project = $fk_origin;
 				else
@@ -984,8 +984,8 @@ class MouvementStock extends CommonObject
                     // Separate originetype with "@" : left part is class name, right part is module name
                     $origintype_array = explode('@', $origintype);
                     $classname = ucfirst($origintype_array[0]);
-                    $modulename = empty($origintype_array[1]) ? $classname : empty($origintype_array[1]);
-					$result=dol_include_once('/'.$modulename.'/class/'.strtolower($classname).'.class.php');
+                    $modulename = empty($origintype_array[1]) ? $classname : $origintype_array[1];
+					$result = dol_include_once('/'.$modulename.'/class/'.strtolower($classname).'.class.php');
 					if ($result)
 					{
 						$classname = ucfirst($classname);

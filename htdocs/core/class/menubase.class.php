@@ -102,7 +102,7 @@ class Menubase
     /**
      * @var string Key for menu translation
      * @deprecated
-     * @see title
+     * @see $title
      */
     public $titre;
 

@@ -477,7 +477,7 @@ class Facture extends CommonInvoice
 			$this->fk_project        = GETPOST('projectid', 'int') > 0 ? ((int) GETPOST('projectid', 'int')) : $_facrec->fk_project;
 			$this->note_public       = GETPOST('note_public', 'none') ? GETPOST('note_public', 'none') : $_facrec->note_public;
 			$this->note_private      = GETPOST('note_private', 'none') ? GETPOST('note_private', 'none') : $_facrec->note_private;
-			$this->modelpdf          = GETPOST('model', 'alpha') ? GETPOST('model', 'apha') : $_facrec->modelpdf;
+			$this->modelpdf          = GETPOST('model', 'alpha') ? GETPOST('model', 'alpha') : $_facrec->modelpdf;
 			$this->cond_reglement_id = GETPOST('cond_reglement_id', 'int') > 0 ? ((int) GETPOST('cond_reglement_id', 'int')) : $_facrec->cond_reglement_id;
 			$this->mode_reglement_id = GETPOST('mode_reglement_id', 'int') > 0 ? ((int) GETPOST('mode_reglement_id', 'int')) : $_facrec->mode_reglement_id;
 			$this->fk_account        = GETPOST('fk_account') > 0 ? ((int) GETPOST('fk_account')) : $_facrec->fk_account;
@@ -1253,6 +1253,14 @@ class Facture extends CommonInvoice
 			$line->date_start = $object->lines[$i]->date_start;
 			$line->date_end = $object->lines[$i]->date_end;
 
+			// Multicurrency
+			$line->fk_multicurrency = $object->lines[$i]->fk_multicurrency;
+			$line->multicurrency_code = $object->lines[$i]->multicurrency_code;
+			$line->multicurrency_subprice = $object->lines[$i]->multicurrency_subprice;
+			$line->multicurrency_total_ht = $object->lines[$i]->multicurrency_total_ht;
+			$line->multicurrency_total_tva = $object->lines[$i]->multicurrency_total_tva;
+			$line->multicurrency_total_ttc = $object->lines[$i]->multicurrency_total_ttc;
+
 			$line->fk_fournprice = $object->lines[$i]->fk_fournprice;
 			$marginInfos			= getMarginInfos($object->lines[$i]->subprice, $object->lines[$i]->remise_percent, $object->lines[$i]->tva_tx, $object->lines[$i]->localtax1_tx, $object->lines[$i]->localtax2_tx, $object->lines[$i]->fk_fournprice, $object->lines[$i]->pa_ht);
 			$line->pa_ht			= $marginInfos[0];
@@ -1267,6 +1275,7 @@ class Facture extends CommonInvoice
 
 		$this->socid                = $object->socid;
 		$this->fk_project           = $object->fk_project;
+		$this->fk_account = $object->fk_account;
 		$this->cond_reglement_id    = $object->cond_reglement_id;
 		$this->mode_reglement_id    = $object->mode_reglement_id;
 		$this->availability_id      = $object->availability_id;
@@ -1388,6 +1397,9 @@ class Facture extends CommonInvoice
             if (!empty($this->total_ttc))
                 $label .= '<br><b>'.$langs->trans('AmountTTC').':</b> '.price($this->total_ttc, 0, $langs, 0, -1, -1, $conf->currency);
     		if ($moretitle) $label .= ' - '.$moretitle;
+    		if (isset($this->statut) && isset($this->alreadypaid)) {
+    			$label .= '<br><b>'.$langs->trans("Status").":</b> ".$this->getLibStatut(5, $this->alreadypaid);
+    		}
         }
 
 		$linkclose = ($target ? ' target="'.$target.'"' : '');
@@ -2410,12 +2422,23 @@ class Facture extends CommonInvoice
 	 * @param   string	$force_number	Reference to force on invoice
 	 * @param	int		$idwarehouse	Id of warehouse to use for stock decrease if option to decreasenon stock is on (0=no decrease)
 	 * @param	int		$notrigger		1=Does not execute triggers, 0= execute triggers
+	 * @param	int		$batch_rule		[=0] 0 not decrement batch, else batch rule to use
+	 *                                 	1=take in batches ordered by sellby and eatby dates
      * @return	int						<0 if KO, 0=Nothing done because invoice is not a draft, >0 if OK
 	 */
-    public function validate($user, $force_number = '', $idwarehouse = 0, $notrigger = 0)
+    public function validate($user, $force_number = '', $idwarehouse = 0, $notrigger = 0, $batch_rule = 0)
 	{
 		global $conf, $langs;
 		require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
+		$productStatic = null;
+		$warehouseStatic = null;
+		if ($batch_rule > 0) {
+			require_once DOL_DOCUMENT_ROOT . '/product/class/product.class.php';
+			require_once DOL_DOCUMENT_ROOT . '/product/class/productbatch.class.php';
+			require_once DOL_DOCUMENT_ROOT . '/product/stock/class/entrepot.class.php';
+			$productStatic = new Product($this->db);
+			$warehouseStatic = new Entrepot($this->db);
+		}
 
 		$now = dol_now();
 
@@ -2507,7 +2530,7 @@ class Facture extends CommonInvoice
 		{
 			$num = $this->ref;
 		}
-		$this->newref = $num;
+		$this->newref = dol_sanitizeFileName($num);
 
 		if ($num)
 		{
@@ -2557,11 +2580,94 @@ class Facture extends CommonInvoice
 							$mouvP = new MouvementStock($this->db);
 							$mouvP->origin = &$this;
 							// We decrease stock for product
-							if ($this->type == self::TYPE_CREDIT_NOTE) $result = $mouvP->reception($user, $this->lines[$i]->fk_product, $idwarehouse, $this->lines[$i]->qty, 0, $langs->trans("InvoiceValidatedInDolibarr", $num));
-							else $result = $mouvP->livraison($user, $this->lines[$i]->fk_product, $idwarehouse, $this->lines[$i]->qty, $this->lines[$i]->subprice, $langs->trans("InvoiceValidatedInDolibarr", $num));
-							if ($result < 0) {
-								$error++;
-								$this->error = $mouvP->error;
+							if ($this->type == self::TYPE_CREDIT_NOTE) {
+								$result = $mouvP->reception($user, $this->lines[$i]->fk_product, $idwarehouse, $this->lines[$i]->qty, 0, $langs->trans("InvoiceValidatedInDolibarr", $num));
+								if ($result < 0) {
+									$error++;
+									$this->error = $mouvP->error;
+								}
+							} else {
+								$is_batch_line = false;
+								if ($batch_rule > 0) {
+									$productStatic->fetch($this->lines[$i]->fk_product);
+									if ($productStatic->hasbatch()) {
+										$is_batch_line = true;
+										$product_qty_remain = $this->lines[$i]->qty;
+
+										$sortfield = null;
+										$sortorder = null;
+										// find all batch order by sellby (DLC) and eatby dates (DLUO) first
+										if ($batch_rule == Productbatch::BATCH_RULE_SELLBY_EATBY_DATES_FIRST) {
+											$sortfield = 'pl.sellby,pl.eatby,pb.qty,pl.rowid';
+											$sortorder = 'ASC,ASC,ASC,ASC';
+										}
+
+										$resBatchList = Productbatch::findAllForProduct($this->db, $productStatic->id, $idwarehouse, (!empty($conf->global->STOCK_ALLOW_NEGATIVE_TRANSFER) ? null : 0), $sortfield, $sortorder);
+										if (!is_array($resBatchList)) {
+											$error++;
+											$this->error = $this->db->lasterror();
+										}
+
+										if (!$error) {
+											$batchList = $resBatchList;
+											if (empty($batchList)) {
+												$error++;
+												$langs->load('errors');
+												$warehouseStatic->fetch($idwarehouse);
+												$this->error = $langs->trans('ErrorBatchNoFoundForProductInWarehouse', $productStatic->label, $warehouseStatic->ref);
+												dol_syslog(__METHOD__ . ' Error: ' . $langs->transnoentitiesnoconv('ErrorBatchNoFoundForProductInWarehouse', $productStatic->label, $warehouseStatic->ref), LOG_ERR);
+											}
+
+											foreach ($batchList as $batch) {
+												if ($batch->qty <= 0) continue; // try to decrement only batches have positive quantity first
+
+												// enough quantity in this batch
+												if ($batch->qty >= $product_qty_remain) {
+													$product_batch_qty = $product_qty_remain;
+												} // not enough (take all in batch)
+												else {
+													$product_batch_qty = $batch->qty;
+												}
+												$result = $mouvP->livraison($user, $productStatic->id, $idwarehouse, $product_batch_qty, $this->lines[$i]->subprice, $langs->trans('InvoiceValidatedInDolibarr', $num), '', '', '', $batch->batch);
+												if ($result < 0) {
+													$error++;
+													$this->error = $mouvP->error;
+													break;
+												}
+
+												$product_qty_remain -= $product_batch_qty;
+												// all product quantity was decremented
+												if ($product_qty_remain <= 0) break;
+											}
+
+											if (!$error && $product_qty_remain > 0) {
+												if ($conf->global->STOCK_ALLOW_NEGATIVE_TRANSFER) {
+													// take in the first batch
+													$batch = $batchList[0];
+													$result = $mouvP->livraison($user, $productStatic->id, $idwarehouse, $product_qty_remain, $this->lines[$i]->subprice, $langs->trans('InvoiceValidatedInDolibarr', $num), '', '', '', $batch->batch);
+													if ($result < 0) {
+														$error++;
+														$this->error = $mouvP->error;
+													}
+												} else {
+													$error++;
+													$langs->load('errors');
+													$warehouseStatic->fetch($idwarehouse);
+													$this->error = $langs->trans('ErrorBatchNoFoundEnoughQuantityForProductInWarehouse', $productStatic->label, $warehouseStatic->ref);
+													dol_syslog(__METHOD__ . ' Error: ' . $langs->transnoentitiesnoconv('ErrorBatchNoFoundEnoughQuantityForProductInWarehouse', $productStatic->label, $warehouseStatic->ref), LOG_ERR);
+												}
+											}
+										}
+									}
+								}
+
+								if (!$is_batch_line) {
+									$result = $mouvP->livraison($user, $this->lines[$i]->fk_product, $idwarehouse, $this->lines[$i]->qty, $this->lines[$i]->subprice, $langs->trans("InvoiceValidatedInDolibarr", $num));
+									if ($result < 0) {
+										$error++;
+										$this->error = $mouvP->error;
+									}
+								}
 							}
 						}
 					}
@@ -4581,18 +4687,18 @@ class Facture extends CommonInvoice
 		if ($this->statut != Facture::STATUS_VALIDATED) return false;
 
 		$hasDelay = $this->date_lim_reglement < ($now - $conf->facture->client->warning_delay);
-		if($hasDelay && !empty($this->retained_warranty) && !empty($this->retained_warranty_date_limit))
+		if ($hasDelay && !empty($this->retained_warranty) && !empty($this->retained_warranty_date_limit))
 		{
 		    $totalpaye = $this->getSommePaiement();
 		    $totalpaye = floatval($totalpaye);
 		    $RetainedWarrantyAmount = $this->getRetainedWarrantyAmount();
-		    if($totalpaye >= 0 &&  $RetainedWarrantyAmount>= 0)
+		    if ($totalpaye >= 0 && $RetainedWarrantyAmount >= 0)
 		    {
-		        if( ($totalpaye < $this->total_ttc - $RetainedWarrantyAmount) && $this->date_lim_reglement < ($now - $conf->facture->client->warning_delay) )
+		        if (($totalpaye < $this->total_ttc - $RetainedWarrantyAmount) && $this->date_lim_reglement < ($now - $conf->facture->client->warning_delay))
 		        {
 		            $hasDelay = 1;
 		        }
-		        elseif($totalpaye < $this->total_ttc && $this->retained_warranty_date_limit < ($now - $conf->facture->client->warning_delay) )
+		        elseif ($totalpaye < $this->total_ttc && $this->retained_warranty_date_limit < ($now - $conf->facture->client->warning_delay))
 		        {
 		            $hasDelay = 1;
 		        }
@@ -4657,8 +4763,8 @@ class Facture extends CommonInvoice
 	        $retainedWarrantyAmount = $this->total_ttc * $this->retained_warranty / 100;
 	    }
 
-		if ($rounding < 0){
-			$rounding=min($conf->global->MAIN_MAX_DECIMALS_UNIT, $conf->global->MAIN_MAX_DECIMALS_TOT);
+		if ($rounding < 0) {
+			$rounding = min($conf->global->MAIN_MAX_DECIMALS_UNIT, $conf->global->MAIN_MAX_DECIMALS_TOT);
 			return round($retainedWarrantyAmount, 2);
 		}
 

@@ -168,9 +168,15 @@ if ($action == 'valid' && $user->rights->facture->creer)
 		$invoice->update($user);
 	}
 
+	$sav_FACTURE_ADDON='';
+	if (! empty($conf->global->TAKEPOS_ADDON)) {
+		$sav_FACTURE_ADDON = $conf->global->FACTURE_ADDON;
+		if ($conf->global->TAKEPOS_ADDON=="terminal") $conf->global->FACTURE_ADDON = $conf->global->{'TAKEPOS_ADDON'.$_SESSION["takeposterminal"]};
+		else $conf->global->FACTURE_ADDON = $conf->global->TAKEPOS_ADDON;
+	}
+
 	$constantforkey = 'CASHDESK_NO_DECREASE_STOCK'.$_SESSION["takeposterminal"];
-	if ($invoice->statut != Facture::STATUS_DRAFT)
-	{
+	if ($invoice->statut != Facture::STATUS_DRAFT) {
 		//If invoice is validated but it is not fully paid is not error and make the payment
 		if ($invoice->getRemainToPay() > 0) $res = 1;
 		else {
@@ -190,13 +196,24 @@ if ($action == 'valid' && $user->rights->facture->creer)
 
 		$constantforkey = 'CASHDESK_ID_WAREHOUSE'.$_SESSION["takeposterminal"];
 		dol_syslog("Validate invoice with stock change into warehouse defined into constant ".$constantforkey." = ".$conf->global->$constantforkey);
-		$res = $invoice->validate($user, '', $conf->global->$constantforkey);
+		$batch_rule = 0;
+		if (!empty($conf->productbatch->enabled) && !empty($conf->global->CASHDESK_FORCE_DECREASE_STOCK)) {
+			require_once DOL_DOCUMENT_ROOT . '/product/class/productbatch.class.php';
+			$batch_rule = Productbatch::BATCH_RULE_SELLBY_EATBY_DATES_FIRST;
+		}
+		$res = $invoice->validate($user, '', $conf->global->$constantforkey, 0, $batch_rule);
 
 		$conf->global->STOCK_CALCULATE_ON_BILL = $savconst;
 	}
 	else
 	{
 	    $res = $invoice->validate($user);
+	}
+
+	// Restore save values
+	if (! empty($sav_FACTURE_ADDON))
+	{
+		$conf->global->FACTURE_ADDON = $sav_FACTURE_ADDON;
 	}
 
 	$remaintopay = $invoice->getRemainToPay();
@@ -441,6 +458,10 @@ if ($action == "updatereduction")
 if ($action == "order" and $placeid != 0)
 {
     include_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
+	if ($conf->global->TAKEPOS_PRINT_METHOD == "receiptprinter"){
+		require_once DOL_DOCUMENT_ROOT.'/core/class/dolreceiptprinter.class.php';
+		$printer = new dolReceiptPrinter($db);
+	}
 
     $headerorder = '<html><br><b>'.$langs->trans('Place').' '.$place.'<br><table width="65%"><thead><tr><th class="left">'.$langs->trans("Label").'</th><th class="right">'.$langs->trans("Qty").'</th></tr></thead><tbody>';
     $footerorder = '</tbody></table>'.dol_print_date(dol_now(), 'dayhour').'<br></html>';
@@ -458,13 +479,20 @@ if ($action == "order" and $placeid != 0)
         $result = array_intersect($catsprinter1, $existing);
         $count = count($result);
         if ($count > 0) {
-            $sql = "UPDATE ".MAIN_DB_PREFIX."facturedet set special_code='4' where rowid=".$line->id;
+            $sql = "UPDATE ".MAIN_DB_PREFIX."facturedet set special_code='1' where rowid=".$line->id; //Set to print on printer 1
             $db->query($sql);
             $order_receipt_printer1 .= '<tr>'.$line->product_label.'<td class="right">'.$line->qty;
 			if (!empty($line->array_options['options_order_notes'])) $order_receipt_printer1 .= "<br>(".$line->array_options['options_order_notes'].")";
 			$order_receipt_printer1 .= '</td></tr>';
         }
     }
+	if ($conf->global->TAKEPOS_PRINT_METHOD == "receiptprinter"){
+		$invoice->fetch($placeid); //Reload object before send to printer
+		$ret = $printer->sendToPrinter($invoice, $conf->global->{'TAKEPOS_TEMPLATE_TO_USE_FOR_ORDERS'.$_SESSION["takeposterminal"]}, $conf->global->{'TAKEPOS_PRINTER_TO_USE'.$_SESSION["takeposterminal"]}); // PRINT TO PRINTER 1
+	}
+	$sql = "UPDATE ".MAIN_DB_PREFIX."facturedet set special_code='4' where special_code='1' and fk_facture=".$invoice->id; // Set as printed
+	$db->query($sql);
+	$invoice->fetch($placeid); //Reload object after set lines as printed
 
     foreach ($invoice->lines as $line)
     {
@@ -476,15 +504,20 @@ if ($action == "order" and $placeid != 0)
         $result = array_intersect($catsprinter2, $existing);
         $count = count($result);
         if ($count > 0) {
-            $sql = "UPDATE ".MAIN_DB_PREFIX."facturedet set special_code='4' where rowid=".$line->id;
+            $sql = "UPDATE ".MAIN_DB_PREFIX."facturedet set special_code='2' where rowid=".$line->id; //Set to print on printer 2
             $db->query($sql);
             $order_receipt_printer2 .= '<tr>'.$line->product_label.'<td class="right">'.$line->qty;
 			if (!empty($line->array_options['options_order_notes'])) $order_receipt_printer2 .= "<br>(".$line->array_options['options_order_notes'].")";
 			$order_receipt_printer2 .= '</td></tr>';
         }
     }
-
-    $invoice->fetch($placeid);
+	if ($conf->global->TAKEPOS_PRINT_METHOD == "receiptprinter"){
+		$invoice->fetch($placeid); //Reload object before send to printer
+		$ret = $printer->sendToPrinter($invoice, $conf->global->{'TAKEPOS_TEMPLATE_TO_USE_FOR_ORDERS'.$_SESSION["takeposterminal"]}, $conf->global->{'TAKEPOS_PRINTER_TO_USE'.$_SESSION["takeposterminal"]}); // PRINT TO PRINTER 2
+	}
+	$sql = "UPDATE ".MAIN_DB_PREFIX."facturedet set special_code='4' where special_code='2' and fk_facture=".$invoice->id; // Set as printed
+	$db->query($sql);
+	$invoice->fetch($placeid); //Reload object after set lines as printed
 }
 
 $sectionwithinvoicelink = '';
@@ -504,9 +537,9 @@ if ($action == "valid" || $action == "history")
         else $sectionwithinvoicelink .= $langs->trans('BillShortStatusValidated');
     }
     $sectionwithinvoicelink .= '</span>';
-    if ($conf->global->TAKEPOSCONNECTOR) {
+    if ($conf->global->TAKEPOS_PRINT_METHOD == "takeposconnector"){
          $sectionwithinvoicelink .= ' <button id="buttonprint" type="button" onclick="TakeposPrinting('.$placeid.');">'.$langs->trans('PrintTicket').'</button>';
-    } elseif ($conf->global->TAKEPOS_DOLIBARR_PRINTER) {
+    } elseif ($conf->global->TAKEPOS_PRINT_METHOD == "receiptprinter"){
         $sectionwithinvoicelink .= ' <button id="buttonprint" type="button" onclick="DolibarrTakeposPrinting('.$placeid.');">'.$langs->trans('PrintTicket').'</button>';
     } else {
         $sectionwithinvoicelink .= ' <button id="buttonprint" type="button" onclick="Print('.$placeid.');">'.$langs->trans('PrintTicket').'</button>';

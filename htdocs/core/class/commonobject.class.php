@@ -571,7 +571,7 @@ abstract class CommonObject
 		$return = '<div class="box-flex-item">';
 		$return .= '<div class="info-box info-box-sm">';
 		$return .= '<span class="info-box-icon bg-infoxbox-action">';
-		$return .= '<i class="fa fa-dol-action"></i>';		// Can be image
+		$return .= '<i class="fa fa-dol-action"></i>'; // Can be image
 		$return .= '</span>';
 		$return .= '<div class="info-box-content">';
 		$return .= '<span class="info-box-title">'.(method_exists($this, 'getNomUrl') ? $this->getNomUrl() : $this->ref).'</span>';
@@ -1797,14 +1797,14 @@ abstract class CommonObject
 		// this->ismultientitymanaged contains
 		// 0=No test on entity, 1=Test with field entity, 'field@table'=Test with link by field@table
 		$aliastablesociete = 's';
-		if ($this->element == 'societe') $aliastablesociete = 'te';	// te as table_element
+		if ($this->element == 'societe') $aliastablesociete = 'te'; // te as table_element
 
 		$sql = "SELECT MAX(te.".$fieldid.")";
 		$sql .= " FROM ".(empty($nodbprefix) ?MAIN_DB_PREFIX:'').$this->table_element." as te";
 		if ($this->element == 'user' && !empty($conf->global->MULTICOMPANY_TRANSVERSE_MODE)) {
 			$sql .= ",".MAIN_DB_PREFIX."usergroup_user as ug";
 		}
-		if (isset($this->ismultientitymanaged) && ! is_numeric($this->ismultientitymanaged)) {
+		if (isset($this->ismultientitymanaged) && !is_numeric($this->ismultientitymanaged)) {
 			$tmparray = explode('@', $this->ismultientitymanaged);
 			$sql .= ", ".MAIN_DB_PREFIX.$tmparray[1]." as ".($tmparray[1] == 'societe' ? 's' : 'parenttable'); // If we need to link to this table to limit select to entity
 		}
@@ -1819,7 +1819,7 @@ abstract class CommonObject
 			if (!preg_match('/^\s*AND/i', $filter)) $sql .= " AND "; // For backward compatibility
 			$sql .= $filter;
 		}
-		if (isset($this->ismultientitymanaged) && ! is_numeric($this->ismultientitymanaged)) {
+		if (isset($this->ismultientitymanaged) && !is_numeric($this->ismultientitymanaged)) {
 			$tmparray = explode('@', $this->ismultientitymanaged);
 			$sql .= ' AND te.'.$tmparray[0].' = '.($tmparray[1] == 'societe' ? 's' : 'parenttable').'.rowid'; // If we need to link to this table to limit select to entity
 		}
@@ -1836,7 +1836,7 @@ abstract class CommonObject
 				$sql .= ' AND te.entity IN ('.getEntity($this->element).')';
 			}
 		}
-		if (isset($this->ismultientitymanaged) && ! is_numeric($this->ismultientitymanaged) && $this->element != 'societe') {
+		if (isset($this->ismultientitymanaged) && !is_numeric($this->ismultientitymanaged) && $this->element != 'societe') {
 			$tmparray = explode('@', $this->ismultientitymanaged);
 			$sql .= ' AND parenttable.entity IN ('.getEntity($tmparray[1]).')';
 		}
@@ -3369,6 +3369,9 @@ abstract class CommonObject
 					elseif ($objecttype == 'subscription') {
 						$classpath = 'adherents/class'; $module = 'adherent';
 					}
+					elseif ($objecttype == 'contact') {
+						 $module = 'societe';
+					}
 
 					// Set classfile
 					$classfile = strtolower($subelement); $classname = ucfirst($subelement);
@@ -3390,6 +3393,9 @@ abstract class CommonObject
 					}
 					elseif ($objecttype == 'subscription') {
 						$classfile = 'subscription'; $classname = 'Subscription';
+					}
+					elseif ($objecttype == 'project' || $objecttype == 'projet') {
+						$classpath = 'projet/class'; $classfile = 'project'; $classname = 'Project';
 					}
 
 					// Here $module, $classfile and $classname are set
@@ -5625,7 +5631,7 @@ abstract class CommonObject
 			$form = new Form($this->db);
 		}
 
-		if (! empty($this->fields)) {
+		if (!empty($this->fields)) {
 			$val = $this->fields[$key];
 		}
 

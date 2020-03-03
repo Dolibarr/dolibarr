@@ -76,13 +76,13 @@ function product_prepare_head($object)
 	}
 
 	// Sub products
-	if (! empty($conf->global->PRODUIT_SOUSPRODUITS))
+	if (!empty($conf->global->PRODUIT_SOUSPRODUITS))
 	{
 		$head[$h][0] = DOL_URL_ROOT."/product/composition/card.php?id=".$object->id;
 		$head[$h][1] = $langs->trans('AssociatedProducts');
 
 		$nbFatherAndChild = $object->hasFatherOrChild();
-		if ($nbFatherAndChild > 0) $head[$h][1].= '<span class="badge marginleftonlyshort">'.$nbFatherAndChild.'</span>';
+		if ($nbFatherAndChild > 0) $head[$h][1] .= '<span class="badge marginleftonlyshort">'.$nbFatherAndChild.'</span>';
 		$head[$h][2] = 'subproduct';
 		$h++;
 	}
@@ -110,15 +110,15 @@ function product_prepare_head($object)
 			$head[$h][1] = $langs->trans('ProductCombinations');
 			$head[$h][2] = 'combinations';
 			$nbVariant = $prodcomb->countNbOfCombinationForFkProductParent($object->id);
-            if ($nbVariant > 0) $head[$h][1].= '<span class="badge marginleftonlyshort">'.$nbVariant.'</span>';
+            if ($nbVariant > 0) $head[$h][1] .= '<span class="badge marginleftonlyshort">'.$nbVariant.'</span>';
 		}
 
 		$h++;
 	}
 
-    if ($object->isProduct() || ($object->isService() && ! empty($conf->global->STOCK_SUPPORTS_SERVICES)))    // If physical product we can stock (or service with option)
+    if ($object->isProduct() || ($object->isService() && !empty($conf->global->STOCK_SUPPORTS_SERVICES)))    // If physical product we can stock (or service with option)
     {
-        if (! empty($conf->stock->enabled) && $user->rights->stock->lire)
+        if (!empty($conf->stock->enabled) && $user->rights->stock->lire)
         {
             $head[$h][0] = DOL_URL_ROOT."/product/stock/product.php?id=".$object->id;
             $head[$h][1] = $langs->trans("Stock");
@@ -156,11 +156,11 @@ function product_prepare_head($object)
     if (empty($conf->global->MAIN_DISABLE_NOTES_TAB))
     {
         $nbNote = 0;
-        if(!empty($object->note_private)) $nbNote++;
-        if(!empty($object->note_public)) $nbNote++;
+        if (!empty($object->note_private)) $nbNote++;
+        if (!empty($object->note_public)) $nbNote++;
         $head[$h][0] = DOL_URL_ROOT.'/product/note.php?id='.$object->id;
         $head[$h][1] = $langs->trans('Notes');
-        if ($nbNote > 0) $head[$h][1].= '<span class="badge marginleftonlyshort">'.$nbNote.'</span>';
+        if ($nbNote > 0) $head[$h][1] .= '<span class="badge marginleftonlyshort">'.$nbNote.'</span>';
         $head[$h][2] = 'note';
         $h++;
     }
@@ -168,18 +168,18 @@ function product_prepare_head($object)
     // Attachments
 	require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
     require_once DOL_DOCUMENT_ROOT.'/core/class/link.class.php';
-    if (! empty($conf->product->enabled) && ($object->type==Product::TYPE_PRODUCT)) $upload_dir = $conf->product->multidir_output[$object->entity].'/'.dol_sanitizeFileName($object->ref);
-    if (! empty($conf->service->enabled) && ($object->type==Product::TYPE_SERVICE)) $upload_dir = $conf->service->multidir_output[$object->entity].'/'.dol_sanitizeFileName($object->ref);
+    if (!empty($conf->product->enabled) && ($object->type == Product::TYPE_PRODUCT)) $upload_dir = $conf->product->multidir_output[$object->entity].'/'.dol_sanitizeFileName($object->ref);
+    if (!empty($conf->service->enabled) && ($object->type == Product::TYPE_SERVICE)) $upload_dir = $conf->service->multidir_output[$object->entity].'/'.dol_sanitizeFileName($object->ref);
     $nbFiles = count(dol_dir_list($upload_dir, 'files', 0, '', '(\.meta|_preview.*\.png)$'));
-    if (! empty($conf->global->PRODUCT_USE_OLD_PATH_FOR_PHOTO)) {
-        if (! empty($conf->product->enabled) && ($object->type==Product::TYPE_PRODUCT)) $upload_dir = $conf->product->multidir_output[$object->entity].'/'.get_exdir($object->id, 2, 0, 0, $object, 'product').$object->id.'/photos';
-        if (! empty($conf->service->enabled) && ($object->type==Product::TYPE_SERVICE)) $upload_dir = $conf->service->multidir_output[$object->entity].'/'.get_exdir($object->id, 2, 0, 0, $object, 'product').$object->id.'/photos';
+    if (!empty($conf->global->PRODUCT_USE_OLD_PATH_FOR_PHOTO)) {
+        if (!empty($conf->product->enabled) && ($object->type == Product::TYPE_PRODUCT)) $upload_dir = $conf->product->multidir_output[$object->entity].'/'.get_exdir($object->id, 2, 0, 0, $object, 'product').$object->id.'/photos';
+        if (!empty($conf->service->enabled) && ($object->type == Product::TYPE_SERVICE)) $upload_dir = $conf->service->multidir_output[$object->entity].'/'.get_exdir($object->id, 2, 0, 0, $object, 'product').$object->id.'/photos';
         $nbFiles += count(dol_dir_list($upload_dir, 'files', 0, '', '(\.meta|_preview.*\.png)$'));
     }
-    $nbLinks=Link::count($db, $object->element, $object->id);
+    $nbLinks = Link::count($db, $object->element, $object->id);
 	$head[$h][0] = DOL_URL_ROOT.'/product/document.php?id='.$object->id;
 	$head[$h][1] = $langs->trans('Documents');
-	if (($nbFiles+$nbLinks) > 0) $head[$h][1].= '<span class="badge marginleftonlyshort">'.($nbFiles+$nbLinks).'</span>';
+	if (($nbFiles + $nbLinks) > 0) $head[$h][1] .= '<span class="badge marginleftonlyshort">'.($nbFiles + $nbLinks).'</span>';
 	$head[$h][2] = 'documents';
 	$h++;
 
@@ -225,10 +225,10 @@ function productlot_prepare_head($object)
     require_once DOL_DOCUMENT_ROOT.'/core/class/link.class.php';
     $upload_dir = $conf->productbatch->multidir_output[$object->entity].'/'.dol_sanitizeFileName($object->ref);
     $nbFiles = count(dol_dir_list($upload_dir, 'files', 0, '', '(\.meta|_preview.*\.png)$'));
-    $nbLinks=Link::count($db, $object->element, $object->id);
+    $nbLinks = Link::count($db, $object->element, $object->id);
 	$head[$h][0] = DOL_URL_ROOT."/product/stock/productlot_document.php?id=".$object->id;
 	$head[$h][1] = $langs->trans("Documents");
-	if (($nbFiles+$nbLinks) > 0) $head[$h][1].= '<span class="badge marginleftonlyshort">'.($nbFiles+$nbLinks).'</span>';
+	if (($nbFiles + $nbLinks) > 0) $head[$h][1] .= '<span class="badge marginleftonlyshort">'.($nbFiles + $nbLinks).'</span>';
     $head[$h][2] = 'documents';
 	$h++;
 
@@ -536,7 +536,7 @@ function measuringUnitString($unit, $measuring_style = '', $scale = '', $use_sho
 	if (empty($measuring_unit_cache[$unit.'_'.$measuring_style.'_'.$scale.'_'.$use_short_label]))
 	{
 		require_once DOL_DOCUMENT_ROOT.'/core/class/cunits.class.php';
-		$measuringUnits= new CUnits($db);
+		$measuringUnits = new CUnits($db);
 
 		if ($measuring_style == '' && $scale == '')
 		{

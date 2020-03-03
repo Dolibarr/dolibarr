@@ -951,7 +951,11 @@ class DolGraph
 		    $this->stringtoshow .= '<div class="nographyettext">'.$langs->trans("NotEnoughDataYet").'</div>';
 		    return;
 		}
-		$this->stringtoshow .= '<div id="placeholder_'.$tag.'" style="width:'.$this->width.'px;height:'.$this->height.'px;" class="dolgraph'.(empty($this->cssprefix) ? '' : ' dolgraph'.$this->cssprefix).' center"></div>'."\n";
+
+		// Start the div that will contains all the graph
+		$dolxaxisvertical='';
+		if (count($this->data) > 20) $dolxaxisvertical='dol-xaxis-vertical';
+		$this->stringtoshow .= '<div id="placeholder_'.$tag.'" style="width:'.$this->width.'px;height:'.$this->height.'px;" class="dolgraph'.(empty($dolxaxisvertical)?'':' '.$dolxaxisvertical).(empty($this->cssprefix) ? '' : ' dolgraph'.$this->cssprefix).' center"></div>'."\n";
 
 		$this->stringtoshow .= '<script id="'.$tag.'">'."\n";
 		$this->stringtoshow .= '$(function () {'."\n";

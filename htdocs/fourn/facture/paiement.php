@@ -301,8 +301,8 @@ if (empty($reshook))
 
 	        $paiement->num_payment  = GETPOST('num_paiement', 'alpha');
 	        $paiement->note_private = GETPOST('comment', 'alpha');
-	        $paiement->num_paiement = $paiement->num_payment;		// For bacward compatibility
-	        $paiement->note         = $paiement->note_private;		// For bacward compatibility
+	        $paiement->num_paiement = $paiement->num_payment; // For bacward compatibility
+	        $paiement->note         = $paiement->note_private; // For bacward compatibility
 
 	        if (!$error)
 	        {

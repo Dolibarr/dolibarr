@@ -255,13 +255,14 @@ else
 		$px1->draw($file, $fileurl);
 
 		$show1 = $px1->show();
-		unset($graph_datas);
-		unset($px1);
-		unset($datas);
-		unset($datamin);
-		unset($dataall);
-		unset($labels);
-		unset($amounts);
+
+		$px1 = null;
+		$graph_datas =null;
+		$datas = null;
+		$datamin = null;
+		$dataall = null;
+		$labels = null;
+		$amounts = null;
 	}
 
 	// Graph Balance for the year
@@ -392,13 +393,13 @@ else
 
 		$show2 = $px2->show();
 
-		unset($px2);
-		unset($graph_datas);
-		unset($datas);
-		unset($datamin);
-		unset($dataall);
-		unset($labels);
-		unset($amounts);
+		$px2 = null;
+		$graph_datas =null;
+		$datas = null;
+		$datamin = null;
+		$dataall = null;
+		$labels = null;
+		$amounts = null;
 	}
 
 	// Graph 3 - Balance for all time line
@@ -460,7 +461,7 @@ else
 			}
 			else
 			{
-				$datas[$i] = '' +$solde + $subtotal;
+				$datas[$i] = 0 + $solde + $subtotal;
 			}
 			$datamin[$i] = $object->min_desired;
 			$dataall[$i] = $object->min_allowed;
@@ -505,13 +506,13 @@ else
 
 		$show3 = $px3->show();
 
-		unset($px3);
-		unset($graph_datas);
-		unset($datas);
-		unset($datamin);
-		unset($dataall);
-		unset($labels);
-		unset($amounts);
+		$px3 = null;
+		$graph_datas =null;
+		$datas = null;
+		$datamin = null;
+		$dataall = null;
+		$labels = null;
+		$amounts = null;
 	}
 
 	// Tableau 4a - Credit/Debit
@@ -634,10 +635,10 @@ else
 
 		$show4 = $px4->show();
 
-		unset($graph_datas);
-		unset($px4);
-		unset($debits);
-		unset($credits);
+		$px4 = null;
+		$graph_datas = null;
+		$debits = null;
+		$credits = null;
 	}
 
 	// Tableau 4b - Credit/Debit
@@ -742,10 +743,10 @@ else
 
 		$show5 = $px5->show();
 
-		unset($graph_datas);
-		unset($px5);
-		unset($debits);
-		unset($credits);
+		$px5 = null;
+		$graph_datas = null;
+		$debits = null;
+		$credits = null;
 	}
 }
 

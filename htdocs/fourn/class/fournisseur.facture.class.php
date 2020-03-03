@@ -218,7 +218,7 @@ class FactureFournisseur extends CommonInvoice
     public $fk_facture_source;
 
 
-    public $fields=array(
+    public $fields = array(
     	'rowid' =>array('type'=>'integer', 'label'=>'TechnicalID', 'enabled'=>1, 'visible'=>-1, 'notnull'=>1, 'position'=>10),
     	'ref' =>array('type'=>'varchar(255)', 'label'=>'Ref', 'enabled'=>1, 'visible'=>-1, 'notnull'=>1, 'showoncombobox'=>1, 'position'=>15),
     	'ref_supplier' =>array('type'=>'varchar(255)', 'label'=>'RefSupplier', 'enabled'=>1, 'visible'=>-1, 'position'=>20),
@@ -1413,7 +1413,7 @@ class FactureFournisseur extends CommonInvoice
 		{
             $num = $this->ref;
         }
-        $this->newref = $num;
+        $this->newref = dol_sanitizeFileName($num);
 
         $sql = "UPDATE ".MAIN_DB_PREFIX."facture_fourn";
         $sql .= " SET ref='".$num."', fk_statut = 1, fk_user_valid = ".$user->id.", date_valid = '".$this->db->idate($now)."'";
@@ -2287,7 +2287,7 @@ class FactureFournisseur extends CommonInvoice
 
                 if ($facturestatic->hasDelay()) {
 	                $response->nbtodolate++;
-					$response->url_late=DOL_URL_ROOT.'/fourn/facture/list.php?option=late&mainmenu=billing&leftmenu=suppliers_bills';
+					$response->url_late = DOL_URL_ROOT.'/fourn/facture/list.php?option=late&mainmenu=billing&leftmenu=suppliers_bills';
                 }
             }
             $this->db->free($resql);
@@ -2358,6 +2358,9 @@ class FactureFournisseur extends CommonInvoice
         elseif ($this->type == self::TYPE_CREDIT_NOTE) $label = $langs->transnoentitiesnoconv("ShowInvoiceAvoir").': '.$this->ref;
         elseif ($this->type == self::TYPE_DEPOSIT)     $label = $langs->transnoentitiesnoconv("ShowInvoiceDeposit").': '.$this->ref;
         if ($moretitle) $label .= ' - '.$moretitle;
+        if (isset($this->statut) && isset($this->alreadypaid)) {
+        	$label .= '<br><b>'.$langs->trans("Status").":</b> ".$this->getLibStatut(5, $this->alreadypaid);
+        }
 
         $ref = $this->ref;
         if (empty($ref)) $ref = $this->id;

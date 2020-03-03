@@ -49,6 +49,10 @@ abstract class CommonDocGenerator
      */
 	protected $db;
 
+    /**
+     * @var Extrafields object
+     */
+	public $extrafieldsCache;
 
 	/**
 	 *	Constructor
@@ -532,14 +536,16 @@ abstract class CommonDocGenerator
 	 *
 	 *	@param  Object			$line				Object line
 	 *	@param  Translate		$outputlangs        Lang object to use for output
+	 *  @param  int				$linenumber			The number of the line for the substitution of "object_line_pos"
 	 *  @return	array								Return a substitution array
 	 */
-	public function get_substitutionarray_lines($line, $outputlangs)
+	public function get_substitutionarray_lines($line, $outputlangs, $linenumber = 0)
 	{
         // phpcs:enable
 		global $conf;
 
 		$resarray = array(
+			'line_pos' => $linenumber,
 			'line_fulldesc'=>doc_getlinedesc($line, $outputlangs),
 			'line_product_ref'=>$line->product_ref,
 			'line_product_ref_fourn'=>$line->ref_fourn, // for supplier doc lines
@@ -788,81 +794,84 @@ abstract class CommonDocGenerator
     {
         // phpcs:enable
 		global $conf;
-		foreach($extrafields->attributes[$object->table_element]['label'] as $key=>$label)
-		{
-			if($extrafields->attributes[$object->table_element]['type'][$key] == 'price')
+
+		if (is_array($extrafields->attributes[$object->table_element]['label'])) {
+			foreach($extrafields->attributes[$object->table_element]['label'] as $key=>$label)
 			{
-				$object->array_options['options_'.$key] = price2num($object->array_options['options_'.$key]);
-				$object->array_options['options_'.$key.'_currency'] = price($object->array_options['options_'.$key], 0, $outputlangs, 0, 0, -1, $conf->currency);
-				//Add value to store price with currency
-				$array_to_fill=array_merge($array_to_fill, array($array_key.'_options_'.$key.'_currency' => $object->array_options['options_'.$key.'_currency']));
-			}
-			elseif($extrafields->attributes[$object->table_element]['type'][$key] == 'select')
-			{
-				$object->array_options['options_'.$key] = $extrafields->attributes[$object->table_element]['param'][$key]['options'][$object->array_options['options_'.$key]];
-			}
-			elseif($extrafields->attributes[$object->table_element]['type'][$key] == 'checkbox') {
-				$valArray=explode(',', $object->array_options['options_'.$key]);
-				$output=array();
-				foreach($extrafields->attributes[$object->table_element]['param'][$key]['options'] as $keyopt=>$valopt) {
-					if  (in_array($keyopt, $valArray)) {
-						$output[]=$valopt;
+				if($extrafields->attributes[$object->table_element]['type'][$key] == 'price')
+				{
+					$object->array_options['options_'.$key] = price2num($object->array_options['options_'.$key]);
+					$object->array_options['options_'.$key.'_currency'] = price($object->array_options['options_'.$key], 0, $outputlangs, 0, 0, -1, $conf->currency);
+					//Add value to store price with currency
+					$array_to_fill=array_merge($array_to_fill, array($array_key.'_options_'.$key.'_currency' => $object->array_options['options_'.$key.'_currency']));
+				}
+				elseif($extrafields->attributes[$object->table_element]['type'][$key] == 'select')
+				{
+					$object->array_options['options_'.$key] = $extrafields->attributes[$object->table_element]['param'][$key]['options'][$object->array_options['options_'.$key]];
+				}
+				elseif($extrafields->attributes[$object->table_element]['type'][$key] == 'checkbox') {
+					$valArray=explode(',', $object->array_options['options_'.$key]);
+					$output=array();
+					foreach($extrafields->attributes[$object->table_element]['param'][$key]['options'] as $keyopt=>$valopt) {
+						if  (in_array($keyopt, $valArray)) {
+							$output[]=$valopt;
+						}
 					}
+					$object->array_options['options_'.$key] = implode(', ', $output);
 				}
-				$object->array_options['options_'.$key] = implode(', ', $output);
-			}
-			elseif($extrafields->attributes[$object->table_element]['type'][$key] == 'date')
-			{
-				if (strlen($object->array_options['options_'.$key])>0)
+				elseif($extrafields->attributes[$object->table_element]['type'][$key] == 'date')
 				{
-					$date = $object->array_options['options_'.$key];
-					$object->array_options['options_'.$key] = dol_print_date($date, 'day');                                       // using company output language
-					$object->array_options['options_'.$key.'_locale'] = dol_print_date($date, 'day', 'tzserver', $outputlangs);     // using output language format
-					$object->array_options['options_'.$key.'_rfc'] = dol_print_date($date, 'dayrfc');                             // international format
-				}
-				else
-				{
-					$object->array_options['options_'.$key] = '';
-					$object->array_options['options_'.$key.'_locale'] = '';
-					$object->array_options['options_'.$key.'_rfc'] = '';
-				}
-				$array_to_fill=array_merge($array_to_fill, array($array_key.'_options_'.$key.'_locale' => $object->array_options['options_'.$key.'_locale']));
-				$array_to_fill=array_merge($array_to_fill, array($array_key.'_options_'.$key.'_rfc' => $object->array_options['options_'.$key.'_rfc']));
-			}
-			elseif($extrafields->attributes[$object->table_element]['label'][$key] == 'datetime')
-			{
-				$datetime = $object->array_options['options_'.$key];
-				$object->array_options['options_'.$key] = ($datetime!="0000-00-00 00:00:00"?dol_print_date($object->array_options['options_'.$key], 'dayhour'):'');                            // using company output language
-				$object->array_options['options_'.$key.'_locale'] = ($datetime!="0000-00-00 00:00:00"?dol_print_date($object->array_options['options_'.$key], 'dayhour', 'tzserver', $outputlangs):'');    // using output language format
-				$object->array_options['options_'.$key.'_rfc'] = ($datetime!="0000-00-00 00:00:00"?dol_print_date($object->array_options['options_'.$key], 'dayhourrfc'):'');                             // international format
-				$array_to_fill=array_merge($array_to_fill, array($array_key.'_options_'.$key.'_locale' => $object->array_options['options_'.$key.'_locale']));
-				$array_to_fill=array_merge($array_to_fill, array($array_key.'_options_'.$key.'_rfc' => $object->array_options['options_'.$key.'_rfc']));
-			}
-			elseif($extrafields->attributes[$object->table_element]['type'][$key] == 'link')
-			{
-				$id = $object->array_options['options_'.$key];
-				if ($id != "")
-				{
-					$param = $extrafields->attributes[$object->table_element]['param'][$key];
-					$param_list=array_keys($param['options']);              // $param_list='ObjectName:classPath'
-					$InfoFieldList = explode(":", $param_list[0]);
-					$classname=$InfoFieldList[0];
-					$classpath=$InfoFieldList[1];
-					if (! empty($classpath))
+					if (strlen($object->array_options['options_'.$key])>0)
 					{
-						dol_include_once($InfoFieldList[1]);
-						if ($classname && class_exists($classname))
+						$date = $object->array_options['options_'.$key];
+						$object->array_options['options_'.$key] = dol_print_date($date, 'day');                                       // using company output language
+						$object->array_options['options_'.$key.'_locale'] = dol_print_date($date, 'day', 'tzserver', $outputlangs);     // using output language format
+						$object->array_options['options_'.$key.'_rfc'] = dol_print_date($date, 'dayrfc');                             // international format
+					}
+					else
+					{
+						$object->array_options['options_'.$key] = '';
+						$object->array_options['options_'.$key.'_locale'] = '';
+						$object->array_options['options_'.$key.'_rfc'] = '';
+					}
+					$array_to_fill=array_merge($array_to_fill, array($array_key.'_options_'.$key.'_locale' => $object->array_options['options_'.$key.'_locale']));
+					$array_to_fill=array_merge($array_to_fill, array($array_key.'_options_'.$key.'_rfc' => $object->array_options['options_'.$key.'_rfc']));
+				}
+				elseif($extrafields->attributes[$object->table_element]['label'][$key] == 'datetime')
+				{
+					$datetime = $object->array_options['options_'.$key];
+					$object->array_options['options_'.$key] = ($datetime!="0000-00-00 00:00:00"?dol_print_date($object->array_options['options_'.$key], 'dayhour'):'');                            // using company output language
+					$object->array_options['options_'.$key.'_locale'] = ($datetime!="0000-00-00 00:00:00"?dol_print_date($object->array_options['options_'.$key], 'dayhour', 'tzserver', $outputlangs):'');    // using output language format
+					$object->array_options['options_'.$key.'_rfc'] = ($datetime!="0000-00-00 00:00:00"?dol_print_date($object->array_options['options_'.$key], 'dayhourrfc'):'');                             // international format
+					$array_to_fill=array_merge($array_to_fill, array($array_key.'_options_'.$key.'_locale' => $object->array_options['options_'.$key.'_locale']));
+					$array_to_fill=array_merge($array_to_fill, array($array_key.'_options_'.$key.'_rfc' => $object->array_options['options_'.$key.'_rfc']));
+				}
+				elseif($extrafields->attributes[$object->table_element]['type'][$key] == 'link')
+				{
+					$id = $object->array_options['options_'.$key];
+					if ($id != "")
+					{
+						$param = $extrafields->attributes[$object->table_element]['param'][$key];
+						$param_list=array_keys($param['options']);              // $param_list='ObjectName:classPath'
+						$InfoFieldList = explode(":", $param_list[0]);
+						$classname=$InfoFieldList[0];
+						$classpath=$InfoFieldList[1];
+						if (! empty($classpath))
 						{
-							$tmpobject = new $classname($this->db);
-							$tmpobject->fetch($id);
-							// completely replace the id with the linked object name
-							$object->array_options['options_'.$key] = $tmpobject->name;
+							dol_include_once($InfoFieldList[1]);
+							if ($classname && class_exists($classname))
+							{
+								$tmpobject = new $classname($this->db);
+								$tmpobject->fetch($id);
+								// completely replace the id with the linked object name
+								$object->array_options['options_'.$key] = $tmpobject->name;
+							}
 						}
 					}
 				}
-			}
 
-			$array_to_fill = array_merge($array_to_fill, array($array_key.'_options_'.$key => $object->array_options['options_'.$key]));
+				$array_to_fill = array_merge($array_to_fill, array($array_key.'_options_'.$key => $object->array_options['options_'.$key]));
+			}
 		}
 
 		return $array_to_fill;
@@ -1074,7 +1083,7 @@ abstract class CommonDocGenerator
      *  @param	float		$curY    	curent Y position
      *  @param	string		$colKey    	the column key
      *  @param	string		$columnText   column text
-     *  @return	int         new rank on success and -1 on error
+     *  @return	null
      */
     public function printStdColumnContent($pdf, &$curY, $colKey, $columnText = '')
     {
@@ -1094,6 +1103,221 @@ abstract class CommonDocGenerator
             $colDef = $this->cols[$colKey];
             $pdf->writeHTMLCell($this->getColumnContentWidth($colKey) + 2, 2, $this->getColumnContentXStart($colKey) - 1, $curY, $columnText, 0, 0, 0, true, $colDef['content']['align']);
         }
+    }
+
+    /**
+     *  get extrafield content for pdf writeHtmlCell compatibility
+     *  usage for PDF line columns and object note block
+     *
+     *  @param	object		$object     common object
+     *  @param	string		$extrafieldKey    	the extrafield key
+     *  @return	string
+     */
+    public function getExtrafieldContent($object, $extrafieldKey)
+    {
+        global $hookmanager;
+
+        if(empty($object->table_element)){ return; }
+
+        $extrafieldsKeyPrefix = "options_";
+
+        // Cleanup extrafield key to remove prefix if present
+        $pos = strpos($extrafieldKey, $extrafieldsKeyPrefix);
+        if($pos===0){
+            $extrafieldKey = substr($extrafieldKey, strlen($extrafieldsKeyPrefix));
+        }
+
+        $extrafieldOptionsKey = $extrafieldsKeyPrefix.$extrafieldKey;
+
+
+        // Load extrafiels if not allready does
+        if(empty($this->extrafieldsCache)){ $this->extrafieldsCache = new ExtraFields($this->db); }
+        if(empty($this->extrafieldsCache->attributes[$object->table_element])){ $this->extrafieldsCache->fetch_name_optionals_label($object->table_element); }
+        $extrafields = $this->extrafieldsCache;
+
+        $extrafieldOutputContent = $extrafields->showOutputField($extrafieldKey, $object->array_options[$extrafieldOptionsKey], '', $object->table_element);
+
+        // TODO : allow showOutputField to be pdf public friendly, ex: in a link to object, clean getNomUrl to remove link and images... like a getName methode ...
+        if($extrafields->attributes[$object->table_element]['type'][$extrafieldKey] == 'link'){
+            // for lack of anything better we cleanup all html tags
+            $extrafieldOutputContent = dol_string_nohtmltag($extrafieldOutputContent);
+        }
+
+        $parameters = array(
+            'object' => $object,
+            'extrafields' => $extrafields,
+            'extrafieldKey' => $extrafieldKey,
+            'extrafieldOutputContent' =>& $extrafieldOutputContent
+        );
+        $reshook = $hookmanager->executeHooks('getPDFExtrafieldContent', $parameters, $this); // Note that $action and $object may have been modified by hook
+        if ($reshook < 0) setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
+        if ($reshook)
+        {
+            $extrafieldOutputContent = $hookmanager->resPrint;
+        }
+
+        return $extrafieldOutputContent;
+    }
+
+
+    /**
+     *  display extrafields columns content
+     *
+     *  @param	object		$object    	line of common object
+     *  @param Translate $outputlangs    Output language
+     *  @param array $params    array of additionals parameters
+     *  @return	double  max y value
+     */
+    public function getExtrafieldsInHtml($object, $outputlangs, $params = array())
+    {
+        global $hookmanager;
+
+        if(empty($object->table_element)){
+            return;
+        }
+
+        // Load extrafiels if not allready does
+        if(empty($this->extrafieldsCache)){ $this->extrafieldsCache = new ExtraFields($this->db); }
+        if(empty($this->extrafieldsCache->attributes[$object->table_element])){ $this->extrafieldsCache->fetch_name_optionals_label($object->table_element); }
+        $extrafields = $this->extrafieldsCache;
+
+        $defaultParams = array(
+            'style'         => '',
+            'display'         => 'auto', // auto, table, list
+
+            'table'         => array(
+                'maxItemsInRow' => 2,
+                'cellspacing'   => 0,
+                'cellpadding'   => 0,
+                'border'        => 0,
+                'labelcolwidth' => '25%',
+                'arrayOfLineBreakType' => array('text', 'html')
+            ),
+
+            'list'         => array(
+                'separator' => '<br/>'
+            ),
+
+            'auto'         => array(
+                'list' => 0, // 0 for default
+                'table' => 4 // if there more than x extrafield to display
+            ),
+        );
+
+        $params = $params + $defaultParams;
+
+
+        /**
+         * @var $extrafields ExtraFields
+         */
+
+        $html = '';
+        $fields = array();
+
+        if (is_array($extrafields->attributes[$object->table_element]['label'])) {
+            foreach ($extrafields->attributes[$object->table_element]['label'] as $key => $label)
+            {
+                // Enable extrafield ?
+                $enabled = !empty($extrafields->attributes[$object->table_element]['printable'][$key]);
+
+                if(empty($enabled)){
+                    continue;
+                }
+
+                $field = new stdClass();
+                $field->rank = intval($extrafields->attributes[$object->table_element]['pos'][$key]);
+                $field->content = $this->getExtrafieldContent($object, $key);
+                $field->label = $outputlangs->transnoentities($label);
+                $field->type = $extrafields->attributes[$object->table_element]['type'][$key];
+
+                $fields[] = $field;
+            }
+        }
+
+        if(!empty($fields))
+        {
+            // Sort extrafields by rank
+            uasort($fields, function ($a, $b) {
+                return  ($a->rank > $b->rank) ? -1 : 1;
+			}
+            );
+
+
+
+            // define some HTML content with style
+            $html.= '<style>'.$params['style'].'</style>';
+
+            // auto select display format
+            if($params['display'] == 'auto') {
+                $lastNnumbItems = 0;
+                foreach ($params['auto'] as $display => $numbItems){
+                    if($lastNnumbItems <= $numbItems && count($fields) > $numbItems){
+                        $lastNnumbItems = $numbItems;
+                        $params['display'] = $display;
+                    }
+                }
+            }
+
+            if($params['display'] == 'list') {
+                // Display in list format
+                foreach ($fields as $field) {
+                    $html .= !empty($html)?$params['list']['separator']:'';
+                    $html .= '<strong>' . $field->label . ' : </strong>';
+                    $html .= $field->content;
+                }
+            }
+            elseif($params['display'] == 'table') {
+                // Display in table format
+                $html .= '<table class="extrafield-table" cellspacing="' . $params['table']['cellspacing'] . '" cellpadding="' . $params['table']['cellpadding'] . '" border="' . $params['table']['border'] . '">';
+
+                $html .= "<tr>";
+                $itemsInRow = 0;
+                $maxItemsInRow = $params['table']['maxItemsInRow'];
+                foreach ($fields as $field) {
+                    //$html.= !empty($html)?'<br/>':'';
+                    if ($itemsInRow >= $maxItemsInRow) {
+                        // start a new line
+                        $html .= "</tr><tr>";
+                        $itemsInRow = 0;
+                    }
+
+                    // for some type we need line break
+                    if (in_array($field->type, $params['table']['arrayOfLineBreakType'])) {
+                        if ($itemsInRow > 0) {
+                            // close table row and empty cols
+                            for ($i = $itemsInRow; $i <= $maxItemsInRow; $i++) {
+                                $html .= "<td ></td><td></td>";
+                            }
+                            $html .= "</tr>";
+
+                            // start a new line
+                            $html .= "<tr>";
+                        }
+
+                        $itemsInRow = $maxItemsInRow;
+                        $html .= '<td colspan="' . ($maxItemsInRow * 2 - 1) . '">';
+                        $html .= '<strong>' . $field->label . ' :</strong> ';
+                        $html .= $field->content;
+                        $html .= "</td>";
+                    } else {
+                        $itemsInRow++;
+                        $html .= '<td width="'.$params['table']['labelcolwidth'].'" class="extrafield-label">';
+                        $html .= '<strong>' . $field->label . ' :</strong>';
+                        $html .= "</td>";
+
+
+                        $html .= '<td  class="extrafield-content">';
+                        $html .= $field->content;
+                        $html .= "</td>";
+                    }
+                }
+                $html .= "</tr>";
+
+                $html .= '</table>';
+            }
+        }
+
+        return $html;
     }
 
 
@@ -1166,5 +1390,82 @@ abstract class CommonDocGenerator
             }
         }
         return $this->tabTitleHeight;
+    }
+
+
+
+    /**
+     *  Define Array Column Field for extrafields
+     *
+     *  @param	object			$object    		common object det
+     *  @param	Translate		$outputlangs    langs
+     *  @param	int			   $hidedetails		Do not show line details
+     *  @return	null
+     */
+    public function defineColumnExtrafield($object, $outputlangs, $hidedetails = 0)
+    {
+        global $conf;
+
+        if(!empty($hidedetails)){
+            return;
+        }
+
+        if(empty($object->table_element)){
+            return;
+        }
+
+        // Load extrafiels if not allready does
+        if(empty($this->extrafieldsCache)){ $this->extrafieldsCache = new ExtraFields($this->db); }
+        if(empty($this->extrafieldsCache->attributes[$object->table_element])){ $this->extrafieldsCache->fetch_name_optionals_label($object->table_element); }
+        $extrafields = $this->extrafieldsCache;
+
+
+        if (!empty($extrafields->attributes[$object->table_element]) && is_array($extrafields->attributes[$object->table_element]['label'])) {
+            foreach ($extrafields->attributes[$object->table_element]['label'] as $key => $label)
+            {
+                // Dont display separator yet even is set to be displayed (not compatible yet)
+                if ($extrafields->attributes[$object->table_element]['type'][$key] == 'separate')
+                {
+                    continue;
+                }
+
+                // Enable extrafield ?
+                $enabled = !empty($extrafields->attributes[$object->table_element]['printable'][$key]);
+
+
+                // Load language if required
+                if (!empty($extrafields->attributes[$object->table_element]['langfile'][$key])) $outputlangs->load($extrafields->attributes[$object->table_element]['langfile'][$key]);
+
+                // TODO : add more extrafield customisation capacities for PDF like width, rank...
+
+                // set column definition
+                $def = array(
+                    'rank' => intval($extrafields->attributes[$object->table_element]['pos'][$key]),
+                    'width' => 25, // in mm
+                    'status' => boolval($enabled),
+                    'title' => array(
+                        'label' => $outputlangs->transnoentities($label)
+                    ),
+                    'content' => array(
+                        'align' => 'C'
+                    ),
+                    'border-left' => true, // add left line separator
+                );
+
+                $alignTypeRight = array('double', 'int', 'price');
+                if(in_array($extrafields->attributes[$object->table_element]['type'][$key], $alignTypeRight)){
+                    $def['content']['align'] = 'R';
+                }
+
+                $alignTypeLeft  = array('text', 'html');
+                if(in_array($extrafields->attributes[$object->table_element]['type'][$key], $alignTypeLeft)){
+                    $def['content']['align'] = 'L';
+                }
+
+
+                // for extrafields we use rank of extrafield to place it on PDF
+                $this->insertNewColumnDef("options_".$key, $def);
+            }
+        }
     }
 }

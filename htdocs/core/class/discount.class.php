@@ -504,15 +504,16 @@ class DiscountAbsolute
      * 	@param		string		$filter			Filtre autre
      * 	@param		int			$maxvalue		Filter on max value for discount
      *  @param      int			$discount_type  0 => customer discount, 1 => supplier discount
+	 *  @param      int			$multicurrency  Return multicurrency_amount instead of amount
      * 	@return		int						<0 if KO, amount otherwise
      */
-    public function getAvailableDiscounts($company = '', $user = '', $filter = '', $maxvalue = 0, $discount_type = 0)
+    public function getAvailableDiscounts($company = '', $user = '', $filter = '', $maxvalue = 0, $discount_type = 0, $multicurrency = 0)
     {
         global $conf;
 
         dol_syslog(get_class($this)."::getAvailableDiscounts discount_type=".$discount_type, LOG_DEBUG);
 
-        $sql = "SELECT SUM(rc.amount_ttc) as amount";
+        $sql = "SELECT SUM(rc.amount_ttc) as amount, SUM(rc.multicurrency_amount_ttc) as multicurrency_amount";
         $sql .= " FROM ".MAIN_DB_PREFIX."societe_remise_except as rc";
         $sql .= " WHERE rc.entity = ".$conf->entity;
         $sql .= " AND rc.discount_type=".intval($discount_type);
@@ -535,6 +536,11 @@ class DiscountAbsolute
             //print 'zz'.$obj->amount;
             //$obj = $this->db->fetch_object($resql);
             //}
+			if ($multicurrency)
+			{
+				return $obj->amount_multicurrency;
+			}
+
             return $obj->amount;
         }
         return -1;
@@ -604,14 +610,14 @@ class DiscountAbsolute
             $sql = 'SELECT sum(rc.amount_ttc) as amount, sum(rc.multicurrency_amount_ttc) as multicurrency_amount';
             $sql .= ' FROM '.MAIN_DB_PREFIX.'societe_remise_except as rc, '.MAIN_DB_PREFIX.'facture as f';
             $sql .= ' WHERE rc.fk_facture_source=f.rowid AND rc.fk_facture = '.$invoice->id;
-            $sql .= ' AND (f.type = 2 OR f.type = 0)'; // Find discount coming from credit note or excess received
+            $sql .= ' AND f.type IN (' . $invoice::TYPE_STANDARD . ', ' . $invoice::TYPE_CREDIT_NOTE . ', ' . $invoice::TYPE_SITUATION . ')'; // Find discount coming from credit note or excess received
         }
         elseif ($invoice->element == 'invoice_supplier')
         {
             $sql = 'SELECT sum(rc.amount_ttc) as amount, sum(rc.multicurrency_amount_ttc) as multicurrency_amount';
             $sql .= ' FROM '.MAIN_DB_PREFIX.'societe_remise_except as rc, '.MAIN_DB_PREFIX.'facture_fourn as f';
             $sql .= ' WHERE rc.fk_invoice_supplier_source=f.rowid AND rc.fk_invoice_supplier = '.$invoice->id;
-            $sql .= ' AND (f.type = 2 OR f.type = 0)'; // Find discount coming from credit note or excess paid
+            $sql .= ' AND f.type IN (' . $invoice::TYPE_STANDARD . ', ' . $invoice::TYPE_CREDIT_NOTE . ')'; // Find discount coming from credit note or excess paid
         }
         else
         {

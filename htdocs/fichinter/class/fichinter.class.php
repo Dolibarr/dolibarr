@@ -544,7 +544,7 @@ class Fichinter extends CommonObject
 			{
 				$num = $this->ref;
 			}
-			$this->newref = $num;
+			$this->newref = dol_sanitizeFileName($num);
 
 			$sql = "UPDATE ".MAIN_DB_PREFIX."fichinter";
 			$sql .= " SET fk_statut = 1";
@@ -753,8 +753,10 @@ class Fichinter extends CommonObject
 		$result = '';
 
 		$label = '<u>'.$langs->trans("ShowIntervention").'</u>';
-		if (!empty($this->ref))
-			$label .= '<br><b>'.$langs->trans('Ref').':</b> '.$this->ref;
+		$label .= '<br><b>'.$langs->trans('Ref').':</b> '.$this->ref;
+		if (isset($this->statut)) {
+			$label .= '<br><b>'.$langs->trans("Status").":</b> ".$this->getLibStatut(5);
+		}
 
 		$url = DOL_URL_ROOT.'/fichinter/card.php?id='.$this->id;
 

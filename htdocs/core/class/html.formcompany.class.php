@@ -249,8 +249,7 @@ class FormCompany extends Form
 							}
 						}
 
-						if ((!empty($selected) && $selected == $obj->rowid)
-						 || (empty($selected) && !empty($conf->global->MAIN_FORCE_DEFAULT_STATE_ID) && $conf->global->MAIN_FORCE_DEFAULT_STATE_ID == $obj->rowid))
+						if (!empty($selected) && $selected == $obj->rowid)
 						{
 							$out .= '<option value="'.$obj->rowid.'" selected>';
 						}
@@ -455,9 +454,10 @@ class FormCompany extends Form
 	 *    @param    int			$country_codeid     0=list for all countries, otherwise list only country requested
      *    @param    string		$filter          	Add a SQL filter on list
      *    @param	string		$htmlname			HTML name of select
+     *    @param	string		$morecss			More CSS
      *    @return	string							String with HTML select
 	 */
-	public function select_juridicalstatus($selected = '', $country_codeid = 0, $filter = '', $htmlname = 'forme_juridique_code')
+	public function select_juridicalstatus($selected = '', $country_codeid = 0, $filter = '', $htmlname = 'forme_juridique_code', $morecss = '')
 	{
         // phpcs:enable
 		global $conf, $langs, $user;
@@ -479,7 +479,7 @@ class FormCompany extends Form
 		if ($resql)
 		{
 			$out .= '<div id="particulier2" class="visible">';
-			$out .= '<select class="flat minwidth200" name="'.$htmlname.'" id="'.$htmlname.'">';
+			$out .= '<select class="flat minwidth200'.($morecss?' '.$morecss:'').'" name="'.$htmlname.'" id="'.$htmlname.'">';
 			if ($country_codeid) $out .= '<option value="0">&nbsp;</option>'; // When country_codeid is set, we force to add an empty line because it does not appears from select. When not set, we already get the empty line from select.
 
 			$num = $this->db->num_rows($resql);
@@ -832,7 +832,7 @@ class FormCompany extends Form
     public function get_input_id_prof($idprof, $htmlname, $preselected, $country_code, $morecss = 'maxwidth100onsmartphone quatrevingtpercent')
     {
         // phpcs:enable
-        global $conf, $langs;
+        global $conf, $langs, $hookmanager;
 
         $formlength = 0;
         if (empty($conf->global->MAIN_DISABLEPROFIDRULES)) {
@@ -865,7 +865,16 @@ class FormCompany extends Form
         $maxlength = $formlength;
         if (empty($formlength)) { $formlength = 24; $maxlength = 128; }
 
-        $out = '<input type="text" '.($morecss ? 'class="'.$morecss.'" ' : '').'name="'.$htmlname.'" id="'.$htmlname.'" maxlength="'.$maxlength.'" value="'.$selected.'">';
+        $out = '';
+
+        // Execute hook getInputIdProf to complete or replace $out
+        $parameters=array('formlength'=>$formlength, 'selected'=>$preselected, 'idprof'=>$idprof, 'htmlname'=>$htmlname, 'country_code'=>$country_code);
+        $reshook=$hookmanager->executeHooks('getInputIdProf', $parameters);
+        if (empty($reshook))
+        {
+        	$out .= '<input type="text" '.($morecss ? 'class="'.$morecss.'" ' : '').'name="'.$htmlname.'" id="'.$htmlname.'" maxlength="'.$maxlength.'" value="'.$selected.'">';
+        }
+        $out .= $hookmanager->resPrint;
 
         return $out;
     }
