@@ -104,9 +104,9 @@ class Invoices extends DolibarrApi
     }
 
     /**
-     * Get properties of an order object
+     * Get properties of an invoice object
      *
-     * Return an array with order informations
+     * Return an array with invoice informations
      *
      * @param       int         $id            ID of order
 	 * @param		string		$ref			Ref of object
