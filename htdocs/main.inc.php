@@ -1915,7 +1915,10 @@ function top_menu_user($hideloginname = 0, $urllogout = '')
                     $("#topmenu-login-dropdown").removeClass("open");
                 }
             });
+			';
 
+        if ($conf->theme != 'md') {
+        $btnUser .= '
             $("#topmenu-login-dropdown .dropdown-toggle").on("click", function(event) {
 				console.log("toggle login dropdown");
 				event.preventDefault();
@@ -1924,8 +1927,10 @@ function top_menu_user($hideloginname = 0, $urllogout = '')
 
             $("#topmenuloginmoreinfo-btn").on("click", function() {
                 $("#topmenuloginmoreinfo").slideToggle();
-            });
+            });';
+        }
 
+        $btnUser .= '
         });
         </script>
         ';
