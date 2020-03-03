@@ -167,17 +167,16 @@ if ($action == 'valid' && $user->rights->facture->creer)
 		$invoice->fk_facture_source = $fk_source;
 		$invoice->update($user);
 	}
-	
+
 	$sav_FACTURE_ADDON='';
-	if (! empty($conf->global->TAKEPOS_ADDON))
-	{
+	if (! empty($conf->global->TAKEPOS_ADDON)) {
 		$sav_FACTURE_ADDON = $conf->global->FACTURE_ADDON;
-		$conf->global->FACTURE_ADDON = $conf->global->TAKEPOS_ADDON;
+		if ($conf->global->TAKEPOS_ADDON=="terminal") $conf->global->FACTURE_ADDON = $conf->global->{'TAKEPOS_ADDON'.$_SESSION["takeposterminal"]};
+		else $conf->global->FACTURE_ADDON = $conf->global->TAKEPOS_ADDON;
 	}
 
 	$constantforkey = 'CASHDESK_NO_DECREASE_STOCK'.$_SESSION["takeposterminal"];
-	if ($invoice->statut != Facture::STATUS_DRAFT)
-	{
+	if ($invoice->statut != Facture::STATUS_DRAFT) {
 		//If invoice is validated but it is not fully paid is not error and make the payment
 		if ($invoice->getRemainToPay() > 0) $res = 1;
 		else {
@@ -216,7 +215,7 @@ if ($action == 'valid' && $user->rights->facture->creer)
 	{
 		$conf->global->FACTURE_ADDON = $sav_FACTURE_ADDON;
 	}
-	
+
 	$remaintopay = $invoice->getRemainToPay();
 
 	// Add the payment

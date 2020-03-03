@@ -1425,11 +1425,7 @@ body.sidebar-collapse .side-nav-vert, body.sidebar-collapse #id-right {
 	margin-left: 228px;
 }
 body.sidebar-collapse .side-nav, body.sidebar-collapse .login_block {
-<?php if (in_array($conf->browser->layout, array('phone', 'tablet')) && empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER)) { ?>
-	left: -240px;
-<?php } else { ?>
-	left: -229px;
-<?php } ?>
+	display: none;
 }
 <?php if (empty($conf->global->THEME_DISABLE_STICKY_TOPMENU)) {  ?>
 .side-nav-vert {
@@ -2284,6 +2280,23 @@ div.login a:hover {
 }
 div.login_block_user, div.login_block_other { clear: both; }
 div.login_block_other { padding-top: 3px; }
+
+.topnav div.login_block_user {
+	display: inline-block;
+    vertical-align: middle;
+	line-height: <?php echo $disableimages ? '25' : '50'; ?>px;
+	height: <?php echo $disableimages ? '25' : '50'; ?>px;
+}
+.topnav div.login_block_other {
+	display: inline-block;
+    vertical-align: middle;
+	clear: <?php echo $disableimages ? 'none' : 'both'; ?>;
+	padding-top: 0;
+	text-align: right;
+	margin-right: 8px;
+	max-width: 200px;
+}
+
 .login_block_elem {
 	float: right;
 	vertical-align: top;
@@ -6008,6 +6021,17 @@ border-top-right-radius: 6px;
 }
 
 
+/* ============================================================================== */
+/* CSS style used for jFlot                                                       */
+/* ============================================================================== */
+
+.dol-xaxis-vertical .flot-x-axis .flot-tick-label.tickLabel {
+    text-orientation: sideways;
+    font-weight: 400;
+    writing-mode: vertical-rl;
+    white-space: nowrap;
+}
+
 
 /* ============================================================================== */
 /* CSS style used for small screen                                                */
@@ -6069,7 +6093,8 @@ border-top-right-radius: 6px;
   		color: #<?php echo $colortextbackhmenu; ?>;
 	}
 	.mainmenuaspan {
-  		font-size: 12px;
+  		font-size: 0.9em;
+  		/* font-weight: 300; */
     }
     .topmenuimage {
     	background-size: 24px auto;
@@ -6170,7 +6195,6 @@ border-top-right-radius: 6px;
 		width: 95%;
 	}
 }
-
 
 
 <?php

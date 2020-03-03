@@ -396,11 +396,16 @@ if ($action == 'addsite')
 
 	if (!$error)
 	{
+		$arrayotherlang=explode(',', GETPOST('WEBSITE_OTHERLANG', 'alphanohtml'));
+		foreach($arrayotherlang as $key => $val) {
+			$arrayotherlang[$key] = substr(trim($val), 0, 2);	// Kept short language code only
+		}
+
 		$tmpobject = new Website($db);
 		$tmpobject->ref = GETPOST('WEBSITE_REF', 'alpha');
 		$tmpobject->description = GETPOST('WEBSITE_DESCRIPTION', 'alphanohtml');
 		$tmpobject->lang = GETPOST('WEBSITE_LANG', 'aZ09');
-		$tmpobject->otherlang = GETPOST('WEBSITE_OTHERLANG', 'aZ09comma');
+		$tmpobject->otherlang = join(',', $arrayotherlang);
 		$tmpobject->virtualhost = GETPOST('virtualhost', 'alpha');
 
 		$result = $tmpobject->create($user);
@@ -1038,7 +1043,7 @@ if ($action == 'delete')
 	}
 }
 
-// Update css
+// Update css Update site properties
 if ($action == 'updatecss')
 {
 	// If we tried to reload another site/page, we stay on editcss mode.
@@ -1062,9 +1067,14 @@ if ($action == 'updatecss')
 
     		if (!$error)
     		{
+    			$arrayotherlang=explode(',', GETPOST('WEBSITE_OTHERLANG', 'alphanohtml'));
+    			foreach($arrayotherlang as $key => $val) {
+    				$arrayotherlang[$key] = substr(trim($val), 0, 2);	// Kept short language code only
+    			}
+
     		    $object->virtualhost = GETPOST('virtualhost', 'alpha');
     		    $object->lang = GETPOST('WEBSITE_LANG', 'aZ09');
-    		    $object->otherlang = GETPOST('WEBSITE_OTHERLANG', 'aZ09comma');
+    		    $object->otherlang = join(',', $arrayotherlang);
     		    $object->use_manifest = GETPOST('use_manifest', 'alpha');
 
     		    $result = $object->update($user);
@@ -2453,16 +2463,19 @@ if (!GETPOST('hide_websitemenu'))
 			$htmltext .= '<br>'.$langs->trans("CheckVirtualHostPerms", $langs->transnoentitiesnoconv("ReadPerm"), DOL_DOCUMENT_ROOT);
 			$htmltext .= '<br>'.$langs->trans("CheckVirtualHostPerms", $langs->transnoentitiesnoconv("WritePerm"), DOL_DATA_ROOT.'/website<br>'.DOL_DATA_ROOT.'/medias');
 
-			print '<a class="websitebuttonsitepreview" id="previewpage" href="'.$realpage.'&nocache='.dol_now().'" class="button" target="tab'.$websitekey.'" alt="'.dol_escape_htmltag($htmltext).'">';
+			print '<div class="websiteinputurl inline-block paddingright">';
+			print '<a class="websitebuttonsitepreview inline-block" id="previewpage" href="'.$realpage.'&nocache='.dol_now().'" class="button" target="tab'.$websitekey.'" alt="'.dol_escape_htmltag($htmltext).'">';
 			print $form->textwithpicto('', $htmltext, 1, 'preview');
 			print '</a>'; // View page in new Tab
+			print '</div>';
 
-			print '<div class="websiteinputurl" id="websiteinputpage">';
+			/*print '<div class="websiteinputurl inline-block" id="websiteinputpage">';
 			print '<input type="text" id="previewpageurl" class="minwidth200imp" name="previewsite" value="'.$pagealias.'" disabled="disabled">';
 			$htmltext = $langs->trans("PageNameAliasHelp", $langs->transnoentitiesnoconv("EditPageMeta"));
 			print $form->textwithpicto('', $htmltext, 1, 'help', '', 0, 2, 'helppagealias');
-			print '</div>';
+			print '</div>';*/
 
+			/*
 			$urlext = $virtualurl.'/'.$pagealias.'.php';
 			$urlint = $urlwithroot.'/public/website/index.php?website='.$websitekey;
 
@@ -2471,6 +2484,7 @@ if (!GETPOST('hide_websitemenu'))
 			print '<a class="websitebuttonsitepreview'.($virtualurl ? '' : ' websitebuttonsitepreviewdisabled cursornotallowed').'" id="previewpageext" href="'.$urlext.'" target="tab'.$websitekey.'ext" alt="'.dol_escape_htmltag($htmltext).'">';
 			print $form->textwithpicto('', $htmltext, 1, 'preview_ext');
 			print '</a>';
+			*/
 			//print '<input type="submit" class="button" name="previewpage" target="tab'.$websitekey.'"value="'.$langs->trans("ViewPageInNewTab").'">';
 
 			// TODO Add js to save alias like we save virtual host name and use dynamic virtual host for url of id=previewpageext

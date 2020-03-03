@@ -666,7 +666,7 @@ if ($object->id > 0)
 	$now = dol_now();
 
 	/*
-	 * Last proposals
+	 * Latest proposals
 	 */
 	if (!empty($conf->propal->enabled) && $user->rights->propal->lire)
 	{
@@ -738,7 +738,7 @@ if ($object->id > 0)
 	}
 
 	/*
-	 * Last orders
+	 * Latest orders
 	 */
 	if (!empty($conf->commande->enabled) && $user->rights->commande->lire)
 	{
@@ -824,7 +824,7 @@ if ($object->id > 0)
 	}
 
     /*
-     *   Last shipments
+     *   Latest shipments
      */
     if (!empty($conf->expedition->enabled) && $user->rights->expedition->lire)
     {
@@ -897,7 +897,7 @@ if ($object->id > 0)
     }
 
 	/*
-	 * Last linked contracts
+	 * Latest linked contracts
 	 */
 	if (!empty($conf->contrat->enabled) && $user->rights->contrat->lire)
 	{
@@ -967,7 +967,7 @@ if ($object->id > 0)
 	}
 
 	/*
-	 * Last interventions
+	 * Latest interventions
 	 */
 	if (!empty($conf->ficheinter->enabled) && $user->rights->ficheinter->lire)
 	{
@@ -1028,7 +1028,7 @@ if ($object->id > 0)
 	}
 
 	/*
-	 *   Last invoices templates
+	 *   Latest invoices templates
 	 */
 	if (!empty($conf->facture->enabled) && $user->rights->facture->lire)
 	{
@@ -1063,7 +1063,7 @@ if ($object->id > 0)
 				print '<table class="noborder centpercent lastrecordtable">';
 
 				print '<tr class="liste_titre">';
-				print '<td colspan="4"><table width="100%" class="nobordernopadding"><tr><td>'.$langs->trans("LatestCustomerTemplateInvoices", ($num <= $MAXLIST ? "" : $MAXLIST)).'</td><td class="right"><a class="notasortlink" href="'.DOL_URL_ROOT.'/compta/facture/list.php?socid='.$object->id.'">'.$langs->trans("AllCustomerTemplateInvoices").'<span class="badge marginleftonlyshort">'.$num.'</span></a></td>';
+				print '<td colspan="4"><table width="100%" class="nobordernopadding"><tr><td>'.$langs->trans("LatestCustomerTemplateInvoices", ($num <= $MAXLIST ? "" : $MAXLIST)).'</td><td class="right"><a class="notasortlink" href="'.DOL_URL_ROOT.'/compta/facture/invoicetemplate_list.php?socid='.$object->id.'">'.$langs->trans("AllCustomerTemplateInvoices").'<span class="badge marginleftonlyshort">'.$num.'</span></a></td>';
 				print '</tr></table></td>';
 				print '</tr>';
 			}

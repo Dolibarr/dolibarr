@@ -66,7 +66,7 @@ llxHeader('', $langs->trans("ClickToDialSetup"), $wikihelp);
 $linkback='<a href="'.DOL_URL_ROOT.'/admin/modules.php?restore_lastsearch_values=1">'.$langs->trans("BackToModuleList").'</a>';
 print load_fiche_titre($langs->trans("ClickToDialSetup"), $linkback, 'title_setup');
 
-print $langs->trans("ClickToDialDesc")."<br>\n";
+print '<span class="opacitymedium">'.$langs->trans("ClickToDialDesc")."</span><br>\n";
 
 print '<br>';
 print '<form method="post" action="clicktodial.php">';

@@ -3134,8 +3134,8 @@ class Product extends CommonObject
 
         for ($j = 0; $j < 12; $j++)
         {
-            $idx = ucfirst(dol_trunc(dol_print_date(dol_mktime(12, 0, 0, $month, 1, $year), "%b"), 3, 'right', 'UTF-8', 1));
-            $monthnum = sprintf("%02s", $month);
+            //$idx = ucfirst(dol_trunc(dol_print_date(dol_mktime(12, 0, 0, $month, 1, $year), "%b"), 3, 'right', 'UTF-8', 1));
+        	$idx = ucfirst(dol_trunc(dol_print_date(dol_mktime(12, 0, 0, $month, 1, $year), "%b"), 1, 'right', 'UTF-8', 1));
 
             $result[$j] = array($idx, isset($tab[$year.$month]) ? $tab[$year.$month] : 0);
             //            $result[$j] = array($monthnum,isset($tab[$year.$month])?$tab[$year.$month]:0);
@@ -3261,7 +3261,7 @@ class Product extends CommonObject
 
     // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
     /**
-     *  Return nb of units or proposals in which product is included
+     *  Return nb of units in proposals in which product is included
      *
      * @param  int    $socid               Limit count on a particular third party id
      * @param  string $mode                'byunit'=number of unit, 'bynumber'=nb of entities
@@ -3313,7 +3313,7 @@ class Product extends CommonObject
 
     // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
     /**
-     *  Return nb of units or proposals in which product is included
+     *  Return nb of units in proposals in which product is included
      *
      * @param  int    $socid               Limit count on a particular third party id
      * @param  string $mode                'byunit'=number of unit, 'bynumber'=nb of entities
@@ -3365,7 +3365,7 @@ class Product extends CommonObject
 
     // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
     /**
-     *  Return nb of units or orders in which product is included
+     *  Return nb of units in orders in which product is included
      *
      * @param  int    $socid               Limit count on a particular third party id
      * @param  string $mode                'byunit'=number of unit, 'bynumber'=nb of entities
@@ -3416,7 +3416,7 @@ class Product extends CommonObject
 
     // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
     /**
-     *  Return nb of units or orders in which product is included
+     *  Return nb of units in orders in which product is included
      *
      * @param  int    $socid               Limit count on a particular third party id
      * @param  string $mode                'byunit'=number of unit, 'bynumber'=nb of entities
@@ -3467,7 +3467,7 @@ class Product extends CommonObject
 
     // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
     /**
-     *  Return nb of units or orders in which product is included
+     *  Return nb of units in orders in which product is included
      *
      * @param  int    $socid               Limit count on a particular third party id
      * @param  string $mode                'byunit'=number of unit, 'bynumber'=nb of entities
@@ -3515,6 +3515,59 @@ class Product extends CommonObject
     	$sql .= $morefilter;
     	$sql .= " GROUP BY date_format(c.date_contrat,'%Y%m')";
     	$sql .= " ORDER BY date_format(c.date_contrat,'%Y%m') DESC";
+
+    	return $this->_get_stats($sql, $mode, $year);
+    }
+
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
+    /**
+     *  Return nb of units in orders in which product is included
+     *
+     * @param  int    $socid               Limit count on a particular third party id
+     * @param  string $mode                'byunit'=number of unit, 'bynumber'=nb of entities
+     * @param  int    $filteronproducttype 0=To filter on product only, 1=To filter on services only
+     * @param  int    $year                Year (0=last 12 month)
+     * @param  string $morefilter          More sql filters
+     * @return array                            <0 if KO, result[month]=array(valuex,valuey) where month is 0 to 11
+     */
+    public function get_nb_mos($socid, $mode, $filteronproducttype = -1, $year = 0, $morefilter = '')
+    {
+    	// phpcs:enable
+    	global $conf, $user;
+
+    	$sql = "SELECT sum(c.qty), date_format(c.date_valid, '%Y%m')";
+    	if ($mode == 'bynumber') {
+    		$sql .= ", count(DISTINCT c.rowid)";
+    	}
+    	$sql .= " FROM ".MAIN_DB_PREFIX."mrp_mo as c LEFT JOIN  ".MAIN_DB_PREFIX."societe as s ON c.fk_soc = s.rowid";
+    	if ($filteronproducttype >= 0) {
+    		$sql .= ", ".MAIN_DB_PREFIX."product as p";
+    	}
+    	if (!$user->rights->societe->client->voir && !$socid) {
+    		$sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
+    	}
+
+    	$sql .= " WHERE c.entity IN (".getEntity('mo').")";
+    	$sql .= " AND c.status > 0";
+
+    	if ($this->id > 0) {
+    		$sql .= " AND c.fk_product =".$this->id;
+    	} else {
+    		$sql .= " AND c.fk_product > 0";
+    	}
+    	if ($filteronproducttype >= 0) {
+    		$sql .= " AND p.rowid = c.fk_product AND p.fk_product_type =".$filteronproducttype;
+    	}
+
+    	if (!$user->rights->societe->client->voir && !$socid) {
+    		$sql .= " AND c.fk_soc = sc.fk_soc AND sc.fk_user = ".$user->id;
+    	}
+    	if ($socid > 0) {
+    		$sql .= " AND c.fk_soc = ".$socid;
+    	}
+    	$sql .= $morefilter;
+    	$sql .= " GROUP BY date_format(c.date_valid,'%Y%m')";
+    	$sql .= " ORDER BY date_format(c.date_valid,'%Y%m') DESC";
 
     	return $this->_get_stats($sql, $mode, $year);
     }
@@ -4774,6 +4827,8 @@ class Product extends CommonObject
 		$stock_sending_client = 0;
 		$stock_reception_fournisseur = 0;
 		$stock_inproduction = 0;
+
+		//dol_syslog("load_virtual_stock");
 
 		if (!empty($conf->commande->enabled))
 		{

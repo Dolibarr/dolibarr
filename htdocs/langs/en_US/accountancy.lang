@@ -232,8 +232,7 @@ ShowOpeningBalance=Show opening balance
 HideOpeningBalance=Hide opening balance
 
 Pcgtype=Group of account
-Pcgsubtype=Subgroup of account
-PcgtypeDesc=Group and subgroup of account are used as predefined 'filter' and 'grouping' criteria for some accounting reports. For example, 'INCOME' or 'EXPENSE' are used as groups for accounting accounts of products to build the expense/income report.
+PcgtypeDesc=Group of account are used as predefined 'filter' and 'grouping' criteria for some accounting reports. For example, 'INCOME' or 'EXPENSE' are used as groups for accounting accounts of products to build the expense/income report.
 
 TotalVente=Total turnover before tax
 TotalMarge=Total sales margin

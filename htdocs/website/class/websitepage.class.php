@@ -309,6 +309,8 @@ class WebsitePage extends CommonObject
 			foreach ($filter as $key => $value) {
 				if ($key == 't.rowid' || $key == 't.fk_website') {
 					$sqlwhere[] = $key.'='.$value;
+				} elseif ($key == 'lang' || $key == 't.lang') {
+					$sqlwhere[] = $key." = '".$this->db->escape(substr($value, 0, 2))."'";
 				} else {
 					$sqlwhere[] = $key.' LIKE \'%'.$this->db->escape($value).'%\'';
 				}

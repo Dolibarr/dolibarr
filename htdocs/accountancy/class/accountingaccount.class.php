@@ -91,11 +91,6 @@ class AccountingAccount extends CommonObject
 	public $pcg_type;
 
     /**
-     * @var string pcg subtype
-     */
-	public $pcg_subtype;
-
-    /**
      * @var string account number
      */
 	public $account_number;
@@ -167,7 +162,7 @@ class AccountingAccount extends CommonObject
 		global $conf;
 
 		if ($rowid || $account_number) {
-			$sql  = "SELECT a.rowid as rowid, a.datec, a.tms, a.fk_pcg_version, a.pcg_type, a.pcg_subtype, a.account_number, a.account_parent, a.label, a.labelshort, a.fk_accounting_category, a.fk_user_author, a.fk_user_modif, a.active";
+			$sql  = "SELECT a.rowid as rowid, a.datec, a.tms, a.fk_pcg_version, a.pcg_type, a.account_number, a.account_parent, a.label, a.labelshort, a.fk_accounting_category, a.fk_user_author, a.fk_user_modif, a.active";
 			$sql .= ", ca.label as category_label";
 			$sql .= " FROM " . MAIN_DB_PREFIX . "accounting_account as a";
 			$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."c_accounting_category as ca ON a.fk_accounting_category = ca.rowid";
@@ -198,7 +193,6 @@ class AccountingAccount extends CommonObject
 					$this->tms = $obj->tms;
 					$this->fk_pcg_version = $obj->fk_pcg_version;
 					$this->pcg_type = $obj->pcg_type;
-					$this->pcg_subtype = $obj->pcg_subtype;
 					$this->account_number = $obj->account_number;
 					$this->account_parent = $obj->account_parent;
 					$this->label = $obj->label;
@@ -240,8 +234,6 @@ class AccountingAccount extends CommonObject
 			$this->fk_pcg_version = trim($this->fk_pcg_version);
 		if (isset($this->pcg_type))
 			$this->pcg_type = trim($this->pcg_type);
-		if (isset($this->pcg_subtype))
-			$this->pcg_subtype = trim($this->pcg_subtype);
 		if (isset($this->account_number))
 			$this->account_number = trim($this->account_number);
 		if (isset($this->label))
@@ -253,10 +245,6 @@ class AccountingAccount extends CommonObject
 		{
 			$this->pcg_type = 'XXXXXX';
 		}
-		if (empty($this->pcg_subtype) || $this->pcg_subtype == '-1')
-		{
-			$this->pcg_subtype = 'XXXXXX';
-		}
 		// Check parameters
 		// Put here code to add control on parameters values
 
@@ -266,7 +254,6 @@ class AccountingAccount extends CommonObject
 		$sql .= ", entity";
 		$sql .= ", fk_pcg_version";
 		$sql .= ", pcg_type";
-		$sql .= ", pcg_subtype";
 		$sql .= ", account_number";
 		$sql .= ", account_parent";
 		$sql .= ", label";
@@ -279,7 +266,6 @@ class AccountingAccount extends CommonObject
 		$sql .= ", " . $conf->entity;
 		$sql .= ", " . (empty($this->fk_pcg_version) ? 'NULL' : "'" . $this->db->escape($this->fk_pcg_version) . "'");
 		$sql .= ", " . (empty($this->pcg_type) ? 'NULL' : "'" . $this->db->escape($this->pcg_type) . "'");
-		$sql .= ", " . (empty($this->pcg_subtype) ? 'NULL' : "'" . $this->db->escape($this->pcg_subtype) . "'");
 		$sql .= ", " . (empty($this->account_number) ? 'NULL' : "'" . $this->db->escape($this->account_number) . "'");
 		$sql .= ", " . (empty($this->account_parent) ? 0 : (int) $this->account_parent);
 		$sql .= ", " . (empty($this->label) ? "''" : "'" . $this->db->escape($this->label) . "'");
@@ -341,17 +327,12 @@ class AccountingAccount extends CommonObject
 		{
 			$this->pcg_type = 'XXXXXX';
 		}
-		if (empty($this->pcg_subtype) || $this->pcg_subtype == '-1')
-		{
-			$this->pcg_subtype = 'XXXXXX';
-		}
 
 		$this->db->begin();
 
 		$sql = "UPDATE " . MAIN_DB_PREFIX . "accounting_account ";
 		$sql .= " SET fk_pcg_version = " . ($this->fk_pcg_version ? "'" . $this->db->escape($this->fk_pcg_version) . "'" : "null");
 		$sql .= " , pcg_type = " . ($this->pcg_type ? "'" . $this->db->escape($this->pcg_type) . "'" : "null");
-		$sql .= " , pcg_subtype = " . ($this->pcg_subtype ? "'" . $this->db->escape($this->pcg_subtype) . "'" : "null");
 		$sql .= " , account_number = '" . $this->db->escape($this->account_number) . "'";
 		$sql .= " , account_parent = " . (int) $this->account_parent;
 		$sql .= " , label = " . ($this->label ? "'" . $this->db->escape($this->label) . "'" : "''");

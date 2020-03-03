@@ -1384,10 +1384,6 @@ div.blockvmenulogo
 {
 	border-bottom: 0 !important;
 }
-/*div.blockvmenusearch {
-	padding-bottom: 12px !important;
-	border-bottom: 1px solid #e0e0e0;
-}*/
 div.blockvmenupair, div.blockvmenuimpair, div.blockvmenubookmarks, div.blockvmenuend {
 	border-top: none !important;
 	border-left: none !important;
@@ -1738,7 +1734,7 @@ div.tmenudisabled, a.tmenudisabled {
 	opacity: 0.6;
 }
 a.tmenu, a.tmenusel, a.tmenudisabled {
-    font-weight: 300;
+    /* font-weight: 300; */
 }
 a.tmenudisabled:link, a.tmenudisabled:visited, a.tmenudisabled:hover, a.tmenudisabled:active {
 	padding: 0px 5px 0px 5px;
@@ -2388,8 +2384,7 @@ div.blockvmenusearchphone
 }
 .vmenu div.blockvmenusearch
 {
-	padding-bottom: 4px;
-/*	border-bottom: 1px solid #e0e0e0;  */
+	padding-bottom: 13px;
 }
 .vmenu div.blockvmenuend
 {
@@ -5062,7 +5057,7 @@ input.select2-input {
 	background: var(--inputbackgroundcolor);
 }
 .select2-container--default .select2-selection--multiple .select2-selection__choice{
-	background-color: var(--inputbackgroundcolor);
+	background-color: #ddd;
 }
 
 .select2-search__field
@@ -6029,6 +6024,18 @@ div.tabsElem a.tab {
 }
 
 
+/* ============================================================================== */
+/* CSS style used for jFlot                                                       */
+/* ============================================================================== */
+
+.dol-xaxis-vertical .flot-x-axis .flot-tick-label.tickLabel {
+    text-orientation: sideways;
+    font-weight: 400;
+    writing-mode: vertical-rl;
+    white-space: nowrap;
+}
+
+
 
 /* ============================================================================== */
 /* CSS style used for small screen                                                */
@@ -6264,6 +6271,7 @@ if (!empty($conf->global->THEME_CUSTOM_CSS)) print $conf->global->THEME_CUSTOM_C
 
 ?>
 
-div.flot-text .flot-tick-label .tickLabel{
+/* Must be at end */
+div.flot-text .flot-tick-label .tickLabel {
 	color: unset;
 }

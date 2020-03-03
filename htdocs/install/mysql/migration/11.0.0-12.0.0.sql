@@ -186,4 +186,4 @@ DELETE FROM llx_const WHERE name = __ENCRYPT('DONATION_ART885')__;
 ALTER TABLE llx_extrafields MODIFY COLUMN printable integer DEFAULT 0;
 ALTER TABLE llx_extrafields ADD COLUMN printable integer DEFAULT 0;
 
-
+ALTER TABLE llx_accounting_account DROP COLUMN pcg_subtype;

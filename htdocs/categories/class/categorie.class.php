@@ -167,8 +167,9 @@ class Categorie extends CommonObject
 		'member'   => 'adherent',
 		'contact'  => 'socpeople',
 		'user'     => 'user',
-        'account'  => 'bank_account',
-        'project'  => 'projet',
+		'account'  => 'bank_account',	// old for bank account
+		'bank_account'  => 'bank_account',
+		'project'  => 'projet',
         'warehouse'=> 'entrepot',
         'actioncomm' => 'actioncomm',
 	);
@@ -774,7 +775,7 @@ class Categorie extends CommonObject
 	/**
 	 * Return list of fetched instance of elements having this category
 	 *
-	 * @param   string     	$type       Type of category ('customer', 'supplier', 'contact', 'product', 'member')
+	 * @param   string     	$type       Type of category ('customer', 'supplier', 'contact', 'product', 'member', ...)
 	 * @param   int        	$onlyids    Return only ids of objects (consume less memory)
 	 * @param	int			$limit		Limit
 	 * @param	int			$offset		Offset
@@ -1957,4 +1958,56 @@ class Categorie extends CommonObject
 
         return CommonObject::commonReplaceThirdparty($db, $origin_id, $dest_id, $tables, 1);
     }
+
+	/**
+	 * Return the addtional SQL JOIN query for filtering a list by a category
+	 *
+	 * @param string	$type			The category type (e.g Categorie::TYPE_WAREHOUSE)
+	 * @param string	$rowIdName		The name of the row id inside the whole sql query (e.g. "e.rowid")
+	 * @return string					A additional SQL JOIN query
+	 */
+	public static function getFilterJoinQuery($type, $rowIdName)
+	{
+		return " LEFT JOIN ".MAIN_DB_PREFIX."categorie_".$type." as cp"
+			 . " ON ".$rowIdName." = cp.fk_".$type;
+	}
+
+	/**
+	 * Return the addtional SQL SELECT query for filtering a list by a category
+	 *
+	 * @param string	$type			The category type (e.g Categorie::TYPE_WAREHOUSE)
+	 * @param string	$rowIdName		The name of the row id inside the whole sql query (e.g. "e.rowid")
+	 * @param Array		$searchList		A list with the selected categories
+	 * @return string					A additional SQL SELECT query
+	 */
+	public static function getFilterSelectQuery($type, $rowIdName, $searchList)
+	{
+		if (empty($searchList) && !is_array($searchList))
+		{
+			return "";
+		}
+
+		foreach ($searchList as $searchCategory)
+		{
+			if (intval($searchCategory) == -2)
+			{
+				$searchCategorySqlList[] = " cp.fk_categorie IS NULL";
+			}
+			elseif (intval($searchCategory) > 0)
+			{
+				$searchCategorySqlList[] = " ".$rowIdName
+										." IN (SELECT fk_".$type." FROM ".MAIN_DB_PREFIX."categorie_".$type
+										." WHERE fk_categorie = ".$searchCategory.")";
+			}
+		}
+
+		if (!empty($searchCategorySqlList))
+		{
+			return " AND (".implode(' AND ', $searchCategorySqlList).")";
+		}
+		else
+		{
+			return "";
+		}
+	}
 }

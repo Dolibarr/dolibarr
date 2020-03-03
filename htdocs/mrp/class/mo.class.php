@@ -97,7 +97,7 @@ class Mo extends CommonObject
 		'ref' => array('type'=>'varchar(128)', 'label'=>'Ref', 'enabled'=>1, 'visible'=>4, 'position'=>10, 'notnull'=>1, 'default'=>'(PROV)', 'index'=>1, 'searchall'=>1, 'comment'=>"Reference of object", 'showoncombobox'=>'1', 'noteditable'=>1),
 		'fk_bom' => array('type'=>'integer:Bom:bom/class/bom.class.php:0:t.status=1', 'filter'=>'active=1', 'label'=>'BOM', 'enabled'=>1, 'visible'=>1, 'position'=>33, 'notnull'=>-1, 'index'=>1, 'comment'=>"Original BOM", 'css'=>'maxwidth300'),
 		'fk_product' => array('type'=>'integer:Product:product/class/product.class.php:0', 'label'=>'Product', 'enabled'=>1, 'visible'=>1, 'position'=>35, 'notnull'=>1, 'index'=>1, 'comment'=>"Product to produce", 'css'=>'maxwidth300'),
-		'qty' => array('type'=>'real', 'label'=>'QtyToProduce', 'enabled'=>1, 'visible'=>1, 'position'=>40, 'notnull'=>1, 'comment'=>"Qty to produce", 'css'=>'width75'),
+		'qty' => array('type'=>'real', 'label'=>'QtyToProduce', 'enabled'=>1, 'visible'=>1, 'position'=>40, 'notnull'=>1, 'comment'=>"Qty to produce", 'css'=>'width75', 'isameasure'=>1),
 		'label' => array('type'=>'varchar(255)', 'label'=>'Label', 'enabled'=>1, 'visible'=>1, 'position'=>42, 'notnull'=>-1, 'searchall'=>1, 'showoncombobox'=>'1',),
 		'fk_soc' => array('type'=>'integer:Societe:societe/class/societe.class.php:1', 'label'=>'ThirdParty', 'enabled'=>1, 'visible'=>-1, 'position'=>50, 'notnull'=>-1, 'index'=>1, 'css'=>'maxwidth300'),
 		'fk_project' => array('type'=>'integer:Project:projet/class/project.class.php:1:fk_statut=1', 'label'=>'Project', 'enabled'=>1, 'visible'=>-1, 'position'=>51, 'notnull'=>-1, 'index'=>1,),
@@ -648,7 +648,7 @@ class Mo extends CommonObject
 							if ($line->qty_frozen) {
 								$moline->qty = $line->qty; // Qty to consume does not depends on quantity to produce
 							} else {
-								$moline->qty = round($line->qty * $this->qty / $bom->efficiency, 2);
+								$moline->qty = round($line->qty * $this->qty / $line->efficiency, 2);
 							}
 							if ($moline->qty <= 0) {
 								$error++;
@@ -1268,7 +1268,7 @@ class Mo extends CommonObject
 
 		print '<tr class="liste_titre">';
 		print '<td>'.$langs->trans('Ref').'</td>';
-		print '<td class="right">'.$langs->trans('Qty').'</td>';
+		print '<td class="right">'.$langs->trans('Qty').' <span class="opacitymedium">('.$langs->trans("ForAQuantityOf1").')</span></td>';
 		print '<td class="center">'.$langs->trans('QtyFrozen').'</td>';
 		print '<td class="center">'.$langs->trans('DisableStockChange').'</td>';
 		//print '<td class="right">'.$langs->trans('Efficiency').'</td>';
@@ -1337,7 +1337,7 @@ class Mo extends CommonObject
 		$this->tpl['qty'] = $line->qty;
 		$this->tpl['qty_frozen'] = $line->qty_frozen;
 		$this->tpl['disable_stock_change'] = $line->disable_stock_change;
-		//$this->tpl['efficiency'] = $line->efficiency;
+		$this->tpl['efficiency'] = $line->efficiency;
 
 		$tpl = DOL_DOCUMENT_ROOT.'/mrp/tpl/originproductline.tpl.php';
 		$res = include $tpl;

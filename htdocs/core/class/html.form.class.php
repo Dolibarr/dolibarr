@@ -2400,9 +2400,10 @@ class Form
 	 * @param 	string		$selected		    Preselected value
 	 * @param   int         $hidepriceinlabel   Hide price in label
 	 * @param   string      $filterkey          Filter key to highlight
+	 * @param	int			$novirtualstock 	Do not load virtual stock, even if slow option STOCK_SHOW_VIRTUAL_STOCK_IN_PRODUCTS_COMBO is on.
 	 * @return	void
 	 */
-	protected function constructProductListOption(&$objp, &$opt, &$optJson, $price_level, $selected, $hidepriceinlabel = 0, $filterkey = '')
+	protected function constructProductListOption(&$objp, &$opt, &$optJson, $price_level, $selected, $hidepriceinlabel = 0, $filterkey = '', $novirtualstock = 0)
 	{
 		global $langs, $conf, $user, $db;
 
@@ -2639,7 +2640,7 @@ class Form
     			}
     			$outval .= $langs->transnoentities("Stock").':'.$objp->stock;
     			$outval .= '</span>';
-    			if (!empty($conf->global->STOCK_SHOW_VIRTUAL_STOCK_IN_PRODUCTS_COMBO))  // Warning, this option may slow down combo list generation
+    			if (empty($novirtualstock) && !empty($conf->global->STOCK_SHOW_VIRTUAL_STOCK_IN_PRODUCTS_COMBO))  // Warning, this option may slow down combo list generation
     			{
     			    $langs->load("stocks");
 
