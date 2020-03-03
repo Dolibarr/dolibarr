@@ -897,11 +897,6 @@ if ($resql)
 		$generic_commande->total_ht = $obj->total_ht;
 		$generic_commande->total_tva = $obj->total_tva;
 		$generic_commande->total_ttc = $obj->total_ttc;
-		$generic_commande->multicurrency_code = $obj->multicurrency_code;
-		$generic_commande->multicurrency_tx = $obj->multicurrency_tx;
-		$generic_commande->multicurrency_total_ht = $obj->multicurrency_total_ht;
-		$generic_commande->multicurrency_total_tva = $obj->multicurrency_total_vat;
-		$generic_commande->multicurrency_total_ttc = $obj->multicurrency_total_ttc;
 		$generic_commande->note_public = $obj->note_public;
 		$generic_commande->note_private = $obj->note_private;
 
