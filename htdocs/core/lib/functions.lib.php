@@ -6317,6 +6317,10 @@ function getCommonSubstitutionArray($outputlangs, $onlykey = 0, $exclude = null,
 					$substitutionarray['__DIRECTDOWNLOAD_URL_INVOICE__'] = $object->getLastMainDocLink($object->element);
 				}
 				else $substitutionarray['__DIRECTDOWNLOAD_URL_INVOICE__'] = '';
+
+				if (is_object($object) && $object->element == 'propal') $substitutionarray['__URL_PROPOSAL__'] = DOL_MAIN_URL_ROOT . "/comm/propal/card.php?id=" . $object->id;
+				if (is_object($object) && $object->element == 'commande') $substitutionarray['__URL_ORDER__'] = DOL_MAIN_URL_ROOT . "/commande/card.php?id=" . $object->id;
+				if (is_object($object) && $object->element == 'facture') $substitutionarray['__URL_INVOICE__'] = DOL_MAIN_URL_ROOT . "/compta/facture/card.php?id=" . $object->id;
 			}
 		}
 	}
