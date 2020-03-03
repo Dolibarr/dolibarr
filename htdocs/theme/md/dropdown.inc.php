@@ -29,6 +29,9 @@ div#topmenu-bookmark-dropdown {
 	display: none;
 }
 
+#topmenu-bookmark-dropdown .dropdown-menu {
+    width: 300px;
+}
 
 button.dropdown-item.global-search-item {
     outline: none;
@@ -395,6 +398,32 @@ a.top-menu-dropdown-link {
     transform-style: preserve-3d;
 
 }
+
+
+/* smartphone */
+@media only screen and (max-width: 767px)
+{
+	#topmenu-bookmark-dropdown a.login-dropdown-a {
+		color: #000;
+	}
+
+	#topmenu-bookmark-dropdown .dropdown-menu {
+		width: 230px;
+	}
+
+	div#topmenu-bookmark-dropdown {
+		position: unset;
+	}
+
+	div#topmenu-global-search-dropdown, div#topmenu-bookmark-dropdown {
+    	line-height: unset;
+	}
+
+	ul.tmenu {
+	    margin-right: 2px;
+	}
+}
+
 
 .dropdown-search-input::placeholder {
     color: color(#575756 a(0.8));
