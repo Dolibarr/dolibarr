@@ -503,22 +503,22 @@ if ($result)
             	$compta_prodsell_id = $aarowid_prodsell_export;
         	}
         	else {
-				$compta_prodsell = (! empty($conf->global->ACCOUNTING_SERVICE_SOLD_ACCOUNT) ? $conf->global->ACCOUNTING_SERVICE_SOLD_ACCOUNT : $langs->trans("CodeNotDef"));
-				$compta_prodsell_id = $aarowid_servsell;
+				$compta_prodsell = (! empty($conf->global->ACCOUNTING_PRODUCT_SOLD_ACCOUNT) ? $conf->global->ACCOUNTING_PRODUCT_SOLD_ACCOUNT : $langs->trans("CodeNotDef"));
+				$compta_prodsell_id = $aarowid_prodsell;
 			}
 		}
 		else {
 			if ($accounting_product_mode == 'ACCOUNTANCY_SELL') {
 				$compta_prodsell = (! empty($conf->global->ACCOUNTING_SERVICE_SOLD_ACCOUNT) ? $conf->global->ACCOUNTING_SERVICE_SOLD_ACCOUNT : $langs->trans("CodeNotDef"));
-				$compta_prodsell_id = $aarowid_prodsell;
+				$compta_prodsell_id = $aarowid_servsell;
 			}
 			elseif ($accounting_product_mode == 'ACCOUNTANCY_SELL_INTRA') {
 				$compta_prodsell = (! empty($conf->global->ACCOUNTING_SERVICE_SOLD_INTRA_ACCOUNT) ? $conf->global->ACCOUNTING_SERVICE_SOLD_INTRA_ACCOUNT : $langs->trans("CodeNotDef"));
-				$compta_prodsell_id = $aarowid_prodsell_intra;
+				$compta_prodsell_id = $aarowid_servsell_intra;
 			}
 			elseif ($accounting_product_mode == 'ACCOUNTANCY_SELL_EXPORT') {
 				$compta_prodsell = (! empty($conf->global->ACCOUNTING_SERVICE_SOLD_EXPORT_ACCOUNT) ? $conf->global->ACCOUNTING_SERVICE_SOLD_EXPORT_ACCOUNT : $langs->trans("CodeNotDef"));
-				$compta_prodsell_id = $aarowid_prodsell_export;
+				$compta_prodsell_id = $aarowid_servsell_export;
 			}
 			else {
 				$compta_prodsell = (! empty($conf->global->ACCOUNTING_SERVICE_SOLD_ACCOUNT) ? $conf->global->ACCOUNTING_SERVICE_SOLD_ACCOUNT : $langs->trans("CodeNotDef"));
@@ -542,21 +542,21 @@ if ($result)
 			}
 			else {
 				$compta_prodbuy = (! empty($conf->global->ACCOUNTING_SERVICE_BUY_ACCOUNT) ? $conf->global->ACCOUNTING_SERVICE_BUY_ACCOUNT : $langs->trans("CodeNotDef"));
-				$compta_prodbuy_id = $aarowid_servbuy;
+				$compta_prodbuy_id = $aarowid_prodbuy;
 			}
 		}
 		else {
 			if ($accounting_product_mode == 'ACCOUNTANCY_BUY') {
 				$compta_prodbuy = (! empty($conf->global->ACCOUNTING_SERVICE_BUY_ACCOUNT) ? $conf->global->ACCOUNTING_SERVICE_BUY_ACCOUNT : $langs->trans("CodeNotDef"));
-				$compta_prodbuy_id = $aarowid_prodbuy;
+				$compta_prodbuy_id = $aarowid_servbuy;
 			}
 			elseif ($accounting_product_mode == 'ACCOUNTANCY_BUY_INTRA') {
 				$compta_prodbuy = (! empty($conf->global->ACCOUNTING_SERVICE_BUY_INTRA_ACCOUNT) ? $conf->global->ACCOUNTING_SERVICE_BUY_INTRA_ACCOUNT : $langs->trans("CodeNotDef"));
-				$compta_prodbuy_id = $aarowid_prodbuy_intra;
+				$compta_prodbuy_id = $aarowid_servbuy_intra;
 			}
 			elseif ($accounting_product_mode == 'ACCOUNTANCY_BUY_EXPORT') {
 				$compta_prodbuy = (! empty($conf->global->ACCOUNTING_SERVICE_BUY_EXPORT_ACCOUNT) ? $conf->global->ACCOUNTING_SERVICE_BUY_EXPORT_ACCOUNT : $langs->trans("CodeNotDef"));
-				$compta_prodbuy_id = $aarowid_prodbuy_export;
+				$compta_prodbuy_id = $aarowid_servbuy_export;
 			}
 			else {
 				$compta_prodbuy = (! empty($conf->global->ACCOUNTING_SERVICE_BUY_ACCOUNT) ? $conf->global->ACCOUNTING_SERVICE_BUY_ACCOUNT : $langs->trans("CodeNotDef"));
