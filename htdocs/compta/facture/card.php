@@ -5099,7 +5099,7 @@ elseif ($id > 0 || !empty($ref))
 			// Reverse back money or convert to reduction
 			if ($object->type == Facture::TYPE_CREDIT_NOTE || $object->type == Facture::TYPE_DEPOSIT || $object->type == Facture::TYPE_STANDARD || $object->type == Facture::TYPE_SITUATION) {
 				// For credit note only
-				if ($object->type == Facture::TYPE_CREDIT_NOTE && $object->statut == 1 && $object->paye == 0 && $usercanissuepayment)
+				if ($object->type == Facture::TYPE_CREDIT_NOTE && $object->statut == Facture::STATUS_VALIDATED && $object->paye == 0 && $usercanissuepayment)
 				{
 					if ($resteapayer == 0)
 					{
@@ -5112,12 +5112,12 @@ elseif ($id > 0 || !empty($ref))
 				}
 
 				// For standard invoice with excess received
-				if (($object->type == Facture::TYPE_STANDARD || $object->type == Facture::TYPE_SITUATION) && empty($object->paye) && $resteapayer < 0 && $usercancreate && empty($discount->id))
+				if (($object->type == Facture::TYPE_STANDARD || $object->type == Facture::TYPE_SITUATION) && $object->statut == Facture::STATUS_VALIDATED && empty($object->paye) && $resteapayer < 0 && $usercancreate && empty($discount->id))
 				{
 					print '<a class="butAction'.($conf->use_javascript_ajax ? ' reposition' : '').'" href="'.$_SERVER["PHP_SELF"].'?facid='.$object->id.'&amp;action=converttoreduc">'.$langs->trans('ConvertExcessReceivedToReduc').'</a>';
 				}
 				// For credit note
-				if ($object->type == Facture::TYPE_CREDIT_NOTE && $object->statut == 1 && $object->paye == 0 && $usercancreate
+				if ($object->type == Facture::TYPE_CREDIT_NOTE && $object->statut == Facture::STATUS_VALIDATED  && $object->paye == 0 && $usercancreate
 					&& (!empty($conf->global->INVOICE_ALLOW_REUSE_OF_CREDIT_WHEN_PARTIALLY_REFUNDED) || $object->getSommePaiement() == 0)
 					) {
 					print '<a class="butAction'.($conf->use_javascript_ajax ? ' reposition' : '').'" href="'.$_SERVER["PHP_SELF"].'?facid='.$object->id.'&amp;action=converttoreduc" title="'.dol_escape_htmltag($langs->trans("ConfirmConvertToReduc2")).'">'.$langs->trans('ConvertToReduc').'</a>';
@@ -5130,7 +5130,7 @@ elseif ($id > 0 || !empty($ref))
 			}
 
 			// Classify paid
-			if (($object->statut == 1 && $object->paye == 0 && $usercanissuepayment && (($object->type != Facture::TYPE_CREDIT_NOTE && $object->type != Facture::TYPE_DEPOSIT && $resteapayer <= 0) || ($object->type == Facture::TYPE_CREDIT_NOTE && $resteapayer >= 0)))
+			if (($object->statut == Facture::STATUS_VALIDATED && $object->paye == 0 && $usercanissuepayment && (($object->type != Facture::TYPE_CREDIT_NOTE && $object->type != Facture::TYPE_DEPOSIT && $resteapayer <= 0) || ($object->type == Facture::TYPE_CREDIT_NOTE && $resteapayer >= 0)))
 				|| ($object->type == Facture::TYPE_DEPOSIT && $object->paye == 0 && $object->total_ttc > 0 && $resteapayer == 0 && $usercanissuepayment && empty($discount->id))
 			)
 			{
@@ -5139,7 +5139,7 @@ elseif ($id > 0 || !empty($ref))
 
 			// Classify 'closed not completely paid' (possible si validee et pas encore classee payee)
 
-			if ($object->statut == 1 && $object->paye == 0 && $resteapayer > 0 && $usercanissuepayment)
+			if ($object->statut == Facture::STATUS_VALIDATED && $object->paye == 0 && $resteapayer > 0 && $usercanissuepayment)
 			{
 				if ($totalpaye > 0 || $totalcreditnotes > 0)
 				{
