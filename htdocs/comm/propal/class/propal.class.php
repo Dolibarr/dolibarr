@@ -1803,7 +1803,7 @@ class Propal extends CommonObject
 		{
 			$num = $this->ref;
 		}
-		$this->newref = $num;
+		$this->newref = dol_sanitizeFileName($num);
 
 		$sql = "UPDATE ".MAIN_DB_PREFIX."propal";
 		$sql .= " SET ref = '".$this->db->escape($num)."',";

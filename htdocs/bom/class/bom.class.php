@@ -561,7 +561,7 @@ class BOM extends CommonObject
 	    {
 	        $num = $this->ref;
 	    }
-	    $this->newref = $num;
+	    $this->newref = dol_sanitizeFileName($num);
 
 	    // Validate
 	    $sql = "UPDATE ".MAIN_DB_PREFIX.$this->table_element;
