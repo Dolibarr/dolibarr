@@ -541,7 +541,7 @@ if ($result)
 				$compta_prodbuy_id = $aarowid_prodbuy_export;
 			}
 			else {
-				$compta_prodbuy = (! empty($conf->global->ACCOUNTING_SERVICE_BUY_ACCOUNT) ? $conf->global->ACCOUNTING_SERVICE_BUY_ACCOUNT : $langs->trans("CodeNotDef"));
+				$compta_prodbuy = (! empty($conf->global->ACCOUNTING_PRODUCT_BUY_ACCOUNT) ? $conf->global->ACCOUNTING_PRODUCT_BUY_ACCOUNT : $langs->trans("CodeNotDef"));
 				$compta_prodbuy_id = $aarowid_prodbuy;
 			}
 		}
