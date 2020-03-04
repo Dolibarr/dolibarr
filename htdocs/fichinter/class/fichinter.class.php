@@ -57,7 +57,7 @@ class Fichinter extends CommonObject
 	'datee' =>array('type'=>'date', 'label'=>'Datee', 'enabled'=>1, 'visible'=>-1, 'position'=>90),
 	'datet' =>array('type'=>'date', 'label'=>'Datet', 'enabled'=>1, 'visible'=>-1, 'position'=>95),
 	'duree' =>array('type'=>'double', 'label'=>'Duree', 'enabled'=>1, 'visible'=>-1, 'position'=>100),
-	'description' =>array('type'=>'text', 'label'=>'Description', 'enabled'=>1, 'visible'=>-1, 'position'=>105),
+	'description' =>array('type'=>'text', 'label'=>'Description', 'enabled'=>1, 'visible'=>-1, 'position'=>105,'showoncombobox'=>1),
 	'note_private' =>array('type'=>'text', 'label'=>'NotePublic', 'enabled'=>1, 'visible'=>0, 'position'=>110),
 	'note_public' =>array('type'=>'text', 'label'=>'NotePrivate', 'enabled'=>1, 'visible'=>0, 'position'=>115),
 	'model_pdf' =>array('type'=>'varchar(255)', 'label'=>'Model pdf', 'enabled'=>1, 'visible'=>0, 'position'=>120),
