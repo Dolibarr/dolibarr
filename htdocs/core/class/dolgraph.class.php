@@ -1036,7 +1036,9 @@ class DolGraph
 		$dolxaxisvertical='';
 		if (count($this->data) > 20) $dolxaxisvertical='dol-xaxis-vertical';
 		// No height for the pie grah
-		$this->stringtoshow .= '<div id="placeholder_'.$tag.'" style="width:'.$this->width.(strpos($this->width, '%') > 0 ? '': 'px').';" class="dolgraphchart dolgraph'.(empty($dolxaxisvertical)?'':' '.$dolxaxisvertical).(empty($this->cssprefix) ? '' : ' dolgraph'.$this->cssprefix).' center"><canvas id="canvas_'.$tag.'"></canvas></div>'."\n";
+		$cssfordiv = 'dolgraphchart';
+		if (isset($this->type[$firstlot]) && ($this->type[$firstlot] == 'pie' || $this->type[$firstlot] == 'polar')) $cssfordiv .= ' dolgraphcharpie';
+		$this->stringtoshow .= '<div id="placeholder_'.$tag.'" style="width:'.$this->width.(strpos($this->width, '%') > 0 ? '': 'px').';" class="'.$cssfordiv.' dolgraph'.(empty($dolxaxisvertical)?'':' '.$dolxaxisvertical).(empty($this->cssprefix) ? '' : ' dolgraph'.$this->cssprefix).' center"><canvas id="canvas_'.$tag.'"></canvas></div>'."\n";
 
 		$this->stringtoshow .= '<script id="'.$tag.'">'."\n";
 		$i = $firstlot;
@@ -1055,7 +1057,7 @@ class DolGraph
 		}
 		$this->stringtoshow .= "\n";
 
-		// Special case for Graph of type 'pie'
+		// Special case for Graph of type 'pie' or 'polar'
 		if (isset($this->type[$firstlot]) && ($this->type[$firstlot] == 'pie' || $this->type[$firstlot] == 'polar'))
 		{
 			$type = $this->type[$firstlot];	// pie or polar
@@ -1090,7 +1092,7 @@ class DolGraph
 			$i = 0;
 			foreach($legends as $val)	// Loop on each serie
 			{
-				if ($i > 0) $this->stringtoshow .= ', '."\n";
+				if ($i > 0) $this->stringtoshow .= ', ';
 				$this->stringtoshow .= "'".$val."'";
 				$i++;
 			}
@@ -1116,12 +1118,12 @@ class DolGraph
 			$this->stringtoshow .= '}'."\n";
 			$this->stringtoshow .= '});'."\n";
 		}
-		// Other cases, graph of type 'bars', 'lines'
+		// Other cases, graph of type 'bars', 'lines', 'linesnopoint'
 		else
 		{
-			$type = 'bars';
+			$type = 'bar';
 			if (!isset($this->type[$firstlot]) || $this->type[$firstlot] == 'bars') $type = 'bar';
-			if (isset($this->type[$firstlot]) && ($this->type[$firstlot] == 'lines' || $this->type[$i] == 'linesnopoint')) $type = 'line';
+			if (isset($this->type[$firstlot]) && ($this->type[$firstlot] == 'lines' || $this->type[$firstlot] == 'linesnopoint')) $type = 'line';
 
 			$this->stringtoshow .= '
 				var ctx = document.getElementById("canvas_'.$tag.'").getContext("2d");
@@ -1136,7 +1138,7 @@ class DolGraph
 			$i = 0;
 			foreach($legends as $val)	// Loop on each serie
 			{
-				if ($i > 0) $this->stringtoshow .= ', '."\n";
+				if ($i > 0) $this->stringtoshow .= ', ';
 				$this->stringtoshow .= "'".$val."'";
 				$i++;
 			}
