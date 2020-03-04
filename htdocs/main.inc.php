@@ -1918,16 +1918,16 @@ function top_menu_user($hideloginname = 0, $urllogout = '')
 			';
 
         if ($conf->theme != 'md') {
-        $btnUser .= '
-            $("#topmenu-login-dropdown .dropdown-toggle").on("click", function(event) {
-				console.log("toggle login dropdown");
-				event.preventDefault();
-                $("#topmenu-login-dropdown").toggleClass("open");
-            });
+	        $btnUser .= '
+	            $("#topmenu-login-dropdown .dropdown-toggle").on("click", function(event) {
+					console.log("toggle login dropdown");
+					event.preventDefault();
+	                $("#topmenu-login-dropdown").toggleClass("open");
+	            });
 
-            $("#topmenuloginmoreinfo-btn").on("click", function() {
-                $("#topmenuloginmoreinfo").slideToggle();
-            });';
+	            $("#topmenuloginmoreinfo-btn").on("click", function() {
+	                $("#topmenuloginmoreinfo").slideToggle();
+	            });';
         }
 
         $btnUser .= '
