@@ -380,3 +380,16 @@ a.top-menu-dropdown-link {
 .hidden-search-result{
     display: none !important;
 }
+
+/* smartphone */
+@media only screen and (max-width: 767px)
+{
+	.dropdown-search-input {
+	    width: 100%;
+	}
+
+	.tmenu .dropdown-menu, .login_block .dropdown-menu, .topnav .dropdown-menu {
+	    margin-left: 5px;
+	    right: 0;
+    }
+}

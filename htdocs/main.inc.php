@@ -1915,17 +1915,22 @@ function top_menu_user($hideloginname = 0, $urllogout = '')
                     $("#topmenu-login-dropdown").removeClass("open");
                 }
             });
+			';
 
-            $("#topmenu-login-dropdown .dropdown-toggle").on("click", function(event) {
-				console.log("toggle login dropdown");
-				event.preventDefault();
-                $("#topmenu-login-dropdown").toggleClass("open");
-            });
+        if ($conf->theme != 'md') {
+	        $btnUser .= '
+	            $("#topmenu-login-dropdown .dropdown-toggle").on("click", function(event) {
+					console.log("toggle login dropdown");
+					event.preventDefault();
+	                $("#topmenu-login-dropdown").toggleClass("open");
+	            });
 
-            $("#topmenuloginmoreinfo-btn").on("click", function() {
-                $("#topmenuloginmoreinfo").slideToggle();
-            });
+	            $("#topmenuloginmoreinfo-btn").on("click", function() {
+	                $("#topmenuloginmoreinfo").slideToggle();
+	            });';
+        }
 
+        $btnUser .= '
         });
         </script>
         ';

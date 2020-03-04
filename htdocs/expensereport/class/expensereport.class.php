@@ -1163,7 +1163,7 @@ class ExpenseReport extends CommonObject
         }
         if (empty($num) || $num < 0) return -1;
 
-        $this->newref = $num;
+        $this->newref = dol_sanitizeFileName($num);
 
 		$this->db->begin();
 

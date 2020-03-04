@@ -767,7 +767,7 @@ if (GETPOST('actionadd') || GETPOST('actionmodify'))
 
             if ($keycode == 'sortorder')		// For column name 'sortorder', we use the field name 'position'
             {
-            	$sql .= "'".(int) GETPOST('position', 'int');
+            	$sql .= "'".(int) GETPOST('position', 'int')."'";
             }
             elseif ($_POST[$keycode] == '' && !($keycode == 'code' && $id == 10)) $sql .= "null"; // For vat, we want/accept code = ''
             elseif ($keycode == 'content') {
