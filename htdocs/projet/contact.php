@@ -19,7 +19,7 @@
 /**
  *       \file       htdocs/projet/contact.php
  *       \ingroup    project
- *       \brief      Onglet de gestion des contacts du projet
+ *       \brief      List of all contacts of a project
  */
 
 require '../main.inc.php';
@@ -27,6 +27,7 @@ require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
 require_once DOL_DOCUMENT_ROOT.'/contact/class/contact.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/project.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formcompany.class.php';
+if ($conf->categorie->enabled) { require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php'; }
 
 // Load translation files required by the page
 $langs->loadLangs(array('projects', 'companies'));
