@@ -2,6 +2,69 @@
 English Dolibarr ChangeLog
 --------------------------------------------------------------
 
+***** ChangeLog for 11.0.2 compared to 11.0.1 *****
+FIX: #10309
+FIX: #13110
+FIX: #13118
+FIX: #13124
+FIX: #13131
+FIX: #13135
+FIX: #13146 #13198
+FIX: #13175
+FIX: #13182
+FIX: #13183
+FIX: #13184
+FIX: #13263
+FIX: #13267
+FIX: an external user can not approve
+FIX: API Get list of documents for supplier_invoice
+FIX: API to push an expense report
+FIX: API upload/download doc for expensereport
+FIX: Avoid to download the export if we just press enter to refresh form
+FIX: Bad link to template invoices
+FIX: Bad sort link in accounting report
+FIX: Bad translation for productlot EatBy and SellBy
+FIX: better method to check user rights AND usergroup rights !
+FIX: CA by product list filter
+FIX: CSS
+FIX: Disable js if no javascript
+FIX: duplicate class name into some log lines
+FIX: etrafield with visibilty=5 were not in read only.
+FIX: excess paid from situation invoices not counted when calculating remain to pay.
+FIX: Force FEC export to txt format.
+FIX: Free input for email no more visible.
+FIX: Keep assigned users in session when loading projects and tasks
+FIX: List of viewed projects too large in task widget.
+FIX: Menu truncated. Add tooltip to have all content.
+FIX: Missing field "billed" in export.
+FIX: missing "statut" for getNomUrl() function
+FIX: modFournisseur is required by modSupplierProposal
+FIX: Multicompany compatibility
+FIX: must be == and not =
+FIX: option for topbar search and bookmarks
+FIX: option MAIN_OPTIMIZEFORTEXTBROWSER
+FIX: some responsive troubles
+FIX: round MT in accountancy books
+FIX: search with '0'
+FIX: sort link
+FIX: SQL Overload in default contact trigger.
+FIX: SQl syntax error.
+FIX: Submit of documents for supplier invoices.
+FIX: timezone must be tzserver and not tzuser as on contract card
+FIX: token in barcode tools page missing
+FIX: Bad name of trigger PROPAL_SUPPLIER_TRIGGER, should be PROPOSAL_SUPPLIER_TRIGGER
+FIX: Type of contact for event does not exists and not supported
+FIX: Type of contact not saved when creating a contact
+FIX: typo on ckeck method
+FIX: undefined function measuringUnitString in product list
+FIX: Usage of project not available in export.
+FIX: wrong test
+FIX: z-index for moretabsList with constant MAIN_MAXTABS_IN_CARD
+FIX: Use GETPOST instead of POST
+FIX: HTML Injection
+FIX: Visualization rights correction on last modified contacts box.
+FIX: Vulnerability in module from modulebuilder.
+FIX: Vulnerability reported by code16
 
 ***** ChangeLog for 12.0.0 compared to 11.0.0 *****
 For Users:

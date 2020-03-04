@@ -46,6 +46,7 @@ if (!defined('USE_CUSTOME_REPORT_AS_INCLUDE'))
 	$search_filters = GETPOST('search_filters', 'array');
 	$search_measures = GETPOST('search_measures', 'array');
 	$search_xaxis = GETPOST('search_xaxis', 'array');
+	$search_groupby = GETPOST('search_groupby', 'array');
 	$search_yaxis = GETPOST('search_yaxis', 'array');
 	$search_graph = GETPOST('search_graph', 'none');
 
@@ -173,6 +174,10 @@ if ($action == 'viewgraph') {
 		setEventMessages($langs->trans("OnlyOneFieldForXAxisIsPossible"), null, 'warnings');
 		$search_xaxis = array(0 => $search_xaxis[0]);
 	}
+	if (count($search_groupby) >= 2) {
+		setEventMessages($langs->trans("OnlyOneFieldForGroupByIsPossible"), null, 'warnings');
+		$search_groupby = array(0 => $search_groupb[0]);
+	}
 	if (!count($search_xaxis)) {
 		setEventMessages($langs->trans("AtLeastOneXAxisIsRequired"), null, 'warnings');
 	} elseif ($mode == 'graph' && $search_graph == 'bars' && count($search_measures) > 3) {
@@ -191,7 +196,9 @@ $param = '';
 
 $arrayofmesures = array('t.count'=>'Count');
 $arrayofxaxis = array();
+$arrayofgroupby = array();
 $arrayofyaxis = array();
+$arrayofvaluesforgroupby = array();
 
 print '<form method="post" action="'.$_SERVER['PHP_SELF'].'">';
 print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
@@ -256,6 +263,46 @@ print '<div class="inline-block opacitymedium"><span class="fas fa-chart-line pa
 print $form->multiselectarray('search_measures', $arrayofmesures, $search_measures, 0, 0, 'minwidth500', 1);
 print '</div>';
 
+
+// Group by
+print '<div class="divadvancedsearchfield">';
+foreach ($object->fields as $key => $val) {
+	if (!$val['measure']) {
+		if (in_array($key, array(
+			'id', 'ref_int', 'ref_ext', 'rowid', 'entity', 'last_main_doc', 'logo', 'logo_squarred', 'extraparams',
+			'parent', 'photo', 'socialnetworks', 'webservices_url', 'webservices_key'))) continue;
+		if (isset($val['enabled']) && !dol_eval($val['enabled'], 1)) continue;
+		if (isset($val['visible']) && !dol_eval($val['visible'], 1)) continue;
+		if (preg_match('/^fk_/', $key) && !preg_match('/^fk_statu/', $key)) continue;
+		if (preg_match('/^pass/', $key)) continue;
+		if (in_array($val['type'], array('html', 'text'))) continue;
+		if (in_array($val['type'], array('timestamp', 'date', 'datetime'))) {
+			$arrayofgroupby['t.'.$key.'-year'] = array('label' => $langs->trans($val['label']).' ('.$langs->trans("Year").')', 'position' => $val['position'].'-y');
+			$arrayofgroupby['t.'.$key.'-month'] = array('label' => $langs->trans($val['label']).' ('.$langs->trans("Month").')', 'position' => $val['position'].'-m');
+			$arrayofgroupby['t.'.$key.'-day'] = array('label' => $langs->trans($val['label']).' ('.$langs->trans("Day").')', 'position' => $val['position'].'-d');
+		} else {
+			$arrayofgroupby['t.'.$key] = array('label' => $val['label'], 'position' => (int) $val['position']);
+		}
+	}
+	// Add measure from extrafields
+	if ($object->isextrafieldmanaged) {
+		foreach ($extrafields->attributes[$object->table_element]['label'] as $key => $val) {
+			if ($extrafields->attributes[$object->table_element]['type'][$key] == 'separate') continue;
+			$arrayofgroupby['te.'.$key] = array('label' => $extrafields->attributes[$object->table_element]['label'][$key], 'position' => (int) $extrafields->attributes[$object->table_element]['pos'][$key]);
+		}
+	}
+}
+
+$arrayofgroupby = dol_sort_array($arrayofgroupby, 'position', 'asc', 1);
+$arrayofgroupbylabel = array();
+foreach ($arrayofgroupby as $key => $val) {
+	$arrayofgroupbylabel[$key] = $val['label'];
+}
+print '<div class="inline-block opacitymedium"><span class="fas fa-ruler-horizontal paddingright" title="'.$langs->trans("GroupBy").'"></span>'.$langs->trans("GroupBy").'</div> ';
+print $form->multiselectarray('search_groupby', $arrayofgroupbylabel, $search_groupby, 0, 0, 'minwidth250', 1);
+print '</div>';
+
+
 // XAxis
 print '<div class="divadvancedsearchfield">';
 foreach ($object->fields as $key => $val) {
@@ -279,7 +326,8 @@ foreach ($object->fields as $key => $val) {
     // Add measure from extrafields
     if ($object->isextrafieldmanaged) {
         foreach ($extrafields->attributes[$object->table_element]['label'] as $key => $val) {
-            $arrayofxaxis['te.'.$key] = array('label' => $extrafields->attributes[$object->table_element]['label'][$key], 'position' => (int) $extrafields->attributes[$object->table_element]['pos'][$key]);
+        	if ($extrafields->attributes[$object->table_element]['type'][$key] == 'separate') continue;
+        	$arrayofxaxis['te.'.$key] = array('label' => $extrafields->attributes[$object->table_element]['label'][$key], 'position' => (int) $extrafields->attributes[$object->table_element]['pos'][$key]);
         }
     }
 }
@@ -290,7 +338,7 @@ foreach ($arrayofxaxis as $key => $val) {
     $arrayofxaxislabel[$key] = $val['label'];
 }
 print '<div class="inline-block opacitymedium"><span class="fas fa-ruler-horizontal paddingright" title="'.$langs->trans("XAxis").'"></span>'.$langs->trans("XAxis").'</div> ';
-print $form->multiselectarray('search_xaxis', $arrayofxaxislabel, $search_xaxis, 0, 0, 'minwidth500', 1);
+print $form->multiselectarray('search_xaxis', $arrayofxaxislabel, $search_xaxis, 0, 0, 'minwidth250', 1);
 print '</div>';
 
 // YAxis
@@ -342,6 +390,19 @@ print '</div>';
 print '</form>';
 
 
+// Get all possible values of fields when a group by is set
+if (is_array($search_groupby) && count($search_groupby)) {
+	$sql = 'SELECT DISTINCT '.$search_groupby[0].' as val FROM '.MAIN_DB_PREFIX.$object->table_element.' as t';
+	$resql = $db->query($sql);
+	if (!$resql) {
+		dol_print_error($db);
+	}
+
+	while ($obj = $db->fetch_object($resql)) {
+		$arrayofvaluesforgroupby[$obj->val] = $obj->val;
+	}
+}
+
 // Generate the SQL request
 $sql = '';
 if (!empty($search_measures) && !empty($search_xaxis))
@@ -361,6 +422,19 @@ if (!empty($search_measures) && !empty($search_xaxis))
             $sql .= 'DATE_FORMAT('.$tmpval.", '%Y-%m-%d') as x_".$key.', ';
         }
         else $sql .= $val.' as x_'.$key.', ';
+    }
+    foreach ($search_groupby as $key => $val) {
+    	if (preg_match('/\-year$/', $val)) {
+    		$tmpval = preg_replace('/\-year$/', '', $val);
+    		$sql .= 'DATE_FORMAT('.$tmpval.", '%Y'), ";
+    	} elseif (preg_match('/\-month$/', $val)) {
+    		$tmpval = preg_replace('/\-month$/', '', $val);
+    		$sql .= 'DATE_FORMAT('.$tmpval.", '%Y-%m'), ";
+    	} elseif (preg_match('/\-day$/', $val)) {
+    		$tmpval = preg_replace('/\-day$/', '', $val);
+    		$sql .= 'DATE_FORMAT('.$tmpval.", '%Y-%m-%d'), ";
+    	}
+    	else $sql .= $val.', ';
     }
     foreach ($search_measures as $key => $val) {
         if ($val == 't.count') $sql .= 'COUNT(t.'.$fieldid.') as y_'.$key.', ';
@@ -416,6 +490,19 @@ if (!empty($search_measures) && !empty($search_xaxis))
             $sql .= 'DATE_FORMAT('.$tmpval.", '%Y-%m-%d'), ";
         }
         else $sql .= $val.', ';
+    }
+    foreach ($search_groupby as $key => $val) {
+    	if (preg_match('/\-year$/', $val)) {
+    		$tmpval = preg_replace('/\-year$/', '', $val);
+    		$sql .= 'DATE_FORMAT('.$tmpval.", '%Y'), ";
+    	} elseif (preg_match('/\-month$/', $val)) {
+    		$tmpval = preg_replace('/\-month$/', '', $val);
+    		$sql .= 'DATE_FORMAT('.$tmpval.", '%Y-%m'), ";
+    	} elseif (preg_match('/\-day$/', $val)) {
+    		$tmpval = preg_replace('/\-day$/', '', $val);
+    		$sql .= 'DATE_FORMAT('.$tmpval.", '%Y-%m-%d'), ";
+    	}
+    	else $sql .= $val.', ';
     }
     $sql = preg_replace('/,\s*$/', '', $sql);
     $sql .= ' ORDER BY ';
@@ -482,7 +569,7 @@ if ($mode == 'grid') {
 if ($mode == 'graph') {
     $WIDTH = '80%';
     $HEIGHT = 200;
-
+    var_dump($data);
     // Show graph
     $px1 = new DolGraph();
     $mesg = $px1->isGraphKo();

@@ -1883,6 +1883,7 @@ function dol_print_date($time, $format = '', $tzoutput = 'tzserver', $outputlang
 		$format = str_replace('%A', '__A__', $format);
 	}
 
+
 	// Analyze date
 	$reg = array();
 	if (preg_match('/^([0-9][0-9][0-9][0-9])([0-9][0-9])([0-9][0-9])([0-9][0-9])([0-9][0-9])([0-9][0-9])$/i', $time, $reg))	// Deprecated. Ex: 1970-01-01, 1970-01-01 01:00:00, 19700101010000
