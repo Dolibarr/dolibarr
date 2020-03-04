@@ -36,9 +36,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/commonobjectline.class.php';
  */
 class Fichinter extends CommonObject
 {
-class Fichinter extends CommonObject
-{
-
+	
 	public $fields=array(
 	'rowid' =>array('type'=>'integer', 'label'=>'TechnicalID', 'enabled'=>1, 'visible'=>-1, 'notnull'=>1, 'position'=>10),
 	'fk_soc' =>array('type'=>'integer:Societe:societe/class/societe.class.php', 'label'=>'ThirdParty', 'enabled'=>1, 'visible'=>-1, 'notnull'=>1, 'position'=>15),
