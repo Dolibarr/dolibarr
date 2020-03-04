@@ -339,32 +339,50 @@ print "<!-- END PHP TEMPLATE CONTACTS -->\n";
 // TODO: Remove this functions after switch to $db->sort($sortfield, $sortorder);
 function nature_asc($left, $right)
 {
-	return $left->nature > $right->nature; }
+	return $left->nature > $right->nature;
+}
+
 function thirdparty_asc($left, $right)
 {
-	return $left->thirdparty > $right->thirdparty; }
+	return $left->thirdparty > $right->thirdparty;
+}
+
 function contact_asc($left, $right)
 {
-	return $left->contact > $right->contact; }
+	return $left->contact > $right->contact;
+}
+
 function type_asc($left, $right)
 {
-	return $left->type > $right->type; }
+	return $left->type > $right->type;
+}
+
 function status_asc($left, $right)
 {
-	return $left->status > $right->status; }
+	return $left->status > $right->status;
+}
 
 function nature_desc($left, $right)
 {
-	return $left->nature < $right->nature; }
+	return $left->nature < $right->nature;
+}
+
 function thirdparty_desc($left, $right)
 {
-	return $left->thirdparty < $right->thirdparty; }
+	return $left->thirdparty < $right->thirdparty;
+}
+
 function contact_desc($left, $right)
 {
-	return $left->contact < $right->contact; }
+	return $left->contact < $right->contact;
+}
+
 function type_desc($left, $right)
 {
-	return $left->type < $right->type; }
+	return $left->type < $right->type;
+}
+
 function status_desc($left, $right)
 {
-	return $left->status < $right->status; }
+	return $left->status < $right->status;
+}
