@@ -185,7 +185,7 @@ foreach(array('internal', 'external') as $source)
 		{
 			$entry->nature = $langs->trans("User");
 		}
-		else if ($tab[$i]['source'] == 'external')
+		elseif ($tab[$i]['source'] == 'external')
 		{
 			$entry->nature = $langs->trans("ThirdPartyContact");
 		}
@@ -195,11 +195,11 @@ foreach(array('internal', 'external') as $source)
 			$companystatic->fetch($tab[$i]['socid']);
 			$entry->thirdparty = $companystatic->getNomUrl(1);
 		}
-		else if ($tab[$i]['socid'] < 0)
+		elseif ($tab[$i]['socid'] < 0)
 		{
 			$entry->thirdparty = $conf->global->MAIN_INFO_SOCIETE_NOM;
 		}
-		else if (! $tab[$i]['socid'])
+		elseif (! $tab[$i]['socid'])
 		{
 			$entry->thirdparty = "";
 		}
@@ -209,7 +209,7 @@ foreach(array('internal', 'external') as $source)
 			$userstatic->fetch($tab[$i]['id']);
 			$entry->contact = $userstatic->getNomUrl(-1, '', 0, 0, 0, 0, '', 'valignmiddle');
 		}
-		else if ($tab[$i]['source']=='external')
+		elseif ($tab[$i]['source']=='external')
 		{
 			$contactstatic->fetch($tab[$i]['id']);
 			$entry->contact =$contactstatic->getNomUrl(1, '', 0, '', 0, 0);
@@ -219,7 +219,7 @@ foreach(array('internal', 'external') as $source)
 		{
 			$entry->status = $userstatic->LibStatut($tab[$i]['statuscontact'], 3);
 		}
-		else if ($tab[$i]['source']=='external')
+		elseif ($tab[$i]['source']=='external')
 		{
 			$entry->status = $contactstatic->LibStatut($tab[$i]['statuscontact'], 3);
 		}
@@ -337,14 +337,34 @@ print "<!-- END PHP TEMPLATE CONTACTS -->\n";
 
 
 // TODO: Remove this functions after switch to $db->sort($sortfield, $sortorder);
-function nature_asc($left, $right) { return $left->nature > $right->nature; }
-function thirdparty_asc($left, $right) { return $left->thirdparty > $right->thirdparty; }
-function contact_asc($left, $right) { return $left->contact > $right->contact; }
-function type_asc($left, $right) { return $left->type > $right->type; }
-function status_asc($left, $right) { return $left->status > $right->status; }
+function nature_asc($left, $right)
+{
+	return $left->nature > $right->nature; }
+function thirdparty_asc($left, $right)
+{
+	return $left->thirdparty > $right->thirdparty; }
+function contact_asc($left, $right)
+{
+	return $left->contact > $right->contact; }
+function type_asc($left, $right)
+{
+	return $left->type > $right->type; }
+function status_asc($left, $right)
+{
+	return $left->status > $right->status; }
 
-function nature_desc($left, $right) { return $left->nature < $right->nature; }
-function thirdparty_desc($left, $right) { return $left->thirdparty < $right->thirdparty; }
-function contact_desc($left, $right) { return $left->contact < $right->contact; }
-function type_desc($left, $right) { return $left->type < $right->type; }
-function status_desc($left, $right) { return $left->status < $right->status; }
+function nature_desc($left, $right)
+{
+	return $left->nature < $right->nature; }
+function thirdparty_desc($left, $right)
+{
+	return $left->thirdparty < $right->thirdparty; }
+function contact_desc($left, $right)
+{
+	return $left->contact < $right->contact; }
+function type_desc($left, $right)
+{
+	return $left->type < $right->type; }
+function status_desc($left, $right)
+{
+	return $left->status < $right->status; }
