@@ -435,6 +435,7 @@ define("ace/keyboard/vim",["require","exports","module","ace/range","ace/lib/eve
     if (!e) e = s;
     return this.ace.session.replace(new Range(s.line, s.ch, e.line, e.ch), text);
   };
+  this.replaceSelection = 
   this.replaceSelections = function(p) {
     var sel = this.ace.selection;
     if (this.ace.inVirtualSelectionMode) {
@@ -846,6 +847,8 @@ dom.importCssString(".normal-mode .ace_cursor{\
     { keys: '<C-c>', type: 'keyToKey', toKeys: '<Esc>' },
     { keys: '<C-[>', type: 'keyToKey', toKeys: '<Esc>', context: 'insert' },
     { keys: '<C-c>', type: 'keyToKey', toKeys: '<Esc>', context: 'insert' },
+    { keys: '<C-Esc>', type: 'keyToKey', toKeys: '<Esc>' }, // ace_patch ipad keyboard sends C-Esc instead of C-[
+    { keys: '<C-Esc>', type: 'keyToKey', toKeys: '<Esc>', context: 'insert' },
     { keys: 's', type: 'keyToKey', toKeys: 'cl', context: 'normal' },
     { keys: 's', type: 'keyToKey', toKeys: 'c', context: 'visual'},
     { keys: 'S', type: 'keyToKey', toKeys: 'cc', context: 'normal' },
@@ -940,7 +943,9 @@ dom.importCssString(".normal-mode .ace_cursor{\
     { keys: 'A', type: 'action', action: 'enterInsertMode', isEdit: true, actionArgs: { insertAt: 'eol' }, context: 'normal' },
     { keys: 'A', type: 'action', action: 'enterInsertMode', isEdit: true, actionArgs: { insertAt: 'endOfSelectedArea' }, context: 'visual' },
     { keys: 'i', type: 'action', action: 'enterInsertMode', isEdit: true, actionArgs: { insertAt: 'inplace' }, context: 'normal' },
+    { keys: 'gi', type: 'action', action: 'enterInsertMode', isEdit: true, actionArgs: { insertAt: 'lastEdit' }, context: 'normal' },
     { keys: 'I', type: 'action', action: 'enterInsertMode', isEdit: true, actionArgs: { insertAt: 'firstNonBlank'}, context: 'normal' },
+    { keys: 'gI', type: 'action', action: 'enterInsertMode', isEdit: true, actionArgs: { insertAt: 'bol'}, context: 'normal' },
     { keys: 'I', type: 'action', action: 'enterInsertMode', isEdit: true, actionArgs: { insertAt: 'startOfSelectedArea' }, context: 'visual' },
     { keys: 'o', type: 'action', action: 'newLineAndEnterInsertMode', isEdit: true, interlaceInsertRepeat: true, actionArgs: { after: true }, context: 'normal' },
     { keys: 'O', type: 'action', action: 'newLineAndEnterInsertMode', isEdit: true, interlaceInsertRepeat: true, actionArgs: { after: false }, context: 'normal' },
@@ -950,6 +955,7 @@ dom.importCssString(".normal-mode .ace_cursor{\
     { keys: '<C-q>', type: 'action', action: 'toggleVisualMode', actionArgs: { blockwise: true }},
     { keys: 'gv', type: 'action', action: 'reselectLastSelection' },
     { keys: 'J', type: 'action', action: 'joinLines', isEdit: true },
+    { keys: 'gJ', type: 'action', action: 'joinLines', actionArgs: { keepSpaces: true }, isEdit: true },
     { keys: 'p', type: 'action', action: 'paste', isEdit: true, actionArgs: { after: true, isEdit: true }},
     { keys: 'P', type: 'action', action: 'paste', isEdit: true, actionArgs: { after: false, isEdit: true }},
     { keys: 'r<character>', type: 'action', action: 'replace', isEdit: true },
@@ -1026,7 +1032,6 @@ dom.importCssString(".normal-mode .ace_cursor{\
       CodeMirror.off(cm.getInputField(), 'paste', getOnPasteFn(cm));
       cm.state.vim = null;
     }
-
     function detachVimMap(cm, next) {
       if (this == CodeMirror.keyMap.vim)
         CodeMirror.rmClass(cm.getWrapperElement(), "cm-fat-cursor");
@@ -1296,9 +1301,16 @@ dom.importCssString(".normal-mode .ace_cursor{\
         }
         return mark;
       }
+      function find(cm, offset) {
+        var oldPointer = pointer;
+        var mark = move(cm, offset);
+        pointer = oldPointer;
+        return mark && mark.find();
+      }
       return {
         cachedCursor: undefined, //used for # and * jumps
         add: add,
+        find: find,
         move: move
       };
     };
@@ -1943,6 +1955,7 @@ dom.importCssString(".normal-mode .ace_cursor{\
           });
         }
         function onPromptClose(query) {
+          cm.scrollTo(originalScrollPos.left, originalScrollPos.top);
           handleQuery(query, true /** ignoreCase */, true /** smartCase */);
           var macroModeState = vimGlobalState.macroModeState;
           if (macroModeState.isRecording) {
@@ -2514,7 +2527,7 @@ dom.importCssString(".normal-mode .ace_cursor{\
           }
         }
         if (ch < lineText.length) {
-          var re = /[<>]/.test(lineText[ch]) ? /[(){}[\]<>]/ : /[(){}[\]]/;
+          var re = /[<>]/.test(lineText[ch]) ? /[(){}[\]<>]/ : /[(){}[\]]/; //ace_patch?
           var matched = cm.findMatchingBracket(Pos(line, ch+1), {bracketRegex: re});
           return matched.to;
         } else {
@@ -2643,8 +2656,8 @@ dom.importCssString(".normal-mode .ace_cursor{\
             head.line--;
             cm.setSelection(anchor, head)
             text = cm.getSelection();
-            cm.replaceSelections("");
-            finalHead = anchor
+            cm.replaceSelection("");
+            finalHead = anchor;
         } else {
           text = cm.getSelection();
           var replacement = fillArray('', ranges.length);
@@ -2864,6 +2877,8 @@ dom.importCssString(".normal-mode .ace_cursor{\
         var height = cm.listSelections().length;
         if (insertAt == 'eol') {
           head = Pos(head.line, lineLength(cm, head.line));
+        } else if (insertAt == 'bol') {
+          head = Pos(head.line, 0);
         } else if (insertAt == 'charAfter') {
           head = offsetCursor(head, 0, 1);
         } else if (insertAt == 'firstNonBlank') {
@@ -2902,6 +2917,8 @@ dom.importCssString(".normal-mode .ace_cursor{\
           if (vim.visualMode){
             return;
           }
+        } else if (insertAt == 'lastEdit') {
+          head = getLastEditPos(cm) || head;
         }
         cm.setOption('disableInput', false);
         if (actionArgs && actionArgs.replace) {
@@ -3001,7 +3018,9 @@ dom.importCssString(".normal-mode .ace_cursor{\
           var tmp = Pos(curStart.line + 1,
                         lineLength(cm, curStart.line + 1));
           var text = cm.getRange(curStart, tmp);
-          text = text.replace(/\n\s*/g, ' ');
+          text = actionArgs.keepSpaces
+            ? text.replace(/\n\r?/g, '')
+            : text.replace(/\n\s*/g, ' ');
           cm.replaceRange(text, curStart, tmp);
         }
         var curFinalPos = Pos(curStart.line, finalCh);
@@ -4583,9 +4602,20 @@ dom.importCssString(".normal-mode .ace_cursor{\
     }
 
     function getMarkPos(cm, vim, markName) {
+      if (markName == '\'' || markName == '`') {
+        return vimGlobalState.jumpList.find(cm, -1) || Pos(0, 0);
+      } else if (markName == '.') {
+        return getLastEditPos(cm);
+      }
 
       var mark = vim.marks[markName];
       return mark && mark.find();
+    }
+
+    function getLastEditPos(cm) {
+      var undoManager = cm.ace.session.$undoManager;
+      if (undoManager && undoManager.$lastDelta)
+        return toCmPos(undoManager.$lastDelta.end);
     }
 
     var ExCommandDispatcher = function() {
@@ -5068,6 +5098,9 @@ dom.importCssString(".normal-mode .ace_cursor{\
         var global = false; // True to replace all instances on a line, false to replace only 1.
         if (tokens.length) {
           regexPart = tokens[0];
+          if (getOption('pcre') && regexPart !== '') {
+              regexPart = new RegExp(regexPart).source; //normalize not escaped characters
+          }
           replacePart = tokens[1];
           if (regexPart && regexPart[regexPart.length - 1] === '$') {
             regexPart = regexPart.slice(0, regexPart.length - 1) + '\\n';
@@ -5075,7 +5108,7 @@ dom.importCssString(".normal-mode .ace_cursor{\
           }
           if (replacePart !== undefined) {
             if (getOption('pcre')) {
-              replacePart = unescapeRegexReplace(replacePart);
+              replacePart = unescapeRegexReplace(replacePart.replace(/([^\\])&/g,"$1$$&"));
             } else {
               replacePart = translateRegexReplace(replacePart);
             }
@@ -5101,7 +5134,11 @@ dom.importCssString(".normal-mode .ace_cursor{\
               global = true;
               flagsPart.replace('g', '');
             }
-            regexPart = regexPart.replace(/\//g, "\\/") + '/' + flagsPart;
+            if (getOption('pcre')) {
+               regexPart = regexPart + '/' + flagsPart;
+            } else {
+               regexPart = regexPart.replace(/\//g, "\\/") + '/' + flagsPart;
+            }
           }
         }
         if (regexPart) {
