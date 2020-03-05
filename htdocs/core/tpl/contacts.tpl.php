@@ -236,27 +236,8 @@ $sortorder = GETPOST("sortorder", 'alpha');
 if (!$sortfield) $sortfield = "nature";
 if (!$sortorder) $sortorder = "asc";
 
-/**
- * Re-sort list
- */
-
-// TODO: switch to $db->sort($sortfield, $sortorder);
-if($sortorder == "asc")
-{
-	if($sortfield == "nature")		usort($list, "nature_asc");
-	if($sortfield == "thirdparty")	usort($list, "thirdparty_asc");
-	if($sortfield == "contact")		usort($list, "contact_asc");
-	if($sortfield == "type")		usort($list, "type_asc");
-	if($sortfield == "status")		usort($list, "status_asc");
-}
-else
-{
-	if($sortfield == "nature")		usort($list, "nature_desc");
-	if($sortfield == "thirdparty")	usort($list, "thirdparty_desc");
-	if($sortfield == "contact")		usort($list, "contact_desc");
-	if($sortfield == "type")		usort($list, "type_desc");
-	if($sortfield == "status")		usort($list, "status_desc");
-}
+// Re-sort list
+$list = dol_sort_array($list, $sortfield, $sortorder, 1, 0, 1);
 
 $arrayfields = array(
 	'rowid' 		=> array('label'=>$langs->trans("Id"), 'checked'=>1),
@@ -291,7 +272,7 @@ print_liste_field_titre($arrayfields['nature']['label'], $_SERVER["PHP_SELF"], "
 print_liste_field_titre($arrayfields['thirdparty']['label'], $_SERVER["PHP_SELF"], "thirdparty", "", $param, "", $sortfield, $sortorder);
 print_liste_field_titre($arrayfields['contact']['label'], $_SERVER["PHP_SELF"], "contact", "", $param, "", $sortfield, $sortorder);
 print_liste_field_titre($arrayfields['type']['label'], $_SERVER["PHP_SELF"], "type", "", $param, "", $sortfield, $sortorder);
-print_liste_field_titre($arrayfields['status']['label'], $_SERVER["PHP_SELF"], "statut", "", $param, "", $sortfield, $sortorder);
+print_liste_field_titre($arrayfields['status']['label'], $_SERVER["PHP_SELF"], "statut", "", $param, "", $sortfield, $sortorder, 'center ');
 print_liste_field_titre($arrayfields['link']['label'], $_SERVER["PHP_SELF"], "", "", "", "", $sortfield, $sortorder, 'center maxwidthsearch ');
 print "</tr>";
 
@@ -303,7 +284,7 @@ foreach($list as $entry)
 	print '<td class="tdoverflowmax200">'.$entry->thirdparty.'</td>';
 	print '<td class="tdoverflowmax200">'.$entry->contact.'</td>';
 	print '<td class="tdoverflowmax200">'.$entry->type.'</td>';
-	print '<td class="tdoverflowmax200">'.$entry->status.'</td>';
+	print '<td class="tdoverflowmax200 center">'.$entry->status.'</td>';
 
 	if ($permission)
 	{
@@ -335,54 +316,3 @@ if (is_object($hookmanager)) {
 }
 print "<!-- END PHP TEMPLATE CONTACTS -->\n";
 
-
-// TODO: Remove this functions after switch to $db->sort($sortfield, $sortorder);
-function nature_asc($left, $right)
-{
-	return $left->nature > $right->nature;
-}
-
-function thirdparty_asc($left, $right)
-{
-	return $left->thirdparty > $right->thirdparty;
-}
-
-function contact_asc($left, $right)
-{
-	return $left->contact > $right->contact;
-}
-
-function type_asc($left, $right)
-{
-	return $left->type > $right->type;
-}
-
-function status_asc($left, $right)
-{
-	return $left->status > $right->status;
-}
-
-function nature_desc($left, $right)
-{
-	return $left->nature < $right->nature;
-}
-
-function thirdparty_desc($left, $right)
-{
-	return $left->thirdparty < $right->thirdparty;
-}
-
-function contact_desc($left, $right)
-{
-	return $left->contact < $right->contact;
-}
-
-function type_desc($left, $right)
-{
-	return $left->type < $right->type;
-}
-
-function status_desc($left, $right)
-{
-	return $left->status < $right->status;
-}
