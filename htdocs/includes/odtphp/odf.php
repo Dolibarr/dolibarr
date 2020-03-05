@@ -179,7 +179,7 @@ class Odf
 			}
 			$this->contentXml = str_replace('</office:font-face-decls>', $fonts . '</office:font-face-decls>', $this->contentXml);
 		}
-		else $this->vars[$tag] = $value;
+		else $this->vars[$tag] = preg_replace('/(\r\n|\r|\n)/i', "<text:line-break/>", $value);
 		
 		return $this;
 	}
