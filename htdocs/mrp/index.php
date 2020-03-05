@@ -104,8 +104,7 @@ if ($conf->use_javascript_ajax)
     		$dolgraph->setShowLegend(1);
     		$dolgraph->setShowPercent(1);
     		$dolgraph->SetType(array('pie'));
-    		$dolgraph->setWidth('100%');
-    		$dolgraph->SetHeight(180);
+    		$dolgraph->SetHeight(200);
     		$dolgraph->draw('idgraphstatus');
     		print $dolgraph->show($totalnb?0:1);
 

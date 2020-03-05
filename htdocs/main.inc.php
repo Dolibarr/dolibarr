@@ -1382,32 +1382,41 @@ function top_htmlhead($head, $title = '', $disablejs = 0, $disablehead = 0, $arr
 				print '<script src="'.DOL_URL_ROOT.'/includes/jquery/plugins/jnotify/jquery.jnotify.min.js'.($ext ? '?'.$ext : '').'"></script>'."\n";
 			}
 			// Flot
-			if (empty($conf->global->MAIN_DISABLE_JQUERY_FLOT) && !defined('DISABLE_JQUERY_FLOT'))
+			if (empty($conf->global->MAIN_JS_GRAPH) || $conf->global->MAIN_JS_GRAPH == 'jflot')
 			{
-				if (constant('JS_JQUERY_FLOT'))
+				if (empty($conf->global->MAIN_DISABLE_JQUERY_FLOT) && !defined('DISABLE_JQUERY_FLOT'))
 				{
-					print '<script src="'.JS_JQUERY_FLOT.'jquery.flot.js'.($ext ? '?'.$ext : '').'"></script>'."\n";
-					print '<script src="'.JS_JQUERY_FLOT.'jquery.flot.pie.js'.($ext ? '?'.$ext : '').'"></script>'."\n";
-					print '<script src="'.JS_JQUERY_FLOT.'jquery.flot.stack.js'.($ext ? '?'.$ext : '').'"></script>'."\n";
-				}
-				else
-				{
-					print '<script src="'.DOL_URL_ROOT.'/includes/jquery/plugins/flot/jquery.flot.js'.($ext ? '?'.$ext : '').'"></script>'."\n";
-					print '<script src="'.DOL_URL_ROOT.'/includes/jquery/plugins/flot/jquery.flot.pie.js'.($ext ? '?'.$ext : '').'"></script>'."\n";
-					print '<script src="'.DOL_URL_ROOT.'/includes/jquery/plugins/flot/jquery.flot.stack.js'.($ext ? '?'.$ext : '').'"></script>'."\n";
-					/* Test for jflot 4.2 -> not better than current
-					print '<script language="javascript" type="text/javascript" src="'.DOL_URL_ROOT.'/includes/jquery/plugins/flot/jquery.canvaswrapper.js"></script>'."\n";
-					print '<script language="javascript" type="text/javascript" src="'.DOL_URL_ROOT.'/includes/jquery/plugins/flot/jquery.colorhelpers.js"></script>'."\n";
-					print '<script language="javascript" type="text/javascript" src="'.DOL_URL_ROOT.'/includes/jquery/plugins/flot/jquery.flot.js"></script>'."\n";
-					print '<script language="javascript" type="text/javascript" src="'.DOL_URL_ROOT.'/includes/jquery/plugins/flot/jquery.flot.pie.js"></script>'."\n";
-					print '<script language="javascript" type="text/javascript" src="'.DOL_URL_ROOT.'/includes/jquery/plugins/flot/jquery.flot.stack.js"></script>'."\n";
-					print '<script language="javascript" type="text/javascript" src="'.DOL_URL_ROOT.'/includes/jquery/plugins/flot/jquery.flot.saturated.js"></script>'."\n";
-					print '<script language="javascript" type="text/javascript" src="'.DOL_URL_ROOT.'/includes/jquery/plugins/flot/jquery.flot.browser.js"></script>'."\n";
-					print '<script language="javascript" type="text/javascript" src="'.DOL_URL_ROOT.'/includes/jquery/plugins/flot/jquery.flot.drawSeries.js"></script>'."\n";
-					print '<script language="javascript" type="text/javascript" src="'.DOL_URL_ROOT.'/includes/jquery/plugins/flot/jquery.flot.uiConstants.js"></script>'."\n";
-					*/
+					if (constant('JS_JQUERY_FLOT'))
+					{
+						print '<script src="'.JS_JQUERY_FLOT.'jquery.flot.js'.($ext ? '?'.$ext : '').'"></script>'."\n";
+						print '<script src="'.JS_JQUERY_FLOT.'jquery.flot.pie.js'.($ext ? '?'.$ext : '').'"></script>'."\n";
+						print '<script src="'.JS_JQUERY_FLOT.'jquery.flot.stack.js'.($ext ? '?'.$ext : '').'"></script>'."\n";
+					}
+					else
+					{
+						print '<script src="'.DOL_URL_ROOT.'/includes/jquery/plugins/flot/jquery.flot.js'.($ext ? '?'.$ext : '').'"></script>'."\n";
+						print '<script src="'.DOL_URL_ROOT.'/includes/jquery/plugins/flot/jquery.flot.pie.js'.($ext ? '?'.$ext : '').'"></script>'."\n";
+						print '<script src="'.DOL_URL_ROOT.'/includes/jquery/plugins/flot/jquery.flot.stack.js'.($ext ? '?'.$ext : '').'"></script>'."\n";
+						/* Test for jflot 4.2 -> not better than current
+						print '<script language="javascript" type="text/javascript" src="'.DOL_URL_ROOT.'/includes/jquery/plugins/flot/jquery.canvaswrapper.js"></script>'."\n";
+						print '<script language="javascript" type="text/javascript" src="'.DOL_URL_ROOT.'/includes/jquery/plugins/flot/jquery.colorhelpers.js"></script>'."\n";
+						print '<script language="javascript" type="text/javascript" src="'.DOL_URL_ROOT.'/includes/jquery/plugins/flot/jquery.flot.js"></script>'."\n";
+						print '<script language="javascript" type="text/javascript" src="'.DOL_URL_ROOT.'/includes/jquery/plugins/flot/jquery.flot.pie.js"></script>'."\n";
+						print '<script language="javascript" type="text/javascript" src="'.DOL_URL_ROOT.'/includes/jquery/plugins/flot/jquery.flot.stack.js"></script>'."\n";
+						print '<script language="javascript" type="text/javascript" src="'.DOL_URL_ROOT.'/includes/jquery/plugins/flot/jquery.flot.saturated.js"></script>'."\n";
+						print '<script language="javascript" type="text/javascript" src="'.DOL_URL_ROOT.'/includes/jquery/plugins/flot/jquery.flot.browser.js"></script>'."\n";
+						print '<script language="javascript" type="text/javascript" src="'.DOL_URL_ROOT.'/includes/jquery/plugins/flot/jquery.flot.drawSeries.js"></script>'."\n";
+						print '<script language="javascript" type="text/javascript" src="'.DOL_URL_ROOT.'/includes/jquery/plugins/flot/jquery.flot.uiConstants.js"></script>'."\n";
+						*/
+					}
 				}
 			}
+			// Chart
+			if ($conf->global->MAIN_JS_GRAPH == 'chart')
+			{
+				print '<script src="'.DOL_URL_ROOT.'/includes/chart/dist/Chart.min.js'.($ext ? '?'.$ext : '').'"></script>'."\n";
+			}
+
 			// jQuery jeditable
 			if (!empty($conf->global->MAIN_USE_JQUERY_JEDITABLE) && !defined('DISABLE_JQUERY_JEDITABLE'))
 			{

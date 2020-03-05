@@ -1356,7 +1356,7 @@ class Adherent extends CommonObject
 
 		require_once DOL_DOCUMENT_ROOT . '/adherents/class/subscription.class.php';
 
-		$sql = "SELECT c.rowid, c.fk_adherent, c.subscription, c.note, c.fk_bank,";
+		$sql = "SELECT c.rowid, c.fk_adherent, c.fk_type, c.subscription, c.note, c.fk_bank,";
 		$sql .= " c.tms as datem,";
 		$sql .= " c.datec as datec,";
 		$sql .= " c.dateadh as dateh,";
@@ -1386,6 +1386,7 @@ class Adherent extends CommonObject
 				$subscription = new Subscription($this->db);
 				$subscription->id = $obj->rowid;
 				$subscription->fk_adherent = $obj->fk_adherent;
+				$subscription->fk_type = $obj->fk_type;
 				$subscription->amount = $obj->subscription;
 				$subscription->note = $obj->note;
 				$subscription->fk_bank = $obj->fk_bank;

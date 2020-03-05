@@ -683,6 +683,8 @@ class Conf
 
 		if (!isset($this->global->MAIN_USE_OLD_TITLE_BUTTON)) $this->global->MAIN_USE_OLD_TITLE_BUTTON = 0;
 
+		if (!isset($conf->global->MAIN_JS_GRAPH)) $conf->global->MAIN_JS_GRAPH = 'chart';	// Use chart.js library
+
 		if (empty($this->global->MAIN_MODULE_DOLISTORE_API_SRV)) $this->global->MAIN_MODULE_DOLISTORE_API_SRV = 'https://www.dolistore.com';
 		if (empty($this->global->MAIN_MODULE_DOLISTORE_API_KEY)) $this->global->MAIN_MODULE_DOLISTORE_API_KEY = 'dolistorecatalogpublickey1234567';
 

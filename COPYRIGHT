@@ -38,6 +38,7 @@ TCPDI                  1.0.0         LGPL-3+ / Apache 2.0        Yes            
 
 JS libraries:
 Ace                    1.4.8         BSD                         Yes             JS library to get code syntaxique coloration in a textarea.
+Chart				   2.9.3         MIT License                 Yes             JS library for graph
 jQuery                 3.4.1         MIT License                 Yes             JS library
 jQuery UI              1.12.1        GPL and MIT License         Yes             JS library plugin UI
 jQuery select2         4.0.13        GPL and Apache License      Yes             JS library plugin for sexier multiselect

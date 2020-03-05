@@ -212,7 +212,7 @@ if (!empty($conf->use_javascript_ajax))
     $dolgraph->setShowLegend(1);
     $dolgraph->setShowPercent(1);
     $dolgraph->SetType(array('pie'));
-    $dolgraph->setWidth('100%');
+    $dolgraph->setHeight('200');
     $dolgraph->draw('idgraphstatus');
     print $dolgraph->show($total ? 0 : 1);
 
@@ -363,10 +363,10 @@ if ($result)
 		print '</td>';
 		print '<td class="center">'.dol_print_date($db->jdate($obj->tms), 'dayhour').'</td>';
 		//print '<td class="left">'.$staticcontrat->LibStatut($obj->statut,2).'</td>';
-		print '<td class="right" width="32">'.($obj->nb_initial > 0 ? $obj->nb_initial.$staticcontratligne->LibStatut(0, 3) : '').'</td>';
-		print '<td class="right" width="32">'.($obj->nb_running > 0 ? $obj->nb_running.$staticcontratligne->LibStatut(4, 3, 0) : '').'</td>';
-		print '<td class="right" width="32">'.($obj->nb_expired > 0 ? $obj->nb_expired.$staticcontratligne->LibStatut(4, 3, 1) : '').'</td>';
-		print '<td class="right" width="32">'.($obj->nb_closed > 0 ? $obj->nb_closed.$staticcontratligne->LibStatut(5, 3) : '').'</td>';
+		print '<td class="right nowraponall" width="32">'.($obj->nb_initial > 0 ? '<span class="paddingright">'.$obj->nb_initial.'</span>'.$staticcontratligne->LibStatut(0, 3, -1, 'class="paddingleft"') : '').'</td>';
+		print '<td class="right nowraponall" width="32">'.($obj->nb_running > 0 ? '<span class="paddingright">'.$obj->nb_running.'</span>'.$staticcontratligne->LibStatut(4, 3, 0, 'class="marginleft"') : '').'</td>';
+		print '<td class="right nowraponall" width="32">'.($obj->nb_expired > 0 ? '<span class="paddingright">'.$obj->nb_expired.'</span>'.$staticcontratligne->LibStatut(4, 3, 1, 'class="paddingleft"') : '').'</td>';
+		print '<td class="right nowraponall" width="32">'.($obj->nb_closed > 0 ? '<span class="paddingright">'.$obj->nb_closed.'</span>'.$staticcontratligne->LibStatut(5, 3, -1, 'class="paddingleft"') : '').'</td>';
 		print "</tr>\n";
 		$i++;
 	}

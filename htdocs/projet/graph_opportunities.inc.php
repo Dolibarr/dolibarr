@@ -75,7 +75,7 @@ if (!empty($conf->global->PROJECT_USE_OPPORTUNITIES))
 	    }
 	    if ($conf->use_javascript_ajax)
 	    {
-	        print '<tr><td class="center" colspan="2">';
+	        print '<tr><td class="center nopaddingleftimp nopaddingrightimp" colspan="2">';
 
 	        include_once DOL_DOCUMENT_ROOT.'/core/class/dolgraph.class.php';
 	        $dolgraph = new DolGraph();
@@ -83,8 +83,8 @@ if (!empty($conf->global->PROJECT_USE_OPPORTUNITIES))
 	        $dolgraph->setShowLegend(1);
 	        $dolgraph->setShowPercent(1);
 	        $dolgraph->SetType(array('pie'));
-	        $dolgraph->setWidth('100%');
-	        $dolgraph->SetHeight(180);
+	        //$dolgraph->setWidth('100%');
+	        $dolgraph->SetHeight('200');
 	        $dolgraph->draw('idgraphstatus');
 	        print $dolgraph->show($totaloppnb ? 0 : 1);
 

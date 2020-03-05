@@ -21,7 +21,7 @@
 /**
  *       \file       htdocs/comm/propal/contact.php
  *       \ingroup    propal
- *       \brief      Onglet de gestion des contacts de propal
+ *       \brief      Tab to manage contacts/adresses of proposal
  */
 
 require '../../main.inc.php';
