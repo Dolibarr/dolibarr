@@ -30,10 +30,10 @@
  *    $dolgraph->SetTitle($langs->transnoentities('MyTitle').'<br>'.$langs->transnoentities('MyTitlePercent').'%');
  *    $dolgraph->SetMaxValue(50);
  *    $dolgraph->SetData($data);
- *    $dolgraph->setShowLegend(1);
+ *    $dolgraph->setShowLegend(2);
  *    $dolgraph->setShowPercent(1);
  *    $dolgraph->SetType(array('pie'));
- *    $dolgraph->setWidth('100%');
+ *    $dolgraph->setHeight('200');
  *    $dolgraph->draw('idofgraph');
  *    print $dolgraph->show($total?0:1);
  */
@@ -422,7 +422,7 @@ class DolGraph
 	/**
 	 * Show legend or not
 	 *
-	 * @param	int		$showlegend		1=Show legend (default), 0=Hide legend
+	 * @param	int		$showlegend		1=Show legend (default), 0=Hide legend, 2=Show legend on right
 	 * @return	void
 	 */
     public function setShowLegend($showlegend)
@@ -957,6 +957,8 @@ class DolGraph
 			return;
 		}
 
+		$showlegend = $this->showlegend;
+
 		$legends = array();
 		$nblot = 0;
 		if (is_array($this->data) && is_array($this->data[0])) {
@@ -1040,6 +1042,7 @@ class DolGraph
 				$this->stringtoshow .= 'circumference: Math.PI,'."\n";
 				$this->stringtoshow .= 'rotation: -Math.PI,'."\n";
 			}
+			if ($showlegend) $this->stringtoshow .= 'legend: { position: \''.($showlegend == 2 ? 'right' : 'top').'\' },'."\n";
 			$this->stringtoshow .= 'elements: { arc: {'."\n";
 			// Color of earch arc
 			$this->stringtoshow .= 'backgroundColor: [';

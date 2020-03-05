@@ -239,6 +239,7 @@ if (!empty($dataseries) && count($dataseries) > 1) {
             $legend[] = $i;
             $i++;
         }
+        $px1->setShowLegend(2);
         $px1->SetType(array('pie'));
         $px1->SetLegend($legend);
         $px1->SetMaxValue($px1->GetCeilMaxValue());
