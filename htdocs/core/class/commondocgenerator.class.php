@@ -562,12 +562,12 @@ abstract class CommonDocGenerator
 			'line_price_ttc_locale'=>price($line->total_ttc, 0, $outputlangs),
 			'line_price_vat_locale'=>price($line->total_tva, 0, $outputlangs),
 		    // Dates
-			'line_date_start'=>dol_print_date($line->date_start, 'day', 'tzuser'),
-			'line_date_start_locale'=>dol_print_date($line->date_start, 'day', 'tzuser', $outputlangs),
-		    'line_date_start_rfc'=>dol_print_date($line->date_start, 'dayrfc', 'tzuser'),
-		    'line_date_end'=>dol_print_date($line->date_end, 'day', 'tzuser'),
-		    'line_date_end_locale'=>dol_print_date($line->date_end, 'day', 'tzuser', $outputlangs),
-		    'line_date_end_rfc'=>dol_print_date($line->date_end, 'dayrfc', 'tzuser'),
+			'line_date_start'=>dol_print_date($line->date_start, 'day'),
+			'line_date_start_locale'=>dol_print_date($line->date_start, 'day', 'tzserver', $outputlangs),
+		    'line_date_start_rfc'=>dol_print_date($line->date_start, 'dayrfc'),
+		    'line_date_end'=>dol_print_date($line->date_end, 'day'),
+		    'line_date_end_locale'=>dol_print_date($line->date_end, 'day', 'tzserver', $outputlangs),
+		    'line_date_end_rfc'=>dol_print_date($line->date_end, 'dayrfc'),
 
 		    'line_multicurrency_code' => price2num($line->multicurrency_code),
 		    'line_multicurrency_subprice' => price2num($line->multicurrency_subprice),
