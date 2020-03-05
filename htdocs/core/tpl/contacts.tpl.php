@@ -255,6 +255,8 @@ $param = 'id='.$object->id.'&mainmenu=home';
  * Show list
  */
 
+print '<br>';
+
 print '<form method="POST" id="searchFormList" action="'.$_SERVER["PHP_SELF"].'">';
 print '<input type="hidden" name="token" value="'.newToken().'">';
 print '<input type="hidden" name="formfilteraction" id="formfilteraction" value="list">';
