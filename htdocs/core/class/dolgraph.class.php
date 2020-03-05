@@ -260,7 +260,8 @@ class DolGraph
 	/**
 	 * Set type
 	 *
-	 * @param 	array	$type		Array with type for each serie. Example: array('pie', ...), array('lines', 'linesnopoint', 'bars', 'pie')
+	 * @param 	array	$type		Array with type for each serie. Example: array('type1', 'type2', ...) where type can be:
+	 * 								'pie', 'piesemicircle', 'polar', 'lines', 'linesnopoint', 'bars', ...
 	 * @return	void
 	 */
 	public function SetType($type)
@@ -715,7 +716,7 @@ class DolGraph
 				$x++;
 			}
 
-			if (isset($this->type[$firstlot]) && $this->type[$firstlot] == 'pie')
+			if (isset($this->type[$firstlot]) && in_array($this->type[$firstlot], array('pie', 'piesemicircle', 'polar')))
 			{
 				foreach ($values as $x => $y) {
 					if (isset($y)) $serie[$i] .= 'd'.$i.'.push({"label":"'.dol_escape_js($legends[$x]).'", "data":'.$y.'});'."\n";
@@ -766,7 +767,7 @@ class DolGraph
 		$this->stringtoshow .= "\n";
 
 		// Special case for Graph of type 'pie'
-		if (isset($this->type[$firstlot]) && ($this->type[$firstlot] == 'pie' || $this->type[$firstlot] == 'polar'))
+		if (isset($this->type[$firstlot]) && in_array($this->type[$firstlot], array('pie', 'piesemicircle', 'polar')))
 		{
 			$datacolor = array();
 			foreach ($this->datacolor as $val) {
@@ -933,7 +934,7 @@ class DolGraph
 	 *	$this->data  = array(array(0=>'labelxA',1=>yA1,...,n=>yAn), array('labelxB',yB1,...yBn));   // or when there is n series to show for each x
 	 *  $this->data  = array(array('label'=>'labelxA','data'=>yA),  array('labelxB',yB));			// Syntax deprecated
 	 *  $this->legend= array("Val1",...,"Valn");													// list of n series name
-	 *  $this->type  = array('bars',...'lines', 'linesnopoint'); or array('pie') or array('polar');
+	 *  $this->type  = array('bars',...'lines', 'linesnopoint'); or array('pie') or array('polar') or array('piesemicircle');
 	 *  $this->mode = 'depth' ???
 	 *  $this->bgcolorgrid
 	 *  $this->datacolor
@@ -982,26 +983,11 @@ class DolGraph
 				$x++;
 			}
 
-			if (isset($this->type[$firstlot]) && $this->type[$firstlot] == 'pie')
-			{
-				$j = 0;
-				foreach ($values as $x => $y) {
-					//if (isset($y)) $serie[$i] .= 'd'.$i.'.push({"label":"'.dol_escape_js($legends[$x]).'", "data":'.$y.'});'."\n";
-					if (isset($y)) {
-						//$serie[$i][] = $y;
-						$serie[$i] .= ($j > 0 ? ", " : "").$y;
-						$j++;
-					}
-				}
-			}
-			else
-			{
-				$j = 0;
-				foreach ($values as $x => $y) {
-					if (isset($y)) {
-						$serie[$i] .= ($j > 0 ? ", " : "").$y;
-						$j++;
-					}
+			$j = 0;
+			foreach ($values as $x => $y) {
+				if (isset($y)) {
+					$serie[$i] .= ($j > 0 ? ", " : "").$y;
+					$j++;
 				}
 			}
 
@@ -1024,7 +1010,7 @@ class DolGraph
 		if (count($this->data) > 20) $dolxaxisvertical='dol-xaxis-vertical';
 		// No height for the pie grah
 		$cssfordiv = 'dolgraphchart';
-		if (isset($this->type[$firstlot]) && ($this->type[$firstlot] == 'pie' || $this->type[$firstlot] == 'polar')) $cssfordiv .= ' dolgraphcharpie';
+		if (isset($this->type[$firstlot])) $cssfordiv .= ' dolgraphchar'.$this->type[$firstlot];
 		$this->stringtoshow .= '<div id="placeholder_'.$tag.'" style="min-height: '.$this->height.(strpos($this->height, '%') > 0 ? '': 'px').'; width:'.$this->width.(strpos($this->width, '%') > 0 ? '': 'px').';" class="'.$cssfordiv.' dolgraph'.(empty($dolxaxisvertical)?'':' '.$dolxaxisvertical).(empty($this->cssprefix) ? '' : ' dolgraph'.$this->cssprefix).' center"><canvas id="canvas_'.$tag.'"></canvas></div>'."\n";
 
 		$this->stringtoshow .= '<script id="'.$tag.'">'."\n";
@@ -1044,12 +1030,18 @@ class DolGraph
 		}
 		$this->stringtoshow .= "\n";
 
-		// Special case for Graph of type 'pie' or 'polar'
-		if (isset($this->type[$firstlot]) && ($this->type[$firstlot] == 'pie' || $this->type[$firstlot] == 'polar'))
+		// Special case for Graph of type 'pie', 'piesemicircle', or 'polar'
+		if (isset($this->type[$firstlot]) && (in_array($this->type[$firstlot], array('pie', 'polar', 'piesemicircle'))))
 		{
 			$type = $this->type[$firstlot];	// pie or polar
 
-			$this->stringtoshow .= 'var options = { elements: { arc: {'."\n";
+			$this->stringtoshow .= 'var options = {'."\n";
+			if ($this->type[$firstlot] == 'piesemicircle') {
+				$this->stringtoshow .= 'circumference: Math.PI,'."\n";
+				$this->stringtoshow .= 'rotation: -Math.PI,'."\n";
+			}
+			$this->stringtoshow .= 'elements: { arc: {'."\n";
+			// Color of earch arc
 			$this->stringtoshow .= 'backgroundColor: [';
 			$i = 0; $foundnegativecolor = 0;
 			foreach($legends as $val)	// Loop on each serie
@@ -1068,7 +1060,7 @@ class DolGraph
 				$i++;
 			}
 			$this->stringtoshow .= '], '."\n";
-
+			// Border color
 			if ($foundnegativecolor) {
 				$this->stringtoshow .= 'borderColor: [';
 				$i = 0;
@@ -1092,7 +1084,7 @@ class DolGraph
 				var ctx = document.getElementById("canvas_'.$tag.'").getContext("2d");
 				var chart = new Chart(ctx, {
 			    // The type of chart we want to create
-    			type: \''.($type == 'pie' ? 'doughnut' : 'polarArea').'\',
+    			type: \''.(in_array($type, array('pie', 'piesemicircle')) ? 'doughnut' : 'polarArea').'\',
 				// Configuration options go here
     			options: options,
 				data: {
