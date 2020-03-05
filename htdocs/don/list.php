@@ -43,7 +43,7 @@ $pagenext = $page + 1;
 if (! $sortorder) $sortorder="DESC";
 if (! $sortfield) $sortfield="d.datedon";
 
-$search_status=(GETPOST("search_status", 'intcomma') != '') ? GETPOST("search_status", 'intcomma') : "-1";
+$search_status=(GETPOST("search_status", 'intcomma') != '') ? GETPOST("search_status", 'intcomma') : "-4";
 $search_all=trim((GETPOST('search_all', 'alphanohtml')!='')?GETPOST('search_all', 'alphanohtml'):GETPOST('sall', 'alphanohtml'));
 $search_ref=GETPOST('search_ref', 'alpha');
 $search_company=GETPOST('search_company', 'alpha');
@@ -60,6 +60,7 @@ if (GETPOST('button_removefilter_x', 'alpha') || GETPOST('button_removefilter.x'
 	$search_company = "";
 	$search_name = "";
 	$search_amount = "";
+	$search_status = '';
 }
 
 // Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
@@ -91,7 +92,7 @@ $sql.= " d.amount, d.fk_statut as status,";
 $sql.= " p.rowid as pid, p.ref, p.title, p.public";
 $sql.= " FROM ".MAIN_DB_PREFIX."don as d LEFT JOIN ".MAIN_DB_PREFIX."projet AS p";
 $sql.= " ON p.rowid = d.fk_projet WHERE d.entity IN (".getEntity('donation').")";
-if ($search_status != '' && $search_status != '-1')
+if ($search_status != '' && $search_status != '-4')
 {
 	$sql .= " AND d.fk_statut IN (".$db->escape($search_status).")";
 }
@@ -196,7 +197,15 @@ if ($resql)
         print '</td>';
     }
     print '<td class="liste_titre right"><input name="search_amount" class="flat" type="text" size="8" value="'.$search_amount.'"></td>';
-    print '<td class="liste_titre right"></td>';
+    print '<td class="liste_titre right">';
+    $liststatus = array(
+    	Don::STATUS_DRAFT=>$langs->trans("DonationStatusPromiseNotValidated"),
+    	Don::STATUS_VALIDATED=>$langs->trans("DonationStatusPromiseValidated"),
+    	Don::STATUS_PAID=>$langs->trans("DonationStatusPaid"),
+    	Don::STATUS_CANCELED=>$langs->trans("Canceled")
+    );
+    print $form->selectarray('search_status', $liststatus, $search_status, -4, 0, 0, '', 0, 0, 0, '', 'maxwidth100');
+    print '</td>';
     print '<td class="liste_titre maxwidthsearch">';
     $searchpicto=$form->showFilterAndCheckAddButtons(0);
     print $searchpicto;

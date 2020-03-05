@@ -159,7 +159,7 @@ $totalnb = 0;
 foreach ($listofstatus as $status)
 {
     print '<tr class="oddeven">';
-    print '<td><a href="list.php?statut='.$status.'">'.$donstatic->LibStatut($status, 4).'</a></td>';
+    print '<td><a href="list.php?search_status='.$status.'">'.$donstatic->LibStatut($status, 4).'</a></td>';
     print '<td class="right">'.(!empty($nb[$status]) ? $nb[$status] : '&nbsp;').'</td>';
     print '<td class="right">'.(!empty($nb[$status]) ?price($somme[$status], 'MT') : '&nbsp;').'</td>';
     print '<td class="right">'.(!empty($nb[$status]) ?price(price2num($somme[$status] / $nb[$status], 'MT')) : '&nbsp;').'</td>';
