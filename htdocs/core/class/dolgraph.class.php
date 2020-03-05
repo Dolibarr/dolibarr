@@ -1025,7 +1025,7 @@ class DolGraph
 		// No height for the pie grah
 		$cssfordiv = 'dolgraphchart';
 		if (isset($this->type[$firstlot]) && ($this->type[$firstlot] == 'pie' || $this->type[$firstlot] == 'polar')) $cssfordiv .= ' dolgraphcharpie';
-		$this->stringtoshow .= '<div id="placeholder_'.$tag.'" style="width:'.$this->width.(strpos($this->width, '%') > 0 ? '': 'px').';" class="'.$cssfordiv.' dolgraph'.(empty($dolxaxisvertical)?'':' '.$dolxaxisvertical).(empty($this->cssprefix) ? '' : ' dolgraph'.$this->cssprefix).' center"><canvas id="canvas_'.$tag.'"></canvas></div>'."\n";
+		$this->stringtoshow .= '<div id="placeholder_'.$tag.'" style="min-height: '.$this->height.(strpos($this->height, '%') > 0 ? '': 'px').'; width:'.$this->width.(strpos($this->width, '%') > 0 ? '': 'px').';" class="'.$cssfordiv.' dolgraph'.(empty($dolxaxisvertical)?'':' '.$dolxaxisvertical).(empty($this->cssprefix) ? '' : ' dolgraph'.$this->cssprefix).' center"><canvas id="canvas_'.$tag.'"></canvas></div>'."\n";
 
 		$this->stringtoshow .= '<script id="'.$tag.'">'."\n";
 		$i = $firstlot;
@@ -1135,12 +1135,14 @@ class DolGraph
 			if (isset($this->type[$firstlot]) && ($this->type[$firstlot] == 'lines' || $this->type[$firstlot] == 'linesnopoint')) $type = 'line';
 
 			$this->stringtoshow .= '
+				var options = { maintainAspectRatio: false, aspectRatio: 2.5 };
+
 				var ctx = document.getElementById("canvas_'.$tag.'").getContext("2d");
 				var chart = new Chart(ctx, {
 			    // The type of chart we want to create
     			type: \''.$type.'\',
 				// Configuration options go here
-    			options: {},
+    			options: options,
 				data: {
 					labels: [';
 

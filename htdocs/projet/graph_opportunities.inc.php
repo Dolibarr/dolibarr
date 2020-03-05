@@ -83,8 +83,8 @@ if (!empty($conf->global->PROJECT_USE_OPPORTUNITIES))
 	        $dolgraph->setShowLegend(1);
 	        $dolgraph->setShowPercent(1);
 	        $dolgraph->SetType(array('pie'));
-	        $dolgraph->setWidth('100%');
-	        $dolgraph->SetHeight(180);
+	        //$dolgraph->setWidth('100%');
+	        $dolgraph->SetHeight('200');
 	        $dolgraph->draw('idgraphstatus');
 	        print $dolgraph->show($totaloppnb ? 0 : 1);
 

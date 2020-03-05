@@ -115,7 +115,7 @@ if (!empty($conf->use_javascript_ajax) && ((round($third['prospect']) ? 1 : 0) +
 	$dolgraph->setShowLegend(1);
 	$dolgraph->setShowPercent(1);
 	$dolgraph->SetType(array('pie'));
-	$dolgraph->setWidth('100%');
+	$dolgraph->setHeight('200');
 	$dolgraph->draw('idgraphthirdparties');
 	print $dolgraph->show();
     print '</td></tr>'."\n";

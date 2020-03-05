@@ -183,7 +183,7 @@ if ((!empty($conf->product->enabled) || !empty($conf->service->enabled)) && ($us
 		$dolgraph->setShowLegend(1);
 		$dolgraph->setShowPercent(0);
 		$dolgraph->SetType(array('pie'));
-		$dolgraph->setWidth('100%');
+		$dolgraph->setHeight('200');
 		$dolgraph->draw('idgraphstatus');
 		print $dolgraph->show($total ? 0 : 1);
 

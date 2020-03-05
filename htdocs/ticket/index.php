@@ -110,7 +110,7 @@ if (empty($endyear)) {
 
 $startyear = $endyear - 1;
 $WIDTH = (($shownb && $showtot) || !empty($conf->dol_optimize_smallscreen)) ? '100%' : '80%';
-$HEIGHT = '228';
+$HEIGHT = '200';
 
 print '<div class="fichecenter"><div class="fichethirdleft">';
 
@@ -242,7 +242,7 @@ if (!empty($dataseries) && count($dataseries) > 1) {
         $px1->SetType(array('pie'));
         $px1->SetLegend($legend);
         $px1->SetMaxValue($px1->GetCeilMaxValue());
-        $px1->SetWidth($WIDTH);
+        //$px1->SetWidth($WIDTH);
         $px1->SetHeight($HEIGHT);
         $px1->SetYLabel($langs->trans("TicketStatByStatus"));
         $px1->SetShading(3);
@@ -327,7 +327,7 @@ if ($result) {
             print '<tr class="oddeven">';
 
             // Ref
-            print '<td class="nowrap">';
+            print '<td class="nowraponall">';
             print $tickesupstatic->getNomUrl(1);
             print "</td>\n";
 
@@ -356,7 +356,7 @@ if ($result) {
             print $objp->severity_label;
             print "</td>";
 
-            print '<td class="nowrap right">';
+            print '<td class="nowraponall right">';
             print $tickesupstatic->getLibStatut(5);
             print "</td>";
 
