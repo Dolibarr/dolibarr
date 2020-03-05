@@ -198,9 +198,12 @@ if ($conf->use_javascript_ajax)
     $dataseries[] = array($langs->trans("MembersStatusResiliated"), round($SommeD));
     $dataseries[] = array($langs->trans("MembersStatusToValid"), round($SommeA));
 
+    include_once DOL_DOCUMENT_ROOT.'/theme/'.$conf->theme.'/theme_vars.inc.php';
+
     include_once DOL_DOCUMENT_ROOT.'/core/class/dolgraph.class.php';
     $dolgraph = new DolGraph();
     $dolgraph->SetData($dataseries);
+    $dolgraph->SetDataColor(array($badgeStatus1, $badgeStatus4, $badgeStatus6, '-'.$badgeStatus0));
     $dolgraph->setShowLegend(1);
     $dolgraph->setShowPercent(1);
     $dolgraph->SetType(array('pie'));

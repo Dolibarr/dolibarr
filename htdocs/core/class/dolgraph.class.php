@@ -122,20 +122,6 @@ class DolGraph
 
     // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
-	 * Set Y precision
-	 *
-	 * @param 	float	$which_prec		Precision
-	 * @return 	boolean
-	 * @deprecated
-	 */
-	public function SetPrecisionY($which_prec)
-	{
-        // phpcs:enable
-		return true;
-	}
-
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
-	/**
 	 * Utiliser SetNumTicks ou SetHorizTickIncrement mais pas les 2
 	 *
 	 * @param 	float 		$xi		Xi
@@ -729,7 +715,6 @@ class DolGraph
 				$x++;
 			}
 
-			// TODO Avoid push by adding generated long array...
 			if (isset($this->type[$firstlot]) && $this->type[$firstlot] == 'pie')
 			{
 				foreach ($values as $x => $y) {
@@ -784,7 +769,10 @@ class DolGraph
 		if (isset($this->type[$firstlot]) && ($this->type[$firstlot] == 'pie' || $this->type[$firstlot] == 'polar'))
 		{
 			$datacolor = array();
-			foreach ($this->datacolor as $val) $datacolor[] = "#".sprintf("%02x%02x%02x", $val[0], $val[1], $val[2]);
+			foreach ($this->datacolor as $val) {
+				if (is_array($val)) $datacolor[] = "#".sprintf("%02x%02x%02x", $val[0], $val[1], $val[2]);		// If datacolor is array(R, G, B)
+				else $datacolor[] = "#".str_replace(array('#', '-'), '', $val);																	// If $val is '124' or '#124'
+			}
 
 			$urltemp = ''; // TODO Add support for url link into labels
 			$showlegend = $this->showlegend;
@@ -994,7 +982,6 @@ class DolGraph
 				$x++;
 			}
 
-			// TODO Avoid push by adding generated long array...
 			if (isset($this->type[$firstlot]) && $this->type[$firstlot] == 'pie')
 			{
 				$j = 0;
@@ -1062,22 +1049,44 @@ class DolGraph
 		{
 			$type = $this->type[$firstlot];	// pie or polar
 
-			$this->stringtoshow .= 'var options = {
-				elements: {
-					arc: {
-						backgroundColor: [';
-			$i = 0;
+			$this->stringtoshow .= 'var options = { elements: { arc: {'."\n";
+			$this->stringtoshow .= 'backgroundColor: [';
+			$i = 0; $foundnegativecolor = 0;
 			foreach($legends as $val)	// Loop on each serie
 			{
 				if ($i > 0) $this->stringtoshow .= ', '."\n";
-				$color = 'rgb('.$this->datacolor[$i][0].', '.$this->datacolor[$i][1].', '.$this->datacolor[$i][2].')';
+				if (is_array($this->datacolor[$i])) $color = 'rgb('.$this->datacolor[$i][0].', '.$this->datacolor[$i][1].', '.$this->datacolor[$i][2].')';		// If datacolor is array(R, G, B)
+				else {
+					$tmp = str_replace('#', '', $this->datacolor[$i]);
+					if (strpos($tmp, '-') !== false) {
+						$foundnegativecolor++;
+						$color = '#FFFFFF';						// If $val is '-123'
+					}
+					else $color = "#".$tmp;											// If $val is '123' or '#123'
+				}
 				$this->stringtoshow .= "'".$color."'";
 				$i++;
 			}
-			$this->stringtoshow .= ']
+			$this->stringtoshow .= '], '."\n";
+
+			if ($foundnegativecolor) {
+				$this->stringtoshow .= 'borderColor: [';
+				$i = 0;
+				foreach($legends as $val)	// Loop on each serie
+				{
+					if ($i > 0) $this->stringtoshow .= ', '."\n";
+					if (is_array($this->datacolor[$i])) $color = 'null';		// If datacolor is array(R, G, B)
+					else {
+						$tmp = str_replace('#', '', $this->datacolor[$i]);
+						if (strpos($tmp, '-') !== false) $color = '#'.str_replace('-', '', $tmp);						// If $val is '-123'
+						else $color = 'null';											// If $val is '123' or '#123'
 					}
+					$this->stringtoshow .= ($color == 'null' ? "'rgba(0,0,0,0.2)'" : "'".$color."'");
+					$i++;
 				}
-			};'."\n";
+				$this->stringtoshow .= ']';
+			}
+			$this->stringtoshow .= '} } };'."\n";
 
 			$this->stringtoshow .= '
 				var ctx = document.getElementById("canvas_'.$tag.'").getContext("2d");
