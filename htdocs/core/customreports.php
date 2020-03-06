@@ -609,7 +609,9 @@ if ($sql) {
     					//var_dump('gvaluepossiblekey='.$gvaluepossiblekey.' gvaluepossiblelabel='.$gvaluepossiblelabel.' ykeysuffix='.$ykeysuffix.' gval='.$gval.' gvalwithoutsuffix='.$gvalwithoutprefix);
     					//var_dump('fieldforg='.$fieldforg.' obj->$fieldforg='.$obj->$fieldforg.' fieldfory='.$fieldfory.' obj->$fieldfory='.$obj->$fieldfory.' fieldforybis='.$fieldforybis.' obj->$fieldforybis='.$obj->$fieldforybis);
 
-    					if (! array_key_exists('label', $data[$xi])) {
+    					if (! is_array($data[$xi])) $data[$xi] = array();
+
+						if (! array_key_exists('label', $data[$xi])) {
     						$data[$xi] = array();
     						$data[$xi]['label'] = $labeltouse;
     					}
