@@ -1267,9 +1267,7 @@ class Website extends CommonObject
 	 */
 	public function isMultiLang()
 	{
-		// TODO Can edit list of languages of web site. Return false if there is only 0 or 1 language.
-
-		return true;
+		return (empty($this->otherlang) ? false : true);
 	}
 
 	/**
