@@ -229,24 +229,39 @@ if (is_array($search_groupby) && count($search_groupby)) {
 		}
 
 		$sql = 'SELECT DISTINCT '.$fieldtocount.' as val';
-		$sql.= ' FROM '.MAIN_DB_PREFIX.$object->table_element.' as t';
+		if (strpos($fieldtocount, 'te.') === 0) {
+			$sql.= ' FROM '.MAIN_DB_PREFIX.$object->table_element.'_extrafields as te';
+		} else {
+			$sql.= ' FROM '.MAIN_DB_PREFIX.$object->table_element.' as t';
+		}
 		// TODO Add the where here
 
 		$sql.= ' LIMIT '.($MAXUNIQUEVALFORGROUP + 1);
+
+		//print $sql;
 		$resql = $db->query($sql);
 		if (!$resql) {
 			dol_print_error($db);
 		}
 
 		while ($obj = $db->fetch_object($resql)) {
-			if (is_null($obj->val)) $valuetranslated = $langs->transnoentitiesnoconv("NotDefined");
-			elseif ($obj->val === '') $valuetranslated = $langs->transnoentitiesnoconv("Empty");
-			else $valuetranslated = $obj->val;
+			if (is_null($obj->val)) {
+				$keytouse = '__NULL__';
+				$valuetranslated = $langs->transnoentitiesnoconv("NotDefined");
+			}
+			elseif ($obj->val === '') {
+				$keytouse = '';
+				$valuetranslated = $langs->transnoentitiesnoconv("Empty");
+			}
+			else {
+				$keytouse = (string) $obj->val;
+				$valuetranslated = $obj->val;
+			}
 			if (!empty($object->fields[$gvalwithoutprefix]['arrayofkeyval'])) {
 				$valuetranslated = $object->fields[$gvalwithoutprefix]['arrayofkeyval'][$obj->val];
 			}
 
-			$arrayofvaluesforgroupby['g_'.$gkey][$obj->val] = $valuetranslated;
+			$arrayofvaluesforgroupby['g_'.$gkey][$keytouse] = $valuetranslated;
 		}
 		asort($arrayofvaluesforgroupby['g_'.$gkey]);
 
@@ -537,6 +552,9 @@ foreach ($search_measures as $key => $val) {
     $legend[] = $langs->trans($arrayofmesures[$val]);
 }
 
+$useagroupby = (is_array($search_groupby) && count($search_groupby));
+//var_dump($arrayofvaluesforgroupby);
+
 // Execute the SQL request
 $totalnbofrecord = 0;
 $data = array();
@@ -546,9 +564,10 @@ if ($sql) {
         dol_print_error($db);
     }
 
-    $xi = 0; $oldlabeltouse = '';
+    $ifetch = 0; $xi = 0; $oldlabeltouse = '';
     while ($obj = $db->fetch_object($resql)) {
-    	if (is_array($search_groupby) && count($search_groupby)) {
+    	$ifetch++;
+    	if ($useagroupby) {
     		$xval = $search_xaxis[0];
     		$fieldforxkey = 'x_0';
     		$xlabel = $obj->$fieldforxkey;
@@ -564,31 +583,65 @@ if ($sql) {
     		//var_dump($labeltouse.' '.$oldlabeltouse.' '.$xi);
     		$oldlabeltouse = $labeltouse;
 
+    		/* Example of value for $arrayofvaluesforgroupby
+    		 * array (size=1)
+			 *	  'g_0' =>
+			 *	    array (size=6)
+			 *	      0 => string '0' (length=1)
+			 *	      '' => string 'Empty' (length=5)
+			 *	      '__NULL__' => string 'Not defined' (length=11)
+			 *	      'done' => string 'done' (length=4)
+			 *	      'processing' => string 'processing' (length=10)
+			 *	      'undeployed' => string 'undeployed' (length=10)
+    		 */
     		foreach ($search_measures as $key => $val) {
     			$gi = 0;
     			foreach ($search_groupby as $gkey) {
-    				//var_dump($arrayofvaluesforgroupby['g_'.$gi]);exit;
-    				foreach($arrayofvaluesforgroupby['g_'.$gi] as $gvaluepossiblekey => $gvaluepossibleval) {
-    					$ykeysuffix = $gvaluepossibleval;
+    				//var_dump('*** Fetch #'.$ifetch.' for labeltouse='.$labeltouse.' measure number '.$key.' and group g_'.$gi);
+    				//var_dump($arrayofvaluesforgroupby);
+    				foreach($arrayofvaluesforgroupby['g_'.$gi] as $gvaluepossiblekey => $gvaluepossiblelabel) {
+    					$ykeysuffix = $gvaluepossiblelabel;
     					$gvalwithoutprefix = preg_replace('/^[a-z]+\./', '', $gval);
 
-    					//var_dump('For measure '.$key.' g_'.$gi.' gvaluepossiblekey='.$gvaluepossiblekey.' gvaluepossibleval='.$gvaluepossibleval.' '.$ykeysuffix.' '.$gval.' '.$gvalwithoutprefix);
     					$fieldfory = 'y_'.$key;
     					$fieldforg = 'g_'.$gi;
     					$fieldforybis = 'y_'.$key.'_'.$ykeysuffix;
+    					//var_dump('gvaluepossiblekey='.$gvaluepossiblekey.' gvaluepossiblelabel='.$gvaluepossiblelabel.' ykeysuffix='.$ykeysuffix.' gval='.$gval.' gvalwithoutsuffix='.$gvalwithoutprefix);
+    					//var_dump('fieldforg='.$fieldforg.' obj->$fieldforg='.$obj->$fieldforg.' fieldfory='.$fieldfory.' obj->$fieldfory='.$obj->$fieldfory.' fieldforybis='.$fieldforybis.' obj->$fieldforybis='.$obj->$fieldforybis);
 
     					if (! array_key_exists('label', $data[$xi])) {
     						$data[$xi] = array();
     						$data[$xi]['label'] = $labeltouse;
     					}
 
-    					if ($obj->$fieldforg == $gvaluepossiblekey) {
-    						$data[$xi][$fieldforybis] = $obj->$fieldfory;
-    					}
-    					elseif (! isset($data[$xi][$fieldforybis])) {
-    						$data[$xi][$fieldforybis] = '0';
+    					$objfieldforg = $obj->$fieldforg;
+    					if (is_null($objfieldforg)) $objfieldforg = '__NULL__';
+
+    					if ($gvaluepossiblekey == '0') {	// $gvaluepossiblekey can have type int or string. So we create a special if, used when value is '0'
+    						//var_dump($objfieldforg); var_dump($gvaluepossiblekey);
+    						//var_dump($objfieldforg.' == \'0\' -> '.($objfieldforg == '0'));
+    						if ($objfieldforg == '0') {
+    							// The record we fetch is for this group
+    							$data[$xi][$fieldforybis] = $obj->$fieldfory;
+    						}
+    						// The record we fetch is not for this group
+    						elseif (! isset($data[$xi][$fieldforybis])) {
+    							$data[$xi][$fieldforybis] = '0';
+    						}
+    					} else {
+    						//var_dump($objfieldforg); var_dump($gvaluepossiblekey);
+    						//var_dump($objfieldforg.' === '.$gvaluepossiblekey.' -> '.($objfieldforg === $gvaluepossiblekey));
+    						if ($objfieldforg === $gvaluepossiblekey) {
+    							// The record we fetch is for this group
+    							$data[$xi][$fieldforybis] = $obj->$fieldfory;
+    						}
+    						// The record we fetch is not for this group
+    						elseif (! isset($data[$xi][$fieldforybis])) {
+    							$data[$xi][$fieldforybis] = '0';
+    						}
     					}
     				}
+    				//var_dump($data[$xi]);
     				$gi++;
     			}
     		}
@@ -615,6 +668,8 @@ if ($sql) {
 
     $totalnbofrecord = count($data);
 }
+//var_dump($data);
+
 
 print '<div class="customreportsoutput'.($totalnbofrecord ? '' : ' customreportsoutputnotdata').'">';
 

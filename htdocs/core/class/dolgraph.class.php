@@ -969,13 +969,14 @@ class DolGraph
 		// Works with line but not with bars
 		//if ($nblot > 2) $firstlot = ($nblot - 2);        // We limit nblot to 2 because jflot can't manage more than 2 bars on same x
 
-		$i = $firstlot;
 		$serie = array(); $arrayofgroupslegend = array();
+		//var_dump($this->data);
+
+		$i = $firstlot;
 		while ($i < $nblot)	// Loop on each serie
 		{
 			$values = array(); // Array with horizontal y values (specific values of a serie) for each abscisse x (with x=0,1,2,...)
 			$serie[$i] = "";
-			//var_dump($this->data);exit;
 
 			// Fill array $values
 			$x = 0;
@@ -985,7 +986,7 @@ class DolGraph
 				$array_of_ykeys = array_keys($valarray);
 				$alabelexists = 1;
 				$tmpykey = explode('_', ($array_of_ykeys[$i+($alabelexists ? 1 : 0)]), 3);
-				if (! empty($tmpykey[2])) {		// This is a group by array
+				if (! empty($tmpykey[2]) || $tmpykey[2] == '0') {		// This is a 'Group by' array
 					$tmpvalue = (array_key_exists('y_'.$tmpykey[1].'_'.$tmpykey[2], $valarray) ? $valarray['y_'.$tmpykey[1].'_'.$tmpykey[2]] : $valarray[$i + 1]);
 					$values[$x]  = (is_numeric($tmpvalue) ? $tmpvalue : null);
 					$arrayofgroupslegend[$i] = array(
@@ -1011,6 +1012,9 @@ class DolGraph
 			$values = null;	// Free mem
 			$i++;
 		}
+		//var_dump($serie);
+		//var_dump($arrayofgroupslegend);
+
 		$tag = dol_escape_htmltag(dol_string_unaccent(dol_string_nospecial(basename($file), '_', array('-', '.'))));
 
 		$this->stringtoshow = '<!-- Build using chart -->'."\n";
@@ -1152,7 +1156,6 @@ class DolGraph
 			$type = 'bar';
 			if (!isset($this->type[$firstlot]) || $this->type[$firstlot] == 'bars') $type = 'bar';
 			if (isset($this->type[$firstlot]) && ($this->type[$firstlot] == 'lines' || $this->type[$firstlot] == 'linesnopoint')) $type = 'line';
-
 
 			$this->stringtoshow .= 'var options = { maintainAspectRatio: false, aspectRatio: 2.5, ';
 			if (empty($showlegend)) {
