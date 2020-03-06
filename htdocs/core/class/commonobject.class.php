@@ -5420,7 +5420,7 @@ abstract class CommonObject
 				// Add field of attribute
 				if ($extrafields->attributes[$this->table_element]['type'][$attributeKey] != 'separate') // Only for other type than separator)
 				{
-					if ($new_array_options[$key] != '')
+					if ($new_array_options[$key] != '' || $new_array_options[$key] == '0')
 					{
 						$sql .= ",'".$this->db->escape($new_array_options[$key])."'";
 					}
@@ -5522,7 +5522,7 @@ abstract class CommonObject
 						$this->errors[] = $langs->trans("ExtraFieldHasWrongValue", $attributeLabel);
 						return -1;
 					}
-					elseif ($value == '')
+					elseif ($value === '')
 					{
 						$this->array_options["options_".$key] = null;
 					}
@@ -5535,7 +5535,7 @@ abstract class CommonObject
 						$this->errors[] = $langs->trans("ExtraFieldHasWrongValue", $attributeLabel);
 						return -1;
 					}
-					elseif ($value == '')
+					elseif ($value === '')
 					{
 						$this->array_options["options_".$key] = null;
 					}

@@ -75,6 +75,7 @@ class box_graph_product_distribution extends ModeleBoxes
 		global $conf, $user, $langs;
 
 		$this->max = $max;
+		$dir = $conf->user->dir_temp;
 
 		$refreshaction = 'refresh_'.$this->boxcode;
 
