@@ -1051,16 +1051,22 @@ class DolGraph
 		if (isset($this->type[$firstlot]) && (in_array($this->type[$firstlot], array('pie', 'polar', 'piesemicircle'))))
 		{
 			$type = $this->type[$firstlot];	// pie or polar
-
 			$this->stringtoshow .= 'var options = {'."\n";
+			$legendMaxLines= 0;	// Does not work
 			if (empty($showlegend)) {
 				$this->stringtoshow .= 'legend: { display: false }, ';
+			} else {
+				$this->stringtoshow .= 'legend: { position: \''.($showlegend == 2 ? 'right' : 'top').'\'';
+				if (! empty($legendMaxLines)) {
+					$this->stringtoshow .= ', maxLines: '.$legendMaxLines.'';
+				}
+				$this->stringtoshow .= ' }, '."\n";
 			}
+
 			if ($this->type[$firstlot] == 'piesemicircle') {
 				$this->stringtoshow .= 'circumference: Math.PI,'."\n";
 				$this->stringtoshow .= 'rotation: -Math.PI,'."\n";
 			}
-			if ($showlegend) $this->stringtoshow .= 'legend: { position: \''.($showlegend == 2 ? 'right' : 'top').'\' },'."\n";
 			$this->stringtoshow .= 'elements: { arc: {'."\n";
 			// Color of earch arc
 			$this->stringtoshow .= 'backgroundColor: [';
