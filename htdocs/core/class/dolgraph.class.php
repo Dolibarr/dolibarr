@@ -1053,6 +1053,9 @@ class DolGraph
 			$type = $this->type[$firstlot];	// pie or polar
 
 			$this->stringtoshow .= 'var options = {'."\n";
+			if (empty($showlegend)) {
+				$this->stringtoshow .= 'legend: { display: false }, ';
+			}
 			if ($this->type[$firstlot] == 'piesemicircle') {
 				$this->stringtoshow .= 'circumference: Math.PI,'."\n";
 				$this->stringtoshow .= 'rotation: -Math.PI,'."\n";

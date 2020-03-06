@@ -162,7 +162,8 @@ class box_graph_product_distribution extends ModeleBoxes
 					$i = 0; $tot = count($data1); $legend = array();
 					while ($i <= $tot)
 					{
-						$data1[$i][0] = dol_trunc($data1[$i][0], 5); // Required to avoid error "Could not draw pie with labels contained inside canvas"
+						//$data1[$i][0] = dol_trunc($data1[$i][0], 5); // Required to avoid error "Could not draw pie with labels contained inside canvas"
+						$data1[$i][0] = dol_trunc($data1[$i][0], 32);
 						$legend[] = $data1[$i][0];
 						$i++;
 					}
@@ -172,11 +173,11 @@ class box_graph_product_distribution extends ModeleBoxes
 
 					if ($nocolor) $px1->SetDataColor(array(array(220, 220, 220)));
 					$px1->SetLegend($legend);
-					$px1->setShowLegend(0);
+					$px1->setShowLegend(2);
 					$px1->setShowPointValue($showpointvalue);
 					$px1->setShowPercent(0);
 					$px1->SetMaxValue($px1->GetCeilMaxValue());
-					$px1->SetWidth($WIDTH);
+					//$px1->SetWidth($WIDTH);
 					$px1->SetHeight($HEIGHT);
 					//$px1->SetYLabel($langs->trans("NumberOfBills"));
 					$px1->SetShading(3);
@@ -230,11 +231,11 @@ class box_graph_product_distribution extends ModeleBoxes
 
 					if ($nocolor) $px2->SetDataColor(array(array(220, 220, 220)));
 					$px2->SetLegend($legend);
-					$px2->setShowLegend(0);
+					$px2->setShowLegend(2);
 					$px2->setShowPointValue($showpointvalue);
 					$px2->setShowPercent(0);
 					$px2->SetMaxValue($px2->GetCeilMaxValue());
-					$px2->SetWidth($WIDTH);
+					//$px2->SetWidth($WIDTH);
 					$px2->SetHeight($HEIGHT);
 					//$px2->SetYLabel($langs->trans("AmountOfBillsHT"));
 					$px2->SetShading(3);
@@ -289,11 +290,11 @@ class box_graph_product_distribution extends ModeleBoxes
 
 					if ($nocolor) $px3->SetDataColor(array(array(220, 220, 220)));
 					$px3->SetLegend($legend);
-					$px3->setShowLegend(0);
+					$px3->setShowLegend(2);
 					$px3->setShowPointValue($showpointvalue);
 					$px3->setShowPercent(0);
 					$px3->SetMaxValue($px3->GetCeilMaxValue());
-					$px3->SetWidth($WIDTH);
+					//$px3->SetWidth($WIDTH);
 					$px3->SetHeight($HEIGHT);
 					//$px3->SetYLabel($langs->trans("AmountOfBillsHT"));
 					$px3->SetShading(3);
