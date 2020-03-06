@@ -603,7 +603,7 @@ if ($sql) {
     $xi = 0; $oldlabeltouse = '';
     while ($obj = $db->fetch_object($resql)) {
     	if (is_array($search_groupby) && count($search_groupby)) {
-    		$xval = 'x_0';
+    		$xval = $search_xaxis[0];
     		$fieldforxkey = 'x_0';
     		$xlabel = $obj->$fieldforxkey;
     		$xvalwithoutprefix = preg_replace('/^[a-z]+\./', '', $xval);
@@ -647,13 +647,15 @@ if ($sql) {
     			}
     		}
     	} else {	// No group by
-    		$xval = 'x_0';
+    		$xval = $search_xaxis[0];
     		$fieldforxkey = 'x_0';
     		$xlabel = $obj->$fieldforxkey;
     		$xvalwithoutprefix = preg_replace('/^[a-z]+\./', '', $xval);
+
     		if (!empty($object->fields[$xvalwithoutprefix]['arrayofkeyval'])) {
     			$xlabel = $object->fields[$xvalwithoutprefix]['arrayofkeyval'][$obj->$fieldforxkey];
     		}
+
     		$labeltouse = (($xlabel || $xlabel == '0') ? dol_trunc($xlabel, 20, 'middle') : ($xlabel === '' ? $langs->trans("Empty") : $langs->trans("NotDefined")));
     		$xarrayforallseries = array('label' => $labeltouse);
     		foreach ($search_measures as $key => $val) {

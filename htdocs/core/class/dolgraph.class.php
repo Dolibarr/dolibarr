@@ -976,6 +976,7 @@ class DolGraph
 			$values = array(); // Array with horizontal y values (specific values of a serie) for each abscisse x (with x=0,1,2,...)
 			$serie[$i] = "";
 			//var_dump($this->data);exit;
+
 			// Fill array $values
 			$x = 0;
 			foreach ($this->data as $valarray)	// Loop on each x
