@@ -108,9 +108,6 @@ elseif (is_array($hookmanager->resArray)) {
 	        $arrayoftype[$key] = $val;
 	    }
 	}
-	if (!empty($hookmanager->resArray['modenotusedforlist'])) {		// Show objecttype selection even if objecttype is set
-		$modenotusedforlist = $hookmanager->resArray['modenotusedforlist'];
-	}
 }
 
 if ($objecttype) {
@@ -145,6 +142,22 @@ $search_array_options = $extrafields->getOptionalsFromPost($object->table_elemen
 
 $search_component_params = array('');
 
+$MAXUNIQUEVALFORGROUP = 20;
+$MAXMEASURESINBARGRAPH = 20;
+$YYYY=substr($langs->trans("Year"), 0, 1).substr($langs->trans("Year"), 0, 1).substr($langs->trans("Year"), 0, 1).substr($langs->trans("Year"), 0, 1);
+$MM=substr($langs->trans("Month"), 0, 1).substr($langs->trans("Month"), 0, 1);
+$DD=substr($langs->trans("Day"), 0, 1).substr($langs->trans("Day"), 0, 1);
+$HH=substr($langs->trans("Hour"), 0, 1).substr($langs->trans("Hour"), 0, 1);
+$MI=substr($langs->trans("Minute"), 0, 1).substr($langs->trans("Minute"), 0, 1);
+$SS=substr($langs->trans("Second"), 0, 1).substr($langs->trans("Second"), 0, 1);
+
+$arrayofmesures = array('t.count'=>'Count');
+$arrayofxaxis = array();
+$arrayofgroupby = array();
+$arrayofyaxis = array();
+$arrayofvaluesforgroupby = array();
+
+
 
 /*
  * Actions
@@ -175,16 +188,71 @@ if ($action == 'viewgraph') {
 		$search_xaxis = array(0 => $search_xaxis[0]);
 	}
 	if (count($search_groupby) >= 2) {
-		setEventMessages($langs->trans("OnlyOneFieldForGroupByIsPossible"), null, 'warnings');
-		$search_groupby = array(0 => $search_groupb[0]);
+		setEventMessages($langs->trans("ErrorOnlyOneFieldForGroupByIsPossible"), null, 'warnings');
+		$search_groupby = array(0 => $search_groupby[0]);
 	}
 	if (!count($search_xaxis)) {
 		setEventMessages($langs->trans("AtLeastOneXAxisIsRequired"), null, 'warnings');
-	} elseif ($mode == 'graph' && $search_graph == 'bars' && count($search_measures) > 3) {
-		setEventMessages($langs->trans("GraphInBarsAreLimitedTo3Measures"), null, 'warnings');
+	} elseif ($mode == 'graph' && $search_graph == 'bars' && count($search_measures) > $MAXMEASURESINBARGRAPH) {
+		$langs->load("errors");
+		setEventMessages($langs->trans("GraphInBarsAreLimitedToNMeasures", $MAXMEASURESINBARGRAPH), null, 'warnings');
 		$search_graph = 'lines';
 	}
 }
+
+
+// Get all possible values of fields when a 'group by' is set and save this into $arrayofvaluesforgroupby
+if (is_array($search_groupby) && count($search_groupby)) {
+	foreach($search_groupby as $gkey => $gval) {
+		$gvalwithoutprefix = preg_replace('/^[a-z]+\./', '', $gval);
+
+		if (preg_match('/\-year$/', $search_groupby[$gkey])) {
+			$tmpval = preg_replace('/\-year$/', '', $search_groupby[$gkey]);
+			$fieldtocount .= 'DATE_FORMAT('.$tmpval.", '%Y')";
+		} elseif (preg_match('/\-month$/', $search_groupby[$gkey])) {
+			$tmpval = preg_replace('/\-month$/', '', $search_groupby[$gkey]);
+			$fieldtocount .= 'DATE_FORMAT('.$tmpval.", '%Y-%m')";
+		} elseif (preg_match('/\-day$/', $search_groupby[$gkey])) {
+			$tmpval = preg_replace('/\-day$/', '', $search_groupby[$gkey]);
+			$fieldtocount .= 'DATE_FORMAT('.$tmpval.", '%Y-%m-%d')";
+		} else {
+			$fieldtocount = $search_groupby[$gkey];
+		}
+
+		$sql = 'SELECT DISTINCT '.$fieldtocount.' as val';
+		$sql.= ' FROM '.MAIN_DB_PREFIX.$object->table_element.' as t';
+		// TODO Add the where here
+
+		$sql.= ' LIMIT '.($MAXUNIQUEVALFORGROUP + 1);
+		$resql = $db->query($sql);
+		if (!$resql) {
+			dol_print_error($db);
+		}
+
+		while ($obj = $db->fetch_object($resql)) {
+			$valuetranslated = $obj->val;
+			if (!empty($object->fields[$gvalwithoutprefix]['arrayofkeyval'])) {
+				$valuetranslated = $object->fields[$gvalwithoutprefix]['arrayofkeyval'][$obj->val];
+			}
+
+			$arrayofvaluesforgroupby['g_'.$gkey][$obj->val] = $valuetranslated;
+		}
+		asort($arrayofvaluesforgroupby['g_'.$gkey]);
+
+		if (count($arrayofvaluesforgroupby['g_'.$gkey]) > $MAXUNIQUEVALFORGROUP) {
+			$langs->load("errors");
+			//var_dump($gkey.' '.$gval.' '.$gvalwithoutprefix);
+			$gvalwithoutprefix = preg_replace('/\-(year|month|day)/', '', $gvalwithoutprefix);
+			$labeloffield = $langs->transnoentitiesnoconv($object->fields[$gvalwithoutprefix]['label']);
+			setEventMessages($langs->trans("ErrorTooManyDifferentValueForSelectedGroupBy", $MAXUNIQUEVALFORGROUP, $labeloffield), null, 'warnings');
+			$search_groupby = array();
+		}
+
+		$db->free($resql);
+	}
+}
+//var_dump($arrayofvaluesforgroupby);exit;
+
 
 $tmparray = dol_getdate(dol_now());
 $endyear = $tmparray['year'];
@@ -193,12 +261,6 @@ $datelastday = dol_get_last_day($endyear, $endmonth, 1);
 $startyear = $endyear - 2;
 
 $param = '';
-
-$arrayofmesures = array('t.count'=>'Count');
-$arrayofxaxis = array();
-$arrayofgroupby = array();
-$arrayofyaxis = array();
-$arrayofvaluesforgroupby = array();
 
 print '<form method="post" action="'.$_SERVER['PHP_SELF'].'">';
 print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
@@ -277,9 +339,9 @@ foreach ($object->fields as $key => $val) {
 		if (preg_match('/^pass/', $key)) continue;
 		if (in_array($val['type'], array('html', 'text'))) continue;
 		if (in_array($val['type'], array('timestamp', 'date', 'datetime'))) {
-			$arrayofgroupby['t.'.$key.'-year'] = array('label' => $langs->trans($val['label']).' ('.$langs->trans("Year").')', 'position' => $val['position'].'-y');
-			$arrayofgroupby['t.'.$key.'-month'] = array('label' => $langs->trans($val['label']).' ('.$langs->trans("Month").')', 'position' => $val['position'].'-m');
-			$arrayofgroupby['t.'.$key.'-day'] = array('label' => $langs->trans($val['label']).' ('.$langs->trans("Day").')', 'position' => $val['position'].'-d');
+			$arrayofgroupby['t.'.$key.'-year'] = array('label' => $langs->trans($val['label']).' ('.$YYYY.')', 'position' => $val['position'].'-y');
+			$arrayofgroupby['t.'.$key.'-month'] = array('label' => $langs->trans($val['label']).' ('.$YYYY.'-'.$MM.')', 'position' => $val['position'].'-m');
+			$arrayofgroupby['t.'.$key.'-day'] = array('label' => $langs->trans($val['label']).' ('.$YYYY.'-'.$MM.'-'.$DD.')', 'position' => $val['position'].'-d');
 		} else {
 			$arrayofgroupby['t.'.$key] = array('label' => $val['label'], 'position' => (int) $val['position']);
 		}
@@ -316,9 +378,9 @@ foreach ($object->fields as $key => $val) {
         if (preg_match('/^pass/', $key)) continue;
         if (in_array($val['type'], array('html', 'text'))) continue;
         if (in_array($val['type'], array('timestamp', 'date', 'datetime'))) {
-            $arrayofxaxis['t.'.$key.'-year'] = array('label' => $langs->trans($val['label']).' ('.$langs->trans("Year").')', 'position' => $val['position'].'-y');
-            $arrayofxaxis['t.'.$key.'-month'] = array('label' => $langs->trans($val['label']).' ('.$langs->trans("Month").')', 'position' => $val['position'].'-m');
-            $arrayofxaxis['t.'.$key.'-day'] = array('label' => $langs->trans($val['label']).' ('.$langs->trans("Day").')', 'position' => $val['position'].'-d');
+        	$arrayofxaxis['t.'.$key.'-year'] = array('label' => $langs->trans($val['label']).' ('.$YYYY.')', 'position' => $val['position'].'-y');
+            $arrayofxaxis['t.'.$key.'-month'] = array('label' => $langs->trans($val['label']).' ('.$YYYY.'-'.$MM.')', 'position' => $val['position'].'-m');
+            $arrayofxaxis['t.'.$key.'-day'] = array('label' => $langs->trans($val['label']).' ('.$YYYY.'-'.$MM.'-'.$DD.')', 'position' => $val['position'].'-d');
         } else {
             $arrayofxaxis['t.'.$key] = array('label' => $val['label'], 'position' => (int) $val['position']);
         }
@@ -350,9 +412,9 @@ if ($mode == 'grid') {
             if (preg_match('/^fk_/', $key)) continue;
             if (in_array($val['type'], array('html', 'text'))) continue;
             if (in_array($val['type'], array('timestamp', 'date', 'datetime'))) {
-                $arrayofyaxis['t.'.$key.'-year'] = array('label' => $langs->trans($val['label']).' ('.$langs->trans("Year").')', 'position' => $val['position']);
-                $arrayofyaxis['t.'.$key.'-month'] = array('label' => $langs->trans($val['label']).' ('.$langs->trans("Month").')', 'position' => $val['position']);
-                $arrayofyaxis['t.'.$key.'-day'] = array('label' => $langs->trans($val['label']).' ('.$langs->trans("Day").')', 'position' => $val['position']);
+            	$arrayofyaxis['t.'.$key.'-year'] = array('label' => $langs->trans($val['label']).' ('.$YYYY.')', 'position' => $val['position']);
+                $arrayofyaxis['t.'.$key.'-month'] = array('label' => $langs->trans($val['label']).' ('.$YYYY.'-'.$MM.')', 'position' => $val['position']);
+                $arrayofyaxis['t.'.$key.'-day'] = array('label' => $langs->trans($val['label']).' ('.$YYYY.'-'.$MM.'-'.$DD.')', 'position' => $val['position']);
             } else {
                 $arrayofyaxis['t.'.$key] = array('label' => $val['label'], 'position' => (int) $val['position']);
             }
@@ -389,20 +451,6 @@ print '</div>';
 print '</div>';
 print '</form>';
 
-
-// Get all possible values of fields when a group by is set
-if (is_array($search_groupby) && count($search_groupby)) {
-	$sql = 'SELECT DISTINCT '.$search_groupby[0].' as val FROM '.MAIN_DB_PREFIX.$object->table_element.' as t';
-	$resql = $db->query($sql);
-	if (!$resql) {
-		dol_print_error($db);
-	}
-
-	while ($obj = $db->fetch_object($resql)) {
-		$arrayofvaluesforgroupby[$obj->val] = $obj->val;
-	}
-}
-
 // Generate the SQL request
 $sql = '';
 if (!empty($search_measures) && !empty($search_xaxis))
@@ -426,15 +474,15 @@ if (!empty($search_measures) && !empty($search_xaxis))
     foreach ($search_groupby as $key => $val) {
     	if (preg_match('/\-year$/', $val)) {
     		$tmpval = preg_replace('/\-year$/', '', $val);
-    		$sql .= 'DATE_FORMAT('.$tmpval.", '%Y'), ";
+    		$sql .= 'DATE_FORMAT('.$tmpval.", '%Y') as g_".$key.', ';
     	} elseif (preg_match('/\-month$/', $val)) {
     		$tmpval = preg_replace('/\-month$/', '', $val);
-    		$sql .= 'DATE_FORMAT('.$tmpval.", '%Y-%m'), ";
+    		$sql .= 'DATE_FORMAT('.$tmpval.", '%Y-%m') as g_".$key.', ';
     	} elseif (preg_match('/\-day$/', $val)) {
     		$tmpval = preg_replace('/\-day$/', '', $val);
-    		$sql .= 'DATE_FORMAT('.$tmpval.", '%Y-%m-%d'), ";
+    		$sql .= 'DATE_FORMAT('.$tmpval.", '%Y-%m-%d') as g_".$key.', ';
     	}
-    	else $sql .= $val.', ';
+    	else $sql .= $val.' as g_'.$key.', ';
     }
     foreach ($search_measures as $key => $val) {
         if ($val == 't.count') $sql .= 'COUNT(t.'.$fieldid.') as y_'.$key.', ';
@@ -519,9 +567,22 @@ if (!empty($search_measures) && !empty($search_xaxis))
         }
         else $sql .= $val.', ';
     }
+    foreach ($search_groupby as $key => $val) {
+    	if (preg_match('/\-year$/', $val)) {
+    		$tmpval = preg_replace('/\-year$/', '', $val);
+    		$sql .= 'DATE_FORMAT('.$tmpval.", '%Y'), ";
+    	} elseif (preg_match('/\-month$/', $val)) {
+    		$tmpval = preg_replace('/\-month$/', '', $val);
+    		$sql .= 'DATE_FORMAT('.$tmpval.", '%Y-%m'), ";
+    	} elseif (preg_match('/\-day$/', $val)) {
+    		$tmpval = preg_replace('/\-day$/', '', $val);
+    		$sql .= 'DATE_FORMAT('.$tmpval.", '%Y-%m-%d'), ";
+    	}
+    	else $sql .= $val.', ';
+    }
     $sql = preg_replace('/,\s*$/', '', $sql);
 }
-
+//print $sql;
 
 $legend = array();
 foreach ($search_measures as $key => $val) {
@@ -537,27 +598,74 @@ if ($sql) {
         dol_print_error($db);
     }
 
+    $xi = 0; $oldlabeltouse = '';
     while ($obj = $db->fetch_object($resql)) {
-        // $this->data  = array(array(0=>'labelxA',1=>yA1,...,n=>yAn), array('labelxB',yB1,...yBn));   // or when there is n series to show for each x
-        foreach ($search_xaxis as $xkey => $xval) {
-            $fieldforxkey = 'x_'.$xkey;
-            $xlabel = $obj->$fieldforxkey;
-            $xvalwithoutprefix = preg_replace('/^[a-z]+\./', '', $xval);
-            if (!empty($object->fields[$xvalwithoutprefix]['arrayofkeyval'])) {
-                $xlabel = $object->fields[$xvalwithoutprefix]['arrayofkeyval'][$obj->$fieldforxkey];
-            }
-            $xarray = array(0 => (($xlabel || $xlabel == '0') ? dol_trunc($xlabel, 20, 'middle') : $langs->trans("NotDefined")));
-            foreach ($search_measures as $key => $val) {
-                $fieldfory = 'y_'.$key;
-                $xarray[] = $obj->$fieldfory;
-            }
-            $data[] = $xarray;
-        }
+    	if (is_array($search_groupby) && count($search_groupby)) {
+    		$xval = 'x_0';
+    		$fieldforxkey = 'x_0';
+    		$xlabel = $obj->$fieldforxkey;
+    		$xvalwithoutprefix = preg_replace('/^[a-z]+\./', '', $xval);
+    		if (!empty($object->fields[$xvalwithoutprefix]['arrayofkeyval'])) {
+    			$xlabel = $object->fields[$xvalwithoutprefix]['arrayofkeyval'][$obj->$fieldforxkey];
+    		}
+    		$labeltouse = (($xlabel || $xlabel == '0') ? dol_trunc($xlabel, 20, 'middle') : ($xlabel === '' ? $langs->trans("Empty") : $langs->trans("NotDefined")));
+
+    		if ($oldlabeltouse && ($labeltouse != $oldlabeltouse)) {
+    			$xi++;	// Increase $xi
+    		}
+    		//var_dump($labeltouse.' '.$oldlabeltouse.' '.$xi);
+    		$oldlabeltouse = $labeltouse;
+
+    		foreach ($search_measures as $key => $val) {
+    			$gi = 0;
+    			foreach ($search_groupby as $gkey) {
+    				//var_dump($arrayofvaluesforgroupby['g_'.$gi]);exit;
+    				foreach($arrayofvaluesforgroupby['g_'.$gi] as $gvaluepossiblekey => $gvaluepossibleval) {
+    					$ykeysuffix = $gvaluepossibleval;
+    					$gvalwithoutprefix = preg_replace('/^[a-z]+\./', '', $gval);
+
+    					//var_dump('For measure '.$key.' g_'.$gi.' gvaluepossiblekey='.$gvaluepossiblekey.' gvaluepossibleval='.$gvaluepossibleval.' '.$ykeysuffix.' '.$gval.' '.$gvalwithoutprefix);
+    					$fieldfory = 'y_'.$key;
+    					$fieldforg = 'g_'.$gi;
+    					$fieldforybis = 'y_'.$key.'_'.$ykeysuffix;
+
+    					if (! array_key_exists('label', $data[$xi])) {
+    						$data[$xi] = array();
+    						$data[$xi]['label'] = $labeltouse;
+    					}
+
+    					if ($obj->$fieldforg == $gvaluepossiblekey) {
+    						$data[$xi][$fieldforybis] = $obj->$fieldfory;
+    					}
+    					elseif (! isset($data[$xi][$fieldforybis])) {
+    						$data[$xi][$fieldforybis] = '0';
+    					}
+    				}
+    				$gi++;
+    			}
+    		}
+    	} else {	// No group by
+    		$xval = 'x_0';
+    		$fieldforxkey = 'x_0';
+    		$xlabel = $obj->$fieldforxkey;
+    		$xvalwithoutprefix = preg_replace('/^[a-z]+\./', '', $xval);
+    		if (!empty($object->fields[$xvalwithoutprefix]['arrayofkeyval'])) {
+    			$xlabel = $object->fields[$xvalwithoutprefix]['arrayofkeyval'][$obj->$fieldforxkey];
+    		}
+    		$labeltouse = (($xlabel || $xlabel == '0') ? dol_trunc($xlabel, 20, 'middle') : ($xlabel === '' ? $langs->trans("Empty") : $langs->trans("NotDefined")));
+    		$xarrayforallseries = array('label' => $labeltouse);
+    		foreach ($search_measures as $key => $val) {
+    			$fieldfory = 'y_'.$key;
+    			$xarrayforallseries[$fieldfory] = $obj->$fieldfory;
+    		}
+    		$data[$xi] = $xarrayforallseries;
+    		$xi++;
+    	}
     }
 
     $totalnbofrecord = count($data);
 }
-
+//var_dump($data);
 
 print '<div class="customreportsoutput'.($totalnbofrecord ? '' : ' customreportsoutputnotdata').'">';
 
@@ -569,7 +677,7 @@ if ($mode == 'grid') {
 if ($mode == 'graph') {
     $WIDTH = '80%';
     $HEIGHT = 200;
-    var_dump($data);
+
     // Show graph
     $px1 = new DolGraph();
     $mesg = $px1->isGraphKo();

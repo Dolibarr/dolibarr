@@ -970,18 +970,32 @@ class DolGraph
 		//if ($nblot > 2) $firstlot = ($nblot - 2);        // We limit nblot to 2 because jflot can't manage more than 2 bars on same x
 
 		$i = $firstlot;
-		$serie = array();
+		$serie = array(); $arrayofgroupslegend = array();
 		while ($i < $nblot)	// Loop on each serie
 		{
-			$values = array(); // Array with horizontal y values (specific values of a serie) for each abscisse x
+			$values = array(); // Array with horizontal y values (specific values of a serie) for each abscisse x (with x=0,1,2,...)
 			$serie[$i] = "";
-
+			//var_dump($this->data);exit;
 			// Fill array $values
 			$x = 0;
 			foreach ($this->data as $valarray)	// Loop on each x
 			{
-				$legends[$x] = $valarray[0];
-				$values[$x]  = (is_numeric($valarray[$i + 1]) ? $valarray[$i + 1] : null);
+				$legends[$x] = (array_key_exists('label', $valarray) ? $valarray['label'] : $valarray[0]);
+				$array_of_ykeys = array_keys($valarray);
+				$alabelexists = 1;
+				$tmpykey = explode('_', ($array_of_ykeys[$i+($alabelexists ? 1 : 0)]), 3);
+				if (! empty($tmpykey[2])) {		// This is a group by array
+					$tmpvalue = (array_key_exists('y_'.$tmpykey[1].'_'.$tmpykey[2], $valarray) ? $valarray['y_'.$tmpykey[1].'_'.$tmpykey[2]] : $valarray[$i + 1]);
+					$values[$x]  = (is_numeric($tmpvalue) ? $tmpvalue : null);
+					$arrayofgroupslegend[$i] = array(
+						'stacknum'=> $tmpykey[1],
+						'legend' => $this->Legend[$tmpykey[1]],
+						'legendwithgroup' => $this->Legend[$tmpykey[1]].' - '.$tmpykey[2]
+					);
+				} else {
+					$tmpvalue = (array_key_exists('y_'.$i, $valarray) ? $valarray['y_'.$i] : $valarray[$i + 1]);
+					$values[$x]  = (is_numeric($tmpvalue) ? $tmpvalue : null);
+				}
 				$x++;
 			}
 
@@ -993,7 +1007,7 @@ class DolGraph
 				}
 			}
 
-			unset($values);
+			$values = null;	// Free mem
 			$i++;
 		}
 		$tag = dol_escape_htmltag(dol_string_unaccent(dol_string_nospecial(basename($file), '_', array('-', '.'))));
@@ -1129,9 +1143,14 @@ class DolGraph
 			if (!isset($this->type[$firstlot]) || $this->type[$firstlot] == 'bars') $type = 'bar';
 			if (isset($this->type[$firstlot]) && ($this->type[$firstlot] == 'lines' || $this->type[$firstlot] == 'linesnopoint')) $type = 'line';
 
-			$this->stringtoshow .= '
-				var options = { maintainAspectRatio: false, aspectRatio: 2.5 };
 
+			$this->stringtoshow .= 'var options = { maintainAspectRatio: false, aspectRatio: 2.5';
+			if (count($arrayofgroupslegend) > 0) {
+				$this->stringtoshow .= ', scales: {xAxes: [{ stacked: true, }], yAxes: [{ stacked: true }] }';
+			}
+			$this->stringtoshow .= '};';
+
+			$this->stringtoshow .= '
 				var ctx = document.getElementById("canvas_'.$tag.'").getContext("2d");
 				var chart = new Chart(ctx, {
 			    // The type of chart we want to create
@@ -1149,24 +1168,59 @@ class DolGraph
 				$i++;
 			}
 
+			//var_dump($arrayofgroupslegend);
+
 			$this->stringtoshow .= '],
 					datasets: [';
-			$i = 0;
+
+			$i = 0; $iinstack = 0;
+			$oldstacknum = -1;
 			while ($i < $nblot)	// Loop on each serie
 			{
-				$color = 'rgb('.$this->datacolor[$i][0].', '.$this->datacolor[$i][1].', '.$this->datacolor[$i][2].')';
-				//$color = (!empty($data['seriescolor']) ? json_encode($data['seriescolor']) : json_encode($datacolor));
+				if (count($arrayofgroupslegend[$i]) > 0) {	// We used a 'group by'
+					// If we change the stack
+					$newcolor = $this->datacolor[$arrayofgroupslegend[$i]['stacknum']];
+					if ($oldstacknum == -1 || $arrayofgroupslegend[$i]['stacknum'] != $oldstacknum) {
+						$iinstack = 0;
+						//var_dump('iinstack='.$iinstack.' - '.colorArrayToHex($newcolor));
+					} else {
+						// Change color with offset of $$iinstack
+						//var_dump($newcolor);
+						$ratio = max(-90, -10 * $iinstack);
+						$brightnessratio = min(90, 20 * $iinstack);
+						$newcolor = array_values(colorHexToRgb(colorAgressiveness(colorArrayToHex($newcolor), $ratio, $brightnessratio), false, true));
+						//var_dump($ratio.' '.$brightnessratio);
+						//var_dump($newcolor);
+					}
+					$oldstacknum = $arrayofgroupslegend[$i]['stacknum'];
 
-				if ($i > 0) $this->stringtoshow .= ', '."\n";
-				$this->stringtoshow .= '{'."\n";
-				$this->stringtoshow .= 'label: "'.$this->Legend[$i].'",';
+					$color = 'rgb('.$newcolor[0].', '.$newcolor[1].', '.$newcolor[2].', 0.9)';
+					$bordercolor = 'rgb('.$newcolor[0].', '.$newcolor[1].', '.$newcolor[2].')';
+					$textoflegend = $arrayofgroupslegend[$i]['legendwithgroup'];
+
+				} else {
+					$color = 'rgb('.$this->datacolor[$i][0].', '.$this->datacolor[$i][1].', '.$this->datacolor[$i][2].', 0.9)';
+					$bordercolor = $color;
+					//$color = (!empty($data['seriescolor']) ? json_encode($data['seriescolor']) : json_encode($datacolor));
+					$textoflegend = $this->Legend[$i];
+				}
+
+				if ($i > 0) $this->stringtoshow .= ', ';
+				$this->stringtoshow .= "\n";
+				$this->stringtoshow .= '{';
+				$this->stringtoshow .= 'dolibarrinfo: \'y_'.$i.'\', ';
+				$this->stringtoshow .= 'label: \''.dol_escape_js(dol_string_nohtmltag($textoflegend)).'\', ';
 				$this->stringtoshow .= 'pointStyle: \''.($this->type[$i] == 'linesnopoint' ? 'line' : 'circle').'\', ';
 				$this->stringtoshow .= 'fill: '.($type == 'bar' ? 'true' : 'false').', ';
-				$this->stringtoshow .= 'borderColor: \''.$color.'\', ';
+				$this->stringtoshow .= 'borderWidth: \'1\', ';
+				$this->stringtoshow .= 'borderColor: \''.$bordercolor.'\', ';
 				$this->stringtoshow .= 'backgroundColor: \''.$color.'\', ';
-				$this->stringtoshow .= '  data: ['.$serie[$i].']';
+				if ($arrayofgroupslegend[$i]) $this->stringtoshow .= 'stack: \''.$arrayofgroupslegend[$i]['stacknum'].'\', ';
+				$this->stringtoshow .= 'data: ['.$serie[$i].']';
 				$this->stringtoshow .= '}'."\n";
+
 				$i++;
+				$iinstack++;
 			}
 			$this->stringtoshow .= ']'."\n";
 			$this->stringtoshow .= '}'."\n";
