@@ -111,19 +111,18 @@ class Orders extends DolibarrApi
      * @param       int         $id            ID of order
 	 * @param		string		$ref			Ref of object
 	 * @param		string		$ref_ext		External reference of object
-	 * @param		string		$ref_int		Internal reference of other objec
      * @param       int         $contact_list  0: Returned array of contacts/addresses contains all properties, 1: Return array contains just id
      * @return 	array|mixed data without useless information
      *
      * @throws 	RestException
      */
-    private function _fetch($id, $ref = '', $ref_ext = '', $ref_int = '', $contact_list = 1)
+    private function _fetch($id, $ref = '', $ref_ext = '', $contact_list = 1)
     {
         if(! DolibarrApiAccess::$user->rights->commande->lire) {
             throw new RestException(401);
         }
 
-        $result = $this->commande->fetch($id, $ref, $ref_ext, $ref_int);
+        $result = $this->commande->fetch($id, $ref, $ref_ext);
         if( ! $result ) {
             throw new RestException(404, 'Order not found');
         }

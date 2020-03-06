@@ -260,7 +260,7 @@ class Propal extends CommonObject
 		'ref' =>array('type'=>'varchar(30)', 'label'=>'Ref', 'enabled'=>1, 'visible'=>-1, 'notnull'=>1, 'showoncombobox'=>1, 'position'=>30),
 		'entity' =>array('type'=>'integer', 'label'=>'Entity', 'default'=>1, 'enabled'=>1, 'visible'=>-2, 'notnull'=>1, 'position'=>35, 'index'=>1),
 		'ref_ext' =>array('type'=>'varchar(255)', 'label'=>'Ref ext', 'enabled'=>1, 'visible'=>0, 'position'=>40),
-		'ref_int' =>array('type'=>'varchar(255)', 'label'=>'Ref int', 'enabled'=>1, 'visible'=>-1, 'position'=>45),
+		'ref_int' =>array('type'=>'varchar(255)', 'label'=>'Ref int', 'enabled'=>1, 'visible'=>0, 'position'=>45),	// deprecated
 		'ref_client' =>array('type'=>'varchar(255)', 'label'=>'Ref client', 'enabled'=>1, 'visible'=>-1, 'position'=>50),
 		'datec' =>array('type'=>'datetime', 'label'=>'DateCreation', 'enabled'=>1, 'visible'=>-1, 'position'=>55),
 		'datep' =>array('type'=>'date', 'label'=>'Datep', 'enabled'=>1, 'visible'=>-1, 'position'=>60),
@@ -1453,9 +1453,10 @@ class Propal extends CommonObject
 	 *
 	 *	@param      int			$rowid		id of object to load
 	 *	@param		string		$ref		Ref of proposal
+	 *	@param		string		$ref_ext	Ref ext of proposal
 	 *	@return     int         			>0 if OK, <0 if KO
 	 */
-    public function fetch($rowid, $ref = '')
+    public function fetch($rowid, $ref = '', $ref_ext = '')
 	{
 		$sql = "SELECT p.rowid, p.ref, p.entity, p.remise, p.remise_percent, p.remise_absolue, p.fk_soc";
 		$sql .= ", p.total, p.tva, p.localtax1, p.localtax2, p.total_ht";

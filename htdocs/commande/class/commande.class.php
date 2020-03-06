@@ -101,6 +101,7 @@ class Commande extends CommonOrder
 
     /**
 	 * @var string Internal ref for order
+	 * @deprecated
 	 */
 	public $ref_int;
 
@@ -269,7 +270,7 @@ class Commande extends CommonOrder
 		'ref' =>array('type'=>'varchar(30)', 'label'=>'Ref', 'enabled'=>1, 'visible'=>-1, 'notnull'=>1, 'showoncombobox'=>1, 'position'=>30),
 		'entity' =>array('type'=>'integer', 'label'=>'Entity', 'default'=>1, 'enabled'=>1, 'visible'=>-2, 'notnull'=>1, 'position'=>35, 'index'=>1),
 		'ref_ext' =>array('type'=>'varchar(255)', 'label'=>'Ref ext', 'enabled'=>1, 'visible'=>0, 'position'=>40),
-		'ref_int' =>array('type'=>'varchar(255)', 'label'=>'Ref int', 'enabled'=>1, 'visible'=>-1, 'position'=>45),
+		'ref_int' =>array('type'=>'varchar(255)', 'label'=>'Ref int', 'enabled'=>1, 'visible'=>0, 'position'=>45),	// deprecated
 		'ref_client' =>array('type'=>'varchar(255)', 'label'=>'Ref client', 'enabled'=>1, 'visible'=>-1, 'position'=>50),
 		'date_creation' =>array('type'=>'datetime', 'label'=>'Date creation', 'enabled'=>1, 'visible'=>-1, 'position'=>55),
 		'date_valid' =>array('type'=>'datetime', 'label'=>'DateValidation', 'enabled'=>1, 'visible'=>-1, 'position'=>60),
@@ -1773,13 +1774,13 @@ class Commande extends CommonOrder
 	 *	@param      int			$id       		Id of object to load
 	 * 	@param		string		$ref			Ref of object
 	 * 	@param		string		$ref_ext		External reference of object
-	 * 	@param		string		$ref_int		Internal reference of other object
+	 * 	@param		string		$notused		Internal reference of other object
 	 *	@return     int         				>0 if OK, <0 if KO, 0 if not found
 	 */
-	public function fetch($id, $ref = '', $ref_ext = '', $ref_int = '')
+	public function fetch($id, $ref = '', $ref_ext = '', $notused = '')
 	{
 		// Check parameters
-		if (empty($id) && empty($ref) && empty($ref_ext) && empty($ref_int)) return -1;
+		if (empty($id) && empty($ref) && empty($ref_ext)) return -1;
 
 		$sql = 'SELECT c.rowid, c.entity, c.date_creation, c.ref, c.fk_soc, c.fk_user_author, c.fk_user_valid, c.fk_statut';
 		$sql .= ', c.amount_ht, c.total_ht, c.total_ttc, c.tva as total_tva, c.localtax1 as total_localtax1, c.localtax2 as total_localtax2, c.fk_cond_reglement, c.fk_mode_reglement, c.fk_availability, c.fk_input_reason';
@@ -1810,7 +1811,7 @@ class Commande extends CommonOrder
 
 		if ($ref)     $sql .= " AND c.ref='".$this->db->escape($ref)."'";
 		if ($ref_ext) $sql .= " AND c.ref_ext='".$this->db->escape($ref_ext)."'";
-		if ($ref_int) $sql .= " AND c.ref_int='".$this->db->escape($ref_int)."'";
+		if ($notused) $sql .= " AND c.ref_int='".$this->db->escape($notused)."'";
 
 		dol_syslog(get_class($this)."::fetch", LOG_DEBUG);
 		$result = $this->db->query($sql);
