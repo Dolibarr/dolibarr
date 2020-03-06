@@ -925,15 +925,15 @@ foreach ($listofreferent as $key => $value)
 			for ($i = 0; $i < $num; $i++)
 			{
 				$tablerow = new TableRow();
-				
+
 				$tmp = explode('_', $elementarray[$i]);
 				$idofelement = $tmp[0];
 				$idofelementuser = $tmp[1];
-				
+
 				$element->fetch($idofelement);
 				if ($idofelementuser) $elementuser->fetch($idofelementuser);
 
-				
+
 				// Special cases
 				if ($tablename != 'expensereport_det')
 				{
@@ -944,27 +944,27 @@ foreach ($listofreferent as $key => $value)
 					$expensereport = new ExpenseReport($db);
 					$expensereport->fetch($element->fk_expensereport);
 				}
-				
+
 				//print 'xxx'.$tablename.'yyy'.$classname;
-				
+
 				if ($breakline && $saved_third_id != $element->thirdparty->id)
 				{
 					print $breakline;
-					
+
 					$saved_third_id = $element->thirdparty->id;
 					$breakline = '';
-					
+
 					$total_ht_by_third = 0;
 					$total_ttc_by_third = 0;
 				}
 				$saved_third_id = $element->thirdparty->id;
-				
+
 				$qualifiedfortotal = true;
 				if ($key == 'invoice')
 				{
 					if (!empty($element->close_code) && $element->close_code == 'replaced') $qualifiedfortotal = false; // Replacement invoice, do not include into total
 				}
-				
+
 				// Unlink - save id of the element, need for the "unlink" action
 				$tablerow->id = $element->id;
 
