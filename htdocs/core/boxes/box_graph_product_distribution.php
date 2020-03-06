@@ -146,6 +146,7 @@ class box_graph_product_distribution extends ModeleBoxes
 				$mode = 'customer';
 				$stats_invoice = new FactureStats($this->db, $socid, $mode, ($userid > 0 ? $userid : 0));
 				$data1 = $stats_invoice->getAllByProductEntry($year, (GETPOST('action', 'aZ09') == $refreshaction ?-1 : (3600 * 24)));
+
 				if (empty($data1))
 				{
 					$showpointvalue = 0;
@@ -160,7 +161,7 @@ class box_graph_product_distribution extends ModeleBoxes
 				if (!$mesg)
 				{
 					$i = 0; $tot = count($data1); $legend = array();
-					while ($i <= $tot)
+					while ($i < $tot)
 					{
 						//$data1[$i][0] = dol_trunc($data1[$i][0], 5); // Required to avoid error "Could not draw pie with labels contained inside canvas"
 						$data1[$i][0] = dol_trunc($data1[$i][0], 32);
@@ -219,7 +220,7 @@ class box_graph_product_distribution extends ModeleBoxes
 				if (!$mesg)
 				{
 					$i = 0; $tot = count($data2); $legend = array();
-					while ($i <= $tot)
+					while ($i < $tot)
 					{
 						$data2[$i][0] = dol_trunc($data2[$i][0], 5); // Required to avoid error "Could not draw pie with labels contained inside canvas"
 						$legend[] = $data2[$i][0];
@@ -278,7 +279,7 @@ class box_graph_product_distribution extends ModeleBoxes
 				if (!$mesg)
 				{
 					$i = 0; $tot = count($data3); $legend = array();
-					while ($i <= $tot)
+					while ($i < $tot)
 					{
 						$data3[$i][0] = dol_trunc($data3[$i][0], 5); // Required to avoid error "Could not draw pie with labels contained inside canvas"
 						$legend[] = $data3[$i][0];
