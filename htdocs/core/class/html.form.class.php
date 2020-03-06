@@ -3507,7 +3507,7 @@ class Form
     // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 *      Return list of payment methods
-	 *	Constant MAIN_DEFAULT_PAYMENT_TYPE_ID can used to set default value but scope is all application, probably not what you want.
+	 *      Constant MAIN_DEFAULT_PAYMENT_TYPE_ID can used to set default value but scope is all application, probably not what you want.
 	 *
 	 *      @param	string	$selected       Id du mode de paiement pre-selectionne
 	 *      @param  string	$htmlname       Nom de la zone select

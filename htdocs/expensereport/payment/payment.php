@@ -248,14 +248,14 @@ if ($action == 'create' || empty($action))
     print '<table class="border centpercent">'."\n";
 
     print '<tr><td class="titlefield fieldrequired">'.$langs->trans("Date").'</td><td colspan="2">';
-	$datepaid = dol_mktime(12, 0, 0, $_POST["remonth"], $_POST["reday"], $_POST["reyear"]);
+	$datepaid = dol_mktime(12, 0, 0, GETPOST("remonth", 'int'), GETPOST("reday", 'int'), GETPOST("reyear", 'int'));
 	$datepayment=empty($conf->global->MAIN_AUTOFILL_DATE)?(empty($_POST["remonth"])?-1:$datepaid):0;
 	print $form->selectDate($datepayment, '', '', '', '', "add_payment", 1, 1);
 	print "</td>";
 	print '</tr>';
 
 	print '<tr><td class="fieldrequired">'.$langs->trans("PaymentMode").'</td><td colspan="2">';
-	$form->select_types_paiements(isset($_POST["fk_typepayment"])?$_POST["fk_typepayment"]:$expensereport->fk_typepayment, "fk_typepayment");
+	$form->select_types_paiements(GETPOSTISSET("fk_typepayment") ? GETPOST("fk_typepayment", 'alpha') : $expensereport->fk_c_paiement, "fk_typepayment");
 	print "</td>\n";
 	print '</tr>';
 
@@ -264,7 +264,7 @@ if ($action == 'create' || empty($action))
     	print '<tr>';
     	print '<td class="fieldrequired">'.$langs->trans('AccountToDebit').'</td>';
     	print '<td colspan="2">';
-    	$form->select_comptes(isset($_POST["accountid"])?$_POST["accountid"]:$expensereport->accountid, "accountid", 0, '', 1);  // Show open bank account list
+    	$form->select_comptes(GETPOSTISSET("accountid") ? GETPOST("accountid", "int") : $expensereport->accountid, "accountid", 0, '', 1);  // Show open bank account list
     	print '</td></tr>';
 	}
 
