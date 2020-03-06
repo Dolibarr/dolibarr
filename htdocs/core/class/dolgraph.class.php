@@ -1145,10 +1145,18 @@ class DolGraph
 			if (isset($this->type[$firstlot]) && ($this->type[$firstlot] == 'lines' || $this->type[$firstlot] == 'linesnopoint')) $type = 'line';
 
 
-			$this->stringtoshow .= 'var options = { maintainAspectRatio: false, aspectRatio: 2.5';
+			$this->stringtoshow .= 'var options = { maintainAspectRatio: false, aspectRatio: 2.5, ';
+			$this->stringtoshow .= 'scales: { xAxes: [{ ';
+			//$this->stringtoshow .= 'type: \'time\', ';		// Need Moment.js
+			$this->stringtoshow .= 'distribution: \'linear\'';
 			if (count($arrayofgroupslegend) > 0) {
-				$this->stringtoshow .= ', scales: {xAxes: [{ stacked: true, }], yAxes: [{ stacked: true }] }';
+				$this->stringtoshow .= ', stacked: true';
 			}
+			$this->stringtoshow .= ' }]';
+			if (count($arrayofgroupslegend) > 0) {
+				$this->stringtoshow .= ', yAxes: [{ stacked: true }]';
+			}
+			$this->stringtoshow .= ' }';
 			$this->stringtoshow .= '};';
 
 			$this->stringtoshow .= '
