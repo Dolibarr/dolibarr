@@ -707,11 +707,9 @@ while ($i < min($num, $limit))
 			$listsalesrepresentatives=$socstatic->getSalesRepresentatives($user);
 			if ($listsalesrepresentatives < 0) dol_print_error($db);
 			$nbofsalesrepresentative=count($listsalesrepresentatives);
-			if ($nbofsalesrepresentative > 3) {
-				// We print only number
-				print '<a href="'.DOL_URL_ROOT.'/societe/commerciaux.php?socid='.$socstatic->id.'">';
+			if ($nbofsalesrepresentative > 3)   // We print only number
+			{
 				print $nbofsalesrepresentative;
-				print '</a>';
 			}
 			elseif ($nbofsalesrepresentative > 0)
 			{

@@ -306,9 +306,7 @@ abstract class ActionsCardCommon
             $nbofsalesrepresentative=count($listsalesrepresentatives);
             if ($nbofsalesrepresentative > 3)   // We print only number
             {
-            	$this->tpl['sales_representatives'].= '<a href="'.DOL_URL_ROOT.'/societe/commerciaux.php?socid='.$this->object->id.'">';
             	$this->tpl['sales_representatives'].= $nbofsalesrepresentative;
-            	$this->tpl['sales_representatives'].= '</a>';
             }
             elseif ($nbofsalesrepresentative > 0)
             {
