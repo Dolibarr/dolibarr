@@ -35,56 +35,58 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/html.formprojet.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/project.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php';
-if (! empty($conf->propal->enabled))		require_once DOL_DOCUMENT_ROOT.'/comm/propal/class/propal.class.php';
-if (! empty($conf->facture->enabled))		require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
-if (! empty($conf->facture->enabled))		require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture-rec.class.php';
-if (! empty($conf->commande->enabled))		require_once DOL_DOCUMENT_ROOT.'/commande/class/commande.class.php';
-if (! empty($conf->supplier_proposal->enabled)) require_once DOL_DOCUMENT_ROOT.'/supplier_proposal/class/supplier_proposal.class.php';
-if (! empty($conf->fournisseur->enabled))	require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.facture.class.php';
-if (! empty($conf->fournisseur->enabled))	require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.commande.class.php';
-if (! empty($conf->contrat->enabled))		require_once DOL_DOCUMENT_ROOT.'/contrat/class/contrat.class.php';
-if (! empty($conf->ficheinter->enabled))	require_once DOL_DOCUMENT_ROOT.'/fichinter/class/fichinter.class.php';
-if (! empty($conf->expedition->enabled))	require_once DOL_DOCUMENT_ROOT.'/expedition/class/expedition.class.php';
-if (! empty($conf->deplacement->enabled))	require_once DOL_DOCUMENT_ROOT.'/compta/deplacement/class/deplacement.class.php';
-if (! empty($conf->expensereport->enabled))	require_once DOL_DOCUMENT_ROOT.'/expensereport/class/expensereport.class.php';
-if (! empty($conf->agenda->enabled))		require_once DOL_DOCUMENT_ROOT.'/comm/action/class/actioncomm.class.php';
-if (! empty($conf->don->enabled))			require_once DOL_DOCUMENT_ROOT.'/don/class/don.class.php';
-if (! empty($conf->loan->enabled))			require_once DOL_DOCUMENT_ROOT.'/loan/class/loan.class.php';
-if (! empty($conf->loan->enabled))			require_once DOL_DOCUMENT_ROOT.'/loan/class/loanschedule.class.php';
-if (! empty($conf->stock->enabled))			require_once DOL_DOCUMENT_ROOT.'/product/stock/class/mouvementstock.class.php';
-if (! empty($conf->tax->enabled))			require_once DOL_DOCUMENT_ROOT.'/compta/sociales/class/chargesociales.class.php';
-if (! empty($conf->banque->enabled))		require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/paymentvarious.class.php';
-if (! empty($conf->salaries->enabled))		require_once DOL_DOCUMENT_ROOT.'/salaries/class/paymentsalary.class.php';
-if (! empty($conf->categorie->enabled))		require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
+if (!empty($conf->propal->enabled))		require_once DOL_DOCUMENT_ROOT.'/comm/propal/class/propal.class.php';
+if (!empty($conf->facture->enabled))		require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
+if (!empty($conf->facture->enabled))		require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture-rec.class.php';
+if (!empty($conf->commande->enabled))		require_once DOL_DOCUMENT_ROOT.'/commande/class/commande.class.php';
+if (!empty($conf->supplier_proposal->enabled)) require_once DOL_DOCUMENT_ROOT.'/supplier_proposal/class/supplier_proposal.class.php';
+if (!empty($conf->fournisseur->enabled))	require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.facture.class.php';
+if (!empty($conf->fournisseur->enabled))	require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.commande.class.php';
+if (!empty($conf->contrat->enabled))		require_once DOL_DOCUMENT_ROOT.'/contrat/class/contrat.class.php';
+if (!empty($conf->ficheinter->enabled))	require_once DOL_DOCUMENT_ROOT.'/fichinter/class/fichinter.class.php';
+if (!empty($conf->expedition->enabled))	require_once DOL_DOCUMENT_ROOT.'/expedition/class/expedition.class.php';
+if (!empty($conf->deplacement->enabled))	require_once DOL_DOCUMENT_ROOT.'/compta/deplacement/class/deplacement.class.php';
+if (!empty($conf->expensereport->enabled))	require_once DOL_DOCUMENT_ROOT.'/expensereport/class/expensereport.class.php';
+if (!empty($conf->agenda->enabled))		require_once DOL_DOCUMENT_ROOT.'/comm/action/class/actioncomm.class.php';
+if (!empty($conf->don->enabled))			require_once DOL_DOCUMENT_ROOT.'/don/class/don.class.php';
+if (!empty($conf->loan->enabled))			require_once DOL_DOCUMENT_ROOT.'/loan/class/loan.class.php';
+if (!empty($conf->loan->enabled))			require_once DOL_DOCUMENT_ROOT.'/loan/class/loanschedule.class.php';
+if (!empty($conf->stock->enabled))			require_once DOL_DOCUMENT_ROOT.'/product/stock/class/mouvementstock.class.php';
+if (!empty($conf->tax->enabled))			require_once DOL_DOCUMENT_ROOT.'/compta/sociales/class/chargesociales.class.php';
+if (!empty($conf->banque->enabled))		require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/paymentvarious.class.php';
+if (!empty($conf->salaries->enabled))		require_once DOL_DOCUMENT_ROOT.'/salaries/class/paymentsalary.class.php';
+if (!empty($conf->categorie->enabled))		require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
+if (!empty($conf->mrp->enabled))		require_once DOL_DOCUMENT_ROOT.'/mrp/class/mo.class.php';
 
 // Load translation files required by the page
 $langs->loadLangs(array('projects', 'companies', 'suppliers', 'compta'));
-if (! empty($conf->facture->enabled))		$langs->load("bills");
-if (! empty($conf->commande->enabled))		$langs->load("orders");
-if (! empty($conf->propal->enabled))		$langs->load("propal");
-if (! empty($conf->ficheinter->enabled))	$langs->load("interventions");
-if (! empty($conf->deplacement->enabled))	$langs->load("trips");
-if (! empty($conf->expensereport->enabled)) $langs->load("trips");
-if (! empty($conf->don->enabled))			$langs->load("donations");
-if (! empty($conf->loan->enabled))			$langs->load("loan");
-if (! empty($conf->salaries->enabled))		$langs->load("salaries");
+if (!empty($conf->facture->enabled))		$langs->load("bills");
+if (!empty($conf->commande->enabled))		$langs->load("orders");
+if (!empty($conf->propal->enabled))		$langs->load("propal");
+if (!empty($conf->ficheinter->enabled))	$langs->load("interventions");
+if (!empty($conf->deplacement->enabled))	$langs->load("trips");
+if (!empty($conf->expensereport->enabled)) $langs->load("trips");
+if (!empty($conf->don->enabled))			$langs->load("donations");
+if (!empty($conf->loan->enabled))			$langs->load("loan");
+if (!empty($conf->salaries->enabled))		$langs->load("salaries");
+if (!empty($conf->mrp->enabled))		$langs->load("mrp");
 
-$id=GETPOST('id', 'int');
-$ref=GETPOST('ref', 'alpha');
-$action=GETPOST('action', 'alpha');
-$datesrfc=GETPOST('datesrfc');
-$dateerfc=GETPOST('dateerfc');
-$dates=dol_mktime(0, 0, 0, GETPOST('datesmonth'), GETPOST('datesday'), GETPOST('datesyear'));
-$datee=dol_mktime(23, 59, 59, GETPOST('dateemonth'), GETPOST('dateeday'), GETPOST('dateeyear'));
-if (empty($dates) && ! empty($datesrfc)) $dates=dol_stringtotime($datesrfc);
-if (empty($datee) && ! empty($dateerfc)) $datee=dol_stringtotime($dateerfc);
-if (! isset($_POST['datesrfc']) && ! isset($_POST['datesday']) && ! empty($conf->global->PROJECT_LINKED_ELEMENT_DEFAULT_FILTER_YEAR))
+$id = GETPOST('id', 'int');
+$ref = GETPOST('ref', 'alpha');
+$action = GETPOST('action', 'alpha');
+$datesrfc = GETPOST('datesrfc');
+$dateerfc = GETPOST('dateerfc');
+$dates = dol_mktime(0, 0, 0, GETPOST('datesmonth'), GETPOST('datesday'), GETPOST('datesyear'));
+$datee = dol_mktime(23, 59, 59, GETPOST('dateemonth'), GETPOST('dateeday'), GETPOST('dateeyear'));
+if (empty($dates) && !empty($datesrfc)) $dates = dol_stringtotime($datesrfc);
+if (empty($datee) && !empty($dateerfc)) $datee = dol_stringtotime($dateerfc);
+if (!isset($_POST['datesrfc']) && !isset($_POST['datesday']) && !empty($conf->global->PROJECT_LINKED_ELEMENT_DEFAULT_FILTER_YEAR))
 {
-	$new=dol_now();
-	$tmp=dol_getdate($new);
+	$new = dol_now();
+	$tmp = dol_getdate($new);
 	//$datee=$now
 	//$dates=dol_time_plus_duree($datee, -1, 'y');
-	$dates=dol_get_first_day($tmp['year'], 1);
+	$dates = dol_get_first_day($tmp['year'], 1);
 }
 if ($id == '' && $ref == '')
 {
@@ -93,18 +95,18 @@ if ($id == '' && $ref == '')
 	exit();
 }
 
-$mine = $_REQUEST['mode']=='mine' ? 1 : 0;
+$mine = $_REQUEST['mode'] == 'mine' ? 1 : 0;
 //if (! $user->rights->projet->all->lire) $mine=1;	// Special for projects
 
 $object = new Project($db);
 
 include DOL_DOCUMENT_ROOT.'/core/actions_fetchobject.inc.php';  // Must be include, not include_once
-if(! empty($conf->global->PROJECT_ALLOW_COMMENT_ON_PROJECT) && method_exists($object, 'fetchComments') && empty($object->comments)) $object->fetchComments();
+if (!empty($conf->global->PROJECT_ALLOW_COMMENT_ON_PROJECT) && method_exists($object, 'fetchComments') && empty($object->comments)) $object->fetchComments();
 
 // Security check
-$socid=$object->socid;
+$socid = $object->socid;
 //if ($user->socid > 0) $socid = $user->socid;    // For external user, no check is done on company because readability is managed by public status of project and assignement.
-$result = restrictedArea($user, 'projet',  $object->id, 'projet&project');
+$result = restrictedArea($user, 'projet', $object->id, 'projet&project');
 
 $hookmanager->initHooks(array('projectOverview'));
 
@@ -166,23 +168,23 @@ print '<tr><td class="tdtop">';
 print $langs->trans("Usage");
 print '</td>';
 print '<td>';
-if (! empty($conf->global->PROJECT_USE_OPPORTUNITIES))
+if (!empty($conf->global->PROJECT_USE_OPPORTUNITIES))
 {
-	print '<input type="checkbox" disabled name="usage_opportunity"'.(GETPOSTISSET('usage_opportunity') ? (GETPOST('usage_opportunity', 'alpha')!=''?' checked="checked"':'') : ($object->usage_opportunity ? ' checked="checked"' : '')).'"> ';
+	print '<input type="checkbox" disabled name="usage_opportunity"'.(GETPOSTISSET('usage_opportunity') ? (GETPOST('usage_opportunity', 'alpha') != ''?' checked="checked"':'') : ($object->usage_opportunity ? ' checked="checked"' : '')).'"> ';
 	$htmltext = $langs->trans("ProjectFollowOpportunity");
 	print $form->textwithpicto($langs->trans("ProjectFollowOpportunity"), $htmltext);
 	print '<br>';
 }
 if (empty($conf->global->PROJECT_HIDE_TASKS))
 {
-	print '<input type="checkbox" disabled name="usage_task"'.(GETPOSTISSET('usage_task') ? (GETPOST('usage_task', 'alpha')!=''?' checked="checked"':'') : ($object->usage_task ? ' checked="checked"' : '')).'"> ';
+	print '<input type="checkbox" disabled name="usage_task"'.(GETPOSTISSET('usage_task') ? (GETPOST('usage_task', 'alpha') != ''?' checked="checked"':'') : ($object->usage_task ? ' checked="checked"' : '')).'"> ';
 	$htmltext = $langs->trans("ProjectFollowTasks");
 	print $form->textwithpicto($langs->trans("ProjectFollowTasks"), $htmltext);
 	print '<br>';
 }
-if (! empty($conf->global->PROJECT_BILL_TIME_SPENT))
+if (!empty($conf->global->PROJECT_BILL_TIME_SPENT))
 {
-	print '<input type="checkbox" disabled name="usage_bill_time"'.(GETPOSTISSET('usage_bill_time') ? (GETPOST('usage_bill_time', 'alpha')!=''?' checked="checked"':'') : ($object->usage_bill_time ? ' checked="checked"' : '')).'"> ';
+	print '<input type="checkbox" disabled name="usage_bill_time"'.(GETPOSTISSET('usage_bill_time') ? (GETPOST('usage_bill_time', 'alpha') != ''?' checked="checked"':'') : ($object->usage_bill_time ? ' checked="checked"' : '')).'"> ';
 	$htmltext = $langs->trans("ProjectBillTimeDescription");
 	print $form->textwithpicto($langs->trans("BillTime"), $htmltext);
 	print '<br>';
@@ -250,7 +252,7 @@ print '</td></tr>';
 // Categories
 if ($conf->categorie->enabled) {
     print '<tr><td class="valignmiddle">'.$langs->trans("Categories").'</td><td>';
-    print $form->showCategories($object->id, 'project', 1);
+    print $form->showCategories($object->id, Categorie::TYPE_PROJECT, 1);
     print "</td></tr>";
 }
 
@@ -385,6 +387,18 @@ $listofreferent = array(
 	'buttonnew'=>'CreateShipment',
 	'testnew'=>0,
 	'test'=>$conf->expedition->enabled && $user->rights->expedition->lire),
+'mrp'=>array(
+	'name'=>"MO",
+	'title'=>"ListMOAssociatedProject",
+	'class'=>'Mo',
+	'table'=>'mrp_mo',
+	'datefieldname'=>'date_valid',
+	'urlnew'=>DOL_URL_ROOT.'/mrp/mo_card.php?action=create&origin=project&originid='.$id.'&socid='.$socid,
+	'lang'=>'mrp',
+	'buttonnew'=>'CreateMO',
+	'testnew'=>'$user->rights->mrp->write',
+	'project_field'=>'fk_project',
+	'test'=>$conf->mrp->enabled && $user->rights->mrp->read),
 'trip'=>array(
 	'name'=>"TripsAndExpenses",
 	'title'=>"ListExpenseReportsAssociatedProject",
@@ -513,19 +527,19 @@ $listofreferent = array(
 */
 );
 
-$parameters=array('listofreferent'=>$listofreferent);
+$parameters = array('listofreferent'=>$listofreferent);
 $resHook = $hookmanager->executeHooks('completeListOfReferent', $parameters, $object, $action);
 
-if(!empty($hookmanager->resArray)) {
+if (!empty($hookmanager->resArray)) {
 	$listofreferent = array_merge($listofreferent, $hookmanager->resArray);
 }
 
-if ($action=="addelement")
+if ($action == "addelement")
 {
 	$tablename = GETPOST("tablename");
 	$elementselectid = GETPOST("elementselect");
-	$result=$object->update_element($tablename, $elementselectid);
-	if ($result<0)
+	$result = $object->update_element($tablename, $elementselectid);
+	if ($result < 0)
 	{
 		setEventMessages($object->error, $object->errors, 'errors');
 	}
@@ -552,7 +566,7 @@ $showdatefilter = 0;
 if (!$showdatefilter)
 {
 	print '<div class="center centpercent">';
-    print '<form action="'.$_SERVER["PHP_SELF"].'?id=' . $object->id . '" method="post">';
+    print '<form action="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'" method="post">';
     print '<input type="hidden" name="token" value="'.$_SESSION["newtoken"].'">';
     print '<input type="hidden" name="tablename" value="'.$tablename.'">';
 	print '<input type="hidden" name="action" value="view">';
@@ -593,12 +607,12 @@ print '</tr>';
 
 foreach ($listofreferent as $key => $value)
 {
-	$name=$langs->trans($value['name']);
-	$title=$value['title'];
-	$classname=$value['class'];
-	$tablename=$value['table'];
-	$datefieldname=$value['datefieldname'];
-	$qualified=$value['test'];
+	$name = $langs->trans($value['name']);
+	$title = $value['title'];
+	$classname = $value['class'];
+	$tablename = $value['table'];
+	$datefieldname = $value['datefieldname'];
+	$qualified = $value['test'];
 	$margin = $value['margin'];
 	$project_field = $value['project_field'];
 	if ($qualified && isset($margin))		// If this element must be included into profit calculation ($margin is 'minus' or 'plus')
@@ -607,39 +621,39 @@ foreach ($listofreferent as $key => $value)
 
 		$elementarray = $object->get_element_list($key, $tablename, $datefieldname, $dates, $datee, !empty($project_field)?$project_field:'fk_projet');
 
-		if (count($elementarray)>0 && is_array($elementarray))
+		if (is_array($elementarray) && count($elementarray) > 0)
 		{
 			$total_ht = 0;
 			$total_ttc = 0;
 
-			$num=count($elementarray);
+			$num = count($elementarray);
 			for ($i = 0; $i < $num; $i++)
 			{
-				$tmp=explode('_', $elementarray[$i]);
-				$idofelement=$tmp[0];
-				$idofelementuser=$tmp[1];
+				$tmp = explode('_', $elementarray[$i]);
+				$idofelement = $tmp[0];
+				$idofelementuser = $tmp[1];
 
 				$element->fetch($idofelement);
 				if ($idofelementuser) $elementuser->fetch($idofelementuser);
 
 				// Define if record must be used for total or not
-				$qualifiedfortotal=true;
+				$qualifiedfortotal = true;
 				if ($key == 'invoice')
 				{
-				    if (! empty($element->close_code) && $element->close_code == 'replaced') $qualifiedfortotal=false;	// Replacement invoice, do not include into total
-				    if (! empty($conf->global->FACTURE_DEPOSITS_ARE_JUST_PAYMENTS) && $element->type == Facture::TYPE_DEPOSIT) $qualifiedfortotal=false;	// If hidden option to use deposits as payment (deprecated, not recommended to use this), deposits are not included
+				    if (!empty($element->close_code) && $element->close_code == 'replaced') $qualifiedfortotal=false;	// Replacement invoice, do not include into total
+				    if (!empty($conf->global->FACTURE_DEPOSITS_ARE_JUST_PAYMENTS) && $element->type == Facture::TYPE_DEPOSIT) $qualifiedfortotal=false;	// If hidden option to use deposits as payment (deprecated, not recommended to use this), deposits are not included
 				}
 				if ($key == 'propal')
 				{
-				    if ($element->statut == Propal::STATUS_NOTSIGNED) $qualifiedfortotal=false;	// Refused proposal must not be included in total
+				    if ($element->statut == Propal::STATUS_NOTSIGNED) $qualifiedfortotal = false;	// Refused proposal must not be included in total
 				}
 
 				if ($tablename != 'expensereport_det' && method_exists($element, 'fetch_thirdparty')) $element->fetch_thirdparty();
 
 				// Define $total_ht_by_line
-				if ($tablename == 'don' || $tablename == 'chargesociales' || $tablename == 'payment_various' || $tablename == 'payment_salary') $total_ht_by_line=$element->amount;
-				elseif ($tablename == 'fichinter') $total_ht_by_line=$element->getAmount();
-				elseif ($tablename == 'stock_mouvement') $total_ht_by_line=$element->price*abs($element->qty);
+				if ($tablename == 'don' || $tablename == 'chargesociales' || $tablename == 'payment_various' || $tablename == 'payment_salary') $total_ht_by_line = $element->amount;
+				elseif ($tablename == 'fichinter') $total_ht_by_line = $element->getAmount();
+				elseif ($tablename == 'stock_mouvement') $total_ht_by_line = $element->price*abs($element->qty);
 				elseif ($tablename == 'projet_task')
 				{
 					if ($idofelementuser)
@@ -653,12 +667,12 @@ foreach ($listofreferent as $key => $value)
 						$total_ht_by_line = price2num($tmp['amount'], 'MT');
 					}
 				}
-                elseif ($key == 'loan'){
+                elseif ($key == 'loan') {
                     if((empty($dates) && empty($datee)) || (intval($dates) <= $element->datestart && intval($datee) >= $element->dateend)){
                         // Get total loan
                         $total_ht_by_line = -$element->capital;
                     }
-				    else{
+				    else {
                         // Get loan schedule according to date filter
                         $total_ht_by_line = 0;
                         $loanScheduleStatic = new LoanSchedule($element->db);
@@ -668,10 +682,10 @@ foreach ($listofreferent as $key => $value)
                                 /**
                                  * @var $loanSchedule LoanSchedule
                                  */
-                                if( ($loanSchedule->datep >= $dates && $loanSchedule->datep <= $datee) // dates filter is defined
+                                if (($loanSchedule->datep >= $dates && $loanSchedule->datep <= $datee) // dates filter is defined
                                     || !empty($dates) && empty($datee) && $loanSchedule->datep >= $dates && $loanSchedule->datep <= dol_now()
                                     || empty($dates) && !empty($datee) && $loanSchedule->datep <= $datee
-                                ){
+                                ) {
                                     $total_ht_by_line = -$loanSchedule->amount_capital;
                                 }
                             }
@@ -689,7 +703,7 @@ foreach ($listofreferent as $key => $value)
 					$defaultvat = get_default_tva($mysoc, $mysoc);
 					$total_ttc_by_line = price2num($total_ht_by_line * (1 + ($defaultvat / 100)), 'MT');
 				}
-                elseif ($key == 'loan'){
+                elseif ($key == 'loan') {
                         $total_ttc_by_line = $total_ht_by_line; // For loan there is actually no taxe managed in Dolibarr
                 }
 				else $total_ttc_by_line = $element->total_ttc;
@@ -762,7 +776,6 @@ print "</table>";
 print '<br><br>';
 print '<br>';
 
-// TODO: FOR TESTING
 $param = 'id='.$object->id.'&mainmenu=home';
 $sortfield = GETPOST("sortfield", "alpha");
 $sortorder = GETPOST("sortorder", 'alpha');
@@ -795,49 +808,49 @@ foreach ($listofreferent as $key => $value)
 
 		$element = new $classname($db);
 
-		$addform='';
+		$addform = '';
 
-		$idtofilterthirdparty=0;
+		$idtofilterthirdparty = 0;
 		$array_of_element_linkable_with_different_thirdparty = array('facture_fourn', 'commande_fournisseur');
-		if (! in_array($tablename, $array_of_element_linkable_with_different_thirdparty))
+		if (!in_array($tablename, $array_of_element_linkable_with_different_thirdparty))
 		{
-		    $idtofilterthirdparty=$object->thirdparty->id;
-		    if (! empty($conf->global->PROJECT_OTHER_THIRDPARTY_ID_TO_ADD_ELEMENTS)) $idtofilterthirdparty.=','.$conf->global->PROJECT_OTHER_THIRDPARTY_ID_TO_ADD_ELEMENTS;
+		    $idtofilterthirdparty = $object->thirdparty->id;
+		    if (! empty($conf->global->PROJECT_OTHER_THIRDPARTY_ID_TO_ADD_ELEMENTS)) $idtofilterthirdparty. = ','.$conf->global->PROJECT_OTHER_THIRDPARTY_ID_TO_ADD_ELEMENTS;
 		}
 
        	if (empty($conf->global->PROJECT_LINK_ON_OVERWIEW_DISABLED) && $idtofilterthirdparty && !in_array($tablename, $exclude_select_element))
        	{
-			$selectList=$formproject->select_element($tablename, $idtofilterthirdparty, 'minwidth300', -2, !empty($project_field)?$project_field:'fk_projet');
-			if ($selectList<0)
+			$selectList = $formproject->select_element($tablename, $idtofilterthirdparty, 'minwidth300', -2, !empty($project_field)?$project_field:'fk_projet');
+			if ($selectList < 0)
 			{
 				setEventMessages($formproject->error, $formproject->errors, 'errors');
 			}
-			elseif($selectList)
+			elseif ($selectList)
 			{
 				// Define form with the combo list of elements to link
-			    $addform.='<div class="inline-block valignmiddle">';
-			    $addform.='<form action="'.$_SERVER["PHP_SELF"].'?id=' . $object->id . '" method="post">';
-			    $addform.='<input type="hidden" name="token" value="'.$_SESSION["newtoken"].'">';
-			    $addform.='<input type="hidden" name="tablename" value="'.$tablename.'">';
-				$addform.='<input type="hidden" name="action" value="addelement">';
-				$addform.='<input type="hidden" name="datesrfc" value="'.dol_print_date($dates, 'dayhourrfc').'">';
-				$addform.='<input type="hidden" name="dateerfc" value="'.dol_print_date($datee, 'dayhourrfc').'">';
-				$addform.='<table><tr><td>'.$langs->trans("SelectElement").'</td>';
-				$addform.='<td>'.$selectList.'</td>';
-				$addform.='<td><input type="submit" class="button" value="'.dol_escape_htmltag($langs->trans("AddElement")).'"></td>';
-				$addform.='</tr></table>';
-				$addform.='</form>';
-				$addform.='</div>';
+			    $addform. = '<div class="inline-block valignmiddle">';
+			    $addform. = '<form action="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'" method="post">';
+			    $addform. = '<input type="hidden" name="token" value="'.$_SESSION["newtoken"].'">';
+			    $addform. = '<input type="hidden" name="tablename" value="'.$tablename.'">';
+				$addform. = '<input type="hidden" name="action" value="addelement">';
+				$addform. = '<input type="hidden" name="datesrfc" value="'.dol_print_date($dates, 'dayhourrfc').'">';
+				$addform. = '<input type="hidden" name="dateerfc" value="'.dol_print_date($datee, 'dayhourrfc').'">';
+				$addform. = '<table><tr><td>'.$langs->trans("SelectElement").'</td>';
+				$addform. = '<td>'.$selectList.'</td>';
+				$addform. = '<td><input type="submit" class="button" value="'.dol_escape_htmltag($langs->trans("AddElement")).'"></td>';
+				$addform. = '</tr></table>';
+				$addform. = '</form>';
+				$addform. = '</div>';
 			}
 		}
 		if (empty($conf->global->PROJECT_CREATE_ON_OVERVIEW_DISABLED) && $urlnew)
 		{
-			$addform.='<div class="inline-block valignmiddle">';
-			if ($testnew) $addform.='<a class="buttonxxx" href="'.$urlnew.'"><span class="valignmiddle text-plus-circle">'.($buttonnew?$langs->trans($buttonnew):$langs->trans("Create")).'</span><span class="fa fa-plus-circle valignmiddle paddingleft"></span></a>';
+			$addform .= '<div class="inline-block valignmiddle">';
+			if ($testnew) $addform .= '<a class="buttonxxx" href="'.$urlnew.'"><span class="valignmiddle text-plus-circle">'.($buttonnew?$langs->trans($buttonnew):$langs->trans("Create")).'</span><span class="fa fa-plus-circle valignmiddle paddingleft"></span></a>';
 			elseif (empty($conf->global->MAIN_BUTTON_HIDE_UNAUTHORIZED)) {
-				$addform.='<a class="buttonxxx buttonRefused" disabled="disabled" href="#"><span class="valignmiddle text-plus-circle">'.($buttonnew?$langs->trans($buttonnew):$langs->trans("Create")).'</span><span class="fa fa-plus-circle valignmiddle"></span></a>';
+				$addform .= '<a class="buttonxxx buttonRefused" disabled="disabled" href="#"><span class="valignmiddle text-plus-circle">'.($buttonnew?$langs->trans($buttonnew):$langs->trans("Create")).'</span><span class="fa fa-plus-circle valignmiddle"></span></a>';
 			}
-            $addform.='<div>';
+            $addform .= '<div>';
 		}
 
 		print load_fiche_titre($langs->trans($title), $addform, '');
@@ -1026,6 +1039,9 @@ foreach ($listofreferent as $key => $value)
 						$date = $element->date; // invoice, ...
 						if (empty($date)) $date = $element->date_contrat;
 						if (empty($date)) $date = $element->datev;
+						if (empty($date) && !empty($datefieldname)) {
+    						$date = $element->$datefieldname;
+    					}
 					}
 				}
 				elseif ($key == 'loan')
@@ -1268,7 +1284,6 @@ foreach ($listofreferent as $key => $value)
 
 			if($sortfield == "user")
 			{
-
 				if($sortorder == "asc")
 				{
 					usort($sortable_table, "sort_by_user_asc");
