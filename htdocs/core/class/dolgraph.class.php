@@ -1189,7 +1189,7 @@ class DolGraph
 			$oldstacknum = -1;
 			while ($i < $nblot)	// Loop on each serie
 			{
-				if (count($arrayofgroupslegend[$i]) > 0) {	// We used a 'group by'
+				if (is_array($arrayofgroupslegend[$i]) && count($arrayofgroupslegend[$i]) > 0) {	// We used a 'group by'
 					// If we change the stack
 					$newcolor = $this->datacolor[$arrayofgroupslegend[$i]['stacknum']];
 					if ($oldstacknum == -1 || $arrayofgroupslegend[$i]['stacknum'] != $oldstacknum) {
