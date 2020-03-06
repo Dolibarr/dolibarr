@@ -925,13 +925,15 @@ foreach ($listofreferent as $key => $value)
 			for ($i = 0; $i < $num; $i++)
 			{
 				$tablerow = new TableRow();
+				
 				$tmp = explode('_', $elementarray[$i]);
 				$idofelement = $tmp[0];
 				$idofelementuser = $tmp[1];
-
+				
 				$element->fetch($idofelement);
 				if ($idofelementuser) $elementuser->fetch($idofelementuser);
 
+				
 				// Special cases
 				if ($tablename != 'expensereport_det')
 				{
@@ -942,26 +944,29 @@ foreach ($listofreferent as $key => $value)
 					$expensereport = new ExpenseReport($db);
 					$expensereport->fetch($element->fk_expensereport);
 				}
-
+				
 				//print 'xxx'.$tablename.'yyy'.$classname;
-
+				
 				if ($breakline && $saved_third_id != $element->thirdparty->id)
 				{
 					print $breakline;
-
+					
 					$saved_third_id = $element->thirdparty->id;
 					$breakline = '';
-
+					
 					$total_ht_by_third = 0;
 					$total_ttc_by_third = 0;
 				}
 				$saved_third_id = $element->thirdparty->id;
-
+				
 				$qualifiedfortotal = true;
 				if ($key == 'invoice')
 				{
 					if (!empty($element->close_code) && $element->close_code == 'replaced') $qualifiedfortotal = false; // Replacement invoice, do not include into total
 				}
+				
+				// Unlink - save id of the element, need for the "unlink" action
+				$tablerow->id = $element->id;
 
 				// Ref
 				if ($tablename == 'expensereport_det')
@@ -1308,7 +1313,7 @@ foreach ($listofreferent as $key => $value)
 				{
 					if (empty($conf->global->PROJECT_DISABLE_UNLINK_FROM_OVERVIEW) || $user->admin)		// PROJECT_DISABLE_UNLINK_FROM_OVERVIEW is empty by defaut, so this test true
 					{
-						print '<a href="' . $_SERVER["PHP_SELF"] . '?id=' .  $object->id . '&action=unlink&tablename=' . $tablename . '&elementselect=' . $element->id . ($project_field ? '&projectfield=' . $project_field : '') . '" class="reposition">';
+						print '<a href="' . $_SERVER["PHP_SELF"] . '?id=' .  $object->id . '&action=unlink&tablename=' . $tablename . '&elementselect=' . $tablerow->id . ($project_field ? '&projectfield=' . $project_field : '') . '" class="reposition">';
 						print img_picto($langs->trans('Unlink'), 'unlink');
 						print '</a>';
 					}
@@ -1505,6 +1510,11 @@ function sort_by_user_desc($left, $right)
  */
 class TableRow
 {
+	/**
+	 * The id of this project (need for "unlink" action)
+	 */
+	var $id;
+
 	/**
 	 * The reference of this object (only for sorting)
 	 */
