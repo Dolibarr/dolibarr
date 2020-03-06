@@ -177,7 +177,8 @@ foreach(array('internal', 'external') as $source)
 	$i = 0;
 	while ($i < $num)
 	{
-		$entry = '';
+		$entry = new stdClass();
+
 		$entry->id   = $tab[$i]['rowid'];
 		$entry->type = $tab[$i]['libelle'];
 

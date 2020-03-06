@@ -312,7 +312,7 @@ foreach ($object->fields as $key => $val) {
         $arrayofmesures['t.'.$key.'-max'] = $langs->trans($val['label']).' <span class="opacitymedium">('.$langs->trans("Maximum").')</span>';
     }
 }
-// Add measure from extrafields
+// Add extrafields to Measures
 if ($object->isextrafieldmanaged) {
     foreach ($extrafields->attributes[$object->table_element]['label'] as $key => $val) {
         if (!empty($extrafields->attributes[$object->table_element]['totalizable'][$key])) {
@@ -348,12 +348,13 @@ foreach ($object->fields as $key => $val) {
 			$arrayofgroupby['t.'.$key] = array('label' => $val['label'], 'position' => (int) $val['position']);
 		}
 	}
-	// Add measure from extrafields
-	if ($object->isextrafieldmanaged) {
-		foreach ($extrafields->attributes[$object->table_element]['label'] as $key => $val) {
-			if ($extrafields->attributes[$object->table_element]['type'][$key] == 'separate') continue;
-			$arrayofgroupby['te.'.$key] = array('label' => $extrafields->attributes[$object->table_element]['label'][$key], 'position' => (int) $extrafields->attributes[$object->table_element]['pos'][$key]);
-		}
+}
+// Add extrafields to Group by
+if ($object->isextrafieldmanaged) {
+	foreach ($extrafields->attributes[$object->table_element]['label'] as $key => $val) {
+		if ($extrafields->attributes[$object->table_element]['type'][$key] == 'separate') continue;
+		if (!empty($extrafields->attributes[$object->table_element]['totalizable'][$key])) continue;
+		$arrayofgroupby['te.'.$key] = array('label' => $extrafields->attributes[$object->table_element]['label'][$key], 'position' => (int) $extrafields->attributes[$object->table_element]['pos'][$key]);
 	}
 }
 
@@ -387,13 +388,14 @@ foreach ($object->fields as $key => $val) {
             $arrayofxaxis['t.'.$key] = array('label' => $val['label'], 'position' => (int) $val['position']);
         }
     }
-    // Add measure from extrafields
-    if ($object->isextrafieldmanaged) {
-        foreach ($extrafields->attributes[$object->table_element]['label'] as $key => $val) {
-        	if ($extrafields->attributes[$object->table_element]['type'][$key] == 'separate') continue;
-        	$arrayofxaxis['te.'.$key] = array('label' => $extrafields->attributes[$object->table_element]['label'][$key], 'position' => (int) $extrafields->attributes[$object->table_element]['pos'][$key]);
-        }
-    }
+}
+// Add extrafields to X-Axis
+if ($object->isextrafieldmanaged) {
+	foreach ($extrafields->attributes[$object->table_element]['label'] as $key => $val) {
+		if ($extrafields->attributes[$object->table_element]['type'][$key] == 'separate') continue;
+		if (!empty($extrafields->attributes[$object->table_element]['totalizable'][$key])) continue;
+		$arrayofxaxis['te.'.$key] = array('label' => $extrafields->attributes[$object->table_element]['label'][$key], 'position' => (int) $extrafields->attributes[$object->table_element]['pos'][$key]);
+	}
 }
 
 $arrayofxaxis = dol_sort_array($arrayofxaxis, 'position', 'asc', 1);
@@ -425,7 +427,7 @@ if ($mode == 'grid') {
         if ($object->isextrafieldmanaged) {
             foreach ($extrafields->attributes[$object->table_element]['label'] as $key => $val) {
                 if (!empty($extrafields->attributes[$object->table_element]['totalizable'][$key])) {
-                    $arrayofyaxis['te.'.$key] = array('label' => $extrafields->attributes[$object->table_element]['label'][$key], 'position' => (int) $extrafields->attributes[$object->table_element]['pos'][$key]);
+					$arrayofyaxis['te.'.$key] = array('label' => $extrafields->attributes[$object->table_element]['label'][$key], 'position' => (int) $extrafields->attributes[$object->table_element]['pos'][$key]);
                 }
             }
         }
