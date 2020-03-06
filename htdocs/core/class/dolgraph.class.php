@@ -1146,6 +1146,9 @@ class DolGraph
 
 
 			$this->stringtoshow .= 'var options = { maintainAspectRatio: false, aspectRatio: 2.5, ';
+			if (empty($showlegend)) {
+				$this->stringtoshow .= 'legend: { display: false }, ';
+			}
 			$this->stringtoshow .= 'scales: { xAxes: [{ ';
 			//$this->stringtoshow .= 'type: \'time\', ';		// Need Moment.js
 			$this->stringtoshow .= 'distribution: \'linear\'';
