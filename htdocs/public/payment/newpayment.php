@@ -665,9 +665,9 @@ if ($action == 'charge' && !empty($conf->stripe->enabled))
         if ($paymentintent->status != 'succeeded')
         {
             $error++;
-            $errormessage = "StatusOfRetreivedIntent is not succeeded: ".$e->getMessage();
+            $errormessage = "StatusOfRetreivedIntent is not succeeded: ".$paymentintent->status;
             dol_syslog($errormessage, LOG_WARNING, 0, '_stripe');
-            setEventMessages($e->getMessage(), null, 'errors');
+            setEventMessages($paymentintent->status, null, 'errors');
             $action = '';
         }
         else
