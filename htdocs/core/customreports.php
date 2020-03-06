@@ -230,7 +230,9 @@ if (is_array($search_groupby) && count($search_groupby)) {
 		}
 
 		while ($obj = $db->fetch_object($resql)) {
-			$valuetranslated = $obj->val;
+			if (is_null($obj->val)) $valuetranslated = $langs->transnoentitiesnoconv("NotDefined");
+			else if ($obj->val === '') $valuetranslated = $langs->transnoentitiesnoconv("Empty");
+			else $valuetranslated = $obj->val;
 			if (!empty($object->fields[$gvalwithoutprefix]['arrayofkeyval'])) {
 				$valuetranslated = $object->fields[$gvalwithoutprefix]['arrayofkeyval'][$obj->val];
 			}
@@ -321,7 +323,7 @@ if ($object->isextrafieldmanaged) {
         }
     }
 }
-print '<div class="inline-block opacitymedium"><span class="fas fa-chart-line paddingright" title="'.$langs->trans("Measures").'"></span>'.$langs->trans("Measures").'</div> ';
+print '<div class="inline-block"><span class="fas fa-chart-line paddingright" title="'.$langs->trans("Measures").'"></span>'.$langs->trans("Measures").'</div> ';
 print $form->multiselectarray('search_measures', $arrayofmesures, $search_measures, 0, 0, 'minwidth500', 1);
 print '</div>';
 
@@ -399,7 +401,7 @@ $arrayofxaxislabel = array();
 foreach ($arrayofxaxis as $key => $val) {
     $arrayofxaxislabel[$key] = $val['label'];
 }
-print '<div class="inline-block opacitymedium"><span class="fas fa-ruler-horizontal paddingright" title="'.$langs->trans("XAxis").'"></span>'.$langs->trans("XAxis").'</div> ';
+print '<div class="inline-block"><span class="fas fa-ruler-horizontal paddingright" title="'.$langs->trans("XAxis").'"></span>'.$langs->trans("XAxis").'</div> ';
 print $form->multiselectarray('search_xaxis', $arrayofxaxislabel, $search_xaxis, 0, 0, 'minwidth250', 1);
 print '</div>';
 
@@ -665,7 +667,6 @@ if ($sql) {
 
     $totalnbofrecord = count($data);
 }
-//var_dump($data);
 
 print '<div class="customreportsoutput'.($totalnbofrecord ? '' : ' customreportsoutputnotdata').'">';
 
