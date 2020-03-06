@@ -815,7 +815,7 @@ foreach ($listofreferent as $key => $value)
 		if (!in_array($tablename, $array_of_element_linkable_with_different_thirdparty))
 		{
 		    $idtofilterthirdparty = $object->thirdparty->id;
-		    if (! empty($conf->global->PROJECT_OTHER_THIRDPARTY_ID_TO_ADD_ELEMENTS)) $idtofilterthirdparty. = ','.$conf->global->PROJECT_OTHER_THIRDPARTY_ID_TO_ADD_ELEMENTS;
+		    if (! empty($conf->global->PROJECT_OTHER_THIRDPARTY_ID_TO_ADD_ELEMENTS)) $idtofilterthirdparty .= ','.$conf->global->PROJECT_OTHER_THIRDPARTY_ID_TO_ADD_ELEMENTS;
 		}
 
        	if (empty($conf->global->PROJECT_LINK_ON_OVERWIEW_DISABLED) && $idtofilterthirdparty && !in_array($tablename, $exclude_select_element))
@@ -828,19 +828,19 @@ foreach ($listofreferent as $key => $value)
 			elseif ($selectList)
 			{
 				// Define form with the combo list of elements to link
-			    $addform. = '<div class="inline-block valignmiddle">';
-			    $addform. = '<form action="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'" method="post">';
-			    $addform. = '<input type="hidden" name="token" value="'.$_SESSION["newtoken"].'">';
-			    $addform. = '<input type="hidden" name="tablename" value="'.$tablename.'">';
-				$addform. = '<input type="hidden" name="action" value="addelement">';
-				$addform. = '<input type="hidden" name="datesrfc" value="'.dol_print_date($dates, 'dayhourrfc').'">';
-				$addform. = '<input type="hidden" name="dateerfc" value="'.dol_print_date($datee, 'dayhourrfc').'">';
-				$addform. = '<table><tr><td>'.$langs->trans("SelectElement").'</td>';
-				$addform. = '<td>'.$selectList.'</td>';
-				$addform. = '<td><input type="submit" class="button" value="'.dol_escape_htmltag($langs->trans("AddElement")).'"></td>';
-				$addform. = '</tr></table>';
-				$addform. = '</form>';
-				$addform. = '</div>';
+			    $addform .= '<div class="inline-block valignmiddle">';
+			    $addform .= '<form action="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'" method="post">';
+			    $addform .= '<input type="hidden" name="token" value="'.$_SESSION["newtoken"].'">';
+			    $addform .= '<input type="hidden" name="tablename" value="'.$tablename.'">';
+				$addform .= '<input type="hidden" name="action" value="addelement">';
+				$addform .= '<input type="hidden" name="datesrfc" value="'.dol_print_date($dates, 'dayhourrfc').'">';
+				$addform .= '<input type="hidden" name="dateerfc" value="'.dol_print_date($datee, 'dayhourrfc').'">';
+				$addform .= '<table><tr><td>'.$langs->trans("SelectElement").'</td>';
+				$addform .= '<td>'.$selectList.'</td>';
+				$addform .= '<td><input type="submit" class="button" value="'.dol_escape_htmltag($langs->trans("AddElement")).'"></td>';
+				$addform .= '</tr></table>';
+				$addform .= '</form>';
+				$addform .= '</div>';
 			}
 		}
 		if (empty($conf->global->PROJECT_CREATE_ON_OVERVIEW_DISABLED) && $urlnew)
