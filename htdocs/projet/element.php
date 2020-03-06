@@ -1513,45 +1513,45 @@ class TableRow
 	/**
 	 * The id of this project (need for "unlink" action)
 	 */
-	var $id;
+	public $id;
 
 	/**
 	 * The reference of this object (only for sorting)
 	 */
-	var $ref;
+	public $ref;
 
 	/**
 	 * The visible text for the reference (string or html)
 	 */
-	var $ref_text;
+	public $ref_text;
 
 	/**
 	 * The related user or societe of the object
 	 */
-	var $user;
+	public $user;
 
 	/**
 	 * The ht amount of this object (only for sorting)
 	 */
-	var $amount_ht;
+	public $amount_ht;
 
 	/**
 	 * The visible text for the $amount_ht (string or html)
 	 */
-	var $amount_ht_text;
+	public $amount_ht_text;
 
 	/**
 	 * The ttc amount of this object (only for sorting)
 	 */
-	var $amount_ttc;
+	public $amount_ttc;
 
 	/**
 	 * The visible text for the $amount_ttc (string or html)
 	 */
-	var $amount_ttc_text;
+	public $amount_ttc_text;
 
 	/**
 	 * The status of the object (string or html)
 	 */
-	var $status;
+	public $status;
 }
