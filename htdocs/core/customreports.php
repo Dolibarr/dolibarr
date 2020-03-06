@@ -231,7 +231,7 @@ if (is_array($search_groupby) && count($search_groupby)) {
 
 		while ($obj = $db->fetch_object($resql)) {
 			if (is_null($obj->val)) $valuetranslated = $langs->transnoentitiesnoconv("NotDefined");
-			else if ($obj->val === '') $valuetranslated = $langs->transnoentitiesnoconv("Empty");
+			elseif ($obj->val === '') $valuetranslated = $langs->transnoentitiesnoconv("Empty");
 			else $valuetranslated = $obj->val;
 			if (!empty($object->fields[$gvalwithoutprefix]['arrayofkeyval'])) {
 				$valuetranslated = $object->fields[$gvalwithoutprefix]['arrayofkeyval'][$obj->val];
