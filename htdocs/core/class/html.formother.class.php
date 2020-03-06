@@ -1338,4 +1338,118 @@ class FormOther
 		$resultautomanual .= '</select>'."\n";
 		return $resultautomanual;
 	}
+
+
+	/**
+	 * Return HTML select list to select a group by field
+	 *
+	 * @param 	mixed	$object				Object analyzed
+	 * @param	array	$search_groupby		Array of preselected fields
+	 * @param	array	$arrayofgroupby		Array of groupby to fill
+	 * @return string						HTML string component
+	 */
+	public function selectGroupByField($object, $search_groupby, &$arrayofgroupby) {
+		global $langs, $extrafields, $form;
+
+		$YYYY=substr($langs->trans("Year"), 0, 1).substr($langs->trans("Year"), 0, 1).substr($langs->trans("Year"), 0, 1).substr($langs->trans("Year"), 0, 1);
+		$MM=substr($langs->trans("Month"), 0, 1).substr($langs->trans("Month"), 0, 1);
+		$DD=substr($langs->trans("Day"), 0, 1).substr($langs->trans("Day"), 0, 1);
+		$HH=substr($langs->trans("Hour"), 0, 1).substr($langs->trans("Hour"), 0, 1);
+		$MI=substr($langs->trans("Minute"), 0, 1).substr($langs->trans("Minute"), 0, 1);
+		$SS=substr($langs->trans("Second"), 0, 1).substr($langs->trans("Second"), 0, 1);
+
+		foreach ($object->fields as $key => $val) {
+			if (!$val['measure']) {
+				if (in_array($key, array(
+					'id', 'ref_int', 'ref_ext', 'rowid', 'entity', 'last_main_doc', 'logo', 'logo_squarred', 'extraparams',
+					'parent', 'photo', 'socialnetworks', 'webservices_url', 'webservices_key'))) continue;
+				if (isset($val['enabled']) && !dol_eval($val['enabled'], 1)) continue;
+				if (isset($val['visible']) && !dol_eval($val['visible'], 1)) continue;
+				if (preg_match('/^fk_/', $key) && !preg_match('/^fk_statu/', $key)) continue;
+				if (preg_match('/^pass/', $key)) continue;
+				if (in_array($val['type'], array('html', 'text'))) continue;
+				if (in_array($val['type'], array('timestamp', 'date', 'datetime'))) {
+					$arrayofgroupby['t.'.$key.'-year'] = array('label' => $langs->trans($val['label']).' ('.$YYYY.')', 'position' => $val['position'].'-y');
+					$arrayofgroupby['t.'.$key.'-month'] = array('label' => $langs->trans($val['label']).' ('.$YYYY.'-'.$MM.')', 'position' => $val['position'].'-m');
+					$arrayofgroupby['t.'.$key.'-day'] = array('label' => $langs->trans($val['label']).' ('.$YYYY.'-'.$MM.'-'.$DD.')', 'position' => $val['position'].'-d');
+				} else {
+					$arrayofgroupby['t.'.$key] = array('label' => $langs->trans($val['label']), 'position' => (int) $val['position']);
+				}
+			}
+		}
+		// Add extrafields to Group by
+		if ($object->isextrafieldmanaged) {
+			foreach ($extrafields->attributes[$object->table_element]['label'] as $key => $val) {
+				if ($extrafields->attributes[$object->table_element]['type'][$key] == 'separate') continue;
+				if (!empty($extrafields->attributes[$object->table_element]['totalizable'][$key])) continue;
+				$arrayofgroupby['te.'.$key] = array('label' => $langs->trans($extrafields->attributes[$object->table_element]['label'][$key]), 'position' => 1000 + (int) $extrafields->attributes[$object->table_element]['pos'][$key]);
+			}
+		}
+
+		$arrayofgroupby = dol_sort_array($arrayofgroupby, 'position', 'asc', 1);
+		$arrayofgroupbylabel = array();
+		foreach ($arrayofgroupby as $key => $val) {
+			$arrayofgroupbylabel[$key] = $val['label'];
+		}
+		$result = $form->selectarray('search_groupby', $arrayofgroupbylabel, $search_groupby, 1, 0, 0, '', 0, 0, 0, '', 'minwidth250', 1);
+
+		return $result;
+	}
+
+	/**
+	 * Return HTML select list to select a group by field
+	 *
+	 * @param 	mixed	$object				Object analyzed
+	 * @param	array	$search_xaxis		Array of preselected fields
+	 * @param	array	$arrayofxaxis		Array of groupby to fill
+	 * @return string						HTML string component
+	 */
+	public function selectXAxisField($object, $search_xaxis, &$arrayofxaxis) {
+		global $langs, $extrafields, $form;
+
+		$YYYY=substr($langs->trans("Year"), 0, 1).substr($langs->trans("Year"), 0, 1).substr($langs->trans("Year"), 0, 1).substr($langs->trans("Year"), 0, 1);
+		$MM=substr($langs->trans("Month"), 0, 1).substr($langs->trans("Month"), 0, 1);
+		$DD=substr($langs->trans("Day"), 0, 1).substr($langs->trans("Day"), 0, 1);
+		$HH=substr($langs->trans("Hour"), 0, 1).substr($langs->trans("Hour"), 0, 1);
+		$MI=substr($langs->trans("Minute"), 0, 1).substr($langs->trans("Minute"), 0, 1);
+		$SS=substr($langs->trans("Second"), 0, 1).substr($langs->trans("Second"), 0, 1);
+
+
+		foreach ($object->fields as $key => $val) {
+			if (!$val['measure']) {
+				if (in_array($key, array(
+					'id', 'ref_int', 'ref_ext', 'rowid', 'entity', 'last_main_doc', 'logo', 'logo_squarred', 'extraparams',
+					'parent', 'photo', 'socialnetworks', 'webservices_url', 'webservices_key'))) continue;
+				if (isset($val['enabled']) && !dol_eval($val['enabled'], 1)) continue;
+				if (isset($val['visible']) && !dol_eval($val['visible'], 1)) continue;
+				if (preg_match('/^fk_/', $key) && !preg_match('/^fk_statu/', $key)) continue;
+				if (preg_match('/^pass/', $key)) continue;
+				if (in_array($val['type'], array('html', 'text'))) continue;
+				if (in_array($val['type'], array('timestamp', 'date', 'datetime'))) {
+					$arrayofxaxis['t.'.$key.'-year'] = array('label' => $langs->trans($val['label']).' ('.$YYYY.')', 'position' => $val['position'].'-y');
+					$arrayofxaxis['t.'.$key.'-month'] = array('label' => $langs->trans($val['label']).' ('.$YYYY.'-'.$MM.')', 'position' => $val['position'].'-m');
+					$arrayofxaxis['t.'.$key.'-day'] = array('label' => $langs->trans($val['label']).' ('.$YYYY.'-'.$MM.'-'.$DD.')', 'position' => $val['position'].'-d');
+				} else {
+					$arrayofxaxis['t.'.$key] = array('label' => $val['label'], 'position' => (int) $val['position']);
+				}
+			}
+		}
+		// Add extrafields to X-Axis
+		if ($object->isextrafieldmanaged) {
+			foreach ($extrafields->attributes[$object->table_element]['label'] as $key => $val) {
+				if ($extrafields->attributes[$object->table_element]['type'][$key] == 'separate') continue;
+				if (!empty($extrafields->attributes[$object->table_element]['totalizable'][$key])) continue;
+				$arrayofxaxis['te.'.$key] = array('label' => $extrafields->attributes[$object->table_element]['label'][$key], 'position' => (int) $extrafields->attributes[$object->table_element]['pos'][$key]);
+			}
+		}
+
+		$arrayofxaxis = dol_sort_array($arrayofxaxis, 'position', 'asc', 1);
+		$arrayofxaxislabel = array();
+		foreach ($arrayofxaxis as $key => $val) {
+			$arrayofxaxislabel[$key] = $val['label'];
+		}
+		$result = $form->selectarray('search_xaxis', $arrayofxaxislabel, $search_xaxis, 0, 0, 0, '', 0, 0, 0, '', 'minwidth250', 1);
+
+		return $result;
+	}
 }

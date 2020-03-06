@@ -28,10 +28,6 @@
 if (!defined('USE_CUSTOME_REPORT_AS_INCLUDE'))
 {
 	require '../main.inc.php';
-	require_once DOL_DOCUMENT_ROOT."/core/lib/admin.lib.php";
-	require_once DOL_DOCUMENT_ROOT."/core/lib/company.lib.php";
-	require_once DOL_DOCUMENT_ROOT."/core/class/dolgraph.class.php";
-	require_once DOL_DOCUMENT_ROOT."/core/class/doleditor.class.php";
 
 	// Get parameters
 	$action     = GETPOST('action', 'aZ09') ?GETPOST('action', 'aZ09') : 'view'; // The action 'add', 'create', 'edit', 'update', 'view', ...
@@ -45,8 +41,14 @@ if (!defined('USE_CUSTOME_REPORT_AS_INCLUDE'))
 
 	$search_filters = GETPOST('search_filters', 'array');
 	$search_measures = GETPOST('search_measures', 'array');
-	$search_xaxis = GETPOST('search_xaxis', 'array');
-	$search_groupby = GETPOST('search_groupby', 'array');
+
+	//$search_xaxis = GETPOST('search_xaxis', 'array');
+	if (GETPOST('search_xaxis', 'alpha') && GETPOST('search_xaxis', 'alpha') != '-1') $search_xaxis = array(GETPOST('search_xaxis', 'alpha'));
+	else $search_xaxis = array();
+	//$search_groupby = GETPOST('search_groupby', 'array');
+	if (GETPOST('search_groupby', 'alpha') && GETPOST('search_groupby', 'alpha') != '-1') $search_groupby = array(GETPOST('search_groupby', 'alpha'));
+	else $search_groupby = array();
+
 	$search_yaxis = GETPOST('search_yaxis', 'array');
 	$search_graph = GETPOST('search_graph', 'none');
 
@@ -62,6 +64,12 @@ if (!defined('USE_CUSTOME_REPORT_AS_INCLUDE'))
 
 	$diroutputmassaction = $conf->user->dir_temp.'/'.$user->id.'/customreport';
 }
+
+require_once DOL_DOCUMENT_ROOT."/core/lib/admin.lib.php";
+require_once DOL_DOCUMENT_ROOT."/core/lib/company.lib.php";
+require_once DOL_DOCUMENT_ROOT."/core/class/dolgraph.class.php";
+require_once DOL_DOCUMENT_ROOT."/core/class/doleditor.class.php";
+require_once DOL_DOCUMENT_ROOT."/core/class/html.formother.class.php";
 
 // Load traductions files requiredby by page
 $langs->loadLangs(array("companies", "other", "exports"));
@@ -144,6 +152,7 @@ $search_component_params = array('');
 
 $MAXUNIQUEVALFORGROUP = 20;
 $MAXMEASURESINBARGRAPH = 20;
+
 $YYYY=substr($langs->trans("Year"), 0, 1).substr($langs->trans("Year"), 0, 1).substr($langs->trans("Year"), 0, 1).substr($langs->trans("Year"), 0, 1);
 $MM=substr($langs->trans("Month"), 0, 1).substr($langs->trans("Month"), 0, 1);
 $DD=substr($langs->trans("Day"), 0, 1).substr($langs->trans("Day"), 0, 1);
@@ -172,6 +181,7 @@ $arrayofvaluesforgroupby = array();
  */
 
 $form = new Form($db);
+$formother = new FormOther($db);
 
 if (!defined('USE_CUSTOME_REPORT_AS_INCLUDE')) {
 	llxHeader('', $langs->transnoentitiesnoconv('CustomReports'), '');
@@ -199,7 +209,6 @@ if ($action == 'viewgraph') {
 		$search_graph = 'lines';
 	}
 }
-
 
 // Get all possible values of fields when a 'group by' is set and save this into $arrayofvaluesforgroupby
 if (is_array($search_groupby) && count($search_groupby)) {
@@ -330,86 +339,21 @@ print '</div>';
 
 // Group by
 print '<div class="divadvancedsearchfield">';
-foreach ($object->fields as $key => $val) {
-	if (!$val['measure']) {
-		if (in_array($key, array(
-			'id', 'ref_int', 'ref_ext', 'rowid', 'entity', 'last_main_doc', 'logo', 'logo_squarred', 'extraparams',
-			'parent', 'photo', 'socialnetworks', 'webservices_url', 'webservices_key'))) continue;
-		if (isset($val['enabled']) && !dol_eval($val['enabled'], 1)) continue;
-		if (isset($val['visible']) && !dol_eval($val['visible'], 1)) continue;
-		if (preg_match('/^fk_/', $key) && !preg_match('/^fk_statu/', $key)) continue;
-		if (preg_match('/^pass/', $key)) continue;
-		if (in_array($val['type'], array('html', 'text'))) continue;
-		if (in_array($val['type'], array('timestamp', 'date', 'datetime'))) {
-			$arrayofgroupby['t.'.$key.'-year'] = array('label' => $langs->trans($val['label']).' ('.$YYYY.')', 'position' => $val['position'].'-y');
-			$arrayofgroupby['t.'.$key.'-month'] = array('label' => $langs->trans($val['label']).' ('.$YYYY.'-'.$MM.')', 'position' => $val['position'].'-m');
-			$arrayofgroupby['t.'.$key.'-day'] = array('label' => $langs->trans($val['label']).' ('.$YYYY.'-'.$MM.'-'.$DD.')', 'position' => $val['position'].'-d');
-		} else {
-			$arrayofgroupby['t.'.$key] = array('label' => $val['label'], 'position' => (int) $val['position']);
-		}
-	}
-}
-// Add extrafields to Group by
-if ($object->isextrafieldmanaged) {
-	foreach ($extrafields->attributes[$object->table_element]['label'] as $key => $val) {
-		if ($extrafields->attributes[$object->table_element]['type'][$key] == 'separate') continue;
-		if (!empty($extrafields->attributes[$object->table_element]['totalizable'][$key])) continue;
-		$arrayofgroupby['te.'.$key] = array('label' => $extrafields->attributes[$object->table_element]['label'][$key], 'position' => (int) $extrafields->attributes[$object->table_element]['pos'][$key]);
-	}
-}
-
-$arrayofgroupby = dol_sort_array($arrayofgroupby, 'position', 'asc', 1);
-$arrayofgroupbylabel = array();
-foreach ($arrayofgroupby as $key => $val) {
-	$arrayofgroupbylabel[$key] = $val['label'];
-}
 print '<div class="inline-block opacitymedium"><span class="fas fa-ruler-horizontal paddingright" title="'.$langs->trans("GroupBy").'"></span>'.$langs->trans("GroupBy").'</div> ';
-print $form->multiselectarray('search_groupby', $arrayofgroupbylabel, $search_groupby, 0, 0, 'minwidth250', 1);
+print $formother->selectGroupByField($object, $search_groupby, $arrayofgroupby);
 print '</div>';
 
 
 // XAxis
 print '<div class="divadvancedsearchfield">';
-foreach ($object->fields as $key => $val) {
-    if (!$val['measure']) {
-        if (in_array($key, array(
-        	'id', 'ref_int', 'ref_ext', 'rowid', 'entity', 'last_main_doc', 'logo', 'logo_squarred', 'extraparams',
-        	'parent', 'photo', 'socialnetworks', 'webservices_url', 'webservices_key'))) continue;
-        if (isset($val['enabled']) && !dol_eval($val['enabled'], 1)) continue;
-        if (isset($val['visible']) && !dol_eval($val['visible'], 1)) continue;
-        if (preg_match('/^fk_/', $key) && !preg_match('/^fk_statu/', $key)) continue;
-        if (preg_match('/^pass/', $key)) continue;
-        if (in_array($val['type'], array('html', 'text'))) continue;
-        if (in_array($val['type'], array('timestamp', 'date', 'datetime'))) {
-        	$arrayofxaxis['t.'.$key.'-year'] = array('label' => $langs->trans($val['label']).' ('.$YYYY.')', 'position' => $val['position'].'-y');
-            $arrayofxaxis['t.'.$key.'-month'] = array('label' => $langs->trans($val['label']).' ('.$YYYY.'-'.$MM.')', 'position' => $val['position'].'-m');
-            $arrayofxaxis['t.'.$key.'-day'] = array('label' => $langs->trans($val['label']).' ('.$YYYY.'-'.$MM.'-'.$DD.')', 'position' => $val['position'].'-d');
-        } else {
-            $arrayofxaxis['t.'.$key] = array('label' => $val['label'], 'position' => (int) $val['position']);
-        }
-    }
-}
-// Add extrafields to X-Axis
-if ($object->isextrafieldmanaged) {
-	foreach ($extrafields->attributes[$object->table_element]['label'] as $key => $val) {
-		if ($extrafields->attributes[$object->table_element]['type'][$key] == 'separate') continue;
-		if (!empty($extrafields->attributes[$object->table_element]['totalizable'][$key])) continue;
-		$arrayofxaxis['te.'.$key] = array('label' => $extrafields->attributes[$object->table_element]['label'][$key], 'position' => (int) $extrafields->attributes[$object->table_element]['pos'][$key]);
-	}
-}
-
-$arrayofxaxis = dol_sort_array($arrayofxaxis, 'position', 'asc', 1);
-$arrayofxaxislabel = array();
-foreach ($arrayofxaxis as $key => $val) {
-    $arrayofxaxislabel[$key] = $val['label'];
-}
 print '<div class="inline-block"><span class="fas fa-ruler-horizontal paddingright" title="'.$langs->trans("XAxis").'"></span>'.$langs->trans("XAxis").'</div> ';
-print $form->multiselectarray('search_xaxis', $arrayofxaxislabel, $search_xaxis, 0, 0, 'minwidth250', 1);
+print $formother->selectXAxisField($object, $search_xaxis, $arrayofxaxis);
 print '</div>';
 
-// YAxis
+
 if ($mode == 'grid') {
-    print '<div class="divadvancedsearchfield">';
+	// YAxis
+	print '<div class="divadvancedsearchfield">';
     foreach ($object->fields as $key => $val) {
         if (!$val['measure']) {
             if (in_array($key, array('id', 'rowid', 'entity', 'last_main_doc', 'extraparams'))) continue;
@@ -527,7 +471,7 @@ if (!empty($search_measures) && !empty($search_xaxis))
    		$sql .= ' AND entity IN ('.getEntity($object->element).')';
     }
     foreach ($search_filters as $key => $val) {
-		// TODO
+    	// TODO Add the where here
     }
     $sql .= ' GROUP BY ';
     foreach ($search_xaxis as $key => $val) {
