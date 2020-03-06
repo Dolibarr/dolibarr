@@ -892,7 +892,7 @@ foreach ($listofreferent as $key => $value)
 		// Remove link column
 		print '<td style="width: 24px"></td>';
 
-		print_liste_field_titre($langs->trans("Ref"), $_SERVER["PHP_SELF"], "ref", "", $param, 'style="width: 200px"', $sortfield, $sortorder);
+		print_liste_field_titre("Ref", $_SERVER["PHP_SELF"], "ref", "", $param, 'style="width: 200px"', $sortfield, $sortorder);
 		print_liste_field_titre($label_date, $_SERVER["PHP_SELF"], "date", "", $param, $moreattrib, $sortfield, $sortorder, "center ");
 		print_liste_field_titre($label_user, $_SERVER["PHP_SELF"], "user", "", $param, "", $sortfield, $sortorder);
 		print_liste_field_titre($label_amount_ht, $_SERVER["PHP_SELF"], "amount_ht", "", $param, 'style="width: 120px"', $sortfield, $sortorder, "right ");
