@@ -1434,12 +1434,13 @@ class FormOther
 				}
 			}
 		}
+
 		// Add extrafields to X-Axis
 		if ($object->isextrafieldmanaged) {
 			foreach ($extrafields->attributes[$object->table_element]['label'] as $key => $val) {
 				if ($extrafields->attributes[$object->table_element]['type'][$key] == 'separate') continue;
 				if (!empty($extrafields->attributes[$object->table_element]['totalizable'][$key])) continue;
-				$arrayofxaxis['te.'.$key] = array('label' => $extrafields->attributes[$object->table_element]['label'][$key], 'position' => (int) $extrafields->attributes[$object->table_element]['pos'][$key]);
+				$arrayofxaxis['te.'.$key] = array('label' => $langs->trans($extrafields->attributes[$object->table_element]['label'][$key]), 'position' => 1000 + (int) $extrafields->attributes[$object->table_element]['pos'][$key]);
 			}
 		}
 
@@ -1448,7 +1449,7 @@ class FormOther
 		foreach ($arrayofxaxis as $key => $val) {
 			$arrayofxaxislabel[$key] = $val['label'];
 		}
-		$result = $form->selectarray('search_xaxis', $arrayofxaxislabel, $search_xaxis, 0, 0, 0, '', 0, 0, 0, '', 'minwidth250', 1);
+		$result = $form->selectarray('search_xaxis', $arrayofxaxislabel, $search_xaxis, 1, 0, 0, '', 0, 0, 0, '', 'minwidth250', 1);
 
 		return $result;
 	}
