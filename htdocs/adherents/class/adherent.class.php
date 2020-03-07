@@ -1376,48 +1376,49 @@ class Adherent extends CommonObject
 
 		require_once DOL_DOCUMENT_ROOT.'/adherents/class/subscription.class.php';
 
-		$sql = "SELECT c.rowid, c.fk_adherent, c.subscription, c.note, c.fk_bank,";
-		$sql.= " c.tms as datem,";
-		$sql.= " c.datec as datec,";
-		$sql.= " c.dateadh as dateh,";
-		$sql.= " c.datef as datef";
-		$sql.= " FROM ".MAIN_DB_PREFIX."subscription as c";
-		$sql.= " WHERE c.fk_adherent = ".$this->id;
-		$sql.= " ORDER BY c.dateadh";
+		$sql = "SELECT c.rowid, c.fk_adherent, c.fk_type, c.subscription, c.note, c.fk_bank,";
+		$sql .= " c.tms as datem,";
+		$sql .= " c.datec as datec,";
+		$sql .= " c.dateadh as dateh,";
+		$sql .= " c.datef as datef";
+		$sql .= " FROM ".MAIN_DB_PREFIX."subscription as c";
+		$sql .= " WHERE c.fk_adherent = ".$this->id;
+		$sql .= " ORDER BY c.dateadh";
 		dol_syslog(get_class($this)."::fetch_subscriptions", LOG_DEBUG);
 
-		$resql=$this->db->query($sql);
+		$resql = $this->db->query($sql);
 		if ($resql)
 		{
-			$this->subscriptions=array();
+			$this->subscriptions = array();
 
-			$i=0;
+			$i = 0;
 			while ($obj = $this->db->fetch_object($resql))
 			{
-				if ($i==0)
+				if ($i == 0)
 				{
-					$this->first_subscription_date=$this->db->jdate($obj->datec);
-					$this->first_subscription_date_start=$this->db->jdate($obj->dateh);
-					$this->first_subscription_date_end=$this->db->jdate($obj->datef);
-					$this->first_subscription_amount=$obj->subscription;
+					$this->first_subscription_date = $this->db->jdate($obj->datec);
+					$this->first_subscription_date_start = $this->db->jdate($obj->dateh);
+					$this->first_subscription_date_end = $this->db->jdate($obj->datef);
+					$this->first_subscription_amount = $obj->subscription;
 				}
-				$this->last_subscription_date=$this->db->jdate($obj->datec);
-				$this->last_subscription_date_start=$this->db->jdate($obj->datef);
-				$this->last_subscription_date_end=$this->db->jdate($obj->datef);
-				$this->last_subscription_amount=$obj->subscription;
+				$this->last_subscription_date = $this->db->jdate($obj->datec);
+				$this->last_subscription_date_start = $this->db->jdate($obj->datef);
+				$this->last_subscription_date_end = $this->db->jdate($obj->datef);
+				$this->last_subscription_amount = $obj->subscription;
 
-				$subscription=new Subscription($this->db);
-				$subscription->id=$obj->rowid;
-				$subscription->fk_adherent=$obj->fk_adherent;
-				$subscription->amount=$obj->subscription;
-				$subscription->note=$obj->note;
-				$subscription->fk_bank=$obj->fk_bank;
-				$subscription->datem=$this->db->jdate($obj->datem);
-				$subscription->datec=$this->db->jdate($obj->datec);
-				$subscription->dateh=$this->db->jdate($obj->dateh);
-				$subscription->datef=$this->db->jdate($obj->datef);
+				$subscription = new Subscription($this->db);
+				$subscription->id = $obj->rowid;
+				$subscription->fk_adherent = $obj->fk_adherent;
+				$subscription->fk_type = $obj->fk_type;
+				$subscription->amount = $obj->subscription;
+				$subscription->note = $obj->note;
+				$subscription->fk_bank = $obj->fk_bank;
+				$subscription->datem = $this->db->jdate($obj->datem);
+				$subscription->datec = $this->db->jdate($obj->datec);
+				$subscription->dateh = $this->db->jdate($obj->dateh);
+				$subscription->datef = $this->db->jdate($obj->datef);
 
-				$this->subscriptions[]=$subscription;
+				$this->subscriptions[] = $subscription;
 
 				$i++;
 			}
@@ -1425,7 +1426,7 @@ class Adherent extends CommonObject
 		}
 		else
 		{
-			$this->error=$this->db->error().' sql='.$sql;
+			$this->error = $this->db->error().' sql='.$sql;
 			return -1;
 		}
 	}

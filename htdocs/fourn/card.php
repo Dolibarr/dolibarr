@@ -810,16 +810,6 @@ if ($object->id > 0)
 
 		if ($user->rights->fournisseur->facture->creer)
 		{
-			$langs->load("bills");
-	        if ($object->status == 1) {
-	            print '<a class="butAction" href="'.DOL_URL_ROOT.'/fourn/facture/card.php?action=create&socid='.$object->id.'">'.$langs->trans("AddBill").'</a>';
-	        } else {
-	            print '<a class="butActionRefused classfortooltip" title="'.dol_escape_js($langs->trans("ThirdPartyIsClosed")).'" href="#">'.$langs->trans("AddBill").'</a>';
-	        }
-		}
-
-		if ($user->rights->fournisseur->facture->creer)
-		{
 			if (!empty($orders2invoice) && $orders2invoice > 0)
 			{
 				if ($object->status == 1)
@@ -833,6 +823,16 @@ if ($object->id > 0)
 				}
 			}
 			else print '<div class="inline-block divButAction"><a class="butActionRefused classfortooltip" title="'.dol_escape_js($langs->trans("NoOrdersToInvoice").' ('.$langs->trans("WithReceptionFinished").')').'" href="#">'.$langs->trans("CreateInvoiceForThisCustomer").'</a></div>';
+		}
+
+		if ($user->rights->fournisseur->facture->creer)
+		{
+			$langs->load("bills");
+	        if ($object->status == 1) {
+	            print '<a class="butAction" href="'.DOL_URL_ROOT.'/fourn/facture/card.php?action=create&socid='.$object->id.'">'.$langs->trans("AddBill").'</a>';
+	        } else {
+	            print '<a class="butActionRefused classfortooltip" title="'.dol_escape_js($langs->trans("ThirdPartyIsClosed")).'" href="#">'.$langs->trans("AddBill").'</a>';
+	        }
 		}
 
     	// Add action
