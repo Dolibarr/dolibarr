@@ -8619,6 +8619,160 @@ function dolGetButtonTitle($label, $helpText = '', $iconClass = 'fa fa-file', $u
 }
 
 /**
+ * Get an array with properties of an element.
+ * Called by fetchObjectByElement.
+ *
+ * @param   string 	$element_type 	Element type (Value of $object->element). Example: 'action', 'facture', 'project_task' or 'object@mymodule'...
+ * @return  array					(module, classpath, element, subelement, classfile, classname)
+ */
+function getElementProperties($element_type)
+{
+	$regs = array();
+
+	$classfile = $classname = $classpath = '';
+
+	// Parse element/subelement (ex: project_task)
+	$module = $element_type;
+	$element = $element_type;
+	$subelement = $element_type;
+
+	// If we ask an resource form external module (instead of default path)
+	if (preg_match('/^([^@]+)@([^@]+)$/i', $element_type, $regs)) {
+		$element = $subelement = $regs[1];
+		$module = $regs[2];
+	}
+
+	//print '<br>1. element : '.$element.' - module : '.$module .'<br>';
+	if (preg_match('/^([^_]+)_([^_]+)/i', $element, $regs)) {
+		$module = $element = $regs[1];
+		$subelement = $regs[2];
+	}
+
+	// For compat
+	if ($element_type == "action") {
+		$classpath = 'comm/action/class';
+		$subelement = 'Actioncomm';
+		$module = 'agenda';
+	}
+
+	// To work with non standard path
+	if ($element_type == 'facture' || $element_type == 'invoice') {
+		$classpath = 'compta/facture/class';
+		$module = 'facture';
+		$subelement = 'facture';
+	}
+	if ($element_type == 'commande' || $element_type == 'order') {
+		$classpath = 'commande/class';
+		$module = 'commande';
+		$subelement = 'commande';
+	}
+	if ($element_type == 'propal') {
+		$classpath = 'comm/propal/class';
+	}
+	if ($element_type == 'supplier_proposal') {
+		$classpath = 'supplier_proposal/class';
+	}
+	if ($element_type == 'shipping') {
+		$classpath = 'expedition/class';
+		$subelement = 'expedition';
+		$module = 'expedition_bon';
+	}
+	if ($element_type == 'delivery') {
+		$classpath = 'livraison/class';
+		$subelement = 'livraison';
+		$module = 'livraison_bon';
+	}
+	if ($element_type == 'contract') {
+		$classpath = 'contrat/class';
+		$module = 'contrat';
+		$subelement = 'contrat';
+	}
+	if ($element_type == 'member') {
+		$classpath = 'adherents/class';
+		$module = 'adherent';
+		$subelement = 'adherent';
+	}
+	if ($element_type == 'cabinetmed_cons') {
+		$classpath = 'cabinetmed/class';
+		$module = 'cabinetmed';
+		$subelement = 'cabinetmedcons';
+	}
+	if ($element_type == 'fichinter') {
+		$classpath = 'fichinter/class';
+		$module = 'ficheinter';
+		$subelement = 'fichinter';
+	}
+	if ($element_type == 'dolresource' || $element_type == 'resource') {
+		$classpath = 'resource/class';
+		$module = 'resource';
+		$subelement = 'dolresource';
+	}
+	if ($element_type == 'propaldet') {
+		$classpath = 'comm/propal/class';
+		$module = 'propal';
+		$subelement = 'propaleligne';
+	}
+	if ($element_type == 'order_supplier') {
+		$classpath = 'fourn/class';
+		$module = 'fournisseur';
+		$subelement = 'commandefournisseur';
+		$classfile = 'fournisseur.commande';
+	}
+	if ($element_type == 'invoice_supplier') {
+		$classpath = 'fourn/class';
+		$module = 'fournisseur';
+		$subelement = 'facturefournisseur';
+		$classfile = 'fournisseur.facture';
+	}
+	if ($element_type == "service") {
+		$classpath = 'product/class';
+		$subelement = 'product';
+	}
+
+	if (empty($classfile)) $classfile = strtolower($subelement);
+	if (empty($classname)) $classname = ucfirst($subelement);
+	if (empty($classpath)) $classpath = $module.'/class';
+
+	$element_properties = array(
+		'module' => $module,
+		'classpath' => $classpath,
+		'element' => $element,
+		'subelement' => $subelement,
+		'classfile' => $classfile,
+		'classname' => $classname
+	);
+	return $element_properties;
+}
+
+/**
+ * Fetch an object from its id and element_type
+ * Inclusion of classes is automatic
+ *
+ * @param	int     	$element_id 	Element id
+ * @param	string  	$element_type 	Element type
+ * @param	string     	$element_ref 	Element ref (Use this or element_id but not both)
+ * @return 	int|object 					object || 0 || -1 if error
+ */
+function fetchObjectByElement($element_id, $element_type, $element_ref = '')
+{
+	global $conf, $db;
+
+	$element_prop = getElementProperties($element_type);
+	if (is_array($element_prop) && $conf->{$element_prop['module']}->enabled)
+	{
+		dol_include_once('/'.$element_prop['classpath'].'/'.$element_prop['classfile'].'.class.php');
+
+		$objecttmp = new $element_prop['classname']($db);
+		$ret = $objecttmp->fetch($element_id, $element_ref);
+		if ($ret >= 0)
+		{
+			return $objecttmp;
+		}
+	}
+	return 0;
+}
+
+/**
  * Return if a file can contains executable content
  *
  * @param   string  $filename       File NamedRange
