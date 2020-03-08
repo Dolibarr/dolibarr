@@ -196,8 +196,13 @@ function restrictedArea($user, $features, $objectid = 0, $tableandshare = '', $f
 	// Get more permissions checks from hooks
 	$parameters = array('features'=>$features, 'objectid'=>$objectid, 'idtype'=>$dbt_select);
 	$reshook = $hookmanager->executeHooks('restrictedArea', $parameters);
-	if (!empty($hookmanager->resArray['result'])) return true;
-	if ($reshook > 0) return false;
+
+	if (isset($hookmanager->resArray['result'])) {
+		if ($hookmanager->resArray['result'] == 0) accessforbidden();		// Module returns 0, so access forbidden
+	}
+	if ($reshook > 0) {		// No other test done.
+		return 1;
+	}
 
 	if ($dbt_select != 'rowid' && $dbt_select != 'id') $objectid = "'".$objectid."'";
 

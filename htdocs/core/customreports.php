@@ -85,16 +85,16 @@ $object = null;
 $ObjectClassName = '';
 // Objects available by default
 $arrayoftype = array(
-	'thirdparty' => array('label' => 'ThirdParties', 'ObjectClassName' => 'Societe', 'enabled' => $conf->societe->enabled, 'ClassPath' => DOL_DOCUMENT_ROOT."/societe/class/societe.class.php"),
-	'contact' => array('label' => 'Contacts', 'ObjectClassName' => 'Contact', 'enabled' => $conf->societe->enabled, 'ClassPath' => DOL_DOCUMENT_ROOT."/contact/class/contact.class.php"),
-	'contract' => array('label' => 'Contracts', 'ObjectClassName' => 'Contrat', 'enabled' => $conf->contrat->enabled, 'ClassPath' => DOL_DOCUMENT_ROOT."/contrat/class/contrat.class.php", 'langs'=>'contract'),
-	'invoice' => array('label' => 'Invoices', 'ObjectClassName' => 'Facture', 'enabled' => $conf->facture->enabled, 'ClassPath' => DOL_DOCUMENT_ROOT."/compta/facture/class/facture.class.php"),
-	'invoice_template'=>array('label' => 'PredefinedInvoices', 'ObjectClassName' => 'FactureRec', 'enabled' => $conf->facture->enabled, 'ClassPath' => DOL_DOCUMENT_ROOT."/compta/class/facturerec.class.php", 'langs'=>'bills'),
+	'thirdparty' => array('label' => 'ThirdParties', 'ObjectClassName' => 'Societe', 'enabled' => $conf->societe->enabled, 'ClassPath' => "/societe/class/societe.class.php"),
+	'contact' => array('label' => 'Contacts', 'ObjectClassName' => 'Contact', 'enabled' => $conf->societe->enabled, 'ClassPath' => "/contact/class/contact.class.php"),
+	'contract' => array('label' => 'Contracts', 'ObjectClassName' => 'Contrat', 'enabled' => $conf->contrat->enabled, 'ClassPath' => "/contrat/class/contrat.class.php", 'langs'=>'contract'),
+	'invoice' => array('label' => 'Invoices', 'ObjectClassName' => 'Facture', 'enabled' => $conf->facture->enabled, 'ClassPath' => "/compta/facture/class/facture.class.php"),
+	'invoice_template'=>array('label' => 'PredefinedInvoices', 'ObjectClassName' => 'FactureRec', 'enabled' => $conf->facture->enabled, 'ClassPath' => "/compta/class/facturerec.class.php", 'langs'=>'bills'),
 	'bom' => array('label' => 'BOM', 'ObjectClassName' => 'Bom', 'enabled' => $conf->bom->enabled),
-	'mo' => array('label' => 'MO', 'ObjectClassName' => 'Mo', 'enabled' => $conf->mrp->enabled, 'ClassPath' => DOL_DOCUMENT_ROOT."/mrp/class/mo.class.php"),
+	'mo' => array('label' => 'MO', 'ObjectClassName' => 'Mo', 'enabled' => $conf->mrp->enabled, 'ClassPath' => "/mrp/class/mo.class.php"),
 	'ticket' => array('label' => 'Ticket', 'ObjectClassName' => 'Ticket', 'enabled' => $conf->ticket->enabled),
-	'member' => array('label' => 'Adherent', 'ObjectClassName' => 'Adherent', 'enabled' => $conf->adherent->enabled, 'ClassPath' => DOL_DOCUMENT_ROOT."/adherents/class/adherent.class.php", 'langs'=>'members'),
-	'cotisation' => array('label' => 'Subscriptions', 'ObjectClassName' => 'Subscription', 'enabled' => $conf->adherent->enabled, 'ClassPath' => DOL_DOCUMENT_ROOT."/adherents/class/subscription.class.php", 'langs'=>'members'),
+	'member' => array('label' => 'Adherent', 'ObjectClassName' => 'Adherent', 'enabled' => $conf->adherent->enabled, 'ClassPath' => "/adherents/class/adherent.class.php", 'langs'=>'members'),
+	'cotisation' => array('label' => 'Subscriptions', 'ObjectClassName' => 'Subscription', 'enabled' => $conf->adherent->enabled, 'ClassPath' => "/adherents/class/subscription.class.php", 'langs'=>'members'),
 );
 
 // Complete $arrayoftype by external modules
@@ -120,10 +120,10 @@ elseif (is_array($hookmanager->resArray)) {
 
 if ($objecttype) {
     try {
-    	if ($arrayoftype[$objecttype]['ClassPath']) {
-    		include_once $arrayoftype[$objecttype]['ClassPath'];
+    	if (! empty($arrayoftype[$objecttype]['ClassPath'])) {
+    		dol_include_once($arrayoftype[$objecttype]['ClassPath']);
     	} else {
-    		include_once DOL_DOCUMENT_ROOT."/".$objecttype."/class/".$objecttype.".class.php";
+    		dol_include_once("/".$objecttype."/class/".$objecttype.".class.php");
     	}
         $ObjectClassName = $arrayoftype[$objecttype]['ObjectClassName'];
         $object = new $ObjectClassName($db);
@@ -140,6 +140,7 @@ if ($user->socid > 0)	// Protection if external user
 	//$socid = $user->socid;
 	accessforbidden();
 }
+
 $result = restrictedArea($user, $object->element, 0, '');
 
 // Fetch optionals attributes and labels
