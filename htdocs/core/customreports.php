@@ -72,7 +72,7 @@ require_once DOL_DOCUMENT_ROOT."/core/class/doleditor.class.php";
 require_once DOL_DOCUMENT_ROOT."/core/class/html.formother.class.php";
 
 // Load traductions files requiredby by page
-$langs->loadLangs(array("companies", "other", "exports"));
+$langs->loadLangs(array("companies", "other", "exports", "sendings"));
 
 $extrafields = new ExtraFields($db);
 
@@ -310,7 +310,7 @@ foreach ($arrayoftype as $key => $val) {
 		$langs->load($val['langs']);
 	}
 }
-print $form->selectarray('objecttype', $newarrayoftype, $objecttype, 0, 0, 0, '', 1, 0, 0, '', '', 1);
+print $form->selectarray('objecttype', $newarrayoftype, $objecttype, 0, 0, 0, '', 1, 0, 0, '', 'minwidth200', 1);
 if (empty($conf->use_javascript_ajax)) print '<input type="submit" class="button" name="changeobjecttype" value="'.$langs->trans("Refresh").'">';
 else {
     print '<script type="text/javascript" language="javascript">
@@ -329,10 +329,10 @@ print '<div class="divadvancedsearchfield quatrevingtpercent">';
 print $form->searchComponent(array($object->element => $object->fields), $search_component_params);
 print '</div>';
 
-// Measures
+// Add measures into array
 print '<div class="divadvancedsearchfield clearboth">';
 foreach ($object->fields as $key => $val) {
-    if ($val['isameasure']) {
+	if (!empty($val['isameasure']) && (! isset($val['enabled']) || dol_eval($val['enabled'], 1))) {
         $arrayofmesures['t.'.$key.'-sum'] = $langs->trans($val['label']).' <span class="opacitymedium">('.$langs->trans("Sum").')</span>';
         $arrayofmesures['t.'.$key.'-average'] = $langs->trans($val['label']).' <span class="opacitymedium">('.$langs->trans("Average").')</span>';
         $arrayofmesures['t.'.$key.'-min'] = $langs->trans($val['label']).' <span class="opacitymedium">('.$langs->trans("Minimum").')</span>';
@@ -342,7 +342,7 @@ foreach ($object->fields as $key => $val) {
 // Add extrafields to Measures
 if ($object->isextrafieldmanaged) {
     foreach ($extrafields->attributes[$object->table_element]['label'] as $key => $val) {
-        if (!empty($extrafields->attributes[$object->table_element]['totalizable'][$key])) {
+    	if (!empty($extrafields->attributes[$object->table_element]['totalizable'][$key]) && (! isset($extrafields->attributes[$object->table_element]['enabled'][$key]) || dol_eval($extrafields->attributes[$object->table_element]['enabled'][$key], 1))) {
             $arrayofmesures['te.'.$key.'-sum'] = $langs->trans($extrafields->attributes[$object->table_element]['label'][$key]).' <span class="opacitymedium">('.$langs->trans("Sum").')</span>';
             $arrayofmesures['te.'.$key.'-average'] = $langs->trans($extrafields->attributes[$object->table_element]['label'][$key]).' <span class="opacitymedium">('.$langs->trans("Average").')</span>';
             $arrayofmesures['te.'.$key.'-min'] = $langs->trans($extrafields->attributes[$object->table_element]['label'][$key]).' <span class="opacitymedium">('.$langs->trans("Minimum").')</span>';
@@ -373,7 +373,7 @@ if ($mode == 'grid') {
 	// YAxis
 	print '<div class="divadvancedsearchfield">';
     foreach ($object->fields as $key => $val) {
-        if (!$val['measure']) {
+    	if (empty($val['measure']) && (! isset($val['enabled']) || dol_eval($val['enabled'], 1))) {
             if (in_array($key, array('id', 'rowid', 'entity', 'last_main_doc', 'extraparams'))) continue;
             if (preg_match('/^fk_/', $key)) continue;
             if (in_array($val['type'], array('html', 'text'))) continue;
@@ -388,7 +388,7 @@ if ($mode == 'grid') {
         // Add measure from extrafields
         if ($object->isextrafieldmanaged) {
             foreach ($extrafields->attributes[$object->table_element]['label'] as $key => $val) {
-                if (!empty($extrafields->attributes[$object->table_element]['totalizable'][$key])) {
+            	if (!empty($extrafields->attributes[$object->table_element]['totalizable'][$key]) && (! isset($extrafields->attributes[$object->table_element]['enabled'][$key]) || dol_eval($extrafields->attributes[$object->table_element]['enabled'][$key], 1))) {
 					$arrayofyaxis['te.'.$key] = array('label' => $extrafields->attributes[$object->table_element]['label'][$key], 'position' => (int) $extrafields->attributes[$object->table_element]['pos'][$key]);
                 }
             }
