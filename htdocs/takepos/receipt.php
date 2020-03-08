@@ -85,31 +85,27 @@ if (!empty($hookmanager->resPrint)) {
 <br>
 <p class="left">
 <?php
-if ($conf->global->TAKEPOS_CUSTOM_RECEIPT)
+if (!empty($conf->global->TAKEPOS_HEADER))
 {
 	$substitutionarray = getCommonSubstitutionArray($langs);
 	if (!empty($conf->global->TAKEPOS_HEADER))
-	{
-		$newfreetext = make_substitutions($conf->global->TAKEPOS_HEADER, $substitutionarray);
-		echo $newfreetext;
-	}
+	$newfreetext = make_substitutions($conf->global->TAKEPOS_HEADER, $substitutionarray);
+	echo $newfreetext;
 }
 ?>
 </p>
 <p class="right">
 <?php
 print $langs->trans('Date')." ".dol_print_date($object->date, 'day').'<br>';
-if ($conf->global->TAKEPOS_CUSTOM_RECEIPT) print $conf->global->TAKEPOS_RECEIPT_NAME." ";
+if (!empty($conf->global->TAKEPOS_RECEIPT_NAME)) print $conf->global->TAKEPOS_RECEIPT_NAME." ";
 if ($object->statut == Facture::STATUS_DRAFT) print str_replace(")", "", str_replace("-", " ".$langs->trans('Place')." ", str_replace("(PROV-POS", $langs->trans("Terminal")." ", $object->ref)));
 else print $object->ref;
-if ($conf->global->TAKEPOS_CUSTOM_RECEIPT && $conf->global->TAKEPOS_SHOW_CUSTOMER)
+if ($conf->global->TAKEPOS_SHOW_CUSTOMER)
 {
-	$soc = new Societe($db);
-	$soc->fetch($invoice->socid);
-	if ($invoice->socid != $conf->global->{'CASHDESK_ID_THIRDPARTY'.$_SESSION["takeposterminal"]})
+	if ($object->socid != $conf->global->{'CASHDESK_ID_THIRDPARTY'.$_SESSION["takeposterminal"]})
 	{
 		$soc = new Societe($db);
-		if ($invoice->socid > 0) $soc->fetch($invoice->socid);
+		if ($object->socid > 0) $soc->fetch($object->socid);
 		else $soc->fetch($conf->global->{'CASHDESK_ID_THIRDPARTY'.$_SESSION["takeposterminal"]});
 		print "<br>".$langs->trans("Customer").': '.$soc->name;
 	}
@@ -183,13 +179,11 @@ if ($conf->global->TAKEPOS_CUSTOM_RECEIPT && $conf->global->TAKEPOS_SHOW_CUSTOME
 <br>
 <br>
 <?php
-if ($conf->global->TAKEPOS_CUSTOM_RECEIPT)
+if (!empty($conf->global->TAKEPOS_FOOTER))
 {
 	$substitutionarray = getCommonSubstitutionArray($langs);
-	if (!empty($conf->global->TAKEPOS_FOOTER)) {
-		$newfreetext = make_substitutions($conf->global->TAKEPOS_FOOTER, $substitutionarray);
-		echo $newfreetext;
-	}
+	$newfreetext = make_substitutions($conf->global->TAKEPOS_FOOTER, $substitutionarray);
+	echo $newfreetext;
 }
 ?>
 
