@@ -664,6 +664,14 @@ function DolibarrTakeposPrinting(id) {
         url: "<?php print dol_buildpath('/takepos/ajax/ajax.php', 1).'?action=printinvoiceticket&term='.$_SESSION["takeposterminal"].'&id='; ?>" + id,
     });
 }
+
+$( document ).ready(function() {
+    $("a#customer").text("<?php
+	if ($invoice->socid != $conf->global->$constforcompanyid) print $soc->name;
+	else print $langs->trans("Customer");
+	?>");
+});
+
 </script>
 
 <?php
@@ -881,9 +889,7 @@ print '</table>';
 
 if ($invoice->socid != $conf->global->$constforcompanyid)
 {
-    print '<!-- Show customer -->';
     print '<p class="right">';
-    print $langs->trans("Customer").': '.$soc->name;
 
 	$constantforkey = 'CASHDESK_NO_DECREASE_STOCK'.$_SESSION["takeposterminal"];
 	if (!empty($conf->stock->enabled) && $conf->global->$constantforkey != "1")

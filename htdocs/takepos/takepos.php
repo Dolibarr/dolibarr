@@ -672,7 +672,7 @@ if (empty($conf->global->TAKEPOS_HIDE_HEAD_BAR)) {
 			echo '<span class="hideonsmartphone"> - '.dol_print_date(dol_now(), "day").'</span>';
 			?>
 			</a>
-			<a onclick="Customer();"><?php echo $langs->trans("Customer"); ?></a>
+			<a id="customer" onclick="Customer();"><?php echo $langs->trans("Customer"); ?></a>
 			</div>
 			<div class="topnav-right">
 				<div class="login_block_other">
