@@ -279,5 +279,33 @@ class ActionsMyModule
     }
 
 
+
+    /**
+     * Overloading the restrictedArea function : check permission on an object
+     *
+     * @param   array           $parameters     Hook metadatas (context, etc...)
+     * @param   string          $action         Current action (if set). Generally create or edit or null
+     * @param   HookManager     $hookmanager    Hook manager propagated to allow calling another hook
+     * @return  int 		      			  	<0 if KO,
+     *                          				=0 if OK but we want to process standard actions too,
+     *  	                            		>0 if OK and we want to replace standard actions.
+     */
+    public function restrictedArea($parameters, &$action, $hookmanager)
+    {
+    	global $user;
+
+    	if ($parameters['features'] == 'myobject') {
+    		if ($user->rights->mymodule->myobject->read) {
+    			$this->results['result'] = 1;
+    			return 1;
+    		} else {
+    			$this->results['result'] = 0;
+    			return 1;
+    		}
+    	}
+
+    	return 0;
+    }
+
     /* Add here any other hooked methods... */
 }
