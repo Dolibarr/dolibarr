@@ -1386,7 +1386,7 @@ class FormOther
 			}
 		}
 
-		$arrayofgroupby = dol_sort_array($arrayofgroupby, 'position', 'asc', 1);
+		$arrayofgroupby = dol_sort_array($arrayofgroupby, 'position', 'asc', 0, 0, 1);
 		$arrayofgroupbylabel = array();
 		foreach ($arrayofgroupby as $key => $val) {
 			$arrayofgroupbylabel[$key] = $val['label'];
@@ -1430,7 +1430,7 @@ class FormOther
 					$arrayofxaxis['t.'.$key.'-month'] = array('label' => $langs->trans($val['label']).' ('.$YYYY.'-'.$MM.')', 'position' => $val['position'].'-m');
 					$arrayofxaxis['t.'.$key.'-day'] = array('label' => $langs->trans($val['label']).' ('.$YYYY.'-'.$MM.'-'.$DD.')', 'position' => $val['position'].'-d');
 				} else {
-					$arrayofxaxis['t.'.$key] = array('label' => $val['label'], 'position' => (int) $val['position']);
+					$arrayofxaxis['t.'.$key] = array('label' => $langs->trans($val['label']), 'position' => (int) $val['position']);
 				}
 			}
 		}
@@ -1444,7 +1444,8 @@ class FormOther
 			}
 		}
 
-		$arrayofxaxis = dol_sort_array($arrayofxaxis, 'position', 'asc', 1);
+		$arrayofxaxis = dol_sort_array($arrayofxaxis, 'position', 'asc', 0, 0, 1);
+
 		$arrayofxaxislabel = array();
 		foreach ($arrayofxaxis as $key => $val) {
 			$arrayofxaxislabel[$key] = $val['label'];

@@ -87,9 +87,11 @@ $ObjectClassName = '';
 $arrayoftype = array(
 	'thirdparty' => array('label' => 'ThirdParties', 'ObjectClassName' => 'Societe', 'enabled' => $conf->societe->enabled, 'ClassPath' => "/societe/class/societe.class.php"),
 	'contact' => array('label' => 'Contacts', 'ObjectClassName' => 'Contact', 'enabled' => $conf->societe->enabled, 'ClassPath' => "/contact/class/contact.class.php"),
-	'contract' => array('label' => 'Contracts', 'ObjectClassName' => 'Contrat', 'enabled' => $conf->contrat->enabled, 'ClassPath' => "/contrat/class/contrat.class.php", 'langs'=>'contract'),
+	'proposal' => array('label' => 'Proposals', 'ObjectClassName' => 'Propal', 'enabled' => $conf->propal->enabled, 'ClassPath' => "/comm/propal/class/propal.class.php"),
+	'order' => array('label' => 'Orders', 'ObjectClassName' => 'Commande', 'enabled' => $conf->commande->enabled, 'ClassPath' => "/commande/class/commande.class.php"),
 	'invoice' => array('label' => 'Invoices', 'ObjectClassName' => 'Facture', 'enabled' => $conf->facture->enabled, 'ClassPath' => "/compta/facture/class/facture.class.php"),
 	'invoice_template'=>array('label' => 'PredefinedInvoices', 'ObjectClassName' => 'FactureRec', 'enabled' => $conf->facture->enabled, 'ClassPath' => "/compta/class/facturerec.class.php", 'langs'=>'bills'),
+	'contract' => array('label' => 'Contracts', 'ObjectClassName' => 'Contrat', 'enabled' => $conf->contrat->enabled, 'ClassPath' => "/contrat/class/contrat.class.php", 'langs'=>'contract'),
 	'bom' => array('label' => 'BOM', 'ObjectClassName' => 'Bom', 'enabled' => $conf->bom->enabled),
 	'mo' => array('label' => 'MO', 'ObjectClassName' => 'Mo', 'enabled' => $conf->mrp->enabled, 'ClassPath' => "/mrp/class/mo.class.php"),
 	'ticket' => array('label' => 'Ticket', 'ObjectClassName' => 'Ticket', 'enabled' => $conf->ticket->enabled),
@@ -554,6 +556,7 @@ foreach ($search_measures as $key => $val) {
 }
 
 $useagroupby = (is_array($search_groupby) && count($search_groupby));
+//var_dump($useagroupby);
 //var_dump($arrayofvaluesforgroupby);
 
 // Execute the SQL request
@@ -608,7 +611,7 @@ if ($sql) {
     					$fieldforg = 'g_'.$gi;
     					$fieldforybis = 'y_'.$key.'_'.$ykeysuffix;
     					//var_dump('gvaluepossiblekey='.$gvaluepossiblekey.' gvaluepossiblelabel='.$gvaluepossiblelabel.' ykeysuffix='.$ykeysuffix.' gval='.$gval.' gvalwithoutsuffix='.$gvalwithoutprefix);
-    					//var_dump('fieldforg='.$fieldforg.' obj->$fieldforg='.$obj->$fieldforg.' fieldfory='.$fieldfory.' obj->$fieldfory='.$obj->$fieldfory.' fieldforybis='.$fieldforybis.' obj->$fieldforybis='.$obj->$fieldforybis);
+    					//var_dump('fieldforg='.$fieldforg.' obj->$fieldforg='.$obj->$fieldforg.' fieldfory='.$fieldfory.' obj->$fieldfory='.$obj->$fieldfory.' fieldforybis='.$fieldforybis);
 
     					if (! is_array($data[$xi])) $data[$xi] = array();
 
@@ -621,7 +624,6 @@ if ($sql) {
     					if (is_null($objfieldforg)) $objfieldforg = '__NULL__';
 
     					if ($gvaluepossiblekey == '0') {	// $gvaluepossiblekey can have type int or string. So we create a special if, used when value is '0'
-    						//var_dump($objfieldforg); var_dump($gvaluepossiblekey);
     						//var_dump($objfieldforg.' == \'0\' -> '.($objfieldforg == '0'));
     						if ($objfieldforg == '0') {
     							// The record we fetch is for this group
@@ -632,9 +634,8 @@ if ($sql) {
     							$data[$xi][$fieldforybis] = '0';
     						}
     					} else {
-    						//var_dump($objfieldforg); var_dump($gvaluepossiblekey);
-    						//var_dump($objfieldforg.' === '.$gvaluepossiblekey.' -> '.($objfieldforg === $gvaluepossiblekey));
-    						if ($objfieldforg === $gvaluepossiblekey) {
+    						//var_dump((string) $objfieldforg.' === '.(string) $gvaluepossiblekey.' -> '.((string) $objfieldforg === (string) $gvaluepossiblekey));
+    						if ((string) $objfieldforg === (string) $gvaluepossiblekey) {
     							// The record we fetch is for this group
     							$data[$xi][$fieldforybis] = $obj->$fieldfory;
     						}
