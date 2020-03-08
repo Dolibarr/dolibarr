@@ -1168,11 +1168,11 @@ class DolGraph
 			$this->stringtoshow .= 'scales: { xAxes: [{ ';
 			//$this->stringtoshow .= 'type: \'time\', ';		// Need Moment.js
 			$this->stringtoshow .= 'distribution: \'linear\'';
-			if (count($arrayofgroupslegend) > 0) {
+			if ($type == 'bar' && count($arrayofgroupslegend) > 0) {
 				$this->stringtoshow .= ', stacked: true';
 			}
 			$this->stringtoshow .= ' }]';
-			if (count($arrayofgroupslegend) > 0) {
+			if ($type == 'bar' && count($arrayofgroupslegend) > 0) {
 				$this->stringtoshow .= ', yAxes: [{ stacked: true }]';
 			}
 			$this->stringtoshow .= ' }';
@@ -1259,7 +1259,7 @@ class DolGraph
 				$this->stringtoshow .= 'label: \''.dol_escape_js(dol_string_nohtmltag($textoflegend)).'\', ';
 				$this->stringtoshow .= 'pointStyle: \''.($this->type[$i] == 'linesnopoint' ? 'line' : 'circle').'\', ';
 				$this->stringtoshow .= 'fill: '.($type == 'bar' ? 'true' : 'false').', ';
-				$this->stringtoshow .= 'borderWidth: \'1\', ';
+				if ($type == 'bar') { $this->stringtoshow .= 'borderWidth: \'1\', '; }
 				$this->stringtoshow .= 'borderColor: \''.$bordercolor.'\', ';
 				$this->stringtoshow .= 'backgroundColor: \''.$color.'\', ';
 				if ($arrayofgroupslegend[$i]) $this->stringtoshow .= 'stack: \''.$arrayofgroupslegend[$i]['stacknum'].'\', ';
