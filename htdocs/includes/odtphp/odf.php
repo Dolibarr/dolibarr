@@ -320,7 +320,7 @@ class Odf
                     $tempHtml = substr($tempHtml, $tagOffset);
                 }
                 // Extract the attribute data from the html tag
-                preg_match_all('/([0-9A-Za-z]+(?:="[0-9A-Za-z\:\-\s]*")?)+/', $matches[2][0], $explodedAttributes);
+                preg_match_all('/([0-9A-Za-z]+(?:="[0-9A-Za-z\:\-\s\,\;]*")?)+/', $matches[2][0], $explodedAttributes);
                 $explodedAttributes = array_filter($explodedAttributes[0]);
                 $attributes = array();
                 // Store each attribute with its name in the $attributes array
