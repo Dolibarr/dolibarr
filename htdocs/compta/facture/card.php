@@ -306,7 +306,7 @@ if (empty($reshook))
 				if (empty($array_of_total_ht_per_vat_rate[$line->tva_tx.'_'.$line->vat_src_code])) $array_of_total_ht_per_vat_rate[$line->tva_tx.'_'.$line->vat_src_code] = 0;
 				if (empty($array_of_total_ht_devise_per_vat_rate[$line->tva_tx.'_'.$line->vat_src_code])) $array_of_total_ht_devise_per_vat_rate[$line->tva_tx.'_'.$line->vat_src_code] = 0;
 				$array_of_total_ht_per_vat_rate[$line->tva_tx.'_'.$line->vat_src_code] += $line->total_ht;
-				$array_of_total_ht_devise_per_vat_rate[$line->tva_tx.'_'.$line->vat_src_code] += $line->multicurrency_subprice;
+				$array_of_total_ht_devise_per_vat_rate[$line->tva_tx.'_'.$line->vat_src_code] += $line->multicurrency_total_ht;
 			}
 
 			//var_dump($array_of_total_ht_per_vat_rate);exit;
