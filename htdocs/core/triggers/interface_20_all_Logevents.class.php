@@ -206,9 +206,10 @@ class InterfaceLogevents extends DolibarrTriggers
         else
         {
             $error ="Failed to insert security event: ".$event->error;
+            $this->errors[] = $error;
             $this->error=$error;
 
-            dol_syslog(get_class($this).": ".$this->error, LOG_ERR);
+            dol_syslog(get_class($this).": ".$error, LOG_ERR);
             return -1;
         }
     }
