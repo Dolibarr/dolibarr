@@ -849,6 +849,13 @@ if ($action == 'addcontainer')
 				{
 					$error++;
 					setEventMessages($object->error, $object->errors, 'errors');
+				} else {
+					$filetpl = $pathofwebsite.'/page'.$pageid.'.tpl.php';
+
+					// Generate the index.php page to be the home page
+					$result = dolSaveIndexPage($pathofwebsite, $fileindex, $filetpl, $filewrapper);
+
+					if ($result <= 0) setEventMessages('Failed to write file '.$fileindex, null, 'errors');
 				}
 			}
 		}
@@ -1327,8 +1334,9 @@ if ($action == 'setashome')
 	{
 		$db->commit();
 
+		$filetpl = $pathofwebsite.'/page'.$pageid.'.tpl.php';
+
 		// Generate the index.php page to be the home page
-		//-------------------------------------------------
 		$result = dolSaveIndexPage($pathofwebsite, $fileindex, $filetpl, $filewrapper);
 
 		if ($result) setEventMessages($langs->trans("Saved"), null, 'mesgs');
