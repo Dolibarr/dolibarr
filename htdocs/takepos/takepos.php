@@ -429,13 +429,24 @@ function Refresh() {
 function New() {
 	// If we go here,it means $conf->global->TAKEPOS_BAR_RESTAURANT is not defined
 	console.log("New with place = <?php echo $place; ?>, js place="+place);
-	var r = confirm('<?php echo ($place > 0 ? $langs->transnoentitiesnoconv("ConfirmDeletionOfThisPOSSale") : $langs->transnoentitiesnoconv("ConfirmDiscardOfThisPOSSale")); ?>');
-	if (r == true) {
-    	$("#poslines").load("invoice.php?action=delete&place="+place, function() {
-    		//$('#poslines').scrollTop($('#poslines')[0].scrollHeight);
-    	});
-		ClearSearch();
-	}
+
+	invoiceid = $("#invoiceid").val();
+	$.getJSON('<?php echo DOL_URL_ROOT ?>/takepos/ajax/ajax.php?action=getInvoice&id='+invoiceid, function(data) {
+		var r;
+
+		if (parseInt(data['paye']) === 1) {
+			r = true;
+		} else {
+			r = confirm('<?php echo ($place > 0 ? $langs->transnoentitiesnoconv("ConfirmDeletionOfThisPOSSale") : $langs->transnoentitiesnoconv("ConfirmDiscardOfThisPOSSale")); ?>');
+		}
+
+		if (r == true) {
+			$("#poslines").load("invoice.php?action=delete&place=" + place, function () {
+				//$('#poslines').scrollTop($('#poslines')[0].scrollHeight);
+			});
+			ClearSearch();
+		}
+	});
 }
 
 /**

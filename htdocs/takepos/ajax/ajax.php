@@ -120,4 +120,13 @@ elseif ($action == 'search' && $term != '') {
         $object->fetch($id);
         $ret = $printer->sendToPrinter($object, $conf->global->{'TAKEPOS_TEMPLATE_TO_USE_FOR_INVOICES'.$term}, $conf->global->{'TAKEPOS_PRINTER_TO_USE'.$term});
     }
+} elseif ($action == 'getInvoice') {
+	require_once DOL_DOCUMENT_ROOT . '/compta/facture/class/facture.class.php';
+
+	$object = new Facture($db);
+	if ($id > 0) {
+		$object->fetch($id);
+	}
+
+	echo json_encode($object);
 }
