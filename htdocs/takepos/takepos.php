@@ -137,8 +137,8 @@ foreach ($categories as $key => $categorycursor)
     }
 }
 
-sort($maincategories);
-sort($subcategories);
+$maincategories = dol_sort_array($maincategories, 'label');
+$subcategories = dol_sort_array($subcategories, 'label');
 ?>
 
 var categories = <?php echo json_encode($maincategories); ?>;
