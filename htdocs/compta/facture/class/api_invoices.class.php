@@ -64,7 +64,7 @@ class Invoices extends DolibarrApi
      */
 	public function get($id, $contact_list = 1)
 	{
-        return $this->_fetch($id, '', '', '', $contact_list);
+        return $this->_fetch($id, '', '', $contact_list);
 	}
 
     /**
@@ -82,7 +82,7 @@ class Invoices extends DolibarrApi
      */
     public function getByRef($ref, $contact_list = 1)
     {
-        return $this->_fetch('', $ref, '', '', $contact_list);
+        return $this->_fetch('', $ref, '', $contact_list);
     }
 
     /**
@@ -100,7 +100,7 @@ class Invoices extends DolibarrApi
      */
     public function getByRefExt($ref_ext, $contact_list = 1)
     {
-        return $this->_fetch('', '', $ref_ext, '', $contact_list);
+        return $this->_fetch('', '', $ref_ext, $contact_list);
     }
 
     /**
