@@ -1207,19 +1207,20 @@ class DolGraph
 			$oldstacknum = -1;
 			while ($i < $nblot)	// Loop on each serie
 			{
+				$usecolorvariantforgroupby=0;
 				// We used a 'group by' and we have too many colors so we generated color variants per
 				if (is_array($arrayofgroupslegend[$i]) && count($arrayofgroupslegend[$i]) > 0) {	// If we used a group by.
 					$nbofcolorneeds = count($arrayofgroupslegend);
 					$nbofcolorsavailable = count($theme_datacolor);
 					if ($nbofcolorneeds > $nbofcolorsavailable) {
-						$usecolorvariantforgroypby = 1;
+						$usecolorvariantforgroupby = 1;
 					}
 
 					$textoflegend = $arrayofgroupslegend[$i]['legendwithgroup'];
 				} else {
 					$textoflegend = $this->Legend[$i];
 				}
-				if ($usecolorvariantforgroypby) {
+				if ($usecolorvariantforgroupby) {
 					$newcolor = $this->datacolor[$arrayofgroupslegend[$i]['stacknum']];
 					// If we change the stack
 					if ($oldstacknum == -1 || $arrayofgroupslegend[$i]['stacknum'] != $oldstacknum) {
