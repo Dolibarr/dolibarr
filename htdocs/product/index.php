@@ -174,13 +174,13 @@ if ((!empty($conf->product->enabled) || !empty($conf->service->enabled)) && ($us
 		{
 			$dataseries[] = array($langs->trans("ServicesOnSale"), round($SommeD));
 			$dataseries[] = array($langs->trans("ServicesOnPurchase"), round($SommeE));
-			$dataseries[] = array($langs->trans("ServicesNotOnSell"), round($SommeF));
+			$dataseries[] = array(dol_trunc($langs->trans("ServicesNotOnSell"), 24), round($SommeF));
 		}
 
 		include_once DOL_DOCUMENT_ROOT.'/core/class/dolgraph.class.php';
 		$dolgraph = new DolGraph();
 		$dolgraph->SetData($dataseries);
-		$dolgraph->setShowLegend(1);
+		$dolgraph->setShowLegend(2);
 		$dolgraph->setShowPercent(0);
 		$dolgraph->SetType(array('pie'));
 		$dolgraph->setHeight('200');
@@ -241,10 +241,10 @@ if (!empty($conf->categorie->enabled) && !empty($conf->global->CATEGORY_GRAPHSTA
 			include_once DOL_DOCUMENT_ROOT.'/core/class/dolgraph.class.php';
 			$dolgraph = new DolGraph();
 			$dolgraph->SetData($dataseries);
-			$dolgraph->setShowLegend(1);
+			$dolgraph->setShowLegend(2);
 			$dolgraph->setShowPercent(1);
 			$dolgraph->SetType(array('pie'));
-			$dolgraph->setWidth('100%');
+			$dolgraph->setHeight('200');
 			$dolgraph->draw('idstatscategproduct');
 			print $dolgraph->show($total ? 0 : 1);
 		}

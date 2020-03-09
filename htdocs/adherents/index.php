@@ -204,7 +204,7 @@ if ($conf->use_javascript_ajax)
     $dolgraph = new DolGraph();
     $dolgraph->SetData($dataseries);
     $dolgraph->SetDataColor(array($badgeStatus1, $badgeStatus4, $badgeStatus6, '-'.$badgeStatus0));
-    $dolgraph->setShowLegend(1);
+    $dolgraph->setShowLegend(2);
     $dolgraph->setShowPercent(1);
     $dolgraph->SetType(array('pie'));
     $dolgraph->setHeight('200');

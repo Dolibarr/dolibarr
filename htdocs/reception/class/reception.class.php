@@ -56,7 +56,13 @@ class Reception extends CommonObject
 
     public $socid;
     public $ref_supplier;
+
+    /**
+     * @var int		Ref int
+     * @deprecated
+     */
     public $ref_int;
+
     public $brouillon;
     public $entrepot_id;
     public $lines = array();
@@ -372,15 +378,15 @@ class Reception extends CommonObject
 	 *	@param	int		$id       	Id of object to load
 	 * 	@param	string	$ref		Ref of object
 	 * 	@param	string	$ref_ext	External reference of object
-     * 	@param	string	$ref_int	Internal reference of other object
+     * 	@param	string	$notused	Internal reference of other object
 	 *	@return int			        >0 if OK, 0 if not found, <0 if KO
 	 */
-    public function fetch($id, $ref = '', $ref_ext = '', $ref_int = '')
+    public function fetch($id, $ref = '', $ref_ext = '', $notused = '')
 	{
 		global $conf;
 
 		// Check parameters
-		if (empty($id) && empty($ref) && empty($ref_ext) && empty($ref_int)) return -1;
+		if (empty($id) && empty($ref) && empty($ref_ext)) return -1;
 
 		$sql = "SELECT e.rowid, e.ref, e.fk_soc as socid, e.date_creation, e.ref_supplier, e.ref_ext, e.ref_int, e.fk_user_author, e.fk_statut";
 		$sql .= ", e.weight, e.weight_units, e.size, e.size_units, e.width, e.height";
@@ -397,7 +403,7 @@ class Reception extends CommonObject
 		if ($id)   	  $sql .= " AND e.rowid=".$id;
         if ($ref)     $sql .= " AND e.ref='".$this->db->escape($ref)."'";
         if ($ref_ext) $sql .= " AND e.ref_ext='".$this->db->escape($ref_ext)."'";
-        if ($ref_int) $sql .= " AND e.ref_int='".$this->db->escape($ref_int)."'";
+        if ($notused) $sql .= " AND e.ref_int='".$this->db->escape($notused)."'";
 
 		dol_syslog(get_class($this)."::fetch", LOG_DEBUG);
 		$result = $this->db->query($sql);

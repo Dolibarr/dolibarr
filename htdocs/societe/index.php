@@ -112,7 +112,7 @@ if (!empty($conf->use_javascript_ajax) && ((round($third['prospect']) ? 1 : 0) +
     include_once DOL_DOCUMENT_ROOT.'/core/class/dolgraph.class.php';
     $dolgraph = new DolGraph();
 	$dolgraph->SetData($dataseries);
-	$dolgraph->setShowLegend(1);
+	$dolgraph->setShowLegend(2);
 	$dolgraph->setShowPercent(1);
 	$dolgraph->SetType(array('pie'));
 	$dolgraph->setHeight('200');
@@ -200,10 +200,10 @@ if (!empty($conf->categorie->enabled) && !empty($conf->global->CATEGORY_GRAPHSTA
 			include_once DOL_DOCUMENT_ROOT.'/core/class/dolgraph.class.php';
 			$dolgraph = new DolGraph();
 			$dolgraph->SetData($dataseries);
-			$dolgraph->setShowLegend(1);
+			$dolgraph->setShowLegend(2);
 			$dolgraph->setShowPercent(1);
 			$dolgraph->SetType(array('pie'));
-			$dolgraph->setWidth('100%');
+			$dolgraph->setHeight('200');
 			$dolgraph->draw('idgraphcateg');
 			print $dolgraph->show();
 		}

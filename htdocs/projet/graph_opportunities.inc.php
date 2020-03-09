@@ -80,7 +80,7 @@ if (!empty($conf->global->PROJECT_USE_OPPORTUNITIES))
 	        include_once DOL_DOCUMENT_ROOT.'/core/class/dolgraph.class.php';
 	        $dolgraph = new DolGraph();
 	        $dolgraph->SetData($dataseries);
-	        $dolgraph->setShowLegend(1);
+	        $dolgraph->setShowLegend(2);
 	        $dolgraph->setShowPercent(1);
 	        $dolgraph->SetType(array('pie'));
 	        //$dolgraph->setWidth('100%');

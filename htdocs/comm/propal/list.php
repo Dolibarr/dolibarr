@@ -1165,9 +1165,7 @@ if ($resql)
 				$nbofsalesrepresentative = count($listsalesrepresentatives);
 				if ($nbofsalesrepresentative > 3)   // We print only number
 				{
-					print '<a href="'.DOL_URL_ROOT.'/societe/commerciaux.php?socid='.$companystatic->id.'">';
 					print $nbofsalesrepresentative;
-					print '</a>';
 				}
 				elseif ($nbofsalesrepresentative > 0)
 				{

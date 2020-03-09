@@ -3507,7 +3507,7 @@ class Form
     // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 *      Return list of payment methods
-	 *	Constant MAIN_DEFAULT_PAYMENT_TYPE_ID can used to set default value but scope is all application, probably not what you want.
+	 *      Constant MAIN_DEFAULT_PAYMENT_TYPE_ID can used to set default value but scope is all application, probably not what you want.
 	 *
 	 *      @param	string	$selected       Id du mode de paiement pre-selectionne
 	 *      @param  string	$htmlname       Nom de la zone select
@@ -5268,8 +5268,9 @@ class Form
 			$disabled = false; $title = '';
 			if (is_object($societe_vendeuse) && $societe_vendeuse->id == $mysoc->id && $societe_vendeuse->tva_assuj == "0")
 			{
-				// Override/enable VAT for expense report regardless of global setting - needed if expense report used for business expenses
-				if (empty($conf->global->OVERRIDE_VAT_FOR_EXPENSE_REPORT))
+				// Override/enable VAT for expense report regardless of global setting - needed if expense report used for business expenses instead
+				// of using supplier invoices (this is a very bad idea !)
+				if (empty($conf->global->EXPENSEREPORT_OVERRIDE_VAT))
 				{
 					$title = ' title="'.$langs->trans('VATIsNotUsed').'"';
 					$disabled = true;

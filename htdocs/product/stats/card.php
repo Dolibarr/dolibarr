@@ -355,6 +355,7 @@ if ($result || empty($id))
 					$px->SetYLabel($graphfiles[$key]['label']);
 					$px->SetMaxValue($px->GetCeilMaxValue() < 0 ? 0 : $px->GetCeilMaxValue());
 					$px->SetMinValue($px->GetFloorMinValue() > 0 ? 0 : $px->GetFloorMinValue());
+					$px->setShowLegend(0);
 					$px->SetWidth($WIDTH);
 					$px->SetHeight($HEIGHT);
 					$px->SetHorizTickIncrement(1);

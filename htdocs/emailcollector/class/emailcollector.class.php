@@ -1236,13 +1236,14 @@ class EmailCollector extends CommonObject
                 // References: <1542377954.SMTPs-dolibarr-tic649@8f6014fde11ec6cdec9a822234fc557e>
                 // References: <1542377954.SMTPs-dolibarr-abc649@8f6014fde11ec6cdec9a822234fc557e>
                 $trackid = '';
+                $objectid = 0;
+                $objectemail = null;
+
                 $reg = array();
                 if (!empty($headers['References']) && preg_match('/dolibarr-([a-z]+)([0-9]+)@'.preg_quote($host, '/').'/', $headers['References'], $reg))
                 {
                     $trackid = $reg[1].$reg[2];
 
-                    $objectid = 0;
-                    $objectemail = null;
                     if ($reg[1] == 'inv')
                     {
                         $objectid = $reg[2];
@@ -1814,8 +1815,8 @@ class EmailCollector extends CommonObject
 
 
 							'thirdpartyid' => $thirdpartyid ,
-							'objectid'=>@$objectid,
-							'objectemail'=>@$objectemail,
+							'objectid'=> $objectid,
+							'objectemail'=> $objectemail,
 
 							'messagetext'=>$messagetext,
 							'subject'=>$subject,

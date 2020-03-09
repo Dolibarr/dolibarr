@@ -542,7 +542,6 @@ $param = '';
 if (!empty($contextpage) && $contextpage != $_SERVER["PHP_SELF"]) $param .= '&contextpage='.urlencode($contextpage);
 if ($limit > 0 && $limit != $conf->liste_limit) $param .= '&limit='.urlencode($limit);
 if ($search_all != '')     $param = "&sall=".urlencode($search_all);
-if ($sall != '')           $param .= "&sall=".urlencode($sall);
 if ($search_categ_cus > 0) $param .= '&search_categ_cus='.urlencode($search_categ_cus);
 if ($search_categ_sup > 0) $param .= '&search_categ_sup='.urlencode($search_categ_sup);
 if ($search_sale > 0)	   $param .= '&search_sale='.urlencode($search_sale);
