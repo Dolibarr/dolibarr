@@ -101,6 +101,7 @@ button.calcbutton {
     /* border-color: unset; */
     border-width: 0;
     margin: 1px;
+	font-size: 14pt;
 }
 
 button.calcbutton2 {
@@ -118,6 +119,8 @@ button.calcbutton2 {
 	width: calc(25% - 2px);
 	height: calc(25% - 2px);
 	font-weight: bold;
+	font-size: 8pt;
+	margin: 1px;
 }
 
 button.calcbutton3 {
@@ -128,10 +131,11 @@ button.calcbutton3 {
 	cursor: pointer;
 	vertical-align: middle;
 	text-align: center;
-	font-size:120%;
 	overflow: visible; /* removes extra width in IE */
 	width: calc(25% - 2px);
 	height: calc(25% - 2px);
+	font-size: 14pt;
+	margin: 1px;
 }
 
 button.actionbutton {
@@ -468,12 +472,6 @@ div.description_content {
 }
 
 @media screen and (min-width: 892px) {
-	.calcbutton{
-		font-size: 18px;
-	}
-	.calcbutton2{
-		font-size: 14px;
-	}
 	.actionbutton{
 		font-size: 13px;
 	}
@@ -486,12 +484,6 @@ div.description_content {
 }
 
 @media (max-width: 891px) and (min-width: 386px) {
-	.calcbutton{
-		font-size: 12px;
-	}
-	.calcbutton2{
-		font-size: 9px;
-	}
 	.actionbutton{
 		font-size: 12px;
 	}
@@ -504,12 +496,6 @@ div.description_content {
 }
 
 @media screen and (max-width: 385px){
-	.calcbutton{
-		font-size: 8px;
-	}
-	.calcbutton2{
-		font-size: 7px;
-	}
 	.actionbutton{
 		font-size: 10px;
 	}
