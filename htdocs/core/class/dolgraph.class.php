@@ -965,9 +965,13 @@ class DolGraph
 
 		$legends = array();
 		$nblot = 0;
-		if (is_array($this->data) && is_array($this->data[0])) {
-			$nblot = count($this->data[0]) - 1; // -1 to remove legend
+		if (is_array($this->data)) {
+			foreach ($this->data as $valarray)      // Loop on each x
+			{
+				$nblot = max($nblot, count($valarray) - 1); // -1 to remove legend
+			}
 		}
+		//var_dump($nblot);
 		if ($nblot < 0) dol_syslog('Bad value for property ->data. Must be set by mydolgraph->SetData before calling mydolgrapgh->draw', LOG_WARNING);
 		$firstlot = 0;
 		// Works with line but not with bars
@@ -1000,17 +1004,20 @@ class DolGraph
 					);
 				} else {
 					$tmpvalue = (array_key_exists('y_'.$i, $valarray) ? $valarray['y_'.$i] : $valarray[$i + 1]);
+					//var_dump($i.'_'.$x.'_'.$tmpvalue);
 					$values[$x]  = (is_numeric($tmpvalue) ? $tmpvalue : null);
 				}
 				$x++;
 			}
-
+			//var_dump($values);
 			$j = 0;
 			foreach ($values as $x => $y) {
 				if (isset($y)) {
 					$serie[$i] .= ($j > 0 ? ", " : "").$y;
-					$j++;
+				} else {
+					$serie[$i] .= ($j > 0 ? ", " : "").'null';
 				}
+				$j++;
 			}
 
 			$values = null;	// Free mem
@@ -1207,19 +1214,20 @@ class DolGraph
 			$oldstacknum = -1;
 			while ($i < $nblot)	// Loop on each serie
 			{
+				$usecolorvariantforgroupby=0;
 				// We used a 'group by' and we have too many colors so we generated color variants per
 				if (is_array($arrayofgroupslegend[$i]) && count($arrayofgroupslegend[$i]) > 0) {	// If we used a group by.
 					$nbofcolorneeds = count($arrayofgroupslegend);
 					$nbofcolorsavailable = count($theme_datacolor);
 					if ($nbofcolorneeds > $nbofcolorsavailable) {
-						$usecolorvariantforgroypby = 1;
+						$usecolorvariantforgroupby = 1;
 					}
 
 					$textoflegend = $arrayofgroupslegend[$i]['legendwithgroup'];
 				} else {
 					$textoflegend = $this->Legend[$i];
 				}
-				if ($usecolorvariantforgroypby) {
+				if ($usecolorvariantforgroupby) {
 					$newcolor = $this->datacolor[$arrayofgroupslegend[$i]['stacknum']];
 					// If we change the stack
 					if ($oldstacknum == -1 || $arrayofgroupslegend[$i]['stacknum'] != $oldstacknum) {
@@ -1245,7 +1253,6 @@ class DolGraph
 
 					$color = 'rgb('.$newcolor[0].', '.$newcolor[1].', '.$newcolor[2].', 0.9)';
 					$bordercolor = 'rgb('.$newcolor[0].', '.$newcolor[1].', '.$newcolor[2].')';
-
 				} else {																			// We do not use a 'group by'
 					$color = 'rgb('.$this->datacolor[$i][0].', '.$this->datacolor[$i][1].', '.$this->datacolor[$i][2].', 0.9)';
 					$bordercolor = $color;

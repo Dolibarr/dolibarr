@@ -1348,7 +1348,8 @@ class FormOther
 	 * @param	array	$arrayofgroupby		Array of groupby to fill
 	 * @return string						HTML string component
 	 */
-	public function selectGroupByField($object, $search_groupby, &$arrayofgroupby) {
+	public function selectGroupByField($object, $search_groupby, &$arrayofgroupby)
+	{
 		global $langs, $extrafields, $form;
 
 		$YYYY=substr($langs->trans("Year"), 0, 1).substr($langs->trans("Year"), 0, 1).substr($langs->trans("Year"), 0, 1).substr($langs->trans("Year"), 0, 1);
@@ -1404,7 +1405,8 @@ class FormOther
 	 * @param	array	$arrayofxaxis		Array of groupby to fill
 	 * @return string						HTML string component
 	 */
-	public function selectXAxisField($object, $search_xaxis, &$arrayofxaxis) {
+	public function selectXAxisField($object, $search_xaxis, &$arrayofxaxis)
+	{
 		global $langs, $extrafields, $form;
 
 		$YYYY=substr($langs->trans("Year"), 0, 1).substr($langs->trans("Year"), 0, 1).substr($langs->trans("Year"), 0, 1).substr($langs->trans("Year"), 0, 1);
