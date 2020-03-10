@@ -1288,6 +1288,10 @@ class CommandeFournisseur extends CommonOrder
 
 		$this->db->begin();
 
+        // get extrafields so they will be clone
+        foreach($this->lines as $line)
+            $line->fetch_optionals($line->rowid);
+
 		// Load source object
 		$objFrom = clone $this;
 
