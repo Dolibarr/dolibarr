@@ -6753,7 +6753,8 @@ abstract class CommonObject
 						if ($mode != 'view' && !empty($extrafields->attributes[$this->table_element]['required'][$key])) $out .= '&nbsp;<font color="red">*</font>';
 					} else {
 						if ($mode != 'view' && !empty($extrafields->attributes[$this->table_element]['required'][$key])) $out .= ' fieldrequired';
-						$out .= '">';
+						$out .= '"';
+						$out .= '>';
 						if (!empty($extrafields->attributes[$this->table_element]['help'][$key])) $out .= $form->textwithpicto($labeltoshow, $extrafields->attributes[$this->table_element]['help'][$key]);
 						else $out .= $labeltoshow;
 					}
