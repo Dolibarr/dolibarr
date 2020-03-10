@@ -37,11 +37,14 @@ if (empty($conf) || !is_object($conf))
 <?php
 
 // Other attributes
-$parameters = array();
+if (! isset($parameters)) $parameters = array();
+
 $reshook = $hookmanager->executeHooks('formObjectOptions', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
 print $hookmanager->resPrint;
 if (empty($reshook)) {
-	$params = isset($tpl_context) ? array('tpl_context' => $tpl_context) : array(); // BUG #11554 : Add tpl_context in params
+	$params = array();
+	if (isset($tpl_context)) $params['tpl_context'] = $tpl_context;
+	$params['cols']=$parameters['colspanvalue'];
 	print $object->showOptionals($extrafields, 'edit', $params); // BUG #11554 : Add context in params
 }
 
