@@ -270,7 +270,6 @@ print '<button type="button" class="calcbutton" onclick="addreceived('.($numpad 
 	}
 
 	print '<button type="button" class="calcbutton2" onclick="Validate(\''.$langs->trans($paycode).'\');">' . (!empty($payIcon) ? '<span class="fa fa-2x fa-' . $payIcon . '"></span>' : $langs->trans("PaymentTypeShort".$paiements[0]->code)) . '</button>';
-
 } else {
 	print '<button type="button" class="calcbutton2">' . $langs->trans("NoPaimementModesDefined") . '</button>';
 }
