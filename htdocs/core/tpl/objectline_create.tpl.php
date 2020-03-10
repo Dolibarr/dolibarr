@@ -773,11 +773,11 @@ if (!empty($usemargins) && $user->rights->margins->creer)
 			console.log("We choose a price by quanty price_by_qty id = "+pbq+" price_by_qty upht = "+pbqupht+" price_by_qty qty = "+pbqqty+" price_by_qty percent = "+pbqpercent);
 			jQuery("#pbq").val(pbq);
 			jQuery("#price_ht").val(pbqupht);
-			if (jQuery("#qty").val() < pbqqty)
+			if (jQuery("#qty").val() != pbqqty) // change if different
 			{
 				jQuery("#qty").val(pbqqty);
 			}
-			if (jQuery("#remise_percent").val() < pbqpercent)
+			if (jQuery("#remise_percent").val() != pbqpercent) // change if different
 			{
 				jQuery("#remise_percent").val(pbqpercent);
 			}
