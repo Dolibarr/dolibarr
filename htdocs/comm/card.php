@@ -836,7 +836,7 @@ if ($object->id > 0)
         $sql .= ', s.rowid as socid';
         $sql .= " FROM ".MAIN_DB_PREFIX."societe as s, ".MAIN_DB_PREFIX."expedition as e";
         $sql .= " WHERE e.fk_soc = s.rowid AND s.rowid = ".$object->id;
-        $sql .= " AND e.entity IN (".getEntity('expedition').")";
+        $sql .= " AND e.entity IN (".getEntity('commande').")";
         $sql .= ' GROUP BY e.rowid';
         $sql .= ', e.ref';
         $sql .= ', e.date_creation';
