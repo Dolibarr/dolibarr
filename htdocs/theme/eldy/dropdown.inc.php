@@ -351,7 +351,7 @@ a.top-menu-dropdown-link {
 */
 
 .dropdown-search-input {
-    width: 280px;
+    width: 100%;
     padding: 10px 35px 10px 20px;
 
     background-color: transparent;

@@ -6,6 +6,9 @@ if (!defined('ISLOADEDBYSTEELSHEET')) die('Must be call by steelsheet'); ?>
  * Dropdown of user popup
  */
 
+.bookmark-footer a.top-menu-dropdown-link {
+    white-space: normal;
+}
 
 button.dropdown-item.global-search-item {
     outline: none;
