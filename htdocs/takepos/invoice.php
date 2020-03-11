@@ -845,19 +845,27 @@ if ($placeid > 0)
                 if (empty($line->product_type)) $htmlforlines .= img_object('', 'product').' ';
                 else $htmlforlines .= img_object('', 'service').' ';
             }
-            if ($line->product_label) $htmlforlines .= $line->product_label;
-            if ($line->product_label && $line->desc) $htmlforlines .= '<br>';
-            if ($line->product_label != $line->desc)
-            {
-                $firstline = dolGetFirstLineOfText($line->desc);
-                if ($firstline != $line->desc)
-                {
-                    $htmlforlines .= $form->textwithpicto(dolGetFirstLineOfText($line->desc), $line->desc);
-                }
-                else
-                {
-                    $htmlforlines .= $line->desc;
-                }
+            if (empty($conf->global->TAKEPOS_SHOW_N_FIRST_LINES)) {
+            	$tooltiptext = '<b>'.$langs->trans("Ref").'</b> : '.$line->product_ref.'<br>';
+            	$tooltiptext .= '<b>'.$langs->trans("Label").'</b> : '.$line->product_label.'<br>';
+            	$tooltiptext .= '<br>';
+            	$tooltiptext .= $line->desc;
+            	$htmlforlines .= $form->textwithpicto($line->product_label ? $line->product_label : $line->product_ref, $tooltiptext);
+            } else {
+            	if ($line->product_label) $htmlforlines .= $line->product_label;
+            	if ($line->product_label && $line->desc) $htmlforlines .= '<br>';
+            	if ($line->product_label != $line->desc)
+	            {
+	            	$firstline = dolGetFirstLineOfText($line->desc, $conf->global->TAKEPOS_SHOW_N_FIRST_LINES);
+	                if ($firstline != $line->desc)
+	                {
+	                    $htmlforlines .= $form->textwithpicto(dolGetFirstLineOfText($line->desc), $line->desc);
+	                }
+	                else
+	                {
+	                    $htmlforlines .= $line->desc;
+	                }
+	            }
             }
             if (!empty($line->array_options['options_order_notes'])) $htmlforlines .= "<br>(".$line->array_options['options_order_notes'].")";
             if ($_SESSION["basiclayout"] != 1)
