@@ -1178,7 +1178,7 @@ class CommandeFournisseur extends CommonOrder
                         false,
 	                    $this->lines[$i]->date_start,
                         $this->lines[$i]->date_end,
-                        0,
+                        $this->lines[$i]->array_options,
                         $this->lines[$i]->fk_unit
 	                );
 	                if ($result < 0)
