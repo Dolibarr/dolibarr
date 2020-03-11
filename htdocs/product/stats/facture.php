@@ -61,7 +61,7 @@ $pagenext = $page + 1;
 if (! $sortorder) $sortorder="DESC";
 if (! $sortfield) $sortfield="f.datef";
 
-$search_month = GETPOST('search_month', 'aplha');
+$search_month = GETPOST('search_month', 'alpha');
 $search_year = GETPOST('search_year', 'int');
 
 if (GETPOST('button_removefilter_x', 'alpha') || GETPOST('button_removefilter', 'alpha')) {
@@ -234,9 +234,9 @@ if ($id > 0 || ! empty($ref))
                     while ($i < min($num, $limit))
 					{
                         $objp = $db->fetch_object($result);
-						
+
 						if ($objp->type == Facture::TYPE_CREDIT_NOTE) $objp->qty=-($objp->qty);
-						
+
                         $total_ht+=$objp->total_ht;
                         $total_qty+=$objp->qty;
 

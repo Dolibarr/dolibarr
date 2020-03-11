@@ -1788,6 +1788,7 @@ function dol_print_date($time, $format = '', $tzoutput = 'tzserver', $outputlang
 		$format=str_replace('%A', '__A__', $format);
 	}
 
+
 	// Analyze date
 	$reg=array();
 	if (preg_match('/^([0-9][0-9][0-9][0-9])([0-9][0-9])([0-9][0-9])([0-9][0-9])([0-9][0-9])([0-9][0-9])$/i', $time, $reg))	// Deprecated. Ex: 1970-01-01, 1970-01-01 01:00:00, 19700101010000
@@ -7587,7 +7588,7 @@ function natural_search($fields, $value, $mode = 0, $nofirstand = 0)
 				$i3 = 0;
 				foreach($tmpcrits as $tmpcrit)
 				{
-					if(!isset($tmpcrit)) continue;
+                    if($tmpcrit !== '0' && empty($tmpcrit)) continue;
 
 					$newres .= (($i2 > 0 || $i3 > 0) ? ' OR ' : '');
 

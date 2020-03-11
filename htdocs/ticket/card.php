@@ -320,7 +320,7 @@ if ($action == "mark_ticket_read" && $user->rights->ticket->write) {
 }
 
 // Assign to someone
-if ($action == "assign_user" && GETPOST('btn_assign_user', 'aplha') && $user->rights->ticket->write) {
+if ($action == "assign_user" && GETPOST('btn_assign_user', 'alpha') && $user->rights->ticket->write) {
     $object->fetch('', '', GETPOST("track_id", 'alpha'));
     $useroriginassign = $object->fk_user_assign;
     $usertoassign = GETPOST('fk_user_assign', 'int');
