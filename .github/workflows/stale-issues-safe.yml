@@ -3,7 +3,7 @@ name: "Close stale issues (bugs and feature requests)"
 
 on:
   schedule:
-  - cron: "0 21 * * *"
+  - cron: "20 20 * * *"
   issue_comment:
     types: [created]
 
@@ -20,5 +20,5 @@ jobs:
         days-before-stale: 365
         days-before-close: 15
         operations-per-run: 50
-        dry-run: false
+        dry-run: true
         
