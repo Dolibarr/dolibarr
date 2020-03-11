@@ -558,7 +558,7 @@ if ($action == "valid" || $action == "history")
     	$sectionwithinvoicelink .= ' <button id="buttonsend" type="button" onclick="SendTicket('.$placeid.');">'.$langs->trans('SendTicket').'</button>';
     }
 
-    if ($conf->global->TAKEPOS_AUTO_PRINT_TICKETS) $sectionwithinvoicelink .= '<script language="javascript">$("#buttonprint").click();</script>';
+    if ($remaintopay <= 0 && $conf->global->TAKEPOS_AUTO_PRINT_TICKETS) $sectionwithinvoicelink .= '<script language="javascript">$("#buttonprint").click();</script>';
 }
 
 /*
