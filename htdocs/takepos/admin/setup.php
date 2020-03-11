@@ -175,7 +175,7 @@ print '<tr class="oddeven"><td>';
 print $langs->trans("SortProductField");
 print '<td colspan="2">';
 $prod = new Product($db);
-$array = array('rowid' => 'ID', 'ref' => 'Ref', 'datec' => 'DateCreation', 'tms' => 'DateModification');
+$array = array('rowid' => 'ID', 'ref' => 'Ref', 'label' => 'Label', 'datec' => 'DateCreation', 'tms' => 'DateModification');
 print $form->selectarray('TAKEPOS_SORTPRODUCTFIELD', $array, (empty($conf->global->TAKEPOS_SORTPRODUCTFIELD) ? 'rowid' : $conf->global->TAKEPOS_SORTPRODUCTFIELD), 0, 0, 0, '', 1);
 print "</td></tr>\n";
 
