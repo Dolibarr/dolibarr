@@ -2395,7 +2395,7 @@ if (!GETPOST('hide_websitemenu'))
 										console.log("Enable inline edit for "+idtouse);
 										CKEDITOR.inline(idtouse, {
 											// Allow some non-standard markup that we used in the introduction.
-											extraAllowedContent: \'span(*);cite(*);q(*);dl(*);dt(*);dd(*);ul(*);li(*);header(*);button(*);h1(*);h2(*);title(*);\',
+											extraAllowedContent: \'span(*);cite(*);q(*);dl(*);dt(*);dd(*);ul(*);li(*);header(*);button(*);h1(*);h2(*);\',
 											//extraPlugins: \'sourcedialog\',
 											removePlugins: \'flash,stylescombo\',
 											// Show toolbar on startup (optional).
