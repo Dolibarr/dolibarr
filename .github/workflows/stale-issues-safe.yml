@@ -19,6 +19,6 @@ jobs:
         exempt-label: 'Priority High / Blocking'
         days-before-stale: 365
         days-before-close: 15
-        operations-per-run: 50
+        operations-per-run: 100
         dry-run: false
         
