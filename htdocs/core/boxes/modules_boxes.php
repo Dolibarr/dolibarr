@@ -332,13 +332,13 @@ class ModeleBoxes // Can't be abtract as it is instantiated to build "empty" box
                             if (! empty($contents[$i][$j]['maxlength'])) $maxlength=$contents[$i][$j]['maxlength'];
 
                             if ($maxlength) $textwithnotags=dol_trunc($textwithnotags, $maxlength);
-                            if (preg_match('/^<img/i', $text) || preg_match('/^<div/i', $text) || ! empty($contents[$i][$j]['asis'])) $out.= $text;   // show text with no html cleaning
+                            if (preg_match('/^<(img|div|span)/i', $text) || ! empty($contents[$i][$j]['asis'])) $out.= $text;   // show text with no html cleaning
                             else $out.= $textwithnotags;                // show text with html cleaning
 
                             // End Url
                             if (! empty($contents[$i][$j]['url'])) $out.= '</a>';
 
-                            if (preg_match('/^<img/i', $text2) || preg_match('/^<div/i', $text2) || ! empty($contents[$i][$j]['asis2'])) $out.= $text2; // show text with no html cleaning
+                            if (preg_match('/^<(img|div|span)/i', $text2) || ! empty($contents[$i][$j]['asis2'])) $out.= $text2; // show text with no html cleaning
                             else $out.= $text2withnotags;               // show text with html cleaning
 
                             if (! empty($textnoformat)) $out.= "\n".$textnoformat."\n";
