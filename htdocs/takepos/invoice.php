@@ -240,6 +240,8 @@ if ($action == 'valid' && $user->rights->facture->creer)
 			dol_syslog("Invoice is paid, so we set it to status Paid");
 			$result = $invoice->set_paid($user);
 			if ($result > 0) $invoice->paye = 1;
+			// set payment method
+			$invoice->setPaymentMethods($paiementid);
 		} else {
 			dol_syslog("Invoice is not paid, remain to pay = ".$remaintopay);
 		}
