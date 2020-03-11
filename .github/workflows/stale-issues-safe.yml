@@ -20,5 +20,5 @@ jobs:
         days-before-stale: 365
         days-before-close: 15
         operations-per-run: 50
-        dry-run: true
+        dry-run: false
         
