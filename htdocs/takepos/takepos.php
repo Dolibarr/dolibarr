@@ -473,7 +473,7 @@ function Search2(keyCodeForEnter) {
 				$("#prodiv" + i).data("iscat", 0);
 			}
 		}).always(function (data) {
-			if (data.length == 1) ClickProduct(0);
+			if ($('#search').val().length > 0 && data.length == 1) ClickProduct(0);
 		});
 	}
 }
