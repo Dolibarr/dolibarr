@@ -64,7 +64,7 @@ $joomlaport = 3306;
 $dbjoomla=getDoliDBInstance('mysqli', $joomlahost, $joomlalogin, $joomlapass, $joomladatabase, $joomlaport);
 if ($dbjoomla->error)
 {
-	dol_print_error($dbjoomla,"host=".$joomlahost.", port=".$joomlaport.", user=".$joomlalogin.", databasename=".$joomladatabase.", ".$dbjoomla->error);
+	dol_print_error($dbjoomla, "host=".$joomlahost.", port=".$joomlaport.", user=".$joomlalogin.", databasename=".$joomladatabase.", ".$dbjoomla->error);
 	exit(-1);
 }
 
