@@ -5,7 +5,7 @@ on:
   schedule:
   - cron: "0 21 * * *"
   issue_comment:
-  - types: [created]
+    types: [created]
 
 jobs:
   stale:
