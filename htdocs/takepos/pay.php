@@ -260,13 +260,13 @@ print '<button type="button" class="calcbutton" onclick="addreceived('.($numpad 
 	$payIcon = '';
 	if ($paycode == 'LIQ') {
 		$paycode = 'cash';
-		$payIcon = 'coins';
+		if (!empty($conf->global->TAKEPOS_NUMPAD_USE_PAYMENT_ICON))	$payIcon = 'coins';
 	} elseif ($paycode == 'CB') {
 		$paycode = 'card';
-		$payIcon = 'credit-card';
+		if (!empty($conf->global->TAKEPOS_NUMPAD_USE_PAYMENT_ICON))	$payIcon = 'credit-card';
 	} elseif ($paycode == 'CHQ') {
 		$paycode = 'cheque';
-		$payIcon = 'money-check';
+		if (!empty($conf->global->TAKEPOS_NUMPAD_USE_PAYMENT_ICON))	$payIcon = 'money-check';
 	}
 
 	print '<button type="button" class="calcbutton2" onclick="Validate(\''.$langs->trans($paycode).'\');">' . (!empty($payIcon) ? '<span class="fa fa-2x fa-' . $payIcon . '"></span>' : $langs->trans("PaymentTypeShort".$paiements[0]->code)) . '</button>';
@@ -283,13 +283,13 @@ print '<button type="button" class="calcbutton" onclick="addreceived('.($numpad 
 	$payIcon = '';
 	if ($paycode == 'LIQ') {
 		$paycode = 'cash';
-		$payIcon = 'coins';
+		if (!empty($conf->global->TAKEPOS_NUMPAD_USE_PAYMENT_ICON))	$payIcon = 'coins';
 	} elseif ($paycode == 'CB') {
 		$paycode = 'card';
-		$payIcon = 'credit-card';
+		if (!empty($conf->global->TAKEPOS_NUMPAD_USE_PAYMENT_ICON))	$payIcon = 'credit-card';
 	} elseif ($paycode == 'CHQ') {
 		$paycode = 'cheque';
-		$payIcon = 'money-check';
+		if (!empty($conf->global->TAKEPOS_NUMPAD_USE_PAYMENT_ICON))	$payIcon = 'money-check';
 	}
 
 	print '<button type="button" class="calcbutton2" onclick="Validate(\''.$langs->trans($paycode).'\');">'. (!empty($payIcon) ? '<span class="fa fa-2x fa-'.$payIcon.'"></span>' : $langs->trans("PaymentTypeShort".$paiements[1]->code)) . '</button>';
@@ -307,13 +307,13 @@ print '<button type="button" class="calcbutton" onclick="addreceived('.($numpad 
 	$payIcon = '';
 	if ($paycode == 'LIQ') {
 		$paycode = 'cash';
-		$payIcon = 'coins';
+		if (!empty($conf->global->TAKEPOS_NUMPAD_USE_PAYMENT_ICON))	$payIcon = 'coins';
 	} elseif ($paycode == 'CB') {
 		$paycode = 'card';
-		$payIcon = 'credit-card';
+		if (!empty($conf->global->TAKEPOS_NUMPAD_USE_PAYMENT_ICON))	$payIcon = 'credit-card';
 	} elseif ($paycode == 'CHQ') {
 		$paycode = 'cheque';
-		$payIcon = 'money-check';
+		if (!empty($conf->global->TAKEPOS_NUMPAD_USE_PAYMENT_ICON))	$payIcon = 'money-check';
 	}
 
 	print '<button type="button" class="calcbutton2" onclick="Validate(\''.$langs->trans($paycode).'\');">' . (!empty($payIcon) ? '<span class="fa fa-2x fa-'.$payIcon.'"></span>' : $langs->trans("PaymentTypeShort".$paiements[2]->code)) . '</button>';

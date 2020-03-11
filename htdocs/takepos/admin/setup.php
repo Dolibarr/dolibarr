@@ -201,6 +201,13 @@ $array = array(0=>$langs->trans("Numberspad"), 1=>$langs->trans("BillsCoinsPad")
 print $form->selectarray('TAKEPOS_NUMPAD', $array, (empty($conf->global->TAKEPOS_NUMPAD) ? '0' : $conf->global->TAKEPOS_NUMPAD), 0);
 print "</td></tr>\n";
 
+// Numpad use payment icons
+print '<tr class="oddeven"><td>';
+print $langs->trans('TakeposNumpadUsePaymentIcon');
+print '<td colspan="2">';
+print ajax_constantonoff("TAKEPOS_NUMPAD_USE_PAYMENT_ICON", array(), $conf->entity, 0, 0, 1, 0);
+print "</td></tr>\n";
+
 // Direct Payment
 print '<tr class="oddeven"><td>';
 print $langs->trans('DirectPaymentButton');
