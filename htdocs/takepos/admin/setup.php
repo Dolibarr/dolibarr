@@ -175,7 +175,7 @@ print '<tr class="oddeven"><td>';
 print $langs->trans("SortProductField");
 print '<td colspan="2">';
 $prod = new Product($db);
-$array = array('rowid' => 'ID', 'ref' => 'Ref', 'datec' => 'DateCreation', 'tms' => 'DateModification');
+$array = array('rowid' => 'ID', 'ref' => 'Ref', 'label' => 'Label', 'datec' => 'DateCreation', 'tms' => 'DateModification');
 print $form->selectarray('TAKEPOS_SORTPRODUCTFIELD', $array, (empty($conf->global->TAKEPOS_SORTPRODUCTFIELD) ? 'rowid' : $conf->global->TAKEPOS_SORTPRODUCTFIELD), 0, 0, 0, '', 1);
 print "</td></tr>\n";
 
@@ -199,6 +199,13 @@ print $langs->trans("Paymentnumpad");
 print '<td colspan="2">';
 $array = array(0=>$langs->trans("Numberspad"), 1=>$langs->trans("BillsCoinsPad"));
 print $form->selectarray('TAKEPOS_NUMPAD', $array, (empty($conf->global->TAKEPOS_NUMPAD) ? '0' : $conf->global->TAKEPOS_NUMPAD), 0);
+print "</td></tr>\n";
+
+// Numpad use payment icons
+print '<tr class="oddeven"><td>';
+print $langs->trans('TakeposNumpadUsePaymentIcon');
+print '<td colspan="2">';
+print ajax_constantonoff("TAKEPOS_NUMPAD_USE_PAYMENT_ICON", array(), $conf->entity, 0, 0, 1, 0);
 print "</td></tr>\n";
 
 // Direct Payment

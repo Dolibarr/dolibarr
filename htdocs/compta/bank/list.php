@@ -4,6 +4,7 @@
  * Copyright (C) 2005-2012 Regis Houssin        <regis.houssin@inodbox.com>
  * Copyright (C) 2015      Jean-François Ferry	<jfefe@aternatik.fr>
  * Copyright (C) 2018      Ferran Marcet		<fmarcet@2byte.es>
+ * Copyright (C) 2020      Tobias Sekan			<tobias.sekan@startmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -30,8 +31,10 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/bank.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/tva/class/tva.class.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/sociales/class/chargesociales.class.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
-if (! empty($conf->accounting->enabled)) require_once DOL_DOCUMENT_ROOT . '/accountancy/class/accountingaccount.class.php';
-if (! empty($conf->accounting->enabled)) require_once DOL_DOCUMENT_ROOT . '/accountancy/class/accountingjournal.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/class/html.formcategory.class.php';
+if (!empty($conf->accounting->enabled)) require_once DOL_DOCUMENT_ROOT.'/accountancy/class/accountingaccount.class.php';
+if (!empty($conf->accounting->enabled)) require_once DOL_DOCUMENT_ROOT.'/accountancy/class/accountingjournal.class.php';
+if (!empty($conf->categorie->enabled)) require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
 
 // Load translation files required by the page
 $langs->loadLangs(array('banks', 'categories', 'accountancy', 'compta'));
@@ -48,6 +51,11 @@ $search_label=GETPOST('search_label', 'alpha');
 $search_number=GETPOST('search_number', 'alpha');
 $search_status=GETPOST('search_status')?GETPOST('search_status', 'alpha'):'opened';                      // 'all' or ''='opened'
 $optioncss = GETPOST('optioncss', 'alpha');
+
+if (!empty($conf->categorie->enabled))
+{
+	$search_category_list = GETPOST("search_category_".Categorie::TYPE_ACCOUNT."_list", "array");
+}
 
 // Security check
 if ($user->socid) $socid=$user->socid;
@@ -138,9 +146,9 @@ if (GETPOST('button_removefilter_x', 'alpha') || GETPOST('button_removefilter.x'
  * View
  */
 
-$form=new Form($db);
+$form = new FormCategory($db);
 
-$title=$langs->trans('BankAccounts');
+$title = $langs->trans('BankAccounts');
 
 // Load array of financial accounts (opened by default)
 $accounts = array();
@@ -151,14 +159,26 @@ if (! empty($extrafields->attributes[$object->table_element]['label'])) {
 	foreach ($extrafields->attributes[$object->table_element]['label'] as $key => $val) $sql.=($extrafields->attributes[$object->table_element]['type'][$key] != 'separate' ? ", ef.".$key.' as options_'.$key : '');
 }
 // Add fields from hooks
-$parameters=array();
-$reshook=$hookmanager->executeHooks('printFieldListSelect', $parameters);    // Note that $action and $object may have been modified by hook
-$sql.=$hookmanager->resPrint;
+$parameters = array();
+$reshook = $hookmanager->executeHooks('printFieldListSelect', $parameters);    // Note that $action and $object may have been modified by hook
+$sql.= $hookmanager->resPrint;
 $sql.= " FROM ".MAIN_DB_PREFIX."bank_account as b";
 if (is_array($extrafields->attributes[$object->table_element]['label']) && count($extrafields->attributes[$object->table_element]['label'])) $sql.= " LEFT JOIN ".MAIN_DB_PREFIX.$object->table_element."_extrafields as ef on (b.rowid = ef.fk_object)";
+
+if (!empty($conf->categorie->enabled))
+{
+	$sql .= Categorie::getFilterJoinQuery(Categorie::TYPE_ACCOUNT, "b.rowid");
+}
+
 $sql.= " WHERE b.entity IN (".getEntity('bank_account').")";
 if ($search_status == 'opened')  $sql.= " AND clos = 0";
 if ($search_status == 'closed')  $sql.= " AND clos = 1";
+
+if (!empty($conf->categorie->enabled))
+{
+	$sql .= Categorie::getFilterSelectQuery(Categorie::TYPE_ACCOUNT, "b.rowid", $search_category_list);
+}
+
 if ($search_ref != '')    $sql.=natural_search('b.ref', $search_ref);
 if ($search_label != '')  $sql.=natural_search('b.label', $search_label);
 if ($search_number != '') $sql.=natural_search('b.number', $search_number);
@@ -263,6 +283,10 @@ if ($sall)
 
 $moreforfilter = '';
 
+if (!empty($conf->categorie->enabled))
+{
+	$moreforfilter .= $form->getFilterBox(Categorie::TYPE_ACCOUNT, $search_category_list);
+}
 
 // Bank accounts
 $parameters = array();

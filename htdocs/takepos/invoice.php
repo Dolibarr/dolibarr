@@ -454,6 +454,12 @@ if ($action == "updatereduction")
 		}
     }
 	$invoice->fetch($placeid);
+} elseif ($action == 'update_reduction_global') {
+	foreach ($invoice->lines as $line) {
+		$result = $invoice->updateline($line->id, $line->desc, $line->subprice, $line->qty, $number, $line->date_start, $line->date_end, $line->tva_tx, $line->localtax1_tx, $line->localtax2_tx, 'HT', $line->info_bits, $line->product_type, $line->fk_parent_line, 0, $line->fk_fournprice, $line->pa_ht, $line->label, $line->special_code, $line->array_options, $line->situation_percent, $line->fk_unit);
+	}
+
+	$invoice->fetch($placeid);
 }
 
 if ($action == "order" and $placeid != 0)
@@ -664,6 +670,14 @@ function DolibarrTakeposPrinting(id) {
         url: "<?php print dol_buildpath('/takepos/ajax/ajax.php', 1).'?action=printinvoiceticket&term='.$_SESSION["takeposterminal"].'&id='; ?>" + id,
     });
 }
+
+$( document ).ready(function() {
+    $("a#customer").text("<?php
+	if ($invoice->socid != $conf->global->$constforcompanyid) print $soc->name;
+	else print $langs->trans("Customer");
+	?>");
+});
+
 </script>
 
 <?php
@@ -881,9 +895,7 @@ print '</table>';
 
 if ($invoice->socid != $conf->global->$constforcompanyid)
 {
-    print '<!-- Show customer -->';
     print '<p class="right">';
-    print $langs->trans("Customer").': '.$soc->name;
 
 	$constantforkey = 'CASHDESK_NO_DECREASE_STOCK'.$_SESSION["takeposterminal"];
 	if (!empty($conf->stock->enabled) && $conf->global->$constantforkey != "1")

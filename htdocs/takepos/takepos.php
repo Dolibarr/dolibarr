@@ -137,8 +137,8 @@ foreach ($categories as $key => $categorycursor)
     }
 }
 
-sort($maincategories);
-sort($subcategories);
+$maincategories = dol_sort_array($maincategories, 'label');
+$subcategories = dol_sort_array($subcategories, 'label');
 ?>
 
 var categories = <?php echo json_encode($maincategories); ?>;
@@ -398,6 +398,12 @@ function History()
     $.colorbox({href:"../compta/facture/list.php?contextpage=poslist", width:"90%", height:"80%", transition:"none", iframe:"true", title:"<?php echo $langs->trans("History"); ?>"});
 }
 
+function Reduction() {
+	invoiceid = $("#invoiceid").val();
+	console.log("Open popup to enter reduction on invoiceid="+invoiceid);
+	$.colorbox({href:"reduction.php?place="+place+"&invoiceid="+invoiceid, width:"80%", height:"90%", transition:"none", iframe:"true", title:""});
+}
+
 function CloseBill() {
 	invoiceid = $("#invoiceid").val();
 	console.log("Open popup to enter payment on invoiceid="+invoiceid);
@@ -446,28 +452,36 @@ function New() {
  */
 function Search2(keyCodeForEnter) {
 	console.log("Search2 Call ajax search to replace products");
-	if(window.event.keyCode == keyCodeForEnter) var key=13;
-	pageproducts=0;
-	jQuery(".wrapper2 .catwatermark").hide();
-	$.getJSON('<?php echo DOL_URL_ROOT ?>/takepos/ajax/ajax.php?action=search&term='+$('#search').val(), function(data) {
-		for (i = 0; i < <?php echo $MAXPRODUCT ?>; i++) {
-			if (typeof (data[i]) == "undefined"){
-				$("#prodesc"+i).text("");
-				$("#proimg"+i).attr("src","genimg/empty.png");
-                $("#prodiv"+i).data("rowid","");
-				continue;
+
+	var search = false;
+	var eventKeyCode = window.event.keyCode;
+	if (typeof keyCodeForEnter === 'undefined' || eventKeyCode == keyCodeForEnter) {
+		search = true;
+	}
+
+	if (search === true) {
+		pageproducts = 0;
+		jQuery(".wrapper2 .catwatermark").hide();
+		$.getJSON('<?php echo DOL_URL_ROOT ?>/takepos/ajax/ajax.php?action=search&term=' + $('#search').val(), function (data) {
+			for (i = 0; i < <?php echo $MAXPRODUCT ?>; i++) {
+				if (typeof (data[i]) == "undefined") {
+					$("#prodesc" + i).text("");
+					$("#proimg" + i).attr("src", "genimg/empty.png");
+					$("#prodiv" + i).data("rowid", "");
+					continue;
+				}
+				var titlestring = '<?php echo dol_escape_js($langs->transnoentities('Ref') . ': '); ?>' + data[i]['ref'];
+				$("#prodesc" + i).text(data[i]['label']);
+				$("#prodivdesc" + i).show();
+				$("#proimg" + i).attr("title", titlestring);
+				$("#proimg" + i).attr("src", "genimg/index.php?query=pro&id=" + data[i]['rowid']);
+				$("#prodiv" + i).data("rowid", data[i]['rowid']);
+				$("#prodiv" + i).data("iscat", 0);
 			}
-			var titlestring = '<?php echo dol_escape_js($langs->transnoentities('Ref').': '); ?>'+data[i]['ref'];
-			$("#prodesc"+i).text(data[i]['label']);
-			$("#prodivdesc"+i).show();
-			$("#proimg"+i).attr("title", titlestring);
-			$("#proimg"+i).attr("src", "genimg/index.php?query=pro&id="+data[i]['rowid']);
-			$("#prodiv"+i).data("rowid", data[i]['rowid']);
-			$("#prodiv"+i).data("iscat", 0);
-		}
-	}).always(function(data) {
-		if(key==13 && data.length==1) ClickProduct(0);
-  });
+		}).always(function (data) {
+			if ($('#search').val().length > 0 && data.length == 1) ClickProduct(0);
+		});
+	}
 }
 
 function Edit(number) {
@@ -655,7 +669,7 @@ $( document ).ready(function() {
 <body class="bodytakepos" style="overflow: hidden;">
 <?php
 print '<div class="hidden" id="dialog-info" title="TakePOS">'.$langs->trans('TerminalSelect').'</div>';
-$keyCodeForEnter = $conf->global->{'CASHDESK_READER_KEYCODE_FOR_ENTER'.$_SESSION['takeposterminal']} > 0 ? $conf->global->{'CASHDESK_READER_KEYCODE_FOR_ENTER'.$_SESSION['takeposterminal']} : 13;
+$keyCodeForEnter = $conf->global->{'CASHDESK_READER_KEYCODE_FOR_ENTER'.$_SESSION['takeposterminal']} > 0 ? $conf->global->{'CASHDESK_READER_KEYCODE_FOR_ENTER'.$_SESSION['takeposterminal']} : '';
 ?>
 <div class="container">
 
@@ -672,7 +686,7 @@ if (empty($conf->global->TAKEPOS_HIDE_HEAD_BAR)) {
 			echo '<span class="hideonsmartphone"> - '.dol_print_date(dol_now(), "day").'</span>';
 			?>
 			</a>
-			<a onclick="Customer();"><?php echo $langs->trans("Customer"); ?></a>
+			<a id="customer" onclick="Customer();"></a>
 			</div>
 			<div class="topnav-right">
 				<div class="login_block_other">
@@ -766,6 +780,7 @@ if (!empty($conf->global->TAKEPOS_HIDE_HEAD_BAR)) {
 }
 $menus[$r++] = array('title'=>'<span class="fa fa-history paddingrightonly"></span><div class="trunc">'.$langs->trans("History").'</div>', 'action'=>'History();');
 $menus[$r++] = array('title'=>'<span class="fa fa-cube paddingrightonly"></span><div class="trunc">'.$langs->trans("FreeZone").'</div>', 'action'=>'FreeZone();');
+$menus[$r++] = array('title'=>'<span class="fa fa-percent paddingrightonly"></span><div class="trunc">'.$langs->trans("Reduction").'</div>', 'action'=>'Reduction();');
 $menus[$r++] = array('title'=>'<span class="far fa-money-bill-alt paddingrightonly"></span><div class="trunc">'.$langs->trans("Payment").'</div>', 'action'=>'CloseBill();');
 
 if ($conf->global->TAKEPOS_DIRECT_PAYMENT) {
