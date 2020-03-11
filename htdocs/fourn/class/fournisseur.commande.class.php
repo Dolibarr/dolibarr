@@ -1364,7 +1364,7 @@ class CommandeFournisseur extends CommonOrder
                         false,
 	                    $this->lines[$i]->date_start,
                         $this->lines[$i]->date_end,
-                        0,
+                        $this->lines[$i]->array_options,
                         $this->lines[$i]->fk_unit
 	                );
 	                if ($result < 0)
@@ -1474,9 +1474,9 @@ class CommandeFournisseur extends CommonOrder
 
 		$this->db->begin();
 
-		// get lines so they will be clone
-		foreach($this->lines as $line)
-			$line->fetch_optionals();
+        // get extrafields so they will be clone
+        foreach($this->lines as $line)
+            $line->fetch_optionals();
 
 		// Load source object
 		$objFrom = clone $this;
