@@ -132,7 +132,7 @@ if (! defined('JS_JQUERY_DISABLE_DROPDOWN'))
                   $(document).bind(\'click\', function (e) {
                       var $clicked = $(e.target);	// This is element we click on
                       if (!$clicked.parents().hasClass("dropdown")) {
-                          console.log("close dropdown dd ul - we click outside");
+                          //console.log("close dropdown dd ul - we click outside");
 						  //$(".dropdown dd ul").hide();
 						  $(".dropdown dd ul").removeClass("open");
 

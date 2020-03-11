@@ -157,6 +157,16 @@ button.actionbutton {
 	height: calc(25% - 2px);
 }
 
+div[aria-describedby="dialog-info"] button:before {
+    content: "\f788";
+    font-family: "Font Awesome 5 Free";
+    font-weight: 900;
+    padding-right: 5px;
+}
+div[aria-describedby="dialog-info"].ui-dialog .ui-dialog-buttonpane {
+	border-width: 0;
+}
+
 .takepospay {
 	font-size: 1.5em;
 }
