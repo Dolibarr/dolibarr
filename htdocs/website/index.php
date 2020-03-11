@@ -2195,7 +2195,26 @@ if (!GETPOST('hide_websitemenu'))
     		$htmltext .= '<br>';
     		$htmltext .= '<br>'.$langs->trans("CheckVirtualHostPerms", $langs->transnoentitiesnoconv("ReadPerm"), DOL_DOCUMENT_ROOT);
     		$htmltext .= '<br>'.$langs->trans("CheckVirtualHostPerms", $langs->transnoentitiesnoconv("WritePerm"), DOL_DATA_ROOT.'/website<br>'.DOL_DATA_ROOT.'/medias');
-    		$htmltext .= '<br>';
+
+    		$examplewithapache = '<Directory "'.DOL_DOCUMENT_ROOT.'">'."\n";
+    		$examplewithapache .= 'AllowOverride FileInfo Options
+    		Options       -Indexes -MultiViews -FollowSymLinks -ExecCGI
+    		Require all granted
+    		</Directory>
+    		<Directory "'.DOL_DATA_ROOT.'/website">
+    		AllowOverride FileInfo Options
+    		Options       -Indexes -MultiViews +FollowSymLinks -ExecCGI
+    		Require all granted
+    		</Directory>
+    		<Directory "'.DOL_DATA_ROOT.'/medias">
+    		AllowOverride FileInfo Options
+    		Options       -Indexes -MultiViews -FollowSymLinks -ExecCGI
+    		Require all granted
+    		</Directory>';
+
+    		$htmltext .= '<br>'.$langs->trans("ExampleToUseInApacheVirtualHostConfig").':<br>';
+    		$htmltext .= '<div class="centpercent exampleapachesetup">'.dol_nl2br(dol_escape_htmltag($examplewithapache, 1, 1)).'</div>';
+
     		$htmltext .= '<br>';
     		$htmltext .= $langs->trans("YouCanAlsoTestWithPHPS", $dataroot);
     		$htmltext .= '<br>';
@@ -2371,12 +2390,12 @@ if (!GETPOST('hide_websitemenu'))
 								if (! isEditingEnabled || forceenable)
 								{
 									console.log("Enable inline edit");
-									jQuery(\'section[contenteditable="true"]\').each(function(idx){
+									jQuery(\'section[contenteditable="true"],div[contenteditable="true"]\').each(function(idx){
 										var idtouse = $(this).attr(\'id\');
 										console.log("Enable inline edit for "+idtouse);
 										CKEDITOR.inline(idtouse, {
 											// Allow some non-standard markup that we used in the introduction.
-											extraAllowedContent: \'span(*);cite(*);q(*);dl(*);dt(*);dd(*);ul(*);li(*);header(*);button(*);h1(*);h2(*);\',
+											extraAllowedContent: \'span(*);cite(*);q(*);dl(*);dt(*);dd(*);ul(*);li(*);header(*);button(*);h1(*);h2(*);title(*);\',
 											//extraPlugins: \'sourcedialog\',
 											removePlugins: \'flash,stylescombo\',
 											// Show toolbar on startup (optional).
@@ -2400,7 +2419,9 @@ if (!GETPOST('hide_websitemenu'))
 				print $langs->trans("EditInLine");
 				print '</span>';
 
-				if ($websitepage->grabbed_from)
+				//$disableeditinline = $websitepage->grabbed_from;
+				$disableeditinline = 0;
+				if ($disableeditinline)
 				{
 					//print '<input type="submit" class="button bordertransp" disabled="disabled" title="'.dol_escape_htmltag($langs->trans("OnlyEditionOfSourceForGrabbedContent")).'" value="'.dol_escape_htmltag($langs->trans("EditWithEditor")).'" name="editcontent">';
 					print '<a class="nobordertransp opacitymedium nohoverborder marginleftonlyshort"'.$disabled.' href="#" disabled="disabled" title="'.dol_escape_htmltag($langs->trans("OnlyEditionOfSourceForGrabbedContent")).'">'.img_picto($langs->trans("OnlyEditionOfSourceForGrabbedContent"), 'switch_off', '', false, 0, 0, '', 'nomarginleft').'</a>';
@@ -2421,12 +2442,6 @@ if (!GETPOST('hide_websitemenu'))
 				print '</div>';
 				print '<div class="inline-block marginrightonly">';
 				print $langs->trans("ShowSubcontainers");
-				/*if ($websitepage->grabbed_from)
-				{
-					print '<a class="button nobordertransp opacitymedium nohoverborder"'.$disabled.' href="#" disabled="disabled" title="'.dol_escape_htmltag($langs->trans("OnlyEditionOfSourceForGrabbedContent")).'">'.img_picto($langs->trans("OnlyEditionOfSourceForGrabbedContent"),'switch_off','',false,0,0,'','nomarginleft').'</a>';
-				}
-				else
-				{*/
 				if (empty($conf->global->WEBSITE_SUBCONTAINERSINLINE))
 				{
 					print '<a class="nobordertransp nohoverborder marginleftonlyshort"'.$disabled.' href="'.$_SERVER["PHP_SELF"].'?website='.$object->ref.'&pageid='.$websitepage->id.'&action=setshowsubcontainers">'.img_picto($langs->trans("ShowSubContainersOnOff", $langs->transnoentitiesnoconv("Off")), 'switch_off', '', false, 0, 0, '', 'nomarginleft').'</a>';

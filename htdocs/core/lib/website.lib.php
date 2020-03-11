@@ -51,11 +51,14 @@ function dolStripPhpCode($str, $replacewith = '')
 			$partlings = explode('?>', $part);
 			if (!empty($partlings))
 			{
-				$phppart = $partlings[0];
+				//$phppart = $partlings[0];
 				//remove content before closing tag
 				if (count($partlings) > 1) $partlings[0] = '';	// Todo why a count > 1 and not >= 1 ?
 				//append to out string
-				$newstr .= '<span class="phptag" class="tooltip" title="'.dol_escape_htmltag(dolGetFirstLineOfText($phppart).'...').'">'.$replacewith.'<!-- '.$phppart.' --></span>'.implode('', $partlings);
+				//$newstr .= '<span class="phptag" class="tooltip" title="'.dol_escape_htmltag(dolGetFirstLineOfText($phppart).'...').'">'.$replacewith.'<!-- '.$phppart.' --></span>'.implode('', $partlings);
+				//$newstr .= '<span>'.$replacewith.'<!-- '.$phppart.' --></span>'.implode('', $partlings);
+				$newstr .= '<span phptag>'.$replacewith.'</span>'.implode('', $partlings);
+				//$newstr .= $replacewith.implode('', $partlings);
 			}
 		}
 	}

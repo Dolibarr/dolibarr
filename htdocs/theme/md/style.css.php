@@ -4115,7 +4115,14 @@ tr.visible {
 /*  Module website                                                                */
 /* ============================================================================== */
 
-.phptag {
+.exampleapachesetup {
+    overflow-y: auto;
+    max-height: 100px;
+    font-size: 0.8em;
+    border: 1px solid #aaa;
+}
+
+span[phptag] {
 	background: #ddd; border: 1px solid #ccc; border-radius: 4px;
 }
 
