@@ -187,3 +187,6 @@ ALTER TABLE llx_extrafields MODIFY COLUMN printable integer DEFAULT 0;
 ALTER TABLE llx_extrafields ADD COLUMN printable integer DEFAULT 0;
 
 ALTER TABLE llx_accounting_account DROP COLUMN pcg_subtype;
+
+ALTER TABLE llx_product ADD COLUMN accountancy_code_buy_intra varchar(32) AFTER accountancy_code_buy;
+ALTER TABLE llx_product ADD COLUMN accountancy_code_buy_export varchar(32) AFTER accountancy_code_buy_intra;
