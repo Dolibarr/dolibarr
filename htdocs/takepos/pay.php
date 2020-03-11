@@ -214,7 +214,7 @@ else print "var received=0;";
     }
 </script>
 
-<div style="position:absolute; top:2%; left:5%; height:30%; width:91%;">
+<div style="position:relative; padding-top: 10px; left:5%; height:150px; width:91%;">
 <center>
 <div class="paymentbordline paymentbordlinetotal">
 <center><span class="takepospay"><font color="white"><?php echo $langs->trans('TotalTTC'); ?>: </font><span id="totaldisplay" class="colorwhite"><?php echo price($invoice->total_ttc, 1, '', 1, -1, -1) ?></span></font></span></center>
@@ -233,7 +233,7 @@ else print "var received=0;";
 </center>
 </div>
 
-<div style="position:absolute; top:33%; left:5%; height:52%; width:92%;">
+<div style="position:absolute; left:5%; height:52%; width:92%;">
 <?php
 $action_buttons = array(
 	array(

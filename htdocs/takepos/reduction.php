@@ -184,7 +184,7 @@ $langs->loadLangs(array('main', 'bills', 'cashdesk'));
 	}
 </script>
 
-<div style="position:absolute; top:2%; left:5%; height:30%; width:91%;">
+<div style="position:absolute; top:2%; left:5%; width:91%;">
 <center>
 <?php
     print '<input type="text" class="takepospay" id="reduction_total" name="reduction_total" style="width: 50%;" placeholder="' . $langs->trans('Reduction') . '">';
