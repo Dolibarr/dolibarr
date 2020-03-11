@@ -77,12 +77,16 @@ if (! $resql) {
 }
 
 while ($obj = $dbjoomla->fetch_object($resql)) {
+	$i = 0;
 	if ($obj) {
+		$i++;
 		$id = $obj->id;
 		$title = $obj->title;
 		$alias = $obj->alias;
 		$description = dol_string_nohtmltag($obj->introtext);
 		$hmtltext = $obj->fulltext;
+
+		print $i.' '.$id.' '.$title."\n";
 	}
 }
 
