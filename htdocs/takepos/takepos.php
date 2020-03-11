@@ -398,6 +398,12 @@ function History()
     $.colorbox({href:"../compta/facture/list.php?contextpage=poslist", width:"90%", height:"80%", transition:"none", iframe:"true", title:"<?php echo $langs->trans("History"); ?>"});
 }
 
+function Reduction() {
+	invoiceid = $("#invoiceid").val();
+	console.log("Open popup to enter reduction on invoiceid="+invoiceid);
+	$.colorbox({href:"reduction.php?place="+place+"&invoiceid="+invoiceid, width:"80%", height:"90%", transition:"none", iframe:"true", title:""});
+}
+
 function CloseBill() {
 	invoiceid = $("#invoiceid").val();
 	console.log("Open popup to enter payment on invoiceid="+invoiceid);
@@ -766,6 +772,7 @@ if (!empty($conf->global->TAKEPOS_HIDE_HEAD_BAR)) {
 }
 $menus[$r++] = array('title'=>'<span class="fa fa-history paddingrightonly"></span><div class="trunc">'.$langs->trans("History").'</div>', 'action'=>'History();');
 $menus[$r++] = array('title'=>'<span class="fa fa-cube paddingrightonly"></span><div class="trunc">'.$langs->trans("FreeZone").'</div>', 'action'=>'FreeZone();');
+$menus[$r++] = array('title'=>'<span class="fa fa-percent paddingrightonly"></span><div class="trunc">'.$langs->trans("Reduction").'</div>', 'action'=>'Reduction();');
 $menus[$r++] = array('title'=>'<span class="far fa-money-bill-alt paddingrightonly"></span><div class="trunc">'.$langs->trans("Payment").'</div>', 'action'=>'CloseBill();');
 
 if ($conf->global->TAKEPOS_DIRECT_PAYMENT) {
