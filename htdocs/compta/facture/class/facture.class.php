@@ -117,7 +117,7 @@ class Facture extends CommonInvoice
 	 * @var int Ref Int
 	 * @deprecated
 	 */
-	public $ref_int;	// deprecated
+	public $ref_int; // deprecated
 
 	//Check constants for types
 	public $type = self::TYPE_STANDARD;
@@ -261,7 +261,7 @@ class Facture extends CommonInvoice
 		'ref' =>array('type'=>'varchar(30)', 'label'=>'Ref', 'enabled'=>1, 'visible'=>-1, 'notnull'=>1, 'showoncombobox'=>1, 'position'=>15),
 		'entity' =>array('type'=>'integer', 'label'=>'Entity', 'default'=>1, 'enabled'=>1, 'visible'=>-2, 'notnull'=>1, 'position'=>20, 'index'=>1),
 		'ref_ext' =>array('type'=>'varchar(255)', 'label'=>'Ref ext', 'enabled'=>1, 'visible'=>0, 'position'=>25),
-		'ref_int' =>array('type'=>'varchar(255)', 'label'=>'Ref int', 'enabled'=>1, 'visible'=>0, 'position'=>30),	// deprecated
+		'ref_int' =>array('type'=>'varchar(255)', 'label'=>'Ref int', 'enabled'=>1, 'visible'=>0, 'position'=>30), // deprecated
 		'type' =>array('type'=>'smallint(6)', 'label'=>'Type', 'enabled'=>1, 'visible'=>-1, 'notnull'=>1, 'position'=>35),
 		'ref_client' =>array('type'=>'varchar(255)', 'label'=>'Ref client', 'enabled'=>1, 'visible'=>-1, 'position'=>40),
 		//'increment' =>array('type'=>'varchar(10)', 'label'=>'Increment', 'enabled'=>1, 'visible'=>-1, 'position'=>45),
@@ -813,6 +813,14 @@ class Facture extends CommonInvoice
 						$vatrate = $line->tva_tx;
 						if ($line->vat_src_code && !preg_match('/\(.*\)/', $vatrate)) $vatrate .= ' ('.$line->vat_src_code.')';
 
+						if(!empty($conf->global->MAIN_CREATEFROM_KEEP_LINE_ORIGIN_INFORMATION)) {
+							$originid=$line->origin_id;
+							$origintype=$line->origin;
+						} else {
+							$originid=$line->id;
+							$origintype=$this->element;
+						}
+
                         $result = $this->addline(
 							$line->desc,
 							$line->subprice,
@@ -832,8 +840,8 @@ class Facture extends CommonInvoice
 							$line->product_type,
 							$line->rang,
 							$line->special_code,
-                            $this->element,
-                            $line->id,
+	                        $origintype,
+	                        $originid,
 							$fk_parent_line,
 							$line->fk_fournprice,
 							$line->pa_ht,
@@ -1499,7 +1507,7 @@ class Facture extends CommonInvoice
 			$sql .= ' WHERE f.entity IN ('.getEntity('invoice').')'; // Dont't use entity if you use rowid
 			if ($ref)     $sql .= " AND f.ref='".$this->db->escape($ref)."'";
 			if ($ref_ext) $sql .= " AND f.ref_ext='".$this->db->escape($ref_ext)."'";
-			if ($notused) $sql .= " AND f.ref_int='".$this->db->escape($notused)."'";	// deprecated
+			if ($notused) $sql .= " AND f.ref_int='".$this->db->escape($notused)."'"; // deprecated
 		}
 
 		dol_syslog(get_class($this)."::fetch", LOG_DEBUG);
@@ -2439,9 +2447,9 @@ class Facture extends CommonInvoice
 		$productStatic = null;
 		$warehouseStatic = null;
 		if ($batch_rule > 0) {
-			require_once DOL_DOCUMENT_ROOT . '/product/class/product.class.php';
-			require_once DOL_DOCUMENT_ROOT . '/product/class/productbatch.class.php';
-			require_once DOL_DOCUMENT_ROOT . '/product/stock/class/entrepot.class.php';
+			require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
+			require_once DOL_DOCUMENT_ROOT.'/product/class/productbatch.class.php';
+			require_once DOL_DOCUMENT_ROOT.'/product/stock/class/entrepot.class.php';
 			$productStatic = new Product($this->db);
 			$warehouseStatic = new Entrepot($this->db);
 		}
@@ -2621,7 +2629,7 @@ class Facture extends CommonInvoice
 												$langs->load('errors');
 												$warehouseStatic->fetch($idwarehouse);
 												$this->error = $langs->trans('ErrorBatchNoFoundForProductInWarehouse', $productStatic->label, $warehouseStatic->ref);
-												dol_syslog(__METHOD__ . ' Error: ' . $langs->transnoentitiesnoconv('ErrorBatchNoFoundForProductInWarehouse', $productStatic->label, $warehouseStatic->ref), LOG_ERR);
+												dol_syslog(__METHOD__.' Error: '.$langs->transnoentitiesnoconv('ErrorBatchNoFoundForProductInWarehouse', $productStatic->label, $warehouseStatic->ref), LOG_ERR);
 											}
 
 											foreach ($batchList as $batch) {
@@ -2660,7 +2668,7 @@ class Facture extends CommonInvoice
 													$langs->load('errors');
 													$warehouseStatic->fetch($idwarehouse);
 													$this->error = $langs->trans('ErrorBatchNoFoundEnoughQuantityForProductInWarehouse', $productStatic->label, $warehouseStatic->ref);
-													dol_syslog(__METHOD__ . ' Error: ' . $langs->transnoentitiesnoconv('ErrorBatchNoFoundEnoughQuantityForProductInWarehouse', $productStatic->label, $warehouseStatic->ref), LOG_ERR);
+													dol_syslog(__METHOD__.' Error: '.$langs->transnoentitiesnoconv('ErrorBatchNoFoundEnoughQuantityForProductInWarehouse', $productStatic->label, $warehouseStatic->ref), LOG_ERR);
 												}
 											}
 										}
@@ -2942,8 +2950,8 @@ class Facture extends CommonInvoice
 	 *  @param		int			$type				Type of line (0=product, 1=service). Not used if fk_product is defined, the type of product is used.
 	 *  @param      int			$rang               Position of line
 	 *  @param		int			$special_code		Special code (also used by externals modules!)
-	 *  @param		string		$origin				'order', ...
-	 *  @param		int			$origin_id			Id of origin object
+	 *  @param		string		$origin				Depend on global conf MAIN_CREATEFROM_KEEP_LINE_ORIGIN_INFORMATION can be 'orderdet', 'propaldet'..., else 'order','propal,'....
+	 *  @param		int			$origin_id			Depend on global conf MAIN_CREATEFROM_KEEP_LINE_ORIGIN_INFORMATION can be Id of origin object (aka line id), else object id
 	 *  @param		int			$fk_parent_line		Id of parent line
 	 *  @param		int			$fk_fournprice		Supplier price id (to calculate margin) or ''
 	 *  @param		int			$pa_ht				Buying price of line (to calculate margin) or ''

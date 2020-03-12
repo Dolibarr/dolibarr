@@ -167,15 +167,15 @@ $arrayfields = array(
 	'p.total_ht'=>array('label'=>"AmountHT", 'checked'=>1),
 	'p.total_vat'=>array('label'=>"AmountVAT", 'checked'=>0),
 	'p.total_ttc'=>array('label'=>"AmountTTC", 'checked'=>0),
-	'p.total_ht_invoiced'=>array('label'=>"AmountInvoicedHT", 'checked'=>0, 'enabled'=>! empty($conf->global->PROPOSAL_SHOW_INVOICED_AMOUNT)),
-	'p.total_invoiced'=>array('label'=>"AmountInvoicedTTC", 'checked'=>0, 'enabled'=>! empty($conf->global->PROPOSAL_SHOW_INVOICED_AMOUNT)),
+	'p.total_ht_invoiced'=>array('label'=>"AmountInvoicedHT", 'checked'=>0, 'enabled'=>!empty($conf->global->PROPOSAL_SHOW_INVOICED_AMOUNT)),
+	'p.total_invoiced'=>array('label'=>"AmountInvoicedTTC", 'checked'=>0, 'enabled'=>!empty($conf->global->PROPOSAL_SHOW_INVOICED_AMOUNT)),
 	'p.multicurrency_code'=>array('label'=>'Currency', 'checked'=>0, 'enabled'=>(empty($conf->multicurrency->enabled) ? 0 : 1)),
 	'p.multicurrency_tx'=>array('label'=>'CurrencyRate', 'checked'=>0, 'enabled'=>(empty($conf->multicurrency->enabled) ? 0 : 1)),
 	'p.multicurrency_total_ht'=>array('label'=>'MulticurrencyAmountHT', 'checked'=>0, 'enabled'=>(empty($conf->multicurrency->enabled) ? 0 : 1)),
 	'p.multicurrency_total_vat'=>array('label'=>'MulticurrencyAmountVAT', 'checked'=>0, 'enabled'=>(empty($conf->multicurrency->enabled) ? 0 : 1)),
 	'p.multicurrency_total_ttc'=>array('label'=>'MulticurrencyAmountTTC', 'checked'=>0, 'enabled'=>(empty($conf->multicurrency->enabled) ? 0 : 1)),
-	'p.multicurrency_total_ht_invoiced'=>array('label'=>'MulticurrencyAmountInvoicedHT', 'checked'=>0, 'enabled'=>! empty($conf->multicurrency->enabled) && ! empty($conf->global->PROPOSAL_SHOW_INVOICED_AMOUNT)),
-	'p.multicurrency_total_invoiced'=>array('label'=>'MulticurrencyAmountInvoicedTTC', 'checked'=>0, 'enabled'=>! empty($conf->multicurrency->enabled) && ! empty($conf->global->PROPOSAL_SHOW_INVOICED_AMOUNT)),
+	'p.multicurrency_total_ht_invoiced'=>array('label'=>'MulticurrencyAmountInvoicedHT', 'checked'=>0, 'enabled'=>!empty($conf->multicurrency->enabled) && !empty($conf->global->PROPOSAL_SHOW_INVOICED_AMOUNT)),
+	'p.multicurrency_total_invoiced'=>array('label'=>'MulticurrencyAmountInvoicedTTC', 'checked'=>0, 'enabled'=>!empty($conf->multicurrency->enabled) && !empty($conf->global->PROPOSAL_SHOW_INVOICED_AMOUNT)),
 	'u.login'=>array('label'=>"Author", 'checked'=>1, 'position'=>10),
 	'sale_representative'=>array('label'=>"SaleRepresentativesOfThirdParty", 'checked'=>1),
 	'p.datec'=>array('label'=>"DateCreation", 'checked'=>0, 'position'=>500),
@@ -344,7 +344,7 @@ if ($search_login)					$sql .= natural_search("u.login", $search_login);
 if ($search_montant_ht != '')		$sql .= natural_search("p.total_ht", $search_montant_ht, 1);
 if ($search_montant_vat != '')		$sql .= natural_search("p.tva", $search_montant_vat, 1);
 if ($search_montant_ttc != '')		$sql .= natural_search("p.total", $search_montant_ttc, 1);
-if ($search_multicurrency_code != '')        $sql .= ' AND p.multicurrency_code = "' . $db->escape($search_multicurrency_code) . '"';
+if ($search_multicurrency_code != '')        $sql .= ' AND p.multicurrency_code = "'.$db->escape($search_multicurrency_code).'"';
 if ($search_multicurrency_tx != '')          $sql .= natural_search('p.multicurrency_tx', $search_multicurrency_tx, 1);
 if ($search_multicurrency_montant_ht != '')  $sql .= natural_search('p.multicurrency_total_ht', $search_multicurrency_montant_ht, 1);
 if ($search_multicurrency_montant_vat != '') $sql .= natural_search('p.multicurrency_total_tva', $search_multicurrency_montant_vat, 1);
@@ -1099,7 +1099,7 @@ if ($resql)
 		// Currency
 		if (!empty($arrayfields['p.multicurrency_code']['checked']))
 		{
-			  print '<td class="nowrap">'.$obj->multicurrency_code . ' - ' . $langs->trans('Currency' . $obj->multicurrency_code)."</td>\n";
+			  print '<td class="nowrap">'.$obj->multicurrency_code.' - '.$langs->trans('Currency'.$obj->multicurrency_code)."</td>\n";
 			  if (!$i) $totalarray['nbfield']++;
 		}
 
@@ -1107,7 +1107,7 @@ if ($resql)
 		if (!empty($arrayfields['p.multicurrency_tx']['checked']))
 		{
 			  print '<td class="nowrap">';
-			  $form->form_multicurrency_rate($_SERVER['PHP_SELF'] . '?id=' . $obj->rowid, $obj->multicurrency_tx, 'none', $obj->multicurrency_code);
+			  $form->form_multicurrency_rate($_SERVER['PHP_SELF'].'?id='.$obj->rowid, $obj->multicurrency_tx, 'none', $obj->multicurrency_code);
 			  print "</td>\n";
 			  if (!$i) $totalarray['nbfield']++;
 		}

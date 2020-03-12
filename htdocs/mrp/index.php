@@ -114,7 +114,7 @@ if ($conf->use_javascript_ajax)
     		$dolgraph->SetType(array('pie'));
     		$dolgraph->SetHeight('200');
     		$dolgraph->draw('idgraphstatus');
-    		print $dolgraph->show($totalnb?0:1);
+    		print $dolgraph->show($totalnb ? 0 : 1);
 
     		print '</td></tr>';
     	}
@@ -138,15 +138,15 @@ print '</div><div class="fichetwothirdright"><div class="ficheaddleft">';
  * Last modified BOM
  */
 
-$max=5;
+$max = 5;
 
 $sql = "SELECT a.rowid, a.status, a.ref, a.tms as datem, a.status";
-$sql.= " FROM ".MAIN_DB_PREFIX."bom_bom as a";
-$sql.= " WHERE a.entity IN (".getEntity('bom').")";
-$sql.= $db->order("a.tms", "DESC");
-$sql.= $db->plimit($max, 0);
+$sql .= " FROM ".MAIN_DB_PREFIX."bom_bom as a";
+$sql .= " WHERE a.entity IN (".getEntity('bom').")";
+$sql .= $db->order("a.tms", "DESC");
+$sql .= $db->plimit($max, 0);
 
-$resql=$db->query($sql);
+$resql = $db->query($sql);
 if ($resql)
 {
 	print '<div class="div-table-responsive-no-min">';
@@ -162,10 +162,10 @@ if ($resql)
 		{
 			$obj = $db->fetch_object($resql);
 
-			$staticbom->id=$obj->rowid;
-			$staticbom->ref=$obj->ref;
-			$staticbom->date_modification=$obj->datem;
-			$staticbom->status=$obj->status;
+			$staticbom->id = $obj->rowid;
+			$staticbom->ref = $obj->ref;
+			$staticbom->date_modification = $obj->datem;
+			$staticbom->status = $obj->status;
 
 			print '<tr class="oddeven">';
 			print '<td>'.$staticbom->getNomUrl(1, 32).'</td>';
@@ -176,7 +176,7 @@ if ($resql)
 		}
 	} else {
 		print '<tr class="oddeven">';
-		print '<td><span class="opacitymedium">' . $langs->trans("None") . '</span></td>';
+		print '<td><span class="opacitymedium">'.$langs->trans("None").'</span></td>';
 		print '</tr>';
 	}
 	print "</table></div>";
@@ -191,15 +191,15 @@ else
  * Last modified MOs
  */
 
-$max=5;
+$max = 5;
 
 $sql = "SELECT a.rowid, a.status, a.ref, a.tms as datem, a.status";
-$sql.= " FROM ".MAIN_DB_PREFIX."mrp_mo as a";
-$sql.= " WHERE a.entity IN (".getEntity('mo').")";
-$sql.= $db->order("a.tms", "DESC");
-$sql.= $db->plimit($max, 0);
+$sql .= " FROM ".MAIN_DB_PREFIX."mrp_mo as a";
+$sql .= " WHERE a.entity IN (".getEntity('mo').")";
+$sql .= $db->order("a.tms", "DESC");
+$sql .= $db->plimit($max, 0);
 
-$resql=$db->query($sql);
+$resql = $db->query($sql);
 if ($resql)
 {
     print '<div class="div-table-responsive-no-min">';
@@ -215,10 +215,10 @@ if ($resql)
         {
             $obj = $db->fetch_object($resql);
 
-            $staticmo->id=$obj->rowid;
-            $staticmo->ref=$obj->ref;
-            $staticmo->date_modification=$obj->datem;
-            $staticmo->status=$obj->status;
+            $staticmo->id = $obj->rowid;
+            $staticmo->ref = $obj->ref;
+            $staticmo->date_modification = $obj->datem;
+            $staticmo->status = $obj->status;
 
             print '<tr class="oddeven">';
             print '<td>'.$staticmo->getNomUrl(1, 32).'</td>';
@@ -229,7 +229,7 @@ if ($resql)
         }
     } else {
         print '<tr class="oddeven">';
-        print '<td><span class="opacitymedium">' . $langs->trans("None") . '</span></td>';
+        print '<td><span class="opacitymedium">'.$langs->trans("None").'</span></td>';
         print '</tr>';
     }
     print "</table></div>";

@@ -46,13 +46,13 @@ if (empty($user->rights->accounting->chartofaccount))
 $action = GETPOST('action', 'aZ09');
 
 
-$list_account_main = array (
+$list_account_main = array(
     'ACCOUNTING_ACCOUNT_CUSTOMER',
     'ACCOUNTING_ACCOUNT_SUPPLIER',
     'SALARIES_ACCOUNTING_ACCOUNT_PAYMENT',
 );
 
-$list_account = array ();
+$list_account = array();
 $list_account[] = '---Product---';
 $list_account[] = 'ACCOUNTING_PRODUCT_SOLD_ACCOUNT';
 if ($mysoc->isInEEC()) {
@@ -120,25 +120,25 @@ if ($action == 'update') {
 	foreach ($list_account_main as $constname) {
 		$constvalue = GETPOST($constname, 'alpha');
 
-		if (! dolibarr_set_const($db, $constname, $constvalue, 'chaine', 0, '', $conf->entity)) {
-			$error ++;
+		if (!dolibarr_set_const($db, $constname, $constvalue, 'chaine', 0, '', $conf->entity)) {
+			$error++;
 		}
 	}
 
 	foreach ($list_account as $constname) {
-		$reg=array();
+		$reg = array();
 		if (preg_match('/---(.*)---/', $constname, $reg)) {	// This is a separator
 			continue;
 		}
 
 		$constvalue = GETPOST($constname, 'alpha');
 
-	    if (! dolibarr_set_const($db, $constname, $constvalue, 'chaine', 0, '', $conf->entity)) {
-	        $error ++;
+	    if (!dolibarr_set_const($db, $constname, $constvalue, 'chaine', 0, '', $conf->entity)) {
+	        $error++;
 	    }
 	}
 
-	if (! $error) {
+	if (!$error) {
 		setEventMessages($langs->trans("SetupSaved"), null, 'mesgs');
 	} else {
 		setEventMessages($langs->trans("Error"), null, 'errors');
@@ -190,7 +190,7 @@ foreach ($list_account_main as $key) {
 
 
 foreach ($list_account as $key) {
-	$reg=array();
+	$reg = array();
 	if (preg_match('/---(.*)---/', $key, $reg)) {
 		print '<tr class="liste_titre"><td>'.$langs->trans($reg[1]).'</td><td></td></tr>';
 	}
@@ -198,9 +198,9 @@ foreach ($list_account as $key) {
 		print '<tr class="oddeven value">';
 		// Param
 		$label = $langs->trans($key);
-		print '<td width="50%">' . $label . '</td>';
+		print '<td width="50%">'.$label.'</td>';
 		// Value
-		print '<td>';  // Do not force class=right, or it align also the content of the select box
+		print '<td>'; // Do not force class=right, or it align also the content of the select box
 		print $formaccounting->select_account($conf->global->$key, $key, 1, '', 1, 1);
 		print '</td>';
 		print '</tr>';
