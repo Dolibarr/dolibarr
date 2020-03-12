@@ -927,6 +927,14 @@ class Commande extends CommonOrder
 					$vatrate = $line->tva_tx;
 					if ($line->vat_src_code && !preg_match('/\(.*\)/', $vatrate)) $vatrate .= ' ('.$line->vat_src_code.')';
 
+					if(!empty($conf->global->MAIN_CREATEFROM_KEEP_LINE_ORIGIN_INFORMATION)) {
+						$originid=$line->origin_id;
+						$origintype=$line->origin;
+					} else {
+						$originid=$line->id;
+						$origintype=$this->element;
+					}
+
                     $result = $this->addline(
 						$line->desc,
 						$line->subprice,
@@ -951,8 +959,8 @@ class Commande extends CommonOrder
 						$line->label,
 						$line->array_options,
 						$line->fk_unit,
-						$line->origin,
-						$line->origin_id
+	                    $origintype,
+	                    $originid
 					);
 					if ($result < 0)
 					{
@@ -1355,8 +1363,8 @@ class Commande extends CommonOrder
 	 *  @param		string			$label				Label
 	 *  @param		array			$array_options		extrafields array. Example array('options_codeforfield1'=>'valueforfield1', 'options_codeforfield2'=>'valueforfield2', ...)
 	 * 	@param 		string			$fk_unit 			Code of the unit to use. Null to use the default one
-	 * 	@param		string		    $origin				'order', ...
-	 *  @param		int			    $origin_id			Id of origin object
+	 * 	@param		string		    $origin				Depend on global conf MAIN_CREATEFROM_KEEP_LINE_ORIGIN_INFORMATION can be 'orderdet', 'propaldet'..., else 'order','propal,'....
+	 *  @param		int			    $origin_id			Depend on global conf MAIN_CREATEFROM_KEEP_LINE_ORIGIN_INFORMATION can be Id of origin object (aka line id), else object id
 	 * 	@param		double			$pu_ht_devise		Unit price in currency
 	 *	@return     int             					>0 if OK, <0 if KO
 	 *

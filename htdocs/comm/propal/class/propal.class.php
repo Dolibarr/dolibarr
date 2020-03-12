@@ -440,8 +440,8 @@ class Propal extends CommonObject
      *		@param      int			$date_end         	End date of the line
      *      @param		array		$array_options		extrafields array
      * 		@param 		string		$fk_unit 			Code of the unit to use. Null to use the default one
-     *      @param		string		$origin				'order', ...
-     *      @param		int			$origin_id			Id of origin object
+     *      @param		string		$origin				Depend on global conf MAIN_CREATEFROM_KEEP_LINE_ORIGIN_INFORMATION can be 'orderdet', 'propaldet'..., else 'order','propal,'....
+     *      @param		int			$origin_id			Depend on global conf MAIN_CREATEFROM_KEEP_LINE_ORIGIN_INFORMATION can be Id of origin object (aka line id), else object id
      * 		@param		double		$pu_ht_devise		Unit price in currency
      * 		@param		int    		$fk_remise_except	Id discount if line is from a discount
      *    	@return    	int         	    			>0 if OK, <0 if KO
@@ -1099,6 +1099,14 @@ class Propal extends CommonObject
 						$vatrate = $line->tva_tx;
 						if ($line->vat_src_code && !preg_match('/\(.*\)/', $vatrate)) $vatrate .= ' ('.$line->vat_src_code.')';
 
+						if(!empty($conf->global->MAIN_CREATEFROM_KEEP_LINE_ORIGIN_INFORMATION)) {
+							$originid=$line->origin_id;
+							$origintype=$line->origin;
+						} else {
+							$originid=$line->id;
+							$origintype=$this->element;
+						}
+
 						$result = $this->addline(
 							$line->desc,
 							$line->subprice,
@@ -1122,8 +1130,8 @@ class Propal extends CommonObject
 							$line->date_end,
 							$line->array_options,
 							$line->fk_unit,
-							$this->element,
-							$line->id
+							$origintype,
+							$originid
 						);
 
 						if ($result < 0)
