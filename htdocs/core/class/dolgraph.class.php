@@ -115,7 +115,7 @@ class DolGraph
 
 		$this->_library = $library;
 		if ($this->_library == 'auto') {
-			$this->_library = (empty($conf->global->MAIN_JS_GRAPH) ? 'jflot': $conf->global->MAIN_JS_GRAPH);
+			$this->_library = (empty($conf->global->MAIN_JS_GRAPH) ? 'jflot' : $conf->global->MAIN_JS_GRAPH);
 		}
 	}
 
@@ -535,7 +535,7 @@ class DolGraph
     public function GetMaxValueInData()
 	{
         // phpcs:enable
-		if (! is_array($this->data)) return 0;
+		if (!is_array($this->data)) return 0;
 
 		$k = 0;
 		$vals = array();
@@ -564,7 +564,7 @@ class DolGraph
     public function GetMinValueInData()
 	{
         // phpcs:enable
-		if (! is_array($this->data)) return 0;
+		if (!is_array($this->data)) return 0;
 
 		$k = 0;
 		$vals = array();
@@ -748,9 +748,9 @@ class DolGraph
 		}
 
 		// Start the div that will contains all the graph
-		$dolxaxisvertical='';
-		if (count($this->data) > 20) $dolxaxisvertical='dol-xaxis-vertical';
-		$this->stringtoshow .= '<div id="placeholder_'.$tag.'" style="width:'.$this->width.'px;height:'.$this->height.'px;" class="dolgraph'.(empty($dolxaxisvertical)?'':' '.$dolxaxisvertical).(empty($this->cssprefix) ? '' : ' dolgraph'.$this->cssprefix).' center"></div>'."\n";
+		$dolxaxisvertical = '';
+		if (count($this->data) > 20) $dolxaxisvertical = 'dol-xaxis-vertical';
+		$this->stringtoshow .= '<div id="placeholder_'.$tag.'" style="width:'.$this->width.'px;height:'.$this->height.'px;" class="dolgraph'.(empty($dolxaxisvertical) ? '' : ' '.$dolxaxisvertical).(empty($this->cssprefix) ? '' : ' dolgraph'.$this->cssprefix).' center"></div>'."\n";
 
 		$this->stringtoshow .= '<script id="'.$tag.'">'."\n";
 		$this->stringtoshow .= '$(function () {'."\n";
@@ -775,8 +775,8 @@ class DolGraph
 		{
 			$datacolor = array();
 			foreach ($this->datacolor as $val) {
-				if (is_array($val)) $datacolor[] = "#".sprintf("%02x%02x%02x", $val[0], $val[1], $val[2]);		// If datacolor is array(R, G, B)
-				else $datacolor[] = "#".str_replace(array('#', '-'), '', $val);																	// If $val is '124' or '#124'
+				if (is_array($val)) $datacolor[] = "#".sprintf("%02x%02x%02x", $val[0], $val[1], $val[2]); // If datacolor is array(R, G, B)
+				else $datacolor[] = "#".str_replace(array('#', '-'), '', $val); // If $val is '124' or '#124'
 			}
 
 			$urltemp = ''; // TODO Add support for url link into labels
@@ -993,10 +993,10 @@ class DolGraph
 				$legends[$x] = (array_key_exists('label', $valarray) ? $valarray['label'] : $valarray[0]);
 				$array_of_ykeys = array_keys($valarray);
 				$alabelexists = 1;
-				$tmpykey = explode('_', ($array_of_ykeys[$i+($alabelexists ? 1 : 0)]), 3);
-				if (! empty($tmpykey[2]) || $tmpykey[2] == '0') {		// This is a 'Group by' array
+				$tmpykey = explode('_', ($array_of_ykeys[$i + ($alabelexists ? 1 : 0)]), 3);
+				if (!empty($tmpykey[2]) || $tmpykey[2] == '0') {		// This is a 'Group by' array
 					$tmpvalue = (array_key_exists('y_'.$tmpykey[1].'_'.$tmpykey[2], $valarray) ? $valarray['y_'.$tmpykey[1].'_'.$tmpykey[2]] : $valarray[$i + 1]);
-					$values[$x]  = (is_numeric($tmpvalue) ? $tmpvalue : null);
+					$values[$x] = (is_numeric($tmpvalue) ? $tmpvalue : null);
 					$arrayofgroupslegend[$i] = array(
 						'stacknum'=> $tmpykey[1],
 						'legend' => $this->Legend[$tmpykey[1]],
@@ -1005,7 +1005,7 @@ class DolGraph
 				} else {
 					$tmpvalue = (array_key_exists('y_'.$i, $valarray) ? $valarray['y_'.$i] : $valarray[$i + 1]);
 					//var_dump($i.'_'.$x.'_'.$tmpvalue);
-					$values[$x]  = (is_numeric($tmpvalue) ? $tmpvalue : null);
+					$values[$x] = (is_numeric($tmpvalue) ? $tmpvalue : null);
 				}
 				$x++;
 			}
@@ -1020,7 +1020,7 @@ class DolGraph
 				$j++;
 			}
 
-			$values = null;	// Free mem
+			$values = null; // Free mem
 			$i++;
 		}
 		//var_dump($serie);
@@ -1065,14 +1065,14 @@ class DolGraph
 		// Special case for Graph of type 'pie', 'piesemicircle', or 'polar'
 		if (isset($this->type[$firstlot]) && (in_array($this->type[$firstlot], array('pie', 'polar', 'piesemicircle'))))
 		{
-			$type = $this->type[$firstlot];	// pie or polar
+			$type = $this->type[$firstlot]; // pie or polar
 			$this->stringtoshow .= 'var options = {'."\n";
-			$legendMaxLines= 0;	// Does not work
+			$legendMaxLines = 0; // Does not work
 			if (empty($showlegend)) {
 				$this->stringtoshow .= 'legend: { display: false }, ';
 			} else {
 				$this->stringtoshow .= 'legend: { position: \''.($showlegend == 2 ? 'right' : 'top').'\'';
-				if (! empty($legendMaxLines)) {
+				if (!empty($legendMaxLines)) {
 					$this->stringtoshow .= ', maxLines: '.$legendMaxLines.'';
 				}
 				$this->stringtoshow .= ' }, '."\n";
@@ -1086,17 +1086,17 @@ class DolGraph
 			// Color of earch arc
 			$this->stringtoshow .= 'backgroundColor: [';
 			$i = 0; $foundnegativecolor = 0;
-			foreach($legends as $val)	// Loop on each serie
+			foreach ($legends as $val)	// Loop on each serie
 			{
 				if ($i > 0) $this->stringtoshow .= ', '."\n";
-				if (is_array($this->datacolor[$i])) $color = 'rgb('.$this->datacolor[$i][0].', '.$this->datacolor[$i][1].', '.$this->datacolor[$i][2].')';		// If datacolor is array(R, G, B)
+				if (is_array($this->datacolor[$i])) $color = 'rgb('.$this->datacolor[$i][0].', '.$this->datacolor[$i][1].', '.$this->datacolor[$i][2].')'; // If datacolor is array(R, G, B)
 				else {
 					$tmp = str_replace('#', '', $this->datacolor[$i]);
 					if (strpos($tmp, '-') !== false) {
 						$foundnegativecolor++;
-						$color = '#FFFFFF';						// If $val is '-123'
+						$color = '#FFFFFF'; // If $val is '-123'
 					}
-					else $color = "#".$tmp;											// If $val is '123' or '#123'
+					else $color = "#".$tmp; // If $val is '123' or '#123'
 				}
 				$this->stringtoshow .= "'".$color."'";
 				$i++;
@@ -1106,14 +1106,14 @@ class DolGraph
 			if ($foundnegativecolor) {
 				$this->stringtoshow .= 'borderColor: [';
 				$i = 0;
-				foreach($legends as $val)	// Loop on each serie
+				foreach ($legends as $val)	// Loop on each serie
 				{
 					if ($i > 0) $this->stringtoshow .= ', '."\n";
-					if (is_array($this->datacolor[$i])) $color = 'null';		// If datacolor is array(R, G, B)
+					if (is_array($this->datacolor[$i])) $color = 'null'; // If datacolor is array(R, G, B)
 					else {
 						$tmp = str_replace('#', '', $this->datacolor[$i]);
-						if (strpos($tmp, '-') !== false) $color = '#'.str_replace('-', '', $tmp);						// If $val is '-123'
-						else $color = 'null';											// If $val is '123' or '#123'
+						if (strpos($tmp, '-') !== false) $color = '#'.str_replace('-', '', $tmp); // If $val is '-123'
+						else $color = 'null'; // If $val is '123' or '#123'
 					}
 					$this->stringtoshow .= ($color == 'null' ? "'rgba(0,0,0,0.2)'" : "'".$color."'");
 					$i++;
@@ -1133,7 +1133,7 @@ class DolGraph
 					labels: [';
 
 			$i = 0;
-			foreach($legends as $val)	// Loop on each serie
+			foreach ($legends as $val)	// Loop on each serie
 			{
 				if ($i > 0) $this->stringtoshow .= ', ';
 				$this->stringtoshow .= "'".$val."'";
@@ -1196,7 +1196,7 @@ class DolGraph
 					labels: [';
 
 			$i = 0;
-			foreach($legends as $val)	// Loop on each serie
+			foreach ($legends as $val)	// Loop on each serie
 			{
 				if ($i > 0) $this->stringtoshow .= ', ';
 				$this->stringtoshow .= "'".$val."'";
@@ -1214,7 +1214,7 @@ class DolGraph
 			$oldstacknum = -1;
 			while ($i < $nblot)	// Loop on each serie
 			{
-				$usecolorvariantforgroupby=0;
+				$usecolorvariantforgroupby = 0;
 				// We used a 'group by' and we have too many colors so we generated color variants per
 				if (is_array($arrayofgroupslegend[$i]) && count($arrayofgroupslegend[$i]) > 0) {	// If we used a group by.
 					$nbofcolorneeds = count($arrayofgroupslegend);
@@ -1239,11 +1239,11 @@ class DolGraph
 						// Change color with offset of $$iinstack
 						//var_dump($newcolor);
 						if ($iinstack % 2) {	// We increase agressiveness of reference color for color 2, 4, 6, ...
-							$ratio = min(95, 10 + 10 * $iinstack);			// step of 20
-							$brightnessratio = min(90, 5 + 5 * $iinstack);	// step of 10
+							$ratio = min(95, 10 + 10 * $iinstack); // step of 20
+							$brightnessratio = min(90, 5 + 5 * $iinstack); // step of 10
 						} else {				// We decrease agressiveness of reference color for color 3, 5, 7, ..
-							$ratio = max(-100, - 15 * $iinstack + 10);		// step of -20
-							$brightnessratio = min(90, 10 * $iinstack);  	// step of 20
+							$ratio = max(-100, - 15 * $iinstack + 10); // step of -20
+							$brightnessratio = min(90, 10 * $iinstack); // step of 20
 						}
 						//var_dump('Color '.($iinstack+1).' : '.$ratio.' '.$brightnessratio);
 

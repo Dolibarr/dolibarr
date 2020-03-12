@@ -292,7 +292,7 @@ foreach ($dirmodels as $reldir)
 
                         if ($module->isEnabled())
                         {
-							$array[preg_replace('/\-.*$/', '', preg_replace('/\.php$/', '', $file))]=preg_replace('/\-.*$/', '', preg_replace('/mod_facture_/', '', preg_replace('/\.php$/', '', $file)));
+							$array[preg_replace('/\-.*$/', '', preg_replace('/\.php$/', '', $file))] = preg_replace('/\-.*$/', '', preg_replace('/mod_facture_/', '', preg_replace('/\.php$/', '', $file)));
                         }
                     }
                 }

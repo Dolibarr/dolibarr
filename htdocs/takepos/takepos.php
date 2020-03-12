@@ -481,7 +481,7 @@ function Search2(keyCodeForEnter) {
 					$("#prodiv" + i).data("rowid", "");
 					continue;
 				}
-				var titlestring = '<?php echo dol_escape_js($langs->transnoentities('Ref') . ': '); ?>' + data[i]['ref'];
+				var titlestring = '<?php echo dol_escape_js($langs->transnoentities('Ref').': '); ?>' + data[i]['ref'];
 				$("#prodesc" + i).text(data[i]['label']);
 				$("#prodivdesc" + i).show();
 				$("#proimg" + i).attr("title", titlestring);
@@ -808,7 +808,7 @@ if ($conf->global->TAKEPOS_BAR_RESTAURANT)
 	//add temp ticket button
 	if ($conf->global->TAKEPOS_BAR_RESTAURANT)
 	{
-	    if ($conf->global->TAKEPOS_PRINT_METHOD == "takeposconnector"){
+	    if ($conf->global->TAKEPOS_PRINT_METHOD == "takeposconnector") {
 			$menus[$r++] = array('title'=>'<span class="fa fa-receipt paddingrightonly"></span><div class="trunc">'.$langs->trans("Receipt").'</div>', 'action'=>'TakeposPrinting(placeid);');
 		} else {
 			$menus[$r++] = array('title'=>'<span class="fa fa-receipt paddingrightonly"></span><div class="trunc">'.$langs->trans("Receipt").'</div>', 'action'=>'Print(placeid);');
@@ -824,7 +824,7 @@ if ($conf->global->TAKEPOS_BAR_RESTAURANT)
 	}
 }
 
-if ($conf->global->TAKEPOS_PRINT_METHOD == "takeposconnector"){
+if ($conf->global->TAKEPOS_PRINT_METHOD == "takeposconnector") {
     $menus[$r++] = array('title'=>'<span class="fa fa-receipt paddingrightonly"></span><div class="trunc">'.$langs->trans("DOL_OPEN_DRAWER").'</div>', 'action'=>'OpenDrawer();');
 }
 if ($conf->global->TAKEPOS_PRINT_METHOD == "receiptprinter") {

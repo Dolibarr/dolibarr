@@ -24,12 +24,12 @@
 
 $sapi_type = php_sapi_name();
 $script_file = basename(__FILE__);
-$path = __DIR__ . '/';
+$path = __DIR__.'/';
 
 // Test if batch mode
 if (substr($sapi_type, 0, 3) == 'cgi') {
-	echo "Error: You are using PHP for CGI. To execute " . $script_file . " from command line, you must use PHP for CLI mode.\n";
-	exit(- 1);
+	echo "Error: You are using PHP for CGI. To execute ".$script_file." from command line, you must use PHP for CLI mode.\n";
+	exit(-1);
 }
 
 @set_time_limit(0); // No timeout for this script
@@ -37,18 +37,18 @@ define('EVEN_IF_ONLY_LOGIN_ALLOWED', 1); // Set this define to 0 if you want to 
 
 $error = 0;
 
-if (empty($argv[3]) || ! in_array($argv[1], array('test','confirm'))) {
+if (empty($argv[3]) || !in_array($argv[1], array('test', 'confirm'))) {
 	print "Usage: $script_file (test|confirm) website login:pass@serverjoomla/tableprefix/databasejoomla\n";
 	print "\n";
 	print "Load joomla news and create them into Dolibarr database (if they don't alreay exist).\n";
-	exit(- 1);
+	exit(-1);
 }
 
 $mode = $argv[1];
 $website = $argv[2];
 $joomlaserverinfo = $argv[3];
 
-require $path . "../../htdocs/master.inc.php";
+require $path."../../htdocs/master.inc.php";
 
 $langs->load('main');
 

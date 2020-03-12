@@ -302,7 +302,7 @@ if (empty($reshook))
 			// Note: Other solution if you want to add a negative line on invoice, is to create a discount for customer and consumme it (but this is possible on standard invoice only).
 			$array_of_total_ht_per_vat_rate = array();
 			$array_of_total_ht_devise_per_vat_rate = array();
-			foreach($object->lines as $line) {
+			foreach ($object->lines as $line) {
 				if (empty($array_of_total_ht_per_vat_rate[$line->tva_tx.'_'.$line->vat_src_code])) $array_of_total_ht_per_vat_rate[$line->tva_tx.'_'.$line->vat_src_code] = 0;
 				if (empty($array_of_total_ht_devise_per_vat_rate[$line->tva_tx.'_'.$line->vat_src_code])) $array_of_total_ht_devise_per_vat_rate[$line->tva_tx.'_'.$line->vat_src_code] = 0;
 				$array_of_total_ht_per_vat_rate[$line->tva_tx.'_'.$line->vat_src_code] += $line->total_ht;
@@ -310,7 +310,7 @@ if (empty($reshook))
 			}
 
 			//var_dump($array_of_total_ht_per_vat_rate);exit;
-			foreach($array_of_total_ht_per_vat_rate as $vatrate => $tmpvalue)
+			foreach ($array_of_total_ht_per_vat_rate as $vatrate => $tmpvalue)
 			{
 				$tmp_total_ht = $array_of_total_ht_per_vat_rate[$vatrate];
 				$tmp_total_ht_devise = $array_of_total_ht_devise_per_vat_rate[$vatrate];
@@ -1524,7 +1524,7 @@ if (empty($reshook))
 								// If we create a deposit with all lines and a percent, we change amount
 								if ($_POST['type'] == Facture::TYPE_DEPOSIT && $typeamount == 'variablealllines') {
 									if (is_array($lines)) {
-										foreach($lines as $line) {
+										foreach ($lines as $line) {
 											// We keep ->subprice and ->pa_ht, but we change the qty
 											$line->qty = price2num($line->qty * $valuedeposit / 100, 'MS');
 										}
@@ -5119,7 +5119,7 @@ elseif ($id > 0 || !empty($ref))
 				}
 				// For credit note
 				if ($object->type == Facture::TYPE_CREDIT_NOTE && $object->statut == Facture::STATUS_VALIDATED && $object->paye == 0 && $usercancreate
-					&& (! empty($conf->global->INVOICE_ALLOW_REUSE_OF_CREDIT_WHEN_PARTIALLY_REFUNDED) || $object->getSommePaiement() == 0)
+					&& (!empty($conf->global->INVOICE_ALLOW_REUSE_OF_CREDIT_WHEN_PARTIALLY_REFUNDED) || $object->getSommePaiement() == 0)
 					) {
 					print '<a class="butAction'.($conf->use_javascript_ajax ? ' reposition' : '').'" href="'.$_SERVER["PHP_SELF"].'?facid='.$object->id.'&amp;action=converttoreduc" title="'.dol_escape_htmltag($langs->trans("ConfirmConvertToReduc2")).'">'.$langs->trans('ConvertToReduc').'</a>';
 				}
