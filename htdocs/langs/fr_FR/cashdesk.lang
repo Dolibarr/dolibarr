@@ -83,3 +83,5 @@ ProductSupplements=Suppléments de produit
 SupplementCategory=Catégorie des suppléments
 SortProductField=Champ pour le tri des produits
 TakeposNumpadUsePaymentIcon=Utilisation d'icônes sur les touches des modes de règlement du pavé numérique
+CashDeskRefNumberingModules=Modèles de numérotation des caisses
+CashDeskGenericMaskCodes6 = <br>La balise <b>{TN}</b> permet de rajouter le numéro du terminal

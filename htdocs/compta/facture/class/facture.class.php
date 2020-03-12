@@ -3699,63 +3699,77 @@ class Facture extends CommonInvoice
     public function getNextNumRef($soc, $mode = 'next')
 	{
 		global $conf, $langs;
-		$langs->load("bills");
 
-		// Clean parameters (if not defined or using deprecated value)
-		if (empty($conf->global->FACTURE_ADDON)) $conf->global->FACTURE_ADDON = 'mod_facture_terre';
-		elseif ($conf->global->FACTURE_ADDON == 'terre') $conf->global->FACTURE_ADDON = 'mod_facture_terre';
-		elseif ($conf->global->FACTURE_ADDON == 'mercure') $conf->global->FACTURE_ADDON = 'mod_facture_mercure';
+		if ($this->module_source == 'takepos') {
+			$langs->load('cashdesk@cashdesk');
 
-		if (!empty($conf->global->FACTURE_ADDON))
-		{
-			dol_syslog("Call getNextNumRef with FACTURE_ADDON = ".$conf->global->FACTURE_ADDON.", thirdparty=".$soc->nom.", type=".$soc->typent_code, LOG_DEBUG);
+			$moduleName = 'takepos';
+			$moduleSourceName = 'Takepos';
+			$addonConstName = 'TAKEPOS_REF_ADDON';
+
+			// Clean parameters (if not defined or using deprecated value)
+			if (empty($conf->global->TAKEPOS_REF_ADDON)) $conf->global->TAKEPOS_REF_ADDON = 'mod_takepos_ref_simple';
+
+			$addon = $conf->global->TAKEPOS_REF_ADDON;
+		} else {
+			$langs->load('bills');
+
+			$moduleName = 'facture';
+			$moduleSourceName = 'Invoice';
+			$addonConstName = 'FACTURE_ADDON';
+
+			// Clean parameters (if not defined or using deprecated value)
+			if (empty($conf->global->FACTURE_ADDON)) $conf->global->FACTURE_ADDON = 'mod_facture_terre';
+			elseif ($conf->global->FACTURE_ADDON == 'terre') $conf->global->FACTURE_ADDON = 'mod_facture_terre';
+			elseif ($conf->global->FACTURE_ADDON == 'mercure') $conf->global->FACTURE_ADDON = 'mod_facture_mercure';
+
+			$addon = $conf->global->FACTURE_ADDON;
+		}
+
+		if (!empty($addon)) {
+			dol_syslog("Call getNextNumRef with " . $addonConstName . " = " . $conf->global->FACTURE_ADDON . ", thirdparty=" . $soc->nom . ", type=" . $soc->typent_code, LOG_DEBUG);
 
 			$mybool = false;
 
 
-			$file = $conf->global->FACTURE_ADDON.".php";
-			$classname = $conf->global->FACTURE_ADDON;
+			$file = $addon . '.php';
+			$classname = $addon;
 
 
 			// Include file with class
-			$dirmodels = array_merge(array('/'), (array) $conf->modules_parts['models']);
+			$dirmodels = array_merge(array('/'), (array)$conf->modules_parts['models']);
 
 			foreach ($dirmodels as $reldir) {
-				$dir = dol_buildpath($reldir."core/modules/facture/");
+				$dir = dol_buildpath($reldir . 'core/modules/' . $moduleName . '/');
 
 				// Load file with numbering class (if found)
-				if (is_file($dir.$file) && is_readable($dir.$file))
-				{
-                    $mybool |= include_once $dir.$file;
-                }
-			}
-
-			// For compatibility
-			if (!$mybool)
-			{
-				$file = $conf->global->FACTURE_ADDON."/".$conf->global->FACTURE_ADDON.".modules.php";
-				$classname = "mod_facture_".$conf->global->FACTURE_ADDON;
-				$classname = preg_replace('/\-.*$/', '', $classname);
-				// Include file with class
-				foreach ($conf->file->dol_document_root as $dirroot)
-				{
-					$dir = $dirroot."/core/modules/facture/";
-
-					// Load file with numbering class (if found)
-					if (is_file($dir.$file) && is_readable($dir.$file)) {
-                        $mybool |= include_once $dir.$file;
-                    }
+				if (is_file($dir . $file) && is_readable($dir . $file)) {
+					$mybool |= include_once $dir . $file;
 				}
 			}
 
-			if (!$mybool)
-			{
-				dol_print_error('', "Failed to include file ".$file);
+			// For compatibility
+			if (!$mybool) {
+				$file = $addon . '/' . $addon . '.modules.php';
+				$classname = 'mod_' . $moduleName . '_' . $addon;
+				$classname = preg_replace('/\-.*$/', '', $classname);
+				// Include file with class
+				foreach ($conf->file->dol_document_root as $dirroot) {
+					$dir = $dirroot . '/core/modules/' . $moduleName . '/';
+
+					// Load file with numbering class (if found)
+					if (is_file($dir . $file) && is_readable($dir . $file)) {
+						$mybool |= include_once $dir . $file;
+					}
+				}
+			}
+
+			if (!$mybool) {
+				dol_print_error('', 'Failed to include file ' . $file);
 				return '';
 			}
 
 			$obj = new $classname();
-			$numref = "";
 			$numref = $obj->getNextValue($soc, $this, $mode);
 
 			/**
@@ -3764,17 +3778,14 @@ class Facture extends CommonInvoice
 			 */
 			if ($mode != 'last' && !$numref) {
 				$this->error = $obj->error;
-				//dol_print_error($this->db,"Facture::getNextNumRef ".$obj->error);
-				return "";
+				return '';
 			}
 
 			return $numref;
-		}
-		else
-		{
-			$langs->load("errors");
-			print $langs->trans("Error")." ".$langs->trans("ErrorModuleSetupNotComplete", $langs->transnoentitiesnoconv("Invoice"));
-			return "";
+		} else {
+			$langs->load('errors');
+			print $langs->trans('Error') . ' ' . $langs->trans('ErrorModuleSetupNotComplete', $langs->transnoentitiesnoconv($moduleSourceName));
+			return '';
 		}
 	}
 
