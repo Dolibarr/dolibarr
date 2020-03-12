@@ -512,7 +512,13 @@ class pdf_beluga extends ModelePDFProjects
 						            else
 						            {
 							            // We found a page break
-							            $showpricebeforepagebreak=0;
+
+										// Allows data in the first page if description is long enough to break in multiples pages
+										if(!empty($conf->global->MAIN_PDF_DATA_ON_FIRST_PAGE))
+											$showpricebeforepagebreak = 1;
+										else
+											$showpricebeforepagebreak = 0;
+
 							            $forcedesconsamepage=1;
 							            if ($forcedesconsamepage)
 							            {

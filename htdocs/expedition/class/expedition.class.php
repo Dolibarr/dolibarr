@@ -85,6 +85,7 @@ class Expedition extends CommonObject
 
 	/**
 	 * @var string internal ref
+	 * @deprecated
 	 */
 	public $ref_int;
 
@@ -447,7 +448,7 @@ class Expedition extends CommonObject
 	 * @param	array	$array_options		extrafields array
 	 * @return	int							<0 if KO, line_id if OK
 	 */
-	public function create_line($entrepot_id, $origin_line_id, $qty, $rang, $array_options = 0)
+	public function create_line($entrepot_id, $origin_line_id, $qty, $rang = 0, $array_options = 0)
 	{
 		//phpcs:enable
 		global $user;
@@ -523,15 +524,15 @@ class Expedition extends CommonObject
 	 *	@param	int		$id       	Id of object to load
 	 * 	@param	string	$ref		Ref of object
 	 * 	@param	string	$ref_ext	External reference of object
-	 * 	@param	string	$ref_int	Internal reference of other object
+	 * 	@param	string	$notused	Internal reference of other object
 	 *	@return int			        >0 if OK, 0 if not found, <0 if KO
 	 */
-	public function fetch($id, $ref = '', $ref_ext = '', $ref_int = '')
+	public function fetch($id, $ref = '', $ref_ext = '', $notused = '')
 	{
 		global $conf;
 
 		// Check parameters
-		if (empty($id) && empty($ref) && empty($ref_ext) && empty($ref_int)) return -1;
+		if (empty($id) && empty($ref) && empty($ref_ext)) return -1;
 
 		$sql = "SELECT e.rowid, e.ref, e.fk_soc as socid, e.date_creation, e.ref_customer, e.ref_ext, e.ref_int, e.fk_user_author, e.fk_statut, e.fk_projet as fk_project, e.billed";
         $sql.= ", e.date_valid";
@@ -551,7 +552,7 @@ class Expedition extends CommonObject
 		if ($id)   	  $sql.= " AND e.rowid=".$id;
 		if ($ref)     $sql.= " AND e.ref='".$this->db->escape($ref)."'";
 		if ($ref_ext) $sql.= " AND e.ref_ext='".$this->db->escape($ref_ext)."'";
-		if ($ref_int) $sql.= " AND e.ref_int='".$this->db->escape($ref_int)."'";
+		if ($notused) $sql.= " AND e.ref_int='".$this->db->escape($notused)."'";
 
 		dol_syslog(get_class($this)."::fetch", LOG_DEBUG);
 		$result = $this->db->query($sql);
@@ -697,7 +698,7 @@ class Expedition extends CommonObject
 		{
 			$numref = "EXP".$this->id;
 		}
-		$this->newref = $numref;
+		$this->newref = dol_sanitizeFileName($numref);
 
 		$now = dol_now();
 

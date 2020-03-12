@@ -153,7 +153,7 @@ if (GETPOST('actionadd', 'alpha') || GETPOST('actionmodify', 'alpha'))
 		if ($value == 'formula' && empty($_POST['formula'])) continue;
 		if ($value == 'range_account' && empty($_POST['range_account'])) continue;
 		if ($value == 'country' || $value == 'country_id') continue;
-		if (!isset($_POST[$value]) || $_POST[$value] == '')
+		if (!GETPOSTISSET($value) || GETPOST($value) == '')
         {
             $ok = 0;
             $fieldnamekey = $listfield[$f];
@@ -677,9 +677,6 @@ if ($id)
             }
             if ($fieldlist[$field] == 'pcg_type') {
                 $valuetoshow = $langs->trans("Pcg_type");
-            }
-            if ($fieldlist[$field] == 'pcg_subtype') {
-                $valuetoshow = $langs->trans("Pcg_subtype");
             }
         	if ($fieldlist[$field] == 'type_template') {
                 $valuetoshow = $langs->trans("TypeOfTemplate");

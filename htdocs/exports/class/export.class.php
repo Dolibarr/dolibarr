@@ -547,7 +547,7 @@ class Export
 		$indice = 0;
 		asort($array_selected);
 
-		dol_syslog(get_class($this)."::".__FUNCTION__." ".$model.", ".$datatoexport.", ".implode(",", $array_selected));
+		dol_syslog(__METHOD__." ".$model.", ".$datatoexport.", ".implode(",", $array_selected));
 
 		// Check parameters or context properties
 		if (empty($this->array_export_fields) || !is_array($this->array_export_fields))
@@ -588,7 +588,7 @@ class Export
 
 		// Run the sql
 		$this->sqlusedforexport = $sql;
-		dol_syslog(get_class($this)."::".__FUNCTION__."", LOG_DEBUG);
+		dol_syslog(__METHOD__, LOG_DEBUG);
 		$resql = $this->db->query($sql);
 		if ($resql)
 		{

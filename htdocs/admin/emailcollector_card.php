@@ -231,7 +231,9 @@ if ($action == 'confirm_collect')
 $form = new Form($db);
 $formfile = new FormFile($db);
 
-llxHeader('', 'EmailCollector', '');
+$help_url="EN:Module_EMail_Collector|FR:Module_Collecteur_de_courrier_électronique|ES:Module_EMail_Collector";
+
+llxHeader('', 'EmailCollector', $help_url);
 
 // Example : Adding jquery code
 print '<script type="text/javascript" language="javascript">
@@ -573,6 +575,18 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 	    'recordevent'=>'RecordEvent');
 	if ($conf->projet->enabled) $arrayoftypes['project'] = 'CreateLeadAndThirdParty';
 	if ($conf->ticket->enabled) $arrayoftypes['ticket'] = 'CreateTicketAndThirdParty';
+
+	// support hook for add action
+	$parameters = array( 'arrayoftypes' => $arrayoftypes ) ;
+	$res = $hookmanager->executeHooks('addMoreActionsEmailCollector', $parameters, $object, $action);
+
+	if($res)
+		$arrayoftypes = $hookmanager->resArray;
+	else
+		foreach($hookmanager->resArray as $k=>$desc)
+			$arrayoftypes[$k]=$desc;
+
+
 	print $form->selectarray('operationtype', $arrayoftypes, '', 1, 0, 0, '', 1, 0, 0, '', 'maxwidth300');
 	print '</td><td>';
 	print '<input type="text" name="operationparam">';

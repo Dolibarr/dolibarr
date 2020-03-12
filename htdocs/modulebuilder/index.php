@@ -659,6 +659,7 @@ if ($dirins && $action == 'confirm_removefile' && !empty($module))
     }
 }
 
+// Build the $fields array from SQL table (initfromtablename)
 if ($dirins && $action == 'initobject' && $module && GETPOST('createtablearray', 'alpha'))
 {
 	$tablename = GETPOST('initfromtablename', 'alpha');
@@ -757,6 +758,7 @@ if ($dirins && $action == 'initobject' && $module && GETPOST('createtablearray',
 			// position
 			$position = $i;
 			if (in_array($fieldname, array('status', 'statut', 'fk_status', 'fk_statut'))) $position = 500;
+			if ($fieldname == 'import_key') $position = 900;
 			// index
 			$index = 0;
 			if ($fieldname == 'entity') $index = 1;
@@ -1650,8 +1652,7 @@ $head[$h][1] = $langs->trans("DangerZone");
 $head[$h][2] = 'deletemodule';
 $h++;
 
-
-dol_fiche_head($head, $module, $langs->trans("Modules"), -1, 'generic', 0, $infomodulesfound); // Modules
+dol_fiche_head($head, $module, $langs->trans("Modules"), -1, 'generic', 0, $infomodulesfound, '', 8); // Modules
 
 if ($module == 'initmodule')
 {

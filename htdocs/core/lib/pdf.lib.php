@@ -1401,7 +1401,7 @@ function pdf_getlinedesc($object, $i, $outputlangs, $hideref = 0, $hidedesc = 0,
 		foreach ($tblcateg as $cate)
 		{
 			// Adding the descriptions if they are filled
-			$desccateg = $cate->add_description;
+			$desccateg = $cate->description;
 			if ($desccateg)
 				$libelleproduitservice .= '__N__'.$desccateg;
 		}

@@ -64,7 +64,7 @@ class Orders extends DolibarrApi
      */
     public function get($id, $contact_list = 1)
     {
-        return $this->_fetch($id, '', '', '', $contact_list);
+        return $this->_fetch($id, '', '', $contact_list);
     }
 
     /**
@@ -82,7 +82,7 @@ class Orders extends DolibarrApi
      */
     public function getByRef($ref, $contact_list = 1)
     {
-        return $this->_fetch('', $ref, '', '', $contact_list);
+        return $this->_fetch('', $ref, '', $contact_list);
     }
 
     /**
@@ -100,7 +100,7 @@ class Orders extends DolibarrApi
      */
     public function getByRefExt($ref_ext, $contact_list = 1)
     {
-        return $this->_fetch('', '', $ref_ext, '', $contact_list);
+        return $this->_fetch('', '', $ref_ext, $contact_list);
     }
 
     /**
@@ -111,19 +111,18 @@ class Orders extends DolibarrApi
      * @param       int         $id            ID of order
 	 * @param		string		$ref			Ref of object
 	 * @param		string		$ref_ext		External reference of object
-	 * @param		string		$ref_int		Internal reference of other objec
      * @param       int         $contact_list  0: Returned array of contacts/addresses contains all properties, 1: Return array contains just id
      * @return 	array|mixed data without useless information
      *
      * @throws 	RestException
      */
-    private function _fetch($id, $ref = '', $ref_ext = '', $ref_int = '', $contact_list = 1)
+    private function _fetch($id, $ref = '', $ref_ext = '', $contact_list = 1)
     {
         if(! DolibarrApiAccess::$user->rights->commande->lire) {
             throw new RestException(401);
         }
 
-        $result = $this->commande->fetch($id, $ref, $ref_ext, $ref_int);
+        $result = $this->commande->fetch($id, $ref, $ref_ext);
         if( ! $result ) {
             throw new RestException(404, 'Order not found');
         }
@@ -425,8 +424,9 @@ class Orders extends DolibarrApi
      * @url	DELETE {id}/lines/{lineid}
      *
      * @return int
-     * @throws 401
-     * @throws 404
+     *
+     * @throws RestException 401
+     * @throws RestException 404
      */
     public function deleteLine($id, $lineid)
     {
@@ -463,8 +463,9 @@ class Orders extends DolibarrApi
 	 * @url	POST {id}/contact/{contactid}/{type}
 	 *
 	 * @return int
-     * @throws 401
-     * @throws 404
+	 *
+     * @throws RestException 401
+     * @throws RestException 404
 	 */
     public function postContact($id, $contactid, $type)
     {
@@ -499,9 +500,10 @@ class Orders extends DolibarrApi
 	 * @url	DELETE {id}/contact/{rowid}
 	 *
 	 * @return int
-     * @throws 401
-     * @throws 404
-     * @throws 500
+	 *
+     * @throws RestException 401
+     * @throws RestException 404
+     * @throws RestException 500
 	 */
     public function deleteContact($id, $rowid)
     {
@@ -617,10 +619,10 @@ class Orders extends DolibarrApi
      *
      * @url POST    {id}/validate
      *
-	 * @throws 304
-     * @throws 401
-     * @throws 404
-     * @throws 500
+	 * @throws RestException 304
+     * @throws RestException 401
+     * @throws RestException 404
+     * @throws RestException 500
      *
      * @return  array
      */
@@ -670,11 +672,11 @@ class Orders extends DolibarrApi
      *
      * @return int
      *
-     * @throws 304
-     * @throws 400
-     * @throws 401
-     * @throws 404
-     * @throws 405
+     * @throws RestException 304
+     * @throws RestException 400
+     * @throws RestException 401
+     * @throws RestException 404
+     * @throws RestException 405
      */
     public function reopen($id)
     {
@@ -709,10 +711,10 @@ class Orders extends DolibarrApi
      *
      * @return int
      *
-     * @throws 400
-     * @throws 401
-     * @throws 404
-     * @throws 405
+     * @throws RestException 400
+     * @throws RestException 401
+     * @throws RestException 404
+     * @throws RestException 405
      */
     public function setinvoiced($id)
     {
@@ -849,10 +851,10 @@ class Orders extends DolibarrApi
      * @url     POST /createfromproposal/{proposalid}
      *
      * @return int
-     * @throws 400
-     * @throws 401
-     * @throws 404
-     * @throws 405
+     * @throws RestException 400
+     * @throws RestException 401
+     * @throws RestException 404
+     * @throws RestException 405
      */
     public function createOrderFromProposal($proposalid)
     {

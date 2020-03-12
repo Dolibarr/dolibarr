@@ -128,8 +128,8 @@ class FactureRec extends CommonInvoice
 		'datec' =>array('type'=>'datetime', 'label'=>'DateCreation', 'enabled'=>1, 'visible'=>-1, 'position'=>30),
 		//'amount' =>array('type'=>'double(24,8)', 'label'=>'Amount', 'enabled'=>1, 'visible'=>-1, 'notnull'=>1, 'position'=>35),
 		'remise' =>array('type'=>'double', 'label'=>'Remise', 'enabled'=>1, 'visible'=>-1, 'position'=>40),
-		'remise_percent' =>array('type'=>'double', 'label'=>'Remise percent', 'enabled'=>1, 'visible'=>-1, 'position'=>45),
-		'remise_absolue' =>array('type'=>'double', 'label'=>'Remise absolue', 'enabled'=>1, 'visible'=>-1, 'position'=>50),
+		//'remise_percent' =>array('type'=>'double', 'label'=>'Remise percent', 'enabled'=>1, 'visible'=>-1, 'position'=>45),
+		//'remise_absolue' =>array('type'=>'double', 'label'=>'Remise absolue', 'enabled'=>1, 'visible'=>-1, 'position'=>50),
 		'tva' =>array('type'=>'double(24,8)', 'label'=>'Tva', 'enabled'=>1, 'visible'=>-1, 'position'=>55, 'isameasure'=>1),
 		'localtax1' =>array('type'=>'double(24,8)', 'label'=>'Localtax1', 'enabled'=>1, 'visible'=>-1, 'position'=>60, 'isameasure'=>1),
 		'localtax2' =>array('type'=>'double(24,8)', 'label'=>'Localtax2', 'enabled'=>1, 'visible'=>-1, 'position'=>65, 'isameasure'=>1),
@@ -150,20 +150,19 @@ class FactureRec extends CommonInvoice
 		'nb_gen_done' =>array('type'=>'integer', 'label'=>'Nb gen done', 'enabled'=>1, 'visible'=>-1, 'position'=>140),
 		'nb_gen_max' =>array('type'=>'integer', 'label'=>'Nb gen max', 'enabled'=>1, 'visible'=>-1, 'position'=>145),
 		'frequency' =>array('type'=>'integer', 'label'=>'Frequency', 'enabled'=>1, 'visible'=>-1, 'position'=>150),
-		'usenewprice' =>array('type'=>'integer', 'label'=>'Usenewprice', 'enabled'=>1, 'visible'=>-1, 'position'=>155),
-		'revenuestamp' =>array('type'=>'double(24,8)', 'label'=>'Revenuestamp', 'enabled'=>1, 'visible'=>-1, 'position'=>160),
+		'usenewprice' =>array('type'=>'integer', 'label'=>'UseNewPrice', 'enabled'=>1, 'visible'=>0, 'position'=>155),
+		'revenuestamp' =>array('type'=>'double(24,8)', 'label'=>'RevenueStamp', 'enabled'=>1, 'visible'=>-1, 'position'=>160, 'isameasure'=>1),
 		'auto_validate' =>array('type'=>'integer', 'label'=>'Auto validate', 'enabled'=>1, 'visible'=>-1, 'position'=>165),
 		'generate_pdf' =>array('type'=>'integer', 'label'=>'Generate pdf', 'enabled'=>1, 'visible'=>-1, 'position'=>170),
 		'fk_account' =>array('type'=>'integer', 'label'=>'Fk account', 'enabled'=>1, 'visible'=>-1, 'position'=>175),
 		'fk_multicurrency' =>array('type'=>'integer', 'label'=>'Fk multicurrency', 'enabled'=>1, 'visible'=>-1, 'position'=>180),
 		'multicurrency_code' =>array('type'=>'varchar(255)', 'label'=>'Multicurrency code', 'enabled'=>1, 'visible'=>-1, 'position'=>185),
-		'multicurrency_tx' =>array('type'=>'double(24,8)', 'label'=>'Multicurrency tx', 'enabled'=>1, 'visible'=>-1, 'position'=>190),
-		'multicurrency_total_ht' =>array('type'=>'double(24,8)', 'label'=>'Multicurrency total ht', 'enabled'=>1, 'visible'=>-1, 'position'=>195),
-		'multicurrency_total_tva' =>array('type'=>'double(24,8)', 'label'=>'Multicurrency total tva', 'enabled'=>1, 'visible'=>-1, 'position'=>200),
-		'multicurrency_total_ttc' =>array('type'=>'double(24,8)', 'label'=>'Multicurrency total ttc', 'enabled'=>1, 'visible'=>-1, 'position'=>205),
+		'multicurrency_tx' =>array('type'=>'double(24,8)', 'label'=>'Multicurrency tx', 'enabled'=>1, 'visible'=>-1, 'position'=>190, 'isameasure'=>1),
+		'multicurrency_total_ht' =>array('type'=>'double(24,8)', 'label'=>'Multicurrency total ht', 'enabled'=>1, 'visible'=>-1, 'position'=>195, 'isameasure'=>1),
+		'multicurrency_total_tva' =>array('type'=>'double(24,8)', 'label'=>'Multicurrency total tva', 'enabled'=>1, 'visible'=>-1, 'position'=>200, 'isameasure'=>1),
+		'multicurrency_total_ttc' =>array('type'=>'double(24,8)', 'label'=>'Multicurrency total ttc', 'enabled'=>1, 'visible'=>-1, 'position'=>205, 'isameasure'=>1),
 		'fk_user_modif' =>array('type'=>'integer:User:user/class/user.class.php', 'label'=>'UserModif', 'enabled'=>1, 'visible'=>-2, 'notnull'=>-1, 'position'=>210),
 		'tms' =>array('type'=>'timestamp', 'label'=>'DateModification', 'enabled'=>1, 'visible'=>-1, 'notnull'=>1, 'position'=>215),
-		'vat_src_code' =>array('type'=>'varchar(10)', 'label'=>'Vat src code', 'enabled'=>1, 'visible'=>-1, 'position'=>220),
 		'suspended' =>array('type'=>'integer', 'label'=>'Suspended', 'enabled'=>1, 'visible'=>-1, 'position'=>225),
 	);
 	// END MODULEBUILDER PROPERTIES
@@ -1676,7 +1675,7 @@ class FactureRec extends CommonInvoice
 			$xnbp++;
 		}
 
-		$this->usenewprice = 1;
+		$this->usenewprice = 0;
 	}
 
 	/**

@@ -57,7 +57,7 @@ class PaymentSocialContribution extends CommonObject
 
 	/**
 	 * @deprecated
-	 * @see amount
+	 * @see $amount
 	 */
 	public $total;
 

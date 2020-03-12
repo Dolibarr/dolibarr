@@ -673,7 +673,8 @@ if ($object->fetch($id) >= 0)
 					// Date sent
 					print '<td align="center">&nbsp;</td>';
 
-					print '<td class="nowrap right">'.$langs->trans("MailingStatusNotSent");
+					print '<td class="nowrap right">';
+					print $object::libStatutDest($obj->statut, 2, '');
 					print '</td>';
 				}
 				else

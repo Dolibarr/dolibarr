@@ -54,6 +54,8 @@ $specimenthirdparty->initAsSpecimen();
  * Actions
  */
 
+include DOL_DOCUMENT_ROOT.'/core/actions_setmoduleoptions.inc.php';
+
 if ($action == 'updateMask')
 {
     $maskconstorder = GETPOST('maskconstorder', 'alpha');
@@ -163,7 +165,7 @@ elseif ($action == 'setmod')
 elseif ($action == 'addcat')
 {
     $fourn = new Fournisseur($db);
-    $fourn->CreateCategory($user, $_POST["cat"]);
+    $fourn->CreateCategory($user, GETPOST('cat', 'alphanohtml'));
 }
 
 elseif ($action == 'set_SUPPLIER_ORDER_OTHER')

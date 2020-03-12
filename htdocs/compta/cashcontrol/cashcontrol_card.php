@@ -345,7 +345,8 @@ if ($action == "create" || $action == "start")
     print '<td>';
 
     $array = array();
-    for($i = 1; $i <= max(1, $conf->global->TAKEPOS_NUM_TERMINALS); $i++) {
+    $numterminals = max(1, $conf->global->TAKEPOS_NUM_TERMINALS);
+    for($i = 1; $i <= $numterminals; $i++) {
     	$array[$i] = $i;
     }
     $selectedposnumber = 0; $showempty = 1;

@@ -148,7 +148,7 @@ $langs->load("modulebuilder");
 <!-- Label -->
 <tr><td class="titlefield fieldrequired"><?php echo $langs->trans("LabelOrTranslationKey"); ?></td><td class="valeur"><input type="text" name="label" size="40" value="<?php echo GETPOST('label', 'alpha'); ?>"></td></tr>
 <!-- Code -->
-<tr><td class="fieldrequired"><?php echo $langs->trans("AttributeCode"); ?></td><td class="valeur"><input type="text" name="attrname" id="attrname"  size="10" value="<?php echo GETPOST('attrname', 'alpha'); ?>"> (<?php echo $langs->trans("AlphaNumOnlyLowerCharsAndNoSpace"); ?>)</td></tr>
+<tr><td class="fieldrequired"><?php echo $langs->trans("AttributeCode"); ?></td><td class="valeur"><input type="text" name="attrname" id="attrname"  size="10" value="<?php echo GETPOST('attrname', 'alpha'); ?>"> <span class="opacitymedium">(<?php echo $langs->trans("AlphaNumOnlyLowerCharsAndNoSpace"); ?>)</span></td></tr>
 <!-- Type -->
 <tr><td class="fieldrequired"><?php echo $langs->trans("Type"); ?></td><td class="valeur">
 <?php print $form->selectarray('type', $type2label, GETPOST('type', 'alpha')); ?>
@@ -196,6 +196,9 @@ $langs->load("modulebuilder");
 <!-- Visibility -->
 <tr><td class="extra_list"><?php echo $form->textwithpicto($langs->trans("Visibility"), $langs->trans("VisibleDesc")); ?>
 </td><td class="valeur"><input id="list" class="minwidth100" type="text" name="list" value="<?php echo GETPOST('list', 'int')!='' ? GETPOST('list', 'int') : '1'; ?>"></td></tr>
+<!-- Visibility for PDF-->
+<tr><td class="extra_pdf"><?php echo $form->textwithpicto($langs->trans("DisplayOnPdf"), $langs->trans("DisplayOnPdfDesc")); ?>
+</td><td class="valeur"><input id="printable" class="minwidth100" type="text" name="printable" value="<?php echo dol_escape_htmltag(GETPOST('printable', 'int')); ?>"></td></tr>
 <!-- Totalizable -->
 <tr class="extra_totalizable"><td><?php echo $langs->trans("Totalizable"); ?></td><td class="valeur"><input id="totalizable" type="checkbox" name="totalizable"<?php echo ((GETPOST('totalizable', 'alpha') || GETPOST('button', 'alpha'))?' checked':''); ?>></td></tr>
 <!-- Help tooltip -->

@@ -141,7 +141,7 @@ class AdvanceTargetingMailing extends CommonObject
 		$sql .= " ".(!isset($this->filtervalue) ? 'NULL' : "'".$this->db->escape($this->filtervalue)."'").",";
 		$sql .= " ".$user->id.",";
 		$sql .= " '".$this->db->idate(dol_now())."',";
-		$sql .= " null";
+		$sql.= " ".$user->id;
 		$sql .= ")";
 
 		$this->db->begin();

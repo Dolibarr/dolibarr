@@ -412,7 +412,7 @@ print '</tr>'."\n";
 // Fields title label
 // --------------------------------------------------------------------
 print '<tr class="liste_titre">';
-foreach($object->fields as $key => $val)
+foreach ($object->fields as $key => $val)
 {
 	$cssforfield = (empty($val['css']) ? '' : $val['css']);
 	if ($key == 'status') $cssforfield .= ($cssforfield ? ' ' : '').'center';
@@ -427,8 +427,8 @@ foreach($object->fields as $key => $val)
 // Extra fields
 include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_title.tpl.php';
 // Hook fields
-$parameters=array('arrayfields'=>$arrayfields,'param'=>$param,'sortfield'=>$sortfield,'sortorder'=>$sortorder);
-$reshook=$hookmanager->executeHooks('printFieldListTitle', $parameters, $object);    // Note that $action and $object may have been modified by hook
+$parameters = array('arrayfields'=>$arrayfields, 'param'=>$param, 'sortfield'=>$sortfield, 'sortorder'=>$sortorder);
+$reshook = $hookmanager->executeHooks('printFieldListTitle', $parameters, $object); // Note that $action and $object may have been modified by hook
 print $hookmanager->resPrint;
 // Action column
 print getTitleFieldOfList($selectedfields, 0, $_SERVER["PHP_SELF"], '', '', '', 'align="center"', $sortfield, $sortorder, 'maxwidthsearch ')."\n";
@@ -436,7 +436,7 @@ print '</tr>'."\n";
 
 
 // Detect if we need a fetch on each output line
-$needToFetchEachLine=0;
+$needToFetchEachLine = 0;
 if (is_array($extrafields->attributes[$object->table_element]['computed']) && count($extrafields->attributes[$object->table_element]['computed']) > 0)
 {
 	foreach ($extrafields->attributes[$object->table_element]['computed'] as $key => $val)
@@ -448,19 +448,19 @@ if (is_array($extrafields->attributes[$object->table_element]['computed']) && co
 
 // Loop on record
 // --------------------------------------------------------------------
-$i=0;
-$totalarray=array();
+$i = 0;
+$totalarray = array();
 while ($i < ($limit ? min($num, $limit) : $num))
 {
 	$obj = $db->fetch_object($resql);
-	if (empty($obj)) break;		// Should not happen
+	if (empty($obj)) break; // Should not happen
 
 	// Store properties in $object
 	$object->setVarsFromFetchObj($obj);
 
 	// Show here line of result
 	print '<tr class="oddeven">';
-	foreach($object->fields as $key => $val)
+	foreach ($object->fields as $key => $val)
 	{
 		$cssforfield = (empty($val['css']) ? '' : $val['css']);
 		if (in_array($val['type'], array('date', 'datetime', 'timestamp'))) $cssforfield .= ($cssforfield ? ' ' : '').'center';

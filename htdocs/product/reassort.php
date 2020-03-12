@@ -256,14 +256,14 @@ if ($resql)
     }
 
 	$param = '';
-	if ($tosell)	$param .= "&tosell=".$tosell;
-	if ($tobuy)		$param .= "&tobuy=".$tobuy;
-	if ($type)		$param .= "&type=".$type;
-	if ($fourn_id)	$param .= "&fourn_id=".$fourn_id;
-	if ($snom)		$param .= "&snom=".$snom;
-	if ($sref)		$param .= "&sref=".$sref;
-	if ($toolowstock)		$param .= "&toolowstock=".$toolowstock;
-	if ($search_categ)		$param .= "&search_categ=".$search_categ;
+	if ($tosell)	$param .= "&tosell=".urlencode($tosell);
+	if ($tobuy)		$param .= "&tobuy=".urlencode($tobuy);
+	if ($type)		$param .= "&type=".urlencode($type);
+	if ($fourn_id)	$param .= "&fourn_id=".urlencode($fourn_id);
+	if ($snom)		$param .= "&snom=".urlencode($snom);
+	if ($sref)		$param .= "&sref=".urlencode($sref);
+	if ($toolowstock)		$param .= "&toolowstock=".urlencode($toolowstock);
+	if ($search_categ)		$param .= "&search_categ=".urlencode($search_categ);
 
 	$formProduct = new FormProduct($db);
 	$formProduct->loadWarehouses();
@@ -362,7 +362,7 @@ if ($resql)
 		// Real stock
 		print '<td class="right">';
         if ($objp->seuil_stock_alerte != '' && ($objp->stock_physique < $objp->seuil_stock_alerte)) print img_warning($langs->trans("StockTooLow")).' ';
-		print $objp->stock_physique | 0;
+        print price2num($objp->stock_physique, 'MS');
 		print '</td>';
 
 		// Details per warehouse

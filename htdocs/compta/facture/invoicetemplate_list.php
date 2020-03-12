@@ -33,10 +33,7 @@ require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture-rec.class.php';
 require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
-if (!empty($conf->projet->enabled)) {
-	require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
-	//require_once DOL_DOCUMENT_ROOT . '/core/class/html.formprojet.class.php';
-}
+require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formprojet.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/invoice.lib.php';
@@ -54,6 +51,8 @@ $cancel     = GETPOST('cancel', 'alpha');
 $toselect   = GETPOST('toselect', 'array');
 $contextpage = GETPOST('contextpage', 'aZ') ?GETPOST('contextpage', 'aZ') : 'invoicetemplatelist'; // To manage different context of search
 
+$socid = GETPOST('socid', 'int');
+
 // Security check
 $id = (GETPOST('facid', 'int') ?GETPOST('facid', 'int') : GETPOST('id', 'int'));
 $lineid = GETPOST('lineid', 'int');
@@ -62,7 +61,6 @@ if ($user->socid) $socid = $user->socid;
 $objecttype = 'facture_rec';
 if ($action == "create" || $action == "add") $objecttype = '';
 $result = restrictedArea($user, 'facture', $id, $objecttype);
-$projectid = GETPOST('projectid', 'int');
 
 $search_ref = GETPOST('search_ref');
 $search_societe = GETPOST('search_societe');
@@ -146,6 +144,13 @@ if (is_array($extrafields->attributes[$object->table_element]['label']) && count
 $object->fields = dol_sort_array($object->fields, 'position');
 $arrayfields = dol_sort_array($arrayfields, 'position');
 
+if ($socid > 0) {
+	$tmpthirdparty = new Societe($db);
+	$res = $tmpthirdparty->fetch($socid);
+	if ($res > 0) $search_societe = $tmpthirdparty->name;
+}
+
+
 
 /*
  * Actions
@@ -218,6 +223,7 @@ $today = dol_mktime(23, 59, 59, $tmparray['mon'], $tmparray['mday'], $tmparray['
 /*
  *  List mode
  */
+
 $sql = "SELECT s.nom as name, s.rowid as socid, f.rowid as facid, f.titre as title, f.total, f.tva as total_vat, f.total_ttc, f.frequency, f.unit_frequency,";
 $sql .= " f.nb_gen_done, f.nb_gen_max, f.date_last_gen, f.date_when, f.suspended,";
 $sql .= " f.datec, f.tms,";
@@ -243,6 +249,7 @@ if (!$user->rights->societe->client->voir && !$socid) {
 	$sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".$user->id;
 }
 if ($search_ref)                  $sql .= natural_search('f.titre', $search_ref);
+if ($socid)                       $sql .= ' AND s.rowid = '.(int) $socid;
 if ($search_societe)              $sql .= natural_search('s.nom', $search_societe);
 if ($search_montant_ht != '')     $sql .= natural_search('f.total', $search_montant_ht, 1);
 if ($search_montant_vat != '')    $sql .= natural_search('f.tva', $search_montant_vat, 1);
@@ -286,7 +293,7 @@ if ($resql)
 	$param = '';
 	if (!empty($contextpage) && $contextpage != $_SERVER["PHP_SELF"]) $param .= '&contextpage='.urlencode($contextpage);
 	if ($limit > 0 && $limit != $conf->liste_limit) $param .= '&limit='.urlencode($limit);
-	if ($socid)                     $param .= '&socid='.urlencode($socid);
+	if ($socid > 0)                 $param .= '&socid='.urlencode($socid);
 	if ($search_day)                $param .= '&search_day='.urlencode($search_day);
 	if ($search_month)              $param .= '&search_month='.urlencode($search_month);
 	if ($search_year)               $param .= '&search_year='.urlencode($search_year);
@@ -299,12 +306,11 @@ if ($resql)
 	if ($search_montant_vat != '')  $param .= '&search_montant_vat='.urlencode($search_montant_vat);
 	if ($search_montant_ttc != '')  $param .= '&search_montant_ttc='.urlencode($search_montant_ttc);
 	if ($search_payment_mode != '') $param .= '&search_payment_mode='.urlencode($search_payment_mode);
-	if ($search_payment_type != '') $param .= '&search_payment_type='.urlencode($search_payment_type);
+	if ($search_payment_term != '') $param .= '&search_payment_term='.urlencode($search_payment_term);
 	if ($search_recurring != '' && $search_recurrning != '-1')    $param .= '&search_recurring='.urlencode($search_recurring);
 	if ($search_frequency > 0)        $param .= '&search_frequency='.urlencode($search_frequency);
 	if ($search_unit_frequency != '') $param .= '&search_unit_frequency='.urlencode($search_unit_frequency);
 	if ($search_status != '')		$param .= '&search_status='.urlencode($search_status);
-	if ($option)                    $param .= "&option=".urlencode($option);
 	if ($optioncss != '')           $param .= '&optioncss='.urlencode($optioncss);
 	// Add $param from extra fields
 	include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_param.tpl.php';
@@ -326,11 +332,15 @@ if ($resql)
 	print '<input type="hidden" name="contextpage" value="'.$contextpage.'">';
 	print '<input type="hidden" name="viewstatut" value="'.$viewstatut.'">';
 
-	print_barre_liste($langs->trans("RepeatableInvoices"), $page, $_SERVER['PHP_SELF'], $param, $sortfield, $sortorder, '', $num, $nbtotalofrecords, 'invoicing', 0, '', '', $limit);
+	$title = $langs->trans("RepeatableInvoices");
+
+	print_barre_liste($title, $page, $_SERVER['PHP_SELF'], $param, $sortfield, $sortorder, '', $num, $nbtotalofrecords, 'invoicing', 0, '', '', $limit);
 
 	print '<span class="opacitymedium">'.$langs->trans("ToCreateAPredefinedInvoice", $langs->transnoentitiesnoconv("ChangeIntoRepeatableInvoice")).'</span><br><br>';
 
 	$i = 0;
+
+	$moreforfilter = '';
 
 	print '<div class="div-table-responsive">';
 	print '<table class="tagtable liste'.($moreforfilter ? " listwithfilterbefore" : "").'">'."\n";
@@ -467,7 +477,6 @@ if ($resql)
 	print '</td>';
 	print "</tr>\n";
 
-
 	print '<tr class="liste_titre">';
 	if (!empty($arrayfields['f.titre']['checked']))         print_liste_field_titre($arrayfields['f.titre']['label'], $_SERVER['PHP_SELF'], "f.titre", "", $param, "", $sortfield, $sortorder);
 	if (!empty($arrayfields['s.nom']['checked']))           print_liste_field_titre($arrayfields['s.nom']['label'], $_SERVER['PHP_SELF'], "s.nom", "", $param, "", $sortfield, $sortorder);
@@ -527,21 +536,21 @@ if ($resql)
 			}
 			if (!empty($arrayfields['f.total']['checked']))
 			{
-			    print '<td class="right">'.price($objp->total).'</td>'."\n";
+			    print '<td class="nowrap right">'.price($objp->total).'</td>'."\n";
 			    if (!$i) $totalarray['nbfield']++;
 			    if (!$i) $totalarray['pos'][$totalarray['nbfield']] = 'f.total';
 			    $totalarray['val']['f.total'] += $objp->total;
 			}
 			if (!empty($arrayfields['f.tva']['checked']))
 			{
-			    print '<td class="right">'.price($objp->total_vat).'</td>'."\n";
+			    print '<td class="nowrap right">'.price($objp->total_vat).'</td>'."\n";
 			    if (!$i) $totalarray['nbfield']++;
 			    if (!$i) $totalarray['pos'][$totalarray['nbfield']] = 'f.tva';
 			    $totalarray['val']['f.tva'] += $objp->total_vat;
 			}
 			if (!empty($arrayfields['f.total_ttc']['checked']))
 			{
-			    print '<td class="right">'.price($objp->total_ttc).'</td>'."\n";
+			    print '<td class="nowrap right">'.price($objp->total_ttc).'</td>'."\n";
 			    if (!$i) $totalarray['nbfield']++;
 			    if (!$i) $totalarray['pos'][$totalarray['nbfield']] = 'f.total_ttc';
 			    $totalarray['val']['f.total_ttc'] += $objp->total_ttc;

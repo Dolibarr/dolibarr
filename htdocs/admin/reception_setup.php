@@ -234,7 +234,7 @@ foreach ($dirmodels as $reldir)
 				{
 					$file = substr($file, 0, dol_strlen($file) - 4);
 
-					require_once $dir.$file.'.php';
+					require_once $dir.'/'.$file.'.php';
 
 					$module = new $file;
 

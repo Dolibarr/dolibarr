@@ -99,9 +99,14 @@ $head[$h][1] = $langs->trans("Chart");
 $head[$h][2] = 'chart';
 $h++;
 
-$head[$h][0] = $_SERVER['PHP_SELF'];
-$head[$h][1] = $title;
+$head[$h][0] = DOL_URL_ROOT.'/product/popuprop.php';
+$head[$h][1] = $langs->trans("PopuProp");
 $head[$h][2] = 'popularityprop';
+$h++;
+
+$head[$h][0] = DOL_URL_ROOT.'/product/popucom.php';
+$head[$h][1] = $langs->trans("PopuCom");
+$head[$h][2] = 'popularitycommande';
 $h++;
 
 dol_fiche_head($head, 'popularityprop', $langs->trans("Statistics"), -1);

@@ -238,5 +238,74 @@ class ActionsMyModule
         return $ret;
     }
 
+
+
+    /**
+     * Overloading the loadDataForCustomReports function : returns data to complete the customreport tool
+     *
+     * @param   array           $parameters     Hook metadatas (context, etc...)
+     * @param   string          $action         Current action (if set). Generally create or edit or null
+     * @param   HookManager     $hookmanager    Hook manager propagated to allow calling another hook
+     * @return  int                             < 0 on error, 0 on success, 1 to replace standard code
+     */
+    public function loadDataForCustomReports($parameters, &$action, $hookmanager)
+    {
+    	global $conf, $user, $langs;
+
+    	$langs->load("mymodule@mymodule");
+
+    	$this->results = array();
+
+    	$head = array();
+    	$h = 0;
+
+    	if ($parameters['tabfamily'] == 'mymodule') {
+    		$head[$h][0] = dol_buildpath('/module/index.php', 1);
+    		$head[$h][1] = $langs->trans("Home");
+    		$head[$h][2] = 'home';
+    		$h++;
+
+    		$this->results['title'] = $langs->trans("MyModule");
+    		$this->results['picto'] = 'mymodule@mymodule';
+    	}
+
+    	$head[$h][0] = 'customreports.php?objecttype='.$parameters['objecttype'].(empty($parameters['tabfamily'])?'':'&tabfamily='.$parameters['tabfamily']);
+    	$head[$h][1] = $langs->trans("CustomReports");
+    	$head[$h][2] = 'customreports';
+
+    	$this->results['head'] = $head;
+
+    	return 1;
+    }
+
+
+
+    /**
+     * Overloading the restrictedArea function : check permission on an object
+     *
+     * @param   array           $parameters     Hook metadatas (context, etc...)
+     * @param   string          $action         Current action (if set). Generally create or edit or null
+     * @param   HookManager     $hookmanager    Hook manager propagated to allow calling another hook
+     * @return  int 		      			  	<0 if KO,
+     *                          				=0 if OK but we want to process standard actions too,
+     *  	                            		>0 if OK and we want to replace standard actions.
+     */
+    public function restrictedArea($parameters, &$action, $hookmanager)
+    {
+    	global $user;
+
+    	if ($parameters['features'] == 'myobject') {
+    		if ($user->rights->mymodule->myobject->read) {
+    			$this->results['result'] = 1;
+    			return 1;
+    		} else {
+    			$this->results['result'] = 0;
+    			return 1;
+    		}
+    	}
+
+    	return 0;
+    }
+
     /* Add here any other hooked methods... */
 }

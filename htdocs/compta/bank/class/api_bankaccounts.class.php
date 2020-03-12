@@ -183,10 +183,10 @@ class BankAccounts extends DolibarrApi
      *
      * @status 201
      *
-     * @throws 401 Unauthorized: User does not have permission to configure bank accounts
-	 * @throws 404 Not Found: Either the source or the destination bankaccount for the provided id does not exist
-     * @throws 422 Unprocessable Entity: Refer to detailed exception message for the cause
-	 * @throws 500 Internal Server Error: Error(s) returned by the RDBMS
+     * @throws RestException 401 Unauthorized: User does not have permission to configure bank accounts
+	 * @throws RestException 404 Not Found: Either the source or the destination bankaccount for the provided id does not exist
+     * @throws RestException 422 Unprocessable Entity: Refer to detailed exception message for the cause
+	 * @throws RestException 500 Internal Server Error: Error(s) returned by the RDBMS
      */
     public function transfer($bankaccount_from_id = 0, $bankaccount_to_id = 0, $date = null, $description = "", $amount = 0.0, $amount_to = 0.0)
     {

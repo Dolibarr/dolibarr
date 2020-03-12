@@ -325,6 +325,6 @@ if (GETPOSTISSET('THEME_AGRESSIVENESS_RATIO')) $conf->global->THEME_AGRESSIVENES
 @media only screen and (max-width: 767px)
 {
 	.box-flex-container {
-	    margin: 0 0 0 -8px !important;
+	    margin: 0 0 0 0 !important;
 	}
 }

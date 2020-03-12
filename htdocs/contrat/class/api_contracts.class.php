@@ -439,8 +439,9 @@ class Contracts extends DolibarrApi
      * @url	DELETE {id}/lines/{lineid}
      *
      * @return int
-     * @throws 401
-     * @throws 404
+     *
+     * @throws RestException 401
+     * @throws RestException 404
      */
     public function deleteLine($id, $lineid)
     {

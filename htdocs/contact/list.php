@@ -290,7 +290,7 @@ $title = (!empty($conf->global->SOCIETE_ADDRESSES_MANAGEMENT) ? $langs->trans("C
 
 $sql = "SELECT s.rowid as socid, s.nom as name,";
 $sql .= " p.rowid, p.lastname as lastname, p.statut, p.firstname, p.zip, p.town, p.poste, p.email, p.no_email,";
-$sql .= " p.socialnetworks,";
+$sql .= " p.socialnetworks, p.photo,";
 $sql .= " p.phone as phone_pro, p.phone_mobile, p.phone_perso, p.fax, p.fk_pays, p.priv, p.datec as date_creation, p.tms as date_update,";
 $sql .= " co.label as country, co.code as country_code";
 // Add fields from extrafields
@@ -786,7 +786,6 @@ while ($i < min($num, $limit))
 {
 	$obj = $db->fetch_object($result);
 
-	print '<tr class="oddeven">';
 	$arraysocialnetworks = (array) json_decode($obj->socialnetworks, true);
 	$contactstatic->lastname = $obj->lastname;
 	$contactstatic->firstname = '';
@@ -802,6 +801,9 @@ while ($i < min($num, $limit))
 	$contactstatic->socialnetworks = $arraysocialnetworks;
 	$contactstatic->country = $obj->country;
 	$contactstatic->country_code = $obj->country_code;
+	$contactstatic->photo = $obj->photo;
+
+	print '<tr class="oddeven">';
 
 	// ID
 	if (!empty($arrayfields['p.rowid']['checked']))

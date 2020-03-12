@@ -269,13 +269,14 @@ abstract class Stats
 	 *
 	 * @param	int		$year			Year
 	 * @param	int		$cachedelay		Delay we accept for cache file (0=No read, no save of cache, -1=No read but save)
+     * @param  	int     $limit      	Limit
 	 * @return 	array					Array of values
 	 */
-    public function getAllByProductEntry($year, $cachedelay = 0)
+    public function getAllByProductEntry($year, $cachedelay = 0, $limit = 10)
     {
         global $conf,$user,$langs;
 
-        $datay=array();
+        $data=array();
 
         // Search into cache
         if (! empty($cachedelay))
@@ -313,7 +314,7 @@ abstract class Stats
         }
         else
 		{
-			$data=$this->getAllByProduct($year);
+			$data = $this->getAllByProduct($year, $limit);
 			//					$data[$i][]=$datay[$year][$i][1];	// set yval for x=i
 		}
 
@@ -604,7 +605,6 @@ abstract class Stats
 		global $langs;
 
 		$result=array();
-		$res=array();
 
 		dol_syslog(get_class($this).'::'.__FUNCTION__."", LOG_DEBUG);
 		$resql=$this->db->query($sql);

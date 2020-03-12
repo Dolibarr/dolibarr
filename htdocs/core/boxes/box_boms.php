@@ -86,7 +86,7 @@ class box_boms extends ModeleBoxes
 
         if ($user->rights->bom->read)
         {
-            $sql = "SELECT p.ref as product_ref";
+            $sql = "SELECT p.ref as product_ref, p.tobuy, p.tosell";
             $sql.= ", c.rowid";
             $sql.= ", c.date_creation";
             $sql.= ", c.tms";
@@ -109,11 +109,15 @@ class box_boms extends ModeleBoxes
                 while ($line < $num) {
                     $objp = $this->db->fetch_object($result);
                     $datem=$this->db->jdate($objp->tms);
+
                     $bomstatic->id = $objp->rowid;
                     $bomstatic->ref = $objp->ref;
                     $bomstatic->id = $objp->socid;
                     $bomstatic->status = $objp->status;
+
                     $productstatic->ref = $objp->product_ref;
+                    $productstatic->status = $objp->tobuy;
+                    $productstatic->status_buy = $objp->tosell;
 
                     $this->info_box_contents[$line][] = array(
                         'td' => 'class="nowraponall"',

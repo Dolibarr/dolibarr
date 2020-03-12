@@ -21,14 +21,14 @@
  */
 
 // Protection to avoid direct call of template
-if (empty($langs) || ! is_object($langs))
+if (empty($langs) || !is_object($langs))
 {
 	print "Error, template page can't be called as URL";
 	exit;
 }
 
 // Load translation files required by the page
-$langs->loadLangs(array("main","bills","cashdesk"));
+$langs->loadLangs(array("main", "bills", "cashdesk"));
 
 // Object $form must de defined
 
@@ -64,7 +64,7 @@ $id = $obj_facturation->id();
 // Si trop d'articles ont ete trouves, on n'affiche que les X premiers (defini dans le fichier de configuration) ...
 
 $nbtoshow = $nbr_enreg;
-if (! empty($conf_taille_listes) && $nbtoshow > $conf_taille_listes) $nbtoshow = $conf_taille_listes;
+if (!empty($conf_taille_listes) && $nbtoshow > $conf_taille_listes) $nbtoshow = $conf_taille_listes;
 
 for ($i = 0; $i < $nbtoshow; $i++)
 {
@@ -77,8 +77,8 @@ for ($i = 0; $i < $nbtoshow; $i++)
 	$label = $tab_designations[$i]['label'];
 
 	print '<option '.$selected.' value="'.$tab_designations[$i]['rowid'].'">'.dol_trunc($tab_designations[$i]['ref'], 16).' - '.dol_trunc($label, 35, 'middle');
-	if (! empty($conf->stock->enabled) && !empty($conf_fkentrepot) && $tab_designations[$i]['fk_product_type']==0) {
-		print ' ('.$langs->trans("CashDeskStock").': '.(empty($tab_designations[$i]['reel'])?0:$tab_designations[$i]['reel']).')';
+	if (!empty($conf->stock->enabled) && !empty($conf_fkentrepot) && $tab_designations[$i]['fk_product_type'] == 0) {
+		print ' ('.$langs->trans("CashDeskStock").': '.(empty($tab_designations[$i]['reel']) ? 0 : $tab_designations[$i]['reel']).')';
 	}
 	print '</option>'."\n";
 }
@@ -101,23 +101,23 @@ for ($i = 0; $i < $nbtoshow; $i++)
             </tr>
 			<tr>
 				<td><input class="texte1 maxwidth50onsmartphone" type="text" id="txtQte" name="txtQte" value="1" onkeyup="javascript: modif();" onfocus="javascript: this.select();" />
-<?php print genkeypad("txtQte", "frmQte");?>
+<?php print genkeypad("txtQte", "frmQte"); ?>
 				</td>
 				<!-- Show unit price -->
 				<?php // TODO Remove the disabled and use this value when adding product into cart ?>
 				<td><input class="texte1_off maxwidth50onsmartphone" type="text" name="txtPrixUnit" value="<?php echo price2num($obj_facturation->prix(), 'MU'); ?>" onchange="javascript: modif();" disabled /></td>
     			<!-- Choix de la remise -->
     			<td><input class="texte1 maxwidth50onsmartphone" type="text" id="txtRemise" name="txtRemise" value="0" onkeyup="javascript: modif();" onfocus="javascript: this.select();"/>
-					<?php print genkeypad("txtRemise", "frmQte");?>
+					<?php print genkeypad("txtRemise", "frmQte"); ?>
     			</td>
                 <!-- Choix du taux de TVA -->
                 <td class="select_tva center">
                 <?php
-					$vatrate = $obj_facturation->vatrate;      // To get vat rate we just have selected
+					$vatrate = $obj_facturation->vatrate; // To get vat rate we just have selected
 
 					$buyer = new Societe($db);
 					if ($_SESSION["CASHDESK_ID_THIRDPARTY"] > 0) $buyer->fetch($_SESSION["CASHDESK_ID_THIRDPARTY"]);
-					echo $form->load_tva('selTva', (isset($_POST["selTva"])?GETPOST("selTva", 'alpha', 2):$vatrate), $mysoc, $buyer, 0, 0, '', false, -1);
+					echo $form->load_tva('selTva', (GETPOSTISSET("selTva") ? GETPOST("selTva", 'alpha', 2) : $vatrate), $mysoc, $buyer, 0, 0, '', false, -1);
 			    ?>
                 </td>
 				<td></td>
@@ -152,7 +152,7 @@ for ($i = 0; $i < $nbtoshow; $i++)
 			<td><input class="texte2_off maxwidth100onsmartphone" type="text" name="txtDu" value="<?php echo price2num($obj_facturation->prixTotalTtc(), 'MT'); ?>" disabled /></td>
 			<!-- Choix du montant encaisse -->
 			<td><input class="texte2 maxwidth100onsmartphone" type="text" id="txtEncaisse" name="txtEncaisse" value="" onkeyup="javascript: verifDifference();" onfocus="javascript: this.select();" />
-<?php print genkeypad("txtEncaisse", "frmDifference");?>
+<?php print genkeypad("txtEncaisse", "frmDifference"); ?>
 			</td>
 			<!-- Affichage du montant rendu -->
 			<td><input class="texte2_off maxwidth100onsmartphone" type="text" name="txtRendu" value="0" disabled /></td>

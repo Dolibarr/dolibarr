@@ -229,7 +229,7 @@ if ($user->rights->adherent->cotisation->creer && $action == 'subscription' && !
     // Payment informations
     $accountid = $_POST["accountid"];
     $operation = $_POST["operation"]; // Payment mode
-    $num_chq = $_POST["num_chq"];
+    $num_chq = GETPOST("num_chq", "alphanohtml");
     $emetteur_nom = $_POST["chqemetteur"];
     $emetteur_banque = $_POST["chqbank"];
     $option = $_POST["paymentsave"];

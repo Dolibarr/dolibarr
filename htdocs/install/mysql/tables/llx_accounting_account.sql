@@ -27,7 +27,6 @@ create table llx_accounting_account
   tms                       timestamp,
   fk_pcg_version            varchar(32)  NOT NULL,			  -- Chart system
   pcg_type                  varchar(20)  NOT NULL,			  -- First part of Key for predefined groups
-  pcg_subtype               varchar(20)  NOT NULL,            -- Second part of Key for predefined groups 
   account_number            varchar(32)  NOT NULL,
   account_parent            integer DEFAULT 0,                -- Hierarchic parent.
   label                     varchar(255) NOT NULL,

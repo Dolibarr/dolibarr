@@ -53,11 +53,6 @@ class AccountancySystem
      */
 	public $pcg_type;
 
-    /**
-     * @var string pcg subtype
-     */
-	public $pcg_subtype;
-
 	/**
 	 * @var string Accountancy System numero
 	 */

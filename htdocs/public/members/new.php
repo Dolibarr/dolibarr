@@ -101,7 +101,7 @@ function llxHeaderVierge($title, $head = "", $disablejs = 0, $disablehead = 0, $
 
     // Define urllogo
     $width = 0;
-    $urllogo = DOL_URL_ROOT.'/theme/login_logo.png';
+    $urllogo = DOL_URL_ROOT.'/theme/common/login_logo.png';
 
     if (!empty($mysoc->logo_small) && is_readable($conf->mycompany->dir_output.'/logos/thumbs/'.$mysoc->logo_small))
     {

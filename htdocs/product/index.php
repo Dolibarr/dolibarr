@@ -148,8 +148,8 @@ if ((!empty($conf->product->enabled) || !empty($conf->service->enabled)) && ($us
 	{
 		print '<div class="div-table-responsive-no-min">';
 		print '<table class="noborder centpercent">';
-		print '<tr class="liste_titre"><th colspan="2">'.$langs->trans("Statistics").'</th></tr>';
-		print '<tr><td class="center" colspan="2">';
+		print '<tr class="liste_titre"><th>'.$langs->trans("Statistics").'</th></tr>';
+		print '<tr><td class="center nopaddingleftimp nopaddingrightimp">';
 
 		$SommeA = $prodser[0]['sell'];
 		$SommeB = $prodser[0]['buy'];
@@ -174,16 +174,16 @@ if ((!empty($conf->product->enabled) || !empty($conf->service->enabled)) && ($us
 		{
 			$dataseries[] = array($langs->trans("ServicesOnSale"), round($SommeD));
 			$dataseries[] = array($langs->trans("ServicesOnPurchase"), round($SommeE));
-			$dataseries[] = array($langs->trans("ServicesNotOnSell"), round($SommeF));
+			$dataseries[] = array(dol_trunc($langs->trans("ServicesNotOnSell"), 24), round($SommeF));
 		}
 
 		include_once DOL_DOCUMENT_ROOT.'/core/class/dolgraph.class.php';
 		$dolgraph = new DolGraph();
 		$dolgraph->SetData($dataseries);
-		$dolgraph->setShowLegend(1);
+		$dolgraph->setShowLegend(2);
 		$dolgraph->setShowPercent(0);
 		$dolgraph->SetType(array('pie'));
-		$dolgraph->setWidth('100%');
+		$dolgraph->setHeight('200');
 		$dolgraph->draw('idgraphstatus');
 		print $dolgraph->show($total ? 0 : 1);
 
@@ -241,10 +241,10 @@ if (!empty($conf->categorie->enabled) && !empty($conf->global->CATEGORY_GRAPHSTA
 			include_once DOL_DOCUMENT_ROOT.'/core/class/dolgraph.class.php';
 			$dolgraph = new DolGraph();
 			$dolgraph->SetData($dataseries);
-			$dolgraph->setShowLegend(1);
+			$dolgraph->setShowLegend(2);
 			$dolgraph->setShowPercent(1);
 			$dolgraph->SetType(array('pie'));
-			$dolgraph->setWidth('100%');
+			$dolgraph->setHeight('200');
 			$dolgraph->draw('idstatscategproduct');
 			print $dolgraph->show($total ? 0 : 1);
 		}

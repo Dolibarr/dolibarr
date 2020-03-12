@@ -97,6 +97,8 @@ if (empty($reshook))
 	    $totalpayment = 0;
 		$multicurrency_totalpayment = 0;
 	    $atleastonepaymentnotnull = 0;
+		$formquestion = array();
+		$i = 0;
 
 	    // Generate payment array and check if there is payment higher than invoice and payment date before invoice date
 	    $tmpinvoice = new Facture($db);
@@ -216,7 +218,7 @@ if (empty($reshook))
 	{
 	    $error = 0;
 
-	    $datepaye = dol_mktime(12, 0, 0, GETPOST('remonth'), GETPOST('reday'), GETPOST('reyear'));
+	    $datepaye = dol_mktime(12, 0, 0, GETPOST('remonth', 'int'), GETPOST('reday', 'int'), GETPOST('reyear', 'int'));
 
 	    $db->begin();
 
@@ -262,8 +264,10 @@ if (empty($reshook))
 	    $paiement->amounts      = $amounts; // Array with all payments dispatching with invoice id
 	    $paiement->multicurrency_amounts = $multicurrency_amounts; // Array with all payments dispatching
 	    $paiement->paiementid   = dol_getIdFromCode($db, GETPOST('paiementcode'), 'c_paiement', 'code', 'id', 1);
-	    $paiement->num_paiement = GETPOST('num_paiement', 'alpha');
-	    $paiement->note         = GETPOST('comment', 'alpha');
+	    $paiement->num_payment  = GETPOST('num_paiement', 'alpha');
+	    $paiement->note_private = GETPOST('comment', 'alpha');
+	    $paiement->num_paiement = $paiement->num_payment; // For bacward compatibility
+	    $paiement->note         = $paiement->note_private; // For bacward compatibility
 
 	    if (!$error)
 	    {

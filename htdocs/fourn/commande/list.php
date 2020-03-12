@@ -80,6 +80,11 @@ $search_sale = GETPOST('search_sale', 'int');
 $search_total_ht = GETPOST('search_total_ht', 'alpha');
 $search_total_vat = GETPOST('search_total_vat', 'alpha');
 $search_total_ttc = GETPOST('search_total_ttc', 'alpha');
+$search_multicurrency_code = GETPOST('search_multicurrency_code', 'alpha');
+$search_multicurrency_tx = GETPOST('search_multicurrency_tx', 'alpha');
+$search_multicurrency_montant_ht = GETPOST('search_multicurrency_montant_ht', 'alpha');
+$search_multicurrency_montant_vat = GETPOST('search_multicurrency_montant_vat', 'alpha');
+$search_multicurrency_montant_ttc = GETPOST('search_multicurrency_montant_ttc', 'alpha');
 $optioncss = GETPOST('optioncss', 'alpha');
 $search_billed = GETPOST('search_billed', 'int');
 $search_project_ref = GETPOST('search_project_ref', 'alpha');
@@ -146,6 +151,11 @@ $arrayfields = array(
 	'cf.total_ht'=>array('label'=>$langs->trans("AmountHT"), 'checked'=>1),
 	'cf.total_vat'=>array('label'=>$langs->trans("AmountVAT"), 'checked'=>0),
 	'cf.total_ttc'=>array('label'=>$langs->trans("AmountTTC"), 'checked'=>0),
+	'cf.multicurrency_code'=>array('label'=>'Currency', 'checked'=>0, 'enabled'=>(empty($conf->multicurrency->enabled) ? 0 : 1)),
+	'cf.multicurrency_tx'=>array('label'=>'CurrencyRate', 'checked'=>0, 'enabled'=>(empty($conf->multicurrency->enabled) ? 0 : 1)),
+	'cf.multicurrency_total_ht'=>array('label'=>'MulticurrencyAmountHT', 'checked'=>0, 'enabled'=>(empty($conf->multicurrency->enabled) ? 0 : 1)),
+	'cf.multicurrency_total_vat'=>array('label'=>'MulticurrencyAmountVAT', 'checked'=>0, 'enabled'=>(empty($conf->multicurrency->enabled) ? 0 : 1)),
+	'cf.multicurrency_total_ttc'=>array('label'=>'MulticurrencyAmountTTC', 'checked'=>0, 'enabled'=>(empty($conf->multicurrency->enabled) ? 0 : 1)),
 	'cf.datec'=>array('label'=>$langs->trans("DateCreation"), 'checked'=>0, 'position'=>500),
 	'cf.tms'=>array('label'=>$langs->trans("DateModificationShort"), 'checked'=>0, 'position'=>500),
 	'cf.fk_statut'=>array('label'=>$langs->trans("Status"), 'checked'=>1, 'position'=>1000),
@@ -201,6 +211,11 @@ if (empty($reshook))
 		$search_total_ht = '';
 		$search_total_vat = '';
 		$search_total_ttc = '';
+		$search_multicurrency_code = '';
+		$search_multicurrency_tx = '';
+		$search_multicurrency_montant_ht = '';
+		$search_multicurrency_montant_vat = '';
+		$search_multicurrency_montant_ttc = '';
 		$search_project_ref = '';
 		$search_status = -1;
 		$search_orderyear = '';
@@ -485,6 +500,7 @@ $sql .= ' s.rowid as socid, s.nom as name, s.town, s.zip, s.fk_pays, s.client, s
 $sql .= " typent.code as typent_code,";
 $sql .= " state.code_departement as state_code, state.nom as state_name,";
 $sql .= " cf.rowid, cf.ref, cf.ref_supplier, cf.fk_statut, cf.billed, cf.total_ht, cf.tva as total_tva, cf.total_ttc, cf.fk_user_author, cf.date_commande as date_commande, cf.date_livraison as date_delivery,";
+$sql .= ' cf.fk_multicurrency, cf.multicurrency_code, cf.multicurrency_tx, cf.multicurrency_total_ht, cf.multicurrency_total_tva as multicurrency_total_vat, cf.multicurrency_total_ttc,';
 $sql .= ' cf.date_creation as date_creation, cf.tms as date_update,';
 $sql .= ' cf.note_public, cf.note_private,';
 $sql .= " p.rowid as project_id, p.ref as project_ref, p.title as project_title,";
@@ -543,6 +559,11 @@ if ($search_user > 0) $sql .= " AND ec.fk_c_type_contact = tc.rowid AND tc.eleme
 if ($search_total_ht != '') $sql .= natural_search('cf.total_ht', $search_total_ht, 1);
 if ($search_total_vat != '') $sql .= natural_search('cf.tva', $search_total_vat, 1);
 if ($search_total_ttc != '') $sql .= natural_search('cf.total_ttc', $search_total_ttc, 1);
+if ($search_multicurrency_code != '')        $sql .= ' AND cf.multicurrency_code = "' . $db->escape($search_multicurrency_code) . '"';
+if ($search_multicurrency_tx != '')          $sql .= natural_search('cf.multicurrency_tx', $search_multicurrency_tx, 1);
+if ($search_multicurrency_montant_ht != '')  $sql .= natural_search('cf.multicurrency_total_ht', $search_multicurrency_montant_ht, 1);
+if ($search_multicurrency_montant_vat != '') $sql .= natural_search('cf.multicurrency_total_tva', $search_multicurrency_montant_vat, 1);
+if ($search_multicurrency_montant_ttc != '') $sql .= natural_search('cf.multicurrency_total_ttc', $search_multicurrency_montant_ttc, 1);
 if ($search_project_ref != '') $sql .= natural_search("p.ref", $search_project_ref);
 // Add where from extra fields
 include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_sql.tpl.php';
@@ -613,6 +634,11 @@ if ($resql)
 	if ($search_sale > 0) 		$param .= '&search_sale='.$search_sale;
 	if ($search_total_ht != '') $param .= '&search_total_ht='.$search_total_ht;
 	if ($search_total_ttc != '') $param .= "&search_total_ttc=".$search_total_ttc;
+	if ($search_multicurrency_code != '')  $param .= '&search_multicurrency_code='.urlencode($search_multicurrency_code);
+	if ($search_multicurrency_tx != '')  $param .= '&search_multicurrency_tx='.urlencode($search_multicurrency_tx);
+	if ($search_multicurrency_montant_ht != '')  $param .= '&search_multicurrency_montant_ht='.urlencode($search_multicurrency_montant_ht);
+	if ($search_multicurrency_montant_vat != '')  $param .= '&search_multicurrency_montant_vat='.urlencode($search_multicurrency_montant_vat);
+	if ($search_multicurrency_montant_ttc != '') $param .= '&search_multicurrency_montant_ttc='.urlencode($search_multicurrency_montant_ttc);
 	if ($search_refsupp) 		$param .= "&search_refsupp=".$search_refsupp;
 	if ($search_status >= 0)  	$param .= "&search_status=".$search_status;
 	if ($search_project_ref >= 0) $param .= "&search_project_ref=".$search_project_ref;
@@ -844,6 +870,41 @@ if ($resql)
 		print '<input class="flat" type="text" size="5" name="search_total_ttc" value="'.$search_total_ttc.'">';
 		print '</td>';
 	}
+	if (!empty($arrayfields['cf.multicurrency_code']['checked']))
+	{
+		// Currency
+		print '<td class="liste_titre">';
+		print $form->selectMultiCurrency($search_multicurrency_code, 'search_multicurrency_code', 1);
+		print '</td>';
+	}
+	if (!empty($arrayfields['cf.multicurrency_tx']['checked']))
+	{
+		// Currency rate
+		print '<td class="liste_titre">';
+		print '<input class="flat" type="text" size="4" name="search_multicurrency_tx" value="'.dol_escape_htmltag($search_multicurrency_tx).'">';
+		print '</td>';
+	}
+	if (!empty($arrayfields['cf.multicurrency_total_ht']['checked']))
+	{
+		// Amount
+		print '<td class="liste_titre right">';
+		print '<input class="flat" type="text" size="4" name="search_multicurrency_montant_ht" value="'.dol_escape_htmltag($search_multicurrency_montant_ht).'">';
+		print '</td>';
+	}
+	if (!empty($arrayfields['cf.multicurrency_total_vat']['checked']))
+	{
+		// Amount
+		print '<td class="liste_titre right">';
+		print '<input class="flat" type="text" size="4" name="search_multicurrency_montant_vat" value="'.dol_escape_htmltag($search_multicurrency_montant_vat).'">';
+		print '</td>';
+	}
+	if (!empty($arrayfields['cf.multicurrency_total_ttc']['checked']))
+	{
+		// Amount
+		print '<td class="liste_titre right">';
+		print '<input class="flat" type="text" size="4" name="search_multicurrency_montant_ttc" value="'.dol_escape_htmltag($search_multicurrency_montant_ttc).'">';
+		print '</td>';
+	}
 	// Extra fields
 	include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_input.tpl.php';
 
@@ -902,6 +963,11 @@ if ($resql)
 	if (!empty($arrayfields['cf.total_ht']['checked']))       print_liste_field_titre($arrayfields['cf.total_ht']['label'], $_SERVER["PHP_SELF"], "cf.total_ht", "", $param, '', $sortfield, $sortorder, 'right ');
 	if (!empty($arrayfields['cf.total_vat']['checked']))      print_liste_field_titre($arrayfields['cf.total_vat']['label'], $_SERVER["PHP_SELF"], "cf.tva", "", $param, '', $sortfield, $sortorder, 'right ');
 	if (!empty($arrayfields['cf.total_ttc']['checked']))      print_liste_field_titre($arrayfields['cf.total_ttc']['label'], $_SERVER["PHP_SELF"], "cf.total_ttc", "", $param, '', $sortfield, $sortorder, 'right ');
+	if (!empty($arrayfields['cf.multicurrency_code']['checked']))          print_liste_field_titre($arrayfields['cf.multicurrency_code']['label'], $_SERVER['PHP_SELF'], 'cf.multicurrency_code', '', $param, '', $sortfield, $sortorder);
+	if (!empty($arrayfields['cf.multicurrency_tx']['checked']))            print_liste_field_titre($arrayfields['cf.multicurrency_tx']['label'], $_SERVER['PHP_SELF'], 'cf.multicurrency_tx', '', $param, '', $sortfield, $sortorder);
+	if (!empty($arrayfields['cf.multicurrency_total_ht']['checked']))      print_liste_field_titre($arrayfields['cf.multicurrency_total_ht']['label'], $_SERVER['PHP_SELF'], 'cf.multicurrency_total_ht', '', $param, 'class="right"', $sortfield, $sortorder);
+	if (!empty($arrayfields['cf.multicurrency_total_vat']['checked']))     print_liste_field_titre($arrayfields['cf.multicurrency_total_vat']['label'], $_SERVER['PHP_SELF'], 'cf.multicurrency_total_tva', '', $param, 'class="right"', $sortfield, $sortorder);
+	if (!empty($arrayfields['cf.multicurrency_total_ttc']['checked']))     print_liste_field_titre($arrayfields['cf.multicurrency_total_ttc']['label'], $_SERVER['PHP_SELF'], 'cf.multicurrency_total_ttc', '', $param, 'class="right"', $sortfield, $sortorder);
 	// Extra fields
 	include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_title.tpl.php';
 	// Hook fields
@@ -1084,6 +1150,40 @@ if ($resql)
 			if (! $i) $totalarray['nbfield']++;
 			if (! $i) $totalarray['pos'][$totalarray['nbfield']]='cf.total_ttc';
 			$totalarray['val']['cf.total_ttc'] += $obj->total_ttc;
+		}
+
+		// Currency
+		if (!empty($arrayfields['cf.multicurrency_code']['checked']))
+		{
+			  print '<td class="nowrap">'.$obj->multicurrency_code . ' - ' . $langs->trans('Currency' . $obj->multicurrency_code)."</td>\n";
+			  if (!$i) $totalarray['nbfield']++;
+		}
+
+		// Currency rate
+		if (!empty($arrayfields['cf.multicurrency_tx']['checked']))
+		{
+			  print '<td class="nowrap">';
+			  $form->form_multicurrency_rate($_SERVER['PHP_SELF'] . '?id=' . $obj->rowid, $obj->multicurrency_tx, 'none', $obj->multicurrency_code);
+			  print "</td>\n";
+			  if (!$i) $totalarray['nbfield']++;
+		}
+		// Amount HT
+		if (!empty($arrayfields['cf.multicurrency_total_ht']['checked']))
+		{
+			  print '<td class="right nowrap">'.price($obj->multicurrency_total_ht)."</td>\n";
+			  if (!$i) $totalarray['nbfield']++;
+		}
+		// Amount VAT
+		if (!empty($arrayfields['cf.multicurrency_total_vat']['checked']))
+		{
+			print '<td class="right nowrap">'.price($obj->multicurrency_total_vat)."</td>\n";
+			if (!$i) $totalarray['nbfield']++;
+		}
+		// Amount TTC
+		if (!empty($arrayfields['cf.multicurrency_total_ttc']['checked']))
+		{
+			print '<td class="right nowrap">'.price($obj->multicurrency_total_ttc)."</td>\n";
+			if (!$i) $totalarray['nbfield']++;
 		}
 
 		// Extra fields

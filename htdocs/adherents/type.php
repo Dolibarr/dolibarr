@@ -792,7 +792,7 @@ if ($rowid > 0)
         $morphys["phy"] = $langs->trans("Physical");
         $morphys["mor"] = $langs->trans("Moral");
         print '<tr><td><span>'.$langs->trans("MemberNature").'</span></td><td>';
-        print $form->selectarray("morphy", $morphys, isset($_POST["morphy"]) ? $_POST["morphy"] : $object->morphy);
+        print $form->selectarray("morphy", $morphys, GETPOSTISSET("morphy") ? GETPOST("morphy") : $object->morphy);
         print "</td></tr>";
 
     	print '<tr><td>'.$langs->trans("SubscriptionRequired").'</td><td>';

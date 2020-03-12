@@ -130,7 +130,7 @@ class ImportXlsx extends ModeleImports
 	 * 	Output header of an example file for this format
 	 *
 	 * 	@param	Translate	$outputlangs		Output language
-	 *  @return	string
+	 *  @return	string							Empty string
 	 */
     public function write_header_example($outputlangs)
 	{
@@ -164,7 +164,7 @@ class ImportXlsx extends ModeleImports
 	 *
 	 * 	@param	Translate	$outputlangs		Output language
 	 *  @param	array		$headerlinefields	Array of fields name
-	 * 	@return	string
+	 * 	@return	string							String output
 	 */
     public function write_title_example($outputlangs, $headerlinefields)
 	{
@@ -190,7 +190,7 @@ class ImportXlsx extends ModeleImports
 	 *
 	 * 	@param	Translate	$outputlangs		Output language
 	 * 	@param	array		$contentlinevalues	Array of lines
-	 * 	@return	string
+	 * 	@return	string							Empty string
 	 */
     public function write_record_example($outputlangs, $contentlinevalues)
 	{
@@ -210,7 +210,7 @@ class ImportXlsx extends ModeleImports
 	 * 	Output footer of an example file for this format
 	 *
 	 * 	@param	Translate	$outputlangs		Output language
-	 *  @return	string
+	 *  @return	string							String output
 	 */
     public function write_footer_example($outputlangs)
 	{
@@ -258,7 +258,7 @@ class ImportXlsx extends ModeleImports
 	 * 	Return nb of records. File must be closed.
 	 *
 	 *	@param	string	$file		Path of filename
-	 * 	@return		int		<0 if KO, >=0 if OK
+	 * 	@return	int					<0 if KO, >=0 if OK
 	 */
     public function import_get_nb_of_lines($file)
 	{

@@ -98,10 +98,10 @@ $coldisplay++;
 echo $line->disable_stock_change ? yn($line->disable_stock_change) : '';  // Yes, it is a quantity, not a price, but we just want the formating role of function price
 print '</td>';
 
-//print '<td class="linecolqty nowrap right">';
-//$coldisplay++;
-//echo $line->efficiency;
-//print '</td>';
+print '<td class="linecolefficiency nowrap right">';
+$coldisplay++;
+echo $line->efficiency;
+print '</td>';
 
 if ($this->status == 0 && ($object_rights->write) && $action != 'selectlines' ) {
 	print '<td class="linecoledit center">';
@@ -156,7 +156,7 @@ print '</tr>';
 //Line extrafield
 if (!empty($extrafields))
 {
-	print $line->showOptionals($extrafields, 'view', array('style'=>'class="drag drop oddeven"', 'colspan'=>$coldisplay), '', '', empty($conf->global->MAIN_EXTRAFIELDS_IN_ONE_TD) ? 0 : 1);
+	print $line->showOptionals($extrafields, 'view', array('style'=>'class="drag drop oddeven"', 'colspan'=>$coldisplay), '', '', 1);
 }
 
 print "<!-- END PHP TEMPLATE objectline_view.tpl.php -->\n";

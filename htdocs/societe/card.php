@@ -1557,14 +1557,9 @@ else
 			print '</td></tr>';
 		}
 
-        // Other attributes
-        $parameters = array('colspan' => ' colspan="3"', 'cols' => '3');
-        $reshook = $hookmanager->executeHooks('formObjectOptions', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
-        print $hookmanager->resPrint;
-        if (empty($reshook))
-        {
-        	print $object->showOptionals($extrafields, 'edit', $parameters);
-        }
+		// Other attributes
+		$parameters = array('socid'=>$socid, 'colspan' => ' colspan="3"', 'colspanvalue' => '3');
+		include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_create.tpl.php';
 
 		// Assign a sale representative
 		print '<tr>';
@@ -1903,30 +1898,27 @@ else
                 	print $form->editfieldkey('SupplierCode', 'supplier_code', '', $object, 0);
                 }
                 print '</td><td>';
-                if (!empty($conf->fournisseur->enabled) && !empty($user->rights->fournisseur->lire))
+                print '<table class="nobordernopadding"><tr><td>';
+                if ((!$object->code_fournisseur || $object->code_fournisseur == -1) && $modCodeFournisseur->code_auto)
                 {
-	                print '<table class="nobordernopadding"><tr><td>';
-	                if ((!$object->code_fournisseur || $object->code_fournisseur == -1) && $modCodeFournisseur->code_auto)
-	                {
-	                    $tmpcode = $object->code_fournisseur;
-	                    if (empty($tmpcode) && !empty($object->oldcopy->code_fournisseur)) $tmpcode = $object->oldcopy->code_fournisseur; // When there is an error to update a thirdparty, the number for supplier and customer code is kept to old value.
-	                    if (empty($tmpcode) && !empty($modCodeFournisseur->code_auto)) $tmpcode = $modCodeFournisseur->getNextValue($object, 1);
-	                    print '<input type="text" name="supplier_code" id="supplier_code" size="16" value="'.dol_escape_htmltag($tmpcode).'" maxlength="15">';
-	                }
-	                elseif ($object->codefournisseur_modifiable())
-	                {
-	                    print '<input type="text" name="supplier_code" id="supplier_code" size="16" value="'.$object->code_fournisseur.'" maxlength="15">';
-	                }
-	                else
-	                {
-	                    print $object->code_fournisseur;
-	                    print '<input type="hidden" name="supplier_code" value="'.$object->code_fournisseur.'">';
-	                }
-	                print '</td><td>';
-	                $s = $modCodeFournisseur->getToolTip($langs, $object, 1);
-	                print $form->textwithpicto('', $s, 1);
-	                print '</td></tr></table>';
+                    $tmpcode = $object->code_fournisseur;
+                    if (empty($tmpcode) && !empty($object->oldcopy->code_fournisseur)) $tmpcode = $object->oldcopy->code_fournisseur; // When there is an error to update a thirdparty, the number for supplier and customer code is kept to old value.
+                    if (empty($tmpcode) && !empty($modCodeFournisseur->code_auto)) $tmpcode = $modCodeFournisseur->getNextValue($object, 1);
+                    print '<input type="text" name="supplier_code" id="supplier_code" size="16" value="'.dol_escape_htmltag($tmpcode).'" maxlength="15">';
                 }
+                elseif ($object->codefournisseur_modifiable())
+                {
+                    print '<input type="text" name="supplier_code" id="supplier_code" size="16" value="'.$object->code_fournisseur.'" maxlength="15">';
+                }
+                else
+                {
+                    print $object->code_fournisseur;
+                    print '<input type="hidden" name="supplier_code" value="'.$object->code_fournisseur.'">';
+                }
+                print '</td><td>';
+                $s = $modCodeFournisseur->getToolTip($langs, $object, 1);
+                print $form->textwithpicto('', $s, 1);
+                print '</td></tr></table>';
                 print '</td></tr>';
             }
 
@@ -1988,7 +1980,7 @@ else
             print '<tr><td>'.img_picto('', 'object_email').' '.$form->editfieldkey('EMail', 'email', GETPOST('email', 'alpha'), $object, 0, 'string', '', (!empty($conf->global->SOCIETE_EMAIL_MANDATORY))).'</td>';
             print '<td colspan="3"><input type="text" name="email" id="email" class="maxwidth100onsmartphone quatrevingtpercent" value="'.(GETPOSTISSET('email') ?GETPOST('email', 'alpha') : $object->email).'"></td></tr>';
 	        print '<tr><td>'.img_picto('', 'globe').' '.$form->editfieldkey('Web', 'url', GETPOST('url', 'alpha'), $object, 0).'</td>';
-	        print '<td colspan="3"><input type="text" name="url" id="url" class="maxwidth100onsmartphone quatrevingtpercent" value="'.(GETPOSTISSET('url') ?GETPOST('url', 'alpha') : $object->irl).'"></td></tr>';
+	        print '<td colspan="3"><input type="text" name="url" id="url" class="maxwidth100onsmartphone quatrevingtpercent" value="'.(GETPOSTISSET('url') ?GETPOST('url', 'alpha') : $object->url).'"></td></tr>';
 
             if (!empty($conf->socialnetworks->enabled)) {
                 foreach ($socialnetworks as $key => $value) {
@@ -2221,14 +2213,9 @@ else
 				print '</td></tr>';
 			}
 
-            // Other attributes
-            $parameters = array('colspan' => ' colspan="3"', 'cols' => '3');
-            $reshook = $hookmanager->executeHooks('formObjectOptions', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
-            print $hookmanager->resPrint;
-            if (empty($reshook))
-            {
-            	print $object->showOptionals($extrafields, 'edit', $parameters);
-            }
+			// Other attributes
+			$parameters = array('socid'=>$socid, 'colspan' => ' colspan="3"', 'colspanvalue' => '3');
+			include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_edit.tpl.php';
 
             // Webservices url/key
             if (!empty($conf->syncsupplierwebservices->enabled)) {

@@ -137,8 +137,8 @@ foreach ($categories as $key => $categorycursor)
     }
 }
 
-sort($maincategories);
-sort($subcategories);
+$maincategories = dol_sort_array($maincategories, 'label');
+$subcategories = dol_sort_array($subcategories, 'label');
 ?>
 
 var categories = <?php echo json_encode($maincategories); ?>;
@@ -398,6 +398,12 @@ function History()
     $.colorbox({href:"../compta/facture/list.php?contextpage=poslist", width:"90%", height:"80%", transition:"none", iframe:"true", title:"<?php echo $langs->trans("History"); ?>"});
 }
 
+function Reduction() {
+	invoiceid = $("#invoiceid").val();
+	console.log("Open popup to enter reduction on invoiceid="+invoiceid);
+	$.colorbox({href:"reduction.php?place="+place+"&invoiceid="+invoiceid, width:"80%", height:"90%", transition:"none", iframe:"true", title:""});
+}
+
 function CloseBill() {
 	invoiceid = $("#invoiceid").val();
 	console.log("Open popup to enter payment on invoiceid="+invoiceid);
@@ -429,39 +435,64 @@ function Refresh() {
 function New() {
 	// If we go here,it means $conf->global->TAKEPOS_BAR_RESTAURANT is not defined
 	console.log("New with place = <?php echo $place; ?>, js place="+place);
-	var r = confirm('<?php echo ($place > 0 ? $langs->transnoentitiesnoconv("ConfirmDeletionOfThisPOSSale") : $langs->transnoentitiesnoconv("ConfirmDiscardOfThisPOSSale")); ?>');
-	if (r == true) {
-    	$("#poslines").load("invoice.php?action=delete&place="+place, function() {
-    		//$('#poslines').scrollTop($('#poslines')[0].scrollHeight);
-    	});
-		ClearSearch();
-	}
+
+	invoiceid = $("#invoiceid").val();
+	$.getJSON('<?php echo DOL_URL_ROOT ?>/takepos/ajax/ajax.php?action=getInvoice&id='+invoiceid, function(data) {
+		var r;
+
+		if (parseInt(data['paye']) === 1) {
+			r = true;
+		} else {
+			r = confirm('<?php echo ($place > 0 ? $langs->transnoentitiesnoconv("ConfirmDeletionOfThisPOSSale") : $langs->transnoentitiesnoconv("ConfirmDiscardOfThisPOSSale")); ?>');
+		}
+
+		if (r == true) {
+			$("#poslines").load("invoice.php?action=delete&place=" + place, function () {
+				//$('#poslines').scrollTop($('#poslines')[0].scrollHeight);
+			});
+			ClearSearch();
+		}
+	});
 }
 
-function Search2() {
+/**
+ * Search products
+ *
+ * @param   {int}			keyCodeForEnter     Key code for "enter"
+ * return   {void}
+ */
+function Search2(keyCodeForEnter) {
 	console.log("Search2 Call ajax search to replace products");
-	if(window.event.keyCode == 13) var key=13;
-	pageproducts=0;
-	jQuery(".wrapper2 .catwatermark").hide();
-	$.getJSON('<?php echo DOL_URL_ROOT ?>/takepos/ajax/ajax.php?action=search&term='+$('#search').val(), function(data) {
-		for (i = 0; i < <?php echo $MAXPRODUCT ?>; i++) {
-			if (typeof (data[i]) == "undefined"){
-				$("#prodesc"+i).text("");
-				$("#proimg"+i).attr("src","genimg/empty.png");
-                $("#prodiv"+i).data("rowid","");
-				continue;
+
+	var search = false;
+	var eventKeyCode = window.event.keyCode;
+	if (typeof keyCodeForEnter === 'undefined' || eventKeyCode == keyCodeForEnter) {
+		search = true;
+	}
+
+	if (search === true) {
+		pageproducts = 0;
+		jQuery(".wrapper2 .catwatermark").hide();
+		$.getJSON('<?php echo DOL_URL_ROOT ?>/takepos/ajax/ajax.php?action=search&term=' + $('#search').val(), function (data) {
+			for (i = 0; i < <?php echo $MAXPRODUCT ?>; i++) {
+				if (typeof (data[i]) == "undefined") {
+					$("#prodesc" + i).text("");
+					$("#proimg" + i).attr("src", "genimg/empty.png");
+					$("#prodiv" + i).data("rowid", "");
+					continue;
+				}
+				var titlestring = '<?php echo dol_escape_js($langs->transnoentities('Ref') . ': '); ?>' + data[i]['ref'];
+				$("#prodesc" + i).text(data[i]['label']);
+				$("#prodivdesc" + i).show();
+				$("#proimg" + i).attr("title", titlestring);
+				$("#proimg" + i).attr("src", "genimg/index.php?query=pro&id=" + data[i]['rowid']);
+				$("#prodiv" + i).data("rowid", data[i]['rowid']);
+				$("#prodiv" + i).data("iscat", 0);
 			}
-			var titlestring = '<?php echo dol_escape_js($langs->transnoentities('Ref').': '); ?>'+data[i]['ref'];
-			$("#prodesc"+i).text(data[i]['label']);
-			$("#prodivdesc"+i).show();
-			$("#proimg"+i).attr("title", titlestring);
-			$("#proimg"+i).attr("src", "genimg/?query=pro&id="+data[i]['rowid']);
-			$("#prodiv"+i).data("rowid", data[i]['rowid']);
-			$("#prodiv"+i).data("iscat", 0);
-		}
-	}).always(function() {
-		if(key==13) ClickProduct(0);
-  });
+		}).always(function (data) {
+			if ($('#search').val().length > 0 && data.length == 1) ClickProduct(0);
+		});
+	}
 }
 
 function Edit(number) {
@@ -648,7 +679,8 @@ $( document ).ready(function() {
 
 <body class="bodytakepos" style="overflow: hidden;">
 <?php
-if ($conf->global->TAKEPOS_NUM_TERMINALS != "1" && $_SESSION["takeposterminal"] == "") print '<div id="dialog-info" title="TakePOS">'.$langs->trans('TerminalSelect').'</div>';
+print '<div class="hidden" id="dialog-info" title="TakePOS">'.$langs->trans('TerminalSelect').'</div>';
+$keyCodeForEnter = $conf->global->{'CASHDESK_READER_KEYCODE_FOR_ENTER'.$_SESSION['takeposterminal']} > 0 ? $conf->global->{'CASHDESK_READER_KEYCODE_FOR_ENTER'.$_SESSION['takeposterminal']} : '';
 ?>
 <div class="container">
 
@@ -658,20 +690,27 @@ if (empty($conf->global->TAKEPOS_HIDE_HEAD_BAR)) {
 	<div class="header">
 		<div class="topnav">
 			<div class="topnav-left">
-			<a onclick="TerminalsDialog();">
+			<a class="topnav-terminalhour" onclick="TerminalsDialog();">
 			<?php echo $langs->trans("Terminal")." ";
-			if ($_SESSION["takeposterminal"] == "") echo "1"; else echo $_SESSION["takeposterminal"];
-			echo " - ".dol_print_date(dol_now(), "dayhour");
+			if ($_SESSION["takeposterminal"] == "") echo "1";
+			else echo $_SESSION["takeposterminal"];
+			echo '<span class="hideonsmartphone"> - '.dol_print_date(dol_now(), "day").'</span>';
 			?>
 			</a>
-			<a onclick="Customer();"><?php echo $langs->trans("Customer"); ?></a>
+			<a id="customer" onclick="Customer();"></a>
 			</div>
 			<div class="topnav-right">
-				<input type="text" id="search" name="search" onkeyup="Search2();"  placeholder="<?php echo $langs->trans("Search"); ?>" autofocus>
+				<div class="login_block_other">
+				<input type="text" id="search" name="search" onkeyup="Search2(<?php echo $keyCodeForEnter; ?>);"  placeholder="<?php echo $langs->trans("Search"); ?>" autofocus>
 				<a onclick="ClearSearch();"><span class="fa fa-backspace"></span></a>
-				<a onclick="window.location.href='<?php echo DOL_URL_ROOT; ?>';"><span class="fas fa-sign-out-alt"></span></a>
-				<a onclick="window.location.href='<?php echo DOL_URL_ROOT; ?>/user/logout.php';"><span class="fas fa-user"></span></a>
+				<a onclick="window.location.href='<?php echo DOL_URL_ROOT; ?>';"><span class="fas fa-home"></span></a>
 				<a onclick="FullScreen();"><span class="fa fa-expand-arrows-alt"></span></a>
+				</div>
+				<div class="login_block_user">
+				<?php
+				print top_menu_user(1, DOL_URL_ROOT.'/user/logout.php');
+				?>
+				</div>
 			</div>
 		</div>
 	</div>
@@ -752,6 +791,7 @@ if (!empty($conf->global->TAKEPOS_HIDE_HEAD_BAR)) {
 }
 $menus[$r++] = array('title'=>'<span class="fa fa-history paddingrightonly"></span><div class="trunc">'.$langs->trans("History").'</div>', 'action'=>'History();');
 $menus[$r++] = array('title'=>'<span class="fa fa-cube paddingrightonly"></span><div class="trunc">'.$langs->trans("FreeZone").'</div>', 'action'=>'FreeZone();');
+$menus[$r++] = array('title'=>'<span class="fa fa-percent paddingrightonly"></span><div class="trunc">'.$langs->trans("Reduction").'</div>', 'action'=>'Reduction();');
 $menus[$r++] = array('title'=>'<span class="far fa-money-bill-alt paddingrightonly"></span><div class="trunc">'.$langs->trans("Payment").'</div>', 'action'=>'CloseBill();');
 
 if ($conf->global->TAKEPOS_DIRECT_PAYMENT) {
@@ -768,13 +808,13 @@ if ($conf->global->TAKEPOS_BAR_RESTAURANT)
 	//add temp ticket button
 	if ($conf->global->TAKEPOS_BAR_RESTAURANT)
 	{
-	    if ($conf->global->TAKEPOSCONNECTOR) {
+	    if ($conf->global->TAKEPOS_PRINT_METHOD == "takeposconnector"){
 			$menus[$r++] = array('title'=>'<span class="fa fa-receipt paddingrightonly"></span><div class="trunc">'.$langs->trans("Receipt").'</div>', 'action'=>'TakeposPrinting(placeid);');
 		} else {
 			$menus[$r++] = array('title'=>'<span class="fa fa-receipt paddingrightonly"></span><div class="trunc">'.$langs->trans("Receipt").'</div>', 'action'=>'Print(placeid);');
 		}
 	}
-	if ($conf->global->TAKEPOSCONNECTOR && $conf->global->TAKEPOS_ORDER_NOTES == 1)
+	if ($conf->global->TAKEPOS_PRINT_METHOD == "takeposconnector" && $conf->global->TAKEPOS_ORDER_NOTES == 1)
 	{
 	    $menus[$r++] = array('title'=>'<span class="fa fa-receipt paddingrightonly"></span><div class="trunc">'.$langs->trans("OrderNotes").'</div>', 'action'=>'TakeposOrderNotes();');
 	}
@@ -784,10 +824,10 @@ if ($conf->global->TAKEPOS_BAR_RESTAURANT)
 	}
 }
 
-if ($conf->global->TAKEPOSCONNECTOR) {
+if ($conf->global->TAKEPOS_PRINT_METHOD == "takeposconnector"){
     $menus[$r++] = array('title'=>'<span class="fa fa-receipt paddingrightonly"></span><div class="trunc">'.$langs->trans("DOL_OPEN_DRAWER").'</div>', 'action'=>'OpenDrawer();');
 }
-if ($conf->global->TAKEPOS_DOLIBARR_PRINTER) {
+if ($conf->global->TAKEPOS_PRINT_METHOD == "receiptprinter") {
     $menus[$r++] = array(
 		'title' => '<span class="fa fa-receipt paddingrightonly"></span><div class="trunc">'.$langs->trans("DOL_OPEN_DRAWER").'</div>',
 		'action' => 'DolibarrOpenDrawer();',
@@ -801,8 +841,6 @@ if (!empty($reshook)) {
 }
 
 if ($r % 3 == 2) $menus[$r++] = array('title'=>'', 'style'=>'visibility: hidden;');
-
-$menus[$r++] = array('title'=>'<span class="fa fa-home paddingrightonly"></span><div class="trunc">'.$langs->trans("BackOffice").'</div>', 'action'=>'window.open(\''.(DOL_URL_ROOT ? DOL_URL_ROOT : '/').'\', \'_backoffice\');');
 
 if (!empty($conf->global->TAKEPOS_HIDE_HEAD_BAR)) {
 	$menus[$r++] = array('title'=>'<span class="fa fa-sign-out-alt paddingrightonly"></span><div class="trunc">'.$langs->trans("Logout").'</div>', 'action'=>'window.location.href=\''.DOL_URL_ROOT.'/user/logout.php\';');
@@ -828,7 +866,7 @@ if (!empty($conf->global->TAKEPOS_HIDE_HEAD_BAR)) {
 		if (!empty($conf->global->TAKEPOS_HIDE_HEAD_BAR)) {
 			print '<!-- Show the search input text -->'."\n";
 			print '<div class="margintoponly">';
-			print '<input type="text" id="search" name="search" onkeyup="Search2();" style="width:80%;width:calc(100% - 51px);font-size: 150%;" placeholder="'.$langs->trans("Search").'" autofocus> ';
+			print '<input type="text" id="search" name="search" onkeyup="Search2('.$keyCodeForEnter.');" style="width:80%;width:calc(100% - 51px);font-size: 150%;" placeholder="'.$langs->trans("Search").'" autofocus> ';
 			print '<a class="marginleftonly hideonsmartphone" onclick="ClearSearch();">'.img_picto('', 'searchclear').'</a>';
 			print '</div>';
 		}
