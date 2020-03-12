@@ -213,7 +213,7 @@ if ($action == 'viewgraph') {
 	}
 }
 
-// Get all possible values of fields when a 'group by' is set and save this into $arrayofvaluesforgroupby
+// Get all possible values of fields when a 'group by' is set, and save this into $arrayofvaluesforgroupby
 if (is_array($search_groupby) && count($search_groupby)) {
 	foreach($search_groupby as $gkey => $gval) {
 		$gvalwithoutprefix = preg_replace('/^[a-z]+\./', '', $gval);
@@ -262,6 +262,8 @@ if (is_array($search_groupby) && count($search_groupby)) {
 			}
 			if (!empty($object->fields[$gvalwithoutprefix]['arrayofkeyval'])) {
 				$valuetranslated = $object->fields[$gvalwithoutprefix]['arrayofkeyval'][$obj->val];
+				if (is_null($valuetranslated)) $valuetranslated =  $langs->transnoentitiesnoconv("UndefinedKey");
+				$valuetranslated = $langs->trans($valuetranslated);
 			}
 
 			$arrayofvaluesforgroupby['g_'.$gkey][$keytouse] = $valuetranslated;
