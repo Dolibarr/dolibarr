@@ -743,7 +743,7 @@ class DolGraph
 		if (!empty($this->shownographyet))
 		{
 		    $this->stringtoshow .= '<div style="width:'.$this->width.'px;height:'.$this->height.'px;" class="nographyet"></div>';
-		    $this->stringtoshow .= '<div class="nographyettext">'.$langs->trans("NotEnoughDataYet").'</div>';
+		    $this->stringtoshow .= '<div class="nographyettext margintoponly">'.$langs->trans("NotEnoughDataYet").'...</div>';
 		    return;
 		}
 
@@ -1033,7 +1033,7 @@ class DolGraph
 		if (!empty($this->shownographyet))
 		{
 			$this->stringtoshow .= '<div style="width:'.$this->width.(strpos($this->width, '%') > 0 ? '': 'px').'; height:'.$this->height.'px;" class="nographyet"></div>';
-			$this->stringtoshow .= '<div class="nographyettext">'.$langs->trans("NotEnoughDataYet").'</div>';
+			$this->stringtoshow .= '<div class="nographyettext margintoponly">'.$langs->trans("NotEnoughDataYet").'...</div>';
 			return;
 		}
 
@@ -1313,11 +1313,11 @@ class DolGraph
 		if ($shownographyet)
 		{
 			$s = '<div class="nographyet" style="width:'.(preg_match('/%/', $this->width) ? $this->width : $this->width.'px').'; height:'.(preg_match('/%/', $this->height) ? $this->height : $this->height.'px').';"></div>';
-			$s .= '<div class="nographyettext">';
+			$s .= '<div class="nographyettext margintoponly">';
 			if (is_numeric($shownographyet)) {
-                $s .= $langs->trans("NotEnoughDataYet");
+                $s .= $langs->trans("NotEnoughDataYet").'...';
 			} else {
-			    $s .= $shownographyet;
+			    $s .= $shownographyet.'...';
 			}
 			$s .= '</div>';
 			return $s;
