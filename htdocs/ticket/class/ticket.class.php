@@ -1696,7 +1696,7 @@ class Ticket extends CommonObject
 
         // Cache already loaded
 
-        $sql = "SELECT id as rowid, fk_user_author, datec, label, note as message, visibility";
+        $sql = "SELECT id as rowid, fk_user_author, datec, label, note as message, code";
         $sql .= " FROM ".MAIN_DB_PREFIX."actioncomm";
         $sql .= " WHERE fk_element = ".(int) $this->id;
         $sql .= " AND elementtype = 'ticket'";
@@ -1714,7 +1714,7 @@ class Ticket extends CommonObject
                 $this->cache_msgs_ticket[$i]['datec'] = $this->db->jdate($obj->datec);
                 $this->cache_msgs_ticket[$i]['subject'] = $obj->label;
                 $this->cache_msgs_ticket[$i]['message'] = $obj->message;
-                $this->cache_msgs_ticket[$i]['private'] = ($obj->visibility == 'private' ? 1 : 0);
+                $this->cache_msgs_ticket[$i]['private'] = ($obj->code == 'TICKET_MSG_PRIVATE' ? 1 : 0);
                 $i++;
             }
             return $num;
