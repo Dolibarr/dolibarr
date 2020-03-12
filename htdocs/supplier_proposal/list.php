@@ -307,7 +307,7 @@ if ($search_author)  $sql .= natural_search('u.login', $search_author);
 if ($search_montant_ht) $sql .= natural_search('sp.total_ht=', $search_montant_ht, 1);
 if ($search_montant_vat != '') $sql .= natural_search("sp.tva", $search_montant_vat, 1);
 if ($search_montant_ttc != '') $sql .= natural_search("sp.total", $search_montant_ttc, 1);
-if ($search_multicurrency_code != '')        $sql .= ' AND sp.multicurrency_code = "' . $db->escape($search_multicurrency_code) . '"';
+if ($search_multicurrency_code != '')        $sql .= ' AND sp.multicurrency_code = "'.$db->escape($search_multicurrency_code).'"';
 if ($search_multicurrency_tx != '')          $sql .= natural_search('sp.multicurrency_tx', $search_multicurrency_tx, 1);
 if ($search_multicurrency_montant_ht != '')  $sql .= natural_search('sp.multicurrency_total_ht', $search_multicurrency_montant_ht, 1);
 if ($search_multicurrency_montant_vat != '') $sql .= natural_search('sp.multicurrency_total_tva', $search_multicurrency_montant_vat, 1);
@@ -719,121 +719,121 @@ if ($resql)
 			}
 			// Other picto tool
 			print '<td width="16" class="right nobordernopadding hideonsmartphone">';
-			$filename=dol_sanitizeFileName($obj->ref);
-			$filedir=$conf->supplier_proposal->dir_output . '/' . dol_sanitizeFileName($obj->ref);
-			$urlsource=$_SERVER['PHP_SELF'].'?id='.$obj->rowid;
+			$filename = dol_sanitizeFileName($obj->ref);
+			$filedir = $conf->supplier_proposal->dir_output.'/'.dol_sanitizeFileName($obj->ref);
+			$urlsource = $_SERVER['PHP_SELF'].'?id='.$obj->rowid;
 			print $formfile->getDocumentsLink($objectstatic->element, $filename, $filedir);
 			print '</td></tr></table>';
 
 			print "</td>\n";
-			if (! $i) $totalarray['nbfield']++;
+			if (!$i) $totalarray['nbfield']++;
 		}
 
 		$url = DOL_URL_ROOT.'/comm/card.php?socid='.$obj->socid;
 
 		// Company
-		$companystatic->id=$obj->socid;
-		$companystatic->name=$obj->name;
-		$companystatic->client=$obj->client;
-		$companystatic->code_client=$obj->code_client;
+		$companystatic->id = $obj->socid;
+		$companystatic->name = $obj->name;
+		$companystatic->client = $obj->client;
+		$companystatic->code_client = $obj->code_client;
 
 		// Thirdparty
-		if (! empty($arrayfields['s.nom']['checked']))
+		if (!empty($arrayfields['s.nom']['checked']))
 		{
 			print '<td class="tdoverflowmax200">';
 			print $companystatic->getNomUrl(1, 'customer');
 			print '</td>';
-			if (! $i) $totalarray['nbfield']++;
+			if (!$i) $totalarray['nbfield']++;
 		}
 
 		// Town
-		if (! empty($arrayfields['s.town']['checked']))
+		if (!empty($arrayfields['s.town']['checked']))
 		{
 			print '<td class="nocellnopadd">';
 			print $obj->town;
 			print '</td>';
-			if (! $i) $totalarray['nbfield']++;
+			if (!$i) $totalarray['nbfield']++;
 		}
 		// Zip
-		if (! empty($arrayfields['s.zip']['checked']))
+		if (!empty($arrayfields['s.zip']['checked']))
 		{
 			print '<td class="nocellnopadd">';
 			print $obj->zip;
 			print '</td>';
-			if (! $i) $totalarray['nbfield']++;
+			if (!$i) $totalarray['nbfield']++;
 		}
 		// State
-		if (! empty($arrayfields['state.nom']['checked']))
+		if (!empty($arrayfields['state.nom']['checked']))
 		{
 			print "<td>".$obj->state_name."</td>\n";
-			if (! $i) $totalarray['nbfield']++;
+			if (!$i) $totalarray['nbfield']++;
 		}
 		// Country
-		if (! empty($arrayfields['country.code_iso']['checked']))
+		if (!empty($arrayfields['country.code_iso']['checked']))
 		{
 			print '<td class="center">';
-			$tmparray=getCountry($obj->fk_pays, 'all');
+			$tmparray = getCountry($obj->fk_pays, 'all');
 			print $tmparray['label'];
 			print '</td>';
-			if (! $i) $totalarray['nbfield']++;
+			if (!$i) $totalarray['nbfield']++;
 		}
 		// Type ent
-		if (! empty($arrayfields['typent.code']['checked']))
+		if (!empty($arrayfields['typent.code']['checked']))
 		{
 			print '<td class="center">';
-			if (count($typenArray)==0) $typenArray = $formcompany->typent_array(1);
+			if (count($typenArray) == 0) $typenArray = $formcompany->typent_array(1);
 			print $typenArray[$obj->typent_code];
 			print '</td>';
-			if (! $i) $totalarray['nbfield']++;
+			if (!$i) $totalarray['nbfield']++;
 		}
 
 		// Date proposal
-		if (! empty($arrayfields['sp.date_valid']['checked']))
+		if (!empty($arrayfields['sp.date_valid']['checked']))
 		{
 			print '<td class="center">';
 			print dol_print_date($db->jdate($obj->date_valid), 'day');
 			print "</td>\n";
-			if (! $i) $totalarray['nbfield']++;
+			if (!$i) $totalarray['nbfield']++;
 		}
 
 		// Date delivery
-		if (! empty($arrayfields['sp.date_livraison']['checked']))
+		if (!empty($arrayfields['sp.date_livraison']['checked']))
 		{
 			print '<td class="center">';
 			print dol_print_date($db->jdate($obj->dp), 'day');
 			print "</td>\n";
-			if (! $i) $totalarray['nbfield']++;
+			if (!$i) $totalarray['nbfield']++;
 		}
 
 		// Amount HT
-		if (! empty($arrayfields['sp.total_ht']['checked']))
+		if (!empty($arrayfields['sp.total_ht']['checked']))
 		{
 			  print '<td class="right">'.price($obj->total_ht)."</td>\n";
-			  if (! $i) $totalarray['nbfield']++;
-			  if (! $i) $totalarray['pos'][$totalarray['nbfield']]='sp.total_ht';
+			  if (!$i) $totalarray['nbfield']++;
+			  if (!$i) $totalarray['pos'][$totalarray['nbfield']] = 'sp.total_ht';
 			  $totalarray['val']['sp.total_ht'] += $obj->total_ht;
 		}
 		// Amount VAT
-		if (! empty($arrayfields['sp.total_vat']['checked']))
+		if (!empty($arrayfields['sp.total_vat']['checked']))
 		{
 			print '<td class="right">'.price($obj->total_vat)."</td>\n";
-			if (! $i) $totalarray['nbfield']++;
-			if (! $i) $totalarray['pos'][$totalarray['nbfield']]='sp.total_vat';
+			if (!$i) $totalarray['nbfield']++;
+			if (!$i) $totalarray['pos'][$totalarray['nbfield']] = 'sp.total_vat';
 			$totalarray['val']['sp.total_vat'] += $obj->total_vat;
 		}
 		// Amount TTC
-		if (! empty($arrayfields['sp.total_ttc']['checked']))
+		if (!empty($arrayfields['sp.total_ttc']['checked']))
 		{
 			print '<td class="right">'.price($obj->total_ttc)."</td>\n";
-			if (! $i) $totalarray['nbfield']++;
-			if (! $i) $totalarray['pos'][$totalarray['nbfield']]='sp.total_ttc';
+			if (!$i) $totalarray['nbfield']++;
+			if (!$i) $totalarray['pos'][$totalarray['nbfield']] = 'sp.total_ttc';
 			$totalarray['val']['sp.total_ttc'] += $obj->total_ttc;
 		}
 
 		// Currency
 		if (!empty($arrayfields['sp.multicurrency_code']['checked']))
 		{
-			  print '<td class="nowrap">'.$obj->multicurrency_code . ' - ' . $langs->trans('Currency' . $obj->multicurrency_code)."</td>\n";
+			  print '<td class="nowrap">'.$obj->multicurrency_code.' - '.$langs->trans('Currency'.$obj->multicurrency_code)."</td>\n";
 			  if (!$i) $totalarray['nbfield']++;
 		}
 
@@ -841,7 +841,7 @@ if ($resql)
 		if (!empty($arrayfields['sp.multicurrency_tx']['checked']))
 		{
 			  print '<td class="nowrap">';
-			  $form->form_multicurrency_rate($_SERVER['PHP_SELF'] . '?id=' . $obj->rowid, $obj->multicurrency_tx, 'none', $obj->multicurrency_code);
+			  $form->form_multicurrency_rate($_SERVER['PHP_SELF'].'?id='.$obj->rowid, $obj->multicurrency_tx, 'none', $obj->multicurrency_code);
 			  print "</td>\n";
 			  if (!$i) $totalarray['nbfield']++;
 		}
@@ -864,58 +864,58 @@ if ($resql)
 			if (!$i) $totalarray['nbfield']++;
 		}
 
-		$userstatic->id=$obj->fk_user_author;
-		$userstatic->login=$obj->login;
+		$userstatic->id = $obj->fk_user_author;
+		$userstatic->login = $obj->login;
 
 		// Author
-		if (! empty($arrayfields['u.login']['checked']))
+		if (!empty($arrayfields['u.login']['checked']))
 		{
 			print '<td class="center">';
 			if ($userstatic->id) print $userstatic->getLoginUrl(1);
 			else print '&nbsp;';
 			print "</td>\n";
-			if (! $i) $totalarray['nbfield']++;
+			if (!$i) $totalarray['nbfield']++;
 		}
 
 		// Extra fields
 		include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_print_fields.tpl.php';
 		// Fields from hook
-		$parameters=array('arrayfields'=>$arrayfields, 'obj'=>$obj);
-		$reshook=$hookmanager->executeHooks('printFieldListValue', $parameters);    // Note that $action and $object may have been modified by hook
+		$parameters = array('arrayfields'=>$arrayfields, 'obj'=>$obj);
+		$reshook = $hookmanager->executeHooks('printFieldListValue', $parameters); // Note that $action and $object may have been modified by hook
 		print $hookmanager->resPrint;
 		// Date creation
-		if (! empty($arrayfields['sp.datec']['checked']))
+		if (!empty($arrayfields['sp.datec']['checked']))
 		{
 			print '<td class="center nowrap">';
 			print dol_print_date($db->jdate($obj->date_creation), 'dayhour', 'tzuser');
 			print '</td>';
-			if (! $i) $totalarray['nbfield']++;
+			if (!$i) $totalarray['nbfield']++;
 		}
 		// Date modification
-		if (! empty($arrayfields['sp.tms']['checked']))
+		if (!empty($arrayfields['sp.tms']['checked']))
 		{
 			print '<td class="center nowrap">';
 			print dol_print_date($db->jdate($obj->date_update), 'dayhour', 'tzuser');
 			print '</td>';
-			if (! $i) $totalarray['nbfield']++;
+			if (!$i) $totalarray['nbfield']++;
 		}
 		// Status
-		if (! empty($arrayfields['sp.fk_statut']['checked']))
+		if (!empty($arrayfields['sp.fk_statut']['checked']))
 		{
 			print '<td class="right">'.$objectstatic->LibStatut($obj->fk_statut, 5)."</td>\n";
-			if (! $i) $totalarray['nbfield']++;
+			if (!$i) $totalarray['nbfield']++;
 		}
 
 		// Action column
 		print '<td class="nowrap center">';
 		if ($massactionbutton || $massaction)   // If we are in select mode (massactionbutton defined) or if we have already selected and sent an action ($massaction) defined
 		{
-			$selected=0;
-			if (in_array($obj->rowid, $arrayofselected)) $selected=1;
-			print '<input id="cb'.$obj->rowid.'" class="flat checkforselect" type="checkbox" name="toselect[]" value="'.$obj->rowid.'"'.($selected?' checked="checked"':'').'>';
+			$selected = 0;
+			if (in_array($obj->rowid, $arrayofselected)) $selected = 1;
+			print '<input id="cb'.$obj->rowid.'" class="flat checkforselect" type="checkbox" name="toselect[]" value="'.$obj->rowid.'"'.($selected ? ' checked="checked"' : '').'>';
 		}
 		print '</td>';
-		if (! $i) $totalarray['nbfield']++;
+		if (!$i) $totalarray['nbfield']++;
 
 		print "</tr>\n";
 

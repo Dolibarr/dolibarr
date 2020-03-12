@@ -480,7 +480,7 @@ if ($result) {
 			}
 		}
 
-		if (! empty($objp->code_buy_p)) {
+		if (!empty($objp->code_buy_p)) {
 			// Value was defined previously
 		} else {
 			$code_buy_p_notset = 'color:orange';
@@ -561,7 +561,7 @@ if ($result) {
 		// Suggested accounting account
 		print '<td>';
 		$suggestedid = $objp->aarowid_suggest;
-		if (empty($suggestedid) && empty($objp->code_buy_p) && ! empty($objp->code_buy_l) && empty($conf->global->ACCOUNTANCY_DO_NOT_AUTOFILL_ACCOUNT_WITH_GENERIC))
+		if (empty($suggestedid) && empty($objp->code_buy_p) && !empty($objp->code_buy_l) && empty($conf->global->ACCOUNTANCY_DO_NOT_AUTOFILL_ACCOUNT_WITH_GENERIC))
 		{
 			if (empty($accountingaccount_codetotid_cache[$objp->code_buy_l]))
 			{
@@ -597,7 +597,7 @@ if ($result) {
 	print $db->error();
 }
 if ($db->type == 'mysqli') {
-	$db->query("SET SQL_BIG_SELECTS=0");  // Enable MAX_JOIN_SIZE limitation
+	$db->query("SET SQL_BIG_SELECTS=0"); // Enable MAX_JOIN_SIZE limitation
 }
 
 // Add code to auto check the box when we select an account

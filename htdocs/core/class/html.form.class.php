@@ -2907,7 +2907,7 @@ class Form
 							$objp->fprice = $price_result;
 							if ($objp->quantity >= 1)
 							{
-								$objp->unitprice = $objp->fprice / $objp->quantity;	// Replace dynamically unitprice
+								$objp->unitprice = $objp->fprice / $objp->quantity; // Replace dynamically unitprice
 							}
 						}
 					}

@@ -2181,7 +2181,7 @@ class Product extends CommonObject
                 $this->barcode_type                    = $obj->fk_barcode_type;
 
                 $this->accountancy_code_buy				= $obj->accountancy_code_buy;
-                $this->accountancy_code_buy_intra		= $obj->accountancy_code_buy_intra;
+                $this->accountancy_code_buy_intra = $obj->accountancy_code_buy_intra;
                 $this->accountancy_code_buy_export		= $obj->accountancy_code_buy_export;
                 $this->accountancy_code_sell			= $obj->accountancy_code_sell;
                 $this->accountancy_code_sell_intra		= $obj->accountancy_code_sell_intra;

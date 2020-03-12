@@ -378,7 +378,7 @@ if ($nolinesbefore) {
 	<td class="nobottom linecolqty right"><input type="text" size="2" name="qty" id="qty" class="flat right" value="<?php echo (isset($_POST["qty"]) ?GETPOST("qty", 'alpha', 2) : 1); ?>">
 	</td>
 	<?php
-	if (! empty($conf->global->PRODUCT_USE_UNITS)) {
+	if (!empty($conf->global->PRODUCT_USE_UNITS)) {
 		$coldisplay++;
 		print '<td class="nobottom linecoluseunit left">';
 		print $form->selectUnits($line->fk_unit, "units");
@@ -636,7 +636,7 @@ if (!empty($usemargins) && $user->rights->margins->creer)
 			{
 				console.log("We are in a price per qty context, we do not call ajax/product");
 			} else {
-				<?php if (! empty($conf->global->PRODUIT_CUSTOMER_PRICES_BY_QTY) || ! empty($conf->global->PRODUIT_CUSTOMER_PRICES_BY_QTY_MULTIPRICES)) { ?>
+				<?php if (!empty($conf->global->PRODUIT_CUSTOMER_PRICES_BY_QTY) || !empty($conf->global->PRODUIT_CUSTOMER_PRICES_BY_QTY_MULTIPRICES)) { ?>
 					if (isNaN(pbq)) { console.log("We use experimental option PRODUIT_CUSTOMER_PRICES_BY_QTY or PRODUIT_CUSTOMER_PRICES_BY_QTY but we are not yet able to get the id of pbq from product combo list, so load of price may be 0 if product has differet prices"); }
 				<?php } ?>
 				// Get the HT price for the product and display it

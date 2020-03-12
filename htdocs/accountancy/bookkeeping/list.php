@@ -204,7 +204,7 @@ if (empty($reshook))
         $search_debit = '';
         $search_credit = '';
         $search_lettering_code = '';
-		$search_not_reconciled='';
+		$search_not_reconciled = '';
     }
 
     // Must be after the remove filter action, before the export.
@@ -276,32 +276,32 @@ if (empty($reshook))
     if (!empty($search_date_creation_start)) {
         $filter['t.date_creation>='] = $search_date_creation_start;
         $tmp = dol_getdate($search_date_creation_start);
-        $param .= '&date_creation_startmonth=' . urlencode($tmp['mon']) . '&date_creation_startday=' . urlencode($tmp['mday']) . '&date_creation_startyear=' . urlencode($tmp['year']);
+        $param .= '&date_creation_startmonth='.urlencode($tmp['mon']).'&date_creation_startday='.urlencode($tmp['mday']).'&date_creation_startyear='.urlencode($tmp['year']);
     }
     if (!empty($search_date_creation_end)) {
         $filter['t.date_creation<='] = $search_date_creation_end;
         $tmp = dol_getdate($search_date_creation_end);
-        $param .= '&date_creation_endmonth=' .urlencode($tmp['mon']) . '&date_creation_endday=' . urlencode($tmp['mday']) . '&date_creation_endyear=' . urlencode($tmp['year']);
+        $param .= '&date_creation_endmonth='.urlencode($tmp['mon']).'&date_creation_endday='.urlencode($tmp['mday']).'&date_creation_endyear='.urlencode($tmp['year']);
     }
     if (!empty($search_date_modification_start)) {
         $filter['t.tms>='] = $search_date_modification_start;
         $tmp = dol_getdate($search_date_modification_start);
-        $param .= '&date_modification_startmonth=' . urlencode($tmp['mon']) . '&date_modification_startday=' . urlencode($tmp['mday']) . '&date_modification_startyear=' . urlencode($tmp['year']);
+        $param .= '&date_modification_startmonth='.urlencode($tmp['mon']).'&date_modification_startday='.urlencode($tmp['mday']).'&date_modification_startyear='.urlencode($tmp['year']);
     }
     if (!empty($search_date_modification_end)) {
         $filter['t.tms<='] = $search_date_modification_end;
         $tmp = dol_getdate($search_date_modification_end);
-        $param .= '&date_modification_endmonth=' . urlencode($tmp['mon']) . '&date_modification_endday=' . urlencode($tmp['mday']) . '&date_modification_endyear=' . urlencode($tmp['year']);
+        $param .= '&date_modification_endmonth='.urlencode($tmp['mon']).'&date_modification_endday='.urlencode($tmp['mday']).'&date_modification_endyear='.urlencode($tmp['year']);
     }
     if (!empty($search_date_export_start)) {
         $filter['t.date_export>='] = $search_date_export_start;
         $tmp = dol_getdate($search_date_export_start);
-        $param .= '&date_export_startmonth=' . urlencode($tmp['mon']) . '&date_export_startday=' . urlencode($tmp['mday']) . '&date_export_startyear=' . urlencode($tmp['year']);
+        $param .= '&date_export_startmonth='.urlencode($tmp['mon']).'&date_export_startday='.urlencode($tmp['mday']).'&date_export_startyear='.urlencode($tmp['year']);
     }
     if (!empty($search_date_export_end)) {
         $filter['t.date_export<='] = $search_date_export_end;
         $tmp = dol_getdate($search_date_export_end);
-        $param .= '&date_export_endmonth=' . urlencode($tmp['mon']) . '&date_export_endday=' . urlencode($tmp['mday']) . '&date_export_endyear=' . urlencode($tmp['year']);
+        $param .= '&date_export_endmonth='.urlencode($tmp['mon']).'&date_export_endday='.urlencode($tmp['mday']).'&date_export_endyear='.urlencode($tmp['year']);
     }
     if (!empty($search_debit)) {
         $filter['t.debit'] = $search_debit;
@@ -315,9 +315,9 @@ if (empty($reshook))
         $filter['t.lettering_code'] = $search_lettering_code;
         $param .= '&search_lettering_code='.urlencode($search_lettering_code);
     }
-	if (! empty($search_not_reconciled)) {
+	if (!empty($search_not_reconciled)) {
 		$filter['t.reconciled_option'] = $search_not_reconciled;
-		$param .= '&search_not_reconciled=' . urlencode($search_not_reconciled);
+		$param .= '&search_not_reconciled='.urlencode($search_not_reconciled);
 	}
 }
 
@@ -768,7 +768,7 @@ if (!empty($arrayfields['t.lettering_code']['checked']))
 {
 	print '<td class="liste_titre center">';
 	print '<input type="text" size="3" class="flat" name="search_lettering_code" value="'.$search_lettering_code.'"/>';
-	print '<br><span class="nowrap"><input type="checkbox" name="search_reconciled_option" value="notreconciled"'.($search_not_reconciled == 'notreconciled'?' checked':'').'>'.$langs->trans("NotReconciled").'</span>';
+	print '<br><span class="nowrap"><input type="checkbox" name="search_reconciled_option" value="notreconciled"'.($search_not_reconciled == 'notreconciled' ? ' checked' : '').'>'.$langs->trans("NotReconciled").'</span>';
 	print '</td>';
 }
 // Code journal
@@ -953,9 +953,9 @@ while ($i < min($num, $limit))
             $objectstatic->fetch($line->fk_doc);
             //$modulepart = 'expensereport';
 
-            $filename=dol_sanitizeFileName($line->doc_ref);
-            $filedir=$conf->expensereport->dir_output . '/' . dol_sanitizeFileName($line->doc_ref);
-            $urlsource=$_SERVER['PHP_SELF'].'?id='.$objectstatic->id;
+            $filename = dol_sanitizeFileName($line->doc_ref);
+            $filedir = $conf->expensereport->dir_output.'/'.dol_sanitizeFileName($line->doc_ref);
+            $urlsource = $_SERVER['PHP_SELF'].'?id='.$objectstatic->id;
             $documentlink = $formfile->getDocumentsLink($objectstatic->element, $filename, $filedir);
         }
         else
@@ -969,7 +969,7 @@ while ($i < min($num, $limit))
         // Picto + Ref
         print '<td class="nobordernopadding nowrap">';
 
-        if($line->doc_type == 'customer_invoice' || $line->doc_type == 'supplier_invoice' || $line->doc_type == 'expense_report')
+        if ($line->doc_type == 'customer_invoice' || $line->doc_type == 'supplier_invoice' || $line->doc_type == 'expense_report')
         {
             print $objectstatic->getNomUrl(1, '', 0, 0, '', 0, -1, 1);
             print $documentlink;
