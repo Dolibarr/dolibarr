@@ -205,10 +205,11 @@ class FactureStats extends Stats
 	/**
 	 *	Return nb, amount of predefined product for year
 	 *
-	 *	@param	int		$year	Year to scan
-	 *	@return	array	Array of values
+	 *	@param	int		$year		Year to scan
+     *  @param  int     $limit      Limit
+	 *	@return	array				Array of values
 	 */
-	public function getAllByProduct($year)
+	public function getAllByProduct($year, $limit = 10)
 	{
 		global $user;
 
@@ -222,6 +223,6 @@ class FactureStats extends Stats
         $sql.= $this->db->order('nb', 'DESC');
         //$sql.= $this->db->plimit(20);
 
-		return $this->_getAllByProduct($sql);
+        return $this->_getAllByProduct($sql, $limit);
 	}
 }

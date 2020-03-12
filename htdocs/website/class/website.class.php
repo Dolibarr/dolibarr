@@ -1002,7 +1002,7 @@ class Website extends CommonObject
 			fputs($fp, $line);
 
 			// Warning: We must keep llx_ here. It is a generic SQL.
-			$line = 'INSERT INTO llx_website_page(rowid, fk_page, fk_website, pageurl, aliasalt, title, description, lang, otherlang, image, keywords, status, date_creation, tms, import_key, grabbed_from, type_container, htmlheader, content)';
+			$line = 'INSERT INTO llx_website_page(rowid, fk_page, fk_website, pageurl, aliasalt, title, description, lang, image, keywords, status, date_creation, tms, import_key, grabbed_from, type_container, htmlheader, content)';
 
 			$line .= " VALUES(";
 			$line .= $objectpageold->newid."__+MAX_llx_website_page__, ";
@@ -1013,7 +1013,6 @@ class Website extends CommonObject
 			$line .= "'".$this->db->escape($objectpageold->title)."', ";
 			$line .= "'".$this->db->escape($objectpageold->description)."', ";
 			$line .= "'".$this->db->escape($objectpageold->lang)."', ";
-			$line .= "'".$this->db->escape($objectpageold->otherlang)."', ";
 			$line .= "'".$this->db->escape($objectpageold->image)."', ";
 			$line .= "'".$this->db->escape($objectpageold->keywords)."', ";
 			$line .= "'".$this->db->escape($objectpageold->status)."', ";
@@ -1267,9 +1266,7 @@ class Website extends CommonObject
 	 */
 	public function isMultiLang()
 	{
-		// TODO Can edit list of languages of web site. Return false if there is only 0 or 1 language.
-
-		return true;
+		return (empty($this->otherlang) ? false : true);
 	}
 
 	/**

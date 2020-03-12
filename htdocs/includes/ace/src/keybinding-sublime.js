@@ -1,9 +1,6 @@
-define("ace/keyboard/sublime",["require","exports","module","ace/lib/keys","ace/lib/oop","ace/lib/useragent","ace/keyboard/hash_handler"], function(require, exports, module) {
+define("ace/keyboard/sublime",["require","exports","module","ace/keyboard/hash_handler"], function(require, exports, module) {
 "use strict";
 
-var keyUtil = require("../lib/keys");
-var oop = require("../lib/oop");
-var useragent = require("../lib/useragent");
 var HashHandler = require("../keyboard/hash_handler").HashHandler;
 
 function moveBySubWords(editor, direction, extend) {
@@ -373,7 +370,7 @@ exports.handler.addCommands([{
 },
 {
     bindKey: { mac: "cmd-shift-l", win: "ctrl-shift-l" },
-    name: "splitIntoLines"
+    name: "splitSelectionIntoLines"
 }, {
     bindKey: { mac: "ctrl-cmd-down", win: "ctrl-shift-down" },
     name: "movelinesdown"

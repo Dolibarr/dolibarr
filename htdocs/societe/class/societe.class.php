@@ -134,7 +134,7 @@ class Societe extends CommonObject
 		'name_alias' =>array('type'=>'varchar(128)', 'label'=>'Name alias', 'enabled'=>1, 'visible'=>-1, 'position'=>36, 'showoncombobox'=>1),
 		'entity' =>array('type'=>'integer', 'label'=>'Entity', 'default'=>1, 'enabled'=>1, 'visible'=>-2, 'notnull'=>1, 'position'=>40, 'index'=>1),
 		'ref_ext' =>array('type'=>'varchar(255)', 'label'=>'Ref ext', 'enabled'=>1, 'visible'=>0, 'position'=>45),
-		'ref_int' =>array('type'=>'varchar(60)', 'label'=>'Ref int', 'enabled'=>1, 'visible'=>-1, 'position'=>50),
+		'ref_int' =>array('type'=>'varchar(60)', 'label'=>'Ref int', 'enabled'=>1, 'visible'=>0, 'position'=>50),	// deprecated
 		'code_client' =>array('type'=>'varchar(24)', 'label'=>'Code client', 'enabled'=>1, 'visible'=>-1, 'position'=>55),
 		'code_fournisseur' =>array('type'=>'varchar(24)', 'label'=>'Code fournisseur', 'enabled'=>1, 'visible'=>-1, 'position'=>60),
 		'code_compta' =>array('type'=>'varchar(24)', 'label'=>'Code compta', 'enabled'=>1, 'visible'=>-1, 'position'=>65),
@@ -625,13 +625,13 @@ class Societe extends CommonObject
 
 	/**
 	 * @var string Internal ref
+	 * @deprecated
 	 */
 	public $ref_int;
 
 	/**
 	 * External user reference.
-	 * This is to allow external systems to store their id and make self-developed synchronizing functions easier to
-	 * build.
+	 * This is to allow external systems to store their id and make self-developed synchronizing functions easier to build.
 	 * @var string
 	 */
 	public $ref_ext;
@@ -1454,7 +1454,7 @@ class Societe extends CommonObject
 	 *    @param	int		$rowid			Id of third party to load
 	 *    @param    string	$ref			Reference of third party, name (Warning, this can return several records)
 	 *    @param    string	$ref_ext       	External reference of third party (Warning, this information is a free field not provided by Dolibarr)
-	 *    @param    string	$ref_int       	Internal reference of third party (not used by dolibarr)
+	 *    @param    string	$notused       	Not used
 	 *    @param    string	$idprof1		Prof id 1 of third party (Warning, this can return several records)
 	 *    @param    string	$idprof2		Prof id 2 of third party (Warning, this can return several records)
 	 *    @param    string	$idprof3		Prof id 3 of third party (Warning, this can return several records)
@@ -1465,12 +1465,12 @@ class Societe extends CommonObject
 	 *    @param    string	$ref_alias 		Name_alias of third party (Warning, this can return several records)
 	 *    @return   int						>0 if OK, <0 if KO or if two records found for same ref or idprof, 0 if not found.
 	 */
-    public function fetch($rowid, $ref = '', $ref_ext = '', $ref_int = '', $idprof1 = '', $idprof2 = '', $idprof3 = '', $idprof4 = '', $idprof5 = '', $idprof6 = '', $email = '', $ref_alias = '')
+	public function fetch($rowid, $ref = '', $ref_ext = '', $notused = '', $idprof1 = '', $idprof2 = '', $idprof3 = '', $idprof4 = '', $idprof5 = '', $idprof6 = '', $email = '', $ref_alias = '')
 	{
 		global $langs;
 		global $conf;
 
-		if (empty($rowid) && empty($ref) && empty($ref_ext) && empty($ref_int) && empty($idprof1) && empty($idprof2) && empty($idprof3) && empty($idprof4) && empty($idprof5) && empty($idprof6) && empty($email)) return -1;
+		if (empty($rowid) && empty($ref) && empty($ref_ext) && empty($idprof1) && empty($idprof2) && empty($idprof3) && empty($idprof4) && empty($idprof5) && empty($idprof6) && empty($email)) return -1;
 
 		$sql = 'SELECT s.rowid, s.nom as name, s.name_alias, s.entity, s.ref_ext, s.ref_int, s.address, s.datec as date_creation, s.prefix_comm';
 		$sql .= ', s.status';
@@ -1515,7 +1515,7 @@ class Societe extends CommonObject
 		if ($ref)       $sql .= " AND s.nom = '".$this->db->escape($ref)."'";
 		if ($ref_alias) $sql .= " AND s.name_alias = '".$this->db->escape($ref_alias)."'";
 		if ($ref_ext)   $sql .= " AND s.ref_ext = '".$this->db->escape($ref_ext)."'";
-		if ($ref_int)   $sql .= " AND s.ref_int = '".$this->db->escape($ref_int)."'";
+		if ($notused)   $sql .= " AND s.ref_int = '".$this->db->escape($notused)."'";
 		if ($idprof1)   $sql .= " AND s.siren = '".$this->db->escape($idprof1)."'";
 		if ($idprof2)   $sql .= " AND s.siret = '".$this->db->escape($idprof2)."'";
 		if ($idprof3)   $sql .= " AND s.ape = '".$this->db->escape($idprof3)."'";

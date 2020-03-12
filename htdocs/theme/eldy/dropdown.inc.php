@@ -190,7 +190,7 @@ a.top-menu-dropdown-link {
 
 
 .dropdown-menu .dropdown-header{
-    padding: 5px 10px 10px 10px;
+    padding: 8px 8px 8px 8px;
 }
 
 .dropdown-menu > .user-footer {
@@ -351,7 +351,7 @@ a.top-menu-dropdown-link {
 */
 
 .dropdown-search-input {
-    width: 280px;
+    width: 100%;
     padding: 10px 35px 10px 20px;
 
     background-color: transparent;
@@ -379,4 +379,17 @@ a.top-menu-dropdown-link {
 
 .hidden-search-result{
     display: none !important;
+}
+
+/* smartphone */
+@media only screen and (max-width: 767px)
+{
+	.dropdown-search-input {
+	    width: 100%;
+	}
+
+	.tmenu .dropdown-menu, .login_block .dropdown-menu, .topnav .dropdown-menu {
+	    margin-left: 5px;
+	    right: 0;
+    }
 }

@@ -370,6 +370,59 @@ class WebsitePage extends CommonObject
 	}
 
 	/**
+	 * Count objects in the database.
+	 *
+	 * @param  string      $websiteid    Web site
+	 * @param  array       $filter       Filter array
+	 * @param  string      $filtermode   Filter mode (AND or OR)
+	 * @return int         		         int <0 if KO, array of pages if OK
+	 */
+	public function countAll($websiteid, array $filter = array(), $filtermode = 'AND')
+	{
+		dol_syslog(__METHOD__, LOG_DEBUG);
+
+		$result = 0;
+
+		$sql = 'SELECT COUNT(t.rowid) as nb';
+		$sql .= ' FROM '.MAIN_DB_PREFIX.$this->table_element.' as t';
+		$sql .= ' WHERE t.fk_website = '.$websiteid;
+		// Manage filter
+		$sqlwhere = array();
+		if (count($filter) > 0) {
+			foreach ($filter as $key => $value) {
+				if ($key == 't.rowid' || $key == 't.fk_website') {
+					$sqlwhere[] = $key.'='.$value;
+				} elseif ($key == 'lang' || $key == 't.lang') {
+					$sqlwhere[] = $key." = '".$this->db->escape(substr($value, 0, 2))."'";
+				} else {
+					$sqlwhere[] = $key.' LIKE \'%'.$this->db->escape($value).'%\'';
+				}
+			}
+		}
+		if (count($sqlwhere) > 0) {
+			$sql .= ' AND ('.implode(' '.$filtermode.' ', $sqlwhere).')';
+		}
+
+		$resql = $this->db->query($sql);
+		if ($resql) {
+			$obj = $this->db->fetch_object($resql);
+			if ($obj) {
+				$result = $obj->nb;
+			}
+
+			$this->db->free($resql);
+
+			return $result;
+		} else {
+			$this->error = 'Error '.$this->db->lasterror();
+			$this->errors[] = $this->error;
+			dol_syslog(__METHOD__.' '.join(',', $this->errors), LOG_ERR);
+
+			return -1;
+		}
+	}
+
+	/**
 	 * Update object into database
 	 *
 	 * @param  User $user      User that modifies

@@ -32,6 +32,7 @@ function printDropdownBookmarksList()
     global $conf, $user, $db, $langs;
 
     require_once DOL_DOCUMENT_ROOT.'/bookmarks/class/bookmark.class.php';
+    require_once DOL_DOCUMENT_ROOT.'/core/lib/functions.lib.php';
 
     $langs->load("bookmarks");
 
@@ -60,6 +61,7 @@ function printDropdownBookmarksList()
 
     $searchForm = '<!-- form with POST method by default, will be replaced with GET for external link by js -->'."\n";
     $searchForm .= '<form id="top-menu-action-bookmark" name="actionbookmark" method="POST" action="" onsubmit="return false" >';
+    $searchForm .= '<input type="hidden" name="token" value="'.newToken().'">';
     $searchForm .= '<input name="bookmark" id="top-bookmark-search-input" class="dropdown-search-input" placeholder="'.$langs->trans('Bookmarks').'" autocomplete="off" >';
     $searchForm .= '</form>';
 

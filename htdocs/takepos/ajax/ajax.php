@@ -38,6 +38,10 @@ $action = GETPOST('action', 'alpha');
 $term = GETPOST('term', 'alpha');
 $id = GETPOST('id', 'int');
 
+if (empty($user->rights->takepos->run)) {
+	access_forbidden();
+}
+
 
 /*
  * View
@@ -103,14 +107,14 @@ elseif ($action == 'search' && $term != '') {
 } elseif ($action == "opendrawer" && $term != '') {
     require_once DOL_DOCUMENT_ROOT.'/core/class/dolreceiptprinter.class.php';
     $printer = new dolReceiptPrinter($db);
-    // chek printer for terminal
+    // check printer for terminal
     if ($conf->global->{'TAKEPOS_PRINTER_TO_USE'.$term} > 0) {
         $printer->initPrinter($conf->global->{'TAKEPOS_PRINTER_TO_USE'.$term});
         // open cashdrawer
         $printer->pulse();
         $printer->close();
     }
-} elseif ($action == "printinvoiceticket" && $term != '' && $id > 0) {
+} elseif ($action == "printinvoiceticket" && $term != '' && $id > 0 && ! empty($user->rights->facture->lire)) {
     require_once DOL_DOCUMENT_ROOT.'/core/class/dolreceiptprinter.class.php';
     require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
     $printer = new dolReceiptPrinter($db);
@@ -120,4 +124,13 @@ elseif ($action == 'search' && $term != '') {
         $object->fetch($id);
         $ret = $printer->sendToPrinter($object, $conf->global->{'TAKEPOS_TEMPLATE_TO_USE_FOR_INVOICES'.$term}, $conf->global->{'TAKEPOS_PRINTER_TO_USE'.$term});
     }
+} elseif ($action == 'getInvoice') {
+	require_once DOL_DOCUMENT_ROOT . '/compta/facture/class/facture.class.php';
+
+	$object = new Facture($db);
+	if ($id > 0) {
+		$object->fetch($id);
+	}
+
+	echo json_encode($object);
 }

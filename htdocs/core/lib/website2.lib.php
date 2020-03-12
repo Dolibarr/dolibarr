@@ -116,7 +116,7 @@ function dolSavePageContent($filetpl, Website $object, WebsitePage $objectpage)
 	dol_delete_file($filetpl);
 
 	$shortlangcode = '';
-	if ($objectpage->lang) $shortlangcode = preg_replace('/[_-].*$/', '', $objectpage->lang); // en_US or en-US -> en
+	if ($objectpage->lang) $shortlangcode = substr($objectpage->lang, 0, 2); // en_US or en-US -> en
 
 	$tplcontent = '';
 	$tplcontent .= "<?php // BEGIN PHP\n";
@@ -148,7 +148,8 @@ function dolSavePageContent($filetpl, Website $object, WebsitePage $objectpage)
 	// Add translation reference (main language)
 	if ($object->isMultiLang()) {
 		// Add myself
-		$tplcontent .= '<link rel="alternate" hreflang="'.$shortlangcode.'" href="'.($object->fk_default_home == $objectpage->id ? '/' : '/'.$shortlangcode.'/'.$objectpage->pageurl.'.php').'" />'."\n";
+		$tplcontent .= '<link rel="alternate" hreflang="'.$shortlangcode.'" href="'.(($object->fk_default_home == $objectpage->id) ? '/' : (($shortlangcode != substr($object->lang, 0, 2) ? '/'.$shortlangcode : '')).'/'.$objectpage->pageurl.'.php').'" />'."\n";
+
 		// Add page "translation of"
 		$translationof = $objectpage->fk_page;
 		if ($translationof) {
@@ -183,7 +184,7 @@ function dolSavePageContent($filetpl, Website $object, WebsitePage $objectpage)
 		else dol_print_error($db);
 	}
 	// Add canonical reference
-	$tplcontent .= '<link href="/'.(($objectpage->id == $object->fk_default_home) ? '' : $shortlangcode.'/'.($objectpage->pageurl.'.php')).'" rel="canonical" />'."\n";
+	$tplcontent .= '<link href="'.(($objectpage->id == $object->fk_default_home) ? '/' : (($shortlangcode != substr($object->lang, 0, 2) ? '/'.$shortlangcode : '') .'/'.$objectpage->pageurl.'.php')).'" rel="canonical" />'."\n";
 	// Add manifest.json on homepage
 	$tplcontent .= '<?php if ($website->use_manifest) { print \'<link rel="manifest" href="/manifest.json.php" />\'."\n"; } ?>'."\n";
 	$tplcontent .= '<!-- Include link to CSS file -->'."\n";

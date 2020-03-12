@@ -282,7 +282,7 @@ class Translate
 						 * and split the rest until a line feed.
 						 * This is more efficient than fgets + explode + trim by a factor of ~2.
 						 */
-						while ($line = fscanf($fp, "%[^= ]%*[ =]%[^\n]"))
+						while ($line = fscanf($fp, "%[^= ]%*[ =]%[^\n\r]"))
 						{
 							if (isset($line[1]))
 							{

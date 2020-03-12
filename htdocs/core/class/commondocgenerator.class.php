@@ -568,12 +568,12 @@ abstract class CommonDocGenerator
 			'line_price_ttc_locale'=>price($line->total_ttc, 0, $outputlangs),
 			'line_price_vat_locale'=>price($line->total_tva, 0, $outputlangs),
 		    // Dates
-			'line_date_start'=>dol_print_date($line->date_start, 'day', 'tzuser'),
-			'line_date_start_locale'=>dol_print_date($line->date_start, 'day', 'tzuser', $outputlangs),
-		    'line_date_start_rfc'=>dol_print_date($line->date_start, 'dayrfc', 'tzuser'),
-		    'line_date_end'=>dol_print_date($line->date_end, 'day', 'tzuser'),
-		    'line_date_end_locale'=>dol_print_date($line->date_end, 'day', 'tzuser', $outputlangs),
-		    'line_date_end_rfc'=>dol_print_date($line->date_end, 'dayrfc', 'tzuser'),
+			'line_date_start'=>dol_print_date($line->date_start, 'day'),
+			'line_date_start_locale'=>dol_print_date($line->date_start, 'day', 'tzserver', $outputlangs),
+		    'line_date_start_rfc'=>dol_print_date($line->date_start, 'dayrfc'),
+		    'line_date_end'=>dol_print_date($line->date_end, 'day'),
+		    'line_date_end_locale'=>dol_print_date($line->date_end, 'day', 'tzserver', $outputlangs),
+		    'line_date_end_rfc'=>dol_print_date($line->date_end, 'dayrfc'),
 
 		    'line_multicurrency_code' => price2num($line->multicurrency_code),
 		    'line_multicurrency_subprice' => price2num($line->multicurrency_subprice),
@@ -609,21 +609,32 @@ abstract class CommonDocGenerator
             // Add the product supplier extrafields to the substitutions
             $extrafields->fetch_name_optionals_label("product_fournisseur_price");
             $extralabels=$extrafields->attributes["product_fournisseur_price"]['label'];
-            $columns = "";
-            foreach ($extralabels as $key => $value)
-                $columns .= "$key, ";
 
-            if ($columns != "")
-            {
-                $columns = substr($columns, 0, strlen($columns) - 2);
-                $resql = $this->db->query("SELECT $columns FROM " . MAIN_DB_PREFIX . "product_fournisseur_price_extrafields AS ex INNER JOIN " . MAIN_DB_PREFIX . "product_fournisseur_price AS f ON ex.fk_object = f.rowid WHERE f.ref_fourn = '" . $line->ref_supplier . "'");
-                if ($this->db->num_rows($resql) > 0) {
-                    $resql = $this->db->fetch_object($resql);
+			if (!empty($extralabels) && is_array($extralabels))
+			{
+				$columns = "";
 
-                    foreach ($extralabels as $key => $value)
-                        $resarray['line_product_supplier_'.$key] = $resql->{$key};
-                }
-            }
+				foreach ($extralabels as $key)
+				{
+					$columns .= "$key, ";
+				}
+
+				if ($columns != "")
+				{
+					$columns = substr($columns, 0, strlen($columns) - 2);
+					$resql = $this->db->query("SELECT $columns FROM " . MAIN_DB_PREFIX . "product_fournisseur_price_extrafields AS ex INNER JOIN " . MAIN_DB_PREFIX . "product_fournisseur_price AS f ON ex.fk_object = f.rowid WHERE f.ref_fourn = '" . $line->ref_supplier . "'");
+
+					if ($this->db->num_rows($resql) > 0)
+					{
+						$resql = $this->db->fetch_object($resql);
+
+						foreach ($extralabels as $key)
+						{
+							$resarray['line_product_supplier_'.$key] = $resql->{$key};
+						}
+					}
+				}
+			}
         }
 
 		// Load product data optional fields to the line -> enables to use "line_options_{extrafield}"
@@ -1079,7 +1090,7 @@ abstract class CommonDocGenerator
     /**
      *  print standard column content
      *
-     *  @param	PDF		    $pdf    	pdf object
+     *  @param	TCPDF		    $pdf    	pdf object
      *  @param	float		$curY    	curent Y position
      *  @param	string		$colKey    	the column key
      *  @param	string		$columnText   column text
@@ -1099,9 +1110,59 @@ abstract class CommonDocGenerator
         if (!$reshook)
         {
             if (empty($columnText)) return;
-            $pdf->SetXY($this->getColumnContentXStart($colKey) - 1, $curY); // Set curent position
+            $pdf->SetXY($this->getColumnContentXStart($colKey), $curY); // Set curent position
             $colDef = $this->cols[$colKey];
-            $pdf->writeHTMLCell($this->getColumnContentWidth($colKey) + 2, 2, $this->getColumnContentXStart($colKey) - 1, $curY, $columnText, 0, 0, 0, true, $colDef['content']['align']);
+            // save curent cell padding
+			$curentCellPaddinds = $pdf->getCellPaddings();
+            // set cell padding with column content definition
+			$pdf->setCellPaddings($colDef['content']['padding'][3], $colDef['content']['padding'][0], $colDef['content']['padding'][1], $colDef['content']['padding'][2]);
+            $pdf->writeHTMLCell($colDef['width'], 2, $colDef['xStartPos'], $curY, $columnText, 0, 1, 0, true, $colDef['content']['align']);
+
+            // restore cell padding
+			$pdf->setCellPaddings($curentCellPaddinds['L'], $curentCellPaddinds['T'], $curentCellPaddinds['R'], $curentCellPaddinds['B']);
+        }
+    }
+
+
+    /**
+     *  print description column content
+     *
+     *  @param	TCPDF		$pdf    	pdf object
+     *  @param	float		$curY    	curent Y position
+     *  @param	string		$colKey    	the column key
+     *  @param  object      $object CommonObject
+     *  @param  int         $i  the $object->lines array key
+     *  @param  Translate $outputlangs    Output language
+     *  @param  int $hideref hide ref
+     *  @param  int $hidedesc hide desc
+     *  @param  int $issupplierline if object need supplier product
+     *  @return null
+     */
+    public function printColDescContent($pdf, &$curY, $colKey, $object, $i, $outputlangs, $hideref = 0, $hidedesc = 0, $issupplierline = 0)
+	{
+        // load desc col params
+        $colDef = $this->cols[$colKey];
+        // save curent cell padding
+        $curentCellPaddinds = $pdf->getCellPaddings();
+        // set cell padding with column content definition
+        $pdf->setCellPaddings($colDef['content']['padding'][3], $colDef['content']['padding'][0], $colDef['content']['padding'][1], $colDef['content']['padding'][2]);
+
+        // line description
+        pdf_writelinedesc($pdf, $object, $i, $outputlangs, $colDef['width'], 3, $colDef['xStartPos'], $curY, $hideref, $hidedesc, $issupplierline);
+        $posYAfterDescription = $pdf->GetY() - $colDef['content']['padding'][0];
+
+        // restore cell padding
+        $pdf->setCellPaddings($curentCellPaddinds['L'], $curentCellPaddinds['T'], $curentCellPaddinds['R'], $curentCellPaddinds['B']);
+
+        // Display extrafield if needed
+        $params = array(
+            'display'         => 'list',
+            'printableEnable' => array(3),
+            'printableEnableNotEmpty' => array(4)
+        );
+        $extrafieldDesc = $this->getExtrafieldsInHtml($object->lines[$i], $outputlangs, $params);
+        if(!empty($extrafieldDesc)){
+            $this->printStdColumnContent($pdf, $posYAfterDescription, $colKey, $extrafieldDesc);
         }
     }
 
@@ -1184,6 +1245,8 @@ abstract class CommonDocGenerator
         $defaultParams = array(
             'style'         => '',
             'display'         => 'auto', // auto, table, list
+            'printableEnable' => array(1),
+            'printableEnableNotEmpty' => array(2),
 
             'table'         => array(
                 'maxItemsInRow' => 2,
@@ -1218,7 +1281,18 @@ abstract class CommonDocGenerator
             foreach ($extrafields->attributes[$object->table_element]['label'] as $key => $label)
             {
                 // Enable extrafield ?
-                $enabled = !empty($extrafields->attributes[$object->table_element]['printable'][$key]);
+                $enabled = 0;
+                $disableOnEmpty = 0;
+                if(!empty($extrafields->attributes[$object->table_element]['printable'][$key])) {
+                    $printable = intval($extrafields->attributes[$object->table_element]['printable'][$key]);
+                    if(in_array($printable, $params['printableEnable']) || in_array($printable, $params['printableEnableNotEmpty']) ) {
+                        $enabled = 1;
+                    }
+
+                    if (in_array($printable, $params['printableEnableNotEmpty'])) {
+                        $disableOnEmpty = 1;
+                    }
+                }
 
                 if(empty($enabled)){
                     continue;
@@ -1230,6 +1304,11 @@ abstract class CommonDocGenerator
                 $field->label = $outputlangs->transnoentities($label);
                 $field->type = $extrafields->attributes[$object->table_element]['type'][$key];
 
+                // dont display if empty
+                if($disableOnEmpty && empty($field->content)) {
+                    continue;
+                }
+
                 $fields[] = $field;
             }
         }
@@ -1239,13 +1318,10 @@ abstract class CommonDocGenerator
             // Sort extrafields by rank
             uasort($fields, function ($a, $b) {
                 return  ($a->rank > $b->rank) ? -1 : 1;
-			}
-            );
-
-
+			});
 
             // define some HTML content with style
-            $html.= '<style>'.$params['style'].'</style>';
+            $html.= !empty($params['style'])?'<style>'.$params['style'].'</style>':'';
 
             // auto select display format
             if($params['display'] == 'auto') {
@@ -1260,10 +1336,12 @@ abstract class CommonDocGenerator
 
             if($params['display'] == 'list') {
                 // Display in list format
+                $i=0;
                 foreach ($fields as $field) {
-                    $html .= !empty($html)?$params['list']['separator']:'';
+                    $html .= !empty($i)?$params['list']['separator']:'';
                     $html .= '<strong>' . $field->label . ' : </strong>';
                     $html .= $field->content;
+                    $i++;
                 }
             }
             elseif($params['display'] == 'table') {
@@ -1338,7 +1416,7 @@ abstract class CommonDocGenerator
     /**
      * Print standard column content
      *
-     * @param PDF	    $pdf            Pdf object
+     * @param TCPDI	    $pdf            Pdf object
      * @param float     $tab_top        Tab top position
      * @param float     $tab_height     Default tab height
      * @param Translate $outputlangs    Output language
@@ -1374,18 +1452,35 @@ abstract class CommonDocGenerator
                 }
 
                 if (empty($hidetop)) {
-                    $pdf->SetXY($colDef['xStartPos'] + $colDef['title']['padding'][3], $tab_top + $colDef['title']['padding'][0]);
-                    $textWidth = $colDef['width'] - $colDef['title']['padding'][3] - $colDef['title']['padding'][1];
-                    $pdf->MultiCell($textWidth, 2, $colDef['title']['label'], '', $colDef['title']['align']);
+                    // save curent cell padding
+                    $curentCellPaddinds = $pdf->getCellPaddings();
 
                     global $outputlangsbis;
                     if (is_object($outputlangsbis)) {
-                    	$pdf->SetXY($colDef['xStartPos'] + $colDef['title']['padding'][3], $tab_top + $colDef['title']['padding'][0] + 4);
+                        // set cell padding with column title definition
+                        $pdf->setCellPaddings($colDef['title']['padding'][3], $colDef['title']['padding'][0], $colDef['title']['padding'][1], 0.5);
+                    }
+                    else{
+                        // set cell padding with column title definition
+                        $pdf->setCellPaddings($colDef['title']['padding'][3], $colDef['title']['padding'][0], $colDef['title']['padding'][1], $colDef['title']['padding'][2]);
+                    }
+
+                    $pdf->SetXY($colDef['xStartPos'], $tab_top);
+                    $textWidth = $colDef['width'];
+                    $pdf->MultiCell($textWidth, 2, $colDef['title']['label'], '', $colDef['title']['align']);
+
+
+                    if (is_object($outputlangsbis)) {
+                        $pdf->setCellPaddings($colDef['title']['padding'][3], 0, $colDef['title']['padding'][1], $colDef['title']['padding'][2]);
+                    	$pdf->SetXY($colDef['xStartPos'], $pdf->GetY());
                     	$textbis = $outputlangsbis->transnoentities($colDef['title']['textkey']);
                     	$pdf->MultiCell($textWidth, 2, $textbis, '', $colDef['title']['align']);
                     }
 
-                    $this->tabTitleHeight = max($pdf->GetY() - $tab_top + $colDef['title']['padding'][2], $this->tabTitleHeight);
+                    $this->tabTitleHeight = max($pdf->GetY() - $tab_top, $this->tabTitleHeight);
+
+                    // restore cell padding
+                    $pdf->setCellPaddings($curentCellPaddinds['L'], $curentCellPaddinds['T'], $curentCellPaddinds['R'], $curentCellPaddinds['B']);
                 }
             }
         }
@@ -1430,8 +1525,16 @@ abstract class CommonDocGenerator
                 }
 
                 // Enable extrafield ?
-                $enabled = !empty($extrafields->attributes[$object->table_element]['printable'][$key]);
+                $enabled = 0;
+                if(!empty($extrafields->attributes[$object->table_element]['printable'][$key])) {
+                    $printable = intval($extrafields->attributes[$object->table_element]['printable'][$key]);
+                    if($printable === 1 || $printable === 2) {
+                        $enabled = 1;
+                    }
+                    // Note : if $printable === 3 or 4 so, it's displayed after line description not in cols
+                }
 
+                if (!$enabled){ continue; } // don't wast resourses if we don't need them...
 
                 // Load language if required
                 if (!empty($extrafields->attributes[$object->table_element]['langfile'][$key])) $outputlangs->load($extrafields->attributes[$object->table_element]['langfile'][$key]);

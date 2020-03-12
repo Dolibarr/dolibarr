@@ -74,7 +74,13 @@ $socid = GETPOST('socid', 'int');
 $search_user = GETPOST('search_user', 'int');
 $search_sale = GETPOST('search_sale', 'int');
 $search_total_ht = GETPOST('search_total_ht', 'alpha');
+$search_total_vat = GETPOST('search_total_vat', 'alpha');
 $search_total_ttc = GETPOST('search_total_ttc', 'alpha');
+$search_multicurrency_code = GETPOST('search_multicurrency_code', 'alpha');
+$search_multicurrency_tx = GETPOST('search_multicurrency_tx', 'alpha');
+$search_multicurrency_montant_ht = GETPOST('search_multicurrency_montant_ht', 'alpha');
+$search_multicurrency_montant_vat = GETPOST('search_multicurrency_montant_vat', 'alpha');
+$search_multicurrency_montant_ttc = GETPOST('search_multicurrency_montant_ttc', 'alpha');
 $search_login = GETPOST('search_login', 'alpha');
 $search_categ_cus = trim(GETPOST("search_categ_cus", 'int'));
 $optioncss = GETPOST('optioncss', 'alpha');
@@ -141,6 +147,11 @@ $arrayfields = array(
 	'c.total_ht'=>array('label'=>"AmountHT", 'checked'=>1),
 	'c.total_vat'=>array('label'=>"AmountVAT", 'checked'=>0),
 	'c.total_ttc'=>array('label'=>"AmountTTC", 'checked'=>0),
+	'c.multicurrency_code'=>array('label'=>'Currency', 'checked'=>0, 'enabled'=>(empty($conf->multicurrency->enabled) ? 0 : 1)),
+	'c.multicurrency_tx'=>array('label'=>'CurrencyRate', 'checked'=>0, 'enabled'=>(empty($conf->multicurrency->enabled) ? 0 : 1)),
+	'c.multicurrency_total_ht'=>array('label'=>'MulticurrencyAmountHT', 'checked'=>0, 'enabled'=>(empty($conf->multicurrency->enabled) ? 0 : 1)),
+	'c.multicurrency_total_vat'=>array('label'=>'MulticurrencyAmountVAT', 'checked'=>0, 'enabled'=>(empty($conf->multicurrency->enabled) ? 0 : 1)),
+	'c.multicurrency_total_ttc'=>array('label'=>'MulticurrencyAmountTTC', 'checked'=>0, 'enabled'=>(empty($conf->multicurrency->enabled) ? 0 : 1)),
 	'u.login'=>array('label'=>"Author", 'checked'=>1, 'position'=>10),
 	'c.datec'=>array('label'=>"DateCreation", 'checked'=>0, 'position'=>500),
 	'c.tms'=>array('label'=>"DateModificationShort", 'checked'=>0, 'position'=>500),
@@ -197,6 +208,11 @@ if (empty($reshook))
 		$search_total_ht = '';
 		$search_total_vat = '';
 		$search_total_ttc = '';
+		$search_multicurrency_code = '';
+		$search_multicurrency_tx = '';
+		$search_multicurrency_montant_ht = '';
+		$search_multicurrency_montant_vat = '';
+		$search_multicurrency_montant_ttc = '';
 		$search_login = '';
 		$search_dateorder_start = '';
 		$search_dateorder_end = '';
@@ -250,6 +266,7 @@ $sql .= ' s.rowid as socid, s.nom as name, s.email, s.town, s.zip, s.fk_pays, s.
 $sql .= " typent.code as typent_code,";
 $sql .= " state.code_departement as state_code, state.nom as state_name,";
 $sql .= ' c.rowid, c.ref, c.total_ht, c.tva as total_tva, c.total_ttc, c.ref_client, c.fk_user_author,';
+$sql .= ' c.fk_multicurrency, c.multicurrency_code, c.multicurrency_tx, c.multicurrency_total_ht, c.multicurrency_total_tva as multicurrency_total_vat, c.multicurrency_total_ttc,';
 $sql .= ' c.date_valid, c.date_commande, c.note_private, c.date_livraison as date_delivery, c.fk_statut, c.facture as billed,';
 $sql .= ' c.date_creation as date_creation, c.tms as date_update, c.date_cloture as date_cloture,';
 $sql .= " p.rowid as project_id, p.ref as project_ref, p.title as project_label,";
@@ -314,25 +331,31 @@ if ($viewstatut <> '')
 	}
 }
 
-if ($search_dateorder_start)        $sql .= " AND c.date_commande >= '".$db->idate($search_dateorder_start)."'";
-if ($search_dateorder_end)          $sql .= " AND c.date_commande <= '".$db->idate($search_dateorder_end)."'";
-if ($search_datedelivery_start)		$sql .= " AND c.date_livraison >= '".$db->idate($search_datedelivery_start)."'";
-if ($search_datedelivery_end)		$sql .= " AND c.date_livraison <= '".$db->idate($search_datedelivery_end)."'";
-if ($search_town)					$sql .= natural_search('s.town', $search_town);
-if ($search_zip)					$sql .= natural_search("s.zip", $search_zip);
-if ($search_state)					$sql .= natural_search("state.nom", $search_state);
-if ($search_country)				$sql .= " AND s.fk_pays IN (".$search_country.')';
-if ($search_type_thirdparty)		$sql .= " AND s.fk_typent IN (".$search_type_thirdparty.')';
-if ($search_company)				$sql .= natural_search('s.nom', $search_company);
-if ($search_sale > 0)				$sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".$search_sale;
-if ($search_user > 0)				$sql .= " AND ec.fk_c_type_contact = tc.rowid AND tc.element='commande' AND tc.source='internal' AND ec.element_id = c.rowid AND ec.fk_socpeople = ".$search_user;
-if ($search_total_ht != '')			$sql .= natural_search('c.total_ht', $search_total_ht, 1);
-if ($search_total_ttc != '')		$sql .= natural_search('c.total_ttc', $search_total_ttc, 1);
-if ($search_login)       $sql .= natural_search("u.login", $search_login);
-if ($search_project_ref != '')		$sql .= natural_search("p.ref", $search_project_ref);
-if ($search_project != '')			$sql .= natural_search("p.title", $search_project);
-if ($search_categ_cus > 0)			$sql .= " AND cc.fk_categorie = ".$db->escape($search_categ_cus);
-if ($search_categ_cus == -2)		$sql .= " AND cc.fk_categorie IS NULL";
+if ($search_dateorder_start)                 $sql .= " AND c.date_commande >= '".$db->idate($search_dateorder_start)."'";
+if ($search_dateorder_end)                   $sql .= " AND c.date_commande <= '".$db->idate($search_dateorder_end)."'";
+if ($search_datedelivery_start)              $sql .= " AND c.date_livraison >= '".$db->idate($search_datedelivery_start)."'";
+if ($search_datedelivery_end)                $sql .= " AND c.date_livraison <= '".$db->idate($search_datedelivery_end)."'";
+if ($search_town)                            $sql .= natural_search('s.town', $search_town);
+if ($search_zip)                             $sql .= natural_search("s.zip", $search_zip);
+if ($search_state)                           $sql .= natural_search("state.nom", $search_state);
+if ($search_country)                         $sql .= " AND s.fk_pays IN (".$search_country.')';
+if ($search_type_thirdparty)                 $sql .= " AND s.fk_typent IN (".$search_type_thirdparty.')';
+if ($search_company)                         $sql .= natural_search('s.nom', $search_company);
+if ($search_sale > 0)                        $sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".$search_sale;
+if ($search_user > 0)                        $sql .= " AND ec.fk_c_type_contact = tc.rowid AND tc.element='commande' AND tc.source='internal' AND ec.element_id = c.rowid AND ec.fk_socpeople = ".$search_user;
+if ($search_total_ht != '')                  $sql .= natural_search('c.total_ht', $search_total_ht, 1);
+if ($search_total_vat != '')                 $sql .= natural_search('c.tva', $search_total_vat, 1);
+if ($search_total_ttc != '')                 $sql .= natural_search('c.total_ttc', $search_total_ttc, 1);
+if ($search_multicurrency_code != '')        $sql .= ' AND c.multicurrency_code = "' . $db->escape($search_multicurrency_code) . '"';
+if ($search_multicurrency_tx != '')          $sql .= natural_search('c.multicurrency_tx', $search_multicurrency_tx, 1);
+if ($search_multicurrency_montant_ht != '')  $sql .= natural_search('c.multicurrency_total_ht', $search_multicurrency_montant_ht, 1);
+if ($search_multicurrency_montant_vat != '') $sql .= natural_search('c.multicurrency_total_tva', $search_multicurrency_montant_vat, 1);
+if ($search_multicurrency_montant_ttc != '') $sql .= natural_search('c.multicurrency_total_ttc', $search_multicurrency_montant_ttc, 1);
+if ($search_login)                           $sql .= natural_search("u.login", $search_login);
+if ($search_project_ref != '')               $sql .= natural_search("p.ref", $search_project_ref);
+if ($search_project != '')                   $sql .= natural_search("p.title", $search_project);
+if ($search_categ_cus > 0)                   $sql .= " AND cc.fk_categorie = ".$db->escape($search_categ_cus);
+if ($search_categ_cus == -2)                 $sql .= " AND cc.fk_categorie IS NULL";
 
 // Add where from extra fields
 include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_sql.tpl.php';
@@ -424,6 +447,11 @@ if ($resql)
 	if ($search_total_ht != '') 	$param .= '&search_total_ht='.urlencode($search_total_ht);
 	if ($search_total_vat != '')  	$param .= '&search_total_vat='.urlencode($search_total_vat);
 	if ($search_total_ttc != '')  	$param .= '&search_total_ttc='.urlencode($search_total_ttc);
+	if ($search_multicurrency_code != '')  $param .= '&search_multicurrency_code='.urlencode($search_multicurrency_code);
+	if ($search_multicurrency_tx != '')  $param .= '&search_multicurrency_tx='.urlencode($search_multicurrency_tx);
+	if ($search_multicurrency_montant_ht != '')  $param .= '&search_multicurrency_montant_ht='.urlencode($search_multicurrency_montant_ht);
+	if ($search_multicurrency_montant_vat != '')  $param .= '&search_multicurrency_montant_vat='.urlencode($search_multicurrency_montant_vat);
+	if ($search_multicurrency_montant_ttc != '') $param .= '&search_multicurrency_montant_ttc='.urlencode($search_multicurrency_montant_ttc);
 	if ($search_login)  	 $param .= '&search_login='.urlencode($search_login);
 	if ($search_project_ref >= 0) 	$param .= "&search_project_ref=".urlencode($search_project_ref);
 	if ($search_town != '')       	$param .= '&search_town='.urlencode($search_town);
@@ -697,6 +725,41 @@ if ($resql)
 		print '<input class="flat" type="text" size="5" name="search_total_ttc" value="'.$search_total_ttc.'">';
 		print '</td>';
 	}
+	if (!empty($arrayfields['c.multicurrency_code']['checked']))
+	{
+		// Currency
+		print '<td class="liste_titre">';
+		print $form->selectMultiCurrency($search_multicurrency_code, 'search_multicurrency_code', 1);
+		print '</td>';
+	}
+	if (!empty($arrayfields['c.multicurrency_tx']['checked']))
+	{
+		// Currency rate
+		print '<td class="liste_titre">';
+		print '<input class="flat" type="text" size="4" name="search_multicurrency_tx" value="'.dol_escape_htmltag($search_multicurrency_tx).'">';
+		print '</td>';
+	}
+	if (!empty($arrayfields['c.multicurrency_total_ht']['checked']))
+	{
+		// Amount
+		print '<td class="liste_titre right">';
+		print '<input class="flat" type="text" size="4" name="search_multicurrency_montant_ht" value="'.dol_escape_htmltag($search_multicurrency_montant_ht).'">';
+		print '</td>';
+	}
+	if (!empty($arrayfields['c.multicurrency_total_vat']['checked']))
+	{
+		// Amount
+		print '<td class="liste_titre right">';
+		print '<input class="flat" type="text" size="4" name="search_multicurrency_montant_vat" value="'.dol_escape_htmltag($search_multicurrency_montant_vat).'">';
+		print '</td>';
+	}
+	if (!empty($arrayfields['c.multicurrency_total_ttc']['checked']))
+	{
+		// Amount
+		print '<td class="liste_titre right">';
+		print '<input class="flat" type="text" size="4" name="search_multicurrency_montant_ttc" value="'.dol_escape_htmltag($search_multicurrency_montant_ttc).'">';
+		print '</td>';
+	}
 	if (!empty($arrayfields['u.login']['checked']))
 	{
 		// Author
@@ -775,6 +838,11 @@ if ($resql)
 	if (!empty($arrayfields['c.total_ht']['checked']))       print_liste_field_titre($arrayfields['c.total_ht']['label'], $_SERVER["PHP_SELF"], 'c.total_ht', '', $param, '', $sortfield, $sortorder, 'right ');
 	if (!empty($arrayfields['c.total_vat']['checked']))      print_liste_field_titre($arrayfields['c.total_vat']['label'], $_SERVER["PHP_SELF"], 'c.tva', '', $param, '', $sortfield, $sortorder, 'right ');
 	if (!empty($arrayfields['c.total_ttc']['checked']))      print_liste_field_titre($arrayfields['c.total_ttc']['label'], $_SERVER["PHP_SELF"], 'c.total_ttc', '', $param, '', $sortfield, $sortorder, 'right ');
+	if (!empty($arrayfields['c.multicurrency_code']['checked']))          print_liste_field_titre($arrayfields['c.multicurrency_code']['label'], $_SERVER['PHP_SELF'], 'c.multicurrency_code', '', $param, '', $sortfield, $sortorder);
+	if (!empty($arrayfields['c.multicurrency_tx']['checked']))            print_liste_field_titre($arrayfields['c.multicurrency_tx']['label'], $_SERVER['PHP_SELF'], 'c.multicurrency_tx', '', $param, '', $sortfield, $sortorder);
+	if (!empty($arrayfields['c.multicurrency_total_ht']['checked']))      print_liste_field_titre($arrayfields['c.multicurrency_total_ht']['label'], $_SERVER['PHP_SELF'], 'c.multicurrency_total_ht', '', $param, 'class="right"', $sortfield, $sortorder);
+	if (!empty($arrayfields['c.multicurrency_total_vat']['checked']))     print_liste_field_titre($arrayfields['c.multicurrency_total_vat']['label'], $_SERVER['PHP_SELF'], 'c.multicurrency_total_tva', '', $param, 'class="right"', $sortfield, $sortorder);
+	if (!empty($arrayfields['c.multicurrency_total_ttc']['checked']))     print_liste_field_titre($arrayfields['c.multicurrency_total_ttc']['label'], $_SERVER['PHP_SELF'], 'c.multicurrency_total_ttc', '', $param, 'class="right"', $sortfield, $sortorder);
 	if (!empty($arrayfields['u.login']['checked']))       	  print_liste_field_titre($arrayfields['u.login']['label'], $_SERVER["PHP_SELF"], 'u.login', '', $param, 'align="center"', $sortfield, $sortorder);
 
 	// Extra fields
@@ -1095,6 +1163,40 @@ if ($resql)
 			if (!$i) $totalarray['nbfield']++;
 			if (!$i) $totalarray['pos'][$totalarray['nbfield']] = 'c.total_ttc';
 			$totalarray['val']['c.total_ttc'] += $obj->total_ttc;
+		}
+
+		// Currency
+		if (!empty($arrayfields['c.multicurrency_code']['checked']))
+		{
+			  print '<td class="nowrap">'.$obj->multicurrency_code . ' - ' . $langs->trans('Currency' . $obj->multicurrency_code)."</td>\n";
+			  if (!$i) $totalarray['nbfield']++;
+		}
+
+		// Currency rate
+		if (!empty($arrayfields['c.multicurrency_tx']['checked']))
+		{
+			  print '<td class="nowrap">';
+			  $form->form_multicurrency_rate($_SERVER['PHP_SELF'] . '?id=' . $obj->rowid, $obj->multicurrency_tx, 'none', $obj->multicurrency_code);
+			  print "</td>\n";
+			  if (!$i) $totalarray['nbfield']++;
+		}
+		// Amount HT
+		if (!empty($arrayfields['c.multicurrency_total_ht']['checked']))
+		{
+			  print '<td class="right nowrap">'.price($obj->multicurrency_total_ht)."</td>\n";
+			  if (!$i) $totalarray['nbfield']++;
+		}
+		// Amount VAT
+		if (!empty($arrayfields['c.multicurrency_total_vat']['checked']))
+		{
+			print '<td class="right nowrap">'.price($obj->multicurrency_total_vat)."</td>\n";
+			if (!$i) $totalarray['nbfield']++;
+		}
+		// Amount TTC
+		if (!empty($arrayfields['c.multicurrency_total_ttc']['checked']))
+		{
+			print '<td class="right nowrap">'.price($obj->multicurrency_total_ttc)."</td>\n";
+			if (!$i) $totalarray['nbfield']++;
 		}
 
 		$userstatic->id = $obj->fk_user_author;

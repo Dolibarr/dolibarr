@@ -1883,6 +1883,7 @@ function dol_print_date($time, $format = '', $tzoutput = 'tzserver', $outputlang
 		$format = str_replace('%A', '__A__', $format);
 	}
 
+
 	// Analyze date
 	$reg = array();
 	if (preg_match('/^([0-9][0-9][0-9][0-9])([0-9][0-9])([0-9][0-9])([0-9][0-9])([0-9][0-9])([0-9][0-9])$/i', $time, $reg))	// Deprecated. Ex: 1970-01-01, 1970-01-01 01:00:00, 19700101010000
@@ -3109,15 +3110,14 @@ function img_picto($titlealt, $picto, $moreatt = '', $pictoisfullpath = false, $
 		//if (in_array($picto, array('switch_off', 'switch_on', 'off', 'on')))
         if (empty($srconly) && in_array($pictowithouttext, array(
         		'1downarrow', '1uparrow', '1leftarrow', '1rightarrow', '1uparrow_selected', '1downarrow_selected', '1leftarrow_selected', '1rightarrow_selected',
-        		'address', 'barcode', 'bank', 'bookmark', 'building', 'cash-register', 'close_title', 'cubes', 'delete', 'dolly', 'edit', 'ellipsis-h',
+        		'address', 'barcode', 'bank', 'bookmark', 'building', 'cash-register', 'check', 'close_title', 'cubes', 'delete', 'dolly', 'edit', 'ellipsis-h',
         		'filter', 'file-code', 'grip', 'grip_title', 'list', 'listlight', 'note',
         		'object_bookmark', 'object_list', 'object_calendar', 'object_calendarweek', 'object_calendarmonth', 'object_calendarday', 'object_calendarperuser',
         		'off', 'on', 'play', 'playdisabled', 'printer', 'resize', 'stats',
 				'note', 'setup', 'sign-out', 'split', 'switch_off', 'switch_on', 'tools', 'unlink', 'uparrow', 'user', 'wrench', 'globe',
-				'jabber', 'skype', 'twitter', 'facebook', 'linkedin',
-				'instagram', 'snapchat', 'youtube', 'google-plus-g', 'whatsapp',
+				'jabber', 'skype', 'twitter', 'facebook', 'linkedin', 'instagram', 'snapchat', 'youtube', 'google-plus-g', 'whatsapp',
 				'chevron-left', 'chevron-right', 'chevron-down', 'chevron-top',
-				'home', 'companies', 'products', 'commercial', 'invoicing', 'accountancy', 'project', 'hrm', 'members', 'ticket', 'generic',
+				'home', 'companies', 'products', 'commercial', 'invoicing', 'accountancy', 'preview', 'project', 'hrm', 'members', 'ticket', 'generic',
         		'error', 'warning',
         		'title_setup', 'title_accountancy', 'title_bank', 'title_hrm', 'title_agenda'
 			)
@@ -3133,13 +3133,14 @@ function img_picto($titlealt, $picto, $moreatt = '', $pictoisfullpath = false, $
 			}
 
 		    $arrayconvpictotofa = array(
-		    	'address'=> 'address-book', 'setup'=>'cog', 'companies'=>'building', 'products'=>'cube', 'commercial'=>'suitcase', 'invoicing'=>'coins', 'accountancy'=>'money-check-alt', 'project'=>'sitemap',
+		    	'address'=> 'address-book', 'setup'=>'cog', 'companies'=>'building', 'products'=>'cube', 'commercial'=>'suitcase', 'invoicing'=>'coins', 'accountancy'=>'money-check-alt',
 		    	'hrm'=>'umbrella-beach', 'members'=>'users', 'ticket'=>'ticket-alt', 'generic'=>'folder-open',
-		    	'switch_off'=>'toggle-off', 'switch_on'=>'toggle-on', 'object_bookmark'=>'star', 'bookmark'=>'star', 'stats' => 'chart-bar',
+		    	'switch_off'=>'toggle-off', 'switch_on'=>'toggle-on', 'check'=>'check', 'object_bookmark'=>'star', 'bookmark'=>'star', 'stats' => 'chart-bar',
 		    	'bank'=>'university', 'close_title'=>'window-close', 'delete'=>'trash', 'edit'=>'pencil', 'filter'=>'filter', 'split'=>'code-branch',
 		    	'object_list'=>'list-alt', 'object_calendar'=>'calendar-alt', 'object_calendarweek'=>'calendar-week', 'object_calendarmonth'=>'calendar-alt', 'object_calendarday'=>'calendar-day', 'object_calendarperuser'=>'table',
 		    	'error'=>'exclamation-triangle', 'warning'=>'exclamation-triangle',
-		    	'title_setup'=>'tools', 'title_accountancy'=>'money-check-alt', 'title_bank'=>'university', 'title_hrm'=>'umbrella-beach', 'title_agenda'=>'calendar-alt'
+		    	'title_setup'=>'tools', 'title_accountancy'=>'money-check-alt', 'title_bank'=>'university', 'title_hrm'=>'umbrella-beach', 'title_agenda'=>'calendar-alt',
+		    	'preview'=>'binoculars', 'project'=>'sitemap'
 		    );
 		    if ($pictowithouttext == 'error' || $pictowithouttext == 'warning') {
 		    	$facolor = '';
@@ -3151,6 +3152,10 @@ function img_picto($titlealt, $picto, $moreatt = '', $pictoisfullpath = false, $
 				$fakey = 'fa-'.$arrayconvpictotofa[$pictowithouttext];
 			}
 			elseif ($pictowithouttext == 'switch_on') {
+				$morecss .= ($morecss ? ' ' : '').'font-status4';
+				$fakey = 'fa-'.$arrayconvpictotofa[$pictowithouttext];
+			}
+			elseif ($pictowithouttext == 'check') {
 				$morecss .= ($morecss ? ' ' : '').'font-status4';
 				$fakey = 'fa-'.$arrayconvpictotofa[$pictowithouttext];
 			}
@@ -6016,7 +6021,8 @@ function getCommonSubstitutionArray($outputlangs, $onlykey = 0, $exclude = null,
         $substitutionarray = array_merge($substitutionarray, array(
 		'__USER_ID__' => (string) $user->id,
 		'__USER_LOGIN__' => (string) $user->login,
-		'__USER_LASTNAME__' => (string) $user->lastname,
+        '__USER_EMAIL__' => (string) $user->email,
+        '__USER_LASTNAME__' => (string) $user->lastname,
 		'__USER_FIRSTNAME__' => (string) $user->firstname,
 		'__USER_FULLNAME__' => (string) $user->getFullName($outputlangs),
 		'__USER_SUPERVISOR_ID__' => (string) ($user->fk_user ? $user->fk_user : '0'),
@@ -6317,6 +6323,10 @@ function getCommonSubstitutionArray($outputlangs, $onlykey = 0, $exclude = null,
 					$substitutionarray['__DIRECTDOWNLOAD_URL_INVOICE__'] = $object->getLastMainDocLink($object->element);
 				}
 				else $substitutionarray['__DIRECTDOWNLOAD_URL_INVOICE__'] = '';
+
+				if (is_object($object) && $object->element == 'propal') $substitutionarray['__URL_PROPOSAL__'] = DOL_MAIN_URL_ROOT . "/comm/propal/card.php?id=" . $object->id;
+				if (is_object($object) && $object->element == 'commande') $substitutionarray['__URL_ORDER__'] = DOL_MAIN_URL_ROOT . "/commande/card.php?id=" . $object->id;
+				if (is_object($object) && $object->element == 'facture') $substitutionarray['__URL_INVOICE__'] = DOL_MAIN_URL_ROOT . "/compta/facture/card.php?id=" . $object->id;
 			}
 		}
 	}
@@ -8607,6 +8617,160 @@ function dolGetButtonTitle($label, $helpText = '', $iconClass = 'fa fa-file', $u
     }
 
     return $button;
+}
+
+/**
+ * Get an array with properties of an element.
+ * Called by fetchObjectByElement.
+ *
+ * @param   string 	$element_type 	Element type (Value of $object->element). Example: 'action', 'facture', 'project_task' or 'object@mymodule'...
+ * @return  array					(module, classpath, element, subelement, classfile, classname)
+ */
+function getElementProperties($element_type)
+{
+	$regs = array();
+
+	$classfile = $classname = $classpath = '';
+
+	// Parse element/subelement (ex: project_task)
+	$module = $element_type;
+	$element = $element_type;
+	$subelement = $element_type;
+
+	// If we ask an resource form external module (instead of default path)
+	if (preg_match('/^([^@]+)@([^@]+)$/i', $element_type, $regs)) {
+		$element = $subelement = $regs[1];
+		$module = $regs[2];
+	}
+
+	//print '<br>1. element : '.$element.' - module : '.$module .'<br>';
+	if (preg_match('/^([^_]+)_([^_]+)/i', $element, $regs)) {
+		$module = $element = $regs[1];
+		$subelement = $regs[2];
+	}
+
+	// For compat
+	if ($element_type == "action") {
+		$classpath = 'comm/action/class';
+		$subelement = 'Actioncomm';
+		$module = 'agenda';
+	}
+
+	// To work with non standard path
+	if ($element_type == 'facture' || $element_type == 'invoice') {
+		$classpath = 'compta/facture/class';
+		$module = 'facture';
+		$subelement = 'facture';
+	}
+	if ($element_type == 'commande' || $element_type == 'order') {
+		$classpath = 'commande/class';
+		$module = 'commande';
+		$subelement = 'commande';
+	}
+	if ($element_type == 'propal') {
+		$classpath = 'comm/propal/class';
+	}
+	if ($element_type == 'supplier_proposal') {
+		$classpath = 'supplier_proposal/class';
+	}
+	if ($element_type == 'shipping') {
+		$classpath = 'expedition/class';
+		$subelement = 'expedition';
+		$module = 'expedition_bon';
+	}
+	if ($element_type == 'delivery') {
+		$classpath = 'livraison/class';
+		$subelement = 'livraison';
+		$module = 'livraison_bon';
+	}
+	if ($element_type == 'contract') {
+		$classpath = 'contrat/class';
+		$module = 'contrat';
+		$subelement = 'contrat';
+	}
+	if ($element_type == 'member') {
+		$classpath = 'adherents/class';
+		$module = 'adherent';
+		$subelement = 'adherent';
+	}
+	if ($element_type == 'cabinetmed_cons') {
+		$classpath = 'cabinetmed/class';
+		$module = 'cabinetmed';
+		$subelement = 'cabinetmedcons';
+	}
+	if ($element_type == 'fichinter') {
+		$classpath = 'fichinter/class';
+		$module = 'ficheinter';
+		$subelement = 'fichinter';
+	}
+	if ($element_type == 'dolresource' || $element_type == 'resource') {
+		$classpath = 'resource/class';
+		$module = 'resource';
+		$subelement = 'dolresource';
+	}
+	if ($element_type == 'propaldet') {
+		$classpath = 'comm/propal/class';
+		$module = 'propal';
+		$subelement = 'propaleligne';
+	}
+	if ($element_type == 'order_supplier') {
+		$classpath = 'fourn/class';
+		$module = 'fournisseur';
+		$subelement = 'commandefournisseur';
+		$classfile = 'fournisseur.commande';
+	}
+	if ($element_type == 'invoice_supplier') {
+		$classpath = 'fourn/class';
+		$module = 'fournisseur';
+		$subelement = 'facturefournisseur';
+		$classfile = 'fournisseur.facture';
+	}
+	if ($element_type == "service") {
+		$classpath = 'product/class';
+		$subelement = 'product';
+	}
+
+	if (empty($classfile)) $classfile = strtolower($subelement);
+	if (empty($classname)) $classname = ucfirst($subelement);
+	if (empty($classpath)) $classpath = $module.'/class';
+
+	$element_properties = array(
+		'module' => $module,
+		'classpath' => $classpath,
+		'element' => $element,
+		'subelement' => $subelement,
+		'classfile' => $classfile,
+		'classname' => $classname
+	);
+	return $element_properties;
+}
+
+/**
+ * Fetch an object from its id and element_type
+ * Inclusion of classes is automatic
+ *
+ * @param	int     	$element_id 	Element id
+ * @param	string  	$element_type 	Element type
+ * @param	string     	$element_ref 	Element ref (Use this or element_id but not both)
+ * @return 	int|object 					object || 0 || -1 if error
+ */
+function fetchObjectByElement($element_id, $element_type, $element_ref = '')
+{
+	global $conf, $db;
+
+	$element_prop = getElementProperties($element_type);
+	if (is_array($element_prop) && $conf->{$element_prop['module']}->enabled)
+	{
+		dol_include_once('/'.$element_prop['classpath'].'/'.$element_prop['classfile'].'.class.php');
+
+		$objecttmp = new $element_prop['classname']($db);
+		$ret = $objecttmp->fetch($element_id, $element_ref);
+		if ($ret >= 0)
+		{
+			return $objecttmp;
+		}
+	}
+	return 0;
 }
 
 /**

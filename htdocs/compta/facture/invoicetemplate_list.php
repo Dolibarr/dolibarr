@@ -536,21 +536,21 @@ if ($resql)
 			}
 			if (!empty($arrayfields['f.total']['checked']))
 			{
-			    print '<td class="right">'.price($objp->total).'</td>'."\n";
+			    print '<td class="nowrap right">'.price($objp->total).'</td>'."\n";
 			    if (!$i) $totalarray['nbfield']++;
 			    if (!$i) $totalarray['pos'][$totalarray['nbfield']] = 'f.total';
 			    $totalarray['val']['f.total'] += $objp->total;
 			}
 			if (!empty($arrayfields['f.tva']['checked']))
 			{
-			    print '<td class="right">'.price($objp->total_vat).'</td>'."\n";
+			    print '<td class="nowrap right">'.price($objp->total_vat).'</td>'."\n";
 			    if (!$i) $totalarray['nbfield']++;
 			    if (!$i) $totalarray['pos'][$totalarray['nbfield']] = 'f.tva';
 			    $totalarray['val']['f.tva'] += $objp->total_vat;
 			}
 			if (!empty($arrayfields['f.total_ttc']['checked']))
 			{
-			    print '<td class="right">'.price($objp->total_ttc).'</td>'."\n";
+			    print '<td class="nowrap right">'.price($objp->total_ttc).'</td>'."\n";
 			    if (!$i) $totalarray['nbfield']++;
 			    if (!$i) $totalarray['pos'][$totalarray['nbfield']] = 'f.total_ttc';
 			    $totalarray['val']['f.total_ttc'] += $objp->total_ttc;

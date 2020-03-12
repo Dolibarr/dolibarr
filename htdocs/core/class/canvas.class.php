@@ -176,6 +176,7 @@ class Canvas
 		global $db, $conf, $langs, $user, $canvas;
 		global $form, $formfile;
 
+		//var_dump($this->card.'-'.$action);
 		include $this->template_dir.(!empty($this->card)?$this->card.'_':'').$this->_cleanaction($action).'.tpl.php';        // Include native PHP template
 	}
 

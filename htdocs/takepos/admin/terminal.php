@@ -90,6 +90,8 @@ if (GETPOST('action', 'alpha') == 'set')
 
 	$res = dolibarr_set_const($db, 'CASHDESK_READER_KEYCODE_FOR_ENTER'.$terminaltouse, (GETPOST('CASHDESK_READER_KEYCODE_FOR_ENTER'.$terminaltouse, 'int') > 0 ? GETPOST('CASHDESK_READER_KEYCODE_FOR_ENTER'.$terminaltouse, 'int') : ''), 'chaine', 0, '', $conf->entity);
 
+	$res = dolibarr_set_const($db, "TAKEPOS_ADDON".$terminaltouse, GETPOST('TAKEPOS_ADDON'.$terminaltouse, 'alpha'), 'chaine', 0, '', $conf->entity);
+
 	dol_syslog("admin/cashdesk: level ".GETPOST('level', 'alpha'));
 
 	if (!$res > 0) $error++;
@@ -250,6 +252,66 @@ print '<tr class="oddeven"><td>' . $langs->trans('CashDeskReaderKeyCodeForEnter'
 print '<td>';
 print '<input type="text" name="' . 'CASHDESK_READER_KEYCODE_FOR_ENTER'.$terminaltouse . '" value="' . $conf->global->{'CASHDESK_READER_KEYCODE_FOR_ENTER'.$terminaltouse} . '" />';
 print '</td></tr>';
+
+// Numbering module
+if ($conf->global->TAKEPOS_ADDON=="terminal"){
+	print '<tr class="oddeven"><td>';
+	print $langs->trans("BillsNumberingModule");
+	print '<td colspan="2">';
+	$array = array(0=>$langs->trans("Default"));
+	$dirmodels = array_merge(array('/'), (array) $conf->modules_parts['models']);
+	foreach ($dirmodels as $reldir)
+	{
+		$dir = dol_buildpath($reldir."core/modules/facture/");
+		if (is_dir($dir))
+		{
+			$handle = opendir($dir);
+			if (is_resource($handle))
+			{
+				while (($file = readdir($handle)) !== false)
+				{
+					if (!is_dir($dir.$file) || (substr($file, 0, 1) <> '.' && substr($file, 0, 3) <> 'CVS'))
+					{
+						$filebis = $file;
+						$classname = preg_replace('/\.php$/', '', $file);
+						// For compatibility
+						if (!is_file($dir.$filebis))
+						{
+							$filebis = $file."/".$file.".modules.php";
+							$classname = "mod_facture_".$file;
+						}
+						// Check if there is a filter on country
+						preg_match('/\-(.*)_(.*)$/', $classname, $reg);
+						if (!empty($reg[2]) && $reg[2] != strtoupper($mysoc->country_code)) continue;
+
+						$classname = preg_replace('/\-.*$/', '', $classname);
+						if (!class_exists($classname) && is_readable($dir.$filebis) && (preg_match('/mod_/', $filebis) || preg_match('/mod_/', $classname)) && substr($filebis, dol_strlen($filebis) - 3, 3) == 'php')
+						{
+							// Charging the numbering class
+							require_once $dir.$filebis;
+
+                        	$module = new $classname($db);
+
+							// Show modules according to features level
+							if ($module->version == 'development' && $conf->global->MAIN_FEATURES_LEVEL < 2) continue;
+							if ($module->version == 'experimental' && $conf->global->MAIN_FEATURES_LEVEL < 1) continue;
+
+							if ($module->isEnabled())
+							{
+								$array[preg_replace('/\-.*$/', '', preg_replace('/\.php$/', '', $file))]=preg_replace('/\-.*$/', '', preg_replace('/mod_facture_/', '', preg_replace('/\.php$/', '', $file)));
+							}
+						}
+					}
+				}
+				closedir($handle);
+			}
+		}
+	}
+	print $form->selectarray('TAKEPOS_ADDON'.$terminaltouse, $array, (empty($conf->global->{'TAKEPOS_ADDON'.$terminaltouse}) ? '0' : $conf->global->{'TAKEPOS_ADDON'.$terminaltouse}), 0);
+	print "</td></tr>\n";
+	print '</table>';
+	print '</div>';
+}
 
 print '</table>';
 print '</div>';

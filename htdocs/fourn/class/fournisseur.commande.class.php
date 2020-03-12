@@ -587,7 +587,7 @@ class CommandeFournisseur extends CommonOrder
 			{
                 $num = $this->ref;
             }
-            $this->newref = $num;
+            $this->newref = dol_sanitizeFileName($num);
 
             $sql = 'UPDATE '.MAIN_DB_PREFIX."commande_fournisseur";
             $sql .= " SET ref='".$this->db->escape($num)."',";
@@ -971,7 +971,7 @@ class CommandeFournisseur extends CommonOrder
 			{
                 $num = $this->ref;
             }
-            $this->newref = $num;
+            $this->newref = dol_sanitizeFileName($num);
 
             // Do we have to change status now ? (If double approval is required and first approval, we keep status to 1 = validated)
 			$movetoapprovestatus = true;
@@ -1375,7 +1375,7 @@ class CommandeFournisseur extends CommonOrder
                         false,
 	                    $this->lines[$i]->date_start,
                         $this->lines[$i]->date_end,
-                        0,
+                        $this->lines[$i]->array_options,
                         $this->lines[$i]->fk_unit
 	                );
 	                if ($result < 0)
@@ -1485,9 +1485,9 @@ class CommandeFournisseur extends CommonOrder
 
 		$this->db->begin();
 
-		// get lines so they will be clone
-		foreach ($this->lines as $line)
-			$line->fetch_optionals();
+        // get extrafields so they will be clone
+        foreach($this->lines as $line)
+            $line->fetch_optionals();
 
 		// Load source object
 		$objFrom = clone $this;

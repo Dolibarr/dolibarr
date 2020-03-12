@@ -115,10 +115,10 @@ if ($conf->use_javascript_ajax)
     include_once DOL_DOCUMENT_ROOT.'/core/class/dolgraph.class.php';
     $dolgraph = new DolGraph();
     $dolgraph->SetData($dataseries);
-    $dolgraph->setShowLegend(1);
+    $dolgraph->setShowLegend(2);
     $dolgraph->setShowPercent(1);
     $dolgraph->SetType(array('pie'));
-    $dolgraph->setWidth('100%');
+    $dolgraph->setHeight('200');
     $dolgraph->draw('idgraphstatus');
     print $dolgraph->show($totalnb?0:1);
 
