@@ -139,10 +139,10 @@ class Product extends CommonObject
      */
     public $price_min_ttc;
 
-    /*
-    * Base price ('TTC' for price including tax or 'HT' for net price)
-    * @var float
-    */
+    /**
+     * Base price ('TTC' for price including tax or 'HT' for net price)
+     * @var string
+     */
     public $price_base_type;
 
     //! Arrays for multiprices
