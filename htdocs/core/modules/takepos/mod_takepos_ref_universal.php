@@ -33,16 +33,29 @@ dol_include_once('/core/modules/takepos/modules_takepos.php');
  */
 class mod_takepos_ref_universal extends ModeleNumRefTakepos
 {
-    var $version = 'dolibarr';        // 'development', 'experimental', 'dolibarr'
-    var $error = '';
-    var $nom = 'Universal';
+	/**
+	 * Dolibarr version of the loaded document 'development', 'experimental', 'dolibarr'
+	 * @var string
+	 */
+	public $version = 'dolibarr';
+
+	/**
+	 * @var string Error code (or message)
+	 */
+	public $error = '';
+
+	/**
+	 * Name
+	 * @var string
+	 */
+	public $nom = 'Universal';
 
     /**
      *  Renvoi la description du modele de numerotation
      *
      * @return     string      Texte descripif
      */
-    function info()
+	public function info()
     {
         global $conf, $langs;
 
@@ -83,7 +96,7 @@ class mod_takepos_ref_universal extends ModeleNumRefTakepos
      *
      * @return     string      Example
      */
-    function getExample()
+	public function getExample()
     {
         global $conf, $langs, $mysoc;
 
@@ -99,14 +112,14 @@ class mod_takepos_ref_universal extends ModeleNumRefTakepos
     }
 
     /**
-     *    Return next free value
+     * Return next free value
      *
      * @param   Societe     $objsoc     Object thirdparty
      * @param   Facture		$invoice	Object invoice
      * @param   string		$mode       'next' for next value or 'last' for last value
      * @return  string      Value if KO, <0 if KO
      */
-    function getNextValue($objsoc = 0, $invoice = null, $mode = 'next')
+	public function getNextValue($objsoc = 0, $invoice = null, $mode = 'next')
     {
         global $db, $conf;
 
@@ -124,7 +137,7 @@ class mod_takepos_ref_universal extends ModeleNumRefTakepos
         $entity = getEntity('invoicenumber', 1, $invoice);
 
         $pos_source = is_object($invoice) && $invoice->pos_source > 0 ? $invoice->pos_source : 0;
-	    $mask = str_replace('{TN}' , $pos_source, $mask);
+	    $mask = str_replace('{TN}', $pos_source, $mask);
         $numFinal = get_next_value($db, $mask, 'facture', 'ref', '', $objsoc, $invoice->date, $mode, false, null, $entity);
 
         return $numFinal;
@@ -138,7 +151,7 @@ class mod_takepos_ref_universal extends ModeleNumRefTakepos
      * @param   Object      $objforref      Object for number to search
      * @return  string      Next free value
      */
-    function getNumRef($objsoc, $objforref)
+	public function getNumRef($objsoc, $objforref)
     {
         return $this->getNextValue($objsoc, $objforref);
     }

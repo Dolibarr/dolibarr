@@ -3737,8 +3737,7 @@ class Facture extends CommonInvoice
 
 
 			// Include file with class
-			$dirmodels = array_merge(array('/'), (array)$conf->modules_parts['models']);
-
+			$dirmodels = array_merge(array('/'), (array) $conf->modules_parts['models']);
 			foreach ($dirmodels as $reldir) {
 				$dir = dol_buildpath($reldir . 'core/modules/' . $moduleName . '/');
 

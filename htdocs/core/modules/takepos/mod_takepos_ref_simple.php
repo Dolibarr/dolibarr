@@ -31,17 +31,35 @@ dol_include_once('/core/modules/takepos/modules_takepos.php');
  */
 class mod_takepos_ref_simple extends ModeleNumRefTakepos
 {
-    var $version = 'dolibarr';        // 'development', 'experimental', 'dolibarr'
-    var $prefix = 'TK';
-    var $error = '';
-    var $nom = 'Simple';
+	/**
+	 * Dolibarr version of the loaded document 'development', 'experimental', 'dolibarr'
+	 * @var string
+	 */
+    public $version = 'dolibarr';
+
+	/**
+	 * Prefix
+	 * @var string
+	 */
+	public $prefix = 'TK';
+
+	/**
+	 * @var string Error code (or message)
+	 */
+	public $error = '';
+
+	/**
+	 * Name
+	 * @var string
+	 */
+	public $nom = 'Simple';
 
     /**
      *  Return description of numbering module
      *
      * @return     string      Text with description
      */
-    function info()
+	public function info()
     {
         global $langs;
 
@@ -53,7 +71,7 @@ class mod_takepos_ref_simple extends ModeleNumRefTakepos
      *
      * @return     string      Example
      */
-    function getExample()
+	public function getExample()
     {
         return $this->prefix . '0-0501-0001';
     }
@@ -64,7 +82,7 @@ class mod_takepos_ref_simple extends ModeleNumRefTakepos
      *
      * @return     boolean     false si conflit, true si ok
      */
-    function canBeActivated()
+	public function canBeActivated()
     {
         global $conf, $langs, $db;
 
@@ -103,7 +121,7 @@ class mod_takepos_ref_simple extends ModeleNumRefTakepos
      * @param   string		$mode       'next' for next value or 'last' for last value
      * @return  string      Next value
      */
-    function getNextValue($objsoc = null, $invoice = null, $mode = 'next')
+	public function getNextValue($objsoc = null, $invoice = null, $mode = 'next')
     {
         global $db;
 
@@ -168,7 +186,7 @@ class mod_takepos_ref_simple extends ModeleNumRefTakepos
      * @param       Object      $objforref      Object for number to search
      * @return      string      Next free value
      */
-    function getNumRef($objsoc, $objforref)
+	public function getNumRef($objsoc, $objforref)
     {
         return $this->getNextValue($objsoc, $objforref);
     }

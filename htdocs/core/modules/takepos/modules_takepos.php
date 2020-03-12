@@ -33,71 +33,76 @@
  */
 abstract class ModeleNumRefTakepos
 {
-    var $error='';
-    public $version = '';
+	/**
+	 * @var string Error code (or message)
+	 */
+	public $error='';
 
-    /**
-     * 	Return if a module can be used or not
-     *
-     * 	@return		boolean     true if module can be used
-     */
-    function isEnabled()
+
+	public $version = '';
+
+	/**
+	 * Return if a module can be used or not
+	 *
+	 * @return	boolean     true if module can be used
+	 */
+	public function isEnabled()
     {
         return true;
     }
 
-    /**
-     * 	Renvoi la description par defaut du modele de numerotation
-     *
-     * 	@return     string      Texte descripif
-     */
-    function info()
+	/**
+	 * Renvoi la description par defaut du modele de numerotation
+	 *
+	 * @return    string      Texte descripif
+	 */
+    public function info()
     {
         global $langs;
         $langs->load("cashdesk@cashdesk");
         return $langs->trans("NoDescription");
     }
 
-    /**
-     * 	Renvoi un exemple de numerotation
-     *
-     * 	@return     string      Example
-     */
-    function getExample()
+	/**
+	 * Return an example of numbering
+	 *
+	 * @return	string      Example
+	 */
+	public function getExample()
     {
         global $langs;
         $langs->load('cashdesk@cashdesk');
         return $langs->trans('NoExample');
     }
 
-    /**
-     * 	Test si les numeros deja en vigueur dans la base ne provoquent pas de
-     * 	de conflits qui empechera cette numerotation de fonctionner.
-     *
-     * 	@return     boolean     false si conflit, true si ok
-     */
-    function canBeActivated()
+	/**
+	 *  Checks if the numbers already in force in the data base do not
+	 *  cause conflicts that would prevent this numbering from working.
+	 *
+	 * @return	boolean     false if conflict, true if ok
+	 */
+	public function canBeActivated()
     {
         return true;
     }
 
     /**
-     * 	Renvoi prochaine valeur attribuee
+     * Renvoi prochaine valeur attribuee
      *
-     * 	@return     string      Valeur
+     * @return     string      Valeur
      */
-    function getNextValue()
+	public function getNextValue()
     {
         global $langs;
         return $langs->trans('NotAvailable');
     }
 
-    /**
-     * 	Renvoi version du module numerotation
-     *
-     * 	@return     string      Valeur
-     */
-    function getVersion()
+	/**
+	 * Renvoi version du modele de numerotation
+	 *
+	 * @return    string      Valeur
+	 */
+	public function getVersion()
     {
         global $langs;
         $langs->load("admin");
