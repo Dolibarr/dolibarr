@@ -931,7 +931,7 @@ class AccountancyExport
 
     /**
      * Export format : LD Compta version 9 & higher
-     * http://www.ldsysteme.fr/fileadmin/telechargement/np/ldcompta/Documentation/IntCptW10.pdf
+     * http://www.ldsysteme.fr/fileadmin/telechargement/np/ldcompta/Documentation/IntCptW9.pdf
      *
      * @param array $objectLines data
      *
