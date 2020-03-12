@@ -545,7 +545,7 @@ if (empty($reshook))
                             if ($result < 1)
                             {
                                 $db->rollback();
-                                setEventMessage($langs->trans('ErrorProductClone'), null, 'errors');
+                                setEventMessages($langs->trans('ErrorProductClone'), null, 'errors');
                                 header("Location: ".$_SERVER["PHP_SELF"]."?id=".$originalId);
                                 exit;
                             }
