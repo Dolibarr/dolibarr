@@ -57,7 +57,7 @@ if ($resql) {
 	}
 }
 
-$action = GETPOST('action','alpha');
+$action = GETPOST('action', 'alpha');
 
 /*
  * Actions
@@ -146,7 +146,7 @@ print '<br>';
 $now = dol_now();
 $dirmodels = array_merge(array('/'), (array) $conf->modules_parts['models']);
 
-print load_fiche_titre($langs->trans('CashDeskRefNumberingModules'),'','');
+print load_fiche_titre($langs->trans('CashDeskRefNumberingModules'), '', '');
 
 print '<table class="noborder" width="100%">';
 print '<tr class="liste_titre">';
@@ -194,7 +194,7 @@ foreach ($dirmodels as $reldir)
 						// Show example of numbering module
 						print '<td class="nowrap">';
 						$tmp=$module->getExample();
-						if (preg_match('/^Error/',$tmp)) print '<div class="error">'.$langs->trans($tmp).'</div>';
+						if (preg_match('/^Error/', $tmp)) print '<div class="error">'.$langs->trans($tmp).'</div>';
 						elseif ($tmp=='NotConfigured') print $langs->trans($tmp);
 						else print $tmp;
 						print '</td>'."\n";
@@ -202,12 +202,12 @@ foreach ($dirmodels as $reldir)
 						print '<td align="center">';
 						if ($conf->global->TAKEPOS_REF_ADDON == "$file")
 						{
-							print img_picto($langs->trans("Activated"),'switch_on');
+							print img_picto($langs->trans("Activated"), 'switch_on');
 						}
 						else
 						{
 							print '<a href="'.$_SERVER["PHP_SELF"].'?action=setrefmod&amp;value='.$file.'">';
-							print img_picto($langs->trans("Disabled"),'switch_off');
+							print img_picto($langs->trans("Disabled"), 'switch_off');
 							print '</a>';
 						}
 						print '</td>';
@@ -225,7 +225,7 @@ foreach ($dirmodels as $reldir)
 						if ("$nextval" != $langs->trans("NotAvailable")) {  // Keep " on nextval
 							$htmltooltip.=''.$langs->trans("NextValue").': ';
 							if ($nextval) {
-								if (preg_match('/^Error/',$nextval) || $nextval=='NotConfigured')
+								if (preg_match('/^Error/', $nextval) || $nextval=='NotConfigured')
 									$nextval = $langs->trans($nextval);
 								$htmltooltip.=$nextval.'<br>';
 							} else {
@@ -234,7 +234,7 @@ foreach ($dirmodels as $reldir)
 						}
 
 						print '<td align="center">';
-						print $form->textwithpicto('',$htmltooltip,1,0);
+						print $form->textwithpicto('', $htmltooltip, 1, 0);
 						print '</td>';
 
 						print "</tr>\n";

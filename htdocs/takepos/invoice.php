@@ -168,12 +168,12 @@ if ($action == 'valid' && $user->rights->facture->creer)
 		$invoice->update($user);
 	}
 
-//	$sav_FACTURE_ADDON = '';
-//	if (!empty($conf->global->TAKEPOS_ADDON)) {
-//		$sav_FACTURE_ADDON = $conf->global->FACTURE_ADDON;
-//		if ($conf->global->TAKEPOS_ADDON == "terminal") $conf->global->FACTURE_ADDON = $conf->global->{'TAKEPOS_ADDON'.$_SESSION["takeposterminal"]};
-//		else $conf->global->FACTURE_ADDON = $conf->global->TAKEPOS_ADDON;
-//	}
+	//$sav_FACTURE_ADDON = '';
+	//if (!empty($conf->global->TAKEPOS_ADDON)) {
+	//	$sav_FACTURE_ADDON = $conf->global->FACTURE_ADDON;
+	//	if ($conf->global->TAKEPOS_ADDON == "terminal") $conf->global->FACTURE_ADDON = $conf->global->{'TAKEPOS_ADDON'.$_SESSION["takeposterminal"]};
+	//	else $conf->global->FACTURE_ADDON = $conf->global->TAKEPOS_ADDON;
+	//}
 
 	$constantforkey = 'CASHDESK_NO_DECREASE_STOCK'.$_SESSION["takeposterminal"];
 	if ($invoice->statut != Facture::STATUS_DRAFT) {
@@ -211,10 +211,10 @@ if ($action == 'valid' && $user->rights->facture->creer)
 	}
 
 	// Restore save values
-//	if (!empty($sav_FACTURE_ADDON))
-//	{
-//		$conf->global->FACTURE_ADDON = $sav_FACTURE_ADDON;
-//	}
+	//if (!empty($sav_FACTURE_ADDON))
+	//{
+	//	$conf->global->FACTURE_ADDON = $sav_FACTURE_ADDON;
+	//}
 
 	$remaintopay = $invoice->getRemainToPay();
 

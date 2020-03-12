@@ -156,4 +156,3 @@ class mod_takepos_ref_universal extends ModeleNumRefTakepos
         return $this->getNextValue($objsoc, $objforref);
     }
 }
-
