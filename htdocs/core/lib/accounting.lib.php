@@ -227,3 +227,11 @@ function journalHead($nom,$variante,$period,$periodlink,$description,$builddate,
     print "\n<!-- fin cartouche journal -->\n\n";
 }
 
+function getAmountForExport($amount) {
+
+	global $conf;
+	if(!empty($conf->global->ACCOUNTING_EXPORT_USE_PRICE2NUM)) return price2num($amount);
+
+	return price($amount);
+
+}

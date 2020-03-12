@@ -586,8 +586,8 @@ if ($action == 'exportcsv') {		// ISO and not UTF8 !
 				print '"' . length_accounta(html_entity_decode($k)) . '"' . $sep;
 				print '"' . $langs->trans("Thirdparty") . '"' . $sep;
 				print '"' . utf8_decode(dol_trunc($companystatic->name, 16)) . ' - ' . $invoicestatic->ref . ' - ' . $langs->trans("Thirdparty") . '"' . $sep;
-				print '"' . ($mt >= 0 ? price($mt) : '') . '"' . $sep;
-				print '"' . ($mt < 0 ? price(- $mt) : '') . '"' . $sep;
+				print '"' . ($mt >= 0 ? getAmountForExport($mt) : '') . '"' . $sep;
+				print '"' . ($mt < 0 ? getAmountForExport(- $mt) : '') . '"' . $sep;
 				print '"' . $journal . '"';
 				print "\n";
 			//}
@@ -607,8 +607,8 @@ if ($action == 'exportcsv') {		// ISO and not UTF8 !
 				print '""' . $sep;
 				print '"' . utf8_decode(dol_trunc($accountingaccount->label, 32)) . '"' . $sep;
 				print '"' . utf8_decode(dol_trunc($companystatic->name, 16)) . ' - ' . dol_trunc($accountingaccount->label, 32) . '"' . $sep;
-				print '"' . ($mt < 0 ? price(- $mt) : '') . '"' . $sep;
-				print '"' . ($mt >= 0 ? price($mt) : '') . '"' . $sep;
+				print '"' . ($mt < 0 ? getAmountForExport(- $mt) : '') . '"' . $sep;
+				print '"' . ($mt >= 0 ? getAmountForExport($mt) : '') . '"' . $sep;
 				print '"' . $journal . '"';
 				print "\n";
 			//}
@@ -632,8 +632,8 @@ if ($action == 'exportcsv') {		// ISO and not UTF8 !
 					print '""' . $sep;
 					print '"' . $langs->trans("VAT") . ' - ' . $def_tva[$key] . ' %"' . $sep;
 					print '"' . utf8_decode(dol_trunc($companystatic->name, 16)) . ' - ' . $invoicestatic->ref . ' - ' . $langs->trans("VAT") . join(', ',$def_tva[$key][$k]) .' %' . ($numtax?' - Localtax '.$numtax:'') . '"' . $sep;
-					print '"' . ($mt < 0 ? price(- $mt) : '') . '"' . $sep;
-					print '"' . ($mt >= 0 ? price($mt) : '') . '"' . $sep;
+					print '"' . ($mt < 0 ? getAmountForExport(- $mt) : '') . '"' . $sep;
+					print '"' . ($mt >= 0 ? getAmountForExport($mt) : '') . '"' . $sep;
 					print '"' . $journal . '"';
 					print "\n";
 				}
