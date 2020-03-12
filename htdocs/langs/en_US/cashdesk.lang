@@ -92,3 +92,4 @@ PrintMethod=Print method
 ReceiptPrinterMethodDescription=Powerful method with a lot of parameters. Full customizable with templates. Cannot print from the cloud.
 ByTerminal=By terminal
 TakeposNumpadUsePaymentIcon=Use payment icon on numpad
+TakeposGroupSameProduct=Group same products lines

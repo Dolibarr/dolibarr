@@ -76,6 +76,7 @@ if (GETPOST('action', 'alpha') == 'set')
 	$res = dolibarr_set_const($db, "TAKEPOS_SUPPLEMENTS_CATEGORY", GETPOST('TAKEPOS_SUPPLEMENTS_CATEGORY', 'alpha'), 'chaine', 0, '', $conf->entity);
 	$res = dolibarr_set_const($db, "TAKEPOS_NUMPAD", GETPOST('TAKEPOS_NUMPAD', 'alpha'), 'chaine', 0, '', $conf->entity);
 	$res = dolibarr_set_const($db, "TAKEPOS_SORTPRODUCTFIELD", GETPOST('TAKEPOS_SORTPRODUCTFIELD', 'alpha'), 'chaine', 0, '', $conf->entity);
+	$res = dolibarr_set_const($db, 'TAKEPOS_GROUP_SAME_PRODUCT', GETPOST('TAKEPOS_GROUP_SAME_PRODUCT', 'alpha'), 'chaine', 0, '', $conf->entity);
 	$res = dolibarr_set_const($db, "TAKEPOS_COLOR_THEME", GETPOST('TAKEPOS_COLOR_THEME', 'alpha'), 'chaine', 0, '', $conf->entity);
 	$res = dolibarr_set_const($db, "TAKEPOS_NUM_TERMINALS", GETPOST('TAKEPOS_NUM_TERMINALS', 'alpha'), 'chaine', 0, '', $conf->entity);
 	$res = dolibarr_set_const($db, "TAKEPOS_DIRECT_PAYMENT", GETPOST('TAKEPOS_DIRECT_PAYMENT', 'int'), 'int', 0, '', $conf->entity);
@@ -177,6 +178,12 @@ print '<td colspan="2">';
 $prod = new Product($db);
 $array = array('rowid' => 'ID', 'ref' => 'Ref', 'label' => 'Label', 'datec' => 'DateCreation', 'tms' => 'DateModification');
 print $form->selectarray('TAKEPOS_SORTPRODUCTFIELD', $array, (empty($conf->global->TAKEPOS_SORTPRODUCTFIELD) ? 'rowid' : $conf->global->TAKEPOS_SORTPRODUCTFIELD), 0, 0, 0, '', 1);
+print "</td></tr>\n";
+
+print '<tr class="oddeven"><td>';
+print $langs->trans('TakeposGroupSameProduct');
+print '<td colspan="2">';
+print ajax_constantonoff("TAKEPOS_GROUP_SAME_PRODUCT", array(), $conf->entity, 0, 0, 1, 0);
 print "</td></tr>\n";
 
 $substitutionarray = pdf_getSubstitutionArray($langs, null, null, 2);
