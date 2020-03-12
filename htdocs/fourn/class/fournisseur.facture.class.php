@@ -861,7 +861,7 @@ class FactureFournisseur extends CommonInvoice
 
 	                // Extra fields
 					$line->fetch_optionals();
-					
+
 					$this->lines[$i] = $line;
 
                     $i++;
