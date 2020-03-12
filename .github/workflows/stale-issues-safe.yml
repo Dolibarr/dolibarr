@@ -3,7 +3,7 @@ name: "Close stale issues (bugs and feature requests)"
 
 on:
   schedule:
-  - cron: "0 15 * * *"
+  - cron: "0 21 * * *"
   issue_comment:
     types: [created]
 
