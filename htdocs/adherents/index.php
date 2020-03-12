@@ -176,11 +176,9 @@ if ($conf->use_javascript_ajax)
     $SommeD = 0;
     $total = 0;
     $dataval = array();
-    $datalabels = array();
     $i = 0;
     foreach ($AdherentType as $key => $adhtype)
     {
-        $datalabels[] = array($i, $adhtype->getNomUrl(0, dol_size(16)));
         $dataval['draft'][] = array($i, isset($MemberToValidate[$key]) ? $MemberToValidate[$key] : 0);
         $dataval['notuptodate'][] = array($i, isset($MembersValidated[$key]) ? $MembersValidated[$key] - (isset($MemberUpToDate[$key]) ? $MemberUpToDate[$key] : 0) : 0);
         $dataval['uptodate'][] = array($i, isset($MemberUpToDate[$key]) ? $MemberUpToDate[$key] : 0);

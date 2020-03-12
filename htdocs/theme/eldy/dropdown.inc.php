@@ -190,7 +190,7 @@ a.top-menu-dropdown-link {
 
 
 .dropdown-menu .dropdown-header{
-    padding: 5px 10px 10px 10px;
+    padding: 8px 8px 8px 8px;
 }
 
 .dropdown-menu > .user-footer {

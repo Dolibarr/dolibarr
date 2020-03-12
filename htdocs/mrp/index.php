@@ -66,6 +66,7 @@ if ($conf->use_javascript_ajax)
     $sql= "SELECT COUNT(t.rowid) as nb, status";
     $sql.=" FROM ".MAIN_DB_PREFIX."mrp_mo as t";
 	$sql.=" GROUP BY t.status";
+	$sql.=" ORDER BY t.status ASC";
     $resql = $db->query($sql);
 
     if ($resql)
@@ -74,18 +75,24 @@ if ($conf->use_javascript_ajax)
     	$i = 0;
 
     	$totalnb=0;
-    	$dataseries=array();
-    	// -1=Canceled, 0=Draft, 1=Validated, (2=Accepted/On process not managed for customer orders), 3=Closed (Sent/Received, billed or not)
+    	$dataseries = array();
+		$colorseries = array();
+
+		include_once DOL_DOCUMENT_ROOT.'/theme/'.$conf->theme.'/theme_vars.inc.php';
+
     	while ($i < $num)
     	{
     		$obj = $db->fetch_object($resql);
     		if ($obj)
     		{
-    			//if ($row[1]!=-1 && ($row[1]!=3 || $row[2]!=1))
-    			{
-    				$dataseries[$obj->status]=array(0=>$staticmo->LibStatut($obj->status), $obj->nb);
-    				$totalnb+=$obj->nb;
-    			}
+   				$dataseries[$obj->status]=array(0=>$staticmo->LibStatut($obj->status), $obj->nb);
+   				if ($obj->status == Mo::STATUS_DRAFT) $coloseries[$obj->status] = '-'.$badgeStatus0;
+   				if ($obj->status == Mo::STATUS_VALIDATED) $coloseries[$obj->status] = $badgeStatus1;
+   				if ($obj->status == Mo::STATUS_INPROGRESS) $coloseries[$obj->status] = $badgeStatus4;
+   				if ($obj->status == Mo::STATUS_PRODUCED) $coloseries[$obj->status] = $badgeStatus6;
+   				if ($obj->status == Mo::STATUS_CANCELED) $coloseries[$obj->status] = '-'.$badgeStatus5;
+
+   				$totalnb+=$obj->nb;
     		}
     		$i++;
     	}
@@ -101,6 +108,7 @@ if ($conf->use_javascript_ajax)
     		include_once DOL_DOCUMENT_ROOT.'/core/class/dolgraph.class.php';
     		$dolgraph = new DolGraph();
     		$dolgraph->SetData($dataseries);
+    		$dolgraph->SetDataColor(array_values($coloseries));
     		$dolgraph->setShowLegend(2);
     		$dolgraph->setShowPercent(1);
     		$dolgraph->SetType(array('pie'));
