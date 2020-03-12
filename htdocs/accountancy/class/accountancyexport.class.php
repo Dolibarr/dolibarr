@@ -1078,10 +1078,8 @@ class AccountancyExport
 		$last_codeinvoice = '';
 
 		foreach ($objectLines as $line) {
-
 			// TYPE C
 			if($last_codeinvoice != $line->doc_ref){
-
 				//recherche societe en fonction de son code client
 				$sql = "SELECT code_client, fk_forme_juridique, nom, address, zip, town, fk_pays, phone, siret FROM ".MAIN_DB_PREFIX."societe WHERE code_client = '".$line->thirdparty_code ."'";
 				$resql = $this->db->query($sql);
@@ -1209,7 +1207,7 @@ class AccountancyExport
 			// DATP
 			print $date_document.$separator;
 			// LIBE
-			print dol_trunc($line->label_operation,25,'right','UTF-8',1).$separator;
+			print dol_trunc($line->label_operation, 25, 'right', 'UTF-8', 1).$separator;
 			// DATH
 			print $date_lim_reglement.$separator;
 			// CNPI
