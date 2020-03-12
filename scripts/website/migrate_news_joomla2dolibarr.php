@@ -1,6 +1,6 @@
 #!/usr/bin/env php
 <?php
-/* Copyright (C) 2007-2016 Laurent Destailleur <eldy@users.sourceforge.net>
+/* Copyright (C) 2020 Laurent Destailleur <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -37,18 +37,22 @@ define('EVEN_IF_ONLY_LOGIN_ALLOWED', 1); // Set this define to 0 if you want to 
 
 $error = 0;
 
-if (empty($argv[3]) || !in_array($argv[1], array('test', 'confirm'))) {
+$mode = $argv[1];
+$websiteref = $argv[2];
+$joomlaserverinfo = $argv[3];
+$image = 'image/__WEBSITE_KEY__/images/stories/dolibarr.png';
+
+$max = 1;
+
+if (empty($argv[3]) || !in_array($argv[1], array('test', 'confirm')) || empty($websiteref)) {
 	print "Usage: $script_file (test|confirm) website login:pass@serverjoomla/tableprefix/databasejoomla\n";
 	print "\n";
 	print "Load joomla news and create them into Dolibarr database (if they don't alreay exist).\n";
 	exit(-1);
 }
 
-$mode = $argv[1];
-$website = $argv[2];
-$joomlaserverinfo = $argv[3];
-
 require $path."../../htdocs/master.inc.php";
+include_once DOL_DOCUMENT_ROOT.'/website/class/website.class.php';
 
 $langs->load('main');
 
@@ -61,6 +65,15 @@ $joomladatabase = $joomlaserverinfoarray[4];
 $joomlaport = 3306;
 
 
+$website = new Website($db);
+$result = $website->fetch(0, $websiteref);
+if ($result <= 0) {
+	print 'Error, web site '.$websiteref.' not found'."\n";
+	exit(-1);
+}
+$websiteid = $website->id;
+$importid = dol_print_date(dol_now(), 'dayhourlog');
+
 $dbjoomla=getDoliDBInstance('mysqli', $joomlahost, $joomlalogin, $joomlapass, $joomladatabase, $joomlaport);
 if ($dbjoomla->error)
 {
@@ -68,7 +81,10 @@ if ($dbjoomla->error)
 	exit(-1);
 }
 
-$sql = 'SELECT id, title, alias, created, introtext, `fulltext` FROM '.$joomlaprefix.'_content WHERE 1 = 1';
+$sql = 'SELECT c.id, c.title, c.alias, c.created, c.introtext, `fulltext`, c.metadesc, c.metakey, c.language, c.created, c.publish_up, u.username FROM '.$joomlaprefix.'_content as c';
+$sql.= ' LEFT JOIN '.$joomlaprefix.'_users as u ON u.id = c.created_by';
+$sql.= ' WHERE featured = 1';
+$sql.= ' ORDER BY publish_up ASC';
 $resql = $dbjoomla->query($sql);
 
 if (! $resql) {
@@ -76,18 +92,50 @@ if (! $resql) {
 	exit;
 }
 
+$db->begin();
+
 while ($obj = $dbjoomla->fetch_object($resql)) {
 	$i = 0;
 	if ($obj) {
 		$i++;
 		$id = $obj->id;
-		$title = $obj->title;
 		$alias = $obj->alias;
-		$description = dol_string_nohtmltag($obj->introtext);
-		$hmtltext = $obj->fulltext;
+		$title = $obj->title;
+		//$description = dol_string_nohtmltag($obj->introtext);
+		$description = trim(dol_trunc(dol_string_nohtmltag($obj->metadesc), 250));
+		if (empty($description)) $description = trim(dol_trunc(dol_string_nohtmltag($obj->introtext), 250));
+		$hmtltext = $obj->introtext.'<br>'."\n".'<hr>'."\n".'<br>'."\n".$obj->fulltext;
+		$language = ($obj->language && $obj->language != '*' ? $obj->language : 'en');
+		$keywords = $obj->metakey;
+		$author_alias = $obj->username;
 
-		print $i.' '.$id.' '.$title."\n";
+		$date_creation = $dbjoomla->jdate($obj->publish_up);
+
+		print $i.' '.$id.' '.$title.' '.$language.' '.$keywords.' '.$importid."\n";
+
+		$sqlinsert = 'INSERT INTO '.MAIN_DB_PREFIX.'website_page(fk_website, pageurl, aliasalt, title, description, keywords, content, status, type_container, lang, import_key, image, date_creation, author_alias)';
+		$sqlinsert .= " VALUES(".$websiteid.", '".$db->escape($alias)."', '', '".$db->escape($title)."', '".$db->escape($description)."', '".$db->escape($keywords)."', ";
+		$sqlinsert .= " '".$db->escape($hmtltext)."', '1', 'blogpost', '".$db->escape($language)."', '".$db->escape($importid)."', '".$db->escape($image)."', '".$db->idate($date_creation)."', '".$db->escape($author_alias)."')";
+		print $sqlinsert."\n";
+
+		$result = $db->query($sqlinsert);
+		if ($result <= 0) {
+			$error++;
+			print 'Error, '.$db->lasterror.": ".$sqlinsert."\n";
+			break;
+		}
+
+		if ($max && $i <= $max) {
+			print 'Nb max of record reached. We stop now.'."\n";
+			break;
+		}
 	}
+}
+
+if ($mode == 'confirm' && ! $error) {
+	$db->commit();
+} else {
+	$db->rollback();
 }
 
 exit($error);

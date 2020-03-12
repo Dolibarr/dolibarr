@@ -98,6 +98,11 @@ class WebsitePage extends CommonObject
 	 */
 	public $date_modification;
 
+	/**
+	 * @var string author_alias
+	 */
+	public $author_alias;
+
 
 	const STATUS_DRAFT = 0;
 	const STATUS_VALIDATED = 1;
@@ -128,7 +133,8 @@ class WebsitePage extends CommonObject
 		'tms'            =>array('type'=>'timestamp', 'label'=>'DateModification', 'enabled'=>1, 'visible'=>-1, 'notnull'=>1, 'position'=>501),
 		//'date_valid'    =>array('type'=>'datetime',     'label'=>'DateValidation',     'enabled'=>1, 'visible'=>-1, 'position'=>502),
 		'fk_user_creat'  =>array('type'=>'integer', 'label'=>'UserAuthor', 'enabled'=>1, 'visible'=>-1, 'notnull'=>true, 'position'=>510),
-		'fk_user_modif'  =>array('type'=>'integer', 'label'=>'UserModif', 'enabled'=>1, 'visible'=>-1, 'position'=>511),
+		'author_alias'   =>array('type'=>'varchar(64)', 'label'=>'AuthorAlias', 'enabled'=>1, 'visible'=>-1, 'index'=>0, 'position'=>511, 'comment'=>'Author alias'),
+		'fk_user_modif'  =>array('type'=>'integer', 'label'=>'UserModif', 'enabled'=>1, 'visible'=>-1, 'position'=>512),
 		//'fk_user_valid' =>array('type'=>'integer',      'label'=>'UserValidation',        'enabled'=>1, 'visible'=>-1, 'position'=>512),
 		'import_key'     =>array('type'=>'varchar(14)', 'label'=>'ImportId', 'enabled'=>1, 'visible'=>-1, 'index'=>1, 'position'=>1000, 'notnull'=>-1),
 	);
@@ -199,6 +205,7 @@ class WebsitePage extends CommonObject
 		$sql .= " t.date_creation,";
 		$sql .= " t.tms as date_modification,";
 		$sql .= " t.fk_user_creat,";
+		$sql .= " t.author_alias,";
 		$sql .= " t.fk_user_modif";
 		$sql .= ' FROM '.MAIN_DB_PREFIX.$this->table_element.' as t';
 		//$sql .= ' WHERE entity IN ('.getEntity('website').')';       // entity is on website level
@@ -246,6 +253,7 @@ class WebsitePage extends CommonObject
 				$this->date_creation = $this->db->jdate($obj->date_creation);
 				$this->date_modification = $this->db->jdate($obj->date_modification);
 				$this->fk_user_creat = $obj->fk_user_creat;
+				$this->author_alias = $obj->author_alias;
 				$this->fk_user_modif = $obj->fk_user_modif;
 			}
 			$this->db->free($resql);
@@ -300,6 +308,7 @@ class WebsitePage extends CommonObject
 		$sql .= " t.date_creation,";
 		$sql .= " t.tms as date_modification,";
 		$sql .= " t.fk_user_creat,";
+		$sql .= " t.author_alias,";
 		$sql .= " t.fk_user_modif";
 		$sql .= ' FROM '.MAIN_DB_PREFIX.$this->table_element.' as t';
 		$sql .= ' WHERE t.fk_website = '.$websiteid;
@@ -353,6 +362,7 @@ class WebsitePage extends CommonObject
 				$record->date_creation = $this->db->jdate($obj->date_creation);
 				$record->date_modification = $this->db->jdate($obj->date_modification);
 				$record->fk_user_creat = $obj->fk_user_creat;
+				$record->author_alias = $obj->author_alias;
 				$record->fk_user_modif = $obj->fk_user_modif;
 				//var_dump($record->id);
 				$records[$record->id] = $record;
@@ -533,6 +543,7 @@ class WebsitePage extends CommonObject
 		$object->pageurl = $newref;
 		$object->aliasalt = '';
 		$object->fk_user_creat = $user->id;
+		$object->author_alias = '';
 		$object->date_creation = $now;
 		$object->title = ($newtitle == '1' ? $object->title : ($newtitle ? $newtitle : $object->title));
 		if (!empty($newlang)) $object->lang = $newlang;
@@ -689,5 +700,6 @@ class WebsitePage extends CommonObject
 		$this->date_creation = $now - (24 * 30 * 3600);
 		$this->date_modification = $now - (24 * 7 * 3600);
 		$this->fk_user_creat = $user->id;
+		$this->author_alias = 'mypublicpseudo';
 	}
 }
