@@ -987,23 +987,32 @@ function dol_escape_js($stringtoescape, $mode = 0, $noescapebackslashn = 0)
 /**
  *  Returns text escaped for inclusion in HTML alt or title tags, or into values of HTML input fields.
  *
- *  @param      string		$stringtoescape		String to escape
- *  @param		int			$keepb				1=Preserve b tags (otherwise, remove them)
- *  @param      int         $keepn              1=Preserve \r\n strings (otherwise, replace them with escaped value). Set to 1 when escaping for a <textarea>.
- *  @param		string		$keepmoretags		'' or 'common' or list of tags
- *  @return     string     				 		Escaped string
+ *  @param      string		$stringtoescape			String to escape
+ *  @param		int			$keepb					1=Preserve b tags (otherwise, remove them)
+ *  @param      int         $keepn              	1=Preserve \r\n strings (otherwise, replace them with escaped value). Set to 1 when escaping for a <textarea>.
+ *  @param		string		$keepmoretags			'' or 'common' or list of tags
+ *  @param		int			$escapeonlyhtmltags		1=Escape only html tags, not the special chars like accents.
+ *  @return     string     				 			Escaped string
  *  @see		dol_string_nohtmltag(), dol_string_nospecial(), dol_string_unaccent()
  */
-function dol_escape_htmltag($stringtoescape, $keepb = 0, $keepn = 0, $keepmoretags = '')
+function dol_escape_htmltag($stringtoescape, $keepb = 0, $keepn = 0, $keepmoretags = '', $escapeonlyhtmltags = 0)
 {
 	if ($keepmoretags == 'common') $keepmoretags = 'html,body,a,em,i,u,ul,li,br,div,img,font,p,span,strong,table,tr,td,th,tbody';
 	// TODO Implement $keepmoretags
 
 	// escape quotes and backslashes, newlines, etc.
-	$tmp = html_entity_decode($stringtoescape, ENT_COMPAT, 'UTF-8'); // TODO Use htmlspecialchars_decode instead, that make only required change for html tags
+	if ($escapeonlyhtmltags) {
+		$tmp = htmlspecialchars_decode($stringtoescape, ENT_COMPAT);
+	} else {
+		$tmp = html_entity_decode($stringtoescape, ENT_COMPAT, 'UTF-8');
+	}
 	if (!$keepb) $tmp = strtr($tmp, array("<b>"=>'', '</b>'=>''));
 	if (!$keepn) $tmp = strtr($tmp, array("\r"=>'\\r', "\n"=>'\\n'));
-	return htmlentities($tmp, ENT_COMPAT, 'UTF-8'); // TODO Use htmlspecialchars instead, that make only required change for html tags
+	if ($escapeonlyhtmltags) {
+		return htmlspecialchars($tmp, ENT_COMPAT, 'UTF-8');
+	} else {
+		return htmlentities($tmp, ENT_COMPAT, 'UTF-8');
+	}
 }
 
 
@@ -5933,6 +5942,7 @@ function dol_textishtml($msg, $option = 0)
 	{
 		if (preg_match('/<html/i', $msg))				return true;
 		elseif (preg_match('/<body/i', $msg))			return true;
+		elseif (preg_match('/<\/textarea/i', $msg))	  return true;
 		elseif (preg_match('/<br/i', $msg))				return true;
 		return false;
 	}
@@ -5940,6 +5950,7 @@ function dol_textishtml($msg, $option = 0)
 	{
 		if (preg_match('/<html/i', $msg))				return true;
 		elseif (preg_match('/<body/i', $msg))			return true;
+		elseif (preg_match('/<\/textarea/i', $msg))	  return true;
 		elseif (preg_match('/<(b|em|i|u)>/i', $msg))		return true;
 		elseif (preg_match('/<br\/>/i', $msg))	  return true;
 		elseif (preg_match('/<(br|div|font|li|p|span|strong|table)>/i', $msg)) 	  return true;

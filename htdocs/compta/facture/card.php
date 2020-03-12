@@ -141,7 +141,6 @@ $result = restrictedArea($user, 'facture', $id, '', '', 'fk_soc', $fieldid, $isd
 
 
 
-
 /*
  * Actions
  */
