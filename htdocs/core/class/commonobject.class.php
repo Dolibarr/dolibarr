@@ -2916,7 +2916,7 @@ abstract class CommonObject
 			$MODULE = "MODULE_DISALLOW_UPDATE_PRICE_ORDER";
 		elseif ($this->element == 'facture' || $this->element == 'invoice')
 			$MODULE = "MODULE_DISALLOW_UPDATE_PRICE_INVOICE";
-		elseif ($this->element == 'facture_fourn' || $this->element == 'supplier_invoice')
+		elseif ($this->element == 'facture_fourn' || $this->element == 'supplier_invoice' || $this->element == 'invoice_supplier')
 			$MODULE = "MODULE_DISALLOW_UPDATE_PRICE_SUPPLIER_INVOICE";
 		elseif ($this->element == 'order_supplier' || $this->element == 'supplier_order')
 			$MODULE = "MODULE_DISALLOW_UPDATE_PRICE_SUPPLIER_ORDER";
@@ -6753,7 +6753,8 @@ abstract class CommonObject
 						if ($mode != 'view' && !empty($extrafields->attributes[$this->table_element]['required'][$key])) $out .= '&nbsp;<font color="red">*</font>';
 					} else {
 						if ($mode != 'view' && !empty($extrafields->attributes[$this->table_element]['required'][$key])) $out .= ' fieldrequired';
-						$out .= '">';
+						$out .= '"';
+						$out .= '>';
 						if (!empty($extrafields->attributes[$this->table_element]['help'][$key])) $out .= $form->textwithpicto($labeltoshow, $extrafields->attributes[$this->table_element]['help'][$key]);
 						else $out .= $labeltoshow;
 					}

@@ -1061,9 +1061,11 @@ if ($action == 'create')
 	}
 	else
 	{
+		print '<form name="fichinter" action="'.$_SERVER['PHP_SELF'].'" method="POST">';
+		print '<input type="hidden" name="token" value="'.newToken().'">';
+
 		dol_fiche_head('');
 
-		print '<form name="fichinter" action="'.$_SERVER['PHP_SELF'].'" method="POST">';
 		if (is_object($objectsrc))
 		{
 			print '<input type="hidden" name="origin"         value="'.$objectsrc->element.'">';

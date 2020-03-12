@@ -261,7 +261,7 @@ if ($nolinesbefore) {
 				if ($senderissupplier != 2)
 				{
 					$ajaxoptions = array(
-					'update' => array('qty'=>'qty', 'remise_percent' => 'discount', 'idprod' => 'idprod'), // html id tags that will be edited with which ajax json response key
+					'update' => array('qty'=>'qty', 'remise_percent' => 'discount', 'idprod' => 'idprod'), // html id tags that will be edited with each ajax json response key
 					'option_disabled' => 'idthatdoesnotexists', // html id to disable once select is done
 					'warning' => $langs->trans("NoPriceDefinedForThisSupplier") // translation of an error saved into var 'warning' (for example shown we select a disabled option into combo)
 					);
@@ -761,7 +761,7 @@ if (!empty($usemargins) && $user->rights->margins->creer)
 
 		/* To process customer price per quantity (CUSTOMER_PRICE_PER_QTY works only if combo product is not an ajax after x key pressed) */
 		var pbq = parseInt($('option:selected', this).attr('data-pbq'));
-		var pbqup = parseInt($('option:selected', this).attr('data-pbqup'));
+		var pbqup = parseFloat($('option:selected', this).attr('data-pbqup'));
 		var pbqbase = $('option:selected', this).attr('data-pbqbase');
 		var pbqqty = parseFloat($('option:selected', this).attr('data-pbqqty'));
 		var pbqpercent = parseFloat($('option:selected', this).attr('data-pbqpercent'));

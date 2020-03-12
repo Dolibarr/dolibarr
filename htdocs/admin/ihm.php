@@ -156,7 +156,7 @@ if ($action == 'update')
 	dolibarr_set_const($db, "MAIN_START_WEEK", GETPOST("MAIN_START_WEEK", 'int'), 'chaine', 0, '', $conf->entity);
 	dolibarr_set_const($db, "MAIN_DEFAULT_WORKING_DAYS", GETPOST("MAIN_DEFAULT_WORKING_DAYS", 'int'), 'chaine', 0, '', $conf->entity);
 	dolibarr_set_const($db, "MAIN_DEFAULT_WORKING_HOURS", GETPOST("MAIN_DEFAULT_WORKING_HOURS", 'int'), 'chaine', 0, '', $conf->entity);
-	//dolibarr_set_const($db, "MAIN_SHOW_LOGO", GETPOST("MAIN_SHOW_LOGO", 'aZ09'), 'chaine', 0, '', $conf->entity);
+	dolibarr_set_const($db, "MAIN_SHOW_LOGO", GETPOST("MAIN_SHOW_LOGO", 'aZ09'), 'chaine', 0, '', $conf->entity);
 	dolibarr_set_const($db, "MAIN_FIRSTNAME_NAME_POSITION", GETPOST("MAIN_FIRSTNAME_NAME_POSITION", 'aZ09'), 'chaine', 0, '', $conf->entity);
 
 	dolibarr_set_const($db, "MAIN_HELPCENTER_DISABLELINK", GETPOST('MAIN_HELPCENTER_DISABLELINK', 'aZ09'), 'chaine', 0, '', 0);	// Param for all entities
