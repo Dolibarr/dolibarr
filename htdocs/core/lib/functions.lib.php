@@ -4281,14 +4281,15 @@ function load_fiche_titre($titre, $morehtmlright = '', $picto = 'generic', $pict
  *	@param	int|string  $totalnboflines		Total number of records/lines for all pages (if known). Use a negative value of number to not show number. Use '' if unknown.
  *	@param	string	    $picto				Icon to use before title (should be a 32x32 transparent png file)
  *	@param	int		    $pictoisfullpath	1=Icon name is a full absolute url of image
- *  @param	string	    $morehtmlright			More html to show
+ *  @param	string	    $morehtmlright		More html to show
  *  @param  string      $morecss            More css to the table
  *  @param  int         $limit              Max number of lines (-1 = use default, 0 = no limit, > 0 = limit).
  *  @param  int         $hideselectlimit    Force to hide select limit
  *  @param  int         $hidenavigation     Force to hide all navigation tools
+ *  @param  int			$pagenavastextinput 1=Do not suggest list of pages to navigate but suggest the page number into an input field.
  *	@return	void
  */
-function print_barre_liste($titre, $page, $file, $options = '', $sortfield = '', $sortorder = '', $morehtmlcenter = '', $num = -1, $totalnboflines = '', $picto = 'generic', $pictoisfullpath = 0, $morehtmlright = '', $morecss = '', $limit = -1, $hideselectlimit = 0, $hidenavigation = 0)
+function print_barre_liste($titre, $page, $file, $options = '', $sortfield = '', $sortorder = '', $morehtmlcenter = '', $num = -1, $totalnboflines = '', $picto = 'generic', $pictoisfullpath = 0, $morehtmlright = '', $morecss = '', $limit = -1, $hideselectlimit = 0, $hidenavigation = 0, $pagenavastextinput = 0)
 {
 	global $conf, $langs;
 
@@ -4347,30 +4348,47 @@ function print_barre_liste($titre, $page, $file, $options = '', $sortfield = '',
 
 			if ($cpt >= 1)
 			{
-				$pagelist .= '<li class="pagination"><a href="'.$file.'?page=0'.$options.'">1</a></li>';
-				if ($cpt > 2) $pagelist .= '<li class="pagination"><span class="inactive">...</span></li>';
-				elseif ($cpt == 2) $pagelist .= '<li class="pagination"><a href="'.$file.'?page=1'.$options.'">2</a></li>';
+				if (empty($pagenavastextinput)) {
+					$pagelist .= '<li class="pagination"><a href="'.$file.'?page=0'.$options.'">1</a></li>';
+					if ($cpt > 2) $pagelist .= '<li class="pagination"><span class="inactive">...</span></li>';
+					elseif ($cpt == 2) $pagelist .= '<li class="pagination"><a href="'.$file.'?page=1'.$options.'">2</a></li>';
+				}
 			}
 
 			do
 			{
-				if ($cpt == $page)
-				{
-					$pagelist .= '<li class="pagination"><span class="active">'.($page + 1).'</span></li>';
-				}
-				else
-				{
-					$pagelist .= '<li class="pagination"><a href="'.$file.'?page='.$cpt.$options.'">'.($cpt + 1).'</a></li>';
+				if ($pagenavastextinput) {
+					if ($cpt == $page)
+					{
+						$pagelist .= '<li class="pagination"><input type="text" class="width25 center pageplusone" name="pageplusone" value="'.($page + 1).'"></li>';
+						if (($cpt + 1) < $nbpages) $pagelist .= '/';
+					}
+				} else {
+					if ($cpt == $page)
+					{
+						$pagelist .= '<li class="pagination"><span class="active">'.($page + 1).'</span></li>';
+					}
+					else
+					{
+						$pagelist .= '<li class="pagination"><a href="'.$file.'?page='.$cpt.$options.'">'.($cpt + 1).'</a></li>';
+					}
 				}
 				$cpt++;
 			}
-			while ($cpt < $nbpages && $cpt <= $page + $maxnbofpage);
+			while ($cpt < $nbpages && $cpt <= ($page + $maxnbofpage));
 
-			if ($cpt < $nbpages)
-			{
-				if ($cpt < $nbpages - 2) $pagelist .= '<li class="pagination"><span class="inactive">...</span></li>';
-				elseif ($cpt == $nbpages - 2) $pagelist .= '<li class="pagination"><a href="'.$file.'?page='.($nbpages - 2).$options.'">'.($nbpages - 1).'</a></li>';
-				$pagelist .= '<li class="pagination"><a href="'.$file.'?page='.($nbpages - 1).$options.'">'.$nbpages.'</a></li>';
+			if (empty($pagenavastextinput)) {
+				if ($cpt < $nbpages)
+				{
+					if ($cpt < $nbpages - 2) $pagelist .= '<li class="pagination"><span class="inactive">...</span></li>';
+					elseif ($cpt == $nbpages - 2) $pagelist .= '<li class="pagination"><a href="'.$file.'?page='.($nbpages - 2).$options.'">'.($nbpages - 1).'</a></li>';
+					$pagelist .= '<li class="pagination"><a href="'.$file.'?page='.($nbpages - 1).$options.'">'.$nbpages.'</a></li>';
+				}
+			} else {
+				//var_dump($page.' '.$cpt.' '.$nbpages);
+				if (($page + 1) < $nbpages) {
+					$pagelist .= '<li class="pagination"><a href="'.$file.'?page='.($nbpages - 1).$options.'">'.$nbpages.'</a></li>';
+				}
 			}
 		}
 		else
@@ -4381,6 +4399,11 @@ function print_barre_liste($titre, $page, $file, $options = '', $sortfield = '',
 
 	if ($savlimit || $morehtmlright) {
 		print_fleche_navigation($page, $file, $options, $nextpage, $pagelist, $morehtmlright, $savlimit, $totalnboflines, $hideselectlimit); // output the div and ul for previous/last completed with page numbers into $pagelist
+	}
+
+	// js to autoselect page field on focus
+	if ($pagenavastextinput) {
+		print ajax_autoselect('.pageplusone');
 	}
 
 	print '</td>';
@@ -8019,7 +8042,7 @@ function getAdvancedPreviewUrl($modulepart, $relativepath, $alldata = 0, $param 
 /**
  * Make content of an input box selected when we click into input field.
  *
- * @param string	$htmlname	Id of html object
+ * @param string	$htmlname	Id of html object ('#idvalue' or '.classvalue')
  * @param string	$addlink	Add a 'link to' after
  * @return string
  */
@@ -8028,7 +8051,7 @@ function ajax_autoselect($htmlname, $addlink = '')
 	global $langs;
 	$out = '<script>
                jQuery(document).ready(function () {
-				    jQuery("#'.$htmlname.'").click(function() { jQuery(this).select(); } );
+				    jQuery("'.((strpos($htmlname, '.') === 0 ? '' : '#').$htmlname).'").click(function() { jQuery(this).select(); } );
 				});
 		    </script>';
 	if ($addlink) $out .= ' <a href="'.$addlink.'" target="_blank">'.$langs->trans("Link").'</a>';
