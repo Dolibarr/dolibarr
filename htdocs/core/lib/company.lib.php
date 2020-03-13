@@ -872,7 +872,7 @@ function show_contacts($conf, $langs, $db, $object, $backtopage = '')
     $optioncss = GETPOST('optioncss', 'alpha');
     $sortfield = GETPOST("sortfield", 'alpha');
     $sortorder = GETPOST("sortorder", 'alpha');
-    $page = GETPOST('page', 'int');
+    $page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOST("page", 'int');
 
     $search_status = GETPOST("search_status", 'int');
     if ($search_status == '') $search_status = 1; // always display active customer first

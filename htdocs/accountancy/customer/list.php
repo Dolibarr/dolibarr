@@ -69,7 +69,7 @@ $btn_ventil = GETPOST('ventil', 'alpha');
 $limit = GETPOST('limit', 'int') ?GETPOST('limit', 'int') : (empty($conf->global->ACCOUNTING_LIMIT_LIST_VENTILATION) ? $conf->liste_limit : $conf->global->ACCOUNTING_LIMIT_LIST_VENTILATION);
 $sortfield = GETPOST('sortfield', 'alpha');
 $sortorder = GETPOST('sortorder', 'alpha');
-$page = GETPOST('page', 'int');
+$page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOST("page", 'int');
 if (empty($page) || $page < 0) { $page = 0; }
 $offset = $limit * $page;
 $pageprev = $page - 1;
@@ -439,7 +439,10 @@ if ($result) {
     			$objp->code_sell_l = (!empty($conf->global->ACCOUNTING_SERVICE_SOLD_ACCOUNT) ? $conf->global->ACCOUNTING_SERVICE_SOLD_ACCOUNT : '');
     			$suggestedaccountingaccountbydefaultfor = '';
     		} else {
-    			if ($isSellerInEEC && $isBuyerInEEC) {          // European intravat sale
+				if ($isSellerInEEC && $isBuyerInEEC && empty($objp->tva_intra)) {    // European intravat sale without VAT intra community number
+					$objp->code_sell_l = (!empty($conf->global->ACCOUNTING_SERVICE_SOLD_ACCOUNT) ? $conf->global->ACCOUNTING_SERVICE_SOLD_ACCOUNT : '');
+					$suggestedaccountingaccountbydefaultfor = '';
+				} elseif ($isSellerInEEC && $isBuyerInEEC) {    // European intravat sale
     				$objp->code_sell_l = (!empty($conf->global->ACCOUNTING_SERVICE_SOLD_INTRA_ACCOUNT) ? $conf->global->ACCOUNTING_SERVICE_SOLD_INTRA_ACCOUNT : '');
     				$suggestedaccountingaccountbydefaultfor = 'eec';
 	    		} else {                                        // Foreign sale
@@ -452,7 +455,10 @@ if ($result) {
 				$objp->code_sell_l = (!empty($conf->global->ACCOUNTING_PRODUCT_SOLD_ACCOUNT) ? $conf->global->ACCOUNTING_PRODUCT_SOLD_ACCOUNT : '');
 				$suggestedaccountingaccountbydefaultfor = '';
 			} else {
-				if ($isSellerInEEC && $isBuyerInEEC) {          // European intravat sale
+				if ($isSellerInEEC && $isBuyerInEEC && empty($objp->tva_intra)) {	// European intravat sale without VAT intra community number
+					$objp->code_sell_l = (!empty($conf->global->ACCOUNTING_PRODUCT_SOLD_ACCOUNT) ? $conf->global->ACCOUNTING_PRODUCT_SOLD_ACCOUNT : '');
+					$suggestedaccountingaccountbydefaultfor = '';
+				} elseif ($isSellerInEEC && $isBuyerInEEC) {	// European intravat sale
 					$objp->code_sell_l = (!empty($conf->global->ACCOUNTING_PRODUCT_SOLD_INTRA_ACCOUNT) ? $conf->global->ACCOUNTING_PRODUCT_SOLD_INTRA_ACCOUNT : '');
 					$suggestedaccountingaccountbydefaultfor = 'eec';
 				} else {
@@ -470,7 +476,11 @@ if ($result) {
             $objp->aarowid_suggest = $objp->aarowid;
             $suggestedaccountingaccountfor = '';
         } else {
-            if ($isSellerInEEC && $isBuyerInEEC) {          // European intravat sale
+			if ($isSellerInEEC && $isBuyerInEEC && empty($objp->tva_intra)) {	// European intravat sale without VAT intra community number
+				$objp->code_sell_p = $objp->code_sell;
+				$objp->aarowid_suggest = $objp->aarowid;
+				$suggestedaccountingaccountfor = '';
+			} elseif ($isSellerInEEC && $isBuyerInEEC) {          // European intravat sale
                 $objp->code_sell_p = $objp->code_sell_intra;
                 $objp->aarowid_suggest = $objp->aarowid_intra;
                 $suggestedaccountingaccountfor = 'eec';

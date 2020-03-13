@@ -139,10 +139,10 @@ class Product extends CommonObject
      */
     public $price_min_ttc;
 
-    /*
-    * Base price ('TTC' for price including tax or 'HT' for net price)
-    * @var float
-    */
+    /**
+     * Base price ('TTC' for price including tax or 'HT' for net price)
+     * @var string
+     */
     public $price_base_type;
 
     //! Arrays for multiprices
@@ -2181,7 +2181,7 @@ class Product extends CommonObject
                 $this->barcode_type                    = $obj->fk_barcode_type;
 
                 $this->accountancy_code_buy				= $obj->accountancy_code_buy;
-                $this->accountancy_code_buy_intra		= $obj->accountancy_code_buy_intra;
+                $this->accountancy_code_buy_intra = $obj->accountancy_code_buy_intra;
                 $this->accountancy_code_buy_export		= $obj->accountancy_code_buy_export;
                 $this->accountancy_code_sell			= $obj->accountancy_code_sell;
                 $this->accountancy_code_sell_intra		= $obj->accountancy_code_sell_intra;

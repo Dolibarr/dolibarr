@@ -1414,10 +1414,10 @@ function top_htmlhead($head, $title = '', $disablejs = 0, $disablehead = 0, $arr
 			// Chart
 			if ($conf->global->MAIN_JS_GRAPH == 'chart')
 			{
-				print '<script src="'.DOL_URL_ROOT.'/includes/chart/dist/Chart.min.js'.($ext ? '?'.$ext : '').'"></script>'."\n";
+				print '<script src="'.DOL_URL_ROOT.'/includes/nnnick/chartjs/dist/Chart.min.js'.($ext ? '?'.$ext : '').'"></script>'."\n";
 			}
 
-			// jQuery jeditable
+			// jQuery jeditable for Edit In Place features
 			if (!empty($conf->global->MAIN_USE_JQUERY_JEDITABLE) && !defined('DISABLE_JQUERY_JEDITABLE'))
 			{
 				print '<!-- JS to manage editInPlace feature -->'."\n";

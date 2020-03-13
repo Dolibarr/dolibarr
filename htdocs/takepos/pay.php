@@ -251,9 +251,9 @@ $action_buttons = array(
 );
 $numpad = $conf->global->TAKEPOS_NUMPAD;
 
-print '<button type="button" class="calcbutton" onclick="addreceived('.($numpad == 0 ? '7' : '10').');">' . ($numpad == 0 ? '7' : '10') . '</button>';
-print '<button type="button" class="calcbutton" onclick="addreceived('.($numpad == 0 ? '8' : '20').');">' . ($numpad == 0 ? '8' : '20') . '</button>';
-print '<button type="button" class="calcbutton" onclick="addreceived('.($numpad == 0 ? '9' : '50').');">' . ($numpad == 0 ? '9' : '50') . '</button>';
+print '<button type="button" class="calcbutton" onclick="addreceived('.($numpad == 0 ? '7' : '10').');">'.($numpad == 0 ? '7' : '10').'</button>';
+print '<button type="button" class="calcbutton" onclick="addreceived('.($numpad == 0 ? '8' : '20').');">'.($numpad == 0 ? '8' : '20').'</button>';
+print '<button type="button" class="calcbutton" onclick="addreceived('.($numpad == 0 ? '9' : '50').');">'.($numpad == 0 ? '9' : '50').'</button>';
 ?>
 <?php if (count($paiements) > 0) {
     $paycode = $paiements[0]->code;
@@ -269,14 +269,14 @@ print '<button type="button" class="calcbutton" onclick="addreceived('.($numpad 
 		if (!empty($conf->global->TAKEPOS_NUMPAD_USE_PAYMENT_ICON))	$payIcon = 'money-check';
 	}
 
-	print '<button type="button" class="calcbutton2" onclick="Validate(\''.$langs->trans($paycode).'\');">' . (!empty($payIcon) ? '<span class="fa fa-2x fa-' . $payIcon . '"></span>' : $langs->trans("PaymentTypeShort".$paiements[0]->code)) . '</button>';
+	print '<button type="button" class="calcbutton2" onclick="Validate(\''.$langs->trans($paycode).'\');">'.(!empty($payIcon) ? '<span class="fa fa-2x fa-'.$payIcon.'"></span>' : $langs->trans("PaymentTypeShort".$paiements[0]->code)).'</button>';
 } else {
-	print '<button type="button" class="calcbutton2">' . $langs->trans("NoPaimementModesDefined") . '</button>';
+	print '<button type="button" class="calcbutton2">'.$langs->trans("NoPaimementModesDefined").'</button>';
 }
 
-print '<button type="button" class="calcbutton" onclick="addreceived('.($numpad == 0 ? '4' : '1').');">' . ($numpad == 0 ? '4' : '1') . '</button>';
-print '<button type="button" class="calcbutton" onclick="addreceived('.($numpad == 0 ? '5' : '2').');">' . ($numpad == 0 ? '5' : '2') . '</button>';
-print '<button type="button" class="calcbutton" onclick="addreceived('.($numpad == 0 ? '6' : '5').');">' . ($numpad == 0 ? '6' : '5') . '</button>';
+print '<button type="button" class="calcbutton" onclick="addreceived('.($numpad == 0 ? '4' : '1').');">'.($numpad == 0 ? '4' : '1').'</button>';
+print '<button type="button" class="calcbutton" onclick="addreceived('.($numpad == 0 ? '5' : '2').');">'.($numpad == 0 ? '5' : '2').'</button>';
+print '<button type="button" class="calcbutton" onclick="addreceived('.($numpad == 0 ? '6' : '5').');">'.($numpad == 0 ? '6' : '5').'</button>';
 ?>
 <?php if (count($paiements) > 1) {
     $paycode = $paiements[1]->code;
@@ -292,15 +292,15 @@ print '<button type="button" class="calcbutton" onclick="addreceived('.($numpad 
 		if (!empty($conf->global->TAKEPOS_NUMPAD_USE_PAYMENT_ICON))	$payIcon = 'money-check';
 	}
 
-	print '<button type="button" class="calcbutton2" onclick="Validate(\''.$langs->trans($paycode).'\');">'. (!empty($payIcon) ? '<span class="fa fa-2x fa-'.$payIcon.'"></span>' : $langs->trans("PaymentTypeShort".$paiements[1]->code)) . '</button>';
+	print '<button type="button" class="calcbutton2" onclick="Validate(\''.$langs->trans($paycode).'\');">'.(!empty($payIcon) ? '<span class="fa fa-2x fa-'.$payIcon.'"></span>' : $langs->trans("PaymentTypeShort".$paiements[1]->code)).'</button>';
 } else {
 	$button = array_pop($action_buttons);
-	print '<button type="button" class="calcbutton2" onclick="' . $button["function"] . '"><span ' . $button["span"] . '>' . $button["text"] . '</span></button>';
+	print '<button type="button" class="calcbutton2" onclick="'.$button["function"].'"><span '.$button["span"].'>'.$button["text"].'</span></button>';
 }
 
-print '<button type="button" class="calcbutton" onclick="addreceived('.($numpad == 0 ? '1' : '0.10').');">' . ($numpad == 0 ? '1' : '0.10') . '</button>';
-print '<button type="button" class="calcbutton" onclick="addreceived('.($numpad == 0 ? '2' : '0.20').');">' . ($numpad == 0 ? '2' : '0.20') . '</button>';
-print '<button type="button" class="calcbutton" onclick="addreceived('.($numpad == 0 ? '3' : '0.50').');">' . ($numpad == 0 ? '3' : '0.50') . '</button>';
+print '<button type="button" class="calcbutton" onclick="addreceived('.($numpad == 0 ? '1' : '0.10').');">'.($numpad == 0 ? '1' : '0.10').'</button>';
+print '<button type="button" class="calcbutton" onclick="addreceived('.($numpad == 0 ? '2' : '0.20').');">'.($numpad == 0 ? '2' : '0.20').'</button>';
+print '<button type="button" class="calcbutton" onclick="addreceived('.($numpad == 0 ? '3' : '0.50').');">'.($numpad == 0 ? '3' : '0.50').'</button>';
 ?>
 <?php if (count($paiements) > 2) {
     $paycode = $paiements[2]->code;
@@ -316,19 +316,19 @@ print '<button type="button" class="calcbutton" onclick="addreceived('.($numpad 
 		if (!empty($conf->global->TAKEPOS_NUMPAD_USE_PAYMENT_ICON))	$payIcon = 'money-check';
 	}
 
-	print '<button type="button" class="calcbutton2" onclick="Validate(\''.$langs->trans($paycode).'\');">' . (!empty($payIcon) ? '<span class="fa fa-2x fa-'.$payIcon.'"></span>' : $langs->trans("PaymentTypeShort".$paiements[2]->code)) . '</button>';
+	print '<button type="button" class="calcbutton2" onclick="Validate(\''.$langs->trans($paycode).'\');">'.(!empty($payIcon) ? '<span class="fa fa-2x fa-'.$payIcon.'"></span>' : $langs->trans("PaymentTypeShort".$paiements[2]->code)).'</button>';
 } else {
     $button = array_pop($action_buttons);
-	print '<button type="button" class="calcbutton2" onclick="'.$button["function"].'"><span '.$button["span"].'>' . $button["text"] . '</span></button>';
+	print '<button type="button" class="calcbutton2" onclick="'.$button["function"].'"><span '.$button["span"].'>'.$button["text"].'</span></button>';
 }
 
-print '<button type="button" class="calcbutton" onclick="addreceived('.($numpad == 0 ? '0' : '0.01').');">' . ($numpad == 0 ? '0' : '0.01') . '</button>';
-print '<button type="button" class="calcbutton" onclick="addreceived('.($numpad == 0 ? '\'000\'' : '0.02').');">' . ($numpad == 0 ? '000' : '0.02') . '</button>';
-print '<button type="button" class="calcbutton" onclick="addreceived('.($numpad == 0 ? '\'.\'' : '0.05').');">' . ($numpad == 0 ? '.' : '0.05') . '</button>';
+print '<button type="button" class="calcbutton" onclick="addreceived('.($numpad == 0 ? '0' : '0.01').');">'.($numpad == 0 ? '0' : '0.01').'</button>';
+print '<button type="button" class="calcbutton" onclick="addreceived('.($numpad == 0 ? '\'000\'' : '0.02').');">'.($numpad == 0 ? '000' : '0.02').'</button>';
+print '<button type="button" class="calcbutton" onclick="addreceived('.($numpad == 0 ? '\'.\'' : '0.05').');">'.($numpad == 0 ? '.' : '0.05').'</button>';
 
 $i = 3;
 while ($i < count($paiements)) {
-	print '<button type="button" class="calcbutton2" onclick="Validate(\''.$langs->trans($paiements[$i]->code).'\');">' . $langs->trans("PaymentTypeShort".$paiements[$i]->code) . '</button>';
+	print '<button type="button" class="calcbutton2" onclick="Validate(\''.$langs->trans($paiements[$i]->code).'\');">'.$langs->trans("PaymentTypeShort".$paiements[$i]->code).'</button>';
 	$i = $i + 1;
 }
 

@@ -195,7 +195,7 @@ if ((empty($paymentmethod) || $paymentmethod == 'paybox') && ! empty($conf->payb
 }
 if ((empty($paymentmethod) || $paymentmethod == 'stripe') && ! empty($conf->stripe->enabled))
 {
-	require_once DOL_DOCUMENT_ROOT.'/stripe/config.php';	// This include also /stripe/lib/stripe.lib.php, /includes/stripe/init.php, ...
+	require_once DOL_DOCUMENT_ROOT.'/stripe/config.php';	// This include also /stripe/lib/stripe.lib.php, /includes/stripe/stripe-php/init.php, ...
 }
 
 // Initialize $validpaymentmethod

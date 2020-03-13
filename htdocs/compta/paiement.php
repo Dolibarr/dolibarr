@@ -49,7 +49,7 @@ $socid      = GETPOST('socid', 'int');
 
 $sortfield	= GETPOST('sortfield', 'alpha');
 $sortorder	= GETPOST('sortorder', 'alpha');
-$page = GETPOST('page', 'int');
+$page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOST("page", 'int');
 
 $amounts = array();
 $amountsresttopay = array();

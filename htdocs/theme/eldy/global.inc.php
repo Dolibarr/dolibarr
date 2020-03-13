@@ -311,10 +311,15 @@ td.rightborder {
 td.actionbuttons a {
     padding-left: 6px;
 }
-select.flat, form.flat select {
+select.flat, form.flat select, .pageplusone {
 	font-weight: normal;
 	font-size: unset;
 }
+input.pageplusone {
+    padding-bottom: 4px;
+    padding-top: 4px;
+}
+
 .optionblue {
 	color: var(--colortextlink);
 }
@@ -702,14 +707,24 @@ div.divsearchfield {
     -webkit-flex-flow: row wrap;
     flex-flow: row wrap;
     background: #fff;
-    padding: 3px;
+    padding-top: 3px;
+    padding-bottom: 3px;
+    padding-left: 10px;
+    padding-right: 10px;
+    border-bottom: solid 1px rgba(0,0,0,.2);
+    height: 24px;
 }
-.search_component_params_input, .search_component_params_input:focus {
+.search_component_searchtext {
+    padding-top: 2px;
+}
+.search_component_params_text, .search_component_params_text:focus {
 	border-bottom: none;
 	width: auto;
 	margin: 0 !important;
 	padding: 3px;
 }
+
+
 <?php
 // Add a nowrap on smartphone, so long list of field used for filter are overflowed with clip
 if ($conf->browser->layout == 'phone') {

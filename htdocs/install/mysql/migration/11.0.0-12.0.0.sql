@@ -62,6 +62,8 @@ UPDATE llx_website_page SET lang = 'pt' WHERE lang like 'pt_%';
 ALTER TABLE llx_website ADD COLUMN lang varchar(8);
 ALTER TABLE llx_website ADD COLUMN otherlang varchar(255); 
 
+ALTER TABLE llx_website_page ADD COLUMN author_alias varchar(64);
+
 ALTER TABLE llx_holiday_users DROP INDEX uk_holiday_users;
 ALTER TABLE llx_holiday_users ADD UNIQUE INDEX uk_holiday_users(fk_user, fk_type);
 
