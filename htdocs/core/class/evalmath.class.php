@@ -1,5 +1,4 @@
 <?php
-
 /*
  * ================================================================================
  *
@@ -129,11 +128,10 @@ class EvalMath
 	/**
 	 * Evaluate
 	 *
-	 * @param string $expr
-	 *        	String
+	 * @param string $expr 	String
 	 * @return boolean|number|NULL|mixed Result
 	 */
-	function e($expr)
+	public function e($expr)
 	{
 		return $this->evaluate($expr);
 	}
@@ -141,11 +139,10 @@ class EvalMath
 	/**
 	 * Evaluate
 	 *
-	 * @param string $expr
-	 *        	String
+	 * @param string $expr 	String
 	 * @return boolean|number|NULL|mixed Result
 	 */
-	function evaluate($expr)
+	public function evaluate($expr)
 	{
 		$this->last_error = null;
 		$this->last_error_code = null;
@@ -197,7 +194,7 @@ class EvalMath
 	 *
 	 * @return string Output
 	 */
-	function vars()
+	private function vars()
 	{
 		$output = $this->v;
 		unset($output['pi']);
@@ -210,7 +207,7 @@ class EvalMath
 	 *
 	 * @return string Output
 	 */
-	function funcs()
+	private function funcs()
 	{
 		$output = array();
 		foreach ($this->f as $fnn => $dat)
@@ -227,7 +224,7 @@ class EvalMath
 	 *        	Expression
 	 * @return string Output
 	 */
-	function nfx($expr)
+	private function nfx($expr)
 	{
 		$index = 0;
 		$stack = new EvalMathStack();
@@ -362,13 +359,11 @@ class EvalMath
 	/**
 	 * evaluate postfix notation
 	 *
-	 * @param string $tokens
-	 *        	Expression
-	 * @param array $vars
-	 *        	Array
-	 * @return string Output
+	 * @param string $tokens      	Expression
+	 * @param array $vars       	Array
+	 * @return string 				Output
 	 */
-	function pfx($tokens, $vars = array())
+	private function pfx($tokens, $vars = array())
 	{
 		if ($tokens == false)
 			return false;
@@ -446,13 +441,10 @@ class EvalMath
 	/**
 	 * trigger an error, but nicely, if need be
 	 *
-	 * @param string $code
-	 *        	Code
-	 * @param string $msg
-	 *        	Msg
-	 * @param string|null $info
-	 *        	sting
-	 * @return boolean False
+	 * @param string $code		   	Code
+	 * @param string $msg			Msg
+	 * @param string|null $info		String
+	 * @return boolean 				False
 	 */
 	function trigger($code, $msg, $info = null)
 	{
@@ -477,11 +469,10 @@ class EvalMathStack
 	/**
 	 * push
 	 *
-	 * @param string $val
-	 *        	Val
+	 * @param string $val		Val
 	 * @return void
 	 */
-	function push($val)
+	public function push($val)
 	{
 		$this->stack[$this->count] = $val;
 		$this->count ++;
@@ -492,7 +483,7 @@ class EvalMathStack
 	 *
 	 * @return mixed Stack
 	 */
-	function pop()
+	public function pop()
 	{
 		if ($this->count > 0) {
 			$this->count --;
@@ -504,11 +495,10 @@ class EvalMathStack
 	/**
 	 * last
 	 *
-	 * @param int $n
-	 *        	N
-	 * @return mixed Stack
+	 * @param int $n	N
+	 * @return mixed 	Stack
 	 */
-	function last($n = 1)
+	public function last($n = 1)
 	{
 		if (isset($this->stack[$this->count - $n])) {
 			return $this->stack[$this->count - $n];
