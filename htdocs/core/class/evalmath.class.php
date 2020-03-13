@@ -220,9 +220,8 @@ class EvalMath
 	/**
 	 * Convert infix to postfix notation
 	 *
-	 * @param string $expr
-	 *        	Expression
-	 * @return string Output
+	 * @param string $expr		Expression
+	 * @return string 			Output
 	 */
 	private function nfx($expr)
 	{
@@ -446,7 +445,7 @@ class EvalMath
 	 * @param string|null $info		String
 	 * @return boolean 				False
 	 */
-	function trigger($code, $msg, $info = null)
+	public function trigger($code, $msg, $info = null)
 	{
 		$this->last_error = $msg;
 		$this->last_error_code = array($code,$info);
@@ -462,9 +461,9 @@ class EvalMath
 class EvalMathStack
 {
 
-	var $stack = array();
+	public $stack = array();
 
-	var $count = 0;
+	public $count = 0;
 
 	/**
 	 * push
