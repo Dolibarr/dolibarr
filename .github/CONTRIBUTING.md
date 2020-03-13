@@ -115,7 +115,7 @@ Also, some code changes need a prior approbation:
 
 * if you add a new table, you must first create a page on https://wiki.dolibarr.org/index.php/Category:Table_SQL (copy an existing page changing its name to see it into this index page). Than ask the project manager (@eldy) if the new data model you plan to add is compatible with curent and future works in progress and can be accepted as you suggest.
 
-Once a PR has been submitted, you may need to wait for its integration. It is common that the project leader let the PR open for a long delay to allow every developer discuss about the PR.
+Once a PR has been submitted, you may need to wait for its integration. It is common that the project leader let the PR open for a long delay to allow every developer discuss about the PR (A label is added in such a case).
 
 If the label of PR start with "WIP" (Work In Progress), it will not be analyzed (until you change the label of PR).
 
