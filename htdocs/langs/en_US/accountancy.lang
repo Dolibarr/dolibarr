@@ -348,6 +348,8 @@ AccountRemovedFromGroup=Account removed from group
 SaleLocal=Local sale
 SaleExport=Export sale
 SaleEEC=Sale in EEC
+SaleEECWithVAT=Sale in EEC with a VAT not null, so we suppose this is NOT an intracommunautary sale and the suggested account is the standard product account.
+SaleEECWithoutVATNumber=Sale in EEC with no VAT but the VAT ID of thirdparty is not defined. We fallback on the product account for standard sales. You can fix the VAT ID of thirdparty or the product account if needed.
 
 ## Dictionary
 Range=Range of accounting account

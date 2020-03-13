@@ -206,8 +206,10 @@ if (empty($chartaccountcode))
 // Customer Invoice lines
 $sql = "SELECT f.rowid as facid, f.ref as ref, f.datef, f.type as ftype,";
 $sql .= " l.rowid, l.fk_product, l.description, l.total_ht, l.fk_code_ventilation, l.product_type as type_l, l.tva_tx as tva_tx_line, l.vat_src_code,";
-$sql .= " p.rowid as product_id, p.ref as product_ref, p.label as product_label, p.fk_product_type as type, p.accountancy_code_sell as code_sell, p.tva_tx as tva_tx_prod,";
-$sql .= " p.accountancy_code_sell_intra as code_sell_intra, p.accountancy_code_sell_export as code_sell_export,";
+$sql .= " p.rowid as product_id, p.ref as product_ref, p.label as product_label, p.fk_product_type as type, p.tva_tx as tva_tx_prod,";
+$sql .= " p.accountancy_code_sell as code_sell, p.accountancy_code_sell_intra as code_sell_intra, p.accountancy_code_sell_export as code_sell_export,";
+$sql .= " p.accountancy_code_buy as code_buy, p.accountancy_code_buy_intra as code_buy_intra, p.accountancy_code_buy_export as code_buy_export,";
+$sql .= " p.tosell as status, p.tobuy as status_buy,";
 $sql .= " aa.rowid as aarowid, aa2.rowid as aarowid_intra, aa3.rowid as aarowid_export,";
 $sql .= " co.code as country_code, co.label as country_label,";
 $sql .= " s.tva_intra";
@@ -423,6 +425,14 @@ if ($result) {
 		$product_static->id = $objp->product_id;
 		$product_static->type = $objp->type;
 		$product_static->label = $objp->product_label;
+		$product_static->status = $objp->status;
+		$product_static->status_buy = $objp->status_buy;
+		$product_static->accountancy_code_sell = $objp->code_sell;
+		$product_static->accountancy_code_sell_intra = $objp->code_sell_intra;
+		$product_static->accountancy_code_sell_export = $objp->code_sell_export;
+		$product_static->accountancy_code_buy = $objp->code_buy;
+		$product_static->accountancy_code_buy_intra = $objp->code_buy_intra;
+		$product_static->accountancy_code_buy_export = $objp->code_buy_export;
 
 		$facture_static->ref = $objp->ref;
 		$facture_static->id = $objp->facid;
@@ -433,15 +443,19 @@ if ($result) {
 
         $isBuyerInEEC = isInEEC($objp);
 
+        // Search suggested default account for product/service
         $suggestedaccountingaccountbydefaultfor = '';
     	if ($objp->type_l == 1) {
     		if ($objp->country_code == $mysoc->country_code || empty($objp->country_code)) {  // If buyer in same country than seller (if not defined, we assume it is same country)
     			$objp->code_sell_l = (!empty($conf->global->ACCOUNTING_SERVICE_SOLD_ACCOUNT) ? $conf->global->ACCOUNTING_SERVICE_SOLD_ACCOUNT : '');
     			$suggestedaccountingaccountbydefaultfor = '';
     		} else {
-				if ($isSellerInEEC && $isBuyerInEEC && empty($objp->tva_intra)) {    // European intravat sale without VAT intra community number
+    			if ($isSellerInEEC && $isBuyerInEEC && $objp->tva_tx_line != 0) {    // European intravat sale, but with a VAT
 					$objp->code_sell_l = (!empty($conf->global->ACCOUNTING_SERVICE_SOLD_ACCOUNT) ? $conf->global->ACCOUNTING_SERVICE_SOLD_ACCOUNT : '');
-					$suggestedaccountingaccountbydefaultfor = '';
+					$suggestedaccountingaccountbydefaultfor = 'eecwithvat';
+    			} elseif ($isSellerInEEC && $isBuyerInEEC && empty($objp->tva_intra)) {    // European intravat sale, without VAT intra community number
+    				$objp->code_sell_l = (!empty($conf->global->ACCOUNTING_SERVICE_SOLD_ACCOUNT) ? $conf->global->ACCOUNTING_SERVICE_SOLD_ACCOUNT : '');
+    				$suggestedaccountingaccountbydefaultfor = 'eecwithoutvatnumber';
 				} elseif ($isSellerInEEC && $isBuyerInEEC) {    // European intravat sale
     				$objp->code_sell_l = (!empty($conf->global->ACCOUNTING_SERVICE_SOLD_INTRA_ACCOUNT) ? $conf->global->ACCOUNTING_SERVICE_SOLD_INTRA_ACCOUNT : '');
     				$suggestedaccountingaccountbydefaultfor = 'eec';
@@ -455,9 +469,12 @@ if ($result) {
 				$objp->code_sell_l = (!empty($conf->global->ACCOUNTING_PRODUCT_SOLD_ACCOUNT) ? $conf->global->ACCOUNTING_PRODUCT_SOLD_ACCOUNT : '');
 				$suggestedaccountingaccountbydefaultfor = '';
 			} else {
-				if ($isSellerInEEC && $isBuyerInEEC && empty($objp->tva_intra)) {	// European intravat sale without VAT intra community number
+				if ($isSellerInEEC && $isBuyerInEEC && $objp->tva_tx_line != 0) {	// European intravat sale, but with a VAT
 					$objp->code_sell_l = (!empty($conf->global->ACCOUNTING_PRODUCT_SOLD_ACCOUNT) ? $conf->global->ACCOUNTING_PRODUCT_SOLD_ACCOUNT : '');
-					$suggestedaccountingaccountbydefaultfor = '';
+					$suggestedaccountingaccountbydefaultfor = 'eecwithvat';
+				} elseif ($isSellerInEEC && $isBuyerInEEC && empty($objp->tva_intra)) {	// European intravat sale, without VAT intra community number
+					$objp->code_sell_l = (!empty($conf->global->ACCOUNTING_PRODUCT_SOLD_ACCOUNT) ? $conf->global->ACCOUNTING_PRODUCT_SOLD_ACCOUNT : '');
+					$suggestedaccountingaccountbydefaultfor = 'eecwithoutvatnumber';
 				} elseif ($isSellerInEEC && $isBuyerInEEC) {	// European intravat sale
 					$objp->code_sell_l = (!empty($conf->global->ACCOUNTING_PRODUCT_SOLD_INTRA_ACCOUNT) ? $conf->global->ACCOUNTING_PRODUCT_SOLD_INTRA_ACCOUNT : '');
 					$suggestedaccountingaccountbydefaultfor = 'eec';
@@ -469,17 +486,21 @@ if ($result) {
 		}
 		if ($objp->code_sell_l == -1) $objp->code_sell_l = '';
 
-		// Search suggested account for product/service
+		// Search suggested account for product/service (similar code exists in page index.php to make automatic binding)
 		$suggestedaccountingaccountfor = '';
 		if (($objp->country_code == $mysoc->country_code) || empty($objp->country_code)) {  // If buyer in same country than seller (if not defined, we assume it is same country)
             $objp->code_sell_p = $objp->code_sell;
             $objp->aarowid_suggest = $objp->aarowid;
             $suggestedaccountingaccountfor = '';
         } else {
-			if ($isSellerInEEC && $isBuyerInEEC && empty($objp->tva_intra)) {	// European intravat sale without VAT intra community number
+        	if ($isSellerInEEC && $isBuyerInEEC && $objp->tva_tx_line != 0) {	// European intravat sale, but with VAT
 				$objp->code_sell_p = $objp->code_sell;
 				$objp->aarowid_suggest = $objp->aarowid;
-				$suggestedaccountingaccountfor = '';
+				$suggestedaccountingaccountfor = 'eecwithvat';
+        	} elseif ($isSellerInEEC && $isBuyerInEEC && empty($objp->tva_intra)) {	// European intravat sale, without VAT intra community number
+        		$objp->code_sell_p = $objp->code_sell;
+        		$objp->aarowid_suggest = $objp->aarowid;	// There is a doubt for this case. Is it an error on vat or we just forgot to fill vat number ?
+        		$suggestedaccountingaccountfor = 'eecwithoutvatnumber';
 			} elseif ($isSellerInEEC && $isBuyerInEEC) {          // European intravat sale
                 $objp->code_sell_p = $objp->code_sell_intra;
                 $objp->aarowid_suggest = $objp->aarowid_intra;
@@ -497,6 +518,7 @@ if ($result) {
 			$code_sell_p_notset = 'color:orange';
 		}
 		if (empty($objp->code_sell_l) && empty($objp->code_sell_p)) $code_sell_p_notset = 'color:red';
+		if ($suggestedaccountingaccountfor == 'eecwithoutvatnumber' && empty($code_sell_p_notset)) $code_sell_p_notset = 'color:orange';
 
 		// $objp->code_sell_l is now default code of product/service
 		// $objp->code_sell_p is now code of product/service
@@ -513,8 +535,9 @@ if ($result) {
 
 		// Ref Product
 		print '<td>';
-		if ($product_static->id > 0)
+		if ($product_static->id > 0) {
 			print $product_static->getNomUrl(1);
+		}
 		if ($objp->product_label) print '<br>'.$objp->product_label;
 		print '</td>';
 
@@ -557,6 +580,8 @@ if ($result) {
 		    $s = (($objp->type_l == 1) ? $langs->trans("ThisService") : $langs->trans("ThisProduct")).': ';
 		    $shelp = '';
 		    if ($suggestedaccountingaccountfor == 'eec') $shelp = $langs->trans("SaleEEC");
+		    elseif ($suggestedaccountingaccountfor == 'eecwithvat') $shelp = $langs->trans("SaleEECWithVAT");
+		    elseif ($suggestedaccountingaccountfor == 'eecwithoutvatnumber') $shelp = $langs->trans("SaleEECWithoutVATNumber");
 		    elseif ($suggestedaccountingaccountfor == 'export') $shelp = $langs->trans("SaleExport");
 		    $s .= (empty($objp->code_sell_p) ? $langs->trans("NotDefined") : length_accountg($objp->code_sell_p));
 		    print $form->textwithpicto($s, $shelp, 1, 'help', '', 0, 2, '', 1);
@@ -592,6 +617,7 @@ if ($result) {
 		print '<td class="center">';
 		//var_dump($objp->aarowid);var_dump($objp->aarowid_intra);var_dump($objp->aarowid_export);var_dump($objp->aarowid_suggest);
 		$ischecked = $objp->aarowid_suggest;
+		if ($suggestedaccountingaccountfor == 'eecwithoutvatnumber') $ischecked = 0;
 		print '<input type="checkbox" class="flat checkforselect checkforselect'.$objp->rowid.'" name="toselect[]" value="'.$objp->rowid."_".$i.'"'.($ischecked ? "checked" : "").'/>';
 		print '</td>';
 
