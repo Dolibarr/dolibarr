@@ -32,7 +32,8 @@
 		"phpoffice/phpexcel" : "1.8.1",
 		"restler/framework" : "3.0.0-RC6",
 		"tecnickcom/tcpdf" : "6.3.2",
-		"nnnick/chartjs" : "2.9.3"
+		"nnnick/chartjs" : "2.9.3",
+		"stripe/stripe-php" : "6.43.1"
 	},
 	"require-dev" : {
 		"jakub-onderka/php-parallel-lint" : "^0",
