@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "content-hash": "bf6a7dc416541060b0900b7a7982296f",
+    "content-hash": "9f3a6e33d25fad5f44426d0dc8fc3c3d",
     "packages": [
         {
             "name": "ckeditor/ckeditor",
@@ -153,6 +153,47 @@
                 "php mobile detect"
             ],
             "time": "2018-09-01T15:05:15+00:00"
+        },
+        {
+            "name": "nnnick/chartjs",
+            "version": "v2.9.3",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/chartjs/Chart.js.git",
+                "reference": "06f73dc3590084b2c464bf08189c7aee2b6b92d2"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/chartjs/Chart.js/zipball/06f73dc3590084b2c464bf08189c7aee2b6b92d2",
+                "reference": "06f73dc3590084b2c464bf08189c7aee2b6b92d2",
+                "shasum": ""
+            },
+            "require": {
+                "php": ">=5.3.3"
+            },
+            "type": "library",
+            "extra": {
+                "branch-alias": {
+                    "release/2.0": "v2.0-dev"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "NICK DOWNIE",
+                    "email": "hello@nickdownie.com"
+                }
+            ],
+            "description": "Simple HTML5 charts using the canvas element.",
+            "homepage": "https://www.chartjs.org/",
+            "keywords": [
+                "JS",
+                "chart"
+            ],
+            "time": "2019-11-14T18:37:30+00:00"
         },
         {
             "name": "phpoffice/phpexcel",

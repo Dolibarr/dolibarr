@@ -1414,7 +1414,7 @@ function top_htmlhead($head, $title = '', $disablejs = 0, $disablehead = 0, $arr
 			// Chart
 			if ($conf->global->MAIN_JS_GRAPH == 'chart')
 			{
-				print '<script src="'.DOL_URL_ROOT.'/includes/chart/dist/Chart.min.js'.($ext ? '?'.$ext : '').'"></script>'."\n";
+				print '<script src="'.DOL_URL_ROOT.'/includes/nnnick/chartjs/dist/Chart.min.js'.($ext ? '?'.$ext : '').'"></script>'."\n";
 			}
 
 			// jQuery jeditable

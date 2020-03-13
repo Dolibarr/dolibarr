@@ -31,8 +31,8 @@
 		"mobiledetect/mobiledetectlib" : "2.8.33",
 		"phpoffice/phpexcel" : "1.8.1",
 		"restler/framework" : "3.0.0-RC6",
-		"tecnickcom/tcpdf" : "^6.2",
-		"luracast/restler" : "^3.0"
+		"tecnickcom/tcpdf" : "6.3.2",
+		"nnnick/chartjs": "2.9.3"
 	},
 	"require-dev" : {
 		"jakub-onderka/php-parallel-lint" : "^0",
