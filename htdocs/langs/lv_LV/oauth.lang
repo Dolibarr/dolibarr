@@ -5,7 +5,7 @@ ManualTokenGeneration=Manual token generation
 TokenManager=Žetonu pārvaldnieks
 IsTokenGenerated=Vai tiek ģenerēts marķieris?
 NoAccessToken=No access token saved into local database
-HasAccessToken=A token was generated and saved into local database
+HasAccessToken=Tika izveidots marķieris un saglabāts lokālajā datu bāzē
 NewTokenStored=Token received and saved
 ToCheckDeleteTokenOnProvider=Click here to check/delete authorization saved by %s OAuth provider
 TokenDeleted=Tokens dzēsts
@@ -28,3 +28,5 @@ OAUTH_GITHUB_NAME=OAuth GitHub pakalpojums
 OAUTH_GITHUB_ID=OAuth GitHub ID
 OAUTH_GITHUB_SECRET=OAuth GitHub noslēpums
 OAUTH_GITHUB_DESC=Dodieties uz <a class="notasortlink" href="https://github.com/settings/developers" target="_blank"> šo lapu </a> un pēc tam "Reģistrējiet jaunu pieteikumu", lai izveidotu OAuth akreditācijas datus
+OAUTH_STRIPE_TEST_NAME=OAuth svītras tests
+OAUTH_STRIPE_LIVE_NAME=OAuth Stripe Live

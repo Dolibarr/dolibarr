@@ -60,7 +60,7 @@ MemberSubscriptionModifiedInDolibarr=Abonnement %s for medlem %s ændret
 MemberSubscriptionDeletedInDolibarr=Abonnement %s for medlem %s slettet
 ShipmentValidatedInDolibarr=Forsendelse %s bekræftet
 ShipmentClassifyClosedInDolibarr=Forsendelse %s klassificeret faktureret
-ShipmentUnClassifyCloseddInDolibarr=Forsendelse %s klassificeret genåbnet
+ShipmentUnClassifyCloseddInDolibarr=Shipment %s classified re-open
 ShipmentBackToDraftInDolibarr=Forsendelse %s gå tilbage til udkast status
 ShipmentDeletedInDolibarr=Forsendelse %s slettet
 OrderCreatedInDolibarr=Bestil %s oprettet
@@ -123,6 +123,7 @@ AgendaUrlOptionsNotAdmin=<b> logina =! %s </ b> for at begrænse output til hand
 AgendaUrlOptions4=<b> logind = %s </b> for at begrænse uddata til handlinger tildelt bruger <b> %s </b> (ejer og andre).
 AgendaUrlOptionsProject=<b>projekt = __ PROJECT_ID __ </b> for at begrænse output til handlinger, der er knyttet til projektet <b> __ PROJECT_ID __ </b>.
 AgendaUrlOptionsNotAutoEvent=<b> notactiontype = systemauto </ b> for at udelukke automatiske begivenheder.
+AgendaUrlOptionsIncludeHolidays=<b>includeholidays=1</b> to include events of holidays.
 AgendaShowBirthdayEvents=Vis fødselsdage på kontakter
 AgendaHideBirthdayEvents=Skjul fødselsdage på kontakter
 Busy=Travl

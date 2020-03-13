@@ -419,6 +419,7 @@ PaymentCondition14DENDMONTH=ظرف  14 روز پس از آخرماه
 FixAmount=Fixed amount - 1 line with label '%s'
 VarAmount=مبلغ متغیر ( %% کل )
 VarAmountOneLine=مبلغ متغیر ( %% کل ) - 1 سطر با برچسب "%s"
+VarAmountAllLines=Variable amount (%% tot.) - all same lines
 # PaymentType
 PaymentTypeVIR=انتقال بانکی
 PaymentTypeShortVIR=انتقال بانکی
@@ -512,13 +513,15 @@ RevenueStamp=تمبر درآمد
 YouMustCreateInvoiceFromThird=این گزینه تنها وقتی فعال است که شما صورت‌حساب را از زبانۀ "مشتری" یک شخص سوم می‌سازید
 YouMustCreateInvoiceFromSupplierThird=این گزینه تنها وقتی فعال است که شما صورت‌حساب را از زبانۀ "فروشنده" یک شخص سوم می‌سازید
 YouMustCreateStandardInvoiceFirstDesc=شما باید ابتدا یک صورت‌حساب استاندارد ساخته و سپس آن را تبدیل به "قالب" کنید تا یک صورت‌حساب قالبی ساخته باشید
-PDFCrabeDescription=Invoice PDF template Crabe. A complete invoice template 
+PDFCrabeDescription=Invoice PDF template Crabe. A complete invoice template (old implementation of Sponge template)
 PDFSpongeDescription=قالب PDF صورت‌حساب Sponge. یک قالب کامل صورت‌حساب 
 PDFCrevetteDescription=قالب PDF صورت‌حساب Crevette. یک قالب کامل صورت‌حساب برای صورت‌حساب‌های وضعیت
 TerreNumRefModelDesc1=بازگرداندن عدد با شکل %syymm-nnnn برای صورت‌حساب‌های استاندارد و %syymm-nnnn برای یادداشت‌های اعتباری که در آن yy نمایندۀ سال، mm ماه و nnnn یک شمارنده بدون توقف و بدون بازگشت به 0 است
 MarsNumRefModelDesc1=بازگرداندن عدد با شکل %syymm-nnnn برای صورت‌حساب‌های استاندارد و %s yymm-nnnn برای صورت‌حساب‌های جایگزین و %syymm-nnnn برای صورت‌حساب‌های پیش‌پرداخت و %syymm-nnnn برای یادداشت‌های اعتباری است که در آن yy نمایندۀ سال، mm ماه و nnnn یک شمارنده بدون توقف و بدون بازگشت به 0 است
 TerreNumRefModelError=صورت‌حسابی که با $syymm شروع می‌شود قبلا وجود داشته و با این نوع ترتیب شماره همخوان نیست. آن را حذف کرده یا تغییر نام دهید تا این واحد فعال شود
 CactusNumRefModelDesc1=بازگرداندن عدد با شکل %s yymm-nnnn برای صورت‌حساب‌های استاندارد و %s yymm-nnnn  برای یادداشت‌های اعتباری و  %syymm-nnnn برای پیش پرداخت است که در آن yy نمایندۀ سال، mm ماه و nnnn یک شمارنده بدون توقف و بدون بازگشت به 0 است
+EarlyClosingReason=Early closing reason
+EarlyClosingComment=Early closing note
 ##### Types de contacts #####
 TypeContact_facture_internal_SALESREPFOLL=نمایندۀ پیگیر صورت‌حساب مشتری
 TypeContact_facture_external_BILLING=طرف‌تماس صورت‌حساب مشتری

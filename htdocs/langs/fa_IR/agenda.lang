@@ -60,7 +60,7 @@ MemberSubscriptionModifiedInDolibarr=عضویت %s برای عضو %s ویرای
 MemberSubscriptionDeletedInDolibarr=عضویت %s برای عضو %s حذف شد
 ShipmentValidatedInDolibarr=ارسال %s تائید شد
 ShipmentClassifyClosedInDolibarr=ارسال %s به‌عنوان صورت‌حساب‌شده طبقه‌بندی شد
-ShipmentUnClassifyCloseddInDolibarr=ارسال %s به‌عنوان بازگشائی‌شده طبقه‌بندی شد
+ShipmentUnClassifyCloseddInDolibarr=Shipment %s classified re-open
 ShipmentBackToDraftInDolibarr=ارسال %s به حالت پیش‌نویس بازگردانده شد
 ShipmentDeletedInDolibarr=ارسال %s حذف شد
 OrderCreatedInDolibarr=سفارش %s ساخته شد
@@ -123,6 +123,7 @@ AgendaUrlOptionsNotAdmin=<b>logina=!%s</b> برای محدودکردن خروج�
 AgendaUrlOptions4=<b>logint=%s</b> برای محدود کردن خروجی به کنش‌هائی که به کاربر <b>%s</b> اختصاص داده شده است (مالک و سایرین).
 AgendaUrlOptionsProject=<b>project=__PROJECT_ID__</b>  برای محدود کردن خروجی به کنش‌های مرتبط به یک طرح <b>__PROJECT_ID__</b>.
 AgendaUrlOptionsNotAutoEvent=<b>notactiontype=systemauto</b> برای مستثنی کردن روی‌دادهای خودکار.
+AgendaUrlOptionsIncludeHolidays=<b>includeholidays=1</b> to include events of holidays.
 AgendaShowBirthdayEvents=نمایش تاریخ‌تولد طرف‌های تماس
 AgendaHideBirthdayEvents=پنهان کردن تاریخ تولد طرف‌های تماس
 Busy=مشغول

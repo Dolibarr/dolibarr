@@ -331,6 +331,10 @@ PossibleValues=Các giá trị có thể
 GoOnMenuToCreateVairants=Vào menu %s - %s để chuẩn bị các biến thể thuộc tính (như màu sắc, kích thước, ...)
 UseProductFournDesc=Thêm một tính năng để xác định các mô tả sản phẩm được mô tả bởi các nhà cung cấp bên cạnh các mô tả cho khách hàng
 ProductSupplierDescription=Mô tả sản phẩm của nhà cung cấp
+UseProductSupplierPackaging=Use packaging on supplier prices (recalculate quantities according to packaging set on supplier price when adding/updating line in supplier documents)
+PackagingForThisProduct=Packaging
+QtyRecalculatedWithPackaging=The quantity of the line were recalculated according to supplier packaging
+
 #Attributes
 VariantAttributes=Thuộc tính biến thể
 ProductAttributes=Thuộc tính biến thể cho sản phẩm
@@ -363,7 +367,7 @@ UsePercentageVariations=Sử dụng các biến thể tỷ lệ phần trăm
 PercentageVariation=Biến thể tỷ lệ phần trăm
 ErrorDeletingGeneratedProducts=Có lỗi trong khi cố gắng xóa biến thể sản phẩm hiện có
 NbOfDifferentValues=Số các giá trị khác nhau
-NbProducts=Số các sản phẩm
+NbProducts=Number of products
 ParentProduct=Sản phẩm cha
 HideChildProducts=Ẩn biến thể sản phẩm
 ShowChildProducts=Hiển thị biến thể sản phẩm
@@ -376,3 +380,4 @@ ErrorProductCombinationNotFound=Không thấy biến thể sản phẩm
 ActionAvailableOnVariantProductOnly=Hành động chỉ có hiệu lực trên biến thể sản phẩm
 ProductsPricePerCustomer=Giá sản phẩm mỗi khách hàng
 ProductSupplierExtraFields=Thuộc tính bổ sung (Giá Nhà cung cấp)
+DeleteLinkedProduct=Delete the child product linked to the combination

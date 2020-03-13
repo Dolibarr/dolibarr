@@ -68,3 +68,4 @@ ToOfferALinkForTestWebhook=Σύνδεση με τη ρύθμιση Stripe WebHoo
 ToOfferALinkForLiveWebhook=Σύνδεση στη ρύθμιση Stripe WebHook για κλήση του IPN (ζωντανή λειτουργία)
 PaymentWillBeRecordedForNextPeriod=Η πληρωμή θα καταγραφεί για την επόμενη περίοδο.
 ClickHereToTryAgain=<a href="%s">Κάντε κλικ εδώ για να δοκιμάσετε ξανά ...</a>
+CreationOfPaymentModeMustBeDoneFromStripeInterface=Λόγω ισχυρών κανόνων αυθεντικότητας πελατών, η δημιουργία μιας κάρτας πρέπει να γίνεται από το Stripe backoffice. Μπορείτε να κάνετε κλικ εδώ για να μεταφερθείτε στην εγγραφή πελάτη Stripe: %s

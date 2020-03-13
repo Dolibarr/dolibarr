@@ -46,7 +46,7 @@ PropalClosedRefusedInDolibarr=Предложение %s е отхвърлено
 PropalValidatedInDolibarr=Предложение %s е валидирано
 PropalClassifiedBilledInDolibarr=Предложение %s е фактурирано
 InvoiceValidatedInDolibarr=Фактура %s е валидирана
-InvoiceValidatedInDolibarrFromPos=Фактура %s е валидирана от POS
+InvoiceValidatedInDolibarrFromPos=Фактура %s е валидирана от ПОС
 InvoiceBackToDraftInDolibarr=Фактура %s е върната в статус на чернова
 InvoiceDeleteDolibarr=Фактура %s е изтрита
 InvoicePaidInDolibarr=Фактура %s е платена
@@ -58,11 +58,11 @@ MemberDeletedInDolibarr=Член %s е изтрит
 MemberSubscriptionAddedInDolibarr=Членски внос %s за член %s е добавен
 MemberSubscriptionModifiedInDolibarr=Членски внос %s за член %s е променен
 MemberSubscriptionDeletedInDolibarr=Членски внос %s за член %s е изтрит
-ShipmentValidatedInDolibarr=Доставка %s е валидирана
-ShipmentClassifyClosedInDolibarr=Доставка %s е фактурирана
-ShipmentUnClassifyCloseddInDolibarr=Доставка %s е повторно отворена
-ShipmentBackToDraftInDolibarr=Доставка %s е върната в статус чернова
-ShipmentDeletedInDolibarr=Доставка %s е изтрита
+ShipmentValidatedInDolibarr=Пратка %s е валидирана
+ShipmentClassifyClosedInDolibarr=Пратка %s е фактурирана
+ShipmentUnClassifyCloseddInDolibarr=Пратка %s е повторно отворена
+ShipmentBackToDraftInDolibarr=Пратка %s е върната в статус чернова
+ShipmentDeletedInDolibarr=Пратка %s е изтрита
 OrderCreatedInDolibarr=Поръчка %s е създадена
 OrderValidatedInDolibarr=Поръчка %s е валидирана
 OrderDeliveredInDolibarr=Поръчка %s е класифицирана като доставена
@@ -78,8 +78,8 @@ InvoiceSentByEMail=Фактура за продажба %s е изпратена
 SupplierOrderSentByEMail=Поръчка за покупка %s е изпратена по имейл
 ORDER_SUPPLIER_DELETEInDolibarr=Поръчката за покупка %s е изтрита
 SupplierInvoiceSentByEMail=Фактура за покупка %s е изпратена по имейл
-ShippingSentByEMail=Доставка %s е изпратена по имейл
-ShippingValidated= Доставка %s е валидирана
+ShippingSentByEMail=Пратка %s е изпратена по имейл
+ShippingValidated= Пратка %s е валидирана
 InterventionSentByEMail=Интервенция %s е изпратена по имейл
 ProposalDeleted=Предложението е изтрито
 OrderDeleted=Поръчката е изтрита
@@ -122,7 +122,8 @@ AgendaUrlOptions3=<b>logina=%s</b>, за да ограничи показван�
 AgendaUrlOptionsNotAdmin=<b>logina=!%s</b>, за да ограничи показването до събития, които не са собственост на потребител <b>%s</b>.
 AgendaUrlOptions4=<b>logint=%s</b>, за да ограничи показването до събития, които са възложени на потребител <b>%s</b> (като собственик и не).
 AgendaUrlOptionsProject=<b>project=__PROJECT_ID__</b>, за да ограничи показването до събития, които са свързани с проект <b>__PROJECT_ID__</b>.
-AgendaUrlOptionsNotAutoEvent=<b>notactiontype=systemauto</b> за изключване на автоматични събития.
+AgendaUrlOptionsNotAutoEvent=<b>notactiontype=systemauto</b>, за да изключи автоматичните събития.
+AgendaUrlOptionsIncludeHolidays=<b>includeholidays=1</b>, за да включи събитията с почивни дни.
 AgendaShowBirthdayEvents=Показване на рождени дни на контакти
 AgendaHideBirthdayEvents=Скриване на рождени дни на контакти
 Busy=Зает

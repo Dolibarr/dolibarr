@@ -121,3 +121,6 @@ BackToHomePage=Terug naar de startpagina...
 TranslationLinks=Vertaling links
 YouTryToAccessToAFileThatIsNotAWebsitePage=U probeert toegang te krijgen tot een pagina die geen webpagina is
 UseTextBetween5And70Chars=Gebruik voor goede SEO-praktijken een tekst tussen 5 en 70 tekens
+MainLanguage=Main language
+OtherLanguages=Other languages
+UseManifest=Provide a manifest.json file

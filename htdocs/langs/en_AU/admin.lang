@@ -1,7 +1,10 @@
 # Dolibarr language file - Source file is en_US - admin
+YouCanSubmitFile=You can upload the .zip file of module package from here:
 OldVATRates=Old GST rate
 NewVATRates=New GST rate
+Module50150Desc=Point of Sale module TakePOS (touchscreen POS, for shops, bars or restaurants).
 DictionaryVAT=GST Rates or Sales Tax Rates
+ValueOfConstantKey=Value of a configuration constant
 OptionVatMode=GST due
 SuppliersCommandModel=Complete template of Purchase Order
 SuppliersInvoiceModel=Complete template of Vendor Invoice

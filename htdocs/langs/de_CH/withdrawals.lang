@@ -1,2 +1,5 @@
 # Dolibarr language file - Source file is en_US - withdrawals
+StandingOrderPayment=Bankeinzug/Lastschrift
+WithdrawalReceipt=Bankeinzug / Lastschrift
 WithdrawalRefusedConfirm=Möchten Sie wirklich eine Abbuchungsablehnung zu diesem Geschäftspartner erstellen?
+StatusMotif4=Kundenbestellungen

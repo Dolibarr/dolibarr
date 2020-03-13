@@ -331,6 +331,10 @@ PossibleValues=Πιθανές τιμές
 GoOnMenuToCreateVairants=Πηγαίνετε στο μενού %s - %s για να προετοιμάσετε παραλλαγές χαρακτηριστικών (όπως χρώματα, μέγεθος, ...)
 UseProductFournDesc=Προσθέστε μια δυνατότητα για να ορίσετε τις περιγραφές των προϊόντων που ορίζονται από τους προμηθευτές εκτός από τις περιγραφές για τους πελάτες
 ProductSupplierDescription=Περιγραφή του πωλητή για το προϊόν
+UseProductSupplierPackaging=Χρησιμοποιήστε τη συσκευασία στις τιμές προμηθευτή (επανυπολογίστε τις ποσότητες σύμφωνα με τη συσκευασία που καθορίζεται στην τιμή προμηθευτή κατά την προσθήκη / ενημέρωση της γραμμής στα έγγραφα προμηθευτών)
+PackagingForThisProduct=Συσκευασία
+QtyRecalculatedWithPackaging=Η ποσότητα της γραμμής υπολογίστηκε εκ νέου σύμφωνα με τη συσκευασία του προμηθευτή
+
 #Attributes
 VariantAttributes=Χαρακτηριστικά παραλλαγής
 ProductAttributes=Χαρακτηριστικά παραλλαγών για προϊόντα
@@ -363,7 +367,7 @@ UsePercentageVariations=Χρησιμοποιήστε ποσοστιαίες πα
 PercentageVariation=Ποσοστιαία μεταβολή
 ErrorDeletingGeneratedProducts=Παρουσιάστηκε σφάλμα κατά την προσπάθεια διαγραφής των υπαρχουσών παραλλαγών προϊόντων
 NbOfDifferentValues=Αριθ. Διαφορετικών τιμών
-NbProducts=Αριθμός προϊόντων
+NbProducts=Number of products
 ParentProduct=Το γονικό προϊόν
 HideChildProducts=Απόκρυψη παραλλαγών προϊόντων
 ShowChildProducts=Εμφάνιση παραλλαγών προϊόντων
@@ -376,3 +380,4 @@ ErrorProductCombinationNotFound=Παραλλαγή προϊόντος δεν β�
 ActionAvailableOnVariantProductOnly=Δράση διαθέσιμη μόνο για την παραλλαγή του προϊόντος
 ProductsPricePerCustomer=Τιμές προϊόντων ανά πελάτη
 ProductSupplierExtraFields=Πρόσθετα χαρακτηριστικά (τιμές προμηθευτή)
+DeleteLinkedProduct=Delete the child product linked to the combination

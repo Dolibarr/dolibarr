@@ -568,7 +568,7 @@ if ($result) {
 
 		// Current account
 		print '<td class="center" style="'.$code_sell_p_notset.'">';
-	    $s = (($objp->type_l == 1) ? $langs->trans("DefaultForService") : $langs->trans("DefaultForProduct")).': ';
+	    $s = '<span class="opacitymedium">'.(($objp->type_l == 1) ? $langs->trans("DefaultForService") : $langs->trans("DefaultForProduct")).': </span>';
 	    $shelp = '';
 	    if ($suggestedaccountingaccountbydefaultfor == 'eec') $shelp .= $langs->trans("SaleEEC");
 	    elseif ($suggestedaccountingaccountbydefaultfor == 'export') $shelp .= $langs->trans("SaleExport");
@@ -577,7 +577,7 @@ if ($result) {
 	    if ($objp->product_id > 0)
 		{
 		    print '<br>';
-		    $s = (($objp->type_l == 1) ? $langs->trans("ThisService") : $langs->trans("ThisProduct")).': ';
+		    $s = (($objp->type_l == 1) ? '<span class="opacitymedium">'.$langs->trans("ThisService") : $langs->trans("ThisProduct")).': </span>';
 		    $shelp = '';
 		    if ($suggestedaccountingaccountfor == 'eec') $shelp = $langs->trans("SaleEEC");
 		    elseif ($suggestedaccountingaccountfor == 'eecwithvat') $shelp = $langs->trans("SaleEECWithVAT");

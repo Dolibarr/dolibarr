@@ -224,13 +224,15 @@ ListAccounts=Förteckning över redovisningskonton
 UnknownAccountForThirdparty=Okänt tredje part konto. Vi använder %s
 UnknownAccountForThirdpartyBlocking=Okänt tredje part konto. Blockeringsfel
 ThirdpartyAccountNotDefinedOrThirdPartyUnknown=Third-party account not defined or third party unknown. We will use %s
+ThirdpartyAccountNotDefinedOrThirdPartyUnknownSubledgerIgnored=Third-party unknown and subledger not defined on the payment. We will keep the subledger account value empty.
 ThirdpartyAccountNotDefinedOrThirdPartyUnknownBlocking=Third-party account not defined or third party unknown. Blocking error.
 UnknownAccountForThirdpartyAndWaitingAccountNotDefinedBlocking=Okänt tredje part konto och väntande konto inte definierat. Blockeringsfel
 PaymentsNotLinkedToProduct=Betalning som inte är kopplad till någon produkt / tjänst
+ShowOpeningBalance=Show opening balance
+HideOpeningBalance=Hide opening balance
 
 Pcgtype=Grupp av konto
-Pcgsubtype=Undergrupp av konto
-PcgtypeDesc=Grupp- och undergrupp för konto används som fördefinierade kriterier för "filter" och "gruppering" för vissa redovisningsrapporter. Till exempel används "INKOMST" eller "EXPENSATION" som grupper för bokföringskonto för produkter för att bygga kostnads- / inkomstrapporten.
+PcgtypeDesc=Group of account are used as predefined 'filter' and 'grouping' criteria for some accounting reports. For example, 'INCOME' or 'EXPENSE' are used as groups for accounting accounts of products to build the expense/income report.
 
 TotalVente=Total turnover before tax
 TotalMarge=Total försäljning marginal
@@ -269,6 +271,7 @@ ChangeBinding=Ändra bindningen
 Accounted=Redovisas i huvudbok
 NotYetAccounted=Ännu inte redovisad i huvudbok
 ShowTutorial=Show Tutorial
+NotReconciled=Inte avstämd
 
 ## Admin
 ApplyMassCategories=Applicera masskategorier

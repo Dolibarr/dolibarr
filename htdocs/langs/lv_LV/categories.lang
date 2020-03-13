@@ -78,6 +78,7 @@ CatMemberList=Dalībnieku tagu / kategoriju saraksts
 CatContactList=List of contact tags/categories
 CatSupLinks=Saites starp piegādātājiem un tagiem / sadaļām
 CatCusLinks=Saiknes starp klientiem / perspektīvām un tagiem / kategorijām
+CatContactsLinks=Saiknes starp kontaktiem / adresēm un tagiem / kategorijām
 CatProdLinks=Saiknes starp produktiem / pakalpojumiem un tagiem / kategorijām
 CatProJectLinks=Saiknes starp projektiem un tagiem / kategorijām
 DeleteFromCat=Noņemt no tagiem / kategorijas

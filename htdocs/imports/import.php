@@ -522,6 +522,7 @@ if ($step == 3 && $datatoimport)
 
 	print load_fiche_titre($langs->trans("InformationOnSourceFile"), '', '');
 
+
 	print '<div class="underbanner clearboth"></div>';
 	print '<div class="fichecenter">';
 	print '<table width="100%" class="border tableforfield">';
@@ -539,6 +540,13 @@ if ($step == 3 && $datatoimport)
 	print '</div>';
 
 	dol_fiche_end();
+
+
+	if ($format == 'xlsx' && ! class_exists('XMLWriter')) {
+		$langs->load("install");
+		print info_admin($langs->trans("ErrorPHPDoesNotSupport", 'php-xml'), 0, 0, 1, 'error');
+	}
+
 
     print '<br>';
 

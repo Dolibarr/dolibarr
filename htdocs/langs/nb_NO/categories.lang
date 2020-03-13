@@ -78,6 +78,7 @@ CatMemberList=Liste over medlems-merker/kategorier
 CatContactList=Liste over kontakt-merker/kategorier
 CatSupLinks=Lenker mellom leverandører og merker/kategorier
 CatCusLinks=Lenker mellom kunder/prospekter og merker/kategorier
+CatContactsLinks=Koblinger mellom kontakter/adresser og koder/kategorier
 CatProdLinks=Lenker mellom varer/tjenester og merker/kategorier
 CatProJectLinks=Lenker mellom prosjekter og merker/kategorier
 DeleteFromCat=Fjern fra merker/kategorier

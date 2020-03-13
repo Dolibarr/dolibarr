@@ -91,7 +91,7 @@ GoToSetupArea=Go to Dolibarr (setup area)
 MigrationNotFinished=Η έκδοση της βάσης δεδομένων δεν είναι εντελώς ενημερωμένη: εκτελέστε ξανά τη διαδικασία αναβάθμισης.
 GoToUpgradePage=Go to upgrade page again
 WithNoSlashAtTheEnd=Without the slash "/" at the end
-DirectoryRecommendation=Συνιστάται να χρησιμοποιείτε έναν κατάλογο εκτός των ιστοσελίδων.
+DirectoryRecommendation=<span class="warning"> ΣΗΜΑΝΤΙΚΟ </span>: Πρέπει να χρησιμοποιήσετε έναν κατάλογο ο οποίος βρίσκεται εκτός των ιστοσελίδων (οπότε μην χρησιμοποιείτε υποκατάλογο προηγούμενης παραμέτρου).
 LoginAlreadyExists=Already exists
 DolibarrAdminLogin=Dolibarr admin login
 AdminLoginAlreadyExists=Ο λογαριασμός διαχειριστή <b>Dolibarr</b> &#39; <b>%s</b> &#39; υπάρχει ήδη. Επιστρέψτε αν θέλετε να δημιουργήσετε ένα άλλο.

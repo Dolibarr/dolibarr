@@ -1,3 +1,16 @@
 # Dolibarr language file - Source file is en_US - workflow
-WorkflowDesc=Dieses Modul wurde gestaltet um das Verhalten von automatischen Aktionen in den Anwendung zu verändern. Standardmässig wird der Prozess offen sein. (Sie können die Dinge in der gewünschten Reihenfolge tun). Sie können die automatische Aktionen, die Sie interessieren aktivieren.
-ThereIsNoWorkflowToModify=Es sind keine Workflow Änderungen möglich mit den aktivierten Modulen.
+WorkflowDesc=Grundsätzlich sind alle Abläufe frei definierbar. Trotzdem kannst du hier einige vorgefertigte Abläufe aktivieren.
+ThereIsNoWorkflowToModify=Für die aktiven Module sind keine Workflow - Änderungen möglich.
+descWORKFLOW_PROPAL_AUTOCREATE_ORDER=Erzeuge automatisch eine Kundenbestellung, sobald die Offerte unterzeichnet ist (Positionen und Beträge, wie offeriert).
+descWORKFLOW_PROPAL_AUTOCREATE_INVOICE=Erzeuge automatisch eine Kundenrechnung, sobald die Offerte unterzeichnet ist (Positionen und Beträge, wie offeriert).
+descWORKFLOW_CONTRACT_AUTOCREATE_INVOICE=Erzeuge automatisch eine Kundenrechnung, sobald der Vertrag frei gegeben wird.
+descWORKFLOW_ORDER_AUTOCREATE_INVOICE=Erzeuge automatisch eine Kundenrechnung, sobald die Bestellung geschlossen wird (Positionen und Beträge, wie bestellt).
+descWORKFLOW_ORDER_CLASSIFY_BILLED_PROPAL=Setze die verknüpfte Offerte auf 'verrechnet', sobald die Kundenbestellung auf 'verrechnet' gesetzt wird. (Das funktioniert, wenn die Beträge der beiden übereinstimmen.)
+descWORKFLOW_INVOICE_CLASSIFY_BILLED_PROPAL=Setze die verknüpfte Offerte auf 'verrechnet', sobald die Kundenrechnung frei gegeben wird. (Das funktioniert, wenn die Beträge der beiden übereinstimmen.)
+descWORKFLOW_INVOICE_AMOUNT_CLASSIFY_BILLED_ORDER=Setze die verknüpfte Bestellung auf 'verrechnet', sobald die Kundenrechnung frei gegeben wird. (Das funktioniert, wenn die Beträge der beiden übereinstimmen.)
+descWORKFLOW_INVOICE_CLASSIFY_BILLED_ORDER=Setze die verknüpfte Bestellung auf 'verrechnet', sobald die Kundenrechnung als 'bezahlt' markiert wird. (Das funktioniert, wenn die Beträge der beiden übereinstimmen.)
+descWORKFLOW_ORDER_CLASSIFY_SHIPPED_SHIPPING=Setze die verknüpfte Bestellung auf 'geliefert', sobald die entsprechnde Lieferung frei gegeben wird. (Das funktioniert, wenn die Artikelmengen der beiden übereinstimmen.)
+descWORKFLOW_ORDER_CLASSIFY_BILLED_SUPPLIER_PROPOSAL=Setze die verknüpfte Lieferanten - Offerte auf 'verrechnet', sobald die Lieferantenrechnung frei gegeben wird. (Das funktioniert, wenn die Beträge der beiden übereinstimmen.)
+descWORKFLOW_INVOICE_AMOUNT_CLASSIFY_BILLED_SUPPLIER_ORDER=Setze die verknüpfte Lieferanten - Bestellung auf 'verrechnet', sobald die Lieferantenrechnung frei gegeben wird. (Das funktioniert, wenn die Beträge der beiden übereinstimmen.)
+AutomaticCreation=Automatisch generiert
+AutomaticClassification=Automatisch klassifiziert
