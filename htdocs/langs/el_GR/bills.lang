@@ -419,6 +419,7 @@ PaymentCondition14DENDMONTH=Within 14 days following the end of the month
 FixAmount=Σταθερό ποσό - 1 γραμμή με την ετικέτα '%s'
 VarAmount=Μεταβλητή ποσού (%% tot.)
 VarAmountOneLine=Μεταβλητή ποσότητα (%% tot.) - 1 γραμμή με την ετικέτα &#39;%s&#39;
+VarAmountAllLines=Μεταβλητή ποσότητα (%% συν.) - όλες οι ίδιες γραμμές
 # PaymentType
 PaymentTypeVIR=Τραπεζική μεταφορά
 PaymentTypeShortVIR=Τραπεζική μεταφορά
@@ -512,13 +513,15 @@ RevenueStamp=Revenue stamp
 YouMustCreateInvoiceFromThird=Αυτή η επιλογή είναι διαθέσιμη μόνο όταν δημιουργείτε τιμολόγιο από την καρτέλα &quot;Πελάτης&quot; τρίτου μέρους
 YouMustCreateInvoiceFromSupplierThird=Αυτή η επιλογή είναι διαθέσιμη μόνο κατά τη δημιουργία τιμολογίου από την καρτέλα &quot;Προμηθευτής&quot; τρίτου μέρους
 YouMustCreateStandardInvoiceFirstDesc=You have to create a standard invoice first and convert it to "template" to create a new template invoice
-PDFCrabeDescription=Πρότυπο τιμολόγιο PDF Crabe. Ένα πλήρες πρότυπο τιμολογίου 
+PDFCrabeDescription=Πρότυπο τιμολόγιο PDF Crabe. Ένα πλήρες πρότυπο τιμολογίου (παλιά εφαρμογή του προτύπου Sponge)
 PDFSpongeDescription=Τιμολόγιο πρότυπο PDF Σφουγγάρι. Ένα πλήρες πρότυπο τιμολογίου
 PDFCrevetteDescription=Invoice PDF template Crevette. A complete invoice template for situation invoices
 TerreNumRefModelDesc1=Επιστρέψετε αριθμό με μορφή %syymm-nnnn για τυπικά τιμολόγια και %syymm-nnnn για πιστωτικά τιμολόγια όπου yy είναι το έτος, mm είναι ο μήνας και nnnn είναι μια ακολουθία αρίθμησης χωρίς διάλειμμα και χωρίς επιστροφή στο 0
 MarsNumRefModelDesc1=Επιστρέφει αριθμό με μορφή %syymm-nnnn για τυπικά τιμολόγια, %syymm-nnnn για τα τιμολόγια αντικατάστασης, %syymm-nnnn για τα τιμολόγια των καταθέσεων και %syymm-nnnn για πιστωτικά σημειώματα όπου yy είναι το έτος, mm είναι μήνας και nnnn είναι μια ακολουθία χωρίς διακοπή και χωρίς επιστροφή σε 0
 TerreNumRefModelError=A bill starting with $syymm already exists and is not compatible with this model of sequence. Remove it or rename it to activate this module.
 CactusNumRefModelDesc1=Return number with format %syymm-nnnn for standard invoices, %syymm-nnnn for credit notes and %syymm-nnnn for deposit invoices where yy is year, mm is month and nnnn is a sequence with no break and no return to 0
+EarlyClosingReason=Πρώιμος λόγος κλεισίματος
+EarlyClosingComment=Πρώιμο σημείωμα κλεισίματος
 ##### Types de contacts #####
 TypeContact_facture_internal_SALESREPFOLL=Representative following-up customer invoice
 TypeContact_facture_external_BILLING=Αντιπρόσωπος τιμολογίου πελάτη

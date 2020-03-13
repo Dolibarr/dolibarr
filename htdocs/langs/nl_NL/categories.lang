@@ -78,6 +78,7 @@ CatMemberList=Lijst leden kenmerken/categorieën
 CatContactList=Lijst met contactpersoon labels/-categorieën
 CatSupLinks=Koppelingen tussen leveranciers en kenmerken/categorieën
 CatCusLinks=Koppelingen tussen klanten/prospects en labels/categorieën
+CatContactsLinks=Links between contacts/addresses and tags/categories
 CatProdLinks=Koppelingen tussen producten/diensten en labels/categorieën
 CatProJectLinks=Koppelingen tussen projecten en labels/categorieën
 DeleteFromCat=Verwijderen uit labels/categorie

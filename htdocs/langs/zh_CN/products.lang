@@ -331,6 +331,10 @@ PossibleValues=可能的值
 GoOnMenuToCreateVairants=继续菜单%s  -  %s准备属性变体（如颜色，大小......）
 UseProductFournDesc=Add a feature to define the descriptions of products defined by the vendors in addition to descriptions for customers
 ProductSupplierDescription=Vendor description for the product
+UseProductSupplierPackaging=Use packaging on supplier prices (recalculate quantities according to packaging set on supplier price when adding/updating line in supplier documents)
+PackagingForThisProduct=Packaging
+QtyRecalculatedWithPackaging=The quantity of the line were recalculated according to supplier packaging
+
 #Attributes
 VariantAttributes=变体属性
 ProductAttributes=产品的变体属性
@@ -363,7 +367,7 @@ UsePercentageVariations=使用百分比变化
 PercentageVariation=百分率变化
 ErrorDeletingGeneratedProducts=尝试删除现有产品变体时出错
 NbOfDifferentValues=No. of different values
-NbProducts=No. of products
+NbProducts=Number of products
 ParentProduct=父产品
 HideChildProducts=隐藏变体产品
 ShowChildProducts=Show variant products
@@ -376,3 +380,4 @@ ErrorProductCombinationNotFound=未找到产品变体
 ActionAvailableOnVariantProductOnly=Action only available on the variant of product
 ProductsPricePerCustomer=Product prices per customers
 ProductSupplierExtraFields=Additional Attributes (Supplier Prices)
+DeleteLinkedProduct=Delete the child product linked to the combination

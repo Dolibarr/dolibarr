@@ -3,3 +3,4 @@ ErrorBadUrl=Url %s ist ungültig
 ErrorRecordNotFound=Eintrag nicht gefunden.
 ErrorCashAccountAcceptsOnlyCashMoney=Dies ist ein Bargeldkonto (Kassa) und akzeptiert deshalb nur Bargeldtransaktionen.
 ErrorCustomerCodeAlreadyUsed=Diese Kunden Nr. ist bereits vergeben.
+ErrorSelectAtLeastOne=Error, select at least one entry.

@@ -60,7 +60,7 @@ MemberSubscriptionModifiedInDolibarr=Subskrypcja %s dla członka %s zmodyfikowan
 MemberSubscriptionDeletedInDolibarr=Subskrypcja %s dla członka %s usunięta
 ShipmentValidatedInDolibarr=Przesyłka %s potwierdzona
 ShipmentClassifyClosedInDolibarr=Wysyłka %s sklasyfikowana jako rozliczona
-ShipmentUnClassifyCloseddInDolibarr=Wysyłka %s sklasyfikowana jako ponownie otwarta
+ShipmentUnClassifyCloseddInDolibarr=Shipment %s classified re-open
 ShipmentBackToDraftInDolibarr=Shipment %s go back to draft status
 ShipmentDeletedInDolibarr=Przesyłka %s usunięta
 OrderCreatedInDolibarr=Zamówienie %s utworzone
@@ -123,6 +123,7 @@ AgendaUrlOptionsNotAdmin=<b>logina=!%s</b> to restrict output to actions not own
 AgendaUrlOptions4=<b>logint=%s</b> to restrict output to actions assigned to user <b>%s</b> (owner and others).
 AgendaUrlOptionsProject=<b>project=__PROJECT_ID__</b> to restrict output to actions linked to project <b>__PROJECT_ID__</b>.
 AgendaUrlOptionsNotAutoEvent=<b>notactiontype=systemauto</b> to exclude automatic events.
+AgendaUrlOptionsIncludeHolidays=<b>includeholidays=1</b> to include events of holidays.
 AgendaShowBirthdayEvents=Wyświetlaj urodziny kontaktów
 AgendaHideBirthdayEvents=Ukryj urodziny kontaktów
 Busy=Zajęty

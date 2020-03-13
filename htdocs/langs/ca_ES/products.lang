@@ -331,6 +331,10 @@ PossibleValues=Valors possibles
 GoOnMenuToCreateVairants=Anar al menu %s - %s per preparar variants de l'atribut (com colors, mides, etc...)
 UseProductFournDesc=Afegeix una funció per definir les descripcions dels productes definits pels proveïdors, a més de les descripcions pels clients
 ProductSupplierDescription=Descripció del venedor del producte
+UseProductSupplierPackaging=Utilitzeu els envasos als preus del proveïdor (calcular les quantitats segons els envasos fixats al preu del proveïdor quan afegiu / actualitzeu la línia dels documents del proveïdor)
+PackagingForThisProduct=Embalatge
+QtyRecalculatedWithPackaging=La quantitat de la línia es recalcula segons els envasos del proveïdor
+
 #Attributes
 VariantAttributes=Atributs de variants
 ProductAttributes=Atributs de variants per a productes
@@ -363,7 +367,7 @@ UsePercentageVariations=Utilitzar variants percentuals
 PercentageVariation=Variant percentual
 ErrorDeletingGeneratedProducts=S'ha produït un error al intentar eliminar les variants existents
 NbOfDifferentValues=Nombre de valors diferents
-NbProducts=Nº de productes
+NbProducts=Nombre de productes
 ParentProduct=Producte pare
 HideChildProducts=Oculta productes variants
 ShowChildProducts=Mostra variants del producte
@@ -376,3 +380,4 @@ ErrorProductCombinationNotFound=Variant de producte no trobada
 ActionAvailableOnVariantProductOnly=Acció només disponible sobre la variant del producte
 ProductsPricePerCustomer=Preus dels productes per clients
 ProductSupplierExtraFields=Atributs addicionals (preus de proveïdors)
+DeleteLinkedProduct=Suprimeix el producte fill enllaçat a la combinació

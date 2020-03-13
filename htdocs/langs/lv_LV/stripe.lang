@@ -68,3 +68,4 @@ ToOfferALinkForTestWebhook=Saite uz iestatījumu Stripe WebHook, lai izsauktu IP
 ToOfferALinkForLiveWebhook=Saite uz iestatījumu Stripe WebHook, lai izsauktu IPN (tiešraides režīms)
 PaymentWillBeRecordedForNextPeriod=Maksājums tiks reģistrēts par nākamo periodu.
 ClickHereToTryAgain=<a href="%s">Noklikšķiniet šeit, lai mēģinātu vēlreiz ...</a>
+CreationOfPaymentModeMustBeDoneFromStripeInterface=Sakarā ar stingriem klientu autentifikācijas noteikumiem, karte jāizveido no Stripe biroja. Jūs varat noklikšķināt šeit, lai ieslēgtu Stripe klientu ierakstu: %s

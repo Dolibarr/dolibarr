@@ -419,6 +419,7 @@ PaymentCondition14DENDMONTH=在月底之后的14天内
 FixAmount=Fixed amount - 1 line with label '%s'
 VarAmount=可变金额(%% tot.)
 VarAmountOneLine=可变金额（%% tot。） -  1行标签'%s'
+VarAmountAllLines=Variable amount (%% tot.) - all same lines
 # PaymentType
 PaymentTypeVIR=银行转帐
 PaymentTypeShortVIR=银行转帐
@@ -512,13 +513,15 @@ RevenueStamp=印花税票
 YouMustCreateInvoiceFromThird=This option is only available when creating an invoice from tab "Customer" of third party
 YouMustCreateInvoiceFromSupplierThird=This option is only available when creating an invoice from tab "Vendor" of third party
 YouMustCreateStandardInvoiceFirstDesc=您必须先创建标准发票并将其转换为“模板”以创建新模板发票
-PDFCrabeDescription=Invoice PDF template Crabe. A complete invoice template 
+PDFCrabeDescription=Invoice PDF template Crabe. A complete invoice template (old implementation of Sponge template)
 PDFSpongeDescription=Invoice PDF template Sponge. A complete invoice template
 PDFCrevetteDescription=发票PDF模板Crevette。情况发票的完整发票模板
 TerreNumRefModelDesc1=Return number with format %syymm-nnnn for standard invoices and %syymm-nnnn for credit notes where yy is year, mm is month and nnnn is a sequence with no break and no return to 0
 MarsNumRefModelDesc1=标准发票的格式为%syymm-nnnn，换发票为%syymm-nnnn，预付款发票为%syymm-nnnn，yy为年份为%syymm-nnnn，mm为月，nnnn为没有中断的序列回到0
 TerreNumRefModelError=A bill starting with $syymm already exists and is not compatible with this model of sequence. Remove it or rename it to activate this module.
 CactusNumRefModelDesc1=返回编号为标准发票的格式为%syymm-nnnn，信用票据为%syymm-nnnn，yy为年的预付款发票为%syymm-nnnn，mm为月，nnnn为没有中断且不返回0的序列
+EarlyClosingReason=Early closing reason
+EarlyClosingComment=Early closing note
 ##### Types de contacts #####
 TypeContact_facture_internal_SALESREPFOLL=代表跟进客户发票
 TypeContact_facture_external_BILLING=客户发票联络人

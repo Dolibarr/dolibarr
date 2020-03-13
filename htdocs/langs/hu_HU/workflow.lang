@@ -1,20 +1,20 @@
 # Dolibarr language file - Source file is en_US - workflow
 WorkflowSetup=Workflow modul beállítása
-WorkflowDesc=This module is designed to modify the behaviour of automatic actions into application. By default, workflow is open (you can do things in the order you want). You can activate the automatic actions you are interested in.
-ThereIsNoWorkflowToModify=There is no workflow modifications available with the activated modules.
+WorkflowDesc=Ez a modul néhány automatikus műveletet biztosít. Alapértelmezés szerint a munkafolyamat nyitva van (a kívánt sorrendben végezhet feladatokat), de itt aktiválhat néhány automatikus műveletet is.
+ThereIsNoWorkflowToModify=Az aktivált modulokhoz nem állnak rendelkezésre munkafolyamat-módosítások.
 # Autocreate
-descWORKFLOW_PROPAL_AUTOCREATE_ORDER=Automatically create a customer order after a commercial proposal is signed (new order will have same amount than proposal)
-descWORKFLOW_PROPAL_AUTOCREATE_INVOICE=Automatically create a customer invoice after a commercial proposal is signed (new invoice will have same amount than proposal)
-descWORKFLOW_CONTRACT_AUTOCREATE_INVOICE=Automatically create a customer invoice after a contract is validated
-descWORKFLOW_ORDER_AUTOCREATE_INVOICE=Automatically create a customer invoice after a customer order is closed (new invoice will have same amount than order)
+descWORKFLOW_PROPAL_AUTOCREATE_ORDER=Értékesítési megrendelés automatikus létrehozása a kereskedelmi ajánlat aláírása után (az új megrendelés összege megegyezik az ajánlat összegével)
+descWORKFLOW_PROPAL_AUTOCREATE_INVOICE=Az ügyfélszámla automatikus létrehozása a kereskedelmi ajánlat aláírása után (az új számla összege megegyezik az ajánlat összegével)
+descWORKFLOW_CONTRACT_AUTOCREATE_INVOICE=Az ügyfélszámla automatikus létrehozása a szerződés érvényesítése után
+descWORKFLOW_ORDER_AUTOCREATE_INVOICE=Az ügyfélszámla automatikus létrehozása az értékesítési megrendelés lezárása után (az új számla összege megegyezik a megrendelés összegével)
 # Autoclassify customer proposal or order
-descWORKFLOW_ORDER_CLASSIFY_BILLED_PROPAL=Classify linked source proposal(s) to billed when customer order is set to billed (and if amount of the order is same than total amount of signed linked proposals)
-descWORKFLOW_INVOICE_CLASSIFY_BILLED_PROPAL=Classify linked source proposal(s) to billed when customer invoice is validated (and if amount of the invoice is same than total amount of signed linked proposals)
-descWORKFLOW_INVOICE_AMOUNT_CLASSIFY_BILLED_ORDER=Classify linked source customer order(s) to billed when customer invoice is validated (and if amount of the invoice is same than total amount of linked orders)
-descWORKFLOW_INVOICE_CLASSIFY_BILLED_ORDER=Classify linked source customer order(s) to billed when customer invoice is set to paid (and if amount of the invoice is same than total amount of linked orders)
-descWORKFLOW_ORDER_CLASSIFY_SHIPPED_SHIPPING=Classify linked source customer order to shipped when a shipment is validated (and if quantity shipped by all shipments is the same as in the order to update)
-# Autoclassify supplier order
-descWORKFLOW_ORDER_CLASSIFY_BILLED_SUPPLIER_PROPOSAL=Classify linked source vendor proposal(s) to billed when vendor invoice is validated (and if amount of the invoice is same than total amount of linked proposals)
-descWORKFLOW_INVOICE_AMOUNT_CLASSIFY_BILLED_SUPPLIER_ORDER=Classify linked source purchase order(s) to billed when vendor invoice is validated (and if amount of the invoice is same than total amount of linked orders)
-AutomaticCreation=Automatic creation
-AutomaticClassification=Automatic classification
+descWORKFLOW_ORDER_CLASSIFY_BILLED_PROPAL=A kapcsolt forrásból származó javaslatot számlázottként minősíti, ha az értékesítési rendelés számlázottra van állítva (és ha a megrendelés összege megegyezik az aláírt csatolt javaslat teljes összegével)
+descWORKFLOW_INVOICE_CLASSIFY_BILLED_PROPAL=A kapcsolt forrásból származó javaslatot számlázottra minősíti, ha az ügyfélszámla érvényesítésre kerül (és ha a számla összege megegyezik az aláírt csatolt javaslat teljes összegével)
+descWORKFLOW_INVOICE_AMOUNT_CLASSIFY_BILLED_ORDER=A kapcsolt forrásból származó értékesítési megrendelést számlázottra minősíti, ha az ügyfélszámla érvényesítve lesz (és ha a számla összege megegyezik a kapcsolódó rendelés teljes összegével)
+descWORKFLOW_INVOICE_CLASSIFY_BILLED_ORDER=A kapcsolt forrásból származó értékesítési megrendelést számlázottra minősíti, ha az ügyfélszámla kifizetettre van állítva (és ha a számla összege megegyezik a kapcsolódó rendelés teljes összegével)
+descWORKFLOW_ORDER_CLASSIFY_SHIPPED_SHIPPING=A kapcsolt forrásból származó értékesítési megrendelést kiszállítottként minősíti, ha a kiszállítás érvényesítve van (és ha az összes szállítmány által szállított mennyiség megegyezik a frissített megrendelésével)
+# Autoclassify purchase order
+descWORKFLOW_ORDER_CLASSIFY_BILLED_SUPPLIER_PROPOSAL=A kapcsolt forrásból származó szállítói javaslatot számlázottként minősíti, ha a szállítói számla érvényesítve lesz (és ha a számla összege megegyezik a kapcsolódó ajánlat teljes összegével)
+descWORKFLOW_INVOICE_AMOUNT_CLASSIFY_BILLED_SUPPLIER_ORDER=A kapcsolt forrásból származó megrendelést számlázottra minősíti, ha a szállítói számla érvényesítve lesz (és ha a számla összege megegyezik a kapcsolódó rendelés teljes összegével)
+AutomaticCreation=Automatikus létrehozás
+AutomaticClassification=Automatikus minősítés

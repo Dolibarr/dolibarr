@@ -224,13 +224,15 @@ ListAccounts=Muhasebe hesapları listesi
 UnknownAccountForThirdparty=Bilinmeyen üçüncü parti hesabı. %s kullanacağız
 UnknownAccountForThirdpartyBlocking=Bilinmeyen üçüncü parti hesabı. Engelleme hatası
 ThirdpartyAccountNotDefinedOrThirdPartyUnknown=Third-party account not defined or third party unknown. We will use %s
+ThirdpartyAccountNotDefinedOrThirdPartyUnknownSubledgerIgnored=Third-party unknown and subledger not defined on the payment. We will keep the subledger account value empty.
 ThirdpartyAccountNotDefinedOrThirdPartyUnknownBlocking=Third-party account not defined or third party unknown. Blocking error.
 UnknownAccountForThirdpartyAndWaitingAccountNotDefinedBlocking=Unknown third-party account and waiting account not defined. Blocking error
 PaymentsNotLinkedToProduct=Payment not linked to any product / service
+ShowOpeningBalance=Show opening balance
+HideOpeningBalance=Hide opening balance
 
 Pcgtype=Hesap grubu
-Pcgsubtype=Hesap alt grubu
-PcgtypeDesc=Group and subgroup of account are used as predefined 'filter' and 'grouping' criteria for some accounting reports. For example, 'INCOME' or 'EXPENSE' are used as groups for accounting accounts of products to build the expense/income report.
+PcgtypeDesc=Group of account are used as predefined 'filter' and 'grouping' criteria for some accounting reports. For example, 'INCOME' or 'EXPENSE' are used as groups for accounting accounts of products to build the expense/income report.
 
 TotalVente=Vergi öncesi toplam gelir
 TotalMarge=Toplam satışlar kar oranı
@@ -269,6 +271,7 @@ ChangeBinding=Bağlamayı değiştir
 Accounted=Accounted in ledger
 NotYetAccounted=Büyük defterde henüz muhasebeleştirilmemiş
 ShowTutorial=Show Tutorial
+NotReconciled=Uzlaştırılmadı
 
 ## Admin
 ApplyMassCategories=Toplu kategori uygula
