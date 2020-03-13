@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "content-hash": "16c94fd4f22ac17820d85ee57b0616e1",
+    "content-hash": "bf6a7dc416541060b0900b7a7982296f",
     "packages": [
         {
             "name": "ckeditor/ckeditor",
@@ -49,24 +49,31 @@
         },
         {
             "name": "mike42/escpos-php",
-            "version": "v1.2.1",
+            "version": "v2.2",
             "source": {
                 "type": "git",
                 "url": "https://github.com/mike42/escpos-php.git",
-                "reference": "cfea4c4fc95516ac953e1e5b623f854632afa2ee"
+                "reference": "e5496cf819b048b11877117bd14a9cea4fb17c03"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/mike42/escpos-php/zipball/cfea4c4fc95516ac953e1e5b623f854632afa2ee",
-                "reference": "cfea4c4fc95516ac953e1e5b623f854632afa2ee",
+                "url": "https://api.github.com/repos/mike42/escpos-php/zipball/e5496cf819b048b11877117bd14a9cea4fb17c03",
+                "reference": "e5496cf819b048b11877117bd14a9cea4fb17c03",
                 "shasum": ""
             },
             "require": {
-                "php": ">=5.3.0"
+                "ext-mbstring": "*",
+                "php": ">=5.4.0"
             },
             "require-dev": {
-                "phpunit/phpunit": "4.5.*",
-                "squizlabs/php_codesniffer": "2.*"
+                "guzzlehttp/guzzle": "^5.3",
+                "phpunit/phpunit": "^4.8",
+                "squizlabs/php_codesniffer": "^3.2"
+            },
+            "suggest": {
+                "ext-gd": "Used for image printing if present.",
+                "ext-imagick": "Will be used for image printing if present. Required for PDF printing or use of custom fonts.",
+                "guzzlehttp/guzzle": "Allows the use of the ApiConnector to send print jobs over HTTP."
             },
             "type": "library",
             "autoload": {
@@ -80,27 +87,11 @@
             ],
             "authors": [
                 {
-                    "name": "Roni Saha",
-                    "email": "roni.cse@gmail.com"
-                },
-                {
                     "name": "Michael Billington",
                     "email": "michael.billington@gmail.com"
-                },
-                {
-                    "name": "Gergely Radics",
-                    "email": "gerifield@ustream.tv"
-                },
-                {
-                    "name": "Warren Doyle",
-                    "email": "w.doyle@fuelled.co"
-                },
-                {
-                    "name": "vharo",
-                    "email": "vharo@geepok.com"
                 }
             ],
-            "description": "Thermal receipt printer library, for use with ESC/POS compatible printers",
+            "description": "PHP receipt printer library for use with ESC/POS-compatible thermal and impact printers",
             "homepage": "https://github.com/mike42/escpos-php",
             "keywords": [
                 "ESC-POS",
@@ -109,7 +100,7 @@
                 "print",
                 "receipt"
             ],
-            "time": "2016-04-25T01:14:07+00:00"
+            "time": "2019-10-05T05:59:00+00:00"
         },
         {
             "name": "mobiledetect/mobiledetectlib",
@@ -1815,7 +1806,7 @@
     "prefer-stable": false,
     "prefer-lowest": false,
     "platform": {
-        "php": ">=5.3.0",
+        "php": ">=5.5.0",
         "ext-curl": "*"
     },
     "platform-dev": []
