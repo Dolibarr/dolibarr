@@ -177,7 +177,7 @@ class WebsitePage extends CommonObject
 	 *                                  - If this is 0, the value into $page will be used. If not found or $page not defined, the default page of website_id will be used or the first page found if not set.
 	 *                                  - If value is < 0, we must exclude this ID.
 	 * @param string    $website_id     Web site id (page name must also be filled if this parameter is used)
-	 * @param string    $page           Page name (website id must also be filled if this parameter is used)
+	 * @param string    $page           Page name (website id must also be filled if this parameter is used). Exemple 'myaliaspage' or 'fr/myaliaspage'
 	 * @param string    $aliasalt       Alternative alias to search page (slow)
 	 *
 	 * @return int <0 if KO, 0 if not found, >0 if OK
@@ -219,7 +219,17 @@ class WebsitePage extends CommonObject
 			if ($id < 0) $sql .= ' AND t.rowid <> '.abs($id);
 			if (null !== $website_id) {
 			    $sql .= " AND t.fk_website = '".$this->db->escape($website_id)."'";
-			    if ($page)		$sql .= " AND t.pageurl = '".$this->db->escape($page)."'";
+			    if ($page)		{
+			    	$pagetouse = $page;
+			    	$langtouse = '';
+			    	$tmppage = explode('/', $page);
+			    	if (! empty($tmppage[1])) {
+			    		$pagetouse = $tmppage[1];
+			    		if (strlen($tmppage[0])) $langtouse = $tmppage[0];
+			    	}
+			    	$sql .= " AND t.pageurl = '".$this->db->escape($pagetouse)."'";
+			    	if ($langtouse) $sql .= " AND t.lang = '".$this->db->escape($langtouse)."'";
+			    }
 			    if ($aliasalt)	$sql .= " AND (t.aliasalt LIKE '%,".$this->db->escape($aliasalt).",%' OR t.aliasalt LIKE '%, ".$this->db->escape($aliasalt).",%')";
 			}
 		}
