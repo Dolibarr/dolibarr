@@ -401,7 +401,7 @@ if ($result) {
 	print_liste_field_titre("VATRate", $_SERVER["PHP_SELF"], "l.tva_tx", "", $param, '', $sortfield, $sortorder, 'right ');
 	print_liste_field_titre("Country", $_SERVER["PHP_SELF"], "co.label", "", $param, '', $sortfield, $sortorder);
 	print_liste_field_titre("VATIntra", $_SERVER["PHP_SELF"], "s.tva_intra", "", $param, '', $sortfield, $sortorder);
-	print_liste_field_titre("AccountAccountingSuggest", '', '', '', '', '', '', '', 'center ');
+	print_liste_field_titre("AccountAccountingSuggest", '', '', '', '', '', '', '', '');
 	print_liste_field_titre("IntoAccount", '', '', '', '', '', '', '', 'center ');
 	$checkpicto = '';
 	if ($massactionbutton) $checkpicto = $form->showCheckAddButtons('checkforselect', 1);
@@ -538,7 +538,7 @@ if ($result) {
 		if ($product_static->id > 0) {
 			print $product_static->getNomUrl(1);
 		}
-		if ($objp->product_label) print '<br>'.$objp->product_label;
+		if ($objp->product_label) print '<br><span class="opacitymedium">'.$objp->product_label.'</span>';
 		print '</td>';
 
 		print '<td class="tdoverflowonsmartphone">';

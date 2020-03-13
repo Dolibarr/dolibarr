@@ -313,7 +313,7 @@ if ($result) {
 	print_liste_field_titre("Description", $_SERVER["PHP_SELF"], "erd.comments", "", $param, '', $sortfield, $sortorder);
 	print_liste_field_titre("Amount", $_SERVER["PHP_SELF"], "erd.total_ht", "", $param, '', $sortfield, $sortorder, 'right maxwidth50 ');
 	print_liste_field_titre("VATRate", $_SERVER["PHP_SELF"], "erd.tva_tx", "", $param, '', $sortfield, $sortorder, 'right ');
-	print_liste_field_titre("AccountAccountingSuggest", '', '', '', '', '', $sortfield, $sortorder, 'center ');
+	print_liste_field_titre("AccountAccountingSuggest", '', '', '', '', '', $sortfield, $sortorder, '');
 	print_liste_field_titre("IntoAccount", '', '', '', '', '', $sortfield, $sortorder, 'center ');
 	$checkpicto = '';
 	if ($massactionbutton) $checkpicto = $form->showCheckAddButtons('checkforselect', 1);
@@ -366,7 +366,7 @@ if ($result) {
 		print '</td>';
 
 		// Current account
-		print '<td class="center">';
+		print '<td>';
 		print length_accountg(html_entity_decode($objp->code_buy));
 		print '</td>';
 
