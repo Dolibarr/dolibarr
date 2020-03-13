@@ -101,8 +101,9 @@ Long description (Can span accross multiple lines).
 </pre>
 
 ### Pull Requests
-When submitting a pull request, use same rule as [Commits](#commits) for the message.
+Pull Request process is the process to submit a change (enhancement, bug fix, ...) into the code of the project. There is some rules and process to follow...
 
+When submitting a pull request, use same rule as [Commits](#commits) for the message.
 If your pull request only contains one commit, GitHub will be smart enough to fill it for you.
 Otherwise, please be a bit verbose about what you're providing.
 
@@ -111,7 +112,7 @@ Also, some code changes need a prior approbation:
 
 * if you want to include a new external library (into htdocs/includes directory), please ask before to the project manager (@eldy) to see if such a library can be accepted.
 
-* if you add a new table, you must first create a page on http://wiki.dolibarr.org/index.php/Category:Table_SQL (copy an existing page changing its name to see it into this index page). Than ask the project manager (@eldy) if the new data model you plan to add can be accepted as you suggest.
+* if you add a new table, you must first create a page on https://wiki.dolibarr.org/index.php/Category:Table_SQL (copy an existing page changing its name to see it into this index page). Than ask the project manager (@eldy) if the new data model you plan to add can be accepted as you suggest.
 
 Once a PR has been submitted, you may need to wait for its integration. It is common that the project leader let the PR open for a long delay to allow every developer discuss about the PR.
 
