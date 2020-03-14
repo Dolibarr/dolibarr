@@ -401,7 +401,7 @@ if ($result) {
 	print_liste_field_titre("VATRate", $_SERVER["PHP_SELF"], "l.tva_tx", "", $param, '', $sortfield, $sortorder, 'right ');
 	print_liste_field_titre("Country", $_SERVER["PHP_SELF"], "co.label", "", $param, '', $sortfield, $sortorder);
 	print_liste_field_titre("VATIntra", $_SERVER["PHP_SELF"], "s.tva_intra", "", $param, '', $sortfield, $sortorder);
-	print_liste_field_titre("AccountAccountingSuggest", '', '', '', '', '', '', '', ' ');
+	print_liste_field_titre("AccountAccountingSuggest", '', '', '', '', '', '', '', 'nowraponall ');
 	print_liste_field_titre("IntoAccount", '', '', '', '', '', '', '', 'center ');
 	$checkpicto = '';
 	if ($massactionbutton) $checkpicto = $form->showCheckAddButtons('checkforselect', 1);
@@ -550,7 +550,7 @@ if ($result) {
 
 		// Current account
 		print '<td style="'.$code_buy_p_notset.'">';
-		$s = (($objp->type_l == 1) ? $langs->trans("DefaultForService") : $langs->trans("DefaultForProduct")).': ';
+		$s = '<span class="small">'.(($objp->type_l == 1) ? $langs->trans("DefaultForService") : $langs->trans("DefaultForProduct")).': </span>';
 		$shelp = '';
 		if ($suggestedaccountingaccountbydefaultfor == 'eec') $shelp .= $langs->trans("SaleEEC");
 		elseif ($suggestedaccountingaccountbydefaultfor == 'export') $shelp .= $langs->trans("SaleExport");
@@ -559,7 +559,7 @@ if ($result) {
 		if ($objp->product_id > 0)
 		{
 			print '<br>';
-			$s = (($objp->type_l == 1) ? $langs->trans("ThisService") : $langs->trans("ThisProduct")).': ';
+			$s = '<span class="small">'.(($objp->type_l == 1) ? $langs->trans("ThisService") : $langs->trans("ThisProduct")).': </span>';
 			$shelp = '';
 			if ($suggestedaccountingaccountfor == 'eec') $shelp = $langs->trans("SaleEEC");
 			elseif ($suggestedaccountingaccountfor == 'export') $shelp = $langs->trans("SaleExport");
