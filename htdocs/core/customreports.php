@@ -693,6 +693,8 @@ if ($mode == 'graph') {
     $mesg = $px1->isGraphKo();
     if (!$mesg)
     {
+    	/*var_dump($legend);
+    	var_dump($data);*/
     	$px1->SetData($data);
     	unset($data);
 

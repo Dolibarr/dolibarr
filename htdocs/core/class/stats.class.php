@@ -198,7 +198,7 @@ abstract class Stats
 			// $data = array('xval'=>array(0=>xlabel,1=>yval1,2=>yval2...),...)
 			for ($i = 0; $i < 12; $i++)
 			{
-				$data[$i][] = $datay[$endyear][($i + $sm) % 12][0]; // set label
+				$data[$i][] = $datay[$endyear][($i + $sm) % 12]['label']; // set label
 				$year = $startyear;
 				while ($year <= $endyear)
 				{
@@ -479,7 +479,6 @@ abstract class Stats
 
     // phpcs:disable PEAR.NamingConventions.ValidFunctionName.PublicUnderscore
 	/**
-	 *     Renvoie le montant totalise par mois pour une annee donnee
      *     Return the amount per month for a given year
 	 *
 	 *     @param	int		$year       Year
