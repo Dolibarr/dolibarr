@@ -348,7 +348,7 @@ function pdfBuildThirdpartyName($thirdparty, Translate $outputlangs, $includeali
 	if ($thirdparty instanceof Societe) {
 		$socname .= $thirdparty->name;
 		if (($includealias || !empty($conf->global->PDF_INCLUDE_ALIAS_IN_THIRDPARTY_NAME)) && !empty($thirdparty->name_alias)) {
-		    $socname .= "\n".$thirdparty->name_alias;
+		    $socname .= " - ".$thirdparty->name_alias;
 		}
 	} elseif ($thirdparty instanceof Contact) {
 		$socname = $thirdparty->socname;
@@ -386,7 +386,7 @@ function pdf_build_address($outputlangs, $sourcecompany, $targetcompany = '', $t
 	$stringaddress = '';
 	if (is_object($hookmanager))
 	{
-		$parameters = array('sourcecompany'=>&$sourcecompany, 'targetcompany'=>&$targetcompany, 'targetcontact'=>&$targetcontact, 'outputlangs'=>$outputlangs, 'mode'=>$mode, 'usecontact'=>$usecontact);
+		$parameters = array('sourcecompany' => &$sourcecompany, 'targetcompany' => &$targetcompany, 'targetcontact' => &$targetcontact, 'outputlangs' => $outputlangs, 'mode' => $mode, 'usecontact' => $usecontact);
 		$action = '';
 		$reshook = $hookmanager->executeHooks('pdf_build_address', $parameters, $object, $action); // Note that $action and $object may have been modified by some hooks
 		$stringaddress .= $hookmanager->resPrint;
