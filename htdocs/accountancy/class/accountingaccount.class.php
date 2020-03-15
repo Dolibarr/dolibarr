@@ -598,7 +598,7 @@ class AccountingAccount extends CommonObject
 			$sql .= "SET " . $fieldtouse . " = '0'";
 			$sql .= " WHERE rowid = " . $this->db->escape($id);
 
-			dol_syslog(get_class($this) . "::" . $fieldtouse . " sql=" . $sql, LOG_DEBUG);
+			dol_syslog(get_class($this) . "::account_desactivate " . $fieldtouse . " sql=" . $sql, LOG_DEBUG);
 			$result = $this->db->query($sql);
 
 			if ($result) {
