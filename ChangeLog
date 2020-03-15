@@ -19,7 +19,7 @@ FIX: CSRF error when creating an intervention
 FIX: date order was -1D and desc with label repetition
 FIX: empty of series in graph of product distribution
 FIX: fk_type subscription list via api REST
-FIX: link when using anchor on "/"
+FIX: link when using anchor on "/" in website module
 FIX: menu export document was not visible when using "simple accounting"
 FIX: missing class declaration
 FIX: missing global $conf
