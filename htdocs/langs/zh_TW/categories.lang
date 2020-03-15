@@ -78,6 +78,7 @@ CatMemberList=會員標籤/類別清單
 CatContactList=聯絡人標籤/類別清單
 CatSupLinks=供應商與標籤/類別之間的連結
 CatCusLinks=客戶/潛在方與標籤/類別之間的連結
+CatContactsLinks=聯絡人/地址與標籤/類別之間的連結
 CatProdLinks=產品/服務與標籤/類別之間的連結
 CatProJectLinks=專案與標籤/類別之間的連結
 DeleteFromCat=從標籤/類別中刪除

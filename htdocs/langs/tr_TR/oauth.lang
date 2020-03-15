@@ -28,3 +28,5 @@ OAUTH_GITHUB_NAME=OAuth GitHub hizmeti
 OAUTH_GITHUB_ID=OAuth GitHub Id
 OAUTH_GITHUB_SECRET=OAuth GitHub Secret
 OAUTH_GITHUB_DESC=<a class="notasortlink" href="https://github.com/settings/developers" target="_blank">Bu sayfaya gidin</a> ve sonra OAuth kimlik bilgileri oluşturmak için "Yeni bir uygulama kaydet" linkine gidin
+OAUTH_STRIPE_TEST_NAME=OAuth Stripe Test
+OAUTH_STRIPE_LIVE_NAME=OAuth Stripe Live

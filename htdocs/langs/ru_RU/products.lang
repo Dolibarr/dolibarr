@@ -331,6 +331,10 @@ PossibleValues=Возможные значения
 GoOnMenuToCreateVairants=Перейдите в меню %s - %s, чтобы подготовить варианты атрибутов (например, цвета, размер, ...)
 UseProductFournDesc=Add a feature to define the descriptions of products defined by the vendors in addition to descriptions for customers
 ProductSupplierDescription=Vendor description for the product
+UseProductSupplierPackaging=Use packaging on supplier prices (recalculate quantities according to packaging set on supplier price when adding/updating line in supplier documents)
+PackagingForThisProduct=Packaging
+QtyRecalculatedWithPackaging=The quantity of the line were recalculated according to supplier packaging
+
 #Attributes
 VariantAttributes=Вариант атрибутов
 ProductAttributes=Вариант атрибутов для продуктов
@@ -363,7 +367,7 @@ UsePercentageVariations=Использовать процентные вариа
 PercentageVariation=Изменение процентов
 ErrorDeletingGeneratedProducts=При попытке удалить существующие варианты продукта произошла ошибка
 NbOfDifferentValues=No. of different values
-NbProducts=No. of products
+NbProducts=Number of products
 ParentProduct=Родительский продукт
 HideChildProducts=Скрыть варианты продуктов
 ShowChildProducts=Show variant products
@@ -376,3 +380,4 @@ ErrorProductCombinationNotFound=Вариант продукта не найде�
 ActionAvailableOnVariantProductOnly=Action only available on the variant of product
 ProductsPricePerCustomer=Product prices per customers
 ProductSupplierExtraFields=Additional Attributes (Supplier Prices)
+DeleteLinkedProduct=Delete the child product linked to the combination

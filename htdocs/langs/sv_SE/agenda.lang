@@ -60,7 +60,7 @@ MemberSubscriptionModifiedInDolibarr=Prenumeration %s för medlem %s modified
 MemberSubscriptionDeletedInDolibarr=Prenumeration %s för medlem %s raderad
 ShipmentValidatedInDolibarr=Leverans %s bekräftat
 ShipmentClassifyClosedInDolibarr=Sändning %s märkt fakturerad
-ShipmentUnClassifyCloseddInDolibarr=Sändning %s märkt som återöppnad
+ShipmentUnClassifyCloseddInDolibarr=Shipment %s classified re-open
 ShipmentBackToDraftInDolibarr=Leverans %s gå tillbaka till utkast status
 ShipmentDeletedInDolibarr=Frakten %s raderad
 OrderCreatedInDolibarr=Order %s skapad
@@ -123,6 +123,7 @@ AgendaUrlOptionsNotAdmin= <b> logina =! %s </b> för att begränsa produktionen
 AgendaUrlOptions4= <b> logint = %s </b> för att begränsa utdata till åtgärder som tilldelats user <b> %s </b> (ägare and andra).
 AgendaUrlOptionsProject= <b> project = __ PROJECT_ID__ </b> för att begränsa utsignalen till åtgärder linked till project <b> __PROJECT_ID__ </b>.
 AgendaUrlOptionsNotAutoEvent= <b> notactiontype = systemauto </b> för att utesluta automatisk events.
+AgendaUrlOptionsIncludeHolidays=<b>includeholidays=1</b> to include events of holidays.
 AgendaShowBirthdayEvents=Show födelsedagar av contacts
 AgendaHideBirthdayEvents=Dölj födelsedagar av contacts
 Busy=Upptagen

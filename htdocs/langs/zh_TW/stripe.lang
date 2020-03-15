@@ -68,3 +68,4 @@ ToOfferALinkForTestWebhook=連結到Stripe WebHook設定以呼叫IPN（測試模
 ToOfferALinkForLiveWebhook=連結到Stripe WebHook設定以呼叫IPN（live模式）
 PaymentWillBeRecordedForNextPeriod=付款將記錄在下一個期間。
 ClickHereToTryAgain=<a href="%s">點擊此處重試... </a>
+CreationOfPaymentModeMustBeDoneFromStripeInterface=根據嚴格的客戶身份驗證規則，必須在Stripe後台建立卡。您可以點擊此處打開Stripe客戶記錄：%s

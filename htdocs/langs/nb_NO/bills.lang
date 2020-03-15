@@ -419,6 +419,7 @@ PaymentCondition14DENDMONTH=Innen 14 dager etter slutten av måneden
 FixAmount=Fast beløp - 1 linje med etiketten '%s'
 VarAmount=Variabelt beløp
 VarAmountOneLine=Variabel mengde (%% tot.) - 1 linje med etikett '%s'
+VarAmountAllLines=Variabelt beløp (%% tot.) - alle like linjer
 # PaymentType
 PaymentTypeVIR=Bankoverførsel
 PaymentTypeShortVIR=Bankoverførsel
@@ -512,13 +513,15 @@ RevenueStamp=Stempelmerke
 YouMustCreateInvoiceFromThird=Dette alternativet er bare tilgjengelig når du oppretter faktura fra kategorien "kunde" under tredjepart
 YouMustCreateInvoiceFromSupplierThird=Dette alternativet er bare tilgjengelig når du oppretter faktura fra kategorien "leverandør" under tredjepart
 YouMustCreateStandardInvoiceFirstDesc=Du må først lage en standardfaktura og så konvertere den til "mal" for å lage en ny fakturamal
-PDFCrabeDescription=PDF-fakturamal Crabe. En komplett fakturamal 
+PDFCrabeDescription=PDF-fakturamal Crabe. En komplett fakturamal (gammel implementering av Sponge-mal)
 PDFSpongeDescription=PDF Fakturamal Sponge. En komplett fakturamal
 PDFCrevetteDescription=PDF fakturamal Crevette. En komplett mal for delfaktura
 TerreNumRefModelDesc1=Returnerer nummer med format %syymm-nnnn for standardfaktura og %syymm-nnnn for kreditnota, der yy er året, mm måned og nnnn er et løpenummer som starter på 0+1.
 MarsNumRefModelDesc1=Returnerer et nummer med format %syymm-nnnn for standardfakturaer, %syymm-nnnn for erstatningsfakturaer, %syymm-nnnn for nedbetalingsfakturaer og %syymm-nnnn for kreditnotater hvor yy er år, mm er måned og nnnn er en sekvens uten pause og ingen retur til 0
 TerreNumRefModelError=En faktura som starter med $sååmm finnes allerede og er ikke kompatibel med denne nummereringsmodulen. Du må slette den eller gi den ett nytt navn for å aktivere denne modulen.
 CactusNumRefModelDesc1=Returnerer et nummer med format %syymm-nnnn for standardfakturaer, %syymm-nnnn for kreditnotater og %syymm-nnnn for nedbetalingsfakturaer hvor yy er år, mm er måned og nnnn er en sekvens uten pause og ingen retur til 0
+EarlyClosingReason=Årsaken til tidlig avslutning
+EarlyClosingComment=Tidlig avslutning notat
 ##### Types de contacts #####
 TypeContact_facture_internal_SALESREPFOLL=Representant for oppfølging av kundefaktura
 TypeContact_facture_external_BILLING=Kundekontakt faktura

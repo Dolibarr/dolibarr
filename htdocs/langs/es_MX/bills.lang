@@ -43,5 +43,5 @@ CreditNote=Nota de crédito
 ReasonDiscount=Razón
 PaymentTypeCB=Tarjeta de crédito
 PaymentTypeShortCB=Tarjeta de crédito
-PDFCrabeDescription=Invoice PDF template Crabe. A complete invoice template 
+PDFCrabeDescription=Invoice PDF template Crabe. A complete invoice template (old implementation of Sponge template)
 situationInvoiceShortcode_S=D

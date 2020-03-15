@@ -91,7 +91,7 @@ GoToSetupArea=Prejsť na Dolibarr (nastavenie plochy)
 MigrationNotFinished=The database version is not completely up to date: run the upgrade process again.
 GoToUpgradePage=Prejsť na stránku znova upgradovať
 WithNoSlashAtTheEnd=Bez lomítka &quot;/&quot; na koniec
-DirectoryRecommendation=It is recommended to use a directory outside of the web pages.
+DirectoryRecommendation=<span class="warning">IMPORTANT</span>: You must use a directory that is outside of the web pages (so do not use a subdirectory of previous parameter).
 LoginAlreadyExists=Už existuje
 DolibarrAdminLogin=Dolibarr admin login
 AdminLoginAlreadyExists=Dolibarr administrator account '<b>%s</b>' already exists. Go back if you want to create another one.

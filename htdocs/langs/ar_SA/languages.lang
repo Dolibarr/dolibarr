@@ -1,6 +1,6 @@
 # Dolibarr language file - Source file is en_US - languages
 Language_ar_AR=العربية
-Language_ar_EG=العربيه مصر
+Language_ar_EG=Arabic (Egypt)
 Language_ar_SA=العربية
 Language_bn_BD=بنغالي
 Language_bg_BG=البلغارية
@@ -65,7 +65,7 @@ Language_mk_MK=المقدونية
 Language_mn_MN=المنغولية
 Language_nb_NO=النرويجية (بوكمال)
 Language_nl_BE=الهولندية (بلجيكا)
-Language_nl_NL=الهولندية (هولندا)
+Language_nl_NL=Dutch
 Language_pl_PL=بولندي
 Language_pt_BR=البرتغالية (البرازيل)
 Language_pt_PT=البرتغالية
@@ -86,4 +86,4 @@ Language_uz_UZ=الأوزبكي
 Language_vi_VN=الفيتنامية
 Language_zh_CN=الصينية
 Language_zh_TW=الصينية (التقليدية)
-Language_bh_MY=الماليزية
+Language_bh_MY=Malay

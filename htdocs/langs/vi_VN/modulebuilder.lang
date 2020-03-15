@@ -84,6 +84,8 @@ ListOfPermissionsDefined=Danh sách các quyền được định nghĩa
 SeeExamples=Xem ví dụ ở đây
 EnabledDesc=Điều kiện để có trường này hoạt động (Ví dụ: 1 hoặc $conf-> golobal->MYMODULE_MYOPTION)
 VisibleDesc=Is the field visible ? (Examples: 0=Never visible, 1=Visible on list and create/update/view forms, 2=Visible on list only, 3=Visible on create/update/view form only (not list), 4=Visible on list and update/view form only (not create), 5=Visible on list end view form only (not create, not update). Using a negative value means field is not shown by default on list but can be selected for viewing). It can be an expression, for example:<br>preg_match('/public/', $_SERVER['PHP_SELF'])?0:1<br>($user->rights->holiday->define_holiday ? 1 : 0)
+DisplayOnPdfDesc=Display this field on compatible PDF documents, you can manage position with "Position" field.<br/>Currently, known compatibles PDF models are : eratostene 
+DisplayOnPdf=Display on PDF
 IsAMeasureDesc=Giá trị của trường có thể được tích lũy để có được tổng số vào danh sách không? (Ví dụ: 1 hoặc 0)
 SearchAllDesc=Là trường được sử dụng để thực hiện tìm kiếm từ công cụ tìm kiếm nhanh? (Ví dụ: 1 hoặc 0)
 SpecDefDesc=Nhập vào đây tất cả tài liệu bạn muốn cung cấp với mô-đun chưa được xác định bởi các tab khác. Bạn có thể sử dụng .md hoặc tốt hơn, cú pháp .asciidoc đầy đủ.

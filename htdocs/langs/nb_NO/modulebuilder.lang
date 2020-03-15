@@ -84,6 +84,8 @@ ListOfPermissionsDefined=Liste over definerte tillatelser
 SeeExamples=Se eksempler her
 EnabledDesc=Betingelse for å ha dette feltet aktivt (Eksempler: 1 eller $conf->global->MYMODULE_MYOPTION)
 VisibleDesc=Er feltet synlig? (Eksempler: 0=Aldri synlig, 1=Synlig på liste og opprett/oppdater/vis skjemaer, 2=Synlig bare på liste, 3=Synlig bare på opprett/oppdater/vis skjema (ikke liste), 4=Synlig bare på liste og oppdaterings-/visningsskjema  (ikke opprett), 5=Synlig på listens sluttformular (ikke opprett, ikke oppdatering). Bruk av negativ verdi betyr at feltet ikke vises som standard på listen, men kan velges for visning). Det kan være et uttrykk, for eksempel: <br> preg_match ('public/',$_SERVER['PHP_SELF'])?0:1<br>($ user->rights->holiday>define_holiday ? 1: 0)
+DisplayOnPdfDesc=Vis dette feltet på kompatible PDF-dokumenter, du kan endre posisjon med "Posisjon" -feltet. <br/> For øyeblikket er kjente kompatible PDF-modeller: eratostene 
+DisplayOnPdf=Vis på PDF
 IsAMeasureDesc=Kan verdien av feltet bli kumulert for å få en total i listen? (Eksempler: 1 eller 0)
 SearchAllDesc=Er feltet brukt til å søke fra hurtigsøkingsverktøyet? (Eksempler: 1 eller 0)
 SpecDefDesc=Skriv inn all dokumentasjon du vil gi med modulen din, som ikke allerede er definert av andre faner. Du kan bruke .md eller bedre,  .asciidoc-syntaksen.

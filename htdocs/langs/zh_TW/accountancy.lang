@@ -224,13 +224,15 @@ ListAccounts=各式會計科目清單
 UnknownAccountForThirdparty=未知的合作方科目。我們將使用%s
 UnknownAccountForThirdpartyBlocking=未知的合作方科目。阻止錯誤
 ThirdpartyAccountNotDefinedOrThirdPartyUnknown=未定義的合作方科目或未知的合作方。我們將使用%s
+ThirdpartyAccountNotDefinedOrThirdPartyUnknownSubledgerIgnored=未知合作方與付款中未定義分類帳。我們會將分類帳帳戶值保留為空。
 ThirdpartyAccountNotDefinedOrThirdPartyUnknownBlocking=未定義合作方帳戶或未知的合作方。封鎖錯誤。
 UnknownAccountForThirdpartyAndWaitingAccountNotDefinedBlocking=未定義的未知合作方帳戶和等待帳戶。封鎖錯誤
 PaymentsNotLinkedToProduct=付款未連結到任何產品/服務
+ShowOpeningBalance=顯示初期餘額
+HideOpeningBalance=隱藏初期餘額
 
 Pcgtype=會計項目大類
-Pcgsubtype=會計項目中類
-PcgtypeDesc=群組和子群組用於某些會計報告中預定義“篩選器”和“分組”標準。例如，“ 收入”或“ 費用”用作產品會計科目的組，以建立費用/收入報告。
+PcgtypeDesc=用作某些會計報告的預定義“過濾器”和“分組”標準的科目組。例如“ INCOME”或“ EXPENSE”用作產品的會計科目組，以建立費用/收入報告。
 
 TotalVente=稅前總周轉
 TotalMarge=總銷貨淨利
@@ -269,6 +271,7 @@ ChangeBinding=修改關聯性
 Accounted=計入總帳
 NotYetAccounted=尚未記入總帳
 ShowTutorial=顯示教程
+NotReconciled=未對帳
 
 ## Admin
 ApplyMassCategories=套用大量分類

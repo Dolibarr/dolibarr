@@ -60,7 +60,7 @@ MemberSubscriptionModifiedInDolibarr=Subscription %s for member %s modified
 MemberSubscriptionDeletedInDolibarr=Subscription %s for member %s deleted
 ShipmentValidatedInDolibarr=Saadetis %s kinnitatud
 ShipmentClassifyClosedInDolibarr=Saadetise %s arveldatud
-ShipmentUnClassifyCloseddInDolibarr=Saadetis %s taasavatud
+ShipmentUnClassifyCloseddInDolibarr=Shipment %s classified re-open
 ShipmentBackToDraftInDolibarr=Saadetis %s on muudetud mustandiks
 ShipmentDeletedInDolibarr=Saadetis %s kustutatud
 OrderCreatedInDolibarr=Tellimus %s loodud
@@ -123,6 +123,7 @@ AgendaUrlOptionsNotAdmin=<b>logina=!%s</b> to restrict output to actions not own
 AgendaUrlOptions4=<b>logint=%s</b> to restrict output to actions assigned to user <b>%s</b> (owner and others).
 AgendaUrlOptionsProject=<b>project=__PROJECT_ID__</b> to restrict output to actions linked to project <b>__PROJECT_ID__</b>.
 AgendaUrlOptionsNotAutoEvent=<b>notactiontype=systemauto</b> to exclude automatic events.
+AgendaUrlOptionsIncludeHolidays=<b>includeholidays=1</b> to include events of holidays.
 AgendaShowBirthdayEvents=Näita kontaktide sünnipäevi
 AgendaHideBirthdayEvents=Peida kontaktide sünnipäevad
 Busy=Hõivatud

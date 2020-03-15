@@ -2,6 +2,34 @@
 English Dolibarr ChangeLog
 --------------------------------------------------------------
 
+
+***** ChangeLog for 11.0.3 compared to 11.0.2 *****
+FIX: unit price for selected supplier products not set. NaN was used.
+FIX: use bad var to check if total is positive for each VAT rate when validating an invoice
+FIX: status missing from last customer invoices box when using MAIN_STATUS_USES_CSS
+FIX: translations for "orders" not loaded in the homepage box
+FIX: #13194
+FIX: #13274 cannot add or update 0 value for an int or double extrafield
+FIX: #13285 SQL error during migration with pgsql
+FIX: #13294
+FIX: #13313
+FIX: Clone Fourn Command, add line's extrafields
+FIX: cols parameter not propagated to tpl
+FIX: CSRF error when creating an intervention
+FIX: date order was -1D and desc with label repetition
+FIX: empty of series in graph of product distribution
+FIX: fk_type subscription list via api REST
+FIX: link when using anchor on "/" in website module
+FIX: menu export document was not visible when using "simple accounting"
+FIX: missing class declaration
+FIX: missing global $conf
+FIX: Missing token in some forms (avoid unset POST errors)
+FIX: params of setEventMessage($langs->trans('ErrorProductClone')...
+FIX: Remove unexisting link
+FIX: substitute lines dates values on doc generator (ODT, ...)
+FIX: Ticket - Load Cache Messages Ticket, wrong message's status
+FIX: Ticket Public  - Private messages are displayed
+
 ***** ChangeLog for 11.0.2 compared to 11.0.1 *****
 FIX: #10309
 FIX: #13110
@@ -9,7 +37,8 @@ FIX: #13118
 FIX: #13124
 FIX: #13131
 FIX: #13135
-FIX: #13146 #13198
+FIX: #13146 
+FIX: #13198
 FIX: #13175
 FIX: #13182
 FIX: #13183

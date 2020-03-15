@@ -19,6 +19,8 @@
  * This template needs:
  * $object
  * $withproject (if we are on task contact)
+ *
+ * $preselectedtypeofcontact may be defined or not
  */
 
 // Protection to avoid direct call of template
@@ -28,6 +30,9 @@ if (empty($object) || !is_object($object))
 	exit;
 }
 
+if (empty($preselectedtypeofcontact)) {
+	$preselectedtypeofcontact = 0;
+}
 
 require_once DOL_DOCUMENT_ROOT.'/contact/class/contact.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formcompany.class.php';
@@ -142,7 +147,7 @@ if ($permission) {
 			<?php
 			$tmpobject=$object;
 			if (($object->element == 'shipping'|| $object->element == 'reception') && is_object($objectsrc)) $tmpobject=$objectsrc;
-			$formcompany->selectTypeContact($tmpobject, '', 'type', 'external', 'position', 0, 'minwidth100imp'); ?>
+			$formcompany->selectTypeContact($tmpobject, $preselectedtypeofcontact, 'type', 'external', 'position', 0, 'minwidth100imp'); ?>
 		</div>
 		<div class="tagtd noborderbottom">&nbsp;</div>
 		<div class="tagtd center noborderbottom">
