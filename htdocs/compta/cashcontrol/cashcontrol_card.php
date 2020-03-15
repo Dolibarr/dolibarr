@@ -679,7 +679,6 @@ if (empty($action) || $action == "view" || $action == "close")
 
 			print '<center><iframe src="report.php?id='.$id.'" width="60%" height="800"></iframe></center>';
 	    } else {
-
 	    	print '<form method="POST" action="'.$_SERVER["PHP_SELF"].'" name="formclose">';
 	    	print '<input type="hidden" name="token" value="' . $_SESSION ['newtoken'] . '">';
 	    	if ($action == 'start' && GETPOST('posnumber', 'int') != '' && GETPOST('posnumber', 'int') != '' && GETPOST('posnumber', 'int') != '-1')
