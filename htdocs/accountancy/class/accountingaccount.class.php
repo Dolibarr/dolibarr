@@ -586,7 +586,7 @@ class AccountingAccount extends CommonObject
         {
             $fieldtouse = 'active';
         }
-        else if ($mode == 1)
+        elseif ($mode == 1)
         {
 			$fieldtouse = 'reconciliable';
         }
@@ -631,7 +631,7 @@ class AccountingAccount extends CommonObject
         {
             $fieldtouse = 'active';
         }
-        else if ($mode == 1)
+        elseif ($mode == 1)
         {
             $fieldtouse = 'reconciliable';
         }
