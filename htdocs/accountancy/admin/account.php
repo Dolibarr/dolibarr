@@ -70,8 +70,11 @@ $arrayfields = array(
 	'aa.labelshort'=>array('label'=>$langs->trans("LabelToShow"), 'checked'=>1),
 	'aa.account_parent'=>array('label'=>$langs->trans("Accountparent"), 'checked'=>1),
     'aa.pcg_type'=>array('label'=>$langs->trans("Pcgtype"), 'checked'=>1, 'help'=>'PcgtypeDesc'),
-    'aa.active'=>array('label'=>$langs->trans("Activated"), 'checked'=>1)
+    'aa.reconciliable'=>array('label'=>$langs->trans("Reconciliable"), 'checked'=>1),
+	'aa.active'=>array('label'=>$langs->trans("Activated"), 'checked'=>1)
 );
+
+if ($conf->global->MAIN_FEATURES_LEVEL < 2) unset($arrayfields['aa.reconciliable']);
 
 $accounting = new AccountingAccount($db);
 
@@ -157,7 +160,8 @@ if (empty($reshook))
 
     if ($action == 'disable') {
     	if ($accounting->fetch($id)) {
-    		$result = $accounting->account_desactivate($id);
+            $mode = GETPOST('mode', 'int');
+    		$result = $accounting->account_desactivate($id, $mode);
     	}
 
     	$action = 'update';
@@ -166,7 +170,8 @@ if (empty($reshook))
     	}
     } elseif ($action == 'enable') {
     	if ($accounting->fetch($id)) {
-    		$result = $accounting->account_activate($id);
+            $mode = GETPOST('mode', 'int');
+    		$result = $accounting->account_activate($id, $mode);
     	}
     	$action = 'update';
     	if ($result < 0) {
@@ -192,7 +197,7 @@ if ($action == 'delete') {
 
 $pcgver = $conf->global->CHARTOFACCOUNTS;
 
-$sql = "SELECT aa.rowid, aa.fk_pcg_version, aa.pcg_type, aa.account_number, aa.account_parent , aa.label, aa.labelshort, aa.active, ";
+$sql = "SELECT aa.rowid, aa.fk_pcg_version, aa.pcg_type, aa.account_number, aa.account_parent , aa.label, aa.labelshort, aa.reconciliable, aa.active, ";
 $sql .= " a2.rowid as rowid2, a2.label as label2, a2.account_number as account_number2";
 $sql .= " FROM ".MAIN_DB_PREFIX."accounting_account as aa";
 $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."accounting_system as asy ON aa.fk_pcg_version = asy.pcg_version AND aa.entity = ".$conf->entity;
@@ -352,6 +357,7 @@ if ($resql)
 		print '</td>';
 	}
 	if (!empty($arrayfields['aa.pcg_type']['checked']))		    print '<td class="liste_titre"><input type="text" class="flat" size="6" name="search_pcgtype" value="'.$search_pcgtype.'"></td>';
+	if ($conf->global->MAIN_FEATURES_LEVEL >= 2) { if (! empty($arrayfields['aa.reconciliable']['checked']))   print '<td class="liste_titre">&nbsp;</td>'; }
 	if (!empty($arrayfields['aa.active']['checked']))			print '<td class="liste_titre">&nbsp;</td>';
 	print '<td class="liste_titre maxwidthsearch">';
 	$searchpicto = $form->showFilterAndCheckAddButtons($massactionbutton ? 1 : 0, 'checkforselect', 1);
@@ -365,6 +371,7 @@ if ($resql)
 	if (!empty($arrayfields['aa.labelshort']['checked']))		print_liste_field_titre($arrayfields['aa.labelshort']['label'], $_SERVER["PHP_SELF"], "aa.labelshort", "", $param, '', $sortfield, $sortorder);
 	if (!empty($arrayfields['aa.account_parent']['checked']))	print_liste_field_titre($arrayfields['aa.account_parent']['label'], $_SERVER["PHP_SELF"], "aa.account_parent", "", $param, '', $sortfield, $sortorder, 'left ');
 	if (!empty($arrayfields['aa.pcg_type']['checked']))			print_liste_field_titre($arrayfields['aa.pcg_type']['label'], $_SERVER["PHP_SELF"], 'aa.pcg_type', '', $param, '', $sortfield, $sortorder, '', $arrayfields['aa.pcg_type']['help']);
+	if ($conf->global->MAIN_FEATURES_LEVEL >= 2) { if (! empty($arrayfields['aa.reconciliable']['checked']))	print_liste_field_titre($arrayfields['aa.reconciliable']['label'], $_SERVER["PHP_SELF"], 'aa.reconciliable', '', $param, '', $sortfield, $sortorder); }
 	if (!empty($arrayfields['aa.active']['checked']))			print_liste_field_titre($arrayfields['aa.active']['label'], $_SERVER["PHP_SELF"], 'aa.active', '', $param, '', $sortfield, $sortorder);
 	print_liste_field_titre($selectedfields, $_SERVER["PHP_SELF"], "", '', '', '', $sortfield, $sortorder, 'center maxwidthsearch ');
 	print "</tr>\n";
@@ -441,16 +448,36 @@ if ($resql)
 			if (!$i) $totalarray['nbfield']++;
 		}
 
+		if ($conf->global->MAIN_FEATURES_LEVEL >= 2) {
+			// Activated or not reconciliation on accounting account
+			if (!empty($arrayfields['aa.reconciliable']['checked'])) {
+				print '<td class="center">';
+				if (empty($obj->reconciliable)) {
+					print '<a class="reposition" href="' . $_SERVER["PHP_SELF"] . '?id=' . $obj->rowid . '&action=enable&mode=1">';
+					print img_picto($langs->trans("Disabled"), 'switch_off');
+					print '</a>';
+				} else {
+					print '<a class="reposition" href="' . $_SERVER["PHP_SELF"] . '?id=' . $obj->rowid . '&action=disable&mode=1">';
+					print img_picto($langs->trans("Activated"), 'switch_on');
+					print '</a>';
+				}
+				print '</td>';
+				if (!$i) {
+					$totalarray['nbfield']++;
+				}
+			}
+		}
+
 		// Activated or not
 		if (!empty($arrayfields['aa.active']['checked']))
 		{
-			print '<td>';
+			print '<td class="center">';
 			if (empty($obj->active)) {
-				print '<a class="reposition" href="'.$_SERVER["PHP_SELF"].'?id='.$obj->rowid.'&action=enable">';
+				print '<a class="reposition" href="'.$_SERVER["PHP_SELF"].'?id='.$obj->rowid.'&action=enable&mode=0">';
 				print img_picto($langs->trans("Disabled"), 'switch_off');
 				print '</a>';
 			} else {
-				print '<a class="reposition" href="'.$_SERVER["PHP_SELF"].'?id='.$obj->rowid.'&action=disable">';
+				print '<a class="reposition" href="'.$_SERVER["PHP_SELF"].'?id='.$obj->rowid.'&action=disable&mode=0">';
 				print img_picto($langs->trans("Activated"), 'switch_on');
 				print '</a>';
 			}
