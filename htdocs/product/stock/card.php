@@ -509,7 +509,7 @@ else
 			print_liste_field_titre("Product", "", "p.ref", "&amp;id=".$id, "", "", $sortfield, $sortorder);
 			print_liste_field_titre("Label", "", "p.label", "&amp;id=".$id, "", "", $sortfield, $sortorder);
             print_liste_field_titre("Units", "", "ps.reel", "&amp;id=".$id, "", '', $sortfield, $sortorder, 'right ');
-            if(!empty($conf->global->PRODUCT_USE_UNITS)) print_liste_field_titre("Unit","", "p.fk_unit","&amp;id=".$id,"",'align="left"',$sortfield,$sortorder);
+            if(!empty($conf->global->PRODUCT_USE_UNITS)) print_liste_field_titre("Unit", "", "p.fk_unit", "&amp;id=".$id, "", 'align="left"', $sortfield, $sortorder);
             print_liste_field_titre("AverageUnitPricePMPShort", "", "p.pmp", "&amp;id=".$id, "", '', $sortfield, $sortorder, 'right ');
 			print_liste_field_titre("EstimatedStockValueShort", "", "", "&amp;id=".$id, "", '', $sortfield, $sortorder, 'right ');
             if (empty($conf->global->PRODUIT_MULTIPRICES)) {
