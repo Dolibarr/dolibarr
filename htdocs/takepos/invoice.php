@@ -673,11 +673,74 @@ function DolibarrTakeposPrinting(id) {
     });
 }
 
+
 $( document ).ready(function() {
-    $("a#customer").text("<?php
-	if ($invoice->socid != $conf->global->$constforcompanyid) print $soc->name;
-	else print $langs->trans("Customer");
-	?>");
+	console.log("Set customer info in header");
+
+    <?php
+    $s = $langs->trans("Customer");
+    if ($invoice->socid != $conf->global->$constforcompanyid) {
+    	$s = $soc->name;
+    }
+    ?>
+
+    $("a#customer").html('<?php print dol_escape_js($s); ?>');
+
+	<?php
+	$s = '';
+
+    $constantforkey = 'CASHDESK_NO_DECREASE_STOCK'.$_SESSION["takeposterminal"];
+    if (!empty($conf->stock->enabled) && $conf->global->$constantforkey != "1")
+    {
+    	$s = '<span class="small">';
+    	$constantforkey = 'CASHDESK_ID_WAREHOUSE'.$_SESSION["takeposterminal"];
+    	$warehouse = new Entrepot($db);
+    	$warehouse->fetch($conf->global->$constantforkey);
+    	$s .= $langs->trans("Warehouse").'<br>'.$warehouse->ref;
+    	$s .= '</span>';
+    }
+	?>
+
+    $("#infowarehouse").html('<?php print dol_escape_js($s); ?>');
+
+	<?php
+	// Module Adherent
+	$s = '';
+	if (!empty($conf->adherent->enabled) && $invoice->socid != $conf->global->$constforcompanyid)
+	{
+		$s = '<span class="small">';
+		require_once DOL_DOCUMENT_ROOT.'/adherents/class/adherent.class.php';
+		$langs->load("members");
+		$s .= $langs->trans("Member").': ';
+		$adh = new Adherent($db);
+		$result = $adh->fetch('', '', $invoice->socid);
+		if ($result > 0)
+		{
+			$adh->ref = $adh->getFullName($langs);
+			$s.= $adh->getFullName($langs);
+			$s.= ' - '.$adh->type;
+			if ($adh->datefin)
+			{
+				$s.= '<br>'.$langs->trans("SubscriptionEndDate").': '.dol_print_date($adh->datefin, 'day');
+				if ($adh->hasDelay()) {
+					$s.= " ".img_warning($langs->trans("Late"));
+				}
+			}
+			else
+			{
+				$s.= '<br>'.$langs->trans("SubscriptionNotReceived");
+				if ($adh->statut > 0) $s.= " ".img_warning($langs->trans("Late")); // displays delay Pictogram only if not a draft and not terminated
+			}
+		}
+		else
+		{
+			$s.= '<br>'.$langs->trans("ThirdpartyNotLinkedToMember");
+		}
+		$s.= '</span>';
+	}
+	?>
+	$("#moreinfo").html('<?php print dol_escape_js($s); ?>');
+
 });
 
 </script>
@@ -902,53 +965,6 @@ else {      // No invoice generated yet
 
 print '</table>';
 
-
-if ($invoice->socid != $conf->global->$constforcompanyid)
-{
-    print '<p class="right">';
-
-	$constantforkey = 'CASHDESK_NO_DECREASE_STOCK'.$_SESSION["takeposterminal"];
-	if (!empty($conf->stock->enabled) && $conf->global->$constantforkey != "1")
-	{
-		$constantforkey = 'CASHDESK_ID_WAREHOUSE'.$_SESSION["takeposterminal"];
-		$warehouse = new Entrepot($db);
-		$warehouse->fetch($conf->global->$constantforkey);
-		print '<br>'.$langs->trans("Warehouse").': '.$warehouse->ref;
-	}
-
-    // Module Adherent
-    if (!empty($conf->adherent->enabled))
-    {
-    	require_once DOL_DOCUMENT_ROOT.'/adherents/class/adherent.class.php';
-    	$langs->load("members");
-    	print '<br>'.$langs->trans("Member").': ';
-    	$adh = new Adherent($db);
-    	$result = $adh->fetch('', '', $invoice->socid);
-    	if ($result > 0)
-		{
-		    $adh->ref = $adh->getFullName($langs);
-		    print $adh->getFullName($langs);
-		    print '<br>'.$langs->trans("Type").': '.$adh->type;
-			if ($adh->datefin)
-			{
-				print '<br>'.$langs->trans("SubscriptionEndDate").': '.dol_print_date($adh->datefin, 'day');
-				if ($adh->hasDelay()) {
-					print " ".img_warning($langs->trans("Late"));
-				}
-			}
-			else
-			{
-				print '<br>'.$langs->trans("SubscriptionNotReceived");
-				if ($adh->statut > 0) print " ".img_warning($langs->trans("Late")); // displays delay Pictogram only if not a draft and not terminated
-			}
-		}
-		else
-		{
-   			print '<span class="opacitymedium">'.$langs->trans("ThirdpartyNotLinkedToMember").'</span>';
-		}
-	}
-	print '</p>';
-}
 
 if ($action == "search")
 {

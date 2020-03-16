@@ -33,7 +33,7 @@
 	--colorboxstatsborder: #ddd;
 	--dolgraphbg: rgba(255,255,255,0);
 	--fieldrequiredcolor: #000055;
-	--colortextbacktab: #<?php print $colortextbacktab; ?>) ;
+	--colortextbacktab: #<?php print $colortextbacktab; ?>;
 	--colorboxiconbg: #eee;
 	--refidnocolor:#444;
 	--tableforfieldcolor:#666;

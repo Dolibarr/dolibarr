@@ -252,6 +252,7 @@ if ($action == "change")	// Change customer for TakePOS
     $resql = $db->query($sql);
     ?>
 	    <script>
+	    console.log("Reload page invoice.php");
 	    parent.$("#poslines").load("invoice.php?place="+<?php print $place; ?>, function() {
 	        //parent.$("#poslines").scrollTop(parent.$("#poslines")[0].scrollHeight);
 			<?php if (!$resql) { ?>

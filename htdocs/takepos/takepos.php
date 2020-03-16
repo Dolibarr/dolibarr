@@ -690,14 +690,16 @@ if (empty($conf->global->TAKEPOS_HIDE_HEAD_BAR)) {
 	<div class="header">
 		<div class="topnav">
 			<div class="topnav-left">
-			<a class="topnav-terminalhour" onclick="TerminalsDialog();">
+			<div class="inline-block valignmiddle"><a class="topnav-terminalhour" onclick="TerminalsDialog();">
 			<?php echo $langs->trans("Terminal")." ";
 			if ($_SESSION["takeposterminal"] == "") echo "1";
 			else echo $_SESSION["takeposterminal"];
 			echo '<span class="hideonsmartphone"> - '.dol_print_date(dol_now(), "day").'</span>';
 			?>
-			</a>
-			<a id="customer" onclick="Customer();"></a>
+			</a></div>
+			<div class="inline-block valignmiddle"><a class="valignmiddle" id="customer" onclick="Customer();"></a></div>
+			<div class="inline-block valignmiddle" id="moreinfo"></div>
+			<div class="inline-block valignmiddle" id="infowarehouse"></div>
 			</div>
 			<div class="topnav-right">
 				<div class="login_block_other">
