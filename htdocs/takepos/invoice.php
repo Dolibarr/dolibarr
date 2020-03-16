@@ -916,14 +916,16 @@ if ($placeid > 0)
             if (empty($conf->global->TAKEPOS_SHOW_N_FIRST_LINES)) {
             	$tooltiptext = '<b>'.$langs->trans("Ref").'</b> : '.$line->product_ref.'<br>';
             	$tooltiptext .= '<b>'.$langs->trans("Label").'</b> : '.$line->product_label.'<br>';
-            	$tooltiptext .= '<br>';
-            	$tooltiptext .= $line->desc;
+            	if ($line->product_label != $line->desc) {
+            		if ($line->desc) $tooltiptext .= '<br>';
+    	        	$tooltiptext .= $line->desc;
+            	}
             	$htmlforlines .= $form->textwithpicto($line->product_label ? $line->product_label : $line->product_ref, $tooltiptext);
             } else {
             	if ($line->product_label) $htmlforlines .= $line->product_label;
-            	if ($line->product_label && $line->desc) $htmlforlines .= '<br>';
             	if ($line->product_label != $line->desc)
 	            {
+	            	if ($line->product_label && $line->desc) $htmlforlines .= '<br>';
 	            	$firstline = dolGetFirstLineOfText($line->desc, $conf->global->TAKEPOS_SHOW_N_FIRST_LINES);
 	                if ($firstline != $line->desc)
 	                {
