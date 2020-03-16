@@ -424,7 +424,7 @@ class FormOther
     public function select_salesrepresentatives($selected, $htmlname, $user, $showstatus = 0, $showempty = 1, $morecss = '', $norepresentative = 0)
     {
         // phpcs:enable
-        global $conf, $langs;
+        global $conf, $langs, $hookmanager;
 
         $langs->load('users');
 
@@ -440,6 +440,9 @@ class FormOther
             	$out.=$comboenhancement;
             }
         }
+
+	    $reshook = $hookmanager->executeHooks('addSQLWhereFilterOnSelectSalesRep', array(), $this, $action);
+
         // Select each sales and print them in a select input
         $out.='<select class="flat'.($morecss?' '.$morecss:'').'" id="'.$htmlname.'" name="'.$htmlname.'">';
         if ($showempty) $out.='<option value="0">&nbsp;</option>';
@@ -464,6 +467,10 @@ class FormOther
 
         if (empty($user->rights->user->user->lire)) $sql_usr.=" AND u.rowid = ".$user->id;
         if (! empty($user->socid)) $sql_usr.=" AND u.fk_soc = ".$user->socid;
+
+	    //Add hook to filter on user (for exemple on usergroup define in custom modules)
+	    if (!empty($reshook)) $sql_usr .= $hookmanager->resArray[0];
+
         // Add existing sales representatives of thirdparty of external user
         if (empty($user->rights->user->user->lire) && $user->socid)
         {
@@ -485,7 +492,11 @@ class FormOther
             }
 
             $sql_usr.= " AND u2.rowid = sc.fk_user AND sc.fk_soc=".$user->socid;
+
+	        //Add hook to filter on user (for exemple on usergroup define in custom modules)
+	        if (!empty($reshook)) $sql_usr .= $hookmanager->resArray[1];
         }
+
 	    $sql_usr.= " ORDER BY statut DESC, lastname ASC";  // Do not use 'ORDER BY u.statut' here, not compatible with the UNION.
         //print $sql_usr;exit;
 

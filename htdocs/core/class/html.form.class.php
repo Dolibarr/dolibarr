@@ -1618,7 +1618,7 @@ class Form
     public function select_dolusers($selected = '', $htmlname = 'userid', $show_empty = 0, $exclude = null, $disabled = 0, $include = '', $enableonly = '', $force_entity = '0', $maxlength = 0, $showstatus = 0, $morefilter = '', $show_every = 0, $enableonlytext = '', $morecss = '', $noactive = 0, $outputmode = 0, $multiple = false)
 	{
         // phpcs:enable
-		global $conf, $user, $langs;
+		global $conf, $user, $langs, $hookmanager;
 
 		// If no preselected user defined, we take current user
 		if ((is_numeric($selected) && ($selected < -2 || empty($selected))) && empty($conf->global->SOCIETE_DISABLE_DEFAULT_SALESREPRESENTATIVE)) $selected = $user->id;
@@ -1678,6 +1678,10 @@ class Form
 		if ($includeUsers) $sql .= " AND u.rowid IN (".$includeUsers.")";
 		if (!empty($conf->global->USER_HIDE_INACTIVE_IN_COMBOBOX) || $noactive) $sql .= " AND u.statut <> 0";
 		if (!empty($morefilter)) $sql .= " ".$morefilter;
+
+		//Add hook to filter on user (for exemple on usergroup define in custom modules)
+		$reshook = $hookmanager->executeHooks('addSQLWhereFilterOnSelectUsers', array(), $this, $action);
+		if (!empty($reshook)) $sql .= $hookmanager->resPrint;
 
 		if (empty($conf->global->MAIN_FIRSTNAME_NAME_POSITION))	// MAIN_FIRSTNAME_NAME_POSITION is 0 means firstname+lastname
 		{
