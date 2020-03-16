@@ -189,7 +189,7 @@ foreach(array('internal', 'external') as $source)
 		{
 			$entry->nature = $langs->trans("User");
 		}
-		else if ($contact['source'] == 'external')
+		elseif ($contact['source'] == 'external')
 		{
 			$entry->nature = $langs->trans("ThirdPartyContact");
 		}
@@ -200,7 +200,7 @@ foreach(array('internal', 'external') as $source)
 			$entry->thirdparty_html = $companystatic->getNomUrl(1);
 			$entry->thirdparty_name = strtolower($companystatic->getFullName($langs));
 		}
-		else if ($contact['socid'] < 0)
+		elseif ($contact['socid'] < 0)
 		{
 			$entry->thirdparty_html = $conf->global->MAIN_INFO_SOCIETE_NOM;
 			$entry->thirdparty_name = strtolower($conf->global->MAIN_INFO_SOCIETE_NOM);
@@ -212,7 +212,7 @@ foreach(array('internal', 'external') as $source)
 			$entry->contact_html = $userstatic->getNomUrl(-1, '', 0, 0, 0, 0, '', 'valignmiddle');
 			$entry->contact_name = strtolower($userstatic->getFullName($langs));
 		}
-		else if ($contact['source'] == 'external')
+		elseif ($contact['source'] == 'external')
 		{
 			$contactstatic->fetch($contact['id']);
 			$entry->contact_html = $contactstatic->getNomUrl(1, '', 0, '', 0, 0);
@@ -223,7 +223,7 @@ foreach(array('internal', 'external') as $source)
 		{
 			$entry->status = $userstatic->LibStatut($contact['statuscontact'], 3);
 		}
-		else if ($contact['source'] == 'external')
+		elseif ($contact['source'] == 'external')
 		{
 			$entry->status = $contactstatic->LibStatut($contact['statuscontact'], 3);
 		}
