@@ -657,7 +657,7 @@ if (empty($reshook))
 				$_GET['socid'] = $_POST['socid'];
 				$error++;
 			}
-			if (!($_POST['fac_replacement'] > 0)) {
+			if (! (GETPOST('fac_replacement', 'int') > 0)) {
 				$error++;
 				setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("ReplaceInvoice")), null, 'errors');
 			}
@@ -870,7 +870,7 @@ if (empty($reshook))
 				if (!$error && $_POST['origin'] && $_POST['originid'])
 				{
 					// Parse element/subelement (ex: project_task)
-					$element = $subelement = GETPOST('origin');
+					$element = $subelement = GETPOST('origin', 'alpha');
 					/*if (preg_match('/^([^_]+)_([^_]+)/i',$_POST['origin'],$regs))
 					 {
 					$element = $regs[1];
@@ -894,8 +894,8 @@ if (empty($reshook))
 					{
 						$element = 'projet';
 					}
-					$object->origin    = GETPOST('origin');
-					$object->origin_id = GETPOST('originid');
+					$object->origin    = GETPOST('origin', 'alpha');
+					$object->origin_id = GETPOST('originid', 'int');
 
 
 					require_once DOL_DOCUMENT_ROOT.'/'.$element.'/class/'.$subelement.'.class.php';
@@ -916,6 +916,10 @@ if (empty($reshook))
 								$object->linked_objects['order_supplier'] = $value;
 							}
 						}
+					}
+					elseif (!empty($object->origin) && !empty($object->origin_id))
+ 					{
+						$object->linkedObjectsIds[$object->origin] = $object->origin_id;
 					}
 
 					$id = $object->create($user);
@@ -1803,7 +1807,7 @@ if ($action == 'create')
 			});
 			</script>';
 		}
-		print ' <a href="'.DOL_URL_ROOT.'/societe/card.php?action=create&client=0&fournisseur=1&backtopage='.urlencode($_SERVER["PHP_SELF"].'?action=create').'"><span class="valignmiddle text-plus-circle">'.$langs->trans("AddThirdParty").'</span><span class="fa fa-plus-circle valignmiddle paddingleft"></span></a>';
+		print ' <a href="'.DOL_URL_ROOT.'/societe/card.php?action=create&client=0&fournisseur=1&backtopage='.urlencode($_SERVER["PHP_SELF"].'?action=create').'"><span class="fa fa-plus-circle valignmiddle paddingleft" title="'.$langs->trans("AddThirdParty").'"></span></a>';
 	}
 	print '</td></tr>';
 

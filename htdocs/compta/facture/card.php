@@ -101,6 +101,9 @@ $usehm = (!empty($conf->global->MAIN_USE_HOURMIN_IN_DATE_RANGE) ? $conf->global-
 $object = new Facture($db);
 $extrafields = new ExtraFields($db);
 
+// Fetch optionals attributes and labels
+$extrafields->fetch_name_optionals_label($object->table_element);
+
 // Load object
 if ($id > 0 || !empty($ref)) {
 	if ($action != 'add') {
@@ -293,31 +296,32 @@ if (empty($reshook))
 
 			// Also negative lines should not be allowed on 'non Credit notes' invoices. A test is done when adding or updating lines but we must
 			// do it again in validation to avoid cases where invoice is created from another object that allow negative lines.
-			// Note that we can accept the negative line if sum with other lines with same vat is positivie: Because all the lines will be merged together
+			// Note that we can accept the negative line if sum with other lines with same vat makes total positive: Because all the lines will be merged together
 			// when converted into 'available credit' and we will get a positive available credit line.
 			// Note: Other solution if you want to add a negative line on invoice, is to create a discount for customer and consumme it (but this is possible on standard invoice only).
-			$array_of_pu_ht_per_vat_rate = array();
-			$array_of_pu_ht_devise_per_vat_rate = array();
+			$array_of_total_ht_per_vat_rate = array();
+			$array_of_total_ht_devise_per_vat_rate = array();
 			foreach ($object->lines as $line) {
-				if (empty($array_of_pu_ht_per_vat_rate[$line->tva_tx.'_'.$line->vat_src_code])) $array_of_pu_ht_per_vat_rate[$line->tva_tx.'_'.$line->vat_src_code] = 0;
-				if (empty($array_of_pu_ht_devise_per_vat_rate[$line->tva_tx.'_'.$line->vat_src_code])) $array_of_pu_ht_devise_per_vat_rate[$line->tva_tx.'_'.$line->vat_src_code] = 0;
-				$array_of_pu_ht_per_vat_rate[$line->tva_tx.'_'.$line->vat_src_code] += $line->subprice;
-				$array_of_pu_ht_devise_per_vat_rate[$line->tva_tx.'_'.$line->vat_src_code] += $line->multicurrency_subprice;
+				if (empty($array_of_total_ht_per_vat_rate[$line->tva_tx.'_'.$line->vat_src_code])) $array_of_total_ht_per_vat_rate[$line->tva_tx.'_'.$line->vat_src_code] = 0;
+				if (empty($array_of_total_ht_devise_per_vat_rate[$line->tva_tx.'_'.$line->vat_src_code])) $array_of_total_ht_devise_per_vat_rate[$line->tva_tx.'_'.$line->vat_src_code] = 0;
+				$array_of_total_ht_per_vat_rate[$line->tva_tx.'_'.$line->vat_src_code] += $line->total_ht;
+				$array_of_total_ht_devise_per_vat_rate[$line->tva_tx.'_'.$line->vat_src_code] += $line->multicurrency_total_ht;
 			}
-			//var_dump($array_of_pu_ht_per_vat_rate);exit;
-			foreach ($array_of_pu_ht_per_vat_rate as $vatrate => $tmpvalue)
-			{
-				$pu_ht = $array_of_pu_ht_per_vat_rate[$vatrate];
-				$pu_ht_devise = $array_of_pu_ht_devise_per_vat_rate[$vatrate];
 
-				if (($pu_ht < 0 || $pu_ht_devise < 0) && empty($conf->global->FACTURE_ENABLE_NEGATIVE_LINES))
+			//var_dump($array_of_total_ht_per_vat_rate);exit;
+			foreach ($array_of_total_ht_per_vat_rate as $vatrate => $tmpvalue)
+			{
+				$tmp_total_ht = $array_of_total_ht_per_vat_rate[$vatrate];
+				$tmp_total_ht_devise = $array_of_total_ht_devise_per_vat_rate[$vatrate];
+
+				if (($tmp_total_ht < 0 || $tmp_total_ht_devise < 0) && empty($conf->global->FACTURE_ENABLE_NEGATIVE_LINES))
 				{
 					$langs->load("errors");
 					if ($object->type == $object::TYPE_DEPOSIT) {
 						// Using negative lines on deposit lead to headach and blocking problems when you want to consume them.
 						setEventMessages($langs->trans("ErrorLinesCantBeNegativeOnDeposits"), null, 'errors');
 					} else {
-						setEventMessages($langs->trans("ErrorFieldCantBeNegativeOnInvoice", $langs->transnoentitiesnoconv("UnitPriceHT"), $langs->transnoentitiesnoconv("CustomerAbsoluteDiscountShort")), null, 'errors');
+						setEventMessages($langs->trans("ErrorLinesCantBeNegativeForOneVATRate"), null, 'errors');
 					}
 					$error++;
 					$action = '';
@@ -793,7 +797,7 @@ if (empty($reshook))
 
 		$canconvert = 0;
 		if ($object->type == Facture::TYPE_DEPOSIT && empty($discountcheck->id)) $canconvert = 1; // we can convert deposit into discount if deposit is payed (completely, partially or not at all) and not already converted (see real condition into condition used to show button converttoreduc)
-		if (($object->type == Facture::TYPE_CREDIT_NOTE || $object->type == Facture::TYPE_STANDARD) && $object->paye == 0 && empty($discountcheck->id)) $canconvert = 1; // we can convert credit note into discount if credit note is not payed back and not already converted and amount of payment is 0 (see real condition into condition used to show button converttoreduc)
+		if (($object->type == Facture::TYPE_CREDIT_NOTE || $object->type == Facture::TYPE_STANDARD || $object->type == Facture::TYPE_SITUATION) && $object->paye == 0 && empty($discountcheck->id)) $canconvert = 1; // we can convert credit note into discount if credit note is not payed back and not already converted and amount of payment is 0 (see real condition into condition used to show button converttoreduc)
 		if ($canconvert)
 		{
 			$db->begin();
@@ -1519,7 +1523,7 @@ if (empty($reshook))
 								// If we create a deposit with all lines and a percent, we change amount
 								if ($_POST['type'] == Facture::TYPE_DEPOSIT && $typeamount == 'variablealllines') {
 									if (is_array($lines)) {
-										foreach($lines as $line) {
+										foreach ($lines as $line) {
 											// We keep ->subprice and ->pa_ht, but we change the qty
 											$line->qty = price2num($line->qty * $valuedeposit / 100, 'MS');
 										}
@@ -3351,8 +3355,8 @@ if ($action == 'create')
 	print '</td></tr>';
 
 	// Bank Account
-	if (isset($_POST['fk_account'])) {
-		$fk_account = $_POST['fk_account'];
+	if (GETPOSTISSET('fk_account')) {
+		$fk_account = GETPOST('fk_account');
 	}
 
 	print '<tr><td>'.$langs->trans('BankAccount').'</td><td colspan="2">';
@@ -3640,7 +3644,7 @@ elseif ($id > 0 || !empty($ref))
 
 	// Confirmation de la conversion de l'avoir en reduc
 	if ($action == 'converttoreduc') {
-		if ($object->type == Facture::TYPE_STANDARD) $type_fac = 'ExcessReceived';
+		if ($object->type == Facture::TYPE_STANDARD || $object->type == Facture::TYPE_SITUATION) $type_fac = 'ExcessReceived';
 		elseif ($object->type == Facture::TYPE_CREDIT_NOTE) $type_fac = 'CreditNote';
 		elseif ($object->type == Facture::TYPE_DEPOSIT) $type_fac = 'Deposit';
 		$text = $langs->trans('ConfirmConvertToReduc', strtolower($langs->transnoentities($type_fac)));
@@ -4517,7 +4521,7 @@ elseif ($id > 0 || !empty($ref))
 
 	        $current_situation_counter = array();
 	        foreach ($object->tab_previous_situation_invoice as $prev_invoice) {
-	            $totalpaye = $prev_invoice->getSommePaiement();
+	            $totalpaye_prev = $prev_invoice->getSommePaiement();
 	            $total_prev_ht += $prev_invoice->total_ht;
 	            $total_prev_ttc += $prev_invoice->total_ttc;
 	            $current_situation_counter[] = (($prev_invoice->type == Facture::TYPE_CREDIT_NOTE) ?-1 : 1) * $prev_invoice->situation_counter;
@@ -4528,7 +4532,7 @@ elseif ($id > 0 || !empty($ref))
 	            if (!empty($conf->banque->enabled)) print '<td class="right"></td>';
 	            print '<td class="right">'.price($prev_invoice->total_ht).'</td>';
 	            print '<td class="right">'.price($prev_invoice->total_ttc).'</td>';
-	            print '<td class="right">'.$prev_invoice->getLibStatut(3, $totalpaye).'</td>';
+	            print '<td class="right">'.$prev_invoice->getLibStatut(3, $totalpaye_prev).'</td>';
 	            print '</tr>';
 	        }
 	    }
@@ -5093,9 +5097,9 @@ elseif ($id > 0 || !empty($ref))
 			}
 
 			// Reverse back money or convert to reduction
-			if ($object->type == Facture::TYPE_CREDIT_NOTE || $object->type == Facture::TYPE_DEPOSIT || $object->type == Facture::TYPE_STANDARD) {
+			if ($object->type == Facture::TYPE_CREDIT_NOTE || $object->type == Facture::TYPE_DEPOSIT || $object->type == Facture::TYPE_STANDARD || $object->type == Facture::TYPE_SITUATION) {
 				// For credit note only
-				if ($object->type == Facture::TYPE_CREDIT_NOTE && $object->statut == 1 && $object->paye == 0 && $usercanissuepayment)
+				if ($object->type == Facture::TYPE_CREDIT_NOTE && $object->statut == Facture::STATUS_VALIDATED && $object->paye == 0 && $usercanissuepayment)
 				{
 					if ($resteapayer == 0)
 					{
@@ -5108,12 +5112,12 @@ elseif ($id > 0 || !empty($ref))
 				}
 
 				// For standard invoice with excess received
-				if ($object->type == Facture::TYPE_STANDARD && empty($object->paye) && ($object->total_ttc - $totalpaye - $totalcreditnotes - $totaldeposits) < 0 && $usercancreate && empty($discount->id))
+				if (($object->type == Facture::TYPE_STANDARD || $object->type == Facture::TYPE_SITUATION) && $object->statut == Facture::STATUS_VALIDATED && empty($object->paye) && $resteapayer < 0 && $usercancreate && empty($discount->id))
 				{
 					print '<a class="butAction'.($conf->use_javascript_ajax ? ' reposition' : '').'" href="'.$_SERVER["PHP_SELF"].'?facid='.$object->id.'&amp;action=converttoreduc">'.$langs->trans('ConvertExcessReceivedToReduc').'</a>';
 				}
 				// For credit note
-				if ($object->type == Facture::TYPE_CREDIT_NOTE && $object->statut == 1 && $object->paye == 0 && $usercancreate
+				if ($object->type == Facture::TYPE_CREDIT_NOTE && $object->statut == Facture::STATUS_VALIDATED && $object->paye == 0 && $usercancreate
 					&& (!empty($conf->global->INVOICE_ALLOW_REUSE_OF_CREDIT_WHEN_PARTIALLY_REFUNDED) || $object->getSommePaiement() == 0)
 					) {
 					print '<a class="butAction'.($conf->use_javascript_ajax ? ' reposition' : '').'" href="'.$_SERVER["PHP_SELF"].'?facid='.$object->id.'&amp;action=converttoreduc" title="'.dol_escape_htmltag($langs->trans("ConfirmConvertToReduc2")).'">'.$langs->trans('ConvertToReduc').'</a>';
@@ -5126,7 +5130,7 @@ elseif ($id > 0 || !empty($ref))
 			}
 
 			// Classify paid
-			if (($object->statut == 1 && $object->paye == 0 && $usercanissuepayment && (($object->type != Facture::TYPE_CREDIT_NOTE && $object->type != Facture::TYPE_DEPOSIT && $resteapayer <= 0) || ($object->type == Facture::TYPE_CREDIT_NOTE && $resteapayer >= 0)))
+			if (($object->statut == Facture::STATUS_VALIDATED && $object->paye == 0 && $usercanissuepayment && (($object->type != Facture::TYPE_CREDIT_NOTE && $object->type != Facture::TYPE_DEPOSIT && $resteapayer <= 0) || ($object->type == Facture::TYPE_CREDIT_NOTE && $resteapayer >= 0)))
 				|| ($object->type == Facture::TYPE_DEPOSIT && $object->paye == 0 && $object->total_ttc > 0 && $resteapayer == 0 && $usercanissuepayment && empty($discount->id))
 			)
 			{
@@ -5135,7 +5139,7 @@ elseif ($id > 0 || !empty($ref))
 
 			// Classify 'closed not completely paid' (possible si validee et pas encore classee payee)
 
-			if ($object->statut == 1 && $object->paye == 0 && $resteapayer > 0 && $usercanissuepayment)
+			if ($object->statut == Facture::STATUS_VALIDATED && $object->paye == 0 && $resteapayer > 0 && $usercanissuepayment)
 			{
 				if ($totalpaye > 0 || $totalcreditnotes > 0)
 				{

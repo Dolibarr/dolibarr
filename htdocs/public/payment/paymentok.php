@@ -78,6 +78,7 @@ $suffix=GETPOST("suffix", 'aZ09');
 
 // Detect $paymentmethod
 $paymentmethod='';
+$reg = array();
 if (preg_match('/PM=([^\.]+)/', $FULLTAG, $reg))
 {
     $paymentmethod=$reg[1];
@@ -136,43 +137,57 @@ if (! empty($conf->global->ONLINE_PAYMENT_CSS_URL)) $head='<link rel="stylesheet
 $conf->dol_hide_topmenu=1;
 $conf->dol_hide_leftmenu=1;
 
-llxHeader($head, $langs->trans("PaymentForm"), '', '', 0, 0, '', '', '', 'onlinepaymentbody');
+$replacemainarea = (empty($conf->dol_hide_leftmenu) ? '<div>' : '').'<div>';
+llxHeader($head, $langs->trans("PaymentForm"), '', '', 0, 0, '', '', '', 'onlinepaymentbody', $replacemainarea);
 
 
 // Show message
 print '<span id="dolpaymentspan"></span>'."\n";
-print '<div id="dolpaymentdiv" align="center">'."\n";
+print '<div id="dolpaymentdiv" class="center">'."\n";
 
 
 // Show logo (search order: logo defined by PAYMENT_LOGO_suffix, then PAYMENT_LOGO, then small company logo, large company logo, theme logo, common logo)
-$width=0;
+$width = 0;
 // Define logo and logosmall
-$logosmall=$mysoc->logo_small;
-$logo=$mysoc->logo;
-$paramlogo='ONLINE_PAYMENT_LOGO_'.$suffix;
-if (! empty($conf->global->$paramlogo)) $logosmall=$conf->global->$paramlogo;
-elseif (! empty($conf->global->ONLINE_PAYMENT_LOGO)) $logosmall=$conf->global->ONLINE_PAYMENT_LOGO;
+$logosmall = $mysoc->logo_small;
+$logo = $mysoc->logo;
+$paramlogo = 'ONLINE_PAYMENT_LOGO_'.$suffix;
+if (!empty($conf->global->$paramlogo)) $logosmall = $conf->global->$paramlogo;
+elseif (!empty($conf->global->ONLINE_PAYMENT_LOGO)) $logosmall = $conf->global->ONLINE_PAYMENT_LOGO;
 //print '<!-- Show logo (logosmall='.$logosmall.' logo='.$logo.') -->'."\n";
 // Define urllogo
-$urllogo='';
-if (! empty($logosmall) && is_readable($conf->mycompany->dir_output.'/logos/thumbs/'.$logosmall))
+$urllogo = '';
+$urllogofull = '';
+if (!empty($logosmall) && is_readable($conf->mycompany->dir_output.'/logos/thumbs/'.$logosmall))
 {
-	$urllogo=DOL_URL_ROOT.'/viewimage.php?modulepart=mycompany&amp;file='.urlencode('logos/thumbs/'.$logosmall);
-	$width=150;
+	$urllogo = DOL_URL_ROOT.'/viewimage.php?modulepart=mycompany&amp;entity='.$conf->entity.'&amp;file='.urlencode('logos/thumbs/'.$logosmall);
+	$urllogofull = $dolibarr_main_url_root.'/viewimage.php?modulepart=mycompany&entity='.$conf->entity.'&file='.urlencode('logos/thumbs/'.$logosmall);
+	$width = 150;
 }
-elseif (! empty($logo) && is_readable($conf->mycompany->dir_output.'/logos/'.$logo))
+elseif (!empty($logo) && is_readable($conf->mycompany->dir_output.'/logos/'.$logo))
 {
-	$urllogo=DOL_URL_ROOT.'/viewimage.php?modulepart=mycompany&amp;file='.urlencode('logos/'.$logo);
-	$width=150;
+	$urllogo = DOL_URL_ROOT.'/viewimage.php?modulepart=mycompany&amp;entity='.$conf->entity.'&amp;file='.urlencode('logos/'.$logo);
+	$urllogofull = $dolibarr_main_url_root.'/viewimage.php?modulepart=mycompany&entity='.$conf->entity.'&file='.urlencode('logos/'.$logo);
+	$width = 150;
 }
+
 // Output html code for logo
 if ($urllogo)
 {
-	print '<center><img id="dolpaymentlogo" title="'.$title.'" src="'.$urllogo.'"';
+	print '<div class="backgreypublicpayment">';
+	print '<div class="logopublicpayment">';
+	print '<img id="dolpaymentlogo" src="'.$urllogo.'"';
 	if ($width) print ' width="'.$width.'"';
-	print '></center>';
-	print '<br>';
+	print '>';
+	print '</div>';
+	if (empty($conf->global->MAIN_HIDE_POWERED_BY)) {
+		print '<div class="poweredbypublicpayment opacitymedium right"><a href="https://www.dolibarr.org" target="dolibarr">'.$langs->trans("PoweredBy").'<br><img src="'.DOL_URL_ROOT.'/theme/dolibarr_logo.png" width="80px"></a></div>';
+	}
+	print '</div>';
 }
+
+
+print '<br><br>';
 
 
 if (! empty($conf->paypal->enabled))

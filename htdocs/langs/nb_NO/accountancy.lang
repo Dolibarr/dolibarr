@@ -167,14 +167,14 @@ ACCOUNTING_ACCOUNT_SUSPENSE=Regnskapskonto for vent
 DONATION_ACCOUNTINGACCOUNT=Regnskapskonto for registrering av donasjoner
 ADHERENT_SUBSCRIPTION_ACCOUNTINGACCOUNT=Regnskapskonto for å registrere abonnementer
 
-ACCOUNTING_PRODUCT_BUY_ACCOUNT=Accounting account by default for the bought products (used if not defined in the product sheet)
+ACCOUNTING_PRODUCT_BUY_ACCOUNT=Regnskapskonto som standard for de kjøpte varene (brukt hvis ikke definert i produktarket)
 ACCOUNTING_PRODUCT_SOLD_ACCOUNT=Standard regnskapskonto for solgte varer (brukt hvis ikke definert på varekortet)
-ACCOUNTING_PRODUCT_SOLD_INTRA_ACCOUNT=Accounting account by default for the products sold in EEC (used if not defined in the product sheet)
-ACCOUNTING_PRODUCT_SOLD_EXPORT_ACCOUNT=Accounting account by default for the products sold and exported out of EEC (used if not defined in the product sheet)
+ACCOUNTING_PRODUCT_SOLD_INTRA_ACCOUNT=Regnskapskonto som standard for varene som selges i EU (brukt hvis ikke definert i varearket)
+ACCOUNTING_PRODUCT_SOLD_EXPORT_ACCOUNT=Regnskapskonto som standard for produktene som er solgt og eksportert ut av EU (brukt hvis ikke definert i varearket)
 ACCOUNTING_SERVICE_BUY_ACCOUNT=Standard regnskapskonto for kjøpte tjenester (brukt hvis ikke definert på tjenestekortet)
 ACCOUNTING_SERVICE_SOLD_ACCOUNT=Standard regnskapskonto for solgte tjenester (brukt hvis ikke definert på tjenestekortet)
-ACCOUNTING_SERVICE_SOLD_INTRA_ACCOUNT=Accounting account by default for the services sold in EEC (used if not defined in the service sheet)
-ACCOUNTING_SERVICE_SOLD_EXPORT_ACCOUNT=Accounting account by default for the services sold and exported out of EEC (used if not defined in the service sheet)
+ACCOUNTING_SERVICE_SOLD_INTRA_ACCOUNT=Regnskapskonto som standard for tjenestene som selges i EU (brukes hvis ikke definert i tjenestearket)
+ACCOUNTING_SERVICE_SOLD_EXPORT_ACCOUNT=Regnskapskonto som standard for tjenestene som er solgt og eksportert ut av EU (brukt hvis ikke definert i tjenestearket)
 
 Doctype=Dokumenttype
 Docdate=Dato
@@ -197,10 +197,10 @@ ByPersonalizedAccountGroups=Etter personlige grupper
 ByYear=Etter år
 NotMatch=Ikke valgt
 DeleteMvt=Slett linjer fra hovedboken
-DelMonth=Month to delete
+DelMonth=Måned å slette
 DelYear=År som skal slettes
 DelJournal=Journal som skal slettes
-ConfirmDeleteMvt=This will delete all lines of the Ledger for the year/month and/or from a specific journal (At least one criterion is required). You will have to reuse the feature 'Registration in accounting' to have the deleted record back in the ledger.
+ConfirmDeleteMvt=Dette vil slette alle linjene i hovedboken for året/måneden og/eller fra en bestemt journal (Det kreves minst ett kriterium). Du må gjenbruke funksjonen 'Registrering i regnskap' for å få den slettede posten tilbake i hovedboken.
 ConfirmDeleteMvtPartial=Dette vil slette transaksjonen fra hovedboken(alle linjer knyttet til samme transaksjon vil bli slettet)
 FinanceJournal=Finansjournal
 ExpenseReportsJournal=Journal for utgiftsrapporter
@@ -224,13 +224,15 @@ ListAccounts=Liste over regnskapskontoer
 UnknownAccountForThirdparty=Ukjent tredjepartskonto. Vi vil bruke %s
 UnknownAccountForThirdpartyBlocking=Ukjent tredjepartskonto. Blokkeringsfeil
 ThirdpartyAccountNotDefinedOrThirdPartyUnknown=Tredjepartskonto ikke definert eller tredjepart ukjent. Vi bruker %s
+ThirdpartyAccountNotDefinedOrThirdPartyUnknownSubledgerIgnored=Tredjepart ukjent og regnskapsbok ikke definert på betalingen. Vi vil holde kontoen tom.
 ThirdpartyAccountNotDefinedOrThirdPartyUnknownBlocking=Tredjepartskonto ikke definert eller tredjepart ukjent. Blokkeringsfeil.
 UnknownAccountForThirdpartyAndWaitingAccountNotDefinedBlocking=Ukjent tredjepartskonto og ventekonto ikke definert. Blokkeringsfeil
 PaymentsNotLinkedToProduct=Betaling ikke knyttet til noen vare/tjeneste
+ShowOpeningBalance=Vis åpningsbalanse
+HideOpeningBalance=Skjul åpningsbalansen
 
 Pcgtype=Kontogruppe
-Pcgsubtype=Konto-undergruppe
-PcgtypeDesc=Gruppe og undergruppe av konto brukes som forhåndsdefinerte "filter"- og "grupperings" -kriterier for enkelte regnskapsrapporter. For eksempel brukes "Inntekt" eller "Utgift som grupper for regnskapskontoer for produkter for å bygge utgifts-/inntektsrapporten.
+PcgtypeDesc=Kontogruppe brukes som forhåndsdefinerte 'filter' og 'gruppering' kriterier for noen regnskapsrapporter. For eksempel blir 'INNTEKT' eller 'UTGIFT' brukt som grupper for regnskapsføring av varer for å lage utgifts-/inntektsrapporten.
 
 TotalVente=Total omsetning før skatt
 TotalMarge=Total salgsmargin
@@ -241,7 +243,7 @@ DescVentilDoneCustomer=Liste over kunde-fakturalinjer og deres vare-regnskapskon
 DescVentilTodoCustomer=Bind fakturalinjer som ikke allerede er bundet, til en vare-regnskapskonto
 ChangeAccount=Endre regnskapskonto for valgte vare-/tjenestelinjer til følgende konto:
 Vide=-
-DescVentilSupplier=Consult here the list of vendor invoice lines bound or not yet bound to a product accounting account (only record not already transfered in accountancy are visible)
+DescVentilSupplier=Liste over leverandørfakturalinjer som er bundet eller ennå ikke bundet til en vareregnskapskonto (bare posten som ikke allerede er overført i regnskap, er synlig)
 DescVentilDoneSupplier=Liste over linjene med leverandørfakturaer og deres regnskapskonto
 DescVentilTodoExpenseReport=Bind utgiftsrapport-linjer til en gebyr-regnskapskonto
 DescVentilExpenseReport=Liste over utgiftsrapport-linjer bundet (eller ikke) til en gebyr-regnskapskonto
@@ -269,6 +271,7 @@ ChangeBinding=Endre bindingen
 Accounted=Regnskapsført i hovedbok
 NotYetAccounted=Ikke regnskapsført i hovedboken enda
 ShowTutorial=Vis veiledning
+NotReconciled=Ikke sammenslått
 
 ## Admin
 ApplyMassCategories=Masseinnlegging av kategorier

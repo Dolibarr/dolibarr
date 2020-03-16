@@ -263,12 +263,12 @@ if (empty($reshook))
 			$object->socid        = GETPOST('socid', 'int');
 			$object->description  = GETPOST('description', 'none'); // Do not use 'alpha' here, we want field as it is
 			$object->public       = GETPOST('public', 'alpha');
-			$object->date_start   = empty($_POST["projectstart"]) ? '' : $date_start;
-			$object->date_end     = empty($_POST["projectend"]) ? '' : $date_end;
-			if (isset($_POST['opp_amount']))    $object->opp_amount   = price2num(GETPOST('opp_amount', 'alpha'));
-			if (isset($_POST['budget_amount'])) $object->budget_amount = price2num(GETPOST('budget_amount', 'alpha'));
-			if (isset($_POST['opp_status']))    $object->opp_status   = $opp_status;
-			if (isset($_POST['opp_percent']))   $object->opp_percent  = $opp_percent;
+			$object->date_start   = (!GETPOST('projectstart')) ? '' : $date_start;
+			$object->date_end     = (!GETPOST('projectend')) ? '' : $date_end;
+			if (GETPOSTISSET('opp_amount'))    $object->opp_amount   = price2num(GETPOST('opp_amount', 'alpha'));
+			if (GETPOSTISSET('budget_amount')) $object->budget_amount = price2num(GETPOST('budget_amount', 'alpha'));
+			if (GETPOSTISSET('opp_status'))    $object->opp_status   = $opp_status;
+			if (GETPOSTISSET('opp_percent'))   $object->opp_percent  = $opp_percent;
 			$object->usage_opportunity    = (GETPOST('usage_opportunity', 'alpha') == 'on' ? 1 : 0);
 			$object->usage_task           = (GETPOST('usage_task', 'alpha') == 'on' ? 1 : 0);
 			$object->usage_bill_time      = (GETPOST('usage_bill_time', 'alpha') == 'on' ? 1 : 0);
@@ -546,7 +546,7 @@ if ($action == 'create' && $user->rights->projet->creer)
 	print '</td></tr>';
 
 	// Label
-	print '<tr><td><span class="fieldrequired">'.$langs->trans("Label").'</span></td><td><input size="80" type="text" name="title" value="'.dol_escape_htmltag(GETPOST("title", 'none')).'" autofocus></td></tr>';
+	print '<tr><td><span class="fieldrequired">'.$langs->trans("Label").'</span></td><td><input class="minwidth500" type="text" name="title" value="'.dol_escape_htmltag(GETPOST("title", 'none')).'" autofocus></td></tr>';
 
 	// Usage (opp, task, bill time, ...)
 	print '<tr><td class="tdtop">';
@@ -786,7 +786,7 @@ elseif ($object->id > 0)
 			array('type' => 'checkbox', 'name' => 'clone_task_files', 'label' => $langs->trans("CloneTaskFiles"), 'value' => false)
 		);
 
-		print $form->formconfirm($_SERVER["PHP_SELF"]."?id=".$object->id, $langs->trans("CloneProject"), $langs->trans("ConfirmCloneProject"), "confirm_clone", $formquestion, '', 1, 300, 590);
+		print $form->formconfirm($_SERVER["PHP_SELF"]."?id=".$object->id, $langs->trans("ToClone"), $langs->trans("ConfirmCloneProject"), "confirm_clone", $formquestion, '', 1, 300, 590);
 	}
 
 
@@ -1048,6 +1048,11 @@ elseif ($object->id > 0)
 	        }*/
 			if (strcmp($object->opp_amount, '')) print price($object->opp_amount, 0, $langs, 1, 0, -1, $conf->currency);
 			print '</td></tr>';
+
+            // Opportunity Weighted Amount
+            print '<tr><td>'.$langs->trans('OpportunityWeightedAmount').'</td><td>';
+            if (strcmp($object->opp_amount, '') && strcmp($object->opp_percent, '')) print price($object->opp_amount * $object->opp_percent / 100, 0, $langs, 1, 0, -1, $conf->currency);
+            print '</td></tr>';
 		}
 
 		// Date start - end

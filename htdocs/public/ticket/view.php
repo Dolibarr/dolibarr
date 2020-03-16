@@ -234,9 +234,9 @@ if ($action == "view_ticket" || $action == "presend" || $action == "close" || $a
             print $form->formconfirm($_SERVER["PHP_SELF"]."?track_id=".$track_id, $langs->trans("CloseATicket"), $langs->trans("ConfirmCloseAticket"), "confirm_public_close", '', '', 1);
         }
 
-        print '<div id="form_view_ticket">';
+        print '<div id="form_view_ticket" class="margintoponly">';
 
-        print '<table class="border" style="width:100%">';
+        print '<table class="ticketpublictable centpercent tableforfield">';
 
         // Ref
         print '<tr><td class="titlefield">'.$langs->trans("Ref").'</td><td>';
@@ -378,7 +378,7 @@ if ($action == "view_ticket" || $action == "presend" || $action == "close" || $a
         print '<div class="error">Not Allowed<br><a href="'.$_SERVER['PHP_SELF'].'?track_id='.$object->dao->track_id.'">'.$langs->trans('Back').'</a></div>';
     }
 } else {
-    print '<p class="center">'.$langs->trans("TicketPublicMsgViewLogIn").'</p>';
+    print '<div class="center opacitymedium margintoponly marginbottomonly">'.$langs->trans("TicketPublicMsgViewLogIn").'</div>';
 
     print '<div id="form_view_ticket">';
     print '<form method="post" name="form_view_ticket"  enctype="multipart/form-data" action="'.$_SERVER['PHP_SELF'].'">';

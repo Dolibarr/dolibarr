@@ -24,6 +24,5 @@ BankType0=Sparkonto\n
 BankType2=Kassa
 IncludeClosedAccount=Geschlossene konten miteinbeziehen
 StatusAccountClosed=geschlossen
-WithdrawalPayment=Widerrufsrecht Zahlung
 ShowCheckReceipt=Zeige überprüfen Einzahlungsbeleg
 Graph=Grafik

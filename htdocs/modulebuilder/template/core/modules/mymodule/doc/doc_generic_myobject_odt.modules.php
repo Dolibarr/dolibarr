@@ -422,9 +422,11 @@ class doc_generic_myobject_odt extends ModelePDFMyObject
 					}
 					if ($foundtagforlines)
 					{
+						$linenumber = 0;
 						foreach ($object->lines as $line)
 						{
-							$tmparray = $this->get_substitutionarray_lines($line, $outputlangs);
+							$linenumber++;
+							$tmparray = $this->get_substitutionarray_lines($line, $outputlangs, $linenumber);
 							complete_substitutions_array($tmparray, $outputlangs, $object, $line, "completesubstitutionarray_lines");
 							// Call the ODTSubstitutionLine hook
 							$parameters = array('odfHandler'=>&$odfHandler, 'file'=>$file, 'object'=>$object, 'outputlangs'=>$outputlangs, 'substitutionarray'=>&$tmparray, 'line'=>$line);

@@ -104,6 +104,7 @@ class CashControl extends CommonObject
 
 	const STATUS_DRAFT = 0;
 	const STATUS_VALIDATED = 1;
+	const STATUS_CLOSED = 1;		// For the moment CLOSED = VALIDATED
 
 
 	/**
@@ -286,6 +287,18 @@ class CashControl extends CommonObject
 		$result = $this->fetchCommon($id, $ref);
 		if ($result > 0 && ! empty($this->table_element_line)) $this->fetchLines();
 		return $result;
+	}
+
+	/**
+	 * Update object into database
+	 *
+	 * @param  User $user      User that modifies
+	 * @param  bool $notrigger false=launch triggers after, true=disable triggers
+	 * @return int             <0 if KO, >0 if OK
+	 */
+	public function update(User $user, $notrigger = false)
+	{
+		return $this->updateCommon($user, $notrigger);
 	}
 
 	/**

@@ -49,6 +49,8 @@
  * <dol_print_object_tax>                           Print object total tax
  * <dol_print_object_local_tax>                     Print object local tax
  * <dol_print_object_total>                         Print object total
+ * <dol_print_order_lines_printer1>                 Print order lines for Printer1
+ * <dol_print_order_lines_printer2>                 Print order lines for Printer2
  * <dol_print_payment>                              Print payment method
  *
  * Code which can be placed everywhere
@@ -59,8 +61,6 @@
  * <dol_value_month>                                Replaced by month number
  * <dol_value_day>                                  Replaced by day number
  * <dol_value_day_letters>                          Replaced by day number
- * <dol_value_table>                                Replaced by table number (for restaurant, bar...)
- * <dol_value_cutlery>                              Replaced by number of cutlery (for restaurant)
  * <dol_object_id>                                  Replaced by object id
  * <dol_object_ref>                                 Replaced by object ref
  * <dol_value_customer_firstname>                   Replaced by customer firstname
@@ -180,8 +180,6 @@ class dolReceiptPrinter extends Printer
             'dol_value_month',
             'dol_value_day',
             'dol_value_day_letters',
-            'dol_value_table',
-            'dol_value_cutlery',
             'dol_print_payment',
             'dol_print_logo',
             'dol_print_logo_old',
@@ -192,6 +190,8 @@ class dolReceiptPrinter extends Printer
             'dol_print_object_local_tax',
             'dol_print_object_total',
             'dol_print_object_number',
+			'dol_print_order_lines_printer1',
+			'dol_print_order_lines_printer2',
             'dol_value_customer_firstname',
             'dol_value_customer_lastname',
             'dol_value_customer_mail',
@@ -579,15 +579,13 @@ class dolReceiptPrinter extends Printer
         $this->template = str_replace('<dol_value_vendor_firstname>', $object->vendor_firstname, $this->template);
         $this->template = str_replace('<dol_value_vendor_lastname>', $object->vendor_lastname, $this->template);
         $this->template = str_replace('<dol_value_vendor_mail>', $object->vendor_mail, $this->template);
-        $this->template = str_replace('<dol_value_date>', $object->date, $this->template);
-        $this->template = str_replace('<dol_value_date_time>', $object->date_time, $this->template);
-        $this->template = str_replace('<dol_value_year>', $object->date_time, $this->template);
-        $this->template = str_replace('<dol_value_month_letters>', $object->date_time, $this->template);
-        $this->template = str_replace('<dol_value_month>', $object->date_time, $this->template);
-        $this->template = str_replace('<dol_value_day>', $object->date_time, $this->template);
-        $this->template = str_replace('<dol_value_day_letters>', $object->date_time, $this->template);
-        $this->template = str_replace('<dol_value_table>', $object->table, $this->template);
-        $this->template = str_replace('<dol_value_cutlery>', $object->cutlery, $this->template);
+        $this->template = str_replace('<dol_value_date>', dol_print_date($object->date, 'day'), $this->template);
+        $this->template = str_replace('<dol_value_date_time>', dol_print_date($object->date, 'dayhour'), $this->template);
+        $this->template = str_replace('<dol_value_year>', dol_print_date($object->date, '%Y'), $this->template);
+        $this->template = str_replace('<dol_value_month_letters>', $langs->trans("Month".dol_print_date($object->date, '%m')), $this->template);
+        $this->template = str_replace('<dol_value_month>', dol_print_date($object->date, '%m'), $this->template);
+        $this->template = str_replace('<dol_value_day>', dol_print_date($object->date, '%d'), $this->template);
+        $this->template = str_replace('<dol_value_day_letters>', $langs->trans("Day".dol_print_date($object->date, '%m')[1]), $this->template);
 
         // parse template
         $p = xml_parser_create();
@@ -726,6 +724,28 @@ class dolReceiptPrinter extends Printer
 					case 'DOL_BEEP':
                         $this->printer->getPrintConnector() -> write("\x1e");
                         break;
+					case 'DOL_PRINT_ORDER_LINES_PRINTER1':
+						foreach ($object->lines as $line) {
+							if ($line->special_code==1)
+							{
+								$spacestoadd = $nbcharactbyline - strlen($line->ref) - strlen($line->qty) - 10 - 1;
+								$spaces = str_repeat(' ', $spacestoadd);
+								$this->printer->text($line->ref.$spaces.$line->qty.' '.str_pad(price($line->total_ttc), 10, ' ', STR_PAD_LEFT)."\n");
+								$this->printer->text(strip_tags(htmlspecialchars_decode($line->desc))."\n");
+							}
+                        }
+						break;
+					case 'DOL_PRINT_ORDER_LINES_PRINTER2':
+						foreach ($object->lines as $line) {
+							if ($line->special_code==2)
+							{
+								$spacestoadd = $nbcharactbyline - strlen($line->ref) - strlen($line->qty) - 10 - 1;
+								$spaces = str_repeat(' ', $spacestoadd);
+								$this->printer->text($line->ref.$spaces.$line->qty.' '.str_pad(price($line->total_ttc), 10, ' ', STR_PAD_LEFT)."\n");
+								$this->printer->text(strip_tags(htmlspecialchars_decode($line->desc))."\n");
+							}
+                        }
+						break;
                     default:
                         $this->printer->text($vals[$tplline]['tag']);
                         $this->printer->text($vals[$tplline]['value']);

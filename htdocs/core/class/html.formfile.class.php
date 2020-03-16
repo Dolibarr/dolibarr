@@ -325,7 +325,7 @@ class FormFile
 	 * 		@param		int					$notused	        Not used
 	 * 		@param		integer				$noform				Do not output html form tags
 	 * 		@param		string				$param				More param on http links
-	 * 		@param		string				$title				Title to show on top of form
+	 * 		@param		string				$title				Title to show on top of form. Example: '' (Default to "Documents") or 'none'
 	 * 		@param		string				$buttonlabel		Label on submit button
 	 * 		@param		string				$codelang			Default language code to use on lang combo box if multilang is enabled
 	 * 		@param		string				$morepicto			Add more HTML content into cell with picto
@@ -408,7 +408,7 @@ class FormFile
 		}
 
 		$titletoshow = $langs->trans("Documents");
-		if (!empty($title)) $titletoshow = $title;
+		if (!empty($title)) $titletoshow = ($title == 'none' ? '' : $title);
 
 		// Show table
 		if ($genallowed)
@@ -1099,7 +1099,7 @@ class FormFile
 		if ($disablecrop == -1)
 		{
 			$disablecrop = 1;
-			if (in_array($modulepart, array('bank', 'bom', 'expensereport', 'holiday', 'member', 'mrp', 'project', 'product', 'produit', 'propal', 'service', 'societe', 'tax', 'ticket', 'user'))) $disablecrop = 0;
+			if (in_array($modulepart, array('bank', 'bom', 'expensereport', 'holiday', 'member', 'mrp', 'project', 'product', 'produit', 'propal', 'service', 'societe', 'tax', 'tax-vat', 'ticket', 'user'))) $disablecrop = 0;
 		}
 
 		// Define relative path used to store the file
@@ -1121,6 +1121,8 @@ class FormFile
 			$relativedir = preg_replace('/^'.preg_quote(DOL_DATA_ROOT, '/').'/', '', $upload_dir);
 			$relativedir = preg_replace('/^[\\/]/', '', $relativedir);
 		}
+		// For example here $upload_dir = '/pathtodocuments/commande/SO2001-123/'
+		// For example here $upload_dir = '/pathtodocuments/tax/vat/1'
 
 		$hookmanager->initHooks(array('formfile'));
 		$parameters = array(

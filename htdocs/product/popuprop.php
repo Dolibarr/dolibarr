@@ -42,7 +42,7 @@ $result=restrictedArea($user, 'produit|service');
 $limit = GETPOST('limit', 'int')?GETPOST('limit', 'int'):$conf->liste_limit;
 $sortfield = GETPOST("sortfield", 'alpha');
 $sortorder = GETPOST("sortorder", 'alpha');
-$page = GETPOST("page", 'int');
+$page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOST("page", 'int');
 if (empty($page) || $page == -1) { $page = 0; }     // If $page is not defined, or '' or -1
 if (! $sortfield) $sortfield="c";
 if (! $sortorder) $sortorder="DESC";
@@ -99,9 +99,14 @@ $head[$h][1] = $langs->trans("Chart");
 $head[$h][2] = 'chart';
 $h++;
 
-$head[$h][0] = $_SERVER['PHP_SELF'];
-$head[$h][1] = $title;
+$head[$h][0] = DOL_URL_ROOT.'/product/popuprop.php';
+$head[$h][1] = $langs->trans("PopuProp");
 $head[$h][2] = 'popularityprop';
+$h++;
+
+$head[$h][0] = DOL_URL_ROOT.'/product/popucom.php';
+$head[$h][1] = $langs->trans("PopuCom");
+$head[$h][2] = 'popularitycommande';
 $h++;
 
 dol_fiche_head($head, 'popularityprop', $langs->trans("Statistics"), -1);

@@ -1,13 +1,18 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!ELEMENT ruleset (description,exclude-pattern*,rule+)>
+<!ELEMENT ruleset (description,arg*,exclude-pattern*,rule+)>
 <!ATTLIST ruleset name CDATA "">
 <!ELEMENT description (#PCDATA)>
+<!ELEMENT arg (#PCDATA)>
+<!ATTLIST arg name CDATA "">
+<!ATTLIST arg value CDATA "">
 <!ELEMENT exclude-pattern (#PCDATA)>
 <!ATTLIST exclude-pattern type CDATA "">
-<!ELEMENT rule (properties*,severity*)>
+<!ELEMENT rule (properties*,severity*,exclude*)>
 <!ATTLIST rule ref CDATA "">
 <!ELEMENT properties (property+)>
 <!ELEMENT property (#PCDATA)>
 <!ATTLIST property name CDATA "">
 <!ATTLIST property value CDATA "">
 <!ELEMENT severity (#PCDATA)>
+<!ELEMENT exclude (#PCDATA)>
+<!ATTLIST exclude name CDATA "">

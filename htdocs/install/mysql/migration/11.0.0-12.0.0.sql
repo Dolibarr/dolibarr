@@ -40,9 +40,29 @@ create table llx_commande_fournisseur_dispatch_extrafields
 
 ALTER TABLE llx_commande_fournisseur_dispatch_extrafields ADD INDEX idx_commande_fournisseur_dispatch_extrafields (fk_object);
 
+UPDATE llx_accounting_system SET fk_country = NULL, active = 0 WHERE pcg_version = 'SYSCOHADA';
+
 
 
 -- For v12
+
+UPDATE llx_website SET lang = 'en' WHERE lang like 'en_%';
+UPDATE llx_website SET lang = 'fr' WHERE lang like 'fr_%';
+UPDATE llx_website SET lang = 'es' WHERE lang like 'es_%';
+UPDATE llx_website SET lang = 'de' WHERE lang like 'de_%';
+UPDATE llx_website SET lang = 'it' WHERE lang like 'it_%';
+UPDATE llx_website SET lang = 'pt' WHERE lang like 'pt_%';
+UPDATE llx_website_page SET lang = 'en' WHERE lang like 'en_%';
+UPDATE llx_website_page SET lang = 'fr' WHERE lang like 'fr_%';
+UPDATE llx_website_page SET lang = 'es' WHERE lang like 'es_%';
+UPDATE llx_website_page SET lang = 'de' WHERE lang like 'de_%';
+UPDATE llx_website_page SET lang = 'it' WHERE lang like 'it_%';
+UPDATE llx_website_page SET lang = 'pt' WHERE lang like 'pt_%';
+
+ALTER TABLE llx_website ADD COLUMN lang varchar(8);
+ALTER TABLE llx_website ADD COLUMN otherlang varchar(255); 
+
+ALTER TABLE llx_website_page ADD COLUMN author_alias varchar(64);
 
 ALTER TABLE llx_holiday_users DROP INDEX uk_holiday_users;
 ALTER TABLE llx_holiday_users ADD UNIQUE INDEX uk_holiday_users(fk_user, fk_type);
@@ -139,6 +159,8 @@ UPDATE llx_c_country SET eec = 1 WHERE code IN ('AT','BE','BG','CY','CZ','DE','D
 
 INSERT INTO llx_accounting_system (fk_country, pcg_version, label, active) VALUES (  1, 'PCG18-ASSOC', 'French foundation chart of accounts 2018', 1);
 
+INSERT INTO llx_accounting_system (fk_country, pcg_version, label, active) VALUES (  1, 'PCGAFR14-DEV', 'The developed farm accountancy french plan 2014', 1);
+
 INSERT INTO llx_accounting_system (fk_country, pcg_version, label, active) VALUES ( 41, 'AT-BASE', 'Plan Austria', 1);
 
 
@@ -161,3 +183,14 @@ INSERT INTO llx_c_ticket_resolution (code, pos, label, active, use_default, desc
 INSERT INTO llx_c_ticket_resolution (code, pos, label, active, use_default, description) VALUES('CANCELED', '50', 'Canceled',  1, 0, NULL);
 INSERT INTO llx_c_ticket_resolution (code, pos, label, active, use_default, description) VALUES('OTHER',    '90', 'Other',     1, 0, NULL);
 
+DELETE FROM llx_const WHERE name = __ENCRYPT('DONATION_ART885')__;
+
+ALTER TABLE llx_extrafields MODIFY COLUMN printable integer DEFAULT 0;
+ALTER TABLE llx_extrafields ADD COLUMN printable integer DEFAULT 0;
+
+ALTER TABLE llx_accounting_account DROP COLUMN pcg_subtype;
+
+ALTER TABLE llx_product ADD COLUMN accountancy_code_buy_intra varchar(32) AFTER accountancy_code_buy;
+ALTER TABLE llx_product ADD COLUMN accountancy_code_buy_export varchar(32) AFTER accountancy_code_buy_intra;
+
+ALTER TABLE llx_accounting_account ADD COLUMN reconciliable tinyint DEFAULT 0 NOT NULL after active;

@@ -304,7 +304,8 @@ class User extends CommonObject
 		$sql .= " u.color,";
 		$sql .= " u.dateemployment, u.dateemploymentend,";
 		$sql .= " u.fk_warehouse,";
-		$sql .= " u.ref_int, u.ref_ext,";
+		$sql .= " u.ref_int,";
+		$sql .= " u.ref_ext,";
 		$sql .= " u.default_range, u.default_c_exp_tax_cat,"; // Expense report default mode
 		$sql .= " c.code as country_code, c.label as country,";
 		$sql .= " d.code_departement as state_code, d.nom as state";
@@ -3362,7 +3363,7 @@ class User extends CommonObject
 		$sql .= $this->db->order($sortfield, $sortorder);
 		if ($limit) $sql .= $this->db->plimit($limit + 1, $offset);
 
-		dol_syslog(get_class($this)."::".__METHOD__, LOG_DEBUG);
+		dol_syslog(__METHOD__, LOG_DEBUG);
 
 		$resql = $this->db->query($sql);
 		if ($resql)

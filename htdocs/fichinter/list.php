@@ -67,7 +67,7 @@ $diroutputmassaction = $conf->ficheinter->dir_output.'/temp/massgeneration/'.$us
 $limit = GETPOST('limit', 'int') ?GETPOST('limit', 'int') : $conf->liste_limit;
 $sortfield = GETPOST('sortfield', 'alpha');
 $sortorder = GETPOST('sortorder', 'alpha');
-$page = GETPOST('page', 'int');
+$page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOST("page", 'int');
 if (empty($page) || $page == -1) { $page = 0; }     // If $page is not defined, or '' or -1
 $offset = $limit * $page;
 $pageprev = $page - 1;
@@ -204,7 +204,7 @@ foreach ($arrayfields as $tmpkey => $tmpval)
 $sql = "SELECT";
 $sql .= " f.ref, f.rowid, f.fk_statut, f.description, f.datec as date_creation, f.tms as date_update, f.note_private,";
 if (empty($conf->global->FICHINTER_DISABLE_DETAILS) && $atleastonefieldinlines) $sql .= "fd.rowid as lineid, fd.description as descriptiondetail, fd.date as dp, fd.duree,";
-$sql .= " s.nom as name, s.rowid as socid, s.client";
+$sql .= " s.nom as name, s.rowid as socid, s.client, s.fournisseur, s.email, s.status as thirdpartystatus";
 if (!empty($conf->projet->enabled)) {
     $sql .= ", pr.rowid as projet_id, pr.ref as projet_ref, pr.title as projet_title";
 }
@@ -479,6 +479,13 @@ if ($resql)
 		$objectstatic->ref = $obj->ref;
 		$objectstatic->statut = $obj->fk_statut;
 
+		$companystatic->name=$obj->name;
+		$companystatic->id=$obj->socid;
+		$companystatic->client=$obj->client;
+		$companystatic->fournisseur=$obj->fournisseur;
+		$companystatic->email=$obj->email;
+		$companystatic->status=$obj->thirdpartystatus;
+
 		print '<tr class="oddeven">';
 
 		if (!empty($arrayfields['f.ref']['checked']))
@@ -521,9 +528,6 @@ if ($resql)
 		if (! empty($arrayfields['s.nom']['checked']))
 		{
 			print '<td>';
-			$companystatic->name=$obj->name;
-			$companystatic->id=$obj->socid;
-			$companystatic->client=$obj->client;
 			print $companystatic->getNomUrl(1, '', 44);
 			print '</td>';
 			if (! $i) $totalarray['nbfield']++;

@@ -112,14 +112,7 @@ class FormMail extends Form
 	public $withfrom;
 
 	/**
-	 * @var int
-	 * @deprecated Fill withto with array before calling method.
-	 * @see $withto
-	 */
-	public $withtosocid;
-
-	/**
-	 * @var int|int[]
+	 * @var int|string|array
 	 */
 	public $withto; // Show recipient emails
 
@@ -1034,6 +1027,7 @@ class FormMail extends Form
 				$out .= '	$(document).on("keypress", \'#mailform\', function (e) {		/* Note this is called at every key pressed ! */
 	    						var code = e.keyCode || e.which;
 	    						if (code == 13) {
+									console.log("Enter was intercepted and blocked");
 	        						e.preventDefault();
 	        						return false;
 	    						}

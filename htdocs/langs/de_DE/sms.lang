@@ -1,7 +1,7 @@
 # Dolibarr language file - Source file is en_US - sms
 Sms=SMS
 SmsSetup=SMS Einstellungen
-SmsDesc=Auf dieser Seite haben Sie die Möglichkeit globale Einstellungen der SMS-Funktionen vorzunehmen
+SmsDesc=Auf dieser Seite können globale Einstellungen der SMS-Funktionen vorgenommen werden
 SmsCard=SMS Karte
 AllSms=alle SMS Kampagnen
 SmsTargets=Ziele
@@ -38,7 +38,7 @@ SmsStatusNotSent=Nicht gesendet
 SmsSuccessfulySent=SMS korrekt gesendet (von %s an %s)
 ErrorSmsRecipientIsEmpty=Anzahl der Empfänger ist leer
 WarningNoSmsAdded=Keine neuen Rufnummern zum hinzufügen an die Empfängerliste gefunden
-ConfirmValidSms=Bestätigen Sie die Freigabe dieser Kampagne?
+ConfirmValidSms=Bestätige die Freigabe dieser Kampagne?
 NbOfUniqueSms=Anzahl der eindeutigen Rufnummern
 NbOfSms=Anzahl der Rufnummern
 ThisIsATestMessage=Dies ist eine Testnachricht

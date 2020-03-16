@@ -812,9 +812,9 @@ class EmailCollector extends CommonObject
                         //var_dump($tmpproperty.' - '.$regexstring.' - '.$regexoptions.' - '.$sourcestring);
                         if (preg_match('/'.$regexstring.'/'.$regexoptions, $sourcestring, $regforval))
                         {
-                            //var_dump($regforval[1]);exit;
+                            //var_dump($regforval[count($regforval)-1]);exit;
                             // Overwrite param $tmpproperty
-                            $object->$tmpproperty = isset($regforval[1]) ?trim($regforval[1]) : null;
+                            $object->$tmpproperty = isset($regforval[count($regforval) - 1]) ?trim($regforval[count($regforval) - 1]) : null;
                         }
                         else
                         {
@@ -1135,7 +1135,7 @@ class EmailCollector extends CommonObject
                 if (function_exists('imap_mime_header_decode')) {
                 	$elements = imap_mime_header_decode($overview[0]->subject);
                 	$newstring = '';
-                	if (! empty($elements)) {
+                	if (!empty($elements)) {
                         $num = count($elements);
 	                	for ($i = 0; $i < $num; $i++) {
 	                		$newstring .= ($newstring ? ' ' : '').$elements[$i]->text;
@@ -1236,13 +1236,14 @@ class EmailCollector extends CommonObject
                 // References: <1542377954.SMTPs-dolibarr-tic649@8f6014fde11ec6cdec9a822234fc557e>
                 // References: <1542377954.SMTPs-dolibarr-abc649@8f6014fde11ec6cdec9a822234fc557e>
                 $trackid = '';
+                $objectid = 0;
+                $objectemail = null;
+
                 $reg = array();
                 if (!empty($headers['References']) && preg_match('/dolibarr-([a-z]+)([0-9]+)@'.preg_quote($host, '/').'/', $headers['References'], $reg))
                 {
                     $trackid = $reg[1].$reg[2];
 
-                    $objectid = 0;
-                    $objectemail = null;
                     if ($reg[1] == 'inv')
                     {
                         $objectid = $reg[2];
@@ -1423,9 +1424,9 @@ class EmailCollector extends CommonObject
                                         //var_dump($regexstring);var_dump($sourcestring);
                                         if (preg_match('/'.$regexstring.'/ms', $sourcestring, $regforval))
                                         {
-                                            //var_dump($regforval[1]);exit;
+                                            //var_dump($regforval[count($regforval)-1]);exit;
                                             // Overwrite param $tmpproperty
-                                            $nametouseforthirdparty = isset($regforval[1]) ?trim($regforval[1]) : null;
+                                            $nametouseforthirdparty = isset($regforval[count($regforval) - 1]) ?trim($regforval[count($regforval) - 1]) : null;
                                         }
                                         else
                                         {
@@ -1793,6 +1794,39 @@ class EmailCollector extends CommonObject
                             }
                             $tickettocreate->ref = $defaultref;
                         }
+						 // Create event specific on hook
+						// this code action is hook..... for support this call
+						elseif (substr($operation['type'], 0, 4) == 'hook') {
+							global $hookmanager;
+
+							if (!is_object($hookmanager))
+							$hookmanager->initHooks(array('emailcollectorcard'));
+
+							$parameters = array(
+							'connection'=>  $connection,
+							'imapemail'=>$imapemail,
+							'overview'=>$overview,
+
+							'from' => $from,
+							'fromtext' => $fromtext,
+
+							'actionparam'=>  $operation['actionparam'],
+
+
+
+							'thirdpartyid' => $thirdpartyid,
+							'objectid'=> $objectid,
+							'objectemail'=> $objectemail,
+
+							'messagetext'=>$messagetext,
+							'subject'=>$subject,
+							'header'=>$header,
+							);
+							$res = $hookmanager->executeHooks('doCollectOneCollector', $parameters, $this, $operation['type']);
+
+							if ($res < 0)
+							 $this->error = $hookmanager->resPrint;
+						}
 
                         if ($errorforthisaction)
                         {
@@ -2013,7 +2047,7 @@ class EmailCollector extends CommonObject
 
         // TEXT
         if ($p->type == 0 && $data) {
-			if(!empty($params['charset'])) {
+			if (!empty($params['charset'])) {
                 $data = $this->convertStringEncoding($data, $params['charset']);
             }
             // Messages may be split in different parts because of inline attachments,
@@ -2031,7 +2065,7 @@ class EmailCollector extends CommonObject
         // There are no PHP functions to parse embedded messages,
         // so this just appends the raw source to the main message.
         elseif ($p->type == 2 && $data) {
-			if(!empty($params['charset'])) {
+			if (!empty($params['charset'])) {
                 $data = $this->convertStringEncoding($data, $params['charset']);
             }
             $plainmsg .= $data."\n\n";
@@ -2057,14 +2091,14 @@ class EmailCollector extends CommonObject
 	 */
 	protected function convertStringEncoding($string, $fromEncoding, $toEncoding = 'UTF-8')
 	{
-  		if(!$string || $fromEncoding == $toEncoding) {
+  		if (!$string || $fromEncoding == $toEncoding) {
   			return $string;
   		}
-  		$convertedString = function_exists('iconv') ? @iconv($fromEncoding, $toEncoding . '//IGNORE', $string) : null;
-  		if(!$convertedString && extension_loaded('mbstring')) {
+  		$convertedString = function_exists('iconv') ? @iconv($fromEncoding, $toEncoding.'//IGNORE', $string) : null;
+  		if (!$convertedString && extension_loaded('mbstring')) {
   			$convertedString = @mb_convert_encoding($string, $toEncoding, $fromEncoding);
   		}
-  		if(!$convertedString) {
+  		if (!$convertedString) {
   			throw new Exception('Mime string encoding conversion failed');
   		}
   		return $convertedString;

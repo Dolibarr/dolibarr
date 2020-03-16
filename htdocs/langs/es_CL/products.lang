@@ -207,7 +207,6 @@ DoNotRemovePreviousCombinations=No eliminar variantes anteriores
 UsePercentageVariations=Usar variaciones porcentuales
 ErrorDeletingGeneratedProducts=Hubo un error al intentar eliminar las variantes de productos existentes
 NbOfDifferentValues=No. de valores diferentes
-NbProducts=No. de productos
 ParentProduct=Producto principal
 HideChildProducts=Ocultar productos variantes
 ShowChildProducts=Mostrar productos variantes

@@ -60,7 +60,7 @@ MemberSubscriptionModifiedInDolibarr=Đăng ký %s cho thành viên %s đã sử
 MemberSubscriptionDeletedInDolibarr=Đăng ký %s cho thành viên %s đã bị xóa
 ShipmentValidatedInDolibarr=Lô hàng %s được xác thực
 ShipmentClassifyClosedInDolibarr=Lô hàng %s được phân loại hóa đơn
-ShipmentUnClassifyCloseddInDolibarr=Lô hàng %s được phân loại mở lại
+ShipmentUnClassifyCloseddInDolibarr=Shipment %s classified re-open
 ShipmentBackToDraftInDolibarr=Lô hàng %s trở lại trạng thái dự thảo
 ShipmentDeletedInDolibarr=Lô hàng %s đã bị xóa
 OrderCreatedInDolibarr=Đặt hàng %s đã tạo
@@ -123,6 +123,7 @@ AgendaUrlOptionsNotAdmin=<b>logina =! %s</b> để hạn chế đầu ra cho cá
 AgendaUrlOptions4=<b>logint = %s</b> để hạn chế đầu ra cho các hành động được chỉ định cho người dùng <b>%s</b> (chủ sở hữu và những người khác).
 AgendaUrlOptionsProject=<b>project = __PROJECT_ID__</b> để hạn chế đầu ra cho các hành động được liên kết với dự án <b>__PROJECT_ID__</b>.
 AgendaUrlOptionsNotAutoEvent=<b>notactiontype = systemauto</b> để loại trừ các sự kiện tự động.
+AgendaUrlOptionsIncludeHolidays=<b>includeholidays=1</b> to include events of holidays.
 AgendaShowBirthdayEvents=Hiển thị ngày sinh của các liên lạc
 AgendaHideBirthdayEvents=Ẩn ngày sinh của các liên lạc
 Busy=Bận

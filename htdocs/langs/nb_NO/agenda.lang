@@ -123,6 +123,7 @@ AgendaUrlOptionsNotAdmin=<b>logina=%s</b> for å begrense utdata til handlinger 
 AgendaUrlOptions4=<b>logint=%s</b> for å begrense utdata til handlinger som er tildelt brukeren <b> %s </b>(eier og andre).
 AgendaUrlOptionsProject=<b>project=__ PROJECT_ID__</b> for å begrense resultat til handlinger knyttet til prosjektet <b>__PROJECT_ID__</b>.
 AgendaUrlOptionsNotAutoEvent=<b> notactiontype=systemauto </b> for å ekskludere automatiske hendelser.
+AgendaUrlOptionsIncludeHolidays= <b> includeholidays=1 </b> for å inkludere hendelser i ferie.
 AgendaShowBirthdayEvents=Vis kontakters fødselsdager
 AgendaHideBirthdayEvents=Skjul kontakters fødselsdager
 Busy=Opptatt

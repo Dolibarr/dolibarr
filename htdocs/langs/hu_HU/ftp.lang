@@ -2,13 +2,13 @@
 FTPClientSetup=FTP Kliens modul beállítása
 NewFTPClient=Új FTP kapcsolat beállítása
 FTPArea=FTP terület
-FTPAreaDesc=This screen show you content of a FTP server view
-SetupOfFTPClientModuleNotComplete=Az FTP kliens beállítása nem teljes
+FTPAreaDesc=A képernyő egy FTP-kiszolgáló egy nézetét mutatja.
+SetupOfFTPClientModuleNotComplete=Az FTP kliens modul telepítése hiányosnak tűnik
 FTPFeatureNotSupportedByYourPHP=A PHP beállítása nem támogatja az FTP funkciókat
 FailedToConnectToFTPServer=Nem sikerült csatlakozni az FTP szerverhez (szerver %s, port %s)
 FailedToConnectToFTPServerWithCredentials=Nem sikerült bejelentkezni FTP szerverre a megadott felhasználó névvel/jelszóval.
 FTPFailedToRemoveFile=Nem sikerült eltávolítani: <b>%s</b>.
-FTPFailedToRemoveDir=Nem sikerült eltávolítani <b>%s</b> (Engedélyek? Üres a könyvtár?).
+FTPFailedToRemoveDir=Az <b>%s</b> könyvtár eltávolítása nem sikerült: ellenőrizze az engedélyeket és hogy a könyvtár üres.
 FTPPassiveMode=Passzív mód
-ChooseAFTPEntryIntoMenu=Válasszon egy FTP kapcsolatot a menüben!
+ChooseAFTPEntryIntoMenu=Válasszon FTP-helyet a menüből ...
 FailedToGetFile=Nem sikerült a %s fájlokat letölteni

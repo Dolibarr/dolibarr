@@ -78,6 +78,7 @@ CatMemberList=Lista över medlemmar taggar / kategorier
 CatContactList=Lista över kontaktkoder / kategorier
 CatSupLinks=Länkar mellan leverantörer och taggar / kategorier
 CatCusLinks=Länkar mellan kunder / utsikter och taggar / kategorier
+CatContactsLinks=Links between contacts/addresses and tags/categories
 CatProdLinks=Länkar mellan produkter / tjänster och taggar / kategorier
 CatProJectLinks=Länkar mellan projekt och taggar / kategorier
 DeleteFromCat=Ta bort från taggar / kategori

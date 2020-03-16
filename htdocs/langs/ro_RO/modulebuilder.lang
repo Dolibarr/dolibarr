@@ -84,6 +84,8 @@ ListOfPermissionsDefined=Lista permisiunilor definite
 SeeExamples=Vedeți aici exemple
 EnabledDesc=Condiție de activare a acestui câmp (Exemple: 1 sau $ conf-> global-> MYMODULE_MYOPTION)
 VisibleDesc=Is the field visible ? (Examples: 0=Never visible, 1=Visible on list and create/update/view forms, 2=Visible on list only, 3=Visible on create/update/view form only (not list), 4=Visible on list and update/view form only (not create), 5=Visible on list end view form only (not create, not update). Using a negative value means field is not shown by default on list but can be selected for viewing). It can be an expression, for example:<br>preg_match('/public/', $_SERVER['PHP_SELF'])?0:1<br>($user->rights->holiday->define_holiday ? 1 : 0)
+DisplayOnPdfDesc=Display this field on compatible PDF documents, you can manage position with "Position" field.<br/>Currently, known compatibles PDF models are : eratostene 
+DisplayOnPdf=Display on PDF
 IsAMeasureDesc=Poate fi cumulata valoarea câmpului pentru a obține un total în listă? (Exemple: 1 sau 0)
 SearchAllDesc=Este câmpul folosit pentru a face o căutare din instrumentul de căutare rapidă? (Exemple: 1 sau 0)
 SpecDefDesc=Introduceți aici toată documentația pe care doriți să o furnizați împreună cu modulul, care nu este deja definită de alte file. Puteți utiliza .md sau mai bine, sintaxa bogată .asciidoc.

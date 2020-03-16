@@ -243,10 +243,9 @@ class FichinterRec extends Fichinter
      *	@param	  int		$rowid	   	Id of object to load
      * 	@param		string	$ref			Reference of fichinter
      * 	@param		string	$ref_ext		External reference of fichinter
-     * 	@param		int		$ref_int		Internal reference of other object
      *	@return	 int		 			>0 if OK, <0 if KO, 0 if not found
      */
-    public function fetch($rowid = 0, $ref = '', $ref_ext = '', $ref_int = '')
+    public function fetch($rowid = 0, $ref = '', $ref_ext = '')
     {
         $sql = 'SELECT f.titre, f.fk_soc';
         $sql .= ', f.datec, f.duree, f.fk_projet, f.fk_contrat, f.description';
@@ -257,11 +256,6 @@ class FichinterRec extends Fichinter
         $sql .= ' FROM '.MAIN_DB_PREFIX.'fichinter_rec as f';
         if ($rowid > 0) $sql .= ' WHERE f.rowid='.$rowid;
         elseif ($ref) $sql .= " WHERE f.titre='".$this->db->escape($ref)."'";
-
-        /* This field are not used for template fichinter
-        if ($ref_ext) $sql.= " AND f.ref_ext='".$this->db->escape($ref_ext)."'";
-        if ($ref_int) $sql.= " AND f.ref_int='".$this->db->escape($ref_int)."'";
-        */
 
         dol_syslog(get_class($this)."::fetch rowid=".$rowid, LOG_DEBUG);
 

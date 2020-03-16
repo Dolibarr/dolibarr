@@ -1069,7 +1069,7 @@ class SupplierProposal extends CommonObject
                         if (!$error && !$notrigger)
                         {
                             // Call trigger
-                            $result = $this->call_trigger('PROPAL_SUPPLIER_CREATE', $user);
+                            $result = $this->call_trigger('PROPOSAL_SUPPLIER_CREATE', $user);
                             if ($result < 0) { $error++; }
                             // End call triggers
                         }
@@ -1462,7 +1462,7 @@ class SupplierProposal extends CommonObject
             {
                 $num = $this->ref;
             }
-            $this->newref = $num;
+            $this->newref = dol_sanitizeFileName($num);
 
             $sql = "UPDATE ".MAIN_DB_PREFIX."supplier_proposal";
             $sql .= " SET ref = '".$this->db->escape($num)."',";
@@ -2834,7 +2834,7 @@ class SupplierProposalLine extends CommonObjectLine
     // From llx_product
     /**
      * @deprecated
-     * @see product_ref
+     * @see $product_ref
      */
     public $ref;
 

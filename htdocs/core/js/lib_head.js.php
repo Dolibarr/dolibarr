@@ -523,14 +523,16 @@ function hideMessage(fieldId,message) {
  * @param	string	intput		Input
  * @param	int		entity		Entity
  * @param	int		strict		Strict
+ * @param   int     forcereload Force reload
  */
-function setConstant(url, code, input, entity, strict) {
+function setConstant(url, code, input, entity, strict, forcereload) {
 	$.get( url, {
 		action: "set",
 		name: code,
 		entity: entity
 	},
 	function() {
+		console.log("url request success forcereload="+forcereload);
 		$("#set_" + code).hide();
 		$("#del_" + code).show();
 		$.each(input, function(type, data) {
@@ -576,6 +578,9 @@ function setConstant(url, code, input, entity, strict) {
 				});
 			}
 		});
+		if (forcereload) {
+			location.reload();
+		}
 	});
 }
 
@@ -587,14 +592,16 @@ function setConstant(url, code, input, entity, strict) {
  * @param	string	intput		Input
  * @param	int		entity		Entity
  * @param	int		strict		Strict
+ * @param   int     forcereload Force reload
  */
-function delConstant(url, code, input, entity, strict) {
+function delConstant(url, code, input, entity, strict, forcereload) {
 	$.get( url, {
 		action: "del",
 		name: code,
 		entity: entity
 	},
 	function() {
+		console.log("url request success forcereload="+forcereload);
 		$("#del_" + code).hide();
 		$("#set_" + code).show();
 		$.each(input, function(type, data) {
@@ -636,6 +643,9 @@ function delConstant(url, code, input, entity, strict) {
 				});
 			}
 		});
+		if (forcereload) {
+			location.reload();
+		}
 	});
 }
 

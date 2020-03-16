@@ -305,12 +305,12 @@ class Utils
 			if ($compression == 'gz')   $handle = gzopen($outputfile, 'w');
 			if ($compression == 'bz')   $handle = bzopen($outputfile, 'w');
 
+			$ok = 0;
 			if ($handle)
 			{
 				if (!empty($conf->global->MAIN_EXEC_USE_POPEN)) $execmethod = $conf->global->MAIN_EXEC_USE_POPEN;
 				if (empty($execmethod)) $execmethod = 1;
 
-				$ok = 0;
 				dol_syslog("Utils::dumpDatabase execmethod=".$execmethod." command:".$fullcommandcrypted, LOG_DEBUG);
 
 				// TODO Replace with executeCLI function
@@ -388,7 +388,9 @@ class Utils
 				if ($compression == 'none') fclose($handle);
 				if ($compression == 'gz')   gzclose($handle);
 				if ($compression == 'bz')   bzclose($handle);
-				if ($ok && preg_match('/^-- MySql/i', $errormsg)) $errormsg = ''; // Pas erreur
+				if ($ok && preg_match('/^-- (MySql|MariaDB)/i', $errormsg)) {	// No error
+					$errormsg = '';
+				}
 				else
 				{
 					// Renommer fichier sortie en fichier erreur

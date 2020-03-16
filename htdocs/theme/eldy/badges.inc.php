@@ -23,7 +23,7 @@ if (!defined('ISLOADEDBYSTEELSHEET')) die('Must be call by steelsheet'); ?>
 }
 
 .badge-status {
-    font-size: 1em;
+    font-size: 0.95em;
     padding: .19em .35em;			/* more than 0.19 generate a change into heigth of lines */
 }
 

@@ -662,10 +662,12 @@ class Mailing extends CommonObject
 		$labelStatusShort = array();
 
 		$labelStatus[-1] = $langs->trans('MailingStatusError');
+		$labelStatus[0] = $langs->trans('MailingStatusNotSent');
 		$labelStatus[1] = $langs->trans('MailingStatusSent');
 		$labelStatus[2] = $langs->trans('MailingStatusRead');
 		$labelStatus[3] = $langs->trans('MailingStatusNotContact');
 		$labelStatusShort[-1] = $langs->trans('MailingStatusError');
+		$labelStatusShort[0] = $langs->trans('MailingStatusNotSent');
 		$labelStatusShort[1] = $langs->trans('MailingStatusSent');
 		$labelStatusShort[2] = $langs->trans('MailingStatusRead');
 		$labelStatusShort[3] = $langs->trans('MailingStatusNotContact');
