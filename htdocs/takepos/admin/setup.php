@@ -59,9 +59,11 @@ if ($resql) {
 
 $action = GETPOST('action', 'alpha');
 
+
 /*
  * Actions
  */
+
 $error = 0;
 
 if ($action == 'set')
@@ -186,8 +188,7 @@ foreach ($dirmodels as $reldir)
 
 					if ($module->isEnabled())
 					{
-						$var=!$var;
-						print '<tr '.$bc[$var].'><td>'.$module->nom."</td><td>\n";
+						print '<tr class="oddeven"><td>'.$module->nom."</td><td>\n";
 						print $module->info();
 						print '</td>';
 
@@ -313,7 +314,7 @@ $htmltext .= '</i>';
 print '<tr class="oddeven"><td>';
 print $langs->trans("ColorTheme");
 print '<td colspan="2">';
-$array = array(0=>"eldy", 1=>$langs->trans("Colorful"));
+$array = array(0=>"Eldy", 1=>$langs->trans("Colorful"));
 print $form->selectarray('TAKEPOS_COLOR_THEME', $array, (empty($conf->global->TAKEPOS_COLOR_THEME) ? '0' : $conf->global->TAKEPOS_COLOR_THEME), 0);
 print "</td></tr>\n";
 

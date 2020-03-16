@@ -132,7 +132,7 @@ function updatename(rowid) {
 	}
 
 function LoadPlace(place){
-	parent.location.href='takepos.php?place='+place;
+	parent.location.href='index.php?place='+place;
 }
 
 

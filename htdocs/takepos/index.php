@@ -17,7 +17,7 @@
  */
 
 /**
- *	\file       htdocs/takepos/takepos.php
+ *	\file       htdocs/takepos/index.php
  *	\ingroup    takepos
  *	\brief      Main TakePOS screen
  */
@@ -48,7 +48,7 @@ if ($setterminal > 0)
 	$_SESSION["takeposterminal"] = $setterminal;
 }
 
-$_SESSION["urlfrom"] = '/takepos/takepos.php';
+$_SESSION["urlfrom"] = '/takepos/index.php';
 
 $langs->loadLangs(array("bills", "orders", "commercial", "cashdesk", "receiptprinter"));
 
@@ -179,7 +179,7 @@ function ClearSearch() {
 
 // Set the focus on search field but only on desktop. On tablet or smartphone, we don't to avoid to have the keyboard open automatically
 function setFocusOnSearchField() {
-	console.log("Call setFocusOnSearchField in page takepos.php");
+	console.log("Call setFocusOnSearchField in page index.php");
 	<?php if ($conf->browser->layout == 'classic') { ?>
 		console.log("has keyboard from localStorage, so we can force focus on search field");
 		$("#search").focus();
@@ -636,14 +636,14 @@ function TerminalsDialog()
 	    modal: true,
 	    buttons: {
 			'<?php echo dol_escape_js($langs->trans("Terminal")) ?> 1': function() {
-				location.href='takepos.php?setterminal=1';
+				location.href='index.php?setterminal=1';
 			}
 			<?php
 			for ($i = 2; $i <= $conf->global->TAKEPOS_NUM_TERMINALS; $i++)
 			{
 				print ",
 				'".dol_escape_js($langs->trans("Terminal"))." ".$i."': function() {
-					location.href='takepos.php?setterminal=".$i."';
+					location.href='index.php?setterminal=".$i."';
 				}
 				";
 			}
