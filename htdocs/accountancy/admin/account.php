@@ -371,7 +371,7 @@ if ($resql)
 	if (!empty($arrayfields['aa.labelshort']['checked']))		print_liste_field_titre($arrayfields['aa.labelshort']['label'], $_SERVER["PHP_SELF"], "aa.labelshort", "", $param, '', $sortfield, $sortorder);
 	if (!empty($arrayfields['aa.account_parent']['checked']))	print_liste_field_titre($arrayfields['aa.account_parent']['label'], $_SERVER["PHP_SELF"], "aa.account_parent", "", $param, '', $sortfield, $sortorder, 'left ');
 	if (!empty($arrayfields['aa.pcg_type']['checked']))			print_liste_field_titre($arrayfields['aa.pcg_type']['label'], $_SERVER["PHP_SELF"], 'aa.pcg_type', '', $param, '', $sortfield, $sortorder, '', $arrayfields['aa.pcg_type']['help']);
-	if ($conf->global->MAIN_FEATURES_LEVEL >= 2) { if (! empty($arrayfields['aa.reconcilable']['checked']))	print_liste_field_titre($arrayfields['aa.reconciliable']['label'], $_SERVER["PHP_SELF"], 'aa.reconciliable', '', $param, '', $sortfield, $sortorder); }
+	if ($conf->global->MAIN_FEATURES_LEVEL >= 2) { if (! empty($arrayfields['aa.reconcilable']['checked']))	print_liste_field_titre($arrayfields['aa.reconcilable']['label'], $_SERVER["PHP_SELF"], 'aa.reconcilable', '', $param, '', $sortfield, $sortorder); }
 	if (!empty($arrayfields['aa.active']['checked']))			print_liste_field_titre($arrayfields['aa.active']['label'], $_SERVER["PHP_SELF"], 'aa.active', '', $param, '', $sortfield, $sortorder);
 	print_liste_field_titre($selectedfields, $_SERVER["PHP_SELF"], "", '', '', '', $sortfield, $sortorder, 'center maxwidthsearch ');
 	print "</tr>\n";
