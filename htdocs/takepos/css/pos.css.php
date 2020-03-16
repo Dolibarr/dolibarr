@@ -485,7 +485,7 @@ div.description_content {
 
 div#moreinfo, div#infowarehouse {
     color: #aaa;
-    padding: 0 4px 0 4px;
+    padding: 0 8px 0 8px;
 }
 
 
