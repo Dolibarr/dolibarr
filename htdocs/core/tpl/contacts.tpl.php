@@ -274,7 +274,7 @@ print_liste_field_titre($arrayfields['nature']['label'], $_SERVER["PHP_SELF"], "
 print_liste_field_titre($arrayfields['thirdparty']['label'], $_SERVER["PHP_SELF"], "thirdparty_name", "", $param, "", $sortfield, $sortorder);
 print_liste_field_titre($arrayfields['contact']['label'], $_SERVER["PHP_SELF"], "contact_name", "", $param, "", $sortfield, $sortorder);
 print_liste_field_titre($arrayfields['type']['label'], $_SERVER["PHP_SELF"], "type", "", $param, "", $sortfield, $sortorder);
-print_liste_field_titre($arrayfields['status']['label'], $_SERVER["PHP_SELF"], "statut", "", $param, "", $sortfield, $sortorder);
+print_liste_field_titre($arrayfields['status']['label'], $_SERVER["PHP_SELF"], "statut", "", $param, "", $sortfield, $sortorder, 'center ');
 print_liste_field_titre($arrayfields['link']['label'], $_SERVER["PHP_SELF"], "", "", "", "", $sortfield, $sortorder, 'center maxwidthsearch ');
 print "</tr>";
 
@@ -286,7 +286,7 @@ foreach ($list as $entry)
 	print '<td class="tdoverflowmax200">'.$entry->thirdparty_html.'</td>';
 	print '<td class="tdoverflowmax200">'.$entry->contact_html.'</td>';
 	print '<td class="tdoverflowmax200">'.$entry->type.'</td>';
-	print '<td class="tdoverflowmax200">'.$entry->status.'</td>';
+	print '<td class="tdoverflowmax200 center">'.$entry->status.'</td>';
 
 	if ($permission)
 	{
