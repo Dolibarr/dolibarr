@@ -286,7 +286,7 @@ div.paymentbordline
 .row1withhead{
 	margin: 0 auto;
 	width: 100%;
-	height: calc(50% - 50px);
+	height: calc(45% - 50px);
 	padding-top: 5px;
 }
 
@@ -299,7 +299,7 @@ div.paymentbordline
 .row2withhead{
 	margin: 0 auto;
 	width: 100%;
-	height: 50%;
+	height: 55%;
 }
 
 .div1{
@@ -488,6 +488,20 @@ div#moreinfo, div#infowarehouse {
     padding: 0 8px 0 8px;
 }
 
+.productprice {
+    position: absolute;
+    top: 5px;
+    right: 5px;
+    background: var(--colorbackhmenu1);
+    color: var(--colortextbackhmenu);
+    font-size: 2em;
+    padding: 5px;
+    border-radius: 2px;
+    opacity: 0.9;
+    padding-left: 8px;
+    padding-right: 8px;
+}
+
 
 @media screen and (min-width: 892px) {
 	.actionbutton{
@@ -561,7 +575,7 @@ div#moreinfo, div#infowarehouse {
 	}
 
 	.row1withhead{
-		height: calc(50% - 100px);
+		height: calc(45% - 100px);
 	}
 
 

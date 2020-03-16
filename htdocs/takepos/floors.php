@@ -47,6 +47,15 @@ $place = (GETPOST('place', 'int') > 0 ? GETPOST('place', 'int') : 0); // $place 
 $newname = GETPOST('newname', 'alpha');
 $mode = GETPOST('mode', 'alpha');
 
+if (empty($user->rights->takepos->run)) {
+	access_forbidden();
+}
+
+
+/*
+ * Actions
+ */
+
 if ($action == "getTables")
 {
     $sql = "SELECT rowid, entity, label, leftpos, toppos, floor FROM ".MAIN_DB_PREFIX."takepos_floor_tables where floor=".$floor;
@@ -80,6 +89,11 @@ if ($action == "add")
     $asdf = $db->query($sql);
     $db->query("update ".MAIN_DB_PREFIX."takepos_floor_tables set label=rowid where label=''"); // No empty table names
 }
+
+
+/*
+ * View
+ */
 
 // Title
 $title = 'TakePOS - Dolibarr '.DOL_VERSION;

@@ -38,6 +38,10 @@ $place = (GETPOST('place', 'int') > 0 ? GETPOST('place', 'int') : 0); // $place 
 
 $invoiceid = GETPOST('invoiceid', 'int');
 
+if (empty($user->rights->takepos->run)) {
+	access_forbidden();
+}
+
 
 /*
  * View

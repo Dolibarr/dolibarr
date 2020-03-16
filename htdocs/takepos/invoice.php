@@ -70,6 +70,11 @@ if ($conf->global->TAKEPOS_PHONE_BASIC_LAYOUT == 1 && $conf->browser->layout == 
 	<script type="text/javascript" src="js/jquery.colorbox-min.js"></script>';
 }
 
+if (empty($user->rights->takepos->run)) {
+	access_forbidden();
+}
+
+
 /**
  * Abort invoice creationg with a given error message
  *
