@@ -64,7 +64,7 @@ if (! $sortfield) $sortfield="p.rowid";
 llxHeader();
 
 $sql = "SELECT p.rowid, p.datep as dp, p.amount, p.statut";
-$sql.=", c.libelle as paiement_type, p.num_paiement";
+$sql.=", c.libelle as paiement_type, p.num_paiement as num_payment";
 $sql.= " FROM ".MAIN_DB_PREFIX."paiement as p LEFT JOIN ".MAIN_DB_PREFIX."c_paiement as c ON p.fk_paiement = c.id";
 if ($socid)
 {
@@ -119,7 +119,7 @@ if ($resql)
         print '<tr class="oddeven">';
         print '<td><a href="'.DOL_URL_ROOT.'/compta/paiement/card.php?id='.$objp->rowid.'">'.img_object($langs->trans("ShowPayment"), "payment").' '.$objp->rowid.'</a></td>';
         print '<td width="80" align="center">'.dol_print_date($db->jdate($objp->dp), 'day')."</td>\n";
-        print "<td>$objp->paiement_type $objp->num_paiement</td>\n";
+        print "<td>$objp->paiement_type $objp->num_payment</td>\n";
         print '<td class="right">'.price($objp->amount).'</td>';
         print '<td class="center">';
 
