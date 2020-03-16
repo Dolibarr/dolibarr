@@ -102,7 +102,7 @@ $diroutputmassaction = $conf->commande->multidir_output[$conf->entity].'/temp/ma
 $limit = GETPOST('limit', 'int') ?GETPOST('limit', 'int') : $conf->liste_limit;
 $sortfield = GETPOST("sortfield", 'alpha');
 $sortorder = GETPOST("sortorder", 'alpha');
-$page = GETPOST("page", 'int');
+$page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOST("page", 'int');
 if (empty($page) || $page == -1 || !empty($search_btn) || !empty($search_remove_btn) || (empty($toselect) && $massaction === '0')) { $page = 0; }     // If $page is not defined, or '' or -1
 $offset = $limit * $page;
 $pageprev = $page - 1;
@@ -346,7 +346,7 @@ if ($search_user > 0)                        $sql .= " AND ec.fk_c_type_contact 
 if ($search_total_ht != '')                  $sql .= natural_search('c.total_ht', $search_total_ht, 1);
 if ($search_total_vat != '')                 $sql .= natural_search('c.tva', $search_total_vat, 1);
 if ($search_total_ttc != '')                 $sql .= natural_search('c.total_ttc', $search_total_ttc, 1);
-if ($search_multicurrency_code != '')        $sql .= ' AND c.multicurrency_code = "' . $db->escape($search_multicurrency_code) . '"';
+if ($search_multicurrency_code != '')        $sql .= ' AND c.multicurrency_code = "'.$db->escape($search_multicurrency_code).'"';
 if ($search_multicurrency_tx != '')          $sql .= natural_search('c.multicurrency_tx', $search_multicurrency_tx, 1);
 if ($search_multicurrency_montant_ht != '')  $sql .= natural_search('c.multicurrency_total_ht', $search_multicurrency_montant_ht, 1);
 if ($search_multicurrency_montant_vat != '') $sql .= natural_search('c.multicurrency_total_tva', $search_multicurrency_montant_vat, 1);
@@ -1168,7 +1168,7 @@ if ($resql)
 		// Currency
 		if (!empty($arrayfields['c.multicurrency_code']['checked']))
 		{
-			  print '<td class="nowrap">'.$obj->multicurrency_code . ' - ' . $langs->trans('Currency' . $obj->multicurrency_code)."</td>\n";
+			  print '<td class="nowrap">'.$obj->multicurrency_code.' - '.$langs->trans('Currency'.$obj->multicurrency_code)."</td>\n";
 			  if (!$i) $totalarray['nbfield']++;
 		}
 
@@ -1176,7 +1176,7 @@ if ($resql)
 		if (!empty($arrayfields['c.multicurrency_tx']['checked']))
 		{
 			  print '<td class="nowrap">';
-			  $form->form_multicurrency_rate($_SERVER['PHP_SELF'] . '?id=' . $obj->rowid, $obj->multicurrency_tx, 'none', $obj->multicurrency_code);
+			  $form->form_multicurrency_rate($_SERVER['PHP_SELF'].'?id='.$obj->rowid, $obj->multicurrency_tx, 'none', $obj->multicurrency_code);
 			  print "</td>\n";
 			  if (!$i) $totalarray['nbfield']++;
 		}

@@ -230,7 +230,7 @@ class pdf_stdmovement extends ModelePDFMovement
 		$search_type_mouvement = GETPOST('search_type_mouvement', 'int');
 
 		$limit = GETPOST('limit', 'int') ?GETPOST('limit', 'int') : $conf->liste_limit;
-		$page = GETPOST("page", 'int');
+		$page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOST("page", 'int');
 		$sortfield = GETPOST("sortfield", 'alpha');
 		$sortorder = GETPOST("sortorder", 'alpha');
 		if (empty($page) || $page == -1) { $page = 0; }     // If $page is not defined, or '' or -1

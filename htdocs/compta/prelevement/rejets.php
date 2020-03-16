@@ -39,7 +39,7 @@ if ($user->socid) $socid=$user->socid;
 $result = restrictedArea($user, 'prelevement', '', '', 'bons');
 
 // Get supervariables
-$page = GETPOST('page', 'int');
+$page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOST("page", 'int');
 $sortorder = GETPOST('sortorder', 'alpha');
 $sortfield = GETPOST('sortfield', 'alpha');
 

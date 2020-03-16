@@ -224,13 +224,15 @@ ListAccounts=Liste des comptes comptables
 UnknownAccountForThirdparty=Compte de tiers inconnu. %s sera utilisé
 UnknownAccountForThirdpartyBlocking=Compte de tiers inconnu. Erreur bloquante.
 ThirdpartyAccountNotDefinedOrThirdPartyUnknown=Code comptable du tiers non défini ou tiers inconnu. On utilisera %s.
+ThirdpartyAccountNotDefinedOrThirdPartyUnknownSubledgerIgnored=Tiers inconnu et code comptable auxiliaire non défini sur le paiement. Nous conserverons la valeur du compte auxiliaire vide.
 ThirdpartyAccountNotDefinedOrThirdPartyUnknownBlocking=Compte tiers non défini ou inconnu. Erreur bloquante.
 UnknownAccountForThirdpartyAndWaitingAccountNotDefinedBlocking=Compte tiers inconnu et compte d'attente non défini. Erreur blocante.
 PaymentsNotLinkedToProduct=Paiement non lié à un produit / service
+ShowOpeningBalance=Show opening balance
+HideOpeningBalance=Hide opening balance
 
 Pcgtype=Groupe de comptes comptables
-Pcgsubtype=Sous-groupe de comptes comptables
-PcgtypeDesc=Les groupes et sous-groupes de comptes sont utilisés comme critères de filtre et de regroupement prédéfinis pour certains rapports de comptabilité. Par exemple, «INCOME» ou «EXPENSE» sont utilisés en tant que groupes pour la comptabilité afin de générer le rapport dépenses / revenus.
+PcgtypeDesc=Group of account are used as predefined 'filter' and 'grouping' criteria for some accounting reports. For example, 'INCOME' or 'EXPENSE' are used as groups for accounting accounts of products to build the expense/income report.
 
 TotalVente=Total chiffre affaires hors taxe
 TotalMarge=Total marge
@@ -269,6 +271,7 @@ ChangeBinding=Changer les liens
 Accounted=Comptabilisé
 NotYetAccounted=Pas encore comptabilisé
 ShowTutorial=Afficher le tutoriel
+NotReconciled=Non rapproché
 
 ## Admin
 ApplyMassCategories=Application en masse des catégories

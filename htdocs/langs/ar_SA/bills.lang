@@ -419,6 +419,7 @@ PaymentCondition14DENDMONTH=Within 14 days following the end of the month
 FixAmount=Fixed amount - 1 line with label '%s'
 VarAmount=مقدار متغير (٪٪ TOT).
 VarAmountOneLine=Variable amount (%% tot.) - 1 line with label '%s'
+VarAmountAllLines=Variable amount (%% tot.) - all same lines
 # PaymentType
 PaymentTypeVIR=حوالة مصرفية
 PaymentTypeShortVIR=حوالة مصرفية
@@ -512,13 +513,15 @@ RevenueStamp=طوابع الواردات
 YouMustCreateInvoiceFromThird=This option is only available when creating an invoice from tab "Customer" of third party
 YouMustCreateInvoiceFromSupplierThird=This option is only available when creating an invoice from tab "Vendor" of third party
 YouMustCreateStandardInvoiceFirstDesc=You have to create a standard invoice first and convert it to "template" to create a new template invoice
-PDFCrabeDescription=Invoice PDF template Crabe. A complete invoice template 
+PDFCrabeDescription=Invoice PDF template Crabe. A complete invoice template (old implementation of Sponge template)
 PDFSpongeDescription=Invoice PDF template Sponge. A complete invoice template
 PDFCrevetteDescription=Invoice PDF template Crevette. A complete invoice template for situation invoices
 TerreNumRefModelDesc1=عودة عدد مع الشكل syymm NNNN عن الفواتير القياسية و٪ syymm-NNNN لتلاحظ الائتمان حيث هو YY العام٪، مم هو الشهر وnnnn هو تسلسل مع أي انقطاع وعدم العودة إلى 0
 MarsNumRefModelDesc1=Return number with format %syymm-nnnn for standard invoices, %syymm-nnnn for replacement invoices, %syymm-nnnn for down payment invoices and %syymm-nnnn for credit notes where yy is year, mm is month and nnnn is a sequence with no break and no return to 0
 TerreNumRefModelError=وهناك مشروع قانون بدءا من دولار ويوجد بالفعل syymm لا تتفق مع هذا النموذج من التسلسل. إزالة أو تغيير تسميتها لتصبح لتفعيل هذه الوحدة.
 CactusNumRefModelDesc1=Return number with format %syymm-nnnn for standard invoices, %syymm-nnnn for credit notes and %syymm-nnnn for down payment invoices where yy is year, mm is month and nnnn is a sequence with no break and no return to 0
+EarlyClosingReason=Early closing reason
+EarlyClosingComment=Early closing note
 ##### Types de contacts #####
 TypeContact_facture_internal_SALESREPFOLL=ممثل العميل متابعة فاتورة
 TypeContact_facture_external_BILLING=الزبون فاتورة الاتصال

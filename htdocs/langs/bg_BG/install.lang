@@ -91,17 +91,17 @@ GoToSetupArea=Отидете в Dolibarr (секция за настройка)
 MigrationNotFinished=Версията на базата данни не е напълно актуална, изпълнете отново процеса на актуализация.
 GoToUpgradePage=Отидете отново в страницата за актуализация
 WithNoSlashAtTheEnd=Без наклонена черта "/" в края
-DirectoryRecommendation=Препоръчително е да използвате директория извън уеб страниците.
+DirectoryRecommendation=<span class="warning">ВАЖНО</span>: Трябва да използвате директория, която е извън уеб страниците (не използвайте поддиректория на предишния параметър).
 LoginAlreadyExists=Вече съществува
 DolibarrAdminLogin=Администратор на Dolibarr
 AdminLoginAlreadyExists=Администраторският профил '<b> %s </b>' за Dolibarr вече съществува. Върнете се обратно, ако искате да създадете друг.
 FailedToCreateAdminLogin=Неуспешно създаване на администраторски профил за Dolibarr.
 WarningRemoveInstallDir=Внимание, от съображения за сигурност, след като инсталирането или приключи актуализацията, трябва да добавите файл с име <b> install.lock </b> в директорията /documents на Dolibarr, за да предотвратите повторното използване на инструментите за инсталиране.
 FunctionNotAvailableInThisPHP=Не е налично за тази PHP инсталация
-ChoosedMigrateScript=Изберете скрипт за миграция
+ChoosedMigrateScript=Избран скрипт за миграция
 DataMigration=Миграция на база данни (данни)
 DatabaseMigration=Миграция на база данни (структура + някои данни)
-ProcessMigrateScript=Скриптова обработка
+ProcessMigrateScript=Обработване на скриптове
 ChooseYourSetupMode=Изберете режим на настройка и кликнете върху "Начало"...
 FreshInstall=Нова инсталация
 FreshInstallDesc=Използвайте този режим, ако това е първата ви инсталация. Ако не, този режим може да поправи непълна предишна инсталация. Ако искате да актуализирате версията си, изберете режим "Актуализация".
@@ -147,7 +147,7 @@ KeepDefaultValuesDeb=Използвахте съветника за настро
 KeepDefaultValuesMamp=Използвахте съветника за настройка на Dolibarr от DoliMamp, така че предложените тук стойности вече са оптимизирани. Променяйте ги само, ако знаете какво правите.
 KeepDefaultValuesProxmox=Използвахте съветника за настройка на Dolibarr от виртуалното устройство на Proxmox, така че предложените тук стойности вече са оптимизирани. Променяйте ги, само ако знаете какво правите.
 UpgradeExternalModule=Изпълнете препоръчителния процес за обновяване на външния модул
-SetAtLeastOneOptionAsUrlParameter=Задайте поне един параметър като параметър в URL адреса. Например: "... repair.php?standard=confirmed"
+SetAtLeastOneOptionAsUrlParameter=Посочете поне една опция като параметър в URL адреса. Например: '...repair.php?standard=confirmed'.
 NothingToDelete=Няма нищо за почистване / изтриване
 NothingToDo=Няма нищо за правене
 #########

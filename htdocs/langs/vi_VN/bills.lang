@@ -419,6 +419,7 @@ PaymentCondition14DENDMONTH=Trong vòng 14 ngày sau khi kết thúc tháng
 FixAmount=Fixed amount - 1 line with label '%s'
 VarAmount=Số tiền thay đổi (%% tot.)
 VarAmountOneLine=Số tiền thay đổi (%% tot.) - 1 dòng có nhãn '%s'
+VarAmountAllLines=Variable amount (%% tot.) - all same lines
 # PaymentType
 PaymentTypeVIR=Chuyển khoản ngân hàng
 PaymentTypeShortVIR=Chuyển khoản ngân hàng
@@ -512,13 +513,15 @@ RevenueStamp=Doanh thu đóng dấu
 YouMustCreateInvoiceFromThird=Tùy chọn này chỉ khả dụng khi tạo hóa đơn từ tab "Khách hàng" của bên thứ ba
 YouMustCreateInvoiceFromSupplierThird=Tùy chọn này chỉ khả dụng khi tạo hóa đơn từ tab "Nhà cung cấp" của bên thứ ba
 YouMustCreateStandardInvoiceFirstDesc=Trước tiên, bạn phải tạo hóa đơn chuẩn và chuyển đổi thành "mẫu" để tạo hóa đơn mẫu mới
-PDFCrabeDescription=Invoice PDF template Crabe. A complete invoice template 
+PDFCrabeDescription=Invoice PDF template Crabe. A complete invoice template (old implementation of Sponge template)
 PDFSpongeDescription=Hóa đơn PDF mẫu Sponge. Một mẫu hóa đơn hoàn chỉnh
 PDFCrevetteDescription=Hóa đơn PDF mẫu Crevette. Mẫu hóa đơn hoàn chỉnh cho hóa đơn tình huống
 TerreNumRefModelDesc1=Quay về số với định dạng %ssyymm-nnnn cho hóa đơn chuẩn và %syymm-nnnn cho các giấy báo có nơi mà yy là năm, mm là tháng và nnnn là một chuỗi ngắt và không trở về 0
 MarsNumRefModelDesc1=Trả về số có định dạng %syymm-nnnn cho hóa đơn tiêu chuẩn, %syymm-nnnn cho hóa đơn thay thế, %syymm-nnn cho thanh toán giảm và %syymm-nnnn cho ghi chú tín dụng khi yy là năm, mm là tháng và nnnn là chuỗi không ngăn cách và không trả về 0
 TerreNumRefModelError=Bắt đầu ra một hóa đơn với $syymm mà đã tồn tại thì không tương thích với mô hình này của chuỗi. Xóa bỏ nó hoặc đổi tên nó để kích hoạt module này.
 CactusNumRefModelDesc1=Số trả về có định dạng %syymm-nnnn cho các hóa đơn tiêu chuẩn, %syymm-nnnn cho các ghi chú tín dụng và %syymm-nnnn cho giảm thanh toán các hóa đơn khi yy là năm, mm là tháng và nnnn là chuỗi không phân cách và không trả về 0
+EarlyClosingReason=Early closing reason
+EarlyClosingComment=Early closing note
 ##### Types de contacts #####
 TypeContact_facture_internal_SALESREPFOLL=Đại diện theo dõi hóa đơn khách hàng
 TypeContact_facture_external_BILLING=Liên lạc hóa đơn khách hàng

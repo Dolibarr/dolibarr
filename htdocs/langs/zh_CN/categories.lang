@@ -78,6 +78,7 @@ CatMemberList=会员标签/分类列表
 CatContactList=联系人标签/分类列表
 CatSupLinks=链接供应商与标签/分类
 CatCusLinks=链接客户/准客户与标签/分类
+CatContactsLinks=Links between contacts/addresses and tags/categories
 CatProdLinks=链接产品/服务与标签/分类
 CatProJectLinks=链接项目与标签/分类
 DeleteFromCat=从标签/分类移除

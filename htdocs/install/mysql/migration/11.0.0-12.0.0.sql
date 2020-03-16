@@ -62,6 +62,8 @@ UPDATE llx_website_page SET lang = 'pt' WHERE lang like 'pt_%';
 ALTER TABLE llx_website ADD COLUMN lang varchar(8);
 ALTER TABLE llx_website ADD COLUMN otherlang varchar(255); 
 
+ALTER TABLE llx_website_page ADD COLUMN author_alias varchar(64);
+
 ALTER TABLE llx_holiday_users DROP INDEX uk_holiday_users;
 ALTER TABLE llx_holiday_users ADD UNIQUE INDEX uk_holiday_users(fk_user, fk_type);
 
@@ -187,3 +189,8 @@ ALTER TABLE llx_extrafields MODIFY COLUMN printable integer DEFAULT 0;
 ALTER TABLE llx_extrafields ADD COLUMN printable integer DEFAULT 0;
 
 ALTER TABLE llx_accounting_account DROP COLUMN pcg_subtype;
+
+ALTER TABLE llx_product ADD COLUMN accountancy_code_buy_intra varchar(32) AFTER accountancy_code_buy;
+ALTER TABLE llx_product ADD COLUMN accountancy_code_buy_export varchar(32) AFTER accountancy_code_buy_intra;
+
+ALTER TABLE llx_accounting_account ADD COLUMN reconciliable tinyint DEFAULT 0 NOT NULL after active;

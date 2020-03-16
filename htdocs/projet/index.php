@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2001-2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2016 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2020 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2010 Regis Houssin        <regis.houssin@inodbox.com>
  * Copyright (C) 2019      Nicolas ZABOURI      <info@inovea-conseil.com>
  *
@@ -200,7 +200,7 @@ if ($resql)
 			$obj = $db->fetch_object($resql);
 
 			print '<tr class="oddeven">';
-			print '<td width="20%" class="nowrap">';
+			print '<td class="nowrap">';
 
 			$projectstatic->id = $obj->rowid;
 			$projectstatic->ref = $obj->ref;

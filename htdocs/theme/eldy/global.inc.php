@@ -311,10 +311,15 @@ td.rightborder {
 td.actionbuttons a {
     padding-left: 6px;
 }
-select.flat, form.flat select {
+select.flat, form.flat select, .pageplusone {
 	font-weight: normal;
 	font-size: unset;
 }
+input.pageplusone {
+    padding-bottom: 4px;
+    padding-top: 4px;
+}
+
 .optionblue {
 	color: var(--colortextlink);
 }
@@ -374,6 +379,10 @@ input#onlinepaymenturl, input#directdownloadlink {
 	opacity: 0.7;
 }
 
+.formconsumeproduce {
+	background: #f3f3f3;
+    padding: 20px 0px 0px 0px;
+}
 
 div#moretabsList, div#moretabsListaction {
     z-index: 5;
@@ -698,14 +707,24 @@ div.divsearchfield {
     -webkit-flex-flow: row wrap;
     flex-flow: row wrap;
     background: #fff;
-    padding: 3px;
+    padding-top: 3px;
+    padding-bottom: 3px;
+    padding-left: 10px;
+    padding-right: 10px;
+    border-bottom: solid 1px rgba(0,0,0,.2);
+    height: 24px;
 }
-.search_component_params_input, .search_component_params_input:focus {
+.search_component_searchtext {
+    padding-top: 2px;
+}
+.search_component_params_text, .search_component_params_text:focus {
 	border-bottom: none;
 	width: auto;
 	margin: 0 !important;
 	padding: 3px;
 }
+
+
 <?php
 // Add a nowrap on smartphone, so long list of field used for filter are overflowed with clip
 if ($conf->browser->layout == 'phone') {
@@ -782,6 +801,9 @@ select.flat.selectlimit {
 	width: 130px;
 }
 /* using a tdoverflowxxx make the min-width not working */
+.tdnooverflowimp {
+   text-overflow: none;
+}
 .tdoverflow {
     max-width: 0;
     overflow: hidden;
@@ -4112,7 +4134,14 @@ tr.visible {
 /*  Module website                                                                */
 /* ============================================================================== */
 
-.phptag {
+.exampleapachesetup {
+    overflow-y: auto;
+    height: 100px;
+    font-size: 0.8em;
+    border: 1px solid #aaa;
+}
+
+span[phptag] {
 	background: #ddd; border: 1px solid #ccc; border-radius: 4px;
 }
 

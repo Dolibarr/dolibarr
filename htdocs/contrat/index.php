@@ -39,7 +39,7 @@ $langs->loadLangs(array('products', 'companies', 'contracts'));
 
 $sortfield = GETPOST('sortfield', 'alpha');
 $sortorder = GETPOST('sortorder', 'alpha');
-$page = GETPOST('page', 'int');
+$page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOST("page", 'int');
 
 $statut = GETPOST('statut') ?GETPOST('statut') : 1;
 

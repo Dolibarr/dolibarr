@@ -91,7 +91,7 @@ GoToSetupArea=Du-te la Dolibarr (zona de configurare)
 MigrationNotFinished=Versiunea bazei de date nu este complet actualizată: executați din nou procesul de actualizare.
 GoToUpgradePage=Du-te la pagina din nou upgrade
 WithNoSlashAtTheEnd=Fără a slash &quot;/&quot; de la sfârşitul
-DirectoryRecommendation=Se recomandă utilizarea unui director în afara paginilor web.
+DirectoryRecommendation=<span class="warning">IMPORTANT</span>: You must use a directory that is outside of the web pages (so do not use a subdirectory of previous parameter).
 LoginAlreadyExists=Există deja
 DolibarrAdminLogin=Dolibarr admin autentificare
 AdminLoginAlreadyExists=Contul de administrator Dolibarr "<b> %s </b>" există deja. Întoarce-te dacă vrei să creezi altul.

@@ -252,13 +252,13 @@ class Propal extends CommonObject
 	/**
 	 * @var array  Array with all fields and their property. Do not use it as a static var. It may be modified by constructor.
 	 */
-	public $fields=array(
+	public $fields = array(
 		'rowid' =>array('type'=>'integer', 'label'=>'TechnicalID', 'enabled'=>1, 'visible'=>-1, 'notnull'=>1, 'position'=>10),
 		'entity' =>array('type'=>'integer', 'label'=>'Entity', 'default'=>1, 'enabled'=>1, 'visible'=>-2, 'notnull'=>1, 'position'=>15, 'index'=>1),
 		'ref' =>array('type'=>'varchar(30)', 'label'=>'Ref', 'enabled'=>1, 'visible'=>-1, 'notnull'=>1, 'showoncombobox'=>1, 'position'=>20),
 		'ref_client' =>array('type'=>'varchar(255)', 'label'=>'RefCustomer', 'enabled'=>1, 'visible'=>-1, 'position'=>22),
 		'ref_ext' =>array('type'=>'varchar(255)', 'label'=>'RefExt', 'enabled'=>1, 'visible'=>0, 'position'=>40),
-		'ref_int' =>array('type'=>'varchar(255)', 'label'=>'RefInt', 'enabled'=>1, 'visible'=>0, 'position'=>45),	// deprecated
+		'ref_int' =>array('type'=>'varchar(255)', 'label'=>'RefInt', 'enabled'=>1, 'visible'=>0, 'position'=>45), // deprecated
 		'fk_soc' =>array('type'=>'integer:Societe:societe/class/societe.class.php', 'label'=>'ThirdParty', 'enabled'=>1, 'visible'=>-1, 'position'=>23),
 		'fk_projet' =>array('type'=>'integer:Project:projet/class/project.class.php:1:fk_statut=1', 'label'=>'Fk projet', 'enabled'=>1, 'visible'=>-1, 'position'=>24),
 		'tms' =>array('type'=>'timestamp', 'label'=>'DateModification', 'enabled'=>1, 'visible'=>-1, 'notnull'=>1, 'position'=>25),
@@ -290,7 +290,7 @@ class Propal extends CommonObject
 		'date_livraison' =>array('type'=>'date', 'label'=>'DateDeliveryPlanned', 'enabled'=>1, 'visible'=>-1, 'position'=>185),
 		'fk_shipping_method' =>array('type'=>'integer', 'label'=>'ShippingMethod', 'enabled'=>1, 'visible'=>-1, 'position'=>190),
 		'fk_availability' =>array('type'=>'integer', 'label'=>'Availability', 'enabled'=>1, 'visible'=>-1, 'position'=>195),
-		'fk_delivery_address' =>array('type'=>'integer', 'label'=>'DeliveryAddress', 'enabled'=>1, 'visible'=>0, 'position'=>200),	// deprecated
+		'fk_delivery_address' =>array('type'=>'integer', 'label'=>'DeliveryAddress', 'enabled'=>1, 'visible'=>0, 'position'=>200), // deprecated
 		'fk_input_reason' =>array('type'=>'integer', 'label'=>'InputReason', 'enabled'=>1, 'visible'=>-1, 'position'=>205),
 		'extraparams' =>array('type'=>'varchar(255)', 'label'=>'Extraparams', 'enabled'=>1, 'visible'=>-1, 'position'=>215),
 		'fk_incoterms' =>array('type'=>'integer', 'label'=>'IncotermCode', 'enabled'=>'$conf->incoterm->enabled', 'visible'=>-1, 'position'=>220),
@@ -524,8 +524,8 @@ class Propal extends CommonObject
      *		@param      int			$date_end         	End date of the line
      *      @param		array		$array_options		extrafields array
      * 		@param 		string		$fk_unit 			Code of the unit to use. Null to use the default one
-     *      @param		string		$origin				'order', ...
-     *      @param		int			$origin_id			Id of origin object
+     *      @param		string		$origin				Depend on global conf MAIN_CREATEFROM_KEEP_LINE_ORIGIN_INFORMATION can be 'orderdet', 'propaldet'..., else 'order','propal,'....
+     *      @param		int			$origin_id			Depend on global conf MAIN_CREATEFROM_KEEP_LINE_ORIGIN_INFORMATION can be Id of origin object (aka line id), else object id
      * 		@param		double		$pu_ht_devise		Unit price in currency
      * 		@param		int    		$fk_remise_except	Id discount if line is from a discount
      *    	@return    	int         	    			>0 if OK, <0 if KO
@@ -1183,6 +1183,14 @@ class Propal extends CommonObject
 						$vatrate = $line->tva_tx;
 						if ($line->vat_src_code && !preg_match('/\(.*\)/', $vatrate)) $vatrate .= ' ('.$line->vat_src_code.')';
 
+						if(!empty($conf->global->MAIN_CREATEFROM_KEEP_LINE_ORIGIN_INFORMATION)) {
+							$originid=$line->origin_id;
+							$origintype=$line->origin;
+						} else {
+							$originid=$line->id;
+							$origintype=$this->element;
+						}
+
 						$result = $this->addline(
 							$line->desc,
 							$line->subprice,
@@ -1206,8 +1214,8 @@ class Propal extends CommonObject
 							$line->date_end,
 							$line->array_options,
 							$line->fk_unit,
-							$this->element,
-							$line->id
+							$origintype,
+							$originid
 						);
 
 						if ($result < 0)
@@ -3334,8 +3342,8 @@ class Propal extends CommonObject
 		$statusType = '';
 		if ($status == self::STATUS_DRAFT) $statusType = 'status0';
 		elseif ($status == self::STATUS_VALIDATED) $statusType = 'status1';
-		elseif ($status == self::STATUS_SIGNED) $statusType = 'status3';
-		elseif ($status == self::STATUS_NOTSIGNED) $statusType = 'status5';
+		elseif ($status == self::STATUS_SIGNED) $statusType = 'status4';
+		elseif ($status == self::STATUS_NOTSIGNED) $statusType = 'status9';
 		elseif ($status == self::STATUS_BILLED) $statusType = 'status6';
 
 		return dolGetStatus($this->labelStatus[$status], $this->labelStatusShort[$status], '', $statusType, $mode);

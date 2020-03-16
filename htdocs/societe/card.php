@@ -1557,14 +1557,9 @@ else
 			print '</td></tr>';
 		}
 
-        // Other attributes
-        $parameters = array('colspan' => ' colspan="3"', 'cols' => '3');
-        $reshook = $hookmanager->executeHooks('formObjectOptions', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
-        print $hookmanager->resPrint;
-        if (empty($reshook))
-        {
-        	print $object->showOptionals($extrafields, 'edit', $parameters);
-        }
+		// Other attributes
+		$parameters = array('socid'=>$socid, 'colspan' => ' colspan="3"', 'colspanvalue' => '3');
+		include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_add.tpl.php';
 
 		// Assign a sale representative
 		print '<tr>';
@@ -2218,14 +2213,9 @@ else
 				print '</td></tr>';
 			}
 
-            // Other attributes
-            $parameters = array('colspan' => ' colspan="3"', 'cols' => '3');
-            $reshook = $hookmanager->executeHooks('formObjectOptions', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
-            print $hookmanager->resPrint;
-            if (empty($reshook))
-            {
-            	print $object->showOptionals($extrafields, 'edit', $parameters);
-            }
+			// Other attributes
+			$parameters = array('socid'=>$socid, 'colspan' => ' colspan="3"', 'colspanvalue' => '3');
+			include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_edit.tpl.php';
 
             // Webservices url/key
             if (!empty($conf->syncsupplierwebservices->enabled)) {

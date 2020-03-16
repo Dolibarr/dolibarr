@@ -224,13 +224,15 @@ ListAccounts=Seznam účetních účtů
 UnknownAccountForThirdparty=Neznámý účet subjektu. Použijeme %s
 UnknownAccountForThirdpartyBlocking=Neznámý účet subjektu. Chyba blokování
 ThirdpartyAccountNotDefinedOrThirdPartyUnknown=Third-party account not defined or third party unknown. We will use %s
+ThirdpartyAccountNotDefinedOrThirdPartyUnknownSubledgerIgnored=Third-party unknown and subledger not defined on the payment. We will keep the subledger account value empty.
 ThirdpartyAccountNotDefinedOrThirdPartyUnknownBlocking=Účet subjektu není definován nebo neznámý subjekt. Chyba blokování.
 UnknownAccountForThirdpartyAndWaitingAccountNotDefinedBlocking=Neznámý účet subjektu a účet čekání není definován. Chyba blokování
 PaymentsNotLinkedToProduct=Platba není spojena s žádným produktem / službou
+ShowOpeningBalance=Show opening balance
+HideOpeningBalance=Hide opening balance
 
 Pcgtype=Skupina účtů
-Pcgsubtype=Podskupina účtu
-PcgtypeDesc=Skupina a podskupina účtu jsou používány jako předdefinované kritéria pro filtrování a seskupování pro některé účetní výkazy. Například "INCOME" nebo "EXPENSE" jsou používány jako skupiny účetních účtů produktů pro sestavení výkazu výdajů / výnosů.
+PcgtypeDesc=Group of account are used as predefined 'filter' and 'grouping' criteria for some accounting reports. For example, 'INCOME' or 'EXPENSE' are used as groups for accounting accounts of products to build the expense/income report.
 
 TotalVente=Celkový obrat před zdaněním
 TotalMarge=Celkové tržby marže
@@ -269,6 +271,7 @@ ChangeBinding=Změnit vazby
 Accounted=Účtováno v knize
 NotYetAccounted=Zatím nebyl zaznamenán v knize
 ShowTutorial=Show Tutorial
+NotReconciled=Nesladěno
 
 ## Admin
 ApplyMassCategories=Aplikovat hmotnostní kategorie

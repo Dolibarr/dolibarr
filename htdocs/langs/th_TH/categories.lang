@@ -78,6 +78,7 @@ CatMemberList=รายชื่อสมาชิกแท็ก / ประเ
 CatContactList=รายการของแท็กติดต่อ / ประเภท
 CatSupLinks=การเชื่อมโยงระหว่างซัพพลายเออร์และแท็ก / ประเภท
 CatCusLinks=การเชื่อมโยงระหว่างลูกค้า / ลูกค้าเป้าหมาย และ แท็ก / ประเภท
+CatContactsLinks=Links between contacts/addresses and tags/categories
 CatProdLinks=การเชื่อมโยงระหว่างผลิตภัณฑ์ / บริการและแท็ก / ประเภท
 CatProJectLinks=Links between projects and tags/categories
 DeleteFromCat=ลบออกจากแท็ก / หมวดหมู่
