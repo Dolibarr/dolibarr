@@ -2189,7 +2189,7 @@ function print_projecttasks_array($db, $form, $socid, $projectsListId, $mytasks 
 
 				print '<td>';
 				print $projectstatic->getNomUrl(1);
-				if (!in_array('projectlabel', $hiddenfields)) print '<br>'.dol_trunc($objp->title, 24);
+				if (!in_array('projectlabel', $hiddenfields)) print '<br><span class="opacitymedium">'.dol_trunc($objp->title, 24).'</span>';
 				print '</td>';
 				print '<td>';
 				if ($objp->fk_soc > 0)

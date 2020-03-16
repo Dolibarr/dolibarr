@@ -419,6 +419,7 @@ PaymentCondition14DENDMONTH=Within 14 days following the end of the month
 FixAmount=Fixed amount - 1 line with label '%s'
 VarAmount=Variabilni znesek (%% tot.)
 VarAmountOneLine=Variable amount (%% tot.) - 1 line with label '%s'
+VarAmountAllLines=Variable amount (%% tot.) - all same lines
 # PaymentType
 PaymentTypeVIR=Bančni transfer
 PaymentTypeShortVIR=Bančni transfer
@@ -512,13 +513,15 @@ RevenueStamp=Žig prihodka
 YouMustCreateInvoiceFromThird=This option is only available when creating an invoice from tab "Customer" of third party
 YouMustCreateInvoiceFromSupplierThird=This option is only available when creating an invoice from tab "Vendor" of third party
 YouMustCreateStandardInvoiceFirstDesc=You have to create a standard invoice first and convert it to "template" to create a new template invoice
-PDFCrabeDescription=Invoice PDF template Crabe. A complete invoice template 
+PDFCrabeDescription=Invoice PDF template Crabe. A complete invoice template (old implementation of Sponge template)
 PDFSpongeDescription=Invoice PDF template Sponge. A complete invoice template
 PDFCrevetteDescription=Invoice PDF template Crevette. A complete invoice template for situation invoices
 TerreNumRefModelDesc1=Predlaga številko v formatu %syymm-nnnn za standardne račune in %syymm-nnnn za dobropise kjer je yy leto, mm mesec in nnnn zaporedna številka brez presledkov in večja od 0
 MarsNumRefModelDesc1=Return number with format %syymm-nnnn for standard invoices, %syymm-nnnn for replacement invoices, %syymm-nnnn for down payment invoices and %syymm-nnnn for credit notes where yy is year, mm is month and nnnn is a sequence with no break and no return to 0
 TerreNumRefModelError=Račun z začetkom $syymm že obstaja in ni kompatibilen s tem modelom zaporedja. Odstranite ga ali ga preimenujte za aktiviranje tega modula.
 CactusNumRefModelDesc1=Return number with format %syymm-nnnn for standard invoices, %syymm-nnnn for credit notes and %syymm-nnnn for down payment invoices where yy is year, mm is month and nnnn is a sequence with no break and no return to 0
+EarlyClosingReason=Early closing reason
+EarlyClosingComment=Early closing note
 ##### Types de contacts #####
 TypeContact_facture_internal_SALESREPFOLL=Predstavnik za sledenje računa kupcu
 TypeContact_facture_external_BILLING=Kontakt za račun kupcu

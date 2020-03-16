@@ -224,13 +224,15 @@ ListAccounts=Danh sách các tài khoản kế toán
 UnknownAccountForThirdparty=Không biết tài khoản bên thứ ba. Chúng ta sẽ sử dụng %s
 UnknownAccountForThirdpartyBlocking=Không biết tài khoản bên thứ ba. Lỗi chặn
 ThirdpartyAccountNotDefinedOrThirdPartyUnknown=Tài khoản bên thứ ba không được xác định hoặc không biết bên thứ ba. Chúng ta sẽ sử dụng %s
+ThirdpartyAccountNotDefinedOrThirdPartyUnknownSubledgerIgnored=Third-party unknown and subledger not defined on the payment. We will keep the subledger account value empty.
 ThirdpartyAccountNotDefinedOrThirdPartyUnknownBlocking=Tài khoản bên thứ ba không được xác định hoặc không biết bên thứ ba. Lỗi chặn.
 UnknownAccountForThirdpartyAndWaitingAccountNotDefinedBlocking=Không biết tài khoản bên thứ ba và tài khoản đang chờ không xác định. Lỗi chặn
 PaymentsNotLinkedToProduct=Thanh toán không được liên kết với bất kỳ sản phẩm/ dịch vụ nào
+ShowOpeningBalance=Show opening balance
+HideOpeningBalance=Hide opening balance
 
 Pcgtype=Nhóm tài khoản
-Pcgsubtype=Phân nhóm tài khoản
-PcgtypeDesc=Nhóm và phân nhóm của tài khoản được sử dụng làm tiêu chí 'bộ lọc' và 'nhóm' được xác định trước cho một số báo cáo kế toán. Ví dụ: 'THU NHẬP' hoặc 'CHI PHÍ' được sử dụng làm nhóm cho tài khoản kế toán của các sản phẩm để xây dựng báo cáo chi phí/ thu nhập.
+PcgtypeDesc=Group of account are used as predefined 'filter' and 'grouping' criteria for some accounting reports. For example, 'INCOME' or 'EXPENSE' are used as groups for accounting accounts of products to build the expense/income report.
 
 TotalVente=Tổng doanh thu trước thuế
 TotalMarge=Tổng  lợi nhuận bán hàng
@@ -269,6 +271,7 @@ ChangeBinding=Thay đổi ràng buộc
 Accounted=Tài khoản trên Sổ cái
 NotYetAccounted=Chưa hạch toán vào Sổ cái
 ShowTutorial=Chương trình hướng dẫn
+NotReconciled=Chưa đối chiếu
 
 ## Admin
 ApplyMassCategories=Áp dụng cho số một lớn các danh mục

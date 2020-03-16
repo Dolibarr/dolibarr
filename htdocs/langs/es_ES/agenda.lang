@@ -123,6 +123,7 @@ AgendaUrlOptionsNotAdmin=<b> logina =!%s</b> para restringir la salida a accione
 AgendaUrlOptions4=<b>logint=%s</b>para restringir notificaciones en acciones asignadas al usuario <b>%s</b>(propietario y otros).
 AgendaUrlOptionsProject=<b>project=__PROJECT_ID__</b> para restringir exportación de acciones asociadas al proyecto <b>__PROJECT_ID__</b>.
 AgendaUrlOptionsNotAutoEvent=<b>notactiontype = systemauto</b> para excluir el evento automático.
+AgendaUrlOptionsIncludeHolidays= <b> includeholidays = 1 </b> para incluir eventos de días libres.
 AgendaShowBirthdayEvents=Mostrar cumpleaños de los contactos
 AgendaHideBirthdayEvents=Ocultar cumpleaños de los contactos
 Busy=Ocupado

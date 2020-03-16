@@ -331,6 +331,10 @@ PossibleValues=可能的值
 GoOnMenuToCreateVairants=前往選單%s-%s以準備屬性（例如顏色，大小等）
 UseProductFournDesc=增加供應商已定義產品描述的功能，以針對客戶的描述
 ProductSupplierDescription=產品的供應商說明
+UseProductSupplierPackaging=按照供應商價格使用包裝（在供應商文件中增加/更新行時，根據供應商價格上設定的包裝重新計算數量）
+PackagingForThisProduct=包裝
+QtyRecalculatedWithPackaging=根據供應商的包裝重新計算了生產線的數量
+
 #Attributes
 VariantAttributes=變異屬性
 ProductAttributes=產品的變異屬性
@@ -363,7 +367,7 @@ UsePercentageVariations=使用變化百分比
 PercentageVariation=變化百分比
 ErrorDeletingGeneratedProducts=嘗試刪除現有產品變數時發生錯誤
 NbOfDifferentValues=不同值的數量
-NbProducts=產品編號
+NbProducts=產品數量
 ParentProduct=母產品
 HideChildProducts=隱藏其他產品
 ShowChildProducts=顯示其他產品
@@ -376,3 +380,4 @@ ErrorProductCombinationNotFound=找不到產品變數
 ActionAvailableOnVariantProductOnly=僅對產品的變數提供操作
 ProductsPricePerCustomer=每個客戶的產品價格
 ProductSupplierExtraFields=附加屬性（供應商價格）
+DeleteLinkedProduct=刪除連結到組合的子產品

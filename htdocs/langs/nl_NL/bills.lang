@@ -419,6 +419,7 @@ PaymentCondition14DENDMONTH=Binnen 14 dagen na het einde van de maand
 FixAmount=Vast bedrag - 1 regel met label '%s'
 VarAmount=Variabel bedrag  (%% tot.)
 VarAmountOneLine=Variabel aantal (%% tot.) - 1 regel met label '%s'
+VarAmountAllLines=Variabel bedrag (%% tot.) - allemaal dezelfde regels
 # PaymentType
 PaymentTypeVIR=Bankoverboeking
 PaymentTypeShortVIR=Bankoverboeking
@@ -512,13 +513,15 @@ RevenueStamp=Taxzegel
 YouMustCreateInvoiceFromThird=Deze optie is alleen beschikbaar wanneer u een factuur maakt op het tabblad "Klant" van een relatie
 YouMustCreateInvoiceFromSupplierThird=Deze optie is alleen beschikbaar bij het maken van een factuur op het tabblad "Leverancier" bij relatie
 YouMustCreateStandardInvoiceFirstDesc=Maak eerst een standaard factuur en converteer naar een sjabloon om deze als sjabloon te gebruiken
-PDFCrabeDescription=Invoice PDF template Crabe. A complete invoice template 
+PDFCrabeDescription=Invoice PDF template Crabe. A complete invoice template (old implementation of Sponge template)
 PDFSpongeDescription=Factuur PDF-sjabloon Sponge. Een complete sjabloon voor een factuur
 PDFCrevetteDescription=Factuur PDF-sjabloon 'Crevette'. Een compleet sjabloon voor facturen
 TerreNumRefModelDesc1=Geeft een getal in de vorm van %syymm-nnnn voor standaard facturen en %syymm-nnnn voor creditnota's, met yy voor jaar, mm voor maand en nnnn als opeenvolgende getallenreeks die niet terug op 0 komt
 MarsNumRefModelDesc1=Weergave met het formaat %syymm-nnnn voor standaardfacturen, %syymm-nnnn voor vervangende facturen, %syymm-nnnn voor aanbetalingsfacturen en %syymm-nnnn voor creditfacturen, waas yy staat voor jaar, mm voor maand en nnnn is de volgorde met geen onderbreking en geen 0
 TerreNumRefModelError=Een wetsvoorstel te beginnen met $ syymm bestaat al en is niet compatibel met dit model van de reeks. Verwijderen of hernoemen naar deze module te activeren.
 CactusNumRefModelDesc1=Weergave met het formaat %syymm-nnnn voor standaardfacturen, %syymm-nnnn voor creditnota's en %syymm-nnnn voor facturen met vooruitbetaling waarbij yy jaar is, mm is maand en nnnn een reeks is zonder onderbreking
+EarlyClosingReason=Vroege afsluiting reden
+EarlyClosingComment=Vroege afsluiting opmerking
 ##### Types de contacts #####
 TypeContact_facture_internal_SALESREPFOLL=Verantwoordelijke toezicht afnemersfactuur
 TypeContact_facture_external_BILLING=Afnemersfactureringscontact

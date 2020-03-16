@@ -60,7 +60,7 @@ MemberSubscriptionModifiedInDolibarr=Подписка %s для члена %s и
 MemberSubscriptionDeletedInDolibarr=Подписка %s для участника %s удалена
 ShipmentValidatedInDolibarr=Отправка %s  подтверждена
 ShipmentClassifyClosedInDolibarr=Отправка %sотмечена "оплачено"
-ShipmentUnClassifyCloseddInDolibarr=Отправка %s классифицирована переоткрыта
+ShipmentUnClassifyCloseddInDolibarr=Shipment %s classified re-open
 ShipmentBackToDraftInDolibarr=Shipment %s go back to draft status
 ShipmentDeletedInDolibarr=Отправка %s удалена
 OrderCreatedInDolibarr=Заказ %s создан
@@ -123,6 +123,7 @@ AgendaUrlOptionsNotAdmin=<b>logina =! %s </b> для ограничения вы
 AgendaUrlOptions4=<b>logint = %s</b> для ограничения вывода на действия, назначенные пользователю <b>%s</b> (владелец и другие).
 AgendaUrlOptionsProject=<b>project = __ PROJECT_ID __</b>, чтобы ограничить вывод действий, связанных с проектом <b>__ PROJECT_ID __ </b>.
 AgendaUrlOptionsNotAutoEvent=<b>notactiontype=systemauto</b> to exclude automatic events.
+AgendaUrlOptionsIncludeHolidays=<b>includeholidays=1</b> to include events of holidays.
 AgendaShowBirthdayEvents=Показывать дни рождения контактов 
 AgendaHideBirthdayEvents=Скрыть дни рождения контактов
 Busy=Занят

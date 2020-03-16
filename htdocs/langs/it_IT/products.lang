@@ -309,7 +309,7 @@ WarningSelectOneDocument=Seleziona almeno un documento
 DefaultUnitToShow=Unità
 NbOfQtyInProposals=Q.ta in proposte
 ClinkOnALinkOfColumn=Fare clic su un collegamento della colonna %s per ottenere una vista dettagliata ...
-ProductsOrServicesTranslations=Products/Services translations
+ProductsOrServicesTranslations=Traduzione Prodotti/Servizi
 TranslatedLabel=Etichetta tradotta
 TranslatedDescription=Descrizione tradotta
 TranslatedNote=Note tradotte
@@ -331,6 +331,10 @@ PossibleValues=Valori possibili
 GoOnMenuToCreateVairants=Vai sul menu %s - %s per preparare le varianti degli attributi (come colori, dimensioni, ...)
 UseProductFournDesc=Add a feature to define the descriptions of products defined by the vendors in addition to descriptions for customers
 ProductSupplierDescription=Vendor description for the product
+UseProductSupplierPackaging=Use packaging on supplier prices (recalculate quantities according to packaging set on supplier price when adding/updating line in supplier documents)
+PackagingForThisProduct=Packaging
+QtyRecalculatedWithPackaging=The quantity of the line were recalculated according to supplier packaging
+
 #Attributes
 VariantAttributes=Variante attributi
 ProductAttributes=Variante attributi per i prodotti
@@ -376,3 +380,4 @@ ErrorProductCombinationNotFound=Variante di prodotto non trovata
 ActionAvailableOnVariantProductOnly=Action only available on the variant of product
 ProductsPricePerCustomer=Product prices per customers
 ProductSupplierExtraFields=Attributi aggiuntivi (prezzi dei fornitori)
+DeleteLinkedProduct=Delete the child product linked to the combination

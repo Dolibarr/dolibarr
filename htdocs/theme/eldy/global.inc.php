@@ -801,6 +801,9 @@ select.flat.selectlimit {
 	width: 130px;
 }
 /* using a tdoverflowxxx make the min-width not working */
+.tdnooverflowimp {
+   text-overflow: none;
+}
 .tdoverflow {
     max-width: 0;
     overflow: hidden;

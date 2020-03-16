@@ -77,6 +77,7 @@ if ($conf->use_javascript_ajax)
     	$totalnb=0;
     	$dataseries = array();
 		$colorseries = array();
+		$vals = array();
 
 		include_once DOL_DOCUMENT_ROOT.'/theme/'.$conf->theme.'/theme_vars.inc.php';
 
@@ -85,14 +86,9 @@ if ($conf->use_javascript_ajax)
     		$obj = $db->fetch_object($resql);
     		if ($obj)
     		{
-   				$dataseries[$obj->status]=array(0=>$staticmo->LibStatut($obj->status), $obj->nb);
-   				if ($obj->status == Mo::STATUS_DRAFT) $coloseries[$obj->status] = '-'.$badgeStatus0;
-   				if ($obj->status == Mo::STATUS_VALIDATED) $coloseries[$obj->status] = $badgeStatus1;
-   				if ($obj->status == Mo::STATUS_INPROGRESS) $coloseries[$obj->status] = $badgeStatus4;
-   				if ($obj->status == Mo::STATUS_PRODUCED) $coloseries[$obj->status] = $badgeStatus6;
-   				if ($obj->status == Mo::STATUS_CANCELED) $coloseries[$obj->status] = '-'.$badgeStatus5;
+    			$vals[$obj->status]=$obj->nb;
 
-   				$totalnb+=$obj->nb;
+   				$totalnb += $obj->nb;
     		}
     		$i++;
     	}
@@ -101,6 +97,24 @@ if ($conf->use_javascript_ajax)
     	print '<div class="div-table-responsive-no-min">';
     	print '<table class="noborder nohover centpercent">';
     	print '<tr class="liste_titre"><th colspan="2">'.$langs->trans("Statistics").' - '.$langs->trans("MO").'</th></tr>'."\n";
+    	$listofstatus = array(0, 1, 2, 3, 9);
+    	foreach ($listofstatus as $status)
+    	{
+    		$dataseries[] = array($staticmo->LibStatut($status, 1), (isset($vals[$status]) ? (int) $vals[$status] : 0));
+    		if ($status == Mo::STATUS_DRAFT) $colorseries[$status] = '-'.$badgeStatus0;
+    		if ($status == Mo::STATUS_VALIDATED) $colorseries[$status] = $badgeStatus1;
+    		if ($status == Mo::STATUS_INPROGRESS) $colorseries[$status] = $badgeStatus4;
+    		if ($status == Mo::STATUS_PRODUCED) $colorseries[$status] = $badgeStatus6;
+    		if ($status == Mo::STATUS_CANCELED) $colorseries[$status] = $badgeStatus9;
+
+    		if (empty($conf->use_javascript_ajax))
+    		{
+    			print '<tr class="oddeven">';
+    			print '<td>'.$staticmo->LibStatut($status, 0).'</td>';
+    			print '<td class="right"><a href="list.php?statut='.$status.'">'.(isset($vals[$status]) ? $vals[$status] : 0).'</a></td>';
+    			print "</tr>\n";
+    		}
+    	}
         if ($conf->use_javascript_ajax)
     	{
     		print '<tr><td class="center" colspan="2">';
@@ -108,7 +122,7 @@ if ($conf->use_javascript_ajax)
     		include_once DOL_DOCUMENT_ROOT.'/core/class/dolgraph.class.php';
     		$dolgraph = new DolGraph();
     		$dolgraph->SetData($dataseries);
-    		$dolgraph->SetDataColor(array_values($coloseries));
+    		$dolgraph->SetDataColor(array_values($colorseries));
     		$dolgraph->setShowLegend(2);
     		$dolgraph->setShowPercent(1);
     		$dolgraph->SetType(array('pie'));

@@ -8,7 +8,6 @@ MemberModifiedInDolibarr=Membre %s modifié
 MemberResiliatedInDolibarr=Membre %s terminé
 MemberDeletedInDolibarr=Membre %s supprimé
 ShipmentClassifyClosedInDolibarr=Expédition %s classé facturé
-ShipmentUnClassifyCloseddInDolibarr=Expédition %s classée rouverte
 ShipmentDeletedInDolibarr=Envoi %s supprimé
 OrderCreatedInDolibarr=L'ordre %s a été créé
 OrderDeliveredInDolibarr=Commande %s classée Délivrée

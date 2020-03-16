@@ -78,6 +78,7 @@ CatMemberList=Seznam tagů/kategorií uživatelů
 CatContactList=Seznam kontaktů tagů/kategorií
 CatSupLinks=Spojení mezi dodavateli a tagy/kategoriemi
 CatCusLinks=Spojení mezi zákazníky/cíly a tagy/kategoriemi
+CatContactsLinks=Links between contacts/addresses and tags/categories
 CatProdLinks=Spojení mezi produkty/službami a tagy/kategoriemi
 CatProJectLinks=Links between projects and tags/categories
 DeleteFromCat=Odebrat z tagů/kategorií

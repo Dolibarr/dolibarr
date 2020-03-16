@@ -76,7 +76,6 @@ class ProjectStats extends Stats
 		$sql .= " GROUP BY t.fk_opp_status, cls.code, cls.label";
 
 		$result = array ();
-		$res = array ();
 
 		dol_syslog(get_class($this) . '::' . __METHOD__ . "", LOG_DEBUG);
 		$resql = $this->db->query($sql);

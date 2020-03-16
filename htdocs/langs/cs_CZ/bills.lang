@@ -419,6 +419,7 @@ PaymentCondition14DENDMONTH=Do 14 dnů po skončení měsíce,
 FixAmount=Fixed amount - 1 line with label '%s'
 VarAmount=Variabilní částka (%% celk.)
 VarAmountOneLine=Proměnná částka (%% tot.) - 1 řádek se štítkem '%s'
+VarAmountAllLines=Variable amount (%% tot.) - all same lines
 # PaymentType
 PaymentTypeVIR=Bankovní převod
 PaymentTypeShortVIR=Bankovní převod
@@ -512,13 +513,15 @@ RevenueStamp=Kolek
 YouMustCreateInvoiceFromThird=Tato možnost je k dispozici pouze při vytváření faktury z karty "Zákazník" subjektu
 YouMustCreateInvoiceFromSupplierThird=Tato možnost je k dispozici pouze při vytváření faktury z karty "Prodejce" subjektu
 YouMustCreateStandardInvoiceFirstDesc=Musíte nejprve vytvořit standardní fakturu a převést ji do „šablony“ pro vytvoření nové šablony faktury
-PDFCrabeDescription=Invoice PDF template Crabe. A complete invoice template 
+PDFCrabeDescription=Invoice PDF template Crabe. A complete invoice template (old implementation of Sponge template)
 PDFSpongeDescription=Faktura Šablona PDF Sponge. Kompletní šablona faktury
 PDFCrevetteDescription=Faktura PDF šablony Crevette. Kompletní fakturu šablona pro situace faktur
 TerreNumRefModelDesc1=Vrátí číslo ve formátu %s yymm-nnnn pro standardní faktury a %s yymm-nnnn pro dobropisy, kde yy je rok, mm je měsíc a nnnn je sekvence bez přerušení a bez návratu k 0
 MarsNumRefModelDesc1=Vrátí číslo s formát %syymm-nnnn pro standardní faktury, %syymm-nnnn náhradních faktur, %syymm-nnnn pro akontace faktur a %syymm-nnnn pro dobropisy, kde yy je rok, MM měsíc a nnnn je sekvence bez přestávky a ne vrátí do polohy 0
 TerreNumRefModelError=Účet počínaje $syymm již existuje a není kompatibilní s tímto modelem sekvence. Vyjměte ji nebo přejmenujte jej aktivací tohoto modulu.
 CactusNumRefModelDesc1=Vrátí číslo s formát %syymm-nnnn pro standardní faktury, %syymm-nnnn pro dobropisy a %syymm-nnnn pro akontace faktur, kde yy je rok, mm je měsíc a nnnn je sekvence bez přestávky, a ne návrat k 0 ° C
+EarlyClosingReason=Early closing reason
+EarlyClosingComment=Early closing note
 ##### Types de contacts #####
 TypeContact_facture_internal_SALESREPFOLL=Zástupce následující zákaznické faktury
 TypeContact_facture_external_BILLING=Fakturační kontakt zákazníka
