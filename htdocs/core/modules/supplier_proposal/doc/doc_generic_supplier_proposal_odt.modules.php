@@ -416,7 +416,7 @@ class doc_generic_supplier_proposal_odt extends ModelePDFSupplierProposal
 
 				$array_thirdparty_contact = array();
 				if ($usecontact && is_object($contactobject)) $array_thirdparty_contact = $this->get_substitutionarray_contact($contactobject, $outputlangs, 'contact');
-				
+
 				$tmparray = array_merge($substitutionarray, $array_user, $array_soc, $array_thirdparty, $array_objet, $array_other, $array_thirdparty_contact);
 				complete_substitutions_array($tmparray, $outputlangs, $object);
 
