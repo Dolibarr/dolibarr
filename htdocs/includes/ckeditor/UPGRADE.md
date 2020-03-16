@@ -1,9 +1,9 @@
 To upgrade ckeditor:
-- Go on web site. 
-- Choose profile "Online builder"
-- Choose Full package
-- Add plugin SourceDialog (for "source" button on edit inline)
-- Choose skin mona-lisa
-- Choose all languages
+- go to web site   https://ckeditor.com/cke4/builder  (Online Builder)
+- 1. Choose preset: "Full" package
+- 2. Select your plugins ans skins: 
+     add from Available plugins "Source Dialog" (for "source" button on edit inline)
+     choose skin "Moona-Lisa"
+- 3. Finalize: Choose all languages
 - Download
-- Repalce files and remove dir 'samples'.
+- Replace files and remove dir 'samples'
