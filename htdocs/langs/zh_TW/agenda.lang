@@ -123,6 +123,7 @@ AgendaUrlOptionsNotAdmin=<b>logina=!%s</b> 將限制輸出非用戶<b>%s</b>擁�
 AgendaUrlOptions4=<b>logint = %s</b>將限制輸出分配給用戶<b>%s</b> （所有者和其他用戶）的操作。
 AgendaUrlOptionsProject=<b>project=PROJECT_ID</b> 將限制輸出為已連結專案操作 <b>PROJECT_ID</b>.
 AgendaUrlOptionsNotAutoEvent=<b>notactiontype = systemauto</b>排除自動事件。
+AgendaUrlOptionsIncludeHolidays=設定<b>includeholidays=1</b>以包括假期活動。
 AgendaShowBirthdayEvents=顯示連絡人生日
 AgendaHideBirthdayEvents=隱藏連絡人生日
 Busy=忙錄

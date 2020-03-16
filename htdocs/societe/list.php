@@ -97,8 +97,6 @@ $search_type = GETPOST('search_type', 'alpha');
 $search_level = GETPOST("search_level", "array");
 $search_stcomm = GETPOST('search_stcomm', 'int');
 $search_import_key  = GETPOST("search_import_key", "alpha");
-$search_btn = GETPOST('button_search', 'alpha');
-$search_remove_btn = GETPOST('button_removefilter', 'alpha');
 $search_parent_name = GETPOST('search_parent_name', 'alpha');
 
 $type = GETPOST('type', 'alpha');
@@ -110,10 +108,10 @@ $diroutputmassaction = $conf->societe->dir_output.'/temp/massgeneration/'.$user-
 $limit = GETPOST('limit', 'int') ?GETPOST('limit', 'int') : $conf->liste_limit;
 $sortfield = GETPOST("sortfield", 'alpha');
 $sortorder = GETPOST("sortorder", 'alpha');
-$page = GETPOST("page", 'int');
+$page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOST("page", 'int');
 if (!$sortorder) $sortorder = "ASC";
 if (!$sortfield) $sortfield = "s.nom";
-if (empty($page) || $page == -1 || !empty($search_btn) || !empty($search_remove_btn) || (empty($toselect) && $massaction === '0')) { $page = 0; }
+if (empty($page) || $page == -1 || GETPOST('button_search', 'alpha') || GETPOST('button_removefilter', 'alpha')) { $page = 0; }     // If $page is not defined, or '' or -1 or if we click on clear filters or if we select empty mass action
 $offset = $limit * $page;
 $pageprev = $page - 1;
 $pagenext = $page + 1;
@@ -619,10 +617,10 @@ print '<input type="hidden" name="token" value="'.newToken().'">';
 print '<input type="hidden" name="formfilteraction" id="formfilteraction" value="list">';
 print '<input type="hidden" name="sortfield" value="'.$sortfield.'">';
 print '<input type="hidden" name="sortorder" value="'.$sortorder.'">';
-print '<input type="hidden" name="page" value="'.$page.'">';
+//print '<input type="hidden" name="page" value="'.$page.'">';
 print '<input type="hidden" name="contextpage" value="'.$contextpage.'">';
 
-print_barre_liste($title, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, $massactionbutton, $num, $nbtotalofrecords, 'building', 0, $newcardbutton, '', $limit);
+print_barre_liste($title, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, $massactionbutton, $num, $nbtotalofrecords, 'building', 0, $newcardbutton, '', $limit, 0, 0, 1);
 
 $langs->load("other");
 $textprofid = array();

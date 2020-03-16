@@ -168,12 +168,12 @@ if ($action == 'valid' && $user->rights->facture->creer)
 		$invoice->update($user);
 	}
 
-	$sav_FACTURE_ADDON='';
-	if (! empty($conf->global->TAKEPOS_ADDON)) {
-		$sav_FACTURE_ADDON = $conf->global->FACTURE_ADDON;
-		if ($conf->global->TAKEPOS_ADDON=="terminal") $conf->global->FACTURE_ADDON = $conf->global->{'TAKEPOS_ADDON'.$_SESSION["takeposterminal"]};
-		else $conf->global->FACTURE_ADDON = $conf->global->TAKEPOS_ADDON;
-	}
+	//$sav_FACTURE_ADDON = '';
+	//if (!empty($conf->global->TAKEPOS_ADDON)) {
+	//	$sav_FACTURE_ADDON = $conf->global->FACTURE_ADDON;
+	//	if ($conf->global->TAKEPOS_ADDON == "terminal") $conf->global->FACTURE_ADDON = $conf->global->{'TAKEPOS_ADDON'.$_SESSION["takeposterminal"]};
+	//	else $conf->global->FACTURE_ADDON = $conf->global->TAKEPOS_ADDON;
+	//}
 
 	$constantforkey = 'CASHDESK_NO_DECREASE_STOCK'.$_SESSION["takeposterminal"];
 	if ($invoice->statut != Facture::STATUS_DRAFT) {
@@ -198,7 +198,7 @@ if ($action == 'valid' && $user->rights->facture->creer)
 		dol_syslog("Validate invoice with stock change into warehouse defined into constant ".$constantforkey." = ".$conf->global->$constantforkey);
 		$batch_rule = 0;
 		if (!empty($conf->productbatch->enabled) && !empty($conf->global->CASHDESK_FORCE_DECREASE_STOCK)) {
-			require_once DOL_DOCUMENT_ROOT . '/product/class/productbatch.class.php';
+			require_once DOL_DOCUMENT_ROOT.'/product/class/productbatch.class.php';
 			$batch_rule = Productbatch::BATCH_RULE_SELLBY_EATBY_DATES_FIRST;
 		}
 		$res = $invoice->validate($user, '', $conf->global->$constantforkey, 0, $batch_rule);
@@ -211,10 +211,10 @@ if ($action == 'valid' && $user->rights->facture->creer)
 	}
 
 	// Restore save values
-	if (! empty($sav_FACTURE_ADDON))
-	{
-		$conf->global->FACTURE_ADDON = $sav_FACTURE_ADDON;
-	}
+	//if (!empty($sav_FACTURE_ADDON))
+	//{
+	//	$conf->global->FACTURE_ADDON = $sav_FACTURE_ADDON;
+	//}
 
 	$remaintopay = $invoice->getRemainToPay();
 
@@ -227,7 +227,7 @@ if ($action == 'valid' && $user->rights->facture->creer)
 
 		// If user has not used change control, add total invoice payment
 		// Or if user has used change control and the amount of payment is higher than remain to pay, add the remain to pay
-		if ($amountofpayment == 0 || $amountofpayment>$remaintopay) $payment->amounts[$invoice->id] = $remaintopay;
+		if ($amountofpayment == 0 || $amountofpayment > $remaintopay) $payment->amounts[$invoice->id] = $remaintopay;
 
 		$payment->paiementid = $paiementid;
 		$payment->num_payment = $invoice->ref;
@@ -302,7 +302,7 @@ if ($action == "addline")
 	$localtax1_tx = get_localtax($tva_tx, 1, $customer, $mysoc, $tva_npr);
 	$localtax2_tx = get_localtax($tva_tx, 2, $customer, $mysoc, $tva_npr);
 
-	if (! empty($conf->global->TAKEPOS_SUPPLEMENTS))
+	if (!empty($conf->global->TAKEPOS_SUPPLEMENTS))
 	{
 		require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
 		$cat = new Categorie($db);
@@ -313,8 +313,8 @@ if ($action == "addline")
 			$sql = "SELECT fk_parent_line FROM ".MAIN_DB_PREFIX."facturedet where rowid=$selectedline";
 			$resql = $db->query($sql);
 			$row = $db->fetch_array($resql);
-			if ($row[0]==null) $parent_line=$selectedline;
-			else $parent_line=$row[0]; //If the parent line is already a supplement, add the supplement to the main  product
+			if ($row[0] == null) $parent_line = $selectedline;
+			else $parent_line = $row[0]; //If the parent line is already a supplement, add the supplement to the main  product
 		}
 	}
 
@@ -467,7 +467,7 @@ if ($action == "updatereduction")
 if ($action == "order" and $placeid != 0)
 {
     include_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
-	if ($conf->global->TAKEPOS_PRINT_METHOD == "receiptprinter"){
+	if ($conf->global->TAKEPOS_PRINT_METHOD == "receiptprinter") {
 		require_once DOL_DOCUMENT_ROOT.'/core/class/dolreceiptprinter.class.php';
 		$printer = new dolReceiptPrinter($db);
 	}
@@ -495,7 +495,7 @@ if ($action == "order" and $placeid != 0)
 			$order_receipt_printer1 .= '</td></tr>';
         }
     }
-	if ($conf->global->TAKEPOS_PRINT_METHOD == "receiptprinter"){
+	if ($conf->global->TAKEPOS_PRINT_METHOD == "receiptprinter") {
 		$invoice->fetch($placeid); //Reload object before send to printer
 		$ret = $printer->sendToPrinter($invoice, $conf->global->{'TAKEPOS_TEMPLATE_TO_USE_FOR_ORDERS'.$_SESSION["takeposterminal"]}, $conf->global->{'TAKEPOS_PRINTER_TO_USE'.$_SESSION["takeposterminal"]}); // PRINT TO PRINTER 1
 	}
@@ -520,7 +520,7 @@ if ($action == "order" and $placeid != 0)
 			$order_receipt_printer2 .= '</td></tr>';
         }
     }
-	if ($conf->global->TAKEPOS_PRINT_METHOD == "receiptprinter"){
+	if ($conf->global->TAKEPOS_PRINT_METHOD == "receiptprinter") {
 		$invoice->fetch($placeid); //Reload object before send to printer
 		$ret = $printer->sendToPrinter($invoice, $conf->global->{'TAKEPOS_TEMPLATE_TO_USE_FOR_ORDERS'.$_SESSION["takeposterminal"]}, $conf->global->{'TAKEPOS_PRINTER_TO_USE'.$_SESSION["takeposterminal"]}); // PRINT TO PRINTER 2
 	}
@@ -546,9 +546,9 @@ if ($action == "valid" || $action == "history")
         else $sectionwithinvoicelink .= $langs->trans('BillShortStatusValidated');
     }
     $sectionwithinvoicelink .= '</span>';
-    if ($conf->global->TAKEPOS_PRINT_METHOD == "takeposconnector"){
+    if ($conf->global->TAKEPOS_PRINT_METHOD == "takeposconnector") {
          $sectionwithinvoicelink .= ' <button id="buttonprint" type="button" onclick="TakeposPrinting('.$placeid.');">'.$langs->trans('PrintTicket').'</button>';
-    } elseif ($conf->global->TAKEPOS_PRINT_METHOD == "receiptprinter"){
+    } elseif ($conf->global->TAKEPOS_PRINT_METHOD == "receiptprinter") {
         $sectionwithinvoicelink .= ' <button id="buttonprint" type="button" onclick="DolibarrTakeposPrinting('.$placeid.');">'.$langs->trans('PrintTicket').'</button>';
     } else {
         $sectionwithinvoicelink .= ' <button id="buttonprint" type="button" onclick="Print('.$placeid.');">'.$langs->trans('PrintTicket').'</button>';
@@ -800,13 +800,13 @@ if ($placeid > 0)
         $tmplines = array_reverse($invoice->lines);
         foreach ($tmplines as $line)
         {
-			if ($line->fk_parent_line!=false)
+			if ($line->fk_parent_line != false)
 			{
-				$htmlsupplements[$line->fk_parent_line].='<tr class="drag drop oddeven posinvoiceline';
-				if ($line->special_code == "4") $htmlsupplements[$line->fk_parent_line].=' order';
-				$htmlsupplements[$line->fk_parent_line].= '" id="'.$line->id.'">';
-				$htmlsupplements[$line->fk_parent_line].= '<td class="left">';
-				$htmlsupplements[$line->fk_parent_line].= img_picto('', 'rightarrow');
+				$htmlsupplements[$line->fk_parent_line] .= '<tr class="drag drop oddeven posinvoiceline';
+				if ($line->special_code == "4") $htmlsupplements[$line->fk_parent_line] .= ' order';
+				$htmlsupplements[$line->fk_parent_line] .= '" id="'.$line->id.'">';
+				$htmlsupplements[$line->fk_parent_line] .= '<td class="left">';
+				$htmlsupplements[$line->fk_parent_line] .= img_picto('', 'rightarrow');
 				if ($line->product_label) $htmlsupplements[$line->fk_parent_line] .= $line->product_label;
 				if ($line->product_label && $line->desc) $htmlsupplements[$line->fk_parent_line] .= '<br>';
 				if ($line->product_label != $line->desc)

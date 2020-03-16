@@ -987,23 +987,32 @@ function dol_escape_js($stringtoescape, $mode = 0, $noescapebackslashn = 0)
 /**
  *  Returns text escaped for inclusion in HTML alt or title tags, or into values of HTML input fields.
  *
- *  @param      string		$stringtoescape		String to escape
- *  @param		int			$keepb				1=Preserve b tags (otherwise, remove them)
- *  @param      int         $keepn              1=Preserve \r\n strings (otherwise, replace them with escaped value). Set to 1 when escaping for a <textarea>.
- *  @param		string		$keepmoretags		'' or 'common' or list of tags
- *  @return     string     				 		Escaped string
+ *  @param      string		$stringtoescape			String to escape
+ *  @param		int			$keepb					1=Preserve b tags (otherwise, remove them)
+ *  @param      int         $keepn              	1=Preserve \r\n strings (otherwise, replace them with escaped value). Set to 1 when escaping for a <textarea>.
+ *  @param		string		$keepmoretags			'' or 'common' or list of tags
+ *  @param		int			$escapeonlyhtmltags		1=Escape only html tags, not the special chars like accents.
+ *  @return     string     				 			Escaped string
  *  @see		dol_string_nohtmltag(), dol_string_nospecial(), dol_string_unaccent()
  */
-function dol_escape_htmltag($stringtoescape, $keepb = 0, $keepn = 0, $keepmoretags = '')
+function dol_escape_htmltag($stringtoescape, $keepb = 0, $keepn = 0, $keepmoretags = '', $escapeonlyhtmltags = 0)
 {
 	if ($keepmoretags == 'common') $keepmoretags = 'html,body,a,em,i,u,ul,li,br,div,img,font,p,span,strong,table,tr,td,th,tbody';
 	// TODO Implement $keepmoretags
 
 	// escape quotes and backslashes, newlines, etc.
-	$tmp = html_entity_decode($stringtoescape, ENT_COMPAT, 'UTF-8'); // TODO Use htmlspecialchars_decode instead, that make only required change for html tags
+	if ($escapeonlyhtmltags) {
+		$tmp = htmlspecialchars_decode($stringtoescape, ENT_COMPAT);
+	} else {
+		$tmp = html_entity_decode($stringtoescape, ENT_COMPAT, 'UTF-8');
+	}
 	if (!$keepb) $tmp = strtr($tmp, array("<b>"=>'', '</b>'=>''));
 	if (!$keepn) $tmp = strtr($tmp, array("\r"=>'\\r', "\n"=>'\\n'));
-	return htmlentities($tmp, ENT_COMPAT, 'UTF-8'); // TODO Use htmlspecialchars instead, that make only required change for html tags
+	if ($escapeonlyhtmltags) {
+		return htmlspecialchars($tmp, ENT_COMPAT, 'UTF-8');
+	} else {
+		return htmlentities($tmp, ENT_COMPAT, 'UTF-8');
+	}
 }
 
 
@@ -4272,14 +4281,15 @@ function load_fiche_titre($titre, $morehtmlright = '', $picto = 'generic', $pict
  *	@param	int|string  $totalnboflines		Total number of records/lines for all pages (if known). Use a negative value of number to not show number. Use '' if unknown.
  *	@param	string	    $picto				Icon to use before title (should be a 32x32 transparent png file)
  *	@param	int		    $pictoisfullpath	1=Icon name is a full absolute url of image
- *  @param	string	    $morehtmlright			More html to show
+ *  @param	string	    $morehtmlright		More html to show
  *  @param  string      $morecss            More css to the table
  *  @param  int         $limit              Max number of lines (-1 = use default, 0 = no limit, > 0 = limit).
  *  @param  int         $hideselectlimit    Force to hide select limit
  *  @param  int         $hidenavigation     Force to hide all navigation tools
+ *  @param  int			$pagenavastextinput 1=Do not suggest list of pages to navigate but suggest the page number into an input field.
  *	@return	void
  */
-function print_barre_liste($titre, $page, $file, $options = '', $sortfield = '', $sortorder = '', $morehtmlcenter = '', $num = -1, $totalnboflines = '', $picto = 'generic', $pictoisfullpath = 0, $morehtmlright = '', $morecss = '', $limit = -1, $hideselectlimit = 0, $hidenavigation = 0)
+function print_barre_liste($titre, $page, $file, $options = '', $sortfield = '', $sortorder = '', $morehtmlcenter = '', $num = -1, $totalnboflines = '', $picto = 'generic', $pictoisfullpath = 0, $morehtmlright = '', $morecss = '', $limit = -1, $hideselectlimit = 0, $hidenavigation = 0, $pagenavastextinput = 0)
 {
 	global $conf, $langs;
 
@@ -4338,30 +4348,47 @@ function print_barre_liste($titre, $page, $file, $options = '', $sortfield = '',
 
 			if ($cpt >= 1)
 			{
-				$pagelist .= '<li class="pagination"><a href="'.$file.'?page=0'.$options.'">1</a></li>';
-				if ($cpt > 2) $pagelist .= '<li class="pagination"><span class="inactive">...</span></li>';
-				elseif ($cpt == 2) $pagelist .= '<li class="pagination"><a href="'.$file.'?page=1'.$options.'">2</a></li>';
+				if (empty($pagenavastextinput)) {
+					$pagelist .= '<li class="pagination"><a href="'.$file.'?page=0'.$options.'">1</a></li>';
+					if ($cpt > 2) $pagelist .= '<li class="pagination"><span class="inactive">...</span></li>';
+					elseif ($cpt == 2) $pagelist .= '<li class="pagination"><a href="'.$file.'?page=1'.$options.'">2</a></li>';
+				}
 			}
 
 			do
 			{
-				if ($cpt == $page)
-				{
-					$pagelist .= '<li class="pagination"><span class="active">'.($page + 1).'</span></li>';
-				}
-				else
-				{
-					$pagelist .= '<li class="pagination"><a href="'.$file.'?page='.$cpt.$options.'">'.($cpt + 1).'</a></li>';
+				if ($pagenavastextinput) {
+					if ($cpt == $page)
+					{
+						$pagelist .= '<li class="pagination"><input type="text" class="width25 center pageplusone" name="pageplusone" value="'.($page + 1).'"></li>';
+						if (($cpt + 1) < $nbpages) $pagelist .= '/';
+					}
+				} else {
+					if ($cpt == $page)
+					{
+						$pagelist .= '<li class="pagination"><span class="active">'.($page + 1).'</span></li>';
+					}
+					else
+					{
+						$pagelist .= '<li class="pagination"><a href="'.$file.'?page='.$cpt.$options.'">'.($cpt + 1).'</a></li>';
+					}
 				}
 				$cpt++;
 			}
-			while ($cpt < $nbpages && $cpt <= $page + $maxnbofpage);
+			while ($cpt < $nbpages && $cpt <= ($page + $maxnbofpage));
 
-			if ($cpt < $nbpages)
-			{
-				if ($cpt < $nbpages - 2) $pagelist .= '<li class="pagination"><span class="inactive">...</span></li>';
-				elseif ($cpt == $nbpages - 2) $pagelist .= '<li class="pagination"><a href="'.$file.'?page='.($nbpages - 2).$options.'">'.($nbpages - 1).'</a></li>';
-				$pagelist .= '<li class="pagination"><a href="'.$file.'?page='.($nbpages - 1).$options.'">'.$nbpages.'</a></li>';
+			if (empty($pagenavastextinput)) {
+				if ($cpt < $nbpages)
+				{
+					if ($cpt < $nbpages - 2) $pagelist .= '<li class="pagination"><span class="inactive">...</span></li>';
+					elseif ($cpt == $nbpages - 2) $pagelist .= '<li class="pagination"><a href="'.$file.'?page='.($nbpages - 2).$options.'">'.($nbpages - 1).'</a></li>';
+					$pagelist .= '<li class="pagination"><a href="'.$file.'?page='.($nbpages - 1).$options.'">'.$nbpages.'</a></li>';
+				}
+			} else {
+				//var_dump($page.' '.$cpt.' '.$nbpages);
+				if (($page + 1) < $nbpages) {
+					$pagelist .= '<li class="pagination"><a href="'.$file.'?page='.($nbpages - 1).$options.'">'.$nbpages.'</a></li>';
+				}
 			}
 		}
 		else
@@ -4372,6 +4399,11 @@ function print_barre_liste($titre, $page, $file, $options = '', $sortfield = '',
 
 	if ($savlimit || $morehtmlright) {
 		print_fleche_navigation($page, $file, $options, $nextpage, $pagelist, $morehtmlright, $savlimit, $totalnboflines, $hideselectlimit); // output the div and ul for previous/last completed with page numbers into $pagelist
+	}
+
+	// js to autoselect page field on focus
+	if ($pagenavastextinput) {
+		print ajax_autoselect('.pageplusone');
 	}
 
 	print '</td>';
@@ -5933,6 +5965,7 @@ function dol_textishtml($msg, $option = 0)
 	{
 		if (preg_match('/<html/i', $msg))				return true;
 		elseif (preg_match('/<body/i', $msg))			return true;
+		elseif (preg_match('/<\/textarea/i', $msg))	  return true;
 		elseif (preg_match('/<br/i', $msg))				return true;
 		return false;
 	}
@@ -5940,6 +5973,7 @@ function dol_textishtml($msg, $option = 0)
 	{
 		if (preg_match('/<html/i', $msg))				return true;
 		elseif (preg_match('/<body/i', $msg))			return true;
+		elseif (preg_match('/<\/textarea/i', $msg))	  return true;
 		elseif (preg_match('/<(b|em|i|u)>/i', $msg))		return true;
 		elseif (preg_match('/<br\/>/i', $msg))	  return true;
 		elseif (preg_match('/<(br|div|font|li|p|span|strong|table)>/i', $msg)) 	  return true;
@@ -6324,9 +6358,9 @@ function getCommonSubstitutionArray($outputlangs, $onlykey = 0, $exclude = null,
 				}
 				else $substitutionarray['__DIRECTDOWNLOAD_URL_INVOICE__'] = '';
 
-				if (is_object($object) && $object->element == 'propal') $substitutionarray['__URL_PROPOSAL__'] = DOL_MAIN_URL_ROOT . "/comm/propal/card.php?id=" . $object->id;
-				if (is_object($object) && $object->element == 'commande') $substitutionarray['__URL_ORDER__'] = DOL_MAIN_URL_ROOT . "/commande/card.php?id=" . $object->id;
-				if (is_object($object) && $object->element == 'facture') $substitutionarray['__URL_INVOICE__'] = DOL_MAIN_URL_ROOT . "/compta/facture/card.php?id=" . $object->id;
+				if (is_object($object) && $object->element == 'propal') $substitutionarray['__URL_PROPOSAL__'] = DOL_MAIN_URL_ROOT."/comm/propal/card.php?id=".$object->id;
+				if (is_object($object) && $object->element == 'commande') $substitutionarray['__URL_ORDER__'] = DOL_MAIN_URL_ROOT."/commande/card.php?id=".$object->id;
+				if (is_object($object) && $object->element == 'facture') $substitutionarray['__URL_INVOICE__'] = DOL_MAIN_URL_ROOT."/compta/facture/card.php?id=".$object->id;
 			}
 		}
 	}
@@ -7647,7 +7681,7 @@ function printCommonFooter($zone = 'private')
 				}
 
 				if (function_exists("memory_get_usage")) {
-					print ' - Mem: '.memory_get_usage();	// Do not use true here, it seems it takes the peak amount
+					print ' - Mem: '.memory_get_usage(); // Do not use true here, it seems it takes the peak amount
 				}
 				if (function_exists("memory_get_peak_usage")) {
 					print ' - Real mem peak: '.memory_get_peak_usage(true);
@@ -8008,7 +8042,7 @@ function getAdvancedPreviewUrl($modulepart, $relativepath, $alldata = 0, $param 
 /**
  * Make content of an input box selected when we click into input field.
  *
- * @param string	$htmlname	Id of html object
+ * @param string	$htmlname	Id of html object ('#idvalue' or '.classvalue')
  * @param string	$addlink	Add a 'link to' after
  * @return string
  */
@@ -8017,7 +8051,7 @@ function ajax_autoselect($htmlname, $addlink = '')
 	global $langs;
 	$out = '<script>
                jQuery(document).ready(function () {
-				    jQuery("#'.$htmlname.'").click(function() { jQuery(this).select(); } );
+				    jQuery("'.((strpos($htmlname, '.') === 0 ? '' : '#').$htmlname).'").click(function() { jQuery(this).select(); } );
 				});
 		    </script>';
 	if ($addlink) $out .= ' <a href="'.$addlink.'" target="_blank">'.$langs->trans("Link").'</a>';

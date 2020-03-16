@@ -61,7 +61,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 $error=0;
 $websitekey=GETPOST('website', 'alpha');
 $pageid=GETPOST('page', 'alpha')?GETPOST('page', 'alpha'):GETPOST('pageid', 'alpha');
-$pageref=GETPOST('pageref', 'aZ09')?GETPOST('pageref', 'aZ09'):'';
+$pageref=GETPOST('pageref', 'alphanohtml')?GETPOST('pageref', 'alphanohtml'):'';
 
 $accessallowed = 1;
 $type='';

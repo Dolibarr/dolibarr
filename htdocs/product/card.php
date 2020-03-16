@@ -553,7 +553,7 @@ if (empty($reshook))
                             if ($result < 1)
                             {
                                 $db->rollback();
-                                setEventMessage($langs->trans('ErrorProductClone'), null, 'errors');
+                                setEventMessages($langs->trans('ErrorProductClone'), null, 'errors');
                                 header("Location: ".$_SERVER["PHP_SELF"]."?id=".$originalId);
                                 exit;
                             }
@@ -1601,8 +1601,10 @@ else
 				$c = new Categorie($db);
 				$cats = $c->containing($object->id, Categorie::TYPE_PRODUCT);
 				$arrayselected = array();
-				foreach ($cats as $cat) {
-					$arrayselected[] = $cat->id;
+				if (is_array($cats)) {
+					foreach ($cats as $cat) {
+						$arrayselected[] = $cat->id;
+					}
 				}
 				print $form->multiselectarray('categories', $cate_arbo, $arrayselected, '', 0, '', 0, '100%');
 				print "</td></tr>";

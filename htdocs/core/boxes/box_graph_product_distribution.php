@@ -163,7 +163,7 @@ class box_graph_product_distribution extends ModeleBoxes
 				{
 					$i = 0; $legend = array();
 
-					foreach($data1 as $key => $val)
+					foreach ($data1 as $key => $val)
 					{
 						$data1[$key][0] = dol_trunc($data1[$key][0], 32);
 						$legend[] = $data1[$key][0];
@@ -222,7 +222,7 @@ class box_graph_product_distribution extends ModeleBoxes
 				{
 					$i = 0; $legend = array();
 
-					foreach($data2 as $key => $val)
+					foreach ($data2 as $key => $val)
 					{
 						$data2[$key][0] = dol_trunc($data2[$key][0], 32);
 						$legend[] = $data2[$key][0];
@@ -282,7 +282,7 @@ class box_graph_product_distribution extends ModeleBoxes
 				{
 					$i = 0; $legend = array();
 
-					foreach($data3 as $key => $val)
+					foreach ($data3 as $key => $val)
 					{
 						$data3[$key][0] = dol_trunc($data3[$key][0], 32);
 						$legend[] = $data3[$key][0];

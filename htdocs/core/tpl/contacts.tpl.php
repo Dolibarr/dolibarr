@@ -128,10 +128,10 @@ if ($permission)
 		</div>
 		<div class="tagtd maxwidthonsmartphone noborderbottom">
 			<?php
-			$nbofcontacts=$form->select_contacts(($selectedCompany > 0 ? $selectedCompany : -1), '', 'contactid', 3, '', '', 1, 'minwidth100imp');
+			$nbofcontacts = $form->select_contacts(($selectedCompany > 0 ? $selectedCompany : -1), '', 'contactid', 3, '', '', 1, 'minwidth100imp');
 
 			$newcardbutton = '';
-			if (! empty($object->socid) && $object->socid > 1 && $user->rights->societe->creer)
+			if (!empty($object->socid) && $object->socid > 1 && $user->rights->societe->creer)
 			{
 				$newcardbutton .= '<a href="'.DOL_URL_ROOT.'/contact/card.php?socid='.$object->socid.'&action=create&backtopage='.urlencode($_SERVER["PHP_SELF"].'?id='.$object->id).'" title="'.$langs->trans('NewContact').'"><span class="fa fa-plus-circle valignmiddle paddingleft"></span></a>';
 			}
@@ -140,13 +140,13 @@ if ($permission)
 		</div>
 		<div class="tagtd maxwidthonsmartphone noborderbottom">
 			<?php
-			$tmpobject=$object;
-			if (($object->element == 'shipping'|| $object->element == 'reception') && is_object($objectsrc)) $tmpobject=$objectsrc;
+			$tmpobject = $object;
+			if (($object->element == 'shipping' || $object->element == 'reception') && is_object($objectsrc)) $tmpobject = $objectsrc;
 			$formcompany->selectTypeContact($tmpobject, '', 'type', 'external', 'position', 0, 'minwidth100imp'); ?>
 		</div>
 		<div class="tagtd noborderbottom">&nbsp;</div>
 		<div class="tagtd center noborderbottom">
-			<input type="submit" id="add-customer-contact" class="button" value="<?php echo $langs->trans("Add"); ?>"<?php if (! $nbofcontacts) echo ' disabled'; ?>>
+			<input type="submit" id="add-customer-contact" class="button" value="<?php echo $langs->trans("Add"); ?>"<?php if (!$nbofcontacts) echo ' disabled'; ?>>
 		</div>
 	</form>
 
@@ -162,11 +162,11 @@ print "</div>";
 
 // TODO: replace this with direct SQL string to use $db->sort($sortfield, $sortorder)
 $list = array();
-foreach(array('internal', 'external') as $source)
+foreach (array('internal', 'external') as $source)
 {
 	$tmpobject = $object;
 
-	if (($object->element == 'shipping'|| $object->element == 'reception') && is_object($objectsrc))
+	if (($object->element == 'shipping' || $object->element == 'reception') && is_object($objectsrc))
 	{
 		$tmpobject = $objectsrc;
 	}
@@ -200,27 +200,27 @@ foreach(array('internal', 'external') as $source)
 		{
 			$entry->thirdparty = $conf->global->MAIN_INFO_SOCIETE_NOM;
 		}
-		elseif (! $tab[$i]['socid'])
+		elseif (!$tab[$i]['socid'])
 		{
 			$entry->thirdparty = "";
 		}
 
-		if ($tab[$i]['source']=='internal')
+		if ($tab[$i]['source'] == 'internal')
 		{
 			$userstatic->fetch($tab[$i]['id']);
 			$entry->contact = $userstatic->getNomUrl(-1, '', 0, 0, 0, 0, '', 'valignmiddle');
 		}
-		elseif ($tab[$i]['source']=='external')
+		elseif ($tab[$i]['source'] == 'external')
 		{
 			$contactstatic->fetch($tab[$i]['id']);
-			$entry->contact =$contactstatic->getNomUrl(1, '', 0, '', 0, 0);
+			$entry->contact = $contactstatic->getNomUrl(1, '', 0, '', 0, 0);
 		}
 
-		if ($tab[$i]['source']=='internal')
+		if ($tab[$i]['source'] == 'internal')
 		{
 			$entry->status = $userstatic->LibStatut($tab[$i]['statuscontact'], 3);
 		}
-		elseif ($tab[$i]['source']=='external')
+		elseif ($tab[$i]['source'] == 'external')
 		{
 			$entry->status = $contactstatic->LibStatut($tab[$i]['statuscontact'], 3);
 		}
@@ -279,7 +279,7 @@ print_liste_field_titre($arrayfields['status']['label'], $_SERVER["PHP_SELF"], "
 print_liste_field_titre($arrayfields['link']['label'], $_SERVER["PHP_SELF"], "", "", "", "", $sortfield, $sortorder, 'center maxwidthsearch ');
 print "</tr>";
 
-foreach($list as $entry)
+foreach ($list as $entry)
 {
 	print '<tr class="oddeven">';
 
@@ -314,8 +314,8 @@ print "</div>";
 print "<!-- TEMPLATE CONTACTS HOOK BEGIN HERE -->\n";
 if (is_object($hookmanager)) {
     $hookmanager->initHooks(array('contacttpl'));
-    $parameters=array();
-    $reshook=$hookmanager->executeHooks('formContactTpl', $parameters, $object, $action);
+    $parameters = array();
+    $reshook = $hookmanager->executeHooks('formContactTpl', $parameters, $object, $action);
 }
 print "<!-- END PHP TEMPLATE CONTACTS -->\n";
 

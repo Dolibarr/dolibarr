@@ -20,7 +20,7 @@
  *	\ingroup    product
  *	\brief      File of class to calculate prices using expression
  */
-require_once DOL_DOCUMENT_ROOT.'/includes/evalmath/evalmath.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/class/evalmath.class.php';
 require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.product.class.php';
 require_once DOL_DOCUMENT_ROOT.'/product/dynamic_price/class/price_expression.class.php';
 require_once DOL_DOCUMENT_ROOT.'/product/dynamic_price/class/price_global_variable.class.php';

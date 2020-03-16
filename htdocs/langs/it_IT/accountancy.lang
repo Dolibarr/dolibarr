@@ -228,10 +228,11 @@ ThirdpartyAccountNotDefinedOrThirdPartyUnknownSubledgerIgnored=Third-party unkno
 ThirdpartyAccountNotDefinedOrThirdPartyUnknownBlocking=Third-party account not defined or third party unknown. Blocking error.
 UnknownAccountForThirdpartyAndWaitingAccountNotDefinedBlocking=Unknown third-party account and waiting account not defined. Blocking error
 PaymentsNotLinkedToProduct=Payment not linked to any product / service
+ShowOpeningBalance=Show opening balance
+HideOpeningBalance=Hide opening balance
 
 Pcgtype=Gruppo di conto
-Pcgsubtype=Sottogruppo di conto
-PcgtypeDesc=Group and subgroup of account are used as predefined 'filter' and 'grouping' criteria for some accounting reports. For example, 'INCOME' or 'EXPENSE' are used as groups for accounting accounts of products to build the expense/income report.
+PcgtypeDesc=Group of account are used as predefined 'filter' and 'grouping' criteria for some accounting reports. For example, 'INCOME' or 'EXPENSE' are used as groups for accounting accounts of products to build the expense/income report.
 
 TotalVente=Total turnover before tax
 TotalMarge=Margine totale sulle vendite
@@ -270,6 +271,7 @@ ChangeBinding=Cambia il piano dei conti
 Accounted=Accounted in ledger
 NotYetAccounted=Not yet accounted in ledger
 ShowTutorial=Mostra tutorial
+NotReconciled=Non conciliata
 
 ## Admin
 ApplyMassCategories=Applica categorie di massa

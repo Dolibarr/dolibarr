@@ -2911,7 +2911,7 @@ class Form
 							$objp->fprice = $price_result;
 							if ($objp->quantity >= 1)
 							{
-								$objp->unitprice = $objp->fprice / $objp->quantity;	// Replace dynamically unitprice
+								$objp->unitprice = $objp->fprice / $objp->quantity; // Replace dynamically unitprice
 							}
 						}
 					}
@@ -6207,7 +6207,7 @@ class Form
 			$out .= ajax_combobox($htmlname);
 		}
 
-		$out .= '<select id="'.preg_replace('/^\./', '', $htmlname).'" '.($disabled ? 'disabled ' : '').'class="flat '.(preg_replace('/^\./', '', $htmlname)).($morecss ? ' '.$morecss : '').'"';
+		$out .= '<select id="'.preg_replace('/^\./', '', $htmlname).'" '.($disabled ? 'disabled="disabled" ' : '').'class="flat '.(preg_replace('/^\./', '', $htmlname)).($morecss ? ' '.$morecss : '').'"';
 		$out .= ' name="'.preg_replace('/^\./', '', $htmlname).'" '.($moreparam ? $moreparam : '');
 		$out .= '>';
 
@@ -8081,9 +8081,13 @@ class Form
 		$ret .= $langs->trans("Filters");
 		$ret .= '</a>';
 		//$ret .= '<button type="submit" class="liste_titre button_search paddingleftonly" name="button_search_x" value="x"><span class="fa fa-search"></span></button>';
-		$ret .= '<div name="search_component_params" class="search_component_params inline-block minwidth500 maxwidth300onsmartphone">';
-		$ret .= '<input type="text" name="search_component_params_input" class="search_component_params_input" placeholder="'.$langs->trans("Search").'" value="'.GETPOST("search_component_params_input").'">';
+		$ret .= '<div name="search_component_params" class="search_component_params inline-block minwidth500 maxwidth300onsmartphone valignmiddle">';
+		$texttoshow = '<div class="opacitymedium inline-block search_component_searchtext">'.$langs->trans("Search").'</div>';
+
+		$ret .= '<div class="search_component inline-block valignmiddle">'.$texttoshow.'</div>';
 		$ret .= '</div>';
+		$ret .= '<input type="hidden" name="search_component_params_hidden" class="search_component_params_hidden" value="'.GETPOST("search_component_params_hidden").'">';
+		// For compatibility with forms that show themself the search criteria in addition of this component, we output the fields
 		foreach ($arrayofcriterias as $criterias) {
 		    foreach ($criterias as $criteriafamilykey => $criteriafamilyval) {
 		    	if (in_array('search_'.$criteriafamilykey, $arrayofinputfieldsalreadyoutput)) continue;

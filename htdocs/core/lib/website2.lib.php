@@ -159,7 +159,7 @@ function dolSavePageContent($filetpl, Website $object, WebsitePage $objectpage)
 				$tmpshortlangcode = '';
 				if ($tmppage->lang) $tmpshortlangcode = preg_replace('/[_-].*$/', '', $tmppage->lang); // en_US or en-US -> en
 				if ($tmpshortlangcode != $shortlangcode) {
-					$tplcontent .= '<link rel="alternate" hreflang="'.$tmpshortlangcode.'" href="'.($object->fk_default_home == $tmppage->id ? '/' : '/'.$tmpshortlangcode.'/'.$tmppage->pageurl.'.php').'" />'."\n";
+					$tplcontent .= '<link rel="alternate" hreflang="'.$tmpshortlangcode.'" href="'.($object->fk_default_home == $tmppage->id ? '/' : (($tmpshortlangcode != substr($object->lang, 0, 2) ? '/'.$tmpshortlangcode : '')).'/'.$tmppage->pageurl.'.php').'" />'."\n";
 				}
 			}
 		}
@@ -176,7 +176,7 @@ function dolSavePageContent($filetpl, Website $object, WebsitePage $objectpage)
 					$tmpshortlangcode = '';
 					if ($obj->lang) $tmpshortlangcode = preg_replace('/[_-].*$/', '', $obj->lang); // en_US or en-US -> en
 					if ($tmpshortlangcode != $shortlangcode) {
-						$tplcontent .= '<link rel="alternate" hreflang="'.$tmpshortlangcode.'" href="'.($object->fk_default_home == $obj->id ? '/' : '/'.$tmpshortlangcode.'/'.$obj->pageurl.'.php').'" />'."\n";
+						$tplcontent .= '<link rel="alternate" hreflang="'.$tmpshortlangcode.'" href="'.($object->fk_default_home == $obj->id ? '/' : (($tmpshortlangcode != substr($object->lang, 0, 2) ? '/'.$tmpshortlangcode : '')).'/'.$obj->pageurl.'.php').'" />'."\n";
 					}
 				}
 			}
@@ -184,7 +184,7 @@ function dolSavePageContent($filetpl, Website $object, WebsitePage $objectpage)
 		else dol_print_error($db);
 	}
 	// Add canonical reference
-	$tplcontent .= '<link href="'.(($objectpage->id == $object->fk_default_home) ? '/' : (($shortlangcode != substr($object->lang, 0, 2) ? '/'.$shortlangcode : '') .'/'.$objectpage->pageurl.'.php')).'" rel="canonical" />'."\n";
+	$tplcontent .= '<link href="'.(($objectpage->id == $object->fk_default_home) ? '/' : (($shortlangcode != substr($object->lang, 0, 2) ? '/'.$shortlangcode : '').'/'.$objectpage->pageurl.'.php')).'" rel="canonical" />'."\n";
 	// Add manifest.json on homepage
 	$tplcontent .= '<?php if ($website->use_manifest) { print \'<link rel="manifest" href="/manifest.json.php" />\'."\n"; } ?>'."\n";
 	$tplcontent .= '<!-- Include link to CSS file -->'."\n";

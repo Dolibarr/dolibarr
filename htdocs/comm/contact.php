@@ -31,7 +31,7 @@ $langs->load("companies");
 
 $sortfield=GETPOST('sortfield', 'alpha');
 $sortorder=GETPOST('sortorder', 'alpha');
-$page=GETPOST('page', 'int');
+$page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOST("page", 'int');
 if (! $sortorder) $sortorder="ASC";
 if (! $sortfield) $sortfield="p.name";
 if ($page < 0) { $page = 0; }

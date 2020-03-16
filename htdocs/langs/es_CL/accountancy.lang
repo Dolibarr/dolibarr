@@ -164,7 +164,6 @@ ThirdpartyAccountNotDefinedOrThirdPartyUnknown=Cuenta de terceros no definida o 
 ThirdpartyAccountNotDefinedOrThirdPartyUnknownBlocking=Cuenta de terceros no definida o tercero desconocido. Error de bloqueo.
 UnknownAccountForThirdpartyAndWaitingAccountNotDefinedBlocking=Cuenta de terceros desconocida y cuenta de espera no definida. Error de bloqueo
 PaymentsNotLinkedToProduct=Pago no vinculado a ningún producto / servicio
-PcgtypeDesc=El grupo y el subgrupo de cuenta se utilizan como criterios predefinidos de &quot;filtro&quot; y &quot;agrupación&quot; para algunos informes contables. Por ejemplo, &#39;INGRESOS&#39; o &#39;GASTOS&#39; se utilizan como grupos para cuentas contables de productos para generar el informe de gastos / ingresos.
 TotalVente=Volumen de negocios total antes de impuestos
 TotalMarge=Margen total de ventas
 DescVentilCustomer=Consulte aquí la lista de líneas de facturación de clientes vinculadas (o no) a una cuenta de contabilidad de producto

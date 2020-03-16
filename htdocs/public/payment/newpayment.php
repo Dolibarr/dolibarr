@@ -195,7 +195,7 @@ if ((empty($paymentmethod) || $paymentmethod == 'paybox') && ! empty($conf->payb
 }
 if ((empty($paymentmethod) || $paymentmethod == 'stripe') && ! empty($conf->stripe->enabled))
 {
-	require_once DOL_DOCUMENT_ROOT.'/stripe/config.php';	// This include also /stripe/lib/stripe.lib.php, /includes/stripe/init.php, ...
+	require_once DOL_DOCUMENT_ROOT.'/stripe/config.php';	// This include also /stripe/lib/stripe.lib.php, /includes/stripe/stripe-php/init.php, ...
 }
 
 // Initialize $validpaymentmethod
@@ -1719,7 +1719,6 @@ if ($action != 'dopayment')
 
 			if ((empty($paymentmethod) || $paymentmethod == 'paybox') && !empty($conf->paybox->enabled))
 			{
-				// If STRIPE_PICTO_FOR_PAYMENT is 'cb' we show a picto of a crdit card instead of paybox
 				print '<br><div class="button buttonpayment" id="div_dopayment_paybox"><span class="fa fa-credit-card"></span> <input class="" type="submit" id="dopayment_paybox" name="dopayment_paybox" value="'.$langs->trans("PayBoxDoPayment").'">';
 				print '<br>';
 				print '<span class="buttonpaymentsmall">'.$langs->trans("CreditOrDebitCard").'</span>';
@@ -1740,7 +1739,6 @@ if ($action != 'dopayment')
 
 			if ((empty($paymentmethod) || $paymentmethod == 'stripe') && !empty($conf->stripe->enabled))
 			{
-				// If STRIPE_PICTO_FOR_PAYMENT is 'cb' we show a picto of a crdit card instead of stripe
 				print '<br><div class="button buttonpayment" id="div_dopayment_stripe"><span class="fa fa-credit-card"></span> <input class="" type="submit" id="dopayment_stripe" name="dopayment_stripe" value="'.$langs->trans("StripeDoPayment").'">';
 				print '<input type="hidden" name="noidempotency" value="'.GETPOST('noidempotency', 'int').'">';
 				print '<br>';
