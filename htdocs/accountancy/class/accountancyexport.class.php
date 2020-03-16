@@ -1089,19 +1089,18 @@ class AccountancyExport
 					$soc = $this->db->fetch_object($resql);
 
 	                $address=array('','','');
-                    if (strpos($soc->address,"\n")!==false) {
-	                    $address = explode("\n",$soc->address);
+                    if (strpos($soc->address, "\n")!==false) {
+	                    $address = explode("\n", $soc->address);
 	                    if (is_array($address) && count($address)>0) {
 	                    	foreach($address as $key=>$data) {
 			                    $address[$key]=str_replace(array("\t", "\n", "\r"), "", $data);
-			                    $address[$key]=dol_trunc($address[$key],40,'right','UTF-8',1);
+			                    $address[$key]=dol_trunc($address[$key], 40, 'right', 'UTF-8', 1);
 		                    }
 	                    }
                     } else {
-	                    $address[0] =  substr(str_replace(array("\t", "\r"), " ", $soc->address),0,40);
-	                    $address[1] =  substr(str_replace(array("\t", "\r"), " ", $soc->address),41,40);
-	                    $address[2] =  substr(str_replace(array("\t", "\r"), " ", $soc->address),82,40);
-
+	                    $address[0] =  substr(str_replace(array("\t", "\r"), " ", $soc->address), 0, 40);
+	                    $address[1] =  substr(str_replace(array("\t", "\r"), " ", $soc->address), 41, 40);
+	                    $address[2] =  substr(str_replace(array("\t", "\r"), " ", $soc->address), 82, 40);
                     }
 
 					$type_enregistrement = 'C';
