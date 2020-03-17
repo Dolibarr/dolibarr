@@ -1411,7 +1411,9 @@ class Setup extends DolibarrApi
      *
      * @param	string			$confname	Name of conf variable to get
      * @return  array|mixed 				Data without useless information
-     * @throws  RestException	500			Error Bad or unknown value for constname
+     *
+     * @throws RestException 403 Forbidden
+	 * @throws RestException 500 Error Bad or unknown value for constname
      */
     public function getConf($confname)
     {
@@ -1419,14 +1421,14 @@ class Setup extends DolibarrApi
 
     	if (!DolibarrApiAccess::$user->admin
     		&& (empty($conf->global->API_LOGIN_ALLOWED_FOR_ADMIN_CHECK) || DolibarrApiAccess::$user->login != $conf->global->API_LOGIN_ALLOWED_FOR_ADMIN_CHECK)) {
-    		throw new RestException(503, 'Error API open to admin users only or to the login user defined with constant API_LOGIN_ALLOWED_FOR_ADMIN_CHECK');
+    		throw new RestException(403, 'Error API open to admin users only or to the login user defined with constant API_LOGIN_ALLOWED_FOR_ADMIN_CHECK');
     	}
 
     	if (! preg_match('/[^a-zA-Z0-9_]/', $confname) || ! isset($conf->global->$confname)) {
     		throw new RestException(500, 'Error Bad or unknown value for constname');
     	}
     	if (preg_match('/(_pass|password|secret|_key|key$)/i', $confname)) {
-    		throw new RestException(503, 'Forbidden');
+    		throw new RestException(403, 'Forbidden');
     	}
 
     	return $conf->global->$confname;
@@ -1440,7 +1442,9 @@ class Setup extends DolibarrApi
      *
      * @url     GET checkintegrity
      *
-     * @throws RestException
+     * @throws RestException 404 Signature file not found
+     * @throws RestException 500 Technical error
+     * @throws RestException 503 Forbidden
      */
     public function getCheckIntegrity($target)
     {

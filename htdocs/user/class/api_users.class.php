@@ -290,7 +290,8 @@ class Users extends DolibarrApi
 	 * @param int $id     Id of user
 	 * @return array      Array of group objects
 	 *
-	 * @throws RestException
+	 * @throws RestException 403 Not allowed
+     * @throws RestException 404 Not found
 	 *
 	 * @url GET {id}/groups
 	 */
@@ -299,7 +300,7 @@ class Users extends DolibarrApi
 		$obj_ret = array();
 
 		if (!DolibarrApiAccess::$user->rights->user->user->lire) {
-			throw new RestException(401);
+			throw new RestException(403);
 		}
 
 		$user = new User($this->db);
