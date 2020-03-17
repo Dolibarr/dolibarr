@@ -50,6 +50,7 @@ top_httphead('text/css');
 // Important: Following code is to avoid page request by browser and PHP CPU at each Dolibarr page access.
 if (empty($dolibarr_nocache)) header('Cache-Control: max-age=10800, public, must-revalidate');
 else header('Cache-Control: no-cache');
+header('Cache-Control: no-cache');
 
 
 require DOL_DOCUMENT_ROOT.'/theme/'.$conf->theme.'/theme_vars.inc.php';
@@ -119,7 +120,7 @@ button.calcbutton2 {
 	width: calc(25% - 2px);
 	height: calc(25% - 2px);
 	font-weight: bold;
-	font-size: 8pt;
+	font-size: 10pt;
 	margin: 1px;
 }
 
@@ -157,6 +158,19 @@ button.actionbutton {
 	height: calc(25% - 2px);
 	margin: 1px;
    	border-width: 0;
+}
+
+button.item_value {
+	background: #bbbbbb;
+	border: #000000 1px solid;
+	border-radius: 4px;
+	padding: 8px;
+}
+
+button.item_value.selected {
+	background: #ffffff;
+	color: #000000;
+	font-weight: bold;
 }
 
 div[aria-describedby="dialog-info"] button:before {
