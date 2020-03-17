@@ -47,6 +47,12 @@ $idproduct = GETPOST('idproduct', 'int');
 $place = (GETPOST('place', 'int') > 0 ? GETPOST('place', 'int') : 0); // $place is id of table for Bar or Restaurant
 $placeid = 0; // $placeid is ID of invoice
 
+if (empty($user->rights->takepos->run)) {
+	access_forbidden();
+}
+
+
+
 if ($conf->global->TAKEPOS_PHONE_BASIC_LAYOUT == 1 && $conf->browser->layout == 'phone')
 {
 	// DIRECT LINK TO THIS PAGE FROM MOBILE AND NO TERMINAL SELECTED
@@ -918,14 +924,16 @@ if ($placeid > 0)
             if (empty($conf->global->TAKEPOS_SHOW_N_FIRST_LINES)) {
             	$tooltiptext = '<b>'.$langs->trans("Ref").'</b> : '.$line->product_ref.'<br>';
             	$tooltiptext .= '<b>'.$langs->trans("Label").'</b> : '.$line->product_label.'<br>';
-            	$tooltiptext .= '<br>';
-            	$tooltiptext .= $line->desc;
-            	$htmlforlines .= $form->textwithpicto($line->product_label ? $line->product_label : $line->product_ref, $tooltiptext);
+            	if ($line->product_label != $line->desc) {
+            		if ($line->desc) $tooltiptext .= '<br>';
+    	        	$tooltiptext .= $line->desc;
+            	}
+            	$htmlforlines .= $form->textwithpicto($line->product_label ? $line->product_label : ($line->product_ref ? $line->product_ref : dolGetFirstLineOfText($line->desc, 1)), $tooltiptext);
             } else {
             	if ($line->product_label) $htmlforlines .= $line->product_label;
-            	if ($line->product_label && $line->desc) $htmlforlines .= '<br>';
             	if ($line->product_label != $line->desc)
 	            {
+	            	if ($line->product_label && $line->desc) $htmlforlines .= '<br>';
 	            	$firstline = dolGetFirstLineOfText($line->desc, $conf->global->TAKEPOS_SHOW_N_FIRST_LINES);
 	                if ($firstline != $line->desc)
 	                {

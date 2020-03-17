@@ -305,6 +305,7 @@ switch ($action)
 				$payment->note=$langs->trans("Payment").' '.$langs->trans("Invoice").' '.$obj_facturation->numInvoice();
 				$payment->paiementid=$invoice->mode_reglement_id;
 				$payment->num_paiement='';
+				$payment->num_payment='';
 
 				$paiement_id = $payment->create($user);
 				if ($paiement_id > 0)

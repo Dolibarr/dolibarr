@@ -34,6 +34,10 @@ $place = (GETPOST('place', 'int') > 0 ? GETPOST('place', 'int') : 0); // $place 
 
 $facid = GETPOST('facid', 'int');
 
+if (empty($user->rights->takepos->run)) {
+	access_forbidden();
+}
+
 
 /*
  * View

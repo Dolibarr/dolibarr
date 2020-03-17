@@ -299,10 +299,12 @@ if (empty($reshook))
 	        $paiement->multicurrency_amounts = $multicurrency_amounts;
 	        $paiement->paiementid   = GETPOST('paiementid', 'int');
 
-	        $paiement->num_payment  = GETPOST('num_paiement', 'alpha');
+	        $paiement->num_payment  = GETPOST('num_paiement', 'alphanohtml');
 	        $paiement->note_private = GETPOST('comment', 'alpha');
-	        $paiement->num_paiement = $paiement->num_payment; // For bacward compatibility
-	        $paiement->note         = $paiement->note_private; // For bacward compatibility
+	        $paiement->num_paiement = $paiement->num_payment; // For backward compatibility
+	        $paiement->num_payment = $paiement->num_payment;
+	        $paiement->note         = $paiement->note_private; // For backward compatibility
+	        $paiement->note_private = $paiement->note_private;
 
 	        if (!$error)
 	        {

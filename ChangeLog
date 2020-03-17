@@ -8,7 +8,10 @@ For Users:
 NEW: Module MO (Manufacturing Order) is available as stable module.
 
 For Developers or integrators:
-
+* A new way to navigate between pages in list is available. To use it, you must
+  - replace $page = GETPOST('page', 'int') with $page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOST("page", 'int'); 
+  - remove input field in form '<input type="hidden" name="page" value="'.$page.'">';'
+  - add parameter $pagenavastextinput to value 1 when calling print_barre_liste   
 
 
 WARNING:
