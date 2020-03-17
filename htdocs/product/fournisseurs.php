@@ -53,7 +53,7 @@ $socid=GETPOST('socid', 'int');
 $cost_price=GETPOST('cost_price', 'alpha');
 $backtopage=GETPOST('backtopage', 'alpha');
 $error=0;
-$canmodifyotherentityfournprice = 1
+$canmodifyotherentityfournprice = 1 ;
 
 // If socid provided by ajax company selector
 if (! empty($_REQUEST['search_fourn_id']))
