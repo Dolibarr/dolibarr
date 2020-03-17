@@ -207,7 +207,7 @@ if ($conf->global->TAKEPOS_PRINT_METHOD == "browser" || $conf->global->TAKEPOS_P
 
 	// Customer information
 	print '<tr class="oddeven"><td>';
-	print $langs->trans('ShowCustomer');
+	print $langs->trans('PrintCustomerOnReceipts');
 	print '<td colspan="2">';
 	print $form->selectyesno("TAKEPOS_SHOW_CUSTOMER", $conf->global->TAKEPOS_SHOW_CUSTOMER, 1);
 	print "</td></tr>\n";

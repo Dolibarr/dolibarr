@@ -48,6 +48,11 @@ if ($setterminal > 0)
 
 $langs->loadLangs(array("bills", "orders", "commercial", "cashdesk", "receiptprinter"));
 
+if (empty($user->rights->takepos->run)) {
+	access_forbidden();
+}
+
+
 /*
  * View
  */

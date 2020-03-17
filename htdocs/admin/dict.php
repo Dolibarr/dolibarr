@@ -70,7 +70,7 @@ $active = 1;
 
 $sortfield = GETPOST("sortfield", 'alpha');
 $sortorder = GETPOST("sortorder", 'alpha');
-$page = GETPOST("page", 'int');
+$page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOST("page", 'int');
 if (empty($page) || $page == -1) { $page = 0; }     // If $page is not defined, or '' or -1
 $offset = $listlimit * $page;
 $pageprev = $page - 1;
@@ -767,7 +767,7 @@ if (GETPOST('actionadd') || GETPOST('actionmodify'))
 
             if ($keycode == 'sortorder')		// For column name 'sortorder', we use the field name 'position'
             {
-            	$sql .= "'".(int) GETPOST('position', 'int');
+            	$sql .= "'".(int) GETPOST('position', 'int')."'";
             }
             elseif ($_POST[$keycode] == '' && !($keycode == 'code' && $id == 10)) $sql .= "null"; // For vat, we want/accept code = ''
             elseif ($keycode == 'content') {

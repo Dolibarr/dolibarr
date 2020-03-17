@@ -67,7 +67,7 @@ $colorbacklinepairhover = '230,237,244'; // line hover
 $colorbacklinepairchecked = '230,237,244'; // line checked
 $colorbacklinebreak = '233,228,230'; // line break
 $colorbackbody = '255,255,255';
-$colortexttitlenotab = '90,50,120'; // 150,90,121 140,80,10 or 10,140,80  #875a7b
+$colortexttitlenotab = '0,113,120'; // 150,90,121 140,80,10 or 10,140,80  #875a7b  green=0,113,120, violet: 0,50,120
 $colortexttitle = '0,0,0';
 $colortext = '0,0,0';
 $colortextlink = '10, 20, 100';

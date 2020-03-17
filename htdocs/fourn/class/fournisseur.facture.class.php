@@ -859,7 +859,10 @@ class FactureFournisseur extends CommonInvoice
 					$line->multicurrency_total_tva = $obj->multicurrency_total_tva;
 					$line->multicurrency_total_ttc = $obj->multicurrency_total_ttc;
 
-	                $this->lines[$i] = $line;
+	                // Extra fields
+					$line->fetch_optionals();
+
+					$this->lines[$i] = $line;
 
                     $i++;
                 }

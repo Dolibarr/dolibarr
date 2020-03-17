@@ -1912,8 +1912,8 @@ class Categorie extends CommonObject
 	/**
 	 *	Return label of contact status
 	 *
-	 *	@param      int			$mode       0=libelle long, 1=libelle court, 2=Picto + Libelle court, 3=Picto, 4=Picto + Libelle long, 5=Libelle court + Picto
-	 * 	@return 	string					Label of contact status
+	 *	@param      int		$mode       0=Long label, 1=Short label, 2=Picto + Short label, 3=Picto, 4=Picto + Long label, 5=Short label + Picto, 6=Long label + Picto
+	 * 	@return 	string				Label of contact status
 	 */
 	public function getLibStatut($mode)
 	{
@@ -1968,8 +1968,9 @@ class Categorie extends CommonObject
 	 */
 	public static function getFilterJoinQuery($type, $rowIdName)
 	{
-		return " LEFT JOIN ".MAIN_DB_PREFIX."categorie_".$type." as cp"
-			 . " ON ".$rowIdName." = cp.fk_".$type;
+		if ($type == 'bank_account') $type = 'account';
+
+		return " LEFT JOIN ".MAIN_DB_PREFIX."categorie_".$type." as cp ON ".$rowIdName." = cp.fk_".$type;
 	}
 
 	/**
@@ -1982,6 +1983,8 @@ class Categorie extends CommonObject
 	 */
 	public static function getFilterSelectQuery($type, $rowIdName, $searchList)
 	{
+		if ($type == 'bank_account') $type = 'account';
+
 		if (empty($searchList) && !is_array($searchList))
 		{
 			return "";

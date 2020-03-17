@@ -51,7 +51,7 @@ $websiteid = GETPOST('websiteid', 'int');
 $websitekey = GETPOST('website', 'alpha');
 $page = GETPOST('page', 'alpha');
 $pageid = GETPOST('pageid', 'int');
-$pageref = GETPOST('pageref', 'aZ09');
+$pageref = GETPOST('pageref', 'alphanohtml');
 $action = GETPOST('action', 'aZ09');
 $confirm = GETPOST('confirm', 'alpha');
 $cancel = GETPOST('cancel', 'alpha');
@@ -89,7 +89,7 @@ if (GETPOST('refreshsite') || GETPOST('refreshsite_x') || GETPOST('refreshsite.x
 $limit = GETPOST('limit', 'int') ?GETPOST('limit', 'int') : $conf->liste_limit;
 $sortfield = GETPOST("sortfield", 'alpha');
 $sortorder = GETPOST("sortorder", 'alpha');
-$page = GETPOST("page", 'int');
+$page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOST("page", 'int');
 if (empty($page) || $page == -1) { $page = 0; }     // If $page is not defined, or '' or -1
 $offset = $limit * $page;
 $pageprev = $page - 1;
@@ -794,6 +794,7 @@ if ($action == 'addcontainer')
 		$objectpage->image = GETPOST('WEBSITE_IMAGE', 'alpha');
 		$objectpage->keywords = GETPOST('WEBSITE_KEYWORDS', 'alphanohtml');
 		$objectpage->htmlheader = GETPOST('htmlheader', 'none');
+		$objectpage->author_alias = GETPOST('WEBSITE_AUTHORALIAS', 'alphanohtml');
 
 		$substitutionarray = array();
 		$substitutionarray['__WEBSITE_CREATE_BY__'] = $user->getFullName($langs);
@@ -849,6 +850,13 @@ if ($action == 'addcontainer')
 				{
 					$error++;
 					setEventMessages($object->error, $object->errors, 'errors');
+				} else {
+					$filetpl = $pathofwebsite.'/page'.$pageid.'.tpl.php';
+
+					// Generate the index.php page to be the home page
+					$result = dolSaveIndexPage($pathofwebsite, $fileindex, $filetpl, $filewrapper);
+
+					if ($result <= 0) setEventMessages('Failed to write file '.$fileindex, null, 'errors');
 				}
 			}
 		}
@@ -1327,8 +1335,9 @@ if ($action == 'setashome')
 	{
 		$db->commit();
 
+		$filetpl = $pathofwebsite.'/page'.$pageid.'.tpl.php';
+
 		// Generate the index.php page to be the home page
-		//-------------------------------------------------
 		$result = dolSaveIndexPage($pathofwebsite, $fileindex, $filetpl, $filewrapper);
 
 		if ($result) setEventMessages($langs->trans("Saved"), null, 'mesgs');
@@ -1429,6 +1438,7 @@ if ($action == 'updatemeta')
 		$objectpage->keywords = GETPOST('WEBSITE_KEYWORDS', 'alphanohtml');
 		$objectpage->htmlheader = trim(GETPOST('htmlheader', 'none'));
 		$objectpage->fk_page = (GETPOST('pageidfortranslation', 'int') > 0 ? GETPOST('pageidfortranslation', 'int') : 0);
+		$objectpage->author_alias = trim(GETPOST('WEBSITE_AUTHORALIAS', 'alphanohtml'));
 
 		$newdatecreation = dol_mktime(GETPOST('datecreationhour', 'int'), GETPOST('datecreationmin', 'int'), GETPOST('datecreationsec', 'int'), GETPOST('datecreationmonth', 'int'), GETPOST('datecreationday', 'int'), GETPOST('datecreationyear', 'int'));
 		if ($newdatecreation) $objectpage->date_creation = $newdatecreation;
@@ -2064,7 +2074,7 @@ if (!GETPOST('hide_websitemenu'))
 	// List of website
 	print '<span class="websiteselection">';
 	$out = '';
-	$out .= '<select name="website" class="minwidth100 maxwidth300" id="website">';
+	$out .= '<select name="website" class="minwidth100 maxwidth300 maxwidth150onsmartphone" id="website">';
 	if (empty($object->records)) $out .= '<option value="-1">&nbsp;</option>';
 	// Loop on each sites
 	$i = 0;
@@ -2187,7 +2197,26 @@ if (!GETPOST('hide_websitemenu'))
     		$htmltext .= '<br>';
     		$htmltext .= '<br>'.$langs->trans("CheckVirtualHostPerms", $langs->transnoentitiesnoconv("ReadPerm"), DOL_DOCUMENT_ROOT);
     		$htmltext .= '<br>'.$langs->trans("CheckVirtualHostPerms", $langs->transnoentitiesnoconv("WritePerm"), DOL_DATA_ROOT.'/website<br>'.DOL_DATA_ROOT.'/medias');
-    		$htmltext .= '<br>';
+
+    		$examplewithapache = '<Directory "'.DOL_DOCUMENT_ROOT.'">'."\n";
+    		$examplewithapache .= 'AllowOverride FileInfo Options
+    		Options       -Indexes -MultiViews -FollowSymLinks -ExecCGI
+    		Require all granted
+    		</Directory>
+    		<Directory "'.DOL_DATA_ROOT.'/website">
+    		AllowOverride FileInfo Options
+    		Options       -Indexes -MultiViews +FollowSymLinks -ExecCGI
+    		Require all granted
+    		</Directory>
+    		<Directory "'.DOL_DATA_ROOT.'/medias">
+    		AllowOverride FileInfo Options
+    		Options       -Indexes -MultiViews -FollowSymLinks -ExecCGI
+    		Require all granted
+    		</Directory>';
+
+    		$htmltext .= '<br>'.$langs->trans("ExampleToUseInApacheVirtualHostConfig").':<br>';
+    		$htmltext .= '<div class="centpercent exampleapachesetup">'.dol_nl2br(dol_escape_htmltag($examplewithapache, 1, 1)).'</div>';
+
     		$htmltext .= '<br>';
     		$htmltext .= $langs->trans("YouCanAlsoTestWithPHPS", $dataroot);
     		$htmltext .= '<br>';
@@ -2231,7 +2260,7 @@ if (!GETPOST('hide_websitemenu'))
 
 		if ($action != 'addcontainer')
 		{
-			print '<span class="websiteselection">'.$formwebsite->selectContainer($website, 'pageid', $pageid, 0, $action).'</span>';
+			print '<span class="websiteselection">'.$formwebsite->selectContainer($website, 'pageid', $pageid, 0, $action, 'maxwidth200onsmartphone').'</span>';
 		}
 		else
 		{
@@ -2363,7 +2392,7 @@ if (!GETPOST('hide_websitemenu'))
 								if (! isEditingEnabled || forceenable)
 								{
 									console.log("Enable inline edit");
-									jQuery(\'section[contenteditable="true"]\').each(function(idx){
+									jQuery(\'section[contenteditable="true"],div[contenteditable="true"]\').each(function(idx){
 										var idtouse = $(this).attr(\'id\');
 										console.log("Enable inline edit for "+idtouse);
 										CKEDITOR.inline(idtouse, {
@@ -2392,7 +2421,9 @@ if (!GETPOST('hide_websitemenu'))
 				print $langs->trans("EditInLine");
 				print '</span>';
 
-				if ($websitepage->grabbed_from)
+				//$disableeditinline = $websitepage->grabbed_from;
+				$disableeditinline = 0;
+				if ($disableeditinline)
 				{
 					//print '<input type="submit" class="button bordertransp" disabled="disabled" title="'.dol_escape_htmltag($langs->trans("OnlyEditionOfSourceForGrabbedContent")).'" value="'.dol_escape_htmltag($langs->trans("EditWithEditor")).'" name="editcontent">';
 					print '<a class="nobordertransp opacitymedium nohoverborder marginleftonlyshort"'.$disabled.' href="#" disabled="disabled" title="'.dol_escape_htmltag($langs->trans("OnlyEditionOfSourceForGrabbedContent")).'">'.img_picto($langs->trans("OnlyEditionOfSourceForGrabbedContent"), 'switch_off', '', false, 0, 0, '', 'nomarginleft').'</a>';
@@ -2413,12 +2444,6 @@ if (!GETPOST('hide_websitemenu'))
 				print '</div>';
 				print '<div class="inline-block marginrightonly">';
 				print $langs->trans("ShowSubcontainers");
-				/*if ($websitepage->grabbed_from)
-				{
-					print '<a class="button nobordertransp opacitymedium nohoverborder"'.$disabled.' href="#" disabled="disabled" title="'.dol_escape_htmltag($langs->trans("OnlyEditionOfSourceForGrabbedContent")).'">'.img_picto($langs->trans("OnlyEditionOfSourceForGrabbedContent"),'switch_off','',false,0,0,'','nomarginleft').'</a>';
-				}
-				else
-				{*/
 				if (empty($conf->global->WEBSITE_SUBCONTAINERSINLINE))
 				{
 					print '<a class="nobordertransp nohoverborder marginleftonlyshort"'.$disabled.' href="'.$_SERVER["PHP_SELF"].'?website='.$object->ref.'&pageid='.$websitepage->id.'&action=setshowsubcontainers">'.img_picto($langs->trans("ShowSubContainersOnOff", $langs->transnoentitiesnoconv("Off")), 'switch_off', '', false, 0, 0, '', 'nomarginleft').'</a>';
@@ -3043,6 +3068,7 @@ if ($action == 'editmeta' || $action == 'createcontainer')
 		$pagedatemodification = $objectpage->date_modification;
 		$pageauthorid = $objectpage->fk_user_creat;
 		$pageusermodifid = $objectpage->fk_user_modif;
+		$pageauthoralias = $objectpage->author_alias;
 	}
 	else
 	{
@@ -3050,6 +3076,7 @@ if ($action == 'editmeta' || $action == 'createcontainer')
 		$pagedatecreation = dol_now();
 		$pageauthorid = $user->id;
 		$pageusermodifid = 0;
+		$pageauthoralias = '';
 	}
 	if (GETPOST('WEBSITE_TITLE', 'alpha'))       $pagetitle = GETPOST('WEBSITE_TITLE', 'alpha');
 	if (GETPOST('WEBSITE_PAGENAME', 'alpha'))    $pageurl = GETPOST('WEBSITE_PAGENAME', 'alpha');
@@ -3207,6 +3234,12 @@ if ($action == 'editmeta' || $action == 'createcontainer')
 	    $fuser->fetch($pageauthorid);
 	    print $fuser->getNomUrl(1);
 	}
+	print '</td></tr>';
+
+	print '<tr><td>';
+	print $langs->trans('PublicAuthorAlias');
+	print '</td><td>';
+	print '<input type="text" class="flat minwidth300" name="WEBSITE_AUTHORALIAS" value="'.dol_escape_htmltag($pageauthoralias).'">';
 	print '</td></tr>';
 
 	print '<tr><td>';

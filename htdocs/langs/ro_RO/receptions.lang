@@ -1,5 +1,5 @@
 # Dolibarr language file - Source file is en_US - receptions
-ReceptionsSetup=Product Reception setup
+ReceptionsSetup=Setare Recepţie produse
 RefReception=Ref. recepţie
 Reception=Recepţie
 Receptions=Receptii
@@ -41,5 +41,5 @@ ReceptionLine=Linia de recepție
 ProductQtyInReceptionAlreadySent=Cantitatea de produse din comanda deschisă deja trimisă
 ProductQtyInSuppliersReceptionAlreadyRecevied=Cantitatea de produse din comanda furnizor deschisă deja primită
 ValidateOrderFirstBeforeReception=Mai întâi trebuie să validezi comanda înainte de a putea face recepții.
-ReceptionsNumberingModules=Numbering module for receptions
-ReceptionsReceiptModel=Document templates for receptions
+ReceptionsNumberingModules=Mod de numerotare pentru recepţii 
+ReceptionsReceiptModel=Şabloane documente pentru recepţii

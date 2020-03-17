@@ -121,3 +121,6 @@ BackToHomePage=Quay lại trang chủ...
 TranslationLinks=Liên kết dịch
 YouTryToAccessToAFileThatIsNotAWebsitePage=Bạn cố gắng truy cập vào một trang không phải là trang web
 UseTextBetween5And70Chars=Để thực hành SEO tốt, hãy sử dụng văn bản có từ 5 đến 70 ký tự
+MainLanguage=Main language
+OtherLanguages=Other languages
+UseManifest=Provide a manifest.json file

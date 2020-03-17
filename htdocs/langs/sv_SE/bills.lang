@@ -419,6 +419,7 @@ PaymentCondition14DENDMONTH=Inom 14 dagar efter slutet av månaden
 FixAmount=Fixed amount - 1 line with label '%s'
 VarAmount=Variabelt belopp (%% summa)
 VarAmountOneLine=Variabel mängd (%% tot.) - 1 rad med etikett '%s'
+VarAmountAllLines=Variable amount (%% tot.) - all same lines
 # PaymentType
 PaymentTypeVIR=Banköverföring
 PaymentTypeShortVIR=Banköverföring
@@ -512,13 +513,15 @@ RevenueStamp=Intäkt stämpel
 YouMustCreateInvoiceFromThird=Det här alternativet är endast tillgängligt när du skapar en faktura från fliken "Kund" från tredje part
 YouMustCreateInvoiceFromSupplierThird=Det här alternativet är endast tillgängligt när du skapar en faktura från fliken "Leverantör" till tredje part
 YouMustCreateStandardInvoiceFirstDesc=Du måste först skapa en standardfaktura och konvertera den till "mall" för att skapa en ny mallfaktura
-PDFCrabeDescription=Invoice PDF template Crabe. A complete invoice template 
+PDFCrabeDescription=Invoice PDF template Crabe. A complete invoice template (old implementation of Sponge template)
 PDFSpongeDescription=Faktura PDF mall Svamp. En komplett fakturamall
 PDFCrevetteDescription=Faktura PDF-mall Crevette. En komplett faktura mall för lägesfakturor
 TerreNumRefModelDesc1=Återger nummer med formatet %syymm-nnnn för standardfakturor och %syymm-NNNN för kreditnotor där yy är året, mm månaden och nnnn är en sekvens med ingen paus och ingen återgång till 0
 MarsNumRefModelDesc1=Returnummer med format %syymm-nnnn för standardfakturor, %syymm-nnnn för utbytesfakturor, %syymm-nnnn för betalningsfakturor och %syymm-nnnn för kreditnoteringar var du är år, mm är månad och nnnn är en sekvens utan paus och nej återgå till 0
 TerreNumRefModelError=Ett lagförslag som börjar med $ syymm finns redan och är inte förenligt med denna modell för sekvens. Ta bort den eller byta namn på den för att aktivera denna modul.
 CactusNumRefModelDesc1=Returnummer med format %syymm-nnnn för standardfakturor, %syymm-nnnn för kreditnoteringar och %syymm-nnnn för nedbetalningsfakturor varav år, mm är månad och nnnn är en sekvens utan paus och ingen återgång till 0
+EarlyClosingReason=Early closing reason
+EarlyClosingComment=Early closing note
 ##### Types de contacts #####
 TypeContact_facture_internal_SALESREPFOLL=Representanten uppföljning kundfaktura
 TypeContact_facture_external_BILLING=Kundfaktura kontakt

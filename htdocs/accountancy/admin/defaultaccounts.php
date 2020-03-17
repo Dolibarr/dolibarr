@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2013-2014  Olivier Geffroy         <jeff@jeffinfo.com>
  * Copyright (C) 2013-2014  Florian Henry           <florian.henry@open-concept.pro>
- * Copyright (C) 2013-2019  Alexandre Spangaro      <aspangaro@open-dsi.fr>
+ * Copyright (C) 2013-2020  Alexandre Spangaro      <aspangaro@open-dsi.fr>
  * Copyright (C) 2014-2015  Ari Elbaz (elarifr)     <github@accedinfo.com>
  * Copyright (C) 2014       Marcos García           <marcosgdf@gmail.com>
  * Copyright (C) 2014       Juanjo Menent           <jmenent@2byte.es>
@@ -46,27 +46,35 @@ if (empty($user->rights->accounting->chartofaccount))
 $action = GETPOST('action', 'aZ09');
 
 
-$list_account_main = array (
+$list_account_main = array(
     'ACCOUNTING_ACCOUNT_CUSTOMER',
     'ACCOUNTING_ACCOUNT_SUPPLIER',
     'SALARIES_ACCOUNTING_ACCOUNT_PAYMENT',
 );
 
-$list_account = array ();
+$list_account = array();
 $list_account[] = '---Product---';
-$list_account[] = 'ACCOUNTING_PRODUCT_BUY_ACCOUNT';
 $list_account[] = 'ACCOUNTING_PRODUCT_SOLD_ACCOUNT';
 if ($mysoc->isInEEC()) {
 	$list_account[] = 'ACCOUNTING_PRODUCT_SOLD_INTRA_ACCOUNT';
 }
 $list_account[] = 'ACCOUNTING_PRODUCT_SOLD_EXPORT_ACCOUNT';
+$list_account[] = 'ACCOUNTING_PRODUCT_BUY_ACCOUNT';
+if ($mysoc->isInEEC()) {
+	$list_account[] = 'ACCOUNTING_PRODUCT_BUY_INTRA_ACCOUNT';
+}
+$list_account[] = 'ACCOUNTING_PRODUCT_BUY_EXPORT_ACCOUNT';
 $list_account[] = '---Service---';
-$list_account[] = 'ACCOUNTING_SERVICE_BUY_ACCOUNT';
 $list_account[] = 'ACCOUNTING_SERVICE_SOLD_ACCOUNT';
 if ($mysoc->isInEEC()) {
 	$list_account[] = 'ACCOUNTING_SERVICE_SOLD_INTRA_ACCOUNT';
 }
 $list_account[] = 'ACCOUNTING_SERVICE_SOLD_EXPORT_ACCOUNT';
+$list_account[] = 'ACCOUNTING_SERVICE_BUY_ACCOUNT';
+if ($mysoc->isInEEC()) {
+	$list_account[] = 'ACCOUNTING_SERVICE_BUY_INTRA_ACCOUNT';
+}
+$list_account[] = 'ACCOUNTING_SERVICE_BUY_EXPORT_ACCOUNT';
 $list_account[] = '---Other---';
 $list_account[] = 'ACCOUNTING_VAT_BUY_ACCOUNT';
 $list_account[] = 'ACCOUNTING_VAT_SOLD_ACCOUNT';
@@ -112,25 +120,25 @@ if ($action == 'update') {
 	foreach ($list_account_main as $constname) {
 		$constvalue = GETPOST($constname, 'alpha');
 
-		if (! dolibarr_set_const($db, $constname, $constvalue, 'chaine', 0, '', $conf->entity)) {
-			$error ++;
+		if (!dolibarr_set_const($db, $constname, $constvalue, 'chaine', 0, '', $conf->entity)) {
+			$error++;
 		}
 	}
 
 	foreach ($list_account as $constname) {
-		$reg=array();
+		$reg = array();
 		if (preg_match('/---(.*)---/', $constname, $reg)) {	// This is a separator
 			continue;
 		}
 
 		$constvalue = GETPOST($constname, 'alpha');
 
-	    if (! dolibarr_set_const($db, $constname, $constvalue, 'chaine', 0, '', $conf->entity)) {
-	        $error ++;
+	    if (!dolibarr_set_const($db, $constname, $constvalue, 'chaine', 0, '', $conf->entity)) {
+	        $error++;
 	    }
 	}
 
-	if (! $error) {
+	if (!$error) {
 		setEventMessages($langs->trans("SetupSaved"), null, 'mesgs');
 	} else {
 		setEventMessages($langs->trans("Error"), null, 'errors');
@@ -182,7 +190,7 @@ foreach ($list_account_main as $key) {
 
 
 foreach ($list_account as $key) {
-	$reg=array();
+	$reg = array();
 	if (preg_match('/---(.*)---/', $key, $reg)) {
 		print '<tr class="liste_titre"><td>'.$langs->trans($reg[1]).'</td><td></td></tr>';
 	}
@@ -190,9 +198,9 @@ foreach ($list_account as $key) {
 		print '<tr class="oddeven value">';
 		// Param
 		$label = $langs->trans($key);
-		print '<td width="50%">' . $label . '</td>';
+		print '<td width="50%">'.$label.'</td>';
 		// Value
-		print '<td>';  // Do not force class=right, or it align also the content of the select box
+		print '<td>'; // Do not force class=right, or it align also the content of the select box
 		print $formaccounting->select_account($conf->global->$key, $key, 1, '', 1, 1);
 		print '</td>';
 		print '</tr>';

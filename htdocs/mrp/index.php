@@ -66,6 +66,7 @@ if ($conf->use_javascript_ajax)
     $sql= "SELECT COUNT(t.rowid) as nb, status";
     $sql.=" FROM ".MAIN_DB_PREFIX."mrp_mo as t";
 	$sql.=" GROUP BY t.status";
+	$sql.=" ORDER BY t.status ASC";
     $resql = $db->query($sql);
 
     if ($resql)
@@ -74,18 +75,20 @@ if ($conf->use_javascript_ajax)
     	$i = 0;
 
     	$totalnb=0;
-    	$dataseries=array();
-    	// -1=Canceled, 0=Draft, 1=Validated, (2=Accepted/On process not managed for customer orders), 3=Closed (Sent/Received, billed or not)
+    	$dataseries = array();
+		$colorseries = array();
+		$vals = array();
+
+		include_once DOL_DOCUMENT_ROOT.'/theme/'.$conf->theme.'/theme_vars.inc.php';
+
     	while ($i < $num)
     	{
     		$obj = $db->fetch_object($resql);
     		if ($obj)
     		{
-    			//if ($row[1]!=-1 && ($row[1]!=3 || $row[2]!=1))
-    			{
-    				$dataseries[$obj->status]=array(0=>$staticmo->LibStatut($obj->status), $obj->nb);
-    				$totalnb+=$obj->nb;
-    			}
+    			$vals[$obj->status]=$obj->nb;
+
+   				$totalnb += $obj->nb;
     		}
     		$i++;
     	}
@@ -94,6 +97,24 @@ if ($conf->use_javascript_ajax)
     	print '<div class="div-table-responsive-no-min">';
     	print '<table class="noborder nohover centpercent">';
     	print '<tr class="liste_titre"><th colspan="2">'.$langs->trans("Statistics").' - '.$langs->trans("MO").'</th></tr>'."\n";
+    	$listofstatus = array(0, 1, 2, 3, 9);
+    	foreach ($listofstatus as $status)
+    	{
+    		$dataseries[] = array($staticmo->LibStatut($status, 1), (isset($vals[$status]) ? (int) $vals[$status] : 0));
+    		if ($status == Mo::STATUS_DRAFT) $colorseries[$status] = '-'.$badgeStatus0;
+    		if ($status == Mo::STATUS_VALIDATED) $colorseries[$status] = $badgeStatus1;
+    		if ($status == Mo::STATUS_INPROGRESS) $colorseries[$status] = $badgeStatus4;
+    		if ($status == Mo::STATUS_PRODUCED) $colorseries[$status] = $badgeStatus6;
+    		if ($status == Mo::STATUS_CANCELED) $colorseries[$status] = $badgeStatus9;
+
+    		if (empty($conf->use_javascript_ajax))
+    		{
+    			print '<tr class="oddeven">';
+    			print '<td>'.$staticmo->LibStatut($status, 0).'</td>';
+    			print '<td class="right"><a href="list.php?statut='.$status.'">'.(isset($vals[$status]) ? $vals[$status] : 0).'</a></td>';
+    			print "</tr>\n";
+    		}
+    	}
         if ($conf->use_javascript_ajax)
     	{
     		print '<tr><td class="center" colspan="2">';
@@ -101,13 +122,13 @@ if ($conf->use_javascript_ajax)
     		include_once DOL_DOCUMENT_ROOT.'/core/class/dolgraph.class.php';
     		$dolgraph = new DolGraph();
     		$dolgraph->SetData($dataseries);
-    		$dolgraph->setShowLegend(1);
+    		$dolgraph->SetDataColor(array_values($colorseries));
+    		$dolgraph->setShowLegend(2);
     		$dolgraph->setShowPercent(1);
     		$dolgraph->SetType(array('pie'));
-    		$dolgraph->setWidth('100%');
-    		$dolgraph->SetHeight(180);
+    		$dolgraph->SetHeight('200');
     		$dolgraph->draw('idgraphstatus');
-    		print $dolgraph->show($totalnb?0:1);
+    		print $dolgraph->show($totalnb ? 0 : 1);
 
     		print '</td></tr>';
     	}
@@ -131,15 +152,15 @@ print '</div><div class="fichetwothirdright"><div class="ficheaddleft">';
  * Last modified BOM
  */
 
-$max=5;
+$max = 5;
 
 $sql = "SELECT a.rowid, a.status, a.ref, a.tms as datem, a.status";
-$sql.= " FROM ".MAIN_DB_PREFIX."bom_bom as a";
-$sql.= " WHERE a.entity IN (".getEntity('bom').")";
-$sql.= $db->order("a.tms", "DESC");
-$sql.= $db->plimit($max, 0);
+$sql .= " FROM ".MAIN_DB_PREFIX."bom_bom as a";
+$sql .= " WHERE a.entity IN (".getEntity('bom').")";
+$sql .= $db->order("a.tms", "DESC");
+$sql .= $db->plimit($max, 0);
 
-$resql=$db->query($sql);
+$resql = $db->query($sql);
 if ($resql)
 {
 	print '<div class="div-table-responsive-no-min">';
@@ -155,10 +176,10 @@ if ($resql)
 		{
 			$obj = $db->fetch_object($resql);
 
-			$staticbom->id=$obj->rowid;
-			$staticbom->ref=$obj->ref;
-			$staticbom->date_modification=$obj->datem;
-			$staticbom->status=$obj->status;
+			$staticbom->id = $obj->rowid;
+			$staticbom->ref = $obj->ref;
+			$staticbom->date_modification = $obj->datem;
+			$staticbom->status = $obj->status;
 
 			print '<tr class="oddeven">';
 			print '<td>'.$staticbom->getNomUrl(1, 32).'</td>';
@@ -169,7 +190,7 @@ if ($resql)
 		}
 	} else {
 		print '<tr class="oddeven">';
-		print '<td><span class="opacitymedium">' . $langs->trans("None") . '</span></td>';
+		print '<td><span class="opacitymedium">'.$langs->trans("None").'</span></td>';
 		print '</tr>';
 	}
 	print "</table></div>";
@@ -184,15 +205,15 @@ else
  * Last modified MOs
  */
 
-$max=5;
+$max = 5;
 
 $sql = "SELECT a.rowid, a.status, a.ref, a.tms as datem, a.status";
-$sql.= " FROM ".MAIN_DB_PREFIX."mrp_mo as a";
-$sql.= " WHERE a.entity IN (".getEntity('mo').")";
-$sql.= $db->order("a.tms", "DESC");
-$sql.= $db->plimit($max, 0);
+$sql .= " FROM ".MAIN_DB_PREFIX."mrp_mo as a";
+$sql .= " WHERE a.entity IN (".getEntity('mo').")";
+$sql .= $db->order("a.tms", "DESC");
+$sql .= $db->plimit($max, 0);
 
-$resql=$db->query($sql);
+$resql = $db->query($sql);
 if ($resql)
 {
     print '<div class="div-table-responsive-no-min">';
@@ -208,10 +229,10 @@ if ($resql)
         {
             $obj = $db->fetch_object($resql);
 
-            $staticmo->id=$obj->rowid;
-            $staticmo->ref=$obj->ref;
-            $staticmo->date_modification=$obj->datem;
-            $staticmo->status=$obj->status;
+            $staticmo->id = $obj->rowid;
+            $staticmo->ref = $obj->ref;
+            $staticmo->date_modification = $obj->datem;
+            $staticmo->status = $obj->status;
 
             print '<tr class="oddeven">';
             print '<td>'.$staticmo->getNomUrl(1, 32).'</td>';
@@ -222,7 +243,7 @@ if ($resql)
         }
     } else {
         print '<tr class="oddeven">';
-        print '<td><span class="opacitymedium">' . $langs->trans("None") . '</span></td>';
+        print '<td><span class="opacitymedium">'.$langs->trans("None").'</span></td>';
         print '</tr>';
     }
     print "</table></div>";

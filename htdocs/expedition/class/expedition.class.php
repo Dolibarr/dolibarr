@@ -85,6 +85,7 @@ class Expedition extends CommonObject
 
 	/**
 	 * @var string internal ref
+	 * @deprecated
 	 */
 	public $ref_int;
 
@@ -286,90 +287,90 @@ class Expedition extends CommonObject
 		$this->db->begin();
 
 		$sql = "INSERT INTO ".MAIN_DB_PREFIX."expedition (";
-		$sql.= "ref";
-		$sql.= ", entity";
-		$sql.= ", ref_customer";
-		$sql.= ", ref_int";
-		$sql.= ", date_creation";
-		$sql.= ", fk_user_author";
-		$sql.= ", date_expedition";
-		$sql.= ", date_delivery";
-		$sql.= ", fk_soc";
-		$sql.= ", fk_projet";
-		$sql.= ", fk_address";
-		$sql.= ", fk_shipping_method";
-		$sql.= ", tracking_number";
-		$sql.= ", weight";
-		$sql.= ", size";
-		$sql.= ", width";
-		$sql.= ", height";
-		$sql.= ", weight_units";
-		$sql.= ", size_units";
-		$sql.= ", note_private";
-		$sql.= ", note_public";
-		$sql.= ", model_pdf";
-		$sql.= ", fk_incoterms, location_incoterms";
-		$sql.= ") VALUES (";
-		$sql.= "'(PROV)'";
-		$sql.= ", ".$conf->entity;
-		$sql.= ", ".($this->ref_customer?"'".$this->db->escape($this->ref_customer)."'":"null");
-		$sql.= ", ".($this->ref_int?"'".$this->db->escape($this->ref_int)."'":"null");
-		$sql.= ", '".$this->db->idate($now)."'";
-		$sql.= ", ".$user->id;
-		$sql.= ", ".($this->date_expedition>0?"'".$this->db->idate($this->date_expedition)."'":"null");
-		$sql.= ", ".($this->date_delivery>0?"'".$this->db->idate($this->date_delivery)."'":"null");
-		$sql.= ", ".$this->socid;
-		$sql.= ", ".$this->fk_project;
-		$sql.= ", ".($this->fk_delivery_address>0?$this->fk_delivery_address:"null");
-		$sql.= ", ".($this->shipping_method_id>0?$this->shipping_method_id:"null");
-		$sql.= ", '".$this->db->escape($this->tracking_number)."'";
-		$sql.= ", ".$this->weight;
-		$sql.= ", ".$this->sizeS;	// TODO Should use this->trueDepth
-		$sql.= ", ".$this->sizeW;	// TODO Should use this->trueWidth
-		$sql.= ", ".$this->sizeH;	// TODO Should use this->trueHeight
-		$sql.= ", ".($this->weight_units != '' ? (int) $this->weight_units : 'NULL');
-		$sql.= ", ".($this->size_units != '' ? (int) $this->size_units : 'NULL');
-		$sql.= ", ".(!empty($this->note_private)?"'".$this->db->escape($this->note_private)."'":"null");
-		$sql.= ", ".(!empty($this->note_public)?"'".$this->db->escape($this->note_public)."'":"null");
-		$sql.= ", ".(!empty($this->model_pdf)?"'".$this->db->escape($this->model_pdf)."'":"null");
-		$sql.= ", ".(int) $this->fk_incoterms;
-		$sql.= ", '".$this->db->escape($this->location_incoterms)."'";
-		$sql.= ")";
+		$sql .= "ref";
+		$sql .= ", entity";
+		$sql .= ", ref_customer";
+		$sql .= ", ref_int";
+		$sql .= ", date_creation";
+		$sql .= ", fk_user_author";
+		$sql .= ", date_expedition";
+		$sql .= ", date_delivery";
+		$sql .= ", fk_soc";
+		$sql .= ", fk_projet";
+		$sql .= ", fk_address";
+		$sql .= ", fk_shipping_method";
+		$sql .= ", tracking_number";
+		$sql .= ", weight";
+		$sql .= ", size";
+		$sql .= ", width";
+		$sql .= ", height";
+		$sql .= ", weight_units";
+		$sql .= ", size_units";
+		$sql .= ", note_private";
+		$sql .= ", note_public";
+		$sql .= ", model_pdf";
+		$sql .= ", fk_incoterms, location_incoterms";
+		$sql .= ") VALUES (";
+		$sql .= "'(PROV)'";
+		$sql .= ", ".$conf->entity;
+		$sql .= ", ".($this->ref_customer ? "'".$this->db->escape($this->ref_customer)."'" : "null");
+		$sql .= ", ".($this->ref_int ? "'".$this->db->escape($this->ref_int)."'" : "null");
+		$sql .= ", '".$this->db->idate($now)."'";
+		$sql .= ", ".$user->id;
+		$sql .= ", ".($this->date_expedition > 0 ? "'".$this->db->idate($this->date_expedition)."'" : "null");
+		$sql .= ", ".($this->date_delivery > 0 ? "'".$this->db->idate($this->date_delivery)."'" : "null");
+		$sql .= ", ".$this->socid;
+		$sql .= ", ".$this->fk_project;
+		$sql .= ", ".($this->fk_delivery_address > 0 ? $this->fk_delivery_address : "null");
+		$sql .= ", ".($this->shipping_method_id > 0 ? $this->shipping_method_id : "null");
+		$sql .= ", '".$this->db->escape($this->tracking_number)."'";
+		$sql .= ", ".$this->weight;
+		$sql .= ", ".$this->sizeS; // TODO Should use this->trueDepth
+		$sql .= ", ".$this->sizeW; // TODO Should use this->trueWidth
+		$sql .= ", ".$this->sizeH; // TODO Should use this->trueHeight
+		$sql .= ", ".($this->weight_units != '' ? (int) $this->weight_units : 'NULL');
+		$sql .= ", ".($this->size_units != '' ? (int) $this->size_units : 'NULL');
+		$sql .= ", ".(!empty($this->note_private) ? "'".$this->db->escape($this->note_private)."'" : "null");
+		$sql .= ", ".(!empty($this->note_public) ? "'".$this->db->escape($this->note_public)."'" : "null");
+		$sql .= ", ".(!empty($this->model_pdf) ? "'".$this->db->escape($this->model_pdf)."'" : "null");
+		$sql .= ", ".(int) $this->fk_incoterms;
+		$sql .= ", '".$this->db->escape($this->location_incoterms)."'";
+		$sql .= ")";
 
 		dol_syslog(get_class($this)."::create", LOG_DEBUG);
-		$resql=$this->db->query($sql);
+		$resql = $this->db->query($sql);
 		if ($resql)
 		{
 			$this->id = $this->db->last_insert_id(MAIN_DB_PREFIX."expedition");
 
 			$sql = "UPDATE ".MAIN_DB_PREFIX."expedition";
-			$sql.= " SET ref = '(PROV".$this->id.")'";
-			$sql.= " WHERE rowid = ".$this->id;
+			$sql .= " SET ref = '(PROV".$this->id.")'";
+			$sql .= " WHERE rowid = ".$this->id;
 
 			dol_syslog(get_class($this)."::create", LOG_DEBUG);
 			if ($this->db->query($sql))
 			{
 				// Insert of lines
-				$num=count($this->lines);
+				$num = count($this->lines);
 				for ($i = 0; $i < $num; $i++)
 				{
-					if (! isset($this->lines[$i]->detail_batch))
+					if (!isset($this->lines[$i]->detail_batch))
 					{	// no batch management
-						if (! $this->create_line($this->lines[$i]->entrepot_id, $this->lines[$i]->origin_line_id, $this->lines[$i]->qty, $this->lines[$i]->rang, $this->lines[$i]->array_options) > 0)
+						if (!$this->create_line($this->lines[$i]->entrepot_id, $this->lines[$i]->origin_line_id, $this->lines[$i]->qty, $this->lines[$i]->rang, $this->lines[$i]->array_options) > 0)
 						{
 							$error++;
 						}
 					}
 					else
 					{	// with batch management
-						if (! $this->create_line_batch($this->lines[$i], $this->lines[$i]->array_options) > 0)
+						if (!$this->create_line_batch($this->lines[$i], $this->lines[$i]->array_options) > 0)
 						{
 							$error++;
 						}
 					}
 				}
 
-				if (! $error && $this->id && $this->origin_id)
+				if (!$error && $this->id && $this->origin_id)
 				{
 					$ret = $this->add_object_linked();
 					if (!$ret)
@@ -523,35 +524,35 @@ class Expedition extends CommonObject
 	 *	@param	int		$id       	Id of object to load
 	 * 	@param	string	$ref		Ref of object
 	 * 	@param	string	$ref_ext	External reference of object
-	 * 	@param	string	$ref_int	Internal reference of other object
+	 * 	@param	string	$notused	Internal reference of other object
 	 *	@return int			        >0 if OK, 0 if not found, <0 if KO
 	 */
-	public function fetch($id, $ref = '', $ref_ext = '', $ref_int = '')
+	public function fetch($id, $ref = '', $ref_ext = '', $notused = '')
 	{
 		global $conf;
 
 		// Check parameters
-		if (empty($id) && empty($ref) && empty($ref_ext) && empty($ref_int)) return -1;
+		if (empty($id) && empty($ref) && empty($ref_ext)) return -1;
 
 		$sql = "SELECT e.rowid, e.ref, e.fk_soc as socid, e.date_creation, e.ref_customer, e.ref_ext, e.ref_int, e.fk_user_author, e.fk_statut, e.fk_projet as fk_project, e.billed";
-        $sql.= ", e.date_valid";
-		$sql.= ", e.weight, e.weight_units, e.size, e.size_units, e.width, e.height";
-		$sql.= ", e.date_expedition as date_expedition, e.model_pdf, e.fk_address, e.date_delivery";
-		$sql.= ", e.fk_shipping_method, e.tracking_number";
-		$sql.= ", e.note_private, e.note_public";
-		$sql.= ', e.fk_incoterms, e.location_incoterms';
-		$sql.= ', i.libelle as label_incoterms';
-		$sql.= ', s.libelle as shipping_method';
-		$sql.= ", el.fk_source as origin_id, el.sourcetype as origin";
-		$sql.= " FROM ".MAIN_DB_PREFIX."expedition as e";
-		$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."element_element as el ON el.fk_target = e.rowid AND el.targettype = '".$this->db->escape($this->element)."'";
-		$sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'c_incoterms as i ON e.fk_incoterms = i.rowid';
-		$sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'c_shipment_mode as s ON e.fk_shipping_method = s.rowid';
-		$sql.= " WHERE e.entity IN (".getEntity('expedition').")";
-		if ($id)   	  $sql.= " AND e.rowid=".$id;
-		if ($ref)     $sql.= " AND e.ref='".$this->db->escape($ref)."'";
-		if ($ref_ext) $sql.= " AND e.ref_ext='".$this->db->escape($ref_ext)."'";
-		if ($ref_int) $sql.= " AND e.ref_int='".$this->db->escape($ref_int)."'";
+        $sql .= ", e.date_valid";
+		$sql .= ", e.weight, e.weight_units, e.size, e.size_units, e.width, e.height";
+		$sql .= ", e.date_expedition as date_expedition, e.model_pdf, e.fk_address, e.date_delivery";
+		$sql .= ", e.fk_shipping_method, e.tracking_number";
+		$sql .= ", e.note_private, e.note_public";
+		$sql .= ', e.fk_incoterms, e.location_incoterms';
+		$sql .= ', i.libelle as label_incoterms';
+		$sql .= ', s.libelle as shipping_method';
+		$sql .= ", el.fk_source as origin_id, el.sourcetype as origin";
+		$sql .= " FROM ".MAIN_DB_PREFIX."expedition as e";
+		$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."element_element as el ON el.fk_target = e.rowid AND el.targettype = '".$this->db->escape($this->element)."'";
+		$sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'c_incoterms as i ON e.fk_incoterms = i.rowid';
+		$sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'c_shipment_mode as s ON e.fk_shipping_method = s.rowid';
+		$sql .= " WHERE e.entity IN (".getEntity('expedition').")";
+		if ($id)   	  $sql .= " AND e.rowid=".$id;
+		if ($ref)     $sql .= " AND e.ref='".$this->db->escape($ref)."'";
+		if ($ref_ext) $sql .= " AND e.ref_ext='".$this->db->escape($ref_ext)."'";
+		if ($notused) $sql .= " AND e.ref_int='".$this->db->escape($notused)."'";
 
 		dol_syslog(get_class($this)."::fetch", LOG_DEBUG);
 		$result = $this->db->query($sql);
@@ -564,26 +565,26 @@ class Expedition extends CommonObject
 				$this->id                   = $obj->rowid;
 				$this->ref                  = $obj->ref;
 				$this->socid                = $obj->socid;
-				$this->ref_customer	    = $obj->ref_customer;
+				$this->ref_customer = $obj->ref_customer;
 				$this->ref_ext		    = $obj->ref_ext;
 				$this->ref_int		    = $obj->ref_int;
 				$this->statut               = $obj->fk_statut;
 				$this->user_author_id       = $obj->fk_user_author;
 				$this->date_creation        = $this->db->jdate($obj->date_creation);
-                $this->date_valid           = $this->db->jdate($obj->date_valid);
-				$this->date                 = $this->db->jdate($obj->date_expedition);	// TODO deprecated
-				$this->date_expedition      = $this->db->jdate($obj->date_expedition);	// TODO deprecated
-				$this->date_shipping        = $this->db->jdate($obj->date_expedition);	// Date real
-				$this->date_delivery        = $this->db->jdate($obj->date_delivery);	// Date planed
+                $this->date_valid = $this->db->jdate($obj->date_valid);
+				$this->date                 = $this->db->jdate($obj->date_expedition); // TODO deprecated
+				$this->date_expedition      = $this->db->jdate($obj->date_expedition); // TODO deprecated
+				$this->date_shipping        = $this->db->jdate($obj->date_expedition); // Date real
+				$this->date_delivery        = $this->db->jdate($obj->date_delivery); // Date planed
 				$this->fk_delivery_address  = $obj->fk_address;
 				$this->modelpdf             = $obj->model_pdf;
 				$this->shipping_method_id   = $obj->fk_shipping_method;
-				$this->shipping_method	    = $obj->shipping_method;
+				$this->shipping_method = $obj->shipping_method;
 				$this->tracking_number      = $obj->tracking_number;
-				$this->origin               = ($obj->origin?$obj->origin:'commande'); // For compatibility
+				$this->origin               = ($obj->origin ? $obj->origin : 'commande'); // For compatibility
 				$this->origin_id            = $obj->origin_id;
 				$this->billed               = $obj->billed;
-				$this->fk_project	        = $obj->fk_project;
+				$this->fk_project = $obj->fk_project;
 
 				$this->trueWeight           = $obj->weight;
 				$this->weight_units         = $obj->weight_units;
@@ -762,7 +763,7 @@ class Expedition extends CommonObject
 						// line without batch detail
 
 						// We decrement stock of product (and sub-products) -> update table llx_product_stock (key of this table is fk_product+fk_entrepot) and add a movement record.
-						$result=$mouvS->livraison($user, $obj->fk_product, $obj->fk_entrepot, $qty, $obj->subprice, $langs->trans("ShipmentValidatedInDolibarr", $numref));
+						$result = $mouvS->livraison($user, $obj->fk_product, $obj->fk_entrepot, $qty, $obj->subprice, $langs->trans("ShipmentValidatedInDolibarr", $numref));
 						if ($result < 0) {
 							$error++;
 							$this->error = $mouvS->error;
@@ -776,7 +777,7 @@ class Expedition extends CommonObject
 
 						// We decrement stock of product (and sub-products) -> update table llx_product_stock (key of this table is fk_product+fk_entrepot) and add a movement record.
 						// Note: ->fk_origin_stock = id into table llx_product_batch (may be rename into llx_product_stock_batch in another version)
-						$result=$mouvS->livraison($user, $obj->fk_product, $obj->fk_entrepot, $qty, $obj->subprice, $langs->trans("ShipmentValidatedInDolibarr", $numref), '', $this->db->jdate($obj->eatby), $this->db->jdate($obj->sellby), $obj->batch, $obj->fk_origin_stock);
+						$result = $mouvS->livraison($user, $obj->fk_product, $obj->fk_entrepot, $qty, $obj->subprice, $langs->trans("ShipmentValidatedInDolibarr", $numref), '', $this->db->jdate($obj->eatby), $this->db->jdate($obj->sellby), $obj->batch, $obj->fk_origin_stock);
 						if ($result < 0) {
 							$error++;
 							$this->error = $mouvS->error;
@@ -818,17 +819,17 @@ class Expedition extends CommonObject
 			if (preg_match('/^[\(]?PROV/i', $this->ref))
 			{
 				// Now we rename also files into index
-				$sql = 'UPDATE '.MAIN_DB_PREFIX."ecm_files set filename = CONCAT('".$this->db->escape($this->newref)."', SUBSTR(filename, ".(strlen($this->ref)+1).")), filepath = 'expedition/sending/".$this->db->escape($this->newref)."'";
-				$sql.= " WHERE filename LIKE '".$this->db->escape($this->ref)."%' AND filepath = 'expedition/sending/".$this->db->escape($this->ref)."' and entity = ".$conf->entity;
+				$sql = 'UPDATE '.MAIN_DB_PREFIX."ecm_files set filename = CONCAT('".$this->db->escape($this->newref)."', SUBSTR(filename, ".(strlen($this->ref) + 1).")), filepath = 'expedition/sending/".$this->db->escape($this->newref)."'";
+				$sql .= " WHERE filename LIKE '".$this->db->escape($this->ref)."%' AND filepath = 'expedition/sending/".$this->db->escape($this->ref)."' and entity = ".$conf->entity;
 				$resql = $this->db->query($sql);
-				if (! $resql) { $error++; $this->error = $this->db->lasterror(); }
+				if (!$resql) { $error++; $this->error = $this->db->lasterror(); }
 
 				// We rename directory ($this->ref = old ref, $num = new ref) in order not to lose the attachments
 				$oldref = dol_sanitizeFileName($this->ref);
 				$newref = dol_sanitizeFileName($numref);
 				$dirsource = $conf->expedition->dir_output.'/sending/'.$oldref;
 				$dirdest = $conf->expedition->dir_output.'/sending/'.$newref;
-				if (! $error && file_exists($dirsource))
+				if (!$error && file_exists($dirsource))
 				{
 					dol_syslog(get_class($this)."::valid rename dir ".$dirsource." into ".$dirdest);
 
@@ -851,13 +852,13 @@ class Expedition extends CommonObject
 		}
 
 		// Set new ref and current status
-		if (! $error)
+		if (!$error)
 		{
 			$this->ref = $numref;
 			$this->statut = self::STATUS_VALIDATED;
 		}
 
-		if (! $error)
+		if (!$error)
 		{
 			$this->db->commit();
 			return 1;
@@ -865,7 +866,7 @@ class Expedition extends CommonObject
 		else
 		{
 			$this->db->rollback();
-			return -1*$error;
+			return -1 * $error;
 		}
 	}
 
@@ -1172,32 +1173,32 @@ class Expedition extends CommonObject
 		require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 		require_once DOL_DOCUMENT_ROOT.'/expedition/class/expeditionbatch.class.php';
 
-		$error=0;
-		$this->error='';
+		$error = 0;
+		$this->error = '';
 
 		$this->db->begin();
 
 		// Add a protection to refuse deleting if shipment has at least one delivery
-		$this->fetchObjectLinked($this->id, 'shipping', 0, 'delivery');	// Get deliveries linked to this shipment
+		$this->fetchObjectLinked($this->id, 'shipping', 0, 'delivery'); // Get deliveries linked to this shipment
 		if (count($this->linkedObjectsIds) > 0)
 		{
-			$this->error='ErrorThereIsSomeDeliveries';
+			$this->error = 'ErrorThereIsSomeDeliveries';
 			$error++;
 		}
 
-		if (! $error)
+		if (!$error)
 		{
-			if (! $notrigger)
+			if (!$notrigger)
 			{
 				// Call trigger
-				$result=$this->call_trigger('SHIPPING_DELETE', $user);
+				$result = $this->call_trigger('SHIPPING_DELETE', $user);
 				if ($result < 0) { $error++; }
 				// End call triggers
 			}
 		}
 
 		// Stock control
-		if (! $error && $conf->stock->enabled &&
+		if (!$error && $conf->stock->enabled &&
 			(($conf->global->STOCK_CALCULATE_ON_SHIPMENT && $this->statut > self::STATUS_DRAFT) ||
 			 ($conf->global->STOCK_CALCULATE_ON_SHIPMENT_CLOSE && $this->statut == self::STATUS_CLOSED && $also_update_stock)))
 		{
@@ -1386,20 +1387,20 @@ class Expedition extends CommonObject
         // phpcs:enable
 		global $conf, $mysoc;
 		// TODO: recuperer les champs du document associe a part
-		$this->lines=array();
+		$this->lines = array();
 
 		$sql = "SELECT cd.rowid, cd.fk_product, cd.label as custom_label, cd.description, cd.qty as qty_asked, cd.product_type";
-		$sql.= ", cd.total_ht, cd.total_localtax1, cd.total_localtax2, cd.total_ttc, cd.total_tva";
-		$sql.= ", cd.vat_src_code, cd.tva_tx, cd.localtax1_tx, cd.localtax2_tx, cd.localtax1_type, cd.localtax2_type, cd.info_bits, cd.price, cd.subprice, cd.remise_percent,cd.buy_price_ht as pa_ht";
-		$sql.= ", cd.fk_multicurrency, cd.multicurrency_code, cd.multicurrency_subprice, cd.multicurrency_total_ht, cd.multicurrency_total_tva, cd.multicurrency_total_ttc, cd.rang";
-		$sql.= ", ed.rowid as line_id, ed.qty as qty_shipped, ed.fk_origin_line, ed.fk_entrepot";
-		$sql.= ", p.ref as product_ref, p.label as product_label, p.fk_product_type";
-		$sql.= ", p.weight, p.weight_units, p.length, p.length_units, p.surface, p.surface_units, p.volume, p.volume_units, p.tobatch as product_tobatch";
-		$sql.= " FROM ".MAIN_DB_PREFIX."expeditiondet as ed, ".MAIN_DB_PREFIX."commandedet as cd";
-		$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."product as p ON p.rowid = cd.fk_product";
-		$sql.= " WHERE ed.fk_expedition = ".$this->id;
-		$sql.= " AND ed.fk_origin_line = cd.rowid";
-		$sql.= " ORDER BY cd.rang, ed.fk_origin_line";
+		$sql .= ", cd.total_ht, cd.total_localtax1, cd.total_localtax2, cd.total_ttc, cd.total_tva";
+		$sql .= ", cd.vat_src_code, cd.tva_tx, cd.localtax1_tx, cd.localtax2_tx, cd.localtax1_type, cd.localtax2_type, cd.info_bits, cd.price, cd.subprice, cd.remise_percent,cd.buy_price_ht as pa_ht";
+		$sql .= ", cd.fk_multicurrency, cd.multicurrency_code, cd.multicurrency_subprice, cd.multicurrency_total_ht, cd.multicurrency_total_tva, cd.multicurrency_total_ttc, cd.rang";
+		$sql .= ", ed.rowid as line_id, ed.qty as qty_shipped, ed.fk_origin_line, ed.fk_entrepot";
+		$sql .= ", p.ref as product_ref, p.label as product_label, p.fk_product_type";
+		$sql .= ", p.weight, p.weight_units, p.length, p.length_units, p.surface, p.surface_units, p.volume, p.volume_units, p.tobatch as product_tobatch";
+		$sql .= " FROM ".MAIN_DB_PREFIX."expeditiondet as ed, ".MAIN_DB_PREFIX."commandedet as cd";
+		$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."product as p ON p.rowid = cd.fk_product";
+		$sql .= " WHERE ed.fk_expedition = ".$this->id;
+		$sql .= " AND ed.fk_origin_line = cd.rowid";
+		$sql .= " ORDER BY cd.rang, ed.fk_origin_line";
 
 		dol_syslog(get_class($this)."::fetch_lines", LOG_DEBUG);
 		$resql = $this->db->query($sql);
@@ -1460,7 +1461,7 @@ class Expedition extends CommonObject
 				$line->label = $obj->custom_label;
 				$line->description    	= $obj->description;
 				$line->qty_asked      	= $obj->qty_asked;
-				$line->rang             = $obj->rang;
+				$line->rang = $obj->rang;
 				$line->weight         	= $obj->weight;
 				$line->weight_units   	= $obj->weight_units;
 				$line->length         	= $obj->length;
@@ -1749,23 +1750,23 @@ class Expedition extends CommonObject
 		$this->origin_id            = 1;
 		$this->origin               = 'commande';
 
-		$this->note_private			= 'Private note';
-		$this->note_public			= 'Public note';
+		$this->note_private = 'Private note';
+		$this->note_public = 'Public note';
 
 		$nbp = 5;
 		$xnbp = 0;
 		while ($xnbp < $nbp)
 		{
-			$line=new ExpeditionLigne($this->db);
-			$line->desc=$langs->trans("Description")." ".$xnbp;
-			$line->libelle=$langs->trans("Description")." ".$xnbp;	// deprecated
-			$line->label=$langs->trans("Description")." ".$xnbp;
-			$line->qty=10;
-			$line->qty_asked=5;
-			$line->qty_shipped=4;
-			$line->fk_product=$this->commande->lines[$xnbp]->fk_product;
+			$line = new ExpeditionLigne($this->db);
+			$line->desc = $langs->trans("Description")." ".$xnbp;
+			$line->libelle = $langs->trans("Description")." ".$xnbp; // deprecated
+			$line->label = $langs->trans("Description")." ".$xnbp;
+			$line->qty = 10;
+			$line->qty_asked = 5;
+			$line->qty_shipped = 4;
+			$line->fk_product = $this->commande->lines[$xnbp]->fk_product;
 
-			$this->lines[]=$line;
+			$this->lines[] = $line;
 			$xnbp++;
 		}
 	}
@@ -1819,17 +1820,17 @@ class Expedition extends CommonObject
 		$this->meths = array();
 
 		$sql = "SELECT em.rowid, em.code, em.libelle as label";
-		$sql.= " FROM ".MAIN_DB_PREFIX."c_shipment_mode as em";
-		$sql.= " WHERE em.active = 1";
-		$sql.= " ORDER BY em.libelle ASC";
+		$sql .= " FROM ".MAIN_DB_PREFIX."c_shipment_mode as em";
+		$sql .= " WHERE em.active = 1";
+		$sql .= " ORDER BY em.libelle ASC";
 
 		$resql = $this->db->query($sql);
 		if ($resql)
 		{
 			while ($obj = $this->db->fetch_object($resql))
 			{
-				$label=$langs->trans('SendingMethod'.$obj->code);
-				$this->meths[$obj->rowid] = ($label != 'SendingMethod'.$obj->code?$label:$obj->label);
+				$label = $langs->trans('SendingMethod'.$obj->code);
+				$this->meths[$obj->rowid] = ($label != 'SendingMethod'.$obj->code ? $label : $obj->label);
 			}
 		}
 	}
@@ -1847,11 +1848,11 @@ class Expedition extends CommonObject
 		global $langs;
 
 		$this->listmeths = array();
-		$i=0;
+		$i = 0;
 
 		$sql = "SELECT em.rowid, em.code, em.libelle as label, em.description, em.tracking, em.active";
-		$sql.= " FROM ".MAIN_DB_PREFIX."c_shipment_mode as em";
-		if ($id!='') $sql.= " WHERE em.rowid=".$id;
+		$sql .= " FROM ".MAIN_DB_PREFIX."c_shipment_mode as em";
+		if ($id != '') $sql .= " WHERE em.rowid=".$id;
 
 		$resql = $this->db->query($sql);
 		if ($resql)
@@ -1860,8 +1861,8 @@ class Expedition extends CommonObject
 			{
 				$this->listmeths[$i]['rowid'] = $obj->rowid;
 				$this->listmeths[$i]['code'] = $obj->code;
-				$label=$langs->trans('SendingMethod'.$obj->code);
-				$this->listmeths[$i]['libelle'] = ($label != 'SendingMethod'.$obj->code?$label:$obj->label);
+				$label = $langs->trans('SendingMethod'.$obj->code);
+				$this->listmeths[$i]['libelle'] = ($label != 'SendingMethod'.$obj->code ? $label : $obj->label);
 				$this->listmeths[$i]['description'] = $obj->description;
 				$this->listmeths[$i]['tracking'] = $obj->tracking;
 				$this->listmeths[$i]['active'] = $obj->active;
@@ -2315,16 +2316,16 @@ class Expedition extends CommonObject
 	 */
 	public function generateDocument($modele, $outputlangs, $hidedetails = 0, $hidedesc = 0, $hideref = 0, $moreparams = null)
 	{
-		global $conf,$langs;
+		global $conf, $langs;
 
 		$langs->load("sendings");
 
-		if (! dol_strlen($modele)) {
+		if (!dol_strlen($modele)) {
 			$modele = 'rouget';
 
 			if ($this->modelpdf) {
 				$modele = $this->modelpdf;
-			} elseif (! empty($conf->global->EXPEDITION_ADDON_PDF)) {
+			} elseif (!empty($conf->global->EXPEDITION_ADDON_PDF)) {
 				$modele = $conf->global->EXPEDITION_ADDON_PDF;
 			}
 		}
@@ -2566,10 +2567,10 @@ class ExpeditionLigne extends CommonObjectLine
 	{
 		global $langs, $conf;
 
-		$error=0;
+		$error = 0;
 
 		// Check parameters
-		if (empty($this->fk_expedition) || empty($this->fk_origin_line) || ! is_numeric($this->qty))
+		if (empty($this->fk_expedition) || empty($this->fk_origin_line) || !is_numeric($this->qty))
 		{
 			$this->error = 'ErrorMandatoryParametersNotProvided';
 			return -1;
@@ -2588,18 +2589,18 @@ class ExpeditionLigne extends CommonObjectLine
 		}
 
 		$sql = "INSERT INTO ".MAIN_DB_PREFIX."expeditiondet (";
-		$sql.= "fk_expedition";
-		$sql.= ", fk_entrepot";
-		$sql.= ", fk_origin_line";
-		$sql.= ", qty";
-		$sql.= ", rang";
-		$sql.= ") VALUES (";
-		$sql.= $this->fk_expedition;
-		$sql.= ", ".(empty($this->entrepot_id) ? 'NULL' : $this->entrepot_id);
-		$sql.= ", ".$this->fk_origin_line;
-		$sql.= ", ".$this->qty;
-		$sql.= ", ".$ranktouse;
-		$sql.= ")";
+		$sql .= "fk_expedition";
+		$sql .= ", fk_entrepot";
+		$sql .= ", fk_origin_line";
+		$sql .= ", qty";
+		$sql .= ", rang";
+		$sql .= ") VALUES (";
+		$sql .= $this->fk_expedition;
+		$sql .= ", ".(empty($this->entrepot_id) ? 'NULL' : $this->entrepot_id);
+		$sql .= ", ".$this->fk_origin_line;
+		$sql .= ", ".$this->qty;
+		$sql .= ", ".$ranktouse;
+		$sql .= ")";
 
 		dol_syslog(get_class($this)."::insert", LOG_DEBUG);
 		$resql = $this->db->query($sql);

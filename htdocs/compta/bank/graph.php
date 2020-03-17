@@ -350,10 +350,11 @@ else
 			}
 			$datamin[$i] = $object->min_desired;
 			$dataall[$i] = $object->min_allowed;
-			if ($xday == '15')
+			/*if ($xday == '15')	// Set only some label for jflot
 			{
 				$labels[$i] = dol_print_date($day, "%b");
-			}
+			}*/
+			$labels[$i] = dol_print_date($day, "%Y%m");
 			$day += 86400;
 			$textdate = strftime("%Y%m%d", $day);
 			$xyear = substr($textdate, 0, 4);
@@ -465,10 +466,11 @@ else
 			}
 			$datamin[$i] = $object->min_desired;
 			$dataall[$i] = $object->min_allowed;
-			if (substr($textdate, 6, 2) == '01' || $i == 0)
+			/*if (substr($textdate, 6, 2) == '01' || $i == 0)	// Set only few label for jflot
 			{
-				$labels[$i] = substr($textdate, 4, 2);
-			}
+				$labels[$i] = substr($textdate, 0, 6);
+			}*/
+			$labels[$i] = substr($textdate, 0, 6);
 
 			$day += 86400;
 			$textdate = strftime("%Y%m%d", $day);
@@ -815,6 +817,8 @@ else
 }
 print '<br><br></td></tr>';
 
+print '</table>';
+
 
 // Graphs
 if ($mode == 'standard')
@@ -826,39 +830,39 @@ if ($mode == 'standard')
 
 	// For month
 	$link = "<a href='".$_SERVER["PHP_SELF"]."?account=".$account.($_GET["option"] != 'all' ? '' : '&option=all')."&year=".$prevyear."&month=".$prevmonth."'>".img_previous('', 'class="valignbottom"')."</a> ".$langs->trans("Month")." <a href='".$_SERVER["PHP_SELF"]."?account=".$account."&year=".$nextyear."&month=".$nextmonth."'>".img_next('', 'class="valignbottom"')."</a>";
-	print '<tr><td class="right">'.$link.'</td></tr>';
+	print '<div class="right clearboth">'.$link.'</div>';
 
-	print '<tr><td class="center">';
+	print '<div class="center clearboth margintoponly">';
 	$file = "movement".$account."-".$year.$month.".png";
 	print $show4;
-	print '</td></tr>';
+	print '</div>';
 
-	print '<tr><td class="center">';
+	print '<div class="center clearboth margintoponly">';
 	print $show1;
-	print '</td></tr>';
+	print '</div>';
 
 	// For year
 	$prevyear = $year - 1; $nextyear = $year + 1;
 	$link = "<a href='".$_SERVER["PHP_SELF"]."?account=".$account.($_GET["option"] != 'all' ? '' : '&option=all')."&year=".($prevyear)."'>".img_previous('', 'class="valignbottom"')."</a> ".$langs->trans("Year")." <a href='".$_SERVER["PHP_SELF"]."?account=".$account."&year=".($nextyear)."'>".img_next('', 'class="valignbottom"')."</a>";
-	print '<tr><td class="right">'.$link.'</td></tr>';
 
-	print '<tr><td class="center">';
+	print '<div class="right clearboth margintoponly">'.$link.'</div>';
+
+	print '<div class="center clearboth margintoponly">';
 	print $show5;
-	print '</td></tr>';
+	print '</div>';
 
-	print '<tr><td class="center">';
+	print '<div class="center clearboth margintoponly">';
 	print $show2;
-	print '</td></tr>';
+	print '</div>';
 }
 
 if ($mode == 'showalltime')
 {
-	print '<tr><td class="center">';
+	print '<div class="center clearboth margintoponly">';
 	print $show3;
-	print '</td></tr>';
+	print '</div>';
 }
 
-print '</table>';
 
 // End of page
 llxFooter();

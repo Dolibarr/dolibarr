@@ -91,7 +91,7 @@ GoToSetupArea=Přejít na Dolibarr (Oblast Nastavení)
 MigrationNotFinished=Verze Vaší databáze není zcela aktuální, budete muset spustit aktualizaci znovu.
 GoToUpgradePage=Přejít znovu na aktualizační stránku
 WithNoSlashAtTheEnd=Bez lomítka "/" na konci
-DirectoryRecommendation=Je doporučeno použít adresář mimo adresáře webových stránek.
+DirectoryRecommendation=<span class="warning">IMPORTANT</span>: You must use a directory that is outside of the web pages (so do not use a subdirectory of previous parameter).
 LoginAlreadyExists=Již existuje
 DolibarrAdminLogin=Login Dolibarr administrátora
 AdminLoginAlreadyExists=Účet administrátora Dolibarru '<b>%s</b>' již existuje. Běžte zpět, pro vytvoření jiného účtu.

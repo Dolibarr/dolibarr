@@ -68,7 +68,7 @@ $search_payment_num=GETPOST('search_payment_num', 'alpha');
 $limit = GETPOST('limit', 'int')?GETPOST('limit', 'int'):$conf->liste_limit;
 $sortfield = GETPOST("sortfield", 'alpha');
 $sortorder = GETPOST("sortorder", 'alpha');
-$page = GETPOST("page", 'int');
+$page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOST("page", 'int');
 if (empty($page) || $page == -1) { $page = 0; }     // If $page is not defined, or '' or -1
 $offset = $limit * $page;
 $pageprev = $page - 1;
@@ -115,7 +115,7 @@ if (GETPOST("orphelins", "alpha"))
 {
     // Payments not linked to an invoice. Should not happend. For debug only.
     $sql = "SELECT p.rowid, p.ref, p.datep as dp, p.amount,";
-    $sql.= " p.statut, p.num_paiement,";
+    $sql.= " p.statut, p.num_paiement as num_payment,";
     $sql.= " c.code as paiement_code";
 	// Add fields from hooks
 	$parameters=array();
@@ -133,7 +133,7 @@ if (GETPOST("orphelins", "alpha"))
 else
 {
     $sql = "SELECT DISTINCT p.rowid, p.ref, p.datep as dp, p.amount,"; // DISTINCT is to avoid duplicate when there is a link to sales representatives
-    $sql.= " p.statut, p.num_paiement,";
+    $sql.= " p.statut, p.num_paiement as num_payment,";
     $sql.= " c.code as paiement_code,";
     $sql.= " ba.rowid as bid, ba.ref as bref, ba.label as blabel, ba.number, ba.account_number as account_number, ba.fk_accountancy_journal as accountancy_journal,";
     $sql.= " s.rowid as socid, s.nom as name, s.email";
@@ -323,7 +323,7 @@ if ($resql)
         if (!$i) $totalarray['nbfield']++;
 
         // Payment number
-        print '<td>'.$objp->num_paiement.'</td>';
+        print '<td>'.$objp->num_payment.'</td>';
         if (!$i) $totalarray['nbfield']++;
 
         // Account

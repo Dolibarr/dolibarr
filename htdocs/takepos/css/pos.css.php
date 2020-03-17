@@ -101,6 +101,7 @@ button.calcbutton {
     /* border-color: unset; */
     border-width: 0;
     margin: 1px;
+	font-size: 14pt;
 }
 
 button.calcbutton2 {
@@ -118,6 +119,8 @@ button.calcbutton2 {
 	width: calc(25% - 2px);
 	height: calc(25% - 2px);
 	font-weight: bold;
+	font-size: 8pt;
+	margin: 1px;
 }
 
 button.calcbutton3 {
@@ -128,10 +131,11 @@ button.calcbutton3 {
 	cursor: pointer;
 	vertical-align: middle;
 	text-align: center;
-	font-size:120%;
 	overflow: visible; /* removes extra width in IE */
 	width: calc(25% - 2px);
 	height: calc(25% - 2px);
+	font-size: 14pt;
+	margin: 1px;
 }
 
 button.actionbutton {
@@ -151,6 +155,18 @@ button.actionbutton {
 	overflow: visible; /* removes extra width in IE */
 	width:33%;
 	height: calc(25% - 2px);
+	margin: 1px;
+   	border-width: 0;
+}
+
+div[aria-describedby="dialog-info"] button:before {
+    content: "\f788";
+    font-family: "Font Awesome 5 Free";
+    font-weight: 900;
+    padding-right: 5px;
+}
+div[aria-describedby="dialog-info"].ui-dialog .ui-dialog-buttonpane {
+	border-width: 0;
 }
 
 .takepospay {
@@ -212,7 +228,7 @@ div.description{
 	text-align:center;
 
 	padding-top: 30px;
-    background: -webkit-linear-gradient(top, rgba(255,255,255,0), rgba(255,255,255,0.98), rgba(255,255,255,1));
+    background: -webkit-linear-gradient(top, rgba(250,250,250,0), rgba(250,250,250,0.5), rgba(250,250,250,0.95), rgba(250,250,250,1));
 }
 
 div.catwatermark{
@@ -270,7 +286,7 @@ div.paymentbordline
 .row1withhead{
 	margin: 0 auto;
 	width: 100%;
-	height: calc(40% - 50px);
+	height: calc(45% - 50px);
 	padding-top: 5px;
 }
 
@@ -283,7 +299,7 @@ div.paymentbordline
 .row2withhead{
 	margin: 0 auto;
 	width: 100%;
-	height: 60%;
+	height: 55%;
 }
 
 .div1{
@@ -294,7 +310,7 @@ div.paymentbordline
 	box-sizing: border-box;
 	overflow: auto;
 	/* background-color:white; */
-	padding-top: 0;
+	padding-top: 1px;
 	padding-bottom: 0;
 	padding-right: 5px;
 	padding-left: 5px;
@@ -467,13 +483,27 @@ div.description_content {
     border-radius: 5px;
 }
 
+div#moreinfo, div#infowarehouse {
+    color: #aaa;
+    padding: 0 8px 0 8px;
+}
+
+.productprice {
+    position: absolute;
+    top: 5px;
+    right: 5px;
+    background: var(--colorbackhmenu1);
+    color: var(--colortextbackhmenu);
+    font-size: 2em;
+    padding: 5px;
+    border-radius: 2px;
+    opacity: 0.9;
+    padding-left: 8px;
+    padding-right: 8px;
+}
+
+
 @media screen and (min-width: 892px) {
-	.calcbutton{
-		font-size: 18px;
-	}
-	.calcbutton2{
-		font-size: 14px;
-	}
 	.actionbutton{
 		font-size: 13px;
 	}
@@ -486,12 +516,6 @@ div.description_content {
 }
 
 @media (max-width: 891px) and (min-width: 386px) {
-	.calcbutton{
-		font-size: 12px;
-	}
-	.calcbutton2{
-		font-size: 9px;
-	}
 	.actionbutton{
 		font-size: 12px;
 	}
@@ -504,12 +528,6 @@ div.description_content {
 }
 
 @media screen and (max-width: 385px){
-	.calcbutton{
-		font-size: 8px;
-	}
-	.calcbutton2{
-		font-size: 7px;
-	}
 	.actionbutton{
 		font-size: 10px;
 	}
@@ -557,7 +575,7 @@ div.description_content {
 	}
 
 	.row1withhead{
-		height: calc(40% - 100px);
+		height: calc(45% - 100px);
 	}
 
 
@@ -590,4 +608,9 @@ div.description_content {
 		font-size: 1.2em;
 	}
 
+	button.actionbutton {
+		min-height: 60px;
+		padding-left: 4px;
+		padding-right: 4px;
+	}
 }

@@ -331,6 +331,10 @@ PossibleValues=Valeurs possibles
 GoOnMenuToCreateVairants=Allez sur le menu %s - %s pour ajouter les attributs de variantes (comme les couleurs, tailles, ...)
 UseProductFournDesc=Ajouter une fonctionnalité pour définir les descriptions des produits définies par les fournisseurs en plus des descriptions pour les clients
 ProductSupplierDescription=Description du fournisseur du produit
+UseProductSupplierPackaging=Use packaging on supplier prices (recalculate quantities according to packaging set on supplier price when adding/updating line in supplier documents)
+PackagingForThisProduct=Packaging
+QtyRecalculatedWithPackaging=The quantity of the line were recalculated according to supplier packaging
+
 #Attributes
 VariantAttributes=Attributs de variante
 ProductAttributes=Attributs de variantes pour les produits
@@ -363,7 +367,7 @@ UsePercentageVariations=Utiliser les pourcentages de variation
 PercentageVariation=Variation de pourcentage
 ErrorDeletingGeneratedProducts=Une erreur s'est produite lors de la suppression des variantes existante de produits
 NbOfDifferentValues=Nb de valeurs différentes
-NbProducts=Nb de produits
+NbProducts=Number of products
 ParentProduct=Produit parent
 HideChildProducts=Cacher les variantes de produits
 ShowChildProducts=Afficher les variantes de produits
@@ -376,3 +380,4 @@ ErrorProductCombinationNotFound=Variante du produit non trouvé
 ActionAvailableOnVariantProductOnly=Action disponible uniquement sur la variante du produit
 ProductsPricePerCustomer=Prix produit par clients
 ProductSupplierExtraFields=Attributs supplémentaires (Prix fournisseur)
+DeleteLinkedProduct=Delete the child product linked to the combination
