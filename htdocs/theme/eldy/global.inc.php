@@ -1165,6 +1165,7 @@ table[summary="list_of_modules"] .fa-cog {
     .maxwidth150onsmartphone { max-width: 120px; }
     .maxwidth150onsmartphoneimp { max-width: 120px !important; }
     .maxwidth200onsmartphone { max-width: 200px; }
+    .maxwidth250onsmartphone { max-width: 250px; }
     .maxwidth300onsmartphone { max-width: 300px; }
     .maxwidth400onsmartphone { max-width: 400px; }
 	.minwidth50imp  { min-width: 50px !important; }
@@ -4161,6 +4162,7 @@ span[phptag] {
 	background: #e6e6e6;
 	display: inline-block;
 	padding: 4px 0 4px 0;
+	z-index: 250;
 }
 .websitebar .buttonDelete, .websitebar .button {
 	text-shadow: none;
