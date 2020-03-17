@@ -1289,7 +1289,7 @@ td.showDragHandle {
 .side-nav-vert {
 	position: sticky;
 	top: 0px;
-	z-index: 210;
+	z-index: 1001;
 }
 <?php } ?>
 
@@ -4162,7 +4162,7 @@ span[phptag] {
 	background: #e6e6e6;
 	display: inline-block;
 	padding: 4px 0 4px 0;
-	z-index: 250;
+	z-index: 1000;
 }
 .websitebar .buttonDelete, .websitebar .button {
 	text-shadow: none;

@@ -1440,7 +1440,7 @@ body.sidebar-collapse .side-nav, body.sidebar-collapse .login_block
 .side-nav-vert {
 	position: sticky;
 	top: 0px;
-	z-index: 210;
+	z-index: 1001;
 }
 <?php } ?>
 
