@@ -194,3 +194,6 @@ ALTER TABLE llx_product ADD COLUMN accountancy_code_buy_intra varchar(32) AFTER 
 ALTER TABLE llx_product ADD COLUMN accountancy_code_buy_export varchar(32) AFTER accountancy_code_buy_intra;
 
 ALTER TABLE llx_accounting_account ADD COLUMN reconciliable tinyint DEFAULT 0 NOT NULL after active;
+
+ALTER TABLE llx_entrepot ADD COLUMN fax varchar(20) DEFAULT NULL AFTER fk_pays;
+ALTER TABLE llx_entrepot ADD COLUMN phone varchar(20) DEFAULT NULL AFTER fk_pays;
