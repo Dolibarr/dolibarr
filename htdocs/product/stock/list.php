@@ -3,7 +3,6 @@
  * Copyright (C) 2004-2016	Laurent Destailleur		<eldy@users.sourceforge.net>
  * Copyright (C) 2005-2014	Regis Houssin			<regis.houssin@inodbox.com>
  * Copyright (C) 2015       Juanjo Menent           <jmenent@2byte.es>
- * Copyright (C) 2020       Tobias Sekan            <tobias.sekan@startmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -27,12 +26,6 @@
 
 require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/product/stock/class/entrepot.class.php';
-require_once DOL_DOCUMENT_ROOT.'/core/class/html.formcategory.class.php';
-
-if (!empty($conf->categorie->enabled))
-{
-	require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
-}
 
 // Load translation files required by the page
 $langs->loadLangs(array("stocks", "other"));
@@ -52,16 +45,11 @@ $search_ref = GETPOST("sref", "alpha") ?GETPOST("sref", "alpha") : GETPOST("sear
 $search_label = GETPOST("snom", "alpha") ?GETPOST("snom", "alpha") : GETPOST("search_label", "alpha");
 $search_status = GETPOST("search_status", "int");
 
-if (!empty($conf->categorie->enabled))
-{
-	$search_category_list = GETPOST("search_category_".Categorie::TYPE_WAREHOUSE."_list", "array");
-}
-
 // Load variable for pagination
 $limit = GETPOST('limit', 'int') ?GETPOST('limit', 'int') : $conf->liste_limit;
 $sortfield = GETPOST('sortfield', 'alpha');
 $sortorder = GETPOST('sortorder', 'alpha');
-$page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOST("page", 'int');
+$page = GETPOST('page', 'int');
 if (empty($page) || $page == -1 || GETPOST('button_search', 'alpha') || GETPOST('button_removefilter', 'alpha') || (empty($toselect) && $massaction === '0')) { $page = 0; }     // If $page is not defined, or '' or -1 or if we click on clear filters or if we select empty mass action
 $offset = $limit * $page;
 $pageprev = $page - 1;
@@ -149,7 +137,6 @@ if (empty($reshook))
 	    $search_status = "";
 	    $toselect = '';
 	    $search_array_options = array();
-		$search_category_list = array();
 	}
 	if (GETPOST('button_removefilter_x', 'alpha') || GETPOST('button_removefilter.x', 'alpha') || GETPOST('button_removefilter', 'alpha')
 		|| GETPOST('button_search_x', 'alpha') || GETPOST('button_search.x', 'alpha') || GETPOST('button_search', 'alpha'))
@@ -171,7 +158,7 @@ if (empty($reshook))
  *	View
  */
 
-$form = new FormCategory($db);
+$form = new Form($db);
 $warehouse = new Entrepot($db);
 
 $now = dol_now();
@@ -196,22 +183,10 @@ $reshook = $hookmanager->executeHooks('printFieldListSelect', $parameters, $obje
 $sql .= $hookmanager->resPrint;
 $sql = preg_replace('/,\s*$/', '', $sql);
 $sql .= " FROM ".MAIN_DB_PREFIX.$object->table_element." as e";
-
-if (!empty($conf->categorie->enabled))
-{
-	$sql .= Categorie::getFilterJoinQuery(Categorie::TYPE_WAREHOUSE, "e.rowid");
-}
-
 if (is_array($extrafields->attributes[$object->table_element]['label']) && count($extrafields->attributes[$object->table_element]['label'])) $sql .= " LEFT JOIN ".MAIN_DB_PREFIX.$object->table_element."_extrafields as ef on (e.rowid = ef.fk_object)";
 $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."product_stock as ps ON e.rowid = ps.fk_entrepot";
 $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."product as p ON ps.fk_product = p.rowid";
 $sql .= " WHERE e.entity IN (".getEntity('stock').")";
-
-if (!empty($conf->categorie->enabled))
-{
-	$sql .= Categorie::getFilterSelectQuery(Categorie::TYPE_WAREHOUSE, "e.rowid", $search_category_list);
-}
-
 if ($search_ref) $sql .= natural_search("e.ref", $search_ref); // ref
 if ($search_label) $sql .= natural_search("e.lieu", $search_label); // label
 if ($search_status != '' && $search_status >= 0) $sql .= " AND e.statut = ".$search_status;
@@ -338,12 +313,6 @@ if ($search_all)
 }
 
 $moreforfilter = '';
-
-if (!empty($conf->categorie->enabled))
-{
-	$moreforfilter .= $form->getFilterBox(Categorie::TYPE_WAREHOUSE, $search_category_list);
-}
-
 /*$moreforfilter.='<div class="divsearchfield">';
  $moreforfilter.= $langs->trans('MyFilter') . ': <input type="text" name="search_myfield" value="'.dol_escape_htmltag($search_myfield).'">';
  $moreforfilter.= '</div>';*/
