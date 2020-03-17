@@ -4361,7 +4361,8 @@ function print_barre_liste($titre, $page, $file, $options = '', $sortfield = '',
 					if ($cpt == $page)
 					{
 						$pagelist .= '<li class="pagination"><input type="text" class="width25 center pageplusone" name="pageplusone" value="'.($page + 1).'"></li>';
-						if (($cpt + 1) < $nbpages) $pagelist .= '/';
+						$pagelist .= '/';
+						//if (($cpt + 1) < $nbpages) $pagelist .= '/';
 					}
 				} else {
 					if ($cpt == $page)
@@ -4386,9 +4387,9 @@ function print_barre_liste($titre, $page, $file, $options = '', $sortfield = '',
 				}
 			} else {
 				//var_dump($page.' '.$cpt.' '.$nbpages);
-				if (($page + 1) < $nbpages) {
+				//if (($page + 1) < $nbpages) {
 					$pagelist .= '<li class="pagination"><a href="'.$file.'?page='.($nbpages - 1).$options.'">'.$nbpages.'</a></li>';
-				}
+				//}
 			}
 		}
 		else
