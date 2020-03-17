@@ -1559,7 +1559,7 @@ else
 
 		// Other attributes
 		$parameters = array('socid'=>$socid, 'colspan' => ' colspan="3"', 'colspanvalue' => '3');
-		include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_create.tpl.php';
+		include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_add.tpl.php';
 
 		// Assign a sale representative
 		print '<tr>';
