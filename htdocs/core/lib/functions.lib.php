@@ -6463,6 +6463,7 @@ function make_substitutions($text, $substitutionarray, $outputlangs = null)
 	// Make substitution for language keys: __(AnyTranslationKey)__ or __(AnyTranslationKey|langfile)__
 	if (is_object($outputlangs))
 	{
+		$reg = array();
 		while (preg_match('/__\(([^\)]+)\)__/', $text, $reg))
 		{
 			$msgishtml = 0;
@@ -6478,6 +6479,7 @@ function make_substitutions($text, $substitutionarray, $outputlangs = null)
 
 	// Make substitution for constant keys.
 	// Must be after the substitution of translation, so if the text of translation contains a string __[xxx]__, it is also converted.
+	$reg = array();
 	while (preg_match('/__\[([^\]]+)\]__/', $text, $reg))
 	{
 		$msgishtml = 0;
