@@ -38,13 +38,15 @@ if (!$user->admin)
 	accessforbidden();
 
 $action = GETPOST('action', 'alpha');
-$value = GETPOST('value', 'alpha');
+
 
 /*
  * Actions
  */
 
-include DOL_DOCUMENT_ROOT.'/core/actions_setmoduleoptions.inc.php';
+if ($action == 'save') {
+	dolibarr_set_const($db, 'EXPORT_CSV_SEPARATOR_TO_USE', GETPOST('EXPORT_CSV_SEPARATOR_TO_USE', 'alphanohtml'));
+}
 
 
 /*
@@ -73,7 +75,7 @@ dol_fiche_head($head, 'setup', $langs->trans("ExportsArea"), -1, "technic");
 
 print '<form method="POST" action="'.$_SERVER['PHP_SELF'].'">';
 print '<input type="hidden" name="token" value="'.newToken().'">';
-print '<input type="hidden" name="action" value="set_EXPORTS_SHARE_MODELS">';
+print '<input type="hidden" name="action" value="save">';
 
 print '<table class="noborder centpercent">';
 
@@ -93,7 +95,7 @@ print '</td></tr>';
 
 print '<tr class="oddeven">';
 print '<td>'.$langs->trans("ExportCsvSeparator").'</td>';
-print '<td width="60" align="center">'."<input size=\"3\" class=\"flat\" type=\"text\" name=\"value\" value=\"".$conf->global->EXPORT_CSV_SEPARATOR_TO_USE."\"></td>";
+print '<td width="60" align="center">'."<input size=\"3\" class=\"flat\" type=\"text\" name=\"EXPORT_CSV_SEPARATOR_TO_USE\" value=\"".(empty($conf->global->EXPORT_CSV_SEPARATOR_TO_USE) ? ',' : $conf->global->EXPORT_CSV_SEPARATOR_TO_USE)."\"></td>";
 print '<td class="right"><input type="submit" class="button" value="'.$langs->trans("Modify").'"></td>';
 print '</tr>';
 
