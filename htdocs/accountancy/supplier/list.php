@@ -411,6 +411,10 @@ if ($result) {
 	$facturefourn_static = new FactureFournisseur($db);
 	$product_static = new Product($db);
 
+	$isBuyerInEEC = isInEEC($mysoc);
+
+	$accountingaccount_codetotid_cache = array();
+
 	while ($i < min($num_lines, $limit)) {
 		$objp = $db->fetch_object($result);
 
@@ -440,7 +444,7 @@ if ($result) {
 		$code_buy_p_notset = '';
 		$objp->aarowid_suggest = ''; // Will be set later
 
-		$isBuyerInEEC = isInEEC($objp);
+		$isSellerInEEC = isInEEC($objp);
 
 		$suggestedaccountingaccountbydefaultfor = '';
 		if ($objp->type_l == 1) {
