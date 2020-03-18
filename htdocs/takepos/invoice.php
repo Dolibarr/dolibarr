@@ -37,6 +37,8 @@ require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/paiement/class/paiement.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.form.class.php';
 
+global $mysoc;
+
 $langs->loadLangs(array("companies", "commercial", "bills", "cashdesk", "stocks"));
 
 $id = GETPOST('id', 'int');
@@ -333,7 +335,12 @@ if ($action == "freezone") {
     $customer = new Societe($db);
     $customer->fetch($invoice->socid);
 
-    $tva_tx = get_default_tva($mysoc, $customer);
+	$tva_tx = GETPOST('tva_tx', 'alpha');
+	if ($tva_tx != '') {
+		$tva_tx = price2num($tva_tx);
+	} else {
+		$tva_tx = get_default_tva($mysoc, $customer);
+	}
 
     // Local Taxes
     $localtax1_tx = get_localtax($tva_tx, 1, $customer, $mysoc, $tva_npr);

@@ -159,6 +159,19 @@ button.actionbutton {
    	border-width: 0;
 }
 
+button.item_value {
+	background: #bbbbbb;
+	border: #000000 1px solid;
+	border-radius: 4px;
+	padding: 8px;
+}
+
+button.item_value.selected {
+	background: #ffffff;
+	color: #000000;
+	font-weight: bold;
+}
+
 div[aria-describedby="dialog-info"] button:before {
     content: "\f788";
     font-family: "Font Awesome 5 Free";
