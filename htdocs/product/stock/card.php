@@ -105,6 +105,8 @@ if (empty($reshook))
 		$object->zip         = GETPOST("zipcode");
 		$object->town        = GETPOST("town");
 		$object->country_id  = GETPOST("country_id");
+		$object->phone		 = GETPOST("phone");
+		$object->fax		 = GETPOST("fax");
 
 		if (!empty($object->libelle))
 		{
@@ -174,6 +176,8 @@ if (empty($reshook))
 			$object->zip         = GETPOST("zipcode");
 			$object->town        = GETPOST("town");
 			$object->country_id  = GETPOST("country_id");
+			$object->phone  	 = GETPOST("phone");
+			$object->fax 		 = GETPOST("fax");
 
 	        // Fill array 'array_options' with data from add form
 	        $ret = $extrafields->setOptionalsFromPost(null, $object);
@@ -292,6 +296,11 @@ if ($action == 'create')
 	print $form->select_country((!empty($object->country_id) ? $object->country_id : $mysoc->country_code), 'country_id');
 	if ($user->admin) print info_admin($langs->trans("YouCanChangeValuesForThisListFromDictionarySetup"), 1);
 	print '</td></tr>';
+
+	// Phone / Fax
+	print '<tr><td class="titlefieldcreate fieldrequired">'.img_picto('', 'object_phoning').' '.$form->editfieldkey('Phone', 'phone', '', $object, 0).'</td><td><input name="phone" size="20" value="'.$object->phone.'"></td></tr>';
+	print '<tr><td class="titlefieldcreate fieldrequired">'.img_picto('', 'object_phoning_fax').' '.$form->editfieldkey('Fax', 'fax', '', $object, 0).'</td><td><input name="fax" size="20" value="'.$object->fax.'"></td></tr>';
+
 	// Status
 	print '<tr><td>'.$langs->trans("Status").'</td><td>';
 	print '<select name="statut" class="flat">';
@@ -702,6 +711,10 @@ else
 			print $form->select_country($object->country_id ? $object->country_id : $mysoc->country_code, 'country_id');
 			if ($user->admin) print info_admin($langs->trans("YouCanChangeValuesForThisListFromDictionarySetup"), 1);
 			print '</td></tr>';
+
+			// Phone / Fax
+			print '<tr><td class="titlefieldcreate fieldrequired">'.img_picto('', 'object_phoning').' '.$form->editfieldkey('Phone', 'phone', '', $object, 0).'</td><td><input name="phone" size="20" value="'.$object->phone.'"></td></tr>';
+			print '<tr><td class="titlefieldcreate fieldrequired">'.img_picto('', 'object_phoning_fax').' '.$form->editfieldkey('Fax', 'fax', '', $object, 0).'</td><td><input name="fax" size="20" value="'.$object->fax.'"></td></tr>';
 
 			// Status
 			print '<tr><td>'.$langs->trans("Status").'</td><td>';
