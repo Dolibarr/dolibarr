@@ -1699,7 +1699,18 @@ if (empty($reshook))
 				$object->fk_facture_source = $_POST['situations'];
 				$object->type = Facture::TYPE_SITUATION;
 
-				if (!empty($origin) && !empty($originid))
+
+                $object->retained_warranty = GETPOST('retained_warranty', 'int');
+                $object->retained_warranty_fk_cond_reglement = GETPOST('retained_warranty_fk_cond_reglement', 'int');
+
+                $retained_warranty_date_limit = GETPOST('retained_warranty_date_limit');
+                if (!empty($retained_warranty_date_limit) && $db->jdate($retained_warranty_date_limit)) {
+                    $object->retained_warranty_date_limit = $db->jdate($retained_warranty_date_limit);
+                }
+                $object->retained_warranty_date_limit = !empty($object->retained_warranty_date_limit) ? $object->retained_warranty_date_limit : $object->calculate_date_lim_reglement($object->retained_warranty_fk_cond_reglement);
+var_dump('la', $object->retained_warranty);
+
+                if (!empty($origin) && !empty($originid))
 				{
 					$object->origin = $origin;
 					$object->origin_id = $originid;
