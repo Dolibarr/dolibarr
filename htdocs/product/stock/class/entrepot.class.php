@@ -88,6 +88,16 @@ class Entrepot extends CommonObject
 	 * @var string Town
 	 */
 	public $town;
+	
+	/**
+	 * @var string Phone
+	 */
+	public $phone;
+	
+	/**
+	 * @var string Fax
+	 */
+	public $fax;
 
 	/**
      * @var int ID of parent
@@ -114,6 +124,8 @@ class Entrepot extends CommonObject
 		'town' =>array('type'=>'varchar(50)', 'label'=>'Town', 'enabled'=>1, 'visible'=>-2, 'position'=>55),
 		'fk_departement' =>array('type'=>'integer', 'label'=>'State', 'enabled'=>1, 'visible'=>0, 'position'=>60),
 		'fk_pays' =>array('type'=>'integer', 'label'=>'Country', 'enabled'=>1, 'visible'=>-2, 'position'=>65),
+		'phone' =>array('type'=>'varchar(20)', 'label'=>'Phone', 'enabled'=>1, 'visible'=>-2, 'position'=>70),
+		'fax' =>array('type'=>'varchar(20)', 'label'=>'Fax', 'enabled'=>1, 'visible'=>-2, 'position'=>75),
 		//'fk_user_author' =>array('type'=>'integer', 'label'=>'Fk user author', 'enabled'=>1, 'visible'=>-2, 'position'=>82),
 		'datec' =>array('type'=>'datetime', 'label'=>'DateCreation', 'enabled'=>1, 'visible'=>-2, 'position'=>500),
 		'tms' =>array('type'=>'timestamp', 'label'=>'DateModification', 'enabled'=>1, 'visible'=>-2, 'notnull'=>1, 'position'=>501),
@@ -293,6 +305,8 @@ class Entrepot extends CommonObject
 		$sql .= ", zip = '".$this->db->escape($this->zip)."'";
 		$sql .= ", town = '".$this->db->escape($this->town)."'";
 		$sql .= ", fk_pays = ".$this->country_id;
+		$sql .= ", phone = '".$this->db->escape($this->phone)."'";
+		$sql .= ", fax = '".$this->db->escape($this->fax)."'";
 		$sql .= " WHERE rowid = ".$id;
 
 		$this->db->begin();
@@ -440,7 +454,7 @@ class Entrepot extends CommonObject
 			return -1;
 		}
 
-		$sql  = "SELECT rowid, fk_parent, ref as label, description, statut, lieu, address, zip, town, fk_pays as country_id";
+		$sql  = "SELECT rowid, fk_parent, ref as label, description, statut, lieu, address, zip, town, fk_pays as country_id, phone, fax";
 		$sql .= " FROM ".MAIN_DB_PREFIX."entrepot";
 		if ($id)
 		{
@@ -471,6 +485,8 @@ class Entrepot extends CommonObject
 				$this->zip            = $obj->zip;
 				$this->town           = $obj->town;
 				$this->country_id     = $obj->country_id;
+				$this->phone     	  = $obj->phone;
+				$this->fax	     	  = $obj->fax;
 
                 // Retreive all extrafield
                 // fetch optionals attributes and labels
