@@ -1052,6 +1052,11 @@ class Facture extends CommonInvoice
 		$facture->situation_cycle_ref = $this->situation_cycle_ref;
 		$facture->situation_final = $this->situation_final;
 
+        $facture->retained_warranty = $this->retained_warranty;
+        $facture->retained_warranty_fk_cond_reglement = $this->retained_warranty_fk_cond_reglement;
+        $facture->retained_warranty_date_limit = $this->retained_warranty_date_limit;
+
+
 		// Loop on each line of new invoice
 		foreach ($facture->lines as $i => $tmpline)
 		{
