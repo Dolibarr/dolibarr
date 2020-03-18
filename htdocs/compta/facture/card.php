@@ -2551,7 +2551,12 @@ if (empty($reshook))
                     $pa_ht = $originLine->pa_ht;
                     $label = $originLine->label;
                     $array_options = $originLine->array_options;
-                    $situation_percent = 100;
+                    if($object->type == Facture::TYPE_SITUATION){
+                        $situation_percent = 0;
+                    }
+                    else{
+                        $situation_percent = 100;
+                    }
                     $fk_prev_id = '';
                     $fk_unit = $originLine->fk_unit;
                     $pu_ht_devise = $originLine->multicurrency_subprice;
