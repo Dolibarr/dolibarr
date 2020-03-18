@@ -548,7 +548,7 @@ if ($result) {
         // VAT Num
 		print '<td>'.$objp->tva_intra.'</td>';
 
-		// Current account
+		// Found accounts
 		print '<td style="'.$code_buy_p_notset.'">';
 		$s = '<span class="small">'.(($objp->type_l == 1) ? $langs->trans("DefaultForService") : $langs->trans("DefaultForProduct")).': </span>';
 		$shelp = '';

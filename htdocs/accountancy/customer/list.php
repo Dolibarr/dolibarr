@@ -566,8 +566,8 @@ if ($result) {
 
 		print '<td>'.$objp->tva_intra.'</td>';
 
-		// Current account
-		print '<td class="center" style="'.$code_sell_p_notset.'">';
+		// Found accounts
+		print '<td style="'.$code_sell_p_notset.'">';
 	    $s = '<span class="small">'.(($objp->type_l == 1) ? $langs->trans("DefaultForService") : $langs->trans("DefaultForProduct")).': </span>';
 	    $shelp = '';
 	    if ($suggestedaccountingaccountbydefaultfor == 'eec') $shelp .= $langs->trans("SaleEEC");
