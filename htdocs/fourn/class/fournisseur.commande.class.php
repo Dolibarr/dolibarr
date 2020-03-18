@@ -1223,8 +1223,13 @@ class CommandeFournisseur extends CommonOrder
         {
             $this->db->begin();
 
-            $sql = "UPDATE ".MAIN_DB_PREFIX."commande_fournisseur SET fk_statut = ".self::STATUS_ORDERSENT.", fk_input_method=".$methode.", date_commande='".$this->db->idate($date)."'";
-            $sql .= " WHERE rowid = ".$this->id;
+            $newnoteprivate = $this->note_private;
+            if ($comment) $newnoteprivate = dol_concatdesc($newnoteprivate, $langs->trans("Comment").': '.$comment);
+
+            $sql = "UPDATE ".MAIN_DB_PREFIX."commande_fournisseur";
+            $sql .= " SET fk_statut=".self::STATUS_ORDERSENT.", fk_input_method=".$methode.", date_commande='".$this->db->idate($date)."', ";
+            $sql .= " note_private='".$this->db->escape($newnoteprivate)."'";
+            $sql .= " WHERE rowid=".$this->id;
 
             dol_syslog(get_class($this)."::commande", LOG_DEBUG);
             if ($this->db->query($sql))
@@ -1232,6 +1237,7 @@ class CommandeFournisseur extends CommonOrder
                 $this->statut = self::STATUS_ORDERSENT;
                 $this->methode_commande_id = $methode;
                 $this->date_commande = $date;
+                $this->context = array('comments' => $comment);
 
                 // Call trigger
                 $result = $this->call_trigger('ORDER_SUPPLIER_SUBMIT', $user);
