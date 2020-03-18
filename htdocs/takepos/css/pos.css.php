@@ -119,7 +119,7 @@ button.calcbutton2 {
 	width: calc(25% - 2px);
 	height: calc(25% - 2px);
 	font-weight: bold;
-	font-size: 8pt;
+	font-size: 10pt;
 	margin: 1px;
 }
 
