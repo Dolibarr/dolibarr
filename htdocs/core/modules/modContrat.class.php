@@ -193,14 +193,20 @@ class modContrat extends DolibarrModules
 		'p.rowid'=>'List:product:label','p.ref'=>'Text','p.label'=>'Text');
 
 
+		$keyforselect='contrat'; $keyforelement='contract'; $keyforaliasextra='coextra';
+		include DOL_DOCUMENT_ROOT.'/core/extrafieldsinexport.inc.php';
+		$keyforselect='contratdet'; $keyforelement='contract_line'; $keyforaliasextra='codextra';
+		include DOL_DOCUMENT_ROOT.'/core/extrafieldsinexport.inc.php';
+
 		$this->export_sql_start[$r]='SELECT DISTINCT ';
 		$this->export_sql_end[$r]  =' FROM '.MAIN_DB_PREFIX.'societe as s';
-		$this->export_sql_end[$r] .=' LEFT JOIN '.MAIN_DB_PREFIX.'c_country as c on s.fk_pays = c.rowid,';
-		$this->export_sql_end[$r] .=' '.MAIN_DB_PREFIX.'contrat as co,';
-		$this->export_sql_end[$r] .=' '.MAIN_DB_PREFIX.'contratdet as cod';
-		$this->export_sql_end[$r] .=' LEFT JOIN '.MAIN_DB_PREFIX.'product as p on (cod.fk_product = p.rowid)';
-		$this->export_sql_end[$r] .=' WHERE co.fk_soc = s.rowid and co.rowid = cod.fk_contrat';
-		$this->export_sql_end[$r] .=' AND co.entity IN ('.getEntity('contract').')';
+		$this->export_sql_end[$r] .=' LEFT JOIN '.MAIN_DB_PREFIX.'c_country as c on s.fk_pays = c.rowid';
+		$this->export_sql_end[$r] .=' INNER JOIN '.MAIN_DB_PREFIX.'contrat as co ON co.fk_soc = s.rowid';
+		$this->export_sql_end[$r] .=' INNER JOIN '.MAIN_DB_PREFIX.'contratdet as cod ON co.rowid = cod.fk_contrat';
+		$this->export_sql_end[$r] .=' LEFT JOIN '.MAIN_DB_PREFIX.'product as p ON (cod.fk_product = p.rowid)';
+		$this->export_sql_end[$r] .=' LEFT JOIN '.MAIN_DB_PREFIX.'contrat_extrafields as coextra on (co.rowid = coextra.fk_object)';
+		$this->export_sql_end[$r] .=' LEFT JOIN '.MAIN_DB_PREFIX.'contratdet_extrafields as codextra on (cod.rowid = codextra.fk_object)';
+		$this->export_sql_end[$r] .=' WHERE co.entity IN ('.getEntity('contract').')';
 	}
 
 
