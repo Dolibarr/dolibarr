@@ -1959,6 +1959,7 @@ WarningValueHigherSlowsDramaticalyOutput=Warning, higher values slows dramatical
 ModuleActivated=Module %s is activated and slows the interface
 EXPORTS_SHARE_MODELS=Export models are share with everybody
 ExportSetup=Setup of module Export
+ImportSetup=Setup of module Import
 InstanceUniqueID=Unique ID of the instance
 SmallerThan=Smaller than
 LargerThan=Larger than
