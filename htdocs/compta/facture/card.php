@@ -1708,7 +1708,7 @@ if (empty($reshook))
                     $object->retained_warranty_date_limit = $db->jdate($retained_warranty_date_limit);
                 }
                 $object->retained_warranty_date_limit = !empty($object->retained_warranty_date_limit) ? $object->retained_warranty_date_limit : $object->calculate_date_lim_reglement($object->retained_warranty_fk_cond_reglement);
-var_dump('la', $object->retained_warranty);
+				var_dump('la', $object->retained_warranty);
 
                 if (!empty($origin) && !empty($originid))
 				{
