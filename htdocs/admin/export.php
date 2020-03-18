@@ -71,6 +71,9 @@ $h++;
 
 dol_fiche_head($head, 'setup', $langs->trans("ExportsArea"), -1, "exports");
 
+print '<form method="POST" action="'.$_SERVER['PHP_SELF'].'">';
+print '<input type="hidden" name="token" value="'.newToken().'">';
+print '<input type="hidden" name="action" value="set_EXPORTS_SHARE_MODELS">';
 
 print '<table class="noborder centpercent">';
 print '<tr class="liste_titre">';
@@ -78,22 +81,17 @@ print '<td>'.$langs->trans("Parameters").'</td>'."\n";
 print '<td class="center" width="20">&nbsp;</td>';
 print '<td class="center" width="100"></td>'."\n";
 
-
 // Example with a yes / no select
 print '<tr class="oddeven">';
 print '<td>'.$langs->trans("EXPORTS_SHARE_MODELS").'</td>';
 print '<td class="center" width="20">&nbsp;</td>';
 print '<td class="center" width="100">';
-
-print '<form method="POST" action="'.$_SERVER['PHP_SELF'].'">';
-print '<input type="hidden" name="token" value="'.newToken().'">';
-print '<input type="hidden" name="action" value="set_EXPORTS_SHARE_MODELS">';
 echo ajax_constantonoff('EXPORTS_SHARE_MODELS');
-print '</form>';
-
 print '</td></tr>';
 
 print '</table>';
+
+print '</form>';
 
 dol_fiche_end();
 
