@@ -88,12 +88,12 @@ class Entrepot extends CommonObject
 	 * @var string Town
 	 */
 	public $town;
-	
+
 	/**
 	 * @var string Phone
 	 */
 	public $phone;
-	
+
 	/**
 	 * @var string Fax
 	 */

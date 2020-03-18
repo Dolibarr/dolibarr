@@ -578,7 +578,7 @@ if ($num)
 		{
 			print '<td>'.$obj->phone.'</td>';
 		}
-		
+
 		//Fax
 		if (!empty($arrayfields['e.fax']['checked']))
 		{
