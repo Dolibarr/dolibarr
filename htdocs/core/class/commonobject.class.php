@@ -4125,7 +4125,7 @@ abstract class CommonObject
 	 */
 	public function printObjectLines($action, $seller, $buyer, $selected = 0, $dateSelector = 0, $defaulttpldir = '/core/tpl')
 	{
-		global $conf, $hookmanager, $langs, $user, $object, $form, $extrafields;
+		global $conf, $hookmanager, $langs, $user, $form, $extrafields, $object;
 		// TODO We should not use global var for this
 		global $inputalsopricewithtax, $usemargins, $disableedit, $disablemove, $disableremove, $outputalsopricetotalwithtax;
 
@@ -4149,6 +4149,7 @@ abstract class CommonObject
 		{
 			// Output template part (modules that overwrite templates must declare this into descriptor)
 			// Use global variables + $dateSelector + $seller and $buyer
+			// Note: This is deprecated. If you need to overwrite the tpl file, use instead the hook.
 			$dirtpls = array_merge($conf->modules_parts['tpl'], array($defaulttpldir));
 			foreach ($dirtpls as $module => $reldir)
 			{
