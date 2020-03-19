@@ -56,6 +56,7 @@ create table llx_product
   fk_user_modif                 integer,                            -- user making last change
   tosell                        tinyint      DEFAULT 1,             -- Product you sell
   tobuy                         tinyint      DEFAULT 1,             -- Product you buy
+  tostock                       tinyint      DEFAULT 1,             -- Product or service managed in stock
   onportal                      tinyint      DEFAULT 0,	            -- If it is a product you sell and you want to sell it on portal (module website must be on)
   tobatch                       tinyint      DEFAULT 0 NOT NULL,    -- Is it a product that need a batch management (eat-by or lot management)
   fk_product_type               integer      DEFAULT 0,             -- Type of product: 0 for regular product, 1 for service, 9 for other (used by external module)

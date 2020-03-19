@@ -625,6 +625,7 @@ class Product extends CommonObject
                     $sql .= ", price_base_type";
                     $sql .= ", tobuy";
                     $sql .= ", tosell";
+                    $sql .= ", tostock";
                     $sql .= ", accountancy_code_buy";
                     $sql .= ", accountancy_code_buy_intra";
                     $sql .= ", accountancy_code_buy_export";
@@ -650,6 +651,7 @@ class Product extends CommonObject
                     $sql .= ", '".$this->db->escape($this->price_base_type)."'";
                     $sql .= ", ".$this->status;
                     $sql .= ", ".$this->status_buy;
+                    $sql .= ", ".$this->tostock;
                     $sql .= ", '".$this->db->escape($this->accountancy_code_buy)."'";
                     $sql .= ", '".$this->db->escape($this->accountancy_code_buy_intra)."'";
                     $sql .= ", '".$this->db->escape($this->accountancy_code_buy_export)."'";
@@ -895,6 +897,9 @@ class Product extends CommonObject
         if (empty($this->status_buy)) {
             $this->status_buy = 0;
         }
+        if (empty($this->tostock)) {
+            $this->tostock = 0;
+        }
 
         if (empty($this->country_id)) {
             $this->country_id = 0;
@@ -995,6 +1000,7 @@ class Product extends CommonObject
 
             $sql .= ", tosell = ".(int) $this->status;
             $sql .= ", tobuy = ".(int) $this->status_buy;
+            $sql .= ", tostock = ".(int) $this->tostock;
             $sql .= ", tobatch = ".((empty($this->status_batch) || $this->status_batch < 0) ? '0' : (int) $this->status_batch);
             $sql .= ", finished = ".((!isset($this->finished) || $this->finished < 0) ? "null" : (int) $this->finished);
             $sql .= ", net_measure = ".($this->net_measure != '' ? "'".$this->db->escape($this->net_measure)."'" : 'null');
