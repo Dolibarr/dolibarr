@@ -848,7 +848,7 @@ class ExtraFields
 	public function fetch_name_optionals_label($elementtype, $forceload = false)
 	{
         // phpcs:enable
-		global $conf;
+		global $langs, $conf;
 
 		if (empty($elementtype)) return array();
 
@@ -910,6 +910,11 @@ class ExtraFields
 					if ($tab->type != 'separate')
 					{
 						$array_name_label[$tab->name] = $tab->label;
+					}
+
+					if (! empty($tab->langs))
+					{
+						$langs->load($tab->langs);
 					}
 
 					// Old usage
@@ -1943,6 +1948,10 @@ class ExtraFields
 		elseif ($type == 'int')
 		{
 			$align = "right";
+		}
+		elseif ($type == 'price')
+		{
+			$align="right";
 		}
 		elseif ($type == 'double')
 		{
