@@ -97,7 +97,7 @@ $server->wsdl->addComplexType(
     '',
     array(
         'amount'          => array('name'=>'amount','type'=>'xsd:double'),
-        'num_paiement'    => array('name'=>'num_paiement','type'=>'xsd:string'),
+        'num_payment'     => array('name'=>'num_payment','type'=>'xsd:string'),
         'thirdparty_id'   => array('name'=>'thirdparty_id','type'=>'xsd:int'),
                'bank_account'    => array('name'=>'bank_account','type'=>'xsd:int'),
                'payment_mode_id' => array('name'=>'payment_mode_id','type'=>'xsd:int'),
@@ -167,14 +167,14 @@ function createPayment($authentication, $payment)
         $soc = new Societe($db);
         $res = $soc->fetch($payment['thirdparty_id']);
 
-        $new_payment               = new Paiement($db);
-        $new_payment->amount       = doubleval($payment['amount']);
-        $new_payment->num_paiement = $payment['num_paiement'];
-        $new_payment->bank_account = intval($payment['bank_account']);
-        $new_payment->paiementid   = !empty($payment['payment_mode_id']) ? intval($payment['payment_mode_id']) : $soc->mode_reglement_id;
-        $new_payment->datepaye     = $now;
-        $new_payment->author       = $payment['thirdparty_id'];
-        $new_payment->amounts      = array();
+        $new_payment              = new Paiement($db);
+        $new_payment->amount      = doubleval($payment['amount']);
+        $new_payment->num_payment = $payment['num_payment'];
+        $new_payment->fk_account  = intval($payment['bank_account']);
+        $new_payment->paiementid  = !empty($payment['payment_mode_id']) ? intval($payment['payment_mode_id']) : $soc->mode_reglement_id;
+        $new_payment->datepaye    = $now;
+        $new_payment->author      = $payment['thirdparty_id'];
+        $new_payment->amounts     = array();
 
         if (intval($payment['invoice_id']) > 0) {
             $new_payment->amounts[ $payment['invoice_id'] ] = $new_payment->amount;

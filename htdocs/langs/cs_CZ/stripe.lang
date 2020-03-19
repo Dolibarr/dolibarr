@@ -68,3 +68,4 @@ ToOfferALinkForTestWebhook=Odkaz na nastavení Stripe WebHook pro volání IPN (
 ToOfferALinkForLiveWebhook=Odkaz na nastavení Stripe WebHook pro volání IPN (provozní režim)
 PaymentWillBeRecordedForNextPeriod=Payment will be recorded for the next period.
 ClickHereToTryAgain=<a href="%s">Click here to try again...</a>
+CreationOfPaymentModeMustBeDoneFromStripeInterface=Due to Strong Customer Authenticatin rules, creation of a card must be done from Stripe backoffice. You can click here to switch on Stripe customer record: %s

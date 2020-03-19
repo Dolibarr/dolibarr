@@ -282,7 +282,7 @@ class Translate
 						 * and split the rest until a line feed.
 						 * This is more efficient than fgets + explode + trim by a factor of ~2.
 						 */
-						while ($line = fscanf($fp, "%[^= ]%*[ =]%[^\n]"))
+						while ($line = fscanf($fp, "%[^= ]%*[ =]%[^\n\r]"))
 						{
 							if (isset($line[1]))
 							{
@@ -764,28 +764,62 @@ class Translate
 	 * 	@param	string	$langdir		Directory to scan
 	 *  @param  integer	$maxlength   	Max length for each value in combo box (will be truncated)
 	 *  @param	int		$usecode		1=Show code instead of country name for language variant, 2=Show only code
+	 *  @param	int		$mainlangonly   1=Show only main languages ('fr_FR' no' fr_BE', 'es_ES' not 'es_MX', ...)
 	 *  @return array     				List of languages
 	 */
-    public function get_available_languages($langdir = DOL_DOCUMENT_ROOT, $maxlength = 0, $usecode = 0)
+	public function get_available_languages($langdir = DOL_DOCUMENT_ROOT, $maxlength = 0, $usecode = 0, $mainlangonly = 0)
     {
         // phpcs:enable
 		global $conf;
+
+		$this->load("languages");
 
 		// We scan directory langs to detect available languages
 		$handle = opendir($langdir."/langs");
 		$langs_available = array();
 		while ($dir = trim(readdir($handle)))
 		{
-			if (preg_match('/^[a-z]+_[A-Z]+/i', $dir))
+			$regs = array();
+			if (preg_match('/^([a-z]+)_([A-Z]+)/i', $dir, $regs))
 			{
-				$this->load("languages");
-
+				// We must keep only main languages
+				if ($mainlangonly) {
+					$arrayofspecialmainlanguages = array(
+						'en'=>'en_US',
+						'sq'=>'sq_AL',
+						'ar'=>'ar_SA',
+						'eu'=>'eu_ES',
+						'bn'=>'bn_DB',
+						'bs'=>'bs_BA',
+						'ca'=>'ca_ES',
+						'zh'=>'zh_TW',
+						'cs'=>'cs_CZ',
+						'da'=>'da_DK',
+						'et'=>'et_EE',
+						'ka'=>'ka_GE',
+						'el'=>'el_GR',
+						'he'=>'he_IL',
+						'kn'=>'kn_IN',
+						'km'=>'km_KH',
+						'ko'=>'ko_KR',
+						'lo'=>'lo_LA',
+						'nb'=>'nb_NO',
+						'fa'=>'fa_IR',
+						'sr'=>'sr_RS',
+						'sl'=>'sl_SI',
+						'uk'=>'uk_UA',
+						'vi'=>'vi_VN'
+					);
+					if (strtolower($regs[1]) != strtolower($regs[2]) && ! in_array($dir, $arrayofspecialmainlanguages)) continue;
+				}
+				// We must keep only languages into MAIN_LANGUAGES_ALLOWED
 				if (!empty($conf->global->MAIN_LANGUAGES_ALLOWED) && !in_array($dir, explode(',', $conf->global->MAIN_LANGUAGES_ALLOWED))) continue;
 
 				if ($usecode == 2)
 				{
 				    $langs_available[$dir] = $dir;
 				}
+
 				if ($usecode == 1 || !empty($conf->global->MAIN_SHOW_LANGUAGE_CODE))
 				{
 				    $langs_available[$dir] = $dir.': '.dol_trunc($this->trans('Language_'.$dir), $maxlength);
@@ -793,6 +827,9 @@ class Translate
 				else
 				{
 					$langs_available[$dir] = $this->trans('Language_'.$dir);
+				}
+				if ($mainlangonly) {
+					$langs_available[$dir] = str_replace(' (United States)', '', $langs_available[$dir]);
 				}
 			}
 		}

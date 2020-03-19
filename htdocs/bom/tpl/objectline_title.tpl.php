@@ -66,7 +66,7 @@ print '<td class="linecolqty right">'.$form->textwithpicto($langs->trans('QtyFro
 print '<td class="linecolqty right">'.$form->textwithpicto($langs->trans('DisableStockChange'), $langs->trans('DisableStockChangeHelp')).'</td>';
 
 // Efficiency
-//print '<td class="linecollost right">'.$form->textwithpicto($langs->trans('ManufacturingEfficiency'), $langs->trans('XXX')).'</td>';
+print '<td class="linecollost right">'.$form->textwithpicto($langs->trans('ManufacturingEfficiency'), $langs->trans('ValueOfMeansLoss')).'</td>';
 
 print '<td class="linecoledit"></td>';  // No width to allow autodim
 

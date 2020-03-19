@@ -13,6 +13,15 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <https://www.gnu.org/licenses/>.
+ *
+ * Note about $_SERVER:
+ * REQUEST_URI: /test/before_rewrite/script.php/path/info?q=helloword
+ * PHP_SELF: /test/after_rewrite/script.php/path/info
+ * QUERY_STRING: q=helloword
+ * SCRIPT_NAME: /test/after_rewrite/script.php
+ * PATH_INFO: /path/info
+ * SCRIPT_FILENAME: /var/www/test/php/script.php
+ * __FILE__ : /var/www/test/php/script_included.php
  */
 
 /**
@@ -52,7 +61,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 $error=0;
 $websitekey=GETPOST('website', 'alpha');
 $pageid=GETPOST('page', 'alpha')?GETPOST('page', 'alpha'):GETPOST('pageid', 'alpha');
-$pageref=GETPOST('pageref', 'aZ09')?GETPOST('pageref', 'aZ09'):'';
+$pageref=GETPOST('pageref', 'alphanohtml')?GETPOST('pageref', 'alphanohtml'):'';
 
 $accessallowed = 1;
 $type='';
@@ -110,7 +119,7 @@ if (empty($pageid))
 
 		if (empty($pageid))
 		{
-			$array=$objectpage->fetchAll($object->id);
+			$array=$objectpage->fetchAll($object->id);	// TODO Can filter on container of type pages only ?
 			if (is_array($array) && count($array) > 0)
 			{
 				$firstrep=reset($array);

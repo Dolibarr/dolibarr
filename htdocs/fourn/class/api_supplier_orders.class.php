@@ -252,8 +252,8 @@ class SupplierOrders extends DolibarrApi
 	/**
 	 * Delete supplier order
 	 *
-	 * @param int   $id Supplier order ID
-	 * @return type
+	 * @param int   	$id 	Supplier order ID
+	 * @return array			Array of result
 	 */
 	public function delete($id)
 	{

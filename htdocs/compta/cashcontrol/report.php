@@ -40,6 +40,7 @@ $langs->load("bills");
 $id = GETPOST('id', 'int');
 
 $_GET['optioncss'] = "print";
+
 $cashcontrol = new CashControl($db);
 $cashcontrol->fetch($id);
 
@@ -68,6 +69,8 @@ $terminalid = $cashcontrol->posnumber;
 /*
  * View
  */
+
+$param = '';
 
 llxHeader('', $langs->trans("CashControl"), '', '', 0, 0, array(), array(), $param);
 
@@ -268,21 +271,21 @@ if ($resql)
 
 	print "<div style='text-align: right'><h2>";
 	print $langs->trans("Cash").": ".price($cash);
-	if ($cash != $cashcontrol->cash) {
+	if ($cashcontrol->status == $cashcontrol::STATUS_VALIDATED && $cash != $cashcontrol->cash) {
 		print ' <> <span class="amountremaintopay">'.$langs->trans("Declared").': '.price($cashcontrol->cash).'</span>';
 	}
 	print "<br><br>";
 
 	//print '<br>';
 	print $langs->trans("PaymentTypeCHQ").": ".price($cheque);
-	if ($cheque != $cashcontrol->cheque) {
+	if ($cashcontrol->status == $cashcontrol::STATUS_VALIDATED && $cheque != $cashcontrol->cheque) {
 		print ' <> <span class="amountremaintopay">'.$langs->trans("Declared").': '.price($cashcontrol->cheque).'</span>';
 	}
 	print "<br><br>";
 
 	//print '<br>';
 	print $langs->trans("PaymentTypeCB").": ".price($bank);
-	if ($bank != $cashcontrol->card) {
+	if ($cashcontrol->status == $cashcontrol::STATUS_VALIDATED && $bank != $cashcontrol->card) {
 		print ' <> <span class="amountremaintopay">'.$langs->trans("Declared").': '.price($cashcontrol->card).'</span>';
 	}
 	print "<br><br>";

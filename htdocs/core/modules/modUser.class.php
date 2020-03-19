@@ -314,7 +314,8 @@ class modUser extends DolibarrModules
             'u.birth'=>'^[0-9][0-9][0-9][0-9]-[0-9][0-9]-[0-9][0-9]$'
 		);
 		$this->import_examplevalues_array[$r] = array(
-			'u.lastname'=>"Doe", 'u.firstname'=>'John', 'u.login'=>'jdoe', 'u.employee'=>'0 or 1',
+			'u.lastname'=>"Doe", 'u.firstname'=>'John', 'u.login'=>'jdoe', 'u.employee'=>'0 or 1', 'u.job'=>'CTO', 'u.gender'=>'0 or 1',
+			'u.pass_crypted'=>'Encrypted password',
 			'u.fk_soc'=>'0 (internal user) or company name (external user)', 'u.datec'=>dol_print_date(dol_now(), '%Y-%m-%d'), 'u.address'=>"61 jump street",
 			'u.zip'=>"123456", 'u.town'=>"Big town", 'u.fk_country'=>'US, FR, DE...', 'u.office_phone'=>"0101010101", 'u.office_fax'=>"0101010102",
 			'u.email'=>"test@mycompany.com", 'u.salary'=>"10000", 'u.note'=>"This is an example of note for record", 'u.datec'=>"2015-01-01 or 2015-01-01 12:30:00",

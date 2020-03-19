@@ -217,7 +217,7 @@ class modTakePos extends DolibarrModules
 								'titre'=>'PointOfSaleShort',
 								'mainmenu'=>'takepos',
 								'leftmenu'=>'',
-								'url'=>'/takepos/takepos.php',
+								'url'=>'/takepos/index.php',
 								'langs'=>'cashdesk', // Lang file to use (without .lang) by module. File must be in langs/code_CODE/ directory.
 								'position'=>1000 + $r,
 								'enabled'=>'$conf->takepos->enabled', // Define condition to show or hide menu entry. Use '$conf->takepos->enabled' if entry must be visible if module is enabled.
@@ -265,6 +265,10 @@ class modTakePos extends DolibarrModules
 	 */
 	public function init($options = '')
 	{
+		global $conf,$db;
+
+		dolibarr_set_const($db, "TAKEPOS_PRINT_METHOD", "browser", 'chaine', 0, '', $conf->entity);
+
 		$this->_load_tables('/takepos/sql/');
 
 		$sql = array();

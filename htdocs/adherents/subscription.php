@@ -49,7 +49,7 @@ $typeid = GETPOST('typeid', 'int');
 $limit = GETPOST('limit', 'int') ?GETPOST('limit', 'int') : $conf->liste_limit;
 $sortfield = GETPOST('sortfield', 'alpha');
 $sortorder = GETPOST('sortorder', 'alpha');
-$page = GETPOST('page', 'int');
+$page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOST("page", 'int');
 if (empty($page) || $page == -1) { $page = 0; }     // If $page is not defined, or '' or -1
 $offset = $limit * $page;
 $pageprev = $page - 1;
@@ -229,7 +229,7 @@ if ($user->rights->adherent->cotisation->creer && $action == 'subscription' && !
     // Payment informations
     $accountid = $_POST["accountid"];
     $operation = $_POST["operation"]; // Payment mode
-    $num_chq = $_POST["num_chq"];
+    $num_chq = GETPOST("num_chq", "alphanohtml");
     $emetteur_nom = $_POST["chqemetteur"];
     $emetteur_banque = $_POST["chqbank"];
     $option = $_POST["paymentsave"];

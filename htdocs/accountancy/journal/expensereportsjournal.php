@@ -355,7 +355,7 @@ if ($action == 'writebookkeeping') {
 		}
 
 		// Protection against a bug on line before
-		if (price2num($totaldebit) != price2num($totalcredit))
+		if (price2num($totaldebit, 'MT') != price2num($totalcredit, 'MT'))
 		{
 			$error++;
 			$errorforline++;

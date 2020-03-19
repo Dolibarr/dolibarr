@@ -50,7 +50,7 @@ $status				= GETPOST('status', 'alpha');
 $limit = GETPOST('limit', 'int') ?GETPOST('limit', 'int') : $conf->liste_limit;
 $sortfield = GETPOST("sortfield", 'alpha');
 $sortorder = GETPOST("sortorder", 'alpha');
-$page = GETPOST("page", 'int');
+$page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOST("page", 'int');
 if (empty($page) || $page == -1) { $page = 0; }     // If $page is not defined, or '' or -1
 $offset = $limit * $page;
 $pageprev = $page - 1;
@@ -792,7 +792,7 @@ if ($rowid > 0)
         $morphys["phy"] = $langs->trans("Physical");
         $morphys["mor"] = $langs->trans("Moral");
         print '<tr><td><span>'.$langs->trans("MemberNature").'</span></td><td>';
-        print $form->selectarray("morphy", $morphys, isset($_POST["morphy"]) ? $_POST["morphy"] : $object->morphy);
+        print $form->selectarray("morphy", $morphys, GETPOSTISSET("morphy") ? GETPOST("morphy") : $object->morphy);
         print "</td></tr>";
 
     	print '<tr><td>'.$langs->trans("SubscriptionRequired").'</td><td>';

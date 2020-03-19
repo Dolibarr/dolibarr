@@ -216,7 +216,6 @@ SetupIsReadyForUse=El despliegue del módulo ha finalizado. Sin embargo, debe ha
 NotExistsDirect=El directorio raíz alternativo no está definido en un directorio existente. <br>
 InfDirAlt=Desde la versión 3, es posible definir un directorio raíz alternativo. Esto le permite almacenar, en un directorio dedicado, complementos y plantillas personalizadas. <br> Simplemente cree un directorio en la raíz de Dolibarr (por ejemplo: personalizado). <br>
 InfDirExample=<br> Luego declara en el archivo <strong> conf.php </strong> <br> $ dolibarr_main_url_root_alt = '/ custom' <br> $ dolibarr_main_document_root_alt = '/ path / of / dolibarr / htdocs / custom' <br> Si estas líneas están comentadas con "#", para habilitarlas, simplemente elimine el comentario eliminando el carácter "#".
-YouCanSubmitFile=Alternativamente, puedes subir el paquete del paquete de archivos .zip:
 CurrentVersion=Dolibarr versión actual
 LastActivationAuthor=Autor de activación más reciente
 LastActivationIP=Última activación de IP

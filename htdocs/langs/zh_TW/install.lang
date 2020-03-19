@@ -91,7 +91,7 @@ GoToSetupArea=前往Dolibarr（設定區）
 MigrationNotFinished=資料庫版本不是最新的：再執行升級程序一次。
 GoToUpgradePage=再次進入升級頁面
 WithNoSlashAtTheEnd=結尾沒有斜杠“ /”
-DirectoryRecommendation=建議使用網頁之外的資料夾。
+DirectoryRecommendation=<span class="warning">重要</span>: 您必須使用網頁以外的資料夾(所以不要使用先前參數的子目錄).
 LoginAlreadyExists=已存在
 DolibarrAdminLogin=Dolibarr管理員登入
 AdminLoginAlreadyExists=Dolibarr管理員帳戶 '<b>%s</b>'已經存在。如果要建立另一個，請返回。

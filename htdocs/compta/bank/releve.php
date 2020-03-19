@@ -49,7 +49,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/functions.lib.php';
 $langs->loadLangs(array("banks", "categories", "companies", "bills", "trips", "donations", "loan"));
 
 $action = GETPOST('action', 'alpha');
-$id = GETPOST('account', 'int');
+$id = GETPOST('account', 'int') ? GETPOST('account', 'int') : GETPOST('id', 'int');
 $ref = GETPOST('ref', 'alpha');
 $dvid = GETPOST('dvid', 'alpha');
 $numref = GETPOST('num', 'alpha');
@@ -80,7 +80,7 @@ if ($user->rights->banque->consolidate && $action == 'dvprev' && !empty($dvid))
 $limit = GETPOST('limit', 'int') ?GETPOST('limit', 'int') : $conf->liste_limit;
 $sortfield = GETPOST("sortfield", 'alpha');
 $sortorder = GETPOST("sortorder", 'alpha');
-$page = GETPOST("page", 'int');
+$page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOST("page", 'int');
 $pageplusone = GETPOST("pageplusone", 'int');
 if ($pageplusone) $page = $pageplusone - 1;
 if (empty($page) || $page == -1) { $page = 0; }     // If $page is not defined, or '' or -1

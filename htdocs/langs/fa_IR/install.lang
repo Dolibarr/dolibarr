@@ -91,7 +91,7 @@ GoToSetupArea=برو به Dolibarr (بخش برپاسازی)
 MigrationNotFinished=نسخۀ پایگاه داده کاملا به‌روز نیست: روند ارتقا را دوباره اجرا کنید.
 GoToUpgradePage=رفتن دوباره به صفحۀ ارتقا
 WithNoSlashAtTheEnd=بدون ممیز "/" در انتها
-DirectoryRecommendation=پیشنهاد می‌شود یک پوشه در بیرون از محیط صفحات وب استفاده شود
+DirectoryRecommendation=<span class="warning">IMPORTANT</span>: You must use a directory that is outside of the web pages (so do not use a subdirectory of previous parameter).
 LoginAlreadyExists=قبلا وجود داشته است
 DolibarrAdminLogin=ورود کاربر مدیر به Dolibarr
 AdminLoginAlreadyExists=حساب مدیریت Dolibarr '<b>%s</b>' قبلا وجود داشته است. در صورتی که می‌خواهید یکی دیگر بسازید، به عقب برگردید.

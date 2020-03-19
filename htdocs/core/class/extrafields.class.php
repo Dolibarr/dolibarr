@@ -225,9 +225,10 @@ class ExtraFields
 	 *  @param  string  		$langfile  		 	Language file
 	 *  @param  string  		$enabled  		 	Condition to have the field enabled or not
 	 *  @param	int				$totalizable		Is a measure. Must show a total on lists
+     *  @param  int             $printable        Is extrafield displayed on PDF
 	 *  @return int      							<=0 if KO, >0 if OK
 	 */
-	public function addExtraField($attrname, $label, $type, $pos, $size, $elementtype, $unique = 0, $required = 0, $default_value = '', $param = '', $alwayseditable = 0, $perms = '', $list = '-1', $help = '', $computed = '', $entity = '', $langfile = '', $enabled = '1', $totalizable = 0)
+	public function addExtraField($attrname, $label, $type, $pos, $size, $elementtype, $unique = 0, $required = 0, $default_value = '', $param = '', $alwayseditable = 0, $perms = '', $list = '-1', $help = '', $computed = '', $entity = '', $langfile = '', $enabled = '1', $totalizable = 0, $printable = 0)
 	{
 		if (empty($attrname)) return -1;
 		if (empty($label)) return -1;
@@ -245,7 +246,7 @@ class ExtraFields
 		if ($result > 0 || $err1 == 'DB_ERROR_COLUMN_ALREADY_EXISTS' || $type == 'separate')
 		{
 			// Add declaration of field into table
-			$result2 = $this->create_label($attrname, $label, $type, $pos, $size, $elementtype, $unique, $required, $param, $alwayseditable, $perms, $list, $help, $default_value, $computed, $entity, $langfile, $enabled, $totalizable);
+			$result2 = $this->create_label($attrname, $label, $type, $pos, $size, $elementtype, $unique, $required, $param, $alwayseditable, $perms, $list, $help, $default_value, $computed, $entity, $langfile, $enabled, $totalizable, $printable);
 			$err2 = $this->errno;
 			if ($result2 > 0 || ($err1 == 'DB_ERROR_COLUMN_ALREADY_EXISTS' && $err2 == 'DB_ERROR_RECORD_ALREADY_EXISTS'))
 			{
@@ -374,9 +375,11 @@ class ExtraFields
 	 *  @param	string			$langfile		Language file
 	 *  @param  string  		$enabled  		Condition to have the field enabled or not
 	 *  @param	int				$totalizable	Is a measure. Must show a total on lists
+     *  @param  int             $printable        Is extrafield displayed on PDF
 	 *  @return	int								<=0 if KO, >0 if OK
+     *  @throws Exception
 	 */
-	private function create_label($attrname, $label = '', $type = '', $pos = 0, $size = 0, $elementtype = 'member', $unique = 0, $required = 0, $param = '', $alwayseditable = 0, $perms = '', $list = '-1', $help = '', $default = '', $computed = '', $entity = '', $langfile = '', $enabled = '1', $totalizable = 0)
+	private function create_label($attrname, $label = '', $type = '', $pos = 0, $size = 0, $elementtype = 'member', $unique = 0, $required = 0, $param = '', $alwayseditable = 0, $perms = '', $list = '-1', $help = '', $default = '', $computed = '', $entity = '', $langfile = '', $enabled = '1', $totalizable = 0, $printable = 0)
 	{
         // phpcs:enable
 		global $conf, $user;
@@ -390,6 +393,7 @@ class ExtraFields
 		if (empty($required)) $required = 0;
 		if (empty($unique)) $unique = 0;
 		if (empty($alwayseditable)) $alwayseditable = 0;
+		if (empty($totalizable)) $totalizable = 0;
 
 		if (!empty($attrname) && preg_match("/^\w[a-zA-Z0-9-_]*$/", $attrname) && !is_numeric($attrname))
 		{
@@ -421,6 +425,7 @@ class ExtraFields
 			$sql .= " perms,";
 			$sql .= " langs,";
 			$sql .= " list,";
+			$sql .= " printable,";
 			$sql .= " fielddefault,";
 			$sql .= " fieldcomputed,";
 			$sql .= " fk_user_author,";
@@ -444,6 +449,7 @@ class ExtraFields
 			$sql .= " ".($perms ? "'".$this->db->escape($perms)."'" : "null").",";
 			$sql .= " ".($langfile ? "'".$this->db->escape($langfile)."'" : "null").",";
 			$sql .= " '".$this->db->escape($list)."',";
+			$sql .= " '".$this->db->escape($printable)."',";
 			$sql .= " ".($default ? "'".$this->db->escape($default)."'" : "null").",";
 			$sql .= " ".($computed ? "'".$this->db->escape($computed)."'" : "null").",";
 			$sql .= " ".(is_object($user) ? $user->id : 0).",";
@@ -451,7 +457,7 @@ class ExtraFields
 			$sql .= "'".$this->db->idate(dol_now())."',";
 			$sql .= " ".($enabled ? "'".$this->db->escape($enabled)."'" : "1").",";
 			$sql .= " ".($help ? "'".$this->db->escape($help)."'" : "null").",";
-			$sql .= " ".($totalizable ? '1' : '0');
+			$sql .= " ".($totalizable ? 'TRUE' : 'FALSE');
 			$sql .= ')';
 
 			dol_syslog(get_class($this)."::create_label", LOG_DEBUG);
@@ -590,9 +596,11 @@ class ExtraFields
 	 *  @param	string	$langfile			Language file
 	 *  @param  string  $enabled  			Condition to have the field enabled or not
      *  @param  int     $totalizable        Is extrafield totalizable on list
+     *  @param  int     $printable        Is extrafield displayed on PDF
 	 * 	@return	int							>0 if OK, <=0 if KO
+     *  @throws Exception
 	 */
-	public function update($attrname, $label, $type, $length, $elementtype, $unique = 0, $required = 0, $pos = 0, $param = '', $alwayseditable = 0, $perms = '', $list = '', $help = '', $default = '', $computed = '', $entity = '', $langfile = '', $enabled = '1', $totalizable = 0)
+	public function update($attrname, $label, $type, $length, $elementtype, $unique = 0, $required = 0, $pos = 0, $param = '', $alwayseditable = 0, $perms = '', $list = '', $help = '', $default = '', $computed = '', $entity = '', $langfile = '', $enabled = '1', $totalizable = 0, $printable = 0)
 	{
 		if ($elementtype == 'thirdparty') $elementtype = 'societe';
 		if ($elementtype == 'contact') $elementtype = 'socpeople';
@@ -642,7 +650,7 @@ class ExtraFields
 			{
 				if ($label)
 				{
-					$result = $this->update_label($attrname, $label, $type, $length, $elementtype, $unique, $required, $pos, $param, $alwayseditable, $perms, $list, $help, $default, $computed, $entity, $langfile, $enabled, $totalizable);
+					$result = $this->update_label($attrname, $label, $type, $length, $elementtype, $unique, $required, $pos, $param, $alwayseditable, $perms, $list, $help, $default, $computed, $entity, $langfile, $enabled, $totalizable, $printable);
 				}
 				if ($result > 0)
 				{
@@ -700,13 +708,15 @@ class ExtraFields
 	 *  @param	string	$langfile			Language file
 	 *  @param  string  $enabled  			Condition to have the field enabled or not
      *  @param  int     $totalizable        Is extrafield totalizable on list
+     *  @param  int     $printable        Is extrafield displayed on PDF
      *  @return	int							<=0 if KO, >0 if OK
+     *  @throws Exception
 	 */
-	private function update_label($attrname, $label, $type, $size, $elementtype, $unique = 0, $required = 0, $pos = 0, $param = '', $alwayseditable = 0, $perms = '', $list = '0', $help = '', $default = '', $computed = '', $entity = '', $langfile = '', $enabled = '1', $totalizable = 0)
+	private function update_label($attrname, $label, $type, $size, $elementtype, $unique = 0, $required = 0, $pos = 0, $param = '', $alwayseditable = 0, $perms = '', $list = '0', $help = '', $default = '', $computed = '', $entity = '', $langfile = '', $enabled = '1', $totalizable = 0, $printable = 0)
 	{
         // phpcs:enable
 		global $conf, $user;
-		dol_syslog(get_class($this)."::update_label ".$attrname.", ".$label.", ".$type.", ".$size.", ".$elementtype.", ".$unique.", ".$required.", ".$pos.", ".$alwayseditable.", ".$perms.", ".$list.", ".$default.", ".$computed.", ".$entity.", ".$langfile.", ".$enabled.", ".$totalizable);
+		dol_syslog(get_class($this)."::update_label ".$attrname.", ".$label.", ".$type.", ".$size.", ".$elementtype.", ".$unique.", ".$required.", ".$pos.", ".$alwayseditable.", ".$perms.", ".$list.", ".$default.", ".$computed.", ".$entity.", ".$langfile.", ".$enabled.", ".$totalizable.", ".$printable);
 
 		// Clean parameters
 		if ($elementtype == 'thirdparty') $elementtype = 'societe';
@@ -771,6 +781,7 @@ class ExtraFields
 			$sql .= " alwayseditable,";
 			$sql .= " param,";
 			$sql .= " list,";
+			$sql .= " printable,";
             $sql .= " totalizable,";
 			$sql .= " fielddefault,";
 			$sql .= " fieldcomputed,";
@@ -794,7 +805,8 @@ class ExtraFields
 			$sql .= " '".$this->db->escape($alwayseditable)."',";
 			$sql .= " '".$this->db->escape($params)."',";
 			$sql .= " '".$this->db->escape($list)."', ";
-            $sql .= " ".$totalizable.",";
+			$sql .= " '".$this->db->escape($printable)."', ";
+            $sql .= " ".($totalizable ? 'TRUE' : 'FALSE').",";
 			$sql .= " ".(($default != '') ? "'".$this->db->escape($default)."'" : "null").",";
 			$sql .= " ".($computed ? "'".$this->db->escape($computed)."'" : "null").",";
 			$sql .= " ".$user->id.",";
@@ -871,7 +883,7 @@ class ExtraFields
 		}*/
 
 		// We should not have several time this request. If we have, there is some optimization to do by calling a simple $extrafields->fetch_optionals() in top of code and not into subcode
-		$sql = "SELECT rowid,name,label,type,size,elementtype,fieldunique,fieldrequired,param,pos,alwayseditable,perms,langs,list,totalizable,fielddefault,fieldcomputed,entity,enabled,help";
+		$sql = "SELECT rowid,name,label,type,size,elementtype,fieldunique,fieldrequired,param,pos,alwayseditable,perms,langs,list,printable,totalizable,fielddefault,fieldcomputed,entity,enabled,help";
 		$sql .= " FROM ".MAIN_DB_PREFIX."extrafields";
 		//$sql.= " WHERE entity IN (0,".$conf->entity.")";    // Filter is done later
 		if ($elementtype) $sql .= " WHERE elementtype = '".$elementtype."'"; // Filed with object->table_element
@@ -933,7 +945,8 @@ class ExtraFields
 					$this->attributes[$tab->elementtype]['perms'][$tab->name] = (strlen($tab->perms) == 0 ? 1 : $tab->perms);
 					$this->attributes[$tab->elementtype]['langfile'][$tab->name] = $tab->langs;
 					$this->attributes[$tab->elementtype]['list'][$tab->name] = $tab->list;
-                    $this->attributes[$tab->elementtype]['totalizable'][$tab->name] = $tab->totalizable;
+					$this->attributes[$tab->elementtype]['printable'][$tab->name] = $tab->printable;
+                    $this->attributes[$tab->elementtype]['totalizable'][$tab->name] = ($tab->totalizable ? 1 : 0);
 					$this->attributes[$tab->elementtype]['entityid'][$tab->name] = $tab->entity;
 					$this->attributes[$tab->elementtype]['enabled'][$tab->name] = $tab->enabled;
 					$this->attributes[$tab->elementtype]['help'][$tab->name] = $tab->help;

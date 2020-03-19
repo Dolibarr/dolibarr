@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2013-2014 Olivier Geffroy		<jeff@jeffinfo.com>
  * Copyright (C) 2013-2014 Florian Henry		<florian.henry@open-concept.pro>
- * Copyright (C) 2013-2015 Alexandre Spangaro	<aspangaro@open-dsi.fr>
+ * Copyright (C) 2013-2020 Alexandre Spangaro	<aspangaro@open-dsi.fr>
  * Copyright (C) 2014	   Juanjo Menent		<jmenent@2byte.es>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -119,8 +119,9 @@ if ($action == 'validatehistory') {
 	// Supplier Invoice Lines (must be same request than into page list.php for manual binding)
 	$sql = "SELECT f.rowid as facid, f.ref, f.ref_supplier, f.libelle as invoice_label, f.datef, f.type as ftype,";
 	$sql .= " l.rowid, l.fk_product, l.description, l.total_ht, l.fk_code_ventilation, l.product_type as type_l, l.tva_tx as tva_tx_line, l.vat_src_code,";
-	$sql .= " p.rowid as product_id, p.ref as product_ref, p.label as product_label, p.fk_product_type as type, p.accountancy_code_buy as code_buy, p.tva_tx as tva_tx_prod,";
-	$sql .= " aa.rowid as aarowid,";
+	$sql .= " p.rowid as product_id, p.ref as product_ref, p.label as product_label, p.fk_product_type as type,";
+	$sql .= " p.accountancy_code_buy as code_buy, p.accountancy_code_buy_intra as code_buy_intra, p.accountancy_code_buy_export as code_buy_export, p.tva_tx as tva_tx_prod,";
+	$sql .= " aa.rowid as aarowid, aa2.rowid as aarowid_intra, aa3.rowid as aarowid_export,";
 	$sql .= " co.code as country_code, co.label as country_label,";
 	$sql .= " s.tva_intra";
 	$sql .= " FROM ".MAIN_DB_PREFIX."facture_fourn as f";
@@ -128,7 +129,9 @@ if ($action == 'validatehistory') {
 	$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."c_country as co ON co.rowid = s.fk_pays ";
 	$sql .= " INNER JOIN ".MAIN_DB_PREFIX."facture_fourn_det as l ON f.rowid = l.fk_facture_fourn";
 	$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."product as p ON p.rowid = l.fk_product";
-	$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."accounting_account as aa ON p.accountancy_code_buy = aa.account_number AND aa.active = 1 AND aa.fk_pcg_version = '".$chartaccountcode."' AND aa.entity = ".$conf->entity;
+	$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."accounting_account as aa  ON p.accountancy_code_buy = aa.account_number         AND aa.active = 1  AND aa.fk_pcg_version = '".$chartaccountcode."' AND aa.entity = ".$conf->entity;
+	$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."accounting_account as aa2 ON p.accountancy_code_buy_intra = aa2.account_number  AND aa2.active = 1 AND aa2.fk_pcg_version = '".$chartaccountcode."' AND aa2.entity = ".$conf->entity;
+	$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."accounting_account as aa3 ON p.accountancy_code_buy_export = aa3.account_number AND aa3.active = 1 AND aa3.fk_pcg_version = '".$chartaccountcode."' AND aa3.entity = ".$conf->entity;
 	$sql .= " WHERE f.fk_statut > 0 AND l.fk_code_ventilation <= 0";
 	$sql .= " AND l.product_type <= 2";
 
@@ -157,16 +160,12 @@ if ($action == 'validatehistory') {
 				$suggestedaccountingaccountfor = '';
 			} else {
 				if ($isSellerInEEC && $isBuyerInEEC) {          // European intravat sale
-					//$objp->code_buy_p = $objp->code_buy_intra;
-					$objp->code_buy_p = $objp->code_buy;
-					//$objp->aarowid_suggest = $objp->aarowid_intra;
-					$objp->aarowid_suggest = $objp->aarowid;
+					$objp->code_buy_p = $objp->code_buy_intra;
+					$objp->aarowid_suggest = $objp->aarowid_intra;
 					$suggestedaccountingaccountfor = 'eec';
 				} else {                                        // Foreign sale
-					//$objp->code_buy_p = $objp->code_buy_export;
-					$objp->code_buy_p = $objp->code_buy;
-					//$objp->aarowid_suggest = $objp->aarowid_export;
-					$objp->aarowid_suggest = $objp->aarowid;
+					$objp->code_buy_p = $objp->code_buy_export;
+					$objp->aarowid_suggest = $objp->aarowid_export;
 					$suggestedaccountingaccountfor = 'export';
 				}
 			}

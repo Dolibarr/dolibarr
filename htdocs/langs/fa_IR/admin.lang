@@ -328,7 +328,7 @@ SetupIsReadyForUse=واحد مورد نظر مورد استفاده قرار گ�
 NotExistsDirect=پوشۀ جایگزین ریشه در پوشۀ موجود فعلی تعریف نشده است. <br>
 InfDirAlt=از نسخۀ 3، امکان تعریف یک پوشۀ جایگزین ریشه وجود دارد. این به شما امکان ذخیرۀ افزونه‌ها و قالب‌های دل‌خواه  را در یک پوشۀ اختصاصی می‌دهد. <br>فقط یک پوشه در ریشۀ Dolibarr بسازید (مثلا: custom).<br>
 InfDirExample=<br>سپس در فایل <strong>conf.php</strong><br> تعاریف را اینگونه تعیین کنید: $dolibarr_main_url_root_alt='/custom' <br>  $dolibarr_main_document_root_alt='/path/of/dolibarr/htdocs/custom' <br> در صورتی که این سطور با علامت "#" به توضیح تبدیل شده‌اند، برای فعال کردن، آن‌ها را با حذف علامت "#" از حالت توضیحی خارج کنید.
-YouCanSubmitFile=به‌جای‌این‌کار همچنین می‌توانید فایل module.zip را بارگذاری نمائید:
+YouCanSubmitFile=You can upload the .zip file of module package from here:
 CurrentVersion=نسخه کنونی Dolibarr
 CallUpdatePage=رفتن به صفحۀ روزآمدسازی ساختار بانک داده و داده‌های آن: %s
 LastStableVersion=آخرین نسخۀ پایدار
@@ -472,6 +472,7 @@ Use3StepsApproval=به طور پیش‌فرض، سفارشات خرید باید
 UseDoubleApproval=استفاده از 3 گام تائید در حالتی که مبلغ (بدون مالیات) بالاتر از ....
 WarningPHPMail=هشدار: همواره بهتر است که رایانامه‌های خروجی را برای استفاده از سرویس‌دهندۀ رایانامۀ سرور خود به جای گزینۀ پیش‌فرض استفاده کنید. برخی ارائه‌دهندگان رایانامه (مانند Yahoo) به شما اجازۀ ارسال رایانامه از سرور دیگری را نمی‌دهند. برپاسازی فعلی شما از سرور برنامه برای ارسال رایانامه استفاده می‌کند، نه از سرور ارائه‌دهندۀ رایانامۀ شما، بنابراین برخی دریافت‌کنندگان (آن‌هائی که با قرارداد محدودیت DMARC سازگارند)، در صورتی که امکان دریافت رایانامۀ شما را داشته باشند، از ارائه دهندۀ خدمات رایانامۀ شما یا برخی ارائه‌دهندگان رایانامه (مثل Yahoo) خواهند پرسید و پاسخ "no" خواهند فرستاد چون سرور، مربوط به آن‌ها نیست، بنابراین ممکن است تعدادی از رایانامه‌های شما پذیرفته نشود (همچنین به محدودیت تعداد ارسال رایانامه در ارائه‌دهندۀ خدمات خود دقت کنید). <br> در صورتی که ارائه دهندۀ خدمات رایانامۀ شما (مانند Yahoo) این محدودیت را داشته باشد، شما باید تنظیمات رایانامه را طوری تغییر دهید و گزینۀ دیگر یعنی "سرور SMTP" را برگزینید و مشخصات فنی و مجوزهای ورود به سرور SMTP مربوط به سرور ارائه دهندۀ خدمات رایانامه را وارد نمائید.
 WarningPHPMail2=در صورتی که ارائۀ خدمات رایانامۀ SMTP شما نیازمند محدود کردن مشتری خدمات رایانامه به درگاه‌های اینترنتی خاص است (در موارد معدود)، این نشانی درگاه اینترنتی کاربر رایانامه (MUA) برای برنامۀ ERP CRM شماست: <strong>%s</strong>.
+WarningPHPMailSPF=If the domain name in your sender email address is protected by SPF (ask you email provider), you must include the following IPs in the SPF record of the DNS of your domain: <strong>%s</strong>.
 ClickToShowDescription=برای دریافت توضیحات کلیک کنید
 DependsOn=این واحد نیازمند فعالیت واحد‌(های) دیگر است
 RequiredBy=این واحد توسط واحد(های) دیگر مورد نیاز است
@@ -544,6 +545,8 @@ Module58Name=کلیک برای تماس
 Module58Desc=یکپارچه سازی سیستم ClickToDial (استریسک، ...)
 Module59Name=Bookmark4u
 Module59Desc=اضافه کردن تابع برای ایجاد حساب کاربری Bookmark4u از یک حساب Dolibarr
+Module60Name=Stickers
+Module60Desc=Management of stickers
 Module70Name=واسطه‌گری
 Module70Desc=مدیریت واسطه‌گری
 Module75Name=یادداشت‌های هزینه‌ها و سفرها-ی درون شهری-
@@ -639,7 +642,7 @@ Module50000Desc=به مشتریان امکان پرداخت برخط از طری
 Module50100Name=صندوق SimplePOS
 Module50100Desc=واحد ناحیۀ فروش SimplePOS (صندوق ساده)
 Module50150Name=صندوق TakePOS
-Module50150Desc=واحد ناحیۀ فروش TakePOS (صندوق لمسی)
+Module50150Desc=Point of Sale module TakePOS (touchscreen POS, for shops, bars or restaurants).
 Module50200Name=Paypal
 Module50200Desc=امکان پرداخت از طریق PayPal برای مشتریان (حساب PayPal یا کارتهای اعتباری/نقدی). این به کاربران امکان پرداخت‌های اختصاصی برای اشیاء Dolibarr را می‌دهد (صورت‌حساب، سفارش و غیره)
 Module50300Name=Stripe
@@ -1018,7 +1021,7 @@ CalcLocaltax3Desc=گزارش مالیات محلی جمع مالیات‌برف�
 LabelUsedByDefault=این برچسب در حالتی که هیچ ترجمه‌ای برای کد یافت نشود استفاده خواهد شد
 LabelOnDocuments=برچسب روی مستندات
 LabelOrTranslationKey=برچسب یا کلید ترجمه
-ValueOfConstantKey=محتوای مقدار ثابت
+ValueOfConstantKey=Value of a configuration constant
 NbOfDays=تعداد روزها
 AtEndOfMonth=در پایان ماه
 CurrentNext=فعلی/بعدی
@@ -1683,6 +1686,9 @@ CashDeskIdWareHouse=مقیدکردن و اجبار یک انبار برای اس
 StockDecreaseForPointOfSaleDisabled=کاهش موجودی برای فروش از طریق صندوق غیرفعال است
 StockDecreaseForPointOfSaleDisabledbyBatch=کاهش موجودی در صندوق با واحد مدیریت شماره‌سری/ساخت سازگار نیست (فعلا فعال است)، بنابراین کاهش موجودی غیرفعال است.
 CashDeskYouDidNotDisableStockDecease=شما کاهش موجودی با فروش از طریق صندوق را غیرفعال نکرده‌اید، بنابراین تعریف یک انبار موردنیاز است.
+CashDeskForceDecreaseStockLabel=Stock decrease for batch products was forced.
+CashDeskForceDecreaseStockDesc=Decrease first by the oldest eatby and sellby dates.
+CashDeskReaderKeyCodeForEnter=Key code for "Enter" defined in barcode reader (Example: 13)
 ##### Bookmark #####
 BookmarkSetup=برپاسازی واحد نشانه‌ها
 BookmarkDesc=این واحد به شما امکان مدیریت نشانه‌ها را می‌دهد. شما همچنین می‌توانید از این طریق به صفحات مختلف Dolibarr یا سایر نشانی‌های خارجی در فهرست سمت چپ میان‌بر ایجاد کنید. 
@@ -1791,6 +1797,7 @@ BackgroundTableLineEvenColor=رنگ پس‌زمینۀ سطور زوج جدول
 MinimumNoticePeriod=حداقل بازۀ خبردهی (درخواست مرخصی شما باید حداقل با این فاصلۀ زمانی انجام شود)
 NbAddedAutomatically=تعداد روزهائی که باید به شمارنده‌های کاربران (به شکل خودکار) در هر ماه اضافه شود
 EnterAnyCode=این بخش حاوی ارجاعی به یک سطر شناسه است. مقدار دل‌خواه خود را وارد نمائید، اما بدون نویسه‌های خاص.
+Enter0or1=Enter 0 or 1
 UnicodeCurrency=در اینجا بین دو براکت فهرست اعداد بایت‌هائی را که نمایاندۀ نماد واحدپولی است وارد نمائید. برای مثال، برای $ مقدار [36] را وارد نمائید، برای ریال برزیل R$ مقدار [82,36] و برای €، مقدار [8364]
 ColorFormat=رنگ RGB در مبنای HEX، مثال: FF0000
 PositionIntoComboList=مکان سطر در فهرست‌های ترکیبی
@@ -1964,10 +1971,13 @@ DeleteEmailCollector=حذف جمع‌آورندۀ رایانامه
 ConfirmDeleteEmailCollector=آیا مطمئن هستید می‌خواهید این جمع‌آورندۀ رایانامه را حذف کنید؟
 RecipientEmailsWillBeReplacedWithThisValue=رایانامه‌های دریافت‌کننده همواره با این مقدار جایگزین می‌شود
 AtLeastOneDefaultBankAccountMandatory=حداقل 1 حساب بانکی باید تعریف شود
-RESTRICT_API_ON_IP=Allow available APIs to some host IP only (wildcard not allowed, use space between values). Empty means every hosts can use the available APIs.
 RESTRICT_ON_IP=Allow access to some host IP only (wildcard not allowed, use space between values). Empty means every hosts can access.
+IPListExample=127.0.0.1 192.168.0.2 [::1]
 BaseOnSabeDavVersion=Based on the library SabreDAV version
 NotAPublicIp=Not a public IP
 MakeAnonymousPing=Make an anonymous Ping '+1' to the Dolibarr foundation server (done 1 time only after installation) to allow the foundation to count the number of Dolibarr installation.
 FeatureNotAvailableWithReceptionModule=Feature not available when module Reception is enabled
 EmailTemplate=Template for email
+EMailsWillHaveMessageID=Emails will have a tag 'References' matching this syntax
+PDF_USE_ALSO_LANGUAGE_CODE=If you want to have some text title in your PDF duplicated in 2 different languages in the same generate PDF, you must set here this second language so generated PDF will contains 2 different languages in same page, the one chosen when generating PDF and this one (only few PDF templates support this). Keep empty for 1 language per PDF.
+FafaIconSocialNetworksDesc=Enter here the code of a FontAwesome icon. If you don't know what is FontAwesome, you can use the generic value fa-address-book.

@@ -369,6 +369,13 @@ class pdf_cornas extends ModelePDFSuppliersOrders
 				// Affiche notes
 				$notetoshow = empty($object->note_public) ? '' : $object->note_public;
 
+                // Extrafields in note
+                $extranote = $this->getExtrafieldsInHtml($object, $outputlangs);
+                if (!empty($extranote))
+                {
+                    $notetoshow = dol_concatdesc($notetoshow, $extranote);
+                }
+
 				$pagenb = $pdf->getPage();
 				if ($notetoshow)
 				{
@@ -489,9 +496,7 @@ class pdf_cornas extends ModelePDFSuppliersOrders
 				    $height_note = 0;
 				}
 
-				$iniY = $tab_top + 7;
-				$curY = $tab_top + 7;
-				$nexY = $tab_top + 7;
+				$nexY = $tab_top + 5;
 
 				// Use new auto collum system
 				$this->prepareArrayColumnField($object, $outputlangs, $hidedetails, $hidedesc, $hideref);
@@ -548,15 +553,15 @@ class pdf_cornas extends ModelePDFSuppliersOrders
 					if ($this->getColumnStatus('desc'))
 					{
 					    $pdf->startTransaction();
-					    pdf_writelinedesc($pdf, $object, $i, $outputlangs, $this->getColumnContentWidth('desc'), 3, $this->getColumnContentXStart('desc'), $curY, $hideref, $hidedesc);
+                        $this->printColDescContent($pdf, $curY, 'desc', $object, $i, $outputlangs, $hideref, $hidedesc, 1);
+
 					    $pageposafter = $pdf->getPage();
 					    if ($pageposafter > $pageposbefore)	// There is a pagebreak
 					    {
 					        $pdf->rollbackTransaction(true);
-					        $pageposafter = $pageposbefore;
-					        //print $pageposafter.'-'.$pageposbefore;exit;
-					        $pdf->setPageOrientation('', 1, $heightforfooter); // The only function to edit the bottom margin of current page to set it.
-					        pdf_writelinedesc($pdf, $object, $i, $outputlangs, $this->getColumnContentWidth('desc'), 3, $this->getColumnContentXStart('desc'), $curY, $hideref, $hidedesc);
+
+                            $this->printColDescContent($pdf, $curY, 'desc', $object, $i, $outputlangs, $hideref, $hidedesc, 1);
+
 					        $pageposafter = $pdf->getPage();
 					        $posyafter = $pdf->GetY();
 					        if ($posyafter > ($this->page_hauteur - ($heightforfooter + $heightforfreetext + $heightforinfotot)))	// There is no space left for total+free text
@@ -649,6 +654,17 @@ class pdf_cornas extends ModelePDFSuppliersOrders
 					    $nexY = max($pdf->GetY(), $nexY);
 					}
 
+                    // Extrafields
+                    if(!empty($object->lines[$i]->array_options)){
+                        foreach ($object->lines[$i]->array_options as $extrafieldColKey => $extrafieldValue){
+                            if ($this->getColumnStatus($extrafieldColKey))
+                            {
+                                $extrafieldValue = $this->getExtrafieldContent($object->lines[$i], $extrafieldColKey);
+                                $this->printStdColumnContent($pdf, $curY, $extrafieldColKey, $extrafieldValue);
+                                $nexY = max($pdf->GetY(), $nexY);
+                            }
+                        }
+                    }
 
 					$parameters = array(
 					    'object' => $object,
@@ -706,11 +722,9 @@ class pdf_cornas extends ModelePDFSuppliersOrders
 						$pdf->setPage($pageposafter);
 						$pdf->SetLineStyle(array('dash'=>'1,1', 'color'=>array(80, 80, 80)));
 						//$pdf->SetDrawColor(190,190,200);
-						$pdf->line($this->marge_gauche, $nexY + 1, $this->page_largeur - $this->marge_droite, $nexY + 1);
+						$pdf->line($this->marge_gauche, $nexY, $this->page_largeur - $this->marge_droite, $nexY);
 						$pdf->SetLineStyle(array('dash'=>0));
 					}
-
-					$nexY += 2; // Add space between lines
 
 					// Detect if some page were added automatically and output _tableau for past pages
 					while ($pagenb < $pageposafter)
@@ -1465,7 +1479,7 @@ class pdf_cornas extends ModelePDFSuppliersOrders
 	    // Default field style for content
 	    $this->defaultContentsFieldsStyle = array(
 	        'align' => 'R', // R,C,L
-	        'padding' => array(0.5, 0.5, 0.5, 0.5), // Like css 0 => top , 1 => right, 2 => bottom, 3 => left
+            'padding' => array(1, 0.5, 1, 0.5), // Like css 0 => top , 1 => right, 2 => bottom, 3 => left
 	    );
 
 	    // Default field style for content
@@ -1502,10 +1516,11 @@ class pdf_cornas extends ModelePDFSuppliersOrders
 	            'align' => 'L',
 	            // 'textkey' => 'yourLangKey', // if there is no label, yourLangKey will be translated to replace label
 	            // 'label' => ' ', // the final label
-	            'padding' => array(0.5, 0.5, 0.5, 0.5), // Like css 0 => top , 1 => right, 2 => bottom, 3 => left
+                'padding' => array(0.5, 1, 0.5, 1.5), // Like css 0 => top , 1 => right, 2 => bottom, 3 => left
 	        ),
 	        'content' => array(
 	            'align' => 'L',
+                'padding' => array(1, 0.5, 1, 1.5), // Like css 0 => top , 1 => right, 2 => bottom, 3 => left
 	        ),
 	    );
 
@@ -1596,7 +1611,7 @@ class pdf_cornas extends ModelePDFSuppliersOrders
 	        $this->cols['discount']['status'] = true;
 	    }
 
-	    $rank = $rank + 10;
+	    $rank = $rank + 1000; // add a big offset to be sure is the last col because default extrafield rank is 100
 	    $this->cols['totalexcltax'] = array(
 	        'rank' => $rank,
 	        'width' => 26, // in mm
@@ -1607,6 +1622,11 @@ class pdf_cornas extends ModelePDFSuppliersOrders
 	        'border-left' => true, // add left line separator
 	    );
 
+        // Add extrafields cols
+        if(!empty($object->lines)) {
+            $line = reset($object->lines);
+            $this->defineColumnExtrafield($line, $outputlangs, $hidedetails);
+        }
 
 	    $parameters = array(
 	        'object' => $object,
@@ -1629,231 +1649,5 @@ class pdf_cornas extends ModelePDFSuppliersOrders
 	    {
 	        $this->cols = $hookmanager->resArray;
 	    }
-	}
-
-	/*
-	 *
-	 * DEBUT PARTIE NORMALEMENT DANS LA CLASSE CommonDocGenerator
-	 *
-	 *
-	 */
-
-	/**
-	 *   	uasort callback function to Sort columns fields
-	 *
-	 *   	@param	array			$a    			PDF lines array fields configs
-	 *   	@param	array			$b    			PDF lines array fields configs
-	 *      @return	int								Return compare result
-	 */
-	public function columnSort($a, $b)
-	{
-	    if (empty($a['rank'])) { $a['rank'] = 0; }
-	    if (empty($b['rank'])) { $b['rank'] = 0; }
-	    if ($a['rank'] == $b['rank']) {
-	        return 0;
-	    }
-	    return ($a['rank'] > $b['rank']) ? -1 : 1;
-	}
-
-	/**
-	 *   	Prepare Array Column Field
-	 *
-	 *   	@param	object		  $object    		common object
-	 *   	@param	Translate	  $outputlangs      langs
-	 *      @param	int			  $hidedetails		Do not show line details
-	 *      @param	int			  $hidedesc			Do not show desc
-	 *      @param	int			  $hideref			Do not show ref
-	 *      @return	null
-	 */
-	public function prepareArrayColumnField($object, $outputlangs, $hidedetails = 0, $hidedesc = 0, $hideref = 0)
-	{
-	    global $conf;
-
-	    $this->defineColumnField($object, $outputlangs, $hidedetails, $hidedesc, $hideref);
-
-	    // Sorting
-	    uasort($this->cols, array($this, 'columnSort'));
-
-	    // Positionning
-	    $curX = $this->page_largeur - $this->marge_droite; // start from right
-
-	    // Array width
-	    $arrayWidth = $this->page_largeur - $this->marge_droite - $this->marge_gauche;
-
-	    // Count flexible column
-	    $totalDefinedColWidth = 0;
-	    $countFlexCol = 0;
-	    foreach ($this->cols as $colKey => &$colDef)
-	    {
-	        if (!$this->getColumnStatus($colKey)) continue; // continue if disabled
-
-	        if (!empty($colDef['scale'])) {
-	            // In case of column widht is defined by percentage
-	            $colDef['width'] = abs($arrayWidth * $colDef['scale'] / 100);
-	        }
-
-	        if (empty($colDef['width'])) {
-	            $countFlexCol++;
-	        }
-	        else {
-	            $totalDefinedColWidth += $colDef['width'];
-	        }
-	    }
-
-	    foreach ($this->cols as $colKey => &$colDef)
-	    {
-	        // setting empty conf with default
-	        if (!empty($colDef['title'])) {
-	            $colDef['title'] = array_replace($this->defaultTitlesFieldsStyle, $colDef['title']);
-	        }
-	        else {
-	            $colDef['title'] = $this->defaultTitlesFieldsStyle;
-	        }
-
-	        // setting empty conf with default
-	        if (!empty($colDef['content'])) {
-	            $colDef['content'] = array_replace($this->defaultContentsFieldsStyle, $colDef['content']);
-	        }
-	        else {
-	            $colDef['content'] = $this->defaultContentsFieldsStyle;
-	        }
-
-	        if ($this->getColumnStatus($colKey))
-	        {
-	            // In case of flexible column
-	            if (empty($colDef['width'])) {
-	                $colDef['width'] = abs(($arrayWidth - $totalDefinedColWidth)) / $countFlexCol;
-	            }
-
-	            // Set positions
-	            $lastX = $curX;
-	            $curX = $lastX - $colDef['width'];
-	            $colDef['xStartPos'] = $curX;
-	            $colDef['xEndPos']   = $lastX;
-	        }
-	    }
-	}
-
-	/**
-	 *   	get column content width from column key
-	 *
-	 *   	@param	string			$colKey    		the column key
-	 *      @return	float      width in mm
-	 */
-	public function getColumnContentWidth($colKey)
-	{
-	    $colDef = $this->cols[$colKey];
-	    return $colDef['width'] - $colDef['content']['padding'][3] - $colDef['content']['padding'][1];
-	}
-
-
-	/**
-	 *   	get column content X (abscissa) left position from column key
-	 *
-	 *   	@param	string    $colKey    		the column key
-	 *      @return	float      X position in mm
-	 */
-	public function getColumnContentXStart($colKey)
-	{
-	    $colDef = $this->cols[$colKey];
-	    return  $colDef['xStartPos'] + $colDef['content']['padding'][3];
-	}
-
-	/**
-	 *   	get column position rank from column key
-	 *
-	 *   	@param	string		$colKey    		the column key
-	 *      @return	int         rank on success and -1 on error
-	 */
-	public function getColumnRank($colKey)
-	{
-	    if (!isset($this->cols[$colKey]['rank'])) return -1;
-	    return  $this->cols[$colKey]['rank'];
-	}
-
-	/**
-	 *   	get column position rank from column key
-	 *
-	 *   	@param	string		$newColKey    	the new column key
-	 *   	@param	array		$defArray    	a single column definition array
-	 *   	@param	string		$targetCol    	target column used to place the new column beside
-	 *   	@param	bool		$insertAfterTarget    	insert before or after target column ?
-	 *      @return	int         new rank on success and -1 on error
-	 */
-	public function insertNewColumnDef($newColKey, $defArray, $targetCol = false, $insertAfterTarget = false)
-	{
-	    // prepare wanted rank
-	    $rank = -1;
-
-	    // try to get rank from target column
-	    if (!empty($targetCol)) {
-	        $rank = $this->getColumnRank($targetCol);
-	        if ($rank >= 0 && $insertAfterTarget) { $rank++; }
-	    }
-
-	    // get rank from new column definition
-	    if ($rank < 0 && !empty($defArray['rank'])) {
-	        $rank = $defArray['rank'];
-	    }
-
-	    // error: no rank
-	    if ($rank < 0) { return -1; }
-
-	    foreach ($this->cols as $colKey =>& $colDef)
-	    {
-	        if ($rank <= $colDef['rank'])
-	        {
-	            $colDef['rank'] = $colDef['rank'] + 1;
-	        }
-	    }
-
-	    $defArray['rank'] = $rank;
-	    $this->cols[$newColKey] = $defArray; // array_replace is used to preserve keys
-
-	    return $rank;
-	}
-
-
-	/**
-	 *   	print standard column content
-	 *
-	 *   	@param	PDF		    $pdf    	pdf object
-	 *   	@param	float		$curY    	curent Y position
-	 *   	@param	string		$colKey    	the column key
-	 *   	@param	string		$columnText   column text
-	 *      @return	int         new rank on success and -1 on error
-	 */
-	public function printStdColumnContent($pdf, &$curY, $colKey, $columnText = '')
-	{
-	    global $hookmanager;
-
-	    $parameters = array(
-	        'curY' =>& $curY,
-	        'columnText' => $columnText,
-	        'colKey' => $colKey
-	    );
-	    $reshook = $hookmanager->executeHooks('printStdColumnContent', $parameters, $this); // Note that $action and $object may have been modified by hook
-	    if ($reshook < 0) setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
-	    if (!$reshook)
-	    {
-	        if (empty($columnText)) return;
-	        $pdf->SetXY($this->getColumnContentXStart($colKey), $curY); // Set curent position
-	        $colDef = $this->cols[$colKey];
-	        $pdf->MultiCell($this->getColumnContentWidth($colKey), 2, $columnText, '', $colDef['content']['align']);
-	    }
-	}
-
-	/**
-	 *   	get column status from column key
-	 *
-	 *   	@param	string			$colKey    		the column key
-	 *      @return	float      width in mm
-	 */
-	public function getColumnStatus($colKey)
-	{
-	    if (!empty($this->cols[$colKey]['status'])) {
-	        return true;
-	    }
-	    else return false;
 	}
 }

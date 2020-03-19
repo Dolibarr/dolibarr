@@ -74,7 +74,7 @@ $optioncss = GETPOST('optioncss', 'alpha');
 $limit = GETPOST('limit', 'int') ?GETPOST('limit', 'int') : $conf->liste_limit;
 $sortfield = GETPOST("sortfield", 'alpha');
 $sortorder = GETPOST("sortorder", 'alpha');
-$page = GETPOST("page", 'int');
+$page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOST("page", 'int');
 if (empty($page) || $page == -1) { $page = 0; }     // If $page is not defined, or '' or -1
 $offset = $limit * $page;
 $pageprev = $page - 1;
@@ -705,9 +705,7 @@ while ($i < min($num, $limit))
 			$nbofsalesrepresentative = count($listsalesrepresentatives);
 			if ($nbofsalesrepresentative > 3) {
 				// We print only number
-				print '<a href="'.DOL_URL_ROOT.'/societe/commerciaux.php?socid='.$socstatic->id.'">';
 				print $nbofsalesrepresentative;
-				print '</a>';
 			}
 			elseif ($nbofsalesrepresentative > 0)
 			{
@@ -741,7 +739,7 @@ while ($i < min($num, $limit))
 	// Date
 	if (!empty($arrayfields['c.date_contrat']['checked']))
 	{
-		print '<td class="center">'.dol_print_date($db->jdate($obj->date_contrat), 'day', 'tzuser').'</td>';
+		print '<td class="center">'.dol_print_date($db->jdate($obj->date_contrat), 'day', 'tzserver').'</td>';
 	}
 	// Extra fields
 	include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_print_fields.tpl.php';

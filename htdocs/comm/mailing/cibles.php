@@ -43,7 +43,7 @@ if (!$user->rights->mailing->lire || $user->socid > 0) accessforbidden();
 $limit = GETPOST('limit', 'int') ?GETPOST('limit', 'int') : $conf->liste_limit;
 $sortfield = GETPOST('sortfield', 'alpha');
 $sortorder = GETPOST('sortorder', 'alpha');
-$page = GETPOST('page', 'int');
+$page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOST("page", 'int');
 if (empty($page) || $page == -1) { $page = 0; }     // If $page is not defined, or '' or -1
 $offset = $limit * $page;
 $pageprev = $page - 1;
@@ -673,7 +673,8 @@ if ($object->fetch($id) >= 0)
 					// Date sent
 					print '<td align="center">&nbsp;</td>';
 
-					print '<td class="nowrap right">'.$langs->trans("MailingStatusNotSent");
+					print '<td class="nowrap right">';
+					print $object::libStatutDest($obj->statut, 2, '');
 					print '</td>';
 				}
 				else

@@ -1,17 +1,25 @@
+comparison of terms
 
 
-Term Dolibarr		SAP					Odoo							...
-----------------------------------------------------------------------------
-Thirdparty			Contact partner		Partner/Contact (company)
-Contact/address		Contact person		Partner/Contact (individual)
+Dolibarr             SAP ERP					      Odoo							    
+-------------------------------------------------------------------------
+Thirdparty			     Contact partner	    	Partner/Contact (company)
+Contact/address		   Contact person	  	    Partner/Contact (individual)
 
-Financial			??					Invoicing
-
-Income / Expense	??					Profit / Loss
-Balance				??					Net profit
-Subledger account	Subledger account	??
+Financial 			     Finance (FI)				  	Accounting
+Accounting
 
 
-Proposal            ??                  Quotation                       Proposal is ok but proposition looks better (proposal is for a detailed proposition). We can say also "business proposition or business proposal".
-                                                                        Indian are using "Quotation".
+Income / Expense	       ??					        Profit / Loss
+Balance				           ??					        Net profit
+Subledger account	   Subledger account	        ??
+
+CRM                  Sales & Distribution   Sales 
+Proposal                ??                  Quotation                         
+
+
+
+Proposal is ok but proposition looks better (proposal is for a detailed proposition). 
+We can say also "business proposition or business proposal".
+In India they are using "Quotation".
                                                                         

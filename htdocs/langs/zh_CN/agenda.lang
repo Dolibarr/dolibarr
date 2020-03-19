@@ -60,7 +60,7 @@ MemberSubscriptionModifiedInDolibarr=订阅%s为会员%s修改
 MemberSubscriptionDeletedInDolibarr=成员%s的订阅%s已删除
 ShipmentValidatedInDolibarr=运输 %s 已验证
 ShipmentClassifyClosedInDolibarr=发货%s已经确认付账
-ShipmentUnClassifyCloseddInDolibarr=发货%s已经确认重开。
+ShipmentUnClassifyCloseddInDolibarr=Shipment %s classified re-open
 ShipmentBackToDraftInDolibarr=Shipment %s go back to draft status
 ShipmentDeletedInDolibarr=运输 %s 已删除
 OrderCreatedInDolibarr=订单%s已创建
@@ -123,6 +123,7 @@ AgendaUrlOptionsNotAdmin=<b> logina =！%s</b>将输出限制为非用户<b> %s<
 AgendaUrlOptions4=<b> logint = %s</b>将输出限制为分配给用户<b> %s </b>（所有者和其他人）的操作。
 AgendaUrlOptionsProject=<b> project = __ PROJECT_ID __</b>将输出限制为链接到项目<b> __ PROJECT_ID __</b>的操作。
 AgendaUrlOptionsNotAutoEvent=<b> notactiontype = systemauto </b>排除自动事件。
+AgendaUrlOptionsIncludeHolidays=<b>includeholidays=1</b> to include events of holidays.
 AgendaShowBirthdayEvents=显示联系人生日
 AgendaHideBirthdayEvents=隐藏联系人生日
 Busy=忙碌

@@ -20,7 +20,7 @@
  *	\ingroup    product
  *	\brief      File of class to calculate prices using expression
  */
-require_once DOL_DOCUMENT_ROOT.'/includes/evalmath/evalmath.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/class/evalmath.class.php';
 require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.product.class.php';
 require_once DOL_DOCUMENT_ROOT.'/product/dynamic_price/class/price_expression.class.php';
 require_once DOL_DOCUMENT_ROOT.'/product/dynamic_price/class/price_global_variable.class.php';
@@ -133,7 +133,15 @@ class PriceParser
     public function parseExpression($product, $expression, $values)
     {
         global $user;
-
+        global $hookmanager;
+        $action = 'PARSEEXPRESSION';
+        if ($result = $hookmanager->executeHooks('doDynamiPrice', array(
+								'expression' =>$expression,
+								'product' => $product,
+								'values' => $values
+        ), $this, $action)) {
+			return $result;
+        }
         //Check if empty
         $expression = trim($expression);
         if (empty($expression))
@@ -173,7 +181,7 @@ class PriceParser
             //Do processing
             $res = $entry->process();
             //Store any error or clear status if OK
-            $entry->update_status($res < 1?$entry->error:'', $user);
+            $entry->update_status($res < 1 ? $entry->error : '', $user);
         }
 
         //Get all global values
@@ -208,7 +216,7 @@ class PriceParser
         {
             $data = explode($this->special_chr, $expression);
             $variable = $this->special_chr.$data[1];
-            if (isset($data[2])) $variable.= $this->special_chr;
+            if (isset($data[2])) $variable .= $this->special_chr;
             $this->error_parser = array(23, array($variable, $expression));
             return -6;
         }
@@ -265,11 +273,14 @@ class PriceParser
 		//Get the supplier min price
 		$productFournisseur = new ProductFournisseur($this->db);
 		$res = $productFournisseur->find_min_price_product_fournisseur($product->id, 0, 0);
-		if ($res < 1) {
+		if ($res < 0) {
 			$this->error_parser = array(25, null);
 			return -1;
+		}  elseif ($res == 0) {
+			$supplier_min_price = 0;
+		} else {
+			 $supplier_min_price = $productFournisseur->fourn_unitprice;
 		}
-		$supplier_min_price = $productFournisseur->fourn_unitprice;
 
         //Accessible values by expressions
 		$extra_values = array_merge($extra_values, array(

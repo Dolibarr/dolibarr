@@ -57,7 +57,7 @@ class modImport extends DolibarrModules
 		$this->dirs = array("/import/temp");
 
 		// Config pages
-		$this->config_page_url = array();
+		$this->config_page_url = array("import.php");
 
 		// Dependencies
 		$this->hidden = false;			// A condition to hide module

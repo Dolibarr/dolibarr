@@ -60,7 +60,7 @@ MemberSubscriptionModifiedInDolibarr=Předplatné %s pro člena %supraveno
 MemberSubscriptionDeletedInDolibarr=Předplatné %s pro člena %s bylo smazáno
 ShipmentValidatedInDolibarr=Doprava %s ověřena
 ShipmentClassifyClosedInDolibarr=Zásilka %s klasifikováno účtoval
-ShipmentUnClassifyCloseddInDolibarr=Zásilka %s klasifikováno znovuotevření
+ShipmentUnClassifyCloseddInDolibarr=Shipment %s classified re-open
 ShipmentBackToDraftInDolibarr=Doprava %s se vrátí zpět na stav konceptu
 ShipmentDeletedInDolibarr=Doprava %s odstraněna
 OrderCreatedInDolibarr=Objednat %s vytvořil
@@ -123,6 +123,7 @@ AgendaUrlOptionsNotAdmin=<b> logina =! %s</b> omezit výstup na akce, které nev
 AgendaUrlOptions4=<b> logint = %s</b> omezit výstup na akce přiřazené uživateli <b> %s</b>(majitel a další).
 AgendaUrlOptionsProject=<b> project = __ PROJECT_ID __ </b> pro omezení výstupu na akce spojené s projektem <b> __ PROJECT_ID __ </b>.
 AgendaUrlOptionsNotAutoEvent=<b> notactiontype = systemauto </b> pro vyloučení automatických událostí.
+AgendaUrlOptionsIncludeHolidays=<b>includeholidays=1</b> to include events of holidays.
 AgendaShowBirthdayEvents=Zobrazit narozeniny kontaktů
 AgendaHideBirthdayEvents=Skrýt narozeniny kontaktů
 Busy=Zaneprázdněný

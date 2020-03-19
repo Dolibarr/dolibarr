@@ -502,9 +502,10 @@ WHERE c.fk_product_parent = ".(int) $productid." AND p.tosell = 1";
 	 * @param bool $price_var_percent Is the price variation a relative variation?
 	 * @param bool|float $forced_pricevar If the price variation is forced
 	 * @param bool|float $forced_weightvar If the weight variation is forced
+	 * @param bool|string $forced_refvar If the reference is forced
 	 * @return int <0 KO, >0 OK
 	 */
-	public function createProductCombination(User $user, Product $product, array $combinations, array $variations, $price_var_percent = false, $forced_pricevar = false, $forced_weightvar = false)
+	public function createProductCombination(User $user, Product $product, array $combinations, array $variations, $price_var_percent = false, $forced_pricevar = false, $forced_weightvar = false, $forced_refvar = false)
 	{
 		global $db, $conf;
 
@@ -513,7 +514,23 @@ WHERE c.fk_product_parent = ".(int) $productid." AND p.tosell = 1";
 
 		$db->begin();
 
-		$newproduct = clone $product;
+		$forced_refvar = trim($forced_refvar);
+
+		if (!empty($forced_refvar) && $forced_refvar != $product->ref) {
+			$existingProduct = new Product($db);
+			$result = $existingProduct->fetch('', $forced_refvar);
+			if ($result > 0) {
+				$newproduct = $existingProduct;
+			} else {
+				$existingProduct = false;
+				$newproduct = clone $product;
+				$newproduct->ref = $forced_refvar;
+			}
+		} else {
+		    $forced_refvar = false;
+		    $existingProduct = false;
+            $newproduct = clone $product;
+		}
 
 		//Final weight impact
 		$weight_impact = $forced_weightvar;
@@ -536,7 +553,6 @@ WHERE c.fk_product_parent = ".(int) $productid." AND p.tosell = 1";
 			$newcomb = $existingCombination;
 		} else {
 			$newcomb->fk_product_parent = $product->id;
-
 			if ($newcomb->create($user) < 0) {		// Create 1 entry into product_attribute_combination (1 entry for all combinations)
 				$db->rollback();
 				return -1;
@@ -573,10 +589,12 @@ WHERE c.fk_product_parent = ".(int) $productid." AND p.tosell = 1";
 				$price_impact += (float) price2num($variations[$currcombattr][$currcombval]['price']);
 			}
 
-			if (isset($conf->global->PRODUIT_ATTRIBUTES_SEPARATOR)) {
-			    $newproduct->ref .= $conf->global->PRODUIT_ATTRIBUTES_SEPARATOR . $prodattrval->ref;
-			} else {
-			    $newproduct->ref .= '_'.$prodattrval->ref;
+			if ($forced_refvar === false) {
+    			if (isset($conf->global->PRODUIT_ATTRIBUTES_SEPARATOR)) {
+					$newproduct->ref .= $conf->global->PRODUIT_ATTRIBUTES_SEPARATOR . $prodattrval->ref;
+    			} else {
+					$newproduct->ref .= '_'.$prodattrval->ref;
+    			}
 			}
 
 			//The first one should not contain a linebreak
@@ -592,58 +610,65 @@ WHERE c.fk_product_parent = ".(int) $productid." AND p.tosell = 1";
 
 		$newproduct->weight += $weight_impact;
 
-		//To avoid wrong information in price history log
-		$newproduct->price = 0;
-		$newproduct->price_ttc = 0;
-		$newproduct->price_min = 0;
-		$newproduct->price_min_ttc = 0;
-
-		// A new variant must use a new barcode (not same product)
-		$newproduct->barcode = -1;
-
 		// Now create the product
 		//print 'Create prod '.$newproduct->ref.'<br>'."\n";
-		$newprodid = $newproduct->create($user);
-		if ($newprodid < 0)
-		{
-			//In case the error is not related with an already existing product
-			if ($newproduct->error != 'ErrorProductAlreadyExists') {
-			    $this->error[] = $newproduct->error;
-			    $this->errors = $newproduct->errors;
-				$db->rollback();
-				return -1;
-			}
+		if ($existingProduct === false) {
+    		//To avoid wrong information in price history log
+    		$newproduct->price = 0;
+    		$newproduct->price_ttc = 0;
+    		$newproduct->price_min = 0;
+    		$newproduct->price_min_ttc = 0;
 
-			/**
-			 * If there is an existing combination, then we update the prices and weight
-			 * Otherwise, we try adding a random number to the ref
-			 */
+    		// A new variant must use a new barcode (not same product)
+    		$newproduct->barcode = -1;
+		    $result = $newproduct->create($user);
 
-			if ($newcomb->fk_product_child) {
-				$res = $newproduct->fetch($existingCombination->fk_product_child);
-			} else {
-				$orig_prod_ref = $newproduct->ref;
-				$i = 1;
+    		if ($result < 0)
+    		{
+    			//In case the error is not related with an already existing product
+    			if ($newproduct->error != 'ErrorProductAlreadyExists') {
+    			    $this->error[] = $newproduct->error;
+    			    $this->errors = $newproduct->errors;
+    				$db->rollback();
+    				return -1;
+    			}
 
-				do {
-					$newproduct->ref = $orig_prod_ref.$i;
-					$res = $newproduct->create($user);
+    			/**
+    			 * If there is an existing combination, then we update the prices and weight
+    			 * Otherwise, we try adding a random number to the ref
+    			 */
 
-					if ($newproduct->error != 'ErrorProductAlreadyExists') {
-					    $this->errors[] = $newproduct->error;
-						break;
-					}
+    			if ($newcomb->fk_product_child) {
+    				$res = $newproduct->fetch($existingCombination->fk_product_child);
+    			} else {
+    				$orig_prod_ref = $newproduct->ref;
+    				$i = 1;
 
-					$i++;
-				} while ($res < 0);
-			}
+    				do {
+    					$newproduct->ref = $orig_prod_ref.$i;
+    					$res = $newproduct->create($user);
 
-			if ($res < 0) {
-				$db->rollback();
-				return -1;
-			}
+    					if ($newproduct->error != 'ErrorProductAlreadyExists') {
+    					    $this->errors[] = $newproduct->error;
+    						break;
+    					}
 
-			$newproduct->weight += $weight_impact;
+    					$i++;
+    				} while ($res < 0);
+    			}
+
+    			if ($res < 0) {
+    				$db->rollback();
+    				return -1;
+    			}
+    		}
+		} else {
+		    $result = $newproduct->update($newproduct->id, $user);
+		    if ($result < 0)
+		    {
+		        $db->rollback();
+		        return -1;
+		    }
 		}
 
 		$newcomb->fk_product_child = $newproduct->id;

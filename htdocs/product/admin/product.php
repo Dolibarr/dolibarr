@@ -37,31 +37,31 @@ require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formbarcode.class.php';
 
 // Load translation files required by the page
-$langs->loadLangs(array("admin","products"));
+$langs->loadLangs(array("admin", "products"));
 
 // Security check
-if (! $user->admin || (empty($conf->product->enabled) && empty($conf->service->enabled)))
+if (!$user->admin || (empty($conf->product->enabled) && empty($conf->service->enabled)))
 	accessforbidden();
 
 $action = GETPOST('action', 'alpha');
 $value = GETPOST('value', 'alpha');
 $label = GETPOST('label', 'alpha');
 $scandir = GETPOST('scan_dir', 'alpha');
-$type='product';
+$type = 'product';
 
 // Pricing Rules
-$select_pricing_rules=array(
-	'PRODUCT_PRICE_UNIQ'=>$langs->trans('PriceCatalogue'),				// Unique price
-	'PRODUIT_MULTIPRICES'=>$langs->trans('MultiPricesAbility'),			// Several prices according to a customer level
-	'PRODUIT_CUSTOMER_PRICES'=>$langs->trans('PriceByCustomer'),		// Different price for each customer
+$select_pricing_rules = array(
+	'PRODUCT_PRICE_UNIQ'=>$langs->trans('PriceCatalogue'), // Unique price
+	'PRODUIT_MULTIPRICES'=>$langs->trans('MultiPricesAbility'), // Several prices according to a customer level
+	'PRODUIT_CUSTOMER_PRICES'=>$langs->trans('PriceByCustomer'), // Different price for each customer
 );
-$keyforparam='PRODUIT_CUSTOMER_PRICES_BY_QTY';
-if ($conf->global->MAIN_FEATURES_LEVEL >= 1 || ! empty($conf->global->$keyforparam)) $select_pricing_rules['PRODUIT_CUSTOMER_PRICES_BY_QTY'] = $langs->trans('PriceByQuantity').' ('.$langs->trans("VersionExperimental").')';	// TODO If this is enabled, price must be hidden when price by qty is enabled, also price for quantity must be used when adding product into order/propal/invoice
-$keyforparam='PRODUIT_CUSTOMER_PRICES_BY_QTY_MULTIPRICES';
-if ($conf->global->MAIN_FEATURES_LEVEL >= 2 || ! empty($conf->global->$keyforparam)) $select_pricing_rules['PRODUIT_CUSTOMER_PRICES_BY_QTY_MULTIPRICES'] = $langs->trans('MultiPricesAbility') . '+' . $langs->trans('PriceByQuantity').' ('.$langs->trans("VersionExperimental").')';
+$keyforparam = 'PRODUIT_CUSTOMER_PRICES_BY_QTY';
+if ($conf->global->MAIN_FEATURES_LEVEL >= 1 || !empty($conf->global->$keyforparam)) $select_pricing_rules['PRODUIT_CUSTOMER_PRICES_BY_QTY'] = $langs->trans('PriceByQuantity').' ('.$langs->trans("VersionExperimental").')'; // TODO If this is enabled, price must be hidden when price by qty is enabled, also price for quantity must be used when adding product into order/propal/invoice
+$keyforparam = 'PRODUIT_CUSTOMER_PRICES_BY_QTY_MULTIPRICES';
+if ($conf->global->MAIN_FEATURES_LEVEL >= 2 || !empty($conf->global->$keyforparam)) $select_pricing_rules['PRODUIT_CUSTOMER_PRICES_BY_QTY_MULTIPRICES'] = $langs->trans('MultiPricesAbility').'+'.$langs->trans('PriceByQuantity').' ('.$langs->trans("VersionExperimental").')';
 
 // Clean param
-if (! empty($conf->global->PRODUIT_MULTIPRICES) && empty($conf->global->PRODUIT_MULTIPRICES_LIMIT)) {
+if (!empty($conf->global->PRODUIT_MULTIPRICES) && empty($conf->global->PRODUIT_MULTIPRICES_LIMIT)) {
 	dolibarr_set_const($db, 'PRODUIT_MULTIPRICES_LIMIT', 5, 'chaine', 0, '', $conf->entity);
 }
 
@@ -72,7 +72,7 @@ $error = 0;
  * Actions
  */
 
-$nomessageinsetmoduleoptions=1;
+$nomessageinsetmoduleoptions = 1;
 include DOL_DOCUMENT_ROOT.'/core/actions_setmoduleoptions.inc.php';
 
 if ($action == 'setcodeproduct')
@@ -91,12 +91,12 @@ if ($action == 'setcodeproduct')
 if ($action == 'other' && GETPOST('value_PRODUIT_LIMIT_SIZE') >= 0)
 {
 	$res = dolibarr_set_const($db, "PRODUIT_LIMIT_SIZE", GETPOST('value_PRODUIT_LIMIT_SIZE'), 'chaine', 0, '', $conf->entity);
-	if (! $res > 0) $error++;
+	if (!$res > 0) $error++;
 }
 if ($action == 'other' && GETPOST('value_PRODUIT_MULTIPRICES_LIMIT') > 0)
 {
 	$res = dolibarr_set_const($db, "PRODUIT_MULTIPRICES_LIMIT", GETPOST('value_PRODUIT_MULTIPRICES_LIMIT'), 'chaine', 0, '', $conf->entity);
-	if (! $res > 0) $error++;
+	if (!$res > 0) $error++;
 }
 if ($action == 'other')
 {
@@ -114,8 +114,8 @@ if ($action == 'other')
 			}
 			else
 			{
-				$multirule=explode('&', $princingrules);
-				foreach($multirule as $rulesselected)
+				$multirule = explode('&', $princingrules);
+				foreach ($multirule as $rulesselected)
 				{
 					$res = dolibarr_set_const($db, $rulesselected, 1, 'chaine', 0, '', $conf->entity);
 				}
@@ -123,7 +123,7 @@ if ($action == 'other')
 		}
 		else	// We clear this mode
 		{
-			if (strpos($rule, '&')===false) {
+			if (strpos($rule, '&') === false) {
 				$res = dolibarr_set_const($db, $rule, 0, 'chaine', 0, '', $conf->entity);
 			}
 		}
@@ -156,24 +156,36 @@ if ($action == 'other')
 	        $resql_new = $db->query($sql_new);
 	    }
 	}
+
+	$value = GETPOST('activate_useProdSupplierPackaging', 'alpha');
+	$res = dolibarr_set_const($db, "PRODUCT_USE_SUPPLIER_PACKAGING", $value, 'chaine', 0, '', $conf->entity);
+	if ($value) {
+		$sql_test = "SELECT count(packaging) as cpt FROM ".MAIN_DB_PREFIX."product_fournisseur_price WHERE 1";
+		$resql = $db->query($sql_test);
+		if (!$resql && $db->lasterrno == 'DB_ERROR_NOSUCHFIELD') // if the field does not exist, we create it
+		{
+			$sql_new = "ALTER TABLE ".MAIN_DB_PREFIX."product_fournisseur_price ADD COLUMN packaging double(24,8) DEFAULT 1";
+			$resql_new = $db->query($sql_new);
+		}
+	}
 }
 
 if ($action == 'specimen') // For products
 {
-	$modele= GETPOST('module', 'alpha');
+	$modele = GETPOST('module', 'alpha');
 
 	$product = new Product($db);
 	$product->initAsSpecimen();
 
 	// Search template files
-	$file=''; $classname=''; $filefound=0;
-	$dirmodels=array_merge(array('/'), (array) $conf->modules_parts['models']);
-	foreach($dirmodels as $reldir)
+	$file = ''; $classname = ''; $filefound = 0;
+	$dirmodels = array_merge(array('/'), (array) $conf->modules_parts['models']);
+	foreach ($dirmodels as $reldir)
 	{
-	    $file=dol_buildpath($reldir."core/modules/product/doc/pdf_".$modele.".modules.php", 0);
+	    $file = dol_buildpath($reldir."core/modules/product/doc/pdf_".$modele.".modules.php", 0);
 		if (file_exists($file))
 		{
-			$filefound=1;
+			$filefound = 1;
 			$classname = "pdf_".$modele;
 			break;
 		}
@@ -243,7 +255,7 @@ if ($action == 'set')
 	$value = GETPOST('value');
 	if (GETPOST('value', 'alpha')) $res = dolibarr_set_const($db, $const, $value, 'chaine', 0, '', $conf->entity);
 	else $res = dolibarr_del_const($db, $const, $conf->entity);
-	if (! $res > 0) $error++;
+	if (!$res > 0) $error++;
 }
 
 //if ($action == 'other')
@@ -255,7 +267,7 @@ if ($action == 'set')
 
 if ($action)
 {
-    if (! $error)
+    if (!$error)
     {
 	    setEventMessages($langs->trans("SetupSaved"), null, 'mesgs');
     }
@@ -269,7 +281,7 @@ if ($action)
  * View
  */
 
-$formbarcode=new FormBarCode($db);
+$formbarcode = new FormBarCode($db);
 
 $title = $langs->trans('ProductServiceSetup');
 $tab = $langs->trans("ProductsAndServices");
@@ -286,17 +298,17 @@ elseif (empty($conf->service->enabled))
 
 llxHeader('', $title);
 
-$linkback='<a href="'.DOL_URL_ROOT.'/admin/modules.php?restore_lastsearch_values=1">'.$langs->trans("BackToModuleList").'</a>';
+$linkback = '<a href="'.DOL_URL_ROOT.'/admin/modules.php?restore_lastsearch_values=1">'.$langs->trans("BackToModuleList").'</a>';
 print load_fiche_titre($title, $linkback, 'title_setup');
 
 $head = product_admin_prepare_head();
 dol_fiche_head($head, 'general', $tab, -1, 'product');
 
-$form=new Form($db);
+$form = new Form($db);
 
 // Module to manage product / services code
-$dirproduct=array('/core/modules/product/');
-$dirmodels=array_merge(array('/'), (array) $conf->modules_parts['models']);
+$dirproduct = array('/core/modules/product/');
+$dirmodels = array_merge(array('/'), (array) $conf->modules_parts['models']);
 
 print load_fiche_titre($langs->trans("ProductCodeChecker"), '', '');
 
@@ -318,16 +330,16 @@ foreach ($dirproduct as $dirroot)
     if (is_resource($handle))
     {
     	// Loop on each module find in opened directory
-    	while (($file = readdir($handle))!==false)
+    	while (($file = readdir($handle)) !== false)
     	{
     		if (substr($file, 0, 16) == 'mod_codeproduct_' && substr($file, -3) == 'php')
     		{
-    			$file = substr($file, 0, dol_strlen($file)-4);
+    			$file = substr($file, 0, dol_strlen($file) - 4);
 
     			try {
         			dol_include_once($dirroot.$file.'.php');
     			}
-    			catch(Exception $e)
+    			catch (Exception $e)
     			{
     			    dol_syslog($e->getMessage(), LOG_ERR);
     			}
@@ -335,7 +347,7 @@ foreach ($dirproduct as $dirroot)
     			$modCodeProduct = new $file;
 
     			// Show modules according to features level
-    			if ($modCodeProduct->version == 'development'  && $conf->global->MAIN_FEATURES_LEVEL < 2) continue;
+    			if ($modCodeProduct->version == 'development' && $conf->global->MAIN_FEATURES_LEVEL < 2) continue;
     			if ($modCodeProduct->version == 'experimental' && $conf->global->MAIN_FEATURES_LEVEL < 1) continue;
 
     			$var = !$var;
@@ -344,7 +356,7 @@ foreach ($dirproduct as $dirroot)
     			print '<td>'.$modCodeProduct->info($langs).'</td>'."\n";
     			print '<td class="nowrap">'.$modCodeProduct->getExample($langs).'</td>'."\n";
 
-    			if (! empty($conf->global->PRODUCT_CODEPRODUCT_ADDON) && $conf->global->PRODUCT_CODEPRODUCT_ADDON == $file)
+    			if (!empty($conf->global->PRODUCT_CODEPRODUCT_ADDON) && $conf->global->PRODUCT_CODEPRODUCT_ADDON == $file)
     			{
     				print '<td class="center">'."\n";
     				print img_picto($langs->trans("Activated"), 'switch_on');
@@ -353,16 +365,16 @@ foreach ($dirproduct as $dirroot)
     			else
     			{
     				$disabled = false;
-    				if (! empty($conf->multicompany->enabled) && (is_object($mc) && ! empty($mc->sharings['referent']) && $mc->sharings['referent'] == $conf->entity) ? false : true);
+    				if (!empty($conf->multicompany->enabled) && (is_object($mc) && !empty($mc->sharings['referent']) && $mc->sharings['referent'] == $conf->entity) ? false : true);
     				print '<td class="center">';
-    				if (! $disabled) print '<a class="reposition" href="'.$_SERVER['PHP_SELF'].'?action=setcodeproduct&value='.$file.'">';
+    				if (!$disabled) print '<a class="reposition" href="'.$_SERVER['PHP_SELF'].'?action=setcodeproduct&value='.$file.'">';
     				print img_picto($langs->trans("Disabled"), 'switch_off');
-    				if (! $disabled) print '</a>';
+    				if (!$disabled) print '</a>';
     				print '</td>';
     			}
 
     			print '<td class="center">';
-    			$s=$modCodeProduct->getToolTip($langs, null, -1);
+    			$s = $modCodeProduct->getToolTip($langs, null, -1);
     			print $form->textwithpicto('', $s, 1);
     			print '</td>';
 
@@ -377,14 +389,14 @@ print '</table>';
 // Module to build doc
 $def = array();
 $sql = "SELECT nom";
-$sql.= " FROM ".MAIN_DB_PREFIX."document_model";
-$sql.= " WHERE type = '".$type."'";
-$sql.= " AND entity = ".$conf->entity;
-$resql=$db->query($sql);
+$sql .= " FROM ".MAIN_DB_PREFIX."document_model";
+$sql .= " WHERE type = '".$type."'";
+$sql .= " AND entity = ".$conf->entity;
+$resql = $db->query($sql);
 if ($resql)
 {
 	$i = 0;
-	$num_rows=$db->num_rows($resql);
+	$num_rows = $db->num_rows($resql);
 	while ($i < $num_rows)
 	{
 		$array = $db->fetch_array($resql);
@@ -415,41 +427,41 @@ clearstatcache();
 
 foreach ($dirmodels as $reldir)
 {
-    foreach (array('','/doc') as $valdir)
+    foreach (array('', '/doc') as $valdir)
     {
     	$dir = dol_buildpath($reldir."core/modules/product".$valdir);
         if (is_dir($dir))
         {
-            $handle=opendir($dir);
+            $handle = opendir($dir);
             if (is_resource($handle))
             {
-                while (($file = readdir($handle))!==false)
+                while (($file = readdir($handle)) !== false)
                 {
-                    $filelist[]=$file;
+                    $filelist[] = $file;
                 }
                 closedir($handle);
                 arsort($filelist);
 
-                foreach($filelist as $file)
+                foreach ($filelist as $file)
                 {
                     if (preg_match('/\.modules\.php$/i', $file) && preg_match('/^(pdf_|doc_)/', $file))
                     {
                     	if (file_exists($dir.'/'.$file))
                     	{
-                    		$name = substr($file, 4, dol_strlen($file) -16);
-	                        $classname = substr($file, 0, dol_strlen($file) -12);
+                    		$name = substr($file, 4, dol_strlen($file) - 16);
+	                        $classname = substr($file, 0, dol_strlen($file) - 12);
 
 	                        require_once $dir.'/'.$file;
 	                        $module = new $classname($db);
 
-	                        $modulequalified=1;
-	                        if ($module->version == 'development'  && $conf->global->MAIN_FEATURES_LEVEL < 2) $modulequalified=0;
-	                        if ($module->version == 'experimental' && $conf->global->MAIN_FEATURES_LEVEL < 1) $modulequalified=0;
+	                        $modulequalified = 1;
+	                        if ($module->version == 'development' && $conf->global->MAIN_FEATURES_LEVEL < 2) $modulequalified = 0;
+	                        if ($module->version == 'experimental' && $conf->global->MAIN_FEATURES_LEVEL < 1) $modulequalified = 0;
 
 	                        if ($modulequalified)
 	                        {
 	                            print '<tr class="oddeven"><td width="100">';
-	                            print (empty($module->name)?$name:$module->name);
+	                            print (empty($module->name) ? $name : $module->name);
 	                            print "</td><td>\n";
 	                            if (method_exists($module, 'info')) print $module->info($langs);
 	                            else print $module->description;
@@ -484,15 +496,15 @@ foreach ($dirmodels as $reldir)
 	                            print '</td>';
 
 								// Info
-		    					$htmltooltip =    ''.$langs->trans("Name").': '.$module->name;
-					    		$htmltooltip.='<br>'.$langs->trans("Type").': '.($module->type?$module->type:$langs->trans("Unknown"));
+		    					$htmltooltip = ''.$langs->trans("Name").': '.$module->name;
+					    		$htmltooltip .= '<br>'.$langs->trans("Type").': '.($module->type ? $module->type : $langs->trans("Unknown"));
 			                    if ($module->type == 'pdf')
 			                    {
-			                        $htmltooltip.='<br>'.$langs->trans("Width").'/'.$langs->trans("Height").': '.$module->page_largeur.'/'.$module->page_hauteur;
+			                        $htmltooltip .= '<br>'.$langs->trans("Width").'/'.$langs->trans("Height").': '.$module->page_largeur.'/'.$module->page_hauteur;
 			                    }
-					    		$htmltooltip.='<br><br><u>'.$langs->trans("FeaturesSupported").':</u>';
-					    		$htmltooltip.='<br>'.$langs->trans("Logo").': '.yn($module->option_logo, 1, 1);
-					    		$htmltooltip.='<br>'.$langs->trans("MultiLanguage").': '.yn($module->option_multilang, 1, 1);
+					    		$htmltooltip .= '<br><br><u>'.$langs->trans("FeaturesSupported").':</u>';
+					    		$htmltooltip .= '<br>'.$langs->trans("Logo").': '.yn($module->option_logo, 1, 1);
+					    		$htmltooltip .= '<br>'.$langs->trans("MultiLanguage").': '.yn($module->option_multilang, 1, 1);
 
 
 	                            print '<td class="center">';
@@ -549,10 +561,10 @@ print '<td width="80">&nbsp;</td></tr>'."\n";
  */
 
 $rowspan = 4;
-if (! empty($conf->global->PRODUIT_MULTIPRICES) || ! empty($conf->global->PRODUIT_CUSTOMER_PRICES_BY_QTY_MULTIPRICES)) $rowspan++;
+if (!empty($conf->global->PRODUIT_MULTIPRICES) || !empty($conf->global->PRODUIT_CUSTOMER_PRICES_BY_QTY_MULTIPRICES)) $rowspan++;
 if (empty($conf->global->PRODUIT_USE_SEARCH_TO_SELECT)) $rowspan++;
-if (! empty($conf->global->MAIN_MULTILANGS)) $rowspan++;
-if (! empty($conf->fournisseur->enabled)) $rowspan++;
+if (!empty($conf->global->MAIN_MULTILANGS)) $rowspan++;
+if (!empty($conf->fournisseur->enabled)) $rowspan++;
 
 
 print '<tr class="oddeven">';
@@ -566,10 +578,10 @@ else
 }
 print '<td width="60" class="right">';
 $current_rule = 'PRODUCT_PRICE_UNIQ';
-if (!empty($conf->global->PRODUIT_MULTIPRICES)) $current_rule='PRODUIT_MULTIPRICES';
-if (!empty($conf->global->PRODUIT_CUSTOMER_PRICES_BY_QTY)) $current_rule='PRODUIT_CUSTOMER_PRICES_BY_QTY';
-if (!empty($conf->global->PRODUIT_CUSTOMER_PRICES)) $current_rule='PRODUIT_CUSTOMER_PRICES';
-if (!empty($conf->global->PRODUIT_CUSTOMER_PRICES_BY_QTY_MULTIPRICES)) $current_rule='PRODUIT_CUSTOMER_PRICES_BY_QTY_MULTIPRICES';
+if (!empty($conf->global->PRODUIT_MULTIPRICES)) $current_rule = 'PRODUIT_MULTIPRICES';
+if (!empty($conf->global->PRODUIT_CUSTOMER_PRICES_BY_QTY)) $current_rule = 'PRODUIT_CUSTOMER_PRICES_BY_QTY';
+if (!empty($conf->global->PRODUIT_CUSTOMER_PRICES)) $current_rule = 'PRODUIT_CUSTOMER_PRICES';
+if (!empty($conf->global->PRODUIT_CUSTOMER_PRICES_BY_QTY_MULTIPRICES)) $current_rule = 'PRODUIT_CUSTOMER_PRICES_BY_QTY_MULTIPRICES';
 print $form->selectarray("princingrule", $select_pricing_rules, $current_rule);
 print '</td><td rowspan="'.$rowspan.'" class="nohover right">';
 print '<input type="submit" class="button" value="'.$langs->trans("Modify").'">';
@@ -578,7 +590,7 @@ print '</tr>';
 
 
 // multiprix nombre de prix a proposer
-if (! empty($conf->global->PRODUIT_MULTIPRICES) || ! empty($conf->global->PRODUIT_CUSTOMER_PRICES_BY_QTY_MULTIPRICES))
+if (!empty($conf->global->PRODUIT_MULTIPRICES) || !empty($conf->global->PRODUIT_CUSTOMER_PRICES_BY_QTY_MULTIPRICES))
 {
 	print '<tr class="oddeven">';
 	print '<td>'.$langs->trans("MultiPricesNumPrices").'</td>';
@@ -608,7 +620,7 @@ if (empty($conf->use_javascript_ajax))
 else
 {
 	print '<td width="60" class="right">';
-	$arrval=array(
+	$arrval = array(
 		'0'=>$langs->trans("No"),
 		'1'=>$langs->trans("Yes").' ('.$langs->trans("NumberOfKeyToSearch", 1).')',
 	    '2'=>$langs->trans("Yes").' ('.$langs->trans("NumberOfKeyToSearch", 2).')',
@@ -658,31 +670,38 @@ print '</tr>';
 */
 
 // View product description in thirdparty language
-if (! empty($conf->global->MAIN_MULTILANGS))
+if (!empty($conf->global->MAIN_MULTILANGS))
 {
 	print '<tr class="oddeven">';
 	print '<td>'.$langs->trans("ViewProductDescInThirdpartyLanguageAbility").'</td>';
 	print '<td width="60" class="right">';
-	print $form->selectyesno("activate_viewProdTextsInThirdpartyLanguage", (! empty($conf->global->PRODUIT_TEXTS_IN_THIRDPARTY_LANGUAGE)?$conf->global->PRODUIT_TEXTS_IN_THIRDPARTY_LANGUAGE:0), 1);
+	print $form->selectyesno("activate_viewProdTextsInThirdpartyLanguage", (!empty($conf->global->PRODUIT_TEXTS_IN_THIRDPARTY_LANGUAGE) ? $conf->global->PRODUIT_TEXTS_IN_THIRDPARTY_LANGUAGE : 0), 1);
 	print '</td>';
 	print '</tr>';
 }
 
-if (! empty($conf->fournisseur->enabled))
+if (!empty($conf->fournisseur->enabled))
 {
     print '<tr class="oddeven">';
     print '<td>'.$langs->trans("UseProductFournDesc").'</td>';
     print '<td width="60" class="right">';
-    print $form->selectyesno("activate_useProdFournDesc", (! empty($conf->global->PRODUIT_FOURN_TEXTS)?$conf->global->PRODUIT_FOURN_TEXTS:0), 1);
+    print $form->selectyesno("activate_useProdFournDesc", (!empty($conf->global->PRODUIT_FOURN_TEXTS) ? $conf->global->PRODUIT_FOURN_TEXTS : 0), 1);
     print '</td>';
     print '</tr>';
+
+	print '<tr class="oddeven">';
+	print '<td>'.$langs->trans("UseProductSupplierPackaging").'</td>';
+	print '<td width="60" align="right">';
+	print $form->selectyesno("activate_useProdSupplierPackaging", (!empty($conf->global->PRODUCT_USE_SUPPLIER_PACKAGING) ? $conf->global->PRODUCT_USE_SUPPLIER_PACKAGING : 0), 1);
+	print '</td>';
+	print '</tr>';
 }
 
 
-if (! empty($conf->global->PRODUCT_CANVAS_ABILITY))
+if (!empty($conf->global->PRODUCT_CANVAS_ABILITY))
 {
 	// Add canvas feature
-	$dir = DOL_DOCUMENT_ROOT . "/product/canvas/";
+	$dir = DOL_DOCUMENT_ROOT."/product/canvas/";
 
 	print '<tr class="liste_titre">';
 	print '<td>'.$langs->trans("ProductSpecial").'</td>'."\n";
@@ -691,12 +710,12 @@ if (! empty($conf->global->PRODUCT_CANVAS_ABILITY))
 
 	if (is_dir($dir))
 	{
-		require_once DOL_DOCUMENT_ROOT . '/product/class/product.class.php';
+		require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
 
-		$handle=opendir($dir);
+		$handle = opendir($dir);
         if (is_resource($handle))
         {
-    		while (($file = readdir($handle))!==false)
+    		while (($file = readdir($handle)) !== false)
     		{
     			if (file_exists($dir.$file.'/product.'.$file.'.class.php'))
     			{

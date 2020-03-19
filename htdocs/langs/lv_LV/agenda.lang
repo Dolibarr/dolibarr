@@ -123,6 +123,7 @@ AgendaUrlOptionsNotAdmin=<b>logina =! %s</b>, lai ierobežotu izvadi darbībām,
 AgendaUrlOptions4=<b>logint=%s</b> to restrict output to actions assigned to user <b>%s</b> (owner and others).
 AgendaUrlOptionsProject=<b> project = __ PROJECT_ID __ </ b>, lai ierobežotu izlaidi darbībām, kas saistītas ar projektu <b> __ PROJECT_ID __ </ b>.
 AgendaUrlOptionsNotAutoEvent=<b> notactiontype = systemauto </b>, lai izslēgtu automātiskus notikumus.
+AgendaUrlOptionsIncludeHolidays= <b> includeholidays = 1 </b>, lai iekļautu svētku pasākumus.
 AgendaShowBirthdayEvents=Rādīt kontaktu dzimšanas dienas
 AgendaHideBirthdayEvents=Slēpt kontaktu dzimšanas dienas
 Busy=Aizņemts

@@ -47,6 +47,11 @@ $action = GETPOST('action', 'aZ09');
 $confirm = GETPOST('confirm');
 $projectid = (GETPOST('projectid') ? GETPOST('projectid', 'int') : 0);
 
+$dateech = dol_mktime(GETPOST('echhour'), GETPOST('echmin'), GETPOST('echsec'), GETPOST('echmonth'), GETPOST('echday'), GETPOST('echyear'));
+$dateperiod = dol_mktime(GETPOST('periodhour'), GETPOST('periodmin'), GETPOST('periodsec'), GETPOST('periodmonth'), GETPOST('periodday'), GETPOST('periodyear'));
+$label = GETPOST('label', 'alpha');
+$actioncode = GETPOST('actioncode');
+
 // Security check
 $socid = GETPOST('socid', 'int');
 if ($user->socid) $socid = $user->socid;
@@ -134,10 +139,7 @@ if ($action == 'confirm_delete' && $confirm == 'yes')
 // Add social contribution
 if ($action == 'add' && $user->rights->tax->charges->creer)
 {
-	$dateech = dol_mktime(GETPOST('echhour'), GETPOST('echmin'), GETPOST('echsec'), GETPOST('echmonth'), GETPOST('echday'), GETPOST('echyear'));
-	$dateperiod = dol_mktime(GETPOST('periodhour'), GETPOST('periodmin'), GETPOST('periodsec'), GETPOST('periodmonth'), GETPOST('periodday'), GETPOST('periodyear'));
 	$amount = price2num(GETPOST('amount'));
-	$actioncode = GETPOST('actioncode');
 
 	if (!$dateech)
 	{
@@ -187,8 +189,6 @@ if ($action == 'add' && $user->rights->tax->charges->creer)
 
 if ($action == 'update' && !$_POST["cancel"] && $user->rights->tax->charges->creer)
 {
-	$dateech = dol_mktime(GETPOST('echhour'), GETPOST('echmin'), GETPOST('echsec'), GETPOST('echmonth'), GETPOST('echday'), GETPOST('echyear'));
-	$dateperiod = dol_mktime(GETPOST('periodhour'), GETPOST('periodmin'), GETPOST('periodsec'), GETPOST('periodmonth'), GETPOST('periodday'), GETPOST('periodyear'));
 	$amount = price2num(GETPOST('amount'));
 
 	if (!$dateech)
@@ -603,7 +603,7 @@ if ($id > 0)
 		/*
 		 * Payments
 		 */
-		$sql = "SELECT p.rowid, p.num_paiement, datep as dp, p.amount,";
+		$sql = "SELECT p.rowid, p.num_paiement as num_payment, datep as dp, p.amount,";
 		$sql .= " c.code as type_code,c.libelle as paiement_type,";
 		$sql .= ' ba.rowid as baid, ba.ref as baref, ba.label, ba.number as banumber, ba.account_number, ba.currency_code as bacurrency_code, ba.fk_accountancy_journal';
 		$sql .= " FROM ".MAIN_DB_PREFIX."paiementcharge as p";
@@ -647,7 +647,7 @@ if ($id > 0)
 					print '<a href="'.DOL_URL_ROOT.'/compta/payment_sc/card.php?id='.$objp->rowid.'">'.img_object($langs->trans("Payment"), "payment").' '.$objp->rowid.'</a></td>';
 					print '<td>'.dol_print_date($db->jdate($objp->dp), 'day')."</td>\n";
 					$labeltype = $langs->trans("PaymentType".$objp->type_code) != ("PaymentType".$objp->type_code) ? $langs->trans("PaymentType".$objp->type_code) : $objp->paiement_type;
-					print "<td>".$labeltype.' '.$objp->num_paiement."</td>\n";
+					print "<td>".$labeltype.' '.$objp->num_payment."</td>\n";
 					if (!empty($conf->banque->enabled))
 					{
 						$bankaccountstatic->id = $objp->baid;

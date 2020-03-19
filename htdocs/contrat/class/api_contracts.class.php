@@ -99,7 +99,8 @@ class Contracts extends DolibarrApi
      * @param string           $sqlfilters          Other criteria to filter answers separated by a comma. Syntax example "(t.ref:like:'SO-%') and (t.date_creation:<:'20160101')"
      * @return  array                               Array of contract objects
      *
-     * @throws RestException
+     * @throws RestException 404 Not found
+     * @throws RestException 503 Error
      */
     public function index($sortfield = "t.rowid", $sortorder = 'ASC', $limit = 100, $page = 0, $thirdparty_ids = '', $sqlfilters = '')
     {
@@ -439,8 +440,9 @@ class Contracts extends DolibarrApi
      * @url	DELETE {id}/lines/{lineid}
      *
      * @return int
-     * @throws 401
-     * @throws 404
+     *
+     * @throws RestException 401
+     * @throws RestException 404
      */
     public function deleteLine($id, $lineid)
     {

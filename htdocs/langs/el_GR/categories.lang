@@ -78,6 +78,7 @@ CatMemberList=Λίστα μελών ετικέτες/κατηγορίες
 CatContactList=Λίστα ετικετών/κατηγοριών επαφών
 CatSupLinks=Συνδέσεις μεταξύ προμηθευτών και ετικετών/κατηγοριών
 CatCusLinks=Συνδέσεις μεταξύ πελατών/προοπτικών και ετικετών/κατηγοριών
+CatContactsLinks=Links between contacts/addresses and tags/categories
 CatProdLinks=Συνδέσεις μεταξύ προϊόντων/υπηρεσιών και ετικετών/κατηγοριών
 CatProJectLinks=Links between projects and tags/categories
 DeleteFromCat=Αφαίρεση αυτής της ετικέτας/κατηγορίας

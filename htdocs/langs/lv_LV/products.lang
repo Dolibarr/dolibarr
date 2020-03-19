@@ -331,6 +331,10 @@ PossibleValues=Iespējamās vērtības
 GoOnMenuToCreateVairants=Iet uz izvēlni %s - %s, lai sagatavotu atribūtu variantus (piemēram, krāsas, izmērs, ...)
 UseProductFournDesc=Pievienojiet funkciju, lai definētu pārdevēju definētos produktu aprakstus papildus aprakstiem klientiem
 ProductSupplierDescription=Produkta pārdevēja apraksts
+UseProductSupplierPackaging=Izmantojiet iepakojumu uz piegādātāju cenām (pārrēķiniet daudzumus atbilstoši iepakojumam, kas noteikts pēc piegādātāja cenas, pievienojot / atjauninot rindiņu piegādātāja dokumentos)
+PackagingForThisProduct=Iepakojums
+QtyRecalculatedWithPackaging=Līnijas daudzums tika pārrēķināts atbilstoši piegādātāja iesaiņojumam
+
 #Attributes
 VariantAttributes=Variantu atribūti
 ProductAttributes=Variantu atribūti produktiem
@@ -376,3 +380,4 @@ ErrorProductCombinationNotFound=Produkta variants nav atrasts
 ActionAvailableOnVariantProductOnly=Darbība pieejama tikai produkta variantam
 ProductsPricePerCustomer=Produktu cenas uz vienu klientu
 ProductSupplierExtraFields=Papildu atribūti (piegādātāju cenas)
+DeleteLinkedProduct=Izdzēsiet kombinēto produktu, kas saistīts ar to
