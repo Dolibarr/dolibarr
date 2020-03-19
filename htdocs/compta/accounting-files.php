@@ -241,7 +241,7 @@ if (($action == 'searchfiles' || $action == 'dl')) {
 	            {
 	                $result = true;
 
-	                $files = dol_dir_list($upload_dir, "files", 0, '', '(\.meta|_preview\.png)$', '', SORT_ASC, 1);
+	                $files = dol_dir_list($upload_dir, "files", 0, '', '(\.meta|_preview.*\.png)$', '', SORT_ASC, 1);
 	                //var_dump($upload_dir);
 	                //var_dump($files);
 
