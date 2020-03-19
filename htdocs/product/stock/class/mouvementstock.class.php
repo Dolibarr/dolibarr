@@ -1134,4 +1134,17 @@ class MouvementStock extends CommonObject
 
 		return $this->commonGenerateDocument($modelpath, $modele, $outputlangs, $hidedetails, $hidedesc, $hideref);
 	}
+
+	/**
+	 * Delete object in database
+	 *
+	 * @param User $user       User that deletes
+	 * @param bool $notrigger  false=launch triggers after, true=disable triggers
+	 * @return int             <0 if KO, >0 if OK
+	 */
+	public function delete(User $user, $notrigger = false)
+	{
+		return $this->deleteCommon($user, $notrigger);
+		//return $this->deleteCommon($user, $notrigger, 1);
+	}
 }
