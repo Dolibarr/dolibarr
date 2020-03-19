@@ -409,7 +409,8 @@ clearstatcache();
 
 foreach ($dirmodels as $reldir)
 {
-	$dir = dol_buildpath($reldir."core/modules/fichinter/doc/");
+	$realpath = $reldir."core/modules/fichinter/doc";
+	$dir = dol_buildpath($realpath);
 
 	if (is_dir($dir))
 	{
@@ -480,6 +481,8 @@ foreach ($dirmodels as $reldir)
 		    				$htmltooltip = ''.$langs->trans("Name").': '.$module->name;
 		    				$htmltooltip .= '<br>'.$langs->trans("Type").': '.($module->type ? $module->type : $langs->trans("Unknown"));
 		    				$htmltooltip .= '<br>'.$langs->trans("Width").'/'.$langs->trans("Height").': '.$module->page_largeur.'/'.$module->page_hauteur;
+		    				$htmltooltip .= '<br>'.$langs->trans("Path").': '.preg_replace('/^\//', '', $realpath).'/'.$file;
+
 		    				$htmltooltip .= '<br><br><u>'.$langs->trans("FeaturesSupported").':</u>';
 		    				$htmltooltip .= '<br>'.$langs->trans("Logo").': '.yn($module->option_logo, 1, 1);
 		    				$htmltooltip .= '<br>'.$langs->trans("PaymentMode").': '.yn($module->option_modereg, 1, 1);

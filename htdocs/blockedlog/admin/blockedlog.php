@@ -28,9 +28,9 @@ require_once DOL_DOCUMENT_ROOT.'/blockedlog/class/blockedlog.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
 
 // Load translation files required by the page
-$langs->loadLangs(array("admin","other","blockedlog"));
+$langs->loadLangs(array("admin", "other", "blockedlog"));
 
-if (! $user->admin || empty($conf->blockedlog->enabled)) accessforbidden();
+if (!$user->admin || empty($conf->blockedlog->enabled)) accessforbidden();
 
 $action = GETPOST('action', 'alpha');
 $backtopage = GETPOST('backtopage', 'alpha');
@@ -40,11 +40,12 @@ $backtopage = GETPOST('backtopage', 'alpha');
  * Actions
  */
 
+$reg = array();
 if (preg_match('/set_(.*)/', $action, $reg))
 {
-	$code=$reg[1];
+	$code = $reg[1];
 	$values = GETPOST($code);
-	if(is_array($values))$values = implode(',', $values);
+	if (is_array($values)) $values = implode(',', $values);
 
 	if (dolibarr_set_const($db, $code, $values, 'chaine', 0, '', $conf->entity) > 0)
 	{
@@ -59,7 +60,7 @@ if (preg_match('/set_(.*)/', $action, $reg))
 
 if (preg_match('/del_(.*)/', $action, $reg))
 {
-	$code=$reg[1];
+	$code = $reg[1];
 	if (dolibarr_del_const($db, $code, 0) > 0)
 	{
 		Header("Location: ".$_SERVER["PHP_SELF"]);
@@ -76,22 +77,22 @@ if (preg_match('/del_(.*)/', $action, $reg))
  *	View
  */
 
-$form=new Form($db);
+$form = new Form($db);
 $block_static = new BlockedLog($db);
 
 llxHeader('', $langs->trans("BlockedLogSetup"));
 
-$linkback='';
+$linkback = '';
 if (GETPOST('withtab', 'alpha'))
 {
-	$linkback='<a href="'.($backtopage?$backtopage:DOL_URL_ROOT.'/admin/modules.php').'">'.$langs->trans("BackToModuleList").'</a>';
+	$linkback = '<a href="'.($backtopage ? $backtopage : DOL_URL_ROOT.'/admin/modules.php').'">'.$langs->trans("BackToModuleList").'</a>';
 }
 
 print load_fiche_titre($langs->trans("ModuleSetup").' '.$langs->trans('BlockedLog'), $linkback);
 
 if (GETPOST('withtab', 'alpha'))
 {
-	$head=blockedlogadmin_prepare_head();
+	$head = blockedlogadmin_prepare_head();
 	dol_fiche_head($head, 'blockedlog', '', -1);
 }
 
@@ -134,16 +135,16 @@ print '<input type="hidden" name="token" value="'.newToken().'">';
 print '<input type="hidden" name="action" value="set_BLOCKEDLOG_DISABLE_NOT_ALLOWED_FOR_COUNTRY">';
 
 $sql = "SELECT rowid, code as code_iso, code_iso as code_iso3, label, favorite";
-$sql.= " FROM ".MAIN_DB_PREFIX."c_country";
-$sql.= " WHERE active > 0";
+$sql .= " FROM ".MAIN_DB_PREFIX."c_country";
+$sql .= " WHERE active > 0";
 
-$countryArray=array();
-$resql=$db->query($sql);
+$countryArray = array();
+$resql = $db->query($sql);
 if ($resql)
 {
 	while ($obj = $db->fetch_object($resql))
 	{
-			$countryArray[$obj->code_iso] = ($obj->code_iso && $langs->transnoentitiesnoconv("Country".$obj->code_iso)!="Country".$obj->code_iso?$langs->transnoentitiesnoconv("Country".$obj->code_iso):($obj->label!='-'?$obj->label:''));
+			$countryArray[$obj->code_iso] = ($obj->code_iso && $langs->transnoentitiesnoconv("Country".$obj->code_iso) != "Country".$obj->code_iso ? $langs->transnoentitiesnoconv("Country".$obj->code_iso) : ($obj->label != '-' ? $obj->label : ''));
 	}
 }
 
@@ -159,8 +160,8 @@ print '</td>';
 print '<tr class="oddeven">';
 print '<td class="titlefield">';
 print $langs->trans("ListOfTrackedEvents").'</td><td>';
-$arrayoftrackedevents=$block_static->trackedevents;
-foreach($arrayoftrackedevents as $key => $val)
+$arrayoftrackedevents = $block_static->trackedevents;
+foreach ($arrayoftrackedevents as $key => $val)
 {
 	print $key.' - '.$langs->trans($val).'<br>';
 }

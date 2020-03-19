@@ -4,7 +4,7 @@ Actions=事件
 Agenda=應辦事項
 TMenuAgenda=應辦事項
 Agendas=應辦事項
-LocalAgenda=內部日曆
+LocalAgenda=內部行事曆
 ActionsOwnedBy=事件承辦人
 ActionsOwnedByShort=承辦人
 AffectedTo=指定給
@@ -32,8 +32,8 @@ ViewPerUser=檢視每位用戶
 ViewPerType=每種類別檢視
 AutoActions= 自動填滿
 AgendaAutoActionDesc= 在這裡，您可以定義希望Dolibarr在應辦事項中自動新增的事件。如果未進行任何檢查，則日誌中將僅包含手動操作，並在應辦事項中顯示。將不會保存專案中自動商業行動追蹤（驗證，狀態更改）。
-AgendaSetupOtherDesc= 此頁面允許將您的Dolibarr事件匯出到外部日曆（Thunderbird，Google Calendar等）。
-AgendaExtSitesDesc=該頁面允許顯示外部來源日曆，以將其事件納入Dolibarr應辦事項。
+AgendaSetupOtherDesc= 此頁面允許將您的Dolibarr事件匯出到外部行事曆（Thunderbird，Google Calendar等）。
+AgendaExtSitesDesc=該頁面允許顯示外部來源行事曆，以將其事件納入Dolibarr應辦事項。
 ActionsEvents=Dolibarr 會在待辦事項中自動建立行動事件
 EventRemindersByEmailNotEnabled=電子郵件事件提醒未在%s模組設定中啟用。
 ##### Agenda event labels #####
@@ -60,7 +60,7 @@ MemberSubscriptionModifiedInDolibarr=會員 %s 已修改 %s 訂閱
 MemberSubscriptionDeletedInDolibarr=會員 %s 已刪除 %s 訂閱
 ShipmentValidatedInDolibarr=裝運%s已驗證
 ShipmentClassifyClosedInDolibarr=裝運%s已歸類為開票
-ShipmentUnClassifyCloseddInDolibarr=裝運%s已歸類為重新打開
+ShipmentUnClassifyCloseddInDolibarr=發貨%s已分類為重新打開
 ShipmentBackToDraftInDolibarr=裝運%s回到草稿狀態
 ShipmentDeletedInDolibarr=裝運%s已刪除
 OrderCreatedInDolibarr=訂單 %s 已建立
@@ -123,6 +123,7 @@ AgendaUrlOptionsNotAdmin=<b>logina=!%s</b> 將限制輸出非用戶<b>%s</b>擁�
 AgendaUrlOptions4=<b>logint = %s</b>將限制輸出分配給用戶<b>%s</b> （所有者和其他用戶）的操作。
 AgendaUrlOptionsProject=<b>project=PROJECT_ID</b> 將限制輸出為已連結專案操作 <b>PROJECT_ID</b>.
 AgendaUrlOptionsNotAutoEvent=<b>notactiontype = systemauto</b>排除自動事件。
+AgendaUrlOptionsIncludeHolidays=設定<b>includeholidays=1</b>以包括假期活動。
 AgendaShowBirthdayEvents=顯示連絡人生日
 AgendaHideBirthdayEvents=隱藏連絡人生日
 Busy=忙錄

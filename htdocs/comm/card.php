@@ -67,7 +67,7 @@ $mode = GETPOST("mode");
 
 $sortfield = GETPOST("sortfield", 'alpha');
 $sortorder = GETPOST("sortorder", 'alpha');
-$page = GETPOST("page", 'int');
+$page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOST("page", 'int');
 if (empty($page) || $page == -1) { $page = 0; }     // If $page is not defined, or '' or -1
 $offset = $conf->liste_limit * $page;
 $pageprev = $page - 1;
@@ -666,7 +666,7 @@ if ($object->id > 0)
 	$now = dol_now();
 
 	/*
-	 * Last proposals
+	 * Latest proposals
 	 */
 	if (!empty($conf->propal->enabled) && $user->rights->propal->lire)
 	{
@@ -738,7 +738,7 @@ if ($object->id > 0)
 	}
 
 	/*
-	 * Last orders
+	 * Latest orders
 	 */
 	if (!empty($conf->commande->enabled) && $user->rights->commande->lire)
 	{
@@ -751,7 +751,7 @@ if ($object->id > 0)
 		$sql .= " FROM ".MAIN_DB_PREFIX."societe as s, ".MAIN_DB_PREFIX."commande as c";
 		$sql .= " WHERE c.fk_soc = s.rowid ";
 		$sql .= " AND s.rowid = ".$object->id;
-		$sql .= " AND c.entity = ".$conf->entity;
+		$sql .= " AND c.entity IN (".getEntity('commande').')';
 		$sql .= " ORDER BY c.date_commande DESC";
 
 		$resql = $db->query($sql);
@@ -824,7 +824,7 @@ if ($object->id > 0)
 	}
 
     /*
-     *   Last shipments
+     *   Latest shipments
      */
     if (!empty($conf->expedition->enabled) && $user->rights->expedition->lire)
     {
@@ -897,7 +897,7 @@ if ($object->id > 0)
     }
 
 	/*
-	 * Last linked contracts
+	 * Latest linked contracts
 	 */
 	if (!empty($conf->contrat->enabled) && $user->rights->contrat->lire)
 	{
@@ -905,7 +905,7 @@ if ($object->id > 0)
 		$sql .= " FROM ".MAIN_DB_PREFIX."societe as s, ".MAIN_DB_PREFIX."contrat as c";
 		$sql .= " WHERE c.fk_soc = s.rowid ";
 		$sql .= " AND s.rowid = ".$object->id;
-		$sql .= " AND c.entity = ".$conf->entity;
+		$sql .= " AND c.entity IN (".getEntity('contract').")";
 		$sql .= " ORDER BY c.datec DESC";
 
 		$resql = $db->query($sql);
@@ -967,7 +967,7 @@ if ($object->id > 0)
 	}
 
 	/*
-	 * Last interventions
+	 * Latest interventions
 	 */
 	if (!empty($conf->ficheinter->enabled) && $user->rights->ficheinter->lire)
 	{
@@ -975,7 +975,7 @@ if ($object->id > 0)
 		$sql .= " FROM ".MAIN_DB_PREFIX."societe as s, ".MAIN_DB_PREFIX."fichinter as f";
 		$sql .= " WHERE f.fk_soc = s.rowid";
 		$sql .= " AND s.rowid = ".$object->id;
-		$sql .= " AND f.entity = ".$conf->entity;
+		$sql .= " AND f.entity IN (".getEntity('intervention').")";
 		$sql .= " ORDER BY f.tms DESC";
 
 		$resql = $db->query($sql);
@@ -1028,11 +1028,11 @@ if ($object->id > 0)
 	}
 
 	/*
-	 *   Last invoices templates
+	 *   Latest invoices templates
 	 */
 	if (!empty($conf->facture->enabled) && $user->rights->facture->lire)
 	{
-		$sql = 'SELECT f.rowid as id, f.titre as ref, f.amount';
+		$sql = 'SELECT f.rowid as id, f.titre as ref';
 		$sql .= ', f.total as total_ht';
 		$sql .= ', f.tva as total_tva';
 		$sql .= ', f.total_ttc';
@@ -1044,10 +1044,10 @@ if ($object->id > 0)
 		$sql .= ', s.nom, s.rowid as socid';
 		$sql .= " FROM ".MAIN_DB_PREFIX."societe as s,".MAIN_DB_PREFIX."facture_rec as f";
 		$sql .= " WHERE f.fk_soc = s.rowid AND s.rowid = ".$object->id;
-		$sql .= " AND f.entity = ".$conf->entity;
-		$sql .= ' GROUP BY f.rowid, f.titre, f.amount, f.total, f.tva, f.total_ttc,';
+		$sql .= " AND f.entity IN (".getEntity('invoice').")";
+		$sql .= ' GROUP BY f.rowid, f.titre, f.total, f.tva, f.total_ttc,';
 		$sql .= ' f.date_last_gen, f.datec, f.frequency, f.unit_frequency,';
-		$sql .= ' f.suspended,';
+		$sql .= ' f.suspended, f.date_when,';
 		$sql .= ' s.nom, s.rowid';
 		$sql .= " ORDER BY f.date_last_gen, f.datec DESC";
 
@@ -1063,7 +1063,7 @@ if ($object->id > 0)
 				print '<table class="noborder centpercent lastrecordtable">';
 
 				print '<tr class="liste_titre">';
-				print '<td colspan="4"><table width="100%" class="nobordernopadding"><tr><td>'.$langs->trans("LatestCustomerTemplateInvoices", ($num <= $MAXLIST ? "" : $MAXLIST)).'</td><td class="right"><a class="notasortlink" href="'.DOL_URL_ROOT.'/compta/facture/list.php?socid='.$object->id.'">'.$langs->trans("AllCustomerTemplateInvoices").'<span class="badge marginleftonlyshort">'.$num.'</span></a></td>';
+				print '<td colspan="4"><table width="100%" class="nobordernopadding"><tr><td>'.$langs->trans("LatestCustomerTemplateInvoices", ($num <= $MAXLIST ? "" : $MAXLIST)).'</td><td class="right"><a class="notasortlink" href="'.DOL_URL_ROOT.'/compta/facture/invoicetemplate_list.php?socid='.$object->id.'">'.$langs->trans("AllCustomerTemplateInvoices").'<span class="badge marginleftonlyshort">'.$num.'</span></a></td>';
 				print '</tr></table></td>';
 				print '</tr>';
 			}
@@ -1140,7 +1140,7 @@ if ($object->id > 0)
 	 */
 	if (!empty($conf->facture->enabled) && $user->rights->facture->lire)
 	{
-        $sql = 'SELECT f.rowid as facid, f.ref, f.type, f.amount';
+        $sql = 'SELECT f.rowid as facid, f.ref, f.type';
         $sql .= ', f.total as total_ht';
         $sql .= ', f.tva as total_tva';
         $sql .= ', f.total_ttc';
@@ -1151,7 +1151,7 @@ if ($object->id > 0)
 		$sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'paiement_facture as pf ON f.rowid=pf.fk_facture';
 		$sql .= " WHERE f.fk_soc = s.rowid AND s.rowid = ".$object->id;
 		$sql .= " AND f.entity IN (".getEntity('invoice').")";
-		$sql .= ' GROUP BY f.rowid, f.ref, f.type, f.amount, f.total, f.tva, f.total_ttc,';
+		$sql .= ' GROUP BY f.rowid, f.ref, f.type, f.total, f.tva, f.total_ttc,';
 		$sql .= ' f.datef, f.datec, f.paye, f.fk_statut,';
 		$sql .= ' s.nom, s.rowid';
 		$sql .= " ORDER BY f.datef DESC, f.datec DESC";

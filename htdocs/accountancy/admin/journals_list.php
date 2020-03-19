@@ -57,7 +57,7 @@ $active = 1;
 
 $sortfield = GETPOST("sortfield", 'alpha');
 $sortorder = GETPOST("sortorder", 'alpha');
-$page = GETPOST("page", 'int');
+$page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOST("page", 'int');
 if (empty($page) || $page == -1) { $page = 0; }     // If $page is not defined, or '' or -1
 $offset = $listlimit * $page;
 $pageprev = $page - 1;
@@ -165,9 +165,9 @@ if (GETPOST('actionadd', 'alpha') || GETPOST('actionmodify', 'alpha'))
 		if ($fieldnamekey == 'nature') $fieldnamekey = 'NatureOfJournal';
 	}
 	// Other checks
-	if (isset($_POST["code"]))
+	if (GETPOSTISSET("code"))
 	{
-		if ($_POST["code"] == '0')
+		if (GETPOST("code") == '0')
 		{
 			$ok = 0;
 			setEventMessages($langs->transnoentities('ErrorCodeCantContainZero'), null, 'errors');

@@ -545,7 +545,9 @@ function calendars_prepare_head($param)
         $h++;
     }
 
-    $head[$h][0] = DOL_URL_ROOT.'/comm/action/peruser.php'.($param?'?'.$param:'');
+    $newparam = $param;
+    $newparam = preg_replace('/&?search_filtert=\d+/', '', $newparam);
+    $head[$h][0] = DOL_URL_ROOT.'/comm/action/peruser.php'.($newparam?'?'.$newparam:'');
     $head[$h][1] = $langs->trans("ViewPerUser");
     $head[$h][2] = 'cardperuser';
     $h++;

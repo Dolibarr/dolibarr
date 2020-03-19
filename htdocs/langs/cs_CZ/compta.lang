@@ -254,3 +254,4 @@ ByVatRate=Sazbou daně z prodeje
 TurnoverbyVatrate=Obrat je fakturován sazbou daně z prodeje
 TurnoverCollectedbyVatrate=Obrat shromážděný podle sazby daně z prodeje
 PurchasebyVatrate=Nákup podle sazby daně z prodeje
+LabelToShow=Krátký štítek

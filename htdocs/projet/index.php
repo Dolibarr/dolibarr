@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2001-2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2016 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2020 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2010 Regis Houssin        <regis.houssin@inodbox.com>
  * Copyright (C) 2019      Nicolas ZABOURI      <info@inovea-conseil.com>
  *
@@ -166,14 +166,14 @@ include DOL_DOCUMENT_ROOT.'/projet/graph_opportunities.inc.php';
 
 
 // List of draft projects
-print_projecttasks_array($db, $form, $socid, $projectsListId, 0, 0, $listofoppstatus, array('projectlabel', 'plannedworkload', 'declaredprogress'));
+print_projecttasks_array($db, $form, $socid, $projectsListId, 0, 0, $listofoppstatus, array('projectlabel', 'plannedworkload', 'declaredprogress', 'prospectionstatus', 'projectstatus'));
 
 
 print '</div><div class="fichetwothirdright"><div class="ficheaddleft">';
 
 // Latest modified projects
-$sql = "SELECT p.rowid, p.ref, p.title, p.fk_statut, p.tms as datem,";
-$sql .= " s.rowid as socid, s.nom as name, s.email, s.client, s.fournisseur, s.code_client, s.code_fournisseur, s.canvas";
+$sql = "SELECT p.rowid, p.ref, p.title, p.fk_statut as status, p.tms as datem,";
+$sql .= " s.rowid as socid, s.nom as name, s.email, s.client, s.fournisseur, s.code_client, s.code_fournisseur, s.canvas, s.status as thirdpartystatus";
 $sql .= " FROM ".MAIN_DB_PREFIX."projet as p";
 $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s on p.fk_soc = s.rowid";
 $sql .= " WHERE p.entity IN (".getEntity('project').")";
@@ -200,7 +200,7 @@ if ($resql)
 			$obj = $db->fetch_object($resql);
 
 			print '<tr class="oddeven">';
-			print '<td width="20%" class="nowrap">';
+			print '<td class="nowrap">';
 
 			$projectstatic->id = $obj->rowid;
 			$projectstatic->ref = $obj->ref;
@@ -208,6 +208,7 @@ if ($resql)
 			$projectstatic->dateo = $obj->dateo;
 			$projectstatic->datep = $obj->datep;
 			$projectstatic->thirdparty_name = $obj->name;
+			$projectstatic->status = $obj->status;
 
 			$companystatic->id = $obj->socid;
 			$companystatic->name = $obj->name;
@@ -217,6 +218,7 @@ if ($resql)
 			$companystatic->code_client = $obj->code_client;
 			$companystatic->code_fournisseur = $obj->code_fournisseur;
 			$companystatic->canvas = $obj->canvas;
+			$companystatic->status = $obj->thirdpartystatus;
 
 			print '<table class="nobordernopadding"><tr class="nocellnopadd">';
 			print '<td width="96" class="nobordernopadding nowrap">';
@@ -243,7 +245,7 @@ if ($resql)
 			}
 			print '</td>';
 			print '<td>'.dol_print_date($db->jdate($obj->datem), 'day').'</td>';
-			print '<td class="right">'.$projectstatic->LibStatut($obj->fk_statut, 3).'</td>';
+			print '<td class="right">'.$projectstatic->LibStatut($obj->status, 3).'</td>';
 			print '</tr>';
 			$i++;
 		}
@@ -265,25 +267,33 @@ print_liste_field_titre("NbOfProjects", "", "", "", "", '', $sortfield, $sortord
 print "</tr>\n";
 
 $sql = "SELECT COUNT(p.rowid) as nb, SUM(p.opp_amount)";
-$sql .= ", s.nom as name, s.rowid as socid";
+$sql .= ", s.rowid as socid, s.nom as name, s.email, s.client, s.fournisseur, s.code_client, s.code_fournisseur, s.canvas, s.status";
 $sql .= " FROM ".MAIN_DB_PREFIX."projet as p";
 $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s on p.fk_soc = s.rowid";
 $sql .= " WHERE p.entity IN (".getEntity('project').")";
 $sql .= " AND p.fk_statut = 1";
 if ($mine || empty($user->rights->projet->all->lire)) $sql .= " AND p.rowid IN (".$projectsListId.")"; // If we have this test true, it also means projectset is not 2
 if ($socid)	$sql .= " AND (p.fk_soc IS NULL OR p.fk_soc = 0 OR p.fk_soc = ".$socid.")";
-$sql .= " GROUP BY s.nom, s.rowid";
+$sql .= " GROUP BY s.rowid, s.nom, s.email, s.client, s.fournisseur, s.code_client, s.code_fournisseur, s.canvas, s.status";
 $sql .= $db->order($sortfield, $sortorder);
+//$sql .= $db->plimit($max + 1, 0);
 
 $resql = $db->query($sql);
 if ($resql)
 {
 	$num = $db->num_rows($resql);
 	$i = 0;
+	$othernb = 0;
 
 	while ($i < $num)
 	{
 		$obj = $db->fetch_object($resql);
+
+		if ($i >= $max) {
+			$othernb += $obj->nb;
+			$i++;
+			continue;
+		}
 
 		print '<tr class="oddeven">';
 		print '<td class="nowrap">';
@@ -291,11 +301,15 @@ if ($resql)
 		{
 			$companystatic->id = $obj->socid;
 			$companystatic->name = $obj->name;
+			$companystatic->email = $obj->email;
+			$companystatic->status = $obj->status;
+
 			print $companystatic->getNomUrl(1);
 		}
 		else
 		{
 			print $langs->trans("OthersNotLinkedToThirdParty");
+			$i--;
 		}
 		print '</td>';
 		print '<td class="right">';
@@ -305,6 +319,16 @@ if ($resql)
 		print "</tr>\n";
 
 		$i++;
+	}
+	if ($othernb) {
+		print '<tr class="oddeven">';
+		print '<td class="nowrap">';
+		print '...';
+		print '</td>';
+		print '<td class="nowrap right">';
+		print $othernb;
+		print '</td>';
+		print "</tr>\n";
 	}
 
 	$db->free($resql);
@@ -316,10 +340,10 @@ else
 print "</table>";
 print '</div>';
 
-if (!empty($conf->global->PROJECT_SHOW_PROJECT_LIST_ON_PROJECT_AREA))
+if (empty($conf->global->PROJECT_HIDE_PROJECT_LIST_ON_PROJECT_AREA))
 {
-    // This list can be very long, so we don't show it by default on task area. We prefer to use the list page.
-    // Add constant PROJECT_SHOW_PROJECT_LIST_ON_PROJECT_AREA to show this list
+    // This list can be very long, so we allow to hide it to prefer to use the list page.
+    // Add constant PROJECT_HIDE_PROJECT_LIST_ON_PROJECT_AREA to show this list
 
     print '<br>';
 
@@ -329,7 +353,7 @@ if (!empty($conf->global->PROJECT_SHOW_PROJECT_LIST_ON_PROJECT_AREA))
 print '</div></div></div>';
 
 $parameters = array('user' => $user);
-$reshook = $hookmanager->executeHooks('dashboardProjects', $parameters, $object); // Note that $action and $object may have been modified by hook
+$reshook = $hookmanager->executeHooks('dashboardProjects', $parameters, $projectstatic); // Note that $action and $object may have been modified by hook
 
 // End of page
 llxFooter();

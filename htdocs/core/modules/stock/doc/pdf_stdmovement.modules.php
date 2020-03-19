@@ -230,7 +230,7 @@ class pdf_stdmovement extends ModelePDFMovement
 		$search_type_mouvement = GETPOST('search_type_mouvement', 'int');
 
 		$limit = GETPOST('limit', 'int') ?GETPOST('limit', 'int') : $conf->liste_limit;
-		$page = GETPOST("page", 'int');
+		$page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOST("page", 'int');
 		$sortfield = GETPOST("sortfield", 'alpha');
 		$sortorder = GETPOST("sortorder", 'alpha');
 		if (empty($page) || $page == -1) { $page = 0; }     // If $page is not defined, or '' or -1
@@ -543,7 +543,12 @@ class pdf_stdmovement extends ModelePDFMovement
 							else
 							{
 								// We found a page break
-								$showpricebeforepagebreak=0;
+
+								// Allows data in the first page if description is long enough to break in multiples pages
+								if(!empty($conf->global->MAIN_PDF_DATA_ON_FIRST_PAGE))
+									$showpricebeforepagebreak = 1;
+								else
+									$showpricebeforepagebreak = 0;
 							}
 						}
 						else	// No pagebreak

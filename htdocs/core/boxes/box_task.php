@@ -86,6 +86,7 @@ class box_task extends ModeleBoxes
 		$form = new Form($this->db);
         $cookie_name = 'boxfilter_task';
         $boxcontent = '';
+        $socid = $user->socid;
 
         $textHead = $langs->trans("CurentlyOpenedTasks");
 
@@ -96,7 +97,6 @@ class box_task extends ModeleBoxes
         elseif (!empty($_COOKIE[$cookie_name])) {
             $filterValue = $_COOKIE[$cookie_name];
         }
-
 
         if ($filterValue == 'im_task_contact') {
             $textHead .= ' : '.$langs->trans("WhichIamLinkedTo");
@@ -127,21 +127,27 @@ class box_task extends ModeleBoxes
             $boxcontent .= '<button type="submit" class="button">'.$langs->trans("Refresh").'</button>';
             $boxcontent .= '</form>'."\n";
             $boxcontent .= '</div>'."\n";
-            $boxcontent .= '<script type="text/javascript" language="javascript">
-					jQuery(document).ready(function() {
-						jQuery("#idsubimg'.$this->boxcode.'").click(function() {
-							jQuery(".showiffilter'.$this->boxcode.'").toggle();
+            if (! empty($conf->use_javascript_ajax)) {
+	            $boxcontent .= '<script type="text/javascript" language="javascript">
+						jQuery(document).ready(function() {
+							jQuery("#idsubimg'.$this->boxcode.'").click(function() {
+								jQuery(".showiffilter'.$this->boxcode.'").toggle();
+							});
 						});
-					});
-					</script>';
-            // set cookie by js
-            $boxcontent .= '<script>date = new Date(); date.setTime(date.getTime()+(30*86400000)); document.cookie = "'.$cookie_name.'='.$filterValue.'; expires= " + date.toGMTString() + "; path=/ "; </script>';
+						</script>';
+	            // set cookie by js
+	            $boxcontent .= '<script>date = new Date(); date.setTime(date.getTime()+(30*86400000)); document.cookie = "'.$cookie_name.'='.$filterValue.'; expires= " + date.toGMTString() + "; path=/ "; </script>';
+            }
             $this->info_box_contents[0][] = array(
                 'tr'=>'class="nohover showiffilter'.$this->boxcode.' hideobject"',
                 'td' => 'class="nohover"',
                 'textnoformat' => $boxcontent,
             );
 
+
+            // Get list of project id allowed to user (in a string list separated by coma)
+            $projectsListId = '';
+            if (!$user->rights->projet->all->lire) $projectsListId = $projectstatic->getProjectsAuthorizedForUser($user, 0, 1, $socid);
 
             $sql = "SELECT pt.rowid, pt.ref, pt.fk_projet, pt.fk_task_parent, pt.datec, pt.dateo, pt.datee, pt.datev, pt.label, pt.description, pt.duration_effective, pt.planned_workload, pt.progress";
 			$sql .= ", p.rowid project_id, p.ref project_ref, p.title project_title";
@@ -163,7 +169,7 @@ class box_task extends ModeleBoxes
 			$sql .= " AND p.fk_statut = ".Project::STATUS_VALIDATED;
 			$sql .= " AND (pt.progress < 100 OR pt.progress IS NULL ) "; // 100% is done and not displayed
             $sql .= " AND p.usage_task = 1 ";
-
+            if (!$user->rights->projet->all->lire) $sql .= " AND p.rowid IN (".$projectsListId.")"; // public and assigned to, or restricted to company for external users
 
 			$sql .= " ORDER BY pt.datee ASC, pt.dateo ASC";
 			$sql .= $this->db->plimit($max, 0);

@@ -84,7 +84,7 @@ class box_factures_fourn_imp extends ModeleBoxes
 		{
 			$sql = "SELECT s.nom as name, s.rowid as socid,";
 			$sql.= " f.rowid as facid, f.ref, f.ref_supplier, f.date_lim_reglement as datelimite,";
-			$sql.= " f.amount, f.datef as df,";
+			$sql.= " f.datef as df,";
             $sql.= " f.total_ht as total_ht,";
             $sql.= " f.tva as total_tva,";
             $sql.= " f.total_ttc,";

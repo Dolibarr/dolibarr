@@ -53,14 +53,13 @@ class Setup extends DolibarrApi
      * @param int       $limit      Number of items per page
      * @param int       $page       Page number {@min 0}
      * @param int       $active     Payment type is active or not {@min 0} {@max 1}
-     * @param string    $sqlfilters SQL criteria to filter with. Syntax example "(t.code:=:'CHQ')"
+     * @param string    $sqlfilters SQL criteria to filter with. Syntax example "(t.code:=:'OrderByWWW')"
      *
      * @url     GET dictionary/ordering_methods
      *
      * @return array [List of ordering methods]
      *
-     * @throws 400 RestException
-     * @throws 200 OK
+     * @throws RestException 400
      */
     public function getOrderingMethods($sortfield = "code", $sortorder = 'ASC', $limit = 100, $page = 0, $active = 1, $sqlfilters = '')
     {
@@ -121,8 +120,7 @@ class Setup extends DolibarrApi
      *
      * @return array [List of payment types]
      *
-     * @throws 400 RestException
-     * @throws 200 OK
+     * @throws RestException 400
      */
     public function getPaymentTypes($sortfield = "code", $sortorder = 'ASC', $limit = 100, $page = 0, $active = 1, $sqlfilters = '')
     {
@@ -339,8 +337,7 @@ class Setup extends DolibarrApi
      *
      * @return array [List of availability]
      *
-     * @throws 400 RestException
-     * @throws 200 OK
+     * @throws RestException 400
      */
     public function getAvailability($sortfield = "code", $sortorder = 'ASC', $limit = 100, $page = 0, $active = 1, $sqlfilters = '')
     {
@@ -556,6 +553,70 @@ class Setup extends DolibarrApi
 
         return $list;
     }
+
+
+    /**
+     * Get the list of Expense Report types.
+     *
+     * @param string    $sortfield  Sort field
+     * @param string    $sortorder  Sort order
+     * @param int       $limit      Number of items per page
+     * @param int       $page       Page number (starting from zero)
+     * @param string    $module     To filter on module
+     * @param int       $active     Event's type is active or not {@min 0} {@max 1}
+     * @param string    $sqlfilters Other criteria to filter answers separated by a comma. Syntax example "(t.code:like:'A%') and (t.active:>=:0)"
+     * @return array				List of expense report types
+     *
+     * @url     GET dictionary/expensereport_types
+     *
+     * @throws RestException
+     */
+    public function getListOfExpenseReportsTypes($sortfield = "code", $sortorder = 'ASC', $limit = 100, $page = 0, $module = '', $active = 1, $sqlfilters = '')
+    {
+    	$list = array();
+
+    	$sql = "SELECT id, code, label, accountancy_code, active, module, position";
+    	$sql .= " FROM ".MAIN_DB_PREFIX."c_type_fees as t";
+    	$sql .= " WHERE t.active = ".$active;
+    	if ($module)    $sql .= " AND t.module LIKE '%".$this->db->escape($module)."%'";
+    	// Add sql filters
+    	if ($sqlfilters)
+    	{
+    		if (!DolibarrApi::_checkFilters($sqlfilters))
+    		{
+    			throw new RestException(503, 'Error when validating parameter sqlfilters '.$sqlfilters);
+    		}
+    		$regexstring = '\(([^:\'\(\)]+:[^:\'\(\)]+:[^:\(\)]+)\)';
+    		$sql .= " AND (".preg_replace_callback('/'.$regexstring.'/', 'DolibarrApi::_forge_criteria_callback', $sqlfilters).")";
+    	}
+
+
+    	$sql .= $this->db->order($sortfield, $sortorder);
+
+    	if ($limit) {
+    		if ($page < 0) {
+    			$page = 0;
+    		}
+    		$offset = $limit * $page;
+
+    		$sql .= $this->db->plimit($limit, $offset);
+    	}
+
+    	$result = $this->db->query($sql);
+
+    	if ($result) {
+    		$num = $this->db->num_rows($result);
+    		$min = min($num, ($limit <= 0 ? $num : $limit));
+    		for ($i = 0; $i < $min; $i++) {
+    			$list[] = $this->db->fetch_object($result);
+    		}
+    	} else {
+    		throw new RestException(503, 'Error when retrieving list of expense report types : '.$this->db->lasterror());
+    	}
+
+    	return $list;
+    }
+
 
     /**
      * Get the list of contacts types.
@@ -908,8 +969,7 @@ class Setup extends DolibarrApi
      *
      * @return array List of payment terms
      *
-     * @throws 400 RestException
-     * @throws 200 OK
+     * @throws RestException 400
      */
     public function getPaymentTerms($sortfield = "sortorder", $sortorder = 'ASC', $limit = 100, $page = 0, $active = 1, $sqlfilters = '')
     {
@@ -969,8 +1029,7 @@ class Setup extends DolibarrApi
      *
      * @return array List of shipping methods
      *
-     * @throws 400 RestException
-     * @throws 200 OK
+     * @throws RestException 400
      */
     public function getShippingModes($limit = 100, $page = 0, $active = 1, $sqlfilters = '')
     {
@@ -1342,6 +1401,39 @@ class Setup extends DolibarrApi
         return $this->_cleanObjectDatas($mysoc);
     }
 
+
+    /**
+     * Get value of a setup variables
+     *
+     * Note that conf variables that stores security key or password hashes can't be loaded with API.
+     *
+     * @url	GET /conf
+     *
+     * @param	string			$confname	Name of conf variable to get
+     * @return  array|mixed 				Data without useless information
+     *
+     * @throws RestException 403 Forbidden
+	 * @throws RestException 500 Error Bad or unknown value for constname
+     */
+    public function getConf($confname)
+    {
+    	global $conf;
+
+    	if (!DolibarrApiAccess::$user->admin
+    		&& (empty($conf->global->API_LOGIN_ALLOWED_FOR_ADMIN_CHECK) || DolibarrApiAccess::$user->login != $conf->global->API_LOGIN_ALLOWED_FOR_ADMIN_CHECK)) {
+    		throw new RestException(403, 'Error API open to admin users only or to the login user defined with constant API_LOGIN_ALLOWED_FOR_ADMIN_CHECK');
+    	}
+
+    	if (! preg_match('/[^a-zA-Z0-9_]/', $confname) || ! isset($conf->global->$confname)) {
+    		throw new RestException(500, 'Error Bad or unknown value for constname');
+    	}
+    	if (preg_match('/(_pass|password|secret|_key|key$)/i', $confname)) {
+    		throw new RestException(403, 'Forbidden');
+    	}
+
+    	return $conf->global->$confname;
+    }
+
     /**
      * Do a test of integrity for files and setup.
      *
@@ -1350,7 +1442,9 @@ class Setup extends DolibarrApi
      *
      * @url     GET checkintegrity
      *
-     * @throws RestException
+     * @throws RestException 404 Signature file not found
+     * @throws RestException 500 Technical error
+     * @throws RestException 503 Forbidden
      */
     public function getCheckIntegrity($target)
     {
@@ -1359,7 +1453,7 @@ class Setup extends DolibarrApi
     	if (!DolibarrApiAccess::$user->admin
     		&& (empty($conf->global->API_LOGIN_ALLOWED_FOR_INTEGRITY_CHECK) || DolibarrApiAccess::$user->login != $conf->global->API_LOGIN_ALLOWED_FOR_INTEGRITY_CHECK))
     	{
-    		throw new RestException(503, 'Error API open to admin users only or to login user defined with constant API_LOGIN_ALLOWED_FOR_INTEGRITY_CHECK');
+    		throw new RestException(503, 'Error API open to admin users only or to the login user defined with constant API_LOGIN_ALLOWED_FOR_INTEGRITY_CHECK');
     	}
 
     	require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';

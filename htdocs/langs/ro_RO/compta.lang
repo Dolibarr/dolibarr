@@ -254,3 +254,4 @@ ByVatRate=Prin cota de impozit pe vânzare
 TurnoverbyVatrate=Cifra de afaceri facturată prin rata impozitului pe vânzare
 TurnoverCollectedbyVatrate=Cifra de afaceri colectată prin rata impozitului pe vânzare
 PurchasebyVatrate=Cumpărare prin rata de impozitare a vânzării
+LabelToShow=Etichetă scurta

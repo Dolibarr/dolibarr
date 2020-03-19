@@ -14,7 +14,6 @@ MemberResiliatedInDolibarr=Lid %s verwijderd
 MemberSubscriptionModifiedInDolibarr=Abonnement %s voor lid %s aangepast
 ShipmentValidatedInDolibarr=Shipment %s goedgekeurd
 ShipmentClassifyClosedInDolibarr=Verzending %s werd geclassificeerd als gefactureerd
-ShipmentUnClassifyCloseddInDolibarr=Verzending %s werd geclassificieerd als opnieuw geopend
 ShipmentBackToDraftInDolibarr=Verzending %s zet om naar conceptstatus
 ShipmentDeletedInDolibarr=Shipment %s gewist
 ProposalSentByEMail=Commercieel voorstel %s verzonden per e-mail

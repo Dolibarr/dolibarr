@@ -141,10 +141,10 @@ OrderByEMail=Email
 OrderByWWW=Online
 OrderByPhone=Τηλέφωνο
 # Documents models
-PDFEinsteinDescription=Ολοκληρωμένο πρότυπο παραγγελίας (λογότυπο...)
-PDFEratostheneDescription=Ολοκληρωμένο πρότυπο παραγγελίας (λογότυπο...)
+PDFEinsteinDescription=Ένα πλήρες μοντέλο παραγγελίας 
+PDFEratostheneDescription=Ένα πλήρες μοντέλο παραγγελίας
 PDFEdisonDescription=Απλό πρότυπο παραγγελίας
-PDFProformaDescription=Ένα πλήρες προτιμολόγιο (λογότυπο ...)
+PDFProformaDescription=Ένα πλήρες πρότυπο τιμολογίου Proforma
 CreateInvoiceForThisCustomer=Τιμολογημένες παραγγελίες
 NoOrdersToInvoice=Δεν υπάρχουν τιμολογημένες παραγγελίες
 CloseProcessedOrdersAutomatically=Χαρακτηρίστε σε «εξέλιξη» όλες τις επιλεγμένες παραγγελίες.

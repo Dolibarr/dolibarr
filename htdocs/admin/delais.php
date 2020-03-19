@@ -107,6 +107,10 @@ $modules = array(
 				array(
 						'code' => 'MAIN_DELAY_MEMBERS',
 						'img' => 'user'
+				),
+        array(
+						'code' => 'MAIN_DELAY_MEMBERS_SHIFT',
+						'img' => 'user'
 				)
 		),
 		'expensereport' => array(

@@ -28,6 +28,7 @@ if (!defined('NOREQUIREMENU'))  define('NOREQUIREMENU', '1');
 if (!defined('NOREQUIREHTML'))  define('NOREQUIREHTML', '1');
 if (!defined('NOLOGIN'))        define("NOLOGIN", 1); // This means this output page does not require to be logged.
 if (!defined('NOCSRFCHECK'))    define("NOCSRFCHECK", 1); // We accept to go on this page from external web site.
+if (!defined('NOIPCHECK'))		define('NOIPCHECK', '1'); // Do not check IP defined into conf $dolibarr_main_restrict_ip
 
 require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/ticket/class/actions_ticket.class.php';
@@ -53,6 +54,7 @@ $extrafields = new ExtraFields($db);
 
 $extrafields->fetch_name_optionals_label($object->table_element);
 
+
 /*
  * Actions
  */
@@ -66,11 +68,12 @@ if (GETPOST('addfile', 'alpha') && !GETPOST('add', 'alpha')) {
 
     // Set tmp directory TODO Use a dedicated directory for temp mails files
     $vardir = $conf->ticket->dir_output;
-    $upload_dir_tmp = $vardir.'/temp';
+    $upload_dir_tmp = $vardir.'/temp/'.session_id();
     if (!dol_is_dir($upload_dir_tmp)) {
         dol_mkdir($upload_dir_tmp);
     }
-    dol_add_file_process($upload_dir_tmp, 0, 0, 'addedfile');
+
+    dol_add_file_process($upload_dir_tmp, 0, 0, 'addedfile', '', null, '', 0);
     $action = 'create_ticket';
     ////}
 }
@@ -81,7 +84,7 @@ if (GETPOST('removedfile', 'alpha') && !GETPOST('add', 'alpha')) {
 
     // Set tmp directory
     $vardir = $conf->ticket->dir_output.'/';
-    $upload_dir_tmp = $vardir.'/temp';
+    $upload_dir_tmp = $vardir.'/temp/'.session_id();
 
     // TODO Delete only files that was uploaded from email form
     dol_remove_file_process($_POST['removedfile'], 0, 0);
@@ -168,7 +171,7 @@ if ($action == 'create_ticket' && GETPOST('add', 'alpha')) {
 
         if (!$error && $id > 0) {
             if ($usertoassign > 0) {
-                $object->add_contact($usertoassign, "SUPPORTCLI", 'external', $notrigger = 0);
+                $object->add_contact($usertoassign, "SUPPORTCLI", 'external', 0);
             }
         }
 
@@ -203,7 +206,7 @@ if ($action == 'create_ticket' && GETPOST('add', 'alpha')) {
 
                 // Send email to customer
 
-                $subject = '['.$conf->global->MAIN_INFO_SOCIETE_NOM.'] '.$langs->transnoentities('TicketNewEmailSubject', $object->ref);
+                $subject = '['.$conf->global->MAIN_INFO_SOCIETE_NOM.'] '.$langs->transnoentities('TicketNewEmailSubject', $object->ref, $object->track_id);
                 $message .= ($conf->global->TICKET_MESSAGE_MAIL_NEW ? $conf->global->TICKET_MESSAGE_MAIL_NEW : $langs->transnoentities('TicketNewEmailBody'))."\n\n";
                 $message .= $langs->transnoentities('TicketNewEmailBodyInfosTicket')."\n";
 
@@ -245,7 +248,7 @@ if ($action == 'create_ticket' && GETPOST('add', 'alpha')) {
 
                 if ($sendto)
                 {
-	                $subject = '['.$conf->global->MAIN_INFO_SOCIETE_NOM.'] '.$langs->transnoentities('TicketNewEmailSubjectAdmin', $object->ref);
+	                $subject = '['.$conf->global->MAIN_INFO_SOCIETE_NOM.'] '.$langs->transnoentities('TicketNewEmailSubjectAdmin', $object->ref, $object->track_id);
 	                $message_admin = $langs->transnoentities('TicketNewEmailBodyAdmin', $object->track_id)."\n\n";
 	                $message_admin .= '<ul><li>'.$langs->trans('Title').' : '.$object->subject.'</li>';
 	                $message_admin .= '<li>'.$langs->trans('Type').' : '.$object->type_label.'</li>';
@@ -302,7 +305,7 @@ if ($action == 'create_ticket' && GETPOST('add', 'alpha')) {
             }
 
             // Copy files into ticket directory
-            $destdir = $conf->ticket->dir_output.'/'.$object->track_id;
+            $destdir = $conf->ticket->dir_output.'/'.$object->ref;
             if (!dol_is_dir($destdir)) {
             	dol_mkdir($destdir);
             }

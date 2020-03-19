@@ -24,7 +24,7 @@
 /**
  *	\file       htdocs/livraison/card.php
  *	\ingroup    livraison
- *	\brief      Fiche descriptive d'un bon de livraison=reception
+ *	\brief      Page to describe a delivery receipt
  */
 
 require '../main.inc.php';
@@ -247,49 +247,8 @@ $upload_dir = $conf->expedition->dir_output.'/receipt';
 $permissiontoadd = $user->rights->expedition->creer;
 include DOL_DOCUMENT_ROOT.'/core/actions_builddoc.inc.php';
 
-
-/*
- * Build document
- */
-/*
-if ($action == 'builddoc')	// En get ou en post
-{
-	// Save last template used to generate document
-	if (GETPOST('model')) $object->setDocModel($user, GETPOST('model','alpha'));
-
-	// Define output language
-	$outputlangs = $langs;
-	$newlang='';
-	if ($conf->global->MAIN_MULTILANGS && empty($newlang) && GETPOST('lang_id','aZ09')) $newlang=GETPOST('lang_id','aZ09');
-	if ($conf->global->MAIN_MULTILANGS && empty($newlang)) $newlang=$object->thirdparty->default_lang;
-	if (! empty($newlang))
-	{
-		$outputlangs = new Translate("",$conf);
-		$outputlangs->setDefaultLang($newlang);
-	}
-    $ret=$object->fetch($id);    // Reload to get new records
-	$result= $object->generateDocument($object->modelpdf, $outputlangs);
-	if ($result < 0)
-	{
-		setEventMessages($object->error, $object->errors, 'errors');
-        $action='';
-	}
-}
-
-// Delete file in doc form
-elseif ($action == 'remove_file')
-{
-	require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
-
-	$upload_dir =	$conf->expedition->dir_output . "/receipt";
-	$file =	$upload_dir	. '/' .	GETPOST('file');
-	$ret=dol_delete_file($file,0,0,0,$object);
-	if ($ret) setEventMessages($langs->trans("FileWasRemoved", GETPOST('urlfile')), null, 'mesgs');
-	else setEventMessages($langs->trans("ErrorFailToDeleteFile", GETPOST('urlfile')), null, 'errors');
-}
-*/
-
 include DOL_DOCUMENT_ROOT.'/core/actions_printing.inc.php';
+
 
 /*
  *	View
@@ -300,20 +259,10 @@ llxHeader('', $langs->trans('Delivery'), 'Livraison');
 $form = new Form($db);
 $formfile = new FormFile($db);
 
-/*********************************************************************
- *
- * Mode creation
- *
- *********************************************************************/
-if ($action == 'create')    // Seems to no be used
+if ($action == 'create')    // Create. Seems to no be used
 {
 }
-else
-/* *************************************************************************** */
-/*                                                                             */
-/* Mode vue et edition                                                         */
-/*                                                                             */
-/* *************************************************************************** */
+else	// View
 {
 	if ($object->id > 0)
 	{

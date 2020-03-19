@@ -52,7 +52,7 @@ function check_user_password_ldap($usertotest, $passwordtotest, $entitytotest)
 
 	if (! function_exists("ldap_connect"))
 	{
-		dol_syslog("functions_ldap::check_user_password_ldap Authentification ko failed to connect to LDAP. LDAP functions are disabled on this PHP");
+		dol_syslog("functions_ldap::check_user_password_ldap Authentication KO failed to connect to LDAP. LDAP functions are disabled on this PHP", LOG_ERR);
 		sleep(1);
 
 		// Load translation files required by the page
@@ -202,7 +202,7 @@ function check_user_password_ldap($usertotest, $passwordtotest, $entitytotest)
 					$ret=$mc->checkRight($usertmp->id, $entitytotest);
 					if ($ret < 0)
 					{
-						dol_syslog("functions_ldap::check_user_password_ldap Authentification ko entity '".$entitytotest."' not allowed for user '".$usertmp->id."'");
+						dol_syslog("functions_ldap::check_user_password_ldap Authentication KO entity '".$entitytotest."' not allowed for user '".$usertmp->id."'", LOG_NOTICE);
 						$login=''; // force authentication failure
 					}
 					unset($usertmp);
@@ -210,7 +210,7 @@ function check_user_password_ldap($usertotest, $passwordtotest, $entitytotest)
 			}
 			if ($result == 1)
 			{
-				dol_syslog("functions_ldap::check_user_password_ldap Authentification ko bad user/password for '".$usertotest."'");
+				dol_syslog("functions_ldap::check_user_password_ldap Authentication KO bad user/password for '".$usertotest."'", LOG_NOTICE);
 				sleep(1);
 
 				// Load translation files required by the page
@@ -229,7 +229,7 @@ function check_user_password_ldap($usertotest, $passwordtotest, $entitytotest)
              ** 49 - Wrong password
              ** 53 - Account inactive (manually locked out by administrator)
              */
-			dol_syslog("functions_ldap::check_user_password_ldap Authentification ko failed to connect to LDAP for '".$usertotest."'");
+			dol_syslog("functions_ldap::check_user_password_ldap Authentication KO failed to connect to LDAP for '".$usertotest."'", LOG_NOTICE);
 			if (is_resource($ldap->connection))    // If connection ok but bind ko
 			{
 				$ldap->ldapErrorCode = ldap_errno($ldap->connection);

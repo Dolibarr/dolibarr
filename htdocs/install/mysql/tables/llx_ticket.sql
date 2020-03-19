@@ -38,5 +38,6 @@ CREATE TABLE llx_ticket
 	date_read datetime,
 	date_close datetime,
 	notify_tiers_at_create tinyint,
-	tms timestamp
+	tms timestamp,
+    import_key        varchar(14)
 )ENGINE=innodb;

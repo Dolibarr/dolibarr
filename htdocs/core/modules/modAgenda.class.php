@@ -219,7 +219,7 @@ class modAgenda extends DolibarrModules
         );
         $r++;
 
-		$this->menu[$r]=array(
+		$this->menu[$r] = array(
 			'fk_menu'=>'r=0',
 			'type'=>'left',
 			'titre'=>'Actions',
@@ -233,7 +233,7 @@ class modAgenda extends DolibarrModules
 			'user'=>2,
 		);
 		$r++;
-		$this->menu[$r]=array(
+		$this->menu[$r] = array(
 			'fk_menu'=>'r=1',
 			'type'=>'left',
 			'titre'=>'NewAction',
@@ -248,7 +248,7 @@ class modAgenda extends DolibarrModules
 		);
 		$r++;
 		// Calendar
-		$this->menu[$r]=array(
+		$this->menu[$r] = array(
 			'fk_menu'=>'r=1',
 			'type'=>'left',
 			'titre'=>'Calendar',
@@ -262,7 +262,7 @@ class modAgenda extends DolibarrModules
 			'user'=>2
 		);
 		$r++;
-		$this->menu[$r]=array(
+		$this->menu[$r] = array(
 			'fk_menu'=>'r=3',
 			'type'=>'left',
 			'titre'=>'MenuToDoMyActions',
@@ -276,7 +276,7 @@ class modAgenda extends DolibarrModules
 			'user'=>2
 		);
 		$r++;
-		$this->menu[$r]=array(
+		$this->menu[$r] = array(
 			'fk_menu'=>'r=3',
 			'type'=>'left',
 			'titre'=>'MenuDoneMyActions',
@@ -290,7 +290,7 @@ class modAgenda extends DolibarrModules
 			'user'=>2
 		);
 		$r++;
-		$this->menu[$r]=array(
+		$this->menu[$r] = array(
 			'fk_menu'=>'r=3',
 			'type'=>'left',
 			'titre'=>'MenuToDoActions',
@@ -304,7 +304,7 @@ class modAgenda extends DolibarrModules
 			'user'=>2
 		);
 		$r++;
-		$this->menu[$r]=array(
+		$this->menu[$r] = array(
 			'fk_menu'=>'r=3',
 			'type'=>'left',
 			'titre'=>'MenuDoneActions',
@@ -320,7 +320,7 @@ class modAgenda extends DolibarrModules
 
 		// List
 		$r++;
-		$this->menu[$r]=array(
+		$this->menu[$r] = array(
 			'fk_menu'=>'r=1',
 			'type'=>'left',
 			'titre'=>'List',
@@ -334,7 +334,7 @@ class modAgenda extends DolibarrModules
 			'user'=>2
 		);
 		$r++;
-		$this->menu[$r]=array(
+		$this->menu[$r] = array(
 			'fk_menu'=>'r=8',
 			'type'=>'left',
 			'titre'=>'MenuToDoMyActions',
@@ -348,7 +348,7 @@ class modAgenda extends DolibarrModules
 			'user'=>2
 		);
 		$r++;
-		$this->menu[$r]=array(
+		$this->menu[$r] = array(
 			'fk_menu'=>'r=8',
 			'type'=>'left',
 			'titre'=>'MenuDoneMyActions',
@@ -362,7 +362,7 @@ class modAgenda extends DolibarrModules
 			'user'=>2
 		);
 		$r++;
-		$this->menu[$r]=array(
+		$this->menu[$r] = array(
 			'fk_menu'=>'r=8',
 			'type'=>'left',
 			'titre'=>'MenuToDoActions',
@@ -376,7 +376,7 @@ class modAgenda extends DolibarrModules
 			'user'=>2
 		);
 		$r++;
-		$this->menu[$r]=array(
+		$this->menu[$r] = array(
 			'fk_menu'=>'r=8',
 			'type'=>'left',
 			'titre'=>'MenuDoneActions',
@@ -391,7 +391,7 @@ class modAgenda extends DolibarrModules
 		);
 		$r++;
 		// Reports
-		$this->menu[$r]=array(
+		$this->menu[$r] = array(
 			'fk_menu'=>'r=1',
 			'type'=>'left',
 			'titre'=>'Reportings',
@@ -406,7 +406,7 @@ class modAgenda extends DolibarrModules
 		);
 		$r++;
 		// Categories
-		$this->menu[$r]=array(
+		$this->menu[$r] = array(
 			'fk_menu' => 'r=1',
 			'type' => 'left',
 			'titre' => 'Categories',

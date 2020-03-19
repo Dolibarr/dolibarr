@@ -47,7 +47,7 @@ $socid      = GETPOST('socid', 'int')?GETPOST('socid', 'int'):GETPOST('id', 'int
 $limit = GETPOST('limit', 'int') ? GETPOST('limit', 'int') : $conf->liste_limit;
 $sortfield = GETPOST("sortfield", 'alpha');
 $sortorder = GETPOST("sortorder", 'alpha');
-$page = GETPOST("page", 'int');
+$page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOST("page", 'int');
 if (empty($page) || $page == - 1) {
 	$page = 0;
 } // If $page is not defined, or '' or -1
@@ -260,9 +260,9 @@ if ($resql) {
 		print '<td class="center">' . dol_print_date($db->jdate($obj->doc_date), 'day') . '</td>';
 		print '<td>' . $obj->doc_ref . '</td>';
 		print '<td>' . $obj->label_compte . '</td>';
-		print '<td class="right">' . price($obj->debit) . '</td>';
-		print '<td class="right">' . price($obj->credit) . '</td>';
-		print '<td class="right">' . price(round($solde, 2)) . '</td>';
+		print '<td class="nowrap right">' . price($obj->debit) . '</td>';
+		print '<td class="nowrap right">' . price($obj->credit) . '</td>';
+		print '<td class="nowrap right">' . price(round($solde, 2)) . '</td>';
 
 		// Journal
         $accountingjournal = new AccountingJournal($db);
@@ -285,15 +285,15 @@ if ($resql) {
 
 	print '<tr class="oddeven">';
 	print '<td class="right" colspan="3">'.$langs->trans("Total").':</td>' . "\n";
-	print '<td class="right"><strong>' . price($debit) . '</strong></td>';
-	print '<td class="right"><strong>' . price($credit) . '</strong></td>';
+	print '<td class="nowrap right"><strong>' . price($debit) . '</strong></td>';
+	print '<td class="nowrap right"><strong>' . price($credit) . '</strong></td>';
 	print '<td colspan="4"></td>';
 	print "</tr>\n";
 
 	print '<tr class="oddeven">';
 	print '<td class="right" colspan="3">'.$langs->trans("Balancing").':</td>' . "\n";
 	print '<td colspan="2">&nbsp;</td>';
-	print '<td class="right"><strong>' . price($credit - $debit) . '</strong></td>';
+	print '<td class="nowrap right"><strong>' . price($credit - $debit) . '</strong></td>';
 	print '<td colspan="6"></td>';
 	print "</tr>\n";
 

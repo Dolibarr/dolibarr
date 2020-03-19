@@ -222,7 +222,7 @@ print '</td></tr>';
 // Payment type (VIR, LIQ, ...)
 $labeltype = $langs->trans("PaymentType".$object->type_code) != ("PaymentType".$object->type_code) ? $langs->trans("PaymentType".$object->type_code) : $object->type_label;
 print '<tr><td>'.$langs->trans('PaymentMode').'</td><td>'.$labeltype;
-print $object->num_paiement ? ' - '.$object->num_paiement : '';
+print $object->num_payment? ' - '.$object->num_payment : '';
 print '</td></tr>';
 
 // Amount
@@ -297,7 +297,7 @@ if (!empty($conf->banque->enabled))
 	print '<tr>';
 	print '<td>'.$langs->trans('BankTransactionLine').'</td>';
 	print '<td>';
-	print $bankline->getNomUrl(1, 0, 'showconciliated');
+	print $bankline->getNomUrl(1, 0, 'showconciliatedandaccounted');
 	print '</td>';
 	print '</tr>';
 }

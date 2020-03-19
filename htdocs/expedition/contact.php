@@ -211,7 +211,7 @@ if ($id > 0 || !empty($ref))
     //print '<div class="fichehalfleft">';
 	print '<div class="underbanner clearboth"></div>';
 
-    print '<table class="border centpercent">';
+    print '<table class="border centpercent tableforfield">';
 
     // Linked documents
 	if ($typeobject == 'commande' && $object->$typeobject->id && !empty($conf->commande->enabled))
@@ -260,6 +260,7 @@ if ($id > 0 || !empty($ref))
 
 	// Contacts lines (modules that overwrite templates must declare this into descriptor)
 	$dirtpls = array_merge($conf->modules_parts['tpl'], array('/core/tpl'));
+	$preselectedtypeofcontact = dol_getIdFromCode($db, 'SHIPPING', 'c_type_contact', 'code', 'rowid');
 	foreach ($dirtpls as $reldir)
 	{
 	    $res = @include dol_buildpath($reldir.'/contacts.tpl.php');

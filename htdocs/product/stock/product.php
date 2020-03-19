@@ -689,6 +689,14 @@ if ($id > 0 || $ref)
 				$helpondiff .= $langs->trans("ProductQtyInSuppliersShipmentAlreadyRecevied").': '.$object->stats_reception['qty'];
 			}
 
+			// Number of product in production
+			if (!empty($conf->mrp->enabled)) {
+				if ($found) $helpondiff .= '<br>'; else $found = 1;
+				$helpondiff .= $langs->trans("ProductQtyToConsumeByMO").': '.$object->stats_mrptoconsume['qty'].'<br>';
+				$helpondiff .= $langs->trans("ProductQtyToProduceByMO").': '.$object->stats_mrptoproduce['qty'];
+			}
+
+
 			// Calculating a theorical value
 			print '<tr><td>';
 			print $form->textwithpicto($langs->trans("VirtualStock"), $langs->trans("VirtualStockDesc"));
@@ -1010,7 +1018,8 @@ if (!$variants) {
 	}
 } else {
 	// List of variants
-
+	include_once DOL_DOCUMENT_ROOT.'/variants/class/ProductCombination.class.php';
+	include_once DOL_DOCUMENT_ROOT.'/variants/class/ProductCombination2ValuePair.class.php';
 	$prodstatic = new Product($db);
 	$prodcomb = new ProductCombination($db);
 	$comb2val = new ProductCombination2ValuePair($db);

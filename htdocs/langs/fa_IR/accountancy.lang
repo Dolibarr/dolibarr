@@ -224,13 +224,15 @@ ListAccounts=فهرست حساب‌های حسابداری
 UnknownAccountForThirdparty=حساب‌ شخص‌سوم ناشناخته. از %s استفاده می‌شود.
 UnknownAccountForThirdpartyBlocking=حساب شخص‌سوم ناشناخته. خطای انسدادی
 ThirdpartyAccountNotDefinedOrThirdPartyUnknown=Third-party account not defined or third party unknown. We will use %s
+ThirdpartyAccountNotDefinedOrThirdPartyUnknownSubledgerIgnored=Third-party unknown and subledger not defined on the payment. We will keep the subledger account value empty.
 ThirdpartyAccountNotDefinedOrThirdPartyUnknownBlocking=حساب شخص‌سوم تعریف نشده یا شخص سوم ناشناخته است. خطای انسدادی
 UnknownAccountForThirdpartyAndWaitingAccountNotDefinedBlocking=حساب شخص‌سوم ناشناخته و حساب انتظار تعریف نشده است. خطای انسدادی
 PaymentsNotLinkedToProduct=پرداخت به هیچ محصول/خدمتی وصل نشده است
+ShowOpeningBalance=Show opening balance
+HideOpeningBalance=Hide opening balance
 
 Pcgtype=گروه حساب
-Pcgsubtype=زیرگروه حساب
-PcgtypeDesc=گروه و زیرگروه حساب به‌عنوان "فیلتر" ازپیش‌تعریف شده و ضابطۀ "گروه‌بندی" برای برخی گزارشات حساب‌داری مورد استفاده است. برای مثال، "درآمد" یا "هزینه" به‌عنوان گروه‌های مربوط به حساب‌های حساب‌داری محصولات برای ساخت گزارش هزینه/درآمد استفاده می‌شود.
+PcgtypeDesc=Group of account are used as predefined 'filter' and 'grouping' criteria for some accounting reports. For example, 'INCOME' or 'EXPENSE' are used as groups for accounting accounts of products to build the expense/income report.
 
 TotalVente=جمع گردش‌مالی پیش‌از محاسبۀ مالیات
 TotalMarge=حاشیه فروش کل
@@ -269,6 +271,7 @@ ChangeBinding=تغییر بند‌شدن‌ها
 Accounted=در دفترکل حساب‌شده است
 NotYetAccounted=هنوز در دفترکل حساب نشده‌است
 ShowTutorial=Show Tutorial
+NotReconciled=وفق داده نشده
 
 ## Admin
 ApplyMassCategories=انتساب دست‌جمعی دسته‌بندی

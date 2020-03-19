@@ -45,7 +45,7 @@ class mod_supplier_payment_bronan extends ModeleNumRefSupplierPayments
 	/**
 	 * @var string Nom du modele
 	 * @deprecated
-	 * @see name
+	 * @see $name
 	 */
 	public $nom='Bronan';
 

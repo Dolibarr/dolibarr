@@ -254,3 +254,4 @@ ByVatRate=Per verkoop belastingtarief
 TurnoverbyVatrate=Omzet gefactureerd per omzetbelasting-tarief
 TurnoverCollectedbyVatrate=Omzet per BTW tarief
 PurchasebyVatrate=Aankoop bij verkoop belastingtarief
+LabelToShow=Kort label

@@ -194,8 +194,8 @@ class SupplierInvoices extends DolibarrApi
      *
      * @return int  ID of supplier invoice
      *
-     * @throws 401
-     * @throws 500
+     * @throws RestException 401
+     * @throws RestException 500
      */
     public function post($request_data = null)
     {
@@ -226,8 +226,8 @@ class SupplierInvoices extends DolibarrApi
      *
      * @return int
      *
-     * @throws 401
-     * @throws 404
+     * @throws RestException 401
+     * @throws RestException 404
      */
     public function put($id, $request_data = null)
     {
@@ -262,9 +262,9 @@ class SupplierInvoices extends DolibarrApi
      *
      * @return array
      *
-     * @throws 401
-     * @throws 404
-     * @throws 500
+     * @throws RestException 401
+     * @throws RestException 404
+     * @throws RestException 500
      */
     public function delete($id)
     {
@@ -304,11 +304,11 @@ class SupplierInvoices extends DolibarrApi
      *
      * @return  array
      *
-     * @throws 304
-     * @throws 401
-     * @throws 404
-     * @throws 405
-     * @throws 500
+     * @throws RestException 304
+     * @throws RestException 401
+     * @throws RestException 404
+     * @throws RestException 405
+     * @throws RestException 500
      */
     public function validate($id, $idwarehouse = 0, $notrigger = 0)
     {
@@ -348,10 +348,10 @@ class SupplierInvoices extends DolibarrApi
      * @url     GET {id}/payments
      *
      * @return array
-     * @throws 400
-     * @throws 401
-     * @throws 404
-     * @throws 405
+     * @throws RestException 400
+     * @throws RestException 401
+     * @throws RestException 404
+     * @throws RestException 405
      */
     public function getPayments($id)
     {
@@ -388,7 +388,7 @@ class SupplierInvoices extends DolibarrApi
      * @param int     $paiementid         {@from body}  Payment mode Id {@min 1}
      * @param string  $closepaidinvoices  {@from body}  Close paid invoices {@choice yes,no}
      * @param int     $accountid          {@from body}  Account Id {@min 1}
-     * @param string  $num_paiement       {@from body}  Payment number (optional)
+     * @param string  $num_payment       {@from body}  Payment number (optional)
      * @param string  $comment            {@from body}  Note (optional)
      * @param string  $chqemetteur        {@from body}  Payment issuer (mandatory if paiementcode = 'CHQ')
      * @param string  $chqbank            {@from body}  Issuer bank name (optional)
@@ -396,11 +396,11 @@ class SupplierInvoices extends DolibarrApi
      * @url     POST {id}/payments
      *
      * @return int  Payment ID
-     * @throws 400
-     * @throws 401
-     * @throws 404
+     * @throws RestException 400
+     * @throws RestException 401
+     * @throws RestException 404
      */
-    public function addPayment($id, $datepaye, $paiementid, $closepaidinvoices, $accountid, $num_paiement = '', $comment = '', $chqemetteur = '', $chqbank = '')
+    public function addPayment($id, $datepaye, $paiementid, $closepaidinvoices, $accountid, $num_payment = '', $comment = '', $chqemetteur = '', $chqbank = '')
     {
         global $conf;
 
@@ -455,7 +455,7 @@ class SupplierInvoices extends DolibarrApi
         $paiement->multicurrency_amounts = $multicurrency_amounts;    // Array with all payments dispatching
         $paiement->paiementid = $paiementid;
         $paiement->paiementcode = dol_getIdFromCode($this->db, $paiementid, 'c_paiement', 'id', 'code', 1);
-        $paiement->num_payment = $num_paiement;
+        $paiement->num_payment = $num_payment;
         $paiement->note_public = $comment;
 
         $paiement_id = $paiement->create(DolibarrApiAccess::$user, ($closepaidinvoices=='yes'?1:0));    // This include closing invoices

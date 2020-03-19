@@ -29,7 +29,7 @@
 
 require_once DOL_DOCUMENT_ROOT.'/core/class/commondocgenerator.class.php';
 require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
-require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';   // Required because used in classes that inherit
+require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php'; // Required because used in classes that inherit
 
 
 /**
@@ -40,7 +40,11 @@ abstract class ModelePDFFactures extends CommonDocGenerator
 	/**
 	 * @var string Error code (or message)
 	 */
-	public $error='';
+	public $error = '';
+
+	public $atleastonediscount = 0;
+	public $atleastoneratenotnull = 0;
+
 
     // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
@@ -55,11 +59,11 @@ abstract class ModelePDFFactures extends CommonDocGenerator
         // phpcs:enable
 		global $conf;
 
-		$type='invoice';
-		$liste=array();
+		$type = 'invoice';
+		$liste = array();
 
 		include_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
-		$liste=getListOfModels($db, $type, $maxfilenamelength);
+		$liste = getListOfModels($db, $type, $maxfilenamelength);
 
 		return $liste;
 	}
@@ -73,7 +77,7 @@ abstract class ModeleNumRefFactures
 	/**
 	 * @var string Error code (or message)
 	 */
-	public $error='';
+	public $error = '';
 
 	/**
 	 * Return if a module can be used or not

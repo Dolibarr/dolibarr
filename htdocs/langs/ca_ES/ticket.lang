@@ -30,6 +30,7 @@ Permission56005=Veure els tiquets de tots els tercers (no efectiu per als usuari
 TicketDictType=Tiquet - Tipus
 TicketDictCategory=Tiquet - Grups
 TicketDictSeverity=Tiquet - Severitats
+TicketDictResolution=Tiquet - Resolució
 TicketTypeShortBUGSOFT=Disfunció de la lògica
 TicketTypeShortBUGHARD=Disfunció de matèries
 TicketTypeShortCOM=Qüestió comercial
@@ -229,8 +230,8 @@ TicketConfirmChangeStatus=Confirmar el canvi d'estatus : %s ?
 TicketLogStatusChanged=Estatus canviat : %s a %s
 TicketNotNotifyTiersAtCreate=No es notifica a l'empresa a crear
 Unread=No llegit
-TicketNotCreatedFromPublicInterface=No disponible El tiquet no s&#39;ha creat des de la interfície pública.
-PublicInterfaceNotEnabled=La interfície pública no s&#39;ha activat
+TicketNotCreatedFromPublicInterface=No disponible El tiquet no s'ha creat des de la interfície pública.
+PublicInterfaceNotEnabled=La interfície pública no s'ha activat
 ErrorTicketRefRequired=El nom de referència del tiquet és obligatori
 
 #
@@ -241,7 +242,7 @@ NoLogForThisTicket=Encara no hi ha 'log' per aquest tiquet
 TicketLogAssignedTo=Tiquet %s assignat a %s
 TicketLogPropertyChanged=Tiquet %s modificat: classificació de %s a %s
 TicketLogClosedBy=Tiquet %s tancat per %s
-TicketLogReopen=S'ha obert el tiquet %s
+TicketLogReopen=El tiquet %s s'ha re-obert
 
 #
 # Public pages
@@ -253,7 +254,7 @@ TicketPublicDesc=Podeu crear un tiquet d'assistència o consultar des d'una iden
 YourTicketSuccessfullySaved=S'ha desat el tiquet amb èxit!
 MesgInfosPublicTicketCreatedWithTrackId=S'ha creat un nou tiquet amb l'ID %s i la ref. %s.
 PleaseRememberThisId=Guardeu el número de traça que us podríem demanar més tard.
-TicketNewEmailSubject=Confirmació de la creació del tiquet - Ref. %s
+TicketNewEmailSubject=Confirmació de la creació de tiquet - Ref %s (ID de l’entrada pública %s)
 TicketNewEmailSubjectCustomer=Nou tiquet de suport
 TicketNewEmailBody=Aquest és un correu electrònic automàtic per confirmar que heu registrat un nou tiquet.
 TicketNewEmailBodyCustomer=Aquest és un correu electrònic automàtic per confirmar que un nou tiquet acaba de ser creat al vostre compte.
@@ -272,7 +273,7 @@ Subject=Assumpte
 ViewTicket=Vista del tiquet
 ViewMyTicketList=Veure la meva llista de tiquets
 ErrorEmailMustExistToCreateTicket=Error: adreça de correu electrònic no trobada a la nostra base de dades
-TicketNewEmailSubjectAdmin=S'ha creat el nou tiquet amb ref. %s
+TicketNewEmailSubjectAdmin=S'ha creat un nou tiquet: Ref %s (ID d'entrada pública %s)
 TicketNewEmailBodyAdmin=<p>S'ha creat una entrada amb ID #%s, veure informació :</p>
 SeeThisTicketIntomanagementInterface=Consulteu el tiquet a la interfície de gestió
 TicketPublicInterfaceForbidden=La interfície pública de les entrades no estava habilitada

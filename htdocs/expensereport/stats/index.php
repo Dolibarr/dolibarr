@@ -211,7 +211,9 @@ print '<div class="fichecenter"><div class="fichethirdleft">';
 
 // Show filter box
 print '<form name="stats" method="POST" action="'.$_SERVER["PHP_SELF"].'">';
+print '<input type="hidden" name="token" value="'.newToken().'">';
 print '<input type="hidden" name="mode" value="'.$mode.'">';
+
 print '<table class="noborder centpercent">';
 print '<tr class="liste_titre"><td class="liste_titre" colspan="2">'.$langs->trans("Filter").'</td></tr>';
 // Company
@@ -232,7 +234,9 @@ $liststatus = $tmpexpensereport->statuts;
 print $form->selectarray('object_status', $liststatus, GETPOST('object_status', 'int'), -4, 0, 0, '', 1);
 print '</td></tr>';
 // Year
-print '<tr><td>'.$langs->trans("Year").'</td><td>';
+print '<tr><td>';
+print $form->textwithpicto($langs->trans("Year"), $langs->trans("DateValidation"));
+print '</td><td>';
 if (!in_array($year, $arrayyears)) $arrayyears[$year] = $year;
 arsort($arrayyears);
 print $form->selectarray('year', $arrayyears, $year, 0);

@@ -99,5 +99,5 @@ $badgeStatus4 = '#277d1e';
 $badgeStatus5 = '#cad2d2';
 $badgeStatus6 = '#cad2d2';
 $badgeStatus7 = '#baa32b';
-$badgeStatus8 = '#be3013';
+$badgeStatus8 = '#993013';
 $badgeStatus9 = '#e7f0f0';

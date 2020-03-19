@@ -229,7 +229,6 @@ class AgendaEvents extends DolibarrApi
      *
      * @return int
      */
-    /*
     public function put($id, $request_data = null)
     {
         if (! DolibarrApiAccess::$user->rights->agenda->myactions->create) {
@@ -245,11 +244,11 @@ class AgendaEvents extends DolibarrApi
             $this->actioncomm->fetch_userassigned();
             $this->actioncomm->oldcopy = clone $this->actioncomm;
         }
-        if ( ! $result ) {
+        if (! $result ) {
             throw new RestException(404, 'actioncomm not found');
         }
 
-        if ( ! DolibarrApi::_checkAccessToResource('actioncomm',$this->actioncomm->id)) {
+        if (! DolibarrApi::_checkAccessToResource('actioncomm', $this->actioncomm->id)) {
             throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
         }
         foreach($request_data as $field => $value) {
@@ -257,12 +256,11 @@ class AgendaEvents extends DolibarrApi
             $this->actioncomm->$field = $value;
         }
 
-        if ($this->actioncomm->update($id, DolibarrApiAccess::$user,1,'','','update'))
+        if ($this->actioncomm->update(DolibarrApiAccess::$user, 1) > 0)
             return $this->get($id);
 
         return false;
     }
-    */
 
     /**
      * Delete Agenda Event

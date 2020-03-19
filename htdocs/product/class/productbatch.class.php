@@ -31,6 +31,11 @@ require_once DOL_DOCUMENT_ROOT."/core/class/commonobject.class.php";
 class Productbatch extends CommonObject
 {
 	/**
+	 * Batches rules
+	 */
+	const BATCH_RULE_SELLBY_EATBY_DATES_FIRST = 1;
+
+	/**
 	 * @var string ID to identify managed object
 	 */
 	public $element = 'productbatch';
@@ -540,4 +545,65 @@ class Productbatch extends CommonObject
             return -1;
         }
     }
+
+	/**
+	 * Return all batch for a product and a warehouse
+	 *
+	 * @param	DoliDB		$db    				Database object
+	 * @param	int			$fk_product         Id of product
+	 * @param	int			$fk_warehouse       Id of warehouse
+	 * @param	int			$qty_min            [=NULL] Minimum quantity
+	 * @param	string		$sortfield		    [=NULL] List of sort fields, separated by comma. Example: 't1.fielda,t2.fieldb'
+	 * @param	string		$sortorder		    [=NULL] Sort order, separated by comma. Example: 'ASC,DESC';
+	 * @return  int|array   <0 if KO, array of batch
+	 *
+	 * @throws  Exception
+	 */
+	public static function findAllForProduct($db, $fk_product, $fk_warehouse = 0, $qty_min = null, $sortfield = null, $sortorder = null)
+	{
+		$productBatchList = array();
+
+		dol_syslog(__METHOD__ . ' fk_product=' . $fk_product . ', fk_warehouse=' . $fk_warehouse . ', qty_min=' . $qty_min . ', sortfield=' . $sortfield . ', sortorder=' . $sortorder, LOG_DEBUG);
+
+		$sql  = "SELECT";
+		$sql .= " pl.rowid";
+		$sql .= ", pl.fk_product";
+		$sql .= ", pl.batch";
+		$sql .= ", pl.sellby";
+		$sql .= ", pl.eatby";
+		$sql .= ", pb.qty";
+		$sql .= " FROM " . MAIN_DB_PREFIX . "product_lot as pl";
+		$sql .= " LEFT JOIN " . MAIN_DB_PREFIX . "product as p ON p.rowid = pl.fk_product";
+		$sql .= " LEFT JOIN " . MAIN_DB_PREFIX . "product_batch AS pb ON pl.batch = pb.batch";
+		$sql .= " LEFT JOIN " . MAIN_DB_PREFIX . "product_stock AS ps ON ps.rowid = pb.fk_product_stock";
+		$sql .= " WHERE p.entity IN (" . getEntity('product') . ")";
+		$sql .= " AND pl.fk_product = " . $fk_product;
+		if ($fk_warehouse > 0) {
+			$sql .= " AND ps.fk_entrepot = " . $fk_warehouse;
+		}
+		if ($qty_min !== null) {
+			$sql .= " AND pb.qty > " . $qty_min;
+		}
+		$sql .= $db->order($sortfield, $sortorder);
+
+		$resql = $db->query($sql);
+		if ($resql) {
+			while ($obj = $db->fetch_object($resql)) {
+				$productBatch             = new self($db);
+				$productBatch->id         = $obj->rowid;
+				$productBatch->fk_product = $obj->fk_product;
+				$productBatch->batch      = $obj->batch;
+				$productBatch->eatby      = $db->jdate($obj->eatby);
+				$productBatch->sellby     = $db->jdate($obj->sellby);
+				$productBatch->qty        = $obj->qty;
+				$productBatchList[]       = $productBatch;
+			}
+			$db->free($resql);
+
+			return $productBatchList;
+		} else {
+			dol_syslog(__METHOD__ . ' Error: ' . $db->lasterror(), LOG_ERR);
+			return -1;
+		}
+	}
 }

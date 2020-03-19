@@ -919,7 +919,7 @@ class FormTicket
 
             print '<tr class="email_line"><td class="titlefieldcreate">'.$langs->trans('Subject').'</td>';
             $label_title = empty($conf->global->MAIN_APPLICATION_TITLE) ? $mysoc->name : $conf->global->MAIN_APPLICATION_TITLE;
-            print '<td colspan="2"><input type="text" class="text" size="80" name="subject" value="['.$label_title.' - ticket #'.$this->track_id.'] '.$langs->trans('TicketNewMessage').'" />';
+            print '<td colspan="2"><input type="text" class="text" size="80" name="subject" value="['.$label_title.' - '.$langs->trans("Ticket").' #'.$this->ref.'] '.$langs->trans('TicketNewMessage').'" />';
             print '</td></tr>';
 
             // Destinataires
@@ -935,13 +935,13 @@ class FormTicket
                 if (is_array($contacts) && count($contacts) > 0) {
                     foreach ($contacts as $key => $info_sendto) {
                         if ($info_sendto['email'] != '') {
-                        	$sendto[] = dol_escape_htmltag(trim($info_sendto['firstname']." ".$info_sendto['lastname'])." <".$info_sendto['email'].">")." <small>(".dol_escape_htmltag($info_sendto['libelle']).")</small>";
+                        	$sendto[] = dol_escape_htmltag(trim($info_sendto['firstname']." ".$info_sendto['lastname'])." <".$info_sendto['email'].">").' <small class="opacitymedium">('.dol_escape_htmltag($info_sendto['libelle']).")</small>";
                         }
                     }
                 }
 
                 if ($ticketstat->origin_email && !in_array($this->dao->origin_email, $sendto)) {
-                	$sendto[] = dol_escape_htmltag($ticketstat->origin_email)." <small>(".$langs->trans("TicketEmailOriginIssuer").")</small>";
+                	$sendto[] = dol_escape_htmltag($ticketstat->origin_email).' <small class="opacitymedium">('.$langs->trans("TicketEmailOriginIssuer").")</small>";
                 }
 
                 if ($ticketstat->fk_soc > 0) {
@@ -949,12 +949,12 @@ class FormTicket
                     $ticketstat->fetch_thirdparty();
 
                     if (is_array($ticketstat->thirdparty->email) && !in_array($ticketstat->thirdparty->email, $sendto)) {
-                        $sendto[] = $ticketstat->thirdparty->email.' <small>('.$langs->trans('Customer').')</small>';
+                        $sendto[] = $ticketstat->thirdparty->email.' <small class="opacitymedium">('.$langs->trans('Customer').')</small>';
                     }
                 }
 
                 if ($conf->global->TICKET_NOTIFICATION_ALSO_MAIN_ADDRESS) {
-                    $sendto[] = $conf->global->TICKET_NOTIFICATION_EMAIL_TO.' <small>(generic email)</small>';
+                    $sendto[] = $conf->global->TICKET_NOTIFICATION_EMAIL_TO.' <small class="opacitymedium">(generic email)</small>';
                 }
 
                 // Print recipient list

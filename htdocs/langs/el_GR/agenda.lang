@@ -110,9 +110,9 @@ BOM_UNVALIDATEInDolibarr=Το BOM δεν έχει εγκριθεί
 BOM_CLOSEInDolibarr=Το BOM είναι απενεργοποιημένο
 BOM_REOPENInDolibarr=Ανοίξτε ξανά το BOM
 BOM_DELETEInDolibarr=Το BOM διαγράφηκε
-MRP_MO_VALIDATEInDolibarr=MO validated
-MRP_MO_PRODUCEDInDolibarr=MO produced
-MRP_MO_DELETEInDolibarr=MO deleted
+MRP_MO_VALIDATEInDolibarr=Το ΜΟ επικυρώθηκε
+MRP_MO_PRODUCEDInDolibarr=Το ΜΟ παράχθηκε
+MRP_MO_DELETEInDolibarr=Το MO διαγράφηκε
 ##### End agenda events #####
 AgendaModelModule=Πρότυπα εγγράφων για συμβάν
 DateActionStart=Ημερομηνία έναρξης
@@ -123,6 +123,7 @@ AgendaUrlOptionsNotAdmin=<b>logina =! %s</b> για να περιορίσετε 
 AgendaUrlOptions4=<b>logint = %s</b> για να περιορίσετε την έξοδο σε ενέργειες που έχουν εκχωρηθεί στο χρήστη <b>%s</b> (ιδιοκτήτης και άλλοι).
 AgendaUrlOptionsProject=<b>project = __ PROJECT_ID__</b> για να περιορίσετε την έξοδο σε ενέργειες που σχετίζονται με το έργο <b>__PROJECT_ID__</b> .
 AgendaUrlOptionsNotAutoEvent=<b>notactiontype = systemauto</b> για την εξαίρεση αυτόματων συμβάντων.
+AgendaUrlOptionsIncludeHolidays= <b> includeholidays = 1 </b> για να συμπεριλάβετε εκδηλώσεις διακοπών.
 AgendaShowBirthdayEvents=Εμφάνιση γενεθλίων των επαφών
 AgendaHideBirthdayEvents=Απόκρυψη γενεθλίων των επαφών
 Busy=Απασχολ.

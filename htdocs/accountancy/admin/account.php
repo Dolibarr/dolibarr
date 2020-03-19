@@ -27,6 +27,7 @@ require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/accounting.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/accountancy/class/accountingaccount.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/class/html.formaccounting.class.php';
 
 // Load translation files required by the page
 $langs->loadLangs(array("compta", "bills", "admin", "accountancy", "salaries"));
@@ -44,17 +45,18 @@ $search_label = GETPOST('search_label', 'alpha');
 $search_labelshort = GETPOST('search_labelshort', 'alpha');
 $search_accountparent = GETPOST('search_accountparent', 'alpha');
 $search_pcgtype = GETPOST('search_pcgtype', 'alpha');
-$search_pcgsubtype = GETPOST('search_pcgsubtype', 'alpha');
+
+$chartofaccounts = GETPOST('chartofaccounts', 'int');
 
 // Security check
 if ($user->socid > 0) accessforbidden();
-if (! $user->rights->accounting->chartofaccount) accessforbidden();
+if (!$user->rights->accounting->chartofaccount) accessforbidden();
 
 // Load variable for pagination
-$limit = GETPOST('limit', 'int')?GETPOST('limit', 'int'):$conf->liste_limit;
+$limit = GETPOST('limit', 'int') ?GETPOST('limit', 'int') : $conf->liste_limit;
 $sortfield = GETPOST('sortfield', 'alpha');
 $sortorder = GETPOST('sortorder', 'alpha');
-$page = GETPOST('page', 'int');
+$page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOST("page", 'int');
 if (empty($page) || $page == -1) { $page = 0; }     // If $page is not defined, or '' or -1
 $offset = $limit * $page;
 $pageprev = $page - 1;
@@ -68,9 +70,11 @@ $arrayfields = array(
 	'aa.labelshort'=>array('label'=>$langs->trans("LabelToShow"), 'checked'=>1),
 	'aa.account_parent'=>array('label'=>$langs->trans("Accountparent"), 'checked'=>1),
     'aa.pcg_type'=>array('label'=>$langs->trans("Pcgtype"), 'checked'=>1, 'help'=>'PcgtypeDesc'),
-    'aa.pcg_subtype'=>array('label'=>$langs->trans("Pcgsubtype"), 'checked'=>0, 'help'=>'PcgtypeDesc'),
+    'aa.reconcilable'=>array('label'=>$langs->trans("Reconcilable"), 'checked'=>1),
 	'aa.active'=>array('label'=>$langs->trans("Activated"), 'checked'=>1)
 );
+
+if ($conf->global->MAIN_FEATURES_LEVEL < 2) unset($arrayfields['aa.reconcilable']);
 
 $accounting = new AccountingAccount($db);
 
@@ -100,14 +104,11 @@ if (empty($reshook))
 		$search_labelshort = "";
 		$search_accountparent = "";
     	$search_pcgtype = "";
-    	$search_pcgsubtype = "";
 		$search_array_options = array();
     }
-
-    if (GETPOST('change_chart', 'alpha') && (GETPOST('valid_change_chart', 'int') || empty($conf->use_javascript_ajax)))
+    if ((GETPOST('valid_change_chart', 'alpha') && GETPOST('chartofaccounts', 'int') > 0)	// explicit click on button 'Change and load' with js on
+    	|| (GETPOST('chartofaccounts', 'int') > 0 && GETPOST('chartofaccounts', 'int') != $conf->global->CHARTOFACCOUNTS))	// a submit of form is done and chartofaccounts combo has been modified
     {
-        $chartofaccounts = GETPOST('chartofaccounts', 'int');
-
         if ($chartofaccounts > 0)
         {
 			// Get language code for this $chartofaccounts
@@ -159,7 +160,8 @@ if (empty($reshook))
 
     if ($action == 'disable') {
     	if ($accounting->fetch($id)) {
-    		$result = $accounting->account_desactivate($id);
+            $mode = GETPOST('mode', 'int');
+    		$result = $accounting->account_desactivate($id, $mode);
     	}
 
     	$action = 'update';
@@ -168,7 +170,8 @@ if (empty($reshook))
     	}
     } elseif ($action == 'enable') {
     	if ($accounting->fetch($id)) {
-    		$result = $accounting->account_activate($id);
+            $mode = GETPOST('mode', 'int');
+    		$result = $accounting->account_activate($id, $mode);
     	}
     	$action = 'update';
     	if ($result < 0) {
@@ -183,6 +186,7 @@ if (empty($reshook))
  */
 
 $form = new Form($db);
+$formaccounting = new FormAccounting($db);
 
 llxHeader('', $langs->trans("ListAccounts"));
 
@@ -193,7 +197,7 @@ if ($action == 'delete') {
 
 $pcgver = $conf->global->CHARTOFACCOUNTS;
 
-$sql = "SELECT aa.rowid, aa.fk_pcg_version, aa.pcg_type, aa.pcg_subtype, aa.account_number, aa.account_parent , aa.label, aa.labelshort, aa.active, ";
+$sql = "SELECT aa.rowid, aa.fk_pcg_version, aa.pcg_type, aa.account_number, aa.account_parent , aa.label, aa.labelshort, aa.reconcilable, aa.active, ";
 $sql .= " a2.rowid as rowid2, a2.label as label2, a2.account_number as account_number2";
 $sql .= " FROM ".MAIN_DB_PREFIX."accounting_account as aa";
 $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."accounting_system as asy ON aa.fk_pcg_version = asy.pcg_version AND aa.entity = ".$conf->entity;
@@ -201,12 +205,44 @@ if ($db->type == 'pgsql') $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."accounting_accou
 else $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."accounting_account as a2 ON a2.rowid = aa.account_parent AND a2.entity = ".$conf->entity;
 $sql .= " WHERE asy.rowid = ".$pcgver;
 //print $sql;
-if (strlen(trim($search_account)))			$sql .= natural_search("aa.account_number", $search_account);
+if (strlen(trim($search_account))) {
+	$lengthpaddingaccount = 0;
+	if ($conf->global->ACCOUNTING_LENGTH_GACCOUNT || $conf->global->ACCOUNTING_LENGTH_AACCOUNT) {
+		$lengthpaddingaccount = max($conf->global->ACCOUNTING_LENGTH_GACCOUNT, $conf->global->ACCOUNTING_LENGTH_AACCOUNT);
+	}
+	$search_account_tmp = $search_account;
+	$weremovedsomezero = 0;
+	if (strlen($search_account_tmp) <= $lengthpaddingaccount) {
+		for ($i = 0; $i < $lengthpaddingaccount; $i++) {
+			if (preg_match('/0$/', $search_account_tmp)) {
+				$weremovedsomezero++;
+				$search_account_tmp = preg_replace('/0$/', '', $search_account_tmp);
+			}
+		}
+	}
+
+	//var_dump($search_account); exit;
+	if ($search_account_tmp) {
+		if ($weremovedsomezero) {
+			$search_account_tmp_clean = $search_account_tmp;
+			$search_account_clean = $search_account;
+			$startchar = '%';
+			if (strpos($search_account_tmp, '^') === 0)
+			{
+				$startchar = '';
+				$search_account_tmp_clean = preg_replace('/^\^/', '', $search_account_tmp);
+				$search_account_clean = preg_replace('/^\^/', '', $search_account);
+			}
+			$sql .= " AND (aa.account_number LIKE '".$startchar.$search_account_tmp_clean."'";
+			$sql .= " OR aa.account_number LIKE '".$startchar.$search_account_clean."%')";
+		}
+		else $sql .= natural_search("aa.account_number", $search_account_tmp);
+	}
+}
 if (strlen(trim($search_label)))			$sql .= natural_search("aa.label", $search_label);
 if (strlen(trim($search_labelshort)))       $sql .= natural_search("aa.labelshort", $search_labelshort);
-if (strlen(trim($search_accountparent)))	$sql .= natural_search("aa.account_parent", $search_accountparent);
+if (strlen(trim($search_accountparent)) && $search_accountparent != '-1')	$sql .= natural_search("aa.account_parent", $search_accountparent, 2);
 if (strlen(trim($search_pcgtype)))			$sql .= natural_search("aa.pcg_type", $search_pcgtype);
-if (strlen(trim($search_pcgsubtype)))		$sql .= natural_search("aa.pcg_subtype", $search_pcgsubtype);
 $sql .= $db->order($sortfield, $sortorder);
 
 // Count total nb of records
@@ -236,26 +272,20 @@ if ($resql)
 	if ($limit > 0 && $limit != $conf->liste_limit) $param .= '&limit='.$limit;
 	if ($search_account) $param .= '&search_account='.urlencode($search_account);
 	if ($search_label) $param .= '&search_label='.urlencode($search_label);
-	if ($search_labelshort) $param.= '&search_labelshort='.urlencode($search_labelshort);
-	if ($search_accountparent) $param .= '&search_accountparent='.urlencode($search_accountparent);
+	if ($search_labelshort) $param .= '&search_labelshort='.urlencode($search_labelshort);
+	if ($search_accountparent > 0 || $search_accountparent == '0') $param .= '&search_accountparent='.urlencode($search_accountparent);
 	if ($search_pcgtype) $param .= '&search_pcgtype='.urlencode($search_pcgtype);
-	if ($search_pcgsubtype) $param .= '&search_pcgsubtype='.urlencode($search_pcgsubtype);
-    if ($optioncss != '') $param .= '&optioncss='.$optioncss;
+	if ($optioncss != '') $param .= '&optioncss='.$optioncss;
 
     if (!empty($conf->use_javascript_ajax))
     {
-	    print '<!-- Add javascript to update a flag when we select "Change plan" -->
+	    print '<!-- Add javascript to reload page when we click "Change plan" -->
 			<script type="text/javascript">
 			$(document).ready(function () {
-		    	$("#searchFormList").on("submit", function (e) {
-					console.log("chartofaccounts focus = "+$("#chartofaccounts").is(":focus"));
-					console.log("change_chart focus = "+$("#change_chart").is(":focus"));
-					if ($("#change_chart").is(":focus"))
-					{
-						console.log("We set valid_change_chart to 1");
-						$("#valid_change_chart").val(1);
-					}
-					return true;
+		    	$("#change_chart").on("click", function (e) {
+					console.log("chartofaccounts seleted = "+$("#chartofaccounts").val());
+					// reload page
+					window.location.href = "'.$_SERVER["PHP_SELF"].'?valid_change_chart=1&chartofaccounts="+$("#chartofaccounts").val();
 			    });
 			});
 	    	</script>';
@@ -302,8 +332,7 @@ if ($resql)
     else dol_print_error($db);
     print "</select>";
     print ajax_combobox("chartofaccounts");
-    print '<input type="submit" class="button" name="change_chart" id="change_chart" value="'.dol_escape_htmltag($langs->trans("ChangeAndLoad")).'">';
-    print '<input type="hidden" name="valid_change_chart" id="valid_change_chart" value="0">';
+    print '<input type="'.(empty($conf->use_javascript_ajax)?'submit':'button').'" class="button" name="change_chart" id="change_chart" value="'.dol_escape_htmltag($langs->trans("ChangeAndLoad")).'">';
 
     print '<br>';
 	print '<br>';
@@ -321,10 +350,14 @@ if ($resql)
 	print '<tr class="liste_titre_filter">';
 	if (!empty($arrayfields['aa.account_number']['checked']))	print '<td class="liste_titre"><input type="text" class="flat" size="10" name="search_account" value="'.$search_account.'"></td>';
 	if (!empty($arrayfields['aa.label']['checked']))			print '<td class="liste_titre"><input type="text" class="flat" size="20" name="search_label" value="'.$search_label.'"></td>';
-	if (!empty($arrayfields['aa.labelshort']['checked']))		print '<td class="liste_titre"><input type="text" class="flat" size="20" name="search_labelshort" value="' . $search_labelshort . '"></td>';
-	if (!empty($arrayfields['aa.account_parent']['checked']))	print '<td class="liste_titre"><input type="text" class="flat" size="10" name="search_accountparent" value="'.$search_accountparent.'"></td>';
-	if (!empty($arrayfields['aa.pcg_type']['checked']))			print '<td class="liste_titre"><input type="text" class="flat" size="6" name="search_pcgtype" value="'.$search_pcgtype.'"></td>';
-	if (!empty($arrayfields['aa.pcg_subtype']['checked']))		print '<td class="liste_titre"><input type="text" class="flat" size="6" name="search_pcgsubtype" value="'.$search_pcgsubtype.'"></td>';
+	if (!empty($arrayfields['aa.labelshort']['checked']))		print '<td class="liste_titre"><input type="text" class="flat" size="20" name="search_labelshort" value="'.$search_labelshort.'"></td>';
+	if (!empty($arrayfields['aa.account_parent']['checked'])) {
+		print '<td class="liste_titre">';
+		print $formaccounting->select_account($search_accountparent, 'search_accountparent', 2);
+		print '</td>';
+	}
+	if (!empty($arrayfields['aa.pcg_type']['checked']))		    print '<td class="liste_titre"><input type="text" class="flat" size="6" name="search_pcgtype" value="'.$search_pcgtype.'"></td>';
+	if ($conf->global->MAIN_FEATURES_LEVEL >= 2) { if (! empty($arrayfields['aa.reconcilable']['checked']))   print '<td class="liste_titre">&nbsp;</td>'; }
 	if (!empty($arrayfields['aa.active']['checked']))			print '<td class="liste_titre">&nbsp;</td>';
 	print '<td class="liste_titre maxwidthsearch">';
 	$searchpicto = $form->showFilterAndCheckAddButtons($massactionbutton ? 1 : 0, 'checkforselect', 1);
@@ -338,7 +371,7 @@ if ($resql)
 	if (!empty($arrayfields['aa.labelshort']['checked']))		print_liste_field_titre($arrayfields['aa.labelshort']['label'], $_SERVER["PHP_SELF"], "aa.labelshort", "", $param, '', $sortfield, $sortorder);
 	if (!empty($arrayfields['aa.account_parent']['checked']))	print_liste_field_titre($arrayfields['aa.account_parent']['label'], $_SERVER["PHP_SELF"], "aa.account_parent", "", $param, '', $sortfield, $sortorder, 'left ');
 	if (!empty($arrayfields['aa.pcg_type']['checked']))			print_liste_field_titre($arrayfields['aa.pcg_type']['label'], $_SERVER["PHP_SELF"], 'aa.pcg_type', '', $param, '', $sortfield, $sortorder, '', $arrayfields['aa.pcg_type']['help']);
-	if (!empty($arrayfields['aa.pcg_subtype']['checked']))		print_liste_field_titre($arrayfields['aa.pcg_subtype']['label'], $_SERVER["PHP_SELF"], 'aa.pcg_subtype', '', $param, '', $sortfield, $sortorder, '', $arrayfields['aa.pcg_subtype']['help']);
+	if ($conf->global->MAIN_FEATURES_LEVEL >= 2) { if (! empty($arrayfields['aa.reconcilable']['checked']))	print_liste_field_titre($arrayfields['aa.reconcilable']['label'], $_SERVER["PHP_SELF"], 'aa.reconcilable', '', $param, '', $sortfield, $sortorder); }
 	if (!empty($arrayfields['aa.active']['checked']))			print_liste_field_titre($arrayfields['aa.active']['label'], $_SERVER["PHP_SELF"], 'aa.active', '', $param, '', $sortfield, $sortorder);
 	print_liste_field_titre($selectedfields, $_SERVER["PHP_SELF"], "", '', '', '', $sortfield, $sortorder, 'center maxwidthsearch ');
 	print "</tr>\n";
@@ -346,6 +379,7 @@ if ($resql)
 	$accountstatic = new AccountingAccount($db);
 	$accountparent = new AccountingAccount($db);
 
+	$totalarray = array();
 	$i = 0;
 	while ($i < min($num, $limit))
 	{
@@ -376,12 +410,12 @@ if ($resql)
 		}
 
 		// Account label to show (label short)
-		if (! empty($arrayfields['aa.labelshort']['checked']))
+		if (!empty($arrayfields['aa.labelshort']['checked']))
 		{
 			print "<td>";
 			print $obj->labelshort;
 			print "</td>\n";
-			if (! $i) $totalarray['nbfield']++;
+			if (!$i) $totalarray['nbfield']++;
 		}
 
 		// Account parent
@@ -414,25 +448,36 @@ if ($resql)
 			if (!$i) $totalarray['nbfield']++;
 		}
 
-		// Chart of accounts subtype
-		if (!empty($arrayfields['aa.pcg_subtype']['checked']))
-		{
-			print "<td>";
-			print $obj->pcg_subtype;
-			print "</td>\n";
-			if (!$i) $totalarray['nbfield']++;
+		if ($conf->global->MAIN_FEATURES_LEVEL >= 2) {
+			// Activated or not reconciliation on accounting account
+			if (!empty($arrayfields['aa.reconcilable']['checked'])) {
+				print '<td class="center">';
+				if (empty($obj->reconcilable)) {
+					print '<a class="reposition" href="' . $_SERVER["PHP_SELF"] . '?id=' . $obj->rowid . '&action=enable&mode=1">';
+					print img_picto($langs->trans("Disabled"), 'switch_off');
+					print '</a>';
+				} else {
+					print '<a class="reposition" href="' . $_SERVER["PHP_SELF"] . '?id=' . $obj->rowid . '&action=disable&mode=1">';
+					print img_picto($langs->trans("Activated"), 'switch_on');
+					print '</a>';
+				}
+				print '</td>';
+				if (!$i) {
+					$totalarray['nbfield']++;
+				}
+			}
 		}
 
 		// Activated or not
 		if (!empty($arrayfields['aa.active']['checked']))
 		{
-			print '<td>';
+			print '<td class="center">';
 			if (empty($obj->active)) {
-				print '<a class="reposition" href="'.$_SERVER["PHP_SELF"].'?id='.$obj->rowid.'&action=enable">';
+				print '<a class="reposition" href="'.$_SERVER["PHP_SELF"].'?id='.$obj->rowid.'&action=enable&mode=0">';
 				print img_picto($langs->trans("Disabled"), 'switch_off');
 				print '</a>';
 			} else {
-				print '<a class="reposition" href="'.$_SERVER["PHP_SELF"].'?id='.$obj->rowid.'&action=disable">';
+				print '<a class="reposition" href="'.$_SERVER["PHP_SELF"].'?id='.$obj->rowid.'&action=disable&mode=0">';
 				print img_picto($langs->trans("Activated"), 'switch_on');
 				print '</a>';
 			}

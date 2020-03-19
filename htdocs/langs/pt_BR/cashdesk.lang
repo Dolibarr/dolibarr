@@ -53,3 +53,5 @@ InvoiceIsAlreadyValidated=A fatura já está validada
 NoLinesToBill=Nenhuma linha para cobrança
 CustomReceipt=Recibo personalizado
 ReceiptName=Nome do recibo
+ProductSupplements=Suplementos ao produto
+SupplementCategory=Categoria de suplemento

@@ -26,21 +26,21 @@ require_once DOL_DOCUMENT_ROOT.'/stripe/class/stripe.class.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
 require_once DOL_DOCUMENT_ROOT.'/commande/class/commande.class.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
-if (! empty($conf->accounting->enabled)) require_once DOL_DOCUMENT_ROOT . '/accountancy/class/accountingjournal.class.php';
+if (!empty($conf->accounting->enabled)) require_once DOL_DOCUMENT_ROOT.'/accountancy/class/accountingjournal.class.php';
 
 // Load translation files required by the page
 $langs->loadLangs(array('compta', 'salaries', 'bills', 'hrm', 'stripe'));
 
 // Security check
 $socid = GETPOST("socid", "int");
-if ($user->socid) $socid=$user->socid;
+if ($user->socid) $socid = $user->socid;
 //$result = restrictedArea($user, 'salaries', '', '', '');
 
-$limit = GETPOST('limit', 'int')?GETPOST('limit', 'int'):$conf->liste_limit;
+$limit = GETPOST('limit', 'int') ?GETPOST('limit', 'int') : $conf->liste_limit;
 $rowid = GETPOST("rowid", 'alpha');
 $sortfield = GETPOST("sortfield", 'alpha');
 $sortorder = GETPOST("sortorder", 'alpha');
-$page = GETPOST("page", 'int');
+$page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOST("page", 'int');
 if (empty($page) || $page == -1) { $page = 0; }     // If $page is not defined, or '' or -1
 $offset = $conf->liste_limit * $page;
 $pageprev = $page - 1;
@@ -139,23 +139,31 @@ if (!$rowid)
 			$type = $langs->trans("card");
 	    } elseif ($charge->payment_method_details->type=='three_d_secure'){
 			$type = $langs->trans("card3DS");
+	    } elseif ($charge->payment_method_details->type=='sepa_debit'){
+			$type = $langs->trans("sepadebit");
+	    } elseif ($charge->payment_method_details->type=='ideal'){
+			$type = $langs->trans("iDEAL");
 	    }
 
         if (! empty($charge->payment_intent)) {
-            $charge = \Stripe\PaymentIntent::retrieve($charge->payment_intent);
+			if (empty($stripeacc)) {				// If the Stripe connect account not set, we use common API usage
+	    		$charge = \Stripe\PaymentIntent::retrieve($charge->payment_intent);
+			} else {
+				$charge = \Stripe\PaymentIntent::retrieve($charge->payment_intent, array("stripe_account" => $stripeacc));
+			}
         }
 
 		// The metadata FULLTAG is defined by the online payment page
-		$FULLTAG=$charge->metadata->FULLTAG;
+		$FULLTAG = $charge->metadata->FULLTAG;
 
 		// Save into $tmparray all metadata
 		$tmparray = dolExplodeIntoArray($FULLTAG, '.', '=');
 		// Load origin object according to metadata
-		if (! empty($tmparray['CUS']) && $tmparray['CUS'] > 0)
+		if (!empty($tmparray['CUS']) && $tmparray['CUS'] > 0)
 		{
 			$societestatic->fetch($tmparray['CUS']);
 		}
-		elseif (! empty($charge->metadata->dol_thirdparty_id) && $charge->metadata->dol_thirdparty_id > 0)
+		elseif (!empty($charge->metadata->dol_thirdparty_id) && $charge->metadata->dol_thirdparty_id > 0)
 		{
 			$societestatic->fetch($charge->metadata->dol_thirdparty_id);
 		}
@@ -211,7 +219,7 @@ if (!$rowid)
 		print "</td>\n";
 		// Origine
 		print "<td>";
-		if ($charge->metadata->dol_type=="order") {
+		if ($charge->metadata->dol_type=="order" || $charge->metadata->dol_type=="commande") {
 			$object = new Commande($db);
 			$object->fetch($charge->metadata->dol_id);
             if ($object->id > 0) {
@@ -219,7 +227,7 @@ if (!$rowid)
             } else {
                 print $FULLTAG;
             }
-		} elseif ($charge->metadata->dol_type=="invoice") {
+		} elseif ($charge->metadata->dol_type=="invoice" || $charge->metadata->dol_type=="facture") {
 			$object = new Facture($db);
 			$object->fetch($charge->metadata->dol_id);
             if ($object->id > 0) {

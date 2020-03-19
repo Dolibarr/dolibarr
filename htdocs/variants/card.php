@@ -148,9 +148,9 @@ if ($action != 'edit') {
     print '<div class="fichecenter">';
     print '<div class="underbanner clearboth"></div>';
 }
-print '<table class="border" style="width: 100%">';
+print '<table class="border centpercent tableforfield">';
 print '<tr>';
-print '<td class="titlefield fieldrequired">'.$langs->trans('Ref').'</td>';
+print '<td class="titlefield'.($action == 'edit' ? ' fieldrequired' : '').'">'.$langs->trans('Ref').'</td>';
 print '<td>';
 if ($action == 'edit') {
 	print '<input type="text" name="ref" value="'.$object->ref.'">';
@@ -160,7 +160,7 @@ if ($action == 'edit') {
 print '</td>';
 print '</tr>';
 print '<tr>';
-print '<td class="fieldrequired">'.$langs->trans('Label').'</td>';
+print '<td'.($action == 'edit' ? ' class="fieldrequired"' : '').'>'.$langs->trans('Label').'</td>';
 print '<td>';
 if ($action == 'edit') {
 	print '<input type="text" name="label" value="'.$object->label.'">';

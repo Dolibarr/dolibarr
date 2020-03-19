@@ -197,6 +197,7 @@ dol_fiche_end();
 
 print load_fiche_titre($langs->trans("TicketNumberingModules"));
 
+print '<div class="div-table-responsive-no-min">';
 print '<table class="noborder centpercent">';
 print '<tr class="liste_titre">';
 print '<td width="100">'.$langs->trans("Name").'</td>';
@@ -209,7 +210,7 @@ print "</tr>\n";
 clearstatcache();
 
 foreach ($dirmodels as $reldir) {
-    $dir = dol_buildpath($reldir."core/modules/ticket/");
+    $dir = dol_buildpath($reldir."core/modules/ticket");
 
     if (is_dir($dir)) {
         $handle = opendir($dir);
@@ -219,7 +220,7 @@ foreach ($dirmodels as $reldir) {
                     $file = $reg[1];
                     $classname = substr($file, 4);
 
-                    include_once $dir.$file.'.php';
+                    include_once $dir.'/'.$file.'.php';
 
                     $module = new $file;
 
@@ -287,7 +288,9 @@ foreach ($dirmodels as $reldir) {
     }
 }
 
-print '</table><br>';
+print '</table>';
+print '</div>';
+print '<br>';
 
 if (!$conf->use_javascript_ajax) {
     print '<form method="post" action="'.$_SERVER['PHP_SELF'].'" enctype="multipart/form-data" >';

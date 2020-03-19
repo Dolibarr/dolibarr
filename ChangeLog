@@ -5,19 +5,194 @@ English Dolibarr ChangeLog
 
 ***** ChangeLog for 12.0.0 compared to 11.0.0 *****
 For Users:
-
+NEW: Module MO (Manufacturing Order) is available as stable module.
 
 For Developers or integrators:
-
+* A new way to navigate between pages in list is available. To use it, you must
+  - replace $page = GETPOST('page', 'int') with $page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOST("page", 'int'); 
+  - remove input field in form '<input type="hidden" name="page" value="'.$page.'">';'
+  - add parameter $pagenavastextinput to value 1 when calling print_barre_liste   
 
 
 WARNING:
 
 Following changes may create regressions for some external modules, but were necessary to make Dolibarr better:
 * PHP 5.5 is no more supported. Minimum PHP is now 5.6+.
+* Default mode for GETPOST function is now 'alphanohtml' instead of 'none'. So check when you make POST or GET requests
+  with HTML content that you make a GETPOST('myparam', 'restricthtml') or GETPOST('myparam', 'none') if you really need posted content without sanitizing
+  the HTML into content (in such a case, sanitize data later)
+* Removed hidden constant MAIN_EXTRAFIELDS_IN_ONE_TD that was useless. 
+* Reference of object including a "/" are no more allowed. It is never used by default but to support setup that introduced it, the "/" will be replaced 
+  by a "_" automatically when a reference (with a custom numbering mask that use it) is generated.  
+  
+  
 
-  
-  
+***** ChangeLog for 11.0.3 compared to 11.0.2 *****
+FIX: unit price for selected supplier products not set. NaN was used.
+FIX: use bad var to check if total is positive for each VAT rate when validating an invoice
+FIX: status missing from last customer invoices box when using MAIN_STATUS_USES_CSS
+FIX: translations for "orders" not loaded in the homepage box
+FIX: #13194
+FIX: #13274 cannot add or update 0 value for an int or double extrafield
+FIX: #13285 SQL error during migration with pgsql
+FIX: #13294
+FIX: #13313
+FIX: Clone Fourn Command, add line's extrafields
+FIX: cols parameter not propagated to tpl
+FIX: CSRF error when creating an intervention
+FIX: date order was -1D and desc with label repetition
+FIX: empty of series in graph of product distribution
+FIX: fk_type subscription list via api REST
+FIX: link when using anchor on "/" in website module
+FIX: menu export document was not visible when using "simple accounting"
+FIX: missing class declaration
+FIX: missing global $conf
+FIX: Missing token in some forms (avoid unset POST errors)
+FIX: params of setEventMessage($langs->trans('ErrorProductClone')...
+FIX: Remove unexisting link
+FIX: substitute lines dates values on doc generator (ODT, ...)
+FIX: Ticket - Load Cache Messages Ticket, wrong message's status
+FIX: Ticket Public  - Private messages are displayed
+FIX: wrong include - replace extrafields_create.tpl.php to extrafields_add.tpl.php
+
+***** ChangeLog for 11.0.2 compared to 11.0.1 *****
+FIX: #10309
+FIX: #13110
+FIX: #13118
+FIX: #13124
+FIX: #13131
+FIX: #13135
+FIX: #13146 
+FIX: #13198
+FIX: #13175
+FIX: #13182
+FIX: #13183
+FIX: #13184
+FIX: #13263
+FIX: #13267
+FIX: an external user can not approve
+FIX: API Get list of documents for supplier_invoice
+FIX: API to push an expense report
+FIX: API upload/download doc for expensereport
+FIX: Avoid to download the export if we just press enter to refresh form
+FIX: Bad link to template invoices
+FIX: Bad sort link in accounting report
+FIX: Bad translation for productlot EatBy and SellBy
+FIX: better method to check user rights AND usergroup rights !
+FIX: CA by product list filter
+FIX: CSS
+FIX: Disable js if no javascript
+FIX: duplicate class name into some log lines
+FIX: etrafield with visibilty=5 were not in read only.
+FIX: excess paid from situation invoices not counted when calculating remain to pay.
+FIX: Force FEC export to txt format.
+FIX: Free input for email no more visible.
+FIX: Keep assigned users in session when loading projects and tasks
+FIX: List of viewed projects too large in task widget.
+FIX: Menu truncated. Add tooltip to have all content.
+FIX: Missing field "billed" in export.
+FIX: missing "statut" for getNomUrl() function
+FIX: modFournisseur is required by modSupplierProposal
+FIX: Multicompany compatibility
+FIX: must be == and not =
+FIX: option for topbar search and bookmarks
+FIX: option MAIN_OPTIMIZEFORTEXTBROWSER
+FIX: some responsive troubles
+FIX: round MT in accountancy books
+FIX: search with '0'
+FIX: sort link
+FIX: SQL Overload in default contact trigger.
+FIX: SQl syntax error.
+FIX: Submit of documents for supplier invoices.
+FIX: timezone must be tzserver and not tzuser as on contract card
+FIX: token in barcode tools page missing
+FIX: Bad name of trigger PROPAL_SUPPLIER_TRIGGER, should be PROPOSAL_SUPPLIER_TRIGGER
+FIX: Type of contact for event does not exists and not supported
+FIX: Type of contact not saved when creating a contact
+FIX: typo on ckeck method
+FIX: undefined function measuringUnitString in product list
+FIX: Usage of project not available in export.
+FIX: wrong test
+FIX: z-index for moretabsList with constant MAIN_MAXTABS_IN_CARD
+FIX: Use GETPOST instead of POST
+FIX: HTML Injection
+FIX: Visualization rights correction on last modified contacts box.
+FIX: Vulnerability in module from modulebuilder.
+FIX: Vulnerability reported by code16
+
+***** ChangeLog for 11.0.1 compared to 11.0.0 *****
+FIX: advanced target emailing sql and ergonomy.
+FIX: After import of a website template, home page was not set.
+FIX: Avoid deletion of bank record if in accounting
+FIX: compatibility with multicompany (avoid duplicate data)
+FIX: Confusion between 'bank reconciled' and 'accounted'. Show both data.
+FIX: Count of Stripe payment mode must take test/live into account
+FIX: Creation of Stripe card from backoffice must return a clean message
+FIX: CVE-2019–17223
+FIX: CVE-2019–17223 
+FIX: CVE-2020-7994
+FIX: CVE Need permission to be able to develop modules
+FIX: #13053
+FIX: Disable ticket status change if ticket closed
+FIX: doc of dictionnary API
+FIX: expedition ceate line new parameter is not required.
+FIX: export ledger
+FIX: FEC export have specific name
+FIX: Filenames must not contains non ascii char or we will get non ascii
+FIX: Filter on list of events were lost after "Back to list"
+FIX: hasDelay for retained warranty
+FIX: If we can change vendor status, we must be able to chane vendor code
+FIX: links in products/services index
+FIX: Log of authentication ok or ko + CVE-2020-7996
+FIX: Look and feel v11
+FIX: Mail smtps truncated if content has a line with single .
+FIX: missing hook parameter
+FIX: Missing include
+FIX: need weight short label in shipping doc
+FIX: Picture of contact not visible in tooltip
+FIX: Problem with column label in subscription list
+FIX: ref_client not visible in tooltip.
+FIX: search filter on extrafields were not restored after "Back to list"
+FIX: situation invoice: allow excess paid to be converted to discount
+FIX: situation invoice: bad amount for previous payments because of local variable overwriting a more global one
+FIX: situation invoice: can't convert excess received to discount & bad previous payment amount
+FIX: SQL request and phpunit
+FIX: Update export_files.php
+FIX: Use ref into label of ticket message
+FIX: use "usergroup" instead of "user"
+FIX: Warning on admin/export_files
+FIX: #10203
+FIX: default filtering for 'select' extrafields should use "=", not "LIKE"
+FIX: #11975 When a product is split between multiple pages in a document, prices/quantity/etc appear on the last relevant page
+FIX: #12760 #12763 #12755 #12765 #12751
+FIX: #12874
+FIX: #12892
+FIX: #12908 User login with credentials from self-subscription form fails
+FIX: #12932
+FIX: #12966
+FIX: #12973
+FIX: #12974
+FIX: #12975
+FIX: #12978
+FIX: #12986
+FIX: #12991
+FIX: #12992
+FIX: #12995
+FIX: #13018 Extrafields Supplier invoice
+FIX: #13019
+FIX: #13022
+FIX: #13028
+FIX: #13038 ExpenseReport PDF - custom category description is not correct
+FIX: #13046 More complete
+FIX: #13048
+FIX: #13050
+FIX: #13077 Replace left join with inner join (left join was useless)
+FIX: #13085
+FIX: #13094
+FIX: #13096
+FIX: #13100
+
+
 ***** ChangeLog for 11.0.0 compared to 10.0.0 *****
 For Users:
 
@@ -33,6 +208,7 @@ NEW: Add button "Save and Stay" in website editor of pages.
 NEW: Accountancy - Can add specific widget in this accountancy area.
 NEW: Accountancy - Add export model LDCompta V9 & higher
 NEW: Accountancy - Add permission on export, delete operations in ledger
+NEW: Can defined alternative profiles (email and signatures) for users.
 NEW: add ability to edit price without tax before adding a line of a predefined product.
 NEW: Add a tab to setup "Opening hours" of company (information only).
 NEW: Add attendee to ical export + cleanup.

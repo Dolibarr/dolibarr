@@ -328,7 +328,7 @@ SetupIsReadyForUse=واحد مورد نظر مورد استفاده قرار گ�
 NotExistsDirect=پوشۀ جایگزین ریشه در پوشۀ موجود فعلی تعریف نشده است. <br>
 InfDirAlt=از نسخۀ 3، امکان تعریف یک پوشۀ جایگزین ریشه وجود دارد. این به شما امکان ذخیرۀ افزونه‌ها و قالب‌های دل‌خواه  را در یک پوشۀ اختصاصی می‌دهد. <br>فقط یک پوشه در ریشۀ Dolibarr بسازید (مثلا: custom).<br>
 InfDirExample=<br>سپس در فایل <strong>conf.php</strong><br> تعاریف را اینگونه تعیین کنید: $dolibarr_main_url_root_alt='/custom' <br>  $dolibarr_main_document_root_alt='/path/of/dolibarr/htdocs/custom' <br> در صورتی که این سطور با علامت "#" به توضیح تبدیل شده‌اند، برای فعال کردن، آن‌ها را با حذف علامت "#" از حالت توضیحی خارج کنید.
-YouCanSubmitFile=به‌جای‌این‌کار همچنین می‌توانید فایل module.zip را بارگذاری نمائید:
+YouCanSubmitFile=You can upload the .zip file of module package from here:
 CurrentVersion=نسخه کنونی Dolibarr
 CallUpdatePage=رفتن به صفحۀ روزآمدسازی ساختار بانک داده و داده‌های آن: %s
 LastStableVersion=آخرین نسخۀ پایدار
@@ -472,6 +472,7 @@ Use3StepsApproval=به طور پیش‌فرض، سفارشات خرید باید
 UseDoubleApproval=استفاده از 3 گام تائید در حالتی که مبلغ (بدون مالیات) بالاتر از ....
 WarningPHPMail=هشدار: همواره بهتر است که رایانامه‌های خروجی را برای استفاده از سرویس‌دهندۀ رایانامۀ سرور خود به جای گزینۀ پیش‌فرض استفاده کنید. برخی ارائه‌دهندگان رایانامه (مانند Yahoo) به شما اجازۀ ارسال رایانامه از سرور دیگری را نمی‌دهند. برپاسازی فعلی شما از سرور برنامه برای ارسال رایانامه استفاده می‌کند، نه از سرور ارائه‌دهندۀ رایانامۀ شما، بنابراین برخی دریافت‌کنندگان (آن‌هائی که با قرارداد محدودیت DMARC سازگارند)، در صورتی که امکان دریافت رایانامۀ شما را داشته باشند، از ارائه دهندۀ خدمات رایانامۀ شما یا برخی ارائه‌دهندگان رایانامه (مثل Yahoo) خواهند پرسید و پاسخ "no" خواهند فرستاد چون سرور، مربوط به آن‌ها نیست، بنابراین ممکن است تعدادی از رایانامه‌های شما پذیرفته نشود (همچنین به محدودیت تعداد ارسال رایانامه در ارائه‌دهندۀ خدمات خود دقت کنید). <br> در صورتی که ارائه دهندۀ خدمات رایانامۀ شما (مانند Yahoo) این محدودیت را داشته باشد، شما باید تنظیمات رایانامه را طوری تغییر دهید و گزینۀ دیگر یعنی "سرور SMTP" را برگزینید و مشخصات فنی و مجوزهای ورود به سرور SMTP مربوط به سرور ارائه دهندۀ خدمات رایانامه را وارد نمائید.
 WarningPHPMail2=در صورتی که ارائۀ خدمات رایانامۀ SMTP شما نیازمند محدود کردن مشتری خدمات رایانامه به درگاه‌های اینترنتی خاص است (در موارد معدود)، این نشانی درگاه اینترنتی کاربر رایانامه (MUA) برای برنامۀ ERP CRM شماست: <strong>%s</strong>.
+WarningPHPMailSPF=If the domain name in your sender email address is protected by SPF (ask you email provider), you must include the following IPs in the SPF record of the DNS of your domain: <strong>%s</strong>.
 ClickToShowDescription=برای دریافت توضیحات کلیک کنید
 DependsOn=این واحد نیازمند فعالیت واحد‌(های) دیگر است
 RequiredBy=این واحد توسط واحد(های) دیگر مورد نیاز است
@@ -519,7 +520,7 @@ Module25Desc=مدیریت سفارشات فروش
 Module30Name=صورت‌حساب‌
 Module30Desc=مدیریت صورت‌حساب‌ها و یادداشت‌های اعتباری برای مشتریان.\nمدیریت صورت‌حساب‌ها و یادداشت‌های اعتباری برای تامین‌کنندگان
 Module40Name=فروشندگان
-Module40Desc=مدیریت فروشندگان و خریدها ( سفارشات خرید و صورت‌حساب‌ها)
+Module40Desc=Vendors and purchase management (purchase orders and billing of supplier invoices)
 Module42Name=گزارش‌کار اشکال‌یابی
 Module42Desc=امکانات گزارش‌برداری (فایل، گزارش‌کار سامانه، ...). این گزارش کارها مربوط به مقاصد فنی/اشکال‌یابی هستند.
 Module49Name=ویراستاران
@@ -544,6 +545,8 @@ Module58Name=کلیک برای تماس
 Module58Desc=یکپارچه سازی سیستم ClickToDial (استریسک، ...)
 Module59Name=Bookmark4u
 Module59Desc=اضافه کردن تابع برای ایجاد حساب کاربری Bookmark4u از یک حساب Dolibarr
+Module60Name=Stickers
+Module60Desc=Management of stickers
 Module70Name=واسطه‌گری
 Module70Desc=مدیریت واسطه‌گری
 Module75Name=یادداشت‌های هزینه‌ها و سفرها-ی درون شهری-
@@ -561,9 +564,9 @@ Module200Desc=همگام‌سازی پوشۀ LDAP
 Module210Name=PostNuke
 Module210Desc=یکپارچه‌سازی با PostNuke
 Module240Name=صادرات داده‌ها
-Module240Desc=ابزار صادرات داده‌های Dolibarr (به‌همراه کمک‌کننده‌ها)
+Module240Desc=Tool to export Dolibarr data (with assistance)
 Module250Name=واردات داده‌ها
-Module250Desc=ابزار وارد کردن داده به Dolibarr (به‌همراه کمک‌کننده‌ها)
+Module250Desc=Tool to import data into Dolibarr (with assistance)
 Module310Name=عضوها
 Module310Desc=مدیریت اعضای مؤسسه
 Module320Name=خوراک RSS
@@ -639,7 +642,7 @@ Module50000Desc=به مشتریان امکان پرداخت برخط از طری
 Module50100Name=صندوق SimplePOS
 Module50100Desc=واحد ناحیۀ فروش SimplePOS (صندوق ساده)
 Module50150Name=صندوق TakePOS
-Module50150Desc=واحد ناحیۀ فروش TakePOS (صندوق لمسی)
+Module50150Desc=Point of Sale module TakePOS (touchscreen POS, for shops, bars or restaurants).
 Module50200Name=Paypal
 Module50200Desc=امکان پرداخت از طریق PayPal برای مشتریان (حساب PayPal یا کارتهای اعتباری/نقدی). این به کاربران امکان پرداخت‌های اختصاصی برای اشیاء Dolibarr را می‌دهد (صورت‌حساب، سفارش و غیره)
 Module50300Name=Stripe
@@ -878,7 +881,7 @@ Permission1251=اجرای واردات گستردۀ داده‌های خارجی
 Permission1321=صادرکردن صورت‌حساب‌های مشتریان، صفت‌ها و پرداخت‌ها
 Permission1322=بازکردن دوبارۀ یک صورت‌حساب پرداخت‌شده
 Permission1421=صادرکردن سفارش‌های فروش و صفات
-Permission2401=Read actions (events or tasks) linked to his user account (if owner of event)
+Permission2401=Read actions (events or tasks) linked to his user account (if owner of event or just assigned to)
 Permission2402=Create/modify actions (events or tasks) linked to his user account (if owner of event)
 Permission2403=Delete actions (events or tasks) linked to his user account (if owner of event)
 Permission2411=ملاحظۀ فعالیت‌ها (رخدادها یا وظایف) پیوند شده به دیگران
@@ -1018,7 +1021,7 @@ CalcLocaltax3Desc=گزارش مالیات محلی جمع مالیات‌برف�
 LabelUsedByDefault=این برچسب در حالتی که هیچ ترجمه‌ای برای کد یافت نشود استفاده خواهد شد
 LabelOnDocuments=برچسب روی مستندات
 LabelOrTranslationKey=برچسب یا کلید ترجمه
-ValueOfConstantKey=محتوای مقدار ثابت
+ValueOfConstantKey=Value of a configuration constant
 NbOfDays=تعداد روزها
 AtEndOfMonth=در پایان ماه
 CurrentNext=فعلی/بعدی
@@ -1156,7 +1159,7 @@ NoEventOrNoAuditSetup=هیچ رخداد امنیتی گزارش نشده است.
 NoEventFoundWithCriteria=با توجه به شرایط جستجو، هیچ رخداد امنیتی یافت نشد.
 SeeLocalSendMailSetup=تنظیمات محلی ارسال رایانامۀ خود را بررسی کنید
 BackupDesc=یک پشتیبان‌گیری <b>کامل</b> از نسخۀ نصب‌شدۀ Dolibarr نیازمند دو گام است.
-BackupDesc2=پشتیبان‌گیری از محتوای پوشۀ "documents" (<b>%s</b>) که دربردارندۀ همۀ فایل‌های ارسال شده و مستندات تولید شده است. که این البته شامل همۀ فایل‌ها نسخه‌برداری-dump که در گام 1 تولید شده نیز هست.
+BackupDesc2=Backup the contents of the "documents" directory (<b>%s</b>) containing all uploaded and generated files. This will also include all the dump files generated in Step 1. This operation may last several minutes.
 BackupDesc3=پشتیبان‌گیر از ساختار و ومحتوای پایگاه‌دادۀ شما (<b>%s</b>) در یک فایل dump. برای این کار دستیار زیر را استفاده نمائید.
 BackupDescX=پوشۀ بایگانی شده باید در یک مکان امن نگهداری شود.
 BackupDescY=فایل رونوشت-dump باید در یک محل امن ذخیره شود.
@@ -1167,6 +1170,7 @@ RestoreDesc3=بازآوری ساختار و داده‌های پایگاه دا�
 RestoreMySQL=وارد‌کردن MySQL
 ForcedToByAModule= این مقررات برای <b>%s</b> توسط یک واحد فعال، الزام شده است
 PreviousDumpFiles=فایل‌های موجود پشتیبان
+PreviousArchiveFiles=Existing archive files
 WeekStartOnDay=اولین روز هفته
 RunningUpdateProcessMayBeRequired=به نظر لازم است روند به‌هنگام‌سازی اجرا شود (نسخۀ برنامه %s از نسخۀ پایگاه‌داده %s متفاوت است)
 YouMustRunCommandFromCommandLineAfterLoginToUser=شما باید این سطر دستور را پس از ورود به خط فرمان با کاربر <b>%s</b> اجرا کنید یا این‌که گزینۀ -W را در انتهای فرمان برای اعلام گذرواژۀ <b>%s</b> به‌کار گیرید.
@@ -1248,6 +1252,7 @@ AskForPreferredShippingMethod=پرسش برای روش ارسال ترجیحی �
 FieldEdition=ویرایش بخش %s
 FillThisOnlyIfRequired=مثال: +2 (تنها در صورتی که با مشکل ناحیۀ زمانی مواجه شوید)
 GetBarCode=دریافت بارکد
+NumberingModules=Numbering models
 ##### Module password generation
 PasswordGenerationStandard=بازگرداندن یک گذرواژه که با توجه به الگوریتم‌ Dolibarr تولید شده است: 8 نویسه، متشکل از اعداد و حروف کوچک.
 PasswordGenerationNone=گذرواژۀ پیشنهادی ارائه نشود. گذرواژه‌ها باید به شکل دستی وارد شوند.
@@ -1681,6 +1686,9 @@ CashDeskIdWareHouse=مقیدکردن و اجبار یک انبار برای اس
 StockDecreaseForPointOfSaleDisabled=کاهش موجودی برای فروش از طریق صندوق غیرفعال است
 StockDecreaseForPointOfSaleDisabledbyBatch=کاهش موجودی در صندوق با واحد مدیریت شماره‌سری/ساخت سازگار نیست (فعلا فعال است)، بنابراین کاهش موجودی غیرفعال است.
 CashDeskYouDidNotDisableStockDecease=شما کاهش موجودی با فروش از طریق صندوق را غیرفعال نکرده‌اید، بنابراین تعریف یک انبار موردنیاز است.
+CashDeskForceDecreaseStockLabel=Stock decrease for batch products was forced.
+CashDeskForceDecreaseStockDesc=Decrease first by the oldest eatby and sellby dates.
+CashDeskReaderKeyCodeForEnter=Key code for "Enter" defined in barcode reader (Example: 13)
 ##### Bookmark #####
 BookmarkSetup=برپاسازی واحد نشانه‌ها
 BookmarkDesc=این واحد به شما امکان مدیریت نشانه‌ها را می‌دهد. شما همچنین می‌توانید از این طریق به صفحات مختلف Dolibarr یا سایر نشانی‌های خارجی در فهرست سمت چپ میان‌بر ایجاد کنید. 
@@ -1711,8 +1719,9 @@ ChequeReceiptsNumberingModule=واحد شماره‌گذاری رسیدهای چ
 MultiCompanySetup=برپاسازی واحد چندشرکتی
 ##### Suppliers #####
 SuppliersSetup=برپاسازی واحد فروشندگان
-SuppliersCommandModel=قالب کامل سفارش خرید (نشان...)
-SuppliersInvoiceModel=قالب کامل صورت‌حساب فروشنده (نشان...)
+SuppliersCommandModel=Complete template of Purchase Order
+SuppliersCommandModelMuscadet=Complete template of Purchase Order 
+SuppliersInvoiceModel=Complete template of Vendor Invoice
 SuppliersInvoiceNumberingModel=روش‌های شماره‌گذاری صورت‌حساب فروشندگان
 IfSetToYesDontForgetPermission=If set to a non null value, don't forget to provide permissions to groups or users allowed for the second approval
 ##### GeoIPMaxmind #####
@@ -1762,9 +1771,10 @@ ListOfNotificationsPerUser=فهرست اطلاع‌رسانی‌های خودک�
 ListOfNotificationsPerUserOrContact=فهرست اطلاع‌رسانی‌های خودکار قابل استفاده (مربوط به روی‌دادی تجاری) فعال برای کاربر* یا بر حسب طرف‌تماس**
 ListOfFixedNotifications=فهرست اطلاع‌رسانی‌های خودکار ثابت
 GoOntoUserCardToAddMore=به زبانۀ "آگاهی‌رسانی" یک کاربر رفته تا آگاهی‌رسانی‌های مربوط به کاربران را اضافه یا حذف نمائید
-GoOntoContactCardToAddMore=به زبانۀ "آگاهی رسانی" یک طرف‌سوم رفته تا آگاهی‌رسانی‌های مربوط به یک طرف تماس/نشانی‌ها را اضافه یا حذف نمائید
+GoOntoContactCardToAddMore=Go to the tab "Notifications" of a third party to add or remove notifications for contacts/addresses
 Threshold=آستانه
-BackupDumpWizard=جادوهای ساخت فایل پشتیبانی
+BackupDumpWizard=Wizard to build the database dump file
+BackupZipWizard=Wizard to build the archive of documents directory
 SomethingMakeInstallFromWebNotPossible=نصب یک واحد خارجی از طریق رابط وب به دلایل ذیل ممکن نیست:
 SomethingMakeInstallFromWebNotPossible2=به این دلیل، روند به‌هنگام‌سازی توضیح داده شده تنها به صورت دستی ممکن خواهد بود که تنها یک کاربر مجاز امکان انجام آن را دارد.
 InstallModuleFromWebHasBeenDisabledByFile=نصب یک واحد خارجی از داخل برنامه توسط مدیر شما غیرفعال شده است. می‌توانید از وی بخواهید فایل <strong>%s</strong> را برای ایجاد اجازۀ نصب حذف نماید.
@@ -1787,6 +1797,7 @@ BackgroundTableLineEvenColor=رنگ پس‌زمینۀ سطور زوج جدول
 MinimumNoticePeriod=حداقل بازۀ خبردهی (درخواست مرخصی شما باید حداقل با این فاصلۀ زمانی انجام شود)
 NbAddedAutomatically=تعداد روزهائی که باید به شمارنده‌های کاربران (به شکل خودکار) در هر ماه اضافه شود
 EnterAnyCode=این بخش حاوی ارجاعی به یک سطر شناسه است. مقدار دل‌خواه خود را وارد نمائید، اما بدون نویسه‌های خاص.
+Enter0or1=Enter 0 or 1
 UnicodeCurrency=در اینجا بین دو براکت فهرست اعداد بایت‌هائی را که نمایاندۀ نماد واحدپولی است وارد نمائید. برای مثال، برای $ مقدار [36] را وارد نمائید، برای ریال برزیل R$ مقدار [82,36] و برای €، مقدار [8364]
 ColorFormat=رنگ RGB در مبنای HEX، مثال: FF0000
 PositionIntoComboList=مکان سطر در فهرست‌های ترکیبی
@@ -1953,15 +1964,20 @@ SmallerThan=کوچک‌تر از
 LargerThan=بزرگتر از
 IfTrackingIDFoundEventWillBeLinked=توجه کنید در صورتی که یک شناسۀ ره‌گیری در یک رایانامۀ دریافتی یافت شود، روی‌داد به طور خودکار به اشیاء مربوطه متصل خواهد شد
 WithGMailYouCanCreateADedicatedPassword=با یک حساب GMail در صورتی که تائید 2 گامی را انتخاب کرده باشید، پیشنهاد می‌شود یک گذرواژۀ دوم برای استفادۀ برنامه به‌جای گذرواژۀ خودتان برای حساب بسازید. این کار از https://myaccount.google.com/ قابل انجام است.
+EmailCollectorTargetDir=It may be a desired behaviour to move the email into another tag/directory when it was processed successfully. Just set a value here to use this feature. Note that you must also use a read/write login account.
+EmailCollectorLoadThirdPartyHelp=You can use this action to use the email content to find and load an existing thirdparty in your database. The found (or created) thirdparty will be used for following actions that need it. In the parameter field you can use for example 'EXTRACT:BODY:Name:\\s([^\\s]*)' if you want to extract the name of the thirdparty from a string 'Name: name to find' found into the body.
 EndPointFor=نقطۀ آخر برای %s : %s
 DeleteEmailCollector=حذف جمع‌آورندۀ رایانامه
 ConfirmDeleteEmailCollector=آیا مطمئن هستید می‌خواهید این جمع‌آورندۀ رایانامه را حذف کنید؟
 RecipientEmailsWillBeReplacedWithThisValue=رایانامه‌های دریافت‌کننده همواره با این مقدار جایگزین می‌شود
 AtLeastOneDefaultBankAccountMandatory=حداقل 1 حساب بانکی باید تعریف شود
-RESTRICT_API_ON_IP=Allow available APIs to some host IP only (wildcard not allowed, use space between values). Empty means every hosts can use the available APIs.
 RESTRICT_ON_IP=Allow access to some host IP only (wildcard not allowed, use space between values). Empty means every hosts can access.
+IPListExample=127.0.0.1 192.168.0.2 [::1]
 BaseOnSabeDavVersion=Based on the library SabreDAV version
 NotAPublicIp=Not a public IP
 MakeAnonymousPing=Make an anonymous Ping '+1' to the Dolibarr foundation server (done 1 time only after installation) to allow the foundation to count the number of Dolibarr installation.
 FeatureNotAvailableWithReceptionModule=Feature not available when module Reception is enabled
 EmailTemplate=Template for email
+EMailsWillHaveMessageID=Emails will have a tag 'References' matching this syntax
+PDF_USE_ALSO_LANGUAGE_CODE=If you want to have some text title in your PDF duplicated in 2 different languages in the same generate PDF, you must set here this second language so generated PDF will contains 2 different languages in same page, the one chosen when generating PDF and this one (only few PDF templates support this). Keep empty for 1 language per PDF.
+FafaIconSocialNetworksDesc=Enter here the code of a FontAwesome icon. If you don't know what is FontAwesome, you can use the generic value fa-address-book.

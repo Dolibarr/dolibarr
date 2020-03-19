@@ -254,3 +254,4 @@ ByVatRate=Per de l'impost sobre vendes
 TurnoverbyVatrate=Facturació facturada pel tipus d'impost sobre la venda
 TurnoverCollectedbyVatrate=Facturació recaptada pel tipus d'impost sobre la venda
 PurchasebyVatrate=Compra per l'impost sobre vendes
+LabelToShow=Etiqueta curta

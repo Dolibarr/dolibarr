@@ -254,3 +254,4 @@ ByVatRate=Theo thuế suất bán hàng
 TurnoverbyVatrate=Doanh thu được lập hóa đơn theo thuế suất bán hàng
 TurnoverCollectedbyVatrate=Doanh thu được thu thập theo thuế suất bán hàng
 PurchasebyVatrate=Mua theo thuế suất bán hàng
+LabelToShow=Nhãn ngắn

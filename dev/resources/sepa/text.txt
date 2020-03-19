@@ -1,2 +1,2 @@
-To test a SEPA file:
-http://www.mesfluxdepaiement.fr/testez-vos-fichiers-sepa
+To test a SEPA file: 
+https://www.mesfluxdepaiement.fr/testez-vos-fichiers-sepa 

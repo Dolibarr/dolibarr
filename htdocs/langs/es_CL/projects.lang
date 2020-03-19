@@ -172,5 +172,4 @@ ModuleSalaryToDefineHourlyRateMustBeEnabled=El módulo &#39;Salarios&#39; debe e
 NewTaskRefSuggested=Referencia de tarea ya utilizada, se requiere una nueva referencia de tarea
 TimeSpentForInvoice=Tiempo dedicado
 InvoiceGeneratedFromTimeSpent=La factura %s se ha generado desde el tiempo invertido en el proyecto
-ProjectBillTimeDescription=Verifique si ingresa la hoja de tiempo en las tareas del proyecto Y planea generar facturas de la hoja de tiempo para facturar al cliente del proyecto (no verifique si planea crear una factura que no esté basada en las hojas de tiempo ingresadas).
 UsageBillTimeShort=Uso: Bill time

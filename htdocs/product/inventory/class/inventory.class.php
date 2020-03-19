@@ -124,6 +124,11 @@ class Inventory extends CommonObject
      */
 	public $fk_warehouse;
 
+	/**
+	 * @var int ID
+	 */
+	public $fk_product;
+
 	public $date_inventory;
 	public $title;
 

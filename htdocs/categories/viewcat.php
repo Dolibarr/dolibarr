@@ -55,7 +55,7 @@ $optioncss  = GETPOST('optioncss', 'aZ'); // Option for the css output (always '
 $limit = GETPOST('limit', 'int') ?GETPOST('limit', 'int') : $conf->liste_limit;
 $sortfield = GETPOST('sortfield', 'alpha');
 $sortorder = GETPOST('sortorder', 'alpha');
-$page = GETPOST('page', 'int');
+$page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOST("page", 'int');
 if (empty($page) || $page == -1 || GETPOST('button_search', 'alpha') || GETPOST('button_removefilter', 'alpha') || (empty($toselect) && $massaction === '0')) { $page = 0; }     // If $page is not defined, or '' or -1 or if we click on clear filters or if we select empty mass action
 $offset = $limit * $page;
 $pageprev = $page - 1;
@@ -145,6 +145,13 @@ if ($id > 0 && $removeelem > 0)
         $result = $tmpobject->fetch($removeelem);
         $elementtype = 'project';
     }
+	elseif ($type == Categorie::TYPE_USER && $user->rights->user->user->creer)
+	{
+		require_once DOL_DOCUMENT_ROOT.'/user/class/user.class.php';
+		$tmpobject = new User($db);
+		$result = $tmpobject->fetch($removeelem);
+		$elementtype = 'user';
+	}
 
 	$result = $object->del_type($tmpobject, $elementtype);
 	if ($result < 0) dol_print_error('', $object->error);
@@ -208,7 +215,7 @@ elseif ($type == Categorie::TYPE_MEMBER)    $title = $langs->trans("MembersCateg
 elseif ($type == Categorie::TYPE_CONTACT)   $title = $langs->trans("ContactCategoriesShort");
 elseif ($type == Categorie::TYPE_ACCOUNT)   $title = $langs->trans("AccountsCategoriesShort");
 elseif ($type == Categorie::TYPE_PROJECT)   $title = $langs->trans("ProjectsCategoriesShort");
-elseif ($type == Categorie::TYPE_USER)      $title = $langs->trans("ProjectsCategoriesShort");
+elseif ($type == Categorie::TYPE_USER)      $title = $langs->trans("UsersCategoriesShort");
 else                                        $title = $langs->trans("Category");
 
 $head = categories_prepare_head($object, $type);
@@ -832,6 +839,53 @@ if ($type == Categorie::TYPE_PROJECT)
 		print "</table>\n";
 
 		print '</form>'."\n";
+	}
+}
+
+// List of users
+if ($type == Categorie::TYPE_USER)
+{
+	require_once DOL_DOCUMENT_ROOT.'/user/class/user.class.php';
+
+	$users = $object->getObjectsInCateg("user");
+	if ($users < 0)
+	{
+		dol_print_error($db, $object->error, $object->errors);
+	}
+	else
+	{
+		print "<br>";
+		print "<table class='noborder' width='100%'>\n";
+		print '<tr class="liste_titre"><td colspan="4">'.$langs->trans("Users").' <span class="badge">'.count($users).'</span></td></tr>'."\n";
+
+		if (count($users) > 0)
+		{
+			// Use "$userentry" here, because "$user" is the current user
+			foreach ($users as $key => $userentry)
+			{
+				print "\t".'<tr class="oddeven">'."\n";
+				print '<td class="nowrap" valign="top">';
+				print $userentry->getNomUrl(1);
+				print "</td>\n";
+				print '<td class="tdtop">'.$userentry->job."</td>\n";
+
+				// Link to delete from category
+				print '<td class="right">';
+				if ($user->rights->user->user->creer)
+				{
+					print "<a href= '".$_SERVER['PHP_SELF']."?".(empty($socid)?'id':'socid')."=".$object->id."&amp;type=".$type."&amp;removeelem=".$userentry->id."'>";
+					print $langs->trans("DeleteFromCat");
+					print img_picto($langs->trans("DeleteFromCat"), 'unlink');
+					print "</a>";
+				}
+				print "</tr>\n";
+			}
+		}
+		else
+		{
+			print '<tr class="oddeven"><td colspan="3" class="opacitymedium">'.$langs->trans("ThisCategoryHasNoUsers").'</td></tr>';
+		}
+		print "</table>\n";
 	}
 }
 

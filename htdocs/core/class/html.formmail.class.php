@@ -112,14 +112,7 @@ class FormMail extends Form
 	public $withfrom;
 
 	/**
-	 * @var int
-	 * @deprecated Fill withto with array before calling method.
-	 * @see $withto
-	 */
-	public $withtosocid;
-
-	/**
-	 * @var int|int[]
+	 * @var int|string|array
 	 */
 	public $withto; // Show recipient emails
 
@@ -569,7 +562,9 @@ class FormMail extends Form
 						}
 
 						// Add also email aliases from the c_email_senderprofile table
-						$sql = 'SELECT rowid, label, email FROM '.MAIN_DB_PREFIX.'c_email_senderprofile WHERE active = 1 ORDER BY position';
+						$sql = 'SELECT rowid, label, email FROM '.MAIN_DB_PREFIX.'c_email_senderprofile';
+						$sql .= ' WHERE active = 1 AND (private = 0 OR private = '.$user->id.')';
+						$sql .= ' ORDER BY position';
 						$resql = $this->db->query($sql);
 						if ($resql)
 						{
@@ -674,10 +669,12 @@ class FormMail extends Form
 				}
 				else
 				{
+					// The free input of email
 					if (!empty($this->withtofree))
 					{
-						$out .= '<input class="minwidth200" id="sendto" name="sendto" value="'.(!is_array($this->withto) && !is_numeric($this->withto) ? (isset($_REQUEST["sendto"]) ? $_REQUEST["sendto"] : $this->withto) : "").'" />';
+						$out .= '<input class="minwidth200" id="sendto" name="sendto" value="'.(($this->withtofree && !is_numeric($this->withtofree)) ? $this->withtofree : (!is_array($this->withto) && !is_numeric($this->withto) ? (isset($_REQUEST["sendto"]) ? $_REQUEST["sendto"] : $this->withto) : "")).'" />';
 					}
+					// The select combo
 					if (!empty($this->withto) && is_array($this->withto))
 					{
 						if (!empty($this->withtofree)) $out .= " ".$langs->trans("and")."/".$langs->trans("or")." ";
@@ -1030,6 +1027,7 @@ class FormMail extends Form
 				$out .= '	$(document).on("keypress", \'#mailform\', function (e) {		/* Note this is called at every key pressed ! */
 	    						var code = e.keyCode || e.which;
 	    						if (code == 13) {
+									console.log("Enter was intercepted and blocked");
 	        						e.preventDefault();
 	        						return false;
 	    						}

@@ -225,7 +225,7 @@ if ($action == 'create')
 	print '<tr>';
 	print '<td>'.$form->editfieldkey('Town', 'town', '', $object, 0).'</td>';
 	print '<td>';
-	print $formcompany->select_ziptown(GETPOST('town', 'alpha'), 'town', array (
+	print $formcompany->select_ziptown(GETPOSTISSET('town') ? GETPOST('town', 'alpha') : $object->town, 'town', array (
 			'zipcode',
 			'selectcountry_id'
 	));
@@ -236,7 +236,7 @@ if ($action == 'create')
 	print '<tr>';
 	print '<td>'.$form->editfieldkey('Country', 'selectcountry_id', '', $object, 0).'</td>';
 	print '<td class="maxwidthonsmartphone">';
-	print $form->select_country(GETPOST('country_id', 'int')>0?GETPOST('country_id', 'int'):$mysoc->country_id, 'country_id');
+	print $form->select_country(GETPOSTISSET('country_id') ? GETPOST('country_id', 'int') : ($object->country_id ? $object->country_id : $mysoc->country_id), 'country_id');
 		if ($user->admin) print info_admin($langs->trans("YouCanChangeValuesForThisListFromDictionarySetup"), 1);
 	print '</td>';
 	print '</tr>';
@@ -245,7 +245,7 @@ if ($action == 'create')
     print '<tr>';
     print '<td>'.$form->editfieldkey('Status', 'status', '', $object, 0, 'string', '', 1).'</td>';
 	print '<td>';
-	print $form->selectarray('status', $status2label, GETPOST('status', 'alpha'));
+	print $form->selectarray('status', $status2label, GETPOSTISSET('status') ? GETPOST('status', 'alpha') : 1);
     print '</td></tr>';
 
     print '</table>';
@@ -318,7 +318,7 @@ if (($id || $ref) && $action == 'edit')
 			// Country
 			print '<tr><td>'.$form->editfieldkey('Country', 'selectcountry_id', '', $object, 0).'</td>';
 			print '<td class="maxwidthonsmartphone">';
-			print $form->select_country($object->fk_country, 'country_id');
+			print $form->select_country($object->country_id, 'country_id');
 				if ($user->admin) print info_admin($langs->trans("YouCanChangeValuesForThisListFromDictionarySetup"), 1);
 			print '</td>';
 			print '</tr>';

@@ -37,6 +37,11 @@ require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
 
 $invoiceid = GETPOST('facid', 'int');
 
+if (empty($user->rights->takepos->run)) {
+	access_forbidden();
+}
+
+
 /*
  * View
  */
@@ -68,7 +73,7 @@ else
 $langs->loadLangs(array("main", "bills", "cashdesk"));
 
 ?>
-<link rel="stylesheet" href="css/pos.css">
+<link rel="stylesheet" href="css/pos.css.php">
 </head>
 <body class="center">
 

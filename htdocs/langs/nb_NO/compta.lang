@@ -254,3 +254,4 @@ ByVatRate=Etter MVA-sats
 TurnoverbyVatrate=Omsetning fakturert etter MVA-sats
 TurnoverCollectedbyVatrate=Omsetning etter MVA-sats
 PurchasebyVatrate=Innkjøp etter MVA-sats
+LabelToShow=Kort etikett

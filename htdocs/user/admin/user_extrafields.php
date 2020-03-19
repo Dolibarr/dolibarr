@@ -60,7 +60,7 @@ require DOL_DOCUMENT_ROOT.'/core/actions_extrafields.inc.php';
 
 $textobject=$langs->transnoentitiesnoconv("Users");
 
-$help_url='EN:Module_Users|FR:Module_Utilisateurs|ES:M&oacute;dulo_Usuarios';
+$help_url='EN:Module_Users|FR:Module_Utilisateurs|ES:M&oacute;dulo_Usuarios|DE:Modul_Benutzer';
 llxHeader('', $langs->trans("UsersSetup"), $help_url);
 
 
@@ -88,8 +88,8 @@ if ($action != 'create' && $action != 'edit')
 
 /* ************************************************************************** */
 /*                                                                            */
-/* Creation d'un champ optionnel
- /*                                                                            */
+/* Creation of an optional field                                              */
+/*                                                                            */
 /* ************************************************************************** */
 
 if ($action == 'create')
@@ -102,7 +102,7 @@ if ($action == 'create')
 
 /* ************************************************************************** */
 /*                                                                            */
-/* Edition d'un champ optionnel                                               */
+/* Editing an optional field                                                  */
 /*                                                                            */
 /* ************************************************************************** */
 if ($action == 'edit' && ! empty($attrname))

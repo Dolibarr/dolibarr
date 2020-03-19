@@ -176,11 +176,9 @@ if ($conf->use_javascript_ajax)
     $SommeD = 0;
     $total = 0;
     $dataval = array();
-    $datalabels = array();
     $i = 0;
     foreach ($AdherentType as $key => $adhtype)
     {
-        $datalabels[] = array($i, $adhtype->getNomUrl(0, dol_size(16)));
         $dataval['draft'][] = array($i, isset($MemberToValidate[$key]) ? $MemberToValidate[$key] : 0);
         $dataval['notuptodate'][] = array($i, isset($MembersValidated[$key]) ? $MembersValidated[$key] - (isset($MemberUpToDate[$key]) ? $MemberUpToDate[$key] : 0) : 0);
         $dataval['uptodate'][] = array($i, isset($MemberUpToDate[$key]) ? $MemberUpToDate[$key] : 0);
@@ -198,13 +196,16 @@ if ($conf->use_javascript_ajax)
     $dataseries[] = array($langs->trans("MembersStatusResiliated"), round($SommeD));
     $dataseries[] = array($langs->trans("MembersStatusToValid"), round($SommeA));
 
+    include_once DOL_DOCUMENT_ROOT.'/theme/'.$conf->theme.'/theme_vars.inc.php';
+
     include_once DOL_DOCUMENT_ROOT.'/core/class/dolgraph.class.php';
     $dolgraph = new DolGraph();
     $dolgraph->SetData($dataseries);
-    $dolgraph->setShowLegend(1);
+    $dolgraph->SetDataColor(array($badgeStatus1, $badgeStatus4, $badgeStatus6, '-'.$badgeStatus0));
+    $dolgraph->setShowLegend(2);
     $dolgraph->setShowPercent(1);
     $dolgraph->SetType(array('pie'));
-    $dolgraph->setWidth('100%');
+    $dolgraph->setHeight('200');
     $dolgraph->draw('idgraphstatus');
     print $dolgraph->show($total ? 0 : 1);
 

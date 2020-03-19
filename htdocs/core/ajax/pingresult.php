@@ -53,8 +53,8 @@ print '<!-- Ajax page called with url '.dol_escape_htmltag($_SERVER["PHP_SELF"])
 // If ok
 if ($action == 'firstpingok')
 {
-	// Note: pings are by installation, done on entity 1.
-	// Once this constant are set, no more ping will be tried (except if we add parameter &forceping=1 on URL). So we can say this are 'first' ping.
+	// Note: pings are per installed instances / entity.
+	// Once this constants are set, no more ping will be tried (except if we add parameter &forceping=1 on URL). So we can say this are 'first' ping.
 	dolibarr_set_const($db, 'MAIN_FIRST_PING_OK_DATE', dol_print_date($now, 'dayhourlog', 'gmt'));
 	dolibarr_set_const($db, 'MAIN_FIRST_PING_OK_ID', $hash_unique_id);
 

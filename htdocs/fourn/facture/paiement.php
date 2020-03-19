@@ -62,7 +62,7 @@ $search_payment_num = GETPOST('search_payment_num', 'alpha');
 $limit = GETPOST('limit', 'int') ?GETPOST('limit', 'int') : $conf->liste_limit;
 $sortfield = GETPOST("sortfield", 'alpha');
 $sortorder = GETPOST("sortorder", 'alpha');
-$page = GETPOST("page", 'int');
+$page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOST("page", 'int');
 if (empty($page) || $page == -1) { $page = 0; }     // If $page is not defined, or '' or -1
 $offset = $limit * $page;
 $pageprev = $page - 1;
@@ -297,9 +297,15 @@ if (empty($reshook))
 	        $paiement->datepaye     = $datepaye;
 	        $paiement->amounts      = $amounts; // Array of amounts
 	        $paiement->multicurrency_amounts = $multicurrency_amounts;
-	        $paiement->paiementid   = $_POST['paiementid'];
-	        $paiement->num_paiement = $_POST['num_paiement'];
-	        $paiement->note         = $_POST['comment'];
+	        $paiement->paiementid   = GETPOST('paiementid', 'int');
+
+	        $paiement->num_payment  = GETPOST('num_paiement', 'alphanohtml');
+	        $paiement->note_private = GETPOST('comment', 'alpha');
+	        $paiement->num_paiement = $paiement->num_payment; // For backward compatibility
+	        $paiement->num_payment = $paiement->num_payment;
+	        $paiement->note         = $paiement->note_private; // For backward compatibility
+	        $paiement->note_private = $paiement->note_private;
+
 	        if (!$error)
 	        {
 	            $paiement_id = $paiement->create($user, (GETPOST('closepaidinvoices') == 'on' ? 1 : 0), $thirdparty);
@@ -370,7 +376,7 @@ if ($action == 'create' || $action == 'confirm_paiement' || $action == 'add_paie
     $dateinvoice = ($datefacture == '' ? (empty($conf->global->MAIN_AUTOFILL_DATE) ?-1 : '') : $datefacture);
 
     $sql = 'SELECT s.nom as name, s.rowid as socid,';
-    $sql .= ' f.rowid, f.ref, f.ref_supplier, f.amount, f.total_ttc as total, f.fk_mode_reglement, f.fk_account';
+    $sql .= ' f.rowid, f.ref, f.ref_supplier, f.total_ttc as total, f.fk_mode_reglement, f.fk_account';
     if (!$user->rights->societe->client->voir && !$socid) $sql .= ", sc.fk_soc, sc.fk_user ";
     $sql .= ' FROM '.MAIN_DB_PREFIX.'societe as s, '.MAIN_DB_PREFIX.'facture_fourn as f';
     if (!$user->rights->societe->client->voir && !$socid) $sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
@@ -808,7 +814,7 @@ if (empty($action) || $action == 'list')
     $limit = GETPOST('limit', 'int') ?GETPOST('limit', 'int') : $conf->liste_limit;
     $sortfield = GETPOST("sortfield", 'alpha');
     $sortorder = GETPOST("sortorder", 'alpha');
-    $page = GETPOST("page", 'int');
+    $page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOST("page", 'int');
     if (empty($page) || $page == -1) { $page = 0; }
     $offset = $limit * $page;
     $pageprev = $page - 1;
@@ -821,7 +827,7 @@ if (empty($action) || $action == 'list')
     $sql .= ' c.code as paiement_type, c.libelle as paiement_libelle,';
     $sql .= ' ba.rowid as bid, ba.label,';
     if (!$user->rights->societe->client->voir) $sql .= ' sc.fk_soc, sc.fk_user,';
-    $sql .= ' SUM(f.amount)';
+    $sql .= ' SUM(pf.amount)';
     $sql .= ' FROM '.MAIN_DB_PREFIX.'paiementfourn AS p';
     $sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'paiementfourn_facturefourn AS pf ON p.rowid=pf.fk_paiementfourn';
     $sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'facture_fourn AS f ON f.rowid=pf.fk_facturefourn';
@@ -1013,9 +1019,9 @@ if (empty($action) || $action == 'list')
 
             // Amount
             print '<td class="right">'.price($objp->pamount).'</td>';
-            if (!$i) $totalarray['nbfield']++;
-            $totalarray['pos'][7] = 'amount';
+            $totalarray['pos'][$totalarray['nbfield']] = 'amount';
             $totalarray['val']['amount'] += $objp->pamount;
+            if (!$i) $totalarray['nbfield']++;
 
             // Ref invoice
             /*$invoicesupplierstatic->ref=$objp->ref_supplier;

@@ -337,7 +337,7 @@ abstract class CommonObject
 
 	/**
 	 * @deprecated
-	 * @see $note_public
+	 * @see $note_private
 	 */
 	public $note;
 
@@ -491,6 +491,7 @@ abstract class CommonObject
 		return $this->error.(is_array($this->errors) ? (($this->error != '' ? ', ' : '').join(', ', $this->errors)) : '');
 	}
 
+
 	/**
 	 * Return customer ref for screen output.
 	 *
@@ -557,6 +558,28 @@ abstract class CommonObject
 		$ret .= dolGetFirstLastname($firstname, $lastname, $nameorder);
 
 		return dol_trunc($ret, $maxlen);
+	}
+
+	/**
+	 *	Return clicable link of object (with eventually picto)
+	 *
+	 *	@param      string	    $option                 Where point the link (0=> main card, 1,2 => shipment, 'nolink'=>No link)
+	 *  @return		string								HTML Code for Kanban thumb.
+	 */
+	public function getKanbanView($option = '')
+	{
+		$return = '<div class="box-flex-item">';
+		$return .= '<div class="info-box info-box-sm">';
+		$return .= '<span class="info-box-icon bg-infoxbox-action">';
+		$return .= '<i class="fa fa-dol-action"></i>'; // Can be image
+		$return .= '</span>';
+		$return .= '<div class="info-box-content">';
+		$return .= '<span class="info-box-title">'.(method_exists($this, 'getNomUrl') ? $this->getNomUrl() : $this->ref).'</span>';
+		$return .= '</div>';
+		$return .= '</div>';
+		$return .= '</div>';
+
+		return $return;
 	}
 
 	/**
@@ -1080,7 +1103,7 @@ abstract class CommonObject
 	 *    Get array of all contacts for an object
 	 *
 	 *    @param	int			$status		Status of links to get (-1=all)
-	 *    @param	string		$source		Source of contact: external or thirdparty (llx_socpeople) or internal (llx_user)
+	 *    @param	string		$source		Source of contact: 'external' or 'thirdparty' (llx_socpeople) or 'internal' (llx_user)
 	 *    @param	int         $list       0:Return array contains all properties, 1:Return array contains just id
 	 *    @param    string      $code       Filter on this code of contact type ('SHIPPING', 'BILLING', ...)
 	 *    @return	array|int		        Array of contacts, -1 if error
@@ -1242,14 +1265,15 @@ abstract class CommonObject
 	/**
 	 *      Return array with list of possible values for type of contacts
 	 *
-	 *      @param	string	$source     'internal', 'external' or 'all'
-	 *      @param  int		$option     0=Return array id->label, 1=Return array code->label
-	 *      @param  int		$activeonly 0=all status of contact, 1=only the active
-	 *		@param	string	$code		Type of contact (Example: 'CUSTOMER', 'SERVICE')
-	 *		@param	string	$element	Filter Element Type
-	 *      @return array       		Array list of type of contacts (id->label if option=0, code->label if option=1)
+	 *      @param	string	$source     		'internal', 'external' or 'all'
+	 *      @param  int		$option     		0=Return array id->label, 1=Return array code->label
+	 *      @param  int		$activeonly 		0=all status of contact, 1=only the active
+	 *		@param	string	$code				Type of contact (Example: 'CUSTOMER', 'SERVICE')
+	 *		@param	string	$element			Filter on 1 element type
+	 *      @param	string	$excludeelement		Exclude 1 element type. Example: 'agenda'
+	 *      @return array       				Array list of type of contacts (id->label if option=0, code->label if option=1)
 	 */
-	public function listeTypeContacts($source = 'internal', $option = 0, $activeonly = 0, $code = '', $element = '')
+	public function listeTypeContacts($source = 'internal', $option = 0, $activeonly = 0, $code = '', $element = '', $excludeelement = '')
 	{
 		// phpcs:enable
 		global $langs, $conf;
@@ -1260,8 +1284,12 @@ abstract class CommonObject
 		$sql .= " FROM ".MAIN_DB_PREFIX."c_type_contact as tc";
 
 		$sqlWhere = array();
-		if (!empty($element))
+		if (!empty($element)) {
 			$sqlWhere[] = " tc.element='".$this->db->escape($element)."'";
+		}
+		if (!empty($excludeelement)) {
+			$sqlWhere[] = " tc.element <> '".$this->db->escape($excludeelement)."'";
+		}
 
 		if ($activeonly == 1)
 			$sqlWhere[] = " tc.active=1"; // only the active types
@@ -1278,24 +1306,25 @@ abstract class CommonObject
 
 		$sql .= $this->db->order('tc.element, tc.position', 'ASC');
 
-		dol_syslog(get_class($this)."::".__METHOD__, LOG_DEBUG);
+		dol_syslog(__METHOD__, LOG_DEBUG);
 		$resql = $this->db->query($sql);
 		if ($resql) {
 			$num = $this->db->num_rows($resql);
 			if ($num > 0) {
 				while ($obj = $this->db->fetch_object($resql)) {
+					$modulename = $obj->element;
 					if (strpos($obj->element, 'project') !== false) {
-						$element = 'projet';
+						$modulename = 'projet';
 					} elseif ($obj->element == 'contrat') {
 						$element = 'contract';
+					} elseif ($obj->element == 'action') {
+						$modulename = 'agenda';
 					} elseif (strpos($obj->element, 'supplier') !== false && $obj->element != 'supplier_proposal') {
-						$element = 'fournisseur';
+						$modulename = 'fournisseur';
 					} elseif (strpos($obj->element, 'supplier') !== false && $obj->element != 'supplier_proposal') {
-						$element = 'fournisseur';
-					} else {
-						$element = $obj->element;
+						$modulename = 'fournisseur';
 					}
-					if ($conf->{$element}->enabled) {
+					if ($conf->{$modulename}->enabled) {
 						$libelle_element = $langs->trans('ContactDefault_'.$obj->element);
 						$transkey = "TypeContact_".$this->element."_".$source."_".$obj->code;
 						$libelle_type = ($langs->trans($transkey) != $transkey ? $langs->trans($transkey) : $obj->libelle);
@@ -1701,7 +1730,7 @@ abstract class CommonObject
 
 		$sql .= " WHERE ".$id_field." = ".$id;
 
-		dol_syslog(get_class($this)."::".__FUNCTION__."", LOG_DEBUG);
+		dol_syslog(__METHOD__."", LOG_DEBUG);
 		$resql = $this->db->query($sql);
 		if ($resql)
 		{
@@ -1766,19 +1795,22 @@ abstract class CommonObject
 		if ($user->socid > 0) $socid = $user->socid;
 
 		// this->ismultientitymanaged contains
-		// 0=No test on entity, 1=Test with field entity, 2=Test with link by societe
-		$alias = 's';
-		if ($this->element == 'societe') $alias = 'te';
+		// 0=No test on entity, 1=Test with field entity, 'field@table'=Test with link by field@table
+		$aliastablesociete = 's';
+		if ($this->element == 'societe') $aliastablesociete = 'te'; // te as table_element
 
 		$sql = "SELECT MAX(te.".$fieldid.")";
 		$sql .= " FROM ".(empty($nodbprefix) ?MAIN_DB_PREFIX:'').$this->table_element." as te";
 		if ($this->element == 'user' && !empty($conf->global->MULTICOMPANY_TRANSVERSE_MODE)) {
 			$sql .= ",".MAIN_DB_PREFIX."usergroup_user as ug";
 		}
-		if (isset($this->ismultientitymanaged) && $this->ismultientitymanaged == 2) $sql .= ", ".MAIN_DB_PREFIX."societe as s"; // If we need to link to societe to limit select to entity
+		if (isset($this->ismultientitymanaged) && !is_numeric($this->ismultientitymanaged)) {
+			$tmparray = explode('@', $this->ismultientitymanaged);
+			$sql .= ", ".MAIN_DB_PREFIX.$tmparray[1]." as ".($tmparray[1] == 'societe' ? 's' : 'parenttable'); // If we need to link to this table to limit select to entity
+		}
 		elseif ($this->restrictiononfksoc == 1 && $this->element != 'societe' && !$user->rights->societe->client->voir && !$socid) $sql .= ", ".MAIN_DB_PREFIX."societe as s"; // If we need to link to societe to limit select to socid
 		elseif ($this->restrictiononfksoc == 2 && $this->element != 'societe' && !$user->rights->societe->client->voir && !$socid) $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s ON te.fk_soc = s.rowid"; // If we need to link to societe to limit select to socid
-		if ($this->restrictiononfksoc && !$user->rights->societe->client->voir && !$socid)  $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."societe_commerciaux as sc ON ".$alias.".rowid = sc.fk_soc";
+		if ($this->restrictiononfksoc && !$user->rights->societe->client->voir && !$socid)  $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."societe_commerciaux as sc ON ".$aliastablesociete.".rowid = sc.fk_soc";
 		$sql .= " WHERE te.".$fieldid." < '".$this->db->escape($this->ref)."'"; // ->ref must always be defined (set to id if field does not exists)
 		if ($this->restrictiononfksoc == 1 && !$user->rights->societe->client->voir && !$socid) $sql .= " AND sc.fk_user = ".$user->id;
 		if ($this->restrictiononfksoc == 2 && !$user->rights->societe->client->voir && !$socid) $sql .= " AND (sc.fk_user = ".$user->id.' OR te.fk_soc IS NULL)';
@@ -1787,7 +1819,10 @@ abstract class CommonObject
 			if (!preg_match('/^\s*AND/i', $filter)) $sql .= " AND "; // For backward compatibility
 			$sql .= $filter;
 		}
-		if (isset($this->ismultientitymanaged) && $this->ismultientitymanaged == 2) $sql .= ' AND te.fk_soc = s.rowid'; // If we need to link to societe to limit select to entity
+		if (isset($this->ismultientitymanaged) && !is_numeric($this->ismultientitymanaged)) {
+			$tmparray = explode('@', $this->ismultientitymanaged);
+			$sql .= ' AND te.'.$tmparray[0].' = '.($tmparray[1] == 'societe' ? 's' : 'parenttable').'.rowid'; // If we need to link to this table to limit select to entity
+		}
 		elseif ($this->restrictiononfksoc == 1 && $this->element != 'societe' && !$user->rights->societe->client->voir && !$socid) $sql .= ' AND te.fk_soc = s.rowid'; // If we need to link to societe to limit select to socid
 		if (isset($this->ismultientitymanaged) && $this->ismultientitymanaged == 1) {
 			if ($this->element == 'user' && !empty($conf->global->MULTICOMPANY_TRANSVERSE_MODE)) {
@@ -1800,6 +1835,10 @@ abstract class CommonObject
 			} else {
 				$sql .= ' AND te.entity IN ('.getEntity($this->element).')';
 			}
+		}
+		if (isset($this->ismultientitymanaged) && !is_numeric($this->ismultientitymanaged) && $this->element != 'societe') {
+			$tmparray = explode('@', $this->ismultientitymanaged);
+			$sql .= ' AND parenttable.entity IN ('.getEntity($tmparray[1]).')';
 		}
 		if ($this->restrictiononfksoc == 1 && $socid && $this->element != 'societe') $sql .= ' AND te.fk_soc = '.$socid;
 		if ($this->restrictiononfksoc == 2 && $socid && $this->element != 'societe') $sql .= ' AND (te.fk_soc = '.$socid.' OR te.fk_soc IS NULL)';
@@ -1821,10 +1860,10 @@ abstract class CommonObject
 		if ($this->element == 'user' && !empty($conf->global->MULTICOMPANY_TRANSVERSE_MODE)) {
 			$sql .= ",".MAIN_DB_PREFIX."usergroup_user as ug";
 		}
-		if (isset($this->ismultientitymanaged) && $this->ismultientitymanaged == 2) $sql .= ", ".MAIN_DB_PREFIX."societe as s"; // If we need to link to societe to limit select to entity
+		if (isset($this->ismultientitymanaged) && $this->ismultientitymanaged == 'fk_soc@societe') $sql .= ", ".MAIN_DB_PREFIX."societe as s"; // If we need to link to societe to limit select to entity
 		elseif ($this->restrictiononfksoc == 1 && $this->element != 'societe' && !$user->rights->societe->client->voir && !$socid) $sql .= ", ".MAIN_DB_PREFIX."societe as s"; // If we need to link to societe to limit select to socid
 		elseif ($this->restrictiononfksoc == 2 && $this->element != 'societe' && !$user->rights->societe->client->voir && !$socid) $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s ON te.fk_soc = s.rowid"; // If we need to link to societe to limit select to socid
-		if ($this->restrictiononfksoc && !$user->rights->societe->client->voir && !$socid) $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."societe_commerciaux as sc ON ".$alias.".rowid = sc.fk_soc";
+		if ($this->restrictiononfksoc && !$user->rights->societe->client->voir && !$socid) $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."societe_commerciaux as sc ON ".$aliastablesociete.".rowid = sc.fk_soc";
 		$sql .= " WHERE te.".$fieldid." > '".$this->db->escape($this->ref)."'"; // ->ref must always be defined (set to id if field does not exists)
 		if ($this->restrictiononfksoc == 1 && !$user->rights->societe->client->voir && !$socid) $sql .= " AND sc.fk_user = ".$user->id;
 		if ($this->restrictiononfksoc == 2 && !$user->rights->societe->client->voir && !$socid) $sql .= " AND (sc.fk_user = ".$user->id.' OR te.fk_soc IS NULL)';
@@ -1833,7 +1872,7 @@ abstract class CommonObject
 			if (!preg_match('/^\s*AND/i', $filter)) $sql .= " AND "; // For backward compatibility
 			$sql .= $filter;
 		}
-		if (isset($this->ismultientitymanaged) && $this->ismultientitymanaged == 2) $sql .= ' AND te.fk_soc = s.rowid'; // If we need to link to societe to limit select to entity
+		if (isset($this->ismultientitymanaged) && $this->ismultientitymanaged == 'fk_soc@societe') $sql .= ' AND te.fk_soc = s.rowid'; // If we need to link to societe to limit select to entity
 		elseif ($this->restrictiononfksoc == 1 && $this->element != 'societe' && !$user->rights->societe->client->voir && !$socid) $sql .= ' AND te.fk_soc = s.rowid'; // If we need to link to societe to limit select to socid
 		if (isset($this->ismultientitymanaged) && $this->ismultientitymanaged == 1) {
 			if ($this->element == 'user' && !empty($conf->global->MULTICOMPANY_TRANSVERSE_MODE)) {
@@ -2744,10 +2783,13 @@ abstract class CommonObject
 	public function line_max($fk_parent_line = 0)
 	{
         // phpcs:enable
+        $positionfield = 'rang';
+		if ($this->table_element == 'bom') $positionfield = 'position';
+
 		// Search the last rang with fk_parent_line
 		if ($fk_parent_line)
 		{
-			$sql = 'SELECT max(rang) FROM '.MAIN_DB_PREFIX.$this->table_element_line;
+			$sql = 'SELECT max('.$positionfield.') FROM '.MAIN_DB_PREFIX.$this->table_element_line;
 			$sql .= ' WHERE '.$this->fk_element.' = '.$this->id;
 			$sql .= ' AND fk_parent_line = '.$fk_parent_line;
 
@@ -2769,7 +2811,7 @@ abstract class CommonObject
 		// If not, search the last rang of element
 		else
 		{
-			$sql = 'SELECT max(rang) FROM '.MAIN_DB_PREFIX.$this->table_element_line;
+			$sql = 'SELECT max('.$positionfield.') FROM '.MAIN_DB_PREFIX.$this->table_element_line;
 			$sql .= ' WHERE '.$this->fk_element.' = '.$this->id;
 
 			dol_syslog(get_class($this)."::line_max", LOG_DEBUG);
@@ -2907,7 +2949,7 @@ abstract class CommonObject
 			$MODULE = "MODULE_DISALLOW_UPDATE_PRICE_ORDER";
 		elseif ($this->element == 'facture' || $this->element == 'invoice')
 			$MODULE = "MODULE_DISALLOW_UPDATE_PRICE_INVOICE";
-		elseif ($this->element == 'facture_fourn' || $this->element == 'supplier_invoice')
+		elseif ($this->element == 'facture_fourn' || $this->element == 'supplier_invoice' || $this->element == 'invoice_supplier')
 			$MODULE = "MODULE_DISALLOW_UPDATE_PRICE_SUPPLIER_INVOICE";
 		elseif ($this->element == 'order_supplier' || $this->element == 'supplier_order')
 			$MODULE = "MODULE_DISALLOW_UPDATE_PRICE_SUPPLIER_ORDER";
@@ -3327,6 +3369,9 @@ abstract class CommonObject
 					elseif ($objecttype == 'subscription') {
 						$classpath = 'adherents/class'; $module = 'adherent';
 					}
+					elseif ($objecttype == 'contact') {
+						 $module = 'societe';
+					}
 
 					// Set classfile
 					$classfile = strtolower($subelement); $classname = ucfirst($subelement);
@@ -3348,6 +3393,9 @@ abstract class CommonObject
 					}
 					elseif ($objecttype == 'subscription') {
 						$classfile = 'subscription'; $classname = 'Subscription';
+					}
+					elseif ($objecttype == 'project' || $objecttype == 'projet') {
+						$classpath = 'projet/class'; $classfile = 'project'; $classname = 'Project';
 					}
 
 					// Here $module, $classfile and $classname are set
@@ -4035,6 +4083,7 @@ abstract class CommonObject
 
 		// Output template part (modules that overwrite templates must declare this into descriptor)
 		// Use global variables + $dateSelector + $seller and $buyer
+		// Note: This is deprecated. If you need to overwrite the tpl file, use instead the hook 'formAddObjectLine'.
 		$dirtpls = array_merge($conf->modules_parts['tpl'], array($defaulttpldir));
 		foreach ($dirtpls as $module => $reldir)
 		{
@@ -4077,7 +4126,7 @@ abstract class CommonObject
 	 */
 	public function printObjectLines($action, $seller, $buyer, $selected = 0, $dateSelector = 0, $defaulttpldir = '/core/tpl')
 	{
-		global $conf, $hookmanager, $langs, $user, $object, $form, $extrafields;
+		global $conf, $hookmanager, $langs, $user, $form, $extrafields, $object;
 		// TODO We should not use global var for this
 		global $inputalsopricewithtax, $usemargins, $disableedit, $disablemove, $disableremove, $outputalsopricetotalwithtax;
 
@@ -4101,6 +4150,7 @@ abstract class CommonObject
 		{
 			// Output template part (modules that overwrite templates must declare this into descriptor)
 			// Use global variables + $dateSelector + $seller and $buyer
+			// Note: This is deprecated. If you need to overwrite the tpl file, use instead the hook.
 			$dirtpls = array_merge($conf->modules_parts['tpl'], array($defaulttpldir));
 			foreach ($dirtpls as $module => $reldir)
 			{
@@ -4167,7 +4217,7 @@ abstract class CommonObject
 	 *	@param  string	    		$buyer             	Object of buyer third party
 	 *	@param	int					$selected		   	Object line selected
 	 *  @param  Extrafields			$extrafields		Object of extrafields
-	 *  @param	string				$defaulttpldir		Directory where to find the template
+	 *  @param	string				$defaulttpldir		Directory where to find the template (deprecated)
 	 *	@return	void
 	 */
 	public function printObjectLine($action, $line, $var, $num, $i, $dateSelector, $seller, $buyer, $selected = 0, $extrafields = null, $defaulttpldir = '/core/tpl')
@@ -4180,15 +4230,9 @@ abstract class CommonObject
 
 		$element = $this->element;
 
-		$text = ''; $description = ''; $type = 0;
+		$text = ''; $description = '';
 
-		// Show product and description
-		$type = (!empty($line->product_type) ? $line->product_type : $line->fk_product_type);
-		// Try to enhance type detection using date_start and date_end for free lines where type was not saved.
-		if (!empty($line->date_start)) $type = 1; // deprecated
-		if (!empty($line->date_end)) $type = 1; // deprecated
-
-		// Ligne en mode visu
+		// Line in view mode
 		if ($action != 'editline' || $selected != $line->id)
 		{
 			// Product
@@ -4199,6 +4243,7 @@ abstract class CommonObject
 
 				$product_static->ref = $line->ref; //can change ref in hook
 				$product_static->label = $line->label; //can change label in hook
+
 				$text = $product_static->getNomUrl(1);
 
 				// Define output language and label
@@ -4238,6 +4283,7 @@ abstract class CommonObject
 
 			// Output template part (modules that overwrite templates must declare this into descriptor)
 			// Use global variables + $dateSelector + $seller and $buyer
+			// Note: This is deprecated. If you need to overwrite the tpl file, use instead the hook printObjectLine and printObjectSubLine.
 			$dirtpls = array_merge($conf->modules_parts['tpl'], array($defaulttpldir));
 			foreach ($dirtpls as $module => $reldir)
 			{
@@ -4263,12 +4309,12 @@ abstract class CommonObject
 		if ($this->statut == 0 && $action == 'editline' && $selected == $line->id)
 		{
 			$label = (!empty($line->label) ? $line->label : (($line->fk_product > 0) ? $line->product_label : ''));
-			$placeholder = ' placeholder="'.$langs->trans("Label").'"';
 
 			$line->pu_ttc = price2num($line->subprice * (1 + ($line->tva_tx / 100)), 'MU');
 
 			// Output template part (modules that overwrite templates must declare this into descriptor)
 			// Use global variables + $dateSelector + $seller and $buyer
+			// Note: This is deprecated. If you need to overwrite the tpl file, use instead the hook printObjectLine and printObjectSubLine.
 			$dirtpls = array_merge($conf->modules_parts['tpl'], array($defaulttpldir));
 			foreach ($dirtpls as $module => $reldir)
 			{
@@ -4730,6 +4776,7 @@ abstract class CommonObject
 			    {
 				    if (!dol_is_file($srctemplatepath))
 				    {
+				    	dol_syslog("Failed to locate template file ".$srctemplatepath, LOG_WARNING);
 					    $this->error = 'ErrorGenerationAskedForOdtTemplateWithSrcFileNotFound';
 					    return -1;
 				    }
@@ -4930,7 +4977,7 @@ abstract class CommonObject
 		global $conf, $_POST;
 
 		// If param here has been posted, we use this value first.
-		if (isset($_POST[$fieldname])) return GETPOST($fieldname, 2);
+		if (GETPOSTISSET($fieldname)) return GETPOST($fieldname, 'alphanohtml', 3);
 
 		if (isset($alternatevalue)) return $alternatevalue;
 
@@ -5186,7 +5233,6 @@ abstract class CommonObject
 			   	$attributeRequired = $extrafields->attributes[$this->table_element]['required'][$attributeKey];
 				$attrfieldcomputed = $extrafields->attributes[$this->table_element]['computed'][$attributeKey];
 
-
 			   	if ($attributeRequired)
 			   	{
 			   		$mandatorypb = false;
@@ -5216,7 +5262,6 @@ abstract class CommonObject
 						$new_array_options[$key] = null;
 					}
 				}
-
 
 			   	switch ($attributeType)
 			   	{
@@ -5372,7 +5417,7 @@ abstract class CommonObject
 				// Add field of attribute
 				if ($extrafields->attributes[$this->table_element]['type'][$attributeKey] != 'separate') // Only for other type than separator)
 				{
-					if ($new_array_options[$key] != '')
+					if ($new_array_options[$key] != '' || $new_array_options[$key] == '0')
 					{
 						$sql .= ",'".$this->db->escape($new_array_options[$key])."'";
 					}
@@ -5474,7 +5519,7 @@ abstract class CommonObject
 						$this->errors[] = $langs->trans("ExtraFieldHasWrongValue", $attributeLabel);
 						return -1;
 					}
-					elseif ($value == '')
+					elseif ($value === '')
 					{
 						$this->array_options["options_".$key] = null;
 					}
@@ -5487,7 +5532,7 @@ abstract class CommonObject
 						$this->errors[] = $langs->trans("ExtraFieldHasWrongValue", $attributeLabel);
 						return -1;
 					}
-					elseif ($value == '')
+					elseif ($value === '')
 					{
 						$this->array_options["options_".$key] = null;
 					}
@@ -5545,7 +5590,7 @@ abstract class CommonObject
 
 			if ($error)
 			{
-				dol_syslog(get_class($this)."::".__METHOD__.$this->error, LOG_ERR);
+				dol_syslog(__METHOD__.$this->error, LOG_ERR);
 				$this->db->rollback();
 				return -1;
 			}
@@ -5583,7 +5628,7 @@ abstract class CommonObject
 			$form = new Form($this->db);
 		}
 
-		if (! empty($this->fields)) {
+		if (!empty($this->fields)) {
 			$val = $this->fields[$key];
 		}
 
@@ -6124,7 +6169,7 @@ abstract class CommonObject
 			$param_list_array = explode(':', $param_list[0]);
 			$showempty = (($required && $default != '') ? 0 : 1);
 
-			$out = $form->selectForForms($param_list[0], $keyprefix.$key.$keysuffix, $value, $showempty, '', '', $morecss, '', 0, empty($val['disabled']) ? 0 : 1);
+			$out = $form->selectForForms($param_list[0], $keyprefix.$key.$keysuffix, $value, $showempty, '', '', $morecss, $moreparam, 0, empty($val['disabled']) ? 0 : 1);
 
 			if (!empty($param_list_array[2]))		// If we set to add a create button
 			{
@@ -6613,6 +6658,11 @@ abstract class CommonObject
 
 				// @todo Add test also on 'enabled' (different than 'list' that is 'visibility')
 				$enabled = 1;
+				if ($enabled && isset($extrafields->attributes[$this->table_element]['enabled'][$key]))
+				{
+                    $enabled = dol_eval($extrafields->attributes[$this->table_element]['enabled'][$key], 1);
+                }
+				if (empty($enabled)) continue;
 
 				$visibility = 1;
 				if ($visibility && isset($extrafields->attributes[$this->table_element]['list'][$key]))
@@ -6745,7 +6795,8 @@ abstract class CommonObject
 						if ($mode != 'view' && !empty($extrafields->attributes[$this->table_element]['required'][$key])) $out .= '&nbsp;<font color="red">*</font>';
 					} else {
 						if ($mode != 'view' && !empty($extrafields->attributes[$this->table_element]['required'][$key])) $out .= ' fieldrequired';
-						$out .= '">';
+						$out .= '"';
+						$out .= '>';
 						if (!empty($extrafields->attributes[$this->table_element]['help'][$key])) $out .= $form->textwithpicto($labeltoshow, $extrafields->attributes[$this->table_element]['help'][$key]);
 						else $out .= $labeltoshow;
 					}
@@ -7523,7 +7574,10 @@ abstract class CommonObject
 			}
 
 			// If field is an implicit foreign key field
-			if (preg_match('/^integer:/i', $this->fields[$key]['type']) && empty($values[$key])) $values[$key] = 'null';
+			if (preg_match('/^integer:/i', $this->fields[$key]['type']) && empty($values[$key])) {
+				if (isset($this->fields[$key]['default'])) $values[$key] = $this->fields[$key]['default'];
+				else $values[$key] = 'null';
+			}
 			if (!empty($this->fields[$key]['foreignkey']) && empty($values[$key])) $values[$key] = 'null';
 		}
 

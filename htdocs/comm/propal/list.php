@@ -69,6 +69,11 @@ $search_societe = GETPOST('search_societe', 'alpha');
 $search_montant_ht = GETPOST('search_montant_ht', 'alpha');
 $search_montant_vat = GETPOST('search_montant_vat', 'alpha');
 $search_montant_ttc = GETPOST('search_montant_ttc', 'alpha');
+$search_multicurrency_code = GETPOST('search_multicurrency_code', 'alpha');
+$search_multicurrency_tx = GETPOST('search_multicurrency_tx', 'alpha');
+$search_multicurrency_montant_ht = GETPOST('search_multicurrency_montant_ht', 'alpha');
+$search_multicurrency_montant_vat = GETPOST('search_multicurrency_montant_vat', 'alpha');
+$search_multicurrency_montant_ttc = GETPOST('search_multicurrency_montant_ttc', 'alpha');
 $search_login = GETPOST('search_login', 'alpha');
 $search_product_category = GETPOST('search_product_category', 'int');
 $search_town = GETPOST('search_town', 'alpha');
@@ -98,7 +103,7 @@ $mesg = (GETPOST("msg") ? GETPOST("msg") : GETPOST("mesg"));
 $limit = GETPOST('limit', 'int') ?GETPOST('limit', 'int') : $conf->liste_limit;
 $sortfield = GETPOST("sortfield", 'alpha');
 $sortorder = GETPOST("sortorder", 'alpha');
-$page = GETPOST("page", 'int');
+$page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOST("page", 'int');
 if (empty($page) || $page == -1 || !empty($search_btn) || !empty($search_remove_btn) || (empty($toselect) && $massaction === '0')) { $page = 0; }     // If $page is not defined, or '' or -1
 $offset = $limit * $page;
 $pageprev = $page - 1;
@@ -162,8 +167,15 @@ $arrayfields = array(
 	'p.total_ht'=>array('label'=>"AmountHT", 'checked'=>1),
 	'p.total_vat'=>array('label'=>"AmountVAT", 'checked'=>0),
 	'p.total_ttc'=>array('label'=>"AmountTTC", 'checked'=>0),
-	'p.total_ht_invoiced'=>array('label'=>$langs->trans("AmountInvoicedHT"), 'checked'=>0, 'enabled'=>$conf->global->PROPOSAL_SHOW_INVOICED_AMOUNT),
-	'p.total_invoiced'=>array('label'=>$langs->trans("AmountInvoicedTTC"), 'checked'=>0, 'enabled'=>$conf->global->PROPOSAL_SHOW_INVOICED_AMOUNT),
+	'p.total_ht_invoiced'=>array('label'=>"AmountInvoicedHT", 'checked'=>0, 'enabled'=>!empty($conf->global->PROPOSAL_SHOW_INVOICED_AMOUNT)),
+	'p.total_invoiced'=>array('label'=>"AmountInvoicedTTC", 'checked'=>0, 'enabled'=>!empty($conf->global->PROPOSAL_SHOW_INVOICED_AMOUNT)),
+	'p.multicurrency_code'=>array('label'=>'Currency', 'checked'=>0, 'enabled'=>(empty($conf->multicurrency->enabled) ? 0 : 1)),
+	'p.multicurrency_tx'=>array('label'=>'CurrencyRate', 'checked'=>0, 'enabled'=>(empty($conf->multicurrency->enabled) ? 0 : 1)),
+	'p.multicurrency_total_ht'=>array('label'=>'MulticurrencyAmountHT', 'checked'=>0, 'enabled'=>(empty($conf->multicurrency->enabled) ? 0 : 1)),
+	'p.multicurrency_total_vat'=>array('label'=>'MulticurrencyAmountVAT', 'checked'=>0, 'enabled'=>(empty($conf->multicurrency->enabled) ? 0 : 1)),
+	'p.multicurrency_total_ttc'=>array('label'=>'MulticurrencyAmountTTC', 'checked'=>0, 'enabled'=>(empty($conf->multicurrency->enabled) ? 0 : 1)),
+	'p.multicurrency_total_ht_invoiced'=>array('label'=>'MulticurrencyAmountInvoicedHT', 'checked'=>0, 'enabled'=>!empty($conf->multicurrency->enabled) && !empty($conf->global->PROPOSAL_SHOW_INVOICED_AMOUNT)),
+	'p.multicurrency_total_invoiced'=>array('label'=>'MulticurrencyAmountInvoicedTTC', 'checked'=>0, 'enabled'=>!empty($conf->multicurrency->enabled) && !empty($conf->global->PROPOSAL_SHOW_INVOICED_AMOUNT)),
 	'u.login'=>array('label'=>"Author", 'checked'=>1, 'position'=>10),
 	'sale_representative'=>array('label'=>"SaleRepresentativesOfThirdParty", 'checked'=>1),
 	'p.datec'=>array('label'=>"DateCreation", 'checked'=>0, 'position'=>500),
@@ -209,6 +221,11 @@ if (GETPOST('button_removefilter_x', 'alpha') || GETPOST('button_removefilter.x'
 	$search_montant_ht = '';
 	$search_montant_vat = '';
 	$search_montant_ttc = '';
+	$search_multicurrency_code = '';
+	$search_multicurrency_tx = '';
+	$search_multicurrency_montant_ht = '';
+	$search_multicurrency_montant_vat = '';
+	$search_multicurrency_montant_ttc = '';
 	$search_login = '';
 	$search_product_category = '';
 	$search_town = '';
@@ -217,12 +234,12 @@ if (GETPOST('button_removefilter_x', 'alpha') || GETPOST('button_removefilter.x'
 	$search_type = '';
 	$search_country = '';
 	$search_type_thirdparty = '';
-	$search_date_start='';
-	$search_date_end='';
-	$search_dateend_start='';
-	$search_dateend_end='';
-	$search_datedelivery_start='';
-	$search_datedelivery_end='';
+	$search_date_start = '';
+	$search_date_end = '';
+	$search_dateend_start = '';
+	$search_dateend_end = '';
+	$search_datedelivery_start = '';
+	$search_datedelivery_end = '';
 	$search_availability = '';
 	$viewstatut = '';
 	$object_statut = '';
@@ -269,6 +286,7 @@ $sql .= " typent.code as typent_code,";
 $sql .= " ava.rowid as availability,";
 $sql .= " state.code_departement as state_code, state.nom as state_name,";
 $sql .= ' p.rowid, p.entity, p.note_private, p.total_ht, p.tva as total_vat, p.total as total_ttc, p.localtax1, p.localtax2, p.ref, p.ref_client, p.fk_statut, p.fk_user_author, p.datep as dp, p.fin_validite as dfv,p.date_livraison as ddelivery,';
+$sql .= ' p.fk_multicurrency, p.multicurrency_code, p.multicurrency_tx, p.multicurrency_total_ht, p.multicurrency_total_tva as multicurrency_total_vat, p.multicurrency_total_ttc,';
 $sql .= ' p.datec as date_creation, p.tms as date_update, p.date_cloture as date_cloture,';
 $sql .= ' p.note_public, p.note_private,';
 $sql .= " pr.rowid as project_id, pr.ref as project_ref, pr.title as project_label,";
@@ -326,6 +344,11 @@ if ($search_login)					$sql .= natural_search("u.login", $search_login);
 if ($search_montant_ht != '')		$sql .= natural_search("p.total_ht", $search_montant_ht, 1);
 if ($search_montant_vat != '')		$sql .= natural_search("p.tva", $search_montant_vat, 1);
 if ($search_montant_ttc != '')		$sql .= natural_search("p.total", $search_montant_ttc, 1);
+if ($search_multicurrency_code != '')        $sql .= ' AND p.multicurrency_code = "'.$db->escape($search_multicurrency_code).'"';
+if ($search_multicurrency_tx != '')          $sql .= natural_search('p.multicurrency_tx', $search_multicurrency_tx, 1);
+if ($search_multicurrency_montant_ht != '')  $sql .= natural_search('p.multicurrency_total_ht', $search_multicurrency_montant_ht, 1);
+if ($search_multicurrency_montant_vat != '') $sql .= natural_search('p.multicurrency_total_tva', $search_multicurrency_montant_vat, 1);
+if ($search_multicurrency_montant_ttc != '') $sql .= natural_search('p.multicurrency_total_ttc', $search_multicurrency_montant_ttc, 1);
 if ($sall) {
 	$sql .= natural_search(array_keys($fieldstosearchall), $sall);
 }
@@ -338,13 +361,13 @@ if ($viewstatut != '' && $viewstatut != '-1')
 {
 	$sql .= ' AND p.fk_statut IN ('.$db->escape($viewstatut).')';
 }
-if ($search_date_start)             $sql .= " AND p.datep >= '" . $db->idate($search_date_start) . "'";
-if ($search_date_end)               $sql .= " AND p.datep <= '" . $db->idate($search_date_end) . "'";
-if ($search_dateend_start)      	$sql .= " AND p.fin_validite >= '" . $db->idate($search_dateend_start) . "'";
-if ($search_dateend_end)            $sql .= " AND p.fin_validite <= '" . $db->idate($search_dateend_end) . "'";
-if ($search_datedelivery_start)     $sql .= " AND p.date_livraison >= '" . $db->idate($search_datedelivery_start) . "'";
-if ($search_datedelivery_end)       $sql .= " AND p.date_livraison <= '" . $db->idate($search_datedelivery_end) . "'";
-if ($search_sale > 0)				$sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = " .$db->escape($search_sale);
+if ($search_date_start)             $sql .= " AND p.datep >= '".$db->idate($search_date_start)."'";
+if ($search_date_end)               $sql .= " AND p.datep <= '".$db->idate($search_date_end)."'";
+if ($search_dateend_start)      	$sql .= " AND p.fin_validite >= '".$db->idate($search_dateend_start)."'";
+if ($search_dateend_end)            $sql .= " AND p.fin_validite <= '".$db->idate($search_dateend_end)."'";
+if ($search_datedelivery_start)     $sql .= " AND p.date_livraison >= '".$db->idate($search_datedelivery_start)."'";
+if ($search_datedelivery_end)       $sql .= " AND p.date_livraison <= '".$db->idate($search_datedelivery_end)."'";
+if ($search_sale > 0)				$sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".$db->escape($search_sale);
 if ($search_user > 0)
 {
 	$sql .= " AND c.fk_c_type_contact = tc.rowid AND tc.element='propal' AND tc.source='internal' AND c.element_id = p.rowid AND c.fk_socpeople = ".$db->escape($search_user);
@@ -428,6 +451,11 @@ if ($resql)
 	if ($search_user > 0)    			$param .= '&search_user='.urlencode($search_user);
 	if ($search_sale > 0)    			$param .= '&search_sale='.urlencode($search_sale);
 	if ($search_montant_ht)  			$param .= '&search_montant_ht='.urlencode($search_montant_ht);
+	if ($search_multicurrency_code != '')  $param .= '&search_multicurrency_code='.urlencode($search_multicurrency_code);
+	if ($search_multicurrency_tx != '')  $param .= '&search_multicurrency_tx='.urlencode($search_multicurrency_tx);
+	if ($search_multicurrency_montant_ht != '')  $param .= '&search_multicurrency_montant_ht='.urlencode($search_multicurrency_montant_ht);
+	if ($search_multicurrency_montant_vat != '')  $param .= '&search_multicurrency_montant_vat='.urlencode($search_multicurrency_montant_vat);
+	if ($search_multicurrency_montant_ttc != '') $param .= '&search_multicurrency_montant_ttc='.urlencode($search_multicurrency_montant_ttc);
 	if ($search_login)  	 			$param .= '&search_login='.urlencode($search_login);
 	if ($search_town)		 			$param .= '&search_town='.urlencode($search_town);
 	if ($search_zip)		 			$param .= '&search_zip='.urlencode($search_zip);
@@ -599,12 +627,12 @@ if ($resql)
 	{
 		print '<td class="liste_titre center">';
 		print '<div class="nowrap">';
-		print $langs->trans('From') . ' ';
-		print $form->selectDate($search_date_start?$search_date_start:-1, 'search_date_start', 0, 0, 1);
+		print $langs->trans('From').' ';
+		print $form->selectDate($search_date_start ? $search_date_start : -1, 'search_date_start', 0, 0, 1);
 		print '</div>';
 		print '<div class="nowrap">';
-		print $langs->trans('to') . ' ';
-		print $form->selectDate($search_date_end?$search_date_end:-1, 'search_date_end', 0, 0, 1);
+		print $langs->trans('to').' ';
+		print $form->selectDate($search_date_end ? $search_date_end : -1, 'search_date_end', 0, 0, 1);
 		print '</div>';
 		print '</td>';
 	}
@@ -613,12 +641,12 @@ if ($resql)
 	{
 		print '<td class="liste_titre center">';
 		print '<div class="nowrap">';
-		print $langs->trans('From') . ' ';
-		print $form->selectDate($search_dateend_start?$search_dateend_start:-1, 'search_dateend_start', 0, 0, 1);
+		print $langs->trans('From').' ';
+		print $form->selectDate($search_dateend_start ? $search_dateend_start : -1, 'search_dateend_start', 0, 0, 1);
 		print '</div>';
 		print '<div class="nowrap">';
-		print $langs->trans('to') . ' ';
-		print $form->selectDate($search_dateend_end?$search_dateend_end:-1, 'search_dateend_end', 0, 0, 1);
+		print $langs->trans('to').' ';
+		print $form->selectDate($search_dateend_end ? $search_dateend_end : -1, 'search_dateend_end', 0, 0, 1);
 		print '</div>';
 		print '</td>';
 	}
@@ -627,12 +655,12 @@ if ($resql)
 	{
 		print '<td class="liste_titre center">';
 		print '<div class="nowrap">';
-		print $langs->trans('From') . ' ';
-		print $form->selectDate($search_datedelivery_start?$search_datedelivery_start:-1, 'search_datedelivery_start', 0, 0, 1);
+		print $langs->trans('From').' ';
+		print $form->selectDate($search_datedelivery_start ? $search_datedelivery_start : -1, 'search_datedelivery_start', 0, 0, 1);
 		print '</div>';
 		print '<div class="nowrap">';
-		print $langs->trans('to') . ' ';
-		print $form->selectDate($search_datedelivery_end?$search_datedelivery_end:-1, 'search_datedelivery_end', 0, 0, 1);
+		print $langs->trans('to').' ';
+		print $form->selectDate($search_datedelivery_end ? $search_datedelivery_end : -1, 'search_datedelivery_end', 0, 0, 1);
 		print '</div>';
 		print '</td>';
 	}
@@ -672,6 +700,53 @@ if ($resql)
 		print '</td>';
 	}
 	if (!empty($arrayfields['p.total_invoiced']['checked']))
+	{
+		// Amount invoiced
+		print '<td class="liste_titre right">';
+		print '</td>';
+	}
+	if (!empty($arrayfields['p.multicurrency_code']['checked']))
+	{
+		// Currency
+		print '<td class="liste_titre">';
+		print $form->selectMultiCurrency($search_multicurrency_code, 'search_multicurrency_code', 1);
+		print '</td>';
+	}
+	if (!empty($arrayfields['p.multicurrency_tx']['checked']))
+	{
+		// Currency rate
+		print '<td class="liste_titre">';
+		print '<input class="flat" type="text" size="4" name="search_multicurrency_tx" value="'.dol_escape_htmltag($search_multicurrency_tx).'">';
+		print '</td>';
+	}
+	if (!empty($arrayfields['p.multicurrency_total_ht']['checked']))
+	{
+		// Amount
+		print '<td class="liste_titre right">';
+		print '<input class="flat" type="text" size="4" name="search_multicurrency_montant_ht" value="'.dol_escape_htmltag($search_multicurrency_montant_ht).'">';
+		print '</td>';
+	}
+	if (!empty($arrayfields['p.multicurrency_total_vat']['checked']))
+	{
+		// Amount
+		print '<td class="liste_titre right">';
+		print '<input class="flat" type="text" size="4" name="search_multicurrency_montant_vat" value="'.dol_escape_htmltag($search_multicurrency_montant_vat).'">';
+		print '</td>';
+	}
+	if (!empty($arrayfields['p.multicurrency_total_ttc']['checked']))
+	{
+		// Amount
+		print '<td class="liste_titre right">';
+		print '<input class="flat" type="text" size="4" name="search_multicurrency_montant_ttc" value="'.dol_escape_htmltag($search_multicurrency_montant_ttc).'">';
+		print '</td>';
+	}
+	if (!empty($arrayfields['p.multicurrency_total_ht_invoiced']['checked']))
+	{
+		// Amount invoiced
+		print '<td class="liste_titre right">';
+		print '</td>';
+	}
+	if (!empty($arrayfields['p.multicurrency_total_invoiced']['checked']))
 	{
 		// Amount invoiced
 		print '<td class="liste_titre right">';
@@ -750,6 +825,13 @@ if ($resql)
 	if (!empty($arrayfields['p.total_ttc']['checked']))			print_liste_field_titre($arrayfields['p.total_ttc']['label'], $_SERVER["PHP_SELF"], 'p.total', '', $param, 'class="right"', $sortfield, $sortorder);
 	if (!empty($arrayfields['p.total_ht_invoiced']['checked'])) print_liste_field_titre($arrayfields['p.total_ht_invoiced']['label'], $_SERVER["PHP_SELF"], '', '', $param, 'class="right"', $sortfield, $sortorder);
 	if (!empty($arrayfields['p.total_invoiced']['checked']))	print_liste_field_titre($arrayfields['p.total_invoiced']['label'], $_SERVER["PHP_SELF"], '', '', $param, 'class="right"', $sortfield, $sortorder);
+	if (!empty($arrayfields['p.multicurrency_code']['checked']))      print_liste_field_titre($arrayfields['p.multicurrency_code']['label'], $_SERVER['PHP_SELF'], 'p.multicurrency_code', '', $param, '', $sortfield, $sortorder);
+	if (!empty($arrayfields['p.multicurrency_tx']['checked']))        print_liste_field_titre($arrayfields['p.multicurrency_tx']['label'], $_SERVER['PHP_SELF'], 'p.multicurrency_tx', '', $param, '', $sortfield, $sortorder);
+	if (!empty($arrayfields['p.multicurrency_total_ht']['checked']))  print_liste_field_titre($arrayfields['p.multicurrency_total_ht']['label'], $_SERVER['PHP_SELF'], 'p.multicurrency_total_ht', '', $param, 'class="right"', $sortfield, $sortorder);
+	if (!empty($arrayfields['p.multicurrency_total_vat']['checked'])) print_liste_field_titre($arrayfields['p.multicurrency_total_vat']['label'], $_SERVER['PHP_SELF'], 'p.multicurrency_total_tva', '', $param, 'class="right"', $sortfield, $sortorder);
+	if (!empty($arrayfields['p.multicurrency_total_ttc']['checked'])) print_liste_field_titre($arrayfields['p.multicurrency_total_ttc']['label'], $_SERVER['PHP_SELF'], 'p.multicurrency_total_ttc', '', $param, 'class="right"', $sortfield, $sortorder);
+	if (!empty($arrayfields['p.multicurrency_total_ht_invoiced']['checked'])) print_liste_field_titre($arrayfields['p.multicurrency_total_ht_invoiced']['label'], $_SERVER["PHP_SELF"], '', '', $param, 'class="right"', $sortfield, $sortorder);
+	if (!empty($arrayfields['p.multicurrency_total_invoiced']['checked']))	print_liste_field_titre($arrayfields['p.multicurrency_total_invoiced']['label'], $_SERVER["PHP_SELF"], '', '', $param, 'class="right"', $sortfield, $sortorder);
 	if (!empty($arrayfields['u.login']['checked']))				print_liste_field_titre($arrayfields['u.login']['label'], $_SERVER["PHP_SELF"], 'u.login', '', $param, 'align="center"', $sortfield, $sortorder);
 	if (!empty($arrayfields['sale_representative']['checked']))	print_liste_field_titre($arrayfields['sale_representative']['label'], $_SERVER["PHP_SELF"], "", "", "$param", '', $sortfield, $sortorder);
 	// Extra fields
@@ -776,6 +858,7 @@ if ($resql)
 
 		$objectstatic->id = $obj->rowid;
 		$objectstatic->ref = $obj->ref;
+		$objectstatic->ref_client = $obj->ref_client;
 		$objectstatic->note_public = $obj->note_public;
 		$objectstatic->note_private = $obj->note_private;
 
@@ -789,6 +872,29 @@ if ($resql)
 		$projectstatic->ref = $obj->project_ref;
 		$projectstatic->title = $obj->project_label;
 
+		$totalInvoicedHT = 0;
+		$totalInvoicedTTC = 0;
+		$multicurrency_totalInvoicedHT = 0;
+		$multicurrency_totalInvoicedTTC = 0;
+
+		$TInvoiceData = $objectstatic->InvoiceArrayList($obj->rowid);
+
+		if (!empty($TInvoiceData))
+		{
+			foreach ($TInvoiceData as $invoiceData)
+			{
+				$invoice = new Facture($db);
+				$invoice->fetch($invoiceData->facid);
+
+				if (!empty($conf->global->FACTURE_DEPOSITS_ARE_JUST_PAYMENTS) && $invoice->type == Facture::TYPE_DEPOSIT) continue;
+
+				$totalInvoicedHT += $invoice->total_ht;
+				$totalInvoicedTTC += $invoice->total_ttc;
+				$multicurrency_totalInvoicedHT += $invoice->multicurrency_total_ht;
+				$multicurrency_totalInvoicedTTC += $invoice->multicurrency_total_ttc;
+			}
+		}
+
 		print '<tr class="oddeven">';
 
 		if (!empty($arrayfields['p.ref']['checked']))
@@ -798,7 +904,7 @@ if ($resql)
 			print '<table class="nobordernopadding"><tr class="nocellnopadd">';
 			// Picto + Ref
 			print '<td class="nobordernopadding nowrap">';
-			print $objectstatic->getNomUrl(1, '', '', 0, 1, 1);
+			print $objectstatic->getNomUrl(1, '', '', 0, 1, (isset($conf->global->PROPAL_LIST_SHOW_NOTES) ? $conf->global->PROPAL_LIST_SHOW_NOTES : 1));
 			print '</td>';
 			// Warning
 			$warnornote = '';
@@ -824,7 +930,7 @@ if ($resql)
 		if (!empty($arrayfields['p.ref_client']['checked']))
 		{
 			// Customer ref
-			print '<td class="nowrap">';
+			print '<td class="nowrap tdoverflowmax200">';
 			print $obj->ref_client;
 			print '</td>';
 			if (!$i) $totalarray['nbfield']++;
@@ -974,46 +1080,66 @@ if ($resql)
 			$totalarray['val']['p.total_ttc'] += $obj->total_ttc;
 		}
 		// Amount invoiced
-        if (!empty($arrayfields['p.total_ht_invoiced']['checked'])) {
-            $totalInvoiced = 0;
-            $p = new Propal($db);
-            $TInvoiceData = $p->InvoiceArrayList($obj->rowid);
-
-            if (!empty($TInvoiceData)) {
-                foreach ($TInvoiceData as $invoiceData) {
-                    $invoice = new Facture($db);
-                    $invoice->fetch($invoiceData->facid);
-
-                    if (!empty($conf->global->FACTURE_DEPOSITS_ARE_JUST_PAYMENTS) && $invoice->type == Facture::TYPE_DEPOSIT) continue;
-                    $totalInvoiced += $invoice->total_ht;
-                }
-            }
-
-            print '<td class="nowrap right">'.price($totalInvoiced)."</td>\n";
+        if (!empty($arrayfields['p.total_ht_invoiced']['checked']))
+        {
+            print '<td class="nowrap right">'.price($totalInvoicedHT)."</td>\n";
             if (!$i) $totalarray['nbfield']++;
             if (!$i) $totalarray['pos'][$totalarray['nbfield']] = 'p.total_ht_invoiced';
-            $totalarray['val']['p.total_ht_invoiced'] += $obj->total_ht_invoiced;
+            $totalarray['val']['p.total_ht_invoiced'] += $totalInvoicedHT;
         }
         // Amount invoiced
-        if (!empty($arrayfields['p.total_invoiced']['checked'])) {
-            $totalInvoiced = 0;
-            $p = new Propal($db);
-            $TInvoiceData = $p->InvoiceArrayList($obj->rowid);
-
-            if (!empty($TInvoiceData)) {
-                foreach ($TInvoiceData as $invoiceData) {
-                    $invoice = new Facture($db);
-                    $invoice->fetch($invoiceData->facid);
-
-                    if (!empty($conf->global->FACTURE_DEPOSITS_ARE_JUST_PAYMENTS) && $invoice->type == Facture::TYPE_DEPOSIT) continue;
-                    $totalInvoiced += $invoice->total_ttc;
-                }
-            }
-
-            print '<td class="nowrap right">'.price($totalInvoiced)."</td>\n";
+        if (!empty($arrayfields['p.total_invoiced']['checked']))
+        {
+            print '<td class="nowrap right">'.price($totalInvoicedTTC)."</td>\n";
             if (!$i) $totalarray['nbfield']++;
             if (!$i) $totalarray['pos'][$totalarray['nbfield']] = 'p.total_invoiced';
-            $totalarray['val']['p.total_invoiced'] += $obj->total_invoiced;
+            $totalarray['val']['p.total_invoiced'] += $totalInvoicedTTC;
+        }
+
+		// Currency
+		if (!empty($arrayfields['p.multicurrency_code']['checked']))
+		{
+			  print '<td class="nowrap">'.$obj->multicurrency_code.' - '.$langs->trans('Currency'.$obj->multicurrency_code)."</td>\n";
+			  if (!$i) $totalarray['nbfield']++;
+		}
+
+		// Currency rate
+		if (!empty($arrayfields['p.multicurrency_tx']['checked']))
+		{
+			  print '<td class="nowrap">';
+			  $form->form_multicurrency_rate($_SERVER['PHP_SELF'].'?id='.$obj->rowid, $obj->multicurrency_tx, 'none', $obj->multicurrency_code);
+			  print "</td>\n";
+			  if (!$i) $totalarray['nbfield']++;
+		}
+		// Amount HT
+		if (!empty($arrayfields['p.multicurrency_total_ht']['checked']))
+		{
+			  print '<td class="right nowrap">'.price($obj->multicurrency_total_ht)."</td>\n";
+			  if (!$i) $totalarray['nbfield']++;
+		}
+		// Amount VAT
+		if (!empty($arrayfields['p.multicurrency_total_vat']['checked']))
+		{
+			print '<td class="right nowrap">'.price($obj->multicurrency_total_vat)."</td>\n";
+			if (!$i) $totalarray['nbfield']++;
+		}
+		// Amount TTC
+		if (!empty($arrayfields['p.multicurrency_total_ttc']['checked']))
+		{
+			print '<td class="right nowrap">'.price($obj->multicurrency_total_ttc)."</td>\n";
+			if (!$i) $totalarray['nbfield']++;
+		}
+		// Amount invoiced
+        if (!empty($arrayfields['p.multicurrency_total_ht_invoiced']['checked']))
+        {
+            print '<td class="nowrap right">'.price($multicurrency_totalInvoicedHT)."</td>\n";
+            if (!$i) $totalarray['nbfield']++;
+        }
+        // Amount invoiced
+        if (!empty($arrayfields['p.multicurrency_total_invoiced']['checked']))
+        {
+            print '<td class="nowrap right">'.price($multicurrency_totalInvoicedTTC)."</td>\n";
+            if (!$i) $totalarray['nbfield']++;
         }
 
 		$userstatic->id = $obj->fk_user_author;
@@ -1039,9 +1165,7 @@ if ($resql)
 				$nbofsalesrepresentative = count($listsalesrepresentatives);
 				if ($nbofsalesrepresentative > 3)   // We print only number
 				{
-					print '<a href="'.DOL_URL_ROOT.'/societe/commerciaux.php?socid='.$companystatic->id.'">';
 					print $nbofsalesrepresentative;
-					print '</a>';
 				}
 				elseif ($nbofsalesrepresentative > 0)
 				{

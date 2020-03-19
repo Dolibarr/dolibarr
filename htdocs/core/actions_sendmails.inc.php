@@ -273,6 +273,7 @@ if (($action == 'send' || $action == 'relance') && !$_POST['addfile'] && !$_POST
 
 			$langs->load("commercial");
 
+			$reg = array();
 			$fromtype = GETPOST('fromtype', 'alpha');
 			if ($fromtype === 'robot') {
 				$from = dol_string_nospecial($conf->global->MAIN_MAIL_EMAIL_FROM, ' ', array(",")).' <'.$conf->global->MAIN_MAIL_EMAIL_FROM.'>';
@@ -292,7 +293,8 @@ if (($action == 'send' || $action == 'relance') && !$_POST['addfile'] && !$_POST
 				$from = trim($tmp[($reg[1] - 1)]);
 			}
 			elseif (preg_match('/senderprofile_(\d+)_(\d+)/', $fromtype, $reg)) {
-				$sql = 'SELECT rowid, label, email FROM '.MAIN_DB_PREFIX.'c_email_senderprofile WHERE rowid = '.(int) $reg[1];
+				$sql = 'SELECT rowid, label, email FROM '.MAIN_DB_PREFIX.'c_email_senderprofile';
+				$sql .= ' WHERE rowid = '.(int) $reg[1];
 				$resql = $db->query($sql);
 				$obj = $db->fetch_object($resql);
 				if ($obj)
