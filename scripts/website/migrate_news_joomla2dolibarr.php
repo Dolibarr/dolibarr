@@ -37,15 +37,16 @@ define('EVEN_IF_ONLY_LOGIN_ALLOWED', 1); // Set this define to 0 if you want to 
 
 $error = 0;
 
-$mode = $argv[1];
-$websiteref = $argv[2];
-$joomlaserverinfo = $argv[3];
+$mode = empty($argv[1])?'':$argv[1];
+$websiteref = empty($argv[2])?'':$argv[2];
+$joomlaserverinfo = empty($argv[3])?'':$argv[3];
 $image = 'image/__WEBSITE_KEY__/images/stories/dolibarr.png';
 
-$max = 1;
+$max = empty($argv[4])?'10':$argv[4];
 
 if (empty($argv[3]) || !in_array($argv[1], array('test', 'confirm')) || empty($websiteref)) {
-	print "Usage: $script_file (test|confirm) website login:pass@serverjoomla/tableprefix/databasejoomla\n";
+	print '***** '.$script_file.' *****'."\n";
+	print "Usage: $script_file (test|confirm) website login:pass@serverjoomla/tableprefix/databasejoomla [nbmaxrecord]\n";
 	print "\n";
 	print "Load joomla news and create them into Dolibarr database (if they don't alreay exist).\n";
 	exit(-1);
@@ -94,8 +95,8 @@ if (! $resql) {
 
 $db->begin();
 
+$i = 0;
 while ($obj = $dbjoomla->fetch_object($resql)) {
-	$i = 0;
 	if ($obj) {
 		$i++;
 		$id = $obj->id;
@@ -104,37 +105,48 @@ while ($obj = $dbjoomla->fetch_object($resql)) {
 		//$description = dol_string_nohtmltag($obj->introtext);
 		$description = trim(dol_trunc(dol_string_nohtmltag($obj->metadesc), 250));
 		if (empty($description)) $description = trim(dol_trunc(dol_string_nohtmltag($obj->introtext), 250));
-		$hmtltext = $obj->introtext.'<br>'."\n".'<hr>'."\n".'<br>'."\n".$obj->fulltext;
+		$htmltext = '<section id="mysectionnews" contenteditable="true">'."\n";
+		$htmltext .= $obj->introtext;
+		if ($obj->fulltext) {
+			$htmltext .= '<br>'."\n".'<hr>'."\n".'<br>'."\n".$obj->fulltext;
+		}
+		$htmltext .= "\n</section>";
 		$language = ($obj->language && $obj->language != '*' ? $obj->language : 'en');
 		$keywords = $obj->metakey;
 		$author_alias = $obj->username;
 
 		$date_creation = $dbjoomla->jdate($obj->publish_up);
 
-		print $i.' '.$id.' '.$title.' '.$language.' '.$keywords.' '.$importid."\n";
+		print '#'.$i.' id='.$id.' '.$title.' lang='.$language.' keywords='.$keywords.' importid='.$importid."\n";
 
 		$sqlinsert = 'INSERT INTO '.MAIN_DB_PREFIX.'website_page(fk_website, pageurl, aliasalt, title, description, keywords, content, status, type_container, lang, import_key, image, date_creation, author_alias)';
 		$sqlinsert .= " VALUES(".$websiteid.", '".$db->escape($alias)."', '', '".$db->escape($title)."', '".$db->escape($description)."', '".$db->escape($keywords)."', ";
-		$sqlinsert .= " '".$db->escape($hmtltext)."', '1', 'blogpost', '".$db->escape($language)."', '".$db->escape($importid)."', '".$db->escape($image)."', '".$db->idate($date_creation)."', '".$db->escape($author_alias)."')";
+		$sqlinsert .= " '".$db->escape($htmltext)."', '1', 'blogpost', '".$db->escape($language)."', '".$db->escape($importid)."', '".$db->escape($image)."', '".$db->idate($date_creation)."', '".$db->escape($author_alias)."')";
 		print $sqlinsert."\n";
 
 		$result = $db->query($sqlinsert);
 		if ($result <= 0) {
-			$error++;
-			print 'Error, '.$db->lasterror.": ".$sqlinsert."\n";
-			break;
+			print 'ERROR: '.$db->lasterrno.": ".$sqlinsert."\n";
+			if ($db->lasterrno != 'DB_ERROR_RECORD_ALREADY_EXISTS') {
+				$error++;
+			}
+		} else {
+			$pageid = $db->last_insert_id(MAIN_DB_PREFIX.'website_page');
+			print "Insert done - pageid = ".$pageid."\n";
 		}
 
-		if ($max && $i <= $max) {
-			print 'Nb max of record reached. We stop now.'."\n";
+		if ($max && $i >= $max) {
+			print 'Nb max of record ('.$max.') reached. We stop now.'."\n";
 			break;
 		}
 	}
 }
 
 if ($mode == 'confirm' && ! $error) {
+	print "Commit\n";
 	$db->commit();
 } else {
+	print "Rollback\n";
 	$db->rollback();
 }
 

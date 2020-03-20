@@ -53,10 +53,10 @@ print $langs->trans("YouMayFindPerfAdviceHere", 'https://wiki.dolibarr.org/index
 
 // Recupere la version de PHP
 $phpversion=version_php();
-print "<br>PHP - ".$langs->trans("Version").": ".$phpversion."<br>\n";
+print "<br><strong>PHP</strong> - ".$langs->trans("Version").": ".$phpversion."<br>\n";
 
 // Recupere la version du serveur web
-print "<br>Web server - ".$langs->trans("Version").": ".$_SERVER["SERVER_SOFTWARE"]."<br>\n";
+print "<br><strong>Web server</strong> - ".$langs->trans("Version").": ".$_SERVER["SERVER_SOFTWARE"]."<br>\n";
 
 // XDebug
 print '<br>';
@@ -65,8 +65,8 @@ $test=!function_exists('xdebug_is_enabled');
 if ($test) print img_picto('', 'tick.png').' '.$langs->trans("NotInstalled");
 else
 {
-	print img_picto('', 'warning').' '.$langs->trans("XDebugInstalled");
-	print ' '.$langs->trans("MoreInformation").' <a href="'.DOL_URL_ROOT.'/admin/system/xdebug.php'.'">XDebug admin page</a>';
+	print img_picto('', 'warning').' '.$langs->trans("ModuleActivated", $langs->transnoentities("XDebug"));
+	print ' - '.$langs->trans("MoreInformation").' <a href="'.DOL_URL_ROOT.'/admin/system/xdebug.php'.'">XDebug admin page</a>';
 }
 print '<br>';
 
