@@ -483,7 +483,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 	print '<input type="hidden" name="id" value="'.$object->id.'">';
 
 	// Filters
-	print '<table class="border centpercent">';
+	print '<table class="border centpercent tableforfield">';
 	print '<tr class="liste_titre">';
 	print '<td>'.$langs->trans("Filters").'</td><td></td><td></td>';
 	print '</tr>';
@@ -562,7 +562,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 	print '<div class="clearboth"></div><br>';
 
 	// Operations
-	print '<table id="tablelines" class="noborder noshadow">';
+	print '<table id="tablelines" class="noborder noshadow tableforfield">';
 	print '<tr class="liste_titre">';
 	print '<td>'.$langs->trans("EmailcollectorOperations").'</td><td></td><td></td><td></td>';
 	print '</tr>';
