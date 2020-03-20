@@ -113,6 +113,7 @@ function dolSavePageContent($filetpl, Website $object, WebsitePage $objectpage)
 	// Now create the .tpl file (duplicate code with actions updatesource or updatecontent but we need this to save new header)
 	dol_syslog("We regenerate the tpl page filetpl=".$filetpl);
 
+	include_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 	dol_delete_file($filetpl);
 
 	$shortlangcode = '';

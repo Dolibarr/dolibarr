@@ -54,6 +54,8 @@ if (empty($argv[3]) || !in_array($argv[1], array('test', 'confirm')) || empty($w
 
 require $path."../../htdocs/master.inc.php";
 include_once DOL_DOCUMENT_ROOT.'/website/class/website.class.php';
+include_once DOL_DOCUMENT_ROOT.'/website/class/websitepage.class.php';
+include_once DOL_DOCUMENT_ROOT.'/core/lib/website2.lib.php';
 
 $langs->load('main');
 
@@ -95,7 +97,7 @@ if (! $resql) {
 
 $db->begin();
 
-$i = 0;
+$i = 0; $nbimported = 0; $nbalreadyexists = 0;
 while ($obj = $dbjoomla->fetch_object($resql)) {
 	if ($obj) {
 		$i++;
@@ -129,10 +131,23 @@ while ($obj = $dbjoomla->fetch_object($resql)) {
 			print 'ERROR: '.$db->lasterrno.": ".$sqlinsert."\n";
 			if ($db->lasterrno != 'DB_ERROR_RECORD_ALREADY_EXISTS') {
 				$error++;
+			} else {
+				$nbalreadyexists++;
 			}
 		} else {
 			$pageid = $db->last_insert_id(MAIN_DB_PREFIX.'website_page');
+
+			if ($pageid > 0) {	// We must also regenerate page on disk
+				global $dolibarr_main_data_root;
+				$pathofwebsite = $dolibarr_main_data_root.'/website/'.$websiteref;
+				$filetpl = $pathofwebsite.'/page'.$pageid.'.tpl.php';
+				$websitepage = new WebsitePage($db);
+				$websitepage->fetch($pageid);
+				dolSavePageContent($filetpl, $website, $websitepage);
+			}
+
 			print "Insert done - pageid = ".$pageid."\n";
+			$nbimported++;
 		}
 
 		if ($max && $i >= $max) {
@@ -144,6 +159,8 @@ while ($obj = $dbjoomla->fetch_object($resql)) {
 
 if ($mode == 'confirm' && ! $error) {
 	print "Commit\n";
+	print $nbalreadyexists." page(s) already exists.\n";
+	print $nbimported." page(s) imported with importid=".$importid."\n";
 	$db->commit();
 } else {
 	print "Rollback\n";

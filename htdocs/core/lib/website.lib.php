@@ -21,7 +21,6 @@
  *      \brief      Library for website module
  */
 
-
 /**
  * Remove PHP code part from a string.
  *

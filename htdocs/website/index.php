@@ -3642,10 +3642,20 @@ if ($action == 'preview' || $action == 'createfromclone' || $action == 'createpa
 		// If mode WEBSITE_SUBCONTAINERSINLINE is on
 		if (!empty($conf->global->WEBSITE_SUBCONTAINERSINLINE))
 		{
+			// TODO Check file $filephp exists, if not create it.
+
 			//var_dump($filetpl);
 			$filephp = $filetpl;
 			ob_start();
-			include $filephp;
+			try {
+				$res = include $filephp;
+				if (empty($res)) {
+					print "ERROR: Failed to include file '".$filephp."'. Try to edit and save page.";
+				}
+			} catch(Exception $e)
+			{
+				print $e->getMessage();
+			}
 			$newcontent = ob_get_contents();
 			ob_end_clean();
 		}
