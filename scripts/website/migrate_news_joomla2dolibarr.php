@@ -42,7 +42,7 @@ $websiteref = empty($argv[2])?'':$argv[2];
 $joomlaserverinfo = empty($argv[3])?'':$argv[3];
 $image = 'image/__WEBSITE_KEY__/images/stories/dolibarr.png';
 
-$max = empty($argv[4])?'10':$argv[4];
+$max = (empty($argv[4]) && $argv[4] !== '0')?'10':$argv[4];
 
 if (empty($argv[3]) || !in_array($argv[1], array('test', 'confirm')) || empty($websiteref)) {
 	print '***** '.$script_file.' *****'."\n";
@@ -95,6 +95,19 @@ if (! $resql) {
 	exit;
 }
 
+$blogpostheader = file_get_contents($path.'blogpost-header.txt');
+if ($blogpostheader === false) {
+	print "Error: Failed to load file content of 'blogpost-header.txt'\n";
+	exit(-1);
+}
+$blogpostfooter = file_get_contents($path.'blogpost-footer.txt');
+if ($blogpostfooter === false) {
+	print "Error: Failed to load file content of 'blogpost-footer.txt'\n";
+	exit(-1);
+}
+
+
+
 $db->begin();
 
 $i = 0; $nbimported = 0; $nbalreadyexists = 0;
@@ -107,12 +120,17 @@ while ($obj = $dbjoomla->fetch_object($resql)) {
 		//$description = dol_string_nohtmltag($obj->introtext);
 		$description = trim(dol_trunc(dol_string_nohtmltag($obj->metadesc), 250));
 		if (empty($description)) $description = trim(dol_trunc(dol_string_nohtmltag($obj->introtext), 250));
-		$htmltext = '<section id="mysectionnews" contenteditable="true">'."\n";
+
+		$htmltext = "";
+		if ($blogpostheader) $htmltext .= $blogpostheader."\n";
+		$htmltext .= '<section id="mysectionnews" contenteditable="true">'."\n";
 		$htmltext .= $obj->introtext;
 		if ($obj->fulltext) {
 			$htmltext .= '<br>'."\n".'<hr>'."\n".'<br>'."\n".$obj->fulltext;
 		}
 		$htmltext .= "\n</section>";
+		if ($blogpostfooter) $htmltext .= "\n".$blogpostfooter;
+
 		$language = ($obj->language && $obj->language != '*' ? $obj->language : 'en');
 		$keywords = $obj->metakey;
 		$author_alias = $obj->username;

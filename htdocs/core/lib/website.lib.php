@@ -562,57 +562,54 @@ function getStructuredData($type, $data = array())
 	}
 	elseif ($type == 'blogpost')
 	{
-		if ($websitepage->fk_user_creat > 0)
+		if (! empty($websitepage->author_alias))
 		{
-			include_once DOL_DOCUMENT_ROOT.'/user/class/user.class.php';
-			$tmpuser = new User($db);
-			$restmpuser = $tmpuser->fetch($websitepage->fk_user_creat);
+			//include_once DOL_DOCUMENT_ROOT.'/user/class/user.class.php';
+			//$tmpuser = new User($db);
+			//$restmpuser = $tmpuser->fetch($websitepage->fk_user_creat);
 
-			if ($restmpuser > 0)
-			{
-				$pageurl = $websitepage->pageurl;
-				$title = $websitepage->title;
-				$image = $websitepage->image;
-				$companyname = $mysoc->name;
-				$description = $websitepage->description;
+			$pageurl = $websitepage->pageurl;
+			$title = $websitepage->title;
+			$image = $websitepage->image;
+			$companyname = $mysoc->name;
+			$description = $websitepage->description;
 
-				$pageurl = str_replace('__WEBSITE_KEY__', $website->ref, $pageurl);
-				$title = str_replace('__WEBSITE_KEY__', $website->ref, $title);
-				$image = str_replace('__WEBSITE_KEY__', $website->ref, $image);
-				$companyname = str_replace('__WEBSITE_KEY__', $website->ref, $companyname);
-				$description = str_replace('__WEBSITE_KEY__', $website->ref, $description);
+			$pageurl = str_replace('__WEBSITE_KEY__', $website->ref, $pageurl);
+			$title = str_replace('__WEBSITE_KEY__', $website->ref, $title);
+			$image = str_replace('__WEBSITE_KEY__', $website->ref, $image);
+			$companyname = str_replace('__WEBSITE_KEY__', $website->ref, $companyname);
+			$description = str_replace('__WEBSITE_KEY__', $website->ref, $description);
 
-				$ret = '<!-- Add structured data for blog post -->'."\n";
-				$ret .= '<script type="application/ld+json">'."\n";
-				$ret .= '{
-					  "@context": "https://schema.org",
-					  "@type": "NewsArticle",
-					  "mainEntityOfPage": {
-					    "@type": "WebPage",
-					    "@id": "'.dol_escape_json($pageurl).'"
-					  },
-					  "headline": "'.dol_escape_json($title).'",
-					  "image": [
-					    "'.dol_escape_json($image).'"
-					   ],
-					  "datePublished": "'.dol_print_date($websitepage->date_creation, 'dayhourrfc').'",
-					  "dateModified": "'.dol_print_date($websitepage->date_modification, 'dayhourrfc').'",
-					  "author": {
-					    "@type": "Person",
-					    "name": "'.$tmpuser->getFullName($weblangs).'"
-					  },
-					  "publisher": {
-					     "@type": "Organization",
-					     "name": "'.dol_escape_json($companyname).'",
-					     "logo": {
-					        "@type": "ImageObject",
-					        "url": "/viewimage.php?modulepart=mycompany&file=logos%2F'.urlencode($mysoc->logo).'"
-					     }
-					   },
-					  "description": "'.dol_escape_json($description).'"
-					}'."\n";
-				$ret .= '</script>'."\n";
-			}
+			$ret = '<!-- Add structured data for blog post -->'."\n";
+			$ret .= '<script type="application/ld+json">'."\n";
+			$ret .= '{
+				  "@context": "https://schema.org",
+				  "@type": "NewsArticle",
+				  "mainEntityOfPage": {
+				    "@type": "WebPage",
+				    "@id": "'.dol_escape_json($pageurl).'"
+				  },
+				  "headline": "'.dol_escape_json($title).'",
+				  "image": [
+				    "'.dol_escape_json($image).'"
+				   ],
+				  "datePublished": "'.dol_print_date($websitepage->date_creation, 'dayhourrfc').'",
+				  "dateModified": "'.dol_print_date($websitepage->date_modification, 'dayhourrfc').'",
+				  "author": {
+				    "@type": "Person",
+				    "name": "'.dol_escape_json($websitepage->author_alias).'"
+				  },
+				  "publisher": {
+				     "@type": "Organization",
+				     "name": "'.dol_escape_json($companyname).'",
+				     "logo": {
+				        "@type": "ImageObject",
+				        "url": "/viewimage.php?modulepart=mycompany&file=logos%2F'.urlencode($mysoc->logo).'"
+				     }
+				   },
+				  "description": "'.dol_escape_json($description).'"
+				}'."\n";
+			$ret .= '</script>'."\n";
 		}
 	}
 	elseif ($type == 'product')
