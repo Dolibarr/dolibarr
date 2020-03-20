@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2013-2015  Laurent Destailleur     <eldy@users.sourceforge.net>
+/* Copyright (C) 2013-2020  Laurent Destailleur     <eldy@users.sourceforge.net>
  * Copyright (C) 2014       Marcos García           <marcosgdf@gmail.com>
  * Copyright (C) 2018       Frédéric France         <frederic.france@netlogic.fr>
  *
@@ -503,6 +503,8 @@ dol_fiche_end();
 print '</form>'."\n";
 
 
+// Buttons
+
 print '<div class="tabsAction">';
 
 print '<a class="butAction" href="exportcsv.php?id='.$numsondage.'">'.$langs->trans("ExportSpreadsheet").' (.CSV)'.'</a>';
@@ -546,7 +548,7 @@ if (GETPOST('ajoutsujet'))
 		for ($i = 1; $i < 32; $i++) {
 			print '<OPTION VALUE="'.$i.'">'.$i.'</OPTION>'."\n";
 		}
-		print '</SELECT>'."\n";
+		print '</select>'."\n";
 
 		print $formother->select_month('', 'nouveaumois', 1);
 
@@ -560,14 +562,14 @@ if (GETPOST('ajoutsujet'))
 		for ($i = 0; $i < 24; $i++) {
 			print '<OPTION VALUE="'.$i.'">'.$i.' H</OPTION>'."\n";
 		}
-		print '</SELECT>'."\n";
+		print '</select>'."\n";
 		print '<select name="nouvelleminutedebut"> '."\n";
 		print '<OPTION VALUE="vide">&nbsp;</OPTION>'."\n";
 		print '<OPTION VALUE="00">00</OPTION>'."\n";
 		print '<OPTION VALUE="15">15</OPTION>'."\n";
 		print '<OPTION VALUE="30">30</OPTION>'."\n";
 		print '<OPTION VALUE="45">45</OPTION>'."\n";
-		print '</SELECT>'."\n";
+		print '</select>'."\n";
 		print '<br><br>'.$langs->trans("AddEndHour").': <br><br>'."\n";
 		print '<select name="nouvelleheurefin"> '."\n";
 		print '<OPTION VALUE="vide">&nbsp;</OPTION>'."\n";
@@ -581,7 +583,7 @@ if (GETPOST('ajoutsujet'))
 		print '<OPTION VALUE="15">15</OPTION>'."\n";
 		print '<OPTION VALUE="30">30</OPTION>'."\n";
 		print '<OPTION VALUE="45">45</OPTION>'."\n";
-		print '</SELECT>'."\n";
+		print '</select>'."\n";
 
 		print '<br><br>';
 		print' <input type="submit" class="button" name="ajoutercolonne" value="'.dol_escape_htmltag($langs->trans("Add")).'">'."\n";
@@ -597,7 +599,7 @@ if (GETPOST('ajoutsujet'))
 }
 
 if ($user->rights->opensurvey->write) {
-	print '<br>'.$langs->trans("PollAdminDesc", img_picto('', 'delete'), $langs->trans("Add")).'<br>';
+	print '<span class="opacitymedium">'.$langs->trans("PollAdminDesc", img_picto('', 'delete'), $langs->trans("Add")).'</span><br>';
 }
 
 $nbcolonnes = substr_count($object->sujet, ',') + 1;
