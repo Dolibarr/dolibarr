@@ -1093,6 +1093,6 @@ print '</form>'."\n";
 
 print '<a name="bas"></a>'."\n";
 
-llxFooterSurvey();
+llxFooter();
 
 $db->close();
