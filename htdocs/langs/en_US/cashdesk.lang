@@ -96,3 +96,4 @@ ByTerminal=By terminal
 TakeposNumpadUsePaymentIcon=Use payment icon on numpad
 CashDeskRefNumberingModules=Numbering module for cash desk
 CashDeskGenericMaskCodes6 = <br><b>{TN}</b> tag is used to add the terminal number
+TakeposGroupSameProduct=Group same products lines
