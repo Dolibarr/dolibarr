@@ -130,7 +130,7 @@ function llxHeaderSurvey($title, $head = "", $disablejs = 0, $disablehead = 0, $
 		print '</div>';
 	}
 
-	print '<div style="margin-left: 50px; margin-right: 50px;"><br>';
+	print '<div style="margin-left: 50px; margin-right: 50px; text-align: start;"><br>';
 }
 
 /**
