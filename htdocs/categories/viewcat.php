@@ -71,7 +71,7 @@ if ($id == "" && $label == "")
 $result = restrictedArea($user, 'categorie', $id, '&category');
 
 $object = new Categorie($db);
-$result = $object->fetch($id, $label);
+$result = $object->fetch($id, $label, $type);
 if ($result <= 0) {
 	dol_print_error($db, $object->error); exit;
 }
@@ -80,7 +80,6 @@ if ($result <= 0) {
 	dol_print_error($db, $object->error); exit;
 }
 
-$type = $object->type;
 if (is_numeric($type)) $type = Categorie::$MAP_ID_TO_CODE[$type]; // For backward compatibility
 
 $extrafields = new ExtraFields($db);
@@ -222,8 +221,8 @@ $head = categories_prepare_head($object, $type);
 
 dol_fiche_head($head, 'card', $title, -1, 'category');
 $backtolist = (GETPOST('backtolist') ? GETPOST('backtolist') : DOL_URL_ROOT.'/categories/index.php?leftmenu=cat&type='.$type);
-$linkback = '<a href="'.$backtolist.'\">'.$langs->trans("BackToList").'</a>';
-$object->next_prev_filter=" type = ".$object->type;
+$linkback = '<a href="'.$backtolist.'">'.$langs->trans("BackToList").'</a>';
+$object->next_prev_filter = ' type = ' . $object->type;
 $object->ref = $object->label;
 $morehtmlref='<br><div class="refidno"><a href="'.DOL_URL_ROOT.'/categories/index.php?leftmenu=cat&type='.$type.'">'.$langs->trans("Root").'</a> >> ';
 $ways = $object->print_all_ways(" &gt;&gt; ", '', 1);
@@ -233,7 +232,7 @@ foreach ($ways as $way)
 }
 $morehtmlref.='</div>';
 
-dol_banner_tab($object, 'label', $linkback, ($user->socid?0:1), 'label', 'label', $morehtmlref, '', 0, '', '', 1);
+dol_banner_tab($object, 'label', $linkback, ($user->socid?0:1), 'label', 'label', $morehtmlref, '&type=' . $type, 0, '', '', 1);
 
 
 /*
