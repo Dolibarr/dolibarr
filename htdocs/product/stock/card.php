@@ -628,16 +628,13 @@ else
 						print '<td class="center"><a href="'.DOL_URL_ROOT.'/product/stock/product.php?dwid='.$object->id.'&id='.$objp->rowid.'&action=correction&backtopage='.urlencode($_SERVER["PHP_SELF"].'?id='.$id).'">';
 						print $langs->trans("StockCorrection");
 						print "</a></td>";
-					}
-
-                    if ($user->rights->stock->creer) {
                         print '<td align="center"><a href="' . DOL_URL_ROOT . '/product/stock/product.php?dwid=' . $object->id . '&id=' . $objp->rowid . '&action=correction&backtopage=' . urlencode($_SERVER["PHP_SELF"] . '?id=' . $id) . '">';
                         print $langs->trans("StockCorrection");
                         print "</a></td>";
                     }
                     if(!empty($conf->global->PRODUCT_USE_UNITS)) {
                         if ($i == 0) $units = $productstatic->fk_unit;
-                        elseif($productstatic->fk_unit !== $units) $sameunits = false;
+                        elseif($productstatic->fk_unit != $units) $sameunits = false;
                     }
                     print "</tr>";
                     $i++;
@@ -649,7 +646,9 @@ else
 				$valtoshow=price2num($totalunit, 'MS');
 				if(empty($conf->global->PRODUCT_USE_UNITS) || $sameunits) print empty($valtoshow)?'0':$valtoshow;
 				print '</td>';
-				print '<td class="liste_total">&nbsp;</td>';
+				print '<td class="liste_total">';
+				if(empty($conf->global->PRODUCT_USE_UNITS) && $sameunits) print $langs->trans($productstatic->getLabelOfUnit());
+                print '</td>';
                 print '<td class="liste_total right">'.price(price2num($totalvalue, 'MT')).'</td>';
                 if (empty($conf->global->PRODUIT_MULTIPRICES))
                 {
