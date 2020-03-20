@@ -3397,6 +3397,7 @@ if ($action == 'replacesite' || $action == 'replacesiteconfirm')
 					print '<td class="tdoverflow100">'.$answerrecord->description.'</td>';
 					print '<td>';
 					$param = '?action=replacesiteconfirm';
+					$param .= '&websiteid='.$website->id;
 					$param .= '&optioncontent='.GETPOST('optioncontent');
 					$param .= '&optionmeta='.GETPOST('optionmeta');
 					$param .= '&optionsitefiles='.GETPOST('optionsitefiles');
