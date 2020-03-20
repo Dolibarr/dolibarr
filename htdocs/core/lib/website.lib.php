@@ -544,8 +544,8 @@ function getStructuredData($type, $data = array())
 		$ret .= '{
 			"@context": "https://schema.org",
 			"@type": "SoftwareApplication",
-			"name": "'.$data['name'].'",
-			"operatingSystem": "'.$data['os'].'",
+			"name": "'.dol_escape_json($data['name']).'",
+			"operatingSystem": "'.dol_escape_json($data['os']).'",
 			"applicationCategory": "https://schema.org/GameApplication",
 			"aggregateRating": {
 				"@type": "AggregateRating",
@@ -570,6 +570,18 @@ function getStructuredData($type, $data = array())
 
 			if ($restmpuser > 0)
 			{
+				$pageurl = $websitepage->pageurl;
+				$title = $websitepage->title;
+				$image = $websitepage->image;
+				$companyname = $mysoc->name;
+				$description = $websitepage->description;
+
+				$pageurl = str_replace('__WEBSITE_KEY__', $website->ref, $pageurl);
+				$title = str_replace('__WEBSITE_KEY__', $website->ref, $title);
+				$image = str_replace('__WEBSITE_KEY__', $website->ref, $image);
+				$companyname = str_replace('__WEBSITE_KEY__', $website->ref, $companyname);
+				$description = str_replace('__WEBSITE_KEY__', $website->ref, $description);
+
 				$ret = '<!-- Add structured data for blog post -->'."\n";
 				$ret .= '<script type="application/ld+json">'."\n";
 				$ret .= '{
@@ -577,11 +589,11 @@ function getStructuredData($type, $data = array())
 					  "@type": "NewsArticle",
 					  "mainEntityOfPage": {
 					    "@type": "WebPage",
-					    "@id": "'.$websitepage->pageurl.'"
+					    "@id": "'.dol_escape_json($pageurl).'"
 					  },
-					  "headline": "'.$websitepage->title.'",
+					  "headline": "'.dol_escape_json($title).'",
 					  "image": [
-					    "'.$websitepage->image.'"
+					    "'.dol_escape_json($image).'"
 					   ],
 					  "datePublished": "'.dol_print_date($websitepage->date_creation, 'dayhourrfc').'",
 					  "dateModified": "'.dol_print_date($websitepage->date_modification, 'dayhourrfc').'",
@@ -591,13 +603,13 @@ function getStructuredData($type, $data = array())
 					  },
 					  "publisher": {
 					     "@type": "Organization",
-					     "name": "'.$mysoc->name.'",
+					     "name": "'.dol_escape_json($companyname).'",
 					     "logo": {
 					        "@type": "ImageObject",
 					        "url": "/viewimage.php?modulepart=mycompany&file=logos%2F'.urlencode($mysoc->logo).'"
 					     }
 					   },
-					  "description": "'.$websitepage->description.'"
+					  "description": "'.dol_escape_json($description).'"
 					}'."\n";
 				$ret .= '</script>'."\n";
 			}
@@ -610,19 +622,19 @@ function getStructuredData($type, $data = array())
 		$ret .= '{
 				"@context": "https://schema.org/",
 				"@type": "Product",
-				"name": "'.$data['label'].'",
+				"name": "'.dol_escape_json($data['label']).'",
 				"image": [
-					"'.$data['image'].'",
+					"'.dol_escape_json($data['image']).'",
 				],
-				"description": "'.$data['description'].'",
-				"sku": "'.$data['ref'].'",
+				"description": "'.dol_escape_json($data['description']).'",
+				"sku": "'.dol_escape_json($data['ref']).'",
 				"brand": {
 					"@type": "Thing",
-					"name": "'.$data['brand'].'"
+					"name": "'.dol_escape_json($data['brand']).'"
 				},
 				"author": {
 					"@type": "Person",
-					"name": "'.$data['author'].'"
+					"name": "'.dol_escape_json($data['author']).'"
 				}
 				},
 				"offers": {
@@ -634,7 +646,7 @@ function getStructuredData($type, $data = array())
 					"availability": "https://schema.org/InStock",
 					"seller": {
 						"@type": "Organization",
-						"name": "'.$mysoc->name.'"
+						"name": "'.dol_escape_json($mysoc->name).'"
 					}
 				}
 			}'."\n";

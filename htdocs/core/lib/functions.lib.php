@@ -984,6 +984,16 @@ function dol_escape_js($stringtoescape, $mode = 0, $noescapebackslashn = 0)
 	return strtr($stringtoescape, $substitjs);
 }
 
+/**
+ *  Returns text escaped for inclusion into javascript code
+ *
+ *  @param      string		$stringtoescape		String to escape
+ *  @return     string     		 				Escaped string for json content.
+ */
+function dol_escape_json($stringtoescape)
+{
+	return str_replace('"', '\"', $stringtoescape);
+}
 
 /**
  *  Returns text escaped for inclusion in HTML alt or title tags, or into values of HTML input fields.
