@@ -67,31 +67,70 @@ function opensurvey_prepare_head(Opensurveysondage $object)
  * @param 	int    		$disablehead		More content into html header
  * @param 	array  		$arrayofjs			Array of complementary js files
  * @param 	array  		$arrayofcss			Array of complementary css files
+ * @param	string		$numsondage			Num survey
  * @return	void
  */
-function llxHeaderSurvey($title, $head = "", $disablejs = 0, $disablehead = 0, $arrayofjs = '', $arrayofcss = '')
+function llxHeaderSurvey($title, $head = "", $disablejs = 0, $disablehead = 0, $arrayofjs = '', $arrayofcss = '', $numsondage = '')
 {
-	global $conf, $mysoc;
+	global $conf, $langs, $mysoc;
+	global $dolibarr_main_url_root;
+
+	//$replacemainarea = (empty($conf->dol_hide_leftmenu) ? '<div>' : '').'<div>';
 
 	top_htmlhead($head, $title, $disablejs, $disablehead, $arrayofjs, $arrayofcss); // Show html headers
-	print '<body id="mainbody" class="publicnewmemberform" style="margin-top: 10px;">';
+	print '<body id="mainbody" class="publicnewmemberform">';
 
-	// Print logo
-	if ($mysoc->logo) {
-		if (file_exists($conf->mycompany->dir_output.'/logos/thumbs/'.$mysoc->logo_small)) {
-			$urllogo=DOL_URL_ROOT.'/viewimage.php?cache=1&amp;modulepart=mycompany&amp;file='.urlencode('logos/thumbs/'.$mysoc->logo_small);
-		}
-	}
 
-	if (!$urllogo && (is_readable(DOL_DOCUMENT_ROOT.'/theme/dolibarr_logo.png')))
+
+	print '<span id="dolpaymentspan"></span>'."\n";
+	print '<div class="center">'."\n";
+	print '<form name="formulaire" action="studs.php?sondage='.$numsondage.'"'.'#bas" method="POST">'."\n";
+	print '<input type="hidden" name="sondage" value="'.$numsondage.'"/>';
+	print '<input type="hidden" name="token" value="'.newToken().'">'."\n";
+	print "\n";
+
+
+	// Show logo (search order: logo defined by PAYMENT_LOGO_suffix, then PAYMENT_LOGO, then small company logo, large company logo, theme logo, common logo)
+	$width = 0;
+	// Define logo and logosmall
+	$logosmall = $mysoc->logo_small;
+	$logo = $mysoc->logo;
+	$paramlogo = 'ONLINE_PAYMENT_LOGO_'.$suffix;
+	if (!empty($conf->global->$paramlogo)) $logosmall = $conf->global->$paramlogo;
+	elseif (!empty($conf->global->ONLINE_PAYMENT_LOGO)) $logosmall = $conf->global->ONLINE_PAYMENT_LOGO;
+	//print '<!-- Show logo (logosmall='.$logosmall.' logo='.$logo.') -->'."\n";
+	// Define urllogo
+	$urllogo = '';
+	$urllogofull = '';
+	if (!empty($logosmall) && is_readable($conf->mycompany->dir_output.'/logos/thumbs/'.$logosmall))
 	{
-		$urllogo=DOL_URL_ROOT.'/theme/dolibarr_logo.png';
+		$urllogo = DOL_URL_ROOT.'/viewimage.php?modulepart=mycompany&amp;entity='.$conf->entity.'&amp;file='.urlencode('logos/thumbs/'.$logosmall);
+		$urllogofull = $dolibarr_main_url_root.'/viewimage.php?modulepart=mycompany&entity='.$conf->entity.'&file='.urlencode('logos/thumbs/'.$logosmall);
+		$width = 150;
+	}
+	elseif (!empty($logo) && is_readable($conf->mycompany->dir_output.'/logos/'.$logo))
+	{
+		$urllogo = DOL_URL_ROOT.'/viewimage.php?modulepart=mycompany&amp;entity='.$conf->entity.'&amp;file='.urlencode('logos/'.$logo);
+		$urllogofull = $dolibarr_main_url_root.'/viewimage.php?modulepart=mycompany&entity='.$conf->entity.'&file='.urlencode('logos/'.$logo);
+		$width = 150;
 	}
 
-	print '<div style="text-align:center"><img alt="Logo" id="logosubscribe" title="" src="'.$urllogo.'"/></div>';
-	print '<br>';
+	// Output html code for logo
+	if ($urllogo)
+	{
+		print '<div class="backgreypublicpayment">';
+		print '<div class="logopublicpayment">';
+		print '<img id="dolpaymentlogo" src="'.$urllogo.'"';
+		if ($width) print ' width="'.$width.'"';
+		print '>';
+		print '</div>';
+		if (empty($conf->global->MAIN_HIDE_POWERED_BY)) {
+			print '<div class="poweredbypublicpayment opacitymedium right"><a href="https://www.dolibarr.org" target="dolibarr">'.$langs->trans("PoweredBy").'<br><img src="'.DOL_URL_ROOT.'/theme/dolibarr_logo.png" width="80px"></a></div>';
+		}
+		print '</div>';
+	}
 
-	print '<div style="margin-left: 50px; margin-right: 50px;">';
+	print '<div style="margin-left: 50px; margin-right: 50px; text-align: start;"><br>';
 }
 
 /**
@@ -101,6 +140,8 @@ function llxHeaderSurvey($title, $head = "", $disablejs = 0, $disablehead = 0, $
  */
 function llxFooterSurvey()
 {
+	print '</div>';
+	print '</form>';
 	print '</div>';
 
 	printCommonFooter('public');

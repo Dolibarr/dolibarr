@@ -26,9 +26,11 @@ FIX: missing global $conf
 FIX: Missing token in some forms (avoid unset POST errors)
 FIX: params of setEventMessage($langs->trans('ErrorProductClone')...
 FIX: Remove unexisting link
+FIX: mass action on stock movements
 FIX: substitute lines dates values on doc generator (ODT, ...)
 FIX: Ticket - Load Cache Messages Ticket, wrong message's status
 FIX: Ticket Public  - Private messages are displayed
+FIX: wrong include - replace extrafields_create.tpl.php to extrafields_add.tpl.php
 
 ***** ChangeLog for 11.0.2 compared to 11.0.1 *****
 FIX: #10309

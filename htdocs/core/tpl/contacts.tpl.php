@@ -66,11 +66,12 @@ $userstatic = new User($db);
 ?>
 
 <!-- BEGIN PHP TEMPLATE CONTACTS -->
-<div class="underbanner clearboth"></div>
-<div class="div-table-responsive">
-<div class="tagtable tableforcontact centpercent noborder nobordertop allwidth">
-
 <?php
+
+print '<div class="underbanner clearboth"></div>'."\n";
+print '<div class="div-table-responsive">'."\n";
+print '<div class="tagtable tableforcontact centpercent noborder nobordertop allwidth">'."\n";
+
 if ($permission) {
     ?>
 	<form class="tagtr liste_titre">

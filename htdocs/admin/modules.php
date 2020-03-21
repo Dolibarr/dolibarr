@@ -930,7 +930,7 @@ if ($mode == 'marketplace')
 
 	    ?>
 	            <form method="POST" class="centpercent" id="searchFormList" action="<?php echo $dolistore->url ?>">
-					<input type="hidden" name="token" value="<?php echo $_SESSION['newtoken'] ?>">
+					<input type="hidden" name="token" value="<?php echo newToken(); ?>">
 	            	<input type="hidden" name="mode" value="marketplace">
 	                <div class="divsearchfield"><?php echo $langs->trans('Keyword') ?>:
 	                    <input name="search_keyword" placeholder="<?php echo $langs->trans('Chercher un module') ?>" id="search_keyword" type="text" size="50" value="<?php echo $options['search'] ?>"><br>

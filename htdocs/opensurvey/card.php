@@ -113,8 +113,8 @@ if (empty($reshook))
     	if (!$error)
     	{
     		$object->titre = GETPOST('nouveautitre', 'nohtml');
-    		$object->commentaires = GETPOST('nouveauxcommentaires', 'nohtml');
-    		$object->description = GETPOST('nouveauxcommentaires', 'nohtml');
+    		$object->commentaires = GETPOST('nouveauxcommentaires', 'restricthtml');
+    		$object->description = GETPOST('nouveauxcommentaires', 'restricthtml');
     		$object->mail_admin = GETPOST('nouvelleadresse', 'alpha');
     		$object->date_fin = $expiredate;
     		$object->allow_comments = GETPOST('cancomment', 'alpha') == 'on' ? true : false;
@@ -208,6 +208,7 @@ $toutsujet = str_replace("@", "<br>", $toutsujet);
 $toutsujet = str_replace("°", "'", $toutsujet);
 
 print '<form name="updatesurvey" action="'.$_SERVER["PHP_SELF"].'?id='.$numsondage.'" method="POST">'."\n";
+print '<input type="hidden" name="token" value="'.newToken().'">';
 print '<input type="hidden" name="action" value="update">';
 
 $head = opensurvey_prepare_head($object);
@@ -248,12 +249,12 @@ print '</td></tr>';
 print '<tr><td class="tdtop">'.$langs->trans("Description").'</td><td colspan="2">';
 if ($action == 'edit')
 {
-	$doleditor = new DolEditor('nouveauxcommentaires', dol_htmlentities($object->commentaires), '', 120, 'dolibarr_notes', 'In', 1, 1, 1, ROWS_7, '90%');
+	$doleditor = new DolEditor('nouveauxcommentaires', $object->description, '', 120, 'dolibarr_notes', 'In', 1, 1, 1, ROWS_7, '90%');
 	$doleditor->Create(0, '');
 }
 else
 {
-	 print (dol_textishtml($object->commentaires) ? $object->commentaires : dol_nl2br($object->commentaires, 1, true));
+	print (dol_textishtml($object->description) ? $object->description : dol_nl2br($object->description, 1, true));
 }
 print '</td></tr>';
 
@@ -263,7 +264,7 @@ if (!$object->fk_user_creat) {
 	print '<tr><td>'.$langs->trans("EMail").'</td><td colspan="2">';
 	if ($action == 'edit')
 	{
-		print '<input type="text" name="nouvelleadresse" size="40" value="'.$object->mail_admin.'">';
+		print '<input type="text" name="nouvelleadresse" class="minwith200" value="'.$object->mail_admin.'">';
 	}
 	else print dol_print_email($object->mail_admin, 0, 0, 1);
 	print '</td></tr>';
@@ -395,6 +396,7 @@ print '<br>';
 
 
 print '<form name="formulaire5" action="#" method="POST">'."\n";
+print '<input type="hidden" name="token" value="'.newToken().'">';
 
 print load_fiche_titre($langs->trans("CommentsOfVoters"), '', '');
 
