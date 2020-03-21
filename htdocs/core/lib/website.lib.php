@@ -664,25 +664,25 @@ function getSocialNetworkSharingLinks()
 	$fullurl = $website->alias.'/'.$websitepage->pageurl.'.php';
 	$hashtags = trim(join(' #', array_map('trim', explode(',', $websitepage->keywords))));
 
-	print '<!-- section for social network sharing of page -->'."\n";
-	print '<div class="dol-social-share">'."\n";
+	$out = '<!-- section for social network sharing of page -->'."\n";
+	$out.= '<div class="dol-social-share">'."\n";
 
 	// Twitter
-	print '<div class="dol-social-share-tw">'."\n";
-    print '<a href="https://twitter.com/share" class="twitter-share-button" data-url="'.$fullurl.'" data-text="'.dol_escape_htmltag($websitepage->description).'" data-lang="'.$websitepage->lang.'" data-size="small" data-related="" data-hashtags="'.preg_replace('/^#/', '', $hashtags).'" data-count="horizontal">Tweet</a>';
-	print '<script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0],p=/^http:/.test(d.location)?\'http\':\'https\';if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src=p+\'://platform.twitter.com/widgets.js\';fjs.parentNode.insertBefore(js,fjs);}}(document, \'script\', \'twitter-wjs\');</script>';
-	print '</div>'."\n";
+	$out.= '<div class="dol-social-share-tw">'."\n";
+	$out.= '<a href="https://twitter.com/share" class="twitter-share-button" data-url="'.$fullurl.'" data-text="'.dol_escape_htmltag($websitepage->description).'" data-lang="'.$websitepage->lang.'" data-size="small" data-related="" data-hashtags="'.preg_replace('/^#/', '', $hashtags).'" data-count="horizontal">Tweet</a>';
+	$out.= '<script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0],p=/^http:/.test(d.location)?\'http\':\'https\';if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src=p+\'://platform.twitter.com/widgets.js\';fjs.parentNode.insertBefore(js,fjs);}}(document, \'script\', \'twitter-wjs\');</script>';
+	$out.= '</div>'."\n";
 
 	// Reddit
-	print '<div class="dol-social-share-reddit">'."\n";
-	print '<a href="https://www.reddit.com/submit" target="_blank" onclick="window.location = \'https://www.reddit.com/submit?url='.$fullurl.'\'; return false">';
-    print '<img src="https://www.reddit.com/static/spreddit7.gif" alt="Submit to reddit" border="0" /> </a>';
-	print '</div>'."\n";
+	$out.= '<div class="dol-social-share-reddit">'."\n";
+	$out.= '<a href="https://www.reddit.com/submit" target="_blank" onclick="window.location = \'https://www.reddit.com/submit?url='.$fullurl.'\'; return false">';
+	$out.= '<img src="https://www.reddit.com/static/spreddit7.gif" alt="Submit to reddit" border="0" /> </a>';
+	$out.= '</div>'."\n";
 
 	// Facebook
-	print '<div class="dol-social-share-fbl">'."\n";
-	print '<div id="fb-root"></div>'."\n";
-	print '<script>(function(d, s, id) {
+	$out.= '<div class="dol-social-share-fbl">'."\n";
+	$out.= '<div id="fb-root"></div>'."\n";
+	$out.= '<script>(function(d, s, id) {
 			  var js, fjs = d.getElementsByTagName(s)[0];
 			  if (d.getElementById(id)) return;
 			  js = d.createElement(s); js.id = id;
@@ -697,10 +697,12 @@ function getSocialNetworkSharingLinks()
 			        colorscheme="light"
 			        share="1"
 			        action="like" ></fb:like>'."\n";
-	print '</div>'."\n";
+	$out.= '</div>'."\n";
 
-	print "\n</div>\n";
-	print '<!-- section end for social network sharing of page -->'."\n";
+	$out.= "\n</div>\n";
+	$out.= '<!-- section end for social network sharing of page -->'."\n";
+
+	return $out;
 }
 
 /**
@@ -881,6 +883,7 @@ function getAllImages($object, $objectpage, $urltograb, &$tmp, &$action, $modify
 	$urltograb = dirname($urltograb); // So urltograb is now http://www.nltechno.com or http://www.nltechno.com/dir1
 
 	// Search X in "img...src=X"
+	$regs = array();
 	preg_match_all('/<img([^\.\/]+)src="([^>"]+)"([^>]*)>/i', $tmp, $regs);
 
 	foreach ($regs[0] as $key => $val)

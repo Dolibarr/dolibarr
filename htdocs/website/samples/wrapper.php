@@ -5,10 +5,16 @@ if (! defined('USEDOLIBARRSERVER') && ! defined('USEDOLIBARREDITOR')) { require_
 include_once DOL_DOCUMENT_ROOT.'/core/lib/images.lib.php';
 
 $encoding = '';
+
+// Parameters to download files
 $hashp=GETPOST('hashp', 'aZ09');
 $modulepart=GETPOST('modulepart', 'aZ09');
 $entity=GETPOST('entity', 'int')?GETPOST('entity', 'int'):$conf->entity;
 $original_file=GETPOST("file", "alpha");
+
+// Parameters for RSS
+$rss=GETPOST('rss', 'aZ09');
+if ($rss) $original_file = 'blog.rss';
 
 // If we have a hash public (hashp), we guess the original_file.
 if (! empty($hashp))
@@ -60,7 +66,7 @@ if (! empty($conf->global->MAIN_DISABLE_FORCE_SAVEAS_WEBSITE)) $attachment=false
 
 // Define mime type
 $type = 'application/octet-stream';
-if (GETPOST('type','none')) $type=GETPOST('type', 'alpha');
+if (GETPOSTISSET('type')) $type=GETPOST('type', 'alpha');
 else $type=dol_mimetype($original_file);
 
 // Security: Delete string ../ into $original_file
@@ -75,26 +81,119 @@ if (GETPOST("cache",'none') || image_format_supported($original_file) >= 0)
     header('Pragma: cache');       // This is to avoid having Pragma: no-cache
 }
 
-// Find the subdirectory name as the reference
 $refname=basename(dirname($original_file)."/");
 
-if ($_GET["modulepart"] == "mycompany" && preg_match('/^\/?logos\//', $original_file)) 
+// Get RSS news
+if ($rss) {
+	$format = 'rss';
+	$type = '';
+	$cachedelay = 0;
+	$filename = $original_file;
+	$filters = array('type_container'=>'blogpost', 'lang'=>'en_US');
+	$dir_temp = $conf->website->dir_temp;
+	include_once DOL_DOCUMENT_ROOT.'/website/class/website.class.php';
+	include_once DOL_DOCUMENT_ROOT.'/website/class/websitepage.class.php';
+	$website = new Website($db);
+	$websitepage = new WebsitePage($db);
+
+	$website->fetch('', $websitekey);
+
+    $MAXNEWS = 20;
+    $arrayofblogs = $websitepage->fetchAll($website->id, 'DESC', 'date_creation', $MAXNEWS, 0, $filters);
+	$eventarray = $arrayofblogs;
+
+    require_once DOL_DOCUMENT_ROOT."/core/lib/xcal.lib.php";
+    require_once DOL_DOCUMENT_ROOT."/core/lib/date.lib.php";
+    require_once DOL_DOCUMENT_ROOT."/core/lib/files.lib.php";
+
+    dol_syslog("build_exportfile Build export file format=".$format.", type=".$type.", cachedelay=".$cachedelay.", filename=".$filename.", filters size=".count($filters), LOG_DEBUG);
+
+    // Check parameters
+    if (empty($format)) return -1;
+
+    // Clean parameters
+    if (!$filename)
+    {
+    	$extension = 'vcs';
+    	if ($format == 'ical') $extension = 'ics';
+    	$filename = $format.'.'.$extension;
+    }
+
+    // Create dir and define output file (definitive and temporary)
+    $result = dol_mkdir($dir_temp);
+    $outputfile = $dir_temp.'/'.$filename;
+
+    $result = 0;
+
+    $buildfile = true;
+
+    if ($cachedelay)
+    {
+    	$nowgmt = dol_now();
+    	include_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
+    	if (dol_filemtime($outputfile) > ($nowgmt - $cachedelay))
+    	{
+    		dol_syslog("build_exportfile file ".$outputfile." is not older than now - cachedelay (".$nowgmt." - ".$cachedelay."). Build is canceled");
+    		$buildfile = false;
+    	}
+    }
+
+    if ($buildfile)
+    {
+    	$title=$desc=$langs->transnoentities('LastBlogPosts');
+
+    	// Create temp file
+    	$outputfiletmp=tempnam($dir_temp, 'tmp');  // Temporary file (allow call of function by different threads
+    	@chmod($outputfiletmp, octdec($conf->global->MAIN_UMASK));
+
+    	// Write file
+    	if ($format == 'vcal') $result=build_calfile($format, $title, $desc, $eventarray, $outputfiletmp);
+    	elseif ($format == 'ical') $result=build_calfile($format, $title, $desc, $eventarray, $outputfiletmp);
+    	elseif ($format == 'rss')  $result=build_rssfile($format, $title, $desc, $eventarray, $outputfiletmp);
+
+    	if ($result >= 0)
+    	{
+    		if (dol_move($outputfiletmp, $outputfile, 0, 1)) $result=1;
+    		else
+    		{
+    			$error='Failed to rename '.$outputfiletmp.' into '.$outputfile;
+    			dol_syslog("build_exportfile ".$error, LOG_ERR);
+    			dol_delete_file($outputfiletmp, 0, 1);
+    			print $error;
+    			exit(-1);
+    		}
+    	}
+    	else
+    	{
+    		dol_syslog("build_exportfile build_xxxfile function fails to for format=".$format." outputfiletmp=".$outputfile, LOG_ERR);
+    		dol_delete_file($outputfiletmp, 0, 1);
+    		$langs->load("errors");
+    		print $langs->trans("ErrorFailToCreateFile", $outputfile);
+    		exit(-1);
+    	}
+    }
+
+    return $result;
+}
+// Get logos
+elseif ($modulepart == "mycompany" && preg_match('/^\/?logos\//', $original_file))
 {
 	readfile(dol_osencode($conf->mycompany->dir_output."/".$original_file));
 }
-else 
+else
 {
+	// Find the subdirectory name as the reference
 	include_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 	$check_access = dol_check_secure_access_document($modulepart, $original_file, $entity, $refname);
 	$accessallowed              = $check_access['accessallowed'];
 	$sqlprotectagainstexternals = $check_access['sqlprotectagainstexternals'];
 	$fullpath_original_file     = $check_access['original_file'];               // $fullpath_original_file is now a full path name
-	if (! empty($_GET["hashp"]))
+	if ($hashp)
 	{
 		$accessallowed = 1;					// When using hashp, link is public so we force $accessallowed
 		$sqlprotectagainstexternals = '';
 	}
-	
+
 	// Security:
 	// Limit access if permissions are wrong
 	if (! $accessallowed)
