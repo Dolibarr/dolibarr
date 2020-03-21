@@ -330,7 +330,7 @@ function build_calfile($format, $title, $desc, $events_array, $outputfile)
  *  @param      string	$format             "rss"
  *  @param      string	$title              Title of export
  *  @param      string	$desc               Description of export
- *  @param      array	$events_array       Array of events ("uid","startdate","summary","url","desc","author","category")
+ *  @param      array	$events_array       Array of events ("uid","startdate","summary","url","desc","author","category") or Array of WebsitePage
  *  @param      string	$outputfile         Output file
  *  @param      string	$filter             (optional) Filter
  *  @return     int                         < 0 if ko, Nb of events in file if ok
@@ -355,7 +355,7 @@ function build_rssfile($format, $title, $desc, $events_array, $outputfile, $filt
         $date = date("r");
 
         // Print header
-        fwrite($fichier, '<?xml version="1.0" encoding="".$langs->charset_output.""?>');
+        fwrite($fichier, '<?xml version="1.0" encoding="'.$langs->charset_output.'"?>');
         fwrite($fichier, "\n");
 
         fwrite($fichier, '<rss version="2.0">');
@@ -363,11 +363,13 @@ function build_rssfile($format, $title, $desc, $events_array, $outputfile, $filt
 
         fwrite($fichier, "<channel>\n<title>".$title."</title>\n");
 
-        $form = "<description><![CDATA[".$desc.".]]></description>"."\n".
+        /*
+        fwrite($fichier, "<description><![CDATA[".$desc.".]]></description>"."\n".
                 // "<language>fr</language>"."\n".
                 "<copyright>Dolibarr</copyright>"."\n".
                 "<lastBuildDate>".$date."</lastBuildDate>"."\n".
-                "<generator>Dolibarr</generator>"."\n";
+                "<generator>Dolibarr</generator>"."\n");
+        */
 
         // Define $urlwithroot
         $urlwithouturlroot = preg_replace("/".preg_quote(DOL_URL_ROOT, "/")."$/i", "", trim($dolibarr_main_url_root));
@@ -392,6 +394,19 @@ function build_rssfile($format, $title, $desc, $events_array, $outputfile, $filt
 
             if ($eventqualified)
             {
+            	if (is_object($event) && get_class($event) == 'WebsitePage') {
+            		// Convert object into an array
+            		$tmpevent = array();
+            		$tmpevent['uid'] = $event->id;
+            		$tmpevent['startdate'] = $event->date_creation;
+            		$tmpevent['summary'] = $event->title;
+            		$tmpevent['url'] = $event->urlpage.'.php';
+            		$tmpevent['author'] = $event->author_alias ? $event->author_alias : 'unknown';
+            		//$tmpevent['category'] = '';
+
+            		$event = $tmpevent;
+            	}
+
                 $uid		  = $event["uid"];
                 $startdate	  = $event["startdate"];
                 $summary  	  = $event["summary"];
