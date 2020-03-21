@@ -484,7 +484,7 @@ class BonPrelevement extends CommonObject
 							$paiement->amounts      = $cursoramounts; // Array with detail of dispatching of payments for each invoice
 							$paiement->paiementid   = 3; //
 							$paiement->num_payment = $this->ref;  // Set ref of direct debit note
-							$paiement->num_paiement = $this->ref; // For bacward compatibility
+							$paiement->num_paiement = $this->ref; // For backward compatibility
 							$paiement->id_prelevement = $this->id;
 
 							$paiement_id = $paiement->create($user);

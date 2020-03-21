@@ -331,6 +331,10 @@ PossibleValues=Možné hodnoty
 GoOnMenuToCreateVairants=Přejděte do nabídky %s - %s a připravte varianty atributů (například barvy, velikost, ...)
 UseProductFournDesc=Přidání funkce pro definování popisů produktů definovaných dodavateli vedle popisů pro zákazníky
 ProductSupplierDescription=Popis dodavatele produktu
+UseProductSupplierPackaging=Use packaging on supplier prices (recalculate quantities according to packaging set on supplier price when adding/updating line in supplier documents)
+PackagingForThisProduct=Packaging
+QtyRecalculatedWithPackaging=The quantity of the line were recalculated according to supplier packaging
+
 #Attributes
 VariantAttributes=Atributy variant
 ProductAttributes=Atributy variant pro produkty
@@ -363,7 +367,7 @@ UsePercentageVariations=Použijte procentuální variace
 PercentageVariation=Procentní variace
 ErrorDeletingGeneratedProducts=Při pokusu o odstranění existujících variant produktů došlo k chybě
 NbOfDifferentValues=Počet různých hodnot
-NbProducts=Počet produktů
+NbProducts=Number of products
 ParentProduct=Nadřazený produkt
 HideChildProducts=Skrýt varianty produktů
 ShowChildProducts=Zobrazit variantní produkty
@@ -376,3 +380,4 @@ ErrorProductCombinationNotFound=Produkt nebyl nalezen
 ActionAvailableOnVariantProductOnly=Akce je k dispozici pouze u varianty výrobku
 ProductsPricePerCustomer=Ceny produktů na zákazníky
 ProductSupplierExtraFields=Additional Attributes (Supplier Prices)
+DeleteLinkedProduct=Delete the child product linked to the combination

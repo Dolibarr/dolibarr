@@ -1337,6 +1337,10 @@ class Account extends CommonObject
 			$label .= '<br><b>'.$langs->trans('AccountAccounting').':</b> '.length_accountg($this->account_number);
 			$label .= '<br><b>'.$langs->trans('AccountancyJournal').':</b> '.$this->accountancy_journal;
 		}
+		if (isset($this->status)) {
+			$label .= '<br><b>'.$langs->trans("Status").":</b> ".$this->getLibStatut(5);
+		}
+
 		$linkclose = '" title="'.dol_escape_htmltag($label, 1).'" class="classfortooltip">';
 
 		$url = DOL_URL_ROOT.'/compta/bank/card.php?id='.$this->id;

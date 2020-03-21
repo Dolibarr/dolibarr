@@ -461,12 +461,12 @@ class FormAccounting extends Form
 		$sql .= " FROM ".MAIN_DB_PREFIX."accounting_bookkeeping";
 	    $sql .= " WHERE entity IN (".getEntity('accountancy').")";
 		$sql .= " ORDER BY date_format(doc_date, '%Y')";
-		dol_syslog(get_class($this)."::".__METHOD__, LOG_DEBUG);
+		dol_syslog(__METHOD__, LOG_DEBUG);
 		$resql = $this->db->query($sql);
 
 		if (!$resql) {
 			$this->error = "Error ".$this->db->lasterror();
-			dol_syslog(get_class($this)."::".__METHOD__.$this->error, LOG_ERR);
+			dol_syslog(__METHOD__.$this->error, LOG_ERR);
 			return -1;
 		}
 		while ($obj = $this->db->fetch_object($resql)) {

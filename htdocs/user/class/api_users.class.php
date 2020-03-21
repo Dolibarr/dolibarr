@@ -171,9 +171,8 @@ class Users extends DolibarrApi
      *
      * @return  array|mixed Data without useless information
      *
-     * @throws  401     RestException       Insufficient rights
-     * @throws  404     RestException       User not found
-     * @throws  404     RestException       User group not found
+     * @throws RestException 401     Insufficient rights
+     * @throws RestException 404     User or group not found
      */
     public function getInfo()
     {
@@ -291,7 +290,8 @@ class Users extends DolibarrApi
 	 * @param int $id     Id of user
 	 * @return array      Array of group objects
 	 *
-	 * @throws RestException
+	 * @throws RestException 403 Not allowed
+     * @throws RestException 404 Not found
 	 *
 	 * @url GET {id}/groups
 	 */
@@ -300,7 +300,7 @@ class Users extends DolibarrApi
 		$obj_ret = array();
 
 		if (!DolibarrApiAccess::$user->rights->user->user->lire) {
-			throw new RestException(401);
+			throw new RestException(403);
 		}
 
 		$user = new User($this->db);
@@ -508,7 +508,7 @@ class Users extends DolibarrApi
 	 * Clean sensible object datas
 	 *
 	 * @param   object  $object    Object to clean
-	 * @return    array    Array of cleaned object properties
+	 * @return  array    			Array of cleaned object properties
 	 */
 	protected function _cleanObjectDatas($object)
 	{

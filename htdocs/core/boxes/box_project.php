@@ -96,7 +96,7 @@ class box_project extends ModeleBoxes
             $projectsListId='';
             if (! $user->rights->projet->all->lire) $projectsListId = $projectstatic->getProjectsAuthorizedForUser($user, 0, 1, $socid);
 
-            $sql = "SELECT p.rowid, p.ref, p.title, p.fk_statut, p.public";
+            $sql = "SELECT p.rowid, p.ref, p.title, p.fk_statut as status, p.public";
             $sql.= " FROM ".MAIN_DB_PREFIX."projet as p";
             $sql.= " WHERE p.entity IN (".getEntity('project').")"; // Only current entity or severals if permission ok
 			$sql.= " AND p.fk_statut = 1"; // Only open projects
@@ -117,6 +117,7 @@ class box_project extends ModeleBoxes
                     $projectstatic->ref = $objp->ref;
                     $projectstatic->title = $objp->title;
                     $projectstatic->public = $objp->public;
+                    $projectstatic->statut = $objp->status;
 
                     $this->info_box_contents[$i][] = array(
                         'td' => 'class="nowraponall"',
@@ -152,6 +153,7 @@ class box_project extends ModeleBoxes
                         $this->info_box_contents[$i][] = array('td' => 'class="right"', 'text' => round(0));
                         $this->info_box_contents[$i][] = array('td' => 'class="right"', 'text' => "N/A&nbsp;");
                     }
+                    $this->info_box_contents[$i][] = array('td' => 'class="right"', 'text' => $projectstatic->getLibStatut(3));
 
                     $i++;
                 }
@@ -166,21 +168,25 @@ class box_project extends ModeleBoxes
 
         // Add the sum à the bottom of the boxes
         $this->info_box_contents[$i][] = array(
-            'td' => '',
+            'td' => 'class="liste_total"',
             'text' => $langs->trans("Total")."&nbsp;".$textHead,
              'text' => "&nbsp;",
         );
         $this->info_box_contents[$i][] = array(
-            'td' => 'class="right" ',
+            'td' => 'class="right liste_total" ',
             'text' => round($num, 0)."&nbsp;".$langs->trans("Projects"),
         );
         $this->info_box_contents[$i][] = array(
-            'td' => 'class="right" ',
+            'td' => 'class="right liste_total" ',
             'text' => (($max < $num) ? '' : (round($totalnbTask, 0)."&nbsp;".$langs->trans("Tasks"))),
         );
         $this->info_box_contents[$i][] = array(
-            'td' => '',
+            'td' => 'class="liste_total"',
             'text' => "&nbsp;",
+        );
+        $this->info_box_contents[$i][] = array(
+        	'td' => 'class="liste_total"',
+        	'text' => "&nbsp;",
         );
     }
 

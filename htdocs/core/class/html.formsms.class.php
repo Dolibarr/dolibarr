@@ -53,6 +53,11 @@ class FormSms
     public $withtopic;
     public $withbody;
 
+    /**
+     * @var int 	Id of company
+     */
+    public $withtosocid;
+
     public $withfromreadonly;
     public $withreplytoreadonly;
     public $withtoreadonly;
@@ -288,7 +293,7 @@ function limitChars(textarea, limit, infodiv)
                     //var_dump($_REQUEST);exit;
                     print $form->selectarray("receiver", $liste, GETPOST("receiver"), 1);
                 }
-                print ' '.$langs->trans("SmsInfoNumero");
+                print ' <span class="opacitymedium">'.$langs->trans("SmsInfoNumero").'</span>';
             }
             print "</td></tr>\n";
         }

@@ -91,7 +91,7 @@ GoToSetupArea=Iet uz Dolibarr (iestatīšanas apgabalu)
 MigrationNotFinished=Datubāzes versija nav pilnībā atjaunināta: atkārtoti palaidiet jaunināšanas procesu.
 GoToUpgradePage=Iet uz atjaunošanas lapu atkal
 WithNoSlashAtTheEnd=Bez slīpsvītras "/" beigās
-DirectoryRecommendation=Ieteicams izmantot direktoriju ārpus tīmekļa lapām.
+DirectoryRecommendation= <span class="warning"> SVARĪGI </span>: Jums jāizmanto direktorija, kas atrodas ārpus tīmekļa lapām (tāpēc nelietojiet iepriekšējā parametra apakšdirektoriju).
 LoginAlreadyExists=Jau eksistē
 DolibarrAdminLogin=Dolibarr administratora lietotāja vārds
 AdminLoginAlreadyExists=Dolibarr administratora konts '<b>%s</b>' jau pastāv. Atgriezieties, ja vēlaties izveidot vēl vienu.

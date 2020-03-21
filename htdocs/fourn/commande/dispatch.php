@@ -273,7 +273,7 @@ if ($action == 'dispatch' && $user->rights->fournisseur->commande->receptionner)
 						if (empty($conf->multicurrency->enabled) && empty($conf->dynamicprices->enabled)) {
 							$dto = GETPOST("dto_".$reg[1].'_'.$reg[2]);
 							//update supplier price
-							if (isset($_POST[$saveprice])) {
+							if (GETPOSTISSET($saveprice)) {
 								// TODO Use class
 								$sql = "UPDATE ".MAIN_DB_PREFIX."product_fournisseur_price";
 								$sql .= " SET unitprice='".GETPOST($pu)."'";

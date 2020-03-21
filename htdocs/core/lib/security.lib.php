@@ -107,7 +107,7 @@ function dol_decode($chain, $key = '1')
  *  If constant MAIN_SECURITY_SALT is defined, we use it as a salt (used only if hashing algorightm is something else than 'password_hash').
  *
  * 	@param 		string		$chain		String to hash
- * 	@param		string		$type		Type of hash ('0':auto will use MAIN_SECURITY_HASH_ALGO else md5, '1':sha1, '2':sha1+md5, '3':md5, '4':md5 for OpenLdap, '5':sha256). Use '3' here, if hash is not needed for security purpose, for security need, prefer '0'.
+ * 	@param		string		$type		Type of hash ('0':auto will use MAIN_SECURITY_HASH_ALGO else md5, '1':sha1, '2':sha1+md5, '3':md5, '4':md5 for OpenLdap with no salt, '5':sha256). Use '3' here, if hash is not needed for security purpose, for security need, prefer '0'.
  * 	@return		string					Hash of string
  *  @see getRandomPassword()
  */
@@ -122,7 +122,7 @@ function dol_hash($chain, $type = '0')
 	}
 
 	// Salt value
-	if (!empty($conf->global->MAIN_SECURITY_SALT)) $chain = $conf->global->MAIN_SECURITY_SALT.$chain;
+	if (!empty($conf->global->MAIN_SECURITY_SALT) && $type != '4' && $type !== 'md5openldap') $chain = $conf->global->MAIN_SECURITY_SALT.$chain;
 
 	if ($type == '1' || $type == 'sha1') return sha1($chain);
 	elseif ($type == '2' || $type == 'sha1md5') return sha1(md5($chain));
@@ -196,8 +196,13 @@ function restrictedArea($user, $features, $objectid = 0, $tableandshare = '', $f
 	// Get more permissions checks from hooks
 	$parameters = array('features'=>$features, 'objectid'=>$objectid, 'idtype'=>$dbt_select);
 	$reshook = $hookmanager->executeHooks('restrictedArea', $parameters);
-	if (!empty($hookmanager->resArray['result'])) return true;
-	if ($reshook > 0) return false;
+
+	if (isset($hookmanager->resArray['result'])) {
+		if ($hookmanager->resArray['result'] == 0) accessforbidden(); // Module returns 0, so access forbidden
+	}
+	if ($reshook > 0) {		// No other test done.
+		return 1;
+	}
 
 	if ($dbt_select != 'rowid' && $dbt_select != 'id') $objectid = "'".$objectid."'";
 
@@ -316,6 +321,9 @@ function restrictedArea($user, $features, $objectid = 0, $tableandshare = '', $f
 			{
 				foreach ($feature2 as $subfeature)
 				{
+					if ($subfeature == 'user' && $user->id == $objectid && $user->rights->user->self->creer) continue; // User can edit its own card
+					if ($subfeature == 'user' && $user->id == $objectid && $user->rights->user->self->password) continue; // User can edit its own password
+
 					if (empty($user->rights->$feature->$subfeature->creer)
 					&& empty($user->rights->$feature->$subfeature->write)
 					&& empty($user->rights->$feature->$subfeature->create)) {

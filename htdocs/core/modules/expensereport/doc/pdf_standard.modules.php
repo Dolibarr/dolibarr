@@ -576,8 +576,10 @@ class pdf_standard extends ModeleExpenseReport
         }
 
         $expensereporttypecode = $object->lines[$linenumber]->type_fees_code;
-        $expensereporttypecodetoshow = $outputlangs->trans($expensereporttypecode);
-        if ($expensereporttypecodetoshow == $expensereporttypecode) {
+		$expensereporttypecodetoshow = ($outputlangs->trans(($expensereporttypecode)) == $expensereporttypecode ? $object->lines[$linenumber]->type_fees_libelle : $outputlangs->trans($expensereporttypecode));
+
+
+		if ($expensereporttypecodetoshow == $expensereporttypecode) {
             $expensereporttypecodetoshow = preg_replace('/^(EX_|TF_)/', '', $expensereporttypecodetoshow);
         }
         //$expensereporttypecodetoshow = dol_trunc($expensereporttypecodetoshow, 9);

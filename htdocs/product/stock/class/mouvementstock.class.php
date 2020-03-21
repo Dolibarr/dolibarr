@@ -77,6 +77,29 @@ class MouvementStock extends CommonObject
 	public $batch;
 
 
+	public $fields = array(
+		'rowid' =>array('type'=>'integer', 'label'=>'TechnicalID', 'enabled'=>1, 'visible'=>-1, 'notnull'=>1, 'position'=>10, 'showoncombobox'=>1),
+		'tms' =>array('type'=>'timestamp', 'label'=>'DateModification', 'enabled'=>1, 'visible'=>-1, 'notnull'=>1, 'position'=>15),
+		'datem' =>array('type'=>'datetime', 'label'=>'Datem', 'enabled'=>1, 'visible'=>-1, 'position'=>20),
+		'fk_product' =>array('type'=>'integer:Product:product/class/product.class.php:1', 'label'=>'Product', 'enabled'=>1, 'visible'=>-1, 'notnull'=>1, 'position'=>25),
+		'fk_entrepot' =>array('type'=>'integer:Entrepot:product/stock/class/entrepot.class.php', 'label'=>'Warehouse', 'enabled'=>1, 'visible'=>-1, 'notnull'=>1, 'position'=>30),
+		'value' =>array('type'=>'double', 'label'=>'Value', 'enabled'=>1, 'visible'=>-1, 'position'=>35),
+		'price' =>array('type'=>'double(24,8)', 'label'=>'Price', 'enabled'=>1, 'visible'=>-1, 'position'=>40),
+		'type_mouvement' =>array('type'=>'smallint(6)', 'label'=>'Type mouvement', 'enabled'=>1, 'visible'=>-1, 'position'=>45),
+		'fk_user_author' =>array('type'=>'integer:User:user/class/user.class.php', 'label'=>'Fk user author', 'enabled'=>1, 'visible'=>-1, 'position'=>50),
+		'label' =>array('type'=>'varchar(255)', 'label'=>'Label', 'enabled'=>1, 'visible'=>-1, 'position'=>55),
+		'fk_origin' =>array('type'=>'integer', 'label'=>'Fk origin', 'enabled'=>1, 'visible'=>-1, 'position'=>60),
+		'origintype' =>array('type'=>'varchar(32)', 'label'=>'Origintype', 'enabled'=>1, 'visible'=>-1, 'position'=>65),
+		'model_pdf' =>array('type'=>'varchar(255)', 'label'=>'Model pdf', 'enabled'=>1, 'visible'=>0, 'position'=>70),
+		'fk_projet' =>array('type'=>'integer:Project:projet/class/project.class.php:1:fk_statut=1', 'label'=>'Project', 'enabled'=>1, 'visible'=>-1, 'notnull'=>1, 'position'=>75),
+		'inventorycode' =>array('type'=>'varchar(128)', 'label'=>'InventoryCode', 'enabled'=>1, 'visible'=>-1, 'position'=>80),
+		'batch' =>array('type'=>'varchar(30)', 'label'=>'Batch', 'enabled'=>1, 'visible'=>-1, 'position'=>85),
+		'eatby' =>array('type'=>'date', 'label'=>'Eatby', 'enabled'=>1, 'visible'=>-1, 'position'=>90),
+		'sellby' =>array('type'=>'date', 'label'=>'Sellby', 'enabled'=>1, 'visible'=>-1, 'position'=>95),
+		'fk_project' =>array('type'=>'integer:Project:projet/class/project.class.php:1:fk_statut=1', 'label'=>'Fk project', 'enabled'=>1, 'visible'=>-1, 'position'=>100),
+	);
+
+
 
     /**
 	 *  Constructor
@@ -354,7 +377,7 @@ class MouvementStock extends CommonObject
 		{
 			$fk_project = 0;
 			if (!empty($this->origin)) {			// This is set by caller for tracking reason
-				$origintype = $this->origin->element;
+				$origintype = empty($this->origin->origin_type) ? $this->origin->element : $this->origin->origin_type;
 				$fk_origin = $this->origin->id;
 				if ($origintype == 'project') $fk_project = $fk_origin;
 				else
@@ -958,10 +981,14 @@ class MouvementStock extends CommonObject
 			default:
 				if ($origintype)
 				{
-					$result = dol_include_once('/'.$origintype.'/class/'.$origintype.'.class.php');
+                    // Separate originetype with "@" : left part is class name, right part is module name
+                    $origintype_array = explode('@', $origintype);
+                    $classname = ucfirst($origintype_array[0]);
+                    $modulename = empty($origintype_array[1]) ? $classname : $origintype_array[1];
+					$result = dol_include_once('/'.$modulename.'/class/'.strtolower($classname).'.class.php');
 					if ($result)
 					{
-						$classname = ucfirst($origintype);
+						$classname = ucfirst($classname);
 						$origin = new $classname($this->db);
 					}
 				}
@@ -1134,5 +1161,18 @@ class MouvementStock extends CommonObject
 		$modelpath = "core/modules/stock/doc/";
 
 		return $this->commonGenerateDocument($modelpath, $modele, $outputlangs, $hidedetails, $hidedesc, $hideref);
+	}
+
+	/**
+	 * Delete object in database
+	 *
+	 * @param User $user       User that deletes
+	 * @param bool $notrigger  false=launch triggers after, true=disable triggers
+	 * @return int             <0 if KO, >0 if OK
+	 */
+	public function delete(User $user, $notrigger = false)
+	{
+		return $this->deleteCommon($user, $notrigger);
+		//return $this->deleteCommon($user, $notrigger, 1);
 	}
 }

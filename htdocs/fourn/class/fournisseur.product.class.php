@@ -273,6 +273,7 @@ class ProductFournisseur extends Product
 		$charges = price2num($charges, 'MU');
         $qty = price2num($qty, 'MS');
 		$unitBuyPrice = price2num($buyprice / $qty, 'MU');
+		$packaging = ($this->packaging < $qty) ? $qty : $this->packaging;
 
 		$error = 0;
 		$now = dol_now();
@@ -359,6 +360,7 @@ class ProductFournisseur extends Product
 			$sql .= " supplier_reputation = ".(empty($supplier_reputation) ? 'NULL' : "'".$this->db->escape($supplier_reputation)."'").",";
             $sql .= " barcode = ".(empty($barcode) ? 'NULL' : "'".$this->db->escape($barcode)."'").",";
             $sql .= " fk_barcode_type = ".(empty($fk_barcode_type) ? 'NULL' : "'".$this->db->escape($fk_barcode_type)."'");
+			if (!empty($conf->global->PRODUCT_USE_SUPPLIER_PACKAGING)) $sql .= ", packaging = ".(empty($packaging) ? 1 : $packaging);
 			$sql .= " WHERE rowid = ".$this->product_fourn_price_id;
 			// TODO Add price_base_type and price_ttc
 
@@ -408,6 +410,7 @@ class ProductFournisseur extends Product
                 $sql = "INSERT INTO ".MAIN_DB_PREFIX."product_fournisseur_price(";
                 $sql .= " multicurrency_price, multicurrency_unitprice, multicurrency_tx, fk_multicurrency, multicurrency_code,";
                 $sql .= "datec, fk_product, fk_soc, ref_fourn, desc_fourn, fk_user, price, quantity, remise_percent, remise, unitprice, tva_tx, charges, fk_availability, default_vat_code, info_bits, entity, delivery_time_days, supplier_reputation, barcode, fk_barcode_type)";
+				if (!empty($conf->global->PRODUCT_USE_SUPPLIER_PACKAGING)) $sql .= ", packaging";
                 $sql .= " values(";
                 $sql .= (isset($multicurrency_buyprice) ? "'".$this->db->escape(price2num($multicurrency_buyprice))."'" : 'null').",";
                 $sql .= (isset($multicurrency_unitBuyPrice) ? "'".$this->db->escape(price2num($multicurrency_unitBuyPrice))."'" : 'null').",";
@@ -435,13 +438,14 @@ class ProductFournisseur extends Product
                 $sql .= (empty($supplier_reputation) ? 'NULL' : "'".$this->db->escape($supplier_reputation)."'").",";
                 $sql .= (empty($barcode) ? 'NULL' : "'".$this->db->escape($barcode)."'").",";
                 $sql .= (empty($fk_barcode_type) ? 'NULL' : "'".$this->db->escape($fk_barcode_type)."'");
+				if (!empty($conf->global->PRODUCT_USE_SUPPLIER_PACKAGING)) $sql .= ", ".(empty($this->packaging) ? 1 : $this->db->escape($this->packaging));
                 $sql .= ")";
 
 				$this->product_fourn_price_id = 0;
 
                 $resql = $this->db->query($sql);
                 if ($resql) {
-                    $this->product_fourn_price_id = $this->db->last_insert_id(MAIN_DB_PREFIX . "product_fournisseur_price");
+                    $this->product_fourn_price_id = $this->db->last_insert_id(MAIN_DB_PREFIX."product_fournisseur_price");
                 }
                 else {
                     $error++;
@@ -501,6 +505,7 @@ class ProductFournisseur extends Product
         $sql .= " pfp.supplier_reputation, pfp.fk_user, pfp.datec,";
         $sql .= " pfp.multicurrency_price, pfp.multicurrency_unitprice, pfp.multicurrency_tx, pfp.fk_multicurrency, pfp.multicurrency_code,";
         $sql .= "  pfp.barcode, pfp.fk_barcode_type";
+		if (!empty($conf->global->PRODUCT_USE_SUPPLIER_PACKAGING)) $sql .= ", pfp.packaging";
         $sql .= " FROM ".MAIN_DB_PREFIX."product_fournisseur_price as pfp";
         $sql .= " WHERE pfp.rowid = ".(int) $rowid;
 
@@ -544,6 +549,12 @@ class ProductFournisseur extends Product
                     $this->fourn_barcode = $obj->barcode;
                     $this->fourn_fk_barcode_type = $obj->fk_barcode_type;
                 }
+
+				if (!empty($conf->global->PRODUCT_USE_SUPPLIER_PACKAGING)) {
+					$this->packaging = $obj->packaging;
+					if ($this->packaging < $this->fourn_qty) $this->packaging = $this->fourn_qty;
+				}
+
                 if (empty($ignore_expression) && !empty($this->fk_supplier_price_expression))
                 {
                     $priceparser = new PriceParser($this->db);
@@ -598,7 +609,8 @@ class ProductFournisseur extends Product
         $sql .= " pfp.price, pfp.quantity, pfp.unitprice, pfp.remise_percent, pfp.remise, pfp.tva_tx, pfp.fk_availability, pfp.charges, pfp.info_bits, pfp.delivery_time_days, pfp.supplier_reputation,";
         $sql .= " pfp.multicurrency_price, pfp.multicurrency_unitprice, pfp.multicurrency_tx, pfp.fk_multicurrency, pfp.multicurrency_code, pfp.datec, pfp.tms,";
         $sql .= " pfp.barcode, pfp.fk_barcode_type";
-        $sql .= " FROM ".MAIN_DB_PREFIX."product_fournisseur_price as pfp, ".MAIN_DB_PREFIX."societe as s";
+		if (!empty($conf->global->PRODUCT_USE_SUPPLIER_PACKAGING)) $sql .= ", pfp.packaging";
+		$sql .= " FROM ".MAIN_DB_PREFIX."product_fournisseur_price as pfp, ".MAIN_DB_PREFIX."societe as s";
         $sql .= " WHERE pfp.entity IN (".getEntity('productsupplierprice').")";
         $sql .= " AND pfp.fk_soc = s.rowid";
         $sql .= " AND s.status=1"; // only enabled company selected
@@ -646,6 +658,11 @@ class ProductFournisseur extends Product
                 $prodfourn->fourn_multicurrency_tx          = $record["multicurrency_tx"];
                 $prodfourn->fourn_multicurrency_id          = $record["fk_multicurrency"];
                 $prodfourn->fourn_multicurrency_code        = $record["multicurrency_code"];
+
+				if (!empty($conf->global->PRODUCT_USE_SUPPLIER_PACKAGING)) {
+					$prodfourn->packaging = $record["packaging"];
+					if ($prodfourn->packaging < $prodfourn->fourn_qty) $prodfourn->packaging = $prodfourn->fourn_qty;
+				}
 
                 if ($conf->barcode->enabled) {
                     $prodfourn->barcode = $record["barcode"];

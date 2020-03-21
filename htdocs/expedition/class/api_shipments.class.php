@@ -373,8 +373,9 @@ class Shipments extends DolibarrApi
      * @url	DELETE {id}/lines/{lineid}
      *
      * @return int
-     * @throws 401
-     * @throws 404
+     *
+     * @throws RestException 401
+     * @throws RestException 404
      */
     public function deleteLine($id, $lineid)
     {
@@ -537,10 +538,10 @@ class Shipments extends DolibarrApi
     //  *
     //  * @return int
     //  *
-    //  * @throws 400
-    //  * @throws 401
-    //  * @throws 404
-    //  * @throws 405
+    //  * @throws RestException 400
+    //  * @throws RestException 401
+    //  * @throws RestException 404
+    //  * @throws RestException 405
     //  */
      /*
     public function setinvoiced($id)
@@ -574,10 +575,10 @@ class Shipments extends DolibarrApi
     //  * @url     POST /createfromorder/{orderid}
     //  *
     //  * @return int
-    //  * @throws 400
-    //  * @throws 401
-    //  * @throws 404
-    //  * @throws 405
+    //  * @throws RestException 400
+    //  * @throws RestException 401
+    //  * @throws RestException 404
+    //  * @throws RestException 405
     //  */
     /*
     public function createShipmentFromOrder($orderid)

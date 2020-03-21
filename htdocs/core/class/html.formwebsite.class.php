@@ -269,7 +269,15 @@ class FormWebsite
 
 	    		$valueforoption = '<span class="opacitymedium">['.$valpage->type_container.' '.sprintf("%03d", $valpage->id).']</span> ';
 	    		$valueforoption .= $valpage->pageurl.' - '.$valpage->title;
-	    		if ($website->fk_default_home && $key == $website->fk_default_home) $valueforoption .= ' <span class="opacitymedium">('.$langs->trans("HomePage").')</span>';
+	    		if ($website->otherlang) {	// If there is alternative lang for this web site, we show the language code
+	    			if ($valpage->lang) {
+	    				$valueforoption .= ' <span class="opacitymedium">('.$valpage->lang.')</span>';
+	    			}
+	    		}
+	    		if ($website->fk_default_home && $key == $website->fk_default_home) {
+	    			//$valueforoption .= ' <span class="opacitymedium">('.$langs->trans("HomePage").')</span>';
+	    			$valueforoption .= ' <span class="opacitymedium fa fa-home"></span>';
+	    		}
 
 	    		$out .= '<option value="'.$key.'"';
 	    		if ($pageid > 0 && $pageid == $key) $out .= ' selected'; // To preselect a value

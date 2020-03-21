@@ -89,49 +89,49 @@ if (empty($reshook)) {
 			$tabparam = array();
 
 			if (GETPOST("check_MAIN_LANDING_PAGE") == "on") {
-				$tabparam["MAIN_LANDING_PAGE"] = $_POST["MAIN_LANDING_PAGE"];
+				$tabparam["MAIN_LANDING_PAGE"] = GETPOST("MAIN_LANDING_PAGE", 'alphanohtml');
 			} else {
 				$tabparam["MAIN_LANDING_PAGE"] = '';
 			}
 
 			if (GETPOST("check_MAIN_LANG_DEFAULT") == "on") {
-				$tabparam["MAIN_LANG_DEFAULT"] = $_POST["main_lang_default"];
+				$tabparam["MAIN_LANG_DEFAULT"] = GETPOST("main_lang_default", 'aZ09');
 			} else {
 				$tabparam["MAIN_LANG_DEFAULT"] = '';
 			}
 
 			if (GETPOST("check_SIZE_LISTE_LIMIT") == "on") {
-				$tabparam["MAIN_SIZE_LISTE_LIMIT"] = $_POST["main_size_liste_limit"];
+				$tabparam["MAIN_SIZE_LISTE_LIMIT"] = GETPOST("main_size_liste_limit", 'int');
 			} else {
 				$tabparam["MAIN_SIZE_LISTE_LIMIT"] = '';
 			}
 
 			if (GETPOST("check_AGENDA_DEFAULT_VIEW") == "on") {
-				$tabparam["AGENDA_DEFAULT_VIEW"] = $_POST["AGENDA_DEFAULT_VIEW"];
+				$tabparam["AGENDA_DEFAULT_VIEW"] = GETPOST("AGENDA_DEFAULT_VIEW", 'aZ09');
 			} else {
 				$tabparam["AGENDA_DEFAULT_VIEW"] = '';
 			}
 
 			if (GETPOST("check_MAIN_THEME") == "on") {
-				$tabparam["MAIN_THEME"] = $_POST["main_theme"];
+				$tabparam["MAIN_THEME"] = GETPOST('main_theme', 'aZ09');
 			} else {
 				$tabparam["MAIN_THEME"] = '';
 			}
 
-			$val = (implode(',', (colorStringToArray(GETPOST('THEME_ELDY_TOPMENU_BACK1'), array()))));
+			$val = (implode(',', (colorStringToArray(GETPOST('THEME_ELDY_TOPMENU_BACK1', 'alphanohtml'), array()))));
 			if ($val == '') {
 				$tabparam['THEME_ELDY_TOPMENU_BACK1'] = '';
 			} else {
 				$tabparam['THEME_ELDY_TOPMENU_BACK1'] = join(',',
-					colorStringToArray(GETPOST('THEME_ELDY_TOPMENU_BACK1'), array()));
+					colorStringToArray(GETPOST('THEME_ELDY_TOPMENU_BACK1', 'alphanohtml'), array()));
 			}
 
-			$val = (implode(',', (colorStringToArray(GETPOST('THEME_ELDY_BACKTITLE1'), array()))));
+			$val = (implode(',', (colorStringToArray(GETPOST('THEME_ELDY_BACKTITLE1', 'alphanohtml'), array()))));
 			if ($val == '') {
 				$tabparam['THEME_ELDY_BACKTITLE1'] = '';
 			} else {
 				$tabparam['THEME_ELDY_BACKTITLE1'] = join(',',
-					colorStringToArray(GETPOST('THEME_ELDY_BACKTITLE1'), array()));
+					colorStringToArray(GETPOST('THEME_ELDY_BACKTITLE1', 'alphanohtml'), array()));
 			}
 
 			if (GETPOST('check_THEME_ELDY_USE_HOVER') == 'on') {
@@ -153,7 +153,7 @@ if (empty($reshook)) {
 			}
 
 			if (GETPOST('MAIN_OPTIMIZEFORCOLORBLIND')) {
-				$tabparam["MAIN_OPTIMIZEFORCOLORBLIND"] = GETPOST('MAIN_OPTIMIZEFORCOLORBLIND');
+				$tabparam["MAIN_OPTIMIZEFORCOLORBLIND"] = GETPOST('MAIN_OPTIMIZEFORCOLORBLIND', 'aZ09');
 			} else {
 				$tabparam["MAIN_OPTIMIZEFORCOLORBLIND"] = 0;
 			}

@@ -37,6 +37,11 @@ require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
 
 $invoiceid = GETPOST('facid', 'int');
 
+if (empty($user->rights->takepos->run)) {
+	access_forbidden();
+}
+
+
 /*
  * View
  */

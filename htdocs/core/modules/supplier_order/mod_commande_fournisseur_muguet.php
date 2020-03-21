@@ -45,7 +45,7 @@ class mod_commande_fournisseur_muguet extends ModeleNumRefSuppliersOrders
 	/**
 	 * @var string Nom du modele
 	 * @deprecated
-	 * @see name
+	 * @see $name
 	 */
 	public $nom='Muguet';
 

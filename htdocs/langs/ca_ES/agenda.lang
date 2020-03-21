@@ -123,6 +123,7 @@ AgendaUrlOptionsNotAdmin=<b>logina=!%s</b> ​​per a restringir la producció 
 AgendaUrlOptions4=<b>logint=%s</b> per a restringir la producció d'accions assignades a l'usuari <b>%s</b> (propietari i altres).
 AgendaUrlOptionsProject=<b>project=PROJECT_ID</b> per a restringir la sortida d'accions associades al projecta <b>PROJECT_ID</b>.
 AgendaUrlOptionsNotAutoEvent=<b>notactiontype=systemauto</b> per excloure esdeveniments automàtics.
+AgendaUrlOptionsIncludeHolidays= <b> includeholidays = 1 </b> per incloure esdeveniments de vacances.
 AgendaShowBirthdayEvents=Mostra aniversaris dels contactes
 AgendaHideBirthdayEvents=Oculta aniversaris dels contactes
 Busy=Ocupat

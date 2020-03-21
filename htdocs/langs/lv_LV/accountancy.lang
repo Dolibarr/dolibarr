@@ -228,10 +228,11 @@ ThirdpartyAccountNotDefinedOrThirdPartyUnknownSubledgerIgnored=Trešā puse nav 
 ThirdpartyAccountNotDefinedOrThirdPartyUnknownBlocking=Trešās puses konts nav definēts vai trešā persona nav zināma. Bloķēšanas kļūda.
 UnknownAccountForThirdpartyAndWaitingAccountNotDefinedBlocking=Nav noteikts nezināms trešās puses konts un gaidīšanas konts. Bloķēšanas kļūda
 PaymentsNotLinkedToProduct=Maksājums nav saistīts ar kādu produktu / pakalpojumu
+ShowOpeningBalance=Rādīt sākuma atlikumu
+HideOpeningBalance=Slēpt sākuma atlikumu
 
 Pcgtype=Kontu grupa
-Pcgsubtype=Konta apakšgrupa
-PcgtypeDesc=Kontu grupa un apakšgrupa tiek izmantota kā iepriekš definēts "filtru" un "grupēšanas" kritērijs dažiem grāmatvedības pārskatiem. Piemēram, "ienākumi" vai "IZDEVUMI" tiek izmantoti kā produktu grāmatvedības kontu grupas, lai izveidotu izdevumu / ienākumu pārskatu.
+PcgtypeDesc=Kontu grupa tiek izmantota kā iepriekš definēti “filtra” un “grupēšanas” kritēriji dažiem grāmatvedības pārskatiem. Piemēram, “IENĀKUMS” vai “IZDEVUMI” tiek izmantoti kā produktu uzskaites kontu grupas, lai izveidotu izdevumu / ienākumu pārskatu.
 
 TotalVente=Kopējais apgrozījums pirms nodokļu nomaksas
 TotalMarge=Kopējā pārdošanas starpība
@@ -270,6 +271,7 @@ ChangeBinding=Mainiet saites
 Accounted=Uzskaitīts virsgrāmatā
 NotYetAccounted=Vēl nav uzskaitīti virsgrāmatā
 ShowTutorial=Rādīt apmācību
+NotReconciled=Nesaskaņots
 
 ## Admin
 ApplyMassCategories=Pielietot masu sadaļas

@@ -60,7 +60,7 @@ MemberSubscriptionModifiedInDolibarr=Abonamentul %s pentru membrul %s a fost mod
 MemberSubscriptionDeletedInDolibarr=Abonamentul %s pentru membrul %s a fost eliminat
 ShipmentValidatedInDolibarr=Livrarea %s validata
 ShipmentClassifyClosedInDolibarr=Expediere %s clasificată facturată
-ShipmentUnClassifyCloseddInDolibarr=Expediere %s clasificată redeschisă
+ShipmentUnClassifyCloseddInDolibarr=Shipment %s classified re-open
 ShipmentBackToDraftInDolibarr=Expedierea %s revine la starea de proiect
 ShipmentDeletedInDolibarr=Livrare %s ştearsă
 OrderCreatedInDolibarr=Comanda %s a fost creată
@@ -123,6 +123,7 @@ AgendaUrlOptionsNotAdmin=<b>logina=!%s</b> ​​pentru a limita exportul de ac�
 AgendaUrlOptions4=<b>logint=%s</b> ​​pentru a limita exportul de acțiuni atribuite utilizatorului <b>%s</b>( proprietari sau altii).
 AgendaUrlOptionsProject=<b> project = __ PROJECT_ID __ </b> pentru a restricționa ieșirea la acțiunile legate de proiectul <b> __ PROJECT_ID __ </b>.
 AgendaUrlOptionsNotAutoEvent=<b> notactiontype = systemauto </b> pentru a exclude evenimentele automate.
+AgendaUrlOptionsIncludeHolidays=<b>includeholidays=1</b> to include events of holidays.
 AgendaShowBirthdayEvents=Afişează ziua de naştere a contactelor
 AgendaHideBirthdayEvents=Ascunde ziua de naştere a contactelor
 Busy=Ocupat

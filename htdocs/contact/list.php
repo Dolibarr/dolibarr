@@ -103,12 +103,12 @@ $view = GETPOST("view", 'alpha');
 $limit = GETPOST('limit', 'int') ?GETPOST('limit', 'int') : $conf->liste_limit;
 $sortfield = GETPOST('sortfield', 'alpha');
 $sortorder = GETPOST('sortorder', 'alpha');
-$page = GETPOST('page', 'int');
+$page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOST("page", 'int');
 $userid = GETPOST('userid', 'int');
 $begin = GETPOST('begin');
 if (!$sortorder) $sortorder = "ASC";
 if (!$sortfield) $sortfield = "p.lastname";
-if (empty($page) || $page < 0) { $page = 0; }
+if (empty($page) || $page < 0 || GETPOST('button_search', 'alpha') || GETPOST('button_removefilter', 'alpha')) { $page = 0; }
 $offset = $limit * $page;
 
 $titre = (!empty($conf->global->SOCIETE_ADDRESSES_MANAGEMENT) ? $langs->trans("ListOfContacts") : $langs->trans("ListOfContactsAddresses"));
@@ -290,7 +290,7 @@ $title = (!empty($conf->global->SOCIETE_ADDRESSES_MANAGEMENT) ? $langs->trans("C
 
 $sql = "SELECT s.rowid as socid, s.nom as name,";
 $sql .= " p.rowid, p.lastname as lastname, p.statut, p.firstname, p.zip, p.town, p.poste, p.email, p.no_email,";
-$sql .= " p.socialnetworks,";
+$sql .= " p.socialnetworks, p.photo,";
 $sql .= " p.phone as phone_pro, p.phone_mobile, p.phone_perso, p.fax, p.fk_pays, p.priv, p.datec as date_creation, p.tms as date_update,";
 $sql .= " co.label as country, co.code as country_code";
 // Add fields from extrafields
@@ -497,11 +497,11 @@ print '<input type="hidden" name="token" value="'.newToken().'">';
 print '<input type="hidden" name="formfilteraction" id="formfilteraction" value="list">';
 print '<input type="hidden" name="sortfield" value="'.$sortfield.'">';
 print '<input type="hidden" name="sortorder" value="'.$sortorder.'">';
-print '<input type="hidden" name="page" value="'.$page.'">';
+//print '<input type="hidden" name="page" value="'.$page.'">';
 print '<input type="hidden" name="type" value="'.$type.'">';
 print '<input type="hidden" name="view" value="'.dol_escape_htmltag($view).'">';
 
-print_barre_liste($titre, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, $massactionbutton, $num, $nbtotalofrecords, 'address', 0, $newcardbutton, '', $limit);
+print_barre_liste($titre, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, $massactionbutton, $num, $nbtotalofrecords, 'address', 0, $newcardbutton, '', $limit, 0, 0, 1);
 
 $topicmail = "Information";
 $modelmail = "contact";
@@ -786,7 +786,6 @@ while ($i < min($num, $limit))
 {
 	$obj = $db->fetch_object($result);
 
-	print '<tr class="oddeven">';
 	$arraysocialnetworks = (array) json_decode($obj->socialnetworks, true);
 	$contactstatic->lastname = $obj->lastname;
 	$contactstatic->firstname = '';
@@ -802,6 +801,9 @@ while ($i < min($num, $limit))
 	$contactstatic->socialnetworks = $arraysocialnetworks;
 	$contactstatic->country = $obj->country;
 	$contactstatic->country_code = $obj->country_code;
+	$contactstatic->photo = $obj->photo;
+
+	print '<tr class="oddeven">';
 
 	// ID
 	if (!empty($arrayfields['p.rowid']['checked']))

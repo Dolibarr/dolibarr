@@ -62,7 +62,7 @@ $search_payment_num = GETPOST('search_payment_num', 'alpha');
 $limit = GETPOST('limit', 'int') ?GETPOST('limit', 'int') : $conf->liste_limit;
 $sortfield = GETPOST("sortfield", 'alpha');
 $sortorder = GETPOST("sortorder", 'alpha');
-$page = GETPOST("page", 'int');
+$page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOST("page", 'int');
 if (empty($page) || $page == -1) { $page = 0; }     // If $page is not defined, or '' or -1
 $offset = $limit * $page;
 $pageprev = $page - 1;
@@ -297,9 +297,15 @@ if (empty($reshook))
 	        $paiement->datepaye     = $datepaye;
 	        $paiement->amounts      = $amounts; // Array of amounts
 	        $paiement->multicurrency_amounts = $multicurrency_amounts;
-	        $paiement->paiementid   = $_POST['paiementid'];
-	        $paiement->num_paiement = $_POST['num_paiement'];
-	        $paiement->note         = $_POST['comment'];
+	        $paiement->paiementid   = GETPOST('paiementid', 'int');
+
+	        $paiement->num_payment  = GETPOST('num_paiement', 'alphanohtml');
+	        $paiement->note_private = GETPOST('comment', 'alpha');
+	        $paiement->num_paiement = $paiement->num_payment; // For backward compatibility
+	        $paiement->num_payment = $paiement->num_payment;
+	        $paiement->note         = $paiement->note_private; // For backward compatibility
+	        $paiement->note_private = $paiement->note_private;
+
 	        if (!$error)
 	        {
 	            $paiement_id = $paiement->create($user, (GETPOST('closepaidinvoices') == 'on' ? 1 : 0), $thirdparty);
@@ -808,7 +814,7 @@ if (empty($action) || $action == 'list')
     $limit = GETPOST('limit', 'int') ?GETPOST('limit', 'int') : $conf->liste_limit;
     $sortfield = GETPOST("sortfield", 'alpha');
     $sortorder = GETPOST("sortorder", 'alpha');
-    $page = GETPOST("page", 'int');
+    $page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOST("page", 'int');
     if (empty($page) || $page == -1) { $page = 0; }
     $offset = $limit * $page;
     $pageprev = $page - 1;

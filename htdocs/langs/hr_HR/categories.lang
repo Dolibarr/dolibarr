@@ -78,6 +78,7 @@ CatMemberList=Popis kategorija članova
 CatContactList=Popis kategorija kontakta
 CatSupLinks=Veze između dobavljača i kategorija
 CatCusLinks=Veze između kupaca/potencijalnih kupaca i kategorija
+CatContactsLinks=Links between contacts/addresses and tags/categories
 CatProdLinks=Veze izmeđi proizvoda/usluga i kategorija
 CatProJectLinks=Veze između projekata i kategorija
 DeleteFromCat=Makni iz kategorije

@@ -60,7 +60,7 @@ MemberSubscriptionModifiedInDolibarr=Subscription %s for member %s modified
 MemberSubscriptionDeletedInDolibarr=Subscription %s for member %s deleted
 ShipmentValidatedInDolibarr=A %s szállítás jóváhagyva
 ShipmentClassifyClosedInDolibarr=Shipment %s classified billed
-ShipmentUnClassifyCloseddInDolibarr=Shipment %s classified reopened
+ShipmentUnClassifyCloseddInDolibarr=Shipment %s classified re-open
 ShipmentBackToDraftInDolibarr=Shipment %s go back to draft status
 ShipmentDeletedInDolibarr=Shipment %s deleted
 OrderCreatedInDolibarr=Order %s created
@@ -123,6 +123,7 @@ AgendaUrlOptionsNotAdmin=<b>logina=!%s</b> to restrict output to actions not own
 AgendaUrlOptions4=<b>logint=%s</b> to restrict output to actions assigned to user <b>%s</b> (owner and others).
 AgendaUrlOptionsProject=<b>project=__PROJECT_ID__</b> to restrict output to actions linked to project <b>__PROJECT_ID__</b>.
 AgendaUrlOptionsNotAutoEvent=<b>notactiontype=systemauto</b> to exclude automatic events.
+AgendaUrlOptionsIncludeHolidays=<b>includeholidays=1</b> to include events of holidays.
 AgendaShowBirthdayEvents=Mutassa a születésnapokat a névjegyzékben
 AgendaHideBirthdayEvents=Rejtse el a születésnapokat a névjegyzékben 
 Busy=Elfoglalt

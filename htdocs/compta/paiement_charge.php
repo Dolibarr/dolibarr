@@ -108,9 +108,10 @@ if ($action == 'add_payment' || ($action == 'confirm_paiement' && $confirm == 'y
     		$paiement->chid         = $chid;
     		$paiement->datepaye     = $datepaye;
     		$paiement->amounts      = $amounts; // Tableau de montant
-    		$paiement->paiementtype = $_POST["paiementtype"];
-    		$paiement->num_paiement = $_POST["num_paiement"];
-    		$paiement->note         = $_POST["note"];
+    		$paiement->paiementtype = GETPOST("paiementtype", 'alphanohtml');
+    		$paiement->num_payment  = GETPOST("num_payment", 'alphanohtml');
+    		$paiement->note         = GETPOST("note", 'none');
+    		$paiement->note_private = GETPOST("note", 'none');
 
     		if (!$error)
     		{
@@ -243,7 +244,7 @@ if ($action == 'create')
 	print '<tr><td>'.$langs->trans('Numero');
 	print ' <em>('.$langs->trans("ChequeOrTransferNumber").')</em>';
 	print '</td>';
-	print '<td><input name="num_paiement" type="text" value="'.GETPOST('num_paiement').'"></td></tr>'."\n";
+	print '<td><input name="num_payment" type="text" value="'.GETPOST('num_payment', 'alphanohtml').'"></td></tr>'."\n";
 
 	print '<tr>';
 	print '<td class="tdtop">'.$langs->trans("Comments").'</td>';

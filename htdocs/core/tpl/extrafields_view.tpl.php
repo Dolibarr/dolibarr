@@ -73,7 +73,7 @@ if (empty($reshook) && is_array($extrafields->attributes[$object->table_element]
 		//print $key.'-'.$enabled.'-'.$perms.'-'.$label.$_POST["options_" . $key].'<br>'."\n";
 
 		if (empty($enabled)) continue; // 0 = Never visible field
-		if (abs($enabled) != 1 && abs($enabled) != 3) continue; // <> -1 and <> 1 and <> 3 = not visible on forms, only on list
+		if (abs($enabled) != 1 && abs($enabled) != 3 && abs($enabled) != 5) continue; // <> -1 and <> 1 and <> 3 = not visible on forms, only on list
 		if (empty($perms)) continue; // 0 = Not visible
 
 		// Load language if required
@@ -135,7 +135,7 @@ if (empty($reshook) && is_array($extrafields->attributes[$object->table_element]
 			if ($object->element == 'productlot')       $permok = $user->rights->stock->creer;
 			if ($object->element == 'facturerec') 	  $permok = $user->rights->facture->creer;
 			if (($object->statut == 0 || !empty($extrafields->attributes[$object->table_element]['alwayseditable'][$key]))
-				&& $permok && ($action != 'edit_extras' || GETPOST('attribute') != $key)
+				&& $permok && $enabled != 5 && ($action != 'edit_extras' || GETPOST('attribute') != $key)
 			    && empty($extrafields->attributes[$object->table_element]['computed'][$key]))
 			{
 			    $fieldid = 'id';

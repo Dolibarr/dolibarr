@@ -1094,7 +1094,7 @@ class Cronjob extends CommonObject
 
 				    $errmsg = '';
 				    if (!is_array($object->errors) || !in_array($object->error, $object->errors)) $errmsg .= $object->error;
-				    if (is_array($object->errors) && count($object->errors)) $errmsg .= ($errmsg ? ', '.$errmsg : '').join(', ', $object->errors);
+				    if (is_array($object->errors) && count($object->errors)) $errmsg .= (($errmsg ? ', ' : '').join(', ', $object->errors));
 				    if (empty($errmsg)) $errmsg = $langs->trans('ErrorUnknown');
 
 				    dol_syslog(get_class($this)."::run_jobs END result=".$result." error=".$errmsg, LOG_ERR);
@@ -1320,9 +1320,9 @@ class Cronjob extends CommonObject
 			if ($processing) $moretext = ' ('.$langs->trans("Running").')';
 			elseif ($lastresult) $moretext .= ' ('.$langs->trans("Error").')';
 
-			$this->labelStatus[self::STATUS_DISABLED] = $langs->trans('Draft').$moretext;
+			$this->labelStatus[self::STATUS_DISABLED] = $langs->trans('Disabled').$moretext;
 			$this->labelStatus[self::STATUS_ENABLED] = $langs->trans('Enabled').$moretext;
-			$this->labelStatusShort[self::STATUS_DISABLED] = $langs->trans('Draft');
+			$this->labelStatusShort[self::STATUS_DISABLED] = $langs->trans('Disabled');
 			$this->labelStatusShort[self::STATUS_ENABLED] = $langs->trans('Enabled');
 		}
 

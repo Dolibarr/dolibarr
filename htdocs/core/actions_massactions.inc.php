@@ -691,11 +691,11 @@ if ($massaction == 'confirm_createbills')   // Create bills from orders
 
 				for ($i = 0; $i < $num; $i++)
 				{
-					$desc = ($lines[$i]->desc ? $lines[$i]->desc : $lines[$i]->libelle);
+					$desc = ($lines[$i]->desc ? $lines[$i]->desc : '');
 					// If we build one invoice for several order, we must put the invoice of order on the line
 					if (!empty($createbills_onebythird))
 					{
-					    $desc = dol_concatdesc($desc, $langs->trans("Order").' '.$cmd->ref.' - '.dol_print_date($cmd->date, 'day', $langs));
+					    $desc = dol_concatdesc($desc, $langs->trans("Order").' '.$cmd->ref.' - '.dol_print_date($cmd->date, 'day'));
 					}
 
 					if ($lines[$i]->subprice < 0)
@@ -1215,6 +1215,8 @@ if (!$error && $massaction == 'closed' && $objectclass == "Propal" && $permissio
         $db->rollback();
     }
 }
+
+
 // Delete record from mass action (massaction = 'delete' for direct delete, action/confirm='delete'/'yes' with a confirmation step before)
 if (!$error && ($massaction == 'delete' || ($action == 'delete' && $confirm == 'yes')) && $permissiontodelete)
 {

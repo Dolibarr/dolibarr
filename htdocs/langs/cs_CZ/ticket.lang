@@ -30,6 +30,7 @@ Permission56005=Viz vstupenky všech subjektů (neplatí pro externí uživatele
 TicketDictType=Vstupenka - Typy
 TicketDictCategory=Vstupenka - skupiny
 TicketDictSeverity=Vstupenka - závažnosti
+TicketDictResolution=Ticket - Resolution
 TicketTypeShortBUGSOFT=Logika Dysfonctionnement
 TicketTypeShortBUGHARD=Dysfonctionnement matériel -nějaký mišmaš ???
 TicketTypeShortCOM=Obchodní otázka
@@ -241,7 +242,7 @@ NoLogForThisTicket=Pro tento lístek zatím není žádný záznam
 TicketLogAssignedTo=Vstupenka %s přiřazena %s
 TicketLogPropertyChanged=Vstupenka %s upraveno: klasifikace z %s do %s
 TicketLogClosedBy=Vstupenka %s uzavřena %s
-TicketLogReopen=Vstupenka %s znovu otevřena
+TicketLogReopen=Ticket %s re-open
 
 #
 # Public pages
@@ -253,7 +254,7 @@ TicketPublicDesc=Můžete vytvořit lístek podpory nebo šek z existujícího I
 YourTicketSuccessfullySaved=Lístek byl úspěšně uložen!
 MesgInfosPublicTicketCreatedWithTrackId=A new ticket has been created with ID %s and Ref %s.
 PleaseRememberThisId=Udržujte prosím sledovací číslo, které bychom vás mohli požádat později.
-TicketNewEmailSubject=Ticket creation confirmation - Ref %s
+TicketNewEmailSubject=Ticket creation confirmation - Ref %s (public ticket ID %s)
 TicketNewEmailSubjectCustomer=Nová podpora lístku
 TicketNewEmailBody=Jedná se o automatický e-mail, který potvrzuje, že jste zaregistrovali nový lístek.
 TicketNewEmailBodyCustomer=Jedná se o automatický e-mail, který potvrzuje, že byl do vašeho účtu právě vytvořen nový lístek.
@@ -272,7 +273,7 @@ Subject=Předmět
 ViewTicket=Zobrazit lístek
 ViewMyTicketList=Zobrazit seznam lístků
 ErrorEmailMustExistToCreateTicket=Chyba: e-mailová adresa nebyla nalezena v naší databázi
-TicketNewEmailSubjectAdmin=New ticket created - Ref %s
+TicketNewEmailSubjectAdmin=New ticket created - Ref %s (public ticket ID %s)
 TicketNewEmailBodyAdmin=<p> Lístek byl právě vytvořen s ID # %s, viz informace: </p>
 SeeThisTicketIntomanagementInterface=Viz tiket v rozhraní pro správu
 TicketPublicInterfaceForbidden=Veřejné rozhraní pro vstupenky nebylo povoleno

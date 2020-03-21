@@ -48,7 +48,7 @@ $constnote=GETPOST('constnote', 'alpha');
 $limit = GETPOST('limit', 'int')?GETPOST('limit', 'int'):$conf->liste_limit;
 $sortfield = GETPOST('sortfield', 'alpha');
 $sortorder = GETPOST('sortorder', 'alpha');
-$page = GETPOST('page', 'int');
+$page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOST("page", 'int');
 if (empty($page) || $page == -1 || GETPOST('button_search', 'alpha') || GETPOST('button_removefilter', 'alpha') || (empty($toselect) && $massaction === '0')) { $page = 0; }     // If $page is not defined, or '' or -1 or if we click on clear filters or if we select empty mass action
 $offset = $limit * $page;
 $pageprev = $page - 1;
@@ -201,14 +201,14 @@ print '<div class="div-table-responsive-no-min">';
 print '<table class="noborder centpercent">';
 print '<tr class="liste_titre">';
 print getTitleFieldOfList('Name', 0, $_SERVER['PHP_SELF'], 'name', '', $param, '', $sortfield, $sortorder, '')."\n";
-print '<td>'.$langs->trans("Value").'</td>';
-print '<td>'.$langs->trans("Comment").'</td>';
-print getTitleFieldOfList('DateModificationShort', 0, $_SERVER['PHP_SELF'], 'tms', '', $param, '', $sortfield, $sortorder, 'center')."\n";
+print getTitleFieldOfList("Value", 0, $_SERVER["PHP_SELF"], '', '', $param, '', $sortfield, $sortorder);
+print getTitleFieldOfList("Comment", 0, $_SERVER["PHP_SELF"], '', '', $param, '', $sortfield, $sortorder);
+print getTitleFieldOfList('DateModificationShort', 0, $_SERVER['PHP_SELF'], 'tms', '', $param, '', $sortfield, $sortorder, 'center ')."\n";
 if (! empty($conf->multicompany->enabled) && !$user->entity)
 {
-	print getTitleFieldOfList('Entity', 0, $_SERVER['PHP_SELF'], 'tms', '', $param, '', $sortfield, $sortorder, 'center')."\n";
+	print getTitleFieldOfList('Entity', 0, $_SERVER['PHP_SELF'], 'tms', '', $param, '', $sortfield, $sortorder, 'center ')."\n";
 }
-print '<td class="center">'.$langs->trans("Action").'</td>';
+print getTitleFieldOfList("Action", 0, $_SERVER["PHP_SELF"], '', '', $param, '', $sortfield, $sortorder, 'center ');
 print "</tr>\n";
 
 
