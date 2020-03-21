@@ -69,10 +69,11 @@ $db->begin();
 
 $listofpages = $websitepagestatic->fetchAll($website->id, '', $max);
 
+global $dolibarr_main_data_root;
+$pathofwebsite = $dolibarr_main_data_root.'/website/'.$websiteref;
+
 $nbgenerated = 0;
 foreach($listofpages as $websitepage) {
-	global $dolibarr_main_data_root;
-	$pathofwebsite = $dolibarr_main_data_root.'/website/'.$websiteref;
 	$filealias = $pathofwebsite.'/'.$websitepage->pageurl.'.php';
 	$filetpl = $pathofwebsite.'/page'.$websitepage->id.'.tpl.php';
 	if ($mode == 'confirm') {
@@ -89,7 +90,7 @@ foreach($listofpages as $websitepage) {
 }
 
 if ($mode == 'confirm') {
-	print $nbgenerated." page(s) generated\n";
+	print $nbgenerated." page(s) generated into ".$pathofwebsite."\n";
 } else {
 	print $nbgenerated." page(s) found but not generated (test mode)\n";
 }
