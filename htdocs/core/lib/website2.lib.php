@@ -49,7 +49,8 @@ function dolSaveMasterFile($filemaster)
 }
 
 /**
- * Save content of a page on disk
+ * Save content of a page on disk.
+ * It can save file into root directory or into language subdirectory.
  *
  * @param	string		$filealias			Full path of filename to generate
  * @param	Website		$object				Object website
@@ -98,7 +99,8 @@ function dolSavePageAlias($filealias, $object, $objectpage)
 
 
 /**
- * Save content of a page on disk
+ * Save content of a page on disk.
+ * Page contents are always saved into root directory.
  *
  * @param	string		$filetpl			Full path of filename to generate
  * @param	Website		$object				Object website

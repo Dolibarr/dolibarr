@@ -17,7 +17,7 @@
  */
 
 /**
- * \file scripts/website/migrate_newsèjoomla2dolibarr.php
+ * \file scripts/website/migrate_news_joomla2dolibarr.php
  * \ingroup scripts
  * \brief Migrate news from a Joomla databse into a Dolibarr website
  */
@@ -42,7 +42,7 @@ $websiteref = empty($argv[2])?'':$argv[2];
 $joomlaserverinfo = empty($argv[3])?'':$argv[3];
 $image = 'image/__WEBSITE_KEY__/images/stories/dolibarr.png';
 
-$max = (empty($argv[4]) && $argv[4] !== '0')?'10':$argv[4];
+$max = (!isset($argv[4]) || (empty($argv[4]) && $argv[4] !== '0'))?'10':$argv[4];
 
 if (empty($argv[3]) || !in_array($argv[1], array('test', 'confirm')) || empty($websiteref)) {
 	print '***** '.$script_file.' *****'."\n";
