@@ -333,9 +333,10 @@ function build_calfile($format, $title, $desc, $events_array, $outputfile)
  *  @param      array	$events_array       Array of events ("uid","startdate","summary","url","desc","author","category") or Array of WebsitePage
  *  @param      string	$outputfile         Output file
  *  @param      string	$filter             (optional) Filter
+ *  @param		string	$url				Url
  *  @return     int                         < 0 if ko, Nb of events in file if ok
  */
-function build_rssfile($format, $title, $desc, $events_array, $outputfile, $filter = "")
+function build_rssfile($format, $title, $desc, $events_array, $outputfile, $filter = "", $url="")
 {
     global $user, $conf, $langs;
     global $dolibarr_main_url_root;
@@ -371,13 +372,14 @@ function build_rssfile($format, $title, $desc, $events_array, $outputfile, $filt
                 "<generator>Dolibarr</generator>"."\n");
         */
 
-        // Define $urlwithroot
-        $urlwithouturlroot = preg_replace("/".preg_quote(DOL_URL_ROOT, "/")."$/i", "", trim($dolibarr_main_url_root));
+        if (empty($url)) {
+	        // Define $urlwithroot
+	        $urlwithouturlroot = preg_replace("/".preg_quote(DOL_URL_ROOT, "/")."$/i", "", trim($dolibarr_main_url_root));
+	        $urlwithroot       = $urlwithouturlroot.DOL_URL_ROOT;   // This is to use external domain name found into config file
+	        //$urlwithroot=DOL_MAIN_URL_ROOT;                       // This is to use same domain name than current
 
-        $urlwithroot       = $urlwithouturlroot.DOL_URL_ROOT;   // This is to use external domain name found into config file
-        //$urlwithroot=DOL_MAIN_URL_ROOT;                       // This is to use same domain name than current
-
-        $url=$urlwithroot."/public/agenda/agendaexport.php?format=rss&exportkey=".urlencode($conf->global->MAIN_AGENDA_XCAL_EXPORTKEY);
+	        $url = $urlwithroot."/public/agenda/agendaexport.php?format=rss&exportkey=".urlencode($conf->global->MAIN_AGENDA_XCAL_EXPORTKEY);
+        }
 
         fwrite($fichier, "<link><![CDATA[".$url."]]></link>"."\n");
 

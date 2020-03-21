@@ -1,6 +1,7 @@
 <?php
-// BEGIN PHP File wrapper.php - DO NOT MODIFY - It is just a copy of wrapper.html sample.
+// BEGIN PHP File wrapper.php - DO NOT MODIFY - It is just a copy of file website/samples/wrapper.php
 $websitekey=basename(__DIR__);
+if (strpos($_SERVER["PHP_SELF"], 'website/samples/wrapper.php')) die("Sample file for website module. Can be called directly.");
 if (! defined('USEDOLIBARRSERVER') && ! defined('USEDOLIBARREDITOR')) { require_once './master.inc.php'; } // Load master if not already loaded
 include_once DOL_DOCUMENT_ROOT.'/core/lib/images.lib.php';
 
@@ -147,9 +148,9 @@ if ($rss) {
     	@chmod($outputfiletmp, octdec($conf->global->MAIN_UMASK));
 
     	// Write file
-    	if ($format == 'vcal') $result=build_calfile($format, $title, $desc, $eventarray, $outputfiletmp);
-    	elseif ($format == 'ical') $result=build_calfile($format, $title, $desc, $eventarray, $outputfiletmp);
-    	elseif ($format == 'rss')  $result=build_rssfile($format, $title, $desc, $eventarray, $outputfiletmp);
+    	//if ($format == 'vcal') $result=build_calfile($format, $title, $desc, $eventarray, $outputfiletmp);
+    	//elseif ($format == 'ical') $result=build_calfile($format, $title, $desc, $eventarray, $outputfiletmp);
+    	if ($format == 'rss')  $result=build_rssfile($format, $title, $desc, $eventarray, $outputfiletmp);
 
     	if ($result >= 0)
     	{
@@ -173,7 +174,33 @@ if ($rss) {
     	}
     }
 
-    return $result;
+    if ($result >= 0)
+    {
+    	$attachment = false;
+    	if (isset($_GET["attachment"])) $attachment=$_GET["attachment"];
+    	//$attachment = false;
+    	$contenttype='application/rss+xml';
+    	if (isset($_GET["contenttype"])) $contenttype=$_GET["contenttype"];
+    	//$contenttype='text/plain';
+    	$outputencoding='UTF-8';
+
+    	if ($contenttype)       header('Content-Type: '.$contenttype.($outputencoding?'; charset='.$outputencoding:''));
+    	if ($attachment) 		header('Content-Disposition: attachment; filename="'.$filename.'"');
+
+    	// Ajout directives pour resoudre bug IE
+    	//header('Cache-Control: Public, must-revalidate');
+    	//header('Pragma: public');
+    	if ($cachedelay) header('Cache-Control: max-age='.$cachedelay.', private, must-revalidate');
+    	else header('Cache-Control: private, must-revalidate');
+
+    	// Clean parameters
+    	$outputfile=$dir_temp.'/'.$filename;
+    	$result=readfile($outputfile);
+    	if (! $result) print 'File '.$outputfile.' was empty.';
+
+    	// header("Location: ".DOL_URL_ROOT.'/document.php?modulepart=agenda&file='.urlencode($filename));
+    	exit;
+    }
 }
 // Get logos
 elseif ($modulepart == "mycompany" && preg_match('/^\/?logos\//', $original_file))

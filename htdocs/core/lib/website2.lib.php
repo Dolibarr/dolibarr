@@ -253,7 +253,7 @@ function dolSaveIndexPage($pathofwebsite, $fileindex, $filetpl, $filewrapper)
 
 		dol_delete_file($filewrapper);
 
-		$wrappercontent = file_get_contents(DOL_DOCUMENT_ROOT.'/website/samples/wrapper.html');
+		$wrappercontent = file_get_contents(DOL_DOCUMENT_ROOT.'/website/samples/wrapper.php');
 
 		$result2 = file_put_contents($filewrapper, $wrappercontent);
 		if (!empty($conf->global->MAIN_UMASK))
