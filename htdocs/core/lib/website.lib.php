@@ -709,7 +709,7 @@ function getSocialNetworkSharingLinks()
  * Return list of containers object that match a criteria.
  * WARNING: This function can be used by websites.
  *
- * @param 	string		$type				Type of container to search into (Example: 'page')
+ * @param 	string		$type				Type of container to search into (Example: '', 'page', 'blogpost', 'page,blogpost', ...)
  * @param 	string		$algo				Algorithm used for search (Example: 'meta' is searching into meta information like title and description, 'content', 'sitefiles', or any combination, ...)
  * @param	string		$searchstring		Search string
  * @param	int			$max				Max number of answers
@@ -737,11 +737,17 @@ function getPagesFromSearchCriterias($type, $algo, $searchstring, $max = 25)
 		$arrayresult['code'] = 'KO';
 		$arrayresult['message'] = $weblangs->trans("ErrorSearchCriteriaTooSmall");
 	}
-	elseif (!in_array($type, array('', 'page')))
+	else
 	{
-		$error++;
-		$arrayresult['code'] = 'KO';
-		$arrayresult['message'] = 'Bad value for parameter $type';
+		$tmparrayoftype = explode(',', $type);
+		foreach($tmparrayoftype as $tmptype) {
+			if (!in_array($tmptype, array('', 'page', 'blogpost'))) {
+				$error++;
+				$arrayresult['code'] = 'KO';
+				$arrayresult['message'] = 'Bad value for parameter type';
+				break;
+			}
+		}
 	}
 
 	$searchdone = 0;
@@ -751,7 +757,14 @@ function getPagesFromSearchCriterias($type, $algo, $searchstring, $max = 25)
 	{
 		$sql = 'SELECT rowid FROM '.MAIN_DB_PREFIX.'website_page';
 		$sql .= " WHERE fk_website = ".$website->id;
-		if ($type) $sql .= " AND type_container = '".$db->escape($type)."'";
+		if ($type) {
+			$tmparrayoftype = explode(',', $type);
+			$typestring = '';
+			foreach($tmparrayoftype as $tmptype) {
+				$typestring .= ($typestring ? ", ": "")."'".trim($tmptype)."'";
+			}
+			$sql .= " AND type_container IN (".$typestring.")";
+		}
 		$sql .= " AND (";
 		$searchalgo = '';
 		if (preg_match('/meta/', $algo))
