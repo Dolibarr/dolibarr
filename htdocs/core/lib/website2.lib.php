@@ -248,18 +248,19 @@ function dolSaveIndexPage($pathofwebsite, $fileindex, $filetpl, $filewrapper)
 	$indexcontent .= "include_once './".basename($filetpl)."'\n";
 	$indexcontent .= '// END PHP ?>'."\n";
 	$result1 = file_put_contents($fileindex, $indexcontent);
-	if (!empty($conf->global->MAIN_UMASK))
+	if (!empty($conf->global->MAIN_UMASK)) {
 		@chmod($fileindex, octdec($conf->global->MAIN_UMASK));
+	}
+	dol_delete_file($filewrapper);
 
-		dol_delete_file($filewrapper);
+	$wrappercontent = file_get_contents(DOL_DOCUMENT_ROOT.'/website/samples/wrapper.php');
 
-		$wrappercontent = file_get_contents(DOL_DOCUMENT_ROOT.'/website/samples/wrapper.php');
+	$result2 = file_put_contents($filewrapper, $wrappercontent);
+	if (!empty($conf->global->MAIN_UMASK)) {
+		@chmod($filewrapper, octdec($conf->global->MAIN_UMASK));
+	}
 
-		$result2 = file_put_contents($filewrapper, $wrappercontent);
-		if (!empty($conf->global->MAIN_UMASK))
-			@chmod($filewrapper, octdec($conf->global->MAIN_UMASK));
-
-			return ($result1 && $result2);
+	return ($result1 && $result2);
 }
 
 
