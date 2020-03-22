@@ -807,7 +807,6 @@ if ($id > 0 || !empty($ref)) {
 						print '<td>';
 						if (! empty($conf->productbatch->enabled) && $objp->tobatch == 1) {
 						    $type = 'batch';
-						    //print img_picto($langs->trans('AddDispatchBatchLine'), 'split.png', 'class="splitbutton" onClick="addDispatchLine(' . $i . ',\'' . $type . '\')"');
 						    print img_picto($langs->trans('AddStockLocationLine'), 'split.png', 'class="splitbutton" onClick="addDispatchLine('.$i.', \''.$type.'\')"');
 						}
 						else
@@ -815,7 +814,6 @@ if ($id > 0 || !empty($ref)) {
 						    $type = 'dispatch';
 						    print img_picto($langs->trans('AddStockLocationLine'), 'split.png', 'class="splitbutton" onClick="addDispatchLine('.$i.', \''.$type.'\')"');
 						}
-
 						print '</td>';
 
 						if (! empty($conf->global->SUPPLIER_ORDER_CAN_UPDATE_BUYINGPRICE_DURING_RECEIPT)) {

@@ -397,7 +397,8 @@ $formproduct = new FormProduct($db);
 $tmpwarehouse = new Entrepot($db);
 $tmpbatch = new Productlot($db);
 
-llxHeader('', $langs->trans('Mo'), '');
+$help_url = 'EN:Module_Manufacturing_Orders|FR:Module_Ordres_de_Fabrication';
+llxHeader('', $langs->trans('Mo'), $help_url, '', 0, 0, array('/mrp/js/lib_dispatch.js.php'));
 
 // Part to show record
 if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'create')))
@@ -687,7 +688,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
     		print '<td>';
     		print $form->select_produits('', 'productidtoadd', '', 0, 0, -1, 2, '', 0, array(), 0, '1', 0, 'maxwidth300');
     		print '</td>';
-    		print '<td class="right"><input type="text" name="qtytoadd" value="1" class="width50"></td>';
+    		print '<td class="right"><input type="text" name="qtytoadd" value="1" class="width50 right"></td>';
     		print '<td class="right"></td>';
     		print '<td>';
     		print '<input type="submit" class="button" name="addconsumelinebutton" value="'.$langs->trans("Add").'">';
@@ -774,8 +775,8 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
     	    			print '<td class="right">'.$line2['qty'].'</td>';
     	    			print '<td>';
     	    			if ($line2['fk_warehouse'] > 0) {
-    	    				$tmpwarehouse->fetch($line2['fk_warehouse']);
-    	    				print $tmpwarehouse->getNomUrl(1);
+    	    				$result = $tmpwarehouse->fetch($line2['fk_warehouse']);
+    	    				if ($result > 0) print $tmpwarehouse->getNomUrl(1);
     	    			}
     	    			print '</td>';
     	    			// Lot Batch
@@ -846,6 +847,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
     		print '<td>';
     		if ($collapse || in_array($action, array('consumeorproduce', 'consumeandproduceall'))) print $langs->trans("Batch");
     		print '</td>';
+    		print '<td></td>';
     	}
     	print '</tr>';
 
@@ -861,6 +863,8 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
     		$nblinetoproducecursor = 0;
     		foreach ($object->lines as $line) {
     			if ($line->role == 'toproduce') {
+    				$i=1;
+
     				$nblinetoproducecursor++;
 
     				$tmpproduct = new Product($db);
@@ -871,6 +875,12 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
     				foreach ($arrayoflines as $line2) {
     					$alreadyproduced += $line2['qty'];
     				}
+
+    				$suffix = '_'.$line->id;
+    				print '<!-- Line to dispatch '.$suffix.' -->'."\n";
+    				// hidden fields for js function
+    				print '<input id="qty_ordered'.$suffix.'" type="hidden" value="'.$line->qty.'">';
+    				print '<input id="qty_dispatched'.$suffix.'" type="hidden" value="'.$alreadyproduced.'">';
 
     				print '<tr>';
     				print '<td>'.$tmpproduct->getNomUrl(1).'</td>';
@@ -899,6 +909,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
     				print '</td>';
     				if ($conf->productbatch->enabled) {
     					print '<td></td>'; // Lot
+    					print '<td></td>';
     				}
     				print '</tr>';
 
@@ -912,30 +923,33 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
     					print '<td class="right">'.$line2['qty'].'</td>';
     					print '<td>';
     					if ($line2['fk_warehouse'] > 0) {
-    						$tmpwarehouse->fetch($line2['fk_warehouse']);
-    						print $tmpwarehouse->getNomUrl(1);
+    						$result = $tmpwarehouse->fetch($line2['fk_warehouse']);
+    						if ($result > 0) print $tmpwarehouse->getNomUrl(1);
     					}
     					print '</td>';
-    					print '<td>';
-    					if ($line2['batch'] != '') {
-    						$tmpbatch->fetch(0, $line2['fk_product'], $line2['batch']);
-    						print $tmpbatch->getNomUrl(1);
+    					if ($conf->productbatch->enabled) {
+    						print '<td>';
+	    					if ($line2['batch'] != '') {
+	    						$tmpbatch->fetch(0, $line2['fk_product'], $line2['batch']);
+	    						print $tmpbatch->getNomUrl(1);
+	    					}
+	    					print '</td>';
+	    					print '<td></td>';
     					}
-    					print '</td>';
     					print '</tr>';
     				}
 
     				if (in_array($action, array('consumeorproduce', 'consumeandproduceall'))) {
-    					print '<tr>';
+    					print '<tr name="batch_'.$line->id.'_'.$i.'">';
     					print '<td>'.$langs->trans("ToProduce").'</td>';
     					$preselected = (GETPOSTISSET('qtytoproduce-'.$line->id.'-'.$i) ? GETPOST('qtytoproduce-'.$line->id.'-'.$i) : max(0, $line->qty - $alreadyproduced));
     					if ($action == 'consumeorproduce' && !GETPOSTISSET('qtytoproduce-'.$line->id.'-'.$i)) $preselected = 0;
-    					print '<td class="right"><input type="text" class="width50 right" name="qtytoproduce-'.$line->id.'-'.$i.'" value="'.$preselected.'"></td>';
+    					print '<td class="right"><input type="text" class="width50 right" id="qtytoproduce-'.$line->id.'-'.$i.'" name="qtytoproduce-'.$line->id.'-'.$i.'" value="'.$preselected.'"></td>';
     					print '<td></td>';
     					print '<td>';
     					if ($tmpproduct->type == Product::TYPE_PRODUCT || !empty($conf->global->STOCK_SUPPORTS_SERVICES)) {
     						$preselected = (GETPOSTISSET('idwarehousetoproduce-'.$line->id.'-'.$i) ? GETPOST('idwarehousetoproduce-'.$line->id.'-'.$i) : ($object->fk_warehouse > 0 ? $object->fk_warehouse : 'ifone'));
-    						print $formproduct->selectWarehouses($preselected, 'idwarehousetoproduce-'.$line->id.'-'.$i, '', 1, 0, $line->fk_product, '', 1);
+    						print $formproduct->selectWarehouses($preselected, 'idwarehousetoproduce-'.$line->id.'-'.$i, '', 1, 0, $line->fk_product, '', 1, 0, null, 'csswarehouse_'.$line->id.'_'.$i);
     					} else {
     						print '<span class="opacitymedium">'.$langs->trans("NoStockChangeOnServices").'</span>';
     					}
@@ -945,6 +959,12 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
     						if ($tmpproduct->status_batch) {
     							$preselected = (GETPOSTISSET('batchtoproduce-'.$line->id.'-'.$i) ? GETPOST('batchtoproduce-'.$line->id.'-'.$i) : '');
     							print '<input type="text" class="width50" name="batchtoproduce-'.$line->id.'-'.$i.'" value="'.$preselected.'">';
+    						}
+    						print '</td>';
+    						print '<td>';
+    						if ($tmpproduct->status_batch) {
+    							$type = 'batch';
+    							print img_picto($langs->trans('AddStockLocationLine'), 'split.png', 'class="splitbutton" onClick="addDispatchLine('.$line->id.', \''.$type.'\', \'qtymissing\')"');
     						}
     						print '</td>';
     					}
