@@ -1,3 +1,4 @@
+<?php
 // Copyright (C) 2014 Cedric GROSS		<c.gross@kreiz-it.fr>
 // Copyright (C) 2017 Francis Appels	<francis.appels@z-application.com>
 //
@@ -15,14 +16,33 @@
 // along with this program. If not, see <https://www.gnu.org/licenses/>.
 // or see https://www.gnu.org/
 
-//
-// \file       htdocs/core/js/lib_dispatch.js
-// \brief      File that include javascript functions used dispatch.php
-//
+/**
+ * \file       htdocs/core/js/lib_dispatch.js.php
+ * \brief      File that include javascript functions used for dispatching qty/stock/lot
+ */
 
+if (! defined('NOREQUIRESOC'))    define('NOREQUIRESOC', '1');
+if (! defined('NOCSRFCHECK'))     define('NOCSRFCHECK', 1);
+if (! defined('NOTOKENRENEWAL'))  define('NOTOKENRENEWAL', 1);
+if (! defined('NOLOGIN'))         define('NOLOGIN', 1);
+if (! defined('NOREQUIREMENU'))   define('NOREQUIREMENU', 1);
+if (! defined('NOREQUIREHTML'))   define('NOREQUIREHTML', 1);
+if (! defined('NOREQUIREAJAX'))   define('NOREQUIREAJAX', '1');
+
+session_cache_limiter('public');
+
+require_once '../../main.inc.php';
+
+// Define javascript type
+top_httphead('text/javascript; charset=UTF-8');
+// Important: Following code is to avoid page request by browser and PHP CPU at each Dolibarr page access.
+if (empty($dolibarr_nocache)) header('Cache-Control: max-age=10800, public, must-revalidate');
+else header('Cache-Control: no-cache');
+
+?>
 /**
  * addDispatchLine
- * Adds new table row for dispatching to multiple stock locations
+ * Adds new table row for dispatching to multiple stock locations or multiple lot/serial
  *
  * @param	index	int		index of product line. 0 = first product line
  * @param	type	string	type of dispatch (batch = batch dispatch, dispatch = non batch dispatch)
@@ -32,7 +52,7 @@ function addDispatchLine(index, type, mode)
 {
 	mode = mode || 'qtymissing'
 
-	console.log("fourn/js/lib_dispatch.js Split line type="+type+" index="+index+" mode="+mode);
+	console.log("fourn/js/lib_dispatch.js.php Split line type="+type+" index="+index+" mode="+mode);
 	var $row = $("tr[name='"+type+'_0_'+index+"']").clone(true), 		// clone first batch line to jQuery object
 		nbrTrs = $("tr[name^='"+type+"_'][name$='_"+index+"']").length, // position of line for batch
 		qtyOrdered = parseFloat($("#qty_ordered_0_"+index).val()), 		// Qty ordered is same for all rows
@@ -46,8 +66,17 @@ function addDispatchLine(index, type, mode)
 	else
 	{
 		qtyDispatched = parseFloat($("#qty_dispatched_0_"+index).val()) + qty;
+		// If user did not reduced the qty to dispatch on old line, we keep only 1 on old line and the rest on new line
+		if (qtyDispatched == qtyOrdered && qtyDispatched > 1) {
+			qtyDispatched = parseFloat($("#qty_dispatched_0_"+index).val()) + 1;
+			mode = 'lessone';
+		}
 	}
+	console.log("qtyDispatched="+qtyDispatched+" qtyOrdered="+qtyOrdered);
 
+	if (qtyOrdered <= 1) {
+		window.alert("Quantity can't be split");
+	}
 	if (qtyDispatched < qtyOrdered)
 	{
 		//replace tr suffix nbr
