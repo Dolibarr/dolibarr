@@ -522,20 +522,3 @@ function showWebsiteTemplates(Website $website)
 	print '</table>';
 }
 
-
-
-/**
- * Return HTML content to add structured data for an article, news or Blog Post.
- *
- * @return  string							HTML content
- */
-function getRSSForBlogPosts()
-{
-	global $conf, $db, $hookmanager, $langs, $mysoc, $user, $website, $websitepage, $weblangs; // Very important. Required to have var available when running inluded containers.
-
-
-
-	return $out;
-}
-
-

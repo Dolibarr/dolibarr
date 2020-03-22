@@ -325,13 +325,14 @@ class Form
 	 * @param	string	$typeofdata		Type of data ('string' by default, 'email', 'amount:99', 'numeric:99', 'text' or 'textarea:rows:cols', 'datepicker' ('day' do not work, don't know why), 'ckeditor:dolibarr_zzz:width:height:savemethod:1:rows:cols', 'select;xxx[:class]'...)
 	 * @return	string   		      	HTML code for the edit of alternative language
 	 */
-	public function widgetForTranslation($htmlname, $object, $perm, $typeofdata = 'string') {
+	public function widgetForTranslation($fieldname, $object, $perm, $typeofdata = 'string')
+	{
 		global $conf, $langs;
 
 		$result = '';
 
 		if (! empty($conf->global->PDF_USE_ALSO_LANGUAGE_CODE)) {
-			$result ='<div class="inline-block field-'.$object->element.'-'.$htmlname.'">';
+			$result ='<div class="inline-block paddingleft field-'.$object->element.'-'.$fieldname.'">';
 
 			$s=picto_from_langcode($conf->global->PDF_USE_ALSO_LANGUAGE_CODE);
 			$result .= $s;
