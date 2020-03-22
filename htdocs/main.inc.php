@@ -210,7 +210,7 @@ $sessionname = 'DOLSESSID_'.$prefix;
 $sessiontimeout = 'DOLSESSTIMEOUT_'.$prefix;
 if (!empty($_COOKIE[$sessiontimeout])) ini_set('session.gc_maxlifetime', $_COOKIE[$sessiontimeout]);
 session_name($sessionname);
-session_set_cookie_params(0, '/', null, false, true); // Add tag httponly on session cookie (same as setting session.cookie_httponly into php.ini). Must be called before the session_start.
+session_set_cookie_params(0, '/', null, (empty($dolibarr_main_force_https) ? false : true), true); // Add tag secure and httponly on session cookie (same as setting session.cookie_httponly into php.ini). Must be called before the session_start.
 // This create lock, released when session_write_close() or end of page.
 // We need this lock as long as we read/write $_SESSION ['vars']. We can remove lock when finished.
 if (!defined('NOSESSION'))
@@ -625,7 +625,7 @@ if (!defined('NOLOGIN'))
 			dol_syslog('User not found, connexion refused');
 			session_destroy();
 			session_name($sessionname);
-			session_set_cookie_params(0, '/', null, false, true); // Add tag httponly on session cookie
+			session_set_cookie_params(0, '/', null, (empty($dolibarr_main_force_https) ? false : true), true); // Add tag secure and httponly on session cookie
 			session_start();
 
 			if ($resultFetchUser == 0)
@@ -682,7 +682,7 @@ if (!defined('NOLOGIN'))
 			dol_syslog("Can't load user even if session logged. _SESSION['dol_login']=".$login, LOG_WARNING);
 			session_destroy();
 			session_name($sessionname);
-			session_set_cookie_params(0, '/', null, false, true); // Add tag httponly on session cookie
+			session_set_cookie_params(0, '/', null, (empty($dolibarr_main_force_https) ? false : true), true); // Add tag secure and httponly on session cookie
 			session_start();
 
 			if ($resultFetchUser == 0)
