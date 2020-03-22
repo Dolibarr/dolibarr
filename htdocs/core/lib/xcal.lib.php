@@ -336,7 +336,7 @@ function build_calfile($format, $title, $desc, $events_array, $outputfile)
  *  @param		string	$url				Url
  *  @return     int                         < 0 if ko, Nb of events in file if ok
  */
-function build_rssfile($format, $title, $desc, $events_array, $outputfile, $filter = "", $url="")
+function build_rssfile($format, $title, $desc, $events_array, $outputfile, $filter = '', $url = '')
 {
     global $user, $conf, $langs;
     global $dolibarr_main_url_root;
@@ -534,7 +534,7 @@ function calEncode($line)
             // Take char at position $j
             $char = substr($line, $j, 1);
 
-            if ((dol_strlen($newpara) + dol_strlen($char)) >= 75 )
+            if ((dol_strlen($newpara) + dol_strlen($char)) >= 75)
             {
                 // CRLF + Space for cal
                 $out .= $newpara . "\r\n ";
