@@ -521,4 +521,3 @@ function showWebsiteTemplates(Website $website)
 	print '</td></tr>';
 	print '</table>';
 }
-
