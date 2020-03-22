@@ -243,7 +243,49 @@ class Categorie extends CommonObject
 	 */
 	public function __construct($db)
 	{
+		global $hookmanager;
+
 		$this->db = $db;
+
+		if (is_object($hookmanager)) {
+			$hookmanager->initHooks(array('category'));
+			$parameters = array();
+			$reshook = $hookmanager->executeHooks('constructCategory', $parameters, $this); // Note that $action and $object may have been modified by some hooks
+			if ($reshook >= 0 && !empty($hookmanager->resArray)) {
+				$mapList = $hookmanager->resArray;
+				$mapId   = $mapList['id'];
+				$mapCode = $mapList['code'];
+				self::$MAP_ID_TO_CODE[$mapId]  = $mapCode;
+				$this->MAP_ID[$mapCode]        = $mapId;
+				$this->MAP_CAT_FK[$mapCode]    = $mapList['cat_fk'];
+				$this->MAP_CAT_TABLE[$mapCode] = $mapList['cat_table'];
+				$this->MAP_OBJ_CLASS[$mapCode] = $mapList['obj_class'];
+				$this->MAP_OBJ_TABLE[$mapCode] = $mapList['obj_table'];
+			}
+		}
+	}
+
+	/**
+	 * Get map list
+	 *
+	 * @return	array
+	 */
+	public function getMapList()
+	{
+		$mapList = array();
+
+		foreach ($this->MAP_ID as $mapCode => $mapId) {
+			$mapList[] = array(
+				'id'        => $mapId,
+				'code'      => $mapCode,
+				'cat_fk'    => $this->MAP_CAT_FK[$mapCode],
+				'cat_table' => $this->MAP_CAT_TABLE[$mapCode],
+				'obj_class' => $this->MAP_OBJ_CLASS[$mapCode],
+				'obj_table' => $this->MAP_OBJ_TABLE[$mapCode]
+			);
+		}
+
+		return $mapList;
 	}
 
 	/**
