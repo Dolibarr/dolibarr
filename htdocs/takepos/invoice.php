@@ -723,18 +723,18 @@ $( document ).ready(function() {
 			echo '$("#customerandsales").append(\'';
 			if ($placeid==$obj->rowid) echo "<b>";
 			echo '<a class="valignmiddle" onclick="location.href=\\\'index.php?place=';
-			$num_sale=str_replace(")","", str_replace("(PROV-POS".$_SESSION["takeposterminal"]."-", "", $obj->ref));
+			$num_sale=str_replace(")", "", str_replace("(PROV-POS".$_SESSION["takeposterminal"]."-", "", $obj->ref));
 			echo $num_sale;
-			if (str_replace("-","",$num_sale)>$max_sale) $max_sale=str_replace("-","",$num_sale);
+			if (str_replace("-", "", $num_sale)>$max_sale) $max_sale=str_replace("-", "", $num_sale);
 			echo '\\\'">'.date('H:i', strtotime($obj->datec));
 			if ($placeid==$obj->rowid) echo "</b>";
 			echo '</a>\');';
 		}
-	echo '$("#customerandsales").append(\'<a onclick="location.href=\\\'index.php?place=0-';
-	echo $max_sale+1;
-	echo '\\\'"><span class="fa fa-plus-square"></a>\');';
+		echo '$("#customerandsales").append(\'<a onclick="location.href=\\\'index.php?place=0-';
+		echo $max_sale+1;
+		echo '\\\'"><span class="fa fa-plus-square"></a>\');';
 	}
-			
+
 	$s = '';
 
     $constantforkey = 'CASHDESK_NO_DECREASE_STOCK'.$_SESSION["takeposterminal"];
