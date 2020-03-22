@@ -40,7 +40,7 @@ global $mysoc;
 
 $langs->loadLangs(array("bills", "cashdesk"));
 
-$place = (GETPOST('place', 'int') > 0 ? GETPOST('place', 'int') : 0); // $place is id of table for Ba or Restaurant
+$place = (GETPOST('place', 'alpha') > 0 ? GETPOST('place', 'alpha') : 0); // $place is id of table for Ba or Restaurant
 
 $idline = GETPOST('idline', 'int');
 $action = GETPOST('action', 'alpha');

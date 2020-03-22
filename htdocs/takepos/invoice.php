@@ -44,7 +44,7 @@ $langs->loadLangs(array("companies", "commercial", "bills", "cashdesk", "stocks"
 $id = GETPOST('id', 'int');
 $action = GETPOST('action', 'alpha');
 $idproduct = GETPOST('idproduct', 'int');
-$place = (GETPOST('place', 'int') > 0 ? GETPOST('place', 'int') : 0); // $place is id of table for Bar or Restaurant
+$place = (GETPOST('place', 'alpha') ? GETPOST('place', 'alpha') : 0); // $place is id of table for Bar or Restaurant
 $placeid = 0; // $placeid is ID of invoice
 
 if (empty($user->rights->takepos->run)) {
@@ -713,9 +713,28 @@ $( document ).ready(function() {
     }
     ?>
 
-    $("a#customer").html('<?php print dol_escape_js($s); ?>');
+    $("#customerandsales").html('<a class="valignmiddle" id="customer" onclick="Customer();"><?php print dol_escape_js($s); ?></a>');	
 
 	<?php
+	$sql = "SELECT rowid, datec, ref FROM ".MAIN_DB_PREFIX."facture where ref LIKE '(PROV-POS".$_SESSION["takeposterminal"]."-0%'";
+	$resql = $db->query($sql);
+	if ($resql) {
+		while ($obj = $db->fetch_object($resql)) {
+			echo '$("#customerandsales").append(\'';
+			if ($placeid==$obj->rowid) echo "<b>";
+			echo '<a class="valignmiddle" onclick="location.href=\\\'index.php?place=';
+			$num_sale=str_replace(")","", str_replace("(PROV-POS".$_SESSION["takeposterminal"]."-", "", $obj->ref));
+			echo $num_sale;
+			if (str_replace("-","",$num_sale)>$max_sale) $max_sale=str_replace("-","",$num_sale);
+			echo '\\\'">'.date('H:i', strtotime($obj->datec));
+			if ($placeid==$obj->rowid) echo "</b>";
+			echo '</a>\');';
+		}
+	echo '$("#customerandsales").append(\'<a onclick="location.href=\\\'index.php?place=0-';
+	echo $max_sale+1;
+	echo '\\\'"><span class="fa fa-plus-square"></a>\');';
+	}
+			
 	$s = '';
 
     $constantforkey = 'CASHDESK_NO_DECREASE_STOCK'.$_SESSION["takeposterminal"];
