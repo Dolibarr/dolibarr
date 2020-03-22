@@ -228,7 +228,7 @@ $arrayfields = dol_sort_array($arrayfields, 'position');
 if ($action == "change")	// Change customer for TakePOS
 {
     $idcustomer = GETPOST('idcustomer', 'int');
-    $place = (GETPOST('place', 'int') > 0 ? GETPOST('place', 'int') : 0); // $place is id of table for Ba or Restaurant
+    $place = (GETPOST('place', 'alpha') ? GETPOST('place', 'alpha') : 0); // $place is id of table for Ba or Restaurant
 
     // Check if draft invoice already exists, if not create it
 	$sql = "SELECT rowid FROM ".MAIN_DB_PREFIX."facture where ref='(PROV-POS".$_SESSION["takeposterminal"]."-".$place.")' AND entity IN (".getEntity('invoice').")";
@@ -1031,7 +1031,7 @@ while ($i < min($num, $limit))
 	print '<tr class="oddeven"';
 	if ($contextpage == 'poslist')
 	{
-		$place = (GETPOST('place', 'int') > 0 ? GETPOST('place', 'int') : 0); // $place is id of table for Bar or Restaurant
+		$place = (GETPOST('place', 'alpha') > 0 ? GETPOST('place', 'alpha') : 0); // $place is id of table for Bar or Restaurant
 	    print ' onclick="location.href=\'list.php?action=change&contextpage=poslist&idcustomer='.$obj->rowid.'&place='.$place.'\'"';
 	}
 	print '>';

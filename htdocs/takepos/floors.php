@@ -42,7 +42,7 @@ $action = GETPOST('action', 'alpha');
 $left = GETPOST('left', 'alpha');
 $top = GETPOST('top', 'alpha');
 
-$place = (GETPOST('place', 'int') > 0 ? GETPOST('place', 'int') : 0); // $place is id of table for Ba or Restaurant
+$place = (GETPOST('place', 'alpha') ? GETPOST('place', 'alpha') : 0); // $place is id of table for Ba or Restaurant
 
 $newname = GETPOST('newname', 'alpha');
 $mode = GETPOST('mode', 'alpha');
