@@ -319,6 +319,32 @@ class Form
 	/**
 	 * Output edit in place form
 	 *
+	 * @param   string	$fieldname		Name of the field
+	 * @param	object	$object			Object
+	 * @param	boolean	$perm			Permission to allow button to edit parameter. Set it to 0 to have a not edited field.
+	 * @param	string	$typeofdata		Type of data ('string' by default, 'email', 'amount:99', 'numeric:99', 'text' or 'textarea:rows:cols', 'datepicker' ('day' do not work, don't know why), 'ckeditor:dolibarr_zzz:width:height:savemethod:1:rows:cols', 'select;xxx[:class]'...)
+	 * @return	string   		      	HTML code for the edit of alternative language
+	 */
+	public function widgetForTranslation($htmlname, $object, $perm, $typeofdata = 'string') {
+		global $conf, $langs;
+
+		$result = '';
+
+		if (! empty($conf->global->PDF_USE_ALSO_LANGUAGE_CODE)) {
+			$result ='<div class="inline-block field-'.$object->element.'-'.$htmlname.'">';
+
+			$s=picto_from_langcode($conf->global->PDF_USE_ALSO_LANGUAGE_CODE);
+			$result .= $s;
+
+			$result .= '</div>';
+		}
+
+		return $result;
+	}
+
+	/**
+	 * Output edit in place form
+	 *
 	 * @param	object	$object			Object
 	 * @param	string	$value			Value to show/edit
 	 * @param	string	$htmlname		DIV ID (field name)

@@ -712,6 +712,7 @@ class Societe extends CommonObject
      */
 	public $multicurrency_code;
 
+
 	/**
 	 *    Constructor
 	 *
