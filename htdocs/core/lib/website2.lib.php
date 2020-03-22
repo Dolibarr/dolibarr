@@ -421,7 +421,6 @@ function dolSaveReadme($file, $content)
 function showWebsiteTemplates(Website $website)
 {
 	global $conf, $langs, $db, $form;
-	global $bc;
 
 	$dirthemes = array('/doctemplates/websites');
 	if (!empty($conf->modules_parts['websitetemplates']))		// Using this feature slow down application
