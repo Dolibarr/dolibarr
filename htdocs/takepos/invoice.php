@@ -717,7 +717,7 @@ $( document ).ready(function() {
 
     <?php
     $s = $langs->trans("Customer");
-    if ($invoice->socid != $conf->global->$constforcompanyid) {
+    if ($invoice->id > 0 && ($invoice->socid != $conf->global->$constforcompanyid)) {
     	$s = $soc->name;
     }
     ?>
