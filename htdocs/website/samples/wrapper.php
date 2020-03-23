@@ -109,14 +109,10 @@ if ($rss) {
 
     dol_syslog("build_exportfile Build export file format=".$format.", type=".$type.", cachedelay=".$cachedelay.", filename=".$filename.", filters size=".count($filters), LOG_DEBUG);
 
-    // Check parameters
-    if (empty($format)) return -1;
-
     // Clean parameters
     if (!$filename)
     {
-    	$extension = 'vcs';
-    	if ($format == 'ical') $extension = 'ics';
+    	$extension = 'rss';
     	$filename = $format.'.'.$extension;
     }
 
@@ -148,9 +144,7 @@ if ($rss) {
     	@chmod($outputfiletmp, octdec($conf->global->MAIN_UMASK));
 
     	// Write file
-    	//if ($format == 'vcal') $result=build_calfile($format, $title, $desc, $eventarray, $outputfiletmp);
-    	//elseif ($format == 'ical') $result=build_calfile($format, $title, $desc, $eventarray, $outputfiletmp);
-    	if ($format == 'rss')  $result=build_rssfile($format, $title, $desc, $eventarray, $outputfiletmp);
+    	$result=build_rssfile($format, $title, $desc, $eventarray, $outputfiletmp);
 
     	if ($result >= 0)
     	{
