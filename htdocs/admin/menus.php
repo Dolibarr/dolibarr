@@ -41,8 +41,8 @@ $dirsmartphone = array();
 $dirmenus=array_merge(array("/core/menus/"), (array) $conf->modules_parts['menus']);
 foreach($dirmenus as $dirmenu)
 {
-    $dirstandard[]=$dirmenu.'standard';
-    $dirsmartphone[]=$dirmenu.'smartphone';
+	$dirstandard[]=$dirmenu.'standard';
+	$dirsmartphone[]=$dirmenu.'smartphone';
 }
 
 $error=0;
@@ -85,8 +85,8 @@ if ($action == 'update' && ! $cancel)
 		foreach($dirmenus as $dirmenu)
 		{
 			$file='init_menu_'.$key.'.sql';
-		    $fullpath=dol_buildpath($dirmenu.$file);
-		    //print 'action='.$action.' Search menu into fullpath='.$fullpath.'<br>';exit;
+			$fullpath=dol_buildpath($dirmenu.$file);
+			//print 'action='.$action.' Search menu into fullpath='.$fullpath.'<br>';exit;
 
 			if (file_exists($fullpath))
 			{

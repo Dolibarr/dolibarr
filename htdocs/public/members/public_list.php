@@ -56,10 +56,10 @@ function llxHeaderVierge($title, $head = "")
 
 	header("Content-type: text/html; charset=".$conf->file->character_set_client);
 	print "<html>\n";
-    print "<head>\n";
-    print "<title>".$title."</title>\n";
-    if ($head) print $head."\n";
-    print "</head>\n";
+	print "<head>\n";
+	print "<title>".$title."</title>\n";
+	if ($head) print $head."\n";
+	print "</head>\n";
 	print '<body class="public_body">'."\n";
 }
 
@@ -70,9 +70,9 @@ function llxHeaderVierge($title, $head = "")
  */
 function llxFooterVierge()
 {
-    printCommonFooter('public');
+	printCommonFooter('public');
 
-    print "</body>\n";
+	print "</body>\n";
 	print "</html>\n";
 }
 

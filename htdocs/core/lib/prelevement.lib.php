@@ -59,15 +59,15 @@ function prelevement_prepare_head(BonPrelevement $object)
 	$head[$h][2] = 'statistics';
 	$h++;
 
-    // Show more tabs from modules
-    // Entries must be declared in modules descriptor with line
-    // $this->tabs = array('entity:+tabname:Title:@mymodule:/mymodule/mypage.php?id=__ID__');   to add new tab
-    // $this->tabs = array('entity:-tabname);   												to remove a tab
-    complete_head_from_modules($conf, $langs, $object, $head, $h, 'prelevement');
+	// Show more tabs from modules
+	// Entries must be declared in modules descriptor with line
+	// $this->tabs = array('entity:+tabname:Title:@mymodule:/mymodule/mypage.php?id=__ID__');   to add new tab
+	// $this->tabs = array('entity:-tabname);   												to remove a tab
+	complete_head_from_modules($conf, $langs, $object, $head, $h, 'prelevement');
 
-    complete_head_from_modules($conf, $langs, $object, $head, $h, 'prelevement', 'remove');
+	complete_head_from_modules($conf, $langs, $object, $head, $h, 'prelevement', 'remove');
 
-    return $head;
+	return $head;
 }
 
 /**
@@ -80,6 +80,6 @@ function prelevement_check_config()
 	global $conf;
 	if(empty($conf->global->PRELEVEMENT_ID_BANKACCOUNT)) return -1;
 	if(empty($conf->global->PRELEVEMENT_ICS)) return -1;
-    if(empty($conf->global->PRELEVEMENT_USER)) return -1;
+	if(empty($conf->global->PRELEVEMENT_USER)) return -1;
 	return 0;
 }

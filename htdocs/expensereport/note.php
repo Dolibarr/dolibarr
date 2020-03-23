@@ -81,13 +81,13 @@ if ($id > 0 || ! empty($ref))
 	$linkback = '<a href="'.DOL_URL_ROOT.'/expensereport/list.php?restore_lastsearch_values=1'.(! empty($socid)?'&socid='.$socid:'').'">'.$langs->trans("BackToList").'</a>';
 
 	$morehtmlref='<div class="refidno">';
-    $morehtmlref.='</div>';
+	$morehtmlref.='</div>';
 
 
 	dol_banner_tab($object, 'ref', $linkback, 1, 'ref', 'ref', $morehtmlref);
 
-    print '<div class="fichecenter">';
-    print '<div class="underbanner clearboth"></div>';
+	print '<div class="fichecenter">';
+	print '<div class="underbanner clearboth"></div>';
 
 	$cssclass="titlefield";
 	include DOL_DOCUMENT_ROOT.'/core/tpl/notes.tpl.php';
