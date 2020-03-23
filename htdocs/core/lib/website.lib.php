@@ -710,12 +710,14 @@ function getSocialNetworkSharingLinks()
  * WARNING: This function can be used by websites.
  *
  * @param 	string		$type				Type of container to search into (Example: '', 'page', 'blogpost', 'page,blogpost', ...)
- * @param 	string		$algo				Algorithm used for search (Example: 'meta' is searching into meta information like title and description, 'content', 'sitefiles', or any combination, ...)
+ * @param 	string		$algo				Algorithm used for search (Example: 'meta' is searching into meta information like title and description, 'content', 'sitefiles', or any combination 'meta,content,...')
  * @param	string		$searchstring		Search string
  * @param	int			$max				Max number of answers
+ * @param	string		$sortfield			Sort Fields
+ * @param	string		$sortorder			Sort order ('DESC' or 'ASC')
  * @return  string							HTML content
  */
-function getPagesFromSearchCriterias($type, $algo, $searchstring, $max = 25)
+function getPagesFromSearchCriterias($type, $algo, $searchstring, $max = 25, $sortfield='date_creation', $sortorder='DESC')
 {
 	global $conf, $db, $hookmanager, $langs, $mysoc, $user, $website, $websitepage, $weblangs; // Very important. Required to have var available when running inluded containers.
 
@@ -778,6 +780,7 @@ function getPagesFromSearchCriterias($type, $algo, $searchstring, $max = 25)
 		}
 		$sql .= $searchalgo;
 		$sql .= ")";
+		$sql .= $db->order($sortfield, $sortorder);
 		$sql .= $db->plimit($max);
 
 		$resql = $db->query($sql);

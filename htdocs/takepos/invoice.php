@@ -395,6 +395,14 @@ if ($action == "deleteline") {
 
 if ($action == "delete") {
 	// $placeid is the invoice id (it differs from place) and is defined if the place is set and the ref of invoice is '(PROV-POS'.$_SESSION["takeposterminal"].'-'.$place.')', so the fetch at begining of page works.
+
+	/*$reg = array();
+	if (preg_match('/^(\d+)-(\d+)$/', $place, $reg)) {
+
+		$place = $reg[1];
+		var_dump($place);
+	}*/
+
 	if ($placeid > 0) {
         $result = $invoice->fetch($placeid);
 
@@ -407,7 +415,8 @@ if ($action == "delete") {
         	$resql1 = $db->query($sql);
         	$sql = "DELETE FROM ".MAIN_DB_PREFIX."facturedet where fk_facture = ".$placeid;
             $resql2 = $db->query($sql);
-			$sql = "UPDATE ".MAIN_DB_PREFIX."facture set fk_soc=".$conf->global->{'CASHDESK_ID_THIRDPARTY'.$_SESSION["takeposterminal"]}." where ref='(PROV-POS".$_SESSION["takeposterminal"]."-".$place.")'";
+			$sql = "UPDATE ".MAIN_DB_PREFIX."facture set fk_soc=".$conf->global->{'CASHDESK_ID_THIRDPARTY'.$_SESSION["takeposterminal"]};
+			$sql.= " WHERE ref='(PROV-POS".$_SESSION["takeposterminal"]."-".$place.")'";
 			$resql3 = $db->query($sql);
 
             if ($resql1 && $resql2 && $resql3)
@@ -713,10 +722,12 @@ $( document ).ready(function() {
     }
     ?>
 
-    $("#customerandsales").html('<a class="valignmiddle" id="customer" onclick="Customer();"><?php print dol_escape_js($s); ?></a>');	
+    $("#customerandsales").html('<a class="valignmiddle" id="customer" onclick="Customer();"><?php print dol_escape_js($s); ?></a>');
 
 	<?php
-	$sql = "SELECT rowid, datec, ref FROM ".MAIN_DB_PREFIX."facture where ref LIKE '(PROV-POS".$_SESSION["takeposterminal"]."-0%'";
+	$sql = "SELECT rowid, datec, ref FROM ".MAIN_DB_PREFIX."facture";
+	$sql.= " WHERE ref LIKE '(PROV-POS".$_SESSION["takeposterminal"]."-0%'";
+	$sql.= $db->order('datec', 'ASC');
 	$resql = $db->query($sql);
 	if ($resql) {
 		while ($obj = $db->fetch_object($resql)) {
@@ -733,6 +744,8 @@ $( document ).ready(function() {
 		echo '$("#customerandsales").append(\'<a onclick="location.href=\\\'index.php?place=0-';
 		echo $max_sale+1;
 		echo '\\\'"><span class="fa fa-plus-square"></a>\');';
+	} else {
+		dol_print_error($db);
 	}
 
 	$s = '';

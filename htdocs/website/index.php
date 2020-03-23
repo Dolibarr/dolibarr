@@ -121,7 +121,7 @@ if ($websiteid > 0 || $websitekey)
 
 $website = $object;
 
-// Check pageid received as aprameter
+// Check pageid received as parameter
 if ($pageid < 0) $pageid = 0;
 if (($pageid > 0 || $pageref) && $action != 'addcontainer')
 {
