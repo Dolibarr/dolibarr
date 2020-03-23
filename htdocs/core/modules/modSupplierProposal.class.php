@@ -144,58 +144,6 @@ class modSupplierProposal extends DolibarrModules
  		// Main menu entries
 		$this->menu = array();			// List of menus to add
 		$r=0;
-		$this->menu[$r]=array(
-			'fk_menu'=>'fk_mainmenu=commercial',		    // Use 'fk_mainmenu=xxx' or 'fk_mainmenu=xxx,fk_leftmenu=yyy' where xxx is mainmenucode and yyy is a leftmenucode
-			'type'=>'left',			                // This is a Left menu entry
-			'titre'=>'SupplierProposalsShort',
-			'leftmenu'=>'supplier_proposalsubmenu',
-			'url'=>'/supplier_proposal/index.php',
-			'langs'=>'supplier_proposal',	        // Lang file to use (without .lang) by module. File must be in langs/code_CODE/ directory.
-			'enabled'=>'$conf->supplier_proposal->enabled',  // Define condition to show or hide menu entry. Use '$conf->mymodule->enabled' if entry must be visible if module is enabled. Use '$leftmenu==\'system\'' to show if leftmenu system is selected.
-			'perms'=>'$user->rights->supplier_proposal->lire',	// Use 'perms'=>'$user->rights->mymodule->level1->level2' if you want your menu with a permission rules
-			'user'=>2, // 0=Menu for internal users, 1=external users, 2=both
-            'position'=>300
-		);
-		$r++;
-
-		$this->menu[$r]=array(
-			'fk_menu'=>'fk_mainmenu=commercial,fk_leftmenu=supplier_proposalsubmenu',
-			'type'=>'left',
-			'titre'=>'SupplierProposalNew',
-			'url'=>'/supplier_proposal/card.php?action=create&amp;leftmenu=supplier_proposals',
-			'langs'=>'supplier_proposal',
-			'enabled'=>'$conf->supplier_proposal->enabled',
-			'perms'=>'$user->rights->supplier_proposal->creer',
-			'user'=>2,
-            'position'=>301
-		);
-		$r++;
-
-		$this->menu[$r]=array(
-			'fk_menu'=>'fk_mainmenu=commercial,fk_leftmenu=supplier_proposalsubmenu',
-			'type'=>'left',
-			'titre'=>'List',
-			'url'=>'/supplier_proposal/list.php?leftmenu=supplier_proposals',
-			'langs'=>'supplier_proposal',
-			'enabled'=>'$conf->supplier_proposal->enabled',
-			'perms'=>'$user->rights->supplier_proposal->lire',
-			'user'=>2,
-            'position'=>302
-		);
-		$r++;
-
-		$this->menu[$r]=array(
-		    'fk_menu'=>'fk_mainmenu=commercial,fk_leftmenu=supplier_proposalsubmenu',
-		    'type'=>'left',
-		    'titre'=>'Statistics',
-		    'url'=>'/comm/propal/stats/index.php?leftmenu=supplier_proposals&amp;mode=supplier',
-		    'langs'=>'supplier_proposal',
-		    'enabled'=>'$conf->supplier_proposal->enabled',
-		    'perms'=>'$user->rights->supplier_proposal->lire',
-		    'user'=>2,
-		    'position'=>303
-		);
-		$r++;
 	}
 
 
