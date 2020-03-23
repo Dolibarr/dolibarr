@@ -341,7 +341,7 @@ print '</table>';
 */
 
 print '<br>';
-print '<i>'.$langs->trans("StatsOnReceptionsOnlyValidated").'</i>';
+print '<i class="opacitymedium">'.$langs->trans("StatsOnReceptionsOnlyValidated").'</i>';
 
 llxFooter();
 
