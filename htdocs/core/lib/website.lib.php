@@ -717,7 +717,7 @@ function getSocialNetworkSharingLinks()
  * @param	string		$sortorder			Sort order ('DESC' or 'ASC')
  * @return  string							HTML content
  */
-function getPagesFromSearchCriterias($type, $algo, $searchstring, $max = 25, $sortfield='date_creation', $sortorder='DESC')
+function getPagesFromSearchCriterias($type, $algo, $searchstring, $max = 25, $sortfield = 'date_creation', $sortorder = 'DESC')
 {
 	global $conf, $db, $hookmanager, $langs, $mysoc, $user, $website, $websitepage, $weblangs; // Very important. Required to have var available when running inluded containers.
 
