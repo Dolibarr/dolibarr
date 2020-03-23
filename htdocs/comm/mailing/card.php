@@ -992,7 +992,7 @@ else
 					print '<a class="butAction" href="'.$_SERVER['PHP_SELF'].'?action=settodraft&amp;id='.$object->id.'">'.$langs->trans("SetToDraft").'</a>';
 				}
 
-				if (($object->statut == 0 || $object->statut == 1) && $user->rights->mailing->creer)
+				if (($object->statut == 0 || $object->statut == 1 || $object->statut == 2) && $user->rights->mailing->creer)
 				{
 					if (!empty($conf->fckeditor->enabled) && !empty($conf->global->FCKEDITOR_ENABLE_MAILING))
 					{
