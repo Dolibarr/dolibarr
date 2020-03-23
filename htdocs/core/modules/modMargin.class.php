@@ -105,17 +105,17 @@ class modMargin extends DolibarrModules
 		// left menu entry
 		$this->menu[$r]=array(
 				'fk_menu'=>'fk_mainmenu=billing',			// Put 0 if this is a top menu
-    			'type'=>'left',			// This is a Top menu entry
-    			'titre'=>'Margins',
-    			'mainmenu'=>'billing',
-    			'leftmenu'=>'margins',
-    			'url'=>'/margin/index.php',
-    			'langs'=>'margins',	// Lang file to use (without .lang) by module. File must be in langs/code_CODE/ directory.
-    			'position'=>100,
-    			'enabled'=>'$conf->margin->enabled',			// Define condition to show or hide menu entry. Use '$conf->monmodule->enabled' if entry must be visible if module is enabled.
-    			'perms'=>'$user->rights->margins->liretous',	// Use 'perms'=>'$user->rights->monmodule->level1->level2' if you want your menu with a permission rules
-    			'target'=>'',
-    			'user'=>2);				// 0=Menu for internal users, 1=external users, 2=both
+				'type'=>'left',			// This is a Top menu entry
+				'titre'=>'Margins',
+				'mainmenu'=>'billing',
+				'leftmenu'=>'margins',
+				'url'=>'/margin/index.php',
+				'langs'=>'margins',	// Lang file to use (without .lang) by module. File must be in langs/code_CODE/ directory.
+				'position'=>100,
+				'enabled'=>'$conf->margin->enabled',			// Define condition to show or hide menu entry. Use '$conf->monmodule->enabled' if entry must be visible if module is enabled.
+				'perms'=>'$user->rights->margins->liretous',	// Use 'perms'=>'$user->rights->monmodule->level1->level2' if you want your menu with a permission rules
+				'target'=>'',
+				'user'=>2);				// 0=Menu for internal users, 1=external users, 2=both
 		$r++;
 
 		// Permissions

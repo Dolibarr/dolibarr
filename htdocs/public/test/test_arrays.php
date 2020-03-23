@@ -48,9 +48,9 @@ if (empty($usedolheader))
 }
 else
 {
-    $arraycss=array();
-    $arrayjs=array();
-    /*
+	$arraycss=array();
+	$arrayjs=array();
+	/*
 	$arraycss=array('/includes/jquery/plugins/datatables/media/css/jquery.dataTables.css',
 			'/includes/jquery/plugins/datatables/extensions/Buttons/css/buttons.dataTables.min.css',
 			'/includes/jquery/plugins/datatables/extensions/ColReorder/css/colReorder.dataTables.min.css'
@@ -207,12 +207,12 @@ $moreforfilter.='</div>';
 
 if (! empty($moreforfilter))
 {
-    print '<div class="liste_titre liste_titre_bydiv centpercent">';
-    print $moreforfilter;
-    $parameters=array();
-    $reshook=$hookmanager->executeHooks('printFieldPreListTitle', $parameters);    // Note that $action and $object may have been modified by hook
-    print $hookmanager->resPrint;
-    print '</div>';
+	print '<div class="liste_titre liste_titre_bydiv centpercent">';
+	print $moreforfilter;
+	$parameters=array();
+	$reshook=$hookmanager->executeHooks('printFieldPreListTitle', $parameters);    // Note that $action and $object may have been modified by hook
+	print $hookmanager->resPrint;
+	print '</div>';
 }
 
 ?>
@@ -245,12 +245,12 @@ if (! empty($moreforfilter))
 $(document).ready(function(){
     $('#idtableexample2').dataTable( {
     	<?php
-    	if ($optioncss=='print') {
-    	 	print '\'dom\': \'lfrtip\',';
-    	} else {
-    		print '\'dom\': \'Blfrtip\',';
-    	}
-    	?>
+		if ($optioncss=='print') {
+		 	print '\'dom\': \'lfrtip\',';
+		} else {
+			print '\'dom\': \'Blfrtip\',';
+		}
+		?>
     	"colReorder": true,
 		'buttons': [
 		          'colvis','copy', 'csv', 'excel', 'pdf', 'print'

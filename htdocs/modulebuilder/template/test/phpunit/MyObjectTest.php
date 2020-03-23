@@ -32,7 +32,7 @@ class MyObjectTest extends \PHPUnit_Framework_TestCase
 {
 	/**
 	 * Global test setup
-     * @return void
+	 * @return void
 	 */
 	public static function setUpBeforeClass()
 	{
@@ -41,7 +41,7 @@ class MyObjectTest extends \PHPUnit_Framework_TestCase
 
 	/**
 	 * Unit test setup
-     * @return void
+	 * @return void
 	 */
 	protected function setUp()
 	{
@@ -50,7 +50,7 @@ class MyObjectTest extends \PHPUnit_Framework_TestCase
 
 	/**
 	 * Verify pre conditions
-     * @return void
+	 * @return void
 	 */
 	protected function assertPreConditions()
 	{
@@ -59,7 +59,7 @@ class MyObjectTest extends \PHPUnit_Framework_TestCase
 
 	/**
 	 * A sample test
-     * @return bool
+	 * @return bool
 	 */
 	public function testSomething()
 	{
@@ -70,7 +70,7 @@ class MyObjectTest extends \PHPUnit_Framework_TestCase
 
 	/**
 	 * Verify post conditions
-     * @return void
+	 * @return void
 	 */
 	protected function assertPostConditions()
 	{
@@ -79,7 +79,7 @@ class MyObjectTest extends \PHPUnit_Framework_TestCase
 
 	/**
 	 * Unit test teardown
-     * @return void
+	 * @return void
 	 */
 	protected function tearDown()
 	{
@@ -88,7 +88,7 @@ class MyObjectTest extends \PHPUnit_Framework_TestCase
 
 	/**
 	 * Global test teardown
-     * @return void
+	 * @return void
 	 */
 	public static function tearDownAfterClass()
 	{
@@ -99,7 +99,7 @@ class MyObjectTest extends \PHPUnit_Framework_TestCase
 	 * Unsuccessful test
 	 *
 	 * @param  Exception $e    Exception
-     * @return void
+	 * @return void
 	 * @throws Exception
 	 */
 	protected function onNotSuccessfulTest(Exception $e)
