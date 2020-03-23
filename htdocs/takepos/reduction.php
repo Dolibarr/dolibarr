@@ -34,7 +34,7 @@ if (!defined('NOREQUIREAJAX'))		define('NOREQUIREAJAX', '1');
 require '../main.inc.php'; // Load $user and permissions
 require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
 
-$place = (GETPOST('place', 'alpha') ? GETPOST('place', 'alpha') : 0); // $place is id of table for Ba or Restaurant
+$place = (GETPOST('place', 'aZ09') ? GETPOST('place', 'aZ09') : 0); // $place is id of table for Ba or Restaurant
 
 $invoiceid = GETPOST('invoiceid', 'int');
 
