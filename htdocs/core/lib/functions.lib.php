@@ -66,9 +66,9 @@ function getDoliDBInstance($type, $host, $user, $pass, $name, $port)
  * 	@param	string	$element		Current element
  *									'societe', 'socpeople', 'actioncomm', 'agenda', 'resource',
  *									'product', 'productprice', 'stock', 'bom', 'mo',
- *									'propal', 'supplier_proposal', 'invoice', 'facture_fourn', 'payment_various',
+ *									'propal', 'supplier_proposal', 'invoice', 'supplier_invoice', 'payment_various',
  *									'categorie', 'bank_account', 'bank_account', 'adherent', 'user',
- *									'commande', 'commande_fournisseur', 'expedition', 'intervention', 'survey',
+ *									'commande', 'supplier_order', 'expedition', 'intervention', 'survey',
  *									'contract', 'tax', 'expensereport', 'holiday', 'multicurrency', 'project',
  *									'email_template', 'event', 'donation'
  *									'c_paiement', 'c_payment_term', ...
