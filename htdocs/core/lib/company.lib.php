@@ -104,8 +104,9 @@ function societe_prepare_head(Societe $object)
             $h++;
         }
     }
-	if (!empty($conf->fournisseur->enabled) && empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD) || !empty($conf->supplier_order->enabled) || !empty($conf->supplier_invoice->enabled)) $supplier_module_enabled=1;
-    if ($supplier_module_enabled==1 && $object->fournisseur && !empty($user->rights->fournisseur->lire))
+    $supplier_module_enabled = 0;
+    if ((!empty($conf->fournisseur->enabled) && empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD)) || !empty($conf->supplier_proposal->enabled) || !empty($conf->supplier_order->enabled) || !empty($conf->supplier_invoice->enabled)) $supplier_module_enabled=1;
+    if ($supplier_module_enabled == 1 && $object->fournisseur && !empty($user->rights->fournisseur->lire))
     {
         $head[$h][0] = DOL_URL_ROOT.'/fourn/card.php?socid='.$object->id;
         $head[$h][1] = $langs->trans("Supplier");
