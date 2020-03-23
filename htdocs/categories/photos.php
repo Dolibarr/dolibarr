@@ -36,15 +36,13 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/categories.lib.php';
 $langs->loadlangs(array('categories', 'bills'));
 
 
-$id = GETPOST('id', 'int');
-$ref = GETPOST('ref');
-$type = GETPOST('type');
-$action = GETPOST('action', 'aZ09');
+$id      = GETPOST('id', 'int');
+$label   = GETPOST('label', 'alpha');
+$type    = GETPOST('type');
+$action  = GETPOST('action', 'aZ09');
 $confirm = GETPOST('confirm');
 
-if (is_numeric($type)) $type = Categorie::$MAP_ID_TO_CODE[$type]; // For backward compatibility
-
-if ($id == "")
+if ($id == '' && $label == '')
 {
     dol_print_error('', 'Missing parameter id');
     exit();
@@ -54,13 +52,17 @@ if ($id == "")
 $result = restrictedArea($user, 'categorie', $id, '&category');
 
 $object = new Categorie($db);
-if ($id > 0)
-{
-	$result = $object->fetch($id);
-
-	$upload_dir = $conf->categorie->multidir_output[$object->entity];
+$result = $object->fetch($id, $label, $type);
+if ($result <= 0) {
+	dol_print_error($db, $object->error); exit;
 }
+$object->fetch_optionals();
+if ($result <= 0) {
+	dol_print_error($db, $object->error); exit;
+}
+$upload_dir = $conf->categorie->multidir_output[$object->entity];
 
+if (is_numeric($type)) $type = Categorie::$MAP_ID_TO_CODE[$type]; // For backward compatibility
 
 /*
  * Actions
@@ -126,7 +128,7 @@ if ($object->id)
 	dol_fiche_head($head, 'photos', $title, -1, 'category');
 
 	$linkback = '<a href="'.DOL_URL_ROOT.'/categories/index.php?leftmenu=cat&type='.$type.'">'.$langs->trans("BackToList").'</a>';
-
+	$object->next_prev_filter = ' type = ' . $object->type;
 	$object->ref = $object->label;
 	$morehtmlref='<br><div class="refidno"><a href="'.DOL_URL_ROOT.'/categories/index.php?leftmenu=cat&type='.$type.'">'.$langs->trans("Root").'</a> >> ';
 	$ways = $object->print_all_ways(" &gt;&gt; ", '', 1);
@@ -136,7 +138,7 @@ if ($object->id)
 	}
 	$morehtmlref.='</div>';
 
-	dol_banner_tab($object, 'ref', $linkback, ($user->socid?0:1), 'ref', 'ref', $morehtmlref, '', 0, '', '', 1);
+	dol_banner_tab($object, 'label', $linkback, ($user->socid?0:1), 'label', 'label', $morehtmlref, '&type=' . $type, 0, '', '', 1);
 
 	/*
 	 * Confirmation de la suppression de photo

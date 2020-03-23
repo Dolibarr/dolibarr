@@ -147,13 +147,13 @@ dol_fiche_head($head, 'card', $langs->trans("MenuUsersAndGroups"), -1, 'user');
 
 print '<table class="noborder centpercent">';
 print '<tr class="liste_titre">';
-print '<td>'.$langs->trans("Description").'</td>';
+print '<td>'.$langs->trans("Parameter").'</td>';
 print '<td align="center" width="20">&nbsp;</td>';
 print '<td align="center" width="100">'.$langs->trans("Value").'</td>'."\n";
 print '</tr>';
 
 
-// Mail required for members
+// Mail required for users
 
 print '<tr class="oddeven">';
 print '<td>'.$langs->trans("UserMailRequired").'</td>';
@@ -205,6 +205,8 @@ else
 {
 	dol_print_error($db);
 }
+
+print load_fiche_titre($langs->trans("UsersDocModules"), '', '');
 
 print '<table class="noborder centpercent">';
 print '<tr class="liste_titre">';

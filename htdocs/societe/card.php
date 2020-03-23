@@ -98,6 +98,13 @@ if (!empty($canvas))
 // Security check
 $result = restrictedArea($user, 'societe', $socid, '&societe', '', 'fk_soc', 'rowid', $objcanvas);
 
+$permissiontoread = $user->rights->societe->lire;
+$permissiontoadd = $user->rights->societe->creer; // Used by the include of actions_addupdatedelete.inc.php and actions_lineupdown.inc.php
+$permissiontodelete = $user->rights->societe->delete || ($permissiontoadd && isset($object->status) && $object->status == 0);
+$permissionnote = $user->rights->societe->creer; // Used by the include of actions_setnotes.inc.php
+$permissiondellink = $user->rights->societe->creer; // Used by the include of actions_dellink.inc.php
+$upload_dir = $conf->societe->multidir_output[isset($object->entity) ? $object->entity : 1];
+
 
 /*
  * Actions
@@ -1186,7 +1193,7 @@ else
         print '<table class="border centpercent">';
 
         // Name, firstname
-	    print '<tr><td class="titlefieldcreate">';
+	    print '<tr class="tr-field-thirdparty-name"><td class="titlefieldcreate">';
         if ($object->particulier || $private)
         {
 	        print '<span id="TypeName" class="fieldrequired">'.$langs->trans('ThirdPartyName').' / '.$langs->trans('LastName', 'name').'</span>';
@@ -1196,7 +1203,9 @@ else
 			print '<span id="TypeName" class="fieldrequired">'.$form->editfieldkey('ThirdPartyName', 'name', '', $object, 0).'</span>';
         }
 	    print '</td><td'.(empty($conf->global->SOCIETE_USEPREFIX) ? ' colspan="3"' : '').'>';
-	    print '<input type="text" class="minwidth300" maxlength="128" name="name" id="name" value="'.$object->name.'" autofocus="autofocus"></td>';
+	    print '<input type="text" class="minwidth300" maxlength="128" name="name" id="name" value="'.$object->name.'" autofocus="autofocus">';
+	    print $form->widgetForTranslation("name", $object, $permissiontoadd);
+	    print '</td>';
 	    if (!empty($conf->global->SOCIETE_USEPREFIX))  // Old not used prefix field
 	    {
 		    print '<td>'.$langs->trans('Prefix').'</td><td><input type="text" size="5" maxlength="5" name="prefix_comm" value="'.$object->prefix_comm.'"></td>';
@@ -1286,16 +1295,20 @@ else
         // Barcode
         if (!empty($conf->barcode->enabled))
         {
-            print '<tr><td>'.$form->editfieldkey('Gencod', 'barcode', '', $object, 0).'</td>';
+        	print '<tr><td>'.$form->editfieldkey('Gencod', 'barcode', '', $object, 0).'</td>';
 	        print '<td colspan="3"><input type="text" name="barcode" id="barcode" value="'.$object->barcode.'">';
             print '</td></tr>';
         }
 
         // Address
-        print '<tr><td class="tdtop">'.$form->editfieldkey('Address', 'address', '', $object, 0).'</td>';
+        print '<tr><td class="tdtop">';
+        print $form->editfieldkey('Address', 'address', '', $object, 0);
+        print '</td>';
 	    print '<td colspan="3"><textarea name="address" id="address" class="quatrevingtpercent" rows="'.ROWS_2.'" wrap="soft">';
         print $object->address;
-        print '</textarea></td></tr>';
+        print '</textarea>';
+        print $form->widgetForTranslation("address", $object, $permissiontoadd);
+        print '</td></tr>';
 
         // Zip / Town
         print '<tr><td>'.$form->editfieldkey('Zip', 'zipcode', '', $object, 0).'</td><td>';
@@ -1304,6 +1317,7 @@ else
         if ($conf->browser->layout == 'phone') print '</tr><tr>';
         print '<td>'.$form->editfieldkey('Town', 'town', '', $object, 0).'</td><td>';
         print $formcompany->select_ziptown($object->town, 'town', array('zipcode', 'selectcountry_id', 'state_id'), 0, 0, '', 'maxwidth100 quatrevingtpercent');
+        print $form->widgetForTranslation("town", $object, $permissiontoadd);
         print '</td></tr>';
 
         // Country

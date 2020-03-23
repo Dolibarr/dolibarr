@@ -71,10 +71,10 @@ if (GETPOSTISSET('type')) $type=GETPOST('type', 'alpha');
 else $type=dol_mimetype($original_file);
 
 // Security: Delete string ../ into $original_file
-$original_file=str_replace("../","/", $original_file);
+$original_file = str_replace("../", "/", $original_file);
 
 // Cache or not
-if (GETPOST("cache",'none') || image_format_supported($original_file) >= 0)
+if (GETPOST("cache", 'none') || image_format_supported($original_file) >= 0)
 {
     // Important: Following code is to avoid page request by browser and PHP CPU at
     // each Dolibarr page access.
@@ -257,4 +257,4 @@ else
 	readfile($fullpath_original_file_osencoded);
 }
 if (is_object($db)) $db->close();
-// END PHP ?>
+// END PHP
