@@ -152,7 +152,7 @@ function llxHeaderVierge($title, $head = "")
 */
 function llxFooterVierge()
 {
-    printCommonFooter('public');
+	printCommonFooter('public');
 
 	print "</body>\n";
 	print "</html>\n";

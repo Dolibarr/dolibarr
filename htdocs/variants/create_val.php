@@ -43,9 +43,9 @@ if ($object->fetch($id) < 1) {
 
 if ($cancel)
 {
-    $action='';
-    header('Location: '.DOL_URL_ROOT.'/variants/card.php?id='.$object->id);
-    exit();
+	$action='';
+	header('Location: '.DOL_URL_ROOT.'/variants/card.php?id='.$object->id);
+	exit();
 }
 
 // None

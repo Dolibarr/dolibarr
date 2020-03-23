@@ -54,17 +54,17 @@ $i=0;
 foreach($modulesdir as $dir)
 {
 	$handle=@opendir(dol_osencode($dir));
-    if (is_resource($handle))
-    {
-    	while (($file = readdir($handle))!==false)
-    	{
-    		if (is_readable($dir.$file) && substr($file, 0, 3) == 'mod' && substr($file, dol_strlen($file) - 10) == '.class.php')
-    		{
-    			$modName = substr($file, 0, dol_strlen($file) - 10);
+	if (is_resource($handle))
+	{
+		while (($file = readdir($handle))!==false)
+		{
+			if (is_readable($dir.$file) && substr($file, 0, 3) == 'mod' && substr($file, dol_strlen($file) - 10) == '.class.php')
+			{
+				$modName = substr($file, 0, dol_strlen($file) - 10);
 
-    			if ($modName)
-    			{
-    				//print 'xx'.$dir.$file.'<br>';
+				if ($modName)
+				{
+					//print 'xx'.$dir.$file.'<br>';
 					if (in_array($file, $modules_files))
 					{
 						// File duplicate
@@ -77,13 +77,13 @@ foreach($modulesdir as $dir)
 						if (class_exists($modName))
 						{
 							try {
-	    						$objMod = new $modName($db);
+								$objMod = new $modName($db);
 
-			    				$modules[$objMod->numero]=$objMod;
-			    				$modules_names[$objMod->numero]=$objMod->name;
-	    						$modules_files[$objMod->numero]=$file;
-	    						$modules_fullpath[$file]=$dir.$file;
-	    						$picto[$objMod->numero]=(isset($objMod->picto) && $objMod->picto)?$objMod->picto:'generic';
+								$modules[$objMod->numero]=$objMod;
+								$modules_names[$objMod->numero]=$objMod->name;
+								$modules_files[$objMod->numero]=$file;
+								$modules_fullpath[$file]=$dir.$file;
+								$picto[$objMod->numero]=(isset($objMod->picto) && $objMod->picto)?$objMod->picto:'generic';
 							}
 							catch(Exception $e)
 							{
@@ -95,11 +95,11 @@ foreach($modulesdir as $dir)
 							print "Warning bad descriptor file : ".$dir.$file." (Class ".$modName." not found into file)<br>";
 						}
 					}
-    			}
-    		}
-    	}
-    	closedir($handle);
-    }
+				}
+			}
+		}
+		closedir($handle);
+	}
 }
 
 print '<div class="div-table-responsive-no-min">';
@@ -120,15 +120,15 @@ foreach($sortorder as $numero=>$name)
 	// Module
 	print '<tr class="oddeven"><td width="300" class="nowrap">';
 	$alt=$name.' - '.$modules_files[$numero];
-    if (! empty($picto[$numero]))
-    {
-       	if (preg_match('/^\//', $picto[$numero])) print img_picto($alt, $picto[$numero], 'width="14px"', 1);
-       	else print img_object($alt, $picto[$numero], 'width="14px"');
-    }
-    else
-    {
-      	print img_object($alt, $picto[$numero], 'width="14px"');
-    }
+	if (! empty($picto[$numero]))
+	{
+	   	if (preg_match('/^\//', $picto[$numero])) print img_picto($alt, $picto[$numero], 'width="14px"', 1);
+	   	else print img_object($alt, $picto[$numero], 'width="14px"');
+	}
+	else
+	{
+	  	print img_object($alt, $picto[$numero], 'width="14px"');
+	}
 	print ' '.$modules[$numero]->getName();
 	print "</td>";
 	// Version

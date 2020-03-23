@@ -255,13 +255,13 @@ llxHeaderSurvey($object->titre, "", 0, 0, $arrayofjs, $arrayofcss, $numsondage);
 
 if (empty($object->ref))     // For survey, id is a hex string
 {
-    $langs->load("errors");
-    print $langs->trans("ErrorRecordNotFound");
+	$langs->load("errors");
+	print $langs->trans("ErrorRecordNotFound");
 
-    llxFooterSurvey();
+	llxFooterSurvey();
 
-    $db->close();
-    exit();
+	$db->close();
+	exit();
 }
 
 // Define format of choices
