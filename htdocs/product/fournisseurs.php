@@ -53,7 +53,6 @@ $socid=GETPOST('socid', 'int');
 $cost_price=GETPOST('cost_price', 'alpha');
 $backtopage=GETPOST('backtopage', 'alpha');
 $error=0;
-$canmodifyotherentityfournprice = 1 ;
 
 // If socid provided by ajax company selector
 if (! empty($_REQUEST['search_fourn_id']))
@@ -935,8 +934,8 @@ SCRIPT;
 
 						// Modify-Remove
 						print '<td class="center nowraponall">';
-						
-						if ($usercancreate && $canmodifyotherentityfournprice == 1)
+
+						if ($usercancreate)
 						{
 							print '<a href="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'&amp;socid='.$productfourn->fourn_id.'&amp;action=add_price&amp;rowid='.$productfourn->product_fourn_price_id.'">'.img_edit()."</a>";
 							print ' &nbsp; ';
