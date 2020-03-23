@@ -743,7 +743,7 @@ $( document ).ready(function() {
 		}
 		echo '$("#customerandsales").append(\'<a onclick="location.href=\\\'index.php?place=0-';
 		echo $max_sale+1;
-		echo '\\\'"><span class="fa fa-plus-square"></a>\');';
+		echo '\\\'"><span class="fa fa-plus-square" title="'.dol_escape_htmltag($langs->trans("StartAParallelSale")).'"></a>\');';
 	} else {
 		dol_print_error($db);
 	}
