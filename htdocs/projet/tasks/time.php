@@ -391,8 +391,8 @@ if ($action == 'confirm_generateinvoice')
 				    $arrayoftasks[$object->id]['timespent']+=$object->timespent_duration;
 				    $arrayoftasks[$object->id]['totalvaluetodivideby3600']+=($object->timespent_duration * $object->timespent_thm);
 
-                    // Need to preserve all timespent_id's associated with 
-                    $arrayoftasks[$object->id]['rowids'] .= ((string)$object->timespent_id).",";
+                    // Need to preserve all timespent_id's associated with
+                    $arrayoftasks[$object->id]['rowids'] .= ((string) $object->timespent_id).",";
 
                     $task_note = $object->timespent_note;
                     if ($task_note != null){
@@ -464,12 +464,12 @@ if ($action == 'confirm_generateinvoice')
 				        $sql ='UPDATE '.MAIN_DB_PREFIX.'projet_task_time SET invoice_line_id = '.$lineid.', invoice_id = '.$tmpinvoice->id;
 				        $sql.=' WHERE rowid in ('.join(',', $toselect).') AND fk_user = '.$userid;
 				        $result = $db->query($sql);
-				        if (! $result)
+					if (! $result)
 				        {
-				            $error++;
-				            setEventMessages($db->lasterror(), null, 'errors');
-				            break;
-				        }
+						$error++;
+						setEventMessages($db->lasterror(), null, 'errors');
+						break;
+					}
 			    }
 			}
 		}

@@ -307,7 +307,7 @@ if ($action == 'addtime' && $user->rights->projet->lire && GETPOST('formfilterac
 						$object->timespent_fk_user = $usertoprocess->id;
 						$object->timespent_date = dol_time_plus_duree($firstdaytoshow, $key, 'd');
 						$object->timespent_datehour = $object->timespent_date;
-						
+
 						// #ISSUE 12277: Create a note from known information about the task
 						$object->timespent_note = $object->description;
 
