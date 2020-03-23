@@ -39,7 +39,7 @@ $term = GETPOST('term', 'alpha');
 $id = GETPOST('id', 'int');
 
 if (empty($user->rights->takepos->run)) {
-	access_forbidden();
+	accessforbidden();
 }
 
 

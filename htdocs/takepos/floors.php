@@ -48,7 +48,7 @@ $newname = GETPOST('newname', 'alpha');
 $mode = GETPOST('mode', 'alpha');
 
 if (empty($user->rights->takepos->run)) {
-	access_forbidden();
+	accessforbidden();
 }
 
 

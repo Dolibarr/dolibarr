@@ -46,7 +46,7 @@ $idline = GETPOST('idline', 'int');
 $action = GETPOST('action', 'alpha');
 
 if (empty($user->rights->takepos->run)) {
-	access_forbidden();
+	accessforbidden();
 }
 
 // get invoice
