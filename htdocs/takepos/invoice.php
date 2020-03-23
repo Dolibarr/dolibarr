@@ -733,17 +733,17 @@ $( document ).ready(function() {
 		while ($obj = $db->fetch_object($resql)) {
 			echo '$("#customerandsales").append(\'';
 			if ($placeid==$obj->rowid) echo "<b>";
-			echo '<a class="valignmiddle" onclick="location.href=\\\'index.php?place=';
+			echo '<a class="valignmiddle" onclick="place=\\\'';
 			$num_sale=str_replace(")", "", str_replace("(PROV-POS".$_SESSION["takeposterminal"]."-", "", $obj->ref));
 			echo $num_sale;
 			if (str_replace("-", "", $num_sale)>$max_sale) $max_sale=str_replace("-", "", $num_sale);
-			echo '\\\'">'.date('H:i', strtotime($obj->datec));
+			echo '\\\';Refresh();">'.date('H:i', strtotime($obj->datec));
 			if ($placeid==$obj->rowid) echo "</b>";
 			echo '</a>\');';
 		}
-		echo '$("#customerandsales").append(\'<a onclick="location.href=\\\'index.php?place=0-';
+		echo '$("#customerandsales").append(\'<a onclick="place=\\\'0-';
 		echo $max_sale+1;
-		echo '\\\'"><span class="fa fa-plus-square" title="'.dol_escape_htmltag($langs->trans("StartAParallelSale")).'"></a>\');';
+		echo '\\\';Refresh();"><span class="fa fa-plus-square" title="'.dol_escape_htmltag($langs->trans("StartAParallelSale")).'"></a>\');';
 	} else {
 		dol_print_error($db);
 	}
