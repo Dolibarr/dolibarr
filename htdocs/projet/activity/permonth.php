@@ -21,7 +21,7 @@
 /**
  *	\file       htdocs/projet/activity/permonth.php
  *	\ingroup    projet
- *	\brief      List activities of tasks (per week entry)
+ *	\brief      List activities of tasks (per month entry)
  */
 
 require "../../main.inc.php";
@@ -480,8 +480,7 @@ print '<td class="liste_titre"></td>';
 print '<td class="liste_titre right"><input type="text" size="4" name="search_declared_progress" value="'.dol_escape_htmltag($search_declared_progress).'"></td>';
 print '<td class="liste_titre"></td>';
 print '<td class="liste_titre"></td>';
-$countWeek = count($TWeek);
-for ($idw=0;$idw<$countWeek;$idw++)
+foreach ($TWeek as $week_number)
 {
 	print '<td class="liste_titre"></td>';
 }
@@ -515,6 +514,8 @@ $colspan=5;
 
 // By default, we can edit only tasks we are assigned to
 $restrictviewformytask=(empty($conf->global->PROJECT_TIME_SHOW_TASK_NOT_ASSIGNED)?1:0);
+
+$isavailable = array();
 
 if (count($tasksarray) > 0)
 {
@@ -616,6 +617,7 @@ print "</table>";
 print '</div>';
 
 print '<input type="hidden" id="numberOfLines" name="numberOfLines" value="'.count($tasksarray).'"/>'."\n";
+print '<input type="hidden" id="numberOfFirstLine" name="numberOfFirstLine" value="'.(reset($TWeek)).'"/>'."\n";
 
 print '<div class="center">';
 print '<input type="submit" class="button" name="save" value="'.dol_escape_htmltag($langs->trans("Save")).'">';
@@ -639,11 +641,9 @@ if ($conf->use_javascript_ajax)
 					}
 				});'."\n";
 
-	$idw=0;
-	while ($idw < 7)
+	foreach ($TWeek as $week_number)
 	{
-		print '    updateTotal('.$idw.',\''.$modeinput.'\');';
-		$idw++;
+		print '    updateTotal('.$week_number.',\''.$modeinput.'\');';
 	}
 	print "\n});\n";
 	print '</script>';
