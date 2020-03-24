@@ -2785,7 +2785,7 @@ class ContratLigne extends CommonObjectLine
 		elseif ($status == self::STATUS_CLOSED) { $labelStatus = $langs->trans("ServiceStatusClosed"); $labelStatusShort = $langs->trans("ServiceStatusClosed"); }
 
 		$statusType = 'status'.$status;
-		if ($status == self::STATUS_OPEN && $expired == 1) $statusType = 'status3';
+		if ($status == self::STATUS_OPEN && $expired == 1) $statusType = 'status1';
 		if ($status == self::STATUS_CLOSED) $statusType = 'status6';
 
 		$params = array(); $reg = array();
