@@ -2535,7 +2535,7 @@ class Form
 		if ($outbarcode) $outval .= ' ('.$outbarcode.')';
 		$outval .= ' - '.dol_trunc($label, $maxlengtharticle);
 		if ($outorigin && !empty($conf->global->PRODUCT_SHOW_ORIGIN_IN_COMBO)) $outval .= ' ('.getCountry($outorigin, 1).')';
-		
+
         // Units
         $opt .= $outvalUnits;
         $outval .= $outvalUnits;
