@@ -581,7 +581,7 @@ if (!empty($conf->societe->enabled) && $user->rights->societe->lire)
 }
 
 // Last suppliers
-if (!empty($conf->fournisseur->enabled) && $user->rights->societe->lire)
+if ((!empty($conf->fournisseur->enabled) && empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD) || !empty($conf->supplier_order->enabled) || !empty($conf->supplier_invoice->enabled)) && $user->rights->societe->lire)
 {
 	$langs->load("boxes");
 
