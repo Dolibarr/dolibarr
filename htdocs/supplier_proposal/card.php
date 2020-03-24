@@ -1041,7 +1041,7 @@ if (empty($reshook))
 
 		if (!$error)
 		{
-			$result = $object->insertExtraFields('SUPPLIER_PROPOSAL_MODIFY');
+			$result = $object->insertExtraFields('PROPOSAL_SUPPLIER_MODIFY');
 			if ($result < 0)
 			{
 				setEventMessages($object->error, $object->errors, 'errors');
@@ -1433,7 +1433,7 @@ if ($action == 'create')
 			require_once DOL_DOCUMENT_ROOT.'/core/class/notify.class.php';
 			$notify = new Notify($db);
 			$text .= '<br>';
-			$text .= $notify->confirmMessage('SUPPLIER_PROPOSAL_VALIDATE', $object->socid, $object);
+			$text .= $notify->confirmMessage('PROPOSAL_SUPPLIER_VALIDATE', $object->socid, $object);
 		}
 
 		if (!$error)
