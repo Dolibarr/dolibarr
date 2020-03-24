@@ -318,7 +318,7 @@ if ($action == "create" || $action == "start")
 	print load_fiche_titre($langs->trans("CashControl")." - ".$langs->trans("New"), '', 'cash-register');
 
 	print '<form method="POST" action="'.$_SERVER["PHP_SELF"].'">';
-    print '<input type="hidden" name="token" value="' . $_SESSION ['newtoken'] . '">';
+    print '<input type="hidden" name="token" value="' . newToken() . '">';
     if ($action == 'start' && GETPOST('posnumber', 'int') != '' && GETPOST('posnumber', 'int') != '' && GETPOST('posnumber', 'int') != '-1')
     {
 	    print '<input type="hidden" name="action" value="add">';

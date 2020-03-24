@@ -1594,8 +1594,8 @@ if ($action == 'create' && $usercancreate)
 		$note_public = $object->getDefaultCreateValueFor('note_public');
 	}
 
-	print '<form name="crea_commande" action="' . $_SERVER["PHP_SELF"] . '" method="POST">';
-	print '<input type="hidden" name="token" value="' . $_SESSION ['newtoken'] . '">';
+	print '<form name="crea_commande" action="'.$_SERVER["PHP_SELF"].'" method="POST">';
+	print '<input type="hidden" name="token" value="'.newToken().'">';
 	print '<input type="hidden" name="action" value="add">';
 	print '<input type="hidden" name="socid" value="' . $soc->id . '">' . "\n";
 	print '<input type="hidden" name="remise_percent" value="' . $soc->remise_percent . '">';
@@ -2177,7 +2177,7 @@ if ($action == 'create' && $usercancreate)
 		print '</td><td>';
 		if ($action == 'editdate') {
 			print '<form name="setdate" action="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'" method="post">';
-			print '<input type="hidden" name="token" value="'.$_SESSION ['newtoken'].'">';
+			print '<input type="hidden" name="token" value="'.newToken().'">';
 			print '<input type="hidden" name="action" value="setdate">';
 			print $form->selectDate($object->date, 'order_', '', '', '', "setdate");
 			print '<input type="submit" class="button" value="'.$langs->trans('Modify').'">';
@@ -2198,7 +2198,7 @@ if ($action == 'create' && $usercancreate)
 		print '</td><td>';
 		if ($action == 'editdate_livraison') {
 			print '<form name="setdate_livraison" action="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'" method="post">';
-			print '<input type="hidden" name="token" value="'.$_SESSION ['newtoken'].'">';
+			print '<input type="hidden" name="token" value="'.newToken().'">';
 			print '<input type="hidden" name="action" value="setdate_livraison">';
 			print $form->selectDate($object->date_livraison ? $object->date_livraison : - 1, 'liv_', '', '', '', "setdate_livraison");
 			print '<input type="submit" class="button" value="'.$langs->trans('Modify').'">';
@@ -2492,7 +2492,7 @@ if ($action == 'create' && $usercancreate)
 		$result = $object->getLinesArray();
 
 		print '<form name="addproduct" id="addproduct" action="'.$_SERVER["PHP_SELF"].'?id='.$object->id.(($action != 'editline') ? '#addline' : '#line_'.GETPOST('lineid')).'" method="POST">
-		<input type="hidden" name="token" value="' . $_SESSION ['newtoken'].'">
+		<input type="hidden" name="token" value="' . newToken().'">
 		<input type="hidden" name="action" value="' . (($action != 'editline') ? 'addline' : 'updateline').'">
 		<input type="hidden" name="mode" value="">
 		<input type="hidden" name="id" value="' . $object->id.'">';
