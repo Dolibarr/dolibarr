@@ -295,7 +295,7 @@ if ($object->id > 0)
 	print '</td>';
 	print '</tr>';
 
-	if (!empty($conf->fournisseur->enabled) && !empty($conf->global->ORDER_MANAGE_MIN_AMOUNT))
+	if ((!empty($conf->fournisseur->enabled) && empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD) || !empty($conf->supplier_order->enabled)) && !empty($conf->global->ORDER_MANAGE_MIN_AMOUNT))
 	{
 		print '<tr class="nowrap">';
 		print '<td>';
@@ -378,7 +378,7 @@ if ($object->id > 0)
 	    if ($link) $boxstat .= '</a>';
 	}
 
-	if ($conf->fournisseur->enabled)
+	if (!empty($conf->fournisseur->enabled) && empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD) || !empty($conf->supplier_order->enabled) || !empty($conf->supplier_invoice->enabled))
 	{
 	    // Box proposals
 	    $tmp = $object->getOutstandingOrders('supplier');
@@ -396,7 +396,7 @@ if ($object->id > 0)
 	    if ($link) $boxstat .= '</a>';
 	}
 
-	if ($conf->fournisseur->enabled)
+	if (!empty($conf->fournisseur->enabled) && empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD) || !empty($conf->supplier_order->enabled) || !empty($conf->supplier_invoice->enabled))
 	{
 	    $tmp = $object->getOutstandingBills('supplier');
 	    $outstandingOpened = $tmp['opened'];
