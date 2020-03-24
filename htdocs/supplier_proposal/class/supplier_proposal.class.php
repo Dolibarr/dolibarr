@@ -13,7 +13,7 @@
  * Copyright (C) 2014      Marcos García            <marcosgdf@gmail.com>
  * Copyright (C) 2016      Ferran Marcet            <fmarcet@2byte.es>
  * Copyright (C) 2018      Nicolas ZABOURI			<info@inovea-conseil.com>
- * Copyright (C) 2019       Frédéric France         <frederic.france@netlogic.fr>
+ * Copyright (C) 2019      Frédéric France          <frederic.france@netlogic.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -2233,7 +2233,7 @@ class SupplierProposal extends CommonObject
     	if ($status == self::STATUS_DRAFT) $statusnew = 'status0';
     	elseif ($status == self::STATUS_VALIDATED) $statusnew = 'status1';
     	elseif ($status == self::STATUS_SIGNED) $statusnew = 'status4';
-    	elseif ($status == self::STATUS_NOTSIGNED) $statusnew = 'status5';
+    	elseif ($status == self::STATUS_NOTSIGNED) $statusnew = 'status9';
     	elseif ($status == self::STATUS_CLOSE) $statusnew = 'status6';
 
     	return dolGetStatus($this->labelStatus[$status], $this->labelStatusShort[$status], '', $statusnew, $mode);

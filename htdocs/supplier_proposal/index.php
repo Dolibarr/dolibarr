@@ -292,7 +292,7 @@ if ($resql)
 			print '<td>'.$companystatic->getNomUrl(1, 'customer').'</td>';
 
 			print '<td>'.dol_print_date($db->jdate($obj->datec), 'day').'</td>';
-			print '<td class="right">'.$supplier_proposalstatic->LibStatut($obj->fk_statut, 5).'</td>';
+			print '<td class="right">'.$supplier_proposalstatic->LibStatut($obj->fk_statut, 3).'</td>';
 			print '</tr>';
 			$i++;
 		}

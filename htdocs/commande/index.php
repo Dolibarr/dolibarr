@@ -315,7 +315,7 @@ if ($resql)
             print $companystatic->getNomUrl(1, 'company', 16);
             print '</td>';
 			print '<td>'.dol_print_date($db->jdate($obj->datem), 'day').'</td>';
-			print '<td class="right">'.$commandestatic->LibStatut($obj->fk_statut, $obj->facture, 5).'</td>';
+			print '<td class="right">'.$commandestatic->LibStatut($obj->fk_statut, $obj->facture, 3).'</td>';
 			print '</tr>';
 			$i++;
 		}
@@ -331,7 +331,7 @@ $max = 10;
  */
 if (!empty($conf->commande->enabled))
 {
-	$sql = "SELECT c.rowid, c.entity, c.ref, c.fk_statut, c.facture, s.nom as name, s.rowid as socid";
+	$sql = "SELECT c.rowid, c.entity, c.ref, c.fk_statut, c.facture, c.date_commande as date, s.nom as name, s.rowid as socid";
     $sql .= ", s.client";
     $sql .= ", s.code_client";
     $sql .= ", s.canvas";
@@ -353,7 +353,7 @@ if (!empty($conf->commande->enabled))
         print '<div class="div-table-responsive-no-min">';
 		print '<table class="noborder centpercent">';
 		print '<tr class="liste_titre">';
-		print '<th colspan="3">'.$langs->trans("OrdersToProcess").' <a href="'.DOL_URL_ROOT.'/commande/list.php?viewstatut='.Commande::STATUS_VALIDATED.'"><span class="badge">'.$num.'</span></a></th></tr>';
+		print '<th colspan="4">'.$langs->trans("OrdersToProcess").' <a href="'.DOL_URL_ROOT.'/commande/list.php?viewstatut='.Commande::STATUS_VALIDATED.'"><span class="badge">'.$num.'</span></a></th></tr>';
 
 		if ($num)
 		{
@@ -395,13 +395,15 @@ if (!empty($conf->commande->enabled))
                 print $companystatic->getNomUrl(1, 'company', 24);
                 print '</td>';
 
-				print '<td class="right">'.$commandestatic->LibStatut($obj->fk_statut, $obj->facture, 5).'</td>';
+                print '<td class="right">'.dol_print_date($db->jdate($obj->date), 'day').'</td>'."\n";
+
+				print '<td class="right">'.$commandestatic->LibStatut($obj->fk_statut, $obj->facture, 3).'</td>';
 
 				print '</tr>';
 				$i++;
 			}
 			if ($i < $num) {
-				print '<tr><td><span class="opacitymedium">'.$langs->trans("More").'...</span></td><td></td><td></td></tr>';
+				print '<tr><td><span class="opacitymedium">'.$langs->trans("More").'...</span></td><td></td><td></td><td></td></tr>';
 			}
 		}
 
@@ -415,7 +417,7 @@ if (!empty($conf->commande->enabled))
  */
 if (!empty($conf->commande->enabled))
 {
-	$sql = "SELECT c.rowid, c.entity, c.ref, c.fk_statut, c.facture, s.nom as name, s.rowid as socid";
+	$sql = "SELECT c.rowid, c.entity, c.ref, c.fk_statut, c.facture, c.date_commande as date, s.nom as name, s.rowid as socid";
     $sql .= ", s.client";
     $sql .= ", s.code_client";
     $sql .= ", s.canvas";
@@ -437,7 +439,7 @@ if (!empty($conf->commande->enabled))
         print '<div class="div-table-responsive-no-min">';
 		print '<table class="noborder centpercent">';
 		print '<tr class="liste_titre">';
-		print '<th colspan="3">'.$langs->trans("OnProcessOrders").' <a href="'.DOL_URL_ROOT.'/commande/list.php?viewstatut='.Commande::STATUS_ACCEPTED.'"><span class="badge">'.$num.'</span></a></th></tr>';
+		print '<th colspan="4">'.$langs->trans("OnProcessOrders").' <a href="'.DOL_URL_ROOT.'/commande/list.php?viewstatut='.Commande::STATUS_ACCEPTED.'"><span class="badge">'.$num.'</span></a></th></tr>';
 
 		if ($num)
 		{
@@ -479,13 +481,15 @@ if (!empty($conf->commande->enabled))
 				print $companystatic->getNomUrl(1, 'company');
 				print '</td>';
 
-				print '<td class="right">'.$commandestatic->LibStatut($obj->fk_statut, $obj->facture, 5).'</td>';
+				print '<td class="right">'.dol_print_date($db->jdate($obj->date), 'day').'</td>'."\n";
+
+				print '<td class="right">'.$commandestatic->LibStatut($obj->fk_statut, $obj->facture, 3).'</td>';
 
 				print '</tr>';
 				$i++;
 			}
 			if ($i < $num) {
-				print '<tr><td><span class="opacitymedium">'.$langs->trans("More").'...</span></td><td></td><td></td></tr>';
+				print '<tr><td><span class="opacitymedium">'.$langs->trans("More").'...</span></td><td></td><td></td><td></td></tr>';
 			}
 		}
 		print "</table></div><br>";
