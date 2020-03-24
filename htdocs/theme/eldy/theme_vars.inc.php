@@ -104,11 +104,13 @@ $colorblind_deuteranopes_badgeWarning   = '#e4e411';
 *  So this badges status uses default value according to theme eldy status img
 *  TODO: use color definition vars above for define badges color status X -> exemple $badgeStatusValidate, $badgeStatusClosed, $badgeStatusActive ....
 */
-$badgeStatus0 = '#cbd3d3';
-$badgeStatus1 = '#bc9526';
-$badgeStatus2 = '#e6f0f0';
+$badgeStatus0 = '#cbd3d3';	// draft
+$badgeStatus1 = '#bc9526';	// validated
+$badgeStatus1b = '#bc9526';	// validated
+$badgeStatus2 = '#9c9c26';	// approved
 $badgeStatus3 = '#bca52b';
 $badgeStatus4 = '#55a580'; // Color ok
+$badgeStatus4b = '#55a580'; // Color ok
 $badgeStatus5 = '#cad2d2';
 $badgeStatus6 = '#cad2d2';
 $badgeStatus7 = '#baa32b';
