@@ -392,6 +392,7 @@ class ExtraFields
 		if (empty($list)) $list = '0';
 		if (empty($required)) $required = 0;
 		if (empty($unique)) $unique = 0;
+		if (empty($printable)) $printable = 0;
 		if (empty($alwayseditable)) $alwayseditable = 0;
 		if (empty($totalizable)) $totalizable = 0;
 
