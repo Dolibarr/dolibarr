@@ -3764,10 +3764,13 @@ function img_allow($allow, $titlealt = 'default')
  *	Return image of a credit card according to its brand name
  *
  *	@param	string	$brand		Brand name of credit card
+ *  @param	string	$morecss	More CSS
  *	@return string     			Return img tag
  */
-function img_credit_card($brand)
+function img_credit_card($brand, $morecss = null)
 {
+	if (is_null($morecss)) $morecss = 'fa-2x';
+
 	if ($brand == 'visa' || $brand == 'Visa') {$brand = 'cc-visa'; }
 	elseif ($brand == 'mastercard' || $brand == 'MasterCard') {$brand = 'cc-mastercard'; }
 	elseif ($brand == 'amex' || $brand == 'American Express') {$brand = 'cc-amex'; }
@@ -3776,7 +3779,7 @@ function img_credit_card($brand)
 	elseif ($brand == 'diners' || $brand == 'Diners club') {$brand = 'cc-diners-club'; }
 	elseif (!in_array($brand, array('cc-visa', 'cc-mastercard', 'cc-amex', 'cc-discover', 'cc-jcb', 'cc-diners-club'))) {$brand = 'credit-card'; }
 
-	return '<span class="fa fa-'.$brand.' fa-2x fa-fw"></span>';
+	return '<span class="fa fa-'.$brand.' fa-fw'.($morecss ? ' '.$morecss : '').'"></span>';
 }
 
 /**
