@@ -103,6 +103,11 @@ $coldisplay++;
 echo $line->efficiency;
 print '</td>';
 
+print '<td class="linecolcost nowrap right">';
+$coldisplay++;
+echo price($line->total_cost);
+print '</td>';
+
 if ($this->status == 0 && ($object_rights->write) && $action != 'selectlines' ) {
 	print '<td class="linecoledit center">';
 	$coldisplay++;

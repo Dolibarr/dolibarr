@@ -912,6 +912,7 @@ class BOM extends CommonObject
 	    else
 	    {
 	        $this->lines = $result;
+	        $this->calculateCosts();
 	        return $this->lines;
 	    }
 	}
@@ -990,6 +991,19 @@ class BOM extends CommonObject
 		$this->db->commit();
 
 		return $error;
+	}
+
+	public function calculateCosts() {
+		include_once DOL_DOCUMENT_ROOT . '/product/class/product.class.php';
+		$this->total_cost = 0;
+		foreach ($this->lines as &$line) {
+			$tmpproduct = new Product($this->db);
+			$tmpproduct->fetch($line->fk_product);
+
+			$line->unit_cost = $tmpproduct->cost_price; // TODO : add option to work with cost_price or pmp
+			$line->total_cost = price2num($line->qty * $line->unit_cost);
+			$this->total_cost += $line->total_cost;
+		}
 	}
 }
 

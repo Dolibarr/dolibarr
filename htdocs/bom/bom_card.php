@@ -68,6 +68,7 @@ if (empty($action) && empty($id) && empty($ref)) $action = 'view';
 
 // Load object
 include DOL_DOCUMENT_ROOT.'/core/actions_fetchobject.inc.php'; // Must be include, not include_once.
+$object->calculateCosts();
 
 // Security check - Protection if external user
 //if ($user->socid > 0) accessforbidden();
@@ -522,6 +523,8 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 	// Common attributes
 	$keyforbreak = 'duration';
 	include DOL_DOCUMENT_ROOT.'/core/tpl/commonfields_view.tpl.php';
+
+	print '<td>Coût total</td><td>'.price($object->total_cost).'</td>';
 
 	// Other attributes
 	include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_view.tpl.php';
