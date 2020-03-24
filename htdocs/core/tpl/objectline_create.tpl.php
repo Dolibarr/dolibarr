@@ -227,6 +227,11 @@ if ($nolinesbefore) {
 			if (empty($senderissupplier))
 			{
 				$statustoshow = 1;
+				
+				////
+				$buyer->price_level = $object->thirdparty->price_level;
+				////
+				
 				if (!empty($conf->global->ENTREPOT_EXTRA_STATUS))
 				{
 					// hide products in closed warehouse, but show products for internal transfer
