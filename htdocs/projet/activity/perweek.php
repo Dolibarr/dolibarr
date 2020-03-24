@@ -660,8 +660,8 @@ if (!empty($arrayfields['t.progress']['checked']))
 /*print '<td class="maxwidth75 right">'.$langs->trans("TimeSpent").'</td>';
  if ($usertoprocess->id == $user->id) print '<td class="maxwidth75 right">'.$langs->trans("TimeSpentByYou").'</td>';
  else print '<td class="maxwidth75 right">'.$langs->trans("TimeSpentByUser").'</td>';*/
-print '<th class="maxwidth75 right">'.$langs->trans("TimeSpent").'<br>('.$langs->trans("Everybody").')</th>';
-print '<th class="maxwidth75 right">'.$langs->trans("TimeSpent").($usertoprocess->firstname ? '<br>('.dol_trunc($usertoprocess->firstname, 10).')' : '').'</th>';
+print '<th class="maxwidth75 right">'.$langs->trans("TimeSpent").'<br><span class="opacitymedium">'.$langs->trans("Everybody").'</span></th>';
+print '<th class="maxwidth75 right">'.$langs->trans("TimeSpent").($usertoprocess->firstname ? '<br><span class="opacitymedium">'.dol_trunc($usertoprocess->firstname, 10).'</span>' : '').'</th>';
 
 for ($idw = 0; $idw < 7; $idw++)
 {

@@ -2232,7 +2232,7 @@ class SupplierProposal extends CommonObject
     	$statusnew = '';
     	if ($status == self::STATUS_DRAFT) $statusnew = 'status0';
     	elseif ($status == self::STATUS_VALIDATED) $statusnew = 'status1';
-    	elseif ($status == self::STATUS_SIGNED) $statusnew = 'status3';
+    	elseif ($status == self::STATUS_SIGNED) $statusnew = 'status4';
     	elseif ($status == self::STATUS_NOTSIGNED) $statusnew = 'status5';
     	elseif ($status == self::STATUS_CLOSE) $statusnew = 'status6';
 

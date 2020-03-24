@@ -500,8 +500,8 @@ print '<td align="right" class="maxwidth75">'.$langs->trans("ProgressDeclared").
 /*print '<td align="right" class="maxwidth75">'.$langs->trans("TimeSpent").'</td>';
  if ($usertoprocess->id == $user->id) print '<td align="right" class="maxwidth75">'.$langs->trans("TimeSpentByYou").'</td>';
  else print '<td align="right" class="maxwidth75">'.$langs->trans("TimeSpentByUser").'</td>';*/
-print '<td align="right" class="maxwidth75">'.$langs->trans("TimeSpent").'<br>('.$langs->trans("Everybody").')</td>';
-print '<td align="right" class="maxwidth75">'.$langs->trans("TimeSpent").($usertoprocess->firstname ? '<br>('.dol_trunc($usertoprocess->firstname, 10).')' : '').'</td>';
+print '<td align="right" class="maxwidth75">'.$langs->trans("TimeSpent").'<br><span class="opacitymedium">'.$langs->trans("Everybody").'</span></td>';
+print '<td align="right" class="maxwidth75">'.$langs->trans("TimeSpent").($usertoprocess->firstname ? '<br><span class="opacitymedium">'.dol_trunc($usertoprocess->firstname, 10).'</span>' : '').'</td>';
 
 foreach ($TWeek as $week_number)
 {

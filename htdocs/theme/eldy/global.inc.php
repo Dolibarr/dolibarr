@@ -3224,6 +3224,9 @@ td.evenodd, tr.nohoverpair td, #trlinefordates td {
     border-bottom: 1pt solid black !important;
 	/* background-color: #<?php echo colorArrayToHex(colorStringToArray($colorbacklinebreak)); ?> !important; */
 }
+.trforbreak.nobold td a, .trforbreak.nobold span.secondary {
+    font-weight: normal !important;
+}
 
 table.dataTable td {
     padding: 5px 8px 5px 8px !important;

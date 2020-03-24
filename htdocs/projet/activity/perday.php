@@ -606,8 +606,8 @@ if (!empty($arrayfields['t.progress']['checked']))
 /*print '<td class="right maxwidth100">'.$langs->trans("TimeSpent").'</td>';
 if ($usertoprocess->id == $user->id) print '<td class="right maxwidth100">'.$langs->trans("TimeSpentByYou").'</td>';
 else print '<td class="right maxwidth100">'.$langs->trans("TimeSpentByUser").'</td>';*/
-print '<th class="right maxwidth100">'.$langs->trans("TimeSpent").'<br>('.$langs->trans("Everybody").')</th>';
-print '<th class="right maxwidth100">'.$langs->trans("TimeSpent").($usertoprocess->firstname ? '<br>('.dol_trunc($usertoprocess->firstname, 10).')' : '').'</th>';
+print '<th class="right maxwidth100">'.$langs->trans("TimeSpent").'<br><span class="opacitymedium">'.$langs->trans("Everybody").'</span></th>';
+print '<th class="right maxwidth100">'.$langs->trans("TimeSpent").($usertoprocess->firstname ? '<br><span class="opacitymedium">'.dol_trunc($usertoprocess->firstname, 10).'</span>' : '').'</th>';
 print '<th class="center leftborder">'.$langs->trans("HourStart").'</td>';
 
 // By default, we can edit only tasks we are assigned to

@@ -1557,7 +1557,7 @@ if ($action == 'create')
 	print '</tr></table>';
 	print '</td><td colspan="3">';
 	if ($action == 'editdate_livraison') {
-		print '<form name="editdate_livraison" action="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'" method="post">';
+		print '<form name="editdate_livraison" action="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'" method="post" class="formconsumeproduce">';
 		print '<input type="hidden" name="token" value="'.$_SESSION ['newtoken'].'">';
 		print '<input type="hidden" name="action" value="setdate_livraison">';
 		print $form->selectDate($object->date_livraison, 'liv_', '', '', '', "editdate_livraison");
@@ -1806,12 +1806,13 @@ if ($action == 'create')
 	if ($action == 'statut')
 	{
 		// Form to set proposal accepted/refused
-		$form_close = '<form action="' . $_SERVER["PHP_SELF"] . '?id=' . $object->id . '" method="post">';
-		if (! empty($conf->global->SUPPLIER_PROPOSAL_UPDATE_PRICE_ON_SUPPlIER_PROPOSAL)) $form_close .= '<p class="notice">'.$langs->trans('SupplierProposalRefFournNotice').'</p>';  // TODO Suggest a permanent checkbox instead of option
+		$form_close = '<form action="' . $_SERVER["PHP_SELF"] . '?id=' . $object->id . '" method="POST" id="formacceptrefuse" class="formconsumeproduce">';
 		$form_close .= '<input type="hidden" name="token" value="' . $_SESSION ['newtoken'] . '">';
+		$form_close .= '<input type="hidden" name="action" value="setstatut">';
+
+		if (! empty($conf->global->SUPPLIER_PROPOSAL_UPDATE_PRICE_ON_SUPPlIER_PROPOSAL)) $form_close .= '<p class="notice">'.$langs->trans('SupplierProposalRefFournNotice').'</p>';  // TODO Suggest a permanent checkbox instead of option
 		$form_close .= '<table class="border centpercent">';
 		$form_close .= '<tr><td width="150"  class="left">' . $langs->trans("CloseAs") . '</td><td class="left">';
-		$form_close .= '<input type="hidden" name="action" value="setstatut">';
 		$form_close .= '<select id="statut" name="statut" class="flat">';
 		$form_close .= '<option value="0">&nbsp;</option>';
 		$form_close .= '<option value="2">' . $langs->trans('SupplierProposalStatusSigned') . '</option>';
@@ -1882,7 +1883,7 @@ if ($action == 'create')
 
 				// Set accepted/refused
 				if ($object->statut == SupplierProposal::STATUS_VALIDATED && $user->rights->supplier_proposal->cloturer) {
-					print '<div class="inline-block divButAction"><a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=statut'.(empty($conf->global->MAIN_JUMP_TAG) ? '' : '#acceptedrefused').'"';
+					print '<div class="inline-block divButAction"><a class="butAction reposition" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=statut'.(empty($conf->global->MAIN_JUMP_TAG) ? '' : '#acceptedrefused').'"';
 					print '>'.$langs->trans('SetAcceptedRefused').'</a></div>';
 				}
 

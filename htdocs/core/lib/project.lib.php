@@ -830,7 +830,7 @@ function projectLinesPerAction(&$inc, $parent, $fuser, $lines, &$level, &$projec
 
 			if (empty($oldprojectforbreak) || ($oldprojectforbreak != -1 && $oldprojectforbreak != $projectstatic->id))
 			{
-				print '<tr class="oddeven trforbreak">'."\n";
+				print '<tr class="oddeven trforbreak nobold">'."\n";
 				print '<td colspan="11">';
 				print $projectstatic->getNomUrl(1, '', 0, $langs->transnoentitiesnoconv("YourRole").': '.$projectsrole[$lines[$i]->fk_project]);
 				if ($projectstatic->title)
@@ -1449,7 +1449,7 @@ function projectLinesPerWeek(&$inc, $firstdaytoshow, $fuser, $parent, $lines, &$
                         if ($val['checked'] && substr($key, 0, 5) == 'efpt.') $addcolspan++;
                     }
 
-					print '<tr class="oddeven trforbreak">'."\n";
+					print '<tr class="oddeven trforbreak nobold">'."\n";
 					print '<td colspan="'.(11 + $addcolspan).'">';
 					print $projectstatic->getNomUrl(1, '', 0, '<strong>'.$langs->transnoentitiesnoconv("YourRole").':</strong> '.$projectsrole[$lines[$i]->fk_project]);
 					if ($thirdpartystatic->id > 0) print ' - '.$thirdpartystatic->getNomUrl(1);
@@ -1797,7 +1797,7 @@ function projectLinesPerMonth(&$inc, $firstdaytoshow, $fuser, $parent, $lines, &
 
 				if (empty($oldprojectforbreak) || ($oldprojectforbreak != -1 && $oldprojectforbreak != $projectstatic->id))
 				{
-					print '<tr class="oddeven trforbreak">'."\n";
+					print '<tr class="oddeven trforbreak nobold">'."\n";
 					print '<td colspan="'.(6 + count($TWeek)).'">';
 					print $projectstatic->getNomUrl(1, '', 0, '<strong>'.$langs->transnoentitiesnoconv("YourRole").':</strong> '.$projectsrole[$lines[$i]->fk_project]);
 					if ($thirdpartystatic->id > 0) print ' - '.$thirdpartystatic->getNomUrl(1);
