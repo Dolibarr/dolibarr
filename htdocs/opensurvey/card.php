@@ -113,8 +113,8 @@ if (empty($reshook))
     	if (!$error)
     	{
     		$object->titre = GETPOST('nouveautitre', 'nohtml');
-    		$object->commentaires = GETPOST('nouveauxcommentaires', 'nohtml');
-    		$object->description = GETPOST('nouveauxcommentaires', 'nohtml');
+    		$object->commentaires = GETPOST('nouveauxcommentaires', 'restricthtml');
+    		$object->description = GETPOST('nouveauxcommentaires', 'restricthtml');
     		$object->mail_admin = GETPOST('nouvelleadresse', 'alpha');
     		$object->date_fin = $expiredate;
     		$object->allow_comments = GETPOST('cancomment', 'alpha') == 'on' ? true : false;
@@ -208,6 +208,7 @@ $toutsujet = str_replace("@", "<br>", $toutsujet);
 $toutsujet = str_replace("°", "'", $toutsujet);
 
 print '<form name="updatesurvey" action="'.$_SERVER["PHP_SELF"].'?id='.$numsondage.'" method="POST">'."\n";
+print '<input type="hidden" name="token" value="'.newToken().'">';
 print '<input type="hidden" name="action" value="update">';
 
 $head = opensurvey_prepare_head($object);
@@ -248,12 +249,12 @@ print '</td></tr>';
 print '<tr><td class="tdtop">'.$langs->trans("Description").'</td><td colspan="2">';
 if ($action == 'edit')
 {
-	$doleditor = new DolEditor('nouveauxcommentaires', dol_htmlentities($object->commentaires), '', 120, 'dolibarr_notes', 'In', 1, 1, 1, ROWS_7, '90%');
+	$doleditor = new DolEditor('nouveauxcommentaires', $object->description, '', 120, 'dolibarr_notes', 'In', 1, 1, 1, ROWS_7, '90%');
 	$doleditor->Create(0, '');
 }
 else
 {
-	 print (dol_textishtml($object->commentaires) ? $object->commentaires : dol_nl2br($object->commentaires, 1, true));
+	print (dol_textishtml($object->description) ? $object->description : dol_nl2br($object->description, 1, true));
 }
 print '</td></tr>';
 
@@ -263,7 +264,7 @@ if (!$object->fk_user_creat) {
 	print '<tr><td>'.$langs->trans("EMail").'</td><td colspan="2">';
 	if ($action == 'edit')
 	{
-		print '<input type="text" name="nouvelleadresse" size="40" value="'.$object->mail_admin.'">';
+		print '<input type="text" name="nouvelleadresse" class="minwith200" value="'.$object->mail_admin.'">';
 	}
 	else print dol_print_email($object->mail_admin, 0, 0, 1);
 	print '</td></tr>';
@@ -391,10 +392,9 @@ if ($action == 'delete')
 
 
 
-print '<br>';
-
 
 print '<form name="formulaire5" action="#" method="POST">'."\n";
+print '<input type="hidden" name="token" value="'.newToken().'">';
 
 print load_fiche_titre($langs->trans("CommentsOfVoters"), '', '');
 
@@ -404,7 +404,7 @@ $comments = $object->getComments();
 if ($comments) {
 	foreach ($comments as $comment) {
 		if ($user->rights->opensurvey->write) {
-			print '<a href="'.dol_buildpath('/opensurvey/card.php', 1).'?deletecomment='.$comment->id_comment.'&id='.$numsondage.'"> '.img_picto('', 'delete.png').'</a> ';
+			print '<a href="'.dol_buildpath('/opensurvey/card.php', 1).'?deletecomment='.$comment->id_comment.'&id='.$numsondage.'"> '.img_picto('', 'delete.png', '', false, 0, 0, '', '', 0).'</a> ';
 		}
 
 		print dol_htmlentities($comment->usercomment).': '.dol_nl2br(dol_htmlentities($comment->comment))." <br>";
@@ -421,7 +421,7 @@ print '<br>';
 if ($object->allow_comments) {
 	print $langs->trans("AddACommentForPoll").'<br>';
 	print '<textarea name="comment" rows="2" class="quatrevingtpercent"></textarea><br>'."\n";
-	print $langs->trans("Name").': <input type="text" size="50" name="commentuser" value="'.$user->getFullName($langs).'"><br>'."\n";
+	print $langs->trans("Name").': <input type="text" class="minwidth300" name="commentuser" value="'.$user->getFullName($langs).'"> '."\n";
 	print '<input type="submit" class="button" name="ajoutcomment" value="'.dol_escape_htmltag($langs->trans("AddComment")).'"><br>'."\n";
 	if (isset($erreur_commentaire_vide) && $erreur_commentaire_vide == "yes") {
 		print "<font color=#FF0000>".$langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Name"))."</font>";

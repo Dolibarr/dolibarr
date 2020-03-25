@@ -39,7 +39,7 @@ $term = GETPOST('term', 'alpha');
 $id = GETPOST('id', 'int');
 
 if (empty($user->rights->takepos->run)) {
-	access_forbidden();
+	accessforbidden();
 }
 
 
@@ -85,10 +85,10 @@ elseif ($action == 'search' && $term != '') {
 		}
 	}
 
-    $sql = 'SELECT rowid, ref, label, tosell, tobuy FROM '.MAIN_DB_PREFIX.'product as p';
+    $sql = 'SELECT rowid, ref, label, tosell, tobuy, barcode, price FROM '.MAIN_DB_PREFIX.'product as p';
     $sql .= ' WHERE entity IN ('.getEntity('product').')';
     if ($filteroncategids) {
-    	$sql.= ' AND rowid IN (SELECT DISTINCT fk_product FROM '.MAIN_DB_PREFIX.'categorie_product WHERE fk_categorie IN ('.$filteroncategids.'))';
+    	$sql.= ' AND EXISTS (SELECT cp.fk_product FROM '.MAIN_DB_PREFIX.'categorie_product as cp WHERE cp.fk_product = p.rowid AND cp.fk_categorie IN ('.$filteroncategids.'))';
     }
     $sql .= ' AND tosell = 1';
     $sql .= natural_search(array('ref', 'label', 'barcode'), $term);
@@ -96,8 +96,17 @@ elseif ($action == 'search' && $term != '') {
 	if ($resql)
 	{
 	    $rows = array();
-	    while ($row = $db->fetch_object($resql)) {
-	        $rows[] = $row;
+	    while ($obj = $db->fetch_object($resql)) {
+	    	$rows[] = array(
+	    		'rowid' => $obj->rowid,
+	    		'ref' => $obj->ref,
+	    		'label' => $obj->label,
+	    		'tosell' => $obj->tosell,
+	    		'tobuy' => $obj->tobuy,
+	    		'barcode' => $obj->barcode,
+	    		'price' => $obj->price
+	    		//'price_formated' => price(price2num($obj->price, 'MU'), 1, $langs, 1, -1, -1, $conf->currency)
+	    	);
 	    }
 	    echo json_encode($rows);
 	}

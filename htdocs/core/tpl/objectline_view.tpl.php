@@ -35,7 +35,7 @@
  * $object_rights->creer initialized from = $object->getRights()
  * $disableedit, $disablemove, $disableremove
  *
- * $type, $text, $description, $line
+ * $text, $description, $line
  */
 
 // Protection to avoid direct call of template
@@ -127,6 +127,7 @@ else
 	}
 	else
 	{
+		$type = (!empty($line->product_type) ? $line->product_type : $line->fk_product_type);
 		if ($type == 1) $text = img_object($langs->trans('Service'), 'service');
 		else $text = img_object($langs->trans('Product'), 'product');
 

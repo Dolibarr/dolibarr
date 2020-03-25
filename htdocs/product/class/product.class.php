@@ -4381,6 +4381,12 @@ class Product extends CommonObject
         if (!empty($this->label)) {
             $label .= '<br><b>'.$langs->trans('ProductLabel').':</b> '.$this->label;
         }
+        if ($this->type == Product::TYPE_PRODUCT || !empty($conf->global->STOCK_SUPPORTS_SERVICES)) {
+        	if (!empty($conf->productbatch->enabled)) {
+        		$langs->load("productbatch");
+        		$label .= "<br><b>".$langs->trans("ManageLotSerial").'</b>: '.$this->getLibStatut(0, 2);
+        	}
+        }
         if (!empty($conf->barcode->enabled)) {
         	$label .= '<br><b>'.$langs->trans('BarCode').':</b> '.$this->barcode;
         }
@@ -4390,28 +4396,26 @@ class Product extends CommonObject
             if ($this->weight) {
             	$label .= "<br><b>".$langs->trans("Weight").'</b>: '.$this->weight.' '.measuringUnitString(0, "weight", $this->weight_units);
             }
+            $labelsize = "";
             if ($this->length) {
-            	$label .= "<br><b>".$langs->trans("Length").'</b>: '.$this->length.' '.measuringUnitString(0, 'size', $this->length_units);
+            	$labelsize .= ($labelsize ? " - ": "")."<b>".$langs->trans("Length").'</b>: '.$this->length.' '.measuringUnitString(0, 'size', $this->length_units);
             }
             if ($this->width) {
-            	$label .= "<br><b>".$langs->trans("Width").'</b>: '.$this->width.' '.measuringUnitString(0, 'size', $this->width_units);
+            	$labelsize .= ($labelsize ? " - ": "")."<b>".$langs->trans("Width").'</b>: '.$this->width.' '.measuringUnitString(0, 'size', $this->width_units);
             }
             if ($this->height) {
-            	$label .= "<br><b>".$langs->trans("Height").'</b>: '.$this->height.' '.measuringUnitString(0, 'size', $this->height_units);
+            	$labelsize .= ($labelsize ? " - ": "")."<b>".$langs->trans("Height").'</b>: '.$this->height.' '.measuringUnitString(0, 'size', $this->height_units);
             }
+            if ($labelsize) $label .= "<br>".$labelsize;
+
+            $labelsurfacevolume = "";
             if ($this->surface) {
-            	$label .= "<br><b>".$langs->trans("Surface").'</b>: '.$this->surface.' '.measuringUnitString(0, 'surface', $this->surface_units);
+            	$labelsurfacevolume .= ($labelsurfacevolume ? " - " : "")."<b>".$langs->trans("Surface").'</b>: '.$this->surface.' '.measuringUnitString(0, 'surface', $this->surface_units);
             }
             if ($this->volume) {
-            	$label .= "<br><b>".$langs->trans("Volume").'</b>: '.$this->volume.' '.measuringUnitString(0, 'volume', $this->volume_units);
+            	$labelsurfacevolume .= ($labelsurfacevolume ? " - " : "")."<b>".$langs->trans("Volume").'</b>: '.$this->volume.' '.measuringUnitString(0, 'volume', $this->volume_units);
             }
-        }
-
-        if ($this->type == Product::TYPE_PRODUCT || !empty($conf->global->STOCK_SUPPORTS_SERVICES)) {
-            if (!empty($conf->productbatch->enabled)) {
-                $langs->load("productbatch");
-                $label .= "<br><b>".$langs->trans("ManageLotSerial").'</b>: '.$this->getLibStatut(0, 2);
-            }
+            if ($labelsurfacevolume) $label .= "<br>".$labelsurfacevolume;
         }
 
         if (!empty($conf->accounting->enabled) && $this->status) {

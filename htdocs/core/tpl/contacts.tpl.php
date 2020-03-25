@@ -19,6 +19,8 @@
  * This template needs:
  * $object
  * $withproject (if we are on task contact)
+ *
+ * $preselectedtypeofcontact may be defined or not
  */
 
 // Protection to avoid direct call of template
@@ -26,6 +28,10 @@ if (empty($object) || !is_object($object))
 {
 	print "Error, template page can't be called as URL";
 	exit;
+}
+
+if (empty($preselectedtypeofcontact)) {
+	$preselectedtypeofcontact = 0;
 }
 
 require_once DOL_DOCUMENT_ROOT.'/contact/class/contact.class.php';
@@ -60,14 +66,14 @@ $userstatic = new User($db);
 ?>
 
 <!-- BEGIN PHP TEMPLATE CONTACTS -->
-<div class="underbanner clearboth"></div>
-<div class="div-table-responsive">
-<div class="tagtable tableforcontact centpercent noborder nobordertop allwidth">
-
 <?php
 if ($permission)
 {
-	?>
+	print '<div class="underbanner clearboth"></div>'."\n";
+	print '<div class="div-table-responsive">'."\n";
+	print '<div class="tagtable tableforcontact centpercent noborder nobordertop allwidth">'."\n";
+
+    ?>
 	<form class="tagtr liste_titre">
 		<div class="tagtd liste_titre"><?php echo $langs->trans("NatureOfContact"); ?></div>
 		<div class="tagtd liste_titre"><?php echo $langs->trans("ThirdParty"); ?></div>
@@ -140,9 +146,10 @@ if ($permission)
 		</div>
 		<div class="tagtd maxwidthonsmartphone noborderbottom">
 			<?php
-			$tmpobject = $object;
+			$tmpobject=$object;
 			if (($object->element == 'shipping' || $object->element == 'reception') && is_object($objectsrc)) $tmpobject = $objectsrc;
-			$formcompany->selectTypeContact($tmpobject, '', 'type', 'external', 'position', 0, 'minwidth100imp'); ?>
+			$formcompany->selectTypeContact($tmpobject, $preselectedtypeofcontact, 'type', 'external', 'position', 0, 'minwidth100imp');
+			?>
 		</div>
 		<div class="tagtd noborderbottom">&nbsp;</div>
 		<div class="tagtd center noborderbottom">
@@ -152,9 +159,11 @@ if ($permission)
 
         <?php
 	}
+
+	print "</div>";
+	print "</div>";
 }
 
-print "</div>";
 
 /**
 * Prepare list

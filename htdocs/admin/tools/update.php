@@ -54,9 +54,9 @@ $version='0.0';
 
 if ($action == 'getlastversion')
 {
-    $result = getURLContent('http://sourceforge.net/projects/dolibarr/rss');
-    //var_dump($result['content']);
-    $sfurl = simplexml_load_string($result['content']);
+	$result = getURLContent('http://sourceforge.net/projects/dolibarr/rss');
+	//var_dump($result['content']);
+	$sfurl = simplexml_load_string($result['content']);
 }
 
 
@@ -75,39 +75,39 @@ print $langs->trans("CurrentVersion").' : <strong>'.DOL_VERSION.'</strong><br>';
 
 if (function_exists('curl_init'))
 {
-    $conf->global->MAIN_USE_RESPONSE_TIMEOUT = 10;
+	$conf->global->MAIN_USE_RESPONSE_TIMEOUT = 10;
 
-    if ($action == 'getlastversion')
-    {
-        if ($sfurl)
-        {
-            $i=0;
-            while (! empty($sfurl->channel[0]->item[$i]->title) && $i < 10000)
-            {
-                $title=$sfurl->channel[0]->item[$i]->title;
-                if (preg_match('/([0-9]+\.([0-9\.]+))/', $title, $reg))
-                {
-                    $newversion=$reg[1];
-                    $newversionarray=explode('.', $newversion);
-                    $versionarray=explode('.', $version);
-                    //var_dump($newversionarray);var_dump($versionarray);
-                    if (versioncompare($newversionarray, $versionarray) > 0) $version=$newversion;
-                }
-                $i++;
-            }
+	if ($action == 'getlastversion')
+	{
+		if ($sfurl)
+		{
+			$i=0;
+			while (! empty($sfurl->channel[0]->item[$i]->title) && $i < 10000)
+			{
+				$title=$sfurl->channel[0]->item[$i]->title;
+				if (preg_match('/([0-9]+\.([0-9\.]+))/', $title, $reg))
+				{
+					$newversion=$reg[1];
+					$newversionarray=explode('.', $newversion);
+					$versionarray=explode('.', $version);
+					//var_dump($newversionarray);var_dump($versionarray);
+					if (versioncompare($newversionarray, $versionarray) > 0) $version=$newversion;
+				}
+				$i++;
+			}
 
-            // Show version
-        	print $langs->trans("LastStableVersion").' : <b>'. (($version != '0.0')?$version:$langs->trans("Unknown")) .'</b><br>';
-        }
-        else
-        {
-            print $langs->trans("LastStableVersion").' : <b>' .$langs->trans("UpdateServerOffline").'</b><br>';
-        }
-    }
-    else
-    {
-        print $langs->trans("LastStableVersion").' : <a href="'.$_SERVER["PHP_SELF"].'?action=getlastversion" class="button">' .$langs->trans("Check").'</a><br>';
-    }
+			// Show version
+			print $langs->trans("LastStableVersion").' : <b>'. (($version != '0.0')?$version:$langs->trans("Unknown")) .'</b><br>';
+		}
+		else
+		{
+			print $langs->trans("LastStableVersion").' : <b>' .$langs->trans("UpdateServerOffline").'</b><br>';
+		}
+	}
+	else
+	{
+		print $langs->trans("LastStableVersion").' : <a href="'.$_SERVER["PHP_SELF"].'?action=getlastversion" class="button">' .$langs->trans("Check").'</a><br>';
+	}
 }
 
 print '<br>';

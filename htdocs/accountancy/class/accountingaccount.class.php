@@ -136,9 +136,9 @@ class AccountingAccount extends CommonObject
     public $active;
 
 	/**
-	 * @var int reconciliable
+	 * @var int reconcilable
 	 */
-	public $reconciliable;
+	public $reconcilable;
 
 	/**
 	 * Constructor
@@ -167,7 +167,7 @@ class AccountingAccount extends CommonObject
 		global $conf;
 
 		if ($rowid || $account_number) {
-			$sql  = "SELECT a.rowid as rowid, a.datec, a.tms, a.fk_pcg_version, a.pcg_type, a.account_number, a.account_parent, a.label, a.labelshort, a.fk_accounting_category, a.fk_user_author, a.fk_user_modif, a.active, a.reconciliable";
+			$sql  = "SELECT a.rowid as rowid, a.datec, a.tms, a.fk_pcg_version, a.pcg_type, a.account_number, a.account_parent, a.label, a.labelshort, a.fk_accounting_category, a.fk_user_author, a.fk_user_modif, a.active, a.reconcilable";
 			$sql .= ", ca.label as category_label";
 			$sql .= " FROM " . MAIN_DB_PREFIX . "accounting_account as a";
 			$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."c_accounting_category as ca ON a.fk_accounting_category = ca.rowid";
@@ -208,7 +208,7 @@ class AccountingAccount extends CommonObject
 					$this->fk_user_modif = $obj->fk_user_modif;
 					$this->active = $obj->active;
 					$this->status = $obj->active;
-					$this->reconciliable = $obj->reconciliable;
+					$this->reconcilable = $obj->reconcilable;
 
 					return $this->id;
 				} else {
@@ -267,7 +267,7 @@ class AccountingAccount extends CommonObject
 		$sql .= ", fk_accounting_category";
 		$sql .= ", fk_user_author";
 		$sql .= ", active";
-		$sql .= ", reconciliable";
+		$sql .= ", reconcilable";
 		$sql .= ") VALUES (";
 		$sql .= " '" . $this->db->idate($now) . "'";
 		$sql .= ", " . $conf->entity;
@@ -280,7 +280,7 @@ class AccountingAccount extends CommonObject
 		$sql .= ", " . (empty($this->account_category) ? 0 : (int) $this->account_category);
 		$sql .= ", " . $user->id;
 		$sql .= ", " . (int) $this->active;
-		$sql .= ", " . (int) $this->reconciliable;
+		$sql .= ", " . (int) $this->reconcilable;
 		$sql .= ")";
 
 		$this->db->begin();
@@ -348,7 +348,7 @@ class AccountingAccount extends CommonObject
 		$sql .= " , fk_accounting_category = " . (empty($this->account_category) ? 0 : (int) $this->account_category);
 		$sql .= " , fk_user_modif = " . $user->id;
 		$sql .= " , active = " . (int) $this->active;
-		$sql .= " , reconciliable = " . (int) $this->reconciliable;
+		$sql .= " , reconcilable = " . (int) $this->reconcilable;
 		$sql .= " WHERE rowid = " . $this->id;
 
 		dol_syslog(get_class($this) . "::update sql=" . $sql, LOG_DEBUG);
@@ -588,7 +588,7 @@ class AccountingAccount extends CommonObject
         }
         elseif ($mode == 1)
         {
-			$fieldtouse = 'reconciliable';
+			$fieldtouse = 'reconcilable';
         }
 
 		if ($result > 0) {
@@ -619,7 +619,7 @@ class AccountingAccount extends CommonObject
 	 * Account activated
 	 *
 	 * @param  int  $id         Id
-     * @param  int  $mode       0=field active, 1=field reconciliable, 2=field active_customer_list, 3=field_active_supplier_list
+     * @param  int  $mode       0=field active, 1=field reconcilable
 	 * @return int              <0 if KO, >0 if OK
 	 */
     public function account_activate($id, $mode = 0)
@@ -633,7 +633,7 @@ class AccountingAccount extends CommonObject
         }
         elseif ($mode == 1)
         {
-            $fieldtouse = 'reconciliable';
+            $fieldtouse = 'reconcilable';
         }
 
 		$sql = "UPDATE " . MAIN_DB_PREFIX . "accounting_account ";

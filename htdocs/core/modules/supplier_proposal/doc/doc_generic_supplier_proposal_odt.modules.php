@@ -330,11 +330,20 @@ class doc_generic_supplier_proposal_odt extends ModelePDFSupplierProposal
 				}
 
 				// Recipient name
+				$contactobject = null;
 				if (!empty($usecontact))
 				{
 					// On peut utiliser le nom de la societe du contact
-					if (!empty($conf->global->MAIN_USE_COMPANY_NAME_OF_CONTACT)) $socobject = $object->contact;
-					else $socobject = $object->thirdparty;
+					if (!empty($conf->global->MAIN_USE_COMPANY_NAME_OF_CONTACT))
+					{
+						$socobject = $object->contact;
+					}
+					else
+					{
+						$socobject = $object->thirdparty;
+						// if we have a CUSTOMER contact and we dont use it as recipient we store the contact object for later use
+						$contactobject = $object->contact;
+					}
 				}
 				else
 				{
@@ -405,7 +414,10 @@ class doc_generic_supplier_proposal_odt extends ModelePDFSupplierProposal
 				$array_thirdparty = $this->get_substitutionarray_thirdparty($socobject, $outputlangs);
 				$array_other = $this->get_substitutionarray_other($outputlangs);
 
-				$tmparray = array_merge($substitutionarray, $array_user, $array_soc, $array_thirdparty, $array_objet, $array_other);
+				$array_thirdparty_contact = array();
+				if ($usecontact && is_object($contactobject)) $array_thirdparty_contact = $this->get_substitutionarray_contact($contactobject, $outputlangs, 'contact');
+
+				$tmparray = array_merge($substitutionarray, $array_user, $array_soc, $array_thirdparty, $array_objet, $array_other, $array_thirdparty_contact);
 				complete_substitutions_array($tmparray, $outputlangs, $object);
 
 				// Call the ODTSubstitution hook

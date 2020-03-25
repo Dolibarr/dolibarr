@@ -319,6 +319,33 @@ class Form
 	/**
 	 * Output edit in place form
 	 *
+	 * @param   string	$fieldname		Name of the field
+	 * @param	object	$object			Object
+	 * @param	boolean	$perm			Permission to allow button to edit parameter. Set it to 0 to have a not edited field.
+	 * @param	string	$typeofdata		Type of data ('string' by default, 'email', 'amount:99', 'numeric:99', 'text' or 'textarea:rows:cols', 'datepicker' ('day' do not work, don't know why), 'ckeditor:dolibarr_zzz:width:height:savemethod:1:rows:cols', 'select;xxx[:class]'...)
+	 * @return	string   		      	HTML code for the edit of alternative language
+	 */
+	public function widgetForTranslation($fieldname, $object, $perm, $typeofdata = 'string')
+	{
+		global $conf, $langs;
+
+		$result = '';
+
+		if (! empty($conf->global->PDF_USE_ALSO_LANGUAGE_CODE)) {
+			$result ='<div class="inline-block paddingleft field-'.$object->element.'-'.$fieldname.'">';
+
+			$s=picto_from_langcode($conf->global->PDF_USE_ALSO_LANGUAGE_CODE);
+			$result .= $s;
+
+			$result .= '</div>';
+		}
+
+		return $result;
+	}
+
+	/**
+	 * Output edit in place form
+	 *
 	 * @param	object	$object			Object
 	 * @param	string	$value			Value to show/edit
 	 * @param	string	$htmlname		DIV ID (field name)
@@ -1618,7 +1645,7 @@ class Form
     public function select_dolusers($selected = '', $htmlname = 'userid', $show_empty = 0, $exclude = null, $disabled = 0, $include = '', $enableonly = '', $force_entity = '0', $maxlength = 0, $showstatus = 0, $morefilter = '', $show_every = 0, $enableonlytext = '', $morecss = '', $noactive = 0, $outputmode = 0, $multiple = false)
 	{
         // phpcs:enable
-		global $conf, $user, $langs;
+		global $conf, $user, $langs, $hookmanager;
 
 		// If no preselected user defined, we take current user
 		if ((is_numeric($selected) && ($selected < -2 || empty($selected))) && empty($conf->global->SOCIETE_DISABLE_DEFAULT_SALESREPRESENTATIVE)) $selected = $user->id;
@@ -1678,6 +1705,10 @@ class Form
 		if ($includeUsers) $sql .= " AND u.rowid IN (".$includeUsers.")";
 		if (!empty($conf->global->USER_HIDE_INACTIVE_IN_COMBOBOX) || $noactive) $sql .= " AND u.statut <> 0";
 		if (!empty($morefilter)) $sql .= " ".$morefilter;
+
+		//Add hook to filter on user (for exemple on usergroup define in custom modules)
+		$reshook = $hookmanager->executeHooks('addSQLWhereFilterOnSelectUsers', array(), $this, $action);
+		if (!empty($reshook)) $sql .= $hookmanager->resPrint;
 
 		if (empty($conf->global->MAIN_FIRSTNAME_NAME_POSITION))	// MAIN_FIRSTNAME_NAME_POSITION is 0 means firstname+lastname
 		{
@@ -3510,11 +3541,11 @@ class Form
 	 *      Return list of payment methods
 	 *      Constant MAIN_DEFAULT_PAYMENT_TYPE_ID can used to set default value but scope is all application, probably not what you want.
 	 *
-	 *      @param	string	$selected       Id du mode de paiement pre-selectionne
-	 *      @param  string	$htmlname       Nom de la zone select
+	 *      @param	string	$selected       Id or code or preselected payment mode
+	 *      @param  string	$htmlname       Name of select field
 	 *      @param  string	$filtertype     To filter on field type in llx_c_paiement ('CRDT' or 'DBIT' or array('code'=>xx,'label'=>zz))
-	 *      @param  int		$format         0=id+libelle, 1=code+code, 2=code+libelle, 3=id+code
-	 *      @param  int		$empty			1=peut etre vide, 0 sinon
+	 *      @param  int		$format         0=id+label, 1=code+code, 2=code+label, 3=id+code
+	 *      @param  int		$empty			1=can be empty, 0 otherwise
 	 * 		@param	int		$noadmininfo	0=Add admin info, 1=Disable admin info
 	 *      @param  int		$maxlength      Max length of label
 	 *      @param  int     $active         Active or not, -1 = all
@@ -3555,9 +3586,12 @@ class Form
 			elseif ($format == 1) print '<option value="'.$arraytypes['code'].'"';
 			elseif ($format == 2) print '<option value="'.$arraytypes['code'].'"';
 			elseif ($format == 3) print '<option value="'.$id.'"';
-			// Si selected est text, on compare avec code, sinon avec id
-			if (preg_match('/[a-z]/i', $selected) && $selected == $arraytypes['code']) print ' selected';
-			elseif ($selected == $id) print ' selected';
+			// Print attribute selected or not
+			if ($format==1 || $format==2) {
+				if ($selected == $arraytypes['code']) print ' selected';
+			} else {
+				if ($selected == $id) print ' selected';
+			}
 			print '>';
 			if ($format == 0) $value = ($maxlength ?dol_trunc($arraytypes['label'], $maxlength) : $arraytypes['label']);
 			elseif ($format == 1) $value = $arraytypes['code'];

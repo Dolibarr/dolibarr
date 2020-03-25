@@ -282,7 +282,7 @@ class WebsitePage extends CommonObject
 	}
 
 	/**
-	 * Load list of objects in memory from the database.
+	 * Return array of all web site pages.
 	 *
 	 * @param  string      $websiteid    Web site
 	 * @param  string      $sortorder    Sort Order

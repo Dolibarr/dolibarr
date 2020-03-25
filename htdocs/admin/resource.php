@@ -35,7 +35,7 @@ $langs->loadLangs(array("admin","resource"));
 
 // Security check
 if (!$user->admin)
-    accessforbidden();
+	accessforbidden();
 
 $action = GETPOST('action', 'alpha');
 

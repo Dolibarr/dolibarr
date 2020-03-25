@@ -248,7 +248,7 @@ $nav .= " &nbsp; (<a href=\"?year=".$nowyear."&amp;month=".$nowmonth."&amp;day="
 $picto = 'calendarweek';
 
 $nav .= ' &nbsp; <form name="dateselect" action="'.$_SERVER["PHP_SELF"].'?action=show_peruser'.$param.'">';
-$nav .= '<input type="hidden" name="token" value="'.$_SESSION ['newtoken'].'">';
+$nav .= '<input type="hidden" name="token" value="'.newToken().'">';
 $nav .= '<input type="hidden" name="action" value="'.$action.'">';
 $nav .= '<input type="hidden" name="filtert" value="'.$filtert.'">';
 $nav .= '<input type="hidden" name="usergroup" value="'.$usergroup.'">';

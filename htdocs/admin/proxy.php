@@ -40,34 +40,34 @@ $upload_dir=$conf->admin->dir_temp;
 
 if (GETPOST('action', 'aZ09') == 'set_proxy')
 {
-    if (GETPOST("MAIN_USE_CONNECT_TIMEOUT") && ! is_numeric(GETPOST("MAIN_USE_CONNECT_TIMEOUT")))
-    {
-        setEventMessages($langs->trans("ErrorValueMustBeInteger"), null, 'errors');
-        $error++;
-    }
-    if (GETPOST("MAIN_USE_RESPONSE_TIMEOUT") && ! is_numeric(GETPOST("MAIN_USE_RESPONSE_TIMEOUT")))
-    {
-        setEventMessages($langs->trans("ErrorValueMustBeInteger"), null, 'errors');
-        $error++;
-    }
+	if (GETPOST("MAIN_USE_CONNECT_TIMEOUT") && ! is_numeric(GETPOST("MAIN_USE_CONNECT_TIMEOUT")))
+	{
+		setEventMessages($langs->trans("ErrorValueMustBeInteger"), null, 'errors');
+		$error++;
+	}
+	if (GETPOST("MAIN_USE_RESPONSE_TIMEOUT") && ! is_numeric(GETPOST("MAIN_USE_RESPONSE_TIMEOUT")))
+	{
+		setEventMessages($langs->trans("ErrorValueMustBeInteger"), null, 'errors');
+		$error++;
+	}
 
-    if (! $error)
-    {
-        $result=0;
-        $result+=dolibarr_set_const($db, 'MAIN_USE_CONNECT_TIMEOUT', GETPOST("MAIN_USE_CONNECT_TIMEOUT"), 'chaine', 0, '', $conf->entity);
-        $result+=dolibarr_set_const($db, 'MAIN_USE_RESPONSE_TIMEOUT', GETPOST("MAIN_USE_RESPONSE_TIMEOUT"), 'chaine', 0, '', $conf->entity);
-        $result+=dolibarr_set_const($db, 'MAIN_PROXY_USE', GETPOST("MAIN_PROXY_USE"), 'chaine', 0, '', $conf->entity);
-        $result+=dolibarr_set_const($db, 'MAIN_PROXY_HOST', GETPOST("MAIN_PROXY_HOST"), 'chaine', 0, '', $conf->entity);
-        $result+=dolibarr_set_const($db, 'MAIN_PROXY_PORT', GETPOST("MAIN_PROXY_PORT"), 'chaine', 0, '', $conf->entity);
-        $result+=dolibarr_set_const($db, 'MAIN_PROXY_USER', GETPOST("MAIN_PROXY_USER"), 'chaine', 0, '', $conf->entity);
-        $result+=dolibarr_set_const($db, 'MAIN_PROXY_PASS', GETPOST("MAIN_PROXY_PASS"), 'chaine', 0, '', $conf->entity);
-        if ($result < 5) dol_print_error($db);
-    }
+	if (! $error)
+	{
+		$result=0;
+		$result+=dolibarr_set_const($db, 'MAIN_USE_CONNECT_TIMEOUT', GETPOST("MAIN_USE_CONNECT_TIMEOUT"), 'chaine', 0, '', $conf->entity);
+		$result+=dolibarr_set_const($db, 'MAIN_USE_RESPONSE_TIMEOUT', GETPOST("MAIN_USE_RESPONSE_TIMEOUT"), 'chaine', 0, '', $conf->entity);
+		$result+=dolibarr_set_const($db, 'MAIN_PROXY_USE', GETPOST("MAIN_PROXY_USE"), 'chaine', 0, '', $conf->entity);
+		$result+=dolibarr_set_const($db, 'MAIN_PROXY_HOST', GETPOST("MAIN_PROXY_HOST"), 'chaine', 0, '', $conf->entity);
+		$result+=dolibarr_set_const($db, 'MAIN_PROXY_PORT', GETPOST("MAIN_PROXY_PORT"), 'chaine', 0, '', $conf->entity);
+		$result+=dolibarr_set_const($db, 'MAIN_PROXY_USER', GETPOST("MAIN_PROXY_USER"), 'chaine', 0, '', $conf->entity);
+		$result+=dolibarr_set_const($db, 'MAIN_PROXY_PASS', GETPOST("MAIN_PROXY_PASS"), 'chaine', 0, '', $conf->entity);
+		if ($result < 5) dol_print_error($db);
+	}
 
-    if (! $error)
-    {
-        setEventMessages($langs->trans("RecordModifiedSuccessfully"), null, 'mesgs');
-    }
+	if (! $error)
+	{
+		setEventMessages($langs->trans("RecordModifiedSuccessfully"), null, 'mesgs');
+	}
 }
 
 
@@ -99,8 +99,8 @@ dol_fiche_head($head, 'proxy', $langs->trans("Security"), -1);
 
 if ($conf->use_javascript_ajax)
 {
-    print "\n".'<script type="text/javascript" language="javascript">';
-    print 'jQuery(document).ready(function () {
+	print "\n".'<script type="text/javascript" language="javascript">';
+	print 'jQuery(document).ready(function () {
                 function initfields()
                 {
                     if (jQuery("#MAIN_PROXY_USE").val()==\'1\')
@@ -117,7 +117,7 @@ if ($conf->use_javascript_ajax)
                     initfields();
                 });
            })';
-    print '</script>'."\n";
+	print '</script>'."\n";
 }
 
 

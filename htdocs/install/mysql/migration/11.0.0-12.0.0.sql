@@ -45,6 +45,7 @@ UPDATE llx_accounting_system SET fk_country = NULL, active = 0 WHERE pcg_version
 
 
 -- For v12
+DELETE FROM llx_menu where module='supplier_proposal';
 
 UPDATE llx_website SET lang = 'en' WHERE lang like 'en_%';
 UPDATE llx_website SET lang = 'fr' WHERE lang like 'fr_%';
@@ -193,4 +194,9 @@ ALTER TABLE llx_accounting_account DROP COLUMN pcg_subtype;
 ALTER TABLE llx_product ADD COLUMN accountancy_code_buy_intra varchar(32) AFTER accountancy_code_buy;
 ALTER TABLE llx_product ADD COLUMN accountancy_code_buy_export varchar(32) AFTER accountancy_code_buy_intra;
 
-ALTER TABLE llx_accounting_account ADD COLUMN reconciliable tinyint DEFAULT 0 NOT NULL after active;
+ALTER TABLE llx_entrepot ADD COLUMN fax varchar(20) DEFAULT NULL;
+ALTER TABLE llx_entrepot ADD COLUMN phone varchar(20) DEFAULT NULL;
+
+ALTER TABLE llx_accounting_account ADD COLUMN reconcilable tinyint DEFAULT 0 NOT NULL after active;
+
+ALTER TABLE llx_categorie MODIFY type integer NOT NULL DEFAULT 1;

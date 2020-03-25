@@ -341,7 +341,7 @@ print '</table>';
 */
 
 print '<br>';
-print '<i>'.$langs->trans("StatsOnShipmentsOnlyValidated").'</i>';
+print '<i class="opacitymedium">'.$langs->trans("StatsOnShipmentsOnlyValidated").'</i>';
 
 // End of page
 llxFooter();

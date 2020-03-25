@@ -1944,6 +1944,10 @@ class ExtraFields
 		{
 			$align = "right";
 		}
+		elseif ($type == 'price')
+		{
+			$align="right";
+		}
 		elseif ($type == 'double')
 		{
 			$align = "right";

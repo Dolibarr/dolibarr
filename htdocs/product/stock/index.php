@@ -65,7 +65,7 @@ if (! empty($conf->global->MAIN_SEARCH_FORM_ON_HOME_AREAS))     // This is usele
     print '<table class="noborder nohover centpercent">';
     print "<tr class=\"liste_titre\">";
     print '<td colspan="3">'.$langs->trans("Search").'</td></tr>';
-    print "<tr ".$bc[false]."><td>";
+    print '<tr class="oddevene"><td>';
     print $langs->trans("Warehouse").':</td><td><input class="flat" type="text" size="18" name="sall"></td><td rowspan="2"><input type="submit" value="'.$langs->trans("Search").'" class="button"></td></tr>';
     print "</table></div></form><br>";
 }
@@ -119,7 +119,7 @@ else
 print '</div><div class="fichetwothirdright"><div class="ficheaddleft">';
 
 
-// Last movements
+// Latest movements
 $max=10;
 $sql = "SELECT p.rowid, p.label as produit, p.tobatch, p.tosell, p.tobuy,";
 $sql.= " e.ref as stock, e.rowid as entrepot_id,";
@@ -167,7 +167,7 @@ if ($resql)
 		$producttmp->status_buy = $objp->tobuy;
 
 		print '<tr class="oddeven">';
-		print '<td>'.dol_print_date($db->jdate($objp->datem), 'dayhour').'</td>';
+		print '<td class="nowraponall">'.dol_print_date($db->jdate($objp->datem), 'dayhour').'</td>';
 		print '<td class="tdoverflowmax200">';
 		print $producttmp->getNomUrl(1);
 		print "</td>\n";

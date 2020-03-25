@@ -119,7 +119,7 @@ button.calcbutton2 {
 	width: calc(25% - 2px);
 	height: calc(25% - 2px);
 	font-weight: bold;
-	font-size: 8pt;
+	font-size: 10pt;
 	margin: 1px;
 }
 
@@ -155,6 +155,21 @@ button.actionbutton {
 	overflow: visible; /* removes extra width in IE */
 	width:33%;
 	height: calc(25% - 2px);
+	margin: 1px;
+   	border-width: 0;
+}
+
+button.item_value {
+	background: #bbbbbb;
+	border: #000000 1px solid;
+	border-radius: 4px;
+	padding: 8px;
+}
+
+button.item_value.selected {
+	background: #ffffff;
+	color: #000000;
+	font-weight: bold;
 }
 
 div[aria-describedby="dialog-info"] button:before {
@@ -226,7 +241,7 @@ div.description{
 	text-align:center;
 
 	padding-top: 30px;
-    background: -webkit-linear-gradient(top, rgba(255,255,255,0), rgba(255,255,255,0.98), rgba(255,255,255,1));
+    background: -webkit-linear-gradient(top, rgba(250,250,250,0), rgba(250,250,250,0.5), rgba(250,250,250,0.95), rgba(250,250,250,1));
 }
 
 div.catwatermark{
@@ -284,7 +299,7 @@ div.paymentbordline
 .row1withhead{
 	margin: 0 auto;
 	width: 100%;
-	height: calc(40% - 50px);
+	height: calc(45% - 50px);
 	padding-top: 5px;
 }
 
@@ -297,7 +312,7 @@ div.paymentbordline
 .row2withhead{
 	margin: 0 auto;
 	width: 100%;
-	height: 60%;
+	height: 55%;
 }
 
 .div1{
@@ -308,7 +323,7 @@ div.paymentbordline
 	box-sizing: border-box;
 	overflow: auto;
 	/* background-color:white; */
-	padding-top: 0;
+	padding-top: 1px;
 	padding-bottom: 0;
 	padding-right: 5px;
 	padding-left: 5px;
@@ -481,6 +496,26 @@ div.description_content {
     border-radius: 5px;
 }
 
+div#moreinfo, div#infowarehouse {
+    color: #aaa;
+    padding: 0 8px 0 8px;
+}
+
+.productprice {
+    position: absolute;
+    top: 5px;
+    right: 5px;
+    background: var(--colorbackhmenu1);
+    color: var(--colortextbackhmenu);
+    font-size: 2em;
+    padding: 5px;
+    border-radius: 2px;
+    opacity: 0.9;
+    padding-left: 8px;
+    padding-right: 8px;
+}
+
+
 @media screen and (min-width: 892px) {
 	.actionbutton{
 		font-size: 13px;
@@ -553,7 +588,7 @@ div.description_content {
 	}
 
 	.row1withhead{
-		height: calc(40% - 100px);
+		height: calc(45% - 100px);
 	}
 
 
@@ -586,4 +621,9 @@ div.description_content {
 		font-size: 1.2em;
 	}
 
+	button.actionbutton {
+		min-height: 60px;
+		padding-left: 4px;
+		padding-right: 4px;
+	}
 }

@@ -32,45 +32,45 @@ require_once DOL_DOCUMENT_ROOT . '/fourn/class/fournisseur.commande.class.php';
  */
 function dolDispatchToDo($order_id)
 {
-    global $db;
+	global $db;
 
-    $dispatched = array();
-    $ordered = array();
+	$dispatched = array();
+	$ordered = array();
 
-    // Count nb of quantity dispatched per product
-    $sql = 'SELECT fk_product, SUM(qty) FROM ' . MAIN_DB_PREFIX . 'commande_fournisseur_dispatch';
-    $sql.= ' WHERE fk_commande = ' . $order_id;
-    $sql.= ' GROUP BY fk_product';
-    $sql.= ' ORDER by fk_product';
-    $resql = $db->query($sql);
-    if ($resql && $db->num_rows($resql))
-    {
-        while ($obj = $db->fetch_object($resql))
-            $dispatched[$obj->fk_product] = $obj;
-    }
+	// Count nb of quantity dispatched per product
+	$sql = 'SELECT fk_product, SUM(qty) FROM ' . MAIN_DB_PREFIX . 'commande_fournisseur_dispatch';
+	$sql.= ' WHERE fk_commande = ' . $order_id;
+	$sql.= ' GROUP BY fk_product';
+	$sql.= ' ORDER by fk_product';
+	$resql = $db->query($sql);
+	if ($resql && $db->num_rows($resql))
+	{
+		while ($obj = $db->fetch_object($resql))
+			$dispatched[$obj->fk_product] = $obj;
+	}
 
-    // Count nb of quantity to dispatch per product
-    $sql = 'SELECT fk_product, SUM(qty) FROM ' . MAIN_DB_PREFIX . 'commande_fournisseurdet';
-    $sql.= ' WHERE fk_commande = ' . $order_id;
-    $sql.= ' AND fk_product > 0';
-    if (empty($conf->global->STOCK_SUPPORTS_SERVICES)) $sql.= ' AND product_type = 0';
-    $sql.= ' GROUP BY fk_product';
-    $sql.= ' ORDER by fk_product';
-    $resql = $db->query($sql);
-    if ($resql && $db->num_rows($resql))
-    {
-        while ($obj = $db->fetch_object($resql))
-            $ordered[$obj->fk_product] = $obj;
-    }
+	// Count nb of quantity to dispatch per product
+	$sql = 'SELECT fk_product, SUM(qty) FROM ' . MAIN_DB_PREFIX . 'commande_fournisseurdet';
+	$sql.= ' WHERE fk_commande = ' . $order_id;
+	$sql.= ' AND fk_product > 0';
+	if (empty($conf->global->STOCK_SUPPORTS_SERVICES)) $sql.= ' AND product_type = 0';
+	$sql.= ' GROUP BY fk_product';
+	$sql.= ' ORDER by fk_product';
+	$resql = $db->query($sql);
+	if ($resql && $db->num_rows($resql))
+	{
+		while ($obj = $db->fetch_object($resql))
+			$ordered[$obj->fk_product] = $obj;
+	}
 
-    $todispatch=0;
-    foreach ($ordered as $key => $val)
-    {
+	$todispatch=0;
+	foreach ($ordered as $key => $val)
+	{
 		if ($ordered[$key] > $dispatched[$key]) $todispatch++;
-    }
+	}
 
-    return ($todispatch ? true : false);
-    //return true;
+	return ($todispatch ? true : false);
+	//return true;
 }
 
 /**
@@ -80,30 +80,30 @@ function dolDispatchToDo($order_id)
  */
 function dispatchedOrders()
 {
-    global $db;
+	global $db;
 
-    $sql = 'SELECT rowid FROM ' . MAIN_DB_PREFIX . 'commande_fournisseur';
-    $resql = $db->query($sql);
-    $resarray = array();
-    if ($resql && $db->num_rows($resql) > 0)
-    {
-        while ($obj = $db->fetch_object($resql))
-        {
-            if (! dolDispatchToDo($obj->rowid))
-            {
-                $resarray[] = $obj->rowid;
-            }
-        }
-    }
+	$sql = 'SELECT rowid FROM ' . MAIN_DB_PREFIX . 'commande_fournisseur';
+	$resql = $db->query($sql);
+	$resarray = array();
+	if ($resql && $db->num_rows($resql) > 0)
+	{
+		while ($obj = $db->fetch_object($resql))
+		{
+			if (! dolDispatchToDo($obj->rowid))
+			{
+				$resarray[] = $obj->rowid;
+			}
+		}
+	}
 
-    if (count($resarray))
-    {
-        $res = '(' . implode(',', $resarray) . ')';
-    } else {
-        //hack to make sure ordered SQL request won't syntax error
-        $res = '(0)';
-    }
-    return $res;
+	if (count($resarray))
+	{
+		$res = '(' . implode(',', $resarray) . ')';
+	} else {
+		//hack to make sure ordered SQL request won't syntax error
+		$res = '(0)';
+	}
+	return $res;
 }
 
 /**
@@ -159,16 +159,16 @@ function ordered($product_id)
  */
 function getProducts($order_id)
 {
-    global $db;
-    $order = new CommandeFournisseur($db);
-    $f = $order->fetch($order_id);
-    $products = array();
-    if($f) {
-        foreach($order->lines as $line) {
-            if (!in_array($line->fk_product, $products)) {
-                $products[] = $line->fk_product;
-            }
-        }
-    }
-    return $products;
+	global $db;
+	$order = new CommandeFournisseur($db);
+	$f = $order->fetch($order_id);
+	$products = array();
+	if($f) {
+		foreach($order->lines as $line) {
+			if (!in_array($line->fk_product, $products)) {
+				$products[] = $line->fk_product;
+			}
+		}
+	}
+	return $products;
 }

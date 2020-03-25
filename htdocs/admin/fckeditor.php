@@ -57,7 +57,7 @@ $modules = array(
 $conditions = array(
 'SOCIETE' => 1,
 'PRODUCTDESC' => (! empty($conf->product->enabled) || ! empty($conf->service->enabled)),
-'DETAILS' => (! empty($conf->facture->enabled) || ! empty($conf->propal->enabled) || ! empty($conf->commande->enabled) || ! empty($conf->supplier_proposal->enabled) || ! empty($conf->fournisseur->enabled)),
+'DETAILS' => (! empty($conf->facture->enabled) || ! empty($conf->propal->enabled) || ! empty($conf->commande->enabled) || ! empty($conf->supplier_proposal->enabled) || ! empty($conf->fournisseur->enabled) && empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD) || ! empty($conf->supplier_order->enabled) || ! empty($conf->supplier_invoice->enabled)),
 'USERSIGN' => 1,
 'MAILING' => ! empty($conf->mailing->enabled),
 'MAIL' => (! empty($conf->facture->enabled) || ! empty($conf->propal->enabled) || ! empty($conf->commande->enabled)),
@@ -185,7 +185,7 @@ else
 	print '<br>'."\n";
 
 	print '<form name="formtest" method="POST" action="'.$_SERVER["PHP_SELF"].'">'."\n";
-    print '<input type="hidden" name="token" value="' . $_SESSION ['newtoken'] . '">';
+    print '<input type="hidden" name="token" value="' . newToken() . '">';
 
 	// Skins
     show_skin(null, 1);

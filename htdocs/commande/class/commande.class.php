@@ -3613,7 +3613,7 @@ class Commande extends CommonOrder
 		if ($status == self::STATUS_CANCELED) {
 		    $labelStatus = $langs->trans('StatusOrderCanceled');
 		    $labelStatusShort = $langs->trans('StatusOrderCanceledShort');
-		    $statusType = 'status5';
+		    $statusType = 'status9';
 		}
 		elseif ($status == self::STATUS_DRAFT) {
 		    $labelStatus = $langs->trans('StatusOrderDraft');
@@ -3628,7 +3628,7 @@ class Commande extends CommonOrder
 		elseif ($status == self::STATUS_SHIPMENTONPROCESS) {
 		    $labelStatus = $langs->trans('StatusOrderSentShort').$billedtext;
 		    $labelStatusShort = $langs->trans('StatusOrderSentShort').$billedtext;
-		    $statusType = 'status3';
+		    $statusType = 'status4';
 		}
 		elseif ($status == self::STATUS_CLOSED && (!$billed && empty($conf->global->WORKFLOW_BILL_ON_SHIPMENT))) {
 		    $labelStatus = $langs->trans('StatusOrderToBill');

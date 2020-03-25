@@ -54,15 +54,15 @@ $sql.= " AND pb.entity = ".$conf->entity;
 $resql=$db->query($sql);
 if ($resql)
 {
-    $num = $db->num_rows($resql);
-    $i = 0;
+	$num = $db->num_rows($resql);
+	$i = 0;
 
-    if ( $num > 0 )
-    {
-        $row = $db->fetch_row($resql);
-        $total = $row[0];
-        $nbtotal = $row[1];
-    }
+	if ( $num > 0 )
+	{
+		$row = $db->fetch_row($resql);
+		$total = $row[0];
+		$nbtotal = $row[1];
+	}
 }
 
 
@@ -150,15 +150,15 @@ $sql.= " AND pl.statut = 3";
 $resql=$db->query($sql);
 if ($resql)
 {
-    $num = $db->num_rows($resql);
-    $i = 0;
+	$num = $db->num_rows($resql);
+	$i = 0;
 
-    if ( $num > 0 )
-    {
-        $row = $db->fetch_row($resql);
-        $total = $row[0];
-        $nbtotal = $row[1];
-    }
+	if ( $num > 0 )
+	{
+		$row = $db->fetch_row($resql);
+		$total = $row[0];
+		$nbtotal = $row[1];
+	}
 }
 
 /*

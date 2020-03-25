@@ -17,7 +17,7 @@
  */
 
 /**
- * \file scripts/website/migrate_newsèjoomla2dolibarr.php
+ * \file scripts/website/migrate_news_joomla2dolibarr.php
  * \ingroup scripts
  * \brief Migrate news from a Joomla databse into a Dolibarr website
  */
@@ -37,15 +37,16 @@ define('EVEN_IF_ONLY_LOGIN_ALLOWED', 1); // Set this define to 0 if you want to 
 
 $error = 0;
 
-$mode = $argv[1];
-$websiteref = $argv[2];
-$joomlaserverinfo = $argv[3];
+$mode = empty($argv[1])?'':$argv[1];
+$websiteref = empty($argv[2])?'':$argv[2];
+$joomlaserverinfo = empty($argv[3])?'':$argv[3];
 $image = 'image/__WEBSITE_KEY__/images/stories/dolibarr.png';
 
-$max = 1;
+$max = (!isset($argv[4]) || (empty($argv[4]) && $argv[4] !== '0'))?'10':$argv[4];
 
 if (empty($argv[3]) || !in_array($argv[1], array('test', 'confirm')) || empty($websiteref)) {
-	print "Usage: $script_file (test|confirm) website login:pass@serverjoomla/tableprefix/databasejoomla\n";
+	print '***** '.$script_file.' *****'."\n";
+	print "Usage: $script_file (test|confirm) website login:pass@serverjoomla/tableprefix/databasejoomla [nbmaxrecord]\n";
 	print "\n";
 	print "Load joomla news and create them into Dolibarr database (if they don't alreay exist).\n";
 	exit(-1);
@@ -53,6 +54,8 @@ if (empty($argv[3]) || !in_array($argv[1], array('test', 'confirm')) || empty($w
 
 require $path."../../htdocs/master.inc.php";
 include_once DOL_DOCUMENT_ROOT.'/website/class/website.class.php';
+include_once DOL_DOCUMENT_ROOT.'/website/class/websitepage.class.php';
+include_once DOL_DOCUMENT_ROOT.'/core/lib/website2.lib.php';
 
 $langs->load('main');
 
@@ -92,10 +95,23 @@ if (! $resql) {
 	exit;
 }
 
+$blogpostheader = file_get_contents($path.'blogpost-header.txt');
+if ($blogpostheader === false) {
+	print "Error: Failed to load file content of 'blogpost-header.txt'\n";
+	exit(-1);
+}
+$blogpostfooter = file_get_contents($path.'blogpost-footer.txt');
+if ($blogpostfooter === false) {
+	print "Error: Failed to load file content of 'blogpost-footer.txt'\n";
+	exit(-1);
+}
+
+
+
 $db->begin();
 
+$i = 0; $nbimported = 0; $nbalreadyexists = 0;
 while ($obj = $dbjoomla->fetch_object($resql)) {
-	$i = 0;
 	if ($obj) {
 		$i++;
 		$id = $obj->id;
@@ -104,37 +120,68 @@ while ($obj = $dbjoomla->fetch_object($resql)) {
 		//$description = dol_string_nohtmltag($obj->introtext);
 		$description = trim(dol_trunc(dol_string_nohtmltag($obj->metadesc), 250));
 		if (empty($description)) $description = trim(dol_trunc(dol_string_nohtmltag($obj->introtext), 250));
-		$hmtltext = $obj->introtext.'<br>'."\n".'<hr>'."\n".'<br>'."\n".$obj->fulltext;
+
+		$htmltext = "";
+		if ($blogpostheader) $htmltext .= $blogpostheader."\n";
+		$htmltext .= '<section id="mysectionnews" contenteditable="true">'."\n";
+		$htmltext .= $obj->introtext;
+		if ($obj->fulltext) {
+			$htmltext .= '<br>'."\n".'<hr>'."\n".'<br>'."\n".$obj->fulltext;
+		}
+		$htmltext .= "\n</section>";
+		if ($blogpostfooter) $htmltext .= "\n".$blogpostfooter;
+
 		$language = ($obj->language && $obj->language != '*' ? $obj->language : 'en');
 		$keywords = $obj->metakey;
 		$author_alias = $obj->username;
 
 		$date_creation = $dbjoomla->jdate($obj->publish_up);
 
-		print $i.' '.$id.' '.$title.' '.$language.' '.$keywords.' '.$importid."\n";
+		print '#'.$i.' id='.$id.' '.$title.' lang='.$language.' keywords='.$keywords.' importid='.$importid."\n";
 
 		$sqlinsert = 'INSERT INTO '.MAIN_DB_PREFIX.'website_page(fk_website, pageurl, aliasalt, title, description, keywords, content, status, type_container, lang, import_key, image, date_creation, author_alias)';
 		$sqlinsert .= " VALUES(".$websiteid.", '".$db->escape($alias)."', '', '".$db->escape($title)."', '".$db->escape($description)."', '".$db->escape($keywords)."', ";
-		$sqlinsert .= " '".$db->escape($hmtltext)."', '1', 'blogpost', '".$db->escape($language)."', '".$db->escape($importid)."', '".$db->escape($image)."', '".$db->idate($date_creation)."', '".$db->escape($author_alias)."')";
+		$sqlinsert .= " '".$db->escape($htmltext)."', '1', 'blogpost', '".$db->escape($language)."', '".$db->escape($importid)."', '".$db->escape($image)."', '".$db->idate($date_creation)."', '".$db->escape($author_alias)."')";
 		print $sqlinsert."\n";
 
 		$result = $db->query($sqlinsert);
 		if ($result <= 0) {
-			$error++;
-			print 'Error, '.$db->lasterror.": ".$sqlinsert."\n";
-			break;
+			print 'ERROR: '.$db->lasterrno.": ".$sqlinsert."\n";
+			if ($db->lasterrno != 'DB_ERROR_RECORD_ALREADY_EXISTS') {
+				$error++;
+			} else {
+				$nbalreadyexists++;
+			}
+		} else {
+			$pageid = $db->last_insert_id(MAIN_DB_PREFIX.'website_page');
+
+			if ($pageid > 0) {	// We must also regenerate page on disk
+				global $dolibarr_main_data_root;
+				$pathofwebsite = $dolibarr_main_data_root.'/website/'.$websiteref;
+				$filetpl = $pathofwebsite.'/page'.$pageid.'.tpl.php';
+				$websitepage = new WebsitePage($db);
+				$websitepage->fetch($pageid);
+				dolSavePageContent($filetpl, $website, $websitepage);
+			}
+
+			print "Insert done - pageid = ".$pageid."\n";
+			$nbimported++;
 		}
 
-		if ($max && $i <= $max) {
-			print 'Nb max of record reached. We stop now.'."\n";
+		if ($max && $i >= $max) {
+			print 'Nb max of record ('.$max.') reached. We stop now.'."\n";
 			break;
 		}
 	}
 }
 
 if ($mode == 'confirm' && ! $error) {
+	print "Commit\n";
+	print $nbalreadyexists." page(s) already exists.\n";
+	print $nbimported." page(s) imported with importid=".$importid."\n";
 	$db->commit();
 } else {
+	print "Rollback\n";
 	$db->rollback();
 }
 

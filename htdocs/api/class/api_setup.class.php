@@ -1401,6 +1401,39 @@ class Setup extends DolibarrApi
         return $this->_cleanObjectDatas($mysoc);
     }
 
+
+    /**
+     * Get value of a setup variables
+     *
+     * Note that conf variables that stores security key or password hashes can't be loaded with API.
+     *
+     * @url	GET /conf
+     *
+     * @param	string			$confname	Name of conf variable to get
+     * @return  array|mixed 				Data without useless information
+     *
+     * @throws RestException 403 Forbidden
+	 * @throws RestException 500 Error Bad or unknown value for constname
+     */
+    public function getConf($confname)
+    {
+    	global $conf;
+
+    	if (!DolibarrApiAccess::$user->admin
+    		&& (empty($conf->global->API_LOGIN_ALLOWED_FOR_ADMIN_CHECK) || DolibarrApiAccess::$user->login != $conf->global->API_LOGIN_ALLOWED_FOR_ADMIN_CHECK)) {
+    		throw new RestException(403, 'Error API open to admin users only or to the login user defined with constant API_LOGIN_ALLOWED_FOR_ADMIN_CHECK');
+    	}
+
+    	if (! preg_match('/[^a-zA-Z0-9_]/', $confname) || ! isset($conf->global->$confname)) {
+    		throw new RestException(500, 'Error Bad or unknown value for constname');
+    	}
+    	if (preg_match('/(_pass|password|secret|_key|key$)/i', $confname)) {
+    		throw new RestException(403, 'Forbidden');
+    	}
+
+    	return $conf->global->$confname;
+    }
+
     /**
      * Do a test of integrity for files and setup.
      *
@@ -1409,7 +1442,9 @@ class Setup extends DolibarrApi
      *
      * @url     GET checkintegrity
      *
-     * @throws RestException
+     * @throws RestException 404 Signature file not found
+     * @throws RestException 500 Technical error
+     * @throws RestException 503 Forbidden
      */
     public function getCheckIntegrity($target)
     {
@@ -1418,7 +1453,7 @@ class Setup extends DolibarrApi
     	if (!DolibarrApiAccess::$user->admin
     		&& (empty($conf->global->API_LOGIN_ALLOWED_FOR_INTEGRITY_CHECK) || DolibarrApiAccess::$user->login != $conf->global->API_LOGIN_ALLOWED_FOR_INTEGRITY_CHECK))
     	{
-    		throw new RestException(503, 'Error API open to admin users only or to login user defined with constant API_LOGIN_ALLOWED_FOR_INTEGRITY_CHECK');
+    		throw new RestException(503, 'Error API open to admin users only or to the login user defined with constant API_LOGIN_ALLOWED_FOR_INTEGRITY_CHECK');
     	}
 
     	require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';

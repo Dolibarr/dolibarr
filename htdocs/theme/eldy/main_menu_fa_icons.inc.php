@@ -142,3 +142,34 @@ div.mainmenu.generic3::before {
 div.mainmenu.generic4::before {
     content: "\f249";
 }
+
+
+/* Define square Dolibarr logo in pure CSS */
+.fa-dolibarr-css{
+	color: #235481;
+	background: currentColor;
+	height: 150px;
+	width: 150px;
+	position: relative;
+}
+.fa-dolibarr-css:before{
+	content: '';
+	position: absolute;
+	left: 19%;
+	top: 17%;
+	width: 25%;
+	height: 25%;
+	border: solid 30px white;
+	border-radius: 0% 200% 200% 0% / 0% 180% 180% 0%;
+}
+.fa-dolibarr-css:after{
+	content: '';
+	position: absolute;
+	left: 19%;
+	top: 17%;
+	width: 5px;
+	height: 25%;
+	border-bottom: solid 60px currentColor;
+	margin-left: 30px;
+}
+

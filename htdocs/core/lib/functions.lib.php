@@ -66,9 +66,9 @@ function getDoliDBInstance($type, $host, $user, $pass, $name, $port)
  * 	@param	string	$element		Current element
  *									'societe', 'socpeople', 'actioncomm', 'agenda', 'resource',
  *									'product', 'productprice', 'stock', 'bom', 'mo',
- *									'propal', 'supplier_proposal', 'invoice', 'facture_fourn', 'payment_various',
+ *									'propal', 'supplier_proposal', 'invoice', 'supplier_invoice', 'payment_various',
  *									'categorie', 'bank_account', 'bank_account', 'adherent', 'user',
- *									'commande', 'commande_fournisseur', 'expedition', 'intervention', 'survey',
+ *									'commande', 'supplier_order', 'expedition', 'intervention', 'survey',
  *									'contract', 'tax', 'expensereport', 'holiday', 'multicurrency', 'project',
  *									'email_template', 'event', 'donation'
  *									'c_paiement', 'c_payment_term', ...
@@ -509,6 +509,7 @@ function GETPOST($paramname, $check = 'alphanohtml', $method = 0, $filter = null
 	// We do this only if var is a GET. If it is a POST, may be we want to post the text with vars as the setup text.
 	if (!is_array($out) && empty($_POST[$paramname]) && empty($noreplace))
 	{
+		$reg = array();
 		$maxloop = 20; $loopnb = 0; // Protection against infinite loop
 		while (preg_match('/__([A-Z0-9]+_?[A-Z0-9]+)__/i', $out, $reg) && ($loopnb < $maxloop))    // Detect '__ABCDEF__' as key 'ABCDEF' and '__ABC_DEF__' as key 'ABC_DEF'. Detection is also correct when 2 vars are side by side.
 		{
@@ -983,6 +984,16 @@ function dol_escape_js($stringtoescape, $mode = 0, $noescapebackslashn = 0)
 	return strtr($stringtoescape, $substitjs);
 }
 
+/**
+ *  Returns text escaped for inclusion into javascript code
+ *
+ *  @param      string		$stringtoescape		String to escape
+ *  @return     string     		 				Escaped string for json content.
+ */
+function dol_escape_json($stringtoescape)
+{
+	return str_replace('"', '\"', $stringtoescape);
+}
 
 /**
  *  Returns text escaped for inclusion in HTML alt or title tags, or into values of HTML input fields.
@@ -3294,6 +3305,7 @@ function img_picto($titlealt, $picto, $moreatt = '', $pictoisfullpath = false, $
 		}
 
 		// If we ask an image into $url/$mymodule/img (instead of default path)
+		$regs = array();
 		if (preg_match('/^([^@]+)@([^@]+)$/i', $picto, $regs)) {
 			$picto = $regs[1];
 			$path = $regs[2]; // $path is $mymodule
@@ -3752,10 +3764,13 @@ function img_allow($allow, $titlealt = 'default')
  *	Return image of a credit card according to its brand name
  *
  *	@param	string	$brand		Brand name of credit card
+ *  @param	string	$morecss	More CSS
  *	@return string     			Return img tag
  */
-function img_credit_card($brand)
+function img_credit_card($brand, $morecss = null)
 {
+	if (is_null($morecss)) $morecss = 'fa-2x';
+
 	if ($brand == 'visa' || $brand == 'Visa') {$brand = 'cc-visa'; }
 	elseif ($brand == 'mastercard' || $brand == 'MasterCard') {$brand = 'cc-mastercard'; }
 	elseif ($brand == 'amex' || $brand == 'American Express') {$brand = 'cc-amex'; }
@@ -3764,7 +3779,7 @@ function img_credit_card($brand)
 	elseif ($brand == 'diners' || $brand == 'Diners club') {$brand = 'cc-diners-club'; }
 	elseif (!in_array($brand, array('cc-visa', 'cc-mastercard', 'cc-amex', 'cc-discover', 'cc-jcb', 'cc-diners-club'))) {$brand = 'credit-card'; }
 
-	return '<span class="fa fa-'.$brand.' fa-2x fa-fw"></span>';
+	return '<span class="fa fa-'.$brand.' fa-fw'.($morecss ? ' '.$morecss : '').'"></span>';
 }
 
 /**
@@ -4361,7 +4376,8 @@ function print_barre_liste($titre, $page, $file, $options = '', $sortfield = '',
 					if ($cpt == $page)
 					{
 						$pagelist .= '<li class="pagination"><input type="text" class="width25 center pageplusone" name="pageplusone" value="'.($page + 1).'"></li>';
-						if (($cpt + 1) < $nbpages) $pagelist .= '/';
+						$pagelist .= '/';
+						//if (($cpt + 1) < $nbpages) $pagelist .= '/';
 					}
 				} else {
 					if ($cpt == $page)
@@ -4386,9 +4402,9 @@ function print_barre_liste($titre, $page, $file, $options = '', $sortfield = '',
 				}
 			} else {
 				//var_dump($page.' '.$cpt.' '.$nbpages);
-				if (($page + 1) < $nbpages) {
+				//if (($page + 1) < $nbpages) {
 					$pagelist .= '<li class="pagination"><a href="'.$file.'?page='.($nbpages - 1).$options.'">'.$nbpages.'</a></li>';
-				}
+				//}
 			}
 		}
 		else
@@ -5649,7 +5665,7 @@ function dol_string_onlythesehtmltags($stringtoclean, $cleanalsosomestyles = 1)
 	$allowed_tags_string = '<'.$allowed_tags_string.'>';
 
 	if ($cleanalsosomestyles) {
-		$stringtoclean = preg_replace('/position\s*:\s*(absolute|fixed)\s*!\s*important/', '', $stringtoclean); // Note: If hacker try to introduce css comment into string to avoid this, string should be encoded by the dol_htmlentitiesbr so be harmless
+		$stringtoclean = preg_replace('/position\s*:\s*(absolute|fixed)\s*!\s*important/', '', $stringtoclean);	// Note: If hacker try to introduce css comment into string to bypass this regex, the string must also be encoded by the dol_htmlentitiesbr during output so it become harmless
 	}
 
 	$temp = strip_tags($stringtoclean, $allowed_tags_string);
@@ -6462,6 +6478,7 @@ function make_substitutions($text, $substitutionarray, $outputlangs = null)
 	// Make substitution for language keys: __(AnyTranslationKey)__ or __(AnyTranslationKey|langfile)__
 	if (is_object($outputlangs))
 	{
+		$reg = array();
 		while (preg_match('/__\(([^\)]+)\)__/', $text, $reg))
 		{
 			$msgishtml = 0;
@@ -6477,6 +6494,7 @@ function make_substitutions($text, $substitutionarray, $outputlangs = null)
 
 	// Make substitution for constant keys.
 	// Must be after the substitution of translation, so if the text of translation contains a string __[xxx]__, it is also converted.
+	$reg = array();
 	while (preg_match('/__\[([^\]]+)\]__/', $text, $reg))
 	{
 		$msgishtml = 0;
@@ -8411,16 +8429,16 @@ function dolGetStatus($statusLabel = '', $statusLabelShort = '', $html = '', $st
 
         // For backward compatibility. Image's filename are still in French, so we use this array to convert
         $statusImg = array(
-        	'status0' => 'statut0'
-        	,'status1' => 'statut1'
-        	,'status2' => 'statut2'
-        	,'status3' => 'statut3'
-        	,'status4' => 'statut4'
-        	,'status5' => 'statut5'
-        	,'status6' => 'statut6'
-        	,'status7' => 'statut7'
-        	,'status8' => 'statut8'
-        	,'status9' => 'statut9'
+        	'status0' => 'statut0',
+        	'status1' => 'statut1',
+        	'status2' => 'statut2',
+        	'status3' => 'statut3',
+        	'status4' => 'statut4',
+        	'status5' => 'statut5',
+        	'status6' => 'statut6',
+        	'status7' => 'statut7',
+        	'status8' => 'statut8',
+        	'status9' => 'statut9'
         );
 
         if (!empty($statusImg[$statusType])) {
@@ -8823,11 +8841,22 @@ function isAFileWithExecutableContent($filename)
 }
 
 /**
- * Return new session token
+ * Return the value of token currently saved into session with name 'newtoken'.
+ * This token must be send by any POST as it will be used by next page for comparison with value in session.
  *
  * @return  string
  */
 function newToken()
 {
 	return $_SESSION['newtoken'];
+}
+
+/**
+ * Return the value of token currently saved into session with name 'token'.
+ *
+ * @return  string
+ */
+function currentToken()
+{
+	return $_SESSION['token'];
 }

@@ -268,12 +268,12 @@ function user_admin_prepare_head()
 	$h++;
 
 	$head[$h][0] = DOL_URL_ROOT.'/user/admin/user_extrafields.php';
-	$head[$h][1] = $langs->trans("ExtraFields");
+	$head[$h][1] = $langs->trans("ExtraFields")." (".$langs->trans("Users").")";
 	$head[$h][2] = 'attributes';
 	$h++;
 
 	$head[$h][0] = DOL_URL_ROOT.'/user/admin/group_extrafields.php';
-	$head[$h][1] = $langs->trans("ExtraFields")." ".$langs->trans("Groups");
+	$head[$h][1] = $langs->trans("ExtraFields")." (".$langs->trans("Groups").")";
 	$head[$h][2] = 'attributes_group';
 	$h++;
 

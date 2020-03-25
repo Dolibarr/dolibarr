@@ -33,7 +33,7 @@
 	--colorboxstatsborder: #ddd;
 	--dolgraphbg: rgba(255,255,255,0);
 	--fieldrequiredcolor: #000055;
-	--colortextbacktab: #<?php print $colortextbacktab; ?>) ;
+	--colortextbacktab: #<?php print $colortextbacktab; ?>;
 	--colorboxiconbg: #eee;
 	--refidnocolor:#444;
 	--tableforfieldcolor:#666;
@@ -298,12 +298,14 @@ td.onholidaymorning, td.onholidayafternoon {
 td.onholidayallday {
 	background-color: #f4eede;
 }
+/*
 td.leftborder, td.hide0 {
 	border-left: 1px solid #ccc;
 }
 td.leftborder, td.hide6 {
 	border-right: 1px solid #ccc;
 }
+*/
 td.rightborder {
 	border-right: 1px solid #ccc;
 }
@@ -1165,6 +1167,7 @@ table[summary="list_of_modules"] .fa-cog {
     .maxwidth150onsmartphone { max-width: 120px; }
     .maxwidth150onsmartphoneimp { max-width: 120px !important; }
     .maxwidth200onsmartphone { max-width: 200px; }
+    .maxwidth250onsmartphone { max-width: 250px; }
     .maxwidth300onsmartphone { max-width: 300px; }
     .maxwidth400onsmartphone { max-width: 400px; }
 	.minwidth50imp  { min-width: 50px !important; }
@@ -1288,7 +1291,7 @@ td.showDragHandle {
 .side-nav-vert {
 	position: sticky;
 	top: 0px;
-	z-index: 210;
+	z-index: 1001;
 }
 <?php } ?>
 
@@ -1551,7 +1554,7 @@ div.nopadding {
 
 td.nobordernopadding.widthpictotitle.opacityhigh.valignmiddle.col-picto {
     color: var(--colortexttitlenotab);
-    opacity: 0.65;
+    opacity: 0.45;
 }
 .pictotitle {
 	margin-<?php echo $right; ?>: 8px;
@@ -3221,6 +3224,9 @@ td.evenodd, tr.nohoverpair td, #trlinefordates td {
     border-bottom: 1pt solid black !important;
 	/* background-color: #<?php echo colorArrayToHex(colorStringToArray($colorbacklinebreak)); ?> !important; */
 }
+.trforbreak.nobold td a, .trforbreak.nobold span.secondary {
+    font-weight: normal !important;
+}
 
 table.dataTable td {
     padding: 5px 8px 5px 8px !important;
@@ -4161,6 +4167,7 @@ span[phptag] {
 	background: #e6e6e6;
 	display: inline-block;
 	padding: 4px 0 4px 0;
+	z-index: 1000;
 }
 .websitebar .buttonDelete, .websitebar .button {
 	text-shadow: none;

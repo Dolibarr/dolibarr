@@ -328,7 +328,7 @@ if ($resql) {
 							dol_syslog("error for emailing id " . $id . " #" . $i . ($mail->error ? ' - ' . $mail->error : ''), LOG_DEBUG);
 
 							$sqlerror = "UPDATE " . MAIN_DB_PREFIX . "mailing_cibles";
-							$sqlerror .= " SET statut=-1, date_envoi=" . $db->idate($now) . " WHERE rowid=" . $obj->rowid;
+							$sqlerror .= " SET statut=-1, date_envoi='" . $db->idate($now) . "' WHERE rowid=" . $obj->rowid;
 							$resqlerror = $db->query($sqlerror);
 							if (! $resqlerror) {
 								dol_print_error($db);

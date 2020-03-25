@@ -55,14 +55,13 @@ if (!empty($conf->variants->enabled)) {
 	require_once DOL_DOCUMENT_ROOT.'/variants/class/ProductCombination.class.php';
 }
 
-$langs->loadLangs(array('admin', 'orders', 'sendings', 'companies', 'bills', 'propal', 'supplier_proposal', 'deliveries', 'products', 'stocks', 'productbatch'));
+$langs->loadLangs(array('admin', 'orders', 'sendings', 'companies', 'bills', 'propal', 'receptions', 'supplier_proposal', 'deliveries', 'products', 'stocks', 'productbatch'));
 if (!empty($conf->incoterm->enabled)) $langs->load('incoterm');
 
 $id = GETPOST('id', 'int');
 $ref = GETPOST('ref', 'alpha');
 $action 		= GETPOST('action', 'alpha');
 $confirm		= GETPOST('confirm', 'alpha');
-$comclientid = GETPOST('comid', 'int');
 $socid = GETPOST('socid', 'int');
 $projectid = GETPOST('projectid', 'int');
 $cancel         = GETPOST('cancel', 'alpha');
@@ -917,7 +916,7 @@ if (empty($reshook))
 
 	// Force mandatory order method
     if ($action == 'commande') {
-        $methodecommande = GETPOST('methodecommande');
+        $methodecommande = GETPOST('methodecommande', 'int');
 
         if ($methodecommande <= 0) {
             setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentities("OrderMode")), null, 'errors');
@@ -927,7 +926,7 @@ if (empty($reshook))
 
 	if ($action == 'confirm_commande' && $confirm == 'yes' && $user->rights->fournisseur->commande->commander)
 	{
-		$result = $object->commande($user, $_REQUEST["datecommande"], $_REQUEST["methode"], $_REQUEST['comment']);
+		$result = $object->commande($user, GETPOST("datecommande"), GETPOST("methode", 'int'), GETPOST('comment', 'alphanohtml'));
 		if ($result > 0)
 		{
 			if (empty($conf->global->MAIN_DISABLE_PDF_AUTOUPDATE))
@@ -2484,11 +2483,14 @@ elseif (!empty($object->id))
 
 			if (!empty($conf->stock->enabled) && (!empty($conf->global->STOCK_CALCULATE_ON_SUPPLIER_DISPATCH_ORDER) || !empty($conf->global->STOCK_CALCULATE_ON_RECEPTION) || !empty($conf->global->STOCK_CALCULATE_ON_RECEPTION_CLOSE)))
 			{
+				$labelofbutton = $langs->trans('ReceiveProducts');
+				if ($conf->reception->enabled) $labelofbutton = $langs->trans("CreateReception");
+
 				if (in_array($object->statut, array(3, 4, 5))) {
 					if ($conf->fournisseur->enabled && $user->rights->fournisseur->commande->receptionner) {
-						print '<div class="inline-block divButAction"><a class="butAction" href="'.DOL_URL_ROOT.'/fourn/commande/dispatch.php?id='.$object->id.'">'.$langs->trans('ReceiveProducts').'</a></div>';
+						print '<div class="inline-block divButAction"><a class="butAction" href="'.DOL_URL_ROOT.'/fourn/commande/dispatch.php?id='.$object->id.'">'.$labelofbutton.'</a></div>';
 					} else {
-						print '<div class="inline-block divButAction"><a class="butActionRefused classfortooltip" href="#" title="'.dol_escape_htmltag($langs->trans("NotAllowed")).'">'.$langs->trans('ReceiveProducts').'</a></div>';
+						print '<div class="inline-block divButAction"><a class="butActionRefused classfortooltip" href="#" title="'.dol_escape_htmltag($langs->trans("NotAllowed")).'">'.$labelofbutton.'</a></div>';
 					}
 				}
 			}
