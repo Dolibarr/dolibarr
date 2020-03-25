@@ -255,7 +255,6 @@ if ( $resql )
 			print '<td></td>';
 			print '<td></td>';
 			print '</tr>';
-
 		}
 
 		print "</table></div><br>";
