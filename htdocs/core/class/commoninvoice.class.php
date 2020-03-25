@@ -95,7 +95,7 @@ abstract class CommonInvoice extends CommonObject
 	 *  This does not include open direct debit requests.
 	 *
 	 *  @param 		int 	$multicurrency 	Return multicurrency_amount instead of amount
-	 *	@return		double						Remain of amount to pay
+	 *	@return		double					Remain of amount to pay
 	 */
 	public function getRemainToPay($multicurrency = 0)
 	{
@@ -103,7 +103,7 @@ abstract class CommonInvoice extends CommonObject
 	    $alreadypaid+=$this->getSommePaiement($multicurrency);
 	    $alreadypaid+=$this->getSumDepositsUsed($multicurrency);
 	    $alreadypaid+=$this->getSumCreditNotesUsed($multicurrency);
-		return price2num($this->total_ttc, 'MT') - price2num($alreadypaid, 'MT');
+		return price2num($this->total_ttc - $alreadypaid, 'MT');
 	}
 
 	/**
