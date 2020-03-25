@@ -4,6 +4,7 @@
  * Copyright (C) 2007       Patrick Raguin		<patrick.raguin@gmail.com>
  * Copyright (C) 2005-2012  Regis Houssin		<regis.houssin@inodbox.com>
  * Copyright (C) 2015       Raphaël Doursenaud  <rdoursenaud@gpcsolutions.fr>
+ * Copyright (C) 2020		Tobias Sekan		<tobias.sekan@startmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -290,8 +291,18 @@ if ($user->rights->categorie->supprimer)
 
 print "</div>";
 
+if (! empty($user->rights->categorie->creer))
+{
+	$link = DOL_URL_ROOT.'/categories/card.php';
+	$link .= '?action=create';
+	$link .= '&type='.$type;
+	$link .= '&catorigin='.$object->id;
+	$link .= '&backtopage='.urlencode($_SERVER["PHP_SELF"].'?type='.$type.'&id='.$id);
 
-
+	print '<div class="right">';
+	print dolGetButtonTitle($langs->trans('NewCategory'), '', 'fa fa-plus-circle', $link);
+	print "</div>";
+}
 
 $cats = $object->get_filles();
 if ($cats < 0)
