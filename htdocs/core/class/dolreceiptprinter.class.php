@@ -104,6 +104,7 @@ require_once DOL_DOCUMENT_ROOT.'/includes/mike42/escpos-php/autoload.php';
 use Mike42\Escpos\PrintConnectors\FilePrintConnector;
 use Mike42\Escpos\PrintConnectors\NetworkPrintConnector;
 use Mike42\Escpos\PrintConnectors\WindowsPrintConnector;
+use Mike42\Escpos\PrintConnectors\CupsPrintConnector;
 use Mike42\Escpos\PrintConnectors\DummyPrintConnector;
 use Mike42\Escpos\CapabilityProfile;
 use Mike42\Escpos\Printer;
@@ -119,7 +120,7 @@ class dolReceiptPrinter extends Printer
     const CONNECTOR_FILE_PRINT = 2;
     const CONNECTOR_NETWORK_PRINT = 3;
     const CONNECTOR_WINDOWS_PRINT = 4;
-    //const CONNECTOR_JAVA = 5;
+    const CONNECTOR_CUPS_PRINT = 5;
 
     /**
      * @var DoliDB Database handler.
@@ -262,7 +263,7 @@ class dolReceiptPrinter extends Printer
                         $row['fk_type_name'] = 'CONNECTOR_WINDOWS_PRINT';
                         break;
                     case 5:
-                        $row['fk_type_name'] = 'CONNECTOR_JAVA';
+                        $row['fk_type_name'] = 'CONNECTOR_CUPS_PRINT';
                         break;
                     default:
                         $row['fk_type_name'] = 'CONNECTOR_UNKNOWN';
@@ -343,6 +344,7 @@ class dolReceiptPrinter extends Printer
             2 => $langs->trans('CONNECTOR_FILE_PRINT'),
             3 => $langs->trans('CONNECTOR_NETWORK_PRINT'),
             4 => $langs->trans('CONNECTOR_WINDOWS_PRINT'),
+			5 => $langs->trans('CONNECTOR_CUPS_PRINT'),
         );
 
         $this->resprint = Form::selectarray($htmlname, $options, $selected);
@@ -839,6 +841,9 @@ class dolReceiptPrinter extends Printer
                         break;
                     case 4:
                         $this->connector = new WindowsPrintConnector($parameter);
+                        break;
+					case 5:
+                        $this->connector = new CupsPrintConnector($parameter);
                         break;
                     default:
                         $this->connector = 'CONNECTOR_UNKNOWN';
