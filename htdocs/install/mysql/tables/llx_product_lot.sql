@@ -21,7 +21,7 @@ CREATE TABLE llx_product_lot (
   rowid           integer AUTO_INCREMENT PRIMARY KEY,
   entity          integer DEFAULT 1,
   fk_product      integer NOT NULL,				-- Id of product
-  batch           varchar(30) DEFAULT NULL,		-- Lot or serial number
+  batch           varchar(128) DEFAULT NULL,	-- Lot or serial number
   eatby           date DEFAULT NULL,			-- Eatby date
   sellby          date DEFAULT NULL, 			-- Sellby date
   datec         datetime,
