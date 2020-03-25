@@ -733,7 +733,6 @@ if (empty($conf->global->TAKEPOS_HIDE_HEAD_BAR)) {
 			?>
 			</a></div>
 			<div class="inline-block valignmiddle" id="customerandsales">
-			<a class="valignmiddle" id="customer" onclick="Customer();"></a>
 			</div>
 			<div class="inline-block valignmiddle" id="moreinfo"></div>
 			<div class="inline-block valignmiddle" id="infowarehouse"></div>
