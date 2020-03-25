@@ -1969,51 +1969,57 @@ function top_menu_bookmark()
         include_once DOL_DOCUMENT_ROOT.'/bookmarks/bookmarks.lib.php';
         $langs->load("bookmarks");
 
-        $html .= '<!-- div for bookmark link -->
-        <div id="topmenu-bookmark-dropdown" class="dropdown inline-block">
-            <a class="dropdown-toggle login-dropdown-a" data-toggle="dropdown" href="#" title="'.$langs->trans('Bookmarks').' ('.$langs->trans('BookmarksMenuShortCut').')">
-                <i class="fa fa-star" ></i>
-            </a>
-            <div class="dropdown-menu">
-                '.printDropdownBookmarksList().'
-            </div>
-        </div>';
+        if (!empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER)) {
+        	$html .= '<div id="topmenu-bookmark-dropdown" class="dropdown inline-block">';
+        	$html .= printDropdownBookmarksList();
+        	$html .= '</div>';
+        } else {
+	        $html .= '<!-- div for bookmark link -->
+	        <div id="topmenu-bookmark-dropdown" class="dropdown inline-block">
+	            <a class="dropdown-toggle login-dropdown-a" data-toggle="dropdown" href="#" title="'.$langs->trans('Bookmarks').' ('.$langs->trans('BookmarksMenuShortCut').')">
+	                <i class="fa fa-star" ></i>
+	            </a>
+	            <div class="dropdown-menu">
+	                '.printDropdownBookmarksList().'
+	            </div>
+	        </div>';
 
-        $html .= '
-        <!-- Code to show/hide the user drop-down -->
-        <script>
-        $( document ).ready(function() {
-            $(document).on("click", function(event) {
-                if (!$(event.target).closest("#topmenu-bookmark-dropdown").length) {
-					//console.log("close bookmark dropdown - we click outside");
-                    // Hide the menus.
-                    $("#topmenu-bookmark-dropdown").removeClass("open");
-                }
-            });
+	        $html .= '
+	        <!-- Code to show/hide the bookmark drop-down -->
+	        <script>
+	        $( document ).ready(function() {
+	            $(document).on("click", function(event) {
+	                if (!$(event.target).closest("#topmenu-bookmark-dropdown").length) {
+						//console.log("close bookmark dropdown - we click outside");
+	                    // Hide the menus.
+	                    $("#topmenu-bookmark-dropdown").removeClass("open");
+	                }
+	            });
 
-            $("#topmenu-bookmark-dropdown .dropdown-toggle").on("click", function(event) {
-				console.log("toggle bookmark dropdown");
-				openBookMarkDropDown();
-            });
+	            $("#topmenu-bookmark-dropdown .dropdown-toggle").on("click", function(event) {
+					console.log("toggle bookmark dropdown");
+					openBookMarkDropDown();
+	            });
 
-            // Key map shortcut
-            $(document).keydown(function(e){
-                  if( e.which === 77 && e.ctrlKey && e.shiftKey ){
-                     console.log(\'control + shift + m : trigger open bookmark dropdown\');
-                     openBookMarkDropDown();
-                  }
-            });
+	            // Key map shortcut
+	            $(document).keydown(function(e){
+	                  if( e.which === 77 && e.ctrlKey && e.shiftKey ){
+	                     console.log(\'control + shift + m : trigger open bookmark dropdown\');
+	                     openBookMarkDropDown();
+	                  }
+	            });
 
 
-            var openBookMarkDropDown = function() {
-                event.preventDefault();
-                $("#topmenu-bookmark-dropdown").toggleClass("open");
-                $("#top-bookmark-search-input").focus();
-            }
+	            var openBookMarkDropDown = function() {
+	                event.preventDefault();
+	                $("#topmenu-bookmark-dropdown").toggleClass("open");
+	                $("#top-bookmark-search-input").focus();
+	            }
 
-        });
-        </script>
-        ';
+	        });
+	        </script>
+	        ';
+        }
     }
     return $html;
 }
