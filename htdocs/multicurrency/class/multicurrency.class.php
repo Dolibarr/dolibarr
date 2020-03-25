@@ -628,11 +628,11 @@ class MultiCurrency extends CommonObject
 	}
 
 	/**
-	 * Sync rates from api
+	 * Sync rates from API
 	 *
 	 * @param 	string  $key                Key to use. Come from $conf->global->MULTICURRENCY_APP_ID.
 	 * @param   int     $addifnotfound      Add if not found
-     * @return  void
+     * @return  int							<0 if KO, >0 if OK
 	 */
 	public static function syncRates($key, $addifnotfound = 0)
 	{
@@ -672,11 +672,15 @@ class MultiCurrency extends CommonObject
 					}
 				}
 			}
-		}
+
+			return 1;
+        }
 		else
 		{
 		    dol_syslog("Failed to call endpoint ".$response->error->info, LOG_WARNING);
 			setEventMessages($langs->trans('multicurrency_syncronize_error', $response->error->info), null, 'errors');
+
+			return -1;
 		}
 	}
 
