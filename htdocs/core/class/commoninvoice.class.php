@@ -103,7 +103,7 @@ abstract class CommonInvoice extends CommonObject
 	    $alreadypaid+=$this->getSommePaiement($multicurrency);
 	    $alreadypaid+=$this->getSumDepositsUsed($multicurrency);
 	    $alreadypaid+=$this->getSumCreditNotesUsed($multicurrency);
-    	return $this->total_ttc - $alreadypaid;
+		return price2num($this->total_ttc, 'MT') - price2num($alreadypaid, 'MT');
 	}
 
 	/**
