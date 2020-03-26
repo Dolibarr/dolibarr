@@ -302,10 +302,12 @@ if (empty($reshook))
 			$array_of_total_ht_per_vat_rate = array();
 			$array_of_total_ht_devise_per_vat_rate = array();
 			foreach ($object->lines as $line) {
-				if (empty($array_of_total_ht_per_vat_rate[$line->tva_tx.'_'.$line->vat_src_code])) $array_of_total_ht_per_vat_rate[$line->tva_tx.'_'.$line->vat_src_code] = 0;
-				if (empty($array_of_total_ht_devise_per_vat_rate[$line->tva_tx.'_'.$line->vat_src_code])) $array_of_total_ht_devise_per_vat_rate[$line->tva_tx.'_'.$line->vat_src_code] = 0;
-				$array_of_total_ht_per_vat_rate[$line->tva_tx.'_'.$line->vat_src_code] += $line->total_ht;
-				$array_of_total_ht_devise_per_vat_rate[$line->tva_tx.'_'.$line->vat_src_code] += $line->multicurrency_total_ht;
+				//$vat_src_code_for_line = $line->vat_src_code;		// TODO We chek sign of total per vat without taking into account the vat code because for the moment the vat code is lost/unknown when we add a down payment.
+				$vat_src_code_for_line = '';
+				if (empty($array_of_total_ht_per_vat_rate[$line->tva_tx.'_'.$vat_src_code_for_line])) $array_of_total_ht_per_vat_rate[$line->tva_tx.'_'.$vat_src_code_for_line] = 0;
+				if (empty($array_of_total_ht_devise_per_vat_rate[$line->tva_tx.'_'.$vat_src_code_for_line])) $array_of_total_ht_devise_per_vat_rate[$line->tva_tx.'_'.$vat_src_code_for_line] = 0;
+				$array_of_total_ht_per_vat_rate[$line->tva_tx.'_'.$vat_src_code_for_line] += $line->total_ht;
+				$array_of_total_ht_devise_per_vat_rate[$line->tva_tx.'_'.$vat_src_code_for_line] += $line->multicurrency_total_ht;
 			}
 
 			//var_dump($array_of_total_ht_per_vat_rate);exit;
