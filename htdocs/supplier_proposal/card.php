@@ -863,10 +863,10 @@ if (empty($reshook))
 
 		if (GETPOST('price_ht') != '')
 		{
-			$price_base_type = 'HT';
 			$ht = price2num(GETPOST('price_ht'));
 		}
-		else
+
+		if (GETPOST('price_ttc') != '')
 		{
 			$reg = array();
 			$vatratecleaned = $vat_rate;
@@ -878,9 +878,9 @@ if (empty($reshook))
 
 			$ttc = price2num(GETPOST('price_ttc'));
 			$ht = $ttc / (1 + ($vatratecleaned / 100));
-			$price_base_type = 'HT';
 		}
 
+		$price_base_type = 'HT';
 		$pu_ht_devise = GETPOST('multicurrency_subprice');
 
 		// Add buying price
