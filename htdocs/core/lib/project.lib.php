@@ -357,7 +357,7 @@ function project_admin_prepare_head()
  * @param   array       $arrayfields            Array with displayed coloumn information
  * @return	int									Nb of tasks shown
  */
-function projectLinesa(&$inc, $parent, &$lines, &$level, $var, $showproject, &$taskrole, $projectsListId = '', $addordertick = 0, $projectidfortotallink = 0, $filterprogresscalc = '', $showbilltime = 0, $arrayfields=array())
+function projectLinesa(&$inc, $parent, &$lines, &$level, $var, $showproject, &$taskrole, $projectsListId = '', $addordertick = 0, $projectidfortotallink = 0, $filterprogresscalc = '', $showbilltime = 0, $arrayfields = array())
 {
 	global $user, $langs, $conf, $db, $hookmanager;
 	global $projectstatic, $taskstatic, $extrafields;
