@@ -89,15 +89,11 @@ function llxHeaderSurvey($title, $head = "", $disablejs = 0, $disablehead = 0, $
 	print '<input type="hidden" name="token" value="'.newToken().'">'."\n";
 	print "\n";
 
-
 	// Show logo (search order: logo defined by PAYMENT_LOGO_suffix, then PAYMENT_LOGO, then small company logo, large company logo, theme logo, common logo)
 	$width = 0;
 	// Define logo and logosmall
 	$logosmall = $mysoc->logo_small;
 	$logo = $mysoc->logo;
-	$paramlogo = 'ONLINE_PAYMENT_LOGO_'.$suffix;
-	if (!empty($conf->global->$paramlogo)) $logosmall = $conf->global->$paramlogo;
-	elseif (!empty($conf->global->ONLINE_PAYMENT_LOGO)) $logosmall = $conf->global->ONLINE_PAYMENT_LOGO;
 	//print '<!-- Show logo (logosmall='.$logosmall.' logo='.$logo.') -->'."\n";
 	// Define urllogo
 	$urllogo = '';

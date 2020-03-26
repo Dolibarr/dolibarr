@@ -112,6 +112,7 @@ function printDropdownBookmarksList()
     			$searchForm .= '<option value="newbookmark" class="optionblue" rel="'.dol_escape_htmltag($urltoadd).'"';
     			$searchForm .= ' data-html="'.dol_escape_htmltag(img_picto('', 'bookmark').' '.$langs->trans('AddThisPageToBookmarks').'...').'">'.dol_escape_htmltag($langs->trans('AddThisPageToBookmarks').'...').'</option>';
     		}
+    		$i = 0;
     		while ((empty($conf->global->BOOKMARKS_SHOW_IN_MENU) || $i < $conf->global->BOOKMARKS_SHOW_IN_MENU) && $obj = $db->fetch_object($resql))
     		{
     			$searchForm .= '<option name="bookmark'.$obj->rowid.'" value="'.$obj->rowid.'" '.($obj->target == 1 ? ' target="_blank"' : '').' rel="'.dol_escape_htmltag($obj->url).'" >';
