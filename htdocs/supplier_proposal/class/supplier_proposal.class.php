@@ -14,6 +14,7 @@
  * Copyright (C) 2016      Ferran Marcet            <fmarcet@2byte.es>
  * Copyright (C) 2018      Nicolas ZABOURI			<info@inovea-conseil.com>
  * Copyright (C) 2019      Frédéric France          <frederic.france@netlogic.fr>
+ * Copyright (C) 2020		Tobias Sekan			<tobias.sekan@startmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -595,12 +596,12 @@ class SupplierProposal extends CommonObject
             //var_dump($this->line->fk_fournprice);exit;
 
             // Multicurrency
-            $this->line->fk_multicurrency = $this->fk_multicurrency;
-            $this->line->multicurrency_code = $this->multicurrency_code;
+            $this->line->fk_multicurrency			= $this->fk_multicurrency;
+            $this->line->multicurrency_code			= $this->multicurrency_code;
             $this->line->multicurrency_subprice		= $pu_ht_devise;
-            $this->line->multicurrency_total_ht 	= $multicurrency_total_ht;
-            $this->line->multicurrency_total_tva 	= $multicurrency_total_tva;
-            $this->line->multicurrency_total_ttc 	= $multicurrency_total_ttc;
+            $this->line->multicurrency_total_ht		= $multicurrency_total_ht;
+            $this->line->multicurrency_total_tva	= $multicurrency_total_tva;
+            $this->line->multicurrency_total_ttc	= $multicurrency_total_ttc;
 
             // Mise en option de la ligne
             if (empty($qty) && empty($special_code)) $this->line->special_code = 3;
@@ -708,6 +709,10 @@ class SupplierProposal extends CommonObject
             	$txtva = preg_replace('/\s*\(.*\)/', '', $txtva); // Remove code into vatrate.
             }
 
+			if ($conf->multicurrency->enabled && $pu_ht_devise > 0) {
+				$pu = 0;
+			}
+			
             $tabprice = calcul_price_total($qty, $pu, $remise_percent, $txtva, $txlocaltax1, $txlocaltax2, 0, $price_base_type, $info_bits, $type, $this->thirdparty, $localtaxes_type, 100, $this->multicurrency_tx, $pu_ht_devise);
             $total_ht  = $tabprice[0];
             $total_tva = $tabprice[1];
@@ -719,6 +724,7 @@ class SupplierProposal extends CommonObject
             $multicurrency_total_ht  = $tabprice[16];
             $multicurrency_total_tva = $tabprice[17];
             $multicurrency_total_ttc = $tabprice[18];
+			$pu_ht_devise			 = $tabprice[19];
 
             //Fetch current line from the database and then clone the object and set it in $oldline property
             $line = new SupplierProposalLine($this->db);
@@ -784,11 +790,11 @@ class SupplierProposal extends CommonObject
             	}
             }
 
-            // Multicurrency
-            $this->line->multicurrency_subprice		= price2num($pu * $this->multicurrency_tx);
-            $this->line->multicurrency_total_ht 	= $multicurrency_total_ht;
-            $this->line->multicurrency_total_tva 	= $multicurrency_total_tva;
-            $this->line->multicurrency_total_ttc 	= $multicurrency_total_ttc;
+			// Multicurrency
+			$this->line->multicurrency_subprice		= $pu_ht_devise;
+			$this->line->multicurrency_total_ht		= $multicurrency_total_ht;
+			$this->line->multicurrency_total_tva	= $multicurrency_total_tva;
+			$this->line->multicurrency_total_ttc	= $multicurrency_total_ttc;
 
             $result = $this->line->update();
             if ($result > 0)
