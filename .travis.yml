@@ -3,6 +3,7 @@
 # For syntax, see http://about.travis-ci.org/docs/user/languages/php/
 
 # We use dist: trusty to have php 5.4+ available
+os: linux
 dist: trusty
 sudo: required
 
