@@ -2496,9 +2496,8 @@ class Product extends CommonObject
                 }
             }
 
-            $hookmanager->initHooks(array('productdao'));
             $parameters = array('socid' => $socid);
-            $reshook = $hookmanager->executeHooks('loadStatsPropale', $parameters, $this, $action);
+            $reshook = $hookmanager->executeHooks('loadStatsCustomerProposal', $parameters, $this, $action);
             if ($reshook > 0) $this->stats_propale = $hookmanager->resArray['stats_propale'];
 
             return 1;
@@ -2548,9 +2547,8 @@ class Product extends CommonObject
             $this->stats_proposal_supplier['rows'] = $obj->nb_rows;
             $this->stats_proposal_supplier['qty'] = $obj->qty ? $obj->qty : 0;
 
-            $hookmanager->initHooks(array('productdao'));
             $parameters = array('socid' => $socid);
-            $reshook = $hookmanager->executeHooks('loadStatsProposalSupplier', $parameters, $this, $action);
+            $reshook = $hookmanager->executeHooks('loadStatsSupplierProposal', $parameters, $this, $action);
             if ($reshook > 0) $this->stats_proposal_supplier = $hookmanager->resArray['stats_proposal_supplier'];
 
             return 1;
@@ -2652,9 +2650,9 @@ class Product extends CommonObject
                     $this->stats_commande['qty'] -= $adeduire;
                 }
             }
-            $hookmanager->initHooks(array('productdao'));
+
             $parameters = array('socid' => $socid, 'filtrestatut' => $filtrestatut, 'forVirtualStock' => $forVirtualStock);
-            $reshook = $hookmanager->executeHooks('loadStatsCommande', $parameters, $this, $action);
+            $reshook = $hookmanager->executeHooks('loadStatsCustomerOrder', $parameters, $this, $action);
             if ($reshook > 0) $this->stats_commande = $hookmanager->resArray['stats_commande'];
             return 1;
         }
@@ -2709,9 +2707,8 @@ class Product extends CommonObject
             $this->stats_commande_fournisseur['rows'] = $obj->nb_rows;
             $this->stats_commande_fournisseur['qty'] = $obj->qty ? $obj->qty : 0;
 
-            $hookmanager->initHooks(array('productdao'));
             $parameters = array('socid' => $socid, 'filtrestatut' => $filtrestatut, 'forVirtualStock' => $forVirtualStock);
-            $reshook = $hookmanager->executeHooks('loadStatsCommandeFournisseur', $parameters, $this, $action);
+            $reshook = $hookmanager->executeHooks('loadStatsSupplierOrder', $parameters, $this, $action);
             if ($reshook > 0) $this->stats_commande_fournisseur = $hookmanager->resArray['stats_commande_fournisseur'];
 
             return 1;
@@ -2794,7 +2791,6 @@ class Product extends CommonObject
                 }
             }
 
-            $hookmanager->initHooks(array('productdao'));
             $parameters = array('socid' => $socid, 'filtrestatut' => $filtrestatut, 'forVirtualStock' => $forVirtualStock, 'filterShipmentStatus' => $filterShipmentStatus);
             $reshook = $hookmanager->executeHooks('loadStatsSending', $parameters, $this, $action);
             if ($reshook > 0) $this->stats_expedition = $hookmanager->resArray['stats_expedition'];
@@ -2848,7 +2844,6 @@ class Product extends CommonObject
             $this->stats_reception['rows'] = $obj->nb_rows;
             $this->stats_reception['qty'] = $obj->qty ? $obj->qty : 0;
 
-            $hookmanager->initHooks(array('productdao'));
             $parameters = array('socid' => $socid, 'filtrestatut' => $filtrestatut, 'forVirtualStock' => $forVirtualStock);
             $reshook = $hookmanager->executeHooks('loadStatsReception', $parameters, $this, $action);
             if ($reshook > 0) $this->stats_reception = $hookmanager->resArray['stats_reception'];
@@ -2940,7 +2935,6 @@ class Product extends CommonObject
     		if ($this->stats_mrptoconsume['qty'] < 0) $this->stats_mrptoconsume['qty'] = 0;
     		if ($this->stats_mrptoproduce['qty'] < 0) $this->stats_mrptoproduce['qty'] = 0;
 
-            $hookmanager->initHooks(array('productdao'));
             $parameters = array('socid' => $socid, 'filtrestatut' => $filtrestatut, 'forVirtualStock' => $forVirtualStock);
             $reshook = $hookmanager->executeHooks('loadStatsInProduction', $parameters, $this, $action);
             if ($reshook > 0) $this->stats_mrptoproduce = $hookmanager->resArray['stats_mrptoproduce'];
@@ -3015,9 +3009,8 @@ class Product extends CommonObject
                 }
             }
 
-            $hookmanager->initHooks(array('productdao'));
             $parameters = array('socid' => $socid);
-            $reshook = $hookmanager->executeHooks('loadStatsContrat', $parameters, $this, $action);
+            $reshook = $hookmanager->executeHooks('loadStatsContract', $parameters, $this, $action);
             if ($reshook > 0) $this->stats_contrat = $hookmanager->resArray['stats_contrat'];
 
             return 1;
@@ -3090,9 +3083,8 @@ class Product extends CommonObject
                 }
             }
 
-            $hookmanager->initHooks(array('productdao'));
             $parameters = array('socid' => $socid);
-            $reshook = $hookmanager->executeHooks('loadStatsFacture', $parameters, $this, $action);
+            $reshook = $hookmanager->executeHooks('loadStatsCustomerInvoice', $parameters, $this, $action);
             if ($reshook > 0) $this->stats_facture = $hookmanager->resArray['stats_facture'];
 
             return 1;
@@ -3144,9 +3136,8 @@ class Product extends CommonObject
             $this->stats_facture_fournisseur['rows'] = $obj->nb_rows;
             $this->stats_facture_fournisseur['qty'] = $obj->qty ? $obj->qty : 0;
 
-            $hookmanager->initHooks(array('productdao'));
             $parameters = array('socid' => $socid);
-            $reshook = $hookmanager->executeHooks('loadStatsFactureFournisseur', $parameters, $this, $action);
+            $reshook = $hookmanager->executeHooks('loadStatsSupplierInvoice', $parameters, $this, $action);
             if ($reshook > 0) $this->stats_facture_fournisseur = $hookmanager->resArray['stats_facture_fournisseur'];
 
             return 1;
