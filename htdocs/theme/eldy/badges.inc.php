@@ -118,13 +118,13 @@ a.badge-warning:focus, a.badge-warning:hover {
 }
 
 /* WARNING colorblind */
-body[class^="colorblind-"] .badge-warning {
+body[class*="colorblind-"] .badge-warning {
 	  background-color: <?php print $colorblind_deuteranopes_badgeWarning; ?>;
   }
-body[class^="colorblind-"] a.badge-warning.focus,body[class^="colorblind-"] a.badge-warning:focus {
+body[class*="colorblind-"] a.badge-warning.focus,body[class^="colorblind-"] a.badge-warning:focus {
 	box-shadow: 0 0 0 0.2rem <?php print colorHexToRgb($colorblind_deuteranopes_badgeWarning, 0.5); ?>;
 }
-body[class^="colorblind-"] a.badge-warning:focus, a.badge-warning:hover {
+body[class*="colorblind-"] a.badge-warning:focus, a.badge-warning:hover {
 	background-color: <?php print colorDarker($colorblind_deuteranopes_badgeWarning, 10); ?>;
 }
 
