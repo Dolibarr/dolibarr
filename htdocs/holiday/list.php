@@ -522,13 +522,13 @@ if ($resql)
                     $valideurobjects = $users->get_full_tree();
 
 		    $valideurarray = array();
-                    foreach ($valideurobjects as $val) {
-                        // Check the right for each returned users if valid we add it to the approver
-                        $valideur_user  = new User($db);
-                        $valideur_user->fetch($val['id']);
-                        $valideur_user->getrights('holiday');
-                        if($valideur_user->rights->holiday->approve) $valideurarray[$valideur_user->id] = $valideur_user->id;
-                    }
+			foreach ($valideurobjects as $val) {
+				// Check the right for each returned users if valid we add it to the approver
+				$valideur_user  = new User($db);
+				$valideur_user->fetch($val['id']);
+				$valideur_user->getrights('holiday');
+				if($valideur_user->rights->holiday->approve) $valideurarray[$valideur_user->id] = $valideur_user->id;
+			}
 
 		    print $form->select_dolusers($search_valideur, "search_valideur", 1, "", 0, $valideurarray, '', 0, 0, 0, $morefilter, 0, '', 'maxwidth200');
 		    print '</td>';
