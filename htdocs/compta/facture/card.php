@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2002-2006  Rodolphe Quiedeville    <rodolphe@quiedeville.org>
  * Copyright (C) 2004       Eric Seigne             <eric.seigne@ryxeo.com>
- * Copyright (C) 2004-2016  Laurent Destailleur     <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2020  Laurent Destailleur     <eldy@users.sourceforge.net>
  * Copyright (C) 2005       Marc Barilley / Ocebo   <marc@ocebo.com>
  * Copyright (C) 2005-2015  Regis Houssin           <regis.houssin@inodbox.com>
  * Copyright (C) 2006       Andre Cianfarani        <acianfa@free.fr>
@@ -811,14 +811,16 @@ if (empty($reshook))
 			$i = 0;
 			foreach ($object->lines as $line)
 			{
-				if ($line->product_type < 9 && $line->total_ht != 0) // Remove lines with product_type greater than or equal to 9
-				{ 	// no need to create discount if amount is null
-					$amount_ht[$line->tva_tx] += $line->total_ht;
-					$amount_tva[$line->tva_tx] += $line->total_tva;
-					$amount_ttc[$line->tva_tx] += $line->total_ttc;
-					$multicurrency_amount_ht[$line->tva_tx] += $line->multicurrency_total_ht;
-					$multicurrency_amount_tva[$line->tva_tx] += $line->multicurrency_total_tva;
-					$multicurrency_amount_ttc[$line->tva_tx] += $line->multicurrency_total_ttc;
+				if ($line->product_type < 9 && $line->total_ht != 0) // Remove lines with product_type greater than or equal to 9 and no need to create discount if amount is null
+				{
+					$keyforvatrate = $line->tva_tx.($line->vat_src_code ? ' ('.$line->vat_src_code.')' : '');
+
+					$amount_ht[$keyforvatrate] += $line->total_ht;
+					$amount_tva[$keyforvatrate] += $line->total_tva;
+					$amount_ttc[$keyforvatrate] += $line->total_ttc;
+					$multicurrency_amount_ht[$keyforvatrate] += $line->multicurrency_total_ht;
+					$multicurrency_amount_tva[$keyforvatrate] += $line->multicurrency_total_tva;
+					$multicurrency_amount_ttc[$keyforvatrate] += $line->multicurrency_total_ttc;
 					$i++;
 				}
 			}
@@ -832,9 +834,9 @@ if (empty($reshook))
 						$amount_ht[$vatrate] = price2num($amount_ht[$vatrate] * $ratio, 'MU');
 						$amount_tva[$vatrate] = price2num($amount_tva[$vatrate] * $ratio, 'MU');
 						$amount_ttc[$vatrate] = price2num($amount_ttc[$vatrate] * $ratio, 'MU');
-						$multicurrency_amount_ht[$line->tva_tx] = price2num($multicurrency_amount_ht[$vatrate] * $ratio, 'MU');
-						$multicurrency_amount_tva[$line->tva_tx] = price2num($multicurrency_amount_tva[$vatrate] * $ratio, 'MU');
-						$multicurrency_amount_ttc[$line->tva_tx] = price2num($multicurrency_amount_ttc[$vatrate] * $ratio, 'MU');
+						$multicurrency_amount_ht[$vatrate] = price2num($multicurrency_amount_ht[$vatrate] * $ratio, 'MU');
+						$multicurrency_amount_tva[$vatrate] = price2num($multicurrency_amount_tva[$vatrate] * $ratio, 'MU');
+						$multicurrency_amount_ttc[$vatrate] = price2num($multicurrency_amount_ttc[$vatrate] * $ratio, 'MU');
 					}
 				}
 			}
@@ -889,6 +891,7 @@ if (empty($reshook))
 				$discount->amount_ht = $discount->amount_ttc = $total_paiements + $total_creditnote_and_deposit - $object->total_ttc;
 				$discount->amount_tva = 0;
 				$discount->tva_tx = 0;
+				$discount->vat_src_code = '';
 
 				$result = $discount->create($user);
 				if ($result < 0)
@@ -906,7 +909,18 @@ if (empty($reshook))
 					$discount->multicurrency_amount_ht = abs($multicurrency_amount_ht[$tva_tx]);
 					$discount->multicurrency_amount_tva = abs($multicurrency_amount_tva[$tva_tx]);
 					$discount->multicurrency_amount_ttc = abs($multicurrency_amount_ttc[$tva_tx]);
+
+					// Clean vat code
+					$reg = array();
+					$vat_src_code = '';
+					if (preg_match('/\((.*)\)/', $tva_tx, $reg))
+					{
+						$vat_src_code = $reg[1];
+						$tva_tx = preg_replace('/\s*\(.*\)/', '', $tva_tx); // Remove code into vatrate.
+					}
+
 					$discount->tva_tx = abs($tva_tx);
+					$discount->vat_src_code =$vat_src_code;
 
 					$result = $discount->create($user);
 					if ($result < 0)
