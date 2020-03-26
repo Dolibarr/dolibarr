@@ -335,7 +335,7 @@ if ($cats < 0)
 {
 	dol_print_error($db, $cats->error, $cats->errors);
 }
-else if(count($cats) < 1)
+elseif(count($cats) < 1)
 {
 	print '<tr class="oddeven">';
 	print '<td colspan="3" class="opacitymedium">'.$langs->trans("NoSubCat").'</td>';
