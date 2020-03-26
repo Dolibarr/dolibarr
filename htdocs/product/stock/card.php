@@ -628,9 +628,6 @@ else
 						print '<td class="center"><a href="'.DOL_URL_ROOT.'/product/stock/product.php?dwid='.$object->id.'&id='.$objp->rowid.'&action=correction&backtopage='.urlencode($_SERVER["PHP_SELF"].'?id='.$id).'">';
 						print $langs->trans("StockCorrection");
 						print "</a></td>";
-                        print '<td align="center"><a href="' . DOL_URL_ROOT . '/product/stock/product.php?dwid=' . $object->id . '&id=' . $objp->rowid . '&action=correction&backtopage=' . urlencode($_SERVER["PHP_SELF"] . '?id=' . $id) . '">';
-                        print $langs->trans("StockCorrection");
-                        print "</a></td>";
                     }
                     if(!empty($conf->global->PRODUCT_USE_UNITS)) {
                         if ($i == 0) $units = $productstatic->fk_unit;
