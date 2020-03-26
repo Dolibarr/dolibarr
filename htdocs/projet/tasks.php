@@ -796,6 +796,7 @@ elseif ($id > 0 || !empty($ref))
 	}
 	if (!empty($conf->global->PROJECT_SHOW_CONTACTS_IN_LIST)) print_liste_field_titre("TaskRessourceLinks", $_SERVER["PHP_SELF"], '', '', $param, $sortfield, $sortorder);
 	// Extra fields
+	$disablesortlink=1;
 	include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_title.tpl.php';
 	// Hook fields
 	$parameters = array('arrayfields'=>$arrayfields, 'param'=>$param, 'sortfield'=>$sortfield, 'sortorder'=>$sortorder);

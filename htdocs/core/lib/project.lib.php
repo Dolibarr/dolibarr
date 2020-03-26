@@ -360,10 +360,7 @@ function project_admin_prepare_head()
 function projectLinesa(&$inc, $parent, &$lines, &$level, $var, $showproject, &$taskrole, $projectsListId = '', $addordertick = 0, $projectidfortotallink = 0, $filterprogresscalc = '', $showbilltime = 0, $arrayfields=array())
 {
 	global $user, $langs, $conf, $db, $hookmanager;
-	global $projectstatic, $taskstatic;
-
-	$extrafields = new ExtraFields($db);
-	$extrafields->fetch_name_optionals_label($taskstatic->table_element);
+	global $projectstatic, $taskstatic, $extrafields;
 
 	$lastprojectid = 0;
 

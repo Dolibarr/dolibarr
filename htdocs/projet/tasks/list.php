@@ -925,13 +925,11 @@ while ($i < min($num, $limit))
 
 		print "</tr>\n";
 
-		//print projectLinesa();
 	}
 
 	$i++;
 }
 // Show total line
-//include DOL_DOCUMENT_ROOT.'/core/tpl/list_print_total.tpl.php';
 if (isset($totalarray['totaldurationeffectivefield']) || isset($totalarray['totalplannedworkloadfield']) || isset($totalarray['totalprogress_calculatedfield'])
 	|| isset($totalarray['totaltobill']) || isset($totalarray['totalbilled']))
 {
