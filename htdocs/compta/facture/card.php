@@ -487,10 +487,10 @@ if (empty($reshook))
 		// POST[remise_id] or POST[remise_id_for_payment]
 
 		// We use the credit to reduce amount of invoice
-		if (!empty($_POST["remise_id"])) {
+		if (GETPOST("remise_id", 'int') > 0) {
 			$ret = $object->fetch($id);
 			if ($ret > 0) {
-				$result = $object->insert_discount($_POST["remise_id"]);
+				$result = $object->insert_discount(GETPOST("remise_id", 'int'));
 				if ($result < 0) {
 					setEventMessages($object->error, $object->errors, 'errors');
 				}
@@ -499,11 +499,11 @@ if (empty($reshook))
 			}
 		}
 		// We use the credit to reduce remain to pay
-		if (!empty($_POST["remise_id_for_payment"]))
+		if (GETPOST("remise_id_for_payment", 'int') > 0)
 		{
 			require_once DOL_DOCUMENT_ROOT.'/core/class/discount.class.php';
 			$discount = new DiscountAbsolute($db);
-			$discount->fetch($_POST["remise_id_for_payment"]);
+			$discount->fetch(GETPOST("remise_id_for_payment", 'int'));
 
 			//var_dump($object->getRemainToPay(0));
 			//var_dump($discount->amount_ttc);exit;
