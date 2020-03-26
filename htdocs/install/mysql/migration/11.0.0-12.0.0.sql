@@ -200,3 +200,6 @@ ALTER TABLE llx_entrepot ADD COLUMN phone varchar(20) DEFAULT NULL;
 ALTER TABLE llx_accounting_account ADD COLUMN reconcilable tinyint DEFAULT 0 NOT NULL after active;
 
 ALTER TABLE llx_categorie MODIFY type integer NOT NULL DEFAULT 1;
+
+ALTER TABLE llx_societe_remise_except ADD COLUMN vat_src_code varchar(10) DEFAULT '';
+
