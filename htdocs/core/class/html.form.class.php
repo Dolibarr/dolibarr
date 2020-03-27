@@ -323,21 +323,44 @@ class Form
 	 * @param	object	$object			Object
 	 * @param	boolean	$perm			Permission to allow button to edit parameter. Set it to 0 to have a not edited field.
 	 * @param	string	$typeofdata		Type of data ('string' by default, 'email', 'amount:99', 'numeric:99', 'text' or 'textarea:rows:cols', 'datepicker' ('day' do not work, don't know why), 'ckeditor:dolibarr_zzz:width:height:savemethod:1:rows:cols', 'select;xxx[:class]'...)
+	 * @param	string	$check			Same coe than $check parameter of GETPOST()
+	 * @param	string	$morecss		More CSS
 	 * @return	string   		      	HTML code for the edit of alternative language
 	 */
-	public function widgetForTranslation($fieldname, $object, $perm, $typeofdata = 'string')
+	public function widgetForTranslation($fieldname, $object, $perm, $typeofdata = 'string', $check = '', $morecss = '')
 	{
 		global $conf, $langs;
 
 		$result = '';
 
 		if (! empty($conf->global->PDF_USE_ALSO_LANGUAGE_CODE)) {
-			$result ='<div class="inline-block paddingleft field-'.$object->element.'-'.$fieldname.'">';
+			$langcode = $conf->global->PDF_USE_ALSO_LANGUAGE_CODE;
 
-			$s=picto_from_langcode($conf->global->PDF_USE_ALSO_LANGUAGE_CODE);
+			$result .='<div class="inline-block paddingleft image-'.$object->element.'-'.$fieldname.'">';
+			$s=img_picto($langs->trans("ShowOtherLanguages"), 'language', '', false, 0, 0, '', 'fa-15 editfieldlang');
 			$result .= $s;
-
 			$result .= '</div>';
+
+			$result .='<div class="inline-block hidden field-'.$object->element.'-'.$fieldname.'">';
+
+			$valuetoshow = GETPOSTISSET($fieldname."-".$langcode) ? GETPOST($fieldname."-".$langcode, $check) : '';
+			if (empty($valuetoshow)) {
+				$object->fetchValueForAlternateLanguages();
+				//var_dump($object->array_languages);
+				$valuetoshow = $object->array_languages[$fieldname][$langcode];
+			}
+
+			$s=picto_from_langcode($conf->global->PDF_USE_ALSO_LANGUAGE_CODE, 'class="pictoforlang"');
+			$result .= $s;
+			if ($typeofdata == 'textarea') {
+				$result .= '<textarea name="'.$fieldname."-".$langcode.'" id="'.$fieldname."-".$langcode.'" class="'.$morecss.'" rows="'.ROWS_2.'" wrap="soft">';
+				$result .= $object->address;
+				$result .= '</textarea>';
+			} else {
+				$result .= '<input type="text" class="inputfieldforlang '.($morecss ? ' '.$morecss : '').'" name="'.$fieldname."-".$langcode.'" value="'.$valuetoshow.'">';
+			}
+			$result .= '</div>';
+			$result .= '<script>$(".image-'.$object->element.'-'.$fieldname.'").click(function() { console.log("Toggle lang widget"); jQuery(".field-'.$object->element.'-'.$fieldname.'").toggle(); });</script>';
 		}
 
 		return $result;

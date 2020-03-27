@@ -88,6 +88,11 @@ abstract class CommonObject
 	public $array_options = array();
 
 	/**
+	 * @var mixed		Array to store alternative languages values of object
+	 */
+	public $array_languages = null;			// Value is array() when load already tried
+
+	/**
 	 * @var int[][]		Array of linked objects ids. Loaded by ->fetchObjectLinked
 	 */
 	public $linkedObjectsIds;
@@ -5041,6 +5046,72 @@ abstract class CommonObject
 	}
 
 
+	/* Functions for data in other language */
+
+
+	/**
+	 *  Function to get alternative languages of a data into $this->array_languages
+	 *  This method is NOT called by method fetch of objects but must be called separately.
+	 *
+	 *  @return	int						<0 if error, 0 if no values of alternative languages to find nor found, 1 if a value was found and loaded
+	 */
+	public function fetchValueForAlternateLanguages()
+	{
+		// To avoid SQL errors. Probably not the better solution though
+		if (!$this->element) {
+			return 0;
+		}
+		if (! ($this->id > 0)) {
+			return 0;
+		}
+
+		$this->array_languages = array();
+
+		$element = $this->element;
+		if ($element == 'categorie') $element = 'categories'; // For compatibility
+
+		// Request to get translation values for object
+		$sql = "SELECT rowid, property, lang , value";
+		$sql .= " FROM ".MAIN_DB_PREFIX."object_lang";
+		$sql .= " WHERE type_object = '".$element."'";
+		$sql .= " AND fk_object = ".$this->id;
+
+		//dol_syslog(get_class($this)."::fetch_optionals get extrafields data for ".$this->table_element, LOG_DEBUG);		// Too verbose
+		$resql = $this->db->query($sql);
+		if ($resql)
+		{
+			$numrows = $this->db->num_rows($resql);
+			if ($numrows)
+			{
+				$tab = $this->db->fetch_array($resql);
+
+				foreach ($tab as $key => $value)
+				{
+					// we can add this attribute to object
+					if (preg_match('/date/', $key))
+					{
+						$this->array_languages[$key] = $this->db->jdate($value);
+					}
+					else
+					{
+						$this->array_languages[$key] = $value;
+					}
+				}
+			}
+
+			$this->db->free($resql);
+
+			if ($numrows) return $numrows;
+			else return 0;
+		}
+		else
+		{
+			dol_print_error($this->db);
+			return -1;
+		}
+	}
+
+
 	/* Functions for extrafields */
 
 
@@ -5059,6 +5130,7 @@ abstract class CommonObject
 		global $extrafields;
 
 		if (empty($rowid)) $rowid = $this->id;
+		if (empty($rowid)) $rowid = $this->rowid;
 
 		// To avoid SQL errors. Probably not the better solution though
 		if (!$this->table_element) {
@@ -5110,7 +5182,6 @@ abstract class CommonObject
 			$resql = $this->db->query($sql);
 			if ($resql)
 			{
-				$this->array_options = array();
 				$numrows = $this->db->num_rows($resql);
 				if ($numrows)
 				{

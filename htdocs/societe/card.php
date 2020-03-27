@@ -1193,7 +1193,7 @@ else
         print '<table class="border centpercent">';
 
         // Name, firstname
-	    print '<tr class="tr-field-thirdparty-name"><td class="titlefieldcreate">';
+	    print '<tr class="tr-field-thirdparty-name"><td class="titlefieldcreate tdtop">';
         if ($object->particulier || $private)
         {
 	        print '<span id="TypeName" class="fieldrequired">'.$langs->trans('ThirdPartyName').' / '.$langs->trans('LastName', 'name').'</span>';
@@ -1204,7 +1204,7 @@ else
         }
 	    print '</td><td'.(empty($conf->global->SOCIETE_USEPREFIX) ? ' colspan="3"' : '').'>';
 	    print '<input type="text" class="minwidth300" maxlength="128" name="name" id="name" value="'.$object->name.'" autofocus="autofocus">';
-	    print $form->widgetForTranslation("name", $object, $permissiontoadd);
+	    print $form->widgetForTranslation("name", $object, $permissiontoadd, 'string', 'alpahnohtml', 'minwidth300');
 	    print '</td>';
 	    if (!empty($conf->global->SOCIETE_USEPREFIX))  // Old not used prefix field
 	    {
@@ -1304,10 +1304,11 @@ else
         print '<tr><td class="tdtop">';
         print $form->editfieldkey('Address', 'address', '', $object, 0);
         print '</td>';
-	    print '<td colspan="3"><textarea name="address" id="address" class="quatrevingtpercent" rows="'.ROWS_2.'" wrap="soft">';
+	    print '<td colspan="3">';
+	    print '<textarea name="address" id="address" class="quatrevingtpercent" rows="'.ROWS_2.'" wrap="soft">';
         print $object->address;
         print '</textarea>';
-        print $form->widgetForTranslation("address", $object, $permissiontoadd);
+        print $form->widgetForTranslation("address", $object, $permissiontoadd, 'textarea', 'alphanohtml', 'quatrevingtpercent');
         print '</td></tr>';
 
         // Zip / Town
@@ -1315,9 +1316,9 @@ else
         print $formcompany->select_ziptown($object->zip, 'zipcode', array('town', 'selectcountry_id', 'state_id'), 0, 0, '', 'maxwidth100 quatrevingtpercent');
         print '</td>';
         if ($conf->browser->layout == 'phone') print '</tr><tr>';
-        print '<td>'.$form->editfieldkey('Town', 'town', '', $object, 0).'</td><td>';
+        print '<td class="tdtop">'.$form->editfieldkey('Town', 'town', '', $object, 0).'</td><td>';
         print $formcompany->select_ziptown($object->town, 'town', array('zipcode', 'selectcountry_id', 'state_id'), 0, 0, '', 'maxwidth100 quatrevingtpercent');
-        print $form->widgetForTranslation("town", $object, $permissiontoadd);
+        print $form->widgetForTranslation("town", $object, $permissiontoadd, 'string', 'alphanohtml', 'maxwidth100 quatrevingtpercent');
         print '</td></tr>';
 
         // Country

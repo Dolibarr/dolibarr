@@ -1022,3 +1022,4 @@ SelectYourGraphOptionsFirst=Select your graph options to build a graph
 Measures=Measures
 XAxis=X-Axis
 YAxis=Y-Axis
+StatusOfRefMustBe=Status of %s must be %s

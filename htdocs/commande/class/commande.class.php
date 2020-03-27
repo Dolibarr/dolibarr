@@ -1381,7 +1381,7 @@ class Commande extends CommonOrder
 		$this->origin_id = $object->id;
 
 		// get extrafields from original line
-		$object->fetch_optionals($object->id);
+		$object->fetch_optionals();
 
 		$e = new ExtraFields($this->db);
 		$element_extrafields = $e->fetch_name_optionals_label($this->table_element);

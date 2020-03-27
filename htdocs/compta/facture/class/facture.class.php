@@ -1317,7 +1317,7 @@ class Facture extends CommonInvoice
 		$this->origin_id = $object->id;
 
         // get extrafields from original line
-		$object->fetch_optionals($object->id);
+		$object->fetch_optionals();
 		foreach ($object->array_options as $options_key => $value)
 			$this->array_options[$options_key] = $value;
 
