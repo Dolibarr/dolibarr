@@ -45,6 +45,7 @@ $result=restrictedArea($user, 'stock');
  */
 
 $producttmp=new Product($db);
+$warehouse=new Entrepot($db);
 
 $help_url='EN:Module_Stocks_En|FR:Module_Stock|ES:M&oacute;dulo_Stocks';
 llxHeader("", $langs->trans("Stocks"), $help_url);
@@ -93,8 +94,6 @@ if ($result)
 
     if ($num)
     {
-        $warehouse=new Entrepot($db);
-
         while ($i < min($max, $num))
         {
             $objp = $db->fetch_object($result);
@@ -108,7 +107,9 @@ if ($result)
             print '<td>';
             print $warehouse->getNomUrl(1);
             print '</td>'."\n";
-            print '<td class="right">'.$warehouse->getLibStatut(5).'</td>';
+            print '<td class="right">';
+            print $warehouse->getLibStatut(5);
+            print '</td>';
             print "</tr>\n";
             $i++;
         }
@@ -134,7 +135,7 @@ print '</div><div class="fichetwothirdright"><div class="ficheaddleft">';
 // Last movements
 $max=10;
 $sql = "SELECT p.rowid, p.label as produit, p.tobatch, p.tosell, p.tobuy,";
-$sql.= " e.ref as stock, e.rowid as entrepot_id,";
+$sql.= " e.ref as warehouse_ref, e.rowid as warehouse_id, e.ref as warehouse_label, e.lieu, e.statut as warehouse_status,";
 $sql.= " m.value as qty, m.datem, m.batch, m.eatby, m.sellby";
 $sql.= " FROM ".MAIN_DB_PREFIX."entrepot as e";
 $sql.= ", ".MAIN_DB_PREFIX."stock_mouvement as m";
@@ -178,6 +179,12 @@ if ($resql)
 		$producttmp->status_sell = $objp->tosell;
 		$producttmp->status_buy = $objp->tobuy;
 
+		$warehouse->id = $objp->warehouse_id;
+		$warehouse->ref = $objp->warehouse_ref;
+		$warehouse->statut = $objp->warehouse_status;
+		$warehouse->label = $objp->warehouse_label;
+		$warehouse->lieu = $objp->lieu;
+
 		print '<tr class="oddeven">';
 		print '<td>'.dol_print_date($db->jdate($objp->datem), 'dayhour').'</td>';
 		print '<td class="tdoverflowmax200">';
@@ -189,9 +196,9 @@ if ($resql)
 			print '<td>'.dol_print_date($db->jdate($objp->sellby), 'day').'</td>';
 			print '<td>'.dol_print_date($db->jdate($objp->eatby), 'day').'</td>';
 		}
-		print '<td class="tdoverflowmax200"><a href="card.php?id='.$objp->entrepot_id.'">';
-		print img_object($langs->trans("ShowWarehouse"), "stock").' '.$objp->stock;
-		print "</a></td>\n";
+		print '<td class="tdoverflowmax200">';
+		print $warehouse->getNomUrl(1);
+		print "</td>\n";
 		print '<td class="right">';
 		if ($objp->qty > 0) print '+';
 		print $objp->qty.'</td>';
@@ -202,6 +209,8 @@ if ($resql)
 
 	print "</table>";
     print '</div>';
+} else {
+	dol_print_error($db);
 }
 
 //print '</td></tr></table>';
