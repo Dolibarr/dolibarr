@@ -2280,10 +2280,8 @@ class DolibarrModules // Can not be abstract, because we need to instantiate it 
     	if (!empty($conf->global->$const_name))	// If module is already activated
     	{
     		$disableSetup = 0;
-
     	} else {
-
-
+			// TODO
     	}
 
 		print '
