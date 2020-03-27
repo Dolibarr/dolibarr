@@ -70,13 +70,14 @@ if (! empty($conf->global->MAIN_SEARCH_FORM_ON_HOME_AREAS))     // This is usele
     print "</table></div></form><br>";
 }
 
+$max = 15;
 
-$sql = "SELECT e.ref as label, e.rowid, e.statut";
+$sql = "SELECT e.rowid, e.ref as label, e.lieu, e.statut as status";
 $sql.= " FROM ".MAIN_DB_PREFIX."entrepot as e";
 $sql.= " WHERE e.statut in (0,1)";
 $sql.= " AND e.entity IN (".getEntity('stock').")";
 $sql.= $db->order('e.statut', 'DESC');
-$sql.= $db->plimit(15, 0);
+$sql.= $db->plimit($max + 1, 0);
 
 $result = $db->query($sql);
 
@@ -92,20 +93,31 @@ if ($result)
 
     if ($num)
     {
-        $entrepot=new Entrepot($db);
+        $warehouse=new Entrepot($db);
 
-        while ($i < $num)
+        while ($i < min($max, $num))
         {
             $objp = $db->fetch_object($result);
 
+            $warehouse->id = $objp->rowid;
+            $warehouse->statut = $objp->status;
+            $warehouse->label = $objp->label;
+            $warehouse->lieu = $objp->lieu;
+
             print '<tr class="oddeven">';
-            print "<td><a href=\"card.php?id=$objp->rowid\">".img_object($langs->trans("ShowStock"), "stock")." ".$objp->label."</a></td>\n";
-            print '<td class="right">'.$entrepot->LibStatut($objp->statut, 5).'</td>';
+            print '<td>';
+            print $warehouse->getNomUrl(1);
+            print '</td>'."\n";
+            print '<td class="right">'.$warehouse->getLibStatut(5).'</td>';
             print "</tr>\n";
             $i++;
         }
         $db->free($result);
     }
+    if ($num > $max) {
+    	print '<tr><td><span class="opacitymedium">'.$langs->trans("More").'...</span></td><td></td></tr>';
+    }
+
     print "</table>";
     print '</div>';
 }
