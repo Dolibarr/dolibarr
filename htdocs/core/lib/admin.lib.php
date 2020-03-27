@@ -1782,7 +1782,6 @@ function company_admin_prepare_head()
 
 	complete_head_from_modules($conf, $langs, null, $head, $h, 'company_admin', 'remove');
 	complete_head_from_modules($conf, $langs, null, $head, $h, 'company_admin', 'add');
-	
 	return $head;
 }
 
