@@ -796,11 +796,11 @@ class Products extends DolibarrApi
         }
 
         if ($result) {
-            $this->productsupplier->fetch($id, $ref);
-            $this->productsupplier->list_product_fournisseur_price($id, '', '', 0, 0);
+            $product_fourn = new ProductFournisseur($this->db);
+            $product_fourn_list = $product_fourn->list_product_fournisseur_price($this->product->id, '', '', 0, 0);
         }
 
-        return $this->_cleanObjectDatas($this->productsupplier);
+        return $this->_cleanObjectDatas($product_fourn_list);
     }
 
     /**
