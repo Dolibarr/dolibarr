@@ -175,7 +175,7 @@ input, select {
 	margin-bottom:1px;
 	margin-top:1px;
 }
-input.button {
+#mainbody input.button {
 	background: var(--butactionbg);
     border-collapse: collapse;
     border: none;
