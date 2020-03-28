@@ -143,8 +143,31 @@ div.mainmenu.generic4::before {
     content: "\f249";
 }
 
+/* Define color of some picto */
+
+.fa-phone, .fa-fax {
+	opacity: 0.5;
+	color: #440;
+}
+.fa-at, .fa-external-link-alt {
+	opacity: 0.5;
+	color: #304;
+}
+.fa-trash {
+	color: #666;
+}
+.fa-trash:hover:before {
+	color: #800;
+}
+.fa-play {
+	color: #444;
+}
+.fa-unlink {
+	color: #555;
+}
 
 /* Define square Dolibarr logo in pure CSS */
+
 .fa-dolibarr-css{
 	color: #235481;
 	background: currentColor;

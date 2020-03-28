@@ -1073,7 +1073,7 @@ function projectLinesPerDay(&$inc, $parent, $fuser, $lines, &$level, &$projectsr
                         if ($val['checked'] && substr($key, 0, 5) == 'efpt.') $addcolspan++;
                     }
 
-					print '<tr class="oddeven trforbreak">'."\n";
+					print '<tr class="oddeven trforbreak nobold">'."\n";
 					print '<td colspan="'.(7 + $addcolspan).'">';
 					print $projectstatic->getNomUrl(1, '', 0, '<strong>'.$langs->transnoentitiesnoconv("YourRole").':</strong> '.$projectsrole[$lines[$i]->fk_project]);
 					if ($thirdpartystatic->id > 0) print ' - '.$thirdpartystatic->getNomUrl(1);

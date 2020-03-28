@@ -3131,6 +3131,7 @@ function img_picto($titlealt, $picto, $moreatt = '', $pictoisfullpath = false, $
         		'1downarrow', '1uparrow', '1leftarrow', '1rightarrow', '1uparrow_selected', '1downarrow_selected', '1leftarrow_selected', '1rightarrow_selected',
         		'address', 'barcode', 'bank', 'bookmark', 'building', 'cash-register', 'check', 'close_title', 'cubes', 'delete', 'dolly', 'edit', 'ellipsis-h',
         		'filter', 'file-code', 'grip', 'grip_title', 'language', 'list', 'listlight', 'note',
+        		'object_phoning', 'object_phoning_fax', 'object_email',
         		'object_bookmark', 'object_list', 'object_calendar', 'object_calendarweek', 'object_calendarmonth', 'object_calendarday', 'object_calendarperuser',
         		'off', 'on', 'play', 'playdisabled', 'printer', 'resize', 'stats',
 				'note', 'setup', 'sign-out', 'split', 'switch_off', 'switch_on', 'tools', 'unlink', 'uparrow', 'user', 'wrench', 'globe',
@@ -3153,7 +3154,8 @@ function img_picto($titlealt, $picto, $moreatt = '', $pictoisfullpath = false, $
 
 		    $arrayconvpictotofa = array(
 		    	'address'=> 'address-book', 'setup'=>'cog', 'companies'=>'building', 'products'=>'cube', 'commercial'=>'suitcase', 'invoicing'=>'coins', 'accountancy'=>'money-check-alt',
-		    	'hrm'=>'umbrella-beach', 'members'=>'users', 'ticket'=>'ticket-alt', 'generic'=>'folder-open',
+		    	'hrm'=>'umbrella-beach', 'members'=>'users', 'ticket'=>'ticket-alt', 'generic'=>'folder-open', 'globe'=>'external-link-alt',
+		    	'object_phoning'=>'phone', 'object_phoning_fax'=>'fax', 'object_email'=>'at',
 		    	'switch_off'=>'toggle-off', 'switch_on'=>'toggle-on', 'check'=>'check', 'object_bookmark'=>'star', 'bookmark'=>'star', 'stats' => 'chart-bar',
 		    	'bank'=>'university', 'close_title'=>'window-close', 'delete'=>'trash', 'edit'=>'pencil', 'filter'=>'filter', 'split'=>'code-branch',
 		    	'object_list'=>'list-alt', 'object_calendar'=>'calendar-alt', 'object_calendarweek'=>'calendar-week', 'object_calendarmonth'=>'calendar-alt', 'object_calendarday'=>'calendar-day', 'object_calendarperuser'=>'table',
@@ -3190,10 +3192,6 @@ function img_picto($titlealt, $picto, $moreatt = '', $pictoisfullpath = false, $
 				$fakey = 'fa-'.$arrayconvpictotofa[$pictowithouttext];
 			}
 			elseif ($pictowithouttext == 'stats') {
-				$fakey = 'fa-'.$arrayconvpictotofa[$pictowithouttext];
-				$facolor = '#444';
-			}
-			elseif ($pictowithouttext == 'delete') {
 				$fakey = 'fa-'.$arrayconvpictotofa[$pictowithouttext];
 				$facolor = '#444';
 			}
@@ -3238,17 +3236,9 @@ function img_picto($titlealt, $picto, $moreatt = '', $pictoisfullpath = false, $
 				$fakey = 'fa-sign-out-alt';
 			    $marginleftonlyshort = 0;
 			}
-			elseif ($pictowithouttext == 'unlink') {
-				$fakey = 'fa-unlink';
-				$facolor = '#555';
-			}
 			elseif ($pictowithouttext == 'playdisabled') {
 				$fakey = 'fa-play';
 				$facolor = '#ccc';
-			}
-			elseif ($pictowithouttext == 'play') {
-				$fakey = 'fa-play';
-				$facolor = '#444';
 			}
 			elseif ($pictowithouttext == 'jabber') {
 				$fakey = 'fa-comment-o';
@@ -3261,12 +3251,10 @@ function img_picto($titlealt, $picto, $moreatt = '', $pictoisfullpath = false, $
 			elseif (!empty($arrayconvpictotofa[$pictowithouttext]))
 			{
 				$fakey = 'fa-'.$arrayconvpictotofa[$pictowithouttext];
-				//$facolor = '#444';
 				$marginleftonlyshort = 0;
 			}
 			else {
 				$fakey = 'fa-'.$pictowithouttext;
-				//$facolor = '#444';
 				$marginleftonlyshort = 0;
 			}
 
@@ -3538,7 +3526,6 @@ function img_delete($titlealt = 'default', $other = 'class="pictodelete"')
 	if ($titlealt == 'default') $titlealt = $langs->trans('Delete');
 
 	return img_picto($titlealt, 'delete.png', $other);
-	//return '<span class="fa fa-trash fa-2x fa-fw" style="font-size: 1.7em;" title="'.$titlealt.'"></span>';
 }
 
 /**

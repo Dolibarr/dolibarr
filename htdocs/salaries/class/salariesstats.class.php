@@ -126,6 +126,7 @@ class SalariesStats extends Stats
 
         $res=$this->_getAmountByMonth($year, $sql, $format);
         //var_dump($res);print '<br>';
+
         return $res;
     }
 

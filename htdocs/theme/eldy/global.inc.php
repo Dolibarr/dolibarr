@@ -175,6 +175,14 @@ input, select {
 	margin-bottom:1px;
 	margin-top:1px;
 }
+input.button {
+	background: var(--butactionbg);
+    border-collapse: collapse;
+    border: none;
+}
+input.button:focus {
+	border-bottom: 0;
+}
 input.button.massactionconfirmed {
     margin: 4px;
 }

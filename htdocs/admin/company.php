@@ -451,27 +451,33 @@ print '</td></tr>'."\n";
 
 // Phone
 print '<tr class="oddeven"><td><label for="phone">'.$langs->trans("Phone").'</label></td><td>';
+print img_picto('', 'object_phoning', '', false, 0, 0, '', 'paddingright');
 print '<input name="tel" id="phone" value="'.dol_escape_htmltag($conf->global->MAIN_INFO_SOCIETE_TEL).'"></td></tr>';
 print '</td></tr>'."\n";
 
 // Fax
 print '<tr class="oddeven"><td><label for="fax">'.$langs->trans("Fax").'</label></td><td>';
+print img_picto('', 'object_phoning_fax', '', false, 0, 0, '', 'paddingright');
 print '<input name="fax" id="fax" value="'.dol_escape_htmltag($conf->global->MAIN_INFO_SOCIETE_FAX).'"></td></tr>';
 print '</td></tr>'."\n";
 
 // Email
 print '<tr class="oddeven"><td><label for="email">'.$langs->trans("EMail").'</label></td><td>';
+print img_picto('', 'object_email', '', false, 0, 0, '', 'paddingright');
 print '<input name="mail" id="email" class="minwidth200" value="'.dol_escape_htmltag($conf->global->MAIN_INFO_SOCIETE_MAIL).'"></td></tr>';
 print '</td></tr>'."\n";
 
 // Web
 print '<tr class="oddeven"><td><label for="web">'.$langs->trans("Web").'</label></td><td>';
+print img_picto('', 'globe', '', false, 0, 0, '', 'paddingright');
 print '<input name="web" id="web" class="minwidth300" value="'.dol_escape_htmltag($conf->global->MAIN_INFO_SOCIETE_WEB).'"></td></tr>';
 print '</td></tr>'."\n";
 
 // Barcode
 if (!empty($conf->barcode->enabled)) {
-	print '<tr class="oddeven"><td><label for="barcode">'.$langs->trans("Gencod").'</label></td><td>';
+	print '<tr class="oddeven"><td>';
+	print '<label for="barcode">'.$langs->trans("Gencod").'</label></td><td>';
+	print '<span class="fa paddingright fa-barcode"></span>';
 	print '<input name="barcode" id="barcode" class="minwidth150" value="'.dol_escape_htmltag($conf->global->MAIN_INFO_SOCIETE_GENCOD).'"></td></tr>';
 	print '</td></tr>';
 }
@@ -480,15 +486,16 @@ if (!empty($conf->barcode->enabled)) {
 print '<tr class="oddeven"><td><label for="logo">'.$form->textwithpicto($langs->trans("Logo"), 'png, jpg').'</label></td><td>';
 print '<div class="centpertent nobordernopadding valignmiddle "><div class="inline-block marginrightonly">';
 print '<input type="file" class="flat minwidth200" name="logo" id="logo" accept="image/*">';
-print '</div><div class="inline-block valignmiddle marginrightonly">';
+print '</div>';
 if (!empty($mysoc->logo_mini)) {
-	print '<a class="reposition" href="'.$_SERVER["PHP_SELF"].'?action=removelogo">'.img_delete($langs->trans("Delete")).'</a>';
 	if (file_exists($conf->mycompany->dir_output.'/logos/thumbs/'.$mysoc->logo_mini)) {
-		print '</div><div class="inline-block valignmiddle">';
+		print '<div class="inline-block valignmiddle">';
 		print '<img src="'.DOL_URL_ROOT.'/viewimage.php?modulepart=mycompany&amp;file='.urlencode('logos/thumbs/'.$mysoc->logo_mini).'">';
+		print '</div>';
 	}
+	print '<div class="inline-block valignmiddle marginrightonly"><a class="reposition" href="'.$_SERVER["PHP_SELF"].'?action=removelogo">'.img_delete($langs->trans("Delete")).'</a></div>';
 } else {
-	print '<img height="30" src="'.DOL_URL_ROOT.'/public/theme/common/nophoto.png">';
+	print '<img height="60" src="'.DOL_URL_ROOT.'/public/theme/common/nophoto.png">';
 }
 print '</div>';
 print '</td></tr>';
@@ -497,15 +504,16 @@ print '</td></tr>';
 print '<tr class="oddeven"><td><label for="logo_squarred">'.$form->textwithpicto($langs->trans("LogoSquarred"), 'png, jpg').'</label></td><td>';
 print '<div class="centpertent nobordernopadding valignmiddle"><div class="inline-block marginrightonly">';
 print '<input type="file" class="flat minwidth200" name="logo_squarred" id="logo_squarred" accept="image/*">';
-print '</div><div class="inline-block valignmiddle marginrightonly">';
+print '</div>';
 if (!empty($mysoc->logo_squarred_mini)) {
-	print '<a class="reposition" href="'.$_SERVER["PHP_SELF"].'?action=removelogosquarred">'.img_delete($langs->trans("Delete")).'</a>';
 	if (file_exists($conf->mycompany->dir_output.'/logos/thumbs/'.$mysoc->logo_squarred_mini)) {
-		print '</div><div class="inline-block valignmiddle marginrightonly">';
+		print '<div class="inline-block valignmiddle marginrightonly">';
 		print '<img src="'.DOL_URL_ROOT.'/viewimage.php?modulepart=mycompany&amp;file='.urlencode('logos/thumbs/'.$mysoc->logo_squarred_mini).'">';
+		print '</div>';
 	}
+	print '<div class="inline-block valignmiddle marginrightonly"><a class="reposition" href="'.$_SERVER["PHP_SELF"].'?action=removelogosquarred">'.img_delete($langs->trans("Delete")).'</a></div>';
 } else {
-	print '<img height="30" src="'.DOL_URL_ROOT.'/public/theme/common/nophoto.png">';
+	print '<img height="60" src="'.DOL_URL_ROOT.'/public/theme/common/nophoto.png">';
 }
 print '</div>';
 print '</td></tr>';
@@ -524,35 +532,15 @@ print '<tr class="liste_titre">';
 print '<td class="titlefield">'.$langs->trans("SocialNetworksInformation").'</td><td>'.$langs->trans("Value").'</td>';
 print "</tr>\n";
 
-// Facebook
-print '<tr class="oddeven"><td><label for="facebookurl">'.$langs->trans("SocialNetworksFacebookURL").'</label></td><td>';
-print '<input name="facebookurl" id="facebookurl" class="minwidth300" value="'.dol_escape_htmltag($conf->global->MAIN_INFO_SOCIETE_FACEBOOK_URL).'"></td></tr>';
-print '</td></tr>'."\n";
-
-// Twitter
-print '<tr class="oddeven"><td><label for="twitterurl">'.$langs->trans("SocialNetworksTwitterURL").'</label></td><td>';
-print '<input name="twitterurl" id="twitterurl" class="minwidth300" value="'.dol_escape_htmltag($conf->global->MAIN_INFO_SOCIETE_TWITTER_URL).'"></td></tr>';
-print '</td></tr>'."\n";
-
-// LinkedIn
-print '<tr class="oddeven"><td><label for="linkedinurl">'.$langs->trans("SocialNetworksLinkedinURL").'</label></td><td>';
-print '<input name="linkedinurl" id="linkedinurl" class="minwidth300" value="'.dol_escape_htmltag($conf->global->MAIN_INFO_SOCIETE_LINKEDIN_URL).'"></td></tr>';
-print '</td></tr>'."\n";
-
-// Instagram
-print '<tr class="oddeven"><td><label for="instagramurl">'.$langs->trans("SocialNetworksInstagramURL").'</label></td><td>';
-print '<input name="instagramurl" id="instagramurl" class="minwidth300" value="'.dol_escape_htmltag($conf->global->MAIN_INFO_SOCIETE_INSTAGRAM_URL).'"></td></tr>';
-print '</td></tr>'."\n";
-
-// Youtube
-print '<tr class="oddeven"><td><label for="youtubeurl">'.$langs->trans("SocialNetworksYoutubeURL").'</label></td><td>';
-print '<input name="youtubeurl" id="youtubeurl" class="minwidth300" value="'.dol_escape_htmltag($conf->global->MAIN_INFO_SOCIETE_YOUTUBE_URL).'"></td></tr>';
-print '</td></tr>'."\n";
-
-// Github
-print '<tr class="oddeven"><td><label for="githuburl">'.$langs->trans("SocialNetworksGithubURL").'</label></td><td>';
-print '<input name="githuburl" id="githuburl" class="minwidth300" value="'.dol_escape_htmltag($conf->global->MAIN_INFO_SOCIETE_GITHUB_URL).'"></td></tr>';
-print '</td></tr>'."\n";
+$listofnetworks = array('facebook'=>'facebook', 'twitter'=>'twitter', 'linkedin'=>'linkedin', 'instagram'=>'instagram', 'youtube'=>'youtube', 'github'=>'github');
+foreach($listofnetworks as $networkkey => $networkicon) {
+	print '<tr class="oddeven"><td>';
+	print '<label for="'.$networkkey.'url">'.$langs->trans("SocialNetworks".ucfirst($networkkey)."URL").'</label></td><td>';
+	$networkconst = 'MAIN_INFO_SOCIETE_'.strtoupper($networkkey).'_URL';
+	print '<span class="fa paddingright fa-'.($networkicon ? $networkicon : 'link').'"></span>';
+	print '<input name="'.$networkkey.'url" id="'.$networkkey.'url" class="minwidth300" value="'.dol_escape_htmltag($conf->global->$networkconst).'"></td></tr>';
+	print '</td></tr>'."\n";
+}
 
 print "</table>";
 

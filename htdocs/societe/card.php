@@ -1345,17 +1345,17 @@ else
         }
 
         // Phone / Fax
-        print '<tr><td>'.img_picto('', 'object_phoning').' '.$form->editfieldkey('Phone', 'phone', '', $object, 0).'</td>';
-        print '<td><input type="text" name="phone" id="phone" class="maxwidth200" value="'.(GETPOSTISSET('phone') ?GETPOST('phone', 'alpha') : $object->phone).'"></td>';
+        print '<tr><td>'.$form->editfieldkey('Phone', 'phone', '', $object, 0).'</td>';
+        print '<td>'.img_picto('', 'object_phoning').' <input type="text" name="phone" id="phone" class="maxwidth200" value="'.(GETPOSTISSET('phone') ?GETPOST('phone', 'alpha') : $object->phone).'"></td>';
         if ($conf->browser->layout == 'phone') print '</tr><tr>';
-        print '<td>'.img_picto('', 'object_phoning_fax').' '.$form->editfieldkey('Fax', 'fax', '', $object, 0).'</td>';
-        print '<td><input type="text" name="fax" id="fax" class="maxwidth200" value="'.(GETPOSTISSET('fax') ?GETPOST('fax', 'alpha') : $object->fax).'"></td></tr>';
+        print '<td>'.$form->editfieldkey('Fax', 'fax', '', $object, 0).'</td>';
+        print '<td>'.img_picto('', 'object_phoning_fax').' <input type="text" name="fax" id="fax" class="maxwidth200" value="'.(GETPOSTISSET('fax') ?GETPOST('fax', 'alpha') : $object->fax).'"></td></tr>';
 
         // Email / Web
-        print '<tr><td>'.img_picto('', 'object_email').' '.$form->editfieldkey('EMail', 'email', '', $object, 0, 'string', '', $conf->global->SOCIETE_EMAIL_MANDATORY).'</td>';
-	    print '<td colspan="3"><input type="text" name="email" id="email" value="'.$object->email.'"></td></tr>';
-        print '<tr><td>'.img_picto('', 'globe').' '.$form->editfieldkey('Web', 'url', '', $object, 0).'</td>';
-	    print '<td colspan="3"><input type="text" name="url" id="url" value="'.$object->url.'"></td></tr>';
+        print '<tr><td>'.$form->editfieldkey('EMail', 'email', '', $object, 0, 'string', '', $conf->global->SOCIETE_EMAIL_MANDATORY).'</td>';
+	    print '<td colspan="3">'.img_picto('', 'object_email').' <input type="text" name="email" id="email" value="'.$object->email.'"></td></tr>';
+        print '<tr><td>'.$form->editfieldkey('Web', 'url', '', $object, 0).'</td>';
+	    print '<td colspan="3">'.img_picto('', 'globe').' <input type="text" name="url" id="url" value="'.$object->url.'"></td></tr>';
 
         if (!empty($conf->socialnetworks->enabled)) {
             foreach ($socialnetworks as $key => $value) {
