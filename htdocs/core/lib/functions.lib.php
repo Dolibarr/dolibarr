@@ -66,9 +66,9 @@ function getDoliDBInstance($type, $host, $user, $pass, $name, $port)
  * 	@param	string	$element		Current element
  *									'societe', 'socpeople', 'actioncomm', 'agenda', 'resource',
  *									'product', 'productprice', 'stock', 'bom', 'mo',
- *									'propal', 'supplier_proposal', 'invoice', 'facture_fourn', 'payment_various',
+ *									'propal', 'supplier_proposal', 'invoice', 'supplier_invoice', 'payment_various',
  *									'categorie', 'bank_account', 'bank_account', 'adherent', 'user',
- *									'commande', 'commande_fournisseur', 'expedition', 'intervention', 'survey',
+ *									'commande', 'supplier_order', 'expedition', 'intervention', 'survey',
  *									'contract', 'tax', 'expensereport', 'holiday', 'multicurrency', 'project',
  *									'email_template', 'event', 'donation'
  *									'c_paiement', 'c_payment_term', ...
@@ -3127,11 +3127,11 @@ function img_picto($titlealt, $picto, $moreatt = '', $pictoisfullpath = false, $
 	} else {
 		$pictowithouttext = preg_replace('/(\.png|\.gif|\.svg)$/', '', $picto);
 
-		//if (in_array($picto, array('switch_off', 'switch_on', 'off', 'on')))
         if (empty($srconly) && in_array($pictowithouttext, array(
         		'1downarrow', '1uparrow', '1leftarrow', '1rightarrow', '1uparrow_selected', '1downarrow_selected', '1leftarrow_selected', '1rightarrow_selected',
         		'address', 'barcode', 'bank', 'bookmark', 'building', 'cash-register', 'check', 'close_title', 'cubes', 'delete', 'dolly', 'edit', 'ellipsis-h',
-        		'filter', 'file-code', 'grip', 'grip_title', 'list', 'listlight', 'note',
+        		'filter', 'file-code', 'grip', 'grip_title', 'language', 'list', 'listlight', 'note',
+        		'object_phoning', 'object_phoning_fax', 'object_email',
         		'object_bookmark', 'object_list', 'object_calendar', 'object_calendarweek', 'object_calendarmonth', 'object_calendarday', 'object_calendarperuser',
         		'off', 'on', 'play', 'playdisabled', 'printer', 'resize', 'stats',
 				'note', 'setup', 'sign-out', 'split', 'switch_off', 'switch_on', 'tools', 'unlink', 'uparrow', 'user', 'wrench', 'globe',
@@ -3154,7 +3154,8 @@ function img_picto($titlealt, $picto, $moreatt = '', $pictoisfullpath = false, $
 
 		    $arrayconvpictotofa = array(
 		    	'address'=> 'address-book', 'setup'=>'cog', 'companies'=>'building', 'products'=>'cube', 'commercial'=>'suitcase', 'invoicing'=>'coins', 'accountancy'=>'money-check-alt',
-		    	'hrm'=>'umbrella-beach', 'members'=>'users', 'ticket'=>'ticket-alt', 'generic'=>'folder-open',
+		    	'hrm'=>'umbrella-beach', 'members'=>'users', 'ticket'=>'ticket-alt', 'generic'=>'folder-open', 'globe'=>'external-link-alt',
+		    	'object_phoning'=>'phone', 'object_phoning_fax'=>'fax', 'object_email'=>'at',
 		    	'switch_off'=>'toggle-off', 'switch_on'=>'toggle-on', 'check'=>'check', 'object_bookmark'=>'star', 'bookmark'=>'star', 'stats' => 'chart-bar',
 		    	'bank'=>'university', 'close_title'=>'window-close', 'delete'=>'trash', 'edit'=>'pencil', 'filter'=>'filter', 'split'=>'code-branch',
 		    	'object_list'=>'list-alt', 'object_calendar'=>'calendar-alt', 'object_calendarweek'=>'calendar-week', 'object_calendarmonth'=>'calendar-alt', 'object_calendarday'=>'calendar-day', 'object_calendarperuser'=>'table',
@@ -3196,7 +3197,6 @@ function img_picto($titlealt, $picto, $moreatt = '', $pictoisfullpath = false, $
 			}
 			elseif ($pictowithouttext == 'delete') {
 				$fakey = 'fa-'.$arrayconvpictotofa[$pictowithouttext];
-				$facolor = '#444';
 			}
 			elseif ($pictowithouttext == 'edit') {
 				$facolor = '#444';
@@ -3239,17 +3239,9 @@ function img_picto($titlealt, $picto, $moreatt = '', $pictoisfullpath = false, $
 				$fakey = 'fa-sign-out-alt';
 			    $marginleftonlyshort = 0;
 			}
-			elseif ($pictowithouttext == 'unlink') {
-				$fakey = 'fa-unlink';
-				$facolor = '#555';
-			}
 			elseif ($pictowithouttext == 'playdisabled') {
 				$fakey = 'fa-play';
 				$facolor = '#ccc';
-			}
-			elseif ($pictowithouttext == 'play') {
-				$fakey = 'fa-play';
-				$facolor = '#444';
 			}
 			elseif ($pictowithouttext == 'jabber') {
 				$fakey = 'fa-comment-o';
@@ -3262,12 +3254,10 @@ function img_picto($titlealt, $picto, $moreatt = '', $pictoisfullpath = false, $
 			elseif (!empty($arrayconvpictotofa[$pictowithouttext]))
 			{
 				$fakey = 'fa-'.$arrayconvpictotofa[$pictowithouttext];
-				//$facolor = '#444';
 				$marginleftonlyshort = 0;
 			}
 			else {
 				$fakey = 'fa-'.$pictowithouttext;
-				//$facolor = '#444';
 				$marginleftonlyshort = 0;
 			}
 
@@ -3305,6 +3295,7 @@ function img_picto($titlealt, $picto, $moreatt = '', $pictoisfullpath = false, $
 		}
 
 		// If we ask an image into $url/$mymodule/img (instead of default path)
+		$regs = array();
 		if (preg_match('/^([^@]+)@([^@]+)$/i', $picto, $regs)) {
 			$picto = $regs[1];
 			$path = $regs[2]; // $path is $mymodule
@@ -3538,7 +3529,6 @@ function img_delete($titlealt = 'default', $other = 'class="pictodelete"')
 	if ($titlealt == 'default') $titlealt = $langs->trans('Delete');
 
 	return img_picto($titlealt, 'delete.png', $other);
-	//return '<span class="fa fa-trash fa-2x fa-fw" style="font-size: 1.7em;" title="'.$titlealt.'"></span>';
 }
 
 /**
@@ -3763,10 +3753,13 @@ function img_allow($allow, $titlealt = 'default')
  *	Return image of a credit card according to its brand name
  *
  *	@param	string	$brand		Brand name of credit card
+ *  @param	string	$morecss	More CSS
  *	@return string     			Return img tag
  */
-function img_credit_card($brand)
+function img_credit_card($brand, $morecss = null)
 {
+	if (is_null($morecss)) $morecss = 'fa-2x';
+
 	if ($brand == 'visa' || $brand == 'Visa') {$brand = 'cc-visa'; }
 	elseif ($brand == 'mastercard' || $brand == 'MasterCard') {$brand = 'cc-mastercard'; }
 	elseif ($brand == 'amex' || $brand == 'American Express') {$brand = 'cc-amex'; }
@@ -3775,7 +3768,7 @@ function img_credit_card($brand)
 	elseif ($brand == 'diners' || $brand == 'Diners club') {$brand = 'cc-diners-club'; }
 	elseif (!in_array($brand, array('cc-visa', 'cc-mastercard', 'cc-amex', 'cc-discover', 'cc-jcb', 'cc-diners-club'))) {$brand = 'credit-card'; }
 
-	return '<span class="fa fa-'.$brand.' fa-2x fa-fw"></span>';
+	return '<span class="fa fa-'.$brand.' fa-fw'.($morecss ? ' '.$morecss : '').'"></span>';
 }
 
 /**
@@ -4656,6 +4649,7 @@ function price($amount, $form = 0, $outlangs = '', $trunc = 1, $rounding = -1, $
  * 									'MU'=Round to Max unit price (MAIN_MAX_DECIMALS_UNIT)
  *									'MT'=Round to Max for totals with Tax (MAIN_MAX_DECIMALS_TOT)
  *									'MS'=Round to Max for stock quantity (MAIN_MAX_DECIMALS_STOCK)
+ *                                  'CR'=Currency rate
  *									Numeric = Nb of digits for rounding
  * 	@param	int		$alreadysqlnb	Put 1 if you know that content is already universal format number
  *	@return	string					Amount with universal numeric format (Example: '99.99999').
@@ -4709,6 +4703,7 @@ function price2num($amount, $rounding = '', $alreadysqlnb = 0)
 		if ($rounding == 'MU')     $nbofdectoround = $conf->global->MAIN_MAX_DECIMALS_UNIT;
 		elseif ($rounding == 'MT') $nbofdectoround = $conf->global->MAIN_MAX_DECIMALS_TOT;
 		elseif ($rounding == 'MS') $nbofdectoround = empty($conf->global->MAIN_MAX_DECIMALS_STOCK) ? 5 : $conf->global->MAIN_MAX_DECIMALS_STOCK;
+		elseif ($rounding == 'CR') $nbofdectoround = 8;
 		elseif (is_numeric($rounding))  $nbofdectoround = $rounding;
 		//print "RR".$amount.' - '.$nbofdectoround.'<br>';
 		if (dol_strlen($nbofdectoround)) $amount = round($amount, $nbofdectoround); // $nbofdectoround can be 0.
@@ -8425,16 +8420,16 @@ function dolGetStatus($statusLabel = '', $statusLabelShort = '', $html = '', $st
 
         // For backward compatibility. Image's filename are still in French, so we use this array to convert
         $statusImg = array(
-        	'status0' => 'statut0'
-        	,'status1' => 'statut1'
-        	,'status2' => 'statut2'
-        	,'status3' => 'statut3'
-        	,'status4' => 'statut4'
-        	,'status5' => 'statut5'
-        	,'status6' => 'statut6'
-        	,'status7' => 'statut7'
-        	,'status8' => 'statut8'
-        	,'status9' => 'statut9'
+        	'status0' => 'statut0',
+        	'status1' => 'statut1',
+        	'status2' => 'statut2',
+        	'status3' => 'statut3',
+        	'status4' => 'statut4',
+        	'status5' => 'statut5',
+        	'status6' => 'statut6',
+        	'status7' => 'statut7',
+        	'status8' => 'statut8',
+        	'status9' => 'statut9'
         );
 
         if (!empty($statusImg[$statusType])) {

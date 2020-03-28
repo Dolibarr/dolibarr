@@ -26,7 +26,7 @@ create table llx_categorie
 	fk_parent		integer DEFAULT 0 NOT NULL,
 	label 		    varchar(180) NOT NULL,				-- category ref/name
 	ref_ext			varchar(255),						-- reference into an external system (not used by dolibarr)
-	type	        tinyint DEFAULT 1 NOT NULL,			-- category type (product, supplier, customer, member)
+	type	        integer DEFAULT 1 NOT NULL,			-- category type (product, supplier, customer, member)
 	description 	text,								-- description of the category
     color           varchar(8),                         -- color
 	fk_soc          integer DEFAULT NULL,				-- not used by default. Used when option CATEGORY_ASSIGNED_TO_A_CUSTOMER is set.

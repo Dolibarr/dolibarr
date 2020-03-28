@@ -524,8 +524,9 @@ function hideMessage(fieldId,message) {
  * @param	int		entity		Entity
  * @param	int		strict		Strict
  * @param   int     forcereload Force reload
+ * @param   int     userid      User id
  */
-function setConstant(url, code, input, entity, strict, forcereload) {
+function setConstant(url, code, input, entity, strict, forcereload, userid) {
 	$.get( url, {
 		action: "set",
 		name: code,
@@ -593,8 +594,9 @@ function setConstant(url, code, input, entity, strict, forcereload) {
  * @param	int		entity		Entity
  * @param	int		strict		Strict
  * @param   int     forcereload Force reload
+ * @param   int     userid      User id
  */
-function delConstant(url, code, input, entity, strict, forcereload) {
+function delConstant(url, code, input, entity, strict, forcereload, userid) {
 	$.get( url, {
 		action: "del",
 		name: code,
@@ -661,8 +663,9 @@ function delConstant(url, code, input, entity, strict, forcereload) {
  * @param	int		yesButton	yesButton
  * @param	int		noButton	noButton
  * @param	int		strict		Strict
+ * @param   int     userid      User id
  */
-function confirmConstantAction(action, url, code, input, box, entity, yesButton, noButton, strict) {
+function confirmConstantAction(action, url, code, input, box, entity, yesButton, noButton, strict, userid) {
 	var boxConfirm = box;
 	$("#confirm_" + code)
 			.attr("title", boxConfirm.title)
@@ -678,9 +681,9 @@ function confirmConstantAction(action, url, code, input, box, entity, yesButton,
 						text : yesButton,
 						click : function() {
 							if (action == "set") {
-								setConstant(url, code, input, entity, strict);
+								setConstant(url, code, input, entity, strict, 0, userid);
 							} else if (action == "del") {
-								delConstant(url, code, input, entity, strict);
+								delConstant(url, code, input, entity, strict, 0, userid);
 							}
 							// Close dialog
 							$(this).dialog("close");

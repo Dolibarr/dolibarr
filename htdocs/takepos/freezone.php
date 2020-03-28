@@ -40,13 +40,13 @@ global $mysoc;
 
 $langs->loadLangs(array("bills", "cashdesk"));
 
-$place = (GETPOST('place', 'int') > 0 ? GETPOST('place', 'int') : 0); // $place is id of table for Ba or Restaurant
+$place = (GETPOST('place', 'aZ09') ? GETPOST('place', 'aZ09') : '0'); // $place is id of table for Bar or Restaurant
 
 $idline = GETPOST('idline', 'int');
 $action = GETPOST('action', 'alpha');
 
 if (empty($user->rights->takepos->run)) {
-	access_forbidden();
+	accessforbidden();
 }
 
 // get invoice
@@ -83,15 +83,17 @@ top_htmlhead($head, '', 0, 0, $arrayofjs, $arrayofcss);
 	 * @param   {string}    rate        VAT rate
 	 */
 	function ApplyVATRate(id, rate) {
+		console.log("Save selected VAT Rate into vatRate variable with value "+rate);
 		vatRate = rate;
 		jQuery('button.vat_rate').removeClass('selected');
-		jQuery('#vat_rate_' + id).addClass('selected');
+		jQuery('#vat_rate_'+id).addClass('selected');
 	}
 
 	/**
 	 * Save (validate)
 	 */
 	function Save() {
+		console.log("We click so we call page invoice.php with place=<?php echo $place; ?> tva_tx="+vatRate);
 		$.get( "invoice.php", { action: "<?php echo $action; ?>", place: "<?php echo $place; ?>", desc:$('#desc').val(), number:$('#number').val(), tva_tx: vatRate} );
 		parent.$.colorbox.close();
 	}

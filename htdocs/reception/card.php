@@ -1175,8 +1175,9 @@ if ($action == 'create')
 					$extrafields->fetch_name_optionals_label($srcLine->table_element);
 					$extrafields->fetch_name_optionals_label($line->table_element);
 
-					$srcLine->fetch_optionals($line->id); // fetch extrafields also available in orderline
-					$line->fetch_optionals($object->id);
+					$srcLine->id = $line->id;
+					$srcLine->fetch_optionals(); // fetch extrafields also available in orderline
+					$line->fetch_optionals();
 
 					$line->array_options = array_merge($line->array_options, $srcLine->array_options);
 
@@ -1231,7 +1232,7 @@ elseif ($id || $ref)
 		$soc = new Societe($db);
 		$soc->fetch($object->socid);
 
-		$res = $object->fetch_optionals($object->id);
+		$res = $object->fetch_optionals();
 
 		$head = reception_prepare_head($object);
 		dol_fiche_head($head, 'reception', $langs->trans("Reception"), -1, 'reception');
@@ -1610,7 +1611,7 @@ elseif ($id || $ref)
 		if ($action == 'editline')
 		{
 			print '<form name="updateline" id="updateline" action="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;lineid='.$line_id.'" method="POST">
-			<input type="hidden" name="token" value="' . $_SESSION ['newtoken'].'">
+			<input type="hidden" name="token" value="' . newToken().'">
 			<input type="hidden" name="action" value="updateline">
 			<input type="hidden" name="mode" value="">
 			<input type="hidden" name="id" value="' . $object->id.'">';
@@ -1986,7 +1987,8 @@ elseif ($id || $ref)
 			{
 				$colspan = empty($conf->productbatch->enabled) ? 8 : 9;
 				$line = new CommandeFournisseurDispatch($db);
-				$line->fetch_optionals($lines[$i]->id);
+				$line->id = $lines[$i]->id;
+				$line->fetch_optionals();
 
 				if ($action == 'editline' && $lines[$i]->id == $line_id)
 				{

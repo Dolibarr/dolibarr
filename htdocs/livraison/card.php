@@ -515,9 +515,8 @@ else	// View
 			// Other attributes
 			if ($action == 'create_delivery') {
 				// copy from expedition
-				$expeditionExtrafields = new Extrafields($db);
-				$expeditionExtrafieldLabels = $expeditionExtrafields->fetch_name_optionals_label($expedition->table_element);
-				if ($expedition->fetch_optionals($object->origin_id) > 0) {
+				$extrafields->fetch_name_optionals_label($expedition->table_element);
+				if ($expedition->fetch_optionals() > 0) {
 					$object->array_options = array_merge($object->array_options, $expedition->array_options);
 				}
 			}
@@ -625,12 +624,14 @@ else	// View
 						$colspan = 2;
 						$mode = ($object->statut == 0) ? 'edit' : 'view';
 
-						$object->lines[$i]->fetch_optionals($object->lines[$i]->id);
+						$object->lines[$i]->fetch_optionals();
+
 						if ($action == 'create_delivery') {
 							$srcLine = new ExpeditionLigne($db);
 
 							$extrafields->fetch_name_optionals_label($srcLine->table_element);
-							$srcLine->fetch_optionals($expedition->lines[$i]->id);
+							$srcLine->id = $expedition->lines[$i]->id;
+							$srcLine->fetch_optionals();
 
 							$object->lines[$i]->array_options = array_merge($object->lines[$i]->array_options, $srcLine->array_options);
 						}

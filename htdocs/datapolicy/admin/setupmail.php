@@ -34,13 +34,13 @@ $backtopage = GETPOST('backtopage', 'alpha');
 $formadmin = new FormAdmin($db);
 
 if (GETPOST('l')) {
-    $l = GETPOST('l');
+	$l = GETPOST('l');
 } else {
-    $l = $langs->defaultlang;
+	$l = $langs->defaultlang;
 }
 // Access control
 if (!$user->admin)
-    accessforbidden();
+	accessforbidden();
 
 /*
  * Actions
@@ -49,28 +49,28 @@ if (!$user->admin)
 include DOL_DOCUMENT_ROOT . '/core/actions_setmoduleoptions.inc.php';
 
 if ($action == 'setvalue' && $user->admin) {
-    $db->begin();
-    $sub = "DATAPOLICIESSUBJECT_" . $l;
-    $result = dolibarr_set_const($db, $sub, GETPOST($sub), 'chaine', 0, '', $conf->entity);
-    $cont = "DATAPOLICIESCONTENT_" . $l;
-    $result = dolibarr_set_const($db, $cont, GETPOST($cont), 'chaine', 0, '', $conf->entity);
-    $cont = "TXTLINKDATAPOLICIESACCEPT_" . $l;
-    $result = dolibarr_set_const($db, $cont, GETPOST($cont), 'chaine', 0, '', $conf->entity);
-    $cont = "TXTLINKDATAPOLICIESREFUSE_" . $l;
-    $result = dolibarr_set_const($db, $cont, GETPOST($cont), 'chaine', 0, '', $conf->entity);
-    $sub = "DATAPOLICIESACCEPT_" . $l;
-    $result = dolibarr_set_const($db, $sub, GETPOST($sub), 'chaine', 0, '', $conf->entity);
-    $sub = "DATAPOLICIESREFUSE_" . $l;
-    $result = dolibarr_set_const($db, $sub, GETPOST($sub), 'chaine', 0, '', $conf->entity);
-    if (!$result > 0)
-        $error++;
-    if (!$error) {
-        $db->commit();
-        setEventMessage($langs->trans("SetupSaved"));
-    } else {
-        $db->rollback();
-        dol_print_error($db);
-    }
+	$db->begin();
+	$sub = "DATAPOLICIESSUBJECT_" . $l;
+	$result = dolibarr_set_const($db, $sub, GETPOST($sub), 'chaine', 0, '', $conf->entity);
+	$cont = "DATAPOLICIESCONTENT_" . $l;
+	$result = dolibarr_set_const($db, $cont, GETPOST($cont), 'chaine', 0, '', $conf->entity);
+	$cont = "TXTLINKDATAPOLICIESACCEPT_" . $l;
+	$result = dolibarr_set_const($db, $cont, GETPOST($cont), 'chaine', 0, '', $conf->entity);
+	$cont = "TXTLINKDATAPOLICIESREFUSE_" . $l;
+	$result = dolibarr_set_const($db, $cont, GETPOST($cont), 'chaine', 0, '', $conf->entity);
+	$sub = "DATAPOLICIESACCEPT_" . $l;
+	$result = dolibarr_set_const($db, $sub, GETPOST($sub), 'chaine', 0, '', $conf->entity);
+	$sub = "DATAPOLICIESREFUSE_" . $l;
+	$result = dolibarr_set_const($db, $sub, GETPOST($sub), 'chaine', 0, '', $conf->entity);
+	if (!$result > 0)
+		$error++;
+	if (!$error) {
+		$db->commit();
+		setEventMessage($langs->trans("SetupSaved"));
+	} else {
+		$db->rollback();
+		dol_print_error($db);
+	}
 }
 
 
@@ -105,9 +105,9 @@ print '<input type="hidden" name="token" value="' . $_SESSION['newtoken'] . '">'
 print '<input type="hidden" name="action" value="setvalue">';
 print '<table>';
 if ($conf->global->MAIN_MULTILANGS) {
-    print '<tr><td>' . $form->editfieldkey('DefaultLang', 'default_lang', '', null, 0) . '</td><td colspan="3" class="maxwidthonsmartphone">' . "\n";
-    print $formadmin->select_language((GETPOST('l') ? GETPOST('l') : $langs->defaultlang), 'default_lang', 0, 0, 1, 0, 0, 'maxwidth200onsmartphone');
-    print '</tr>';
+	print '<tr><td>' . $form->editfieldkey('DefaultLang', 'default_lang', '', null, 0) . '</td><td colspan="3" class="maxwidthonsmartphone">' . "\n";
+	print $formadmin->select_language((GETPOST('l') ? GETPOST('l') : $langs->defaultlang), 'default_lang', 0, 0, 1, 0, 0, 'maxwidth200onsmartphone');
+	print '</tr>';
 }
 $subject = 'DATAPOLICIESSUBJECT_' . $l;
 $linka = 'TXTLINKDATAPOLICIESACCEPT_' . $l;

@@ -55,30 +55,30 @@ $server->wsdl->schemaTargetNamespace=$ns;
 
 // Define WSDL Authentication object
 $server->wsdl->addComplexType(
-    'authentication',
-    'complexType',
-    'struct',
-    'all',
-    '',
-    array(
-        'dolibarrkey' => array('name'=>'dolibarrkey','type'=>'xsd:string'),
-    	'sourceapplication' => array('name'=>'sourceapplication','type'=>'xsd:string'),
-    	'login' => array('name'=>'login','type'=>'xsd:string'),
-        'password' => array('name'=>'password','type'=>'xsd:string'),
-        'entity' => array('name'=>'entity','type'=>'xsd:string'),
-    )
+	'authentication',
+	'complexType',
+	'struct',
+	'all',
+	'',
+	array(
+		'dolibarrkey' => array('name'=>'dolibarrkey','type'=>'xsd:string'),
+		'sourceapplication' => array('name'=>'sourceapplication','type'=>'xsd:string'),
+		'login' => array('name'=>'login','type'=>'xsd:string'),
+		'password' => array('name'=>'password','type'=>'xsd:string'),
+		'entity' => array('name'=>'entity','type'=>'xsd:string'),
+	)
 );
 // Define WSDL Return object
 $server->wsdl->addComplexType(
-    'result',
-    'complexType',
-    'struct',
-    'all',
-    '',
-    array(
-        'result_code' => array('name'=>'result_code','type'=>'xsd:string'),
-        'result_label' => array('name'=>'result_label','type'=>'xsd:string'),
-    )
+	'result',
+	'complexType',
+	'struct',
+	'all',
+	'',
+	array(
+		'result_code' => array('name'=>'result_code','type'=>'xsd:string'),
+		'result_label' => array('name'=>'result_label','type'=>'xsd:string'),
+	)
 );
 
 // Define WSDL Return object for document
@@ -109,16 +109,16 @@ $styleuse='encoded';   // encoded/literal/literal wrapped
 
 // Register WSDL
 $server->register(
-    'getVersions',
-    // Entry values
-    array('authentication'=>'tns:authentication'),
-    // Exit values
-    array('result'=>'tns:result','dolibarr'=>'xsd:string','os'=>'xsd:string','php'=>'xsd:string','webserver'=>'xsd:string'),
-    $ns,
-    $ns.'#getVersions',
-    $styledoc,
-    $styleuse,
-    'WS to get Versions'
+	'getVersions',
+	// Entry values
+	array('authentication'=>'tns:authentication'),
+	// Exit values
+	array('result'=>'tns:result','dolibarr'=>'xsd:string','os'=>'xsd:string','php'=>'xsd:string','webserver'=>'xsd:string'),
+	$ns,
+	$ns.'#getVersions',
+	$styledoc,
+	$styleuse,
+	'WS to get Versions'
 );
 
 // Register WSDL
@@ -146,15 +146,15 @@ function getVersions($authentication)
 
 	if ($authentication['entity']) $conf->entity=$authentication['entity'];
 
-    // Init and check authentication
-    $objectresp=array();
-    $errorcode='';$errorlabel='';
-    $error=0;
-    $fuser=check_authentication($authentication, $error, $errorcode, $errorlabel);
-    // Check parameters
+	// Init and check authentication
+	$objectresp=array();
+	$errorcode='';$errorlabel='';
+	$error=0;
+	$fuser=check_authentication($authentication, $error, $errorcode, $errorlabel);
+	// Check parameters
 
 
-    if (! $error)
+	if (! $error)
 	{
 		$objectresp['result']=array('result_code'=>'OK', 'result_label'=>'');
 		$objectresp['dolibarr']=version_dolibarr();

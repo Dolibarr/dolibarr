@@ -70,27 +70,27 @@ $configfileparameters=array(
 							'?dolibarr_main_auth_ldap_admin_login',
 							'?dolibarr_main_auth_ldap_admin_pass',
 							'?dolibarr_main_auth_ldap_debug',
-                            'separator',
-                            '?dolibarr_lib_ADODB_PATH',
+							'separator',
+							'?dolibarr_lib_ADODB_PATH',
 							'?dolibarr_lib_FPDF_PATH',
-	                        '?dolibarr_lib_TCPDF_PATH',
+							'?dolibarr_lib_TCPDF_PATH',
 							'?dolibarr_lib_FPDI_PATH',
-                            '?dolibarr_lib_TCPDI_PATH',
+							'?dolibarr_lib_TCPDI_PATH',
 							'?dolibarr_lib_NUSOAP_PATH',
-                            '?dolibarr_lib_PHPEXCEL_PATH',
-                            '?dolibarr_lib_GEOIP_PATH',
+							'?dolibarr_lib_PHPEXCEL_PATH',
+							'?dolibarr_lib_GEOIP_PATH',
 							'?dolibarr_lib_ODTPHP_PATH',
-                            '?dolibarr_lib_ODTPHP_PATHTOPCLZIP',
-						    '?dolibarr_js_CKEDITOR',
-						    '?dolibarr_js_JQUERY',
-						    '?dolibarr_js_JQUERY_UI',
-						    '?dolibarr_js_JQUERY_FLOT',
+							'?dolibarr_lib_ODTPHP_PATHTOPCLZIP',
+							'?dolibarr_js_CKEDITOR',
+							'?dolibarr_js_JQUERY',
+							'?dolibarr_js_JQUERY_UI',
+							'?dolibarr_js_JQUERY_FLOT',
 							'?dolibarr_font_DOL_DEFAULT_TTF',
-                            '?dolibarr_font_DOL_DEFAULT_TTF_BOLD',
+							'?dolibarr_font_DOL_DEFAULT_TTF_BOLD',
 							'separator',
 							'?dolibarr_mailing_limit_sendbyweb',
 							'?dolibarr_mailing_limit_sendbycli',
-                            '?dolibarr_strict_mode'
+							'?dolibarr_strict_mode'
 						);
 $configfilelib=array(
 //					'separator',
@@ -121,20 +121,20 @@ $configfilelib=array(
 					'dolibarr_main_auth_ldap_admin_pass',
 					'dolibarr_main_auth_ldap_debug',
 					'separator',
-                    'dolibarr_lib_ADODB_PATH',
-                    'dolibarr_lib_TCPDF_PATH',
-                    'dolibarr_lib_FPDI_PATH',
+					'dolibarr_lib_ADODB_PATH',
+					'dolibarr_lib_TCPDF_PATH',
+					'dolibarr_lib_FPDI_PATH',
 					'dolibarr_lib_NUSOAP_PATH',
-                    'dolibarr_lib_PHPEXCEL_PATH',
-                    'dolibarr_lib_GEOIP_PATH',
+					'dolibarr_lib_PHPEXCEL_PATH',
+					'dolibarr_lib_GEOIP_PATH',
 					'dolibarr_lib_ODTPHP_PATH',
-                    'dolibarr_lib_ODTPHP_PATHTOPCLZIP',
-                    'dolibarr_js_CKEDITOR',
-                    'dolibarr_js_JQUERY',
-                    'dolibarr_js_JQUERY_UI',
-                    'dolibarr_js_JQUERY_FLOT',
+					'dolibarr_lib_ODTPHP_PATHTOPCLZIP',
+					'dolibarr_js_CKEDITOR',
+					'dolibarr_js_JQUERY',
+					'dolibarr_js_JQUERY_UI',
+					'dolibarr_js_JQUERY_FLOT',
 					'dolibarr_font_DOL_DEFAULT_TTF',
-                    'dolibarr_font_DOL_DEFAULT_TTF_BOLD',
+					'dolibarr_font_DOL_DEFAULT_TTF_BOLD',
 					'separator',
 					'Limit nb of email sent by page',
 					'Strict mode is on/off'
@@ -155,19 +155,19 @@ foreach($configfileparameters as $key)
 
 	if (empty($ignore))
 	{
-        $newkey = preg_replace('/^\?/', '', $key);
+		$newkey = preg_replace('/^\?/', '', $key);
 
-        if (preg_match('/^\?/', $key) && empty(${$newkey}))
-        {
-            $i++;
-            continue;    // We discard parametes starting with ?
-        }
+		if (preg_match('/^\?/', $key) && empty(${$newkey}))
+		{
+			$i++;
+			continue;    // We discard parametes starting with ?
+		}
 
-        if ($newkey == 'separator' && $lastkeyshown == 'separator')
-        {
-            $i++;
-            continue;
-        }
+		if ($newkey == 'separator' && $lastkeyshown == 'separator')
+		{
+			$i++;
+			continue;
+		}
 
 		print '<tr class="oddeven">';
 		if ($newkey == 'separator')
@@ -233,17 +233,17 @@ if ($resql)
 	$i = 0;
 
 	while ($i < $num)
-    {
-    	$obj = $db->fetch_object($resql);
+	{
+		$obj = $db->fetch_object($resql);
 
-    	print '<tr class="oddeven">';
-    	print '<td>'.$obj->name.'</td>'."\n";
-    	print '<td>'.$obj->value.'</td>'."\n";
-    	if (empty($conf->multicompany->enabled) || !$user->entity) print '<td>'.$obj->entity.'</td>'."\n";	// If superadmin or multicompany disabled
-    	print "</tr>\n";
+		print '<tr class="oddeven">';
+		print '<td>'.$obj->name.'</td>'."\n";
+		print '<td>'.$obj->value.'</td>'."\n";
+		if (empty($conf->multicompany->enabled) || !$user->entity) print '<td>'.$obj->entity.'</td>'."\n";	// If superadmin or multicompany disabled
+		print "</tr>\n";
 
-    	$i++;
-    }
+		$i++;
+	}
 }
 
 print '</table>';

@@ -74,11 +74,11 @@ if (is_array($hookmanager->resArray) && ! empty($hookmanager->resArray)) {
 <?php
 if (! empty($mysoc->logo_small))
 {
-    print '<img class="logopos" alt="Logo company" src="'.DOL_URL_ROOT.'/viewimage.php?modulepart=mycompany&amp;file='.urlencode('logos/thumbs/'.$mysoc->logo_small).'">';
+	print '<img class="logopos" alt="Logo company" src="'.DOL_URL_ROOT.'/viewimage.php?modulepart=mycompany&amp;file='.urlencode('logos/thumbs/'.$mysoc->logo_small).'">';
 }
 else
 {
-    print '<div class="logopos">'.$mysoc->name.'</div>';
+	print '<div class="logopos">'.$mysoc->name.'</div>';
 }
 ?>
 </div>

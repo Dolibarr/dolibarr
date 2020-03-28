@@ -47,11 +47,11 @@ function opensurvey_prepare_head(Opensurveysondage $object)
 	$head[1][2] = 'preview';
 	$h++;
 
-    // Show more tabs from modules
-    // Entries must be declared in modules descriptor with line
-    // $this->tabs = array('entity:+tabname:Title:@mymodule:/mymodule/mypage.php?id=__ID__');   to add new tab
-    // $this->tabs = array('entity:-tabname);   												to remove a tab
-    complete_head_from_modules($conf, $langs, $object, $head, $h, 'opensurveypoll');
+	// Show more tabs from modules
+	// Entries must be declared in modules descriptor with line
+	// $this->tabs = array('entity:+tabname:Title:@mymodule:/mymodule/mypage.php?id=__ID__');   to add new tab
+	// $this->tabs = array('entity:-tabname);   												to remove a tab
+	complete_head_from_modules($conf, $langs, $object, $head, $h, 'opensurveypoll');
 
 	complete_head_from_modules($conf, $langs, $object, $head, $h, 'opensurveypoll', 'remove');
 
@@ -89,15 +89,11 @@ function llxHeaderSurvey($title, $head = "", $disablejs = 0, $disablehead = 0, $
 	print '<input type="hidden" name="token" value="'.newToken().'">'."\n";
 	print "\n";
 
-
 	// Show logo (search order: logo defined by PAYMENT_LOGO_suffix, then PAYMENT_LOGO, then small company logo, large company logo, theme logo, common logo)
 	$width = 0;
 	// Define logo and logosmall
 	$logosmall = $mysoc->logo_small;
 	$logo = $mysoc->logo;
-	$paramlogo = 'ONLINE_PAYMENT_LOGO_'.$suffix;
-	if (!empty($conf->global->$paramlogo)) $logosmall = $conf->global->$paramlogo;
-	elseif (!empty($conf->global->ONLINE_PAYMENT_LOGO)) $logosmall = $conf->global->ONLINE_PAYMENT_LOGO;
 	//print '<!-- Show logo (logosmall='.$logosmall.' logo='.$logo.') -->'."\n";
 	// Define urllogo
 	$urllogo = '';

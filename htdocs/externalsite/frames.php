@@ -129,7 +129,7 @@ else
 	    <frame name=\"barre\" src=\"frametop.php?mainmenu=".$mainmenu."&leftmenu=".$leftmenu."&idmenu=".$idmenu.($theme?'&theme='.$theme:'').($codelang?'&lang='.$codelang:'')."&nobackground=1\" noresize scrolling=\"NO\" noborder>
 	  ";
 		print '<frame name="main" src="';
-	    print $conf->global->EXTERNALSITE_URL;
+		print $conf->global->EXTERNALSITE_URL;
 		print '">';
 		print "
 	    <noframes>

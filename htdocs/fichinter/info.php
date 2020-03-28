@@ -47,8 +47,8 @@ $object = new Fichinter($db);
 
 if (! $object->fetch($id, $ref) > 0)
 {
-    dol_print_error($db);
-    exit;
+	dol_print_error($db);
+	exit;
 }
 
 

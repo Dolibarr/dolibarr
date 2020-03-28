@@ -175,6 +175,14 @@ input, select {
 	margin-bottom:1px;
 	margin-top:1px;
 }
+input.button {
+	background: var(--butactionbg);
+    border-collapse: collapse;
+    border: none;
+}
+input.button:focus {
+	border-bottom: 0;
+}
 input.button.massactionconfirmed {
     margin: 4px;
 }
@@ -298,12 +306,14 @@ td.onholidaymorning, td.onholidayafternoon {
 td.onholidayallday {
 	background-color: #f4eede;
 }
+/*
 td.leftborder, td.hide0 {
 	border-left: 1px solid #ccc;
 }
 td.leftborder, td.hide6 {
 	border-right: 1px solid #ccc;
 }
+*/
 td.rightborder {
 	border-right: 1px solid #ccc;
 }
@@ -398,7 +408,8 @@ hr { border: 0; border-top: 1px solid #ccc; }
 	margin-right: 5px;
 	font-family: <?php print $fontlist ?>;
 	display: inline-block;
-	padding: 4px 14px;
+	padding: 8px 15px;
+	min-width: 90px;
 	text-align: center;
 	cursor: pointer;
 	text-decoration: none !important;
@@ -636,10 +647,10 @@ body[class*="colorblind-"] .text-success{
     color : <?php print $textDanger; ?>
 }
 
-.editfielda span.fa-pencil-alt, .editfielda span.fa-trash {
+.editfielda span.fa-pencil-alt, .editfielda span.fa-trash, .editfieldlang {
     color: #ccc !important;
 }
-.editfielda span.fa-pencil-alt:hover, .editfielda span.fa-trash:hover {
+.editfielda span.fa-pencil-alt:hover, .editfielda span.fa-trash:hover, .editfieldlang:hover {
     color: var(--colortexttitle) !important;
 }
 
@@ -2817,7 +2828,7 @@ div.tabBar div.border .table-border-row, div.tabBar div.border .table-key-border
 }
 div .tdtop {
     vertical-align: top !important;
-	/* padding-top: 8px !important; */
+	padding-top: 10px !important;
 	padding-bottom: 2px !important;
 	padding-bottom: 0px;
 }
@@ -3221,6 +3232,9 @@ td.evenodd, tr.nohoverpair td, #trlinefordates td {
 	font-weight: bold;
     border-bottom: 1pt solid black !important;
 	/* background-color: #<?php echo colorArrayToHex(colorStringToArray($colorbacklinebreak)); ?> !important; */
+}
+.trforbreak.nobold td a, .trforbreak.nobold span.secondary {
+    font-weight: normal !important;
 }
 
 table.dataTable td {
@@ -4981,6 +4995,10 @@ div.dataTables_length select {
 /* ============================================================================== */
 /*  Select2                                                                       */
 /* ============================================================================== */
+
+span#select2-taskid-container[title^='--'] {
+    opacity: 0.3;
+}
 
 .select2-container--default .select2-results__option--highlighted[aria-selected] {
     background-color: rgb(<?php echo $colorbackhmenu1 ?>);

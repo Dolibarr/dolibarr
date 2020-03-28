@@ -2949,7 +2949,6 @@ table.paddingtopbottomonly tr td {
 	background: rgb(<?php echo $colorbacktitle1; ?>) !important;
 }
 tr.liste_titre_filter td.liste_titre {
-    border-bottom: 1px solid #FDFFFF;
 	padding-top: 4px;
 	padding-bottom: 3px;
 }
@@ -4985,6 +4984,10 @@ div.dataTables_length select {
 /* ============================================================================== */
 /*  Select2                                                                       */
 /* ============================================================================== */
+
+span#select2-taskid-container[title^='--'] {
+    opacity: 0.3;
+}
 
 input.select2-input {
 	border-bottom: none ! important;

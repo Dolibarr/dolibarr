@@ -34,12 +34,12 @@ if (!defined('NOREQUIREAJAX'))		define('NOREQUIREAJAX', '1');
 require '../main.inc.php'; // Load $user and permissions
 require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
 
-$place = (GETPOST('place', 'int') > 0 ? GETPOST('place', 'int') : 0); // $place is id of table for Ba or Restaurant
+$place = (GETPOST('place', 'aZ09') ? GETPOST('place', 'aZ09') : 0); // $place is id of table for Ba or Restaurant
 
 $invoiceid = GETPOST('invoiceid', 'int');
 
 if (empty($user->rights->takepos->run)) {
-	access_forbidden();
+	accessforbidden();
 }
 
 

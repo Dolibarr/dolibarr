@@ -942,6 +942,7 @@ function showSkins($fuser, $edit = 0, $foruserprofile = false)
 	    print '<tr class="oddeven">';
 	    print '<td>'.$langs->trans("MAIN_OPTIMIZEFORTEXTBROWSER").'</td>';
 	    print '<td colspan="'.($colspan - 1).'">';
+	    //print ajax_constantonoff("MAIN_OPTIMIZEFORTEXTBROWSER", array(), null, 0, 0, 1, 0);
    	    if ($edit)
    	    {
    	        print $form->selectyesno('MAIN_OPTIMIZEFORTEXTBROWSER', $fuser->conf->MAIN_OPTIMIZEFORTEXTBROWSER, 1);

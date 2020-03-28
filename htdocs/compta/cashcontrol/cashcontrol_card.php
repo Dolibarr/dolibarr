@@ -363,7 +363,7 @@ if ($action == "create" || $action == "start" || $action == 'close')
 		print load_fiche_titre($langs->trans("CashControl")." - ".$langs->trans("New"), '', 'cash-register');
 
 		print '<form method="POST" action="'.$_SERVER["PHP_SELF"].'">';
-	    print '<input type="hidden" name="token" value="' . $_SESSION ['newtoken'] . '">';
+	    print '<input type="hidden" name="token" value="' . newToken() . '">';
 	    if ($action == 'start' && GETPOST('posnumber', 'int') != '' && GETPOST('posnumber', 'int') != '' && GETPOST('posnumber', 'int') != '-1')
 	    {
 		    print '<input type="hidden" name="action" value="add">';
@@ -680,7 +680,7 @@ if (empty($action) || $action == "view" || $action == "close")
 			print '<center><iframe src="report.php?id='.$id.'" width="60%" height="800"></iframe></center>';
 	    } else {
 	    	print '<form method="POST" action="'.$_SERVER["PHP_SELF"].'" name="formclose">';
-	    	print '<input type="hidden" name="token" value="' . $_SESSION ['newtoken'] . '">';
+	    	print '<input type="hidden" name="token" value="' . newToken() . '">';
 	    	if ($action == 'start' && GETPOST('posnumber', 'int') != '' && GETPOST('posnumber', 'int') != '' && GETPOST('posnumber', 'int') != '-1')
 	    	{
 	    		print '<input type="hidden" name="action" value="add">';

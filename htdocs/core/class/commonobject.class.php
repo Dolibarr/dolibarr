@@ -88,6 +88,11 @@ abstract class CommonObject
 	public $array_options = array();
 
 	/**
+	 * @var mixed		Array to store alternative languages values of object
+	 */
+	public $array_languages = null;			// Value is array() when load already tried
+
+	/**
 	 * @var int[][]		Array of linked objects ids. Loaded by ->fetchObjectLinked
 	 */
 	public $linkedObjectsIds;
@@ -5041,6 +5046,72 @@ abstract class CommonObject
 	}
 
 
+	/* Functions for data in other language */
+
+
+	/**
+	 *  Function to get alternative languages of a data into $this->array_languages
+	 *  This method is NOT called by method fetch of objects but must be called separately.
+	 *
+	 *  @return	int						<0 if error, 0 if no values of alternative languages to find nor found, 1 if a value was found and loaded
+	 */
+	public function fetchValueForAlternateLanguages()
+	{
+		// To avoid SQL errors. Probably not the better solution though
+		if (!$this->element) {
+			return 0;
+		}
+		if (! ($this->id > 0)) {
+			return 0;
+		}
+
+		$this->array_languages = array();
+
+		$element = $this->element;
+		if ($element == 'categorie') $element = 'categories'; // For compatibility
+
+		// Request to get translation values for object
+		$sql = "SELECT rowid, property, lang , value";
+		$sql .= " FROM ".MAIN_DB_PREFIX."object_lang";
+		$sql .= " WHERE type_object = '".$element."'";
+		$sql .= " AND fk_object = ".$this->id;
+
+		//dol_syslog(get_class($this)."::fetch_optionals get extrafields data for ".$this->table_element, LOG_DEBUG);		// Too verbose
+		$resql = $this->db->query($sql);
+		if ($resql)
+		{
+			$numrows = $this->db->num_rows($resql);
+			if ($numrows)
+			{
+				$tab = $this->db->fetch_array($resql);
+
+				foreach ($tab as $key => $value)
+				{
+					// we can add this attribute to object
+					if (preg_match('/date/', $key))
+					{
+						$this->array_languages[$key] = $this->db->jdate($value);
+					}
+					else
+					{
+						$this->array_languages[$key] = $value;
+					}
+				}
+			}
+
+			$this->db->free($resql);
+
+			if ($numrows) return $numrows;
+			else return 0;
+		}
+		else
+		{
+			dol_print_error($this->db);
+			return -1;
+		}
+	}
+
+
 	/* Functions for extrafields */
 
 
@@ -5059,6 +5130,7 @@ abstract class CommonObject
 		global $extrafields;
 
 		if (empty($rowid)) $rowid = $this->id;
+		if (empty($rowid)) $rowid = $this->rowid;
 
 		// To avoid SQL errors. Probably not the better solution though
 		if (!$this->table_element) {
@@ -5110,7 +5182,6 @@ abstract class CommonObject
 			$resql = $this->db->query($sql);
 			if ($resql)
 			{
-				$this->array_options = array();
 				$numrows = $this->db->num_rows($resql);
 				if ($numrows)
 				{
@@ -6679,9 +6750,10 @@ abstract class CommonObject
 				if (($mode == 'create' || $mode == 'edit') && abs($visibility) != 1 && abs($visibility) != 3) continue; // <> -1 and <> 1 and <> 3 = not visible on forms, only on list
 				elseif ($mode == 'view' && empty($visibility)) continue;
 				if (empty($perms)) continue;
-
 				// Load language if required
-				if (!empty($extrafields->attributes[$this->table_element]['langfile'][$key])) $langs->load($extrafields->attributes[$this->table_element]['langfile'][$key]);
+				if (!empty($extrafields->attributes[$this->table_element]['langfile'][$key])) {
+					$langs->load($extrafields->attributes[$this->table_element]['langfile'][$key]);
+				}
 
 				$colspan = '';
 				if (is_array($params) && count($params) > 0) {
@@ -6780,8 +6852,8 @@ abstract class CommonObject
 					{
 						$value = GETPOSTISSET($keyprefix.'options_'.$key.$keysuffix) ?price2num(GETPOST($keyprefix.'options_'.$key.$keysuffix, 'alpha', 3)) : $this->array_options['options_'.$key];
 					}
-
 					$labeltoshow = $langs->trans($label);
+					$helptoshow = $langs->trans($extrafields->attributes[$this->table_element]['help'][$key]);
 
 					$out .= '<td class="';
 					//$out .= "titlefield";
@@ -6790,14 +6862,13 @@ abstract class CommonObject
 					$tpl_context = isset($params["tpl_context"]) ? $params["tpl_context"] : "none";
 					if ($tpl_context == "public") {	// Public page : red dot instead of fieldrequired characters
 						$out .= '">';
-						if (!empty($extrafields->attributes[$this->table_element]['help'][$key])) $out .= $form->textwithpicto($labeltoshow, $extrafields->attributes[$this->table_element]['help'][$key]);
+						if (!empty($extrafields->attributes[$this->table_element]['help'][$key])) $out .= $form->textwithpicto($labeltoshow, $helptoshow);
 						else $out .= $labeltoshow;
 						if ($mode != 'view' && !empty($extrafields->attributes[$this->table_element]['required'][$key])) $out .= '&nbsp;<font color="red">*</font>';
 					} else {
 						if ($mode != 'view' && !empty($extrafields->attributes[$this->table_element]['required'][$key])) $out .= ' fieldrequired';
-						$out .= '"';
-						$out .= '>';
-						if (!empty($extrafields->attributes[$this->table_element]['help'][$key])) $out .= $form->textwithpicto($labeltoshow, $extrafields->attributes[$this->table_element]['help'][$key]);
+						$out .= '">';
+						if (!empty($extrafields->attributes[$this->table_element]['help'][$key])) $out .= $form->textwithpicto($labeltoshow, $helptoshow);
 						else $out .= $labeltoshow;
 					}
 					$out .= '</td>';

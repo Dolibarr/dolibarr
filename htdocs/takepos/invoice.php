@@ -44,11 +44,11 @@ $langs->loadLangs(array("companies", "commercial", "bills", "cashdesk", "stocks"
 $id = GETPOST('id', 'int');
 $action = GETPOST('action', 'alpha');
 $idproduct = GETPOST('idproduct', 'int');
-$place = (GETPOST('place', 'int') > 0 ? GETPOST('place', 'int') : 0); // $place is id of table for Bar or Restaurant
+$place = (GETPOST('place', 'aZ09') ? GETPOST('place', 'aZ09') : 0); // $place is id of table for Bar or Restaurant
 $placeid = 0; // $placeid is ID of invoice
 
 if (empty($user->rights->takepos->run)) {
-	access_forbidden();
+	accessforbidden();
 }
 
 
@@ -395,6 +395,14 @@ if ($action == "deleteline") {
 
 if ($action == "delete") {
 	// $placeid is the invoice id (it differs from place) and is defined if the place is set and the ref of invoice is '(PROV-POS'.$_SESSION["takeposterminal"].'-'.$place.')', so the fetch at begining of page works.
+
+	/*$reg = array();
+	if (preg_match('/^(\d+)-(\d+)$/', $place, $reg)) {
+
+		$place = $reg[1];
+		var_dump($place);
+	}*/
+
 	if ($placeid > 0) {
         $result = $invoice->fetch($placeid);
 
@@ -407,7 +415,8 @@ if ($action == "delete") {
         	$resql1 = $db->query($sql);
         	$sql = "DELETE FROM ".MAIN_DB_PREFIX."facturedet where fk_facture = ".$placeid;
             $resql2 = $db->query($sql);
-			$sql = "UPDATE ".MAIN_DB_PREFIX."facture set fk_soc=".$conf->global->{'CASHDESK_ID_THIRDPARTY'.$_SESSION["takeposterminal"]}." where ref='(PROV-POS".$_SESSION["takeposterminal"]."-".$place.")'";
+			$sql = "UPDATE ".MAIN_DB_PREFIX."facture set fk_soc=".$conf->global->{'CASHDESK_ID_THIRDPARTY'.$_SESSION["takeposterminal"]};
+			$sql.= " WHERE ref='(PROV-POS".$_SESSION["takeposterminal"]."-".$place.")'";
 			$resql3 = $db->query($sql);
 
             if ($resql1 && $resql2 && $resql3)
@@ -708,14 +717,37 @@ $( document ).ready(function() {
 
     <?php
     $s = $langs->trans("Customer");
-    if ($invoice->socid != $conf->global->$constforcompanyid) {
+    if ($invoice->id > 0 && ($invoice->socid != $conf->global->$constforcompanyid)) {
     	$s = $soc->name;
     }
     ?>
 
-    $("a#customer").html('<?php print dol_escape_js($s); ?>');
+    $("#customerandsales").html('<a class="valignmiddle" id="customer" onclick="Customer();"><?php print dol_escape_js($s); ?></a>');
 
 	<?php
+	$sql = "SELECT rowid, datec, ref FROM ".MAIN_DB_PREFIX."facture";
+	$sql.= " WHERE ref LIKE '(PROV-POS".$_SESSION["takeposterminal"]."-0%'";
+	$sql.= $db->order('datec', 'ASC');
+	$resql = $db->query($sql);
+	if ($resql) {
+		while ($obj = $db->fetch_object($resql)) {
+			echo '$("#customerandsales").append(\'';
+			if ($placeid==$obj->rowid) echo "<b>";
+			echo '<a class="valignmiddle" onclick="place=\\\'';
+			$num_sale=str_replace(")", "", str_replace("(PROV-POS".$_SESSION["takeposterminal"]."-", "", $obj->ref));
+			echo $num_sale;
+			if (str_replace("-", "", $num_sale)>$max_sale) $max_sale=str_replace("-", "", $num_sale);
+			echo '\\\';Refresh();">'.date('H:i', strtotime($obj->datec));
+			if ($placeid==$obj->rowid) echo "</b>";
+			echo '</a>\');';
+		}
+		echo '$("#customerandsales").append(\'<a onclick="place=\\\'0-';
+		echo $max_sale+1;
+		echo '\\\';Refresh();"><span class="fa fa-plus-square" title="'.dol_escape_htmltag($langs->trans("StartAParallelSale")).'"></a>\');';
+	} else {
+		dol_print_error($db);
+	}
+
 	$s = '';
 
     $constantforkey = 'CASHDESK_NO_DECREASE_STOCK'.$_SESSION["takeposterminal"];
@@ -967,8 +999,7 @@ if ($placeid > 0)
 				$moreinfo = '';
 				$moreinfo .= $langs->transcountry("TotalHT", $mysoc->country_code).': '.price($line->total_ht);
 				if ($line->vat_src_code) $moreinfo .= '<br>'.$langs->trans("VATCode").': '.$line->vat_src_code;
-				$moreinfo .= '<br>'.$langs->transcountry("TotalVAT", $mysoc->country_code).': '.price($line->total_vat);
-				//$moreinfo .= '<br>'.$langs->transcountry("VATRate", $mysoc->country_code).': '.price($line->);
+				$moreinfo .= '<br>'.$langs->transcountry("TotalVAT", $mysoc->country_code).': '.price($line->total_tva);
 				$moreinfo .= '<br>'.$langs->transcountry("TotalLT1", $mysoc->country_code).': '.price($line->total_localtax1);
 				$moreinfo .= '<br>'.$langs->transcountry("TotalLT2", $mysoc->country_code).': '.price($line->total_localtax2);
 				$moreinfo .= '<br>'.$langs->transcountry("TotalTTC", $mysoc->country_code).': '.price($line->total_ttc);

@@ -61,28 +61,28 @@ if (! empty($conf->global->BARCODE_PRODUCT_ADDON_NUM))
 		$dir = dol_buildpath($dirroot, 0);
 
 		$handle = @opendir($dir);
-	    if (is_resource($handle))
-	    {
-	    	while (($file = readdir($handle))!==false)
-	    	{
-	    		if (preg_match('/^mod_barcode_product_.*php$/', $file))
-	    		{
-	    			$file = substr($file, 0, dol_strlen($file)-4);
+		if (is_resource($handle))
+		{
+			while (($file = readdir($handle))!==false)
+			{
+				if (preg_match('/^mod_barcode_product_.*php$/', $file))
+				{
+					$file = substr($file, 0, dol_strlen($file)-4);
 
-	    		    try {
-	        			dol_include_once($dirroot.$file.'.php');
-	    			}
-	    			catch(Exception $e)
-	    			{
-	    			    dol_syslog($e->getMessage(), LOG_ERR);
-	    			}
+					try {
+						dol_include_once($dirroot.$file.'.php');
+					}
+					catch(Exception $e)
+					{
+						dol_syslog($e->getMessage(), LOG_ERR);
+					}
 
-	    			$modBarCodeProduct = new $file();
-	    			break;
-	    		}
-	    	}
-	    	closedir($handle);
-	    }
+					$modBarCodeProduct = new $file();
+					break;
+				}
+			}
+			closedir($handle);
+		}
 	}
 }
 

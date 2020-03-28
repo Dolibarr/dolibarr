@@ -51,7 +51,7 @@ html {
 html {
 <?php
 if (! empty($conf->global->TICKET_SHOW_MODULE_LOGO)) {
-    print 'background: url("../public/img/bg_ticket.png") no-repeat 95% 90%;';
+	print 'background: url("../public/img/bg_ticket.png") no-repeat 95% 90%;';
 }
 ?>
 }

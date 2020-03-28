@@ -905,6 +905,12 @@ if (empty($reshook))
 					$objectsrc->fetch($originid);
 					$objectsrc->fetch_thirdparty();
 
+					if (!empty($object->origin) && !empty($object->origin_id))
+					{
+						$object->linkedObjectsIds[$object->origin] = $object->origin_id;
+					}
+
+					// Add also link with order if object is reception
 					if ($object->origin == 'reception')
 					{
 						$objectsrc->fetchObjectLinked();
@@ -913,13 +919,9 @@ if (empty($reshook))
 						{
 							foreach ($objectsrc->linkedObjectsIds['order_supplier'] as $key => $value)
 							{
-								$object->linked_objects['order_supplier'] = $value;
+								$object->linkedObjectsIds['order_supplier'] = $value;
 							}
 						}
-					}
-					elseif (!empty($object->origin) && !empty($object->origin_id))
- 					{
-						$object->linkedObjectsIds[$object->origin] = $object->origin_id;
 					}
 
 					$id = $object->create($user);
@@ -950,7 +952,7 @@ if (empty($reshook))
 
 								// Extrafields
 								if (empty($conf->global->MAIN_EXTRAFIELDS_DISABLED) && method_exists($lines[$i], 'fetch_optionals')) {
-									$lines[$i]->fetch_optionals($lines[$i]->rowid);
+									$lines[$i]->fetch_optionals();
 								}
 
 								// Dates
@@ -1750,7 +1752,7 @@ if ($action == 'create')
 		$datedue = ($datetmp == '' ?-1 : $datetmp);
 
 		// Replicate extrafields
-		$objectsrc->fetch_optionals($originid);
+		$objectsrc->fetch_optionals();
 		$object->array_options = $objectsrc->array_options;
 	}
 	else
@@ -2077,7 +2079,7 @@ if ($action == 'create')
 
 		$langs->load('projects');
 		print '<tr><td>'.$langs->trans('Project').'</td><td>';
-		$formproject->select_projects((empty($conf->global->PROJECT_CAN_ALWAYS_LINK_TO_ALL_SUPPLIERS) ? $societe->id : -1), $projectid, 'projectid', 0, 0, 1, 1);
+		$formproject->select_projects((empty($conf->global->PROJECT_CAN_ALWAYS_LINK_TO_ALL_SUPPLIERS) ? $societe->id : -1), $projectid, 'projectid', 0, 0, 1, 1, 0, 0, 0, '', 0, 0, 'maxwidth500');
 		print '</td></tr>';
 	}
 

@@ -1574,8 +1574,8 @@ if ($action == 'create')
 						$expLine = new ExpeditionLigne($db);
 
 						$srcLine = new OrderLine($db);
-						$srcLine->fetch_optionals($line->id); // fetch extrafields also available in orderline
-						//$line->fetch_optionals($line->id);
+						$srcLine->id = $line->id;
+						$srcLine->fetch_optionals(); // fetch extrafields also available in orderline
 						$line->array_options = array_merge($line->array_options, $srcLine->array_options);
 
 						print $expLine->showOptionals($extrafields, 'edit', array('style'=>'class="drag drop oddeven"', 'colspan'=>$colspan), $indiceAsked, '', 1);
@@ -2012,7 +2012,7 @@ elseif ($id || $ref)
 		if ($action == 'editline')
 		{
 			print '	<form name="updateline" id="updateline" action="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;lineid='.$line_id.'" method="POST">
-			<input type="hidden" name="token" value="' . $_SESSION ['newtoken'].'">
+			<input type="hidden" name="token" value="' . newToken().'">
 			<input type="hidden" name="action" value="updateline">
 			<input type="hidden" name="mode" value="">
 			<input type="hidden" name="id" value="' . $object->id.'">
@@ -2460,7 +2460,7 @@ elseif ($id || $ref)
 					if (!empty($conf->stock->enabled)) $colspan++;
 
 					$line = $lines[$i];
-					$line->fetch_optionals($line->id);
+					$line->fetch_optionals();
 
 					if ($action == 'editline' && $line->id == $line_id)
 					{

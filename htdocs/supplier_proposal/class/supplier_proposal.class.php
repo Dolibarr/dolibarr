@@ -13,7 +13,7 @@
  * Copyright (C) 2014      Marcos García            <marcosgdf@gmail.com>
  * Copyright (C) 2016      Ferran Marcet            <fmarcet@2byte.es>
  * Copyright (C) 2018      Nicolas ZABOURI			<info@inovea-conseil.com>
- * Copyright (C) 2019       Frédéric France         <frederic.france@netlogic.fr>
+ * Copyright (C) 2019      Frédéric France          <frederic.france@netlogic.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -1481,7 +1481,7 @@ class SupplierProposal extends CommonObject
             if (!$error && !$notrigger)
             {
                 // Call trigger
-                $result = $this->call_trigger('SUPPLIER_PROPOSAL_VALIDATE', $user);
+                $result = $this->call_trigger('PROPOSAL_SUPPLIER_VALIDATE', $user);
                 if ($result < 0) { $error++; }
                 // End call triggers
             }
@@ -1683,7 +1683,7 @@ class SupplierProposal extends CommonObject
             if (!$notrigger)
             {
                 // Call trigger
-                $result = $this->call_trigger('SUPPLIER_PROPOSAL_REOPEN', $user);
+                $result = $this->call_trigger('PROPOSAL_SUPPLIER_REOPEN', $user);
                 if ($result < 0) { $error++; }
                 // End call triggers
             }
@@ -1737,11 +1737,11 @@ class SupplierProposal extends CommonObject
         if ($resql)
         {
             $modelpdf = $conf->global->SUPPLIER_PROPOSAL_ADDON_PDF_ODT_CLOSED ? $conf->global->SUPPLIER_PROPOSAL_ADDON_PDF_ODT_CLOSED : $this->modelpdf;
-            $triggerName = 'SUPPLIER_PROPOSAL_CLOSE_REFUSED';
+            $triggerName = 'PROPOSAL_SUPPLIER_CLOSE_REFUSED';
 
             if ($status == 2)
             {
-                $triggerName = 'SUPPLIER_PROPOSAL_CLOSE_SIGNED';
+                $triggerName = 'PROPOSAL_SUPPLIER_CLOSE_SIGNED';
                 $modelpdf = $conf->global->SUPPLIER_PROPOSAL_ADDON_PDF_ODT_TOBILL ? $conf->global->SUPPLIER_PROPOSAL_ADDON_PDF_ODT_TOBILL : $this->modelpdf;
 
                 if (!empty($conf->global->SUPPLIER_PROPOSAL_UPDATE_PRICE_ON_SUPPlIER_PROPOSAL))     // TODO This option was not tested correctly. Error if product ref does not exists
@@ -1751,7 +1751,7 @@ class SupplierProposal extends CommonObject
             }
             if ($status == 4)
             {
-                $triggerName = 'SUPPLIER_PROPOSAL_CLASSIFY_BILLED';
+                $triggerName = 'PROPOSAL_SUPPLIER_CLASSIFY_BILLED';
             }
 
             if (empty($conf->global->MAIN_DISABLE_PDF_AUTOUPDATE))
@@ -1916,7 +1916,7 @@ class SupplierProposal extends CommonObject
 
             if (!$error) {
                 // Call trigger
-                $result = $this->call_trigger('SUPPLIER_PROPOSAL_UNVALIDATE', $user);
+                $result = $this->call_trigger('PROPOSAL_SUPPLIER_UNVALIDATE', $user);
                 if ($result < 0) $error++;
             }
 
@@ -2034,7 +2034,7 @@ class SupplierProposal extends CommonObject
         if (!$notrigger)
         {
             // Call trigger
-            $result = $this->call_trigger('SUPPLIER_PROPOSAL_DELETE', $user);
+            $result = $this->call_trigger('PROPOSAL_SUPPLIER_DELETE', $user);
             if ($result < 0) { $error++; }
             // End call triggers
         }
@@ -2232,8 +2232,8 @@ class SupplierProposal extends CommonObject
     	$statusnew = '';
     	if ($status == self::STATUS_DRAFT) $statusnew = 'status0';
     	elseif ($status == self::STATUS_VALIDATED) $statusnew = 'status1';
-    	elseif ($status == self::STATUS_SIGNED) $statusnew = 'status3';
-    	elseif ($status == self::STATUS_NOTSIGNED) $statusnew = 'status5';
+    	elseif ($status == self::STATUS_SIGNED) $statusnew = 'status4';
+    	elseif ($status == self::STATUS_NOTSIGNED) $statusnew = 'status9';
     	elseif ($status == self::STATUS_CLOSE) $statusnew = 'status6';
 
     	return dolGetStatus($this->labelStatus[$status], $this->labelStatusShort[$status], '', $statusnew, $mode);

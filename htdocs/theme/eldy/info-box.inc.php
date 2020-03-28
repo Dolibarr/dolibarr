@@ -316,6 +316,13 @@ if (GETPOSTISSET('THEME_AGRESSIVENESS_RATIO')) $conf->global->THEME_AGRESSIVENES
 	height: 0;
 }
 
+.info-box-module {
+	min-width: 350px;
+    max-width: 350px;
+}
+.info-box-module .info-box-content {
+	height: 7em;
+}
 /* Disabled. This break the responsive on smartphone
 .box{
 	overflow: visible;
@@ -326,5 +333,9 @@ if (GETPOSTISSET('THEME_AGRESSIVENESS_RATIO')) $conf->global->THEME_AGRESSIVENES
 {
 	.box-flex-container {
 	    margin: 0 0 0 0 !important;
+	}
+
+	.info-box-module {
+		width: 280px;
 	}
 }

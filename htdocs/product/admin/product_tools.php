@@ -201,7 +201,7 @@ if ($action == 'convert')
 			{
 				$obj = $db->fetch_object($resql);
 
-                $objectstatic2 = new ProductFournisseur($db);          // Object init must be into loop to avoid to get value of previous step
+				$objectstatic2 = new ProductFournisseur($db);          // Object init must be into loop to avoid to get value of previous step
 				$ret=$objectstatic2->fetch_product_fournisseur_price($obj->rowid);
 				if ($ret > 0)
 				{

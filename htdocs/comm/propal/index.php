@@ -302,7 +302,8 @@ if ($resql)
 			print '<td>'.$companystatic->getNomUrl(1, 'customer').'</td>';
 
 			print '<td>'.dol_print_date($db->jdate($obj->datec), 'day').'</td>';
-			print '<td class="right">'.$propalstatic->LibStatut($obj->fk_statut, 5).'</td>';
+
+			print '<td class="right">'.$propalstatic->LibStatut($obj->fk_statut, 3).'</td>';
 			print '</tr>';
 			$i++;
 		}
@@ -314,7 +315,7 @@ else dol_print_error($db);
 
 
 /*
- * Opened proposals
+ * Open proposals
  */
 if (!empty($conf->propal->enabled) && $user->rights->propale->lire)
 {
@@ -381,9 +382,10 @@ if (!empty($conf->propal->enabled) && $user->rights->propale->lire)
 				$companystatic->canvas = $obj->canvas;
 				print '<td class="left">'.$companystatic->getNomUrl(1, 'customer', 44).'</td>'."\n";
 
-				print '<td class="right">';
-				print dol_print_date($db->jdate($obj->dp), 'day').'</td>'."\n";
+				print '<td class="right">'.dol_print_date($db->jdate($obj->dp), 'day').'</td>'."\n";
+
 				print '<td class="right">'.price($obj->total_ttc).'</td>';
+
 				print '<td align="center" width="14">'.$propalstatic->LibStatut($obj->fk_statut, 3).'</td>'."\n";
 				print '</tr>'."\n";
 				$i++;

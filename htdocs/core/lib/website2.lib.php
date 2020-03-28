@@ -421,7 +421,6 @@ function dolSaveReadme($file, $content)
 function showWebsiteTemplates(Website $website)
 {
 	global $conf, $langs, $db, $form;
-	global $bc;
 
 	$dirthemes = array('/doctemplates/websites');
 	if (!empty($conf->modules_parts['websitetemplates']))		// Using this feature slow down application
@@ -521,21 +520,3 @@ function showWebsiteTemplates(Website $website)
 	print '</td></tr>';
 	print '</table>';
 }
-
-
-
-/**
- * Return HTML content to add structured data for an article, news or Blog Post.
- *
- * @return  string							HTML content
- */
-function getRSSForBlogPosts()
-{
-	global $conf, $db, $hookmanager, $langs, $mysoc, $user, $website, $websitepage, $weblangs; // Very important. Required to have var available when running inluded containers.
-
-
-
-	return $out;
-}
-
-

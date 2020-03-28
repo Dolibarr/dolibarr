@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2002-2006  Rodolphe Quiedeville    <rodolphe@quiedeville.org>
  * Copyright (C) 2004       Eric Seigne             <eric.seigne@ryxeo.com>
- * Copyright (C) 2004-2016  Laurent Destailleur     <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2020  Laurent Destailleur     <eldy@users.sourceforge.net>
  * Copyright (C) 2005       Marc Barilley / Ocebo   <marc@ocebo.com>
  * Copyright (C) 2005-2015  Regis Houssin           <regis.houssin@inodbox.com>
  * Copyright (C) 2006       Andre Cianfarani        <acianfa@free.fr>
@@ -302,10 +302,12 @@ if (empty($reshook))
 			$array_of_total_ht_per_vat_rate = array();
 			$array_of_total_ht_devise_per_vat_rate = array();
 			foreach ($object->lines as $line) {
-				if (empty($array_of_total_ht_per_vat_rate[$line->tva_tx.'_'.$line->vat_src_code])) $array_of_total_ht_per_vat_rate[$line->tva_tx.'_'.$line->vat_src_code] = 0;
-				if (empty($array_of_total_ht_devise_per_vat_rate[$line->tva_tx.'_'.$line->vat_src_code])) $array_of_total_ht_devise_per_vat_rate[$line->tva_tx.'_'.$line->vat_src_code] = 0;
-				$array_of_total_ht_per_vat_rate[$line->tva_tx.'_'.$line->vat_src_code] += $line->total_ht;
-				$array_of_total_ht_devise_per_vat_rate[$line->tva_tx.'_'.$line->vat_src_code] += $line->multicurrency_total_ht;
+				//$vat_src_code_for_line = $line->vat_src_code;		// TODO We chek sign of total per vat without taking into account the vat code because for the moment the vat code is lost/unknown when we add a down payment.
+				$vat_src_code_for_line = '';
+				if (empty($array_of_total_ht_per_vat_rate[$line->tva_tx.'_'.$vat_src_code_for_line])) $array_of_total_ht_per_vat_rate[$line->tva_tx.'_'.$vat_src_code_for_line] = 0;
+				if (empty($array_of_total_ht_devise_per_vat_rate[$line->tva_tx.'_'.$vat_src_code_for_line])) $array_of_total_ht_devise_per_vat_rate[$line->tva_tx.'_'.$vat_src_code_for_line] = 0;
+				$array_of_total_ht_per_vat_rate[$line->tva_tx.'_'.$vat_src_code_for_line] += $line->total_ht;
+				$array_of_total_ht_devise_per_vat_rate[$line->tva_tx.'_'.$vat_src_code_for_line] += $line->multicurrency_total_ht;
 			}
 
 			//var_dump($array_of_total_ht_per_vat_rate);exit;
@@ -485,10 +487,10 @@ if (empty($reshook))
 		// POST[remise_id] or POST[remise_id_for_payment]
 
 		// We use the credit to reduce amount of invoice
-		if (!empty($_POST["remise_id"])) {
+		if (GETPOST("remise_id", 'int') > 0) {
 			$ret = $object->fetch($id);
 			if ($ret > 0) {
-				$result = $object->insert_discount($_POST["remise_id"]);
+				$result = $object->insert_discount(GETPOST("remise_id", 'int'));
 				if ($result < 0) {
 					setEventMessages($object->error, $object->errors, 'errors');
 				}
@@ -497,11 +499,11 @@ if (empty($reshook))
 			}
 		}
 		// We use the credit to reduce remain to pay
-		if (!empty($_POST["remise_id_for_payment"]))
+		if (GETPOST("remise_id_for_payment", 'int') > 0)
 		{
 			require_once DOL_DOCUMENT_ROOT.'/core/class/discount.class.php';
 			$discount = new DiscountAbsolute($db);
-			$discount->fetch($_POST["remise_id_for_payment"]);
+			$discount->fetch(GETPOST("remise_id_for_payment", 'int'));
 
 			//var_dump($object->getRemainToPay(0));
 			//var_dump($discount->amount_ttc);exit;
@@ -809,14 +811,16 @@ if (empty($reshook))
 			$i = 0;
 			foreach ($object->lines as $line)
 			{
-				if ($line->product_type < 9 && $line->total_ht != 0) // Remove lines with product_type greater than or equal to 9
-				{ 	// no need to create discount if amount is null
-					$amount_ht[$line->tva_tx] += $line->total_ht;
-					$amount_tva[$line->tva_tx] += $line->total_tva;
-					$amount_ttc[$line->tva_tx] += $line->total_ttc;
-					$multicurrency_amount_ht[$line->tva_tx] += $line->multicurrency_total_ht;
-					$multicurrency_amount_tva[$line->tva_tx] += $line->multicurrency_total_tva;
-					$multicurrency_amount_ttc[$line->tva_tx] += $line->multicurrency_total_ttc;
+				if ($line->product_type < 9 && $line->total_ht != 0) // Remove lines with product_type greater than or equal to 9 and no need to create discount if amount is null
+				{
+					$keyforvatrate = $line->tva_tx.($line->vat_src_code ? ' ('.$line->vat_src_code.')' : '');
+
+					$amount_ht[$keyforvatrate] += $line->total_ht;
+					$amount_tva[$keyforvatrate] += $line->total_tva;
+					$amount_ttc[$keyforvatrate] += $line->total_ttc;
+					$multicurrency_amount_ht[$keyforvatrate] += $line->multicurrency_total_ht;
+					$multicurrency_amount_tva[$keyforvatrate] += $line->multicurrency_total_tva;
+					$multicurrency_amount_ttc[$keyforvatrate] += $line->multicurrency_total_ttc;
 					$i++;
 				}
 			}
@@ -830,9 +834,9 @@ if (empty($reshook))
 						$amount_ht[$vatrate] = price2num($amount_ht[$vatrate] * $ratio, 'MU');
 						$amount_tva[$vatrate] = price2num($amount_tva[$vatrate] * $ratio, 'MU');
 						$amount_ttc[$vatrate] = price2num($amount_ttc[$vatrate] * $ratio, 'MU');
-						$multicurrency_amount_ht[$line->tva_tx] = price2num($multicurrency_amount_ht[$vatrate] * $ratio, 'MU');
-						$multicurrency_amount_tva[$line->tva_tx] = price2num($multicurrency_amount_tva[$vatrate] * $ratio, 'MU');
-						$multicurrency_amount_ttc[$line->tva_tx] = price2num($multicurrency_amount_ttc[$vatrate] * $ratio, 'MU');
+						$multicurrency_amount_ht[$vatrate] = price2num($multicurrency_amount_ht[$vatrate] * $ratio, 'MU');
+						$multicurrency_amount_tva[$vatrate] = price2num($multicurrency_amount_tva[$vatrate] * $ratio, 'MU');
+						$multicurrency_amount_ttc[$vatrate] = price2num($multicurrency_amount_ttc[$vatrate] * $ratio, 'MU');
 					}
 				}
 			}
@@ -887,6 +891,7 @@ if (empty($reshook))
 				$discount->amount_ht = $discount->amount_ttc = $total_paiements + $total_creditnote_and_deposit - $object->total_ttc;
 				$discount->amount_tva = 0;
 				$discount->tva_tx = 0;
+				$discount->vat_src_code = '';
 
 				$result = $discount->create($user);
 				if ($result < 0)
@@ -904,7 +909,18 @@ if (empty($reshook))
 					$discount->multicurrency_amount_ht = abs($multicurrency_amount_ht[$tva_tx]);
 					$discount->multicurrency_amount_tva = abs($multicurrency_amount_tva[$tva_tx]);
 					$discount->multicurrency_amount_ttc = abs($multicurrency_amount_ttc[$tva_tx]);
+
+					// Clean vat code
+					$reg = array();
+					$vat_src_code = '';
+					if (preg_match('/\((.*)\)/', $tva_tx, $reg))
+					{
+						$vat_src_code = $reg[1];
+						$tva_tx = preg_replace('/\s*\(.*\)/', '', $tva_tx); // Remove code into vatrate.
+					}
+
 					$discount->tva_tx = abs($tva_tx);
+					$discount->vat_src_code =$vat_src_code;
 
 					$result = $discount->create($user);
 					if ($result < 0)
@@ -1592,7 +1608,7 @@ if (empty($reshook))
 
 										// Extrafields
 										if (empty($conf->global->MAIN_EXTRAFIELDS_DISABLED) && method_exists($lines[$i], 'fetch_optionals')) {
-											$lines[$i]->fetch_optionals($lines[$i]->rowid);
+											$lines[$i]->fetch_optionals();
 											$array_options = $lines[$i]->array_options;
 										}
 
@@ -1733,7 +1749,7 @@ if (empty($reshook))
 						$line->origin = $object->origin;
 						$line->origin_id = $line->id;
 						$line->fk_prev_id = $line->id;
-						$line->fetch_optionals($line->id);
+						$line->fetch_optionals();
 						$line->situation_percent = $line->get_prev_progress($object->id); // get good progress including credit note
 
 						// Si fk_remise_except defini on vérifie si la réduction à déjà été appliquée
@@ -2539,7 +2555,7 @@ if (empty($reshook))
                 $originLine = new $lineClassName($db);
                 if (intval($fromElementid) > 0 && $originLine->fetch($lineId) > 0)
                 {
-                    $originLine->fetch_optionals($lineId);
+                    $originLine->fetch_optionals();
                     $desc = $originLine->desc;
                     $pu_ht = $originLine->subprice;
                     $qty = $originLine->qty;
@@ -2794,7 +2810,7 @@ if ($action == 'create')
 				$remise_absolue 	= (!empty($expesrc->remise_absolue) ? $expesrc->remise_absolue : (!empty($soc->remise_absolue) ? $soc->remise_absolue : 0));
 
 				//Replicate extrafields
-				$expesrc->fetch_optionals($expeoriginid);
+				$expesrc->fetch_optionals();
 				$object->array_options = $expesrc->array_options;
 			}
 			else
@@ -2812,7 +2828,7 @@ if ($action == 'create')
 				}
 
 				// Replicate extrafields
-				$objectsrc->fetch_optionals($originid);
+				$objectsrc->fetch_optionals();
 				$object->array_options = $objectsrc->array_options;
 			}
 		}
@@ -2854,7 +2870,7 @@ if ($action == 'create')
 	}
 
 	print '<form name="add" action="'.$_SERVER["PHP_SELF"].'" method="POST">';
-	print '<input type="hidden" name="token" value="'.$_SESSION ['newtoken'].'">';
+	print '<input type="hidden" name="token" value="'.newToken().'">';
 	print '<input type="hidden" name="action" value="add">';
 	if ($soc->id > 0) print '<input type="hidden" name="socid" value="'.$soc->id.'">'."\n";
 	print '<input name="ref" type="hidden" value="provisoire">';
@@ -3397,7 +3413,7 @@ if ($action == 'create')
 	{
 		$langs->load('projects');
 		print '<tr><td>'.$langs->trans('Project').'</td><td colspan="2">';
-		$numprojet = $formproject->select_projects(($socid > 0 ? $socid : -1), $projectid, 'projectid', 0, 0, 1, 1);
+		$numprojet = $formproject->select_projects(($socid > 0 ? $socid : -1), $projectid, 'projectid', 0, 0, 1, 1, 0, 0, 0, '', 0, 0, 'maxwidth500');
 		print ' <a href="'.DOL_URL_ROOT.'/projet/card.php?socid='.$soc->id.'&action=create&status=1&backtopage='.urlencode($_SERVER["PHP_SELF"].'?action=create&socid='.$soc->id.($fac_rec ? '&fac_rec='.$fac_rec : '')).'"><span class="fa fa-plus-circle valignmiddle" title="'.$langs->trans("AddProject").'"></span></a>';
 		print '</td></tr>';
 	}
@@ -4459,7 +4475,7 @@ elseif ($id > 0 || !empty($ref))
 		print '</td><td>';
 		if ($action == 'editrevenuestamp') {
 			print '<form action="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'" method="post">';
-			print '<input type="hidden" name="token" value="'.$_SESSION ['newtoken'].'">';
+			print '<input type="hidden" name="token" value="'.newToken().'">';
 			print '<input type="hidden" name="action" value="setrevenuestamp">';
 			print '<input type="hidden" name="revenuestamp" id="revenuestamp_val" value="'.price2num($object->revenuestamp).'">';
 			print $formother->select_revenue_stamp('', 'revenuestamp_type', $mysoc->country_code);
@@ -4963,7 +4979,7 @@ elseif ($id > 0 || !empty($ref))
 	}
 
 	print '	<form name="addproduct" id="addproduct" action="'.$_SERVER["PHP_SELF"].'?id='.$object->id.(($action != 'editline') ? '#addline' : '#line_'.GETPOST('lineid')).'" method="POST">
-	<input type="hidden" name="token" value="' . $_SESSION ['newtoken'].'">
+	<input type="hidden" name="token" value="' . newToken().'">
 	<input type="hidden" name="action" value="' . (($action != 'editline') ? 'addline' : 'updateline').'">
 	<input type="hidden" name="mode" value="">
 	<input type="hidden" name="id" value="' . $object->id.'">

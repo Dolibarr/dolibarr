@@ -5115,7 +5115,7 @@ function migrate_members_socialnetworks()
                 $obj->socialnetworks = '[]';
             }
             $socialnetworks = array_merge($arraysocialnetworks, json_decode($obj->socialnetworks, true));
-            $sqlupd = 'UPDATE '.MAIN_DB_PREFIX.'adherent SET socialnetworks="'.$db->escape(json_encode($socialnetworks, true)).'"';
+            $sqlupd = 'UPDATE '.MAIN_DB_PREFIX."adherent SET socialnetworks='".$db->escape(json_encode($socialnetworks, true))."'";
             $sqlupd.= ', skype=null';
             $sqlupd.= ', twitter=null';
             $sqlupd.= ', facebook=null';
@@ -5209,7 +5209,7 @@ function migrate_contacts_socialnetworks()
                 $obj->socialnetworks = '[]';
             }
             $socialnetworks = array_merge($arraysocialnetworks, json_decode($obj->socialnetworks, true));
-            $sqlupd = 'UPDATE '.MAIN_DB_PREFIX.'socpeople SET socialnetworks="'.$db->escape(json_encode($socialnetworks, true)).'"';
+            $sqlupd = 'UPDATE '.MAIN_DB_PREFIX."socpeople SET socialnetworks='".$db->escape(json_encode($socialnetworks, true))."'";
             $sqlupd.= ', jabberid=null';
             $sqlupd.= ', skype=null';
             $sqlupd.= ', twitter=null';
@@ -5300,7 +5300,7 @@ function migrate_thirdparties_socialnetworks()
                 $obj->socialnetworks = '[]';
             }
             $socialnetworks = array_merge($arraysocialnetworks, json_decode($obj->socialnetworks, true));
-            $sqlupd = 'UPDATE '.MAIN_DB_PREFIX.'societe SET socialnetworks="'.$db->escape(json_encode($socialnetworks, true)).'"';
+            $sqlupd = 'UPDATE '.MAIN_DB_PREFIX."societe SET socialnetworks='".$db->escape(json_encode($socialnetworks, true))."'";
             $sqlupd.= ', skype=null';
             $sqlupd.= ', twitter=null';
             $sqlupd.= ', facebook=null';

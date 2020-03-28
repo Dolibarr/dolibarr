@@ -45,6 +45,7 @@ UPDATE llx_accounting_system SET fk_country = NULL, active = 0 WHERE pcg_version
 
 
 -- For v12
+DELETE FROM llx_menu where module='supplier_proposal';
 
 UPDATE llx_website SET lang = 'en' WHERE lang like 'en_%';
 UPDATE llx_website SET lang = 'fr' WHERE lang like 'fr_%';
@@ -121,7 +122,7 @@ create table llx_object_lang
 (
   rowid          integer AUTO_INCREMENT PRIMARY KEY,
   fk_object      integer      DEFAULT 0 NOT NULL,
-  type_object    varchar(32)  NOT NULL,
+  type_object    varchar(32)  NOT NULL,				-- value found into $object->element
   property       varchar(32)  NOT NULL,
   lang           varchar(5)   DEFAULT 0 NOT NULL,
   value          text,
@@ -197,4 +198,8 @@ ALTER TABLE llx_entrepot ADD COLUMN fax varchar(20) DEFAULT NULL;
 ALTER TABLE llx_entrepot ADD COLUMN phone varchar(20) DEFAULT NULL;
 
 ALTER TABLE llx_accounting_account ADD COLUMN reconcilable tinyint DEFAULT 0 NOT NULL after active;
+
+ALTER TABLE llx_categorie MODIFY type integer NOT NULL DEFAULT 1;
+
+ALTER TABLE llx_societe_remise_except ADD COLUMN vat_src_code varchar(10) DEFAULT '';
 
