@@ -3195,6 +3195,9 @@ function img_picto($titlealt, $picto, $moreatt = '', $pictoisfullpath = false, $
 				$fakey = 'fa-'.$arrayconvpictotofa[$pictowithouttext];
 				$facolor = '#444';
 			}
+			elseif ($pictowithouttext == 'delete') {
+				$fakey = 'fa-'.$arrayconvpictotofa[$pictowithouttext];
+			}
 			elseif ($pictowithouttext == 'edit') {
 				$facolor = '#444';
 				$fakey = 'fa-pencil-alt';

@@ -88,17 +88,15 @@ $morehtml.='</SELECT>';
 $morehtml.='<input type="submit" class="button" name="refresh" value="'.$langs->trans("Refresh").'">';
 $morehtml.='</form>';
 
-print_barre_liste($title, 0, $_SERVER["PHP_SELF"], '', '', '', '', 0, -1, 'project', 0, $morehtml);
-
-// Show description of content
-print '<div class="opacitymedium">';
-if ($mine) print $langs->trans("MyProjectsDesc").'<br><br>';
+if ($mine) $tooltiphelp = $langs->trans("MyProjectsDesc");
 else
 {
-	if (!empty($user->rights->projet->all->lire) && !$socid) print $langs->trans("ProjectsDesc").'<br><br>';
-	else print $langs->trans("ProjectsPublicDesc").'<br><br>';
+	if (!empty($user->rights->projet->all->lire) && !$socid) $tooltiphelp = $langs->trans("ProjectsDesc");
+	else $tooltiphelp = $langs->trans("ProjectsPublicDesc");
 }
-print '</div>';
+
+print_barre_liste($form->textwithpicto($title, $tooltiphelp), 0, $_SERVER["PHP_SELF"], '', '', '', '', 0, -1, 'project', 0, $morehtml);
+
 
 // Get list of ponderated percent for each status
 $listofoppstatus = array(); $listofopplabel = array(); $listofoppcode = array();

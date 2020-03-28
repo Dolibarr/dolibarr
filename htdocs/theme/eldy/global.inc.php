@@ -408,7 +408,8 @@ hr { border: 0; border-top: 1px solid #ccc; }
 	margin-right: 5px;
 	font-family: <?php print $fontlist ?>;
 	display: inline-block;
-	padding: 4px 14px;
+	padding: 8px 15px;
+	min-width: 90px;
 	text-align: center;
 	cursor: pointer;
 	text-decoration: none !important;
@@ -4994,6 +4995,10 @@ div.dataTables_length select {
 /* ============================================================================== */
 /*  Select2                                                                       */
 /* ============================================================================== */
+
+span#select2-taskid-container[title^='--'] {
+    opacity: 0.3;
+}
 
 .select2-container--default .select2-results__option--highlighted[aria-selected] {
     background-color: rgb(<?php echo $colorbackhmenu1 ?>);

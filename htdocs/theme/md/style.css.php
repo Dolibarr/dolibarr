@@ -4985,6 +4985,10 @@ div.dataTables_length select {
 /*  Select2                                                                       */
 /* ============================================================================== */
 
+span#select2-taskid-container[title^='--'] {
+    opacity: 0.3;
+}
+
 input.select2-input {
 	border-bottom: none ! important;
 }

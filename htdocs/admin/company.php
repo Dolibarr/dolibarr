@@ -695,26 +695,24 @@ print "</table>";
 print '<br>';
 print '<table class="noborder centpercent">';
 print '<tr class="liste_titre">';
-print '<td width="140">'.$langs->trans("VATManagement").'</td><td>'.$langs->trans("Description").'</td>';
+print '<td width="25%">'.$langs->trans("VATManagement").'</td><td>'.$langs->trans("Description").'</td>';
 print '<td class="right">&nbsp;</td>';
 print "</tr>\n";
 
 
 print "<tr class=\"oddeven\"><td width=\"140\"><label><input type=\"radio\" name=\"optiontva\" id=\"use_vat\" value=\"1\"".(empty($conf->global->FACTURE_TVAOPTION) ? "" : " checked")."> ".$langs->trans("VATIsUsed")."</label></td>";
 print '<td colspan="2">';
-print "<table>";
-print "<tr><td><label for=\"use_vat\">".$langs->trans("VATIsUsedDesc")."</label></td></tr>";
-if ($mysoc->country_code == 'FR') print "<tr><td><i>".$langs->trans("Example").': '.$langs->trans("VATIsUsedExampleFR")."</i></td></tr>\n";
-print "</table>";
+$tooltiphelp = '';
+if ($mysoc->country_code == 'FR') $tooltiphelp = '<i>'.$langs->trans("Example").': '.$langs->trans("VATIsUsedExampleFR")."</i>";
+print "<label for=\"use_vat\">".$form->textwithpicto($langs->trans("VATIsUsedDesc"), $tooltiphelp)."</label>";
 print "</td></tr>\n";
 
 
 print "<tr class=\"oddeven\"><td width=\"140\"><label><input type=\"radio\" name=\"optiontva\" id=\"no_vat\" value=\"0\"".(empty($conf->global->FACTURE_TVAOPTION) ? " checked" : "")."> ".$langs->trans("VATIsNotUsed")."</label></td>";
 print '<td colspan="2">';
-print "<table>";
-print "<tr><td><label for=\"no_vat\">".$langs->trans("VATIsNotUsedDesc")."</label></td></tr>";
-if ($mysoc->country_code == 'FR') print "<tr><td><i>".$langs->trans("Example").': '.$langs->trans("VATIsNotUsedExampleFR")."</i></td></tr>\n";
-print "</table>";
+$tooltiphelp = '';
+if ($mysoc->country_code == 'FR') $tooltiphelp = "<i>".$langs->trans("Example").': '.$langs->trans("VATIsNotUsedExampleFR")."</i>\n";
+print "<label for=\"no_vat\">".$form->textwithpicto($langs->trans("VATIsNotUsedDesc"), $tooltiphelp)."</label>";
 print "</td></tr>\n";
 
 print "</table>";
@@ -728,40 +726,35 @@ if ($mysoc->useLocalTax(1))
 	print '<br>';
 	print '<table class="noborder centpercent">';
 	print '<tr class="liste_titre">';
-	print '<td width="140">'.$langs->transcountry("LocalTax1Management", $mysoc->country_code).'</td><td>'.$langs->trans("Description").'</td>';
+	print '<td width="25%">'.$langs->transcountry("LocalTax1Management", $mysoc->country_code).'</td><td>'.$langs->trans("Description").'</td>';
 	print '<td class="right">&nbsp;</td>';
 	print "</tr>\n";
 
 	// Note: When option is not set, it must not appears as set on on, because there is no default value for this option
-	print "<tr class=\"oddeven\"><td width=\"140\"><input type=\"radio\" name=\"optionlocaltax1\" id=\"lt1\" value=\"localtax1on\"".(($conf->global->FACTURE_LOCAL_TAX1_OPTION == '1' || $conf->global->FACTURE_LOCAL_TAX1_OPTION == "localtax1on") ? " checked" : "")."> ".$langs->transcountry("LocalTax1IsUsed", $mysoc->country_code)."</td>";
+	print "<tr class=\"oddeven\"><td><input type=\"radio\" name=\"optionlocaltax1\" id=\"lt1\" value=\"localtax1on\"".(($conf->global->FACTURE_LOCAL_TAX1_OPTION == '1' || $conf->global->FACTURE_LOCAL_TAX1_OPTION == "localtax1on") ? " checked" : "")."> ".$langs->transcountry("LocalTax1IsUsed", $mysoc->country_code)."</td>";
 	print '<td colspan="2">';
-	print '<table class="nobordernopadding">';
-	print "<tr><td><label for=\"lt1\">".$langs->transcountry("LocalTax1IsUsedDesc", $mysoc->country_code)."</label></td></tr>";
-	$example = $langs->transcountry("LocalTax1IsUsedExample", $mysoc->country_code);
-	print ($example != "LocalTax1IsUsedExample" ? "<tr><td><i>".$langs->trans("Example").': '.$langs->transcountry("LocalTax1IsUsedExample", $mysoc->country_code)."</i></td></tr>\n" : "");
+	print '<div class="nobordernopadding">';
+	$tooltiphelp = $langs->transcountry("LocalTax1IsUsedExample", $mysoc->country_code);
+	$tooltiphelp = ($tooltiphelp != "LocalTax1IsUsedExample" ? "<i>".$langs->trans("Example").': '.$langs->transcountry("LocalTax1IsUsedExample", $mysoc->country_code)."</i>\n" : "");
+	print "<label for=\"lt1\">".$form->textwithpicto($langs->transcountry("LocalTax1IsUsedDesc", $mysoc->country_code), $tooltiphelp)."</label>";
 	if (!isOnlyOneLocalTax(1))
 	{
-		print '<tr><td class="left"><label for="lt1">'.$langs->trans("LTRate").'</label>: ';
+		print '<br><label for="lt1">'.$langs->trans("LTRate").'</label>: ';
 		$formcompany->select_localtax(1, $conf->global->MAIN_INFO_VALUE_LOCALTAX1, "lt1");
-	    print '</td></tr>';
 	}
 
 	$opcions = array($langs->trans("CalcLocaltax1").' '.$langs->trans("CalcLocaltax1Desc"), $langs->trans("CalcLocaltax2").' - '.$langs->trans("CalcLocaltax2Desc"), $langs->trans("CalcLocaltax3").' - '.$langs->trans("CalcLocaltax3Desc"));
 
-	print '<tr><td class="left"></label for="clt1">'.$langs->trans("CalcLocaltax").'</label>: ';
+	print '<br><label for="clt1">'.$langs->trans("CalcLocaltax").'</label>: ';
 	print $form->selectarray("clt1", $opcions, $conf->global->MAIN_INFO_LOCALTAX_CALC1);
-	print '</td></tr>';
-	print "</table>";
+	print "</div>";
 	print "</td></tr>\n";
 
-
-	print "<tr class=\"oddeven\"><td width=\"140\"><input type=\"radio\" name=\"optionlocaltax1\" id=\"nolt1\" value=\"localtax1off\"".((empty($conf->global->FACTURE_LOCAL_TAX1_OPTION) || $conf->global->FACTURE_LOCAL_TAX1_OPTION == "localtax1off") ? " checked" : "")."> ".$langs->transcountry("LocalTax1IsNotUsed", $mysoc->country_code)."</td>";
+	print "<tr class=\"oddeven\"><td><input type=\"radio\" name=\"optionlocaltax1\" id=\"nolt1\" value=\"localtax1off\"".((empty($conf->global->FACTURE_LOCAL_TAX1_OPTION) || $conf->global->FACTURE_LOCAL_TAX1_OPTION == "localtax1off") ? " checked" : "")."> ".$langs->transcountry("LocalTax1IsNotUsed", $mysoc->country_code)."</td>";
 	print '<td colspan="2">';
-	print "<table>";
-	print "<tr><td><label for=\"nolt1\">".$langs->transcountry("LocalTax1IsNotUsedDesc", $mysoc->country_code)."</label></td></tr>";
-	$example = $langs->transcountry("LocalTax1IsNotUsedExample", $mysoc->country_code);
-	print ($example != "LocalTax1IsNotUsedExample" ? "<tr><td><i>".$langs->trans("Example").': '.$langs->transcountry("LocalTax1IsNotUsedExample", $mysoc->country_code)."</i></td></tr>\n" : "");
-	print "</table>";
+	$tooltiphelp = $langs->transcountry("LocalTax1IsNotUsedExample", $mysoc->country_code);
+	$tooltiphelp = ($tooltiphelp != "LocalTax1IsNotUsedExample" ? "<i>".$langs->trans("Example").': '.$langs->transcountry("LocalTax1IsNotUsedExample", $mysoc->country_code)."</i>\n" : "");
+	print "<label for=\"nolt1\">".$form->textwithpicto($langs->transcountry("LocalTax1IsNotUsedDesc", $mysoc->country_code), $tooltiphelp)."</label>";
 	print "</td></tr>\n";
 	print "</table>";
 }
@@ -771,38 +764,34 @@ if ($mysoc->useLocalTax(2))
 	print '<br>';
 	print '<table class="noborder centpercent">';
 	print '<tr class="liste_titre">';
-	print '<td>'.$langs->transcountry("LocalTax2Management", $mysoc->country_code).'</td><td>'.$langs->trans("Description").'</td>';
+	print '<td width="25%">'.$langs->transcountry("LocalTax2Management", $mysoc->country_code).'</td><td>'.$langs->trans("Description").'</td>';
 	print '<td class="right">&nbsp;</td>';
 	print "</tr>\n";
 
-
 	// Note: When option is not set, it must not appears as set on on, because there is no default value for this option
-	print "<tr class=\"oddeven\"><td width=\"140\"><input type=\"radio\" name=\"optionlocaltax2\" id=\"lt2\" value=\"localtax2on\"".(($conf->global->FACTURE_LOCAL_TAX2_OPTION == '1' || $conf->global->FACTURE_LOCAL_TAX2_OPTION == "localtax2on") ? " checked" : "")."> ".$langs->transcountry("LocalTax2IsUsed", $mysoc->country_code)."</td>";
+	print "<tr class=\"oddeven\"><td><input type=\"radio\" name=\"optionlocaltax2\" id=\"lt2\" value=\"localtax2on\"".(($conf->global->FACTURE_LOCAL_TAX2_OPTION == '1' || $conf->global->FACTURE_LOCAL_TAX2_OPTION == "localtax2on") ? " checked" : "")."> ".$langs->transcountry("LocalTax2IsUsed", $mysoc->country_code)."</td>";
 	print '<td colspan="2">';
-	print '<table class="nobordernopadding">';
-	print "<tr><td><label for=\"lt2\">".$langs->transcountry("LocalTax2IsUsedDesc", $mysoc->country_code)."</label></td></tr>";
-	$example = $langs->transcountry("LocalTax2IsUsedExample", $mysoc->country_code);
-	print ($example != "LocalTax2IsUsedExample" ? "<tr><td><i>".$langs->trans("Example").': '.$langs->transcountry("LocalTax2IsUsedExample", $mysoc->country_code)."</i></td></tr>\n" : "");
+	print '<div class="nobordernopadding">';
+	print "<label for=\"lt2\">".$langs->transcountry("LocalTax2IsUsedDesc", $mysoc->country_code)."</label>";
+	$tooltiphelp = $langs->transcountry("LocalTax2IsUsedExample", $mysoc->country_code);
+	$tooltiphelp = ($tooltiphelp != "LocalTax2IsUsedExample" ? "<i>".$langs->trans("Example").': '.$langs->transcountry("LocalTax2IsUsedExample", $mysoc->country_code)."</i>\n" : "");
 	if (!isOnlyOneLocalTax(2))
 	{
-	    print '<tr><td class="left"><label for="lt2">'.$langs->trans("LTRate").'</label>: ';
+	    print '<br><label for="lt2">'.$langs->trans("LTRate").'</label>: ';
 	    $formcompany->select_localtax(2, $conf->global->MAIN_INFO_VALUE_LOCALTAX2, "lt2");
-		print '</td></tr>';
 	}
-	print '<tr><td class="left"><label for="clt2">'.$langs->trans("CalcLocaltax").'</label>: ';
+	print '<br><label for="clt2">'.$langs->trans("CalcLocaltax").'</label>: ';
 	print $form->selectarray("clt2", $opcions, $conf->global->MAIN_INFO_LOCALTAX_CALC2);
-	print '</td></tr>';
-	print "</table>";
+	print "</div>";
 	print "</td></tr>\n";
 
-
-	print "<tr class=\"oddeven\"><td width=\"140\"><input type=\"radio\" name=\"optionlocaltax2\" id=\"nolt2\" value=\"localtax2off\"".((empty($conf->global->FACTURE_LOCAL_TAX2_OPTION) || $conf->global->FACTURE_LOCAL_TAX2_OPTION == "localtax2off") ? " checked" : "")."> ".$langs->transcountry("LocalTax2IsNotUsed", $mysoc->country_code)."</td>";
+	print "<tr class=\"oddeven\"><td><input type=\"radio\" name=\"optionlocaltax2\" id=\"nolt2\" value=\"localtax2off\"".((empty($conf->global->FACTURE_LOCAL_TAX2_OPTION) || $conf->global->FACTURE_LOCAL_TAX2_OPTION == "localtax2off") ? " checked" : "")."> ".$langs->transcountry("LocalTax2IsNotUsed", $mysoc->country_code)."</td>";
 	print '<td colspan="2">';
-	print "<table>";
-	print "<tr><td><label for=\"nolt2\">".$langs->transcountry("LocalTax2IsNotUsedDesc", $mysoc->country_code)."</label></td></tr>";
-	$example = $langs->transcountry("LocalTax2IsNotUsedExample", $mysoc->country_code);
-	print ($example != "LocalTax2IsNotUsedExample" ? "<tr><td><i>".$langs->trans("Example").': '.$langs->transcountry("LocalTax2IsNotUsedExample", $mysoc->country_code)."</i></td></tr>\n" : "");
-	print "</table>";
+	print "<div>";
+	$tooltiphelp = $langs->transcountry("LocalTax2IsNotUsedExample", $mysoc->country_code);
+	$tooltiphelp = ($tooltiphelp != "LocalTax2IsNotUsedExample" ? "<i>".$langs->trans("Example").': '.$langs->transcountry("LocalTax2IsNotUsedExample", $mysoc->country_code)."</i>\n" : "");
+	print "<label for=\"nolt2\">".$form->textwithpicto($langs->transcountry("LocalTax2IsNotUsedDesc", $mysoc->country_code), $tooltiphelp)."</label>";
+	print "</div>";
 	print "</td></tr>\n";
 	print "</table>";
 }
