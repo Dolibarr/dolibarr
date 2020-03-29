@@ -5064,6 +5064,9 @@ abstract class CommonObject
 		if (! ($this->id > 0)) {
 			return 0;
 		}
+		if (is_array($this->array_languages)) {
+			return 1;
+		}
 
 		$this->array_languages = array();
 
@@ -5083,19 +5086,25 @@ abstract class CommonObject
 			$numrows = $this->db->num_rows($resql);
 			if ($numrows)
 			{
-				$tab = $this->db->fetch_array($resql);
+				$i = 0;
+				while ($i < $numrows) {
+					$obj = $this->db->fetch_object($resql);
+					$key = $obj->property;
+					$value = $obj->value;
+					$codelang = $obj->lang;
+					$type = $this->fields[$key]['type'];
 
-				foreach ($tab as $key => $value)
-				{
 					// we can add this attribute to object
-					if (preg_match('/date/', $key))
+					if (preg_match('/date/', $type))
 					{
-						$this->array_languages[$key] = $this->db->jdate($value);
+						$this->array_languages[$key][$codelang] = $this->db->jdate($value);
 					}
 					else
 					{
-						$this->array_languages[$key] = $value;
+						$this->array_languages[$key][$codelang] = $value;
 					}
+
+					$i++;
 				}
 			}
 
@@ -5109,6 +5118,88 @@ abstract class CommonObject
 			dol_print_error($this->db);
 			return -1;
 		}
+	}
+
+	/**
+	 * Fill array_options property of object by extrafields value (using for data sent by forms)
+	 *
+	 * @param	string	$onlykey		Only the following key is filled. When we make update of only one language field ($action = 'update_languages'), calling page must set this to avoid to have other languages being reset.
+	 * @return	int						1 if array_options set, 0 if no value, -1 if error (field required missing for example)
+	 */
+	public function setValuesForAlternateLanguages($onlykey = '')
+	{
+		global $_POST, $langs;
+
+		// Get extra fields
+		foreach($_POST as $postfieldkey => $postfieldvalue) {
+			$tmparray = explode('-', $postfieldkey);
+			if ($tmparray[0] != 'field') continue;
+
+			$element = $tmparray[1];
+			$key = $tmparray[2];
+			$codelang = $tmparray[3];
+			//var_dump("postfieldkey=".$postfieldkey." element=".$element." key=".$key." codelang=".$codelang);
+
+			if (!empty($onlykey) && $key != $onlykey) continue;
+			if ($element != $this->element) continue;
+
+			$key_type = $this->fields[$key]['type'];
+
+			$enabled = 1;
+			if (isset($this->fields[$key]['enabled']))
+			{
+				$enabled = dol_eval($this->fields[$key]['enabled'], 1);
+			}
+			/*$perms = 1;
+			if (isset($this->fields[$key]['perms']))
+			{
+				$perms = dol_eval($this->fields[$key]['perms'], 1);
+			}*/
+			if (empty($enabled)) continue;
+			//if (empty($perms)) continue;
+
+			if (in_array($key_type, array('date')))
+			{
+				// Clean parameters
+				// TODO GMT date in memory must be GMT so we should add gm=true in parameters
+				$value_key = dol_mktime(0, 0, 0, $_POST[$postfieldkey."month"], $_POST[$postfieldkey."day"], $_POST[$postfieldkey."year"]);
+			}
+			elseif (in_array($key_type, array('datetime')))
+			{
+				// Clean parameters
+				// TODO GMT date in memory must be GMT so we should add gm=true in parameters
+				$value_key = dol_mktime($_POST[$postfieldkey."hour"], $_POST[$postfieldkey."min"], 0, $_POST[$postfieldkey."month"], $_POST[$postfieldkey."day"], $_POST[$postfieldkey."year"]);
+			}
+			elseif (in_array($key_type, array('checkbox', 'chkbxlst')))
+			{
+				$value_arr = GETPOST($postfieldkey, 'array'); // check if an array
+				if (!empty($value_arr)) {
+					$value_key = implode($value_arr, ',');
+				} else {
+					$value_key = '';
+				}
+			}
+			elseif (in_array($key_type, array('price', 'double')))
+			{
+				$value_arr = GETPOST($postfieldkey, 'alpha');
+				$value_key = price2num($value_arr);
+			}
+			else
+			{
+				$value_key = GETPOST($postfieldkey);
+				if (in_array($key_type, array('link')) && $value_key == '-1') $value_key = '';
+			}
+
+			$this->array_languages[$key][$codelang] = $value_key;
+
+			/*if ($nofillrequired) {
+				$langs->load('errors');
+				setEventMessages($langs->trans('ErrorFieldsRequired').' : '.implode(', ', $error_field_required), null, 'errors');
+				return -1;
+			}*/
+		}
+
+		return 1;
 	}
 
 

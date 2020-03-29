@@ -135,7 +135,6 @@ if (empty($reshook))
 		if ($soc_origin_id <= 0)
 		{
 			$langs->load('errors');
-			$langs->load('companies');
 			setEventMessages($langs->trans('ErrorThirdPartyIdIsMandatory', $langs->transnoentitiesnoconv('MergeOriginThirdparty')), null, 'errors');
 		}
 		else
@@ -490,6 +489,14 @@ if (empty($reshook))
 			{
 				 $error++;
 			}
+
+			// Fill array 'array_languages' with data from add form
+			$ret = $object->setValuesForAlternateLanguages();
+			if ($ret < 0)
+			{
+				$error++;
+			}
+			//var_dump($object->array_languages);exit;
 
 	        if (GETPOST('deletephoto')) $object->logo = '';
 	        elseif (!empty($_FILES['photo']['name'])) $object->logo = dol_sanitizeFileName($_FILES['photo']['name']);
