@@ -21,7 +21,8 @@ REM Mysql 5.1+
 REM .\bin\mysql\mysqlWAMPMYSQLVERSION\bin\mysqld.exe --install doliwampmysqld
 REM Mariadb
 REM The mysql_install_db allows to not provide files into mysql dir but does not return to prompt so install hangs
-.\bin\mariadb\mariadbWAMPMYSQLVERSION\bin\mysql_install_db.exe --datadir=WAMPROOT/bin/mariadb/data --port=WAMPMYSQLPORT --password=WAMPMYSQLNEWPASSWORD >> doliwamp.log 2>>&1
+REM .\bin\mariadb\mariadbWAMPMYSQLVERSION\bin\mysql_install_db.exe --datadir=WAMPROOT/bin/mariadb/data --port=WAMPMYSQLPORT --password=WAMPMYSQLNEWPASSWORD >> doliwamp.log 2>>&1
+.\bin\mariadb\mariadbWAMPMYSQLVERSION\bin\mysql_install_db.exe --datadir=WAMPROOT/bin/mariadb/data --port=WAMPMYSQLPORT >> doliwamp.log 2>>&1
 .\bin\mariadb\mariadbWAMPMYSQLVERSION\bin\mysqld.exe --install doliwampmysqld >> doliwamp.log 2>>&1
 
 echo ---- End script >> doliwamp.log 2>>&1
