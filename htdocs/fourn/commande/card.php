@@ -1213,7 +1213,7 @@ $result	= $object->updateline(
 									'',
 									null,
 									null,
-									array(),
+                                    $array_option,
 									$lines[$i]->fk_unit,
 									0,
 									$element,
