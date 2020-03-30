@@ -490,9 +490,9 @@ class SMTPs
                 }
                 // Most server servers expect a 2nd pass of EHLO after TLS is established to get another time
                 // the answer with list of supported AUTH methods. They may differs between non STARTTLS and with STARTTLS.
-                if (!$_retVal = $this->socket_send_str('EHLO '.$host, '250'))
+                if (!$_retVal = $this->socket_send_str('EHLO '.$hosth, '250'))
                 {
-                    $this->_setErr(126, '"'.$host.'" does not support authenticated connections.');
+                    $this->_setErr(126, '"'.$hosth.'" does not support authenticated connections.');
                     return $_retVal;
                 }
             }
