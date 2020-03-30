@@ -343,7 +343,7 @@ class Form
 
 			$result .='<div class="inline-block hidden field-'.$object->element.'-'.$fieldname.'">';
 
-			$valuetoshow = GETPOSTISSET($fieldname."-".$langcode) ? GETPOST($fieldname."-".$langcode, $check) : '';
+			$valuetoshow = GETPOSTISSET('field-'.$object->element."-".$fieldname."-".$langcode) ? GETPOST('field-'.$object->element.'-'.$fieldname."-".$langcode, $check) : '';
 			if (empty($valuetoshow)) {
 				$object->fetchValueForAlternateLanguages();
 				//var_dump($object->array_languages);
@@ -353,11 +353,11 @@ class Form
 			$s=picto_from_langcode($conf->global->PDF_USE_ALSO_LANGUAGE_CODE, 'class="pictoforlang"');
 			$result .= $s;
 			if ($typeofdata == 'textarea') {
-				$result .= '<textarea name="'.$fieldname."-".$langcode.'" id="'.$fieldname."-".$langcode.'" class="'.$morecss.'" rows="'.ROWS_2.'" wrap="soft">';
-				$result .= $object->address;
+				$result .= '<textarea name="field-'.$object->element."-".$fieldname."-".$langcode.'" id="'.$fieldname."-".$langcode.'" class="'.$morecss.'" rows="'.ROWS_2.'" wrap="soft">';
+				$result .= $valuetoshow;
 				$result .= '</textarea>';
 			} else {
-				$result .= '<input type="text" class="inputfieldforlang '.($morecss ? ' '.$morecss : '').'" name="'.$fieldname."-".$langcode.'" value="'.$valuetoshow.'">';
+				$result .= '<input type="text" class="inputfieldforlang '.($morecss ? ' '.$morecss : '').'" name="field-'.$object->element.'-'.$fieldname.'-'.$langcode.'" value="'.$valuetoshow.'">';
 			}
 			$result .= '</div>';
 			$result .= '<script>$(".image-'.$object->element.'-'.$fieldname.'").click(function() { console.log("Toggle lang widget"); jQuery(".field-'.$object->element.'-'.$fieldname.'").toggle(); });</script>';

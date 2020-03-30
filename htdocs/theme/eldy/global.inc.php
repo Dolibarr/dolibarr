@@ -23,7 +23,7 @@
 	--colortext: rgb(<?php print $colortext; ?>);
 	--colortextlink: rgb(<?php print $colortextlink; ?>);
 	--colortextbackhmenu: #<?php echo $colortextbackhmenu; ?>;
-	--colortextbackvmenu: #<?php print $colortextbackvmenu; ?>) ;
+	--colortextbackvmenu: #<?php print $colortextbackvmenu; ?>;
 	--listetotal: #551188;
 	--inputbackgroundcolor: #FFF;
 	--inputbordercolor: rgba(0,0,0,.2);
@@ -175,7 +175,7 @@ input, select {
 	margin-bottom:1px;
 	margin-top:1px;
 }
-input.button {
+#mainbody input.button {
 	background: var(--butactionbg);
     border-collapse: collapse;
     border: none;
