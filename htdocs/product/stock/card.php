@@ -639,8 +639,8 @@ else
                 $db->free($resql);
 
 				print '<tr class="liste_total"><td class="liste_total" colspan="2">'.$langs->trans("Total").'</td>';
-				print '<td class="liste_total" align="right">';
-				$valtoshow=price2num($totalunit, 'MS');
+				print '<td class="liste_total right">';
+				$valtoshow = price2num($totalunit, 'MS');
 				if(empty($conf->global->PRODUCT_USE_UNITS) || $sameunits) print empty($valtoshow)?'0':$valtoshow;
 				print '</td>';
 				print '<td class="liste_total">';
