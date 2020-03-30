@@ -2168,7 +2168,7 @@ class ExtraFields
 
 				if (in_array($key_type, array('date', 'datetime')))
 				{
-					if (!GETPOSTISSET($keysuffix."options_".$key.$keyprefix)."year") continue; // Value was not provided, we should not set it.
+					if (!GETPOSTISSET($keysuffix."options_".$key.$keyprefix."year")) continue; // Value was not provided, we should not set it.
 					// Clean parameters
 					$value_key = dol_mktime(GETPOST($keysuffix."options_".$key.$keyprefix."hour", 'int'), GETPOST($keysuffix."options_".$key.$keyprefix."min", 'int'), 0, GETPOST($keysuffix."options_".$key.$keyprefix."month", 'int'), GETPOST($keysuffix."options_".$key.$keyprefix."day", 'int'), GETPOST($keysuffix."options_".$key.$keyprefix."year", 'int'));
 				}
