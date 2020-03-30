@@ -646,12 +646,14 @@ class Form
     	  				/* console.log( index + ": " + $( this ).text() ); */
     	  				if ($(this).is(\':checked\')) atleastoneselected++;
     	  			});
+
 					console.log("initCheckForSelect mode="+mode+" atleastoneselected="+atleastoneselected);
+
     	  			if (atleastoneselected || '.$alwaysvisible.')
     	  			{
     	  				jQuery(".massaction").show();
-        			    '.($selected ? 'if (atleastoneselected) { jQuery(".massactionselect").val("'.$selected.'"); jQuery(".massactionconfirmed").prop(\'disabled\', false); }' : '').'
-        			    '.($selected ? 'if (! atleastoneselected) { jQuery(".massactionselect").val("0"); jQuery(".massactionconfirmed").prop(\'disabled\', true); } ' : '').'
+        			    '.($selected ? 'if (atleastoneselected) { jQuery(".massactionselect").val("'.$selected.'").trigger(\'change\'); jQuery(".massactionconfirmed").prop(\'disabled\', false); }' : '').'
+        			    '.($selected ? 'if (! atleastoneselected) { jQuery(".massactionselect").val("0").trigger(\'change\'); jQuery(".massactionconfirmed").prop(\'disabled\', true); } ' : '').'
     	  			}
     	  			else
     	  			{
@@ -3509,11 +3511,11 @@ class Form
 	/**
 	 *      Return list of payment methods
 	 *
-	 *      @param	string	$selected       Id du mode de paiement pre-selectionne
-	 *      @param  string	$htmlname       Nom de la zone select
+	 *      @param	string	$selected       Id or code or preselected payment mode
+	 *      @param  string	$htmlname       Name of select field
 	 *      @param  string	$filtertype     To filter on field type in llx_c_paiement ('CRDT' or 'DBIT' or array('code'=>xx,'label'=>zz))
-	 *      @param  int		$format         0=id+libelle, 1=code+code, 2=code+libelle, 3=id+code
-	 *      @param  int		$empty			1=peut etre vide, 0 sinon
+	 *      @param  int		$format         0=id+label, 1=code+code, 2=code+label, 3=id+code
+	 *      @param  int		$empty			1=can be empty, 0 otherwise
 	 * 		@param	int		$noadmininfo	0=Add admin info, 1=Disable admin info
 	 *      @param  int		$maxlength      Max length of label
 	 *      @param  int     $active         Active or not, -1 = all
@@ -3551,9 +3553,12 @@ class Form
 			elseif ($format == 1) print '<option value="'.$arraytypes['code'].'"';
 			elseif ($format == 2) print '<option value="'.$arraytypes['code'].'"';
 			elseif ($format == 3) print '<option value="'.$id.'"';
-			// Si selected est text, on compare avec code, sinon avec id
-			if (preg_match('/[a-z]/i', $selected) && $selected == $arraytypes['code']) print ' selected';
-			elseif ($selected == $id) print ' selected';
+			// Print attribute selected or not
+			if ($format==1 || $format==2) {
+				if ($selected == $arraytypes['code']) print ' selected';
+			} else {
+				if ($selected == $id) print ' selected';
+			}
 			print '>';
 			if ($format == 0) $value = ($maxlength ?dol_trunc($arraytypes['label'], $maxlength) : $arraytypes['label']);
 			elseif ($format == 1) $value = $arraytypes['code'];

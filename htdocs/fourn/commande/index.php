@@ -81,7 +81,7 @@ $sql .= " FROM ".MAIN_DB_PREFIX."societe as s";
 $sql .= ", ".MAIN_DB_PREFIX."commande_fournisseur as cf";
 if (!$user->rights->societe->client->voir && !$socid) $sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
 $sql .= " WHERE cf.fk_soc = s.rowid";
-$sql .= " AND cf.entity = ".$conf->entity;
+$sql .= " AND cf.entity IN (".getEntity('supplier_order').")";
 if ($user->socid) $sql .= ' AND cf.fk_soc = '.$user->socid;
 if (!$user->rights->societe->client->voir && !$socid) $sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".$user->id;
 $sql .= " GROUP BY cf.fk_statut";
@@ -267,7 +267,7 @@ if (! empty($conf->multicompany->enabled) && ! empty($conf->global->MULTICOMPANY
 }
 else
 {
-	$sql.= " WHERE (u.entity IN (".getEntity('user').")";
+	$sql.= " WHERE (u.entity IN (".getEntity('user')."))";
 }
 $sql.= " AND u.fk_soc IS NULL"; // An external user can not approved
 

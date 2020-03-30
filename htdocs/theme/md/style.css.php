@@ -2886,7 +2886,6 @@ table.paddingtopbottomonly tr td {
 	background: rgb(<?php echo $colorbacktitle1; ?>) !important;
 }
 tr.liste_titre_filter td.liste_titre {
-    border-bottom: 1px solid #FDFFFF;
 	padding-top: 4px;
 	padding-bottom: 3px;
 }

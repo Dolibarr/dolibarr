@@ -302,11 +302,13 @@ if (empty($reshook))
 			// Note: Other solution if you want to add a negative line on invoice, is to create a discount for customer and consumme it (but this is possible on standard invoice only).
 			$array_of_total_ht_per_vat_rate = array();
 			$array_of_total_ht_devise_per_vat_rate = array();
-			foreach($object->lines as $line) {
-				if (empty($array_of_total_ht_per_vat_rate[$line->tva_tx.'_'.$line->vat_src_code])) $array_of_total_ht_per_vat_rate[$line->tva_tx.'_'.$line->vat_src_code] = 0;
-				if (empty($array_of_total_ht_devise_per_vat_rate[$line->tva_tx.'_'.$line->vat_src_code])) $array_of_total_ht_devise_per_vat_rate[$line->tva_tx.'_'.$line->vat_src_code] = 0;
-				$array_of_total_ht_per_vat_rate[$line->tva_tx.'_'.$line->vat_src_code] += $line->total_ht;
-				$array_of_total_ht_devise_per_vat_rate[$line->tva_tx.'_'.$line->vat_src_code] += $line->multicurrency_total_ht;
+			foreach ($object->lines as $line) {
+				//$vat_src_code_for_line = $line->vat_src_code;		// TODO We chek sign of total per vat without taking into account the vat code because for the moment the vat code is lost/unknown when we add a down payment.
+				$vat_src_code_for_line = '';
+				if (empty($array_of_total_ht_per_vat_rate[$line->tva_tx.'_'.$vat_src_code_for_line])) $array_of_total_ht_per_vat_rate[$line->tva_tx.'_'.$vat_src_code_for_line] = 0;
+				if (empty($array_of_total_ht_devise_per_vat_rate[$line->tva_tx.'_'.$vat_src_code_for_line])) $array_of_total_ht_devise_per_vat_rate[$line->tva_tx.'_'.$vat_src_code_for_line] = 0;
+				$array_of_total_ht_per_vat_rate[$line->tva_tx.'_'.$vat_src_code_for_line] += $line->total_ht;
+				$array_of_total_ht_devise_per_vat_rate[$line->tva_tx.'_'.$vat_src_code_for_line] += $line->multicurrency_total_ht;
 			}
 
 			//var_dump($array_of_total_ht_per_vat_rate);exit;
@@ -831,9 +833,9 @@ if (empty($reshook))
 						$amount_ht[$vatrate] = price2num($amount_ht[$vatrate] * $ratio, 'MU');
 						$amount_tva[$vatrate] = price2num($amount_tva[$vatrate] * $ratio, 'MU');
 						$amount_ttc[$vatrate] = price2num($amount_ttc[$vatrate] * $ratio, 'MU');
-						$multicurrency_amount_ht[$line->tva_tx] = price2num($multicurrency_amount_ht[$vatrate] * $ratio, 'MU');
-						$multicurrency_amount_tva[$line->tva_tx] = price2num($multicurrency_amount_tva[$vatrate] * $ratio, 'MU');
-						$multicurrency_amount_ttc[$line->tva_tx] = price2num($multicurrency_amount_ttc[$vatrate] * $ratio, 'MU');
+						$multicurrency_amount_ht[$vatrate] = price2num($multicurrency_amount_ht[$vatrate] * $ratio, 'MU');
+						$multicurrency_amount_tva[$vatrate] = price2num($multicurrency_amount_tva[$vatrate] * $ratio, 'MU');
+						$multicurrency_amount_ttc[$vatrate] = price2num($multicurrency_amount_ttc[$vatrate] * $ratio, 'MU');
 					}
 				}
 			}
@@ -2840,7 +2842,7 @@ if ($action == 'create')
 	}
 
 	print '<form name="add" action="'.$_SERVER["PHP_SELF"].'" method="POST">';
-	print '<input type="hidden" name="token" value="'.$_SESSION ['newtoken'].'">';
+	print '<input type="hidden" name="token" value="'.newToken().'">';
 	print '<input type="hidden" name="action" value="add">';
 	if ($soc->id > 0) print '<input type="hidden" name="socid" value="'.$soc->id.'">'."\n";
 	print '<input name="ref" type="hidden" value="provisoire">';
@@ -4441,7 +4443,7 @@ elseif ($id > 0 || !empty($ref))
 		print '</td><td>';
 		if ($action == 'editrevenuestamp') {
 			print '<form action="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'" method="post">';
-			print '<input type="hidden" name="token" value="'.$_SESSION ['newtoken'].'">';
+			print '<input type="hidden" name="token" value="'.newToken().'">';
 			print '<input type="hidden" name="action" value="setrevenuestamp">';
 			print '<input type="hidden" name="revenuestamp" id="revenuestamp_val" value="'.price2num($object->revenuestamp).'">';
 			print $formother->select_revenue_stamp('', 'revenuestamp_type', $mysoc->country_code);
@@ -4945,7 +4947,7 @@ elseif ($id > 0 || !empty($ref))
 	}
 
 	print '	<form name="addproduct" id="addproduct" action="'.$_SERVER["PHP_SELF"].'?id='.$object->id.(($action != 'editline') ? '#addline' : '#line_'.GETPOST('lineid')).'" method="POST">
-	<input type="hidden" name="token" value="' . $_SESSION ['newtoken'].'">
+	<input type="hidden" name="token" value="' . newToken().'">
 	<input type="hidden" name="action" value="' . (($action != 'editline') ? 'addline' : 'updateline').'">
 	<input type="hidden" name="mode" value="">
 	<input type="hidden" name="id" value="' . $object->id.'">

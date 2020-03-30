@@ -185,7 +185,7 @@ else
 	print '<br>'."\n";
 
 	print '<form name="formtest" method="POST" action="'.$_SERVER["PHP_SELF"].'">'."\n";
-    print '<input type="hidden" name="token" value="' . $_SESSION ['newtoken'] . '">';
+    print '<input type="hidden" name="token" value="' . newToken() . '">';
 
 	// Skins
     show_skin(null, 1);

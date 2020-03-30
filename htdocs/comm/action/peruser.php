@@ -289,7 +289,7 @@ $nav .= " &nbsp; <a href=\"?year=".$next_year."&amp;month=".$next_month."&amp;da
 $nav .= " &nbsp; (<a href=\"?year=".$nowyear."&amp;month=".$nowmonth."&amp;day=".$nowday.$param."\">".$langs->trans("Today")."</a>)";
 
 /*$nav.=' &nbsp; <form name="dateselect" action="'.$_SERVER["PHP_SELF"].'?action=show_peruser'.$param.'">';
-$nav.='<input type="hidden" name="token" value="' . $_SESSION ['newtoken'] . '">';
+$nav.='<input type="hidden" name="token" value="' . newToken() . '">';
 $nav.='<input type="hidden" name="action" value="' . $action . '">';
 $nav.='<input type="hidden" name="filtert" value="' . $filtert . '">';
 $nav.='<input type="hidden" name="usergroup" value="' . $usergroup . '">';

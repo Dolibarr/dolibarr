@@ -1610,7 +1610,7 @@ elseif ($id || $ref)
 		if ($action == 'editline')
 		{
 			print '<form name="updateline" id="updateline" action="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;lineid='.$line_id.'" method="POST">
-			<input type="hidden" name="token" value="' . $_SESSION ['newtoken'].'">
+			<input type="hidden" name="token" value="' . newToken().'">
 			<input type="hidden" name="action" value="updateline">
 			<input type="hidden" name="mode" value="">
 			<input type="hidden" name="id" value="' . $object->id.'">';

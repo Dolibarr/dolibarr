@@ -916,7 +916,7 @@ if (empty($action) || $action == 'list')
         $selectedfields = $form->multiSelectArrayWithCheckbox('selectedfields', $arrayfields, $varpage); // This also change content of $arrayfields
 
         print '<div class="div-table-responsive">';
-        print '<table class="tagtable liste'.($moreforfilter ? " listwithfilterbefore" : "").'">'."\n";
+        print '<table class="tagtable nobottomiftotal liste'.($moreforfilter ? " listwithfilterbefore" : "").'">'."\n";
 
         // Lines for filters fields
         print '<tr class="liste_titre_filter">';
@@ -1018,7 +1018,7 @@ if (empty($action) || $action == 'list')
             // Amount
             print '<td class="right">'.price($objp->pamount).'</td>';
             if (!$i) $totalarray['nbfield']++;
-            $totalarray['pos'][7] = 'amount';
+            if (!$i) $totalarray['pos'][$totalarray['nbfield']] = 'amount';
             $totalarray['val']['amount'] += $objp->pamount;
 
             // Ref invoice

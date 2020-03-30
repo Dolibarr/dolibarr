@@ -10,6 +10,7 @@
  * Copyright (C) 2016      Ferran Marcet		<fmarcet@2byte.es>
  * Copyright (C) 2019      Frédéric France      <frederic.france@netlogic.fr>
  * Copyright (C) 2019      Tim Otte			    <otte@meuser.it>
+ * Copyright (C) 2020      Pierre Ardoin        <mapiolca@me.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -1054,6 +1055,7 @@ SCRIPT;
 
 						// Modify-Remove
 						print '<td class="center nowraponall">';
+
 						if ($usercancreate)
 						{
 							print '<a href="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'&amp;socid='.$productfourn->fourn_id.'&amp;action=update_price&amp;rowid='.$productfourn->product_fourn_price_id.'">'.img_edit()."</a>";

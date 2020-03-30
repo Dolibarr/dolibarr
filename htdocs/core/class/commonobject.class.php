@@ -6638,9 +6638,10 @@ abstract class CommonObject
 				if (($mode == 'create' || $mode == 'edit') && abs($visibility) != 1 && abs($visibility) != 3) continue; // <> -1 and <> 1 and <> 3 = not visible on forms, only on list
 				elseif ($mode == 'view' && empty($visibility)) continue;
 				if (empty($perms)) continue;
-
 				// Load language if required
-				if (!empty($extrafields->attributes[$this->table_element]['langfile'][$key])) $langs->load($extrafields->attributes[$this->table_element]['langfile'][$key]);
+				if (!empty($extrafields->attributes[$this->table_element]['langfile'][$key])) {
+					$langs->load($extrafields->attributes[$this->table_element]['langfile'][$key]);
+				}
 
 				$colspan = '';
 				if (is_array($params) && count($params) > 0) {
@@ -6739,8 +6740,8 @@ abstract class CommonObject
 					{
 						$value = GETPOSTISSET($keyprefix.'options_'.$key.$keysuffix) ?price2num(GETPOST($keyprefix.'options_'.$key.$keysuffix, 'alpha', 3)) : $this->array_options['options_'.$key];
 					}
-
 					$labeltoshow = $langs->trans($label);
+					$helptoshow = $langs->trans($extrafields->attributes[$this->table_element]['help'][$key]);
 
 					$out .= '<td class="';
 					//$out .= "titlefield";
@@ -6749,14 +6750,13 @@ abstract class CommonObject
 					$tpl_context = isset($params["tpl_context"]) ? $params["tpl_context"] : "none";
 					if ($tpl_context == "public") {	// Public page : red dot instead of fieldrequired characters
 						$out .= '">';
-						if (!empty($extrafields->attributes[$this->table_element]['help'][$key])) $out .= $form->textwithpicto($labeltoshow, $extrafields->attributes[$this->table_element]['help'][$key]);
+						if (!empty($extrafields->attributes[$this->table_element]['help'][$key])) $out .= $form->textwithpicto($labeltoshow, $helptoshow);
 						else $out .= $labeltoshow;
 						if ($mode != 'view' && !empty($extrafields->attributes[$this->table_element]['required'][$key])) $out .= '&nbsp;<font color="red">*</font>';
 					} else {
 						if ($mode != 'view' && !empty($extrafields->attributes[$this->table_element]['required'][$key])) $out .= ' fieldrequired';
-						$out .= '"';
-						$out .= '>';
-						if (!empty($extrafields->attributes[$this->table_element]['help'][$key])) $out .= $form->textwithpicto($labeltoshow, $extrafields->attributes[$this->table_element]['help'][$key]);
+						$out .= '">';
+						if (!empty($extrafields->attributes[$this->table_element]['help'][$key])) $out .= $form->textwithpicto($labeltoshow, $helptoshow);
 						else $out .= $labeltoshow;
 					}
 					$out .= '</td>';
