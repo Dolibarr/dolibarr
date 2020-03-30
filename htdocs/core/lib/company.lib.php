@@ -402,7 +402,7 @@ function societe_admin_prepare_head()
     // Entries must be declared in modules descriptor with line
     // $this->tabs = array('entity:+tabname:Title:@mymodule:/mymodule/mypage.php?id=__ID__');   to add new tab
     // $this->tabs = array('entity:-tabname:Title:@mymodule:/mymodule/mypage.php?id=__ID__');   to remove a tab
-    complete_head_from_modules($conf, $langs, null, $head, $h, 'societe_admin');
+    complete_head_from_modules($conf, $langs, null, $head, $h, 'company_admin');
 
     $head[$h][0] = DOL_URL_ROOT.'/societe/admin/societe_extrafields.php';
     $head[$h][1] = $langs->trans("ExtraFieldsThirdParties");
@@ -414,7 +414,7 @@ function societe_admin_prepare_head()
     $head[$h][2] = 'attributes_contacts';
     $h++;
 
-    complete_head_from_modules($conf, $langs, null, $head, $h, 'societe_admin', 'remove');
+    complete_head_from_modules($conf, $langs, null, $head, $h, 'company_admin', 'remove');
 
     return $head;
 }
