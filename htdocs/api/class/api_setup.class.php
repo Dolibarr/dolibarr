@@ -230,7 +230,7 @@ class Setup extends DolibarrApi
                 if ($country->fetch($obj->rowid) > 0) {
                     // Translate the name of the country if needed
                     // and then apply the filter if there is one.
-                    $this->translateLabel($country, $lang);
+                    $this->translateLabel($country, $lang, 'Country');
 
                     if (empty($filter) || stripos($country->label, $filter) !== false) {
                         $list[] = $this->_cleanObjectDatas($country);
@@ -318,7 +318,7 @@ class Setup extends DolibarrApi
             throw new RestException(404, 'country not found');
         }
 
-        $this->translateLabel($country, $lang);
+        $this->translateLabel($country, $lang, 'Country');
 
         return $this->_cleanObjectDatas($country);
     }
@@ -403,14 +403,15 @@ class Setup extends DolibarrApi
     }
 
     /**
-     * Translate the name of the country to the given language.
+     * Translate the name of the object to the given language.
      *
-     * @param Ccountry $country   Country
-     * @param string   $lang      Code of the language the name of the
-     *                            country must be translated to
+     * @param object   $object    Object with label to translate
+     * @param string   $lang      Code of the language the name of the object must be translated to
+     * @param string   $modprefix Prefix for translation
+     *                            
      * @return void
      */
-    private function translateLabel($country, $lang)
+    private function translateLabel($object, $lang, $prefix)
     {
         if (!empty($lang)) {
             // Load the translations if this is a new language.
@@ -420,11 +421,12 @@ class Setup extends DolibarrApi
                 $this->translations->setDefaultLang($lang);
                 $this->translations->load('dict');
             }
-            if ($country->code) {
-                $key = 'Country'.$country->code;
+            if ($object->code) {
+                $key = $prefix.$object->code;
+                
                 $translation = $this->translations->trans($key);
                 if ($translation != $key) {
-                    $country->label = html_entity_decode($translation);
+                    $object->label = html_entity_decode($translation);
                 }
             }
         }
