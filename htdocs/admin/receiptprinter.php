@@ -1,7 +1,8 @@
 <?php
-/* Copyright (C) 2013-2016 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2015      Frederic France      <frederic.france@free.fr>
- * Copyright (C) 2016      Juanjo Menent        <jmenent@2byte.es>
+/* Copyright (C) 2013-2016 Laurent Destailleur   <eldy@users.sourceforge.net>
+ * Copyright (C) 2015      Frederic France       <frederic.france@free.fr>
+ * Copyright (C) 2016      Juanjo Menent         <jmenent@2byte.es>
+ * Copyright (C) 2020      Andreu Bisquerra Gaya <jove@bisquerra.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -355,7 +356,7 @@ if ($mode == 'config' && $user->admin) {
     print '<tr class="oddeven"><td>'.$langs->trans("CONNECTOR_NETWORK_PRINT").':</td><td>'.$langs->trans("CONNECTOR_NETWORK_PRINT_HELP").'</td></tr>';
     print '<tr class="oddeven"><td>'.$langs->trans("CONNECTOR_FILE_PRINT").':</td><td>'.$langs->trans("CONNECTOR_FILE_PRINT_HELP").'</td></tr>';
     print '<tr class="oddeven"><td>'.$langs->trans("CONNECTOR_WINDOWS_PRINT").':</td><td>'.$langs->trans("CONNECTOR_WINDOWS_PRINT_HELP").'</td></tr>';
-    //print '<tr class="oddeven"><td>'.$langs->trans("CONNECTOR_JAVA").':</td><td>'.$langs->trans("CONNECTOR_JAVA_HELP").'</td></tr>';
+    print '<tr class="oddeven"><td>'.$langs->trans("CONNECTOR_CUPS_PRINT").':</td><td>'.$langs->trans("CONNECTOR_CUPS_PRINT_HELP").'</td></tr>';
     print '</table>';
     dol_fiche_end();
 
