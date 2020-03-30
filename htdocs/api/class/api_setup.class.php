@@ -408,7 +408,7 @@ class Setup extends DolibarrApi
      * @param object   $object    Object with label to translate
      * @param string   $lang      Code of the language the name of the object must be translated to
      * @param string   $modprefix Prefix for translation
-     *                            
+     *
      * @return void
      */
     private function translateLabel($object, $lang, $prefix)
@@ -423,7 +423,7 @@ class Setup extends DolibarrApi
             }
             if ($object->code) {
                 $key = $prefix.$object->code;
-                
+
                 $translation = $this->translations->trans($key);
                 if ($translation != $key) {
                     $object->label = html_entity_decode($translation);
