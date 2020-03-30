@@ -266,3 +266,4 @@ InvoiceToUse=Draft invoice to use
 NewInvoice=New invoice
 OneLinePerTask=One line per task
 OneLinePerPeriod=One line per period
+RefTaskParent=Ref. Parent Task
