@@ -67,7 +67,7 @@ $tmp=dol_getdate(dol_now());
 $tables=array(
     'propal'=>array(0=>'datep', 1=>'fin_validite', 2=>'date_valid', 3=>'date_cloture'),
     'commande'=>array(0=>'date_commande', 1=>'date_valid', 2=>'date_cloture'),
-    'facture'=>array(0=>'datef', 1=>'date_valid', 2=>'date_lim_reglement'),
+	'facture'=>array(0=>'datec', 0=>'datef', 1=>'date_valid', 2=>'date_lim_reglement'),
     'paiement'=>array(0=>'datep'),
     'bank'=>array(0=>'datev', 1=>'dateo'),
     'commande_fournisseur'=>array(0=>'date_commande', 1=>'date_valid', 3=>'date_creation', 4=>'date_approve', 5=>'date_approve2', 6=>'date_livraison'),
@@ -79,10 +79,11 @@ $currentyear=$tmp['year'];
 while ($year <= $currentyear)
 {
     //$year=2021;
-    $delta=($currentyear - $year);
+    $delta1=($currentyear - $year);
+    $delta2=($currentyear - $year - 1);
     //$delta=-1;
 
-    if ($delta)
+    if ($delta1)
     {
         foreach($tables as $tablekey => $tableval)
         {
@@ -105,7 +106,7 @@ while ($year <= $currentyear)
                         foreach($tableval as $field)
                         {
                             if ($j) $sql2.=", ";
-                            $sql2.= $field." = DATE_ADD(".$field.", INTERVAL ".$delta." YEAR)";
+                            $sql2.= $field." = ".$db->ifsql("DATE_ADD(".$field.", INTERVAL ".$delta1." YEAR) > NOW()", "DATE_ADD(".$field.", INTERVAL ".$delta2." YEAR)", "DATE_ADD(".$field.", INTERVAL ".$delta1." YEAR)");
                             $j++;
                         }
                         $sql2.=" WHERE rowid = ".$obj->rowid;
