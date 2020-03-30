@@ -51,6 +51,8 @@ include_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
  *	Main
  */
 
+print "***** ".$script_file." *****\n";
+print "Update dates to current year for database name = ".$db->database_name."\n";
 if (empty($confirm))
 {
 	print "Usage: $script_file confirm\n";
@@ -84,7 +86,7 @@ while ($year <= $currentyear)
     {
         foreach($tables as $tablekey => $tableval)
         {
-            print "\nCorrect ".$tablekey." for year ".$year." and move them to current year ".$currentyear." ";
+            print "Correct ".$tablekey." for year ".$year." and move them to current year ".$currentyear." ";
             $sql="select rowid from ".MAIN_DB_PREFIX.$tablekey." where ".$tableval[0]." between '".$year."-01-01' and '".$year."-12-31' and ".$tableval[0]." < DATE_ADD(NOW(), INTERVAL -1 YEAR)";
             //$sql="select rowid from ".MAIN_DB_PREFIX.$tablekey." where ".$tableval[0]." between '".$year."-01-01' and '".$year."-12-31' and ".$tableval[0]." > NOW()";
             $resql = $db->query($sql);
@@ -115,6 +117,7 @@ while ($year <= $currentyear)
                 }
             }
             else dol_print_error($db);
+            print "\n";
         }
     }
 
