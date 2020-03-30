@@ -1005,6 +1005,7 @@ class BOM extends CommonObject
 
 	/**
 	 * BOM costs calculation based on cost_price or pmp of each BOM line
+	 * @return void
 	 */
 	public function calculateCosts() {
 		include_once DOL_DOCUMENT_ROOT . '/product/class/product.class.php';
