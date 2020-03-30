@@ -37,7 +37,7 @@ Releases can be downloaded from [official website](https://www.dolibarr.org/).
 
 You can use a Web server and a supported database (MariaDB, MySQL or PostgreSQL) to install the standard version.
 
-- Check that your installed PHP version is supported [see PHP support](./doc/phpmatrix.md).
+- Check that your installed PHP version is supported [see PHP support](https://wiki.dolibarr.org/index.php/Versions).
 
 - Uncompress the downloaded .zip archive to copy the "dolibarr/htdocs" directory and all its files inside your web server root or get the files directly from GitHub (recommanded if you known git):
 
