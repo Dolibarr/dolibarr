@@ -33,6 +33,7 @@ CREATE TABLE llx_blockedlog
 	signature varchar(100) NOT NULL, 
 	signature_line varchar(100) NOT NULL, 
 	object_data	text,
+	object_version varchar(32) DEFAULT '';
 	certified integer
 ) ENGINE=innodb;
 
