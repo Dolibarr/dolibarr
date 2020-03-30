@@ -11,6 +11,7 @@
  * Copyright (C) 2013-2014  Florian Henry           <florian.henry@open-concept.pro>
  * Copyright (C) 2014       Ferran Marcet           <fmarcet@2byte.es>
  * Copyright (C) 2018       Frédéric France         <frederic.france@netlogic.fr>
+ * Copyright (C) 2020		Tobias Sekan			<tobias.sekan@startmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -715,7 +716,7 @@ if (empty($reshook))
 					setEventMessages($langs->trans("ErrorQtyTooLowForThisSupplier"), null, 'errors');
 				}
 			}
-			elseif ((GETPOST('price_ht') !== '' || GETPOST('price_ttc') !== '') && empty($error))    // Free product.  // $price_ht is already set
+			elseif ((GETPOST('price_ht') !== '' || GETPOST('price_ttc') !== '' || GETPOST('multicurrency_price_ht') != '') && empty($error))    // Free product.  // $price_ht is already set
 			{
 				$pu_ht = price2num($price_ht, 'MU');
 				$pu_ttc = price2num(GETPOST('price_ttc'), 'MU');
@@ -745,8 +746,31 @@ if (empty($reshook))
 				$price_base_type = 'HT';
 				$pu_ht_devise = price2num($price_ht_devise, 'MU');
 
-				$result = $object->addline($desc, $pu_ht, $qty, $tva_tx, $localtax1_tx, $localtax2_tx, $idprod, $remise_percent, $price_base_type, $pu_ttc, $info_bits, $type, - 1, 0, GETPOST('fk_parent_line'), $fournprice, $buyingprice, $label, $array_options, $ref_supplier, $fk_unit);
-				//$result = $object->addline($desc, $ht, $qty, $tva_tx, $localtax1_tx, $localtax2_tx, 0, 0, '', $remise_percent, $price_base_type, $ttc, $type,'','', $date_start, $date_end, $array_options, $fk_unit);
+				$result = $object->addline(
+					$desc,
+					$pu_ht,
+					$qty,
+					$tva_tx,
+					$localtax1_tx,
+					$localtax2_tx,
+					$idprod,
+					$remise_percent,
+					$price_base_type,
+					$pu_ttc,
+					$info_bits,
+					$type,
+					-1,								// rang
+					0,								// special_code
+					GETPOST('fk_parent_line'),
+					$fournprice,
+					$buyingprice,
+					$label,
+					$array_options,
+					$ref_supplier,
+					$fk_unit,
+					'',								// origin
+					0,								// origin_id
+					$pu_ht_devise);
 			}
 
 
@@ -839,10 +863,10 @@ if (empty($reshook))
 
 		if (GETPOST('price_ht') != '')
 		{
-			$price_base_type = 'HT';
 			$ht = price2num(GETPOST('price_ht'));
 		}
-		else
+
+		if (GETPOST('price_ttc') != '')
 		{
 			$reg = array();
 			$vatratecleaned = $vat_rate;
@@ -854,9 +878,9 @@ if (empty($reshook))
 
 			$ttc = price2num(GETPOST('price_ttc'));
 			$ht = $ttc / (1 + ($vatratecleaned / 100));
-			$price_base_type = 'HT';
 		}
 
+		$price_base_type = 'HT';
 		$pu_ht_devise = GETPOST('multicurrency_subprice');
 
 		// Add buying price
