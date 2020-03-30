@@ -3161,7 +3161,12 @@ div.pagination li.paginationafterarrows {
 .paginationatbottom {
 	margin-top: 9px;
 }
-
+table.hidepaginationprevious .paginationprevious {
+	display: none;
+}
+table.hidepaginationnext .paginationnext {
+	display: none;
+}
 
 
 

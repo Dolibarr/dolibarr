@@ -3149,6 +3149,13 @@ div.pagination li.paginationafterarrows {
 .paginationatbottom {
 	margin-top: 9px;
 }
+table.hidepaginationprevious .paginationprevious {
+	display: none;
+}
+table.hidepaginationnext .paginationnext {
+	display: none;
+}
+
 
 /* Prepare to remove class pair - impair
 .noborder > tbody > tr:nth-child(even) td {
