@@ -813,7 +813,7 @@ class Livraison extends CommonObject
 				$line->price			= $obj->price;
 				$line->total_ht			= $obj->total_ht;
 
-				// Add 
+				// Add
 				$line->weight         	= $obj->weight;
 				$line->weight_units   	= $obj->weight_units;
 				$line->width         	= $obj->width;
@@ -826,10 +826,10 @@ class Livraison extends CommonObject
 				$line->surface_units   	= $obj->surface_units;
 				$line->volume         	= $obj->volume;
 				$line->volume_units   	= $obj->volume_units;
-				
-				
+
+
 				$line->fk_unit   	= $obj->fk_unit;
-				
+
 				$this->lines[$i] = $line;
 
 				$i++;
