@@ -59,7 +59,7 @@ if ($user->socid)
 // Get parameters
 $sortfield = GETPOST("sortfield", 'alpha');
 $sortorder = GETPOST("sortorder", 'alpha');
-$page = GETPOST("page", 'int');
+$page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOST("page", 'int');
 if (empty($page) || $page == -1) { $page = 0; }
 $offset = $conf->liste_limit * $page;
 $pageprev = $page - 1;
@@ -137,9 +137,9 @@ if ($id > 0 || !empty($ref)) {
 		$modulepart = 'bank';
 		$permission = $user->rights->banque->modifier;
 		$permtoedit = $user->rights->banque->modifier;
-		$param = '&id='.$object->id.'&num='.$num;
-		$uri = '&num='.$num;
-		$relativepathwithnofile = $id."/statement/".$num."/";
+		$param = '&id='.$object->id.'&num='.urlencode($num);
+		$moreparam = '&num='.urlencode($num);;
+		$relativepathwithnofile = $id."/statement/".dol_sanitizeFileName($num)."/";
 		include_once DOL_DOCUMENT_ROOT.'/core/tpl/document_actions_post_headers.tpl.php';
 	}
 	else {

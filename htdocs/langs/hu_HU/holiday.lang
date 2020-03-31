@@ -1,7 +1,7 @@
 # Dolibarr language file - Source file is en_US - holiday
 HRM=HRM
-Holidays=Leave
-CPTitreMenu=Leave
+Holidays=Elhagy
+CPTitreMenu=Elhagy
 MenuReportMonth=Monthly statement
 MenuAddCP=New leave request
 NotActiveModCP=You must enable the module Leave to view this page.
@@ -109,7 +109,7 @@ UpdateConfCPOK=Updated successfully.
 Module27130Name= Management of leave requests
 Module27130Desc= Management of leave requests
 ErrorMailNotSend=An error occurred while sending email:
-NoticePeriod=Notice period
+NoticePeriod=Felmondási idő
 #Messages
 HolidaysToValidate=Validate leave requests
 HolidaysToValidateBody=Below is a leave request to validate

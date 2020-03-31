@@ -32,9 +32,9 @@ $addlinkid = GETPOST('idtolinkto', 'int');
 // Link invoice to order
 if ($action == 'addlink' && ! empty($permissiondellink) && ! GETPOST('cancel', 'alpha') && $id > 0 && $addlinkid > 0)
 {
-    $object->fetch($id);
-    $object->fetch_thirdparty();
-    $result = $object->add_object_linked(GETPOST('addlink', 'alpha'), $addlinkid);
+	$object->fetch($id);
+	$object->fetch_thirdparty();
+	$result = $object->add_object_linked(GETPOST('addlink', 'alpha'), $addlinkid);
 }
 
 // Delete link

@@ -230,7 +230,7 @@ class Lettering extends BookKeeping
 	 *
 	 * @param array $ids ids array
 	 * @param boolean $notrigger no trigger
- 	 * @return number
+	 * @return number
 	 */
 	public function updateLettering($ids = array(), $notrigger = false)
 	{

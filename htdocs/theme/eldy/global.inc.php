@@ -6,41 +6,40 @@
 /* ============================================================================== */
 
 :root {
-            --colorbackhmenu1: rgb(<?php print $colorbackhmenu1; ?>);
-            --colorbackvmenu1: rgb(<?php print $colorbackvmenu1; ?>);
-            --colorbacktitle1: rgb(<?php print $colorbacktitle1; ?>);
-            --colorbacktabcard1: rgb(<?php print $colorbacktabcard1; ?>);
-            --colorbacktabactive: rgb(<?php print $colorbacktabactive; ?>);
-            --colorbacklineimpair1: rgb(<?php print $colorbacklineimpair1; ?>);
-            --colorbacklineimpair2: rgb(<?php print $colorbacklineimpair2; ?>);
-            --colorbacklinepair1: rgb(<?php print $colorbacklinepair1; ?>);
-            --colorbacklinepair2: rgb(<?php print $colorbacklinepair2; ?>);
-            --colorbacklinepairhover: rgb(<?php print $colorbacklinepairhover; ?>);
-            --colorbacklinepairchecked: rgb(<?php print $colorbacklinepairchecked; ?>);
-            --colorbackbody: rgb(<?php print $colorbackbody; ?>);
-            --colortexttitlenotab: rgb(<?php print $colortexttitlenotab; ?>);
-            --colortexttitle: rgb(<?php print $colortexttitle; ?>);
-            --colortext: rgb(<?php print $colortext; ?>);
-            --colortextlink: rgb(<?php print $colortextlink; ?>);
-            --colortextbackhmenu: #<?php echo $colortextbackhmenu; ?>;
-            --colortextbackvmenu: #<?php print $colortextbackvmenu; ?>) ;
-            --listetotal: #551188;
-            --inputbackgroundcolor: #FFF;
-            --inputbordercolor: rgba(0,0,0,.2);
-            --tooltipbgcolor: <?php print $toolTipBgColor; ?>;
-			--tooltipfontcolor : <?php print $toolTipFontColor; ?>;
-			--oddevencolor: #202020;
-			--colorboxstatsborder: #ddd;
-			--dolgraphbg: rgba(255,255,255,0);
-			--fieldrequiredcolor: #000055;
-			--colortextbacktab: #<?php print $colortextbacktab; ?>) ;
-			--colorboxiconbg: #eee;
-			--refidnocolor:#444;
-			--tableforfieldcolor:#666;
-			--amountremaintopaycolor:#880000;
-			--amountpaymentcomplete:#008800;
-			--amountremaintopaybackcolor:none;
-
+	--colorbackhmenu1: rgb(<?php print $colorbackhmenu1; ?>);
+	--colorbackvmenu1: rgb(<?php print $colorbackvmenu1; ?>);
+	--colorbacktitle1: rgb(<?php print $colorbacktitle1; ?>);
+	--colorbacktabcard1: rgb(<?php print $colorbacktabcard1; ?>);
+	--colorbacktabactive: rgb(<?php print $colorbacktabactive; ?>);
+	--colorbacklineimpair1: rgb(<?php print $colorbacklineimpair1; ?>);
+	--colorbacklineimpair2: rgb(<?php print $colorbacklineimpair2; ?>);
+	--colorbacklinepair1: rgb(<?php print $colorbacklinepair1; ?>);
+	--colorbacklinepair2: rgb(<?php print $colorbacklinepair2; ?>);
+	--colorbacklinepairhover: rgb(<?php print $colorbacklinepairhover; ?>);
+	--colorbacklinepairchecked: rgb(<?php print $colorbacklinepairchecked; ?>);
+	--colorbackbody: rgb(<?php print $colorbackbody; ?>);
+	--colortexttitlenotab: rgb(<?php print $colortexttitlenotab; ?>);
+	--colortexttitle: rgb(<?php print $colortexttitle; ?>);
+	--colortext: rgb(<?php print $colortext; ?>);
+	--colortextlink: rgb(<?php print $colortextlink; ?>);
+	--colortextbackhmenu: #<?php echo $colortextbackhmenu; ?>;
+	--colortextbackvmenu: #<?php print $colortextbackvmenu; ?>;
+	--listetotal: #551188;
+	--inputbackgroundcolor: #FFF;
+	--inputbordercolor: rgba(0,0,0,.2);
+	--tooltipbgcolor: <?php print $toolTipBgColor; ?>;
+	--tooltipfontcolor : <?php print $toolTipFontColor; ?>;
+	--oddevencolor: #202020;
+	--colorboxstatsborder: #ddd;
+	--dolgraphbg: rgba(255,255,255,0);
+	--fieldrequiredcolor: #000055;
+	--colortextbacktab: #<?php print $colortextbacktab; ?>;
+	--colorboxiconbg: #eee;
+	--refidnocolor:#444;
+	--tableforfieldcolor:#666;
+	--amountremaintopaycolor:#880000;
+	--amountpaymentcomplete:#008800;
+	--amountremaintopaybackcolor:none;
 }
 
 <?php
@@ -124,6 +123,12 @@ select.vmenusearchselectcombo {
 	background-color: unset;
 }
 
+table.liste th.wrapcolumntitle.liste_titre:not(.maxwidthsearch), table.liste td.wrapcolumntitle.liste_titre:not(.maxwidthsearch) {
+    overflow: hidden;
+    white-space: nowrap;
+    max-width: 120px;
+    text-overflow: ellipsis;
+}
 .liste_titre input[name=month_date_when], .liste_titre input[name=monthvalid], .liste_titre input[name=search_ordermonth], .liste_titre input[name=search_deliverymonth],
 .liste_titre input[name=search_smonth], .liste_titre input[name=search_month], .liste_titre input[name=search_emonth], .liste_titre input[name=smonth], .liste_titre input[name=month], .liste_titre select[name=month],
 .liste_titre input[name=month_lim], .liste_titre input[name=month_start], .liste_titre input[name=month_end], .liste_titre input[name=month_create],
@@ -169,6 +174,18 @@ input, select {
 	margin-left:0px;
 	margin-bottom:1px;
 	margin-top:1px;
+}
+#mainbody input.button:not(.buttongen) {
+	background: var(--butactionbg);
+    border-collapse: collapse;
+    border: none;
+}
+#mainbody input.buttongen {
+	padding: 4px 4px;
+}
+
+input.button:focus {
+	border-bottom: 0;
 }
 input.button.massactionconfirmed {
     margin: 4px;
@@ -293,12 +310,14 @@ td.onholidaymorning, td.onholidayafternoon {
 td.onholidayallday {
 	background-color: #f4eede;
 }
+/*
 td.leftborder, td.hide0 {
 	border-left: 1px solid #ccc;
 }
 td.leftborder, td.hide6 {
 	border-right: 1px solid #ccc;
 }
+*/
 td.rightborder {
 	border-right: 1px solid #ccc;
 }
@@ -306,10 +325,15 @@ td.rightborder {
 td.actionbuttons a {
     padding-left: 6px;
 }
-select.flat, form.flat select {
+select.flat, form.flat select, .pageplusone {
 	font-weight: normal;
 	font-size: unset;
 }
+input.pageplusone {
+    padding-bottom: 4px;
+    padding-top: 4px;
+}
+
 .optionblue {
 	color: var(--colortextlink);
 }
@@ -328,6 +352,13 @@ select.flat, form.flat select {
 .opacitytransp {
 	opacity: 0;
 }
+.colorwhite {
+	color: #fff;
+}
+.colorblack {
+	color: #000;
+}
+
 select:invalid {
 	color: gray;
 }
@@ -362,6 +393,11 @@ input#onlinepaymenturl, input#directdownloadlink {
 	opacity: 0.7;
 }
 
+.formconsumeproduce {
+	background: #f3f3f3;
+    padding: 20px 0px 0px 0px;
+}
+
 div#moretabsList, div#moretabsListaction {
     z-index: 5;
 }
@@ -376,7 +412,8 @@ hr { border: 0; border-top: 1px solid #ccc; }
 	margin-right: 5px;
 	font-family: <?php print $fontlist ?>;
 	display: inline-block;
-	padding: 4px 14px;
+	padding: 8px 15px;
+	min-width: 90px;
 	text-align: center;
 	cursor: pointer;
 	text-decoration: none !important;
@@ -614,10 +651,10 @@ body[class*="colorblind-"] .text-success{
     color : <?php print $textDanger; ?>
 }
 
-.editfielda span.fa-pencil-alt, .editfielda span.fa-trash {
+.editfielda span.fa-pencil-alt, .editfielda span.fa-trash, .editfieldlang {
     color: #ccc !important;
 }
-.editfielda span.fa-pencil-alt:hover, .editfielda span.fa-trash:hover {
+.editfielda span.fa-pencil-alt:hover, .editfielda span.fa-trash:hover, .editfieldlang:hover {
     color: var(--colortexttitle) !important;
 }
 
@@ -685,14 +722,24 @@ div.divsearchfield {
     -webkit-flex-flow: row wrap;
     flex-flow: row wrap;
     background: #fff;
-    padding: 3px;
+    padding-top: 3px;
+    padding-bottom: 3px;
+    padding-left: 10px;
+    padding-right: 10px;
+    border-bottom: solid 1px rgba(0,0,0,.2);
+    height: 24px;
 }
-.search_component_params_input, .search_component_params_input:focus {
+.search_component_searchtext {
+    padding-top: 2px;
+}
+.search_component_params_text, .search_component_params_text:focus {
 	border-bottom: none;
 	width: auto;
 	margin: 0 !important;
 	padding: 3px;
 }
+
+
 <?php
 // Add a nowrap on smartphone, so long list of field used for filter are overflowed with clip
 if ($conf->browser->layout == 'phone') {
@@ -769,6 +816,9 @@ select.flat.selectlimit {
 	width: 130px;
 }
 /* using a tdoverflowxxx make the min-width not working */
+.tdnooverflowimp {
+   text-overflow: none;
+}
 .tdoverflow {
     max-width: 0;
     overflow: hidden;
@@ -1130,6 +1180,7 @@ table[summary="list_of_modules"] .fa-cog {
     .maxwidth150onsmartphone { max-width: 120px; }
     .maxwidth150onsmartphoneimp { max-width: 120px !important; }
     .maxwidth200onsmartphone { max-width: 200px; }
+    .maxwidth250onsmartphone { max-width: 250px; }
     .maxwidth300onsmartphone { max-width: 300px; }
     .maxwidth400onsmartphone { max-width: 400px; }
 	.minwidth50imp  { min-width: 50px !important; }
@@ -1253,7 +1304,7 @@ td.showDragHandle {
 .side-nav-vert {
 	position: sticky;
 	top: 0px;
-	z-index: 210;
+	z-index: 1001;
 }
 <?php } ?>
 
@@ -1371,10 +1422,6 @@ div.blockvmenulogo
 {
 	border-bottom: 0 !important;
 }
-/*div.blockvmenusearch {
-	padding-bottom: 12px !important;
-	border-bottom: 1px solid #e0e0e0;
-}*/
 div.blockvmenupair, div.blockvmenuimpair, div.blockvmenubookmarks, div.blockvmenuend {
 	border-top: none !important;
 	border-left: none !important;
@@ -1519,12 +1566,12 @@ div.nopadding {
 }
 
 td.nobordernopadding.widthpictotitle.opacityhigh.valignmiddle.col-picto {
-    color: rgb(<?php print $colortexttitlenotab; ?>);
-    opacity: 0.5;
+    color: var(--colortexttitlenotab);
+    opacity: 0.45;
 }
 .pictotitle {
 	margin-<?php echo $right; ?>: 8px;
-	margin-bottom: 4px;
+	/* margin-bottom: 4px; */
 }
 @media only screen and (max-width: 767px)
 {
@@ -1625,9 +1672,9 @@ div.statusrefbis {
    	vertical-align: text-bottom;
 }
 img.photoref, div.photoref {
-	border: 1px solid #DDD;
-    -webkit-box-shadow: 0px 0px 6px #DDD;
-    box-shadow: 0px 0px 6px #DDD;
+	/* border: 1px solid #DDD; */
+    -webkit-box-shadow: 1px 1px 4px rgba(0, 0, 0, 0.2), 0px 0px 2px rgba(0, 0, 0, 0.1);
+    box-shadow: 1px 1px 4px rgba(0, 0, 0, 0.2), 0px 0px 2px rgba(0, 0, 0, 0.1);
     padding: 4px;
 	height: 80px;
 	width: 80px;
@@ -1725,7 +1772,7 @@ div.tmenudisabled, a.tmenudisabled {
 	opacity: 0.6;
 }
 a.tmenu, a.tmenusel, a.tmenudisabled {
-    font-weight: 300;
+    /* font-weight: 300; */
 }
 a.tmenudisabled:link, a.tmenudisabled:visited, a.tmenudisabled:hover, a.tmenudisabled:active {
 	padding: 0px 5px 0px 5px;
@@ -1983,13 +2030,7 @@ a.tmenuimage:hover{
         $found = 0; $url = '';
         foreach ($conf->file->dol_document_root as $dirroot)
         {
-            if (file_exists($dirroot."/".$val."/img/".$val."_over.png"))
-            {
-                $url = dol_buildpath('/'.$val.'/img/'.$val.'_over.png', 1);
-                $found = 1;
-                break;
-            }
-    		elseif (file_exists($dirroot."/".$val."/img/".$val.".png"))    // Retro compatibilité
+    		if (file_exists($dirroot."/".$val."/img/".$val.".png"))
     		{
     			$url = dol_buildpath('/'.$val.'/img/'.$val.'.png', 1);
     			$found = 1;
@@ -2000,10 +2041,11 @@ a.tmenuimage:hover{
         if (!$found)
         {
             if (!defined('DISABLE_FONT_AWSOME')) {
-                print "/* A mainmenu entry was found but img file ".$val.".png not found (check /".$val."/img/".$val.".png), so we use a generic one */\n";
+                print "/* A mainmenu entry was found but img file ".$val.".png not found (check /".$val."/img/".$val.".png), so we use a generic one. */\n";
+ 				print "/* Overwrite this definition in your own css with a different content to use your own font awesome icon. */\n";
                 print 'div.mainmenu.'.$val.'::before {
                     content: "\f249";
-                }';
+                }'."\n";
             }
             else
             {
@@ -2343,7 +2385,9 @@ input.vmenusearchselectcombo[type=text] {
 .searchform input { font-size: 16px; }
 
 
-a.vmenu:link, a.vmenu:visited, a.vmenu:hover, a.vmenu:active, span.vmenu, span.vsmenu { white-space: nowrap; font-family: <?php print $fontlist ?>; text-align: <?php print $left; ?>; font-weight: bold; }	/* bold = 600, 500 is ko with Edge on 1200x960 */
+a.vmenu:link, a.vmenu:visited, a.vmenu:hover, a.vmenu:active, span.vmenu, span.vsmenu { white-space: nowrap; font-family: <?php print $fontlist ?>; text-align: <?php print $left; ?>; }
+a.vmenu:link, a.vmenu:visited, a.vmenu:hover, a.vmenu:active,
+span.vmenu, span.vmenu:link, span.vmenu:visited, span.vmenu:hover, span.vmenu:active { font-weight: bold;  }	/* bold = 600, 500 is ko with Edge on 1200x960 */
 font.vmenudisabled  { font-family: <?php print $fontlist ?>; text-align: <?php print $left; ?>; font-weight: bold; color: #aaa; margin-left: 4px; }												/* bold = 600, 500 is ko with Edge on 1200x960 */
 a.vmenu:link, a.vmenu:visited { color: var(--colortextbackvmenu); }
 
@@ -2380,8 +2424,7 @@ div.blockvmenusearchphone
 }
 .vmenu div.blockvmenusearch
 {
-	padding-bottom: 4px;
-/*	border-bottom: 1px solid #e0e0e0;  */
+	padding-bottom: 13px;
 }
 .vmenu div.blockvmenuend
 {
@@ -2789,7 +2832,7 @@ div.tabBar div.border .table-border-row, div.tabBar div.border .table-key-border
 }
 div .tdtop {
     vertical-align: top !important;
-	/* padding-top: 8px !important; */
+	padding-top: 10px !important;
 	padding-bottom: 2px !important;
 	padding-bottom: 0px;
 }
@@ -3122,7 +3165,12 @@ div.pagination li.paginationafterarrows {
 .paginationatbottom {
 	margin-top: 9px;
 }
-
+table.hidepaginationprevious .paginationprevious {
+	display: none;
+}
+table.hidepaginationnext .paginationnext {
+	display: none;
+}
 
 
 
@@ -3193,6 +3241,9 @@ td.evenodd, tr.nohoverpair td, #trlinefordates td {
 	font-weight: bold;
     border-bottom: 1pt solid black !important;
 	/* background-color: #<?php echo colorArrayToHex(colorStringToArray($colorbacklinebreak)); ?> !important; */
+}
+.trforbreak.nobold td a, .trforbreak.nobold span.secondary {
+    font-weight: normal !important;
 }
 
 table.dataTable td {
@@ -3400,7 +3451,7 @@ div:not(.fichecenter):not(.fichehalfleft):not(.fichehalfright):not(.ficheaddleft
 	background: -o-linear-gradient(bottom, var(--colorbacklineimpair1) 85%, var(--colorbacklineimpair2) 100%);
 	background: -moz-linear-gradient(bottom, var(--colorbacklineimpair1) 85%, var(--colorbacklineimpair2) 100%);
 	background: -webkit-linear-gradient(bottom, var(--colorbacklineimpair1) 85%, var(--colorbacklineimpair2) 100%);
-	background: -ms-linear-gradient(bottom, var(--colorbacklineimpair1) 85%, var(--colorbacklineimpair2) 100%);
+	/* background: -ms-linear-gradient(bottom, var(--colorbacklineimpair1) 85%, var(--colorbacklineimpair2) 100%); */
 }
 .noborder > tbody > tr:nth-child(even):not(:last-child) td:not(.liste_titre), .liste > tbody > tr:nth-child(even):not(:last-child) td:not(.liste_titre),
 .noborder .oddeven.tagtr:nth-child(even):not(:last-child) .tagtd:not(.liste_titre)
@@ -3416,7 +3467,7 @@ div:not(.fichecenter):not(.fichehalfleft):not(.fichehalfright):not(.ficheaddleft
 	background: -o-linear-gradient(bottom, var(--colorbacklinepair1) 85%, var(--colorbacklinepair2) 100%);
 	background: -moz-linear-gradient(bottom, var(--colorbacklinepair1) 85%, var(--colorbacklinepair2) 100%);
 	background: -webkit-linear-gradient(bottom, var(--colorbacklinepair1) 85%, var(--colorbacklinepair2) 100%);
-	background: -ms-linear-gradient(bottom, var(--colorbacklinepair1) 85%, var(--colorbacklinepair2) 100%);
+	/* background: -ms-linear-gradient(bottom, var(--colorbacklinepair1) 85%, var(--colorbacklinepair2) 100%); */
 }
 .noborder > tbody > tr:nth-child(odd):not(:last-child) td:not(.liste_titre), .liste > tbody > tr:nth-child(odd):not(:last-child) td:not(.liste_titre),
 .noborder .oddeven.tagtr:nth-child(odd):not(:last-child) .tagtd:not(.liste_titre)
@@ -3597,7 +3648,7 @@ span.dashboardlineko {
 .boxtable {
     margin-bottom: 25px !important;
     border-bottom-width: 1px;
-
+	background: var(--colorbackbody);
     border-top: <?php echo $borderwidth ?>px solid rgb(<?php echo $colortopbordertitle1 ?>);
 	/* border-top: 2px solid var(--colorbackhmenu1) !important; */
 }
@@ -3774,6 +3825,7 @@ span.widthpictotitle { font-size: 2.1em; };
 
 .dolgraphtitle { margin-top: 6px; margin-bottom: 4px; }
 .dolgraphtitlecssboxes { /* margin: 0px; */ }
+.dolgraphchart canvas { width: calc(100% - 20px) !important; }
 .legendColorBox, .legendLabel { border: none !important; }
 div.dolgraph div.legend, div.dolgraph div.legend div { background-color: var(--dolgraphbg) !important; }
 div.dolgraph div.legend table tbody tr { height: auto; }
@@ -4106,7 +4158,14 @@ tr.visible {
 /*  Module website                                                                */
 /* ============================================================================== */
 
-.phptag {
+.exampleapachesetup {
+    overflow-y: auto;
+    height: 100px;
+    font-size: 0.8em;
+    border: 1px solid #aaa;
+}
+
+span[phptag] {
 	background: #ddd; border: 1px solid #ccc; border-radius: 4px;
 }
 
@@ -4126,6 +4185,7 @@ tr.visible {
 	background: #e6e6e6;
 	display: inline-block;
 	padding: 4px 0 4px 0;
+	z-index: 1000;
 }
 .websitebar .buttonDelete, .websitebar .button {
 	text-shadow: none;
@@ -4945,6 +5005,10 @@ div.dataTables_length select {
 /*  Select2                                                                       */
 /* ============================================================================== */
 
+span#select2-taskid-container[title^='--'] {
+    opacity: 0.3;
+}
+
 .select2-container--default .select2-results__option--highlighted[aria-selected] {
     background-color: rgb(<?php echo $colorbackhmenu1 ?>);
     color: #<?php echo $colortextbackhmenu; ?>;
@@ -5054,7 +5118,7 @@ input.select2-input {
 	background: var(--inputbackgroundcolor);
 }
 .select2-container--default .select2-selection--multiple .select2-selection__choice{
-	background-color: var(--inputbackgroundcolor);
+	background-color: #ddd;
 }
 
 .select2-search__field
@@ -6021,6 +6085,18 @@ div.tabsElem a.tab {
 }
 
 
+/* ============================================================================== */
+/* CSS style used for jFlot                                                       */
+/* ============================================================================== */
+
+.dol-xaxis-vertical .flot-x-axis .flot-tick-label.tickLabel {
+    text-orientation: sideways;
+    font-weight: 400;
+    writing-mode: vertical-rl;
+    white-space: nowrap;
+}
+
+
 
 /* ============================================================================== */
 /* CSS style used for small screen                                                */
@@ -6256,6 +6332,7 @@ if (!empty($conf->global->THEME_CUSTOM_CSS)) print $conf->global->THEME_CUSTOM_C
 
 ?>
 
-div.flot-text .flot-tick-label .tickLabel{
+/* Must be at end */
+div.flot-text .flot-tick-label .tickLabel {
 	color: unset;
 }

@@ -210,7 +210,7 @@ $sessionname = 'DOLSESSID_'.$prefix;
 $sessiontimeout = 'DOLSESSTIMEOUT_'.$prefix;
 if (!empty($_COOKIE[$sessiontimeout])) ini_set('session.gc_maxlifetime', $_COOKIE[$sessiontimeout]);
 session_name($sessionname);
-session_set_cookie_params(0, '/', null, false, true); // Add tag httponly on session cookie (same as setting session.cookie_httponly into php.ini). Must be called before the session_start.
+session_set_cookie_params(0, '/', null, (empty($dolibarr_main_force_https) ? false : true), true); // Add tag secure and httponly on session cookie (same as setting session.cookie_httponly into php.ini). Must be called before the session_start.
 // This create lock, released when session_write_close() or end of page.
 // We need this lock as long as we read/write $_SESSION ['vars']. We can remove lock when finished.
 if (!defined('NOSESSION'))
@@ -257,7 +257,7 @@ if (isset($_SERVER["HTTP_USER_AGENT"]))
 }
 
 
-// Force HTTPS if required ($conf->file->main_force_https is 0/1 or https dolibarr root url)
+// Force HTTPS if required ($conf->file->main_force_https is 0/1 or 'https dolibarr root url')
 // $_SERVER["HTTPS"] is 'on' when link is https, otherwise $_SERVER["HTTPS"] is empty or 'off'
 if (!empty($conf->file->main_force_https) && (empty($_SERVER["HTTPS"]) || $_SERVER["HTTPS"] != 'on'))
 {
@@ -284,6 +284,7 @@ if (!empty($conf->file->main_force_https) && (empty($_SERVER["HTTPS"]) || $_SERV
 	// Start redirect
 	if ($newurl)
 	{
+		header_remove();	// Clean header already set to be sure to remove any header like "Set-Cookie: DOLSESSID_..." from non HTTPS answers
 		dol_syslog("main.inc: dolibarr_main_force_https is on, we make a redirect to ".$newurl);
 		header("Location: ".$newurl);
 		exit;
@@ -625,7 +626,7 @@ if (!defined('NOLOGIN'))
 			dol_syslog('User not found, connexion refused');
 			session_destroy();
 			session_name($sessionname);
-			session_set_cookie_params(0, '/', null, false, true); // Add tag httponly on session cookie
+			session_set_cookie_params(0, '/', null, (empty($dolibarr_main_force_https) ? false : true), true); // Add tag secure and httponly on session cookie
 			session_start();
 
 			if ($resultFetchUser == 0)
@@ -682,7 +683,7 @@ if (!defined('NOLOGIN'))
 			dol_syslog("Can't load user even if session logged. _SESSION['dol_login']=".$login, LOG_WARNING);
 			session_destroy();
 			session_name($sessionname);
-			session_set_cookie_params(0, '/', null, false, true); // Add tag httponly on session cookie
+			session_set_cookie_params(0, '/', null, (empty($dolibarr_main_force_https) ? false : true), true); // Add tag secure and httponly on session cookie
 			session_start();
 
 			if ($resultFetchUser == 0)
@@ -1382,33 +1383,42 @@ function top_htmlhead($head, $title = '', $disablejs = 0, $disablehead = 0, $arr
 				print '<script src="'.DOL_URL_ROOT.'/includes/jquery/plugins/jnotify/jquery.jnotify.min.js'.($ext ? '?'.$ext : '').'"></script>'."\n";
 			}
 			// Flot
-			if (empty($conf->global->MAIN_DISABLE_JQUERY_FLOT) && !defined('DISABLE_JQUERY_FLOT'))
+			if (empty($conf->global->MAIN_JS_GRAPH) || $conf->global->MAIN_JS_GRAPH == 'jflot')
 			{
-				if (constant('JS_JQUERY_FLOT'))
+				if (empty($conf->global->MAIN_DISABLE_JQUERY_FLOT) && !defined('DISABLE_JQUERY_FLOT'))
 				{
-					print '<script src="'.JS_JQUERY_FLOT.'jquery.flot.js'.($ext ? '?'.$ext : '').'"></script>'."\n";
-					print '<script src="'.JS_JQUERY_FLOT.'jquery.flot.pie.js'.($ext ? '?'.$ext : '').'"></script>'."\n";
-					print '<script src="'.JS_JQUERY_FLOT.'jquery.flot.stack.js'.($ext ? '?'.$ext : '').'"></script>'."\n";
-				}
-				else
-				{
-					print '<script src="'.DOL_URL_ROOT.'/includes/jquery/plugins/flot/jquery.flot.js'.($ext ? '?'.$ext : '').'"></script>'."\n";
-					print '<script src="'.DOL_URL_ROOT.'/includes/jquery/plugins/flot/jquery.flot.pie.js'.($ext ? '?'.$ext : '').'"></script>'."\n";
-					print '<script src="'.DOL_URL_ROOT.'/includes/jquery/plugins/flot/jquery.flot.stack.js'.($ext ? '?'.$ext : '').'"></script>'."\n";
-					/* Test for jflot 4.2 -> not better than current
-					print '<script language="javascript" type="text/javascript" src="'.DOL_URL_ROOT.'/includes/jquery/plugins/flot/jquery.canvaswrapper.js"></script>'."\n";
-					print '<script language="javascript" type="text/javascript" src="'.DOL_URL_ROOT.'/includes/jquery/plugins/flot/jquery.colorhelpers.js"></script>'."\n";
-					print '<script language="javascript" type="text/javascript" src="'.DOL_URL_ROOT.'/includes/jquery/plugins/flot/jquery.flot.js"></script>'."\n";
-					print '<script language="javascript" type="text/javascript" src="'.DOL_URL_ROOT.'/includes/jquery/plugins/flot/jquery.flot.pie.js"></script>'."\n";
-					print '<script language="javascript" type="text/javascript" src="'.DOL_URL_ROOT.'/includes/jquery/plugins/flot/jquery.flot.stack.js"></script>'."\n";
-					print '<script language="javascript" type="text/javascript" src="'.DOL_URL_ROOT.'/includes/jquery/plugins/flot/jquery.flot.saturated.js"></script>'."\n";
-					print '<script language="javascript" type="text/javascript" src="'.DOL_URL_ROOT.'/includes/jquery/plugins/flot/jquery.flot.browser.js"></script>'."\n";
-					print '<script language="javascript" type="text/javascript" src="'.DOL_URL_ROOT.'/includes/jquery/plugins/flot/jquery.flot.drawSeries.js"></script>'."\n";
-					print '<script language="javascript" type="text/javascript" src="'.DOL_URL_ROOT.'/includes/jquery/plugins/flot/jquery.flot.uiConstants.js"></script>'."\n";
-					*/
+					if (constant('JS_JQUERY_FLOT'))
+					{
+						print '<script src="'.JS_JQUERY_FLOT.'jquery.flot.js'.($ext ? '?'.$ext : '').'"></script>'."\n";
+						print '<script src="'.JS_JQUERY_FLOT.'jquery.flot.pie.js'.($ext ? '?'.$ext : '').'"></script>'."\n";
+						print '<script src="'.JS_JQUERY_FLOT.'jquery.flot.stack.js'.($ext ? '?'.$ext : '').'"></script>'."\n";
+					}
+					else
+					{
+						print '<script src="'.DOL_URL_ROOT.'/includes/jquery/plugins/flot/jquery.flot.js'.($ext ? '?'.$ext : '').'"></script>'."\n";
+						print '<script src="'.DOL_URL_ROOT.'/includes/jquery/plugins/flot/jquery.flot.pie.js'.($ext ? '?'.$ext : '').'"></script>'."\n";
+						print '<script src="'.DOL_URL_ROOT.'/includes/jquery/plugins/flot/jquery.flot.stack.js'.($ext ? '?'.$ext : '').'"></script>'."\n";
+						/* Test for jflot 4.2 -> not better than current
+						print '<script language="javascript" type="text/javascript" src="'.DOL_URL_ROOT.'/includes/jquery/plugins/flot/jquery.canvaswrapper.js"></script>'."\n";
+						print '<script language="javascript" type="text/javascript" src="'.DOL_URL_ROOT.'/includes/jquery/plugins/flot/jquery.colorhelpers.js"></script>'."\n";
+						print '<script language="javascript" type="text/javascript" src="'.DOL_URL_ROOT.'/includes/jquery/plugins/flot/jquery.flot.js"></script>'."\n";
+						print '<script language="javascript" type="text/javascript" src="'.DOL_URL_ROOT.'/includes/jquery/plugins/flot/jquery.flot.pie.js"></script>'."\n";
+						print '<script language="javascript" type="text/javascript" src="'.DOL_URL_ROOT.'/includes/jquery/plugins/flot/jquery.flot.stack.js"></script>'."\n";
+						print '<script language="javascript" type="text/javascript" src="'.DOL_URL_ROOT.'/includes/jquery/plugins/flot/jquery.flot.saturated.js"></script>'."\n";
+						print '<script language="javascript" type="text/javascript" src="'.DOL_URL_ROOT.'/includes/jquery/plugins/flot/jquery.flot.browser.js"></script>'."\n";
+						print '<script language="javascript" type="text/javascript" src="'.DOL_URL_ROOT.'/includes/jquery/plugins/flot/jquery.flot.drawSeries.js"></script>'."\n";
+						print '<script language="javascript" type="text/javascript" src="'.DOL_URL_ROOT.'/includes/jquery/plugins/flot/jquery.flot.uiConstants.js"></script>'."\n";
+						*/
+					}
 				}
 			}
-			// jQuery jeditable
+			// Chart
+			if ($conf->global->MAIN_JS_GRAPH == 'chart')
+			{
+				print '<script src="'.DOL_URL_ROOT.'/includes/nnnick/chartjs/dist/Chart.min.js'.($ext ? '?'.$ext : '').'"></script>'."\n";
+			}
+
+			// jQuery jeditable for Edit In Place features
 			if (!empty($conf->global->MAIN_USE_JQUERY_JEDITABLE) && !defined('DISABLE_JQUERY_JEDITABLE'))
 			{
 				print '<!-- JS to manage editInPlace feature -->'."\n";
@@ -1757,9 +1767,11 @@ function top_menu($head, $title = '', $target = '', $disablejs = 0, $disablehead
 /**
  * Build the tooltip on user login
  *
- * @return  string                  HTML content
+ * @param	int			$hideloginname		Hide login name. Show only the image.
+ * @param	string		$urllogout			URL for logout
+ * @return  string                  		HTML content
  */
-function top_menu_user()
+function top_menu_user($hideloginname = 0, $urllogout = '')
 {
     global $langs, $conf, $db, $hookmanager, $user;
     global $dolibarr_main_authentication, $dolibarr_main_demo;
@@ -1830,9 +1842,10 @@ function top_menu_user()
         }
     }
 
-
-
-    $logoutLink = '<a accesskey="l" href="'.DOL_URL_ROOT.'/user/logout.php" class="button-top-menu-dropdown" ><i class="fa fa-sign-out-alt"></i> '.$langs->trans("Logout").'</a>';
+    if (empty($urllogout)) {
+    	$urllogout = DOL_URL_ROOT.'/user/logout.php';
+    }
+    $logoutLink = '<a accesskey="l" href="'.$urllogout.'" class="button-top-menu-dropdown" ><i class="fa fa-sign-out-alt"></i> '.$langs->trans("Logout").'</a>';
     $profilLink = '<a accesskey="l" href="'.DOL_URL_ROOT.'/user/card.php?id='.$user->id.'" class="button-top-menu-dropdown" ><i class="fa fa-user"></i>  '.$langs->trans("Card").'</a>';
 
 
@@ -1855,42 +1868,51 @@ function top_menu_user()
     }
     else $appli .= " ".DOL_VERSION;
 
-    $btnUser = '<!-- div for user link -->
-    <div id="topmenu-login-dropdown" class="userimg atoplogin dropdown user user-menu  inline-block">
-        <a href="'.DOL_URL_ROOT.'/user/card.php?id='.$user->id.'" class="dropdown-toggle login-dropdown-a" data-toggle="dropdown">
-            '.$userImage.'
-            <span class="hidden-xs maxwidth200 atoploginusername hideonsmartphone">'.dol_trunc($user->firstname ? $user->firstname : $user->login, 10).'</span>
-        </a>
-        <div class="dropdown-menu">
-            <!-- User image -->
-            <div class="user-header">
-                '.$userDropDownImage.'
+    if (empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER)) {
+	    $btnUser = '<!-- div for user link -->
+	    <div id="topmenu-login-dropdown" class="userimg atoplogin dropdown user user-menu inline-block">
+	        <a href="'.DOL_URL_ROOT.'/user/card.php?id='.$user->id.'" class="dropdown-toggle login-dropdown-a" data-toggle="dropdown">
+	            '.$userImage.'
+	            <span class="hidden-xs maxwidth200 atoploginusername hideonsmartphone paddingleft">'.dol_trunc($user->firstname ? $user->firstname : $user->login, 10).'</span>
+	        </a>
+	        <div class="dropdown-menu">
+	            <!-- User image -->
+	            <div class="user-header">
+	                '.$userDropDownImage.'
+	                <p>
+	                    '.$profilName.'<br>
+						<small class="classfortooltip" title="'.$langs->trans("PreviousConnexion").'" ><i class="fa fa-user-clock"></i> '.dol_print_date($user->datepreviouslogin, "dayhour", 'tzuser').'</small><br>
+						<small class="classfortooltip"><i class="fa fa-cog"></i> '.$langs->trans("Version").' '.$appli.'</small>
+	                </p>
+	            </div>
 
-                <p>
-                    '.$profilName.'<br>
-					<small class="classfortooltip" title="'.$langs->trans("PreviousConnexion").'" ><i class="fa fa-user-clock"></i> '.dol_print_date($user->datepreviouslogin, "dayhour", 'tzuser').'</small><br>
-					<small class="classfortooltip"><i class="fa fa-cog"></i> '.$langs->trans("Version").' '.$appli.'</small>
-                </p>
-            </div>
+	            <!-- Menu Body -->
+	            <div class="user-body">'.$dropdownBody.'</div>
 
-            <!-- Menu Body -->
-            <div class="user-body">'.$dropdownBody.'</div>
+	            <!-- Menu Footer-->
+	            <div class="user-footer">
+	                <div class="pull-left">
+	                    '.$profilLink.'
+	                </div>
+	                <div class="pull-right">
+	                    '.$logoutLink.'
+	                </div>
+	                <div style="clear:both;"></div>
+	            </div>
 
-            <!-- Menu Footer-->
-            <div class="user-footer">
-                <div class="pull-left">
-                    '.$profilLink.'
-                </div>
-                <div class="pull-right">
-                    '.$logoutLink.'
-                </div>
-                <div style="clear:both;"></div>
-            </div>
+	        </div>
+	    </div>';
+    } else {
+    	$btnUser = '<!-- div for user link -->
+	    <div id="topmenu-login-dropdown" class="userimg atoplogin dropdown user user-menu  inline-block">
+	    	<a href="'.DOL_URL_ROOT.'/user/card.php?id='.$user->id.'">
+	    	'.$userImage.'
+	    		<span class="hidden-xs maxwidth200 atoploginusername hideonsmartphone">'.dol_trunc($user->firstname ? $user->firstname : $user->login, 10).'</span>
+	    		</a>
+		</div>';
+    }
 
-        </div>
-    </div>';
-
-    if (!defined('JS_JQUERY_DISABLE_DROPDOWN'))    // This may be set by some pages that use different jquery version to avoid errors
+    if (!defined('JS_JQUERY_DISABLE_DROPDOWN') && !empty($conf->use_javascript_ajax))    // This may be set by some pages that use different jquery version to avoid errors
     {
         $btnUser .= '
         <!-- Code to show/hide the user drop-down -->
@@ -1903,17 +1925,22 @@ function top_menu_user()
                     $("#topmenu-login-dropdown").removeClass("open");
                 }
             });
+			';
 
-            $("#topmenu-login-dropdown .dropdown-toggle").on("click", function(event) {
-				console.log("toggle login dropdown");
-				event.preventDefault();
-                $("#topmenu-login-dropdown").toggleClass("open");
-            });
+        if ($conf->theme != 'md') {
+	        $btnUser .= '
+	            $("#topmenu-login-dropdown .dropdown-toggle").on("click", function(event) {
+					console.log("toggle login dropdown");
+					event.preventDefault();
+	                $("#topmenu-login-dropdown").toggleClass("open");
+	            });
 
-            $("#topmenuloginmoreinfo-btn").on("click", function() {
-                $("#topmenuloginmoreinfo").slideToggle();
-            });
+	            $("#topmenuloginmoreinfo-btn").on("click", function() {
+	                $("#topmenuloginmoreinfo").slideToggle();
+	            });';
+        }
 
+        $btnUser .= '
         });
         </script>
         ';
@@ -1935,56 +1962,64 @@ function top_menu_bookmark()
 	$html = '';
 
     // Define $bookmarks
-    if (!empty($conf->bookmark->enabled) && $user->rights->bookmark->lire)
+	if (empty($conf->bookmark->enabled) || empty($user->rights->bookmark->lire)) return $html;
+
+	if (!defined('JS_JQUERY_DISABLE_DROPDOWN') && !empty($conf->use_javascript_ajax))	    // This may be set by some pages that use different jquery version to avoid errors
     {
         include_once DOL_DOCUMENT_ROOT.'/bookmarks/bookmarks.lib.php';
         $langs->load("bookmarks");
 
-        $html .= '<!-- div for bookmark link -->
-        <div id="topmenu-bookmark-dropdown" class="dropdown inline-block">
-            <a class="dropdown-toggle login-dropdown-a" data-toggle="dropdown" href="#" title="'.$langs->trans('Bookmarks').' ('.$langs->trans('BookmarksMenuShortCut').')">
-                <i class="fa fa-star" ></i>
-            </a>
-            <div class="dropdown-menu">
-                '.printDropdownBookmarksList().'
-            </div>
-        </div>';
+        if (!empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER)) {
+        	$html .= '<div id="topmenu-bookmark-dropdown" class="dropdown inline-block">';
+        	$html .= printDropdownBookmarksList();
+        	$html .= '</div>';
+        } else {
+	        $html .= '<!-- div for bookmark link -->
+	        <div id="topmenu-bookmark-dropdown" class="dropdown inline-block">
+	            <a class="dropdown-toggle login-dropdown-a" data-toggle="dropdown" href="#" title="'.$langs->trans('Bookmarks').' ('.$langs->trans('BookmarksMenuShortCut').')">
+	                <i class="fa fa-star" ></i>
+	            </a>
+	            <div class="dropdown-menu">
+	                '.printDropdownBookmarksList().'
+	            </div>
+	        </div>';
 
-        $html .= '
-        <!-- Code to show/hide the user drop-down -->
-        <script>
-        $( document ).ready(function() {
-            $(document).on("click", function(event) {
-                if (!$(event.target).closest("#topmenu-bookmark-dropdown").length) {
-					//console.log("close bookmark dropdown - we click outside");
-                    // Hide the menus.
-                    $("#topmenu-bookmark-dropdown").removeClass("open");
-                }
-            });
+	        $html .= '
+	        <!-- Code to show/hide the bookmark drop-down -->
+	        <script>
+	        $( document ).ready(function() {
+	            $(document).on("click", function(event) {
+	                if (!$(event.target).closest("#topmenu-bookmark-dropdown").length) {
+						//console.log("close bookmark dropdown - we click outside");
+	                    // Hide the menus.
+	                    $("#topmenu-bookmark-dropdown").removeClass("open");
+	                }
+	            });
 
-            $("#topmenu-bookmark-dropdown .dropdown-toggle").on("click", function(event) {
-				console.log("toggle bookmark dropdown");
-				openBookMarkDropDown();
-            });
+	            $("#topmenu-bookmark-dropdown .dropdown-toggle").on("click", function(event) {
+					console.log("toggle bookmark dropdown");
+					openBookMarkDropDown();
+	            });
 
-            // Key map shortcut
-            $(document).keydown(function(e){
-                  if( e.which === 77 && e.ctrlKey && e.shiftKey ){
-                     console.log(\'control + shift + m : trigger open bookmark dropdown\');
-                     openBookMarkDropDown();
-                  }
-            });
+	            // Key map shortcut
+	            $(document).keydown(function(e){
+	                  if( e.which === 77 && e.ctrlKey && e.shiftKey ){
+	                     console.log(\'control + shift + m : trigger open bookmark dropdown\');
+	                     openBookMarkDropDown();
+	                  }
+	            });
 
 
-            var openBookMarkDropDown = function() {
-                event.preventDefault();
-                $("#topmenu-bookmark-dropdown").toggleClass("open");
-                $("#top-bookmark-search-input").focus();
-            }
+	            var openBookMarkDropDown = function() {
+	                event.preventDefault();
+	                $("#topmenu-bookmark-dropdown").toggleClass("open");
+	                $("#top-bookmark-search-input").focus();
+	            }
 
-        });
-        </script>
-        ';
+	        });
+	        </script>
+	        ';
+        }
     }
     return $html;
 }

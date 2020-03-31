@@ -152,6 +152,8 @@ else
 	dol_print_error($db);
 }
 
+print load_fiche_titre($langs->trans("GroupsDocModules"), '', '');
+
 print '<table class="noborder centpercent">';
 print '<tr class="liste_titre">';
 print '<td>'.$langs->trans("Name").'</td>';

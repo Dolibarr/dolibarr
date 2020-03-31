@@ -224,13 +224,15 @@ ListAccounts=Lista de contas contabilísticas
 UnknownAccountForThirdparty=Unknown third-party account. We will use %s
 UnknownAccountForThirdpartyBlocking=Unknown third-party account. Blocking error
 ThirdpartyAccountNotDefinedOrThirdPartyUnknown=Third-party account not defined or third party unknown. We will use %s
+ThirdpartyAccountNotDefinedOrThirdPartyUnknownSubledgerIgnored=Third-party unknown and subledger not defined on the payment. We will keep the subledger account value empty.
 ThirdpartyAccountNotDefinedOrThirdPartyUnknownBlocking=Third-party account not defined or third party unknown. Blocking error.
 UnknownAccountForThirdpartyAndWaitingAccountNotDefinedBlocking=Unknown third-party account and waiting account not defined. Blocking error
 PaymentsNotLinkedToProduct=Pagamento não vinculado a nenhum produto / serviço
+ShowOpeningBalance=Show opening balance
+HideOpeningBalance=Hide opening balance
 
 Pcgtype=Grupo de conta
-Pcgsubtype=Subgrupo de conta
-PcgtypeDesc=Grupo e subgrupo de conta são usados ​​como critérios predefinidos de 'filtro' e 'agrupamento' para alguns relatórios contábeis. Por exemplo, 'RENDA' ou 'DESPESA' são usados ​​como grupos para contas contábeis de produtos para criar o relatório de despesas / receitas.
+PcgtypeDesc=Group of account are used as predefined 'filter' and 'grouping' criteria for some accounting reports. For example, 'INCOME' or 'EXPENSE' are used as groups for accounting accounts of products to build the expense/income report.
 
 TotalVente=Total de volume de negócios sem impostos
 TotalMarge=Margem total de vendas
@@ -269,6 +271,7 @@ ChangeBinding=Alterar vinculação
 Accounted=Contabilizado no ledger
 NotYetAccounted=Ainda não contabilizado no razão
 ShowTutorial=Show Tutorial
+NotReconciled=Not reconciled
 
 ## Admin
 ApplyMassCategories=Aplicar categorias em massa

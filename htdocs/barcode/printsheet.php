@@ -278,6 +278,7 @@ dol_htmloutput_errors($mesg);
 print '<form action="'.$_SERVER["PHP_SELF"].'" method="POST">';
 print '<input type="hidden" name="mode" value="label">';
 print '<input type="hidden" name="action" value="builddoc">';
+print '<input type="hidden" name="token" value="'.newtoken().'">';
 
 print '<div class="tagtable">';
 

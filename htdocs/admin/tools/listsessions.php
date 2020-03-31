@@ -43,7 +43,7 @@ if ($user->socid > 0)
 
 $sortfield = GETPOST("sortfield", 'alpha');
 $sortorder = GETPOST("sortorder", 'alpha');
-$page = GETPOST("page", 'int');
+$page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOST("page", 'int');
 if (empty($page) || $page == -1) { $page = 0; }     // If $page is not defined, or '' or -1
 $offset = $conf->liste_limit * $page ;
 $pageprev = $page - 1;
@@ -167,7 +167,7 @@ if ($savehandler == 'files')
 
 	if (count($listofsessions) == 0)
 	{
-		print '<tr '.$bc[false].'><td colspan="6">'.$langs->trans("NoSessionFound", $savepath, $openbasedir).'</td></tr>';
+		print '<tr class="oddeven"><td colspan="7">'.$langs->trans("NoSessionFound", $savepath, $openbasedir).'</td></tr>';
 	}
 	print "</table>";
 }

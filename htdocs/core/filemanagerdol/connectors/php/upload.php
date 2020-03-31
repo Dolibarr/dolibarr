@@ -57,7 +57,7 @@ if (! IsAllowedCommand($sCommand))
 
 // Check if it is an allowed type.
 if (! IsAllowedType($sType))
-    SendUploadResults(1, '', '', 'Invalid type specified');
+	SendUploadResults(1, '', '', 'Invalid type specified');
 
 
 // @CHANGE

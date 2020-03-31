@@ -71,7 +71,7 @@ $active = 1;
 
 $sortfield = GETPOST("sortfield", 'alpha');
 $sortorder = GETPOST("sortorder", 'alpha');
-$page = GETPOST("page", 'int');
+$page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOST("page", 'int');
 if (empty($page) || $page == -1) { $page = 0; }     // If $page is not defined, or '' or -1
 $offset = $listlimit * $page;
 $pageprev = $page - 1;
@@ -162,8 +162,8 @@ if ($conf->expedition->enabled)        $elementList['shipping_send'] = $langs->t
 if ($conf->reception->enabled) 		   $elementList['reception_send'] = $langs->trans('MailToSendReception');
 if ($conf->ficheinter->enabled)        $elementList['fichinter_send'] = $langs->trans('MailToSendIntervention');
 if ($conf->supplier_proposal->enabled) $elementList['supplier_proposal_send'] = $langs->trans('MailToSendSupplierRequestForQuotation');
-if ($conf->fournisseur->enabled)       $elementList['order_supplier_send'] = $langs->trans('MailToSendSupplierOrder');
-if ($conf->fournisseur->enabled)       $elementList['invoice_supplier_send'] = $langs->trans('MailToSendSupplierInvoice');
+if ($conf->fournisseur->enabled && empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD) || $conf->supplier_order->enabled)	$elementList['order_supplier_send'] = $langs->trans('MailToSendSupplierOrder');
+if ($conf->fournisseur->enabled && empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD) || $conf->supplier_invoice->enabled)	$elementList['invoice_supplier_send'] = $langs->trans('MailToSendSupplierInvoice');
 if ($conf->societe->enabled)           $elementList['thirdparty'] = $langs->trans('MailToThirdparty');
 if ($conf->adherent->enabled)          $elementList['member'] = $langs->trans('MailToMember');
 if ($conf->contrat->enabled)           $elementList['contract'] = $langs->trans('MailToSendContract');

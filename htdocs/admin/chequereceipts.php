@@ -76,18 +76,18 @@ if ($action == 'set_BANK_CHEQUERECEIPT_FREE_TEXT')
 {
 	$freetext = GETPOST('BANK_CHEQUERECEIPT_FREE_TEXT', 'none');	// No alpha here, we want exact string
 
-    $res = dolibarr_set_const($db, "BANK_CHEQUERECEIPT_FREE_TEXT", $freetext, 'chaine', 0, '', $conf->entity);
+	$res = dolibarr_set_const($db, "BANK_CHEQUERECEIPT_FREE_TEXT", $freetext, 'chaine', 0, '', $conf->entity);
 
 	if (! $res > 0) $error++;
 
  	if (! $error)
-    {
-        setEventMessages($langs->trans("SetupSaved"), null, 'mesgs');
-    }
-    else
-    {
-        setEventMessages($langs->trans("Error"), null, 'errors');
-    }
+	{
+		setEventMessages($langs->trans("SetupSaved"), null, 'mesgs');
+	}
+	else
+	{
+		setEventMessages($langs->trans("Error"), null, 'errors');
+	}
 }
 
 /*
@@ -258,13 +258,13 @@ print $form->textwithpicto($langs->trans("FreeLegalTextOnChequeReceipts"), $lang
 $variablename='BANK_CHEQUERECEIPT_FREE_TEXT';
 if (empty($conf->global->PDF_ALLOW_HTML_FOR_FREE_TEXT))
 {
-    print '<textarea name="'.$variablename.'" class="flat" cols="120">'.$conf->global->$variablename.'</textarea>';
+	print '<textarea name="'.$variablename.'" class="flat" cols="120">'.$conf->global->$variablename.'</textarea>';
 }
 else
 {
-    include_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
-    $doleditor=new DolEditor($variablename, $conf->global->$variablename, '', 80, 'dolibarr_notes');
-    print $doleditor->Create();
+	include_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
+	$doleditor=new DolEditor($variablename, $conf->global->$variablename, '', 80, 'dolibarr_notes');
+	print $doleditor->Create();
 }
 print '</td><td class="right">';
 print '<input type="submit" class="button" value="'.$langs->trans("Modify").'">';

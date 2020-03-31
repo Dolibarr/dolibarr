@@ -97,23 +97,22 @@ $search_type = GETPOST('search_type', 'alpha');
 $search_level = GETPOST("search_level", "array");
 $search_stcomm = GETPOST('search_stcomm', 'int');
 $search_import_key  = GETPOST("search_import_key", "alpha");
-$search_btn = GETPOST('button_search', 'alpha');
-$search_remove_btn = GETPOST('button_removefilter', 'alpha');
 $search_parent_name = GETPOST('search_parent_name', 'alpha');
 
 $type = GETPOST('type', 'alpha');
 $optioncss = GETPOST('optioncss', 'alpha');
 $mode = GETPOST("mode", 'alpha');
+$place = GETPOST('place', 'aZ09') ? GETPOST('place', 'aZ09') : '0';	// $place is string id of table for Bar or Restaurant
 
 $diroutputmassaction = $conf->societe->dir_output.'/temp/massgeneration/'.$user->id;
 
 $limit = GETPOST('limit', 'int') ?GETPOST('limit', 'int') : $conf->liste_limit;
 $sortfield = GETPOST("sortfield", 'alpha');
 $sortorder = GETPOST("sortorder", 'alpha');
-$page = GETPOST("page", 'int');
+$page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOST("page", 'int');
 if (!$sortorder) $sortorder = "ASC";
 if (!$sortfield) $sortfield = "s.nom";
-if (empty($page) || $page == -1 || !empty($search_btn) || !empty($search_remove_btn) || (empty($toselect) && $massaction === '0')) { $page = 0; }
+if (empty($page) || $page < 0 || GETPOST('button_search', 'alpha') || GETPOST('button_removefilter', 'alpha')) { $page = 0; }     // If $page is not defined, or '' or -1 or if we click on clear filters or if we select empty mass action
 $offset = $limit * $page;
 $pageprev = $page - 1;
 $pagenext = $page + 1;
@@ -230,7 +229,6 @@ $arrayfields = dol_sort_array($arrayfields, 'position');
 if ($action == "change")	// Change customer for TakePOS
 {
     $idcustomer = GETPOST('idcustomer', 'int');
-    $place = (GETPOST('place', 'int') > 0 ? GETPOST('place', 'int') : 0); // $place is id of table for Ba or Restaurant
 
     // Check if draft invoice already exists, if not create it
 	$sql = "SELECT rowid FROM ".MAIN_DB_PREFIX."facture where ref='(PROV-POS".$_SESSION["takeposterminal"]."-".$place.")' AND entity IN (".getEntity('invoice').")";
@@ -254,7 +252,8 @@ if ($action == "change")	// Change customer for TakePOS
     $resql = $db->query($sql);
     ?>
 	    <script>
-	    parent.$("#poslines").load("invoice.php?place="+<?php print $place; ?>, function() {
+	    console.log("Reload page invoice.php with place=<?php print $place; ?>");
+	    parent.$("#poslines").load("invoice.php?place=<?php print $place; ?>", function() {
 	        //parent.$("#poslines").scrollTop(parent.$("#poslines")[0].scrollHeight);
 			<?php if (!$resql) { ?>
 				alert('Error failed to update customer on draft invoice.');
@@ -542,7 +541,6 @@ $param = '';
 if (!empty($contextpage) && $contextpage != $_SERVER["PHP_SELF"]) $param .= '&contextpage='.urlencode($contextpage);
 if ($limit > 0 && $limit != $conf->liste_limit) $param .= '&limit='.urlencode($limit);
 if ($search_all != '')     $param = "&sall=".urlencode($search_all);
-if ($sall != '')           $param .= "&sall=".urlencode($sall);
 if ($search_categ_cus > 0) $param .= '&search_categ_cus='.urlencode($search_categ_cus);
 if ($search_categ_sup > 0) $param .= '&search_categ_sup='.urlencode($search_categ_sup);
 if ($search_sale > 0)	   $param .= '&search_sale='.urlencode($search_sale);
@@ -620,10 +618,10 @@ print '<input type="hidden" name="token" value="'.newToken().'">';
 print '<input type="hidden" name="formfilteraction" id="formfilteraction" value="list">';
 print '<input type="hidden" name="sortfield" value="'.$sortfield.'">';
 print '<input type="hidden" name="sortorder" value="'.$sortorder.'">';
-print '<input type="hidden" name="page" value="'.$page.'">';
+//print '<input type="hidden" name="page" value="'.$page.'">';
 print '<input type="hidden" name="contextpage" value="'.$contextpage.'">';
 
-print_barre_liste($title, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, $massactionbutton, $num, $nbtotalofrecords, 'building', 0, $newcardbutton, '', $limit);
+print_barre_liste($title, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, $massactionbutton, $num, $nbtotalofrecords, 'building', 0, $newcardbutton, '', $limit, 0, 0, 1);
 
 $langs->load("other");
 $textprofid = array();
@@ -1033,8 +1031,7 @@ while ($i < min($num, $limit))
 	print '<tr class="oddeven"';
 	if ($contextpage == 'poslist')
 	{
-		$place = (GETPOST('place', 'int') > 0 ? GETPOST('place', 'int') : 0); // $place is id of table for Bar or Restaurant
-	    print ' onclick="location.href=\'list.php?action=change&contextpage=poslist&idcustomer='.$obj->rowid.'&place='.$place.'\'"';
+	    print ' onclick="location.href=\'list.php?action=change&contextpage=poslist&idcustomer='.$obj->rowid.'&place='.urlencode($place).'\'"';
 	}
 	print '>';
 	if (!empty($arrayfields['s.rowid']['checked']))

@@ -290,7 +290,7 @@ $text='';
 
 if ($mode == 'desc')
 {
-    if ($moduledesc) $text.=$moduledesc.'<br><br>';
+    if ($moduledesc) $text .= '<br>'.$moduledesc.'<br><br><br>';
 
     $text.='<strong>'.$langs->trans("Version").':</strong> '.$version;
 

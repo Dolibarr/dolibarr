@@ -49,7 +49,8 @@ function dolSaveMasterFile($filemaster)
 }
 
 /**
- * Save content of a page on disk
+ * Save content of a page on disk.
+ * It can save file into root directory or into language subdirectory.
  *
  * @param	string		$filealias			Full path of filename to generate
  * @param	Website		$object				Object website
@@ -98,7 +99,8 @@ function dolSavePageAlias($filealias, $object, $objectpage)
 
 
 /**
- * Save content of a page on disk
+ * Save content of a page on disk.
+ * Page contents are always saved into root directory.
  *
  * @param	string		$filetpl			Full path of filename to generate
  * @param	Website		$object				Object website
@@ -113,10 +115,11 @@ function dolSavePageContent($filetpl, Website $object, WebsitePage $objectpage)
 	// Now create the .tpl file (duplicate code with actions updatesource or updatecontent but we need this to save new header)
 	dol_syslog("We regenerate the tpl page filetpl=".$filetpl);
 
+	include_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 	dol_delete_file($filetpl);
 
 	$shortlangcode = '';
-	if ($objectpage->lang) $shortlangcode = preg_replace('/[_-].*$/', '', $objectpage->lang); // en_US or en-US -> en
+	if ($objectpage->lang) $shortlangcode = substr($objectpage->lang, 0, 2); // en_US or en-US -> en
 
 	$tplcontent = '';
 	$tplcontent .= "<?php // BEGIN PHP\n";
@@ -148,7 +151,8 @@ function dolSavePageContent($filetpl, Website $object, WebsitePage $objectpage)
 	// Add translation reference (main language)
 	if ($object->isMultiLang()) {
 		// Add myself
-		$tplcontent .= '<link rel="alternate" hreflang="'.$shortlangcode.'" href="'.($object->fk_default_home == $objectpage->id ? '/' : '/'.$shortlangcode.'/'.$objectpage->pageurl.'.php').'" />'."\n";
+		$tplcontent .= '<link rel="alternate" hreflang="'.$shortlangcode.'" href="'.(($object->fk_default_home == $objectpage->id) ? '/' : (($shortlangcode != substr($object->lang, 0, 2) ? '/'.$shortlangcode : '')).'/'.$objectpage->pageurl.'.php').'" />'."\n";
+
 		// Add page "translation of"
 		$translationof = $objectpage->fk_page;
 		if ($translationof) {
@@ -158,7 +162,7 @@ function dolSavePageContent($filetpl, Website $object, WebsitePage $objectpage)
 				$tmpshortlangcode = '';
 				if ($tmppage->lang) $tmpshortlangcode = preg_replace('/[_-].*$/', '', $tmppage->lang); // en_US or en-US -> en
 				if ($tmpshortlangcode != $shortlangcode) {
-					$tplcontent .= '<link rel="alternate" hreflang="'.$tmpshortlangcode.'" href="'.($object->fk_default_home == $tmppage->id ? '/' : '/'.$tmpshortlangcode.'/'.$tmppage->pageurl.'.php').'" />'."\n";
+					$tplcontent .= '<link rel="alternate" hreflang="'.$tmpshortlangcode.'" href="'.($object->fk_default_home == $tmppage->id ? '/' : (($tmpshortlangcode != substr($object->lang, 0, 2) ? '/'.$tmpshortlangcode : '')).'/'.$tmppage->pageurl.'.php').'" />'."\n";
 				}
 			}
 		}
@@ -175,7 +179,7 @@ function dolSavePageContent($filetpl, Website $object, WebsitePage $objectpage)
 					$tmpshortlangcode = '';
 					if ($obj->lang) $tmpshortlangcode = preg_replace('/[_-].*$/', '', $obj->lang); // en_US or en-US -> en
 					if ($tmpshortlangcode != $shortlangcode) {
-						$tplcontent .= '<link rel="alternate" hreflang="'.$tmpshortlangcode.'" href="'.($object->fk_default_home == $obj->id ? '/' : '/'.$tmpshortlangcode.'/'.$obj->pageurl.'.php').'" />'."\n";
+						$tplcontent .= '<link rel="alternate" hreflang="'.$tmpshortlangcode.'" href="'.($object->fk_default_home == $obj->id ? '/' : (($tmpshortlangcode != substr($object->lang, 0, 2) ? '/'.$tmpshortlangcode : '')).'/'.$obj->pageurl.'.php').'" />'."\n";
 					}
 				}
 			}
@@ -183,7 +187,7 @@ function dolSavePageContent($filetpl, Website $object, WebsitePage $objectpage)
 		else dol_print_error($db);
 	}
 	// Add canonical reference
-	$tplcontent .= '<link href="/'.(($objectpage->id == $object->fk_default_home) ? '' : $shortlangcode.'/'.($objectpage->pageurl.'.php')).'" rel="canonical" />'."\n";
+	$tplcontent .= '<link href="'.(($objectpage->id == $object->fk_default_home) ? '/' : (($shortlangcode != substr($object->lang, 0, 2) ? '/'.$shortlangcode : '').'/'.$objectpage->pageurl.'.php')).'" rel="canonical" />'."\n";
 	// Add manifest.json on homepage
 	$tplcontent .= '<?php if ($website->use_manifest) { print \'<link rel="manifest" href="/manifest.json.php" />\'."\n"; } ?>'."\n";
 	$tplcontent .= '<!-- Include link to CSS file -->'."\n";
@@ -244,18 +248,19 @@ function dolSaveIndexPage($pathofwebsite, $fileindex, $filetpl, $filewrapper)
 	$indexcontent .= "include_once './".basename($filetpl)."'\n";
 	$indexcontent .= '// END PHP ?>'."\n";
 	$result1 = file_put_contents($fileindex, $indexcontent);
-	if (!empty($conf->global->MAIN_UMASK))
+	if (!empty($conf->global->MAIN_UMASK)) {
 		@chmod($fileindex, octdec($conf->global->MAIN_UMASK));
+	}
+	dol_delete_file($filewrapper);
 
-		dol_delete_file($filewrapper);
+	$wrappercontent = file_get_contents(DOL_DOCUMENT_ROOT.'/website/samples/wrapper.php');
 
-		$wrappercontent = file_get_contents(DOL_DOCUMENT_ROOT.'/website/samples/wrapper.html');
+	$result2 = file_put_contents($filewrapper, $wrappercontent);
+	if (!empty($conf->global->MAIN_UMASK)) {
+		@chmod($filewrapper, octdec($conf->global->MAIN_UMASK));
+	}
 
-		$result2 = file_put_contents($filewrapper, $wrappercontent);
-		if (!empty($conf->global->MAIN_UMASK))
-			@chmod($filewrapper, octdec($conf->global->MAIN_UMASK));
-
-			return ($result1 && $result2);
+	return ($result1 && $result2);
 }
 
 
@@ -416,7 +421,6 @@ function dolSaveReadme($file, $content)
 function showWebsiteTemplates(Website $website)
 {
 	global $conf, $langs, $db, $form;
-	global $bc;
 
 	$dirthemes = array('/doctemplates/websites');
 	if (!empty($conf->modules_parts['websitetemplates']))		// Using this feature slow down application

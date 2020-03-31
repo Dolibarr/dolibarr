@@ -121,3 +121,6 @@ BackToHomePage=Επιστροφή στην αρχική σελίδα...
 TranslationLinks=Μεταφραστικές συνδέσεις
 YouTryToAccessToAFileThatIsNotAWebsitePage=Προσπαθείτε να έχετε πρόσβαση σε μια σελίδα που δεν είναι σελίδα ιστότοπου
 UseTextBetween5And70Chars=Για καλές πρακτικές SEO, χρησιμοποιήστε ένα κείμενο μεταξύ 5 και 70 χαρακτήρων
+MainLanguage=Main language
+OtherLanguages=Other languages
+UseManifest=Provide a manifest.json file

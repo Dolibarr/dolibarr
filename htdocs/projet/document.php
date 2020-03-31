@@ -51,13 +51,13 @@ include DOL_DOCUMENT_ROOT.'/core/actions_fetchobject.inc.php';  // Must be inclu
 if(! empty($conf->global->PROJECT_ALLOW_COMMENT_ON_PROJECT) && method_exists($object, 'fetchComments') && empty($object->comments)) $object->fetchComments();
 
 if ($id > 0 || ! empty($ref)) {
-    $upload_dir = $conf->projet->dir_output . "/" . dol_sanitizeFileName($object->ref);
+	$upload_dir = $conf->projet->dir_output . "/" . dol_sanitizeFileName($object->ref);
 }
 
 // Get parameters
 $sortfield = GETPOST("sortfield", 'alpha');
 $sortorder = GETPOST("sortorder", 'alpha');
-$page = GETPOST("page", 'int');
+$page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOST("page", 'int');
 if (empty($page) || $page == -1) { $page = 0; }     // If $page is not defined, or '' or -1
 $offset = $conf->liste_limit * $page;
 $pageprev = $page - 1;
@@ -94,11 +94,11 @@ if ($object->id > 0)
 {
 	$upload_dir = $conf->projet->dir_output.'/'.dol_sanitizeFileName($object->ref);
 
-    // To verify role of users
-    //$userAccess = $object->restrictedProjectArea($user,'read');
-    $userWrite  = $object->restrictedProjectArea($user, 'write');
-    //$userDelete = $object->restrictedProjectArea($user,'delete');
-    //print "userAccess=".$userAccess." userWrite=".$userWrite." userDelete=".$userDelete;
+	// To verify role of users
+	//$userAccess = $object->restrictedProjectArea($user,'read');
+	$userWrite  = $object->restrictedProjectArea($user, 'write');
+	//$userDelete = $object->restrictedProjectArea($user,'delete');
+	//print "userAccess=".$userAccess." userWrite=".$userWrite." userDelete=".$userDelete;
 
 	$head = project_prepare_head($object);
 	dol_fiche_head($head, 'document', $langs->trans("Project"), -1, ($object->public?'projectpub':'project'));
@@ -122,15 +122,15 @@ if ($object->id > 0)
 	// Thirdparty
 	if ($object->thirdparty->id > 0)
 	{
-	    $morehtmlref.='<br>'.$langs->trans('ThirdParty') . ' : ' . $object->thirdparty->getNomUrl(1, 'project');
+		$morehtmlref.='<br>'.$langs->trans('ThirdParty') . ' : ' . $object->thirdparty->getNomUrl(1, 'project');
 	}
 	$morehtmlref.='</div>';
 
 	// Define a complementary filter for search of next/prev ref.
 	if (! $user->rights->projet->all->lire)
 	{
-	    $objectsListId = $object->getProjectsAuthorizedForUser($user, 0, 0);
-	    $object->next_prev_filter=" rowid in (".(count($objectsListId)?join(',', array_keys($objectsListId)):'0').")";
+		$objectsListId = $object->getProjectsAuthorizedForUser($user, 0, 0);
+		$object->next_prev_filter=" rowid in (".(count($objectsListId)?join(',', array_keys($objectsListId)):'0').")";
 	}
 
 	dol_banner_tab($object, 'ref', $linkback, 1, 'ref', 'ref', $morehtmlref);

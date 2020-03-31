@@ -88,6 +88,11 @@ abstract class CommonObject
 	public $array_options = array();
 
 	/**
+	 * @var mixed		Array to store alternative languages values of object
+	 */
+	public $array_languages = null;			// Value is array() when load already tried
+
+	/**
 	 * @var int[][]		Array of linked objects ids. Loaded by ->fetchObjectLinked
 	 */
 	public $linkedObjectsIds;
@@ -2949,7 +2954,7 @@ abstract class CommonObject
 			$MODULE = "MODULE_DISALLOW_UPDATE_PRICE_ORDER";
 		elseif ($this->element == 'facture' || $this->element == 'invoice')
 			$MODULE = "MODULE_DISALLOW_UPDATE_PRICE_INVOICE";
-		elseif ($this->element == 'facture_fourn' || $this->element == 'supplier_invoice')
+		elseif ($this->element == 'facture_fourn' || $this->element == 'supplier_invoice' || $this->element == 'invoice_supplier')
 			$MODULE = "MODULE_DISALLOW_UPDATE_PRICE_SUPPLIER_INVOICE";
 		elseif ($this->element == 'order_supplier' || $this->element == 'supplier_order')
 			$MODULE = "MODULE_DISALLOW_UPDATE_PRICE_SUPPLIER_ORDER";
@@ -3369,6 +3374,9 @@ abstract class CommonObject
 					elseif ($objecttype == 'subscription') {
 						$classpath = 'adherents/class'; $module = 'adherent';
 					}
+					elseif ($objecttype == 'contact') {
+						 $module = 'societe';
+					}
 
 					// Set classfile
 					$classfile = strtolower($subelement); $classname = ucfirst($subelement);
@@ -3390,6 +3398,9 @@ abstract class CommonObject
 					}
 					elseif ($objecttype == 'subscription') {
 						$classfile = 'subscription'; $classname = 'Subscription';
+					}
+					elseif ($objecttype == 'project' || $objecttype == 'projet') {
+						$classpath = 'projet/class'; $classfile = 'project'; $classname = 'Project';
 					}
 
 					// Here $module, $classfile and $classname are set
@@ -4077,6 +4088,7 @@ abstract class CommonObject
 
 		// Output template part (modules that overwrite templates must declare this into descriptor)
 		// Use global variables + $dateSelector + $seller and $buyer
+		// Note: This is deprecated. If you need to overwrite the tpl file, use instead the hook 'formAddObjectLine'.
 		$dirtpls = array_merge($conf->modules_parts['tpl'], array($defaulttpldir));
 		foreach ($dirtpls as $module => $reldir)
 		{
@@ -4119,7 +4131,7 @@ abstract class CommonObject
 	 */
 	public function printObjectLines($action, $seller, $buyer, $selected = 0, $dateSelector = 0, $defaulttpldir = '/core/tpl')
 	{
-		global $conf, $hookmanager, $langs, $user, $object, $form, $extrafields;
+		global $conf, $hookmanager, $langs, $user, $form, $extrafields, $object;
 		// TODO We should not use global var for this
 		global $inputalsopricewithtax, $usemargins, $disableedit, $disablemove, $disableremove, $outputalsopricetotalwithtax;
 
@@ -4143,6 +4155,7 @@ abstract class CommonObject
 		{
 			// Output template part (modules that overwrite templates must declare this into descriptor)
 			// Use global variables + $dateSelector + $seller and $buyer
+			// Note: This is deprecated. If you need to overwrite the tpl file, use instead the hook.
 			$dirtpls = array_merge($conf->modules_parts['tpl'], array($defaulttpldir));
 			foreach ($dirtpls as $module => $reldir)
 			{
@@ -4209,7 +4222,7 @@ abstract class CommonObject
 	 *	@param  string	    		$buyer             	Object of buyer third party
 	 *	@param	int					$selected		   	Object line selected
 	 *  @param  Extrafields			$extrafields		Object of extrafields
-	 *  @param	string				$defaulttpldir		Directory where to find the template
+	 *  @param	string				$defaulttpldir		Directory where to find the template (deprecated)
 	 *	@return	void
 	 */
 	public function printObjectLine($action, $line, $var, $num, $i, $dateSelector, $seller, $buyer, $selected = 0, $extrafields = null, $defaulttpldir = '/core/tpl')
@@ -4222,15 +4235,9 @@ abstract class CommonObject
 
 		$element = $this->element;
 
-		$text = ''; $description = ''; $type = 0;
+		$text = ''; $description = '';
 
-		// Show product and description
-		$type = (!empty($line->product_type) ? $line->product_type : $line->fk_product_type);
-		// Try to enhance type detection using date_start and date_end for free lines where type was not saved.
-		if (!empty($line->date_start)) $type = 1; // deprecated
-		if (!empty($line->date_end)) $type = 1; // deprecated
-
-		// Ligne en mode visu
+		// Line in view mode
 		if ($action != 'editline' || $selected != $line->id)
 		{
 			// Product
@@ -4281,6 +4288,7 @@ abstract class CommonObject
 
 			// Output template part (modules that overwrite templates must declare this into descriptor)
 			// Use global variables + $dateSelector + $seller and $buyer
+			// Note: This is deprecated. If you need to overwrite the tpl file, use instead the hook printObjectLine and printObjectSubLine.
 			$dirtpls = array_merge($conf->modules_parts['tpl'], array($defaulttpldir));
 			foreach ($dirtpls as $module => $reldir)
 			{
@@ -4306,12 +4314,12 @@ abstract class CommonObject
 		if ($this->statut == 0 && $action == 'editline' && $selected == $line->id)
 		{
 			$label = (!empty($line->label) ? $line->label : (($line->fk_product > 0) ? $line->product_label : ''));
-			$placeholder = ' placeholder="'.$langs->trans("Label").'"';
 
 			$line->pu_ttc = price2num($line->subprice * (1 + ($line->tva_tx / 100)), 'MU');
 
 			// Output template part (modules that overwrite templates must declare this into descriptor)
 			// Use global variables + $dateSelector + $seller and $buyer
+			// Note: This is deprecated. If you need to overwrite the tpl file, use instead the hook printObjectLine and printObjectSubLine.
 			$dirtpls = array_merge($conf->modules_parts['tpl'], array($defaulttpldir));
 			foreach ($dirtpls as $module => $reldir)
 			{
@@ -5038,6 +5046,163 @@ abstract class CommonObject
 	}
 
 
+	/* Functions for data in other language */
+
+
+	/**
+	 *  Function to get alternative languages of a data into $this->array_languages
+	 *  This method is NOT called by method fetch of objects but must be called separately.
+	 *
+	 *  @return	int						<0 if error, 0 if no values of alternative languages to find nor found, 1 if a value was found and loaded
+	 */
+	public function fetchValueForAlternateLanguages()
+	{
+		// To avoid SQL errors. Probably not the better solution though
+		if (!$this->element) {
+			return 0;
+		}
+		if (! ($this->id > 0)) {
+			return 0;
+		}
+		if (is_array($this->array_languages)) {
+			return 1;
+		}
+
+		$this->array_languages = array();
+
+		$element = $this->element;
+		if ($element == 'categorie') $element = 'categories'; // For compatibility
+
+		// Request to get translation values for object
+		$sql = "SELECT rowid, property, lang , value";
+		$sql .= " FROM ".MAIN_DB_PREFIX."object_lang";
+		$sql .= " WHERE type_object = '".$element."'";
+		$sql .= " AND fk_object = ".$this->id;
+
+		//dol_syslog(get_class($this)."::fetch_optionals get extrafields data for ".$this->table_element, LOG_DEBUG);		// Too verbose
+		$resql = $this->db->query($sql);
+		if ($resql)
+		{
+			$numrows = $this->db->num_rows($resql);
+			if ($numrows)
+			{
+				$i = 0;
+				while ($i < $numrows) {
+					$obj = $this->db->fetch_object($resql);
+					$key = $obj->property;
+					$value = $obj->value;
+					$codelang = $obj->lang;
+					$type = $this->fields[$key]['type'];
+
+					// we can add this attribute to object
+					if (preg_match('/date/', $type))
+					{
+						$this->array_languages[$key][$codelang] = $this->db->jdate($value);
+					}
+					else
+					{
+						$this->array_languages[$key][$codelang] = $value;
+					}
+
+					$i++;
+				}
+			}
+
+			$this->db->free($resql);
+
+			if ($numrows) return $numrows;
+			else return 0;
+		}
+		else
+		{
+			dol_print_error($this->db);
+			return -1;
+		}
+	}
+
+	/**
+	 * Fill array_options property of object by extrafields value (using for data sent by forms)
+	 *
+	 * @param	string	$onlykey		Only the following key is filled. When we make update of only one language field ($action = 'update_languages'), calling page must set this to avoid to have other languages being reset.
+	 * @return	int						1 if array_options set, 0 if no value, -1 if error (field required missing for example)
+	 */
+	public function setValuesForAlternateLanguages($onlykey = '')
+	{
+		global $_POST, $langs;
+
+		// Get extra fields
+		foreach($_POST as $postfieldkey => $postfieldvalue) {
+			$tmparray = explode('-', $postfieldkey);
+			if ($tmparray[0] != 'field') continue;
+
+			$element = $tmparray[1];
+			$key = $tmparray[2];
+			$codelang = $tmparray[3];
+			//var_dump("postfieldkey=".$postfieldkey." element=".$element." key=".$key." codelang=".$codelang);
+
+			if (!empty($onlykey) && $key != $onlykey) continue;
+			if ($element != $this->element) continue;
+
+			$key_type = $this->fields[$key]['type'];
+
+			$enabled = 1;
+			if (isset($this->fields[$key]['enabled']))
+			{
+				$enabled = dol_eval($this->fields[$key]['enabled'], 1);
+			}
+			/*$perms = 1;
+			if (isset($this->fields[$key]['perms']))
+			{
+				$perms = dol_eval($this->fields[$key]['perms'], 1);
+			}*/
+			if (empty($enabled)) continue;
+			//if (empty($perms)) continue;
+
+			if (in_array($key_type, array('date')))
+			{
+				// Clean parameters
+				// TODO GMT date in memory must be GMT so we should add gm=true in parameters
+				$value_key = dol_mktime(0, 0, 0, $_POST[$postfieldkey."month"], $_POST[$postfieldkey."day"], $_POST[$postfieldkey."year"]);
+			}
+			elseif (in_array($key_type, array('datetime')))
+			{
+				// Clean parameters
+				// TODO GMT date in memory must be GMT so we should add gm=true in parameters
+				$value_key = dol_mktime($_POST[$postfieldkey."hour"], $_POST[$postfieldkey."min"], 0, $_POST[$postfieldkey."month"], $_POST[$postfieldkey."day"], $_POST[$postfieldkey."year"]);
+			}
+			elseif (in_array($key_type, array('checkbox', 'chkbxlst')))
+			{
+				$value_arr = GETPOST($postfieldkey, 'array'); // check if an array
+				if (!empty($value_arr)) {
+					$value_key = implode($value_arr, ',');
+				} else {
+					$value_key = '';
+				}
+			}
+			elseif (in_array($key_type, array('price', 'double')))
+			{
+				$value_arr = GETPOST($postfieldkey, 'alpha');
+				$value_key = price2num($value_arr);
+			}
+			else
+			{
+				$value_key = GETPOST($postfieldkey);
+				if (in_array($key_type, array('link')) && $value_key == '-1') $value_key = '';
+			}
+
+			$this->array_languages[$key][$codelang] = $value_key;
+
+			/*if ($nofillrequired) {
+				$langs->load('errors');
+				setEventMessages($langs->trans('ErrorFieldsRequired').' : '.implode(', ', $error_field_required), null, 'errors');
+				return -1;
+			}*/
+		}
+
+		return 1;
+	}
+
+
 	/* Functions for extrafields */
 
 
@@ -5056,6 +5221,7 @@ abstract class CommonObject
 		global $extrafields;
 
 		if (empty($rowid)) $rowid = $this->id;
+		if (empty($rowid)) $rowid = $this->rowid;
 
 		// To avoid SQL errors. Probably not the better solution though
 		if (!$this->table_element) {
@@ -5107,7 +5273,6 @@ abstract class CommonObject
 			$resql = $this->db->query($sql);
 			if ($resql)
 			{
-				$this->array_options = array();
 				$numrows = $this->db->num_rows($resql);
 				if ($numrows)
 				{
@@ -5414,7 +5579,7 @@ abstract class CommonObject
 				// Add field of attribute
 				if ($extrafields->attributes[$this->table_element]['type'][$attributeKey] != 'separate') // Only for other type than separator)
 				{
-					if ($new_array_options[$key] != '')
+					if ($new_array_options[$key] != '' || $new_array_options[$key] == '0')
 					{
 						$sql .= ",'".$this->db->escape($new_array_options[$key])."'";
 					}
@@ -5516,7 +5681,7 @@ abstract class CommonObject
 						$this->errors[] = $langs->trans("ExtraFieldHasWrongValue", $attributeLabel);
 						return -1;
 					}
-					elseif ($value == '')
+					elseif ($value === '')
 					{
 						$this->array_options["options_".$key] = null;
 					}
@@ -5529,7 +5694,7 @@ abstract class CommonObject
 						$this->errors[] = $langs->trans("ExtraFieldHasWrongValue", $attributeLabel);
 						return -1;
 					}
-					elseif ($value == '')
+					elseif ($value === '')
 					{
 						$this->array_options["options_".$key] = null;
 					}
@@ -6676,9 +6841,10 @@ abstract class CommonObject
 				if (($mode == 'create' || $mode == 'edit') && abs($visibility) != 1 && abs($visibility) != 3) continue; // <> -1 and <> 1 and <> 3 = not visible on forms, only on list
 				elseif ($mode == 'view' && empty($visibility)) continue;
 				if (empty($perms)) continue;
-
 				// Load language if required
-				if (!empty($extrafields->attributes[$this->table_element]['langfile'][$key])) $langs->load($extrafields->attributes[$this->table_element]['langfile'][$key]);
+				if (!empty($extrafields->attributes[$this->table_element]['langfile'][$key])) {
+					$langs->load($extrafields->attributes[$this->table_element]['langfile'][$key]);
+				}
 
 				$colspan = '';
 				if (is_array($params) && count($params) > 0) {
@@ -6777,8 +6943,8 @@ abstract class CommonObject
 					{
 						$value = GETPOSTISSET($keyprefix.'options_'.$key.$keysuffix) ?price2num(GETPOST($keyprefix.'options_'.$key.$keysuffix, 'alpha', 3)) : $this->array_options['options_'.$key];
 					}
-
 					$labeltoshow = $langs->trans($label);
+					$helptoshow = $langs->trans($extrafields->attributes[$this->table_element]['help'][$key]);
 
 					$out .= '<td class="';
 					//$out .= "titlefield";
@@ -6787,13 +6953,13 @@ abstract class CommonObject
 					$tpl_context = isset($params["tpl_context"]) ? $params["tpl_context"] : "none";
 					if ($tpl_context == "public") {	// Public page : red dot instead of fieldrequired characters
 						$out .= '">';
-						if (!empty($extrafields->attributes[$this->table_element]['help'][$key])) $out .= $form->textwithpicto($labeltoshow, $extrafields->attributes[$this->table_element]['help'][$key]);
+						if (!empty($extrafields->attributes[$this->table_element]['help'][$key])) $out .= $form->textwithpicto($labeltoshow, $helptoshow);
 						else $out .= $labeltoshow;
 						if ($mode != 'view' && !empty($extrafields->attributes[$this->table_element]['required'][$key])) $out .= '&nbsp;<font color="red">*</font>';
 					} else {
 						if ($mode != 'view' && !empty($extrafields->attributes[$this->table_element]['required'][$key])) $out .= ' fieldrequired';
 						$out .= '">';
-						if (!empty($extrafields->attributes[$this->table_element]['help'][$key])) $out .= $form->textwithpicto($labeltoshow, $extrafields->attributes[$this->table_element]['help'][$key]);
+						if (!empty($extrafields->attributes[$this->table_element]['help'][$key])) $out .= $form->textwithpicto($labeltoshow, $helptoshow);
 						else $out .= $labeltoshow;
 					}
 					$out .= '</td>';

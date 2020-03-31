@@ -268,12 +268,12 @@ function user_admin_prepare_head()
 	$h++;
 
 	$head[$h][0] = DOL_URL_ROOT.'/user/admin/user_extrafields.php';
-	$head[$h][1] = $langs->trans("ExtraFields");
+	$head[$h][1] = $langs->trans("ExtraFields")." (".$langs->trans("Users").")";
 	$head[$h][2] = 'attributes';
 	$h++;
 
 	$head[$h][0] = DOL_URL_ROOT.'/user/admin/group_extrafields.php';
-	$head[$h][1] = $langs->trans("ExtraFields")." ".$langs->trans("Groups");
+	$head[$h][1] = $langs->trans("ExtraFields")." (".$langs->trans("Groups").")";
 	$head[$h][2] = 'attributes_group';
 	$h++;
 
@@ -942,6 +942,7 @@ function showSkins($fuser, $edit = 0, $foruserprofile = false)
 	    print '<tr class="oddeven">';
 	    print '<td>'.$langs->trans("MAIN_OPTIMIZEFORTEXTBROWSER").'</td>';
 	    print '<td colspan="'.($colspan - 1).'">';
+	    //print ajax_constantonoff("MAIN_OPTIMIZEFORTEXTBROWSER", array(), null, 0, 0, 1, 0);
    	    if ($edit)
    	    {
    	        print $form->selectyesno('MAIN_OPTIMIZEFORTEXTBROWSER', $fuser->conf->MAIN_OPTIMIZEFORTEXTBROWSER, 1);

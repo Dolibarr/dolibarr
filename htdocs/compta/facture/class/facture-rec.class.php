@@ -677,7 +677,7 @@ class FactureRec extends CommonInvoice
 				$line->price            = $objp->price;
 				$line->remise           = $objp->remise;
 
-				$line->fetch_optionals($line->id);
+				$line->fetch_optionals();
 
 				// Multicurrency
 				$line->fk_multicurrency = $objp->fk_multicurrency;

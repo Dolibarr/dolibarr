@@ -91,7 +91,7 @@ GoToSetupArea=ไปที่ Dolibarr (พื้นที่ติดตั้�
 MigrationNotFinished=The database version is not completely up to date: run the upgrade process again.
 GoToUpgradePage=ไปที่หน้าอัพเกรดอีกครั้ง
 WithNoSlashAtTheEnd=โดยไม่ต้องเฉือน "/" ในตอนท้าย
-DirectoryRecommendation=It is recommended to use a directory outside of the web pages.
+DirectoryRecommendation=<span class="warning">IMPORTANT</span>: You must use a directory that is outside of the web pages (so do not use a subdirectory of previous parameter).
 LoginAlreadyExists=ที่มีอยู่แล้ว
 DolibarrAdminLogin=ผู้ดูแลระบบเข้าสู่ระบบ Dolibarr
 AdminLoginAlreadyExists=Dolibarr administrator account '<b>%s</b>' already exists. Go back if you want to create another one.

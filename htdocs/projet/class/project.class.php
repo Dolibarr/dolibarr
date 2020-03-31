@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2002-2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2005-2016 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2005-2020 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2010 Regis Houssin        <regis.houssin@inodbox.com>
  * Copyright (C) 2013	   Florian Henry        <florian.henry@open-concept.pro>
  * Copyright (C) 2014-2017 Marcos García        <marcosgdf@gmail.com>
@@ -493,7 +493,7 @@ class Project extends CommonObject
         if (empty($id) && empty($ref)) return -1;
 
         $sql = "SELECT rowid, ref, title, description, public, datec, opp_amount, budget_amount,";
-        $sql .= " tms, dateo, datee, date_close, fk_soc, fk_user_creat, fk_user_modif, fk_user_close, fk_statut, fk_opp_status, opp_percent,";
+        $sql .= " tms, dateo, datee, date_close, fk_soc, fk_user_creat, fk_user_modif, fk_user_close, fk_statut as status, fk_opp_status, opp_percent,";
         $sql .= " note_private, note_public, model_pdf, usage_opportunity, usage_task, usage_bill_time, usage_organize_event, entity";
         $sql .= " FROM ".MAIN_DB_PREFIX."projet";
         if (!empty($id))
@@ -534,7 +534,8 @@ class Project extends CommonObject
                 $this->user_modification_id = $obj->fk_user_modif;
                 $this->user_close_id = $obj->fk_user_close;
                 $this->public = $obj->public;
-                $this->statut = $obj->fk_statut;
+                $this->statut = $obj->status;	// deprecated
+                $this->status = $obj->status;
                 $this->opp_status = $obj->fk_opp_status;
                 $this->opp_amount	= $obj->opp_amount;
                 $this->opp_percent = $obj->opp_percent;
@@ -700,7 +701,7 @@ class Project extends CommonObject
         		'propal'=>'fk_projet', 'commande'=>'fk_projet', 'facture'=>'fk_projet',
         		'supplier_proposal'=>'fk_projet', 'commande_fournisseur'=>'fk_projet', 'facture_fourn'=>'fk_projet',
         		'expensereport_det'=>'fk_projet', 'contrat'=>'fk_projet', 'fichinter'=>'fk_projet', 'don'=>'fk_projet',
-        		'actioncomm'=>'fk_project', 'mo'=>'fk_project'
+        		'actioncomm'=>'fk_project', 'mrp_mo'=>'fk_project'
         		);
         foreach ($listoftables as $key => $value)
         {
@@ -994,7 +995,7 @@ class Project extends CommonObject
      */
     public function getLibStatut($mode = 0)
     {
-        return $this->LibStatut($this->statut, $mode);
+    	return $this->LibStatut(isset($this->statut)?$this->statut:$this->status, $mode);
     }
 
     // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
@@ -1055,6 +1056,9 @@ class Project extends CommonObject
         if (!empty($this->datee))
             $label .= ($label ? '<br>' : '').'<b>'.$langs->trans('DateEnd').': </b>'.dol_print_date($this->datee, 'day'); // The space must be after the : to not being explode when showing the title in img_picto
         if ($moreinpopup) $label .= '<br>'.$moreinpopup;
+        if (isset($this->status)) {
+        	$label .= '<br><b>'.$langs->trans("Status").":</b> ".$this->getLibStatut(5);
+        }
 
         $url = '';
         if ($option != 'nolink')

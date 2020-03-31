@@ -90,7 +90,7 @@ class LogHandler
 	/**
 	 * Set current ident.
 	 *
-     * @param	int		$ident		1=Increase ident of 1, -1=Decrease ident of 1
+	 * @param	int		$ident		1=Increase ident of 1, -1=Decrease ident of 1
 	 * @return 	void
 	 */
 	public function setIdent($ident)

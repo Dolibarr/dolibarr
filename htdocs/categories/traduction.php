@@ -36,18 +36,12 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
 $langs->loadLangs(array('categories', 'languages'));
 
 $id     = GETPOST('id', 'int');
-$ref    = GETPOST('ref', 'alpha');
+$label  = GETPOST('label', 'alpha');
 $action = GETPOST('action', 'alpha');
 $cancel = GETPOST('cancel', 'alpha');
 $type   = GETPOST('type', 'aZ09');
 
-if (is_numeric($type)) $type = Categorie::$MAP_ID_TO_CODE[$type]; // For backward compatibility
-
-// Security check
-$fieldvalue = (!empty($id) ? $id : (!empty($ref) ? $ref : ''));
-$fieldtype = (!empty($ref) ? 'ref' : 'rowid');
-
-if ($id == "")
+if ($id == '' && $label == '')
 {
 	dol_print_error('', 'Missing parameter id');
 	exit();
@@ -57,7 +51,16 @@ if ($id == "")
 $result = restrictedArea($user, 'categorie', $id, '&category');
 
 $object = new Categorie($db);
+$result = $object->fetch($id, $label, $type);
+if ($result <= 0) {
+	dol_print_error($db, $object->error); exit;
+}
+$object->fetch_optionals();
+if ($result <= 0) {
+	dol_print_error($db, $object->error); exit;
+}
 
+if (is_numeric($type)) $type = Categorie::$MAP_ID_TO_CODE[$type]; // For backward compatibility
 
 /*
  * Actions
@@ -159,8 +162,6 @@ $cancel != $langs->trans("Cancel") &&
     }
 }
 
-$result = $object->fetch($id, $ref);
-
 
 /*
  * View
@@ -197,7 +198,7 @@ if (!empty($object->multilangs))
 dol_fiche_head($head, 'translation', $title, -1, 'category');
 
 $linkback = '<a href="'.DOL_URL_ROOT.'/categories/index.php?leftmenu=cat&type='.$type.'">'.$langs->trans("BackToList").'</a>';
-
+$object->next_prev_filter = ' type = ' . $object->type;
 $object->ref = $object->label;
 $morehtmlref = '<br><div class="refidno"><a href="'.DOL_URL_ROOT.'/categories/index.php?leftmenu=cat&type='.$type.'">'.$langs->trans("Root").'</a> >> ';
 $ways = $object->print_all_ways(" &gt;&gt; ", '', 1);
@@ -207,7 +208,7 @@ foreach ($ways as $way)
 }
 $morehtmlref .= '</div>';
 
-dol_banner_tab($object, 'ref', $linkback, ($user->socid ? 0 : 1), 'ref', 'ref', $morehtmlref, '', 0, '', '', 1);
+dol_banner_tab($object, 'label', $linkback, ($user->socid ? 0 : 1), 'label', 'label', $morehtmlref, '&type=' . $type, 0, '', '', 1);
 
 print '<br>';
 

@@ -123,6 +123,7 @@ AgendaUrlOptionsNotAdmin=<b>login=%s</b> om uitvoer van acties die niet zijn toe
 AgendaUrlOptions4=<b> logint = %s </b>om de uitvoer te beperken tot acties die zijn toegewezen aan gebruiker <b> %s </b>(eigenaar en anderen).
 AgendaUrlOptionsProject=<b>project=PROJECT_ID</b> om uitvoer van acties gekoppeld aan project<b>PROJECT_ID</b> te beperken.
 AgendaUrlOptionsNotAutoEvent=<b>notactiontype=systemauto</b> om automatische gebeurtenissen uit te sluiten.
+AgendaUrlOptionsIncludeHolidays= <b> includeholidays = 1 </b> om vakanties op te nemen.
 AgendaShowBirthdayEvents=Verjaardagen van contacten weergeven
 AgendaHideBirthdayEvents=Verjaardagen van contacten verbergen
 Busy=Bezig

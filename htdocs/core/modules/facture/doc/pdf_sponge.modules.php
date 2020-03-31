@@ -582,9 +582,7 @@ class pdf_sponge extends ModelePDFFactures
 			    $this->pdfTabTitles($pdf, $tab_top, $tab_height, $outputlangs, $hidetop);
 			    $pdf->rollbackTransaction(true);
 
-			    $iniY = $tab_top + $this->tabTitleHeight + 2;
-			    $curY = $tab_top + $this->tabTitleHeight + 2;
-			    $nexY = $tab_top + $this->tabTitleHeight + 2;
+			    $nexY = $tab_top + $this->tabTitleHeight;
 
 	            // Loop on each lines
 	            $pageposbeforeprintlines = $pdf->getPage();
@@ -605,7 +603,6 @@ class pdf_sponge extends ModelePDFFactures
 
 	                $showpricebeforepagebreak = 1;
 	                $posYAfterImage = 0;
-	                $posYAfterDescription = 0;
 
 	                if ($this->getColumnStatus('photo'))
 	                {
@@ -637,13 +634,17 @@ class pdf_sponge extends ModelePDFFactures
 	                if ($this->getColumnStatus('desc'))
 	                {
     	                $pdf->startTransaction();
-    	                pdf_writelinedesc($pdf, $object, $i, $outputlangs, $this->getColumnContentWidth('desc'), 3, $this->getColumnContentXStart('desc'), $curY, $hideref, $hidedesc);
+
+                        $this->printColDescContent($pdf, $curY, 'desc', $object, $i, $outputlangs, $hideref, $hidedesc);
     	                $pageposafter = $pdf->getPage();
+
     	                if ($pageposafter > $pageposbefore)	// There is a pagebreak
     	                {
     	                    $pdf->rollbackTransaction(true);
     	                    $pdf->setPageOrientation('', 1, $heightforfooter); // The only function to edit the bottom margin of current page to set it.
-    	                    pdf_writelinedesc($pdf, $object, $i, $outputlangs, $this->getColumnContentWidth('desc'), 3, $this->getColumnContentXStart('desc'), $curY, $hideref, $hidedesc);
+
+                            $this->printColDescContent($pdf, $curY, 'desc', $object, $i, $outputlangs, $hideref, $hidedesc);
+
     	                    $pageposafter = $pdf->getPage();
     	                    $posyafter = $pdf->GetY();
     	                    //var_dump($posyafter); var_dump(($this->page_hauteur - ($heightforfooter+$heightforfreetext+$heightforinfotot))); exit;
@@ -670,10 +671,9 @@ class pdf_sponge extends ModelePDFFactures
     	                {
     	                    $pdf->commitTransaction();
     	                }
-    	                $posYAfterDescription = $pdf->GetY();
 	                }
 
-	                $nexY = $pdf->GetY();
+                    $nexY = $pdf->GetY();
 	                $pageposafter = $pdf->getPage();
 	                $pdf->setPage($pageposbefore);
 	                $pdf->setTopMargin($this->marge_haute);
@@ -823,11 +823,9 @@ class pdf_sponge extends ModelePDFFactures
                         $pdf->setPage($pageposafter);
                         $pdf->SetLineStyle(array('dash'=>'1,1', 'color'=>array(80, 80, 80)));
                         //$pdf->SetDrawColor(190,190,200);
-                        $pdf->line($this->marge_gauche, $nexY + 1, $this->page_largeur - $this->marge_droite, $nexY + 1);
+                        $pdf->line($this->marge_gauche, $nexY, $this->page_largeur - $this->marge_droite, $nexY);
                         $pdf->SetLineStyle(array('dash'=>0));
                     }
-
-                    $nexY += 2; // Add space between lines
 
                     // Detect if some page were added automatically and output _tableau for past pages
                     while ($pagenb < $pageposafter) {
@@ -1219,10 +1217,9 @@ class pdf_sponge extends ModelePDFFactures
 			// If payment mode not forced or forced to VIR, show payment with BAN
 			if (empty($object->mode_reglement_code) || $object->mode_reglement_code == 'VIR')
 			{
-				if (!empty($object->fk_account) || !empty($object->fk_bank) || !empty($conf->global->FACTURE_RIB_NUMBER))
-				{
-					$bankid = (empty($object->fk_account) ? $conf->global->FACTURE_RIB_NUMBER : $object->fk_account);
-					if (!empty($object->fk_bank)) $bankid = $object->fk_bank; // For backward compatibility when object->fk_account is forced with object->fk_bank
+				if ($object->fk_account > 0 || $object->fk_bank > 0 || !empty($conf->global->FACTURE_RIB_NUMBER)) {
+					$bankid = ($object->fk_account <= 0 ? $conf->global->FACTURE_RIB_NUMBER : $object->fk_account);
+					if ($object->fk_bank > 0) $bankid = $object->fk_bank; // For backward compatibility when object->fk_account is forced with object->fk_bank
 					$account = new Account($this->db);
 					$account->fetch($bankid);
 
@@ -2198,7 +2195,7 @@ class pdf_sponge extends ModelePDFFactures
 	    // Default field style for content
 	    $this->defaultContentsFieldsStyle = array(
 	        'align' => 'R', // R,C,L
-	        'padding' => array(0.5, 0.5, 0.5, 0.5), // Like css 0 => top , 1 => right, 2 => bottom, 3 => left
+	        'padding' => array(1, 0.5, 1, 0.5), // Like css 0 => top , 1 => right, 2 => bottom, 3 => left
 	    );
 
 	    // Default field style for content
@@ -2239,6 +2236,7 @@ class pdf_sponge extends ModelePDFFactures
 	        ),
 	        'content' => array(
 	            'align' => 'L',
+                'padding' => array(1, 0.5, 1, 1.5), // Like css 0 => top , 1 => right, 2 => bottom, 3 => left
 	        ),
 	    );
 

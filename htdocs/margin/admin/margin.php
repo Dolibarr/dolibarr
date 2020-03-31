@@ -41,66 +41,66 @@ $action=GETPOST('action', 'alpha');
  */
 if (preg_match('/set_([a-z0-9_\-]+)/i', $action, $reg))
 {
-    $code=$reg[1];
-    if (dolibarr_set_const($db, $code, 1, 'yesno', 0, '', $conf->entity) > 0)
-    {
-        header("Location: ".$_SERVER["PHP_SELF"]);
-        exit;
-    }
-    else
-    {
-        dol_print_error($db);
-    }
+	$code=$reg[1];
+	if (dolibarr_set_const($db, $code, 1, 'yesno', 0, '', $conf->entity) > 0)
+	{
+		header("Location: ".$_SERVER["PHP_SELF"]);
+		exit;
+	}
+	else
+	{
+		dol_print_error($db);
+	}
 }
 
 if (preg_match('/del_([a-z0-9_\-]+)/i', $action, $reg))
 {
-    $code=$reg[1];
-    if (dolibarr_del_const($db, $code, $conf->entity) > 0)
-    {
-        header("Location: ".$_SERVER["PHP_SELF"]);
-        exit;
-    }
-    else
-    {
-        dol_print_error($db);
-    }
+	$code=$reg[1];
+	if (dolibarr_del_const($db, $code, $conf->entity) > 0)
+	{
+		header("Location: ".$_SERVER["PHP_SELF"]);
+		exit;
+	}
+	else
+	{
+		dol_print_error($db);
+	}
 }
 
 if ($action == 'remises')
 {
-    if (dolibarr_set_const($db, 'MARGIN_METHODE_FOR_DISCOUNT', $_POST['MARGIN_METHODE_FOR_DISCOUNT'], 'chaine', 0, '', $conf->entity) > 0)
-    {
-          setEventMessages($langs->trans("RecordModifiedSuccessfully"), null, 'mesgs');
-    }
-    else
-    {
-        dol_print_error($db);
-    }
+	if (dolibarr_set_const($db, 'MARGIN_METHODE_FOR_DISCOUNT', $_POST['MARGIN_METHODE_FOR_DISCOUNT'], 'chaine', 0, '', $conf->entity) > 0)
+	{
+		  setEventMessages($langs->trans("RecordModifiedSuccessfully"), null, 'mesgs');
+	}
+	else
+	{
+		dol_print_error($db);
+	}
 }
 
 if ($action == 'typemarges')
 {
-    if (dolibarr_set_const($db, 'MARGIN_TYPE', $_POST['MARGIN_TYPE'], 'chaine', 0, '', $conf->entity) > 0)
-    {
-          setEventMessages($langs->trans("RecordModifiedSuccessfully"), null, 'mesgs');
-    }
-    else
-    {
-        dol_print_error($db);
-    }
+	if (dolibarr_set_const($db, 'MARGIN_TYPE', $_POST['MARGIN_TYPE'], 'chaine', 0, '', $conf->entity) > 0)
+	{
+		  setEventMessages($langs->trans("RecordModifiedSuccessfully"), null, 'mesgs');
+	}
+	else
+	{
+		dol_print_error($db);
+	}
 }
 
 if ($action == 'contact')
 {
-    if (dolibarr_set_const($db, 'AGENT_CONTACT_TYPE', $_POST['AGENT_CONTACT_TYPE'], 'chaine', 0, '', $conf->entity) > 0)
-    {
-          setEventMessages($langs->trans("RecordModifiedSuccessfully"), null, 'mesgs');
-    }
-    else
-    {
-        dol_print_error($db);
-    }
+	if (dolibarr_set_const($db, 'AGENT_CONTACT_TYPE', $_POST['AGENT_CONTACT_TYPE'], 'chaine', 0, '', $conf->entity) > 0)
+	{
+		  setEventMessages($langs->trans("RecordModifiedSuccessfully"), null, 'mesgs');
+	}
+	else
+	{
+		dol_print_error($db);
+	}
 }
 
 /*

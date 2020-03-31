@@ -130,7 +130,9 @@ print '<td>&nbsp;</td>';
 print '</tr>';
 
 print '<tr class="oddeven">';
-print '<td>'.$langs->trans("RESTRICT_API_ON_IP").'</td>';
+print '<td>'.$langs->trans("RESTRICT_ON_IP");
+print ' '.$langs->trans("Example").': '.$langs->trans("IPListExample");
+print '</td>';
 print '<td><input type="text" name="API_RESTRICT_ON_IP" value="'.dol_escape_htmltag($conf->global->API_RESTRICT_ON_IP).'"></td>';
 print '<td>';
 print '<input type="submit" class="button" name="save" value="'.dol_escape_htmltag($langs->trans("Save")).'"></td>';

@@ -128,6 +128,13 @@ if ($action == 'update' && !empty($permissiontoadd))
 		if ($object->fields[$key]['type'] == 'duration') {
 			if (!GETPOSTISSET($key.'hour') || !GETPOSTISSET($key.'min')) continue; // The field was not submited to be edited
 		}
+		elseif ($object->fields[$key]['type'] == 'boolean') {
+			if (!GETPOSTISSET($key)) {
+				$object->$key = 0; // use 0 instead null if the field is defined as not null
+				continue;
+			}
+		}
+
 		else {
 			if (!GETPOSTISSET($key)) continue; // The field was not submited to be edited
 		}

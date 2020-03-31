@@ -1574,8 +1574,8 @@ if ($action == 'create')
 						$expLine = new ExpeditionLigne($db);
 
 						$srcLine = new OrderLine($db);
-						$srcLine->fetch_optionals($line->id); // fetch extrafields also available in orderline
-						//$line->fetch_optionals($line->id);
+						$srcLine->id = $line->id;
+						$srcLine->fetch_optionals(); // fetch extrafields also available in orderline
 						$line->array_options = array_merge($line->array_options, $srcLine->array_options);
 
 						print $expLine->showOptionals($extrafields, 'edit', array('style'=>'class="drag drop oddeven"', 'colspan'=>$colspan), $indiceAsked, '', 1);
@@ -1967,7 +1967,7 @@ elseif ($id || $ref)
 
 		// Tracking Number
 		print '<tr><td class="titlefield">'.$form->editfieldkey("TrackingNumber", 'tracking_number', $object->tracking_number, $object, $user->rights->expedition->creer).'</td><td colspan="3">';
-		print $form->editfieldval("TrackingNumber", 'tracking_number', $object->tracking_url, $object, $user->rights->expedition->creer, 'string', $object->tracking_number);
+		print $form->editfieldval("TrackingNumber", 'tracking_number', $object->tracking_url, $object, $user->rights->expedition->creer, 'safehtmlstring', $object->tracking_number);
 		print '</td></tr>';
 
 		// Incoterms
@@ -2012,7 +2012,7 @@ elseif ($id || $ref)
 		if ($action == 'editline')
 		{
 			print '	<form name="updateline" id="updateline" action="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;lineid='.$line_id.'" method="POST">
-			<input type="hidden" name="token" value="' . $_SESSION ['newtoken'].'">
+			<input type="hidden" name="token" value="' . newToken().'">
 			<input type="hidden" name="action" value="updateline">
 			<input type="hidden" name="mode" value="">
 			<input type="hidden" name="id" value="' . $object->id.'">
@@ -2428,7 +2428,7 @@ elseif ($id || $ref)
 				if ($action == 'editline' && $lines[$i]->id == $line_id)
 				{
 					print '<td class="center" colspan="2" valign="middle">';
-					print '<input type="submit" class="button" id="savelinebutton" name="save" value="' . $langs->trans("Save") . '"><br>';
+					print '<input type="submit" class="button" id="savelinebutton marginbottomonly" name="save" value="' . $langs->trans("Save") . '"><br>';
 					print '<input type="submit" class="button" id="cancellinebutton" name="cancel" value="' . $langs->trans("Cancel") . '"><br>';
 					print '</td>';
 				}
@@ -2460,7 +2460,7 @@ elseif ($id || $ref)
 					if (!empty($conf->stock->enabled)) $colspan++;
 
 					$line = $lines[$i];
-					$line->fetch_optionals($line->id);
+					$line->fetch_optionals();
 
 					if ($action == 'editline' && $line->id == $line_id)
 					{

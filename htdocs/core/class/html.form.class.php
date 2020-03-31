@@ -202,7 +202,7 @@ class Form
 				$ret .= '<input type="hidden" name="'.$paramid.'" value="'.$object->id.'">';
 				if (empty($notabletag)) $ret .= '<table class="nobordernopadding centpercent" cellpadding="0" cellspacing="0">';
 				if (empty($notabletag)) $ret .= '<tr><td>';
-				if (preg_match('/^(string|email)/', $typeofdata))
+				if (preg_match('/^(string|safehtmlstring|email)/', $typeofdata))
 				{
 					$tmp = explode(':', $typeofdata);
 					$ret .= '<input type="text" id="'.$htmlname.'" name="'.$htmlname.'" value="'.($editvalue ? $editvalue : $value).'"'.($tmp[1] ? ' size="'.$tmp[1].'"' : '').'>';
@@ -276,6 +276,7 @@ class Form
 				if (preg_match('/^(email)/', $typeofdata))              $ret .= dol_print_email($value, 0, 0, 0, 0, 1);
 				elseif (preg_match('/^(amount|numeric)/', $typeofdata)) $ret .= ($value != '' ? price($value, '', $langs, 0, -1, -1, $conf->currency) : '');
 				elseif (preg_match('/^text/', $typeofdata) || preg_match('/^note/', $typeofdata))  $ret .= dol_htmlentitiesbr($value);
+				elseif (preg_match('/^safehtmlstring/', $typeofdata)) $ret .= dol_string_onlythesehtmltags($value);
 				elseif ($typeofdata == 'day' || $typeofdata == 'datepicker') $ret .= dol_print_date($value, 'day');
 				elseif ($typeofdata == 'dayhour' || $typeofdata == 'datehourpicker') $ret .= dol_print_date($value, 'dayhour');
 				elseif (preg_match('/^select;/', $typeofdata))
@@ -313,6 +314,56 @@ class Form
 			}
 		}
 		return $ret;
+	}
+
+	/**
+	 * Output edit in place form
+	 *
+	 * @param   string	$fieldname		Name of the field
+	 * @param	object	$object			Object
+	 * @param	boolean	$perm			Permission to allow button to edit parameter. Set it to 0 to have a not edited field.
+	 * @param	string	$typeofdata		Type of data ('string' by default, 'email', 'amount:99', 'numeric:99', 'text' or 'textarea:rows:cols', 'datepicker' ('day' do not work, don't know why), 'ckeditor:dolibarr_zzz:width:height:savemethod:1:rows:cols', 'select;xxx[:class]'...)
+	 * @param	string	$check			Same coe than $check parameter of GETPOST()
+	 * @param	string	$morecss		More CSS
+	 * @return	string   		      	HTML code for the edit of alternative language
+	 */
+	public function widgetForTranslation($fieldname, $object, $perm, $typeofdata = 'string', $check = '', $morecss = '')
+	{
+		global $conf, $langs;
+
+		$result = '';
+
+		if (! empty($conf->global->PDF_USE_ALSO_LANGUAGE_CODE)) {
+			$langcode = $conf->global->PDF_USE_ALSO_LANGUAGE_CODE;
+
+			$result .='<div class="inline-block paddingleft image-'.$object->element.'-'.$fieldname.'">';
+			$s=img_picto($langs->trans("ShowOtherLanguages"), 'language', '', false, 0, 0, '', 'fa-15 editfieldlang');
+			$result .= $s;
+			$result .= '</div>';
+
+			$result .='<div class="inline-block hidden field-'.$object->element.'-'.$fieldname.'">';
+
+			$valuetoshow = GETPOSTISSET('field-'.$object->element."-".$fieldname."-".$langcode) ? GETPOST('field-'.$object->element.'-'.$fieldname."-".$langcode, $check) : '';
+			if (empty($valuetoshow)) {
+				$object->fetchValueForAlternateLanguages();
+				//var_dump($object->array_languages);
+				$valuetoshow = $object->array_languages[$fieldname][$langcode];
+			}
+
+			$s=picto_from_langcode($conf->global->PDF_USE_ALSO_LANGUAGE_CODE, 'class="pictoforlang"');
+			$result .= $s;
+			if ($typeofdata == 'textarea') {
+				$result .= '<textarea name="field-'.$object->element."-".$fieldname."-".$langcode.'" id="'.$fieldname."-".$langcode.'" class="'.$morecss.'" rows="'.ROWS_2.'" wrap="soft">';
+				$result .= $valuetoshow;
+				$result .= '</textarea>';
+			} else {
+				$result .= '<input type="text" class="inputfieldforlang '.($morecss ? ' '.$morecss : '').'" name="field-'.$object->element.'-'.$fieldname.'-'.$langcode.'" value="'.$valuetoshow.'">';
+			}
+			$result .= '</div>';
+			$result .= '<script>$(".image-'.$object->element.'-'.$fieldname.'").click(function() { console.log("Toggle lang widget"); jQuery(".field-'.$object->element.'-'.$fieldname.'").toggle(); });</script>';
+		}
+
+		return $result;
 	}
 
 	/**
@@ -641,12 +692,14 @@ class Form
     	  				/* console.log( index + ": " + $( this ).text() ); */
     	  				if ($(this).is(\':checked\')) atleastoneselected++;
     	  			});
+
 					console.log("initCheckForSelect mode="+mode+" atleastoneselected="+atleastoneselected);
+
     	  			if (atleastoneselected || '.$alwaysvisible.')
     	  			{
     	  				jQuery(".massaction").show();
-        			    '.($selected ? 'if (atleastoneselected) { jQuery(".massactionselect").val("'.$selected.'"); jQuery(".massactionconfirmed").prop(\'disabled\', false); }' : '').'
-        			    '.($selected ? 'if (! atleastoneselected) { jQuery(".massactionselect").val("0"); jQuery(".massactionconfirmed").prop(\'disabled\', true); } ' : '').'
+        			    '.($selected ? 'if (atleastoneselected) { jQuery(".massactionselect").val("'.$selected.'").trigger(\'change\'); jQuery(".massactionconfirmed").prop(\'disabled\', false); }' : '').'
+        			    '.($selected ? 'if (! atleastoneselected) { jQuery(".massactionselect").val("0").trigger(\'change\'); jQuery(".massactionconfirmed").prop(\'disabled\', true); } ' : '').'
     	  			}
     	  			else
     	  			{
@@ -1617,7 +1670,7 @@ class Form
     public function select_dolusers($selected = '', $htmlname = 'userid', $show_empty = 0, $exclude = null, $disabled = 0, $include = '', $enableonly = '', $force_entity = '0', $maxlength = 0, $showstatus = 0, $morefilter = '', $show_every = 0, $enableonlytext = '', $morecss = '', $noactive = 0, $outputmode = 0, $multiple = false)
 	{
         // phpcs:enable
-		global $conf, $user, $langs;
+		global $conf, $user, $langs, $hookmanager;
 
 		// If no preselected user defined, we take current user
 		if ((is_numeric($selected) && ($selected < -2 || empty($selected))) && empty($conf->global->SOCIETE_DISABLE_DEFAULT_SALESREPRESENTATIVE)) $selected = $user->id;
@@ -1677,6 +1730,10 @@ class Form
 		if ($includeUsers) $sql .= " AND u.rowid IN (".$includeUsers.")";
 		if (!empty($conf->global->USER_HIDE_INACTIVE_IN_COMBOBOX) || $noactive) $sql .= " AND u.statut <> 0";
 		if (!empty($morefilter)) $sql .= " ".$morefilter;
+
+		//Add hook to filter on user (for exemple on usergroup define in custom modules)
+		$reshook = $hookmanager->executeHooks('addSQLWhereFilterOnSelectUsers', array(), $this, $action);
+		if (!empty($reshook)) $sql .= $hookmanager->resPrint;
 
 		if (empty($conf->global->MAIN_FIRSTNAME_NAME_POSITION))	// MAIN_FIRSTNAME_NAME_POSITION is 0 means firstname+lastname
 		{
@@ -2109,7 +2166,7 @@ class Form
 			}
 		}
 
-		$selectFields = " p.rowid, p.ref, p.label, p.description, p.barcode, p.fk_product_type, p.price, p.price_ttc, p.price_base_type, p.tva_tx, p.duration, p.fk_price_expression";
+		$selectFields = " p.rowid, p.ref, p.label, p.description, p.barcode, p.fk_country, p.fk_product_type, p.price, p.price_ttc, p.price_base_type, p.tva_tx, p.duration, p.fk_price_expression";
 		if (count($warehouseStatusArray))
 		{
 		    $selectFieldsGrouped = ", sum(".$db->ifsql("e.statut IS NULL", "0", "ps.reel").") as stock"; // e.statut is null if there is no record in stock
@@ -2400,9 +2457,10 @@ class Form
 	 * @param 	string		$selected		    Preselected value
 	 * @param   int         $hidepriceinlabel   Hide price in label
 	 * @param   string      $filterkey          Filter key to highlight
+	 * @param	int			$novirtualstock 	Do not load virtual stock, even if slow option STOCK_SHOW_VIRTUAL_STOCK_IN_PRODUCTS_COMBO is on.
 	 * @return	void
 	 */
-	protected function constructProductListOption(&$objp, &$opt, &$optJson, $price_level, $selected, $hidepriceinlabel = 0, $filterkey = '')
+	protected function constructProductListOption(&$objp, &$opt, &$optJson, $price_level, $selected, $hidepriceinlabel = 0, $filterkey = '', $novirtualstock = 0)
 	{
 		global $langs, $conf, $user, $db;
 
@@ -2412,6 +2470,7 @@ class Form
 		$outlabel = '';
 		$outdesc = '';
 		$outbarcode = '';
+		$outorigin = '';
 		$outtype = '';
 		$outprice_ht = '';
 		$outprice_ttc = '';
@@ -2431,6 +2490,7 @@ class Form
 		$outlabel = $objp->label;
 		$outdesc = $objp->description;
 		$outbarcode = $objp->barcode;
+		$outorigin = $objp->fk_country;
 		$outpbq = empty($objp->price_by_qty_rowid) ? '' : $objp->price_by_qty_rowid;
 
 		$outtype = $objp->fk_product_type;
@@ -2492,12 +2552,15 @@ class Form
 		$opt .= $objp->ref;
 		if ($outbarcode) $opt .= ' ('.$outbarcode.')';
 		$opt .= ' - '.dol_trunc($label, $maxlengtharticle);
+		if ($outorigin && !empty($conf->global->PRODUCT_SHOW_ORIGIN_IN_COMBO)) $opt .= ' ('.getCountry($outorigin, 1).')';
 
 		$objRef = $objp->ref;
 		if (!empty($filterkey) && $filterkey != '') $objRef = preg_replace('/('.preg_quote($filterkey).')/i', '<strong>$1</strong>', $objRef, 1);
 		$outval .= $objRef;
 		if ($outbarcode) $outval .= ' ('.$outbarcode.')';
 		$outval .= ' - '.dol_trunc($label, $maxlengtharticle);
+		if ($outorigin && !empty($conf->global->PRODUCT_SHOW_ORIGIN_IN_COMBO)) $outval .= ' ('.getCountry($outorigin, 1).')';
+
         // Units
         $opt .= $outvalUnits;
         $outval .= $outvalUnits;
@@ -2639,7 +2702,7 @@ class Form
     			}
     			$outval .= $langs->transnoentities("Stock").':'.$objp->stock;
     			$outval .= '</span>';
-    			if (!empty($conf->global->STOCK_SHOW_VIRTUAL_STOCK_IN_PRODUCTS_COMBO))  // Warning, this option may slow down combo list generation
+    			if (empty($novirtualstock) && !empty($conf->global->STOCK_SHOW_VIRTUAL_STOCK_IN_PRODUCTS_COMBO))  // Warning, this option may slow down combo list generation
     			{
     			    $langs->load("stocks");
 
@@ -2905,7 +2968,7 @@ class Form
 							$objp->fprice = $price_result;
 							if ($objp->quantity >= 1)
 							{
-								$objp->unitprice = $objp->fprice / $objp->quantity;
+								$objp->unitprice = $objp->fprice / $objp->quantity; // Replace dynamically unitprice
 							}
 						}
 					}
@@ -2972,7 +3035,7 @@ class Form
 				if (empty($objp->idprodfournprice) && empty($alsoproductwithnosupplierprice)) $opt .= ' disabled';
 				if (!empty($objp->idprodfournprice) && $objp->idprodfournprice > 0)
 				{
-					$opt .= ' pbq="'.$objp->idprodfournprice.'" data-pbq="'.$objp->idprodfournprice.'" data-pbqqty="'.$objp->quantity.'" data-pbqpercent="'.$objp->remise_percent.'"';
+					$opt .= ' pbq="'.$objp->idprodfournprice.'" data-pbq="'.$objp->idprodfournprice.'" data-pbqqty="'.$objp->quantity.'" data-pbqup="'.$objp->unitprice.'" data-pbqpercent="'.$objp->remise_percent.'"';
 				}
 				$opt .= ' data-html="'.dol_escape_htmltag($optlabel).'"';
 				$opt .= '>';
@@ -2987,7 +3050,7 @@ class Form
 				// "key" value of json key array is used by jQuery automatically as selected value
 				// "label" value of json key array is used by jQuery automatically as text for combo box
 				$out .= $opt;
-				array_push($outarray, array('key'=>$outkey, 'value'=>$outref, 'label'=>$outval, 'qty'=>$outqty, 'discount'=>$outdiscount, 'type'=>$outtype, 'duration_value'=>$outdurationvalue, 'duration_unit'=>$outdurationunit, 'disabled'=>(empty($objp->idprodfournprice) ?true:false)));
+				array_push($outarray, array('key'=>$outkey, 'value'=>$outref, 'label'=>$outval, 'qty'=>$outqty, 'up'=>$objp->unitprice, 'discount'=>$outdiscount, 'type'=>$outtype, 'duration_value'=>$outdurationvalue, 'duration_unit'=>$outdurationunit, 'disabled'=>(empty($objp->idprodfournprice) ?true:false)));
 				// Exemple of var_dump $outarray
 				// array(1) {[0]=>array(6) {[key"]=>string(1) "2" ["value"]=>string(3) "ppp"
 				//           ["label"]=>string(76) "ppp (<strong>f</strong>ff2) - ppp - 20,00 Euros/1unité (20,00 Euros/unité)"
@@ -3506,13 +3569,13 @@ class Form
     // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 *      Return list of payment methods
-	 *	Constant MAIN_DEFAULT_PAYMENT_TYPE_ID can used to set default value but scope is all application, probably not what you want.
+	 *      Constant MAIN_DEFAULT_PAYMENT_TYPE_ID can used to set default value but scope is all application, probably not what you want.
 	 *
-	 *      @param	string	$selected       Id du mode de paiement pre-selectionne
-	 *      @param  string	$htmlname       Nom de la zone select
+	 *      @param	string	$selected       Id or code or preselected payment mode
+	 *      @param  string	$htmlname       Name of select field
 	 *      @param  string	$filtertype     To filter on field type in llx_c_paiement ('CRDT' or 'DBIT' or array('code'=>xx,'label'=>zz))
-	 *      @param  int		$format         0=id+libelle, 1=code+code, 2=code+libelle, 3=id+code
-	 *      @param  int		$empty			1=peut etre vide, 0 sinon
+	 *      @param  int		$format         0=id+label, 1=code+code, 2=code+label, 3=id+code
+	 *      @param  int		$empty			1=can be empty, 0 otherwise
 	 * 		@param	int		$noadmininfo	0=Add admin info, 1=Disable admin info
 	 *      @param  int		$maxlength      Max length of label
 	 *      @param  int     $active         Active or not, -1 = all
@@ -3553,9 +3616,12 @@ class Form
 			elseif ($format == 1) print '<option value="'.$arraytypes['code'].'"';
 			elseif ($format == 2) print '<option value="'.$arraytypes['code'].'"';
 			elseif ($format == 3) print '<option value="'.$id.'"';
-			// Si selected est text, on compare avec code, sinon avec id
-			if (preg_match('/[a-z]/i', $selected) && $selected == $arraytypes['code']) print ' selected';
-			elseif ($selected == $id) print ' selected';
+			// Print attribute selected or not
+			if ($format==1 || $format==2) {
+				if ($selected == $arraytypes['code']) print ' selected';
+			} else {
+				if ($selected == $id) print ' selected';
+			}
 			print '>';
 			if ($format == 0) $value = ($maxlength ?dol_trunc($arraytypes['label'], $maxlength) : $arraytypes['label']);
 			elseif ($format == 1) $value = $arraytypes['code'];
@@ -4734,7 +4800,7 @@ class Form
 			print '<form method="POST" action="'.$page.'">';
 			print '<input type="hidden" name="action" value="setmulticurrencyrate">';
 			print '<input type="hidden" name="token" value="'.newToken().'">';
-			print '<input type="text" name="'.$htmlname.'" value="'.(!empty($rate) ? price($rate) : 1).'" size="10" /> ';
+			print '<input type="text" class="maxwidth100" name="'.$htmlname.'" value="'.(!empty($rate) ? price(price2num($rate, 'CR')) : 1).'" /> ';
 			print '<select name="calculation_mode">';
 			print '<option value="1">'.$currency.' > '.$conf->currency.'</option>';
 			print '<option value="2">'.$conf->currency.' > '.$currency.'</option>';
@@ -5267,8 +5333,9 @@ class Form
 			$disabled = false; $title = '';
 			if (is_object($societe_vendeuse) && $societe_vendeuse->id == $mysoc->id && $societe_vendeuse->tva_assuj == "0")
 			{
-				// Override/enable VAT for expense report regardless of global setting - needed if expense report used for business expenses
-				if (empty($conf->global->OVERRIDE_VAT_FOR_EXPENSE_REPORT))
+				// Override/enable VAT for expense report regardless of global setting - needed if expense report used for business expenses instead
+				// of using supplier invoices (this is a very bad idea !)
+				if (empty($conf->global->EXPENSEREPORT_OVERRIDE_VAT))
 				{
 					$title = ' title="'.$langs->trans('VATIsNotUsed').'"';
 					$disabled = true;
@@ -6200,7 +6267,7 @@ class Form
 			$out .= ajax_combobox($htmlname);
 		}
 
-		$out .= '<select id="'.preg_replace('/^\./', '', $htmlname).'" '.($disabled ? 'disabled ' : '').'class="flat '.(preg_replace('/^\./', '', $htmlname)).($morecss ? ' '.$morecss : '').'"';
+		$out .= '<select id="'.preg_replace('/^\./', '', $htmlname).'" '.($disabled ? 'disabled="disabled" ' : '').'class="flat '.(preg_replace('/^\./', '', $htmlname)).($morecss ? ' '.$morecss : '').'"';
 		$out .= ' name="'.preg_replace('/^\./', '', $htmlname).'" '.($moreparam ? $moreparam : '');
 		$out .= '>';
 
@@ -8074,9 +8141,13 @@ class Form
 		$ret .= $langs->trans("Filters");
 		$ret .= '</a>';
 		//$ret .= '<button type="submit" class="liste_titre button_search paddingleftonly" name="button_search_x" value="x"><span class="fa fa-search"></span></button>';
-		$ret .= '<div name="search_component_params" class="search_component_params inline-block minwidth500 maxwidth300onsmartphone">';
-		$ret .= '<input type="text" name="search_component_params_input" class="search_component_params_input" placeholder="'.$langs->trans("Search").'" value="'.GETPOST("search_component_params_input").'">';
+		$ret .= '<div name="search_component_params" class="search_component_params inline-block minwidth500 maxwidth300onsmartphone valignmiddle">';
+		$texttoshow = '<div class="opacitymedium inline-block search_component_searchtext">'.$langs->trans("Search").'</div>';
+
+		$ret .= '<div class="search_component inline-block valignmiddle">'.$texttoshow.'</div>';
 		$ret .= '</div>';
+		$ret .= '<input type="hidden" name="search_component_params_hidden" class="search_component_params_hidden" value="'.GETPOST("search_component_params_hidden").'">';
+		// For compatibility with forms that show themself the search criteria in addition of this component, we output the fields
 		foreach ($arrayofcriterias as $criterias) {
 		    foreach ($criterias as $criteriafamilykey => $criteriafamilyval) {
 		    	if (in_array('search_'.$criteriafamilykey, $arrayofinputfieldsalreadyoutput)) continue;

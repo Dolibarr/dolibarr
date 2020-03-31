@@ -70,7 +70,7 @@ $active = 1;
 
 $sortfield = GETPOST("sortfield", 'alpha');
 $sortorder = GETPOST("sortorder", 'alpha');
-$page = GETPOST("page", 'int');
+$page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOST("page", 'int');
 if (empty($page) || $page == -1) { $page = 0; }     // If $page is not defined, or '' or -1
 $offset = $listlimit * $page;
 $pageprev = $page - 1;
@@ -437,15 +437,15 @@ $tabcond[8] = !empty($conf->societe->enabled);
 $tabcond[9] = true;
 $tabcond[10] = true;
 $tabcond[11] = (!empty($conf->societe->enabled));
-$tabcond[12] = (!empty($conf->commande->enabled) || !empty($conf->propal->enabled) || !empty($conf->facture->enabled) || !empty($conf->fournisseur->enabled));
-$tabcond[13] = (!empty($conf->commande->enabled) || !empty($conf->propal->enabled) || !empty($conf->facture->enabled) || !empty($conf->fournisseur->enabled));
+$tabcond[12] = (!empty($conf->commande->enabled) || !empty($conf->propal->enabled) || !empty($conf->facture->enabled) || (!empty($conf->fournisseur->enabled) && empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD)) || !empty($conf->supplier_invoice->enabled) || !empty($conf->supplier_order->enabled));
+$tabcond[13] = (!empty($conf->commande->enabled) || !empty($conf->propal->enabled) || !empty($conf->facture->enabled) || (!empty($conf->fournisseur->enabled) && empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD)) || !empty($conf->supplier_invoice->enabled) || !empty($conf->supplier_order->enabled));
 $tabcond[14] = (!empty($conf->product->enabled) && (!empty($conf->ecotax->enabled) || !empty($conf->global->MAIN_SHOW_ECOTAX_DICTIONNARY)));
 $tabcond[15] = true;
 $tabcond[16] = (!empty($conf->societe->enabled) && empty($conf->global->SOCIETE_DISABLE_PROSPECTS));
 $tabcond[17] = (!empty($conf->deplacement->enabled) || !empty($conf->expensereport->enabled));
 $tabcond[18] = !empty($conf->expedition->enabled) || !empty($conf->reception->enabled);
 $tabcond[19] = !empty($conf->societe->enabled);
-$tabcond[20] = !empty($conf->fournisseur->enabled);
+$tabcond[20]= (! empty($conf->fournisseur->enabled) && empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD) || ! empty($conf->supplier_order->enabled));
 $tabcond[21] = !empty($conf->propal->enabled);
 $tabcond[22] = (!empty($conf->commande->enabled) || !empty($conf->propal->enabled));
 $tabcond[23] = true;
@@ -767,7 +767,7 @@ if (GETPOST('actionadd') || GETPOST('actionmodify'))
 
             if ($keycode == 'sortorder')		// For column name 'sortorder', we use the field name 'position'
             {
-            	$sql .= "'".(int) GETPOST('position', 'int');
+            	$sql .= "'".(int) GETPOST('position', 'int')."'";
             }
             elseif ($_POST[$keycode] == '' && !($keycode == 'code' && $id == 10)) $sql .= "null"; // For vat, we want/accept code = ''
             elseif ($keycode == 'content') {

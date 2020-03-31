@@ -56,6 +56,7 @@ $search_project_title = GETPOST('search_project_title');
 $search_task_ref = GETPOST('search_task_ref');
 $search_task_label = GETPOST('search_task_label');
 $search_task_description = GETPOST('search_task_description');
+$search_task_ref_parent = GETPOST('search_task_ref_parent');
 $search_project_user = GETPOST('search_project_user');
 $search_task_user = GETPOST('search_task_user');
 
@@ -91,7 +92,7 @@ $diroutputmassaction = $conf->projet->dir_output.'/tasks/temp/massgeneration/'.$
 $limit = GETPOST('limit', 'int') ?GETPOST('limit', 'int') : $conf->liste_limit;
 $sortfield = GETPOST("sortfield", 'alpha');
 $sortorder = GETPOST("sortorder", 'alpha');
-$page = GETPOST("page", 'int');
+$page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOST("page", 'int');
 if (empty($page) || $page == -1) { $page = 0; }     // If $page is not defined, or '' or -1
 $offset = $limit * $page;
 $pageprev = $page - 1;
@@ -109,8 +110,10 @@ $fieldstosearchall = array(
 if (empty($user->socid)) $fieldstosearchall['t.note_private'] = "NotePrivate";
 
 $arrayfields = array(
+	't.fk_task_parent'=>array('label'=>$langs->trans("RefTaskParent"), 'checked'=>0, 'position'=>70),
 	't.ref'=>array('label'=>$langs->trans("RefTask"), 'checked'=>1, 'position'=>80),
 	't.label'=>array('label'=>$langs->trans("LabelTask"), 'checked'=>1, 'position'=>80),
+	't.description'=>array('label'=>$langs->trans("Description"), 'checked'=>0, 'position'=>80),
 	't.dateo'=>array('label'=>$langs->trans("DateStart"), 'checked'=>1, 'position'=>100),
 	't.datee'=>array('label'=>$langs->trans("DateEnd"), 'checked'=>1, 'position'=>101),
 	'p.ref'=>array('label'=>$langs->trans("ProjectRef"), 'checked'=>1),
@@ -169,6 +172,7 @@ if (empty($reshook))
 		$search_task_ref = "";
 		$search_task_label = "";
 		$search_task_description = "";
+		$search_task_ref_parent = "";
 		$search_task_user = -1;
 		$search_project_user = -1;
 		$search_sday = '';
@@ -262,7 +266,8 @@ $distinct = 'DISTINCT'; // We add distinct until we are added a protection to be
 $sql = "SELECT ".$distinct." p.rowid as projectid, p.ref as projectref, p.title as projecttitle, p.fk_statut as projectstatus, p.datee as projectdatee, p.fk_opp_status, p.public, p.fk_user_creat as projectusercreate, p.usage_bill_time,";
 $sql .= " s.nom as name, s.rowid as socid,";
 $sql .= " t.datec as date_creation, t.dateo as date_start, t.datee as date_end, t.tms as date_update,";
-$sql .= " t.rowid as id, t.ref, t.label, t.planned_workload, t.duration_effective, t.progress, t.fk_statut";
+$sql .= " t.rowid as id, t.ref, t.label, t.planned_workload, t.duration_effective, t.progress, t.fk_statut, ";
+$sql .= " t.description, t.fk_task_parent";
 // We'll need these fields in order to filter by categ
 if ($search_categ) $sql .= ", cs.fk_categorie, cs.fk_project";
 // Add sum fields
@@ -302,6 +307,8 @@ if ($search_project_ref)   $sql .= natural_search('p.ref', $search_project_ref);
 if ($search_project_title) $sql .= natural_search('p.title', $search_project_title);
 if ($search_task_ref)      $sql .= natural_search('t.ref', $search_task_ref);
 if ($search_task_label)    $sql .= natural_search('t.label', $search_task_label);
+if ($search_task_description)    $sql .= natural_search('t.description', $search_task_description);
+if ($search_task_ref_parent)    $sql .= ' AND t.fk_task_parent IN (SELECT ipt.rowid FROM '.MAIN_DB_PREFIX.'projet_task  as ipt WHERE '.natural_search('ipt.ref', $search_task_ref_parent, 0, 1).')';
 if ($search_societe)       $sql .= natural_search('s.nom', $search_societe);
 $sql .= dolSqlDateFilter('t.dateo', $search_sday, $search_smonth, $search_syear);
 $sql .= dolSqlDateFilter('t.datee', $search_eday, $search_emonth, $search_eyear);
@@ -385,8 +392,10 @@ if ($socid)				        $param .= '&socid='.urlencode($socid);
 if ($search_all != '') 			$param .= '&search_all='.urlencode($search_all);
 if ($search_project_ref != '') 			$param .= '&search_project_ref='.urlencode($search_project_ref);
 if ($search_project_title != '') 		$param .= '&search_project_title='.urlencode($search_project_title);
-if ($search_ref != '') 			$param .= '&search_ref='.urlencode($search_ref);
-if ($search_label != '') 		$param .= '&search_label='.urlencode($search_label);
+if ($search_task_ref != '') 			$param .= '&search_task_ref='.urlencode($search_ref);
+if ($search_task_label != '') 		$param .= '&search_task_label='.urlencode($search_label);
+if ($search_task_description != '') 		$param .= '&search_task_description='.urlencode($search_description);
+if ($search_task_ref_parent != '') 		$param .= '&search_task_ref_parent='.urlencode($search_task_ref_parent);
 if ($search_societe != '') 		$param .= '&search_societe='.urlencode($search_societe);
 if ($search_projectstatus != '') $param .= '&search_projectstatus='.urlencode($search_projectstatus);
 if ((is_numeric($search_opp_status) && $search_opp_status >= 0) || in_array($search_opp_status, array('all', 'none'))) 	$param .= '&search_opp_status='.urlencode($search_opp_status);
@@ -491,6 +500,12 @@ print '<div class="div-table-responsive">';
 print '<table class="tagtable nobottomiftotal liste'.($moreforfilter ? " listwithfilterbefore" : "").'" id="tablelines3">'."\n";
 
 print '<tr class="liste_titre_filter">';
+if (!empty($arrayfields['t.fk_task_parent']['checked']))
+{
+	print '<td class="liste_titre">';
+	print '<input type="text" class="flat" name="search_task_ref_parent" value="'.dol_escape_htmltag($search_task_ref_parent).'" size="4">';
+	print '</td>';
+}
 if (!empty($arrayfields['t.ref']['checked']))
 {
 	print '<td class="liste_titre">';
@@ -501,6 +516,13 @@ if (!empty($arrayfields['t.label']['checked']))
 {
 	print '<td class="liste_titre">';
 	print '<input type="text" class="flat" name="search_task_label" value="'.dol_escape_htmltag($search_task_label).'" size="8">';
+	print '</td>';
+}
+//Task Description
+if (!empty($arrayfields['t.description']['checked']))
+{
+	print '<td class="liste_titre">';
+	print '<input type="text" class="flat" name="search_task_description" value="'.dol_escape_htmltag($search_task_description).'" size="8">';
 	print '</td>';
 }
 // Start date
@@ -581,17 +603,19 @@ print '</td>';
 print "</tr>\n";
 
 print '<tr class="liste_titre">';
+if (!empty($arrayfields['t.fk_task_parent']['checked']))        print_liste_field_titre($arrayfields['t.fk_task_parent']['label'], $_SERVER["PHP_SELF"], "t.fk_task_parent", "", $param, "", $sortfield, $sortorder);
 if (!empty($arrayfields['t.ref']['checked']))           print_liste_field_titre($arrayfields['t.ref']['label'], $_SERVER["PHP_SELF"], "t.ref", "", $param, "", $sortfield, $sortorder);
 if (!empty($arrayfields['t.label']['checked']))         print_liste_field_titre($arrayfields['t.label']['label'], $_SERVER["PHP_SELF"], "t.label", "", $param, "", $sortfield, $sortorder);
-if (!empty($arrayfields['t.dateo']['checked'])) print_liste_field_titre($arrayfields['t.dateo']['label'], $_SERVER["PHP_SELF"], "t.dateo", "", $param, '', $sortfield, $sortorder, 'center ');
+if (!empty($arrayfields['t.description']['checked']))   print_liste_field_titre($arrayfields['t.description']['label'], $_SERVER["PHP_SELF"], "t.description", "", $param, "", $sortfield, $sortorder);
+if (!empty($arrayfields['t.dateo']['checked']))         print_liste_field_titre($arrayfields['t.dateo']['label'], $_SERVER["PHP_SELF"], "t.dateo", "", $param, '', $sortfield, $sortorder, 'center ');
 if (!empty($arrayfields['t.datee']['checked']))         print_liste_field_titre($arrayfields['t.datee']['label'], $_SERVER["PHP_SELF"], "t.datee", "", $param, '', $sortfield, $sortorder, 'center ');
 if (!empty($arrayfields['p.ref']['checked']))           print_liste_field_titre($arrayfields['p.ref']['label'], $_SERVER["PHP_SELF"], "p.ref", "", $param, "", $sortfield, $sortorder);
 if (!empty($arrayfields['p.title']['checked']))         print_liste_field_titre($arrayfields['p.title']['label'], $_SERVER["PHP_SELF"], "p.title", "", $param, "", $sortfield, $sortorder);
 if (!empty($arrayfields['s.nom']['checked']))           print_liste_field_titre($arrayfields['s.nom']['label'], $_SERVER["PHP_SELF"], "s.nom", "", $param, "", $sortfield, $sortorder);
 if (!empty($arrayfields['p.fk_statut']['checked']))     print_liste_field_titre($arrayfields['p.fk_statut']['label'], $_SERVER["PHP_SELF"], "p.fk_statut", "", $param, '', $sortfield, $sortorder, 'center ');
-if (!empty($arrayfields['t.planned_workload']['checked']))         print_liste_field_titre($arrayfields['t.planned_workload']['label'], $_SERVER["PHP_SELF"], "t.planned_workload", "", $param, '', $sortfield, $sortorder, 'center ');
-if (!empty($arrayfields['t.duration_effective']['checked']))       print_liste_field_titre($arrayfields['t.duration_effective']['label'], $_SERVER["PHP_SELF"], "t.duration_effective", "", $param, '', $sortfield, $sortorder, 'center ');
-if (!empty($arrayfields['t.progress_calculated']['checked']))      print_liste_field_titre($arrayfields['t.progress_calculated']['label'], $_SERVER["PHP_SELF"], "", "", $param, '', '', '', 'center ');
+if (!empty($arrayfields['t.planned_workload']['checked']))      print_liste_field_titre($arrayfields['t.planned_workload']['label'], $_SERVER["PHP_SELF"], "t.planned_workload", "", $param, '', $sortfield, $sortorder, 'center ');
+if (!empty($arrayfields['t.duration_effective']['checked']))    print_liste_field_titre($arrayfields['t.duration_effective']['label'], $_SERVER["PHP_SELF"], "t.duration_effective", "", $param, '', $sortfield, $sortorder, 'center ');
+if (!empty($arrayfields['t.progress_calculated']['checked']))   print_liste_field_titre($arrayfields['t.progress_calculated']['label'], $_SERVER["PHP_SELF"], "", "", $param, '', '', '', 'center ');
 if (!empty($arrayfields['t.progress']['checked']))      print_liste_field_titre($arrayfields['t.progress']['label'], $_SERVER["PHP_SELF"], "t.progress", "", $param, '', $sortfield, $sortorder, 'center ');
 if (!empty($arrayfields['t.progress_summary']['checked']))      print_liste_field_titre($arrayfields['t.progress_summary']['label'], $_SERVER["PHP_SELF"], "t.progress", "", $param, '', $sortfield, $sortorder, 'center ');
 if (!empty($arrayfields['t.tobill']['checked']))        print_liste_field_titre($arrayfields['t.tobill']['label'], $_SERVER["PHP_SELF"], "", "", $param, '', $sortfield, $sortorder, 'center ');
@@ -622,12 +646,14 @@ while ($i < min($num, $limit))
 	$object->id = $obj->id;
 	$object->ref = $obj->ref;
 	$object->label = $obj->label;
+	$object->description = $obj->description;
 	$object->fk_statut = $obj->fk_statut;
 	$object->progress = $obj->progress;
 	$object->datee = $db->jdate($obj->date_end); // deprecated
 	$object->date_end = $db->jdate($obj->date_end);
     $object->planned_workload = $obj->planned_workload;
     $object->duration_effective = $obj->duration_effective;
+    $object->fk_task_parent = $obj->fk_task_parent;
 
 
 	$projectstatic->id = $obj->projectid;
@@ -642,6 +668,23 @@ while ($i < min($num, $limit))
 	{
 		print '<tr data-rowid="'.$object->id.'" class="oddeven">';
 
+		// Ref Parent
+		if (!empty($arrayfields['t.fk_task_parent']['checked'])) {
+			print '<td class="nowraponall">';
+			if (!empty($object->fk_task_parent)) {
+				$object_parent = new Task($db);
+				$result = $object_parent->fetch($object->fk_task_parent);
+				if ($result < 0) {
+					setEventMessage($object_parent->error, 'errors');
+				} else {
+					print $object_parent->getNomUrl(1, 'withproject');
+					if ($object_parent->hasDelay())
+						print img_warning("Late");
+				}
+			}
+			print '</td>';
+			if (!$i) $totalarray['nbfield']++;
+		}
 		// Ref
 		if (!empty($arrayfields['t.ref']['checked']))
 		{
@@ -656,6 +699,14 @@ while ($i < min($num, $limit))
 		{
 			print '<td>';
 			print $object->label;
+			print '</td>';
+			if (!$i) $totalarray['nbfield']++;
+		}
+		// Description
+		if (!empty($arrayfields['t.description']['checked']))
+		{
+			print '<td>';
+			print $object->description;
 			print '</td>';
 			if (!$i) $totalarray['nbfield']++;
 		}
@@ -873,14 +924,11 @@ while ($i < min($num, $limit))
 		if (!$i) $totalarray['nbfield']++;
 
 		print "</tr>\n";
-
-		//print projectLinesa();
 	}
 
 	$i++;
 }
 // Show total line
-//include DOL_DOCUMENT_ROOT.'/core/tpl/list_print_total.tpl.php';
 if (isset($totalarray['totaldurationeffectivefield']) || isset($totalarray['totalplannedworkloadfield']) || isset($totalarray['totalprogress_calculatedfield'])
 	|| isset($totalarray['totaltobill']) || isset($totalarray['totalbilled']))
 {

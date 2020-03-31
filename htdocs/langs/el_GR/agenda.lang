@@ -123,6 +123,7 @@ AgendaUrlOptionsNotAdmin=<b>logina =! %s</b> για να περιορίσετε 
 AgendaUrlOptions4=<b>logint = %s</b> για να περιορίσετε την έξοδο σε ενέργειες που έχουν εκχωρηθεί στο χρήστη <b>%s</b> (ιδιοκτήτης και άλλοι).
 AgendaUrlOptionsProject=<b>project = __ PROJECT_ID__</b> για να περιορίσετε την έξοδο σε ενέργειες που σχετίζονται με το έργο <b>__PROJECT_ID__</b> .
 AgendaUrlOptionsNotAutoEvent=<b>notactiontype = systemauto</b> για την εξαίρεση αυτόματων συμβάντων.
+AgendaUrlOptionsIncludeHolidays= <b> includeholidays = 1 </b> για να συμπεριλάβετε εκδηλώσεις διακοπών.
 AgendaShowBirthdayEvents=Εμφάνιση γενεθλίων των επαφών
 AgendaHideBirthdayEvents=Απόκρυψη γενεθλίων των επαφών
 Busy=Απασχολ.

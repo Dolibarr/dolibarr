@@ -80,7 +80,18 @@ class Documents extends DolibarrApi
 		//--- Finds and returns the document
 		$entity = $conf->entity;
 
-		$check_access = dol_check_secure_access_document($modulepart, $original_file, $entity, DolibarrApiAccess::$user, '', 'read');
+		// Special cases that need to use get_exdir to get real dir of object
+		// If future, all object should use this to define path of documents.
+		/*
+		$tmpreldir = '';
+		if ($modulepart == 'supplier_invoice') {
+			$tmpreldir = get_exdir($object->id, 2, 0, 0, $object, 'invoice_supplier');
+		}
+
+		$relativefile = $tmpreldir.dol_sanitizeFileName($object->ref); */
+		$relativefile = $original_file;
+
+		$check_access = dol_check_secure_access_document($modulepart, $relativefile, $entity, DolibarrApiAccess::$user, '', 'read');
 		$accessallowed = $check_access['accessallowed'];
 		$sqlprotectagainstexternals = $check_access['sqlprotectagainstexternals'];
 		$original_file = $check_access['original_file'];
@@ -146,7 +157,18 @@ class Documents extends DolibarrApi
 		//--- Finds and returns the document
 		$entity = $conf->entity;
 
-		$check_access = dol_check_secure_access_document($modulepart, $original_file, $entity, DolibarrApiAccess::$user, '', 'write');
+		// Special cases that need to use get_exdir to get real dir of object
+		// If future, all object should use this to define path of documents.
+		/*
+		$tmpreldir = '';
+		if ($modulepart == 'supplier_invoice') {
+			$tmpreldir = get_exdir($object->id, 2, 0, 0, $object, 'invoice_supplier');
+		}
+
+		$relativefile = $tmpreldir.dol_sanitizeFileName($object->ref); */
+		$relativefile = $original_file;
+
+		$check_access = dol_check_secure_access_document($modulepart, $relativefile, $entity, DolibarrApiAccess::$user, '', 'write');
 		$accessallowed              = $check_access['accessallowed'];
 		$sqlprotectagainstexternals = $check_access['sqlprotectagainstexternals'];
 		$original_file              = $check_access['original_file'];
@@ -228,7 +250,7 @@ class Documents extends DolibarrApi
 	/**
 	 * Return the list of documents of a dedicated element (from its ID or Ref)
 	 *
-	 * @param   string 	$modulepart		Name of module or area concerned ('thirdparty', 'member', 'proposal', 'order', 'invoice', 'shipment', 'project',  ...)
+	 * @param   string 	$modulepart		Name of module or area concerned ('thirdparty', 'member', 'proposal', 'order', 'invoice', 'supplier_invoice', 'shipment', 'project',  ...)
 	 * @param	int		$id				ID of element
 	 * @param	string	$ref			Ref of element
 	 * @param	string	$sortfield		Sort criteria ('','fullname','relativename','name','date','size')
@@ -369,6 +391,24 @@ class Documents extends DolibarrApi
 
 			$upload_dir = $conf->facture->dir_output."/".get_exdir(0, 0, 0, 1, $object, 'invoice');
 		}
+		elseif ($modulepart == 'facture_fournisseur' || $modulepart == 'supplier_invoice')
+		{
+			$modulepart = 'supplier_invoice';
+
+			require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.facture.class.php';
+
+			if (!DolibarrApiAccess::$user->rights->fournisseur->facture->lire) {
+				throw new RestException(401);
+			}
+
+			$object = new FactureFournisseur($this->db);
+			$result = $object->fetch($id, $ref);
+			if (!$result) {
+				throw new RestException(404, 'Invoice not found');
+			}
+
+			$upload_dir = $conf->fournisseur->dir_output."/facture/".get_exdir($object->id, 2, 0, 0, $object, 'invoice_supplier').dol_sanitizeFileName($object->ref);
+		}
         elseif ($modulepart == 'produit' || $modulepart == 'product')
 		{
 			require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
@@ -401,6 +441,22 @@ class Documents extends DolibarrApi
 
 			$upload_dir = $conf->agenda->dir_output.'/'.dol_sanitizeFileName($object->ref);
 		}
+		elseif ($modulepart == 'expensereport')
+		{
+			require_once DOL_DOCUMENT_ROOT.'/expensereport/class/expensereport.class.php';
+
+			if (!DolibarrApiAccess::$user->rights->expensereport->read && !DolibarrApiAccess::$user->rights->expensereport->read) {
+				throw new RestException(401);
+			}
+
+			$object = new ExpenseReport($this->db);
+			$result = $object->fetch($id, $ref);
+			if (!$result) {
+				throw new RestException(404, 'Expense report not found');
+			}
+
+			$upload_dir = $conf->expensereport->dir_output.'/'.dol_sanitizeFileName($object->ref);
+		}
 		else
 		{
 			throw new RestException(500, 'Modulepart '.$modulepart.' not implemented yet.');
@@ -432,8 +488,9 @@ class Documents extends DolibarrApi
 	/**
 	 * Upload a file.
 	 *
-	 * Test sample 1: { "filename": "mynewfile.txt", "modulepart": "facture", "ref": "FA1701-001", "subdir": "", "filecontent": "content text", "fileencoding": "", "overwriteifexists": "0" }.
-	 * Test sample 2: { "filename": "mynewfile.txt", "modulepart": "medias", "ref": "", "subdir": "image/mywebsite", "filecontent": "Y29udGVudCB0ZXh0Cg==", "fileencoding": "base64", "overwriteifexists": "0" }.
+	 * Test sample for invoice: { "filename": "mynewfile.txt", "modulepart": "invoice", "ref": "FA1701-001", "subdir": "", "filecontent": "content text", "fileencoding": "", "overwriteifexists": "0" }.
+	 * Test sample for supplier invoice: { "filename": "mynewfile.txt", "modulepart": "supplier_invoice", "ref": "FA1701-001", "subdir": "", "filecontent": "content text", "fileencoding": "", "overwriteifexists": "0" }.
+	 * Test sample for medias file: { "filename": "mynewfile.txt", "modulepart": "medias", "ref": "", "subdir": "image/mywebsite", "filecontent": "Y29udGVudCB0ZXh0Cg==", "fileencoding": "base64", "overwriteifexists": "0" }.
 	 *
 	 * @param   string  $filename           Name of file to create ('FA1705-0123.txt')
 	 * @param   string  $modulepart         Name of module or area concerned by file upload ('facture', 'project', 'project_task', ...)
@@ -489,6 +546,13 @@ class Documents extends DolibarrApi
 				require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
 				$object = new Facture($this->db);
 			}
+			elseif ($modulepart == 'facture_fournisseur' || $modulepart == 'supplier_invoice')
+			{
+				$modulepart = 'supplier_invoice';
+
+				require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.facture.class.php';
+				$object = new FactureFournisseur($this->db);
+			}
 			elseif ($modulepart == 'project')
 			{
 				require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
@@ -523,6 +587,11 @@ class Documents extends DolibarrApi
 				require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
 				$object = new Product($this->db);
 			}
+			elseif ($modulepart == 'expensereport')
+			{
+				require_once DOL_DOCUMENT_ROOT.'/expensereport/class/expensereport.class.php';
+				$object = new ExpenseReport($this->db);
+			}
 			// TODO Implement additional moduleparts
 			else
 			{
@@ -546,6 +615,12 @@ class Documents extends DolibarrApi
 			if (!($object->id > 0))
 			{
    				throw new RestException(404, 'The object '.$modulepart." with ref '".$ref."' was not found.");
+			}
+
+			// Special cases that need to use get_exdir to get real dir of object
+			// If future, all object should use this to define path of documents.
+			if ($modulepart == 'supplier_invoice') {
+				$tmpreldir = get_exdir($object->id, 2, 0, 0, $object, 'invoice_supplier');
 			}
 
 			$relativefile = $tmpreldir.dol_sanitizeFileName($object->ref);
@@ -643,7 +718,18 @@ class Documents extends DolibarrApi
 	    //--- Finds and returns the document
 	    $entity = $conf->entity;
 
-	    $check_access = dol_check_secure_access_document($modulepart, $original_file, $entity, DolibarrApiAccess::$user, '', 'read');
+	    // Special cases that need to use get_exdir to get real dir of object
+	    // If future, all object should use this to define path of documents.
+	    /*
+	    $tmpreldir = '';
+	    if ($modulepart == 'supplier_invoice') {
+	    	$tmpreldir = get_exdir($object->id, 2, 0, 0, $object, 'invoice_supplier');
+	    }
+
+	    $relativefile = $tmpreldir.dol_sanitizeFileName($object->ref); */
+	    $relativefile = $original_file;
+
+	    $check_access = dol_check_secure_access_document($modulepart, $relativefile, $entity, DolibarrApiAccess::$user, '', 'read');
 	    $accessallowed = $check_access['accessallowed'];
 	    $sqlprotectagainstexternals = $check_access['sqlprotectagainstexternals'];
 	    $original_file = $check_access['original_file'];

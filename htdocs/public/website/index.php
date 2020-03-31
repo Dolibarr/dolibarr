@@ -61,7 +61,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 $error=0;
 $websitekey=GETPOST('website', 'alpha');
 $pageid=GETPOST('page', 'alpha')?GETPOST('page', 'alpha'):GETPOST('pageid', 'alpha');
-$pageref=GETPOST('pageref', 'aZ09')?GETPOST('pageref', 'aZ09'):'';
+$pageref=GETPOST('pageref', 'alphanohtml')?GETPOST('pageref', 'alphanohtml'):'';
 
 $accessallowed = 1;
 $type='';
@@ -158,16 +158,16 @@ global $dolibarr_main_data_root;
 
 if ($pageid == 'css')   // No more used ?
 {
-    header('Content-type: text/css');
-    // Important: Following code is to avoid page request by browser and PHP CPU at each Dolibarr page access.
-    //if (empty($dolibarr_nocache)) header('Cache-Control: max-age=3600, public, must-revalidate');
-    //else
-    header('Cache-Control: no-cache');
-    $original_file=$dolibarr_main_data_root.'/website/'.$websitekey.'/styles.css.php';
+	header('Content-type: text/css');
+	// Important: Following code is to avoid page request by browser and PHP CPU at each Dolibarr page access.
+	//if (empty($dolibarr_nocache)) header('Cache-Control: max-age=3600, public, must-revalidate');
+	//else
+	header('Cache-Control: no-cache');
+	$original_file=$dolibarr_main_data_root.'/website/'.$websitekey.'/styles.css.php';
 }
 else
 {
-    $original_file=$dolibarr_main_data_root.'/website/'.$websitekey.'/page'.$pageid.'.tpl.php';
+	$original_file=$dolibarr_main_data_root.'/website/'.$websitekey.'/page'.$pageid.'.tpl.php';
 }
 
 // Find the subdirectory name as the reference
@@ -177,7 +177,7 @@ $refname=basename(dirname($original_file)."/");
 // Limite acces si droits non corrects
 if (! $accessallowed)
 {
-    accessforbidden();
+	accessforbidden();
 }
 
 // Security:
@@ -185,10 +185,10 @@ if (! $accessallowed)
 // les noms de fichiers.
 if (preg_match('/\.\./', $original_file) || preg_match('/[<>|]/', $original_file))
 {
-    dol_syslog("Refused to deliver file ".$original_file);
-    $file=basename($original_file);		// Do no show plain path of original_file in shown error message
-    dol_print_error(0, $langs->trans("ErrorFileNameInvalid", $file));
-    exit;
+	dol_syslog("Refused to deliver file ".$original_file);
+	$file=basename($original_file);		// Do no show plain path of original_file in shown error message
+	dol_print_error(0, $langs->trans("ErrorFileNameInvalid", $file));
+	exit;
 }
 
 clearstatcache();
@@ -202,14 +202,14 @@ $original_file_osencoded=dol_osencode($original_file);	// New file name encoded 
 // This test if file exists should be useless. We keep it to find bug more easily
 if (! file_exists($original_file_osencoded))
 {
-    // Return header 404
-    header($_SERVER["SERVER_PROTOCOL"]." 404 Not Found", true, 404);
+	// Return header 404
+	header($_SERVER["SERVER_PROTOCOL"]." 404 Not Found", true, 404);
 
-    $langs->load("website");
-    print $langs->trans("RequestedPageHasNoContentYet", $pageid);
+	$langs->load("website");
+	print $langs->trans("RequestedPageHasNoContentYet", $pageid);
 
-    include DOL_DOCUMENT_ROOT.'/public/error-404.php';
-    exit;
+	include DOL_DOCUMENT_ROOT.'/public/error-404.php';
+	exit;
 }
 
 

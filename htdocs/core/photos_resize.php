@@ -38,6 +38,10 @@ $original_file = GETPOST("file");
 $backtourl = GETPOST('backtourl');
 $cancel = GETPOST('cancel', 'alpha');
 
+$file = GETPOST('file', 'alpha');
+$num = GETPOST('num', 'alpha');		// Used for document on bank statement
+
+
 // Security check
 if (empty($modulepart)) accessforbidden('Bad value for modulepart');
 $accessallowed = 0;
@@ -249,19 +253,25 @@ else {
 
 if (empty($backtourl))
 {
-    if (in_array($modulepart, array('product', 'produit', 'service', 'produit|service'))) $backtourl = DOL_URL_ROOT."/product/document.php?id=".$id.'&file='.urldecode($_POST["file"]);
-    elseif (in_array($modulepart, array('expensereport'))) $backtourl = DOL_URL_ROOT."/expensereport/document.php?id=".$id.'&file='.urldecode($_POST["file"]);
-    elseif (in_array($modulepart, array('holiday')))       $backtourl = DOL_URL_ROOT."/holiday/document.php?id=".$id.'&file='.urldecode($_POST["file"]);
-    elseif (in_array($modulepart, array('member')))        $backtourl = DOL_URL_ROOT."/adherents/document.php?id=".$id.'&file='.urldecode($_POST["file"]);
-    elseif (in_array($modulepart, array('project')))       $backtourl = DOL_URL_ROOT."/projet/document.php?id=".$id.'&file='.urldecode($_POST["file"]);
-    elseif (in_array($modulepart, array('propal')))        $backtourl = DOL_URL_ROOT."/comm/propal/document.php?id=".$id.'&file='.urldecode($_POST["file"]);
-    elseif (in_array($modulepart, array('societe')))       $backtourl = DOL_URL_ROOT."/societe/document.php?id=".$id.'&file='.urldecode($_POST["file"]);
-    elseif (in_array($modulepart, array('tax')))           $backtourl = DOL_URL_ROOT."/compta/sociales/document.php?id=".$id.'&file='.urldecode($_POST["file"]);
-    elseif (in_array($modulepart, array('ticket')))        $backtourl = DOL_URL_ROOT."/ticket/document.php?id=".$id.'&file='.urldecode($_POST["file"]);
-    elseif (in_array($modulepart, array('user')))          $backtourl = DOL_URL_ROOT."/user/document.php?id=".$id.'&file='.urldecode($_POST["file"]);
-    elseif (in_array($modulepart, array('bank')))          $backtourl = DOL_URL_ROOT."/compta/bank/document.php?id=".$id.'&file='.urldecode($_POST["file"]);
-    elseif (in_array($modulepart, array('mrp')))           $backtourl = DOL_URL_ROOT."/mrp/mo_document.php?id=".$id.'&file='.urldecode($_POST["file"]);
-    else $backtourl = DOL_URL_ROOT."/".$modulepart."/".$modulepart."_document.php?id=".$id.'&file='.urldecode($_POST["file"]);
+	$regs = array();
+
+    if (in_array($modulepart, array('product', 'produit', 'service', 'produit|service'))) $backtourl = DOL_URL_ROOT."/product/document.php?id=".$id.'&file='.urldecode($file);
+    elseif (in_array($modulepart, array('expensereport'))) $backtourl = DOL_URL_ROOT."/expensereport/document.php?id=".$id.'&file='.urldecode($file);
+    elseif (in_array($modulepart, array('holiday')))       $backtourl = DOL_URL_ROOT."/holiday/document.php?id=".$id.'&file='.urldecode($file);
+    elseif (in_array($modulepart, array('member')))        $backtourl = DOL_URL_ROOT."/adherents/document.php?id=".$id.'&file='.urldecode($file);
+    elseif (in_array($modulepart, array('project')))       $backtourl = DOL_URL_ROOT."/projet/document.php?id=".$id.'&file='.urldecode($file);
+    elseif (in_array($modulepart, array('propal')))        $backtourl = DOL_URL_ROOT."/comm/propal/document.php?id=".$id.'&file='.urldecode($file);
+    elseif (in_array($modulepart, array('societe')))       $backtourl = DOL_URL_ROOT."/societe/document.php?id=".$id.'&file='.urldecode($file);
+    elseif (in_array($modulepart, array('tax')))           $backtourl = DOL_URL_ROOT."/compta/sociales/document.php?id=".$id.'&file='.urldecode($file);
+    elseif (in_array($modulepart, array('ticket')))        $backtourl = DOL_URL_ROOT."/ticket/document.php?id=".$id.'&file='.urldecode($file);
+    elseif (in_array($modulepart, array('user')))          $backtourl = DOL_URL_ROOT."/user/document.php?id=".$id.'&file='.urldecode($file);
+    elseif (in_array($modulepart, array('bank')) && preg_match('/\/statement\/([^\/]+)\//', $file, $regs)) {
+    	$num = $regs[1];
+    	$backtourl = DOL_URL_ROOT."/compta/bank/account_statement_document.php?id=".$id.'&num='.urlencode($num).'&file='.urldecode($file);
+    }
+    elseif (in_array($modulepart, array('bank')))          $backtourl = DOL_URL_ROOT."/compta/bank/document.php?id=".$id.'&file='.urldecode($file);
+    elseif (in_array($modulepart, array('mrp')))           $backtourl = DOL_URL_ROOT."/mrp/mo_document.php?id=".$id.'&file='.urldecode($file);
+    else $backtourl = DOL_URL_ROOT."/".$modulepart."/".$modulepart."_document.php?id=".$id.'&file='.urldecode($file);
 }
 
 
@@ -283,11 +293,11 @@ if ($cancel)
 	}
 }
 
-if ($action == 'confirm_resize' && (isset($_POST["file"]) != "") && (isset($_POST["sizex"]) != "") && (isset($_POST["sizey"]) != ""))
+if ($action == 'confirm_resize' && GETPOSTISSET("file") && GETPOSTISSET("sizex") && GETPOSTISSET("sizey"))
 {
 	$fullpath = $dir."/".$original_file;
 
-	$result = dol_imageResizeOrCrop($fullpath, 0, $_POST['sizex'], $_POST['sizey']);
+	$result = dol_imageResizeOrCrop($fullpath, 0, GETPOST('sizex', 'int'), GETPOST('sizey', 'int'));
 
 	if ($result == $fullpath)
 	{
@@ -357,7 +367,7 @@ if ($action == 'confirm_crop')
 	$fullpath = $dir."/".$original_file;
 
 	//var_dump($_POST['w'].'x'.$_POST['h'].'-'.$_POST['x'].'x'.$_POST['y']);exit;
-	$result = dol_imageResizeOrCrop($fullpath, 1, $_POST['w'], $_POST['h'], $_POST['x'], $_POST['y']);
+	$result = dol_imageResizeOrCrop($fullpath, 1, GETPOST('w', 'int'), GETPOST('h', 'int'), GETPOST('x', 'int'), GETPOST('y', 'int'));
 
 	if ($result == $fullpath)
 	{
@@ -445,7 +455,7 @@ print '<br>'."\n";
  */
 
 print '<!-- Form to resize -->'."\n";
-print '<form name="redim_file" action="'.$_SERVER["PHP_SELF"].'?id='.$id.'" method="POST">';
+print '<form name="redim_file" action="'.$_SERVER["PHP_SELF"].'?id='.$id.($num ? '&num='.$num : '').'" method="POST">';
 print '<input type="hidden" name="token" value="'.newToken().'">';
 
 print '<fieldset id="redim_file">';
@@ -454,7 +464,7 @@ print $langs->trans("ResizeDesc").'<br>';
 print $langs->trans("NewLength").': <input name="sizex" type="number" class="flat maxwidth50"> px  &nbsp; '.$langs->trans("or").' &nbsp; ';
 print $langs->trans("NewHeight").': <input name="sizey" type="number" class="flat maxwidth50"> px &nbsp; <br>';
 
-print '<input type="hidden" name="file" value="'.dol_escape_htmltag(GETPOST('file')).'" />';
+print '<input type="hidden" name="file" value="'.dol_escape_htmltag($file).'" />';
 print '<input type="hidden" name="action" value="confirm_resize" />';
 print '<input type="hidden" name="product" value="'.$id.'" />';
 print '<input type="hidden" name="modulepart" value="'.dol_escape_htmltag($modulepart).'" />';
@@ -497,7 +507,8 @@ if (!empty($conf->use_javascript_ajax))
 	print '<img src="'.DOL_URL_ROOT.'/viewimage.php?modulepart='.$modulepart.'&entity='.$object->entity.'&file='.urlencode($original_file).'" alt="" id="cropbox" width="'.$widthforcrop.'px"/>';
 	print '</div>';
 	print '</div><br>';
-	print '<form action="'.$_SERVER["PHP_SELF"].'?id='.$id.'" method="POST">';
+
+	print '<form action="'.$_SERVER["PHP_SELF"].'?id='.$id.($num ? '&num='.$num : '').'" method="POST">';
 	print '<input type="hidden" name="token" value="'.newToken().'">';
 	print '
 	      <div class="jc_coords">

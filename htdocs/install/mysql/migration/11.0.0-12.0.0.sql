@@ -40,9 +40,12 @@ create table llx_commande_fournisseur_dispatch_extrafields
 
 ALTER TABLE llx_commande_fournisseur_dispatch_extrafields ADD INDEX idx_commande_fournisseur_dispatch_extrafields (fk_object);
 
+UPDATE llx_accounting_system SET fk_country = NULL, active = 0 WHERE pcg_version = 'SYSCOHADA';
+
 
 
 -- For v12
+DELETE FROM llx_menu where module='supplier_proposal';
 
 UPDATE llx_website SET lang = 'en' WHERE lang like 'en_%';
 UPDATE llx_website SET lang = 'fr' WHERE lang like 'fr_%';
@@ -59,6 +62,8 @@ UPDATE llx_website_page SET lang = 'pt' WHERE lang like 'pt_%';
 
 ALTER TABLE llx_website ADD COLUMN lang varchar(8);
 ALTER TABLE llx_website ADD COLUMN otherlang varchar(255); 
+
+ALTER TABLE llx_website_page ADD COLUMN author_alias varchar(64);
 
 ALTER TABLE llx_holiday_users DROP INDEX uk_holiday_users;
 ALTER TABLE llx_holiday_users ADD UNIQUE INDEX uk_holiday_users(fk_user, fk_type);
@@ -117,7 +122,7 @@ create table llx_object_lang
 (
   rowid          integer AUTO_INCREMENT PRIMARY KEY,
   fk_object      integer      DEFAULT 0 NOT NULL,
-  type_object    varchar(32)  NOT NULL,
+  type_object    varchar(32)  NOT NULL,				-- value found into $object->element
   property       varchar(32)  NOT NULL,
   lang           varchar(5)   DEFAULT 0 NOT NULL,
   value          text,
@@ -185,3 +190,21 @@ ALTER TABLE llx_extrafields MODIFY COLUMN printable integer DEFAULT 0;
 ALTER TABLE llx_extrafields ADD COLUMN printable integer DEFAULT 0;
 
 UPDATE llx_const SET name = 'INVOICE_USE_RETAINED_WARRANTY' WHERE name = 'INVOICE_USE_SITUATION_RETAINED_WARRANTY'
+
+ALTER TABLE llx_accounting_account DROP COLUMN pcg_subtype;
+
+ALTER TABLE llx_product ADD COLUMN accountancy_code_buy_intra varchar(32) AFTER accountancy_code_buy;
+ALTER TABLE llx_product ADD COLUMN accountancy_code_buy_export varchar(32) AFTER accountancy_code_buy_intra;
+
+ALTER TABLE llx_entrepot ADD COLUMN fax varchar(20) DEFAULT NULL;
+ALTER TABLE llx_entrepot ADD COLUMN phone varchar(20) DEFAULT NULL;
+
+ALTER TABLE llx_accounting_account ADD COLUMN reconcilable tinyint DEFAULT 0 NOT NULL after active;
+
+ALTER TABLE llx_categorie MODIFY type integer NOT NULL DEFAULT 1;
+
+ALTER TABLE llx_societe_remise_except ADD COLUMN vat_src_code varchar(10) DEFAULT '';
+
+ALTER TABLE llx_blockedlog MODIFY COLUMN object_data mediumtext;
+ALTER TABLE llx_blockedlog ADD COLUMN object_version varchar(32) DEFAULT '';
+

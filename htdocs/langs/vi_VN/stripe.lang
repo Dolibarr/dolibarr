@@ -68,3 +68,4 @@ ToOfferALinkForTestWebhook=Liên kết để thiết lập Stripe WebHook để 
 ToOfferALinkForLiveWebhook=Liên kết để thiết lập Stripe WebHook để gọi IPN (chế độ trực tiếp)
 PaymentWillBeRecordedForNextPeriod=Thanh toán sẽ được ghi lại cho giai đoạn tiếp theo.
 ClickHereToTryAgain=<a href="%s">Bấm vào đây để thử lại...</a>
+CreationOfPaymentModeMustBeDoneFromStripeInterface=Due to Strong Customer Authenticatin rules, creation of a card must be done from Stripe backoffice. You can click here to switch on Stripe customer record: %s

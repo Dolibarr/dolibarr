@@ -859,7 +859,10 @@ class FactureFournisseur extends CommonInvoice
 					$line->multicurrency_total_tva = $obj->multicurrency_total_tva;
 					$line->multicurrency_total_ttc = $obj->multicurrency_total_ttc;
 
-	                $this->lines[$i] = $line;
+	                // Extra fields
+					$line->fetch_optionals();
+
+					$this->lines[$i] = $line;
 
                     $i++;
                 }
@@ -1413,7 +1416,7 @@ class FactureFournisseur extends CommonInvoice
 		{
             $num = $this->ref;
         }
-        $this->newref = $num;
+        $this->newref = dol_sanitizeFileName($num);
 
         $sql = "UPDATE ".MAIN_DB_PREFIX."facture_fourn";
         $sql .= " SET ref='".$num."', fk_statut = 1, fk_user_valid = ".$user->id.", date_valid = '".$this->db->idate($now)."'";
@@ -2358,6 +2361,9 @@ class FactureFournisseur extends CommonInvoice
         elseif ($this->type == self::TYPE_CREDIT_NOTE) $label = $langs->transnoentitiesnoconv("ShowInvoiceAvoir").': '.$this->ref;
         elseif ($this->type == self::TYPE_DEPOSIT)     $label = $langs->transnoentitiesnoconv("ShowInvoiceDeposit").': '.$this->ref;
         if ($moretitle) $label .= ' - '.$moretitle;
+        if (isset($this->statut) && isset($this->alreadypaid)) {
+        	$label .= '<br><b>'.$langs->trans("Status").":</b> ".$this->getLibStatut(5, $this->alreadypaid);
+        }
 
         $ref = $this->ref;
         if (empty($ref)) $ref = $this->id;

@@ -38,6 +38,7 @@ GoToDolibarr=Ir a Dolibarr
 GoToSetupArea=Ir a Dolibarr (área de configuración)
 GoToUpgradePage=Ir a actualizar la página de nuevo
 WithNoSlashAtTheEnd=Sin la diagonal "/" al final
+DirectoryRecommendation=<span class="warning">IMPORTANT</span>: You must use a directory that is outside of the web pages (so do not use a subdirectory of previous parameter).
 DolibarrAdminLogin=Dolibarr Admin Login
 ChoosedMigrateScript=Elija script de migración
 ProcessMigrateScript=Procesamiento de script

@@ -23,10 +23,10 @@
  *       \ingroup    commandes
  *       \brief      File of class to manage order statistics
  */
-include_once DOL_DOCUMENT_ROOT . '/core/class/stats.class.php';
-include_once DOL_DOCUMENT_ROOT . '/commande/class/commande.class.php';
-include_once DOL_DOCUMENT_ROOT . '/fourn/class/fournisseur.commande.class.php';
-include_once DOL_DOCUMENT_ROOT . '/core/lib/date.lib.php';
+include_once DOL_DOCUMENT_ROOT.'/core/class/stats.class.php';
+include_once DOL_DOCUMENT_ROOT.'/commande/class/commande.class.php';
+include_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.commande.class.php';
+include_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 
 
 /**
@@ -67,31 +67,31 @@ class CommandeStats extends Stats
 
 		if ($mode == 'customer')
 		{
-			$object=new Commande($this->db);
+			$object = new Commande($this->db);
 			$this->from = MAIN_DB_PREFIX.$object->table_element." as c";
 			$this->from_line = MAIN_DB_PREFIX.$object->table_element_line." as tl";
-			$this->field='total_ht';
-			$this->field_line='total_ht';
-			$this->where.= " c.fk_statut > 0";    // Not draft and not cancelled
+			$this->field = 'total_ht';
+			$this->field_line = 'total_ht';
+			$this->where .= " c.fk_statut > 0"; // Not draft and not cancelled
 		}
 		elseif ($mode == 'supplier')
 		{
-			$object=new CommandeFournisseur($this->db);
+			$object = new CommandeFournisseur($this->db);
 			$this->from = MAIN_DB_PREFIX.$object->table_element." as c";
 			$this->from_line = MAIN_DB_PREFIX.$object->table_element_line." as tl";
-			$this->field='total_ht';
-			$this->field_line='total_ht';
-			$this->where.= " c.fk_statut > 2";    // Only approved & ordered
+			$this->field = 'total_ht';
+			$this->field_line = 'total_ht';
+			$this->where .= " c.fk_statut > 2"; // Only approved & ordered
 		}
 		//$this->where.= " AND c.fk_soc = s.rowid AND c.entity = ".$conf->entity;
-		$this->where.= ' AND c.entity IN ('.getEntity('commande').')';
+		$this->where .= ' AND c.entity IN ('.getEntity('commande').')';
 
-		if (!$user->rights->societe->client->voir && !$this->socid) $this->where .= " AND c.fk_soc = sc.fk_soc AND sc.fk_user = " .$user->id;
+		if (!$user->rights->societe->client->voir && !$this->socid) $this->where .= " AND c.fk_soc = sc.fk_soc AND sc.fk_user = ".$user->id;
 		if ($this->socid)
 		{
-			$this->where.=" AND c.fk_soc = ".$this->socid;
+			$this->where .= " AND c.fk_soc = ".$this->socid;
 		}
-        if ($this->userid > 0) $this->where.=' AND c.fk_user_author = '.$this->userid;
+        if ($this->userid > 0) $this->where .= ' AND c.fk_user_author = '.$this->userid;
 	}
 
 	/**
@@ -106,14 +106,14 @@ class CommandeStats extends Stats
 		global $user;
 
 		$sql = "SELECT date_format(c.date_commande,'%m') as dm, COUNT(*) as nb";
-		$sql.= " FROM ".$this->from;
+		$sql .= " FROM ".$this->from;
 		if (!$user->rights->societe->client->voir && !$this->socid) $sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
-		$sql.= " WHERE c.date_commande BETWEEN '".$this->db->idate(dol_get_first_day($year))."' AND '".$this->db->idate(dol_get_last_day($year))."'";
-		$sql.= " AND ".$this->where;
-		$sql.= " GROUP BY dm";
-        $sql.= $this->db->order('dm', 'DESC');
+		$sql .= " WHERE c.date_commande BETWEEN '".$this->db->idate(dol_get_first_day($year))."' AND '".$this->db->idate(dol_get_last_day($year))."'";
+		$sql .= " AND ".$this->where;
+		$sql .= " GROUP BY dm";
+        $sql .= $this->db->order('dm', 'DESC');
 
-		$res=$this->_getNbByMonth($year, $sql, $format);
+		$res = $this->_getNbByMonth($year, $sql, $format);
 		return $res;
 	}
 
@@ -128,11 +128,11 @@ class CommandeStats extends Stats
 		global $user;
 
 		$sql = "SELECT date_format(c.date_commande,'%Y') as dm, COUNT(*) as nb, SUM(c.".$this->field.")";
-		$sql.= " FROM ".$this->from;
+		$sql .= " FROM ".$this->from;
 		if (!$user->rights->societe->client->voir && !$this->socid) $sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
-		$sql.= " WHERE ".$this->where;
-		$sql.= " GROUP BY dm";
-        $sql.= $this->db->order('dm', 'DESC');
+		$sql .= " WHERE ".$this->where;
+		$sql .= " GROUP BY dm";
+        $sql .= $this->db->order('dm', 'DESC');
 
 		return $this->_getNbByYear($sql);
 	}
@@ -149,14 +149,14 @@ class CommandeStats extends Stats
 		global $user;
 
 		$sql = "SELECT date_format(c.date_commande,'%m') as dm, SUM(c.".$this->field.")";
-		$sql.= " FROM ".$this->from;
+		$sql .= " FROM ".$this->from;
 		if (!$user->rights->societe->client->voir && !$this->socid) $sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
-		$sql.= " WHERE c.date_commande BETWEEN '".$this->db->idate(dol_get_first_day($year))."' AND '".$this->db->idate(dol_get_last_day($year))."'";
-		$sql.= " AND ".$this->where;
-		$sql.= " GROUP BY dm";
-        $sql.= $this->db->order('dm', 'DESC');
+		$sql .= " WHERE c.date_commande BETWEEN '".$this->db->idate(dol_get_first_day($year))."' AND '".$this->db->idate(dol_get_last_day($year))."'";
+		$sql .= " AND ".$this->where;
+		$sql .= " GROUP BY dm";
+        $sql .= $this->db->order('dm', 'DESC');
 
-		$res=$this->_getAmountByMonth($year, $sql, $format);
+		$res = $this->_getAmountByMonth($year, $sql, $format);
 		return $res;
 	}
 
@@ -171,12 +171,12 @@ class CommandeStats extends Stats
 		global $user;
 
 		$sql = "SELECT date_format(c.date_commande,'%m') as dm, AVG(c.".$this->field.")";
-		$sql.= " FROM ".$this->from;
+		$sql .= " FROM ".$this->from;
 		if (!$user->rights->societe->client->voir && !$this->socid) $sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
-		$sql.= " WHERE c.date_commande BETWEEN '".$this->db->idate(dol_get_first_day($year))."' AND '".$this->db->idate(dol_get_last_day($year))."'";
-		$sql.= " AND ".$this->where;
-		$sql.= " GROUP BY dm";
-        $sql.= $this->db->order('dm', 'DESC');
+		$sql .= " WHERE c.date_commande BETWEEN '".$this->db->idate(dol_get_first_day($year))."' AND '".$this->db->idate(dol_get_last_day($year))."'";
+		$sql .= " AND ".$this->where;
+		$sql .= " GROUP BY dm";
+        $sql .= $this->db->order('dm', 'DESC');
 
 		return $this->_getAverageByMonth($year, $sql);
 	}
@@ -191,11 +191,11 @@ class CommandeStats extends Stats
 		global $user;
 
 		$sql = "SELECT date_format(c.date_commande,'%Y') as year, COUNT(*) as nb, SUM(c.".$this->field.") as total, AVG(".$this->field.") as avg";
-		$sql.= " FROM ".$this->from;
+		$sql .= " FROM ".$this->from;
 		if (!$user->rights->societe->client->voir && !$this->socid) $sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
-		$sql.= " WHERE ".$this->where;
-		$sql.= " GROUP BY year";
-        $sql.= $this->db->order('year', 'DESC');
+		$sql .= " WHERE ".$this->where;
+		$sql .= " GROUP BY year";
+        $sql .= $this->db->order('year', 'DESC');
 
 		return $this->_getAllByYear($sql);
 	}
@@ -203,23 +203,24 @@ class CommandeStats extends Stats
 	/**
 	 *	Return nb, amount of predefined product for year
 	 *
-	 *	@param	int		$year	Year to scan
-	 *	@return	array	Array of values
+	 *	@param	int		$year			Year to scan
+     *  @param  int     $limit      	Limit
+	 *	@return	array					Array of values
 	 */
-	public function getAllByProduct($year)
+	public function getAllByProduct($year, $limit = 10)
 	{
 		global $user;
 
 		$sql = "SELECT product.ref, COUNT(product.ref) as nb, SUM(tl.".$this->field_line.") as total, AVG(tl.".$this->field_line.") as avg";
-		$sql.= " FROM ".$this->from.", ".$this->from_line.", ".MAIN_DB_PREFIX."product as product";
-		if (!$user->rights->societe->client->voir && !$user->socid) $sql.= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
-		$sql.= " WHERE ".$this->where;
-		$sql.= " AND c.rowid = tl.fk_commande AND tl.fk_product = product.rowid";
-    	$sql.= " AND c.date_commande BETWEEN '".$this->db->idate(dol_get_first_day($year, 1, false))."' AND '".$this->db->idate(dol_get_last_day($year, 12, false))."'";
-		$sql.= " GROUP BY product.ref";
-        $sql.= $this->db->order('nb', 'DESC');
+		$sql .= " FROM ".$this->from.", ".$this->from_line.", ".MAIN_DB_PREFIX."product as product";
+		if (!$user->rights->societe->client->voir && !$user->socid) $sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
+		$sql .= " WHERE ".$this->where;
+		$sql .= " AND c.rowid = tl.fk_commande AND tl.fk_product = product.rowid";
+    	$sql .= " AND c.date_commande BETWEEN '".$this->db->idate(dol_get_first_day($year, 1, false))."' AND '".$this->db->idate(dol_get_last_day($year, 12, false))."'";
+		$sql .= " GROUP BY product.ref";
+        $sql .= $this->db->order('nb', 'DESC');
         //$sql.= $this->db->plimit(20);
 
-		return $this->_getAllByProduct($sql);
+        return $this->_getAllByProduct($sql, $limit);
 	}
 }

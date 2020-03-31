@@ -1545,11 +1545,13 @@ function dol_add_file_process($upload_dir, $allowoverwrite = 0, $donotupdatesess
 				// Define $destfull (path to file including filename) and $destfile (only filename)
 				$destfull = $upload_dir."/".$TFile['name'][$i];
 				$destfile = $TFile['name'][$i];
+				$destfilewithoutext = preg_replace('/\.[^\.]+$/', '', $destfile);
 
-				if ($savingdocmask)
+				if ($savingdocmask && strpos($savingdocmask, $destfilewithoutext) !== 0)
 				{
 					$destfull = $upload_dir."/".preg_replace('/__file__/', $TFile['name'][$i], $savingdocmask);
 					$destfile = preg_replace('/__file__/', $TFile['name'][$i], $savingdocmask);
+
 				}
 
 				// dol_sanitizeFileName the file name and lowercase extension
@@ -2401,10 +2403,11 @@ function dol_check_secure_access_document($modulepart, $original_file, $entity, 
 		$original_file = (!empty($conf->product->multidir_temp[$entity]) ? $conf->product->multidir_temp[$entity] : $conf->service->multidir_temp[$entity]).'/'.$original_file;
 	}
 	// Wrapping for taxes
-	elseif ($modulepart == 'tax' && !empty($conf->tax->dir_output))
+	elseif (in_array($modulepart, array('tax', 'tax-vat')) && !empty($conf->tax->dir_output))
 	{
 		if ($fuser->rights->tax->charges->{$lire}) $accessallowed = 1;
-		$original_file = $conf->tax->dir_output.'/'.$original_file;
+		$modulepartsuffix = str_replace('tax-', '', $modulepart);
+		$original_file = $conf->tax->dir_output.'/'.($modulepartsuffix != 'tax' ? $modulepartsuffix.'/' : '').$original_file;
 	}
 	// Wrapping for events
 	elseif ($modulepart == 'actions' && !empty($conf->agenda->dir_output))

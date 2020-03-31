@@ -23,9 +23,9 @@
  */
 
 /**
- *	\file       htdocs/admin/expedition.php
- *	\ingroup    expedition
- *	\brief      Page d'administration/configuration du module Expedition
+ *	\file       htdocs/admin/export.php
+ *	\ingroup    export
+ *	\brief      config Page module Export
  */
 
 require '../main.inc.php';
@@ -38,13 +38,15 @@ if (!$user->admin)
 	accessforbidden();
 
 $action = GETPOST('action', 'alpha');
-$value = GETPOST('value', 'alpha');
+
 
 /*
  * Actions
  */
 
-include DOL_DOCUMENT_ROOT.'/core/actions_setmoduleoptions.inc.php';
+if ($action == 'save') {
+	dolibarr_set_const($db, 'EXPORT_CSV_SEPARATOR_TO_USE', GETPOST('EXPORT_CSV_SEPARATOR_TO_USE', 'alphanohtml'));
+}
 
 
 /*
@@ -69,31 +71,37 @@ $head[$h][1] = $langs->trans("Setup");
 $head[$h][2] = 'setup';
 $h++;
 
-dol_fiche_head($head, 'setup', $langs->trans("ExportsArea"), -1, "exports");
+dol_fiche_head($head, 'setup', $langs->trans("ExportsArea"), -1, "technic");
 
+print '<form method="POST" action="'.$_SERVER['PHP_SELF'].'">';
+print '<input type="hidden" name="token" value="'.newToken().'">';
+print '<input type="hidden" name="action" value="save">';
 
 print '<table class="noborder centpercent">';
+
 print '<tr class="liste_titre">';
 print '<td>'.$langs->trans("Parameters").'</td>'."\n";
 print '<td class="center" width="20">&nbsp;</td>';
 print '<td class="center" width="100"></td>'."\n";
-
+print '</tr>';
 
 // Example with a yes / no select
 print '<tr class="oddeven">';
 print '<td>'.$langs->trans("EXPORTS_SHARE_MODELS").'</td>';
 print '<td class="center" width="20">&nbsp;</td>';
 print '<td class="center" width="100">';
-
-print '<form method="POST" action="'.$_SERVER['PHP_SELF'].'">';
-print '<input type="hidden" name="token" value="'.newToken().'">';
-print '<input type="hidden" name="action" value="set_EXPORTS_SHARE_MODELS">';
 echo ajax_constantonoff('EXPORTS_SHARE_MODELS');
-print '</form>';
-
 print '</td></tr>';
 
+print '<tr class="oddeven">';
+print '<td>'.$langs->trans("ExportCsvSeparator").'</td>';
+print '<td width="60" align="center">'."<input size=\"3\" class=\"flat\" type=\"text\" name=\"EXPORT_CSV_SEPARATOR_TO_USE\" value=\"".(empty($conf->global->EXPORT_CSV_SEPARATOR_TO_USE) ? ',' : $conf->global->EXPORT_CSV_SEPARATOR_TO_USE)."\"></td>";
+print '<td class="right"><input type="submit" class="button" value="'.$langs->trans("Modify").'"></td>';
+print '</tr>';
+
 print '</table>';
+
+print '</form>';
 
 dol_fiche_end();
 

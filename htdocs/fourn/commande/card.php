@@ -55,14 +55,13 @@ if (!empty($conf->variants->enabled)) {
 	require_once DOL_DOCUMENT_ROOT.'/variants/class/ProductCombination.class.php';
 }
 
-$langs->loadLangs(array('admin', 'orders', 'sendings', 'companies', 'bills', 'propal', 'supplier_proposal', 'deliveries', 'products', 'stocks', 'productbatch'));
+$langs->loadLangs(array('admin', 'orders', 'sendings', 'companies', 'bills', 'propal', 'receptions', 'supplier_proposal', 'deliveries', 'products', 'stocks', 'productbatch'));
 if (!empty($conf->incoterm->enabled)) $langs->load('incoterm');
 
 $id = GETPOST('id', 'int');
 $ref = GETPOST('ref', 'alpha');
 $action 		= GETPOST('action', 'alpha');
 $confirm		= GETPOST('confirm', 'alpha');
-$comclientid = GETPOST('comid', 'int');
 $socid = GETPOST('socid', 'int');
 $projectid = GETPOST('projectid', 'int');
 $cancel         = GETPOST('cancel', 'alpha');
@@ -917,7 +916,7 @@ if (empty($reshook))
 
 	// Force mandatory order method
     if ($action == 'commande') {
-        $methodecommande = GETPOST('methodecommande');
+        $methodecommande = GETPOST('methodecommande', 'int');
 
         if ($methodecommande <= 0) {
             setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentities("OrderMode")), null, 'errors');
@@ -927,7 +926,7 @@ if (empty($reshook))
 
 	if ($action == 'confirm_commande' && $confirm == 'yes' && $user->rights->fournisseur->commande->commander)
 	{
-		$result = $object->commande($user, $_REQUEST["datecommande"], $_REQUEST["methode"], $_REQUEST['comment']);
+		$result = $object->commande($user, GETPOST("datecommande"), GETPOST("methode", 'int'), GETPOST('comment', 'alphanohtml'));
 		if ($result > 0)
 		{
 			if (empty($conf->global->MAIN_DISABLE_PDF_AUTOUPDATE))
@@ -1193,7 +1192,7 @@ if (empty($reshook))
 								// Extrafields
 								if (empty($conf->global->MAIN_EXTRAFIELDS_DISABLED) && method_exists($lines[$i], 'fetch_optionals')) 							// For avoid conflicts if
 								{
-									$lines[$i]->fetch_optionals($lines[$i]->rowid);
+									$lines[$i]->fetch_optionals();
 									$array_option = $lines[$i]->array_options;
 								}
 
@@ -1242,7 +1241,7 @@ if (empty($reshook))
 									'',
 									null,
 									null,
-									array(),
+                                    $array_option,
 									$lines[$i]->fk_unit,
 									0,
 									$element,
@@ -1515,7 +1514,7 @@ if ($action == 'create')
 		$objectsrc->fetch_thirdparty();
 
 		// Replicate extrafields
-		$objectsrc->fetch_optionals($originid);
+		$objectsrc->fetch_optionals();
 		$object->array_options = $objectsrc->array_options;
 
 		$projectid = (!empty($objectsrc->fk_project) ? $objectsrc->fk_project : '');
@@ -1602,7 +1601,7 @@ if ($action == 'create')
 			});
 			</script>';
 		}
-		print ' <a href="'.DOL_URL_ROOT.'/societe/card.php?action=create&client=0&fournisseur=1&backtopage='.urlencode($_SERVER["PHP_SELF"].'?action=create').'"><span class="valignmiddle text-plus-circle">'.$langs->trans("AddThirdParty").'</span><span class="fa fa-plus-circle valignmiddle paddingleft"></span></a>';
+		print ' <a href="'.DOL_URL_ROOT.'/societe/card.php?action=create&client=0&fournisseur=1&backtopage='.urlencode($_SERVER["PHP_SELF"].'?action=create').'"><span class="fa fa-plus-circle valignmiddle paddingleft" title="'.$langs->trans("AddThirdParty").'"></span></a>';
 	}
 	print '</td>';
 
@@ -1661,8 +1660,8 @@ if ($action == 'create')
 
 		$langs->load('projects');
 		print '<tr><td>'.$langs->trans('Project').'</td><td>';
-		$formproject->select_projects((empty($conf->global->PROJECT_CAN_ALWAYS_LINK_TO_ALL_SUPPLIERS) ? $societe->id : -1), $projectid, 'projectid', 0, 0, 1, 1);
-		print ' &nbsp; <a href="'.DOL_URL_ROOT.'/projet/card.php?socid='.$soc->id.'&action=create&status=1&backtopage='.urlencode($_SERVER["PHP_SELF"].'?action=create&socid='.$societe->id).'"><span class="valignmiddle text-plus-circle">'.$langs->trans("AddProject").'</span><span class="fa fa-plus-circle valignmiddle"></span></a>';
+		$formproject->select_projects((empty($conf->global->PROJECT_CAN_ALWAYS_LINK_TO_ALL_SUPPLIERS) ? $societe->id : -1), $projectid, 'projectid', 0, 0, 1, 1, 0, 0, 0, '', 0, 0, 'maxwidth500');
+		print ' &nbsp; <a href="'.DOL_URL_ROOT.'/projet/card.php?socid='.$soc->id.'&action=create&status=1&backtopage='.urlencode($_SERVER["PHP_SELF"].'?action=create&socid='.$societe->id).'"><span class="fa fa-plus-circle valignmiddle" title="'.$langs->trans("AddProject").'"></span></a>';
 		print '</td></tr>';
 	}
 
@@ -2484,11 +2483,14 @@ elseif (!empty($object->id))
 
 			if (!empty($conf->stock->enabled) && (!empty($conf->global->STOCK_CALCULATE_ON_SUPPLIER_DISPATCH_ORDER) || !empty($conf->global->STOCK_CALCULATE_ON_RECEPTION) || !empty($conf->global->STOCK_CALCULATE_ON_RECEPTION_CLOSE)))
 			{
+				$labelofbutton = $langs->trans('ReceiveProducts');
+				if ($conf->reception->enabled) $labelofbutton = $langs->trans("CreateReception");
+
 				if (in_array($object->statut, array(3, 4, 5))) {
 					if ($conf->fournisseur->enabled && $user->rights->fournisseur->commande->receptionner) {
-						print '<div class="inline-block divButAction"><a class="butAction" href="'.DOL_URL_ROOT.'/fourn/commande/dispatch.php?id='.$object->id.'">'.$langs->trans('ReceiveProducts').'</a></div>';
+						print '<div class="inline-block divButAction"><a class="butAction" href="'.DOL_URL_ROOT.'/fourn/commande/dispatch.php?id='.$object->id.'">'.$labelofbutton.'</a></div>';
 					} else {
-						print '<div class="inline-block divButAction"><a class="butActionRefused classfortooltip" href="#" title="'.dol_escape_htmltag($langs->trans("NotAllowed")).'">'.$langs->trans('ReceiveProducts').'</a></div>';
+						print '<div class="inline-block divButAction"><a class="butActionRefused classfortooltip" href="#" title="'.dol_escape_htmltag($langs->trans("NotAllowed")).'">'.$labelofbutton.'</a></div>';
 					}
 				}
 			}

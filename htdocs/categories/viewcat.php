@@ -4,6 +4,7 @@
  * Copyright (C) 2007       Patrick Raguin		<patrick.raguin@gmail.com>
  * Copyright (C) 2005-2012  Regis Houssin		<regis.houssin@inodbox.com>
  * Copyright (C) 2015       Raphaël Doursenaud  <rdoursenaud@gpcsolutions.fr>
+ * Copyright (C) 2020		Tobias Sekan		<tobias.sekan@startmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -55,7 +56,7 @@ $optioncss  = GETPOST('optioncss', 'aZ'); // Option for the css output (always '
 $limit = GETPOST('limit', 'int') ?GETPOST('limit', 'int') : $conf->liste_limit;
 $sortfield = GETPOST('sortfield', 'alpha');
 $sortorder = GETPOST('sortorder', 'alpha');
-$page = GETPOST('page', 'int');
+$page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOST("page", 'int');
 if (empty($page) || $page == -1 || GETPOST('button_search', 'alpha') || GETPOST('button_removefilter', 'alpha') || (empty($toselect) && $massaction === '0')) { $page = 0; }     // If $page is not defined, or '' or -1 or if we click on clear filters or if we select empty mass action
 $offset = $limit * $page;
 $pageprev = $page - 1;
@@ -71,7 +72,7 @@ if ($id == "" && $label == "")
 $result = restrictedArea($user, 'categorie', $id, '&category');
 
 $object = new Categorie($db);
-$result = $object->fetch($id, $label);
+$result = $object->fetch($id, $label, $type);
 if ($result <= 0) {
 	dol_print_error($db, $object->error); exit;
 }
@@ -80,7 +81,6 @@ if ($result <= 0) {
 	dol_print_error($db, $object->error); exit;
 }
 
-$type = $object->type;
 if (is_numeric($type)) $type = Categorie::$MAP_ID_TO_CODE[$type]; // For backward compatibility
 
 $extrafields = new ExtraFields($db);
@@ -222,8 +222,8 @@ $head = categories_prepare_head($object, $type);
 
 dol_fiche_head($head, 'card', $title, -1, 'category');
 $backtolist = (GETPOST('backtolist') ? GETPOST('backtolist') : DOL_URL_ROOT.'/categories/index.php?leftmenu=cat&type='.$type);
-$linkback = '<a href="'.$backtolist.'\">'.$langs->trans("BackToList").'</a>';
-$object->next_prev_filter=" type = ".$object->type;
+$linkback = '<a href="'.$backtolist.'">'.$langs->trans("BackToList").'</a>';
+$object->next_prev_filter = ' type = ' . $object->type;
 $object->ref = $object->label;
 $morehtmlref='<br><div class="refidno"><a href="'.DOL_URL_ROOT.'/categories/index.php?leftmenu=cat&type='.$type.'">'.$langs->trans("Root").'</a> >> ';
 $ways = $object->print_all_ways(" &gt;&gt; ", '', 1);
@@ -233,7 +233,7 @@ foreach ($ways as $way)
 }
 $morehtmlref.='</div>';
 
-dol_banner_tab($object, 'label', $linkback, ($user->socid?0:1), 'label', 'label', $morehtmlref, '', 0, '', '', 1);
+dol_banner_tab($object, 'label', $linkback, ($user->socid?0:1), 'label', 'label', $morehtmlref, '&type=' . $type, 0, '', '', 1);
 
 
 /*
@@ -291,8 +291,18 @@ if ($user->rights->categorie->supprimer)
 
 print "</div>";
 
+if (! empty($user->rights->categorie->creer))
+{
+	$link = DOL_URL_ROOT.'/categories/card.php';
+	$link .= '?action=create';
+	$link .= '&type='.$type;
+	$link .= '&catorigin='.$object->id;
+	$link .= '&backtopage='.urlencode($_SERVER["PHP_SELF"].'?type='.$type.'&id='.$id);
 
-
+	print '<div class="right">';
+	print dolGetButtonTitle($langs->trans('NewCategory'), '', 'fa fa-plus-circle', $link);
+	print "</div>";
+}
 
 $cats = $object->get_filles();
 if ($cats < 0)
