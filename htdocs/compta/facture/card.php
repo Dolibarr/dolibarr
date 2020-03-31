@@ -3359,18 +3359,18 @@ if ($action == 'create')
 
 	if($conf->global->INVOICE_USE_RETAINED_WARRANTY){
 	        $rwStyle = 'display:none;';
-			if(in_array(GETPOST('type', 'int'), $RetainedWarrantyInvoiceAvailableType)){
-	            $rwStyle = '';
-	        }
+		if(in_array(GETPOST('type', 'int'), $RetainedWarrantyInvoiceAvailableType)){
+			$rwStyle = '';
+		}
 
 	        $retained_warranty = GETPOST('retained_warranty', 'int');
-	        if(empty($retained_warranty)){
-                if(!empty($objectsrc->retained_warranty)){ // use previous situation value
-                    $retained_warranty = $objectsrc->retained_warranty;
-                }else{
-                    $retained_warranty = $conf->global->INVOICE_SITUATION_DEFAULT_RETAINED_WARRANTY_PERCENT;
-                }
-            }
+		if(empty($retained_warranty)){
+			if(!empty($objectsrc->retained_warranty)){ // use previous situation value
+				$retained_warranty = $objectsrc->retained_warranty;
+			}else{
+				$retained_warranty = $conf->global->INVOICE_SITUATION_DEFAULT_RETAINED_WARRANTY_PERCENT;
+			}
+		}
 
 	        print '<tr class="retained-warranty-line" style="'.$rwStyle.'" ><td class="nowrap">'.$langs->trans('RetainedWarranty').'</td><td colspan="2">';
 	        print '<input id="new-situation-invoice-retained-warranty" name="retained_warranty" type="number" value="'.$retained_warranty.'" step="0.01" min="0" max="100" />%';
