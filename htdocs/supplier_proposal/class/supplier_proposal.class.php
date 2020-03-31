@@ -1848,11 +1848,12 @@ class SupplierProposal extends CommonObject
      */
     public function createPriceFournisseur($product, $user)
     {
+        global $conf;
+        if(!empty($conf->multicurrency->enabled)) include_once DOL_DOCUMENT_ROOT.'/multicurrency/class/multicurrency.class.php';
         $price=price2num($product->subprice*$product->qty, 'MU');
         $qty=price2num($product->qty);
         $unitPrice = price2num($product->subprice, 'MU');
         $now=dol_now();
-
         $values = array(
             "'".$this->db->idate($now)."'",
             $product->fk_product,
@@ -1864,9 +1865,27 @@ class SupplierProposal extends CommonObject
             $product->tva_tx,
             $user->id
         );
+        if(!empty($conf->multicurrency->enabled)) {
+            $multicurrency = new MultiCurrency($this->db); //need to fetch because empty fk_multicurrency and rate
+            if(!empty($product->multicurrency_code)) {
+                $multicurrency->fetch(0, $product->multicurrency_code);
+                if(! empty($multicurrency->id)) {
+                    $values[] = $multicurrency->id;
+                    $values[] = "'".$product->multicurrency_code."'";
+                    $values[] = $product->multicurrency_subprice;
+                    $values[] = $product->multicurrency_total_ht;
+                    $values[] = $multicurrency->rate->rate;
+                }
+                else {
+                    for($i = 0; $i < 5; $i++) $values[] = 'NULL';
+                }
+            }
+        }
 
         $sql = 'INSERT INTO '.MAIN_DB_PREFIX.'product_fournisseur_price ';
-        $sql .= '(datec, fk_product, fk_soc, ref_fourn, price, quantity, unitprice, tva_tx, fk_user) VALUES ('.implode(',', $values).')';
+        $sql .= '(datec, fk_product, fk_soc, ref_fourn, price, quantity, unitprice, tva_tx, fk_user';
+        if(!empty($conf->multicurrency->enabled) && !empty($product->multicurrency_code)) $sql .= ',fk_multicurrency, multicurrency_code, multicurrency_unitprice, multicurrency_price, multicurrency_tx';
+        $sql .= ')  VALUES ('.implode(',', $values).')';
 
         $resql = $this->db->query($sql);
         if (!$resql) {
