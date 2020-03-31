@@ -405,7 +405,7 @@ div#moretabsList, div#moretabsListaction {
 hr { border: 0; border-top: 1px solid #ccc; }
 .tabBar hr { margin-top: 20px; margin-bottom: 17px; }
 
-.button, .buttonDelete, input[name="sbmtConnexion"] {
+.button:not(.bordertransp), .buttonDelete:not(.bordertransp) {
 	margin-bottom: 0;
 	margin-top: 0;
 	margin-left: 5px;
