@@ -622,7 +622,14 @@ class Expedition extends CommonObject
 
 				// Retreive extrafields
 				$this->fetch_optionals();
-
+				
+				// Fix Get multicurrency param for transmited
+				if (!empty($conf->multicurrency->enabled))
+				{
+					if (!empty($this->multicurrency_code)) $this->multicurrency_code = $this->thirdparty->multicurrency_code;
+					if (!empty($conf->global->MULTICURRENCY_USE_ORIGIN_TX) && !empty($objectsrc->multicurrency_tx))	$this->multicurrency_tx =  $this->thirdparty->multicurrency_tx;
+				}
+				
 				/*
 				 * Lines
 				 */
