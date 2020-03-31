@@ -141,9 +141,9 @@ $result = restrictedArea($user, 'facture', $id, '', '', 'fk_soc', $fieldid, $isd
 
 // retained warranty invoice available type
 if(empty($conf->global->USE_RETAINED_WARRANTY_ONLY_FOR_SITUATION)) {
-	$RetainedWarrantyInvoiceAvailableType = array( Facture::TYPE_SITUATION, Facture::TYPE_STANDARD);
+	$retainedWarrantyInvoiceAvailableType = array( Facture::TYPE_SITUATION, Facture::TYPE_STANDARD);
 } else {
-	$RetainedWarrantyInvoiceAvailableType = array( Facture::TYPE_SITUATION );
+	$retainedWarrantyInvoiceAvailableType = array( Facture::TYPE_SITUATION );
 }
 
 
@@ -3359,7 +3359,7 @@ if ($action == 'create')
 
 	if($conf->global->INVOICE_USE_RETAINED_WARRANTY){
 	        $rwStyle = 'display:none;';
-		if(in_array(GETPOST('type', 'int'), $RetainedWarrantyInvoiceAvailableType)){
+		if(in_array(GETPOST('type', 'int'), $retainedWarrantyInvoiceAvailableType)){
 			$rwStyle = '';
 		}
 
@@ -3393,7 +3393,7 @@ if ($action == 'create')
     		$(document).ready(function() {
 			$("[name=\'type\']").change(function() {
 
-				if($( this ).prop("checked") && $.inArray(parseInt($( this ).val()), '.json_encode($RetainedWarrantyInvoiceAvailableType).' ) !== -1)
+				if($( this ).prop("checked") && $.inArray(parseInt($( this ).val()), '.json_encode($retainedWarrantyInvoiceAvailableType).' ) !== -1)
                     {
                         $(".retained-warranty-line").show();
                     }
@@ -4308,7 +4308,7 @@ elseif ($id > 0 || !empty($ref))
 	if(!empty($object->retained_warranty) || !empty($conf->global->INVOICE_USE_RETAINED_WARRANTY)) {
 
 	    $displayWarranty = true;
-		if(!in_array($object->type, $RetainedWarrantyInvoiceAvailableType) && empty($object->retained_warranty)){
+		if(!in_array($object->type, $retainedWarrantyInvoiceAvailableType) && empty($object->retained_warranty)){
 	         $displayWarranty = false;
 	    }
 
@@ -4983,7 +4983,7 @@ elseif ($id > 0 || !empty($ref))
 	}
 
 	print '	<form name="addproduct" id="addproduct" action="'.$_SERVER["PHP_SELF"].'?id='.$object->id.(($action != 'editline') ? '#addline' : '#line_'.GETPOST('lineid')).'" method="POST">
-	<input type="hidden" name="token" value="' . $_SESSION ['newtoken'].'">
+	<input type="hidden" name="token" value="' . newToken() . '">
 	<input type="hidden" name="action" value="' . (($action != 'editline') ? 'addline' : 'updateline').'">
 	<input type="hidden" name="mode" value="">
 	<input type="hidden" name="id" value="' . $object->id.'">
@@ -5179,7 +5179,7 @@ elseif ($id > 0 || !empty($ref))
 			}
 
 			// Classify paid
-			if (($object->statut == 1 && $object->paye == 0 && $usercanissuepayment && (($object->type != Facture::TYPE_CREDIT_NOTE && $object->type != Facture::TYPE_DEPOSIT && $resteapayer <= 0) || ($object->type == Facture::TYPE_CREDIT_NOTE && $resteapayer >= 0)))
+			if (($object->statut == Facture::STATUS_VALIDATED && $object->paye == 0 && $usercanissuepayment && (($object->type != Facture::TYPE_CREDIT_NOTE && $object->type != Facture::TYPE_DEPOSIT && $resteapayer <= 0) || ($object->type == Facture::TYPE_CREDIT_NOTE && $resteapayer >= 0)))
 				|| ($object->type == Facture::TYPE_DEPOSIT && $object->paye == 0 && $object->total_ttc > 0 && $resteapayer == 0 && $usercanissuepayment && empty($discount->id))
 			)
 			{
