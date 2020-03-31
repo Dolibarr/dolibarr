@@ -407,7 +407,7 @@ class Setup extends DolibarrApi
      *
      * @param object   $object    Object with label to translate
      * @param string   $lang      Code of the language the name of the object must be translated to
-     * @param string   $modprefix Prefix for translation
+     * @param string   $prefix Prefix for translation
      *
      * @return void
      */
