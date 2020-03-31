@@ -966,11 +966,23 @@ if (empty($reshook))
 
 								// FIXME Missing special_code  into addline and updateline methods
 								$object->special_code = $lines[$i]->special_code;
+								
+								// FIXME If currency different from main currency, take multicurrency price
+								if ($object->multicurrency_code != $conf->currency || $object->multicurrency_tx != 1)
+								{
+									$pu = 0;
+									$pu_currency = $lines[$i]->multicurrency_subprice;
+								}
+								else
+								{
+									$pu = $lines[$i]->subprice;
+									$pu_currency = 0;
+								}
 
 								// FIXME Missing $lines[$i]->ref_supplier and $lines[$i]->label into addline and updateline methods. They are filled when coming from order for example.
 								$result = $object->addline(
 									$desc,
-									$lines[$i]->subprice,
+									$pu,
 									$lines[$i]->tva_tx,
 									$lines[$i]->localtax1_tx,
 									$lines[$i]->localtax2_tx,
@@ -988,7 +1000,7 @@ if (empty($reshook))
 									$lines[$i]->array_options,
 									$lines[$i]->fk_unit,
 									$lines[$i]->id,
-									0,
+									$pu_currency,
 									$lines[$i]->ref_supplier,
 									$lines[$i]->special_code
 								);
