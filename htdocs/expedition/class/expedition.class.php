@@ -1471,7 +1471,7 @@ class Expedition extends CommonObject
 				$line->volume         	= $obj->volume;
 				$line->volume_units   	= $obj->volume_units;
 				$line->fk_unit 			= $obj->fk_unit;
-				
+
 				$line->pa_ht = $obj->pa_ht;
 
 				// Local taxes
