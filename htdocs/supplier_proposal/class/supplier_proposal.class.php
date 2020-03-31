@@ -1792,25 +1792,25 @@ class SupplierProposal extends CommonObject
      */
     public function updateOrCreatePriceFournisseur($user)
     {
-        $productsupplier = new ProductFournisseur($this->db);
+        global $conf;
 
         dol_syslog(get_class($this)."::updateOrCreatePriceFournisseur", LOG_DEBUG);
         foreach ($this->lines as $product)
         {
             if ($product->subprice <= 0) continue;
+            $productsupplier = new ProductFournisseur($this->db);
 
-            $idProductFourn = $productsupplier->find_min_price_product_fournisseur($product->fk_product, $product->qty);
-            $res = $productsupplier->fetch($idProductFourn);
+            $multicurrency_tx = 1;
+            $fk_multicurrency = 0;
 
-            if ($productsupplier->id) {
-                if ($productsupplier->fourn_qty == $product->qty) {
-                    $this->updatePriceFournisseur($productsupplier->product_fourn_price_id, $product, $user);
-                } else {
-                    $this->createPriceFournisseur($product, $user);
-                }
-            } else {
-                $this->createPriceFournisseur($product, $user);
-            }
+            if(empty($this->thirdparty)) $this->fetch_thirdparty();
+
+            $ref_fourn = $product->ref_fourn;
+            if(empty($ref_fourn)) $ref_fourn = $product->ref_supplier;
+            if(!empty($conf->multicurrency->enabled) && !empty($product->multicurrency_code)) list($fk_multicurrency, $multicurrency_tx) = MultiCurrency::getIdAndTxFromCode($this->db, $product->multicurrency_code);
+            $productsupplier->id = $product->fk_product;
+
+            $productsupplier->update_buyprice($product->qty, $product->subprice, $user, 'HT', $this->thirdparty, '', $ref_fourn, $product->tva_tx, 0, 0, 0, $product->info_bits,  '',  '',  array(),  '', $product->multicurrency_subprice,  'HT', $multicurrency_tx, $product->multicurrency_code,  '',  '',  '' );
         }
 
         return 1;

@@ -428,7 +428,7 @@ class ProductFournisseur extends Product
                 $sql .= " ".($newdefaultvatcode?"'".$this->db->escape($newdefaultvatcode)."'":"null").",";
                 $sql .= " " . $newnpr . ",";
                 $sql .= $conf->entity . ",";
-                $sql .= $delivery_time_days . ",";
+                $sql .= ($delivery_time_days != '' ? $delivery_time_days : 'null') . ",";
                 $sql .= (empty($supplier_reputation) ? 'NULL' : "'" . $this->db->escape($supplier_reputation) . "'") . ",";
                 $sql .= (empty($barcode) ? 'NULL' : "'" . $this->db->escape($barcode) . "'") . ",";
                 $sql .= (empty($fk_barcode_type) ? 'NULL' : "'" . $this->db->escape($fk_barcode_type) . "'");
@@ -447,7 +447,7 @@ class ProductFournisseur extends Product
                 if (! $error && empty($conf->global->PRODUCT_PRICE_SUPPLIER_NO_LOG)) {
                     // Add record into log table
 					// $this->product_fourn_price_id must be set
-                    $result = $this->logPrice($user, $now, $buyprice, $qty, $multicurrency_buyprice, $multicurrency_unitBuyPrice, $multicurrency_tx, $fk_multicurrenc, $multicurrency_code);
+                    $result = $this->logPrice($user, $now, $buyprice, $qty, $multicurrency_buyprice, $multicurrency_unitBuyPrice, $multicurrency_tx, $fk_multicurrency, $multicurrency_code);
                     if ($result < 0) {
                         $error++;
                     }
