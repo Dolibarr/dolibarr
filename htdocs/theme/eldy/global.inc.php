@@ -175,11 +175,15 @@ input, select {
 	margin-bottom:1px;
 	margin-top:1px;
 }
-#mainbody input.button {
+#mainbody input.button:not(.buttongen) {
 	background: var(--butactionbg);
     border-collapse: collapse;
     border: none;
 }
+#mainbody input.buttongen {
+	padding: 4px 4px;
+}
+
 input.button:focus {
 	border-bottom: 0;
 }
