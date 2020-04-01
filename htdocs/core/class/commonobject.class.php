@@ -5744,7 +5744,6 @@ abstract class CommonObject
 
 			foreach($new_array_languages as $key => $langcodearray) {	// $key = 'name', 'town', ...
 				foreach($langcodearray as $langcode => $value) {
-
 					$sql_del = "DELETE FROM ".MAIN_DB_PREFIX."object_lang";
 					$sql_del .= " WHERE fk_object = ".$this->id." AND property = '".$this->db->escape($key)."' AND type_object = '".$this->db->escape($table_element)."'";
 					$sql_del .= " AND lang = '".$this->db->escape($langcode)."'";
