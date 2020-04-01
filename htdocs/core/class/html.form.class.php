@@ -345,12 +345,12 @@ class Form
 
 			$valuetoshow = GETPOSTISSET('field-'.$object->element."-".$fieldname."-".$langcode) ? GETPOST('field-'.$object->element.'-'.$fieldname."-".$langcode, $check) : '';
 			if (empty($valuetoshow)) {
-				$object->fetchValueForAlternateLanguages();
+				$object->fetchValuesForExtraLanguages();
 				//var_dump($object->array_languages);
 				$valuetoshow = $object->array_languages[$fieldname][$langcode];
 			}
 
-			$s=picto_from_langcode($conf->global->PDF_USE_ALSO_LANGUAGE_CODE, 'class="pictoforlang"');
+			$s=picto_from_langcode($conf->global->PDF_USE_ALSO_LANGUAGE_CODE, 'class="pictoforlang paddingright"');
 			$result .= $s;
 			if ($typeofdata == 'textarea') {
 				$result .= '<textarea name="field-'.$object->element."-".$fieldname."-".$langcode.'" id="'.$fieldname."-".$langcode.'" class="'.$morecss.'" rows="'.ROWS_2.'" wrap="soft">';
