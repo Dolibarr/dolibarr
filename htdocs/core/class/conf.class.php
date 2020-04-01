@@ -177,7 +177,7 @@ class Conf
 					} elseif (isset($_ENV['DOLIBARR_' . $key])) {
 						$value=$_ENV['DOLIBARR_' . $key];
 					}
-					
+
 					//if (! defined("$key")) define("$key", $value);	// In some cases, the constant might be already forced (Example: SYSLOG_HANDLERS during install)
 					$this->global->$key = $value;
 
