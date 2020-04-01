@@ -96,9 +96,26 @@ print "</tr>\n";
 
 _printOnOff('INVOICE_USE_SITUATION', $langs->trans('UseSituationInvoices'));
 _printOnOff('INVOICE_USE_SITUATION_CREDIT_NOTE', $langs->trans('UseSituationInvoicesCreditNote'));
-_printOnOff('INVOICE_USE_RETAINED_WARRANTY', $langs->trans('Retainedwarranty'));
-_printOnOff('USE_RETAINED_WARRANTY_ONLY_FOR_SITUATION', $langs->trans('RetainedwarrantyOnlyForSituation'));
-_printOnOff('USE_RETAINED_WARRANTY_ONLY_FOR_SITUATION_FINAL', $langs->trans('RetainedwarrantyOnlyForSituationFinal'));
+//_printOnOff('INVOICE_USE_RETAINED_WARRANTY', $langs->trans('Retainedwarranty'));
+
+$confkey = 'INVOICE_USE_RETAINED_WARRANTY';
+
+$arrayAvailableType = array(
+	Facture::TYPE_SITUATION => $langs->trans("InvoiceSituation"),
+	Facture::TYPE_STANDARD.'+'.Facture::TYPE_SITUATION => $langs->trans("InvoiceSituation").' + '.$langs->trans("InvoiceStandard"),
+);
+$selected = array();
+$implodeglue = '+';
+if(!empty($conf->global->{$confkey}) && !is_array($conf->global->{$confkey})){
+	$selected = explode('+', $conf->global->{$confkey});
+}
+
+$curentInput = (empty($inputCount)?1:($inputCount+1));
+$formSelectInvoiceType = $form->selectarray('value'.  $curentInput, $arrayAvailableType, $selected, 1);
+_printInputFormPart($confkey, $langs->trans('AllowedInvoiceForRetainedWarranty'), '', array(), $formSelectInvoiceType);
+
+//_printOnOff('INVOICE_RETAINED_WARRANTY_LIMITED_TO_SITUATION', $langs->trans('RetainedwarrantyOnlyForSituation'));
+_printOnOff('INVOICE_RETAINED_WARRANTY_LIMITED_TO_FINAL_SITUATION', $langs->trans('RetainedwarrantyOnlyForSituationFinal'));
 
 $metas = array(
     'type' => 'number',
@@ -228,9 +245,13 @@ function _printInputFormPart($confkey, $title = false, $desc = '', $metas = arra
 
     print '<input type="hidden" name="action" value="setModuleOptions">';
     if ($type=='textarea') {
-        print '<textarea '.$metascompil.'  >'.dol_htmlentities($conf->global->{$confkey}).'</textarea>';
-    } else {
+		print '<textarea ' . $metascompil . '  >' . dol_htmlentities($conf->global->{$confkey}) . '</textarea>';
+	}elseif($type=='input'){
         print '<input '.$metascompil.'  />';
     }
+	else{
+		// custom
+		print $type;
+	}
     print '</td></tr>';
 }

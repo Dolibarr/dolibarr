@@ -140,10 +140,9 @@ $isdraft = (($object->statut == Facture::STATUS_DRAFT) ? 1 : 0);
 $result = restrictedArea($user, 'facture', $id, '', '', 'fk_soc', $fieldid, $isdraft);
 
 // retained warranty invoice available type
-if(empty($conf->global->USE_RETAINED_WARRANTY_ONLY_FOR_SITUATION)) {
-	$retainedWarrantyInvoiceAvailableType = array( Facture::TYPE_SITUATION, Facture::TYPE_STANDARD);
-} else {
-	$retainedWarrantyInvoiceAvailableType = array( Facture::TYPE_SITUATION );
+$retainedWarrantyInvoiceAvailableType=array();
+if(!empty($conf->global->INVOICE_USE_RETAINED_WARRANTY)) {
+	$retainedWarrantyInvoiceAvailableType = explode('+', $conf->global->INVOICE_USE_RETAINED_WARRANTY);
 }
 
 

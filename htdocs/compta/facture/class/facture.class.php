@@ -4750,15 +4750,15 @@ class Facture extends CommonInvoice
 	{
 		global $conf;
 
-		// TODO : add a flag on invoices to store this conf : USE_RETAINED_WARRANTY_ONLY_FOR_SITUATION_FINAL
+		// TODO : add a flag on invoices to store this conf : INVOICE_RETAINED_WARRANTY_LIMITED_TO_FINAL_SITUATION
 
-		// note : we dont need to test USE_RETAINED_WARRANTY_ONLY_FOR_SITUATION because if $this->retained_warranty is not empty it's because it was set when this conf was active
+		// note : we dont need to test INVOICE_USE_RETAINED_WARRANTY because if $this->retained_warranty is not empty it's because it was set when this conf was active
 
 		$displayWarranty = false;
 		if(!empty($this->retained_warranty)) {
 			$displayWarranty = true;
 
-			if ($this->type == Facture::TYPE_SITUATION && !empty($conf->global->USE_RETAINED_WARRANTY_ONLY_FOR_SITUATION_FINAL)) {
+			if ($this->type == Facture::TYPE_SITUATION && !empty($conf->global->INVOICE_RETAINED_WARRANTY_LIMITED_TO_FINAL_SITUATION)) {
 				// Check if this situation invoice is 100% for real
 				$displayWarranty = false;
 				if (!empty($this->situation_final)) {
@@ -4794,7 +4794,7 @@ class Facture extends CommonInvoice
 	    $retainedWarrantyAmount = 0;
 
 	    // Billed - retained warranty
-	    if($this->type == Facture::TYPE_SITUATION && !empty($conf->global->USE_RETAINED_WARRANTY_ONLY_FOR_SITUATION_FINAL))
+	    if($this->type == Facture::TYPE_SITUATION && !empty($conf->global->INVOICE_RETAINED_WARRANTY_LIMITED_TO_FINAL_SITUATION))
 	    {
 	        $displayWarranty = true;
 	        // Check if this situation invoice is 100% for real
