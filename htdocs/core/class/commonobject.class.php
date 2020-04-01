@@ -629,7 +629,7 @@ abstract class CommonObject
 	 */
 	public function getBannerAddress($htmlkey, $object)
 	{
-		global $conf, $langs, $form;
+		global $conf, $langs, $form, $extralanguages;
 
 		$countriesusingstate = array('AU', 'US', 'IN', 'GB', 'ES', 'UK', 'TR'); // See also option MAIN_FORCE_STATE_INTO_ADDRESS
 
@@ -673,18 +673,24 @@ abstract class CommonObject
 			$out .= dol_print_address($coords, 'address_'.$htmlkey.'_'.$this->id, $this->element, $this->id, 1, ', '); $outdone++;
 			$outdone++;
 
-			$useextralanguages = $conf->global->PDF_USE_ALSO_LANGUAGE_CODE;
-			if ($useextralanguages) {
-				$this->fetchValuesForExtraLanguages();
-				$extralanguages = array();
-				if (isset($this->array_languages['address'])) $extralanguages[] = reset(array_keys($this->array_languages['address']));
-				if (isset($this->array_languages['town'])) $extralanguages[] = reset(array_keys($this->array_languages['town']));
+			// List of extra languages
+			$arrayoflangcode = array();
+			if (! empty($conf->global->PDF_USE_ALSO_LANGUAGE_CODE)) $arrayoflangcode[] = $conf->global->PDF_USE_ALSO_LANGUAGE_CODE;
 
-				if (is_array($extralanguages) && count($extralanguages)) {
+			if (is_array($arrayoflangcode) && count($arrayoflangcode)) {
+				if (! is_object($extralanguages)) {
+					include_once DOL_DOCUMENT_ROOT.'/core/class/extralanguages.class.php';
+					$extralanguages = new ExtraLanguages($this->db);
+				}
+				$extralanguages->fetch_name_extralanguages('societe');
+
+				if (! empty($extralanguages->attributes['societe']['address']) || ! empty($extralanguages->attributes['societe']['town']))
+				{
+					$this->fetchValuesForExtraLanguages();
 					if (! is_object($form)) $form = new Form($this->db);
 					$htmltext = '';
 					// If there is extra languages
-					foreach($extralanguages as $key => $extralangcode) {
+					foreach($arrayoflangcode as $extralangcode) {
 						$s=picto_from_langcode($extralangcode, 'class="pictoforlang paddingright"');
 						$coords = $this->getFullAddress(1, ', ', $conf->global->MAIN_SHOW_REGION_IN_STATE_SELECT, $extralangcode);
 						$htmltext .= $s.dol_print_address($coords, 'address_'.$htmlkey.'_'.$this->id, $this->element, $this->id, 1, ', ');
