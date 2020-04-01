@@ -260,7 +260,7 @@ class FactureRec extends CommonInvoice
 					            $facsrc->lines[$i]->fetch_optionals($facsrc->lines[$i]->rowid);
 					            $objectline->array_options = $facsrc->lines[$i]->array_options;
 					        }
-					        
+
 					        $result = $objectline->insertExtraFields();
 					        if ($result < 0)
 					        {
