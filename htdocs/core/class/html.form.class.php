@@ -7359,6 +7359,23 @@ class Form
 		if ($object->element == 'societe')
 		{
 			$ret .= dol_htmlentities($object->name);
+
+			$useextralanguages = $conf->global->PDF_USE_ALSO_LANGUAGE_CODE;
+			if ($useextralanguages) {
+				$object->fetchValuesForExtraLanguages();
+				$extralanguages = array();
+				if (isset($object->array_languages['name'])) $extralanguages[] = reset(array_keys($object->array_languages['name']));
+
+				if (is_array($extralanguages) && count($extralanguages)) {
+					$htmltext = '';
+					// If there is extra languages
+					foreach($extralanguages as $extralangcode) {
+						$s=picto_from_langcode($extralangcode, 'class="pictoforlang paddingright"');
+						$htmltext .= $s.$object->array_languages['name'][$extralangcode];
+					}
+					$ret .= $this->textwithpicto('', $htmltext, -1, 'language', 'opacitymedium paddingleft');
+				}
+			}
 		}
 		elseif ($object->element == 'member')
 		{

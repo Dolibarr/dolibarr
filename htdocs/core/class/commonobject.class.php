@@ -593,9 +593,10 @@ abstract class CommonObject
 	 * 	@param		int			$withcountry		1=Add country into address string
 	 *  @param		string		$sep				Separator to use to build string
 	 *  @param		int		    $withregion			1=Add region into address string
+	 *  @param		string		$extralangcode		User extralanguages as value
 	 *	@return		string							Full address string
 	 */
-	public function getFullAddress($withcountry = 0, $sep = "\n", $withregion = 0)
+	public function getFullAddress($withcountry = 0, $sep = "\n", $withregion = 0, $extralangcode = '')
 	{
 		if ($withcountry && $this->country_id && (empty($this->country_code) || empty($this->country)))
 		{
@@ -615,7 +616,7 @@ abstract class CommonObject
 			$this->region       = $tmparray['region'];
         }
 
-		return dol_format_address($this, $withcountry, $sep);
+		return dol_format_address($this, $withcountry, $sep, '', 0, $extralangcode);
 	}
 
 
@@ -628,7 +629,7 @@ abstract class CommonObject
 	 */
 	public function getBannerAddress($htmlkey, $object)
 	{
-		global $conf, $langs;
+		global $conf, $langs, $form;
 
 		$countriesusingstate = array('AU', 'US', 'IN', 'GB', 'ES', 'UK', 'TR'); // See also option MAIN_FORCE_STATE_INTO_ADDRESS
 
@@ -657,6 +658,7 @@ abstract class CommonObject
 		{
 			if (!empty($conf->use_javascript_ajax))
 			{
+				// Add picto with tooltip on map
 				$namecoords = '';
 				if ($this->element == 'contact' && !empty($conf->global->MAIN_SHOW_COMPANY_NAME_IN_BANNER_ADDRESS))
 				{
@@ -670,6 +672,26 @@ abstract class CommonObject
 			}
 			$out .= dol_print_address($coords, 'address_'.$htmlkey.'_'.$this->id, $this->element, $this->id, 1, ', '); $outdone++;
 			$outdone++;
+
+			$useextralanguages = $conf->global->PDF_USE_ALSO_LANGUAGE_CODE;
+			if ($useextralanguages) {
+				$this->fetchValuesForExtraLanguages();
+				$extralanguages = array();
+				if (isset($this->array_languages['address'])) $extralanguages[] = reset(array_keys($this->array_languages['address']));
+				if (isset($this->array_languages['town'])) $extralanguages[] = reset(array_keys($this->array_languages['town']));
+
+				if (is_array($extralanguages) && count($extralanguages)) {
+					if (! is_object($form)) $form = new Form($this->db);
+					$htmltext = '';
+					// If there is extra languages
+					foreach($extralanguages as $key => $extralangcode) {
+						$s=picto_from_langcode($extralangcode, 'class="pictoforlang paddingright"');
+						$coords = $this->getFullAddress(1, ', ', $conf->global->MAIN_SHOW_REGION_IN_STATE_SELECT, $extralangcode);
+						$htmltext .= $s.dol_print_address($coords, 'address_'.$htmlkey.'_'.$this->id, $this->element, $this->id, 1, ', ');
+					}
+					$out .= $form->textwithpicto('', $htmltext, -1, 'language', 'opacitymedium paddingleft');
+				}
+			}
 		}
 
 		if (!in_array($this->country_code, $countriesusingstate) && empty($conf->global->MAIN_FORCE_STATE_INTO_ADDRESS)   // If MAIN_FORCE_STATE_INTO_ADDRESS is on, state is already returned previously with getFullAddress
