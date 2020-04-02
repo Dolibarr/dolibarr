@@ -307,7 +307,6 @@ if ($resql)
 		else
 		{
 			print $langs->trans("OthersNotLinkedToThirdParty");
-			$i--;
 		}
 		print '</td>';
 		print '<td class="right">';
