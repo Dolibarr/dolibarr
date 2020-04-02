@@ -221,6 +221,7 @@ DoliPartnersDesc=List of companies providing custom-developed modules or feature
 WebSiteDesc=External websites for more add-on (non-core) modules...
 DevelopYourModuleDesc=Some solutions to develop your own module...
 URL=URL
+RelativeURL=Relative URL
 BoxesAvailable=Widgets available
 BoxesActivated=Widgets activated
 ActivateOn=Activate on
