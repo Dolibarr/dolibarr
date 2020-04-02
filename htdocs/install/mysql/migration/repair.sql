@@ -165,6 +165,10 @@ DELETE FROM llx_product_batch WHERE qty = 0;
 UPDATE llx_product p SET p.stock= (SELECT SUM(ps.reel) FROM llx_product_stock ps WHERE ps.fk_product = p.rowid);
 
 
+-- Fix: delete orphelins in product_association
+delete from llx_product_association where fk_product_pere NOT IN (select rowid from llx_product);
+delete from llx_product_association where fk_product_fils NOT IN (select rowid from llx_product);
+
 -- Fix: delete category child with no category parent.
 drop table tmp_categorie;
 create table tmp_categorie as select * from llx_categorie; 
