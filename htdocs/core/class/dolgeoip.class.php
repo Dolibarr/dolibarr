@@ -45,7 +45,7 @@ class DolGeoIP
 	{
 		global $conf;
 
-		$geoipversion = '2';							// 'php', '1' or '2'
+		$geoipversion = '2';							// 'php', or '2'
 		if (! empty($conf->global->GEOIP_VERSION)) $geoipversion = $conf->global->GEOIP_VERSION;
 
 		if ($type == 'country')
@@ -53,9 +53,7 @@ class DolGeoIP
 		    // geoip may have been already included with PEAR
 			if ($geoipversion == '2' || ($geoipversion != 'php' && ! function_exists('geoip_country_code_by_name')))
 		    {
-		    	if ($geoipversion == '1') $res=include_once GEOIP_PATH.'geoip.inc';
-		    	//else $res=include_once DOL_DOCUMENT_ROOT.'/includes/geoip2/vendor/autoload.php';
-		    	else require_once DOL_DOCUMENT_ROOT.'/includes/geoip2/geoip2.phar';
+		    	require_once DOL_DOCUMENT_ROOT.'/includes/geoip2/geoip2.phar';
 		    }
 		}
 		elseif ($type == 'city')
@@ -63,9 +61,7 @@ class DolGeoIP
 		    // geoip may have been already included with PEAR
 			if ($geoipversion == '2' || ($geoipversion != 'php' && ! function_exists('geoip_country_code_by_name')))
 		    {
-		    	if ($geoipversion == '1') $res=include_once GEOIP_PATH.'geoipcity.inc';
-		    	//else $res=include_once DOL_DOCUMENT_ROOT.'/includes/geoip2/vendor/autoload.php';
-		    	else require_once DOL_DOCUMENT_ROOT.'/includes/geoip2/geoip2.phar';
+		    	require_once DOL_DOCUMENT_ROOT.'/includes/geoip2/geoip2.phar';
 		    }
 		}
 		else { print 'ErrorBadParameterInConstructor'; return 0; }
@@ -119,7 +115,7 @@ class DolGeoIP
 	{
 		global $conf;
 
-		$geoipversion = '2';							// 'php', '1' or '2'
+		$geoipversion = '2';							// 'php', or '2'
 		if (! empty($conf->global->GEOIP_VERSION)) $geoipversion = $conf->global->GEOIP_VERSION;
 
 		if (empty($this->gi))
@@ -184,7 +180,7 @@ class DolGeoIP
 	{
 		global $conf;
 
-		$geoipversion = '2';							// 'php', '1' or '2'
+		$geoipversion = '2';							// 'php', or '2'
 		if (! empty($conf->global->GEOIP_VERSION)) $geoipversion = $conf->global->GEOIP_VERSION;
 
 		if (empty($this->gi))
@@ -218,7 +214,7 @@ class DolGeoIP
     {
     	global $conf;
 
-    	$geoipversion = '2';							// 'php', '1' or '2'
+    	$geoipversion = '2';							// 'php', or '2'
     	if (! empty($conf->global->GEOIP_VERSION)) $geoipversion = $conf->global->GEOIP_VERSION;
 
     	if ($geoipversion == 'php')
