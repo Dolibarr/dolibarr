@@ -4,6 +4,7 @@
  * Copyright (C) 2005-2010 Regis Houssin        <regis.houssin@inodbox.com>
  * Copyright (C) 2016-2018 Ferran Marcet        <fmarcet@2byte.es>
  * Copyright (C) 2019      Nicolas ZABOURI      <info@inovea-conseil.com>
+ * Copyright (C) 2020      Thibault FOUCART     <support@ptibogxiv.net> 
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -28,6 +29,7 @@
 require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/expedition/class/expedition.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formcompany.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
@@ -64,6 +66,11 @@ $search_datedelivery_end = dol_mktime(23, 59, 59, GETPOST('search_datedelivery_e
 $search_datereceipt_start = dol_mktime(0, 0, 0, GETPOST('search_datereceipt_startmonth', 'int'), GETPOST('search_datereceipt_startday', 'int'), GETPOST('search_datereceipt_startyear', 'int'));
 $search_datereceipt_end = dol_mktime(23, 59, 59, GETPOST('search_datereceipt_endmonth', 'int'), GETPOST('search_datereceipt_endday', 'int'), GETPOST('search_datereceipt_endyear', 'int'));
 $sall = trim((GETPOST('search_all', 'alphanohtml') != '') ?GETPOST('search_all', 'alphanohtml') : GETPOST('sall', 'alphanohtml'));
+$socid = GETPOST('socid', 'int');
+$search_user = GETPOST('search_user', 'int');
+$search_sale = GETPOST('search_sale', 'int');
+$search_categ_cus = trim(GETPOST("search_categ_cus", 'int'));
+$search_product_category = GETPOST('search_product_category', 'int');
 $optioncss = GETPOST('optioncss', 'alpha');
 
 $limit = GETPOST('limit', 'int') ?GETPOST('limit', 'int') : $conf->liste_limit;
@@ -149,7 +156,11 @@ include DOL_DOCUMENT_ROOT.'/core/actions_changeselectedfields.inc.php';
 // Purge search criteria
 if (GETPOST('button_removefilter_x', 'alpha') || GETPOST('button_removefilter.x', 'alpha') || GETPOST('button_removefilter', 'alpha')) // All tests are required to be compatible with all browsers
 {
-	$search_ref_exp = '';
+	$search_categ = '';
+	$search_user = '';
+	$search_sale = '';
+	$search_product_category = '';
+  $search_ref_exp = '';
 	$search_ref_liv = '';
 	$search_ref_customer = '';
 	$search_company = '';
@@ -185,20 +196,27 @@ if (empty($reshook))
  * View
  */
 
+$now = dol_now();
+
 $form = new Form($db);
+$formother = new FormOther($db);
 $formfile = new FormFile($db);
 $companystatic = new Societe($db);
-$shipment = new Expedition($db);
 $formcompany = new FormCompany($db);
+$shipment = new Expedition($db);
 
 $helpurl = 'EN:Module_Shipments|FR:Module_Exp&eacute;ditions|ES:M&oacute;dulo_Expediciones';
 llxHeader('', $langs->trans('ListOfSendings'), $helpurl);
 
-$sql = "SELECT e.rowid, e.ref, e.ref_customer, e.date_expedition as date_expedition, e.date_delivery as date_livraison, l.date_delivery as date_reception, e.fk_statut, e.billed,";
-$sql .= ' s.rowid as socid, s.nom as name, s.town, s.zip, s.fk_pays, s.client, s.code_client, ';
+$sql = 'SELECT';
+if ($sall || $search_product_category > 0) $sql = 'SELECT DISTINCT';
+$sql .= " e.rowid, e.ref, e.ref_customer, e.date_expedition as date_expedition, e.date_delivery as date_livraison, l.date_delivery as date_reception, e.fk_statut, e.billed,";
+$sql .= " s.rowid as socid, s.nom as name, s.town, s.zip, s.fk_pays, s.client, s.code_client, ";
 $sql .= " typent.code as typent_code,";
 $sql .= " state.code_departement as state_code, state.nom as state_name,";
-$sql .= ' e.date_creation as date_creation, e.tms as date_update';
+$sql .= " e.date_creation as date_creation, e.tms as date_update,";
+$sql .= " u.login";
+if ($search_categ_cus) $sql .= ", cc.fk_categorie, cc.fk_soc";
 // Add fields from extrafields
 if (!empty($extrafields->attributes[$object->table_element]['label'])) {
 	foreach ($extrafields->attributes[$object->table_element]['label'] as $key => $val) $sql .= ($extrafields->attributes[$object->table_element]['type'][$key] != 'separate' ? ", ef.".$key.' as options_'.$key : '');
@@ -209,17 +227,30 @@ $reshook = $hookmanager->executeHooks('printFieldListSelect', $parameters); // N
 $sql .= $hookmanager->resPrint;
 $sql .= " FROM ".MAIN_DB_PREFIX."expedition as e";
 if (is_array($extrafields->attributes[$object->table_element]['label']) && count($extrafields->attributes[$object->table_element]['label'])) $sql .= " LEFT JOIN ".MAIN_DB_PREFIX.$object->table_element."_extrafields as ef on (e.rowid = ef.fk_object)";
+if ($sall || $search_product_category > 0) {
+$sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'expeditiondet as ed ON e.rowid=ed.fk_expedition';
+$sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'commandedet as pd ON pd.rowid=ed.fk_origin_line';
+}
+if ($search_product_category > 0) $sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'categorie_product as cp ON cp.fk_product=pd.fk_product';
 $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s ON s.rowid = e.fk_soc";
+if (!empty($search_categ_cus)) $sql .= ' LEFT JOIN '.MAIN_DB_PREFIX."categorie_societe as cc ON s.rowid = cc.fk_soc"; // We'll need this table joined to the select in order to filter by categ
 $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."c_country as country on (country.rowid = s.fk_pays)";
 $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."c_typent as typent on (typent.id = s.fk_typent)";
 $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."c_departements as state on (state.rowid = s.fk_departement)";
 $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."element_element as ee ON e.rowid = ee.fk_source AND ee.sourcetype = 'shipping' AND ee.targettype = 'delivery'";
 $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."livraison as l ON l.rowid = ee.fk_target";
-if (!$user->rights->societe->client->voir && !$socid)	// Internal user with no permission to see all
+$sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'user as u ON e.fk_user_author = u.rowid';
+
+// We'll need this table joined to the select in order to filter by sale
+if ($search_sale > 0 || (!$user->rights->societe->client->voir && !$socid)) $sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
+if ($search_user > 0)
 {
-	$sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
+	$sql .= ", ".MAIN_DB_PREFIX."element_contact as ec";
+	$sql .= ", ".MAIN_DB_PREFIX."c_type_contact as tc";
 }
 $sql .= " WHERE e.entity IN (".getEntity('expedition').")";
+if ($search_product_category > 0) $sql .= " AND cp.fk_categorie = ".$search_product_category;
+if ($socid > 0) $sql .= ' AND s.rowid = '.$socid;
 if (!$user->rights->societe->client->voir && !$socid)	// Internal user with no permission to see all
 {
 	$sql .= " AND e.fk_soc = sc.fk_soc";
@@ -239,6 +270,7 @@ if ($search_zip)   $sql .= natural_search("s.zip", $search_zip);
 if ($search_state) $sql .= natural_search("state.nom", $search_state);
 if ($search_country) $sql .= " AND s.fk_pays IN (".$search_country.')';
 if ($search_type_thirdparty) $sql .= " AND s.fk_typent IN (".$search_type_thirdparty.')';
+if ($search_sale > 0)                        $sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".$search_sale;
 if ($search_ref_exp) $sql .= natural_search('e.ref', $search_ref_exp);
 if ($search_ref_liv) $sql .= natural_search('l.ref', $search_ref_liv);
 if ($search_company) $sql .= natural_search('s.nom', $search_company);
@@ -247,6 +279,8 @@ if ($search_datedelivery_end)	$sql .= " AND e.date_delivery <= '".$db->idate($se
 if ($search_datereceipt_start)	$sql .= " AND l.date_delivery >= '".$db->idate($search_datereceipt_start)."'";
 if ($search_datereceipt_end)	$sql .= " AND l.date_delivery <= '".$db->idate($search_datereceipt_end)."'";
 if ($sall) $sql .= natural_search(array_keys($fieldstosearchall), $sall);
+if ($search_categ_cus > 0)                   $sql .= " AND cc.fk_categorie = ".$db->escape($search_categ_cus);
+if ($search_categ_cus == -2)                 $sql .= " AND cc.fk_categorie IS NULL";
 
 // Add where from extra fields
 include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_sql.tpl.php';
@@ -289,13 +323,18 @@ if ($resql)
 	if ($search_ref_exp)  $param .= "&amp;search_ref_exp=".urlencode($search_ref_exp);
 	if ($search_ref_liv)  $param .= "&amp;search_ref_liv=".urlencode($search_ref_liv);
 	if ($search_ref_customer) $param .= "&amp;search_ref_customer=".urlencode($search_ref_customer);
+	if ($search_user > 0) 			$param .= '&search_user='.urlencode($search_user);
+	if ($search_sale > 0) 			$param .= '&search_sale='.urlencode($search_sale);
 	if ($search_company)   $param .= "&amp;search_company=".urlencode($search_company);
 	if ($search_town)      $param .= '&search_town='.urlencode($search_town);
 	if ($search_zip)       $param .= '&search_zip='.urlencode($search_zip);
+  
 	if ($search_datedelivery_start)	$param .= '&search_datedelivery_start='.urlencode($search_datedelivery_start);
 	if ($search_datedelivery_end)	$param .= '&search_datedelivery_end='.urlencode($search_datedelivery_end);
 	if ($search_datereceipt_start)	$param .= '&search_datereceipt_start='.urlencode($search_datereceipt_start);
 	if ($search_datereceipt_end)	$param .= '&search_datereceipt_end='.urlencode($search_datereceipt_end);
+	if ($search_product_category != '') $param .= '&search_product_category='.urlencode($search_product_category);
+	if ($search_categ_cus > 0)      $param .= '&search_categ_cus='.urlencode($search_categ_cus);
 	if ($viewstatut != '') $param .= '&viewstatut='.urlencode($viewstatut);
 	if ($optioncss != '')  $param .= '&amp;optioncss='.urlencode($optioncss);
 	// Add $param from extra fields
@@ -303,6 +342,7 @@ if ($resql)
 
     $arrayofmassactions = array(
         'builddoc' => $langs->trans("PDFMerge"),
+        //'classifyclose'=>$langs->trans("Close"), TODO massive close shipment ie: when truck is charged
         'presend'  => $langs->trans("SendByMail"),
     );
     if (in_array($massaction, array('presend'))) $arrayofmassactions = array();
@@ -339,13 +379,51 @@ if ($resql)
 	}
 
 	$moreforfilter = '';
+
+ 	// If the user can view prospects other than his'
+ 	if ($user->rights->societe->client->voir || $socid)
+ 	{
+ 		$langs->load("commercial");
+		$moreforfilter .= '<div class="divsearchfield">';
+ 		$moreforfilter .= $langs->trans('ThirdPartiesOfSaleRepresentative').': ';
+		$moreforfilter .= $formother->select_salesrepresentatives($search_sale, 'search_sale', $user, 0, 1, 'maxwidth200');
+	 	$moreforfilter .= '</div>';
+ 	}
+	// If the user can view other users
+	if ($user->rights->user->user->lire)
+	{
+		$moreforfilter .= '<div class="divsearchfield">';
+		$moreforfilter .= $langs->trans('LinkedToSpecificUsers').': ';
+		$moreforfilter .= $form->select_dolusers($search_user, 'search_user', 1, '', 0, '', '', 0, 0, 0, '', 0, '', 'maxwidth200');
+	 	$moreforfilter .= '</div>';
+	}
+	// If the user can view prospects other than his'
+	if ($conf->categorie->enabled && ($user->rights->produit->lire || $user->rights->service->lire))
+	{
+		include_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
+		$moreforfilter .= '<div class="divsearchfield">';
+		$moreforfilter .= $langs->trans('IncludingProductWithTag').': ';
+		$cate_arbo = $form->select_all_categories(Categorie::TYPE_PRODUCT, null, 'parent', null, null, 1);
+		$moreforfilter .= $form->selectarray('search_product_category', $cate_arbo, $search_product_category, 1, 0, 0, '', 0, 0, 0, 0, 'maxwidth300', 1);
+		$moreforfilter .= '</div>';
+	}
+	if (!empty($conf->categorie->enabled))
+	{
+		require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
+		$moreforfilter .= '<div class="divsearchfield">';
+	 	$moreforfilter .= $langs->trans('CustomersProspectsCategoriesShort').': ';
+		$moreforfilter .= $formother->select_categories('customer', $search_categ_cus, 'search_categ_cus', 1);
+	 	$moreforfilter .= '</div>';
+	}
+	$parameters = array();
+	$reshook = $hookmanager->executeHooks('printFieldPreListTitle', $parameters); // Note that $action and $object may have been modified by hook
+	if (empty($reshook)) $moreforfilter .= $hookmanager->resPrint;
+	else $moreforfilter = $hookmanager->resPrint;
+
 	if (!empty($moreforfilter))
 	{
 		print '<div class="liste_titre liste_titre_bydiv centpercent">';
 		print $moreforfilter;
-		$parameters = array('type'=>$type);
-		$reshook = $hookmanager->executeHooks('printFieldPreListTitle', $parameters); // Note that $action and $object may have been modified by hook
-		print $hookmanager->resPrint;
 		print '</div>';
 	}
 
