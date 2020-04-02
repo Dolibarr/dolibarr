@@ -1857,7 +1857,7 @@ class SupplierProposal extends CommonObject
     public function createPriceFournisseur($product, $user)
     {
         global $conf;
-        
+
 		$price=price2num($product->subprice*$product->qty, 'MU');
         $qty=price2num($product->qty);
         $unitPrice = price2num($product->subprice, 'MU');
