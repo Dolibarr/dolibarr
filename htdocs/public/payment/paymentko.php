@@ -129,12 +129,10 @@ if (!empty($_SESSION['ipaddress']))      // To avoid to make action twice
     $ipaddress          = $_SESSION['ipaddress'];
     $errormessage       = $_SESSION['errormessage'];
 
-    // Appel des triggers
-    include_once DOL_DOCUMENT_ROOT.'/core/class/interfaces.class.php';
-    $interface = new Interfaces($db);
-    $result = $interface->run_triggers('PAYMENTONLINE_PAYMENT_KO', $object, $user, $langs, $conf);
-    if ($result < 0) { $error++; $errors = $interface->errors; }
-    // Fin appel triggers
+    // Call trigger
+    $result = $object->call_trigger('PAYMENTONLINE_PAYMENT_KO', $user);
+    if ($result < 0) $error++;
+    // End call triggers
 
     // Send an email
     $sendemail = '';

@@ -550,12 +550,10 @@ if (!$error && $massaction == 'confirm_presend')
 
 								if (!empty($triggername))
 								{
-									// Appel des triggers
-                                    include_once DOL_DOCUMENT_ROOT."/core/class/interfaces.class.php";
-									$interface = new Interfaces($db);
-                                    $result = $interface->run_triggers($triggername, $objectobj2, $user, $langs, $conf);
-									if ($result < 0) { $error++; $errors = $interface->errors; }
-									// Fin appel triggers
+									// Call trigger
+									$result = $objectobj2->call_trigger($triggername, $user);
+									if ($result < 0) $error++;
+									// End call triggers
 
 									if ($error)
 									{

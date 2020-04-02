@@ -1452,6 +1452,8 @@ class Product extends CommonObject
     {
         global $user, $langs, $conf;
 
+        $error = 0;
+
         $this->db->begin();
 
         if ($type == 'buy') {
@@ -1478,16 +1480,15 @@ class Product extends CommonObject
         $resql = $this->db->query($sql);
 
         if ($resql) {
-            // Call triggers
-            include_once DOL_DOCUMENT_ROOT.'/core/class/interfaces.class.php';
-            $interface = new Interfaces($this->db);
-            $result = $interface->run_triggers('PRODUCT_MODIFY', $this, $user, $langs, $conf);
-            if ($result < 0) {
-                $this->errors = $interface->errors;
+        	// Call trigger
+        	$result = $this->call_trigger('PRODUCT_MODIFY', $user);
+        	if ($result < 0) $error++;
+        	// End call triggers
+
+            if ($error) {
                 $this->db->rollback();
                 return -1;
             }
-            // End call triggers
 
             $this->$field = $value;
 

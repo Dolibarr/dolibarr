@@ -510,14 +510,11 @@ if (!defined('NOLOGIN'))
 
 				// Call trigger for the "security events" log
 				$user->trigger_mesg = 'ErrorBadValueForCode - login='.GETPOST("username", "alpha", 2);
-				// Call of triggers
-				include_once DOL_DOCUMENT_ROOT.'/core/class/interfaces.class.php';
-				$interface = new Interfaces($db);
-				$result = $interface->run_triggers('USER_LOGIN_FAILED', $user, $user, $langs, $conf);
-				if ($result < 0) {
-					$error++;
-				}
-				// End Call of triggers
+
+				// Call trigger
+				$result = $user->call_trigger('USER_LOGIN_FAILED', $user);
+				if ($result < 0) $error++;
+				// End call triggers
 
 				// Hooks on failed login
 				$action = '';
@@ -590,14 +587,11 @@ if (!defined('NOLOGIN'))
 
 				// Call trigger for the "security events" log
 				$user->trigger_mesg = $langs->trans("ErrorBadLoginPassword").' - login='.GETPOST("username", "alpha", 2);
-				// Call of triggers
-				include_once DOL_DOCUMENT_ROOT.'/core/class/interfaces.class.php';
-				$interface = new Interfaces($db);
-				$result = $interface->run_triggers('USER_LOGIN_FAILED', $user, $user, $langs, $conf, GETPOST("username", "alpha", 2));
-				if ($result < 0) {
-					$error++;
-				}
-				// End Call of triggers
+
+				// Call trigger
+				$result = $user->call_trigger('USER_LOGIN_FAILED', $user);
+				if ($result < 0) $error++;
+				// End call triggers
 
 				// Hooks on failed login
 				$action = '';
@@ -645,14 +639,11 @@ if (!defined('NOLOGIN'))
 				$user->trigger_mesg = $user->error;
 			}
 
-			// Call triggers for the "security events" log
-			include_once DOL_DOCUMENT_ROOT.'/core/class/interfaces.class.php';
-			$interface = new Interfaces($db);
-			$result = $interface->run_triggers('USER_LOGIN_FAILED', $user, $user, $langs, $conf);
-			if ($result < 0) {
-				$error++;
-			}
+			// Call trigger
+			$result = $user->call_trigger('USER_LOGIN_FAILED', $user);
+			if ($result < 0) $error++;
 			// End call triggers
+
 
 			// Hooks on failed login
 			$action = '';
@@ -702,13 +693,9 @@ if (!defined('NOLOGIN'))
 				$user->trigger_mesg = $user->error;
 			}
 
-			// Call triggers for the "security events" log
-			include_once DOL_DOCUMENT_ROOT.'/core/class/interfaces.class.php';
-			$interface = new Interfaces($db);
-			$result = $interface->run_triggers('USER_LOGIN_FAILED', $user, $user, $langs, $conf);
-			if ($result < 0) {
-				$error++;
-			}
+			// Call trigger
+			$result = $user->call_trigger('USER_LOGIN_FAILED', $user);
+			if ($result < 0) $error++;
 			// End call triggers
 
 			// Hooks on failed login
@@ -809,13 +796,10 @@ if (!defined('NOLOGIN'))
 
 		// Call triggers for the "security events" log
 		$user->trigger_mesg = $loginfo;
-		// Call triggers
-		include_once DOL_DOCUMENT_ROOT.'/core/class/interfaces.class.php';
-		$interface = new Interfaces($db);
-		$result = $interface->run_triggers('USER_LOGIN', $user, $user, $langs, $conf);
-		if ($result < 0) {
-			$error++;
-		}
+
+		// Call trigger
+		$result = $user->call_trigger('USER_LOGIN', $user);
+		if ($result < 0) $error++;
 		// End call triggers
 
 		// Hooks on successfull login

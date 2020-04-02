@@ -301,22 +301,6 @@ class PaymentExpenseReport extends CommonObject
 		$resql = $this->db->query($sql);
 		if (! $resql) { $error++; $this->errors[]="Error ".$this->db->lasterror(); }
 
-		if (! $error)
-		{
-			if (! $notrigger)
-			{
-				// Uncomment this and change MYOBJECT to your own tag if you
-				// want this action call a trigger.
-
-				//// Call triggers
-				//include_once DOL_DOCUMENT_ROOT . '/core/class/interfaces.class.php';
-				//$interface=new Interfaces($this->db);
-				//$result=$interface->run_triggers('MYOBJECT_MODIFY',$this,$user,$langs,$conf);
-				//if ($result < 0) { $error++; $this->errors=$interface->errors; }
-				//// End call triggers
-			}
-		}
-
 		// Commit or rollback
 		if ($error)
 		{
@@ -373,22 +357,6 @@ class PaymentExpenseReport extends CommonObject
                 $this->errors[]="Error ".$this->db->lasterror();
             }
 		}
-
-		//if (! $error)
-		//{
-		//	if (! $notrigger)
-		//	{
-				// Uncomment this and change MYOBJECT to your own tag if you
-				// want this action call a trigger.
-
-				//// Call triggers
-				//include_once DOL_DOCUMENT_ROOT . '/core/class/interfaces.class.php';
-				//$interface=new Interfaces($this->db);
-				//$result=$interface->run_triggers('MYOBJECT_DELETE',$this,$user,$langs,$conf);
-				//if ($result < 0) { $error++; $this->errors=$interface->errors; }
-				//// End call triggers
-		//	}
-		//}
 
 		// Commit or rollback
 		if ($error)

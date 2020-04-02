@@ -41,11 +41,9 @@ if (!empty($_SESSION["dol_authmode"]) && ($_SESSION["dol_authmode"] == 'forceuse
 
 global $conf, $langs, $user;
 
-// Call triggers for the "security events" log
-include_once DOL_DOCUMENT_ROOT.'/core/class/interfaces.class.php';
-$interface = new Interfaces($db);
-$result = $interface->run_triggers('USER_LOGOUT', $user, $user, $langs, $conf);
-if ($result < 0) { $error++; }
+// Call trigger
+$result = $user->call_trigger('USER_LOGOUT', $user);
+if ($result < 0) $error++;
 // End call triggers
 
 // Hooks on logout

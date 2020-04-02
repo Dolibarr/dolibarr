@@ -295,17 +295,15 @@ class AccountingAccount extends CommonObject
 		if (! $error) {
 			$this->id = $this->db->last_insert_id(MAIN_DB_PREFIX . "accounting_account");
 
-			// if (! $notrigger) {
 			// Uncomment this and change MYOBJECT to your own tag if you
-			// want this action calls a trigger.
+			// want this action to call a trigger.
+			//if (! $error && ! $notrigger) {
 
 			// // Call triggers
-			// include_once DOL_DOCUMENT_ROOT . '/core/class/interfaces.class.php';
-			// $interface=new Interfaces($this->db);
-			// $result=$interface->run_triggers('MYOBJECT_CREATE',$this,$user,$langs,$conf);
-			// if ($result < 0) { $error++; $this->errors=$interface->errors; }
+			// $result=$this->call_trigger('MYOBJECT_CREATE',$user);
+			// if ($result < 0) $error++;
 			// // End call triggers
-			// }
+			//}
 		}
 
 		// Commit or rollback
@@ -410,20 +408,6 @@ class AccountingAccount extends CommonObject
 
 		if ($result > 0) {
 			$this->db->begin();
-
-			// if (! $error) {
-			// if (! $notrigger) {
-			// Uncomment this and change MYOBJECT to your own tag if you
-			// want this action calls a trigger.
-
-			// // Call triggers
-			// include_once DOL_DOCUMENT_ROOT . '/core/class/interfaces.class.php';
-			// $interface=new Interfaces($this->db);
-			// $result=$interface->run_triggers('ACCOUNTANCY_ACCOUNT_DELETE',$this,$user,$langs,$conf);
-			// if ($result < 0) { $error++; $this->errors=$interface->errors; }
-			// // End call triggers
-			// }
-			// }
 
 			if (! $error) {
 				$sql = "DELETE FROM " . MAIN_DB_PREFIX . "accounting_account";
