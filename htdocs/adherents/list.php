@@ -255,6 +255,7 @@ $sql = "SELECT d.rowid, d.login, d.lastname, d.firstname, d.gender, d.societe as
 $sql .= " d.civility, d.datefin, d.address, d.zip, d.town, d.state_id, d.country,";
 $sql .= " d.email, d.phone, d.phone_perso, d.phone_mobile, d.skype, d.birth, d.public, d.photo,";
 $sql .= " d.fk_adherent_type as type_id, d.morphy, d.statut, d.datec as date_creation, d.tms as date_update,";
+$sql .= " d.note_private, d.note_public,";
 $sql .= " s.nom,";
 $sql .= " t.libelle as type, t.subscription,";
 $sql .= " state.code_departement as state_code, state.nom as state_name,";
@@ -686,6 +687,8 @@ while ($i < min($num, $limit))
 	$memberstatic->socid = $obj->fk_soc;
 	$memberstatic->photo = $obj->photo;
 	$memberstatic->morphy = $obj->morphy;
+	$memberstatic->note_public = $obj->note_public;
+	$memberstatic->note_private = $obj->note_private;
 
 	if (!empty($obj->fk_soc)) {
 		$memberstatic->fetch_thirdparty();
@@ -707,7 +710,7 @@ while ($i < min($num, $limit))
 	if (!empty($arrayfields['d.ref']['checked']))
 	{
 		print "<td>";
-		print $memberstatic->getNomUrl(-1, 0, 'card', 'ref');
+		print $memberstatic->getNomUrl(-1, 0, 'card', 'ref', '', -1, 0, 1);
 		print "</td>\n";
 		if (!$i) $totalarray['nbfield']++;
 	}
