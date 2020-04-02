@@ -251,6 +251,23 @@ class FactureRec extends CommonInvoice
 					{
 						$error++;
 					}
+					else {
+					    $objectline = new FactureLigneRec($this->db);
+					    if ($objectline->fetch($result_insert))
+					    {
+					        // Extrafields
+					        if (empty($conf->global->MAIN_EXTRAFIELDS_DISABLED) && method_exists($facsrc->lines[$i], 'fetch_optionals')) {
+					            $facsrc->lines[$i]->fetch_optionals($facsrc->lines[$i]->rowid);
+					            $objectline->array_options = $facsrc->lines[$i]->array_options;
+					        }
+
+					        $result = $objectline->insertExtraFields();
+					        if ($result < 0)
+					        {
+					            $error++;
+					        }
+					    }
+					}
 				}
 
 				if (!empty($this->linkedObjectsIds) && empty($this->linked_objects))	// To use new linkedObjectsIds instead of old linked_objects
