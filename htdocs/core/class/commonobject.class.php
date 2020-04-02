@@ -2939,12 +2939,13 @@ abstract class CommonObject
 	 *  @param  string	$roundingadjust    	'none'=Do nothing, 'auto'=Use default method (MAIN_ROUNDOFTOTAL_NOT_TOTALOFROUND if defined, or '0'), '0'=Force mode total of rounding, '1'=Force mode rounding of total
 	 *  @param	int		$nodatabaseupdate	1=Do not update database. Update only properties of object.
 	 *  @param	Societe	$seller				If roundingadjust is '0' or '1' or maybe 'auto', it means we recalculate total for lines before calculating total for object and for this, we need seller object.
+	 *  @param	boolean $notrigger          false if you want triggers to be called, true if you don't
 	 *	@return	int    			           	<0 if KO, >0 if OK
 	 */
-	public function update_price($exclspec = 0, $roundingadjust = 'none', $nodatabaseupdate = 0, $seller = null)
+	public function update_price($exclspec = 0, $roundingadjust = 'none', $nodatabaseupdate = 0, $seller = null, $notrigger = false)
 	{
         // phpcs:enable
-		global $conf, $hookmanager, $action;
+		global $conf, $hookmanager, $action, $user;
 
 		// Some external module want no update price after a trigger because they have another method to calculate the total (ex: with an extrafield)
 		$MODULE = "";
@@ -3016,6 +3017,7 @@ abstract class CommonObject
 		$resql = $this->db->query($sql);
 		if ($resql)
 		{
+			$this->db->begin();
 			$this->total_ht  = 0;
 			$this->total_tva = 0;
 			$this->total_localtax1 = 0;
@@ -3153,12 +3155,19 @@ abstract class CommonObject
 				}
 			}
 
-			if (!$error)
+			if (!$error && !$notrigger)
 			{
-				return 1;
+				$result = $this->call_trigger('AFTER_UPDATE_PRICE', $user);
+				if ($result < 0) {
+					$error++;
+				}
 			}
-			else
-			{
+
+			if (!$error) {
+				$this->db->commit();
+				return 1;
+			} else {
+				$this->db->rollback();
 				return -1;
 			}
 		}
