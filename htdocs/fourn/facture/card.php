@@ -966,7 +966,7 @@ if (empty($reshook))
 
 								// FIXME Missing special_code  into addline and updateline methods
 								$object->special_code = $lines[$i]->special_code;
-								
+
 								// FIXME If currency different from main currency, take multicurrency price
 								if ($object->multicurrency_code != $conf->currency || $object->multicurrency_tx != 1)
 								{
