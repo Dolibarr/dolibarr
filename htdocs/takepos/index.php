@@ -875,7 +875,7 @@ if ($conf->global->TAKEPOS_BAR_RESTAURANT)
 	{
 	    if ($conf->global->TAKEPOS_PRINT_METHOD == "takeposconnector") {
 			$menus[$r++] = array('title'=>'<span class="fa fa-receipt paddingrightonly"></span><div class="trunc">'.$langs->trans("Receipt").'</div>', 'action'=>'TakeposPrinting(placeid);');
-		} else if ($conf->global->TAKEPOS_PRINT_METHOD == "receiptprinter") {
+		} elseif ($conf->global->TAKEPOS_PRINT_METHOD == "receiptprinter") {
 			$menus[$r++] = array('title'=>'<span class="fa fa-receipt paddingrightonly"></span><div class="trunc">'.$langs->trans("Receipt").'</div>', 'action'=>'DolibarrTakeposPrinting(placeid);');
 		} else {
 			$menus[$r++] = array('title'=>'<span class="fa fa-receipt paddingrightonly"></span><div class="trunc">'.$langs->trans("Receipt").'</div>', 'action'=>'Print(placeid);');
