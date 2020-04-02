@@ -507,7 +507,7 @@ class AccountingAccount extends CommonObject
 		}
 
 		$label_link = length_accountg($this->account_number);
-		if ($withlabel) $label_link .= ' - ' . $labeltoshow;
+		if ($withlabel) $label_link .= ' - ' . ($nourl ? '<span class="opacitymedium">' : '').$labeltoshow.($nourl ? '</span>' : '');
 
 		if ($withpicto) $result.=($linkstart.img_object(($notooltip?'':$label), $picto, ($notooltip?'':'class="classfortooltip"'), 0, 0, $notooltip?0:1).$linkend);
 		if ($withpicto && $withpicto != 2) $result .= ' ';

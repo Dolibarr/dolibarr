@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2005       Matthieu Valleton	<mv@seeschloss.org>
- * Copyright (C) 2006-2015  Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2006-2020  Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2007       Patrick Raguin		<patrick.raguin@gmail.com>
  * Copyright (C) 2005-2012  Regis Houssin		<regis.houssin@inodbox.com>
  * Copyright (C) 2015       Raphaël Doursenaud  <rdoursenaud@gpcsolutions.fr>
@@ -678,7 +678,7 @@ if ($type == Categorie::TYPE_MEMBER)
 
 		print '<br>';
 		$param = '&limit='.$limit.'&id='.$id.'&type='.$type; $num = count($prods); $nbtotalofrecords = ''; $newcardbutton = '';
-		print_barre_liste($langs->trans("Member"), $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, $massactionbutton, $num, $nbtotalofrecords, 'adherents', 0, $newcardbutton, '', $limit);
+		print_barre_liste($langs->trans("Member"), $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, $massactionbutton, $num, $nbtotalofrecords, 'members', 0, $newcardbutton, '', $limit);
 
 		print "<table class='noborder' width='100%'>\n";
 		print '<tr class="liste_titre"><td colspan="4">'.$langs->trans("Name").'</td></tr>'."\n";
@@ -807,7 +807,7 @@ if ($type == Categorie::TYPE_ACCOUNT)
 
     	print '<br>';
     	$param = '&limit='.$limit.'&id='.$id.'&type='.$type; $num = count($accounts); $nbtotalofrecords = ''; $newcardbutton = '';
-    	print_barre_liste($langs->trans("Account"), $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, $massactionbutton, $num, $nbtotalofrecords, 'account', 0, $newcardbutton, '', $limit);
+    	print_barre_liste($langs->trans("Account"), $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, $massactionbutton, $num, $nbtotalofrecords, 'bank', 0, $newcardbutton, '', $limit);
 
     	print "<table class='noborder' width='100%'>\n";
         print '<tr class="liste_titre"><td colspan="4">'.$langs->trans("Ref").'</td></tr>'."\n";
@@ -872,7 +872,7 @@ if ($type == Categorie::TYPE_PROJECT)
 		print '<br>';
 		$param = '&limit='.$limit.'&id='.$id.'&type='.$type; $num = count($objects); $nbtotalofrecords = ''; $newcardbutton = '';
 
-		print_barre_liste($langs->trans("Project"), $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, $massactionbutton, $num, $nbtotalofrecords, 'projects', 0, $newcardbutton, '', $limit);
+		print_barre_liste($langs->trans("Project"), $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, $massactionbutton, $num, $nbtotalofrecords, 'project', 0, $newcardbutton, '', $limit);
 
 		print "<table class='noborder' width='100%'>\n";
 		print '<tr class="liste_titre"><td colspan="4">'.$langs->trans("Ref").'</td></tr>'."\n";
