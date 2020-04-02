@@ -370,6 +370,13 @@ if (is_array($formmail->lines_model)) {
 print $form->selectarray('TAKEPOS_EMAIL_TEMPLATE_INVOICE', $arrayofmessagename, $conf->global->TAKEPOS_EMAIL_TEMPLATE_INVOICE, 'None', 1, 0, '', 0, 0, 0, '', '', 1);
 print "</td></tr>\n";
 
+// Control cash box at opening pos
+print '<tr class="oddeven"><td>';
+print $langs->trans('ControlCashOpening');
+print '<td colspan="2">';
+print ajax_constantonoff("TAKEPOS_CONTROL_CASH_OPENING", array(), $conf->entity, 0, 0, 1, 0);
+print "</td></tr>\n";
+
 // Numbering module
 //print '<tr class="oddeven"><td>';
 //print $langs->trans("BillsNumberingModule");
