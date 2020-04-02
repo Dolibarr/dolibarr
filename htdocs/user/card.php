@@ -46,6 +46,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/usergroups.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formcompany.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/security2.lib.php';
 if (!empty($conf->ldap->enabled)) require_once DOL_DOCUMENT_ROOT.'/core/class/ldap.class.php';
 if (!empty($conf->adherent->enabled)) require_once DOL_DOCUMENT_ROOT.'/adherents/class/adherent.class.php';
 if (!empty($conf->categorie->enabled)) require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
@@ -858,7 +859,6 @@ if ($action == 'create' || $action == 'adduserldap')
 	$generated_password = '';
 	if (empty($ldap_sid))    // ldap_sid is for activedirectory
 	{
-		require_once DOL_DOCUMENT_ROOT.'/core/lib/security2.lib.php';
 		$generated_password = getRandomPassword(false);
 	}
 	$password=(GETPOSTISSET('password')?GETPOST('password'):$generated_password);
@@ -901,19 +901,16 @@ if ($action == 'create' || $action == 'adduserldap')
 	if (!empty($conf->api->enabled))
 	{
 		// API key
-		$generated_api_key = '';
-		require_once DOL_DOCUMENT_ROOT.'/core/lib/security2.lib.php';
-			$generated_password = getRandomPassword(false);
+		//$generated_password = getRandomPassword(false);
 		print '<tr><td>'.$langs->trans("ApiKey").'</td>';
 		print '<td>';
-		print '<input size="30" maxsize="32" type="text" id="api_key" name="api_key" value="'.$api_key.'" autocomplete="off">';
+		print '<input size="30" maxsize="32" type="text" id="api_key" name="api_key" value="'.GETPOST('api_key', 'alphanohtml').'" autocomplete="off">';
 		if (!empty($conf->use_javascript_ajax))
 			print '&nbsp;'.img_picto($langs->trans('Generate'), 'refresh', 'id="generate_api_key" class="linkobject"');
 		print '</td></tr>';
 	}
 	else
 	{
-		require_once DOL_DOCUMENT_ROOT.'/core/lib/security2.lib.php';
 		// PARTIAL WORKAROUND
 		$generated_fake_api_key = getRandomPassword(false);
 		print '<input type="hidden" name="api_key" value="'.$generated_fake_api_key.'">';
