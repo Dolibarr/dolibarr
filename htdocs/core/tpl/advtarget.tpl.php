@@ -263,7 +263,8 @@ if (!empty($conf->categorie->enabled) && $user->rights->categorie->lire) {
 
 // Standard Extrafield feature
 if (empty($conf->global->MAIN_EXTRAFIELDS_DISABLED)) {
-	$elementtype = Societe::$table_element;
+	$socstatic=new Societe($db);
+	$elementtype = $socstatic->table_element;
 	// fetch optionals attributes and labels
 	dol_include_once('/core/class/extrafields.class.php');
 	$extrafields = new ExtraFields($db);

@@ -52,6 +52,7 @@ $search_lastname = GETPOST("search_lastname", 'alpha');
 $search_firstname = GETPOST("search_firstname", 'alpha');
 $search_gender = GETPOST("search_gender", 'alpha');
 $search_civility = GETPOST("search_civility", 'alpha');
+$search_company = GETPOST('search_company', 'alphanohtml');
 $search_login = GETPOST("search_login", 'alpha');
 $search_address = GETPOST("search_address", 'alpha');
 $search_zip = GETPOST("search_zip", 'alpha');
@@ -254,6 +255,7 @@ $sql = "SELECT d.rowid, d.login, d.lastname, d.firstname, d.gender, d.societe as
 $sql .= " d.civility, d.datefin, d.address, d.zip, d.town, d.state_id, d.country,";
 $sql .= " d.email, d.phone, d.phone_perso, d.phone_mobile, d.skype, d.birth, d.public, d.photo,";
 $sql .= " d.fk_adherent_type as type_id, d.morphy, d.statut, d.datec as date_creation, d.tms as date_update,";
+$sql .= " s.nom,";
 $sql .= " t.libelle as type, t.subscription,";
 $sql .= " state.code_departement as state_code, state.nom as state_name,";
 // Add fields from extrafields
@@ -269,6 +271,7 @@ if (is_array($extrafields->attributes[$object->table_element]['label']) && count
 if (!empty($search_categ) || !empty($catid)) $sql .= ' LEFT JOIN '.MAIN_DB_PREFIX."categorie_member as cm ON d.rowid = cm.fk_member"; // We need this table joined to the select in order to filter by categ
 $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."c_country as country on (country.rowid = d.country)";
 $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."c_departements as state on (state.rowid = d.state_id)";
+$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s on (s.rowid = d.fk_soc)";
 $sql .= ", ".MAIN_DB_PREFIX."adherent_type as t";
 $sql .= " WHERE d.fk_adherent_type = t.rowid ";
 if ($catid > 0)    $sql .= " AND cm.fk_categorie = ".$db->escape($catid);
@@ -289,6 +292,7 @@ if ($search_firstname) $sql .= natural_search("d.firstname", $search_firstname);
 if ($search_lastname) $sql .= natural_search(array("d.firstname", "d.lastname", "d.societe"), $search_lastname);
 if ($search_gender != '' && $search_gender != '-1') $sql .= " AND d.gender = '".$search_gender."'";
 if ($search_login) $sql .= natural_search("d.login", $search_login);
+if ($search_company) $sql .= natural_search("s.nom", $search_company);
 if ($search_email) $sql .= natural_search("d.email", $search_email);
 if ($search_town)     $sql .= natural_search("d.town", $search_town);
 if ($search_zip)      $sql .= natural_search("d.zip", $search_zip);

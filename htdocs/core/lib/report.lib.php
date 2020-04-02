@@ -53,16 +53,17 @@ function report_header($reportname, $notused, $period, $periodlink, $description
 	$head[$h][1] = $langs->trans("Report");
 	$head[$h][2] = 'report';
 
-	print '<form method="POST" action="'.$_SERVER["PHP_SELF"].$varlink.'">';
+	print '<form method="POST" action="'.$_SERVER["PHP_SELF"].$varlink.'">'."\n";
+	print '<input type="hidden" name="token" value="'.newToken().'">'."\n";
 
 	dol_fiche_head($head, 'report');
 
 	foreach($moreparam as $key => $value)
 	{
-		 print '<input type="hidden" name="'.$key.'" value="'.$value.'">';
+		 print '<input type="hidden" name="'.$key.'" value="'.$value.'">'."\n";
 	}
 
-	print '<table class="border tableforfield centpercent">';
+	print '<table class="border tableforfield centpercent">'."\n";
 
 	$variante = ($periodlink || $exportlink);
 
@@ -73,7 +74,7 @@ function report_header($reportname, $notused, $period, $periodlink, $description
 	print $reportname;
 	print '</td>';
 	if ($variante) print '<td></td>';
-	print '</tr>';
+	print '</tr>'."\n";
 
 	// Calculation mode
 	if ($calcmode)
@@ -84,7 +85,7 @@ function report_header($reportname, $notused, $period, $periodlink, $description
 		print $calcmode;
 		if ($variante) print '<td></td>';
 		print '</td>';
-		print '</tr>';
+		print '</tr>'."\n";
 	}
 
 	// Ligne de la periode d'analyse du rapport
@@ -94,14 +95,14 @@ function report_header($reportname, $notused, $period, $periodlink, $description
 	if ($period) print $period;
 	if ($variante) print '<td class="nowraponall">'.$periodlink.'</td>';
 	print '</td>';
-	print '</tr>';
+	print '</tr>'."\n";
 
 	// Ligne de description
 	print '<tr>';
 	print '<td>'.$langs->trans("ReportDescription").'</td>';
 	print '<td>'.$description.'</td>';
 	if ($variante) print '<td></td>';
-	print '</tr>';
+	print '</tr>'."\n";
 
 	// Ligne d'export
 	print '<tr>';
@@ -110,9 +111,9 @@ function report_header($reportname, $notused, $period, $periodlink, $description
 	print dol_print_date($builddate, 'dayhour');
 	print '</td>';
 	if ($variante) print '<td>'.($exportlink ? $langs->trans("Export").': '.$exportlink : '').'</td>';
-	print '</tr>';
+	print '</tr>'."\n";
 
-	print '</table>';
+	print '</table>'."\n";
 
 	dol_fiche_end();
 
