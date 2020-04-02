@@ -593,9 +593,10 @@ abstract class CommonObject
 	 * 	@param		int			$withcountry		1=Add country into address string
 	 *  @param		string		$sep				Separator to use to build string
 	 *  @param		int		    $withregion			1=Add region into address string
+	 *  @param		string		$extralangcode		User extralanguages as value
 	 *	@return		string							Full address string
 	 */
-	public function getFullAddress($withcountry = 0, $sep = "\n", $withregion = 0)
+	public function getFullAddress($withcountry = 0, $sep = "\n", $withregion = 0, $extralangcode = '')
 	{
 		if ($withcountry && $this->country_id && (empty($this->country_code) || empty($this->country)))
 		{
@@ -615,7 +616,7 @@ abstract class CommonObject
 			$this->region       = $tmparray['region'];
         }
 
-		return dol_format_address($this, $withcountry, $sep);
+		return dol_format_address($this, $withcountry, $sep, '', 0, $extralangcode);
 	}
 
 
@@ -628,7 +629,7 @@ abstract class CommonObject
 	 */
 	public function getBannerAddress($htmlkey, $object)
 	{
-		global $conf, $langs;
+		global $conf, $langs, $form, $extralanguages;
 
 		$countriesusingstate = array('AU', 'US', 'IN', 'GB', 'ES', 'UK', 'TR'); // See also option MAIN_FORCE_STATE_INTO_ADDRESS
 
@@ -657,6 +658,7 @@ abstract class CommonObject
 		{
 			if (!empty($conf->use_javascript_ajax))
 			{
+				// Add picto with tooltip on map
 				$namecoords = '';
 				if ($this->element == 'contact' && !empty($conf->global->MAIN_SHOW_COMPANY_NAME_IN_BANNER_ADDRESS))
 				{
@@ -670,6 +672,32 @@ abstract class CommonObject
 			}
 			$out .= dol_print_address($coords, 'address_'.$htmlkey.'_'.$this->id, $this->element, $this->id, 1, ', '); $outdone++;
 			$outdone++;
+
+			// List of extra languages
+			$arrayoflangcode = array();
+			if (! empty($conf->global->PDF_USE_ALSO_LANGUAGE_CODE)) $arrayoflangcode[] = $conf->global->PDF_USE_ALSO_LANGUAGE_CODE;
+
+			if (is_array($arrayoflangcode) && count($arrayoflangcode)) {
+				if (! is_object($extralanguages)) {
+					include_once DOL_DOCUMENT_ROOT.'/core/class/extralanguages.class.php';
+					$extralanguages = new ExtraLanguages($this->db);
+				}
+				$extralanguages->fetch_name_extralanguages('societe');
+
+				if (! empty($extralanguages->attributes['societe']['address']) || ! empty($extralanguages->attributes['societe']['town']))
+				{
+					$this->fetchValuesForExtraLanguages();
+					if (! is_object($form)) $form = new Form($this->db);
+					$htmltext = '';
+					// If there is extra languages
+					foreach($arrayoflangcode as $extralangcode) {
+						$s=picto_from_langcode($extralangcode, 'class="pictoforlang paddingright"');
+						$coords = $this->getFullAddress(1, ', ', $conf->global->MAIN_SHOW_REGION_IN_STATE_SELECT, $extralangcode);
+						$htmltext .= $s.dol_print_address($coords, 'address_'.$htmlkey.'_'.$this->id, $this->element, $this->id, 1, ', ');
+					}
+					$out .= $form->textwithpicto('', $htmltext, -1, 'language', 'opacitymedium paddingleft');
+				}
+			}
 		}
 
 		if (!in_array($this->country_code, $countriesusingstate) && empty($conf->global->MAIN_FORCE_STATE_INTO_ADDRESS)   // If MAIN_FORCE_STATE_INTO_ADDRESS is on, state is already returned previously with getFullAddress
@@ -5054,8 +5082,9 @@ abstract class CommonObject
 	 *  This method is NOT called by method fetch of objects but must be called separately.
 	 *
 	 *  @return	int						<0 if error, 0 if no values of alternative languages to find nor found, 1 if a value was found and loaded
+	 *  @see fetch_optionnals()
 	 */
-	public function fetchValueForAlternateLanguages()
+	public function fetchValuesForExtraLanguages()
 	{
 		// To avoid SQL errors. Probably not the better solution though
 		if (!$this->element) {
@@ -5126,7 +5155,7 @@ abstract class CommonObject
 	 * @param	string	$onlykey		Only the following key is filled. When we make update of only one language field ($action = 'update_languages'), calling page must set this to avoid to have other languages being reset.
 	 * @return	int						1 if array_options set, 0 if no value, -1 if error (field required missing for example)
 	 */
-	public function setValuesForAlternateLanguages($onlykey = '')
+	public function setValuesForExtraLanguages($onlykey = '')
 	{
 		global $_POST, $langs;
 
@@ -5214,6 +5243,7 @@ abstract class CommonObject
 	 *  @param	int		$rowid			Id of line. Use the id of object if not defined. Deprecated. Function must be called without parameters.
 	 *  @param  array	$optionsArray   Array resulting of call of extrafields->fetch_name_optionals_label(). Deprecated. Function must be called without parameters.
 	 *  @return	int						<0 if error, 0 if no values of extrafield to find nor found, 1 if an attribute is found and value loaded
+	 *  @see fetchValuesForExtraLanguages()
 	 */
 	public function fetch_optionals($rowid = null, $optionsArray = null)
 	{
@@ -5357,7 +5387,7 @@ abstract class CommonObject
 	 *  @param	string		$trigger		If defined, call also the trigger (for example COMPANY_MODIFY)
 	 *  @param	User		$userused		Object user
 	 *  @return int 						-1=error, O=did nothing, 1=OK
-	 *  @see updateExtraField(), setValueFrom()
+	 *  @see insertExtraLanguages(), updateExtraField(), setValueFrom()
 	 */
 	public function insertExtraFields($trigger = '', $userused = null)
 	{
@@ -5636,6 +5666,129 @@ abstract class CommonObject
 	}
 
 	/**
+	 *	Add/Update all extra fields values for the current object.
+	 *  Data to describe values to insert/update are stored into $this->array_options=array('options_codeforfield1'=>'valueforfield1', 'options_codeforfield2'=>'valueforfield2', ...)
+	 *  This function delete record with all extrafields and insert them again from the array $this->array_options.
+	 *
+	 *  @param	string		$trigger		If defined, call also the trigger (for example COMPANY_MODIFY)
+	 *  @param	User		$userused		Object user
+	 *  @return int 						-1=error, O=did nothing, 1=OK
+	 *  @see insertExtraFields(), updateExtraField(), setValueFrom()
+	 */
+	public function insertExtraLanguages($trigger = '', $userused = null)
+	{
+		global $conf, $langs, $user;
+
+		if (empty($userused)) $userused = $user;
+
+		$error = 0;
+
+		if (!empty($conf->global->MAIN_EXTRALANGUAGES_DISABLED)) return 0; // For avoid conflicts if trigger used
+
+		if (is_array($this->array_languages))
+		{
+			$new_array_languages = $this->array_languages;
+
+			foreach ($new_array_languages as $key => $value)
+			{
+				$attributeKey      = $key;
+				$attributeType     = $this->fields[$attributeKey]['type'];
+				$attributeLabel    = $this->fields[$attributeKey]['label'];
+
+				//dol_syslog("attributeLabel=".$attributeLabel, LOG_DEBUG);
+				//dol_syslog("attributeType=".$attributeType, LOG_DEBUG);
+
+				switch ($attributeType)
+				{
+					case 'int':
+						if (!is_numeric($value) && $value != '')
+						{
+							$this->errors[] = $langs->trans("ExtraLanguageHasWrongValue", $attributeLabel);
+							return -1;
+						}
+						elseif ($value == '')
+						{
+							$new_array_languages[$key] = null;
+						}
+						break;
+					case 'double':
+						$value = price2num($value);
+						if (!is_numeric($value) && $value != '')
+						{
+							dol_syslog($langs->trans("ExtraLanguageHasWrongValue")." sur ".$attributeLabel."(".$value."is not '".$attributeType."')", LOG_DEBUG);
+							$this->errors[] = $langs->trans("ExtraLanguageHasWrongValue", $attributeLabel);
+							return -1;
+						}
+						elseif ($value == '')
+						{
+							$new_array_languages[$key] = null;
+						}
+						//dol_syslog("double value"." sur ".$attributeLabel."(".$value." is '".$attributeType."')", LOG_DEBUG);
+						$new_array_languages[$key] = $value;
+						break;
+						/*case 'select':	// Not required, we chosed value='0' for undefined values
+						 if ($value=='-1')
+						 {
+						 $this->array_options[$key] = null;
+						 }
+						 break;*/
+				}
+			}
+
+			$this->db->begin();
+
+			$table_element = $this->table_element;
+			if ($table_element == 'categorie') $table_element = 'categories'; // For compatibility
+
+			dol_syslog(get_class($this)."::insertExtraLanguages delete then insert", LOG_DEBUG);
+
+			foreach($new_array_languages as $key => $langcodearray) {	// $key = 'name', 'town', ...
+				foreach($langcodearray as $langcode => $value) {
+					$sql_del = "DELETE FROM ".MAIN_DB_PREFIX."object_lang";
+					$sql_del .= " WHERE fk_object = ".$this->id." AND property = '".$this->db->escape($key)."' AND type_object = '".$this->db->escape($table_element)."'";
+					$sql_del .= " AND lang = '".$this->db->escape($langcode)."'";
+					$this->db->query($sql_del);
+
+					if ($value !== '') {
+						$sql = "INSERT INTO ".MAIN_DB_PREFIX."object_lang (fk_object, property, type_object, lang, value";
+						$sql .= ") VALUES (".$this->id.", '".$this->db->escape($key)."', '".$this->db->escape($table_element)."', '".$this->db->escape($langcode)."', '".$this->db->escape($value)."'";
+						$sql .= ")";
+
+						$resql = $this->db->query($sql);
+						if (!$resql)
+						{
+							$this->error = $this->db->lasterror();
+							$error++;
+							break;
+						}
+					}
+				}
+			}
+
+			if (!$error && $trigger)
+			{
+				// Call trigger
+				$this->context = array('extralanguagesaddupdate'=>1);
+				$result = $this->call_trigger($trigger, $userused);
+				if ($result < 0) $error++;
+				// End call trigger
+			}
+
+			if ($error)
+			{
+				$this->db->rollback();
+				return -1;
+			}
+			else
+			{
+				$this->db->commit();
+				return 1;
+			}
+		}
+		else return 0;
+	}
+
+	/**
 	 *	Update an extra field value for the current object.
 	 *  Data to describe values to update are stored into $this->array_options=array('options_codeforfield1'=>'valueforfield1', 'options_codeforfield2'=>'valueforfield2', ...)
 	 *
@@ -5643,7 +5796,7 @@ abstract class CommonObject
 	 *  @param	string		$trigger		If defined, call also the trigger (for example COMPANY_MODIFY)
 	 *  @param	User		$userused		Object user
 	 *  @return int                 		-1=error, O=did nothing, 1=OK
-	 *  @see setValueFrom(), insertExtraFields()
+	 *  @see updateExtraLanguages(), setValueFrom(), insertExtraFields()
 	 */
 	public function updateExtraField($key, $trigger = null, $userused = null)
 	{
@@ -5661,7 +5814,7 @@ abstract class CommonObject
 			$langs->load('admin');
 			require_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
 			$extrafields = new ExtraFields($this->db);
-			$target_extrafields = $extrafields->fetch_name_optionals_label($this->table_element);
+			$extrafields->fetch_name_optionals_label($this->table_element);
 
 			$value = $this->array_options["options_".$key];
 
@@ -5763,6 +5916,29 @@ abstract class CommonObject
 			}
 		}
 		else return 0;
+	}
+
+	/**
+	 *	Update an extra language value for the current object.
+	 *  Data to describe values to update are stored into $this->array_options=array('options_codeforfield1'=>'valueforfield1', 'options_codeforfield2'=>'valueforfield2', ...)
+	 *
+	 *  @param  string      $key    		Key of the extrafield (without starting 'options_')
+	 *  @param	string		$trigger		If defined, call also the trigger (for example COMPANY_MODIFY)
+	 *  @param	User		$userused		Object user
+	 *  @return int                 		-1=error, O=did nothing, 1=OK
+	 *  @see updateExtraFields(), insertExtraLanguages()
+	 */
+	public function updateExtraLanguages($key, $trigger = null, $userused = null)
+	{
+		global $conf, $langs, $user;
+
+		if (empty($userused)) $userused = $user;
+
+		$error = 0;
+
+		if (!empty($conf->global->MAIN_EXTRALANGUAGES_DISABLED)) return 0; // For avoid conflicts if trigger used
+
+		return 0;
 	}
 
 

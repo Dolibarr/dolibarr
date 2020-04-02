@@ -175,11 +175,15 @@ input, select {
 	margin-bottom:1px;
 	margin-top:1px;
 }
-#mainbody input.button {
+#mainbody input.button:not(.buttongen):not(.bordertransp) {
 	background: var(--butactionbg);
     border-collapse: collapse;
     border: none;
 }
+#mainbody input.buttongen {
+	padding: 4px 4px;
+}
+
 input.button:focus {
 	border-bottom: 0;
 }
@@ -401,7 +405,7 @@ div#moretabsList, div#moretabsListaction {
 hr { border: 0; border-top: 1px solid #ccc; }
 .tabBar hr { margin-top: 20px; margin-bottom: 17px; }
 
-.button, .buttonDelete, input[name="sbmtConnexion"] {
+.button:not(.bordertransp), .buttonDelete:not(.bordertransp) {
 	margin-bottom: 0;
 	margin-top: 0;
 	margin-left: 5px;

@@ -329,12 +329,24 @@ class Form
 	 */
 	public function widgetForTranslation($fieldname, $object, $perm, $typeofdata = 'string', $check = '', $morecss = '')
 	{
-		global $conf, $langs;
+		global $conf, $langs, $extralanguages;
 
 		$result = '';
 
-		if (! empty($conf->global->PDF_USE_ALSO_LANGUAGE_CODE)) {
-			$langcode = $conf->global->PDF_USE_ALSO_LANGUAGE_CODE;
+		// List of extra languages
+		$arrayoflangcode = array();
+		if (! empty($conf->global->PDF_USE_ALSO_LANGUAGE_CODE)) $arrayoflangcode[] = $conf->global->PDF_USE_ALSO_LANGUAGE_CODE;
+
+		if (is_array($arrayoflangcode) && count($arrayoflangcode)) {
+			if (! is_object($extralanguages)) {
+				include_once DOL_DOCUMENT_ROOT.'/core/class/extralanguages.class.php';
+				$extralanguages = new ExtraLanguages($this->db);
+			}
+			$extralanguages->fetch_name_extralanguages('societe');
+
+			if (! is_array($extralanguages->attributes[$object->element]) || empty($extralanguages->attributes[$object->element][$fieldname])) {
+				return '';		// No extralang field to show
+			}
 
 			$result .='<div class="inline-block paddingleft image-'.$object->element.'-'.$fieldname.'">';
 			$s=img_picto($langs->trans("ShowOtherLanguages"), 'language', '', false, 0, 0, '', 'fa-15 editfieldlang');
@@ -343,22 +355,28 @@ class Form
 
 			$result .='<div class="inline-block hidden field-'.$object->element.'-'.$fieldname.'">';
 
-			$valuetoshow = GETPOSTISSET('field-'.$object->element."-".$fieldname."-".$langcode) ? GETPOST('field-'.$object->element.'-'.$fieldname."-".$langcode, $check) : '';
-			if (empty($valuetoshow)) {
-				$object->fetchValueForAlternateLanguages();
-				//var_dump($object->array_languages);
-				$valuetoshow = $object->array_languages[$fieldname][$langcode];
-			}
+			$resultforextrlang = '';
+			foreach($arrayoflangcode as $langcode)
+			{
+				$valuetoshow = GETPOSTISSET('field-'.$object->element."-".$fieldname."-".$langcode) ? GETPOST('field-'.$object->element.'-'.$fieldname."-".$langcode, $check) : '';
+				if (empty($valuetoshow)) {
+					$object->fetchValuesForExtraLanguages();
+					//var_dump($object->array_languages);
+					$valuetoshow = $object->array_languages[$fieldname][$langcode];
+				}
 
-			$s=picto_from_langcode($conf->global->PDF_USE_ALSO_LANGUAGE_CODE, 'class="pictoforlang"');
-			$result .= $s;
-			if ($typeofdata == 'textarea') {
-				$result .= '<textarea name="field-'.$object->element."-".$fieldname."-".$langcode.'" id="'.$fieldname."-".$langcode.'" class="'.$morecss.'" rows="'.ROWS_2.'" wrap="soft">';
-				$result .= $valuetoshow;
-				$result .= '</textarea>';
-			} else {
-				$result .= '<input type="text" class="inputfieldforlang '.($morecss ? ' '.$morecss : '').'" name="field-'.$object->element.'-'.$fieldname.'-'.$langcode.'" value="'.$valuetoshow.'">';
+				$s=picto_from_langcode($langcode, 'class="pictoforlang paddingright"');
+				$resultforextrlang .= $s;
+				if ($typeofdata == 'textarea') {
+					$resultforextrlang .= '<textarea name="field-'.$object->element."-".$fieldname."-".$langcode.'" id="'.$fieldname."-".$langcode.'" class="'.$morecss.'" rows="'.ROWS_2.'" wrap="soft">';
+					$resultforextrlang .= $valuetoshow;
+					$resultforextrlang .= '</textarea>';
+				} else {
+					$resultforextrlang .= '<input type="text" class="inputfieldforlang '.($morecss ? ' '.$morecss : '').'" name="field-'.$object->element.'-'.$fieldname.'-'.$langcode.'" value="'.$valuetoshow.'">';
+				}
 			}
+			$result .= $resultforextrlang;
+
 			$result .= '</div>';
 			$result .= '<script>$(".image-'.$object->element.'-'.$fieldname.'").click(function() { console.log("Toggle lang widget"); jQuery(".field-'.$object->element.'-'.$fieldname.'").toggle(); });</script>';
 		}
@@ -7260,7 +7278,7 @@ class Form
 	 */
     public function showrefnav($object, $paramid, $morehtml = '', $shownav = 1, $fieldid = 'rowid', $fieldref = 'ref', $morehtmlref = '', $moreparam = '', $nodbprefix = 0, $morehtmlleft = '', $morehtmlstatus = '', $morehtmlright = '')
 	{
-		global $langs, $conf, $hookmanager;
+		global $langs, $conf, $hookmanager, $extralanguages;
 
 		$ret = '';
 		if (empty($fieldid))  $fieldid = 'rowid';
@@ -7359,6 +7377,31 @@ class Form
 		if ($object->element == 'societe')
 		{
 			$ret .= dol_htmlentities($object->name);
+
+			// List of extra languages
+			$arrayoflangcode = array();
+			if (! empty($conf->global->PDF_USE_ALSO_LANGUAGE_CODE)) $arrayoflangcode[] = $conf->global->PDF_USE_ALSO_LANGUAGE_CODE;
+
+			if (is_array($arrayoflangcode) && count($arrayoflangcode)) {
+				if (! is_object($extralanguages)) {
+					include_once DOL_DOCUMENT_ROOT.'/core/class/extralanguages.class.php';
+					$extralanguages = new ExtraLanguages($this->db);
+				}
+				$extralanguages->fetch_name_extralanguages('societe');
+
+				if (! empty($extralanguages->attributes['societe']['name']))
+				{
+					$object->fetchValuesForExtraLanguages();
+
+					$htmltext = '';
+					// If there is extra languages
+					foreach($arrayoflangcode as $extralangcode) {
+						$s=picto_from_langcode($extralangcode, 'class="pictoforlang paddingright"');
+						$htmltext .= $s.$object->array_languages['name'][$extralangcode];
+					}
+					$ret .= $this->textwithpicto('', $htmltext, -1, 'language', 'opacitymedium paddingleft');
+				}
+			}
 		}
 		elseif ($object->element == 'member')
 		{

@@ -530,7 +530,7 @@ div#moretabsList, div#moretabsListaction {
 
 hr { border: 0; border-top: 1px solid #ccc; }
 
-.button, .buttonDelete, input[name="sbmtConnexion"] {
+.button:not(.bordertransp), .buttonDelete:not(.bordertransp) {
 	border-color: #c5c5c5;
 	border-color: rgba(0, 0, 0, 0.15) rgba(0, 0, 0, 0.15) rgba(0, 0, 0, 0.25);
 	display: inline-block;

@@ -1646,12 +1646,12 @@ function dol_banner_tab($object, $paramid, $morehtml = '', $shownav = 1, $fieldi
 	if (!empty($object->name_alias)) $morehtmlref .= '<div class="refidno">'.$object->name_alias.'</div>';
 
 	// Add label
-	if ($object->element == 'product' || $object->element == 'bank_account' || $object->element == 'project_task')
+	if (in_array($object->element, array('product', 'bank_account', 'project_task')))
 	{
 		if (!empty($object->label)) $morehtmlref .= '<div class="refidno">'.$object->label.'</div>';
 	}
 
-	if (method_exists($object, 'getBannerAddress') && $object->element != 'product' && $object->element != 'bookmark' && $object->element != 'ecm_directories' && $object->element != 'ecm_files')
+	if (method_exists($object, 'getBannerAddress') && !in_array($object->element, array('product', 'bookmark', 'ecm_directories', 'ecm_files')))
 	{
 		$moreaddress = $object->getBannerAddress('refaddress', $object);
 		if ($moreaddress) {
@@ -1660,7 +1660,7 @@ function dol_banner_tab($object, $paramid, $morehtml = '', $shownav = 1, $fieldi
 			$morehtmlref .= '</div>';
 		}
 	}
-	if (!empty($conf->global->MAIN_SHOW_TECHNICAL_ID) && in_array($object->element, array('societe', 'contact', 'member', 'product')))
+	if (!empty($conf->global->MAIN_SHOW_TECHNICAL_ID) && ($conf->global->MAIN_SHOW_TECHNICAL_ID == '1' || preg_match('/'.preg_quote($object->element, '/').'/i', $conf->global->MAIN_SHOW_TECHNICAL_ID)) && ! empty($object->id))
 	{
 		$morehtmlref .= '<div style="clear: both;"></div><div class="refidno">';
 		$morehtmlref .= $langs->trans("TechnicalID").': '.$object->id;
@@ -1718,10 +1718,11 @@ function dol_bc($var, $moreclass = '')
  *      @param	string		$sep			Separator to use to build string
  *      @param	Translate	$outputlangs	Object lang that contains language for text translation.
  *      @param	int			$mode			0=Standard output, 1=Remove address
+ *  	@param	string		$extralangcode	User extralanguage $langcode as values for address, town
  *      @return string						Formated string
  *      @see dol_print_address()
  */
-function dol_format_address($object, $withcountry = 0, $sep = "\n", $outputlangs = '', $mode = 0)
+function dol_format_address($object, $withcountry = 0, $sep = "\n", $outputlangs = '', $mode = 0, $extralangcode = '')
 {
 	global $conf, $langs;
 
@@ -1729,15 +1730,15 @@ function dol_format_address($object, $withcountry = 0, $sep = "\n", $outputlangs
 	$countriesusingstate = array('AU', 'CA', 'US', 'IN', 'GB', 'ES', 'UK', 'TR'); // See also MAIN_FORCE_STATE_INTO_ADDRESS
 
 	// See format of addresses on https://en.wikipedia.org/wiki/Address
-
 	// Address
 	if (empty($mode)) {
-		$ret .= $object->address;
+		$ret .= ($extralangcode ? $object->array_languages['address'][$extralangcode] : $object->address);
 	}
 	// Zip/Town/State
 	if (in_array($object->country_code, array('AU', 'CA', 'US')) || !empty($conf->global->MAIN_FORCE_STATE_INTO_ADDRESS))   	// US: title firstname name \n address lines \n town, state, zip \n country
 	{
-		$ret .= ($ret ? $sep : '').$object->town;
+		$town = ($extralangcode ? $object->array_languages['town'][$extralangcode] : $object->town);
+		$ret .= ($ret ? $sep : '').$town;
 		if ($object->state)
 		{
 			$ret .= ($ret ? ", " : '').$object->state;
@@ -1746,7 +1747,8 @@ function dol_format_address($object, $withcountry = 0, $sep = "\n", $outputlangs
 	}
 	elseif (in_array($object->country_code, array('GB', 'UK'))) // UK: title firstname name \n address lines \n town state \n zip \n country
 	{
-		$ret .= ($ret ? $sep : '').$object->town;
+		$town = ($extralangcode ? $object->array_languages['town'][$extralangcode] : $object->town);
+		$ret .= ($ret ? $sep : '').$town;
 		if ($object->state)
 		{
 			$ret .= ($ret ? ", " : '').$object->state;
@@ -1756,7 +1758,8 @@ function dol_format_address($object, $withcountry = 0, $sep = "\n", $outputlangs
 	elseif (in_array($object->country_code, array('ES', 'TR'))) // ES: title firstname name \n address lines \n zip town \n state \n country
 	{
 		$ret .= ($ret ? $sep : '').$object->zip;
-		$ret .= ($object->town ? (($object->zip ? ' ' : '').$object->town) : '');
+		$town = ($extralangcode ? $object->array_languages['town'][$extralangcode] : $object->town);
+		$ret .= ($town ? (($object->zip ? ' ' : '').$town) : '');
 		if ($object->state)
 		{
 			$ret .= "\n".$object->state;
@@ -1765,13 +1768,15 @@ function dol_format_address($object, $withcountry = 0, $sep = "\n", $outputlangs
 	elseif (in_array($object->country_code, array('IT'))) // IT: tile firstname name\n address lines \n zip (Code Departement) \n country
 	{
 		$ret .= ($ret ? $sep : '').$object->zip;
-		$ret .= ($object->town ? (($object->zip ? ' ' : '').$object->town) : '');
+		$town = ($extralangcode ? $object->array_languages['town'][$extralangcode] : $object->town);
+		$ret .= ($town ? (($object->zip ? ' ' : '').$town) : '');
 		$ret .= ($object->state_code ? (' '.($object->state_code)) : '');
 	}
 	else                                        		// Other: title firstname name \n address lines \n zip town \n country
 	{
+		$town = ($extralangcode ? $object->array_languages['town'][$extralangcode] : $object->town);
 		$ret .= $object->zip ? (($ret ? $sep : '').$object->zip) : '';
-		$ret .= ($object->town ? (($object->zip ? ' ' : ($ret ? $sep : '')).$object->town) : '');
+		$ret .= ($town ? (($object->zip ? ' ' : ($ret ? $sep : '')).$town) : '');
 		if ($object->state && in_array($object->country_code, $countriesusingstate))
 		{
 			$ret .= ($ret ? ", " : '').$object->state;
@@ -2853,16 +2858,16 @@ function dol_user_country()
 /**
  *  Format address string
  *
- *  @param	string	$address    Address
+ *  @param	string	$address    Address string, already formatted with dol_format_address()
  *  @param  int		$htmlid     Html ID (for example 'gmap')
- *  @param  int		$mode       thirdparty|contact|member|other
+ *  @param  int		$element    'thirdparty'|'contact'|'member'|'other'
  *  @param  int		$id         Id of object
  *  @param	int		$noprint	No output. Result is the function return
  *  @param  string  $charfornl  Char to use instead of nl2br. '' means we use a standad nl2br.
  *  @return string|void			Nothing if noprint is 0, formatted address if noprint is 1
  *  @see dol_format_address()
  */
-function dol_print_address($address, $htmlid, $mode, $id, $noprint = 0, $charfornl = '')
+function dol_print_address($address, $htmlid, $element, $id, $noprint = 0, $charfornl = '')
 {
 	global $conf, $user, $langs, $hookmanager;
 
@@ -2871,7 +2876,7 @@ function dol_print_address($address, $htmlid, $mode, $id, $noprint = 0, $charfor
 	if ($address)
 	{
 		if ($hookmanager) {
-			$parameters = array('element' => $mode, 'id' => $id);
+			$parameters = array('element' => $element, 'id' => $id);
 			$reshook = $hookmanager->executeHooks('printAddress', $parameters, $address);
 			$out .= $hookmanager->resPrint;
 		}
@@ -2880,24 +2885,22 @@ function dol_print_address($address, $htmlid, $mode, $id, $noprint = 0, $charfor
 			if (empty($charfornl)) $out .= nl2br($address);
 			else $out .= preg_replace('/[\r\n]+/', $charfornl, $address);
 
+			// TODO Remove this block, we can add this using the hook now
 			$showgmap = $showomap = 0;
-
-			// TODO Add a hook here
-			if (($mode == 'thirdparty' || $mode == 'societe') && !empty($conf->google->enabled) && !empty($conf->global->GOOGLE_ENABLE_GMAPS)) $showgmap = 1;
-			if ($mode == 'contact' && !empty($conf->google->enabled) && !empty($conf->global->GOOGLE_ENABLE_GMAPS_CONTACTS)) $showgmap = 1;
-			if ($mode == 'member' && !empty($conf->google->enabled) && !empty($conf->global->GOOGLE_ENABLE_GMAPS_MEMBERS)) $showgmap = 1;
-			if (($mode == 'thirdparty' || $mode == 'societe') && !empty($conf->openstreetmap->enabled) && !empty($conf->global->OPENSTREETMAP_ENABLE_MAPS)) $showomap = 1;
-			if ($mode == 'contact' && !empty($conf->openstreetmap->enabled) && !empty($conf->global->OPENSTREETMAP_ENABLE_MAPS_CONTACTS)) $showomap = 1;
-			if ($mode == 'member' && !empty($conf->openstreetmap->enabled) && !empty($conf->global->OPENSTREETMAP_ENABLE_MAPS_MEMBERS)) $showomap = 1;
-
+			if (($element == 'thirdparty' || $element == 'societe') && !empty($conf->google->enabled) && !empty($conf->global->GOOGLE_ENABLE_GMAPS)) $showgmap = 1;
+			if ($element == 'contact' && !empty($conf->google->enabled) && !empty($conf->global->GOOGLE_ENABLE_GMAPS_CONTACTS)) $showgmap = 1;
+			if ($element == 'member' && !empty($conf->google->enabled) && !empty($conf->global->GOOGLE_ENABLE_GMAPS_MEMBERS)) $showgmap = 1;
+			if (($element == 'thirdparty' || $element == 'societe') && !empty($conf->openstreetmap->enabled) && !empty($conf->global->OPENSTREETMAP_ENABLE_MAPS)) $showomap = 1;
+			if ($element == 'contact' && !empty($conf->openstreetmap->enabled) && !empty($conf->global->OPENSTREETMAP_ENABLE_MAPS_CONTACTS)) $showomap = 1;
+			if ($element == 'member' && !empty($conf->openstreetmap->enabled) && !empty($conf->global->OPENSTREETMAP_ENABLE_MAPS_MEMBERS)) $showomap = 1;
 			if ($showgmap)
 			{
-				$url = dol_buildpath('/google/gmaps.php?mode='.$mode.'&id='.$id, 1);
+				$url = dol_buildpath('/google/gmaps.php?mode='.$element.'&id='.$id, 1);
 				$out .= ' <a href="'.$url.'" target="_gmaps"><img id="'.$htmlid.'" class="valigntextbottom" src="'.DOL_URL_ROOT.'/theme/common/gmap.png"></a>';
 			}
 			if ($showomap)
 			{
-				$url = dol_buildpath('/openstreetmap/maps.php?mode='.$mode.'&id='.$id, 1);
+				$url = dol_buildpath('/openstreetmap/maps.php?mode='.$element.'&id='.$id, 1);
 				$out .= ' <a href="'.$url.'" target="_gmaps"><img id="'.$htmlid.'_openstreetmap" class="valigntextbottom" src="'.DOL_URL_ROOT.'/theme/common/gmap.png"></a>';
 			}
 		}

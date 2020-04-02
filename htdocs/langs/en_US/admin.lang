@@ -98,10 +98,10 @@ MustBeLowerThanPHPLimit=Note: <b>your</b> PHP configuration currently limits the
 NoMaxSizeByPHPLimit=Note: No limit is set in your PHP configuration
 MaxSizeForUploadedFiles=Maximum size for uploaded files (0 to disallow any upload)
 UseCaptchaCode=Use graphical code (CAPTCHA) on login page
-AntiVirusCommand= Full path to antivirus command
-AntiVirusCommandExample= Example for ClamWin: c:\\Progra~1\\ClamWin\\bin\\clamscan.exe<br>Example for ClamAv: /usr/bin/clamscan
+AntiVirusCommand=Full path to antivirus command
+AntiVirusCommandExample=Example for ClamAv Daemon (require clamav-daemon): /usr/bin/clamdscan<br>Example for ClamWin (very very slow): c:\\Progra~1\\ClamWin\\bin\\clamscan.exe
 AntiVirusParam= More parameters on command line
-AntiVirusParamExample= Example for ClamWin: --database="C:\\Program Files (x86)\\ClamWin\\lib"
+AntiVirusParamExample=Example for ClamAv Daemon: --fdpass<br>Example for ClamWin: --database="C:\\Program Files (x86)\\ClamWin\\lib"
 ComptaSetup=Accounting module setup
 UserSetup=User management setup
 MultiCurrencySetup=Multi-currency setup
