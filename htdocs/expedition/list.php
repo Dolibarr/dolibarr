@@ -176,8 +176,9 @@ if (GETPOST('button_removefilter_x', 'alpha') || GETPOST('button_removefilter.x'
 	$search_datereceipt_start = '';
 	$search_datereceipt_end = '';
 	$viewstatut = '';
-    $toselect = '';
+	$toselect = '';
 	$search_array_options = array();
+	$search_categ_cus = 0;
 }
 
 if (empty($reshook))
