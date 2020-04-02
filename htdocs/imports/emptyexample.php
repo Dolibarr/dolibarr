@@ -12,7 +12,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -21,10 +21,27 @@
  *      \brief      Show example of import file
  */
 
-// This file is a wrapper, so empty header
-function llxHeader() { print '<html><title>Build an import example file</title><body>'; }
-// This file is a wrapper, so empty footer
-function llxFooter() { print '</body></html>'; }
+/**
+ * This file is a wrapper, so empty header
+ *
+ * @ignore
+ * @return	void
+ */
+function llxHeader()
+{
+    print '<html><title>Build an import example file</title><body>';
+}
+
+/**
+ * This file is a wrapper, so empty footer
+ *
+ * @ignore
+ * @return	void
+ */
+function llxFooter()
+{
+    print '</body></html>';
+}
 
 require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
@@ -34,6 +51,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/modules/import/modules_import.php';
 $datatoimport=GETPOST('datatoimport');
 $format=GETPOST('format');
 
+// Load translation files required by the page
 $langs->load("exports");
 
 // Check exportkey
@@ -51,7 +69,7 @@ if (empty($datatoimport))
 $filename=$langs->trans("ExampleOfImportFile").'_'.$datatoimport.'.'.$format;
 
 $objimport=new Import($db);
-$objimport->load_arrays($user,$datatoimport);
+$objimport->load_arrays($user, $datatoimport);
 // Load arrays from descriptor module
 $entity=$objimport->array_import_entities[0][$code];
 $entityicon=$entitytoicon[$entity]?$entitytoicon[$entity]:$entity;
@@ -77,12 +95,11 @@ $contentlinevalues=array();
 $i = 0;
 foreach($fieldstarget as $code=>$label)
 {
-	$withoutstar=preg_replace('/\*/','',$fieldstarget[$code]);
+	$withoutstar=preg_replace('/\*/', '', $fieldstarget[$code]);
 	$headerlinefields[]=$langs->transnoentities($withoutstar).($withoutstar != $fieldstarget[$code]?'*':'').' ('.$code.')';
 	$contentlinevalues[]=$valuestarget[$code];
 }
 //var_dump($headerlinefields);
 //var_dump($contentlinevalues);
 
-print $objimport->build_example_file($format,$headerlinefields,$contentlinevalues,$datatoimport);
-
+print $objimport->build_example_file($format, $headerlinefields, $contentlinevalues, $datatoimport);

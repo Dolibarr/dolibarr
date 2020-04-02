@@ -1,0 +1,305 @@
+# en_US lang file for module ticket
+# Copyright (C) 2013  Jean-François FERRY <hello@librethic.io>
+#
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program.  If not, see <https://www.gnu.org/licenses/>.
+
+#
+# Generic
+#
+
+Module56000Name=Pieteikumi
+Module56000Desc=Biļešu sistēma izsniegšanai vai pieprasījuma pārvaldīšanai
+
+Permission56001=Apskatīt pieteikumus
+Permission56002=Labot pieteikumus
+Permission56003=Dzēst pieteikumus
+Permission56004=Pieteikumu pārvaldīšana
+Permission56005=Skatīt visu trešo pušu biļetes (nav efektīvas ārējiem lietotājiem, vienmēr aprobežojas ar trešajām personām, no kurām tie ir atkarīgi)
+
+TicketDictType=Pieteikumu veids
+TicketDictCategory=Pieteikumu - grupas
+TicketDictSeverity=Pieteikuma svarīgums
+TicketDictResolution=Biļete - izšķirtspēja
+TicketTypeShortBUGSOFT=Dysfontionnement logiciel
+TicketTypeShortBUGHARD=Dysfonctionnement matériel
+TicketTypeShortCOM=Tirdzniecības jautājums
+
+TicketTypeShortHELP=Funkcionālās palīdzības pieprasījums
+TicketTypeShortISSUE=Izdošana, kļūda vai problēma
+TicketTypeShortREQUEST=Mainīt vai uzlabot pieprasījumu
+TicketTypeShortPROJET=Projekts
+TicketTypeShortOTHER=Cits
+
+TicketSeverityShortLOW=Zems
+TicketSeverityShortNORMAL=Normāls
+TicketSeverityShortHIGH=Augsts
+TicketSeverityShortBLOCKING=Kritiski/bloķēšana
+
+ErrorBadEmailAddress=Lauks "%s" ir nepareizs
+MenuTicketMyAssign=Mani pieteikumi
+MenuTicketMyAssignNonClosed=Mani atvērtie pieteikumi
+MenuListNonClosed=Atvērtie pieteikumi
+
+TypeContact_ticket_internal_CONTRIBUTOR=Ieguldītājs
+TypeContact_ticket_internal_SUPPORTTEC=Piešķirtais lietotājs
+TypeContact_ticket_external_SUPPORTCLI=Klientu kontaktu / incidentu izsekošana
+TypeContact_ticket_external_CONTRIBUTOR=Ārējais ieguldītājs
+
+OriginEmail=E-pasta avots
+Notify_TICKET_SENTBYMAIL=Sūtīt biļeti pa e-pastu
+
+# Status
+NotRead=Nav lasāms
+Read=Lasīt
+Assigned=Piešķirts
+InProgress=Procesā
+NeedMoreInformation=Gaida informāciju
+Answered=Atbildēts
+Waiting=Gaida
+Closed=Slēgts
+Deleted=Dzēsts
+
+# Dict
+Type=Veids
+Category=Analītiskais kods
+Severity=Smagums
+
+# Email templates
+MailToSendTicketMessage=Lai nosūtītu e-pastu no pieteikuma
+
+#
+# Admin page
+#
+TicketSetup=Pieteikumu moduļa iestatīšana
+TicketSettings=Iestatījumi
+TicketSetupPage=
+TicketPublicAccess=Publiska saskarne, kurai nav nepieciešama identifikācija, ir pieejama šādā URL
+TicketSetupDictionaries=Pieteikumu, svarīgums un analītiskie kodi ir konfigurējami no vārdnīcās
+TicketParamModule=Moduļa mainīgā iestatīšana
+TicketParamMail=E-pasta iestatīšana
+TicketEmailNotificationFrom=Paziņojuma e-pasts no
+TicketEmailNotificationFromHelp=Izmanto biļešu ziņu atbildē, izmantojot piemēru
+TicketEmailNotificationTo=Paziņojumu e-pastu uz
+TicketEmailNotificationToHelp=Sūtiet e-pasta paziņojumus uz šo adresi.
+TicketNewEmailBodyLabel=Īsziņa, kas nosūtīta pēc pieteikuma izveides
+TicketNewEmailBodyHelp=Šeit norādītais teksts tiks ievietots e-pastā, apstiprinot jauna biļetes izveidi no publiskā saskarnes. Informācija par biļetes apspriešanu tiek automātiski pievienota.
+TicketParamPublicInterface=Publiskās saskarnes iestatīšana
+TicketsEmailMustExist=Pieprasīt esošu e-pasta adresi, lai izveidotu pieteikumu
+TicketsEmailMustExistHelp=Publiskā interfeisa e-pasta adrese jau ir jāaizpilda datu bāzē, lai izveidotu jaunu biļeti.
+PublicInterface=Publiskā saskarne
+TicketUrlPublicInterfaceLabelAdmin=Alternatīvs publiskā interfeisa URL
+TicketUrlPublicInterfaceHelpAdmin=Web serverī ir iespējams definēt pseidonīmus un tādējādi padarīt publisko saskarni pieejamu ar citu URL (serverim šajā jaunajā URL jādarbojas kā starpniekserverim)
+TicketPublicInterfaceTextHomeLabelAdmin=Publiskās saskarnes satikšanās teksts
+TicketPublicInterfaceTextHome=Jūs varat izveidot atbalsta biļeti vai esošo skatījumu no sava identifikatora izsekošanas biļetes.
+TicketPublicInterfaceTextHomeHelpAdmin=Šeit definētais teksts parādīsies publiskās saskarnes mājas lapā.
+TicketPublicInterfaceTopicLabelAdmin=Interfeisa virsraksts
+TicketPublicInterfaceTopicHelp=Šis teksts parādīsies kā publiskā saskarnes nosaukums.
+TicketPublicInterfaceTextHelpMessageLabelAdmin=Palīdziet tekstu ziņojuma ierakstā
+TicketPublicInterfaceTextHelpMessageHelpAdmin=Šis teksts parādās virs lietotāja ziņojuma ievades lauka.
+ExtraFieldsTicket=Papildus atribūti
+TicketCkEditorEmailNotActivated=HTML redaktors nav aktivizēts. Lūdzu, ievietojiet FCKEDITOR_ENABLE_MAIL saturu 1, lai to iegūtu.
+TicketsDisableEmail=Nesūtiet e-pastus par biļešu izveidi vai ziņojumu ierakstīšanu
+TicketsDisableEmailHelp=Pēc noklusējuma e-pastus sūta, kad tiek veidotas jaunas biļetes vai ziņojumi. Iespējojiet šo opciju, lai atspējotu * all * e-pasta paziņojumus
+TicketsLogEnableEmail=Iespējot žurnālu pa e-pastu
+TicketsLogEnableEmailHelp=Katrā izmaiņā ** katram kontaktam **, kas saistīts ar biļeti, tiks nosūtīts e-pasts **.
+TicketParams=Parametri
+TicketsShowModuleLogo=Parādiet moduļa logotipi publiskajā saskarnē
+TicketsShowModuleLogoHelp=Iespējojiet šo opciju, lai slēptu logotipa moduli publiskās saskarnes lapās
+TicketsShowCompanyLogo=Parādīt uzņēmuma logotipi publiskā saskarnē
+TicketsShowCompanyLogoHelp=Iespējojiet šo opciju, lai slēptu galvenā uzņēmuma logotipi publiskās saskarnes lapās
+TicketsEmailAlsoSendToMainAddress=Arī nosūtiet paziņojumu uz galveno e-pasta adresi
+TicketsEmailAlsoSendToMainAddressHelp=Iespējojiet šo opciju, lai nosūtītu e-pastu uz adresi "Paziņojuma e-pasta adrese" (skatiet iestatījumu zemāk).
+TicketsLimitViewAssignedOnly=Ierobežot displeju līdz pašreizējam lietotājam piešķirtajām biļetēm (nav efektīvs ārējiem lietotājiem, vienmēr ierobežojiet to ar trešo personu, kurai tie ir atkarīgi)
+TicketsLimitViewAssignedOnlyHelp=Tiks redzamas tikai pašreizējam lietotājam piešķirtās biļetes. Neattiecas uz lietotāju ar biļešu pārvaldīšanas tiesībām.
+TicketsActivatePublicInterface=Aktivizēt publisko saskarni
+TicketsActivatePublicInterfaceHelp=Publiskā saskarne ļauj apmeklētājiem izveidot biļetes.
+TicketsAutoAssignTicket=Automātiski piešķirt lietotāju, kas izveidojis biļeti
+TicketsAutoAssignTicketHelp=Veidojot biļeti, lietotājs var automātiski piešķirt biļeti.
+TicketNumberingModules=Čeku numerācijas modulis
+TicketNotifyTiersAtCreation=Paziņot trešajai pusei radīšanas laikā
+TicketGroup=Grupa
+TicketsDisableCustomerEmail=Vienmēr atspējojiet e-pasta ziņojumus, ja biļete tiek veidota no publiskās saskarnes
+#
+# Index & list page
+#
+TicketsIndex=Pieteikumi - mājās
+TicketList=Pieteikumu saraksts
+TicketAssignedToMeInfos=Šī lapa parāda pieteikumu sarakstu, kas izveidots vai piešķirts pašreizējam lietotājam
+NoTicketsFound=Nav atrasts neviens pieteikums
+NoUnreadTicketsFound=Nav atrastas nelasītas biļetes
+TicketViewAllTickets=Skatīt visus pieteikumus
+TicketViewNonClosedOnly=Skatīt tikai atvērtos pieteikumus
+TicketStatByStatus=Pieteikumi pēc statusa
+OrderByDateAsc=Kārtot pēc augošā datuma
+OrderByDateDesc=Kārtot pēc dilstošā datuma
+ShowAsConversation=Rādīt kā sarunu sarakstu
+MessageListViewType=Rādīt kā tabulu sarakstu
+
+#
+# Ticket card
+#
+Ticket=Biļete
+TicketCard=Pieteikuma kartiņa
+CreateTicket=Izveidot pieteikumu
+EditTicket=Rediģēt pieteikumu
+TicketsManagement=Pieteikumu pārvaldīšana
+CreatedBy=Izveidojis
+NewTicket=Jauns notikums
+SubjectAnswerToTicket=Pieteikuma atbilde
+TicketTypeRequest=Pieprasījuma veids
+TicketCategory=Analītiskais kods
+SeeTicket=Apskatīt pieteikumu
+TicketMarkedAsRead=Pieteikums ir atzīmēts kā lasīts
+TicketReadOn=Izlasīts
+TicketCloseOn=Beigu datums
+MarkAsRead=Atzīmējiet pieteikumu kā lasītu
+TicketHistory=Pieteikumu vēsture
+AssignUser=Piešķirts lietotājam
+TicketAssigned=Pieteikums ir piešķirts
+TicketChangeType=Mainīt veidu
+TicketChangeCategory=Mainīt analītisko kodu
+TicketChangeSeverity=Mainīt nozīmīgumu
+TicketAddMessage=Pievienot ziņu
+AddMessage=Pievienot ziņu
+MessageSuccessfullyAdded=Pieteikums pievienots
+TicketMessageSuccessfullyAdded=Ziņojums ir veiksmīgi pievienots
+TicketMessagesList=Ziņu saraksts
+NoMsgForThisTicket=Nav ziņu par šo pieteikumu
+Properties=Klasifikācija
+LatestNewTickets=Jaunākie %s jaunākie pieteikumi (nav izlasīti)
+TicketSeverity=Svarīgums
+ShowTicket=Apskatīt pieteikumu
+RelatedTickets=Saistītie pieteikumi
+TicketAddIntervention=Izveidojiet iejaukšanos
+CloseTicket=Slēgts pieteikums
+CloseATicket=Aizvērt pieteikumu
+ConfirmCloseAticket=Apstiprināt pieteikuma aizvēršanu
+ConfirmDeleteTicket=Lūdzu, apstipriniet pieteikuma dzēšanu
+TicketDeletedSuccess=Pieteikums ir dzēsts veiksmīgi
+TicketMarkedAsClosed=Pieteikums ir atzīmēta kā slēgts
+TicketDurationAuto=Aprēķinātais ilgums
+TicketDurationAutoInfos=Ilgums, kas aprēķināts automātiski no intervences
+TicketUpdated=Pieteikums atjaunināts
+SendMessageByEmail=Nosūtīt ziņu pa e-pastu
+TicketNewMessage=Jauna ziņa
+ErrorMailRecipientIsEmptyForSendTicketMessage=Saņēmējs ir tukšs. Nav e-pasta nosūtīt
+TicketGoIntoContactTab=Lūdzu, dodieties uz cilni "Kontakti", lai tos atlasītu
+TicketMessageMailIntro=Ievads
+TicketMessageMailIntroHelp=Šis teksts tiek pievienots tikai e-pasta sākumā un netiks saglabāts.
+TicketMessageMailIntroLabelAdmin=Ievads, nosūtot e-pastu
+TicketMessageMailIntroText=Labdien, <br> Jauna atbilde tika nosūtīta uz biļeti, ar kuru sazināties. Šeit ir ziņa: <br>
+TicketMessageMailIntroHelpAdmin=Šis teksts tiks ievietots pirms atbildes uz biļeti teksta.
+TicketMessageMailSignature=Paraksts
+TicketMessageMailSignatureHelp=Šis teksts tiek pievienots tikai e-pasta ziņojuma beigās un netiks saglabāts.
+TicketMessageMailSignatureText=<p> Ar cieņu, </p><p>--</p>
+TicketMessageMailSignatureLabelAdmin=Atbildes e-pasta paraksts
+TicketMessageMailSignatureHelpAdmin=Šis teksts tiks ievietots pēc atbildes ziņojuma.
+TicketMessageHelp=Tikai šis teksts tiks saglabāts ziņojumu sarakstā uz biļešu kartes.
+TicketMessageSubstitutionReplacedByGenericValues=Mainīšanas mainīgos aizstāj ar vispārējām vērtībām.
+TimeElapsedSince=Laiks pagājis kopš
+TicketTimeToRead=Laiks, kas pagājis pirms izlasīšanas
+TicketContacts=Kontakti biļete
+TicketDocumentsLinked=Ar biļeti saistītie dokumenti
+ConfirmReOpenTicket=Vai apstiprināt atkārtotu pieteikuma atvēršanu ?
+TicketMessageMailIntroAutoNewPublicMessage=Biļetē tika publicēts jauns ziņojums ar tēmu %s:
+TicketAssignedToYou=Pieteikums piešķirts
+TicketAssignedEmailBody=Jums piešķīra pieteikumu # %s  %s
+MarkMessageAsPrivate=Atzīmēt ziņu kā privātu
+TicketMessagePrivateHelp=Šis ziņojums netiks rādīts ārējiem lietotājiem
+TicketEmailOriginIssuer=Emitents pēc biļetes avota
+InitialMessage=Sākotnējā ziņa
+LinkToAContract=Saite uz līgumu
+TicketPleaseSelectAContract=Izvēlieties līgumu
+UnableToCreateInterIfNoSocid=Nevar izveidot iejaukšanos, ja nav definēta trešā puse
+TicketMailExchanges=Pasta apmaiņa
+TicketInitialMessageModified=Sākotnējais ziņojums ir labots
+TicketMessageSuccesfullyUpdated=Ziņa ir veiksmīgi atjaunota
+TicketChangeStatus=Mainīt statusu
+TicketConfirmChangeStatus=Apstipriniet statusa maiņu: %s?
+TicketLogStatusChanged=Statuss mainīts: %s līdz %s
+TicketNotNotifyTiersAtCreate=Neinformēt uzņēmumu par radīšanu
+Unread=Nelasīts
+TicketNotCreatedFromPublicInterface=Nav pieejams. Biļete netika izveidota no publiskās saskarnes.
+PublicInterfaceNotEnabled=Publiskā saskarne nebija iespējota
+ErrorTicketRefRequired=Nepieciešams biļetes atsauces nosaukums
+
+#
+# Logs
+#
+TicketLogMesgReadBy=Pieteikumu %s apskatīja %s
+NoLogForThisTicket=Vēl nav piereģistrējies par šo biļeti
+TicketLogAssignedTo=Pieteikums %s piešķirts %s
+TicketLogPropertyChanged=Pieteikums %s labots: klasifikācija no %s līdz %s
+TicketLogClosedBy=Pieteikumu %s slēdza %s
+TicketLogReopen=Pieteikums %s atvērts atkārtoti
+
+#
+# Public pages
+#
+TicketSystem=Pieteikumu sistēma
+ShowListTicketWithTrackId=Parādīt biļešu sarakstu no maršruta ID
+ShowTicketWithTrackId=Rādīt biļeti no maršruta ID
+TicketPublicDesc=Jūs varat izveidot atbalsta biļeti vai pārbaudīt no esoša ID.
+YourTicketSuccessfullySaved=Biļete ir veiksmīgi saglabāta!
+MesgInfosPublicTicketCreatedWithTrackId=Ir izveidots jauns pieteikums ar ID %s un Ref %s.
+PleaseRememberThisId=Lūdzu, saglabājiet izsekošanas numuru, kuru mēs vēlāk varētu jums lūgt.
+TicketNewEmailSubject=Biļešu izveides apstiprinājums - Ref %s (publiskās biļetes ID %s)
+TicketNewEmailSubjectCustomer=Jauns atbalsta biļete
+TicketNewEmailBody=Šis ir automātisks e-pasts, lai apstiprinātu, ka esat reģistrējies jauns biļete.
+TicketNewEmailBodyCustomer=Šis ir automātiskais e-pasta ziņojums, kas apstiprina, ka jaunais biļete ir tikko izveidots jūsu kontā.
+TicketNewEmailBodyInfosTicket=Informācija biļetes uzraudzībai
+TicketNewEmailBodyInfosTrackId=Biļešu izsekošanas numurs: %s
+TicketNewEmailBodyInfosTrackUrl=Jūs varat apskatīt biļetes norisi, noklikšķinot uz iepriekš redzamās saites.
+TicketNewEmailBodyInfosTrackUrlCustomer=Jūs varat apskatīt pieteikuma statusu konkrētajā saskarnē, noklikšķinot uz šīs saites
+TicketEmailPleaseDoNotReplyToThisEmail=Lūdzu, neatbildiet tieši uz šo e-pastu! Izmantojiet saiti, lai atbildētu interfeisu.
+TicketPublicInfoCreateTicket=Šī veidlapa ļauj ierakstīt atbalsta biļeti mūsu vadības sistēmā.
+TicketPublicPleaseBeAccuratelyDescribe=Lūdzu, precīzi aprakstiet problēmu. Iesniedziet pēc iespējas vairāk informācijas, lai mēs varētu pareizi identificēt jūsu pieprasījumu.
+TicketPublicMsgViewLogIn=Lūdzu, ievadiet biļešu izsekošanas ID
+TicketTrackId=Publiskais izsekošanas ID
+OneOfTicketTrackId=Viens no jūsu izsekošanas ID
+ErrorTicketNotFound=Biļete ar izsekošanas ID %s nav atrasts!
+Subject=Virsraksts
+ViewTicket=Skatīt pieteikumu
+ViewMyTicketList=Skatīt manu pieteikumu sarakstu
+ErrorEmailMustExistToCreateTicket=Kļūda: e-pasta adrese nav atrodama mūsu datu bāzē
+TicketNewEmailSubjectAdmin=Izveidota jauna biļete - Ref %s (publiskās biļetes ID %s)
+TicketNewEmailBodyAdmin=<p> Biļete tikko ir izveidota ar ID # %s, skatiet informāciju: </p>
+SeeThisTicketIntomanagementInterface=Skatiet biļeti vadības saskarnē
+TicketPublicInterfaceForbidden=Pieteikumu publiskā saskarne nav iespējota
+ErrorEmailOrTrackingInvalid=Slikta vērtība izsekošanas ID vai e-pasta ziņojumam
+OldUser=Vecais lietotājs
+NewUser=Jauns lietotājs
+NumberOfTicketsByMonth=Pieteikumu skaits mēnesī
+NbOfTickets=Pieteikumu skaits
+# notifications
+TicketNotificationEmailSubject=Pieteikums %s ir atjaunots
+TicketNotificationEmailBody=Šī ir automātiska ziņa, kas informē jūs, ka biļete %s tikko atjaunināta
+TicketNotificationRecipient=Paziņojuma saņēmējs
+TicketNotificationLogMessage=Log ziņojums
+TicketNotificationEmailBodyInfosTrackUrlinternal=Skatīt biļeti interfeisu
+TicketNotificationNumberEmailSent=Paziņojuma e-pasts nosūtīts: %s
+
+ActionsOnTicket=Notikumi biļetē
+
+#
+# Boxes
+#
+BoxLastTicket=Jaunākais izveidotais pieteikums
+BoxLastTicketDescription=Jaunākie %s izveidotie pieteikumi
+BoxLastTicketContent=
+BoxLastTicketNoRecordedTickets=Nav nesen nelasītu pieteikumu
+BoxLastModifiedTicket=Jaunākie labotie pieteikumi
+BoxLastModifiedTicketDescription=Jaunākās %s lanbotās biļetes
+BoxLastModifiedTicketContent=
+BoxLastModifiedTicketNoRecordedTickets=Nav nesen labotu pieteikumu

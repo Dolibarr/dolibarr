@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2006		Laurent Destailleur	<eldy@users.sourceforge.net>
- * Copyright (C) 2006-2017	Regis Houssin		<regis.houssin@capnetworks.com>
+ * Copyright (C) 2006-2017	Regis Houssin		<regis.houssin@inodbox.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -13,7 +13,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -29,26 +29,24 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/ldap.class.php';
 require_once DOL_DOCUMENT_ROOT.'/adherents/class/adherent.class.php';
 require_once DOL_DOCUMENT_ROOT.'/adherents/class/adherent_type.class.php';
 
-$langs->load("companies");
-$langs->load("members");
-$langs->load("ldap");
-$langs->load("admin");
+// Load translation files required by the page
+$langs->loadLangs(array("companies","members","ldap","admin"));
 
-$rowid = GETPOST('id','int');
-$action = GETPOST('action','aZ09');
+$rowid = GETPOST('id', 'int');
+$action = GETPOST('action', 'aZ09');
 
 // Protection
 $socid=0;
-if ($user->societe_id > 0)
+if ($user->socid > 0)
 {
-    $socid = $user->societe_id;
+    $socid = $user->socid;
 }
 
 $object = new Adherent($db);
 $result=$object->fetch($rowid);
 if (! $result)
 {
-	dol_print_error($db,"Failed to get adherent: ".$object->error);
+	dol_print_error($db, "Failed to get adherent: ".$object->error);
 	exit;
 }
 
@@ -68,14 +66,14 @@ if ($action == 'dolibarr2ldap')
 		$dn=$object->_load_ldap_dn($info);
 		$olddn=$dn;	// We can say that old dn = dn as we force synchro
 
-		$result=$ldap->update($dn,$info,$user,$olddn);
+		$result=$ldap->update($dn, $info, $user, $olddn);
 	}
 
 	if ($result >= 0) {
 		setEventMessages($langs->trans("MemberSynchronized"), null, 'mesgs');
 	}
 	else {
-		setEventMessages($ldap->errors, $ldap->error, 'errors');
+		setEventMessages($ldap->error, $ldap->errors, 'errors');
 	}
 }
 
@@ -85,9 +83,9 @@ if ($action == 'dolibarr2ldap')
  *	View
  */
 
-llxHeader('',$langs->trans("Member"),'EN:Module_Foundations|FR:Module_Adh&eacute;rents|ES:M&oacute;dulo_Miembros');
-
 $form = new Form($db);
+
+llxHeader('', $langs->trans("Member"), 'EN:Module_Foundations|FR:Module_Adh&eacute;rents|ES:M&oacute;dulo_Miembros');
 
 $head = member_prepare_head($object);
 
@@ -100,12 +98,12 @@ dol_banner_tab($object, 'rowid', $linkback);
 print '<div class="fichecenter">';
 
 print '<div class="underbanner clearboth"></div>';
-print '<table class="border centpercent">';
+print '<table class="border centpercent tableforfield">';
 
 // Login
-print '<tr><td class="titlefield">'.$langs->trans("Login").'</td><td class="valeur">'.$object->login.'&nbsp;</td></tr>';
+print '<tr><td class="titlefield">'.$langs->trans("Login").' / '.$langs->trans("Id").'</td><td class="valeur">'.$object->login.'&nbsp;</td></tr>';
 
-// Password not crypted
+// If there is a link to password not crypted, we show value in database here so we can compare because it is shown nowhere else
 if (! empty($conf->global->LDAP_MEMBER_FIELD_PASSWORD))
 {
 	print '<tr><td>'.$langs->trans("LDAPFieldPasswordNotCrypted").'</td>';
@@ -113,18 +111,11 @@ if (! empty($conf->global->LDAP_MEMBER_FIELD_PASSWORD))
 	print "</tr>\n";
 }
 
-// Password crypted
-if (! empty($conf->global->LDAP_MEMBER_FIELD_PASSWORD_CRYPTED))
-{
-	print '<tr><td>'.$langs->trans("LDAPFieldPasswordCrypted").'</td>';
-	print '<td class="valeur">'.$object->pass_crypted.'</td>';
-	print "</tr>\n";
-}
+$adht = new AdherentType($db);
+$adht->fetch($object->typeid);
 
 // Type
-print '<tr><td>'.$langs->trans("Type").'</td><td class="valeur">'.$object->type."</td></tr>\n";
-
-$langs->load("admin");
+print '<tr><td>'.$langs->trans("Type").'</td><td class="valeur">'.$adht->getNomUrl(1)."</td></tr>\n";
 
 // LDAP DN
 print '<tr><td>LDAP '.$langs->trans("LDAPMemberDn").'</td><td class="valeur">'.$conf->global->LDAP_MEMBER_DN."</td></tr>\n";
@@ -178,35 +169,35 @@ $result=$ldap->connect_bind();
 if ($result > 0)
 {
 	$info=$object->_load_ldap_info();
-	$dn=$object->_load_ldap_dn($info,1);
-	$search = "(".$object->_load_ldap_dn($info,2).")";
+	$dn=$object->_load_ldap_dn($info, 1);
+	$search = "(".$object->_load_ldap_dn($info, 2).")";
 
 	if (empty($dn))
 	{
 	    $langs->load("errors");
-	    print '<tr '.$bc[false].'><td colspan="2"><font class="error">'.$langs->trans("ErrorModuleSetupNotComplete").'</font></td></tr>';
+	    print '<tr class="oddeven"><td colspan="2"><font class="error">'.$langs->trans("ErrorModuleSetupNotComplete", $langs->transnoentitiesnoconv("Member")).'</font></td></tr>';
 	}
     else
     {
-    	$records = $ldap->getAttribute($dn,$search);
+    	$records = $ldap->getAttribute($dn, $search);
 
     	//print_r($records);
 
-    	// Affichage arbre
-    	if ((! is_numeric($records) || $records != 0) && (! isset($records['count']) || $records['count'] > 0))
+    	// Show tree
+    	if (((! is_numeric($records)) || $records != 0) && (! isset($records['count']) || $records['count'] > 0))
     	{
     		if (! is_array($records))
     		{
-    			print '<tr '.$bc[false].'><td colspan="2"><font class="error">'.$langs->trans("ErrorFailedToReadLDAP").'</font></td></tr>';
+    			print '<tr class="oddeven"><td colspan="2"><font class="error">'.$langs->trans("ErrorFailedToReadLDAP").'</font></td></tr>';
     		}
     		else
     		{
-    			$result=show_ldap_content($records,0,$records['count'],true);
+    			$result=show_ldap_content($records, 0, $records['count'], true);
     		}
     	}
     	else
     	{
-    		print '<tr '.$bc[false].'><td colspan="2">'.$langs->trans("LDAPRecordNotFound").' (dn='.$dn.' - search='.$search.')</td></tr>';
+    		print '<tr class="oddeven"><td colspan="2">'.$langs->trans("LDAPRecordNotFound").' (dn='.$dn.' - search='.$search.')</td></tr>';
     	}
     }
 
@@ -221,5 +212,6 @@ else
 
 print '</table>';
 
+// End of page
 llxFooter();
 $db->close();

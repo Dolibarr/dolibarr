@@ -12,7 +12,7 @@ class PclZipProxyException extends Exception
  *
  * @copyright  GPL License 2008 - Julien Pauli - Cyril PIERRE de GEYER - Anaska (http://www.anaska.com)
  * @copyright  GPL License 2010 - Laurent Destailleur - eldy@users.sourceforge.net
- * @license    http://www.gnu.org/copyleft/gpl.html  GPL License
+ * @license    https://www.gnu.org/copyleft/gpl.html  GPL License
  * @version 1.4
  */
 class PclZipProxy implements ZipInterface

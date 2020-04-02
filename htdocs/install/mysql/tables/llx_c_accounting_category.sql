@@ -1,5 +1,5 @@
 -- ===================================================================
--- Copyright (C) 2015-2016 Alexandre Spangaro	<aspangaro.dolibarr@gmail.com>
+-- Copyright (C) 2015-2016 Alexandre Spangaro	<aspangaro@open-dsi.fr>
 -- Copyright (C) 2016	   Jamal Elbaz			<jamelbaz@gmail.pro>
 --
 -- This program is free software; you can redistribute it and/or modify
@@ -13,7 +13,7 @@
 -- GNU General Public License for more details.
 --
 -- You should have received a copy of the GNU General Public License
--- along with this program. If not, see <http://www.gnu.org/licenses/>.
+-- along with this program. If not, see <https://www.gnu.org/licenses/>.
 --
 -- Table with category for accounting account.
 -- Note: Each accounting account is inside one chart system, so we can have
@@ -22,6 +22,7 @@
 
 CREATE TABLE llx_c_accounting_category (
   rowid 				integer NOT NULL AUTO_INCREMENT PRIMARY KEY,
+  entity 				integer NOT NULL DEFAULT 1,
   code 					varchar(16) NOT NULL,
   label 				varchar(255) NOT NULL,
   range_account			varchar(255) NOT NULL,			 -- Comment

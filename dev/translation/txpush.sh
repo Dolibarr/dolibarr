@@ -9,13 +9,16 @@
 
 export project='dolibarr'
 
+DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
+cd $DIR/../..
+
 # Syntax
 if [ "x$1" = "x" ]
 then
 	echo "This push local files to transifex for project $project."
 	echo "Note:  If you push a language file (not source), file will be skipped if transifex file is newer."
 	echo "       Using -f will overwrite translation but not memory."
-	echo "Usage: ./dev/translation/txpush.sh (source|xx_XX|all) [-r ".$project.".file] [-f] [--no-interactive]"
+	echo "Usage: ./dev/translation/txpush.sh (source|xx_XX|all) [-r $project.file] [-f] [--no-interactive]"
 	exit
 fi
 

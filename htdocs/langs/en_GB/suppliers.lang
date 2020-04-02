@@ -1,3 +1,2 @@
 # Dolibarr language file - Source file is en_US - suppliers
-SuppliersInvoice=Supplier's invoice
 ReferenceSupplierIsAlreadyAssociatedWithAProduct=This supplier is already associated with a Product: %s

@@ -1,5 +1,4 @@
 # Dolibarr language file - Source file is en_US - ldap
-DomainPassword=Κωδικός πρόσβασης για το Domain
 YouMustChangePassNextLogon=Κωδικός πρόσβασης για <b>%s</b> χρήστη στο <b>%s</b> Domain πρέπει να αλλάξει.
 UserMustChangePassNextLogon=Ο χρήστης πρέπει να αλλάξει τον κωδικό πρόσβασης για το %s Domain
 LDAPInformationsForThisContact=Πληροφορίες στο LDAP βάση δεδομένων για αυτήν την επαφή
@@ -25,3 +24,4 @@ MemberTypeSynchronized=Member type synchronized
 ContactSynchronized=Επικοινωνία συγχρονισμένη
 ForceSynchronize=Δυναμικός συγχρονισμός Dolibarr -> LDAP
 ErrorFailedToReadLDAP=Αποτυχία ανάγνωσης LDAP βάση δεδομένων. Ελέγξτε LDAP εγκατάσταση module και την προσβασιμότητα της βάσης δεδομένων.
+PasswordOfUserInLDAP=Password of user in LDAP

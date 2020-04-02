@@ -15,34 +15,32 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
  *       \file       htdocs/core/get_menudiv.php
- *       \brief      File to return menu into a div tree
+ *       \brief      File to return menu into a div tree, to be used by other frontend
  */
 
 //if (! defined('NOREQUIREUSER'))   define('NOREQUIREUSER','1');	// Not disabled cause need to load personalized language
 //if (! defined('NOREQUIREDB'))   define('NOREQUIREDB','1');		// Not disabled cause need to load personalized language
 //if (! defined('NOREQUIRESOC'))    define('NOREQUIRESOC','1');
 //if (! defined('NOREQUIRETRAN')) define('NOREQUIRETRAN','1');		// Not disabled cause need to do translations
-if (! defined('NOCSRFCHECK'))     define('NOCSRFCHECK',1);
-if (! defined('NOTOKENRENEWAL'))  define('NOTOKENRENEWAL',1);
+if (! defined('NOCSRFCHECK'))     define('NOCSRFCHECK', 1);
+if (! defined('NOTOKENRENEWAL'))  define('NOTOKENRENEWAL', 1);
 //if (! defined('NOLOGIN')) define('NOLOGIN',1);					// Not disabled cause need to load personalized language
-if (! defined('NOREQUIREMENU'))  define('NOREQUIREMENU',1);
-if (! defined('NOREQUIREHTML'))  define('NOREQUIREHTML',1);
+if (! defined('NOREQUIREMENU'))  define('NOREQUIREMENU', 1);
+if (! defined('NOREQUIREHTML'))  define('NOREQUIREHTML', 1);
 
-if (! defined('DISABLE_JQUERY_TABLEDND'))   define('DISABLE_JQUERY_TABLEDND',1);
-if (! defined('DISABLE_JQUERY_JNOTIFY'))    define('DISABLE_JQUERY_JNOTIFY',1);
-if (! defined('DISABLE_JQUERY_FLOT'))       define('DISABLE_JQUERY_FLOT',1);
-if (! defined('DISABLE_JQUERY_JEDITABLE'))  define('DISABLE_JQUERY_JEDITABLE',1);
-if (! defined('DISABLE_JQUERY_JEDITABLE'))  define('DISABLE_JQUERY_JEDITABLE',1);
-if (! defined('DISABLE_CKEDITOR'))          define('DISABLE_CKEDITOR',1);
-if (! defined('DISABLE_CKEDITOR'))          define('DISABLE_CKEDITOR',1);
-if (! defined('DISABLE_BROWSER_NOTIF'))     define('DISABLE_BROWSER_NOTIF',1);
-if (! defined('DISABLE_DATE_PICKER'))       define('DISABLE_DATE_PICKER',1);
-if (! defined('DISABLE_SELECT2'))           define('DISABLE_SELECT2',1);
+if (! defined('DISABLE_JQUERY_TABLEDND'))   define('DISABLE_JQUERY_TABLEDND', 1);
+if (! defined('DISABLE_JQUERY_JNOTIFY'))    define('DISABLE_JQUERY_JNOTIFY', 1);
+if (! defined('DISABLE_JQUERY_FLOT'))       define('DISABLE_JQUERY_FLOT', 1);
+if (! defined('DISABLE_JQUERY_JEDITABLE'))  define('DISABLE_JQUERY_JEDITABLE', 1);
+if (! defined('DISABLE_CKEDITOR'))          define('DISABLE_CKEDITOR', 1);
+if (! defined('DISABLE_BROWSER_NOTIF'))     define('DISABLE_BROWSER_NOTIF', 1);
+if (! defined('DISABLE_DATE_PICKER'))       define('DISABLE_DATE_PICKER', 1);
+if (! defined('DISABLE_SELECT2'))           define('DISABLE_SELECT2', 1);
 
 require_once '../main.inc.php';
 
@@ -128,7 +126,7 @@ print '
         display: block;
     }
     li.lilevel3 a {
-        padding: 0.2em 15px 0.2em 60px;
+        padding: 0.6em 15px 0.6em 60px;
         color: #000;
         cursor: pointer;
         display: block;
@@ -176,7 +174,7 @@ $(document).ready(function(){
 ';
 
 
-if (empty($user->societe_id))	// If internal user or not defined
+if (empty($user->socid))	// If internal user or not defined
 {
 	$conf->standard_menu=(empty($conf->global->MAIN_MENU_STANDARD_FORCED)?(empty($conf->global->MAIN_MENU_STANDARD)?'eldy_menu.php':$conf->global->MAIN_MENU_STANDARD):$conf->global->MAIN_MENU_STANDARD_FORCED);
 }
@@ -191,7 +189,7 @@ if (GETPOST('menu')) $file_menu=GETPOST('menu');     // example: menu=eldy_menu.
 if (! class_exists('MenuManager'))
 {
 	$menufound=0;
-	$dirmenus=array_merge(array("/core/menus/"),(array) $conf->modules_parts['menus']);
+	$dirmenus=array_merge(array("/core/menus/"), (array) $conf->modules_parts['menus']);
 	foreach($dirmenus as $dirmenu)
 	{
 		$menufound=dol_include_once($dirmenu."standard/".$file_menu);
@@ -204,8 +202,8 @@ if (! class_exists('MenuManager'))
 		include_once DOL_DOCUMENT_ROOT."/core/menus/standard/".$file_menu;
 	}
 }
-$menumanager = new MenuManager($db, empty($user->societe_id)?0:1);
-$menumanager->loadMenu('all','all');
+$menumanager = new MenuManager($db, empty($user->socid)?0:1);
+$menumanager->loadMenu('all', 'all');	// Load this->tabMenu with sql menu entries
 //var_dump($menumanager);exit;
 $menumanager->showmenu('jmobile');
 

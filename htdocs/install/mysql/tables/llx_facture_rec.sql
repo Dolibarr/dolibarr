@@ -1,7 +1,7 @@
 -- ===========================================================================
 -- Copyright (C) 2003      Rodolphe Quiedeville <rodolphe@quiedeville.org>
 -- Copyright (C) 2012-2014 Laurent Destailleur  <eldy@users.sourceforge.net>
--- Copyright (C) 2009      Regis Houssin        <regis.houssin@capnetworks.com>
+-- Copyright (C) 2009      Regis Houssin        <regis.houssin@inodbox.com>
 -- Copyright (C) 2010      Juanjo Menent        <jmenent@2byte.es>
 -- 
 -- This program is free software; you can redistribute it and/or modify
@@ -15,7 +15,7 @@
 -- GNU General Public License for more details.
 --
 -- You should have received a copy of the GNU General Public License
--- along with this program. If not, see <http://www.gnu.org/licenses/>.
+-- along with this program. If not, see <https://www.gnu.org/licenses/>.
 --
 -- ===========================================================================
 
@@ -48,7 +48,7 @@ create table llx_facture_rec
   
   fk_projet          integer,             -- projet auquel est associe la facture
   
-  fk_cond_reglement  integer DEFAULT 0,  -- condition de reglement
+  fk_cond_reglement  integer  DEFAULT 1 NOT NULL,  -- condition de reglement
   fk_mode_reglement  integer DEFAULT 0,  -- mode de reglement (Virement, Prelevement)
   date_lim_reglement date,				   -- date limite de reglement
   fk_account         integer,			  -- bank account id

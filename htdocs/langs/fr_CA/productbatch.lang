@@ -11,7 +11,6 @@ DetailBatchNumber=Détails du lot / série
 printBatch=Lot / série: %s
 printSellby=Vendre par: %s
 AddDispatchBatchLine=Ajouter une ligne pour l'expédition de la durée de conservation
-WhenProductBatchModuleOnOptionAreForced=Lorsque le module Lot / Serial est activé, le mode de mise à l'arrêt / diminution automatique est obligé de valider l'expédition et d'envoyer manuellement pour la réception et ne peut pas être modifié. D'autres options peuvent être définies comme vous le souhaitez.
 ProductDoesNotUseBatchSerial=Ce produit n'utilise pas de lot / numéro de série
 ProductLotSetup=Configuration du module lot / série
 ShowCurrentStockOfLot=Afficher le stock actuel pour un produit / lot partiel

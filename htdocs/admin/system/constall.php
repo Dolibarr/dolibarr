@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2003      Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2011 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2009      Regis Houssin        <regis.houssin@capnetworks.com>
+ * Copyright (C) 2009      Regis Houssin        <regis.houssin@inodbox.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -14,7 +14,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -24,9 +24,8 @@
 
 require '../../main.inc.php';
 
-$langs->load("admin");
-$langs->load("user");
-$langs->load("install");
+// Load translation files required by the page
+$langs->loadLangs(array("install","user","admin"));
 
 
 if (!$user->admin)
@@ -39,7 +38,7 @@ if (!$user->admin)
 
 llxHeader();
 
-print load_fiche_titre($langs->trans("SummaryConst"),'','title_setup');
+print load_fiche_titre($langs->trans("SummaryConst"), '', 'title_setup');
 
 
 print load_fiche_titre($langs->trans("ConfigurationFile").' ('.$conffiletoshowshort.')');
@@ -71,27 +70,27 @@ $configfileparameters=array(
 							'?dolibarr_main_auth_ldap_admin_login',
 							'?dolibarr_main_auth_ldap_admin_pass',
 							'?dolibarr_main_auth_ldap_debug',
-                            'separator',
-                            '?dolibarr_lib_ADODB_PATH',
+							'separator',
+							'?dolibarr_lib_ADODB_PATH',
 							'?dolibarr_lib_FPDF_PATH',
-	                        '?dolibarr_lib_TCPDF_PATH',
+							'?dolibarr_lib_TCPDF_PATH',
 							'?dolibarr_lib_FPDI_PATH',
-                            '?dolibarr_lib_TCPDI_PATH',
+							'?dolibarr_lib_TCPDI_PATH',
 							'?dolibarr_lib_NUSOAP_PATH',
-                            '?dolibarr_lib_PHPEXCEL_PATH',
-                            '?dolibarr_lib_GEOIP_PATH',
+							'?dolibarr_lib_PHPEXCEL_PATH',
+							'?dolibarr_lib_GEOIP_PATH',
 							'?dolibarr_lib_ODTPHP_PATH',
-                            '?dolibarr_lib_ODTPHP_PATHTOPCLZIP',
-						    '?dolibarr_js_CKEDITOR',
-						    '?dolibarr_js_JQUERY',
-						    '?dolibarr_js_JQUERY_UI',
-						    '?dolibarr_js_JQUERY_FLOT',
+							'?dolibarr_lib_ODTPHP_PATHTOPCLZIP',
+							'?dolibarr_js_CKEDITOR',
+							'?dolibarr_js_JQUERY',
+							'?dolibarr_js_JQUERY_UI',
+							'?dolibarr_js_JQUERY_FLOT',
 							'?dolibarr_font_DOL_DEFAULT_TTF',
-                            '?dolibarr_font_DOL_DEFAULT_TTF_BOLD',
+							'?dolibarr_font_DOL_DEFAULT_TTF_BOLD',
 							'separator',
 							'?dolibarr_mailing_limit_sendbyweb',
 							'?dolibarr_mailing_limit_sendbycli',
-                            '?dolibarr_strict_mode'
+							'?dolibarr_strict_mode'
 						);
 $configfilelib=array(
 //					'separator',
@@ -122,26 +121,26 @@ $configfilelib=array(
 					'dolibarr_main_auth_ldap_admin_pass',
 					'dolibarr_main_auth_ldap_debug',
 					'separator',
-                    'dolibarr_lib_ADODB_PATH',
-                    'dolibarr_lib_TCPDF_PATH',
-                    'dolibarr_lib_FPDI_PATH',
+					'dolibarr_lib_ADODB_PATH',
+					'dolibarr_lib_TCPDF_PATH',
+					'dolibarr_lib_FPDI_PATH',
 					'dolibarr_lib_NUSOAP_PATH',
-                    'dolibarr_lib_PHPEXCEL_PATH',
-                    'dolibarr_lib_GEOIP_PATH',
+					'dolibarr_lib_PHPEXCEL_PATH',
+					'dolibarr_lib_GEOIP_PATH',
 					'dolibarr_lib_ODTPHP_PATH',
-                    'dolibarr_lib_ODTPHP_PATHTOPCLZIP',
-                    'dolibarr_js_CKEDITOR',
-                    'dolibarr_js_JQUERY',
-                    'dolibarr_js_JQUERY_UI',
-                    'dolibarr_js_JQUERY_FLOT',
+					'dolibarr_lib_ODTPHP_PATHTOPCLZIP',
+					'dolibarr_js_CKEDITOR',
+					'dolibarr_js_JQUERY',
+					'dolibarr_js_JQUERY_UI',
+					'dolibarr_js_JQUERY_FLOT',
 					'dolibarr_font_DOL_DEFAULT_TTF',
-                    'dolibarr_font_DOL_DEFAULT_TTF_BOLD',
+					'dolibarr_font_DOL_DEFAULT_TTF_BOLD',
 					'separator',
 					'Limit nb of email sent by page',
 					'Strict mode is on/off'
 					);
-$var=true;
-print '<table class="noborder" width="100%">';
+
+print '<table class="noborder centpercent">';
 print '<tr class="liste_titre"><td width="280">'.$langs->trans("Label").'</td>';
 print '<td>'.$langs->trans("Parameter").'</td>';
 print '<td>'.$langs->trans("Value").'</td>';
@@ -156,19 +155,19 @@ foreach($configfileparameters as $key)
 
 	if (empty($ignore))
 	{
-        $newkey = preg_replace('/^\?/','',$key);
+		$newkey = preg_replace('/^\?/', '', $key);
 
-        if (preg_match('/^\?/',$key) && empty(${$newkey}))
-        {
-            $i++;
-            continue;    // We discard parametes starting with ?
-        }
+		if (preg_match('/^\?/', $key) && empty(${$newkey}))
+		{
+			$i++;
+			continue;    // We discard parametes starting with ?
+		}
 
-        if ($newkey == 'separator' && $lastkeyshown == 'separator')
-        {
-            $i++;
-            continue;
-        }
+		if ($newkey == 'separator' && $lastkeyshown == 'separator')
+		{
+			$i++;
+			continue;
+		}
 
 		print '<tr class="oddeven">';
 		if ($newkey == 'separator')
@@ -183,8 +182,8 @@ foreach($configfileparameters as $key)
 			print '<td>'.$newkey.'</td>';
 			// Value
 			print "<td>";
-			if ($newkey == 'dolibarr_main_db_pass') print preg_replace('/./i','*',${$newkey});
-			else if ($newkey == 'dolibarr_main_url_root' && preg_match('/__auto__/',${$newkey})) print ${$newkey}.' => '.constant('DOL_MAIN_URL_ROOT');
+			if ($newkey == 'dolibarr_main_db_pass') print preg_replace('/./i', '*', ${$newkey});
+			elseif ($newkey == 'dolibarr_main_url_root' && preg_match('/__auto__/', ${$newkey})) print ${$newkey}.' => '.constant('DOL_MAIN_URL_ROOT');
 			else print ${$newkey};
 			if ($newkey == 'dolibarr_main_url_root' && ${$newkey} != DOL_MAIN_URL_ROOT) print ' (currently overwritten by autodetected value: '.DOL_MAIN_URL_ROOT.')';
 			print "</td>";
@@ -234,22 +233,21 @@ if ($resql)
 	$i = 0;
 
 	while ($i < $num)
-    {
-    	$obj = $db->fetch_object($resql);
+	{
+		$obj = $db->fetch_object($resql);
 
-    	print '<tr class="oddeven">';
-    	print '<td>'.$obj->name.'</td>'."\n";
-    	print '<td>'.$obj->value.'</td>'."\n";
-    	if (empty($conf->multicompany->enabled) || !$user->entity) print '<td>'.$obj->entity.'</td>'."\n";	// If superadmin or multicompany disabled
-    	print "</tr>\n";
+		print '<tr class="oddeven">';
+		print '<td>'.$obj->name.'</td>'."\n";
+		print '<td>'.$obj->value.'</td>'."\n";
+		if (empty($conf->multicompany->enabled) || !$user->entity) print '<td>'.$obj->entity.'</td>'."\n";	// If superadmin or multicompany disabled
+		print "</tr>\n";
 
-    	$i++;
-    }
+		$i++;
+	}
 }
 
 print '</table>';
 
-
+// End of page
 llxFooter();
-
 $db->close();

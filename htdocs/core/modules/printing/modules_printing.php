@@ -1,6 +1,6 @@
 <?php
 /*
- * Copyright (C) 2014-2015 Frederic France      <frederic.france@free.fr>
+ * Copyright (C) 2014-2018 Frederic France      <frederic.france@netlogic.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -13,12 +13,12 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
- * or see http://www.gnu.org/
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
+ * or see https://www.gnu.org/
  */
 
 /**
- *      \file       htdocs/core/modules/mailings/modules_printing.php
+ *      \file       htdocs/core/modules/printing/modules_printing.php
  *      \ingroup    printing
  *      \brief      File with parent class of printing modules
  */
@@ -31,8 +31,15 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
  */
 class PrintingDriver
 {
-    var $db;
-    var $error;
+    /**
+     * @var DoliDB Database handler.
+     */
+    public $db;
+
+    /**
+	 * @var string Error code (or message)
+	 */
+	public $error='';
 
 
     /**
@@ -40,7 +47,7 @@ class PrintingDriver
      *
      *  @param      DoliDB      $db      Database handler
      */
-    function __construct($db)
+    public function __construct($db)
     {
         $this->db = $db;
     }
@@ -52,7 +59,7 @@ class PrintingDriver
      *  @param  integer  $maxfilenamelength  Max length of value to show
      *  @return array                       List of drivers
     */
-    static function listDrivers($db,$maxfilenamelength=0)
+    public static function listDrivers($db, $maxfilenamelength = 0)
     {
         global $conf;
 
@@ -60,9 +67,9 @@ class PrintingDriver
         $list = array();
 
         $moduledir=DOL_DOCUMENT_ROOT."/core/modules/printing/";
-        $tmpfiles=dol_dir_list($moduledir,'all',0,'\modules.php','','name',SORT_ASC,0);
+        $tmpfiles=dol_dir_list($moduledir, 'all', 0, '\modules.php', '', 'name', SORT_ASC, 0);
         foreach($tmpfiles as $record) {
-            $list[$record['fullname']]=str_replace('.modules.php', '',$record['name']);
+            $list[$record['fullname']]=str_replace('.modules.php', '', $record['name']);
         }
 
         return $list;
@@ -73,7 +80,7 @@ class PrintingDriver
      *
      *  @return     string      Return translation of key PrintingModuleDescXXX where XXX is module name, or $this->desc if not exists
      */
-    function getDesc()
+    public function getDesc()
     {
         global $langs;
         $langs->load("printing");
@@ -81,6 +88,4 @@ class PrintingDriver
         if ($langs->trans($transstring) != $transstring) return $langs->trans($transstring);
         else return $this->desc;
     }
-
 }
-

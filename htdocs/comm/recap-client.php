@@ -13,7 +13,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -26,15 +26,16 @@ require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
 
+// Load translation files required by the page
 $langs->load("companies");
 if (! empty($conf->facture->enabled)) $langs->load("bills");
 
 // Security check
 $socid = $_GET["socid"];
-if ($user->societe_id > 0)
+if ($user->socid > 0)
 {
-  $action = '';
-  $socid = $user->societe_id;
+    $action = '';
+    $socid = $user->socid;
 }
 
 
@@ -61,7 +62,7 @@ if ($socid > 0)
     print "<table width=\"100%\">\n";
     print '<tr><td valign="top" width="50%">';
 
-    print '<table class="border" width="100%">';
+    print '<table class="border centpercent">';
 
     // Name
     print '<tr><td width="20%">'.$langs->trans("ThirdParty").'</td><td width="80%" colspan="3">'.$societe->getNomUrl(1).'</td></tr>';
@@ -88,5 +89,6 @@ else
   	dol_print_error($db);
 }
 
+// End of page
 llxFooter();
 $db->close();

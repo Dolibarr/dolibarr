@@ -1,6 +1,7 @@
 <?php
 /* Copyright (C) 2007-2008 Jeremie Ollivier    <jeremie.o@laposte.net>
  * Copyright (C) 2008-2010 Laurent Destailleur <eldy@uers.sourceforge.net>
+ * Copyright (C) 2018		Juanjo Menent <jmenent@2byte.es>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -13,7 +14,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -28,10 +29,10 @@ require_once DOL_DOCUMENT_ROOT.'/cashdesk/class/Facturation.class.php';
 require_once DOL_DOCUMENT_ROOT.'/societe/class/societe.class.php';
 require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
 
-$action = GETPOST('action','alpha');
+$action = GETPOST('action', 'alpha');
 
 $obj_facturation = unserialize($_SESSION['serObjFacturation']);
-unset ($_SESSION['serObjFacturation']);
+unset($_SESSION['serObjFacturation']);
 
 
 switch($action)
@@ -48,11 +49,11 @@ switch($action)
 			// Recuperation des donnees en fonction de la source (liste deroulante ou champ texte) ...
 			if ( $_POST['hdnSource'] == 'LISTE' )
 			{
-				$sql.= " AND p.rowid = ".$_POST['selProduit'];
+				$sql.= " AND p.rowid = ".((int) GETPOST('selProduit', 'int'));
 			}
-			else if ( $_POST['hdnSource'] == 'REF' )
+			elseif ( $_POST['hdnSource'] == 'REF' )
 			{
-				$sql.= " AND p.ref = '".$_POST['txtRef']."'";
+				$sql.= " AND p.ref = '".$db->escape(GETPOST('txtRef', 'alpha'))."'";
 			}
 
 			$result = $db->query($sql);
@@ -63,7 +64,7 @@ switch($action)
 				{
 					$ret=array();
 					$tab = $db->fetch_array($result);
-					foreach ( $tab as $key => $value )
+					foreach ($tab as $key => $value)
 					{
 						$ret[$key] = $value;
 					}
@@ -150,7 +151,8 @@ switch($action)
 					$obj_facturation->id($ret['rowid']);
 					$obj_facturation->ref($ret['ref']);
 					$obj_facturation->stock($ret['reel']);
-					$obj_facturation->prix($ret['price']);
+					//$obj_facturation->prix($ret['price']);
+					$obj_facturation->prix($pu_ht);
 
 
 					$vatrate = $tva_tx;
@@ -161,7 +163,7 @@ switch($action)
 					{
 						$filtre = $ret['ref'];
 					}
-					else if ( $_POST['hdnSource'] == 'REF' )
+					elseif ( $_POST['hdnSource'] == 'REF' )
 					{
 						$filtre = $_POST['txtRef'];
 					}
@@ -195,7 +197,7 @@ switch($action)
 		break;
 
 	case 'change_thirdparty':	// We have clicked on button "Modify" a thirdparty
-		$newthirdpartyid = GETPOST('CASHDESK_ID_THIRDPARTY','int');
+		$newthirdpartyid = GETPOST('CASHDESK_ID_THIRDPARTY', 'int');
 		if ($newthirdpartyid > 0)
 		{
 		    $_SESSION["CASHDESK_ID_THIRDPARTY"] = $newthirdpartyid;
@@ -214,7 +216,6 @@ switch($action)
 			$obj_facturation->remisePercent($_POST['txtRemise']);
 			$obj_facturation->ajoutArticle();	// This add an entry into $_SESSION['poscart']
 			// We update prixTotalTtc
-
 		}
 
 		$redirection = DOL_URL_ROOT.'/cashdesk/affIndex.php?menutpl=facturation';
@@ -225,7 +226,6 @@ switch($action)
 
 		$redirection = DOL_URL_ROOT.'/cashdesk/affIndex.php?menutpl=facturation';
 		break;
-
 }
 
 // We saved object obj_facturation
@@ -233,4 +233,3 @@ $_SESSION['serObjFacturation'] = serialize($obj_facturation);
 //var_dump($_SESSION['serObjFacturation']);
 header('Location: '.$redirection);
 exit;
-

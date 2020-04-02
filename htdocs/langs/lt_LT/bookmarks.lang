@@ -1,9 +1,9 @@
 # Dolibarr language file - Source file is en_US - marque pages
-AddThisPageToBookmarks=Add current page to bookmarks
+AddThisPageToBookmarks=Įtraukti dabartinį puslapį į žymes
 Bookmark=Žymėti
 Bookmarks=Žymekliai
 ListOfBookmarks=Žymeklių sąrašas
-EditBookmarks=List/edit bookmarks
+EditBookmarks=Sąrašas / redaguoti žymes
 NewBookmark=Naujas žymeklis
 ShowBookmark=Rodyti žymeklį
 OpenANewWindow=Atidaryti naują langą
@@ -12,9 +12,9 @@ BookmarkTargetNewWindowShort=Naujas langas
 BookmarkTargetReplaceWindowShort=Dabartinis langas
 BookmarkTitle=Žymeklio pavadinimas
 UrlOrLink=URL
-BehaviourOnClick=Behaviour when a bookmark URL is selected
+BehaviourOnClick=Elgsena kada pasirenkamas žymeklio URL
 CreateBookmark=Sukurti žymeklį
 SetHereATitleForLink=Nustatykite žymeklio pavadinimą
 UseAnExternalHttpLinkOrRelativeDolibarrLink=Naudoti išorinį http URL arba susijusį Dolibarr URL
-ChooseIfANewWindowMustBeOpenedOnClickOnBookmark=Choose if linked page must open in new window or not
+ChooseIfANewWindowMustBeOpenedOnClickOnBookmark=Pasirinkite, ar susietas puslapis turi būti atidarytas naujame lange, ar ne
 BookmarksManagement=Žymeklių valdymas

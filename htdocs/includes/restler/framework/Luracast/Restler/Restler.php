@@ -533,7 +533,7 @@ class Restler extends EventDispatcher
             rtrim($path, '/') //remove trailing slash if found
         );
 
-        if (Defaults::$useUrlBasedVersioning && strlen($path) && $path{0} == 'v') {
+        if (Defaults::$useUrlBasedVersioning && strlen($path) && $path[0] == 'v') {
             $version = intval(substr($path, 1));
             if ($version && $version <= $this->apiVersion) {
                 $this->requestedApiVersion = $version;
@@ -1599,7 +1599,7 @@ class Restler extends EventDispatcher
      */
     public function __get($name)
     {
-        if ($name{0} == '_') {
+        if ($name[0] == '_') {
             $hiddenProperty = substr($name, 1);
             if (isset($this->$hiddenProperty)) {
                 return $this->$hiddenProperty;

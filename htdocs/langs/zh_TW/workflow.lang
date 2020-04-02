@@ -1,20 +1,20 @@
 # Dolibarr language file - Source file is en_US - workflow
-WorkflowSetup=工作流程模組設置
-WorkflowDesc=這個模組是設計來修改自動化的行為。預設為工作流程開啟（你可以依照你要的順序做事）。你可以啟動你有興趣的自動化項目。
-ThereIsNoWorkflowToModify=這個模組啟動會無法修正工作流程。
+WorkflowSetup=工作流程模組設定
+WorkflowDesc=此模組提供了一些自動程序。默認情況下，工作流程是開啟的（您可以按想要的順序執行操作），但是在這裡您可以開啟一些自動程序。
+ThereIsNoWorkflowToModify=已啟動的模組無法可修改的工作流程。
 # Autocreate
-descWORKFLOW_PROPAL_AUTOCREATE_ORDER=Automatically create a customer order after a commercial proposal is signed (new order will have same amount than proposal)
-descWORKFLOW_PROPAL_AUTOCREATE_INVOICE=當商業建議書簽署，自動建立客戶發票 (新發票會有和建議書相同的金額)
+descWORKFLOW_PROPAL_AUTOCREATE_ORDER=簽署商業提案/建議書後自動創建銷售訂單（新訂單的金額將與提案/建議書相同）
+descWORKFLOW_PROPAL_AUTOCREATE_INVOICE=在簽署商業提案/建議書後自動創建客戶發票（新發票將與提案/建議書相同的金額）
 descWORKFLOW_CONTRACT_AUTOCREATE_INVOICE=當合約生效，自動建立客戶發票
-descWORKFLOW_ORDER_AUTOCREATE_INVOICE=當客戶訂單結案，自動產生客戶發票。(新發票會和訂單金額相同)
+descWORKFLOW_ORDER_AUTOCREATE_INVOICE=關閉銷售訂單後自動創建客戶發票（新發票的金額將與訂單金額相同）
 # Autoclassify customer proposal or order
-descWORKFLOW_ORDER_CLASSIFY_BILLED_PROPAL=Classify linked source proposal(s) to billed when customer order is set to billed (and if amount of the order is same than total amount of signed linked proposals)
-descWORKFLOW_INVOICE_CLASSIFY_BILLED_PROPAL=Classify linked source proposal(s) to billed when customer invoice is validated (and if amount of the invoice is same than total amount of signed linked proposals)
-descWORKFLOW_INVOICE_AMOUNT_CLASSIFY_BILLED_ORDER=Classify linked source customer order(s) to billed when customer invoice is validated (and if amount of the invoice is same than total amount of linked orders)
-descWORKFLOW_INVOICE_CLASSIFY_BILLED_ORDER=Classify linked source customer order(s) to billed when customer invoice is set to paid (and if amount of the invoice is same than total amount of linked orders)
-descWORKFLOW_ORDER_CLASSIFY_SHIPPED_SHIPPING=Classify linked source customer order to shipped when a shipment is validated (and if quantity shipped by all shipments is the same as in the order to update)
-# Autoclassify supplier order
-descWORKFLOW_ORDER_CLASSIFY_BILLED_SUPPLIER_PROPOSAL=Classify linked source supplier proposal(s) to billed when supplier invoice is validated (and if amount of the invoice is same than total amount of linked proposals)
-descWORKFLOW_INVOICE_AMOUNT_CLASSIFY_BILLED_SUPPLIER_ORDER=Classify linked source supplier order(s) to billed when supplier invoice is validated (and if amount of the invoice is same than total amount of linked orders)
+descWORKFLOW_ORDER_CLASSIFY_BILLED_PROPAL=將銷售訂單設置為開票時（如果訂單金額與已簽名的連接提案之總金額相同），將連接之提案分類為已開票
+descWORKFLOW_INVOICE_CLASSIFY_BILLED_PROPAL=當已開立客戶發票時（如果發票金額與已簽名的連接之提案的總金額相同），將連接之提案分類為已開票
+descWORKFLOW_INVOICE_AMOUNT_CLASSIFY_BILLED_ORDER=當已開立客戶發票（如果發票金額與連接訂單的總金額相同），將連接的銷售訂單分類為開票
+descWORKFLOW_INVOICE_CLASSIFY_BILLED_ORDER=當客戶發票設置為已付款時（如果發票金額與連接訂單的總金額相同），將連接的銷售訂單分類為開票
+descWORKFLOW_ORDER_CLASSIFY_SHIPPED_SHIPPING=當已確認裝運後（並且如果所有裝運的裝運數量與更新訂單中的數量相同），將鏈接的銷售訂單分類為已裝運
+# Autoclassify purchase order
+descWORKFLOW_ORDER_CLASSIFY_BILLED_SUPPLIER_PROPOSAL=當供應商發票已確認時（如果發票金額與連接提案的總金額相同），將連接供應商提案分類為開票
+descWORKFLOW_INVOICE_AMOUNT_CLASSIFY_BILLED_SUPPLIER_ORDER=當供應商發票已確認時（如果發票金額與連接訂單的總金額相同），將連接的採購訂單分類為開票
 AutomaticCreation=自動建立
 AutomaticClassification=自動分類

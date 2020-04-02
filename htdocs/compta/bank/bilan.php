@@ -13,7 +13,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -22,11 +22,11 @@
  *		\brief      Page de bilan
  */
 
-require('../../main.inc.php');
+require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
 
-$langs->load("banks");
-$langs->load("categories");
+// Load translation files required by the page
+$langs->loadLangs(array('banks', 'categories'));
 
 if (!$user->rights->banque->lire)
   accessforbidden();
@@ -92,5 +92,6 @@ print "<tr class=\"oddeven\"><td>".$langs->trans("BankBalance")."</td><td align=
 
 print "</table>";
 
+// End of page
 llxFooter();
 $db->close();

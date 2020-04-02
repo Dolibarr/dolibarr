@@ -12,8 +12,8 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
- * or see http://www.gnu.org/
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
+ * or see https://www.gnu.org/
  */
 
 /**
@@ -154,15 +154,15 @@ function dol_ch_controle_bvrb($bvrb)
 
 
 	// Clean data
-	$bv=str_replace(' ','',$bvrb);
+	$bv=str_replace(' ', '', $bvrb);
 
 	// Make control
 	$report=0;
 	while (dol_strlen($bv)>1)
 	{
-		$match=substr($bv,0,1);
+		$match=substr($bv, 0, 1);
 		$report=$tableau[$report][$match];
-		$bv=substr($bv,1);
+		$bv=substr($bv, 1);
 	}
 	$controle=$tableau[$report][10];
 

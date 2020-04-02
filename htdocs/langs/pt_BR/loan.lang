@@ -12,32 +12,8 @@ ConfirmDeleteLoan=Confirme a exclusão deste empréstimo
 LoanDeleted=Empréstimo excluído com sucesso
 ConfirmPayLoan=Confirmar este empréstimo como pago
 LoanPaid=Empréstimo pago
-LoanCalc=Calculadora de Empréstimos Bancários
-PurchaseFinanceInfo=Informações de Compras e Financiamentos
-SalePriceOfAsset=Preço de venda de ativos
-PercentageDown=Percentagem de Down
-LengthOfMortgage=Período do empréstimo
-AnnualInterestRate=Taxa de juros anual
-ExplainCalculations=Explique Cálculos
-ShowMeCalculationsAndAmortization=Mostre-me os cálculos e amortização
-MortgagePaymentInformation=Informação do pagamento de hipoteca
-DownPayment=Pagamento Inicial
-DownPaymentDesc=<b>Pagamento inicial</b> = O preço da casa multiplicado pelo percentual dividido por 100 (para 5% tem-se como resultado 5/100 ou 0.05)
-InterestRateDesc=A <b>taxa de juros</b> = O percentual de juros anual dividido por 100
-MonthlyFactorDesc=<b>Fator mensal</b> = Resultado da seguinte fórmula
-MonthlyInterestRateDesc=A <b>taxa de juros mensal</b> = A taxa de juro anual dividido por 12 (para os 12 meses em um ano)
-MonthTermDesc=O <b>termo mensal</b> do empréstimo em meses = Número de anos do empréstimo tomado multiplicado por 12
-MonthlyPaymentDesc=O pagamento mensal é descoberto com a seguinte fórmula
-AmortizationPaymentDesc=A <a href="#amortization">amortização</a> demonstra o quanto do seu pagamento mensal  destina-se a juros do banco e quanto refere-se ao pagamento do pirncipal do seu empréstimo.
-AmountFinanced=Valor Financiado
-AmortizationMonthlyPaymentOverYears=Amortização de pagamento mensal: <b>%s%</b>de  %s ao longo dos anos
-LoanCalcDesc=Esta <b>calculadora de hipoteca</b> pode ser usada para mostrar os pagamentos mensais de um empréstimo, com base no montante contratado, no prazo desejado para o pagamento e na taxa de juros.<br> Esta calculadora inclui também o PMI (Private Mortgage Insurance - Seguro de Hipoteca Privada) para empréstimos onde mais de 20%% são usados para a entrada. Foram também consideradas as taxas municipais (IPTU), e seus efeitos no pagamento mensal total da hipoteca.<br>
-GoToInterest=%s será destinado a JUROS
-GoToPrincipal=%s será destinado ao PRINCIPAL
-YouWillSpend=Você gastará %s no ano de %s
 ListLoanAssociatedProject=Lista de empréstimos associados ao projeto
-AddLoan=Criar empréstimo
+InterestAmount=Juro
 LOAN_ACCOUNTING_ACCOUNT_CAPITAL=Capital contabilístico por padrão
 LOAN_ACCOUNTING_ACCOUNT_INTEREST=Interesse contabilístico por padrão
 LOAN_ACCOUNTING_ACCOUNT_INSURANCE=Seguro contabilístico por padrão
-CreateCalcSchedule=Criar / alterar horário de empréstimo

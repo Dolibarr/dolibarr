@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2010-2012	Laurent Destailleur	<eldy@users.sourceforge.net>
- * Copyright (C) 2012		Regis Houssin		<regis.houssin@capnetworks.com>
+ * Copyright (C) 2012		Regis Houssin		<regis.houssin@inodbox.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -13,8 +13,8 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
- * or see http://www.gnu.org/
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
+ * or see https://www.gnu.org/
  */
 
 /**
@@ -46,7 +46,7 @@ $conf->global->MAIN_DISABLE_ALL_MAILS=1;
  * @backupStaticAttributes enabled
  * @remarks	backupGlobals must be disabled to have db,conf,user and lang not erased.
  */
-class ImagesLibTest extends PHPUnit_Framework_TestCase
+class ImagesLibTest extends PHPUnit\Framework\TestCase
 {
 	protected $savconf;
 	protected $savuser;
@@ -59,8 +59,10 @@ class ImagesLibTest extends PHPUnit_Framework_TestCase
 	 *
 	 * @return ImagesLibTest
 	 */
-	function __construct()
+	public function __construct()
 	{
+		parent::__construct();
+
 		//$this->sharedFixture
 		global $conf,$user,$langs,$db;
 		$this->savconf=$conf;
@@ -74,7 +76,7 @@ class ImagesLibTest extends PHPUnit_Framework_TestCase
 	}
 
 	// Static methods
-  	public static function setUpBeforeClass()
+    public static function setUpBeforeClass()
     {
     	global $conf,$user,$langs,$db;
 		$db->begin();	// This is to have all actions inside a transaction even if test launched without suite.
@@ -116,24 +118,24 @@ class ImagesLibTest extends PHPUnit_Framework_TestCase
     	print __METHOD__."\n";
     }
 
-   /**
-    * testDolCountNbOfLine
-    *
-    * @return	int
-    */
+    /**
+     * testDolCountNbOfLine
+     *
+     * @return	int
+     */
     public function testgetImageSize()
     {
 		$file=dirname(__FILE__).'/img250x50.jpg';
 		$tmp=dol_getImageSize($file);
     	print __METHOD__." result=".$tmp['width'].'/'.$tmp['height']."\n";
-		$this->assertEquals($tmp['width'],250);
-		$this->assertEquals($tmp['height'],50);
+		$this->assertEquals($tmp['width'], 250);
+		$this->assertEquals($tmp['height'], 50);
 
 		$file=dirname(__FILE__).'/img250x20.png';
 		$tmp=dol_getImageSize($file);
     	print __METHOD__." result=".$tmp['width'].'/'.$tmp['height']."\n";
-		$this->assertEquals($tmp['width'],250);
-		$this->assertEquals($tmp['height'],20);
+		$this->assertEquals($tmp['width'], 250);
+		$this->assertEquals($tmp['height'], 20);
 
 		/*$file=dirname(__FILE__).'/filenotfound.png';
 		$tmp=dol_getImageSize($file);
@@ -143,5 +145,4 @@ class ImagesLibTest extends PHPUnit_Framework_TestCase
 
 		return 1;
     }
-
 }

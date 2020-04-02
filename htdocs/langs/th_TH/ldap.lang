@@ -1,5 +1,4 @@
 # Dolibarr language file - Source file is en_US - ldap
-DomainPassword=รหัสผ่านสำหรับโดเมน
 YouMustChangePassNextLogon=<b>รหัสผ่านสำหรับผู้ใช้% s% s</b> ในโดเมนต้องมีการเปลี่ยนแปลง
 UserMustChangePassNextLogon=ผู้ใช้ต้องเปลี่ยนรหัสผ่านในโดเมน% s
 LDAPInformationsForThisContact=ข้อมูลในฐานข้อมูล LDAP สำหรับการติดต่อนี้
@@ -25,3 +24,4 @@ MemberTypeSynchronized=Member type synchronized
 ContactSynchronized=ติดต่อตรง
 ForceSynchronize=กองทัพตรงกัน Dolibarr -> LDAP
 ErrorFailedToReadLDAP=ไม่สามารถอ่านฐานข้อมูล LDAP ตรวจสอบการติดตั้งโมดูล LDAP และการเข้าถึงฐานข้อมูล
+PasswordOfUserInLDAP=Password of user in LDAP

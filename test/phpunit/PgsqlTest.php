@@ -12,8 +12,8 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
- * or see http://www.gnu.org/
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
+ * or see https://www.gnu.org/
  */
 
 /**
@@ -47,7 +47,7 @@ $conf->global->MAIN_DISABLE_ALL_MAILS=1;
  * @backupStaticAttributes enabled
  * @remarks	backupGlobals must be disabled to have db,conf,user and lang not erased.
  */
-class PgsqlTest extends PHPUnit_Framework_TestCase
+class PgsqlTest extends PHPUnit\Framework\TestCase
 {
 	protected $savconf;
 	protected $savuser;
@@ -60,8 +60,10 @@ class PgsqlTest extends PHPUnit_Framework_TestCase
 	 *
 	 * @return ContactTest
 	 */
-	function __construct()
+	public function __construct()
 	{
+		parent::__construct();
+
 		//$this->sharedFixture
 		global $conf,$user,$langs,$db;
 		$this->savconf=$conf;
@@ -74,8 +76,8 @@ class PgsqlTest extends PHPUnit_Framework_TestCase
 		print "\n";
 	}
 
-	// Static methods
-  	public static function setUpBeforeClass()
+    // Static methods
+    public static function setUpBeforeClass()
     {
     	global $conf,$user,$langs,$db;
 
@@ -167,13 +169,13 @@ class PgsqlTest extends PHPUnit_Framework_TestCase
 		$result=DoliDBPgsql::convertSQLFromMysql($sql);
         print __METHOD__." result=".$result."\n";
     	$this->assertEquals($result, "SELECT a.b, STRING_AGG(a.c, ',') FROM table GROUP BY a.b", 'Test GROUP_CONCAT (without SEPARATOR)');
-    	
+
         // Test GROUP_CONCAT (with SEPARATOR)
 		$sql="SELECT a.b, GROUP_CONCAT(a.c SEPARATOR ',') FROM table GROUP BY a.b";
 		$result=DoliDBPgsql::convertSQLFromMysql($sql);
         print __METHOD__." result=".$result."\n";
     	$this->assertEquals($result, "SELECT a.b, STRING_AGG(a.c, ',') FROM table GROUP BY a.b", 'Test GROUP_CONCAT (with SEPARATOR)');
-    	
+
     	return $result;
     }
 }

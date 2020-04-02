@@ -16,19 +16,20 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
- * \file        class/emailsenderprofile.class.php
- * \ingroup     monmodule
+ * \file        core/class/emailsenderprofile.class.php
+ * \ingroup     core
  * \brief       This file is a CRUD class file for EmailSenderProfile (Create/Read/Update/Delete)
  */
 
 // Put here all includes required by your class file
-require_once DOL_DOCUMENT_ROOT . '/core/class/commonobject.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/class/commonobject.class.php';
 //require_once DOL_DOCUMENT_ROOT . '/societe/class/societe.class.php';
 //require_once DOL_DOCUMENT_ROOT . '/product/class/product.class.php';
+
 
 /**
  * Class for EmailSenderProfile
@@ -39,57 +40,93 @@ class EmailSenderProfile extends CommonObject
 	 * @var string ID to identify managed object
 	 */
 	public $element = 'emailsenderprofile';
+
 	/**
 	 * @var string Name of table without prefix where object is stored
 	 */
 	public $table_element = 'c_email_senderprofile';
+
 	/**
 	 * @var array  Does emailsenderprofile support multicompany module ? 0=No test on entity, 1=Test with field entity, 2=Test with link by societe
 	 */
 	public $ismultientitymanaged = 1;
+
 	/**
 	 * @var string String with name of icon for emailsenderprofile
 	 */
 	public $picto = 'emailsenderprofile@monmodule';
 
 
+	const STATUS_DISABLED = 0;
+	const STATUS_ENABLED = 1;
+
+
+
 	/**
-	 *             'type' if the field format.
-	 *             'label' the translation key.
-	 *             'enabled' is a condition when the filed must be managed.
-	 *             'visible' says if field is visible in list (-1 means not shown by default but can be added into list to be viewed).
-	 *             'notnull' is set to 1 if not null in database. Set to -1 if we must set data to null if empty ('' or 0).
-	 *             'index' if we want an index in database.
-	 *             'foreignkey'=>'tablename.field' if the field is a foreign key (it is recommanded to name the field fk_...).
-	 *             'position' is the sort order of field.
-	 *             'searchall' is 1 if we want to search in this field when making a search from the quick search button.
-	 *             'isameasure' must be set to 1 if you want to have a total on list for this field. Field type must be summable like integer or double(24,8).
-	 *             'help' is a string visible as a tooltip on field
-	 *             'comment' is not used. You can store here any text of your choice.
+	 *  'type' if the field format ('integer', 'integer:ObjectClass:PathToClass[:AddCreateButtonOrNot[:Filter]]', 'varchar(x)', 'double(24,8)', 'real', 'price', 'text', 'html', 'date', 'datetime', 'timestamp', 'duration', 'mail', 'phone', 'url', 'password')
+	 *         Note: Filter can be a string like "(t.ref:like:'SO-%') or (t.date_creation:<:'20160101') or (t.nature:is:NULL)"
+	 *  'label' the translation key.
+	 *  'enabled' is a condition when the field must be managed.
+	 *  'position' is the sort order of field.
+	 *  'notnull' is set to 1 if not null in database. Set to -1 if we must set data to null if empty ('' or 0).
+	 *  'visible' says if field is visible in list (Examples: 0=Not visible, 1=Visible on list and create/update/view forms, 2=Visible on list only, 3=Visible on create/update/view form only (not list), 4=Visible on list and update/view form only (not create). 5=Visible on list and view only (not create/not update). Using a negative value means field is not shown by default on list but can be selected for viewing)
+	 *  'noteditable' says if field is not editable (1 or 0)
+	 *  'default' is a default value for creation (can still be overwrote by the Setup of Default Values if field is editable in creation form). Note: If default is set to '(PROV)' and field is 'ref', the default value will be set to '(PROVid)' where id is rowid when a new record is created.
+	 *  'index' if we want an index in database.
+	 *  'foreignkey'=>'tablename.field' if the field is a foreign key (it is recommanded to name the field fk_...).
+	 *  'searchall' is 1 if we want to search in this field when making a search from the quick search button.
+	 *  'isameasure' must be set to 1 if you want to have a total on list for this field. Field type must be summable like integer or double(24,8).
+	 *  'css' is the CSS style to use on field. For example: 'maxwidth200'
+	 *  'help' is a string visible as a tooltip on field
+	 *  'showoncombobox' if value of the field must be visible into the label of the combobox that list record
+	 *  'disabled' is 1 if we want to have the field locked by a 'disabled' attribute. In most cases, this is never set into the definition of $fields into class, but is set dynamically by some part of code.
+	 *  'arraykeyval' to set list of value if type is a list of predefined values. For example: array("0"=>"Draft","1"=>"Active","-1"=>"Cancel")
+	 *  'comment' is not used. You can store here any text of your choice. It is not used by application.
+	 *
+	 *  Note: To have value dynamic, you can set value to 0 in definition and edit the value on the fly into the constructor.
 	 */
 
 	// BEGIN MODULEBUILDER PROPERTIES
 	/**
 	 * @var array  Array with all fields and their property. Do not use it as a static var. It may be modified by constructor.
 	 */
-	public $fields=array(
+	public $fields = array(
 		'rowid' => array('type'=>'integer', 'label'=>'TechnicalID', 'visible'=>-1, 'enabled'=>1, 'position'=>1, 'notnull'=>1, 'index'=>1, 'comment'=>'Id',),
 		'entity' => array('type'=>'integer', 'label'=>'Entity', 'visible'=>-1, 'enabled'=>1, 'position'=>20, 'notnull'=>1, 'index'=>1,),
-		'label' => array('type'=>'varchar(255)', 'label'=>'Label', 'visible'=>1, 'enabled'=>1, 'position'=>30, 'notnull'=>-1),
+		'label' => array('type'=>'varchar(255)', 'label'=>'Label', 'visible'=>1, 'enabled'=>1, 'position'=>30, 'notnull'=>1),
 		'email' => array('type'=>'varchar(255)', 'label'=>'Email', 'visible'=>1, 'enabled'=>1, 'position'=>40, 'notnull'=>-1),
 		//'fk_user_creat' => array('type'=>'integer', 'label'=>'UserAuthor', 'visible'=>-1, 'enabled'=>1, 'position'=>500, 'notnull'=>1,),
-		//'fk_user_modif' => array('type'=>'integer', 'label'=>'UserModif', 'visible'=>-1, 'enabled'=>1, 'position'=>500, 'notnull'=>-1,),
-		'signature' => array('type'=>'text', 'label'=>'Signature', 'visible'=>-1, 'enabled'=>1, 'position'=>1000, 'notnull'=>-1, 'index'=>1,),
-		'position' => array('type'=>'integer', 'label'=>'Position', 'visible'=>-1, 'enabled'=>1, 'position'=>1000, 'notnull'=>-1, 'index'=>1,),
+		'private' => array('type'=>'integer:User:user/class/user.class.php', 'label'=>'User', 'visible'=>-1, 'enabled'=>1, 'position'=>50, 'default'=>'0', 'notnull'=>1),
+		'signature' => array('type'=>'text', 'label'=>'Signature', 'visible'=>3, 'enabled'=>1, 'position'=>400, 'notnull'=>-1, 'index'=>1,),
+		'position' => array('type'=>'integer', 'label'=>'Position', 'visible'=>1, 'enabled'=>1, 'position'=>405, 'notnull'=>-1, 'index'=>1,),
 		'date_creation' => array('type'=>'datetime', 'label'=>'DateCreation', 'visible'=>-1, 'enabled'=>1, 'position'=>500, 'notnull'=>1,),
 		'tms' => array('type'=>'timestamp', 'label'=>'DateModification', 'visible'=>-1, 'enabled'=>1, 'position'=>500, 'notnull'=>1,),
-		'active' => array('type'=>'integer', 'label'=>'Status', 'visible'=>1, 'enabled'=>1, 'position'=>1000, 'notnull'=>-1, 'index'=>1),
+		'active' => array('type'=>'integer', 'label'=>'Status', 'visible'=>1, 'enabled'=>1, 'default'=>1, 'position'=>1000, 'notnull'=>-1, 'index'=>1, 'arrayofkeyval'=>array(0=>'Disabled', 1=>'Enabled')),
 	);
+
+	/**
+	 * @var int ID
+	 */
 	public $rowid;
+
+	/**
+	 * @var int Entity
+	 */
 	public $entity;
-	public $label;
+
+	/**
+     * @var string Email Sender Profile label
+     */
+    public $label;
+
 	public $email;
+
+	/**
+     * @var integer|string date_creation
+     */
 	public $date_creation;
+
+
 	public $tms;
 	//public $fk_user_creat;
 	//public $fk_user_modif;
@@ -115,9 +152,9 @@ class EmailSenderProfile extends CommonObject
 	 */
 	//public $class_element_line = 'EmailSenderProfileline';
 	/**
-	 * @var array  Array of child tables (child tables to delete before deleting a record)
+	 * @var array	List of child tables. To test if we can delete object.
 	 */
-	//protected $childtables=array('emailsenderprofiledet');
+	//protected $childtables=array();
 	/**
 	 * @var EmailSenderProfileLine[]     Array of subtable lines
 	 */
@@ -136,8 +173,8 @@ class EmailSenderProfile extends CommonObject
 
 		$this->db = $db;
 
-		if (empty($conf->global->MAIN_SHOW_TECHNICAL_ID)) $this->fields['rowid']['visible']=0;
-		if (empty($conf->multicompany->enabled)) $this->fields['entity']['enabled']=0;
+		if (empty($conf->global->MAIN_SHOW_TECHNICAL_ID)) $this->fields['rowid']['visible'] = 0;
+		if (empty($conf->multicompany->enabled)) $this->fields['entity']['enabled'] = 0;
 	}
 
 	/**
@@ -191,6 +228,8 @@ class EmailSenderProfile extends CommonObject
 			$this->errors = $object->errors;
 		}
 
+		unset($object->context['createfromclone']);
+
 		// End
 		if (!$error) {
 			$this->db->commit();
@@ -211,7 +250,7 @@ class EmailSenderProfile extends CommonObject
 	public function fetch($id, $ref = null)
 	{
 		$result = $this->fetchCommon($id, $ref);
-		if ($result > 0 && ! empty($this->table_element_line)) $this->fetchLines();
+		if ($result > 0 && !empty($this->table_element_line)) $this->fetchLines();
 		return $result;
 	}
 
@@ -222,11 +261,11 @@ class EmailSenderProfile extends CommonObject
 	 */
 	public function fetchLines()
 	{
-		$this->lines=array();
+		$this->lines = array();
 
 		// Load lines with object EmailSenderProfileLine
 
-		return count($this->lines)?1:0;
+		return count($this->lines) ? 1 : 0;
 	}
 
 	/**
@@ -259,7 +298,7 @@ class EmailSenderProfile extends CommonObject
 	 *	@param	int		$withpicto					Include picto in link (0=No picto, 1=Include picto into link, 2=Only picto)
 	 *	@return	string								String with URL
 	 */
-	function getNomUrl($withpicto=0)
+	public function getNomUrl($withpicto = 0)
 	{
 		global $db, $conf, $langs;
 		global $dolibarr_main_authentication, $dolibarr_main_demo;
@@ -268,32 +307,20 @@ class EmailSenderProfile extends CommonObject
 		$result = '';
 		$companylink = '';
 
-    $label=$this->label;
+        $label = $this->label;
 
-    $url='';
+        $url = '';
 		//$url = dol_buildpath('/monmodule/emailsenderprofile_card.php',1).'?id='.$this->id;
 
 		$linkstart = '';
-		$linkend='';
+		$linkend = '';
 
-		if ($withpicto)
-		{
-			$result.=($linkstart.img_object($label, 'label', 'class="classfortooltip"').$linkend);
-			if ($withpicto != 2) $result.=' ';
+		if ($withpicto) {
+			$result .= ($linkstart.img_object($label, 'label', 'class="classfortooltip"').$linkend);
+			if ($withpicto != 2) $result .= ' ';
 		}
-		$result.= $linkstart . $this->label . $linkend;
+		$result .= $linkstart.$this->label.$linkend;
 		return $result;
-	}
-
-	/**
-	 * Return link to download file from a direct external access
-	 *
-	 * @param	int				$withpicto			Add download picto into link
-	 * @return	string			HTML link to file
-	 */
-	function getDirectExternalLink($withpicto=0)
-	{
-		return 'todo';
 	}
 
 	/**
@@ -302,11 +329,12 @@ class EmailSenderProfile extends CommonObject
 	 *  @param	int		$mode          0=libelle long, 1=libelle court, 2=Picto + Libelle court, 3=Picto, 4=Picto + Libelle long, 5=Libelle court + Picto
 	 *  @return	string 			       Label of status
 	 */
-	function getLibStatut($mode=0)
+	public function getLibStatut($mode = 0)
 	{
-		return $this->LibStatut($this->status,$mode);
+		return $this->LibStatut($this->status, $mode);
 	}
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 *  Return the status
 	 *
@@ -314,61 +342,55 @@ class EmailSenderProfile extends CommonObject
 	 *  @param  int		$mode          	0=long label, 1=short label, 2=Picto + short label, 3=Picto, 4=Picto + long label, 5=Short label + Picto, 6=Long label + Picto
 	 *  @return string 			       	Label of status
 	 */
-	static function LibStatut($status,$mode=0)
+	public static function LibStatut($status, $mode = 0)
 	{
 		global $langs;
 
-		if ($mode == 0)
-		{
-			$prefix='';
-			if ($status == 1) return $langs->trans('Enabled');
-			if ($status == 0) return $langs->trans('Disabled');
-		}
-		if ($mode == 1)
+		if ($mode == 0 || $mode == 1)
 		{
 			if ($status == 1) return $langs->trans('Enabled');
-			if ($status == 0) return $langs->trans('Disabled');
+			elseif ($status == 0) return $langs->trans('Disabled');
 		}
-		if ($mode == 2)
+		elseif ($mode == 2)
 		{
-			if ($status == 1) return img_picto($langs->trans('Enabled'),'statut4').' '.$langs->trans('Enabled');
-			if ($status == 0) return img_picto($langs->trans('Disabled'),'statut5').' '.$langs->trans('Disabled');
+			if ($status == 1) return img_picto($langs->trans('Enabled'), 'statut4').' '.$langs->trans('Enabled');
+			elseif ($status == 0) return img_picto($langs->trans('Disabled'), 'statut5').' '.$langs->trans('Disabled');
 		}
-		if ($mode == 3)
+		elseif ($mode == 3)
 		{
-			if ($status == 1) return img_picto($langs->trans('Enabled'),'statut4');
-			if ($status == 0) return img_picto($langs->trans('Disabled'),'statut5');
+			if ($status == 1) return img_picto($langs->trans('Enabled'), 'statut4');
+			elseif ($status == 0) return img_picto($langs->trans('Disabled'), 'statut5');
 		}
-		if ($mode == 4)
+		elseif ($mode == 4)
 		{
-			if ($status == 1) return img_picto($langs->trans('Enabled'),'statut4').' '.$langs->trans('Enabled');
-			if ($status == 0) return img_picto($langs->trans('Disabled'),'statut5').' '.$langs->trans('Disabled');
+			if ($status == 1) return img_picto($langs->trans('Enabled'), 'statut4').' '.$langs->trans('Enabled');
+			elseif ($status == 0) return img_picto($langs->trans('Disabled'), 'statut5').' '.$langs->trans('Disabled');
 		}
-		if ($mode == 5)
+		elseif ($mode == 5)
 		{
-			if ($status == 1) return $langs->trans('Enabled').' '.img_picto($langs->trans('Enabled'),'statut4');
-			if ($status == 0) return $langs->trans('Disabled').' '.img_picto($langs->trans('Disabled'),'statut5');
+			if ($status == 1) return $langs->trans('Enabled').' '.img_picto($langs->trans('Enabled'), 'statut4');
+			elseif ($status == 0) return $langs->trans('Disabled').' '.img_picto($langs->trans('Disabled'), 'statut5');
 		}
-		if ($mode == 6)
+		elseif ($mode == 6)
 		{
-			if ($status == 1) return $langs->trans('Enabled').' '.img_picto($langs->trans('Enabled'),'statut4');
-			if ($status == 0) return $langs->trans('Disabled').' '.img_picto($langs->trans('Disabled'),'statut5');
+			if ($status == 1) return $langs->trans('Enabled').' '.img_picto($langs->trans('Enabled'), 'statut4');
+			elseif ($status == 0) return $langs->trans('Disabled').' '.img_picto($langs->trans('Disabled'), 'statut5');
 		}
 	}
 
-	/**
-	 *	Charge les informations d'ordre info dans l'objet commande
+    /**
+     *  Charge les informations d'ordre info dans l'objet commande
 	 *
-	 *	@param  int		$id       Id of order
-	 *	@return	void
+	 *  @param  int     $id       Id of order
+	 *  @return	void
 	 */
-	function info($id)
+	public function info($id)
 	{
 		$sql = 'SELECT rowid, date_creation as datec, tms as datem,';
-		$sql.= ' fk_user_creat, fk_user_modif';
-		$sql.= ' FROM '.MAIN_DB_PREFIX.$this->table_element.' as t';
-		$sql.= ' WHERE t.rowid = '.$id;
-		$result=$this->db->query($sql);
+		$sql .= ' fk_user_creat, fk_user_modif';
+		$sql .= ' FROM '.MAIN_DB_PREFIX.$this->table_element.' as t';
+		$sql .= ' WHERE t.rowid = '.$id;
+		$result = $this->db->query($sql);
 		if ($result)
 		{
 			if ($this->db->num_rows($result))
@@ -379,7 +401,7 @@ class EmailSenderProfile extends CommonObject
 				{
 					$cuser = new User($this->db);
 					$cuser->fetch($obj->fk_user_author);
-					$this->user_creation   = $cuser;
+					$this->user_creation = $cuser;
 				}
 
 				if ($obj->fk_user_valid)
@@ -393,7 +415,7 @@ class EmailSenderProfile extends CommonObject
 				{
 					$cluser = new User($this->db);
 					$cluser->fetch($obj->fk_user_cloture);
-					$this->user_cloture   = $cluser;
+					$this->user_cloture = $cluser;
 				}
 
 				$this->date_creation     = $this->db->jdate($obj->datec);
@@ -402,7 +424,6 @@ class EmailSenderProfile extends CommonObject
 			}
 
 			$this->db->free($result);
-
 		}
 		else
 		{
@@ -420,7 +441,6 @@ class EmailSenderProfile extends CommonObject
 	{
 		$this->initAsSpecimenCommon();
 	}
-
 }
 
 /**

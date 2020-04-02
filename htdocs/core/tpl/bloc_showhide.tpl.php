@@ -1,6 +1,7 @@
 <?php
-/* Copyright (C) 2012 Regis Houssin <regis.houssin@capnetworks.com>
- * Copyright (C) 2013 Laurent Destailleur <eldy@users.sourceforge.net>
+/* Copyright (C) 2012       Regis Houssin           <regis.houssin@inodbox.com>
+ * Copyright (C) 2013       Laurent Destailleur     <eldy@users.sourceforge.net>
+ * Copyright (C) 2018       Frédéric France         <frederic.france@netlogic.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -13,7 +14,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 // Protection to avoid direct call of template
@@ -42,7 +43,7 @@ print '});'."\n";
 
 print '$("#show-'.$blocname.'").click(function(){'."\n";
 print '		setShowHide(1);'."\n";
-print '		$("#'.$blocname.'").show("blind", {direction: "vertical"}, 300).addClass("nohideobject");'."\n";
+print '		$("#'.$blocname.'_bloc").show("blind", {direction: "vertical"}, 300).addClass("nohideobject");'."\n";
 print '		$(this).hide();'."\n";
 print '		$("#hide-'.$blocname.'").show();'."\n";
 print '});'."\n";

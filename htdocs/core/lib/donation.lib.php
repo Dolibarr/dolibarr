@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2015 	   Alexandre Spangaro	<aspangaro.dolibarr@gmail.com>
+/* Copyright (C) 2015 	   Alexandre Spangaro	<aspangaro@open-dsi.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -12,7 +12,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -43,7 +43,7 @@ function donation_admin_prepare_head()
 	// $this->tabs = array('entity:+tabname:Title:@mymodule:/mymodule/mypage.php?id=__ID__'); to add new tab
 	// $this->tabs = array('entity:-tabname); to remove a tab
 	complete_head_from_modules($conf, $langs, null, $head, $h, 'donation_admin');
-	
+
 	$head[$h][0] = DOL_URL_ROOT . '/don/admin/donation_extrafields.php';
 	$head[$h][1] = $langs->trans("ExtraFields");
     $head[$h][2] = 'attributes';
@@ -57,7 +57,7 @@ function donation_admin_prepare_head()
 /**
  *	Prepare array with list of tabs
  *
- *	@param	Donation	$object		Donation
+ *	@param	Don       	$object		Donation
  *	@return	array					Array of tabs to show
  */
 function donation_prepare_head($object)
@@ -80,12 +80,12 @@ function donation_prepare_head($object)
 
 	require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
     require_once DOL_DOCUMENT_ROOT.'/core/class/link.class.php';
-	$upload_dir = $conf->don->dir_output . '/' . get_exdir($filename,2,0,1,$object,'donation'). '/'. dol_sanitizeFileName($object->ref);
-	$nbFiles = count(dol_dir_list($upload_dir,'files',0,'','(\.meta|_preview.*\.png)$'));
+	$upload_dir = $conf->don->dir_output . '/' . dol_sanitizeFileName($object->ref);
+	$nbFiles = count(dol_dir_list($upload_dir, 'files', 0, '', '(\.meta|_preview.*\.png)$'));
     $nbLinks=Link::count($db, $object->element, $object->id);
 	$head[$h][0] = DOL_URL_ROOT.'/don/document.php?id='.$object->id;
 	$head[$h][1] = $langs->trans('Documents');
-	if (($nbFiles+$nbLinks) > 0) $head[$h][1].= ' <span class="badge">'.($nbFiles+$nbLinks).'</span>';
+	if (($nbFiles+$nbLinks) > 0) $head[$h][1].= '<span class="badge marginleftonlyshort">'.($nbFiles+$nbLinks).'</span>';
 	$head[$h][2] = 'documents';
 	$h++;
 
@@ -94,10 +94,10 @@ function donation_prepare_head($object)
 	if(!empty($object->note_public)) $nbNote++;
 	$head[$h][0] = DOL_URL_ROOT.'/don/note.php?id='.$object->id;
 	$head[$h][1] = $langs->trans("Notes");
-	if ($nbNote > 0) $head[$h][1].= ' <span class="badge">'.$nbNote.'</span>';
+	if ($nbNote > 0) $head[$h][1].= '<span class="badge marginleftonlyshort">'.$nbNote.'</span>';
 	$head[$h][2] = 'note';
 	$h++;
-	
+
 	$head[$h][0] = DOL_URL_ROOT . '/don/info.php?id=' . $object->id;
 	$head[$h][1] = $langs->trans("Info");
 	$head[$h][2] = 'info';

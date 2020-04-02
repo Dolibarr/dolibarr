@@ -12,7 +12,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -21,25 +21,29 @@
  *		\brief      Page to output style page. Called with <link rel="stylesheet" href="styles.css.php?websiteid=123" type="text/css" />
  */
 
-define('NOTOKENRENEWAL',1); // Disables token renewal
-define("NOLOGIN",1);
-define("NOCSRFCHECK",1);	// We accept to go on this page from external web site.
-if (! defined('NOREQUIREMENU')) define('NOREQUIREMENU','1');
-if (! defined('NOREQUIREHTML')) define('NOREQUIREHTML','1');
-if (! defined('NOREQUIREAJAX')) define('NOREQUIREAJAX','1');
+if (! defined('NOTOKENRENEWAL')) define('NOTOKENRENEWAL', 1); // Disables token renewal
+if (! defined('NOLOGIN'))        define("NOLOGIN", 1);
+if (! defined('NOCSRFCHECK'))    define("NOCSRFCHECK", 1);	// We accept to go on this page from external web site.
+if (! defined('NOREQUIREMENU'))  define('NOREQUIREMENU', '1');
+if (! defined('NOREQUIREHTML'))  define('NOREQUIREHTML', '1');
+if (! defined('NOREQUIREAJAX'))  define('NOREQUIREAJAX', '1');
 
 /**
  * Header empty
  *
  * @return	void
  */
-function llxHeader() { }
+function llxHeader()
+{
+}
 /**
  * Footer empty
  *
  * @return	void
  */
-function llxFooter() { }
+function llxFooter()
+{
+}
 
 require '../../master.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
@@ -78,21 +82,26 @@ if (empty($pageid))
     {
         $object->fetch(0, $website);
     }
+
     $objectpage=new WebsitePage($db);
+    /* Not required for CSS file
     $array=$objectpage->fetchAll($object->id);
 
-    if (count($array) > 0)
+    if (is_array($array) && count($array) > 0)
     {
         $firstrep=reset($array);
         $pageid=$firstrep->id;
     }
+    */
 }
+/* Not required for CSS file
 if (empty($pageid))
 {
     $langs->load("website");
     print $langs->trans("PreviewOfSiteNotYetAvailable");
     exit;
 }
+*/
 
 // Security: Delete string ../ into $original_file
 global $dolibarr_main_data_root;
@@ -112,11 +121,11 @@ if (! $accessallowed)
 // Security:
 // On interdit les remontees de repertoire ainsi que les pipe dans
 // les noms de fichiers.
-if (preg_match('/\.\./',$original_file) || preg_match('/[<>|]/',$original_file))
+if (preg_match('/\.\./', $original_file) || preg_match('/[<>|]/', $original_file))
 {
     dol_syslog("Refused to deliver file ".$original_file);
     $file=basename($original_file);		// Do no show plain path of original_file in shown error message
-    dol_print_error(0,$langs->trans("ErrorFileNameInvalid",$file));
+    dol_print_error(0, $langs->trans("ErrorFileNameInvalid", $file));
     exit;
 }
 
@@ -145,4 +154,3 @@ require_once $original_file_osencoded;
 
 
 if (is_object($db)) $db->close();
-

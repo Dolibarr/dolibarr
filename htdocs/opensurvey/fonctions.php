@@ -13,7 +13,7 @@
 * GNU General Public License for more details.
 *
 * You should have received a copy of the GNU General Public License
-* along with this program. If not, see <http://www.gnu.org/licenses/>.
+* along with this program. If not, see <https://www.gnu.org/licenses/>.
 */
 
 /**
@@ -29,7 +29,8 @@
  * @param Opensurveysondage $object Current viewing poll
  * @return array Tabs for the opensurvey section
  */
-function opensurvey_prepare_head(Opensurveysondage $object) {
+function opensurvey_prepare_head(Opensurveysondage $object)
+{
 
 	global $langs, $conf;
 
@@ -46,13 +47,13 @@ function opensurvey_prepare_head(Opensurveysondage $object) {
 	$head[1][2] = 'preview';
 	$h++;
 
-    // Show more tabs from modules
-    // Entries must be declared in modules descriptor with line
-    // $this->tabs = array('entity:+tabname:Title:@mymodule:/mymodule/mypage.php?id=__ID__');   to add new tab
-    // $this->tabs = array('entity:-tabname);   												to remove a tab
-    complete_head_from_modules($conf,$langs,$object,$head,$h,'opensurveypoll');
+	// Show more tabs from modules
+	// Entries must be declared in modules descriptor with line
+	// $this->tabs = array('entity:+tabname:Title:@mymodule:/mymodule/mypage.php?id=__ID__');   to add new tab
+	// $this->tabs = array('entity:-tabname);   												to remove a tab
+	complete_head_from_modules($conf, $langs, $object, $head, $h, 'opensurveypoll');
 
-	complete_head_from_modules($conf,$langs,$object,$head,$h,'opensurveypoll', 'remove');
+	complete_head_from_modules($conf, $langs, $object, $head, $h, 'opensurveypoll', 'remove');
 
 	return $head;
 }
@@ -66,16 +67,66 @@ function opensurvey_prepare_head(Opensurveysondage $object) {
  * @param 	int    		$disablehead		More content into html header
  * @param 	array  		$arrayofjs			Array of complementary js files
  * @param 	array  		$arrayofcss			Array of complementary css files
+ * @param	string		$numsondage			Num survey
  * @return	void
  */
-function llxHeaderSurvey($title, $head="", $disablejs=0, $disablehead=0, $arrayofjs='', $arrayofcss='')
+function llxHeaderSurvey($title, $head = "", $disablejs = 0, $disablehead = 0, $arrayofjs = '', $arrayofcss = '', $numsondage = '')
 {
+	global $conf, $langs, $mysoc;
+	global $dolibarr_main_url_root;
+
+	//$replacemainarea = (empty($conf->dol_hide_leftmenu) ? '<div>' : '').'<div>';
+
 	top_htmlhead($head, $title, $disablejs, $disablehead, $arrayofjs, $arrayofcss); // Show html headers
-	print '<body id="mainbody" class="publicnewmemberform" style="margin-top: 10px;">';
+	print '<body id="mainbody" class="publicnewmemberform">';
 
-	showlogo();
 
-	print '<div style="margin-left: 50px; margin-right: 50px;">';
+
+	print '<span id="dolpaymentspan"></span>'."\n";
+	print '<div class="center">'."\n";
+	print '<form name="formulaire" action="studs.php?sondage='.$numsondage.'"'.'#bas" method="POST">'."\n";
+	print '<input type="hidden" name="sondage" value="'.$numsondage.'"/>';
+	print '<input type="hidden" name="token" value="'.newToken().'">'."\n";
+	print "\n";
+
+	// Show logo (search order: logo defined by PAYMENT_LOGO_suffix, then PAYMENT_LOGO, then small company logo, large company logo, theme logo, common logo)
+	$width = 0;
+	// Define logo and logosmall
+	$logosmall = $mysoc->logo_small;
+	$logo = $mysoc->logo;
+	//print '<!-- Show logo (logosmall='.$logosmall.' logo='.$logo.') -->'."\n";
+	// Define urllogo
+	$urllogo = '';
+	$urllogofull = '';
+	if (!empty($logosmall) && is_readable($conf->mycompany->dir_output.'/logos/thumbs/'.$logosmall))
+	{
+		$urllogo = DOL_URL_ROOT.'/viewimage.php?modulepart=mycompany&amp;entity='.$conf->entity.'&amp;file='.urlencode('logos/thumbs/'.$logosmall);
+		$urllogofull = $dolibarr_main_url_root.'/viewimage.php?modulepart=mycompany&entity='.$conf->entity.'&file='.urlencode('logos/thumbs/'.$logosmall);
+		$width = 150;
+	}
+	elseif (!empty($logo) && is_readable($conf->mycompany->dir_output.'/logos/'.$logo))
+	{
+		$urllogo = DOL_URL_ROOT.'/viewimage.php?modulepart=mycompany&amp;entity='.$conf->entity.'&amp;file='.urlencode('logos/'.$logo);
+		$urllogofull = $dolibarr_main_url_root.'/viewimage.php?modulepart=mycompany&entity='.$conf->entity.'&file='.urlencode('logos/'.$logo);
+		$width = 150;
+	}
+
+	// Output html code for logo
+	if ($urllogo)
+	{
+		print '<div class="backgreypublicpayment">';
+		print '<div class="logopublicpayment">';
+		print '<img id="dolpaymentlogo" src="'.$urllogo.'"';
+		if ($width) print ' width="'.$width.'"';
+		print '>';
+		print '</div>';
+		if (empty($conf->global->MAIN_HIDE_POWERED_BY)) {
+			print '<div class="poweredbypublicpayment opacitymedium right"><a href="https://www.dolibarr.org" target="dolibarr">'.$langs->trans("PoweredBy").'<br><img src="'.DOL_URL_ROOT.'/theme/dolibarr_logo.png" width="80px"></a></div>';
+		}
+		print '</div>';
+	}
+
+	print '<div style="margin-left: 50px; margin-right: 50px; text-align: start;"><br>';
 }
 
 /**
@@ -85,6 +136,8 @@ function llxHeaderSurvey($title, $head="", $disablejs=0, $disablehead=0, $arrayo
  */
 function llxFooterSurvey()
 {
+	print '</div>';
+	print '</form>';
 	print '</div>';
 
 	printCommonFooter('public');
@@ -97,32 +150,6 @@ function llxFooterSurvey()
 
 
 /**
- * Show logo
- *
- * @return	void
- */
-function showlogo()
-{
-	global $conf, $mysoc;
-
-	// Print logo
-	if ($mysoc->logo) {
-		if (file_exists($conf->mycompany->dir_output.'/logos/thumbs/'.$mysoc->logo_small)) {
-			$urllogo=DOL_URL_ROOT.'/viewimage.php?cache=1&amp;modulepart=mycompany&amp;file=thumbs/'.urlencode($mysoc->logo_small);
-		}
-	}
-
-	if (!$urllogo && (is_readable(DOL_DOCUMENT_ROOT.'/theme/dolibarr_logo.png')))
-	{
-		$urllogo=DOL_URL_ROOT.'/theme/dolibarr_logo.png';
-	}
-
-	print '<div style="text-align:center"><img alt="Logo" id="logosubscribe" title="" src="'.$urllogo.'"/></div>';
-	print '<br>';
-}
-
-
-/**
  * get_server_name
  *
  * @return	string		URL to use
@@ -131,11 +158,11 @@ function get_server_name()
 {
 	global $dolibarr_main_url_root;
 
-	$urlwithouturlroot=preg_replace('/'.preg_quote(DOL_URL_ROOT,'/').'$/i','',trim($dolibarr_main_url_root));
-	$urlwithroot=$urlwithouturlroot.DOL_URL_ROOT;		// This is to use external domain name found into config file
+	$urlwithouturlroot=preg_replace('/'.preg_quote(DOL_URL_ROOT, '/').'$/i', '', trim($dolibarr_main_url_root));
+	//$urlwithroot=$urlwithouturlroot.DOL_URL_ROOT;		// This is to use external domain name found into config file
 	//$urlwithroot=DOL_MAIN_URL_ROOT;					// This is to use same domain name than current
 
-	$url=$urlwithouturlroot.dol_buildpath('/opensurvey/',1);
+	$url=$urlwithouturlroot.dol_buildpath('/opensurvey/', 1);
 
 	if (!preg_match("|/$|", $url)) {
 		$url = $url."/";
@@ -217,6 +244,7 @@ function ajouter_sondage()
 	$opensurveysondage = new Opensurveysondage($db);
 	$opensurveysondage->id_sondage = $sondage;
 	$opensurveysondage->commentaires = $_SESSION['commentaires'];
+	$opensurveysondage->description = $_SESSION['commentaires'];
 	$opensurveysondage->mail_admin = $_SESSION['adresse'];
 	$opensurveysondage->nom_admin = $_SESSION['nom'];
 	$opensurveysondage->titre = $_SESSION['titre'];
@@ -244,7 +272,7 @@ function ajouter_sondage()
 	unset($_SESSION['totalchoixjour']);
 	unset($_SESSION['champdatefin']);
 
-	$urlback=dol_buildpath('/opensurvey/card.php',1).'?id='.$sondage;
+	$urlback=dol_buildpath('/opensurvey/card.php', 1).'?id='.$sondage;
 
 	header("Location: ".$urlback);
 	exit();

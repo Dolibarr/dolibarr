@@ -1,5 +1,5 @@
-/* Copyright (C) 2004      Rodolphe Quiedeville <rodolphe@quiedeville.org> 
- * Copyright (C) 2009-2017 Laurent Destailleur  <eldy@users.sourceforge.net> 
+/* Copyright (C) 2004      Rodolphe Quiedeville <rodolphe@quiedeville.org>
+ * Copyright (C) 2009-2017 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -12,10 +12,13 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 
+.opacitymedium {
+	opacity: 0.5;
+}
 
 body {
 	font-size:14px;
@@ -50,10 +53,9 @@ div.titre {
 }
 
 span.titre {
-	font-size: 90%;
 	font-weight: bold;
 	background: #FFFFFF;
-	color: #444;
+	color: rgb(0,113,121);
 	border: 1px solid #bbb;
 	padding: 10px 10px 10px 10px;
 	margin: 0 0 10px 10px;
@@ -82,6 +84,9 @@ div.soustitre {
 .minwidth400imp { min-width: 400px !important; }
 .minwidth500imp { min-width: 500px !important; }
 
+tr.trlineforchoice {
+    height: 4em;
+}
 
 /* Force values for small screen 570 */
 @media only screen and (max-width: 570px)
@@ -89,16 +94,16 @@ div.soustitre {
 	body {
 		margin: 15px 4px 4px;
 	}
-	
-	input, input[type=text], input[type=password], select, textarea     { 
-		min-width: 20px; 
+
+	input, input[type=text], input[type=password], select, textarea     {
+		min-width: 20px;
     	min-height: 1.4em;
     	line-height: 1.4em;
     	padding: .4em .1em;
     	border: 1px solid #BBB;
     	/* max-width: inherit; why this ? */
      }
-     
+
     .hideonsmartphone { display: none; }
     .noenlargeonsmartphone { width : 50px !important; display: inline !important; }
     .maxwidthonsmartphone { max-width: 100px; }
@@ -120,13 +125,13 @@ div.soustitre {
     	padding-left: 0;
     	padding-right: 0;
 	}
-	
+
 	table.main-inside {
 		padding-left: 1px;
 		padding-right: 1px;
 		line-height: 20px;
 	}
-	
+
 	span.titre {
 	    font-size: 90%;
 	    font-weight: normal;
@@ -146,7 +151,7 @@ input:disabled
 	padding: 0 0 0 0;
 	margin: 0 0 0 0;
 	color: #AAA !important;
-	cursor: not-allowed !important; 
+	cursor: not-allowed !important;
 }
 
 input[type=submit] {
@@ -199,23 +204,20 @@ input:-webkit-autofill {
     -webkit-box-shadow: 0 0 0 50px #FBFFEA inset;
 }
 
-table.listofchoices, tr.listofchoices, td.listofchoices {
+table.listofchoices, table.listofchoices tr, table.listofchoices td {
 	border-collapse: collapse;
-    padding: 4px;
+    padding: 8px;
     color: #000000;
 	border: 1px solid #ccc !important;
 	line-height: 18px;
 }
 
-tr.listofchoices {
-    height: 42px;	
-}
 .listofchoicesdesc {
 	color: #999 !important;
 }
 .blinkwait {
 	font-weight: bold;
-	text-decoration:blink !important;	
+	text-decoration:blink !important;
 }
 
 .installchoices table tr td  {
@@ -230,7 +232,7 @@ tr.listofchoices {
 div.ok {
 	color: #114466;
 }
-font.ok {
+span.ok {
 	color: #114466;
 }
 
@@ -238,7 +240,7 @@ font.ok {
 div.warning {
 	color: #777711;
 }
-font.warning {
+span.warning {
 	color: #777711;
 }
 
@@ -249,7 +251,7 @@ div.error {
 	padding: 0.2em 0.2em 0.2em 0;
 	margin: 0.5em 0 0.5em 0;
 }
-font.error {
+span.error {
 	color: #550000;
 	font-weight: bold;
 }
@@ -273,6 +275,7 @@ div.header {
 
 a:link,a:visited,a:active {
 	text-decoration:none;
+	color: #114466;
 }
 a:hover {
 	text-decoration:underline;
@@ -342,15 +345,27 @@ ul {
 	padding-bottom: 0;
 }
 
+tr.choiceselected td.listofchoicesdesc {
+    color: #000 !important;
+}
 
+tr.choiceselected td .button {
+    background: rgb(0,113,121);
+    color: #fff;
+}
+
+a.button:link,a.button:visited,a.button:active {
+    color: #888;
+}
 .button {
-    background: #fcfcfc;
-    border: 1px solid #e0e0e0;
+    background: #ddd;
+    color: #fff;
+    /* border: 1px solid #e0e0e0; */
     padding: 0.3em 0.7em;
     margin: 0 0.5em;
-    -moz-border-radius: 5px 5px 5px 5px;
-    -webkit-border-radius: 5px 5px 5px 5px;
-    border-radius: 5px 5px 5px 5px;
+    -moz-border-radius: 3px;
+    -webkit-border-radius: 3px;
+    border-radius: 3px;
     -moz-box-shadow: 2px 2px 3px #ddd;
     -webkit-box-shadow: 2px 2px 3px #ddd;
     box-shadow: 2px 2px 3px #ddd;
@@ -360,7 +375,7 @@ a.button:hover {
 }
 
 .choiceselected {
-	background-color: #dfd;
+	background-color: #f4f6f4;
 	background-repeat: repeat-x;
 	background-position: top left;
 }

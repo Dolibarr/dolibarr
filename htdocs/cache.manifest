@@ -11,7 +11,6 @@ CACHE:
 theme/dolibarr_logo.png
 support/
 support/index.php
-support/online.php
 
 support/default.css
 support/helpcenter.png

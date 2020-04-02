@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2010-2011 	Juanjo Menent		<jmenent@2byte.es>
  * Copyright (C) 2010		Laurent Destailleur	<eldy@users.sourceforge.net>
- * Copyright (C) 2011      	Regis Houssin		<regis.houssin@capnetworks.com>
+ * Copyright (C) 2011      	Regis Houssin		<regis.houssin@inodbox.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -14,8 +14,8 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
- * or see http://www.gnu.org/
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
+ * or see https://www.gnu.org/
  */
 
 /**
@@ -59,15 +59,15 @@ function prelevement_prepare_head(BonPrelevement $object)
 	$head[$h][2] = 'statistics';
 	$h++;
 
-    // Show more tabs from modules
-    // Entries must be declared in modules descriptor with line
-    // $this->tabs = array('entity:+tabname:Title:@mymodule:/mymodule/mypage.php?id=__ID__');   to add new tab
-    // $this->tabs = array('entity:-tabname);   												to remove a tab
-    complete_head_from_modules($conf,$langs,$object,$head,$h,'prelevement');
+	// Show more tabs from modules
+	// Entries must be declared in modules descriptor with line
+	// $this->tabs = array('entity:+tabname:Title:@mymodule:/mymodule/mypage.php?id=__ID__');   to add new tab
+	// $this->tabs = array('entity:-tabname);   												to remove a tab
+	complete_head_from_modules($conf, $langs, $object, $head, $h, 'prelevement');
 
-    complete_head_from_modules($conf,$langs,$object,$head,$h,'prelevement','remove');
+	complete_head_from_modules($conf, $langs, $object, $head, $h, 'prelevement', 'remove');
 
-    return $head;
+	return $head;
 }
 
 /**
@@ -80,7 +80,6 @@ function prelevement_check_config()
 	global $conf;
 	if(empty($conf->global->PRELEVEMENT_ID_BANKACCOUNT)) return -1;
 	if(empty($conf->global->PRELEVEMENT_ICS)) return -1;
-    if(empty($conf->global->PRELEVEMENT_USER)) return -1;
+	if(empty($conf->global->PRELEVEMENT_USER)) return -1;
 	return 0;
 }
-

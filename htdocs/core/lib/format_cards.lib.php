@@ -14,8 +14,8 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
- * or see http://www.gnu.org/
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
+ * or see https://www.gnu.org/
  */
 
 /**
@@ -36,7 +36,7 @@ $sql = "SELECT rowid, code, name, paper_size, orientation, metric, leftmargin, t
 $resql = $db->query($sql);
 if ($resql)
 {
-    while ($row = $db->fetch_array($resql)) 
+    while ($row = $db->fetch_array($resql))
     {
         $_Avery_Labels[$row['code']]['name']=$row['name'];
         $_Avery_Labels[$row['code']]['paper-size']=$row['paper_size'];
@@ -66,4 +66,3 @@ foreach($_Avery_Labels as $key => $val)
 {
 	$_Avery_Labels[$key]['name'].=' ('.$_Avery_Labels[$key]['paper-size'].' - '.$_Avery_Labels[$key]['NX'].'x'.$_Avery_Labels[$key]['NY'].')';
 }
-

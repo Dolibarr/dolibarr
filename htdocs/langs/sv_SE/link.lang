@@ -7,4 +7,4 @@ ErrorFileNotLinked=Filen kunde inte kopplas
 LinkRemoved=Länken %s har tagits bort
 ErrorFailedToDeleteLink= Det gick inte att ta bort länk '<b>%s</b>'
 ErrorFailedToUpdateLink= Det gick inte att uppdatera länken '<b>%s</b>'
-URLToLink=URL to link
+URLToLink=URL för länk

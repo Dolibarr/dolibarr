@@ -10,6 +10,7 @@ LoanCapital=Kapitał
 Insurance=Ubezpieczenie
 Interest=Odsetki
 Nbterms=Liczba składników
+Term=Term
 LoanAccountancyCapitalCode=Kapitał rachunku księgowego
 LoanAccountancyInsuranceCode=Ubezpieczenie konta księgowego
 LoanAccountancyInterestCode=Odsetki rachunku księgowego
@@ -17,37 +18,14 @@ ConfirmDeleteLoan=Potwierdź usunięcie tego kredytu
 LoanDeleted=Pożyczka została usunięta
 ConfirmPayLoan=Potwierdź sklasyfikować wypłacane pożyczka
 LoanPaid=Pożyczka Płatny
-# Calc
-LoanCalc=Kalkulator kredytu bankowego
-PurchaseFinanceInfo=Zakup i Finansowanie informacji
-SalePriceOfAsset=Cena sprzedaży aktywów
-PercentageDown=Procent w dół
-LengthOfMortgage=Czas trwania kredytu
-AnnualInterestRate=Roczna stopa procentowa
-ExplainCalculations=Wyjaśnij Obliczenia
-ShowMeCalculationsAndAmortization=Pokaż mi obliczenia i amortyzację
-MortgagePaymentInformation=Informacje o płatności za kredyt hipoteczny
-DownPayment=Zaliczka
-DownPaymentDesc=<b>Zaliczka</b> = cena domu pomnożona przez procent w dół, podzielona przez 100 (dla 5% w dół staje 5/100 lub 0,05)
-InterestRateDesc=<b>Oprocentowanie</b> = Roczna wartość procentowa odsetek podzielony przez 100
-MonthlyFactorDesc=<b>Miesięczna czynnikiem</b> = wynik wzoru
-MonthlyInterestRateDesc=<b>Miesięczna stopa procentowa</b> = roczna stopa procentowa podzielona przez 12 (za 12 miesięcy w roku)
-MonthTermDesc=<b>Miesięcy okres</b> kredytowania w miesiącach = ilość lat wziąłeś kredyt się do czasów 12
-MonthlyPaymentDesc=Miesięczny płatności zorientowali się, stosując następujący wzór
-AmortizationPaymentDesc=<a href="#amortization">Amortyzacja</a> zepsuje, ile miesięczne płatności idzie w kierunku zainteresowania banku, a ile idzie do spłaty kwoty głównej pożyczki.
-AmountFinanced=Kwota finansowania
-AmortizationMonthlyPaymentOverYears=Amortyzacja miesięczną <b>spłatę:% s</b> na% s lat
-Totalsforyear=Sumy dla roku
-MonthlyPayment=Miesięczna płatność
-LoanCalcDesc=Ten <b> kalkulator kredytu hipotycznego </b> może zostać użyty do określenia miesięcznych spłat pożyczki, na podstawie kwoty kredytu, okresu kredytowania i oprocentowania. <br> Kalkulator zawiera również PUK (Prywatne Ubezpieczenie Kredytu) dla pożyczek, gdzie mniej niż 20%% jest umieszczone jako zaliczka. Brane pod uwagę są również miejskie podatki od nieruchomości i ich wpływ na całkowitą miesięczną ratę <br>
-GoToInterest=% s zostanie przeznaczona INTERESÓW
-GoToPrincipal=% s zostanie przeznaczona PODSTAWOWA
-YouWillSpend=Wydasz %s w roku %s
 ListLoanAssociatedProject=Lista pożyczek związanych z projektem
 AddLoan=Utwórz pożyczkę
+FinancialCommitment=Financial commitment
+InterestAmount=Odsetki
+CapitalRemain=Capital remain
 # Admin
 ConfigLoan=Konfiguracja modułu kredytu
 LOAN_ACCOUNTING_ACCOUNT_CAPITAL=Domyśly kapitał konta rachunkowego
 LOAN_ACCOUNTING_ACCOUNT_INTEREST=Domyślnie odsetki od rachunku księgowego
 LOAN_ACCOUNTING_ACCOUNT_INSURANCE=Domyślnie ubezpieczenie rachunku księgowego
-CreateCalcSchedule=Utwórz / zmodyfikuj harmonogram kredytu
+CreateCalcSchedule=Edit financial commitment

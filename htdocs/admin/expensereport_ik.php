@@ -14,7 +14,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 
@@ -30,11 +30,8 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/expensereport.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/expensereport/class/expensereport.class.php';
 require_once DOL_DOCUMENT_ROOT.'/expensereport/class/expensereport_ik.class.php';
 
-$langs->load('admin');
-$langs->load('other');
-$langs->load('trips');
-$langs->load('errors');
-$langs->load('dict');
+// Load translation files required by the page
+$langs->loadLangs(array("admin","trips","errors","other","dict"));
 
 if (!$user->admin) accessforbidden();
 
@@ -42,10 +39,10 @@ if (!$user->admin) accessforbidden();
 $error = false;
 $message = false;
 
-$action = GETPOST('action','alpha');
-$id = GETPOST('id','int');
-$offset = GETPOST('offset','int');
-$coef = GETPOST('coef','int');
+$action = GETPOST('action', 'alpha');
+$id = GETPOST('id', 'int');
+$offset = GETPOST('offset', 'int');
+$coef = GETPOST('coef', 'int');
 
 $fk_c_exp_tax_cat = GETPOST('fk_c_exp_tax_cat');
 $fk_range = GETPOST('fk_range');
@@ -89,12 +86,12 @@ $rangesbycateg = ExpenseReportIk::getAllRanges();
  * View
  */
 
-llxHeader('',$langs->trans("ExpenseReportsSetup"));
+llxHeader('', $langs->trans("ExpenseReportsSetup"));
 
 $form=new Form($db);
 
 $linkback='<a href="'.DOL_URL_ROOT.'/admin/modules.php?restore_lastsearch_values=1">'.$langs->trans("BackToModuleList").'</a>';
-print load_fiche_titre($langs->trans("ExpenseReportsIkSetup"),$linkback,'title_setup');
+print load_fiche_titre($langs->trans("ExpenseReportsIkSetup"), $linkback, 'title_setup');
 
 $head=expensereport_admin_prepare_head();
 dol_fiche_head($head, 'expenseik', $langs->trans("ExpenseReportsIk"), -1, 'trip');
@@ -111,9 +108,9 @@ if ($action == 'edit')
 	echo '<input type="hidden" name="action" value="updateik" />';
 }
 
-echo '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'" />';
+echo '<input type="hidden" name="token" value="'.newToken().'" />';
 
-echo '<table class="noborder" width="100%">';
+echo '<table class="noborder centpercent">';
 
 foreach ($rangesbycateg as $fk_c_exp_tax_cat => $Tab)
 {
@@ -129,7 +126,7 @@ foreach ($rangesbycateg as $fk_c_exp_tax_cat => $Tab)
 	if ($Tab['active'] == 0) continue;
 
 	$tranche=1;
-	$var = true;
+
 	foreach ($Tab['ranges'] as $k => $range)
 	{
 		if (isset($Tab['ranges'][$k+1])) $label = $langs->trans('expenseReportRangeFromTo', $range->range_ik, ($Tab['ranges'][$k+1]->range_ik-1));
@@ -137,7 +134,7 @@ foreach ($rangesbycateg as $fk_c_exp_tax_cat => $Tab)
 
 		if ($range->range_active == 0) $label = $form->textwithpicto($label, $langs->trans('expenseReportRangeDisabled'), 1, 'help', '', 0, 3);
 
-		echo '<tr '.$bc[$var].'>';
+		echo '<tr class="oddeven">';
 
 		// Label
 		echo '<td width="20%"><b>['.$langs->trans('RangeNum', $tranche++).']</b> - '.$label.'</td>';
@@ -157,7 +154,7 @@ foreach ($rangesbycateg as $fk_c_exp_tax_cat => $Tab)
 		echo '<td width="30%">'.$langs->trans('expenseReportPrintExample', price($range->ik->offset + 5 * $range->ik->coef)).'</td>';
 
 		// Action
-		echo '<td align="right">';
+		echo '<td class="right">';
 		if ($range->range_active == 1)
 		{
 			if ($action == 'edit' && $range->ik->id == $id && $range->rowid == $fk_range && $range->fk_c_exp_tax_cat == $fk_c_exp_tax_cat)
@@ -175,7 +172,6 @@ foreach ($rangesbycateg as $fk_c_exp_tax_cat => $Tab)
 		echo '</td>';
 
 		echo '</tr>';
-		$var=!$var;
 	}
 }
 
@@ -183,6 +179,7 @@ echo '</table>';
 echo '</form>';
 
 dol_fiche_end();
-llxFooter();
 
+// End of page
+llxFooter();
 $db->close();

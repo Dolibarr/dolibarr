@@ -13,7 +13,7 @@
 -- GNU General Public License for more details.
 --
 -- You should have received a copy of the GNU General Public License
--- along with this program. If not, see <http://www.gnu.org/licenses/>.
+-- along with this program. If not, see <https://www.gnu.org/licenses/>.
 --
 -- ============================================================================
 
@@ -26,9 +26,9 @@ create table llx_product_fournisseur_price_log
   quantity                    double,
   fk_user                     integer,
 
-  fk_multicurrency		integer,
-  multicurrency_code	varchar(255),
+  fk_multicurrency			integer,
+  multicurrency_code		varchar(255),
   multicurrency_tx			double(24,8) DEFAULT 1,
-  multicurrency_price	double(24,8) DEFAULT NULL,
-  multicurrency_price_ttc	double(24,8) DEFAULT NULL
+  multicurrency_unitprice	double(24,8) DEFAULT NULL,		-- unit price without tax
+  multicurrency_price		double(24,8) DEFAULT NULL
 )ENGINE=innodb;

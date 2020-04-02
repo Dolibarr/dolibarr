@@ -2,7 +2,7 @@
 
 /* Copyright (C) 2003      Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2012 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2005-2012 Regis Houssin        <regis.houssin@capnetworks.com>
+ * Copyright (C) 2005-2012 Regis Houssin        <regis.houssin@inodbox.com>
  * Copyright (C) 2016      Marcos García        <marcosgdf@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -16,15 +16,14 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
  * 	\defgroup   produit     Module product variants
  *  \brief      Module to manage product combinations based on product attributes
- *  \file       htdocs/core/modules/modAttributes.class.php
+ *  \file       htdocs/core/modules/modVariants.class.php
  *  \ingroup    produit
- *  \brief      File to describe module to manage catalog of predefined products
  */
 include_once DOL_DOCUMENT_ROOT .'/core/modules/DolibarrModules.class.php';
 
@@ -54,8 +53,10 @@ class modVariants extends DolibarrModules
 		// Family can be 'crm','financial','hr','projects','products','ecm','technic','other'
 		// It is used to group modules in module setup page
 		$this->family = "products";
+		// Module position in the family on 2 digits ('01', '10', '20', ...)
+		$this->module_position = '50';
 		// Module label (no space allowed), used if translation string 'ModuleXXXName' not found (where XXX is value of numeric property 'numero' of module)
-		$this->name = preg_replace('/^mod/i','',get_class($this));
+		$this->name = preg_replace('/^mod/i', '', get_class($this));
 		// Module description, used if translation string 'ModuleXXXDesc' not found (where XXX is value of numeric property 'numero' of module)
 		$this->description = 'Allows creating products variant based on new attributes';
 		// Possible values for version are: 'development', 'experimental', 'dolibarr' or version
@@ -75,18 +76,14 @@ class modVariants extends DolibarrModules
 		$this->dirs = array();
 
 		// Config pages. Put here list of php page, stored into mymodule/admin directory, to use to setup module.
-		$this->config_page_url = array(
-			'admin.php@variants'
-		);
+		$this->config_page_url = array('admin.php@variants');
 
 		// Dependencies
 		$this->hidden = false;			// A condition to hide module
-		$this->depends = array(
-			'modProduct'
-		);		// List of modules id that must be enabled if this module is enabled
-		$this->requiredby = array();	// List of modules id to disable if this one is disabled
-		$this->conflictwith = array();	// List of modules id this module is in conflict with
-		$this->phpmin = array(5,0);					// Minimum version of PHP required by module
+		$this->depends = array('modProduct');	// List of module class names as string that must be enabled if this module is enabled
+		$this->requiredby = array();	// List of module ids to disable if this one is disabled
+		$this->conflictwith = array();	// List of module class names as string this module is in conflict with
+		$this->phpmin = array(5,4);		// Minimum version of PHP required by module
 		$this->need_dolibarr_version = array(3,0);	// Minimum version of Dolibarr required by module
 		$this->langfiles = array("products");
 
@@ -95,7 +92,7 @@ class modVariants extends DolibarrModules
 
 		// Array to add new pages in new tabs
 		$this->tabs = array(
-//			'product:+combinations:Combinaciones:products:1:/variants/combinations.php?id=__ID__'
+        //	'product:+combinations:Combinaciones:products:1:/variants/combinations.php?id=__ID__'
 		);
 
 		// Dictionaries
@@ -112,24 +109,5 @@ class modVariants extends DolibarrModules
 
 		// Permissions
 		$this->rights = array();		// Permission array used by this module
-
-		// Main menu entries
-		$this->menu = array(
-			array(
-				'fk_menu' => 'fk_mainmenu=products,fk_leftmenu=product',
-				'type' => 'left',
-				'titre' => 'VariantAttributes',
-				'mainmenu' => 'products',
-				'leftmenu' => 'product',
-				'url' => '/variants/list.php',
-				'langs' => 'products',
-				'position' => 100,
-				'enabled' => '$conf->product->enabled',
-				'perms' => 1,
-				'target' => '',
-				'user' => 0
-			)
-		);			// List of menus to add
 	}
 }
-

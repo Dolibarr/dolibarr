@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2001-2003,2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2011      Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2005-2012      Regis Houssin        <regis.houssin@capnetworks.com>
+ * Copyright (C) 2005-2012      Regis Houssin        <regis.houssin@inodbox.com>
  * Copyright (C) 2010           Juanjo Menent        <jmenent@2byte.es>
  * Copyright (C) 2013           Florian Henry		 <florian.henry@open-concept.pro>
  *
@@ -16,7 +16,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -29,13 +29,14 @@ require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/contact.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/contact/class/contact.class.php';
 
-$action = GETPOST('action','aZ09');
+$action = GETPOST('action', 'aZ09');
 
+// Load translation files required by the page
 $langs->load("companies");
 
 // Security check
-$id = GETPOST('id','int');
-if ($user->societe_id) $id=$user->societe_id;
+$id = GETPOST('id', 'int');
+if ($user->socid) $id=$user->socid;
 $result = restrictedArea($user, 'contact', $id, 'socpeople&societe');
 
 $object = new Contact($db);
@@ -98,7 +99,7 @@ if ($id > 0)
     print '<div class="fichecenter">';
     print '<div class="underbanner clearboth"></div>';
 
-	print '<table class="border centpercent">';
+	print '<table class="border centpercent tableforfield">';
 
     // Civility
     print '<tr><td class="'.$cssclass.'">'.$langs->trans("UserTitle").'</td><td>';

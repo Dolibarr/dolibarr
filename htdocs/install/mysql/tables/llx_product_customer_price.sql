@@ -1,7 +1,7 @@
 -- ============================================================================
 -- Copyright (C) 2003		Rodolphe Quiedeville	<rodolphe@quiedeville.org>
 -- Copyright (C) 2009-2011	Laurent Destailleur		<eldy@users.sourceforge.net>
--- Copyright (C) 2009-2013	Regis Houssin			<regis.houssin@capnetworks.com>
+-- Copyright (C) 2009-2013	Regis Houssin			<regis.houssin@inodbox.com>
 -- Copyright (C) 2012		Juanjo Menent			<jmenent@2byte.es>
 -- Copyright (C) 2013		Florian Henry			<florian.henry@open-concept.pro>
 --
@@ -16,7 +16,7 @@
 -- GNU General Public License for more details.
 --
 -- You should have received a copy of the GNU General Public License
--- along with this program. If not, see <http://www.gnu.org/licenses/>.
+-- along with this program. If not, see <https://www.gnu.org/licenses/>.
 --
 -- ============================================================================
 

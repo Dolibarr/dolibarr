@@ -1,6 +1,6 @@
 # ProductBATCH language file - en_US - ProductBATCH
 ManageLotSerial=Utilizar lote/número de série
-ProductStatusOnBatch=Sim (necessário lote/número de série)
+ProductStatusOnBatch=Sim (lote/número de série obrigatório)
 ProductStatusNotOnBatch=Não (não é necessário lote/número de série)
 ProductStatusOnBatchShort=Sim
 ProductStatusNotOnBatchShort=Não
@@ -16,9 +16,9 @@ printEatby=Data de validade: %s
 printSellby=Data de venda: %s
 printQty=Qtd.: %d
 AddDispatchBatchLine=Adicionar uma linha para o apuramento por data de validade
-WhenProductBatchModuleOnOptionAreForced=Quando o módulo Lote/Número de Série estiver ativo, o modo automático de aumento/diminuição de stock é forçado para validação de expedições e despacho manual da recepção de produtos e não pode ser editado. Outras opções podem ser definidas como você desejar.
+WhenProductBatchModuleOnOptionAreForced=Quando o módulo Lote/Número de Série estiver ativo, o modo automático de aumento/diminuição de stock é forçado para validação de expedições e despacho manual da receção de produtos e não pode ser editado. Outras opções podem ser definidas como você desejar.
 ProductDoesNotUseBatchSerial=Este produto não usa lote/número de série
 ProductLotSetup=Configuração do módulo Lote/Número de Série
 ShowCurrentStockOfLot=Mostrar o stock atual para o par produto/lote
 ShowLogOfMovementIfLot=Mostrar registo de movimentos para cada par produto/lote
-StockDetailPerBatch=Stock detail per lot
+StockDetailPerBatch=Detalhes do estoque por lote

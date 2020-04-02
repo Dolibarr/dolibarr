@@ -3,7 +3,7 @@
 -- Copyright (C) 2004-2009 Laurent Destailleur  <eldy@users.sourceforge.net>
 -- Copyright (C) 2004      Benoit Mortier       <benoit.mortier@opensides.be>
 -- Copyright (C) 2004      Guillaume Delecourt  <guillaume.delecourt@opensides.be>
--- Copyright (C) 2005-2009 Regis Houssin        <regis.houssin@capnetworks.com>
+-- Copyright (C) 2005-2009 Regis Houssin        <regis.houssin@inodbox.com>
 -- Copyright (C) 2007 	   Patrick Raguin       <patrick.raguin@gmail.com>
 --
 -- This program is free software; you can redistribute it and/or modify
@@ -17,7 +17,7 @@
 -- GNU General Public License for more details.
 --
 -- You should have received a copy of the GNU General Public License
--- along with this program. If not, see <http://www.gnu.org/licenses/>.
+-- along with this program. If not, see <https://www.gnu.org/licenses/>.
 --
 --
 
@@ -85,3 +85,17 @@ insert into llx_c_type_contact(rowid, element, source, code, libelle, active ) v
 insert into llx_c_type_contact(rowid, element, source, code, libelle, active ) values (181, 'project_task',  'internal', 'TASKCONTRIBUTOR', 'Intervenant', 1);
 insert into llx_c_type_contact(rowid, element, source, code, libelle, active ) values (190, 'project_task',  'external', 'TASKEXECUTIVE', 'Responsable', 1);
 insert into llx_c_type_contact(rowid, element, source, code, libelle, active ) values (191, 'project_task',  'external', 'TASKCONTRIBUTOR', 'Intervenant', 1);
+
+-- Tickets
+INSERT INTO llx_c_type_contact (rowid, element, source, code, libelle, active, module) VALUES(155, 'ticket', 'internal', 'SUPPORTTEC', 'Utilisateur contact support', 1, NULL);
+INSERT INTO llx_c_type_contact (rowid, element, source, code, libelle, active, module) VALUES(156, 'ticket', 'internal', 'CONTRIBUTOR', 'Intervenant', 1, NULL);
+INSERT INTO llx_c_type_contact (rowid, element, source, code, libelle, active, module) VALUES(157, 'ticket', 'external', 'SUPPORTCLI', 'Contact client suivi incident', 1, NULL);
+INSERT INTO llx_c_type_contact (rowid, element, source, code, libelle, active, module) VALUES(158, 'ticket', 'external', 'CONTRIBUTOR', 'Intervenant', 1, NULL);
+
+-- Supplier proposal
+
+insert into llx_c_type_contact(rowid, element, source, code, libelle, active ) values (110, 'supplier_proposal', 'internal', 'SALESREPFOLL',  'Responsable suivi de la demande', 1);
+insert into llx_c_type_contact(rowid, element, source, code, libelle, active ) values (111, 'supplier_proposal', 'external', 'BILLING',       'Contact fournisseur facturation', 1);
+insert into llx_c_type_contact(rowid, element, source, code, libelle, active ) values (112, 'supplier_proposal', 'external', 'SHIPPING',      'Contact fournisseur livraison', 1);
+insert into llx_c_type_contact(rowid, element, source, code, libelle, active ) values (113, 'supplier_proposal', 'external', 'SERVICE',       'Contact fournisseur prestation', 1);
+

@@ -11,4 +11,4 @@ objectclass: dcObject
 objectClass: organization
 objectClass: top
 dc: my-domain
-o: Mon organisation
+o: my organisation

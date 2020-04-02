@@ -1,7 +1,13 @@
 # Dolibarr language file - Source file is en_US - productbatch
-Batch=Chg / Serie
-EatByDate=Verzehren-bis-Datum
-SellByDate=Verkaufen-bis-Datum
-DetailBatchNumber=Chg / Serie Details
+Batch=Lot / Seriennumer
+atleast1batchfield="Verbrauchen bis:" - oder "Verkaufen bis:" - Datum. Oder Lot / Seriennummer
+EatByDate="Verbrauchen bis:" - Datum
+SellByDate="Verkaufen bis:" - Datum
+DetailBatchNumber=Details Lot / Serienummer
 printBatch=Chg / Serie: %s
-AddDispatchBatchLine=Fügen Sie eine Zeile für Haltbarkeit Dispatching
+AddDispatchBatchLine=Fügen Sie eine Zeile für Haltbarkeit hinzu
+WhenProductBatchModuleOnOptionAreForced=Bei aktiviertem Modul Lot / Seriennummer wird bei Freigabe einer Lieferung der Lagerbestand automatisch vermindert.\nUmgekehrt erfolgt die Lagerzunahme bei erst bei manuellem Verschieben in die Lager.\nDas kann man nicht ändern. Die anderen Optionen kannst du ändern.
+ProductLotSetup=Einstellungen Modul Lot / Seriennummer
+ShowCurrentStockOfLot=Zeige aktuellen Lagerbestand von Produkt / Lot Paaren
+ShowLogOfMovementIfLot=Zeige Lagerbewegungen von Produkt / Lot Paaren
+StockDetailPerBatch=Lagerdetails pro Lot

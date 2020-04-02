@@ -12,8 +12,8 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
- * or see http://www.gnu.org/
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
+ * or see https://www.gnu.org/
  */
 
 /**
@@ -44,7 +44,7 @@ $conf->global->MAIN_DISABLE_ALL_MAILS=1;
  * @backupStaticAttributes enabled
  * @remarks	backupGlobals must be disabled to have db,conf,user and lang not erased.
  */
-class UtilsTest extends PHPUnit_Framework_TestCase
+class UtilsTest extends PHPUnit\Framework\TestCase
 {
     protected $savconf;
     protected $savuser;
@@ -57,8 +57,10 @@ class UtilsTest extends PHPUnit_Framework_TestCase
      *
      * @return UserTest
      */
-    function __construct()
+    public function __construct()
     {
+        parent::__construct();
+
         //$this->sharedFixture
         global $conf,$user,$langs,$db;
         $this->savconf=$conf;
@@ -143,10 +145,7 @@ class UtilsTest extends PHPUnit_Framework_TestCase
         $this->assertEquals($result['error'], '');
         //$this->assertEquals(preg_match('/phpunit/', $result['output']), 1);
 
-        print __METHOD__." result=".$result."\n";
+        print __METHOD__." result=".$result['result']."\n";
         return $result;
     }
-
-
-
 }

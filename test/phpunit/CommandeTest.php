@@ -12,8 +12,8 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
- * or see http://www.gnu.org/
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
+ * or see https://www.gnu.org/
  */
 
 /**
@@ -44,7 +44,7 @@ $conf->global->MAIN_DISABLE_ALL_MAILS=1;
  * @backupStaticAttributes enabled
  * @remarks	backupGlobals must be disabled to have db,conf,user and lang not erased.
  */
-class CommandeTest extends PHPUnit_Framework_TestCase
+class CommandeTest extends PHPUnit\Framework\TestCase
 {
     protected $savconf;
     protected $savuser;
@@ -57,9 +57,11 @@ class CommandeTest extends PHPUnit_Framework_TestCase
      *
      * @return CommandeTest
      */
-    function __construct()
+    public function __construct()
     {
-        //$this->sharedFixture
+    	parent::__construct();
+
+    	//$this->sharedFixture
         global $conf,$user,$langs,$db;
         $this->savconf=$conf;
         $this->savuser=$user;
@@ -174,7 +176,7 @@ class CommandeTest extends PHPUnit_Framework_TestCase
      * @depends	testCommandeFetch
      * The depends says test is run only if previous is ok
      */
-    public function testCommandUpdate($localobject)
+    public function testCommandeUpdate($localobject)
     {
     	global $conf,$user,$langs,$db;
     	$conf=$this->savconf;
@@ -196,7 +198,7 @@ class CommandeTest extends PHPUnit_Framework_TestCase
      * @param   Object  $localobject    Order
      * @return  Commande
      *
-     * @depends	testCommandUpdate
+     * @depends	testCommandeUpdate
      * The depends says test is run only if previous is ok
      */
     public function testCommandeValid($localobject)
@@ -292,5 +294,4 @@ class CommandeTest extends PHPUnit_Framework_TestCase
         $this->assertLessThan($result, 0);
         return $result;
     }
-
 }

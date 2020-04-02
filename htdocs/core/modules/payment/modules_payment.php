@@ -12,8 +12,8 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
- * or see http://www.gnu.org/
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
+ * or see https://www.gnu.org/
  */
 
 /**
@@ -23,14 +23,17 @@
 
 abstract class ModeleNumRefPayments
 {
-	var $error='';
+	/**
+	 * @var string Error code (or message)
+	 */
+	public $error='';
 
 	/**
 	 *	Return if a module can be used or not
 	 *
 	 *	@return		boolean     true if module can be used
 	 */
-	function isEnabled()
+	public function isEnabled()
 	{
 		return true;
 	}
@@ -40,7 +43,7 @@ abstract class ModeleNumRefPayments
 	 *
 	 *	@return     string      Texte descripif
 	 */
-	function info()
+	public function info()
 	{
 		global $langs;
 		$langs->load("bills");
@@ -52,7 +55,7 @@ abstract class ModeleNumRefPayments
 	 *
 	 *	@return     string      Example
 	 */
-	function getExample()
+	public function getExample()
 	{
 		global $langs;
 		$langs->load("bills");
@@ -60,11 +63,12 @@ abstract class ModeleNumRefPayments
 	}
 
 	/**
-	 *  Test if the existing numbers in the database do not cause conflicts that would prevent this numbering run.
-	 *
-	 *	@return     boolean     false si conflit, true si ok
-	 */
-	function canBeActivated()
+     *  Checks if the numbers already in force in the data base do not
+     *  cause conflicts that would prevent this numbering from working.
+     *
+     *	@return     boolean     false if conflict, true if ok
+     */
+	public function canBeActivated()
 	{
 		return true;
 	}
@@ -76,7 +80,7 @@ abstract class ModeleNumRefPayments
 	 *	@param	Object		$object		Object we need next value for
 	 *	@return	string      Valeur
 	 */
-	function getNextValue($objsoc,$object)
+	public function getNextValue($objsoc, $object)
 	{
 		global $langs;
 		return $langs->trans("NotAvailable");
@@ -87,15 +91,15 @@ abstract class ModeleNumRefPayments
 	 *
 	 *	@return     string      Value
 	 */
-	function getVersion()
+	public function getVersion()
 	{
 		global $langs;
 		$langs->load("admin");
 
 		if ($this->version == 'development') return $langs->trans("VersionDevelopment");
-		if ($this->version == 'experimental') return $langs->trans("VersionExperimental");
-		if ($this->version == 'dolibarr') return DOL_VERSION;
-		if ($this->version) return $this->version;
-		return $langs->trans("NotAvailable");
+		elseif ($this->version == 'experimental') return $langs->trans("VersionExperimental");
+		elseif ($this->version == 'dolibarr') return DOL_VERSION;
+		elseif ($this->version) return $this->version;
+		else return $langs->trans("NotAvailable");
 	}
 }

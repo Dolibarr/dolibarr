@@ -12,7 +12,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -27,17 +27,33 @@
  */
 class Ctypent // extends CommonObject
 {
-	var $db;							//!< To store db handler
-	var $error;							//!< To return error code (or message)
-	var $errors=array();				//!< To return several error codes (or messages)
+	/**
+     * @var DoliDB Database handler.
+     */
+    public $db;
+
+	/**
+	 * @var string Error code (or message)
+	 */
+	public $error='';
+
+	/**
+	 * @var string[] Error codes (or messages)
+	 */
+	public $errors = array();
+
 	//var $element='ctypent';			//!< Id that identify managed objects
 	//var $table_element='ctypent';	//!< Name of table without prefix where object is stored
 
-    var $id;
-	var $code;
-	var $libelle;
-	var $active;
-	var $module;
+    /**
+	 * @var int ID
+	 */
+	public $id;
+
+	public $code;
+	public $libelle;
+	public $active;
+	public $module;
 
 
 
@@ -47,10 +63,9 @@ class Ctypent // extends CommonObject
      *
      *  @param      DoliDb		$db      Database handler
      */
-    function __construct($db)
+    public function __construct($db)
     {
         $this->db = $db;
-        return 1;
     }
 
 
@@ -61,7 +76,7 @@ class Ctypent // extends CommonObject
      *  @param      int		$notrigger   0=launch triggers after, 1=disable triggers
      *  @return     int      		   	 <0 if KO, Id of created object if OK
      */
-    function create($user, $notrigger=0)
+    public function create($user, $notrigger = 0)
     {
     	global $conf, $langs;
 		$error=0;
@@ -94,7 +109,7 @@ class Ctypent // extends CommonObject
 		$sql.= " ".(! isset($this->id)?'NULL':"'".$this->db->escape($this->id)."'").",";
 		$sql.= " ".(! isset($this->code)?'NULL':"'".$this->db->escape($this->code)."'").",";
 		$sql.= " ".(! isset($this->libelle)?'NULL':"'".$this->db->escape($this->libelle)."'").",";
-		$sql.= " ".(! isset($this->active)?'NULL':"'".$this->db->active($this->active)."'").",";
+		$sql.= " ".(! isset($this->active)?'NULL':"'".$this->db->escape($this->active)."'").",";
 		$sql.= " ".(! isset($this->module)?'NULL':"'".$this->db->escape($this->module)."'")."";
 
 
@@ -109,19 +124,6 @@ class Ctypent // extends CommonObject
 		if (! $error)
         {
             $this->id = $this->db->last_insert_id(MAIN_DB_PREFIX."c_typent");
-
-			if (! $notrigger)
-			{
-	            // Uncomment this and change MYOBJECT to your own tag if you
-	            // want this action call a trigger.
-
-	            //// Call triggers
-	            //include_once DOL_DOCUMENT_ROOT . '/core/class/interfaces.class.php';
-	            //$interface=new Interfaces($this->db);
-	            //$result=$interface->run_triggers('MYOBJECT_CREATE',$this,$user,$langs,$conf);
-	            //if ($result < 0) { $error++; $this->errors=$interface->errors; }
-	            //// End call triggers
-			}
         }
 
         // Commit or rollback
@@ -151,7 +153,7 @@ class Ctypent // extends CommonObject
      *  @param		string	$label	Label
      *  @return     int          	<0 if KO, >0 if OK
      */
-    function fetch($id,$code='',$label='')
+    public function fetch($id, $code = '', $label = '')
     {
     	global $langs;
         $sql = "SELECT";
@@ -199,7 +201,7 @@ class Ctypent // extends CommonObject
      *  @param      int		$notrigger	 0=launch triggers after, 1=disable triggers
      *  @return     int     		   	 <0 if KO, >0 if OK
      */
-    function update($user=null, $notrigger=0)
+    public function update($user = null, $notrigger = 0)
     {
     	global $conf, $langs;
 		$error=0;
@@ -228,22 +230,6 @@ class Ctypent // extends CommonObject
         $resql = $this->db->query($sql);
     	if (! $resql) { $error++; $this->errors[]="Error ".$this->db->lasterror(); }
 
-		if (! $error)
-		{
-			if (! $notrigger)
-			{
-	            // Uncomment this and change MYOBJECT to your own tag if you
-	            // want this action call a trigger.
-
-	            //// Call triggers
-	            //include_once DOL_DOCUMENT_ROOT . '/core/class/interfaces.class.php';
-	            //$interface=new Interfaces($this->db);
-	            //$result=$interface->run_triggers('MYOBJECT_MODIFY',$this,$user,$langs,$conf);
-	            //if ($result < 0) { $error++; $this->errors=$interface->errors; }
-	            //// End call triggers
-	    	}
-		}
-
         // Commit or rollback
 		if ($error)
 		{
@@ -270,7 +256,7 @@ class Ctypent // extends CommonObject
      *  @param  int		$notrigger	 0=launch triggers after, 1=disable triggers
 	 *  @return	int					 <0 if KO, >0 if OK
 	 */
-	function delete($user, $notrigger=0)
+	public function delete($user, $notrigger = 0)
 	{
 		global $conf, $langs;
 		$error=0;
@@ -284,25 +270,9 @@ class Ctypent // extends CommonObject
 		$resql = $this->db->query($sql);
     	if (! $resql) { $error++; $this->errors[]="Error ".$this->db->lasterror(); }
 
-		if (! $error)
-		{
-			if (! $notrigger)
-			{
-				// Uncomment this and change MYOBJECT to your own tag if you
-		        // want this action call a trigger.
-
-		        //// Call triggers
-		        //include_once DOL_DOCUMENT_ROOT . '/core/class/interfaces.class.php';
-		        //$interface=new Interfaces($this->db);
-		        //$result=$interface->run_triggers('MYOBJECT_DELETE',$this,$user,$langs,$conf);
-		        //if ($result < 0) { $error++; $this->errors=$interface->errors; }
-		        //// End call triggers
-			}
-		}
-
         // Commit or rollback
-		if ($error)
-		{
+        if ($error)
+        {
 			foreach($this->errors as $errmsg)
 			{
 	            dol_syslog(get_class($this)."::delete ".$errmsg, LOG_ERR);
@@ -310,12 +280,11 @@ class Ctypent // extends CommonObject
 			}
 			$this->db->rollback();
 			return -1*$error;
-		}
-		else
-		{
-			$this->db->commit();
-			return 1;
-		}
-	}
-
+        }
+        else
+        {
+            $this->db->commit();
+            return 1;
+        }
+    }
 }

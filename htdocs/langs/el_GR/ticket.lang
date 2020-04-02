@@ -1,0 +1,305 @@
+# en_US lang file for module ticket
+# Copyright (C) 2013  Jean-François FERRY <hello@librethic.io>
+#
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program.  If not, see <https://www.gnu.org/licenses/>.
+
+#
+# Generic
+#
+
+Module56000Name=Εισιτήρια
+Module56000Desc=Σύστημα εισιτηρίων για διαχείριση εκδόσεων ή αιτήσεων
+
+Permission56001=Δείτε εισιτήρια
+Permission56002=Τροποποίηση εισιτηρίων
+Permission56003=Διαγράψτε τα εισιτήρια
+Permission56004=Διαχείριση εισιτηρίων
+Permission56005=Δείτε τα εισιτήρια όλων των τρίτων (δεν είναι αποτελεσματικά για εξωτερικούς χρήστες, πάντα περιορίζονται στο τρίτο μέρος από το οποίο εξαρτώνται)
+
+TicketDictType=Τύπος εισιτηρίου
+TicketDictCategory=Εισιτήριο - Ομαδοποιεί
+TicketDictSeverity=Εισιτήριο - Βαρύτητα
+TicketDictResolution=Εισιτήριο - Ανάλυση
+TicketTypeShortBUGSOFT=Λογική δυσλειτουργίας
+TicketTypeShortBUGHARD=Dysfonctionnement υλικά
+TicketTypeShortCOM=Εμπορική ερώτηση
+
+TicketTypeShortHELP=Αίτημα για λειτουργική βοήθεια
+TicketTypeShortISSUE=Θέμα, σφάλμα ή πρόβλημα
+TicketTypeShortREQUEST=Αίτημα αλλαγής ή βελτίωσης
+TicketTypeShortPROJET=Έργο
+TicketTypeShortOTHER=Άλλο
+
+TicketSeverityShortLOW=Χαμηλή
+TicketSeverityShortNORMAL=Κανονικός
+TicketSeverityShortHIGH=Υψηλή
+TicketSeverityShortBLOCKING=Κρίσιμη / Αποκλεισμός
+
+ErrorBadEmailAddress=Το πεδίο &#39;%s&#39; είναι εσφαλμένο
+MenuTicketMyAssign=Τα εισιτήριά μου
+MenuTicketMyAssignNonClosed=Τα ανοιχτά μου εισιτήρια
+MenuListNonClosed=Ανοίξτε εισιτήρια
+
+TypeContact_ticket_internal_CONTRIBUTOR=Συνεισφέρων
+TypeContact_ticket_internal_SUPPORTTEC=Εκχωρημένος χρήστης
+TypeContact_ticket_external_SUPPORTCLI=Παρακολούθηση επαφών πελατών / συμβάντων
+TypeContact_ticket_external_CONTRIBUTOR=Εξωτερικός συνεργάτης
+
+OriginEmail=Πηγή ηλεκτρονικού ταχυδρομείου
+Notify_TICKET_SENTBYMAIL=Στείλτε μήνυμα εισιτηρίου μέσω ηλεκτρονικού ταχυδρομείου
+
+# Status
+NotRead=Δεν διαβάζεται
+Read=Ανάγνωση
+Assigned=Ανατεθεί
+InProgress=Σε εξέλιξη
+NeedMoreInformation=Αναμονή για πληροφορίες
+Answered=Απαντήθηκε
+Waiting=Αναμονή
+Closed=Έκλεισε
+Deleted=Διαγράφηκε
+
+# Dict
+Type=Τύπος
+Category=Αναλυτικός κώδικας
+Severity=Δριμύτητα
+
+# Email templates
+MailToSendTicketMessage=Για να στείλετε email από το μήνυμα εισιτηρίων
+
+#
+# Admin page
+#
+TicketSetup=Ρύθμιση μονάδας εισιτηρίων
+TicketSettings=Ρυθμίσεις
+TicketSetupPage=
+TicketPublicAccess=Μια δημόσια διεπαφή που δεν απαιτεί αναγνώριση είναι διαθέσιμη στην παρακάτω διεύθυνση URL
+TicketSetupDictionaries=Ο τύπος του εισιτηρίου, ο βαθμός σοβαρότητας και οι αναλυτικοί κωδικοί ρυθμίζονται από λεξικά
+TicketParamModule=Ρύθμιση μεταβλητής μονάδας
+TicketParamMail=Ρύθμιση ηλεκτρονικού ταχυδρομείου
+TicketEmailNotificationFrom=Ειδοποίηση ηλεκτρονικού ταχυδρομείου από
+TicketEmailNotificationFromHelp=Χρησιμοποιείται στο μήνυμα του εισιτηρίου με το παράδειγμα
+TicketEmailNotificationTo=Οι ειδοποιήσεις αποστέλλονται ηλεκτρονικά στο
+TicketEmailNotificationToHelp=Στείλτε ειδοποιήσεις μέσω ηλεκτρονικού ταχυδρομείου σε αυτήν τη διεύθυνση.
+TicketNewEmailBodyLabel=Μήνυμα κειμένου που αποστέλλεται μετά τη δημιουργία ενός εισιτηρίου
+TicketNewEmailBodyHelp=Το κείμενο που καθορίζεται εδώ θα εισαχθεί στο μήνυμα ηλεκτρονικού ταχυδρομείου που επιβεβαιώνει τη δημιουργία νέου εισιτηρίου από το δημόσιο περιβάλλον. Οι πληροφορίες σχετικά με τη διαβούλευση με το εισιτήριο προστίθενται αυτόματα.
+TicketParamPublicInterface=Ρύθμιση δημόσιας διεπαφής
+TicketsEmailMustExist=Απαιτήστε μια υπάρχουσα διεύθυνση ηλεκτρονικού ταχυδρομείου για να δημιουργήσετε ένα εισιτήριο
+TicketsEmailMustExistHelp=Στη δημόσια διεπαφή, η διεύθυνση ηλεκτρονικού ταχυδρομείου θα πρέπει ήδη να συμπληρωθεί στη βάση δεδομένων για να δημιουργηθεί ένα νέο εισιτήριο.
+PublicInterface=Δημόσια διεπαφή
+TicketUrlPublicInterfaceLabelAdmin=Εναλλακτική διεύθυνση URL για δημόσια διασύνδεση
+TicketUrlPublicInterfaceHelpAdmin=Είναι δυνατόν να ορίσετε ένα ψευδώνυμο στον διακομιστή ιστού και έτσι να διαθέσετε τη δημόσια διασύνδεση με μια άλλη διεύθυνση URL (ο διακομιστής πρέπει να ενεργεί ως διακομιστής μεσολάβησης σε αυτήν τη νέα διεύθυνση URL)
+TicketPublicInterfaceTextHomeLabelAdmin=Καλωσόρισμα κειμένου της δημόσιας διασύνδεσης
+TicketPublicInterfaceTextHome=Μπορείτε να δημιουργήσετε ένα εισιτήριο υποστήριξης ή μια προβολή που υπάρχει από το εισιτήριο παρακολούθησης ταυτοποίησης.
+TicketPublicInterfaceTextHomeHelpAdmin=Το κείμενο που ορίζεται εδώ θα εμφανιστεί στην αρχική σελίδα της δημόσιας διασύνδεσης.
+TicketPublicInterfaceTopicLabelAdmin=Τίτλος διεπαφής
+TicketPublicInterfaceTopicHelp=Αυτό το κείμενο θα εμφανιστεί ως ο τίτλος της δημόσιας διασύνδεσης.
+TicketPublicInterfaceTextHelpMessageLabelAdmin=Βοήθεια κειμένου στην καταχώρηση μηνύματος
+TicketPublicInterfaceTextHelpMessageHelpAdmin=Αυτό το κείμενο θα εμφανιστεί πάνω από την περιοχή εισαγωγής μηνυμάτων του χρήστη.
+ExtraFieldsTicket=Επιπλέον χαρακτηριστικά
+TicketCkEditorEmailNotActivated=Ο επεξεργαστής HTML δεν είναι ενεργοποιημένος. Καταχωρίστε το περιεχόμενο FCKEDITOR_ENABLE_MAIL σε 1 για να το αποκτήσετε.
+TicketsDisableEmail=Μην αποστέλλετε μηνύματα ηλεκτρονικού ταχυδρομείου για τη δημιουργία εισιτηρίων ή την εγγραφή μηνυμάτων
+TicketsDisableEmailHelp=Από προεπιλογή, αποστέλλονται μηνύματα ηλεκτρονικού ταχυδρομείου όταν δημιουργούνται νέα εισιτήρια ή μηνύματα. Ενεργοποιήστε αυτήν την επιλογή για να απενεργοποιήσετε όλες τις * ειδοποιήσεις ηλεκτρονικού ταχυδρομείου
+TicketsLogEnableEmail=Ενεργοποιήστε το αρχείο καταγραφής μέσω ηλεκτρονικού ταχυδρομείου
+TicketsLogEnableEmailHelp=Σε κάθε αλλαγή, θα σταλεί ένα μήνυμα ηλεκτρονικού ταχυδρομείου ** σε κάθε επαφή ** που σχετίζεται με το εισιτήριο.
+TicketParams=Params
+TicketsShowModuleLogo=Εμφανίστε το λογότυπο της ενότητας στη δημόσια διεπαφή
+TicketsShowModuleLogoHelp=Ενεργοποιήστε αυτήν την επιλογή για να αποκρύψετε τη λειτουργική μονάδα λογότυπου στις σελίδες της δημόσιας διασύνδεσης
+TicketsShowCompanyLogo=Εμφανίστε το λογότυπο της εταιρείας στο δημόσιο περιβάλλον
+TicketsShowCompanyLogoHelp=Ενεργοποιήστε αυτήν την επιλογή για να αποκρύψετε το λογότυπο της κύριας εταιρείας στις σελίδες της δημόσιας διασύνδεσης
+TicketsEmailAlsoSendToMainAddress=Επίσης, αποστέλλετε ειδοποίηση στην κύρια διεύθυνση ηλεκτρονικού ταχυδρομείου
+TicketsEmailAlsoSendToMainAddressHelp=Ενεργοποιήστε αυτή την επιλογή για να στείλετε ένα μήνυμα ηλεκτρονικού ταχυδρομείου στη διεύθυνση &quot;Ειδοποίηση ηλεκτρονικού ταχυδρομείου από&quot; (δείτε την παρακάτω ρύθμιση)
+TicketsLimitViewAssignedOnly=Περιορίστε την εμφάνιση σε εισιτήρια που έχουν εκχωρηθεί στον τρέχοντα χρήστη (δεν είναι αποτελεσματικά για εξωτερικούς χρήστες, πάντα περιορίζονται στο τρίτο μέρος από το οποίο εξαρτώνται)
+TicketsLimitViewAssignedOnlyHelp=Μόνο εισιτήρια που έχουν εκχωρηθεί στον τρέχοντα χρήστη θα είναι ορατά. Δεν ισχύει για χρήστη με δικαιώματα διαχείρισης εισιτηρίων.
+TicketsActivatePublicInterface=Ενεργοποιήστε τη δημόσια διεπαφή
+TicketsActivatePublicInterfaceHelp=Η δημόσια διεπαφή επιτρέπει στους επισκέπτες να δημιουργούν εισιτήρια.
+TicketsAutoAssignTicket=Ορίστε αυτόματα τον χρήστη που δημιούργησε το εισιτήριο
+TicketsAutoAssignTicketHelp=Κατά τη δημιουργία ενός εισιτηρίου, ο χρήστης μπορεί να αντιστοιχιστεί αυτόματα στο εισιτήριο.
+TicketNumberingModules=Μονάδα αρίθμησης εισιτηρίων
+TicketNotifyTiersAtCreation=Ειδοποιήστε τρίτο μέρος στη δημιουργία
+TicketGroup=Ομάδα
+TicketsDisableCustomerEmail=Πάντα να απενεργοποιείτε τα μηνύματα ηλεκτρονικού ταχυδρομείου όταν δημιουργείται ένα εισιτήριο από τη δημόσια διασύνδεση
+#
+# Index & list page
+#
+TicketsIndex=Εισιτήριο - σπίτι
+TicketList=Λίστα εισιτηρίων
+TicketAssignedToMeInfos=Αυτή η σελίδα εμφανίζει τη λίστα εισιτηρίων που έχει δημιουργηθεί ή έχει εκχωρηθεί στον τρέχοντα χρήστη
+NoTicketsFound=Δεν βρέθηκε εισιτήριο
+NoUnreadTicketsFound=Δεν βρέθηκαν αδιάβατα εισιτήρια
+TicketViewAllTickets=Δείτε όλα τα εισιτήρια
+TicketViewNonClosedOnly=Δείτε μόνο ανοιχτά εισιτήρια
+TicketStatByStatus=Εισιτήρια ανά κατάσταση
+OrderByDateAsc=Ταξινόμηση κατά αύξουσα ημερομηνία
+OrderByDateDesc=Ταξινόμηση κατά φθίνουσα ημερομηνία
+ShowAsConversation=Εμφάνιση ως λίστα συνομιλιών
+MessageListViewType=Εμφάνιση ως λίστα πίνακα
+
+#
+# Ticket card
+#
+Ticket=Εισιτήριο
+TicketCard=Κάρτα εισιτηρίων
+CreateTicket=Δημιουργήστε εισιτήριο
+EditTicket=Επεξεργασία εισιτηρίου
+TicketsManagement=Διαχείριση εισιτηρίων
+CreatedBy=Δημιουργήθηκε από
+NewTicket=Νέο εισιτήριο
+SubjectAnswerToTicket=Απάντηση εισιτηρίου
+TicketTypeRequest=Τύπος αιτήματος
+TicketCategory=Αναλυτικός κώδικας
+SeeTicket=Δείτε εισιτήριο
+TicketMarkedAsRead=Το εισιτήριο έχει επισημανθεί ως αναγνωσμένο
+TicketReadOn=Συνέχισε να διαβάζεις
+TicketCloseOn=Ημερομηνία Κλεισίματος
+MarkAsRead=Μαρκάρετε το εισιτήριο ως αναγνωσμένο
+TicketHistory=Ιστορικό εισιτηρίων
+AssignUser=Αναθέστε στον χρήστη
+TicketAssigned=Το εισιτήριο έχει πλέον εκχωρηθεί
+TicketChangeType=Τύπος αλλαγής
+TicketChangeCategory=Αλλάξτε τον αναλυτικό κώδικα
+TicketChangeSeverity=Αλλάξτε τη σοβαρότητα
+TicketAddMessage=Προσθήκη μηνύματος
+AddMessage=Προσθήκη μηνύματος
+MessageSuccessfullyAdded=Το εισιτήριο προστέθηκε
+TicketMessageSuccessfullyAdded=Το μήνυμα προστέθηκε με επιτυχία
+TicketMessagesList=Λίστα μηνυμάτων
+NoMsgForThisTicket=Δεν υπάρχει μήνυμα για αυτό το εισιτήριο
+Properties=Ταξινόμηση
+LatestNewTickets=Τελευταία %s νεότερα εισιτήρια (δεν διαβάζονται)
+TicketSeverity=Δριμύτητα
+ShowTicket=Δείτε εισιτήριο
+RelatedTickets=Σχετικά εισιτήρια
+TicketAddIntervention=Δημιουργία παρέμβασης
+CloseTicket=Κλείστε το εισιτήριο
+CloseATicket=Κλείστε ένα εισιτήριο
+ConfirmCloseAticket=Επιβεβαιώστε το κλείσιμο εισιτηρίου
+ConfirmDeleteTicket=Επιβεβαιώστε τη διαγραφή του εισιτηρίου
+TicketDeletedSuccess=Το εισιτήριο διαγράφηκε με επιτυχία
+TicketMarkedAsClosed=Το εισιτήριο επισημαίνεται ως κλειστό
+TicketDurationAuto=Υπολογισμένη διάρκεια
+TicketDurationAutoInfos=Διάρκεια υπολογίζεται αυτόματα από την παρέμβαση
+TicketUpdated=Το εισιτήριο ενημερώθηκε
+SendMessageByEmail=Αποστολή μηνύματος μέσω ηλεκτρονικού ταχυδρομείου
+TicketNewMessage=Νέο μήνυμα
+ErrorMailRecipientIsEmptyForSendTicketMessage=Ο παραλήπτης είναι κενός. Δεν στέλνεται μήνυμα ηλεκτρονικού ταχυδρομείου
+TicketGoIntoContactTab=Μεταβείτε στην καρτέλα &quot;Επαφές&quot; για να τις επιλέξετε
+TicketMessageMailIntro=Εισαγωγή
+TicketMessageMailIntroHelp=Αυτό το κείμενο προστίθεται μόνο στην αρχή του μηνύματος ηλεκτρονικού ταχυδρομείου και δεν θα αποθηκευτεί.
+TicketMessageMailIntroLabelAdmin=Εισαγωγή στο μήνυμα κατά την αποστολή μηνυμάτων ηλεκτρονικού ταχυδρομείου
+TicketMessageMailIntroText=Γεια σας, <br> Μια νέα απάντηση στάλθηκε σε ένα εισιτήριο που επικοινωνήσατε. Εδώ είναι το μήνυμα: <br>
+TicketMessageMailIntroHelpAdmin=Αυτό το κείμενο θα εισαχθεί πριν από το κείμενο της απάντησης σε ένα εισιτήριο.
+TicketMessageMailSignature=Υπογραφή
+TicketMessageMailSignatureHelp=Αυτό το κείμενο προστίθεται μόνο στο τέλος του μηνύματος ηλεκτρονικού ταχυδρομείου και δεν θα αποθηκευτεί.
+TicketMessageMailSignatureText=<p> Με εκτιμιση, </p><p> - </p>
+TicketMessageMailSignatureLabelAdmin=Υπογραφή ηλεκτρονικού ταχυδρομείου απάντησης
+TicketMessageMailSignatureHelpAdmin=Αυτό το κείμενο θα εισαχθεί μετά το μήνυμα απάντησης.
+TicketMessageHelp=Μόνο αυτό το κείμενο θα αποθηκευτεί στη λίστα μηνυμάτων της κάρτας εισιτηρίων.
+TicketMessageSubstitutionReplacedByGenericValues=Οι μεταβλητές αντικατάστασης αντικαθίστανται από γενικές τιμές.
+TimeElapsedSince=Χρόνος που πέρασε από τότε
+TicketTimeToRead=Ο χρόνος που παρέμενε πριν διαβάσετε
+TicketContacts=Επαφές εισιτήριο
+TicketDocumentsLinked=Έγγραφα που συνδέονται με το εισιτήριο
+ConfirmReOpenTicket=Επιβεβαιώστε ξανανοίξτε αυτό το εισιτήριο;
+TicketMessageMailIntroAutoNewPublicMessage=Ένα νέο μήνυμα αναρτήθηκε στο εισιτήριο με το θέμα %s:
+TicketAssignedToYou=Το εισιτήριο έχει εκχωρηθεί
+TicketAssignedEmailBody=Σας έχει ανατεθεί το εισιτήριο # %s από %s
+MarkMessageAsPrivate=Σημειώστε το μήνυμα ως ιδιωτικό
+TicketMessagePrivateHelp=Αυτό το μήνυμα δεν θα εμφανίζεται σε εξωτερικούς χρήστες
+TicketEmailOriginIssuer=Εκδότης στην αρχή των εισιτηρίων
+InitialMessage=Αρχικό μήνυμα
+LinkToAContract=Σύνδεση με σύμβαση
+TicketPleaseSelectAContract=Επιλέξτε μια σύμβαση
+UnableToCreateInterIfNoSocid=Δεν είναι δυνατή η δημιουργία παρέμβασης όταν δεν ορίζεται κάποιο τρίτο μέρος
+TicketMailExchanges=Ανταλλαγές αλληλογραφίας
+TicketInitialMessageModified=Αρχικό μήνυμα τροποποιήθηκε
+TicketMessageSuccesfullyUpdated=Το μήνυμα ενημερώθηκε με επιτυχία
+TicketChangeStatus=Αλλαγή κατάστασης
+TicketConfirmChangeStatus=Επιβεβαιώστε την αλλαγή κατάστασης: %s?
+TicketLogStatusChanged=Η κατάσταση άλλαξε: %s to %s
+TicketNotNotifyTiersAtCreate=Μην ειδοποιείτε την εταιρεία στη δημιουργία
+Unread=Αδιάβαστος
+TicketNotCreatedFromPublicInterface=Μη διαθέσιμος. Το εισιτήριο δεν δημιουργήθηκε από το δημόσιο περιβάλλον.
+PublicInterfaceNotEnabled=Η δημόσια διεπαφή δεν ήταν ενεργοποιημένη
+ErrorTicketRefRequired=Το όνομα αναφοράς Eισιτηρίου είναι υποχρεωτικό
+
+#
+# Logs
+#
+TicketLogMesgReadBy=Το εισιτήριο %s διαβάζεται από %s
+NoLogForThisTicket=Δεν υπάρχει αρχείο για αυτό το εισιτήριο ακόμα
+TicketLogAssignedTo=Το εισιτήριο %s εκχωρήθηκε στο %s
+TicketLogPropertyChanged=Εισιτήριο %s τροποποιήθηκε: ταξινόμηση από %s σε %s
+TicketLogClosedBy=Το εισιτήριο %s έκλεισε με %s
+TicketLogReopen=Το Eισιτήριο %s άνοιξε ξανά
+
+#
+# Public pages
+#
+TicketSystem=Σύστημα εισιτηρίων
+ShowListTicketWithTrackId=Εμφάνιση λίστας εισιτηρίων από αναγνωριστικό κομματιού
+ShowTicketWithTrackId=Εμφάνιση εισιτηρίου από αναγνωριστικό κομματιού
+TicketPublicDesc=Μπορείτε να δημιουργήσετε ένα εισιτήριο υποστήριξης ή να ελέγξετε από ένα υπάρχον αναγνωριστικό.
+YourTicketSuccessfullySaved=Το εισιτήριο αποθηκεύτηκε με επιτυχία!
+MesgInfosPublicTicketCreatedWithTrackId=Eνα νέο εισιτήριο δημιουργήθηκε με το αναγνωριστικό %sκαι αναφ %s
+PleaseRememberThisId=Παρακαλούμε να διατηρήσετε τον αριθμό παρακολούθησης που σας ζητάμε αργότερα.
+TicketNewEmailSubject=Δημιουργία εισιτηρίου - Ref %s (δημόσιο εισιτήριο ID %s)
+TicketNewEmailSubjectCustomer=Νέο εισιτήριο υποστήριξης
+TicketNewEmailBody=Αυτό είναι ένα αυτόματο μήνυμα ηλεκτρονικού ταχυδρομείου για να επιβεβαιώσετε ότι έχετε καταχωρήσει ένα νέο εισιτήριο.
+TicketNewEmailBodyCustomer=Αυτό είναι ένα αυτόματο μήνυμα ηλεκτρονικού ταχυδρομείου για να επιβεβαιώσετε ότι μόλις δημιουργήθηκε νέο εισιτήριο στο λογαριασμό σας.
+TicketNewEmailBodyInfosTicket=Πληροφορίες για την παρακολούθηση του εισιτηρίου
+TicketNewEmailBodyInfosTrackId=Αριθμός παρακολούθησης εισιτηρίων: %s
+TicketNewEmailBodyInfosTrackUrl=Μπορείτε να δείτε την πρόοδο του εισιτηρίου κάνοντας κλικ στον παραπάνω σύνδεσμο.
+TicketNewEmailBodyInfosTrackUrlCustomer=Μπορείτε να δείτε την πρόοδο του εισιτηρίου στη συγκεκριμένη διεπαφή κάνοντας κλικ στον ακόλουθο σύνδεσμο
+TicketEmailPleaseDoNotReplyToThisEmail=Παρακαλώ μην απαντήσετε απευθείας σε αυτό το μήνυμα ηλεκτρονικού ταχυδρομείου! Χρησιμοποιήστε τη σύνδεση για να απαντήσετε στη διεπαφή.
+TicketPublicInfoCreateTicket=Αυτή η φόρμα σάς επιτρέπει να καταγράψετε ένα εισιτήριο υποστήριξης στο σύστημα διαχείρισης.
+TicketPublicPleaseBeAccuratelyDescribe=Παρακαλούμε περιγράψτε με ακρίβεια το πρόβλημα. Παρέχετε τις περισσότερες πληροφορίες που είναι δυνατόν να μας επιτρέψουν να προσδιορίσουμε σωστά το αίτημά σας.
+TicketPublicMsgViewLogIn=Εισαγάγετε το αναγνωριστικό παρακολούθησης εισιτηρίων
+TicketTrackId=Δημόσιο αναγνωριστικό παρακολούθησης
+OneOfTicketTrackId=Ένα από τα αναγνωριστικά παρακολούθησης
+ErrorTicketNotFound=Δεν βρέθηκε εισιτήριο με αναγνωριστικό παρακολούθησης %s!
+Subject=Αντικείμενο
+ViewTicket=Προβολή εισιτηρίου
+ViewMyTicketList=Δείτε τη λίστα εισιτηρίων μου
+ErrorEmailMustExistToCreateTicket=Σφάλμα: η διεύθυνση ηλεκτρονικού ταχυδρομείου δεν βρέθηκε στη βάση δεδομένων μας
+TicketNewEmailSubjectAdmin=Δημιουργήθηκε νέο εισιτήριο - Ref %s (δημόσιο εισιτήριο ID %s)
+TicketNewEmailBodyAdmin=<p> Το εισιτήριο μόλις δημιουργήθηκε με την ταυτότητα # %s, δείτε τις πληροφορίες: </p>
+SeeThisTicketIntomanagementInterface=Δείτε το εισιτήριο στη διεπαφή διαχείρισης
+TicketPublicInterfaceForbidden=Η δημόσια διεπαφή για τα εισιτήρια δεν ήταν ενεργοποιημένη
+ErrorEmailOrTrackingInvalid=Κακή τιμή για την παρακολούθηση ταυτότητας ή ηλεκτρονικού ταχυδρομείου
+OldUser=Παλιός χρήστης
+NewUser=Νέος χρήστης
+NumberOfTicketsByMonth=Αριθμός εισιτηρίων ανά μήνα
+NbOfTickets=Αριθμός εισιτηρίων
+# notifications
+TicketNotificationEmailSubject=Το ενημερωμένο εισιτήριο %s
+TicketNotificationEmailBody=Αυτό είναι ένα αυτόματο μήνυμα που σας ειδοποιεί ότι το εισιτήριο %s μόλις ενημερώθηκε
+TicketNotificationRecipient=Αποδέκτης ειδοποίησης
+TicketNotificationLogMessage=Μηνύματα καταγραφής
+TicketNotificationEmailBodyInfosTrackUrlinternal=Προβολή εισιτηρίου σε διεπαφή
+TicketNotificationNumberEmailSent=Ειδοποίηση ηλεκτρονικού ταχυδρομείου αποστολή: %s
+
+ActionsOnTicket=Εκδηλώσεις στο εισιτήριο
+
+#
+# Boxes
+#
+BoxLastTicket=Τα πιο πρόσφατα δημιουργημένα εισιτήρια
+BoxLastTicketDescription=Τα τελευταία %s δημιούργησαν εισιτήρια
+BoxLastTicketContent=
+BoxLastTicketNoRecordedTickets=Δεν υπάρχουν πρόσφατα αδιάβαστα εισιτήρια
+BoxLastModifiedTicket=Τελευταία τροποποιημένα εισιτήρια
+BoxLastModifiedTicketDescription=Τα τελευταία τροποποιημένα εισιτήρια %s
+BoxLastModifiedTicketContent=
+BoxLastModifiedTicketNoRecordedTickets=Δεν υπάρχουν πρόσφατα τροποποιημένα εισιτήρια

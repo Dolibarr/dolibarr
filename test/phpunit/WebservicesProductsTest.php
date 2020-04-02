@@ -12,8 +12,8 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
- * or see http://www.gnu.org/
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
+ * or see https://www.gnu.org/
  *
  * Path to WSDL is: http://localhost/dolibarr/webservices/server_productorservice.php?wsdl
  */
@@ -30,7 +30,7 @@ global $conf,$user,$langs,$db;
 //require_once 'PHPUnit/Autoload.php';
 require_once dirname(__FILE__).'/../../htdocs/master.inc.php';
 require_once dirname(__FILE__).'/../../htdocs/core/lib/date.lib.php';
-require_once(NUSOAP_PATH.'/nusoap.php');        // Include SOAP
+require_once NUSOAP_PATH.'/nusoap.php';        // Include SOAP
 
 
 if (empty($user->id)) {
@@ -55,7 +55,7 @@ if (empty($conf->service->enabled))
  * @backupStaticAttributes enabled
  * @remarks	backupGlobals must be disabled to have db,conf,user and lang not erased.
  */
-class WebservicesProductsTest extends PHPUnit_Framework_TestCase
+class WebservicesProductsTest extends PHPUnit\Framework\TestCase
 {
     protected $savconf;
     protected $savuser;
@@ -68,9 +68,11 @@ class WebservicesProductsTest extends PHPUnit_Framework_TestCase
      *
      * @return DateLibTest
      */
-    function __construct()
+    public function __construct()
     {
-        //$this->sharedFixture
+    	parent::__construct();
+
+    	//$this->sharedFixture
         global $conf,$user,$langs,$db;
         $this->savconf=$conf;
         $this->savuser=$user;
@@ -139,7 +141,7 @@ class WebservicesProductsTest extends PHPUnit_Framework_TestCase
         $langs=$this->savlangs;
         $db=$this->savdb;
 
-        $datestring=dol_print_date(dol_now(),'dayhourlog');
+        $datestring=dol_print_date(dol_now(), 'dayhourlog');
 
         $WS_DOL_URL = DOL_MAIN_URL_ROOT.'/webservices/server_productorservice.php';
         $WS_METHOD  = 'createProductOrService';
@@ -176,7 +178,7 @@ class WebservicesProductsTest extends PHPUnit_Framework_TestCase
         );
         print __METHOD__." call method ".$WS_METHOD."\n";
         try {
-            $result = $soapclient->call($WS_METHOD,$parameters,$ns,'');
+            $result = $soapclient->call($WS_METHOD, $parameters, $ns, '');
         } catch(SoapFault $exception) {
             echo $exception;
             $result=0;
@@ -192,7 +194,7 @@ class WebservicesProductsTest extends PHPUnit_Framework_TestCase
         }
 
         print __METHOD__." result=".$result."\n";
-        $this->assertEquals('OK',$result['result']['result_code']);
+        $this->assertEquals('OK', $result['result']['result_code']);
 
         return $result['id'];
     }
@@ -239,7 +241,7 @@ class WebservicesProductsTest extends PHPUnit_Framework_TestCase
         $parameters = array('authentication'=>$authentication,'id'=>$id,'ref'=>'');
         print __METHOD__." call method ".$WS_METHOD."\n";
         try {
-            $result = $soapclient->call($WS_METHOD,$parameters,$ns,'');
+            $result = $soapclient->call($WS_METHOD, $parameters, $ns, '');
         } catch(SoapFault $exception) {
             echo $exception;
             $result=0;
@@ -255,7 +257,7 @@ class WebservicesProductsTest extends PHPUnit_Framework_TestCase
         }
 
         print __METHOD__." result=".$result."\n";
-        $this->assertEquals('OK',$result['result']['result_code']);
+        $this->assertEquals('OK', $result['result']['result_code']);
 
         return $id;
     }
@@ -302,7 +304,7 @@ class WebservicesProductsTest extends PHPUnit_Framework_TestCase
         $parameters = array('authentication'=>$authentication,'listofid'=>$id);
         print __METHOD__." call method ".$WS_METHOD."\n";
         try {
-            $result = $soapclient->call($WS_METHOD,$parameters,$ns,'');
+            $result = $soapclient->call($WS_METHOD, $parameters, $ns, '');
         } catch(SoapFault $exception) {
             echo $exception;
             $result=0;
@@ -318,9 +320,8 @@ class WebservicesProductsTest extends PHPUnit_Framework_TestCase
         }
 
         print __METHOD__." result=".$result."\n";
-        $this->assertEquals('OK',$result['result']['result_code']);
+        $this->assertEquals('OK', $result['result']['result_code']);
 
         return 0;
     }
-
 }

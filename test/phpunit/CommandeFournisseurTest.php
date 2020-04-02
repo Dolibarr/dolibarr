@@ -12,8 +12,8 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
- * or see http://www.gnu.org/
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
+ * or see https://www.gnu.org/
  */
 
 /**
@@ -46,7 +46,7 @@ $conf->global->MAIN_DISABLE_ALL_MAILS=1;
  * @backupStaticAttributes enabled
  * @remarks	backupGlobals must be disabled to have db,conf,user and lang not erased.
  */
-class CommandeFournisseurTest extends PHPUnit_Framework_TestCase
+class CommandeFournisseurTest extends PHPUnit\Framework\TestCase
 {
     protected $savconf;
     protected $savuser;
@@ -59,9 +59,11 @@ class CommandeFournisseurTest extends PHPUnit_Framework_TestCase
      *
      * @return CommandeFournisseurTest
      */
-    function __construct()
+    public function __construct()
     {
-        //$this->sharedFixture
+    	parent::__construct();
+
+    	//$this->sharedFixture
         global $conf,$user,$langs,$db;
         $this->savconf=$conf;
         $this->savuser=$user;
@@ -135,33 +137,39 @@ class CommandeFournisseurTest extends PHPUnit_Framework_TestCase
         $societe=new Societe($db);
         $societe->fetch($socid);
         $product=new ProductFournisseur($db);
-        $product->fetch(0,'PIDRESS');
+        $product->fetch(0, 'PIDRESS');
         if ($product->id <= 0) { print "\n".__METHOD__." A product with ref PIDRESS must exists into database"; die(); }
 
         $quantity=10;
         $ref_fourn='SUPPLIER_REF_PHPUNIT';
         $tva_tx=19.6;
 
-        // Create supplier price
+        // Delete existing supplier prices
+        // TODO
+
+        // Create 1 supplier price with min qty = 10;
         $result=$product->add_fournisseur($user, $societe->id, $ref_fourn, $quantity);    // This insert record with no value for price. Values are update later with update_buyprice
         $this->assertGreaterThanOrEqual(1, $result);
         $result=$product->update_buyprice($quantity, 20, $user, 'HT', $societe, '', $ref_fourn, $tva_tx, 0, 0);
         $this->assertGreaterThanOrEqual(0, $result);
 
-        // Create supplier order with a too low quantity
+        // Create supplier order with a too low quantity and option SUPPLIER_ORDER_WITH_PREDEFINED_PRICES_ONLY is on
+        $conf->global->SUPPLIER_ORDER_WITH_PREDEFINED_PRICES_ONLY = 1;
+
         $localobject=new CommandeFournisseur($db);
         $localobject->initAsSpecimen();
         $localobject->lines=array();    // Overwrite lines of order
         $line=new CommandeFournisseurLigne($db);
-        $line->desc=$langs->trans("Description")." specimen line too low";
+        $line->desc=$langs->trans("Description")." specimen line with qty too low";
         $line->qty=1;                   // So lower than $quantity
+        $line->subprice=100;
         $line->fk_product=$product->id;
         $line->ref_fourn=$ref_fourn;
         $localobject->lines[]=$line;
 
         $result=$localobject->create($user);
         print __METHOD__." result=".$result."\n";
-        $this->assertEquals(-1, $result);   // must be -1 because quantity is lower than minimum of supplier price
+        $this->assertEquals(-1, $result, 'Creation of too low quantity');   // must be -1 because quantity is lower than minimum of supplier price
 
         $sql="DELETE FROM ".MAIN_DB_PREFIX."commande_fournisseur where ref=''";
         $db->query($sql);
@@ -173,13 +181,53 @@ class CommandeFournisseurTest extends PHPUnit_Framework_TestCase
         $line=new CommandeFournisseurLigne($db);
         $line->desc=$langs->trans("Description")." specimen line ok";
         $line->qty=10;                      // So enough quantity
+        $line->subprice=100;
         $line->fk_product=$product->id;
         $line->ref_fourn=$ref_fourn;
         $localobject2->lines[]=$line;
 
         $result=$localobject2->create($user);
         print __METHOD__." result=".$result."\n";
-        $this->assertGreaterThanOrEqual(0, $result);
+        $this->assertGreaterThan(0, $result);
+
+
+        // Create supplier order with a too low quantity but option SUPPLIER_ORDER_WITH_PREDEFINED_PRICES_ONLY is off
+        $conf->global->SUPPLIER_ORDER_WITH_PREDEFINED_PRICES_ONLY = 0;
+
+        $localobject3=new CommandeFournisseur($db);
+        $localobject3->initAsSpecimen();
+        $localobject3->lines=array();    // Overwrite lines of order
+        $line=new CommandeFournisseurLigne($db);
+        $line->desc=$langs->trans("Description")." specimen line with qty too low";
+        $line->qty=1;                   // So lower than $quantity
+        $line->subprice=100;
+        $line->fk_product=$product->id;
+        $line->ref_fourn=$ref_fourn;
+        $localobject3->lines[]=$line;
+
+        $result=$localobject3->create($user);
+        print __METHOD__." result=".$result."\n";
+        $this->assertGreaterThan(0, $result, 'Creation of too low quantity should be ok');   // must be id of line because there is no test on minimum quantity
+
+        $sql="DELETE FROM ".MAIN_DB_PREFIX."commande_fournisseur where ref=''";
+        $db->query($sql);
+
+        // Create supplier order
+        $localobject4=new CommandeFournisseur($db);
+        $localobject4->initAsSpecimen();    // This create 5 lines of first product found for socid 1
+        $localobject4->lines=array();       // Overwrite lines of order
+        $line=new CommandeFournisseurLigne($db);
+        $line->desc=$langs->trans("Description")." specimen line ok";
+        $line->qty=10;                      // So enough quantity
+        $line->subprice=100;
+        $line->fk_product=$product->id;
+        $line->ref_fourn=$ref_fourn;
+        $localobject4->lines[]=$line;
+
+        $result=$localobject4->create($user);
+        print __METHOD__." result=".$result."\n";
+        $this->assertGreaterThan(0, $result);
+
 
         return $result;
     }
@@ -206,7 +254,7 @@ class CommandeFournisseurTest extends PHPUnit_Framework_TestCase
         $result=$localobject->fetch($id);
 
         print __METHOD__." id=".$id." result=".$result."\n";
-        $this->assertLessThan($result, 0);
+        $this->assertLessThan($result, 0, 'Failed to fetch supplier order with id '.$id);
         return $localobject;
     }
 
@@ -337,5 +385,4 @@ class CommandeFournisseurTest extends PHPUnit_Framework_TestCase
         $this->assertLessThan($result, 0);
         return $result;
     }
-
 }

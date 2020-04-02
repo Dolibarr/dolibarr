@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2010 Regis Houssin <regis.houssin@capnetworks.com>
+/* Copyright (C) 2010 Regis Houssin <regis.houssin@inodbox.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -12,7 +12,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 // Protection to avoid direct call of template
@@ -32,17 +32,17 @@ $contact = $GLOBALS['objcanvas']->control->object;
 <?php
 print load_fiche_titre($this->control->tpl['title']);
 
-dol_htmloutput_errors($this->control->tpl['error'],$this->control->tpl['errors']);
+dol_htmloutput_errors($this->control->tpl['error'], $this->control->tpl['errors']);
 
 echo $this->control->tpl['ajax_selectcountry'];
 ?>
 
 <br>
 
-<form method="post" name="formsoc" action="<?php echo $_SERVER["PHP_SELF"].'?id='.GETPOST('id','int'); ?>">
+<form method="post" name="formsoc" action="<?php echo $_SERVER["PHP_SELF"].'?id='.GETPOST('id', 'int'); ?>">
 <input type="hidden" name="token" value="<?php echo $_SESSION['newtoken']; ?>">
 <input type="hidden" name="canvas" value="<?php echo $canvas ?>">
-<input type="hidden" name="id" value="<?php echo GETPOST('id','int'); ?>">
+<input type="hidden" name="id" value="<?php echo GETPOST('id', 'int'); ?>">
 <input type="hidden" name="action" value="update">
 <input type="hidden" name="contactid" value="<?php echo $this->control->tpl['id']; ?>">
 <input type="hidden" name="old_name" value="<?php echo $this->control->tpl['name']; ?>">
@@ -126,11 +126,6 @@ echo $this->control->tpl['ajax_selectcountry'];
 </tr>
 
 <tr>
-	<td><?php echo $langs->trans("IM"); ?></td>
-	<td colspan="3"><input name="jabberid" type="text" size="50" maxlength="80" value="<?php echo $this->control->tpl['jabberid']; ?>"></td>
-</tr>
-
-<tr>
 	<td><?php echo $langs->trans("ContactVisibility"); ?></td>
 	<td colspan="3"><?php echo $this->control->tpl['select_visibility']; ?></td>
 </tr>
@@ -140,13 +135,15 @@ echo $this->control->tpl['ajax_selectcountry'];
 	<td colspan="3" valign="top"><textarea name="note" cols="70" rows="<?php echo ROWS_3; ?>"><?php echo $this->control->tpl['note']; ?></textarea></td>
 </tr>
 
-<?php if (! empty($this->control->tpl['contact_element'])) { ?>
-<?php foreach ($this->control->tpl['contact_element'] as $element) { ?>
-<tr>
-	<td><?php echo $element['linked_element_label']; ?></td>
-	<td colspan="3"><?php echo $element['linked_element_value']; ?></td>
-</tr>
-<?php } } ?>
+<?php
+if (! empty($this->control->tpl['contact_element'])) {
+	foreach ($this->control->tpl['contact_element'] as $element) {
+		print '<tr>';
+		print '<td>'.$element['linked_element_label'].'</td>';
+		print '<td colspan="3">'.$element['linked_element_value'].'</td>';
+		print '</tr>';
+	}
+} ?>
 
 <tr>
 	<td><?php echo $langs->trans("DolibarrLogin"); ?></td>
@@ -154,7 +151,7 @@ echo $this->control->tpl['ajax_selectcountry'];
 </tr>
 
 <tr>
-	<td colspan="4" align="center">
+	<td colspan="4" class="center">
 	<input type="submit" class="button" name="save" value="<?php echo $langs->trans("Save"); ?>">&nbsp;
 	<input type="submit" class="button" name="cancel" value="<?php echo $langs->trans("Cancel"); ?>">
 	</td>

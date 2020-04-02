@@ -14,7 +14,7 @@
 -- GNU General Public License for more details.
 --
 -- You should have received a copy of the GNU General Public License
--- along with this program. If not, see <http://www.gnu.org/licenses/>.
+-- along with this program. If not, see <https://www.gnu.org/licenses/>.
 --
 -- ============================================================================
 
@@ -32,8 +32,11 @@ create table llx_entrepot
   town            varchar(50),
   fk_departement  integer,
   fk_pays         integer DEFAULT 0,
+  phone           varchar(20),                  -- phone number
+  fax             varchar(20),                  -- fax number
   statut          tinyint DEFAULT 1,			-- 1 open, 0 close
   fk_user_author  integer,
-  import_key	  varchar(14),
+  model_pdf       varchar(255),
+  import_key	    varchar(14),
   fk_parent       integer DEFAULT 0
 )ENGINE=innodb;

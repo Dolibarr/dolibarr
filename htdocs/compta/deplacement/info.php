@@ -13,7 +13,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -27,11 +27,12 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/trip.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/deplacement/class/deplacement.class.php';
 
+// Load translation files required by the page
 $langs->load("trips");
 
 // Security check
-$id = GETPOST('id','int');
-if ($user->societe_id) $socid=$user->societe_id;
+$id = GETPOST('id', 'int');
+if ($user->socid) $socid=$user->socid;
 $result = restrictedArea($user, 'deplacement', $id, '');
 
 
@@ -46,17 +47,18 @@ if ($id)
 	$object = new Deplacement($db);
 	$object->fetch($id);
 	$object->info($id);
-	
+
 	$head = trip_prepare_head($object);
-	
+
 	dol_fiche_head($head, 'info', $langs->trans("TripCard"), 0, 'trip');
 
     print '<table width="100%"><tr><td>';
     dol_print_object_info($object);
     print '</td></tr></table>';
-      
+
     print '</div>';
 }
 
+// End of page
 llxFooter();
 $db->close();

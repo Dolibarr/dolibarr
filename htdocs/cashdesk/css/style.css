@@ -11,7 +11,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 body {
@@ -52,7 +52,7 @@ p {
 }
 .logopos {
 	padding-top: 20px;
-	max-height: 40px;	
+	max-height: 40px;
 }
 
 /* ------------------- Header ------------------- */
@@ -64,6 +64,10 @@ p {
 
 .entete span {
 	display: none;
+}
+
+.principal_login td.label1 {
+    width: 50%;
 }
 
 /* ------------------- Menu ------------------- */
@@ -320,7 +324,7 @@ p.titre {
 	padding: 2px 2px;
 }
 
-/* -------------- Boutons --------------------- */
+/* -------------- Buttons for SimplePOS --------------------- */
 .bouton_ajout_article {
 	margin-top: 10px;
 	width: 60%;

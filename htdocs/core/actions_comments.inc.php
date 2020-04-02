@@ -12,8 +12,8 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
- * or see http://www.gnu.org/
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
+ * or see https://www.gnu.org/
  *
  * $elementype must be defined.
  */
@@ -40,8 +40,8 @@ if ($action == 'addcomment')
 	{
 		$comment->description = $description;
 		$comment->datec = time();
-		$comment->fk_element = GETPOST('id','int');
-		$comment->element_type = GETPOST('comment_element_type','alpha');
+		$comment->fk_element = GETPOST('id', 'int');
+		$comment->element_type = GETPOST('comment_element_type', 'alpha');
 		$comment->fk_user_author = $user->id;
 		$comment->entity = $conf->entity;
 		if ($comment->create($user) > 0)
@@ -52,10 +52,28 @@ if ($action == 'addcomment')
 		}
 		else
 		{
-			setEventMessages($comment->error, $comment->errors,'errors');
+			setEventMessages($comment->error, $comment->errors, 'errors');
 			$action='';
 		}
 	}
+}
+if ($action === 'updatecomment')
+{
+    if ($comment->fetch($idcomment) >= 0)
+    {
+        $comment->description = GETPOST('comment_description', 'none');
+        if ($comment->update($user) > 0)
+        {
+            setEventMessages($langs->trans("CommentAdded"), null, 'mesgs');
+            header('Location: '.$varpage.'?id='.$id.($withproject?'&withproject=1#comment':''));
+            exit;
+        }
+        else
+        {
+            setEventMessages($comment->error, $comment->errors, 'errors');
+            $action='';
+        }
+    }
 }
 if ($action == 'deletecomment')
 {
@@ -69,7 +87,7 @@ if ($action == 'deletecomment')
 		}
 		else
 		{
-			setEventMessages($comment->error, $comment->errors,'errors');
+			setEventMessages($comment->error, $comment->errors, 'errors');
 			$action='';
 		}
 	}

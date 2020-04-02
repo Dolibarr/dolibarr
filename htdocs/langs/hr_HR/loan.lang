@@ -10,6 +10,7 @@ LoanCapital=Kapital
 Insurance=Osiguranje
 Interest=Kamata
 Nbterms=Broj rata
+Term=Term
 LoanAccountancyCapitalCode=Accounting account capital
 LoanAccountancyInsuranceCode=Accounting account insurance
 LoanAccountancyInterestCode=Accounting account interest
@@ -17,37 +18,14 @@ ConfirmDeleteLoan=Potvrdite brisanje kredita
 LoanDeleted=Kredit je uspješno obrisan
 ConfirmPayLoan=Potvrdite označivanje isplačen kredit
 LoanPaid=Kredit isplačen
-# Calc
-LoanCalc=Kalkulatora bankovnih kredita
-PurchaseFinanceInfo=Informacije o nabavi i financiranju
-SalePriceOfAsset=Cijena imovine
-PercentageDown=Percentage Down
-LengthOfMortgage=Trajanje kredita
-AnnualInterestRate=Godišnja kamatna stopa
-ExplainCalculations=Objašnjenje izračuna
-ShowMeCalculationsAndAmortization=Prikaži izračun i amortizaciju
-MortgagePaymentInformation=Informacije hipotekarnog plačanja
-DownPayment=Predujam
-DownPaymentDesc=<b>Predujam</b> = Cijena doma pomnožena s percentage down, podjeljena sa 100 ( za 5% dolje postaje 5/100 ili 0.05)
-InterestRateDesc=<b>Kamatna stopa</b> = godišnji kamatni postotak podjeljen sa 100
-MonthlyFactorDesc=<b>Mjesečni faktor</b> = Rezultat sljedeće formule
-MonthlyInterestRateDesc=<b>Mjesečna kamatna stopa</b> = Godišnja kamatna stopa podjeljena sa 12 ( za 12 mjeseci u godini )
-MonthTermDesc=<b>Mjesečni period</b> plačanje kredita u mjesecima = Broj godina na koliko je uzet kredit pomnožen s 12
-MonthlyPaymentDesc=Mjesečna rata je izračunata korištenjem sljedeće formule
-AmortizationPaymentDesc=<a href="#amortization">Amortization</a> razgrađuje koliko vaše mjesčno plačanje ide u bankovne kamate, a koliko ide u plačanje glavnice vašeg kredita.
-AmountFinanced=Financirani iznos
-AmortizationMonthlyPaymentOverYears=Amortizacija za mjesečnu ratu: <b>%s</b> za %s godine
-Totalsforyear=Ukupno za godinu
-MonthlyPayment=Mjesečna rata
-LoanCalcDesc=<b>Hipotekarni kalkulator</b> se može koristiti za izračun mjesečnih rata kredita, bazirano na posuđenom iznosu, periodu kredita i kamatnoj stopi.<br>Ovaj kalkulator također uključuje PMI (privatno kreditno osiguranje) za kredite gdje je predujam manji od 20%% . Isto uzmite u obzir gradske poreze na nekretnine, i njihov utjecaj na ukupnu mjesečnu ratu kredita.
-GoToInterest=%s će otići u KAMATU
-GoToPrincipal=%s će otići u GLAVNICU
-YouWillSpend=Potrošit ćete %s u %s godina
 ListLoanAssociatedProject=List of loan associated with the project
 AddLoan=Create loan
+FinancialCommitment=Financial commitment
+InterestAmount=Kamata
+CapitalRemain=Capital remain
 # Admin
 ConfigLoan=Konfiguracija modula kredita
 LOAN_ACCOUNTING_ACCOUNT_CAPITAL=Accounting account capital by default
 LOAN_ACCOUNTING_ACCOUNT_INTEREST=Accounting account interest by default
 LOAN_ACCOUNTING_ACCOUNT_INSURANCE=Accounting account insurance by default
-CreateCalcSchedule=Créer / Modifier échéancier de pret
+CreateCalcSchedule=Edit financial commitment

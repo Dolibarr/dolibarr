@@ -12,8 +12,8 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
- * or see http://www.gnu.org/
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
+ * or see https://www.gnu.org/
  */
 
 /**
@@ -44,7 +44,7 @@ $conf->global->MAIN_DISABLE_ALL_MAILS=1;
  * @backupStaticAttributes enabled
  * @remarks	backupGlobals must be disabled to have db,conf,user and lang not erased.
  */
-class CMailFileTest extends PHPUnit_Framework_TestCase
+class CMailFileTest extends PHPUnit\Framework\TestCase
 {
     protected $savconf;
     protected $savuser;
@@ -57,9 +57,11 @@ class CMailFileTest extends PHPUnit_Framework_TestCase
      *
      * @return CMailFile
      */
-    function __construct()
+    public function __construct()
     {
-        //$this->sharedFixture
+    	parent::__construct();
+
+    	//$this->sharedFixture
         global $conf,$user,$langs,$db;
         $this->savconf=$conf;
         $this->savuser=$user;
@@ -103,7 +105,7 @@ class CMailFileTest extends PHPUnit_Framework_TestCase
         $db=$this->savdb;
 
         $conf->global->MAIN_DISABLE_ALL_MAILS=1;    // If I comment/remove this lien, unit test still works alone but failed when ran from AllTest. Don't know why.
-        
+
         print __METHOD__."\n";
     }
     /**
@@ -129,7 +131,7 @@ class CMailFileTest extends PHPUnit_Framework_TestCase
         $langs=$this->savlangs;
         $db=$this->savdb;
 
-        $localobject=new CMailFile('Test','test@test.com','from@from.com','Message txt',array(),array(),array(),'','',1,0);
+        $localobject=new CMailFile('Test', 'test@test.com', 'from@from.com', 'Message txt', array(), array(), array(), '', '', 1, 0);
 
         $result=$localobject->sendfile();
         print __METHOD__." result=".$result."\n";
@@ -151,49 +153,48 @@ class CMailFileTest extends PHPUnit_Framework_TestCase
         $langs=$this->savlangs;
         $db=$this->savdb;
 
-        $localobject=new CMailFile('','','','');
+        $localobject=new CMailFile('', '', '', '');
 
         $src='John Doe <john@doe.com>';
-        $result=$localobject->getValidAddress($src,0);
+        $result=$localobject->getValidAddress($src, 0);
         print __METHOD__." result=".$result."\n";
-        $this->assertEquals($result,'John Doe <john@doe.com>');
+        $this->assertEquals($result, 'John Doe <john@doe.com>');
 
         $src='John Doe <john@doe.com>';
-        $result=$localobject->getValidAddress($src,1);
+        $result=$localobject->getValidAddress($src, 1);
         print __METHOD__." result=".$result."\n";
-        $this->assertEquals($result,'<john@doe.com>');
+        $this->assertEquals($result, '<john@doe.com>');
 
         $src='John Doe <john@doe.com>';
-        $result=$localobject->getValidAddress($src,2);
+        $result=$localobject->getValidAddress($src, 2);
         print __METHOD__." result=".$result."\n";
-        $this->assertEquals($result,'john@doe.com');
+        $this->assertEquals($result, 'john@doe.com');
 
         $src='John Doe <john@doe.com>';
-        $result=$localobject->getValidAddress($src,3,0);
+        $result=$localobject->getValidAddress($src, 3, 0);
         print __METHOD__." result=".$result."\n";
-        $this->assertEquals($result,'"John Doe" <john@doe.com>');
+        $this->assertEquals($result, '"John Doe" <john@doe.com>');
 
         $src='John Doe <john@doe.com>';
-        $result=$localobject->getValidAddress($src,3,1);
+        $result=$localobject->getValidAddress($src, 3, 1);
         print __METHOD__." result=".$result."\n";
-        $this->assertEquals($result,'"=?UTF-8?B?Sm9obiBEb2U=?=" <john@doe.com>');
-        
+        $this->assertEquals($result, '"=?UTF-8?B?Sm9obiBEb2U=?=" <john@doe.com>');
+
         $src='John Doe <john@doe.com>';
-        $result=$localobject->getValidAddress($src,4);
+        $result=$localobject->getValidAddress($src, 4);
         print __METHOD__." result=".$result."\n";
-        $this->assertEquals($result,'John Doe');
-        
+        $this->assertEquals($result, 'John Doe');
+
         $src='John Doe <john@doe.com>, John Doe2 <john@doe3.com>, John Doe3 <john@doe2.com>';
-        $result=$localobject->getValidAddress($src,4);
+        $result=$localobject->getValidAddress($src, 4);
         print __METHOD__." result=".$result."\n";
-        $this->assertEquals($result,'John Doe,John Doe2,John Doe3');
-        
+        $this->assertEquals($result, 'John Doe,John Doe2,John Doe3');
+
         $src='John Doe <john@doe.com>, John Doe2 <john@doe3.com>, John Doe3 <john@doe2.com>';
-        $result=$localobject->getValidAddress($src,4,0,2);
+        $result=$localobject->getValidAddress($src, 4, 0, 2);
         print __METHOD__." result=".$result."\n";
-        $this->assertEquals($result,'John Doe,John Doe2...');
-        
+        $this->assertEquals($result, 'John Doe,John Doe2...');
+
         return $result;
     }
-
 }

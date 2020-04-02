@@ -2,7 +2,7 @@
 /* Copyright (C) 2001-2003 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2005 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2004      Eric Seigne          <eric.seigne@ryxeo.com>
- * Copyright (C) 2005-2012 Regis Houssin        <regis.houssin@capnetworks.com>
+ * Copyright (C) 2005-2012 Regis Houssin        <regis.houssin@inodbox.com>
  * Copyright (C) 2014      Marcos García        <marcosgdf@gmail.com>
  * Copyright (C) 2015       Jean-François Ferry	<jfefe@aternatik.fr>
  *
@@ -17,7 +17,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -29,19 +29,20 @@
 require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
 
+// Load translation files required by the page
 //Required to translate NbOfProposals
 $langs->load('propal');
 
-$type=GETPOST("type","int");
+$type=GETPOST("type", "int");
 
 // Security check
-if (! empty($user->societe_id)) $socid=$user->societe_id;
-$result=restrictedArea($user,'produit|service');
+if (! empty($user->socid)) $socid=$user->socid;
+$result=restrictedArea($user, 'produit|service');
 
-$limit = GETPOST('limit','int')?GETPOST('limit','int'):$conf->liste_limit;
-$sortfield = GETPOST("sortfield",'alpha');
-$sortorder = GETPOST("sortorder",'alpha');
-$page = GETPOST("page",'int');
+$limit = GETPOST('limit', 'int')?GETPOST('limit', 'int'):$conf->liste_limit;
+$sortfield = GETPOST("sortfield", 'alpha');
+$sortorder = GETPOST("sortorder", 'alpha');
+$page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOST("page", 'int');
 if (empty($page) || $page == -1) { $page = 0; }     // If $page is not defined, or '' or -1
 if (! $sortfield) $sortfield="c";
 if (! $sortorder) $sortorder="DESC";
@@ -60,22 +61,22 @@ $staticproduct=new Product($db);
 $helpurl='';
 if ($type == '0')
 {
-    $helpurl='EN:Module_Products|FR:Module_Produits|ES:M&oacute;dulo_Productos';
+	$helpurl='EN:Module_Products|FR:Module_Produits|ES:M&oacute;dulo_Productos';
 }
-else if ($type == '1')
+elseif ($type == '1')
 {
-    $helpurl='EN:Module_Services_En|FR:Module_Services|ES:M&oacute;dulo_Servicios';
+	$helpurl='EN:Module_Services_En|FR:Module_Services|ES:M&oacute;dulo_Servicios';
 }
 else
 {
-    $helpurl='EN:Module_Services_En|FR:Module_Services|ES:M&oacute;dulo_Servicios';
+	$helpurl='EN:Module_Services_En|FR:Module_Services|ES:M&oacute;dulo_Servicios';
 }
 $title=$langs->trans("Statistics");
 
 
 llxHeader('', $title, $helpurl);
 
-print load_fiche_titre($title, $mesg,'title_products.png');
+print load_fiche_titre($title, $mesg, 'products');
 
 
 $param = '';
@@ -98,9 +99,14 @@ $head[$h][1] = $langs->trans("Chart");
 $head[$h][2] = 'chart';
 $h++;
 
-$head[$h][0] = $_SERVER['PHP_SELF'];
-$head[$h][1] = $title;
+$head[$h][0] = DOL_URL_ROOT.'/product/popuprop.php';
+$head[$h][1] = $langs->trans("PopuProp");
 $head[$h][2] = 'popularityprop';
+$h++;
+
+$head[$h][0] = DOL_URL_ROOT.'/product/popucom.php';
+$head[$h][1] = $langs->trans("PopuCom");
+$head[$h][2] = 'popularitycommande';
 $h++;
 
 dol_fiche_head($head, 'popularityprop', $langs->trans("Statistics"), -1);
@@ -124,45 +130,45 @@ $sql.= " GROUP BY p.rowid, p.label, p.ref, p.fk_product_type";
 $result=$db->query($sql);
 if ($result)
 {
-    $totalnboflines = $db->num_rows($result);
+	$totalnboflines = $db->num_rows($result);
 }
 
-$sql.= $db->order($sortfield,$sortorder);
+$sql.= $db->order($sortfield, $sortorder);
 $sql.= $db->plimit($limit+1, $offset);
 
 $resql=$db->query($sql);
 if ($resql)
 {
-    $num = $db->num_rows($resql);
-    $i = 0;
+	$num = $db->num_rows($resql);
+	$i = 0;
 
-    while ($i < $num)
-    {
-        $objp = $db->fetch_object($resql);
+	while ($i < $num)
+	{
+		$objp = $db->fetch_object($resql);
 
-        $infoprod[$objp->rowid]=array('type'=>$objp->type, 'ref'=>$objp->ref, 'label'=>$objp->label);
-        $infoprod[$objp->rowid]['nblineproposal']=$objp->c;
+		$infoprod[$objp->rowid]=array('type'=>$objp->type, 'ref'=>$objp->ref, 'label'=>$objp->label);
+		$infoprod[$objp->rowid]['nblineproposal']=$objp->c;
 
-        $i++;
-    }
-    $db->free($resql);
+		$i++;
+	}
+	$db->free($resql);
 }
 else
 {
-    dol_print_error($db);
+	dol_print_error($db);
 }
 //var_dump($infoprod);
 
 
 print_barre_liste($title, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, "", $num, $totalnboflines, '');
 
-print '<table class="noborder" width="100%">';
+print '<table class="noborder centpercent">';
 
 print "<tr class=\"liste_titre\">";
 print_liste_field_titre('Ref', $_SERVER["PHP_SELF"], 'p.ref', '', $param, '', $sortfield, $sortorder);
 print_liste_field_titre('Type', $_SERVER["PHP_SELF"], 'p.fk_product_type', '', $param, '', $sortfield, $sortorder);
 print_liste_field_titre('Label', $_SERVER["PHP_SELF"], 'p.label', '', $param, '', $sortfield, $sortorder);
-print_liste_field_titre('NbOfQtyInProposals', $_SERVER["PHP_SELF"], 'c', '', $param, 'align="right"', $sortfield, $sortorder);
+print_liste_field_titre('NbOfQtyInProposals', $_SERVER["PHP_SELF"], 'c', '', $param, '', $sortfield, $sortorder, 'right ');
 print "</tr>\n";
 
 foreach($infoprod as $prodid => $vals)
@@ -186,8 +192,8 @@ foreach($infoprod as $prodid => $vals)
 
 	print "<tr>";
 	print '<td><a href="'.DOL_URL_ROOT.'/product/stats/card.php?id='.$prodid.'">';
-	if ($vals['type'] == 1) print img_object($langs->trans("ShowService"),"service");
-	else print img_object($langs->trans("ShowProduct"),"product");
+	if ($vals['type'] == 1) print img_object($langs->trans("ShowService"), "service");
+	else print img_object($langs->trans("ShowProduct"), "product");
 	print " ";
 	print $vals['ref'].'</a></td>';
 	print '<td>';
@@ -195,7 +201,7 @@ foreach($infoprod as $prodid => $vals)
 	else print $langs->trans("Product");
 	print '</td>';
 	print '<td>'.$vals['label'].'</td>';
-	print '<td align="right">'.$vals['nblineproposal'].'</td>';
+	print '<td class="right">'.$vals['nblineproposal'].'</td>';
 	print "</tr>\n";
 	$i++;
 }
@@ -206,6 +212,6 @@ print "</table>";
 
 dol_fiche_end();
 
-
+// End of page
 llxFooter();
 $db->close();

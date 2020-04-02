@@ -12,7 +12,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -20,9 +20,9 @@
  *       \brief      File that is entry point to call Dolibarr WebServices
  */
 
-if (! defined("NOCSRFCHECK"))    define("NOCSRFCHECK",'1');
+if (! defined("NOCSRFCHECK"))    define("NOCSRFCHECK", '1');
 
-require_once '../master.inc.php';
+require '../master.inc.php';
 require_once NUSOAP_PATH.'/nusoap.php';        // Include SOAP
 require_once DOL_DOCUMENT_ROOT.'/core/lib/ws.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/user/class/user.class.php';
@@ -39,7 +39,7 @@ if (empty($conf->global->MAIN_MODULE_WEBSERVICES))
 {
 	$langs->load("admin");
 	dol_syslog("Call Dolibarr webservices interfaces with module webservices disabled");
-	print $langs->trans("WarningModuleNotActive",'WebServices').'.<br><br>';
+	print $langs->trans("WarningModuleNotActive", 'WebServices').'.<br><br>';
 	print $langs->trans("ToActivateModule");
 	exit;
 }
@@ -49,36 +49,36 @@ $server = new nusoap_server();
 $server->soap_defencoding='UTF-8';
 $server->decode_utf8=false;
 $ns='http://www.dolibarr.org/ns/';
-$server->configureWSDL('WebServicesDolibarrOther',$ns);
+$server->configureWSDL('WebServicesDolibarrOther', $ns);
 $server->wsdl->schemaTargetNamespace=$ns;
 
 
 // Define WSDL Authentication object
 $server->wsdl->addComplexType(
-    'authentication',
-    'complexType',
-    'struct',
-    'all',
-    '',
-    array(
-        'dolibarrkey' => array('name'=>'dolibarrkey','type'=>'xsd:string'),
-    	'sourceapplication' => array('name'=>'sourceapplication','type'=>'xsd:string'),
-    	'login' => array('name'=>'login','type'=>'xsd:string'),
-        'password' => array('name'=>'password','type'=>'xsd:string'),
-        'entity' => array('name'=>'entity','type'=>'xsd:string'),
-    )
+	'authentication',
+	'complexType',
+	'struct',
+	'all',
+	'',
+	array(
+		'dolibarrkey' => array('name'=>'dolibarrkey','type'=>'xsd:string'),
+		'sourceapplication' => array('name'=>'sourceapplication','type'=>'xsd:string'),
+		'login' => array('name'=>'login','type'=>'xsd:string'),
+		'password' => array('name'=>'password','type'=>'xsd:string'),
+		'entity' => array('name'=>'entity','type'=>'xsd:string'),
+	)
 );
 // Define WSDL Return object
 $server->wsdl->addComplexType(
-    'result',
-    'complexType',
-    'struct',
-    'all',
-    '',
-    array(
-        'result_code' => array('name'=>'result_code','type'=>'xsd:string'),
-        'result_label' => array('name'=>'result_label','type'=>'xsd:string'),
-    )
+	'result',
+	'complexType',
+	'struct',
+	'all',
+	'',
+	array(
+		'result_code' => array('name'=>'result_code','type'=>'xsd:string'),
+		'result_label' => array('name'=>'result_label','type'=>'xsd:string'),
+	)
 );
 
 // Define WSDL Return object for document
@@ -109,16 +109,16 @@ $styleuse='encoded';   // encoded/literal/literal wrapped
 
 // Register WSDL
 $server->register(
-    'getVersions',
-    // Entry values
-    array('authentication'=>'tns:authentication'),
-    // Exit values
-    array('result'=>'tns:result','dolibarr'=>'xsd:string','os'=>'xsd:string','php'=>'xsd:string','webserver'=>'xsd:string'),
-    $ns,
-    $ns.'#getVersions',
-    $styledoc,
-    $styleuse,
-    'WS to get Versions'
+	'getVersions',
+	// Entry values
+	array('authentication'=>'tns:authentication'),
+	// Exit values
+	array('result'=>'tns:result','dolibarr'=>'xsd:string','os'=>'xsd:string','php'=>'xsd:string','webserver'=>'xsd:string'),
+	$ns,
+	$ns.'#getVersions',
+	$styledoc,
+	$styleuse,
+	'WS to get Versions'
 );
 
 // Register WSDL
@@ -146,15 +146,15 @@ function getVersions($authentication)
 
 	if ($authentication['entity']) $conf->entity=$authentication['entity'];
 
-    // Init and check authentication
-    $objectresp=array();
-    $errorcode='';$errorlabel='';
-    $error=0;
-    $fuser=check_authentication($authentication,$error,$errorcode,$errorlabel);
-    // Check parameters
+	// Init and check authentication
+	$objectresp=array();
+	$errorcode='';$errorlabel='';
+	$error=0;
+	$fuser=check_authentication($authentication, $error, $errorcode, $errorlabel);
+	// Check parameters
 
 
-    if (! $error)
+	if (! $error)
 	{
 		$objectresp['result']=array('result_code'=>'OK', 'result_label'=>'');
 		$objectresp['dolibarr']=version_dolibarr();
@@ -181,7 +181,7 @@ function getVersions($authentication)
  * @param	string	$refname			Ref of object to check permission for external users (autodetect if not provided)
  * @return	void
  */
-function getDocument($authentication, $modulepart, $file, $refname='')
+function getDocument($authentication, $modulepart, $file, $refname = '')
 {
 	global $db,$conf,$langs,$mysoc;
 
@@ -201,7 +201,7 @@ function getDocument($authentication, $modulepart, $file, $refname='')
 
 	$accessallowed=0;
 
-	$fuser=check_authentication($authentication,$error,$errorcode,$errorlabel);
+	$fuser=check_authentication($authentication, $error, $errorcode, $errorlabel);
 
 	if ($fuser->societe_id) $socid=$fuser->societe_id;
 
@@ -217,13 +217,13 @@ function getDocument($authentication, $modulepart, $file, $refname='')
 		$fuser->getrights();
 
 		// Suppression de la chaine de caractere ../ dans $original_file
-		$original_file = str_replace("../","/", $original_file);
+		$original_file = str_replace("../", "/", $original_file);
 
 		// find the subdirectory name as the reference
 		if (empty($refname)) $refname=basename(dirname($original_file)."/");
 
 		// Security check
-		$check_access = dol_check_secure_access_document($modulepart,$original_file,$conf->entity,$fuser,$refname);
+		$check_access = dol_check_secure_access_document($modulepart, $original_file, $conf->entity, $fuser, $refname);
 		$accessallowed              = $check_access['accessallowed'];
 		$sqlprotectagainstexternals = $check_access['sqlprotectagainstexternals'];
 		$original_file              = $check_access['original_file'];
@@ -264,7 +264,7 @@ function getDocument($authentication, $modulepart, $file, $refname='')
 		// Security:
 		// On interdit les remontees de repertoire ainsi que les pipe dans
 		// les noms de fichiers.
-		if (preg_match('/\.\./',$original_file) || preg_match('/[<>|]/',$original_file))
+		if (preg_match('/\.\./', $original_file) || preg_match('/[<>|]/', $original_file))
 		{
 			dol_syslog("Refused to deliver file ".$original_file);
 			$errorcode='REFUSED';
@@ -283,8 +283,8 @@ function getDocument($authentication, $modulepart, $file, $refname='')
 				$file=$fileparams['fullname'];
 				$filename = basename($file);
 
-				$f = fopen($original_file,'r');
-				$content_file = fread($f,filesize($original_file));
+				$f = fopen($original_file, 'r');
+				$content_file = fread($f, filesize($original_file));
 
 				$objectret = array(
 					'filename' => basename($original_file),

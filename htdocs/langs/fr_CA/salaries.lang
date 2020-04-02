@@ -1,5 +1,4 @@
 # Dolibarr language file - Source file is en_US - salaries
-SALARIES_ACCOUNTING_ACCOUNT_CHARGE=Compte comptable par défaut pour les dépenses de personnel
 Salary=Salaires
 NewSalaryPayment=Nouveau paiement de salaire
 SalaryPayment=Paiement Salaire

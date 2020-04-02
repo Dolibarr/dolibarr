@@ -1,5 +1,4 @@
 # Dolibarr language file - Source file is en_US - ldap
-DomainPassword=Slaptažodis domenui
 YouMustChangePassNextLogon=Slaptažodis vartotojui <b>%s</b> domene <b>%s</b> turi būti pakeistas.
 UserMustChangePassNextLogon=Vartotojas turi pakeisti slaptažodį domene %s
 LDAPInformationsForThisContact=Informacija LDAP duomenų bazėje šiam kontaktui
@@ -25,3 +24,4 @@ MemberTypeSynchronized=Member type synchronized
 ContactSynchronized=Kontaktas sinchronizuotas
 ForceSynchronize=Pgreitintas sinchronizavimas Dolibarr -> LDAP
 ErrorFailedToReadLDAP=Nepavyko nuskaityti LDAP duomenų bazės. Patikrinkite LDAP modulio nustatymus ir duomenų bazės prieinamumą.
+PasswordOfUserInLDAP=Password of user in LDAP

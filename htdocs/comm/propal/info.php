@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2004		Rodolphe Quiedeville	<rodolphe@quiedeville.org>
  * Copyright (C) 2004-2006	Laurent Destailleur		<eldy@users.sourceforge.net>
- * Copyright (C) 2005-2012	Regis Houssin			<regis.houssin@capnetworks.com>
+ * Copyright (C) 2005-2012	Regis Houssin			<regis.houssin@inodbox.com>
  * Copyright (C) 2017    	Ferran Marcet       	<fmarcet@2byte.es>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -15,7 +15,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -32,15 +32,15 @@ if (! empty($conf->projet->enabled)) {
 	require_once DOL_DOCUMENT_ROOT . '/projet/class/project.class.php';
 }
 
-$langs->load('propal');
-$langs->load('compta');
+// Load translation files required by the page
+$langs->loadLangs(array('propal', 'compta'));
 
-$id=GETPOST('id','int');
-$ref=GETPOST('ref','alpha');
-$socid=GETPOST('socid','int');
+$id=GETPOST('id', 'int');
+$ref=GETPOST('ref', 'alpha');
+$socid=GETPOST('socid', 'int');
 
 // Security check
-if (! empty($user->societe_id)) $socid=$user->societe_id;
+if (! empty($user->socid)) $socid=$user->socid;
 $result = restrictedArea($user, 'propal', $id);
 
 $object = new Propal($db);
@@ -58,7 +58,7 @@ if (! $object->fetch($id, $ref) > 0)
 
 $form = new Form($db);
 
-llxHeader('',$langs->trans('Proposal'),'EN:Commercial_Proposals|FR:Proposition_commerciale|ES:Presupuestos');
+llxHeader('', $langs->trans('Proposal'), 'EN:Commercial_Proposals|FR:Proposition_commerciale|ES:Presupuestos');
 
 $object->fetch_thirdparty();
 
@@ -86,20 +86,21 @@ if (! empty($conf->projet->enabled))
     $morehtmlref.='<br>'.$langs->trans('Project') . ' ';
     if ($user->rights->propal->creer)
     {
-        if ($action != 'classify')
-            //$morehtmlref.='<a href="' . $_SERVER['PHP_SELF'] . '?action=classify&amp;id=' . $object->id . '">' . img_edit($langs->transnoentitiesnoconv('SetProject')) . '</a>';
+        if ($action != 'classify') {
+            //$morehtmlref.='<a class="editfielda" href="' . $_SERVER['PHP_SELF'] . '?action=classify&amp;id=' . $object->id . '">' . img_edit($langs->transnoentitiesnoconv('SetProject')) . '</a>';
             $morehtmlref.=' : ';
-            if ($action == 'classify') {
-                //$morehtmlref.=$form->form_project($_SERVER['PHP_SELF'] . '?id=' . $object->id, $object->socid, $object->fk_project, 'projectid', 0, 0, 1, 1);
-                $morehtmlref.='<form method="post" action="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'">';
-                $morehtmlref.='<input type="hidden" name="action" value="classin">';
-                $morehtmlref.='<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
-                $morehtmlref.=$formproject->select_projects($object->socid, $object->fk_project, 'projectid', $maxlength, 0, 1, 0, 1, 0, 0, '', 1);
-                $morehtmlref.='<input type="submit" class="button valignmiddle" value="'.$langs->trans("Modify").'">';
-                $morehtmlref.='</form>';
-            } else {
-                $morehtmlref.=$form->form_project($_SERVER['PHP_SELF'] . '?id=' . $object->id, $object->socid, $object->fk_project, 'none', 0, 0, 0, 1);
-            }
+        }
+        if ($action == 'classify') {
+            //$morehtmlref.=$form->form_project($_SERVER['PHP_SELF'] . '?id=' . $object->id, $object->socid, $object->fk_project, 'projectid', 0, 0, 1, 1);
+            $morehtmlref.='<form method="post" action="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'">';
+            $morehtmlref.='<input type="hidden" name="action" value="classin">';
+            $morehtmlref.='<input type="hidden" name="token" value="'.newToken().'">';
+            $morehtmlref.=$formproject->select_projects($object->socid, $object->fk_project, 'projectid', $maxlength, 0, 1, 0, 1, 0, 0, '', 1);
+            $morehtmlref.='<input type="submit" class="button valignmiddle" value="'.$langs->trans("Modify").'">';
+            $morehtmlref.='</form>';
+        } else {
+            $morehtmlref.=$form->form_project($_SERVER['PHP_SELF'] . '?id=' . $object->id, $object->socid, $object->fk_project, 'none', 0, 0, 0, 1);
+        }
     } else {
         if (! empty($object->fk_project)) {
             $proj = new Project($db);
@@ -127,5 +128,6 @@ print '</div>';
 
 dol_fiche_end();
 
+// End of page
 llxFooter();
 $db->close();
