@@ -407,11 +407,11 @@ class Setup extends DolibarrApi
      *
      * @param object   $object    Object with label to translate
      * @param string   $lang      Code of the language the name of the object must be translated to
-     * @param string   $prefix Prefix for translation
+     * @param string   $prefix 	  Prefix for translation key
      *
      * @return void
      */
-    private function translateLabel($object, $lang, $prefix)
+    private function translateLabel($object, $lang, $prefix = 'Country')
     {
         if (!empty($lang)) {
             // Load the translations if this is a new language.
