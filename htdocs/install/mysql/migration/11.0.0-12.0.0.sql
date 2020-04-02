@@ -206,8 +206,8 @@ ALTER TABLE llx_societe_remise_except ADD COLUMN vat_src_code varchar(10) DEFAUL
 ALTER TABLE llx_blockedlog MODIFY COLUMN object_data mediumtext;
 ALTER TABLE llx_blockedlog ADD COLUMN object_version varchar(32) DEFAULT '';
 
-ALTER TABLE llx_product_lot MODIFY batch varchar(128);
-ALTER TABLE llx_product_batch MODIFY batch varchar(128);
-ALTER TABLE llx_commande_fournisseur_dispatch MODIFY batch varchar(128);
-ALTER TABLE llx_stock_mouvement MODIFY batch varchar(128);
-ALTER TABLE llx_mrp_production MODIFY batch varchar(128);
+ALTER TABLE llx_product_lot MODIFY COLUMN batch varchar(128);
+ALTER TABLE llx_product_batch MODIFY COLUMN batch varchar(128);
+ALTER TABLE llx_commande_fournisseur_dispatch MODIFY COLUMN batch varchar(128);
+ALTER TABLE llx_stock_mouvement MODIFY COLUMN batch varchar(128);
+ALTER TABLE llx_mrp_production MODIFY COLUMN batch varchar(128);
