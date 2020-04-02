@@ -51,7 +51,6 @@ $contextpage = GETPOST('contextpage', 'aZ') ?GETPOST('contextpage', 'aZ') : 'myo
 $backtopage = GETPOST('backtopage', 'alpha'); // Go back to a dedicated page
 $optioncss  = GETPOST('optioncss', 'aZ'); // Option for the css output (always '' except when 'print')
 
-
 // Load variable for pagination
 $limit = GETPOST('limit', 'int') ?GETPOST('limit', 'int') : $conf->liste_limit;
 $sortfield = GETPOST('sortfield', 'alpha');
@@ -196,7 +195,6 @@ if ($type == Categorie::TYPE_PRODUCT && $elemid && $action == 'addintocategory' 
 }
 
 
-
 /*
  * View
  */
@@ -204,18 +202,21 @@ if ($type == Categorie::TYPE_PRODUCT && $elemid && $action == 'addintocategory' 
 $form = new Form($db);
 $formother = new FormOther($db);
 
+$arrayofjs=array('/includes/jquery/plugins/jquerytreeview/jquery.treeview.js', '/includes/jquery/plugins/jquerytreeview/lib/jquery.cookie.js');
+$arrayofcss=array('/includes/jquery/plugins/jquerytreeview/jquery.treeview.css');
 $helpurl = '';
-llxHeader("", $langs->trans("Categories"), $helpurl);
+llxHeader("", $langs->trans("Categories"), $helpurl, '', 0, 0, $arrayofjs, $arrayofcss);
 
-if ($type == Categorie::TYPE_PRODUCT)       $title = $langs->trans("ProductsCategoryShort");
-elseif ($type == Categorie::TYPE_SUPPLIER)  $title = $langs->trans("SuppliersCategoryShort");
-elseif ($type == Categorie::TYPE_CUSTOMER)  $title = $langs->trans("CustomersCategoryShort");
-elseif ($type == Categorie::TYPE_MEMBER)    $title = $langs->trans("MembersCategoryShort");
-elseif ($type == Categorie::TYPE_CONTACT)   $title = $langs->trans("ContactCategoriesShort");
-elseif ($type == Categorie::TYPE_ACCOUNT)   $title = $langs->trans("AccountsCategoriesShort");
-elseif ($type == Categorie::TYPE_PROJECT)   $title = $langs->trans("ProjectsCategoriesShort");
-elseif ($type == Categorie::TYPE_USER)      $title = $langs->trans("UsersCategoriesShort");
-else                                        $title = $langs->trans("Category");
+if ($type == Categorie::TYPE_PRODUCT)       { $title=$langs->trans("ProductsCategoriesArea");  $typetext='product'; }
+elseif ($type == Categorie::TYPE_SUPPLIER)  { $title=$langs->trans("SuppliersCategoriesArea"); $typetext='supplier'; }
+elseif ($type == Categorie::TYPE_CUSTOMER)  { $title=$langs->trans("CustomersCategoriesArea"); $typetext='customer'; }
+elseif ($type == Categorie::TYPE_MEMBER)    { $title=$langs->trans("MembersCategoriesArea");   $typetext='member'; }
+elseif ($type == Categorie::TYPE_CONTACT)   { $title=$langs->trans("ContactsCategoriesArea");  $typetext='contact'; }
+elseif ($type == Categorie::TYPE_ACCOUNT)   { $title=$langs->trans("AccountsCategoriesArea");  $typetext='bank_account'; }
+elseif ($type == Categorie::TYPE_PROJECT)   { $title=$langs->trans("ProjectsCategoriesArea");  $typetext='project'; }
+elseif ($type == Categorie::TYPE_USER)      { $title=$langs->trans("UsersCategoriesArea");     $typetext='user'; }
+elseif ($type == Categorie::TYPE_WAREHOUSE) { $title=$langs->trans("StocksCategoriesArea");    $typetext='warehouse'; }
+else                                        { $title=$langs->trans("CategoriesArea");          $typetext='unknown'; }
 
 $head = categories_prepare_head($object, $type);
 
@@ -304,55 +305,133 @@ if (! empty($user->rights->categorie->creer))
 	print "</div>";
 }
 
+
+/*
+ * Sub-category tree view of this category
+ */
+
+print '<div class="fichecenter">';
+print '<table class="liste nohover" width="100%">';
+
+print '<tr class="liste_titre">';
+print '<td>'.$langs->trans("SubCats").'</td>';
+print '<td></td>';
+print '<td class="right">';
+
+if (!empty($conf->use_javascript_ajax))
+{
+	print '<div id="iddivjstreecontrol">';
+	print '<a class="notasortlink" href="#">'.img_picto('', 'object_category').' '.$langs->trans("UndoExpandAll").'</a>';
+	print " | ";
+	print '<a class="notasortlink" href="#">'.img_picto('', 'object_category-expanded').' '.$langs->trans("ExpandAll").'</a>';
+	print '</div>';
+}
+
+print '</td>';
+print '</tr>';
+
 $cats = $object->get_filles();
 if ($cats < 0)
 {
 	dol_print_error($db, $cats->error, $cats->errors);
 }
+elseif(count($cats) < 1)
+{
+	print '<tr class="oddeven">';
+	print '<td colspan="3" class="opacitymedium">'.$langs->trans("NoSubCat").'</td>';
+	print '</tr>';
+}
 else
 {
-	print "<br>";
-	print "<table class='noborder' width='100%'>\n";
-	print "<tr class='liste_titre'><td colspan='2'>".$langs->trans("SubCats").'</td><td class="right">';
-	if ($user->rights->categorie->creer)
+	$categstatic = new Categorie($db);
+
+	$fulltree = $categstatic->get_full_arbo($typetext, $object->id, 1);
+
+	// Load possible missing includes
+	if($conf->global->CATEGORY_SHOW_COUNTS)
 	{
-		print "<a href='".DOL_URL_ROOT."/categories/card.php?action=create&amp;catorigin=".$object->id."&amp;socid=".$object->socid."&amp;type=".$type."&amp;urlfrom=".urlencode($_SERVER["PHP_SELF"].'?id='.$object->id.'&type='.$type)."'>";
-		print img_picto($langs->trans("Create"), 'filenew');
-		print "</a>";
+		if ($type == Categorie::TYPE_MEMBER)	require_once DOL_DOCUMENT_ROOT.'/adherents/class/adherent.class.php';
+		if ($type == Categorie::TYPE_ACCOUNT)	require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
+		if ($type == Categorie::TYPE_PROJECT)	require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
+		if ($type == Categorie::TYPE_USER)		require_once DOL_DOCUMENT_ROOT.'/user/class/user.class.php';
 	}
-	print "</td>";
-	print "</tr>\n";
-	if (count($cats) > 0)
+
+	// Define data (format for treeview)
+	$data = array();
+	$data[] = array('rowid'=>0, 'fk_menu'=>-1, 'title'=>"racine", 'mainmenu'=>'', 'leftmenu'=>'', 'fk_mainmenu'=>'', 'fk_leftmenu'=>'');
+	foreach ($fulltree as $key => $val)
 	{
-		foreach ($cats as $cat)
+		$categstatic->id = $val['id'];
+		$categstatic->ref = $val['label'];
+		$categstatic->color = $val['color'];
+		$categstatic->type = $type;
+		$desc = dol_htmlcleanlastbr($val['description']);
+
+		$counter = 0;
+
+		if($conf->global->CATEGORY_SHOW_COUNTS)
 		{
-			print "\t".'<tr class="oddeven">'."\n";
-			print "\t\t".'<td class="nowrap">';
-			print "<a href='viewcat.php?id=".$cat->id."&amp;type=".$type."'>".$cat->label."</a>";
-			print "</td>\n";
-			print "\t\t".'<td colspan="2">'.$cat->description."</td>\n";
+			// we need only a count of the elements, so it is enough to consume only the id's from the database
+			$elements = $type == Categorie::TYPE_ACCOUNT
+				? $categstatic->getObjectsInCateg("account", 1)			// Categorie::TYPE_ACCOUNT is "bank_account" instead of "account"
+				: $categstatic->getObjectsInCateg($type, 1);
 
-			/*
-			if ($cat->visible == 1)
-			{
-				print "\t\t<td>".$langs->trans("ContentsVisibleByAllShort")."</td>\n";
-			}
-			else
-			{
-				print "\t\t<td>".$langs->trans("ContentsNotVisibleByAllShort")."</td>\n";
-			}
-			*/
-
-			print "\t</tr>\n";
+			$counter = is_countable($elements) ? count($elements) : 0;
 		}
+
+		$color = $categstatic->color ? ' style="background: #'.$categstatic->color.';"' : ' style="background: #aaa"';
+
+		$entry = '<table class="nobordernopadding centpercent">';
+		$entry .= '<tr>';
+
+		$entry .= '<td>';
+		$entry .= '<span class="noborderoncategories" '.$color.'>'.$categstatic->getNomUrl(1, '', 60).'</span>';
+		$entry .= '</td>';
+
+		$entry .= '<td class="left" width="40px;">'.$counter.'</td>';
+
+		$entry .= '<td class="right" width="20px;">';
+		$entry .= '<a href="'.DOL_URL_ROOT.'/categories/viewcat.php?id='.$val['id'].'&type='.$type.'">'.img_view().'</a>';
+		$entry .= '</td>';
+
+		$entry .= '</tr>';
+		$entry .= '</table>';
+
+		$data[] = array('rowid' => $val['rowid'], 'fk_menu' => $val['fk_parent'], 'entry' => $entry);
+	}
+
+	if ((count($data) - 1))
+	{
+		require_once DOL_DOCUMENT_ROOT.'/core/lib/treeview.lib.php';
+		print '<tr class="pair">';
+		print '<td colspan="3">';
+
+		// $data[0] is the current shown category, to don'T show the current category use $data[1] instead
+		tree_recur($data, $data[1], 0);
+
+		print '</td>';
+		print '</tr>';
 	}
 	else
 	{
-		print '<tr class="oddeven"><td colspan="3" class="opacitymedium">'.$langs->trans("NoSubCat").'</td></tr>';
+		print '<tr class="pair">';
+		print '<td colspan="3">';
+		print '<table class="nobordernopadding">';
+
+		print '<tr class="nobordernopadding">';
+		print '<td>'.img_picto_common('', 'treemenu/branchbottom.gif').'</td>';
+		print '<td valign="middle">'.$langs->trans("NoCategoryYet").'</td>';
+		print '<td>&nbsp;</td>';
+		print '</tr>';
+
+		print '</table>';
+		print '</td>';
+		print '</tr>';
 	}
-	print "</table>\n";
 }
 
+print "</table>";
+print "</div>";
 
 // List of mass actions available
 $arrayofmassactions = array(
@@ -362,7 +441,6 @@ $arrayofmassactions = array(
 	//'presend'=>$langs->trans("SendByMail"),
 );
 $massactionbutton = $form->selectMassAction('', $arrayofmassactions);
-
 
 // List of products or services (type is type of category)
 if ($type == Categorie::TYPE_PRODUCT)
