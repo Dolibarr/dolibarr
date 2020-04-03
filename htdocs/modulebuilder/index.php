@@ -92,6 +92,7 @@ if (empty($newmask))	// This should no happen
 
 $result = restrictedArea($user, 'modulebuilder', null);
 
+$error = 0;
 
 
 /*
@@ -782,6 +783,8 @@ if ($dirins && $action == 'initobject' && $module && GETPOST('createtablearray',
 
 if ($dirins && $action == 'initobject' && $module && $objectname)
 {
+	$objectname = ucfirst($objectname);
+
 	if (preg_match('/[^a-z0-9_]/i', $objectname))
 	{
 		$error++;
@@ -890,7 +893,6 @@ if ($dirins && $action == 'initobject' && $module && $objectname)
 			// Replace '$includedocgeneration = 0;' into '$includedocgeneration = 1;' into files
 			$arrayreplacement = array('$includedocgeneration = 0;', '$includedocgeneration = 1;');
 			dolReplaceInFile($destdir.'/class/'.strtolower($objectname).'.class.php', $arrayreplacement, '', 0, 0, 1);
-
 		}
 
 		// Scan for object class files
@@ -1711,6 +1713,44 @@ elseif (! empty($module))
 			$linktoenabledisable.='<a class="reposition asetresetmodule" href="'.$_SERVER["PHP_SELF"].'?id='.$moduleobj->numero.'&action=reset&value=mod' . $module . $param . '">';
 			$linktoenabledisable.=img_picto($langs->trans("Activated"), 'switch_on', '', false, 0, 0, '', '', 1);
 			$linktoenabledisable.='</a>';
+
+			$objMod = $moduleobj;
+			$backtourlparam = '';
+			$backtourlparam .= ($backtourlparam ? '&' : '?').'module='.$module; // No urlencode here, done later
+			if ($tab) $backtourlparam .= ($backtourlparam ? '&' : '?').'tab='.$tab; // No urlencode here, done later
+			$backtourl = $_SERVER["PHP_SELF"].$backtourlparam;
+
+			$regs = array();
+			if (is_array($objMod->config_page_url))
+			{
+				$i = 0;
+				foreach ($objMod->config_page_url as $page)
+				{
+					$urlpage = $page;
+					if ($i++)
+					{
+						$linktoenabledisable .= ' <a href="'.$urlpage.'" title="'.$langs->trans($page).'">'.img_picto(ucfirst($page), "setup").'</a>';
+						//    print '<a href="'.$page.'">'.ucfirst($page).'</a>&nbsp;';
+					}
+					else
+					{
+						if (preg_match('/^([^@]+)@([^@]+)$/i', $urlpage, $regs))
+						{
+							$urltouse = dol_buildpath('/'.$regs[2].'/admin/'.$regs[1], 1);
+							$linktoenabledisable .= ' &nbsp; <a href="'.$urltouse.(preg_match('/\?/', $urltouse) ? '&' : '?').'save_lastsearch_values=1&backtopage='.urlencode($backtourl).'" title="'.$langs->trans("Setup").'">'.img_picto($langs->trans("Setup"), "setup", 'style="padding-right: 6px"').'</a>';
+						}
+						else
+						{
+							$urltouse = $urlpage;
+							$linktoenabledisable .= ' &nbsp; <a href="'.$urltouse.(preg_match('/\?/', $urltouse) ? '&' : '?').'save_lastsearch_values=1&backtopage='.urlencode($backtourl).'" title="'.$langs->trans("Setup").'">'.img_picto($langs->trans("Setup"), "setup", 'style="padding-right: 6px"').'</a>';
+						}
+					}
+				}
+			}
+			elseif (preg_match('/^([^@]+)@([^@]+)$/i', $objMod->config_page_url, $regs))
+			{
+				$linktoenabledisable .= ' &nbsp; <a href="'.dol_buildpath('/'.$regs[2].'/admin/'.$regs[1], 1).'?save_lastsearch_values=1&backtopage='.urlencode($backtourl).'" title="'.$langs->trans("Setup").'">'.img_picto($langs->trans("Setup"), "setup", 'style="padding-right: 6px"').'</a>';
+			}
 		}
 		else
 		{
@@ -1718,6 +1758,7 @@ elseif (! empty($module))
 			$linktoenabledisable.=img_picto($langs->trans("Disabled"), 'switch_off', '', false, 0, 0, '', '', 1);
 			$linktoenabledisable.="</a>\n";
 		}
+
 		if (empty($conf->$modulelowercase->enabled))
 		{
 			$modulestatusinfo=$form->textwithpicto($langs->trans("ModuleIsNotActive", $urltomodulesetup), '', -1, 'help');
@@ -1747,14 +1788,14 @@ elseif (! empty($module))
 		$head2[$h][2] = 'objects';
 		$h++;
 
-		$head2[$h][0] = $_SERVER["PHP_SELF"].'?tab=menus&module='.$module.($forceddirread?'@'.$dirread:'');
-		$head2[$h][1] = $langs->trans("Menus");
-		$head2[$h][2] = 'menus';
-		$h++;
-
 		$head2[$h][0] = $_SERVER["PHP_SELF"].'?tab=permissions&module='.$module.($forceddirread?'@'.$dirread:'');
 		$head2[$h][1] = $langs->trans("Permissions");
 		$head2[$h][2] = 'permissions';
+		$h++;
+
+		$head2[$h][0] = $_SERVER["PHP_SELF"].'?tab=menus&module='.$module.($forceddirread?'@'.$dirread:'');
+		$head2[$h][1] = $langs->trans("Menus");
+		$head2[$h][2] = 'menus';
 		$h++;
 
 		$head2[$h][0] = $_SERVER["PHP_SELF"].'?tab=hooks&module='.$module.($forceddirread?'@'.$dirread:'');

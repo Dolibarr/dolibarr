@@ -554,9 +554,9 @@ class MyObject extends CommonObject
 		// Validate
 		$sql = "UPDATE ".MAIN_DB_PREFIX.$this->table_element;
 		$sql .= " SET ref = '".$this->db->escape($num)."',";
-		$sql .= " status = ".self::STATUS_VALIDATED.",";
-		$sql .= " date_validation = '".$this->db->idate($now)."',";
-		$sql .= " fk_user_valid = ".$user->id;
+		$sql .= " status = ".self::STATUS_VALIDATED;
+		if (! empty($this->fields['date_validation'])) $sql .= ", date_validation = '".$this->db->idate($now)."',";
+		if (! empty($this->fields['fk_user_valid'])) $sql .= ", fk_user_valid = ".$user->id;
 		$sql .= " WHERE rowid = ".$this->id;
 
 		dol_syslog(get_class($this)."::validate()", LOG_DEBUG);
