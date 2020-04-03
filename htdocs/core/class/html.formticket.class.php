@@ -127,7 +127,7 @@ class FormTicket
      * @param  int	 $withdolfichehead			With dol_fiche_head
      * @return void
      */
-    public function showForm($withdolfichehead = 0)
+    public function showForm($withdolfichehead = 0, $mode = 'edit')
     {
         global $conf, $langs, $user, $hookmanager;
 
@@ -414,7 +414,7 @@ class FormTicket
         $reshook = $hookmanager->executeHooks('formObjectOptions', $parameters, $ticketstat, $this->action); // Note that $action and $object may have been modified by hook
         if (empty($reshook))
         {
-            print $ticketstat->showOptionals($extrafields, 'edit');
+            print $ticketstat->showOptionals($extrafields, 'create');
         }
 
         print '</table>';
