@@ -273,8 +273,8 @@ class Mailing extends CommonObject
 	 *
 	 *  @param	User	$user		    User making the clone
 	 *	@param  int		$fromid     	Id of object to clone
-	 *	@param	int		$option1		1=Copy content, 0=Forget content
-	 *	@param	int		$option2		Not used
+	 *	@param	int		$option1		1=Clone content, 0=Forget content
+	 *	@param	int		$option2		1=Clone recipients
 	 *	@return	int						New id of clone
 	 */
 	public function createFromClone(User $user, $fromid, $option1, $option2)
@@ -305,7 +305,7 @@ class Mailing extends CommonObject
 			$object->bgcolor            = '';
 			$object->bgimage            = '';
 
-			$object->email_from         = '';
+			//$object->email_from         = '';		// We do not reset from email because it is a mandatory value
 			$object->email_replyto      = '';
 			$object->email_errorsto     = '';
 
@@ -331,7 +331,7 @@ class Mailing extends CommonObject
 
 		if (! $error)
 		{
-			//Clone target
+			// Clone recipient targets
 			if (!empty($option2)) {
 				require_once DOL_DOCUMENT_ROOT .'/core/modules/mailings/modules_mailings.php';
 
