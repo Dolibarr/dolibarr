@@ -761,6 +761,7 @@ if ($mode == 'common')
 	        	print '</td>'."\n";
 
 	        	// Link config
+	        	print '<td class="tdsetuppicto right" width="60px">';
 	        	if (!empty($objMod->config_page_url) && !$disableSetup)
 	        	{
 	        		$backtourlparam = '';
@@ -770,9 +771,9 @@ if ($mode == 'common')
 	        		if ($search_status > -1)   $backtourlparam .= ($backtourlparam ? '&' : '?').'search_status='.$search_status;
 	        		$backtourl = $_SERVER["PHP_SELF"].$backtourlparam;
 
+	        		$regs = array();
 	        		if (is_array($objMod->config_page_url))
 	        		{
-	        			print '<td class="tdsetuppicto right" width="60px">';
 	        			$i = 0;
 	        			foreach ($objMod->config_page_url as $page)
 	        			{
@@ -796,21 +797,21 @@ if ($mode == 'common')
 	        					}
 	        				}
 	        			}
-	        			print "</td>\n";
 	        		}
 	        		elseif (preg_match('/^([^@]+)@([^@]+)$/i', $objMod->config_page_url, $regs))
 	        		{
-	        			print '<td class="tdsetuppicto right valignmiddle" width="60px"><a href="'.dol_buildpath('/'.$regs[2].'/admin/'.$regs[1], 1).'?save_lastsearch_values=1&backtopage='.urlencode($backtourl).'" title="'.$langs->trans("Setup").'">'.img_picto($langs->trans("Setup"), "setup", 'style="padding-right: 6px"').'</a></td>';
+	        			print '<a href="'.dol_buildpath('/'.$regs[2].'/admin/'.$regs[1], 1).'?save_lastsearch_values=1&backtopage='.urlencode($backtourl).'" title="'.$langs->trans("Setup").'">'.img_picto($langs->trans("Setup"), "setup", 'style="padding-right: 6px"').'</a>';
 	        		}
 	        		else
 	        		{
-	        			print '<td class="tdsetuppicto right valignmiddle" width="60px"><a href="'.$objMod->config_page_url.'?save_lastsearch_values=1&backtopage='.urlencode($backtourl).'" title="'.$langs->trans("Setup").'">'.img_picto($langs->trans("Setup"), "setup", 'style="padding-right: 6px"').'</a></td>';
+	        			print '<a href="'.$objMod->config_page_url.'?save_lastsearch_values=1&backtopage='.urlencode($backtourl).'" title="'.$langs->trans("Setup").'">'.img_picto($langs->trans("Setup"), "setup", 'style="padding-right: 6px"').'</a>';
 	        		}
 	        	}
 	        	else
 	        	{
-	        		print '<td class="tdsetuppicto right valignmiddle" width="60px">'.img_picto($langs->trans("NothingToSetup"), "setup", 'class="opacitytransp" style="padding-right: 6px"').'</td>';
+	        		print img_picto($langs->trans("NothingToSetup"), "setup", 'class="opacitytransp" style="padding-right: 6px"');
 	        	}
+	        	print '</td>';
 	        }
 	        else	// Module not yet activated
 			{
