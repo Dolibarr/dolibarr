@@ -90,13 +90,13 @@ if (empty($reshook))
 	// Action clone object
 	if ($action == 'confirm_clone' && $confirm == 'yes')
 	{
-		if (empty($_REQUEST["clone_content"]) && empty($_REQUEST["clone_receivers"]))
+		if (! GETPOST("clone_content", 'alpha') && ! GETPOST("clone_receivers", 'alpha'))
 		{
 			setEventMessages($langs->trans("NoCloneOptionsSpecified"), null, 'errors');
 		}
 		else
 		{
-			$result = $object->createFromClone($user, $object->id, $_REQUEST["clone_content"], $_REQUEST["clone_receivers"]);
+			$result = $object->createFromClone($user, $object->id, GETPOST("clone_content", 'alpha'), GETPOST("clone_receivers", 'alpha'));
 			if ($result > 0)
 			{
 				header("Location: ".$_SERVER['PHP_SELF'].'?id='.$result);
