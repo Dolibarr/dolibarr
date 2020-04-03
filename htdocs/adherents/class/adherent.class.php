@@ -7,11 +7,12 @@
  * Copyright (C) 2009-2017	Regis Houssin			<regis.houssin@inodbox.com>
  * Copyright (C) 2014-2018	Alexandre Spangaro		<aspangaro@open-dsi.fr>
  * Copyright (C) 2015		Marcos García			<marcosgdf@gmail.com>
- * Copyright (C) 2015-2018  Frédéric France			<frederic.france@netlogic.fr>
+ * Copyright (C) 2015-2018	Frédéric France			<frederic.france@netlogic.fr>
  * Copyright (C) 2015		Raphaël Doursenaud		<rdoursenaud@gpcsolutions.fr>
  * Copyright (C) 2016		Juanjo Menent			<jmenent@2byte.es>
- * Copyright (C) 2018-2019  Thibault FOUCART		<support@ptibogxiv.net>
- * Copyright (C) 2019       Nicolas ZABOURI 		<info@inovea-conseil.com>
+ * Copyright (C) 2018-2019	Thibault FOUCART		<support@ptibogxiv.net>
+ * Copyright (C) 2019		Nicolas ZABOURI 		<info@inovea-conseil.com>
+ * Copyright (C) 2020		Josep Lluís Amador 		<joseplluis@lliuretic.cat>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -1958,13 +1959,14 @@ class Adherent extends CommonObject
 	 *	@param	int		$withpictoimg				0=No picto, 1=Include picto into link, 2=Only picto, -1=Include photo into link, -2=Only picto photo, -3=Only photo very small)
 	 *	@param	int		$maxlen						length max label
 	 *	@param	string	$option						Page for link ('card', 'category', 'subscription', ...)
-	 *  @param  string  $mode           			''=Show firstname+lastname as label (using default order), 'firstname'=Show only firstname, 'login'=Show login, 'ref'=Show ref
-	 *  @param  string  $morecss        			Add more css on link
-	 *  @param  int     $save_lastsearch_value    	-1=Auto, 0=No save of lastsearch_values when clicking, 1=Save lastsearch_values whenclicking
-	 *  @param	int		$notooltip					1=Disable tooltip
+	 *	@param  string  $mode           			''=Show firstname+lastname as label (using default order), 'firstname'=Show only firstname, 'login'=Show login, 'ref'=Show ref
+	 *	@param  string  $morecss        			Add more css on link
+	 *	@param  int		$save_lastsearch_value    	-1=Auto, 0=No save of lastsearch_values when clicking, 1=Save lastsearch_values whenclicking
+	 *	@param	int		$notooltip					1=Disable tooltip
+	 *	@param  int		$addlinktonotes			1=Add link to notes
 	 *	@return	string								Chaine avec URL
 	 */
-	public function getNomUrl($withpictoimg = 0, $maxlen = 0, $option = 'card', $mode = '', $morecss = '', $save_lastsearch_value = -1, $notooltip = 0)
+	public function getNomUrl($withpictoimg = 0, $maxlen = 0, $option = 'card', $mode = '', $morecss = '', $save_lastsearch_value = -1, $notooltip = 0, $addlinktonotes = 0)
 	{
 		global $conf, $langs;
 
@@ -2045,6 +2047,17 @@ class Adherent extends CommonObject
 		}
 		if ($withpictoimg) $result .= '</div>';
 		$result .= $linkend;
+
+		if ($addlinktonotes) {
+			if ($this->note_private) {
+				$notetoshow = $langs->trans("ViewPrivateNote").':<br>'.dol_string_nohtmltag($this->note_private, 1);
+				$result .= ' <span class="note inline-block">';
+				$result .= '<a href="'.DOL_URL_ROOT.'/adherents/note.php?id='.$this->id.'" class="classfortooltip" title="'.dol_escape_htmltag($notetoshow).'">';
+				$result .= img_picto('', 'note');
+				$result .= '</a>';
+				$result .= '</span>';
+			}
+		}
 
 		return $result;
 	}
