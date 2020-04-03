@@ -791,6 +791,12 @@ if ($dirins && $action == 'initobject' && $module && $objectname)
 		setEventMessages($langs->trans("SpaceOrSpecialCharAreNotAllowed"), null, 'errors');
 		$tabobj = 'newobject';
 	}
+	if (class_exists($objectname)) {
+		// TODO Add a more efficient detection. Scan disk ?
+		$error++;
+		setEventMessages($langs->trans("AnObjectWithThisClassNameAlreadyExists"), null, 'errors');
+		$tabobj = 'newobject';
+	}
 
 	$srcdir = DOL_DOCUMENT_ROOT.'/modulebuilder/template';
 	$destdir = $dirins.'/'.strtolower($module);
@@ -891,7 +897,7 @@ if ($dirins && $action == 'initobject' && $module && $objectname)
 		// Edit the setup file and the card page
 		if (GETPOST('includedocgeneration', 'aZ09')) {
 			// Replace '$includedocgeneration = 0;' into '$includedocgeneration = 1;' into files
-			$arrayreplacement = array('$includedocgeneration = 0;', '$includedocgeneration = 1;');
+			$arrayreplacement = array('/\$includedocgeneration = 0;/' => '$includedocgeneration = 1;');
 			dolReplaceInFile($destdir.'/class/'.strtolower($objectname).'.class.php', $arrayreplacement, '', 0, 0, 1);
 		}
 
@@ -2609,6 +2615,7 @@ elseif (! empty($module))
 								print '<input class="button" type="submit" name="add" value="'.$langs->trans("Add").'">';
 								print '</td></tr>';
 
+								// List of existing properties
 								foreach ($properties as $propkey => $propval)
 								{
 									/* If from Reflection
@@ -2680,7 +2687,7 @@ elseif (! empty($module))
 									print $propenabled?$propenabled:'';
 									print '</td>';
 									print '<td class="center">';
-									print $propvisible?$propvisible:'';
+									print $propvisible?$propvisible:'0';
 									print '</td>';
 									print '<td class="center">';
 									print $propnoteditable?$propnoteditable:'';
