@@ -887,8 +887,10 @@ if ($dirins && $action == 'initobject' && $module && $objectname)
 
 		// Edit the setup file and the card page
 		if (GETPOST('includedocgeneration', 'aZ09')) {
-			// TODO
-			// dolReplaceInFile();
+			// Replace '$includedocgeneration = 0;' into '$includedocgeneration = 1;' into files
+			$arrayreplacement = array('$includedocgeneration = 0;', '$includedocgeneration = 1;');
+			dolReplaceInFile($destdir.'/class/'.strtolower($objectname).'.class.php', $arrayreplacement, '', 0, 0, 1);
+
 		}
 
 		// Scan for object class files

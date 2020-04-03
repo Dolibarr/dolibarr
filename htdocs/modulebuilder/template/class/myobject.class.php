@@ -982,6 +982,9 @@ class MyObject extends CommonObject
 	{
 		global $conf, $langs;
 
+		$result = 0;
+		$includedocgeneration = 0;
+
 		$langs->load("mymodule@mymodule");
 
 		if (!dol_strlen($modele)) {
@@ -996,7 +999,11 @@ class MyObject extends CommonObject
 
 		$modelpath = "core/modules/mymodule/doc/";
 
-		return $this->commonGenerateDocument($modelpath, $modele, $outputlangs, $hidedetails, $hidedesc, $hideref, $moreparams);
+		if ($includedocgeneration) {
+			$result = $this->commonGenerateDocument($modelpath, $modele, $outputlangs, $hidedetails, $hidedesc, $hideref, $moreparams);
+		}
+
+		return $result;
 	}
 
 	/**
