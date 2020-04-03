@@ -931,7 +931,7 @@ class Commande extends CommonOrder
 			dol_syslog(get_class($this)."::create ".$this->error, LOG_ERR);
 			return -2;
 		}
-		if (!empty($conf->global->COMMANDE_REQUIRE_SOURCE) && $this->source < 0)
+		if (!empty($conf->global->ORDER_REQUIRE_SOURCE) && $this->source < 0)
 		{
 			$this->error = $langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Source"));
 			dol_syslog(get_class($this)."::create ".$this->error, LOG_ERR);
@@ -1412,8 +1412,8 @@ class Commande extends CommonOrder
 
 			if (!$error)
 			{
-				// Ne pas passer par la commande provisoire
-				if ($conf->global->COMMANDE_VALID_AFTER_CLOSE_PROPAL == 1)
+				// Validate immediatly the order
+				if (! empty($conf->global->ORDER_VALID_AFTER_CLOSE_PROPAL))
 				{
 					$this->fetch($ret);
 					$this->valid($user);
