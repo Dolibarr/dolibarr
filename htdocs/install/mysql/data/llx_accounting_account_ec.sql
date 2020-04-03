@@ -29,7 +29,7 @@
 
 -- Description of chart of account EC EC-SUPERCIAS
 -- ID 1 - 445
--- ADD 45000 to rowid # Do no remove this comment --
+-- ADD 8400000 to rowid # Do no remove this comment --
 
 INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label, active) VALUES (__ENTITY__,1,'EC-SUPERCIAS','Activo','1',0,'ACTIVO',1);
 INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label, active) VALUES (__ENTITY__,2,'EC-SUPERCIAS','Activo','101',1,'ACTIVO CORRIENTE',1);
