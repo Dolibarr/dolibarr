@@ -1794,37 +1794,6 @@ elseif (!empty($module))
 	{
 	    $dirread = $listofmodules[strtolower($module)]['moduledescriptorrootpath'];
 
-		$modulelowercase = strtolower($module);
-		$const_name = 'MAIN_MODULE_'.strtoupper($module);
-
-		$param = '';
-		if ($tab)    $param .= '&tab='.urlencode($tab);
-		if ($module) $param .= '&module='.urlencode($module);
-		if ($tabobj) $param .= '&tabobj='.urlencode($tabobj);
-
-		$urltomodulesetup = '<a href="'.DOL_URL_ROOT.'/admin/modules.php?search_keyword='.urlencode($module).'">'.$langs->trans('Home').'-'.$langs->trans("Setup").'-'.$langs->trans("Modules").'</a>';
-		$linktoenabledisable = '';
-		if (!empty($conf->global->$const_name))	// If module is already activated
-		{
-			$linktoenabledisable .= '<a class="reposition asetresetmodule" href="'.$_SERVER["PHP_SELF"].'?id='.$moduleobj->numero.'&action=reset&value=mod'.$module.$param.'">';
-			$linktoenabledisable .= img_picto($langs->trans("Activated"), 'switch_on', '', false, 0, 0, '', '', 1);
-			$linktoenabledisable .= '</a>';
-		}
-		else
-		{
-			$linktoenabledisable .= '<a class="reposition asetresetmodule" href="'.$_SERVER["PHP_SELF"].'?id='.$moduleobj->numero.'&action=set&value=mod'.$module.$param.'">';
-			$linktoenabledisable .= img_picto($langs->trans("Disabled"), 'switch_off', '', false, 0, 0, '', '', 1);
-			$linktoenabledisable .= "</a>\n";
-		}
-		if (empty($conf->$modulelowercase->enabled))
-		{
-			$modulestatusinfo = $form->textwithpicto($langs->trans("ModuleIsNotActive", $urltomodulesetup), '', -1, 'help');
-		}
-		else
-		{
-			$modulestatusinfo = $form->textwithpicto($langs->trans("ModuleIsLive"), $langs->trans("Warning"), -1, 'warning');
-		}
-
 		$head2 = array();
 		$h = 0;
 
