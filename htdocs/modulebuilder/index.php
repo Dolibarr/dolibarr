@@ -888,17 +888,31 @@ if ($dirins && $action == 'initobject' && $module && $objectname)
 		// Edit the class 'class/'.strtolower($objectname).'.class.php'
 		if (GETPOST('includerefgeneration', 'aZ09')) {
 			// Replace 'visible'=>1,  'noteditable'=>0, 'default'=>''
-			$arrayreplacement = array('/\'visible\'=>1,\s*\'noteditable\'=>0,\s*\'default\'=>\'\'/' => "'visible'=>4, 'noteditable'=>1, 'default'=>'(PROV)'");
+			$arrayreplacement = array(
+				'/\'visible\'=>1,\s*\'noteditable\'=>0,\s*\'default\'=>\'\'/' => "'visible'=>4, 'noteditable'=>1, 'default'=>'(PROV)'"
+			);
 			//var_dump($arrayreplacement);exit;
 			//var_dump($destdir.'/class/'.strtolower($objectname).'.class.php');exit;
 			dolReplaceInFile($destdir.'/class/'.strtolower($objectname).'.class.php', $arrayreplacement, '', 0, 0, 1);
+
+			$arrayreplacement = array(
+				'/\'models\' => 0,/' => '\'models\' => 1,'
+			);
+			dolReplaceInFile($destdir.'/core/modules/mod'.$module.'.class.php', $arrayreplacement, '', 0, 0, 1);
 		}
 
 		// Edit the setup file and the card page
 		if (GETPOST('includedocgeneration', 'aZ09')) {
-			// Replace '$includedocgeneration = 0;' into '$includedocgeneration = 1;' into files
-			$arrayreplacement = array('/\$includedocgeneration = 0;/' => '$includedocgeneration = 1;');
+			// Replace some var init into some files
+			$arrayreplacement = array(
+				'/\$includedocgeneration = 0;/' => '$includedocgeneration = 1;'
+			);
 			dolReplaceInFile($destdir.'/class/'.strtolower($objectname).'.class.php', $arrayreplacement, '', 0, 0, 1);
+
+			$arrayreplacement = array(
+				'/\'models\' => 0,/' => '\'models\' => 1,'
+			);
+			dolReplaceInFile($destdir.'/core/modules/mod'.$module.'.class.php', $arrayreplacement, '', 0, 0, 1);
 		}
 
 		// Scan for object class files

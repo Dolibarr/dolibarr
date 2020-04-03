@@ -922,7 +922,7 @@ class MyObject extends CommonObject
 		$langs->load("mymodule@myobject");
 
 		if (empty($conf->global->MYMODULE_MYOBJECT_ADDON)) {
-			$conf->global->MYMODULE_MYOBJECT_ADDON = 'mod_mymobject_standard';
+			$conf->global->MYMODULE_MYOBJECT_ADDON = 'mod_myobject_standard';
 		}
 
 		if (!empty($conf->global->MYMODULE_MYOBJECT_ADDON))
@@ -952,7 +952,7 @@ class MyObject extends CommonObject
 				$obj = new $classname();
 				$numref = $obj->getNextValue($this);
 
-				if ($numref != "")
+				if ($numref != '' && $numref != '-1')
 				{
 					return $numref;
 				}
@@ -963,7 +963,7 @@ class MyObject extends CommonObject
 					return "";
 				}
 			} else {
-				print $langs->trans("Error")." ".$langs->trans("ClassNotFound");
+				print $langs->trans("Error")." ".$langs->trans("ClassNotFound").' '.$classname;
 				return "";
 			}
 		}
