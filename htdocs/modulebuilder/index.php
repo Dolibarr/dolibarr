@@ -2082,7 +2082,7 @@ elseif (! empty($module))
 				print_liste_field_titre("Condition", $_SERVER["PHP_SELF"], '', "", $param, '', $sortfield, $sortorder);
 				print "</tr>\n";
 
-				if (is_array($dicts))
+				if (is_array($dicts) && is_array($dicts['tabname']))
 				{
 					$i = 0;
 					$maxi = count($dicts['tabname']);
