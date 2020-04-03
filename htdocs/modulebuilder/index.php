@@ -1647,12 +1647,90 @@ $head[$h][1] = '<span class="valignmiddle text-plus-circle">'.$langs->trans("New
 $head[$h][2] = 'initmodule';
 $h++;
 
-foreach ($listofmodules as $tmpmodule => $tmpmodulearray)
-{
-	$head[$h][0] = $_SERVER["PHP_SELF"].'?module='.$tmpmodulearray['modulenamewithcase'].($forceddirread ? '@'.$dirread : '');
-	$head[$h][1] = $tmpmodulearray['modulenamewithcase'];
-	$head[$h][2] = $tmpmodulearray['modulenamewithcase'];
-	$h++;
+$linktoenabledisable = '';
+$modulestatusinfo = '';
+
+if (is_array($listofmodules) && count($listofmodules) > 0) {
+	// Define $linktoenabledisable and $modulestatusinfo
+	$modulelowercase=strtolower($module);
+	$const_name = 'MAIN_MODULE_'.strtoupper($module);
+
+	$param='';
+	if ($tab)    $param.='&tab='.urlencode($tab);
+	if ($module) $param.='&module='.urlencode($module);
+	if ($tabobj) $param.='&tabobj='.urlencode($tabobj);
+
+	$urltomodulesetup='<a href="'.DOL_URL_ROOT.'/admin/modules.php?search_keyword='.urlencode($module).'">'.$langs->trans('Home').'-'.$langs->trans("Setup").'-'.$langs->trans("Modules").'</a>';
+	if (! empty($conf->global->$const_name))	// If module is already activated
+	{
+		$linktoenabledisable.='<a class="reposition asetresetmodule" href="'.$_SERVER["PHP_SELF"].'?id='.$moduleobj->numero.'&action=reset&value=mod' . $module . $param . '">';
+		$linktoenabledisable.=img_picto($langs->trans("Activated"), 'switch_on', '', false, 0, 0, '', '', 1);
+		$linktoenabledisable.='</a>';
+
+		$objMod = $moduleobj;
+		$backtourlparam = '';
+		$backtourlparam .= ($backtourlparam ? '&' : '?').'module='.$module; // No urlencode here, done later
+		if ($tab) $backtourlparam .= ($backtourlparam ? '&' : '?').'tab='.$tab; // No urlencode here, done later
+		$backtourl = $_SERVER["PHP_SELF"].$backtourlparam;
+
+		$regs = array();
+		if (is_array($objMod->config_page_url))
+		{
+			$i = 0;
+			foreach ($objMod->config_page_url as $page)
+			{
+				$urlpage = $page;
+				if ($i++)
+				{
+					$linktoenabledisable .= ' <a href="'.$urlpage.'" title="'.$langs->trans($page).'">'.img_picto(ucfirst($page), "setup").'</a>';
+					//    print '<a href="'.$page.'">'.ucfirst($page).'</a>&nbsp;';
+				}
+				else
+				{
+					if (preg_match('/^([^@]+)@([^@]+)$/i', $urlpage, $regs))
+					{
+						$urltouse = dol_buildpath('/'.$regs[2].'/admin/'.$regs[1], 1);
+						$linktoenabledisable .= ' &nbsp; <a href="'.$urltouse.(preg_match('/\?/', $urltouse) ? '&' : '?').'save_lastsearch_values=1&backtopage='.urlencode($backtourl).'" title="'.$langs->trans("Setup").'">'.img_picto($langs->trans("Setup"), "setup", 'style="padding-right: 6px"').'</a>';
+					}
+					else
+					{
+						$urltouse = $urlpage;
+						$linktoenabledisable .= ' &nbsp; <a href="'.$urltouse.(preg_match('/\?/', $urltouse) ? '&' : '?').'save_lastsearch_values=1&backtopage='.urlencode($backtourl).'" title="'.$langs->trans("Setup").'">'.img_picto($langs->trans("Setup"), "setup", 'style="padding-right: 6px"').'</a>';
+					}
+				}
+			}
+		}
+		elseif (preg_match('/^([^@]+)@([^@]+)$/i', $objMod->config_page_url, $regs))
+		{
+			$linktoenabledisable .= ' &nbsp; <a href="'.dol_buildpath('/'.$regs[2].'/admin/'.$regs[1], 1).'?save_lastsearch_values=1&backtopage='.urlencode($backtourl).'" title="'.$langs->trans("Setup").'">'.img_picto($langs->trans("Setup"), "setup", 'style="padding-right: 6px"').'</a>';
+		}
+	}
+	else
+	{
+		$linktoenabledisable.='<a class="reposition asetresetmodule" href="'.$_SERVER["PHP_SELF"].'?id='.$moduleobj->numero.'&action=set&value=mod' . $module . $param . '">';
+		$linktoenabledisable.=img_picto($langs->trans("ModuleIsNotActive", $urltomodulesetup), 'switch_off', '', false, 0, 0, '', 'classfortooltip', 1);
+		$linktoenabledisable.="</a>\n";
+	}
+
+	if (! empty($conf->$modulelowercase->enabled))
+	{
+		$modulestatusinfo=$form->textwithpicto('', $langs->trans("Warning").' : '.$langs->trans("ModuleIsLive"), -1, 'warning');
+	}
+
+	// Loop to show tab of each module
+	foreach ($listofmodules as $tmpmodule => $tmpmodulearray)
+	{
+		$head[$h][0] = $_SERVER["PHP_SELF"].'?module='.$tmpmodulearray['modulenamewithcase'].($forceddirread ? '@'.$dirread : '');
+		$head[$h][1] = $tmpmodulearray['modulenamewithcase'];
+		$head[$h][2] = $tmpmodulearray['modulenamewithcase'];
+
+		/*if ($tmpmodule == $modulelowercase) {
+			$head[$h][1] .= ' '.$modulestatusinfo;
+			$head[$h][1] .= ' '.$linktoenabledisable;
+		}*/
+
+		$h++;
+	}
 }
 
 $head[$h][0] = $_SERVER["PHP_SELF"].'?module=deletemodule';
@@ -1704,75 +1782,6 @@ elseif (! empty($module))
 		$head2 = array();
 		$h=0;
 
-		$modulelowercase=strtolower($module);
-		$const_name = 'MAIN_MODULE_'.strtoupper($module);
-
-		$param='';
-		if ($tab)    $param.='&tab='.urlencode($tab);
-		if ($module) $param.='&module='.urlencode($module);
-		if ($tabobj) $param.='&tabobj='.urlencode($tabobj);
-
-		$urltomodulesetup='<a href="'.DOL_URL_ROOT.'/admin/modules.php?search_keyword='.urlencode($module).'">'.$langs->trans('Home').'-'.$langs->trans("Setup").'-'.$langs->trans("Modules").'</a>';
-		$linktoenabledisable='';
-		if (! empty($conf->global->$const_name))	// If module is already activated
-		{
-			$linktoenabledisable.='<a class="reposition asetresetmodule" href="'.$_SERVER["PHP_SELF"].'?id='.$moduleobj->numero.'&action=reset&value=mod' . $module . $param . '">';
-			$linktoenabledisable.=img_picto($langs->trans("Activated"), 'switch_on', '', false, 0, 0, '', '', 1);
-			$linktoenabledisable.='</a>';
-
-			$objMod = $moduleobj;
-			$backtourlparam = '';
-			$backtourlparam .= ($backtourlparam ? '&' : '?').'module='.$module; // No urlencode here, done later
-			if ($tab) $backtourlparam .= ($backtourlparam ? '&' : '?').'tab='.$tab; // No urlencode here, done later
-			$backtourl = $_SERVER["PHP_SELF"].$backtourlparam;
-
-			$regs = array();
-			if (is_array($objMod->config_page_url))
-			{
-				$i = 0;
-				foreach ($objMod->config_page_url as $page)
-				{
-					$urlpage = $page;
-					if ($i++)
-					{
-						$linktoenabledisable .= ' <a href="'.$urlpage.'" title="'.$langs->trans($page).'">'.img_picto(ucfirst($page), "setup").'</a>';
-						//    print '<a href="'.$page.'">'.ucfirst($page).'</a>&nbsp;';
-					}
-					else
-					{
-						if (preg_match('/^([^@]+)@([^@]+)$/i', $urlpage, $regs))
-						{
-							$urltouse = dol_buildpath('/'.$regs[2].'/admin/'.$regs[1], 1);
-							$linktoenabledisable .= ' &nbsp; <a href="'.$urltouse.(preg_match('/\?/', $urltouse) ? '&' : '?').'save_lastsearch_values=1&backtopage='.urlencode($backtourl).'" title="'.$langs->trans("Setup").'">'.img_picto($langs->trans("Setup"), "setup", 'style="padding-right: 6px"').'</a>';
-						}
-						else
-						{
-							$urltouse = $urlpage;
-							$linktoenabledisable .= ' &nbsp; <a href="'.$urltouse.(preg_match('/\?/', $urltouse) ? '&' : '?').'save_lastsearch_values=1&backtopage='.urlencode($backtourl).'" title="'.$langs->trans("Setup").'">'.img_picto($langs->trans("Setup"), "setup", 'style="padding-right: 6px"').'</a>';
-						}
-					}
-				}
-			}
-			elseif (preg_match('/^([^@]+)@([^@]+)$/i', $objMod->config_page_url, $regs))
-			{
-				$linktoenabledisable .= ' &nbsp; <a href="'.dol_buildpath('/'.$regs[2].'/admin/'.$regs[1], 1).'?save_lastsearch_values=1&backtopage='.urlencode($backtourl).'" title="'.$langs->trans("Setup").'">'.img_picto($langs->trans("Setup"), "setup", 'style="padding-right: 6px"').'</a>';
-			}
-		}
-		else
-		{
-			$linktoenabledisable.='<a class="reposition asetresetmodule" href="'.$_SERVER["PHP_SELF"].'?id='.$moduleobj->numero.'&action=set&value=mod' . $module . $param . '">';
-			$linktoenabledisable.=img_picto($langs->trans("Disabled"), 'switch_off', '', false, 0, 0, '', '', 1);
-			$linktoenabledisable.="</a>\n";
-		}
-
-		if (empty($conf->$modulelowercase->enabled))
-		{
-			$modulestatusinfo=$form->textwithpicto($langs->trans("ModuleIsNotActive", $urltomodulesetup), '', -1, 'help');
-		}
-		else
-		{
-			$modulestatusinfo=$form->textwithpicto($langs->trans("ModuleIsLive"), $langs->trans("Warning"), -1, 'warning');
-		}
 
 		$head2[$h][0] = $_SERVER["PHP_SELF"].'?tab=description&module='.$module.($forceddirread?'@'.$dirread:'');
 		$head2[$h][1] = $langs->trans("Description");
@@ -1850,8 +1859,8 @@ elseif (! empty($module))
 		$h++;
 
 		// Link to enable / disable
-		print $modulestatusinfo;
-		print ' '.$linktoenabledisable.'<br>';
+		print '<div class="center">'.$modulestatusinfo;
+		print ' '.$linktoenabledisable.'</div>';
 
 		print '<br>';
 
