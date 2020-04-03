@@ -551,29 +551,31 @@ class MyObject extends CommonObject
 		}
 		$this->newref = $num;
 
-		// Validate
-		$sql = "UPDATE ".MAIN_DB_PREFIX.$this->table_element;
-		$sql .= " SET ref = '".$this->db->escape($num)."',";
-		$sql .= " status = ".self::STATUS_VALIDATED;
-		if (! empty($this->fields['date_validation'])) $sql .= ", date_validation = '".$this->db->idate($now)."',";
-		if (! empty($this->fields['fk_user_valid'])) $sql .= ", fk_user_valid = ".$user->id;
-		$sql .= " WHERE rowid = ".$this->id;
+		if (! empty($num)) {
+			// Validate
+			$sql = "UPDATE ".MAIN_DB_PREFIX.$this->table_element;
+			$sql .= " SET ref = '".$this->db->escape($num)."',";
+			$sql .= " status = ".self::STATUS_VALIDATED;
+			if (! empty($this->fields['date_validation'])) $sql .= ", date_validation = '".$this->db->idate($now)."',";
+			if (! empty($this->fields['fk_user_valid'])) $sql .= ", fk_user_valid = ".$user->id;
+			$sql .= " WHERE rowid = ".$this->id;
 
-		dol_syslog(get_class($this)."::validate()", LOG_DEBUG);
-		$resql = $this->db->query($sql);
-		if (!$resql)
-		{
-			dol_print_error($this->db);
-			$this->error = $this->db->lasterror();
-			$error++;
-		}
+			dol_syslog(get_class($this)."::validate()", LOG_DEBUG);
+			$resql = $this->db->query($sql);
+			if (!$resql)
+			{
+				dol_print_error($this->db);
+				$this->error = $this->db->lasterror();
+				$error++;
+			}
 
-		if (!$error && !$notrigger)
-		{
-			// Call trigger
-			$result = $this->call_trigger('MYOBJECT_VALIDATE', $user);
-			if ($result < 0) $error++;
-			// End call triggers
+			if (!$error && !$notrigger)
+			{
+				// Call trigger
+				$result = $this->call_trigger('MYOBJECT_VALIDATE', $user);
+				if ($result < 0) $error++;
+				// End call triggers
+			}
 		}
 
 		if (!$error)
@@ -946,23 +948,28 @@ class MyObject extends CommonObject
 				return '';
 			}
 
-			$obj = new $classname();
-			$numref = $obj->getNextValue($this);
+			if (class_exists($classname)) {
+				$obj = new $classname();
+				$numref = $obj->getNextValue($this);
 
-			if ($numref != "")
-			{
-				return $numref;
-			}
-			else
-			{
-				$this->error = $obj->error;
-				//dol_print_error($this->db,get_class($this)."::getNextNumRef ".$obj->error);
+				if ($numref != "")
+				{
+					return $numref;
+				}
+				else
+				{
+					$this->error = $obj->error;
+					//dol_print_error($this->db,get_class($this)."::getNextNumRef ".$obj->error);
+					return "";
+				}
+			} else {
+				print $langs->trans("Error")." ".$langs->trans("ClassNotFound");
 				return "";
 			}
 		}
 		else
 		{
-			print $langs->trans("Error")." ".$langs->trans("Error_MYMODULE_MYOBJECT_ADDON_NotDefined");
+			print $langs->trans("ErrorNumberingModuleNotSetup", $this->element);
 			return "";
 		}
 	}
