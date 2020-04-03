@@ -72,8 +72,8 @@ class mod_commande_marbre extends ModeleNumRefCommandes
 
 
 	/**
-     *  Checks if the numbers already in force in the data base do not
-     *  cause conflicts that would prevent this numbering from working.
+     *  Checks if the numbers already in the database do not
+     *  cause conflicts that would prevent this numbering working.
 	 *
 	 *  @return     boolean     false if conflict, true if ok
 	 */

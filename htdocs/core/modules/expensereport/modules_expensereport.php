@@ -117,7 +117,7 @@ abstract class ModeleNumRefExpenseReport
 	}
 
 	/**
-	 *	Test whether the numbers already in force in the base do not cause conflicts that would prevent this numbering from working.
+	 *	Test whether the numbers already in force in the base do not cause conflicts that would prevent this numbering working.
 	 *
 	 *	@return     boolean     false if conflict, true if ok
 	 */
