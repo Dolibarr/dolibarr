@@ -16,9 +16,10 @@
 --
 -- ============================================================================
 
-ALTER TABLE llx_categorie_websitepage ADD PRIMARY KEY pk_categorie_websitepage (fk_categorie, fk_websitepage);
-ALTER TABLE llx_categorie_websitepage ADD INDEX idx_categorie_websitepage_fk_categorie (fk_categorie);
-ALTER TABLE llx_categorie_websitepage ADD INDEX idx_categorie_websitepage_fk_websitepage (fk_websitepage);
+ALTER TABLE llx_categorie_website_page ADD PRIMARY KEY pk_categorie_website_page (fk_categorie, fk_websitepage);
+ALTER TABLE llx_categorie_website_page ADD INDEX idx_categorie_website_page_fk_categorie (fk_categorie);
+ALTER TABLE llx_categorie_website_page ADD INDEX idx_categorie_website_page_fk_website_page (fk_websitepage);
 
-ALTER TABLE llx_categorie_websitepage ADD CONSTRAINT fk_categorie_websitepage_categorie_rowid FOREIGN KEY (fk_categorie) REFERENCES llx_categorie (rowid);
-ALTER TABLE llx_categorie_websitepage ADD CONSTRAINT fk_categorie_websitepage_fk_websitepage FOREIGN KEY (fk_websitepage) REFERENCES llx_website_page (rowid);
+ALTER TABLE llx_categorie_website_page ADD CONSTRAINT fk_categorie_websitepage_categorie_rowid FOREIGN KEY (fk_categorie) REFERENCES llx_categorie (rowid);
+ALTER TABLE llx_categorie_website_page ADD CONSTRAINT fk_categorie_websitepage_website_page_rowid FOREIGN KEY (fk_website_page) REFERENCES llx_website_page (rowid);
+
