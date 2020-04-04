@@ -184,7 +184,7 @@ if ($mode == 'confirm' && ! $error) {
 	print $nbimported." page(s) imported with importid=".$importid."\n";
 	$db->commit();
 } else {
-	print "Rollback\n";
+	print "Rollback (mode=test)\n";
 	$db->rollback();
 }
 
