@@ -4195,6 +4195,8 @@ span[phptag] {
 	padding: 2px 5px 3px 5px !important;
 	margin: 2px 4px 2px 4px  !important;
     line-height: normal;
+    background: #f5f5f5 !important;
+    border: 1px solid #ccc !important;
 }
 .websiteselection {
 	/* display: inline-block; */
