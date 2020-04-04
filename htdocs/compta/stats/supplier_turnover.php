@@ -163,7 +163,7 @@ if ($modecompta == 'CREANCES-DETTES')
 	$sql .= " FROM ".MAIN_DB_PREFIX."facture_fourn as f";
 	$sql .= " WHERE f.fk_statut in (1,2)";
 	$sql .= " AND f.type IN (0,2)";
-	$sql .= " AND f.entity IN (".getEntity('invoice').")";
+	$sql .= " AND f.entity IN (".getEntity('supplier_invoice').")";
 	if ($socid) $sql .= " AND f.fk_soc = ".$socid;
 }
 elseif ($modecompta == "RECETTES-DEPENSES")
@@ -174,7 +174,7 @@ elseif ($modecompta == "RECETTES-DEPENSES")
 	$sql .= ", ".MAIN_DB_PREFIX."paiementfourn as p";
 	$sql .= " WHERE p.rowid = pf.fk_paiementfourn";
 	$sql .= " AND pf.fk_facturefourn = f.rowid";
-	$sql .= " AND f.entity IN (".getEntity('invoice').")";
+	$sql .= " AND f.entity IN (".getEntity('supplier_invoice').")";
 	if ($socid) $sql .= " AND f.fk_soc = ".$socid;
 }
 elseif ($modecompta == "BOOKKEEPING")
@@ -227,7 +227,7 @@ for ($annee = $year_start; $annee <= $year_end; $annee++)
 {
 	if ($modecompta == 'CREANCES-DETTES') print '<td align="center" width="10%" colspan="3">';
 	else print '<td align="center" width="10%" colspan="2" class="borderrightlight">';
-	if ($modecompta != 'BOOKKEEPING') print '<a href="supplier_turnover_by_thirdparty.php?year='.$annee.'">';
+	if ($modecompta != 'BOOKKEEPING') print '<a href="supplier_turnover_by_thirdparty.php?year='.$annee.($modecompta ? '&modecompta='.$modecompta : '').'">';
 	print $annee;
     if ($conf->global->SOCIETE_FISCAL_MONTH_START > 1) print '-'.($annee + 1);
     if ($modecompta != 'BOOKKEEPING') print '</a>';
