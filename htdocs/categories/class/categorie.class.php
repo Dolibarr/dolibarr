@@ -55,6 +55,7 @@ class Categorie extends CommonObject
     const TYPE_BANK_LINE = 'bank_line';
     const TYPE_WAREHOUSE = 'warehouse';
     const TYPE_ACTIONCOMM = 'actioncomm';
+    const TYPE_WEBSITE_PAGE = 'website_page';
 
 	/**
 	 * @var string String with name of icon for myobject. Must be the part after the 'object_' into object_myobject.png
@@ -65,7 +66,7 @@ class Categorie extends CommonObject
 	/**
 	 * @var array ID mapping from type string
 	 *
-	 * @note This array should be remove in future, once previous constants are moved to the string value. Deprecated
+	 * @note This array should be removed in future, once previous constants are moved to the string value. Deprecated
 	 */
 	protected $MAP_ID = array(
 		'product'      => 0,
@@ -78,11 +79,13 @@ class Categorie extends CommonObject
 		'user'         => 7,
 		'bank_line'    => 8,
 		'warehouse'    => 9,
-        'actioncomm' => 10,
+        'actioncomm'   => 10
 	);
 
     /**
 	 * @var array Code mapping from ID
+	 *
+	 * @note This array should be removed in future, once previous constants are moved to the string value. Deprecated
 	 */
 	public static $MAP_ID_TO_CODE = array(
 		0 => 'product',
@@ -99,41 +102,26 @@ class Categorie extends CommonObject
 	);
 
 	/**
-	 * @var array Foreign keys mapping from type string
+	 * @var array Foreign keys mapping from type string when value does not match
 	 *
 	 * @todo Move to const array when PHP 5.6 will be our minimum target
 	 */
 	protected $MAP_CAT_FK = array(
-		'product'  => 'product',
 		'customer' => 'soc',
 		'supplier' => 'soc',
-		'member'   => 'member',
 		'contact'  => 'socpeople',
-		'user'     => 'user',
-        'account'  => 'account', // old key for bank_account
         'bank_account' => 'account',
-        'project'  => 'project',
-        'warehouse'=> 'warehouse',
-        'actioncomm' => 'actioncomm',
     );
 
     /**
-	 * @var array Category tables mapping from type string (llx_categorie_...)
+	 * @var array Category tables mapping from type string (llx_categorie_...) when value does not match
 	 *
 	 * @note Move to const array when PHP 5.6 will be our minimum target
 	 */
 	protected $MAP_CAT_TABLE = array(
-		'product'  => 'product',
 		'customer' => 'societe',
 		'supplier' => 'fournisseur',
-		'member'   => 'member',
-		'contact'  => 'contact',
-		'user'     => 'user',
-        'account'  => 'account', // old key for bank_account
         'bank_account'=> 'account',
-        'project'  => 'project',
-        'warehouse'=> 'warehouse',
-        'actioncomm' => 'actioncomm',
 	);
 
     /**
@@ -153,25 +141,22 @@ class Categorie extends CommonObject
         'project'  => 'Project',
         'warehouse'=> 'Entrepot',
         'actioncomm' => 'ActionComm',
+		'website_page' => 'WebsitePage'
 	);
 
     /**
-	 * @var array Object table mapping from type string (table llx_...)
+	 * @var array Object table mapping from type string (table llx_...) when value of key does not match table name.
 	 *
 	 * @note Move to const array when PHP 5.6 will be our minimum target
 	 */
 	protected $MAP_OBJ_TABLE = array(
-		'product'  => 'product',
 		'customer' => 'societe',
 		'supplier' => 'societe',
 		'member'   => 'adherent',
 		'contact'  => 'socpeople',
-		'user'     => 'user',
 		'account'  => 'bank_account',	// old for bank account
-		'bank_account'  => 'bank_account',
 		'project'  => 'projet',
-        'warehouse'=> 'entrepot',
-        'actioncomm' => 'actioncomm',
+        'warehouse'=> 'entrepot'
 	);
 
 	/**
@@ -278,10 +263,10 @@ class Categorie extends CommonObject
 			$mapList[] = array(
 				'id'        => $mapId,
 				'code'      => $mapCode,
-				'cat_fk'    => $this->MAP_CAT_FK[$mapCode],
-				'cat_table' => $this->MAP_CAT_TABLE[$mapCode],
-				'obj_class' => $this->MAP_OBJ_CLASS[$mapCode],
-				'obj_table' => $this->MAP_OBJ_TABLE[$mapCode]
+				'cat_fk'    => (empty($this->MAP_CAT_FK[$mapCode]) ? $mapCode : $this->MAP_CAT_FK[$mapCode]),
+				'cat_table' => (empty($this->MAP_CAT_TABLE[$mapCode]) ? $mapCode : $this->MAP_CAT_TABLE[$mapCode]),
+				'obj_class' => (empty($this->MAP_OBJ_CLASS[$mapCode]) ? $mapCode : $this->MAP_OBJ_CLASS[$mapCode]),
+				'obj_table' => (empty($this->MAP_OBJ_TABLE[$mapCode]) ? $mapCode : $this->MAP_OBJ_TABLE[$mapCode])
 			);
 		}
 
@@ -672,8 +657,8 @@ class Categorie extends CommonObject
 
         $this->db->begin();
 
-		$sql = "INSERT INTO ".MAIN_DB_PREFIX."categorie_".$this->MAP_CAT_TABLE[$type];
-		$sql .= " (fk_categorie, fk_".$this->MAP_CAT_FK[$type].")";
+        $sql = "INSERT INTO ".MAIN_DB_PREFIX."categorie_".(empty($this->MAP_CAT_TABLE[$type]) ? $type : $this->MAP_CAT_TABLE[$type]);
+		$sql .= " (fk_categorie, fk_".(empty($this->MAP_CAT_FK[$type]) ? $type : $this->MAP_CAT_FK[$type]).")";
 		$sql .= " VALUES (".$this->id.", ".$obj->id.")";
 
 		dol_syslog(get_class($this).'::add_type', LOG_DEBUG);
@@ -782,9 +767,9 @@ class Categorie extends CommonObject
 
         $this->db->begin();
 
-		$sql = "DELETE FROM ".MAIN_DB_PREFIX."categorie_".$this->MAP_CAT_TABLE[$type];
+        $sql = "DELETE FROM ".MAIN_DB_PREFIX."categorie_".(empty($this->MAP_CAT_TABLE[$type]) ? $type : $this->MAP_CAT_TABLE[$type]);
 		$sql .= " WHERE fk_categorie = ".$this->id;
-		$sql .= " AND   fk_".$this->MAP_CAT_FK[$type]."  = ".$obj->id;
+		$sql .= " AND fk_".(empty($this->MAP_CAT_FK[$type]) ? $type : $this->MAP_CAT_FK[$type])." = ".$obj->id;
 
 		dol_syslog(get_class($this).'::del_type', LOG_DEBUG);
 		if ($this->db->query($sql))
@@ -835,12 +820,12 @@ class Categorie extends CommonObject
 		$tmpclass = $this->MAP_OBJ_CLASS[$type];
 		$obj = new $tmpclass($this->db);
 
-		$sql = "SELECT c.fk_".$this->MAP_CAT_FK[$type];
-		$sql .= " FROM ".MAIN_DB_PREFIX."categorie_".$this->MAP_CAT_TABLE[$type]." as c";
-		$sql .= ", ".MAIN_DB_PREFIX.$this->MAP_OBJ_TABLE[$type]." as o";
+		$sql = "SELECT c.fk_".(empty($this->MAP_CAT_FK[$type]) ? $type : $this->MAP_CAT_FK[$type]);
+		$sql .= " FROM ".MAIN_DB_PREFIX."categorie_".(empty($this->MAP_CAT_TABLE[$type]) ? $type : $this->MAP_CAT_TABLE[$type])." as c";
+		$sql .= ", ".MAIN_DB_PREFIX.(empty($this->MAP_OBJ_TABLE[$type]) ? $type : $this->MAP_OBJ_TABLE[$type])." as o";
 		$sql .= " WHERE o.entity IN (".getEntity($obj->element).")";
 		$sql .= " AND c.fk_categorie = ".$this->id;
-		$sql .= " AND c.fk_".$this->MAP_CAT_FK[$type]." = o.rowid";
+		$sql .= " AND c.fk_".(empty($this->MAP_CAT_FK[$type]) ? $type : $this->MAP_CAT_FK[$type])." = o.rowid";
 		// Protection for external users
 		if (($type == 'customer' || $type == 'supplier') && $user->socid > 0)
 		{
@@ -857,12 +842,12 @@ class Categorie extends CommonObject
 			{
 			    if ($onlyids)
 			    {
-			        $objs[] = $rec['fk_'.$this->MAP_CAT_FK[$type]];
+			    	$objs[] = $rec['fk_'.(empty($this->MAP_CAT_FK[$type]) ? $type : $this->MAP_CAT_FK[$type])];
 			    }
 			    else
 			    {
 				    $obj = new $this->MAP_OBJ_CLASS[$type]($this->db);
-				    $obj->fetch($rec['fk_'.$this->MAP_CAT_FK[$type]]);
+				    $obj->fetch($rec['fk_'.(empty($this->MAP_CAT_FK[$type]) ? $type : $this->MAP_CAT_FK[$type])]);
 				    $objs[] = $obj;
 			    }
 			}
@@ -885,8 +870,8 @@ class Categorie extends CommonObject
 	 */
 	public function containsObject($type, $object_id)
 	{
-		$sql = "SELECT COUNT(*) as nb FROM ".MAIN_DB_PREFIX."categorie_".$this->MAP_CAT_TABLE[$type];
-		$sql .= " WHERE fk_categorie = ".$this->id." AND fk_".$this->MAP_CAT_FK[$type]." = ".$object_id;
+		$sql = "SELECT COUNT(*) as nb FROM ".MAIN_DB_PREFIX."categorie_".(empty($this->MAP_CAT_TABLE[$type]) ? $type : $this->MAP_CAT_TABLE[$type]);
+		$sql .= " WHERE fk_categorie = ".$this->id." AND fk_".(empty($this->MAP_CAT_FK[$type]) ? $type : $this->MAP_CAT_FK[$type])." = ".$object_id;
 		dol_syslog(get_class($this)."::containsObject", LOG_DEBUG);
 		$resql = $this->db->query($sql);
 		if ($resql) {
@@ -1546,8 +1531,8 @@ class Categorie extends CommonObject
         else
         {
     		$sql = "SELECT ct.fk_categorie, c.label, c.rowid";
-    		$sql .= " FROM ".MAIN_DB_PREFIX."categorie_".$this->MAP_CAT_TABLE[$type]." as ct, ".MAIN_DB_PREFIX."categorie as c";
-    		$sql .= " WHERE ct.fk_categorie = c.rowid AND ct.fk_".$this->MAP_CAT_FK[$type]." = ".(int) $id." AND c.type = ".$this->MAP_ID[$type];
+    		$sql .= " FROM ".MAIN_DB_PREFIX."categorie_".(empty($this->MAP_CAT_TABLE[$type]) ? $type : $this->MAP_CAT_TABLE[$type])." as ct, ".MAIN_DB_PREFIX."categorie as c";
+    		$sql .= " WHERE ct.fk_categorie = c.rowid AND ct.fk_".(empty($this->MAP_CAT_FK[$type]) ? $type : $this->MAP_CAT_FK[$type])." = ".(int) $id." AND c.type = ".$this->MAP_ID[$type];
     		$sql .= " AND c.entity IN (".getEntity('category').")";
 
     		$res = $this->db->query($sql);
