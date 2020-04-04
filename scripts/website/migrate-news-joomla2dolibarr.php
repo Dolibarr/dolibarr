@@ -123,12 +123,15 @@ while ($obj = $dbjoomla->fetch_object($resql)) {
 
 		$htmltext = "";
 		if ($blogpostheader) $htmltext .= $blogpostheader."\n";
-		$htmltext .= '<section id="mysectionnews" contenteditable="true">'."\n";
+		$htmltext .= '<section id="mysectionnewsintro" contenteditable="true">'."\n";
 		$htmltext .= $obj->introtext;
+		$htmltext .= '</section>'."\n";
 		if ($obj->fulltext) {
-			$htmltext .= '<br>'."\n".'<hr>'."\n".'<br>'."\n".$obj->fulltext;
+			$htmltext .= '<section id="mysectionnewscontent" contenteditable="true">'."\n";
+			$htmltext .= '<br>'."\n".'<hr>'."\n".'<br>'."\n";
+			$htmltext .= $obj->fulltext;
+			$htmltext .= "</section>";
 		}
-		$htmltext .= "\n</section>";
 		if ($blogpostfooter) $htmltext .= "\n".$blogpostfooter;
 
 		$language = ($obj->language && $obj->language != '*' ? $obj->language : 'en');
