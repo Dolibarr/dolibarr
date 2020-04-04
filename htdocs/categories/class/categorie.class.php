@@ -917,7 +917,8 @@ class Categorie extends CommonObject
 	{
         // phpcs:enable
 		$sql = "SELECT rowid FROM ".MAIN_DB_PREFIX."categorie";
-		$sql.= " WHERE fk_parent = ".$this->id;
+		$sql .= " WHERE fk_parent = ".$this->id;
+		$sql .= " AND entity IN (".getEntity('category').")";
 
 		$res  = $this->db->query($sql);
 		if ($res)
