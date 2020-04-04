@@ -260,3 +260,5 @@ PurchaseTurnoverCollected=Purchase turnover collected
 RulesPurchaseTurnoverDue=- It includes the supplier's due invoices whether they are paid or not. <br>- It is based on the invoice date of these invoices.<br>
 RulesPurchaseTurnoverIn=- It includes all the effective payments of invoices done to suppliers.<br>- It is based on the payment date of these invoices<br>
 RulesPurchaseTurnoverTotalPurchaseJournal=It includes all debit lines from the purchase journal.
+ReportPurchaseTurnover=Purchase turnover invoiced
+ReportPurchaseTurnoverCollected=Purchase turnover collected
