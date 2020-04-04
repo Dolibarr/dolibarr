@@ -577,8 +577,8 @@ if ($resql)
 	if (!empty($arrayfields['state.nom']['checked']))        print_liste_field_titre($arrayfields['state.nom']['label'], $_SERVER["PHP_SELF"], "state.nom", "", $param, '', $sortfield, $sortorder);
 	if (!empty($arrayfields['country.code_iso']['checked'])) print_liste_field_titre($arrayfields['country.code_iso']['label'], $_SERVER["PHP_SELF"], "country.code_iso", "", $param, '', $sortfield, $sortorder, 'center ');
 	if (!empty($arrayfields['typent.code']['checked']))      print_liste_field_titre($arrayfields['typent.code']['label'], $_SERVER["PHP_SELF"], "typent.code", "", $param, '', $sortfield, $sortorder, 'center ');
-  if (!empty($arrayfields['e.weight']['checked']))         print_liste_field_titre($arrayfields['e.weight']['label'], $_SERVER["PHP_SELF"], "e.weight", "", $param, '', $sortfield, $sortorder, 'center ');
-  if (!empty($arrayfields['e.date_delivery']['checked']))  print_liste_field_titre($arrayfields['e.date_delivery']['label'], $_SERVER["PHP_SELF"], "e.date_delivery", "", $param, '', $sortfield, $sortorder, 'center ');
+	if (!empty($arrayfields['e.weight']['checked']))         print_liste_field_titre($arrayfields['e.weight']['label'], $_SERVER["PHP_SELF"], "e.weight", "", $param, '', $sortfield, $sortorder, 'center ');
+	if (!empty($arrayfields['e.date_delivery']['checked']))  print_liste_field_titre($arrayfields['e.date_delivery']['label'], $_SERVER["PHP_SELF"], "e.date_delivery", "", $param, '', $sortfield, $sortorder, 'center ');
 	if (!empty($arrayfields['l.ref']['checked']))            print_liste_field_titre($arrayfields['l.ref']['label'], $_SERVER["PHP_SELF"], "l.ref", "", $param, '', $sortfield, $sortorder);
 	if (!empty($arrayfields['l.date_delivery']['checked']))  print_liste_field_titre($arrayfields['l.date_delivery']['label'], $_SERVER["PHP_SELF"], "l.date_delivery", "", $param, '', $sortfield, $sortorder, 'center ');
 	// Extra fields
@@ -608,8 +608,8 @@ if ($resql)
 		$companystatic->ref = $obj->name;
 		$companystatic->name = $obj->name;
 
-    $object = new Expedition($db);
-    $object->fetch($obj->rowid);
+		$object = new Expedition($db);
+		$object->fetch($obj->rowid);
 		print '<tr class="oddeven">';
 
 		// Ref
@@ -617,7 +617,7 @@ if ($resql)
 		{
 			print "<td>";
 			print $shipment->getNomUrl(1);
-      print "</td>\n";
+			print "</td>\n";
 			if (!$i) $totalarray['nbfield']++;
 		}
 
@@ -679,22 +679,22 @@ if ($resql)
 		}
 		// Weight
 		if (!empty($arrayfields['e.weight']['checked']))
-		{ 
+		{
 			print '<td class="center">';
-		if (empty($object->trueWeight))
-		{
-      $tmparray = $object->getTotalWeightVolume();
-      print showDimensionInBestUnit($tmparray['weight'], 0, "weight", $langs, isset($conf->global->MAIN_WEIGHT_DEFAULT_ROUND)?$conf->global->MAIN_WEIGHT_DEFAULT_ROUND:-1, isset($conf->global->MAIN_WEIGHT_DEFAULT_UNIT)?$conf->global->MAIN_WEIGHT_DEFAULT_UNIT:'no');
-      print $form->textwithpicto('', $langs->trans('EstimatedWeight'), 1);
-    }
-		else
-		{
-			print $object->trueWeight;
-			print ($object->trueWeight && $object->weight_units!='')?' '.measuringUnitString(0, "weight", $object->weight_units):'';
-		}
+			if (empty($object->trueWeight))
+			{
+				$tmparray = $object->getTotalWeightVolume();
+				print showDimensionInBestUnit($tmparray['weight'], 0, "weight", $langs, isset($conf->global->MAIN_WEIGHT_DEFAULT_ROUND)?$conf->global->MAIN_WEIGHT_DEFAULT_ROUND:-1, isset($conf->global->MAIN_WEIGHT_DEFAULT_UNIT)?$conf->global->MAIN_WEIGHT_DEFAULT_UNIT:'no');
+				print $form->textwithpicto('', $langs->trans('EstimatedWeight'), 1);
+			}
+			else
+			{
+				print $object->trueWeight;
+				print ($object->trueWeight && $object->weight_units!='')?' '.measuringUnitString(0, "weight", $object->weight_units):'';
+			}
 			print '</td>';
 			if (!$i) $totalarray['nbfield']++;
-    }
+		}
 		// Date delivery planed
 		if (!empty($arrayfields['e.date_delivery']['checked']))
 		{
