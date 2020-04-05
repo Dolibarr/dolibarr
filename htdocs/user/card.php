@@ -1243,13 +1243,8 @@ if ($action == 'create' || $action == 'adduserldap')
 	}
 
 	// Other attributes
-	$parameters = array('objectsrc' => $objectsrc, 'colspan' => ' colspan="3"');
-	$reshook = $hookmanager->executeHooks('formObjectOptions', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
-	print $hookmanager->resPrint;
-	if (empty($reshook))
-	{
-		print $object->showOptionals($extrafields, 'edit');
-	}
+	$parameters = array('colspan' => ' colspan="3"');
+	include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_add.tpl.php';
 
 	// Note
 	print '<tr><td class="tdtop">';
@@ -2515,74 +2510,6 @@ else
 				}
 			}
 
-			// // Skype
-			// if (! empty($conf->socialnetworks->enabled))
-			// {
-			// 	print '<tr><td>'.$langs->trans("Skype").'</td>';
-			// 	print '<td>';
-			// 	if ($caneditfield  && empty($object->ldap_sid))
-			// 	{
-			// 		print '<input size="40" type="text" name="skype" class="flat" value="'.$object->skype.'">';
-			// 	}
-			// 	else
-			// 	{
-			// 		print '<input type="hidden" name="skype" value="'.$object->skype.'">';
-			// 		print $object->skype;
-			// 	}
-			// 	print '</td></tr>';
-			// }
-
-			// // Twitter
-			// if (! empty($conf->socialnetworks->enabled))
-			// {
-			// 	print '<tr><td>'.$langs->trans("Twitter").'</td>';
-			// 	print '<td>';
-			// 	if ($caneditfield  && empty($object->ldap_sid))
-			// 	{
-			// 		print '<input size="40" type="text" name="twitter" class="flat" value="'.$object->twitter.'">';
-			// 	}
-			// 	else
-			// 	{
-			// 		print '<input type="hidden" name="twitter" value="'.$object->twitter.'">';
-			// 		print $object->twitter;
-			// 	}
-			// 	print '</td></tr>';
-			// }
-
-			// // Facebook
-			// if (! empty($conf->socialnetworks->enabled))
-			// {
-			// 	print '<tr><td>'.$langs->trans("Facebook").'</td>';
-			// 	print '<td>';
-			// 	if ($caneditfield  && empty($object->ldap_sid))
-			// 	{
-			// 		print '<input size="40" type="text" name="facebook" class="flat" value="'.$object->facebook.'">';
-			// 	}
-			// 	else
-			// 	{
-			// 		print '<input type="hidden" name="facebook" value="'.$object->facebook.'">';
-			// 		print $object->facebook;
-			// 	}
-			// 	print '</td></tr>';
-			// }
-
-            // // LinkedIn
-            // if (! empty($conf->socialnetworks->enabled))
-            // {
-            //     print '<tr><td>'.$langs->trans("LinkedIn").'</td>';
-            //     print '<td>';
-            //     if ($caneditfield  && empty($object->ldap_sid))
-            //     {
-            //         print '<input size="40" type="text" name="linkedin" class="flat" value="'.$object->linkedin.'">';
-            //     }
-            //     else
-            //     {
-            //         print '<input type="hidden" name="linkedin" value="'.$object->linkedin.'">';
-            //         print $object->linkedin;
-            //     }
-            //     print '</td></tr>';
-            // }
-
 			// OpenID url
 			if (isset($conf->file->main_authentication) && preg_match('/openid/', $conf->file->main_authentication) && !empty($conf->global->MAIN_OPENIDURL_PERUSER))
 			{
@@ -2738,12 +2665,12 @@ else
 
 			// Other attributes
 			$parameters = array('colspan' => ' colspan="2"');
+			//include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_edit.tpl.php';		// We do not use common tpl here because we need a special test on $caneditfield
 			$reshook = $hookmanager->executeHooks('formObjectOptions', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
 			print $hookmanager->resPrint;
 			if (empty($reshook))
 			{
-				if ($caneditfield)
-				{
+				if ($caneditfield) {
 					print $object->showOptionals($extrafields, 'edit');
 				} else {
 					print $object->showOptionals($extrafields, 'view');
