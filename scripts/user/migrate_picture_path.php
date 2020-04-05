@@ -83,6 +83,7 @@ $db->close(); // Close $db database opened handler
 
 exit($error);
 
+
 /**
  * Migrate file from old path to new one for user $u
  *
@@ -105,7 +106,6 @@ function migrate_user_filespath($u)
 	dol_mkdir($destin);
 
 	if (dol_is_dir($origin)) {
-
 		$handle = opendir($origin_osencoded);
 		if (is_resource($handle)) {
 			while (($file = readdir($handle)) !== false) {
