@@ -33,6 +33,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formcompany.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/product.lib.php';
 
 // Load translation files required by the page
 $langs->loadLangs(array("sendings", "deliveries", 'companies', 'bills'));
@@ -89,6 +90,7 @@ $viewstatut = GETPOST('viewstatut');
 $diroutputmassaction = $conf->expedition->dir_output.'/sending/temp/massgeneration/'.$user->id;
 
 $object = new Expedition($db);
+$form = new Form($db);
 
 // Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
 $hookmanager->initHooks(array('shipmentlist'));
@@ -118,6 +120,7 @@ $arrayfields = array(
 	'country.code_iso'=>array('label'=>$langs->trans("Country"), 'checked'=>0),
 	'typent.code'=>array('label'=>$langs->trans("ThirdPartyType"), 'checked'=>$checkedtypetiers),
 	'e.date_delivery'=>array('label'=>$langs->trans("DateDeliveryPlanned"), 'checked'=>1),
+	'e.weight'=>array('label'=>$langs->trans("Weight"), 'checked'=>0),
 	'e.datec'=>array('label'=>$langs->trans("DateCreation"), 'checked'=>0, 'position'=>500),
 	'e.tms'=>array('label'=>$langs->trans("DateModificationShort"), 'checked'=>0, 'position'=>500),
 	'e.fk_statut'=>array('label'=>$langs->trans("Status"), 'checked'=>1, 'position'=>1000),
@@ -211,7 +214,7 @@ llxHeader('', $langs->trans('ListOfSendings'), $helpurl);
 
 $sql = 'SELECT';
 if ($sall || $search_product_category > 0) $sql = 'SELECT DISTINCT';
-$sql .= " e.rowid, e.ref, e.ref_customer, e.date_expedition as date_expedition, e.date_delivery as date_livraison, l.date_delivery as date_reception, e.fk_statut, e.billed,";
+$sql .= " e.rowid, e.ref, e.ref_customer, e.date_expedition as date_expedition, e.weight, e.weight_units, e.date_delivery as date_livraison, l.date_delivery as date_reception, e.fk_statut, e.billed,";
 $sql .= " s.rowid as socid, s.nom as name, s.town, s.zip, s.fk_pays, s.client, s.code_client, ";
 $sql .= " typent.code as typent_code,";
 $sql .= " state.code_departement as state_code, state.nom as state_name,";
@@ -483,6 +486,13 @@ if ($resql)
 		print $form->selectarray("search_type_thirdparty", $formcompany->typent_array(0), $search_type_thirdparty, 0, 0, 0, '', 0, 0, 0, (empty($conf->global->SOCIETE_SORT_ON_TYPEENT) ? 'ASC' : $conf->global->SOCIETE_SORT_ON_TYPEENT));
 		print '</td>';
 	}
+	// Weight
+	if (!empty($arrayfields['e.weight']['checked']))
+	{
+		print '<td class="liste_titre maxwidthonsmartphone center">';
+
+		print '</td>';
+	}
 	// Date delivery planned
 	if (!empty($arrayfields['e.date_delivery']['checked']))
 	{
@@ -567,6 +577,7 @@ if ($resql)
 	if (!empty($arrayfields['state.nom']['checked']))        print_liste_field_titre($arrayfields['state.nom']['label'], $_SERVER["PHP_SELF"], "state.nom", "", $param, '', $sortfield, $sortorder);
 	if (!empty($arrayfields['country.code_iso']['checked'])) print_liste_field_titre($arrayfields['country.code_iso']['label'], $_SERVER["PHP_SELF"], "country.code_iso", "", $param, '', $sortfield, $sortorder, 'center ');
 	if (!empty($arrayfields['typent.code']['checked']))      print_liste_field_titre($arrayfields['typent.code']['label'], $_SERVER["PHP_SELF"], "typent.code", "", $param, '', $sortfield, $sortorder, 'center ');
+	if (!empty($arrayfields['e.weight']['checked']))         print_liste_field_titre($arrayfields['e.weight']['label'], $_SERVER["PHP_SELF"], "e.weight", "", $param, '', $sortfield, $sortorder, 'center ');
 	if (!empty($arrayfields['e.date_delivery']['checked']))  print_liste_field_titre($arrayfields['e.date_delivery']['label'], $_SERVER["PHP_SELF"], "e.date_delivery", "", $param, '', $sortfield, $sortorder, 'center ');
 	if (!empty($arrayfields['l.ref']['checked']))            print_liste_field_titre($arrayfields['l.ref']['label'], $_SERVER["PHP_SELF"], "l.ref", "", $param, '', $sortfield, $sortorder);
 	if (!empty($arrayfields['l.date_delivery']['checked']))  print_liste_field_titre($arrayfields['l.date_delivery']['label'], $_SERVER["PHP_SELF"], "l.date_delivery", "", $param, '', $sortfield, $sortorder, 'center ');
@@ -597,7 +608,8 @@ if ($resql)
 		$companystatic->ref = $obj->name;
 		$companystatic->name = $obj->name;
 
-
+		$object = new Expedition($db);
+		$object->fetch($obj->rowid);
 		print '<tr class="oddeven">';
 
 		// Ref
@@ -665,7 +677,24 @@ if ($resql)
 			print '</td>';
 			if (!$i) $totalarray['nbfield']++;
 		}
-
+		// Weight
+		if (!empty($arrayfields['e.weight']['checked']))
+		{
+			print '<td class="center">';
+			if (empty($object->trueWeight))
+			{
+				$tmparray = $object->getTotalWeightVolume();
+				print showDimensionInBestUnit($tmparray['weight'], 0, "weight", $langs, isset($conf->global->MAIN_WEIGHT_DEFAULT_ROUND)?$conf->global->MAIN_WEIGHT_DEFAULT_ROUND:-1, isset($conf->global->MAIN_WEIGHT_DEFAULT_UNIT)?$conf->global->MAIN_WEIGHT_DEFAULT_UNIT:'no');
+				print $form->textwithpicto('', $langs->trans('EstimatedWeight'), 1);
+			}
+			else
+			{
+				print $object->trueWeight;
+				print ($object->trueWeight && $object->weight_units!='')?' '.measuringUnitString(0, "weight", $object->weight_units):'';
+			}
+			print '</td>';
+			if (!$i) $totalarray['nbfield']++;
+		}
 		// Date delivery planed
 		if (!empty($arrayfields['e.date_delivery']['checked']))
 		{
