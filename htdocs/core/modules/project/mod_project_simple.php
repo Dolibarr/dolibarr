@@ -32,14 +32,14 @@ require_once DOL_DOCUMENT_ROOT .'/core/modules/project/modules_project.php';
 class mod_project_simple extends ModeleNumRefProjects
 {
 	/**
-     * Dolibarr version of the loaded document
-     * @var string
-     */
+	 * Dolibarr version of the loaded document
+	 * @var string
+	 */
 	public $version = 'dolibarr';		// 'development', 'experimental', 'dolibarr'
 
 	public $prefix='PJ';
 
-    /**
+	/**
 	 * @var string Error code (or message)
 	 */
 	public $error='';
@@ -57,74 +57,74 @@ class mod_project_simple extends ModeleNumRefProjects
 	public $name='Simple';
 
 
-    /**
-     *  Return description of numbering module
-     *
-     *  @return     string      Text with description
-     */
-    public function info()
-    {
-    	global $langs;
-      	return $langs->trans("SimpleNumRefModelDesc", $this->prefix);
-    }
+	/**
+	 *  Return description of numbering module
+	 *
+	 *  @return     string      Text with description
+	 */
+	public function info()
+	{
+		global $langs;
+	  	return $langs->trans("SimpleNumRefModelDesc", $this->prefix);
+	}
 
 
-    /**
-     *  Return an example of numbering module values
-     *
-     * 	@return     string      Example
-     */
-    public function getExample()
-    {
-        return $this->prefix."0501-0001";
-    }
+	/**
+	 *  Return an example of numbering module values
+	 *
+	 * 	@return     string      Example
+	 */
+	public function getExample()
+	{
+		return $this->prefix."0501-0001";
+	}
 
 
-    /**
-     *  Checks if the numbers already in the database do not
-     *  cause conflicts that would prevent this numbering working.
-     *
-     *   @return     boolean     false if conflict, true if ok
-     */
-    public function canBeActivated()
-    {
-    	global $conf,$langs,$db;
+	/**
+	 *  Checks if the numbers already in the database do not
+	 *  cause conflicts that would prevent this numbering working.
+	 *
+	 *   @return     boolean     false if conflict, true if ok
+	 */
+	public function canBeActivated()
+	{
+		global $conf,$langs,$db;
 
-        $coyymm=''; $max='';
+		$coyymm=''; $max='';
 
 		$posindice=8;
 		$sql = "SELECT MAX(CAST(SUBSTRING(ref FROM ".$posindice.") AS SIGNED)) as max";
-        $sql.= " FROM ".MAIN_DB_PREFIX."projet";
+		$sql.= " FROM ".MAIN_DB_PREFIX."projet";
 		$sql.= " WHERE ref LIKE '".$db->escape($this->prefix)."____-%'";
-        $sql.= " AND entity = ".$conf->entity;
-        $resql=$db->query($sql);
-        if ($resql)
-        {
-            $row = $db->fetch_row($resql);
-            if ($row) { $coyymm = substr($row[0], 0, 6); $max=$row[0]; }
-        }
-        if (! $coyymm || preg_match('/'.$this->prefix.'[0-9][0-9][0-9][0-9]/i', $coyymm))
-        {
-            return true;
-        }
-        else
-        {
+		$sql.= " AND entity = ".$conf->entity;
+		$resql=$db->query($sql);
+		if ($resql)
+		{
+			$row = $db->fetch_row($resql);
+			if ($row) { $coyymm = substr($row[0], 0, 6); $max=$row[0]; }
+		}
+		if (! $coyymm || preg_match('/'.$this->prefix.'[0-9][0-9][0-9][0-9]/i', $coyymm))
+		{
+			return true;
+		}
+		else
+		{
 			$langs->load("errors");
 			$this->error=$langs->trans('ErrorNumRefModel', $max);
-            return false;
-        }
-    }
+			return false;
+		}
+	}
 
 
-    /**
-     *  Return next value
-     *
-     *  @param   Societe	$objsoc		Object third party
-     *  @param   Project	$project	Object project
-     *  @return	string				Value if OK, 0 if KO
-     */
-    public function getNextValue($objsoc, $project)
-    {
+	/**
+	 *  Return next value
+	 *
+	 *  @param   Societe	$objsoc		Object third party
+	 *  @param   Project	$project	Object project
+	 *  @return	string				Value if OK, 0 if KO
+	 */
+	public function getNextValue($objsoc, $project)
+	{
 		global $db,$conf;
 
 		// D'abord on recupere la valeur max
@@ -157,20 +157,20 @@ class mod_project_simple extends ModeleNumRefProjects
 
 		dol_syslog("mod_project_simple::getNextValue return ".$this->prefix.$yymm."-".$num);
 		return $this->prefix.$yymm."-".$num;
-    }
+	}
 
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
-    /**
-     *  Return next reference not yet used as a reference
-     *
-     *  @param	Societe	$objsoc     Object third party
-     *  @param  Project	$project	Object project
-     *  @return string      		Next not used reference
-     */
-    public function project_get_num($objsoc = 0, $project = '')
-    {
-        // phpcs:enable
-        return $this->getNextValue($objsoc, $project);
-    }
+	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
+	/**
+	 *  Return next reference not yet used as a reference
+	 *
+	 *  @param	Societe	$objsoc     Object third party
+	 *  @param  Project	$project	Object project
+	 *  @return string      		Next not used reference
+	 */
+	public function project_get_num($objsoc = 0, $project = '')
+	{
+		// phpcs:enable
+		return $this->getNextValue($objsoc, $project);
+	}
 }

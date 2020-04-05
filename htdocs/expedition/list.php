@@ -183,13 +183,13 @@ if (GETPOST('button_removefilter_x', 'alpha') || GETPOST('button_removefilter.x'
 
 if (empty($reshook))
 {
-    $objectclass  = 'Expedition';
-    $objectlabel  = 'Sendings';
-    $permissiontoread   = $user->rights->expedition->lire;
-    $permissiontoadd = $user->rights->expedition->creer;
-    $permissiontodelete = $user->rights->expedition->supprimer;
-    $uploaddir = $conf->expedition->dir_output.'/sending';
-    include DOL_DOCUMENT_ROOT.'/core/actions_massactions.inc.php';
+	$objectclass  = 'Expedition';
+	$objectlabel  = 'Sendings';
+	$permissiontoread   = $user->rights->expedition->lire;
+	$permissiontoadd = $user->rights->expedition->creer;
+	$permissiontodelete = $user->rights->expedition->supprimer;
+	$uploaddir = $conf->expedition->dir_output.'/sending';
+	include DOL_DOCUMENT_ROOT.'/core/actions_massactions.inc.php';
 }
 
 
@@ -313,7 +313,7 @@ if ($resql)
 {
 	$num = $db->num_rows($resql);
 
-    $arrayofselected = is_array($toselect) ? $toselect : array();
+	$arrayofselected = is_array($toselect) ? $toselect : array();
 
 	$expedition = new Expedition($db);
 
@@ -341,18 +341,18 @@ if ($resql)
 	// Add $param from extra fields
 	include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_param.tpl.php';
 
-    $arrayofmassactions = array(
-        'builddoc' => $langs->trans("PDFMerge"),
-        //'classifyclose'=>$langs->trans("Close"), TODO massive close shipment ie: when truck is charged
-        'presend'  => $langs->trans("SendByMail"),
-    );
-    if (in_array($massaction, array('presend'))) $arrayofmassactions = array();
-    $massactionbutton = $form->selectMassAction('', $arrayofmassactions);
+	$arrayofmassactions = array(
+		'builddoc' => $langs->trans("PDFMerge"),
+		//'classifyclose'=>$langs->trans("Close"), TODO massive close shipment ie: when truck is charged
+		'presend'  => $langs->trans("SendByMail"),
+	);
+	if (in_array($massaction, array('presend'))) $arrayofmassactions = array();
+	$massactionbutton = $form->selectMassAction('', $arrayofmassactions);
 
 	$newcardbutton = '';
 	if ($user->rights->expedition->creer)
 	{
-        $newcardbutton .= dolGetButtonTitle($langs->trans('NewSending'), '', 'fa fa-plus-circle', DOL_URL_ROOT.'/expedition/card.php?action=create2');
+		$newcardbutton .= dolGetButtonTitle($langs->trans('NewSending'), '', 'fa fa-plus-circle', DOL_URL_ROOT.'/expedition/card.php?action=create2');
 	}
 
 	$i = 0;
@@ -367,11 +367,11 @@ if ($resql)
 
 	print_barre_liste($langs->trans('ListOfSendings'), $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, $massactionbutton, $num, $nbtotalofrecords, '', 0, $newcardbutton, '', $limit);
 
-    $topicmail = "SendShippingRef";
-    $modelmail = "shipping_send";
-    $objecttmp = new Expedition($db);
-    $trackid = 'shi'.$object->id;
-    include DOL_DOCUMENT_ROOT.'/core/tpl/massactions_pre.tpl.php';
+	$topicmail = "SendShippingRef";
+	$modelmail = "shipping_send";
+	$objecttmp = new Expedition($db);
+	$trackid = 'shi'.$object->id;
+	include DOL_DOCUMENT_ROOT.'/core/tpl/massactions_pre.tpl.php';
 
 	if ($sall)
 	{
@@ -583,7 +583,7 @@ if ($resql)
 	print_liste_field_titre($selectedfields, $_SERVER["PHP_SELF"], "", '', '', '', $sortfield, $sortorder, 'center maxwidthsearch ');
 	print "</tr>\n";
 
-    $typenArray = $formcompany->typent_array(1);
+	$typenArray = $formcompany->typent_array(1);
 	$i = 0;
 	$totalarray = array();
 	while ($i < min($num, $limit))
@@ -736,48 +736,48 @@ if ($resql)
 			if (!$i) $totalarray['nbfield']++;
 		}
 
-        // Action column
-        print '<td class="nowrap" align="center">';
-        if ($massactionbutton || $massaction)   // If we are in select mode (massactionbutton defined) or if we have already selected and sent an action ($massaction) defined
-        {
-            $selected = 0;
-            if (in_array($obj->rowid, $arrayofselected)) $selected = 1;
-            print '<input id="cb'.$obj->rowid.'" class="flat checkforselect" type="checkbox" name="toselect[]" value="'.$obj->rowid.'"'.($selected ? ' checked="checked"' : '').'>';
-        }
-        print '</td>';
+		// Action column
+		print '<td class="nowrap" align="center">';
+		if ($massactionbutton || $massaction)   // If we are in select mode (massactionbutton defined) or if we have already selected and sent an action ($massaction) defined
+		{
+			$selected = 0;
+			if (in_array($obj->rowid, $arrayofselected)) $selected = 1;
+			print '<input id="cb'.$obj->rowid.'" class="flat checkforselect" type="checkbox" name="toselect[]" value="'.$obj->rowid.'"'.($selected ? ' checked="checked"' : '').'>';
+		}
+		print '</td>';
 		if (!$i) $totalarray['nbfield']++;
 
 		print "</tr>\n";
 
 		$i++;
 	}
-    $db->free($resql);
+	$db->free($resql);
 
-    $parameters = array('arrayfields'=>$arrayfields, 'sql'=>$sql);
-    $reshook = $hookmanager->executeHooks('printFieldListFooter', $parameters); // Note that $action and $object may have been modified by hook
-    print $hookmanager->resPrint;
+	$parameters = array('arrayfields'=>$arrayfields, 'sql'=>$sql);
+	$reshook = $hookmanager->executeHooks('printFieldListFooter', $parameters); // Note that $action and $object may have been modified by hook
+	print $hookmanager->resPrint;
 
 	print "</table>";
 	print "</div>";
 	print '</form>';
 
-    $hidegeneratedfilelistifempty = 1;
-    if ($massaction == 'builddoc' || $action == 'remove_file' || $show_files)   $hidegeneratedfilelistifempty = 0;
+	$hidegeneratedfilelistifempty = 1;
+	if ($massaction == 'builddoc' || $action == 'remove_file' || $show_files)   $hidegeneratedfilelistifempty = 0;
 
-    // Show list of available documents
-    $urlsource  = $_SERVER['PHP_SELF'].'?sortfield='.$sortfield.'&sortorder='.$sortorder;
-    $urlsource .= str_replace('&amp;', '&', $param);
+	// Show list of available documents
+	$urlsource  = $_SERVER['PHP_SELF'].'?sortfield='.$sortfield.'&sortorder='.$sortorder;
+	$urlsource .= str_replace('&amp;', '&', $param);
 
-    $filedir    = $diroutputmassaction;
-    $genallowed = $user->rights->expedition->lire;
-    $delallowed = $user->rights->expedition->creer;
-    $title      = '';
+	$filedir    = $diroutputmassaction;
+	$genallowed = $user->rights->expedition->lire;
+	$delallowed = $user->rights->expedition->creer;
+	$title      = '';
 
-    print $formfile->showdocuments('massfilesarea_sendings', '', $filedir, $urlsource, 0, $delallowed, '', 1, 1, 0, 48, 1, $param, $title, '', '', '', null, $hidegeneratedfilelistifempty);
+	print $formfile->showdocuments('massfilesarea_sendings', '', $filedir, $urlsource, 0, $delallowed, '', 1, 1, 0, 48, 1, $param, $title, '', '', '', null, $hidegeneratedfilelistifempty);
 }
 else
 {
-    dol_print_error($db);
+	dol_print_error($db);
 }
 
 // End of page

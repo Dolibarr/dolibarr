@@ -38,17 +38,17 @@ require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';	// requir
 abstract class ModelePDFMyObject extends CommonDocGenerator
 {
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
-    /**
-     *  Return list of active generation modules
-     *
-     *  @param	DoliDB	$db     			Database handler
-     *  @param  integer	$maxfilenamelength  Max length of value to show
-     *  @return	array						List of templates
+	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
+	/**
+	 *  Return list of active generation modules
+	 *
+	 *  @param	DoliDB	$db     			Database handler
+	 *  @param  integer	$maxfilenamelength  Max length of value to show
+	 *  @return	array						List of templates
 	 */
 	public static function liste_modeles($db, $maxfilenamelength = 0)
 	{
-        // phpcs:enable
+		// phpcs:enable
 		global $conf;
 
 		$type = 'mymodule_myobject';
@@ -109,7 +109,7 @@ abstract class ModeleNumRefMyObject
 
 	/**
 	 *  Checks if the numbers already in the database do not
-     *  cause conflicts that would prevent this numbering working.
+	 *  cause conflicts that would prevent this numbering working.
 	 *
 	 *	@param	Object		$object		Object we need next value for
 	 *	@return boolean     			false if conflict, true if ok
