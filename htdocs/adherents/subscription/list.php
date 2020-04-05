@@ -33,6 +33,7 @@ $langs->loadLangs(array("members", "companies"));
 
 $action = GETPOST('action', 'aZ09');
 $massaction = GETPOST('massaction', 'alpha');
+$contextpage = GETPOST('contextpage', 'aZ09');
 $confirm = GETPOST('confirm', 'alpha');
 $toselect = GETPOST('toselect', 'array');
 
@@ -116,7 +117,6 @@ if (empty($reshook))
     // Purge search criteria
     if (GETPOST('button_removefilter_x', 'alpha') || GETPOST('button_removefilter.x', 'alpha') || GETPOST('button_removefilter', 'alpha')) // All tests are required to be compatible with all browsers
     {
-	    $search = "";
 	    $search_type = "";
 	    $search_ref = "";
 	    $search_lastname = "";
@@ -446,7 +446,7 @@ while ($i < min($num, $limit))
     // Type
     if (!empty($arrayfields['d.fk_type']['checked']))
 	{
-        print '<td>';
+        print '<td class="nowraponall">';
         if ($typeid > 0)
         {
         	print $adht->getNomUrl(1);
