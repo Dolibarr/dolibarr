@@ -1,11 +1,5 @@
 <?php
-/* Copyright (C) 2001-2003  Rodolphe Quiedeville    <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2016  Laurent Destailleur     <eldy@users.sourceforge.net>
- * Copyright (C) 2005-2009  Regis Houssin           <regis.houssin@inodbox.com>
- * Copyright (C) 2007       Franky Van Liedekerke   <franky.van.liedekerke@telenet.be>
- * Copyright (C) 2013       Antoine Iauch           <aiauch@gpcsolutions.fr>
- * Copyright (C) 2015       Raphaël Doursenaud      <rdoursenaud@gpcsolutions.fr>
- * Copyright (C) 2018       Frédéric France         <frederic.france@netlogic.fr>
+/* Copyright (C) 2020       Maxime Kohlhaas         <maxime@atm-consulting.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -22,8 +16,8 @@
  */
 
 /**
- *       \file        htdocs/compta/stats/casoc.php
- *       \brief       Page reporting Turnover (CA) by thirdparty
+ *       \file        htdocs/compta/stats/supplier_ca_by_thirdparty.php
+ *       \brief       Page reporting purchase turnover by thirdparty
  */
 
 require '../../main.inc.php';
@@ -175,22 +169,19 @@ if ($modecompta == "BOOKKEEPINGCOLLECTED") $modecompta = "RECETTES-DEPENSES";
 // Show report header
 if ($modecompta == "CREANCES-DETTES")
 {
-	$name = $langs->trans("Turnover").', '.$langs->trans("ByThirdParties");
+	$name = $langs->trans("PurchaseTurnover").', '.$langs->trans("ByThirdParties");
 	$calcmode = $langs->trans("CalcModeDebt");
 	//$calcmode.='<br>('.$langs->trans("SeeReportInInputOutputMode",'<a href="'.$_SERVER["PHP_SELF"].'?year='.$year_start.'&modecompta=RECETTES-DEPENSES">','</a>').')';
-	$description = $langs->trans("RulesCADue");
-	if (!empty($conf->global->FACTURE_DEPOSITS_ARE_JUST_PAYMENTS)) $description .= $langs->trans("DepositsAreNotIncluded");
-	else  $description .= $langs->trans("DepositsAreIncluded");
+	$description = $langs->trans("RulesPurchaseTurnoverDue");
 	$builddate = dol_now();
 	//$exportlink=$langs->trans("NotYetAvailable");
 }
 elseif ($modecompta == "RECETTES-DEPENSES")
 {
-	$name = $langs->trans("TurnoverCollected").', '.$langs->trans("ByThirdParties");
+	$name = $langs->trans("PurchaseTurnoverCollected").', '.$langs->trans("ByThirdParties");
 	$calcmode = $langs->trans("CalcModeEngagement");
 	//$calcmode.='<br>('.$langs->trans("SeeReportInDueDebtMode",'<a href="'.$_SERVER["PHP_SELF"].'?year='.$year_start.'&modecompta=CREANCES-DETTES">','</a>').')';
-	$description = $langs->trans("RulesCAIn");
-	$description .= $langs->trans("DepositsAreIncluded");
+	$description = $langs->trans("RulesPurchaseTurnoverIn");
 	$builddate = dol_now();
 	//$exportlink=$langs->trans("NotYetAvailable");
 }
@@ -218,8 +209,8 @@ $name = array();
 $catotal = 0;
 if ($modecompta == 'CREANCES-DETTES') {
 	$sql = "SELECT DISTINCT s.rowid as socid, s.nom as name, s.zip, s.town, s.fk_pays,";
-	$sql .= " sum(f.total) as amount, sum(f.total_ttc) as amount_ttc";
-	$sql .= " FROM ".MAIN_DB_PREFIX."facture as f, ".MAIN_DB_PREFIX."societe as s";
+	$sql .= " sum(f.total_ht) as amount, sum(f.total_ttc) as amount_ttc";
+	$sql .= " FROM ".MAIN_DB_PREFIX."facture_fourn as f, ".MAIN_DB_PREFIX."societe as s";
 	if ($selected_cat === -2)	// Without any category
 	{
 	    $sql .= " LEFT OUTER JOIN ".MAIN_DB_PREFIX."categorie_societe as cs ON s.rowid = cs.fk_soc";
@@ -229,11 +220,7 @@ if ($modecompta == 'CREANCES-DETTES') {
 	    $sql .= ", ".MAIN_DB_PREFIX."categorie as c, ".MAIN_DB_PREFIX."categorie_societe as cs";
 	}
 	$sql .= " WHERE f.fk_statut in (1,2)";
-	if (!empty($conf->global->FACTURE_DEPOSITS_ARE_JUST_PAYMENTS)) {
-	    $sql .= " AND f.type IN (0,1,2,5)";
-	} else {
-	    $sql .= " AND f.type IN (0,1,2,3,5)";
-	}
+	$sql .= " AND f.type IN (0,2)";
 	$sql .= " AND f.fk_soc = s.rowid";
 	if ($date_start && $date_end) {
 	    $sql .= " AND f.datef >= '".$db->idate($date_start)."' AND f.datef <= '".$db->idate($date_end)."'";
@@ -249,14 +236,10 @@ if ($modecompta == 'CREANCES-DETTES') {
 		$sql .= " AND cs.fk_categorie = c.rowid AND cs.fk_soc = s.rowid";
 	}
 } else {
-	/*
-	 * Liste des paiements (les anciens paiements ne sont pas vus par cette requete car, sur les
-	 * vieilles versions, ils n'etaient pas lies via paiement_facture. On les ajoute plus loin)
-	 */
 	$sql = "SELECT s.rowid as socid, s.nom as name, s.zip, s.town, s.fk_pays, sum(pf.amount) as amount_ttc";
-	$sql .= " FROM ".MAIN_DB_PREFIX."facture as f";
-	$sql .= ", ".MAIN_DB_PREFIX."paiement_facture as pf";
-	$sql .= ", ".MAIN_DB_PREFIX."paiement as p";
+	$sql .= " FROM ".MAIN_DB_PREFIX."facture_fourn as f";
+	$sql .= ", ".MAIN_DB_PREFIX."paiementfourn_facturefourn as pf";
+	$sql .= ", ".MAIN_DB_PREFIX."paiementfourn as p";
 	$sql .= ", ".MAIN_DB_PREFIX."societe as s";
 	if ($selected_cat === -2)	// Without any category
 	{
@@ -266,8 +249,8 @@ if ($modecompta == 'CREANCES-DETTES') {
 	{
 	    $sql .= ", ".MAIN_DB_PREFIX."categorie as c, ".MAIN_DB_PREFIX."categorie_societe as cs";
 	}
-	$sql .= " WHERE p.rowid = pf.fk_paiement";
-	$sql .= " AND pf.fk_facture = f.rowid";
+	$sql .= " WHERE p.rowid = pf.fk_paiementfourn";
+	$sql .= " AND pf.fk_facturefourn = f.rowid";
 	$sql .= " AND f.fk_soc = s.rowid";
 	if ($date_start && $date_end) {
 	    $sql .= " AND p.datep >= '".$db->idate($date_start)."' AND p.datep <= '".$db->idate($date_end)."'";
@@ -287,13 +270,13 @@ if (!empty($search_societe))  $sql .= natural_search('s.nom', $search_societe);
 if (!empty($search_zip))      $sql .= natural_search('s.zip', $search_zip);
 if (!empty($search_town))     $sql .= natural_search('s.town', $search_town);
 if ($search_country > 0)      $sql .= ' AND s.fk_pays = '.$search_country.'';
-$sql .= " AND f.entity IN (".getEntity('invoice').")";
+$sql .= " AND f.entity IN (".getEntity('supplier_invoice').")";
 if ($socid) $sql .= " AND f.fk_soc = ".$socid;
 $sql .= " GROUP BY s.rowid, s.nom, s.zip, s.town, s.fk_pays";
 $sql .= " ORDER BY s.rowid";
 //echo $sql;
 
-dol_syslog("casoc", LOG_DEBUG);
+dol_syslog("supplier_turnover_by_thirdparty", LOG_DEBUG);
 $result = $db->query($sql);
 if ($result) {
 	$num = $db->num_rows($result);
@@ -314,41 +297,6 @@ if ($result) {
 	dol_print_error($db);
 }
 
-// On ajoute les paiements anciennes version, non lies par paiement_facture
-if ($modecompta != 'CREANCES-DETTES') {
-	$sql = "SELECT '0' as socid, 'Autres' as name, sum(p.amount) as amount_ttc";
-	$sql .= " FROM ".MAIN_DB_PREFIX."bank as b";
-	$sql .= ", ".MAIN_DB_PREFIX."bank_account as ba";
-	$sql .= ", ".MAIN_DB_PREFIX."paiement as p";
-	$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."paiement_facture as pf ON p.rowid = pf.fk_paiement";
-	$sql .= " WHERE pf.rowid IS NULL";
-	$sql .= " AND p.fk_bank = b.rowid";
-	$sql .= " AND b.fk_account = ba.rowid";
-	$sql .= " AND ba.entity IN (".getEntity('bank_account').")";
-	if ($date_start && $date_end) $sql .= " AND p.datep >= '".$db->idate($date_start)."' AND p.datep <= '".$db->idate($date_end)."'";
-	$sql .= " GROUP BY socid, name";
-	$sql .= " ORDER BY name";
-
-	$result = $db->query($sql);
-	if ($result) {
-		$num = $db->num_rows($result);
-		$i = 0;
-		while ($i < $num) {
-			$obj = $db->fetch_object($result);
-			$amount[$obj->rowid] += $obj->amount_ttc;
-			$name[$obj->rowid] = $obj->name;
-			$address_zip[$obj->rowid] = $obj->zip;
-			$address_town[$obj->rowid] = $obj->town;
-			$address_pays[$obj->rowid] = getCountry($obj->fk_pays);
-			$catotal += $obj->amount_ttc;
-			$i++;
-		}
-	} else {
-		dol_print_error($db);
-	}
-}
-
-
 // Show array
 $i = 0;
 print '<form method="POST" action="'.$_SERVER["PHP_SELF"].'">';
@@ -367,7 +315,7 @@ print '<table class="tagtable liste'.($moreforfilter ? " listwithfilterbefore" :
 // Category filter
 print '<tr class="liste_titre">';
 print '<td>';
-print $langs->trans("Category").': '.$formother->select_categories(Categorie::TYPE_CUSTOMER, $selected_cat, 'search_categ', true);
+print $langs->trans("Category").': '.$formother->select_categories(Categorie::TYPE_SUPPLIER, $selected_cat, 'search_categ', true);
 print ' ';
 print $langs->trans("SubCats").'? ';
 print '<input type="checkbox" name="subcat" value="yes"';
@@ -544,7 +492,7 @@ if (count($amount)) {
 		    $thirdparty_static->id = $key;
 		    $thirdparty_static->name = $fullname;
 		    $thirdparty_static->client = 1;
-		    $linkname = $thirdparty_static->getNomUrl(1, 'customer');
+		    $linkname = $thirdparty_static->getNomUrl(1, 'supplier');
 		} else {
 			$linkname = $langs->trans("PaymentsNotLinkedToInvoice");
 		}
@@ -566,13 +514,13 @@ if (count($amount)) {
 		print '<td class="right">';
 		if ($modecompta != 'CREANCES-DETTES') {
             if ($key > 0) {
-                print '<a href="'.DOL_URL_ROOT.'/compta/paiement/list.php?socid='.$key.'">';
+                print '<a href="'.DOL_URL_ROOT.'/fourn/facture/paiement/list.php?socid='.$key.'">';
 		    } else {
-                print '<a href="'.DOL_URL_ROOT.'/compta/paiement/list.php?socid=-1">';
+                print '<a href="'.DOL_URL_ROOT.'/fourn/facture/paiement/list.php?socid=-1">';
             }
 		} else {
 		    if ($key > 0) {
-                print '<a href="'.DOL_URL_ROOT.'/compta/facture/list.php?socid='.$key.'">';
+                print '<a href="'.DOL_URL_ROOT.'/fourn/facture/list.php?socid='.$key.'">';
 		    } else {
                 print '<a href="#">';
 		    }
@@ -584,13 +532,13 @@ if (count($amount)) {
 		print '<td class="right">';
 		if ($modecompta != 'CREANCES-DETTES') {
             if ($key > 0) {
-                print '<a href="'.DOL_URL_ROOT.'/compta/paiement/list.php?socid='.$key.'">';
+                print '<a href="'.DOL_URL_ROOT.'/fourn/facture/paiement/list.php?socid='.$key.'">';
 		    } else {
-                print '<a href="'.DOL_URL_ROOT.'/compta/paiement/list.php?orphelins=1">';
+                print '<a href="'.DOL_URL_ROOT.'/fourn/facture/paiement/list.php?orphelins=1">';
 		    }
 		} else {
             if ($key > 0) {
-                print '<a href="'.DOL_URL_ROOT.'/compta/facture/list.php?socid='.$key.'">';
+                print '<a href="'.DOL_URL_ROOT.'/fourn/facture/list.php?socid='.$key.'">';
 		    } else {
                 print '<a href="#">';
 		    }
@@ -604,14 +552,14 @@ if (count($amount)) {
 
         // Other stats
         print '<td class="center">';
-        if (!empty($conf->propal->enabled) && $key > 0) {
+        if (!empty($conf->supplier_proposal->enabled) && $key > 0) {
             print '&nbsp;<a href="'.DOL_URL_ROOT.'/comm/propal/stats/index.php?socid='.$key.'">'.img_picto($langs->trans("ProposalStats"), "stats").'</a>&nbsp;';
         }
-        if (!empty($conf->commande->enabled) && $key > 0) {
-            print '&nbsp;<a href="'.DOL_URL_ROOT.'/commande/stats/index.php?socid='.$key.'">'.img_picto($langs->trans("OrderStats"), "stats").'</a>&nbsp;';
+        if (!empty($conf->fournisseur->enabled) && $key > 0) {
+            print '&nbsp;<a href="'.DOL_URL_ROOT.'/commande/stats/index.php?mode=supplier&socid='.$key.'">'.img_picto($langs->trans("OrderStats"), "stats").'</a>&nbsp;';
         }
-        if (!empty($conf->facture->enabled) && $key > 0) {
-            print '&nbsp;<a href="'.DOL_URL_ROOT.'/compta/facture/stats/index.php?socid='.$key.'">'.img_picto($langs->trans("InvoiceStats"), "stats").'</a>&nbsp;';
+        if (!empty($conf->fournisseur->enabled) && $key > 0) {
+            print '&nbsp;<a href="'.DOL_URL_ROOT.'/compta/facture/stats/index.php?mode=supplier&socid='.$key.'">'.img_picto($langs->trans("InvoiceStats"), "stats").'</a>&nbsp;';
         }
         print '</td>';
         print "</tr>\n";

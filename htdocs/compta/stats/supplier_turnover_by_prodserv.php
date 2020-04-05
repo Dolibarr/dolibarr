@@ -1,8 +1,5 @@
 <?php
-/* Copyright (C) 2013       Antoine Iauch	        <aiauch@gpcsolutions.fr>
- * Copyright (C) 2013-2016  Laurent Destailleur     <eldy@users.sourceforge.net>
- * Copyright (C) 2015       Raphaël Doursenaud      <rdoursenaud@gpcsolutions.fr>
- * Copyright (C) 2018       Frédéric France         <frederic.france@netlogic.fr>
+/* Copyright (C) 2020       Maxime Kohlhaas         <maxime@atm-consulting.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -19,8 +16,8 @@
  */
 
 /**
- *	   \file		htdocs/compta/stats/cabyprodserv.php
- *	   \brief	   Page reporting TO by Products & Services
+ *	   \file		htdocs/compta/stats/supplier_turnover_by_prodserv.php
+ *	   \brief	   Page reporting purchase turnover by Products & Services
  */
 
 require '../../main.inc.php';
@@ -169,27 +166,19 @@ if ($modecompta == "BOOKKEEPINGCOLLECTED") $modecompta = "RECETTES-DEPENSES";
 
 // Show report header
 if ($modecompta == "CREANCES-DETTES") {
-	$name = $langs->trans("Turnover").', '.$langs->trans("ByProductsAndServices");
+	$name = $langs->trans("PurchaseTurnover").', '.$langs->trans("ByProductsAndServices");
 	$calcmode = $langs->trans("CalcModeDebt");
 	//$calcmode.='<br>('.$langs->trans("SeeReportInInputOutputMode",'<a href="'.$_SERVER["PHP_SELF"].'?year='.$year_start.'&modecompta=RECETTES-DEPENSES">','</a>').')';
 
-	$description = $langs->trans("RulesCADue");
-	if (!empty($conf->global->FACTURE_DEPOSITS_ARE_JUST_PAYMENTS)) {
-		$description .= $langs->trans("DepositsAreNotIncluded");
-	} else {
-		$description .= $langs->trans("DepositsAreIncluded");
-	}
-
+	$description = $langs->trans("RulesPurchaseTurnoverDue");
 	$builddate = dol_now();
 }
 elseif ($modecompta == "RECETTES-DEPENSES")
 {
-	$name = $langs->trans("TurnoverCollected").', '.$langs->trans("ByProductsAndServices");
+	$name = $langs->trans("PurchaseTurnoverCollected").', '.$langs->trans("ByProductsAndServices");
 	$calcmode = $langs->trans("CalcModeEngagement");
 	//$calcmode.='<br>('.$langs->trans("SeeReportInDueDebtMode",'<a href="'.$_SERVER["PHP_SELF"].'?year='.$year_start.'&modecompta=CREANCES-DETTES">','</a>').')';
-
-	$description = $langs->trans("RulesCAIn");
-	$description .= $langs->trans("DepositsAreIncluded");
+	$description = $langs->trans("RulesPurchaseTurnoverIn");
 
 	$builddate = dol_now();
 }
@@ -225,9 +214,9 @@ if ($modecompta == 'CREANCES-DETTES')
 	$sql = "SELECT DISTINCT p.rowid as rowid, p.ref as ref, p.label as label, p.fk_product_type as product_type,";
 	$sql .= " SUM(l.total_ht) as amount, SUM(l.total_ttc) as amount_ttc,";
 	$sql .= " SUM(CASE WHEN f.type = 2 THEN -l.qty ELSE l.qty END) as qty";
-	$sql .= " FROM ".MAIN_DB_PREFIX."facture as f";
+	$sql .= " FROM ".MAIN_DB_PREFIX."facture_fourn as f";
     if ($selected_soc > 0) $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."societe as soc ON (soc.rowid = f.fk_soc)";
-    $sql .= ",".MAIN_DB_PREFIX."facturedet as l";
+    $sql .= ",".MAIN_DB_PREFIX."facture_fourn_det as l";
 	$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."product as p ON l.fk_product = p.rowid";
 	if ($selected_cat === -2)	// Without any category
 	{
@@ -237,13 +226,10 @@ if ($modecompta == 'CREANCES-DETTES')
 	{
 		$sql .= ", ".MAIN_DB_PREFIX."categorie as c, ".MAIN_DB_PREFIX."categorie_product as cp";
 	}
-	$sql .= " WHERE l.fk_facture = f.rowid";
+	$sql .= " WHERE l.fk_facture_fourn = f.rowid";
 	$sql .= " AND f.fk_statut in (1,2)";
-	if (!empty($conf->global->FACTURE_DEPOSITS_ARE_JUST_PAYMENTS)) {
-		$sql .= " AND f.type IN (0,1,2,5)";
-	} else {
-		$sql .= " AND f.type IN (0,1,2,3,5)";
-	}
+	$sql .= " AND f.type IN (0,2)";
+
 	if ($date_start && $date_end) {
 		$sql .= " AND f.datef >= '".$db->idate($date_start)."' AND f.datef <= '".$db->idate($date_end)."'";
 	}
@@ -262,11 +248,11 @@ if ($modecompta == 'CREANCES-DETTES')
 		$sql .= " AND cp.fk_categorie = c.rowid AND cp.fk_product = p.rowid";
 	}
     if ($selected_soc > 0) $sql .= " AND soc.rowid=".$selected_soc;
-	$sql .= " AND f.entity IN (".getEntity('invoice').")";
+	$sql .= " AND f.entity IN (".getEntity('supplier_invoice').")";
 	$sql .= " GROUP BY p.rowid, p.ref, p.label, p.fk_product_type";
 	$sql .= $db->order($sortfield, $sortorder);
 
-	dol_syslog("cabyprodserv", LOG_DEBUG);
+	dol_syslog("supplier_turnover_by_prodserv", LOG_DEBUG);
 	$result = $db->query($sql);
 	if ($result) {
 		$num = $db->num_rows($result);
@@ -416,22 +402,12 @@ if ($modecompta == 'CREANCES-DETTES')
 
 			// Amount w/o VAT
 			print '<td class="right">';
-			/*if ($key > 0) {
-				print '<a href="'.DOL_URL_ROOT.'/compta/facture/list.php?productid='.$key.'">';
-			} else {
-				print '<a href="#">';
-			}*/
 			print price($amount_ht[$key]);
 			//print '</a>';
 			print '</td>';
 
 			// Amount with VAT
 			print '<td class="right">';
-			/*if ($key > 0) {
-				print '<a href="'.DOL_URL_ROOT.'/compta/facture/list.php?productid='.$key.'">';
-			} else {
-				print '<a href="#">';
-			}*/
 			print price($amount[$key]);
 			//print '</a>';
 			print '</td>';
