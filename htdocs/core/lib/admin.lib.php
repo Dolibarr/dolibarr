@@ -1807,7 +1807,7 @@ function email_admin_prepare_head()
 		if ($conf->mailing->enabled)
 		{
 			$head[$h][0] = DOL_URL_ROOT."/admin/mails_emailing.php";
-			$head[$h][1] = $langs->trans("OutGoingEmailSetupForEmailing");
+			$head[$h][1] = $langs->trans("OutGoingEmailSetupForEmailing", $langs->transnoentitiesnoconv("EMailing"));
 			$head[$h][2] = 'common_emailing';
 			$h++;
 		}
