@@ -125,7 +125,7 @@ class FormTicket
      * Show the form to input ticket
      *
      * @param  	int	 		$withdolfichehead		With dol_fiche_head
-     * @param	string								Mode ('create' or 'edit')
+     * @param	string		$mode					Mode ('create' or 'edit')
      * @return 	void
      */
     public function showForm($withdolfichehead = 0, $mode = 'edit')
