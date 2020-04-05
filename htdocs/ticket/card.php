@@ -637,7 +637,7 @@ if ($action == 'create' || $action == 'presend')
         $defaultref = '';
     }
 
-    $formticket->showForm(1);
+    $formticket->showForm(1, 'create');
 }
 
 if (empty($action) || $action == 'view' || $action == 'addlink' || $action == 'dellink' || $action == 'presend' || $action == 'presend_addmessage' || $action == 'close' || $action == 'delete' || $action == 'editcustomer' || $action == 'progression' || $action == 'reopen'

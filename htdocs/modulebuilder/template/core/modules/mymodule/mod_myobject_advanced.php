@@ -98,10 +98,10 @@ class mod_myobject_advanced extends ModeleNumRefMyObject
 	 */
 	public function getExample()
 	{
-	 	global $conf, $langs, $mysoc;
+	 	global $conf, $db, $langs, $mysoc;
 
-	 	$object = new MyObject($this->db);
-	 	$object->initAsSpecimen();
+     	$object = new MyObject($db);
+     	$object->initAsSpecimen();
 
 		/*$old_code_client = $mysoc->code_client;
     	$old_code_type = $mysoc->typent_code;
