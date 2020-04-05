@@ -1413,7 +1413,7 @@ class Setup extends DolibarrApi
      * @return  array|mixed 				Data without useless information
      *
      * @url     GET conf/{constante}
-     * 
+     *
      * @throws RestException 403 Forbidden
      * @throws RestException 500 Error Bad or unknown value for constname
      */
