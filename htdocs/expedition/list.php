@@ -33,6 +33,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formcompany.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/product.lib.php';
 
 // Load translation files required by the page
 $langs->loadLangs(array("sendings", "deliveries", 'companies', 'bills'));
@@ -89,6 +90,7 @@ $viewstatut = GETPOST('viewstatut');
 $diroutputmassaction = $conf->expedition->dir_output.'/sending/temp/massgeneration/'.$user->id;
 
 $object = new Expedition($db);
+$form = new Form($db);
 
 // Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
 $hookmanager->initHooks(array('shipmentlist'));
@@ -118,6 +120,7 @@ $arrayfields = array(
 	'country.code_iso'=>array('label'=>$langs->trans("Country"), 'checked'=>0),
 	'typent.code'=>array('label'=>$langs->trans("ThirdPartyType"), 'checked'=>$checkedtypetiers),
 	'e.date_delivery'=>array('label'=>$langs->trans("DateDeliveryPlanned"), 'checked'=>1),
+	'e.weight'=>array('label'=>$langs->trans("Weight"), 'checked'=>0),
 	'e.datec'=>array('label'=>$langs->trans("DateCreation"), 'checked'=>0, 'position'=>500),
 	'e.tms'=>array('label'=>$langs->trans("DateModificationShort"), 'checked'=>0, 'position'=>500),
 	'e.fk_statut'=>array('label'=>$langs->trans("Status"), 'checked'=>1, 'position'=>1000),
@@ -183,13 +186,13 @@ if (GETPOST('button_removefilter_x', 'alpha') || GETPOST('button_removefilter.x'
 
 if (empty($reshook))
 {
-    $objectclass  = 'Expedition';
-    $objectlabel  = 'Sendings';
-    $permissiontoread   = $user->rights->expedition->lire;
-    $permissiontoadd = $user->rights->expedition->creer;
-    $permissiontodelete = $user->rights->expedition->supprimer;
-    $uploaddir = $conf->expedition->dir_output.'/sending';
-    include DOL_DOCUMENT_ROOT.'/core/actions_massactions.inc.php';
+	$objectclass  = 'Expedition';
+	$objectlabel  = 'Sendings';
+	$permissiontoread   = $user->rights->expedition->lire;
+	$permissiontoadd = $user->rights->expedition->creer;
+	$permissiontodelete = $user->rights->expedition->supprimer;
+	$uploaddir = $conf->expedition->dir_output.'/sending';
+	include DOL_DOCUMENT_ROOT.'/core/actions_massactions.inc.php';
 }
 
 
@@ -211,7 +214,7 @@ llxHeader('', $langs->trans('ListOfSendings'), $helpurl);
 
 $sql = 'SELECT';
 if ($sall || $search_product_category > 0) $sql = 'SELECT DISTINCT';
-$sql .= " e.rowid, e.ref, e.ref_customer, e.date_expedition as date_expedition, e.date_delivery as date_livraison, l.date_delivery as date_reception, e.fk_statut, e.billed,";
+$sql .= " e.rowid, e.ref, e.ref_customer, e.date_expedition as date_expedition, e.weight, e.weight_units, e.date_delivery as date_livraison, l.date_delivery as date_reception, e.fk_statut, e.billed,";
 $sql .= " s.rowid as socid, s.nom as name, s.town, s.zip, s.fk_pays, s.client, s.code_client, ";
 $sql .= " typent.code as typent_code,";
 $sql .= " state.code_departement as state_code, state.nom as state_name,";
@@ -313,7 +316,7 @@ if ($resql)
 {
 	$num = $db->num_rows($resql);
 
-    $arrayofselected = is_array($toselect) ? $toselect : array();
+	$arrayofselected = is_array($toselect) ? $toselect : array();
 
 	$expedition = new Expedition($db);
 
@@ -341,18 +344,18 @@ if ($resql)
 	// Add $param from extra fields
 	include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_param.tpl.php';
 
-    $arrayofmassactions = array(
-        'builddoc' => $langs->trans("PDFMerge"),
-        //'classifyclose'=>$langs->trans("Close"), TODO massive close shipment ie: when truck is charged
-        'presend'  => $langs->trans("SendByMail"),
-    );
-    if (in_array($massaction, array('presend'))) $arrayofmassactions = array();
-    $massactionbutton = $form->selectMassAction('', $arrayofmassactions);
+	$arrayofmassactions = array(
+		'builddoc' => $langs->trans("PDFMerge"),
+		//'classifyclose'=>$langs->trans("Close"), TODO massive close shipment ie: when truck is charged
+		'presend'  => $langs->trans("SendByMail"),
+	);
+	if (in_array($massaction, array('presend'))) $arrayofmassactions = array();
+	$massactionbutton = $form->selectMassAction('', $arrayofmassactions);
 
 	$newcardbutton = '';
 	if ($user->rights->expedition->creer)
 	{
-        $newcardbutton .= dolGetButtonTitle($langs->trans('NewSending'), '', 'fa fa-plus-circle', DOL_URL_ROOT.'/expedition/card.php?action=create2');
+		$newcardbutton .= dolGetButtonTitle($langs->trans('NewSending'), '', 'fa fa-plus-circle', DOL_URL_ROOT.'/expedition/card.php?action=create2');
 	}
 
 	$i = 0;
@@ -367,11 +370,11 @@ if ($resql)
 
 	print_barre_liste($langs->trans('ListOfSendings'), $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, $massactionbutton, $num, $nbtotalofrecords, '', 0, $newcardbutton, '', $limit);
 
-    $topicmail = "SendShippingRef";
-    $modelmail = "shipping_send";
-    $objecttmp = new Expedition($db);
-    $trackid = 'shi'.$object->id;
-    include DOL_DOCUMENT_ROOT.'/core/tpl/massactions_pre.tpl.php';
+	$topicmail = "SendShippingRef";
+	$modelmail = "shipping_send";
+	$objecttmp = new Expedition($db);
+	$trackid = 'shi'.$object->id;
+	include DOL_DOCUMENT_ROOT.'/core/tpl/massactions_pre.tpl.php';
 
 	if ($sall)
 	{
@@ -483,6 +486,13 @@ if ($resql)
 		print $form->selectarray("search_type_thirdparty", $formcompany->typent_array(0), $search_type_thirdparty, 0, 0, 0, '', 0, 0, 0, (empty($conf->global->SOCIETE_SORT_ON_TYPEENT) ? 'ASC' : $conf->global->SOCIETE_SORT_ON_TYPEENT));
 		print '</td>';
 	}
+	// Weight
+	if (!empty($arrayfields['e.weight']['checked']))
+	{
+		print '<td class="liste_titre maxwidthonsmartphone center">';
+
+		print '</td>';
+	}
 	// Date delivery planned
 	if (!empty($arrayfields['e.date_delivery']['checked']))
 	{
@@ -567,6 +577,7 @@ if ($resql)
 	if (!empty($arrayfields['state.nom']['checked']))        print_liste_field_titre($arrayfields['state.nom']['label'], $_SERVER["PHP_SELF"], "state.nom", "", $param, '', $sortfield, $sortorder);
 	if (!empty($arrayfields['country.code_iso']['checked'])) print_liste_field_titre($arrayfields['country.code_iso']['label'], $_SERVER["PHP_SELF"], "country.code_iso", "", $param, '', $sortfield, $sortorder, 'center ');
 	if (!empty($arrayfields['typent.code']['checked']))      print_liste_field_titre($arrayfields['typent.code']['label'], $_SERVER["PHP_SELF"], "typent.code", "", $param, '', $sortfield, $sortorder, 'center ');
+	if (!empty($arrayfields['e.weight']['checked']))         print_liste_field_titre($arrayfields['e.weight']['label'], $_SERVER["PHP_SELF"], "e.weight", "", $param, '', $sortfield, $sortorder, 'center ');
 	if (!empty($arrayfields['e.date_delivery']['checked']))  print_liste_field_titre($arrayfields['e.date_delivery']['label'], $_SERVER["PHP_SELF"], "e.date_delivery", "", $param, '', $sortfield, $sortorder, 'center ');
 	if (!empty($arrayfields['l.ref']['checked']))            print_liste_field_titre($arrayfields['l.ref']['label'], $_SERVER["PHP_SELF"], "l.ref", "", $param, '', $sortfield, $sortorder);
 	if (!empty($arrayfields['l.date_delivery']['checked']))  print_liste_field_titre($arrayfields['l.date_delivery']['label'], $_SERVER["PHP_SELF"], "l.date_delivery", "", $param, '', $sortfield, $sortorder, 'center ');
@@ -583,7 +594,7 @@ if ($resql)
 	print_liste_field_titre($selectedfields, $_SERVER["PHP_SELF"], "", '', '', '', $sortfield, $sortorder, 'center maxwidthsearch ');
 	print "</tr>\n";
 
-    $typenArray = $formcompany->typent_array(1);
+	$typenArray = $formcompany->typent_array(1);
 	$i = 0;
 	$totalarray = array();
 	while ($i < min($num, $limit))
@@ -597,7 +608,8 @@ if ($resql)
 		$companystatic->ref = $obj->name;
 		$companystatic->name = $obj->name;
 
-
+		$object = new Expedition($db);
+		$object->fetch($obj->rowid);
 		print '<tr class="oddeven">';
 
 		// Ref
@@ -665,7 +677,24 @@ if ($resql)
 			print '</td>';
 			if (!$i) $totalarray['nbfield']++;
 		}
-
+		// Weight
+		if (!empty($arrayfields['e.weight']['checked']))
+		{
+			print '<td class="center">';
+			if (empty($object->trueWeight))
+			{
+				$tmparray = $object->getTotalWeightVolume();
+				print showDimensionInBestUnit($tmparray['weight'], 0, "weight", $langs, isset($conf->global->MAIN_WEIGHT_DEFAULT_ROUND)?$conf->global->MAIN_WEIGHT_DEFAULT_ROUND:-1, isset($conf->global->MAIN_WEIGHT_DEFAULT_UNIT)?$conf->global->MAIN_WEIGHT_DEFAULT_UNIT:'no');
+				print $form->textwithpicto('', $langs->trans('EstimatedWeight'), 1);
+			}
+			else
+			{
+				print $object->trueWeight;
+				print ($object->trueWeight && $object->weight_units!='')?' '.measuringUnitString(0, "weight", $object->weight_units):'';
+			}
+			print '</td>';
+			if (!$i) $totalarray['nbfield']++;
+		}
 		// Date delivery planed
 		if (!empty($arrayfields['e.date_delivery']['checked']))
 		{
@@ -736,48 +765,48 @@ if ($resql)
 			if (!$i) $totalarray['nbfield']++;
 		}
 
-        // Action column
-        print '<td class="nowrap" align="center">';
-        if ($massactionbutton || $massaction)   // If we are in select mode (massactionbutton defined) or if we have already selected and sent an action ($massaction) defined
-        {
-            $selected = 0;
-            if (in_array($obj->rowid, $arrayofselected)) $selected = 1;
-            print '<input id="cb'.$obj->rowid.'" class="flat checkforselect" type="checkbox" name="toselect[]" value="'.$obj->rowid.'"'.($selected ? ' checked="checked"' : '').'>';
-        }
-        print '</td>';
+		// Action column
+		print '<td class="nowrap" align="center">';
+		if ($massactionbutton || $massaction)   // If we are in select mode (massactionbutton defined) or if we have already selected and sent an action ($massaction) defined
+		{
+			$selected = 0;
+			if (in_array($obj->rowid, $arrayofselected)) $selected = 1;
+			print '<input id="cb'.$obj->rowid.'" class="flat checkforselect" type="checkbox" name="toselect[]" value="'.$obj->rowid.'"'.($selected ? ' checked="checked"' : '').'>';
+		}
+		print '</td>';
 		if (!$i) $totalarray['nbfield']++;
 
 		print "</tr>\n";
 
 		$i++;
 	}
-    $db->free($resql);
+	$db->free($resql);
 
-    $parameters = array('arrayfields'=>$arrayfields, 'sql'=>$sql);
-    $reshook = $hookmanager->executeHooks('printFieldListFooter', $parameters); // Note that $action and $object may have been modified by hook
-    print $hookmanager->resPrint;
+	$parameters = array('arrayfields'=>$arrayfields, 'sql'=>$sql);
+	$reshook = $hookmanager->executeHooks('printFieldListFooter', $parameters); // Note that $action and $object may have been modified by hook
+	print $hookmanager->resPrint;
 
 	print "</table>";
 	print "</div>";
 	print '</form>';
 
-    $hidegeneratedfilelistifempty = 1;
-    if ($massaction == 'builddoc' || $action == 'remove_file' || $show_files)   $hidegeneratedfilelistifempty = 0;
+	$hidegeneratedfilelistifempty = 1;
+	if ($massaction == 'builddoc' || $action == 'remove_file' || $show_files)   $hidegeneratedfilelistifempty = 0;
 
-    // Show list of available documents
-    $urlsource  = $_SERVER['PHP_SELF'].'?sortfield='.$sortfield.'&sortorder='.$sortorder;
-    $urlsource .= str_replace('&amp;', '&', $param);
+	// Show list of available documents
+	$urlsource  = $_SERVER['PHP_SELF'].'?sortfield='.$sortfield.'&sortorder='.$sortorder;
+	$urlsource .= str_replace('&amp;', '&', $param);
 
-    $filedir    = $diroutputmassaction;
-    $genallowed = $user->rights->expedition->lire;
-    $delallowed = $user->rights->expedition->creer;
-    $title      = '';
+	$filedir    = $diroutputmassaction;
+	$genallowed = $user->rights->expedition->lire;
+	$delallowed = $user->rights->expedition->creer;
+	$title      = '';
 
-    print $formfile->showdocuments('massfilesarea_sendings', '', $filedir, $urlsource, 0, $delallowed, '', 1, 1, 0, 48, 1, $param, $title, '', '', '', null, $hidegeneratedfilelistifempty);
+	print $formfile->showdocuments('massfilesarea_sendings', '', $filedir, $urlsource, 0, $delallowed, '', 1, 1, 0, 48, 1, $param, $title, '', '', '', null, $hidegeneratedfilelistifempty);
 }
 else
 {
-    dol_print_error($db);
+	dol_print_error($db);
 }
 
 // End of page
