@@ -6635,7 +6635,8 @@ abstract class CommonObject
 					$perms = dol_eval($extrafields->attributes[$this->table_element]['perms'][$key], 1);
 				}
 
-				if (($mode == 'create' || $mode == 'edit') && abs($visibility) != 1 && abs($visibility) != 3) continue; // <> -1 and <> 1 and <> 3 = not visible on forms, only on list
+				if (($mode == 'create') && abs($visibility) != 1 && abs($visibility) != 3) continue; // <> -1 and <> 1 and <> 3 = not visible on forms, only on list
+				elseif (($mode == 'edit') && abs($visibility) != 1 && abs($visibility) != 3 && abs($visibility) != 4) continue; // <> -1 and <> 1 and <> 3 = not visible on forms, only on list and <> 4 = not visible at the creation
 				elseif ($mode == 'view' && empty($visibility)) continue;
 				if (empty($perms)) continue;
 				// Load language if required
@@ -6663,9 +6664,11 @@ abstract class CommonObject
 					case "view":
 						$value = $this->array_options["options_".$key.$keysuffix];
 						break;
-					case "edit":
-						$getposttemp = GETPOST($keyprefix.'options_'.$key.$keysuffix, 'none'); // GETPOST can get value from GET, POST or setup of default values.
-						// GETPOST("options_" . $key) can be 'abc' or array(0=>'abc')
+					case "create":
+                    case "edit":
+
+                        $getposttemp = GETPOST($keyprefix.'options_'.$key.$keysuffix, 'none'); // GETPOST can get value from GET, POST or setup of default values.
+                        // GETPOST("options_" . $key) can be 'abc' or array(0=>'abc')
 						if (is_array($getposttemp) || $getposttemp != '' || GETPOSTISSET($keyprefix.'options_'.$key.$keysuffix))
 						{
 							if (is_array($getposttemp)) {
@@ -6769,7 +6772,8 @@ abstract class CommonObject
 						case "view":
 							$out .= $extrafields->showOutputField($key, $value);
 							break;
-						case "edit":
+                        case "create":
+                        case "edit":
 							$out .= $extrafields->showInputField($key, $value, '', $keysuffix, '', 0, $this->id, $this->table_element);
 							break;
 					}
