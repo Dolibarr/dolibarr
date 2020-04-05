@@ -466,14 +466,14 @@ while ($i < min($num, $limit))
 	// Firstname
 	if (!empty($arrayfields['d.firstname']['checked']))
 	{
-		print '<td>'.$adherent->firstname.'</td>';
+		print '<td class="tdoverflowmax150" title="'.dol_escape_htmltag($adherent->firstname).'">'.$adherent->firstname.'</td>';
 		if (!$i) $totalarray['nbfield']++;
 	}
 
 	// Login
 	if (!empty($arrayfields['d.login']['checked']))
 	{
-		print '<td>'.$adherent->login.'</td>';
+		print '<td class="tdoverflowmax150" title="'.dol_escape_htmltag($adherent->login).'">'.$adherent->login.'</td>';
 		if (!$i) $totalarray['nbfield']++;
 	}
 
