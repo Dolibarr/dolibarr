@@ -47,21 +47,21 @@ abstract class ModeleNumRefTakepos
 	 * @return	boolean     true if module can be used
 	 */
 	public function isEnabled()
-    {
-        return true;
-    }
+	{
+		return true;
+	}
 
 	/**
 	 * Renvoi la description par defaut du modele de numerotation
 	 *
 	 * @return    string      Texte descripif
 	 */
-    public function info()
-    {
-        global $langs;
-        $langs->load("cashdesk@cashdesk");
-        return $langs->trans("NoDescription");
-    }
+	public function info()
+	{
+		global $langs;
+		$langs->load("cashdesk@cashdesk");
+		return $langs->trans("NoDescription");
+	}
 
 	/**
 	 * Return an example of numbering
@@ -69,11 +69,11 @@ abstract class ModeleNumRefTakepos
 	 * @return	string      Example
 	 */
 	public function getExample()
-    {
-        global $langs;
-        $langs->load('cashdesk@cashdesk');
-        return $langs->trans('NoExample');
-    }
+	{
+		global $langs;
+		$langs->load('cashdesk@cashdesk');
+		return $langs->trans('NoExample');
+	}
 
 	/**
 	 *  Checks if the numbers already in the database do not
@@ -82,20 +82,20 @@ abstract class ModeleNumRefTakepos
 	 * @return	boolean     false if conflict, true if ok
 	 */
 	public function canBeActivated()
-    {
-        return true;
-    }
+	{
+		return true;
+	}
 
-    /**
-     * Renvoi prochaine valeur attribuee
-     *
-     * @return     string      Valeur
-     */
+	/**
+	 * Renvoi prochaine valeur attribuee
+	 *
+	 * @return     string      Valeur
+	 */
 	public function getNextValue()
-    {
-        global $langs;
-        return $langs->trans('NotAvailable');
-    }
+	{
+		global $langs;
+		return $langs->trans('NotAvailable');
+	}
 
 	/**
 	 * Renvoi version du modele de numerotation
@@ -103,14 +103,14 @@ abstract class ModeleNumRefTakepos
 	 * @return    string      Valeur
 	 */
 	public function getVersion()
-    {
-        global $langs;
-        $langs->load("admin");
+	{
+		global $langs;
+		$langs->load("admin");
 
-        if ($this->version == 'development') return $langs->trans('VersionDevelopment');
-        if ($this->version == 'experimental') return $langs->trans('VersionExperimental');
-        if ($this->version == 'dolibarr') return DOL_VERSION;
-        if ($this->version) return $this->version;
-        return $langs->trans('NotAvailable');
-    }
+		if ($this->version == 'development') return $langs->trans('VersionDevelopment');
+		if ($this->version == 'experimental') return $langs->trans('VersionExperimental');
+		if ($this->version == 'dolibarr') return DOL_VERSION;
+		if ($this->version) return $this->version;
+		return $langs->trans('NotAvailable');
+	}
 }
