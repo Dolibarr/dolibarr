@@ -3,6 +3,7 @@
  * Copyright (C) 2004-2008 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2009 Regis Houssin        <regis.houssin@inodbox.com>
  * Copyright (C) 2012	   Juanjo Menent        <jmenent@2byte.es>
+ * Copyright (C) 2020	   Thibault FOUCART     <support@ptibogxiv.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -270,22 +271,22 @@ class modStock extends DolibarrModules
 		$this->export_permission[$r]=array(array("stock","lire"));
 		$this->export_fields_array[$r]=array(
 			'e.rowid'=>'IdWarehouse','e.ref'=>'LocationSummary','e.description'=>'DescWareHouse','e.lieu'=>'LieuWareHouse','e.address'=>'Address','e.zip'=>'Zip',
-			'e.town'=>'Town','p.rowid'=>"ProductId",'p.ref'=>"Ref",'p.fk_product_type'=>"Type",'p.label'=>"Label",'p.description'=>"Description",'p.note'=>"Note",
-			'p.price'=>"Price",'p.tva_tx'=>'VAT','p.tosell'=>"OnSell",'p.tobuy'=>'OnBuy','p.duration'=>"Duration",'p.datec'=>'DateCreation',
-			'p.tms'=>'DateModification','sm.rowid'=>'MovementId','sm.value'=>'Qty','sm.datem'=>'DateMovement','sm.label'=>'MovementLabel',
+			'e.town'=>'Town','p.rowid'=>"ProductId",'p.ref'=>"Ref",'p.fk_product_type'=>"Type",'p.label'=>"Label",'p.description'=>"Description",'c.code'=>'Origin','p.note'=>"Note",
+			'p.price'=>"Price",'p.tva_tx'=>'VAT','p.tosell'=>"OnSell",'p.tobuy'=>'OnBuy','p.duration'=>"Duration",'p.net_measure'=>"NetMeasure",'p.customcode'=>"CustomCode",'p.datec'=>'DateCreation',
+			'p.tms'=>'DateModification','sm.rowid'=>'MovementId','sm.value'=>'Qty','sm.datem'=>'DateMovement','sm.label'=>'MovementLabel', 'sm.price' => 'Price',
 			'sm.inventorycode'=>'InventoryCode'
 		);
 		$this->export_TypeFields_array[$r]=array(
 			'e.rowid'=>'List:entrepot:ref::stock','e.ref'=>'Text','e.description'=>'Text','e.lieu'=>'Text','e.address'=>'Text','e.zip'=>'Text','e.town'=>'Text',
-			'p.rowid'=>"List:product:label::product",'p.ref'=>"Text",'p.fk_product_type'=>"Text",'p.label'=>"Text",'p.description'=>"Text",'p.note'=>"Text",
-			'p.price'=>"Numeric",'p.tva_tx'=>'Numeric','p.tosell'=>"Boolean",'p.tobuy'=>"Boolean",'p.duration'=>"Duree",'p.datec'=>'Date','p.tms'=>'Date',
-			'sm.rowid'=>'Numeric','sm.value'=>'Numeric','sm.datem'=>'Date','sm.batch'=>'Text','sm.label'=>'Text','sm.inventorycode'=>'Text'
+			'p.rowid'=>"List:product:label::product",'p.ref'=>"Text",'p.fk_product_type'=>"Text",'p.label'=>"Text",'p.description'=>"Text",'c.code'=>"Text",'p.note'=>"Text",
+			'p.price'=>"Numeric",'p.tva_tx'=>'Numeric','p.tosell'=>"Boolean",'p.tobuy'=>"Boolean",'p.duration'=>"Duree",'p.net_measure'=>"Numeric",'p.customcode'=>"text",'p.datec'=>'Date','p.tms'=>'Date',
+			'sm.rowid'=>'Numeric','sm.value'=>'Numeric','sm.datem'=>'Date','sm.batch'=>'Text','sm.label'=>'Text','sm.price'=>"Numeric",'sm.inventorycode'=>'Text'
 		);
 		$this->export_entities_array[$r]=array(
 			'e.rowid'=>'warehouse','e.ref'=>'warehouse','e.description'=>'warehouse','e.lieu'=>'warehouse','e.address'=>'warehouse','e.zip'=>'warehouse',
-			'e.town'=>'warehouse','p.rowid'=>"product",'p.ref'=>"product",'p.fk_product_type'=>"product",'p.label'=>"product",'p.description'=>"product",
-			'p.note'=>"product",'p.price'=>"product",'p.tva_tx'=>'product','p.tosell'=>"product",'p.tobuy'=>"product",'p.duration'=>"product",'p.datec'=>'product',
-			'p.tms'=>'product','sm.rowid'=>'movement','sm.value'=>'movement','sm.datem'=>'movement','sm.label'=>'movement','sm.inventorycode'=>'movement'
+			'e.town'=>'warehouse','p.rowid'=>"product",'p.ref'=>"product",'p.fk_product_type'=>"product",'p.label'=>"product",'p.description'=>"product",'c.code'=>"product",
+			'p.note'=>"product",'p.price'=>"product",'p.tva_tx'=>'product','p.tosell'=>"product",'p.tobuy'=>"product",'p.duration'=>"product",'p.net_measure'=>"product",'p.customcode'=>"product",'p.datec'=>'product',
+			'p.tms'=>'product','sm.rowid'=>'movement','sm.value'=>'movement','sm.datem'=>'movement','sm.label'=>'movement','sm.price'=>'movement','sm.inventorycode'=>'movement'
 		);
 		if ($conf->productbatch->enabled)
 		{
@@ -296,8 +297,8 @@ class modStock extends DolibarrModules
 		$this->export_aggregate_array[$r]=array('sm.value'=>'SUM');    // TODO Not used yet
 		$this->export_dependencies_array[$r]=array('movement'=>array('sm.rowid')); // We must keep this until the aggregate_array is used. To add unique key if we ask a field of a child to avoid the DISTINCT to discard them.
 		$this->export_sql_start[$r]='SELECT DISTINCT ';
-		$this->export_sql_end[$r]  =' FROM '.MAIN_DB_PREFIX.'product as p, '.MAIN_DB_PREFIX.'stock_mouvement as sm, '.MAIN_DB_PREFIX.'entrepot as e';
-		$this->export_sql_end[$r] .=' WHERE p.rowid = sm.fk_product AND sm.fk_entrepot = e.rowid';
+		$this->export_sql_end[$r]  =' FROM '.MAIN_DB_PREFIX.'product as p, '.MAIN_DB_PREFIX.'stock_mouvement as sm, '.MAIN_DB_PREFIX.'entrepot as e, '.MAIN_DB_PREFIX.'c_country as c';
+		$this->export_sql_end[$r] .=' WHERE p.rowid = sm.fk_product AND sm.fk_entrepot = e.rowid AND p.fk_country = c.rowid';
 		$this->export_sql_end[$r] .=' AND e.entity IN ('.getEntity('stock').')';
 
 		// Imports
