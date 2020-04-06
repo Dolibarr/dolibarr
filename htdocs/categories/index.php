@@ -67,7 +67,7 @@ if (! empty($user->rights->categorie->creer)) {
 	$newcardbutton.= dolGetButtonTitle($langs->trans('NewCategory'), '', 'fa fa-plus-circle', DOL_URL_ROOT.'/categories/card.php?action=create&type='.$type.'&backtopage='.urlencode($_SERVER["PHP_SELF"].'?type='.$type));
 }
 
-print load_fiche_titre($title, $newcardbutton);
+print load_fiche_titre($title, $newcardbutton, 'object_category');
 
 //print '<table border="0" width="100%" class="notopnoleftnoright">';
 //print '<tr><td valign="top" width="30%" class="notopnoleft">';
@@ -197,7 +197,7 @@ print '<table class="liste nohover" width="100%">';
 print '<tr class="liste_titre"><td>'.$langs->trans("Categories").'</td><td></td><td class="right">';
 if (!empty($conf->use_javascript_ajax))
 {
-	print '<div id="iddivjstreecontrol"><a class="notasortlink" href="#">'.img_picto('', 'object_category').' '.$langs->trans("UndoExpandAll").'</a> | <a class="notasortlink" href="#">'.img_picto('', 'object_category-expanded').' '.$langs->trans("ExpandAll").'</a></div>';
+	print '<div id="iddivjstreecontrol"><a class="notasortlink" href="#">'.img_picto('', 'folder').' '.$langs->trans("UndoExpandAll").'</a> | <a class="notasortlink" href="#">'.img_picto('', 'folder-open').' '.$langs->trans("ExpandAll").'</a></div>';
 }
 print '</td></tr>';
 

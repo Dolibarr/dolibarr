@@ -76,6 +76,10 @@ if (!defined('ISLOADEDBYSTEELSHEET')) die('Must be call by steelsheet'); ?>
 .info-box-icon > img {
 	max-width: 100%;
 }
+.info-box-module .info-box-icon > img {
+    max-width: 70%;
+}
+
 .info-box-icon-text{
     box-sizing: border-box;
     display: block;

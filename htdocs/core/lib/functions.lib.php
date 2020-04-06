@@ -3132,11 +3132,11 @@ function img_picto($titlealt, $picto, $moreatt = '', $pictoisfullpath = false, $
 
         if (empty($srconly) && in_array($pictowithouttext, array(
         		'1downarrow', '1uparrow', '1leftarrow', '1rightarrow', '1uparrow_selected', '1downarrow_selected', '1leftarrow_selected', '1rightarrow_selected',
-        		'address', 'barcode', 'bank', 'bookmark', 'building', 'cash-register', 'check', 'close_title', 'cubes', 'delete', 'dolly', 'edit', 'ellipsis-h',
-        		'filter', 'file-code', 'grip', 'grip_title', 'language', 'list', 'listlight', 'note',
-        		'object_phoning', 'object_phoning_fax', 'object_email',
-        		'object_bookmark', 'object_list', 'object_calendar', 'object_calendarweek', 'object_calendarmonth', 'object_calendarday', 'object_calendarperuser',
-        		'object_cash-register',
+        		'object_accounting', 'object_category', 'address', 'barcode', 'bank', 'bookmark', 'building', 'cash-register', 'check', 'close_title', 'cubes', 'delete', 'dolly', 'edit', 'ellipsis-h',
+        		'filter', 'file-code', 'folder', 'folder-open', 'grip', 'grip_title', 'language', 'list', 'listlight', 'note',
+        		'object_barcode', 'object_phoning', 'object_phoning_fax', 'object_email',
+        		'object_bookmark', 'object_generic', 'object_list', 'object_calendar', 'object_calendarweek', 'object_calendarmonth', 'object_calendarday', 'object_calendarperuser',
+        		'object_cash-register', 'object_printer', 'object_technic',
         		'off', 'on', 'play', 'playdisabled', 'printer', 'resize', 'stats',
 				'note', 'setup', 'sign-out', 'split', 'switch_off', 'switch_on', 'tools', 'unlink', 'uparrow', 'user', 'wrench', 'globe',
 				'jabber', 'skype', 'twitter', 'facebook', 'linkedin', 'instagram', 'snapchat', 'youtube', 'google-plus-g', 'whatsapp',
@@ -3159,12 +3159,15 @@ function img_picto($titlealt, $picto, $moreatt = '', $pictoisfullpath = false, $
 
 		    $arrayconvpictotofa = array(
 		    	'address'=> 'address-book', 'setup'=>'cog', 'companies'=>'building', 'products'=>'cube', 'commercial'=>'suitcase', 'invoicing'=>'coins', 'accountancy'=>'money-check-alt',
+		    	'accounting'=>'chart-line', 'category'=>'tag',
 		    	'hrm'=>'umbrella-beach', 'members'=>'users', 'ticket'=>'ticket-alt', 'generic'=>'folder-open', 'globe'=>'external-link-alt',
 		    	'phoning'=>'phone', 'phoning_fax'=>'fax', 'email'=>'at',
+		    	'generic'=>'file',
 		    	'switch_off'=>'toggle-off', 'switch_on'=>'toggle-on', 'check'=>'check', 'bookmark'=>'star', 'bookmark'=>'star', 'stats' => 'chart-bar',
 		    	'bank'=>'university', 'close_title'=>'window-close', 'delete'=>'trash', 'edit'=>'pencil', 'filter'=>'filter', 'split'=>'code-branch',
 		    	'list'=>'list-alt', 'calendar'=>'calendar-alt', 'calendarweek'=>'calendar-week', 'calendarmonth'=>'calendar-alt', 'calendarday'=>'calendar-day', 'calendarperuser'=>'table',
 		    	'error'=>'exclamation-triangle', 'warning'=>'exclamation-triangle',
+		    	'printer'=>'print', 'technic'=>'cogs',
 		    	'title_setup'=>'tools', 'title_accountancy'=>'money-check-alt', 'title_bank'=>'university', 'title_hrm'=>'umbrella-beach', 'title_agenda'=>'calendar-alt',
 		    	'preview'=>'binoculars', 'project'=>'sitemap'
 		    );
@@ -3223,6 +3226,10 @@ function img_picto($titlealt, $picto, $moreatt = '', $pictoisfullpath = false, $
 			elseif ($pictowithouttext == 'resize') {
 				$fakey = 'fa-crop';
 				$facolor = '#444';
+			}
+			elseif ($pictowithouttext == 'generic') {
+				$fakey = 'fa-file';
+				$fa = 'far';
 			}
 			elseif ($pictowithouttext == 'note') {
 			    $fakey = 'fa-sticky-note';
