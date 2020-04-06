@@ -3275,6 +3275,7 @@ class Societe extends CommonObject
 		$this->phone=$member->phone;       // Prof phone
 		$this->email=$member->email;
 		$this->skype=$member->skype;
+		$this->entity=$member->entity;
 
 		$this->client = 1;				// A member is a customer by default
 		$this->code_client = ($customercode?$customercode:-1);
@@ -3778,7 +3779,7 @@ class Societe extends CommonObject
 
 					$outstandingOpened+=$obj->total_ttc - $paiement - $creditnotes - $deposits;
 				}
-				
+
                 //if credit note is converted but not used
                 if($mode == 'supplier' && $obj->type == FactureFournisseur::TYPE_CREDIT_NOTE  && $tmpobject->isCreditNoteUsed())$outstandingOpened-=$tmpobject->getSumFromThisCreditNotesNotUsed();
 
