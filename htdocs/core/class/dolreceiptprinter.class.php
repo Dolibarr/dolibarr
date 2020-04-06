@@ -597,7 +597,7 @@ class dolReceiptPrinter extends Printer
         //print '<pre>'.print_r($vals, true).'</pre>';
         // print ticket
         $level = 0;
-        $nbcharactbyline = 48;
+        $nbcharactbyline = (!empty($conf->global->RECEIPT_PRINTER_NB_CHARACT_BY_LINE) ? $conf->global->RECEIPT_PRINTER_NB_CHARACT_BY_LINE : 48);
         $ret = $this->initPrinter($printerid);
         if ($ret > 0) {
             setEventMessages($this->error, $this->errors, 'errors');
@@ -615,7 +615,7 @@ class dolReceiptPrinter extends Printer
                             $spacestoadd = $nbcharactbyline - strlen($line->ref) - strlen($line->qty) - 10 - 1;
                             $spaces = str_repeat(' ', $spacestoadd);
                             $this->printer->text($line->ref.$spaces.$line->qty.' '.str_pad(price($line->total_ttc), 10, ' ', STR_PAD_LEFT)."\n");
-                            $this->printer->text(strip_tags(htmlspecialchars_decode($line->desc))."\n");
+                            $this->printer->text(strip_tags(htmlspecialchars_decode($line->product_label))."\n");
                         }
                         break;
                     case 'DOL_PRINT_OBJECT_TAX':
