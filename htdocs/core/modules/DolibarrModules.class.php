@@ -2286,31 +2286,31 @@ class DolibarrModules // Can not be abstract, because we need to instantiate it 
 
 		print '
     	<div class="box-flex-item info-box-module">
-	    <div class="info-box info-box-sm info-box-weather info-box-weather-level4">
-	    <span class="info-box-icon">';
+	    <div class="info-box info-box-sm info-box-module">
+	    <div class="info-box-icon">';
 
 		$alttext = '';
 		//if (is_array($objMod->need_dolibarr_version)) $alttext.=($alttext?' - ':'').'Dolibarr >= '.join('.',$objMod->need_dolibarr_version);
 		//if (is_array($objMod->phpmin)) $alttext.=($alttext?' - ':'').'PHP >= '.join('.',$objMod->phpmin);
 		if (!empty($this->picto))
 		{
-			if (preg_match('/^\//i', $this->picto)) print img_picto($alttext, $this->picto, 'class="inline-block valignmiddle width50"', 1);
-			else print img_object($alttext, $this->picto, 'class="inline-block valignmiddle width50"');
+			if (preg_match('/^\//i', $this->picto)) print img_picto($alttext, $this->picto, 'class="inline-block valignmiddle"', 1);
+			else print img_object($alttext, $this->picto, 'class="inline-block valignmiddle"');
 		}
 		else
 		{
-			print img_object($alttext, 'generic', 'class="inline-block valignmiddle width50"');
+			print img_object($alttext, 'generic', 'class="inline-block valignmiddle"');
 		}
-
-	    print '<img src="/dolibarr_dev/htdocs/theme/eldy/img/weather/weather-storm.png" alt="" class="inline-block valignmiddle width50"></span>
+		print '<span class="info-box-icon-version" title="'.$langs->trans("Version").' '.$this->getVersion(1).'">'.$this->getVersion(1).'</span>';
+		print '</div>
 	    <div class="info-box-content info-box-text-module">
 	    <span class="info-box-title">'.$this->getName().'</span>
 	    <span class="info-box-desc twolinesmax">'.nl2br($this->getDesc()).'</span>';
 
 		print '<a href="javascript:document_preview(\''.DOL_URL_ROOT.'/admin/modulehelp.php?id='.$this->numero.'\',\'text/html\',\''.dol_escape_js($langs->trans("Module")).'\')">'.img_picto($langs->trans("ClickToShowDescription"), $imginfo).'</a>';
 
+		//print '<span class="progress-version"><span class="opacitymedium">'.$this->getVersion(1).'</span></span>';
 		print '
-	    <span class="progress-description"><span class="opacitymedium">'.$this->getVersion(1).'</span></span>
 	    </div><!-- /.info-box-content -->
 	    </div><!-- /.info-box -->
 	    </div>';
