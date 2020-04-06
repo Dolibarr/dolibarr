@@ -209,8 +209,8 @@ $prefix = dol_getprefix('');
 $sessionname = 'DOLSESSID_'.$prefix;
 $sessiontimeout = 'DOLSESSTIMEOUT_'.$prefix;
 if (!empty($_COOKIE[$sessiontimeout])) ini_set('session.gc_maxlifetime', $_COOKIE[$sessiontimeout]);
-session_name($sessionname);
 session_set_cookie_params(0, '/', null, (empty($dolibarr_main_force_https) ? false : true), true); // Add tag secure and httponly on session cookie (same as setting session.cookie_httponly into php.ini). Must be called before the session_start.
+session_name($sessionname);
 // This create lock, released when session_write_close() or end of page.
 // We need this lock as long as we read/write $_SESSION ['vars']. We can remove lock when finished.
 if (!defined('NOSESSION'))
@@ -255,7 +255,6 @@ if (isset($_SERVER["HTTP_USER_AGENT"]))
 
 	if ($conf->browser->layout == 'phone') $conf->dol_no_mouse_hover = 1;
 }
-
 
 // Force HTTPS if required ($conf->file->main_force_https is 0/1 or 'https dolibarr root url')
 // $_SERVER["HTTPS"] is 'on' when link is https, otherwise $_SERVER["HTTPS"] is empty or 'off'
@@ -343,7 +342,6 @@ if ((!empty($conf->global->MAIN_VERSION_LAST_UPGRADE) && ($conf->global->MAIN_VE
 	}
 }
 
-//var_dump(GETPOST('token').' '.$_SESSION['token'].' - '.newToken().' '.$_SERVER['SCRIPT_FILENAME']);
 
 // Creation of a token against CSRF vulnerabilities
 if (!defined('NOTOKENRENEWAL'))
@@ -619,8 +617,8 @@ if (!defined('NOLOGIN'))
 		{
 			dol_syslog('User not found, connexion refused');
 			session_destroy();
-			session_name($sessionname);
 			session_set_cookie_params(0, '/', null, (empty($dolibarr_main_force_https) ? false : true), true); // Add tag secure and httponly on session cookie
+			session_name($sessionname);
 			session_start();
 
 			if ($resultFetchUser == 0)
@@ -673,8 +671,8 @@ if (!defined('NOLOGIN'))
 			// Account has been removed after login
 			dol_syslog("Can't load user even if session logged. _SESSION['dol_login']=".$login, LOG_WARNING);
 			session_destroy();
-			session_name($sessionname);
 			session_set_cookie_params(0, '/', null, (empty($dolibarr_main_force_https) ? false : true), true); // Add tag secure and httponly on session cookie
+			session_name($sessionname);
 			session_start();
 
 			if ($resultFetchUser == 0)
