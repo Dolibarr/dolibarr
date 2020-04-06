@@ -3135,7 +3135,7 @@ function img_picto($titlealt, $picto, $moreatt = '', $pictoisfullpath = false, $
         		'object_accounting', 'object_category', 'address', 'barcode', 'bank', 'bookmark', 'building', 'cash-register', 'check', 'close_title', 'cubes', 'delete', 'dolly', 'edit', 'ellipsis-h',
         		'filter', 'file-code', 'folder', 'folder-open', 'grip', 'grip_title', 'language', 'list', 'listlight', 'note',
         		'object_barcode', 'object_phoning', 'object_phoning_fax', 'object_email',
-        		'object_bookmark', 'object_generic', 'object_list', 'object_calendar', 'object_calendarweek', 'object_calendarmonth', 'object_calendarday', 'object_calendarperuser',
+        		'object_bookmark', 'object_generic', 'object_list-alt', 'object_calendar', 'object_calendarweek', 'object_calendarmonth', 'object_calendarday', 'object_calendarperuser',
         		'object_cash-register', 'object_printer', 'object_technic',
         		'off', 'on', 'play', 'playdisabled', 'printer', 'resize', 'stats',
 				'note', 'setup', 'sign-out', 'split', 'switch_off', 'switch_on', 'tools', 'unlink', 'uparrow', 'user', 'wrench', 'globe',
@@ -3165,7 +3165,7 @@ function img_picto($titlealt, $picto, $moreatt = '', $pictoisfullpath = false, $
 		    	'generic'=>'file',
 		    	'switch_off'=>'toggle-off', 'switch_on'=>'toggle-on', 'check'=>'check', 'bookmark'=>'star', 'bookmark'=>'star', 'stats' => 'chart-bar',
 		    	'bank'=>'university', 'close_title'=>'window-close', 'delete'=>'trash', 'edit'=>'pencil', 'filter'=>'filter', 'split'=>'code-branch',
-		    	'list'=>'list-alt', 'calendar'=>'calendar-alt', 'calendarweek'=>'calendar-week', 'calendarmonth'=>'calendar-alt', 'calendarday'=>'calendar-day', 'calendarperuser'=>'table',
+		    	'list-alt'=>'list-alt', 'calendar'=>'calendar-alt', 'calendarweek'=>'calendar-week', 'calendarmonth'=>'calendar-alt', 'calendarday'=>'calendar-day', 'calendarperuser'=>'table',
 		    	'error'=>'exclamation-triangle', 'warning'=>'exclamation-triangle',
 		    	'printer'=>'print', 'technic'=>'cogs',
 		    	'title_setup'=>'tools', 'title_accountancy'=>'money-check-alt', 'title_bank'=>'university', 'title_hrm'=>'umbrella-beach', 'title_agenda'=>'calendar-alt',
@@ -3259,7 +3259,7 @@ function img_picto($titlealt, $picto, $moreatt = '', $pictoisfullpath = false, $
 				$fakey = 'fa-comment-o';
 			}
 			// Img for type of views
-			elseif (in_array($pictowithouttext, array('list', 'calendar', 'calendarweek', 'calendarmonth', 'calendarday', 'calendarperuser'))) {
+			elseif (in_array($pictowithouttext, array('list-alt', 'calendar', 'calendarweek', 'calendarmonth', 'calendarday', 'calendarperuser'))) {
 				$fakey = 'imgforviewmode fa-'.$arrayconvpictotofa[$pictowithouttext];
 				$marginleftonlyshort = 0;
 			}

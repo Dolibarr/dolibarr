@@ -107,6 +107,8 @@ $search_user = GETPOST('search_user', 'int');
 $search_sale = GETPOST('search_sale', 'int');
 $search_date_start = dol_mktime(0, 0, 0, GETPOST('search_date_startmonth', 'int'), GETPOST('search_date_startday', 'int'), GETPOST('search_date_startyear', 'int'));
 $search_date_end = dol_mktime(23, 59, 59, GETPOST('search_date_endmonth', 'int'), GETPOST('search_date_endday', 'int'), GETPOST('search_date_endyear', 'int'));
+$search_date_valid_start = dol_mktime(0, 0, 0, GETPOST('search_date_valid_startmonth', 'int'), GETPOST('search_date_valid_startday', 'int'), GETPOST('search_date_valid_startyear', 'int'));
+$search_date_valid_end = dol_mktime(23, 59, 59, GETPOST('search_date_valid_endmonth', 'int'), GETPOST('search_date_valid_endday', 'int'), GETPOST('search_date_valid_endyear', 'int'));
 $search_datelimit_start = dol_mktime(0, 0, 0, GETPOST('search_datelimit_startmonth', 'int'), GETPOST('search_datelimit_startday', 'int'), GETPOST('search_datelimit_startyear', 'int'));
 $search_datelimit_end = dol_mktime(23, 59, 59, GETPOST('search_datelimit_endmonth', 'int'), GETPOST('search_datelimit_endday', 'int'), GETPOST('search_datelimit_endyear', 'int'));
 $search_categ_cus = trim(GETPOST("search_categ_cus", 'int'));
@@ -168,6 +170,7 @@ $arrayfields = array(
 	'f.ref_client'=>array('label'=>"RefCustomer", 'checked'=>1, 'position'=>10),
 	'f.type'=>array('label'=>"Type", 'checked'=>0, 'position'=>15),
 	'f.date'=>array('label'=>"DateInvoice", 'checked'=>1, 'position'=>20),
+	'f.date_valid'=>array('label'=>"DateValidation", 'checked'=>0, 'position'=>22),
 	'f.date_lim_reglement'=>array('label'=>"DateDue", 'checked'=>1, 'position'=>25),
 	'f.date_closing'=>array('label'=>"DateClosing", 'checked'=>0, 'position'=>30),
 	'p.ref'=>array('label'=>"ProjectRef", 'checked'=>1, 'enabled'=>(empty($conf->projet->enabled) ? 0 : 1), 'position'=>40),
@@ -269,6 +272,8 @@ if (GETPOST('button_removefilter_x', 'alpha') || GETPOST('button_removefilter', 
 	$search_type_thirdparty = '';
 	$search_date_start = '';
 	$search_date_end = '';
+	$search_date_valid_start = '';
+	$search_date_valid_end = '';
 	$search_datelimit_start = '';
 	$search_datelimit_end = '';
 	$option = '';
@@ -405,7 +410,7 @@ $sql .= ' f.rowid as id, f.ref, f.ref_client, f.type, f.note_private, f.note_pub
 $sql .= ' f.localtax1 as total_localtax1, f.localtax2 as total_localtax2,';
 $sql .= ' f.fk_user_author,';
 $sql .= ' f.fk_multicurrency, f.multicurrency_code, f.multicurrency_tx, f.multicurrency_total_ht, f.multicurrency_total_tva as multicurrency_total_vat, f.multicurrency_total_ttc,';
-$sql .= ' f.datef as df, f.date_lim_reglement as datelimite, f.module_source, f.pos_source,';
+$sql .= ' f.datef as df, f.date_valid, f.date_lim_reglement as datelimite, f.module_source, f.pos_source,';
 $sql .= ' f.paye as paye, f.fk_statut, f.close_code,';
 $sql .= ' f.datec as date_creation, f.tms as date_update, f.date_closing as date_closing,';
 $sql .= ' f.retained_warranty, f.retained_warranty_date_limit, f.situation_final, f.situation_cycle_ref, f.situation_counter,';
@@ -512,6 +517,8 @@ if ($search_module_source)    $sql .= natural_search("f.module_source", $search_
 if ($search_pos_source)       $sql .= natural_search("f.pos_source", $search_pos_source);
 if ($search_date_start)       $sql .= " AND f.datef >= '".$db->idate($search_date_start)."'";
 if ($search_date_end)         $sql .= " AND f.datef <= '".$db->idate($search_date_end)."'";
+if ($search_date_valid_start) $sql .= " AND f.date_valid >= '".$db->idate($search_date_valid_start)."'";
+if ($search_date_valid_end)   $sql .= " AND f.date_valid <= '".$db->idate($search_date_valid_end)."'";
 if ($search_datelimit_start)  $sql .= " AND f.date_lim_reglement >= '".$db->idate($search_datelimit_start)."'";
 if ($search_datelimit_end)    $sql .= " AND f.date_lim_reglement <= '".$db->idate($search_datelimit_end)."'";
 if ($option == 'late') $sql .= " AND f.date_lim_reglement < '".$db->idate(dol_now() - $conf->facture->client->warning_delay)."'";
@@ -531,7 +538,7 @@ if (!$sall)
 {
 	$sql .= ' GROUP BY f.rowid, f.ref, ref_client, f.type, f.note_private, f.note_public, f.increment, f.fk_mode_reglement, f.fk_cond_reglement, f.total, f.tva, f.total_ttc,';
 	$sql .= ' f.localtax1, f.localtax2,';
-	$sql .= ' f.datef, f.date_lim_reglement, f.module_source, f.pos_source,';
+	$sql .= ' f.datef, f.date_valid, f.date_lim_reglement, f.module_source, f.pos_source,';
 	$sql .= ' f.paye, f.fk_statut, f.close_code,';
 	$sql .= ' f.datec, f.tms, f.date_closing,';
 	$sql .= ' f.retained_warranty, f.retained_warranty_date_limit, f.situation_final, f.situation_cycle_ref, f.situation_counter,';
@@ -603,6 +610,8 @@ if ($resql)
 	if ($sall)				 $param .= '&sall='.urlencode($sall);
 	if ($search_date_start)				$param .= '&search_date_start='.urlencode($search_date_start);
 	if ($search_date_end)				$param .= '&search_date_end='.urlencode($search_date_end);
+	if ($search_date_valid_start)		$param .= '&search_date_valid_start='.urlencode($search_date_valid_start);
+	if ($search_date_valid_end)			$param .= '&search_date_valid_end='.urlencode($search_date_valid_end);
 	if ($search_datelimit_start)		$param .= '&search_datelimit_start='.urlencode($search_datelimit_start);
 	if ($search_datelimit_end)			$param .= '&search_datelimit_end='.urlencode($search_datelimit_end);
 	if ($search_ref)         $param .= '&search_ref='.urlencode($search_ref);
@@ -794,6 +803,20 @@ if ($resql)
 		print '<div class="nowrap">';
 		print $langs->trans('to').' ';
 		print $form->selectDate($search_date_end ? $search_date_end : -1, 'search_date_end', 0, 0, 1);
+		print '</div>';
+		print '</td>';
+	}
+	// Date valid
+	if (!empty($arrayfields['f.date_valid']['checked']))
+	{
+		print '<td class="liste_titre center">';
+		print '<div class="nowrap">';
+		print $langs->trans('From').' ';
+		print $form->selectDate($search_date_valid_start ? $search_date_valid_start : -1, 'search_date_valid_start', 0, 0, 1);
+		print '</div>';
+		print '<div class="nowrap">';
+		print $langs->trans('to').' ';
+		print $form->selectDate($search_date_valid_end ? $search_date_valid_end : -1, 'search_date_valid_end', 0, 0, 1);
 		print '</div>';
 		print '</td>';
 	}
@@ -1026,6 +1049,7 @@ if ($resql)
 	if (!empty($arrayfields['f.ref_client']['checked']))                  print_liste_field_titre($arrayfields['f.ref_client']['label'], $_SERVER["PHP_SELF"], 'f.ref_client', '', $param, '', $sortfield, $sortorder);
 	if (!empty($arrayfields['f.type']['checked']))                        print_liste_field_titre($arrayfields['f.type']['label'], $_SERVER["PHP_SELF"], 'f.type', '', $param, '', $sortfield, $sortorder);
 	if (!empty($arrayfields['f.date']['checked']))                        print_liste_field_titre($arrayfields['f.date']['label'], $_SERVER['PHP_SELF'], 'f.datef', '', $param, 'align="center"', $sortfield, $sortorder);
+	if (!empty($arrayfields['f.date_valid']['checked']))                  print_liste_field_titre($arrayfields['f.date_valid']['label'], $_SERVER['PHP_SELF'], 'f.date_valid', '', $param, 'align="center"', $sortfield, $sortorder);
 	if (!empty($arrayfields['f.date_lim_reglement']['checked']))          print_liste_field_titre($arrayfields['f.date_lim_reglement']['label'], $_SERVER['PHP_SELF'], "f.date_lim_reglement", '', $param, 'align="center"', $sortfield, $sortorder);
 	if (!empty($arrayfields['p.ref']['checked']))                         print_liste_field_titre($arrayfields['p.ref']['label'], $_SERVER['PHP_SELF'], "p.ref", '', $param, '', $sortfield, $sortorder);
 	if (!empty($arrayfields['p.title']['checked']))                       print_liste_field_titre($arrayfields['p.title']['label'], $_SERVER['PHP_SELF'], "p.title", '', $param, '', $sortfield, $sortorder);
@@ -1099,8 +1123,12 @@ if ($resql)
 			$facturestatic->total_ttc = $obj->total_ttc;
             $facturestatic->paye = $obj->paye;
             $facturestatic->fk_soc = $obj->fk_soc;
-			$facturestatic->date_lim_reglement = $db->jdate($obj->datelimite);
-			$facturestatic->note_public = $obj->note_public;
+
+            $facturestatic->date = $db->jdate($obj->df);
+            $facturestatic->date_valid = $db->jdate($obj->date_valid);
+            $facturestatic->date_lim_reglement = $db->jdate($obj->datelimite);
+
+            $facturestatic->note_public = $obj->note_public;
 			$facturestatic->note_private = $obj->note_private;
 			if ($conf->global->INVOICE_USE_SITUATION && $conf->global->INVOICE_USE_SITUATION_RETAINED_WARRANTY)
 			{
@@ -1209,6 +1237,15 @@ if ($resql)
 			{
 				print '<td align="center" class="nowrap">';
 				print dol_print_date($db->jdate($obj->df), 'day');
+				print '</td>';
+				if (!$i) $totalarray['nbfield']++;
+			}
+
+			// Date
+			if (!empty($arrayfields['f.date_valid']['checked']))
+			{
+				print '<td align="center" class="nowrap">';
+				print dol_print_date($db->jdate($obj->date_valid), 'day');
 				print '</td>';
 				if (!$i) $totalarray['nbfield']++;
 			}
