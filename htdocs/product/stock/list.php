@@ -485,7 +485,7 @@ if ($num)
 			if (!empty($arrayfields['e.'.$key]['checked']))
 			{
 				print '<td'.($cssforfield ? ' class="'.$cssforfield.'"' : '').'>';
-				if ($key == 'status') print $warehouse->getLibStatut(5);
+				if ($key == 'statut') print $warehouse->getLibStatut(5);
 				else print $warehouse->showOutputField($val, $key, $warehouse->$key, '');
 				print '</td>';
 				if (!$i) $totalarray['nbfield']++;
