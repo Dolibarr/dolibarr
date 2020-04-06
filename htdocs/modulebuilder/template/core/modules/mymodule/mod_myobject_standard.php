@@ -76,9 +76,10 @@ class mod_myobject_standard extends ModeleNumRefMyObject
      *  Checks if the numbers already in force in the data base do not
      *  cause conflicts that would prevent this numbering from working.
 	 *
-	 *  @return     boolean     false if conflict, true if ok
+	 *  @param  Object		$object		Object we need next value for
+	 *  @return boolean     			false if conflict, true if ok
 	 */
-	public function canBeActivated()
+	public function canBeActivated($object)
 	{
 		global $conf,$langs,$db;
 
@@ -88,7 +89,12 @@ class mod_myobject_standard extends ModeleNumRefMyObject
 		$sql = "SELECT MAX(CAST(SUBSTRING(ref FROM ".$posindice.") AS SIGNED)) as max";
 		$sql.= " FROM ".MAIN_DB_PREFIX."mymodule_myobject";
 		$sql.= " WHERE ref LIKE '".$db->escape($this->prefix)."____-%'";
-		$sql.= " AND entity = ".$conf->entity;
+		if ($object->ismultientitymanaged == 1) {
+			$sql.= " AND entity = ".$conf->entity;
+		}
+		elseif ($object->ismultientitymanaged == 2) {
+			// TODO
+		}
 
 		$resql=$db->query($sql);
 		if ($resql)
@@ -121,7 +127,12 @@ class mod_myobject_standard extends ModeleNumRefMyObject
 		$sql = "SELECT MAX(CAST(SUBSTRING(ref FROM ".$posindice.") AS SIGNED)) as max";
 		$sql.= " FROM ".MAIN_DB_PREFIX."mymodule_myobject";
 		$sql.= " WHERE ref LIKE '".$db->escape($this->prefix)."____-%'";
-		$sql.= " AND entity = ".$conf->entity;
+		if ($object->ismultientitymanaged == 1) {
+			$sql.= " AND entity = ".$conf->entity;
+		}
+		elseif ($object->ismultientitymanaged == 2) {
+			// TODO
+		}
 
 		$resql=$db->query($sql);
 		if ($resql)

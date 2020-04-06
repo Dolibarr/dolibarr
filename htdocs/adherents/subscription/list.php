@@ -33,6 +33,7 @@ $langs->loadLangs(array("members", "companies"));
 
 $action = GETPOST('action', 'aZ09');
 $massaction = GETPOST('massaction', 'alpha');
+$contextpage = GETPOST('contextpage', 'aZ09');
 $confirm = GETPOST('confirm', 'alpha');
 $toselect = GETPOST('toselect', 'array');
 
@@ -116,7 +117,6 @@ if (empty($reshook))
     // Purge search criteria
     if (GETPOST('button_removefilter_x', 'alpha') || GETPOST('button_removefilter.x', 'alpha') || GETPOST('button_removefilter', 'alpha')) // All tests are required to be compatible with all browsers
     {
-	    $search = "";
 	    $search_type = "";
 	    $search_ref = "";
 	    $search_lastname = "";
@@ -338,7 +338,7 @@ if (!empty($arrayfields['t.libelle']['checked']))
 if (!empty($arrayfields['d.bank']['checked']))
 {
 	print '<td class="liste_titre">';
-	$form->select_comptes($search_account, 'search_account', 0, '', 1);
+	$form->select_comptes($search_account, 'search_account', 0, '', 1, '', 0, 'maxwidth150');
 	print '</td>';
 }
 
@@ -446,7 +446,7 @@ while ($i < min($num, $limit))
     // Type
     if (!empty($arrayfields['d.fk_type']['checked']))
 	{
-        print '<td>';
+        print '<td class="nowraponall">';
         if ($typeid > 0)
         {
         	print $adht->getNomUrl(1);
@@ -466,14 +466,14 @@ while ($i < min($num, $limit))
 	// Firstname
 	if (!empty($arrayfields['d.firstname']['checked']))
 	{
-		print '<td>'.$adherent->firstname.'</td>';
+		print '<td class="tdoverflowmax150" title="'.dol_escape_htmltag($adherent->firstname).'">'.$adherent->firstname.'</td>';
 		if (!$i) $totalarray['nbfield']++;
 	}
 
 	// Login
 	if (!empty($arrayfields['d.login']['checked']))
 	{
-		print '<td>'.$adherent->login.'</td>';
+		print '<td class="tdoverflowmax150" title="'.dol_escape_htmltag($adherent->login).'">'.$adherent->login.'</td>';
 		if (!$i) $totalarray['nbfield']++;
 	}
 
@@ -489,7 +489,7 @@ while ($i < min($num, $limit))
 	// Banque
 	if (!empty($arrayfields['d.bank']['checked']))
 	{
-		print "<td>";
+		print '<td class="tdmaxoverflow150">';
 		if ($obj->fk_account > 0)
 		{
 			$accountstatic->id = $obj->fk_account;

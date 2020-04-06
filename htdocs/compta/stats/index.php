@@ -31,12 +31,12 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 // Load translation files required by the page
 $langs->loadLangs(array('compta', 'bills', 'donation', 'salaries'));
 
-$date_startmonth = GETPOST('date_startmonth');
-$date_startday = GETPOST('date_startday');
-$date_startyear = GETPOST('date_startyear');
-$date_endmonth = GETPOST('date_endmonth');
-$date_endday = GETPOST('date_endday');
-$date_endyear = GETPOST('date_endyear');
+$date_startday = GETPOST('date_startday', 'int');
+$date_startmonth = GETPOST('date_startmonth', 'int');
+$date_startyear = GETPOST('date_startyear', 'int');
+$date_endday = GETPOST('date_endday', 'int');
+$date_endmonth = GETPOST('date_endmonth', 'int');
+$date_endyear = GETPOST('date_endyear', 'int');
 
 $nbofyear = 4;
 
@@ -193,14 +193,17 @@ elseif ($modecompta == "BOOKKEEPING")
 {
 	$sql = "SELECT date_format(b.doc_date,'%Y-%m') as dm, sum(b.credit) as amount_ttc";
 	$sql .= " FROM ".MAIN_DB_PREFIX."accounting_bookkeeping as b, ".MAIN_DB_PREFIX."accounting_journal as aj";
-	$sql .= " WHERE b.entity = ".$conf->entity;
+	$sql .= " WHERE b.entity = ".$conf->entity;	// In module double party accounting, we never share entities
 	$sql .= " AND aj.entity = ".$conf->entity;
 	$sql .= " AND b.code_journal = aj.code AND aj.nature = 2"; // @todo currently count amount in sale journal, but we need to define a category group for turnover
 }
 
 $sql .= " GROUP BY dm";
 $sql .= " ORDER BY dm";
+// TODO Add a filter on $date_start and $date_end to reduce quantity on data
 //print $sql;
+
+$minyearmonth = $maxyearmonth = 0;
 
 $result = $db->query($sql);
 if ($result)
@@ -214,7 +217,7 @@ if ($result)
 		$cum[$obj->dm] = $obj->amount_ttc;
 		if ($obj->amount_ttc)
 		{
-			$minyearmonth = ($minyearmonth ?min($minyearmonth, $obj->dm) : $obj->dm);
+			$minyearmonth = ($minyearmonth ? min($minyearmonth, $obj->dm) : $obj->dm);
 			$maxyearmonth = max($maxyearmonth, $obj->dm);
 		}
 		$i++;
@@ -309,9 +312,17 @@ for ($mois = 1 + $nb_mois_decalage; $mois <= 12 + $nb_mois_decalage; $mois++)
 	$mois_modulo = $mois; // ajout
 	if ($mois > 12) {$mois_modulo = $mois - 12; } // ajout
 
+	if ($year_start == $year_end) {
+		if ($mois > $date_endmonth && $year_end >= $date_endyear) {
+			break;
+		}
+	}
+
 	print '<tr class="oddeven">';
 
+	// Month
 	print "<td>".dol_print_date(dol_mktime(12, 0, 0, $mois_modulo, 1, 2000), "%B")."</td>";
+
 	for ($annee = $year_start - 1; $annee <= $year_end; $annee++)	// We start one year before to have data to be able to make delta
 	{
 		$annee_decalage = $annee;
