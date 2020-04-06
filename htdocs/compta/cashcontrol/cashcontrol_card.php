@@ -54,6 +54,12 @@ $pageprev = $page - 1;
 $pagenext = $page + 1;
 if (!$sortfield) $sortfield = 'rowid';
 if (!$sortorder) $sortorder = 'ASC';
+$contextpage = GETPOST('contextpage', 'aZ') ?GETPOST('contextpage', 'aZ') : 'thirdpartylist';
+
+if ($contextpage == 'takepos')
+{
+    $_GET['optioncss'] = 'print';
+}
 
 // Security check
 if (!$user->rights->cashdesk->run && !$user->rights->takepos->run)
@@ -178,6 +184,13 @@ elseif ($action == "add")
 			$action = "view";
 		}
 	}
+	if ($contextpage == 'takepos'){
+		print "
+		<script>
+		parent.location.href='../../takepos/index.php?place='+parent.place;
+		</script>";
+		exit;
+	}
 }
 
 if ($action == "valid")	// validate = close
@@ -211,6 +224,13 @@ if ($action == "valid")	// validate = close
 		$db->commit();
 	}
 
+	if ($contextpage == 'takepos'){
+		print "
+		<script>
+		parent.location.href='../../takepos/index.php?place='+parent.place;
+		</script>";
+		exit;
+	}
     $action = "view";
 }
 
@@ -363,7 +383,8 @@ if ($action == "create" || $action == "start" || $action == 'close')
 		print load_fiche_titre($langs->trans("CashControl")." - ".$langs->trans("New"), '', 'cash-register');
 
 		print '<form method="POST" action="'.$_SERVER["PHP_SELF"].'">';
-	    print '<input type="hidden" name="token" value="' . $_SESSION ['newtoken'] . '">';
+	    print '<input type="hidden" name="token" value="' . newToken() . '">';
+		if ($contextpage == 'takepos') print '<input type="hidden" name="contextpage" value="takepos">';
 	    if ($action == 'start' && GETPOST('posnumber', 'int') != '' && GETPOST('posnumber', 'int') != '' && GETPOST('posnumber', 'int') != '-1')
 	    {
 		    print '<input type="hidden" name="action" value="add">';
@@ -668,7 +689,7 @@ if (empty($action) || $action == "view" || $action == "close")
 
 			if ($object->status == CashControl::STATUS_DRAFT)
 			{
-				print '<div class="inline-block divButAction"><a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$id.'&amp;action=close">'.$langs->trans('Close').'</a></div>';
+				print '<div class="inline-block divButAction"><a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$id.'&amp;action=close&amp;contextpage='.$contextpage.'">'.$langs->trans('Close').'</a></div>';
 
 				print '<div class="inline-block divButAction"><a class="butActionDelete" href="'.$_SERVER["PHP_SELF"].'?id='.$id.'&amp;action=confirm_delete">'.$langs->trans('Delete').'</a></div>';
 			} else {
@@ -677,10 +698,11 @@ if (empty($action) || $action == "view" || $action == "close")
 
 			print '</div>';
 
-			print '<center><iframe src="report.php?id='.$id.'" width="60%" height="800"></iframe></center>';
+			if ($contextpage != 'takepos') print '<center><iframe src="report.php?id='.$id.'" width="60%" height="800"></iframe></center>';
 	    } else {
 	    	print '<form method="POST" action="'.$_SERVER["PHP_SELF"].'" name="formclose">';
-	    	print '<input type="hidden" name="token" value="' . $_SESSION ['newtoken'] . '">';
+	    	print '<input type="hidden" name="token" value="' . newToken() . '">';
+			if ($contextpage == 'takepos') print '<input type="hidden" name="contextpage" value="takepos">';
 	    	if ($action == 'start' && GETPOST('posnumber', 'int') != '' && GETPOST('posnumber', 'int') != '' && GETPOST('posnumber', 'int') != '-1')
 	    	{
 	    		print '<input type="hidden" name="action" value="add">';

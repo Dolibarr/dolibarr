@@ -789,11 +789,12 @@ class EcmDirectory // extends CommonObject
 
     // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
-     * Call trigger based on this instance
+     * Call trigger based on this instance.
+     * We implement it here because this class doe not extend CommonObject.
      *
-     *  NB: Error from trigger are stacked in errors
-     *  NB2: if trigger fail, action should be canceled.
-     *  NB3: Should be deleted if EcmDirectory extend CommonObject
+     * NB1: Error from trigger are stacked in errors
+     * NB2: if trigger fail, action should be canceled.
+     * NB3: Should be deleted if EcmDirectory extend CommonObject
      *
      * @param   string    $triggerName   trigger's name to execute
      * @param   User      $user           Object user

@@ -50,13 +50,13 @@ abstract class CommonObjectLine extends CommonObject
 	public $fk_unit;
 
 
-    /**
-     *	Returns the translation key from units dictionary.
-     *  A langs->trans() must be called on result to get translated value.
-     *
-     * 	@param	string $type Label type (long or short)
-     *	@return	string|int <0 if ko, label if ok
-     */
+	/**
+	 *	Returns the translation key from units dictionary.
+	 *  A langs->trans() must be called on result to get translated value.
+	 *
+	 * 	@param	string $type Label type (long or short)
+	 *	@return	string|int <0 if ko, label if ok
+	 */
 	public function getLabelOfUnit($type = 'long')
 	{
 		global $langs;

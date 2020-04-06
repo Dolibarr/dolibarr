@@ -775,8 +775,9 @@ class Livraison extends CommonObject
 		$this->lines = array();
 
 		$sql = "SELECT ld.rowid, ld.fk_product, ld.description, ld.subprice, ld.total_ht, ld.qty as qty_shipped, ld.fk_origin_line, ";
-		$sql.= " cd.qty as qty_asked, cd.label as custom_label,";
-		$sql.= " p.ref as product_ref, p.fk_product_type as fk_product_type, p.label as product_label, p.description as product_desc";
+		$sql.= " cd.qty as qty_asked, cd.label as custom_label, cd.fk_unit,";
+		$sql.= " p.ref as product_ref, p.fk_product_type as fk_product_type, p.label as product_label, p.description as product_desc,";
+		$sql.= " p.weight, p.weight_units,  p.width, p.width_units, p.length, p.length_units, p.height, p.height_units, p.surface, p.surface_units, p.volume, p.volume_units, p.tobatch as product_tobatch";
 		$sql.= " FROM ".MAIN_DB_PREFIX."commandedet as cd, ".MAIN_DB_PREFIX."livraisondet as ld";
 		$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."product as p on p.rowid = ld.fk_product";
 		$sql.= " WHERE ld.fk_origin_line = cd.rowid";
@@ -811,6 +812,22 @@ class Livraison extends CommonObject
 
 				$line->price			= $obj->price;
 				$line->total_ht			= $obj->total_ht;
+
+				// units
+				$line->weight         	= $obj->weight;
+				$line->weight_units   	= $obj->weight_units;
+				$line->width         	= $obj->width;
+				$line->width_units   	= $obj->width_units;
+				$line->height         	= $obj->height;
+				$line->height_units   	= $obj->height_units;
+				$line->length         	= $obj->length;
+				$line->length_units   	= $obj->length_units;
+				$line->surface        	= $obj->surface;
+				$line->surface_units   	= $obj->surface_units;
+				$line->volume         	= $obj->volume;
+				$line->volume_units   	= $obj->volume_units;
+
+				$line->fk_unit   	= $obj->fk_unit;
 
 				$this->lines[$i] = $line;
 

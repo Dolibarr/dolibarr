@@ -68,6 +68,7 @@ if (! empty($conf->global->MAIN_SEARCH_FORM_ON_HOME_AREAS))     // This is usele
 /*
  * Shipments to validate
  */
+
 $clause = " WHERE ";
 
 $sql = "SELECT e.rowid, e.ref, e.ref_customer,";
@@ -91,12 +92,14 @@ $resql=$db->query($sql);
 if ($resql)
 {
 	$num = $db->num_rows($resql);
+
+	print '<div class="div-table-responsive-no-min">';
+	print '<table class="noborder centpercent">';
+	print '<tr class="liste_titre">';
+	print '<th colspan="3">'.$langs->trans("SendingsToValidate").'</th></tr>';
+
 	if ($num)
 	{
-        print '<div class="div-table-responsive-no-min">';
-		print '<table class="noborder centpercent">';
-		print '<tr class="liste_titre">';
-		print '<th colspan="3">'.$langs->trans("SendingsToValidate").'</th></tr>';
 		$i = 0;
 		while ($i < $num)
 		{
@@ -117,132 +120,23 @@ if ($resql)
 			print '</td></tr>';
 			$i++;
 		}
-		print "</table></div><br>";
-	}
-}
-
-
-/*
- * Commandes a traiter
- */
-$sql = "SELECT c.rowid, c.ref, c.ref_client as ref_customer, c.fk_statut, s.nom as name, s.rowid as socid";
-$sql.= " FROM ".MAIN_DB_PREFIX."commande as c,";
-$sql.= " ".MAIN_DB_PREFIX."societe as s";
-if (!$user->rights->societe->client->voir && !$socid) $sql.= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
-$sql.= " WHERE c.fk_soc = s.rowid";
-$sql.= " AND c.entity = ".$conf->entity;
-$sql.= " AND c.fk_statut = 1";
-if ($socid) $sql.= " AND c.fk_soc = ".$socid;
-if (!$user->rights->societe->client->voir && !$socid) $sql.= " AND s.rowid = sc.fk_soc AND sc.fk_user = " .$user->id;
-$sql.= " ORDER BY c.rowid ASC";
-
-$resql=$db->query($sql);
-if ($resql)
-{
-	$num = $db->num_rows($resql);
-	if ($num)
+	} else
 	{
-		$langs->load("orders");
-
-		$i = 0;
-        print '<div class="div-table-responsive-no-min">';
-		print '<table class="noborder centpercent">';
-		print '<tr class="liste_titre">';
-		print '<th colspan="3">'.$langs->trans("OrdersToProcess").'</th></tr>';
-		while ($i < $num)
-		{
-			$obj = $db->fetch_object($resql);
-
-			$orderstatic->id=$obj->rowid;
-			$orderstatic->ref=$obj->ref;
-			$orderstatic->ref_customer=$obj->ref_customer;
-			$orderstatic->statut=$obj->fk_statut;
-			$orderstatic->billed=0;
-
-			$companystatic->name=$obj->name;
-			$companystatic->id=$obj->socid;
-
-			print '<tr class="oddeven">';
-			print '<td class="nowrap">';
-			print $orderstatic->getNomUrl(1);
-			print '</td>';
-			print '<td>';
-			print $companystatic->getNomUrl(1, 'customer', 32);
-			print '</td>';
-			print '<td class="right">';
-			print $orderstatic->getLibStatut(3);
-			print '</td>';
-			print '</tr>';
-			$i++;
-		}
-		print "</table></div><br>";
+		print '<tr><td>'.$langs->trans("None").'</td><td></td><td></td></tr>';
 	}
+
+	print "</table></div><br>";
 }
+
 
 
 //print '</td><td valign="top" width="70%">';
 print '</div><div class="fichetwothirdright"><div class="ficheaddleft">';
 
+$max = 5;
 
 /*
- * Commandes en traitement
- */
-$sql = "SELECT c.rowid, c.ref, c.ref_client as ref_customer, c.fk_statut as status, c.facture as billed, s.nom as name, s.rowid as socid";
-$sql.= " FROM ".MAIN_DB_PREFIX."commande as c,";
-$sql.= " ".MAIN_DB_PREFIX."societe as s";
-if (!$user->rights->societe->client->voir && !$socid) $sql.= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
-$sql.= " WHERE c.fk_soc = s.rowid";
-$sql.= " AND c.entity = ".$conf->entity;
-$sql.= " AND c.fk_statut = 2";
-if ($socid) $sql.= " AND c.fk_soc = ".$socid;
-if (!$user->rights->societe->client->voir && !$socid) $sql.= " AND s.rowid = sc.fk_soc AND sc.fk_user = " .$user->id;
-
-$resql = $db->query($sql);
-if ( $resql )
-{
-	$langs->load("orders");
-
-	$num = $db->num_rows($resql);
-	if ($num)
-	{
-		$i = 0;
-        print '<div class="div-table-responsive-no-min">';
-		print '<table class="noborder centpercent">';
-		print '<tr class="liste_titre">';
-		print '<th colspan="3">'.$langs->trans("OrdersInProcess").'</th></tr>';
-		while ($i < $num)
-		{
-			$obj = $db->fetch_object($resql);
-
-		    $orderstatic->id=$obj->rowid;
-			$orderstatic->ref=$obj->ref;
-			$orderstatic->ref_customer=$obj->ref_customer;
-			$orderstatic->statut=$obj->status;
-            $orderstatic->billed=$obj->billed;
-
-            $companystatic->name=$obj->name;
-			$companystatic->id=$obj->socid;
-
-			print '<tr class="oddeven"><td>';
-			print $orderstatic->getNomUrl(1);
-			print '</td>';
-			print '<td>';
-			print $companystatic->getNomUrl(1, 'customer');
-			print '</td>';
-            print '<td class="right">';
-            print $orderstatic->getLibStatut(3);
-            print '</td>';
-            print '</tr>';
-			$i++;
-		}
-		print "</table></div><br>";
-	}
-}
-else dol_print_error($db);
-
-
-/*
- * Last shipments
+ * Latest shipments
  */
 $sql = "SELECT e.rowid, e.ref, e.ref_customer,";
 $sql.= " s.nom as name, s.rowid as socid,";
@@ -254,10 +148,10 @@ $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s ON s.rowid = e.fk_soc";
 if (! $user->rights->societe->client->voir && ! $socid) $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."societe_commerciaux as sc ON e.fk_soc = sc.fk_soc";
 $sql.= " WHERE e.entity IN (".getEntity('expedition').")";
 if (! $user->rights->societe->client->voir && ! $socid) $sql.= " AND sc.fk_user = " .$user->id;
-$sql.= " AND e.fk_statut = 1";
+$sql.= " AND e.fk_statut = ".Expedition::STATUS_VALIDATED;
 if ($socid) $sql.= " AND c.fk_soc = ".$socid;
 $sql.= " ORDER BY e.date_delivery DESC";
-$sql.= $db->plimit(5, 0);
+$sql.= $db->plimit($max, 0);
 
 $resql = $db->query($sql);
 if ($resql)
@@ -266,10 +160,10 @@ if ($resql)
 	if ($num)
 	{
 		$i = 0;
-        print '<div class="div-table-responsive-no-min">';
+		print '<div class="div-table-responsive-no-min">';
 		print '<table class="noborder centpercent">';
 		print '<tr class="liste_titre">';
-		print '<th colspan="3">'.$langs->trans("LastSendings", $num).'</th></tr>';
+		print '<th colspan="4">'.$langs->trans("LastSendings", $num).'</th></tr>';
 		while ($i < $num)
 		{
 			$obj = $db->fetch_object($resql);
@@ -289,13 +183,82 @@ if ($resql)
 				$orderstatic->ref=$obj->commande_ref;
 				print $orderstatic->getNomUrl(1);
 			}
-			else print '&nbsp;';
-			print '</td></tr>';
+			print '</td>';
+			print '<td class="">';
+
+			print '</td>';
+			print '</tr>';
 			$i++;
 		}
 		print "</table></div><br>";
 	}
 	$db->free($resql);
+}
+else dol_print_error($db);
+
+/*
+ * Open orders
+ */
+$sql = "SELECT c.rowid, c.ref, c.ref_client as ref_customer, c.fk_statut as status, c.facture as billed, s.nom as name, s.rowid as socid";
+$sql.= " FROM ".MAIN_DB_PREFIX."commande as c,";
+$sql.= " ".MAIN_DB_PREFIX."societe as s";
+if (!$user->rights->societe->client->voir && !$socid) $sql.= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
+$sql.= " WHERE c.fk_soc = s.rowid";
+$sql.= " AND c.entity IN (".getEntity('order').")";
+$sql.= " AND c.fk_statut IN (".Commande::STATUS_VALIDATED.", ".Commande::STATUS_ACCEPTED.")";
+if ($socid > 0) $sql.= " AND c.fk_soc = ".$socid;
+if (!$user->rights->societe->client->voir && !$socid) $sql.= " AND s.rowid = sc.fk_soc AND sc.fk_user = " .$user->id;
+$sql.= " ORDER BY c.rowid ASC";
+
+$resql = $db->query($sql);
+if ( $resql )
+{
+	$langs->load("orders");
+
+	$num = $db->num_rows($resql);
+	if ($num)
+	{
+		$i = 0;
+        print '<div class="div-table-responsive-no-min">';
+		print '<table class="noborder centpercent">';
+		print '<tr class="liste_titre">';
+		print '<th colspan="3">'.$langs->trans("OrdersToProcess").' <span class="badge">'.$num.'</span></th></tr>';
+		while ($i < $num && $i < 10)
+		{
+			$obj = $db->fetch_object($resql);
+
+		    $orderstatic->id=$obj->rowid;
+			$orderstatic->ref=$obj->ref;
+			$orderstatic->ref_customer=$obj->ref_customer;
+			$orderstatic->statut=$obj->status;
+            $orderstatic->billed=$obj->billed;
+
+            $companystatic->name=$obj->name;
+			$companystatic->id=$obj->socid;
+
+			print '<tr class="oddeven"><td>';
+			print $orderstatic->getNomUrl(1);
+			print '</td>';
+			print '<td>';
+			print $companystatic->getNomUrl(1, 'customer', 32);
+			print '</td>';
+            print '<td class="right">';
+            print $orderstatic->getLibStatut(3);
+            print '</td>';
+            print '</tr>';
+			$i++;
+		}
+
+		if ($i < $num) {
+			print '<tr class="opacitymedium">';
+			print '<td>'.$langs->trans("More").'...</td>';
+			print '<td></td>';
+			print '<td></td>';
+			print '</tr>';
+		}
+
+		print "</table></div><br>";
+	}
 }
 else dol_print_error($db);
 

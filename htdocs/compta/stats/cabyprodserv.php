@@ -290,6 +290,7 @@ if ($modecompta == 'CREANCES-DETTES')
 	// Show Array
 	$i = 0;
 	print '<form method="POST" action="'.$_SERVER["PHP_SELF"].'">';
+	print '<input type="hidden" name="token" value="'.newToken().'">'."\n";
 	// Extra parameters management
 	foreach ($headerparams as $key => $value)
 	{

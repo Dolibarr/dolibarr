@@ -46,7 +46,7 @@ if (! defined('NOIPCHECK'))		 define('NOIPCHECK', '1');  // Do not check IP defi
  */
 function llxHeaderVierge()
 {
-    print '<html><title>Export agenda cal</title><body>';
+	print '<html><title>Export agenda cal</title><body>';
 }
 /**
  * Footer function
@@ -55,7 +55,7 @@ function llxHeaderVierge()
  */
 function llxFooterVierge()
 {
-    print '</body></html>';
+	print '</body></html>';
 }
 
 require '../../main.inc.php';
@@ -129,12 +129,12 @@ $filename=$shortfilename;
 // Complete long filename
 foreach ($filters as $key => $value)
 {
-    //if ($key == 'notolderthan')    $filename.='-notolderthan'.$value; This filter key is already added before and does not need to be in filename
+	//if ($key == 'notolderthan')    $filename.='-notolderthan'.$value; This filter key is already added before and does not need to be in filename
 	if ($key == 'year')            $filename.='-year'.$value;
-    if ($key == 'id')              $filename.='-id'.$value;
-    if ($key == 'idfrom')          $filename.='-idfrom'.$value;
-    if ($key == 'idto')            $filename.='-idto'.$value;
-    if ($key == 'project')         $filename.='-project'.$value;
+	if ($key == 'id')              $filename.='-id'.$value;
+	if ($key == 'idfrom')          $filename.='-idfrom'.$value;
+	if ($key == 'idto')            $filename.='-idto'.$value;
+	if ($key == 'project')         $filename.='-project'.$value;
 	if ($key == 'logina')	       $filename.='-logina'.$value;	// Author
 	if ($key == 'logint')	       $filename.='-logint'.$value;	// Assigned to
 	if ($key == 'notactiontype')   $filename.='-notactiontype'.$value;
@@ -149,7 +149,7 @@ if ($shortfilename=='dolibarrcalendar')
 	$langs->load("main");
 	$langs->load("errors");
 	llxHeaderVierge();
-    print '<div class="error">'.$langs->trans("ErrorWrongValueForParameterX", 'format').'</div>';
+	print '<div class="error">'.$langs->trans("ErrorWrongValueForParameterX", 'format').'</div>';
 	llxFooterVierge();
 	exit;
 }
@@ -186,7 +186,7 @@ if ($format == 'ical' || $format == 'vcal')
 		$result=readfile($outputfile);
 		if (! $result) print 'File '.$outputfile.' was empty.';
 
-	    //header("Location: ".DOL_URL_ROOT.'/document.php?modulepart=agenda&file='.urlencode($filename));
+		//header("Location: ".DOL_URL_ROOT.'/document.php?modulepart=agenda&file='.urlencode($filename));
 		exit;
 	}
 	else

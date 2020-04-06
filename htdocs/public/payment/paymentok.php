@@ -748,13 +748,10 @@ if ($ispaymentok)
     $currencyCodeType   = $_SESSION['currencyCodeType'];
     $FinalPaymentAmt    = $_SESSION["FinalPaymentAmt"];
 
-    // Appel des triggers
-    include_once DOL_DOCUMENT_ROOT . '/core/class/interfaces.class.php';
-    $interface=new Interfaces($db);
-    $result=$interface->run_triggers('PAYMENTONLINE_PAYMENT_OK', $object, $user, $langs, $conf);
-    if ($result < 0) { $error++; $errors=$interface->errors; }
-    // Fin appel triggers
-
+    // Call trigger
+    $result = $object->call_trigger('PAYMENTONLINE_PAYMENT_OK', $user);
+    if ($result < 0) $error++;
+    // End call triggers
 
     print $langs->trans("YourPaymentHasBeenRecorded")."<br>\n";
     if ($TRANSACTIONID) print $langs->trans("ThisIsTransactionId", $TRANSACTIONID)."<br><br>\n";
@@ -885,13 +882,10 @@ else
     $currencyCodeType   = $_SESSION['currencyCodeType'];
     $FinalPaymentAmt    = $_SESSION["FinalPaymentAmt"];
 
-    // Appel des triggers
-    include_once DOL_DOCUMENT_ROOT . '/core/class/interfaces.class.php';
-    $interface=new Interfaces($db);
-    $result=$interface->run_triggers('PAYMENTONLINE_PAYMENT_KO', $object, $user, $langs, $conf);
-    if ($result < 0) { $error++; $errors=$interface->errors; }
-    // Fin appel triggers
-
+    // Call trigger
+    $result = $object->call_trigger('PAYMENTONLINE_PAYMENT_KO', $user);
+    if ($result < 0) $error++;
+    // End call triggers
 
     print $langs->trans('DoExpressCheckoutPaymentAPICallFailed') . "<br>\n";
     print $langs->trans('DetailedErrorMessage') . ": " . $ErrorLongMsg."<br>\n";

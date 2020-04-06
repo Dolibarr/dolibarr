@@ -209,24 +209,24 @@ function IsImageValid($filePath, $extension)
 	}
 
 	$imageCheckExtensions = array(
-        'gif',
-        'jpeg',
-        'jpg',
-        'png',
-        'swf',
-        'psd',
-        'bmp',
-        'iff',
-        'tiff',
-        'tif',
-        'swc',
-        'jpc',
-        'jp2',
-        'jpx',
-        'jb2',
-        'xbm',
-        'wbmp'
-    );
+		'gif',
+		'jpeg',
+		'jpg',
+		'png',
+		'swf',
+		'psd',
+		'bmp',
+		'iff',
+		'tiff',
+		'tif',
+		'swc',
+		'jpc',
+		'jp2',
+		'jpx',
+		'jb2',
+		'xbm',
+		'wbmp'
+	);
 
 	if (!in_array($extension, $imageCheckExtensions) ) {
 		return true;

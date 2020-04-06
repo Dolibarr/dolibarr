@@ -21,7 +21,6 @@
  *      \brief      Library for website module
  */
 
-
 /**
  * Remove PHP code part from a string.
  *
@@ -545,8 +544,8 @@ function getStructuredData($type, $data = array())
 		$ret .= '{
 			"@context": "https://schema.org",
 			"@type": "SoftwareApplication",
-			"name": "'.$data['name'].'",
-			"operatingSystem": "'.$data['os'].'",
+			"name": "'.dol_escape_json($data['name']).'",
+			"operatingSystem": "'.dol_escape_json($data['os']).'",
 			"applicationCategory": "https://schema.org/GameApplication",
 			"aggregateRating": {
 				"@type": "AggregateRating",
@@ -563,45 +562,54 @@ function getStructuredData($type, $data = array())
 	}
 	elseif ($type == 'blogpost')
 	{
-		if ($websitepage->fk_user_creat > 0)
+		if (! empty($websitepage->author_alias))
 		{
-			include_once DOL_DOCUMENT_ROOT.'/user/class/user.class.php';
-			$tmpuser = new User($db);
-			$restmpuser = $tmpuser->fetch($websitepage->fk_user_creat);
+			//include_once DOL_DOCUMENT_ROOT.'/user/class/user.class.php';
+			//$tmpuser = new User($db);
+			//$restmpuser = $tmpuser->fetch($websitepage->fk_user_creat);
 
-			if ($restmpuser > 0)
-			{
-				$ret = '<!-- Add structured data for blog post -->'."\n";
-				$ret .= '<script type="application/ld+json">'."\n";
-				$ret .= '{
-					  "@context": "https://schema.org",
-					  "@type": "NewsArticle",
-					  "mainEntityOfPage": {
-					    "@type": "WebPage",
-					    "@id": "'.$websitepage->pageurl.'"
-					  },
-					  "headline": "'.$websitepage->title.'",
-					  "image": [
-					    "'.$websitepage->image.'"
-					   ],
-					  "datePublished": "'.dol_print_date($websitepage->date_creation, 'dayhourrfc').'",
-					  "dateModified": "'.dol_print_date($websitepage->date_modification, 'dayhourrfc').'",
-					  "author": {
-					    "@type": "Person",
-					    "name": "'.$tmpuser->getFullName($weblangs).'"
-					  },
-					  "publisher": {
-					     "@type": "Organization",
-					     "name": "'.$mysoc->name.'",
-					     "logo": {
-					        "@type": "ImageObject",
-					        "url": "/viewimage.php?modulepart=mycompany&file=logos%2F'.urlencode($mysoc->logo).'"
-					     }
-					   },
-					  "description": "'.$websitepage->description.'"
-					}'."\n";
-				$ret .= '</script>'."\n";
-			}
+			$pageurl = $websitepage->pageurl;
+			$title = $websitepage->title;
+			$image = $websitepage->image;
+			$companyname = $mysoc->name;
+			$description = $websitepage->description;
+
+			$pageurl = str_replace('__WEBSITE_KEY__', $website->ref, $pageurl);
+			$title = str_replace('__WEBSITE_KEY__', $website->ref, $title);
+			$image = str_replace('__WEBSITE_KEY__', $website->ref, $image);
+			$companyname = str_replace('__WEBSITE_KEY__', $website->ref, $companyname);
+			$description = str_replace('__WEBSITE_KEY__', $website->ref, $description);
+
+			$ret = '<!-- Add structured data for blog post -->'."\n";
+			$ret .= '<script type="application/ld+json">'."\n";
+			$ret .= '{
+				  "@context": "https://schema.org",
+				  "@type": "NewsArticle",
+				  "mainEntityOfPage": {
+				    "@type": "WebPage",
+				    "@id": "'.dol_escape_json($pageurl).'"
+				  },
+				  "headline": "'.dol_escape_json($title).'",
+				  "image": [
+				    "'.dol_escape_json($image).'"
+				   ],
+				  "datePublished": "'.dol_print_date($websitepage->date_creation, 'dayhourrfc').'",
+				  "dateModified": "'.dol_print_date($websitepage->date_modification, 'dayhourrfc').'",
+				  "author": {
+				    "@type": "Person",
+				    "name": "'.dol_escape_json($websitepage->author_alias).'"
+				  },
+				  "publisher": {
+				     "@type": "Organization",
+				     "name": "'.dol_escape_json($companyname).'",
+				     "logo": {
+				        "@type": "ImageObject",
+				        "url": "/viewimage.php?modulepart=mycompany&file=logos%2F'.urlencode($mysoc->logo).'"
+				     }
+				   },
+				  "description": "'.dol_escape_json($description).'"
+				}'."\n";
+			$ret .= '</script>'."\n";
 		}
 	}
 	elseif ($type == 'product')
@@ -611,19 +619,19 @@ function getStructuredData($type, $data = array())
 		$ret .= '{
 				"@context": "https://schema.org/",
 				"@type": "Product",
-				"name": "'.$data['label'].'",
+				"name": "'.dol_escape_json($data['label']).'",
 				"image": [
-					"'.$data['image'].'",
+					"'.dol_escape_json($data['image']).'",
 				],
-				"description": "'.$data['description'].'",
-				"sku": "'.$data['ref'].'",
+				"description": "'.dol_escape_json($data['description']).'",
+				"sku": "'.dol_escape_json($data['ref']).'",
 				"brand": {
 					"@type": "Thing",
-					"name": "'.$data['brand'].'"
+					"name": "'.dol_escape_json($data['brand']).'"
 				},
 				"author": {
 					"@type": "Person",
-					"name": "'.$data['author'].'"
+					"name": "'.dol_escape_json($data['author']).'"
 				}
 				},
 				"offers": {
@@ -635,7 +643,7 @@ function getStructuredData($type, $data = array())
 					"availability": "https://schema.org/InStock",
 					"seller": {
 						"@type": "Organization",
-						"name": "'.$mysoc->name.'"
+						"name": "'.dol_escape_json($mysoc->name).'"
 					}
 				}
 			}'."\n";
@@ -645,16 +653,71 @@ function getStructuredData($type, $data = array())
 }
 
 /**
+ * Return HTML content to add structured data for an article, news or Blog Post.
+ *
+ * @return  string							HTML content
+ */
+function getSocialNetworkSharingLinks()
+{
+	global $conf, $db, $hookmanager, $langs, $mysoc, $user, $website, $websitepage, $weblangs; // Very important. Required to have var available when running inluded containers.
+
+	$fullurl = $website->alias.'/'.$websitepage->pageurl.'.php';
+	$hashtags = trim(join(' #', array_map('trim', explode(',', $websitepage->keywords))));
+
+	$out = '<!-- section for social network sharing of page -->'."\n";
+	$out.= '<div class="dol-social-share">'."\n";
+
+	// Twitter
+	$out.= '<div class="dol-social-share-tw">'."\n";
+	$out.= '<a href="https://twitter.com/share" class="twitter-share-button" data-url="'.$fullurl.'" data-text="'.dol_escape_htmltag($websitepage->description).'" data-lang="'.$websitepage->lang.'" data-size="small" data-related="" data-hashtags="'.preg_replace('/^#/', '', $hashtags).'" data-count="horizontal">Tweet</a>';
+	$out.= '<script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0],p=/^http:/.test(d.location)?\'http\':\'https\';if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src=p+\'://platform.twitter.com/widgets.js\';fjs.parentNode.insertBefore(js,fjs);}}(document, \'script\', \'twitter-wjs\');</script>';
+	$out.= '</div>'."\n";
+
+	// Reddit
+	$out.= '<div class="dol-social-share-reddit">'."\n";
+	$out.= '<a href="https://www.reddit.com/submit" target="_blank" onclick="window.location = \'https://www.reddit.com/submit?url='.$fullurl.'\'; return false">';
+	$out.= '<img src="https://www.reddit.com/static/spreddit7.gif" alt="Submit to reddit" border="0" /> </a>';
+	$out.= '</div>'."\n";
+
+	// Facebook
+	$out.= '<div class="dol-social-share-fbl">'."\n";
+	$out.= '<div id="fb-root"></div>'."\n";
+	$out.= '<script>(function(d, s, id) {
+			  var js, fjs = d.getElementsByTagName(s)[0];
+			  if (d.getElementById(id)) return;
+			  js = d.createElement(s); js.id = id;
+			  js.src = "//connect.facebook.net/en_US/sdk.js#xfbml=1&version=v2.0&amp;appId=dolibarr.org";
+			  fjs.parentNode.insertBefore(js, fjs);
+			}(document, \'script\', \'facebook-jssdk\'));</script>
+			        <fb:like
+			        href="'.$fullurl.'"
+			        layout="button_count"
+			        show_faces="false"
+			        width="90"
+			        colorscheme="light"
+			        share="1"
+			        action="like" ></fb:like>'."\n";
+	$out.= '</div>'."\n";
+
+	$out.= "\n</div>\n";
+	$out.= '<!-- section end for social network sharing of page -->'."\n";
+
+	return $out;
+}
+
+/**
  * Return list of containers object that match a criteria.
  * WARNING: This function can be used by websites.
  *
- * @param 	string		$type				Type of container to search into (Example: 'page')
- * @param 	string		$algo				Algorithm used for search (Example: 'meta' is searching into meta information like title and description, 'content', 'sitefiles', or any combination, ...)
+ * @param 	string		$type				Type of container to search into (Example: '', 'page', 'blogpost', 'page,blogpost', ...)
+ * @param 	string		$algo				Algorithm used for search (Example: 'meta' is searching into meta information like title and description, 'content', 'sitefiles', or any combination 'meta,content,...')
  * @param	string		$searchstring		Search string
  * @param	int			$max				Max number of answers
+ * @param	string		$sortfield			Sort Fields
+ * @param	string		$sortorder			Sort order ('DESC' or 'ASC')
  * @return  string							HTML content
  */
-function getPagesFromSearchCriterias($type, $algo, $searchstring, $max = 25)
+function getPagesFromSearchCriterias($type, $algo, $searchstring, $max = 25, $sortfield = 'date_creation', $sortorder = 'DESC')
 {
 	global $conf, $db, $hookmanager, $langs, $mysoc, $user, $website, $websitepage, $weblangs; // Very important. Required to have var available when running inluded containers.
 
@@ -676,11 +739,17 @@ function getPagesFromSearchCriterias($type, $algo, $searchstring, $max = 25)
 		$arrayresult['code'] = 'KO';
 		$arrayresult['message'] = $weblangs->trans("ErrorSearchCriteriaTooSmall");
 	}
-	elseif (!in_array($type, array('', 'page')))
+	else
 	{
-		$error++;
-		$arrayresult['code'] = 'KO';
-		$arrayresult['message'] = 'Bad value for parameter $type';
+		$tmparrayoftype = explode(',', $type);
+		foreach($tmparrayoftype as $tmptype) {
+			if (!in_array($tmptype, array('', 'page', 'blogpost'))) {
+				$error++;
+				$arrayresult['code'] = 'KO';
+				$arrayresult['message'] = 'Bad value for parameter type';
+				break;
+			}
+		}
 	}
 
 	$searchdone = 0;
@@ -690,7 +759,14 @@ function getPagesFromSearchCriterias($type, $algo, $searchstring, $max = 25)
 	{
 		$sql = 'SELECT rowid FROM '.MAIN_DB_PREFIX.'website_page';
 		$sql .= " WHERE fk_website = ".$website->id;
-		if ($type) $sql .= " AND type_container = '".$db->escape($type)."'";
+		if ($type) {
+			$tmparrayoftype = explode(',', $type);
+			$typestring = '';
+			foreach($tmparrayoftype as $tmptype) {
+				$typestring .= ($typestring ? ", ": "")."'".trim($tmptype)."'";
+			}
+			$sql .= " AND type_container IN (".$typestring.")";
+		}
 		$sql .= " AND (";
 		$searchalgo = '';
 		if (preg_match('/meta/', $algo))
@@ -704,6 +780,7 @@ function getPagesFromSearchCriterias($type, $algo, $searchstring, $max = 25)
 		}
 		$sql .= $searchalgo;
 		$sql .= ")";
+		$sql .= $db->order($sortfield, $sortorder);
 		$sql .= $db->plimit($max);
 
 		$resql = $db->query($sql);
@@ -822,6 +899,7 @@ function getAllImages($object, $objectpage, $urltograb, &$tmp, &$action, $modify
 	$urltograb = dirname($urltograb); // So urltograb is now http://www.nltechno.com or http://www.nltechno.com/dir1
 
 	// Search X in "img...src=X"
+	$regs = array();
 	preg_match_all('/<img([^\.\/]+)src="([^>"]+)"([^>]*)>/i', $tmp, $regs);
 
 	foreach ($regs[0] as $key => $val)

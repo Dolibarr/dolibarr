@@ -206,7 +206,8 @@ class WebsitePage extends CommonObject
 		$sql .= " t.tms as date_modification,";
 		$sql .= " t.fk_user_creat,";
 		$sql .= " t.author_alias,";
-		$sql .= " t.fk_user_modif";
+		$sql .= " t.fk_user_modif,";
+		$sql .= " t.import_key";
 		$sql .= ' FROM '.MAIN_DB_PREFIX.$this->table_element.' as t';
 		//$sql .= ' WHERE entity IN ('.getEntity('website').')';       // entity is on website level
 		$sql .= ' WHERE 1 = 1';
@@ -265,6 +266,7 @@ class WebsitePage extends CommonObject
 				$this->fk_user_creat = $obj->fk_user_creat;
 				$this->author_alias = $obj->author_alias;
 				$this->fk_user_modif = $obj->fk_user_modif;
+				$this->import_key = $obj->import_key;
 			}
 			$this->db->free($resql);
 
@@ -282,7 +284,7 @@ class WebsitePage extends CommonObject
 	}
 
 	/**
-	 * Load list of objects in memory from the database.
+	 * Return array of all web site pages.
 	 *
 	 * @param  string      $websiteid    Web site
 	 * @param  string      $sortorder    Sort Order
@@ -319,7 +321,8 @@ class WebsitePage extends CommonObject
 		$sql .= " t.tms as date_modification,";
 		$sql .= " t.fk_user_creat,";
 		$sql .= " t.author_alias,";
-		$sql .= " t.fk_user_modif";
+		$sql .= " t.fk_user_modif,";
+		$sql .= " t.import_key";
 		$sql .= ' FROM '.MAIN_DB_PREFIX.$this->table_element.' as t';
 		$sql .= ' WHERE t.fk_website = '.$websiteid;
 		// Manage filter
@@ -374,6 +377,7 @@ class WebsitePage extends CommonObject
 				$record->fk_user_creat = $obj->fk_user_creat;
 				$record->author_alias = $obj->author_alias;
 				$record->fk_user_modif = $obj->fk_user_modif;
+				$record->import_key = $obj->import_key;
 				//var_dump($record->id);
 				$records[$record->id] = $record;
 			}
@@ -560,6 +564,7 @@ class WebsitePage extends CommonObject
 		if ($istranslation) $object->fk_page = $fromid;
 		else $object->fk_page = 0;
 		if (!empty($newwebsite)) $object->fk_website = $newwebsite;
+		$object->import_key = '';
 
 		// Create clone
 		$object->context['createfromclone'] = 'createfromclone';

@@ -46,15 +46,15 @@ $type = 'paymentorder';
 
 if ($action == "set")
 {
-    $db->begin();
+	$db->begin();
 
-    $id=GETPOST('PRELEVEMENT_ID_BANKACCOUNT', 'int');
-    $account = new Account($db);
-    if($account->fetch($id)>0)
-    {
-        $res = dolibarr_set_const($db, "PRELEVEMENT_ID_BANKACCOUNT", $id, 'chaine', 0, '', $conf->entity);
-        if (! $res > 0) $error++;
-        /*
+	$id=GETPOST('PRELEVEMENT_ID_BANKACCOUNT', 'int');
+	$account = new Account($db);
+	if($account->fetch($id)>0)
+	{
+		$res = dolibarr_set_const($db, "PRELEVEMENT_ID_BANKACCOUNT", $id, 'chaine', 0, '', $conf->entity);
+		if (! $res > 0) $error++;
+		/*
         $res = dolibarr_set_const($db, "PRELEVEMENT_CODE_BANQUE", $account->code_banque,'chaine',0,'',$conf->entity);
         if (! $res > 0) $error++;
         $res = dolibarr_set_const($db, "PRELEVEMENT_CODE_GUICHET", $account->code_guichet,'chaine',0,'',$conf->entity);
@@ -70,33 +70,33 @@ if ($action == "set")
         $res = dolibarr_set_const($db, "PRELEVEMENT_RAISON_SOCIALE", $account->proprio,'chaine',0,'',$conf->entity);
         if (! $res > 0) $error++;
         */
-    }
-    else $error++;
+	}
+	else $error++;
 
-    $res = dolibarr_set_const($db, "PRELEVEMENT_ICS", GETPOST("PRELEVEMENT_ICS"), 'chaine', 0, '', $conf->entity);
-    if (! $res > 0) $error++;
+	$res = dolibarr_set_const($db, "PRELEVEMENT_ICS", GETPOST("PRELEVEMENT_ICS"), 'chaine', 0, '', $conf->entity);
+	if (! $res > 0) $error++;
 
-    if (GETPOST("PRELEVEMENT_USER") > 0)
-    {
-        $res = dolibarr_set_const($db, "PRELEVEMENT_USER", GETPOST("PRELEVEMENT_USER"), 'chaine', 0, '', $conf->entity);
-        if (! $res > 0) $error++;
-    }
-    if (GETPOST("PRELEVEMENT_END_TO_END") || GETPOST("PRELEVEMENT_END_TO_END")=="")
-    {
-        $res = dolibarr_set_const($db, "PRELEVEMENT_END_TO_END", GETPOST("PRELEVEMENT_END_TO_END"), 'chaine', 0, '', $conf->entity);
-        if (! $res > 0) $error++;
-    }
-    if (GETPOST("PRELEVEMENT_USTRD") || GETPOST("PRELEVEMENT_USTRD")=="")
-    {
-        $res = dolibarr_set_const($db, "PRELEVEMENT_USTRD", GETPOST("PRELEVEMENT_USTRD"), 'chaine', 0, '', $conf->entity);
-        if (! $res > 0) $error++;
-    }
+	if (GETPOST("PRELEVEMENT_USER") > 0)
+	{
+		$res = dolibarr_set_const($db, "PRELEVEMENT_USER", GETPOST("PRELEVEMENT_USER"), 'chaine', 0, '', $conf->entity);
+		if (! $res > 0) $error++;
+	}
+	if (GETPOST("PRELEVEMENT_END_TO_END") || GETPOST("PRELEVEMENT_END_TO_END")=="")
+	{
+		$res = dolibarr_set_const($db, "PRELEVEMENT_END_TO_END", GETPOST("PRELEVEMENT_END_TO_END"), 'chaine', 0, '', $conf->entity);
+		if (! $res > 0) $error++;
+	}
+	if (GETPOST("PRELEVEMENT_USTRD") || GETPOST("PRELEVEMENT_USTRD")=="")
+	{
+		$res = dolibarr_set_const($db, "PRELEVEMENT_USTRD", GETPOST("PRELEVEMENT_USTRD"), 'chaine', 0, '', $conf->entity);
+		if (! $res > 0) $error++;
+	}
 
-    if (GETPOST("PRELEVEMENT_ADDDAYS") || GETPOST("PRELEVEMENT_ADDDAYS")=="")
-    {
-        $res = dolibarr_set_const($db, "PRELEVEMENT_ADDDAYS", GETPOST("PRELEVEMENT_ADDDAYS"), 'chaine', 0, '', $conf->entity);
-        if (! $res > 0) $error++;
-    } elseif (! $error)
+	if (GETPOST("PRELEVEMENT_ADDDAYS") || GETPOST("PRELEVEMENT_ADDDAYS")=="")
+	{
+		$res = dolibarr_set_const($db, "PRELEVEMENT_ADDDAYS", GETPOST("PRELEVEMENT_ADDDAYS"), 'chaine', 0, '', $conf->entity);
+		if (! $res > 0) $error++;
+	} elseif (! $error)
 	{
 		$db->commit();
 		setEventMessages($langs->trans("SetupSaved"), null, 'mesgs');
@@ -110,20 +110,20 @@ if ($action == "set")
 
 if ($action == "addnotif")
 {
-    $bon = new BonPrelevement($db);
-    $bon->AddNotification($db, GETPOST('user', 'int'), $action);
+	$bon = new BonPrelevement($db);
+	$bon->AddNotification($db, GETPOST('user', 'int'), $action);
 
-    header("Location: prelevement.php");
-    exit;
+	header("Location: prelevement.php");
+	exit;
 }
 
 if ($action == "deletenotif")
 {
-    $bon = new BonPrelevement($db);
-    $bon->DeleteNotificationById(GETPOST('notif', 'int'));
+	$bon = new BonPrelevement($db);
+	$bon->DeleteNotificationById(GETPOST('notif', 'int'));
 
-    header("Location: prelevement.php");
-    exit;
+	header("Location: prelevement.php");
+	exit;
 }
 
 /*

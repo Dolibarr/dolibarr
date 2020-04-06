@@ -104,7 +104,9 @@ function societe_prepare_head(Societe $object)
             $h++;
         }
     }
-    if (!empty($conf->fournisseur->enabled) && $object->fournisseur && !empty($user->rights->fournisseur->lire))
+    $supplier_module_enabled = 0;
+    if ((!empty($conf->fournisseur->enabled) && empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD)) || !empty($conf->supplier_proposal->enabled) || !empty($conf->supplier_order->enabled) || !empty($conf->supplier_invoice->enabled)) $supplier_module_enabled=1;
+    if ($supplier_module_enabled == 1 && $object->fournisseur && !empty($user->rights->fournisseur->lire))
     {
         $head[$h][0] = DOL_URL_ROOT.'/fourn/card.php?socid='.$object->id;
         $head[$h][1] = $langs->trans("Supplier");
@@ -1098,7 +1100,7 @@ function show_contacts($conf, $langs, $db, $object, $backtopage = '')
     	if (!empty($arrayfields['t.'.$key]['checked'])) print getTitleFieldOfList($val['label'], 0, $_SERVER['PHP_SELF'], 't.'.$key, '', $param, ($align ? 'class="'.$align.'"' : ''), $sortfield, $sortorder, $align.' ')."\n";
     	if ($key == 'role') $align .= ($align ? ' ' : '').'left';
     	if (!empty($arrayfields['sc.'.$key]['checked'])) {
-    		print getTitleFieldOfList($arrayfields['sc.'.$key]['label'], 0, $_SERVER['PHP_SELF'], 'sc.'.$key, '', $param, ($align ? 'class="'.$align.'"' : ''), $sortfield, $sortorder, $align.' ')."\n";
+    		print getTitleFieldOfList($arrayfields['sc.'.$key]['label'], 0, $_SERVER['PHP_SELF'], '', '', $param, ($align ? 'class="'.$align.'"' : ''), $sortfield, $sortorder, $align.' ')."\n";
 	    }
     }
     // Extra fields
@@ -1317,6 +1319,8 @@ function show_actions_done($conf, $langs, $db, $filterobj, $objcon = '', $noprin
     }
     $sortfield_new = implode(',', $sortfield_new_list);
 
+    $sql = '';
+
     if (!empty($conf->agenda->enabled))
     {
         // Recherche histo sur actioncomm
@@ -1468,85 +1472,88 @@ function show_actions_done($conf, $langs, $db, $filterobj, $objcon = '', $noprin
     }
 
     //TODO Add limit in nb of results
-    $sql .= $db->order($sortfield_new, $sortorder);
-    dol_syslog("company.lib::show_actions_done", LOG_DEBUG);
-    $resql = $db->query($sql);
-    if ($resql)
+    if ($sql)
     {
-        $i = 0;
-        $num = $db->num_rows($resql);
+    	$sql .= $db->order($sortfield_new, $sortorder);
+	    dol_syslog("company.lib::show_actions_done", LOG_DEBUG);
+	    $resql = $db->query($sql);
+	    if ($resql)
+	    {
+	        $i = 0;
+	        $num = $db->num_rows($resql);
 
-        while ($i < $num)
-        {
-            $obj = $db->fetch_object($resql);
+	        while ($i < $num)
+	        {
+	            $obj = $db->fetch_object($resql);
 
-            if ($obj->type == 'action') {
-                $contactaction = new ActionComm($db);
-                $contactaction->id = $obj->id;
-                $result = $contactaction->fetchResources();
-                if ($result < 0) {
-                    dol_print_error($db);
-                    setEventMessage("company.lib::show_actions_done Error fetch ressource", 'errors');
-                }
+	            if ($obj->type == 'action') {
+	                $contactaction = new ActionComm($db);
+	                $contactaction->id = $obj->id;
+	                $result = $contactaction->fetchResources();
+	                if ($result < 0) {
+	                    dol_print_error($db);
+	                    setEventMessage("company.lib::show_actions_done Error fetch ressource", 'errors');
+	                }
 
-                //if ($donetodo == 'todo') $sql.= " AND ((a.percent >= 0 AND a.percent < 100) OR (a.percent = -1 AND a.datep > '".$db->idate($now)."'))";
-                //elseif ($donetodo == 'done') $sql.= " AND (a.percent = 100 OR (a.percent = -1 AND a.datep <= '".$db->idate($now)."'))";
-                $tododone = '';
-                if (($obj->percent >= 0 and $obj->percent < 100) || ($obj->percent == -1 && $obj->datep > $now)) $tododone = 'todo';
+	                //if ($donetodo == 'todo') $sql.= " AND ((a.percent >= 0 AND a.percent < 100) OR (a.percent = -1 AND a.datep > '".$db->idate($now)."'))";
+	                //elseif ($donetodo == 'done') $sql.= " AND (a.percent = 100 OR (a.percent = -1 AND a.datep <= '".$db->idate($now)."'))";
+	                $tododone = '';
+	                if (($obj->percent >= 0 and $obj->percent < 100) || ($obj->percent == -1 && $obj->datep > $now)) $tododone = 'todo';
 
-                $histo[$numaction] = array(
-                    'type'=>$obj->type,
-                    'tododone'=>$tododone,
-                    'id'=>$obj->id,
-                    'datestart'=>$db->jdate($obj->dp),
-                    'dateend'=>$db->jdate($obj->dp2),
-                    'note'=>$obj->label,
-                    'percent'=>$obj->percent,
+	                $histo[$numaction] = array(
+	                    'type'=>$obj->type,
+	                    'tododone'=>$tododone,
+	                    'id'=>$obj->id,
+	                    'datestart'=>$db->jdate($obj->dp),
+	                    'dateend'=>$db->jdate($obj->dp2),
+	                    'note'=>$obj->label,
+	                    'percent'=>$obj->percent,
 
-                    'userid'=>$obj->user_id,
-                    'login'=>$obj->user_login,
-                    'userfirstname'=>$obj->user_firstname,
-                    'userlastname'=>$obj->user_lastname,
-                    'userphoto'=>$obj->user_photo,
+	                    'userid'=>$obj->user_id,
+	                    'login'=>$obj->user_login,
+	                    'userfirstname'=>$obj->user_firstname,
+	                    'userlastname'=>$obj->user_lastname,
+	                    'userphoto'=>$obj->user_photo,
 
-                    'contact_id'=>$obj->fk_contact,
-                    'socpeopleassigned' => $contactaction->socpeopleassigned,
-                    'lastname'=>$obj->lastname,
-                    'firstname'=>$obj->firstname,
-                    'fk_element'=>$obj->fk_element,
-                    'elementtype'=>$obj->elementtype,
-                    // Type of event
-                    'acode'=>$obj->acode,
-                    'alabel'=>$obj->alabel,
-                    'libelle'=>$obj->alabel, // deprecated
-                    'apicto'=>$obj->apicto
-                );
-            } else {
-                $histo[$numaction] = array(
-                    'type'=>$obj->type,
-                    'tododone'=>'done',
-                    'id'=>$obj->id,
-                    'datestart'=>$db->jdate($obj->dp),
-                    'dateend'=>$db->jdate($obj->dp2),
-                    'note'=>$obj->label,
-                    'percent'=>$obj->percent,
-                    'acode'=>$obj->acode,
+	                    'contact_id'=>$obj->fk_contact,
+	                    'socpeopleassigned' => $contactaction->socpeopleassigned,
+	                    'lastname'=>$obj->lastname,
+	                    'firstname'=>$obj->firstname,
+	                    'fk_element'=>$obj->fk_element,
+	                    'elementtype'=>$obj->elementtype,
+	                    // Type of event
+	                    'acode'=>$obj->acode,
+	                    'alabel'=>$obj->alabel,
+	                    'libelle'=>$obj->alabel, // deprecated
+	                    'apicto'=>$obj->apicto
+	                );
+	            } else {
+	                $histo[$numaction] = array(
+	                    'type'=>$obj->type,
+	                    'tododone'=>'done',
+	                    'id'=>$obj->id,
+	                    'datestart'=>$db->jdate($obj->dp),
+	                    'dateend'=>$db->jdate($obj->dp2),
+	                    'note'=>$obj->label,
+	                    'percent'=>$obj->percent,
+	                    'acode'=>$obj->acode,
 
-                    'userid'=>$obj->user_id,
-                    'login'=>$obj->user_login,
-                    'userfirstname'=>$obj->user_firstname,
-                    'userlastname'=>$obj->user_lastname,
-                    'userphoto'=>$obj->user_photo
-                );
-            }
+	                    'userid'=>$obj->user_id,
+	                    'login'=>$obj->user_login,
+	                    'userfirstname'=>$obj->user_firstname,
+	                    'userlastname'=>$obj->user_lastname,
+	                    'userphoto'=>$obj->user_photo
+	                );
+	            }
 
-            $numaction++;
-            $i++;
-        }
-    }
-    else
-    {
-        dol_print_error($db);
+	            $numaction++;
+	            $i++;
+	        }
+	    }
+	    else
+	    {
+	        dol_print_error($db);
+	    }
     }
 
     if (!empty($conf->agenda->enabled) || (!empty($conf->mailing->enabled) && !empty($objcon->email)))
@@ -1781,9 +1788,9 @@ function show_actions_done($conf, $langs, $db, $filterobj, $objcon = '', $noprin
         }
         $out .= "</table>\n";
         $out .= "</div>\n";
-    }
 
-    $out .= '</form>';
+        $out .= '</form>';
+    }
 
     if ($noprint) return $out;
     else print $out;

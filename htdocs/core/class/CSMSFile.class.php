@@ -47,6 +47,11 @@ class CSMSFile
 	public $message;
 	public $nostop;
 
+	public $socid;
+	public $contactid;
+
+	public $fk_project;
+
 
 	/**
 	 *	CSMSFile
@@ -125,7 +130,12 @@ class CSMSFile
                 $sms->class=$this->class;
                 $sms->nostop=$this->nostop;
 
+                $sms->socid=$this->socid;
+                $sms->contactid=$this->contactid;
+                $sms->project=$this->fk_project;
+
                 $res=$sms->SmsSend();
+
 				if ($res <= 0)
 				{
 					$this->error=$sms->error;
@@ -155,7 +165,12 @@ class CSMSFile
 		            $sms->message=$this->message;
 		            $sms->nostop=$this->nostop;
 
+		            $sms->socid=$this->socid;
+		            $sms->contactid=$this->contactid;
+		            $sms->fk_project=$this->fk_project;
+
                     $res=$sms->SmsSend();
+
                     $this->error = $sms->error;
                     $this->errors = $sms->errors;
     				if ($res <= 0)

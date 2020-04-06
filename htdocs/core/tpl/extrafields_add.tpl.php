@@ -45,7 +45,7 @@ if (empty($reshook)) {
 	$params = array();
 	if (isset($tpl_context)) $params['tpl_context'] = $tpl_context;
 	$params['cols'] = $parameters['colspanvalue'];
-	print $object->showOptionals($extrafields, 'edit', $params); // BUG #11554 : Add context in params
+	print $object->showOptionals($extrafields, 'create', $params);
 }
 
 ?>

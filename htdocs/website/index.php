@@ -121,7 +121,7 @@ if ($websiteid > 0 || $websitekey)
 
 $website = $object;
 
-// Check pageid received as aprameter
+// Check pageid received as parameter
 if ($pageid < 0) $pageid = 0;
 if (($pageid > 0 || $pageref) && $action != 'addcontainer')
 {
@@ -3495,6 +3495,7 @@ if ($action == 'replacesite' || $action == 'replacesiteconfirm')
 					print '<td class="tdoverflow100">'.$answerrecord->description.'</td>';
 					print '<td>';
 					$param = '?action=replacesiteconfirm';
+					$param .= '&websiteid='.$website->id;
 					$param .= '&optioncontent='.GETPOST('optioncontent');
 					$param .= '&optionmeta='.GETPOST('optionmeta');
 					$param .= '&optionsitefiles='.GETPOST('optionsitefiles');
@@ -3641,10 +3642,20 @@ if ($action == 'preview' || $action == 'createfromclone' || $action == 'createpa
 		// If mode WEBSITE_SUBCONTAINERSINLINE is on
 		if (!empty($conf->global->WEBSITE_SUBCONTAINERSINLINE))
 		{
+			// TODO Check file $filephp exists, if not create it.
+
 			//var_dump($filetpl);
 			$filephp = $filetpl;
 			ob_start();
-			include $filephp;
+			try {
+				$res = include $filephp;
+				if (empty($res)) {
+					print "ERROR: Failed to include file '".$filephp."'. Try to edit and save page.";
+				}
+			} catch(Exception $e)
+			{
+				print $e->getMessage();
+			}
 			$newcontent = ob_get_contents();
 			ob_end_clean();
 		}

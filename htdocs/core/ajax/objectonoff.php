@@ -68,4 +68,4 @@ else
 
 // Registering new values
 if (($action == 'set') && ! empty($id))
-    $object->setValueFrom($field, $value, $element, $id);
+	$object->setValueFrom($field, $value, $element, $id);

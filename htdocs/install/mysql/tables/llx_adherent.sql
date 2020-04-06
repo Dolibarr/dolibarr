@@ -39,7 +39,7 @@ create table llx_adherent
   pass_crypted     varchar(128),
   fk_adherent_type integer NOT NULL,
   morphy           varchar(3) NOT NULL, -- personne morale / personne physique
-  societe          varchar(128),			-- company name (should be same lenght than societe.name)
+  societe          varchar(128),			-- company name (should be same length than societe.name). No more used.
   fk_soc           integer NULL,		-- Link to third party linked to member
   address          text,
   zip              varchar(30),

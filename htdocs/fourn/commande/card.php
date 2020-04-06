@@ -55,7 +55,7 @@ if (!empty($conf->variants->enabled)) {
 	require_once DOL_DOCUMENT_ROOT.'/variants/class/ProductCombination.class.php';
 }
 
-$langs->loadLangs(array('admin', 'orders', 'sendings', 'companies', 'bills', 'propal', 'supplier_proposal', 'deliveries', 'products', 'stocks', 'productbatch'));
+$langs->loadLangs(array('admin', 'orders', 'sendings', 'companies', 'bills', 'propal', 'receptions', 'supplier_proposal', 'deliveries', 'products', 'stocks', 'productbatch'));
 if (!empty($conf->incoterm->enabled)) $langs->load('incoterm');
 
 $id = GETPOST('id', 'int');
@@ -1192,7 +1192,7 @@ if (empty($reshook))
 								// Extrafields
 								if (empty($conf->global->MAIN_EXTRAFIELDS_DISABLED) && method_exists($lines[$i], 'fetch_optionals')) 							// For avoid conflicts if
 								{
-									$lines[$i]->fetch_optionals($lines[$i]->rowid);
+									$lines[$i]->fetch_optionals();
 									$array_option = $lines[$i]->array_options;
 								}
 
@@ -1241,7 +1241,7 @@ if (empty($reshook))
 									'',
 									null,
 									null,
-									array(),
+                                    $array_option,
 									$lines[$i]->fk_unit,
 									0,
 									$element,
@@ -1514,7 +1514,7 @@ if ($action == 'create')
 		$objectsrc->fetch_thirdparty();
 
 		// Replicate extrafields
-		$objectsrc->fetch_optionals($originid);
+		$objectsrc->fetch_optionals();
 		$object->array_options = $objectsrc->array_options;
 
 		$projectid = (!empty($objectsrc->fk_project) ? $objectsrc->fk_project : '');
@@ -2483,11 +2483,14 @@ elseif (!empty($object->id))
 
 			if (!empty($conf->stock->enabled) && (!empty($conf->global->STOCK_CALCULATE_ON_SUPPLIER_DISPATCH_ORDER) || !empty($conf->global->STOCK_CALCULATE_ON_RECEPTION) || !empty($conf->global->STOCK_CALCULATE_ON_RECEPTION_CLOSE)))
 			{
+				$labelofbutton = $langs->trans('ReceiveProducts');
+				if ($conf->reception->enabled) $labelofbutton = $langs->trans("CreateReception");
+
 				if (in_array($object->statut, array(3, 4, 5))) {
 					if ($conf->fournisseur->enabled && $user->rights->fournisseur->commande->receptionner) {
-						print '<div class="inline-block divButAction"><a class="butAction" href="'.DOL_URL_ROOT.'/fourn/commande/dispatch.php?id='.$object->id.'">'.$langs->trans('ReceiveProducts').'</a></div>';
+						print '<div class="inline-block divButAction"><a class="butAction" href="'.DOL_URL_ROOT.'/fourn/commande/dispatch.php?id='.$object->id.'">'.$labelofbutton.'</a></div>';
 					} else {
-						print '<div class="inline-block divButAction"><a class="butActionRefused classfortooltip" href="#" title="'.dol_escape_htmltag($langs->trans("NotAllowed")).'">'.$langs->trans('ReceiveProducts').'</a></div>';
+						print '<div class="inline-block divButAction"><a class="butActionRefused classfortooltip" href="#" title="'.dol_escape_htmltag($langs->trans("NotAllowed")).'">'.$labelofbutton.'</a></div>';
 					}
 				}
 			}

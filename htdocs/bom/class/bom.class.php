@@ -166,6 +166,16 @@ class BOM extends CommonObject
 	 */
 	public $lines = array();
 
+	/**
+	 * @var int		Calculated cost for the BOM
+	 */
+	public $total_cost = 0;
+
+	/**
+	 * @var int		Calculated cost for 1 unit of the product in BOM
+	 */
+	public $unit_cost = 0;
+
 
 
 	/**
@@ -324,6 +334,7 @@ class BOM extends CommonObject
 	{
 		$result = $this->fetchCommon($id, $ref);
 		if ($result > 0 && !empty($this->table_element_line)) $this->fetchLines();
+		$this->calculateCosts();
 		return $result;
 	}
 
@@ -991,6 +1002,29 @@ class BOM extends CommonObject
 
 		return $error;
 	}
+
+	/**
+	 * BOM costs calculation based on cost_price or pmp of each BOM line
+	 * @return void
+	 */
+	public function calculateCosts()
+	{
+		include_once DOL_DOCUMENT_ROOT . '/product/class/product.class.php';
+		$this->unit_cost = 0;
+		$this->total_cost = 0;
+
+		foreach ($this->lines as &$line) {
+			$tmpproduct = new Product($this->db);
+			$tmpproduct->fetch($line->fk_product);
+
+			$line->unit_cost = (!empty($tmpproduct->cost_price)) ? $tmpproduct->cost_price : $tmpproduct->pmp; // TODO : add option to work with cost_price or pmp
+			$line->total_cost = price2num($line->qty * $line->unit_cost, 'MT');
+			$this->total_cost += $line->total_cost;
+		}
+
+		$this->total_cost = price2num($this->total_cost, 'MT');
+		$this->unit_cost = price2num($this->total_cost / $this->qty, 'MU');
+	}
 }
 
 
@@ -1071,6 +1105,16 @@ class BOMLine extends CommonObjectLine
 	public $position;
 	public $import_key;
 	// END MODULEBUILDER PROPERTIES
+
+	/**
+	 * @var int		Calculated cost for the BOM line
+	 */
+	public $total_cost = 0;
+
+	/**
+	 * @var int		Line unit cost based on product cost price or pmp
+	 */
+	public $unit_cost = 0;
 
 
 	/**

@@ -97,33 +97,33 @@ function rebuild_merge_pdf($db, $langs, $conf, $diroutputpdf, $newlangid, $filte
 	}
 	if (in_array('nodeposit', $filter))
 	{
-	    if (empty($sqlwhere)) $sqlwhere=' WHERE ';
-	    else $sqlwhere.=" AND";
-	    $sqlwhere.=' type <> 3';
+		if (empty($sqlwhere)) $sqlwhere=' WHERE ';
+		else $sqlwhere.=" AND";
+		$sqlwhere.=' type <> 3';
 	}
 	if (in_array('noreplacement', $filter))
 	{
-	    if (empty($sqlwhere)) $sqlwhere=' WHERE ';
-	    else $sqlwhere.=" AND";
-	    $sqlwhere.=' type <> 1';
+		if (empty($sqlwhere)) $sqlwhere=' WHERE ';
+		else $sqlwhere.=" AND";
+		$sqlwhere.=' type <> 1';
 	}
 	if (in_array('nocreditnote', $filter))
 	{
-	    if (empty($sqlwhere)) $sqlwhere=' WHERE ';
-	    else $sqlwhere.=" AND";
-	    $sqlwhere.=' type <> 2';
+		if (empty($sqlwhere)) $sqlwhere=' WHERE ';
+		else $sqlwhere.=" AND";
+		$sqlwhere.=' type <> 2';
 	}
 	if (in_array('excludethirdparties', $filter) && is_array($thirdpartiesid))
 	{
-	    if (empty($sqlwhere)) $sqlwhere=' WHERE ';
-	    else $sqlwhere.=" AND";
-	    $sqlwhere.=' f.fk_soc NOT IN ('.join(',', $thirdpartiesid).')';
+		if (empty($sqlwhere)) $sqlwhere=' WHERE ';
+		else $sqlwhere.=" AND";
+		$sqlwhere.=' f.fk_soc NOT IN ('.join(',', $thirdpartiesid).')';
 	}
 	if (in_array('onlythirdparties', $filter) && is_array($thirdpartiesid))
 	{
-	    if (empty($sqlwhere)) $sqlwhere=' WHERE ';
-	    else $sqlwhere.=" AND";
-	    $sqlwhere.=' f.fk_soc IN ('.join(',', $thirdpartiesid).')';
+		if (empty($sqlwhere)) $sqlwhere=' WHERE ';
+		else $sqlwhere.=" AND";
+		$sqlwhere.=' f.fk_soc IN ('.join(',', $thirdpartiesid).')';
 	}
 	if ($sqlwhere) $sql.=$sqlwhere;
 	if ($sqlorder) $sql.=$sqlorder;
@@ -143,20 +143,20 @@ function rebuild_merge_pdf($db, $langs, $conf, $diroutputpdf, $newlangid, $filte
 	dol_syslog("scripts/invoices/rebuild_merge.php", LOG_DEBUG);
 	if ( $resql=$db->query($sql) )
 	{
-	    $num = $db->num_rows($resql);
-	    $cpt = 0;
-	    $oldemail = '';
-	    $message = '';
-	    $total = '';
+		$num = $db->num_rows($resql);
+		$cpt = 0;
+		$oldemail = '';
+		$message = '';
+		$total = '';
 
-	    if ($num)
-	    {
-	    	// First loop on each resultset to build PDF
-	    	// -----------------------------------------
+		if ($num)
+		{
+			// First loop on each resultset to build PDF
+			// -----------------------------------------
 
-	        while ($cpt < $num)
-	        {
-	            $obj = $db->fetch_object($resql);
+			while ($cpt < $num)
+			{
+				$obj = $db->fetch_object($resql);
 
 				$fac = new Facture($db);
 				$result=$fac->fetch($obj->rowid);
@@ -174,11 +174,11 @@ function rebuild_merge_pdf($db, $langs, $conf, $diroutputpdf, $newlangid, $filte
 					$filename=$conf->facture->dir_output.'/'.$fac->ref.'/'.$fac->ref.'.pdf';
 					if ($regenerate || ! dol_is_file($filename))
 					{
-	            	    if ($usestdout) print "Build PDF for invoice ".$obj->ref." - Lang = ".$outputlangs->defaultlang."\n";
-	    				$result= $fac->generateDocument($regenerate?$regenerate:$fac->modelpdf, $outputlangs);
+						if ($usestdout) print "Build PDF for invoice ".$obj->ref." - Lang = ".$outputlangs->defaultlang."\n";
+						$result= $fac->generateDocument($regenerate?$regenerate:$fac->modelpdf, $outputlangs);
 					}
 					else {
-					    if ($usestdout) print "PDF for invoice ".$obj->ref." already exists\n";
+						if ($usestdout) print "PDF for invoice ".$obj->ref." already exists\n";
 					}
 
 					// Add file into files array
@@ -192,50 +192,50 @@ function rebuild_merge_pdf($db, $langs, $conf, $diroutputpdf, $newlangid, $filte
 					else dol_syslog("Failed to build PDF for invoice ".($fac->ref?$fac->ref:' id '.$obj->rowid), LOG_ERR);
 				}
 
-	            $cpt++;
-	        }
+				$cpt++;
+			}
 
 
-	        // Define format of output PDF
-	        $formatarray=pdf_getFormat($langs);
-	        $page_largeur = $formatarray['width'];
-	        $page_hauteur = $formatarray['height'];
-	        $format = array($page_largeur,$page_hauteur);
+			// Define format of output PDF
+			$formatarray=pdf_getFormat($langs);
+			$page_largeur = $formatarray['width'];
+			$page_hauteur = $formatarray['height'];
+			$format = array($page_largeur,$page_hauteur);
 
-	        if ($usestdout) print "Using output PDF format ".join('x', $format)."\n";
-	        else dol_syslog("Using output PDF format ".join('x', $format), LOG_ERR);
+			if ($usestdout) print "Using output PDF format ".join('x', $format)."\n";
+			else dol_syslog("Using output PDF format ".join('x', $format), LOG_ERR);
 
 
-	        // Now, build a merged files with all files in $files array
+			// Now, build a merged files with all files in $files array
 			//---------------------------------------------------------
 
-	        // Create empty PDF
-	        $pdf=pdf_getInstance($format);
-	        if (class_exists('TCPDF'))
-	        {
-	            $pdf->setPrintHeader(false);
-	            $pdf->setPrintFooter(false);
-	        }
-	        $pdf->SetFont(pdf_getPDFFont($langs));
+			// Create empty PDF
+			$pdf=pdf_getInstance($format);
+			if (class_exists('TCPDF'))
+			{
+				$pdf->setPrintHeader(false);
+				$pdf->setPrintFooter(false);
+			}
+			$pdf->SetFont(pdf_getPDFFont($langs));
 
-	        if ($conf->global->MAIN_DISABLE_PDF_COMPRESSION) $pdf->SetCompression(false);
+			if ($conf->global->MAIN_DISABLE_PDF_COMPRESSION) $pdf->SetCompression(false);
 			//$pdf->SetCompression(false);
 
 			// Add all others
 			foreach($files as $file)
 			{
-	            if ($usestdout) print "Merge PDF file for invoice ".$file."\n";
-	            else dol_syslog("Merge PDF file for invoice ".$file);
+				if ($usestdout) print "Merge PDF file for invoice ".$file."\n";
+				else dol_syslog("Merge PDF file for invoice ".$file);
 
 				// Charge un document PDF depuis un fichier.
 				$pagecount = $pdf->setSourceFile($file);
 				for ($i = 1; $i <= $pagecount; $i++)
-	            {
-	                 $tplidx = $pdf->importPage($i);
-	                 $s = $pdf->getTemplatesize($tplidx);
-	                 $pdf->AddPage($s['h'] > $s['w'] ? 'P' : 'L');
-	                 $pdf->useTemplate($tplidx);
-	            }
+				{
+					 $tplidx = $pdf->importPage($i);
+					 $s = $pdf->getTemplatesize($tplidx);
+					 $pdf->AddPage($s['h'] > $s['w'] ? 'P' : 'L');
+					 $pdf->useTemplate($tplidx);
+				}
 			}
 
 			// Create output dir if not exists
@@ -261,19 +261,19 @@ function rebuild_merge_pdf($db, $langs, $conf, $diroutputpdf, $newlangid, $filte
 			}
 
 			$result = 1;
-	    }
-	    else
-	    {
-	        if ($usestdout) print "No invoices found for criteria.\n";
-	        else dol_syslog("No invoices found for criteria");
-	        $result = 0;
-	    }
+		}
+		else
+		{
+			if ($usestdout) print "No invoices found for criteria.\n";
+			else dol_syslog("No invoices found for criteria");
+			$result = 0;
+		}
 	}
 	else
 	{
-	    dol_print_error($db);
-	    dol_syslog("scripts/invoices/rebuild_merge.php: Error");
-	    $error++;
+		dol_print_error($db);
+		dol_syslog("scripts/invoices/rebuild_merge.php: Error");
+		$error++;
 	}
 
 	if ($error) return -1;

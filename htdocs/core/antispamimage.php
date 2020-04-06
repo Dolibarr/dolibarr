@@ -43,7 +43,7 @@ $number = strlen($letters);
 $string = '';
 for($i = 0; $i < $length; $i++)
 {
-    $string .= $letters{mt_rand(0, $number - 1)};
+	$string .= $letters{mt_rand(0, $number - 1)};
 }
 //print $string;
 
@@ -54,8 +54,8 @@ $_SESSION[$sessionkey]=$string;
 $img = imagecreate(80, 32);
 if (empty($img))
 {
-    dol_print_error('', "Problem with GD creation");
-    exit;
+	dol_print_error('', "Problem with GD creation");
+	exit;
 }
 
 // Define mime type

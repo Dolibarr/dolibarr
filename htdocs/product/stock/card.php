@@ -518,6 +518,7 @@ else
 			print_liste_field_titre("Product", "", "p.ref", "&amp;id=".$id, "", "", $sortfield, $sortorder);
 			print_liste_field_titre("Label", "", "p.label", "&amp;id=".$id, "", "", $sortfield, $sortorder);
             print_liste_field_titre("Units", "", "ps.reel", "&amp;id=".$id, "", '', $sortfield, $sortorder, 'right ');
+            if(!empty($conf->global->PRODUCT_USE_UNITS)) print_liste_field_titre("Unit", "", "p.fk_unit", "&amp;id=".$id, "", 'align="left"', $sortfield, $sortorder);
             print_liste_field_titre("AverageUnitPricePMPShort", "", "p.pmp", "&amp;id=".$id, "", '', $sortfield, $sortorder, 'right ');
 			print_liste_field_titre("EstimatedStockValueShort", "", "", "&amp;id=".$id, "", '', $sortfield, $sortorder, 'right ');
             if (empty($conf->global->PRODUIT_MULTIPRICES)) {
@@ -539,6 +540,7 @@ else
 
 			$sql = "SELECT p.rowid as rowid, p.ref, p.label as produit, p.tobatch, p.fk_product_type as type, p.pmp as ppmp, p.price, p.price_ttc, p.entity,";
 			$sql .= " ps.reel as value";
+            if(!empty($conf->global->PRODUCT_USE_UNITS)) $sql.= ",fk_unit";
 			$sql .= " FROM ".MAIN_DB_PREFIX."product_stock as ps, ".MAIN_DB_PREFIX."product as p";
 			$sql .= " WHERE ps.fk_product = p.rowid";
 			$sql .= " AND ps.reel <> 0"; // We do not show if stock is 0 (no product in this warehouse)
@@ -582,6 +584,7 @@ else
 					$productstatic->type = $objp->type;
 					$productstatic->entity = $objp->entity;
 					$productstatic->status_batch = $objp->tobatch;
+					$productstatic->fk_unit=$objp->fk_unit;
 					print $productstatic->getNomUrl(1, 'stock', 16);
 					print '</td>';
 
@@ -594,6 +597,13 @@ else
 					print '</td>';
 					$totalunit += $objp->value;
 
+                    if(!empty($conf->global->PRODUCT_USE_UNITS)) {
+                        // Units
+                        print '<td align="left">';
+                        if(is_null($productstatic->fk_unit))$productstatic->fk_unit=1;
+                        print $langs->trans($productstatic->getLabelOfUnit());
+                        print '</td>';
+                    }
                     // Price buy PMP
 					print '<td class="right">'.price(price2num($objp->ppmp, 'MU')).'</td>';
 
@@ -627,19 +637,24 @@ else
 						print '<td class="center"><a href="'.DOL_URL_ROOT.'/product/stock/product.php?dwid='.$object->id.'&id='.$objp->rowid.'&action=correction&backtopage='.urlencode($_SERVER["PHP_SELF"].'?id='.$id).'">';
 						print $langs->trans("StockCorrection");
 						print "</a></td>";
-					}
-
-					print "</tr>";
-					$i++;
-				}
-				$db->free($resql);
+                    }
+                    if(!empty($conf->global->PRODUCT_USE_UNITS)) {
+                        if ($i == 0) $units = $productstatic->fk_unit;
+                        elseif($productstatic->fk_unit != $units) $sameunits = false;
+                    }
+                    print "</tr>";
+                    $i++;
+                }
+                $db->free($resql);
 
 				print '<tr class="liste_total"><td class="liste_total" colspan="2">'.$langs->trans("Total").'</td>';
 				print '<td class="liste_total right">';
 				$valtoshow = price2num($totalunit, 'MS');
-				print empty($valtoshow) ? '0' : $valtoshow;
+				if(empty($conf->global->PRODUCT_USE_UNITS) || $sameunits) print empty($valtoshow)?'0':$valtoshow;
 				print '</td>';
-				print '<td class="liste_total">&nbsp;</td>';
+				print '<td class="liste_total">';
+				if(empty($conf->global->PRODUCT_USE_UNITS) && $sameunits) print $langs->trans($productstatic->getLabelOfUnit());
+                print '</td>';
                 print '<td class="liste_total right">'.price(price2num($totalvalue, 'MT')).'</td>';
                 if (empty($conf->global->PRODUIT_MULTIPRICES))
                 {

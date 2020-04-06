@@ -45,8 +45,8 @@ $action=GETPOST('action', 'alpha');
 // Shipment note
 if (! empty($conf->expedition->enabled) && empty($conf->global->MAIN_SUBMODULE_EXPEDITION))
 {
-    // This option should always be set to on when module is on.
-    dolibarr_set_const($db, "MAIN_SUBMODULE_EXPEDITION", "1", 'chaine', 0, '', $conf->entity);
+	// This option should always be set to on when module is on.
+	dolibarr_set_const($db, "MAIN_SUBMODULE_EXPEDITION", "1", 'chaine', 0, '', $conf->entity);
 }
 /*
 if ($action == 'activate_sending')
@@ -66,16 +66,16 @@ if ($action == 'disable_sending')
 // Delivery note
 if ($action == 'activate_delivery')
 {
-    dolibarr_set_const($db, "MAIN_SUBMODULE_EXPEDITION", "1", 'chaine', 0, '', $conf->entity);    // We must also enable this
-    dolibarr_set_const($db, "MAIN_SUBMODULE_LIVRAISON", "1", 'chaine', 0, '', $conf->entity);
+	dolibarr_set_const($db, "MAIN_SUBMODULE_EXPEDITION", "1", 'chaine', 0, '', $conf->entity);    // We must also enable this
+	dolibarr_set_const($db, "MAIN_SUBMODULE_LIVRAISON", "1", 'chaine', 0, '', $conf->entity);
 	header("Location: confexped.php");
 	exit;
 }
 elseif ($action == 'disable_delivery')
 {
 	dolibarr_del_const($db, "MAIN_SUBMODULE_LIVRAISON", $conf->entity);
-    header("Location: confexped.php");
-    exit;
+	header("Location: confexped.php");
+	exit;
 }
 
 

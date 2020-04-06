@@ -148,7 +148,10 @@ elseif ($action == 'setapilayer')
     }
     else
     {
-        MultiCurrency::syncRates($conf->global->MULTICURRENCY_APP_ID);
+        $result = MultiCurrency::syncRates($conf->global->MULTICURRENCY_APP_ID);
+        if ($result > 0) {
+        	setEventMessages($langs->trans("CurrencyRateSyncSucceed"), null, "mesgs");
+        }
     }
 }
 
