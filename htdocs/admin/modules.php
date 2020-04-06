@@ -480,13 +480,14 @@ $nbofactivatedmodules = count($conf->modules);
 $moreinfo = $langs->trans("TotalNumberOfActivatedModules", ($nbofactivatedmodules - 1), count($modules));
 if ($nbofactivatedmodules <= 1) $moreinfo .= ' '.img_warning($langs->trans("YouMustEnableOneModule"));
 
-print load_fiche_titre($langs->trans("ModulesSetup"), $moreinfo, 'title_setup');
+print load_fiche_titre($langs->trans("ModulesSetup"), '', 'title_setup');
 
 // Start to show page
-if ($mode == 'common')      print '<span class="opacitymedium hideonsmartphone">'.$langs->trans("ModulesDesc")."</span><br>\n";
-if ($mode == 'marketplace') print '<span class="opacitymedium hideonsmartphone">'.$langs->trans("ModulesMarketPlaceDesc")."</span><br>\n";
-if ($mode == 'deploy')      print '<span class="opacitymedium hideonsmartphone">'.$langs->trans("ModulesDeployDesc", $langs->transnoentitiesnoconv("AvailableModules"))."</span><br>\n";
-if ($mode == 'develop')     print '<span class="opacitymedium hideonsmartphone">'.$langs->trans("ModulesDevelopDesc")."</span><br>\n";
+if ($mode == 'common')       print '<span class="opacitymedium hideonsmartphone">'.$langs->trans("ModulesDesc")."</span><br>\n";
+if ($mode == 'commonkanban') print '<span class="opacitymedium hideonsmartphone">'.$langs->trans("ModulesDesc")."</span><br>\n";
+if ($mode == 'marketplace')  print '<span class="opacitymedium hideonsmartphone">'.$langs->trans("ModulesMarketPlaceDesc")."</span><br>\n";
+if ($mode == 'deploy')       print '<span class="opacitymedium hideonsmartphone">'.$langs->trans("ModulesDeployDesc", $langs->transnoentitiesnoconv("AvailableModules"))."</span><br>\n";
+if ($mode == 'develop')      print '<span class="opacitymedium hideonsmartphone">'.$langs->trans("ModulesDevelopDesc")."</span><br>\n";
 
 $head = modules_prepare_head();
 
@@ -494,7 +495,7 @@ $head = modules_prepare_head();
 print "<br>\n";
 
 
-if ($mode == 'common')
+if ($mode == 'common' || $mode == 'commonkanban')
 {
 	dol_set_focus('#search_keyword');
 
@@ -504,12 +505,17 @@ if ($mode == 'common')
 	print '<input type="hidden" name="sortfield" value="'.$sortfield.'">';
 	print '<input type="hidden" name="sortorder" value="'.$sortorder.'">';
 	print '<input type="hidden" name="page" value="'.$page.'">';
+	print '<input type="hidden" name="mode" value="'.$mode.'">';
 
-	dol_fiche_head($head, $mode, '', -1);
+	$newmode = $mode;
+	if ($newmode == 'commonkanban') $newmode = 'common';
 
-	$moreforfilter = '';
+	dol_fiche_head($head, $newmode, '', -1);
+
+	$moreforfilter = '<div class="valignmiddle">';
+	$moreforfilter .= '<div class="colorbacktimesheet float valignmiddle">';
 	$moreforfilter .= '<div class="divsearchfield">';
-	$moreforfilter .= $langs->trans('Keyword').': <input type="text" id="search_keyword" name="search_keyword" value="'.dol_escape_htmltag($search_keyword).'">';
+	$moreforfilter .= $langs->trans('Keyword').': <input type="text" id="search_keyword" name="search_keyword" class="maxwidth100" value="'.dol_escape_htmltag($search_keyword).'">';
 	$moreforfilter .= '</div>';
 	$moreforfilter .= '<div class="divsearchfield">';
 	$moreforfilter .= $langs->trans('Origin').': '.$form->selectarray('search_nature', $arrayofnatures, dol_escape_htmltag($search_nature), 1);
@@ -533,6 +539,16 @@ if ($mode == 'common')
 	$moreforfilter .= ' ';
 	$moreforfilter .= '<input type="submit" name="buttonreset" class="button" value="'.dol_escape_htmltag($langs->trans("Reset")).'">';
 	$moreforfilter .= '</div>';
+	$moreforfilter .= '</div>';
+
+	$moreforfilter .= '<div class="floatright right">';
+	$moreforfilter .= dolGetButtonTitle($langs->trans('ViewList'), '', 'fa fa-list-alt paddingleft imgforviewmode', $_SERVER["PHP_SELF"].'?mode=common'.$param, '', 1, array('morecss'=>'reposition'));
+	$moreforfilter .= dolGetButtonTitle($langs->trans('ViewKanban'), '', 'fa fa-list-alt paddingleft imgforviewmode', $_SERVER["PHP_SELF"].'?mode=commonkanban'.$param, '', 1, array('morecss'=>'reposition'));
+	$moreforfilter .= '</div>';
+
+	$moreforfilter .= '<div class="floatright right margintoponly marginrightonly" style="padding-top: 3px">'.$moreinfo.'</div>';
+
+	$moreforfilter .= '</div>';
 
 	if (!empty($moreforfilter))
 	{
@@ -552,7 +568,6 @@ if ($mode == 'common')
 	if ($reshook < 0) setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
 
 	// Show list of modules
-	//$conf->global->MAIN_USE_KANBAN_FOR_MODULES=1;
 	$oldfamily = '';
 
 	foreach ($orders as $key => $value)
@@ -637,7 +652,7 @@ if ($mode == 'common')
 			$familytext = empty($familyinfo[$familykey]['label']) ? $familykey : $familyinfo[$familykey]['label'];
 			print load_fiche_titre($familytext, '', '');
 
-			if (! empty($conf->global->MAIN_USE_KANBAN_FOR_MODULES)) {
+			if ($mode == 'commonkanban') {
 				print '<div class="box-flex-container">';
 			} else {
 				print '<div class="div-table-responsive">';
@@ -670,7 +685,7 @@ if ($mode == 'common')
 			$imginfo = "info_black";
 		}
 
-		if (! empty($conf->global->MAIN_USE_KANBAN_FOR_MODULES)) {
+		if ($mode == 'commonkanban') {
 			// Output Kanban
 			print $objMod->getKanbanView();
 		} else {
@@ -880,7 +895,7 @@ if ($mode == 'common')
 
 	if ($oldfamily)
 	{
-		if (! empty($conf->global->MAIN_USE_KANBAN_FOR_MODULES)) {
+		if ($mode == 'commonkanban') {
 			print '</div>';
 		} else {
 			print "</table>\n";

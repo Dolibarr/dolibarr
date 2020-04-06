@@ -64,11 +64,14 @@ if (!defined('ISLOADEDBYSTEELSHEET')) die('Must be call by steelsheet'); ?>
 	line-height: 90px;
 	background: rgba(0, 0, 0, 0.2);
 }
-.info-box-sm .info-box-icon{
+.info-box-sm .info-box-icon {
     height: 80px;
     width: 80px;
     font-size: 25px;
     line-height: 80px;
+}
+.info-box-module .info-box-icon {
+	height: 106px;
 }
 .info-box-icon > img {
 	max-width: 100%;
@@ -92,13 +95,33 @@ if (!defined('ISLOADEDBYSTEELSHEET')) die('Must be call by steelsheet'); ?>
     transition: opacity 0.5s, visibility 0s 0.5s;
 }
 
+.info-box-icon-version {
+    box-sizing: border-box;
+    display: block;
+    position: absolute;
+    width: 90px;
+    bottom: 0px;
+    color: #ffffff;
+    background-color: rgba(0,0,0,0.1);
+    cursor: default;
+
+    font-size: 10px;
+    line-height: 22px;
+    padding: 0px 3px;
+    text-align: center;
+    opacity: 1;
+    -webkit-transition: opacity 0.5s, visibility 0s 0.5s;
+    transition: opacity 0.5s, visibility 0s 0.5s;
+}
+
+
 <?php if (empty($conf->global->MAIN_DISABLE_GLOBAL_BOXSTATS) && !empty($conf->global->MAIN_INCLUDE_GLOBAL_STATS_IN_OPENED_DASHBOARD)) { ?>
 .info-box-icon-text{
     opacity: 1;
 }
 <?php } ?>
 
-.info-box-sm .info-box-icon-text{
+.info-box-sm .info-box-icon-text, .info-box-sm .info-box-icon-version{
     overflow: hidden;
     width: 80px;
 }
