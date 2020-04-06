@@ -44,7 +44,6 @@ $action=GETPOST('action', 'alpha');
 $sref=GETPOST("sref", 'alpha');
 $snom=GETPOST("snom", 'alpha');
 $sall=trim((GETPOST('search_all', 'alphanohtml')!='')?GETPOST('search_all', 'alphanohtml'):GETPOST('sall', 'alphanohtml'));
-$type=GETPOST("type", "int");
 $search_barcode=GETPOST("search_barcode", 'alpha');
 $catid=GETPOST('catid', 'int');
 $toolowstock=GETPOST('toolowstock');
@@ -128,20 +127,9 @@ if (!empty($conf->global->PRODUCT_USE_UNITS)) $sql .= ' LEFT JOIN '.MAIN_DB_PREF
 // We'll need this table joined to the select in order to filter by categ
 if ($search_categ) $sql .= ", ".MAIN_DB_PREFIX."categorie_product as cp";
 $sql .= " WHERE p.entity IN (".getEntity('product').")";
+$sql .= " AND p.tostock<>0";
 if ($search_categ) $sql .= " AND p.rowid = cp.fk_product"; // Join for the needed table to filter by categ
 if ($sall) $sql .= natural_search(array('p.ref', 'p.label', 'p.description', 'p.note'), $sall);
-// if the type is not 1, we show all products (type = 0,2,3)
-if (dol_strlen($type))
-{
-    if ($type == 1)
-    {
-        $sql .= " AND p.fk_product_type = '1'";
-    }
-    else
-    {
-        $sql .= " AND p.fk_product_type <> '1'";
-    }
-}
 if ($sref)     $sql .= natural_search('p.ref', $sref);
 if ($search_barcode) $sql .= natural_search('p.barcode', $search_barcode);
 if ($snom)     $sql .= natural_search('p.label', $snom);

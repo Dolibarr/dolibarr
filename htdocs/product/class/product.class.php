@@ -235,6 +235,13 @@ class Product extends CommonObject
      */
     public $status_buy = 0;
 
+	/**
+	 * Status indicate whether the product is available for stock '1' or not '0'
+	 *
+	 * @var int
+	 */
+	public $tostock = 0;
+
     /**
      * Status indicates whether the product is a finished product '1' or a raw material '0'
      *
@@ -516,6 +523,12 @@ class Product extends CommonObject
         if (empty($this->status_buy)) {
             $this->status_buy = 0;
         }
+
+	    if ($conf->stock->enabled && !empty($this->tostock)) {
+		    $this->tostock = 1;
+	    } else {
+		    $this->tostock = 0;
+	    }
 
         $price_ht = 0;
         $price_ttc = 0;
@@ -897,9 +910,11 @@ class Product extends CommonObject
         if (empty($this->status_buy)) {
             $this->status_buy = 0;
         }
-        if (empty($this->tostock)) {
-            $this->tostock = 0;
-        }
+	    if ($conf->stock->enabled && !empty($this->tostock)) {
+		    $this->tostock = 1;
+	    } else {
+		    $this->tostock = 0;
+	    }
 
         if (empty($this->country_id)) {
             $this->country_id = 0;
@@ -2109,6 +2124,7 @@ class Product extends CommonObject
         $sql .= " accountancy_code_buy, accountancy_code_buy_intra, accountancy_code_buy_export,";
         $sql .= " accountancy_code_sell, accountancy_code_sell_intra, accountancy_code_sell_export, stock, pmp,";
         $sql .= " datec, tms, import_key, entity, desiredstock, tobatch, fk_unit,";
+	    $sql .= " tostock,";
         $sql .= " fk_price_expression, price_autogen";
         $sql .= " FROM ".MAIN_DB_PREFIX."product";
         if ($id) {
@@ -2131,19 +2147,20 @@ class Product extends CommonObject
             if ($this->db->num_rows($resql) > 0) {
                 $obj = $this->db->fetch_object($resql);
 
-                $this->id = $obj->rowid;
-                $this->ref                            = $obj->ref;
-                $this->ref_ext                        = $obj->ref_ext;
-                $this->label                          = $obj->label;
-                $this->description                    = $obj->description;
-                $this->url                            = $obj->url;
-                $this->note_private                    = $obj->note_private;
-                $this->note                            = $obj->note_private; // deprecated
+                $this->id                            = $obj->rowid;
+                $this->ref                           = $obj->ref;
+                $this->ref_ext                       = $obj->ref_ext;
+                $this->label                         = $obj->label;
+                $this->description                   = $obj->description;
+                $this->url                           = $obj->url;
+                $this->note_private                  = $obj->note_private;
+                $this->note                          = $obj->note_private; // deprecated
 
-                $this->type                            = $obj->fk_product_type;
+                $this->type                          = $obj->fk_product_type;
                 $this->status                        = $obj->tosell;
                 $this->status_buy                    = $obj->tobuy;
-                $this->status_batch                    = $obj->tobatch;
+                $this->tostock                       = $obj->tostock;
+                $this->status_batch                  = $obj->tobatch;
 
                 $this->customcode                    = $obj->customcode;
                 $this->country_id                    = $obj->fk_country;
@@ -4592,7 +4609,7 @@ class Product extends CommonObject
      *    Return label of status of object
      *
      * @param  int $mode 0=long label, 1=short label, 2=Picto + short label, 3=Picto, 4=Picto + long label, 5=Short label + Picto
-     * @param  int $type 0=Sell, 1=Buy, 2=Batch Number management
+     * @param  int $type 0=Sell, 1=Buy, 2=Batch Number management, 3=Stock managed
      * @return string          Label of status
      */
     public function getLibStatut($mode = 0, $type = 0)
@@ -4600,11 +4617,13 @@ class Product extends CommonObject
         switch ($type)
         {
 			case 0:
-            return $this->LibStatut($this->status, $mode, $type);
+                return $this->LibStatut($this->status, $mode, $type);
 			case 1:
-            return $this->LibStatut($this->status_buy, $mode, $type);
+                return $this->LibStatut($this->status_buy, $mode, $type);
 			case 2:
-            return $this->LibStatut($this->status_batch, $mode, $type);
+                return $this->LibStatut($this->status_batch, $mode, $type);
+	        case 3:
+		        return $this->LibStatut($this->tostock, $mode, $type);
 			default:
 				//Simulate previous behavior but should return an error string
             return $this->LibStatut($this->status_buy, $mode, $type);
@@ -4617,7 +4636,7 @@ class Product extends CommonObject
      *
      * @param  int 		$status 	Statut
      * @param  int		$mode       0=long label, 1=short label, 2=Picto + short label, 3=Picto, 4=Picto + long label, 5=Short label + Picto, 6=Long label + Picto
-     * @param  int 		$type   	0=Status "to sell", 1=Status "to buy", 2=Status "to Batch"
+     * @param  int 		$type   	0=Status "to sell", 1=Status "to buy", 2=Status "to Batch", 3=Status "to Stock"
      * @return string              	Label of status
      */
     public function LibStatut($status, $mode = 0, $type = 0)
@@ -4628,7 +4647,8 @@ class Product extends CommonObject
         $labelStatus = $labelStatusShort = '';
 
         $langs->load('products');
-        if (!empty($conf->productbatch->enabled)) { $langs->load("productbatch");
+        if (!empty($conf->productbatch->enabled)) {
+        	$langs->load("productbatch");
         }
 
         if ($type == 2) {
@@ -4669,6 +4689,10 @@ class Product extends CommonObject
                 $labelStatus = $langs->trans('ProductStatusNotOnBatch');
                 $labelStatusShort = $langs->trans('ProductStatusNotOnBatchShort');
             }
+            elseif ($type == 3) {
+                $labelStatus = $langs->trans('ProductStatusNotOnStock');
+                $labelStatusShort = $langs->trans('ProductStatusNotOnStockShort');
+            }
         }
         elseif ($status == 1) {
             // $type   0=Status "to sell", 1=Status "to buy", 2=Status "to Batch"
@@ -4683,6 +4707,10 @@ class Product extends CommonObject
             elseif ($type == 2) {
                 $labelStatus = $langs->trans('ProductStatusOnBatch');
                 $labelStatusShort = $langs->trans('ProductStatusOnBatchShort');
+            }
+            elseif ($type == 3) {
+	            $labelStatus = $langs->trans('ProductStatusOnStock');
+	            $labelStatusShort = $langs->trans('ProductStatusOnStockShort');
             }
         }
 

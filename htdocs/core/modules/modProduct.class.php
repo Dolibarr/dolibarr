@@ -178,6 +178,7 @@ class modProduct extends DolibarrModules
 		$this->export_fields_array[$r] = array(
 			'p.rowid'=>"Id", 'p.ref'=>"Ref", 'p.label'=>"Label",
 			'p.fk_product_type'=>'Type', 'p.tosell'=>"OnSell", 'p.tobuy'=>"OnBuy",
+			'p.tostock'=>"ManageStock",
 			'p.description'=>"Description", 'p.url'=>"PublicUrl",
 			'p.customcode'=>'CustomCode', 'p.fk_country'=>'IDCountry',
 			'p.accountancy_code_sell'=>"ProductAccountancySellCode", 'p.accountancy_code_sell_intra'=>"ProductAccountancySellIntraCode",
@@ -205,6 +206,7 @@ class modProduct extends DolibarrModules
 		$this->export_TypeFields_array[$r] = array(
 			'p.ref'=>"Text", 'p.label'=>"Text",
 			'p.fk_product_type'=>'Numeric', 'p.tosell'=>"Boolean", 'p.tobuy'=>"Boolean",
+			'p.tostock'=>"Boolean",
 			'p.description'=>"Text", 'p.url'=>"Text",
 			'p.accountancy_code_sell'=>"Text", 'p.accountancy_code_sell_intra'=>"Text", 'p.accountancy_code_sell_export'=>"Text",
 			'p.accountancy_code_buy'=>"Text", 'p.accountancy_code_buy_intra'=>"Text", 'p.accountancy_code_buy_export'=>"Text",
@@ -322,7 +324,8 @@ class modProduct extends DolibarrModules
     			'p.note'=>"NotePrivate", 'p.note_public'=>'NotePublic',
     			'p.weight'=>"Weight", 'p.length'=>"Length", 'p.surface'=>"Surface", 'p.volume'=>"Volume", 'p.customcode'=>'CustomCode',
 				'p.price_base_type'=>"PriceBase", 'p.price'=>"UnitPriceHT", 'p.price_ttc'=>"UnitPriceTTC", 'p.tva_tx'=>'VATRate', 'p.tosell'=>"OnSell",
-				'p.tobuy'=>"OnBuy", 'p.datec'=>'DateCreation', 'p.tms'=>'DateModification'
+				'p.tobuy'=>"OnBuy", 'p.tostock'=>"ManageStock", 'p.datec'=>'DateCreation', 'p.tms'=>'DateModification'
+
 			);
     		if (!empty($conf->stock->enabled)) $this->export_fields_array[$r] = array_merge($this->export_fields_array[$r], array('p.stock'=>'Stock', 'p.seuil_stock_alerte'=>'StockLimit', 'p.desiredstock'=>'DesiredStock', 'p.pmp'=>'PMPValue'));
     		if (!empty($conf->barcode->enabled)) $this->export_fields_array[$r] = array_merge($this->export_fields_array[$r], array('p.barcode'=>'BarCode'));
@@ -334,6 +337,7 @@ class modProduct extends DolibarrModules
     			'p.note'=>"Text", 'p.note_public'=>"Text",
     			'p.weight'=>"Numeric", 'p.length'=>"Numeric", 'p.surface'=>"Numeric", 'p.volume'=>"Numeric", 'p.customcode'=>'Text',
 				'p.price_base_type'=>"Text", 'p.price'=>"Numeric", 'p.price_ttc'=>"Numeric", 'p.tva_tx'=>'Numeric', 'p.tosell'=>"Boolean", 'p.tobuy'=>"Boolean",
+				'p.tostock'=>"Boolean",
 				'p.datec'=>'Date', 'p.tms'=>'Date'
 			);
     		if (!empty($conf->stock->enabled)) $this->export_TypeFields_array[$r] = array_merge($this->export_TypeFields_array[$r], array('p.stock'=>'Numeric', 'p.seuil_stock_alerte'=>'Numeric', 'p.desiredstock'=>'Numeric', 'p.pmp'=>'Numeric', 'p.cost_price'=>'Numeric'));
@@ -346,7 +350,7 @@ class modProduct extends DolibarrModules
 				'p.note'=>"virtualproduct", 'p.length'=>"virtualproduct",
 				'p.surface'=>"virtualproduct", 'p.volume'=>"virtualproduct", 'p.weight'=>"virtualproduct", 'p.customcode'=>'virtualproduct',
 				'p.price_base_type'=>"virtualproduct", 'p.price'=>"virtualproduct", 'p.price_ttc'=>"virtualproduct", 'p.tva_tx'=>"virtualproduct",
-				'p.tosell'=>"virtualproduct", 'p.tobuy'=>"virtualproduct", 'p.datec'=>"virtualproduct", 'p.tms'=>"virtualproduct"
+				'p.tosell'=>"virtualproduct", 'p.tobuy'=>"virtualproduct", 'p.tostock'=>"virtualproduct", 'p.datec'=>"virtualproduct", 'p.tms'=>"virtualproduct"
 			);
     		if (!empty($conf->stock->enabled)) $this->export_entities_array[$r] = array_merge($this->export_entities_array[$r], array('p.stock'=>'virtualproduct', 'p.seuil_stock_alerte'=>'virtualproduct', 'p.desiredstock'=>'virtualproduct', 'p.pmp'=>'virtualproduct'));
     		if (!empty($conf->barcode->enabled)) $this->export_entities_array[$r] = array_merge($this->export_entities_array[$r], array('p.barcode'=>'virtualproduct'));
@@ -382,6 +386,7 @@ class modProduct extends DolibarrModules
 			'p.fk_product_type' => "Type*",
 			'p.tosell' => "OnSell*",
 			'p.tobuy' => "OnBuy*",
+			'p.tostock' => "ManageStock*",
 			'p.description' => "Description",
 			'p.url' => "PublicUrl",
 			'p.customcode' => 'CustomCode',
@@ -510,6 +515,7 @@ class modProduct extends DolibarrModules
             'p.price_base_type' => '\AHT\z|\ATTC\z',
             'p.tosell' => '^[0|1]$',
             'p.tobuy' => '^[0|1]$',
+            'p.tostock' => '^[0|1]$',
             'p.fk_product_type' => '^[0|1]$',
             'p.datec' => '^[0-9][0-9][0-9][0-9]-[0-9][0-9]-[0-9][0-9]$',
             'p.recuperableonly' => '^[0|1]$',
@@ -534,6 +540,7 @@ class modProduct extends DolibarrModules
             'p.tva_tx' => '10', // tax rate eg: 10. Must match numerically one of the tax rates defined for your country'
             'p.tosell' => "0 (not for sale to customer, eg. raw material) / 1 (for sale)",
             'p.tobuy' => "0 (not for purchase from supplier, eg. virtual product) / 1 (for purchase)",
+            'p.tostock' => "0 (do not manage stock) / 1 (manage stock)",
             'p.fk_product_type' => "0 (product) / 1 (service)",
             'p.duration' => "eg. 365d/12m/1y",
             'p.url' => 'link to product (no https)',

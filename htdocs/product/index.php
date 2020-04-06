@@ -278,7 +278,8 @@ if ((!empty($conf->product->enabled) || !empty($conf->service->enabled)) && ($us
 	$max = 15;
 	$sql = "SELECT p.rowid, p.label, p.price, p.ref, p.fk_product_type, p.tosell, p.tobuy, p.tobatch, p.fk_price_expression,";
 	$sql .= " p.entity,";
-	$sql .= " p.tms as datem";
+	$sql .= " p.tms as datem,";
+	$sql .= " p.tostock";
 	$sql .= " FROM ".MAIN_DB_PREFIX."product as p";
 	$sql .= " WHERE p.entity IN (".getEntity($product_static->element, 1).")";
 	if ($type != '') $sql .= " AND p.fk_product_type = ".$type;
@@ -306,8 +307,9 @@ if ((!empty($conf->product->enabled) || !empty($conf->service->enabled)) && ($us
 			print '<div class="div-table-responsive-no-min">';
 			print '<table class="noborder centpercent">';
 
-			$colnb = 2;
-			if (empty($conf->global->PRODUIT_MULTIPRICES)) $colnb++;
+			$colnb = 3;
+			if (!empty($conf->global->PRODUIT_MULTIPRICES)) $colnb++;
+			if (!empty($conf->stock->enabled)) $colnb++;
 
 			print '<tr class="liste_titre"><th colspan="'.$colnb.'">'.$transRecordedType.'</th>';
 			print '<th class="right" colspan="3"><a href="'.DOL_URL_ROOT.'/product/list.php?sortfield=p.tms&sortorder=DESC">'.$langs->trans("FullList").'</td>';
@@ -325,6 +327,7 @@ if ((!empty($conf->product->enabled) || !empty($conf->service->enabled)) && ($us
 				$product_static->status = $objp->tosell;
 				$product_static->status_buy = $objp->tobuy;
 				$product_static->status_batch = $objp->tobatch;
+				$product_static->tostock = $objp->tostock;
 
 				//Multilangs
 				if (!empty($conf->global->MAIN_MULTILANGS))
@@ -375,6 +378,13 @@ if ((!empty($conf->product->enabled) || !empty($conf->service->enabled)) && ($us
 	            print '<td class="right nowrap width25"><span class="statusrefbuy">';
 	            print $product_static->LibStatut($objp->tobuy, 3, 1);
 	            print "</span></td>";
+	            if ($conf->stock->enabled)
+	            {
+	            	print '<td class="right nowrap width25"><span class="statusrefstock">';
+		            print $product_static->LibStatut($objp->tostock, 3, 3);
+		            print "</span></td>";
+	            }
+
 				print "</tr>\n";
 				$i++;
 			}

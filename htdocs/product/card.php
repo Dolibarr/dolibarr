@@ -259,21 +259,23 @@ if (empty($reshook))
 	            }
 	        }
 
-	        $object->default_vat_code = $vatratecode;
-	        $object->tva_tx = $tva_tx;
-	        $object->tva_npr = $npr;
-	        $object->localtax1_tx = $localtax1;
-	        $object->localtax2_tx = $localtax2;
-	        $object->localtax1_type = $localtax1_type;
-	        $object->localtax2_type = $localtax2_type;
+	        $object->default_vat_code       = $vatratecode;
+	        $object->tva_tx                 = $tva_tx;
+	        $object->tva_npr                = $npr;
+	        $object->localtax1_tx           = $localtax1;
+	        $object->localtax2_tx           = $localtax2;
+	        $object->localtax1_type         = $localtax1_type;
+	        $object->localtax2_type         = $localtax2_type;
 
-            $object->type               	 = $type;
-            $object->status             	 = GETPOST('statut');
-            $object->status_buy            = GETPOST('statut_buy');
-			$object->status_batch = GETPOST('status_batch');
+            $object->type                   = $type;
+            $object->status             	= GETPOST('statut');
+            $object->status_buy             = GETPOST('statut_buy');
+	        $object->tostock                = GETPOST('tostock');
+            $object->status_batch           = GETPOST('status_batch');
 
-            $object->barcode_type          = GETPOST('fk_barcode_type');
-            $object->barcode = GETPOST('barcode');
+
+            $object->barcode_type           = GETPOST('fk_barcode_type');
+            $object->barcode                = GETPOST('barcode');
             // Set barcode_type_xxx from barcode_type id
             $stdobject = new GenericObject($db);
     	    $stdobject->element = 'product';
@@ -299,29 +301,29 @@ if (empty($reshook))
             $object->duration_unit      	 = $duration_unit;
             $object->fk_default_warehouse	 = GETPOST('fk_default_warehouse');
             $object->seuil_stock_alerte 	 = GETPOST('seuil_stock_alerte') ?GETPOST('seuil_stock_alerte') : 0;
-            $object->desiredstock          = GETPOST('desiredstock') ?GETPOST('desiredstock') : 0;
+            $object->desiredstock            = GETPOST('desiredstock') ?GETPOST('desiredstock') : 0;
             $object->canvas             	 = GETPOST('canvas');
-            $object->net_measure           = GETPOST('net_measure');
-            $object->net_measure_units     = GETPOST('net_measure_units'); // This is not the fk_unit but the power of unit
+            $object->net_measure             = GETPOST('net_measure');
+            $object->net_measure_units       = GETPOST('net_measure_units'); // This is not the fk_unit but the power of unit
             $object->weight             	 = GETPOST('weight');
             $object->weight_units       	 = GETPOST('weight_units'); // This is not the fk_unit but the power of unit
             $object->length             	 = GETPOST('size');
             $object->length_units       	 = GETPOST('size_units'); // This is not the fk_unit but the power of unit
-            $object->width = GETPOST('sizewidth');
+            $object->width                   = GETPOST('sizewidth');
             $object->height             	 = GETPOST('sizeheight');
             $object->surface            	 = GETPOST('surface');
             $object->surface_units      	 = GETPOST('surface_units'); // This is not the fk_unit but the power of unit
             $object->volume             	 = GETPOST('volume');
             $object->volume_units       	 = GETPOST('volume_units'); // This is not the fk_unit but the power of unit
             $object->finished           	 = GETPOST('finished', 'alpha');
-            $object->fk_unit = GETPOST('units', 'alpha'); // This is the fk_unit of sale
+            $object->fk_unit                 = GETPOST('units', 'alpha'); // This is the fk_unit of sale
 
-	        $accountancy_code_sell = GETPOST('accountancy_code_sell', 'alpha');
-	        $accountancy_code_sell_intra = GETPOST('accountancy_code_sell_intra', 'alpha');
-	        $accountancy_code_sell_export = GETPOST('accountancy_code_sell_export', 'alpha');
-	        $accountancy_code_buy = GETPOST('accountancy_code_buy', 'alpha');
-			$accountancy_code_buy_intra = GETPOST('accountancy_code_buy_intra', 'alpha');
-			$accountancy_code_buy_export = GETPOST('accountancy_code_buy_export', 'alpha');
+	        $accountancy_code_sell           = GETPOST('accountancy_code_sell', 'alpha');
+	        $accountancy_code_sell_intra     = GETPOST('accountancy_code_sell_intra', 'alpha');
+	        $accountancy_code_sell_export    = GETPOST('accountancy_code_sell_export', 'alpha');
+	        $accountancy_code_buy            = GETPOST('accountancy_code_buy', 'alpha');
+			$accountancy_code_buy_intra      = GETPOST('accountancy_code_buy_intra', 'alpha');
+			$accountancy_code_buy_export     = GETPOST('accountancy_code_buy_export', 'alpha');
 
 			if ($accountancy_code_sell <= 0) { $object->accountancy_code_sell = ''; } else { $object->accountancy_code_sell = $accountancy_code_sell; }
 			if ($accountancy_code_sell_intra <= 0) { $object->accountancy_code_sell_intra = ''; } else { $object->accountancy_code_sell_intra = $accountancy_code_sell_intra; }
@@ -410,7 +412,8 @@ if (empty($reshook))
                 $object->country_id             = GETPOST('country_id', 'int');
                 $object->status                 = GETPOST('statut', 'int');
                 $object->status_buy             = GETPOST('statut_buy', 'int');
-                $object->status_batch = GETPOST('status_batch', 'aZ09');
+                $object->tostock                = GETPOST('tostock', 'int');
+                $object->status_batch           = GETPOST('status_batch', 'aZ09');
                 // removed from update view so GETPOST always empty
                 $object->fk_default_warehouse   = GETPOST('fk_default_warehouse');
                 /*
@@ -427,8 +430,8 @@ if (empty($reshook))
                 $object->weight_units           = GETPOST('weight_units'); // This is not the fk_unit but the power of unit
                 $object->length                 = GETPOST('size');
                 $object->length_units           = GETPOST('size_units'); // This is not the fk_unit but the power of unit
-                $object->width = GETPOST('sizewidth');
-                $object->height = GETPOST('sizeheight');
+                $object->width                  = GETPOST('sizewidth');
+                $object->height                 = GETPOST('sizeheight');
 
                 $object->surface                = GETPOST('surface');
                 $object->surface_units          = GETPOST('surface_units'); // This is not the fk_unit but the power of unit
@@ -524,6 +527,7 @@ if (empty($reshook))
                 $object->ref = GETPOST('clone_ref', 'alphanohtml');
                 $object->status = 0;
                 $object->status_buy = 0;
+                $object->tostock = 0;
                 $object->id = null;
                 $object->barcode = -1;
 
@@ -1005,6 +1009,14 @@ else
         print $form->selectarray('statut_buy', $statutarray, GETPOST('statut_buy'));
         print '</td></tr>';
 
+        // To Stock
+	    if (!empty($conf->stock->enabled)) {
+		    print '<tr><td class="fieldrequired">' . $langs->trans("ManageStock").'</td><td colspan="3">';
+		    $statutarray = array('1' => $langs->trans("ProductStatusOnStock"), '0' => $langs->trans("ProductStatusNotOnStock"));
+		    print $form->selectarray('tostock', $statutarray, GETPOST('tostock'));
+		    print '</td></tr>';
+	    }
+
 	    // Batch number management
 		if (!empty($conf->productbatch->enabled))
 		{
@@ -1434,6 +1446,24 @@ else
             print '</select>';
             print '</td></tr>';
 
+			// To Stock
+			if (!empty($conf->stock->enabled)) {
+				print '<tr><td class="fieldrequired">'.$langs->trans("ManageStock").'</td><td colspan="3">';
+				print '<select class="flat" name="tostock">';
+				if ($object->tostock)
+				{
+					print '<option value="1" selected>'.$langs->trans("ProductStatusOnStock").'</option>';
+					print '<option value="0">'.$langs->trans("ProductStatusNotOnStock").'</option>';
+				}
+				else
+				{
+					print '<option value="1">'.$langs->trans("ProductStatusOnStock").'</option>';
+					print '<option value="0" selected>'.$langs->trans("ProductStatusNotOnStock").'</option>';
+				}
+				print '</select>';
+				print '</td></tr>';
+			}
+
 			// Batch number managment
 			if ($conf->productbatch->enabled)
 			{
@@ -1488,7 +1518,7 @@ else
             print '</td></tr>';
 
             // Stock
-            if ($object->isProduct() && !empty($conf->stock->enabled))
+            if (!empty($conf->stock->enabled) && !empty($object->tostock))
             {
                 // Default warehouse
                 print '<tr><td>'.$langs->trans("DefaultWarehouse").'</td><td>';

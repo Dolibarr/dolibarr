@@ -63,6 +63,7 @@ $searchCategoryProductOperator = (GETPOST('search_category_product_operator', 'i
 $searchCategoryProductList = GETPOST('search_category_product_list', 'array');
 $search_tosell = GETPOST("search_tosell", 'int');
 $search_tobuy = GETPOST("search_tobuy", 'int');
+$search_tostock = GETPOST("search_tostock", 'int');
 $fourn_id = GETPOST("fourn_id", 'int');
 $catid = GETPOST('catid', 'int');
 $search_tobatch = GETPOST("search_tobatch", 'int');
@@ -209,7 +210,8 @@ $arrayfields = array(
 	'p.datec'=>array('label'=>$langs->trans("DateCreation"), 'checked'=>0, 'position'=>500),
 	'p.tms'=>array('label'=>$langs->trans("DateModificationShort"), 'checked'=>0, 'position'=>500),
 	'p.tosell'=>array('label'=>$langs->trans("Status").' ('.$langs->trans("Sell").')', 'checked'=>1, 'position'=>1000),
-	'p.tobuy'=>array('label'=>$langs->trans("Status").' ('.$langs->trans("Buy").')', 'checked'=>1, 'position'=>1000)
+	'p.tobuy'=>array('label'=>$langs->trans("Status").' ('.$langs->trans("Buy").')', 'checked'=>1, 'position'=>1000),
+	'p.tostock'=>array('label'=>$langs->trans("ProductStatusOnStock"), 'checked'=>1, 'enabled'=>(!empty($conf->stock->enabled)),'position'=>1000)
 );
 // Extra fields
 if (is_array($extrafields->attributes[$object->table_element]['label']) && count($extrafields->attributes[$object->table_element]['label']))
@@ -252,6 +254,7 @@ if (empty($reshook))
         $searchCategoryProductList = array();
 		$search_tosell = "";
 		$search_tobuy = "";
+		$search_tostock = "";
 		$search_vatrate = "";
 		$search_tobatch = '';
 		//$search_type='';						// There is 2 types of list: a list of product and a list of services. No list with both. So when we clear search criteria, we must keep the filter on type.
@@ -303,7 +306,7 @@ else
 }
 
 $sql = 'SELECT DISTINCT p.rowid, p.ref, p.label, p.fk_product_type, p.barcode, p.price, p.tva_tx, p.price_ttc, p.price_base_type, p.entity,';
-$sql .= ' p.fk_product_type, p.duration, p.finished, p.tosell, p.tobuy, p.seuil_stock_alerte, p.desiredstock,';
+$sql .= ' p.fk_product_type, p.duration, p.finished, p.tosell, p.tobuy, p.tostock, p.seuil_stock_alerte, p.desiredstock,';
 $sql .= ' p.tobatch, p.accountancy_code_sell, p.accountancy_code_sell_intra, p.accountancy_code_sell_export,';
 $sql .= ' p.accountancy_code_buy, p.accountancy_code_buy_intra, p.accountancy_code_buy_export,';
 $sql .= ' p.datec as date_creation, p.tms as date_update, p.pmp, p.stock,';
@@ -396,7 +399,7 @@ $parameters = array();
 $reshook = $hookmanager->executeHooks('printFieldListWhere', $parameters); // Note that $action and $object may have been modified by hook
 $sql .= $hookmanager->resPrint;
 $sql .= " GROUP BY p.rowid, p.ref, p.label, p.barcode, p.price, p.tva_tx, p.price_ttc, p.price_base_type,";
-$sql .= " p.fk_product_type, p.duration, p.finished, p.tosell, p.tobuy, p.seuil_stock_alerte, p.desiredstock,";
+$sql .= " p.fk_product_type, p.duration, p.finished, p.tosell, p.tobuy, p.tostock, p.seuil_stock_alerte, p.desiredstock,";
 $sql .= ' p.datec, p.tms, p.entity, p.tobatch, p.accountancy_code_sell, p.accountancy_code_sell_intra, p.accountancy_code_sell_export,';
 $sql .= ' p.accountancy_code_buy, p.accountancy_code_buy_intra, p.accountancy_code_buy_export, p.pmp, p.stock,';
 $sql .= ' p.weight, p.weight_units, p.length, p.length_units, p.width, p.width_units, p.height, p.height_units, p.surface, p.surface_units, p.volume, p.volume_units';
@@ -480,6 +483,7 @@ if ($resql)
 	if ($search_label) $param .= "&search_label=".urlencode($search_label);
 	if ($search_tosell != '') $param .= "&search_tosell=".urlencode($search_tosell);
 	if ($search_tobuy != '') $param .= "&search_tobuy=".urlencode($search_tobuy);
+	if ($search_tostock != '') $param .= "&search_tostock=".urlencode($search_tostock);
     if ($search_vatrate) $sql .= natural_search('p.tva_tx', $search_vatrate);
 	if ($fourn_id > 0) $param .= ($fourn_id ? "&fourn_id=".$fourn_id : "");
 	//if ($seach_categ) $param.=($search_categ?"&search_categ=".urlencode($search_categ):"");
@@ -816,6 +820,12 @@ if ($resql)
 		print $form->selectarray('search_tobuy', array('0'=>$langs->trans('ProductStatusNotOnBuyShort'), '1'=>$langs->trans('ProductStatusOnBuyShort')), $search_tobuy, 1);
 		print '</td>';
 	}
+	if (!empty($arrayfields['p.tostock']['checked']))
+	{
+		print '<td class="liste_titre right">';
+		print $form->selectarray('search_tostock', array('0'=>$langs->trans('ProductStatusNotOnStock'), '1'=>$langs->trans('ProductStatusOnStock')), $search_tostock, 1);
+		print '</td>';
+	}
 	print '<td class="liste_titre center maxwidthsearch">';
 	$searchpicto = $form->showFilterButtons();
 	print $searchpicto;
@@ -925,6 +935,9 @@ if ($resql)
     if (!empty($arrayfields['p.tobuy']['checked'])) {
         print_liste_field_titre($arrayfields['p.tobuy']['label'], $_SERVER["PHP_SELF"], "p.tobuy", "", $param, '', $sortfield, $sortorder, 'right ');
     }
+    if (!empty($arrayfields['p.tostock']['checked'])) {
+        print_liste_field_titre($arrayfields['p.tostock']['label'], $_SERVER["PHP_SELF"], "p.tostock", "", $param, '', $sortfield, $sortorder, 'right ');
+    }
     print_liste_field_titre($selectedfields, $_SERVER["PHP_SELF"], "", '', '', '', $sortfield, $sortorder, 'center maxwidthsearch ');
     print "</tr>\n";
 
@@ -964,6 +977,7 @@ if ($resql)
 		$product_static->type = $obj->fk_product_type;
 		$product_static->status_buy = $obj->tobuy;
 		$product_static->status     = $obj->tosell;
+		$product_static->tostock     = $obj->tostock;
 		$product_static->status_batch = $obj->tobatch;
 		$product_static->entity = $obj->entity;
 		$product_static->pmp = $obj->pmp;
@@ -990,14 +1004,11 @@ if ($resql)
         }
 
 		// STOCK_DISABLE_OPTIM_LOAD can be set to force load_stock whatever is permissions on stock.
-		if ((!empty($conf->stock->enabled) && $user->rights->stock->lire && $search_type != 1) || !empty($conf->global->STOCK_DISABLE_OPTIM_LOAD))	// To optimize call of load_stock
+		if ((!empty($conf->stock->enabled) && $user->rights->stock->lire && $obj->tostock==1) || !empty($conf->global->STOCK_DISABLE_OPTIM_LOAD))	// To optimize call of load_stock
 		{
-			if ($obj->fk_product_type != 1 || !empty($conf->global->STOCK_SUPPORTS_SERVICES))    // Not a service
-			{
-				$option = 'nobatch';
-				if (empty($arrayfields['stock_virtual']['checked'])) $option .= ',novirtual';
-				$product_static->load_stock($option); // Load stock_reel + stock_warehouse. This can also call load_virtual_stock()
-			}
+			$option = 'nobatch';
+			if (empty($arrayfields['stock_virtual']['checked'])) $option .= ',novirtual';
+			$product_static->load_stock($option); // Load stock_reel + stock_warehouse. This can also call load_virtual_stock()
 		}
 
 		print '<tr class="oddeven">';
@@ -1382,6 +1393,18 @@ if ($resql)
 				print ajax_object_onoff($product_static, 'status_buy', 'tobuy', 'ProductStatusOnBuy', 'ProductStatusNotOnBuy');
 			} else {
 				print $product_static->LibStatut($obj->tobuy, 5, 1);
+			}
+			print '</td>';
+			if (!$i) $totalarray['nbfield']++;
+		}
+		// Manage In stock
+		if (!empty($arrayfields['p.tostock']['checked']))
+		{
+			print '<td class="right nowrap">';
+			if (!empty($conf->use_javascript_ajax) && $user->rights->produit->creer && !empty($conf->global->MAIN_DIRECT_STATUS_UPDATE)) {
+				print ajax_object_onoff($product_static, 'tostock', 'tostock', 'ProductStatusOnStock', 'ProductStatusNotOnStock');
+			} else {
+				print $product_static->LibStatut($obj->tostock, 5, 3);
 			}
 			print '</td>';
 			if (!$i) $totalarray['nbfield']++;

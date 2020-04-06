@@ -189,6 +189,9 @@ class MouvementStock extends CommonObject
 		if ($product->id <= 0) {	// Can happen if database is corrupted
 			return 0;
 		}
+		if ($product->tostock==0) {	// Can happen if database is corrupted
+			return 0;
+		}
 
 		$this->db->begin();
 

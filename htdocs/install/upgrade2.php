@@ -461,6 +461,13 @@ if (!GETPOST('action', 'aZ09') || preg_match('/upgrade/i', GETPOST('action', 'aZ
             migrate_contacts_socialnetworks();
             migrate_thirdparties_socialnetworks();
         }
+
+        // Scripts for 12.0
+	    $afterversionarray=explode('.', '11.0.9');
+	    $beforeversionarray=explode('.', '12.0.9');
+	    if (versioncompare($versiontoarray, $afterversionarray) >= 0 && versioncompare($versiontoarray, $beforeversionarray) <= 0) {
+		    migrate_product_tostock();
+	    }
     }
 
 	// Code executed only if migration is LAST ONE. Must always be done.
@@ -5329,4 +5336,55 @@ function migrate_thirdparties_socialnetworks()
     }
     print '<b>'.$langs->trans('MigrationFieldsSocialNetworks', 'Thirdparties')."</b><br>\n";
     print '</td></tr>';
+}
+
+/**
+ * Migrate product and service with To Stock Management
+ *
+ * @return  void
+ */
+function migrate_product_tostock()
+{
+	global $db, $langs;
+
+	$error = 0;
+	$updatetostock=0;
+	$setserviceasinstock=0;
+	$db->begin();
+
+	$sql='SELECT name, value FROM '.MAIN_DB_PREFIX.'const WHERE name IN (\'MAIN_MODULE_STOCK\',\'STOCK_SUPPORTS_SERVICES\')';
+	$resql = $db->query($sql);
+	if ($resql) {
+		while ($obj = $db->fetch_object($resql)) {
+			if ($obj->name=='MAIN_MODULE_STOCK' && $obj->value==1) {
+				$updatetostock=1;
+			}
+			if ($obj->name=='STOCK_SUPPORTS_SERVICES' && $obj->value==1) {
+				$setserviceasinstock=1;
+			}
+		}
+	} else {
+		dol_print_error($db);
+		$error++;
+	}
+
+	if (!empty($updatetostock)) {
+		$sqlupd='UPDATE '.MAIN_DB_PREFIX.'product SET ';
+		$sqlupd.='tostock='.$setserviceasinstock. ' WHERE fk_product_type=1';
+		$resqlupd = $db->query($sqlupd);
+		if (! $resqlupd) {
+			dol_print_error($db);
+			$error++;
+		}
+	}
+
+	if (! $error) {
+		$db->commit();
+	} else {
+		$db->rollback();
+	}
+
+	print '<tr><td colspan="4">';
+	print '<b>'.$langs->trans('MigrationFieldstoStock', 'Product')."</b><br>\n";
+	print '</td></tr>';
 }
