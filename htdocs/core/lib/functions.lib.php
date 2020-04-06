@@ -3136,6 +3136,7 @@ function img_picto($titlealt, $picto, $moreatt = '', $pictoisfullpath = false, $
         		'filter', 'file-code', 'grip', 'grip_title', 'language', 'list', 'listlight', 'note',
         		'object_phoning', 'object_phoning_fax', 'object_email',
         		'object_bookmark', 'object_list', 'object_calendar', 'object_calendarweek', 'object_calendarmonth', 'object_calendarday', 'object_calendarperuser',
+        		'object_cash-register',
         		'off', 'on', 'play', 'playdisabled', 'printer', 'resize', 'stats',
 				'note', 'setup', 'sign-out', 'split', 'switch_off', 'switch_on', 'tools', 'unlink', 'uparrow', 'user', 'wrench', 'globe',
 				'jabber', 'skype', 'twitter', 'facebook', 'linkedin', 'instagram', 'snapchat', 'youtube', 'google-plus-g', 'whatsapp',
@@ -3154,14 +3155,15 @@ function img_picto($titlealt, $picto, $moreatt = '', $pictoisfullpath = false, $
 			if (in_array($pictowithouttext, array('skype', 'twitter', 'facebook', 'linkedin', 'instagram', 'snapchat', 'youtube', 'google-plus-g', 'whatsapp'))) {
 				$fa = 'fab';
 			}
+			$pictowithouttext = str_replace('object_', '', $pictowithouttext);
 
 		    $arrayconvpictotofa = array(
 		    	'address'=> 'address-book', 'setup'=>'cog', 'companies'=>'building', 'products'=>'cube', 'commercial'=>'suitcase', 'invoicing'=>'coins', 'accountancy'=>'money-check-alt',
 		    	'hrm'=>'umbrella-beach', 'members'=>'users', 'ticket'=>'ticket-alt', 'generic'=>'folder-open', 'globe'=>'external-link-alt',
-		    	'object_phoning'=>'phone', 'object_phoning_fax'=>'fax', 'object_email'=>'at',
-		    	'switch_off'=>'toggle-off', 'switch_on'=>'toggle-on', 'check'=>'check', 'object_bookmark'=>'star', 'bookmark'=>'star', 'stats' => 'chart-bar',
+		    	'phoning'=>'phone', 'phoning_fax'=>'fax', 'email'=>'at',
+		    	'switch_off'=>'toggle-off', 'switch_on'=>'toggle-on', 'check'=>'check', 'bookmark'=>'star', 'bookmark'=>'star', 'stats' => 'chart-bar',
 		    	'bank'=>'university', 'close_title'=>'window-close', 'delete'=>'trash', 'edit'=>'pencil', 'filter'=>'filter', 'split'=>'code-branch',
-		    	'object_list'=>'list-alt', 'object_calendar'=>'calendar-alt', 'object_calendarweek'=>'calendar-week', 'object_calendarmonth'=>'calendar-alt', 'object_calendarday'=>'calendar-day', 'object_calendarperuser'=>'table',
+		    	'list'=>'list-alt', 'calendar'=>'calendar-alt', 'calendarweek'=>'calendar-week', 'calendarmonth'=>'calendar-alt', 'calendarday'=>'calendar-day', 'calendarperuser'=>'table',
 		    	'error'=>'exclamation-triangle', 'warning'=>'exclamation-triangle',
 		    	'title_setup'=>'tools', 'title_accountancy'=>'money-check-alt', 'title_bank'=>'university', 'title_hrm'=>'umbrella-beach', 'title_agenda'=>'calendar-alt',
 		    	'preview'=>'binoculars', 'project'=>'sitemap'
@@ -3250,7 +3252,7 @@ function img_picto($titlealt, $picto, $moreatt = '', $pictoisfullpath = false, $
 				$fakey = 'fa-comment-o';
 			}
 			// Img for type of views
-			elseif (in_array($pictowithouttext, array('object_list', 'object_calendar', 'object_calendarweek', 'object_calendarmonth', 'object_calendarday', 'object_calendarperuser'))) {
+			elseif (in_array($pictowithouttext, array('list', 'calendar', 'calendarweek', 'calendarmonth', 'calendarday', 'calendarperuser'))) {
 				$fakey = 'imgforviewmode fa-'.$arrayconvpictotofa[$pictowithouttext];
 				$marginleftonlyshort = 0;
 			}
