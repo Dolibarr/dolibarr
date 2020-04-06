@@ -146,6 +146,7 @@ $search_array_options_task = $extrafields->getOptionalsFromPost($object->table_e
 /*
  * Actions
  */
+
 $parameters = array('id' => $id, 'taskid' => $taskid, 'projectid' => $projectid);
 $reshook=$hookmanager->executeHooks('doActions', $parameters, $object, $action);    // Note that $action and $object may have been modified by some hooks
 if ($reshook < 0) setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
@@ -441,9 +442,10 @@ $nav = '<a class="inline-block valignmiddle" href="?year='.$prev_year."&amp;mont
 $nav .= dol_print_date(dol_mktime(0, 0, 0, $month, $day, $year), "%A").' ';
 $nav .= " <span id=\"month_name\">".dol_print_date(dol_mktime(0, 0, 0, $month, $day, $year), "day")." </span>\n";
 $nav .= '<a class="inline-block valignmiddle" href="?year='.$next_year."&amp;month=".$next_month."&amp;day=".$next_day.$param.'">'.img_next($langs->trans("Next"))."</a>\n";
-$nav .= " &nbsp; (<a href=\"?year=".$nowyear."&amp;month=".$nowmonth."&amp;day=".$nowday.$param."\">".$langs->trans("Today")."</a>)";
-$nav .= '<br>'.$form->selectDate(-1, '', 0, 0, 2, "addtime", 1, 0).' ';
-$nav .= ' <input type="submit" name="submitdateselect" class="button valignmiddle" value="'.$langs->trans("Refresh").'">';
+//$nav .= " &nbsp; (<a href=\"?year=".$nowyear."&amp;month=".$nowmonth."&amp;day=".$nowday.$param."\">".$langs->trans("Today")."</a>)";
+$nav .= ' '.$form->selectDate(-1, '', 0, 0, 2, "addtime", 1, 1).' ';
+//$nav .= ' <input type="submit" name="submitdateselect" class="button valignmiddle" value="'.$langs->trans("Refresh").'">';
+$nav .= ' <button type="submit" name="button_search_x" value="x" class="bordertransp"><span class="fa fa-search"></span></button>';
 
 $picto = 'calendarweek';
 
@@ -484,6 +486,7 @@ print '</div>';
 
 dol_fiche_end();
 
+
 print '<div class="floatright right'.($conf->dol_optimize_smallscreen ? ' centpercent' : '').'">'.$nav.'</div>'; // We move this before the assign to components so, the default submit button is not the assign to.
 
 print '<div class="colorbacktimesheet float valignmiddle">';
@@ -497,7 +500,7 @@ print $formcompany->selectTypeContact($object, '', 'type', 'internal', 'rowid', 
 print '<input type="submit" class="button valignmiddle" name="assigntask" value="'.dol_escape_htmltag($titleassigntask).'">';
 print '</div>';
 
-print '<div class="clearboth" style="padding-bottom: 8px;"></div>';
+print '<div class="clearboth" style="padding-bottom: 20px;"></div>';
 
 
 $moreforfilter = '';

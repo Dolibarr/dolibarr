@@ -5473,7 +5473,7 @@ class Form
 	 * 	@param 	int			$disabled		Disable input fields
 	 *  @param  int			$fullday        When a checkbox with this html name is on, hour and day are set with 00:00 or 23:59
 	 *  @param	string		$addplusone		Add a link "+1 hour". Value must be name of another selectDate field.
-	 *  @param  datetime    $adddateof      Add a link "Date of invoice" using the following date. See also $labeladddateof for the label used.
+	 *  @param  datetime    $adddateof      Add a link "Date of ..." using the following date. See also $labeladddateof for the label used.
      *  @param  string      $openinghours   Specify hour start and hour end for the select ex 8,20
      *  @param  int         $stepminutes    Specify step for minutes between 1 and 30
      *  @param	string		$labeladddateof Label to use for the $adddateof parameter.
