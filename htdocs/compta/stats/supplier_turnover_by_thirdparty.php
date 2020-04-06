@@ -195,18 +195,19 @@ $period = $form->selectDate($date_start, 'date_start', 0, 0, 0, '', 1, 0).' - '.
 if ($date_end == dol_time_plus_duree($date_start, 1, 'y') - 1) $periodlink = '<a href="'.$_SERVER["PHP_SELF"].'?year='.($year_start - 1).'&modecompta='.$modecompta.'">'.img_previous().'</a> <a href="'.$_SERVER["PHP_SELF"].'?year='.($year_start + 1).'&modecompta='.$modecompta.'">'.img_next().'</a>';
 else $periodlink = '';
 
-report_header($name, $namelink, $period, $periodlink, $description, $builddate, $exportlink, $tableparams, $calcmode);
+report_header($name, '', $period, $periodlink, $description, $builddate, $exportlink, $tableparams, $calcmode);
 
 if (!empty($conf->accounting->enabled) && $modecompta != 'BOOKKEEPING')
 {
     print info_admin($langs->trans("WarningReportNotReliable"), 0, 0, 1);
 }
 
-
-$name = array();
-
 // Show Array
 $catotal = 0;
+$catotal_ht = 0;
+$name = array();
+$amount = array();
+$amount_ht = array();
 if ($modecompta == 'CREANCES-DETTES') {
 	$sql = "SELECT DISTINCT s.rowid as socid, s.nom as name, s.zip, s.town, s.fk_pays,";
 	$sql .= " sum(f.total_ht) as amount, sum(f.total_ttc) as amount_ttc";
