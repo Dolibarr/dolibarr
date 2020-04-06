@@ -3226,6 +3226,10 @@ function img_picto($titlealt, $picto, $moreatt = '', $pictoisfullpath = false, $
 				$fakey = 'fa-crop';
 				$facolor = '#444';
 			}
+			elseif ($pictowithouttext == 'generic') {
+				$fakey = 'fa-file';
+				$fa = 'far';
+			}
 			elseif ($pictowithouttext == 'note') {
 			    $fakey = 'fa-sticky-note';
 			    $fa = 'far';
