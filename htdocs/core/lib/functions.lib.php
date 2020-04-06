@@ -3132,8 +3132,8 @@ function img_picto($titlealt, $picto, $moreatt = '', $pictoisfullpath = false, $
 
         if (empty($srconly) && in_array($pictowithouttext, array(
         		'1downarrow', '1uparrow', '1leftarrow', '1rightarrow', '1uparrow_selected', '1downarrow_selected', '1leftarrow_selected', '1rightarrow_selected',
-        		'address', 'barcode', 'bank', 'bookmark', 'building', 'cash-register', 'check', 'close_title', 'cubes', 'delete', 'dolly', 'edit', 'ellipsis-h',
-        		'filter', 'file-code', 'grip', 'grip_title', 'language', 'list', 'listlight', 'note',
+        		'object_accounting', 'object_category', 'address', 'barcode', 'bank', 'bookmark', 'building', 'cash-register', 'check', 'close_title', 'cubes', 'delete', 'dolly', 'edit', 'ellipsis-h',
+        		'filter', 'file-code', 'folder', 'folder-open', 'grip', 'grip_title', 'language', 'list', 'listlight', 'note',
         		'object_barcode', 'object_phoning', 'object_phoning_fax', 'object_email',
         		'object_bookmark', 'object_generic', 'object_list', 'object_calendar', 'object_calendarweek', 'object_calendarmonth', 'object_calendarday', 'object_calendarperuser',
         		'object_cash-register', 'object_printer', 'object_technic',
@@ -3159,6 +3159,7 @@ function img_picto($titlealt, $picto, $moreatt = '', $pictoisfullpath = false, $
 
 		    $arrayconvpictotofa = array(
 		    	'address'=> 'address-book', 'setup'=>'cog', 'companies'=>'building', 'products'=>'cube', 'commercial'=>'suitcase', 'invoicing'=>'coins', 'accountancy'=>'money-check-alt',
+		    	'accounting'=>'chart-line', 'category'=>'tag',
 		    	'hrm'=>'umbrella-beach', 'members'=>'users', 'ticket'=>'ticket-alt', 'generic'=>'folder-open', 'globe'=>'external-link-alt',
 		    	'phoning'=>'phone', 'phoning_fax'=>'fax', 'email'=>'at',
 		    	'generic'=>'file',
@@ -3225,6 +3226,10 @@ function img_picto($titlealt, $picto, $moreatt = '', $pictoisfullpath = false, $
 			elseif ($pictowithouttext == 'resize') {
 				$fakey = 'fa-crop';
 				$facolor = '#444';
+			}
+			elseif ($pictowithouttext == 'generic') {
+				$fakey = 'fa-file';
+				$fa = 'far';
 			}
 			elseif ($pictowithouttext == 'note') {
 			    $fakey = 'fa-sticky-note';
