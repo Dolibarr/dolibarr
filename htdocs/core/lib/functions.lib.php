@@ -3134,10 +3134,10 @@ function img_picto($titlealt, $picto, $moreatt = '', $pictoisfullpath = false, $
         		'1downarrow', '1uparrow', '1leftarrow', '1rightarrow', '1uparrow_selected', '1downarrow_selected', '1leftarrow_selected', '1rightarrow_selected',
         		'address', 'barcode', 'bank', 'bookmark', 'building', 'cash-register', 'check', 'close_title', 'cubes', 'delete', 'dolly', 'edit', 'ellipsis-h',
         		'filter', 'file-code', 'folder', 'folder-open', 'grip', 'grip_title', 'language', 'list', 'listlight', 'note',
-        		'object_account', 'object_barcode', 'object_phoning', 'object_phoning_fax', 'object_email',
+        		'object_action', 'object_account', 'object_barcode', 'object_phoning', 'object_phoning_fax', 'object_email',
         		'object_bookmark', 'object_bug', 'object_generic', 'object_list-alt', 'object_calendar', 'object_calendarweek', 'object_calendarmonth', 'object_calendarday', 'object_calendarperuser',
         		'object_cash-register', 'object_holiday', 'object_hrm', 'object_accounting', 'object_category', 'object_multicurrency',
-        		'object_printer', 'object_technic', 'object_trip', 'object_user', 'object_group', 'object_member',
+        		'object_printer', 'object_resource', 'object_technic', 'object_trip', 'object_user', 'object_group', 'object_member', 'object_other',
         		'off', 'on', 'play', 'playdisabled', 'printer', 'resize', 'stats',
 				'note', 'setup', 'sign-out', 'split', 'switch_off', 'switch_on', 'tools', 'unlink', 'uparrow', 'user', 'wrench', 'globe',
 				'jabber', 'skype', 'twitter', 'facebook', 'linkedin', 'instagram', 'snapchat', 'youtube', 'google-plus-g', 'whatsapp',
@@ -3160,7 +3160,7 @@ function img_picto($titlealt, $picto, $moreatt = '', $pictoisfullpath = false, $
 			$pictowithouttext = str_replace('object_', '', $pictowithouttext);
 
 		    $arrayconvpictotofa = array(
-		    	'address'=> 'address-book', 'setup'=>'cog', 'companies'=>'building', 'products'=>'cube', 'commercial'=>'suitcase', 'invoicing'=>'coins', 'accountancy'=>'money-check-alt',
+		    	'action'=>'calendar-alt', 'address'=> 'address-book', 'setup'=>'cog', 'companies'=>'building', 'products'=>'cube', 'commercial'=>'suitcase', 'invoicing'=>'coins', 'accountancy'=>'money-check-alt',
 		    	'account'=>'university', 'accounting'=>'chart-line', 'category'=>'tag',
 		    	'hrm'=>'umbrella-beach', 'members'=>'users', 'ticket'=>'ticket-alt', 'globe'=>'external-link-alt',
 		    	'email'=>'at',
@@ -3170,7 +3170,7 @@ function img_picto($titlealt, $picto, $moreatt = '', $pictoisfullpath = false, $
 		    	'switch_off'=>'toggle-off', 'switch_on'=>'toggle-on', 'check'=>'check', 'bookmark'=>'star', 'bookmark'=>'star', 'stats' => 'chart-bar',
 		    	'bank'=>'university', 'close_title'=>'window-close', 'delete'=>'trash', 'edit'=>'pencil', 'filter'=>'filter', 'split'=>'code-branch',
 		    	'list-alt'=>'list-alt', 'calendar'=>'calendar-alt', 'calendarweek'=>'calendar-week', 'calendarmonth'=>'calendar-alt', 'calendarday'=>'calendar-day', 'calendarperuser'=>'table',
-		    	'multicurrency'=>'dollar-sign',
+		    	'multicurrency'=>'dollar-sign', 'other'=>'square', 'resource'=>'laptop-house',
 		    	'error'=>'exclamation-triangle', 'warning'=>'exclamation-triangle',
 		    	'phoning'=>'phone', 'phoning_fax'=>'fax', 'printer'=>'print', 'technic'=>'cogs',
 		    	'title_setup'=>'tools', 'title_accountancy'=>'money-check-alt', 'title_bank'=>'university', 'title_hrm'=>'umbrella-beach', 'title_agenda'=>'calendar-alt',
@@ -3224,10 +3224,10 @@ function img_picto($titlealt, $picto, $moreatt = '', $pictoisfullpath = false, $
 
 			// Add CSS
 			$arrayconvpictotomorcess = array(
-				'account'=>'bg-infoxbox-bank_account', 'multicurrency'=>'bg-infoxbox-bank_account',
+				'action'=>'bg-infoxbox-action', 'account'=>'bg-infoxbox-bank_account', 'multicurrency'=>'bg-infoxbox-bank_account',
 				'check'=>'font-status4', 'hrm'=>'bg-infoxbox-adherent', 'group'=>'bg-infoxbox-adherent', 'member'=>'bg-infoxbox-adherent', 'user'=>'bg-infoxbox-adherent', 'users'=>'bg-infoxbox-adherent',
 				'error'=>'pictoerror', 'warning'=>'pictowarning', 'switch_on'=>'font-status4',
-				'holiday'=>'bg-infoxbox-holiday', 'trip'=>'bg-infoxbox-expensereport',
+				'holiday'=>'bg-infoxbox-holiday', 'resource'=>'bg-infoxbox-action', 'trip'=>'bg-infoxbox-expensereport',
 				'list-alt'=>'imgforviewmode', 'calendar'=>'imgforviewmode', 'calendarweek'=>'imgforviewmode', 'calendarmonth'=>'imgforviewmode', 'calendarday'=>'imgforviewmode', 'calendarperuser'=>'imgforviewmode'
 			);
 			if (! empty($arrayconvpictotomorcess[$pictowithouttext])) {
@@ -3236,7 +3236,9 @@ function img_picto($titlealt, $picto, $moreatt = '', $pictoisfullpath = false, $
 
 			// Define $color
 			$arrayconvpictotocolor = array(
-				'category'=>'#666', 'edit'=>'#444', 'note'=>'#999', 'error'=>'', 'listlight'=>'#999', 'playdisabled'=>'#ccc', 'printer'=>'#444', 'resize'=>'#444',
+				'category'=>'#666', 'edit'=>'#444', 'note'=>'#999', 'error'=>'', 'listlight'=>'#999',
+				'other'=>'#ddd',
+				'playdisabled'=>'#ccc', 'printer'=>'#444', 'resize'=>'#444',
 				'stats'=>'#444', 'switch_off'=>'#999', 'uparrow'=>'#555', 'warning'=>''
 			);
 			if (isset($arrayconvpictotocolor[$pictowithouttext])) {
@@ -8296,7 +8298,7 @@ function roundUpToNextMultiple($n, $x = 5)
  * @param   string  $label      label of badge no html : use in alt attribute for accessibility
  * @param   string  $html       optional : label of badge with html
  * @param   string  $type       type of badge : Primary Secondary Success Danger Warning Info Light Dark status0 status1 status2 status3 status4 status5 status6 status7 status8 status9
- * @param   string  $mode       default '' , pill, dot
+ * @param   string  $mode       default '' , 'pill', 'dot'
  * @param   string  $url        the url for link
  * @param   array   $params     various params for future : recommended rather than adding more fuction arguments. array('attr'=>array('title'=>'abc'))
  * @return  string              Html badge
@@ -8441,6 +8443,7 @@ function dolGetStatus($statusLabel = '', $statusLabelShort = '', $html = '', $st
         $statusLabelShort = !empty($statusLabelShort) ? $statusLabelShort : $statusLabel;
 
 		$dolGetBadgeParams['attr']['class'] = 'badge-status';
+		$dolGetBadgeParams['attr']['title'] = $statusLabel;
 
         if ($displayMode == 3) {
             $return = dolGetBadge($statusLabel, '', $statusType, 'dot', $url, $dolGetBadgeParams);
