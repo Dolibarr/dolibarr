@@ -7779,10 +7779,11 @@ class Form
 		global $conf, $langs;
 
 		$out = '';
-		if (!empty($conf->use_javascript_ajax)) $out .= '<div class="inline-block checkallactions"><input type="checkbox" id="checkallactions" name="checkallactions" class="checkallactions"></div>';
+		$id=uniqid();
+		if (!empty($conf->use_javascript_ajax)) $out .= '<div class="inline-block checkallactions"><input type="checkbox" id="checkallactions'.$id.'" name="checkallactions" class="checkallactions"></div>';
 		$out .= '<script>
             $(document).ready(function() {
-            	$("#checkallactions").click(function() {
+            	$("#checkallactions'.$id.'").click(function() {
                     if($(this).is(\':checked\')){
                         console.log("We check all");
                 		$(".'.$cssclass.'").prop(\'checked\', true).trigger(\'change\');
