@@ -41,7 +41,7 @@ $action = GETPOST('action', 'aZ09');
 $contextpage = GETPOST('contextpage', 'aZ') ?GETPOST('contextpage', 'aZ') : 'admincompany'; // To manage different context of search
 
 // Load translation files required by the page
-$langs->loadLangs(array('admin', 'companies'));
+$langs->loadLangs(array('admin', 'companies', 'bills'));
 
 if (!$user->admin) accessforbidden();
 
@@ -689,17 +689,19 @@ print '<tr class="oddeven"><td><label for="SOCIETE_FISCAL_MONTH_START">'.$langs-
 print $formother->select_month($conf->global->SOCIETE_FISCAL_MONTH_START, 'SOCIETE_FISCAL_MONTH_START', 0, 1, 'maxwidth100').'</td></tr>';
 
 print "</table>";
-
-
-// Fiscal options
 print '<br>';
+
+
+// Sales taxes (VAT, IRPF, ...)
+print load_fiche_titre($langs->trans("TypeOfSaleTaxes"));
+
 print '<table class="noborder centpercent">';
 print '<tr class="liste_titre">';
 print '<td width="25%">'.$langs->trans("VATManagement").'</td><td>'.$langs->trans("Description").'</td>';
 print '<td class="right">&nbsp;</td>';
 print "</tr>\n";
 
-
+// Main tax
 print "<tr class=\"oddeven\"><td width=\"140\"><label><input type=\"radio\" name=\"optiontva\" id=\"use_vat\" value=\"1\"".(empty($conf->global->FACTURE_TVAOPTION) ? "" : " checked")."> ".$langs->trans("VATIsUsed")."</label></td>";
 print '<td colspan="2">';
 $tooltiphelp = '';
@@ -717,19 +719,16 @@ print "</td></tr>\n";
 
 print "</table>";
 
-/*
- *  Local Taxes
- */
+// Second tax
+print '<br>';
+print '<table class="noborder centpercent">';
+print '<tr class="liste_titre">';
+print '<td width="25%">'.$form->textwithpicto($langs->transcountry("LocalTax1Management", $mysoc->country_code), $langs->transcountry("LocalTax1IsUsedDesc", $mysoc->country_code)).'</td><td>'.$langs->trans("Description").'</td>';
+print '<td class="right">&nbsp;</td>';
+print "</tr>\n";
+
 if ($mysoc->useLocalTax(1))
 {
-	// Local Tax 1
-	print '<br>';
-	print '<table class="noborder centpercent">';
-	print '<tr class="liste_titre">';
-	print '<td width="25%">'.$langs->transcountry("LocalTax1Management", $mysoc->country_code).'</td><td>'.$langs->trans("Description").'</td>';
-	print '<td class="right">&nbsp;</td>';
-	print "</tr>\n";
-
 	// Note: When option is not set, it must not appears as set on on, because there is no default value for this option
 	print "<tr class=\"oddeven\"><td><input type=\"radio\" name=\"optionlocaltax1\" id=\"lt1\" value=\"localtax1on\"".(($conf->global->FACTURE_LOCAL_TAX1_OPTION == '1' || $conf->global->FACTURE_LOCAL_TAX1_OPTION == "localtax1on") ? " checked" : "")."> ".$langs->transcountry("LocalTax1IsUsed", $mysoc->country_code)."</td>";
 	print '<td colspan="2">';
@@ -756,18 +755,27 @@ if ($mysoc->useLocalTax(1))
 	$tooltiphelp = ($tooltiphelp != "LocalTax1IsNotUsedExample" ? "<i>".$langs->trans("Example").': '.$langs->transcountry("LocalTax1IsNotUsedExample", $mysoc->country_code)."</i>\n" : "");
 	print "<label for=\"nolt1\">".$form->textwithpicto($langs->transcountry("LocalTax1IsNotUsedDesc", $mysoc->country_code), $tooltiphelp)."</label>";
 	print "</td></tr>\n";
-	print "</table>";
+} else {
+	if (empty($mysoc->country_code))
+	{
+		print '<tr class="oddeven"><td class="opacitymedium">'.$countrynotdefined.'</td><td></td><td></td></tr>';
+	} else {
+		print '<tr class="oddeven"><td class="opacitymedium" colspan="3">'.$langs->trans("NoLocalTaxXForThisCountry" , $langs->transnoentitiesnoconv("Setup"), $langs->transnoentitiesnoconv("Dictionaries"), $langs->transnoentitiesnoconv("DictionaryVAT"), $langs->transnoentitiesnoconv("LocalTax1Management")).'</td></tr>';
+	}
 }
+
+print "</table>";
+
+// Third tax system
+print '<br>';
+print '<table class="noborder centpercent">';
+print '<tr class="liste_titre">';
+print '<td width="25%">'.$form->textwithpicto($langs->transcountry("LocalTax2Management", $mysoc->country_code), $langs->transcountry("LocalTax2IsUsedDesc", $mysoc->country_code)).'</td><td>'.$langs->trans("Description").'</td>';
+print '<td class="right">&nbsp;</td>';
+print "</tr>\n";
+
 if ($mysoc->useLocalTax(2))
 {
-	// Local Tax 2
-	print '<br>';
-	print '<table class="noborder centpercent">';
-	print '<tr class="liste_titre">';
-	print '<td width="25%">'.$langs->transcountry("LocalTax2Management", $mysoc->country_code).'</td><td>'.$langs->trans("Description").'</td>';
-	print '<td class="right">&nbsp;</td>';
-	print "</tr>\n";
-
 	// Note: When option is not set, it must not appears as set on on, because there is no default value for this option
 	print "<tr class=\"oddeven\"><td><input type=\"radio\" name=\"optionlocaltax2\" id=\"lt2\" value=\"localtax2on\"".(($conf->global->FACTURE_LOCAL_TAX2_OPTION == '1' || $conf->global->FACTURE_LOCAL_TAX2_OPTION == "localtax2on") ? " checked" : "")."> ".$langs->transcountry("LocalTax2IsUsed", $mysoc->country_code)."</td>";
 	print '<td colspan="2">';
@@ -793,8 +801,44 @@ if ($mysoc->useLocalTax(2))
 	print "<label for=\"nolt2\">".$form->textwithpicto($langs->transcountry("LocalTax2IsNotUsedDesc", $mysoc->country_code), $tooltiphelp)."</label>";
 	print "</div>";
 	print "</td></tr>\n";
-	print "</table>";
+} else {
+	if (empty($mysoc->country_code))
+	{
+		print '<tr class="oddeven"><td class="opacitymedium">'.$countrynotdefined.'</td><td></td><td></td></tr>';
+	} else {
+		print '<tr class="oddeven"><td class="opacitymedium" colspan="3">'.$langs->trans("NoLocalTaxXForThisCountry" , $langs->transnoentitiesnoconv("Setup"), $langs->transnoentitiesnoconv("Dictionaries"), $langs->transnoentitiesnoconv("DictionaryVAT"), $langs->transnoentitiesnoconv("LocalTax2Management")).'</td></tr>';
+	}
 }
+
+print "</table>";
+
+
+// Third tax system
+print '<br>';
+print '<table class="noborder centpercent">';
+print '<tr class="liste_titre">';
+print '<td width="25%">'.$form->textwithpicto($langs->trans("RevenueStamp"), $langs->trans("RevenueStampDesc")).'</td><td>'.$langs->trans("Description").'</td>';
+print '<td class="right">&nbsp;</td>';
+print "</tr>\n";
+if ($mysoc->useRevenueStamp())
+{
+	// Note: When option is not set, it must not appears as set on on, because there is no default value for this option
+	print "<tr class=\"oddeven\"><td>";
+	print $langs->trans("UseRevenueStamp");
+	print "</td>";
+	print '<td colspan="2">';
+	print $langs->trans("UseRevenueStampExample", $langs->transnoentitiesnoconv("Setup"), $langs->transnoentitiesnoconv("Dictionaries"), $langs->transnoentitiesnoconv("DictionaryRevenueStamp"));
+	print "</td></tr>\n";
+} else {
+	if (empty($mysoc->country_code))
+	{
+		print '<tr class="oddeven"><td class="opacitymedium">'.$countrynotdefined.'</td><td></td><td></td></tr>';
+	} else {
+		print '<tr class="oddeven"><td class="opacitymedium" colspan="3">'.$langs->trans("NoLocalTaxXForThisCountry" , $langs->transnoentitiesnoconv("Setup"), $langs->transnoentitiesnoconv("Dictionaries"), $langs->transnoentitiesnoconv("DictionaryRevenueStamp"), $langs->transnoentitiesnoconv("RevenueStamp")).'</td></tr>';
+	}
+}
+
+print "</table>";
 
 
 print '<br><div class="center">';
