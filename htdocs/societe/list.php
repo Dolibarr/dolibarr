@@ -139,6 +139,8 @@ $fieldstosearchall = array(
 	's.code_fournisseur'=>"SupplierCode",
 	's.code_compta'=>"CustomerAccountancyCodeShort",
 	's.code_compta_fournisseur'=>"SupplierAccountancyCodeShort",
+	's.zip'=>"zip",
+	's.town'=>"town",
 	's.email'=>"EMail",
 	's.url'=>"URL",
 	's.tva_intra'=>"VATIntra",
@@ -153,7 +155,7 @@ if (($tmp = $langs->transnoentities("ProfId5".$mysoc->country_code)) && $tmp != 
 if (($tmp = $langs->transnoentities("ProfId6".$mysoc->country_code)) && $tmp != "ProfId6".$mysoc->country_code && $tmp != '-') $fieldstosearchall['s.idprof6'] = 'ProfId6';
 if (!empty($conf->barcode->enabled)) $fieldstosearchall['s.barcode'] = 'Gencod';
 // Personalized search criterias. Example: $conf->global->THIRDPARTY_QUICKSEARCH_ON_FIELDS = 's.nom=ThirdPartyName;s.name_alias=AliasNameShort;s.code_client=CustomerCode'
-if (!empty($conf->global->THIRDPARTY_QUICKSEARCH_ON_FIELDS)) $fieldstosearchall = dolExplodeIntoArray($conf->global->THIRDPARTY_QUICKSEARCH_ON_FIELDS);
+if (!empty($conf->global->THIRDPARTY_QUICKSEARCH_ON_FIELDS)) $fieldstosearchall += dolExplodeIntoArray($conf->global->THIRDPARTY_QUICKSEARCH_ON_FIELDS);
 
 
 // Define list of fields to show into list
