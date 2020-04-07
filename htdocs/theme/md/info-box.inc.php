@@ -61,7 +61,7 @@ span.info-box-icon-text {	/* hide box text number due to problems */
 	max-width: 100%;
 }
 .info-box-module .info-box-icon > img {
-    max-width: 70%;
+    max-width: 50%;
 }
 .info-box-content {
 	padding: 5px 10px;

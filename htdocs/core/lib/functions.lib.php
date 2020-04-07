@@ -3132,11 +3132,12 @@ function img_picto($titlealt, $picto, $moreatt = '', $pictoisfullpath = false, $
 
         if (empty($srconly) && in_array($pictowithouttext, array(
         		'1downarrow', '1uparrow', '1leftarrow', '1rightarrow', '1uparrow_selected', '1downarrow_selected', '1leftarrow_selected', '1rightarrow_selected',
-        		'object_accounting', 'object_category', 'address', 'barcode', 'bank', 'bookmark', 'building', 'cash-register', 'check', 'close_title', 'cubes', 'delete', 'dolly', 'edit', 'ellipsis-h',
+        		'address', 'barcode', 'bank', 'bookmark', 'building', 'cash-register', 'check', 'close_title', 'cubes', 'delete', 'dolly', 'edit', 'ellipsis-h',
         		'filter', 'file-code', 'folder', 'folder-open', 'grip', 'grip_title', 'language', 'list', 'listlight', 'note',
-        		'object_barcode', 'object_phoning', 'object_phoning_fax', 'object_email',
-        		'object_bookmark', 'object_generic', 'object_list-alt', 'object_calendar', 'object_calendarweek', 'object_calendarmonth', 'object_calendarday', 'object_calendarperuser',
-        		'object_cash-register', 'object_printer', 'object_technic',
+        		'object_account', 'object_barcode', 'object_phoning', 'object_phoning_fax', 'object_email',
+        		'object_bookmark', 'object_bug', 'object_generic', 'object_list-alt', 'object_calendar', 'object_calendarweek', 'object_calendarmonth', 'object_calendarday', 'object_calendarperuser',
+        		'object_cash-register', 'object_holiday', 'object_hrm', 'object_accounting', 'object_category', 'object_multicurrency',
+        		'object_printer', 'object_technic', 'object_trip', 'object_user', 'object_group', 'object_member',
         		'off', 'on', 'play', 'playdisabled', 'printer', 'resize', 'stats',
 				'note', 'setup', 'sign-out', 'split', 'switch_off', 'switch_on', 'tools', 'unlink', 'uparrow', 'user', 'wrench', 'globe',
 				'jabber', 'skype', 'twitter', 'facebook', 'linkedin', 'instagram', 'snapchat', 'youtube', 'google-plus-g', 'whatsapp',
@@ -3149,46 +3150,35 @@ function img_picto($titlealt, $picto, $moreatt = '', $pictoisfullpath = false, $
 			$fakey = $pictowithouttext;
 			$facolor = ''; $fasize = '';
 			$fa = 'fas';
-			if (in_array($pictowithouttext, array('off', 'on', 'object_bookmark', 'bookmark'))) {
+			if (in_array($pictowithouttext, array('object_generic', 'note', 'off', 'on', 'object_bookmark', 'bookmark'))) {
 				$fa = 'far';
 			}
 			if (in_array($pictowithouttext, array('skype', 'twitter', 'facebook', 'linkedin', 'instagram', 'snapchat', 'youtube', 'google-plus-g', 'whatsapp'))) {
 				$fa = 'fab';
 			}
+
 			$pictowithouttext = str_replace('object_', '', $pictowithouttext);
 
 		    $arrayconvpictotofa = array(
 		    	'address'=> 'address-book', 'setup'=>'cog', 'companies'=>'building', 'products'=>'cube', 'commercial'=>'suitcase', 'invoicing'=>'coins', 'accountancy'=>'money-check-alt',
-		    	'accounting'=>'chart-line', 'category'=>'tag',
-		    	'hrm'=>'umbrella-beach', 'members'=>'users', 'ticket'=>'ticket-alt', 'generic'=>'folder-open', 'globe'=>'external-link-alt',
-		    	'phoning'=>'phone', 'phoning_fax'=>'fax', 'email'=>'at',
-		    	'generic'=>'file',
+		    	'account'=>'university', 'accounting'=>'chart-line', 'category'=>'tag',
+		    	'hrm'=>'umbrella-beach', 'members'=>'users', 'ticket'=>'ticket-alt', 'globe'=>'external-link-alt',
+		    	'email'=>'at',
+		    	'edit'=>'pencil-alt', 'grip_title'=>'arrows-alt', 'grip'=>'arrows-alt',
+		    	'generic'=>'file', 'holiday'=>'umbrella-beach', 'member'=>'users', 'trip'=>'wallet', 'group'=>'users',
+		    	'sign-out'=>'sign-out-alt',
 		    	'switch_off'=>'toggle-off', 'switch_on'=>'toggle-on', 'check'=>'check', 'bookmark'=>'star', 'bookmark'=>'star', 'stats' => 'chart-bar',
 		    	'bank'=>'university', 'close_title'=>'window-close', 'delete'=>'trash', 'edit'=>'pencil', 'filter'=>'filter', 'split'=>'code-branch',
 		    	'list-alt'=>'list-alt', 'calendar'=>'calendar-alt', 'calendarweek'=>'calendar-week', 'calendarmonth'=>'calendar-alt', 'calendarday'=>'calendar-day', 'calendarperuser'=>'table',
+		    	'multicurrency'=>'dollar-sign',
 		    	'error'=>'exclamation-triangle', 'warning'=>'exclamation-triangle',
-		    	'printer'=>'print', 'technic'=>'cogs',
+		    	'phoning'=>'phone', 'phoning_fax'=>'fax', 'printer'=>'print', 'technic'=>'cogs',
 		    	'title_setup'=>'tools', 'title_accountancy'=>'money-check-alt', 'title_bank'=>'university', 'title_hrm'=>'umbrella-beach', 'title_agenda'=>'calendar-alt',
-		    	'preview'=>'binoculars', 'project'=>'sitemap'
+		    	'playdisabled'=>'play', 'preview'=>'binoculars', 'project'=>'sitemap', 'resize'=>'crop',
+		    	'uparrow'=>'mail-forward',
+		    	'jabber'=>'comment-o'
 		    );
-		    if ($pictowithouttext == 'error' || $pictowithouttext == 'warning') {
-		    	$facolor = '';
-		    	$fakey = 'fa-'.$arrayconvpictotofa[$pictowithouttext];
-		    	$marginleftonlyshort = 0;
-		    	$morecss .= ($morecss ? ' ' : '').('picto'.$pictowithouttext);
-		    } elseif ($pictowithouttext == 'switch_off') {
-				$facolor = '#999';
-				$fakey = 'fa-'.$arrayconvpictotofa[$pictowithouttext];
-			}
-			elseif ($pictowithouttext == 'switch_on') {
-				$morecss .= ($morecss ? ' ' : '').'font-status4';
-				$fakey = 'fa-'.$arrayconvpictotofa[$pictowithouttext];
-			}
-			elseif ($pictowithouttext == 'check') {
-				$morecss .= ($morecss ? ' ' : '').'font-status4';
-				$fakey = 'fa-'.$arrayconvpictotofa[$pictowithouttext];
-			}
-			elseif ($pictowithouttext == 'off') {
+			if ($pictowithouttext == 'off') {
 			    $fakey = 'fa-square';
 				$fasize = '1.3em';
 			}
@@ -3196,50 +3186,17 @@ function img_picto($titlealt, $picto, $moreatt = '', $pictoisfullpath = false, $
 			    $fakey = 'fa-check-square';
 				$fasize = '1.3em';
 			}
-			elseif ($pictowithouttext == 'bank') {
-				$fakey = 'fa-'.$arrayconvpictotofa[$pictowithouttext];
-			}
-			elseif ($pictowithouttext == 'stats') {
-				$fakey = 'fa-'.$arrayconvpictotofa[$pictowithouttext];
-				$facolor = '#444';
-			}
-			elseif ($pictowithouttext == 'delete') {
-				$fakey = 'fa-'.$arrayconvpictotofa[$pictowithouttext];
-			}
-			elseif ($pictowithouttext == 'edit') {
-				$facolor = '#444';
-				$fakey = 'fa-pencil-alt';
-			}
-			elseif ($pictowithouttext == 'grip_title' || $pictowithouttext == 'grip') {
-				$fakey = 'fa-arrows-alt';
-			}
 			elseif ($pictowithouttext == 'listlight') {
 				$fakey = 'fa-download';
-				$facolor = '#999';
 				$marginleftonlyshort = 1;
 			}
 			elseif ($pictowithouttext == 'printer') {
 				$fakey = 'fa-print';
 				$fasize = '1.2em';
-				$facolor = '#444';
-			}
-			elseif ($pictowithouttext == 'resize') {
-				$fakey = 'fa-crop';
-				$facolor = '#444';
-			}
-			elseif ($pictowithouttext == 'generic') {
-				$fakey = 'fa-file';
-				$fa = 'far';
 			}
 			elseif ($pictowithouttext == 'note') {
 			    $fakey = 'fa-sticky-note';
-			    $fa = 'far';
-				$facolor = '#999';
 				$marginleftonlyshort = 1;
-			}
-			elseif ($pictowithouttext == 'uparrow') {
-				$fakey = 'fa-mail-forward';
-				$facolor = '#555';
 			}
 			elseif (in_array($pictowithouttext, array('1uparrow', '1downarrow', '1leftarrow', '1rightarrow', '1uparrow_selected', '1downarrow_selected', '1leftarrow_selected', '1rightarrow_selected'))) {
 			    $convertarray = array('1uparrow'=>'caret-up', '1downarrow'=>'caret-down', '1leftarrow'=>'caret-left', '1rightarrow'=>'caret-right', '1uparrow_selected'=>'caret-up', '1downarrow_selected'=>'caret-down', '1leftarrow_selected'=>'caret-left', '1rightarrow_selected'=>'caret-right');
@@ -3247,34 +3204,47 @@ function img_picto($titlealt, $picto, $moreatt = '', $pictoisfullpath = false, $
 			    if (preg_match('/selected/', $pictowithouttext)) $facolor = '#888';
 				$marginleftonlyshort = 1;
 			}
-			elseif ($pictowithouttext == 'sign-out') {
-				$fakey = 'fa-sign-out-alt';
-			    $marginleftonlyshort = 0;
-			}
-			elseif ($pictowithouttext == 'playdisabled') {
-				$fakey = 'fa-play';
-				$facolor = '#ccc';
-			}
-			elseif ($pictowithouttext == 'jabber') {
-				$fakey = 'fa-comment-o';
-			}
-			// Img for type of views
-			elseif (in_array($pictowithouttext, array('list-alt', 'calendar', 'calendarweek', 'calendarmonth', 'calendarday', 'calendarperuser'))) {
-				$fakey = 'imgforviewmode fa-'.$arrayconvpictotofa[$pictowithouttext];
-				$marginleftonlyshort = 0;
-			}
 			elseif (!empty($arrayconvpictotofa[$pictowithouttext]))
 			{
 				$fakey = 'fa-'.$arrayconvpictotofa[$pictowithouttext];
-				$marginleftonlyshort = 0;
 			}
 			else {
 				$fakey = 'fa-'.$pictowithouttext;
+			}
+
+			// Define $marginleftonlyshort
+			$arrayconvpictotomarginleftonly = array(
+				'bank', 'check', 'delete', 'generic', 'grip', 'grip_title', 'jabber',
+				'grip_title', 'grip', 'listlight', 'note', 'on', 'off', 'playdisabled', 'printer', 'resize', 'sign-out', 'stats', 'switch_on', 'switch_off',
+				'uparrow', '1uparrow', '1downarrow', '1leftarrow', '1rightarrow', '1uparrow_selected', '1downarrow_selected', '1leftarrow_selected', '1rightarrow_selected'
+			);
+			if (! isset($arrayconvpictotomarginleftonly[$pictowithouttext])) {
 				$marginleftonlyshort = 0;
 			}
 
-			//this snippet only needed since function img_edit accepts only one additional parameter: no separate one for css only.
-            //class/style need to be extracted to avoid duplicate class/style validation errors when $moreatt is added to the end of the attributes
+			// Add CSS
+			$arrayconvpictotomorcess = array(
+				'account'=>'bg-infoxbox-bank_account', 'multicurrency'=>'bg-infoxbox-bank_account',
+				'check'=>'font-status4', 'hrm'=>'bg-infoxbox-adherent', 'group'=>'bg-infoxbox-adherent', 'member'=>'bg-infoxbox-adherent', 'user'=>'bg-infoxbox-adherent', 'users'=>'bg-infoxbox-adherent',
+				'error'=>'pictoerror', 'warning'=>'pictowarning', 'switch_on'=>'font-status4',
+				'holiday'=>'bg-infoxbox-holiday', 'trip'=>'bg-infoxbox-expensereport',
+				'list-alt'=>'imgforviewmode', 'calendar'=>'imgforviewmode', 'calendarweek'=>'imgforviewmode', 'calendarmonth'=>'imgforviewmode', 'calendarday'=>'imgforviewmode', 'calendarperuser'=>'imgforviewmode'
+			);
+			if (! empty($arrayconvpictotomorcess[$pictowithouttext])) {
+				$morecss .= ($morecss ? ' ' : '').$arrayconvpictotomorcess[$pictowithouttext];
+			}
+
+			// Define $color
+			$arrayconvpictotocolor = array(
+				'category'=>'#666', 'edit'=>'#444', 'note'=>'#999', 'error'=>'', 'listlight'=>'#999', 'playdisabled'=>'#ccc', 'printer'=>'#444', 'resize'=>'#444',
+				'stats'=>'#444', 'switch_off'=>'#999', 'uparrow'=>'#555', 'warning'=>''
+			);
+			if (isset($arrayconvpictotocolor[$pictowithouttext])) {
+				$facolor = $arrayconvpictotocolor[$pictowithouttext];
+			}
+
+			// This snippet only needed since function img_edit accepts only one additional parameter: no separate one for css only.
+            // class/style need to be extracted to avoid duplicate class/style validation errors when $moreatt is added to the end of the attributes.
             $reg = array();
 			if (preg_match('/class="([^"]+)"/', $moreatt, $reg)) {
                 $morecss .= ($morecss ? ' ' : '').$reg[1];

@@ -2305,7 +2305,7 @@ class DolibarrModules // Can not be abstract, because we need to instantiate it 
 		print '</div>
 	    <div class="info-box-content info-box-text-module">
 	    <span class="info-box-title">'.$this->getName().'</span>
-	    <span class="info-box-desc twolinesmax">'.nl2br($this->getDesc()).'</span>';
+	    <span class="info-box-desc twolinesmax" title="'.dol_escape_htmltag($this->getDesc()).'">'.nl2br($this->getDesc()).'</span>';
 
 		print '<a href="javascript:document_preview(\''.DOL_URL_ROOT.'/admin/modulehelp.php?id='.$this->numero.'\',\'text/html\',\''.dol_escape_js($langs->trans("Module")).'\')">'.img_picto($langs->trans("ClickToShowDescription"), $imginfo).'</a>';
 
