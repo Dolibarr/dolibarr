@@ -817,7 +817,7 @@ class CMailFile
 				// Switch content encoding to base64 - avoid the doubledot issue with quoted-printable
                 $contentEncoderBase64 = new Swift_Mime_ContentEncoder_Base64ContentEncoder();
                 $this->message->setEncoder($contentEncoderBase64);
-				
+
 				// Create the Mailer using your created Transport
 				$this->mailer = new Swift_Mailer($this->transport);
 
