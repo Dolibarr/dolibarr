@@ -434,13 +434,13 @@ class Contact extends CommonObject
 		$this->lastname = trim($this->lastname) ?trim($this->lastname) : trim($this->lastname);
 		$this->firstname = trim($this->firstname);
 		$this->email = trim($this->email);
-		$this->phone_pro = trim($this->phone_pro);
-		$this->phone_perso = trim($this->phone_perso);
-		$this->phone_mobile = trim($this->phone_mobile);
+		$this->phone_pro = preg_replace("/[^0-9]/", "", $this->phone_pro);
+		$this->phone_perso = preg_replace("/[^0-9]/", "", $this->phone_perso);
+		$this->phone_mobile = preg_replace("/[^0-9]/", "", $this->phone_mobile);
 		$this->jabberid = trim($this->jabberid);
 		$this->skype = trim($this->skype);
 		$this->photo = trim($this->photo);
-		$this->fax = trim($this->fax);
+		$this->fax = preg_replace("/[^0-9]/", "", $this->fax);
 		$this->zip = (empty($this->zip) ? '' : $this->zip);
 		$this->town = (empty($this->town) ? '' : $this->town);
 		$this->country_id = ($this->country_id > 0 ? $this->country_id : $this->country_id);
