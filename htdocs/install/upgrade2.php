@@ -5394,6 +5394,6 @@ function migrate_product_tostock()
 	}
 
 	print '<tr><td colspan="4">';
-	print '<b>'.$langs->trans('MigrationFieldstoStock', 'Product')."</b><br>\n";
+	print '<b>'.$langs->trans('MigrationFieldstoStock')."</b><br>\n";
 	print '</td></tr>';
 }

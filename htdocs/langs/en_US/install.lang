@@ -208,6 +208,7 @@ MigrationUserRightsEntity=Update entity field value of llx_user_rights
 MigrationUserGroupRightsEntity=Update entity field value of llx_usergroup_rights
 MigrationUserPhotoPath=Migration of photo paths for users
 MigrationFieldsSocialNetworks=Migration of users fields social networks (%s)
+MigrationFieldstoStock=Migration of feature Manage on stock for product and service
 MigrationReloadModule=Reload module %s
 MigrationResetBlockedLog=Reset module BlockedLog for v7 algorithm
 ShowNotAvailableOptions=Show unavailable options
