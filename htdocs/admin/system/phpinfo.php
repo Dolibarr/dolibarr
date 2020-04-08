@@ -334,7 +334,7 @@ function getConfigFilePath()
  * Return a table column with a indicator (okay or warning), based on the given name and list
  *
  * @param string $name		The name to check inside the given list
- * @param array  $list		A list that should contains the given name 
+ * @param array  $list      A list that should contains the given name
  *
  * @return string
  */
