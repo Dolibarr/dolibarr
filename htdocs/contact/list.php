@@ -153,7 +153,12 @@ $fieldstosearchall = array(
 	'p.firstname'=>'Firstname',
 	'p.email'=>'EMail',
 	's.nom'=>"ThirdParty",
+	'p.zip'=>"Zip",
+	'p.town'=>"Town",
 	'p.phone'=>"Phone",
+	'p.phone_perso'=>"PhonePerso",
+	'p.phone_mobile'=>"PhoneMobile",
+	'p.fax'=>"Fax",
     'p.note_public'=>"NotePublic",
     'p.note_private'=>"NotePrivate",
 );
