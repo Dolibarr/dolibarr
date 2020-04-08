@@ -294,6 +294,8 @@ class Entrepot extends CommonObject
 		$this->zip = trim($this->zip);
 		$this->town = trim($this->town);
 		$this->country_id = ($this->country_id > 0 ? $this->country_id : 0);
+		$this->phone = preg_replace("/[^0-9]/", "", trim($this->phone));
+		$this->fax = preg_replace("/[^0-9]/", "", trim($this->fax));
 
 		$sql = "UPDATE ".MAIN_DB_PREFIX."entrepot ";
 		$sql .= " SET ref = '".$this->db->escape($this->libelle)."'";
