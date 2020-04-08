@@ -3996,7 +3996,7 @@ elseif ($id > 0 || !empty($ref))
 			'no',
 			2);
 	}
-	
+
 	// Call Hook formConfirm
 	$parameters = array('formConfirm' => $formconfirm, 'lineid' => $lineid, 'remainingtopay' => &$resteapayer);
 	$reshook = $hookmanager->executeHooks('formConfirm', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
@@ -5377,7 +5377,7 @@ elseif ($id > 0 || !empty($ref))
 			'facture', $filename, $filedir, $urlsource, $genallowed,
 			$delallowed, $object->modelpdf, 1, 0, 0, 28, 0, '', '', '',
 			$soc->default_lang, '', $object, 0, 'remove_file_comfirm');
-		
+
 		$somethingshown = $formfile->numoffiles;
 
 		// Show links to link elements
