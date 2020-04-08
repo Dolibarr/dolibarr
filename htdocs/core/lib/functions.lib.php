@@ -4166,12 +4166,12 @@ function getTitleFieldOfList($name, $thead = 0, $file = "", $field = "", $begin 
 			if (preg_match('/^DESC/', $sortorder)) {
 				//$out.= '<a href="'.$file.'?sortfield='.$field.'&sortorder=asc&begin='.$begin.$options.'">'.img_down("A-Z",0).'</a>';
 				//$out.= '<a href="'.$file.'?sortfield='.$field.'&sortorder=desc&begin='.$begin.$options.'">'.img_up("Z-A",1).'</a>';
-				$sortimg .= '<span class="nowrap">'.img_up("Z-A", 0).'</span>';
+				$sortimg .= '<span class="nowrap">'.img_up("Z-A", 0, 'paddingleft').'</span>';
 			}
 			if (preg_match('/^ASC/', $sortorder)) {
 				//$out.= '<a href="'.$file.'?sortfield='.$field.'&sortorder=asc&begin='.$begin.$options.'">'.img_down("A-Z",1).'</a>';
 				//$out.= '<a href="'.$file.'?sortfield='.$field.'&sortorder=desc&begin='.$begin.$options.'">'.img_up("Z-A",0).'</a>';
-				$sortimg .= '<span class="nowrap">'.img_down("A-Z", 0).'</span>';
+				$sortimg .= '<span class="nowrap">'.img_down("A-Z", 0, 'paddingleft').'</span>';
 			}
 		}
 	}

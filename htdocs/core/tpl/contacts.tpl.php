@@ -70,7 +70,8 @@ $userstatic = new User($db);
 if ($permission)
 {
 	print '<div class="underbanner clearboth"></div>'."\n";
-	print '<div class="div-table-responsive">'."\n";
+
+	print '<div class="div-table-responsive-no-min">'."\n";
 	print '<div class="tagtable tableforcontact centpercent noborder nobordertop allwidth">'."\n";
 
     ?>
@@ -162,12 +163,12 @@ if ($permission)
 
 	print "</div>";
 	print "</div>";
+
+	print '<br>';
 }
 
 
-/**
-* Prepare list
-*/
+// Prepare list
 
 // TODO: replace this with direct SQL string to use $db->sort($sortfield, $sortorder)
 $list = array();
@@ -273,10 +274,11 @@ print '<input type="hidden" name="action" value="list">';
 print '<input type="hidden" name="sortfield" value="'.$sortfield.'">';
 print '<input type="hidden" name="sortorder" value="'.$sortorder.'">';
 
+print '<div class="div-table-responsive-no-min">'."\n";
 print '<table class="tagtable nobottomiftotal liste">';
 
-print '<tr class="liste_titre_filter">';
-print '</tr>';
+//print '<tr class="liste_titre_filter">';
+//print '</tr>';
 
 print '<tr class="liste_titre">';
 print_liste_field_titre($arrayfields['nature']['label'], $_SERVER["PHP_SELF"], "nature", "", $param, "", $sortfield, $sortorder);
@@ -315,8 +317,12 @@ foreach ($list as $entry)
 }
 
 print "</table>";
+print '</div>';
+
 print "</form>";
-print "</div>";
+
+
+
 
 print "<!-- TEMPLATE CONTACTS HOOK BEGIN HERE -->\n";
 if (is_object($hookmanager)) {
