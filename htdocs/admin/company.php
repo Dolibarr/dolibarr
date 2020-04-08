@@ -760,7 +760,7 @@ if ($mysoc->useLocalTax(1))
 	{
 		print '<tr class="oddeven nohover"><td class="opacitymedium">'.$countrynotdefined.'</td><td></td><td></td></tr>';
 	} else {
-		print '<tr class="oddeven nohover"><td class="opacitymedium" colspan="3">'.$langs->trans("NoLocalTaxXForThisCountry" , $langs->transnoentitiesnoconv("Setup"), $langs->transnoentitiesnoconv("Dictionaries"), $langs->transnoentitiesnoconv("DictionaryVAT"), $langs->transnoentitiesnoconv("LocalTax1Management")).'</td></tr>';
+		print '<tr class="oddeven nohover"><td class="opacitymedium" colspan="3">'.$langs->trans("NoLocalTaxXForThisCountry", $langs->transnoentitiesnoconv("Setup"), $langs->transnoentitiesnoconv("Dictionaries"), $langs->transnoentitiesnoconv("DictionaryVAT"), $langs->transnoentitiesnoconv("LocalTax1Management")).'</td></tr>';
 	}
 }
 
@@ -806,7 +806,7 @@ if ($mysoc->useLocalTax(2))
 	{
 		print '<tr class="oddeven nohover"><td class="opacitymedium">'.$countrynotdefined.'</td><td></td><td></td></tr>';
 	} else {
-		print '<tr class="oddeven nohover"><td class="opacitymedium" colspan="3">'.$langs->trans("NoLocalTaxXForThisCountry" , $langs->transnoentitiesnoconv("Setup"), $langs->transnoentitiesnoconv("Dictionaries"), $langs->transnoentitiesnoconv("DictionaryVAT"), $langs->transnoentitiesnoconv("LocalTax2Management")).'</td></tr>';
+		print '<tr class="oddeven nohover"><td class="opacitymedium" colspan="3">'.$langs->trans("NoLocalTaxXForThisCountry", $langs->transnoentitiesnoconv("Setup"), $langs->transnoentitiesnoconv("Dictionaries"), $langs->transnoentitiesnoconv("DictionaryVAT"), $langs->transnoentitiesnoconv("LocalTax2Management")).'</td></tr>';
 	}
 }
 
@@ -834,7 +834,7 @@ if ($mysoc->useRevenueStamp())
 	{
 		print '<tr class="oddeven nohover"><td class="opacitymedium">'.$countrynotdefined.'</td><td></td><td></td></tr>';
 	} else {
-		print '<tr class="oddeven nohover"><td class="opacitymedium" colspan="3">'.$langs->trans("NoLocalTaxXForThisCountry" , $langs->transnoentitiesnoconv("Setup"), $langs->transnoentitiesnoconv("Dictionaries"), $langs->transnoentitiesnoconv("DictionaryRevenueStamp"), $langs->transnoentitiesnoconv("RevenueStamp")).'</td></tr>';
+		print '<tr class="oddeven nohover"><td class="opacitymedium" colspan="3">'.$langs->trans("NoLocalTaxXForThisCountry", $langs->transnoentitiesnoconv("Setup"), $langs->transnoentitiesnoconv("Dictionaries"), $langs->transnoentitiesnoconv("DictionaryRevenueStamp"), $langs->transnoentitiesnoconv("RevenueStamp")).'</td></tr>';
 	}
 }
 
