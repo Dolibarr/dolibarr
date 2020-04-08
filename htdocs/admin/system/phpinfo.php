@@ -143,7 +143,7 @@ $loadedExtensions    = array_map('strtolower', get_loaded_extensions(false));
 print '<table class="noborder centpercent">';
 print '<tr class="liste_titre">';
 print '<td width="200">'.$langs->trans("Extension").'</td>';
-print '<td align="center">'.$langs->trans("Activated").'</td>';
+print '<td align="center">'.$langs->trans("EnabledInSetup").'</td>';
 print '<td align="center">'.$langs->trans("Loaded").'</td>';
 print '<td align="center">'.$langs->trans("FunctionTest").'</td>';
 print '<td>'.$langs->trans("Result").'</td>';
