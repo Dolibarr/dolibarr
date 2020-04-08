@@ -54,7 +54,7 @@ class modModuleBuilder extends DolibarrModules
         // Key used in llx_const table to save module status enabled/disabled (where MYMODULE is value of property name of module in uppercase)
         $this->const_name = 'MAIN_MODULE_'.strtoupper($this->name);
         // Name of image file used for this module.
-        $this->picto='technic';
+        $this->picto='bug';
 
         // Data directories to create when module is enabled
         $this->dirs = array();

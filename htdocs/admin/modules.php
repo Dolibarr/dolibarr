@@ -699,12 +699,12 @@ if ($mode == 'common' || $mode == 'commonkanban')
 			//if (is_array($objMod->phpmin)) $alttext.=($alttext?' - ':'').'PHP >= '.join('.',$objMod->phpmin);
 			if (!empty($objMod->picto))
 			{
-				if (preg_match('/^\//i', $objMod->picto)) print img_picto($alttext, $objMod->picto, 'class="valignmiddle pictomodule"', 1);
-				else print img_object($alttext, $objMod->picto, 'class="valignmiddle pictomodule"');
+				if (preg_match('/^\//i', $objMod->picto)) print img_picto($alttext, $objMod->picto, 'class="valignmiddle pictomodule paddingrightonly"', 1);
+				else print img_object($alttext, $objMod->picto, 'class="valignmiddle pictomodule paddingrightonly"');
 			}
 			else
 			{
-				print img_object($alttext, 'generic', 'class="valignmiddle"');
+				print img_object($alttext, 'generic', 'class="valignmiddle paddingrightonly"');
 			}
 			print ' <span class="valignmiddle">'.$objMod->getName().'</span>';
 			print "</td>\n";
