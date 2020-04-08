@@ -1554,10 +1554,10 @@ class User extends CommonObject
 		$this->town = $this->town ?trim($this->town) : trim($this->town);
 		$this->state_id = trim($this->state_id);
 		$this->country_id = ($this->country_id > 0) ? $this->country_id : 0;
-		$this->office_phone = trim($this->office_phone);
-		$this->office_fax   = trim($this->office_fax);
-		$this->user_mobile  = trim($this->user_mobile);
-        $this->personal_mobile = trim($this->personal_mobile);
+		$this->office_phone = preg_replace("/[^0-9]/", "", trim($this->office_phone));
+		$this->office_fax   = preg_replace("/[^0-9]/", "", trim($this->office_fax));
+		$this->user_mobile  = preg_replace("/[^0-9]/", "", trim($this->user_mobile));
+        $this->personal_mobile = preg_replace("/[^0-9]/", "", trim($this->personal_mobile));
 		$this->email        = trim($this->email);
         $this->personal_email = trim($this->personal_email);
 
