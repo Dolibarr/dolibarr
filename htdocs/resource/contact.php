@@ -52,11 +52,11 @@ $result = $object->fetch($id, $ref);
 
 if ($action == 'addcontact' && $user->rights->resource->write)
 {
-    if ($result > 0 && $id > 0)
-    {
-    	$contactid = (GETPOST('userid', 'int') ? GETPOST('userid', 'int') : GETPOST('contactid', 'int'));
+	if ($result > 0 && $id > 0)
+	{
+		$contactid = (GETPOST('userid', 'int') ? GETPOST('userid', 'int') : GETPOST('contactid', 'int'));
   		$result = $object->add_contact($contactid, GETPOST('type', 'int'), GETPOST('source', 'alpha'));
-    }
+	}
 
 	if ($result >= 0)
 	{
@@ -79,7 +79,7 @@ if ($action == 'addcontact' && $user->rights->resource->write)
 // Toggle the status of a contact
 elseif ($action == 'swapstatut' && $user->rights->resource->write)
 {
-    $result=$object->swapContactStatus(GETPOST('ligne', 'int'));
+	$result=$object->swapContactStatus(GETPOST('ligne', 'int'));
 }
 
 // Erase a contact

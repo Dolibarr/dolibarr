@@ -36,7 +36,7 @@ class Canvas
 	/**
 	 * @var string Error code (or message)
 	 */
-	public $error='';
+	public $error = '';
 
 	/**
 	 * @var string[] Error codes (or messages)
@@ -45,13 +45,13 @@ class Canvas
 
 	public $actiontype;
 
-    public $dirmodule;			// Module directory
-    public $targetmodule;      // Module concerned by canvas (ex: thirdparty, contact, ...)
-    public $canvas;            // Name of canvas (ex: company, individual, product, service, ...)
-    public $card;              // Tab (sub-canvas)
+    public $dirmodule; // Module directory
+    public $targetmodule; // Module concerned by canvas (ex: thirdparty, contact, ...)
+    public $canvas; // Name of canvas (ex: company, individual, product, service, ...)
+    public $card; // Tab (sub-canvas)
 
-    public $template_dir;		// Initialized by getCanvas with templates directory
-    public $control;           	// Initialized by getCanvas with controller instance
+    public $template_dir; // Initialized by getCanvas with templates directory
+    public $control; // Initialized by getCanvas with controller instance
 
 
     /**
@@ -76,9 +76,9 @@ class Canvas
 	private function _cleanaction($action)
 	{
 	    $newaction = $action;
-	    if ($newaction == 'add')    $newaction='create';
-	    if ($newaction == 'update') $newaction='edit';
-	    if (empty($newaction) || $newaction == 'delete' || $newaction == 'create_user' || $newaction == 'presend' || $newaction == 'send') $newaction='view';
+	    if ($newaction == 'add')    $newaction = 'create';
+	    if ($newaction == 'update') $newaction = 'edit';
+	    if (empty($newaction) || $newaction == 'delete' || $newaction == 'create_user' || $newaction == 'presend' || $newaction == 'send') $newaction = 'view';
 	    return $newaction;
 	}
 
@@ -114,7 +114,7 @@ class Canvas
 		if (file_exists($controlclassfile))
 		{
             // Include actions class (controller)
-            $this->control_file=$controlclassfile;
+            $this->control_file = $controlclassfile;
             require_once $controlclassfile;
 
             // Instantiate actions class (controller)
@@ -124,9 +124,9 @@ class Canvas
 
 		// Template dir
 		$this->template_dir = dol_buildpath('/'.$this->dirmodule.'/canvas/'.$this->canvas.'/tpl/');
-        if (! is_dir($this->template_dir))
+        if (!is_dir($this->template_dir))
         {
-            $this->template_dir='';
+            $this->template_dir = '';
         }
 
         //print 'dimodule='.$dirmodule.' canvas='.$this->canvas.'<br>';
@@ -158,7 +158,7 @@ class Canvas
     {
         if (empty($this->template_dir)) return 0;
 
-        if (file_exists($this->template_dir.(!empty($this->card)?$this->card.'_':'').$this->_cleanaction($action).'.tpl.php')) return 1;
+        if (file_exists($this->template_dir.(!empty($this->card) ? $this->card.'_' : '').$this->_cleanaction($action).'.tpl.php')) return 1;
         else return 0;
     }
 
@@ -177,7 +177,7 @@ class Canvas
 		global $form, $formfile;
 
 		//var_dump($this->card.'-'.$action);
-		include $this->template_dir.(!empty($this->card)?$this->card.'_':'').$this->_cleanaction($action).'.tpl.php';        // Include native PHP template
+		include $this->template_dir.(!empty($this->card) ? $this->card.'_' : '').$this->_cleanaction($action).'.tpl.php'; // Include native PHP template
 	}
 
 

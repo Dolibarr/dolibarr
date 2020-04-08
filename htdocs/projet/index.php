@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2001-2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2016 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2020 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2010 Regis Houssin        <regis.houssin@inodbox.com>
  * Copyright (C) 2019      Nicolas ZABOURI      <info@inovea-conseil.com>
  *
@@ -88,17 +88,15 @@ $morehtml.='</SELECT>';
 $morehtml.='<input type="submit" class="button" name="refresh" value="'.$langs->trans("Refresh").'">';
 $morehtml.='</form>';
 
-print_barre_liste($title, 0, $_SERVER["PHP_SELF"], '', '', '', '', 0, -1, 'project', 0, $morehtml);
-
-// Show description of content
-print '<div class="opacitymedium">';
-if ($mine) print $langs->trans("MyProjectsDesc").'<br><br>';
+if ($mine) $tooltiphelp = $langs->trans("MyProjectsDesc");
 else
 {
-	if (!empty($user->rights->projet->all->lire) && !$socid) print $langs->trans("ProjectsDesc").'<br><br>';
-	else print $langs->trans("ProjectsPublicDesc").'<br><br>';
+	if (!empty($user->rights->projet->all->lire) && !$socid) $tooltiphelp = $langs->trans("ProjectsDesc");
+	else $tooltiphelp = $langs->trans("ProjectsPublicDesc");
 }
-print '</div>';
+
+print_barre_liste($form->textwithpicto($title, $tooltiphelp), 0, $_SERVER["PHP_SELF"], '', '', '', '', 0, -1, 'project', 0, $morehtml);
+
 
 // Get list of ponderated percent for each status
 $listofoppstatus = array(); $listofopplabel = array(); $listofoppcode = array();
@@ -200,7 +198,7 @@ if ($resql)
 			$obj = $db->fetch_object($resql);
 
 			print '<tr class="oddeven">';
-			print '<td width="20%" class="nowrap">';
+			print '<td class="nowrap">';
 
 			$projectstatic->id = $obj->rowid;
 			$projectstatic->ref = $obj->ref;
@@ -309,7 +307,6 @@ if ($resql)
 		else
 		{
 			print $langs->trans("OthersNotLinkedToThirdParty");
-			$i--;
 		}
 		print '</td>';
 		print '<td class="right">';

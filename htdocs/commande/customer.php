@@ -48,7 +48,7 @@ $langs->loadLangs(array("companies", "orders"));
 $limit = GETPOST('limit', 'int')?GETPOST('limit', 'int'):$conf->liste_limit;
 $sortfield = GETPOST("sortfield", 'alpha');
 $sortorder = GETPOST("sortorder", 'alpha');
-$page = GETPOST("page", 'int');
+$page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOST("page", 'int');
 if (empty($page) || $page == -1) { $page = 0; }     // If $page is not defined, or '' or -1
 $offset = $limit * $page;
 $pageprev = $page - 1;
@@ -162,13 +162,13 @@ if ($resql)
 		print '<tr class="oddeven">';
 		print '<td>';
 
-        $result='';
-        $link=$linkend='';
-        $link = '<a href="'.dol_buildpath('/commande/orderstoinvoice.php', 1).'?socid='.$obj->rowid.'">';
-        $linkend='</a>';
-        $name=$obj->name;
-        $result.=($link.img_object($langs->trans("ShowCompany").': '.$name, 'company').$linkend);
-        $result.=$link.(dol_trunc($name, $maxlen)).$linkend;
+		$result='';
+		$link=$linkend='';
+		$link = '<a href="'.dol_buildpath('/commande/orderstoinvoice.php', 1).'?socid='.$obj->rowid.'">';
+		$linkend='</a>';
+		$name=$obj->name;
+		$result.=($link.img_object($langs->trans("ShowCompany").': '.$name, 'company').$linkend);
+		$result.=$link.(dol_trunc($name, $maxlen)).$linkend;
 
 		print $result;
 		print '</td>';

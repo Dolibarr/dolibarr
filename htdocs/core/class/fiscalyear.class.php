@@ -1,5 +1,7 @@
 <?php
-/* Copyright (C) 2014-2018  Alexandre Spangaro  <aspangaro@open-dsi.fr>
+/* Copyright (C) 2014-2020  Alexandre Spangaro  <aspangaro@open-dsi.fr>
+ * Copyright (C) 2020       OScss-Shop          <support@oscss-shop.fr>
+ *
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -381,13 +383,19 @@ class Fiscalyear extends CommonObject
 	 *	@param	int		$dateend	Date end to scan
 	 *	@return	string				Number of entries
 	 */
-	public function getAccountancyEntriesByFiscalYear($datestart, $dateend)
+	public function getAccountancyEntriesByFiscalYear($datestart = '', $dateend = '')
 	{
 		global $conf;
 
+		if(empty($datestart) )
+			$datestart = $this->date_start;
+		if(empty($dateend) )
+			$dateend = $this->date_end;
+
 		$sql = "SELECT count(DISTINCT piece_num) as nb";
-		$sql.= " FROM ".MAIN_DB_PREFIX."accounting_bookkeeping ";
-		$sql.= " WHERE doc_date >= '".$datestart."' and doc_date <= '".$dateend."'";
+		$sql.= " FROM ".MAIN_DB_PREFIX."accounting_bookkeeping";
+		$sql.= " WHERE entity IN (".getEntity('bookkeeping', 0).")";
+		$sql.= " AND doc_date >= '".$this->db->idate($datestart)."' and doc_date <= '".$this->db->idate($dateend)."'";
 
 		$resql=$this->db->query($sql);
 		if ($resql)
@@ -407,13 +415,19 @@ class Fiscalyear extends CommonObject
 	 *  @param	int		$dateend	Date end to scan
 	 *  @return	string				Number of movements
 	 */
-	public function getAccountancyMovementsByFiscalYear($datestart, $dateend)
+	public function getAccountancyMovementsByFiscalYear($datestart = '', $dateend = '')
 	{
 		global $conf;
 
+		if(empty($datestart) )
+			$datestart = $this->date_start;
+		if(empty($dateend) )
+			$dateend = $this->date_end;
+
 		$sql = "SELECT count(rowid) as nb";
 		$sql.= " FROM ".MAIN_DB_PREFIX."accounting_bookkeeping ";
-		$sql.= " WHERE doc_date >= '".$datestart."' AND doc_date <= '".$dateend."'";
+		$sql.= " WHERE entity IN (".getEntity('bookkeeping', 0).")";
+		$sql.= " AND doc_date >= '".$this->db->idate($datestart)."' and doc_date <= '".$this->db->idate($dateend)."'";
 
 		$resql=$this->db->query($sql);
 		if ($resql)

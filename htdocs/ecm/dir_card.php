@@ -44,7 +44,7 @@ if (empty($module)) $module='ecm';
 // Get parameters
 $sortfield = GETPOST("sortfield", 'alpha');
 $sortorder = GETPOST("sortorder", 'alpha');
-$page = GETPOST("page", 'int');
+$page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOST("page", 'int');
 if (empty($page) || $page == -1) { $page = 0; }     // If $page is not defined, or '' or -1
 $offset = $conf->liste_limit * $page;
 $pageprev = $page - 1;
@@ -108,27 +108,27 @@ if (GETPOST("sendit") && ! empty($conf->global->MAIN_UPLOAD_DOC))
 		$resupload = dol_move_uploaded_file($_FILES['userfile']['tmp_name'], $upload_dir . "/" . dol_unescapefile($_FILES['userfile']['name']), 0, 0, $_FILES['userfile']['error']);
 		if (is_numeric($resupload) && $resupload > 0)
 		{
-		    $result=$ecmdir->changeNbOfFiles('+');
-	    }
-	    else
-	    {
+			$result=$ecmdir->changeNbOfFiles('+');
+		}
+		else
+		{
    			$langs->load("errors");
 			if ($resupload < 0)	// Unknown error
 			{
 				setEventMessages($langs->trans("ErrorFileNotUploaded"), null, 'errors');
 			} elseif (preg_match('/ErrorFileIsInfectedWithAVirus/', $resupload)) {
-                // Files infected by a virus
+				// Files infected by a virus
 				setEventMessages($langs->trans("ErrorFileIsInfectedWithAVirus"), null, 'errors');
 			}
 			else	// Known error
 			{
 				setEventMessages($langs->trans($resupload), null, 'errors');
 			}
-	    }
+		}
 	}
 	else
 	{
-	    // Failed transfer (exceeding the limit file?)
+		// Failed transfer (exceeding the limit file?)
 		$langs->load("errors");
 		setEventMessages($langs->trans("ErrorFailToCreateDir", $upload_dir), null, 'errors');
 	}
@@ -137,13 +137,13 @@ if (GETPOST("sendit") && ! empty($conf->global->MAIN_UPLOAD_DOC))
 // Remove file
 if ($action == 'confirm_deletefile' && $confirm == 'yes')
 {
-    $langs->load("other");
-    $file = $upload_dir . "/" . GETPOST('urlfile');	// Do not use urldecode here ($_GET and $_REQUEST are already decoded by PHP).
-    $ret=dol_delete_file($file);
-    if ($ret) setEventMessages($langs->trans("FileWasRemoved", GETPOST('urlfile')), null, 'mesgs');
-    else setEventMessages($langs->trans("ErrorFailToDeleteFile", GETPOST('urlfile')), null, 'errors');
+	$langs->load("other");
+	$file = $upload_dir . "/" . GETPOST('urlfile');	// Do not use urldecode here ($_GET and $_REQUEST are already decoded by PHP).
+	$ret=dol_delete_file($file);
+	if ($ret) setEventMessages($langs->trans("FileWasRemoved", GETPOST('urlfile')), null, 'mesgs');
+	else setEventMessages($langs->trans("ErrorFailToDeleteFile", GETPOST('urlfile')), null, 'errors');
 
-    $result=$ecmdir->changeNbOfFiles('-');
+	$result=$ecmdir->changeNbOfFiles('-');
 }
 
 // Remove dir
@@ -197,21 +197,21 @@ if ($action == 'update' && ! GETPOST('cancel', 'alpha'))
 {
 	$error=0;
 
-    if ($module == 'ecm')
-    {
-    	$oldlabel=$ecmdir->label;
+	if ($module == 'ecm')
+	{
+		$oldlabel=$ecmdir->label;
 		$olddir=$ecmdir->getRelativePath(0);
 		$olddir=$conf->ecm->dir_output.'/'.$olddir;
-    }
-    else
-    {
-    	$olddir=GETPOST('section', 'alpha');
-    	$olddir=$conf->medias->multidir_output[$conf->entity].'/'.$relativepath;
-    }
+	}
+	else
+	{
+		$olddir=GETPOST('section', 'alpha');
+		$olddir=$conf->medias->multidir_output[$conf->entity].'/'.$relativepath;
+	}
 
-    if ($module == 'ecm')
-    {
-    	$db->begin();
+	if ($module == 'ecm')
+	{
+		$db->begin();
 
 		// Fetch was already done
 		$ecmdir->label = dol_sanitizeFileName(GETPOST("label"));
@@ -252,27 +252,27 @@ if ($action == 'update' && ! GETPOST('cancel', 'alpha'))
 			$db->rollback();
 			setEventMessages($ecmdir->error, $ecmdir->errors, 'errors');
 		}
-    }
-    else
-    {
-    	$newdir = $conf->medias->multidir_output[$conf->entity].'/'.GETPOST('oldrelparentdir', 'alpha').'/'.GETPOST('label', 'alpha');
+	}
+	else
+	{
+		$newdir = $conf->medias->multidir_output[$conf->entity].'/'.GETPOST('oldrelparentdir', 'alpha').'/'.GETPOST('label', 'alpha');
 
-    	$result=@rename($olddir, $newdir);
-    	if (! $result)
-    	{
-    		$langs->load('errors');
-    		setEventMessages($langs->trans('ErrorFailToRenameDir', $olddir, $newdir), null, 'errors');
-    		$error++;
-    	}
+		$result=@rename($olddir, $newdir);
+		if (! $result)
+		{
+			$langs->load('errors');
+			setEventMessages($langs->trans('ErrorFailToRenameDir', $olddir, $newdir), null, 'errors');
+			$error++;
+		}
 
-    	if (! $error)
-    	{
-    		// Set new value after renaming
-    		$relativepath=GETPOST('oldrelparentdir', 'alpha').'/'.GETPOST('label', 'alpha');
-    		$upload_dir = $conf->medias->multidir_output[$conf->entity].'/'.$relativepath;
-    		$section = $relativepath;
-    	}
-    }
+		if (! $error)
+		{
+			// Set new value after renaming
+			$relativepath=GETPOST('oldrelparentdir', 'alpha').'/'.GETPOST('label', 'alpha');
+			$upload_dir = $conf->medias->multidir_output[$conf->entity].'/'.$relativepath;
+			$section = $relativepath;
+		}
+	}
 }
 
 
@@ -435,7 +435,7 @@ if ($ecmdir->id > 0)
 	// Test if nb is same than in cache
 	if ($nbofiles != $ecmdir->cachenbofdoc)
 	{
-	    $ecmdir->changeNbOfFiles((string) $nbofiles);
+		$ecmdir->changeNbOfFiles((string) $nbofiles);
 	}
 }
 print '</td></tr>';

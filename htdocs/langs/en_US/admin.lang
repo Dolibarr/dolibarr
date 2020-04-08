@@ -98,10 +98,10 @@ MustBeLowerThanPHPLimit=Note: <b>your</b> PHP configuration currently limits the
 NoMaxSizeByPHPLimit=Note: No limit is set in your PHP configuration
 MaxSizeForUploadedFiles=Maximum size for uploaded files (0 to disallow any upload)
 UseCaptchaCode=Use graphical code (CAPTCHA) on login page
-AntiVirusCommand= Full path to antivirus command
-AntiVirusCommandExample= Example for ClamWin: c:\\Progra~1\\ClamWin\\bin\\clamscan.exe<br>Example for ClamAv: /usr/bin/clamscan
+AntiVirusCommand=Full path to antivirus command
+AntiVirusCommandExample=Example for ClamAv Daemon (require clamav-daemon): /usr/bin/clamdscan<br>Example for ClamWin (very very slow): c:\\Progra~1\\ClamWin\\bin\\clamscan.exe
 AntiVirusParam= More parameters on command line
-AntiVirusParamExample= Example for ClamWin: --database="C:\\Program Files (x86)\\ClamWin\\lib"
+AntiVirusParamExample=Example for ClamAv Daemon: --fdpass<br>Example for ClamWin: --database="C:\\Program Files (x86)\\ClamWin\\lib"
 ComptaSetup=Accounting module setup
 UserSetup=User management setup
 MultiCurrencySetup=Multi-currency setup
@@ -221,6 +221,7 @@ DoliPartnersDesc=List of companies providing custom-developed modules or feature
 WebSiteDesc=External websites for more add-on (non-core) modules...
 DevelopYourModuleDesc=Some solutions to develop your own module...
 URL=URL
+RelativeURL=Relative URL
 BoxesAvailable=Widgets available
 BoxesActivated=Widgets activated
 ActivateOn=Activate on
@@ -988,6 +989,7 @@ VATIsNotUsedDesc=By default the proposed Sales tax is 0 which can be used for ca
 VATIsUsedExampleFR=In France, it means companies or organizations having a real fiscal system (Simplified real or normal real). A system in which VAT is declared.
 VATIsNotUsedExampleFR=In France, it means associations that are non Sales tax declared or companies, organizations or liberal professions that have chosen the micro enterprise fiscal system (Sales tax in franchise) and paid a franchise Sales tax without any Sales tax declaration.  This choice will display the reference "Non applicable Sales tax - art-293B of CGI" on invoices.
 ##### Local Taxes #####
+TypeOfSaleTaxes=Type of sales tax
 LTRate=Rate
 LocalTax1IsNotUsed=Do not use second tax
 LocalTax1IsUsedDesc=Use a second type of tax (other than first one)
@@ -1011,6 +1013,9 @@ LocalTax2IsUsedDescES=The IRPF rate by default when creating prospects, invoices
 LocalTax2IsNotUsedDescES=By default the proposed IRPF is 0. End of rule.
 LocalTax2IsUsedExampleES=In Spain, freelancers and independent professionals who provide services and companies who have chosen the tax system of modules.
 LocalTax2IsNotUsedExampleES=In Spain they are businesses not subject to tax system of modules.
+RevenueStampDesc=The "tax stamp" or "revenue stamp" is a fixed tax you per invoice (It does not depend on amount of invoice). It can also be a percent tax but using the second or third type of tax is better for percent taxes as tax stamps des not provide any reporting. Only few countries uses this type of tax.
+UseRevenueStamp=Use a tax stamp
+UseRevenueStampExample=The value of tax stamp is defined by default into the setup of dictionaries (%s - %s - %s)
 CalcLocaltax=Reports on local taxes
 CalcLocaltax1=Sales - Purchases
 CalcLocaltax1Desc=Local Taxes reports are calculated with the difference between localtaxes sales and localtaxes purchases
@@ -1018,6 +1023,7 @@ CalcLocaltax2=Purchases
 CalcLocaltax2Desc=Local Taxes reports are the total of localtaxes purchases
 CalcLocaltax3=Sales
 CalcLocaltax3Desc=Local Taxes reports are the total of localtaxes sales
+NoLocalTaxXForThisCountry=According to the setup of taxes (See %s - %s - %s), your country does not need to use such type of tax
 LabelUsedByDefault=Label used by default if no translation can be found for code
 LabelOnDocuments=Label on documents
 LabelOrTranslationKey=Label or translation key
@@ -1108,8 +1114,8 @@ Delays_MAIN_DELAY_EXPENSEREPORTS=Expense report to approve
 Delays_MAIN_DELAY_HOLIDAYS=Leave requests to approve
 SetupDescription1=Before starting to use Dolibarr some initial parameters must be defined and modules enabled/configured.
 SetupDescription2=The following two sections are mandatory (the two first entries in the Setup menu):
-SetupDescription3=<a href="%s">%s -> %s</a><br>Basic parameters used to customize the default behavior of your application (e.g for country-related features).
-SetupDescription4=<a href="%s">%s -> %s</a><br>This software is a suite of many modules/applications, all more or less independent. The modules relevant to your needs must be enabled and configured. New items/options are added to menus with the activation of a module.
+SetupDescription3=<a href="%s">%s -> %s</a><br><br>Basic parameters used to customize the default behavior of your application (e.g for country-related features).
+SetupDescription4=<a href="%s">%s -> %s</a><br><br>This software is a suite of many modules/applications. The modules related to your needs must be enabled and configured. Menu entries will appears with the activation of these modules.
 SetupDescription5=Other Setup menu entries manage optional parameters.
 LogEvents=Security audit events
 Audit=Audit
@@ -1128,7 +1134,7 @@ LogEventDesc=Enable logging for specific security events. Administrators the log
 AreaForAdminOnly=Setup parameters can be set by <b>administrator users</b> only.
 SystemInfoDesc=System information is miscellaneous technical information you get in read only mode and visible for administrators only.
 SystemAreaForAdminOnly=This area is available to administrator users only. Dolibarr user permissions cannot change this restriction.
-CompanyFundationDesc=Edit the information of the company/entity. Click on "%s" button at the bottom of the page.
+CompanyFundationDesc=Edit the information of your company/organization. Click on "%s" button at the bottom of the page when done.
 AccountantDesc=If you have an external accountant/bookkeeper, you can edit here its information.
 AccountantFileNumber=Accountant code
 DisplayDesc=Parameters affecting the look and behaviour of Dolibarr can be modified here.
@@ -1264,6 +1270,8 @@ RuleForGeneratedPasswords=Rules to generate and validate passwords
 DisableForgetPasswordLinkOnLogonPage=Do not show the "Password Forgotten" link on the Login page
 UsersSetup=Users module setup
 UserMailRequired=Email required to create a new user
+UsersDocModules=Document templates for documents generated from user record 
+GroupsDocModules=Document templates for documents generated from a group record 
 ##### HRM setup #####
 HRMSetup=HRM module setup
 ##### Company setup #####
@@ -1959,6 +1967,7 @@ WarningValueHigherSlowsDramaticalyOutput=Warning, higher values slows dramatical
 ModuleActivated=Module %s is activated and slows the interface
 EXPORTS_SHARE_MODELS=Export models are share with everybody
 ExportSetup=Setup of module Export
+ImportSetup=Setup of module Import
 InstanceUniqueID=Unique ID of the instance
 SmallerThan=Smaller than
 LargerThan=Larger than
@@ -1979,5 +1988,5 @@ MakeAnonymousPing=Make an anonymous Ping '+1' to the Dolibarr foundation server 
 FeatureNotAvailableWithReceptionModule=Feature not available when module Reception is enabled
 EmailTemplate=Template for email
 EMailsWillHaveMessageID=Emails will have a tag 'References' matching this syntax
-PDF_USE_ALSO_LANGUAGE_CODE=If you want to have some text title in your PDF duplicated in 2 different languages in the same generate PDF, you must set here this second language so generated PDF will contains 2 different languages in same page, the one chosen when generating PDF and this one (only few PDF templates support this). Keep empty for 1 language per PDF.
+PDF_USE_ALSO_LANGUAGE_CODE=If you want to have some texts in your PDF duplicated in 2 different languages in the same generated PDF, you must set here this second language so generated PDF will contains 2 different languages in same page, the one chosen when generating PDF and this one (only few PDF templates support this). Keep empty for 1 language per PDF.
 FafaIconSocialNetworksDesc=Enter here the code of a FontAwesome icon. If you don't know what is FontAwesome, you can use the generic value fa-address-book.

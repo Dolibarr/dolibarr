@@ -55,7 +55,7 @@ $search_year = GETPOST("search_year", "int");
 $limit = GETPOST('limit', 'int') ?GETPOST('limit', 'int') : (empty($conf->global->ACCOUNTING_LIMIT_LIST_VENTILATION) ? $conf->liste_limit : $conf->global->ACCOUNTING_LIMIT_LIST_VENTILATION);
 $sortfield = GETPOST('sortfield', 'alpha');
 $sortorder = GETPOST('sortorder', 'alpha');
-$page = GETPOST('page', 'int');
+$page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOST("page", 'int');
 if (empty($page) || $page < 0) $page = 0;
 $pageprev = $page - 1;
 $pagenext = $page + 1;
@@ -287,7 +287,7 @@ if ($result) {
 
 	while ($i < min($num_lines, $limit)) {
 		$objp = $db->fetch_object($result);
-		$codeCompta = length_accountg($objp->account_number).' - '.$objp->label;
+		$codeCompta = length_accountg($objp->account_number).' - <span class="opacitymedium">'.$objp->label.'</span>';
 
 		$expensereport_static->ref = $objp->ref;
 		$expensereport_static->id = $objp->erid;
@@ -315,7 +315,7 @@ if ($result) {
 
 		print '<td>'.$codeCompta.'</td>';
 
-		print '<td class="left"><a href="./card.php?id='.$objp->rowid.'&backtopage='.urlencode($_SERVER["PHP_SELF"].($param ? '?'.$param : '')).'">';
+		print '<td class="left"><a class="editfielda" href="./card.php?id='.$objp->rowid.'&backtopage='.urlencode($_SERVER["PHP_SELF"].($param ? '?'.$param : '')).'">';
 		print img_edit();
 		print '</a></td>';
 

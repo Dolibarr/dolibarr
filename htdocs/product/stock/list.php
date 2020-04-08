@@ -61,7 +61,7 @@ if (!empty($conf->categorie->enabled))
 $limit = GETPOST('limit', 'int') ?GETPOST('limit', 'int') : $conf->liste_limit;
 $sortfield = GETPOST('sortfield', 'alpha');
 $sortorder = GETPOST('sortorder', 'alpha');
-$page = GETPOST('page', 'int');
+$page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOST("page", 'int');
 if (empty($page) || $page == -1 || GETPOST('button_search', 'alpha') || GETPOST('button_removefilter', 'alpha') || (empty($toselect) && $massaction === '0')) { $page = 0; }     // If $page is not defined, or '' or -1 or if we click on clear filters or if we select empty mass action
 $offset = $limit * $page;
 $pageprev = $page - 1;
@@ -95,6 +95,8 @@ $fieldstosearchall = array(
     'e.address'=>"Address",
     'e.zip'=>'Zip',
     'e.town'=>'Town',
+	'e.phone'=>'Phone',
+	'e.fax'=>'Fax',
 );
 
 // Definition of fields for list
@@ -105,6 +107,8 @@ $arrayfields = array(
 	'e.address'=>array('label'=>$langs->trans("Address"), 'checked'=>0),
 	'e.zip'=>array('label'=>$langs->trans("Zip"), 'checked'=>0),
 	'e.town'=>array('label'=>$langs->trans("Town"), 'checked'=>0),
+	'e.phone'=>array('label'=>$langs->trans("Phone"), 'checked'=>0),
+	'e.fax'=>array('label'=>$langs->trans("Fax"), 'checked'=>0),
 	'stockqty'=>array('type'=>'float', 'label'=>$langs->trans("PhysicalStock"), 'enabled'=>1, 'visible'=>-2, 'position'=>70),
 	'estimatedvalue'=>array('type'=>'float', 'label'=>$langs->trans("EstimatedStockValue"), 'enabled'=>1, 'visible'=>-2, 'position'=>71),
 	'sellvalue'=>array('type'=>'float', 'label'=>$langs->trans("EstimatedStockValueSell"), 'enabled'=>1, 'visible'=>-2, 'position'=>72),
@@ -182,7 +186,7 @@ $title = $langs->trans("ListOfWarehouses");
 
 // Build and execute select
 // --------------------------------------------------------------------
-$sql = "SELECT e.rowid, e.ref, e.statut, e.lieu, e.address, e.zip, e.town, e.fk_pays, e.fk_parent,";
+$sql = "SELECT e.rowid, e.ref, e.statut, e.lieu, e.address, e.zip, e.town, e.phone, e.fax, e.fk_pays, e.fk_parent,";
 $sql .= " SUM(p.pmp * ps.reel) as estimatedvalue, SUM(p.price * ps.reel) as sellvalue, SUM(ps.reel) as stockqty";
 // Add fields from extrafields
 if (!empty($extrafields->attributes[$object->table_element]['label'])) {
@@ -222,7 +226,7 @@ include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_sql.tpl.php';
 $parameters = array();
 $reshook = $hookmanager->executeHooks('printFieldListWhere', $parameters, $object); // Note that $action and $object may have been modified by hook
 $sql .= $hookmanager->resPrint;
-$sql .= " GROUP BY e.rowid, e.ref, e.statut, e.lieu, e.address, e.zip, e.town, e.fk_pays, e.fk_parent";
+$sql .= " GROUP BY e.rowid, e.ref, e.statut, e.lieu, e.address, e.zip, e.town, e.fk_pays, e.phone, e.fax, e.fk_parent";
 $totalnboflines = 0;
 $result = $db->query($sql);
 if ($result)
@@ -365,7 +369,7 @@ $selectedfields = $form->multiSelectArrayWithCheckbox('selectedfields', $arrayfi
 $selectedfields .= (count($arrayofmassactions) ? $form->showCheckAddButtons('checkforselect', 1) : '');
 
 print '<div class="div-table-responsive">'; // You can use div-table-responsive-no-min if you dont need reserved height for your table
-print '<table class="tagtable liste'.($moreforfilter ? " listwithfilterbefore" : "").'">'."\n";
+print '<table class="tagtable nobottomiftotal liste'.($moreforfilter ? " listwithfilterbefore" : "").'">'."\n";
 
 // Fields title search
 // --------------------------------------------------------------------
@@ -396,6 +400,14 @@ if (!empty($arrayfields['e.zip']['checked']))
 	print '<td class="liste_titre"></td>';
 }
 if (!empty($arrayfields['e.town']['checked']))
+{
+	print '<td class="liste_titre"></td>';
+}
+if (!empty($arrayfields['e.phone']['checked']))
+{
+	print '<td class="liste_titre"></td>';
+}
+if (!empty($arrayfields['e.fax']['checked']))
 {
 	print '<td class="liste_titre"></td>';
 }
@@ -461,6 +473,14 @@ if (!empty($arrayfields['e.zip']['checked']))
 if (!empty($arrayfields['e.town']['checked']))
 {
 	print_liste_field_titre($arrayfields['e.town']['label'], $_SERVER["PHP_SELF"], "e.town", "", $param, "", $sortfield, $sortorder);
+}
+if (!empty($arrayfields['e.phone']['checked']))
+{
+	print_liste_field_titre($arrayfields['e.phone']['label'], $_SERVER["PHP_SELF"], "e.phone", "", $param, "", $sortfield, $sortorder);
+}
+if (!empty($arrayfields['e.fax']['checked']))
+{
+	print_liste_field_titre($arrayfields['e.fax']['label'], $_SERVER["PHP_SELF"], "e.fax", "", $param, "", $sortfield, $sortorder);
 }
 if (!empty($arrayfields['stockqty']['checked']))
 {
@@ -551,6 +571,18 @@ if ($num)
 		if (!empty($arrayfields['e.town']['checked']))
 		{
 			print '<td>'.$obj->town.'</td>';
+		}
+
+		// Phone
+		if (!empty($arrayfields['e.phone']['checked']))
+		{
+			print '<td>'.$obj->phone.'</td>';
+		}
+
+		//Fax
+		if (!empty($arrayfields['e.fax']['checked']))
+		{
+			print '<td>'.$obj->fax.'</td>';
 		}
 
 		// Stock qty
@@ -651,6 +683,14 @@ if ($num)
 			$emptyColumn++;
 		}
 		if (!empty($arrayfields['e.town']['checked']))
+		{
+			$emptyColumn++;
+		}
+		if (!empty($arrayfields['e.phone']['checked']))
+		{
+			$emptyColumn++;
+		}
+		if (!empty($arrayfields['e.fax']['checked']))
 		{
 			$emptyColumn++;
 		}

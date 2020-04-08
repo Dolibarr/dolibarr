@@ -78,6 +78,7 @@ $suffix=GETPOST("suffix", 'aZ09');
 
 // Detect $paymentmethod
 $paymentmethod='';
+$reg = array();
 if (preg_match('/PM=([^\.]+)/', $FULLTAG, $reg))
 {
     $paymentmethod=$reg[1];
@@ -136,43 +137,57 @@ if (! empty($conf->global->ONLINE_PAYMENT_CSS_URL)) $head='<link rel="stylesheet
 $conf->dol_hide_topmenu=1;
 $conf->dol_hide_leftmenu=1;
 
-llxHeader($head, $langs->trans("PaymentForm"), '', '', 0, 0, '', '', '', 'onlinepaymentbody');
+$replacemainarea = (empty($conf->dol_hide_leftmenu) ? '<div>' : '').'<div>';
+llxHeader($head, $langs->trans("PaymentForm"), '', '', 0, 0, '', '', '', 'onlinepaymentbody', $replacemainarea);
 
 
 // Show message
 print '<span id="dolpaymentspan"></span>'."\n";
-print '<div id="dolpaymentdiv" align="center">'."\n";
+print '<div id="dolpaymentdiv" class="center">'."\n";
 
 
 // Show logo (search order: logo defined by PAYMENT_LOGO_suffix, then PAYMENT_LOGO, then small company logo, large company logo, theme logo, common logo)
-$width=0;
+$width = 0;
 // Define logo and logosmall
-$logosmall=$mysoc->logo_small;
-$logo=$mysoc->logo;
-$paramlogo='ONLINE_PAYMENT_LOGO_'.$suffix;
-if (! empty($conf->global->$paramlogo)) $logosmall=$conf->global->$paramlogo;
-elseif (! empty($conf->global->ONLINE_PAYMENT_LOGO)) $logosmall=$conf->global->ONLINE_PAYMENT_LOGO;
+$logosmall = $mysoc->logo_small;
+$logo = $mysoc->logo;
+$paramlogo = 'ONLINE_PAYMENT_LOGO_'.$suffix;
+if (!empty($conf->global->$paramlogo)) $logosmall = $conf->global->$paramlogo;
+elseif (!empty($conf->global->ONLINE_PAYMENT_LOGO)) $logosmall = $conf->global->ONLINE_PAYMENT_LOGO;
 //print '<!-- Show logo (logosmall='.$logosmall.' logo='.$logo.') -->'."\n";
 // Define urllogo
-$urllogo='';
-if (! empty($logosmall) && is_readable($conf->mycompany->dir_output.'/logos/thumbs/'.$logosmall))
+$urllogo = '';
+$urllogofull = '';
+if (!empty($logosmall) && is_readable($conf->mycompany->dir_output.'/logos/thumbs/'.$logosmall))
 {
-	$urllogo=DOL_URL_ROOT.'/viewimage.php?modulepart=mycompany&amp;file='.urlencode('logos/thumbs/'.$logosmall);
-	$width=150;
+	$urllogo = DOL_URL_ROOT.'/viewimage.php?modulepart=mycompany&amp;entity='.$conf->entity.'&amp;file='.urlencode('logos/thumbs/'.$logosmall);
+	$urllogofull = $dolibarr_main_url_root.'/viewimage.php?modulepart=mycompany&entity='.$conf->entity.'&file='.urlencode('logos/thumbs/'.$logosmall);
+	$width = 150;
 }
-elseif (! empty($logo) && is_readable($conf->mycompany->dir_output.'/logos/'.$logo))
+elseif (!empty($logo) && is_readable($conf->mycompany->dir_output.'/logos/'.$logo))
 {
-	$urllogo=DOL_URL_ROOT.'/viewimage.php?modulepart=mycompany&amp;file='.urlencode('logos/'.$logo);
-	$width=150;
+	$urllogo = DOL_URL_ROOT.'/viewimage.php?modulepart=mycompany&amp;entity='.$conf->entity.'&amp;file='.urlencode('logos/'.$logo);
+	$urllogofull = $dolibarr_main_url_root.'/viewimage.php?modulepart=mycompany&entity='.$conf->entity.'&file='.urlencode('logos/'.$logo);
+	$width = 150;
 }
+
 // Output html code for logo
 if ($urllogo)
 {
-	print '<center><img id="dolpaymentlogo" title="'.$title.'" src="'.$urllogo.'"';
+	print '<div class="backgreypublicpayment">';
+	print '<div class="logopublicpayment">';
+	print '<img id="dolpaymentlogo" src="'.$urllogo.'"';
 	if ($width) print ' width="'.$width.'"';
-	print '></center>';
-	print '<br>';
+	print '>';
+	print '</div>';
+	if (empty($conf->global->MAIN_HIDE_POWERED_BY)) {
+		print '<div class="poweredbypublicpayment opacitymedium right"><a href="https://www.dolibarr.org" target="dolibarr">'.$langs->trans("PoweredBy").'<br><img src="'.DOL_URL_ROOT.'/theme/dolibarr_logo.png" width="80px"></a></div>';
+	}
+	print '</div>';
 }
+
+
+print '<br><br>';
 
 
 if (! empty($conf->paypal->enabled))
@@ -643,6 +658,7 @@ if ($ispaymentok)
 				}
 				$paiement->paiementid   = $paymentTypeId;
 				$paiement->num_paiement = '';
+				$paiement->num_payment = '';
 				$paiement->note_public  = 'Online payment '.dol_print_date($now, 'standard').' from '.$ipaddress;
 				$paiement->ext_payment_id = $TRANSACTIONID;
 				$paiement->ext_payment_site = $service;
@@ -732,13 +748,10 @@ if ($ispaymentok)
     $currencyCodeType   = $_SESSION['currencyCodeType'];
     $FinalPaymentAmt    = $_SESSION["FinalPaymentAmt"];
 
-    // Appel des triggers
-    include_once DOL_DOCUMENT_ROOT . '/core/class/interfaces.class.php';
-    $interface=new Interfaces($db);
-    $result=$interface->run_triggers('PAYMENTONLINE_PAYMENT_OK', $object, $user, $langs, $conf);
-    if ($result < 0) { $error++; $errors=$interface->errors; }
-    // Fin appel triggers
-
+    // Call trigger
+    $result = $object->call_trigger('PAYMENTONLINE_PAYMENT_OK', $user);
+    if ($result < 0) $error++;
+    // End call triggers
 
     print $langs->trans("YourPaymentHasBeenRecorded")."<br>\n";
     if ($TRANSACTIONID) print $langs->trans("ThisIsTransactionId", $TRANSACTIONID)."<br><br>\n";
@@ -869,13 +882,10 @@ else
     $currencyCodeType   = $_SESSION['currencyCodeType'];
     $FinalPaymentAmt    = $_SESSION["FinalPaymentAmt"];
 
-    // Appel des triggers
-    include_once DOL_DOCUMENT_ROOT . '/core/class/interfaces.class.php';
-    $interface=new Interfaces($db);
-    $result=$interface->run_triggers('PAYMENTONLINE_PAYMENT_KO', $object, $user, $langs, $conf);
-    if ($result < 0) { $error++; $errors=$interface->errors; }
-    // Fin appel triggers
-
+    // Call trigger
+    $result = $object->call_trigger('PAYMENTONLINE_PAYMENT_KO', $user);
+    if ($result < 0) $error++;
+    // End call triggers
 
     print $langs->trans('DoExpressCheckoutPaymentAPICallFailed') . "<br>\n";
     print $langs->trans('DetailedErrorMessage') . ": " . $ErrorLongMsg."<br>\n";

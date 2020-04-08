@@ -68,3 +68,4 @@ ToOfferALinkForTestWebhook=Enllaç a la configuració de Stripe WebHook per truc
 ToOfferALinkForLiveWebhook=Enllaç a la configuració de Stripe WebHook per trucar a l’IPN (mode en directe)
 PaymentWillBeRecordedForNextPeriod=El pagament es registrarà per al període següent.
 ClickHereToTryAgain=<a href="%s">Feu clic aquí per tornar-ho a provar ...</a>
+CreationOfPaymentModeMustBeDoneFromStripeInterface=Degut a les regles d’autenticatització del client, la creació d’una targeta s’ha de fer des del backoffice Stripe. Podeu fer clic aquí per activar el registre de clients de Stripe: %s

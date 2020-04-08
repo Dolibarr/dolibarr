@@ -16,11 +16,17 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
-/**
+
+ /**
  *  \file       htdocs/compta/accounting-files.php
  *  \ingroup    compta
  *  \brief      Page to show portoflio and files of a thirdparty and download it
  */
+
+if ($_GET['action'] == 'dl' || $_POST['action'] == 'dl') {	// To not replace token when downloading file
+	if (! defined('NOTOKENRENEWAL'))           define('NOTOKENRENEWAL', '1');
+}
+
 require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
@@ -54,7 +60,7 @@ $hookmanager->initHooks(array('comptafileslist', 'globallist'));
 $limit = GETPOST('limit', 'int') ?GETPOST('limit', 'int') : $conf->liste_limit;
 $sortfield = GETPOST('sortfield', 'alpha');
 $sortorder = GETPOST('sortorder', 'alpha');
-$page = GETPOST('page', 'int');
+$page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOST("page", 'int');
 if (empty($page) || $page == -1) { $page = 0; }     // If $page is not defined, or '' or -1
 $offset = $limit * $page;
 $pageprev = $page - 1;
@@ -113,7 +119,7 @@ $error = 0;
 
 $filesarray = array();
 $result = false;
-if (($action == "searchfiles" || $action == "dl")) {
+if (($action == 'searchfiles' || $action == 'dl')) {
 	if (empty($date_start))
 	{
 		setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("DateStart")), null, 'errors');
@@ -133,7 +139,7 @@ if (($action == "searchfiles" || $action == "dl")) {
 
 		// Customer invoices
 		if (GETPOST('selectinvoices')) {
-			if (! empty($sql)) $sql .= " UNION ALL";
+			if (!empty($sql)) $sql .= " UNION ALL";
 			$sql .= "SELECT t.rowid as id, t.entity, t.ref, t.paye as paid, t.total as total_ht, t.total_ttc, t.tva as total_vat, t.fk_soc, t.datef as date, t.date_lim_reglement as date_due, 'Invoice' as item, s.nom as thirdparty_name, s.code_client as thirdparty_code, c.code as country_code, s.tva_intra as vatnum";
 		    $sql .= " FROM ".MAIN_DB_PREFIX."facture as t LEFT JOIN ".MAIN_DB_PREFIX."societe as s ON s.rowid = t.fk_soc LEFT JOIN ".MAIN_DB_PREFIX."c_country as c ON c.rowid = s.fk_pays";
 		    $sql .= " WHERE datef between ".$wheretail;
@@ -142,7 +148,7 @@ if (($action == "searchfiles" || $action == "dl")) {
 		}
 	    // Vendor invoices
 		if (GETPOST('selectsupplierinvoices')) {
-			if (! empty($sql)) $sql .= " UNION ALL";
+			if (!empty($sql)) $sql .= " UNION ALL";
 			$sql .= " SELECT t.rowid as id, t.entity, t.ref, t.paye as paid, t.total_ht, t.total_ttc, t.total_tva as total_vat, t.fk_soc, t.datef as date, t.date_lim_reglement as date_due, 'SupplierInvoice' as item, s.nom as thirdparty_name, s.code_fournisseur as thirdparty_code, c.code as country_code, s.tva_intra as vatnum";
 		    $sql .= " FROM ".MAIN_DB_PREFIX."facture_fourn as t LEFT JOIN ".MAIN_DB_PREFIX."societe as s ON s.rowid = t.fk_soc LEFT JOIN ".MAIN_DB_PREFIX."c_country as c ON c.rowid = s.fk_pays";
 		    $sql .= " WHERE datef between ".$wheretail;
@@ -151,7 +157,7 @@ if (($action == "searchfiles" || $action == "dl")) {
 		}
 	    // Expense reports
 		if (GETPOST('selectexpensereports')) {
-			if (! empty($sql)) $sql .= " UNION ALL";
+			if (!empty($sql)) $sql .= " UNION ALL";
 			$sql .= " SELECT t.rowid as id, t.entity, t.ref, t.paid, t.total_ht, t.total_ttc, t.total_tva as total_vat, t.fk_user_author as fk_soc, t.date_fin as date, t.date_fin as date_due, 'ExpenseReport' as item, CONCAT(CONCAT(u.lastname, ' '), u.firstname) as thirdparty_name, '' as thirdparty_code, c.code as country_code, '' as vatnum";
 		    $sql .= " FROM ".MAIN_DB_PREFIX."expensereport as t LEFT JOIN ".MAIN_DB_PREFIX."user as u ON u.rowid = t.fk_user_author LEFT JOIN ".MAIN_DB_PREFIX."c_country as c ON c.rowid = u.fk_country";
 		    $sql .= " WHERE date_fin between  ".$wheretail;
@@ -160,7 +166,7 @@ if (($action == "searchfiles" || $action == "dl")) {
 		}
 	    // Donations
 		if (GETPOST('selectdonations')) {
-			if (! empty($sql)) $sql .= " UNION ALL";
+			if (!empty($sql)) $sql .= " UNION ALL";
 			$sql .= " SELECT t.rowid as id, t.entity, t.ref, paid, amount as total_ht, amount as total_ttc, 0 as total_vat, 0 as fk_soc, t.datedon as date, t.datedon as date_due, 'Donation' as item, t.societe as thirdparty_name, '' as thirdparty_code, c.code as country_code, '' as vatnum";
 		    $sql .= " FROM ".MAIN_DB_PREFIX."don as t LEFT JOIN ".MAIN_DB_PREFIX."c_country as c ON c.rowid = t.fk_country";
 		    $sql .= " WHERE datedon between ".$wheretail;
@@ -169,7 +175,7 @@ if (($action == "searchfiles" || $action == "dl")) {
 		}
 	    // Paiements of salaries
 		if (GETPOST('selectpaymentsofsalaries')) {
-			if (! empty($sql)) $sql .= " UNION ALL";
+			if (!empty($sql)) $sql .= " UNION ALL";
 			$sql .= " SELECT t.rowid as id, t.entity, t.ref as ref, 1 as paid, amount as total_ht, amount as total_ttc, 0 as total_vat, t.fk_user as fk_soc, t.datep as date, t.dateep as date_due, 'SalaryPayment' as item, CONCAT(CONCAT(u.lastname, ' '), u.firstname)  as thirdparty_name, '' as thirdparty_code, c.code as country_code, '' as vatnum";
 		    $sql .= " FROM ".MAIN_DB_PREFIX."payment_salary as t LEFT JOIN ".MAIN_DB_PREFIX."user as u ON u.rowid = t.fk_user LEFT JOIN ".MAIN_DB_PREFIX."c_country as c ON c.rowid = u.fk_country";
 		    $sql .= " WHERE datep between ".$wheretail;
@@ -178,7 +184,7 @@ if (($action == "searchfiles" || $action == "dl")) {
 		}
 	    // Social contributions
 		if (GETPOST('selectsocialcontributions')) {
-			if (! empty($sql)) $sql .= " UNION ALL";
+			if (!empty($sql)) $sql .= " UNION ALL";
 			$sql .= " SELECT t.rowid as id, t.entity, t.libelle as ref, t.paye as paid, t.amount as total_ht, t.amount as total_ttc, 0 as total_tva, 0 as fk_soc, t.date_creation as date, t.date_ech as date_due, 'SocialContributions' as item, '' as thirdparty_name, '' as thirdparty_code, '' as country_code, '' as vatnum";
 		    $sql .= " FROM ".MAIN_DB_PREFIX."chargesociales as t";
 		    $sql .= " WHERE date_creation between ".$wheretail;
@@ -259,7 +265,7 @@ if (($action == "searchfiles" || $action == "dl")) {
 		            {
 		                $result = true;
 
-		                $files = dol_dir_list($upload_dir, "files", 0, '', '(\.meta|_preview\.png)$', '', SORT_ASC, 1);
+		                $files = dol_dir_list($upload_dir, "files", 0, '', '(\.meta|_preview.*\.png)$', '', SORT_ASC, 1);
 		                //var_dump($upload_dir);
 		                //var_dump($files);
 		                if (count($files) < 1)
@@ -467,7 +473,7 @@ print ' - '.$form->selectDate($date_stop, 'date_stop', 0, 0, 0, "", 1, 1, 0)."\n
 if (!empty($conf->multicompany->enabled) && is_object($mc))
 {
 	$mc->getInfo($conf->entity);
-	print '<span class="marginleftonly marginrightonly'.(empty($conf->global->MULTICOMPANY_ALLOW_EXPORT_ACCOUNTING_DOC_FOR_ALL_ENTITIES)?' opacitymedium':'').'">('.$langs->trans("Entity").' : ';
+	print '<span class="marginleftonly marginrightonly'.(empty($conf->global->MULTICOMPANY_ALLOW_EXPORT_ACCOUNTING_DOC_FOR_ALL_ENTITIES) ? ' opacitymedium' : '').'">('.$langs->trans("Entity").' : ';
 	print "<td>";
 	if (!empty($conf->global->MULTICOMPANY_ALLOW_EXPORT_ACCOUNTING_DOC_FOR_ALL_ENTITIES)) {
 		print $mc->select_entities(GETPOSTISSET('search_entity') ? GETPOST('search_entity', 'int') : $mc->id, 'search_entity', '', false, false, false, false, true);
@@ -488,8 +494,8 @@ $listofchoices = array(
 	'selectpaymentsofsalaries'=>array('label'=>'SalariesPayments', 'lang'=>'salaries'),
 	'selectsocialcontributions'=>array('label'=>'SocialContributions')
 );
-foreach($listofchoices as $choice => $val) {
-	$checked = (((! GETPOSTISSET('search') && $action != 'searchfiles') || GETPOST($choice))?' checked="checked"':'');
+foreach ($listofchoices as $choice => $val) {
+	$checked = (((!GETPOSTISSET('search') && $action != 'searchfiles') || GETPOST($choice)) ? ' checked="checked"' : '');
 	print '<div class="paddingleft inline-block marginrightonly"><input type="checkbox" name="'.$choice.'" value="1"'.$checked.'> '.$langs->trans($val['label']).'</div>';
 }
 
@@ -508,17 +514,17 @@ if (!empty($date_start) && !empty($date_stop))
     $param .= '&date_stopday='.GETPOST('date_stopday', 'int');
     $param .= '&date_stopmonth='.GETPOST('date_stopmonth', 'int');
     $param .= '&date_stopyear='.GETPOST('date_stopyear', 'int');
-    foreach($listofchoices as $choice => $val) {
-    	$param.='&'.$choice.'='.(GETPOST($choice, 'int')?1:0);
+    foreach ($listofchoices as $choice => $val) {
+    	$param .= '&'.$choice.'='.(GETPOST($choice, 'int') ? 1 : 0);
     }
     print '<form name="dl" action="?action=dl" method="POST" >'."\n";
-    print '<input type="hidden" name="token" value="'.newToken().'">';
+    print '<input type="hidden" name="token" value="'.currentToken().'">';
 
     echo dol_print_date($date_start, 'day')." - ".dol_print_date($date_stop, 'day');
 
     print '<input type="hidden" name="date_start" value="'.dol_print_date($date_start, 'dayxcard').'" />';
     print '<input type="hidden" name="date_stop"  value="'.dol_print_date($date_stop, 'dayxcard').'" />';
-    foreach($listofchoices as $choice => $val) {
+    foreach ($listofchoices as $choice => $val) {
     	print '<input type="hidden" name="'.$choice.'" value="'.GETPOST($choice).'">';
     }
 

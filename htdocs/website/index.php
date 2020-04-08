@@ -51,7 +51,7 @@ $websiteid = GETPOST('websiteid', 'int');
 $websitekey = GETPOST('website', 'alpha');
 $page = GETPOST('page', 'alpha');
 $pageid = GETPOST('pageid', 'int');
-$pageref = GETPOST('pageref', 'aZ09');
+$pageref = GETPOST('pageref', 'alphanohtml');
 $action = GETPOST('action', 'aZ09');
 $confirm = GETPOST('confirm', 'alpha');
 $cancel = GETPOST('cancel', 'alpha');
@@ -89,7 +89,7 @@ if (GETPOST('refreshsite') || GETPOST('refreshsite_x') || GETPOST('refreshsite.x
 $limit = GETPOST('limit', 'int') ?GETPOST('limit', 'int') : $conf->liste_limit;
 $sortfield = GETPOST("sortfield", 'alpha');
 $sortorder = GETPOST("sortorder", 'alpha');
-$page = GETPOST("page", 'int');
+$page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOST("page", 'int');
 if (empty($page) || $page == -1) { $page = 0; }     // If $page is not defined, or '' or -1
 $offset = $limit * $page;
 $pageprev = $page - 1;
@@ -121,7 +121,7 @@ if ($websiteid > 0 || $websitekey)
 
 $website = $object;
 
-// Check pageid received as aprameter
+// Check pageid received as parameter
 if ($pageid < 0) $pageid = 0;
 if (($pageid > 0 || $pageref) && $action != 'addcontainer')
 {
@@ -794,6 +794,7 @@ if ($action == 'addcontainer')
 		$objectpage->image = GETPOST('WEBSITE_IMAGE', 'alpha');
 		$objectpage->keywords = GETPOST('WEBSITE_KEYWORDS', 'alphanohtml');
 		$objectpage->htmlheader = GETPOST('htmlheader', 'none');
+		$objectpage->author_alias = GETPOST('WEBSITE_AUTHORALIAS', 'alphanohtml');
 
 		$substitutionarray = array();
 		$substitutionarray['__WEBSITE_CREATE_BY__'] = $user->getFullName($langs);
@@ -1437,6 +1438,7 @@ if ($action == 'updatemeta')
 		$objectpage->keywords = GETPOST('WEBSITE_KEYWORDS', 'alphanohtml');
 		$objectpage->htmlheader = trim(GETPOST('htmlheader', 'none'));
 		$objectpage->fk_page = (GETPOST('pageidfortranslation', 'int') > 0 ? GETPOST('pageidfortranslation', 'int') : 0);
+		$objectpage->author_alias = trim(GETPOST('WEBSITE_AUTHORALIAS', 'alphanohtml'));
 
 		$newdatecreation = dol_mktime(GETPOST('datecreationhour', 'int'), GETPOST('datecreationmin', 'int'), GETPOST('datecreationsec', 'int'), GETPOST('datecreationmonth', 'int'), GETPOST('datecreationday', 'int'), GETPOST('datecreationyear', 'int'));
 		if ($newdatecreation) $objectpage->date_creation = $newdatecreation;
@@ -2072,7 +2074,7 @@ if (!GETPOST('hide_websitemenu'))
 	// List of website
 	print '<span class="websiteselection">';
 	$out = '';
-	$out .= '<select name="website" class="minwidth100 maxwidth300" id="website">';
+	$out .= '<select name="website" class="minwidth100 maxwidth300 maxwidth150onsmartphone" id="website">';
 	if (empty($object->records)) $out .= '<option value="-1">&nbsp;</option>';
 	// Loop on each sites
 	$i = 0;
@@ -2258,7 +2260,7 @@ if (!GETPOST('hide_websitemenu'))
 
 		if ($action != 'addcontainer')
 		{
-			print '<span class="websiteselection">'.$formwebsite->selectContainer($website, 'pageid', $pageid, 0, $action).'</span>';
+			print '<span class="websiteselection">'.$formwebsite->selectContainer($website, 'pageid', $pageid, 0, $action, 'maxwidth200onsmartphone').'</span>';
 		}
 		else
 		{
@@ -3066,6 +3068,7 @@ if ($action == 'editmeta' || $action == 'createcontainer')
 		$pagedatemodification = $objectpage->date_modification;
 		$pageauthorid = $objectpage->fk_user_creat;
 		$pageusermodifid = $objectpage->fk_user_modif;
+		$pageauthoralias = $objectpage->author_alias;
 	}
 	else
 	{
@@ -3073,6 +3076,7 @@ if ($action == 'editmeta' || $action == 'createcontainer')
 		$pagedatecreation = dol_now();
 		$pageauthorid = $user->id;
 		$pageusermodifid = 0;
+		$pageauthoralias = '';
 	}
 	if (GETPOST('WEBSITE_TITLE', 'alpha'))       $pagetitle = GETPOST('WEBSITE_TITLE', 'alpha');
 	if (GETPOST('WEBSITE_PAGENAME', 'alpha'))    $pageurl = GETPOST('WEBSITE_PAGENAME', 'alpha');
@@ -3230,6 +3234,12 @@ if ($action == 'editmeta' || $action == 'createcontainer')
 	    $fuser->fetch($pageauthorid);
 	    print $fuser->getNomUrl(1);
 	}
+	print '</td></tr>';
+
+	print '<tr><td>';
+	print $langs->trans('PublicAuthorAlias');
+	print '</td><td>';
+	print '<input type="text" class="flat minwidth300" name="WEBSITE_AUTHORALIAS" value="'.dol_escape_htmltag($pageauthoralias).'">';
 	print '</td></tr>';
 
 	print '<tr><td>';
@@ -3485,6 +3495,7 @@ if ($action == 'replacesite' || $action == 'replacesiteconfirm')
 					print '<td class="tdoverflow100">'.$answerrecord->description.'</td>';
 					print '<td>';
 					$param = '?action=replacesiteconfirm';
+					$param .= '&websiteid='.$website->id;
 					$param .= '&optioncontent='.GETPOST('optioncontent');
 					$param .= '&optionmeta='.GETPOST('optionmeta');
 					$param .= '&optionsitefiles='.GETPOST('optionsitefiles');
@@ -3631,10 +3642,20 @@ if ($action == 'preview' || $action == 'createfromclone' || $action == 'createpa
 		// If mode WEBSITE_SUBCONTAINERSINLINE is on
 		if (!empty($conf->global->WEBSITE_SUBCONTAINERSINLINE))
 		{
+			// TODO Check file $filephp exists, if not create it.
+
 			//var_dump($filetpl);
 			$filephp = $filetpl;
 			ob_start();
-			include $filephp;
+			try {
+				$res = include $filephp;
+				if (empty($res)) {
+					print "ERROR: Failed to include file '".$filephp."'. Try to edit and save page.";
+				}
+			} catch(Exception $e)
+			{
+				print $e->getMessage();
+			}
 			$newcontent = ob_get_contents();
 			ob_end_clean();
 		}

@@ -1780,7 +1780,9 @@ function company_admin_prepare_head()
 	$head[$h][2] = 'accountant';
 	$h++;
 
-	complete_head_from_modules($conf, $langs, null, $head, $h, 'company_admin', 'remove');
+	complete_head_from_modules($conf, $langs, null, $head, $h, 'mycompany_admin', 'add');
+
+	complete_head_from_modules($conf, $langs, null, $head, $h, 'mycompany_admin', 'remove');
 
 	return $head;
 }
@@ -1807,7 +1809,7 @@ function email_admin_prepare_head()
 		if ($conf->mailing->enabled)
 		{
 			$head[$h][0] = DOL_URL_ROOT."/admin/mails_emailing.php";
-			$head[$h][1] = $langs->trans("OutGoingEmailSetupForEmailing");
+			$head[$h][1] = $langs->trans("OutGoingEmailSetupForEmailing", $langs->transnoentitiesnoconv("EMailing"));
 			$head[$h][2] = 'common_emailing';
 			$h++;
 		}

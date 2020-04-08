@@ -348,7 +348,7 @@ if (!empty($conf->facture->enabled) && $user->rights->facture->lire)
 	$sql .= " GROUP BY f.rowid, f.ref, f.fk_statut, f.type, f.total, f.tva, f.total_ttc, f.paye, f.tms, f.date_lim_reglement,";
 	$sql .= " s.nom, s.rowid, s.code_client, s.code_compta, s.email,";
 	$sql .= " cc.rowid, cc.code";
-	$sql .= " ORDER BY f.tms DESC ";
+	$sql .= " ORDER BY f.tms DESC";
 	$sql .= $db->plimit($max, 0);
 
 	$resql = $db->query($sql);

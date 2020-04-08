@@ -91,7 +91,7 @@ GoToSetupArea=Go to Dolibarr (setup area)
 MigrationNotFinished=The database version is not completely up to date: run the upgrade process again.
 GoToUpgradePage=Go to upgrade page again
 WithNoSlashAtTheEnd=Without the slash "/" at the end
-DirectoryRecommendation=It is recommended to use a directory outside of the web pages.
+DirectoryRecommendation=<span class="warning">IMPORTANT</span>: You must use a directory that is outside of the web pages (so do not use a subdirectory of previous parameter).
 LoginAlreadyExists=Already exists
 DolibarrAdminLogin=Dolibarr admin login
 AdminLoginAlreadyExists=Dolibarr administrator account '<b>%s</b>' already exists. Go back if you want to create another one.

@@ -353,7 +353,7 @@ class Website extends CommonObject
 
 
 	/**
-	 * Load object in memory from the database
+	 * Load all object in memory ($this->records) from the database
 	 *
 	 * @param string $sortorder Sort Order
 	 * @param string $sortfield Sort field

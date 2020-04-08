@@ -29,9 +29,9 @@ require_once DOL_DOCUMENT_ROOT .'/core/modules/expensereport/modules_expenserepo
 class mod_expensereport_jade extends ModeleNumRefExpenseReport
 {
 	/**
-     * Dolibarr version of the loaded document
-     * @var string
-     */
+	 * Dolibarr version of the loaded document
+	 * @var string
+	 */
 	public $version = 'dolibarr';		// 'development', 'experimental', 'dolibarr'
 
 	public $prefix='ER';
@@ -54,16 +54,16 @@ class mod_expensereport_jade extends ModeleNumRefExpenseReport
 	public $name='Jade';
 
 
-    /**
-     *  Return description of numbering model
-     *
-     *  @return     string      Text with description
-     */
-    public function info()
-    {
-        global $langs;
-        return $langs->trans("SimpleNumRefModelDesc", $this->prefix);
-    }
+	/**
+	 *  Return description of numbering model
+	 *
+	 *  @return     string      Text with description
+	 */
+	public function info()
+	{
+		global $langs;
+		return $langs->trans("SimpleNumRefModelDesc", $this->prefix);
+	}
 
 
 	/**
@@ -71,19 +71,19 @@ class mod_expensereport_jade extends ModeleNumRefExpenseReport
 	 *
 	 *  @return     string      Example
 	 */
-    public function getExample()
+	public function getExample()
 	{
 		return $this->prefix."0501-0001";
 	}
 
 
 	/**
-     *  Checks if the numbers already in force in the data base do not
-     *  cause conflicts that would prevent this numbering from working.
+	 *  Checks if the numbers already in the database do not
+	 *  cause conflicts that would prevent this numbering working.
 	 *
 	 *  @return     boolean     false if conflict, true if ok
 	 */
-    public function canBeActivated()
+	public function canBeActivated()
 	{
 		global $conf,$langs,$db;
 
@@ -117,7 +117,7 @@ class mod_expensereport_jade extends ModeleNumRefExpenseReport
 	 *  @param  Object		$object		Object we need next value for
 	 *  @return string      			Value if KO, <0 if KO
 	 */
-    public function getNextValue($object)
+	public function getNextValue($object)
 	{
 		global $db,$conf;
 
@@ -139,19 +139,19 @@ class mod_expensereport_jade extends ModeleNumRefExpenseReport
 
 			$result = $db->query($sql);
 
-            if ($db->num_rows($result) > 0) {
-                $objp = $db->fetch_object($result);
-                $newref = $objp->max;
-                $newref++;
-                while (strlen($newref) < $num_car) {
-                    $newref = "0".$newref;
-                }
-            } else {
-                $newref = 1;
-                while (strlen($newref) < $num_car) {
-                    $newref = "0".$newref;
-                }
-            }
+			if ($db->num_rows($result) > 0) {
+				$objp = $db->fetch_object($result);
+				$newref = $objp->max;
+				$newref++;
+				while (strlen($newref) < $num_car) {
+					$newref = "0".$newref;
+				}
+			} else {
+				$newref = 1;
+				while (strlen($newref) < $num_car) {
+					$newref = "0".$newref;
+				}
+			}
 
 			$ref_number_int = ($newref+1)-1;
 
@@ -202,8 +202,8 @@ class mod_expensereport_jade extends ModeleNumRefExpenseReport
 
 		$yymm = strftime("%y%m", $date);
 
-    	if ($max >= (pow(10, 4) - 1)) $num=$max+1;	// If counter > 9999, we do not format on 4 chars, we take number as it is
-    	else $num = sprintf("%04s", $max+1);
+		if ($max >= (pow(10, 4) - 1)) $num=$max+1;	// If counter > 9999, we do not format on 4 chars, we take number as it is
+		else $num = sprintf("%04s", $max+1);
 
 		dol_syslog("mod_expensereport_jade::getNextValue return ".$this->prefix.$yymm."-".$num);
 		return $this->prefix.$yymm."-".$num;

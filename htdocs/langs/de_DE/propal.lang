@@ -76,11 +76,11 @@ TypeContact_propal_external_BILLING=Kontakt für Kundenrechnungen
 TypeContact_propal_external_CUSTOMER=Kundenkontakt für Angebot
 TypeContact_propal_external_SHIPPING=Kundenkontakt für Lieferung
 # Document models
-DocModelAzurDescription=A complete proposal model 
-DocModelCyanDescription=A complete proposal model
+DocModelAzurDescription=Ein vollständiges Angebotsmodell (alte Implementierung der Cyan-Vorlage)
+DocModelCyanDescription=Ein vollständiges Angebotsmodell
 DefaultModelPropalCreate=Erstellung Standardvorlage
 DefaultModelPropalToBill=Standard-Template, wenn Sie ein Angebot schließen wollen (zur Verrechung)
 DefaultModelPropalClosed=Standard Schablone wenn sie ein Geschäftsangebot schließen wollen. (ohne Rechnung)
 ProposalCustomerSignature=Bei Beauftragung: Name in Klarschrift, Ort, Datum, Unterschrift
 ProposalsStatisticsSuppliers=Statistik Lieferantenanfragen
-CaseFollowedBy=Case followed by
+CaseFollowedBy=Fall gefolgt von

@@ -1,5 +1,15 @@
 <?php
-    require '../main.inc.php';
+if (!defined('NOCSRFCHECK'))		define('NOCSRFCHECK', '1');
+if (!defined('NOTOKENRENEWAL'))	    define('NOTOKENRENEWAL', '1');
+if (!defined('NOREQUIREMENU'))		define('NOREQUIREMENU', '1');
+if (!defined('NOREQUIREHTML'))		define('NOREQUIREHTML', '1');
+if (!defined('NOREQUIREAJAX'))		define('NOREQUIREAJAX', '1');
+
+require '../main.inc.php';
+
+if (empty($user->rights->takepos->run)) {
+	accessforbidden();
+}
 
 if (isset($_GET['status'])) {
 	die(strtoupper($_SESSION['SMP_CURRENT_PAYMENT']));

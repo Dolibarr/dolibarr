@@ -98,7 +98,7 @@ if (empty($dateop)) $dateop = -1;
 $limit = GETPOST('limit', 'int') ?GETPOST('limit', 'int') : $conf->liste_limit;
 $sortfield = GETPOST("sortfield", 'alpha');
 $sortorder = GETPOST("sortorder", 'alpha');
-$page = GETPOST("page", 'int');
+$page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOST("page", 'int');
 $pageplusone = GETPOST("pageplusone", 'int');
 if ($pageplusone) $page = $pageplusone - 1;
 if (empty($page) || $page == -1) { $page = 0; }     // If $page is not defined, or '' or -1
@@ -806,7 +806,7 @@ if ($resql)
 
 	$morehtml = '<div class="inline-block '.(($buttonreconcile || $newcardbutton) ? 'marginrightonly' : '').'">';
 	$morehtml .= '<label for="pageplusone">'.$langs->trans("Page")."</label> "; // ' Page ';
-	$morehtml .= '<input type="text" name="pageplusone" id="pageplusone" class="flat right width25" value="'.($page + 1).'">';
+	$morehtml .= '<input type="text" name="pageplusone" id="pageplusone" class="flat right width25 pageplusone" value="'.($page + 1).'">';
 	$morehtml .= '/'.$nbtotalofpages.' ';
 	$morehtml .= '</div>';
 
@@ -1157,14 +1157,14 @@ if ($resql)
                 } else {
                     $color = '#'.$conf->global->BANK_COLORIZE_MOVEMENT_COLOR1;
                 }
-                $backgroundcolor = 'style="background-color: '.$color.';"';
+                $backgroundcolor = 'style="background: '.$color.';"';
             } else {
                 if (empty($conf->global->BANK_COLORIZE_MOVEMENT_COLOR2)) {
                     $color = '#7fdb86';
                 } else {
                     $color = '#'.$conf->global->BANK_COLORIZE_MOVEMENT_COLOR2;
                 }
-                $backgroundcolor = 'style="background-color: '.$color.';"';
+                $backgroundcolor = 'style="background: '.$color.';"';
             }
         }
         print '<tr class="oddeven" '.$backgroundcolor.'>';
@@ -1374,7 +1374,7 @@ if ($resql)
 		// Third party
     	if (!empty($arrayfields['bu.label']['checked']))
     	{
-        	print "<td>";
+        	print '<td class="tdoverflowmax150">';
 			if ($objp->url_id)
 			{
 				$companystatic->id = $objp->url_id;
@@ -1520,13 +1520,13 @@ if ($resql)
     	{
     	    if ($user->rights->banque->modifier || $user->rights->banque->consolidate)
     	    {
-    	        print '<a href="'.DOL_URL_ROOT.'/compta/bank/line.php?save_lastsearch_values=1&amp;rowid='.$objp->rowid.'&amp;account='.$objp->bankid.'&amp;page='.$page.'">';
+    	        print '<a class="editfielda" href="'.DOL_URL_ROOT.'/compta/bank/line.php?save_lastsearch_values=1&amp;rowid='.$objp->rowid.'&amp;account='.$objp->bankid.'&amp;page='.$page.'">';
     	        print img_edit();
     	        print '</a>';
     	    }
     	    else
     	    {
-    	        print '<a href="'.DOL_URL_ROOT.'/compta/bank/line.php?save_lastsearch_values=1&amp;rowid='.$objp->rowid.'&amp;account='.$objp->bankid.'&amp;page='.$page.'">';
+    	        print '<a class="editfielda" href="'.DOL_URL_ROOT.'/compta/bank/line.php?save_lastsearch_values=1&amp;rowid='.$objp->rowid.'&amp;account='.$objp->bankid.'&amp;page='.$page.'">';
     	        print img_view();
     	        print '</a>';
     	    }
@@ -1574,7 +1574,7 @@ if ($resql)
 	        if ($i == 1)
 	        {
 	            if ($num < $limit && empty($offset)) print '<td class="left">'.$langs->trans("Total").'</td>';
-	            else print '<td class="left">'.$langs->trans("Totalforthispage").'</td>';
+	            else print '<td class="left tdoverflowmax50" title="'.$langs->trans("Totalforthispage").'">'.$langs->trans("Totalforthispage").'</td>';
 	        }
 	        elseif ($totalarray['totaldebfield'] == $i) print '<td class="right">'.price(-1 * $totalarray['totaldeb']).'</td>';
 	        elseif ($totalarray['totalcredfield'] == $i) print '<td class="right">'.price($totalarray['totalcred']).'</td>';

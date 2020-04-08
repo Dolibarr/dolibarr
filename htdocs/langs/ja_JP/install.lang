@@ -91,7 +91,7 @@ GoToSetupArea=Dolibarr（セットアップの領域）に移動します
 MigrationNotFinished=The database version is not completely up to date: run the upgrade process again.
 GoToUpgradePage=ページを再度アップグレードする行く
 WithNoSlashAtTheEnd=末尾のスラッシュ&quot;/&quot;なし
-DirectoryRecommendation=It is recommended to use a directory outside of the web pages.
+DirectoryRecommendation=<span class="warning">IMPORTANT</span>: You must use a directory that is outside of the web pages (so do not use a subdirectory of previous parameter).
 LoginAlreadyExists=すでに存在しています
 DolibarrAdminLogin=Dolibarr adminログイン
 AdminLoginAlreadyExists=Dolibarr administrator account '<b>%s</b>' already exists. Go back if you want to create another one.

@@ -171,6 +171,13 @@ class Conf
 				$value = $objp->value;
 				if ($key)
 				{
+					// Allow constants values to be overridden by environment variables
+					if (isset($_SERVER['DOLIBARR_' . $key])) {
+						$value=$_SERVER['DOLIBARR_' . $key];
+					} elseif (isset($_ENV['DOLIBARR_' . $key])) {
+						$value=$_ENV['DOLIBARR_' . $key];
+					}
+
 					//if (! defined("$key")) define("$key", $value);	// In some cases, the constant might be already forced (Example: SYSLOG_HANDLERS during install)
 					$this->global->$key = $value;
 
@@ -683,7 +690,7 @@ class Conf
 
 		if (!isset($this->global->MAIN_USE_OLD_TITLE_BUTTON)) $this->global->MAIN_USE_OLD_TITLE_BUTTON = 0;
 
-		if (!isset($this->global->MAIN_JS_GRAPH)) $this->global->MAIN_JS_GRAPH = 'chart';	// Use chart.js library
+		if (!isset($this->global->MAIN_JS_GRAPH)) $this->global->MAIN_JS_GRAPH = 'chart'; // Use chart.js library
 
 		if (empty($this->global->MAIN_MODULE_DOLISTORE_API_SRV)) $this->global->MAIN_MODULE_DOLISTORE_API_SRV = 'https://www.dolistore.com';
 		if (empty($this->global->MAIN_MODULE_DOLISTORE_API_KEY)) $this->global->MAIN_MODULE_DOLISTORE_API_KEY = 'dolistorecatalogpublickey1234567';

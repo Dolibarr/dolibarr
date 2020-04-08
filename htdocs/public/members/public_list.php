@@ -56,10 +56,10 @@ function llxHeaderVierge($title, $head = "")
 
 	header("Content-type: text/html; charset=".$conf->file->character_set_client);
 	print "<html>\n";
-    print "<head>\n";
-    print "<title>".$title."</title>\n";
-    if ($head) print $head."\n";
-    print "</head>\n";
+	print "<head>\n";
+	print "<title>".$title."</title>\n";
+	if ($head) print $head."\n";
+	print "</head>\n";
 	print '<body class="public_body">'."\n";
 }
 
@@ -70,9 +70,9 @@ function llxHeaderVierge($title, $head = "")
  */
 function llxFooterVierge()
 {
-    printCommonFooter('public');
+	printCommonFooter('public');
 
-    print "</body>\n";
+	print "</body>\n";
 	print "</html>\n";
 }
 
@@ -80,7 +80,7 @@ function llxFooterVierge()
 $sortfield = GETPOST("sortfield", 'alpha');
 $sortorder = GETPOST("sortorder", 'alpha');
 $limit = GETPOST('limit', 'int') ?GETPOST('limit', 'int') : $conf->liste_limit;
-$page = GETPOST("page", 'int');
+$page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOST("page", 'int');
 if (empty($page) || $page == -1) { $page = 0; }     // If $page is not defined, or '' or -1
 $offset = $limit * $page;
 $pageprev = $page - 1;

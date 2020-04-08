@@ -121,3 +121,6 @@ BackToHomePage=Back to home page...
 TranslationLinks=Translation links
 YouTryToAccessToAFileThatIsNotAWebsitePage=You try to access to a page that is not a website page
 UseTextBetween5And70Chars=For good SEO practices, use a text between 5 and 70 characters
+MainLanguage=Main language
+OtherLanguages=Other languages
+UseManifest=Provide a manifest.json file

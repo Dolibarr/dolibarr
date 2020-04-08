@@ -552,29 +552,31 @@ class MyObject extends CommonObject
 		}
 		$this->newref = $num;
 
-		// Validate
-		$sql = "UPDATE ".MAIN_DB_PREFIX.$this->table_element;
-		$sql .= " SET ref = '".$this->db->escape($num)."',";
-		$sql .= " status = ".self::STATUS_VALIDATED.",";
-		$sql .= " date_validation = '".$this->db->idate($now)."',";
-		$sql .= " fk_user_valid = ".$user->id;
-		$sql .= " WHERE rowid = ".$this->id;
+		if (! empty($num)) {
+			// Validate
+			$sql = "UPDATE ".MAIN_DB_PREFIX.$this->table_element;
+			$sql .= " SET ref = '".$this->db->escape($num)."',";
+			$sql .= " status = ".self::STATUS_VALIDATED;
+			if (! empty($this->fields['date_validation'])) $sql .= ", date_validation = '".$this->db->idate($now)."',";
+			if (! empty($this->fields['fk_user_valid'])) $sql .= ", fk_user_valid = ".$user->id;
+			$sql .= " WHERE rowid = ".$this->id;
 
-		dol_syslog(get_class($this)."::validate()", LOG_DEBUG);
-		$resql = $this->db->query($sql);
-		if (!$resql)
-		{
-			dol_print_error($this->db);
-			$this->error = $this->db->lasterror();
-			$error++;
-		}
+			dol_syslog(get_class($this)."::validate()", LOG_DEBUG);
+			$resql = $this->db->query($sql);
+			if (!$resql)
+			{
+				dol_print_error($this->db);
+				$this->error = $this->db->lasterror();
+				$error++;
+			}
 
-		if (!$error && !$notrigger)
-		{
-			// Call trigger
-			$result = $this->call_trigger('MYOBJECT_VALIDATE', $user);
-			if ($result < 0) $error++;
-			// End call triggers
+			if (!$error && !$notrigger)
+			{
+				// Call trigger
+				$result = $this->call_trigger('MYOBJECT_VALIDATE', $user);
+				if ($result < 0) $error++;
+				// End call triggers
+			}
 		}
 
 		if (!$error)
@@ -755,8 +757,8 @@ class MyObject extends CommonObject
                 $label = $langs->trans("ShowMyObject");
                 $linkclose .= ' alt="'.dol_escape_htmltag($label, 1).'"';
             }
-            $linkclose.=' title="'.dol_escape_htmltag($label, 1).'"';
-            $linkclose.=' class="classfortooltip'.($morecss?' '.$morecss:'').'"';
+            $linkclose .= ' title="'.dol_escape_htmltag($label, 1).'"';
+            $linkclose .= ' class="classfortooltip'.($morecss ? ' '.$morecss : '').'"';
         }
         else $linkclose = ($morecss ? ' class="'.$morecss.'"' : '');
 
@@ -770,27 +772,27 @@ class MyObject extends CommonObject
 			if ($withpicto) $result .= img_object(($notooltip ? '' : $label), ($this->picto ? $this->picto : 'generic'), ($notooltip ? (($withpicto != 2) ? 'class="paddingright"' : '') : 'class="'.(($withpicto != 2) ? 'paddingright ' : '').'classfortooltip"'), 0, 0, $notooltip ? 0 : 1);
 		} else {
 			if ($withpicto) {
-				require_once DOL_DOCUMENT_ROOT . '/core/lib/files.lib.php';
+				require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 
 				list($class, $module) = explode('@', $this->picto);
-				$upload_dir = $conf->$module->multidir_output[$conf->entity] . "/$class/" . dol_sanitizeFileName($this->ref);
+				$upload_dir = $conf->$module->multidir_output[$conf->entity]."/$class/".dol_sanitizeFileName($this->ref);
 				$filearray = dol_dir_list($upload_dir, "files");
 				$filename = $filearray[0]['name'];
-				if(!empty($filename)){
+				if (!empty($filename)) {
 					$pospoint = strpos($filearray[0]['name'], '.');
 
-					$pathtophoto = $class . '/' . $this->ref . '/thumbs/' . substr($filename, 0, $pospoint) . '_mini' . substr($filename, $pospoint);
+					$pathtophoto = $class.'/'.$this->ref.'/thumbs/'.substr($filename, 0, $pospoint).'_mini'.substr($filename, $pospoint);
 					if (empty($conf->global->{strtoupper($module.'_'.$class).'_FORMATLISTPHOTOSASUSERS'})) {
-						$result .= '<div class="floatleft inline-block valignmiddle divphotoref"><div class="photoref"><img class="photo' . $module . '" alt="No photo" border="0" src="' . DOL_URL_ROOT . '/viewimage.php?modulepart=' . $module . '&entity=' . $conf->entity . '&file=' . urlencode($pathtophoto) . '"></div></div>';
+						$result .= '<div class="floatleft inline-block valignmiddle divphotoref"><div class="photoref"><img class="photo'.$module.'" alt="No photo" border="0" src="'.DOL_URL_ROOT.'/viewimage.php?modulepart='.$module.'&entity='.$conf->entity.'&file='.urlencode($pathtophoto).'"></div></div>';
 					}
 					else {
-						$result .= '<div class="floatleft inline-block valignmiddle divphotoref"><img class="photouserphoto userphoto" alt="No photo" border="0" src="' . DOL_URL_ROOT . '/viewimage.php?modulepart=' . $module . '&entity=' . $conf->entity . '&file=' . urlencode($pathtophoto) . '"></div>';
+						$result .= '<div class="floatleft inline-block valignmiddle divphotoref"><img class="photouserphoto userphoto" alt="No photo" border="0" src="'.DOL_URL_ROOT.'/viewimage.php?modulepart='.$module.'&entity='.$conf->entity.'&file='.urlencode($pathtophoto).'"></div>';
 					}
 
 					$result .= '</div>';
 				}
 				else {
-					$result.=img_object(($notooltip?'':$label), ($this->picto?$this->picto:'generic'), ($notooltip?(($withpicto != 2) ? 'class="paddingright"' : ''):'class="'.(($withpicto != 2) ? 'paddingright ' : '').'classfortooltip"'), 0, 0, $notooltip?0:1);
+					$result .= img_object(($notooltip ? '' : $label), ($this->picto ? $this->picto : 'generic'), ($notooltip ? (($withpicto != 2) ? 'class="paddingright"' : '') : 'class="'.(($withpicto != 2) ? 'paddingright ' : '').'classfortooltip"'), 0, 0, $notooltip ? 0 : 1);
 				}
 			}
 		}
@@ -951,7 +953,7 @@ class MyObject extends CommonObject
 		$langs->load("mymodule@myobject");
 
 		if (empty($conf->global->MYMODULE_MYOBJECT_ADDON)) {
-			$conf->global->MYMODULE_MYOBJECT_ADDON = 'mod_mymobject_standard';
+			$conf->global->MYMODULE_MYOBJECT_ADDON = 'mod_myobject_standard';
 		}
 
 		if (!empty($conf->global->MYMODULE_MYOBJECT_ADDON))
@@ -977,23 +979,28 @@ class MyObject extends CommonObject
 				return '';
 			}
 
-			$obj = new $classname();
-			$numref = $obj->getNextValue($this);
+			if (class_exists($classname)) {
+				$obj = new $classname();
+				$numref = $obj->getNextValue($this);
 
-			if ($numref != "")
-			{
-				return $numref;
-			}
-			else
-			{
-				$this->error = $obj->error;
-				//dol_print_error($this->db,get_class($this)."::getNextNumRef ".$obj->error);
+				if ($numref != '' && $numref != '-1')
+				{
+					return $numref;
+				}
+				else
+				{
+					$this->error = $obj->error;
+					//dol_print_error($this->db,get_class($this)."::getNextNumRef ".$obj->error);
+					return "";
+				}
+			} else {
+				print $langs->trans("Error")." ".$langs->trans("ClassNotFound").' '.$classname;
 				return "";
 			}
 		}
 		else
 		{
-			print $langs->trans("Error")." ".$langs->trans("Error_MYMODULE_MYOBJECT_ADDON_NotDefined");
+			print $langs->trans("ErrorNumberingModuleNotSetup", $this->element);
 			return "";
 		}
 	}
@@ -1013,6 +1020,9 @@ class MyObject extends CommonObject
 	{
 		global $conf, $langs;
 
+		$result = 0;
+		$includedocgeneration = 0;
+
 		$langs->load("mymodule@mymodule");
 
 		if (!dol_strlen($modele)) {
@@ -1027,7 +1037,11 @@ class MyObject extends CommonObject
 
 		$modelpath = "core/modules/mymodule/doc/";
 
-		return $this->commonGenerateDocument($modelpath, $modele, $outputlangs, $hidedetails, $hidedesc, $hideref, $moreparams);
+		if ($includedocgeneration) {
+			$result = $this->commonGenerateDocument($modelpath, $modele, $outputlangs, $hidedetails, $hidedesc, $hideref, $moreparams);
+		}
+
+		return $result;
 	}
 
 	/**

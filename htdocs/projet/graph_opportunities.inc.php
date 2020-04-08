@@ -29,19 +29,15 @@ if (!empty($conf->global->PROJECT_USE_OPPORTUNITIES))
 	        $obj = $db->fetch_object($resql);
 	        if ($obj)
 	        {
-	            //if ($row[1]!=-1 && ($row[1]!=3 || $row[2]!=1))
-	            {
-	                $valsnb[$obj->opp_status] = $obj->nb;
-	                $valsamount[$obj->opp_status] = $obj->opp_amount;
-	                $totalnb += $obj->nb;
-	                if ($obj->opp_status) $totaloppnb += $obj->nb;
-				if (!in_array($obj->code, array('WON', 'LOST')))
-	                {
+                $valsnb[$obj->opp_status] = $obj->nb;
+                $valsamount[$obj->opp_status] = $obj->opp_amount;
+                $totalnb += $obj->nb;
+                if ($obj->opp_status) $totaloppnb += $obj->nb;
+				if (!in_array($obj->code, array('WON', 'LOST'))) {
 					$totalamount += $obj->opp_amount;
 					$ponderated_opp_amount += $obj->ponderated_opp_amount;
 				}
-	            }
-	            $total += $row[0];
+	            $total += $obj->nb;
 	        }
 	        $i++;
 	    }

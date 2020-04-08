@@ -98,6 +98,11 @@ class WebsitePage extends CommonObject
 	 */
 	public $date_modification;
 
+	/**
+	 * @var string author_alias
+	 */
+	public $author_alias;
+
 
 	const STATUS_DRAFT = 0;
 	const STATUS_VALIDATED = 1;
@@ -128,7 +133,8 @@ class WebsitePage extends CommonObject
 		'tms'            =>array('type'=>'timestamp', 'label'=>'DateModification', 'enabled'=>1, 'visible'=>-1, 'notnull'=>1, 'position'=>501),
 		//'date_valid'    =>array('type'=>'datetime',     'label'=>'DateValidation',     'enabled'=>1, 'visible'=>-1, 'position'=>502),
 		'fk_user_creat'  =>array('type'=>'integer', 'label'=>'UserAuthor', 'enabled'=>1, 'visible'=>-1, 'notnull'=>true, 'position'=>510),
-		'fk_user_modif'  =>array('type'=>'integer', 'label'=>'UserModif', 'enabled'=>1, 'visible'=>-1, 'position'=>511),
+		'author_alias'   =>array('type'=>'varchar(64)', 'label'=>'AuthorAlias', 'enabled'=>1, 'visible'=>-1, 'index'=>0, 'position'=>511, 'comment'=>'Author alias'),
+		'fk_user_modif'  =>array('type'=>'integer', 'label'=>'UserModif', 'enabled'=>1, 'visible'=>-1, 'position'=>512),
 		//'fk_user_valid' =>array('type'=>'integer',      'label'=>'UserValidation',        'enabled'=>1, 'visible'=>-1, 'position'=>512),
 		'import_key'     =>array('type'=>'varchar(14)', 'label'=>'ImportId', 'enabled'=>1, 'visible'=>-1, 'index'=>1, 'position'=>1000, 'notnull'=>-1),
 	);
@@ -171,7 +177,7 @@ class WebsitePage extends CommonObject
 	 *                                  - If this is 0, the value into $page will be used. If not found or $page not defined, the default page of website_id will be used or the first page found if not set.
 	 *                                  - If value is < 0, we must exclude this ID.
 	 * @param string    $website_id     Web site id (page name must also be filled if this parameter is used)
-	 * @param string    $page           Page name (website id must also be filled if this parameter is used)
+	 * @param string    $page           Page name (website id must also be filled if this parameter is used). Exemple 'myaliaspage' or 'fr/myaliaspage'
 	 * @param string    $aliasalt       Alternative alias to search page (slow)
 	 *
 	 * @return int <0 if KO, 0 if not found, >0 if OK
@@ -199,7 +205,9 @@ class WebsitePage extends CommonObject
 		$sql .= " t.date_creation,";
 		$sql .= " t.tms as date_modification,";
 		$sql .= " t.fk_user_creat,";
-		$sql .= " t.fk_user_modif";
+		$sql .= " t.author_alias,";
+		$sql .= " t.fk_user_modif,";
+		$sql .= " t.import_key";
 		$sql .= ' FROM '.MAIN_DB_PREFIX.$this->table_element.' as t';
 		//$sql .= ' WHERE entity IN ('.getEntity('website').')';       // entity is on website level
 		$sql .= ' WHERE 1 = 1';
@@ -212,7 +220,17 @@ class WebsitePage extends CommonObject
 			if ($id < 0) $sql .= ' AND t.rowid <> '.abs($id);
 			if (null !== $website_id) {
 			    $sql .= " AND t.fk_website = '".$this->db->escape($website_id)."'";
-			    if ($page)		$sql .= " AND t.pageurl = '".$this->db->escape($page)."'";
+			    if ($page)		{
+			    	$pagetouse = $page;
+			    	$langtouse = '';
+			    	$tmppage = explode('/', $page);
+			    	if (! empty($tmppage[1])) {
+			    		$pagetouse = $tmppage[1];
+			    		if (strlen($tmppage[0])) $langtouse = $tmppage[0];
+			    	}
+			    	$sql .= " AND t.pageurl = '".$this->db->escape($pagetouse)."'";
+			    	if ($langtouse) $sql .= " AND t.lang = '".$this->db->escape($langtouse)."'";
+			    }
 			    if ($aliasalt)	$sql .= " AND (t.aliasalt LIKE '%,".$this->db->escape($aliasalt).",%' OR t.aliasalt LIKE '%, ".$this->db->escape($aliasalt).",%')";
 			}
 		}
@@ -246,7 +264,9 @@ class WebsitePage extends CommonObject
 				$this->date_creation = $this->db->jdate($obj->date_creation);
 				$this->date_modification = $this->db->jdate($obj->date_modification);
 				$this->fk_user_creat = $obj->fk_user_creat;
+				$this->author_alias = $obj->author_alias;
 				$this->fk_user_modif = $obj->fk_user_modif;
+				$this->import_key = $obj->import_key;
 			}
 			$this->db->free($resql);
 
@@ -264,7 +284,7 @@ class WebsitePage extends CommonObject
 	}
 
 	/**
-	 * Load list of objects in memory from the database.
+	 * Return array of all web site pages.
 	 *
 	 * @param  string      $websiteid    Web site
 	 * @param  string      $sortorder    Sort Order
@@ -300,7 +320,9 @@ class WebsitePage extends CommonObject
 		$sql .= " t.date_creation,";
 		$sql .= " t.tms as date_modification,";
 		$sql .= " t.fk_user_creat,";
-		$sql .= " t.fk_user_modif";
+		$sql .= " t.author_alias,";
+		$sql .= " t.fk_user_modif,";
+		$sql .= " t.import_key";
 		$sql .= ' FROM '.MAIN_DB_PREFIX.$this->table_element.' as t';
 		$sql .= ' WHERE t.fk_website = '.$websiteid;
 		// Manage filter
@@ -353,7 +375,9 @@ class WebsitePage extends CommonObject
 				$record->date_creation = $this->db->jdate($obj->date_creation);
 				$record->date_modification = $this->db->jdate($obj->date_modification);
 				$record->fk_user_creat = $obj->fk_user_creat;
+				$record->author_alias = $obj->author_alias;
 				$record->fk_user_modif = $obj->fk_user_modif;
+				$record->import_key = $obj->import_key;
 				//var_dump($record->id);
 				$records[$record->id] = $record;
 			}
@@ -533,12 +557,14 @@ class WebsitePage extends CommonObject
 		$object->pageurl = $newref;
 		$object->aliasalt = '';
 		$object->fk_user_creat = $user->id;
+		$object->author_alias = '';
 		$object->date_creation = $now;
 		$object->title = ($newtitle == '1' ? $object->title : ($newtitle ? $newtitle : $object->title));
 		if (!empty($newlang)) $object->lang = $newlang;
 		if ($istranslation) $object->fk_page = $fromid;
 		else $object->fk_page = 0;
 		if (!empty($newwebsite)) $object->fk_website = $newwebsite;
+		$object->import_key = '';
 
 		// Create clone
 		$object->context['createfromclone'] = 'createfromclone';
@@ -689,5 +715,6 @@ class WebsitePage extends CommonObject
 		$this->date_creation = $now - (24 * 30 * 3600);
 		$this->date_modification = $now - (24 * 7 * 3600);
 		$this->fk_user_creat = $user->id;
+		$this->author_alias = 'mypublicpseudo';
 	}
 }

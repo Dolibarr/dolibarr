@@ -25,8 +25,8 @@
 *  \brief      Page to move config in api
 */
 
-require_once DOL_DOCUMENT_ROOT.'/includes/stripe/init.php';
-require_once DOL_DOCUMENT_ROOT.'/includes/stripe/lib/Stripe.php';
+require_once DOL_DOCUMENT_ROOT.'/includes/stripe/stripe-php/init.php';
+require_once DOL_DOCUMENT_ROOT.'/includes/stripe/stripe-php/lib/Stripe.php';
 
 //global $stripe;
 global $conf;

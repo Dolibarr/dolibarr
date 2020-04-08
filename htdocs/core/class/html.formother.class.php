@@ -97,7 +97,7 @@ class FormOther
                 if ($obj->fk_user == 0) {
                 	$label .= ' <span class="opacitymedium">('.$langs->trans("Everybody").')</span>';
                 }
-                elseif (! empty($conf->global->EXPORTS_SHARE_MODELS) && empty($fk_user) && is_object($user) && $user->id != $obj->fk_user) {
+                elseif (!empty($conf->global->EXPORTS_SHARE_MODELS) && empty($fk_user) && is_object($user) && $user->id != $obj->fk_user) {
                 	$tmpuser = new User($this->db);
                 	$tmpuser->fetch($obj->fk_user);
                 	$label .= ' <span class="opacitymedium">('.$tmpuser->getFullName($langs).')</span>';
@@ -164,7 +164,7 @@ class FormOther
                 if ($obj->fk_user == 0) {
                 	$label .= ' <span class="opacitymedium">('.$langs->trans("Everybody").')</span>';
                 }
-                elseif (! empty($conf->global->EXPORTS_SHARE_MODELS) && empty($fk_user) && is_object($user) && $user->id != $obj->fk_user) {
+                elseif (!empty($conf->global->EXPORTS_SHARE_MODELS) && empty($fk_user) && is_object($user) && $user->id != $obj->fk_user) {
                 	$tmpuser = new User($this->db);
                 	$tmpuser->fetch($obj->fk_user);
                 	$label .= ' <span class="opacitymedium">('.$tmpuser->getFullName($langs).')</span>';
@@ -424,7 +424,7 @@ class FormOther
     public function select_salesrepresentatives($selected, $htmlname, $user, $showstatus = 0, $showempty = 1, $morecss = '', $norepresentative = 0)
     {
         // phpcs:enable
-        global $conf, $langs;
+        global $conf, $langs, $hookmanager;
 
         $langs->load('users');
 
@@ -432,61 +432,71 @@ class FormOther
         // Enhance with select2
         if ($conf->use_javascript_ajax)
         {
-            include_once DOL_DOCUMENT_ROOT . '/core/lib/ajax.lib.php';
+            include_once DOL_DOCUMENT_ROOT.'/core/lib/ajax.lib.php';
 
             $comboenhancement = ajax_combobox($htmlname);
             if ($comboenhancement)
             {
-            	$out.=$comboenhancement;
+            	$out .= $comboenhancement;
             }
         }
+
+	    $reshook = $hookmanager->executeHooks('addSQLWhereFilterOnSelectSalesRep', array(), $this, $action);
+
         // Select each sales and print them in a select input
-        $out.='<select class="flat'.($morecss?' '.$morecss:'').'" id="'.$htmlname.'" name="'.$htmlname.'">';
-        if ($showempty) $out.='<option value="0">&nbsp;</option>';
+        $out .= '<select class="flat'.($morecss ? ' '.$morecss : '').'" id="'.$htmlname.'" name="'.$htmlname.'">';
+        if ($showempty) $out .= '<option value="0">&nbsp;</option>';
 
         // Get list of users allowed to be viewed
         $sql_usr = "SELECT u.rowid, u.lastname, u.firstname, u.statut, u.login";
-        $sql_usr.= " FROM ".MAIN_DB_PREFIX."user as u";
+        $sql_usr .= " FROM ".MAIN_DB_PREFIX."user as u";
 
-        if (! empty($conf->global->MULTICOMPANY_TRANSVERSE_MODE))
+        if (!empty($conf->global->MULTICOMPANY_TRANSVERSE_MODE))
         {
-        	if (! empty($user->admin) && empty($user->entity) && $conf->entity == 1) {
-        		$sql_usr.= " WHERE u.entity IS NOT NULL"; // Show all users
+        	if (!empty($user->admin) && empty($user->entity) && $conf->entity == 1) {
+        		$sql_usr .= " WHERE u.entity IS NOT NULL"; // Show all users
         	} else {
-        		$sql_usr.= " WHERE EXISTS (SELECT ug.fk_user FROM ".MAIN_DB_PREFIX."usergroup_user as ug WHERE u.rowid = ug.fk_user AND ug.entity IN (".getEntity('usergroup')."))";
-        		$sql_usr.= " OR u.entity = 0"; // Show always superadmin
+        		$sql_usr .= " WHERE EXISTS (SELECT ug.fk_user FROM ".MAIN_DB_PREFIX."usergroup_user as ug WHERE u.rowid = ug.fk_user AND ug.entity IN (".getEntity('usergroup')."))";
+        		$sql_usr .= " OR u.entity = 0"; // Show always superadmin
         	}
         }
         else
         {
-        	$sql_usr.= " WHERE u.entity IN (".getEntity('user').")";
+        	$sql_usr .= " WHERE u.entity IN (".getEntity('user').")";
         }
 
-        if (empty($user->rights->user->user->lire)) $sql_usr.=" AND u.rowid = ".$user->id;
-        if (! empty($user->socid)) $sql_usr.=" AND u.fk_soc = ".$user->socid;
+        if (empty($user->rights->user->user->lire)) $sql_usr .= " AND u.rowid = ".$user->id;
+        if (!empty($user->socid)) $sql_usr .= " AND u.fk_soc = ".$user->socid;
+
+	    //Add hook to filter on user (for exemple on usergroup define in custom modules)
+	    if (!empty($reshook)) $sql_usr .= $hookmanager->resArray[0];
+
         // Add existing sales representatives of thirdparty of external user
         if (empty($user->rights->user->user->lire) && $user->socid)
         {
-            $sql_usr.=" UNION ";
-            $sql_usr.= "SELECT u2.rowid, u2.lastname, u2.firstname, u2.statut, u2.login";
-            $sql_usr.= " FROM ".MAIN_DB_PREFIX."user as u2, ".MAIN_DB_PREFIX."societe_commerciaux as sc";
+            $sql_usr .= " UNION ";
+            $sql_usr .= "SELECT u2.rowid, u2.lastname, u2.firstname, u2.statut, u2.login";
+            $sql_usr .= " FROM ".MAIN_DB_PREFIX."user as u2, ".MAIN_DB_PREFIX."societe_commerciaux as sc";
 
-            if (! empty($conf->global->MULTICOMPANY_TRANSVERSE_MODE))
+            if (!empty($conf->global->MULTICOMPANY_TRANSVERSE_MODE))
             {
-            	if (! empty($user->admin) && empty($user->entity) && $conf->entity == 1) {
-            		$sql_usr.= " WHERE u2.entity IS NOT NULL"; // Show all users
+            	if (!empty($user->admin) && empty($user->entity) && $conf->entity == 1) {
+            		$sql_usr .= " WHERE u2.entity IS NOT NULL"; // Show all users
             	} else {
-            		$sql_usr.= " WHERE EXISTS (SELECT ug2.fk_user FROM ".MAIN_DB_PREFIX."usergroup_user as ug2 WHERE u2.rowid = ug2.fk_user AND ug2.entity IN (".getEntity('usergroup')."))";
+            		$sql_usr .= " WHERE EXISTS (SELECT ug2.fk_user FROM ".MAIN_DB_PREFIX."usergroup_user as ug2 WHERE u2.rowid = ug2.fk_user AND ug2.entity IN (".getEntity('usergroup')."))";
             	}
             }
             else
             {
-            	$sql_usr.= " WHERE u2.entity IN (".getEntity('user').")";
+            	$sql_usr .= " WHERE u2.entity IN (".getEntity('user').")";
             }
 
-            $sql_usr.= " AND u2.rowid = sc.fk_user AND sc.fk_soc=".$user->socid;
+            $sql_usr .= " AND u2.rowid = sc.fk_user AND sc.fk_soc=".$user->socid;
+
+	        //Add hook to filter on user (for exemple on usergroup define in custom modules)
+	        if (!empty($reshook)) $sql_usr .= $hookmanager->resArray[1];
         }
-	    $sql_usr.= " ORDER BY statut DESC, lastname ASC";  // Do not use 'ORDER BY u.statut' here, not compatible with the UNION.
+	    $sql_usr .= " ORDER BY statut DESC, lastname ASC"; // Do not use 'ORDER BY u.statut' here, not compatible with the UNION.
         //print $sql_usr;exit;
 
         $resql_usr = $this->db->query($sql_usr);
@@ -494,34 +504,34 @@ class FormOther
         {
             while ($obj_usr = $this->db->fetch_object($resql_usr))
             {
-                $out.='<option value="'.$obj_usr->rowid.'"';
+                $out .= '<option value="'.$obj_usr->rowid.'"';
 
-                if ($obj_usr->rowid == $selected) $out.=' selected';
+                if ($obj_usr->rowid == $selected) $out .= ' selected';
 
-                $out.='>';
-                $out.=dolGetFirstLastname($obj_usr->firstname, $obj_usr->lastname);
+                $out .= '>';
+                $out .= dolGetFirstLastname($obj_usr->firstname, $obj_usr->lastname);
                 // Complete name with more info
-                $moreinfo=0;
-                if (! empty($conf->global->MAIN_SHOW_LOGIN))
+                $moreinfo = 0;
+                if (!empty($conf->global->MAIN_SHOW_LOGIN))
                 {
-                    $out.=($moreinfo?' - ':' (').$obj_usr->login;
+                    $out .= ($moreinfo ? ' - ' : ' (').$obj_usr->login;
                     $moreinfo++;
                 }
                 if ($showstatus >= 0)
                 {
 					if ($obj_usr->statut == 1 && $showstatus == 1)
 					{
-						$out.=($moreinfo?' - ':' (').$langs->trans('Enabled');
+						$out .= ($moreinfo ? ' - ' : ' (').$langs->trans('Enabled');
 	                	$moreinfo++;
 					}
 					if ($obj_usr->statut == 0)
 					{
-						$out.=($moreinfo?' - ':' (').$langs->trans('Disabled');
+						$out .= ($moreinfo ? ' - ' : ' (').$langs->trans('Disabled');
                 		$moreinfo++;
 					}
 				}
-				$out.=($moreinfo?')':'');
-                $out.='</option>';
+				$out .= ($moreinfo ? ')' : '');
+                $out .= '</option>';
             }
             $this->db->free($resql_usr);
         }
@@ -533,10 +543,10 @@ class FormOther
         if ($norepresentative)
         {
         	$langs->load("companies");
-        	$out.='<option value="-2"'.($selected == -2 ? ' selected':'').'>- '.$langs->trans("NoSalesRepresentativeAffected").' -</option>';
+        	$out .= '<option value="-2"'.($selected == -2 ? ' selected' : '').'>- '.$langs->trans("NoSalesRepresentativeAffected").' -</option>';
         }
 
-        $out.='</select>';
+        $out .= '</select>';
 
         return $out;
     }
@@ -1331,7 +1341,7 @@ class FormOther
 		}
 		else
 	    {
-	   		$selected=(($useempty && $value != '0' && $value != 'manual')?'':' selected');
+	   		$selected = (($useempty && $value != '0' && $value != 'manual') ? '' : ' selected');
 			$resultautomanual .= '<option value="'.$automatic.'">'.$langs->trans("Automatic").'</option>'."\n";
 			$resultautomanual .= '<option value="'.$manual.'"'.$selected.'>'.$langs->trans("Manual").'</option>'."\n";
 		}
@@ -1352,12 +1362,12 @@ class FormOther
 	{
 		global $langs, $extrafields, $form;
 
-		$YYYY=substr($langs->trans("Year"), 0, 1).substr($langs->trans("Year"), 0, 1).substr($langs->trans("Year"), 0, 1).substr($langs->trans("Year"), 0, 1);
-		$MM=substr($langs->trans("Month"), 0, 1).substr($langs->trans("Month"), 0, 1);
-		$DD=substr($langs->trans("Day"), 0, 1).substr($langs->trans("Day"), 0, 1);
-		$HH=substr($langs->trans("Hour"), 0, 1).substr($langs->trans("Hour"), 0, 1);
-		$MI=substr($langs->trans("Minute"), 0, 1).substr($langs->trans("Minute"), 0, 1);
-		$SS=substr($langs->trans("Second"), 0, 1).substr($langs->trans("Second"), 0, 1);
+		$YYYY = substr($langs->trans("Year"), 0, 1).substr($langs->trans("Year"), 0, 1).substr($langs->trans("Year"), 0, 1).substr($langs->trans("Year"), 0, 1);
+		$MM = substr($langs->trans("Month"), 0, 1).substr($langs->trans("Month"), 0, 1);
+		$DD = substr($langs->trans("Day"), 0, 1).substr($langs->trans("Day"), 0, 1);
+		$HH = substr($langs->trans("Hour"), 0, 1).substr($langs->trans("Hour"), 0, 1);
+		$MI = substr($langs->trans("Minute"), 0, 1).substr($langs->trans("Minute"), 0, 1);
+		$SS = substr($langs->trans("Second"), 0, 1).substr($langs->trans("Second"), 0, 1);
 
 		foreach ($object->fields as $key => $val) {
 			if (!$val['measure']) {
@@ -1409,12 +1419,12 @@ class FormOther
 	{
 		global $langs, $extrafields, $form;
 
-		$YYYY=substr($langs->trans("Year"), 0, 1).substr($langs->trans("Year"), 0, 1).substr($langs->trans("Year"), 0, 1).substr($langs->trans("Year"), 0, 1);
-		$MM=substr($langs->trans("Month"), 0, 1).substr($langs->trans("Month"), 0, 1);
-		$DD=substr($langs->trans("Day"), 0, 1).substr($langs->trans("Day"), 0, 1);
-		$HH=substr($langs->trans("Hour"), 0, 1).substr($langs->trans("Hour"), 0, 1);
-		$MI=substr($langs->trans("Minute"), 0, 1).substr($langs->trans("Minute"), 0, 1);
-		$SS=substr($langs->trans("Second"), 0, 1).substr($langs->trans("Second"), 0, 1);
+		$YYYY = substr($langs->trans("Year"), 0, 1).substr($langs->trans("Year"), 0, 1).substr($langs->trans("Year"), 0, 1).substr($langs->trans("Year"), 0, 1);
+		$MM = substr($langs->trans("Month"), 0, 1).substr($langs->trans("Month"), 0, 1);
+		$DD = substr($langs->trans("Day"), 0, 1).substr($langs->trans("Day"), 0, 1);
+		$HH = substr($langs->trans("Hour"), 0, 1).substr($langs->trans("Hour"), 0, 1);
+		$MI = substr($langs->trans("Minute"), 0, 1).substr($langs->trans("Minute"), 0, 1);
+		$SS = substr($langs->trans("Second"), 0, 1).substr($langs->trans("Second"), 0, 1);
 
 
 		foreach ($object->fields as $key => $val) {

@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2007-2012  Laurent Destailleur <eldy@users.sourceforge.net>
+/* Copyright (C) 2007-2020  Laurent Destailleur <eldy@users.sourceforge.net>
  * Copyright (C) 2014       Juanjo Menent       <jmenent@2byte.es>
  * Copyright (C) 2015       Florian Henry       <florian.henry@open-concept.pro>
  * Copyright (C) 2015       Raphaël Doursenaud  <rdoursenaud@gpcsolutions.fr>
@@ -28,6 +28,7 @@
 // Put here all includes required by your class file
 require_once DOL_DOCUMENT_ROOT .'/core/class/commonobject.class.php';
 require_once DOL_DOCUMENT_ROOT .'/core/class/commonobjectline.class.php';
+
 
 /**
  * Class Currency
@@ -92,6 +93,7 @@ class MultiCurrency extends CommonObject
 	 */
 	public $rate;
 
+
 	/**
 	 * Constructor
 	 *
@@ -99,7 +101,7 @@ class MultiCurrency extends CommonObject
 	 */
 	public function __construct(DoliDB $db)
 	{
-		$this->db = &$db;
+		$this->db = $db;
 
 		return 1;
 	}
@@ -107,16 +109,15 @@ class MultiCurrency extends CommonObject
 	/**
 	 * Create object into database
 	 *
-	 * @param  User $user      User that creates
-	 * @param  bool $trigger true=launch triggers after, false=disable triggers
-	 *
-	 * @return int <0 if KO, Id of created object if OK
+	 * @param  User $user      	User that creates
+	 * @param  bool $trigger 	true=launch triggers after, false=disable triggers
+	 * @return int 				<0 if KO, Id of created object if OK
 	 */
 	public function create(User $user, $trigger = true)
 	{
 		global $conf,$langs;
 
-		dol_syslog('Currency::create', LOG_DEBUG);
+		dol_syslog('MultiCurrency::create', LOG_DEBUG);
 
 		$error = 0;
 
@@ -152,7 +153,7 @@ class MultiCurrency extends CommonObject
 		if (!$resql) {
 			$error ++;
 			$this->errors[] = 'Error ' . $this->db->lasterror();
-			dol_syslog('Currency::create ' . join(',', $this->errors), LOG_ERR);
+			dol_syslog('MultiCurrency::create ' . join(',', $this->errors), LOG_ERR);
 		}
 
 		if (!$error) {
@@ -180,14 +181,13 @@ class MultiCurrency extends CommonObject
 	/**
 	 * Load object in memory from the database
 	 *
-	 * @param int    $id  Id object
-	 * @param string $code code
-	 *
-	 * @return int <0 if KO, 0 if not found, >0 if OK
+	 * @param int    $id  		Id object
+	 * @param string $code 		code
+	 * @return int 				<0 if KO, 0 if not found, >0 if OK
 	 */
 	public function fetch($id, $code = null)
 	{
-		dol_syslog('Currency::fetch', LOG_DEBUG);
+		dol_syslog('MultiCurrency::fetch', LOG_DEBUG);
 
 		global $conf;
 
@@ -224,7 +224,7 @@ class MultiCurrency extends CommonObject
 			}
 		} else {
 			$this->errors[] = 'Error ' . $this->db->lasterror();
-			dol_syslog('Currency::fetch ' . join(',', $this->errors), LOG_ERR);
+			dol_syslog('MultiCurrency::fetch ' . join(',', $this->errors), LOG_ERR);
 
 			return -1;
 		}
@@ -260,7 +260,7 @@ class MultiCurrency extends CommonObject
 			return $num;
 		} else {
 			$this->errors[] = 'Error ' . $this->db->lasterror();
-			dol_syslog('Currency::fetchAllCurrencyRate ' . join(',', $this->errors), LOG_ERR);
+			dol_syslog('MultiCurrency::fetchAllCurrencyRate ' . join(',', $this->errors), LOG_ERR);
 
 			return - 1;
 		}
@@ -269,16 +269,15 @@ class MultiCurrency extends CommonObject
 	/**
 	 * Update object into database
 	 *
-	 * @param  User $user      User that modifies
-	 * @param  bool $trigger true=launch triggers after, false=disable triggers
-	 *
-	 * @return int <0 if KO, >0 if OK
+	 * @param  User $user      	User that modifies
+	 * @param  bool $trigger 	true=launch triggers after, false=disable triggers
+	 * @return int 				<0 if KO, >0 if OK
 	 */
 	public function update(User $user, $trigger = true)
 	{
 		$error = 0;
 
-		dol_syslog('Currency::update', LOG_DEBUG);
+		dol_syslog('MultiCurrency::update', LOG_DEBUG);
 
 		// Clean parameters
 		$this->name = trim($this->name);
@@ -287,7 +286,7 @@ class MultiCurrency extends CommonObject
 		// Check parameters
 		if (empty($this->code)) {
 			$error++;
-			dol_syslog('Currency::update $this->code can not be empty', LOG_ERR);
+			dol_syslog('MultiCurrency::update $this->code can not be empty', LOG_ERR);
 
 			return -1;
 		}
@@ -298,14 +297,13 @@ class MultiCurrency extends CommonObject
 		$sql .= ' code=\''.$this->db->escape($this->code).'\'';
 		$sql .= ' WHERE rowid=' . $this->id;
 
-		dol_syslog(__METHOD__, LOG_DEBUG);
 		$this->db->begin();
 
 		$resql = $this->db->query($sql);
 		if (!$resql) {
 			$error ++;
 			$this->errors[] = 'Error ' . $this->db->lasterror();
-			dol_syslog('Currency::update ' . join(',', $this->errors), LOG_ERR);
+			dol_syslog('MultiCurrency::update ' . join(',', $this->errors), LOG_ERR);
 		}
 
 		if (!$error && $trigger) {
@@ -329,14 +327,13 @@ class MultiCurrency extends CommonObject
 	 * Delete object in database
 	 *
 	 * @param bool $trigger true=launch triggers after, false=disable triggers
-	 *
 	 * @return int <0 if KO, >0 if OK
 	 */
 	public function delete($trigger = true)
 	{
 		global $user;
 
-		dol_syslog('Currency::delete', LOG_DEBUG);
+		dol_syslog('MultiCurrency::delete', LOG_DEBUG);
 
 		$error = 0;
 
@@ -363,7 +360,7 @@ class MultiCurrency extends CommonObject
 			if (!$resql) {
 				$error ++;
 				$this->errors[] = 'Error ' . $this->db->lasterror();
-				dol_syslog('Currency::delete ' . join(',', $this->errors), LOG_ERR);
+				dol_syslog('MultiCurrency::delete ' . join(',', $this->errors), LOG_ERR);
 			}
 		}
 
@@ -398,16 +395,15 @@ class MultiCurrency extends CommonObject
 	}
 
 	/**
-	 * Delete rate in database
+	 * Add a Rate into database
 	 *
 	 * @param double	$rate	rate value
-	 *
-	 * @return int -1 if KO, 1 if OK
+	 * @return int 				-1 if KO, 1 if OK
 	 */
 	public function addRate($rate)
 	{
 	 	$currencyRate = new CurrencyRate($this->db);
-		$currencyRate->rate = $rate;
+		$currencyRate->rate = price2num($rate);
 
 		if ($currencyRate->create($this->id) > 0)
 		{
@@ -427,7 +423,6 @@ class MultiCurrency extends CommonObject
 	 *
 	 * @param	string	$code	currency code
 	 * @param	double	$rate	new rate
-	 *
 	 * @return int -1 if KO, 1 if OK, 2 if label found and OK
 	 */
     public function addRateFromDolibarr($code, $rate)
@@ -459,10 +454,9 @@ class MultiCurrency extends CommonObject
     }
 
 	 /**
-	 * Add new entry into llx_multicurrency_rate to historise
+	 * Add new entry into llx_multicurrency_rate
 	 *
 	 * @param double	$rate	rate value
-	  *
 	 * @return int <0 if KO, >0 if OK
      */
     public function updateRate($rate)
@@ -526,10 +520,13 @@ class MultiCurrency extends CommonObject
 
 	 	$sql1 = 'SELECT m.rowid, mc.rate FROM '.MAIN_DB_PREFIX.'multicurrency m';
 		$sql1.= ' LEFT JOIN '.MAIN_DB_PREFIX.'multicurrency_rate mc ON (m.rowid = mc.fk_multicurrency)';
-		$sql1.= ' WHERE m.code = \''.$db->escape($code).'\'';
+		$sql1.= " WHERE m.code = '".$db->escape($code)."'";
 		$sql1.= " AND m.entity IN (".getEntity('multicurrency').")";
 		$sql2= '';
-		if (!empty($conf->global->MULTICURRENCY_USE_RATE_ON_DOCUMENT_DATE) && !empty($date_document)) $sql2.= ' AND DATE_FORMAT(mc.date_sync, "%Y-%m-%d") = "'.date('Y-m-d', $date_document).'"';
+		if (!empty($conf->global->MULTICURRENCY_USE_RATE_ON_DOCUMENT_DATE) && !empty($date_document)) {	// Use last known rate compared to document date
+			$tmparray = dol_getdate($date_document);
+			$sql2.= " AND mc.date_sync <= '".$db->idate(dol_mktime(23, 59, 59, $tmparray['mon'], $tmparray['mday'], $tmparray['year'], true))."'";
+		}
 		$sql3.= ' ORDER BY mc.date_sync DESC LIMIT 1';
 
 		dol_syslog(__METHOD__, LOG_DEBUG);
@@ -625,11 +622,11 @@ class MultiCurrency extends CommonObject
 	}
 
 	/**
-	 * Sync rates from api
+	 * Sync rates from API
 	 *
 	 * @param 	string  $key                Key to use. Come from $conf->global->MULTICURRENCY_APP_ID.
 	 * @param   int     $addifnotfound      Add if not found
-     * @return  void
+     * @return  int							<0 if KO, >0 if OK
 	 */
 	public static function syncRates($key, $addifnotfound = 0)
 	{
@@ -669,11 +666,15 @@ class MultiCurrency extends CommonObject
 					}
 				}
 			}
-		}
+
+			return 1;
+        }
 		else
 		{
 		    dol_syslog("Failed to call endpoint ".$response->error->info, LOG_WARNING);
 			setEventMessages($langs->trans('multicurrency_syncronize_error', $response->error->info), null, 'errors');
+
+			return -1;
 		}
 	}
 

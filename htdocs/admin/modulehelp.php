@@ -243,10 +243,36 @@ $moduledesc=$objMod->getDesc();
 $moduleauthor=$objMod->getPublisher();
 $moduledir=strtolower(preg_replace('/^mod/i', '', get_class($objMod)));
 
+$const_name = 'MAIN_MODULE_'.strtoupper(preg_replace('/^mod/i', '', get_class($objMod)));
+
+$text = '<span class="opacitymedium">'.$langs->trans("LastActivationDate").':</span> ';
+if (! empty($conf->global->$const_name)) $text.=dol_print_date($objMod->getLastActivationDate(), 'dayhour');
+else $text.=$langs->trans("Disabled");
+$tmp = $objMod->getLastActivationInfo();
+$authorid = $tmp['authorid'];
+if ($authorid > 0)
+{
+	$tmpuser = new User($db);
+	$tmpuser->fetch($authorid);
+	$text.='<br><span class="opacitymedium">'.$langs->trans("LastActivationAuthor").':</span> ';
+	$text.= $tmpuser->getNomUrl(1);
+}
+$ip = $tmp['ip'];
+if ($ip)
+{
+	$text.='<br><span class="opacitymedium">'.$langs->trans("LastActivationIP").':</span> ';
+	$text.= $ip;
+}
+
+$moreinfo = $text;
+
+$title = ($modulename?$modulename:$moduledesc);
 
 print '<div class="centpercent">';
 
-print load_fiche_titre(($modulename?$modulename:$moduledesc), $moreinfo, 'object_'.$objMod->picto);
+$picto = 'object_'.$objMod->picto;
+
+print load_fiche_titre(($modulename?$modulename:$moduledesc), $moreinfo, $picto);
 print '<br>';
 
 dol_fiche_head($head, $mode, $title, -1);
@@ -255,8 +281,6 @@ if (! $modulename)
 {
 	dol_syslog("Error for module ".$key." - Property name of module looks empty", LOG_WARNING);
 }
-
-$const_name = 'MAIN_MODULE_'.strtoupper(preg_replace('/^mod/i', '', get_class($objMod)));
 
 // Load all lang files of module
 if (isset($objMod->langfiles) && is_array($objMod->langfiles))
@@ -290,46 +314,24 @@ $text='';
 
 if ($mode == 'desc')
 {
-    if ($moduledesc) $text.=$moduledesc.'<br><br>';
+    if ($moduledesc) $text .= '<br>'.$moduledesc.'<br><br><br>';
 
-    $text.='<strong>'.$langs->trans("Version").':</strong> '.$version;
+    $text.='<span class="opacitymedium">'.$langs->trans("Version").':</span> '.$version;
 
     $textexternal='';
     if ($objMod->isCoreOrExternalModule() == 'external')
     {
-        $textexternal.='<br><strong>'.$langs->trans("Origin").':</strong> '.$langs->trans("ExternalModule", $dirofmodule);
-        if ($objMod->editor_name != 'dolibarr') $textexternal.='<br><strong>'.$langs->trans("Publisher").':</strong> '.(empty($objMod->editor_name)?$langs->trans("Unknown"):$objMod->editor_name);
+        $textexternal.='<br><span class="opacitymedium">'.$langs->trans("Origin").':</span> '.$langs->trans("ExternalModule", $dirofmodule);
+        if ($objMod->editor_name != 'dolibarr') $textexternal.='<br><span class="opacitymedium">'.$langs->trans("Publisher").':</span> '.(empty($objMod->editor_name)?$langs->trans("Unknown"):$objMod->editor_name);
         $editor_url = $objMod->editor_url;
         if (! preg_match('/^http/', $editor_url)) $editor_url = 'http://'.$editor_url;
-        if (! empty($objMod->editor_url) && ! preg_match('/dolibarr\.org/i', $objMod->editor_url)) $textexternal.='<br><strong>'.$langs->trans("Url").':</strong> <a href="'.$editor_url.'" target="_blank">'.$objMod->editor_url.'</a>';
+        if (! empty($objMod->editor_url) && ! preg_match('/dolibarr\.org/i', $objMod->editor_url)) $textexternal.= ($objMod->editor_name != 'dolibarr' ? ' - ' : '').img_picto('', 'globe').' <a href="'.$editor_url.'" target="_blank">'.$objMod->editor_url.'</a>';
         $text.=$textexternal;
         $text.='<br>';
     }
     else
     {
-        $text.='<br><strong>'.$langs->trans("Origin").':</strong> '.$langs->trans("Core").'<br>';
-    }
-    $text.='<br><strong>'.$langs->trans("LastActivationDate").':</strong> ';
-    if (! empty($conf->global->$const_name)) $text.=dol_print_date($objMod->getLastActivationDate(), 'dayhour');
-    else $text.=$langs->trans("Disabled");
-    $text.='<br>';
-
-    $tmp = $objMod->getLastActivationInfo();
-    $authorid = $tmp['authorid'];
-    if ($authorid > 0)
-    {
-        $tmpuser = new User($db);
-        $tmpuser->fetch($authorid);
-        $text.='<strong>'.$langs->trans("LastActivationAuthor").':</strong> ';
-        $text.= $tmpuser->getNomUrl(1);
-        $text.='<br>';
-    }
-    $ip = $tmp['ip'];
-    if ($ip)
-    {
-        $text.='<strong>'.$langs->trans("LastActivationIP").':</strong> ';
-        $text.= $ip;
-        $text.='<br>';
+        $text.='<br><span class="opacitymedium">'.$langs->trans("Origin").':</span> '.$langs->trans("Core").'<br>';
     }
 
     $moduledesclong=$objMod->getDescLong();

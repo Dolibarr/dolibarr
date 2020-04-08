@@ -51,10 +51,10 @@ class modHRM extends DolibarrModules
 		$this->version = 'development';
 
 		$this->const_name = 'MAIN_MODULE_' . strtoupper($this->name);
-	    // Name of image file used for this module.
+		// Name of image file used for this module.
 		// If file is in theme/yourtheme/img directory under name object_pictovalue.png, use this->picto='pictovalue'
 		// If file is in module/img directory under name object_pictovalue.png, use this->picto='pictovalue@module'
-		$this->picto='generic';
+		$this->picto='hrm';
 
 		// define triggers
 		$this->module_parts = array();

@@ -331,6 +331,10 @@ PossibleValues=Mulige værdier
 GoOnMenuToCreateVairants=Gå på menu %s - %s for at forberede attributvarianter (som farver, størrelse, ...)
 UseProductFournDesc=Add a feature to define the descriptions of products defined by the vendors in addition to descriptions for customers
 ProductSupplierDescription=Vendor description for the product
+UseProductSupplierPackaging=Use packaging on supplier prices (recalculate quantities according to packaging set on supplier price when adding/updating line in supplier documents)
+PackagingForThisProduct=Packaging
+QtyRecalculatedWithPackaging=The quantity of the line were recalculated according to supplier packaging
+
 #Attributes
 VariantAttributes=Variant attributter
 ProductAttributes=Variant attributter for produkter
@@ -363,7 +367,7 @@ UsePercentageVariations=Brug procentvise variationer
 PercentageVariation=Procentvis variation
 ErrorDeletingGeneratedProducts=Der opstod en fejl under forsøg på at slette eksisterende varianter
 NbOfDifferentValues=Antal forskellige værdier
-NbProducts=Antal produkter
+NbProducts=Number of products
 ParentProduct=Forældrevarer
 HideChildProducts=Skjul varevarianter
 ShowChildProducts=Vis variantprodukter
@@ -376,3 +380,4 @@ ErrorProductCombinationNotFound=Varevariant ikke fundet
 ActionAvailableOnVariantProductOnly=Action only available on the variant of product
 ProductsPricePerCustomer=Product prices per customers
 ProductSupplierExtraFields=Additional Attributes (Supplier Prices)
+DeleteLinkedProduct=Delete the child product linked to the combination

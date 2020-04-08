@@ -32,14 +32,14 @@ require_once DOL_DOCUMENT_ROOT .'/core/modules/project/task/modules_task.php';
 class mod_task_simple extends ModeleNumRefTask
 {
 	/**
-     * Dolibarr version of the loaded document
-     * @var string
-     */
+	 * Dolibarr version of the loaded document
+	 * @var string
+	 */
 	public $version = 'dolibarr';		// 'development', 'experimental', 'dolibarr'
 
 	public $prefix='TK';
 
-    /**
+	/**
 	 * @var string Error code (or message)
 	 */
 	public $error='';
@@ -57,40 +57,40 @@ class mod_task_simple extends ModeleNumRefTask
 	public $name='Simple';
 
 
-    /**
-     *  Return description of numbering module
-     *
-     *  @return     string      Text with description
-     */
-    public function info()
-    {
-    	global $langs;
-      	return $langs->trans("SimpleNumRefModelDesc", $this->prefix);
-    }
+	/**
+	 *  Return description of numbering module
+	 *
+	 *  @return     string      Text with description
+	 */
+	public function info()
+	{
+		global $langs;
+	  	return $langs->trans("SimpleNumRefModelDesc", $this->prefix);
+	}
 
 
-    /**
-     *  Return an example of numbering module values
-     *
-     * 	@return     string      Example
-     */
-    public function getExample()
-    {
-        return $this->prefix."0501-0001";
-    }
+	/**
+	 *  Return an example of numbering module values
+	 *
+	 * 	@return     string      Example
+	 */
+	public function getExample()
+	{
+		return $this->prefix."0501-0001";
+	}
 
 
-    /**
-     *  Checks if the numbers already in force in the data base do not
-     *  cause conflicts that would prevent this numbering from working.
-     *
-     *  @return     boolean     false if conflict, true if ok
-     */
-    public function canBeActivated()
-    {
-    	global $conf,$langs,$db;
+	/**
+	 *  Checks if the numbers already in the database do not
+	 *  cause conflicts that would prevent this numbering working.
+	 *
+	 *  @return     boolean     false if conflict, true if ok
+	 */
+	public function canBeActivated()
+	{
+		global $conf,$langs,$db;
 
-        $coyymm=''; $max='';
+		$coyymm=''; $max='';
 
 		$posindice=8;
 		$sql = "SELECT MAX(CAST(SUBSTRING(task.ref FROM " . $posindice . ") AS SIGNED)) as max";
@@ -98,34 +98,34 @@ class mod_task_simple extends ModeleNumRefTask
 		$sql .= MAIN_DB_PREFIX . "projet AS project WHERE task.fk_projet=project.rowid";
 		$sql .= " AND task.ref LIKE '" . $db->escape($this->prefix) . "____-%'";
 		$sql .= " AND project.entity = " . $conf->entity;
-        $resql=$db->query($sql);
-        if ($resql)
-        {
-            $row = $db->fetch_row($resql);
-            if ($row) { $coyymm = substr($row[0], 0, 6); $max=$row[0]; }
-        }
-        if (! $coyymm || preg_match('/'.$this->prefix.'[0-9][0-9][0-9][0-9]/i', $coyymm))
-        {
-            return true;
-        }
-        else
-        {
+		$resql=$db->query($sql);
+		if ($resql)
+		{
+			$row = $db->fetch_row($resql);
+			if ($row) { $coyymm = substr($row[0], 0, 6); $max=$row[0]; }
+		}
+		if (! $coyymm || preg_match('/'.$this->prefix.'[0-9][0-9][0-9][0-9]/i', $coyymm))
+		{
+			return true;
+		}
+		else
+		{
 			$langs->load("errors");
 			$this->error=$langs->trans('ErrorNumRefModel', $max);
-            return false;
-        }
-    }
+			return false;
+		}
+	}
 
 
-    /**
-     *  Return next value
-     *
-     *  @param   Societe	$objsoc		Object third party
-     *  @param   Task	$object		Object Task
-     *  @return	string				Value if OK, 0 if KO
-     */
-    public function getNextValue($objsoc, $object)
-    {
+	/**
+	 *  Return next value
+	 *
+	 *  @param   Societe	$objsoc		Object third party
+	 *  @param   Task	$object		Object Task
+	 *  @return	string				Value if OK, 0 if KO
+	 */
+	public function getNextValue($objsoc, $object)
+	{
 		global $db,$conf;
 
 		// D'abord on recupere la valeur max
@@ -157,19 +157,19 @@ class mod_task_simple extends ModeleNumRefTask
 
 		dol_syslog("mod_task_simple::getNextValue return ".$this->prefix.$yymm."-".$num);
 		return $this->prefix.$yymm."-".$num;
-    }
+	}
 
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
-    /**
-     *  Return next reference not yet used as a reference
-     *
-     *  @param  Societe	$objsoc     Object third party
-     *  @param  Task	$object     Object task
-     *  @return string              Next not used reference
-     */
-    public function task_get_num($objsoc = 0, $object = '')
-    {
-        return $this->getNextValue($objsoc, $object);
-    }
+	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
+	/**
+	 *  Return next reference not yet used as a reference
+	 *
+	 *  @param  Societe	$objsoc     Object third party
+	 *  @param  Task	$object     Object task
+	 *  @return string              Next not used reference
+	 */
+	public function task_get_num($objsoc = 0, $object = '')
+	{
+		return $this->getNextValue($objsoc, $object);
+	}
 }

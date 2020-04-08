@@ -125,7 +125,7 @@ class Societe extends CommonObject
 	/**
 	 * @var array  Array with all fields and their property. Do not use it as a static var. It may be modified by constructor.
 	 */
-	public $fields=array(
+	public $fields = array(
 		'rowid' =>array('type'=>'integer', 'label'=>'TechnicalID', 'enabled'=>1, 'visible'=>-1, 'notnull'=>1, 'position'=>10),
 		'parent' =>array('type'=>'integer', 'label'=>'Parent', 'enabled'=>1, 'visible'=>-1, 'position'=>20),
 		'tms' =>array('type'=>'timestamp', 'label'=>'DateModification', 'enabled'=>1, 'visible'=>-1, 'notnull'=>1, 'position'=>25),
@@ -134,7 +134,7 @@ class Societe extends CommonObject
 		'name_alias' =>array('type'=>'varchar(128)', 'label'=>'Name alias', 'enabled'=>1, 'visible'=>-1, 'position'=>36, 'showoncombobox'=>1),
 		'entity' =>array('type'=>'integer', 'label'=>'Entity', 'default'=>1, 'enabled'=>1, 'visible'=>-2, 'notnull'=>1, 'position'=>40, 'index'=>1),
 		'ref_ext' =>array('type'=>'varchar(255)', 'label'=>'Ref ext', 'enabled'=>1, 'visible'=>0, 'position'=>45),
-		'ref_int' =>array('type'=>'varchar(60)', 'label'=>'Ref int', 'enabled'=>1, 'visible'=>0, 'position'=>50),	// deprecated
+		'ref_int' =>array('type'=>'varchar(60)', 'label'=>'Ref int', 'enabled'=>1, 'visible'=>0, 'position'=>50), // deprecated
 		'code_client' =>array('type'=>'varchar(24)', 'label'=>'Code client', 'enabled'=>1, 'visible'=>-1, 'position'=>55),
 		'code_fournisseur' =>array('type'=>'varchar(24)', 'label'=>'Code fournisseur', 'enabled'=>1, 'visible'=>-1, 'position'=>60),
 		'code_compta' =>array('type'=>'varchar(24)', 'label'=>'Code compta', 'enabled'=>1, 'visible'=>-1, 'position'=>65),
@@ -712,6 +712,7 @@ class Societe extends CommonObject
      */
 	public $multicurrency_code;
 
+
 	/**
 	 *    Constructor
 	 *
@@ -877,7 +878,7 @@ class Societe extends CommonObject
 		$contact->firstname         = $this->firstname;
 		$contact->civility_id       = $this->civility_id;
 		$contact->socid             = $this->id; // fk_soc
-		$contact->statut            = 1;	// deprecated
+		$contact->statut            = 1; // deprecated
 		$contact->status            = 1;
 		$contact->priv              = 0;
 		$contact->country_id        = $this->country_id;
@@ -1397,6 +1398,15 @@ class Societe extends CommonObject
 				if (!$error && empty($conf->global->MAIN_EXTRAFIELDS_DISABLED)) // For avoid conflicts if trigger used
 				{
 					$result = $this->insertExtraFields();
+					if ($result < 0)
+					{
+						$error++;
+					}
+				}
+				// Actions on extra languages
+				if (!$error && empty($conf->global->MAIN_EXTRALANGUAGES_DISABLED)) // For avoid conflicts if trigger used
+				{
+					$result = $this->insertExtraLanguages();
 					if ($result < 0)
 					{
 						$error++;
@@ -1986,11 +1996,11 @@ class Societe extends CommonObject
 	 *    	@param	float	$remise     	Amount of discount
 	 *    	@param  User	$user       	User adding discount
 	 *    	@param  string	$desc			Reason of discount
-	 *      @param  float	$tva_tx     	VAT rate
+	 *      @param  string	$vatrate     	VAT rate (may contain the vat code too). Exemple: '1.23', '1.23 (ABC)', ...
 	 *      @param	int		$discount_type	0 => customer discount, 1 => supplier discount
-	 *		@return	int					<0 if KO, id of discount record if OK
+	 *		@return	int						<0 if KO, id of discount record if OK
 	 */
-    public function set_remise_except($remise, User $user, $desc, $tva_tx = 0, $discount_type = 0)
+    public function set_remise_except($remise, User $user, $desc, $vatrate = '', $discount_type = 0)
 	{
         // phpcs:enable
 		global $langs;
@@ -2011,8 +2021,17 @@ class Societe extends CommonObject
 			return -2;
 		}
 
-		if ($this->id)
+		if ($this->id > 0)
 		{
+			// Clean vat code
+			$reg = array();
+			$vat_src_code = '';
+			if (preg_match('/\((.*)\)/', $vatrate, $reg))
+			{
+				$vat_src_code = $reg[1];
+				$vatrate = preg_replace('/\s*\(.*\)/', '', $vatrate); // Remove code into vatrate.
+			}
+
 			require_once DOL_DOCUMENT_ROOT.'/core/class/discount.class.php';
 
 			$discount = new DiscountAbsolute($this->db);
@@ -2021,10 +2040,12 @@ class Societe extends CommonObject
 			$discount->discount_type = $discount_type;
 
 			$discount->amount_ht = $discount->multicurrency_amount_ht = price2num($remise, 'MT');
-			$discount->amount_tva = $discount->multicurrency_amount_tva = price2num($remise * $tva_tx / 100, 'MT');
+			$discount->amount_tva = $discount->multicurrency_amount_tva = price2num($remise * $vatrate / 100, 'MT');
 			$discount->amount_ttc = $discount->multicurrency_amount_ttc = price2num($discount->amount_ht + $discount->amount_tva, 'MT');
 
-			$discount->tva_tx = price2num($tva_tx, 'MT');
+			$discount->tva_tx = price2num($vatrate, 'MT');
+			$discount->vat_src_code = $vat_src_code;
+
 			$discount->description = $desc;
 
 			$result = $discount->create($user);
@@ -2111,7 +2132,7 @@ class Societe extends CommonObject
 					$reparray[$i]['email'] = $obj->email;
 					$reparray[$i]['phone'] = $obj->office_phone;
 					$reparray[$i]['job'] = $obj->job;
-					$reparray[$i]['statut'] = $obj->status;	// deprecated
+					$reparray[$i]['statut'] = $obj->status; // deprecated
 					$reparray[$i]['status'] = $obj->status;
 					$reparray[$i]['entity'] = $obj->entity;
 					$reparray[$i]['login'] = $obj->login;

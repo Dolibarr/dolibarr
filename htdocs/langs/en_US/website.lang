@@ -125,3 +125,5 @@ UseTextBetween5And70Chars=For good SEO practices, use a text between 5 and 70 ch
 MainLanguage=Main language
 OtherLanguages=Other languages
 UseManifest=Provide a manifest.json file
+PublicAuthorAlias=Public author alias
+AvailableLanguagesAreDefinedIntoWebsiteProperties=Available languages are defined into website properties

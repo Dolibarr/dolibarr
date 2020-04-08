@@ -262,12 +262,12 @@ class Commande extends CommonOrder
 	/**
 	 * @var array  Array with all fields and their property. Do not use it as a static var. It may be modified by constructor.
 	 */
-	public $fields=array(
+	public $fields = array(
 		'rowid' =>array('type'=>'integer', 'label'=>'TechnicalID', 'enabled'=>1, 'visible'=>-1, 'notnull'=>1, 'position'=>10),
 		'entity' =>array('type'=>'integer', 'label'=>'Entity', 'default'=>1, 'enabled'=>1, 'visible'=>-2, 'notnull'=>1, 'position'=>20, 'index'=>1),
 		'ref' =>array('type'=>'varchar(30)', 'label'=>'Ref', 'enabled'=>1, 'visible'=>-1, 'notnull'=>1, 'showoncombobox'=>1, 'position'=>25),
 		'ref_ext' =>array('type'=>'varchar(255)', 'label'=>'RefExt', 'enabled'=>1, 'visible'=>0, 'position'=>26),
-		'ref_int' =>array('type'=>'varchar(255)', 'label'=>'RefInt', 'enabled'=>1, 'visible'=>0, 'position'=>27),	// deprecated
+		'ref_int' =>array('type'=>'varchar(255)', 'label'=>'RefInt', 'enabled'=>1, 'visible'=>0, 'position'=>27), // deprecated
 		'ref_client' =>array('type'=>'varchar(255)', 'label'=>'RefCustomer', 'enabled'=>1, 'visible'=>-1, 'position'=>28),
 		'fk_soc' =>array('type'=>'integer:Societe:societe/class/societe.class.php', 'label'=>'ThirdParty', 'enabled'=>1, 'visible'=>-1, 'notnull'=>1, 'position'=>20),
 		'fk_projet' =>array('type'=>'integer:Project:projet/class/project.class.php:1:fk_statut=1', 'label'=>'Project', 'enabled'=>1, 'visible'=>-1, 'position'=>25),
@@ -931,7 +931,7 @@ class Commande extends CommonOrder
 			dol_syslog(get_class($this)."::create ".$this->error, LOG_ERR);
 			return -2;
 		}
-		if (!empty($conf->global->COMMANDE_REQUIRE_SOURCE) && $this->source < 0)
+		if (!empty($conf->global->ORDER_REQUIRE_SOURCE) && $this->source < 0)
 		{
 			$this->error = $langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Source"));
 			dol_syslog(get_class($this)."::create ".$this->error, LOG_ERR);
@@ -1016,6 +1016,14 @@ class Commande extends CommonOrder
 					$vatrate = $line->tva_tx;
 					if ($line->vat_src_code && !preg_match('/\(.*\)/', $vatrate)) $vatrate .= ' ('.$line->vat_src_code.')';
 
+					if(!empty($conf->global->MAIN_CREATEFROM_KEEP_LINE_ORIGIN_INFORMATION)) {
+						$originid=$line->origin_id;
+						$origintype=$line->origin;
+					} else {
+						$originid=$line->id;
+						$origintype=$this->element;
+					}
+
                     $result = $this->addline(
 						$line->desc,
 						$line->subprice,
@@ -1040,8 +1048,8 @@ class Commande extends CommonOrder
 						$line->label,
 						$line->array_options,
 						$line->fk_unit,
-						$this->element,
-						$line->id
+	                    $origintype,
+	                    $originid
 					);
 					if ($result < 0)
 					{
@@ -1373,7 +1381,7 @@ class Commande extends CommonOrder
 		$this->origin_id = $object->id;
 
 		// get extrafields from original line
-		$object->fetch_optionals($object->id);
+		$object->fetch_optionals();
 
 		$e = new ExtraFields($this->db);
 		$element_extrafields = $e->fetch_name_optionals_label($this->table_element);
@@ -1404,8 +1412,8 @@ class Commande extends CommonOrder
 
 			if (!$error)
 			{
-				// Ne pas passer par la commande provisoire
-				if ($conf->global->COMMANDE_VALID_AFTER_CLOSE_PROPAL == 1)
+				// Validate immediatly the order
+				if (! empty($conf->global->ORDER_VALID_AFTER_CLOSE_PROPAL))
 				{
 					$this->fetch($ret);
 					$this->valid($user);
@@ -1444,8 +1452,8 @@ class Commande extends CommonOrder
 	 *  @param		string			$label				Label
 	 *  @param		array			$array_options		extrafields array. Example array('options_codeforfield1'=>'valueforfield1', 'options_codeforfield2'=>'valueforfield2', ...)
 	 * 	@param 		string			$fk_unit 			Code of the unit to use. Null to use the default one
-	 * 	@param		string		    $origin				'order', ...
-	 *  @param		int			    $origin_id			Id of origin object
+	 * 	@param		string		    $origin				Depend on global conf MAIN_CREATEFROM_KEEP_LINE_ORIGIN_INFORMATION can be 'orderdet', 'propaldet'..., else 'order','propal,'....
+	 *  @param		int			    $origin_id			Depend on global conf MAIN_CREATEFROM_KEEP_LINE_ORIGIN_INFORMATION can be Id of origin object (aka line id), else object id
 	 * 	@param		double			$pu_ht_devise		Unit price in currency
 	 *	@return     int             					>0 if OK, <0 if KO
 	 *
@@ -3605,7 +3613,7 @@ class Commande extends CommonOrder
 		if ($status == self::STATUS_CANCELED) {
 		    $labelStatus = $langs->trans('StatusOrderCanceled');
 		    $labelStatusShort = $langs->trans('StatusOrderCanceledShort');
-		    $statusType = 'status5';
+		    $statusType = 'status9';
 		}
 		elseif ($status == self::STATUS_DRAFT) {
 		    $labelStatus = $langs->trans('StatusOrderDraft');
@@ -3620,7 +3628,7 @@ class Commande extends CommonOrder
 		elseif ($status == self::STATUS_SHIPMENTONPROCESS) {
 		    $labelStatus = $langs->trans('StatusOrderSentShort').$billedtext;
 		    $labelStatusShort = $langs->trans('StatusOrderSentShort').$billedtext;
-		    $statusType = 'status3';
+		    $statusType = 'status4';
 		}
 		elseif ($status == self::STATUS_CLOSED && (!$billed && empty($conf->global->WORKFLOW_BILL_ON_SHIPMENT))) {
 		    $labelStatus = $langs->trans('StatusOrderToBill');
@@ -4412,7 +4420,7 @@ class OrderLine extends CommonOrderLine
 
 			foreach ($this->errors as $errmsg)
 			{
-				dol_syslog(get_class($this)."::delete ".$errmsg, LOG_ERR);
+				dol_syslog(get_class($this)."::insert ".$errmsg, LOG_ERR);
 				$this->error .= ($this->error ? ', '.$errmsg : $errmsg);
 			}
 			$this->db->rollback();

@@ -91,7 +91,7 @@ GoToSetupArea=Gå til Dolibarr (Oppsettområdet)
 MigrationNotFinished=Databaseversjonen er ikke helt oppdatert: Kjør oppgraderingsprosessen igjen.
 GoToUpgradePage=Gå til oppgraderingssiden igjen
 WithNoSlashAtTheEnd=Uten skråstrek "/" på slutten
-DirectoryRecommendation=Det anbefales å bruke en katalog utenfor nettsidene.
+DirectoryRecommendation=<span class="warning"> VIKTIG </span>: Du må bruke en mappe som er utenfor websidene (sikke bruk en underkatalog under forrige parameter).
 LoginAlreadyExists=Finnes allerede
 DolibarrAdminLogin=Dolibarr admin login
 AdminLoginAlreadyExists=Dolibarr administratorkonto '<b> %s </b>' finnes allerede. Gå tilbake hvis du vil opprette en annen.

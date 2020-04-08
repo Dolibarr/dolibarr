@@ -40,17 +40,17 @@ abstract class ModelePDFFicheinter extends CommonDocGenerator
 	public $error='';
 
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
+	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 *	Return list of active generation modules
 	 *
-     *  @param	DoliDB	$db     			Database handler
-     *  @param  integer	$maxfilenamelength  Max length of value to show
-     *  @return	array						List of templates
+	 *  @param	DoliDB	$db     			Database handler
+	 *  @param  integer	$maxfilenamelength  Max length of value to show
+	 *  @return	array						List of templates
 	 */
 	public static function liste_modeles($db, $maxfilenamelength = 0)
 	{
-        // phpcs:enable
+		// phpcs:enable
 		global $conf;
 
 		$type='ficheinter';
@@ -109,8 +109,8 @@ abstract class ModeleNumRefFicheinter
 	}
 
 	/**
-     *  Checks if the numbers already in force in the data base do not
-     *  cause conflicts that would prevent this numbering from working.
+	 *  Checks if the numbers already in the database do not
+	 *  cause conflicts that would prevent this numbering working.
 	 *
 	 * 	@return     boolean     false if conflict, true if ok
 	 */
@@ -164,7 +164,7 @@ abstract class ModeleNumRefFicheinter
  */
 function fichinter_create($db, $object, $modele, $outputlangs, $hidedetails = 0, $hidedesc = 0, $hideref = 0)
 {
-    // phpcs:enable
+	// phpcs:enable
 	global $conf,$langs,$user;
 	$langs->load("ficheinter");
 
@@ -187,11 +187,11 @@ function fichinter_create($db, $object, $modele, $outputlangs, $hidedetails = 0,
 
 	// If selected modele is a filename template (then $modele="modelname:filename")
 	$tmp=explode(':', $modele, 2);
-    if (! empty($tmp[1]))
-    {
-        $modele=$tmp[0];
-        $srctemplatepath=$tmp[1];
-    }
+	if (! empty($tmp[1]))
+	{
+		$modele=$tmp[0];
+		$srctemplatepath=$tmp[1];
+	}
 
 	// Search template files
 	$file=''; $classname=''; $filefound=0;
@@ -199,21 +199,21 @@ function fichinter_create($db, $object, $modele, $outputlangs, $hidedetails = 0,
 	if (is_array($conf->modules_parts['models'])) $dirmodels=array_merge($dirmodels, $conf->modules_parts['models']);
 	foreach($dirmodels as $reldir)
 	{
-    	foreach(array('doc','pdf') as $prefix)
-    	{
-    	    $file = $prefix."_".$modele.".modules.php";
+		foreach(array('doc','pdf') as $prefix)
+		{
+			$file = $prefix."_".$modele.".modules.php";
 
-    		// On verifie l'emplacement du modele
-	        $file=dol_buildpath($reldir."core/modules/fichinter/doc/".$file, 0);
-    		if (file_exists($file))
-    		{
-    			$filefound=1;
-    			$classname=$prefix.'_'.$modele;
-    			break;
-    		}
-    	}
-    	if ($filefound) break;
-    }
+			// On verifie l'emplacement du modele
+			$file=dol_buildpath($reldir."core/modules/fichinter/doc/".$file, 0);
+			if (file_exists($file))
+			{
+				$filefound=1;
+				$classname=$prefix.'_'.$modele;
+				break;
+			}
+		}
+		if ($filefound) break;
+	}
 
 	// Charge le modele
 	if ($filefound)

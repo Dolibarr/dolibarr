@@ -181,8 +181,7 @@ class pdf_paiement
 		switch ($this->doc_type) {
 			case "client":
 				$sql = "SELECT p.datep as dp, f.ref";
-				//$sql .= ", c.libelle as paiement_type, p.num_paiement";
-				$sql.= ", c.code as paiement_code, p.num_paiement";
+				$sql.= ", c.code as paiement_code, p.num_paiement as num_payment";
 				$sql.= ", p.amount as paiement_amount, f.total_ttc as facture_amount";
 				$sql.= ", pf.amount as pf_amount";
 				if (! empty($conf->banque->enabled))
@@ -212,8 +211,7 @@ class pdf_paiement
 				break;
 			case "fourn":
 				$sql = "SELECT p.datep as dp, f.ref as ref";
-				//$sql .= ", c.libelle as paiement_type, p.num_paiement";
-				$sql.= ", c.code as paiement_code, p.num_paiement";
+				$sql.= ", c.code as paiement_code, p.num_paiement as num_payment";
 				$sql.= ", p.amount as paiement_amount, f.total_ttc as facture_amount";
 				$sql.= ", pf.amount as pf_amount";
 				if (! empty($conf->banque->enabled))
@@ -257,7 +255,7 @@ class pdf_paiement
 				$lines[$i][0] = $objp->ref;
 				$lines[$i][1] = dol_print_date($this->db->jdate($objp->dp), "day", false, $outputlangs, true);
 				$lines[$i][2] = $langs->transnoentities("PaymentTypeShort".$objp->paiement_code);
-				$lines[$i][3] = $objp->num_paiement;
+				$lines[$i][3] = $objp->num_payment;
 				$lines[$i][4] = price($objp->paiement_amount);
 				$lines[$i][5] = price($objp->facture_amount);
 				$lines[$i][6] = price($objp->pf_amount);

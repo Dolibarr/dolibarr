@@ -304,14 +304,14 @@ if ($result)
         print '<input type="hidden" name="orig_account" value="'.$orig_account.'">';
         print '<input type="hidden" name="id" value="'.$acct->id.'">';
 
-        dol_fiche_head($tabs, 0, $langs->trans('LineRecord'), -1, 'account', 0);
+        dol_fiche_head($tabs, 0, $langs->trans('LineRecord'), 0, 'account', 0);
 
         $linkback = '<a href="'.DOL_URL_ROOT.'/compta/bank/bankentries_list.php?restore_lastsearch_values=1">'.$langs->trans("BackToList").'</a>';
 
 
         dol_banner_tab($bankline, 'rowid', $linkback);
 
-		print '<div class="fichecenter">';
+		print '<div class="fichecenter2">';
 
         print '<div class="underbanner clearboth"></div>';
         print '<table class="border centpercent">';

@@ -60,6 +60,9 @@ span.info-box-icon-text {	/* hide box text number due to problems */
 .info-box-icon > img {
 	max-width: 100%;
 }
+.info-box-module .info-box-icon > img {
+    max-width: 50%;
+}
 .info-box-content {
 	padding: 5px 10px;
 	margin-left: 90px;

@@ -49,7 +49,7 @@ class modZapier extends DolibarrModules
         // It is used to group modules by family in module setup page
         $this->family = "interface";
         // Module position in the family on 2 digits ('01', '10', '20', ...)
-        $this->module_position = '13';
+        $this->module_position = '22';
         // Gives the possibility for the module, to provide his own family info and position of this family (Overwrite $this->family and $this->module_position. Avoid this)
         //$this->familyinfo = array('myownfamily' => array('position' => '01', 'label' => $langs->trans("MyOwnFamily")));
         // Module label (no space allowed), used if translation string 'ModuleZapierName' not found (Zapier is name of module).

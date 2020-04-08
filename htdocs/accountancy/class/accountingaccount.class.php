@@ -136,6 +136,11 @@ class AccountingAccount extends CommonObject
     public $active;
 
 	/**
+	 * @var int reconcilable
+	 */
+	public $reconcilable;
+
+	/**
 	 * Constructor
 	 *
 	 * @param DoliDB $db Database handle
@@ -162,7 +167,7 @@ class AccountingAccount extends CommonObject
 		global $conf;
 
 		if ($rowid || $account_number) {
-			$sql  = "SELECT a.rowid as rowid, a.datec, a.tms, a.fk_pcg_version, a.pcg_type, a.account_number, a.account_parent, a.label, a.labelshort, a.fk_accounting_category, a.fk_user_author, a.fk_user_modif, a.active";
+			$sql  = "SELECT a.rowid as rowid, a.datec, a.tms, a.fk_pcg_version, a.pcg_type, a.account_number, a.account_parent, a.label, a.labelshort, a.fk_accounting_category, a.fk_user_author, a.fk_user_modif, a.active, a.reconcilable";
 			$sql .= ", ca.label as category_label";
 			$sql .= " FROM " . MAIN_DB_PREFIX . "accounting_account as a";
 			$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."c_accounting_category as ca ON a.fk_accounting_category = ca.rowid";
@@ -203,6 +208,7 @@ class AccountingAccount extends CommonObject
 					$this->fk_user_modif = $obj->fk_user_modif;
 					$this->active = $obj->active;
 					$this->status = $obj->active;
+					$this->reconcilable = $obj->reconcilable;
 
 					return $this->id;
 				} else {
@@ -261,6 +267,7 @@ class AccountingAccount extends CommonObject
 		$sql .= ", fk_accounting_category";
 		$sql .= ", fk_user_author";
 		$sql .= ", active";
+		$sql .= ", reconcilable";
 		$sql .= ") VALUES (";
 		$sql .= " '" . $this->db->idate($now) . "'";
 		$sql .= ", " . $conf->entity;
@@ -273,6 +280,7 @@ class AccountingAccount extends CommonObject
 		$sql .= ", " . (empty($this->account_category) ? 0 : (int) $this->account_category);
 		$sql .= ", " . $user->id;
 		$sql .= ", " . (int) $this->active;
+		$sql .= ", " . (int) $this->reconcilable;
 		$sql .= ")";
 
 		$this->db->begin();
@@ -287,17 +295,15 @@ class AccountingAccount extends CommonObject
 		if (! $error) {
 			$this->id = $this->db->last_insert_id(MAIN_DB_PREFIX . "accounting_account");
 
-			// if (! $notrigger) {
 			// Uncomment this and change MYOBJECT to your own tag if you
-			// want this action calls a trigger.
+			// want this action to call a trigger.
+			//if (! $error && ! $notrigger) {
 
 			// // Call triggers
-			// include_once DOL_DOCUMENT_ROOT . '/core/class/interfaces.class.php';
-			// $interface=new Interfaces($this->db);
-			// $result=$interface->run_triggers('MYOBJECT_CREATE',$this,$user,$langs,$conf);
-			// if ($result < 0) { $error++; $this->errors=$interface->errors; }
+			// $result=$this->call_trigger('MYOBJECT_CREATE',$user);
+			// if ($result < 0) $error++;
 			// // End call triggers
-			// }
+			//}
 		}
 
 		// Commit or rollback
@@ -340,6 +346,7 @@ class AccountingAccount extends CommonObject
 		$sql .= " , fk_accounting_category = " . (empty($this->account_category) ? 0 : (int) $this->account_category);
 		$sql .= " , fk_user_modif = " . $user->id;
 		$sql .= " , active = " . (int) $this->active;
+		$sql .= " , reconcilable = " . (int) $this->reconcilable;
 		$sql .= " WHERE rowid = " . $this->id;
 
 		dol_syslog(get_class($this) . "::update sql=" . $sql, LOG_DEBUG);
@@ -401,20 +408,6 @@ class AccountingAccount extends CommonObject
 
 		if ($result > 0) {
 			$this->db->begin();
-
-			// if (! $error) {
-			// if (! $notrigger) {
-			// Uncomment this and change MYOBJECT to your own tag if you
-			// want this action calls a trigger.
-
-			// // Call triggers
-			// include_once DOL_DOCUMENT_ROOT . '/core/class/interfaces.class.php';
-			// $interface=new Interfaces($this->db);
-			// $result=$interface->run_triggers('ACCOUNTANCY_ACCOUNT_DELETE',$this,$user,$langs,$conf);
-			// if ($result < 0) { $error++; $this->errors=$interface->errors; }
-			// // End call triggers
-			// }
-			// }
 
 			if (! $error) {
 				$sql = "DELETE FROM " . MAIN_DB_PREFIX . "accounting_account";
@@ -514,7 +507,7 @@ class AccountingAccount extends CommonObject
 		}
 
 		$label_link = length_accountg($this->account_number);
-		if ($withlabel) $label_link .= ' - ' . $labeltoshow;
+		if ($withlabel) $label_link .= ' - ' . ($nourl ? '<span class="opacitymedium">' : '').$labeltoshow.($nourl ? '</span>' : '');
 
 		if ($withpicto) $result.=($linkstart.img_object(($notooltip?'':$label), $picto, ($notooltip?'':'class="classfortooltip"'), 0, 0, $notooltip?0:1).$linkend);
 		if ($withpicto && $withpicto != 2) $result .= ' ';
@@ -565,21 +558,31 @@ class AccountingAccount extends CommonObject
 	 * Account deactivated
 	 *
 	 * @param  int  $id         Id
+     * @param  int  $mode       0=field active, 1=field active_customer_list, 2=field_active_supplier_list
 	 * @return int              <0 if KO, >0 if OK
 	 */
-    public function account_desactivate($id)
+    public function account_desactivate($id, $mode = 0)
     {
         // phpcs:enable
 		$result = $this->checkUsage();
+
+        if ($mode == 0)
+        {
+            $fieldtouse = 'active';
+        }
+        elseif ($mode == 1)
+        {
+			$fieldtouse = 'reconcilable';
+        }
 
 		if ($result > 0) {
 			$this->db->begin();
 
 			$sql = "UPDATE " . MAIN_DB_PREFIX . "accounting_account ";
-			$sql .= "SET active = '0'";
+			$sql .= "SET " . $fieldtouse . " = '0'";
 			$sql .= " WHERE rowid = " . $this->db->escape($id);
 
-			dol_syslog(get_class($this) . "::desactivate sql=" . $sql, LOG_DEBUG);
+			dol_syslog(get_class($this) . "::account_desactivate " . $fieldtouse . " sql=" . $sql, LOG_DEBUG);
 			$result = $this->db->query($sql);
 
 			if ($result) {
@@ -600,18 +603,28 @@ class AccountingAccount extends CommonObject
 	 * Account activated
 	 *
 	 * @param  int  $id         Id
+     * @param  int  $mode       0=field active, 1=field reconcilable
 	 * @return int              <0 if KO, >0 if OK
 	 */
-    public function account_activate($id)
+    public function account_activate($id, $mode = 0)
     {
         // phpcs:enable
 		$this->db->begin();
 
+        if ($mode == 0)
+        {
+            $fieldtouse = 'active';
+        }
+        elseif ($mode == 1)
+        {
+            $fieldtouse = 'reconcilable';
+        }
+
 		$sql = "UPDATE " . MAIN_DB_PREFIX . "accounting_account ";
-		$sql .= "SET active = '1'";
+		$sql .= "SET " . $fieldtouse . " = '1'";
 		$sql .= " WHERE rowid = " . $this->db->escape($id);
 
-		dol_syslog(get_class($this) . "::activate sql=" . $sql, LOG_DEBUG);
+		dol_syslog(get_class($this) . "::account_activate " . $fieldtouse . " sql=" . $sql, LOG_DEBUG);
 		$result = $this->db->query($sql);
         if ($result) {
 			$this->db->commit();

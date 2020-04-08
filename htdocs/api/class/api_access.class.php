@@ -64,7 +64,9 @@ class DolibarrApiAccess implements iAuthenticate
 	 * Check access
 	 *
 	 * @return bool
-	 * @throws RestException
+	 *
+	 * @throws RestException 401 Forbidden
+	 * @throws RestException 503 Technical error
 	 */
 	public function __isAllowed()
 	{
