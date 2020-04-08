@@ -1081,12 +1081,8 @@ class Societe extends CommonObject
 		$this->town			= $this->town ?trim($this->town) : trim($this->town);
 		$this->state_id = trim($this->state_id);
 		$this->country_id = ($this->country_id > 0) ? $this->country_id : 0;
-		$this->phone		= trim($this->phone);
-		$this->phone		= preg_replace("/\s/", "", $this->phone);
-		$this->phone		= preg_replace("/\./", "", $this->phone);
-		$this->fax			= trim($this->fax);
-		$this->fax			= preg_replace("/\s/", "", $this->fax);
-		$this->fax			= preg_replace("/\./", "", $this->fax);
+		$this->phone		= preg_replace('/[^0-9]/', '', trim($this->phone));
+		$this->fax			= preg_replace('/[^0-9]/', '', trim($this->fax));
 		$this->email = trim($this->email);
 		$this->url			= $this->url ?clean_url($this->url, 0) : '';
 		$this->note_private = trim($this->note_private);
