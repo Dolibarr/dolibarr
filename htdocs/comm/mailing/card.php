@@ -345,6 +345,7 @@ if (empty($reshook))
 
 						    if (!empty($conf->global->MAILING_DELAY))
 						    {
+						    	dol_syslog("Wait a delay of MAILING_DELAY=".$conf->global->MAILING_DELAY);
                             	sleep($conf->global->MAILING_DELAY);
                         	}
 
