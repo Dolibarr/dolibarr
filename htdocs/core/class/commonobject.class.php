@@ -5881,6 +5881,9 @@ abstract class CommonObject
 						$this->array_options["options_".$key] = $object->id;
 					}
 					break;
+				case 'phone':
+						$new_array_options[$key] = preg_replace("/[^0-9]/", "", trim($this->array_options[$key]));
+						break;
 			}
 
 			$this->db->begin();
