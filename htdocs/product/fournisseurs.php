@@ -902,7 +902,6 @@ SCRIPT;
 				$extralabels = $extrafields->attributes["product_fournisseur_price"]['label'];
 				if (!empty($extralabels)) {
 					foreach ($extralabels as $key => $value) {
-
 						// Show field if not hidden
 						if (!empty($extrafields->attributes["product_fournisseur_price"]['list'][$key]) && $extrafields->attributes["product_fournisseur_price"]['list'][$key] != 3) {
                             if(!empty($extrafields->attributes["product_fournisseur_price"]['langfile'][$key])) $langs->load($extrafields->attributes["product_fournisseur_price"]['langfile'][$key]);
