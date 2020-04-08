@@ -679,7 +679,12 @@ while ($i < ($limit ? min($num, $limit) : $num))
 		}
 
 		// Force call prod->load_stats_xxx to choose status to count (otherwise it is loaded by load_stock function)
+        $draftordered = 0;
 		if (isset($draftchecked)) {
+            if(!empty($usevirtualstock)){
+                $result = $prod->load_stats_commande_fournisseur(0, '0');
+                $draftordered = $prod->stats_commande_fournisseur['qty'];
+            }
 			$result = $prod->load_stats_commande_fournisseur(0, '0,1,2,3,4');
 		} else {
 			$result = $prod->load_stats_commande_fournisseur(0, '1,2,3,4');
@@ -704,7 +709,7 @@ while ($i < ($limit ? min($num, $limit) : $num))
 		//virtual stock to compute the stock to buy value
 
 		if(empty($usevirtualstock)) $stocktobuy = max(max($desiredstock, $alertstock) - $stock - $ordered, 0);
-		else $stocktobuy = max(max($desiredstock, $alertstock) - $stock, 0); //ordered is already in $stock in virtual mode
+		else $stocktobuy = max(max($desiredstock, $alertstock) - $stock - $draftordered, 0); //ordered is already in $stock in virtual mode
 
 		$disabled = '';
 		if ($ordered > 0)
