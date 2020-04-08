@@ -38,7 +38,7 @@ require_once DOL_DOCUMENT_ROOT.'/admin/dolistore/class/dolistore.class.php';
 // Load translation files required by the page
 $langs->loadLangs(array("errors", "admin", "modulebuilder"));
 
-$mode = GETPOST('mode', 'alpha');
+$mode = GETPOSTISSET('mode') ? GETPOST('mode', 'alpha') : 'commonkanban';
 if (empty($mode)) $mode = 'common';
 $action = GETPOST('action', 'alpha');
 //var_dump($_POST);exit;
@@ -508,7 +508,7 @@ if ($mode == 'common' || $mode == 'commonkanban')
 	print '<input type="hidden" name="mode" value="'.$mode.'">';
 
 	$newmode = $mode;
-	if ($newmode == 'commonkanban') $newmode = 'common';
+	if ($newmode == 'common') $newmode = 'commonkanban';
 
 	dol_fiche_head($head, $newmode, '', -1);
 
@@ -708,7 +708,7 @@ if ($mode == 'common' || $mode == 'commonkanban')
 			{
 				if (method_exists($objMod, 'alreadyUsed') && $objMod->alreadyUsed()) $codeenabledisable .= $langs->trans("Used");
 				else {
-					$codeenabledisable .= img_picto($langs->trans("Required"), 'switch_on', '', false, 0, 0, '', 'opacitymedium');
+					$codeenabledisable .= img_picto($langs->trans("Required"), 'switch_on', '', false, 0, 0, '', 'opacitymedium valignmiddle');
 					//print $langs->trans("Required");
 				}
 				if (!empty($conf->multicompany->enabled) && $user->entity) $disableSetup++;
@@ -716,12 +716,12 @@ if ($mode == 'common' || $mode == 'commonkanban')
 			else
 			{
 				if (!empty($objMod->warnings_unactivation[$mysoc->country_code]) && method_exists($objMod, 'alreadyUsed') && $objMod->alreadyUsed()) {
-					$codeenabledisable .= '<a class="reposition" href="'.$_SERVER["PHP_SELF"].'?id='.$objMod->numero.'&amp;module_position='.$module_position.'&amp;action=reset_confirm&amp;confirm_message_code='.$objMod->warnings_unactivation[$mysoc->country_code].'&amp;value='.$modName.'&amp;mode='.$mode.$param.'">';
+					$codeenabledisable .= '<a class="reposition valignmiddle" href="'.$_SERVER["PHP_SELF"].'?id='.$objMod->numero.'&amp;module_position='.$module_position.'&amp;action=reset_confirm&amp;confirm_message_code='.$objMod->warnings_unactivation[$mysoc->country_code].'&amp;value='.$modName.'&amp;mode='.$mode.$param.'">';
 					$codeenabledisable .= img_picto($langs->trans("Activated"), 'switch_on');
 					$codeenabledisable .= '</a>';
 				}
 				else {
-					$codeenabledisable .= '<a class="reposition" href="'.$_SERVER["PHP_SELF"].'?id='.$objMod->numero.'&amp;module_position='.$module_position.'&amp;action=reset&amp;value='.$modName.'&amp;mode='.$mode.'&amp;confirm=yes'.$param.'">';
+					$codeenabledisable .= '<a class="reposition valignmiddle" href="'.$_SERVER["PHP_SELF"].'?id='.$objMod->numero.'&amp;module_position='.$module_position.'&amp;action=reset&amp;value='.$modName.'&amp;mode='.$mode.'&amp;confirm=yes'.$param.'">';
 					$codeenabledisable .= img_picto($langs->trans("Activated"), 'switch_on');
 					$codeenabledisable .= '</a>';
 				}
@@ -754,28 +754,28 @@ if ($mode == 'common' || $mode == 'commonkanban')
 							if (preg_match('/^([^@]+)@([^@]+)$/i', $urlpage, $regs))
 							{
 								$urltouse = dol_buildpath('/'.$regs[2].'/admin/'.$regs[1], 1);
-								$codetoconfig .= '<a href="'.$urltouse.(preg_match('/\?/', $urltouse) ? '&' : '?').'save_lastsearch_values=1&backtopage='.urlencode($backtourl).'" title="'.$langs->trans("Setup").'">'.img_picto($langs->trans("Setup"), "setup", 'style="padding-right: 6px"').'</a>';
+								$codetoconfig .= '<a href="'.$urltouse.(preg_match('/\?/', $urltouse) ? '&' : '?').'save_lastsearch_values=1&backtopage='.urlencode($backtourl).'" title="'.$langs->trans("Setup").'">'.img_picto($langs->trans("Setup"), "setup", 'style="padding-right: 6px"', false, 0, 0, '', 'fa-15').'</a>';
 							}
 							else
 							{
 								$urltouse = $urlpage;
-								$codetoconfig .= '<a href="'.$urltouse.(preg_match('/\?/', $urltouse) ? '&' : '?').'save_lastsearch_values=1&backtopage='.urlencode($backtourl).'" title="'.$langs->trans("Setup").'">'.img_picto($langs->trans("Setup"), "setup", 'style="padding-right: 6px"').'</a>';
+								$codetoconfig .= '<a href="'.$urltouse.(preg_match('/\?/', $urltouse) ? '&' : '?').'save_lastsearch_values=1&backtopage='.urlencode($backtourl).'" title="'.$langs->trans("Setup").'">'.img_picto($langs->trans("Setup"), "setup", 'style="padding-right: 6px"', false, 0, 0, '', 'fa-15').'</a>';
 							}
 						}
 					}
 				}
 				elseif (preg_match('/^([^@]+)@([^@]+)$/i', $objMod->config_page_url, $regs))
 				{
-					$codetoconfig .= '<a href="'.dol_buildpath('/'.$regs[2].'/admin/'.$regs[1], 1).'?save_lastsearch_values=1&backtopage='.urlencode($backtourl).'" title="'.$langs->trans("Setup").'">'.img_picto($langs->trans("Setup"), "setup", 'style="padding-right: 6px"').'</a>';
+					$codetoconfig .= '<a class="valignmiddle" href="'.dol_buildpath('/'.$regs[2].'/admin/'.$regs[1], 1).'?save_lastsearch_values=1&backtopage='.urlencode($backtourl).'" title="'.$langs->trans("Setup").'">'.img_picto($langs->trans("Setup"), "setup", 'style="padding-right: 6px"', false, 0, 0, '', 'fa-15').'</a>';
 				}
 				else
 				{
-					$codetoconfig .= '<a href="'.$objMod->config_page_url.'?save_lastsearch_values=1&backtopage='.urlencode($backtourl).'" title="'.$langs->trans("Setup").'">'.img_picto($langs->trans("Setup"), "setup", 'style="padding-right: 6px"').'</a>';
+					$codetoconfig .= '<a class="valignmiddle" href="'.$objMod->config_page_url.'?save_lastsearch_values=1&backtopage='.urlencode($backtourl).'" title="'.$langs->trans("Setup").'">'.img_picto($langs->trans("Setup"), "setup", 'style="padding-right: 6px"', false, 0, 0, '', 'fa-15').'</a>';
 				}
 			}
 			else
 			{
-				$codetoconfig .= img_picto($langs->trans("NothingToSetup"), "setup", 'class="opacitytransp" style="padding-right: 6px"');
+				$codetoconfig .= img_picto($langs->trans("NothingToSetup"), "setup", 'class="opacitytransp" style="padding-right: 6px"', false, 0, 0, '', 'fa-15');
 			}
 		}
 		else	// Module not yet activated
@@ -961,26 +961,24 @@ if ($mode == 'marketplace')
 		$previouslink = $dolistore->get_previous_link();
 		$nextlink = $dolistore->get_next_link();
 
-		print '<div class="liste_titre liste_titre_bydiv centpercent"><div class="divsearchfield">'
+		print '<div class="liste_titre liste_titre_bydiv centpercent"><div class="divsearchfield">';
 
+		print '<form method="POST" class="centpercent" id="searchFormList" action="'.$dolistore->url.'">';
 		?>
-	            <form method="POST" class="centpercent" id="searchFormList" action="<?php echo $dolistore->url ?>">
 					<input type="hidden" name="token" value="<?php echo newToken(); ?>">
 	            	<input type="hidden" name="mode" value="marketplace">
 	                <div class="divsearchfield"><?php echo $langs->trans('Keyword') ?>:
 	                    <input name="search_keyword" placeholder="<?php echo $langs->trans('Chercher un module') ?>" id="search_keyword" type="text" size="50" value="<?php echo $options['search'] ?>"><br>
 	                </div>
 	                <div class="divsearchfield">
-	                    <input class="button" value="<?php echo $langs->trans('Rechercher') ?>" type="submit">
-	                    <a class="button" href="<?php echo $dolistore->url ?>"><?php echo $langs->trans('Reset') ?></a>
+	                    <input class="button buttongen" value="<?php echo $langs->trans('Rechercher') ?>" type="submit">
+	                    <a class="buttonreset" href="<?php echo $dolistore->url ?>"><?php echo $langs->trans('Reset') ?></a>
 
 	                    &nbsp;
 					</div>
-	                <div class="divsearchfield right">
 	    <?php
 		print $previouslink;
 		print $nextlink;
-		print '</div>';
 		print '</form>';
 
 
