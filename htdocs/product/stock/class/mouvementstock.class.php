@@ -189,7 +189,10 @@ class MouvementStock extends CommonObject
 		if ($product->id <= 0) {	// Can happen if database is corrupted
 			return 0;
 		}
-		if ($product->tostock==0) {	// Can happen if database is corrupted
+
+		// if product is not manage in stock we do not store stock movement
+		// This is the goal of "Not manage in stock" product option
+		if ($product->tostock==0) {
 			return 0;
 		}
 

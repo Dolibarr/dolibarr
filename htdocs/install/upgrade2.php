@@ -5376,6 +5376,15 @@ function migrate_product_tostock()
 			dol_print_error($db);
 			$error++;
 		}
+
+		$sqlupd='UPDATE '.MAIN_DB_PREFIX.'product_association SET ';
+		$sqlupd.='incdec=0';
+		$sqlupd.=' WHERE fk_product_fils IN (SELECT rowid FROM '.MAIN_DB_PREFIX.'product WHERE tostock=0)';
+		$resqlupd = $db->query($sqlupd);
+		if (! $resqlupd) {
+			dol_print_error($db);
+			$error++;
+		}
 	}
 
 	if (! $error) {

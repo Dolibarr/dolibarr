@@ -143,6 +143,7 @@ if ($action == 'search')
 
     $sql = 'SELECT DISTINCT p.rowid, p.ref, p.label, p.fk_product_type as type, p.barcode, p.price, p.price_ttc, p.price_base_type, p.entity,';
     $sql.= ' p.fk_product_type, p.tms as datem';
+    $sql.= ' ,p.tostock';
 	if (! empty($conf->global->MAIN_MULTILANGS)) $sql.= ', pl.label as labelm, pl.description as descriptionm';
 	$sql.= ' FROM '.MAIN_DB_PREFIX.'product as p';
 	$sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'categorie_product as cp ON p.rowid = cp.fk_product';
@@ -277,6 +278,9 @@ if ($id > 0 || ! empty($ref))
 		print '<td>'.$langs->trans('ParentProducts').'</td>';
 		print '<td>'.$langs->trans('Label').'</td>';
 		print '<td>'.$langs->trans('Qty').'</td>';
+		print '<td>'.$langs->trans("Status").' ('.$langs->trans("Sell").')</td>';
+		print '<td>'.$langs->trans("Status").' ('.$langs->trans("Buy").')</td>';
+		print '<td>'.$langs->trans('ManageStock').'</td>';
 		print '</td>';
 		if (count($prodsfather) > 0)
 		{
@@ -293,13 +297,16 @@ if ($id > 0 || ! empty($ref))
 				print '<td>'.$productstatic->getNomUrl(1, 'composition').'</td>';
 				print '<td>'.$productstatic->label.'</td>';
 				print '<td>'.$value['qty'].'</td>';
+				print '<td>'.$productstatic->LibStatut($value['tosell'], 5, 0).'</td>';
+				print '<td>'.$productstatic->LibStatut($value['tobuy'], 5, 1).'</td>';
+				print '<td>'.$productstatic->LibStatut($value['tostock'], 5, 3).'</td>';
 				print '</tr>';
 			}
 		}
 		else
 		{
 			print '<tr class="oddeven">';
-			print '<td colspan="3" class="opacitymedium">'.$langs->trans("None").'</td>';
+			print '<td colspan="6" class="opacitymedium">'.$langs->trans("None").'</td>';
 			print '</tr>';
 		}
 		print '</table>';
@@ -386,13 +393,17 @@ if ($id > 0 || ! empty($ref))
 					print '</td>';
 
 					// Stock
-					if (! empty($conf->stock->enabled)) print '<td class="right">'.$value['stock'].'</td>';	// Real stock
+					if (! empty($conf->stock->enabled)) print '<td class="right">'.(($productstatic->tostock)?$value['stock']:$langs->trans('ProductStatusNotOnStock')).'</td>';	// Real stock
 
 					// Qty + IncDec
 					if ($user->rights->produit->creer || $user->rights->service->creer)
 					{
 						print '<td class="center"><input type="text" value="'.$nb_of_subproduct.'" name="TProduct['.$productstatic->id.'][qty]" size="4" /></td>';
-						print '<td class="center"><input type="checkbox" name="TProduct['.$productstatic->id.'][incdec]" value="1" '.($value['incdec']==1?'checked':''  ).' /></td>';
+						if ($productstatic->tostock==1) {
+							print '<td class="center"><input type="checkbox" name="TProduct[' . $productstatic->id . '][incdec]" value="1" ' . ($value['incdec'] == 1 ? 'checked' : '') . ' /></td>';
+						} else {
+							print '<td class="center">'.$langs->trans('ProductStatusNotOnStock').'</td>';
+						}
 					}
 					else{
 						print '<td>'.$nb_of_subproduct.'</td>';
@@ -587,7 +598,7 @@ if ($id > 0 || ! empty($ref))
 						print '<td>'.$labeltoshow.'</td>';
 
 
-						if($object->is_sousproduit($id, $objp->rowid))
+						if($object->is_sousproduit($id, $objp->rowid) && $objp->tostock==1)
 						{
 							//$addchecked = ' checked';
 							$qty=$object->is_sousproduit_qty;
@@ -607,12 +618,19 @@ if ($id > 0 || ! empty($ref))
 
 						// Inc Dec
 						print '<td class="center">';
-						if ($qty) print '<input type="checkbox" name="prod_incdec_'.$i.'" value="1" '.($incdec?'checked':'').'>';
-						else
+						if ($objp->tostock==0) {
+							$disabled='disabled readonly';
+						} else {
+							$disabled='';
+						}
+						if ($qty) print '<input type="checkbox" name="prod_incdec_'.$i.'" value="1" '.$disabled.' '.($incdec?'checked':'').'>';
+						elseif ($objp->tostock==1)
 						{
 							// TODO Hide field and show it when setting a qty
 							print '<input type="checkbox" name="prod_incdec_'.$i.'" value="1" checked>';
 							//print '<input type="checkbox" disabled name="prod_incdec_'.$i.'" value="1" checked>';
+						} else {
+							print $langs->trans('ProductStatusNotOnStock');
 						}
 						print '</td>';
 
