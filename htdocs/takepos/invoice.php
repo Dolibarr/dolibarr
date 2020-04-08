@@ -533,7 +533,7 @@ if ($action == "order" and $placeid != 0)
 			$order_receipt_printer1 .= '</td></tr>';
         }
     }
-	if ($conf->global->TAKEPOS_PRINT_METHOD == "receiptprinter") {
+    if ($conf->global->TAKEPOS_PRINT_METHOD == "receiptprinter" && $count > 0) {
 		$invoice->fetch($placeid); //Reload object before send to printer
 		$ret = $printer->sendToPrinter($invoice, $conf->global->{'TAKEPOS_TEMPLATE_TO_USE_FOR_ORDERS'.$_SESSION["takeposterminal"]}, $conf->global->{'TAKEPOS_PRINTER_TO_USE'.$_SESSION["takeposterminal"]}); // PRINT TO PRINTER 1
 	}
@@ -543,6 +543,7 @@ if ($action == "order" and $placeid != 0)
 
     foreach ($invoice->lines as $line)
     {
+        $count=0;
         if ($line->special_code == "4") {
         	continue;
         }
@@ -558,7 +559,7 @@ if ($action == "order" and $placeid != 0)
 			$order_receipt_printer2 .= '</td></tr>';
         }
     }
-	if ($conf->global->TAKEPOS_PRINT_METHOD == "receiptprinter") {
+    if ($conf->global->TAKEPOS_PRINT_METHOD == "receiptprinter" && $count > 0) {
 		$invoice->fetch($placeid); //Reload object before send to printer
 		$ret = $printer->sendToPrinter($invoice, $conf->global->{'TAKEPOS_TEMPLATE_TO_USE_FOR_ORDERS'.$_SESSION["takeposterminal"]}, $conf->global->{'TAKEPOS_PRINTER_TO_USE'.$_SESSION["takeposterminal"]}); // PRINT TO PRINTER 2
 	}
