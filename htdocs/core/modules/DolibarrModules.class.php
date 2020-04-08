@@ -2278,16 +2278,8 @@ class DolibarrModules // Can not be abstract, because we need to instantiate it 
 
     	$const_name = 'MAIN_MODULE_'.strtoupper(preg_replace('/^mod/i', '', get_class($this)));
 
-    	// Activate/Disable and Setup (2 columns)
-    	if (!empty($conf->global->$const_name))	// If module is already activated
-    	{
-    		$disableSetup = 0;
-    	} else {
-			// TODO
-    	}
-
 		print '
-    	<div class="box-flex-item info-box-module">
+    	<div class="box-flex-item info-box-module'.(empty($conf->global->$const_name) ? ' info-box-module-disabled' : ' ').'">
 	    <div class="info-box info-box-sm info-box-module">
 	    <div class="info-box-icon">';
 

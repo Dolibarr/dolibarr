@@ -117,25 +117,10 @@ if (!defined('ISLOADEDBYSTEELSHEET')) die('Must be call by steelsheet'); ?>
     -webkit-transition: opacity 0.5s, visibility 0s 0.5s;
     transition: opacity 0.5s, visibility 0s 0.5s;
 }
-
-.info-box-icon-action {
-    box-sizing: border-box;
-    display: block;
-    position: absolute;
-    width: 90px;
-    bottom: 0px;
-    color: #ffffff;
-    background-color: rgba(0,0,0,0.1);
-    cursor: default;
-
-    font-size: 0.5em;
-    line-height: 22px;
-    padding: 0px 3px;
-    text-align: center;
-    opacity: 1;
-    -webkit-transition: opacity 0.5s, visibility 0s 0.5s;
-    transition: opacity 0.5s, visibility 0s 0.5s;
+.box-flex-item.info-box-module.info-box-module-disabled {
+    opacity: 0.6;
 }
+
 .info-box-actions {
 	position: absolute;
     right: 0;
@@ -386,6 +371,7 @@ if (GETPOSTISSET('THEME_AGRESSIVENESS_RATIO')) $conf->global->THEME_AGRESSIVENES
 	}
 
 	.info-box-module {
-		width: 280px;
+		width: 100%;
+		max-width: unset;
 	}
 }
