@@ -3983,6 +3983,20 @@ elseif ($id > 0 || !empty($ref))
 		$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"].'?facid='.$object->id, $langs->trans('ToClone'), $langs->trans('ConfirmCloneInvoice', $object->ref), 'confirm_clone', $formquestion, 'yes', 1, 250);
 	}
 
+	if ($action == "remove_file_comfirm")
+	{
+		$file = GETPOST('file', 'alpha');
+
+		$formconfirm = $form->formconfirm(
+			$_SERVER["PHP_SELF"].'?facid='.$object->id.'&file='.$file,
+			$langs->trans('DeleteFileHeader'),
+			$langs->trans('DeleteFileText')."<br><br>".$file,
+			'remove_file',
+			'',
+			'no',
+			2);
+	}
+
 	// Call Hook formConfirm
 	$parameters = array('formConfirm' => $formconfirm, 'lineid' => $lineid, 'remainingtopay' => &$resteapayer);
 	$reshook = $hookmanager->executeHooks('formConfirm', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
@@ -5359,7 +5373,11 @@ elseif ($id > 0 || !empty($ref))
 		$genallowed = $usercanread;
 		$delallowed = $usercancreate;
 
-		print $formfile->showdocuments('facture', $filename, $filedir, $urlsource, $genallowed, $delallowed, $object->modelpdf, 1, 0, 0, 28, 0, '', '', '', $soc->default_lang, '', $object);
+		print $formfile->showdocuments(
+			'facture', $filename, $filedir, $urlsource, $genallowed,
+			$delallowed, $object->modelpdf, 1, 0, 0, 28, 0, '', '', '',
+			$soc->default_lang, '', $object, 0, 'remove_file_comfirm');
+
 		$somethingshown = $formfile->numoffiles;
 
 		// Show links to link elements
