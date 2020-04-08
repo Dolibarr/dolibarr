@@ -92,11 +92,11 @@ include_once DOL_DOCUMENT_ROOT.'/core/actions_linkedfiles.inc.php';
  * View
  */
 
+$form = new Form($db);
+
 $title = $langs->trans("FinancialAccount").' - '.$langs->trans("Documents");
 $helpurl = "";
 llxHeader('', $title, $helpurl);
-
-$form = new Form($db);
 
 if ($id > 0 || !empty($ref)) {
 	if ($object->fetch($id, $ref)) {
@@ -114,12 +114,8 @@ if ($id > 0 || !empty($ref)) {
 			$totalsize += $file['size'];
 		}
 
-		$morehtmlref = '';
-
-
 		$title = $langs->trans("AccountStatement").' '.$num.' - '.$langs->trans("BankAccount").' '.$object->getNomUrl(1, 'receipts');
 		print load_fiche_titre($title, '', '');
-
 
 		print '<div class="fichecenter">';
 		print '<div class="underbanner clearboth"></div>';

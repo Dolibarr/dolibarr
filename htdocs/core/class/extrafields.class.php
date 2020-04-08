@@ -842,7 +842,7 @@ class ExtraFields
 	/**
 	 * 	Load array this->attributes, or old this->attribute_xxx like attribute_label, attribute_type, ...
 	 *
-	 * 	@param	string		$elementtype		Type of element ('adherent', 'commande', 'thirdparty', 'facture', 'propal', 'product', ...).
+	 * 	@param	string		$elementtype		Type of element ('' = all, 'adherent', 'commande', 'thirdparty', 'facture', 'propal', 'product', ...).
 	 * 	@param	boolean		$forceload			Force load of extra fields whatever is status of cache.
 	 * 	@return	array							Array of attributes keys+label for all extra fields.
 	 */
@@ -858,30 +858,6 @@ class ExtraFields
 		if ($elementtype == 'order_supplier') $elementtype = 'commande_fournisseur';
 
 		$array_name_label = array();
-
-		// To avoid conflicts with external modules. TODO Remove this.
-		if (empty($forceload) && !empty($conf->global->MAIN_EXTRAFIELDS_DISABLED)) return $array_name_label;
-
-		// If already loaded
-		// TODO Enable this cache test
-		// if (empty($forceload) && ! empty($this->attributes[$tab->elementtype]['loaded'])) return $array_name_label;
-
-		// Set array of label of entity
-		// Remove completely loading of label. This should be done by presentation.
-		/*
-		$labelmulticompany=array();
-		if (!empty($conf->multicompany->enabled))
-		{
-			$sql_entity_name='SELECT rowid, label FROM '.MAIN_DB_PREFIX.'entity WHERE rowid in (0,'.$conf->entity.')';
-			$resql_entity_name=$this->db->query($sql_entity_name);
-			if ($resql_entity_name)
-			{
-				while ($obj = $this->db->fetch_object($resql_entity_name))
-				{
-					$labelmulticompany[$obj->rowid]=$obj->label;
-				}
-			}
-		}*/
 
 		// We should not have several time this request. If we have, there is some optimization to do by calling a simple $extrafields->fetch_optionals() in top of code and not into subcode
 		$sql = "SELECT rowid,name,label,type,size,elementtype,fieldunique,fieldrequired,param,pos,alwayseditable,perms,langs,list,printable,totalizable,fielddefault,fieldcomputed,entity,enabled,help";
@@ -1591,9 +1567,9 @@ class ExtraFields
 		 if ($type == 'date') $out.=' (YYYY-MM-DD)';
 		 elseif ($type == 'datetime') $out.=' (YYYY-MM-DD HH:MM:SS)';
 		 */
-		if (! empty($help) && $keyprefix != 'search_options_') {
+		/*if (! empty($help) && $keyprefix != 'search_options_') {
 			$out .= $form->textwithpicto('', $help, 1, 'help', '', 0, 3);
-		}
+		}*/
 		return $out;
 	}
 
@@ -2168,7 +2144,7 @@ class ExtraFields
 
 				if (in_array($key_type, array('date', 'datetime')))
 				{
-					if (!GETPOSTISSET($keysuffix."options_".$key.$keyprefix)."year") continue; // Value was not provided, we should not set it.
+					if (!GETPOSTISSET($keysuffix."options_".$key.$keyprefix."year")) continue; // Value was not provided, we should not set it.
 					// Clean parameters
 					$value_key = dol_mktime(GETPOST($keysuffix."options_".$key.$keyprefix."hour", 'int'), GETPOST($keysuffix."options_".$key.$keyprefix."min", 'int'), 0, GETPOST($keysuffix."options_".$key.$keyprefix."month", 'int'), GETPOST($keysuffix."options_".$key.$keyprefix."day", 'int'), GETPOST($keysuffix."options_".$key.$keyprefix."year", 'int'));
 				}

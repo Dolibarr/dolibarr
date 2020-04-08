@@ -23,7 +23,7 @@
 	--colortext: rgb(<?php print $colortext; ?>);
 	--colortextlink: rgb(<?php print $colortextlink; ?>);
 	--colortextbackhmenu: #<?php echo $colortextbackhmenu; ?>;
-	--colortextbackvmenu: #<?php print $colortextbackvmenu; ?>) ;
+	--colortextbackvmenu: #<?php print $colortextbackvmenu; ?>;
 	--listetotal: #551188;
 	--inputbackgroundcolor: #FFF;
 	--inputbordercolor: rgba(0,0,0,.2);
@@ -174,6 +174,18 @@ input, select {
 	margin-left:0px;
 	margin-bottom:1px;
 	margin-top:1px;
+}
+#mainbody input.button:not(.buttongen):not(.bordertransp) {
+	background: var(--butactionbg);
+    border-collapse: collapse;
+    border: none;
+}
+#mainbody input.buttongen {
+	padding: 4px 4px;
+}
+
+input.button:focus {
+	border-bottom: 0;
 }
 input.button.massactionconfirmed {
     margin: 4px;
@@ -393,14 +405,15 @@ div#moretabsList, div#moretabsListaction {
 hr { border: 0; border-top: 1px solid #ccc; }
 .tabBar hr { margin-top: 20px; margin-bottom: 17px; }
 
-.button, .buttonDelete, input[name="sbmtConnexion"] {
+.button:not(.bordertransp), .buttonDelete:not(.bordertransp) {
 	margin-bottom: 0;
 	margin-top: 0;
 	margin-left: 5px;
 	margin-right: 5px;
 	font-family: <?php print $fontlist ?>;
 	display: inline-block;
-	padding: 4px 14px;
+	padding: 8px 15px;
+	min-width: 90px;
 	text-align: center;
 	cursor: pointer;
 	text-decoration: none !important;
@@ -638,10 +651,10 @@ body[class*="colorblind-"] .text-success{
     color : <?php print $textDanger; ?>
 }
 
-.editfielda span.fa-pencil-alt, .editfielda span.fa-trash {
+.editfielda span.fa-pencil-alt, .editfielda span.fa-trash, .editfieldlang {
     color: #ccc !important;
 }
-.editfielda span.fa-pencil-alt:hover, .editfielda span.fa-trash:hover {
+.editfielda span.fa-pencil-alt:hover, .editfielda span.fa-trash:hover, .editfieldlang:hover {
     color: var(--colortexttitle) !important;
 }
 
@@ -2819,7 +2832,7 @@ div.tabBar div.border .table-border-row, div.tabBar div.border .table-key-border
 }
 div .tdtop {
     vertical-align: top !important;
-	/* padding-top: 8px !important; */
+	padding-top: 10px !important;
 	padding-bottom: 2px !important;
 	padding-bottom: 0px;
 }
@@ -3152,7 +3165,12 @@ div.pagination li.paginationafterarrows {
 .paginationatbottom {
 	margin-top: 9px;
 }
-
+table.hidepaginationprevious .paginationprevious {
+	display: none;
+}
+table.hidepaginationnext .paginationnext {
+	display: none;
+}
 
 
 
@@ -4177,6 +4195,8 @@ span[phptag] {
 	padding: 2px 5px 3px 5px !important;
 	margin: 2px 4px 2px 4px  !important;
     line-height: normal;
+    background: #f5f5f5 !important;
+    border: 1px solid #ccc !important;
 }
 .websiteselection {
 	/* display: inline-block; */
@@ -4986,6 +5006,10 @@ div.dataTables_length select {
 /* ============================================================================== */
 /*  Select2                                                                       */
 /* ============================================================================== */
+
+span#select2-taskid-container[title^='--'] {
+    opacity: 0.3;
+}
 
 .select2-container--default .select2-results__option--highlighted[aria-selected] {
     background-color: rgb(<?php echo $colorbackhmenu1 ?>);

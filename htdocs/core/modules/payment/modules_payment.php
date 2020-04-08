@@ -63,11 +63,11 @@ abstract class ModeleNumRefPayments
 	}
 
 	/**
-     *  Checks if the numbers already in force in the data base do not
-     *  cause conflicts that would prevent this numbering from working.
-     *
-     *	@return     boolean     false if conflict, true if ok
-     */
+	 *  Checks if the numbers already in the database do not
+	 *  cause conflicts that would prevent this numbering working.
+	 *
+	 *	@return     boolean     false if conflict, true if ok
+	 */
 	public function canBeActivated()
 	{
 		return true;

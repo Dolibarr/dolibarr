@@ -14,6 +14,7 @@
  * Copyright (C) 2016      Ferran Marcet            <fmarcet@2byte.es>
  * Copyright (C) 2018      Nicolas ZABOURI			<info@inovea-conseil.com>
  * Copyright (C) 2019      Frédéric France          <frederic.france@netlogic.fr>
+ * Copyright (C) 2020		Tobias Sekan			<tobias.sekan@startmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -595,12 +596,12 @@ class SupplierProposal extends CommonObject
             //var_dump($this->line->fk_fournprice);exit;
 
             // Multicurrency
-            $this->line->fk_multicurrency = $this->fk_multicurrency;
-            $this->line->multicurrency_code = $this->multicurrency_code;
+            $this->line->fk_multicurrency			= $this->fk_multicurrency;
+            $this->line->multicurrency_code			= $this->multicurrency_code;
             $this->line->multicurrency_subprice		= $pu_ht_devise;
-            $this->line->multicurrency_total_ht 	= $multicurrency_total_ht;
-            $this->line->multicurrency_total_tva 	= $multicurrency_total_tva;
-            $this->line->multicurrency_total_ttc 	= $multicurrency_total_ttc;
+            $this->line->multicurrency_total_ht		= $multicurrency_total_ht;
+            $this->line->multicurrency_total_tva	= $multicurrency_total_tva;
+            $this->line->multicurrency_total_ttc	= $multicurrency_total_ttc;
 
             // Mise en option de la ligne
             if (empty($qty) && empty($special_code)) $this->line->special_code = 3;
@@ -708,6 +709,10 @@ class SupplierProposal extends CommonObject
             	$txtva = preg_replace('/\s*\(.*\)/', '', $txtva); // Remove code into vatrate.
             }
 
+			if ($conf->multicurrency->enabled && $pu_ht_devise > 0) {
+				$pu = 0;
+			}
+
             $tabprice = calcul_price_total($qty, $pu, $remise_percent, $txtva, $txlocaltax1, $txlocaltax2, 0, $price_base_type, $info_bits, $type, $this->thirdparty, $localtaxes_type, 100, $this->multicurrency_tx, $pu_ht_devise);
             $total_ht  = $tabprice[0];
             $total_tva = $tabprice[1];
@@ -719,6 +724,7 @@ class SupplierProposal extends CommonObject
             $multicurrency_total_ht  = $tabprice[16];
             $multicurrency_total_tva = $tabprice[17];
             $multicurrency_total_ttc = $tabprice[18];
+			$pu_ht_devise			 = $tabprice[19];
 
             //Fetch current line from the database and then clone the object and set it in $oldline property
             $line = new SupplierProposalLine($this->db);
@@ -784,11 +790,11 @@ class SupplierProposal extends CommonObject
             	}
             }
 
-            // Multicurrency
-            $this->line->multicurrency_subprice		= price2num($pu * $this->multicurrency_tx);
-            $this->line->multicurrency_total_ht 	= $multicurrency_total_ht;
-            $this->line->multicurrency_total_tva 	= $multicurrency_total_tva;
-            $this->line->multicurrency_total_ttc 	= $multicurrency_total_ttc;
+			// Multicurrency
+			$this->line->multicurrency_subprice		= $pu_ht_devise;
+			$this->line->multicurrency_total_ht		= $multicurrency_total_ht;
+			$this->line->multicurrency_total_tva	= $multicurrency_total_tva;
+			$this->line->multicurrency_total_ttc	= $multicurrency_total_ttc;
 
             $result = $this->line->update();
             if ($result > 0)
@@ -1800,25 +1806,25 @@ class SupplierProposal extends CommonObject
      */
     public function updateOrCreatePriceFournisseur($user)
     {
-        $productsupplier = new ProductFournisseur($this->db);
+        global $conf;
 
         dol_syslog(get_class($this)."::updateOrCreatePriceFournisseur", LOG_DEBUG);
         foreach ($this->lines as $product)
         {
             if ($product->subprice <= 0) continue;
+            $productsupplier = new ProductFournisseur($this->db);
 
-            $idProductFourn = $productsupplier->find_min_price_product_fournisseur($product->fk_product, $product->qty);
-            $res = $productsupplier->fetch($idProductFourn);
+            $multicurrency_tx = 1;
+            $fk_multicurrency = 0;
 
-            if ($productsupplier->id) {
-                if ($productsupplier->fourn_qty == $product->qty) {
-                    $this->updatePriceFournisseur($productsupplier->product_fourn_price_id, $product, $user);
-                } else {
-                    $this->createPriceFournisseur($product, $user);
-                }
-            } else {
-                $this->createPriceFournisseur($product, $user);
-            }
+            if(empty($this->thirdparty)) $this->fetch_thirdparty();
+
+            $ref_fourn = $product->ref_fourn;
+            if(empty($ref_fourn)) $ref_fourn = $product->ref_supplier;
+            if(!empty($conf->multicurrency->enabled) && !empty($product->multicurrency_code)) list($fk_multicurrency, $multicurrency_tx) = MultiCurrency::getIdAndTxFromCode($this->db, $product->multicurrency_code);
+            $productsupplier->id = $product->fk_product;
+
+            $productsupplier->update_buyprice($product->qty, $product->subprice, $user, 'HT', $this->thirdparty, '', $ref_fourn, $product->tva_tx, 0, 0, 0, $product->info_bits,  '',  '',  array(),  '', $product->multicurrency_subprice,  'HT', $multicurrency_tx, $product->multicurrency_code,  '',  '',  '');
         }
 
         return 1;
@@ -1856,9 +1862,12 @@ class SupplierProposal extends CommonObject
      */
     public function createPriceFournisseur($product, $user)
     {
+    	global $conf;
+
         $price = price2num($product->subprice * $product->qty, 'MU');
         $qty = price2num($product->qty);
         $unitPrice = price2num($product->subprice, 'MU');
+
         $now = dol_now();
 
         $values = array(
@@ -1872,9 +1881,28 @@ class SupplierProposal extends CommonObject
             $product->tva_tx,
             $user->id
         );
+        if (!empty($conf->multicurrency->enabled)) {
+            if (!empty($product->multicurrency_code)) {
+				include_once DOL_DOCUMENT_ROOT.'/multicurrency/class/multicurrency.class.php';
+	            $multicurrency = new MultiCurrency($this->db); //need to fetch because empty fk_multicurrency and rate
+                $multicurrency->fetch(0, $product->multicurrency_code);
+                if(! empty($multicurrency->id)) {
+                    $values[] = $multicurrency->id;
+                    $values[] = "'".$product->multicurrency_code."'";
+                    $values[] = $product->multicurrency_subprice;
+                    $values[] = $product->multicurrency_total_ht;
+                    $values[] = $multicurrency->rate->rate;
+                }
+                else {
+                    for($i = 0; $i < 5; $i++) $values[] = 'NULL';
+                }
+            }
+        }
 
         $sql = 'INSERT INTO '.MAIN_DB_PREFIX.'product_fournisseur_price ';
-        $sql .= '(datec, fk_product, fk_soc, ref_fourn, price, quantity, unitprice, tva_tx, fk_user) VALUES ('.implode(',', $values).')';
+        $sql .= '(datec, fk_product, fk_soc, ref_fourn, price, quantity, unitprice, tva_tx, fk_user';
+        if(!empty($conf->multicurrency->enabled) && !empty($product->multicurrency_code)) $sql .= ',fk_multicurrency, multicurrency_code, multicurrency_unitprice, multicurrency_price, multicurrency_tx';
+        $sql .= ')  VALUES ('.implode(',', $values).')';
 
         $resql = $this->db->query($sql);
         if (!$resql) {

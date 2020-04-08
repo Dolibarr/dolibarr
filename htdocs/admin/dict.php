@@ -489,7 +489,7 @@ $tabhelp[19] = array('code'=>$langs->trans("EnterAnyCode"));
 $tabhelp[20] = array('code'=>$langs->trans("EnterAnyCode"));
 $tabhelp[21] = array('code'=>$langs->trans("EnterAnyCode"));
 $tabhelp[22] = array('code'=>$langs->trans("EnterAnyCode"));
-$tabhelp[23] = array('revenuestamp_type'=>'FixedOfPercent');
+$tabhelp[23] = array('revenuestamp_type'=>'FixedOrPercent');
 $tabhelp[24] = array('code'=>$langs->trans("EnterAnyCode"));
 $tabhelp[25] = array('code'=>$langs->trans('EnterAnyCode'));
 //$tabhelp[26] = array('code'=>$langs->trans("EnterAnyCode"));

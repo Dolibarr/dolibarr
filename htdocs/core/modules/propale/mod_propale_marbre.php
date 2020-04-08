@@ -32,9 +32,9 @@ require_once DOL_DOCUMENT_ROOT .'/core/modules/propale/modules_propale.php';
 class mod_propale_marbre extends ModeleNumRefPropales
 {
 	/**
-     * Dolibarr version of the loaded document
-     * @var string
-     */
+	 * Dolibarr version of the loaded document
+	 * @var string
+	 */
 	public $version = 'dolibarr';		// 'development', 'experimental', 'dolibarr'
 
 	public $prefix='PR';
@@ -57,16 +57,16 @@ class mod_propale_marbre extends ModeleNumRefPropales
 	public $name='Marbre';
 
 
-    /**
-     *  Return description of numbering module
-     *
-     *  @return     string      Text with description
-     */
-    public function info()
-    {
-    	global $langs;
-      	return $langs->trans("SimpleNumRefModelDesc", $this->prefix);
-    }
+	/**
+	 *  Return description of numbering module
+	 *
+	 *  @return     string      Text with description
+	 */
+	public function info()
+	{
+		global $langs;
+	  	return $langs->trans("SimpleNumRefModelDesc", $this->prefix);
+	}
 
 
 	/**
@@ -81,8 +81,8 @@ class mod_propale_marbre extends ModeleNumRefPropales
 
 
 	/**
-     *  Checks if the numbers already in force in the data base do not
-     *  cause conflicts that would prevent this numbering from working.
+	 *  Checks if the numbers already in the database do not
+	 *  cause conflicts that would prevent this numbering working.
 	 *
 	 *  @return     boolean     false if conflict, true if ok
 	 */

@@ -50,7 +50,7 @@ if ($setterminal > 0)
 
 $_SESSION["urlfrom"] = '/takepos/index.php';
 
-$langs->loadLangs(array("bills", "orders", "commercial", "cashdesk", "receiptprinter"));
+$langs->loadLangs(array("bills", "orders", "commercial", "cashdesk", "receiptprinter", "banks"));
 
 $categorie = new Categorie($db);
 
@@ -661,6 +661,21 @@ function MoreActions(totalactions){
 	}
 }
 
+function ControlCashOpening()
+{
+    $.colorbox({href:"../compta/cashcontrol/cashcontrol_card.php?action=create&contextpage=takepos", width:"90%", height:"60%", transition:"none", iframe:"true", title:"<?php echo $langs->trans("NewCashFence"); ?>"});
+}
+
+function CloseCashFence(rowid)
+{
+    $.colorbox({href:"../compta/cashcontrol/cashcontrol_card.php?id="+rowid+"&contextpage=takepos", width:"90%", height:"90%", transition:"none", iframe:"true", title:"<?php echo $langs->trans("NewCashFence"); ?>"});
+}
+
+function CashReport(rowid)
+{
+    $.colorbox({href:"../compta/cashcontrol/report.php?id="+rowid+"&contextpage=takepos", width:"60%", height:"90%", transition:"none", iframe:"true", title:"<?php echo $langs->trans("CashReport"); ?>"});
+}
+
 // Popup to select the terminal to use
 function TerminalsDialog()
 {
@@ -707,6 +722,18 @@ $( document ).ready(function() {
 	{
 		if ($conf->global->TAKEPOS_NUM_TERMINALS == "1") $_SESSION["takeposterminal"] = 1;
 		else print "TerminalsDialog();";
+	}
+	if ($conf->global->TAKEPOS_CONTROL_CASH_OPENING)
+	{
+		$sql = "SELECT rowid FROM ".MAIN_DB_PREFIX."pos_cash_fence WHERE ";
+		$sql .= "date(date_creation) = CURDATE() ";
+		$sql .= "";
+		$resql = $db->query($sql);
+		if ($resql) {
+			$obj = $db->fetch_object($resql);
+			// If there is no cash control from today open it
+			if ($obj->rowid == null) print "ControlCashOpening();";
+		}
 	}
 	?>
 });
@@ -843,11 +870,13 @@ if ($conf->global->TAKEPOS_BAR_RESTAURANT)
 	{
 		$menus[$r++] = array('title'=>$langs->trans("Order"), 'action'=>'TakeposPrintingOrder();');
 	}
-	//add temp ticket button
+	//Button to print receipt before payment
 	if ($conf->global->TAKEPOS_BAR_RESTAURANT)
 	{
 	    if ($conf->global->TAKEPOS_PRINT_METHOD == "takeposconnector") {
 			$menus[$r++] = array('title'=>'<span class="fa fa-receipt paddingrightonly"></span><div class="trunc">'.$langs->trans("Receipt").'</div>', 'action'=>'TakeposPrinting(placeid);');
+		} elseif ($conf->global->TAKEPOS_PRINT_METHOD == "receiptprinter") {
+			$menus[$r++] = array('title'=>'<span class="fa fa-receipt paddingrightonly"></span><div class="trunc">'.$langs->trans("Receipt").'</div>', 'action'=>'DolibarrTakeposPrinting(placeid);');
 		} else {
 			$menus[$r++] = array('title'=>'<span class="fa fa-receipt paddingrightonly"></span><div class="trunc">'.$langs->trans("Receipt").'</div>', 'action'=>'Print(placeid);');
 		}
@@ -870,6 +899,20 @@ if ($conf->global->TAKEPOS_PRINT_METHOD == "receiptprinter") {
 		'title' => '<span class="fa fa-receipt paddingrightonly"></span><div class="trunc">'.$langs->trans("DOL_OPEN_DRAWER").'</div>',
 		'action' => 'DolibarrOpenDrawer();',
 	);
+}
+
+$sql = "SELECT rowid, status FROM ".MAIN_DB_PREFIX."pos_cash_fence WHERE ";
+$sql .= "date(date_creation) = CURDATE() ";
+$resql = $db->query($sql);
+if ($resql)
+{
+	$num = $db->num_rows($resql);
+	if ($num)
+	{
+		$obj = $db->fetch_object($resql);
+		$menus[$r++] = array('title'=>'<span class="fas fa-file-invoice-dollar paddingrightonly"></span><div class="trunc">'.$langs->trans("CashReport").'</div>', 'action'=>'CashReport('.$obj->rowid.');');
+		if ($obj->status == 0) $menus[$r++] = array('title'=>'<span class="fas fa-cash-register paddingrightonly"></span><div class="trunc">'.$langs->trans("CloseCashFence").'</div>', 'action'=>'CloseCashFence('.$obj->rowid.');');
+	}
 }
 
 $hookmanager->initHooks(array('takeposfrontend'));

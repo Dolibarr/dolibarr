@@ -122,7 +122,7 @@ if ($resql)
 		}
 	}
 	else {
-		print '<tr><td>'.$langs->trans("None").'</td><td></td><td></td></tr>';
+		print '<tr><td><span class="opacitymedium">'.$langs->trans("None").'</span></td><td></td><td></td></tr>';
 	}
 
 	print "</table></div><br>";
@@ -196,7 +196,7 @@ else dol_print_error($db);
 
 
 /*
- * Supplier orders to process
+ * Open pruchase orders to process
  */
 
 $sql = "SELECT c.rowid, c.ref, c.ref_supplier as ref_supplier, c.fk_statut as status, c.billed as billed, s.nom as name, s.rowid as socid";
@@ -221,7 +221,7 @@ if ($resql)
         print '<div class="div-table-responsive-no-min">';
 		print '<table class="noborder centpercent">';
 		print '<tr class="liste_titre">';
-		print '<th colspan="3">'.$langs->trans("SuppliersOrdersToProcess").'</th></tr>';
+		print '<th colspan="3">'.$langs->trans("SuppliersOrdersToProcess").' <span class="badge">'.$num.'</span></th></tr>';
 		while ($i < $num)
 		{
 			$obj = $db->fetch_object($resql);

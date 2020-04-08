@@ -1580,7 +1580,7 @@ if ($id > 0)
 
 		$linkback='';
 		// Link to other agenda views
-		$linkback.=img_picto($langs->trans("BackToList"), 'object_list', 'class="hideonsmartphone pictoactionview"');
+		$linkback.=img_picto($langs->trans("BackToList"), 'object_list-alt', 'class="hideonsmartphone pictoactionview"');
 		$linkback.='<a href="'.DOL_URL_ROOT.'/comm/action/list.php?restore_lastsearch_values=1">'.$langs->trans("BackToList").'</a>';
 		$linkback.='</li>';
 		$linkback.='<li class="noborder litext">';

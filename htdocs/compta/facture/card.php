@@ -413,7 +413,9 @@ if (empty($reshook))
 		if ($new_date_lim_reglement > $old_date_lim_reglement) $object->date_lim_reglement = $new_date_lim_reglement;
 		if ($object->date_lim_reglement < $object->date) $object->date_lim_reglement = $object->date;
 		$result = $object->update($user);
-		if ($result < 0) dol_print_error($db, $object->error);
+		if ($result < 0) {
+			dol_print_error($db, $object->error);
+		}
 	}
 
 	elseif ($action == 'setdate_pointoftax' && $usercancreate)
@@ -422,7 +424,9 @@ if (empty($reshook))
 		$date_pointoftax = dol_mktime(12, 0, 0, $_POST['date_pointoftaxmonth'], $_POST['date_pointoftaxday'], $_POST['date_pointoftaxyear']);
 		$object->date_pointoftax = $date_pointoftax;
 		$result = $object->update($user);
-		if ($result < 0) dol_print_error($db, $object->error);
+		if ($result < 0) {
+			dol_print_error($db, $object->error);
+		}
 	}
 
 	elseif ($action == 'setconditions' && $usercancreate)
@@ -438,7 +442,9 @@ if (empty($reshook))
 		if ($new_date_lim_reglement > $old_date_lim_reglement) $object->date_lim_reglement = $new_date_lim_reglement;
 		if ($object->date_lim_reglement < $object->date) $object->date_lim_reglement = $object->date;
 		$result = $object->update($user);
-		if ($result < 0) dol_print_error($db, $object->error);
+		if ($result < 0) {
+			dol_print_error($db, $object->error);
+		}
 	}
 
 	elseif ($action == 'setpaymentterm' && $usercancreate)
@@ -450,8 +456,9 @@ if (empty($reshook))
 			setEventMessages($langs->trans("DatePaymentTermCantBeLowerThanObjectDate"), null, 'warnings');
 		}
 		$result = $object->update($user);
-		if ($result < 0)
+		if ($result < 0) {
 			dol_print_error($db, $object->error);
+		}
 	}
 
 	elseif ($action == 'setrevenuestamp' && $usercancreate)
@@ -460,8 +467,28 @@ if (empty($reshook))
 		$object->revenuestamp = GETPOST('revenuestamp');
 		$result = $object->update($user);
 		$object->update_price(1);
-		if ($result < 0)
+		if ($result < 0) {
 			dol_print_error($db, $object->error);
+		} else {
+			// Define output language
+			if (empty($conf->global->MAIN_DISABLE_PDF_AUTOUPDATE))
+			{
+				$outputlangs = $langs;
+				$newlang = '';
+				if ($conf->global->MAIN_MULTILANGS && empty($newlang) && GETPOST('lang_id', 'aZ09')) $newlang = GETPOST('lang_id', 'aZ09');
+				if ($conf->global->MAIN_MULTILANGS && empty($newlang))	$newlang = $object->thirdparty->default_lang;
+				if (!empty($newlang)) {
+					$outputlangs = new Translate("", $conf);
+					$outputlangs->setDefaultLang($newlang);
+					$outputlangs->load('products');
+				}
+				$model = $object->modelpdf;
+				$ret = $object->fetch($id); // Reload to get new records
+
+				$result = $object->generateDocument($model, $outputlangs, $hidedetails, $hidedesc, $hideref);
+				if ($result < 0) setEventMessages($object->error, $object->errors, 'errors');
+			}
+		}
 	}
 
 	// Set incoterm
@@ -1608,7 +1635,7 @@ if (empty($reshook))
 
 										// Extrafields
 										if (empty($conf->global->MAIN_EXTRAFIELDS_DISABLED) && method_exists($lines[$i], 'fetch_optionals')) {
-											$lines[$i]->fetch_optionals($lines[$i]->rowid);
+											$lines[$i]->fetch_optionals();
 											$array_options = $lines[$i]->array_options;
 										}
 
@@ -1749,7 +1776,7 @@ if (empty($reshook))
 						$line->origin = $object->origin;
 						$line->origin_id = $line->id;
 						$line->fk_prev_id = $line->id;
-						$line->fetch_optionals($line->id);
+						$line->fetch_optionals();
 						$line->situation_percent = $line->get_prev_progress($object->id); // get good progress including credit note
 
 						// Si fk_remise_except defini on vérifie si la réduction à déjà été appliquée
@@ -2555,7 +2582,7 @@ if (empty($reshook))
                 $originLine = new $lineClassName($db);
                 if (intval($fromElementid) > 0 && $originLine->fetch($lineId) > 0)
                 {
-                    $originLine->fetch_optionals($lineId);
+                    $originLine->fetch_optionals();
                     $desc = $originLine->desc;
                     $pu_ht = $originLine->subprice;
                     $qty = $originLine->qty;
@@ -2810,7 +2837,7 @@ if ($action == 'create')
 				$remise_absolue 	= (!empty($expesrc->remise_absolue) ? $expesrc->remise_absolue : (!empty($soc->remise_absolue) ? $soc->remise_absolue : 0));
 
 				//Replicate extrafields
-				$expesrc->fetch_optionals($expeoriginid);
+				$expesrc->fetch_optionals();
 				$object->array_options = $expesrc->array_options;
 			}
 			else
@@ -2828,7 +2855,7 @@ if ($action == 'create')
 				}
 
 				// Replicate extrafields
-				$objectsrc->fetch_optionals($originid);
+				$objectsrc->fetch_optionals();
 				$object->array_options = $objectsrc->array_options;
 			}
 		}
@@ -4480,7 +4507,7 @@ elseif ($id > 0 || !empty($ref))
 			print '<input type="hidden" name="revenuestamp" id="revenuestamp_val" value="'.price2num($object->revenuestamp).'">';
 			print $formother->select_revenue_stamp('', 'revenuestamp_type', $mysoc->country_code);
 			print ' &rarr; <span id="revenuestamp_span"></span>';
-			print ' <input type="submit" class="button" value="'.$langs->trans('Modify').'">';
+			print ' <input type="submit" class="button buttongen" value="'.$langs->trans('Modify').'">';
 			print '</form>';
 			print " <script>
                 $(document).ready(function(){

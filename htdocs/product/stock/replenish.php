@@ -702,7 +702,10 @@ while ($i < ($limit ? min($num, $limit) : $num))
 
 		//depending on conf, use either physical stock or
 		//virtual stock to compute the stock to buy value
-		$stocktobuy = max(max($desiredstock, $alertstock) - $stock - $ordered, 0);
+
+		if(empty($usevirtualstock)) $stocktobuy = max(max($desiredstock, $alertstock) - $stock - $ordered, 0);
+		else $stocktobuy = max(max($desiredstock, $alertstock) - $stock, 0); //ordered is already in $stock in virtual mode
+
 		$disabled = '';
 		if ($ordered > 0)
 		{

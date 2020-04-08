@@ -1316,64 +1316,25 @@ class ActionComm extends CommonObject
         // phpcs:enable
         global $langs;
 
-        if ($mode == 0)
-        {
-            if ($percent == -1 && !$hidenastatus) return $langs->trans('StatusNotApplicable');
-            elseif ($percent == 0) return $langs->trans('StatusActionToDo').' (0%)';
-            elseif ($percent > 0 && $percent < 100) return $langs->trans('StatusActionInProcess').' ('.$percent.'%)';
-            elseif ($percent >= 100) return $langs->trans('StatusActionDone').' (100%)';
-        }
-        elseif ($mode == 1)
-        {
-        	if ($percent == -1 && !$hidenastatus) return $langs->trans('StatusNotApplicable');
-        	elseif ($percent == 0) return $langs->trans('StatusActionToDo');
-        	elseif ($percent > 0 && $percent < 100) return $percent.'%';
-        	elseif ($percent >= 100) return $langs->trans('StatusActionDone');
-        }
-        elseif ($mode == 2)
-        {
-        	if ($percent == -1 && !$hidenastatus) return img_picto($langs->trans('StatusNotApplicable'), 'statut9').' '.$langs->trans('StatusNotApplicable');
-        	elseif ($percent == 0) return img_picto($langs->trans('StatusActionToDo'), 'statut1').' '.$langs->trans('StatusActionToDo');
-        	elseif ($percent > 0 && $percent < 100) return img_picto($langs->trans('StatusActionInProcess'), 'statut3').' '.$percent.'%';
-        	elseif ($percent >= 100) return img_picto($langs->trans('StatusActionDone'), 'statut6').' '.$langs->trans('StatusActionDone');
-        }
-        elseif ($mode == 3)
-        {
-        	if ($percent == -1 && !$hidenastatus) return img_picto($langs->trans("Status").': '.$langs->trans('StatusNotApplicable'), 'statut9');
-        	elseif ($percent == 0) return img_picto($langs->trans("Status").': '.$langs->trans('StatusActionToDo').' (0%)', 'statut1');
-        	elseif ($percent > 0 && $percent < 100) return img_picto($langs->trans("Status").': '.$langs->trans('StatusActionInProcess').' ('.$percent.'%)', 'statut3');
-        	elseif ($percent >= 100) return img_picto($langs->trans("Status").': '.$langs->trans('StatusActionDone').' (100%)', 'statut6');
-        }
-        elseif ($mode == 4)
-        {
-        	if ($percent == -1 && !$hidenastatus) return img_picto($langs->trans('StatusNotApplicable'), 'statut9').' '.$langs->trans('StatusNotApplicable');
-        	elseif ($percent == 0) return img_picto($langs->trans('StatusActionToDo'), 'statut1').' '.$langs->trans('StatusActionToDo').' (0%)';
-        	elseif ($percent > 0 && $percent < 100) return img_picto($langs->trans('StatusActionInProcess'), 'statut3').' '.$langs->trans('StatusActionInProcess').' ('.$percent.'%)';
-        	elseif ($percent >= 100) return img_picto($langs->trans('StatusActionDone'), 'statut6').' '.$langs->trans('StatusActionDone').' (100%)';
-        }
-        elseif ($mode == 5)
-        {
-        	if ($percent == -1 && !$hidenastatus) return img_picto($langs->trans('StatusNotApplicable'), 'statut9');
-        	elseif ($percent == 0) return '0% '.img_picto($langs->trans('StatusActionToDo'), 'statut1');
-        	elseif ($percent > 0 && $percent < 100) return $percent.'% '.img_picto($langs->trans('StatusActionInProcess').' - '.$percent.'%', 'statut3');
-        	elseif ($percent >= 100) return $langs->trans('StatusActionDone').' '.img_picto($langs->trans('StatusActionDone'), 'statut6');
-        }
-        elseif ($mode == 6)
-        {
-        	if ($percent == -1 && !$hidenastatus) return $langs->trans('StatusNotApplicable').' '.img_picto($langs->trans('StatusNotApplicable'), 'statut9');
-        	elseif ($percent == 0) return $langs->trans('StatusActionToDo').' (0%) '.img_picto($langs->trans('StatusActionToDo'), 'statut1');
-        	elseif ($percent > 0 && $percent < 100) return $langs->trans('StatusActionInProcess').' ('.$percent.'%) '.img_picto($langs->trans('StatusActionInProcess').' - '.$percent.'%', 'statut3');
-        	elseif ($percent >= 100) return $langs->trans('StatusActionDone').' (100%) '.img_picto($langs->trans('StatusActionDone'), 'statut6');
-        }
-        elseif ($mode == 7)
-        {
-            if ($percent == -1 && !$hidenastatus) return img_picto($langs->trans('StatusNotApplicable'), 'statut9');
-            elseif ($percent == 0) return '0% '.img_picto($langs->trans('StatusActionToDo'), 'statut1');
-            elseif ($percent > 0 && $percent < 100) return $percent.'% '.img_picto($langs->trans('StatusActionInProcess').' - '.$percent.'%', 'statut3');
-            elseif ($percent >= 100) return img_picto($langs->trans('StatusActionDone'), 'statut6');
-        }
+        $labelStatus = $langs->trans('StatusNotApplicable');
+       	if ($percent == -1 && !$hidenastatus) $labelStatus = $langs->trans('StatusNotApplicable');
+       	elseif ($percent == 0) $labelStatus = $langs->trans('StatusActionToDo').' (0%)';
+       	elseif ($percent > 0 && $percent < 100) $labelStatus = $langs->trans('StatusActionInProcess').' ('.$percent.'%)';
+       	elseif ($percent >= 100) $labelStatus = $langs->trans('StatusActionDone').' (100%)';
 
-        return '';
+        $labelStatusShort = $langs->trans('StatusNotApplicable');
+        if ($percent == -1 && !$hidenastatus) $labelStatusShort = $langs->trans('NA');
+        elseif ($percent == 0) $labelStatusShort = '0%';
+        elseif ($percent > 0 && $percent < 100) $labelStatusShort = $percent.'%';
+        elseif ($percent >= 100) $labelStatusShort = '100%';
+
+        $statusType = 'status9';
+        if ($percent == -1 && !$hidenastatus) $statusType = 'status9';
+        if ($percent == 0) $statusType = 'status1';
+        if ($percent > 0 && $percent < 100) $statusType = 'status3';
+        if ($percent >= 100) $statusType = 'status6';
+
+        return dolGetStatus($labelStatus, $labelStatusShort, '', $statusType, $mode);
     }
 
     /**
@@ -1504,7 +1465,7 @@ class ActionComm extends CommonObject
         }
 
         $result .= $linkstart;
-        if ($withpicto)	$result .= img_object(($notooltip ? '' : $langs->trans("ShowAction").': '.$libelle), ($overwritepicto ? $overwritepicto : 'action'), ($notooltip ? 'class="'.(($withpicto != 2) ? 'paddingright ' : '').'valigntextbottom"' : 'class="'.(($withpicto != 2) ? 'paddingright ' : '').'classfortooltip valigntextbottom"'), 0, 0, $notooltip ? 0 : 1);
+        if ($withpicto)	$result .= img_object(($notooltip ? '' : $langs->trans("ShowAction").': '.$libelle), ($overwritepicto ? $overwritepicto : 'action'), ($notooltip ? 'class="'.(($withpicto != 2) ? 'paddingright ' : '').'"' : 'class="'.(($withpicto != 2) ? 'paddingright ' : '').'classfortooltip"'), 0, 0, $notooltip ? 0 : 1);
         $result .= $libelleshort;
         $result .= $linkend;
 

@@ -1403,6 +1403,15 @@ class Societe extends CommonObject
 						$error++;
 					}
 				}
+				// Actions on extra languages
+				if (!$error && empty($conf->global->MAIN_EXTRALANGUAGES_DISABLED)) // For avoid conflicts if trigger used
+				{
+					$result = $this->insertExtraLanguages();
+					if ($result < 0)
+					{
+						$error++;
+					}
+				}
 
 				if (!$error && $call_trigger)
 				{

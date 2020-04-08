@@ -30,9 +30,9 @@ require_once DOL_DOCUMENT_ROOT.'/core/modules/mrp/modules_mo.php';
 class mod_mo_standard extends ModeleNumRefMos
 {
 	/**
-     * Dolibarr version of the loaded document
-     * @var string
-     */
+	 * Dolibarr version of the loaded document
+	 * @var string
+	 */
 	public $version = 'dolibarr'; // 'development', 'experimental', 'dolibarr'
 
 	public $prefix = 'MO';
@@ -48,16 +48,16 @@ class mod_mo_standard extends ModeleNumRefMos
 	public $name = 'standard';
 
 
-    /**
-     *  Return description of numbering module
-     *
-     *  @return     string      Text with description
-     */
-    public function info()
-    {
-    	global $langs;
-      	return $langs->trans("SimpleNumRefModelDesc", $this->prefix);
-    }
+	/**
+	 *  Return description of numbering module
+	 *
+	 *  @return     string      Text with description
+	 */
+	public function info()
+	{
+		global $langs;
+	  	return $langs->trans("SimpleNumRefModelDesc", $this->prefix);
+	}
 
 
 	/**
@@ -72,8 +72,8 @@ class mod_mo_standard extends ModeleNumRefMos
 
 
 	/**
-     *  Checks if the numbers already in force in the data base do not
-     *  cause conflicts that would prevent this numbering from working.
+	 *  Checks if the numbers already in the database do not
+	 *  cause conflicts that would prevent this numbering working.
 	 *
 	 *  @return     boolean     false if conflict, true if ok
 	 */
@@ -140,8 +140,8 @@ class mod_mo_standard extends ModeleNumRefMos
 		$date = $object->date_creation;
 		$yymm = strftime("%y%m", $date);
 
-    	if ($max >= (pow(10, 4) - 1)) $num = $max + 1; // If counter > 9999, we do not format on 4 chars, we take number as it is
-    	else $num = sprintf("%04s", $max + 1);
+		if ($max >= (pow(10, 4) - 1)) $num = $max + 1; // If counter > 9999, we do not format on 4 chars, we take number as it is
+		else $num = sprintf("%04s", $max + 1);
 
 		dol_syslog("mod_mo_standard::getNextValue return ".$this->prefix.$yymm."-".$num);
 		return $this->prefix.$yymm."-".$num;

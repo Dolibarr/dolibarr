@@ -1175,8 +1175,9 @@ if ($action == 'create')
 					$extrafields->fetch_name_optionals_label($srcLine->table_element);
 					$extrafields->fetch_name_optionals_label($line->table_element);
 
-					$srcLine->fetch_optionals($line->id); // fetch extrafields also available in orderline
-					$line->fetch_optionals($object->id);
+					$srcLine->id = $line->id;
+					$srcLine->fetch_optionals(); // fetch extrafields also available in orderline
+					$line->fetch_optionals();
 
 					$line->array_options = array_merge($line->array_options, $srcLine->array_options);
 
@@ -1231,7 +1232,7 @@ elseif ($id || $ref)
 		$soc = new Societe($db);
 		$soc->fetch($object->socid);
 
-		$res = $object->fetch_optionals($object->id);
+		$res = $object->fetch_optionals();
 
 		$head = reception_prepare_head($object);
 		dol_fiche_head($head, 'reception', $langs->trans("Reception"), -1, 'reception');
@@ -1958,17 +1959,17 @@ elseif ($id || $ref)
 			if ($action == 'editline' && $lines[$i]->id == $line_id)
 			{
 				print '<td class="center" colspan="2" valign="middle">';
-				print '<input type="submit" class="button" id="savelinebutton" name="save" value="'.$langs->trans("Save").'"><br>';
+				print '<input type="submit" class="button" id="savelinebutton marginbottomonly" name="save" value="'.$langs->trans("Save").'"><br>';
 				print '<input type="submit" class="button" id="cancellinebutton" name="cancel" value="'.$langs->trans("Cancel").'"><br>';
 			}
-			elseif ($object->statut == 0)
+			elseif ($object->statut == Reception::STATUS_DRAFT)
 			{
 				// edit-delete buttons
 				print '<td class="linecoledit center">';
-				print '<a href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=editline&amp;lineid='.$lines[$i]->id.'">'.img_edit().'</a>';
+				print '<a class="editfielda" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=editline&amp;lineid='.$lines[$i]->id.'">'.img_edit().'</a>';
 				print '</td>';
 				print '<td class="linecoldelete" width="10">';
-				print '<a href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=deleteline&amp;lineid='.$lines[$i]->id.'">'.img_delete().'</a>';
+				print '<a class="reposition" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=deleteline&amp;lineid='.$lines[$i]->id.'">'.img_delete().'</a>';
 				print '</td>';
 
 				// Display lines extrafields
@@ -1986,7 +1987,8 @@ elseif ($id || $ref)
 			{
 				$colspan = empty($conf->productbatch->enabled) ? 8 : 9;
 				$line = new CommandeFournisseurDispatch($db);
-				$line->fetch_optionals($lines[$i]->id);
+				$line->id = $lines[$i]->id;
+				$line->fetch_optionals();
 
 				if ($action == 'editline' && $lines[$i]->id == $line_id)
 				{
