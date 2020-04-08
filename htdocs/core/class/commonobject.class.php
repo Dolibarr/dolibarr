@@ -5565,6 +5565,9 @@ abstract class CommonObject
 							dol_syslog('Error bad setup of extrafield', LOG_WARNING);
 						}
 						break;
+					case 'phone':
+						$new_array_options[$key] = preg_replace("/[^0-9]/", "", trim($this->array_options[$key]));
+						break;
 			   	}
 			}
 
