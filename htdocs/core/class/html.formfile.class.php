@@ -331,9 +331,10 @@ class FormFile
 	 * 		@param		string				$morepicto			Add more HTML content into cell with picto
 	 *      @param      Object              $object             Object when method is called from an object card.
 	 *      @param		int					$hideifempty		Hide section of generated files if there is no file
+	 *      @param      string              $removeaction       (optional) The action to remove a file
 	 * 		@return		string              					Output string with HTML array of documents (might be empty string)
 	 */
-	public function showdocuments($modulepart, $modulesubdir, $filedir, $urlsource, $genallowed, $delallowed = 0, $modelselected = '', $allowgenifempty = 1, $forcenomultilang = 0, $iconPDF = 0, $notused = 0, $noform = 0, $param = '', $title = '', $buttonlabel = '', $codelang = '', $morepicto = '', $object = null, $hideifempty = 0)
+	public function showdocuments($modulepart, $modulesubdir, $filedir, $urlsource, $genallowed, $delallowed = 0, $modelselected = '', $allowgenifempty = 1, $forcenomultilang = 0, $iconPDF = 0, $notused = 0, $noform = 0, $param = '', $title = '', $buttonlabel = '', $codelang = '', $morepicto = '', $object = null, $hideifempty = 0, $removeaction = 'remove_file')
 	{
 		// Deprecation warning
 		if (!empty($iconPDF)) {
@@ -859,7 +860,7 @@ class FormFile
 						if ($delallowed)
 						{
 							$tmpurlsource = preg_replace('/#[a-zA-Z0-9_]*$/', '', $urlsource);
-							$out .= '<a href="'.$tmpurlsource.((strpos($tmpurlsource, '?') === false) ? '?' : '&amp;').'action=remove_file&amp;file='.urlencode($relativepath);
+							$out .= '<a href="'.$tmpurlsource.((strpos($tmpurlsource, '?') === false) ? '?' : '&amp;').'action='.$removeaction.'&amp;file='.urlencode($relativepath);
 							$out .= ($param ? '&amp;'.$param : '');
 							//$out.= '&modulepart='.$modulepart; // TODO obsolete ?
 							//$out.= '&urlsource='.urlencode($urlsource); // TODO obsolete ?
