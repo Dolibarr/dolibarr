@@ -229,23 +229,31 @@ if ($conf->global->TAKEPOS_PRINT_METHOD == "receiptprinter") {
 	foreach ($printer->listprinters as $key => $value) {
 		$printers[$value['rowid']] = $value['name'];
 	}
-	print '<tr class="oddeven"><td>'.$langs->trans("TakeposTerminalPrinterToUse").'</td>';
+	print '<tr class="oddeven"><td>'.$langs->trans("MainPrinterToUse").'</td>';
 	print '<td>';
 	print $form->selectarray('TAKEPOS_PRINTER_TO_USE'.$terminal, $printers, (empty($conf->global->{'TAKEPOS_PRINTER_TO_USE'.$terminal}) ? '0' : $conf->global->{'TAKEPOS_PRINTER_TO_USE'.$terminal}), 1);
 	print '</td></tr>';
+	if ($conf->global->TAKEPOS_ORDER_PRINTERS) {
+		print '<tr class="oddeven"><td>'.$langs->trans("OrderPrinterToUse").'</td>';
+		print '<td>';
+		print $form->selectarray('TAKEPOS_ORDER_PRINTER_TO_USE'.$terminal, $printers, (empty($conf->global->{'TAKEPOS_ORDER_PRINTER_TO_USE'.$terminal}) ? '0' : $conf->global->{'TAKEPOS_ORDER_PRINTER_TO_USE'.$terminal}), 1);
+		print '</td></tr>';
+	}
 	$printer->listPrintersTemplates();
 	$templates = array();
 	foreach ($printer->listprinterstemplates as $key => $value) {
 		$templates[$value['rowid']] = $value['name'];
 	}
-	print '<tr class="oddeven"><td>'.$langs->trans("TakeposTerminalTemplateToUseForInvoicesTicket").'</td>';
+	print '<tr class="oddeven"><td>'.$langs->trans("MainTemplateToUse").'</td>';
 	print '<td>';
 	print $form->selectarray('TAKEPOS_TEMPLATE_TO_USE_FOR_INVOICES'.$terminal, $templates, (empty($conf->global->{'TAKEPOS_TEMPLATE_TO_USE_FOR_INVOICES'.$terminal}) ? '0' : $conf->global->{'TAKEPOS_TEMPLATE_TO_USE_FOR_INVOICES'.$terminal}), 1);
 	print '</td></tr>';
-	print '<tr class="oddeven"><td>'.$langs->trans("TakeposTerminalTemplateToUseForOrdersTicket").'</td>';
-	print '<td>';
-	print $form->selectarray('TAKEPOS_TEMPLATE_TO_USE_FOR_ORDERS'.$terminal, $templates, (empty($conf->global->{'TAKEPOS_TEMPLATE_TO_USE_FOR_ORDERS'.$terminal}) ? '0' : $conf->global->{'TAKEPOS_TEMPLATE_TO_USE_FOR_ORDERS'.$terminal}), 1);
-	print '</td></tr>';
+	if ($conf->global->TAKEPOS_ORDER_PRINTERS) {
+		print '<tr class="oddeven"><td>'.$langs->trans("OrderTemplateToUse").'</td>';
+		print '<td>';
+		print $form->selectarray('TAKEPOS_TEMPLATE_TO_USE_FOR_ORDERS'.$terminal, $templates, (empty($conf->global->{'TAKEPOS_TEMPLATE_TO_USE_FOR_ORDERS'.$terminal}) ? '0' : $conf->global->{'TAKEPOS_TEMPLATE_TO_USE_FOR_ORDERS'.$terminal}), 1);
+		print '</td></tr>';
+	}
 }
 
 print '<tr class="oddeven"><td>'.$langs->trans('CashDeskReaderKeyCodeForEnter').'</td>';

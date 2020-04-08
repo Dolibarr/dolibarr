@@ -101,3 +101,7 @@ StartAParallelSale=Start a new parallel sale
 ControlCashOpening=Control cash box at opening pos
 CloseCashFence=Close cash fence
 CashReport=Cash report
+MainPrinterToUse=Main printer to use
+OrderPrinterToUse=Order printer to use
+MainTemplateToUse=Main template to use
+OrderTemplateToUse=Order template to use
