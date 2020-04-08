@@ -587,8 +587,12 @@ class Adherent extends CommonObject
 		$this->state_id = ($this->state_id > 0 ? $this->state_id : $this->state_id);
 		if (!empty($conf->global->MAIN_FIRST_TO_UPPER)) $this->lastname = ucwords(trim($this->lastname));
 		if (!empty($conf->global->MAIN_FIRST_TO_UPPER)) $this->firstname = ucwords(trim($this->firstname));
+		if (!empty($conf->global->MAIN_FIRST_TO_UPPER)) $this->firstname = ucwords(strtolower($this->firstname));
 		$this->note_public = ($this->note_public ? $this->note_public : $this->note_public);
 		$this->note_private = ($this->note_private ? $this->note_private : $this->note_private);
+		$this->phone = preg_replace("/[^0-9]/", "", trim($this->phone));;
+		$this->phone_perso = preg_replace("/[^0-9]/", "", trim($this->phone_perso));;
+		$this->phone_mobile = preg_replace("/[^0-9]/", "", trim($this->phone_mobile));;
 
 		// Check parameters
 		if (!empty($conf->global->ADHERENT_MAIL_REQUIRED) && !isValidEMail($this->email)) {
