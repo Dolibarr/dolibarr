@@ -3504,15 +3504,16 @@ function img_view($titlealt = 'default', $float = 0, $other = '')
  *
  *  @param	string	$titlealt   Text on alt and title of image. Alt only if param notitle is set to 1. If text is "TextA:TextB", use Text A on alt and Text B on title.
  *	@param  string	$other      Add more attributes on img
+ *  @param	string	$morecss	More CSS
  *  @return string      		Retourne tag img
  */
-function img_delete($titlealt = 'default', $other = 'class="pictodelete"')
+function img_delete($titlealt = 'default', $other = 'class="pictodelete"', $morecss = '')
 {
 	global $langs;
 
 	if ($titlealt == 'default') $titlealt = $langs->trans('Delete');
 
-	return img_picto($titlealt, 'delete.png', $other);
+	return img_picto($titlealt, 'delete.png', $other, false, 0, 0, '', $morecss);
 }
 
 /**

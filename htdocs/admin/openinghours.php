@@ -89,7 +89,7 @@ if (empty($action) || $action == 'edit' || $action == 'updateedit')
 	print '<input type="hidden" name="token" value="'.newToken().'">';
 	print '<input type="hidden" name="action" value="update">';
 
-	print '<table class="noborder centpercent">';
+	print '<table class="noborder centpercent editmode">';
 	print '<tr class="liste_titre"><th class="titlefield wordbreak">'.$langs->trans("Day").'</th><th>'.$langs->trans("Value").'</th></tr>'."\n";
 
 	print '<tr class="oddeven"><td>';
