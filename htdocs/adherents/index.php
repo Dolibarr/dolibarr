@@ -191,10 +191,10 @@ if ($conf->use_javascript_ajax)
     }
     $total = $SommeA + $SommeB + $SommeC + $SommeD;
     $dataseries = array();
-    $dataseries[] = array($langs->trans("MenuMembersNotUpToDate"), round($SommeB));
-    $dataseries[] = array($langs->trans("MenuMembersUpToDate"), round($SommeC));
-    $dataseries[] = array($langs->trans("MembersStatusResiliated"), round($SommeD));
-    $dataseries[] = array($langs->trans("MembersStatusToValid"), round($SommeA));
+    $dataseries[] = array($langs->transnoentitiesnoconv("MenuMembersNotUpToDate"), round($SommeB));
+    $dataseries[] = array($langs->transnoentitiesnoconv("MenuMembersUpToDate"), round($SommeC));
+    $dataseries[] = array($langs->transnoentitiesnoconv("MembersStatusResiliated"), round($SommeD));
+    $dataseries[] = array($langs->transnoentitiesnoconv("MembersStatusToValid"), round($SommeA));
 
     include_once DOL_DOCUMENT_ROOT.'/theme/'.$conf->theme.'/theme_vars.inc.php';
 
