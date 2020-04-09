@@ -362,7 +362,7 @@ if ($action == "freezone") {
     $localtax1_tx = get_localtax($tva_tx, 1, $customer, $mysoc, $tva_npr);
     $localtax2_tx = get_localtax($tva_tx, 2, $customer, $mysoc, $tva_npr);
 
-    $invoice->addline($desc, $number, 1, $tva_tx, $localtax1_tx, $localtax2_tx, 0, 0, '', 0, 0, 0, '', 'TTC', $number, 0, -1, 0, '', 0, 0, null, 0, '', 0, 100, '', null, 0);
+    $invoice->addline($desc, $number, 1, $tva_tx, $localtax1_tx, $localtax2_tx, 0, 0, '', 0, 0, 0, '', 'TTC', $number, 0, -1, 0, '', 0, 0, null, '', '', 0, 100, '', null, 0);
     $invoice->fetch($placeid);
 }
 
