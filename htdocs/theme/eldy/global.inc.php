@@ -115,7 +115,8 @@ a:link, a:visited, a:hover, a:active { font-family: <?php print $fontlist ?>; co
 a:hover { text-decoration: underline; color: var(--colortextlink); }
 a.commonlink { color: var(--colortextlink) !important; text-decoration: none; }
 th.liste_titre a div div:hover, th.liste_titre_sel a div div:hover { text-decoration: underline; }
-th.liste_titre_sel, td.liste_titre_sel, th.liste_titre, td.liste_titre { opacity: 0.9; }
+tr.liste_titre th.liste_titre_sel:not(.maxwidthsearch), tr.liste_titre td.liste_titre_sel:not(.maxwidthsearch),
+tr.liste_titre th.liste_titre:not(.maxwidthsearch), tr.liste_titre td.liste_titre:not(.maxwidthsearch) { opacity: 0.8; }
 /* th.liste_titre_sel a, th.liste_titre a, td.liste_titre_sel a, td.liste_titre a { color: #766; } */
 input, input.flat, textarea, textarea.flat, form.flat select, select, select.flat, .dataTables_length label select {
 	background-color: var(--inputbackgroundcolor);
@@ -182,8 +183,8 @@ input, select {
     border-collapse: collapse;
     border: none;
 }
-#mainbody input.buttongen {
-	padding: 4px 4px;
+#mainbody input.buttongen, #mainbody button.buttongen {
+	padding: 3px 4px;
 }
 
 input.button:focus {
@@ -1569,7 +1570,7 @@ div.nopadding {
 
 td.nobordernopadding.widthpictotitle.opacityhigh.valignmiddle.col-picto {
     color: var(--colortexttitlenotab);
-    opacity: 0.45;
+    opacity: 0.6;
 }
 .pictotitle {
 	margin-<?php echo $right; ?>: 8px;
@@ -3823,7 +3824,7 @@ div.boximport {
 .fieldrequired { font-weight: bold; color: var(--fieldrequiredcolor); }
 
 .widthpictotitle { width: 32px; text-align: <?php echo $left; ?>; }
-span.widthpictotitle { font-size: 2.1em; };
+span.widthpictotitle { font-size: 2em; };
 
 .dolgraphtitle { margin-top: 6px; margin-bottom: 4px; }
 .dolgraphtitlecssboxes { /* margin: 0px; */ }

@@ -44,7 +44,7 @@ $companystatic=new Societe($db);
 llxHeader();
 
 // List movements bu category for bank transactions
-print load_fiche_titre($langs->trans("BankTransactionByCategories"), '', 'title_bank.png');
+print load_fiche_titre($langs->trans("BankTransactionByCategories"), '', 'bank_account');
 
 print '<table class="noborder centpercent">';
 print "<tr class=\"liste_titre\">";

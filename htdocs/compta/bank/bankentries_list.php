@@ -817,7 +817,7 @@ if ($resql)
 
 	$morehtml .= $newcardbutton;
 
-	$picto = 'title_bank';
+	$picto = 'bank_account';
 	if ($id > 0 || !empty($ref)) $picto = '';
 
 	print_barre_liste($langs->trans("BankTransactions"), $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, $massactionbutton, $num, $nbtotalofrecords, $picto, 0, $morehtml, '', $limit);

@@ -313,7 +313,7 @@ if (! empty($user->rights->categorie->creer))
 
 print '<div class="fichecenter">';
 
-print load_fiche_titre($langs->trans("SubCats"), $newcardbutton);
+print load_fiche_titre($langs->trans("SubCats"), $newcardbutton, 'object_category');
 
 
 print '<table class="liste nohover" width="100%">';
@@ -784,7 +784,7 @@ if ($type == Categorie::TYPE_CONTACT)
 	}
 }
 
-// List of accounts
+// List of bank accounts
 if ($type == Categorie::TYPE_ACCOUNT)
 {
     require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
@@ -807,7 +807,7 @@ if ($type == Categorie::TYPE_ACCOUNT)
 
     	print '<br>';
     	$param = '&limit='.$limit.'&id='.$id.'&type='.$type; $num = count($accounts); $nbtotalofrecords = ''; $newcardbutton = '';
-    	print_barre_liste($langs->trans("Account"), $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, $massactionbutton, $num, $nbtotalofrecords, 'bank', 0, $newcardbutton, '', $limit);
+    	print_barre_liste($langs->trans("Account"), $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, $massactionbutton, $num, $nbtotalofrecords, 'bank_account', 0, $newcardbutton, '', $limit);
 
     	print "<table class='noborder' width='100%'>\n";
         print '<tr class="liste_titre"><td colspan="4">'.$langs->trans("Ref").'</td></tr>'."\n";

@@ -46,7 +46,7 @@ $accountstatic=new Account($db);
 
 llxHeader('', $langs->trans("ChequesArea"));
 
-print load_fiche_titre($langs->trans("ChequesArea"), '', 'bank');
+print load_fiche_titre($langs->trans("ChequesArea"), '', 'bank_account');
 
 print '<div class="fichecenter"><div class="fichethirdleft">';
 

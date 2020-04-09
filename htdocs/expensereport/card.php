@@ -1450,7 +1450,7 @@ $ecmfilesstatic = new EcmFiles($db);
 // Create
 if ($action == 'create')
 {
-	print load_fiche_titre($langs->trans("NewTrip"));
+	print load_fiche_titre($langs->trans("NewTrip"), '', 'trip');
 
 	print '<form action="'.$_SERVER['PHP_SELF'].'" method="post" name="create">';
 	print '<input type="hidden" name="token" value="'.newToken().'">';
@@ -1574,7 +1574,7 @@ else
 				if (empty($user->rights->expensereport->readall) && empty($user->rights->expensereport->lire_tous)
 				    && (empty($conf->global->MAIN_USE_ADVANCED_PERMS) || empty($user->rights->expensereport->writeall_advance)))
 				{
-					print load_fiche_titre($langs->trans('TripCard'));
+					print load_fiche_titre($langs->trans('TripCard'), '', 'trip');
 
 					print '<div class="tabBar">';
 					print $langs->trans('NotUserRightToView');

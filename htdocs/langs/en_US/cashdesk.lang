@@ -49,6 +49,7 @@ Footer=Footer
 AmountAtEndOfPeriod=Amount at end of period (day, month or year)
 TheoricalAmount=Theorical amount
 RealAmount=Real amount
+CashFence=Cash fence
 CashFenceDone=Cash fence done for the period
 NbOfInvoices=Nb of invoices
 Paymentnumpad=Type of Pad to enter payment

@@ -152,6 +152,7 @@ if ($action == 'add')
  */
 
 llxHeader();
+
 print '		<script type="text/javascript">
         	$(document).ready(function () {
     	  		$(".selectbankaccount").change(function() {
@@ -228,7 +229,7 @@ if ($error)
 	$amount = GETPOST('amount', 'alpha');
 }
 
-print load_fiche_titre($langs->trans("MenuBankInternalTransfer"), '', 'title_bank.png');
+print load_fiche_titre($langs->trans("MenuBankInternalTransfer"), '', 'bank_account');
 
 print $langs->trans("TransferDesc");
 print "<br><br>";

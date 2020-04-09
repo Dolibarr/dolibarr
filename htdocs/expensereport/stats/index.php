@@ -70,7 +70,7 @@ $dir = $conf->expensereport->dir_temp;
 
 llxHeader('', $title);
 
-print load_fiche_titre($title, $mesg);
+print load_fiche_titre($title, '', 'trip');
 
 dol_mkdir($dir);
 

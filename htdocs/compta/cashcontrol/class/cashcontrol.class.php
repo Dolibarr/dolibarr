@@ -52,7 +52,8 @@ class CashControl extends CommonObject
 	/**
 	 * @var string String with name of icon for pos_cash_fence. Must be the part after the 'object_' into object_pos_cash_fence.png
 	 */
-	public $picto = 'account';
+	public $picto = 'cash-register';
+
 
 	public $fields=array(
 	'rowid' =>array('type'=>'integer', 'label'=>'ID', 'enabled'=>1, 'visible'=>-2, 'notnull'=>1, 'position'=>10),
@@ -372,7 +373,7 @@ class CashControl extends CommonObject
 
 		$newref=($this->ref?$this->ref:$this->id);
 
-		$label = '<u>' . $langs->trans("ShowCashFence") . '</u>';
+		$label = '<u>' . $langs->trans("CashFence") . '</u>';
 		$label.= '<br>';
 		$label.= '<b>' . $langs->trans('Ref') . ':</b> ' . ($this->ref?$this->ref:$this->id);
 

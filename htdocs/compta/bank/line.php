@@ -628,7 +628,7 @@ if ($result)
         // Releve rappro
         if ($acct->canBeConciliated() > 0)  // Si compte rapprochable
         {
-            print load_fiche_titre($langs->trans("Reconciliation"), '', 'title_bank.png');
+            print load_fiche_titre($langs->trans("Reconciliation"), '', 'bank_account');
             print '<hr>'."\n";
 
             print '<form method="POST" action="'.$_SERVER['PHP_SELF'].'?rowid='.$objp->rowid.'">';
