@@ -1191,9 +1191,11 @@ elseif ($object->id > 0)
 			}*/
 
 			// Send
-			if ($object->statut != 2)
-			{
-				print '<a class="butAction" href="card.php?id='.$object->id.'&amp;action=presend&mode=init#formmailbeforetitle">'.$langs->trans('SendMail').'</a>';
+			if (empty($user->socid)) {
+				if ($object->statut != 2)
+				{
+					print '<a class="butAction" href="card.php?id='.$object->id.'&amp;action=presend&mode=init#formmailbeforetitle">'.$langs->trans('SendMail').'</a>';
+				}
 			}
 
 			// Modify
