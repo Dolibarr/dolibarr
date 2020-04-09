@@ -110,7 +110,7 @@ class box_external_rss extends ModeleBoxes
                 'text' => $title,
                 'sublink' => $link,
                 'subtext'=>$langs->trans("LastRefreshDate").': '.($rssparser->getLastFetchDate()?dol_print_date($rssparser->getLastFetchDate(), "dayhourtext"):$langs->trans("Unknown")),
-                'subpicto'=>'help',
+                'subpicto'=>'globe',
                 'target'=>'_blank',
             );
 		}

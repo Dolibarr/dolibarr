@@ -245,37 +245,45 @@ class ModeleBoxes // Can't be abtract as it is instantiated to build "empty" box
                 $out.= '<td';
                 if ($nbcol > 0) { $out.= ' colspan="'.$nbcol.'"'; }
                 $out.= '>';
-                if ($conf->use_javascript_ajax)
+                if (! empty($conf->use_javascript_ajax))
                 {
-                    $out.= '<table summary="" class="nobordernopadding" width="100%"><tr><td class="tdoverflowmax150 maxwidth150onsmartphone">';
+                    //$out.= '<table summary="" class="nobordernopadding" width="100%"><tr><td class="tdoverflowmax150 maxwidth150onsmartphone">';
+                	$out.= '<div class="tdoverflowmax250 maxwidth150onsmartphone float">';
                 }
                 if (! empty($head['text']))
                 {
                     $s=dol_trunc($head['text'], isset($head['limit'])?$head['limit']:$MAXLENGTHBOX);
                     $out.= $s;
                 }
-                $out.= '</td>';
+                if (! empty($conf->use_javascript_ajax))
+                {
+                	$out.= '</div>';
+                }
+                //$out.= '</td>';
 
                 if (! empty($conf->use_javascript_ajax))
                 {
                     $sublink='';
                     if (! empty($head['sublink']))  $sublink.= '<a href="'.$head['sublink'].'"'.(empty($head['target'])?'':' target="'.$head['target'].'"').'>';
-                    if (! empty($head['subpicto'])) $sublink.= img_picto($head['subtext'], $head['subpicto'], 'class="opacitymedium '.(empty($head['subclass'])?'':$head['subclass']).'" id="idsubimg'.$this->boxcode.'"');
+                    if (! empty($head['subpicto'])) $sublink.= img_picto($head['subtext'], $head['subpicto'], 'class="opacitymedium marginleftonly '.(empty($head['subclass'])?'':$head['subclass']).'" id="idsubimg'.$this->boxcode.'"');
                     if (! empty($head['sublink']))  $sublink.= '</a>';
 
-                    $out.= '<td class="nocellnopadd boxclose right nowraponall">';
+                    //$out.= '<td class="nocellnopadd boxclose right nowraponall">';
+                    $out.= '<div class="nocellnopadd boxclose floatright nowraponall">';
                     $out.=$sublink;
                     // The image must have the class 'boxhandle' beause it's value used in DOM draggable objects to define the area used to catch the full object
-                    $out.= img_picto($langs->trans("MoveBox", $this->box_id), 'grip_title', 'class="opacitymedium boxhandle hideonsmartphone cursormove"');
+                    $out.= img_picto($langs->trans("MoveBox", $this->box_id), 'grip_title', 'class="opacitymedium boxhandle hideonsmartphone cursormove marginleftonly"');
                     $out.= img_picto($langs->trans("CloseBox", $this->box_id), 'close_title', 'class="opacitymedium boxclose cursorpointer marginleftonly" rel="x:y" id="imgclose'.$this->box_id.'"');
                     $label=$head['text'];
                     //if (! empty($head['graph'])) $label.=' ('.$langs->trans("Graph").')';
                     if (! empty($head['graph'])) $label.=' <span class="opacitymedium fa fa-bar-chart"></span>';
                     $out.= '<input type="hidden" id="boxlabelentry'.$this->box_id.'" value="'.dol_escape_htmltag($label).'">';
-                    $out.= '</td></tr></table>';
+                    //$out.= '</td></tr></table>';
+                    $out.= '</div>';
                 }
 
-                $out.= "</tr>\n";
+                $out .= "</td>";
+                $out .= "</tr>\n";
             }
 
             // Show box lines
