@@ -28,6 +28,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/html.formcompany.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php';
 require_once DOL_DOCUMENT_ROOT.'/bom/class/bom.class.php';
 require_once DOL_DOCUMENT_ROOT.'/bom/lib/bom.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
 
 // Load translation files required by the page
 $langs->loadLangs(array("mrp", "other"));
@@ -146,6 +147,13 @@ if (empty($reshook))
 		if (!($idprod > 0)) {
 			setEventMessages($langs->trans('ErrorFieldRequired', $langs->transnoentitiesnoconv('Product')), null, 'errors');
 			$error++;
+		} else {
+			$product = new Product($db);
+			$result = $product->fetch($idprod);
+			if ($result<0) {
+				setEventMessages($product->errors, null, 'errors');
+				$error++;
+			}
 		}
 
 		if ($object->fk_product == $idprod) {
@@ -162,8 +170,13 @@ if (empty($reshook))
     		$bomline->fk_product = $idprod;
     		$bomline->qty = $qty;
     		$bomline->qty_frozen = (int) $qty_frozen;
-    		$bomline->disable_stock_change = (int) $disable_stock_change;
     		$bomline->efficiency = $efficiency;
+
+			if ($product->tostock<>0) {
+				$bomline->disable_stock_change = (int) $disable_stock_change;
+			} else {
+				$bomline->disable_stock_change = 0;
+			}
 
     		// Rang to use
    			$rangmax = $object->line_max(0);

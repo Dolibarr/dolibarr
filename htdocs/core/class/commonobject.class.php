@@ -4159,6 +4159,8 @@ abstract class CommonObject
 		// TODO We should not use global var for this
 		global $inputalsopricewithtax, $usemargins, $disableedit, $disablemove, $disableremove, $outputalsopricetotalwithtax;
 
+		$object_rights = $this->getRights();
+
 		// Define usemargins
 		$usemargins = 0;
 		if (!empty($conf->margin->enabled) && !empty($this->element) && in_array($this->element, array('facture', 'facturerec', 'propal', 'commande'))) $usemargins = 1;

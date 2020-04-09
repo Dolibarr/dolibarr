@@ -95,7 +95,11 @@ echo $line->qty_frozen ? yn($line->qty_frozen) : '';
 print '</td>';
 print '<td class="linecoldisablestockchange nowrap right">';
 $coldisplay++;
-echo $line->disable_stock_change ? yn($line->disable_stock_change) : '';  // Yes, it is a quantity, not a price, but we just want the formating role of function price
+if ($tmpproduct->tostock<>0) {
+	echo $line->disable_stock_change ? yn($line->disable_stock_change) : '';  // Yes, it is a quantity, not a price, but we just want the formating role of function price
+} else {
+	echo $tmpproduct->getLibStatut(5, 3);
+}
 print '</td>';
 
 print '<td class="linecolefficiency nowrap right">';
@@ -113,8 +117,9 @@ if ($this->status == 0 && ($object_rights->write) && $action != 'selectlines' ) 
 	$coldisplay++;
     if (($line->info_bits & 2) == 2 || ! empty($disableedit)) {
     } else {
-        print '<a class="editfielda reposition" href="'.$_SERVER["PHP_SELF"].'?id='.$this->id.'&amp;action=editline&amp;lineid='.$line->id.'#line_'.$line->id.'">'.img_edit().'</a>';
+	    print '<a class="editfielda reposition" href="'.$_SERVER["PHP_SELF"].'?id='.$this->id.'&amp;action=editline&amp;lineid='.$line->id.'#line_'.$line->id.'">'.img_edit().'</a>';
     }
+
     print '</td>';
 
     print '<td class="linecoldelete center">';

@@ -2111,6 +2111,7 @@ class Product extends CommonObject
 
         // Check parameters
         if (!$id && !$ref && !$ref_ext && !$barcode) {
+            $this->errors[] = 'ErrorWrongParameters';
             $this->error = 'ErrorWrongParameters';
             dol_syslog(get_class($this)."::fetch ".$this->error);
             return -1;
@@ -2303,7 +2304,7 @@ class Product extends CommonObject
                         }
                         else
                         {
-                            dol_print_error($this->db);
+	                        $this->errors[]=$this->db->lasterror;
                             return -1;
                         }
                     }
@@ -2352,14 +2353,14 @@ class Product extends CommonObject
                             }
                             else
                             {
-                                    dol_print_error($this->db);
-                                    return -1;
+                            	$this->errors[]=$this->db->lasterror;
+                                return -1;
                             }
                         }
                     }
                     else
                     {
-                        dol_print_error($this->db);
+	                    $this->errors[]=$this->db->lasterror;
                         return -1;
                     }
                 }
@@ -2414,16 +2415,15 @@ class Product extends CommonObject
                                     }
                                     $this->prices_by_qty_list[$i] = $resultat;
                                 }
-                                else
-                                         {
-                                    dol_print_error($this->db);
+                                else {
+	                                $this->errors[]=$this->db->lasterror;
                                     return -1;
                                 }
                             }
                         }
                         else
                         {
-                            dol_print_error($this->db);
+	                        $this->errors[]=$this->db->lasterror;
                             return -1;
                         }
                     }
@@ -2454,7 +2454,8 @@ class Product extends CommonObject
         }
         else
         {
-            dol_print_error($this->db);
+            $this->errors[]=$this->db->lasterror;
+	        $this->error=$this->db->lasterror;
             return -1;
         }
     }

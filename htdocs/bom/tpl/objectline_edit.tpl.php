@@ -121,7 +121,12 @@ print '<td class="nobottom linecolqtyfrozen right"><input type="checkbox" name="
 print '</td>';
 
 $coldisplay++;
-print '<td class="nobottom linecoldisablestockchange right"><input type="checkbox" name="disable_stock_change" id="disable_stock_change" class="flat right" value="1"'.(GETPOSTISSET('disablestockchange')?(GETPOST("disable_stock_change", 'int')?' checked="checked"':''):($line->disable_stock_change?' checked="checked"':'')).'">';
+print '<td class="nobottom linecoldisablestockchange right">';
+if ($tmpproduct->tostock<>0) {
+	print '<input type="checkbox" name="disable_stock_change" id="disable_stock_change" class="flat right" value="1"' . (GETPOSTISSET('disablestockchange') ? (GETPOST("disable_stock_change", 'int') ? ' checked="checked"' : '') : ($line->disable_stock_change ? ' checked="checked"' : '')) . '">';
+} else {
+	print '<input type="hidden" name="disable_stock_change" id="disable_stock_change" class="flat right" value="0">'.$tmpproduct->getLibStatut(5, 3);
+}
 print '</td>';
 
 $coldisplay++;
