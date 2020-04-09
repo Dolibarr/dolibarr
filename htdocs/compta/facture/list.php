@@ -717,6 +717,10 @@ if ($resql)
 
 	// Filters lines
 	print '<tr class="liste_titre_filter">';
+	if (! empty($conf->global->MAIN_VIEW_LINE_NUMBER_IN_LIST)) {
+		print '<td class="liste_titre">';
+		print '</td>';
+	}
 	// Ref
 	if (!empty($arrayfields['f.ref']['checked']))
 	{
@@ -929,7 +933,8 @@ if ($resql)
 	print "</tr>\n";
 
 	print '<tr class="liste_titre">';
-	if (!empty($arrayfields['f.ref']['checked']))          print_liste_field_titre($arrayfields['f.ref']['label'], $_SERVER['PHP_SELF'], 'f.ref', '', $param, '', $sortfield, $sortorder);
+	if (!empty($conf->global->MAIN_VIEW_LINE_NUMBER_IN_LIST))    print_liste_field_titre('#', $_SERVER['PHP_SELF'], '', '', $param, '', $sortfield, $sortorder);
+	if (!empty($arrayfields['f.ref']['checked']))                print_liste_field_titre($arrayfields['f.ref']['label'], $_SERVER['PHP_SELF'], 'f.ref', '', $param, '', $sortfield, $sortorder);
 	if (!empty($arrayfields['f.ref_client']['checked']))         print_liste_field_titre($arrayfields['f.ref_client']['label'], $_SERVER["PHP_SELF"], 'f.ref_client', '', $param, '', $sortfield, $sortorder);
 	if (!empty($arrayfields['f.type']['checked']))               print_liste_field_titre($arrayfields['f.type']['label'], $_SERVER["PHP_SELF"], 'f.type', '', $param, '', $sortfield, $sortorder);
 	if (!empty($arrayfields['f.date']['checked']))               print_liste_field_titre($arrayfields['f.date']['label'], $_SERVER['PHP_SELF'], 'f.datef', '', $param, 'align="center"', $sortfield, $sortorder);
@@ -1040,6 +1045,13 @@ if ($resql)
                 print ' onclick="parent.$(\'#poslines\').load(\'invoice.php?action=history&placeid='.$obj->id.'\', function() {parent.$.colorbox.close();});"';
             }
             print '>';
+
+            // No
+            if (!empty($conf->global->MAIN_VIEW_LINE_NUMBER_IN_LIST)) {
+            	print '<td>'.(($offset * $limit) + $i).'</td>';
+            }
+
+            // Ref
 			if (!empty($arrayfields['f.ref']['checked']))
 			{
 				print '<td class="nowrap">';
