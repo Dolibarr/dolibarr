@@ -1022,3 +1022,5 @@ SelectYourGraphOptionsFirst=Wählen Sie Ihre Diagrammoptionen aus, um ein Diagra
 Measures=Maße
 XAxis=X-Achse
 YAxis=Y-Achse
+DeleteFileHeader=Dateilöschung bestätigen
+DeleteFileText=Möchten sie diese Datei wirklich löschen?

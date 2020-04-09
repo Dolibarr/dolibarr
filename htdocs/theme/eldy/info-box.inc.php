@@ -117,7 +117,15 @@ if (!defined('ISLOADEDBYSTEELSHEET')) die('Must be call by steelsheet'); ?>
     -webkit-transition: opacity 0.5s, visibility 0s 0.5s;
     transition: opacity 0.5s, visibility 0s 0.5s;
 }
+.box-flex-item.info-box-module.info-box-module-disabled {
+    opacity: 0.6;
+}
 
+.info-box-actions {
+	position: absolute;
+    right: 0;
+    bottom: 0;
+}
 
 <?php if (empty($conf->global->MAIN_DISABLE_GLOBAL_BOXSTATS) && !empty($conf->global->MAIN_INCLUDE_GLOBAL_STATS_IN_OPENED_DASHBOARD)) { ?>
 .info-box-icon-text{
@@ -363,6 +371,7 @@ if (GETPOSTISSET('THEME_AGRESSIVENESS_RATIO')) $conf->global->THEME_AGRESSIVENES
 	}
 
 	.info-box-module {
-		width: 280px;
+		width: 100%;
+		max-width: unset;
 	}
 }

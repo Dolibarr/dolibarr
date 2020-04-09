@@ -76,6 +76,7 @@ $search_sale = GETPOST('search_sale', 'int');
 $search_total_ht = GETPOST('search_total_ht', 'alpha');
 $search_total_vat = GETPOST('search_total_vat', 'alpha');
 $search_total_ttc = GETPOST('search_total_ttc', 'alpha');
+$search_warehouse = GETPOST('search_warehouse', 'int');
 $search_multicurrency_code = GETPOST('search_multicurrency_code', 'alpha');
 $search_multicurrency_tx = GETPOST('search_multicurrency_tx', 'alpha');
 $search_multicurrency_montant_ht = GETPOST('search_multicurrency_montant_ht', 'alpha');
@@ -346,7 +347,8 @@ if ($search_user > 0)                        $sql .= " AND ec.fk_c_type_contact 
 if ($search_total_ht != '')                  $sql .= natural_search('c.total_ht', $search_total_ht, 1);
 if ($search_total_vat != '')                 $sql .= natural_search('c.tva', $search_total_vat, 1);
 if ($search_total_ttc != '')                 $sql .= natural_search('c.total_ttc', $search_total_ttc, 1);
-if ($search_multicurrency_code != '')        $sql .= ' AND c.multicurrency_code = "'.$db->escape($search_multicurrency_code).'"';
+if ($search_warehouse != '')		             $sql .= natural_search('c.fk_warehouse', $search_warehouse, 1);
+if ($search_multicurrency_code != '')        $sql .= ' AND c.multicurrency_code = "' . $db->escape($search_multicurrency_code) . '"';
 if ($search_multicurrency_tx != '')          $sql .= natural_search('c.multicurrency_tx', $search_multicurrency_tx, 1);
 if ($search_multicurrency_montant_ht != '')  $sql .= natural_search('c.multicurrency_total_ht', $search_multicurrency_montant_ht, 1);
 if ($search_multicurrency_montant_vat != '') $sql .= natural_search('c.multicurrency_total_tva', $search_multicurrency_montant_vat, 1);
@@ -447,12 +449,13 @@ if ($resql)
 	if ($search_total_ht != '') 	$param .= '&search_total_ht='.urlencode($search_total_ht);
 	if ($search_total_vat != '')  	$param .= '&search_total_vat='.urlencode($search_total_vat);
 	if ($search_total_ttc != '')  	$param .= '&search_total_ttc='.urlencode($search_total_ttc);
+	if ($search_warehouse != '')	$param .= '&search_warehouse='.urlencode($search_warehouse);
+	if ($search_login)				$param .= '&search_login='.urlencode($search_login);
 	if ($search_multicurrency_code != '')  $param .= '&search_multicurrency_code='.urlencode($search_multicurrency_code);
 	if ($search_multicurrency_tx != '')  $param .= '&search_multicurrency_tx='.urlencode($search_multicurrency_tx);
 	if ($search_multicurrency_montant_ht != '')  $param .= '&search_multicurrency_montant_ht='.urlencode($search_multicurrency_montant_ht);
 	if ($search_multicurrency_montant_vat != '')  $param .= '&search_multicurrency_montant_vat='.urlencode($search_multicurrency_montant_vat);
 	if ($search_multicurrency_montant_ttc != '') $param .= '&search_multicurrency_montant_ttc='.urlencode($search_multicurrency_montant_ttc);
-	if ($search_login)  	 $param .= '&search_login='.urlencode($search_login);
 	if ($search_project_ref >= 0) 	$param .= "&search_project_ref=".urlencode($search_project_ref);
 	if ($search_town != '')       	$param .= '&search_town='.urlencode($search_town);
 	if ($search_zip != '')        	$param .= '&search_zip='.urlencode($search_zip);
@@ -599,6 +602,14 @@ if ($resql)
 		$moreforfilter .= '<div class="divsearchfield">';
 	 	$moreforfilter .= $langs->trans('CustomersProspectsCategoriesShort').': ';
 		$moreforfilter .= $formother->select_categories('customer', $search_categ_cus, 'search_categ_cus', 1);
+	 	$moreforfilter .= '</div>';
+	}
+	if (!empty($conf->expedition->enabled) && $conf->global->WAREHOUSE_ASK_WAREHOUSE_DURING_ORDER = 1){
+		require_once DOL_DOCUMENT_ROOT.'/product/class/html.formproduct.class.php';
+		$formproduct = new FormProduct($db);
+		$moreforfilter .= '<div class="divsearchfield">';
+	 	$moreforfilter .= $langs->trans('Warehouse').': ';
+		$moreforfilter .= $formproduct->selectWarehouses($search_warehouse, 'search_warehouse', '', 1);
 	 	$moreforfilter .= '</div>';
 	}
 	$parameters = array();

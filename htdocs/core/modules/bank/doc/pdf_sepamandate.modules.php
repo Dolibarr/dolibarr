@@ -1,5 +1,6 @@
 <?php
 /* Copyright (C) 2016 Laurent Destailleur <eldy@users.sourceforge.net>
+ * Copyright (C) 2020 Josep Lluís Amador  <joseplluis@lliuretic.cat>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -283,7 +284,16 @@ class pdf_sepamandate extends ModeleBankAccountDoc
 				$pdf->SetXY(80, $posY);
 				$pdf->MultiCell($this->page_largeur - $this->marge_gauche - $this->marge_droite, 3, $sepaname, 0, 'L');
 
-			    $address = '______________________________________________';
+				$sepavatid = '__________________________________________________';
+				if (! empty($thirdparty->idprof1)) $sepavatid = $thirdparty->idprof1;
+				$posY=$pdf->GetY();
+				$posY+=1;
+				$pdf->SetXY($this->marge_gauche, $posY);
+				$pdf->MultiCell($this->page_largeur - $this->marge_gauche - $this->marge_droite, 3, $outputlangs->transnoentitiesnoconv('ProfId1'.$thirdparty->country_code).' * : ', 0, 'L');
+				$pdf->SetXY(80, $posY);
+				$pdf->MultiCell($this->page_largeur - $this->marge_gauche - $this->marge_droite, 3, $sepavatid, 0, 'L');
+
+				$address = '______________________________________________';
 				if ($thirdparty->id > 0)
 				{
 				    $address = $thirdparty->getFullAddress();

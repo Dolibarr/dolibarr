@@ -3512,15 +3512,16 @@ function img_view($titlealt = 'default', $float = 0, $other = '')
  *
  *  @param	string	$titlealt   Text on alt and title of image. Alt only if param notitle is set to 1. If text is "TextA:TextB", use Text A on alt and Text B on title.
  *	@param  string	$other      Add more attributes on img
+ *  @param	string	$morecss	More CSS
  *  @return string      		Retourne tag img
  */
-function img_delete($titlealt = 'default', $other = 'class="pictodelete"')
+function img_delete($titlealt = 'default', $other = 'class="pictodelete"', $morecss = '')
 {
 	global $langs;
 
 	if ($titlealt == 'default') $titlealt = $langs->trans('Delete');
 
-	return img_picto($titlealt, 'delete.png', $other);
+	return img_picto($titlealt, 'delete.png', $other, false, 0, 0, '', $morecss);
 }
 
 /**
@@ -4174,12 +4175,12 @@ function getTitleFieldOfList($name, $thead = 0, $file = "", $field = "", $begin 
 			if (preg_match('/^DESC/', $sortorder)) {
 				//$out.= '<a href="'.$file.'?sortfield='.$field.'&sortorder=asc&begin='.$begin.$options.'">'.img_down("A-Z",0).'</a>';
 				//$out.= '<a href="'.$file.'?sortfield='.$field.'&sortorder=desc&begin='.$begin.$options.'">'.img_up("Z-A",1).'</a>';
-				$sortimg .= '<span class="nowrap">'.img_up("Z-A", 0).'</span>';
+				$sortimg .= '<span class="nowrap">'.img_up("Z-A", 0, 'paddingleft').'</span>';
 			}
 			if (preg_match('/^ASC/', $sortorder)) {
 				//$out.= '<a href="'.$file.'?sortfield='.$field.'&sortorder=asc&begin='.$begin.$options.'">'.img_down("A-Z",1).'</a>';
 				//$out.= '<a href="'.$file.'?sortfield='.$field.'&sortorder=desc&begin='.$begin.$options.'">'.img_up("Z-A",0).'</a>';
-				$sortimg .= '<span class="nowrap">'.img_down("A-Z", 0).'</span>';
+				$sortimg .= '<span class="nowrap">'.img_down("A-Z", 0, 'paddingleft').'</span>';
 			}
 		}
 	}

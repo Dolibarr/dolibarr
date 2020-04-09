@@ -364,7 +364,7 @@ if (!empty($conf->tax->enabled) && ($modecompta == 'CREANCES-DETTES' || $modecom
 {
 	if ($modecompta == 'CREANCES-DETTES')
 	{
-		// TVA a payer
+		// TVA collected to pay
 		$sql = "SELECT sum(f.tva) as amount, date_format(f.datef,'%Y-%m') as dm";
 		$sql .= " FROM ".MAIN_DB_PREFIX."facture as f";
 		$sql .= " WHERE f.fk_statut IN (1,2)";
@@ -396,7 +396,7 @@ if (!empty($conf->tax->enabled) && ($modecompta == 'CREANCES-DETTES' || $modecom
 		} else {
 			dol_print_error($db);
 		}
-		// TVA a recuperer
+		// TVA paid to get
 		$sql = "SELECT sum(f.total_tva) as amount, date_format(f.datef,'%Y-%m') as dm";
 		$sql .= " FROM ".MAIN_DB_PREFIX."facture_fourn as f";
 		$sql .= " WHERE f.fk_statut IN (1,2)";
@@ -431,7 +431,7 @@ if (!empty($conf->tax->enabled) && ($modecompta == 'CREANCES-DETTES' || $modecom
 	}
 	elseif ($modecompta == "RECETTES-DEPENSES")
 	{
-		// TVA reellement deja payee
+		// TVA really already paid
 		$sql = "SELECT sum(t.amount) as amount, date_format(t.datev,'%Y-%m') as dm";
 		$sql .= " FROM ".MAIN_DB_PREFIX."tva as t";
 		$sql .= " WHERE amount > 0";
@@ -461,7 +461,7 @@ if (!empty($conf->tax->enabled) && ($modecompta == 'CREANCES-DETTES' || $modecom
 		} else {
 			dol_print_error($db);
 		}
-		// TVA recuperee
+		// TVA retreived
 		$sql = "SELECT sum(t.amount) as amount, date_format(t.datev,'%Y-%m') as dm";
 		$sql .= " FROM ".MAIN_DB_PREFIX."tva as t";
 		$sql .= " WHERE amount < 0";
