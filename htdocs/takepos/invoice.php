@@ -341,7 +341,7 @@ if ($action == "addline")
 		}
 	}
 	if ($idoflineadded <= 0) {
-		$idoflineadded = $invoice->addline($prod->description, $price, 1, $tva_tx, $localtax1_tx, $localtax2_tx, $idproduct, $customer->remise_percent, '', 0, 0, 0, '', $price_base_type, $price_ttc, $prod->type, -1, 0, '', 0, $parent_line, null, 0, '', 0, 100, '', null, 0);
+		$idoflineadded = $invoice->addline($prod->description, $price, 1, $tva_tx, $localtax1_tx, $localtax2_tx, $idproduct, $customer->remise_percent, '', 0, 0, 0, '', $price_base_type, $price_ttc, $prod->type, -1, 0, '', 0, $parent_line, null, '', '', 0, 100, '', null, 0);
 	}
 
     $invoice->fetch($placeid);
@@ -362,7 +362,7 @@ if ($action == "freezone") {
     $localtax1_tx = get_localtax($tva_tx, 1, $customer, $mysoc, $tva_npr);
     $localtax2_tx = get_localtax($tva_tx, 2, $customer, $mysoc, $tva_npr);
 
-    $invoice->addline($desc, $number, 1, $tva_tx, $localtax1_tx, $localtax2_tx, 0, 0, '', 0, 0, 0, '', 'TTC', $number, 0, -1, 0, '', 0, 0, null, 0, '', 0, 100, '', null, 0);
+    $invoice->addline($desc, $number, 1, $tva_tx, $localtax1_tx, $localtax2_tx, 0, 0, '', 0, 0, 0, '', 'TTC', $number, 0, -1, 0, '', 0, 0, null, '', '', 0, 100, '', null, 0);
     $invoice->fetch($placeid);
 }
 
@@ -533,7 +533,7 @@ if ($action == "order" and $placeid != 0)
 			$order_receipt_printer1 .= '</td></tr>';
         }
     }
-	if ($conf->global->TAKEPOS_PRINT_METHOD == "receiptprinter") {
+    if ($conf->global->TAKEPOS_PRINT_METHOD == "receiptprinter" && $count > 0) {
 		$invoice->fetch($placeid); //Reload object before send to printer
 		$ret = $printer->sendToPrinter($invoice, $conf->global->{'TAKEPOS_TEMPLATE_TO_USE_FOR_ORDERS'.$_SESSION["takeposterminal"]}, $conf->global->{'TAKEPOS_PRINTER_TO_USE'.$_SESSION["takeposterminal"]}); // PRINT TO PRINTER 1
 	}
@@ -543,6 +543,7 @@ if ($action == "order" and $placeid != 0)
 
     foreach ($invoice->lines as $line)
     {
+        $count=0;
         if ($line->special_code == "4") {
         	continue;
         }
@@ -558,7 +559,7 @@ if ($action == "order" and $placeid != 0)
 			$order_receipt_printer2 .= '</td></tr>';
         }
     }
-	if ($conf->global->TAKEPOS_PRINT_METHOD == "receiptprinter") {
+    if ($conf->global->TAKEPOS_PRINT_METHOD == "receiptprinter" && $count > 0) {
 		$invoice->fetch($placeid); //Reload object before send to printer
 		$ret = $printer->sendToPrinter($invoice, $conf->global->{'TAKEPOS_TEMPLATE_TO_USE_FOR_ORDERS'.$_SESSION["takeposterminal"]}, $conf->global->{'TAKEPOS_PRINTER_TO_USE'.$_SESSION["takeposterminal"]}); // PRINT TO PRINTER 2
 	}
