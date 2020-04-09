@@ -139,8 +139,6 @@ $fieldstosearchall = array(
 	's.code_fournisseur'=>"SupplierCode",
 	's.code_compta'=>"CustomerAccountancyCodeShort",
 	's.code_compta_fournisseur'=>"SupplierAccountancyCodeShort",
-	's.zip'=>"zip",
-	's.town'=>"town",
 	's.email'=>"EMail",
 	's.url'=>"URL",
 	's.tva_intra'=>"VATIntra",
@@ -1150,7 +1148,7 @@ while ($i < min($num, $limit))
 	}
 	if (!empty($arrayfields['s.email']['checked']))
 	{
-		print "<td>".$obj->email."</td>\n";
+		print "<td>".dol_print_email($obj->email, $obj->rowid, $obj->socid, 'AC_EMAIL', 18)."</td>\n";
 		if (!$i) $totalarray['nbfield']++;
 	}
 	if (!empty($arrayfields['s.phone']['checked']))
