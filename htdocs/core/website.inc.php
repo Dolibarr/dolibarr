@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2017-2018 Laurent Destailleur  <eldy@users.sourceforge.net>
+/* Copyright (C) 2017-2019 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
 * This program is free software; you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -12,8 +12,8 @@
 * GNU General Public License for more details.
 *
 * You should have received a copy of the GNU General Public License
-* along with this program. If not, see <http://www.gnu.org/licenses/>.
-* or see http://www.gnu.org/
+* along with this program. If not, see <https://www.gnu.org/licenses/>.
+* or see https://www.gnu.org/
 */
 
 /**
@@ -28,29 +28,46 @@ include_once DOL_DOCUMENT_ROOT.'/website/class/website.class.php';
 include_once DOL_DOCUMENT_ROOT.'/website/class/websitepage.class.php';
 
 // Define $website
-if (! is_object($website))
+if (!is_object($website))
 {
-	$website=new Website($db);
+	$website = new Website($db);
 	$website->fetch(0, $websitekey);
 }
 // Define $weblangs
-if (! is_object($weblangs))
+if (!is_object($weblangs))
 {
-	$weblangs = dol_clone($langs);	// TODO Use an object lang from a language set into $website object instead of backoffice
+	$weblangs = dol_clone($langs); // TODO Use an object lang from a language set into $website object instead of backoffice
 }
 // Define $websitepage if we have $websitepagefile defined
-if (! $pageid && ! empty($websitepagefile))
+if (!$pageid && !empty($websitepagefile))
 {
 	$pageid = str_replace(array('.tpl.php', 'page'), array('', ''), basename($websitepagefile));
 	if ($pageid == 'index.php') $pageid = $website->fk_default_home;
 }
-if (! is_object($websitepage))
+if (!is_object($websitepage))
 {
-    $websitepage=new WebsitePage($db);
+    $websitepage = new WebsitePage($db);
 }
 if ($pageid > 0)
 {
 	$websitepage->fetch($pageid);
+
+	if (!defined('USEDOLIBARREDITOR') && in_array($websitepage->type_container, array('menu', 'other')))
+	{
+		$weblangs->load("website");
+		http_response_code(404);
+		print '<center><br><br>'.$weblangs->trans("YouTryToAccessToAFileThatIsNotAWebsitePage").'</center>';
+		exit;
+	}
+}
+
+if (!defined('USEDOLIBARRSERVER') && !defined('USEDOLIBARREDITOR')) {
+	header("X-Content-Type-Options: nosniff");
+	/* TODO Manage allow_frames flag on websitepage.
+	if (empty($websitepage->allow_frames) && empty($conf->global->WEBSITE_ALLOW_FRAMES_ON_ALL_PAGES)) {
+		header("X-Frame-Options: SAMEORIGIN");
+	}
+	*/
 }
 
 // A lang was forced, so we change weblangs init
@@ -61,13 +78,13 @@ if ($_SERVER['PHP_SELF'] != DOL_URL_ROOT.'/website/index.php')	// If we browsing
 	//print_r(get_defined_constants(true));exit;
 	if (GETPOST('l', 'aZ09'))
 	{
-		$sql ="SELECT wp.rowid, wp.lang, wp.pageurl, wp.fk_page";
-		$sql.=" FROM ".MAIN_DB_PREFIX."website_page as wp";
-		$sql.=" WHERE wp.fk_website = ".$website->id;
-		$sql.=" AND (wp.fk_page = ".$pageid." OR wp.rowid  = ".$pageid;
-		if (is_object($websitepage) && $websitepage->fk_page > 0) $sql.=" OR wp.fk_page = ".$websitepage->fk_page." OR wp.rowid = ".$websitepage->fk_page;
-		$sql.=")";
-		$sql.= " AND wp.lang = '".$db->escape(GETPOST('l', 'aZ09'))."'";
+		$sql = "SELECT wp.rowid, wp.lang, wp.pageurl, wp.fk_page";
+		$sql .= " FROM ".MAIN_DB_PREFIX."website_page as wp";
+		$sql .= " WHERE wp.fk_website = ".$website->id;
+		$sql .= " AND (wp.fk_page = ".$pageid." OR wp.rowid  = ".$pageid;
+		if (is_object($websitepage) && $websitepage->fk_page > 0) $sql .= " OR wp.fk_page = ".$websitepage->fk_page." OR wp.rowid = ".$websitepage->fk_page;
+		$sql .= ")";
+		$sql .= " AND wp.lang = '".$db->escape(GETPOST('l', 'aZ09'))."'";
 
 		$resql = $db->query($sql);
 		if ($resql)
@@ -95,7 +112,7 @@ if ($_SERVER['PHP_SELF'] != DOL_URL_ROOT.'/website/index.php')	// If we browsing
 }
 
 // Show off line message
-if (! defined('USEDOLIBARREDITOR') && empty($website->status))
+if (!defined('USEDOLIBARREDITOR') && empty($website->status))
 {
 	$weblangs->load("website");
 	http_response_code(503);

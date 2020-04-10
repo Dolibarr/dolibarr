@@ -29,6 +29,7 @@ MenuMembersUpToDate=最新のメンバーに
 MenuMembersNotUpToDate=日付メンバーのうち、
 MenuMembersResiliated=Terminated members
 MembersWithSubscriptionToReceive=受け取るために、サブスクリプションを持つメンバー
+MembersWithSubscriptionToReceiveShort=Subscription to receive
 DateSubscription=サブスクリプションの日付
 DateEndSubscription=サブスクリプションの終了日
 EndSubscription=エンドサブスクリプション

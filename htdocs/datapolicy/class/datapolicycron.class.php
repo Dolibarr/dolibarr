@@ -13,13 +13,13 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
  * \file    htdocs/datapolicy/class/datapolicycron.class.php
  * \ingroup datapolicy
- * \brief   Example hook overload.
+ * \brief   File for cron task of module DataPolicy
  */
 
 /**
@@ -27,19 +27,35 @@
  */
 class DataPolicyCron
 {
+	/**
+	 *	Constructor
+	 *
+	 *  @param		DoliDB		$db      Database handler
+	 */
+	public function __construct($db)
+	{
+		$this->db = $db;
+	}
+
+
     /**
      * Function exec
+	 * CAN BE A CRON TASK
      *
-     * @return boolean
+	 * @return	int									0 if OK, <>0 if KO (this function is used also by cron so only 0 is OK)
      */
-    public function exec()
+	public function cleanDataForDataPolicy()
     {
-        global $conf, $db, $langs, $user;
+        global $conf, $langs, $user;
 
         $langs->load('datapolicy@datapolicy');
 
+        $error = 0;
+        $errormsg = '';
+        $nbupdated = $nbdeleted = 0;
+
         // FIXME Removed hardcoded values of id
-        $arrayofparameters=array(
+        $arrayofparameters = array(
             'DATAPOLICIES_TIERS_CLIENT' => array(
                 'sql' => "
                     SELECT s.rowid FROM ".MAIN_DB_PREFIX."societe as s
@@ -56,7 +72,7 @@ class DataPolicyCron
                     )
                 ",
                 "class" => "Societe",
-                "file" => DOL_DOCUMENT_ROOT . '/societe/class/societe.class.php',
+                "file" => DOL_DOCUMENT_ROOT.'/societe/class/societe.class.php',
                 'fields_anonym' => array(
                     'name' => $langs->trans('ANONYME'),
                     'name_bis' => '',
@@ -91,7 +107,7 @@ class DataPolicyCron
                     )
                 ",
                 "class" => "Societe",
-                "file" => DOL_DOCUMENT_ROOT . '/societe/class/societe.class.php',
+                "file" => DOL_DOCUMENT_ROOT.'/societe/class/societe.class.php',
                 'fields_anonym' => array(
                     'name' => $langs->trans('ANONYME'),
                     'name_bis' => '',
@@ -126,7 +142,7 @@ class DataPolicyCron
                     )
                 ",
                 "class" => "Societe",
-                "file" => DOL_DOCUMENT_ROOT . '/societe/class/societe.class.php',
+                "file" => DOL_DOCUMENT_ROOT.'/societe/class/societe.class.php',
                 'fields_anonym' => array(
                     'name' => $langs->trans('ANONYME'),
                     'name_bis' => '',
@@ -161,7 +177,7 @@ class DataPolicyCron
                     )
                 ",
                 "class" => "Societe",
-                "file" => DOL_DOCUMENT_ROOT . '/societe/class/societe.class.php',
+                "file" => DOL_DOCUMENT_ROOT.'/societe/class/societe.class.php',
                 'fields_anonym' => array(
                     'name' => $langs->trans('ANONYME'),
                     'name_bis' => '',
@@ -195,7 +211,7 @@ class DataPolicyCron
                     )
                 ",
                 "class" => "Societe",
-                "file" => DOL_DOCUMENT_ROOT . '/societe/class/societe.class.php',
+                "file" => DOL_DOCUMENT_ROOT.'/societe/class/societe.class.php',
                 'fields_anonym' => array(
                     'name' => $langs->trans('ANONYME'),
                     'name_bis' => '',
@@ -230,7 +246,7 @@ class DataPolicyCron
                     )
                 ",
                 "class" => "Contact",
-                "file" => DOL_DOCUMENT_ROOT . '/contact/class/contact.class.php',
+                "file" => DOL_DOCUMENT_ROOT.'/contact/class/contact.class.php',
                 'fields_anonym' => array(
                     'lastname' => $langs->trans('ANONYME'),
                     'firstname' => '',
@@ -269,7 +285,7 @@ class DataPolicyCron
                     )
                 ",
                 "class" => "Contact",
-                "file" => DOL_DOCUMENT_ROOT . '/contact/class/contact.class.php',
+                "file" => DOL_DOCUMENT_ROOT.'/contact/class/contact.class.php',
                 'fields_anonym' => array(
                     'lastname' => $langs->trans('ANONYME'),
                     'firstname' => '',
@@ -308,7 +324,7 @@ class DataPolicyCron
                     )
                 ",
                 "class" => "Contact",
-                "file" => DOL_DOCUMENT_ROOT . '/contact/class/contact.class.php',
+                "file" => DOL_DOCUMENT_ROOT.'/contact/class/contact.class.php',
                 'fields_anonym' => array(
                     'lastname' => $langs->trans('ANONYME'),
                     'firstname' => '',
@@ -347,7 +363,7 @@ class DataPolicyCron
                     )
                 ",
                 "class" => "Contact",
-                "file" => DOL_DOCUMENT_ROOT . '/contact/class/contact.class.php',
+                "file" => DOL_DOCUMENT_ROOT.'/contact/class/contact.class.php',
                 'fields_anonym' => array(
                     'lastname' => $langs->trans('ANONYME'),
                     'firstname' => '',
@@ -385,7 +401,7 @@ class DataPolicyCron
                     )
                 ",
                 "class" => "Contact",
-                "file" => DOL_DOCUMENT_ROOT . '/contact/class/contact.class.php',
+                "file" => DOL_DOCUMENT_ROOT.'/contact/class/contact.class.php',
                 'fields_anonym' => array(
                     'lastname' => $langs->trans('ANONYME'),
                     'firstname' => '',
@@ -422,7 +438,7 @@ class DataPolicyCron
                     )
                 ",
                 "class" => "Adherent",
-                "file" => DOL_DOCUMENT_ROOT . '/adherents/class/adherent.class.php',
+                "file" => DOL_DOCUMENT_ROOT.'/adherents/class/adherent.class.php',
                 'fields_anonym' => array(
                     'lastname' => $langs->trans('ANONYME'),
                     'firstname' => $langs->trans('ANONYME'),
@@ -446,48 +462,69 @@ class DataPolicyCron
             ),
         );
 
-        foreach ($arrayofparameters as $key => $params) {
-            if ($conf->global->$key != '' && is_numeric($conf->global->$key) && (int) $conf->global->$key > 0) {
+        $this->db->begin();
 
+        foreach ($arrayofparameters as $key => $params)
+        {
+            if ($conf->global->$key != '' && is_numeric($conf->global->$key) && (int) $conf->global->$key > 0)
+            {
                 $sql = sprintf($params['sql'], (int) $conf->entity, (int) $conf->global->$key, (int) $conf->global->$key);
 
                 $resql = $db->query($sql);
 
-                if ($resql && $db->num_rows($resql) > 0) {
-
+                if ($resql && $db->num_rows($resql) > 0)
+                {
                     $num = $db->num_rows($resql);
                     $i = 0;
 
                     require_once $params['file'];
                     $object = new $params['class']($db);
 
-                    while ($i < $num)
+                    while ($i < $num && !$error)
                     {
                         $obj = $db->fetch_object($resql);
 
                         $object->fetch($obj->rowid);
                         $object->id = $obj->rowid;
 
-                        if ($object->isObjectUsed($obj->rowid) > 0) {
+                        if ($object->isObjectUsed($obj->rowid) > 0)			// If object to clean is used
+                        {
                             foreach ($params['fields_anonym'] as $fields => $val) {
                                 $object->$fields = $val;
                             }
-                            $object->update($obj->rowid, $user);
-                            if ($params['class'] == 'Societe') {
-                                // On supprime les contacts associé
-                                $sql = "DELETE FROM ".MAIN_DB_PREFIX."socpeople WHERE fk_soc = " . $obj->rowid;
-                                $db->query($sql);
+                            $result = $object->update($obj->rowid, $user);
+                            if ($result > 0)
+                            {
+	                            if ($params['class'] == 'Societe') {
+	                                // We delete contacts of thirdparty
+	                                $sql = "DELETE FROM ".MAIN_DB_PREFIX."socpeople WHERE fk_soc = ".$obj->rowid;
+	                                $result = $this->db->query($sql);
+	                                if ($result < 0)
+	                                {
+	                                	$errormsg = $this->db->lasterror();
+	                                	$error++;
+	                                }
+	                            }
                             }
-                        } else {
-                            if (DOL_VERSION < 8) {
-                                $ret = $object->delete($obj->rowid, $user);
+                            else
+                            {
+                            	$errormsg = $object->error;
+                            	$error++;
+                            }
+                            $nbupdated++;
+                        } else {											// If object to clean is not used
+                            if ($object->element == 'adherent') {
+                            	$result = $object->delete($obj->rowid, $user);
                             } else {
-                                if ($object->element == 'adherent') {
-                                    $ret = $object->delete($obj->rowid);
-                                } else {
-                                    $ret = $object->delete();
-                                }
+                            	$result = $object->delete($user);
                             }
+                            if ($result < 0)
+                            {
+                            	$errormsg = $object->error;
+                            	$error++;
+                            }
+
+                            $nbdeleted++;
                         }
 
                         $i++;
@@ -495,27 +532,18 @@ class DataPolicyCron
                 }
             }
         }
-        return true;
-    }
 
+        $this->db->commit();
 
-    /**
-     * sendMailing
-     *
-     * @return boolean
-     */
-    public function sendMailing()
-    {
-        global $conf, $db, $langs, $user;
+        if (!$error)
+        {
+        	$this->output = $nbupdated.' record updated, '.$nbdeleted.' record deleted';
+        }
+        else
+        {
+        	$this->error = $errormsg;
+        }
 
-        $langs->load('datapolicy@datapolicy');
-
-        require_once DOL_DOCUMENT_ROOT . '/datapolicy/class/datapolicy.class.php';
-
-        $contacts = new DataPolicy($db);
-        $contacts->getAllContactNotInformed();
-        $contacts->getAllCompaniesNotInformed();
-        $contacts->getAllAdherentsNotInformed();
-        return true;
+        return 0;
     }
 }

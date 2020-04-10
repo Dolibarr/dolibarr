@@ -149,9 +149,9 @@ foreach ($langstrings_3d AS $filename => $file)
 		$keys = array_keys($langstrings_full, $value);
 		if (count($keys)>1)
 		{
-				foreach ($keys AS $key) {
-					$dups[$value][$filename][$linenum] = trim($langstrings_3dtrans[$filename][$linenum]);
-				}
+			foreach ($keys AS $key) {
+				$dups[$value][$filename][$linenum] = trim($langstrings_3dtrans[$filename][$linenum]);
+			}
 		}
 	}
 }

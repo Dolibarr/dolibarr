@@ -13,8 +13,8 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
- * or see http://www.gnu.org/
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
+ * or see https://www.gnu.org/
  */
 
 /**
@@ -22,7 +22,7 @@
  *  \ingroup    contract
  *  \brief      File of class to manage contract numbering rules Serpis
  */
-require_once DOL_DOCUMENT_ROOT .'/core/modules/holiday/modules_holiday.php';
+require_once DOL_DOCUMENT_ROOT.'/core/modules/holiday/modules_holiday.php';
 
 /**
  * 	Class to manage contract numbering rules madonna
@@ -35,26 +35,29 @@ class mod_holiday_madonna extends ModelNumRefHolidays
      */
 	public $version = 'dolibarr';
 
-	public $prefix='HL';
+	public $prefix = 'HL';
 
 	/**
 	 * @var string Error code (or message)
 	 */
-	public $error='';
+	public $error = '';
 
 	/**
 	 * @var string Nom du modele
 	 * @deprecated
 	 * @see $name
 	 */
-	public $nom='Madonna';
+	public $nom = 'Madonna';
 
 	/**
 	 * @var string model name
 	 */
-	public $name='Madonna';
+	public $name = 'Madonna';
 
-	public $code_auto=1;
+	/**
+	 * @var int Automatic numbering
+	 */
+	public $code_auto = 1;
 
 
 	/**
@@ -87,26 +90,26 @@ class mod_holiday_madonna extends ModelNumRefHolidays
 	 */
 	public function canBeActivated()
 	{
-		global $conf,$langs,$db;
+		global $conf, $langs, $db;
 
-		$coyymm=''; $max='';
+		$coyymm = ''; $max = '';
 
-		$posindice=8;
+		$posindice = 8;
 		$sql = "SELECT MAX(CAST(SUBSTRING(ref FROM ".$posindice.") AS SIGNED)) as max";
-		$sql.= " FROM ".MAIN_DB_PREFIX."holiday";
-		$sql.= " WHERE ref LIKE '".$db->escape($this->prefix)."____-%'";
-		$sql.= " AND entity = ".$conf->entity;
+		$sql .= " FROM ".MAIN_DB_PREFIX."holiday";
+		$sql .= " WHERE ref LIKE '".$db->escape($this->prefix)."____-%'";
+		$sql .= " AND entity = ".$conf->entity;
 
-		$resql=$db->query($sql);
+		$resql = $db->query($sql);
 		if ($resql)
 		{
 			$row = $db->fetch_row($resql);
-			if ($row) { $coyymm = substr($row[0], 0, 6); $max=$row[0]; }
+			if ($row) { $coyymm = substr($row[0], 0, 6); $max = $row[0]; }
 		}
-		if ($coyymm && ! preg_match('/'.$this->prefix.'[0-9][0-9][0-9][0-9]/i', $coyymm))
+		if ($coyymm && !preg_match('/'.$this->prefix.'[0-9][0-9][0-9][0-9]/i', $coyymm))
 		{
 			$langs->load("errors");
-			$this->error=$langs->trans('ErrorNumRefModel', $max);
+			$this->error = $langs->trans('ErrorNumRefModel', $max);
 			return false;
 		}
 
@@ -122,20 +125,20 @@ class mod_holiday_madonna extends ModelNumRefHolidays
 	 */
 	public function getNextValue($objsoc, $holiday)
 	{
-		global $db,$conf;
+		global $db, $conf;
 
-		$posindice=8;
+		$posindice = 8;
 		$sql = "SELECT MAX(CAST(SUBSTRING(ref FROM ".$posindice.") AS SIGNED)) as max";
-		$sql.= " FROM ".MAIN_DB_PREFIX."holiday";
-		$sql.= " WHERE ref LIKE '".$db->escape($this->prefix)."____-%'";
-		$sql.= " AND entity = ".$conf->entity;
+		$sql .= " FROM ".MAIN_DB_PREFIX."holiday";
+		$sql .= " WHERE ref LIKE '".$db->escape($this->prefix)."____-%'";
+		$sql .= " AND entity = ".$conf->entity;
 
-		$resql=$db->query($sql);
+		$resql = $db->query($sql);
 		if ($resql)
 		{
 			$obj = $db->fetch_object($resql);
 			if ($obj) $max = intval($obj->max);
-			else $max=0;
+			else $max = 0;
 		}
 		else
 		{
@@ -143,11 +146,11 @@ class mod_holiday_madonna extends ModelNumRefHolidays
 			return -1;
 		}
 
-		$date=$holiday->date_debut;
+		$date = $holiday->date_debut;
 		$yymm = strftime("%y%m", $date);
 
-		if ($max >= (pow(10, 4) - 1)) $num=$max+1;	// If counter > 9999, we do not format on 4 chars, we take number as it is
-		else $num = sprintf("%04s", $max+1);
+		if ($max >= (pow(10, 4) - 1)) $num = $max + 1; // If counter > 9999, we do not format on 4 chars, we take number as it is
+		else $num = sprintf("%04s", $max + 1);
 
 		dol_syslog("mod_holiday_madonna::getNextValue return ".$this->prefix.$yymm."-".$num);
 		return $this->prefix.$yymm."-".$num;

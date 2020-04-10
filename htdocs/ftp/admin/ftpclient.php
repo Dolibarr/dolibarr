@@ -13,7 +13,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -31,7 +31,7 @@ $langs->loadLangs(array("admin", "ftp"));
 if (!$user->admin) accessforbidden();
 
 $def = array();
-$lastftpentry=0;
+$lastftpentry = 0;
 
 $action = GETPOST('action', 'alpha');
 $entry = GETPOST('numero_entry', 'alpha');
@@ -42,81 +42,81 @@ $entry = GETPOST('numero_entry', 'alpha');
  */
 
 // Get value for $lastftpentry
-$sql ="select MAX(name) as name from ".MAIN_DB_PREFIX."const";
-$sql.=" WHERE name like 'FTP_SERVER_%'";
-$result=$db->query($sql);
+$sql = "select MAX(name) as name from ".MAIN_DB_PREFIX."const";
+$sql .= " WHERE name like 'FTP_SERVER_%'";
+$result = $db->query($sql);
 if ($result)
 {
-    $obj = $db->fetch_object($result);
-    preg_match('/([0-9]+)$/i', $obj->name, $reg);
+	$obj = $db->fetch_object($result);
+	preg_match('/([0-9]+)$/i', $obj->name, $reg);
 	if ($reg[1]) $lastftpentry = $reg[1];
 }
 else
 {
-    dol_print_error($db);
+	dol_print_error($db);
 }
 
 if ($action == 'add' || GETPOST('modify', 'alpha'))
 {
-    $ftp_name = "FTP_NAME_" . $entry;// $_POST["numero_entry"];
-	$ftp_server = "FTP_SERVER_" . $entry; //$_POST["numero_entry"];
+	$ftp_name = "FTP_NAME_".$entry; // $_POST["numero_entry"];
+	$ftp_server = "FTP_SERVER_".$entry; //$_POST["numero_entry"];
 
-	$error=0;
+	$error = 0;
 
-	if (! GETPOST("$ftp_name", 'alpha'))
+	if (!GETPOST("$ftp_name", 'alpha'))
 	{
-		$error=1;
+		$error = 1;
 		setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Label")), null, 'errors');
 	}
 
-	if (! GETPOST("$ftp_server", 'alpha'))
+	if (!GETPOST("$ftp_server", 'alpha'))
 	{
-		$error=1;
+		$error = 1;
 		setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Server")), null, 'errors');
 	}
 
-    if (! $error)
-    {
-    	$ftp_port = "FTP_PORT_" . $entry;
-        $ftp_user = "FTP_USER_" . $entry;
-        $ftp_password = "FTP_PASSWORD_" . $entry;
-        $ftp_passive = "FTP_PASSIVE_" . $entry;
+	if (!$error)
+	{
+		$ftp_port = "FTP_PORT_".$entry;
+		$ftp_user = "FTP_USER_".$entry;
+		$ftp_password = "FTP_PASSWORD_".$entry;
+		$ftp_passive = "FTP_PASSIVE_".$entry;
 
-        $db->begin();
+		$db->begin();
 
-		$result1=dolibarr_set_const($db, "FTP_PORT_" . $entry, GETPOST($ftp_port, 'alpha'), 'chaine', 0, '', $conf->entity);
-		if ($result1) $result2=dolibarr_set_const($db, "FTP_SERVER_" . $entry, GETPOST($ftp_server, 'alpha'), 'chaine', 0, '', $conf->entity);
-		if ($result2) $result3=dolibarr_set_const($db, "FTP_USER_" . $entry, GETPOST($ftp_user, 'alpha'), 'chaine', 0, '', $conf->entity);
-		if ($result3) $result4=dolibarr_set_const($db, "FTP_PASSWORD_" . $entry, GETPOST($ftp_password, 'alpha'), 'chaine', 0, '', $conf->entity);
-		if ($result4) $result5=dolibarr_set_const($db, "FTP_NAME_" . $entry, GETPOST($ftp_name, 'alpha'), 'chaine', 0, '', $conf->entity);
-		if ($result5) $result6=dolibarr_set_const($db, "FTP_PASSIVE_" . $entry, GETPOST($ftp_passive, 'alpha'), 'chaine', 0, '', $conf->entity);
+		$result1 = dolibarr_set_const($db, "FTP_PORT_".$entry, GETPOST($ftp_port, 'alpha'), 'chaine', 0, '', $conf->entity);
+		if ($result1) $result2 = dolibarr_set_const($db, "FTP_SERVER_".$entry, GETPOST($ftp_server, 'alpha'), 'chaine', 0, '', $conf->entity);
+		if ($result2) $result3 = dolibarr_set_const($db, "FTP_USER_".$entry, GETPOST($ftp_user, 'alpha'), 'chaine', 0, '', $conf->entity);
+		if ($result3) $result4 = dolibarr_set_const($db, "FTP_PASSWORD_".$entry, GETPOST($ftp_password, 'alpha'), 'chaine', 0, '', $conf->entity);
+		if ($result4) $result5 = dolibarr_set_const($db, "FTP_NAME_".$entry, GETPOST($ftp_name, 'alpha'), 'chaine', 0, '', $conf->entity);
+		if ($result5) $result6 = dolibarr_set_const($db, "FTP_PASSIVE_".$entry, GETPOST($ftp_passive, 'alpha'), 'chaine', 0, '', $conf->entity);
 
-        if ($result1 && $result2 && $result3 && $result4 && $result5 && $result6)
-        {
-            $db->commit();
-            header("Location: ".$_SERVER["PHP_SELF"]);
-            exit;
-        }
-        else
-        {
-            $db->rollback();
-            dol_print_error($db);
-        }
-    }
+		if ($result1 && $result2 && $result3 && $result4 && $result5 && $result6)
+		{
+			$db->commit();
+			header("Location: ".$_SERVER["PHP_SELF"]);
+			exit;
+		}
+		else
+		{
+			$db->rollback();
+			dol_print_error($db);
+		}
+	}
 }
 
 if (GETPOST('delete', 'alpha'))
 {
-    if($entry)
-    {
-        $db->begin();
+	if ($entry)
+	{
+		$db->begin();
 
-		$result1=dolibarr_del_const($db, "FTP_PORT_" . $entry, $conf->entity);
-		if ($result1) $result2=dolibarr_del_const($db, "FTP_SERVER_" . $entry, $conf->entity);
-		if ($result2) $result3=dolibarr_del_const($db, "FTP_USER_" . $entry, $conf->entity);
-		if ($result3) $result4=dolibarr_del_const($db, "FTP_PASSWORD_" . $entry, $conf->entity);
-		if ($result4) $result5=dolibarr_del_const($db, "FTP_NAME_" . $entry, $conf->entity);
-		if ($result4) $result6=dolibarr_del_const($db, "FTP_PASSIVE_" . $entry, $conf->entity);
+		$result1 = dolibarr_del_const($db, "FTP_PORT_".$entry, $conf->entity);
+		if ($result1) $result2 = dolibarr_del_const($db, "FTP_SERVER_".$entry, $conf->entity);
+		if ($result2) $result3 = dolibarr_del_const($db, "FTP_USER_".$entry, $conf->entity);
+		if ($result3) $result4 = dolibarr_del_const($db, "FTP_PASSWORD_".$entry, $conf->entity);
+		if ($result4) $result5 = dolibarr_del_const($db, "FTP_NAME_".$entry, $conf->entity);
+		if ($result4) $result6 = dolibarr_del_const($db, "FTP_PASSIVE_".$entry, $conf->entity);
 
         if ($result1 && $result2 && $result3 && $result4 && $result5 && $result6)
         {
@@ -137,26 +137,25 @@ if (GETPOST('delete', 'alpha'))
  * View
  */
 
-$form=new Form($db);
+$form = new Form($db);
 
 llxHeader();
 
-$linkback='<a href="'.DOL_URL_ROOT.'/admin/modules.php?restore_lastsearch_values=1">'.$langs->trans("BackToModuleList").'</a>';
+$linkback = '<a href="'.DOL_URL_ROOT.'/admin/modules.php?restore_lastsearch_values=1">'.$langs->trans("BackToModuleList").'</a>';
 print load_fiche_titre($langs->trans("FTPClientSetup"), $linkback, 'title_setup');
 print '<br>';
 
-if (! function_exists('ftp_connect'))
+if (!function_exists('ftp_connect'))
 {
 	print $langs->trans("FTPFeatureNotSupportedByYourPHP");
 }
 else
 {
-
 	// Formulaire ajout
 	print '<form name="ftpconfig" action="ftpclient.php" method="post">';
-	print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+	print '<input type="hidden" name="token" value="'.newToken().'">';
 
-	print '<table class="noborder" width="100%">';
+	print '<table class="noborder centpercent">';
 	print '<tr class="liste_titre">';
 	print '<td colspan="2">'.$langs->trans("NewFTPClient").'</td>';
 	print '<td>'.$langs->trans("Example").'</td>';
@@ -164,39 +163,39 @@ else
 
 	print '<tr class="pair">';
 	print '<td>'.$langs->trans("Label").'</td>';
-	print '<td><input type="text" name="FTP_NAME_'.($lastftpentry+1).'" value="'.GETPOST("FTP_NAME_" . ($lastftpentry+1)).'" size="64"></td>';
+	print '<td><input type="text" name="FTP_NAME_'.($lastftpentry + 1).'" value="'.GETPOST("FTP_NAME_".($lastftpentry + 1)).'" size="64"></td>';
 	print '<td>My FTP access</td>';
 	print '</tr>';
 
 	print '<tr class="impair">';
 	print '<td>'.$langs->trans("Server").'</td>';
-	print '<td><input type="text" name="FTP_SERVER_'.($lastftpentry+1).'" value="'.GETPOST("FTP_SERVER_" . ($lastftpentry+1)).'" size="64"></td>';
+	print '<td><input type="text" name="FTP_SERVER_'.($lastftpentry + 1).'" value="'.GETPOST("FTP_SERVER_".($lastftpentry + 1)).'" size="64"></td>';
 	print '<td>localhost</td>';
 	print '</tr>';
 
 	print '<tr class="pair">';
 	print '<td width="100">'.$langs->trans("Port").'</td>';
-	print '<td><input type="text" name="FTP_PORT_'.($lastftpentry+1).'" value="'.GETPOST("FTP_PORT_" . ($lastftpentry+1)).'" size="64"></td>';
+	print '<td><input type="text" name="FTP_PORT_'.($lastftpentry + 1).'" value="'.GETPOST("FTP_PORT_".($lastftpentry + 1)).'" size="64"></td>';
 	print '<td>21 for pure non crypted FTP or if option FTP_CONNECT_WITH_SSL (See Home-Setup-Other) is on (FTPS)<br>22 if option FTP_CONNECT_WITH_SFTP (See Home-Setup-Other) is on (SFTP)</td>';
 	print '</tr>';
 
 	print '<tr class="impair">';
 	print '<td>'.$langs->trans("User").'</td>';
-	print '<td><input type="text" name="FTP_USER_'.($lastftpentry+1).'" value="'.GETPOST("FTP_USER_" . ($lastftpentry+1)).'" size="24"></td>';
+	print '<td><input type="text" name="FTP_USER_'.($lastftpentry + 1).'" value="'.GETPOST("FTP_USER_".($lastftpentry + 1)).'" size="24"></td>';
 	print '<td>myftplogin</td>';
 	print '</tr>';
 
 	print '<tr class="pair">';
 	print '<td>'.$langs->trans("Password").'</td>';
-	print '<td><input type="password" name="FTP_PASSWORD_'.($lastftpentry+1).'" value="'.GETPOST("FTP_PASSWORD_" . ($lastftpentry+1)).'" size="24"></td>';
+	print '<td><input type="password" name="FTP_PASSWORD_'.($lastftpentry + 1).'" value="'.GETPOST("FTP_PASSWORD_".($lastftpentry + 1)).'" size="24"></td>';
 	print '<td>myftppassword</td>';
 	print '</tr>';
 
 	print '<tr class="impair">';
 	print '<td>'.$langs->trans("FTPPassiveMode").'</td>';
-	$defaultpassive=GETPOST("FTP_PASSIVE_" . ($lastftpentry+1));
-	if (! isset($_POST["FTP_PASSIVE_" . ($lastftpentry+1)])) $defaultpassive=empty($conf->global->FTP_SUGGEST_PASSIVE_BYDEFAULT)?0:1;
-	print '<td>'.$form->selectyesno('FTP_PASSIVE_'.($lastftpentry+1), $defaultpassive, 2).'</td>';
+	$defaultpassive = GETPOST("FTP_PASSIVE_".($lastftpentry + 1));
+	if (!isset($_POST["FTP_PASSIVE_".($lastftpentry + 1)])) $defaultpassive = empty($conf->global->FTP_SUGGEST_PASSIVE_BYDEFAULT) ? 0 : 1;
+	print '<td>'.$form->selectyesno('FTP_PASSIVE_'.($lastftpentry + 1), $defaultpassive, 2).'</td>';
 	print '<td>'.$langs->trans("No").'</td>';
 	print '</tr>';
 
@@ -205,7 +204,7 @@ else
 	?>
 	<br><div class="center"><input type="submit" class="button" value="<?php echo $langs->trans("Add") ?>"></div>
 	<input type="hidden" name="action" value="add">
-	<input type="hidden" name="numero_entry" value="<?php echo ($lastftpentry+1) ?>">
+	<input type="hidden" name="numero_entry" value="<?php echo ($lastftpentry + 1) ?>">
 	<?php
 	print '</form>';
 	?>
@@ -214,70 +213,70 @@ else
 
 	<?php
 
-	$sql ="select name, value, note from ".MAIN_DB_PREFIX."const";
-	$sql.=" WHERE name like 'FTP_SERVER_%'";
-	$sql.=" ORDER BY name";
+	$sql = "select name, value, note from ".MAIN_DB_PREFIX."const";
+	$sql .= " WHERE name like 'FTP_SERVER_%'";
+	$sql .= " ORDER BY name";
 
 	dol_syslog("ftpclient select ftp setup", LOG_DEBUG);
-	$resql=$db->query($sql);
+	$resql = $db->query($sql);
 	if ($resql)
 	{
-		$num =$db->num_rows($resql);
-		$i=0;
+		$num = $db->num_rows($resql);
+		$i = 0;
 
 		while ($i < $num)
 		{
 			$obj = $db->fetch_object($resql);
 
-		    preg_match('/([0-9]+)$/i', $obj->name, $reg);
+			preg_match('/([0-9]+)$/i', $obj->name, $reg);
 			$idrss = $reg[0];
 			//print "x".join(',',$reg)."=".$obj->name."=".$idrss;
 
 			print "<form name=\"externalrssconfig\" action=\"".$_SERVER["PHP_SELF"]."\" method=\"post\">";
-			print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+			print '<input type="hidden" name="token" value="'.newToken().'">';
 			print '<input type="hidden" name="numero_entry" value="'.$idrss.'">';
 
-			print '<table class="noborder" width="100%">'."\n";
+			print '<table class="noborder centpercent">'."\n";
 
 			print '<tr class="liste_titre">';
 			print '<td class="fieldtitle">'.$langs->trans("FTP")." ".($idrss)."</td>";
 			print '<td></td>';
 			print "</tr>";
 
-			$keyforname="FTP_NAME_" . $idrss;
-			$keyforserver="FTP_SERVER_" . $idrss;
-			$keyforport="FTP_PORT_" . $idrss;
-			$keyforuser="FTP_USER_" . $idrss;
-			$keyforpassword="FTP_PASSWORD_" . $idrss;
-			$keyforpassive="FTP_PASSIVE_" . $idrss;
+			$keyforname = "FTP_NAME_".$idrss;
+			$keyforserver = "FTP_SERVER_".$idrss;
+			$keyforport = "FTP_PORT_".$idrss;
+			$keyforuser = "FTP_USER_".$idrss;
+			$keyforpassword = "FTP_PASSWORD_".$idrss;
+			$keyforpassive = "FTP_PASSIVE_".$idrss;
 
 			print '<tr class="oddeven">';
 			print "<td>".$langs->trans("Name")."</td>";
-			print "<td><input type=\"text\" class=\"flat\" name=\"FTP_NAME_" . $idrss . "\" value=\"" . $conf->global->$keyforname . "\" size=\"64\"></td>";
+			print "<td><input type=\"text\" class=\"flat\" name=\"FTP_NAME_".$idrss."\" value=\"".$conf->global->$keyforname."\" size=\"64\"></td>";
 			print "</tr>";
 
 
 			print '<tr class="oddeven">';
 			print "<td>".$langs->trans("Server")."</td>";
-			print "<td><input type=\"text\" class=\"flat\" name=\"FTP_SERVER_" . $idrss . "\" value=\"" . $conf->global->$keyforserver . "\" size=\"64\"></td>";
+			print "<td><input type=\"text\" class=\"flat\" name=\"FTP_SERVER_".$idrss."\" value=\"".$conf->global->$keyforserver."\" size=\"64\"></td>";
 			print "</tr>";
 
 
 			print '<tr class="oddeven">';
 			print "<td width=\"100\">".$langs->trans("Port")."</td>";
-			print "<td><input type=\"text\" class=\"flat\" name=\"FTP_PORT_" . $idrss . "\" value=\"" . $conf->global->$keyforport . "\" size=\"64\"></td>";
+			print "<td><input type=\"text\" class=\"flat\" name=\"FTP_PORT_".$idrss."\" value=\"".$conf->global->$keyforport."\" size=\"64\"></td>";
 			print "</tr>";
 
 
 			print '<tr class="oddeven">';
 			print "<td width=\"100\">".$langs->trans("User")."</td>";
-			print "<td><input type=\"text\" class=\"flat\" name=\"FTP_USER_" . $idrss . "\" value=\"" . $conf->global->$keyforuser . "\" size=\"24\"></td>";
+			print "<td><input type=\"text\" class=\"flat\" name=\"FTP_USER_".$idrss."\" value=\"".$conf->global->$keyforuser."\" size=\"24\"></td>";
 			print "</tr>";
 
 
 			print '<tr class="oddeven">';
 			print "<td width=\"100\">".$langs->trans("Password")."</td>";
-			print "<td><input type=\"password\" class=\"flat\" name=\"FTP_PASSWORD_" . $idrss . "\" value=\"" . $conf->global->$keyforpassword . "\" size=\"24\"></td>";
+			print "<td><input type=\"password\" class=\"flat\" name=\"FTP_PASSWORD_".$idrss."\" value=\"".$conf->global->$keyforpassword."\" size=\"24\"></td>";
 			print "</tr>";
 
 

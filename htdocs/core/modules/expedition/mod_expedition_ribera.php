@@ -13,8 +13,8 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
- * or see http://www.gnu.org/
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
+ * or see https://www.gnu.org/
  */
 
 /**
@@ -23,7 +23,7 @@
  *  \brief      File of class to manage expedition numbering rules Ribera
  */
 
-require_once DOL_DOCUMENT_ROOT .'/core/modules/expedition/modules_expedition.php';
+require_once DOL_DOCUMENT_ROOT.'/core/modules/expedition/modules_expedition.php';
 
 /**
  *	Class to manage expedition numbering rules Ribera
@@ -46,12 +46,12 @@ class mod_expedition_ribera extends ModelNumRefExpedition
 	 * @deprecated
 	 * @see $name
 	 */
-	public $nom='Ribera';
+	public $nom = 'Ribera';
 
 	/**
 	 * @var string model name
 	 */
-	public $name='Ribera';
+	public $name = 'Ribera';
 
 	/**
 	 *	Return default description of numbering model
@@ -67,24 +67,24 @@ class mod_expedition_ribera extends ModelNumRefExpedition
 		$form = new Form($db);
 
 		$texte = $langs->trans('GenericNumRefModelDesc')."<br>\n";
-		$texte.= '<form action="'.$_SERVER["PHP_SELF"].'" method="POST">';
-		$texte.= '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
-		$texte.= '<input type="hidden" name="action" value="updateMask">';
-		$texte.= '<input type="hidden" name="maskconstexpedition" value="EXPEDITION_RIBERA_MASK">';
-		$texte.= '<table class="nobordernopadding" width="100%">';
+		$texte .= '<form action="'.$_SERVER["PHP_SELF"].'" method="POST">';
+		$texte .= '<input type="hidden" name="token" value="'.newToken().'">';
+		$texte .= '<input type="hidden" name="action" value="updateMask">';
+		$texte .= '<input type="hidden" name="maskconstexpedition" value="EXPEDITION_RIBERA_MASK">';
+		$texte .= '<table class="nobordernopadding" width="100%">';
 
-		$tooltip=$langs->trans("GenericMaskCodes", $langs->transnoentities("Shipment"), $langs->transnoentities("Shipment"));
-		$tooltip.=$langs->trans("GenericMaskCodes2");
-		$tooltip.=$langs->trans("GenericMaskCodes3");
-		$tooltip.=$langs->trans("GenericMaskCodes4a", $langs->transnoentities("Shipment"), $langs->transnoentities("Shipment"));
-		$tooltip.=$langs->trans("GenericMaskCodes5");
+		$tooltip = $langs->trans("GenericMaskCodes", $langs->transnoentities("Shipment"), $langs->transnoentities("Shipment"));
+		$tooltip .= $langs->trans("GenericMaskCodes2");
+		$tooltip .= $langs->trans("GenericMaskCodes3");
+		$tooltip .= $langs->trans("GenericMaskCodes4a", $langs->transnoentities("Shipment"), $langs->transnoentities("Shipment"));
+		$tooltip .= $langs->trans("GenericMaskCodes5");
 
-		$texte.= '<tr><td>'.$langs->trans("Mask").':</td>';
-		$texte.= '<td class="right">'.$form->textwithpicto('<input type="text" class="flat" size="24" name="maskexpedition" value="'.$conf->global->EXPEDITION_RIBERA_MASK.'">', $tooltip, 1, 1).'</td>';
-		$texte.= '<td class="left" rowspan="2">&nbsp; <input type="submit" class="button" value="'.$langs->trans("Modify").'" name="Button"></td>';
-		$texte.= '</tr>';
-		$texte.= '</table>';
-		$texte.= '</form>';
+		$texte .= '<tr><td>'.$langs->trans("Mask").':</td>';
+		$texte .= '<td class="right">'.$form->textwithpicto('<input type="text" class="flat" size="24" name="maskexpedition" value="'.$conf->global->EXPEDITION_RIBERA_MASK.'">', $tooltip, 1, 1).'</td>';
+		$texte .= '<td class="left" rowspan="2">&nbsp; <input type="submit" class="button" value="'.$langs->trans("Modify").'" name="Button"></td>';
+		$texte .= '</tr>';
+		$texte .= '</table>';
+		$texte .= '</form>';
 
 		return $texte;
     }
@@ -96,17 +96,17 @@ class mod_expedition_ribera extends ModelNumRefExpedition
 	 */
     public function getExample()
     {
-     	global $conf,$langs,$mysoc;
+     	global $conf, $langs, $mysoc;
 
-    	$old_code_client=$mysoc->code_client;
-    	$old_code_type=$mysoc->typent_code;
-    	$mysoc->code_client='CCCCCCCCCC';
-    	$mysoc->typent_code='TTTTTTTTTT';
+    	$old_code_client = $mysoc->code_client;
+    	$old_code_type = $mysoc->typent_code;
+    	$mysoc->code_client = 'CCCCCCCCCC';
+    	$mysoc->typent_code = 'TTTTTTTTTT';
      	$numExample = $this->getNextValue($mysoc, '');
-		$mysoc->code_client=$old_code_client;
-		$mysoc->typent_code=$old_code_type;
+		$mysoc->code_client = $old_code_client;
+		$mysoc->typent_code = $old_code_type;
 
-		if (! $numExample)
+		if (!$numExample)
 		{
 			$numExample = $langs->trans('NotConfigured');
 		}
@@ -122,21 +122,21 @@ class mod_expedition_ribera extends ModelNumRefExpedition
 	 */
     public function getNextValue($objsoc, $shipment)
     {
-		global $db,$conf;
+		global $db, $conf;
 
-		require_once DOL_DOCUMENT_ROOT .'/core/lib/functions2.lib.php';
+		require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
 
-		$mask=$conf->global->EXPEDITION_RIBERA_MASK;
+		$mask = $conf->global->EXPEDITION_RIBERA_MASK;
 
-		if (! $mask)
+		if (!$mask)
 		{
-			$this->error='NotConfigured';
+			$this->error = 'NotConfigured';
 			return 0;
 		}
 
 		$date = $shipment->date_expedition;
 
-		$numFinal=get_next_value($db, $mask, 'expedition', 'ref', '', $objsoc, $date);
+		$numFinal = get_next_value($db, $mask, 'expedition', 'ref', '', $objsoc, $date);
 
 		return  $numFinal;
 	}

@@ -13,7 +13,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -41,14 +41,14 @@
  */
 function check_user_password_googleoauth($usertotest, $passwordtotest, $entitytotest)
 {
-    global $_POST,$db,$conf,$langs;
+    global $_POST, $db, $conf, $langs;
 
     dol_syslog("functions_googleoauth::check_user_password_googleoauth usertotest=".$usertotest);
 
-    $login='';
+    $login = '';
 
     // Get identity from user and redirect browser to Google OAuth Server
-    if (isset($_POST['username']))
+    if (GETPOSTISSET('username'))
     {
         /*$openid = new SimpleOpenID();
         $openid->SetIdentity($_POST['username']);

@@ -12,7 +12,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -41,7 +41,7 @@ $tab = (!empty($tab)) ? $tab : 'card';
 $tab = strtolower($tab);
 
 // Security check
-$result=restrictedArea($user, 'produit|service&fournisseur', $id, 'product&product', '', '', 'rowid');
+$result = restrictedArea($user, 'produit|service&fournisseur', $id, 'product&product', '', '', 'rowid');
 
 //Initialize objects
 $product = new Product($db);
@@ -73,9 +73,9 @@ if ($action == 'add')
 		if ($result == 0) //No existing entry found with title, ok
 		{
 			//Check the expression validity by parsing it
-            $priceparser = new PriceParser($db);
-            $price_result = $priceparser->testExpression($id, $expression);
-            if ($price_result < 0) { //Expression is not valid
+			$priceparser = new PriceParser($db);
+			$price_result = $priceparser->testExpression($id, $expression);
+			if ($price_result < 0) { //Expression is not valid
 				setEventMessages($priceparser->translatedError(), null, 'errors');
 			}
 			else
@@ -113,9 +113,9 @@ if ($action == 'update')
 		if ($result == 0 || $result == $eid) //No existing entry found with title or existing one is the current one, ok
 		{
 			//Check the expression validity by parsing it
-            $priceparser = new PriceParser($db);
-            $price_result = $priceparser->testExpression($id, $expression);
-            if ($price_result < 0) { //Expression is not valid
+			$priceparser = new PriceParser($db);
+			$price_result = $priceparser->testExpression($id, $expression);
+			if ($price_result < 0) { //Expression is not valid
 				setEventMessages($priceparser->translatedError(), null, 'errors');
 			}
 			else
@@ -149,7 +149,7 @@ if ($action == 'delete')
 {
 	if ($eid != 0)
 	{
-	    $price_expression->fetch($eid);
+		$price_expression->fetch($eid);
 		$result = $price_expression->delete($user);
 		if ($result < 0)
 		{
@@ -172,12 +172,12 @@ print load_fiche_titre($langs->trans("PriceExpressionEditor"));
 
 //Form/Table
 print '<form action="'.$_SERVER['PHP_SELF'].'?id='.$id.'&amp;tab='.$tab.'&amp;eid='.$eid.'" method="POST">';
-print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+print '<input type="hidden" name="token" value="'.newToken().'">';
 print '<input type="hidden" name="action" value='.($eid == 0 ? 'add' : 'update').'>';
 
 dol_fiche_head();
 
-print '<table class="border" width="100%">';
+print '<table class="border centpercent">';
 
 // Price expression selector
 print '<tr><td class="titlefield fieldrequired">'.$langs->trans("PriceExpressionSelected").'</td><td>';
@@ -190,23 +190,23 @@ print '</td></tr>';
 
 // Title input
 print '<tr><td class="fieldrequired">'.$langs->trans("Name").'</td><td>';
-print '<input class="flat" name="expression_title" size="15" value="'.($price_expression->title?$price_expression->title:'').'">';
+print '<input class="flat" name="expression_title" size="15" value="'.($price_expression->title ? $price_expression->title : '').'">';
 print '</td></tr>';
 
 //Help text
 $help_text = $langs->trans("PriceExpressionEditorHelp1");
-$help_text.= '<br><br>'.$langs->trans("PriceExpressionEditorHelp2");
-$help_text.= '<br><br>'.$langs->trans("PriceExpressionEditorHelp3");
-$help_text.= '<br><br>'.$langs->trans("PriceExpressionEditorHelp4");
-$help_text.= '<br><br>'.$langs->trans("PriceExpressionEditorHelp5");
+$help_text .= '<br><br>'.$langs->trans("PriceExpressionEditorHelp2");
+$help_text .= '<br><br>'.$langs->trans("PriceExpressionEditorHelp3");
+$help_text .= '<br><br>'.$langs->trans("PriceExpressionEditorHelp4");
+$help_text .= '<br><br>'.$langs->trans("PriceExpressionEditorHelp5");
 foreach ($price_globals->listGlobalVariables() as $entry) {
-    $help_text.= '<br><b>#globals_'.$entry->code.'#</b> '.$entry->description.' = '.$entry->value;
+	$help_text .= '<br><b>#globals_'.$entry->code.'#</b> '.$entry->description.' = '.$entry->value;
 }
 
 //Price expression editor
 print '<tr><td class="fieldrequired">'.$form->textwithpicto($langs->trans("PriceExpressionEditor"), $help_text, 1).'</td><td>';
 require_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
-$doleditor=new DolEditor('expression', isset($price_expression->expression)?$price_expression->expression:'', '', 300, '', '', false, false, false, ROWS_4, '90%');
+$doleditor = new DolEditor('expression', isset($price_expression->expression) ? $price_expression->expression : '', '', 300, '', '', false, false, false, ROWS_4, '90%');
 $doleditor->Create();
 print '</td></tr>';
 print '</table>';

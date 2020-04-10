@@ -17,7 +17,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -53,8 +53,8 @@ include DOL_DOCUMENT_ROOT.'/core/actions_setmoduleoptions.inc.php';
 
 if (preg_match('/set_([a-z0-9_\-]+)/i', $action, $reg))
 {
-	$code=$reg[1];
-	$value=(GETPOST($code, 'alpha') ? GETPOST($code, 'alpha') : 1);
+	$code = $reg[1];
+	$value = (GETPOST($code, 'alpha') ? GETPOST($code, 'alpha') : 1);
 	if (dolibarr_set_const($db, $code, $value, 'chaine', 0, '', $conf->entity) > 0)
 	{
 		Header("Location: ".$_SERVER["PHP_SELF"]);
@@ -68,7 +68,7 @@ if (preg_match('/set_([a-z0-9_\-]+)/i', $action, $reg))
 
 if (preg_match('/del_([a-z0-9_\-]+)/i', $action, $reg))
 {
-	$code=$reg[1];
+	$code = $reg[1];
 	if (dolibarr_del_const($db, $code, $conf->entity) > 0)
 	{
 		Header("Location: ".$_SERVER["PHP_SELF"]);
@@ -88,21 +88,21 @@ if ($action == 'set')
 }
 elseif ($action == 'specimen')  // For orders
 {
-    $modele=GETPOST('module', 'alpha');
+    $modele = GETPOST('module', 'alpha');
 
     $commande = new CommandeFournisseur($db);
     $commande->initAsSpecimen();
-    $commande->thirdparty=$specimenthirdparty;
+    $commande->thirdparty = $specimenthirdparty;
 
     // Search template files
-    $file=''; $classname=''; $filefound=0;
-    $dirmodels=array_merge(array('/'), (array) $conf->modules_parts['models']);
-    foreach($dirmodels as $reldir)
+    $file = ''; $classname = ''; $filefound = 0;
+    $dirmodels = array_merge(array('/'), (array) $conf->modules_parts['models']);
+    foreach ($dirmodels as $reldir)
     {
-    	$file=dol_buildpath($reldir."core/modules/action/doc/pdf_".$modele.".modules.php", 0);
+    	$file = dol_buildpath($reldir."core/modules/action/doc/pdf_".$modele.".modules.php", 0);
     	if (file_exists($file))
     	{
-    		$filefound=1;
+    		$filefound = 1;
     		$classname = "pdf_".$modele;
     		break;
     	}
@@ -171,18 +171,18 @@ elseif ($action == 'setdoc')
  * View
  */
 
-$formactions=new FormActions($db);
-$dirmodels=array_merge(array('/'), (array) $conf->modules_parts['models']);
+$formactions = new FormActions($db);
+$dirmodels = array_merge(array('/'), (array) $conf->modules_parts['models']);
 
-$wikihelp='EN:Module_Agenda_En|FR:Module_Agenda|ES:Módulo_Agenda';
+$wikihelp = 'EN:Module_Agenda_En|FR:Module_Agenda|ES:Módulo_Agenda';
 llxHeader('', $langs->trans("AgendaSetup"), $wikihelp);
 
-$linkback='<a href="'.DOL_URL_ROOT.'/admin/modules.php?restore_lastsearch_values=1">'.$langs->trans("BackToModuleList").'</a>';
+$linkback = '<a href="'.DOL_URL_ROOT.'/admin/modules.php?restore_lastsearch_values=1">'.$langs->trans("BackToModuleList").'</a>';
 print load_fiche_titre($langs->trans("AgendaSetup"), $linkback, 'title_setup');
 
 
 
-$head=agenda_prepare_head();
+$head = agenda_prepare_head();
 
 dol_fiche_head($head, 'other', $langs->trans("Agenda"), -1, 'action');
 
@@ -196,15 +196,15 @@ dol_fiche_head($head, 'other', $langs->trans("Agenda"), -1, 'action');
 $def = array();
 
 $sql = "SELECT nom";
-$sql.= " FROM ".MAIN_DB_PREFIX."document_model";
-$sql.= " WHERE type = 'action'";
-$sql.= " AND entity = ".$conf->entity;
+$sql .= " FROM ".MAIN_DB_PREFIX."document_model";
+$sql .= " WHERE type = 'action'";
+$sql .= " AND entity = ".$conf->entity;
 
-$resql=$db->query($sql);
+$resql = $db->query($sql);
 if ($resql)
 {
     $i = 0;
-    $num_rows=$db->num_rows($resql);
+    $num_rows = $db->num_rows($resql);
     while ($i < $num_rows)
     {
         $array = $db->fetch_array($resql);
@@ -221,7 +221,7 @@ if ($conf->global->MAIN_FEATURES_LEVEL >= 2)
 {
     print load_fiche_titre($langs->trans("AgendaModelModule"), '', '');
 
-    print '<table class="noborder" width="100%">'."\n";
+    print '<table class="noborder centpercent">'."\n";
     print '<tr class="liste_titre">'."\n";
     print '<td width="100">'.$langs->trans("Name").'</td>'."\n";
     print '<td>'.$langs->trans("Description").'</td>'."\n";
@@ -235,29 +235,29 @@ if ($conf->global->MAIN_FEATURES_LEVEL >= 2)
 
     foreach ($dirmodels as $reldir)
     {
-    	$dir = dol_buildpath($reldir."core/modules/action/doc/");
+    	$dir = dol_buildpath($reldir."core/modules/action/doc");
 
         if (is_dir($dir))
         {
-            $handle=opendir($dir);
+            $handle = opendir($dir);
             if (is_resource($handle))
             {
-                while (($file = readdir($handle))!==false)
+                while (($file = readdir($handle)) !== false)
                 {
                     if (preg_match('/\.modules\.php$/i', $file) && preg_match('/^(pdf_|doc_)/', $file))
                     {
-            			$name = substr($file, 4, dol_strlen($file) -16);
-            			$classname = substr($file, 0, dol_strlen($file) -12);
+            			$name = substr($file, 4, dol_strlen($file) - 16);
+            			$classname = substr($file, 0, dol_strlen($file) - 12);
 
             			require_once $dir.'/'.$file;
             			$module = new $classname($db, new ActionComm($db));
 
             			print '<tr class="oddeven">'."\n";
             			print "<td>";
-            			print (empty($module->name)?$name:$module->name);
+            			print (empty($module->name) ? $name : $module->name);
             			print "</td>\n";
             			print "<td>\n";
-            			require_once $dir.$file;
+            			require_once $dir.'/'.$file;
             			$module = new $classname($db, $specimenthirdparty);
             			if (method_exists($module, 'info'))
             				print $module->info($langs);
@@ -268,18 +268,17 @@ if ($conf->global->MAIN_FEATURES_LEVEL >= 2)
             			// Active
             			if (in_array($name, $def))
             			{
-
-            			print '<td class="center">'."\n";
-            			if ($conf->global->ACTION_EVENT_ADDON_PDF != "$name")
-            			{
-            				print '<a href="'.$_SERVER["PHP_SELF"].'?action=del&amp;value='.$name.'&amp;scan_dir='.$module->scandir.'&amp;label='.urlencode($module->name).'&amp;type=action">';
-            				print img_picto($langs->trans("Enabled"), 'switch_on');
-            				print '</a>';
-            			}
-            			else
-            			{
-            				print img_picto($langs->trans("Enabled"), 'switch_on');
-            			}
+            			    print '<td class="center">'."\n";
+            			    if ($conf->global->ACTION_EVENT_ADDON_PDF != "$name")
+            			    {
+            				    print '<a href="'.$_SERVER["PHP_SELF"].'?action=del&amp;value='.$name.'&amp;scan_dir='.$module->scandir.'&amp;label='.urlencode($module->name).'&amp;type=action">';
+            				    print img_picto($langs->trans("Enabled"), 'switch_on');
+            				    print '</a>';
+            			    }
+            			    else
+            			    {
+            				    print img_picto($langs->trans("Enabled"), 'switch_on');
+            			    }
             				print "</td>";
             			}
             			else
@@ -302,11 +301,11 @@ if ($conf->global->MAIN_FEATURES_LEVEL >= 2)
             			print '</td>';
 
             			// Info
-            			$htmltooltip =    ''.$langs->trans("Name").': '.$module->name;
-            			$htmltooltip.='<br>'.$langs->trans("Type").': '.($module->type?$module->type:$langs->trans("Unknown"));
-            			$htmltooltip.='<br>'.$langs->trans("Width").'/'.$langs->trans("Height").': '.$module->page_largeur.'/'.$module->page_hauteur;
-            			$htmltooltip.='<br><br><u>'.$langs->trans("FeaturesSupported").':</u>';
-            			$htmltooltip.='<br>'.$langs->trans("Logo").': '.yn($module->option_logo, 1, 1);
+            			$htmltooltip = ''.$langs->trans("Name").': '.$module->name;
+            			$htmltooltip .= '<br>'.$langs->trans("Type").': '.($module->type ? $module->type : $langs->trans("Unknown"));
+            			$htmltooltip .= '<br>'.$langs->trans("Width").'/'.$langs->trans("Height").': '.$module->page_largeur.'/'.$module->page_hauteur;
+            			$htmltooltip .= '<br><br><u>'.$langs->trans("FeaturesSupported").':</u>';
+            			$htmltooltip .= '<br>'.$langs->trans("Logo").': '.yn($module->option_logo, 1, 1);
             			print '<td class="center">';
             			print $form->textwithpicto('', $htmltooltip, 1, 0);
             			print '</td>';
@@ -325,6 +324,7 @@ if ($conf->global->MAIN_FEATURES_LEVEL >= 2)
 }
 
 print '<form action="'.$_SERVER["PHP_SELF"].'" name="agenda">';
+print '<input type="hidden" name="token" value="'.newToken().'">';
 print '<input type="hidden" name="action" value="set">';
 
 print '<table class="noborder allwidth">'."\n";
@@ -353,17 +353,16 @@ print '</td></tr>'."\n";
 
 // AGENDA_DEFAULT_VIEW
 print '<tr class="oddeven">'."\n";
-$htmltext=$langs->trans("ThisValueCanOverwrittenOnUserLevel", $langs->transnoentitiesnoconv("UserGUISetup"));
+$htmltext = $langs->trans("ThisValueCanOverwrittenOnUserLevel", $langs->transnoentitiesnoconv("UserGUISetup"));
 print '<td>'.$form->textwithpicto($langs->trans("AGENDA_DEFAULT_VIEW"), $htmltext).'</td>'."\n";
 print '<td class="center">&nbsp;</td>'."\n";
 print '<td class="right">'."\n";
-$tmplist=array(''=>'&nbsp;', 'show_list'=>$langs->trans("ViewList"), 'show_month'=>$langs->trans("ViewCal"), 'show_week'=>$langs->trans("ViewWeek"), 'show_day'=>$langs->trans("ViewDay"), 'show_peruser'=>$langs->trans("ViewPerUser"));
+$tmplist = array(''=>'&nbsp;', 'show_list'=>$langs->trans("ViewList"), 'show_month'=>$langs->trans("ViewCal"), 'show_week'=>$langs->trans("ViewWeek"), 'show_day'=>$langs->trans("ViewDay"), 'show_peruser'=>$langs->trans("ViewPerUser"));
 print $form->selectarray('AGENDA_DEFAULT_VIEW', $tmplist, $conf->global->AGENDA_DEFAULT_VIEW);
 print '</td></tr>'."\n";
 
-if (! empty($conf->global->AGENDA_USE_EVENT_TYPE))
+if (!empty($conf->global->AGENDA_USE_EVENT_TYPE))
 {
-
     print '<!-- AGENDA_USE_EVENT_TYPE_DEFAULT -->';
     print '<tr class="oddeven">'."\n";
     print '<td>'.$langs->trans("AGENDA_USE_EVENT_TYPE_DEFAULT").'</td>'."\n";

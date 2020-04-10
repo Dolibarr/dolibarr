@@ -13,7 +13,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -23,7 +23,7 @@
  */
 
 // Put here all includes required by your class file
-require_once DOL_DOCUMENT_ROOT . '/core/class/commonobject.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/class/commonobject.class.php';
 //require_once DOL_DOCUMENT_ROOT . '/societe/class/societe.class.php';
 //require_once DOL_DOCUMENT_ROOT . '/product/class/product.class.php';
 
@@ -81,7 +81,7 @@ class EmailCollectorAction extends CommonObject
     /**
      * @var array  Array with all fields and their property. Do not use it as a static var. It may be modified by constructor.
      */
-    public $fields=array(
+    public $fields = array(
         'rowid' => array('type'=>'integer', 'label'=>'TechnicalID', 'enabled'=>1, 'visible'=>-1, 'position'=>1, 'notnull'=>1, 'index'=>1, 'comment'=>"Id",),
         'fk_emailcollector' => array('type'=>'integer', 'label'=>'Id of emailcollector', 'foreignkey'=>'emailcollector.rowid'),
         'type' => array('type'=>'varchar(128)', 'label'=>'Type', 'enabled'=>1, 'visible'=>1, 'position'=>10, 'notnull'=>1, 'index'=>1),
@@ -98,7 +98,13 @@ class EmailCollectorAction extends CommonObject
     public $fk_emailcollector;
     public $type;
     public $actionparam;
+
+    /**
+     * @var integer|string date_creation
+     */
     public $date_creation;
+
+
     public $tms;
     public $fk_user_creat;
     public $fk_user_modif;
@@ -149,11 +155,11 @@ class EmailCollectorAction extends CommonObject
 
         $this->db = $db;
 
-        if (empty($conf->global->MAIN_SHOW_TECHNICAL_ID) && isset($this->fields['rowid'])) $this->fields['rowid']['visible']=0;
-        if (empty($conf->multicompany->enabled) && isset($this->fields['entity'])) $this->fields['entity']['enabled']=0;
+        if (empty($conf->global->MAIN_SHOW_TECHNICAL_ID) && isset($this->fields['rowid'])) $this->fields['rowid']['visible'] = 0;
+        if (empty($conf->multicompany->enabled) && isset($this->fields['entity'])) $this->fields['entity']['enabled'] = 0;
 
         // Unset fields that are disabled
-        foreach($this->fields as $key => $val)
+        foreach ($this->fields as $key => $val)
         {
             if (isset($val['enabled']) && empty($val['enabled']))
             {
@@ -162,13 +168,13 @@ class EmailCollectorAction extends CommonObject
         }
 
         // Translate some data of arrayofkeyval
-        foreach($this->fields as $key => $val)
+        foreach ($this->fields as $key => $val)
         {
             if (is_array($val['arrayofkeyval']))
             {
-                foreach($val['arrayofkeyval'] as $key2 => $val2)
+                foreach ($val['arrayofkeyval'] as $key2 => $val2)
                 {
-                	$this->fields[$key]['arrayofkeyval'][$key2]=$langs->trans($val2);
+                	$this->fields[$key]['arrayofkeyval'][$key2] = $langs->trans($val2);
                 }
             }
         }
@@ -187,7 +193,7 @@ class EmailCollectorAction extends CommonObject
         if (empty($this->type))
         {
             $langs->load("errors");
-            $this->errors[]=$langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Type"));
+            $this->errors[] = $langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Type"));
             return -1;
         }
 
@@ -226,11 +232,11 @@ class EmailCollectorAction extends CommonObject
         // Clear extrafields that are unique
         if (is_array($object->array_options) && count($object->array_options) > 0)
         {
-            $extrafields->fetch_name_optionals_label($this->element);
-            foreach($object->array_options as $key => $option)
+            $extrafields->fetch_name_optionals_label($this->table_element);
+            foreach ($object->array_options as $key => $option)
             {
                 $shortkey = preg_replace('/options_/', '', $key);
-                if (! empty($extrafields->attributes[$this->element]['unique'][$shortkey]))
+                if (!empty($extrafields->attributes[$this->element]['unique'][$shortkey]))
                 {
                     //var_dump($key); var_dump($clonedObj->array_options[$key]); exit;
                     unset($object->array_options[$key]);
@@ -269,7 +275,7 @@ class EmailCollectorAction extends CommonObject
     public function fetch($id, $ref = null)
     {
         $result = $this->fetchCommon($id, $ref);
-        if ($result > 0 && ! empty($this->table_element_line)) $this->fetchLines();
+        if ($result > 0 && !empty($this->table_element_line)) $this->fetchLines();
         return $result;
     }
 
@@ -327,35 +333,35 @@ class EmailCollectorAction extends CommonObject
         global $dolibarr_main_authentication, $dolibarr_main_demo;
         global $menumanager;
 
-        if (! empty($conf->dol_no_mouse_hover)) $notooltip=1;   // Force disable tooltips
+        if (!empty($conf->dol_no_mouse_hover)) $notooltip = 1; // Force disable tooltips
 
         $result = '';
         $companylink = '';
 
-        $label = '<u>' . $langs->trans("EmailcollectorAction") . '</u>';
-        $label.= '<br>';
-        $label.= '<b>' . $langs->trans('Ref') . ':</b> ' . $this->ref;
+        $label = '<u>'.$langs->trans("EmailcollectorAction").'</u>';
+        $label .= '<br>';
+        $label .= '<b>'.$langs->trans('Ref').':</b> '.$this->ref;
 
         $url = dol_buildpath('/emailcollector/emailcollectoraction_card.php', 1).'?id='.$this->id;
 
         if ($option != 'nolink')
         {
             // Add param to save lastsearch_values or not
-            $add_save_lastsearch_values=($save_lastsearch_value == 1 ? 1 : 0);
-            if ($save_lastsearch_value == -1 && preg_match('/list\.php/', $_SERVER["PHP_SELF"])) $add_save_lastsearch_values=1;
-            if ($add_save_lastsearch_values) $url.='&save_lastsearch_values=1';
+            $add_save_lastsearch_values = ($save_lastsearch_value == 1 ? 1 : 0);
+            if ($save_lastsearch_value == -1 && preg_match('/list\.php/', $_SERVER["PHP_SELF"])) $add_save_lastsearch_values = 1;
+            if ($add_save_lastsearch_values) $url .= '&save_lastsearch_values=1';
         }
 
-        $linkclose='';
+        $linkclose = '';
         if (empty($notooltip))
         {
-            if (! empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER))
+            if (!empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER))
             {
-                $label=$langs->trans("ShowEmailcollectorAction");
-                $linkclose.=' alt="'.dol_escape_htmltag($label, 1).'"';
+                $label = $langs->trans("ShowEmailcollectorAction");
+                $linkclose .= ' alt="'.dol_escape_htmltag($label, 1).'"';
             }
-            $linkclose.=' title="'.dol_escape_htmltag($label, 1).'"';
-            $linkclose.=' class="classfortooltip'.($morecss?' '.$morecss:'').'"';
+            $linkclose .= ' title="'.dol_escape_htmltag($label, 1).'"';
+            $linkclose .= ' class="classfortooltip'.($morecss ? ' '.$morecss : '').'"';
 
             /*
              $hookmanager->initHooks(array('emailcollectoractiondao'));
@@ -364,22 +370,22 @@ class EmailCollectorAction extends CommonObject
              if ($reshook > 0) $linkclose = $hookmanager->resPrint;
              */
         }
-        else $linkclose = ($morecss?' class="'.$morecss.'"':'');
+        else $linkclose = ($morecss ? ' class="'.$morecss.'"' : '');
 
         $linkstart = '<a href="'.$url.'"';
-        $linkstart.=$linkclose.'>';
-        $linkend='</a>';
+        $linkstart .= $linkclose.'>';
+        $linkend = '</a>';
 
         $result .= $linkstart;
-        if ($withpicto) $result.=img_object(($notooltip?'':$label), ($this->picto?$this->picto:'generic'), ($notooltip?(($withpicto != 2) ? 'class="paddingright"' : ''):'class="'.(($withpicto != 2) ? 'paddingright ' : '').'classfortooltip"'), 0, 0, $notooltip?0:1);
-        if ($withpicto != 2) $result.= $this->ref;
+        if ($withpicto) $result .= img_object(($notooltip ? '' : $label), ($this->picto ? $this->picto : 'generic'), ($notooltip ? (($withpicto != 2) ? 'class="paddingright"' : '') : 'class="'.(($withpicto != 2) ? 'paddingright ' : '').'classfortooltip"'), 0, 0, $notooltip ? 0 : 1);
+        if ($withpicto != 2) $result .= $this->ref;
         $result .= $linkend;
         //if ($withpicto != 2) $result.=(($addlabel && $this->label) ? $sep . dol_trunc($this->label, ($addlabel > 1 ? $addlabel : 0)) : '');
 
-        global $action,$hookmanager;
+        global $action, $hookmanager;
         $hookmanager->initHooks(array('emailcollectoractiondao'));
-        $parameters=array('id'=>$this->id, 'getnomurl'=>$result);
-        $reshook=$hookmanager->executeHooks('getNomUrl', $parameters, $this, $action);    // Note that $action and $object may have been modified by some hooks
+        $parameters = array('id'=>$this->id, 'getnomurl'=>$result);
+        $reshook = $hookmanager->executeHooks('getNomUrl', $parameters, $this, $action); // Note that $action and $object may have been modified by some hooks
         if ($reshook > 0) $result = $hookmanager->resPrint;
         else $result .= $hookmanager->resPrint;
 
@@ -408,46 +414,46 @@ class EmailCollectorAction extends CommonObject
     public function LibStatut($status, $mode = 0)
     {
         // phpcs:enable
-        if (empty($this->labelstatus))
+        if (empty($this->labelStatus))
         {
             global $langs;
             //$langs->load("emailcollector");
-            $this->labelstatus[1] = $langs->trans('Enabled');
-            $this->labelstatus[0] = $langs->trans('Disabled');
+            $this->labelStatus[1] = $langs->trans('Enabled');
+            $this->labelStatus[0] = $langs->trans('Disabled');
         }
 
         if ($mode == 0)
         {
-            return $this->labelstatus[$status];
+            return $this->labelStatus[$status];
         }
         elseif ($mode == 1)
         {
-            return $this->labelstatus[$status];
+            return $this->labelStatus[$status];
         }
         elseif ($mode == 2)
         {
-            if ($status == 1) return img_picto($this->labelstatus[$status], 'statut4', '', false, 0, 0, '', 'valignmiddle').' '.$this->labelstatus[$status];
-            elseif ($status == 0) return img_picto($this->labelstatus[$status], 'statut5', '', false, 0, 0, '', 'valignmiddle').' '.$this->labelstatus[$status];
+            if ($status == 1) return img_picto($this->labelStatus[$status], 'statut4', '', false, 0, 0, '', 'valignmiddle').' '.$this->labelStatus[$status];
+            elseif ($status == 0) return img_picto($this->labelStatus[$status], 'statut5', '', false, 0, 0, '', 'valignmiddle').' '.$this->labelStatus[$status];
         }
         elseif ($mode == 3)
         {
-            if ($status == 1) return img_picto($this->labelstatus[$status], 'statut4', '', false, 0, 0, '', 'valignmiddle');
-            elseif ($status == 0) return img_picto($this->labelstatus[$status], 'statut5', '', false, 0, 0, '', 'valignmiddle');
+            if ($status == 1) return img_picto($this->labelStatus[$status], 'statut4', '', false, 0, 0, '', 'valignmiddle');
+            elseif ($status == 0) return img_picto($this->labelStatus[$status], 'statut5', '', false, 0, 0, '', 'valignmiddle');
         }
         elseif ($mode == 4)
         {
-            if ($status == 1) return img_picto($this->labelstatus[$status], 'statut4', '', false, 0, 0, '', 'valignmiddle').' '.$this->labelstatus[$status];
-            elseif ($status == 0) return img_picto($this->labelstatus[$status], 'statut5', '', false, 0, 0, '', 'valignmiddle').' '.$this->labelstatus[$status];
+            if ($status == 1) return img_picto($this->labelStatus[$status], 'statut4', '', false, 0, 0, '', 'valignmiddle').' '.$this->labelStatus[$status];
+            elseif ($status == 0) return img_picto($this->labelStatus[$status], 'statut5', '', false, 0, 0, '', 'valignmiddle').' '.$this->labelStatus[$status];
         }
         elseif ($mode == 5)
         {
-            if ($status == 1) return $this->labelstatus[$status].' '.img_picto($this->labelstatus[$status], 'statut4', '', false, 0, 0, '', 'valignmiddle');
-            elseif ($status == 0) return $this->labelstatus[$status].' '.img_picto($this->labelstatus[$status], 'statut5', '', false, 0, 0, '', 'valignmiddle');
+            if ($status == 1) return $this->labelStatus[$status].' '.img_picto($this->labelStatus[$status], 'statut4', '', false, 0, 0, '', 'valignmiddle');
+            elseif ($status == 0) return $this->labelStatus[$status].' '.img_picto($this->labelStatus[$status], 'statut5', '', false, 0, 0, '', 'valignmiddle');
         }
         elseif ($mode == 6)
         {
-            if ($status == 1) return $this->labelstatus[$status].' '.img_picto($this->labelstatus[$status], 'statut4', '', false, 0, 0, '', 'valignmiddle');
-            elseif ($status == 0) return $this->labelstatus[$status].' '.img_picto($this->labelstatus[$status], 'statut5', '', false, 0, 0, '', 'valignmiddle');
+            if ($status == 1) return $this->labelStatus[$status].' '.img_picto($this->labelStatus[$status], 'statut4', '', false, 0, 0, '', 'valignmiddle');
+            elseif ($status == 0) return $this->labelStatus[$status].' '.img_picto($this->labelStatus[$status], 'statut5', '', false, 0, 0, '', 'valignmiddle');
         }
     }
 
@@ -460,10 +466,10 @@ class EmailCollectorAction extends CommonObject
     public function info($id)
     {
         $sql = 'SELECT rowid, date_creation as datec, tms as datem,';
-        $sql.= ' fk_user_creat, fk_user_modif';
-        $sql.= ' FROM '.MAIN_DB_PREFIX.$this->table_element.' as t';
-        $sql.= ' WHERE t.rowid = '.$id;
-        $result=$this->db->query($sql);
+        $sql .= ' fk_user_creat, fk_user_modif';
+        $sql .= ' FROM '.MAIN_DB_PREFIX.$this->table_element.' as t';
+        $sql .= ' WHERE t.rowid = '.$id;
+        $result = $this->db->query($sql);
         if ($result)
         {
             if ($this->db->num_rows($result))
@@ -474,7 +480,7 @@ class EmailCollectorAction extends CommonObject
                 {
                     $cuser = new User($this->db);
                     $cuser->fetch($obj->fk_user_author);
-                    $this->user_creation   = $cuser;
+                    $this->user_creation = $cuser;
                 }
 
                 if ($obj->fk_user_valid)
@@ -488,7 +494,7 @@ class EmailCollectorAction extends CommonObject
                 {
                     $cluser = new User($this->db);
                     $cluser->fetch($obj->fk_user_cloture);
-                    $this->user_cloture   = $cluser;
+                    $this->user_cloture = $cluser;
                 }
 
                 $this->date_creation     = $this->db->jdate($obj->datec);

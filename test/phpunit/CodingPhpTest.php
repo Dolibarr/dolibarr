@@ -12,8 +12,8 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
- * or see http://www.gnu.org/
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
+ * or see https://www.gnu.org/
  */
 
 /**
@@ -157,6 +157,19 @@ class CodingPhpTest extends PHPUnit\Framework\TestCase
             print 'Check php file '.$file['fullname']."\n";
             $filecontent=file_get_contents($file['fullname']);
 
+
+            $ok=true;
+            $matches=array();
+            // Check string   ='".$this->xxx   with xxx that is not 'escape'. It means we forget a db->escape when forging sql request.
+            preg_match_all('/'.preg_quote('get_class($this)."::".__METHOD__', '/').'/', $filecontent, $matches, PREG_SET_ORDER);
+            foreach($matches as $key => $val)
+            {
+           		$ok=false;
+           		break;
+            }
+            //print __METHOD__." Result for checking we don't have non escaped string in sql requests for file ".$file."\n";
+            $this->assertTrue($ok, 'Found string get_class($this)."::".__METHOD__ that must be replaced with __METHOD__ only in '.$file['fullname']);
+            //exit;
 
             $ok=true;
             $matches=array();

@@ -29,6 +29,7 @@ MenuMembersUpToDate=Važeći članovi
 MenuMembersNotUpToDate=Istekli članovi
 MenuMembersResiliated=Terminated members
 MembersWithSubscriptionToReceive=Članovi koji primaju pretplatu
+MembersWithSubscriptionToReceiveShort=Subscription to receive
 DateSubscription=Datum pretplate
 DateEndSubscription=Datum kraja pretplate
 EndSubscription=Kraj pretplate

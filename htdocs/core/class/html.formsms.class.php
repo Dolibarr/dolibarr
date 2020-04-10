@@ -14,7 +14,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -22,7 +22,7 @@
  *       \ingroup    core
  *       \brief      Fichier de la classe permettant la generation du formulaire html d'envoi de mail unitaire
  */
-require_once DOL_DOCUMENT_ROOT .'/core/class/html.form.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/class/html.form.class.php';
 
 
 /**
@@ -38,18 +38,25 @@ class FormSms
      */
     public $db;
 
+    public $fromid;
     public $fromname;
     public $fromsms;
+    public $fromtype;
     public $replytoname;
     public $replytomail;
     public $toname;
     public $tomail;
 
-    public $withsubstit;			// Show substitution array
+    public $withsubstit; // Show substitution array
     public $withfrom;
     public $withto;
     public $withtopic;
     public $withbody;
+
+    /**
+     * @var int 	Id of company
+     */
+    public $withtosocid;
 
     public $withfromreadonly;
     public $withreplytoreadonly;
@@ -57,18 +64,18 @@ class FormSms
     public $withtopicreadonly;
     public $withcancel;
 
-    public $substit=array();
-    public $param=array();
+    public $substit = array();
+    public $param = array();
 
     /**
      * @var string Error code (or message)
      */
-    public $error='';
+    public $error = '';
 
     /**
      * @var string[]	Array of error strings
      */
-    public $errors=array();
+    public $errors = array();
 
 
     /**
@@ -80,16 +87,16 @@ class FormSms
     {
         $this->db = $db;
 
-        $this->withfrom=1;
-        $this->withto=1;
-        $this->withtopic=1;
-        $this->withbody=1;
+        $this->withfrom = 1;
+        $this->withto = 1;
+        $this->withtopic = 1;
+        $this->withbody = 1;
 
-        $this->withfromreadonly=1;
-        $this->withreplytoreadonly=1;
-        $this->withtoreadonly=0;
-        $this->withtopicreadonly=0;
-        $this->withbodyreadonly=0;
+        $this->withfromreadonly = 1;
+        $this->withreplytoreadonly = 1;
+        $this->withtoreadonly = 0;
+        $this->withtopicreadonly = 0;
+        $this->withbodyreadonly = 0;
     }
 
     // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
@@ -105,12 +112,12 @@ class FormSms
      // phpcs:enable
         global $conf, $langs, $user, $form;
 
-        if (! is_object($form)) $form=new Form($this->db);
+        if (!is_object($form)) $form = new Form($this->db);
 
         // Load translation files required by the page
         $langs->loadLangs(array('other', 'mails', 'sms'));
 
-        $soc=new Societe($this->db);
+        $soc = new Societe($this->db);
         if (!empty($this->withtosocid) && $this->withtosocid > 0)
         {
             $soc->fetch($this->withtosocid);
@@ -133,7 +140,7 @@ function limitChars(textarea, limit, infodiv)
 
         if ($showform) print "<form method=\"POST\" name=\"smsform\" enctype=\"multipart/form-data\" action=\"".$this->param["returnurl"]."\">\n";
 
-        print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+        print '<input type="hidden" name="token" value="'.newToken().'">';
         foreach ($this->param as $key=>$value)
         {
             print "<input type=\"hidden\" name=\"$key\" value=\"$value\">\n";
@@ -141,13 +148,13 @@ function limitChars(textarea, limit, infodiv)
         print "<table class=\"border centpercent\">\n";
 
         // Substitution array
-        if (! empty($this->withsubstit))		// Unset or set ->withsubstit=0 to disable this.
+        if (!empty($this->withsubstit))		// Unset or set ->withsubstit=0 to disable this.
         {
             print "<tr><td colspan=\"2\">";
-            $help="";
-            foreach($this->substit as $key => $val)
+            $help = "";
+            foreach ($this->substit as $key => $val)
             {
-                $help.=$key.' -> '.$langs->trans($val).'<br>';
+                $help .= $key.' -> '.$langs->trans($val).'<br>';
             }
             print $form->textwithpicto($langs->trans("SmsTestSubstitutionReplacedByGenericValues"), $help);
             print "</td></tr>\n";
@@ -164,7 +171,7 @@ function limitChars(textarea, limit, infodiv)
                 if ($this->fromtype == 'user')
                 {
                     $langs->load("users");
-                    $fuser=new User($this->db);
+                    $fuser = new User($this->db);
                     $fuser->fetch($this->fromid);
                     print $fuser->getNomUrl(1);
                     print ' &nbsp; ';
@@ -203,19 +210,19 @@ function limitChars(textarea, limit, infodiv)
                             $resultsender = $sms->SmsSenderList();
                         }
                     }
-                    catch(Exception $e)
+                    catch (Exception $e)
                     {
                         dol_print_error('', 'Error to get list of senders: '.$e->getMessage());
                     }
                 }
                 elseif (!empty($conf->global->MAIN_SMS_SENDMODE))    // $conf->global->MAIN_SMS_SENDMODE looks like a value 'class@module'
                 {
-                    $tmp=explode('@', $conf->global->MAIN_SMS_SENDMODE);
-                    $classfile=$tmp[0]; $module=(empty($tmp[1])?$tmp[0]:$tmp[1]);
+                    $tmp = explode('@', $conf->global->MAIN_SMS_SENDMODE);
+                    $classfile = $tmp[0]; $module = (empty($tmp[1]) ? $tmp[0] : $tmp[1]);
                     dol_include_once('/'.$module.'/class/'.$classfile.'.class.php');
                     try
                     {
-                        $classname=ucfirst($classfile);
+                        $classname = ucfirst($classfile);
                         if (class_exists($classname))
                         {
                         	$sms = new $classname($this->db);
@@ -224,10 +231,10 @@ function limitChars(textarea, limit, infodiv)
                         else
                         {
                         	$sms = new stdClass();
-                        	$sms->error='The SMS manager "'.$classfile.'" defined into SMS setup MAIN_SMS_SENDMODE is not found';
+                        	$sms->error = 'The SMS manager "'.$classfile.'" defined into SMS setup MAIN_SMS_SENDMODE is not found';
                         }
                     }
-                    catch(Exception $e)
+                    catch (Exception $e)
                     {
                         dol_print_error('', 'Error to get list of senders: '.$e->getMessage());
                         exit;
@@ -236,14 +243,14 @@ function limitChars(textarea, limit, infodiv)
                 else
                 {
                     dol_syslog("Warning: The SMS sending method has not been defined into MAIN_SMS_SENDMODE", LOG_WARNING);
-	                $resultsender=array();
-                    $resultsender[0]->number=$this->fromsms;
+	                $resultsender = array();
+                    $resultsender[0]->number = $this->fromsms;
                 }
 
                 if (is_array($resultsender) && count($resultsender) > 0)
                 {
                     print '<select name="fromsms" id="fromsms" class="flat">';
-                    foreach($resultsender as $obj)
+                    foreach ($resultsender as $obj)
                     {
                         print '<option value="'.$obj->number.'">'.$obj->number.'</option>';
                     }
@@ -252,7 +259,7 @@ function limitChars(textarea, limit, infodiv)
                 else
                 {
                     print '<span class="error">'.$langs->trans("SmsNoPossibleSenderFound");
-                    if (is_object($sms) && ! empty($sms->error)) print ' '.$sms->error;
+                    if (is_object($sms) && !empty($sms->error)) print ' '.$sms->error;
                     print '</span>';
                 }
                 print '</td>';
@@ -265,28 +272,28 @@ function limitChars(textarea, limit, infodiv)
         {
             print '<tr><td>';
             //$moretext=$langs->trans("YouCanUseCommaSeparatorForSeveralRecipients");
-            $moretext='';
+            $moretext = '';
             print $form->textwithpicto($langs->trans("SmsTo"), $moretext);
             print '</td><td>';
             if ($this->withtoreadonly)
             {
-                print (! is_array($this->withto) && ! is_numeric($this->withto))?$this->withto:"";
+                print (!is_array($this->withto) && !is_numeric($this->withto)) ? $this->withto : "";
             }
             else
             {
-                print "<input size=\"16\" id=\"sendto\" name=\"sendto\" value=\"".dol_escape_htmltag(! is_array($this->withto) && $this->withto != '1'? (isset($_REQUEST["sendto"])?GETPOST("sendto"):$this->withto):"+")."\">";
-                if (! empty($this->withtosocid) && $this->withtosocid > 0)
+                print "<input size=\"16\" id=\"sendto\" name=\"sendto\" value=\"".dol_escape_htmltag(!is_array($this->withto) && $this->withto != '1' ? (isset($_REQUEST["sendto"]) ?GETPOST("sendto") : $this->withto) : "+")."\">";
+                if (!empty($this->withtosocid) && $this->withtosocid > 0)
                 {
-                    $liste=array();
+                    $liste = array();
                     foreach ($soc->thirdparty_and_contact_phone_array() as $key => $value)
                     {
-                        $liste[$key]=$value;
+                        $liste[$key] = $value;
                     }
                     print " ".$langs->trans("or")." ";
                     //var_dump($_REQUEST);exit;
                     print $form->selectarray("receiver", $liste, GETPOST("receiver"), 1);
                 }
-                print ' '.$langs->trans("SmsInfoNumero");
+                print ' <span class="opacitymedium">'.$langs->trans("SmsInfoNumero").'</span>';
             }
             print "</td></tr>\n";
         }
@@ -294,14 +301,14 @@ function limitChars(textarea, limit, infodiv)
         // Message
         if ($this->withbody)
         {
-            $defaultmessage='';
-            if ($this->param["models"]=='body')
+            $defaultmessage = '';
+            if ($this->param["models"] == 'body')
             {
-                $defaultmessage=$this->withbody;
+                $defaultmessage = $this->withbody;
             }
-            $defaultmessage=make_substitutions($defaultmessage, $this->substit);
-            if (isset($_POST["message"])) $defaultmessage=$_POST["message"];
-            $defaultmessage=str_replace('\n', "\n", $defaultmessage);
+            $defaultmessage = make_substitutions($defaultmessage, $this->substit);
+            if (isset($_POST["message"])) $defaultmessage = $_POST["message"];
+            $defaultmessage = str_replace('\n', "\n", $defaultmessage);
 
             print "<tr>";
             print '<td class="tdtop">'.$langs->trans("SmsText")."</td>";
@@ -314,7 +321,7 @@ function limitChars(textarea, limit, infodiv)
             else
             {
                 print '<textarea class="quatrevingtpercent" name="message" id="message" rows="'.ROWS_4.'" onkeyup="limitChars(this, 160, \'charlimitinfospan\')">'.$defaultmessage.'</textarea>';
-                print '<div id="charlimitinfo">'.$langs->trans("SmsInfoCharRemain").': <span id="charlimitinfospan">'.(160-dol_strlen($defaultmessage)).'</span></div></td>';
+                print '<div id="charlimitinfo">'.$langs->trans("SmsInfoCharRemain").': <span id="charlimitinfospan">'.(160 - dol_strlen($defaultmessage)).'</span></div></td>';
             }
             print "</td></tr>\n";
         }

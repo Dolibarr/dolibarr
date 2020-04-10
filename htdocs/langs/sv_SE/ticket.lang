@@ -12,7 +12,7 @@
 # GNU General Public License for more details.
 #
 # You should have received a copy of the GNU General Public License
-# along with this program.  If not, see <http://www.gnu.org/licenses/>.
+# along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 #
 # Generic
@@ -30,10 +30,14 @@ Permission56005=Se biljetter till alla tredje parter (inte effektiva för extern
 TicketDictType=Biljett - Typer
 TicketDictCategory=Biljett - Grupper
 TicketDictSeverity=Ticket - Severiteter
+TicketDictResolution=Ticket - Resolution
 TicketTypeShortBUGSOFT=Programfel
 TicketTypeShortBUGHARD=Hårdvarufel
 TicketTypeShortCOM=Kommersiell fråga
-TicketTypeShortINCIDENT=Begäran om hjälp
+
+TicketTypeShortHELP=Request for functionnal help
+TicketTypeShortISSUE=Issue, bug or problem
+TicketTypeShortREQUEST=Change or enhancement request
 TicketTypeShortPROJET=Projekt
 TicketTypeShortOTHER=Andra
 
@@ -137,6 +141,10 @@ NoUnreadTicketsFound=No unread ticket found
 TicketViewAllTickets=Visa alla biljetter
 TicketViewNonClosedOnly=Visa bara öppna biljetter
 TicketStatByStatus=Biljetter efter status
+OrderByDateAsc=Sort by ascending date
+OrderByDateDesc=Sort by descending date
+ShowAsConversation=Show as conversation list
+MessageListViewType=Show as table list
 
 #
 # Ticket card
@@ -222,6 +230,9 @@ TicketConfirmChangeStatus=Bekräfta statusändringen: %s?
 TicketLogStatusChanged=Status ändrad: %s till %s
 TicketNotNotifyTiersAtCreate=Meddela inte företaget på create
 Unread=Oläst
+TicketNotCreatedFromPublicInterface=Not available. Ticket was not created from public interface.
+PublicInterfaceNotEnabled=Public interface was not enabled
+ErrorTicketRefRequired=Ticket reference name is required
 
 #
 # Logs
@@ -231,7 +242,7 @@ NoLogForThisTicket=Ingen logg på denna biljett ännu
 TicketLogAssignedTo=Biljett %s tilldelad %s
 TicketLogPropertyChanged=Biljett %s modifierad: märkt från %s till %s
 TicketLogClosedBy=Biljett %s stängt av %s
-TicketLogReopen=Biljett %s öppnas igen
+TicketLogReopen=Ticket %s re-open
 
 #
 # Public pages
@@ -241,9 +252,9 @@ ShowListTicketWithTrackId=Visa biljellista från spår-ID
 ShowTicketWithTrackId=Visa biljett från spår ID
 TicketPublicDesc=Du kan skapa en supportbiljett eller kolla från ett befintligt ID.
 YourTicketSuccessfullySaved=Biljett har sparats!
-MesgInfosPublicTicketCreatedWithTrackId=En ny biljett har skapats med ID %s.
+MesgInfosPublicTicketCreatedWithTrackId=A new ticket has been created with ID %s and Ref %s.
 PleaseRememberThisId=Var vänlig och håll spårningsnumret som vi kanske frågar dig senare.
-TicketNewEmailSubject=Biljettsättning bekräftelse
+TicketNewEmailSubject=Ticket creation confirmation - Ref %s (public ticket ID %s)
 TicketNewEmailSubjectCustomer=Ny supportbiljett
 TicketNewEmailBody=Det här är ett automatiskt e-postmeddelande som bekräftar att du har registrerat en ny biljett.
 TicketNewEmailBodyCustomer=Det här är ett automatiskt e-postmeddelande för att bekräfta en ny biljett har just skapats i ditt konto.
@@ -262,7 +273,7 @@ Subject=Ämne
 ViewTicket=Visa biljett
 ViewMyTicketList=Visa min biljettlista
 ErrorEmailMustExistToCreateTicket=Fel: E-postadress hittades inte i vår databas
-TicketNewEmailSubjectAdmin=Ny biljett skapad
+TicketNewEmailSubjectAdmin=New ticket created - Ref %s (public ticket ID %s)
 TicketNewEmailBodyAdmin=<p> Biljetten har just skapats med ID # %s, se information: </p>
 SeeThisTicketIntomanagementInterface=Se biljett i hanteringsgränssnittet
 TicketPublicInterfaceForbidden=Det offentliga gränssnittet för biljetterna var inte aktiverat

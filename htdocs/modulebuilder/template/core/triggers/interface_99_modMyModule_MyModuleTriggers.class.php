@@ -12,7 +12,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -97,13 +97,12 @@ class InterfaceMyModuleTriggers extends DolibarrTriggers
      */
     public function runTrigger($action, $object, User $user, Translate $langs, Conf $conf)
     {
-        if (empty($conf->mymodule->enabled)) return 0;     // If module is not enabled, we do nothing
+        if (empty($conf->mymodule->enabled)) return 0; // If module is not enabled, we do nothing
 
         // Put here code you want to execute when a Dolibarr business events occurs.
         // Data and type of action are stored into $object and $action
 
         switch ($action) {
-
             // Users
             //case 'USER_CREATE':
             //case 'USER_MODIFY':

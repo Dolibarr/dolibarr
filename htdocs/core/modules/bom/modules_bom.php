@@ -18,8 +18,8 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
- * or see http://www.gnu.org/
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
+ * or see https://www.gnu.org/
  */
 
 /**
@@ -30,29 +30,29 @@
  */
 
 require_once DOL_DOCUMENT_ROOT.'/core/class/commondocgenerator.class.php';
-require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';	// required for use by classes that inherit
+require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php'; // required for use by classes that inherit
 
 
 /**
  *	Parent class for boms models
  */
-abstract class ModelePDFBoms extends CommonDocGenerator
+abstract class ModelePDFBom extends CommonDocGenerator
 {
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
-    /**
-     *  Return list of active generation modules
-     *
-     *  @param	DoliDB	$db     			Database handler
-     *  @param  integer	$maxfilenamelength  Max length of value to show
-     *  @return	array						List of templates
+	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
+	/**
+	 *  Return list of active generation modules
+	 *
+	 *  @param	DoliDB	$db     			Database handler
+	 *  @param  integer	$maxfilenamelength  Max length of value to show
+	 *  @return	array						List of templates
 	 */
 	public static function liste_modeles($db, $maxfilenamelength = 0)
 	{
-        // phpcs:enable
+		// phpcs:enable
 		global $conf;
 
-		$type = 'order';
+		$type = 'bom';
 		$list = array();
 
 		include_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
@@ -72,7 +72,7 @@ abstract class ModeleNumRefBoms
 	/**
 	 * @var string Error code (or message)
 	 */
-	public $error='';
+	public $error = '';
 
 	/**
 	 *	Return if a module can be used or not
@@ -85,7 +85,7 @@ abstract class ModeleNumRefBoms
 	}
 
 	/**
-	 *	Renvoie la description par defaut du modele de numerotation
+	 *	Returns the default description of the numbering template
 	 *
 	 *	@return     string      Texte descripif
 	 */
@@ -97,7 +97,7 @@ abstract class ModeleNumRefBoms
 	}
 
 	/**
-	 *	Renvoie un exemple de numerotation
+	 *	Returns an example of numbering
 	 *
 	 *	@return     string      Example
 	 */
@@ -109,9 +109,10 @@ abstract class ModeleNumRefBoms
 	}
 
 	/**
-	 *	Test si les numeros deja en vigueur dans la base ne provoquent pas de conflits qui empecheraient cette numerotation de fonctionner.
+	 *  Checks if the numbers already in the database do not
+	 *  cause conflicts that would prevent this numbering working.
 	 *
-	 *	@return     boolean     false si conflit, true si ok
+	 *	@return     boolean     false if conflict, true if ok
 	 */
 	public function canBeActivated()
 	{
@@ -119,7 +120,7 @@ abstract class ModeleNumRefBoms
 	}
 
 	/**
-	 *	Renvoie prochaine valeur attribuee
+	 *	Returns next assigned value
 	 *
 	 *	@param	Societe		$objsoc     Object thirdparty
 	 *	@param	Object		$object		Object we need next value for
@@ -132,7 +133,7 @@ abstract class ModeleNumRefBoms
 	}
 
 	/**
-	 *	Renvoie version du module numerotation
+	 *	Returns version of numbering module
 	 *
 	 *	@return     string      Valeur
 	 */

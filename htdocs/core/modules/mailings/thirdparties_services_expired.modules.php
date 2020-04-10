@@ -22,20 +22,24 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
  */
 class mailing_thirdparties_services_expired extends MailingTargets
 {
-    public $name='DolibarrContractsLinesExpired';
+    public $name = 'DolibarrContractsLinesExpired';
 	// This label is used if no translation is found for key XXX neither MailingModuleDescXXX where XXX=name is found
-    public $desc='Third parties with expired contract\'s lines';
-    public $require_admin=0;
+    public $desc = 'Third parties with expired contract\'s lines';
+    public $require_admin = 0;
 
-    public $require_module=array('contrat');
-    public $picto='company';
+    public $require_module = array('contrat');
+
+    /**
+     * @var string String with name of icon for myobject. Must be the part after the 'object_' into object_myobject.png
+     */
+    public $picto = 'company';
 
     /**
      * @var DoliDB Database handler.
      */
     public $db;
 
-    public $arrayofproducts=array();
+    public $arrayofproducts = array();
 
 
     /**
@@ -47,16 +51,16 @@ class mailing_thirdparties_services_expired extends MailingTargets
     {
     	global $conf;
 
-        $this->db=$db;
+        $this->db = $db;
 
-        $this->arrayofproducts=array();
+        $this->arrayofproducts = array();
 
         // List of services
         $sql = "SELECT ref FROM ".MAIN_DB_PREFIX."product";
-        $sql.= " WHERE entity IN (".getEntity('product').")";
-        if (empty($conf->global->CONTRACT_SUPPORT_PRODUCTS)) $sql.= " AND fk_product_type = 1";	// By default, only services
-        $sql.= " ORDER BY ref";
-        $result=$this->db->query($sql);
+        $sql .= " WHERE entity IN (".getEntity('product').")";
+        if (empty($conf->global->CONTRACT_SUPPORT_PRODUCTS)) $sql .= " AND fk_product_type = 1"; // By default, only services
+        $sql .= " ORDER BY ref";
+        $result = $this->db->query($sql);
         if ($result)
         {
             $num = $this->db->num_rows($result);
@@ -67,7 +71,7 @@ class mailing_thirdparties_services_expired extends MailingTargets
             {
                 $obj = $this->db->fetch_object($result);
                 $i++;
-                $this->arrayofproducts[$i]=$obj->ref;
+                $this->arrayofproducts[$i] = $obj->ref;
             }
         }
         else
@@ -87,12 +91,12 @@ class mailing_thirdparties_services_expired extends MailingTargets
     public function add_to_target($mailing_id)
     {
         // phpcs:enable
-        $key=GETPOST('filter', 'int');
+        $key = GETPOST('filter', 'int');
 
         $cibles = array();
         $j = 0;
 
-        $product='';
+        $product = '';
         if ($key == '0')
         {
         	$this->error = "Error: You must choose a filter";
@@ -100,23 +104,23 @@ class mailing_thirdparties_services_expired extends MailingTargets
         	return $this->error;
         }
 
-        $product=$this->arrayofproducts[$key];
+        $product = $this->arrayofproducts[$key];
 
-        $now=dol_now();
+        $now = dol_now();
 
         // La requete doit retourner: id, email, name
         $sql = "SELECT s.rowid as id, s.email, s.nom as name, cd.rowid as cdid, cd.date_ouverture, cd.date_fin_validite, cd.fk_contrat";
-        $sql.= " FROM ".MAIN_DB_PREFIX."societe as s, ".MAIN_DB_PREFIX."contrat as c";
-        $sql.= ", ".MAIN_DB_PREFIX."contratdet as cd, ".MAIN_DB_PREFIX."product as p";
-        $sql.= " WHERE s.entity IN (".getEntity('societe').")";
-        $sql.= " AND s.email NOT IN (SELECT email FROM ".MAIN_DB_PREFIX."mailing_cibles WHERE fk_mailing=".$mailing_id.")";
-        $sql.= " AND s.rowid = c.fk_soc AND cd.fk_contrat = c.rowid AND s.email != ''";
-        $sql.= " AND cd.statut= 4 AND cd.fk_product=p.rowid AND p.ref = '".$product."'";
-        $sql.= " AND cd.date_fin_validite < '".$this->db->idate($now)."'";
-        $sql.= " ORDER BY s.email";
+        $sql .= " FROM ".MAIN_DB_PREFIX."societe as s, ".MAIN_DB_PREFIX."contrat as c";
+        $sql .= ", ".MAIN_DB_PREFIX."contratdet as cd, ".MAIN_DB_PREFIX."product as p";
+        $sql .= " WHERE s.entity IN (".getEntity('societe').")";
+        $sql .= " AND s.email NOT IN (SELECT email FROM ".MAIN_DB_PREFIX."mailing_cibles WHERE fk_mailing=".$mailing_id.")";
+        $sql .= " AND s.rowid = c.fk_soc AND cd.fk_contrat = c.rowid AND s.email != ''";
+        $sql .= " AND cd.statut= 4 AND cd.fk_product=p.rowid AND p.ref = '".$product."'";
+        $sql .= " AND cd.date_fin_validite < '".$this->db->idate($now)."'";
+        $sql .= " ORDER BY s.email";
 
         // Stocke destinataires dans cibles
-        $result=$this->db->query($sql);
+        $result = $this->db->query($sql);
         if ($result)
         {
             $num = $this->db->num_rows($result);
@@ -132,8 +136,8 @@ class mailing_thirdparties_services_expired extends MailingTargets
                 {
                     $cibles[$j] = array(
 					'email' => $obj->email,
-					'lastname' => $obj->name,	// For thirdparties, lastname must be name
-                    'firstname' => '',			// For thirdparties, firstname is ''
+					'lastname' => $obj->name, // For thirdparties, lastname must be name
+                    'firstname' => '', // For thirdparties, firstname is ''
 					'other' =>
                     ('DateStart='.dol_print_date($this->db->jdate($obj->date_ouverture), 'day')).';'.
                     ('DateEnd='.dol_print_date($this->db->jdate($obj->date_fin_validite), 'day')).';'.
@@ -153,13 +157,13 @@ class mailing_thirdparties_services_expired extends MailingTargets
         else
         {
             dol_syslog($this->db->lasterror());
-            $this->error=$this->db->lasterror();
+            $this->error = $this->db->lasterror();
             return -1;
         }
 
         // ----- Your code end here -----
 
-        return parent::add_to_target($mailing_id, $cibles);
+        return parent::addTargetsToDatabase($mailing_id, $cibles);
     }
 
 
@@ -191,20 +195,20 @@ class mailing_thirdparties_services_expired extends MailingTargets
      */
     public function getNbOfRecipients($sql = '')
     {
-        $now=dol_now();
+        $now = dol_now();
 
         // Example: return parent::getNbOfRecipients("SELECT count(*) as nb from dolibarr_table");
         // Example: return 500;
         $sql = "SELECT count(*) as nb";
-        $sql.= " FROM ".MAIN_DB_PREFIX."societe as s, ".MAIN_DB_PREFIX."contrat as c";
-        $sql.= ", ".MAIN_DB_PREFIX."contratdet as cd, ".MAIN_DB_PREFIX."product as p";
-        $sql.= " WHERE s.entity IN (".getEntity('societe').")";
-        $sql.= " AND s.rowid = c.fk_soc AND cd.fk_contrat = c.rowid AND s.email != ''";
-        $sql.= " AND cd.statut= 4 AND cd.fk_product=p.rowid";
-        $sql.= " AND p.ref IN ('".join("','", $this->arrayofproducts)."')";
-        $sql.= " AND cd.date_fin_validite < '".$this->db->idate($now)."'";
+        $sql .= " FROM ".MAIN_DB_PREFIX."societe as s, ".MAIN_DB_PREFIX."contrat as c";
+        $sql .= ", ".MAIN_DB_PREFIX."contratdet as cd, ".MAIN_DB_PREFIX."product as p";
+        $sql .= " WHERE s.entity IN (".getEntity('societe').")";
+        $sql .= " AND s.rowid = c.fk_soc AND cd.fk_contrat = c.rowid AND s.email != ''";
+        $sql .= " AND cd.statut= 4 AND cd.fk_product=p.rowid";
+        $sql .= " AND p.ref IN ('".join("','", $this->arrayofproducts)."')";
+        $sql .= " AND cd.date_fin_validite < '".$this->db->idate($now)."'";
 
-        $a=parent::getNbOfRecipients($sql);
+        $a = parent::getNbOfRecipients($sql);
 
         return $a;
     }
@@ -219,15 +223,15 @@ class mailing_thirdparties_services_expired extends MailingTargets
     {
         global $langs;
 
-        $s=$langs->trans("ProductOrService");
-        $s.='<select name="filter" class="flat">';
-        if (count($this->arrayofproducts)) $s.='<option value="0">&nbsp;</option>';
-        else $s.='<option value="0">'.$langs->trans("ContactsAllShort").'</option>';
-        foreach($this->arrayofproducts as $key => $val)
+        $s = $langs->trans("ProductOrService");
+        $s .= '<select name="filter" class="flat">';
+        if (count($this->arrayofproducts)) $s .= '<option value="0">&nbsp;</option>';
+        else $s .= '<option value="0">'.$langs->trans("ContactsAllShort").'</option>';
+        foreach ($this->arrayofproducts as $key => $val)
         {
-            $s.='<option value="'.$key.'">'.$val.'</option>';
+            $s .= '<option value="'.$key.'">'.$val.'</option>';
         }
-        $s.='</select>';
+        $s .= '</select>';
         return $s;
     }
 

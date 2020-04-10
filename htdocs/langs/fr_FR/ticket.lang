@@ -12,7 +12,7 @@
 # GNU General Public License for more details.
 #
 # You should have received a copy of the GNU General Public License
-# along with this program.  If not, see <http://www.gnu.org/licenses/>.
+# along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 #
 # Generic
@@ -30,10 +30,14 @@ Permission56005=Voir les tickets de tous les tiers (non effectif pour les utilis
 TicketDictType=Ticket - Types
 TicketDictCategory=Ticket - Groupes
 TicketDictSeverity=Ticket - Sévérités
+TicketDictResolution=Ticket - Résolution
 TicketTypeShortBUGSOFT=Dysfonctionnement logiciel
 TicketTypeShortBUGHARD=Dysfonctionnement matériel
 TicketTypeShortCOM=Question commerciale
-TicketTypeShortINCIDENT=Demande d'assistance
+
+TicketTypeShortHELP=Demande d'aide fonctionnelle
+TicketTypeShortISSUE=Problème ou bogue
+TicketTypeShortREQUEST=Demande de changement ou d'amélioration
 TicketTypeShortPROJET=Projet
 TicketTypeShortOTHER=Autre
 
@@ -60,7 +64,7 @@ NotRead=Non lu
 Read=Lu
 Assigned=Assigné
 InProgress=En cours
-NeedMoreInformation=En attente d'information
+NeedMoreInformation=Attente d'information
 Answered=Répondu
 Waiting=En attente
 Closed=Fermé
@@ -81,7 +85,7 @@ TicketSetup=Configuration du module de ticket
 TicketSettings=Paramètres
 TicketSetupPage=
 TicketPublicAccess=Une interface publique ne nécessitant aucune identification est disponible à l'url suivante
-TicketSetupDictionaries=Les type de ticket, sévérité et codes analytiques sont paramétrables à partir des dictionnaires
+TicketSetupDictionaries=Les types de ticket, sévérité et codes analytiques sont paramétrables à partir des dictionnaires
 TicketParamModule=Configuration des variables du module
 TicketParamMail=Configuration de la messagerie
 TicketEmailNotificationFrom=Email from de notification
@@ -137,6 +141,10 @@ NoUnreadTicketsFound=Aucun ticket non lu trouvé
 TicketViewAllTickets=Voir tous les tickets
 TicketViewNonClosedOnly=Voir seulement les tickets ouverts
 TicketStatByStatus=Tickets par statut
+OrderByDateAsc=Trier par date croissante
+OrderByDateDesc=Trier par date décroissante
+ShowAsConversation=Afficher comme liste de conversation
+MessageListViewType=Afficher la liste sous forme de tableau
 
 #
 # Ticket card
@@ -169,7 +177,7 @@ TicketMessageSuccessfullyAdded=Message ajouté avec succès
 TicketMessagesList=Liste des messages
 NoMsgForThisTicket=Pas de message pour ce ticket
 Properties=Classification
-LatestNewTickets=Les %s derniers billets (non lus)
+LatestNewTickets=Les %s derniers tickets (non lus)
 TicketSeverity=Sévérité
 ShowTicket=Voir le ticket
 RelatedTickets=Tickets liés
@@ -222,6 +230,9 @@ TicketConfirmChangeStatus=Confirmez le changement d'état: %s?
 TicketLogStatusChanged=Statut modifié: %s à %s
 TicketNotNotifyTiersAtCreate=Ne pas notifier l'entreprise à la création
 Unread=Non lu
+TicketNotCreatedFromPublicInterface=Non disponible. Le ticket n’a pas été créé à partir de l'interface publique.
+PublicInterfaceNotEnabled=L’interface publique n’a pas été activée
+ErrorTicketRefRequired=La référence du ticket est requise
 
 #
 # Logs
@@ -241,9 +252,9 @@ ShowListTicketWithTrackId=Afficher la liste des tickets à partir de l'ID de sui
 ShowTicketWithTrackId=Afficher le ticket à partir de l'ID de suivi
 TicketPublicDesc=Vous pouvez créer un ticket ou consulter à partir d'un ID de ticket existant.
 YourTicketSuccessfullySaved=Le ticket a été enregistré avec succès
-MesgInfosPublicTicketCreatedWithTrackId=Un nouveau ticket a été créé avec l'ID %s.
+MesgInfosPublicTicketCreatedWithTrackId=Un nouveau ticket a été créé avec l'ID %s et la référence %s.
 PleaseRememberThisId=Merci de conserver le code de suivi du ticket, il vous sera peut-être nécessaire ultérieurement
-TicketNewEmailSubject=Confirmation de création de ticket
+TicketNewEmailSubject=Ticket creation confirmation - Ref %s (public ticket ID %s)
 TicketNewEmailSubjectCustomer=Nouveau ticket
 TicketNewEmailBody=Ceci est un message automatique pour confirmer l'enregistrement de votre ticket.
 TicketNewEmailBodyCustomer=Ceci est un email automatique pour confirmer qu'un nouveau ticket vient d'être créé dans votre compte.
@@ -262,7 +273,7 @@ Subject=Sujet
 ViewTicket=Voir le ticket
 ViewMyTicketList=Voir la liste de mes tickets
 ErrorEmailMustExistToCreateTicket=Erreur: adresse email introuvable dans notre base de données
-TicketNewEmailSubjectAdmin=Nouveau ticket créé
+TicketNewEmailSubjectAdmin=New ticket created - Ref %s (public ticket ID %s)
 TicketNewEmailBodyAdmin=<p> Le ticket vient d'être créé avec l'ID # %s, voir les informations: </p>
 SeeThisTicketIntomanagementInterface=Voir ticket dans l'interface de gestion
 TicketPublicInterfaceForbidden=L'interface publique pour les tickets n'a pas été activée

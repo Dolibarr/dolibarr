@@ -12,7 +12,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -34,16 +34,16 @@ require '../main.inc.php';
  * View
  */
 
-if (! GETPOST('transkey', 'alphanohtml') && ! GETPOST('transphrase', 'alphanohtml'))
+if (!GETPOST('transkey', 'alphanohtml') && !GETPOST('transphrase', 'alphanohtml'))
 {
-    print 'Sorry, it seems your internet connexion is off.<br>';
-    print 'You need to be connected to network to use this software.<br>';
+	print 'Sorry, it seems your internet connexion is off.<br>';
+	print 'You need to be connected to network to use this software.<br>';
 }
 else
 {
-    $langs->load("error");
-    $langs->load("other");
+	$langs->load("error");
+	$langs->load("other");
 
-    if (GETPOST('transphrase', 'alphanohtml')) print GETPOST('transphrase', 'alphanohtml');
-    if (GETPOST('transkey', 'alphanohtml')) print $langs->trans(GETPOST('transkey', 'alphanohtml'));
+	if (GETPOST('transphrase', 'alphanohtml')) print GETPOST('transphrase', 'alphanohtml');
+	if (GETPOST('transkey', 'alphanohtml')) print $langs->trans(GETPOST('transkey', 'alphanohtml'));
 }

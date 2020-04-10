@@ -15,7 +15,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -24,14 +24,14 @@
  *       \brief      File to return Ajax response on third parties request
  */
 
-if (! defined('NOTOKENRENEWAL')) define('NOTOKENRENEWAL', 1); // Disables token renewal
-if (! defined('NOREQUIREMENU'))  define('NOREQUIREMENU', '1');
-if (! defined('NOREQUIREHTML'))  define('NOREQUIREHTML', '1');
-if (! defined('NOREQUIREAJAX'))  define('NOREQUIREAJAX', '1');
-if (! defined('NOREQUIRESOC'))   define('NOREQUIRESOC', '1');
-if (! defined('NOCSRFCHECK'))    define('NOCSRFCHECK', '1');
+if (!defined('NOTOKENRENEWAL')) define('NOTOKENRENEWAL', 1); // Disables token renewal
+if (!defined('NOREQUIREMENU'))  define('NOREQUIREMENU', '1');
+if (!defined('NOREQUIREHTML'))  define('NOREQUIREHTML', '1');
+if (!defined('NOREQUIREAJAX'))  define('NOREQUIREAJAX', '1');
+if (!defined('NOREQUIRESOC'))   define('NOREQUIRESOC', '1');
+if (!defined('NOCSRFCHECK'))    define('NOCSRFCHECK', '1');
 
-$res=0;
+$res = 0;
 require '../../main.inc.php';
 
 
@@ -57,20 +57,20 @@ if (GETPOST('fk_projet') != '')
 	$return_arr = array();
 
 	$sql = "SELECT p.rowid, p.ref, p.title, s.nom";
-	$sql.= " FROM ".MAIN_DB_PREFIX."projet as p";
-	$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s ON p.fk_soc = s.rowid";
-	if (! empty($_GET["fk_projet"])) $sql.= " WHERE p.ref LIKE '%".$db->escape($_GET["fk_projet"])."%' OR p.title LIKE '%".$db->escape($_GET["fk_projet"])."%' OR s.nom LIKE '%".$db->escape($_GET["fk_projet"])."%'"; // Add other filters
-	$sql.= " ORDER BY p.ref ASC";
+	$sql .= " FROM ".MAIN_DB_PREFIX."projet as p";
+	$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s ON p.fk_soc = s.rowid";
+	if (!empty($_GET["fk_projet"])) $sql .= " WHERE p.ref LIKE '%".$db->escape($_GET["fk_projet"])."%' OR p.title LIKE '%".$db->escape($_GET["fk_projet"])."%' OR s.nom LIKE '%".$db->escape($_GET["fk_projet"])."%'"; // Add other filters
+	$sql .= " ORDER BY p.ref ASC";
 
-	$resql=$db->query($sql);
+	$resql = $db->query($sql);
 	if ($resql)
 	{
 		while ($row = $db->fetch_array($resql))
 		{
-		    $label=$row['ref'].' - '.$row['title'];
+		    $label = $row['ref'].' - '.$row['title'];
 		    $row_array['label'] = $label;
-			 $row_array['value'] = $label;
-	       $row_array['key'] = $row['rowid'];
+			$row_array['value'] = $label;
+	        $row_array['key'] = $row['rowid'];
 
 	        array_push($return_arr, $row_array);
 	    }
@@ -79,10 +79,10 @@ if (GETPOST('fk_projet') != '')
 	}
 	else
 	{
-	    echo json_encode(array('nom'=>'Error','label'=>'Error','key'=>'Error','value'=>'Error'));
+	    echo json_encode(array('nom'=>'Error', 'label'=>'Error', 'key'=>'Error', 'value'=>'Error'));
 	}
 }
 else
 {
-    echo json_encode(array('nom'=>'ErrorBadParameter','label'=>'ErrorBadParameter','key'=>'ErrorBadParameter','value'=>'ErrorBadParameter'));
+    echo json_encode(array('nom'=>'ErrorBadParameter', 'label'=>'ErrorBadParameter', 'key'=>'ErrorBadParameter', 'value'=>'ErrorBadParameter'));
 }

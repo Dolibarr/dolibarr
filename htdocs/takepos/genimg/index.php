@@ -12,25 +12,25 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 //if (! defined('NOREQUIREUSER'))	define('NOREQUIREUSER','1');	// Not disabled cause need to load personalized language
 //if (! defined('NOREQUIREDB'))		define('NOREQUIREDB','1');		// Not disabled cause need to load personalized language
-if (! defined('NOREQUIRESOC'))		define('NOREQUIRESOC', '1');
+if (!defined('NOREQUIRESOC'))		define('NOREQUIRESOC', '1');
 //if (! defined('NOREQUIRETRAN'))		define('NOREQUIRETRAN','1');
-if (! defined('NOCSRFCHECK'))		define('NOCSRFCHECK', '1');
-if (! defined('NOTOKENRENEWAL'))	define('NOTOKENRENEWAL', '1');
-if (! defined('NOREQUIREMENU'))		define('NOREQUIREMENU', '1');
-if (! defined('NOREQUIREHTML'))		define('NOREQUIREHTML', '1');
-if (! defined('NOREQUIREAJAX'))		define('NOREQUIREAJAX', '1');
+if (!defined('NOCSRFCHECK'))		define('NOCSRFCHECK', '1');
+if (!defined('NOTOKENRENEWAL'))	define('NOTOKENRENEWAL', '1');
+if (!defined('NOREQUIREMENU'))		define('NOREQUIREMENU', '1');
+if (!defined('NOREQUIREHTML'))		define('NOREQUIREHTML', '1');
+if (!defined('NOREQUIREAJAX'))		define('NOREQUIREAJAX', '1');
 
-require '../../main.inc.php';	// Load $user and permissions
+require '../../main.inc.php'; // Load $user and permissions
 
 $id = GETPOST('id', 'int');
 $w = GETPOST('w', 'int');
 $h = GETPOST('h', 'int');
-$query= GETPOST('query', 'alpha');
+$query = GETPOST('query', 'alpha');
 
 
 
@@ -38,7 +38,7 @@ $query= GETPOST('query', 'alpha');
  * View
  */
 
-if ($query=="cat")
+if ($query == "cat")
 {
 	require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
 	require_once DOL_DOCUMENT_ROOT.'/core/lib/categories.lib.php';
@@ -47,36 +47,36 @@ if ($query=="cat")
 	$result = $object->fetch($id);
 
 	$upload_dir = $conf->categorie->multidir_output[$object->entity];
-	$pdir = get_exdir($object->id, 2, 0, 0, $object, 'category') . $object->id ."/photos/";
+	$pdir = get_exdir($object->id, 2, 0, 0, $object, 'category').$object->id."/photos/";
 	$dir = $upload_dir.'/'.$pdir;
 
 	foreach ($object->liste_photos($dir) as $key => $obj)
 	{
 		if ($obj['photo_vignette'])
 		{
-			$filename=$obj['photo_vignette'];
+			$filename = $obj['photo_vignette'];
 		}
 		else
 		{
-			$filename=$obj['photo'];
+			$filename = $obj['photo'];
 		}
-		$file=DOL_URL_ROOT.'/viewimage.php?cache=1&modulepart=category&entity='.$object->entity.'&file='.urlencode($pdir.$filename);
+		$file = DOL_URL_ROOT.'/viewimage.php?cache=1&modulepart=category&entity='.$object->entity.'&file='.urlencode($pdir.$filename);
 		header('Location: '.$file);
 		exit;
 	}
 	header('Location: ../../public/theme/common/nophoto.png');
 }
-elseif ($query=="pro")
+elseif ($query == "pro")
 {
 	require_once DOL_DOCUMENT_ROOT."/product/class/product.class.php";
 
 	$objProd = new Product($db);
 	$objProd->fetch($id);
-	$image=$objProd->show_photos('product', $conf->product->multidir_output[$entity], 'small', 1);
+	$image = $objProd->show_photos('product', $conf->product->multidir_output[$entity], 'small', 1);
 
 	preg_match('@src="([^"]+)"@', $image, $match);
 	$file = array_pop($match);
-	if ($file=="") header('Location: ../../public/theme/common/nophoto.png');
+	if ($file == "") header('Location: ../../public/theme/common/nophoto.png');
 	else header('Location: '.$file.'&cache=1');
 }
 else

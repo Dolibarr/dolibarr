@@ -15,7 +15,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -33,9 +33,9 @@ include_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
  */
 class box_produits extends ModeleBoxes
 {
-    public $boxcode="lastproducts";
-    public $boximg="object_product";
-    public $boxlabel="BoxLastProducts";
+    public $boxcode = "lastproducts";
+    public $boximg = "object_product";
+    public $boxlabel = "BoxLastProducts";
     public $depends = array("produit");
 
 	/**
@@ -59,12 +59,12 @@ class box_produits extends ModeleBoxes
 	{
 	    global $conf, $user;
 
-	    $this->db=$db;
+	    $this->db = $db;
 
-	    $listofmodulesforexternal=explode(',', $conf->global->MAIN_MODULES_FOR_EXTERNAL);
-	    $tmpentry=array('enabled'=>(! empty($conf->product->enabled) || ! empty($conf->service->enabled)), 'perms'=>(! empty($user->rights->produit->lire) || ! empty($user->rights->service->lire)), 'module'=>'product|service');
-	    $showmode=isVisibleToUserType(($user->societe_id > 0 ? 1 : 0), $tmpentry, $listofmodulesforexternal);
-	    $this->hidden=($showmode != 1);
+	    $listofmodulesforexternal = explode(',', $conf->global->MAIN_MODULES_FOR_EXTERNAL);
+	    $tmpentry = array('enabled'=>(!empty($conf->product->enabled) || !empty($conf->service->enabled)), 'perms'=>(!empty($user->rights->produit->lire) || !empty($user->rights->service->lire)), 'module'=>'product|service');
+	    $showmode = isVisibleToUserType(($user->socid > 0 ? 1 : 0), $tmpentry, $listofmodulesforexternal);
+	    $this->hidden = ($showmode != 1);
 	}
 
 	/**
@@ -75,55 +75,55 @@ class box_produits extends ModeleBoxes
 	 */
 	public function loadBox($max = 5)
 	{
-		global $user, $langs, $db, $conf, $hookmanager;
+		global $user, $langs, $conf, $hookmanager;
 
-		$this->max=$max;
+		$this->max = $max;
 
 		include_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
-		$productstatic=new Product($db);
+		$productstatic = new Product($this->db);
 
 		$this->info_box_head = array('text' => $langs->trans("BoxTitleLastProducts", $max));
 
 		if ($user->rights->produit->lire || $user->rights->service->lire)
 		{
 			$sql = "SELECT p.rowid, p.label, p.ref, p.price, p.price_base_type, p.price_ttc, p.fk_product_type, p.tms, p.tosell, p.tobuy, p.fk_price_expression, p.entity";
-			$sql.= " FROM ".MAIN_DB_PREFIX."product as p";
-			$sql.= ' WHERE p.entity IN ('.getEntity($productstatic->element).')';
-			if (empty($user->rights->produit->lire)) $sql.=' AND p.fk_product_type != 0';
-			if (empty($user->rights->service->lire)) $sql.=' AND p.fk_product_type != 1';
+			$sql .= " FROM ".MAIN_DB_PREFIX."product as p";
+			$sql .= ' WHERE p.entity IN ('.getEntity($productstatic->element).')';
+			if (empty($user->rights->produit->lire)) $sql .= ' AND p.fk_product_type != 0';
+			if (empty($user->rights->service->lire)) $sql .= ' AND p.fk_product_type != 1';
 			// Add where from hooks
 			if (is_object($hookmanager))
 			{
-			    $parameters=array('boxproductlist'=>1);
-			    $reshook=$hookmanager->executeHooks('printFieldListWhere', $parameters);    // Note that $action and $object may have been modified by hook
-			    $sql.=$hookmanager->resPrint;
+			    $parameters = array('boxproductlist'=>1);
+			    $reshook = $hookmanager->executeHooks('printFieldListWhere', $parameters); // Note that $action and $object may have been modified by hook
+			    $sql .= $hookmanager->resPrint;
 			}
-			$sql.= $db->order('p.datec', 'DESC');
-			$sql.= $db->plimit($max, 0);
+			$sql .= $this->db->order('p.datec', 'DESC');
+			$sql .= $this->db->plimit($max, 0);
 
-			$result = $db->query($sql);
+			$result = $this->db->query($sql);
 			if ($result)
 			{
-				$num = $db->num_rows($result);
+				$num = $this->db->num_rows($result);
 				$line = 0;
 				while ($line < $num)
 				{
-					$objp = $db->fetch_object($result);
-					$datem=$db->jdate($objp->tms);
+					$objp = $this->db->fetch_object($result);
+					$datem = $this->db->jdate($objp->tms);
 
 					// Multilangs
-					if (! empty($conf->global->MAIN_MULTILANGS)) // si l'option est active
+					if (!empty($conf->global->MAIN_MULTILANGS)) // si l'option est active
 					{
 						$sqld = "SELECT label";
-						$sqld.= " FROM ".MAIN_DB_PREFIX."product_lang";
-						$sqld.= " WHERE fk_product=".$objp->rowid;
-						$sqld.= " AND lang='". $langs->getDefaultLang() ."'";
-						$sqld.= " LIMIT 1";
+						$sqld .= " FROM ".MAIN_DB_PREFIX."product_lang";
+						$sqld .= " WHERE fk_product=".$objp->rowid;
+						$sqld .= " AND lang='".$langs->getDefaultLang()."'";
+						$sqld .= " LIMIT 1";
 
-						$resultd = $db->query($sqld);
+						$resultd = $this->db->query($sqld);
 						if ($resultd)
 						{
-							$objtp = $db->fetch_object($resultd);
+							$objtp = $this->db->fetch_object($resultd);
 							if (isset($objtp->label) && $objtp->label != '')
 								$objp->label = $objtp->label;
 						}
@@ -144,10 +144,11 @@ class box_produits extends ModeleBoxes
                         'td' => 'class="tdoverflowmax100 maxwidth100onsmartphone"',
                         'text' => $objp->label,
                     );
-
+                    $price = '';
+                    $price_base_type = '';
                     if (empty($conf->dynamicprices->enabled) || empty($objp->fk_price_expression)) {
-                        $price_base_type=$langs->trans($objp->price_base_type);
-                        $price=($objp->price_base_type == 'HT')?price($objp->price):$price=price($objp->price_ttc);
+                        $price_base_type = $langs->trans($objp->price_base_type);
+                        $price = ($objp->price_base_type == 'HT') ?price($objp->price) : $price = price($objp->price_ttc);
 	                }
 	                else //Parse the dynamic price
 	               	{
@@ -157,14 +158,14 @@ class box_produits extends ModeleBoxes
 	                    if ($price_result >= 0) {
 							if ($objp->price_base_type == 'HT')
 							{
-								$price_base_type=$langs->trans("HT");
+								$price_base_type = $langs->trans("HT");
 							}
 							else
 							{
 								$price_result = $price_result * (1 + ($productstatic->tva_tx / 100));
-								$price_base_type=$langs->trans("TTC");
+								$price_base_type = $langs->trans("TTC");
 							}
-							$price=price($price_result);
+							$price = price($price_result);
 	                    }
 	               	}
 					$this->info_box_contents[$line][] = array(
@@ -196,18 +197,18 @@ class box_produits extends ModeleBoxes
 
                     $line++;
                 }
-                if ($num==0)
+                if ($num == 0)
                     $this->info_box_contents[$line][0] = array(
                         'td' => 'class="center"',
                         'text'=>$langs->trans("NoRecordedProducts"),
                     );
 
-                $db->free($result);
+                $this->db->free($result);
             } else {
                 $this->info_box_contents[0][0] = array(
                     'td' => '',
                     'maxlength'=>500,
-                    'text' => ($db->error().' sql='.$sql),
+                    'text' => ($this->db->error().' sql='.$sql),
                 );
             }
         } else {

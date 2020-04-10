@@ -15,7 +15,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -25,7 +25,7 @@
  */
 
 // Define DOL_DOCUMENT_ROOT
-if (! defined('DOL_DOCUMENT_ROOT'))	    define('DOL_DOCUMENT_ROOT', '..');
+if (!defined('DOL_DOCUMENT_ROOT'))	    define('DOL_DOCUMENT_ROOT', '..');
 
 require_once DOL_DOCUMENT_ROOT.'/core/class/translate.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/functions.lib.php';
@@ -35,22 +35,22 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 // Avoid warnings with strict mode E_STRICT
 $conf = new stdClass(); // instantiate $conf explicitely
 $conf->global	= new stdClass();
-$conf->file		= new stdClass();
-$conf->db		= new stdClass();
+$conf->file = new stdClass();
+$conf->db = new stdClass();
 $conf->syslog	= new stdClass();
 
 // Force $_REQUEST["logtohtml"]
-$_REQUEST["logtohtml"]=1;
+$_REQUEST["logtohtml"] = 1;
 
 // Correction PHP_SELF (ex pour apache via caudium) car PHP_SELF doit valoir URL relative
 // et non path absolu.
 if (isset($_SERVER["DOCUMENT_URI"]) && $_SERVER["DOCUMENT_URI"])
 {
-	$_SERVER["PHP_SELF"]=$_SERVER["DOCUMENT_URI"];
+	$_SERVER["PHP_SELF"] = $_SERVER["DOCUMENT_URI"];
 }
 
 
-$includeconferror='';
+$includeconferror = '';
 
 // Define vars
 $conffiletoshowshort = "conf.php";
@@ -58,7 +58,7 @@ $conffiletoshowshort = "conf.php";
 $conffile = "../conf/conf.php";
 $conffiletoshow = "htdocs/conf/conf.php";
 // For debian/redhat like systems
-if (! file_exists($conffile))
+if (!file_exists($conffile))
 {
 	$conffile = "/etc/dolibarr/conf.php";
 	$conffiletoshow = "/etc/dolibarr/conf.php";
@@ -71,7 +71,6 @@ if (! defined('DONOTLOADCONF') && file_exists($conffile) && filesize($conffile) 
 	$result=include_once $conffile;	// Load conf file
 	if ($result)
 	{
-
 		if (empty($dolibarr_main_db_type)) $dolibarr_main_db_type='mysql';	// For backward compatibility
 
 		//Mysql driver support has been removed in favor of mysqli
@@ -155,8 +154,8 @@ $langs = new Translate('..', $conf);
 if (GETPOST('lang', 'aZ09')) $langs->setDefaultLang(GETPOST('lang', 'aZ09'));
 else $langs->setDefaultLang('auto');
 
-$bc[false]=' class="bg1"';
-$bc[true]=' class="bg2"';
+$bc[false] = ' class="bg1"';
+$bc[true] = ' class="bg2"';
 
 
 /**
@@ -176,10 +175,10 @@ function conf($dolibarr_main_document_root)
 	global $dolibarr_main_db_pass;
 	global $character_set_client;
 
-	$return=include_once $dolibarr_main_document_root.'/core/class/conf.class.php';
-	if (! $return) return -1;
+	$return = include_once $dolibarr_main_document_root.'/core/class/conf.class.php';
+	if (!$return) return -1;
 
-	$conf=new Conf();
+	$conf = new Conf();
 	$conf->db->type = trim($dolibarr_main_db_type);
 	$conf->db->host = trim($dolibarr_main_db_host);
 	$conf->db->port = trim($dolibarr_main_db_port);
@@ -187,7 +186,7 @@ function conf($dolibarr_main_document_root)
 	$conf->db->user = trim($dolibarr_main_db_user);
 	$conf->db->pass = trim($dolibarr_main_db_pass);
 
-	if (empty($conf->db->dolibarr_main_db_collation)) $conf->db->dolibarr_main_db_collation='utf8_unicode_ci';
+	if (empty($conf->db->dolibarr_main_db_collation)) $conf->db->dolibarr_main_db_collation = 'utf8_unicode_ci';
 
 	return 1;
 }
@@ -224,15 +223,12 @@ function pHeader($soutitre, $next, $action = 'none')
 	print '<title>'.$langs->trans("DolibarrHelpCenter").'</title>'."\n";
 	print '</head>'."\n";
 
-	print '<body>'."\n";
+	print '<body class="center">'."\n";
 
-	print '<table class="noborder" summary="helpcentertitle"><tr valign="middle">';
-	print '<td width="20">';
-	print '<img src="helpcenter.png" alt="logohelpcenter">';
-	print '</td>';
-	print '<td>';
-	print '<span class="titre">'.$soutitre.'</span>'."\n";
-	print '</td></tr></table>';
+	print '<div class="noborder centpercent center valignmiddle inline-block">';
+	print '<img src="helpcenter.png" alt="logohelpcenter" class="inline-block"><br><br>';
+	print '<span class="titre inline-block">'.$soutitre.'</span>'."\n";
+	print '</div><br>';
 }
 
 /**

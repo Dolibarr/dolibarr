@@ -12,7 +12,7 @@
 # GNU General Public License for more details.
 #
 # You should have received a copy of the GNU General Public License
-# along with this program.  If not, see <http://www.gnu.org/licenses/>.
+# along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 #
 # Generic
@@ -25,15 +25,19 @@ Permission56001=Bekijk tickets
 Permission56002=Aanpassen tickets
 Permission56003=Verwijder tickets
 Permission56004=Beheer tickets
-Permission56005=See tickets of all third parties (not effective for external users, always be limited to the third party they depend on)
+Permission56005=Bekijk tickets van alle derde partijen (niet van toepassing voor externe gebruikers, altijd beperkt tot de derde partij waarvan ze afhankelijk zijn)
 
 TicketDictType=Types
 TicketDictCategory=Groepen
 TicketDictSeverity=Prioriteit
+TicketDictResolution=Ticket - Resolution
 TicketTypeShortBUGSOFT=Foutmelding
 TicketTypeShortBUGHARD=Storing hardware
 TicketTypeShortCOM=Commerciële vraag
-TicketTypeShortINCIDENT=Verzoek om hulp
+
+TicketTypeShortHELP=Verzoek om functionele hulp
+TicketTypeShortISSUE=Probleem of bug
+TicketTypeShortREQUEST=Verander-  of verbeteringsverzoek
 TicketTypeShortPROJET=Project
 TicketTypeShortOTHER=Overig
 
@@ -53,14 +57,14 @@ TypeContact_ticket_external_SUPPORTCLI=Klanten contact / opvolging
 TypeContact_ticket_external_CONTRIBUTOR=Externe bijdrage
 
 OriginEmail=E-mail bron
-Notify_TICKET_SENTBYMAIL=Send ticket message by email
+Notify_TICKET_SENTBYMAIL=Verzend ticketbericht per e-mail
 
 # Status
 NotRead=Niet gelezen
 Read=Gelezen
 Assigned=Toegekend
 InProgress=Reeds bezig
-NeedMoreInformation=Waiting for information
+NeedMoreInformation=Wachten op informatie
 Answered=Beantwoord
 Waiting=Wachtend
 Closed=Gesloten
@@ -77,96 +81,100 @@ MailToSendTicketMessage=Om e-mail van ticket bericht te verzenden
 #
 # Admin page
 #
-TicketSetup=Ticket module setup
+TicketSetup=Instellingen ticketmodule
 TicketSettings=Instellingen
 TicketSetupPage=
-TicketPublicAccess=A public interface requiring no identification is available at the following url
-TicketSetupDictionaries=The type of ticket, severity and analytic codes are configurable from dictionaries
-TicketParamModule=Module variable setup
+TicketPublicAccess=Een openbare interface waarbij geen identificatie vereist is, is beschikbaar op de volgende URL
+TicketSetupDictionaries=Het type ticket, ernst en analysecodes zijn configureerbaar vanuit woordenboeken
+TicketParamModule=Module variabele instelling
 TicketParamMail=Email setup
-TicketEmailNotificationFrom=Notification email from
+TicketEmailNotificationFrom=E-mailmelding van
 TicketEmailNotificationFromHelp=Gebruikt als voorbeeld antwoord in het ticketbericht
 TicketEmailNotificationTo=Notificatie email naar
 TicketEmailNotificationToHelp=Verzend email notificatie naar dit adres.
-TicketNewEmailBodyLabel=Text message sent after creating a ticket
+TicketNewEmailBodyLabel=Sms verzonden na het maken van een ticket
 TicketNewEmailBodyHelp=De tekst die hier wordt opgegeven, wordt in de e-mail ingevoegd die bevestigt dat er een nieuwe ticket is aangemaakt in de openbare interface. Informatie over de raadpleging van de ticket wordt automatisch toegevoegd.
-TicketParamPublicInterface=Public interface setup
+TicketParamPublicInterface=Instellingen openbare interface
 TicketsEmailMustExist=Vereist een bestaand e-mailadres om een ​​ticket aan te maken
 TicketsEmailMustExistHelp=In de openbare interface moet het e-mailadres al in de database zijn ingevuld om een ​​nieuwe ticket aan te kunnen maken.
 PublicInterface=Publieke interface
-TicketUrlPublicInterfaceLabelAdmin=Alternative URL for public interface
-TicketUrlPublicInterfaceHelpAdmin=It is possible to define an alias to the web server and thus make available the public interface with another URL (the server must act as a proxy on this new URL)
+TicketUrlPublicInterfaceLabelAdmin=Alternatieve URL voor openbare interface
+TicketUrlPublicInterfaceHelpAdmin=Het is mogelijk om een alias voor de webserver te definiëren en zo de openbare interface met een andere URL beschikbaar te stellen (de server moet als proxy op deze nieuwe URL fungeren)
 TicketPublicInterfaceTextHomeLabelAdmin=Welkomtekst op publieke interface
-TicketPublicInterfaceTextHome=You can create a support ticket or view existing from its identifier tracking ticket.
-TicketPublicInterfaceTextHomeHelpAdmin=The text defined here will appear on the home page of the public interface.
-TicketPublicInterfaceTopicLabelAdmin=Interface title
-TicketPublicInterfaceTopicHelp=This text will appear as the title of the public interface.
-TicketPublicInterfaceTextHelpMessageLabelAdmin=Help text to the message entry
-TicketPublicInterfaceTextHelpMessageHelpAdmin=This text will appear above the message input area of the user.
-ExtraFieldsTicket=Extra attributes
-TicketCkEditorEmailNotActivated=HTML editor is not activated. Please put FCKEDITOR_ENABLE_MAIL content to 1 to get it.
-TicketsDisableEmail=Do not send emails for ticket creation or message recording
-TicketsDisableEmailHelp=By default, emails are sent when new tickets or messages created. Enable this option to disable *all* email notifications
-TicketsLogEnableEmail=Enable log by email
-TicketsLogEnableEmailHelp=At each change, an email will be sent **to each contact** associated with the ticket.
+TicketPublicInterfaceTextHome=U kunt een supportticket aanmaken of een bestaand ticket bekijken d.m.v. een ID-trackingticket.
+TicketPublicInterfaceTextHomeHelpAdmin=De hier gedefinieerde tekst verschijnt op de startpagina van de openbare interface.
+TicketPublicInterfaceTopicLabelAdmin=Titel interface
+TicketPublicInterfaceTopicHelp=Deze tekst wordt weergegeven als de titel van de openbare interface.
+TicketPublicInterfaceTextHelpMessageLabelAdmin=Helptekst voor het bericht
+TicketPublicInterfaceTextHelpMessageHelpAdmin=Deze tekst verschijnt boven het invoergebied van de gebruiker.
+ExtraFieldsTicket=Extra attributen
+TicketCkEditorEmailNotActivated=HTML-editor is niet geactiveerd. Zet FCKEDITOR_ENABLE_MAIL op 1 om deze te activeren.
+TicketsDisableEmail=Stuur geen e-mails voor het maken van een ticket of het opnemen van berichten
+TicketsDisableEmailHelp=Standaard worden e-mails verzonden wanneer nieuwe tickets of berichten worden gemaakt. Schakel deze optie in om * alle * e-mailmeldingen uit te schakelen
+TicketsLogEnableEmail=Schakel logboek per e-mail in
+TicketsLogEnableEmailHelp=Bij elke wijziging wordt een e-mail ** verzonden naar elk contact ** dat aan het ticket is gekoppeld.
 TicketParams=Parameters
-TicketsShowModuleLogo=Display the logo of the module in the public interface
-TicketsShowModuleLogoHelp=Enable this option to hide the logo module in the pages of the public interface
-TicketsShowCompanyLogo=Display the logo of the company in the public interface
-TicketsShowCompanyLogoHelp=Enable this option to hide the logo of the main company in the pages of the public interface
-TicketsEmailAlsoSendToMainAddress=Also send notification to main email address
-TicketsEmailAlsoSendToMainAddressHelp=Enable this option to send an email to "Notification email from" address (see setup below)
-TicketsLimitViewAssignedOnly=Restrict the display to tickets assigned to the current user (not effective for external users, always be limited to the third party they depend on)
-TicketsLimitViewAssignedOnlyHelp=Only tickets assigned to the current user will be visible. Does not apply to a user with tickets management rights.
+TicketsShowModuleLogo=Toon het logo van de module in de openbare interface
+TicketsShowModuleLogoHelp=Schakel deze optie in om het logo op de pagina's van de openbare interface te verbergen
+TicketsShowCompanyLogo=Toon het logo van het bedrijf in de openbare interface
+TicketsShowCompanyLogoHelp=Schakel deze optie in om het logo van het bedrijf op de pagina's van de openbare interface te verbergen
+TicketsEmailAlsoSendToMainAddress=Stuur ook een melding naar het hoofd e-mailadres
+TicketsEmailAlsoSendToMainAddressHelp=Schakel deze optie in om een e-mail te verzenden naar het adres "E-mailmelding van" (zie onderstaande instellingen)
+TicketsLimitViewAssignedOnly=Beperk de weergave tot tickets die zijn toegewezen aan de huidige gebruiker (niet effectief voor externe gebruikers, altijd beperkt tot de derde partij waarvan ze afhankelijk zijn)
+TicketsLimitViewAssignedOnlyHelp=Alleen tickets die zijn toegewezen aan de huidige gebruiker zijn zichtbaar. Is niet van toepassing op een gebruiker met toegangsrechten voor tickets.
 TicketsActivatePublicInterface=Publieke interface activeren
-TicketsActivatePublicInterfaceHelp=Public interface allow any visitors to create tickets.
-TicketsAutoAssignTicket=Automatically assign the user who created the ticket
-TicketsAutoAssignTicketHelp=When creating a ticket, the user can be automatically assigned to the ticket.
-TicketNumberingModules=Tickets numbering module
-TicketNotifyTiersAtCreation=Notify third party at creation
+TicketsActivatePublicInterfaceHelp=Met de openbare interface kunnen bezoekers tickets aanmaken.
+TicketsAutoAssignTicket=Wijs automatisch de gebruiker toe die het ticket heeft aangemaakt
+TicketsAutoAssignTicketHelp=Bij het maken van een ticket kan de gebruiker automatisch aan het ticket worden toegewezen.
+TicketNumberingModules=Nummering module voor tickets
+TicketNotifyTiersAtCreation=Breng relatie op de hoogte bij het aanmaken
 TicketGroup=Groep
-TicketsDisableCustomerEmail=Always disable emails when a ticket is created from public interface
+TicketsDisableCustomerEmail=Schakel e-mails altijd uit wanneer een ticket wordt gemaakt vanuit de openbare interface
 #
 # Index & list page
 #
 TicketsIndex=Ticket - home
 TicketList=Ticketlijst
-TicketAssignedToMeInfos=This page display ticket list created by or assigned to current user
+TicketAssignedToMeInfos=Deze pagina geeft een ticketlijst weer die is gemaakt door of toegewezen aan de huidige gebruiker
 NoTicketsFound=Geen ticket gevonden
-NoUnreadTicketsFound=No unread ticket found
+NoUnreadTicketsFound=Geen ongelezen ticket gevonden
 TicketViewAllTickets=Bekijk alle tickets
-TicketViewNonClosedOnly=View only open tickets
-TicketStatByStatus=Tickets by status
+TicketViewNonClosedOnly=Bekijk alleen open tickets
+TicketStatByStatus=Tickets op status
+OrderByDateAsc=Sorteer op oplopende datum
+OrderByDateDesc=Sorteer op aflopende datum
+ShowAsConversation=Weergeven als conversatielijst
+MessageListViewType=Weergeven als tabellijst
 
 #
 # Ticket card
 #
 Ticket=Ticket
 TicketCard=Ticket kaart
-CreateTicket=Create ticket
+CreateTicket=Nieuwe ticket
 EditTicket=Bewerk ticket
 TicketsManagement=Tickets Beheer
 CreatedBy=Aangemaakt door
 NewTicket=Nieuw Ticket
 SubjectAnswerToTicket=Ticket antwoord
-TicketTypeRequest=Request type
+TicketTypeRequest=Aanvraag type
 TicketCategory=Analisten code
 SeeTicket=Bekijk ticket
-TicketMarkedAsRead=Ticket has been marked as read
+TicketMarkedAsRead=Ticket is gemarkeerd als gelezen
 TicketReadOn=Lees verder
 TicketCloseOn=Sluitingsdatum
-MarkAsRead=Mark ticket as read
+MarkAsRead=Ticket markeren als gelezen
 TicketHistory=Ticket historie
 AssignUser=Toewijzen aan gebruiker
 TicketAssigned=Ticket is nu toegewezen
 TicketChangeType=Verander type
-TicketChangeCategory=Change analytic code
+TicketChangeCategory=Wijzig analytische code
 TicketChangeSeverity=Wijzig de ernst
 TicketAddMessage=Bericht toevoegen
 AddMessage=Bericht toevoegen
 MessageSuccessfullyAdded=Ticket toegevoegd
 TicketMessageSuccessfullyAdded=Berichten toegevoegd
-TicketMessagesList=Message list
+TicketMessagesList=Berichtenlijst
 NoMsgForThisTicket=Geen berichten voor deze ticket
 Properties=Classificatie
 LatestNewTickets=Laatste %s nieuwste tickets (niet gelezen)
@@ -177,109 +185,112 @@ TicketAddIntervention=Nieuwe interventie
 CloseTicket=Sluit ticket
 CloseATicket=Sluit een ticket
 ConfirmCloseAticket=Bevestig sluiten ticket
-ConfirmDeleteTicket=Please confirm ticket deleting
+ConfirmDeleteTicket=Bevestig het verwijderen van het ticket
 TicketDeletedSuccess=Ticket succesvol verwijderd 
-TicketMarkedAsClosed=Ticket marked as closed
-TicketDurationAuto=Calculated duration
-TicketDurationAutoInfos=Duration calculated automatically from intervention related
+TicketMarkedAsClosed=Ticket gemarkeerd als gesloten
+TicketDurationAuto=Berekende duur
+TicketDurationAutoInfos=Duur automatisch berekend op basis van interventie
 TicketUpdated=Ticket bijgewerkt
 SendMessageByEmail=Verzend bericht via email
-TicketNewMessage=New message
+TicketNewMessage=Nieuw bericht
 ErrorMailRecipientIsEmptyForSendTicketMessage=Geadresseerde is leeg. Geen e-mail verzonden
-TicketGoIntoContactTab=Please go into "Contacts" tab to select them
+TicketGoIntoContactTab=Ga naar het tabblad "Contacten" om ze te selecteren
 TicketMessageMailIntro=Introductie
 TicketMessageMailIntroHelp=Deze tekst wordt alleen aan het begin van de e-mail toegevoegd en zal niet worden opgeslagen.
-TicketMessageMailIntroLabelAdmin=Introduction to the message when sending email
-TicketMessageMailIntroText=Hello,<br>A new response was sent on a ticket that you contact. Here is the message:<br>
-TicketMessageMailIntroHelpAdmin=This text will be inserted before the text of the response to a ticket.
+TicketMessageMailIntroLabelAdmin=Inleiding tot het bericht bij het verzenden van e-mail
+TicketMessageMailIntroText=Hallo, <br> Er is een nieuw antwoord verzonden op een ticket. Dit is het bericht: <br>
+TicketMessageMailIntroHelpAdmin=Deze tekst wordt ingevoegd vóór de tekst van het antwoord op een ticket.
 TicketMessageMailSignature=Handtekening
-TicketMessageMailSignatureHelp=This text is added only at the end of the email and will not be saved.
-TicketMessageMailSignatureText=<p>Sincerely,</p><p>--</p>
+TicketMessageMailSignatureHelp=Deze tekst wordt alleen aan het einde van de e-mail toegevoegd en wordt niet opgeslagen.
+TicketMessageMailSignatureText=<p> Met vriendelijke groet, </p><p> - </p>
 TicketMessageMailSignatureLabelAdmin=Handtekening van reactie-e-mail
 TicketMessageMailSignatureHelpAdmin=Deze tekst wordt ingevoegd na het antwoordbericht.
-TicketMessageHelp=Only this text will be saved in the message list on ticket card.
-TicketMessageSubstitutionReplacedByGenericValues=Substitutions variables are replaced by generic values.
-TimeElapsedSince=Time elapsed since
-TicketTimeToRead=Time elapsed before read
+TicketMessageHelp=Alleen deze tekst zal worden bewaard in de berichtenlijst op de ticketkaart.
+TicketMessageSubstitutionReplacedByGenericValues=Vervangingsvariabelen worden vervangen door generieke waarden.
+TimeElapsedSince=Verstreken tijd sinds
+TicketTimeToRead=Tijd verstreken voordat gelezen
 TicketContacts=Contact ticket
 TicketDocumentsLinked=Documenten gekoppeld aan ticket
 ConfirmReOpenTicket=Ticket heropenen?
-TicketMessageMailIntroAutoNewPublicMessage=A new message was posted on the ticket with the subject %s:
+TicketMessageMailIntroAutoNewPublicMessage=Er is een nieuw bericht op het ticket geplaatst met het onderwerp %s:
 TicketAssignedToYou=Ticket toegekend
-TicketAssignedEmailBody=You have been assigned the ticket #%s by %s
-MarkMessageAsPrivate=Mark message as private
-TicketMessagePrivateHelp=This message will not display to external users
-TicketEmailOriginIssuer=Issuer at origin of the tickets
-InitialMessage=Initial Message
+TicketAssignedEmailBody=Je hebt het ticket # %s van %s toegewezen gekregen
+MarkMessageAsPrivate=Markeer bericht als privé
+TicketMessagePrivateHelp=Dit bericht wordt niet weergegeven voor externe gebruikers
+TicketEmailOriginIssuer=Uitgevende instelling bij oorsprong van de tickets
+InitialMessage=Oorspronkelijk bericht
 LinkToAContract=Link aan contract
 TicketPleaseSelectAContract=Selecteer een contract
-UnableToCreateInterIfNoSocid=Can not create an intervention when no third party is defined
-TicketMailExchanges=Mail exchanges
-TicketInitialMessageModified=Initial message modified
+UnableToCreateInterIfNoSocid=Kan geen interventie maken als er geen relatie is gedefinieerd
+TicketMailExchanges=E-mail uitwisseling
+TicketInitialMessageModified=Eerste bericht gewijzigd
 TicketMessageSuccesfullyUpdated=Bericht succesvol bijgewerkt
 TicketChangeStatus=Verander status
-TicketConfirmChangeStatus=Confirm the status change: %s ?
-TicketLogStatusChanged=Status changed: %s to %s
-TicketNotNotifyTiersAtCreate=Not notify company at create
-Unread=Unread
+TicketConfirmChangeStatus=Bevestig de statusverandering: %s?
+TicketLogStatusChanged=Status gewijzigd: %s in %s
+TicketNotNotifyTiersAtCreate=Geen bedrijf melden bij aanmaken
+Unread=Niet gelezen
+TicketNotCreatedFromPublicInterface=Niet beschikbaar. Ticket is niet gemaakt vanuit de openbare interface.
+PublicInterfaceNotEnabled=Publieke interface was niet ingeschakeld
+ErrorTicketRefRequired=Naam van ticket is vereist
 
 #
 # Logs
 #
-TicketLogMesgReadBy=Ticket %s read by %s
-NoLogForThisTicket=No log for this ticket yet
-TicketLogAssignedTo=Ticket %s assigned to %s
-TicketLogPropertyChanged=Ticket %s modified: classification from %s to %s
-TicketLogClosedBy=Ticket %s closed by %s
-TicketLogReopen=Ticket %s re-opened
+TicketLogMesgReadBy=Ticket %s gelezen door %s
+NoLogForThisTicket=Nog geen logboek voor dit ticket
+TicketLogAssignedTo=Ticket %s is toegewezen aan %s
+TicketLogPropertyChanged=Ticket %s gewijzigd: classificatie van %s tot %s
+TicketLogClosedBy=Ticket %s gesloten door %s
+TicketLogReopen=Ticket %s heropend
 
 #
 # Public pages
 #
 TicketSystem=Ticket systeem
 ShowListTicketWithTrackId=Geef ticketlijst weer van track ID
-ShowTicketWithTrackId=Display ticket from track ID
-TicketPublicDesc=You can create a support ticket or check from an existing ID.
+ShowTicketWithTrackId=Ticket weergeven van track-ID
+TicketPublicDesc=Nieuwe ticket aanmaken of controleren bestaande ticket ID.
 YourTicketSuccessfullySaved=Ticket is opgeslagen.
-MesgInfosPublicTicketCreatedWithTrackId=A new ticket has been created with ID %s.
-PleaseRememberThisId=Please keep the tracking number that we might ask you later.
-TicketNewEmailSubject=Ticket creation confirmation
+MesgInfosPublicTicketCreatedWithTrackId=Een nieuwe ticket is aangemaakt met ID 1%s en referentie 1%s
+PleaseRememberThisId=Bewaar het trackingnummer in geval dit later nodig kan zijn.
+TicketNewEmailSubject=Ticket creation confirmation - Ref %s (public ticket ID %s)
 TicketNewEmailSubjectCustomer=Nieuw ondersteunings ticket 
-TicketNewEmailBody=This is an automatic email to confirm you have registered a new ticket.
-TicketNewEmailBodyCustomer=This is an automatic email to confirm a new ticket has just been created into your account.
-TicketNewEmailBodyInfosTicket=Information for monitoring the ticket
-TicketNewEmailBodyInfosTrackId=Ticket tracking number: %s
+TicketNewEmailBody=Dit is een automatische e-mail om te bevestigen dat je een nieuwe ticket hebt geregistreerd.
+TicketNewEmailBodyCustomer=Dit is een automatische e-mail om te bevestigen dat er zojuist een nieuw ticket is aangemaakt in uw account.
+TicketNewEmailBodyInfosTicket=Informatie voor het bewaken van het ticket
+TicketNewEmailBodyInfosTrackId=Ticket volgnummer: %s
 TicketNewEmailBodyInfosTrackUrl=U kunt de voortgang van de ticket bekijken door op de bovenstaande link te klikken.
-TicketNewEmailBodyInfosTrackUrlCustomer=You can view the progress of the ticket in the specific interface by clicking the following link
-TicketEmailPleaseDoNotReplyToThisEmail=Please do not reply directly to this email! Use the link to reply into the interface.
-TicketPublicInfoCreateTicket=This form allows you to record a support ticket in our management system.
+TicketNewEmailBodyInfosTrackUrlCustomer=U kunt de voortgang van het ticket bekijken in de specifieke interface door op de volgende link te klikken
+TicketEmailPleaseDoNotReplyToThisEmail=Beantwoord deze e-mail niet rechtstreeks! Gebruik de link om in de interface te antwoorden.
+TicketPublicInfoCreateTicket=Met dit formulier kunt u een supportticket opnemen in ons managementsysteem.
 TicketPublicPleaseBeAccuratelyDescribe=Beschrijf alstublieft het probleem zo nauwkeurig mogelijk. Geef alle mogelijke informatie om ons in staat te stellen uw verzoek op de juiste manier te identificeren.
-TicketPublicMsgViewLogIn=Please enter ticket tracking ID
-TicketTrackId=Public Tracking ID
-OneOfTicketTrackId=One of your tracking ID
-ErrorTicketNotFound=Ticket with tracking ID %s not found!
+TicketPublicMsgViewLogIn=Voer a.u.b. de trackingcode van het ticket in
+TicketTrackId=Openbare tracking-ID
+OneOfTicketTrackId=Een van uw tracking-ID
+ErrorTicketNotFound=Ticket met tracking-ID %s is niet gevonden!
 Subject=Onderwerp
 ViewTicket=Bekijk ticket
 ViewMyTicketList=Bekijk lijst met mijn tickets
-ErrorEmailMustExistToCreateTicket=Error: email address not found in our database
-TicketNewEmailSubjectAdmin=Nieuw ticket aangemaakt
-TicketNewEmailBodyAdmin=<p>Ticket has just been created with ID #%s, see information:</p>
-SeeThisTicketIntomanagementInterface=See ticket in management interface
-TicketPublicInterfaceForbidden=The public interface for the tickets was not enabled
-ErrorEmailOrTrackingInvalid=Bad value for tracking ID or email
-OldUser=Old user
+ErrorEmailMustExistToCreateTicket=Fout: e-mailadres niet gevonden in onze database
+TicketNewEmailSubjectAdmin=New ticket created - Ref %s (public ticket ID %s)
+TicketNewEmailBodyAdmin=<p>Ticket is zojuist gemaakt met ID # %s, zie informatie:</p>
+SeeThisTicketIntomanagementInterface=Bekijk ticket in beheerinterface
+TicketPublicInterfaceForbidden=De openbare interface voor de tickets is niet ingeschakeld
+ErrorEmailOrTrackingInvalid=Onjuiste waarde voor tracking-ID of e-mail
+OldUser=Oude gebruiker
 NewUser=Nieuwe gebruiker
-NumberOfTicketsByMonth=Number of tickets per month
-NbOfTickets=Number of tickets
+NumberOfTicketsByMonth=Aantal tickets per maand
+NbOfTickets=Aantal tickets
 # notifications
-TicketNotificationEmailSubject=Ticket %s updated
-TicketNotificationEmailBody=This is an automatic message to notify you that ticket %s has just been updated
-TicketNotificationRecipient=Notification recipient
+TicketNotificationEmailSubject=Ticket %s bijgewerkt
+TicketNotificationEmailBody=Dit is een automatisch bericht om u te laten weten dat ticket %s zojuist is bijgewerkt
+TicketNotificationRecipient=Kennisgeving ontvanger
 TicketNotificationLogMessage=Log bericht
-TicketNotificationEmailBodyInfosTrackUrlinternal=View ticket into interface
-TicketNotificationNumberEmailSent=Notification email sent: %s
+TicketNotificationEmailBodyInfosTrackUrlinternal=Bekijk ticket in interface
+TicketNotificationNumberEmailSent=E-mailmelding verzonden: %s
 
-ActionsOnTicket=Events on ticket
+ActionsOnTicket=Gebeurtenissen op ticket
 
 #
 # Boxes
@@ -287,8 +298,8 @@ ActionsOnTicket=Events on ticket
 BoxLastTicket=Laatst gemaakte tickets
 BoxLastTicketDescription=Laatste %s gemaakte tickets
 BoxLastTicketContent=
-BoxLastTicketNoRecordedTickets=No recent unread tickets
+BoxLastTicketNoRecordedTickets=Geen recent ongelezen tickets
 BoxLastModifiedTicket=Laatst gewijzigde tickets
 BoxLastModifiedTicketDescription=Laatste %s gewijzigde tickets
 BoxLastModifiedTicketContent=
-BoxLastModifiedTicketNoRecordedTickets=No recent modified tickets
+BoxLastModifiedTicketNoRecordedTickets=Geen recent gewijzigde tickets

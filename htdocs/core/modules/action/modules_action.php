@@ -16,8 +16,8 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
- * or see http://www.gnu.org/
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
+ * or see https://www.gnu.org/
  */
 
 require_once DOL_DOCUMENT_ROOT.'/core/class/commondocgenerator.class.php';
@@ -31,7 +31,7 @@ abstract class ModeleAction extends CommonDocGenerator
     /**
 	 * @var string Error code (or message)
 	 */
-	public $error='';
+	public $error = '';
 
     // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
     /**
@@ -46,24 +46,24 @@ abstract class ModeleAction extends CommonDocGenerator
         // phpcs:enable
         global $conf;
 
-        $type='action';
-        $liste=array();
+        $type = 'action';
+        $list = array();
 
         include_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
-        $liste=getListOfModels($db, $type, $maxfilenamelength);
+        $list = getListOfModels($db, $type, $maxfilenamelength);
 
-        return $liste;
+        return $list;
     }
 }
 
 // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 /**
- *  Create an product document on disk using template defined into PRODUCT_ADDON_PDF
+ *  Create a product document on disk using template defined into PRODUCT_ADDON_PDF
  *
- *  @param	DoliDB		$db  			objet base de donnee
+ *  @param	DoliDB		$db  			data base object
  *  @param	Object		$object			Object fichinter
- *  @param	string		$modele			force le modele a utiliser ('' par defaut)
- *  @param	Translate	$outputlangs	objet lang a utiliser pour traduction
+ *  @param	string		$modele			forces the model to use ('' by default)
+ *  @param	Translate	$outputlangs	lang object to use for translation
  *  @param  int			$hidedetails    Hide details of lines
  *  @param  int			$hidedesc       Hide description
  *  @param  int			$hideref        Hide ref
@@ -72,17 +72,17 @@ abstract class ModeleAction extends CommonDocGenerator
 function action_create($db, $object, $modele, $outputlangs, $hidedetails = 0, $hidedesc = 0, $hideref = 0)
 {
     // phpcs:enable
-	global $conf,$langs,$user;
+	global $conf, $langs, $user;
 	$langs->load("action");
 
-	$error=0;
+	$error = 0;
 
-	$srctemplatepath='';
+	$srctemplatepath = '';
 
-	// Positionne modele sur le nom du modele de fichinter a utiliser
-	if (! dol_strlen($modele))
+	// Position modele on the name of fichinter model to use
+	if (!dol_strlen($modele))
 	{
-		if (! empty($conf->global->ACTION_EVENT_ADDON_PDF))
+		if (!empty($conf->global->ACTION_EVENT_ADDON_PDF))
 		{
 			$modele = $conf->global->ACTION_EVENT_ADDON_PDF;
 		}
@@ -93,29 +93,29 @@ function action_create($db, $object, $modele, $outputlangs, $hidedetails = 0, $h
 	}
 
 	// If selected modele is a filename template (then $modele="modelname:filename")
-	$tmp=explode(':', $modele, 2);
-    if (! empty($tmp[1]))
+	$tmp = explode(':', $modele, 2);
+    if (!empty($tmp[1]))
     {
-        $modele=$tmp[0];
-        $srctemplatepath=$tmp[1];
+        $modele = $tmp[0];
+        $srctemplatepath = $tmp[1];
     }
 
 	// Search template files
-	$file=''; $classname=''; $filefound=0;
-	$dirmodels=array('/');
-	if (is_array($conf->modules_parts['models'])) $dirmodels=array_merge($dirmodels, $conf->modules_parts['models']);
-	foreach($dirmodels as $reldir)
+	$file = ''; $classname = ''; $filefound = 0;
+	$dirmodels = array('/');
+	if (is_array($conf->modules_parts['models'])) $dirmodels = array_merge($dirmodels, $conf->modules_parts['models']);
+	foreach ($dirmodels as $reldir)
 	{
-    	foreach(array('doc','pdf') as $prefix)
+    	foreach (array('doc', 'pdf') as $prefix)
     	{
     	    $file = $prefix."_".$modele.".modules.php";
 
     		// On verifie l'emplacement du modele
-	        $file=dol_buildpath($reldir."core/modules/action/doc/".$file, 0);
+	        $file = dol_buildpath($reldir."core/modules/action/doc/".$file, 0);
     		if (file_exists($file))
     		{
-    			$filefound=1;
-    			$classname=$prefix.'_'.$modele;
+    			$filefound = 1;
+    			$classname = $prefix.'_'.$modele;
     			break;
     		}
     	}
@@ -131,10 +131,10 @@ function action_create($db, $object, $modele, $outputlangs, $hidedetails = 0, $h
 
 		// We save charset_output to restore it because write_file can change it if needed for
 		// output format that does not support UTF8.
-		$sav_charset_output=$outputlangs->charset_output;
+		$sav_charset_output = $outputlangs->charset_output;
 		if ($obj->write_file($object, $outputlangs, $srctemplatepath, $hidedetails, $hidedesc, $hideref) > 0)
 		{
-			$outputlangs->charset_output=$sav_charset_output;
+			$outputlangs->charset_output = $sav_charset_output;
 
 			// We delete old preview
 			require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
@@ -144,7 +144,7 @@ function action_create($db, $object, $modele, $outputlangs, $hidedetails = 0, $h
 		}
 		else
 		{
-			$outputlangs->charset_output=$sav_charset_output;
+			$outputlangs->charset_output = $sav_charset_output;
 			dol_print_error($db, "action_pdf_create Error: ".$obj->error);
 			return 0;
 		}

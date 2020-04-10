@@ -16,8 +16,8 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
- * or see http://www.gnu.org/
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
+ * or see https://www.gnu.org/
  */
 
 /**
@@ -35,29 +35,29 @@
 function expedition_prepare_head(Expedition $object)
 {
 	global $langs, $conf, $user;
-	if (! empty($conf->expedition->enabled)) $langs->load("sendings");
+	if (!empty($conf->expedition->enabled)) $langs->load("sendings");
 	$langs->load("orders");
 
 	$h = 0;
 	$head = array();
 	$h = 0;
-	
+
 	$head[$h][0] = DOL_URL_ROOT."/admin/confexped.php";
 	$head[$h][1] = $langs->trans("Setup");
 	$h++;
-	
+
 	$head[$h][0] = DOL_URL_ROOT."/admin/expedition.php";
 	$head[$h][1] = $langs->trans("Shipment");
-	$hselected=$h;
+	$hselected = $h;
 	$h++;
-	
-	if (! empty($conf->global->MAIN_SUBMODULE_LIVRAISON))
+
+	if (!empty($conf->global->MAIN_SUBMODULE_LIVRAISON))
 	{
 		$head[$h][0] = DOL_URL_ROOT."/admin/livraison.php";
 		$head[$h][1] = $langs->trans("Receivings");
 		$h++;
 	}
-	
+
 
     complete_head_from_modules($conf, $langs, $object, $head, $h, 'order', 'remove');
 
@@ -76,64 +76,64 @@ function expedition_admin_prepare_head()
 
 	$h = 0;
 	$head = array();
-	
+
 	$head[$h][0] = DOL_URL_ROOT."/admin/confexped.php";
 	$head[$h][1] = $langs->trans("Setup");
 	$head[$h][2] = 'general';
 	$h++;
-	
-	
-	if (! empty($conf->global->MAIN_SUBMODULE_EXPEDITION))
+
+
+	if (!empty($conf->global->MAIN_SUBMODULE_EXPEDITION))
 	{
 		$head[$h][0] = DOL_URL_ROOT."/admin/expedition.php";
 		$head[$h][1] = $langs->trans("Shipment");
 		$head[$h][2] = 'shipment';
 		$h++;
 	}
-	
-	
-	if (! empty($conf->global->MAIN_SUBMODULE_EXPEDITION))
+
+
+	if (!empty($conf->global->MAIN_SUBMODULE_EXPEDITION))
 	{
-	$head[$h][0] = DOL_URL_ROOT.'/admin/expedition_extrafields.php';
-	$head[$h][1] = $langs->trans("ExtraFields");
-	$head[$h][2] = 'attributes_shipment';
-	$h++;
+	    $head[$h][0] = DOL_URL_ROOT.'/admin/expedition_extrafields.php';
+	    $head[$h][1] = $langs->trans("ExtraFields");
+	    $head[$h][2] = 'attributes_shipment';
+	    $h++;
 	}
-	
-	if (! empty($conf->global->MAIN_SUBMODULE_EXPEDITION))
+
+	if (!empty($conf->global->MAIN_SUBMODULE_EXPEDITION))
 	{
-	$head[$h][0] = DOL_URL_ROOT.'/admin/expeditiondet_extrafields.php';
-	$head[$h][1] = $langs->trans("ExtraFieldsLines");
-	$head[$h][2] = 'attributeslines_shipment';
-	$h++;
+	    $head[$h][0] = DOL_URL_ROOT.'/admin/expeditiondet_extrafields.php';
+	    $head[$h][1] = $langs->trans("ExtraFieldsLines");
+	    $head[$h][2] = 'attributeslines_shipment';
+	    $h++;
 	}
-	
-	if (! empty($conf->global->MAIN_SUBMODULE_LIVRAISON))
+
+	if (!empty($conf->global->MAIN_SUBMODULE_LIVRAISON))
 	{
 		$head[$h][0] = DOL_URL_ROOT."/admin/livraison.php";
 		$head[$h][1] = $langs->trans("Receivings");
 		$head[$h][2] = 'receivings';
 		$h++;
 	}
-	
-	if (! empty($conf->global->MAIN_SUBMODULE_LIVRAISON))
+
+	if (!empty($conf->global->MAIN_SUBMODULE_LIVRAISON))
 	{
 		$head[$h][0] = DOL_URL_ROOT.'/admin/livraison_extrafields.php';
 		$head[$h][1] = $langs->trans("ExtraFields");
 		$head[$h][2] = 'attributes_receivings';
 		$h++;
 	}
-	
-	if (! empty($conf->global->MAIN_SUBMODULE_LIVRAISON))
+
+	if (!empty($conf->global->MAIN_SUBMODULE_LIVRAISON))
 	{
 		$head[$h][0] = DOL_URL_ROOT.'/admin/livraisondet_extrafields.php';
 		$head[$h][1] = $langs->trans("ExtraFieldsLines");
 		$head[$h][2] = 'attributeslines_receivings';
 		$h++;
 	}
-	
-	
-	
+
+
+
 	complete_head_from_modules($conf, $langs, null, $head, $h, 'expedition_admin', 'remove');
 
 	return $head;

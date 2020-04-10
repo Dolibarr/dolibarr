@@ -12,8 +12,8 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
- * or see http://www.gnu.org/
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
+ * or see https://www.gnu.org/
  */
 
 /**
@@ -247,21 +247,17 @@ class HolidayTest extends PHPUnit\Framework\TestCase
         $langs=$this->savlangs;
         $db=$this->savdb;
 
-        //$localobject->fetch($localobject->id);
+        $result = $localobject->fetchUsers(true, true, '');
+        $this->assertNotEquals($result, -1);
 
-        /*
-        $result=$localobject->getNomUrl(1);
-        print __METHOD__." id=".$localobject->id." result=".$result."\n";
-        $this->assertNotEquals($result, '');
+        $result = $localobject->fetchUsers(true, false, '');
+        $this->assertNotEquals($result, -1);
 
-        $result=$localobject->getFullAddress(1);
-        print __METHOD__." id=".$localobject->id." result=".$result."\n";
-        $this->assertContains("New address\nNew zip New town\nBelgium", $result);
+        $result = $localobject->fetchUsers(false, true, '');
+        $this->assertNotEquals($result, -1);
 
-        $localobject->info($localobject->id);
-        print __METHOD__." localobject->date_creation=".$localobject->date_creation."\n";
-        $this->assertNotEquals($localobject->date_creation, '');
-        */
+        $result = $localobject->fetchUsers(false, false, '');
+        $this->assertNotEquals($result, -1);
 
         return $localobject->id;
     }

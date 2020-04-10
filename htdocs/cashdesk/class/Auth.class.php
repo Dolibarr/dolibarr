@@ -13,7 +13,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 
@@ -85,40 +85,40 @@ class Auth
 	 */
 	public function verif($aLogin, $aPasswd)
 	{
-		global $conf,$langs;
-		global $dolibarr_main_authentication,$dolibarr_auto_user;
+		global $conf, $langs;
+		global $dolibarr_main_authentication, $dolibarr_auto_user;
 
-		$ret=-1;
+		$ret = -1;
 
-		$login='';
+		$login = '';
 
-		$test=true;
+		$test = true;
 
         // Authentication mode
-        if (empty($dolibarr_main_authentication)) $dolibarr_main_authentication='http,dolibarr';
+        if (empty($dolibarr_main_authentication)) $dolibarr_main_authentication = 'http,dolibarr';
         // Authentication mode: forceuser
-        if ($dolibarr_main_authentication == 'forceuser' && empty($dolibarr_auto_user)) $dolibarr_auto_user='auto';
+        if ($dolibarr_main_authentication == 'forceuser' && empty($dolibarr_auto_user)) $dolibarr_auto_user = 'auto';
         // Set authmode
-        $authmode=explode(',', $dolibarr_main_authentication);
+        $authmode = explode(',', $dolibarr_main_authentication);
 
         // No authentication mode
-        if (! count($authmode))
+        if (!count($authmode))
         {
             $langs->load('main');
             dol_print_error('', $langs->trans("ErrorConfigParameterNotDefined", 'dolibarr_main_authentication'));
             exit;
         }
 
-		$usertotest=$aLogin;
-		$passwordtotest=$aPasswd;
-		$entitytotest=$conf->entity;
+		$usertotest = $aLogin;
+		$passwordtotest = $aPasswd;
+		$entitytotest = $conf->entity;
 
         // Validation tests user / password
         // If ok, the variable will be initialized login
         // If error, we will put error message in session under the name dol_loginmesg
-        $goontestloop=false;
-        if (isset($_SERVER["REMOTE_USER"]) && in_array('http', $authmode)) $goontestloop=true;
-        if (isset($aLogin) || GETPOST('openid_mode', 'alpha', 1)) $goontestloop=true;
+        $goontestloop = false;
+        if (isset($_SERVER["REMOTE_USER"]) && in_array('http', $authmode)) $goontestloop = true;
+        if (isset($aLogin) || GETPOST('openid_mode', 'alpha', 1)) $goontestloop = true;
 
         if ($test && $goontestloop)
         {
@@ -128,11 +128,11 @@ class Auth
             {
                 $this->login($aLogin);
                 $this->passwd($aPasswd);
-                $ret=0;
+                $ret = 0;
             }
             else
             {
-                $ret=-1;
+                $ret = -1;
             }
         }
 

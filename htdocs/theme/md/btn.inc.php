@@ -1,5 +1,5 @@
 <?php
-if (! defined('ISLOADEDBYSTEELSHEET')) die('Must be call by steelsheet'); ?>
+if (!defined('ISLOADEDBYSTEELSHEET')) die('Must be call by steelsheet'); ?>
 /* <style type="text/css" > */
 
 
@@ -13,7 +13,8 @@ div.divButAction {
 	margin-bottom: 1.4em;
 	vertical-align: top;
 }
-div.tabsAction > a.butAction, div.tabsAction > a.butActionRefused {
+div.tabsAction > a.butAction, div.tabsAction > a.butActionRefused, div.tabsAction > a.butActionDelete,
+div.tabsAction > span.butAction, div.tabsAction > span.butActionRefused, div.tabsAction > span.butActionDelete {
 	margin-bottom: 1.4em !important;
 }
 
@@ -22,11 +23,11 @@ span.butAction, span.butActionDelete {
 }
 
 
-.button, .butAction, .butActionDelete, .butActionRefused, .butActionNewRefused {
+.button, .buttonDelete, .butAction, .butActionDelete, .butActionRefused, .butActionNewRefused {
 	border-color: rgba(0, 0, 0, 0.15) rgba(0, 0, 0, 0.15) rgba(0, 0, 0, 0.25);
 	display: inline-block;
-	padding: 0.4em <?php echo ($dol_optimize_smallscreen?'0.4':'0.7'); ?>em;
-	margin: 0em <?php echo ($dol_optimize_smallscreen?'0.7':'0.9'); ?>em;
+	padding: 0.4em <?php echo ($dol_optimize_smallscreen ? '0.4' : '0.7'); ?>em;
+	margin: 0em <?php echo ($dol_optimize_smallscreen ? '0.7' : '0.9'); ?>em;
 	line-height: 20px;
 	text-align: center;
 	vertical-align: middle;
@@ -54,8 +55,8 @@ span.butAction, span.butActionDelete {
 	text-decoration: none;
 	/* border-color: rgba(0, 0, 0, 0.15) rgba(0, 0, 0, 0.15) rgba(0, 0, 0, 0.25); */
 	display: inline-block;
-	padding: 0.2em <?php echo ($dol_optimize_smallscreen?'0.4':'0.7'); ?>em;
-	margin: 0em <?php echo ($dol_optimize_smallscreen?'0.7':'0.9'); ?>em;
+	padding: 0.2em <?php echo ($dol_optimize_smallscreen ? '0.4' : '0.7'); ?>em;
+	margin: 0em <?php echo ($dol_optimize_smallscreen ? '0.7' : '0.9'); ?>em;
 	line-height: 20px;
 	/* text-align: center;  New button are on right of screen */
 	vertical-align: middle;
@@ -76,6 +77,20 @@ span.butAction, span.butActionDelete {
 }
 a.butActionNew>span.fa-plus-circle { padding-left: 6px; font-size: 1.5em; }
 a.butActionNewRefused>span.fa-plus-circle { padding-left: 6px; font-size: 1.5em; }
+
+.tableforfieldcreate a.butActionNew>span.fa-plus-circle, .tableforfieldcreate a.butActionNew>span.fa-plus-circle:hover,
+.tableforfieldedit a.butActionNew>span.fa-plus-circle, .tableforfieldedit a.butActionNew>span.fa-plus-circle:hover,
+span.butActionNew>span.fa-plus-circle, span.butActionNew>span.fa-plus-circle:hover,
+a.butActionNewRefused>span.fa-plus-circle, a.butActionNewRefused>span.fa-plus-circle:hover,
+span.butActionNewRefused>span.fa-plus-circle, span.butActionNewRefused>span.fa-plus-circle:hover,
+a.butActionNew>span.fa-list-alt, a.butActionNew>span.fa-list-alt:hover,
+span.butActionNew>span.fa-list-alt, span.butActionNew>span.fa-list-alt:hover,
+a.butActionNewRefused>span.fa-list-alt, a.butActionNewRefused>span.fa-list-alt:hover,
+span.butActionNewRefused>span.fa-list-alt, span.butActionNewRefused>span.fa-list-alt:hover
+{
+	font-size: 1em;
+	padding-left: 0px;
+}
 
 .button, .butAction {
 	color: #ffffff !important;
@@ -228,7 +243,7 @@ div.pagination .btnTitle:hover .btnTitle-label{
 
 
 
-<?php if (! empty($conf->global->MAIN_BUTTON_HIDE_UNAUTHORIZED) && (! $user->admin)) { ?>
+<?php if (!empty($conf->global->MAIN_BUTTON_HIDE_UNAUTHORIZED) && (!$user->admin)) { ?>
 .butActionRefused, .butActionNewRefused, .btnTitle.refused {
     display: none !important;
 }

@@ -16,7 +16,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -36,33 +36,33 @@ $langs->load("companies");
 
 // Security check
 $id = GETPOST('id', 'int');
-if ($user->societe_id) $id=$user->societe_id;
+if ($user->socid) $id = $user->socid;
 $result = restrictedArea($user, 'contact', $id, 'socpeople&societe');
 
 $object = new Contact($db);
 if ($id > 0) $object->fetch($id);
 
-$permissionnote=$user->rights->societe->creer;	// Used by the include of actions_setnotes.inc.php
+$permissionnote = $user->rights->societe->creer; // Used by the include of actions_setnotes.inc.php
 
 
 /*
  * Actions
  */
 
-include DOL_DOCUMENT_ROOT.'/core/actions_setnotes.inc.php';	// Must be include, not includ_once
+include DOL_DOCUMENT_ROOT.'/core/actions_setnotes.inc.php'; // Must be include, not includ_once
 
 
 /*
  *	View
  */
 
-$now=dol_now();
+$now = dol_now();
 
-$title = (! empty($conf->global->SOCIETE_ADDRESSES_MANAGEMENT) ? $langs->trans("Contacts") : $langs->trans("ContactsAddresses"));
+$title = (!empty($conf->global->SOCIETE_ADDRESSES_MANAGEMENT) ? $langs->trans("Contacts") : $langs->trans("ContactsAddresses"));
 
 $form = new Form($db);
 
-$help_url='EN:Module_Third_Parties|FR:Module_Tiers|ES:Empresas';
+$help_url = 'EN:Module_Third_Parties|FR:Module_Tiers|ES:Empresas';
 llxHeader('', $title, $help_url);
 
 if ($id > 0)
@@ -70,7 +70,7 @@ if ($id > 0)
     /*
      * Affichage onglets
      */
-    if (! empty($conf->notification->enabled)) $langs->load("mails");
+    if (!empty($conf->notification->enabled)) $langs->load("mails");
 
     $head = contact_prepare_head($object);
 
@@ -78,28 +78,28 @@ if ($id > 0)
 
     $linkback = '<a href="'.DOL_URL_ROOT.'/contact/list.php?restore_lastsearch_values=1">'.$langs->trans("BackToList").'</a>';
 
-    $morehtmlref='<div class="refidno">';
+    $morehtmlref = '<div class="refidno">';
     if (empty($conf->global->SOCIETE_DISABLE_CONTACTS))
     {
-        $objsoc=new Societe($db);
+        $objsoc = new Societe($db);
         $objsoc->fetch($object->socid);
         // Thirdparty
-        $morehtmlref.=$langs->trans('ThirdParty') . ' : ';
-        if ($objsoc->id > 0) $morehtmlref.=$objsoc->getNomUrl(1);
-        else $morehtmlref.=$langs->trans("ContactNotLinkedToCompany");
+        $morehtmlref .= $langs->trans('ThirdParty').' : ';
+        if ($objsoc->id > 0) $morehtmlref .= $objsoc->getNomUrl(1);
+        else $morehtmlref .= $langs->trans("ContactNotLinkedToCompany");
     }
-    $morehtmlref.='</div>';
+    $morehtmlref .= '</div>';
 
     dol_banner_tab($object, 'id', $linkback, 1, 'rowid', 'ref', $morehtmlref);
 
-    $cssclass='titlefield';
+    $cssclass = 'titlefield';
     //if ($action == 'editnote_public') $cssclass='titlefieldcreate';
     //if ($action == 'editnote_private') $cssclass='titlefieldcreate';
 
     print '<div class="fichecenter">';
     print '<div class="underbanner clearboth"></div>';
 
-	print '<table class="border centpercent">';
+	print '<table class="border centpercent tableforfield">';
 
     // Civility
     print '<tr><td class="'.$cssclass.'">'.$langs->trans("UserTitle").'</td><td>';
@@ -109,7 +109,7 @@ if ($id > 0)
     print "</table>";
 
 
-	$cssclass="titlefield";
+	$cssclass = "titlefield";
 	include DOL_DOCUMENT_ROOT.'/core/tpl/notes.tpl.php';
 
 	print '</div>';

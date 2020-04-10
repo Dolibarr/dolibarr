@@ -12,7 +12,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -27,7 +27,7 @@
 <?php
 
 // Wrapper to show tooltips
-if (! empty($conf->use_javascript_ajax) && empty($conf->dol_no_mouse_hover))
+if (!empty($conf->use_javascript_ajax) && empty($conf->dol_no_mouse_hover))
 {
 	print "\n<!-- JS CODE TO ENABLE Tooltips on all object with class classfortooltip -->\n";
 	print '<script type="text/javascript">

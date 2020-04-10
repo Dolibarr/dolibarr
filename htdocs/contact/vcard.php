@@ -14,7 +14,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -37,19 +37,19 @@ $id = GETPOST('id', 'int');
 $result = restrictedArea($user, 'contact', $id, 'socpeople&societe');
 
 
-$result=$contact->fetch($id);
+$result = $contact->fetch($id);
 if ($result <= 0)
 {
 	dol_print_error($contact->error);
 	exit;
 }
 
-$physicalperson=1;
+$physicalperson = 1;
 
 $company = new Societe($db);
 if ($contact->socid)
 {
-	$result=$company->fetch($contact->socid);
+	$result = $company->fetch($contact->socid);
 }
 
 // We create VCard
@@ -65,8 +65,8 @@ $v->setPhoneNumber($contact->phone_pro, "TYPE=WORK;VOICE");
 $v->setPhoneNumber($contact->phone_mobile, "TYPE=CELL;VOICE");
 $v->setPhoneNumber($contact->fax, "TYPE=WORK;FAX");
 
-$v->setAddress("", "", $contact->address, $contact->town, "", $contact->zip, ($contact->country_code?$contact->country:''), "TYPE=WORK;POSTAL");
-$v->setLabel("", "", $contact->address, $contact->town, "", $contact->zip, ($contact->country_code?$contact->country:''), "TYPE=WORK");
+$v->setAddress("", "", $contact->address, $contact->town, "", $contact->zip, ($contact->country_code ? $contact->country : ''), "TYPE=WORK;POSTAL");
+$v->setLabel("", "", $contact->address, $contact->town, "", $contact->zip, ($contact->country_code ? $contact->country : ''), "TYPE=WORK");
 $v->setEmail($contact->email, 'TYPE=PREF,INTERNET');
 $v->setNote($contact->note);
 
@@ -76,9 +76,9 @@ $v->setTitle($contact->poste);
 if ($company->id)
 {
 	$v->setURL($company->url, "TYPE=WORK");
-	if (! $contact->phone_pro) $v->setPhoneNumber($company->phone, "TYPE=WORK;VOICE");
-	if (! $contact->fax)       $v->setPhoneNumber($company->fax, "TYPE=WORK;FAX");
-	if (! $contact->zip)        $v->setAddress("", "", $company->address, $company->town, "", $company->zip, $company->country, "TYPE=WORK;POSTAL");
+	if (!$contact->phone_pro) $v->setPhoneNumber($company->phone, "TYPE=WORK;VOICE");
+	if (!$contact->fax)       $v->setPhoneNumber($company->fax, "TYPE=WORK;FAX");
+	if (!$contact->zip)        $v->setAddress("", "", $company->address, $company->town, "", $company->zip, $company->country, "TYPE=WORK;POSTAL");
 	if ($company->email != $contact->email) $v->setEmail($company->email, 'TYPE=PREF,INTERNET');
 	// Si contact lie a un tiers non de type "particulier"
 	if ($contact->typent_code != 'TE_PRIVATE') $v->setOrg($company->name);
@@ -95,7 +95,7 @@ $db->close();
 
 $output = $v->getVCard();
 
-$filename =trim(urldecode($v->getFileName()));      // "Nom prenom.vcf"
+$filename = trim(urldecode($v->getFileName())); // "Nom prenom.vcf"
 $filenameurlencoded = dol_sanitizeFileName(urlencode($filename));
 //$filename = dol_sanitizeFileName($filename);
 

@@ -13,18 +13,18 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 // Protection to avoid direct call of template
-if (empty($langs) || ! is_object($langs))
+if (empty($langs) || !is_object($langs))
 {
 	print "Error, template page can't be called as URL";
 	exit;
 }
 
 // Load translation files required by the page
-$langs->loadLangs(array("main","bills","banks"));
+$langs->loadLangs(array("main", "bills", "banks"));
 
 // Object $form must de defined
 
@@ -36,18 +36,16 @@ $langs->loadLangs(array("main","bills","banks"));
 
 		<tr><td class="resume_label"><?php echo $langs->trans("Invoice"); ?></td><td><?php  echo $obj_facturation->numInvoice(); ?></td></tr>
 		<tr><td class="resume_label"><?php echo $langs->trans("TotalHT"); ?></td><td><?php echo price(price2num($obj_facturation->prixTotalHt(), 'MT'), 0, $langs, 0, 0, -1, $conf->currency); ?></td></tr>
-		<?php
-			// Affichage de la tva par taux
-			if ( $obj_facturation->montantTva() ) {
-
-				echo ('<tr><td class="resume_label">'.$langs->trans("VAT").'</td><td>'.price(price2num($obj_facturation->montantTva(), 'MT'), 0, $langs, 0, 0, -1, $conf->currency).'</td></tr>');
-			}
-			else
-			{
-
-				echo ('<tr><td class="resume_label">'.$langs->trans("VAT").'</td><td>'.$langs->trans("NoVAT").'</td></tr>');
-			}
-		?>
+<?php
+// Affichage de la tva par taux
+if ($obj_facturation->montantTva()) {
+	echo ('<tr><td class="resume_label">'.$langs->trans("VAT").'</td><td>'.price(price2num($obj_facturation->montantTva(), 'MT'), 0, $langs, 0, 0, -1, $conf->currency).'</td></tr>');
+}
+else
+{
+	echo ('<tr><td class="resume_label">'.$langs->trans("VAT").'</td><td>'.$langs->trans("NoVAT").'</td></tr>');
+}
+?>
 		<tr><td class="resume_label"><?php echo $langs->trans("TotalTTC"); ?> </td><td><?php echo price(price2num($obj_facturation->prixTotalTtc(), 'MT'), 0, $langs, 0, 0, -1, $conf->currency); ?></td></tr>
 		<tr><td class="resume_label"><?php echo $langs->trans("PaymentMode"); ?> </td><td>
 		<?php
@@ -55,60 +53,57 @@ $langs->loadLangs(array("main","bills","banks"));
 		{
 			case 'ESP':
 				echo $langs->trans("Cash");
-				$filtre='courant=2';
+				$filtre = 'courant=2';
 				if (!empty($_SESSION["CASHDESK_ID_BANKACCOUNT_CASH"]))
 					$selected = $_SESSION["CASHDESK_ID_BANKACCOUNT_CASH"];
 				break;
 			case 'CB':
 				echo $langs->trans("CreditCard");
-				$filtre='courant=1';
+				$filtre = 'courant=1';
 				if (!empty($_SESSION["CASHDESK_ID_BANKACCOUNT_CB"]))
 					$selected = $_SESSION["CASHDESK_ID_BANKACCOUNT_CB"];
 				break;
 			case 'CHQ':
 				echo $langs->trans("Cheque");
-				$filtre='courant=1';
+				$filtre = 'courant=1';
 				if (!empty($_SESSION["CASHDESK_ID_BANKACCOUNT_CHEQUE"]))
 					$selected = $_SESSION["CASHDESK_ID_BANKACCOUNT_CHEQUE"];
 				break;
 			case 'DIF':
 				echo $langs->trans("Reported");
-				$filtre='courant=1 OR courant=2';
-				$selected='';
+				$filtre = 'courant=1 OR courant=2';
+				$selected = '';
 				break;
 			default:
-				$filtre='courant=1 OR courant=2';
-				$selected='';
+				$filtre = 'courant=1 OR courant=2';
+				$selected = '';
 		}
 
 		?>
 		</td></tr>
 
-		<?php
-			// Affichage des infos en fonction du mode de paiement
-			if ( $obj_facturation->getsetPaymentMode() == 'DIF' ) {
+<?php
+// Affichage des infos en fonction du mode de paiement
+if ($obj_facturation->getsetPaymentMode() == 'DIF') {
+	echo ('<tr><td class="resume_label">'.$langs->trans("DateDue").'</td><td>'.$obj_facturation->paiementLe().'</td></tr>');
+} else {
+	echo ('<tr><td class="resume_label">'.$langs->trans("Received").'</td><td>'.price(price2num($obj_facturation->montantEncaisse(), 'MT'), 0, $langs, 0, 0, -1, $conf->currency).'</td></tr>');
+}
 
-				echo ('<tr><td class="resume_label">'.$langs->trans("DateDue").'</td><td>'.$obj_facturation->paiementLe().'</td></tr>');
-			} else {
+// Affichage du montant rendu (reglement en especes)
+if ($obj_facturation->montantRendu()) {
+	echo ('<tr><td class="resume_label">'.$langs->trans("Change").'</td><td>'.price(price2num($obj_facturation->montantRendu(), 'MT'), 0, $langs, 0, 0, -1, $conf->currency).'</td></tr>');
+}
 
-				echo ('<tr><td class="resume_label">'.$langs->trans("Received").'</td><td>'.price(price2num($obj_facturation->montantEncaisse(), 'MT'), 0, $langs, 0, 0, -1, $conf->currency).'</td></tr>');
-			}
-
-			// Affichage du montant rendu (reglement en especes)
-			if ( $obj_facturation->montantRendu() ) {
-
-				echo ('<tr><td class="resume_label">'.$langs->trans("Change").'</td><td>'.price(price2num($obj_facturation->montantRendu(), 'MT'), 0, $langs, 0, 0, -1, $conf->currency).'</td></tr>');
-			}
-
-		?>
+?>
 
 	</table>
 
 	<form id="frmValidation" class="formulaire2" method="post" action="validation_verif.php?action=valide_facture">
-		<input type="hidden" name="token" value="<?php echo $_SESSION['newtoken']; ?>" />
+		<input type="hidden" name="token" value="<?php echo newToken(); ?>" />
 		<p class="note_label">
 			<?php
-				echo $langs->trans("BankToPay"). "<br>";
+				echo $langs->trans("BankToPay")."<br>";
 				$form->select_comptes($selected, 'cashdeskbank', 0, $filtre);
 			?>
 		</p>

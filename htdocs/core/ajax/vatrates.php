@@ -12,7 +12,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -20,17 +20,17 @@
  *       \brief      File to load vat rates combobox
  */
 
-if (! defined('NOTOKENRENEWAL')) define('NOTOKENRENEWAL', '1'); // Disables token renewal
-if (! defined('NOREQUIREMENU'))  define('NOREQUIREMENU', '1');
-if (! defined('NOREQUIREAJAX'))  define('NOREQUIREAJAX', '1');
+if (!defined('NOTOKENRENEWAL')) define('NOTOKENRENEWAL', '1'); // Disables token renewal
+if (!defined('NOREQUIREMENU'))  define('NOREQUIREMENU', '1');
+if (!defined('NOREQUIREAJAX'))  define('NOREQUIREAJAX', '1');
 
 require '../../main.inc.php';
 
-$id			= GETPOST('id', 'int');
-$action		= GETPOST('action', 'alpha');
+$id = GETPOST('id', 'int');
+$action = GETPOST('action', 'alpha');
 $htmlname	= GETPOST('htmlname', 'alpha');
-$selected	= (GETPOST('selected')?GETPOST('selected'):'-1');
-$productid	= (GETPOST('productid', 'int')?GETPOST('productid', 'int'):0);
+$selected	= (GETPOST('selected') ?GETPOST('selected') : '-1');
+$productid = (GETPOST('productid', 'int') ?GETPOST('productid', 'int') : 0);
 
 /*
  * View
@@ -41,7 +41,7 @@ top_httphead();
 //print '<!-- Ajax page called with url '.dol_escape_htmltag($_SERVER["PHP_SELF"]).'?'.dol_escape_htmltag($_SERVER["QUERY_STRING"]).' -->'."\n";
 
 // Load original field value
-if (! empty($id) && ! empty($action) && ! empty($htmlname))
+if (!empty($id) && !empty($action) && !empty($htmlname))
 {
 	$form = new Form($db);
 	$soc = new Societe($db);
@@ -59,10 +59,10 @@ if (! empty($id) && ! empty($action) && ! empty($htmlname))
 		$seller = $soc;
 	}
 
-	$return=array();
+	$return = array();
 
 	$return['value']	= $form->load_tva('tva_tx', $selected, $seller, $buyer, $productid, 0, '', true);
-	$return['num']		= $form->num;
+	$return['num'] = $form->num;
 	$return['error']	= $form->error;
 
 	echo json_encode($return);

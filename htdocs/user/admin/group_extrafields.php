@@ -16,13 +16,13 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
- *      \file       htdocs/adherents/admin/adherent_extrafields.php
- *		\ingroup    member
- *		\brief      Page to setup extra fields of members
+ *  \file       htdocs/user/admin/group_extrafields.php
+ *  \ingroup    user
+ *  \brief      Page to setup extra fields of users
  */
 
 require '../../main.inc.php';
@@ -36,13 +36,13 @@ $extrafields = new ExtraFields($db);
 $form = new Form($db);
 
 // List of supported format
-$tmptype2label=ExtraFields::$type2label;
-$type2label=array('');
-foreach ($tmptype2label as $key => $val) $type2label[$key]=$langs->transnoentitiesnoconv($val);
+$tmptype2label = ExtraFields::$type2label;
+$type2label = array('');
+foreach ($tmptype2label as $key => $val) $type2label[$key] = $langs->transnoentitiesnoconv($val);
 
-$action=GETPOST('action', 'alpha');
-$attrname=GETPOST('attrname', 'alpha');
-$elementtype='usergroup'; //Must be the $table_element of the class that manage extrafield
+$action = GETPOST('action', 'alpha');
+$attrname = GETPOST('attrname', 'alpha');
+$elementtype = 'usergroup'; //Must be the $table_element of the class that manage extrafield
 
 if (!$user->admin) accessforbidden();
 
@@ -59,13 +59,13 @@ require DOL_DOCUMENT_ROOT.'/core/actions_extrafields.inc.php';
  * View
  */
 
-$textobject=$langs->transnoentitiesnoconv("Groups");
+$textobject = $langs->transnoentitiesnoconv("Groups");
 
-$help_url='EN:Module_Users|FR:Module_Utilisateurs|ES:M&oacute;dulo_Usuarios';
+$help_url = 'EN:Module_Users|FR:Module_Utilisateurs|ES:M&oacute;dulo_Usuarios';
 llxHeader('', $langs->trans("UsersSetup"), $help_url);
 
 
-$linkback='<a href="'.DOL_URL_ROOT.'/admin/modules.php?restore_lastsearch_values=1">'.$langs->trans("BackToModuleList").'</a>';
+$linkback = '<a href="'.DOL_URL_ROOT.'/admin/modules.php?restore_lastsearch_values=1">'.$langs->trans("BackToModuleList").'</a>';
 print load_fiche_titre($langs->trans("UsersSetup"), $linkback, 'title_setup');
 
 
@@ -98,7 +98,7 @@ if ($action == 'create')
 	print '<br><div id="newattrib"></div>';
 	print load_fiche_titre($langs->trans('NewAttribute'));
 
-    require DOL_DOCUMENT_ROOT.'/core/tpl/admin_extrafields_add.tpl.php';
+	require DOL_DOCUMENT_ROOT.'/core/tpl/admin_extrafields_add.tpl.php';
 }
 
 /* ************************************************************************** */
@@ -106,12 +106,12 @@ if ($action == 'create')
 /* Edition of an optional field                                               */
 /*                                                                            */
 /* ************************************************************************** */
-if ($action == 'edit' && ! empty($attrname))
+if ($action == 'edit' && !empty($attrname))
 {
 	print "<br>";
 	print load_fiche_titre($langs->trans("FieldEdition", $attrname));
 
-    require DOL_DOCUMENT_ROOT.'/core/tpl/admin_extrafields_edit.tpl.php';
+	require DOL_DOCUMENT_ROOT.'/core/tpl/admin_extrafields_edit.tpl.php';
 }
 
 // End of page

@@ -38,6 +38,7 @@ tools:
                 - doc/*
                 - test/*
                 - htdocs/includes/*
+                - htdocs/core/class/lessc.class.php
             paths:
                 - htdocs/
                 - scripts/

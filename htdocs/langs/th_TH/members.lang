@@ -29,6 +29,7 @@ MenuMembersUpToDate=ขึ้นอยู่กับสมาชิกในว
 MenuMembersNotUpToDate=ออกจากสมาชิกวัน
 MenuMembersResiliated=Terminated members
 MembersWithSubscriptionToReceive=สมาชิกที่มีการสมัครสมาชิกจะได้รับ
+MembersWithSubscriptionToReceiveShort=Subscription to receive
 DateSubscription=วันที่สมัครสมาชิก
 DateEndSubscription=วันที่สิ้นสุดการสมัครสมาชิก
 EndSubscription=สมัครสมาชิก End

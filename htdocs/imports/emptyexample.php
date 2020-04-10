@@ -12,7 +12,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -48,8 +48,8 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/imports/class/import.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/modules/import/modules_import.php';
 
-$datatoimport=GETPOST('datatoimport');
-$format=GETPOST('format');
+$datatoimport = GETPOST('datatoimport');
+$format = GETPOST('format');
 
 // Load translation files required by the page
 $langs->load("exports");
@@ -66,38 +66,38 @@ if (empty($datatoimport))
 }
 
 
-$filename=$langs->trans("ExampleOfImportFile").'_'.$datatoimport.'.'.$format;
+$filename = $langs->trans("ExampleOfImportFile").'_'.$datatoimport.'.'.$format;
 
-$objimport=new Import($db);
+$objimport = new Import($db);
 $objimport->load_arrays($user, $datatoimport);
 // Load arrays from descriptor module
-$entity=$objimport->array_import_entities[0][$code];
-$entityicon=$entitytoicon[$entity]?$entitytoicon[$entity]:$entity;
-$entitylang=$entitytolang[$entity]?$entitytolang[$entity]:$entity;
-$fieldstarget=$objimport->array_import_fields[0];
-$valuestarget=$objimport->array_import_examplevalues[0];
+$entity = $objimport->array_import_entities[0][$code];
+$entityicon = $entitytoicon[$entity] ? $entitytoicon[$entity] : $entity;
+$entitylang = $entitytolang[$entity] ? $entitytolang[$entity] : $entity;
+$fieldstarget = $objimport->array_import_fields[0];
+$valuestarget = $objimport->array_import_examplevalues[0];
 
 $attachment = true;
-if (isset($_GET["attachment"])) $attachment=$_GET["attachment"];
+if (isset($_GET["attachment"])) $attachment = $_GET["attachment"];
 //$attachment = false;
-$contenttype=dol_mimetype($format);
-if (isset($_GET["contenttype"])) $contenttype=$_GET["contenttype"];
+$contenttype = dol_mimetype($format);
+if (isset($_GET["contenttype"])) $contenttype = $_GET["contenttype"];
 //$contenttype='text/plain';
-$outputencoding='UTF-8';
+$outputencoding = 'UTF-8';
 
-if ($contenttype)       header('Content-Type: '.$contenttype.($outputencoding?'; charset='.$outputencoding:''));
+if ($contenttype)       header('Content-Type: '.$contenttype.($outputencoding ? '; charset='.$outputencoding : ''));
 if ($attachment) 		header('Content-Disposition: attachment; filename="'.$filename.'"');
 
 
 // List of targets fields
-$headerlinefields=array();
-$contentlinevalues=array();
+$headerlinefields = array();
+$contentlinevalues = array();
 $i = 0;
-foreach($fieldstarget as $code=>$label)
+foreach ($fieldstarget as $code=>$label)
 {
-	$withoutstar=preg_replace('/\*/', '', $fieldstarget[$code]);
-	$headerlinefields[]=$langs->transnoentities($withoutstar).($withoutstar != $fieldstarget[$code]?'*':'').' ('.$code.')';
-	$contentlinevalues[]=$valuestarget[$code];
+	$withoutstar = preg_replace('/\*/', '', $fieldstarget[$code]);
+	$headerlinefields[] = $langs->transnoentities($withoutstar).($withoutstar != $fieldstarget[$code] ? '*' : '').' ('.$code.')';
+	$contentlinevalues[] = $valuestarget[$code];
 }
 //var_dump($headerlinefields);
 //var_dump($contentlinevalues);

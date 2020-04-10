@@ -50,7 +50,7 @@ fi
 # ----------------------------- if no params on command line
 if [ "x$passwd" = "x" ]
 then
-	export dumpfile=`ls $mydir/mysqldump_dolibarr_*.sql | sort | tail -n 1`
+	export dumpfile=`ls -v $mydir/mysqldump_dolibarr_*.sql | tail -n 1`
 	export dumpfile=`basename $dumpfile`
 
 	# ----------------------------- input file
@@ -110,7 +110,7 @@ then
 	fichtemp=`tempfile 2>/dev/null` || fichtemp=/tmp/test$$
 	trap "rm -f $fichtemp" 0 1 2 5 15
 	$DIALOG --title "Init Dolibarr with demo values" --clear \
-	        --inputbox "Mysql root login (ex: root):" 16 55 root 2> $fichtemp
+	        --inputbox "Mysql user login (ex: root):" 16 55 root 2> $fichtemp
 	
 	valret=$?
 	
@@ -128,7 +128,7 @@ then
 	fichtemp=`tempfile 2>/dev/null` || fichtemp=/tmp/test$$
 	trap "rm -f $fichtemp" 0 1 2 5 15
 	$DIALOG --title "Init Dolibarr with demo values" --clear \
-	        --inputbox "Password for Mysql root login :" 16 55 2> $fichtemp
+	        --inputbox "Password for Mysql user login :" 16 55 2> $fichtemp
 	
 	valret=$?
 	
@@ -172,6 +172,8 @@ echo "mysql -P$port -u$admin -p***** $base < $mydir/$dumpfile"
 mysql -P$port -u$admin $passwd $base < $mydir/$dumpfile
 export res=$?
 
+$mydir/updatedemo.php confirm
+export res=$?
 
 # ---------------------------- copy demo files
 export documentdir=`cat $mydir/../../htdocs/conf/conf.php | grep '^\$dolibarr_main_data_root' | sed -e 's/$dolibarr_main_data_root=//' | sed -e 's/;//' | sed -e "s/'//g" | sed -e 's/"//g' `

@@ -12,8 +12,8 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
- * or see http://www.gnu.org/
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
+ * or see https://www.gnu.org/
  */
 
 /**
@@ -34,7 +34,7 @@ function categories_prepare_head($object, $type)
 	global $langs, $conf, $user;
 
 	// Load translation files required by the page
-    $langs->loadLangs(array('categories', 'products'));
+	$langs->loadLangs(array('categories', 'products'));
 
 	$h = 0;
 	$head = array();
@@ -49,21 +49,21 @@ function categories_prepare_head($object, $type)
 	$head[$h][2] = 'photos';
 	$h++;
 
-	if (! empty($conf->global->MAIN_MULTILANGS))
+	if (!empty($conf->global->MAIN_MULTILANGS))
 	{
-    	$head[$h][0] = DOL_URL_ROOT.'/categories/traduction.php?id='.$object->id.'&amp;type='.$type;
-    	$head[$h][1] = $langs->trans("Translation");
-    	$head[$h][2] = 'translation';
-    	$h++;
+		$head[$h][0] = DOL_URL_ROOT.'/categories/traduction.php?id='.$object->id.'&amp;type='.$type;
+		$head[$h][1] = $langs->trans("Translation");
+		$head[$h][2] = 'translation';
+		$h++;
 	}
 
-    // Show more tabs from modules
-    // Entries must be declared in modules descriptor with line
-    // $this->tabs = array('entity:+tabname:Title:@mymodule:/mymodule/mypage.php?id=__ID__');   to add new tab
-    // $this->tabs = array('entity:-tabname);   												to remove a tab
-    complete_head_from_modules($conf, $langs, $object, $head, $h, 'categories_'.$type);
+	// Show more tabs from modules
+	// Entries must be declared in modules descriptor with line
+	// $this->tabs = array('entity:+tabname:Title:@mymodule:/mymodule/mypage.php?id=__ID__');   to add new tab
+	// $this->tabs = array('entity:-tabname);   												to remove a tab
+	complete_head_from_modules($conf, $langs, $object, $head, $h, 'categories_'.$type);
 
-    complete_head_from_modules($conf, $langs, $object, $head, $h, 'categories_'.$type, 'remove');
+	complete_head_from_modules($conf, $langs, $object, $head, $h, 'categories_'.$type, 'remove');
 
 	return $head;
 }

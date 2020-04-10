@@ -15,7 +15,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -23,14 +23,14 @@
  *       \brief      Wrapper that receive any search. Depending on input field, make a redirect to correct URL.
  */
 
-if (! defined('NOREQUIREUSER'))   define('NOREQUIREUSER', '1');
-if (! defined('NOREQUIREDB'))   define('NOREQUIREDB', '1');
-if (! defined('NOREQUIRESOC'))    define('NOREQUIRESOC', '1');
-if (! defined('NOREQUIRETRAN')) define('NOREQUIRETRAN', '1');
-if (! defined('NOCSRFCHECK'))     define('NOCSRFCHECK', 1);
-if (! defined('NOTOKENRENEWAL'))  define('NOTOKENRENEWAL', 1);
-if (! defined('NOLOGIN')) define('NOLOGIN', 1);
-if (! defined('NOREQUIREMENU'))  define('NOREQUIREMENU', 1);
+if (!defined('NOREQUIREUSER'))   define('NOREQUIREUSER', '1');
+if (!defined('NOREQUIREDB'))   define('NOREQUIREDB', '1');
+if (!defined('NOREQUIRESOC'))    define('NOREQUIRESOC', '1');
+if (!defined('NOREQUIRETRAN')) define('NOREQUIRETRAN', '1');
+if (!defined('NOCSRFCHECK'))     define('NOCSRFCHECK', 1);
+if (!defined('NOTOKENRENEWAL'))  define('NOTOKENRENEWAL', 1);
+if (!defined('NOLOGIN')) define('NOLOGIN', 1);
+if (!defined('NOREQUIREMENU'))  define('NOREQUIREMENU', 1);
 
 require_once '../main.inc.php';
 
@@ -125,25 +125,25 @@ if (GETPOST('search_project') != '')
 }
 if (GETPOST('search_task') != '')
 {
-    header("Location: ".DOL_URL_ROOT.'/projet/tasks/list.php?mode=search&search_all='.urlencode(GETPOST('search_task')));
-    exit;
+	header("Location: ".DOL_URL_ROOT.'/projet/tasks/list.php?mode=search&search_all='.urlencode(GETPOST('search_task')));
+	exit;
 }
 
 if (GETPOST('search_user') != '')
 {
-    header("Location: ".DOL_URL_ROOT.'/user/list.php?mode=search&sall='.urlencode(GETPOST('search_user')));
-    exit;
+	header("Location: ".DOL_URL_ROOT.'/user/list.php?mode=search&sall='.urlencode(GETPOST('search_user')));
+	exit;
 }
 if (GETPOST('search_group') != '')
 {
-    header("Location: ".DOL_URL_ROOT.'/user/group/list.php?mode=search&sall='.urlencode(GETPOST('search_group')));
-    exit;
+	header("Location: ".DOL_URL_ROOT.'/user/group/list.php?mode=search&sall='.urlencode(GETPOST('search_group')));
+	exit;
 }
 
 
 
 // If we are here, search was called with no supported criteria
-if (! empty($_SERVER['HTTP_REFERER']))
+if (!empty($_SERVER['HTTP_REFERER']))
 {
 	header("Location: ".$_SERVER['HTTP_REFERER']);
 	exit;

@@ -12,8 +12,8 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
- * or see http://www.gnu.org/
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
+ * or see https://www.gnu.org/
  */
 
 /**
@@ -30,16 +30,16 @@
 // Save selection
 if (GETPOST('formfilteraction', 'none') == 'listafterchangingselectedfields')
 {
-    $tabparam=array();
+    $tabparam = array();
 
-    $varpage=empty($contextpage)?$_SERVER["PHP_SELF"]:$contextpage;
+    $varpage = empty($contextpage) ? $_SERVER["PHP_SELF"] : $contextpage;
 
-    if (GETPOST("selectedfields")) $tabparam["MAIN_SELECTEDFIELDS_".$varpage]=GETPOST("selectedfields");
-    else $tabparam["MAIN_SELECTEDFIELDS_".$varpage]='';
+    if (GETPOST("selectedfields")) $tabparam["MAIN_SELECTEDFIELDS_".$varpage] = GETPOST("selectedfields");
+    else $tabparam["MAIN_SELECTEDFIELDS_".$varpage] = '';
 
     include_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
 
-    $result=dol_set_user_param($db, $conf, $user, $tabparam);
+    $result = dol_set_user_param($db, $conf, $user, $tabparam);
 
     //$action='list';
     //var_dump($tabparam);exit;

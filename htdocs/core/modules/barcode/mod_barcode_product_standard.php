@@ -15,8 +15,8 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
- * or see http://www.gnu.org/
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
+ * or see https://www.gnu.org/
  */
 
 /**
@@ -33,23 +33,26 @@ require_once DOL_DOCUMENT_ROOT.'/core/modules/barcode/modules_barcode.class.php'
  */
 class mod_barcode_product_standard extends ModeleNumRefBarCode
 {
-	public $name='Standard';				// Model Name
+	public $name = 'Standard'; // Model Name
 
-	public $code_modifiable;				// Editable code
+	public $code_modifiable; // Editable code
 
-	public $code_modifiable_invalide;		// Modified code if it is invalid
+	public $code_modifiable_invalide; // Modified code if it is invalid
 
-	public $code_modifiable_null;			// Modified code if it is null
+	public $code_modifiable_null; // Modified code if it is null
 
-	public $code_null;						// Optional code
+	public $code_null; // Optional code
 
 	/**
      * Dolibarr version of the loaded document
      * @var string
      */
-	public $version = 'dolibarr';    		// 'development', 'experimental', 'dolibarr'
+	public $version = 'dolibarr'; // 'development', 'experimental', 'dolibarr'
 
-	public $code_auto;                     // Automatic Numbering
+	/**
+	 * @var int Automatic numbering
+	 */
+	public $code_auto;
 
 	public $searchcode; // Search string
 
@@ -84,32 +87,32 @@ class mod_barcode_product_standard extends ModeleNumRefBarCode
 
 		$langs->load("products");
 
-		$disabled = ((! empty($mc->sharings['referent']) && $mc->sharings['referent'] != $conf->entity) ? ' disabled' : '');
+		$disabled = ((!empty($mc->sharings['referent']) && $mc->sharings['referent'] != $conf->entity) ? ' disabled' : '');
 
 		$texte = $langs->trans('GenericNumRefModelDesc')."<br>\n";
-		$texte.= '<form action="'.$_SERVER["PHP_SELF"].'" method="POST">';
-		$texte.= '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
-		$texte.= '<input type="hidden" name="action" value="setModuleOptions">';
-		$texte.= '<input type="hidden" name="param1" value="BARCODE_STANDARD_PRODUCT_MASK">';
-		$texte.= '<table class="nobordernopadding" width="100%">';
+		$texte .= '<form action="'.$_SERVER["PHP_SELF"].'" method="POST">';
+		$texte .= '<input type="hidden" name="token" value="'.newToken().'">';
+		$texte .= '<input type="hidden" name="action" value="setModuleOptions">';
+		$texte .= '<input type="hidden" name="param1" value="BARCODE_STANDARD_PRODUCT_MASK">';
+		$texte .= '<table class="nobordernopadding" width="100%">';
 
-		$tooltip=$langs->trans("GenericMaskCodes", $langs->transnoentities("BarCode"), $langs->transnoentities("BarCode"));
-		$tooltip.=$langs->trans("GenericMaskCodes3");
-		$tooltip.='<strong>'.$langs->trans("Example").':</strong><br>';
-		$tooltip.='020{000000000} (for internal use)<br>';
-		$tooltip.='9771234{00000} (example of ISSN code with prefix 1234)<br>';
-		$tooltip.='9791234{00000} (example of ISMN code with prefix 1234)<br>';
+		$tooltip = $langs->trans("GenericMaskCodes", $langs->transnoentities("BarCode"), $langs->transnoentities("BarCode"));
+		$tooltip .= $langs->trans("GenericMaskCodes3");
+		$tooltip .= '<strong>'.$langs->trans("Example").':</strong><br>';
+		$tooltip .= '020{000000000} (for internal use)<br>';
+		$tooltip .= '9771234{00000} (example of ISSN code with prefix 1234)<br>';
+		$tooltip .= '9791234{00000} (example of ISMN code with prefix 1234)<br>';
 		//$tooltip.=$langs->trans("GenericMaskCodes5");
 
 		// Mask parameter
 		//$texte.= '<tr><td>'.$langs->trans("Mask").' ('.$langs->trans("BarCodeModel").'):</td>';
-		$texte.= '<tr><td>'.$langs->trans("Mask").':</td>';
-		$texte.= '<td class="right">'.$form->textwithpicto('<input type="text" class="flat" size="24" name="value1" value="'.(! empty($conf->global->BARCODE_STANDARD_PRODUCT_MASK)?$conf->global->BARCODE_STANDARD_PRODUCT_MASK:'').'"'.$disabled.'>', $tooltip, 1, 1).'</td>';
-		$texte.= '<td class="left" rowspan="2">&nbsp; <input type="submit" class="button" value="'.$langs->trans("Modify").'" name="Button"'.$disabled.'></td>';
-		$texte.= '</tr>';
+		$texte .= '<tr><td>'.$langs->trans("Mask").':</td>';
+		$texte .= '<td class="right">'.$form->textwithpicto('<input type="text" class="flat" size="24" name="value1" value="'.(!empty($conf->global->BARCODE_STANDARD_PRODUCT_MASK) ? $conf->global->BARCODE_STANDARD_PRODUCT_MASK : '').'"'.$disabled.'>', $tooltip, 1, 1).'</td>';
+		$texte .= '<td class="left" rowspan="2">&nbsp; <input type="submit" class="button" value="'.$langs->trans("Modify").'" name="Button"'.$disabled.'></td>';
+		$texte .= '</tr>';
 
-		$texte.= '</table>';
-		$texte.= '</form>';
+		$texte .= '</table>';
+		$texte .= '</form>';
 
 		return $texte;
 	}
@@ -125,14 +128,14 @@ class mod_barcode_product_standard extends ModeleNumRefBarCode
 	public function getExample($langs, $objproduct = 0)
 	{
 		$examplebarcode = $this->getNextValue($objproduct, '');
-		if (! $examplebarcode)
+		if (!$examplebarcode)
 		{
 			$examplebarcode = $langs->trans('NotConfigured');
 		}
-		if($examplebarcode=="ErrorBadMask")
+		if ($examplebarcode == "ErrorBadMask")
 		{
 			$langs->load("errors");
-			$examplebarcode=$langs->trans($examplebarcode);
+			$examplebarcode = $langs->trans($examplebarcode);
 		}
 
 		return $examplebarcode;
@@ -147,27 +150,27 @@ class mod_barcode_product_standard extends ModeleNumRefBarCode
 	 */
 	public function getNextValue($objproduct = null, $type = '')
 	{
-		global $db,$conf;
+		global $db, $conf;
 
-		require_once DOL_DOCUMENT_ROOT .'/core/lib/functions2.lib.php';
+		require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
 
 		// TODO
 
 		// Get Mask value
 		$mask = '';
-		if (! empty($conf->global->BARCODE_STANDARD_PRODUCT_MASK)) $mask = $conf->global->BARCODE_STANDARD_PRODUCT_MASK;
+		if (!empty($conf->global->BARCODE_STANDARD_PRODUCT_MASK)) $mask = $conf->global->BARCODE_STANDARD_PRODUCT_MASK;
 
 		if (empty($mask))
 		{
-			$this->error='NotConfigured';
+			$this->error = 'NotConfigured';
 			return '';
 		}
 
-		$field='barcode';$where='';
+		$field = 'barcode'; $where = '';
 
-		$now=dol_now();
+		$now = dol_now();
 
-		$numFinal=get_next_value($db, $mask, 'product', $field, $where, '', $now);
+		$numFinal = get_next_value($db, $mask, 'product', $field, $where, '', $now);
 
 		return  $numFinal;
 	}
@@ -193,18 +196,18 @@ class mod_barcode_product_standard extends ModeleNumRefBarCode
 
 		//var_dump($code.' '.$product->ref.' '.$thirdparty_type);exit;
 
-		require_once DOL_DOCUMENT_ROOT .'/core/lib/functions2.lib.php';
+		require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
 
-		$result=0;
+		$result = 0;
 		$code = strtoupper(trim($code));
 
 		if (empty($code) && $this->code_null && empty($conf->global->BARCODE_STANDARD_PRODUCT_MASK))
 		{
-			$result=0;
+			$result = 0;
 		}
-		elseif (empty($code) && (! $this->code_null || ! empty($conf->global->BARCODE_STANDARD_PRODUCT_MASK)) )
+		elseif (empty($code) && (!$this->code_null || !empty($conf->global->BARCODE_STANDARD_PRODUCT_MASK)))
 		{
-			$result=-2;
+			$result = -2;
 		}
 		else
 		{
@@ -213,22 +216,22 @@ class mod_barcode_product_standard extends ModeleNumRefBarCode
 				$is_dispo = $this->verif_dispo($db, $code, $product);
 				if ($is_dispo <> 0)
 				{
-					$result=-3;
+					$result = -3;
 				}
 				else
 				{
-					$result=0;
+					$result = 0;
 				}
 			}
 			else
 			{
 				if (dol_strlen($code) == 0)
 				{
-					$result=-2;
+					$result = -2;
 				}
 				else
 				{
-					$result=-1;
+					$result = -1;
 				}
 			}
 		}
@@ -251,10 +254,10 @@ class mod_barcode_product_standard extends ModeleNumRefBarCode
 	{
         // phpcs:enable
 		$sql = "SELECT barcode FROM ".MAIN_DB_PREFIX."product";
-		$sql.= " WHERE barcode = '".$code."'";
-		if ($product->id > 0) $sql.= " AND rowid <> ".$product->id;
+		$sql .= " WHERE barcode = '".$code."'";
+		if ($product->id > 0) $sql .= " AND rowid <> ".$product->id;
 
-		$resql=$db->query($sql);
+		$resql = $db->query($sql);
 		if ($resql)
 		{
 			if ($db->num_rows($resql) == 0)
@@ -288,28 +291,28 @@ class mod_barcode_product_standard extends ModeleNumRefBarCode
 		$result = 0;
 
 		// Get Mask value
-		$mask = empty($conf->global->BARCODE_STANDARD_PRODUCT_MASK)?'':$conf->global->BARCODE_STANDARD_PRODUCT_MASK;
-		if (! $mask)
+		$mask = empty($conf->global->BARCODE_STANDARD_PRODUCT_MASK) ? '' : $conf->global->BARCODE_STANDARD_PRODUCT_MASK;
+		if (!$mask)
 		{
-			$this->error='NotConfigured';
+			$this->error = 'NotConfigured';
 			return -1;
 		}
 
 		dol_syslog(get_class($this).'::verif_syntax codefortest='.$codefortest." typefortest=".$typefortest);
 
-		$newcodefortest=$codefortest;
+		$newcodefortest = $codefortest;
 
         // Special case, if mask is on 12 digits instead of 13, we remove last char into code to test
-        if (in_array($typefortest, array('EAN13','ISBN')))	// We remove the CRC char not included into mask
+        if (in_array($typefortest, array('EAN13', 'ISBN')))	// We remove the CRC char not included into mask
         {
             if (preg_match('/\{(0+)([@\+][0-9]+)?([@\+][0-9]+)?\}/i', $mask, $reg))
             {
-                if (strlen($reg[1]) == 12) $newcodefortest=substr($newcodefortest, 0, 12);
+                if (strlen($reg[1]) == 12) $newcodefortest = substr($newcodefortest, 0, 12);
                 dol_syslog(get_class($this).'::verif_syntax newcodefortest='.$newcodefortest);
             }
         }
 
-		$result=check_value($mask, $newcodefortest);
+		$result = check_value($mask, $newcodefortest);
 		if (is_string($result))
 		{
 			$this->error = $result;

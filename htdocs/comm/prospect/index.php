@@ -14,7 +14,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -30,9 +30,9 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/agenda.lib.php';
 $langs->load("propal");
 
 
-if ($user->societe_id > 0)
+if ($user->socid > 0)
 {
-	$socid = $user->societe_id;
+	$socid = $user->socid;
 }
 
 
@@ -41,7 +41,7 @@ if ($user->societe_id > 0)
  *	View
  */
 
-$companystatic=new Societe($db);
+$companystatic = new Societe($db);
 
 llxHeader();
 
@@ -52,12 +52,12 @@ print load_fiche_titre($langs->trans("ProspectionArea"));
 print '<div class="fichecenter"><div class="fichethirdleft">';
 
 
-if (! empty($conf->propal->enabled))
+if (!empty($conf->propal->enabled))
 {
-	$var=false;
+	$var = false;
 	print '<form method="post" action="'.DOL_URL_ROOT.'/comm/propal/card.php">';
-	print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
-	print '<table class="noborder nohover" width="100%">';
+	print '<input type="hidden" name="token" value="'.newToken().'">';
+	print '<table class="noborder nohover centpercent">';
 	print '<tr class="liste_titre"><td colspan="3">'.$langs->trans("SearchAProposal").'</td></tr>';
 	print '<tr class="oddeven"><td>';
 	print $langs->trans("Ref").':</td><td><input type="text" class="flat" name="sf_ref" size="18"></td><td rowspan="2"><input type="submit" value="'.$langs->trans("Search").'" class="button"></td></tr>';
@@ -72,24 +72,24 @@ if (! empty($conf->propal->enabled))
  */
 
 $sql = "SELECT count(*) as cc, st.libelle, st.id";
-$sql.= " FROM ".MAIN_DB_PREFIX."societe as s";
-$sql.= ", ".MAIN_DB_PREFIX."c_stcomm as st ";
-if (! $user->rights->societe->client->voir && ! $socid) $sql.= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
-$sql.= " WHERE s.fk_stcomm = st.id";
-$sql.= " AND s.client IN (2, 3)";
-$sql.= " AND s.entity IN (".getEntity($companystatic->element).")";
-if (! $user->rights->societe->client->voir && ! $socid) $sql.= " AND s.rowid = sc.fk_soc AND sc.fk_user = " .$user->id;
-$sql.= " GROUP BY st.id";
-$sql.= " ORDER BY st.id";
+$sql .= " FROM ".MAIN_DB_PREFIX."societe as s";
+$sql .= ", ".MAIN_DB_PREFIX."c_stcomm as st ";
+if (!$user->rights->societe->client->voir && !$socid) $sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
+$sql .= " WHERE s.fk_stcomm = st.id";
+$sql .= " AND s.client IN (2, 3)";
+$sql .= " AND s.entity IN (".getEntity($companystatic->element).")";
+if (!$user->rights->societe->client->voir && !$socid) $sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".$user->id;
+$sql .= " GROUP BY st.id";
+$sql .= " ORDER BY st.id";
 
-$resql=$db->query($sql);
+$resql = $db->query($sql);
 if ($resql)
 {
 	$num = $db->num_rows($resql);
 	$i = 0;
-	if ($num > 0 )
+	if ($num > 0)
 	{
-		print '<table class="noborder" width="100%">';
+		print '<table class="noborder centpercent">';
 		print '<tr class="liste_titre">';
 		print '<td colspan="2">'.$langs->trans("ProspectsByStatus").'</td></tr>';
 		while ($i < $num)
@@ -111,21 +111,21 @@ if ($resql)
 /*
  * Liste des propal brouillons
  */
-if (! empty($conf->propal->enabled) && $user->rights->propale->lire)
+if (!empty($conf->propal->enabled) && $user->rights->propale->lire)
 {
 	$sql = "SELECT p.rowid, p.ref, p.price, s.nom as sname";
-	$sql.= " FROM ".MAIN_DB_PREFIX."propal as p";
-	$sql.= ", ".MAIN_DB_PREFIX."societe as s";
-	if (! $user->rights->societe->client->voir && ! $socid) $sql.= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
-	$sql.= " WHERE p.fk_statut = 0";
-	$sql.= " AND p.fk_soc = s.rowid";
-	$sql.= " AND p.entity IN (".getEntity('propal').")";
-	if (! $user->rights->societe->client->voir && ! $socid) $sql.= " AND s.rowid = sc.fk_soc AND sc.fk_user = " .$user->id;
+	$sql .= " FROM ".MAIN_DB_PREFIX."propal as p";
+	$sql .= ", ".MAIN_DB_PREFIX."societe as s";
+	if (!$user->rights->societe->client->voir && !$socid) $sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
+	$sql .= " WHERE p.fk_statut = 0";
+	$sql .= " AND p.fk_soc = s.rowid";
+	$sql .= " AND p.entity IN (".getEntity('propal').")";
+	if (!$user->rights->societe->client->voir && !$socid) $sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".$user->id;
 
-	$resql=$db->query($sql);
+	$resql = $db->query($sql);
 	if ($resql)
 	{
-		$total=0;
+		$total = 0;
 		$num = $db->num_rows($resql);
 		$i = 0;
 		if ($num > 0)
@@ -146,8 +146,7 @@ if (! empty($conf->propal->enabled) && $user->rights->propale->lire)
 				$i++;
 				$total += $obj->price;
 			}
-			if ($total>0) {
-
+			if ($total > 0) {
 				print '<tr class="liste_total"><td>'.$langs->trans("Total")."</td><td align=\"right\">".price($total)."</td></tr>";
 			}
 			print "</table><br>";
@@ -164,29 +163,29 @@ print '</div><div class="fichetwothirdright"><div class="ficheaddleft">';
 /*
  * Actions commerciales a faire
  */
-if (! empty($conf->agenda->enabled)) show_array_actions_to_do(10);
+if (!empty($conf->agenda->enabled)) show_array_actions_to_do(10);
 
 /*
  * Dernieres propales ouvertes
  */
-if (! empty($conf->propal->enabled) && $user->rights->propale->lire)
+if (!empty($conf->propal->enabled) && $user->rights->propale->lire)
 {
 	$sql = "SELECT s.nom as name, s.rowid as socid, s.client, s.canvas,";
-	$sql.= " p.rowid as propalid, p.total as total_ttc, p.ref, p.datep as dp, c.label as statut, c.id as statutid";
-	$sql.= " FROM ".MAIN_DB_PREFIX."societe as s";
-	$sql.= ", ".MAIN_DB_PREFIX."propal as p";
-	$sql.= ", ".MAIN_DB_PREFIX."c_propalst as c";
-	if (! $user->rights->societe->client->voir && ! $socid) $sql.= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
-	$sql.= " WHERE p.fk_soc = s.rowid";
-	$sql.= " AND p.fk_statut = c.id";
-	$sql.= " AND p.fk_statut = 1";
-	$sql.= " AND p.entity IN (".getEntity('propal').")";
-	if (! $user->rights->societe->client->voir && ! $socid) $sql.= " AND s.rowid = sc.fk_soc AND sc.fk_user = " .$user->id;
-	if ($socid) $sql.= " AND s.rowid = ".$socid;
-	$sql.= " ORDER BY p.rowid DESC";
-	$sql.= $db->plimit(5, 0);
+	$sql .= " p.rowid as propalid, p.total as total_ttc, p.ref, p.datep as dp, c.label as statut, c.id as statutid";
+	$sql .= " FROM ".MAIN_DB_PREFIX."societe as s";
+	$sql .= ", ".MAIN_DB_PREFIX."propal as p";
+	$sql .= ", ".MAIN_DB_PREFIX."c_propalst as c";
+	if (!$user->rights->societe->client->voir && !$socid) $sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
+	$sql .= " WHERE p.fk_soc = s.rowid";
+	$sql .= " AND p.fk_statut = c.id";
+	$sql .= " AND p.fk_statut = 1";
+	$sql .= " AND p.entity IN (".getEntity('propal').")";
+	if (!$user->rights->societe->client->voir && !$socid) $sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".$user->id;
+	if ($socid) $sql .= " AND s.rowid = ".$socid;
+	$sql .= " ORDER BY p.rowid DESC";
+	$sql .= $db->plimit(5, 0);
 
-	$resql=$db->query($sql);
+	$resql = $db->query($sql);
 	if ($resql)
 	{
 		$total = 0;
@@ -194,7 +193,7 @@ if (! empty($conf->propal->enabled) && $user->rights->propale->lire)
 		$i = 0;
 		if ($num > 0)
 		{
-			print '<table class="noborder" width="100%">';
+			print '<table class="noborder centpercent">';
 			print '<tr class="liste_titre"><td colspan="4">'.$langs->trans("ProposalsOpened").'</td></tr>';
 
 			while ($i < $num)
@@ -206,10 +205,10 @@ if (! empty($conf->propal->enabled) && $user->rights->propale->lire)
 				print img_object($langs->trans("ShowPropal"), "propal").' '.$obj->ref.'</a></td>';
 
 				print "<td>";
-                $companystatic->id=$obj->socid;
-                $companystatic->name=$obj->name;
-                $companystatic->client=$obj->client;
-                $companystatic->canvas=$obj->canvas;
+                $companystatic->id = $obj->socid;
+                $companystatic->name = $obj->name;
+                $companystatic->client = $obj->client;
+                $companystatic->canvas = $obj->canvas;
                 print $companystatic->getNomUrl(1, '', 44);
 				print "</td>\n";
 				print "<td align=\"right\">";
@@ -218,7 +217,7 @@ if (! empty($conf->propal->enabled) && $user->rights->propale->lire)
 				$i++;
 				$total += $obj->price;
 			}
-			if ($total>0)
+			if ($total > 0)
 			{
 				print '<tr class="liste_total"><td colspan="3" class="right">'.$langs->trans("Total")."</td><td class=\"right\">".price($total)."</td></tr>";
 			}
@@ -236,22 +235,22 @@ if (! empty($conf->propal->enabled) && $user->rights->propale->lire)
  *
  */
 $sql = "SELECT s.nom as name, s.rowid as socid, s.client, s.canvas";
-$sql.= " FROM ".MAIN_DB_PREFIX."societe as s";
-if (! $user->rights->societe->client->voir && ! $socid) $sql.= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
-$sql.= " WHERE s.fk_stcomm = 1";
-$sql.= " AND s.entity IN (".getEntity($companystatic->element).")";
-if (! $user->rights->societe->client->voir && ! $socid) $sql.= " AND s.rowid = sc.fk_soc AND sc.fk_user = " .$user->id;
-$sql.= " ORDER BY s.tms ASC";
-$sql.= $db->plimit(15, 0);
+$sql .= " FROM ".MAIN_DB_PREFIX."societe as s";
+if (!$user->rights->societe->client->voir && !$socid) $sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
+$sql .= " WHERE s.fk_stcomm = 1";
+$sql .= " AND s.entity IN (".getEntity($companystatic->element).")";
+if (!$user->rights->societe->client->voir && !$socid) $sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".$user->id;
+$sql .= " ORDER BY s.tms ASC";
+$sql .= $db->plimit(15, 0);
 
-$resql=$db->query($sql);
+$resql = $db->query($sql);
 if ($resql)
 {
 	$num = $db->num_rows($resql);
 	$i = 0;
-	if ($num > 0 )
+	if ($num > 0)
 	{
-		print '<table class="noborder" width="100%">';
+		print '<table class="noborder centpercent">';
 		print '<tr class="liste_titre"><td>'.$langs->trans("ProspectToContact").'</td></tr>';
 
 		while ($i < $num)
@@ -259,10 +258,10 @@ if ($resql)
 			$obj = $db->fetch_object($resql);
 
 			print '<tr class="oddeven"><td width="12%">';
-            $companystatic->id=$obj->socid;
-            $companystatic->name=$obj->name;
-            $companystatic->client=$obj->client;
-            $companystatic->canvas=$obj->canvas;
+            $companystatic->id = $obj->socid;
+            $companystatic->name = $obj->name;
+            $companystatic->client = $obj->client;
+            $companystatic->canvas = $obj->canvas;
             print $companystatic->getNomUrl(1, 'prospect', 44);
 			print '</td></tr>';
 			$i++;

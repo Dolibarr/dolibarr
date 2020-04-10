@@ -18,7 +18,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -35,7 +35,7 @@ $langs->loadLangs(array("companies", "projects"));
 
 // Security check
 $socid = GETPOST('socid', 'int');
-if ($user->societe_id) $socid=$user->societe_id;
+if ($user->socid) $socid = $user->socid;
 $result = restrictedArea($user, 'societe', $socid, '&societe');
 
 // Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
@@ -46,8 +46,8 @@ $hookmanager->initHooks(array('projectthirdparty'));
  *	Actions
  */
 
-$parameters=array('id'=>$socid);
-$reshook=$hookmanager->executeHooks('doActions', $parameters, $object, $action);    // Note that $action and $object may have been modified by some hooks
+$parameters = array('id'=>$socid);
+$reshook = $hookmanager->executeHooks('doActions', $parameters, $object, $action); // Note that $action and $object may have been modified by some hooks
 if ($reshook < 0) setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
 
 
@@ -71,25 +71,25 @@ if ($socid)
 	$object = new Societe($db);
 	$result = $object->fetch($socid);
 
-	$title=$langs->trans("Projects");
-	if (! empty($conf->global->MAIN_HTML_TITLE) && preg_match('/thirdpartynameonly/', $conf->global->MAIN_HTML_TITLE) && $object->name) $title=$object->name." - ".$title;
+	$title = $langs->trans("Projects");
+	if (!empty($conf->global->MAIN_HTML_TITLE) && preg_match('/thirdpartynameonly/', $conf->global->MAIN_HTML_TITLE) && $object->name) $title = $object->name." - ".$title;
 	llxHeader('', $title);
 
-	if (! empty($conf->notification->enabled)) $langs->load("mails");
+	if (!empty($conf->notification->enabled)) $langs->load("mails");
 	$head = societe_prepare_head($object);
 
 	dol_fiche_head($head, 'project', $langs->trans("ThirdParty"), -1, 'company');
 
     $linkback = '<a href="'.DOL_URL_ROOT.'/societe/list.php?restore_lastsearch_values=1">'.$langs->trans("BackToList").'</a>';
 
-    dol_banner_tab($object, 'socid', $linkback, ($user->societe_id?0:1), 'rowid', 'nom');
+    dol_banner_tab($object, 'socid', $linkback, ($user->socid ? 0 : 1), 'rowid', 'nom');
 
     print '<div class="fichecenter">';
 
     print '<div class="underbanner clearboth"></div>';
 	print '<table class="border centpercent tableforfield">';
 
-    if (! empty($conf->global->SOCIETE_USEPREFIX))  // Old not used prefix field
+    if (!empty($conf->global->SOCIETE_USEPREFIX))  // Old not used prefix field
     {
         print '<tr><td>'.$langs->trans('Prefix').'</td><td colspan="3">'.$object->prefix_comm.'</td></tr>';
     }
@@ -118,32 +118,15 @@ if ($socid)
 
 	dol_fiche_end();
 
+	$params = '';
 
-    /*
-     * Barre d'action
-     */
-
-    /*print '<div class="tabsAction">';
-
-    if (! empty($conf->projet->enabled))
-    {
-    	if (! empty($conf->projet->enabled) && ! empty($user->rights->projet->creer))
-    	{*/
-        	$addbutton = '<a href="'.DOL_URL_ROOT.'/projet/card.php?action=create&socid='.$object->id.'&amp;backtopage='.urlencode($backtopage).'">'.$langs->trans("AddProject").'</a>';
-    /*	}
-    	else
-    	{
-        	print '<a class="butActionRefused classfortooltip" href="#">'.$langs->trans("AddProject").'</a>';
-    	}
-    }
-
-    print '</div>'; */
+	$newcardbutton .= dolGetButtonTitle($langs->trans("NewProject"), '', 'fa fa-plus-circle', DOL_URL_ROOT.'/projet/card.php?action=create&socid='.$object->id.'&amp;backtopage='.urlencode($backtopage), '', 1, $params);
 
     print '<br>';
 
 
 	// Projects list
-	$result=show_projects($conf, $langs, $db, $object, $_SERVER["PHP_SELF"].'?socid='.$object->id, 1, $addbutton);
+    $result = show_projects($conf, $langs, $db, $object, $_SERVER["PHP_SELF"].'?socid='.$object->id, 1, $newcardbutton);
 }
 
 // End of page

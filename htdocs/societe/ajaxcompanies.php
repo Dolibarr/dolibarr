@@ -15,7 +15,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -23,12 +23,12 @@
  *       \brief      File to return Ajax response on third parties request
  */
 
-if (! defined('NOTOKENRENEWAL')) define('NOTOKENRENEWAL', 1); // Disables token renewal
-if (! defined('NOREQUIREMENU'))  define('NOREQUIREMENU', '1');
-if (! defined('NOREQUIREHTML'))  define('NOREQUIREHTML', '1');
-if (! defined('NOREQUIREAJAX'))  define('NOREQUIREAJAX', '1');
-if (! defined('NOREQUIRESOC'))   define('NOREQUIRESOC', '1');
-if (! defined('NOCSRFCHECK'))    define('NOCSRFCHECK', '1');
+if (!defined('NOTOKENRENEWAL')) define('NOTOKENRENEWAL', 1); // Disables token renewal
+if (!defined('NOREQUIREMENU'))  define('NOREQUIREMENU', '1');
+if (!defined('NOREQUIREHTML'))  define('NOREQUIREHTML', '1');
+if (!defined('NOREQUIREAJAX'))  define('NOREQUIREAJAX', '1');
+if (!defined('NOREQUIRESOC'))   define('NOREQUIRESOC', '1');
+if (!defined('NOCSRFCHECK'))    define('NOCSRFCHECK', '1');
 
 require '../main.inc.php';
 
@@ -55,43 +55,43 @@ if (GETPOST('newcompany') || GETPOST('socid', 'int') || GETPOST('id_fourn'))
 	$return_arr = array();
 
 	// Define filter on text typed
-	$socid = $_GET['newcompany']?$_GET['newcompany']:'';
-	if (! $socid) $socid = $_GET['socid']?$_GET['socid']:'';
-	if (! $socid) $socid = $_GET['id_fourn']?$_GET['id_fourn']:'';
+	$socid = $_GET['newcompany'] ? $_GET['newcompany'] : '';
+	if (!$socid) $socid = $_GET['socid'] ? $_GET['socid'] : '';
+	if (!$socid) $socid = $_GET['id_fourn'] ? $_GET['id_fourn'] : '';
 
 	$sql = "SELECT rowid, nom";
-	$sql.= " FROM ".MAIN_DB_PREFIX."societe as s";
-	$sql.= " WHERE s.entity IN (".getEntity('societe').")";
+	$sql .= " FROM ".MAIN_DB_PREFIX."societe as s";
+	$sql .= " WHERE s.entity IN (".getEntity('societe').")";
 	if ($socid)
 	{
-        $sql.=" AND (";
+        $sql .= " AND (";
         // Add criteria on name/code
-        if (! empty($conf->global->COMPANY_DONOTSEARCH_ANYWHERE))   // Can use index
+        if (!empty($conf->global->COMPANY_DONOTSEARCH_ANYWHERE))   // Can use index
         {
-            $sql.="nom LIKE '" . $db->escape($socid) . "%'";
-            $sql.=" OR code_client LIKE '" . $db->escape($socid) . "%'";
-            $sql.=" OR code_fournisseur LIKE '" . $db->escape($socid) . "%'";
+            $sql .= "nom LIKE '".$db->escape($socid)."%'";
+            $sql .= " OR code_client LIKE '".$db->escape($socid)."%'";
+            $sql .= " OR code_fournisseur LIKE '".$db->escape($socid)."%'";
         }
         else
         {
-    		$sql.="nom LIKE '%" . $db->escape($socid) . "%'";
-    		$sql.=" OR code_client LIKE '%" . $db->escape($socid) . "%'";
-    		$sql.=" OR code_fournisseur LIKE '%" . $db->escape($socid) . "%'";
+    		$sql .= "nom LIKE '%".$db->escape($socid)."%'";
+    		$sql .= " OR code_client LIKE '%".$db->escape($socid)."%'";
+    		$sql .= " OR code_fournisseur LIKE '%".$db->escape($socid)."%'";
         }
-		if (! empty($conf->global->SOCIETE_ALLOW_SEARCH_ON_ROWID)) $sql.=" OR rowid = '" . $db->escape($socid) . "'";
-		$sql.=")";
+		if (!empty($conf->global->SOCIETE_ALLOW_SEARCH_ON_ROWID)) $sql .= " OR rowid = '".$db->escape($socid)."'";
+		$sql .= ")";
 	}
 	//if (GETPOST("filter")) $sql.= " AND (".GETPOST("filter", "alpha").")"; // Add other filters
-	$sql.= " ORDER BY nom ASC";
+	$sql .= " ORDER BY nom ASC";
 
 	//dol_syslog("ajaxcompanies", LOG_DEBUG);
-	$resql=$db->query($sql);
+	$resql = $db->query($sql);
 	if ($resql)
 	{
 		while ($row = $db->fetch_array($resql))
 		{
-		    $label=$row['nom'];
-		    if ($socid) $label=preg_replace('/('.preg_quote($socid, '/').')/i', '<strong>$1</strong>', $label, 1);
+		    $label = $row['nom'];
+		    if ($socid) $label = preg_replace('/('.preg_quote($socid, '/').')/i', '<strong>$1</strong>', $label, 1);
 			$row_array['label'] = $label;
 			$row_array['value'] = $row['nom'];
 	        $row_array['key'] = $row['rowid'];
@@ -103,10 +103,10 @@ if (GETPOST('newcompany') || GETPOST('socid', 'int') || GETPOST('id_fourn'))
 	}
 	else
 	{
-	    echo json_encode(array('nom'=>'Error','label'=>'Error','key'=>'Error','value'=>'Error'));
+	    echo json_encode(array('nom'=>'Error', 'label'=>'Error', 'key'=>'Error', 'value'=>'Error'));
 	}
 }
 else
 {
-    echo json_encode(array('nom'=>'ErrorBadParameter','label'=>'ErrorBadParameter','key'=>'ErrorBadParameter','value'=>'ErrorBadParameter'));
+    echo json_encode(array('nom'=>'ErrorBadParameter', 'label'=>'ErrorBadParameter', 'key'=>'ErrorBadParameter', 'value'=>'ErrorBadParameter'));
 }

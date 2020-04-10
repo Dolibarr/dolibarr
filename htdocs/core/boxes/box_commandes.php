@@ -15,13 +15,13 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
  *		\file       htdocs/core/boxes/box_commandes.php
  *		\ingroup    commande
- *		\brief      Module de generation de l'affichage de la box commandes
+ *		\brief      Widget for latest sale orders
  */
 
 include_once DOL_DOCUMENT_ROOT.'/core/boxes/modules_boxes.php';
@@ -32,9 +32,9 @@ include_once DOL_DOCUMENT_ROOT.'/core/boxes/modules_boxes.php';
  */
 class box_commandes extends ModeleBoxes
 {
-    public $boxcode="lastcustomerorders";
-    public $boximg="object_order";
-    public $boxlabel="BoxLastCustomerOrders";
+    public $boxcode = "lastcustomerorders";
+    public $boximg = "object_order";
+    public $boxlabel = "BoxLastCustomerOrders";
     public $depends = array("commande");
 
 	/**
@@ -58,9 +58,9 @@ class box_commandes extends ModeleBoxes
     {
         global $user;
 
-        $this->db=$db;
+        $this->db = $db;
 
-        $this->hidden=! ($user->rights->commande->lire);
+        $this->hidden = !($user->rights->commande->lire);
     }
 
     /**
@@ -71,57 +71,58 @@ class box_commandes extends ModeleBoxes
      */
     public function loadBox($max = 5)
     {
-        global $user, $langs, $db, $conf;
+        global $user, $langs, $conf;
+        $langs->load('orders');
 
         $this->max = $max;
 
         include_once DOL_DOCUMENT_ROOT.'/commande/class/commande.class.php';
         include_once DOL_DOCUMENT_ROOT.'/societe/class/societe.class.php';
 
-        $commandestatic = new Commande($db);
-        $societestatic = new Societe($db);
-        $userstatic = new User($db);
+        $commandestatic = new Commande($this->db);
+        $societestatic = new Societe($this->db);
+        $userstatic = new User($this->db);
 
-        $this->info_box_head = array('text' => $langs->trans("BoxTitleLast".($conf->global->MAIN_LASTBOX_ON_OBJECT_DATE?"":"Modified")."CustomerOrders", $max));
+        $this->info_box_head = array('text' => $langs->trans("BoxTitleLast".($conf->global->MAIN_LASTBOX_ON_OBJECT_DATE ? "" : "Modified")."CustomerOrders", $max));
 
         if ($user->rights->commande->lire)
         {
             $sql = "SELECT s.nom as name";
-            $sql.= ", s.rowid as socid";
-            $sql.= ", s.code_client";
-            $sql.= ", s.logo";
-            $sql.= ", c.ref, c.tms";
-            $sql.= ", c.rowid";
-            $sql.= ", c.date_commande";
-            $sql.= ", c.ref_client";
-            $sql.= ", c.fk_statut";
-            $sql.= ", c.fk_user_valid";
-            $sql.= ", c.facture";
-            $sql.= ", c.total_ht";
-            $sql.= ", c.tva as total_tva";
-            $sql.= ", c.total_ttc";
-            $sql.= " FROM ".MAIN_DB_PREFIX."societe as s";
-            $sql.= ", ".MAIN_DB_PREFIX."commande as c";
-            if (!$user->rights->societe->client->voir && !$user->societe_id) $sql.= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
-            $sql.= " WHERE c.fk_soc = s.rowid";
-            $sql.= " AND c.entity = ".$conf->entity;
-            if (! empty($conf->global->ORDER_BOX_LAST_ORDERS_VALIDATED_ONLY)) $sql.=" AND c.fk_statut = 1";
-            if (!$user->rights->societe->client->voir && !$user->societe_id) $sql.= " AND s.rowid = sc.fk_soc AND sc.fk_user = " .$user->id;
-            if ($user->societe_id) $sql.= " AND s.rowid = ".$user->societe_id;
-            if ($conf->global->MAIN_LASTBOX_ON_OBJECT_DATE) $sql.= " ORDER BY c.date_commande DESC, c.ref DESC ";
-            else $sql.= " ORDER BY c.tms DESC, c.ref DESC ";
-            $sql.= $db->plimit($max, 0);
+            $sql .= ", s.rowid as socid";
+            $sql .= ", s.code_client";
+            $sql .= ", s.logo, s.email";
+            $sql .= ", c.ref, c.tms";
+            $sql .= ", c.rowid";
+            $sql .= ", c.date_commande";
+            $sql .= ", c.ref_client";
+            $sql .= ", c.fk_statut";
+            $sql .= ", c.fk_user_valid";
+            $sql .= ", c.facture";
+            $sql .= ", c.total_ht";
+            $sql .= ", c.tva as total_tva";
+            $sql .= ", c.total_ttc";
+            $sql .= " FROM ".MAIN_DB_PREFIX."societe as s";
+            $sql .= ", ".MAIN_DB_PREFIX."commande as c";
+            if (!$user->rights->societe->client->voir && !$user->socid) $sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
+            $sql .= " WHERE c.fk_soc = s.rowid";
+            $sql .= " AND c.entity = ".$conf->entity;
+            if (!empty($conf->global->ORDER_BOX_LAST_ORDERS_VALIDATED_ONLY)) $sql .= " AND c.fk_statut = 1";
+            if (!$user->rights->societe->client->voir && !$user->socid) $sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".$user->id;
+            if ($user->socid) $sql .= " AND s.rowid = ".$user->socid;
+            if ($conf->global->MAIN_LASTBOX_ON_OBJECT_DATE) $sql .= " ORDER BY c.date_commande DESC, c.ref DESC ";
+            else $sql .= " ORDER BY c.tms DESC, c.ref DESC ";
+            $sql .= $this->db->plimit($max, 0);
 
-            $result = $db->query($sql);
+            $result = $this->db->query($sql);
             if ($result) {
-                $num = $db->num_rows($result);
+                $num = $this->db->num_rows($result);
 
                 $line = 0;
 
                 while ($line < $num) {
-                    $objp = $db->fetch_object($result);
-                    $date=$db->jdate($objp->date_commande);
-                    $datem=$db->jdate($objp->tms);
+                    $objp = $this->db->fetch_object($result);
+                    $date = $this->db->jdate($objp->date_commande);
+                    $datem = $this->db->jdate($objp->tms);
                     $commandestatic->id = $objp->rowid;
                     $commandestatic->ref = $objp->ref;
                     $commandestatic->ref_client = $objp->ref_client;
@@ -130,11 +131,12 @@ class box_commandes extends ModeleBoxes
                     $commandestatic->total_ttc = $objp->total_ttc;
                     $societestatic->id = $objp->socid;
                     $societestatic->name = $objp->name;
+                    $societestatic->email = $objp->email;
                     $societestatic->code_client = $objp->code_client;
                     $societestatic->logo = $objp->logo;
 
                     $this->info_box_contents[$line][] = array(
-                        'td' => '',
+                        'td' => 'class="nowraponall"',
                         'text' => $commandestatic->getNomUrl(1),
                         'asis' => 1,
                     );
@@ -146,15 +148,15 @@ class box_commandes extends ModeleBoxes
                     );
 
                     $this->info_box_contents[$line][] = array(
-                        'td' => 'class="nowrap right"',
+                        'td' => 'class="nowraponall right"',
                         'text' => price($objp->total_ht, 0, $langs, 0, -1, -1, $conf->currency),
                     );
 
-                    if (! empty($conf->global->ORDER_BOX_LAST_ORDERS_SHOW_VALIDATE_USER)) {
+                    if (!empty($conf->global->ORDER_BOX_LAST_ORDERS_SHOW_VALIDATE_USER)) {
                         if ($objp->fk_user_valid > 0) $userstatic->fetch($objp->fk_user_valid);
                         $this->info_box_contents[$line][] = array(
                             'td' => 'class="right"',
-                            'text' => (($objp->fk_user_valid > 0)?$userstatic->getNomUrl(1):''),
+                            'text' => (($objp->fk_user_valid > 0) ? $userstatic->getNomUrl(1) : ''),
                             'asis' => 1,
                         );
                     }
@@ -172,14 +174,14 @@ class box_commandes extends ModeleBoxes
                     $line++;
                 }
 
-                if ($num==0) $this->info_box_contents[$line][0] = array('td' => 'class="center"','text'=>$langs->trans("NoRecordedOrders"));
+                if ($num == 0) $this->info_box_contents[$line][0] = array('td' => 'class="center"', 'text'=>$langs->trans("NoRecordedOrders"));
 
-                $db->free($result);
+                $this->db->free($result);
             } else {
                 $this->info_box_contents[0][0] = array(
                     'td' => '',
                     'maxlength'=>500,
-                    'text' => ($db->error().' sql='.$sql),
+                    'text' => ($this->db->error().' sql='.$sql),
                 );
             }
         } else {

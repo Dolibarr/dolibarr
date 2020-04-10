@@ -14,7 +14,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -25,7 +25,7 @@
 require_once 'class/Facturation.class.php';
 
 // Si nouvelle vente, reinitialisation des donnees (destruction de l'objet et vidage de la table contenant la liste des articles)
-if ( $_GET['id'] == 'NOUV' )
+if ($_GET['id'] == 'NOUV')
 {
 	unset($_SESSION['serObjFacturation']);
 	unset($_SESSION['poscart']);
@@ -45,7 +45,7 @@ else
 
 // $obj_facturation contains data for all invoice total + selection of current product
 
-$obj_facturation->calculTotaux();	// Redefine prix_total_ttc, prix_total_ht et montant_tva from $_SESSION['poscart']
+$obj_facturation->calculTotaux(); // Redefine prix_total_ttc, prix_total_ht et montant_tva from $_SESSION['poscart']
 
 $total_ttc = $obj_facturation->prixTotalTtc();
 
@@ -59,15 +59,15 @@ exit;*/
 print '<div class="inline-block" style="vertical-align: top">';
 print '<div class="principal">';
 
-$page=GETPOST('menutpl', 'alpha');
-if (empty($page)) $page='facturation';
+$page = GETPOST('menutpl', 'alpha');
+if (empty($page)) $page = 'facturation';
 
 if (in_array(
 		$page,
 		array(
 			'deconnexion',
-			'index','index_verif','facturation','facturation_verif','facturation_dhtml',
-			'validation','validation_ok','validation_ticket','validation_verif',
+			'index', 'index_verif', 'facturation', 'facturation_verif', 'facturation_dhtml',
+			'validation', 'validation_ok', 'validation_ticket', 'validation_verif',
 		)
 	))
 {

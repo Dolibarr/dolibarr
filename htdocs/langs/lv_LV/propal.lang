@@ -76,10 +76,11 @@ TypeContact_propal_external_BILLING=Klientu rēķinu kontakts
 TypeContact_propal_external_CUSTOMER=Klientu kontaktu turpinot darboties priekšlikums
 TypeContact_propal_external_SHIPPING=Klienta kontaktpersona piegādei
 # Document models
-DocModelAzurDescription=Pilnīgs priekšlikums modelis (logo. ..)
-DocModelCyanDescription=Pilnīgs priekšlikums modelis (logo. ..)
+DocModelAzurDescription=Pilns piedāvājuma modelis (vecā ciāna veidnes ieviešana)
+DocModelCyanDescription=Pilns piedāvājuma paraugs
 DefaultModelPropalCreate=Noklusējuma modeļa izveide
 DefaultModelPropalToBill=Noklusējuma veidne aizverot uzņēmējdarbības priekšlikumu (tiks izrakstīts rēķins)
 DefaultModelPropalClosed=Noklusējuma veidne aizverot uzņēmējdarbības priekšlikumu (unbilled)
 ProposalCustomerSignature=Written acceptance, company stamp, date and signature
 ProposalsStatisticsSuppliers=Pārdevēja priekšlikumi statistikai
+CaseFollowedBy=Lieta seko

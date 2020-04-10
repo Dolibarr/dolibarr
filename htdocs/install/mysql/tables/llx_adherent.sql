@@ -15,7 +15,7 @@
 -- GNU General Public License for more details.
 --
 -- You should have received a copy of the GNU General Public License
--- along with this program. If not, see <http://www.gnu.org/licenses/>.
+-- along with this program. If not, see <https://www.gnu.org/licenses/>.
 --
 -- ===================================================================
 --
@@ -39,7 +39,7 @@ create table llx_adherent
   pass_crypted     varchar(128),
   fk_adherent_type integer NOT NULL,
   morphy           varchar(3) NOT NULL, -- personne morale / personne physique
-  societe          varchar(128),			-- company name (should be same lenght than societe.name)
+  societe          varchar(128),			-- company name (should be same length than societe.name). No more used.
   fk_soc           integer NULL,		-- Link to third party linked to member
   address          text,
   zip              varchar(30),
@@ -48,6 +48,7 @@ create table llx_adherent
   country          integer,
   email            varchar(255),
 
+  socialnetworks   text DEFAULT NULL,       -- json with socialnetworks
   skype            varchar(255),
   twitter          varchar(255),                        		--
   facebook         varchar(255),                        		--

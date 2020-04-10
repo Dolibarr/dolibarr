@@ -16,7 +16,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -38,7 +38,7 @@ $langs->loadLangs(array('banks', 'categories', 'withdrawals'));
 
 // Security check
 $socid = GETPOST('socid', 'int');
-if ($user->societe_id) $socid=$user->societe_id;
+if ($user->socid) $socid = $user->socid;
 $result = restrictedArea($user, 'prelevement', '', '');
 
 
@@ -67,11 +67,12 @@ print load_fiche_titre($langs->trans("CustomersStandingOrdersArea"));
 print '<div class="fichecenter"><div class="fichethirdleft">';
 
 
-$thirdpartystatic=new Societe($db);
-$invoicestatic=new Facture($db);
+$thirdpartystatic = new Societe($db);
+$invoicestatic = new Facture($db);
 $bprev = new BonPrelevement($db);
 
-print '<table class="noborder" width="100%">';
+print '<div class="div-table-responsive-no-min">';
+print '<table class="noborder centpercent">';
 print '<tr class="liste_titre"><th colspan="2">'.$langs->trans("Statistics").'</th></tr>';
 
 print '<tr class="oddeven"><td>'.$langs->trans("NbOfInvoiceToWithdraw").'</td>';
@@ -84,7 +85,7 @@ print '</td></tr>';
 print '<tr class="oddeven"><td>'.$langs->trans("AmountToWithdraw").'</td>';
 print '<td class="right">';
 print price($bprev->SommeAPrelever(), '', '', 1, -1, -1, 'auto');
-print '</td></tr></table><br>';
+print '</td></tr></table></div><br>';
 
 
 
@@ -92,25 +93,31 @@ print '</td></tr></table><br>';
  * Invoices waiting for withdraw
  */
 $sql = "SELECT f.ref, f.rowid, f.total_ttc, f.fk_statut, f.paye, f.type,";
-$sql.= " pfd.date_demande, pfd.amount,";
-$sql.= " s.nom as name, s.rowid as socid";
-$sql.= " FROM ".MAIN_DB_PREFIX."facture as f,";
-$sql.= " ".MAIN_DB_PREFIX."societe as s";
-if (!$user->rights->societe->client->voir && !$socid) $sql.= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
-$sql.= " , ".MAIN_DB_PREFIX."prelevement_facture_demande as pfd";
-$sql.= " WHERE s.rowid = f.fk_soc";
-$sql.= " AND f.entity IN (".getEntity('invoice').")";
-$sql.= " AND pfd.traite = 0 AND pfd.fk_facture = f.rowid";
-if (!$user->rights->societe->client->voir && !$socid) $sql.= " AND s.rowid = sc.fk_soc AND sc.fk_user = " .$user->id;
-if ($socid) $sql.= " AND f.fk_soc = ".$socid;
+$sql .= " pfd.date_demande, pfd.amount,";
+$sql .= " s.nom as name, s.rowid as socid";
+$sql .= " FROM ".MAIN_DB_PREFIX."facture as f,";
+$sql .= " ".MAIN_DB_PREFIX."societe as s";
+if (!$user->rights->societe->client->voir && !$socid) $sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
+$sql .= " , ".MAIN_DB_PREFIX."prelevement_facture_demande as pfd";
+$sql .= " WHERE s.rowid = f.fk_soc";
+$sql .= " AND f.entity IN (".getEntity('invoice').")";
+$sql .= " AND f.total_ttc > 0";
+if (empty($conf->global->WITHDRAWAL_ALLOW_ANY_INVOICE_STATUS))
+{
+	$sql .= " AND f.fk_statut = ".Facture::STATUS_VALIDATED;
+}
+$sql .= " AND pfd.traite = 0 AND pfd.fk_facture = f.rowid";
+if (!$user->rights->societe->client->voir && !$socid) $sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".$user->id;
+if ($socid) $sql .= " AND f.fk_soc = ".$socid;
 
-$resql=$db->query($sql);
+$resql = $db->query($sql);
 if ($resql)
 {
     $num = $db->num_rows($resql);
     $i = 0;
 
-    print '<table class="noborder" width="100%">';
+    print '<div class="div-table-responsive-no-min">';
+    print '<table class="noborder centpercent">';
     print '<tr class="liste_titre">';
     print '<th colspan="5">'.$langs->trans("InvoiceWaitingWithdraw").' ('.$num.')</th></tr>';
     if ($num)
@@ -119,12 +126,12 @@ if ($resql)
         {
             $obj = $db->fetch_object($resql);
 
-            $invoicestatic->id=$obj->rowid;
-            $invoicestatic->ref=$obj->ref;
-            $invoicestatic->statut=$obj->fk_statut;
-            $invoicestatic->paye=$obj->paye;
-            $invoicestatic->type=$obj->type;
-            $alreadypayed=$invoicestatic->getSommePaiement();
+            $invoicestatic->id = $obj->rowid;
+            $invoicestatic->ref = $obj->ref;
+            $invoicestatic->statut = $obj->fk_statut;
+            $invoicestatic->paye = $obj->paye;
+            $invoicestatic->type = $obj->type;
+            $alreadypayed = $invoicestatic->getSommePaiement();
 
 
             print '<tr class="oddeven"><td>';
@@ -132,8 +139,8 @@ if ($resql)
             print '</td>';
 
             print '<td>';
-            $thirdpartystatic->id=$obj->socid;
-            $thirdpartystatic->name=$obj->name;
+            $thirdpartystatic->id = $obj->socid;
+            $thirdpartystatic->name = $obj->name;
             print $thirdpartystatic->getNomUrl(1, 'customer');
             print '</td>';
 
@@ -156,7 +163,7 @@ if ($resql)
     {
         print '<tr class="oddeven"><td colspan="5" class="opacitymedium">'.$langs->trans("NoInvoiceToWithdraw", $langs->transnoentitiesnoconv("StandingOrders")).'</td></tr>';
     }
-    print "</table><br>";
+    print "</table></div><br>";
 }
 else
 {
@@ -170,11 +177,11 @@ print '</div><div class="fichetwothirdright"><div class="ficheaddleft">';
 /*
  * Withdraw receipts
  */
-$limit=5;
+$limit = 5;
 $sql = "SELECT p.rowid, p.ref, p.amount, p.datec, p.statut";
-$sql.= " FROM ".MAIN_DB_PREFIX."prelevement_bons as p";
-$sql.= " ORDER BY datec DESC";
-$sql.= $db->plimit($limit);
+$sql .= " FROM ".MAIN_DB_PREFIX."prelevement_bons as p";
+$sql .= " ORDER BY datec DESC";
+$sql .= $db->plimit($limit);
 
 $result = $db->query($sql);
 if ($result)
@@ -183,7 +190,8 @@ if ($result)
     $i = 0;
 
     print"\n<!-- debut table -->\n";
-    print '<table class="noborder" width="100%">';
+    print '<div class="div-table-responsive-no-min">';
+    print '<table class="noborder centpercent">';
     print '<tr class="liste_titre"><th>'.$langs->trans("LastWithdrawalReceipt", $limit).'</th>';
     print '<th>'.$langs->trans("Date").'</th>';
     print '<th class="right">'.$langs->trans("Amount").'</th>';
@@ -198,9 +206,9 @@ if ($result)
         print '<tr class="oddeven">';
 
         print "<td>";
-        $bprev->id=$obj->rowid;
-        $bprev->ref=$obj->ref;
-        $bprev->statut=$obj->statut;
+        $bprev->id = $obj->rowid;
+        $bprev->ref = $obj->ref;
+        $bprev->statut = $obj->statut;
         print $bprev->getNomUrl(1);
         print "</td>\n";
         print '<td>'.dol_print_date($db->jdate($obj->datec), "dayhour")."</td>\n";
@@ -210,7 +218,7 @@ if ($result)
         print "</tr>\n";
         $i++;
     }
-    print "</table><br>";
+    print "</table></div><br>";
     $db->free($result);
 }
 else

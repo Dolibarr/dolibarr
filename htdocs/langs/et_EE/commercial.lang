@@ -1,6 +1,6 @@
 # Dolibarr language file - Source file is en_US - commercial
-Commercial=Äritegevus
-CommercialArea=Äritegevuse ala
+Commercial=Commerce
+CommercialArea=Commerce area
 Customer=Klient
 Customers=Kliendid
 Prospect=Huviline
@@ -59,7 +59,7 @@ ActionAC_FAC=Saada kliendi arve posti teel
 ActionAC_REL=Saada kliendi arve posti teel (meeldetuletus)
 ActionAC_CLO=Sulge
 ActionAC_EMAILING=Saada masspostitus
-ActionAC_COM=Saada kliendi tellimuse posti teel
+ActionAC_COM=Send sales order by mail
 ActionAC_SHIP=Saada saatekiri posti teel
 ActionAC_SUP_ORD=Send purchase order by mail
 ActionAC_SUP_INV=Send vendor invoice by mail

@@ -4,6 +4,7 @@ ProposalCard=Angebotskarte
 NewPropal=Neues Angebot
 Prospect=Lead
 LastPropals=%s neueste Angebote
+LastModifiedProposals=%s neueste geänderte Offerten
 ProposalsStatistics=Angebote Statistiken
 PropalsOpened=Offen
 PropalStatusSigned=Unterzeichnet (ist zu verrechnen)

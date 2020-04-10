@@ -14,7 +14,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -37,7 +37,7 @@ class FormActions
     /**
 	 * @var string Error code (or message)
 	 */
-	public $error='';
+	public $error = '';
 
 
     /**
@@ -67,7 +67,7 @@ class FormActions
     public function form_select_status_action($formname, $selected, $canedit = 1, $htmlname = 'complete', $showempty = 0, $onlyselect = 0, $morecss = 'maxwidth100')
     {
         // phpcs:enable
-        global $langs,$conf;
+        global $langs, $conf;
 
         $listofstatus = array(
             '-1' => $langs->trans("ActionNotApplicable"),
@@ -77,7 +77,7 @@ class FormActions
         );
 		// +ActionUncomplete
 
-        if (! empty($conf->use_javascript_ajax))
+        if (!empty($conf->use_javascript_ajax))
         {
             print "\n";
             print "<script type=\"text/javascript\">
@@ -98,7 +98,7 @@ class FormActions
                 function select_status() {
                     var defaultvalue = $('#select' + htmlname).val();
                     var percentage = $('input[name=percentage]');
-                    var selected = '".(isset($selected)?$selected:'')."';
+                    var selected = '".(isset($selected) ? $selected : '')."';
                     var value = (selected>0?selected:(defaultvalue>=0?defaultvalue:''));
 
                     percentage.val(value);
@@ -125,13 +125,13 @@ class FormActions
                 }
                 </script>\n";
         }
-        if (! empty($conf->use_javascript_ajax) || $onlyselect)
+        if (!empty($conf->use_javascript_ajax) || $onlyselect)
         {
         	//var_dump($selected);
-        	if ($selected == 'done') $selected='100';
-            print '<select '.($canedit?'':'disabled ').'name="'.$htmlname.'" id="select'.$htmlname.'" class="flat'.($morecss?' '.$morecss:'').'">';
-            if ($showempty) print '<option value=""'.($selected == ''?' selected':'').'></option>';
-            foreach($listofstatus as $key => $val)
+        	if ($selected == 'done') $selected = '100';
+            print '<select '.($canedit ? '' : 'disabled ').'name="'.$htmlname.'" id="select'.$htmlname.'" class="flat'.($morecss ? ' '.$morecss : '').'">';
+            if ($showempty) print '<option value=""'.($selected == '' ? ' selected' : '').'></option>';
+            foreach ($listofstatus as $key => $val)
             {
                 print '<option value="'.$key.'"'.(($selected == $key && strlen($selected) == strlen($key)) || (($selected > 0 && $selected < 100) && $key == '50') ? ' selected' : '').'>'.$val.'</option>';
                 if ($key == '50' && $onlyselect == 2)
@@ -140,17 +140,17 @@ class FormActions
                 }
             }
             print '</select>';
-            if ($selected == 0 || $selected == 100) $canedit=0;
+            if ($selected == 0 || $selected == 100) $canedit = 0;
 
             if (empty($onlyselect))
             {
-	            print ' <input type="text" id="val'.$htmlname.'" name="percentage" class="flat hideifna" value="'.($selected>=0?$selected:'').'" size="2"'.($canedit&&($selected>=0)?'':' disabled').'>';
+	            print ' <input type="text" id="val'.$htmlname.'" name="percentage" class="flat hideifna" value="'.($selected >= 0 ? $selected : '').'" size="2"'.($canedit && ($selected >= 0) ? '' : ' disabled').'>';
     	        print '<span class="hideonsmartphone hideifna">%</span>';
             }
         }
         else
 		{
-            print ' <input type="text" id="val'.$htmlname.'" name="percentage" class="flat" value="'.($selected>=0?$selected:'').'" size="2"'.($canedit?'':' disabled').'>%';
+            print ' <input type="text" id="val'.$htmlname.'" name="percentage" class="flat" value="'.($selected >= 0 ? $selected : '').'" size="2"'.($canedit ? '' : ' disabled').'>%';
         }
     }
 
@@ -170,79 +170,79 @@ class FormActions
      */
     public function showactions($object, $typeelement, $socid = 0, $forceshowtitle = 0, $morecss = 'listactions', $max = 0, $moreparambacktopage = '', $morehtmlright = '')
     {
-        global $langs,$conf,$user;
+        global $langs, $conf, $user;
         global $bc;
 
         require_once DOL_DOCUMENT_ROOT.'/comm/action/class/actioncomm.class.php';
 
-        $sortfield='a.datep,a.id';
-        $sortorder='DESC,DESC';
+        $sortfield = 'a.datep,a.id';
+        $sortorder = 'DESC,DESC';
 
-        $listofactions=ActionComm::getActions($this->db, $socid, $object->id, $typeelement, '', $sortfield, $sortorder, ($max?($max+1):0));
-        if (! is_array($listofactions)) dol_print_error($this->db, 'FailedToGetActions');
+        $listofactions = ActionComm::getActions($this->db, $socid, $object->id, $typeelement, '', $sortfield, $sortorder, ($max ? ($max + 1) : 0));
+        if (!is_array($listofactions)) dol_print_error($this->db, 'FailedToGetActions');
 
         $num = count($listofactions);
         if ($num || $forceshowtitle)
         {
-        	if ($typeelement == 'invoice')               $title=$langs->trans('ActionsOnBill');
-        	elseif ($typeelement == 'invoice_supplier' || $typeelement == 'supplier_invoice') $title=$langs->trans('ActionsOnBill');
-        	elseif ($typeelement == 'propal')            $title=$langs->trans('ActionsOnPropal');
-        	elseif ($typeelement == 'supplier_proposal') $title=$langs->trans('ActionsOnSupplierProposal');
-        	elseif ($typeelement == 'order')             $title=$langs->trans('ActionsOnOrder');
-        	elseif ($typeelement == 'order_supplier' || $typeelement == 'supplier_order')   $title=$langs->trans('ActionsOnOrder');
-        	elseif ($typeelement == 'shipping')          $title=$langs->trans('ActionsOnShipping');
-            elseif ($typeelement == 'fichinter')         $title=$langs->trans('ActionsOnFicheInter');
-            elseif ($typeelement == 'project')           $title=$langs->trans('LatestLinkedEvents', $max?$max:'');
-            elseif ($typeelement == 'task')              $title=$langs->trans('LatestLinkedEvents', $max?$max:'');
-            elseif ($typeelement == 'member')            $title=$langs->trans('LatestLinkedEvents', $max?$max:'');
-            else $title=$langs->trans("LatestLinkedEvents", $max?$max:'');
+        	if ($typeelement == 'invoice')               $title = $langs->trans('ActionsOnBill');
+        	elseif ($typeelement == 'invoice_supplier' || $typeelement == 'supplier_invoice') $title = $langs->trans('ActionsOnBill');
+        	elseif ($typeelement == 'propal')            $title = $langs->trans('ActionsOnPropal');
+        	elseif ($typeelement == 'supplier_proposal') $title = $langs->trans('ActionsOnSupplierProposal');
+        	elseif ($typeelement == 'order')             $title = $langs->trans('ActionsOnOrder');
+        	elseif ($typeelement == 'order_supplier' || $typeelement == 'supplier_order')   $title = $langs->trans('ActionsOnOrder');
+        	elseif ($typeelement == 'shipping')          $title = $langs->trans('ActionsOnShipping');
+            elseif ($typeelement == 'fichinter')         $title = $langs->trans('ActionsOnFicheInter');
+            elseif ($typeelement == 'project')           $title = $langs->trans('LatestLinkedEvents', $max ? $max : '');
+            elseif ($typeelement == 'task')              $title = $langs->trans('LatestLinkedEvents', $max ? $max : '');
+            elseif ($typeelement == 'member')            $title = $langs->trans('LatestLinkedEvents', $max ? $max : '');
+            else $title = $langs->trans("LatestLinkedEvents", $max ? $max : '');
 
-            $urlbacktopage=$_SERVER['PHP_SELF'].'?id='.$object->id.($moreparambacktopage?'&'.$moreparambacktopage:'');
+            $urlbacktopage = $_SERVER['PHP_SELF'].'?id='.$object->id.($moreparambacktopage ? '&'.$moreparambacktopage : '');
 
             $projectid = $object->fk_project;
             if ($typeelement == 'project') $projectid = $object->id;
 
-            $newcardbutton='';
-			if (! empty($conf->agenda->enabled))
+            $newcardbutton = '';
+			if (!empty($conf->agenda->enabled))
 			{
-                $newcardbutton.= dolGetButtonTitle($langs->trans("AddEvent"), '', 'fa fa-plus-circle', DOL_URL_ROOT.'/comm/action/card.php?action=create&datep='.dol_print_date(dol_now(), 'dayhourlog').'&origin='.$typeelement.'&originid='.$object->id.($object->socid>0?'&socid='.$object->socid:($socid>0?'&socid='.$socid:'')).($projectid>0?'&projectid='.$projectid:'').'&backtopage='.urlencode($urlbacktopage));
+                $newcardbutton .= dolGetButtonTitle($langs->trans("AddEvent"), '', 'fa fa-plus-circle', DOL_URL_ROOT.'/comm/action/card.php?action=create&datep='.dol_print_date(dol_now(), 'dayhourlog').'&origin='.$typeelement.'&originid='.$object->id.($object->socid > 0 ? '&socid='.$object->socid : ($socid > 0 ? '&socid='.$socid : '')).($projectid > 0 ? '&projectid='.$projectid : '').'&backtopage='.urlencode($urlbacktopage));
 			}
 
         	print '<!-- formactions->showactions -->'."\n";
         	print load_fiche_titre($title, $newcardbutton, '', 0, 0, '', $morehtmlright);
 
-        	$page=0; $param='';
+        	$page = 0; $param = '';
 
         	print '<div class="div-table-responsive-no-min">';
-        	print '<table class="centpercent noborder'.($morecss?' '.$morecss:'').'">';
+        	print '<table class="centpercent noborder'.($morecss ? ' '.$morecss : '').'">';
         	print '<tr class="liste_titre">';
-        	print getTitleFieldOfList('Ref',   0, $_SERVER["PHP_SELF"], '', $page, $param, '', $sortfield, $sortorder, '', 1);
-        	print getTitleFieldOfList('By',    0, $_SERVER["PHP_SELF"], '', $page, $param, '', $sortfield, $sortorder, '', 1);
-        	print getTitleFieldOfList('Type',  0, $_SERVER["PHP_SELF"], '', $page, $param, '', $sortfield, $sortorder, '', 1);
+        	print getTitleFieldOfList('Ref', 0, $_SERVER["PHP_SELF"], '', $page, $param, '', $sortfield, $sortorder, '', 1);
+        	print getTitleFieldOfList('By', 0, $_SERVER["PHP_SELF"], '', $page, $param, '', $sortfield, $sortorder, '', 1);
+        	print getTitleFieldOfList('Type', 0, $_SERVER["PHP_SELF"], '', $page, $param, '', $sortfield, $sortorder, '', 1);
         	print getTitleFieldOfList('Title', 0, $_SERVER["PHP_SELF"], '', $page, $param, '', $sortfield, $sortorder, '', 1);
-        	print getTitleFieldOfList('Date',  0, $_SERVER["PHP_SELF"], 'a.datep', $page, $param, '', $sortfield, $sortorder, 'center ', 1);
-        	print getTitleFieldOfList('',      0, $_SERVER["PHP_SELF"], '', $page, $param, '', $sortfield, $sortorder, 'right ', 1);
+        	print getTitleFieldOfList('Date', 0, $_SERVER["PHP_SELF"], 'a.datep', $page, $param, '', $sortfield, $sortorder, 'center ', 1);
+        	print getTitleFieldOfList('', 0, $_SERVER["PHP_SELF"], '', $page, $param, '', $sortfield, $sortorder, 'right ', 1);
         	print '</tr>';
         	print "\n";
 
         	if (is_array($listofactions) && count($listofactions))
         	{
-        		$cacheusers=array();
+        		$cacheusers = array();
 
 	        	$cursorevent = 0;
-	        	foreach($listofactions as $action)
+	        	foreach ($listofactions as $action)
 	        	{
 	        		if ($max && $cursorevent >= $max) break;
 
-	        		$ref=$action->getNomUrl(1, -1);
-	        		$label=$action->getNomUrl(0, 38);
+	        		$ref = $action->getNomUrl(1, -1);
+	        		$label = $action->getNomUrl(0, 38);
 
 	        		print '<tr class="oddeven">';
 	        		// Ref
 					print '<td class="nowraponall">'.$ref.'</td>';
 					// Onwer
-	        		print '<td>';
-	        		if (! empty($action->userownerid))
+	        		print '<td class="tdoverflowmax150">';
+	        		if (!empty($action->userownerid))
 	        		{
 	        			if (is_object($cacheusers[$action->userownerid]))
 	        			{
@@ -262,17 +262,17 @@ class FormActions
 	        		print '</td>';
 					// Type
 	        		print '<td>';
-					$imgpicto='';
-					if (! empty($conf->global->AGENDA_USE_EVENT_TYPE))
+					$imgpicto = '';
+					if (!empty($conf->global->AGENDA_USE_EVENT_TYPE))
 					{
-						if ($action->type_picto) $imgpicto=img_picto('', $action->type_picto);
+						if ($action->type_picto) $imgpicto = img_picto('', $action->type_picto);
 						else {
-							if ($action->type_code == 'AC_RDV')       $imgpicto=img_picto('', 'object_group', '', false, 0, 0, '', 'paddingright').' ';
-							elseif ($action->type_code == 'AC_TEL')   $imgpicto=img_picto('', 'object_phoning', '', false, 0, 0, '', 'paddingright').' ';
-							elseif ($action->type_code == 'AC_FAX')   $imgpicto=img_picto('', 'object_phoning_fax', '', false, 0, 0, '', 'paddingright').' ';
-							elseif ($action->type_code == 'AC_EMAIL') $imgpicto=img_picto('', 'object_email', '', false, 0, 0, '', 'paddingright').' ';
-							elseif ($action->type_code == 'AC_INT')   $imgpicto=img_picto('', 'object_intervention', '', false, 0, 0, '', 'paddingright').' ';
-							elseif (! preg_match('/_AUTO/', $action->type_code)) $imgpicto=img_picto('', 'object_action', '', false, 0, 0, '', 'paddingright').' ';
+							if ($action->type_code == 'AC_RDV')       $imgpicto = img_picto('', 'object_group', '', false, 0, 0, '', 'paddingright').' ';
+							elseif ($action->type_code == 'AC_TEL')   $imgpicto = img_picto('', 'object_phoning', '', false, 0, 0, '', 'paddingright').' ';
+							elseif ($action->type_code == 'AC_FAX')   $imgpicto = img_picto('', 'object_phoning_fax', '', false, 0, 0, '', 'paddingright').' ';
+							elseif ($action->type_code == 'AC_EMAIL') $imgpicto = img_picto('', 'object_email', '', false, 0, 0, '', 'paddingright').' ';
+							elseif ($action->type_code == 'AC_INT')   $imgpicto = img_picto('', 'object_intervention', '', false, 0, 0, '', 'paddingright').' ';
+							elseif (!preg_match('/_AUTO/', $action->type_code)) $imgpicto = img_picto('', 'object_action', '', false, 0, 0, '', 'paddingright').' ';
 						}
 					}
 					print $imgpicto;
@@ -284,8 +284,8 @@ class FormActions
 	        		print '<td class="center">'.dol_print_date($action->datep, 'dayhour', 'tzuserrel');
 	        		if ($action->datef)
 	        		{
-		        		$tmpa=dol_getdate($action->datep);
-		        		$tmpb=dol_getdate($action->datef);
+		        		$tmpa = dol_getdate($action->datep);
+		        		$tmpb = dol_getdate($action->datef);
 		        		if ($tmpa['mday'] == $tmpb['mday'] && $tmpa['mon'] == $tmpb['mon'] && $tmpa['year'] == $tmpb['year'])
 		        		{
 		        			if ($tmpa['hours'] != $tmpb['hours'] || $tmpa['minutes'] != $tmpb['minutes'] && $tmpa['seconds'] != $tmpb['seconds']) print '-'.dol_print_date($action->datef, 'hour', 'tzuserrel');
@@ -335,39 +335,39 @@ class FormActions
     public function select_type_actions($selected = '', $htmlname = 'actioncode', $excludetype = '', $onlyautoornot = 0, $hideinfohelp = 0, $multiselect = 0, $nooutput = 0)
     {
         // phpcs:enable
-        global $langs,$user,$form,$conf;
+        global $langs, $user, $form, $conf;
 
-        if (! is_object($form)) $form=new Form($this->db);
+        if (!is_object($form)) $form = new Form($this->db);
 
         require_once DOL_DOCUMENT_ROOT.'/comm/action/class/cactioncomm.class.php';
         require_once DOL_DOCUMENT_ROOT.'/core/class/html.form.class.php';
-        $caction=new CActionComm($this->db);
+        $caction = new CActionComm($this->db);
 
        	// Suggest a list with manual events or all auto events
-       	$arraylist=$caction->liste_array(1, 'code', $excludetype, $onlyautoornot);
-       	array_unshift($arraylist, '&nbsp;');     // Add empty line at start
+       	$arraylist = $caction->liste_array(1, 'code', $excludetype, $onlyautoornot);
+       	array_unshift($arraylist, '&nbsp;'); // Add empty line at start
        	//asort($arraylist);
 
-       	if ($selected == 'manual') $selected='AC_OTH';
-       	if ($selected == 'auto')   $selected='AC_OTH_AUTO';
+       	if ($selected == 'manual') $selected = 'AC_OTH';
+       	if ($selected == 'auto')   $selected = 'AC_OTH_AUTO';
 
-       	if (! empty($conf->global->AGENDA_ALWAYS_HIDE_AUTO)) unset($arraylist['AC_OTH_AUTO']);
+       	if (!empty($conf->global->AGENDA_ALWAYS_HIDE_AUTO)) unset($arraylist['AC_OTH_AUTO']);
 
-       	$out='';
+       	$out = '';
 
-		if (! empty($multiselect))
+		if (!empty($multiselect))
 		{
 	        if (!is_array($selected) && !empty($selected)) $selected = explode(',', $selected);
-			$out.=$form->multiselectarray($htmlname, $arraylist, $selected, 0, 0, 'centpercent', 0, 0);
+			$out .= $form->multiselectarray($htmlname, $arraylist, $selected, 0, 0, 'centpercent', 0, 0);
 		}
 		else
 		{
-			$out.=$form->selectarray($htmlname, $arraylist, $selected, 0, 0, 0, '', 0, 0, 0, '', 'minwidth200', 1);
+			$out .= $form->selectarray($htmlname, $arraylist, $selected, 0, 0, 0, '', 0, 0, 0, '', 'minwidth200', 1);
 		}
 
         if ($user->admin && empty($onlyautoornot) && $hideinfohelp <= 0)
         {
-            $out.=info_admin($langs->trans("YouCanChangeValuesForThisListFromDictionarySetup").($hideinfohelp == -1 ? ". ".$langs->trans("YouCanSetDefaultValueInModuleSetup") : ''), 1);
+            $out .= info_admin($langs->trans("YouCanChangeValuesForThisListFromDictionarySetup").($hideinfohelp == -1 ? ". ".$langs->trans("YouCanSetDefaultValueInModuleSetup") : ''), 1);
         }
 
         if ($nooutput) return $out;

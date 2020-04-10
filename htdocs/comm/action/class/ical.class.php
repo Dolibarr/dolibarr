@@ -16,7 +16,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -59,9 +59,9 @@ class ICal
     {
         // phpcs:enable
         $this->file = $file;
-        $file_text='';
+        $file_text = '';
 
-        $tmparray=file($file);
+        $tmparray = file($file);
         if (is_array($tmparray))
         {
             $file_text = join("", $tmparray); //load file
@@ -114,8 +114,8 @@ class ICal
         // is this text vcalendar standard text ? on line 1 is BEGIN:VCALENDAR
         if (!stristr($this->file_text[0], 'BEGIN:VCALENDAR')) return 'error not VCALENDAR';
 
-        $insidealarm=0;
-        $tmpkey='';$tmpvalue=''; $type='';
+        $insidealarm = 0;
+        $tmpkey = ''; $tmpvalue = ''; $type = '';
         foreach ($this->file_text as $text)
         {
             $text = trim($text); // trim one line
@@ -128,17 +128,17 @@ class ICal
                 switch ($text) // search special string
                 {
                     case "BEGIN:VTODO":
-                        $this->todo_count = $this->todo_count+1; // new to do begin
+                        $this->todo_count = $this->todo_count + 1; // new to do begin
                         $type = "VTODO";
                         break;
 
                     case "BEGIN:VEVENT":
-                        $this->event_count = $this->event_count+1; // new event begin
+                        $this->event_count = $this->event_count + 1; // new event begin
                         $type = "VEVENT";
                         break;
 
                     case "BEGIN:VFREEBUSY":
-                        $this->freebusy_count = $this->freebusy_count+1; // new event begin
+                        $this->freebusy_count = $this->freebusy_count + 1; // new event begin
                         $type = "VFREEBUSY";
                         break;
 
@@ -162,37 +162,37 @@ class ICal
 
                     // Manage VALARM that are inside a VEVENT to avoid fields of VALARM to overwrites fields of VEVENT
                     case "BEGIN:VALARM":
-                        $insidealarm=1;
+                        $insidealarm = 1;
                         break;
                     case "END:VALARM":
-                        $insidealarm=0;
+                        $insidealarm = 0;
                         break;
 
                     default: // no special string (SUMMARY, DESCRIPTION, ...)
                     	if ($tmpvalue)
 						{
 							$tmpvalue .= $text;
-							if (! preg_match('/=$/', $text))	// No more lines
+							if (!preg_match('/=$/', $text))	// No more lines
 							{
-								$key=$tmpkey;
-								$value=quotedPrintDecode(preg_replace('/^ENCODING=QUOTED-PRINTABLE:/i', '', $tmpvalue));
-								$tmpkey='';
-								$tmpvalue='';
+								$key = $tmpkey;
+								$value = quotedPrintDecode(preg_replace('/^ENCODING=QUOTED-PRINTABLE:/i', '', $tmpvalue));
+								$tmpkey = '';
+								$tmpvalue = '';
 							}
 						}
                     	elseif (preg_match('/^ENCODING=QUOTED-PRINTABLE:/i', $value))
                     	{
                     		if (preg_match('/=$/', $value))
                     		{
-                    			$tmpkey=$key;
-                    			$tmpvalue=$tmpvalue.preg_replace('/=$/', "", $value);	// We must wait to have next line to have complete message
+                    			$tmpkey = $key;
+                    			$tmpvalue = $tmpvalue.preg_replace('/=$/', "", $value); // We must wait to have next line to have complete message
                     		}
                     		else
                     		{
-                    			$value=quotedPrintDecode(preg_replace('/^ENCODING=QUOTED-PRINTABLE:/i', '', $tmpvalue.$value));
+                    			$value = quotedPrintDecode(preg_replace('/^ENCODING=QUOTED-PRINTABLE:/i', '', $tmpvalue.$value));
                     		}
                     	}                    	//$value=quotedPrintDecode($tmpvalue.$value);
-                    	if (! $insidealarm && ! $tmpkey) $this->add_to_array($type, $key, $value); // add to array
+                    	if (!$insidealarm && !$tmpkey) $this->add_to_array($type, $key, $value); // add to array
                         break;
                 }
             }
@@ -222,9 +222,9 @@ class ICal
             $key = $this->last_key;
             switch ($type)
             {
-                case 'VEVENT': $value = $this->cal[$type][$this->event_count][$key].$value;break;
-                case 'VFREEBUSY': $value = $this->cal[$type][$this->freebusy_count][$key].$value;break;
-                case 'VTODO': $value = $this->cal[$type][$this->todo_count][$key].$value;break;
+                case 'VEVENT': $value = $this->cal[$type][$this->event_count][$key].$value; break;
+                case 'VFREEBUSY': $value = $this->cal[$type][$this->freebusy_count][$key].$value; break;
+                case 'VTODO': $value = $this->cal[$type][$this->todo_count][$key].$value; break;
             }
         }
 
@@ -235,11 +235,11 @@ class ICal
         {
         	if (stristr($key, "DTSTART;VALUE=DATE") || stristr($key, "DTEND;VALUE=DATE"))
         	{
-        		list($key,$value) = array($key,$value);
+        		list($key, $value) = array($key, $value);
         	}
         	else
         	{
-        		list($key,$value) = $this->ical_dt_date($key, $value);
+        		list($key, $value) = $this->ical_dt_date($key, $value);
         	}
         }
 
@@ -322,14 +322,14 @@ class ICal
         $ical_date = str_replace('T', '', $ical_date);
         $ical_date = str_replace('Z', '', $ical_date);
 
-        $ntime=0;
+        $ntime = 0;
         // TIME LIMITED EVENT
         if (preg_match('/([0-9]{4})([0-9]{2})([0-9]{2})([0-9]{0,2})([0-9]{0,2})([0-9]{0,2})/', $ical_date, $date))
-            $ntime=dol_mktime($date[4], $date[5], $date[6], $date[2], $date[3], $date[1], true);
+            $ntime = dol_mktime($date[4], $date[5], $date[6], $date[2], $date[3], $date[1], true);
 
         //if (empty($date[4])) print 'Error bad date: '.$ical_date.' - date1='.$date[1];
         //print dol_print_date($ntime,'dayhour');exit;
-        return $ntime;      // ntime is a GTM time
+        return $ntime; // ntime is a GTM time
     }
 
     // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
@@ -352,7 +352,7 @@ class ICal
         if (empty($temp[1])) // not TZID
         {
             $value = str_replace('T', '', $value);
-            return array($key,$value);
+            return array($key, $value);
         }
 
         $key = $temp[0];
@@ -360,7 +360,7 @@ class ICal
         $return_value[$temp[0]] = $temp[1];
         $return_value['unixtime'] = $value;
 
-        return array($key,$return_value);
+        return array($key, $return_value);
     }
 
     // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
@@ -379,7 +379,7 @@ class ICal
             return $temp;
         }
         else
-       {
+        {
             return false;
         }
     }
@@ -407,7 +407,7 @@ class ICal
     public function get_event_list()
     {
         // phpcs:enable
-        return (! empty($this->cal['VEVENT'])?$this->cal['VEVENT']:'');
+        return (!empty($this->cal['VEVENT']) ? $this->cal['VEVENT'] : '');
     }
 
     // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps

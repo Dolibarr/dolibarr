@@ -12,7 +12,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /*
@@ -28,7 +28,7 @@
 set_include_path($_SERVER['DOCUMENT_ROOT'].'/htdocs');
 
 require '../master.inc.php';
-require_once NUSOAP_PATH.'/nusoap.php';                // Include SOAP
+require_once NUSOAP_PATH.'/nusoap.php'; // Include SOAP
 require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/ws.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/user/class/user.class.php';
@@ -68,11 +68,11 @@ $server->wsdl->addComplexType(
     'all',
     '',
     array(
-        'dolibarrkey'       => array('name'=>'dolibarrkey','type'=>'xsd:string'),
-       'sourceapplication' => array('name'=>'sourceapplication','type'=>'xsd:string'),
-       'login'             => array('name'=>'login','type'=>'xsd:string'),
-        'password'          => array('name'=>'password','type'=>'xsd:string'),
-        'entity'            => array('name'=>'entity','type'=>'xsd:string')
+        'dolibarrkey'       => array('name'=>'dolibarrkey', 'type'=>'xsd:string'),
+       'sourceapplication' => array('name'=>'sourceapplication', 'type'=>'xsd:string'),
+       'login'             => array('name'=>'login', 'type'=>'xsd:string'),
+        'password'          => array('name'=>'password', 'type'=>'xsd:string'),
+        'entity'            => array('name'=>'entity', 'type'=>'xsd:string')
     )
 );
 // Define WSDL Return object
@@ -83,8 +83,8 @@ $server->wsdl->addComplexType(
     'all',
     '',
     array(
-        'result_code'  => array('name'=>'result_code','type'=>'xsd:string'),
-        'result_label' => array('name'=>'result_label','type'=>'xsd:string'),
+        'result_code'  => array('name'=>'result_code', 'type'=>'xsd:string'),
+        'result_label' => array('name'=>'result_label', 'type'=>'xsd:string'),
     )
 );
 
@@ -96,32 +96,32 @@ $server->wsdl->addComplexType(
     'all',
     '',
     array(
-        'amount'          => array('name'=>'amount','type'=>'xsd:double'),
-        'num_paiement'    => array('name'=>'num_paiement','type'=>'xsd:string'),
-        'thirdparty_id'   => array('name'=>'thirdparty_id','type'=>'xsd:int'),
-               'bank_account'    => array('name'=>'bank_account','type'=>'xsd:int'),
-               'payment_mode_id' => array('name'=>'payment_mode_id','type'=>'xsd:int'),
-               'invoice_id'      => array('name'=>'invoice_id','type'=>'xsd:int'),
-               'int_label'       => array('name'=>'int_label','type'=>'xsd:string'),
-               'emitter'         => array('name'=>'emitter','type'=>'xsd:string'),
-               'bank_source'     => array('name'=>'bank_source','type'=>'xsd:string'),
+        'amount'          => array('name'=>'amount', 'type'=>'xsd:double'),
+        'num_payment'     => array('name'=>'num_payment', 'type'=>'xsd:string'),
+        'thirdparty_id'   => array('name'=>'thirdparty_id', 'type'=>'xsd:int'),
+               'bank_account'    => array('name'=>'bank_account', 'type'=>'xsd:int'),
+               'payment_mode_id' => array('name'=>'payment_mode_id', 'type'=>'xsd:int'),
+               'invoice_id'      => array('name'=>'invoice_id', 'type'=>'xsd:int'),
+               'int_label'       => array('name'=>'int_label', 'type'=>'xsd:string'),
+               'emitter'         => array('name'=>'emitter', 'type'=>'xsd:string'),
+               'bank_source'     => array('name'=>'bank_source', 'type'=>'xsd:string'),
     )
 );
 
 // 5 styles: RPC/encoded, RPC/literal, Document/encoded (not WS-I compliant), Document/literal, Document/literal wrapped
 // Style merely dictates how to translate a WSDL binding to a SOAP message. Nothing more. You can use either style with any programming model.
 // http://www.ibm.com/developerworks/webservices/library/ws-whichwsdl/
-$styledoc = 'rpc';       // rpc/document (document is an extend into SOAP 1.0 to support unstructured messages)
-$styleuse = 'encoded';   // encoded/literal/literal wrapped
+$styledoc = 'rpc'; // rpc/document (document is an extend into SOAP 1.0 to support unstructured messages)
+$styleuse = 'encoded'; // encoded/literal/literal wrapped
 // Better choice is document/literal wrapped but literal wrapped not supported by nusoap.
 
 // Register WSDL
 $server->register(
     'createPayment',
     // Entry values
-    array('authentication'=>'tns:authentication','payment'=>'tns:payment'),
+    array('authentication'=>'tns:authentication', 'payment'=>'tns:payment'),
     // Exit values
-    array('result'=>'tns:result','id'=>'xsd:string','ref'=>'xsd:string','ref_ext'=>'xsd:string'),
+    array('result'=>'tns:result', 'id'=>'xsd:string', 'ref'=>'xsd:string', 'ref_ext'=>'xsd:string'),
     $ns,
     $ns.'#createPayment',
     $styledoc,
@@ -139,70 +139,70 @@ $server->register(
  */
 function createPayment($authentication, $payment)
 {
-    global $db,$conf,$langs;
+    global $db, $conf, $langs;
 
     $now = dol_now();
 
     dol_syslog("Function: createPayment login=".$authentication['login']." id=".$payment->id.
                ", ref=".$payment->ref.", ref_ext=".$payment->ref_ext);
 
-    if ($authentication['entity']) $conf->entity=$authentication['entity'];
+    if ($authentication['entity']) $conf->entity = $authentication['entity'];
 
     // Init and check authentication
     $objectresp = array();
     $errorcode  = '';
-       $errorlabel = '';
+    $errorlabel = '';
     $error      = 0;
     $fuser      = check_authentication($authentication, $error, $errorcode, $errorlabel);
 
     // Check parameters
     if (empty($payment['amount']) && empty($payment['thirdparty_id'])) {
-       $error++;
-               $errorcode  ='KO';
-               $errorlabel ="You must specify the amount and the third party's ID.";
+        $error++;
+        $errorcode  = 'KO';
+        $errorlabel = "You must specify the amount and the third party's ID.";
     }
 
-    if (! $error)
+    if (!$error)
     {
-               $soc = new Societe($db);
+        $soc = new Societe($db);
         $res = $soc->fetch($payment['thirdparty_id']);
 
-               $new_payment               = new Paiement($db);
-               $new_payment->amount       = doubleval($payment['amount']);
-               $new_payment->num_paiement = $payment['num_paiement'];
-               $new_payment->bank_account = intval($payment['bank_account']);
-               $new_payment->paiementid   = !empty($payment['payment_mode_id']) ? intval($payment['payment_mode_id']) : $soc->mode_reglement_id;
-               $new_payment->datepaye     = $now;
-               $new_payment->author       = $payment['thirdparty_id'];
-               $new_payment->amounts      = array();
+        $new_payment              = new Paiement($db);
+        $new_payment->amount      = doubleval($payment['amount']);
+        $new_payment->num_payment = $payment['num_payment'];
+        $new_payment->fk_account  = intval($payment['bank_account']);
+        $new_payment->paiementid  = !empty($payment['payment_mode_id']) ? intval($payment['payment_mode_id']) : $soc->mode_reglement_id;
+        $new_payment->datepaye    = $now;
+        $new_payment->author      = $payment['thirdparty_id'];
+        $new_payment->amounts     = array();
 
-               if(intval($payment['invoice_id']) > 0) {
-                       $new_payment->amounts[ $payment['invoice_id'] ] = $new_payment->amount;
-               }
+        if (intval($payment['invoice_id']) > 0) {
+            $new_payment->amounts[$payment['invoice_id']] = $new_payment->amount;
+        }
 
         $db->begin();
-               $result = $new_payment->create($fuser, true);
+        $result = $new_payment->create($fuser, true);
 
-               if($payment['bank_account']) {
-                       $new_payment->addPaymentToBank($fuser, 'payment', $payment['int_label'], $payment['bank_account'], $payment['emitter'], $payment['bank_source']);
-               }
+        if ($payment['bank_account']) {
+            $new_payment->addPaymentToBank($fuser, 'payment', $payment['int_label'], $payment['bank_account'], $payment['emitter'], $payment['bank_source']);
+        }
 
         if ($result < 0)
         {
             $error++;
         }
 
-        if (! $error)
+        if (!$error)
         {
             $db->commit();
-            $objectresp=array('result'=>array('result_code'=>'OK', 'result_label'=>''),'id'=>$new_payment->id);
+            $objectresp = array('result'=>array('result_code'=>'OK', 'result_label'=>''), 'id'=>$new_payment->id);
         }
         else
         {
             $db->rollback();
             $error++;
-            $errorcode='KO';
-            $errorlabel=$new_payment->error;
+            $errorcode = 'KO';
+            $errorlabel = $new_payment->error;
             dol_syslog("Function: createInvoice error while creating".$errorlabel);
         }
     }

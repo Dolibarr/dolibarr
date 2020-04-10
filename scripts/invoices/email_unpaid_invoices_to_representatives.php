@@ -16,7 +16,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -26,27 +26,27 @@
  */
 $sapi_type = php_sapi_name();
 $script_file = basename(__FILE__);
-$path = __DIR__ . '/';
+$path = __DIR__.'/';
 
 // Test si mode batch
 $sapi_type = php_sapi_name();
 if (substr($sapi_type, 0, 3) == 'cgi') {
-	echo "Error: You are using PHP for CGI. To execute " . $script_file . " from command line, you must use PHP for CLI mode.\n";
-	exit(- 1);
+	echo "Error: You are using PHP for CGI. To execute ".$script_file." from command line, you must use PHP for CLI mode.\n";
+	exit(-1);
 }
 
-if (! isset($argv[1]) || ! $argv[1] || ! in_array($argv[1], array('test','confirm'))) {
+if (!isset($argv[1]) || !$argv[1] || !in_array($argv[1], array('test', 'confirm'))) {
 	print "Usage: $script_file (test|confirm) [delay]\n";
 	print "\n";
 	print "Send an email to users to remind all unpaid customer invoices user is sale representative for.\n";
 	print "If you choose 'test' mode, no emails are sent.\n";
 	print "If you add a delay (nb of days), only invoice with due date < today + delay are included.\n";
-	exit(- 1);
+	exit(-1);
 }
 $mode = $argv[1];
 
-require $path . "../../htdocs/master.inc.php";
-require_once DOL_DOCUMENT_ROOT . "/core/class/CMailFile.class.php";
+require $path."../../htdocs/master.inc.php";
+require_once DOL_DOCUMENT_ROOT."/core/class/CMailFile.class.php";
 
 $langs->load('main');
 
@@ -59,27 +59,27 @@ $error = 0;
  */
 
 @set_time_limit(0);
-print "***** " . $script_file . " (" . $version . ") pid=" . dol_getmypid() . " *****\n";
-dol_syslog($script_file . " launched with arg " . join(',', $argv));
+print "***** ".$script_file." (".$version.") pid=".dol_getmypid()." *****\n";
+dol_syslog($script_file." launched with arg ".join(',', $argv));
 
 $now = dol_now('tzserver');
 $duration_value = isset($argv[2]) ? $argv[2] : 'none';
 
-print $script_file . " launched with mode " . $mode . " default lang=" . $langs->defaultlang . (is_numeric($duration_value) ? " delay=" . $duration_value : "") . "\n";
+print $script_file." launched with mode ".$mode." default lang=".$langs->defaultlang.(is_numeric($duration_value) ? " delay=".$duration_value : "")."\n";
 
 if ($mode != 'confirm')
 	$conf->global->MAIN_DISABLE_ALL_MAILS = 1;
 
 $sql = "SELECT f.ref, f.total_ttc, f.date_lim_reglement as due_date, s.nom as name, s.email, s.default_lang,";
 $sql .= " u.rowid as uid, u.lastname, u.firstname, u.email, u.lang";
-$sql .= " FROM " . MAIN_DB_PREFIX . "facture as f";
-$sql .= " , " . MAIN_DB_PREFIX . "societe as s";
-$sql .= " , " . MAIN_DB_PREFIX . "societe_commerciaux as sc";
-$sql .= " , " . MAIN_DB_PREFIX . "user as u";
+$sql .= " FROM ".MAIN_DB_PREFIX."facture as f";
+$sql .= " , ".MAIN_DB_PREFIX."societe as s";
+$sql .= " , ".MAIN_DB_PREFIX."societe_commerciaux as sc";
+$sql .= " , ".MAIN_DB_PREFIX."user as u";
 $sql .= " WHERE f.fk_statut = 1 AND f.paye = 0";
 $sql .= " AND f.fk_soc = s.rowid";
 if (is_numeric($duration_value))
-	$sql .= " AND f.date_lim_reglement < '" . $db->idate(dol_time_plus_duree($now, $duration_value, "d")) . "'";
+	$sql .= " AND f.date_lim_reglement < '".$db->idate(dol_time_plus_duree($now, $duration_value, "d"))."'";
 $sql .= " AND sc.fk_soc = s.rowid";
 $sql .= " AND sc.fk_user = u.rowid";
 $sql .= " ORDER BY u.email ASC, s.rowid ASC, f.ref ASC"; // Order by email to allow one message per email
@@ -94,8 +94,8 @@ if ($resql) {
 	$oldlang = '';
 	$total = 0;
 	$foundtoprocess = 0;
-	print "We found " . $num . " couples (unpayed validated invoice - sale representative) qualified\n";
-	dol_syslog("We found " . $num . " couples (unpayed validated invoice - sale representative) qualified");
+	print "We found ".$num." couples (unpayed validated invoice - sale representative) qualified\n";
+	dol_syslog("We found ".$num." couples (unpayed validated invoice - sale representative) qualified");
 	$message = '';
 
 	if ($num) {
@@ -108,7 +108,7 @@ if ($resql) {
 					envoi_mail($mode, $oldemail, $message, $total, $oldlang, $oldsalerepresentative);
 				} else {
 					if ($oldemail != 'none')
-						print "- No email sent for " . $oldsalerepresentative . ", total: " . $total . "\n";
+						print "- No email sent for ".$oldsalerepresentative.", total: ".$total."\n";
 				}
 				$oldemail = $obj->email;
 				$olduid = $obj->uid;
@@ -119,7 +119,7 @@ if ($resql) {
 				$foundtoprocess = 0;
 				$salerepresentative = dolGetFirstLastname($obj->firstname, $obj->lastname);
 				if (empty($obj->email))
-					print "Warning: Sale representative " . $salerepresentative . " has no email. Notice disabled.\n";
+					print "Warning: Sale representative ".$salerepresentative." has no email. Notice disabled.\n";
 			}
 
 			// Define line content
@@ -127,14 +127,14 @@ if ($resql) {
 			$outputlangs->setDefaultLang(empty($obj->lang) ? $langs->defaultlang : $obj->lang); // By default language of sale representative
 
 			// Load translation files required by the page
-			$outputlangs->loadLangs(array("main","bills"));
+			$outputlangs->loadLangs(array("main", "bills"));
 
 			if (dol_strlen($obj->email)) {
-				$message .= $outputlangs->trans("Invoice") . " " . $obj->ref . " : " . price($obj->total_ttc, 0, $outputlangs, 0, 0, - 1, $conf->currency) . " : " . $obj->name . "\n";
-				dol_syslog("email_unpaid_invoices_to_representatives.php: " . $obj->email);
-				$foundtoprocess ++;
+				$message .= $outputlangs->trans("Invoice")." ".$obj->ref." : ".price($obj->total_ttc, 0, $outputlangs, 0, 0, - 1, $conf->currency)." : ".$obj->name."\n";
+				dol_syslog("email_unpaid_invoices_to_representatives.php: ".$obj->email);
+				$foundtoprocess++;
 			}
-			print "Unpaid invoice " . $obj->ref . ", price " . price2num($obj->total_ttc) . ", due date " . dol_print_date($db->jdate($obj->due_date), 'day') . " (linked to company " . $obj->name . ", sale representative " . dolGetFirstLastname($obj->firstname, $obj->lastname) . ", email " . $obj->email . ", lang " . $outputlangs->defaultlang . "): ";
+			print "Unpaid invoice ".$obj->ref.", price ".price2num($obj->total_ttc).", due date ".dol_print_date($db->jdate($obj->due_date), 'day')." (linked to company ".$obj->name.", sale representative ".dolGetFirstLastname($obj->firstname, $obj->lastname).", email ".$obj->email.", lang ".$outputlangs->defaultlang."): ";
 			if (dol_strlen($obj->email))
 				print "qualified.";
 			else
@@ -144,7 +144,7 @@ if ($resql) {
 			unset($outputlangs);
 
 			$total += $obj->total_ttc;
-			$i ++;
+			$i++;
 		}
 
 		// Si il reste des envois en buffer
@@ -154,7 +154,7 @@ if ($resql) {
 				envoi_mail($mode, $oldemail, $message, $total, $oldlang, $oldsalerepresentative);
 			} else {
 				if ($oldemail != 'none')
-					print "- No email sent for " . $oldsalerepresentative . ", total: " . $total . "\n";
+					print "- No email sent for ".$oldsalerepresentative.", total: ".$total."\n";
 			}
 		}
 	} else {
@@ -166,7 +166,7 @@ if ($resql) {
 	dol_print_error($db);
 	dol_syslog("email_unpaid_invoices_to_representatives.php: Error");
 
-	exit(- 1);
+	exit(-1);
 }
 
 /**
@@ -198,8 +198,8 @@ function envoi_mail($mode, $oldemail, $message, $total, $userlang, $oldsalerepre
 	$errorsto = $conf->global->MAIN_MAIL_ERRORS_TO;
 	$msgishtml = - 1;
 
-	print "- Send email for " . $oldsalerepresentative . " (" . $oldemail . "), total: " . $total . "\n";
-	dol_syslog("email_unpaid_invoices_to_representatives.php: send mail to " . $oldemail);
+	print "- Send email for ".$oldsalerepresentative." (".$oldemail."), total: ".$total."\n";
+	dol_syslog("email_unpaid_invoices_to_representatives.php: send mail to ".$oldemail);
 
 	$usehtml = 0;
 	if (dol_textishtml($conf->global->SCRIPT_EMAIL_UNPAID_INVOICES_SALESREPRESENTATIVES_FOOTER))
@@ -208,15 +208,15 @@ function envoi_mail($mode, $oldemail, $message, $total, $userlang, $oldsalerepre
 		$usehtml += 1;
 
 	$allmessage = '';
-	if (! empty($conf->global->SCRIPT_EMAIL_UNPAID_INVOICES_SALESREPRESENTATIVES_HEADER)) {
+	if (!empty($conf->global->SCRIPT_EMAIL_UNPAID_INVOICES_SALESREPRESENTATIVES_HEADER)) {
 		$allmessage .= $conf->global->SCRIPT_EMAIL_UNPAID_INVOICES_SALESREPRESENTATIVES_HEADER;
 	} else {
-		$allmessage .= $newlangs->transnoentities("ListOfYourUnpaidInvoices") . ($usehtml ? "<br>\n" : "\n") . ($usehtml ? "<br>\n" : "\n");
-		$allmessage .= $newlangs->transnoentities("NoteListOfYourUnpaidInvoices") . ($usehtml ? "<br>\n" : "\n");
+		$allmessage .= $newlangs->transnoentities("ListOfYourUnpaidInvoices").($usehtml ? "<br>\n" : "\n").($usehtml ? "<br>\n" : "\n");
+		$allmessage .= $newlangs->transnoentities("NoteListOfYourUnpaidInvoices").($usehtml ? "<br>\n" : "\n");
 	}
-	$allmessage .= $message . ($usehtml ? "<br>\n" : "\n");
-	$allmessage .= $langs->trans("Total") . " = " . price($total, 0, $newlangs, 0, 0, - 1, $conf->currency) . ($usehtml ? "<br>\n" : "\n");
-	if (! empty($conf->global->SCRIPT_EMAIL_UNPAID_INVOICES_SALESREPRESENTATIVES_FOOTER)) {
+	$allmessage .= $message.($usehtml ? "<br>\n" : "\n");
+	$allmessage .= $langs->trans("Total")." = ".price($total, 0, $newlangs, 0, 0, - 1, $conf->currency).($usehtml ? "<br>\n" : "\n");
+	if (!empty($conf->global->SCRIPT_EMAIL_UNPAID_INVOICES_SALESREPRESENTATIVES_FOOTER)) {
 		$allmessage .= $conf->global->SCRIPT_EMAIL_UNPAID_INVOICES_SALESREPRESENTATIVES_FOOTER;
 		if (dol_textishtml($conf->global->SCRIPT_EMAIL_UNPAID_INVOICES_SALESREPRESENTATIVES_FOOTER))
 			$usehtml += 1;
@@ -229,9 +229,9 @@ function envoi_mail($mode, $oldemail, $message, $total, $userlang, $oldsalerepre
 	// Send or not email
 	if ($mode == 'confirm') {
 		$result = $mail->sendfile();
-		if (! $result) {
-			print "Error sending email " . $mail->error . "\n";
-			dol_syslog("Error sending email " . $mail->error . "\n");
+		if (!$result) {
+			print "Error sending email ".$mail->error."\n";
+			dol_syslog("Error sending email ".$mail->error."\n");
 		}
 	} else {
 		print "No email sent (test mode)\n";
@@ -243,6 +243,6 @@ function envoi_mail($mode, $oldemail, $message, $total, $userlang, $oldsalerepre
 	if ($result) {
 		return 1;
 	} else {
-		return - 1;
+		return -1;
 	}
 }

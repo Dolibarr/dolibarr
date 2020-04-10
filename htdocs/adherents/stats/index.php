@@ -14,7 +14,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -28,39 +28,40 @@ require_once DOL_DOCUMENT_ROOT.'/adherents/class/adherentstats.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/dolgraph.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/member.lib.php';
 
-$WIDTH=DolGraph::getDefaultGraphSizeForStats('width');
-$HEIGHT=DolGraph::getDefaultGraphSizeForStats('height');
+$WIDTH = DolGraph::getDefaultGraphSizeForStats('width');
+$HEIGHT = DolGraph::getDefaultGraphSizeForStats('height');
 
-$userid=GETPOST('userid', 'int'); if ($userid < 0) $userid=0;
-$socid=GETPOST('socid', 'int'); if ($socid < 0) $socid=0;
+$userid = GETPOST('userid', 'int'); if ($userid < 0) $userid = 0;
+$socid = GETPOST('socid', 'int'); if ($socid < 0) $socid = 0;
 
 // Security check
-if ($user->societe_id > 0)
+if ($user->socid > 0)
 {
     $action = '';
-    $socid = $user->societe_id;
+    $socid = $user->socid;
 }
-$result=restrictedArea($user, 'adherent', '', '', 'cotisation');
+$result = restrictedArea($user, 'adherent', '', '', 'cotisation');
 
 $year = strftime("%Y", time());
-$startyear=$year-2;
-$endyear=$year;
+$startyear = $year - 2;
+$endyear = $year;
 
 // Load translation files required by the page
-$langs->loadLangs(array("companies","members"));
+$langs->loadLangs(array("companies", "members"));
 
 
 /*
  * View
  */
 
-$form=new Form($db);
+$form = new Form($db);
 
-llxHeader();
+$title = $langs->trans("SubscriptionsStatistics");
+llxHeader('', $title);
 
-print load_fiche_titre($langs->trans("SubscriptionsStatistics"), $mesg);
+print load_fiche_titre($title, '', 'members');
 
-$dir=$conf->adherent->dir_temp;
+$dir = $conf->adherent->dir_temp;
 
 dol_mkdir($dir);
 
@@ -78,13 +79,13 @@ $fileurlnb = DOL_URL_ROOT.'/viewimage.php?modulepart=memberstats&file=subscripti
 
 $px1 = new DolGraph();
 $mesg = $px1->isGraphKo();
-if (! $mesg)
+if (!$mesg)
 {
     $px1->SetData($data);
-    $i=$startyear;
+    $i = $startyear;
     while ($i <= $endyear)
     {
-        $legend[]=$i;
+        $legend[] = $i;
         $i++;
     }
     $px1->SetLegend($legend);
@@ -95,7 +96,7 @@ if (! $mesg)
     $px1->SetYLabel($langs->trans("NbOfSubscriptions"));
     $px1->SetShading(3);
     $px1->SetHorizTickIncrement(1);
-    $px1->mode='depth';
+    $px1->mode = 'depth';
     $px1->SetTitle($langs->trans("NbOfSubscriptions"));
 
     $px1->draw($filenamenb, $fileurlnb);
@@ -111,13 +112,13 @@ $fileurlamount = DOL_URL_ROOT.'/viewimage.php?modulepart=memberstats&file=subscr
 
 $px2 = new DolGraph();
 $mesg = $px2->isGraphKo();
-if (! $mesg)
+if (!$mesg)
 {
     $px2->SetData($data);
-    $i=$startyear;
+    $i = $startyear;
     while ($i <= $endyear)
     {
-        $legend[]=$i;
+        $legend[] = $i;
         $i++;
     }
     $px2->SetLegend($legend);
@@ -128,7 +129,7 @@ if (! $mesg)
     $px2->SetYLabel($langs->trans("AmountOfSubscriptions"));
     $px2->SetShading(3);
     $px2->SetHorizTickIncrement(1);
-    $px2->mode='depth';
+    $px2->mode = 'depth';
     $px2->SetTitle($langs->trans("AmountOfSubscriptions"));
 
     $px2->draw($filenameamount, $fileurlamount);
@@ -144,7 +145,9 @@ print '<div class="fichecenter"><div class="fichethirdleft">';
 
 // Show filter box
 /*print '<form name="stats" method="POST" action="'.$_SERVER["PHP_SELF"].'">';
-print '<table class="border" width="100%">';
+print '<input type="hidden" name="token" value="'.newToken().'">';
+
+print '<table class="border centpercent">';
 print '<tr class="liste_titre"><td class="liste_titre" colspan="2">'.$langs->trans("Filter").'</td></tr>';
 print '<tr><td>'.$langs->trans("Member").'</td><td>';
 print $form->select_company($id,'memberid','',1);
@@ -171,11 +174,11 @@ print '<td class="right">'.$langs->trans("AmountTotal").'</td>';
 print '<td class="right">'.$langs->trans("AmountAverage").'</td>';
 print '</tr>';
 
-$oldyear=0;
+$oldyear = 0;
 foreach ($data as $val)
 {
     $year = $val['year'];
-    while ($oldyear > $year+1)
+    while ($oldyear > $year + 1)
     {	// If we have empty year
         $oldyear--;
         print '<tr class="oddeven" height="24">';
@@ -199,7 +202,7 @@ foreach ($data as $val)
     print '<td class="right">'.price(price2num($val['total'], 'MT'), 1).'</td>';
     print '<td class="right">'.price(price2num($val['avg'], 'MT'), 1).'</td>';
     print '</tr>';
-    $oldyear=$year;
+    $oldyear = $year;
 }
 
 print '</table>';
@@ -210,7 +213,7 @@ print '</div><div class="fichetwothirdright"><div class="ficheaddleft">';
 
 
 // Show graphs
-print '<table class="border" width="100%"><tr class="pair nohover"><td class="center">';
+print '<table class="border centpercent"><tr class="pair nohover"><td class="center">';
 if ($mesg) { print $mesg; }
 else {
     print $px1->show();

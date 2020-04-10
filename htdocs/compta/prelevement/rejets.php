@@ -15,7 +15,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -35,11 +35,11 @@ $langs->loadLangs(array('banks', 'categories', 'withdrawals', 'companies'));
 
 // Security check
 $socid = GETPOST('socid', 'int');
-if ($user->societe_id) $socid=$user->societe_id;
+if ($user->socid) $socid = $user->socid;
 $result = restrictedArea($user, 'prelevement', '', '', 'bons');
 
 // Get supervariables
-$page = GETPOST('page', 'int');
+$page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOST("page", 'int');
 $sortorder = GETPOST('sortorder', 'alpha');
 $sortfield = GETPOST('sortfield', 'alpha');
 
@@ -49,12 +49,12 @@ $sortfield = GETPOST('sortfield', 'alpha');
 
 llxHeader('', $langs->trans("WithdrawsRefused"));
 
-$offset = $conf->liste_limit * $page ;
+$offset = $conf->liste_limit * $page;
 $pageprev = $page - 1;
 $pagenext = $page + 1;
 
-if ($sortorder == "") $sortorder="DESC";
-if ($sortfield == "") $sortfield="p.datec";
+if ($sortorder == "") $sortorder = "DESC";
+if ($sortfield == "") $sortfield = "p.datec";
 
 $rej = new RejetPrelevement($db, $user);
 $ligne = new LignePrelevement($db, $user);
@@ -64,18 +64,18 @@ $ligne = new LignePrelevement($db, $user);
  *
  */
 $sql = "SELECT pl.rowid, pr.motif, p.ref, pl.statut";
-$sql.= " , s.rowid as socid, s.nom";
-$sql.= " FROM ".MAIN_DB_PREFIX."prelevement_bons as p";
-$sql.= " , ".MAIN_DB_PREFIX."prelevement_rejet as pr";
-$sql.= " , ".MAIN_DB_PREFIX."prelevement_lignes as pl";
-$sql.= " , ".MAIN_DB_PREFIX."societe as s";
-$sql.= " WHERE pr.fk_prelevement_lignes = pl.rowid";
-$sql.= " AND pl.fk_prelevement_bons = p.rowid";
-$sql.= " AND pl.fk_soc = s.rowid";
-$sql.= " AND p.entity = ".$conf->entity;
-if ($socid) $sql.= " AND s.rowid = ".$socid;
-$sql.= " ".$db->order($sortfield, $sortorder);
-$sql.= " ".$db->plimit($conf->liste_limit+1, $offset);
+$sql .= " , s.rowid as socid, s.nom";
+$sql .= " FROM ".MAIN_DB_PREFIX."prelevement_bons as p";
+$sql .= " , ".MAIN_DB_PREFIX."prelevement_rejet as pr";
+$sql .= " , ".MAIN_DB_PREFIX."prelevement_lignes as pl";
+$sql .= " , ".MAIN_DB_PREFIX."societe as s";
+$sql .= " WHERE pr.fk_prelevement_lignes = pl.rowid";
+$sql .= " AND pl.fk_prelevement_bons = p.rowid";
+$sql .= " AND pl.fk_soc = s.rowid";
+$sql .= " AND p.entity = ".$conf->entity;
+if ($socid) $sql .= " AND s.rowid = ".$socid;
+$sql .= " ".$db->order($sortfield, $sortorder);
+$sql .= " ".$db->plimit($conf->liste_limit + 1, $offset);
 
 $result = $db->query($sql);
 if ($result)

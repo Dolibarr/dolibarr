@@ -13,7 +13,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -29,8 +29,8 @@ use OAuth\Common\Consumer\Credentials;
 use OAuth\OAuth2\Service\GitHub;
 
 // Define $urlwithroot
-$urlwithouturlroot=preg_replace('/'.preg_quote(DOL_URL_ROOT, '/').'$/i', '', trim($dolibarr_main_url_root));
-$urlwithroot=$urlwithouturlroot.DOL_URL_ROOT;		// This is to use external domain name found into config file
+$urlwithouturlroot = preg_replace('/'.preg_quote(DOL_URL_ROOT, '/').'$/i', '', trim($dolibarr_main_url_root));
+$urlwithroot = $urlwithouturlroot.DOL_URL_ROOT; // This is to use external domain name found into config file
 //$urlwithroot=DOL_MAIN_URL_ROOT;					// This is to use same domain name than current
 
 
@@ -70,8 +70,8 @@ $credentials = new Credentials(
     $currentUri->getAbsoluteUri()
 );
 
-$requestedpermissionsarray=array();
-if (GETPOST('state')) $requestedpermissionsarray=explode(',', GETPOST('state'));       // Example: 'userinfo_email,userinfo_profile,cloud_print'. 'state' parameter is standard to retrieve some parameters back
+$requestedpermissionsarray = array();
+if (GETPOST('state')) $requestedpermissionsarray = explode(',', GETPOST('state')); // Example: 'userinfo_email,userinfo_profile,cloud_print'. 'state' parameter is standard to retrieve some parameters back
 /*if ($action != 'delete' && empty($requestedpermissionsarray))
 {
     print 'Error, parameter state is not defined';
@@ -83,7 +83,7 @@ if (GETPOST('state')) $requestedpermissionsarray=explode(',', GETPOST('state'));
 /** @var $apiService Service */
 //$apiService = $serviceFactory->createService('StripeTest', $credentials, $storage, $requestedpermissionsarray);
 
-$sql="INSERT INTO ".MAIN_DB_PREFIX."oauth_token set service='StripeLive', entity=".$conf->entity;
+$sql = "INSERT INTO ".MAIN_DB_PREFIX."oauth_token set service='StripeLive', entity=".$conf->entity;
 $db->query($sql);
 
 // access type needed to have oauth provider refreshing token
@@ -103,11 +103,11 @@ if ($action == 'delete')
 
     setEventMessages($langs->trans('TokenDeleted'), null, 'mesgs');
 
-    header('Location: ' . $backtourl);
+    header('Location: '.$backtourl);
     exit();
 }
 
-if (! empty($_GET['code']))     // We are coming from oauth provider page
+if (!empty($_GET['code']))     // We are coming from oauth provider page
 {
 	// We should have
 	//$_GET=array('code' => string 'aaaaaaaaaaaaaa' (length=20), 'state' => string 'user,public_repo' (length=16))
@@ -136,12 +136,12 @@ if (! empty($_GET['code']))     // We are coming from oauth provider page
         // parent::__construct($credentials, $httpClient, $storage, $scopes, $baseApiUri)
         // has not the ending parameter to true like the Google class constructor.
 
-        setEventMessages($langs->trans('NewTokenStored'), null, 'mesgs');   // Stored into object managed by class DoliStorage so into table oauth_token
+        setEventMessages($langs->trans('NewTokenStored'), null, 'mesgs'); // Stored into object managed by class DoliStorage so into table oauth_token
 
         $backtourl = $_SESSION["backtourlsavedbeforeoauthjump"];
         unset($_SESSION["backtourlsavedbeforeoauthjump"]);
 
-        header('Location: ' . $backtourl);
+        header('Location: '.$backtourl);
         exit();
     } catch (Exception $e) {
         print $e->getMessage();
@@ -149,7 +149,7 @@ if (! empty($_GET['code']))     // We are coming from oauth provider page
 }
 else // If entry on page with no parameter, we arrive here
 {
-    $_SESSION["backtourlsavedbeforeoauthjump"]=$backtourl;
+    $_SESSION["backtourlsavedbeforeoauthjump"] = $backtourl;
 
     // This may create record into oauth_state before the header redirect.
     // Creation of record with state in this tables depend on the Provider used (see its constructor).
@@ -165,7 +165,7 @@ else // If entry on page with no parameter, we arrive here
     }
 
     // we go on oauth provider authorization page
-    header('Location: ' . $url);
+    header('Location: '.$url);
     exit();
 }
 

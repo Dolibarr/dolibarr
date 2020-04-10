@@ -152,7 +152,9 @@ $dolibarr_main_db_collation='utf8_unicode_ci';
 
 
 // dolibarr_main_instance_unique_id
-// An ID that is unique for each installation.
+// An secret ID that is unique for each installation.
+// This value is also visible and never propagated outside of Dolibarr, so it can be used as a salt / key for some encryption.
+// To propagate a unique key, you propagate the value concatenated with a string with a hash function. Example: md5('dolibarr'+dolibarr_main_instance_unique_id)
 // Default value: randomly defined during installation
 // Examples:
 // $dolibarr_main_instance_unique_id='84b5bc91f83b56e458db71e0adac2b62';
@@ -216,7 +218,7 @@ $dolibarr_main_authentication='dolibarr';
 // 0 = No forced redirect
 // 1 = Force redirect to https, until SCRIPT_URI start with https into response
 // 2 = Force redirect to https, until SERVER["HTTPS"] is 'on' into response
-// 'https://my.domain.com' = Force reditect to https using this domain name.
+// 'https://my.domain.com' = Force redirect to https using this domain name.
 // Warning: If you enable this parameter, your web server must be configured to
 // respond URL with https protocol.
 // According to your web server setup, some values may works and other not. Try
@@ -224,7 +226,7 @@ $dolibarr_main_authentication='dolibarr';
 // Default value: 0
 // Possible values: 0, 1, 2 or 'https://my.domain.com'
 // Examples:
-// $dolibarr_main_force_https='0';
+// $dolibarr_main_force_https='1';
 //
 $dolibarr_main_force_https='0';
 
@@ -248,11 +250,11 @@ $dolibarr_main_prod='0';
 $dolibarr_main_restrict_os_commands='mysqldump, mysql, pg_dump, pgrestore';
 
 // $dolibarr_main_restrict_ip
-// To restrict access to backoffice to some ip addresses only.
+// To restrict access to backoffice to some ip addresses only. Use a comma to separate values.
 // Note: Pages that does not need login (like public pages, web site) are not protected with this.
 // Default value: ''
 // Examples:
-// $dolibarr_main_restrict_ip='127.0.0.1, 192.168.0.1';
+// $dolibarr_main_restrict_ip='127.0.0.1, ::1, 192.168.0.1';
 //
 $dolibarr_main_restrict_ip='';
 

@@ -9,10 +9,10 @@
  * choice:
  *
  *  - GNU General Public License Version 2 or later (the "GPL")
- *    http://www.gnu.org/licenses/gpl.html
+ *    https://www.gnu.org/licenses/gpl.html
  *
  *  - GNU Lesser General Public License Version 2.1 or later (the "LGPL")
- *    http://www.gnu.org/licenses/lgpl.html
+ *    https://www.gnu.org/licenses/lgpl.html
  *
  *  - Mozilla Public License Version 1.1 or later (the "MPL")
  *    http://www.mozilla.org/MPL/MPL-1.1.html
@@ -36,7 +36,7 @@ function SetXmlHeaders()
 	// Date in the past
 	header('Expires: Mon, 26 Jul 1997 05:00:00 GMT');
 	// always modified
-	header('Last-Modified: ' . gmdate('D, d M Y H:i:s') . ' GMT');
+	header('Last-Modified: '.gmdate('D, d M Y H:i:s').' GMT');
 	// HTTP/1.1
 	header('Cache-Control: no-store, no-cache, must-revalidate');
 	header('Cache-Control: post-check=0, pre-check=0', false);
@@ -60,15 +60,15 @@ function CreateXmlHeader($command, $resourceType, $currentFolder)
 	SetXmlHeaders();
 
 	// Create the XML document header.
-	echo '<?xml version="1.0" encoding="utf-8" ?>' ;
+	echo '<?xml version="1.0" encoding="utf-8" ?>';
 
 	// Create the main "Connector" node.
-	echo '<Connector command="' . $command . '" resourceType="' . $resourceType . '">' ;
+	echo '<Connector command="'.$command.'" resourceType="'.$resourceType.'">';
 
 	// Add the current folder node.
-	echo '<CurrentFolder path="' . ConvertToXmlAttribute($currentFolder) . '" url="' . ConvertToXmlAttribute(GetUrlFromPath($resourceType, $currentFolder, $command)) . '" />' ;
+	echo '<CurrentFolder path="'.ConvertToXmlAttribute($currentFolder).'" url="'.ConvertToXmlAttribute(GetUrlFromPath($resourceType, $currentFolder, $command)).'" />';
 
-	$GLOBALS['HeaderSent'] = true ;
+	$GLOBALS['HeaderSent'] = true;
 }
 
 /**
@@ -78,7 +78,7 @@ function CreateXmlHeader($command, $resourceType, $currentFolder)
  */
 function CreateXmlFooter()
 {
-	echo '</Connector>' ;
+	echo '</Connector>';
 }
 
 /**
@@ -90,10 +90,10 @@ function CreateXmlFooter()
  */
 function SendError($number, $text)
 {
-	if ( $_GET['Command'] == 'FileUpload' )
+	if ($_GET['Command'] == 'FileUpload')
 		SendUploadResults($number, "", "", $text);
 
-	if ( isset($GLOBALS['HeaderSent']) && $GLOBALS['HeaderSent'] )
+	if (isset($GLOBALS['HeaderSent']) && $GLOBALS['HeaderSent'])
 	{
 		SendErrorNode($number, $text);
 		CreateXmlFooter();
@@ -103,17 +103,17 @@ function SendError($number, $text)
 		SetXmlHeaders();
 
 		dol_syslog('Error: '.$number.' '.$text, LOG_ERR);
-		
-		// Create the XML document header
-		echo '<?xml version="1.0" encoding="utf-8" ?>' ;
 
-		echo '<Connector>' ;
+		// Create the XML document header
+		echo '<?xml version="1.0" encoding="utf-8" ?>';
+
+		echo '<Connector>';
 
 		SendErrorNode($number, $text);
 
-		echo '</Connector>' ;
+		echo '</Connector>';
 	}
-	exit ;
+	exit;
 }
 
 /**
@@ -126,7 +126,7 @@ function SendError($number, $text)
 function SendErrorNode($number, $text)
 {
 	if ($text)
-		echo '<Error number="' . $number . '" text="' . htmlspecialchars($text) . '" />' ;
+		echo '<Error number="'.$number.'" text="'.htmlspecialchars($text).'" />';
 	else
-		echo '<Error number="' . $number . '" />' ;
+		echo '<Error number="'.$number.'" />';
 }

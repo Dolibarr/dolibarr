@@ -1,2 +1,12 @@
 # Dolibarr language file - Source file is en_US - loan
 ShowLoanPayment=Zeige Kreidtauszahlung
+Term=Laufzeit
+LoanAccountancyInsuranceCode=Buchhaltungskonto Kreditversicherung
+LoanAccountancyInterestCode=Buchhaltungskonto Kreditzins
+ListLoanAssociatedProject=Kredite für dieses Projekt
+AddLoan=Erzeuge Kredit
+CapitalRemain=Restkapital
+LOAN_ACCOUNTING_ACCOUNT_CAPITAL=Standard - Buchhaltungskonto Kapital
+LOAN_ACCOUNTING_ACCOUNT_INTEREST=Standard - Buchhaltungskonto Zins
+LOAN_ACCOUNTING_ACCOUNT_INSURANCE=Standard - Buchhaltungskonto Kreditversicherung
+CreateCalcSchedule=Finanzielle Verpflichtung anpassen.

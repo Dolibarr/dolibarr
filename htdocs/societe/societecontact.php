@@ -17,7 +17,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -34,30 +34,30 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/html.formcompany.class.php';
 
 $langs->loadLangs(array("orders", "companies"));
 
-$id=GETPOST('id', 'int')?GETPOST('id', 'int'):GETPOST('socid', 'int');
-$ref=GETPOST('ref', 'alpha');
-$action=GETPOST('action', 'alpha');
-$massaction=GETPOST('massaction', 'alpha');
+$id = GETPOST('id', 'int') ?GETPOST('id', 'int') : GETPOST('socid', 'int');
+$ref = GETPOST('ref', 'alpha');
+$action = GETPOST('action', 'alpha');
+$massaction = GETPOST('massaction', 'alpha');
 
-$limit = GETPOST('limit', 'int')?GETPOST('limit', 'int'):$conf->liste_limit;
-$sortfield=GETPOST("sortfield", 'alpha');
-$sortorder=GETPOST("sortorder", 'alpha');
-$page=GETPOST("page", 'int');
-if (! $sortorder) $sortorder="ASC";
-if (! $sortfield) $sortfield="s.nom";
+$limit = GETPOST('limit', 'int') ?GETPOST('limit', 'int') : $conf->liste_limit;
+$sortfield = GETPOST("sortfield", 'alpha');
+$sortorder = GETPOST("sortorder", 'alpha');
+$page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOST("page", 'int');
+if (!$sortorder) $sortorder = "ASC";
+if (!$sortfield) $sortfield = "s.nom";
 if (empty($page) || $page == -1 || !empty($search_btn) || !empty($search_remove_btn) || (empty($toselect) && $massaction === '0')) { $page = 0; }
 $offset = $limit * $page;
 $pageprev = $page - 1;
 $pagenext = $page + 1;
 
 // Security check
-if ($user->societe_id) $socid=$user->societe_id;
+if ($user->socid) $socid = $user->socid;
 $result = restrictedArea($user, 'societe', $id, '');
 
 $object = new Societe($db);
 
 // Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
-$hookmanager->initHooks(array('contactthirdparty','globalcard'));
+$hookmanager->initHooks(array('contactthirdparty', 'globalcard'));
 
 
 /*
@@ -98,7 +98,7 @@ elseif ($action == 'swapstatut' && $user->rights->societe->creer)
 {
 	if ($object->fetch($id))
 	{
-	    $result=$object->swapContactStatus(GETPOST('ligne'));
+	    $result = $object->swapContactStatus(GETPOST('ligne'));
 	}
 	else
 	{
@@ -134,15 +134,15 @@ elseif ($action == 'setaddress' && $user->rights->societe->creer)
  * View
  */
 
-$help_url='EN:Module_Third_Parties|FR:Module_Tiers|ES:Empresas';
+$help_url = 'EN:Module_Third_Parties|FR:Module_Tiers|ES:Empresas';
 llxHeader('', $langs->trans("ThirdParty"), $help_url);
 
 
 $form = new Form($db);
 $formcompany = new FormCompany($db);
 $formother = new FormOther($db);
-$contactstatic=new Contact($db);
-$userstatic=new User($db);
+$contactstatic = new Contact($db);
+$userstatic = new User($db);
 
 
 /* *************************************************************************** */
@@ -151,7 +151,7 @@ $userstatic=new User($db);
 /*                                                                             */
 /* *************************************************************************** */
 
-if ($id > 0 || ! empty($ref))
+if ($id > 0 || !empty($ref))
 {
 	if ($object->fetch($id, $ref) > 0)
 	{
@@ -162,11 +162,11 @@ if ($id > 0 || ! empty($ref))
 		dol_fiche_head($head, 'contact', $langs->trans("ThirdParty"), -1, 'company');
 
 		print '<form method="POST" action="'.$_SERVER['PHP_SELF'].'">';
-		print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+		print '<input type="hidden" name="token" value="'.newToken().'">';
 
         $linkback = '<a href="'.DOL_URL_ROOT.'/societe/list.php?restore_lastsearch_values=1">'.$langs->trans("BackToList").'</a>';
 
-        dol_banner_tab($object, 'socid', $linkback, ($user->societe_id?0:1), 'rowid', 'nom');
+        dol_banner_tab($object, 'socid', $linkback, ($user->socid ? 0 : 1), 'rowid', 'nom');
 
     	print '<div class="fichecenter">';
 
@@ -183,7 +183,7 @@ if ($id > 0 || ! empty($ref))
     	print yn($object->fournisseur);
     	print '</td></tr>';*/
 
-		if (! empty($conf->global->SOCIETE_USEPREFIX))  // Old not used prefix field
+		if (!empty($conf->global->SOCIETE_USEPREFIX))  // Old not used prefix field
 		{
 		    print '<tr><td>'.$langs->trans('Prefix').'</td><td colspan="3">'.$object->prefix_comm.'</td></tr>';
 		}
@@ -213,31 +213,31 @@ if ($id > 0 || ! empty($ref))
 		print '<br>';
 
 		// Contacts lines (modules that overwrite templates must declare this into descriptor)
-		$dirtpls=array_merge($conf->modules_parts['tpl'], array('/core/tpl'));
-		foreach($dirtpls as $reldir)
+		$dirtpls = array_merge($conf->modules_parts['tpl'], array('/core/tpl'));
+		foreach ($dirtpls as $reldir)
 		{
-			$res=@include dol_buildpath($reldir.'/contacts.tpl.php');
+			$res = @include dol_buildpath($reldir.'/contacts.tpl.php');
 			if ($res) break;
 		}
 
 		// additionnal list with adherents of company
-		if (! empty($conf->adherent->enabled) && $user->rights->adherent->lire)
+		if (!empty($conf->adherent->enabled) && $user->rights->adherent->lire)
 		{
 			require_once DOL_DOCUMENT_ROOT.'/adherents/class/adherent.class.php';
 			require_once DOL_DOCUMENT_ROOT.'/adherents/class/adherent_type.class.php';
 
-			$membertypestatic=new AdherentType($db);
-			$memberstatic=new Adherent($db);
+			$membertypestatic = new AdherentType($db);
+			$memberstatic = new Adherent($db);
 
 			$langs->load("members");
 			$sql = "SELECT d.rowid, d.login, d.lastname, d.firstname, d.societe as company, d.fk_soc,";
-			$sql.= " d.datefin,";
-			$sql.= " d.email, d.fk_adherent_type as type_id, d.morphy, d.statut,";
-			$sql.= " t.libelle as type, t.subscription";
-			$sql.= " FROM ".MAIN_DB_PREFIX."adherent as d";
-			$sql.= ", ".MAIN_DB_PREFIX."adherent_type as t";
-			$sql.= " WHERE d.fk_soc = ".$id;
-			$sql.= " AND d.fk_adherent_type = t.rowid";
+			$sql .= " d.datefin,";
+			$sql .= " d.email, d.fk_adherent_type as type_id, d.morphy, d.statut,";
+			$sql .= " t.libelle as type, t.subscription";
+			$sql .= " FROM ".MAIN_DB_PREFIX."adherent as d";
+			$sql .= ", ".MAIN_DB_PREFIX."adherent_type as t";
+			$sql .= " WHERE d.fk_soc = ".$id;
+			$sql .= " AND d.fk_adherent_type = t.rowid";
 
 			dol_syslog("get list sql=".$sql);
 			$resql = $db->query($sql);
@@ -245,11 +245,11 @@ if ($id > 0 || ! empty($ref))
 			{
 				$num = $db->num_rows($resql);
 
-				if ($num  > 0)
+				if ($num > 0)
 				{
 					$param = '';
 
-					$titre=$langs->trans("MembersListOfTiers");
+					$titre = $langs->trans("MembersListOfTiers");
 					print '<br>';
 
 					print_barre_liste($titre, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, '', $num, 0, '');
@@ -266,20 +266,20 @@ if ($id > 0 || ! empty($ref))
 					print_liste_field_titre("EndSubscription", $_SERVER["PHP_SELF"], "d.datefin", $param, "", '', $sortfield, $sortorder, 'center ');
 					print "</tr>\n";
 
-					$i=0;
+					$i = 0;
 					while ($i < $num && $i < $conf->liste_limit)
 					{
 						$objp = $db->fetch_object($resql);
 
-						$datefin=$db->jdate($objp->datefin);
-						$memberstatic->id=$objp->rowid;
-						$memberstatic->ref=$objp->rowid;
-						$memberstatic->lastname=$objp->lastname;
-						$memberstatic->firstname=$objp->firstname;
-						$memberstatic->statut=$objp->statut;
-						$memberstatic->datefin=$db->jdate($objp->datefin);
+						$datefin = $db->jdate($objp->datefin);
+						$memberstatic->id = $objp->rowid;
+						$memberstatic->ref = $objp->rowid;
+						$memberstatic->lastname = $objp->lastname;
+						$memberstatic->firstname = $objp->firstname;
+						$memberstatic->statut = $objp->statut;
+						$memberstatic->datefin = $db->jdate($objp->datefin);
 
-						$companyname=$objp->company;
+						$companyname = $objp->company;
 
 						print '<tr class="oddeven">';
 
@@ -290,17 +290,19 @@ if ($id > 0 || ! empty($ref))
 
 						// Lastname
 						print "<td><a href=\"card.php?rowid=$objp->rowid\">";
-						print ((! empty($objp->lastname) || ! empty($objp->firstname)) ? dol_trunc($memberstatic->getFullName($langs)) : '');
-						print (((! empty($objp->lastname) || ! empty($objp->firstname)) && ! empty($companyname)) ? ' / ' : '');
-						print (! empty($companyname) ? dol_trunc($companyname, 32) : '');
+						print ((!empty($objp->lastname) || !empty($objp->firstname)) ? dol_trunc($memberstatic->getFullName($langs)) : '');
+						print (((!empty($objp->lastname) || !empty($objp->firstname)) && !empty($companyname)) ? ' / ' : '');
+						print (!empty($companyname) ? dol_trunc($companyname, 32) : '');
 						print "</a></td>\n";
 
 						// Login
 						print "<td>".$objp->login."</td>\n";
 
 						// Type
-						$membertypestatic->id=$objp->type_id;
-						$membertypestatic->libelle=$objp->type;
+						$membertypestatic->id = $objp->type_id;
+						$membertypestatic->libelle = $objp->type;
+						$membertypestatic->label = $objp->type;
+
 						print '<td class="nowrap">';
 						print $membertypestatic->getNomUrl(1, 32);
 						print '</td>';

@@ -12,11 +12,11 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 // Protection to avoid direct call of template
-if (empty($conf) || ! is_object($conf))
+if (empty($conf) || !is_object($conf))
 {
 	print "Error, template page can't be called as URL";
 	exit;
@@ -28,14 +28,14 @@ print '<!-- BEGIN PHP TEMPLATE ONLINEPAYMENTLINKS -->';
 
 // Url list
 print '<u>'.$langs->trans("FollowingUrlAreAvailableToMakePayments").':</u><br><br>';
-print img_picto('', 'object_globe.png').' '.$langs->trans("ToOfferALinkForOnlinePaymentOnFreeAmount", $servicename).':<br>';
+print img_picto('', 'globe').' '.$langs->trans("ToOfferALinkForOnlinePaymentOnFreeAmount", $servicename).':<br>';
 print '<strong class="wordbreak">'.getOnlinePaymentUrl(1, 'free')."</strong><br><br>\n";
-if (! empty($conf->commande->enabled))
+if (!empty($conf->commande->enabled))
 {
     print '<div id="order"></div>';
-    print img_picto('', 'object_globe.png').' '.$langs->trans("ToOfferALinkForOnlinePaymentOnOrder", $servicename).':<br>';
+    print img_picto('', 'globe').' '.$langs->trans("ToOfferALinkForOnlinePaymentOnOrder", $servicename).':<br>';
 	print '<strong class="wordbreak">'.getOnlinePaymentUrl(1, 'order')."</strong><br>\n";
-	if (! empty($conf->global->PAYMENT_SECURITY_TOKEN) && ! empty($conf->global->PAYMENT_SECURITY_TOKEN_UNIQUE))
+	if (!empty($conf->global->PAYMENT_SECURITY_TOKEN) && !empty($conf->global->PAYMENT_SECURITY_TOKEN_UNIQUE))
 	{
 	    $langs->load("orders");
 	    print '<form action="'.$_SERVER["PHP_SELF"].'#order" method="POST">';
@@ -45,7 +45,7 @@ if (! empty($conf->commande->enabled))
         if (GETPOST('generate_order_ref', 'alpha'))
         {
             print '<br> -> <strong class="wordbreak">';
-            $url=getOnlinePaymentUrl(0, 'order', GETPOST('generate_order_ref', 'alpha'));
+            $url = getOnlinePaymentUrl(0, 'order', GETPOST('generate_order_ref', 'alpha'));
             print $url;
             print "</strong><br>\n";
         }
@@ -53,12 +53,12 @@ if (! empty($conf->commande->enabled))
 	}
 	print '<br>';
 }
-if (! empty($conf->facture->enabled))
+if (!empty($conf->facture->enabled))
 {
     print '<div id="invoice"></div>';
-    print img_picto('', 'object_globe.png').' '.$langs->trans("ToOfferALinkForOnlinePaymentOnInvoice", $servicename).':<br>';
+    print img_picto('', 'globe').' '.$langs->trans("ToOfferALinkForOnlinePaymentOnInvoice", $servicename).':<br>';
 	print '<strong class="wordbreak">'.getOnlinePaymentUrl(1, 'invoice')."</strong><br>\n";
-	if (! empty($conf->global->PAYMENT_SECURITY_TOKEN) && ! empty($conf->global->PAYMENT_SECURITY_TOKEN_UNIQUE))
+	if (!empty($conf->global->PAYMENT_SECURITY_TOKEN) && !empty($conf->global->PAYMENT_SECURITY_TOKEN_UNIQUE))
 	{
 	    $langs->load("bills");
 	    print '<form action="'.$_SERVER["PHP_SELF"].'#invoice" method="POST">';
@@ -68,7 +68,7 @@ if (! empty($conf->facture->enabled))
         if (GETPOST('generate_invoice_ref', 'alpha'))
         {
             print '<br> -> <strong class="wordbreak">';
-            $url=getOnlinePaymentUrl(0, 'invoice', GETPOST('generate_invoice_ref', 'alpha'));
+            $url = getOnlinePaymentUrl(0, 'invoice', GETPOST('generate_invoice_ref', 'alpha'));
             print $url;
             print "</strong><br>\n";
         }
@@ -76,12 +76,12 @@ if (! empty($conf->facture->enabled))
 	}
 	print '<br>';
 }
-if (! empty($conf->contrat->enabled))
+if (!empty($conf->contrat->enabled))
 {
     print '<div id="contractline"></div>';
-    print img_picto('', 'object_globe.png').' '.$langs->trans("ToOfferALinkForOnlinePaymentOnContractLine", $servicename).':<br>';
+    print img_picto('', 'globe').' '.$langs->trans("ToOfferALinkForOnlinePaymentOnContractLine", $servicename).':<br>';
 	print '<strong class="wordbreak">'.getOnlinePaymentUrl(1, 'contractline')."</strong><br>\n";
-	if (! empty($conf->global->PAYMENT_SECURITY_TOKEN) && ! empty($conf->global->PAYMENT_SECURITY_TOKEN_UNIQUE))
+	if (!empty($conf->global->PAYMENT_SECURITY_TOKEN) && !empty($conf->global->PAYMENT_SECURITY_TOKEN_UNIQUE))
 	{
 	    $langs->load("contracts");
 	    print '<form action="'.$_SERVER["PHP_SELF"].'#contractline" method="POST">';
@@ -91,7 +91,7 @@ if (! empty($conf->contrat->enabled))
         if (GETPOST('generate_contract_ref'))
         {
             print '<br> -> <strong class="wordbreak">';
-            $url=getOnlinePaymentUrl(0, 'contractline', GETPOST('generate_contract_ref', 'alpha'));
+            $url = getOnlinePaymentUrl(0, 'contractline', GETPOST('generate_contract_ref', 'alpha'));
             print $url;
             print "</strong><br>\n";
         }
@@ -99,12 +99,12 @@ if (! empty($conf->contrat->enabled))
 	}
 	print '<br>';
 }
-if (! empty($conf->adherent->enabled))
+if (!empty($conf->adherent->enabled))
 {
     print '<div id="membersubscription"></div>';
-    print img_picto('', 'object_globe.png').' '.$langs->trans("ToOfferALinkForOnlinePaymentOnMemberSubscription", $servicename).':<br>';
+    print img_picto('', 'globe').' '.$langs->trans("ToOfferALinkForOnlinePaymentOnMemberSubscription", $servicename).':<br>';
 	print '<strong class="wordbreak">'.getOnlinePaymentUrl(1, 'membersubscription')."</strong><br>\n";
-	if (! empty($conf->global->PAYMENT_SECURITY_TOKEN) && ! empty($conf->global->PAYMENT_SECURITY_TOKEN_UNIQUE))
+	if (!empty($conf->global->PAYMENT_SECURITY_TOKEN) && !empty($conf->global->PAYMENT_SECURITY_TOKEN_UNIQUE))
 	{
 	    $langs->load("members");
 	    print '<form action="'.$_SERVER["PHP_SELF"].'#membersubscription" method="POST">';
@@ -114,7 +114,7 @@ if (! empty($conf->adherent->enabled))
         if (GETPOST('generate_member_ref'))
         {
             print '<br> -> <strong class="wordbreak">';
-            $url=getOnlinePaymentUrl(0, 'membersubscription', GETPOST('generate_member_ref', 'alpha'));
+            $url = getOnlinePaymentUrl(0, 'membersubscription', GETPOST('generate_member_ref', 'alpha'));
             print $url;
             print "</strong><br>\n";
         }
@@ -122,12 +122,12 @@ if (! empty($conf->adherent->enabled))
 	}
 	print '<br>';
 }
-if (! empty($conf->don->enabled))
+if (!empty($conf->don->enabled))
 {
     print '<div id="donation"></div>';
-	print img_picto('', 'object_globe.png').' '.$langs->trans("ToOfferALinkForOnlinePaymentOnDonation", $servicename).':<br>';
+	print img_picto('', 'globe').' '.$langs->trans("ToOfferALinkForOnlinePaymentOnDonation", $servicename).':<br>';
 	print '<strong class="wordbreak">'.getOnlinePaymentUrl(1, 'donation')."</strong><br>\n";
-	if (! empty($conf->global->PAYMENT_SECURITY_TOKEN) && ! empty($conf->global->PAYMENT_SECURITY_TOKEN_UNIQUE))
+	if (!empty($conf->global->PAYMENT_SECURITY_TOKEN) && !empty($conf->global->PAYMENT_SECURITY_TOKEN_UNIQUE))
 	{
 	    $langs->load("members");
 	    print '<form action="'.$_SERVER["PHP_SELF"].'#donation" method="POST">';
@@ -137,7 +137,7 @@ if (! empty($conf->don->enabled))
         if (GETPOST('generate_donation_ref'))
         {
             print '<br> -> <strong class="wordbreak">';
-            $url=getOnlinePaymentUrl(0, 'donation', GETPOST('generate_donation_ref', 'alpha'));
+            $url = getOnlinePaymentUrl(0, 'donation', GETPOST('generate_donation_ref', 'alpha'));
             print $url;
             print "</strong><br>\n";
         }
@@ -146,7 +146,7 @@ if (! empty($conf->don->enabled))
 	print '<br>';
 }
 
-if (! empty($conf->use_javascript_ajax))
+if (!empty($conf->use_javascript_ajax))
 {
 	print "\n".'<script type="text/javascript">';
 	print '$(document).ready(function () {

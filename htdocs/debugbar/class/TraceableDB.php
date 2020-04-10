@@ -1,6 +1,6 @@
 <?php
 
-require_once DOL_DOCUMENT_ROOT .'/core/db/DoliDB.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/db/DoliDB.class.php';
 
 /**
  * TraceableDB class
@@ -333,9 +333,9 @@ class TraceableDB extends DoliDB
 			'sql'           => $sql,
 			'duration'      => $duration,
 			'memory_usage'  => $memoryDelta,
-			'is_success'    => $resql,
-			'error_code'    => ! $resql ? $this->db->lasterrno() : null,
-			'error_message' => ! $resql ? $this->db->lasterror() : null
+			'is_success'    => $resql ? true : false,
+			'error_code'    => $resql ? null : $this->db->lasterrno(),
+			'error_message' => $resql ? null : $this->db->lasterror()
 		);
 	}
 

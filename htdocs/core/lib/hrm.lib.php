@@ -12,7 +12,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -36,7 +36,7 @@ function establishment_prepare_head($object)
 	$h = 0;
 	$head = array();
 
-	$head[$h][0] = DOL_URL_ROOT.'/hrm/establishment/card.php?id=' . $object->id;
+	$head[$h][0] = DOL_URL_ROOT.'/hrm/establishment/card.php?id='.$object->id;
 	$head[$h][1] = $langs->trans("Card");
 	$head[$h][2] = 'card';
 	$h++;
@@ -47,7 +47,7 @@ function establishment_prepare_head($object)
     // $this->tabs = array('entity:-tabname);   												to remove a tab
 	complete_head_from_modules($conf, $langs, $object, $head, $h, 'establishment');
 
-	$head[$h][0] = DOL_URL_ROOT.'/hrm/establishment/info.php?id=' . $object->id;
+	$head[$h][0] = DOL_URL_ROOT.'/hrm/establishment/info.php?id='.$object->id;
 	$head[$h][1] = $langs->trans("Info");
 	$head[$h][2] = 'info';
 	$h++;

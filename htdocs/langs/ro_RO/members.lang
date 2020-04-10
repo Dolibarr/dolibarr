@@ -29,6 +29,7 @@ MenuMembersUpToDate=Membri cu cotizaţia la zi
 MenuMembersNotUpToDate=Membri fără  cotizaţia la zi
 MenuMembersResiliated=Membrii desființați
 MembersWithSubscriptionToReceive=Membri cu cotizaţia de încasat
+MembersWithSubscriptionToReceiveShort=Subscription to receive
 DateSubscription=Data Adeziune
 DateEndSubscription=Dată Sfârşit Adeziune
 EndSubscription=Sfârşit Adeziune

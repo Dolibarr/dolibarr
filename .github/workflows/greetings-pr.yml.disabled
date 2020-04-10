@@ -1,0 +1,13 @@
+# See syntax file on https://help.github.com/en/actions/reference/workflow-syntax-for-github-actions
+name: Greetings PR
+
+on: [pull_request]
+
+jobs:
+  greeting:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/first-interaction@v1
+      with:
+        repo-token: ${{ secrets.GITHUB_TOKEN }}
+        pr-message: 'Welcome to the Dolibarr army. You are on the road to become an Admiral (see https://wiki.dolibarr.org/index.php/Dolibarr_Project)'

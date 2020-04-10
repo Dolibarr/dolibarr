@@ -1,4 +1,5 @@
-# Dolibarr language file - en_US - Accounting Expert
+# Dolibarr language file - en_US - Accountancy (Double entries)
+Accountancy=حسابداری
 Accounting=حساب‌داری
 ACCOUNTING_EXPORT_SEPARATORCSV=جداکنندۀ ستون برای فایل صادرات
 ACCOUNTING_EXPORT_DATE=حالت بندی تاریخ برای صادرات
@@ -97,6 +98,8 @@ MenuExpenseReportAccounts=حساب‌های گزارش هزینه‌ها
 MenuLoanAccounts=حساب‌های وام
 MenuProductsAccounts=حساب‌های محصولات
 MenuClosureAccounts=حساب‌های خاتمه
+MenuAccountancyClosure=Closure
+MenuAccountancyValidationMovements=Validate movements
 ProductsBinding=حساب‌های محصولات
 TransferInAccounting=انتقال به‌داخل حساب‌داری
 RegistrationInAccounting=ثبت در حساب‌داری
@@ -164,12 +167,14 @@ ACCOUNTING_ACCOUNT_SUSPENSE=حساب حساب‌داری انتظار
 DONATION_ACCOUNTINGACCOUNT=حساب حساب‌داری ثبت کمک و اعانه
 ADHERENT_SUBSCRIPTION_ACCOUNTINGACCOUNT=حساب حساب‌داری ثبت اشتراک‌ها
 
-ACCOUNTING_PRODUCT_BUY_ACCOUNT=حساب حساب‌داری پیش‌فرض برای محصولات خریداری شده (در صورت عدم تعریف در برگۀ محصولات استفاده می‌شود)
+ACCOUNTING_PRODUCT_BUY_ACCOUNT=Accounting account by default for the bought products (used if not defined in the product sheet)
 ACCOUNTING_PRODUCT_SOLD_ACCOUNT=حساب حساب‌داری پیش‌فرض برای محصولات فروخته شده (در صورت عدم تعریف در برگۀ محصولات استفاده می‌شود)
-ACCOUNTING_PRODUCT_SOLD_INTRA_ACCOUNT=حساب حساب‌داری پیش‌فرض برای محصولات فروخته شده در اتحادیۀ اروپا (در صورت عدم تعریف در برگۀ محصولات استفاده می‌شود)
-ACCOUNTING_PRODUCT_SOLD_EXPORT_ACCOUNT=حساب حساب‌داری پیش‌فرض برای محصولات فروخته شده و صادر شده در خارج از اتحادیۀ اروپا (در صورت عدم تعریف در برگۀ محصولات استفاده می‌شود)
+ACCOUNTING_PRODUCT_SOLD_INTRA_ACCOUNT=Accounting account by default for the products sold in EEC (used if not defined in the product sheet)
+ACCOUNTING_PRODUCT_SOLD_EXPORT_ACCOUNT=Accounting account by default for the products sold and exported out of EEC (used if not defined in the product sheet)
 ACCOUNTING_SERVICE_BUY_ACCOUNT=حساب حساب‌داری پیش‌فرض برای خدمات خریداری شده (در صورت عدم تعریف در برگۀ خدمات استفاده می‌شود)
 ACCOUNTING_SERVICE_SOLD_ACCOUNT=حساب حساب‌داری پیش‌فرض برای خدمات فروخته شده (در صورت عدم تعریف در برگۀ خدمات استفاده می‌شود)
+ACCOUNTING_SERVICE_SOLD_INTRA_ACCOUNT=Accounting account by default for the services sold in EEC (used if not defined in the service sheet)
+ACCOUNTING_SERVICE_SOLD_EXPORT_ACCOUNT=Accounting account by default for the services sold and exported out of EEC (used if not defined in the service sheet)
 
 Doctype=نوع سند
 Docdate=تاریخ
@@ -192,9 +197,10 @@ ByPersonalizedAccountGroups=به واسطۀ گروه‌های دل‌خواه
 ByYear=به واسطۀ سال
 NotMatch=تعیین نشده
 DeleteMvt=حذف سطور دفترکل
+DelMonth=Month to delete
 DelYear=حذف سال
 DelJournal=حذف دفتر
-ConfirmDeleteMvt=این کار همۀ سطور دفترکل در سال و/یا از یک دفتر خاص را حذف می‌کند. حداقل یک ضابطه نیاز است.
+ConfirmDeleteMvt=This will delete all lines of the Ledger for the year/month and/or from a specific journal (At least one criterion is required). You will have to reuse the feature 'Registration in accounting' to have the deleted record back in the ledger.
 ConfirmDeleteMvtPartial=این کار باعث حذف تراکنش از دفترکل می‌شود (همۀ سطور مربوط به این تراکنش نیز حذف خواهند شد)
 FinanceJournal=دفتر مالی
 ExpenseReportsJournal=دفتر گزارش هزینه
@@ -218,13 +224,15 @@ ListAccounts=فهرست حساب‌های حسابداری
 UnknownAccountForThirdparty=حساب‌ شخص‌سوم ناشناخته. از %s استفاده می‌شود.
 UnknownAccountForThirdpartyBlocking=حساب شخص‌سوم ناشناخته. خطای انسدادی
 ThirdpartyAccountNotDefinedOrThirdPartyUnknown=Third-party account not defined or third party unknown. We will use %s
+ThirdpartyAccountNotDefinedOrThirdPartyUnknownSubledgerIgnored=Third-party unknown and subledger not defined on the payment. We will keep the subledger account value empty.
 ThirdpartyAccountNotDefinedOrThirdPartyUnknownBlocking=حساب شخص‌سوم تعریف نشده یا شخص سوم ناشناخته است. خطای انسدادی
 UnknownAccountForThirdpartyAndWaitingAccountNotDefinedBlocking=حساب شخص‌سوم ناشناخته و حساب انتظار تعریف نشده است. خطای انسدادی
 PaymentsNotLinkedToProduct=پرداخت به هیچ محصول/خدمتی وصل نشده است
+ShowOpeningBalance=Show opening balance
+HideOpeningBalance=Hide opening balance
 
 Pcgtype=گروه حساب
-Pcgsubtype=زیرگروه حساب
-PcgtypeDesc=گروه و زیرگروه حساب به‌عنوان "فیلتر" ازپیش‌تعریف شده و ضابطۀ "گروه‌بندی" برای برخی گزارشات حساب‌داری مورد استفاده است. برای مثال، "درآمد" یا "هزینه" به‌عنوان گروه‌های مربوط به حساب‌های حساب‌داری محصولات برای ساخت گزارش هزینه/درآمد استفاده می‌شود.
+PcgtypeDesc=Group of account are used as predefined 'filter' and 'grouping' criteria for some accounting reports. For example, 'INCOME' or 'EXPENSE' are used as groups for accounting accounts of products to build the expense/income report.
 
 TotalVente=جمع گردش‌مالی پیش‌از محاسبۀ مالیات
 TotalMarge=حاشیه فروش کل
@@ -235,12 +243,18 @@ DescVentilDoneCustomer=در این قسمت فهرستی از سطور صورت�
 DescVentilTodoCustomer=بندکردن سطور صورت‌حساب‌هائی که فعلا به یک حساب‌حساب‌داری محصول بند نشده‌اند
 ChangeAccount=تغییر حساب‌حسابداری محصول/خدمت برای سطور انتخاب شده با حساب‌حسابداری زیر:
 Vide=-
-DescVentilSupplier=در این قسمت فهرست سطور صورت‌حساب تامین‌کنندگان که هنوز به یک حساب‌حساب‌داری محصول بنده نشده‌اند را ملاحظه کنید
+DescVentilSupplier=Consult here the list of vendor invoice lines bound or not yet bound to a product accounting account (only record not already transfered in accountancy are visible)
 DescVentilDoneSupplier=در این قسمت فهرستی از سطور صورت‌حساب‌های تامین کنندگان و حساب‌حساب‌داری آن‌ها ملاحظه کنید
 DescVentilTodoExpenseReport=بندکردن سطور گزارش هزینه‌هائی که قبلا به حساب‌حسابداری پرداختی بند نشده‌اند
 DescVentilExpenseReport=در این قسمت فهرستی از سطور گزارش هزینه‌هائی را که به یک حساب‌حساب‌داری پرداخت بندشده‌اند (یا نشده‌اند) را ملاحظه کنید
 DescVentilExpenseReportMore=در صورتی‌که شما حساب‌حساب‌داری را از نوع سطور گزارش هزینه تنظیم می‌کنید، برنامه قادر خواهد بود همۀ بندهای لازم را بین سطور گزارش هزینه‌های شما و حساب حساب‌داری شما در ساختار حساب‌های‌تان را ایجاد نماید، فقط با یک کلیک بر روی کلید <strong>"%s"</strong>. در صورتی‌که حساب بر روی واژه‌نامۀ پرداخت‌ها ثبت نشده باشد یا هنوز سطوری داشته باشید که به هیچ حسابی متصل نباشد، باید بندها را به شکل دستی از فهرست "<strong>%s</strong>: ایجاد نمائید.
 DescVentilDoneExpenseReport=در این قسمت فهرستی از سطور گزارشات هزینه و حساب‌حساب‌داری پرداخت آن‌ها را داشته باشید
+
+DescClosure=Consult here the number of movements by month who are not validated & fiscal years already open
+OverviewOfMovementsNotValidated=Step 1/ Overview of movements not validated. (Necessary to close a fiscal year)
+ValidateMovements=Validate movements
+DescValidateMovements=Any modification or deletion of writing, lettering and deletes will be prohibited. All entries for an exercise must be validated otherwise closing will not be possible
+SelectMonthAndValidate=Select month and validate movements
 
 ValidateHistory=بندکردن خودکار
 AutomaticBindingDone=بندکردن خودکار انجام شد
@@ -256,6 +270,8 @@ ListOfProductsWithoutAccountingAccount=فهرست محصولاتی که به ه�
 ChangeBinding=تغییر بند‌شدن‌ها
 Accounted=در دفترکل حساب‌شده است
 NotYetAccounted=هنوز در دفترکل حساب نشده‌است
+ShowTutorial=Show Tutorial
+NotReconciled=وفق داده نشده
 
 ## Admin
 ApplyMassCategories=انتساب دست‌جمعی دسته‌بندی
@@ -264,7 +280,7 @@ CategoryDeleted=دسته‌بندی حساب حساب‌داری حذف شد
 AccountingJournals=دفترهای حساب‌داری
 AccountingJournal=دفتر حساب‌داری
 NewAccountingJournal=دفتر حساب‌داری جدید
-ShowAccoutingJournal=نمایش دفتر حساب‌داری
+ShowAccountingJournal=نمایش دفترنویسی حساب‌داری
 NatureOfJournal=Nature of Journal
 AccountingJournalType1=فعالیت‌های متفرقه
 AccountingJournalType2=فروش

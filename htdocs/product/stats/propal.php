@@ -15,7 +15,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -25,10 +25,10 @@
  */
 
 require '../../main.inc.php';
-require_once DOL_DOCUMENT_ROOT . '/core/lib/product.lib.php';
-require_once DOL_DOCUMENT_ROOT . '/comm/propal/class/propal.class.php';
-require_once DOL_DOCUMENT_ROOT . '/product/class/product.class.php';
-require_once DOL_DOCUMENT_ROOT . '/core/class/html.formother.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/product.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/comm/propal/class/propal.class.php';
+require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
 
 // Load translation files required by the page
 $langs->loadLangs(array('products', 'companies'));
@@ -37,30 +37,30 @@ $id = GETPOST('id', 'int');
 $ref = GETPOST('ref', 'alpha');
 
 // Security check
-$fieldvalue = (! empty($id) ? $id : (! empty($ref) ? $ref : ''));
-$fieldtype = (! empty($ref) ? 'ref' : 'rowid');
-$socid='';
-if (! empty($user->societe_id)) $socid=$user->societe_id;
+$fieldvalue = (!empty($id) ? $id : (!empty($ref) ? $ref : ''));
+$fieldtype = (!empty($ref) ? 'ref' : 'rowid');
+$socid = '';
+if (!empty($user->socid)) $socid = $user->socid;
 $result = restrictedArea($user, 'produit|service', $fieldvalue, 'product&product', '', '', $fieldtype);
 
 // Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
-$hookmanager->initHooks(array ('productstatspropal'));
+$hookmanager->initHooks(array('productstatspropal'));
 
 $mesg = '';
 
 // Load variable for pagination
-$limit = GETPOST('limit', 'int')?GETPOST('limit', 'int'):$conf->liste_limit;
+$limit = GETPOST('limit', 'int') ?GETPOST('limit', 'int') : $conf->liste_limit;
 $sortfield = GETPOST('sortfield', 'alpha');
 $sortorder = GETPOST('sortorder', 'alpha');
-$page = GETPOST('page', 'int');
+$page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOST("page", 'int');
 if (empty($page) || $page == -1) { $page = 0; }     // If $page is not defined, or '' or -1
 $offset = $limit * $page;
 $pageprev = $page - 1;
 $pagenext = $page + 1;
-if (! $sortorder) $sortorder = "DESC";
-if (! $sortfield) $sortfield = "p.datep";
+if (!$sortorder) $sortorder = "DESC";
+if (!$sortfield) $sortfield = "p.datep";
 
-$search_month = GETPOST('search_month', 'aplha');
+$search_month = GETPOST('search_month', 'alpha');
 $search_year = GETPOST('search_year', 'int');
 
 if (GETPOST('button_removefilter_x', 'alpha') || GETPOST('button_removefilter', 'alpha')) {
@@ -73,28 +73,28 @@ if (GETPOST('button_removefilter_x', 'alpha') || GETPOST('button_removefilter', 
  */
 
 $propalstatic = new Propal($db);
-$societestatic=new Societe($db);
+$societestatic = new Societe($db);
 
 $form = new Form($db);
 $formother = new FormOther($db);
 
-if ($id > 0 || ! empty($ref))
+if ($id > 0 || !empty($ref))
 {
 	$product = new Product($db);
 	$result = $product->fetch($id, $ref);
 
     $object = $product;
 
-	$parameters = array ('id' => $id);
+	$parameters = array('id' => $id);
 	$reshook = $hookmanager->executeHooks('doActions', $parameters, $product, $action); // Note that $action and $object may have been modified by some hooks
 	if ($reshook < 0) setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
 
-	llxHeader("", "", $langs->trans("CardProduct" . $product->type));
+	llxHeader("", "", $langs->trans("CardProduct".$product->type));
 
 	if ($result > 0)
 	{
 		$head = product_prepare_head($product);
-		$titre = $langs->trans("CardProduct" . $product->type);
+		$titre = $langs->trans("CardProduct".$product->type);
 		$picto = ($product->type == Product::TYPE_SERVICE ? 'service' : 'product');
 		dol_fiche_head($head, 'referers', $titre, -1, $picto);
 
@@ -105,7 +105,7 @@ if ($id > 0 || ! empty($ref))
         $linkback = '<a href="'.DOL_URL_ROOT.'/product/list.php?restore_lastsearch_values=1">'.$langs->trans("BackToList").'</a>';
 
         $shownav = 1;
-        if ($user->societe_id && ! in_array('product', explode(',', $conf->global->MAIN_MODULES_FOR_EXTERNAL))) $shownav=0;
+        if ($user->socid && !in_array('product', explode(',', $conf->global->MAIN_MODULES_FOR_EXTERNAL))) $shownav = 0;
 
         dol_banner_tab($object, 'ref', $linkback, $shownav, 'ref');
 
@@ -129,26 +129,26 @@ if ($id > 0 || ! empty($ref))
 			$sql = "SELECT DISTINCT s.nom as name, s.rowid as socid, p.rowid as propalid, p.ref, d.total_ht as amount,";
 			$sql .= " p.ref_client,";
 			$sql .= "p.datep, p.fk_statut as statut, d.rowid, d.qty";
-			if (! $user->rights->societe->client->voir && ! $socid)
+			if (!$user->rights->societe->client->voir && !$socid)
 				$sql .= ", sc.fk_soc, sc.fk_user ";
-			$sql .= " FROM " . MAIN_DB_PREFIX . "societe as s";
-			$sql .= "," . MAIN_DB_PREFIX . "propal as p";
-			$sql .= ", " . MAIN_DB_PREFIX . "propaldet as d";
-			if (! $user->rights->societe->client->voir && ! $socid)
-				$sql .= ", " . MAIN_DB_PREFIX . "societe_commerciaux as sc";
+			$sql .= " FROM ".MAIN_DB_PREFIX."societe as s";
+			$sql .= ",".MAIN_DB_PREFIX."propal as p";
+			$sql .= ", ".MAIN_DB_PREFIX."propaldet as d";
+			if (!$user->rights->societe->client->voir && !$socid)
+				$sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
 			$sql .= " WHERE p.fk_soc = s.rowid";
 			$sql .= " AND p.entity IN (".getEntity('propal').")";
 			$sql .= " AND d.fk_propal = p.rowid";
-			$sql .= " AND d.fk_product =" . $product->id;
-			if (! empty($search_month))
-				$sql .= ' AND MONTH(p.datep) IN (' . $search_month . ')';
-			if (! empty($search_year))
-				$sql .= ' AND YEAR(p.datep) IN (' . $search_year . ')';
-			if (! $user->rights->societe->client->voir && ! $socid)
-				$sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = " . $user->id;
+			$sql .= " AND d.fk_product =".$product->id;
+			if (!empty($search_month))
+				$sql .= ' AND MONTH(p.datep) IN ('.$search_month.')';
+			if (!empty($search_year))
+				$sql .= ' AND YEAR(p.datep) IN ('.$search_year.')';
+			if (!$user->rights->societe->client->voir && !$socid)
+				$sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".$user->id;
 			if ($socid)
-				$sql .= " AND p.fk_soc = " . $socid;
-			$sql.= $db->order($sortfield, $sortorder);
+				$sql .= " AND p.fk_soc = ".$socid;
+			$sql .= $db->order($sortfield, $sortorder);
 
 			// Calcul total qty and amount for global if full scan list
 			$total_ht = 0;
@@ -169,33 +169,33 @@ if ($id > 0 || ! empty($ref))
 			{
 				$num = $db->num_rows($result);
 
-				if (! empty($id))
-					$option .= '&amp;id=' . $product->id;
-				if (! empty($search_month))
-					$option .= '&amp;search_month=' . $search_month;
-				if (! empty($search_year))
-					$option .= '&amp;search_year=' . $search_year;
-				if ($limit > 0 && $limit != $conf->liste_limit) $option.='&limit='.urlencode($limit);
+				if (!empty($id))
+					$option .= '&amp;id='.$product->id;
+				if (!empty($search_month))
+					$option .= '&amp;search_month='.$search_month;
+				if (!empty($search_year))
+					$option .= '&amp;search_year='.$search_year;
+				if ($limit > 0 && $limit != $conf->liste_limit) $option .= '&limit='.urlencode($limit);
 
-				print '<form method="post" action="' . $_SERVER['PHP_SELF'] . '?id=' . $product->id . '" name="search_form">' . "\n";
-				if (! empty($sortfield))
-					print '<input type="hidden" name="sortfield" value="' . $sortfield . '"/>';
-				if (! empty($sortorder))
-					print '<input type="hidden" name="sortorder" value="' . $sortorder . '"/>';
-				if (! empty($page)) {
-					print '<input type="hidden" name="page" value="' . $page . '"/>';
-					$option .= '&amp;page=' . $page;
+				print '<form method="post" action="'.$_SERVER['PHP_SELF'].'?id='.$product->id.'" name="search_form">'."\n";
+				if (!empty($sortfield))
+					print '<input type="hidden" name="sortfield" value="'.$sortfield.'"/>';
+				if (!empty($sortorder))
+					print '<input type="hidden" name="sortorder" value="'.$sortorder.'"/>';
+				if (!empty($page)) {
+					print '<input type="hidden" name="page" value="'.$page.'"/>';
+					$option .= '&amp;page='.$page;
 				}
 
 				print_barre_liste($langs->trans("Proposals"), $page, $_SERVER["PHP_SELF"], "&amp;id=".$product->id, $sortfield, $sortorder, '', $num, $totalofrecords, '', 0, '', '', $limit);
                 print '<div class="liste_titre liste_titre_bydiv centpercent">';
                 print '<div class="divsearchfield">';
-				print $langs->trans('Period') . ' (' . $langs->trans("DatePropal") . ') - ';
-				print $langs->trans('Month') . ':<input class="flat" type="text" size="4" name="search_month" value="' . $search_month . '"> ';
-				print $langs->trans('Year') . ':' . $formother->selectyear($search_year ? $search_year : - 1, 'search_year', 1, 20, 5);
+				print $langs->trans('Period').' ('.$langs->trans("DatePropal").') - ';
+				print $langs->trans('Month').':<input class="flat" type="text" size="4" name="search_month" value="'.$search_month.'"> ';
+				print $langs->trans('Year').':'.$formother->selectyear($search_year ? $search_year : - 1, 'search_year', 1, 20, 5);
 				print '<div style="vertical-align: middle; display: inline-block">';
-				print '<input type="image" class="liste_titre" name="button_search" src="' . img_picto($langs->trans("Search"), 'search.png', '', '', 1) . '" value="' . dol_escape_htmltag($langs->trans("Search")) . '" title="' . dol_escape_htmltag($langs->trans("Search")) . '">';
-				print '<input type="image" class="liste_titre" name="button_removefilter" src="' . img_picto($langs->trans("Search"), 'searchclear.png', '', '', 1) . '" value="' . dol_escape_htmltag($langs->trans("RemoveFilter")) . '" title="' . dol_escape_htmltag($langs->trans("RemoveFilter")) . '">';
+				print '<input type="image" class="liste_titre" name="button_search" src="'.img_picto($langs->trans("Search"), 'search.png', '', '', 1).'" value="'.dol_escape_htmltag($langs->trans("Search")).'" title="'.dol_escape_htmltag($langs->trans("Search")).'">';
+				print '<input type="image" class="liste_titre" name="button_removefilter" src="'.img_picto($langs->trans("Search"), 'searchclear.png', '', '', 1).'" value="'.dol_escape_htmltag($langs->trans("RemoveFilter")).'" title="'.dol_escape_htmltag($langs->trans("RemoveFilter")).'">';
 				print '</div>';
 				print '</div>';
 				print '</div>';
@@ -218,12 +218,12 @@ if ($id > 0 || ! empty($ref))
 					{
 						$objp = $db->fetch_object($result);
 
-						$total_ht+=$objp->amount;
-						$total_qty+=$objp->qty;
+						$total_ht += $objp->amount;
+						$total_qty += $objp->qty;
 
-						$propalstatic->id=$objp->propalid;
-						$propalstatic->ref=$objp->ref;
-						$propalstatic->ref_client=$objp->ref_client;
+						$propalstatic->id = $objp->propalid;
+						$propalstatic->ref = $objp->ref;
+						$propalstatic->ref_client = $objp->ref_client;
 						$societestatic->fetch($objp->socid);
 
 						print '<tr class="oddeven">';
@@ -231,11 +231,11 @@ if ($id > 0 || ! empty($ref))
 						print $propalstatic->getNomUrl(1);
 						print "</td>\n";
                         print '<td>'.$societestatic->getNomUrl(1).'</td>';
-						print '<td align="center">';
-						print dol_print_date($db->jdate($objp->datep), 'dayhour') . "</td>";
-						print "<td align=\"center\">" . $objp->qty . "</td>\n";
-						print '<td align="right">' . price($objp->amount) . '</td>' . "\n";
-						print '<td align="right">' . $propalstatic->LibStatut($objp->statut, 5) . '</td>';
+						print '<td class="center">';
+						print dol_print_date($db->jdate($objp->datep), 'dayhour')."</td>";
+						print "<td align=\"center\">".$objp->qty."</td>\n";
+						print '<td align="right">'.price($objp->amount).'</td>'."\n";
+						print '<td align="right">'.$propalstatic->LibStatut($objp->statut, 5).'</td>';
 						print "</tr>\n";
 						$i++;
 					}
@@ -245,8 +245,8 @@ if ($id > 0 || ! empty($ref))
         		if ($num < $limit) print '<td class="left">'.$langs->trans("Total").'</td>';
         		else print '<td class="left">'.$langs->trans("Totalforthispage").'</td>';
         		print '<td colspan="2"></td>';
-        		print '<td align="center">' . $total_qty . '</td>';
-        		print '<td align="right">' . price($total_ht) . '</td>';
+        		print '<td class="center">'.$total_qty.'</td>';
+        		print '<td align="right">'.price($total_ht).'</td>';
         		print '<td></td>';
         		print "</table>";
         		print '</div>';
