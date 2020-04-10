@@ -396,9 +396,9 @@ if ($action == 'addsite')
 
 	if (!$error)
 	{
-		$arrayotherlang=explode(',', GETPOST('WEBSITE_OTHERLANG', 'alphanohtml'));
-		foreach($arrayotherlang as $key => $val) {
-			$arrayotherlang[$key] = substr(trim($val), 0, 2);	// Kept short language code only
+		$arrayotherlang = explode(',', GETPOST('WEBSITE_OTHERLANG', 'alphanohtml'));
+		foreach ($arrayotherlang as $key => $val) {
+			$arrayotherlang[$key] = substr(trim($val), 0, 2); // Kept short language code only
 		}
 
 		$tmpobject = new Website($db);
@@ -1075,9 +1075,9 @@ if ($action == 'updatecss')
 
     		if (!$error)
     		{
-    			$arrayotherlang=explode(',', GETPOST('WEBSITE_OTHERLANG', 'alphanohtml'));
-    			foreach($arrayotherlang as $key => $val) {
-    				$arrayotherlang[$key] = substr(trim($val), 0, 2);	// Kept short language code only
+    			$arrayotherlang = explode(',', GETPOST('WEBSITE_OTHERLANG', 'alphanohtml'));
+    			foreach ($arrayotherlang as $key => $val) {
+    				$arrayotherlang[$key] = substr(trim($val), 0, 2); // Kept short language code only
     			}
 
     		    $object->virtualhost = GETPOST('virtualhost', 'alpha');
@@ -2739,7 +2739,7 @@ if ($action == 'editcss')
 
 	// Main language
 	print '<tr><td class="tdtop fieldrequired">';
-	$htmltext='';
+	$htmltext = '';
 	print $form->textwithpicto($langs->trans('MainLanguage'), $htmltext, 1, 'help', '', 0, 2, 'WEBSITE_LANG');
 	print '</td><td>';
 	print $formadmin->select_language((GETPOSTISSET('WEBSITE_LANG') ? GETPOST('WEBSITE_LANG', 'aZ09comma') : ($object->lang ? $object->lang : '0')), 'WEBSITE_LANG', 0, null, 1, 0, 0, 'minwidth300', 2, 0, 0, array(), 1);
@@ -3652,7 +3652,7 @@ if ($action == 'preview' || $action == 'createfromclone' || $action == 'createpa
 				if (empty($res)) {
 					print "ERROR: Failed to include file '".$filephp."'. Try to edit and save page.";
 				}
-			} catch(Exception $e)
+			} catch (Exception $e)
 			{
 				print $e->getMessage();
 			}

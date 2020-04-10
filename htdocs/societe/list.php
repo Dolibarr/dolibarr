@@ -102,7 +102,7 @@ $search_parent_name = GETPOST('search_parent_name', 'alpha');
 $type = GETPOST('type', 'alpha');
 $optioncss = GETPOST('optioncss', 'alpha');
 $mode = GETPOST("mode", 'alpha');
-$place = GETPOST('place', 'aZ09') ? GETPOST('place', 'aZ09') : '0';	// $place is string id of table for Bar or Restaurant
+$place = GETPOST('place', 'aZ09') ? GETPOST('place', 'aZ09') : '0'; // $place is string id of table for Bar or Restaurant
 
 $diroutputmassaction = $conf->societe->dir_output.'/temp/massgeneration/'.$user->id;
 

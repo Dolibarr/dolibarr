@@ -1280,9 +1280,9 @@ else
 			// Accountancy_code_buy
 			print '<tr><td>'.$langs->trans("ProductAccountancyBuyCode").'</td>';
 			print '<td>';
-            if($type == 0)
+            if ($type == 0)
             {
-                $accountancy_code_buy = (GETPOST('accountancy_code_buy', 'alpha')?(GETPOST('accountancy_code_buy', 'alpha')):$conf->global->ACCOUNTING_PRODUCT_BUY_ACCOUNT);
+                $accountancy_code_buy = (GETPOST('accountancy_code_buy', 'alpha') ? (GETPOST('accountancy_code_buy', 'alpha')) : $conf->global->ACCOUNTING_PRODUCT_BUY_ACCOUNT);
             } else {
                 $accountancy_code_buy = GETPOST('accountancy_code_buy', 'alpha');
             }

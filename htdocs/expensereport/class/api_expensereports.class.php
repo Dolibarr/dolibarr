@@ -64,16 +64,16 @@ class ExpenseReports extends DolibarrApi
      */
     public function get($id)
     {
-        if(! DolibarrApiAccess::$user->rights->expensereport->lire) {
+        if (!DolibarrApiAccess::$user->rights->expensereport->lire) {
             throw new RestException(401);
         }
 
         $result = $this->expensereport->fetch($id);
-        if( ! $result ) {
+        if (!$result) {
             throw new RestException(404, 'Expense report not found');
         }
 
-        if( ! DolibarrApi::_checkAccessToResource('expensereport', $this->expensereport->id)) {
+        if (!DolibarrApi::_checkAccessToResource('expensereport', $this->expensereport->id)) {
             throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
         }
 
@@ -104,30 +104,30 @@ class ExpenseReports extends DolibarrApi
         //$socid = DolibarrApiAccess::$user->socid ? DolibarrApiAccess::$user->socid : $societe;
 
         $sql = "SELECT t.rowid";
-        $sql.= " FROM ".MAIN_DB_PREFIX."expensereport as t";
-        $sql.= ' WHERE t.entity IN ('.getEntity('expensereport').')';
-        if ($user_ids) $sql.=" AND t.fk_user_author IN (".$user_ids.")";
+        $sql .= " FROM ".MAIN_DB_PREFIX."expensereport as t";
+        $sql .= ' WHERE t.entity IN ('.getEntity('expensereport').')';
+        if ($user_ids) $sql .= " AND t.fk_user_author IN (".$user_ids.")";
 
         // Add sql filters
         if ($sqlfilters)
         {
-            if (! DolibarrApi::_checkFilters($sqlfilters))
+            if (!DolibarrApi::_checkFilters($sqlfilters))
             {
                 throw new RestException(503, 'Error when validating parameter sqlfilters '.$sqlfilters);
             }
-            $regexstring='\(([^:\'\(\)]+:[^:\'\(\)]+:[^:\(\)]+)\)';
-            $sql.=" AND (".preg_replace_callback('/'.$regexstring.'/', 'DolibarrApi::_forge_criteria_callback', $sqlfilters).")";
+            $regexstring = '\(([^:\'\(\)]+:[^:\'\(\)]+:[^:\(\)]+)\)';
+            $sql .= " AND (".preg_replace_callback('/'.$regexstring.'/', 'DolibarrApi::_forge_criteria_callback', $sqlfilters).")";
         }
 
-        $sql.= $db->order($sortfield, $sortorder);
-        if ($limit)	{
+        $sql .= $db->order($sortfield, $sortorder);
+        if ($limit) {
             if ($page < 0)
             {
                 $page = 0;
             }
             $offset = $limit * $page;
 
-            $sql.= $db->plimit($limit + 1, $offset);
+            $sql .= $db->plimit($limit + 1, $offset);
         }
 
         $result = $db->query($sql);
@@ -140,7 +140,7 @@ class ExpenseReports extends DolibarrApi
             {
                 $obj = $db->fetch_object($result);
                 $expensereport_static = new ExpenseReport($db);
-                if($expensereport_static->fetch($obj->rowid)) {
+                if ($expensereport_static->fetch($obj->rowid)) {
                     $obj_ret[] = $this->_cleanObjectDatas($expensereport_static);
                 }
                 $i++;
@@ -149,7 +149,7 @@ class ExpenseReports extends DolibarrApi
         else {
             throw new RestException(503, 'Error when retrieve Expense Report list : '.$db->lasterror());
         }
-        if( ! count($obj_ret)) {
+        if (!count($obj_ret)) {
             throw new RestException(404, 'No Expense Report found');
         }
         return $obj_ret;
@@ -163,13 +163,13 @@ class ExpenseReports extends DolibarrApi
      */
     public function post($request_data = null)
     {
-        if(! DolibarrApiAccess::$user->rights->expensereport->creer) {
+        if (!DolibarrApiAccess::$user->rights->expensereport->creer) {
             throw new RestException(401, "Insuffisant rights");
         }
         // Check mandatory fields
         $result = $this->_validate($request_data);
 
-        foreach($request_data as $field => $value) {
+        foreach ($request_data as $field => $value) {
             $this->expensereport->$field = $value;
         }
         /*if (isset($request_data["lines"])) {
@@ -391,19 +391,19 @@ class ExpenseReports extends DolibarrApi
      */
     public function put($id, $request_data = null)
     {
-        if(! DolibarrApiAccess::$user->rights->expensereport->creer) {
+        if (!DolibarrApiAccess::$user->rights->expensereport->creer) {
             throw new RestException(401);
         }
 
         $result = $this->expensereport->fetch($id);
-        if( ! $result ) {
+        if (!$result) {
             throw new RestException(404, 'expensereport not found');
         }
 
-        if ( ! DolibarrApi::_checkAccessToResource('expensereport', $this->expensereport->id)) {
+        if (!DolibarrApi::_checkAccessToResource('expensereport', $this->expensereport->id)) {
             throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
         }
-        foreach($request_data as $field => $value) {
+        foreach ($request_data as $field => $value) {
             if ($field == 'id') continue;
             $this->expensereport->$field = $value;
         }
@@ -427,19 +427,19 @@ class ExpenseReports extends DolibarrApi
      */
     public function delete($id)
     {
-        if(! DolibarrApiAccess::$user->rights->expensereport->supprimer) {
+        if (!DolibarrApiAccess::$user->rights->expensereport->supprimer) {
             throw new RestException(401);
         }
         $result = $this->expensereport->fetch($id);
-        if( ! $result ) {
+        if (!$result) {
             throw new RestException(404, 'Expense Report not found');
         }
 
-        if( ! DolibarrApi::_checkAccessToResource('expensereport', $this->expensereport->id)) {
+        if (!DolibarrApi::_checkAccessToResource('expensereport', $this->expensereport->id)) {
             throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
         }
 
-        if( ! $this->expensereport->delete(DolibarrApiAccess::$user)) {
+        if (!$this->expensereport->delete(DolibarrApiAccess::$user)) {
             throw new RestException(500, 'Error when delete Expense Report : '.$this->expensereport->error);
         }
 
@@ -542,7 +542,7 @@ class ExpenseReports extends DolibarrApi
         unset($object->country_id);
         unset($object->country_code);
 
-        unset($object->note);	// We already use note_public and note_pricate
+        unset($object->note); // We already use note_public and note_pricate
 
         return $object;
     }

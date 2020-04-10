@@ -33,7 +33,7 @@ require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.product.class.php';
  */
 class Fournisseur extends Societe
 {
-	public $next_prev_filter="te.fournisseur = 1";		// Used to add a filter in Form::showrefnav method
+	public $next_prev_filter = "te.fournisseur = 1"; // Used to add a filter in Form::showrefnav method
 
 
 	/**
@@ -86,12 +86,12 @@ class Fournisseur extends Societe
 		global $conf;
 
 		$sql = "SELECT count(pfp.rowid) as nb";
-		$sql.= " FROM ".MAIN_DB_PREFIX."product_fournisseur_price as pfp";
-		$sql.= " WHERE pfp.entity = ".$conf->entity;
-		$sql.= " AND pfp.fk_soc = ".$this->id;
+		$sql .= " FROM ".MAIN_DB_PREFIX."product_fournisseur_price as pfp";
+		$sql .= " WHERE pfp.entity = ".$conf->entity;
+		$sql .= " AND pfp.fk_soc = ".$this->id;
 
 		$resql = $this->db->query($sql);
-		if ( $resql )
+		if ($resql)
 		{
 			$obj = $this->db->fetch_object($resql);
 			return $obj->nb;
@@ -113,26 +113,26 @@ class Fournisseur extends Societe
         // phpcs:enable
 		global $conf, $user;
 
-		$this->nb=array();
+		$this->nb = array();
 		$clause = "WHERE";
 
 		$sql = "SELECT count(s.rowid) as nb";
-		$sql.= " FROM ".MAIN_DB_PREFIX."societe as s";
+		$sql .= " FROM ".MAIN_DB_PREFIX."societe as s";
 		if (!$user->rights->societe->client->voir && !$user->socid)
 		{
-			$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."societe_commerciaux as sc ON s.rowid = sc.fk_soc";
-			$sql.= " WHERE sc.fk_user = " .$user->id;
+			$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."societe_commerciaux as sc ON s.rowid = sc.fk_soc";
+			$sql .= " WHERE sc.fk_user = ".$user->id;
 			$clause = "AND";
 		}
-		$sql.= " ".$clause." s.fournisseur = 1";
-		$sql.= " AND s.entity IN (".getEntity('societe').")";
+		$sql .= " ".$clause." s.fournisseur = 1";
+		$sql .= " AND s.entity IN (".getEntity('societe').")";
 
-		$resql=$this->db->query($sql);
+		$resql = $this->db->query($sql);
 		if ($resql)
 		{
-			while ($obj=$this->db->fetch_object($resql))
+			while ($obj = $this->db->fetch_object($resql))
 			{
-				$this->nb["suppliers"]=$obj->nb;
+				$this->nb["suppliers"] = $obj->nb;
 			}
             $this->db->free($resql);
 			return 1;
@@ -140,7 +140,7 @@ class Fournisseur extends Societe
 		else
 		{
 			dol_print_error($this->db);
-			$this->error=$this->db->error();
+			$this->error = $this->db->error();
 			return -1;
 		}
 	}
@@ -157,8 +157,8 @@ class Fournisseur extends Societe
 	{
         // phpcs:enable
 		$sql = "INSERT INTO ".MAIN_DB_PREFIX."categorie (label,visible,type)";
-		$sql.= " VALUES ";
-		$sql.= " ('".$this->db->escape($name)."',1,1)";
+		$sql .= " VALUES ";
+		$sql .= " ('".$this->db->escape($name)."',1,1)";
 
 		dol_syslog("Fournisseur::CreateCategory", LOG_DEBUG);
 		$resql = $this->db->query($sql);
@@ -169,7 +169,7 @@ class Fournisseur extends Societe
 		}
 		else
 		{
-			$this->error=$this->db->lasterror();
+			$this->error = $this->db->lasterror();
 			dol_syslog("Fournisseur::CreateCategory : Failed (".$this->error.")");
 			return -1;
 		}
@@ -190,17 +190,17 @@ class Fournisseur extends Societe
 		$arr = array();
 
 		$sql = "SELECT s.rowid, s.nom as name";
-		$sql.= " FROM ".MAIN_DB_PREFIX."societe as s";
-		if (!$user->rights->societe->client->voir && !$user->socid) $sql.= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
-		$sql.= " WHERE s.fournisseur = 1";
-		$sql.= " AND s.entity IN (".getEntity('societe').")";
-		if (!$user->rights->societe->client->voir && !$user->socid) $sql.= " AND s.rowid = sc.fk_soc AND sc.fk_user = " .$user->id;
+		$sql .= " FROM ".MAIN_DB_PREFIX."societe as s";
+		if (!$user->rights->societe->client->voir && !$user->socid) $sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
+		$sql .= " WHERE s.fournisseur = 1";
+		$sql .= " AND s.entity IN (".getEntity('societe').")";
+		if (!$user->rights->societe->client->voir && !$user->socid) $sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".$user->id;
 
-		$resql=$this->db->query($sql);
+		$resql = $this->db->query($sql);
 
 		if ($resql)
 		{
-			while ($obj=$this->db->fetch_object($resql))
+			while ($obj = $this->db->fetch_object($resql))
 			{
 				$arr[$obj->rowid] = $obj->name;
 			}
@@ -208,7 +208,7 @@ class Fournisseur extends Societe
 		else
 		{
 			dol_print_error($this->db);
-			$this->error=$this->db->lasterror();
+			$this->error = $this->db->lasterror();
 		}
 		return $arr;
 	}

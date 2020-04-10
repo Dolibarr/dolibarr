@@ -154,7 +154,7 @@ class Categorie extends CommonObject
 		'supplier' => 'societe',
 		'member'   => 'adherent',
 		'contact'  => 'socpeople',
-		'account'  => 'bank_account',	// old for bank account
+		'account'  => 'bank_account', // old for bank account
 		'project'  => 'projet',
         'warehouse'=> 'entrepot'
 	);
@@ -1153,7 +1153,7 @@ class Categorie extends CommonObject
         // Include or exclude leaf including $markafterid from tree
         if (count($markafterid) > 0)
         {
-            $keyfiltercatid = '(' . implode('|', $markafterid) . ')';
+            $keyfiltercatid = '('.implode('|', $markafterid).')';
 
             //print "Look to discard category ".$markafterid."\n";
             $keyfilter1 = '^'.$keyfiltercatid.'$';

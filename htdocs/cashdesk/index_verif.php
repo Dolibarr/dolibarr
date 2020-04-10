@@ -31,48 +31,48 @@ require_once DOL_DOCUMENT_ROOT.'/cashdesk/include/environnement.php';
 require_once DOL_DOCUMENT_ROOT.'/cashdesk/class/Auth.class.php';
 
 // Load translation files required by the page
-$langs->loadLangs(array("main","admin","cashdesk"));
+$langs->loadLangs(array("main", "admin", "cashdesk"));
 
 $username = GETPOST("txtUsername");
 $password = GETPOST("pwdPassword");
-$thirdpartyid = (GETPOST('socid', 'int') > 0)?GETPOST('socid', 'int'):$conf->global->CASHDESK_ID_THIRDPARTY;
-$warehouseid = (GETPOST("warehouseid") > 0)?GETPOST("warehouseid", 'int'):$conf->global->CASHDESK_ID_WAREHOUSE;
-$bankid_cash = (GETPOST("CASHDESK_ID_BANKACCOUNT_CASH") > 0)?GETPOST("CASHDESK_ID_BANKACCOUNT_CASH", 'int'):$conf->global->CASHDESK_ID_BANKACCOUNT_CASH;
-$bankid_cheque = (GETPOST("CASHDESK_ID_BANKACCOUNT_CHEQUE") > 0)?GETPOST("CASHDESK_ID_BANKACCOUNT_CHEQUE", 'int'):$conf->global->CASHDESK_ID_BANKACCOUNT_CHEQUE;
-$bankid_cb = (GETPOST("CASHDESK_ID_BANKACCOUNT_CB") > 0)?GETPOST("CASHDESK_ID_BANKACCOUNT_CB", 'int'):$conf->global->CASHDESK_ID_BANKACCOUNT_CB;
+$thirdpartyid = (GETPOST('socid', 'int') > 0) ?GETPOST('socid', 'int') : $conf->global->CASHDESK_ID_THIRDPARTY;
+$warehouseid = (GETPOST("warehouseid") > 0) ?GETPOST("warehouseid", 'int') : $conf->global->CASHDESK_ID_WAREHOUSE;
+$bankid_cash = (GETPOST("CASHDESK_ID_BANKACCOUNT_CASH") > 0) ?GETPOST("CASHDESK_ID_BANKACCOUNT_CASH", 'int') : $conf->global->CASHDESK_ID_BANKACCOUNT_CASH;
+$bankid_cheque = (GETPOST("CASHDESK_ID_BANKACCOUNT_CHEQUE") > 0) ?GETPOST("CASHDESK_ID_BANKACCOUNT_CHEQUE", 'int') : $conf->global->CASHDESK_ID_BANKACCOUNT_CHEQUE;
+$bankid_cb = (GETPOST("CASHDESK_ID_BANKACCOUNT_CB") > 0) ?GETPOST("CASHDESK_ID_BANKACCOUNT_CB", 'int') : $conf->global->CASHDESK_ID_BANKACCOUNT_CB;
 
 // Check username
 if (empty($username))
 {
-	$retour=$langs->trans("ErrorFieldRequired", $langs->transnoentities("Login"));
+	$retour = $langs->trans("ErrorFieldRequired", $langs->transnoentities("Login"));
 	header('Location: '.DOL_URL_ROOT.'/cashdesk/index.php?err='.urlencode($retour).'&user='.$username.'&socid='.$thirdpartyid.'&warehouseid='.$warehouseid.'&bankid_cash='.$bankid_cash.'&bankid_cheque='.$bankid_cheque.'&bankid_cb='.$bankid_cb);
 	exit;
 }
 // Check third party id
-if (! ($thirdpartyid > 0))
+if (!($thirdpartyid > 0))
 {
-    $retour=$langs->trans("ErrorFieldRequired", $langs->transnoentities("CashDeskThirdPartyForSell"));
+    $retour = $langs->trans("ErrorFieldRequired", $langs->transnoentities("CashDeskThirdPartyForSell"));
     header('Location: '.DOL_URL_ROOT.'/cashdesk/index.php?err='.urlencode($retour).'&user='.$username.'&socid='.$thirdpartyid.'&warehouseid='.$warehouseid.'&bankid_cash='.$bankid_cash.'&bankid_cheque='.$bankid_cheque.'&bankid_cb='.$bankid_cb);
     exit;
 }
 
 // If we setup stock module to ask movement on invoices, we must not allow access if required setup not finished.
-if (! empty($conf->stock->enabled) && empty($conf->global->CASHDESK_NO_DECREASE_STOCK) && ! ($warehouseid > 0))
+if (!empty($conf->stock->enabled) && empty($conf->global->CASHDESK_NO_DECREASE_STOCK) && !($warehouseid > 0))
 {
-	$retour=$langs->trans("CashDeskYouDidNotDisableStockDecease");
+	$retour = $langs->trans("CashDeskYouDidNotDisableStockDecease");
 	header('Location: '.DOL_URL_ROOT.'/cashdesk/index.php?err='.urlencode($retour).'&user='.$username.'&socid='.$thirdpartyid.'&warehouseid='.$warehouseid.'&bankid_cash='.$bankid_cash.'&bankid_cheque='.$bankid_cheque.'&bankid_cb='.$bankid_cb);
 	exit;
 }
 
 // If stock decrease on bill validation, check user has stock edit permissions
-if (! empty($conf->stock->enabled) && empty($conf->global->CASHDESK_NO_DECREASE_STOCK) && ! empty($username))
+if (!empty($conf->stock->enabled) && empty($conf->global->CASHDESK_NO_DECREASE_STOCK) && !empty($username))
 {
-	$testuser=new User($db);
+	$testuser = new User($db);
 	$testuser->fetch(0, $username);
 	$testuser->getrights('stock');
 	if (empty($testuser->rights->stock->creer))
 	{
-		$retour=$langs->trans("UserNeedPermissionToEditStockToUsePos");
+		$retour = $langs->trans("UserNeedPermissionToEditStockToUsePos");
 		header('Location: '.DOL_URL_ROOT.'/cashdesk/index.php?err='.urlencode($retour).'&user='.$username.'&socid='.$thirdpartyid.'&warehouseid='.$warehouseid.'&bankid_cash='.$bankid_cash.'&bankid_cheque='.$bankid_cheque.'&bankid_cb='.$bankid_cb);
 		exit;
 	}
@@ -83,14 +83,14 @@ if (! empty($conf->stock->enabled) && empty($conf->global->CASHDESK_NO_DECREASE_
 $auth = new Auth($db);
 $retour = $auth->verif($username, $password);
 
-if ( $retour >= 0 )
+if ($retour >= 0)
 {
-	$return=array();
+	$return = array();
 
 	$sql = "SELECT rowid, lastname, firstname";
-	$sql.= " FROM ".MAIN_DB_PREFIX."user";
-	$sql.= " WHERE login = '".$username."'";
-	$sql.= " AND entity IN (0,".$conf->entity.")";
+	$sql .= " FROM ".MAIN_DB_PREFIX."user";
+	$sql .= " WHERE login = '".$username."'";
+	$sql .= " AND entity IN (0,".$conf->entity.")";
 
 	$result = $db->query($sql);
 	if ($result)
@@ -125,8 +125,8 @@ if ( $retour >= 0 )
 else
 {
 	// Load translation files required by the page
-    $langs->loadLangs(array("other","errors"));
-	$retour=$langs->trans("ErrorBadLoginPassword");
+    $langs->loadLangs(array("other", "errors"));
+	$retour = $langs->trans("ErrorBadLoginPassword");
 	header('Location: '.DOL_URL_ROOT.'/cashdesk/index.php?err='.urlencode($retour).'&user='.$username.'&socid='.$thirdpartyid.'&warehouseid='.$warehouseid);
 	exit;
 }

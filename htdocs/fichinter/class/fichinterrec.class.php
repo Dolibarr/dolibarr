@@ -341,13 +341,13 @@ class FichinterRec extends Fichinter
                 $line = new FichinterLigne($this->db);
 
                 $line->id = $objp->rowid;
-                $line->label = $objp->custom_label;		// Label line
-                $line->desc = $objp->description;		// Description line
-                $line->product_type = $objp->product_type;		// Type of line
-                $line->product_ref = $objp->product_ref;		// Ref product
-                $line->product_label = $objp->product_label;		// Label product
-                $line->product_desc = $objp->product_desc;		// Description product
-                $line->fk_product_type = $objp->fk_product_type;	// Type of product
+                $line->label = $objp->custom_label; // Label line
+                $line->desc = $objp->description; // Description line
+                $line->product_type = $objp->product_type; // Type of line
+                $line->product_ref = $objp->product_ref; // Ref product
+                $line->product_label = $objp->product_label; // Label product
+                $line->product_desc = $objp->product_desc; // Description product
+                $line->fk_product_type = $objp->fk_product_type; // Type of product
                 $line->qty = $objp->qty;
                 $line->duree = $objp->duree;
                 $line->duration = $objp->duree;

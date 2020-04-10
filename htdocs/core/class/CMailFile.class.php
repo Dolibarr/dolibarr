@@ -139,7 +139,7 @@ class CMailFile
 
 		// Clean values of $mimefilename_list
 		if (is_array($mimefilename_list)) {
-			foreach($mimefilename_list as $key => $val) {
+			foreach ($mimefilename_list as $key => $val) {
 				$mimefilename_list[$key] = dol_string_unaccent($mimefilename_list[$key]);
 			}
 		}
@@ -331,7 +331,7 @@ class CMailFile
 
 			// Encode subject if required.
 			$subjecttouse = $subject;
-			if (! ascii_check($subjecttouse)) {
+			if (!ascii_check($subjecttouse)) {
 				$subjecttouse = $this->encodetorfc2822($subjecttouse);
 			}
 
@@ -382,8 +382,8 @@ class CMailFile
 			$smtps->setErrorsTo($errors_to);
 			$smtps->setDeliveryReceipt($deliveryreceipt);
 
-			$host=dol_getprefix('email');
-			$this->msgid = time() . '.SMTPs-dolibarr-'.$trackid.'@' . $host;
+			$host = dol_getprefix('email');
+			$this->msgid = time().'.SMTPs-dolibarr-'.$trackid.'@'.$host;
 
 			$this->smtps = $smtps;
 		}
@@ -686,7 +686,7 @@ class CMailFile
 
 					// Encode subject if required.
 					$subjecttouse = $this->subject;
-					if (! ascii_check($subjecttouse)) {
+					if (!ascii_check($subjecttouse)) {
 						$subjecttouse = $this->encodetorfc2822($subjecttouse);
 					}
 

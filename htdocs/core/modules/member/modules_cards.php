@@ -37,7 +37,7 @@ class ModelePDFCards
 	/**
 	 * @var string Error code (or message)
 	 */
-	public $error='';
+	public $error = '';
 
 
     // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
@@ -53,11 +53,11 @@ class ModelePDFCards
         // phpcs:enable
 		global $conf;
 
-		$type='member';
-		$liste=array();
+		$type = 'member';
+		$liste = array();
 
 		include_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
-		$liste=getListOfModels($db, $type, $maxfilenamelength);
+		$liste = getListOfModels($db, $type, $maxfilenamelength);
 
 		return $liste;
 	}
@@ -79,24 +79,24 @@ class ModelePDFCards
 function members_card_pdf_create($db, $arrayofmembers, $modele, $outputlangs, $outputdir = '', $template = 'standard')
 {
     // phpcs:enable
-	global $conf,$langs;
+	global $conf, $langs;
 	$langs->load("members");
 
-	$error=0;
+	$error = 0;
 
 	// Increase limit for PDF build
-	$err=error_reporting();
+	$err = error_reporting();
 	error_reporting(0);
 	@set_time_limit(120);
 	error_reporting($err);
 
-	$code='';
-	$srctemplatepath='';
+	$code = '';
+	$srctemplatepath = '';
 
 	// Positionne le modele sur le nom du modele a utiliser
-	if (! dol_strlen($modele))
+	if (!dol_strlen($modele))
 	{
-		if (! empty($conf->global->ADHERENT_CARDS_ADDON_PDF))
+		if (!empty($conf->global->ADHERENT_CARDS_ADDON_PDF))
 		{
 			$code = $conf->global->ADHERENT_CARDS_ADDON_PDF;
 		}
@@ -105,33 +105,33 @@ function members_card_pdf_create($db, $arrayofmembers, $modele, $outputlangs, $o
 			$code = $modele;
 		}
 	}
-	else $code=$modele;
+	else $code = $modele;
 
 	// If selected modele is a filename template (then $modele="modelname:filename")
-	$tmp=explode(':', $template, 2);
-	if (! empty($tmp[1]))
+	$tmp = explode(':', $template, 2);
+	if (!empty($tmp[1]))
 	{
-		$template=$tmp[0];
-		$srctemplatepath=$tmp[1];
+		$template = $tmp[0];
+		$srctemplatepath = $tmp[1];
 	}
-	else $srctemplatepath=$code;
+	else $srctemplatepath = $code;
 
 	// Search template files
-	$file=''; $classname=''; $filefound=0;
-	$dirmodels=array('/');
-	if (is_array($conf->modules_parts['models'])) $dirmodels=array_merge($dirmodels, $conf->modules_parts['models']);
-	foreach($dirmodels as $reldir)
+	$file = ''; $classname = ''; $filefound = 0;
+	$dirmodels = array('/');
+	if (is_array($conf->modules_parts['models'])) $dirmodels = array_merge($dirmodels, $conf->modules_parts['models']);
+	foreach ($dirmodels as $reldir)
 	{
-		foreach(array('doc','pdf') as $prefix)
+		foreach (array('doc', 'pdf') as $prefix)
 		{
 			$file = $prefix."_".$template.".class.php";
 
 			// On verifie l'emplacement du modele
-			$file=dol_buildpath($reldir."core/modules/member/doc/".$file, 0);
+			$file = dol_buildpath($reldir."core/modules/member/doc/".$file, 0);
 			if (file_exists($file))
 			{
-				$filefound=1;
-				$classname=$prefix.'_'.$template;
+				$filefound = 1;
+				$classname = $prefix.'_'.$template;
 				break;
 			}
 		}
@@ -148,15 +148,15 @@ function members_card_pdf_create($db, $arrayofmembers, $modele, $outputlangs, $o
 
 		// We save charset_output to restore it because write_file can change it if needed for
 		// output format that does not support UTF8.
-		$sav_charset_output=$outputlangs->charset_output;
+		$sav_charset_output = $outputlangs->charset_output;
 		if ($obj->write_file($arrayofmembers, $outputlangs, $srctemplatepath) > 0)
 		{
-			$outputlangs->charset_output=$sav_charset_output;
+			$outputlangs->charset_output = $sav_charset_output;
 			return 1;
 		}
 		else
 		{
-			$outputlangs->charset_output=$sav_charset_output;
+			$outputlangs->charset_output = $sav_charset_output;
 			dol_print_error($db, "members_card_pdf_create Error: ".$obj->error);
 			return -1;
 		}

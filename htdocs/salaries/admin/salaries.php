@@ -27,7 +27,7 @@ require '../../main.inc.php';
 // Class
 require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/salaries.lib.php';
-if (! empty($conf->accounting->enabled)) require_once DOL_DOCUMENT_ROOT . '/core/class/html.formaccounting.class.php';
+if (!empty($conf->accounting->enabled)) require_once DOL_DOCUMENT_ROOT.'/core/class/html.formaccounting.class.php';
 
 // Load translation files required by the page
 $langs->loadLangs(array('admin', 'salaries'));
@@ -39,7 +39,7 @@ if (!$user->admin)
 $action = GETPOST('action', 'alpha');
 
 // Other parameters SALARIES_*
-$list = array (
+$list = array(
 		'SALARIES_ACCOUNTING_ACCOUNT_PAYMENT',
 );
 
@@ -59,7 +59,7 @@ if ($action == 'update')
         }
     }
 
-    if (! $error)
+    if (!$error)
     {
         setEventMessages($langs->trans("SetupSaved"), null, 'mesgs');
     }
@@ -76,9 +76,9 @@ if ($action == 'update')
 llxHeader('', $langs->trans('SalariesSetup'));
 
 $form = new Form($db);
-if (! empty($conf->accounting->enabled)) $formaccounting = new FormAccounting($db);
+if (!empty($conf->accounting->enabled)) $formaccounting = new FormAccounting($db);
 
-$linkback='<a href="'.DOL_URL_ROOT.'/admin/modules.php?restore_lastsearch_values=1">'.$langs->trans("BackToModuleList").'</a>';
+$linkback = '<a href="'.DOL_URL_ROOT.'/admin/modules.php?restore_lastsearch_values=1">'.$langs->trans("BackToModuleList").'</a>';
 print load_fiche_titre($langs->trans('SalariesSetup'), $linkback, 'title_setup');
 
 $head = salaries_admin_prepare_head();
@@ -111,7 +111,7 @@ foreach ($list as $key)
 
 	// Value
 	print '<td>';
-	if (! empty($conf->accounting->enabled))
+	if (!empty($conf->accounting->enabled))
 	{
 		print $formaccounting->select_account($conf->global->$key, $key, 1, '', 1, 1);
 	}

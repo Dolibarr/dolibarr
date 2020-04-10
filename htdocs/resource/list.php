@@ -58,11 +58,11 @@ $search_type = GETPOST("search_type", 'alpha');
 $filter = array();
 
 if ($search_ref != '') {
-	$param.='&search_ref='.urlencode($search_ref);
+	$param .= '&search_ref='.urlencode($search_ref);
 	$filter['t.ref'] = $search_ref;
 }
 if ($search_type != '') {
-	$param.='&search_type='.urlencode($search_type);
+	$param .= '&search_type='.urlencode($search_type);
 	$filter['ty.label'] = $search_type;
 }
 
@@ -83,7 +83,7 @@ foreach ($search_array_options as $key => $val)
 		$filter['ef.'.$tmpkey] = natural_search('ef.'.$tmpkey, $crit, $mode_search);
 	}
 }
-if (! empty($contextpage) && $contextpage != $_SERVER["PHP_SELF"]) $param .= '&contextpage='.urlencode($contextpage);
+if (!empty($contextpage) && $contextpage != $_SERVER["PHP_SELF"]) $param .= '&contextpage='.urlencode($contextpage);
 
 
 $hookmanager->initHooks(array('resourcelist'));

@@ -382,8 +382,8 @@ class ImportCsv extends ModeleImports
 
 				// array of fields to column index
                 $arrayfield = array();
-                foreach($sort_array_match_file_to_database as $key => $val) {
-                    $arrayfield[$val] = ($key-1);
+                foreach ($sort_array_match_file_to_database as $key => $val) {
+                    $arrayfield[$val] = ($key - 1);
                 }
 
 				// Loop on each fields in the match array: $key = 1..n, $val=alias of field (s.nom)
@@ -502,19 +502,19 @@ class ImportCsv extends ModeleImports
                                         $method = $objimport->array_import_convertvalue[0][$val]['method'];
                                         $codefromfield = $objimport->array_import_convertvalue[0][$val]['codefromfield'];
                                         $code = $arrayrecord[$arrayfield[$codefromfield]]['val'];
-                                        if ($this->cacheconvert[$file . '_' . $class . '_' . $method . '_' . $code][$newval] != '') {
-                                            $newval = $this->cacheconvert[$file . '_' . $class . '_' . $method . '_' . $code][$newval];
+                                        if ($this->cacheconvert[$file.'_'.$class.'_'.$method.'_'.$code][$newval] != '') {
+                                            $newval = $this->cacheconvert[$file.'_'.$class.'_'.$method.'_'.$code][$newval];
                                         } else {
                                             $resultload = dol_include_once($file);
                                             if (empty($resultload)) {
-                                                dol_print_error('', 'Error trying to call file=' . $file . ', class=' . $class . ', method=' . $method . ', code=' . $code);
+                                                dol_print_error('', 'Error trying to call file='.$file.', class='.$class.', method='.$method.', code='.$code);
                                                 break;
                                             }
                                             $classinstance = new $class($this->db);
                                             // Try the fetch from code and ref
                                             $param_array = array('', $newval, $code);
                                             call_user_func_array(array($classinstance, $method), $param_array);
-                                            $this->cacheconvert[$file . '_' . $class . '_' . $method . '_' . $code][$newval] = $classinstance->id;
+                                            $this->cacheconvert[$file.'_'.$class.'_'.$method.'_'.$code][$newval] = $classinstance->id;
                                             if ($classinstance->id > 0)    // we found record
                                             {
                                                 $newval = $classinstance->id;
@@ -528,19 +528,19 @@ class ImportCsv extends ModeleImports
                                         }
                                     }
                                 }
-                                elseif ($objimport->array_import_convertvalue[0][$val]['rule']=='zeroifnull')
+                                elseif ($objimport->array_import_convertvalue[0][$val]['rule'] == 'zeroifnull')
                                 {
-                                    if (empty($newval)) $newval='0';
+                                    if (empty($newval)) $newval = '0';
                                 }
-                                elseif ($objimport->array_import_convertvalue[0][$val]['rule']=='fetchidfromcodeunits' || $objimport->array_import_convertvalue[0][$val]['rule']=='fetchscalefromcodeunits')
+                                elseif ($objimport->array_import_convertvalue[0][$val]['rule'] == 'fetchidfromcodeunits' || $objimport->array_import_convertvalue[0][$val]['rule'] == 'fetchscalefromcodeunits')
                                 {
-                                	$file=(empty($objimport->array_import_convertvalue[0][$val]['classfile'])?$objimport->array_import_convertvalue[0][$val]['file']:$objimport->array_import_convertvalue[0][$val]['classfile']);
-                                	$class=$objimport->array_import_convertvalue[0][$val]['class'];
-                                	$method=$objimport->array_import_convertvalue[0][$val]['method'];
-                                	$units=$objimport->array_import_convertvalue[0][$val]['units'];
+                                	$file = (empty($objimport->array_import_convertvalue[0][$val]['classfile']) ? $objimport->array_import_convertvalue[0][$val]['file'] : $objimport->array_import_convertvalue[0][$val]['classfile']);
+                                	$class = $objimport->array_import_convertvalue[0][$val]['class'];
+                                	$method = $objimport->array_import_convertvalue[0][$val]['method'];
+                                	$units = $objimport->array_import_convertvalue[0][$val]['units'];
                                 	if ($this->cacheconvert[$file.'_'.$class.'_'.$method.'_'.$units][$newval] != '')
                                 	{
-                                		$newval=$this->cacheconvert[$file.'_'.$class.'_'.$method.'_'.$units][$newval];
+                                		$newval = $this->cacheconvert[$file.'_'.$class.'_'.$method.'_'.$units][$newval];
                                 	}
                                 	else
                                 	{

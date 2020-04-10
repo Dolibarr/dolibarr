@@ -127,7 +127,7 @@ class box_task extends ModeleBoxes
             $boxcontent .= '<button type="submit" class="button buttongen">'.$langs->trans("Refresh").'</button>';
             $boxcontent .= '</form>'."\n";
             $boxcontent .= '</div>'."\n";
-            if (! empty($conf->use_javascript_ajax)) {
+            if (!empty($conf->use_javascript_ajax)) {
 	            $boxcontent .= '<script type="text/javascript" language="javascript">
 						jQuery(document).ready(function() {
 							jQuery("#idsubimg'.$this->boxcode.'").click(function() {

@@ -26,7 +26,7 @@ $langs->load("admin");
 
 if (!$user->admin) accessforbidden();
 
-$action=GETPOST('action', 'aZ09');
+$action = GETPOST('action', 'aZ09');
 
 
 /*

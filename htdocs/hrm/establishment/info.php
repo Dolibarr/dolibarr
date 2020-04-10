@@ -29,7 +29,7 @@ require_once DOL_DOCUMENT_ROOT.'/hrm/class/establishment.class.php';
 $langs->loadLangs(array('admin', 'hrm'));
 
 // Security check
-if (! $user->admin) accessforbidden();
+if (!$user->admin) accessforbidden();
 
 $id = GETPOST('id', 'int');
 

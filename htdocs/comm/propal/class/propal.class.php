@@ -1183,12 +1183,12 @@ class Propal extends CommonObject
 						$vatrate = $line->tva_tx;
 						if ($line->vat_src_code && !preg_match('/\(.*\)/', $vatrate)) $vatrate .= ' ('.$line->vat_src_code.')';
 
-						if(!empty($conf->global->MAIN_CREATEFROM_KEEP_LINE_ORIGIN_INFORMATION)) {
-							$originid=$line->origin_id;
-							$origintype=$line->origin;
+						if (!empty($conf->global->MAIN_CREATEFROM_KEEP_LINE_ORIGIN_INFORMATION)) {
+							$originid = $line->origin_id;
+							$origintype = $line->origin;
 						} else {
-							$originid=$line->id;
-							$origintype=$this->element;
+							$originid = $line->id;
+							$origintype = $this->element;
 						}
 
 						$result = $this->addline(

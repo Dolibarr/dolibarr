@@ -39,7 +39,7 @@ $backtourl = GETPOST('backtourl');
 $cancel = GETPOST('cancel', 'alpha');
 
 $file = GETPOST('file', 'alpha');
-$num = GETPOST('num', 'alpha');		// Used for document on bank statement
+$num = GETPOST('num', 'alpha'); // Used for document on bank statement
 
 
 // Security check

@@ -72,7 +72,7 @@ function build_calfile($format, $title, $desc, $events_array, $outputfile)
         fwrite($calfileh, "X-WR-CALDESC:".$encoding.format_cal($format, $desc)."\n");
         //fwrite($calfileh,"X-WR-TIMEZONE:Europe/Paris\n");
 
-        if (! empty($conf->global->MAIN_AGENDA_EXPORT_CACHE) && $conf->global->MAIN_AGENDA_EXPORT_CACHE > 60)
+        if (!empty($conf->global->MAIN_AGENDA_EXPORT_CACHE) && $conf->global->MAIN_AGENDA_EXPORT_CACHE > 60)
         {
             $hh = convertSecondToTime($conf->global->MAIN_AGENDA_EXPORT_CACHE, "hour");
             $mm = convertSecondToTime($conf->global->MAIN_AGENDA_EXPORT_CACHE, "min");
@@ -152,22 +152,22 @@ function build_calfile($format, $title, $desc, $events_array, $outputfile)
                 fwrite($calfileh, "BEGIN:VEVENT\n");
                 fwrite($calfileh, "UID:".$uid."\n");
 
-                if (! empty($email))
+                if (!empty($email))
                 {
                     fwrite($calfileh, "ORGANIZER:MAILTO:".$email."\n");
                     fwrite($calfileh, "CONTACT:MAILTO:".$email."\n");
                 }
 
-                if (! empty($url))
+                if (!empty($url))
                 {
                     fwrite($calfileh, "URL:".$url."\n");
                 }
 
                 if (is_array($assignedUsers))
                 {
-                    foreach($assignedUsers as $assignedUser)
+                    foreach ($assignedUsers as $assignedUser)
                     {
-                        if($assignedUser->email === $email)
+                        if ($assignedUser->email === $email)
                         {
                             continue;
                         }
@@ -189,7 +189,7 @@ function build_calfile($format, $title, $desc, $events_array, $outputfile)
                 fwrite($calfileh, "SUMMARY:".$encoding.$summary."\n");
                 fwrite($calfileh, "DESCRIPTION:".$encoding.$description."\n");
 
-                if (! empty($location))
+                if (!empty($location))
                 {
                     fwrite($calfileh, "LOCATION:".$encoding.$location."\n");
                 }
@@ -234,7 +234,7 @@ function build_calfile($format, $title, $desc, $events_array, $outputfile)
                 {
                     if (empty($enddate))
                     {
-                        $enddate = $startdate+$duration;
+                        $enddate = $startdate + $duration;
                     }
                 }
 
@@ -244,7 +244,7 @@ function build_calfile($format, $title, $desc, $events_array, $outputfile)
                 if ($fulldayevent)
                 {
                     $prefix   = ";VALUE=DATE";
-                    $enddatef = dol_print_date($enddate+1, "dayxcard", false);
+                    $enddatef = dol_print_date($enddate + 1, "dayxcard", false);
 
                     // Local time
                     //$enddatef .= dol_print_date($enddate+1,"dayhourxcard",false);
@@ -253,12 +253,12 @@ function build_calfile($format, $title, $desc, $events_array, $outputfile)
                 fwrite($calfileh, "DTEND".$prefix.":".$enddatef."\n");
                 fwrite($calfileh, "STATUS:CONFIRMED"."\n");
 
-                if (! empty($transparency))
+                if (!empty($transparency))
                 {
                     fwrite($calfileh, "TRANSP:".$transparency."\n");
                 }
 
-                if (! empty($category))
+                if (!empty($category))
                 {
                     fwrite($calfileh, "CATEGORIES:".$encoding.$category."\n");
                 }
@@ -272,13 +272,13 @@ function build_calfile($format, $title, $desc, $events_array, $outputfile)
                 fwrite($calfileh, "BEGIN:VJOURNAL\n");
                 fwrite($calfileh, "UID:".$uid."\n");
 
-                if (! empty($email))
+                if (!empty($email))
                 {
                     fwrite($calfileh, "ORGANIZER:MAILTO:".$email."\n");
                     fwrite($calfileh, "CONTACT:MAILTO:".$email."\n");
                 }
 
-                if (! empty($url))
+                if (!empty($url))
                 {
                     fwrite($calfileh, "URL:".$url."\n");
                 }
@@ -311,7 +311,7 @@ function build_calfile($format, $title, $desc, $events_array, $outputfile)
 
         fclose($calfileh);
 
-        if (! empty($conf->global->MAIN_UMASK))
+        if (!empty($conf->global->MAIN_UMASK))
         {
             @chmod($outputfile, octdec($conf->global->MAIN_UMASK));
         }
@@ -375,7 +375,7 @@ function build_rssfile($format, $title, $desc, $events_array, $outputfile, $filt
         if (empty($url)) {
 	        // Define $urlwithroot
 	        $urlwithouturlroot = preg_replace("/".preg_quote(DOL_URL_ROOT, "/")."$/i", "", trim($dolibarr_main_url_root));
-	        $urlwithroot       = $urlwithouturlroot.DOL_URL_ROOT;   // This is to use external domain name found into config file
+	        $urlwithroot       = $urlwithouturlroot.DOL_URL_ROOT; // This is to use external domain name found into config file
 	        //$urlwithroot=DOL_MAIN_URL_ROOT;                       // This is to use same domain name than current
 
 	        $url = $urlwithroot."/public/agenda/agendaexport.php?format=rss&exportkey=".urlencode($conf->global->MAIN_AGENDA_XCAL_EXPORTKEY);
@@ -391,7 +391,7 @@ function build_rssfile($format, $title, $desc, $events_array, $outputfile, $filt
             {
                 // TODO Add a filter
 
-                $eventqualified=false;
+                $eventqualified = false;
             }
 
             if ($eventqualified)
@@ -413,8 +413,8 @@ function build_rssfile($format, $title, $desc, $events_array, $outputfile, $filt
                 $startdate	  = $event["startdate"];
                 $summary  	  = $event["summary"];
                 $url		  = $event["url"];
-                $author		  = $event["author"];
-                $category	  = $event["category"];
+                $author = $event["author"];
+                $category = $event["category"];
 
                 /* No place inside a RSS
                 $priority     = $event["priority"];
@@ -451,7 +451,7 @@ function build_rssfile($format, $title, $desc, $events_array, $outputfile, $filt
 
         fclose($fichier);
 
-        if (! empty($conf->global->MAIN_UMASK))
+        if (!empty($conf->global->MAIN_UMASK))
         {
             @chmod($outputfile, octdec($conf->global->MAIN_UMASK));
         }
@@ -515,7 +515,7 @@ function calEncode($line)
             if ((mb_strlen($newpara, "UTF-8") + mb_strlen($char, "UTF-8")) >= 75)
             {
                 // CRLF + Space for cal
-                $out .= $newpara . "\r\n ";
+                $out .= $newpara."\r\n ";
 
                 $newpara = "";
             }
@@ -537,7 +537,7 @@ function calEncode($line)
             if ((dol_strlen($newpara) + dol_strlen($char)) >= 75)
             {
                 // CRLF + Space for cal
-                $out .= $newpara . "\r\n ";
+                $out .= $newpara."\r\n ";
 
                 $newpara = "";
             }
@@ -576,16 +576,16 @@ function quotedPrintEncode($str, $forcal = 0)
             $char  = substr($line, $j, 1);
             $ascii = ord($char);
 
-            if ( $ascii < 32 || $ascii === 61 || $ascii > 126 )
+            if ($ascii < 32 || $ascii === 61 || $ascii > 126)
             {
-                $char = "=" . strtoupper(sprintf("%02X", $ascii));
+                $char = "=".strtoupper(sprintf("%02X", $ascii));
             }
 
             // Do not use dol_strlen here, we need number of bytes
-            if ((strlen($newpara) + strlen($char)) >= 76 )
+            if ((strlen($newpara) + strlen($char)) >= 76)
             {
                 // New line with carray-return (CR) and line-feed (LF)
-                $out .= $newpara . "=" . "\r\n";
+                $out .= $newpara."="."\r\n";
 
                 // extra space for cal
                 if ($forcal)

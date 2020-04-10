@@ -586,8 +586,8 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 	if (GETPOST('modelselected')) $action = 'presend';
 
 	// Presend form
-	$modelmail='myobject';
-	$defaulttopic='InformationMessage';
+	$modelmail = 'myobject';
+	$defaulttopic = 'InformationMessage';
 	$diroutput = $conf->mymodule->dir_output;
 	$trackid = 'myobject'.$object->id;
 

@@ -99,7 +99,7 @@ $triggersendname = ''; // Disable triggers
 $paramname = 'id';
 $mode = 'emailfortest';
 $trackid = (($action == 'testhtml') ? "testhtml" : "test");
-$sendcontext='';
+$sendcontext = '';
 include DOL_DOCUMENT_ROOT.'/core/actions_sendmails.inc.php';
 
 if ($action == 'presend' && GETPOST('trackid', 'alphanohtml') == 'test')       $action = 'test';
@@ -758,7 +758,7 @@ else
 		$text = '';
 		if ($conf->global->MAIN_MAIL_SENDMODE == 'mail')
 		{
-			$text .= $langs->trans("WarningPHPMail");	// To encourage to use SMTPS
+			$text .= $langs->trans("WarningPHPMail"); // To encourage to use SMTPS
 		}
 
 		if ($conf->global->MAIN_MAIL_SENDMODE == 'mail')
