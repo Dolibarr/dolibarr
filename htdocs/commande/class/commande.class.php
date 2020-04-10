@@ -752,8 +752,7 @@ class Commande extends CommonOrder
 
 		$error = 0;
 
-		if ((empty($conf->global->MAIN_USE_ADVANCED_PERMS) && !empty($user->rights->commande->creer))
-			|| (!empty($conf->global->MAIN_USE_ADVANCED_PERMS) && !empty($user->rights->commande->order_advance->validate)))
+		if (!empty($user->rights->commande->cloturer))
 		{
 			$this->db->begin();
 
