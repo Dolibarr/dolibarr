@@ -1026,3 +1026,5 @@ Measures=Measures
 XAxis=X-Axis
 YAxis=Y-Axis
 StatusOfRefMustBe=Status of %s must be %s
+DeleteFileHeader=Confirm file delete
+DeleteFileText=Do you really want delete this file?

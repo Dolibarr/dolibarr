@@ -197,30 +197,30 @@ class PaymentLoan extends CommonObject
 	{
 		global $langs;
 		$sql = "SELECT";
-		$sql.= " t.rowid,";
-		$sql.= " t.fk_loan,";
-		$sql.= " t.datec,";
-		$sql.= " t.tms,";
-		$sql.= " t.datep,";
-		$sql.= " t.amount_capital,";
-		$sql.= " t.amount_insurance,";
-		$sql.= " t.amount_interest,";
-		$sql.= " t.fk_typepayment,";
-		$sql.= " t.num_payment,";
-		$sql.= " t.note_private,";
-		$sql.= " t.note_public,";
-		$sql.= " t.fk_bank,";
-		$sql.= " t.fk_user_creat,";
-		$sql.= " t.fk_user_modif,";
-		$sql.= " pt.code as type_code, pt.libelle as type_label,";
-		$sql.= ' b.fk_account';
-		$sql.= " FROM ".MAIN_DB_PREFIX."payment_loan as t";
-		$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."c_paiement as pt ON t.fk_typepayment = pt.id";
-		$sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'bank as b ON t.fk_bank = b.rowid';
-		$sql.= " WHERE t.rowid = ".$id;
+		$sql .= " t.rowid,";
+		$sql .= " t.fk_loan,";
+		$sql .= " t.datec,";
+		$sql .= " t.tms,";
+		$sql .= " t.datep,";
+		$sql .= " t.amount_capital,";
+		$sql .= " t.amount_insurance,";
+		$sql .= " t.amount_interest,";
+		$sql .= " t.fk_typepayment,";
+		$sql .= " t.num_payment,";
+		$sql .= " t.note_private,";
+		$sql .= " t.note_public,";
+		$sql .= " t.fk_bank,";
+		$sql .= " t.fk_user_creat,";
+		$sql .= " t.fk_user_modif,";
+		$sql .= " pt.code as type_code, pt.libelle as type_label,";
+		$sql .= ' b.fk_account';
+		$sql .= " FROM ".MAIN_DB_PREFIX."payment_loan as t";
+		$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."c_paiement as pt ON t.fk_typepayment = pt.id";
+		$sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'bank as b ON t.fk_bank = b.rowid';
+		$sql .= " WHERE t.rowid = ".$id;
 
 		dol_syslog(get_class($this)."::fetch", LOG_DEBUG);
-		$resql=$this->db->query($sql);
+		$resql = $this->db->query($sql);
 		if ($resql)
 		{
 			if ($this->db->num_rows($resql))
@@ -515,16 +515,16 @@ class PaymentLoan extends CommonObject
 	{
 		global $langs;
 
-		$result='';
+		$result = '';
 
 		if (!empty($this->id))
 		{
 			$link = '<a href="'.DOL_URL_ROOT.'/loan/payment/card.php?id='.$this->id.'">';
-			$linkend='</a>';
+			$linkend = '</a>';
 
-			if ($withpicto) $result.=($link.img_object($langs->trans("ShowPayment").': '.$this->ref, 'payment').$linkend.' ');
-			if ($withpicto && $withpicto != 2) $result.=' ';
-			if ($withpicto != 2) $result.=$link.($maxlen?dol_trunc($this->ref, $maxlen):$this->ref).$linkend;
+			if ($withpicto) $result .= ($link.img_object($langs->trans("ShowPayment").': '.$this->ref, 'payment').$linkend.' ');
+			if ($withpicto && $withpicto != 2) $result .= ' ';
+			if ($withpicto != 2) $result .= $link.($maxlen ?dol_trunc($this->ref, $maxlen) : $this->ref).$linkend;
 		}
 
 		return $result;

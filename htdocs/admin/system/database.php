@@ -35,7 +35,7 @@ if (!$user->admin) accessforbidden();
  * View
  */
 
-$form=new Form($db);
+$form = new Form($db);
 
 llxHeader();
 
@@ -47,9 +47,9 @@ print '<table class="noborder centpercent">';
 print '<tr class="liste_titre"><td colspan="2">'.$langs->trans("Database").'</td></tr>'."\n";
 print '<tr '.$bc[0].'><td width="300">'.$langs->trans("Version").'</td><td>'.$db::LABEL.' '.$db->getVersion().'</td></tr>'."\n";
 print '<tr '.$bc[1].'><td width="300">'.$langs->trans("DatabaseServer").'</td><td>'.$conf->db->host.'</td></tr>'."\n";
-print '<tr '.$bc[0].'><td width="300">'.$langs->trans("DatabasePort").'</td><td>'.(empty($conf->db->port)?$langs->trans("Default"):$conf->db->port).'</td></tr>'."\n";
+print '<tr '.$bc[0].'><td width="300">'.$langs->trans("DatabasePort").'</td><td>'.(empty($conf->db->port) ? $langs->trans("Default") : $conf->db->port).'</td></tr>'."\n";
 print '<tr '.$bc[1].'><td width="300">'.$langs->trans("DatabaseName").'</td><td>'.$conf->db->name.'</td></tr>'."\n";
-print '<tr '.$bc[0].'><td width="300">'.$langs->trans("DriverType").'</td><td>'.$conf->db->type . ($db->getDriverInfo() ? ' ('.$db->getDriverInfo().')':'').'</td></tr>'."\n";
+print '<tr '.$bc[0].'><td width="300">'.$langs->trans("DriverType").'</td><td>'.$conf->db->type.($db->getDriverInfo() ? ' ('.$db->getDriverInfo().')' : '').'</td></tr>'."\n";
 print '<tr '.$bc[1].'><td width="300">'.$langs->trans("User").'</td><td>'.$conf->db->user.'</td></tr>'."\n";
 print '<tr '.$bc[0].'><td width="300">'.$langs->trans("Password").'</td><td>'.preg_replace('/./i', '*', $dolibarr_main_db_pass).'</td></tr>'."\n";
 print '<tr '.$bc[1].'><td width="300">'.$langs->trans("DBStoringCharset").'</td><td>'.$db->getDefaultCharacterSetDatabase().'</td></tr>'."\n";
@@ -66,17 +66,17 @@ print '<tr '.$bc[0].'><td width="300"><a href="'.DOL_URL_ROOT.'/admin/system/dat
 print '</table>';
 print '</div>';
 
-$listofvars=$db->getServerParametersValues();
-$listofstatus=$db->getServerStatusValues();
-$arraylist=array('listofvars','listofstatus');
+$listofvars = $db->getServerParametersValues();
+$listofstatus = $db->getServerStatusValues();
+$arraylist = array('listofvars', 'listofstatus');
 
-if (! count($listofvars) && ! count($listofstatus))
+if (!count($listofvars) && !count($listofstatus))
 {
 	print $langs->trans("FeatureNotAvailableWithThisDatabaseDriver");
 }
 else
 {
-	foreach($arraylist as $listname)
+	foreach ($arraylist as $listname)
 	{
 		print '<br>';
         print '<div class="div-table-responsive-no-min">';
@@ -87,37 +87,37 @@ else
 		print '</tr>'."\n";
 
 		// arraytest is an array of test to do
-		$arraytest=array();
+		$arraytest = array();
 		if (preg_match('/mysql/i', $db->type))
 		{
-			$arraytest=array(
-				'character_set_database'=>array('var'=>'dolibarr_main_db_character_set','valifempty'=>'utf8'),
-				'collation_database'=>array('var'=>'dolibarr_main_db_collation','valifempty'=>'utf8_unicode_ci')
+			$arraytest = array(
+				'character_set_database'=>array('var'=>'dolibarr_main_db_character_set', 'valifempty'=>'utf8'),
+				'collation_database'=>array('var'=>'dolibarr_main_db_collation', 'valifempty'=>'utf8_unicode_ci')
 			);
 		}
 
-		$listtouse=array();
-		if ($listname == 'listofvars') $listtouse=$listofvars;
-		if ($listname == 'listofstatus') $listtouse=$listofstatus;
+		$listtouse = array();
+		if ($listname == 'listofvars') $listtouse = $listofvars;
+		if ($listname == 'listofstatus') $listtouse = $listofstatus;
 
-		foreach($listtouse as $param => $paramval)
+		foreach ($listtouse as $param => $paramval)
 		{
 			print '<tr class="oddeven">';
 			print '<td>';
 			print $param;
 			print '</td>';
 			print '<td>';
-			$show=0;$text='';
-			foreach($arraytest as $key => $val)
+			$show = 0; $text = '';
+			foreach ($arraytest as $key => $val)
 			{
 				if ($key != $param) continue;
-				$val2=${$val['var']};
-				$text='Should be in line with value of param <b>'.$val['var'].'</b> thas is <b>'.($val2?$val2:"'' (=".$val['valifempty'].")").'</b>';
-				$show=1;
+				$val2 = ${$val['var']};
+				$text = 'Should be in line with value of param <b>'.$val['var'].'</b> thas is <b>'.($val2 ? $val2 : "'' (=".$val['valifempty'].")").'</b>';
+				$show = 1;
 			}
-			if ($show==0) print $paramval;
-			if ($show==1) print $form->textwithpicto($paramval, $text);
-			if ($show==2) print $form->textwithpicto($paramval, $text, 1, 'warning');
+			if ($show == 0) print $paramval;
+			if ($show == 1) print $form->textwithpicto($paramval, $text);
+			if ($show == 2) print $form->textwithpicto($paramval, $text, 1, 'warning');
 			print '</td>';
 			print '</tr>'."\n";
 		}

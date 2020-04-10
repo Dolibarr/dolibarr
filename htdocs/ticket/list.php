@@ -96,7 +96,12 @@ foreach ($object->fields as $key => $val)
 }
 
 // List of fields to search into when doing a "search in all"
-$fieldstosearchall = array();
+$fieldstosearchall = array(
+	's.nom'=>"ThirdParty",
+	's.name_alias'=>"AliasNameShort",
+	's.zip'=>"Zip",
+	's.town'=>"Town",
+);
 foreach ($object->fields as $key => $val)
 {
 	if ($val['searchall']) $fieldstosearchall['t.'.$key] = $val['label'];
@@ -655,6 +660,12 @@ while ($i < min($num, $limit))
 			elseif ($key == 'severity_code') print $langs->getLabelFromKey($db, $object->severity_code, 'c_ticket_severity', 'code', 'label');
 			elseif ($key == 'type_code') print $langs->getLabelFromKey($db, $object->type_code, 'c_ticket_type', 'code', 'label');
 			elseif ($key == 'tms') print dol_print_date($db->jdate($obj->$key), 'dayhour', 'tzuser');
+			elseif ($key == 'fk_user_create') {
+				if ($object->fk_user_create > 0) {
+					$user_create->fetch($object->fk_user_create);
+					print $user_create->getNomUrl(-1);
+				}
+			}
 			elseif (in_array($val['type'], array('date', 'datetime', 'timestamp'))) print $object->showOutputField($val, $key, $db->jdate($obj->$key), '');
 			else print $object->showOutputField($val, $key, $obj->$key, '');
 			print '</td>';

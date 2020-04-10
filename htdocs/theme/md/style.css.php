@@ -3218,7 +3218,7 @@ ul.noborder li:nth-child(odd):not(.liste_titre) {
 <?php } ?>
 
 .nohover:hover {
-	background: unset;
+	background: unset !important;
 }
 .nohoverborder:hover {
 	border: unset;

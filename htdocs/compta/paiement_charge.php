@@ -30,12 +30,12 @@ require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
 // Load translation files required by the page
 $langs->load("bills");
 
-$chid=GETPOST("id", 'int');
-$action=GETPOST('action', 'alpha');
+$chid = GETPOST("id", 'int');
+$action = GETPOST('action', 'alpha');
 $amounts = array();
 
 // Security check
-$socid=0;
+$socid = 0;
 if ($user->socid > 0)
 {
 	$socid = $user->socid;
@@ -165,11 +165,11 @@ if ($action == 'create')
 {
 	$charge = new ChargeSociales($db);
 	$charge->fetch($chid);
-    $charge->accountid=$charge->fk_account?$charge->fk_account:$charge->accountid;
-    $charge->paiementtype=$charge->mode_reglement_id?$charge->mode_reglement_id:$charge->paiementtype;
+    $charge->accountid = $charge->fk_account ? $charge->fk_account : $charge->accountid;
+    $charge->paiementtype = $charge->mode_reglement_id ? $charge->mode_reglement_id : $charge->paiementtype;
 
 	$total = $charge->amount;
-	if (! empty($conf->use_javascript_ajax))
+	if (!empty($conf->use_javascript_ajax))
 	{
 		print "\n".'<script type="text/javascript" language="javascript">';
 

@@ -267,34 +267,34 @@ abstract class CommonDocGenerator
 			$object->state = getState($object->state_code, 0);
 		}
 
-		$array_contact = array (
-			$array_key . '_fullname' => $object->getFullName($outputlangs, 1),
-			$array_key . '_lastname' => $object->lastname,
-			$array_key . '_firstname' => $object->firstname,
-			$array_key . '_address' => $object->address,
-			$array_key . '_zip' => $object->zip,
-			$array_key . '_town' => $object->town,
-			$array_key . '_state_id' => $object->state_id,
-			$array_key . '_state_code' => $object->state_code,
-			$array_key . '_state' => $object->state,
-			$array_key . '_country_id' => $object->country_id,
-			$array_key . '_country_code' => $object->country_code,
-			$array_key . '_country' => $object->country,
-			$array_key . '_poste' => $object->poste,
-			$array_key . '_socid' => $object->socid,
-			$array_key . '_statut' => $object->statut,
-			$array_key . '_code' => $object->code,
-			$array_key . '_email' => $object->email,
-			$array_key . '_jabberid' => $object->jabberid,					// deprecated
-			$array_key . '_phone_pro' => $object->phone_pro,
-			$array_key . '_phone_perso' => $object->phone_perso,
-			$array_key . '_phone_mobile' => $object->phone_mobile,
-			$array_key . '_fax' => $object->fax,
-			$array_key . '_birthday' => $object->birthday,
-			$array_key . '_default_lang' => $object->default_lang,
-			$array_key . '_note_public' => $object->note_public,
-			$array_key . '_note_private' => $object->note_private,
-			$array_key . '_civility' => $object->civility,
+		$array_contact = array(
+			$array_key.'_fullname' => $object->getFullName($outputlangs, 1),
+			$array_key.'_lastname' => $object->lastname,
+			$array_key.'_firstname' => $object->firstname,
+			$array_key.'_address' => $object->address,
+			$array_key.'_zip' => $object->zip,
+			$array_key.'_town' => $object->town,
+			$array_key.'_state_id' => $object->state_id,
+			$array_key.'_state_code' => $object->state_code,
+			$array_key.'_state' => $object->state,
+			$array_key.'_country_id' => $object->country_id,
+			$array_key.'_country_code' => $object->country_code,
+			$array_key.'_country' => $object->country,
+			$array_key.'_poste' => $object->poste,
+			$array_key.'_socid' => $object->socid,
+			$array_key.'_statut' => $object->statut,
+			$array_key.'_code' => $object->code,
+			$array_key.'_email' => $object->email,
+			$array_key.'_jabberid' => $object->jabberid, // deprecated
+			$array_key.'_phone_pro' => $object->phone_pro,
+			$array_key.'_phone_perso' => $object->phone_perso,
+			$array_key.'_phone_mobile' => $object->phone_mobile,
+			$array_key.'_fax' => $object->fax,
+			$array_key.'_birthday' => $object->birthday,
+			$array_key.'_default_lang' => $object->default_lang,
+			$array_key.'_note_public' => $object->note_public,
+			$array_key.'_note_private' => $object->note_private,
+			$array_key.'_civility' => $object->civility,
 		);
 
 		// Retrieve extrafields
@@ -1317,7 +1317,7 @@ abstract class CommonDocGenerator
         if (!empty($fields))
         {
             // Sort extrafields by rank
-            uasort($fields, function ($a, $b) {
+            uasort($fields, function($a, $b) {
                 return  ($a->rank > $b->rank) ? -1 : 1;
 			});
 

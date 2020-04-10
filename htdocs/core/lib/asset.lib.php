@@ -35,7 +35,7 @@ function asset_admin_prepare_head()
 	$h = 0;
 	$head = array();
 
-	$head[$h][0] = DOL_URL_ROOT . '/asset/admin/setup.php';
+	$head[$h][0] = DOL_URL_ROOT.'/asset/admin/setup.php';
 	$head[$h][1] = $langs->trans("Settings");
 	$head[$h][2] = 'settings';
 	$h++;
@@ -50,12 +50,12 @@ function asset_admin_prepare_head()
 	//); // to remove a tab
 	complete_head_from_modules($conf, $langs, null, $head, $h, 'assets_admin');
 
-	$head[$h][0] = DOL_URL_ROOT . '/asset/admin/assets_extrafields.php';
+	$head[$h][0] = DOL_URL_ROOT.'/asset/admin/assets_extrafields.php';
 	$head[$h][1] = $langs->trans("ExtraFields");
 	$head[$h][2] = 'attributes';
 	$h++;
 
-	$head[$h][0] = DOL_URL_ROOT . '/asset/admin/assets_type_extrafields.php';
+	$head[$h][0] = DOL_URL_ROOT.'/asset/admin/assets_type_extrafields.php';
 	$head[$h][1] = $langs->trans("ExtraFieldsAssetsType");
 	$head[$h][2] = 'attributes_type';
 	$h++;
@@ -80,7 +80,7 @@ function asset_prepare_head(Asset $object)
 	$h = 0;
 	$head = array();
 
-	$head[$h][0] = DOL_URL_ROOT . '/asset/card.php';
+	$head[$h][0] = DOL_URL_ROOT.'/asset/card.php';
 	$head[$h][1] = $langs->trans("Card");
 	$head[$h][2] = 'card';
 	$h++;
@@ -97,25 +97,25 @@ function asset_prepare_head(Asset $object)
 
 	require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 	require_once DOL_DOCUMENT_ROOT.'/core/class/link.class.php';
-	$upload_dir = $conf->assets->dir_output . '/' . dol_sanitizeFileName($object->ref);
+	$upload_dir = $conf->assets->dir_output.'/'.dol_sanitizeFileName($object->ref);
 	$nbFiles = count(dol_dir_list($upload_dir, 'files', 0, '', '(\.meta|_preview.*\.png)$'));
-	$nbLinks=Link::count($db, $object->element, $object->id);
+	$nbLinks = Link::count($db, $object->element, $object->id);
 	$head[$h][0] = DOL_URL_ROOT.'/asset/document.php?id='.$object->id;
 	$head[$h][1] = $langs->trans('Documents');
-	if (($nbFiles+$nbLinks) > 0) $head[$h][1].= '<span class="badge marginleftonlyshort">'.($nbFiles+$nbLinks).'</span>';
+	if (($nbFiles + $nbLinks) > 0) $head[$h][1] .= '<span class="badge marginleftonlyshort">'.($nbFiles + $nbLinks).'</span>';
 	$head[$h][2] = 'documents';
 	$h++;
 
 	$nbNote = 0;
-	if(!empty($object->note_private)) $nbNote++;
-	if(!empty($object->note_public)) $nbNote++;
+	if (!empty($object->note_private)) $nbNote++;
+	if (!empty($object->note_public)) $nbNote++;
 	$head[$h][0] = DOL_URL_ROOT.'/asset/note.php?id='.$object->id;
 	$head[$h][1] = $langs->trans("Notes");
-	if ($nbNote > 0) $head[$h][1].= '<span class="badge marginleftonlyshort">'.$nbNote.'</span>';
+	if ($nbNote > 0) $head[$h][1] .= '<span class="badge marginleftonlyshort">'.$nbNote.'</span>';
 	$head[$h][2] = 'note';
 	$h++;
 
-	$head[$h][0] = DOL_URL_ROOT . '/asset/info.php?id=' . $object->id;
+	$head[$h][0] = DOL_URL_ROOT.'/asset/info.php?id='.$object->id;
 	$head[$h][1] = $langs->trans("Info");
 	$head[$h][2] = 'info';
 	$h++;
@@ -135,7 +135,7 @@ function asset_type_prepare_head(AssetType $object)
 {
 	global $langs, $conf, $user;
 
-	$h=0;
+	$h = 0;
 	$head = array();
 
 	$head[$h][0] = DOL_URL_ROOT.'/asset/type.php?rowid='.$object->id;

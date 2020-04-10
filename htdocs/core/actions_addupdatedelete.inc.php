@@ -155,7 +155,7 @@ if ($action == 'update' && !empty($permissiontoadd))
 				$value = '';
 			}
 		} elseif (preg_match('/^(integer|price|real|double)/', $object->fields[$key]['type'])) {
-            $value = price2num(GETPOST($key, 'none'));	// To fix decimal separator according to lang setup
+            $value = price2num(GETPOST($key, 'none')); // To fix decimal separator according to lang setup
 		} else {
 			$value = GETPOST($key, 'alpha');
 		}

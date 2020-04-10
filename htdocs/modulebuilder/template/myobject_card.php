@@ -456,7 +456,9 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
     	if (empty($reshook))
     	{
     	    // Send
-            print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=presend&mode=init#formmailbeforetitle">'.$langs->trans('SendMail').'</a>'."\n";
+    		if (empty($user->socid)) {
+    			print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=presend&mode=init#formmailbeforetitle">'.$langs->trans('SendMail').'</a>'."\n";
+    		}
 
             // Back to draft
             if ($object->status == $object::STATUS_VALIDATED)
@@ -584,8 +586,8 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 	if (GETPOST('modelselected')) $action = 'presend';
 
 	// Presend form
-	$modelmail='myobject';
-	$defaulttopic='InformationMessage';
+	$modelmail = 'myobject';
+	$defaulttopic = 'InformationMessage';
 	$diroutput = $conf->mymodule->dir_output;
 	$trackid = 'myobject'.$object->id;
 

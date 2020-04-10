@@ -726,8 +726,8 @@ class pdf_cyan extends ModelePDFPropales
 					}
 
                     // Extrafields
-                    if(!empty($object->lines[$i]->array_options)){
-                        foreach ($object->lines[$i]->array_options as $extrafieldColKey => $extrafieldValue){
+                    if (!empty($object->lines[$i]->array_options)) {
+                        foreach ($object->lines[$i]->array_options as $extrafieldColKey => $extrafieldValue) {
                             if ($this->getColumnStatus($extrafieldColKey))
                             {
                                 $extrafieldValue = $this->getExtrafieldContent($object->lines[$i], $extrafieldColKey);
@@ -1984,7 +1984,7 @@ class pdf_cyan extends ModelePDFPropales
 	    );
 
         // Add extrafields cols
-        if(!empty($object->lines)) {
+        if (!empty($object->lines)) {
             $line = reset($object->lines);
             $this->defineColumnExtrafield($line, $outputlangs, $hidedetails);
         }

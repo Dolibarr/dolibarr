@@ -31,7 +31,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
 
 // Load translation files required by the page
-$langs->loadLangs(array("admin","withdrawals"));
+$langs->loadLangs(array("admin", "withdrawals"));
 
 // Security check
 if (!$user->admin) accessforbidden();
@@ -48,12 +48,12 @@ if ($action == "set")
 {
 	$db->begin();
 
-	$id=GETPOST('PRELEVEMENT_ID_BANKACCOUNT', 'int');
+	$id = GETPOST('PRELEVEMENT_ID_BANKACCOUNT', 'int');
 	$account = new Account($db);
-	if($account->fetch($id)>0)
+	if ($account->fetch($id) > 0)
 	{
 		$res = dolibarr_set_const($db, "PRELEVEMENT_ID_BANKACCOUNT", $id, 'chaine', 0, '', $conf->entity);
-		if (! $res > 0) $error++;
+		if (!$res > 0) $error++;
 		/*
         $res = dolibarr_set_const($db, "PRELEVEMENT_CODE_BANQUE", $account->code_banque,'chaine',0,'',$conf->entity);
         if (! $res > 0) $error++;
@@ -74,29 +74,29 @@ if ($action == "set")
 	else $error++;
 
 	$res = dolibarr_set_const($db, "PRELEVEMENT_ICS", GETPOST("PRELEVEMENT_ICS"), 'chaine', 0, '', $conf->entity);
-	if (! $res > 0) $error++;
+	if (!$res > 0) $error++;
 
 	if (GETPOST("PRELEVEMENT_USER") > 0)
 	{
 		$res = dolibarr_set_const($db, "PRELEVEMENT_USER", GETPOST("PRELEVEMENT_USER"), 'chaine', 0, '', $conf->entity);
-		if (! $res > 0) $error++;
+		if (!$res > 0) $error++;
 	}
-	if (GETPOST("PRELEVEMENT_END_TO_END") || GETPOST("PRELEVEMENT_END_TO_END")=="")
+	if (GETPOST("PRELEVEMENT_END_TO_END") || GETPOST("PRELEVEMENT_END_TO_END") == "")
 	{
 		$res = dolibarr_set_const($db, "PRELEVEMENT_END_TO_END", GETPOST("PRELEVEMENT_END_TO_END"), 'chaine', 0, '', $conf->entity);
-		if (! $res > 0) $error++;
+		if (!$res > 0) $error++;
 	}
-	if (GETPOST("PRELEVEMENT_USTRD") || GETPOST("PRELEVEMENT_USTRD")=="")
+	if (GETPOST("PRELEVEMENT_USTRD") || GETPOST("PRELEVEMENT_USTRD") == "")
 	{
 		$res = dolibarr_set_const($db, "PRELEVEMENT_USTRD", GETPOST("PRELEVEMENT_USTRD"), 'chaine', 0, '', $conf->entity);
-		if (! $res > 0) $error++;
+		if (!$res > 0) $error++;
 	}
 
-	if (GETPOST("PRELEVEMENT_ADDDAYS") || GETPOST("PRELEVEMENT_ADDDAYS")=="")
+	if (GETPOST("PRELEVEMENT_ADDDAYS") || GETPOST("PRELEVEMENT_ADDDAYS") == "")
 	{
 		$res = dolibarr_set_const($db, "PRELEVEMENT_ADDDAYS", GETPOST("PRELEVEMENT_ADDDAYS"), 'chaine', 0, '', $conf->entity);
-		if (! $res > 0) $error++;
-	} elseif (! $error)
+		if (!$res > 0) $error++;
+	} elseif (!$error)
 	{
 		$db->commit();
 		setEventMessages($langs->trans("SetupSaved"), null, 'mesgs');
@@ -196,13 +196,13 @@ elseif ($action == 'setdoc')
  *	View
  */
 
-$form=new Form($db);
+$form = new Form($db);
 
-$dirmodels=array_merge(array('/'), (array) $conf->modules_parts['models']);
+$dirmodels = array_merge(array('/'), (array) $conf->modules_parts['models']);
 
 llxHeader('', $langs->trans("WithdrawalsSetup"));
 
-$linkback='<a href="'.DOL_URL_ROOT.'/admin/modules.php?restore_lastsearch_values=1">'.$langs->trans("BackToModuleList").'</a>';
+$linkback = '<a href="'.DOL_URL_ROOT.'/admin/modules.php?restore_lastsearch_values=1">'.$langs->trans("BackToModuleList").'</a>';
 
 print load_fiche_titre($langs->trans("WithdrawalsSetup"), $linkback, 'title_setup');
 print '<br>';
@@ -251,7 +251,7 @@ print '</td></tr>';
 //ADDDAYS
 print '<tr class="pair"><td>'.$langs->trans("ADDDAYS").'</td>';
 print '<td class="left">';
-if (! $conf->global->PRELEVEMENT_ADDDAYS) $conf->global->PRELEVEMENT_ADDDAYS=0;
+if (!$conf->global->PRELEVEMENT_ADDDAYS) $conf->global->PRELEVEMENT_ADDDAYS = 0;
 print '<input type="text" name="PRELEVEMENT_ADDDAYS" value="'.$conf->global->PRELEVEMENT_ADDDAYS.'" size="15" ></td>';
 print '</td></tr>';
 print '</table>';

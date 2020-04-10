@@ -25,7 +25,7 @@ abstract class ModelePDFSuppliersPayments extends CommonDocGenerator
 	/**
 	 * @var string Error code (or message)
 	 */
-	public $error='';
+	public $error = '';
 
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
@@ -41,11 +41,11 @@ abstract class ModelePDFSuppliersPayments extends CommonDocGenerator
 		// phpcs:enable
 		global $conf;
 
-		$type='supplier_payment';
-		$liste=array();
+		$type = 'supplier_payment';
+		$liste = array();
 
 		include_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
-		$liste=getListOfModels($db, $type, $maxfilenamelength);
+		$liste = getListOfModels($db, $type, $maxfilenamelength);
 
 		return $liste;
 	}
@@ -61,7 +61,7 @@ abstract class ModeleNumRefSupplierPayments
 	/**
 	 * @var string Error code (or message)
 	 */
-	public $error='';
+	public $error = '';
 
 	/**
 	 *	Return if a module can be used or not

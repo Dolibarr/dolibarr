@@ -1009,7 +1009,7 @@ class BOM extends CommonObject
 	 */
 	public function calculateCosts()
 	{
-		include_once DOL_DOCUMENT_ROOT . '/product/class/product.class.php';
+		include_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
 		$this->unit_cost = 0;
 		$this->total_cost = 0;
 

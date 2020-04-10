@@ -304,23 +304,23 @@ else
 		// Cree l'objet formulaire mail
 		include_once DOL_DOCUMENT_ROOT.'/core/class/html.formsms.class.php';
 		$formsms = new FormSms($db);
-        $formsms->fromtype='user';
-        $formsms->fromid=$user->id;
-        $formsms->fromsms = (isset($_POST['fromsms'])?$_POST['fromsms']:($conf->global->MAIN_MAIL_SMS_FROM?$conf->global->MAIN_MAIL_SMS_FROM:$user->user_mobile));
-		$formsms->withfromreadonly=0;
-		$formsms->withsubstit=0;
-		$formsms->withfrom=1;
-		$formsms->withto=(isset($_POST['sendto'])?$_POST['sendto']:$user->user_mobile?$user->user_mobile:1);
-		$formsms->withbody=(isset($_POST['message'])?(empty($_POST['message'])?1:$_POST['message']):$langs->trans("ThisIsATestMessage"));
-		$formsms->withbodyreadonly=0;
-		$formsms->withcancel=1;
+        $formsms->fromtype = 'user';
+        $formsms->fromid = $user->id;
+        $formsms->fromsms = (isset($_POST['fromsms']) ? $_POST['fromsms'] : ($conf->global->MAIN_MAIL_SMS_FROM ? $conf->global->MAIN_MAIL_SMS_FROM : $user->user_mobile));
+		$formsms->withfromreadonly = 0;
+		$formsms->withsubstit = 0;
+		$formsms->withfrom = 1;
+		$formsms->withto = (isset($_POST['sendto']) ? $_POST['sendto'] : $user->user_mobile ? $user->user_mobile : 1);
+		$formsms->withbody = (isset($_POST['message']) ? (empty($_POST['message']) ? 1 : $_POST['message']) : $langs->trans("ThisIsATestMessage"));
+		$formsms->withbodyreadonly = 0;
+		$formsms->withcancel = 1;
 		// Tableau des substitutions
-		$formsms->substit=$substitutionarrayfortest;
+		$formsms->substit = $substitutionarrayfortest;
 		// Tableau des parametres complementaires du post
-		$formsms->param["action"]="send";
-		$formsms->param["models"]="body";
-		$formsms->param["smsid"]=0;
-		$formsms->param["returnurl"]=$_SERVER["PHP_SELF"];
+		$formsms->param["action"] = "send";
+		$formsms->param["models"] = "body";
+		$formsms->param["smsid"] = 0;
+		$formsms->param["returnurl"] = $_SERVER["PHP_SELF"];
 
 		$formsms->show_form();
 

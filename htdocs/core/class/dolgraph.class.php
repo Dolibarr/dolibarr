@@ -1032,18 +1032,18 @@ class DolGraph
 		if (!empty($this->title)) $this->stringtoshow .= '<div class="center dolgraphtitle'.(empty($this->cssprefix) ? '' : ' dolgraphtitle'.$this->cssprefix).'">'.$this->title.'</div>';
 		if (!empty($this->shownographyet))
 		{
-			$this->stringtoshow .= '<div style="width:'.$this->width.(strpos($this->width, '%') > 0 ? '': 'px').'; height:'.$this->height.'px;" class="nographyet"></div>';
+			$this->stringtoshow .= '<div style="width:'.$this->width.(strpos($this->width, '%') > 0 ? '' : 'px').'; height:'.$this->height.'px;" class="nographyet"></div>';
 			$this->stringtoshow .= '<div class="nographyettext margintoponly">'.$langs->trans("NotEnoughDataYet").'...</div>';
 			return;
 		}
 
 		// Start the div that will contains all the graph
-		$dolxaxisvertical='';
-		if (count($this->data) > 20) $dolxaxisvertical='dol-xaxis-vertical';
+		$dolxaxisvertical = '';
+		if (count($this->data) > 20) $dolxaxisvertical = 'dol-xaxis-vertical';
 		// No height for the pie grah
 		$cssfordiv = 'dolgraphchart';
 		if (isset($this->type[$firstlot])) $cssfordiv .= ' dolgraphchar'.$this->type[$firstlot];
-		$this->stringtoshow .= '<div id="placeholder_'.$tag.'" style="min-height: '.$this->height.(strpos($this->height, '%') > 0 ? '': 'px').'; width:'.$this->width.(strpos($this->width, '%') > 0 ? '': 'px').';" class="'.$cssfordiv.' dolgraph'.(empty($dolxaxisvertical)?'':' '.$dolxaxisvertical).(empty($this->cssprefix) ? '' : ' dolgraph'.$this->cssprefix).' center"><canvas id="canvas_'.$tag.'"></canvas></div>'."\n";
+		$this->stringtoshow .= '<div id="placeholder_'.$tag.'" style="min-height: '.$this->height.(strpos($this->height, '%') > 0 ? '' : 'px').'; width:'.$this->width.(strpos($this->width, '%') > 0 ? '' : 'px').';" class="'.$cssfordiv.' dolgraph'.(empty($dolxaxisvertical) ? '' : ' '.$dolxaxisvertical).(empty($this->cssprefix) ? '' : ' dolgraph'.$this->cssprefix).' center"><canvas id="canvas_'.$tag.'"></canvas></div>'."\n";
 
 		$this->stringtoshow .= '<script id="'.$tag.'">'."\n";
 		$i = $firstlot;

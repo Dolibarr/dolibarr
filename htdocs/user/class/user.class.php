@@ -2381,7 +2381,7 @@ class User extends CommonObject
 		}
 		$type = ($this->socid ? $langs->trans("External").$company : $langs->trans("Internal"));
 		$label .= '<br><b>'.$langs->trans("Type").':</b> '.$type;
-		$label .= '<br><b>'.$langs->trans("Status").'</b>: '.$this->getLibStatut(0);
+		$label .= '<br><b>'.$langs->trans("Status").'</b>: '.$this->getLibStatut(4);
 		$label .= '</div>';
 		if ($infologin > 0)
 		{

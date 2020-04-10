@@ -34,7 +34,7 @@
  */
 
 // Protection to avoid direct call of template
-if (empty($object) || ! is_object($object))
+if (empty($object) || !is_object($object))
 {
 	print "Error, template page can't be called as URL";
 	exit;
@@ -46,7 +46,7 @@ print "<thead>\n";
 print '<tr class="liste_titre nodrag nodrop">';
 
 // Adds a line numbering column
-if (! empty($conf->global->MAIN_VIEW_LINE_NUMBER)) print '<td class="linecolnum center">&nbsp;</td>';
+if (!empty($conf->global->MAIN_VIEW_LINE_NUMBER)) print '<td class="linecolnum center">&nbsp;</td>';
 
 // Description
 print '<td class="linecoldescription">'.$langs->trans('Description').'</td>';
@@ -71,7 +71,7 @@ print '<td class="linecolefficiency right">'.$form->textwithpicto($langs->trans(
 // Cost
 print '<td class="linecolcost right">'.$langs->trans('CostPrice').'</td>';
 
-print '<td class="linecoledit"></td>';  // No width to allow autodim
+print '<td class="linecoledit"></td>'; // No width to allow autodim
 
 print '<td class="linecoldelete" style="width: 10px"></td>';
 

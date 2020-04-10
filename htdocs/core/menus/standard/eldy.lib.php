@@ -242,7 +242,7 @@ function print_eldy_menu($db, $atarget, $type_user, &$tabMenu, &$menu, $noout = 
 	    'module'=>'propal|commande|supplier_order|supplier_proposal|contrat|ficheinter'
 	);
 
-	$onlysupplierorder = ! empty($user->rights->fournisseur->commande->lire) &&
+	$onlysupplierorder = !empty($user->rights->fournisseur->commande->lire) &&
 		empty($user->rights->propal->lire) &&
 		empty($user->rights->commande->lire) &&
 		empty($user->rights->supplier_order->lire) &&

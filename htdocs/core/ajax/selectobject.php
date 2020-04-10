@@ -20,21 +20,21 @@
  *       \brief      File to return Ajax response on a selection list request
  */
 
-if (! defined('NOTOKENRENEWAL')) define('NOTOKENRENEWAL', 1); // Disables token renewal
-if (! defined('NOREQUIREMENU'))  define('NOREQUIREMENU', '1');
-if (! defined('NOREQUIREHTML'))  define('NOREQUIREHTML', '1');
-if (! defined('NOREQUIREAJAX'))  define('NOREQUIREAJAX', '1');
-if (! defined('NOREQUIRESOC'))   define('NOREQUIRESOC', '1');
-if (! defined('NOCSRFCHECK'))    define('NOCSRFCHECK', '1');
+if (!defined('NOTOKENRENEWAL')) define('NOTOKENRENEWAL', 1); // Disables token renewal
+if (!defined('NOREQUIREMENU'))  define('NOREQUIREMENU', '1');
+if (!defined('NOREQUIREHTML'))  define('NOREQUIREHTML', '1');
+if (!defined('NOREQUIREAJAX'))  define('NOREQUIREAJAX', '1');
+if (!defined('NOREQUIRESOC'))   define('NOREQUIRESOC', '1');
+if (!defined('NOCSRFCHECK'))    define('NOCSRFCHECK', '1');
 
 require '../../main.inc.php';
 
-$objectdesc=GETPOST('objectdesc', 'alpha');
-$htmlname=GETPOST('htmlname', 'aZ09');
-$sqlfilter=GETPOST('sqlfilter', 'alpha');
-$outjson=(GETPOST('outjson', 'int') ? GETPOST('outjson', 'int') : 0);
-$action=GETPOST('action', 'alpha');
-$id=GETPOST('id', 'int');
+$objectdesc = GETPOST('objectdesc', 'alpha');
+$htmlname = GETPOST('htmlname', 'aZ09');
+$sqlfilter = GETPOST('sqlfilter', 'alpha');
+$outjson = (GETPOST('outjson', 'int') ? GETPOST('outjson', 'int') : 0);
+$action = GETPOST('action', 'alpha');
+$id = GETPOST('id', 'int');
 
 
 /*
@@ -58,9 +58,9 @@ if (empty($htmlname)) return;
 
 
 $InfoFieldList = explode(":", $objectdesc);
-$classname=$InfoFieldList[0];
-$classpath=$InfoFieldList[1];
-if (! empty($classpath))
+$classname = $InfoFieldList[0];
+$classpath = $InfoFieldList[1];
+if (!empty($classpath))
 {
 	dol_include_once($classpath);
 	if ($classname && class_exists($classname))
@@ -68,18 +68,18 @@ if (! empty($classpath))
 		$objecttmp = new $classname($db);
 	}
 }
-if (! is_object($objecttmp))
+if (!is_object($objecttmp))
 {
 	dol_syslog('Error bad param objectdesc', LOG_WARNING);
 	print 'Error bad param objectdesc';
 }
 
 // When used from jQuery, the search term is added as GET param "term".
-$searchkey=(($id && GETPOST($id, 'alpha'))?GETPOST($id, 'alpha'):(($htmlname && GETPOST($htmlname, 'alpha'))?GETPOST($htmlname, 'alpha'):''));
+$searchkey = (($id && GETPOST($id, 'alpha')) ?GETPOST($id, 'alpha') : (($htmlname && GETPOST($htmlname, 'alpha')) ?GETPOST($htmlname, 'alpha') : ''));
 
 // TODO Add a security test to avoid to get content of all tables
 
-$arrayresult=$form->selectForFormsList($objecttmp, $htmlname, '', 0, $searchkey, '', '', '', 0, 1);
+$arrayresult = $form->selectForFormsList($objecttmp, $htmlname, '', 0, $searchkey, '', '', '', 0, 1);
 
 $db->close();
 

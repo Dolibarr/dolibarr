@@ -783,32 +783,32 @@ while ($i < min($num, $limit))
 			}
 			//else print '--:--';
 			print '</td>';
-			if (! $i) $totalarray['nbfield']++;
-			if (! $i) $totalarray['pos'][$totalarray['nbfield']]='t.planned_workload';
+			if (!$i) $totalarray['nbfield']++;
+			if (!$i) $totalarray['pos'][$totalarray['nbfield']] = 't.planned_workload';
 			$totalarray['val']['t.planned_workload'] += $obj->planned_workload;
-			if (! $i) $totalarray['totalplannedworkloadfield']=$totalarray['nbfield'];
+			if (!$i) $totalarray['totalplannedworkloadfield'] = $totalarray['nbfield'];
 			$totalarray['totalplannedworkload'] += $obj->planned_workload;
 		}
 		// Time spent
-		if (! empty($arrayfields['t.duration_effective']['checked']))
+		if (!empty($arrayfields['t.duration_effective']['checked']))
 		{
-			$showlineingray=0;$showproject=1;
+			$showlineingray = 0; $showproject = 1;
 			print '<td class="center">';
 			if ($showlineingray) print '<i>';
-			else print '<a href="'.DOL_URL_ROOT.'/projet/tasks/time.php?id='.$object->id.($showproject?'':'&withproject=1').'">';
+			else print '<a href="'.DOL_URL_ROOT.'/projet/tasks/time.php?id='.$object->id.($showproject ? '' : '&withproject=1').'">';
 			if ($obj->duration_effective) print convertSecondToTime($obj->duration_effective, $timespentoutputformat);
 			else print '--:--';
 			if ($showlineingray) print '</i>';
 			else print '</a>';
 			print '</td>';
-			if (! $i) $totalarray['nbfield']++;
-			if (! $i) $totalarray['pos'][$totalarray['nbfield']]='t.duration_effective';
+			if (!$i) $totalarray['nbfield']++;
+			if (!$i) $totalarray['pos'][$totalarray['nbfield']] = 't.duration_effective';
 			$totalarray['val']['t.duration_effective'] += $obj->duration_effective;
-			if (! $i) $totalarray['totaldurationeffectivefield']=$totalarray['nbfield'];
+			if (!$i) $totalarray['totaldurationeffectivefield'] = $totalarray['nbfield'];
 			$totalarray['totaldurationeffective'] += $obj->duration_effective;
 		}
 		// Calculated progress
-		if (! empty($arrayfields['t.progress_calculated']['checked']))
+		if (!empty($arrayfields['t.progress_calculated']['checked']))
 		{
 			print '<td class="center">';
 			if ($obj->planned_workload || $obj->duration_effective)
@@ -829,25 +829,25 @@ while ($i < min($num, $limit))
 				print getTaskProgressBadge($object);
 			}
 			print '</td>';
-			if (! $i) $totalarray['nbfield']++;
-			if (! $i) $totalarray['pos'][$totalarray['nbfield']]='t.progress';
+			if (!$i) $totalarray['nbfield']++;
+			if (!$i) $totalarray['pos'][$totalarray['nbfield']] = 't.progress';
 			$totalarray['val']['t.progress'] += ($obj->planned_workload * $obj->progress / 100);
-			if (! $i) $totalarray['totalprogress_declaredfield']=$totalarray['nbfield'];
+			if (!$i) $totalarray['totalprogress_declaredfield'] = $totalarray['nbfield'];
 			$totalarray['totaldurationdeclared'] += $obj->planned_workload * $obj->progress / 100;
 		}
 		// Progress summary
-		if (! empty($arrayfields['t.progress_summary']['checked']))
+		if (!empty($arrayfields['t.progress_summary']['checked']))
 		{
 			print '<td class="center">';
-			if($obj->progress != '' && $obj->duration_effective){
+			if ($obj->progress != '' && $obj->duration_effective) {
                 print getTaskProgressView($object, false, false);
             }
 			print '</td>';
-			if (! $i) $totalarray['nbfield']++;
-			if (! $i) $totalarray['totalprogress_summary']=$totalarray['nbfield'];
+			if (!$i) $totalarray['nbfield']++;
+			if (!$i) $totalarray['totalprogress_summary'] = $totalarray['nbfield'];
 		}
 		// Time not billed
-		if (! empty($arrayfields['t.tobill']['checked']))
+		if (!empty($arrayfields['t.tobill']['checked']))
 		{
 		    print '<td class="center">';
 		    if ($obj->usage_bill_time)
@@ -861,12 +861,12 @@ while ($i < min($num, $limit))
 		        print '<span class="opacitymedium">'.$langs->trans("NA").'</span>';
 		    }
 		    print '</td>';
-		    if (! $i) $totalarray['nbfield']++;
-		    if (! $i) $totalarray['pos'][$totalarray['nbfield']]='t.tobill';
-		    if (! $i) $totalarray['totaltobillfield']=$totalarray['nbfield'];
+		    if (!$i) $totalarray['nbfield']++;
+		    if (!$i) $totalarray['pos'][$totalarray['nbfield']] = 't.tobill';
+		    if (!$i) $totalarray['totaltobillfield'] = $totalarray['nbfield'];
 		}
 		// Time billed
-		if (! empty($arrayfields['t.billed']['checked']))
+		if (!empty($arrayfields['t.billed']['checked']))
 		{
 		    print '<td class="center">';
 		    if ($obj->usage_bill_time)
@@ -880,31 +880,31 @@ while ($i < min($num, $limit))
 		        print '<span class="opacitymedium">'.$langs->trans("NA").'</span>';
 		    }
 		    print '</td>';
-		    if (! $i) $totalarray['nbfield']++;
-		    if (! $i) $totalarray['pos'][$totalarray['nbfield']]='t.billed';
-		    if (! $i) $totalarray['totalbilledfield']=$totalarray['nbfield'];
+		    if (!$i) $totalarray['nbfield']++;
+		    if (!$i) $totalarray['pos'][$totalarray['nbfield']] = 't.billed';
+		    if (!$i) $totalarray['totalbilledfield'] = $totalarray['nbfield'];
 		}
 		// Extra fields
 		include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_print_fields.tpl.php';
 		// Fields from hook
-		$parameters=array('arrayfields'=>$arrayfields, 'obj'=>$obj);
-		$reshook=$hookmanager->executeHooks('printFieldListValue', $parameters);    // Note that $action and $object may have been modified by hook
+		$parameters = array('arrayfields'=>$arrayfields, 'obj'=>$obj);
+		$reshook = $hookmanager->executeHooks('printFieldListValue', $parameters); // Note that $action and $object may have been modified by hook
 		print $hookmanager->resPrint;
 		// Date creation
-		if (! empty($arrayfields['t.datec']['checked']))
+		if (!empty($arrayfields['t.datec']['checked']))
 		{
 			print '<td class="center">';
 			print dol_print_date($db->jdate($obj->date_creation), 'dayhour', 'tzuser');
 			print '</td>';
-			if (! $i) $totalarray['nbfield']++;
+			if (!$i) $totalarray['nbfield']++;
 		}
 		// Date modification
-		if (! empty($arrayfields['t.tms']['checked']))
+		if (!empty($arrayfields['t.tms']['checked']))
 		{
 			print '<td class="center">';
 			print dol_print_date($db->jdate($obj->date_update), 'dayhour', 'tzuser');
 			print '</td>';
-			if (! $i) $totalarray['nbfield']++;
+			if (!$i) $totalarray['nbfield']++;
 		}
 		// Status
 		/*if (! empty($arrayfields['p.fk_statut']['checked']))

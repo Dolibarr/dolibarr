@@ -237,8 +237,8 @@ if ($action == 'create') {
 	print '<td><input name="label" size="70" value="'.$object->label.'"></td></tr>';
 
 	// Label short
-	print '<tr><td>' . $langs->trans("LabelToShow") . '</td>';
-	print '<td><input name="labelshort" size="70" value="' . $object->labelshort . '"></td></tr>';
+	print '<tr><td>'.$langs->trans("LabelToShow").'</td>';
+	print '<td><input name="labelshort" size="70" value="'.$object->labelshort.'"></td></tr>';
 
 	// Account parent
 	print '<tr><td>'.$langs->trans("Accountparent").'</td>';
@@ -300,8 +300,8 @@ elseif ($id > 0 || $ref) {
 			print '<td><input name="label" size="70" value="'.$object->label.'"</td></tr>';
 
 			// Label short
-			print '<tr><td>' . $langs->trans("LabelToShow") . '</td>';
-			print '<td><input name="labelshort" size="70" value="' . $object->labelshort . '"</td></tr>';
+			print '<tr><td>'.$langs->trans("LabelToShow").'</td>';
+			print '<td><input name="labelshort" size="70" value="'.$object->labelshort.'"</td></tr>';
 
 			// Account parent
 			print '<tr><td>'.$langs->trans("Accountparent").'</td>';
@@ -351,8 +351,8 @@ elseif ($id > 0 || $ref) {
 			print '<td colspan="2">'.$object->label.'</td></tr>';
 
 			// Label to show
-			print '<tr><td class="titlefield">' . $langs->trans("LabelToShow") . '</td>';
-			print '<td colspan="2">' . $object->labelshort . '</td></tr>';
+			print '<tr><td class="titlefield">'.$langs->trans("LabelToShow").'</td>';
+			print '<td colspan="2">'.$object->labelshort.'</td></tr>';
 
 			// Account parent
 			$accp = new AccountingAccount($db);

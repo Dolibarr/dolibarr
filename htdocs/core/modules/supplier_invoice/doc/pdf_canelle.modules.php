@@ -255,29 +255,29 @@ class pdf_canelle extends ModelePDFSuppliersInvoices
 			if (file_exists($dir))
 			{
 				// Add pdfgeneration hook
-				if (! is_object($hookmanager))
+				if (!is_object($hookmanager))
 				{
 					include_once DOL_DOCUMENT_ROOT.'/core/class/hookmanager.class.php';
-					$hookmanager=new HookManager($this->db);
+					$hookmanager = new HookManager($this->db);
 				}
 				$hookmanager->initHooks(array('pdfgeneration'));
-				$parameters=array('file'=>$file,'object'=>$object,'outputlangs'=>$outputlangs);
+				$parameters = array('file'=>$file, 'object'=>$object, 'outputlangs'=>$outputlangs);
 				global $action;
-				$reshook=$hookmanager->executeHooks('beforePDFCreation', $parameters, $object, $action);    // Note that $action and $object may have been modified by some hooks
+				$reshook = $hookmanager->executeHooks('beforePDFCreation', $parameters, $object, $action); // Note that $action and $object may have been modified by some hooks
 
 				// Set nblines with the new facture lines content after hook
 				$nblines = count($object->lines);
 				$nbpayments = count($object->getListOfPayments());
 
 				// Create pdf instance
-                $pdf=pdf_getInstance($this->format);
-                $default_font_size = pdf_getPDFFontSize($outputlangs);	// Must be after pdf_getInstance
+                $pdf = pdf_getInstance($this->format);
+                $default_font_size = pdf_getPDFFontSize($outputlangs); // Must be after pdf_getInstance
                 $pdf->SetAutoPageBreak(1, 0);
 
-                $heightforinfotot = 50+(4*$nbpayments);	// Height reserved to output the info and total part and payment part
-		        $heightforfreetext= (isset($conf->global->MAIN_PDF_FREETEXT_HEIGHT)?$conf->global->MAIN_PDF_FREETEXT_HEIGHT:5);	// Height reserved to output the free text on last page
-	            $heightforfooter = $this->marge_basse + 8;	// Height reserved to output the footer (value include bottom margin)
-	            if ($conf->global->MAIN_GENERATE_DOCUMENTS_SHOW_FOOT_DETAILS >0) $heightforfooter+= 6;
+                $heightforinfotot = 50 + (4 * $nbpayments); // Height reserved to output the info and total part and payment part
+		        $heightforfreetext = (isset($conf->global->MAIN_PDF_FREETEXT_HEIGHT) ? $conf->global->MAIN_PDF_FREETEXT_HEIGHT : 5); // Height reserved to output the free text on last page
+	            $heightforfooter = $this->marge_basse + 8; // Height reserved to output the footer (value include bottom margin)
+	            if ($conf->global->MAIN_GENERATE_DOCUMENTS_SHOW_FOOT_DETAILS > 0) $heightforfooter += 6;
 
                 if (class_exists('TCPDF'))
                 {
@@ -346,38 +346,38 @@ class pdf_canelle extends ModelePDFSuppliersInvoices
 						$tab_top -= 2;
 
 						$pdf->SetFont('', '', $default_font_size - 1);
-						$pdf->writeHTMLCell(190, 3, $this->posxdesc-1, $tab_top-1, dol_htmlentitiesbr($desc_incoterms), 0, 1);
+						$pdf->writeHTMLCell(190, 3, $this->posxdesc - 1, $tab_top - 1, dol_htmlentitiesbr($desc_incoterms), 0, 1);
 						$nexY = $pdf->GetY();
-						$height_incoterms=$nexY-$tab_top;
+						$height_incoterms = $nexY - $tab_top;
 
 						// Rect takes a length in 3rd parameter
 						$pdf->SetDrawColor(192, 192, 192);
-						$pdf->Rect($this->marge_gauche, $tab_top-1, $this->page_largeur-$this->marge_gauche-$this->marge_droite, $height_incoterms+1);
+						$pdf->Rect($this->marge_gauche, $tab_top - 1, $this->page_largeur - $this->marge_gauche - $this->marge_droite, $height_incoterms + 1);
 
-						$tab_top = $nexY+6;
+						$tab_top = $nexY + 6;
 					}
 				}
 
 				// Display notes
-				if (! empty($object->note_public))
+				if (!empty($object->note_public))
 				{
 					$tab_top -= 2;
 
-					$substitutionarray=pdf_getSubstitutionArray($outputlangs, null, $object);
+					$substitutionarray = pdf_getSubstitutionArray($outputlangs, null, $object);
 					complete_substitutions_array($substitutionarray, $outputlangs, $object);
 					$notetoshow = make_substitutions($notetoshow, $substitutionarray, $outputlangs);
 					$notetoshow = convertBackOfficeMediasLinksToPublicLinks($notetoshow);
 
 					$pdf->SetFont('', '', $default_font_size - 1);
-					$pdf->writeHTMLCell(190, 3, $this->posxdesc-1, $tab_top-1, dol_htmlentitiesbr($object->note_public), 0, 1);
+					$pdf->writeHTMLCell(190, 3, $this->posxdesc - 1, $tab_top - 1, dol_htmlentitiesbr($object->note_public), 0, 1);
 					$nexY = $pdf->GetY();
-					$height_note=$nexY-$tab_top;
+					$height_note = $nexY - $tab_top;
 
 					// Rect takes a length in 3rd parameter
 					$pdf->SetDrawColor(192, 192, 192);
-					$pdf->Rect($this->marge_gauche, $tab_top-1, $this->page_largeur-$this->marge_gauche-$this->marge_droite, $height_note+1);
+					$pdf->Rect($this->marge_gauche, $tab_top - 1, $this->page_largeur - $this->marge_gauche - $this->marge_droite, $height_note + 1);
 
-					$tab_top = $nexY+6;
+					$tab_top = $nexY + 6;
 				}
 
 				$iniY = $tab_top + 7;
@@ -385,51 +385,51 @@ class pdf_canelle extends ModelePDFSuppliersInvoices
 				$nexY = $tab_top + 7;
 
 				// Loop on each lines
-				for ($i = 0 ; $i < $nblines ; $i++)
+				for ($i = 0; $i < $nblines; $i++)
 				{
 					$curY = $nexY;
-					$pdf->SetFont('', '', $default_font_size - 1);   // Into loop to work with multipage
+					$pdf->SetFont('', '', $default_font_size - 1); // Into loop to work with multipage
 					$pdf->SetTextColor(0, 0, 0);
 
 					// Define size of image if we need it
-					$imglinesize=array();
-					if (! empty($realpatharray[$i])) $imglinesize=pdf_getSizeForImage($realpatharray[$i]);
+					$imglinesize = array();
+					if (!empty($realpatharray[$i])) $imglinesize = pdf_getSizeForImage($realpatharray[$i]);
 
 					$pdf->setTopMargin($tab_top_newpage);
-					$pdf->setPageOrientation('', 1, $heightforfooter+$heightforfreetext+$heightforinfotot);	// The only function to edit the bottom margin of current page to set it.
-					$pageposbefore=$pdf->getPage();
+					$pdf->setPageOrientation('', 1, $heightforfooter + $heightforfreetext + $heightforinfotot); // The only function to edit the bottom margin of current page to set it.
+					$pageposbefore = $pdf->getPage();
 
-					$showpricebeforepagebreak=1;
+					$showpricebeforepagebreak = 1;
 
 					// Description of product line
-					$curX = $this->posxdesc-1;
+					$curX = $this->posxdesc - 1;
 
 					$pdf->startTransaction();
-					pdf_writelinedesc($pdf, $object, $i, $outputlangs, $this->posxtva-$curX, 3, $curX, $curY, $hideref, $hidedesc, 1);
-					$pageposafter=$pdf->getPage();
+					pdf_writelinedesc($pdf, $object, $i, $outputlangs, $this->posxtva - $curX, 3, $curX, $curY, $hideref, $hidedesc, 1);
+					$pageposafter = $pdf->getPage();
 					if ($pageposafter > $pageposbefore)	// There is a pagebreak
 					{
 						$pdf->rollbackTransaction(true);
-						$pageposafter=$pageposbefore;
+						$pageposafter = $pageposbefore;
 						//print $pageposafter.'-'.$pageposbefore;exit;
-						$pdf->setPageOrientation('', 1, $heightforfooter);	// The only function to edit the bottom margin of current page to set it.
-						pdf_writelinedesc($pdf, $object, $i, $outputlangs, $this->posxtva-$curX, 4, $curX, $curY, $hideref, $hidedesc, 1);
-						$posyafter=$pdf->GetY();
-						if ($posyafter > ($this->page_hauteur - ($heightforfooter+$heightforfreetext+$heightforinfotot)))	// There is no space left for total+free text
+						$pdf->setPageOrientation('', 1, $heightforfooter); // The only function to edit the bottom margin of current page to set it.
+						pdf_writelinedesc($pdf, $object, $i, $outputlangs, $this->posxtva - $curX, 4, $curX, $curY, $hideref, $hidedesc, 1);
+						$posyafter = $pdf->GetY();
+						if ($posyafter > ($this->page_hauteur - ($heightforfooter + $heightforfreetext + $heightforinfotot)))	// There is no space left for total+free text
 						{
-							if ($i == ($nblines-1))	// No more lines, and no space left to show total, so we create a new page
+							if ($i == ($nblines - 1))	// No more lines, and no space left to show total, so we create a new page
 							{
 								$pdf->AddPage('', '', true);
-								if (! empty($tplidx)) $pdf->useTemplate($tplidx);
+								if (!empty($tplidx)) $pdf->useTemplate($tplidx);
 								if (empty($conf->global->MAIN_PDF_DONOTREPEAT_HEAD)) $this->_pagehead($pdf, $object, 0, $outputlangs);
-								$pdf->setPage($pageposafter+1);
+								$pdf->setPage($pageposafter + 1);
 							}
 						}
 						else
 						{
 							// We found a page break
 							// Allows data in the first page if description is long enough to break in multiples pages
-							if(!empty($conf->global->MAIN_PDF_DATA_ON_FIRST_PAGE))
+							if (!empty($conf->global->MAIN_PDF_DATA_ON_FIRST_PAGE))
 								$showpricebeforepagebreak = 1;
 							else
 								$showpricebeforepagebreak = 0;
@@ -439,94 +439,94 @@ class pdf_canelle extends ModelePDFSuppliersInvoices
 					{
 						$pdf->commitTransaction();
 					}
-					$posYAfterDescription=$pdf->GetY();
+					$posYAfterDescription = $pdf->GetY();
 
 					$nexY = $pdf->GetY();
-                    $pageposafter=$pdf->getPage();
+                    $pageposafter = $pdf->getPage();
 					$pdf->setPage($pageposbefore);
 					$pdf->setTopMargin($this->marge_haute);
-					$pdf->setPageOrientation('', 1, 0);	// The only function to edit the bottom margin of current page to set it.
+					$pdf->setPageOrientation('', 1, 0); // The only function to edit the bottom margin of current page to set it.
 
 					// We suppose that a too long description or photo were moved completely on next page
 					if ($pageposafter > $pageposbefore && empty($showpricebeforepagebreak)) {
 						$pdf->setPage($pageposafter); $curY = $tab_top_newpage;
 					}
 
-					$pdf->SetFont('', '', $default_font_size - 1);   // We reposition the default font
+					$pdf->SetFont('', '', $default_font_size - 1); // We reposition the default font
 
 					// VAT Rate
                     if (empty($conf->global->MAIN_GENERATE_DOCUMENTS_WITHOUT_VAT))
                     {
     					$vat_rate = pdf_getlinevatrate($object, $i, $outputlangs, $hidedetails);
                         $pdf->SetXY($this->posxtva, $curY);
-	       				$pdf->MultiCell($this->posxup-$this->posxtva-1, 3, $vat_rate, 0, 'R');
+	       				$pdf->MultiCell($this->posxup - $this->posxtva - 1, 3, $vat_rate, 0, 'R');
                     }
 
 					// Unit price before discount
 					$up_excl_tax = pdf_getlineupexcltax($object, $i, $outputlangs, $hidedetails);
 					$pdf->SetXY($this->posxup, $curY);
-					$pdf->MultiCell($this->posxqty-$this->posxup-0.8, 3, $up_excl_tax, 0, 'R', 0);
+					$pdf->MultiCell($this->posxqty - $this->posxup - 0.8, 3, $up_excl_tax, 0, 'R', 0);
 
 					// Quantity
 					$qty = pdf_getlineqty($object, $i, $outputlangs, $hidedetails);
 					$pdf->SetXY($this->posxqty, $curY);
-					$pdf->MultiCell($this->posxunit-$this->posxqty-0.8, 4, $qty, 0, 'R');  // Enough for 6 chars
+					$pdf->MultiCell($this->posxunit - $this->posxqty - 0.8, 4, $qty, 0, 'R'); // Enough for 6 chars
 
 					// Unit
-					if (! empty($conf->global->PRODUCT_USE_UNITS))
+					if (!empty($conf->global->PRODUCT_USE_UNITS))
 					{
 						$unit = pdf_getlineunit($object, $i, $outputlangs, $hidedetails, $hookmanager);
 						$pdf->SetXY($this->posxunit, $curY);
-						$pdf->MultiCell($this->posxdiscount-$this->posxunit-0.8, 4, $unit, 0, 'L');
+						$pdf->MultiCell($this->posxdiscount - $this->posxunit - 0.8, 4, $unit, 0, 'L');
 					}
 
 					// Discount on line
 					if ($object->lines[$i]->remise_percent)
 					{
-						$pdf->SetXY($this->posxdiscount-2, $curY);
+						$pdf->SetXY($this->posxdiscount - 2, $curY);
 					    $remise_percent = pdf_getlineremisepercent($object, $i, $outputlangs, $hidedetails);
-						$pdf->MultiCell($this->postotalht-$this->posxdiscount-1, 3, $remise_percent, 0, 'R');
+						$pdf->MultiCell($this->postotalht - $this->posxdiscount - 1, 3, $remise_percent, 0, 'R');
 					}
 
 					// Total HT line
 					$total_excl_tax = pdf_getlinetotalexcltax($object, $i, $outputlangs, $hidedetails);
                     $pdf->SetXY($this->postotalht, $curY);
-                    $pdf->MultiCell($this->page_largeur-$this->marge_droite-$this->postotalht, 3, $total_excl_tax, 0, 'R', 0);
+                    $pdf->MultiCell($this->page_largeur - $this->marge_droite - $this->postotalht, 3, $total_excl_tax, 0, 'R', 0);
 
 					// Collecte des totaux par valeur de tva dans $this->tva["taux"]=total_tva
-					if ($conf->multicurrency->enabled && $object->multicurrency_tx != 1) $tvaligne=$object->lines[$i]->multicurrency_total_tva;
-					else $tvaligne=$object->lines[$i]->total_tva;
+					if ($conf->multicurrency->enabled && $object->multicurrency_tx != 1) $tvaligne = $object->lines[$i]->multicurrency_total_tva;
+					else $tvaligne = $object->lines[$i]->total_tva;
 
-					$localtax1ligne=$object->lines[$i]->total_localtax1;
-					$localtax2ligne=$object->lines[$i]->total_localtax2;
+					$localtax1ligne = $object->lines[$i]->total_localtax1;
+					$localtax2ligne = $object->lines[$i]->total_localtax2;
 
-					if (! empty($object->remise_percent)) $tvaligne-=($tvaligne*$object->remise_percent)/100;
+					if (!empty($object->remise_percent)) $tvaligne -= ($tvaligne * $object->remise_percent) / 100;
 
-					$vatrate=(string) $object->lines[$i]->tva_tx;
-					$localtax1rate=(string) $object->lines[$i]->localtax1_tx;
-					$localtax2rate=(string) $object->lines[$i]->localtax2_tx;
+					$vatrate = (string) $object->lines[$i]->tva_tx;
+					$localtax1rate = (string) $object->lines[$i]->localtax1_tx;
+					$localtax2rate = (string) $object->lines[$i]->localtax2_tx;
 
-					if (($object->lines[$i]->info_bits & 0x01) == 0x01) $vatrate.='*';
-					if (empty($this->tva[$vatrate])) $this->tva[$vatrate]=0;
-					if (empty($this->localtax1[$localtax1rate])) $this->localtax1[$localtax1rate]=0;
-					if (empty($this->localtax2[$localtax2rate])) $this->localtax2[$localtax2rate]=0;
+					if (($object->lines[$i]->info_bits & 0x01) == 0x01) $vatrate .= '*';
+					if (empty($this->tva[$vatrate])) $this->tva[$vatrate] = 0;
+					if (empty($this->localtax1[$localtax1rate])) $this->localtax1[$localtax1rate] = 0;
+					if (empty($this->localtax2[$localtax2rate])) $this->localtax2[$localtax2rate] = 0;
 					$this->tva[$vatrate] += $tvaligne;
-					$this->localtax1[$localtax1rate]+=$localtax1ligne;
-					$this->localtax2[$localtax2rate]+=$localtax2ligne;
+					$this->localtax1[$localtax1rate] += $localtax1ligne;
+					$this->localtax2[$localtax2rate] += $localtax2ligne;
 
-					if ($posYAfterImage > $posYAfterDescription) $nexY=$posYAfterImage;
+					if ($posYAfterImage > $posYAfterDescription) $nexY = $posYAfterImage;
 
 					// Add line
-					if (! empty($conf->global->MAIN_PDF_DASH_BETWEEN_LINES) && $i < ($nblines - 1))
+					if (!empty($conf->global->MAIN_PDF_DASH_BETWEEN_LINES) && $i < ($nblines - 1))
 					{
 						$pdf->setPage($pageposafter);
-						$pdf->SetLineStyle(array('dash'=>'1,1','color'=>array(80,80,80)));
+						$pdf->SetLineStyle(array('dash'=>'1,1', 'color'=>array(80, 80, 80)));
 						//$pdf->SetDrawColor(190,190,200);
-						$pdf->line($this->marge_gauche, $nexY+1, $this->page_largeur - $this->marge_droite, $nexY+1);
+						$pdf->line($this->marge_gauche, $nexY + 1, $this->page_largeur - $this->marge_droite, $nexY + 1);
 						$pdf->SetLineStyle(array('dash'=>0));
 					}
 
-					$nexY+=2;    // Add space between lines
+					$nexY += 2; // Add space between lines
 
 					// Detect if some page were added automatically and output _tableau for past pages
 					while ($pagenb < $pageposafter)
@@ -643,10 +643,10 @@ class pdf_canelle extends ModelePDFSuppliersInvoices
 	protected function _tableau_tot(&$pdf, $object, $deja_regle, $posy, $outputlangs)
 	{
         // phpcs:enable
-		global $conf,$mysoc;
+		global $conf, $mysoc;
 
-		$sign=1;
-		if ($object->type == 2 && ! empty($conf->global->INVOICE_POSITIVE_CREDIT_NOTE)) $sign=-1;
+		$sign = 1;
+		if ($object->type == 2 && !empty($conf->global->INVOICE_POSITIVE_CREDIT_NOTE)) $sign = -1;
 
 		$default_font_size = pdf_getPDFFontSize($outputlangs);
 
@@ -658,29 +658,29 @@ class pdf_canelle extends ModelePDFSuppliersInvoices
 		$col1x = 120; $col2x = 170;
 		if ($this->page_largeur < 210) // To work with US executive format
 		{
-			$col2x-=20;
+			$col2x -= 20;
 		}
 		$largcol2 = ($this->page_largeur - $this->marge_droite - $col2x);
 
-		$useborder=0;
-		$index=0;
+		$useborder = 0;
+		$index = 0;
 
 		// Total HT
 		$pdf->SetFillColor(255, 255, 255);
 		$pdf->SetXY($col1x, $tab2_top + 0);
-		$pdf->MultiCell($col2x-$col1x, $tab2_hl, $outputlangs->transnoentities("TotalHT"), 0, 'L', 1);
+		$pdf->MultiCell($col2x - $col1x, $tab2_hl, $outputlangs->transnoentities("TotalHT"), 0, 'L', 1);
 
 		$total_ht = (($conf->multicurrency->enabled && isset($object->multicurrency_tx) && $object->multicurrency_tx != 1) ? $object->multicurrency_total_ht : $object->total_ht);
 		$pdf->SetXY($col2x, $tab2_top + 0);
-		$pdf->MultiCell($largcol2, $tab2_hl, price($sign * ($total_ht + (! empty($object->remise)?$object->remise:0)), 0, $outputlangs), 0, 'R', 1);
+		$pdf->MultiCell($largcol2, $tab2_hl, price($sign * ($total_ht + (!empty($object->remise) ? $object->remise : 0)), 0, $outputlangs), 0, 'R', 1);
 
 		// Show VAT by rates and total
 		$pdf->SetFillColor(248, 248, 248);
 
 		$total_ttc = ($conf->multicurrency->enabled && $object->multicurrency_tx != 1) ? $object->multicurrency_total_ttc : $object->total_ttc;
 
-		$this->atleastoneratenotnull=0;
-		foreach($this->tva as $tvakey => $tvaval)
+		$this->atleastoneratenotnull = 0;
+		foreach ($this->tva as $tvakey => $tvaval)
 		{
 			if ($tvakey > 0)    // On affiche pas taux 0
 			{
@@ -834,18 +834,18 @@ class pdf_canelle extends ModelePDFSuppliersInvoices
 				$pdf->SetFillColor(255, 255, 255);
 
 				$pdf->SetXY($col1x, $tab2_top + $tab2_hl * $index);
-				$pdf->MultiCell($col2x-$col1x, $tab2_hl, $outputlangs->transnoentities("EscompteOfferedShort"), $useborder, 'L', 1);
+				$pdf->MultiCell($col2x - $col1x, $tab2_hl, $outputlangs->transnoentities("EscompteOfferedShort"), $useborder, 'L', 1);
 				$pdf->SetXY($col2x, $tab2_top + $tab2_hl * $index);
 				$pdf->MultiCell($largcol2, $tab2_hl, price($object->total_ttc - $deja_regle - $creditnoteamount - $depositsamount, 0, $outputlangs), $useborder, 'R', 1);
 
-				$resteapayer=0;
+				$resteapayer = 0;
 			}
 
 			$index++;
 			$pdf->SetTextColor(0, 0, 60);
 			$pdf->SetFillColor(224, 224, 224);
 			$pdf->SetXY($col1x, $tab2_top + $tab2_hl * $index);
-			$pdf->MultiCell($col2x-$col1x, $tab2_hl, $outputlangs->transnoentities("RemainderToPay"), $useborder, 'L', 1);
+			$pdf->MultiCell($col2x - $col1x, $tab2_hl, $outputlangs->transnoentities("RemainderToPay"), $useborder, 'L', 1);
 
 			$pdf->SetXY($col2x, $tab2_top + $tab2_hl * $index);
 			$pdf->MultiCell($largcol2, $tab2_hl, price($resteapayer, 0, $outputlangs), $useborder, 'R', 1);

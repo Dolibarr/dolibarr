@@ -588,7 +588,7 @@ class ExpenseReport extends CommonObject
                 elseif ($this->fk_user_validator > 0) $user_approver->fetch($this->fk_user_validator); // For backward compatibility
                 $this->user_validator_infos = dolGetFirstLastname($user_approver->firstname, $user_approver->lastname);
 
-                $this->fk_statut                = $obj->status;		// deprecated
+                $this->fk_statut                = $obj->status; // deprecated
                 $this->status                   = $obj->status;
                 $this->fk_c_paiement            = $obj->fk_c_paiement;
                 $this->paid                     = $obj->paid;

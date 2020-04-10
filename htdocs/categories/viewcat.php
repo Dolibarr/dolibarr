@@ -202,21 +202,21 @@ if ($type == Categorie::TYPE_PRODUCT && $elemid && $action == 'addintocategory' 
 $form = new Form($db);
 $formother = new FormOther($db);
 
-$arrayofjs=array('/includes/jquery/plugins/jquerytreeview/jquery.treeview.js', '/includes/jquery/plugins/jquerytreeview/lib/jquery.cookie.js');
-$arrayofcss=array('/includes/jquery/plugins/jquerytreeview/jquery.treeview.css');
+$arrayofjs = array('/includes/jquery/plugins/jquerytreeview/jquery.treeview.js', '/includes/jquery/plugins/jquerytreeview/lib/jquery.cookie.js');
+$arrayofcss = array('/includes/jquery/plugins/jquerytreeview/jquery.treeview.css');
 $helpurl = '';
 llxHeader("", $langs->trans("Categories"), $helpurl, '', 0, 0, $arrayofjs, $arrayofcss);
 
-if ($type == Categorie::TYPE_PRODUCT)       { $title=$langs->trans("ProductsCategoriesArea");  $typetext='product'; }
-elseif ($type == Categorie::TYPE_SUPPLIER)  { $title=$langs->trans("SuppliersCategoriesArea"); $typetext='supplier'; }
-elseif ($type == Categorie::TYPE_CUSTOMER)  { $title=$langs->trans("CustomersCategoriesArea"); $typetext='customer'; }
-elseif ($type == Categorie::TYPE_MEMBER)    { $title=$langs->trans("MembersCategoriesArea");   $typetext='member'; }
-elseif ($type == Categorie::TYPE_CONTACT)   { $title=$langs->trans("ContactsCategoriesArea");  $typetext='contact'; }
-elseif ($type == Categorie::TYPE_ACCOUNT)   { $title=$langs->trans("AccountsCategoriesArea");  $typetext='bank_account'; }
-elseif ($type == Categorie::TYPE_PROJECT)   { $title=$langs->trans("ProjectsCategoriesArea");  $typetext='project'; }
-elseif ($type == Categorie::TYPE_USER)      { $title=$langs->trans("UsersCategoriesArea");     $typetext='user'; }
-elseif ($type == Categorie::TYPE_WAREHOUSE) { $title=$langs->trans("StocksCategoriesArea");    $typetext='warehouse'; }
-else                                        { $title=$langs->trans("CategoriesArea");          $typetext='unknown'; }
+if ($type == Categorie::TYPE_PRODUCT) { $title = $langs->trans("ProductsCategoriesArea"); $typetext = 'product'; }
+elseif ($type == Categorie::TYPE_SUPPLIER) { $title = $langs->trans("SuppliersCategoriesArea"); $typetext = 'supplier'; }
+elseif ($type == Categorie::TYPE_CUSTOMER) { $title = $langs->trans("CustomersCategoriesArea"); $typetext = 'customer'; }
+elseif ($type == Categorie::TYPE_MEMBER) { $title = $langs->trans("MembersCategoriesArea"); $typetext = 'member'; }
+elseif ($type == Categorie::TYPE_CONTACT) { $title = $langs->trans("ContactsCategoriesArea"); $typetext = 'contact'; }
+elseif ($type == Categorie::TYPE_ACCOUNT) { $title = $langs->trans("AccountsCategoriesArea"); $typetext = 'bank_account'; }
+elseif ($type == Categorie::TYPE_PROJECT) { $title = $langs->trans("ProjectsCategoriesArea"); $typetext = 'project'; }
+elseif ($type == Categorie::TYPE_USER) { $title = $langs->trans("UsersCategoriesArea"); $typetext = 'user'; }
+elseif ($type == Categorie::TYPE_WAREHOUSE) { $title = $langs->trans("StocksCategoriesArea"); $typetext = 'warehouse'; }
+else { $title = $langs->trans("CategoriesArea"); $typetext = 'unknown'; }
 
 $head = categories_prepare_head($object, $type);
 
@@ -224,17 +224,17 @@ $head = categories_prepare_head($object, $type);
 dol_fiche_head($head, 'card', $title, -1, 'category');
 $backtolist = (GETPOST('backtolist') ? GETPOST('backtolist') : DOL_URL_ROOT.'/categories/index.php?leftmenu=cat&type='.$type);
 $linkback = '<a href="'.$backtolist.'">'.$langs->trans("BackToList").'</a>';
-$object->next_prev_filter = ' type = ' . $object->type;
+$object->next_prev_filter = ' type = '.$object->type;
 $object->ref = $object->label;
-$morehtmlref='<br><div class="refidno"><a href="'.DOL_URL_ROOT.'/categories/index.php?leftmenu=cat&type='.$type.'">'.$langs->trans("Root").'</a> >> ';
+$morehtmlref = '<br><div class="refidno"><a href="'.DOL_URL_ROOT.'/categories/index.php?leftmenu=cat&type='.$type.'">'.$langs->trans("Root").'</a> >> ';
 $ways = $object->print_all_ways(" &gt;&gt; ", '', 1);
 foreach ($ways as $way)
 {
-    $morehtmlref.=$way."<br>\n";
+    $morehtmlref .= $way."<br>\n";
 }
-$morehtmlref.='</div>';
+$morehtmlref .= '</div>';
 
-dol_banner_tab($object, 'label', $linkback, ($user->socid?0:1), 'label', 'label', $morehtmlref, '&type=' . $type, 0, '', '', 1);
+dol_banner_tab($object, 'label', $linkback, ($user->socid ? 0 : 1), 'label', 'label', $morehtmlref, '&type='.$type, 0, '', '', 1);
 
 
 /*
@@ -293,7 +293,7 @@ if ($user->rights->categorie->supprimer)
 print "</div>";
 
 $newcardbutton = '';
-if (! empty($user->rights->categorie->creer))
+if (!empty($user->rights->categorie->creer))
 {
 	$link = DOL_URL_ROOT.'/categories/card.php';
 	$link .= '?action=create';
@@ -313,7 +313,7 @@ if (! empty($user->rights->categorie->creer))
 
 print '<div class="fichecenter">';
 
-print load_fiche_titre($langs->trans("SubCats"), $newcardbutton);
+print load_fiche_titre($langs->trans("SubCats"), $newcardbutton, 'object_category');
 
 
 print '<table class="liste nohover" width="100%">';
@@ -340,7 +340,7 @@ if ($cats < 0)
 {
 	dol_print_error($db, $cats->error, $cats->errors);
 }
-elseif(count($cats) < 1)
+elseif (count($cats) < 1)
 {
 	print '<tr class="oddeven">';
 	print '<td colspan="3" class="opacitymedium">'.$langs->trans("NoSubCat").'</td>';
@@ -353,7 +353,7 @@ else
 	$fulltree = $categstatic->get_full_arbo($typetext, $object->id, 1);
 
 	// Load possible missing includes
-	if($conf->global->CATEGORY_SHOW_COUNTS)
+	if ($conf->global->CATEGORY_SHOW_COUNTS)
 	{
 		if ($type == Categorie::TYPE_MEMBER)	require_once DOL_DOCUMENT_ROOT.'/adherents/class/adherent.class.php';
 		if ($type == Categorie::TYPE_ACCOUNT)	require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
@@ -374,7 +374,7 @@ else
 
 		$counter = 0;
 
-		if($conf->global->CATEGORY_SHOW_COUNTS)
+		if ($conf->global->CATEGORY_SHOW_COUNTS)
 		{
 			// we need only a count of the elements, so it is enough to consume only the id's from the database
 			$elements = $type == Categorie::TYPE_ACCOUNT
@@ -784,7 +784,7 @@ if ($type == Categorie::TYPE_CONTACT)
 	}
 }
 
-// List of accounts
+// List of bank accounts
 if ($type == Categorie::TYPE_ACCOUNT)
 {
     require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
@@ -807,7 +807,7 @@ if ($type == Categorie::TYPE_ACCOUNT)
 
     	print '<br>';
     	$param = '&limit='.$limit.'&id='.$id.'&type='.$type; $num = count($accounts); $nbtotalofrecords = ''; $newcardbutton = '';
-    	print_barre_liste($langs->trans("Account"), $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, $massactionbutton, $num, $nbtotalofrecords, 'bank', 0, $newcardbutton, '', $limit);
+    	print_barre_liste($langs->trans("Account"), $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, $massactionbutton, $num, $nbtotalofrecords, 'bank_account', 0, $newcardbutton, '', $limit);
 
     	print "<table class='noborder' width='100%'>\n";
         print '<tr class="liste_titre"><td colspan="4">'.$langs->trans("Ref").'</td></tr>'."\n";
@@ -955,7 +955,7 @@ if ($type == Categorie::TYPE_USER)
 				print '<td class="right">';
 				if ($user->rights->user->user->creer)
 				{
-					print "<a href= '".$_SERVER['PHP_SELF']."?".(empty($socid)?'id':'socid')."=".$object->id."&amp;type=".$type."&amp;removeelem=".$userentry->id."'>";
+					print "<a href= '".$_SERVER['PHP_SELF']."?".(empty($socid) ? 'id' : 'socid')."=".$object->id."&amp;type=".$type."&amp;removeelem=".$userentry->id."'>";
 					print $langs->trans("DeleteFromCat");
 					print img_picto($langs->trans("DeleteFromCat"), 'unlink', '', false, 0, 0, '', 'paddingleft');
 					print "</a>";

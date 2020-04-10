@@ -16,14 +16,14 @@
  */
 
 // Protection to avoid direct call of template
-if (empty($conf) || ! is_object($conf))
+if (empty($conf) || !is_object($conf))
 {
 	print "Error, template page can't be called as URL";
 	exit;
 }
 
 $objectUrl = $object->getNomUrl(0, '', 0, 1);
-if($object->element == 'propal')
+if ($object->element == 'propal')
 {
     $objectUrl = DOL_URL_ROOT.'/comm/propal/card.php?id='.$object->id;
 }

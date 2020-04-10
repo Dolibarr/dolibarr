@@ -181,7 +181,7 @@ class dolReceiptPrinter extends Printer
             'dol_value_month',
             'dol_value_day',
             'dol_value_day_letters',
-            'dol_print_payment',
+            //'dol_print_payment',
             'dol_print_logo',
             'dol_print_logo_old',
             'dol_value_object_id',
@@ -219,14 +219,14 @@ class dolReceiptPrinter extends Printer
             'dol_value_vendor_mail',
             'dol_value_customer_points',
             'dol_value_object_points',
-            'dol_print_if_customer',
-            'dol_print_if_vendor',
-            'dol_print_if_happy_hour',
-            'dol_print_if_num_object_unique',
-            'dol_print_if_customer_points',
-            'dol_print_if_object_points',
-            'dol_print_if_customer_tax_number',
-            'dol_print_if_customer_account_balance_positive',
+            //'dol_print_if_customer',
+            //'dol_print_if_vendor',
+            //'dol_print_if_happy_hour',
+            //'dol_print_if_num_object_unique',
+            //'dol_print_if_customer_points',
+            //'dol_print_if_object_points',
+            //'dol_print_if_customer_tax_number',
+            //'dol_print_if_customer_account_balance_positive',
         );
     }
 
@@ -597,7 +597,7 @@ class dolReceiptPrinter extends Printer
         //print '<pre>'.print_r($vals, true).'</pre>';
         // print ticket
         $level = 0;
-        $nbcharactbyline = 48;
+        $nbcharactbyline = (!empty($conf->global->RECEIPT_PRINTER_NB_CHARACT_BY_LINE) ? $conf->global->RECEIPT_PRINTER_NB_CHARACT_BY_LINE : 48);
         $ret = $this->initPrinter($printerid);
         if ($ret > 0) {
             setEventMessages($this->error, $this->errors, 'errors');
@@ -615,7 +615,7 @@ class dolReceiptPrinter extends Printer
                             $spacestoadd = $nbcharactbyline - strlen($line->ref) - strlen($line->qty) - 10 - 1;
                             $spaces = str_repeat(' ', $spacestoadd);
                             $this->printer->text($line->ref.$spaces.$line->qty.' '.str_pad(price($line->total_ttc), 10, ' ', STR_PAD_LEFT)."\n");
-                            $this->printer->text(strip_tags(htmlspecialchars_decode($line->desc))."\n");
+                            $this->printer->text(strip_tags(htmlspecialchars_decode($line->product_label))."\n");
                         }
                         break;
                     case 'DOL_PRINT_OBJECT_TAX':
@@ -728,7 +728,7 @@ class dolReceiptPrinter extends Printer
                         break;
 					case 'DOL_PRINT_ORDER_LINES_PRINTER1':
 						foreach ($object->lines as $line) {
-							if ($line->special_code==1)
+							if ($line->special_code == 1)
 							{
 								$spacestoadd = $nbcharactbyline - strlen($line->ref) - strlen($line->qty) - 10 - 1;
 								$spaces = str_repeat(' ', $spacestoadd);
@@ -739,7 +739,7 @@ class dolReceiptPrinter extends Printer
 						break;
 					case 'DOL_PRINT_ORDER_LINES_PRINTER2':
 						foreach ($object->lines as $line) {
-							if ($line->special_code==2)
+							if ($line->special_code == 2)
 							{
 								$spacestoadd = $nbcharactbyline - strlen($line->ref) - strlen($line->qty) - 10 - 1;
 								$spaces = str_repeat(' ', $spacestoadd);

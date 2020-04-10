@@ -65,6 +65,9 @@ ALTER TABLE llx_website ADD COLUMN otherlang varchar(255);
 
 ALTER TABLE llx_website_page ADD COLUMN author_alias varchar(64);
 
+UPDATE llx_rights_def SET perms = 'order_advance', subperms = 'close' WHERE module = 'commande' AND perms = 'cloturer';
+UPDATE llx_rights_def SET perms = 'propal_advance', subperms = 'close' WHERE module = 'propale' AND perms = 'cloturer';
+
 ALTER TABLE llx_holiday_users DROP INDEX uk_holiday_users;
 ALTER TABLE llx_holiday_users ADD UNIQUE INDEX uk_holiday_users(fk_user, fk_type);
 

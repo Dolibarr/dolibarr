@@ -497,11 +497,11 @@ if (empty($reshook))
 			}
 
 			// If some payments were already done, we change the amount to pay using same prorate
-			if (! empty($conf->global->SUPPLIER_INVOICE_ALLOW_REUSE_OF_CREDIT_WHEN_PARTIALLY_REFUNDED)) {
-				$alreadypaid = $object->getSommePaiement();		// This can be not 0 if we allow to create credit to reuse from credit notes partially refunded.
+			if (!empty($conf->global->SUPPLIER_INVOICE_ALLOW_REUSE_OF_CREDIT_WHEN_PARTIALLY_REFUNDED)) {
+				$alreadypaid = $object->getSommePaiement(); // This can be not 0 if we allow to create credit to reuse from credit notes partially refunded.
 				if ($alreadypaid && abs($alreadypaid) < abs($object->total_ttc)) {
 					$ratio = abs(($object->total_ttc - $alreadypaid) / $object->total_ttc);
-					foreach($amount_ht as $vatrate => $val) {
+					foreach ($amount_ht as $vatrate => $val) {
 						$amount_ht[$vatrate] = price2num($amount_ht[$vatrate] * $ratio, 'MU');
 						$amount_tva[$vatrate] = price2num($amount_tva[$vatrate] * $ratio, 'MU');
 						$amount_ttc[$vatrate] = price2num($amount_ttc[$vatrate] * $ratio, 'MU');
@@ -657,7 +657,7 @@ if (empty($reshook))
 				$_GET['socid'] = $_POST['socid'];
 				$error++;
 			}
-			if (! (GETPOST('fac_replacement', 'int') > 0)) {
+			if (!(GETPOST('fac_replacement', 'int') > 0)) {
 				$error++;
 				setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("ReplaceInvoice")), null, 'errors');
 			}
@@ -3148,13 +3148,15 @@ else
 				}
 
 				// Send by mail
-				if (($object->statut == FactureFournisseur::STATUS_VALIDATED || $object->statut == FactureFournisseur::STATUS_CLOSED))
-				{
-					if (empty($conf->global->MAIN_USE_ADVANCED_PERMS) || $user->rights->fournisseur->supplier_invoice_advance->send)
+				if (empty($user->socid)) {
+					if (($object->statut == FactureFournisseur::STATUS_VALIDATED || $object->statut == FactureFournisseur::STATUS_CLOSED))
 					{
-						print '<div class="inline-block divButAction"><a class="butAction" href="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'&action=presend&mode=init#formmailbeforetitle">'.$langs->trans('SendMail').'</a></div>';
+						if (empty($conf->global->MAIN_USE_ADVANCED_PERMS) || $user->rights->fournisseur->supplier_invoice_advance->send)
+						{
+							print '<div class="inline-block divButAction"><a class="butAction" href="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'&action=presend&mode=init#formmailbeforetitle">'.$langs->trans('SendMail').'</a></div>';
+						}
+						else print '<div class="inline-block divButAction"><span class="butActionRefused classfortooltip">'.$langs->trans('SendMail').'</a></div>';
 					}
-					else print '<div class="inline-block divButAction"><span class="butActionRefused classfortooltip">'.$langs->trans('SendMail').'</a></div>';
 				}
 
 	            // Make payments
@@ -3194,7 +3196,7 @@ else
 					}
 					// For credit note
 					if ($object->type == FactureFournisseur::TYPE_CREDIT_NOTE && $object->statut == 1 && $object->paye == 0 && $user->rights->fournisseur->facture->creer
-						&& (! empty($conf->global->SUPPLIER_INVOICE_ALLOW_REUSE_OF_CREDIT_WHEN_PARTIALLY_REFUNDED) || $object->getSommePaiement() == 0)
+						&& (!empty($conf->global->SUPPLIER_INVOICE_ALLOW_REUSE_OF_CREDIT_WHEN_PARTIALLY_REFUNDED) || $object->getSommePaiement() == 0)
 						) {
 						print '<div class="inline-block divButAction"><a class="butAction" href="'.$_SERVER["PHP_SELF"].'?facid='.$object->id.'&amp;action=converttoreduc" title="'.dol_escape_htmltag($langs->trans("ConfirmConvertToReducSupplier2")).'">'.$langs->trans('ConvertToReduc').'</a></div>';
 					}

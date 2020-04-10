@@ -143,7 +143,7 @@ class Diff
 			// loop over the columns
 			for ($index2 = 1; $index2 <= $length2; $index2++) {
 				// store the longest common subsequence length
-				if ($sequence1[$index1 + $start - 1]== $sequence2[$index2 + $start - 1]
+				if ($sequence1[$index1 + $start - 1] == $sequence2[$index2 + $start - 1]
 				) {
 					$table[$index1][$index2] = $table[$index1 - 1][$index2 - 1] + 1;
 				} else {
@@ -182,7 +182,7 @@ class Diff
 		while ($index1 > 0 || $index2 > 0) {
 			// check what has happened to the items at these indices
 			if ($index1 > 0 && $index2 > 0
-				&& $sequence1[$index1 + $start - 1]== $sequence2[$index2 + $start - 1]
+				&& $sequence1[$index1 + $start - 1] == $sequence2[$index2 + $start - 1]
 			) {
 				// update the diff and the indices
 				$diff[] = array($sequence1[$index1 + $start - 1], self::UNMODIFIED);
@@ -224,13 +224,13 @@ class Diff
 			// extend the string with the line
 			switch ($line[1]) {
 				case self::UNMODIFIED:
-					$string .= '  ' . $line[0];
+					$string .= '  '.$line[0];
 					break;
 				case self::DELETED:
-					$string .= '- ' . $line[0];
+					$string .= '- '.$line[0];
 					break;
 				case self::INSERTED:
-					$string .= '+ ' . $line[0];
+					$string .= '+ '.$line[0];
 					break;
 			}
 
@@ -271,9 +271,9 @@ class Diff
 					break;
 			}
 			$html .=
-			'<' . $element . '>'
+			'<'.$element.'>'
 			. htmlspecialchars($line[0])
-				. '</' . $element . '>';
+				. '</'.$element.'>';
 
 			// extend the HTML with the separator
 			$html .= $separator;
@@ -295,7 +295,7 @@ class Diff
 	{
 
 		// initialise the HTML
-		$html = $indentation . "<table class=\"diff\">\n";
+		$html = $indentation."<table class=\"diff\">\n";
 
 		// loop over the lines in the diff
 		$index = 0;
@@ -370,7 +370,7 @@ class Diff
 		}
 
 		// return the HTML
-		return $html . $indentation . "</table>\n";
+		return $html.$indentation."</table>\n";
 	}
 
 	/* Returns the content of the cell, for use in the toTable function. The

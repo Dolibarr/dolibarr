@@ -639,7 +639,7 @@ if (!empty($id) || !empty($ref))
 					$langs->trans('Delete'),
 					$langs->trans('ProductCombinationDeleteDialog', $prodstatic->ref),
 					"confirm_deletecombination",
-					array(array('label'=> $langs->trans('DeleteLinkedProduct'),'type'=> 'checkbox', 'name' => 'delete_product', 'value' => false)),
+					array(array('label'=> $langs->trans('DeleteLinkedProduct'), 'type'=> 'checkbox', 'name' => 'delete_product', 'value' => false)),
 					0,
 					1
 				);

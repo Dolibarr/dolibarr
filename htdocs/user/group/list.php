@@ -135,15 +135,15 @@ if ($resql)
 
     $i = 0;
 
-    $param="&amp;search_group=".urlencode($search_group)."&amp;sall=".urlencode($sall);
-    if ($optioncss != '') $param.='&amp;optioncss='.$optioncss;
+    $param = "&amp;search_group=".urlencode($search_group)."&amp;sall=".urlencode($sall);
+    if ($optioncss != '') $param .= '&amp;optioncss='.$optioncss;
 
     $text = $langs->trans("ListOfGroups");
 
-    $newcardbutton='';
+    $newcardbutton = '';
     if ($caneditperms)
     {
-        $newcardbutton.= dolGetButtonTitle($langs->trans('NewGroup'), '', 'fa fa-plus-circle', DOL_URL_ROOT.'/user/group/card.php?action=create&leftmenu=');
+        $newcardbutton .= dolGetButtonTitle($langs->trans('NewGroup'), '', 'fa fa-plus-circle', DOL_URL_ROOT.'/user/group/card.php?action=create&leftmenu=');
     }
 
     print '<form method="POST" id="searchFormList" action="'.$_SERVER["PHP_SELF"].'">'."\n";

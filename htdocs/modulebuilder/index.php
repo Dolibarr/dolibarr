@@ -1668,20 +1668,20 @@ $modulestatusinfo = '';
 
 if (is_array($listofmodules) && count($listofmodules) > 0) {
 	// Define $linktoenabledisable and $modulestatusinfo
-	$modulelowercase=strtolower($module);
+	$modulelowercase = strtolower($module);
 	$const_name = 'MAIN_MODULE_'.strtoupper($module);
 
-	$param='';
-	if ($tab)    $param.='&tab='.urlencode($tab);
-	if ($module) $param.='&module='.urlencode($module);
-	if ($tabobj) $param.='&tabobj='.urlencode($tabobj);
+	$param = '';
+	if ($tab)    $param .= '&tab='.urlencode($tab);
+	if ($module) $param .= '&module='.urlencode($module);
+	if ($tabobj) $param .= '&tabobj='.urlencode($tabobj);
 
-	$urltomodulesetup='<a href="'.DOL_URL_ROOT.'/admin/modules.php?search_keyword='.urlencode($module).'">'.$langs->trans('Home').'-'.$langs->trans("Setup").'-'.$langs->trans("Modules").'</a>';
-	if (! empty($conf->global->$const_name))	// If module is already activated
+	$urltomodulesetup = '<a href="'.DOL_URL_ROOT.'/admin/modules.php?search_keyword='.urlencode($module).'">'.$langs->trans('Home').'-'.$langs->trans("Setup").'-'.$langs->trans("Modules").'</a>';
+	if (!empty($conf->global->$const_name))	// If module is already activated
 	{
-		$linktoenabledisable.='<a class="reposition asetresetmodule" href="'.$_SERVER["PHP_SELF"].'?id='.$moduleobj->numero.'&action=reset&value=mod' . $module . $param . '">';
-		$linktoenabledisable.=img_picto($langs->trans("Activated"), 'switch_on', '', false, 0, 0, '', '', 1);
-		$linktoenabledisable.='</a>';
+		$linktoenabledisable .= '<a class="reposition asetresetmodule" href="'.$_SERVER["PHP_SELF"].'?id='.$moduleobj->numero.'&action=reset&value=mod'.$module.$param.'">';
+		$linktoenabledisable .= img_picto($langs->trans("Activated"), 'switch_on', '', false, 0, 0, '', '', 1);
+		$linktoenabledisable .= '</a>';
 
 		$objMod = $moduleobj;
 		$backtourlparam = '';
@@ -1723,14 +1723,14 @@ if (is_array($listofmodules) && count($listofmodules) > 0) {
 	}
 	else
 	{
-		$linktoenabledisable.='<a class="reposition asetresetmodule" href="'.$_SERVER["PHP_SELF"].'?id='.$moduleobj->numero.'&action=set&value=mod' . $module . $param . '">';
-		$linktoenabledisable.=img_picto($langs->trans("ModuleIsNotActive", $urltomodulesetup), 'switch_off', '', false, 0, 0, '', 'classfortooltip', 1);
-		$linktoenabledisable.="</a>\n";
+		$linktoenabledisable .= '<a class="reposition asetresetmodule" href="'.$_SERVER["PHP_SELF"].'?id='.$moduleobj->numero.'&action=set&value=mod'.$module.$param.'">';
+		$linktoenabledisable .= img_picto($langs->trans("ModuleIsNotActive", $urltomodulesetup), 'switch_off', '', false, 0, 0, '', 'classfortooltip', 1);
+		$linktoenabledisable .= "</a>\n";
 	}
 
-	if (! empty($conf->$modulelowercase->enabled))
+	if (!empty($conf->$modulelowercase->enabled))
 	{
-		$modulestatusinfo=$form->textwithpicto('', $langs->trans("Warning").' : '.$langs->trans("ModuleIsLive"), -1, 'warning');
+		$modulestatusinfo = $form->textwithpicto('', $langs->trans("Warning").' : '.$langs->trans("ModuleIsLive"), -1, 'warning');
 	}
 
 	// Loop to show tab of each module

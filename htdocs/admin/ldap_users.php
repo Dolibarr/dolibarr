@@ -48,44 +48,44 @@ $action = GETPOST('action', 'aZ09');
 
 if ($action == 'setvalue' && $user->admin)
 {
-	$error=0;
+	$error = 0;
 	$db->begin();
 
-	if (! dolibarr_set_const($db, 'LDAP_USER_DN', GETPOST("user"), 'chaine', 0, '', $conf->entity)) $error++;
-	if (! dolibarr_set_const($db, 'LDAP_USER_OBJECT_CLASS', GETPOST("objectclass"), 'chaine', 0, '', $conf->entity)) $error++;
-	if (! dolibarr_set_const($db, 'LDAP_FILTER_CONNECTION', GETPOST("filterconnection"), 'chaine', 0, '', $conf->entity)) $error++;
-	if (! dolibarr_set_const($db, 'LDAP_FIELD_FULLNAME', GETPOST("fieldfullname"), 'chaine', 0, '', $conf->entity)) $error++;
-	if (! dolibarr_set_const($db, 'LDAP_FIELD_LOGIN', GETPOST("fieldlogin"), 'chaine', 0, '', $conf->entity)) $error++;
-	if (! dolibarr_set_const($db, 'LDAP_FIELD_LOGIN_SAMBA', GETPOST("fieldloginsamba"), 'chaine', 0, '', $conf->entity)) $error++;
-	if (! dolibarr_set_const($db, 'LDAP_FIELD_PASSWORD', GETPOST("fieldpassword"), 'chaine', 0, '', $conf->entity)) $error++;
-	if (! dolibarr_set_const($db, 'LDAP_FIELD_PASSWORD_CRYPTED', GETPOST("fieldpasswordcrypted"), 'chaine', 0, '', $conf->entity)) $error++;
-	if (! dolibarr_set_const($db, 'LDAP_FIELD_NAME', GETPOST("fieldname"), 'chaine', 0, '', $conf->entity)) $error++;
-	if (! dolibarr_set_const($db, 'LDAP_FIELD_FIRSTNAME', GETPOST("fieldfirstname"), 'chaine', 0, '', $conf->entity)) $error++;
-	if (! dolibarr_set_const($db, 'LDAP_FIELD_MAIL', GETPOST("fieldmail"), 'chaine', 0, '', $conf->entity)) $error++;
-	if (! dolibarr_set_const($db, 'LDAP_FIELD_PHONE', GETPOST("fieldphone"), 'chaine', 0, '', $conf->entity)) $error++;
-	if (! dolibarr_set_const($db, 'LDAP_FIELD_MOBILE', GETPOST("fieldmobile"), 'chaine', 0, '', $conf->entity)) $error++;
-	if (! dolibarr_set_const($db, 'LDAP_FIELD_SKYPE', GETPOST("fieldskype"), 'chaine', 0, '', $conf->entity)) $error++;
-	if (! dolibarr_set_const($db, 'LDAP_FIELD_FAX', GETPOST("fieldfax"), 'chaine', 0, '', $conf->entity)) $error++;
-	if (! dolibarr_set_const($db, 'LDAP_FIELD_COMPANY', GETPOST("fieldcompany"), 'chaine', 0, '', $conf->entity)) $error++;
-	if (! dolibarr_set_const($db, 'LDAP_FIELD_ADDRESS', GETPOST("fieldaddress"), 'chaine', 0, '', $conf->entity)) $error++;
-	if (! dolibarr_set_const($db, 'LDAP_FIELD_ZIP', GETPOST("fieldzip"), 'chaine', 0, '', $conf->entity)) $error++;
-	if (! dolibarr_set_const($db, 'LDAP_FIELD_TOWN', GETPOST("fieldtown"), 'chaine', 0, '', $conf->entity)) $error++;
-	if (! dolibarr_set_const($db, 'LDAP_FIELD_COUNTRY', GETPOST("fieldcountry"), 'chaine', 0, '', $conf->entity)) $error++;
-	if (! dolibarr_set_const($db, 'LDAP_FIELD_DESCRIPTION', GETPOST("fielddescription"), 'chaine', 0, '', $conf->entity)) $error++;
-	if (! dolibarr_set_const($db, 'LDAP_FIELD_SID', GETPOST("fieldsid"), 'chaine', 0, '', $conf->entity)) $error++;
-	if (! dolibarr_set_const($db, 'LDAP_FIELD_TITLE', GETPOST("fieldtitle"), 'chaine', 0, '', $conf->entity)) $error++;
-	if (! dolibarr_set_const($db, 'LDAP_FIELD_GROUPID', GETPOST("fieldgroupid"), 'chaine', 0, '', $conf->entity)) $error++;
-	if (! dolibarr_set_const($db, 'LDAP_FIELD_USERID', GETPOST("fielduserid"), 'chaine', 0, '', $conf->entity)) $error++;
-	if (! dolibarr_set_const($db, 'LDAP_FIELD_HOMEDIRECTORY', GETPOST("fieldhomedirectory"), 'chaine', 0, '', $conf->entity)) $error++;
-	if (! dolibarr_set_const($db, 'LDAP_FIELD_HOMEDIRECTORYPREFIX', GETPOST("fieldhomedirectoryprefix"), 'chaine', 0, '', $conf->entity)) $error++;
+	if (!dolibarr_set_const($db, 'LDAP_USER_DN', GETPOST("user"), 'chaine', 0, '', $conf->entity)) $error++;
+	if (!dolibarr_set_const($db, 'LDAP_USER_OBJECT_CLASS', GETPOST("objectclass"), 'chaine', 0, '', $conf->entity)) $error++;
+	if (!dolibarr_set_const($db, 'LDAP_FILTER_CONNECTION', GETPOST("filterconnection"), 'chaine', 0, '', $conf->entity)) $error++;
+	if (!dolibarr_set_const($db, 'LDAP_FIELD_FULLNAME', GETPOST("fieldfullname"), 'chaine', 0, '', $conf->entity)) $error++;
+	if (!dolibarr_set_const($db, 'LDAP_FIELD_LOGIN', GETPOST("fieldlogin"), 'chaine', 0, '', $conf->entity)) $error++;
+	if (!dolibarr_set_const($db, 'LDAP_FIELD_LOGIN_SAMBA', GETPOST("fieldloginsamba"), 'chaine', 0, '', $conf->entity)) $error++;
+	if (!dolibarr_set_const($db, 'LDAP_FIELD_PASSWORD', GETPOST("fieldpassword"), 'chaine', 0, '', $conf->entity)) $error++;
+	if (!dolibarr_set_const($db, 'LDAP_FIELD_PASSWORD_CRYPTED', GETPOST("fieldpasswordcrypted"), 'chaine', 0, '', $conf->entity)) $error++;
+	if (!dolibarr_set_const($db, 'LDAP_FIELD_NAME', GETPOST("fieldname"), 'chaine', 0, '', $conf->entity)) $error++;
+	if (!dolibarr_set_const($db, 'LDAP_FIELD_FIRSTNAME', GETPOST("fieldfirstname"), 'chaine', 0, '', $conf->entity)) $error++;
+	if (!dolibarr_set_const($db, 'LDAP_FIELD_MAIL', GETPOST("fieldmail"), 'chaine', 0, '', $conf->entity)) $error++;
+	if (!dolibarr_set_const($db, 'LDAP_FIELD_PHONE', GETPOST("fieldphone"), 'chaine', 0, '', $conf->entity)) $error++;
+	if (!dolibarr_set_const($db, 'LDAP_FIELD_MOBILE', GETPOST("fieldmobile"), 'chaine', 0, '', $conf->entity)) $error++;
+	if (!dolibarr_set_const($db, 'LDAP_FIELD_SKYPE', GETPOST("fieldskype"), 'chaine', 0, '', $conf->entity)) $error++;
+	if (!dolibarr_set_const($db, 'LDAP_FIELD_FAX', GETPOST("fieldfax"), 'chaine', 0, '', $conf->entity)) $error++;
+	if (!dolibarr_set_const($db, 'LDAP_FIELD_COMPANY', GETPOST("fieldcompany"), 'chaine', 0, '', $conf->entity)) $error++;
+	if (!dolibarr_set_const($db, 'LDAP_FIELD_ADDRESS', GETPOST("fieldaddress"), 'chaine', 0, '', $conf->entity)) $error++;
+	if (!dolibarr_set_const($db, 'LDAP_FIELD_ZIP', GETPOST("fieldzip"), 'chaine', 0, '', $conf->entity)) $error++;
+	if (!dolibarr_set_const($db, 'LDAP_FIELD_TOWN', GETPOST("fieldtown"), 'chaine', 0, '', $conf->entity)) $error++;
+	if (!dolibarr_set_const($db, 'LDAP_FIELD_COUNTRY', GETPOST("fieldcountry"), 'chaine', 0, '', $conf->entity)) $error++;
+	if (!dolibarr_set_const($db, 'LDAP_FIELD_DESCRIPTION', GETPOST("fielddescription"), 'chaine', 0, '', $conf->entity)) $error++;
+	if (!dolibarr_set_const($db, 'LDAP_FIELD_SID', GETPOST("fieldsid"), 'chaine', 0, '', $conf->entity)) $error++;
+	if (!dolibarr_set_const($db, 'LDAP_FIELD_TITLE', GETPOST("fieldtitle"), 'chaine', 0, '', $conf->entity)) $error++;
+	if (!dolibarr_set_const($db, 'LDAP_FIELD_GROUPID', GETPOST("fieldgroupid"), 'chaine', 0, '', $conf->entity)) $error++;
+	if (!dolibarr_set_const($db, 'LDAP_FIELD_USERID', GETPOST("fielduserid"), 'chaine', 0, '', $conf->entity)) $error++;
+	if (!dolibarr_set_const($db, 'LDAP_FIELD_HOMEDIRECTORY', GETPOST("fieldhomedirectory"), 'chaine', 0, '', $conf->entity)) $error++;
+	if (!dolibarr_set_const($db, 'LDAP_FIELD_HOMEDIRECTORYPREFIX', GETPOST("fieldhomedirectoryprefix"), 'chaine', 0, '', $conf->entity)) $error++;
 
 	// This one must be after the others
-	$valkey='';
-	$key=GETPOST("key");
-	if ($key) $valkey=$conf->global->$key;
-	if (! dolibarr_set_const($db, 'LDAP_KEY_USERS', $valkey, 'chaine', 0, '', $conf->entity)) $error++;
+	$valkey = '';
+	$key = GETPOST("key");
+	if ($key) $valkey = $conf->global->$key;
+	if (!dolibarr_set_const($db, 'LDAP_KEY_USERS', $valkey, 'chaine', 0, '', $conf->entity)) $error++;
 
-	if (! $error)
+	if (!$error)
 	{
 		$db->commit();
 		setEventMessages($langs->trans("SetupSaved"), null, 'mesgs');
@@ -103,17 +103,17 @@ if ($action == 'setvalue' && $user->admin)
  * Visu
  */
 
-$form=new Form($db);
+$form = new Form($db);
 
 llxHeader('', $langs->trans("LDAPSetup"), 'EN:Module_LDAP_En|FR:Module_LDAP|ES:M&oacute;dulo_LDAP');
-$linkback='<a href="'.DOL_URL_ROOT.'/admin/modules.php?restore_lastsearch_values=1">'.$langs->trans("BackToModuleList").'</a>';
+$linkback = '<a href="'.DOL_URL_ROOT.'/admin/modules.php?restore_lastsearch_values=1">'.$langs->trans("BackToModuleList").'</a>';
 
 print load_fiche_titre($langs->trans("LDAPSetup"), $linkback, 'title_setup');
 
 $head = ldap_prepare_head();
 
 // Test si fonction LDAP actives
-if (! function_exists("ldap_connect"))
+if (!function_exists("ldap_connect"))
 {
 	setEventMessages($langs->trans("LDAPFunctionsNotAvailableOnPHP"), null, 'errors');
 }
@@ -170,35 +170,35 @@ print "</tr>\n";
 print '<tr class="oddeven"><td>'.$langs->trans("LDAPFieldFullname").'</td><td>';
 print '<input size="25" type="text" name="fieldfullname" value="'.$conf->global->LDAP_FIELD_FULLNAME.'">';
 print '</td><td>'.$langs->trans("LDAPFieldFullnameExample").'</td>';
-print '<td class="right"><input type="radio" name="key" value="LDAP_FIELD_FULLNAME"'.(($conf->global->LDAP_KEY_USERS && $conf->global->LDAP_KEY_USERS==$conf->global->LDAP_FIELD_FULLNAME)?' checked':'')."></td>";
+print '<td class="right"><input type="radio" name="key" value="LDAP_FIELD_FULLNAME"'.(($conf->global->LDAP_KEY_USERS && $conf->global->LDAP_KEY_USERS == $conf->global->LDAP_FIELD_FULLNAME) ? ' checked' : '')."></td>";
 print '</tr>';
 
 // Name
 print '<tr class="oddeven"><td>'.$langs->trans("LDAPFieldName").'</td><td>';
 print '<input size="25" type="text" name="fieldname" value="'.$conf->global->LDAP_FIELD_NAME.'">';
 print '</td><td>'.$langs->trans("LDAPFieldNameExample").'</td>';
-print '<td class="right"><input type="radio" name="key" value="LDAP_FIELD_NAME"'.(($conf->global->LDAP_KEY_USERS && $conf->global->LDAP_KEY_USERS==$conf->global->LDAP_FIELD_NAME)?' checked':'')."></td>";
+print '<td class="right"><input type="radio" name="key" value="LDAP_FIELD_NAME"'.(($conf->global->LDAP_KEY_USERS && $conf->global->LDAP_KEY_USERS == $conf->global->LDAP_FIELD_NAME) ? ' checked' : '')."></td>";
 print '</tr>';
 
 // Firstname
 print '<tr class="oddeven"><td>'.$langs->trans("LDAPFieldFirstName").'</td><td>';
 print '<input size="25" type="text" name="fieldfirstname" value="'.$conf->global->LDAP_FIELD_FIRSTNAME.'">';
 print '</td><td>'.$langs->trans("LDAPFieldFirstNameExample").'</td>';
-print '<td class="right"><input type="radio" name="key" value="LDAP_FIELD_FIRSTNAME"'.(($conf->global->LDAP_KEY_USERS && $conf->global->LDAP_KEY_USERS==$conf->global->LDAP_FIELD_FIRSTNAME)?' checked':'')."></td>";
+print '<td class="right"><input type="radio" name="key" value="LDAP_FIELD_FIRSTNAME"'.(($conf->global->LDAP_KEY_USERS && $conf->global->LDAP_KEY_USERS == $conf->global->LDAP_FIELD_FIRSTNAME) ? ' checked' : '')."></td>";
 print '</tr>';
 
 // Login unix
 print '<tr class="oddeven"><td>'.$langs->trans("LDAPFieldLoginUnix").'</td><td>';
 print '<input size="25" type="text" name="fieldlogin" value="'.$conf->global->LDAP_FIELD_LOGIN.'">';
 print '</td><td>'.$langs->trans("LDAPFieldLoginExample").'</td>';
-print '<td class="right"><input type="radio" name="key" value="LDAP_FIELD_LOGIN"'.(($conf->global->LDAP_KEY_USERS && $conf->global->LDAP_KEY_USERS==$conf->global->LDAP_FIELD_LOGIN)?' checked':'')."></td>";
+print '<td class="right"><input type="radio" name="key" value="LDAP_FIELD_LOGIN"'.(($conf->global->LDAP_KEY_USERS && $conf->global->LDAP_KEY_USERS == $conf->global->LDAP_FIELD_LOGIN) ? ' checked' : '')."></td>";
 print '</tr>';
 
 // Login samba
 print '<tr class="oddeven"><td>'.$langs->trans("LDAPFieldLoginSamba").'</td><td>';
 print '<input size="25" type="text" name="fieldloginsamba" value="'.$conf->global->LDAP_FIELD_LOGIN_SAMBA.'">';
 print '</td><td>'.$langs->trans("LDAPFieldLoginSambaExample").'</td>';
-print '<td class="right"><input type="radio" name="key" value="LDAP_FIELD_LOGIN_SAMBA"'.(($conf->global->LDAP_KEY_USERS && $conf->global->LDAP_KEY_USERS==$conf->global->LDAP_FIELD_LOGIN_SAMBA)?' checked':'')."></td>";
+print '<td class="right"><input type="radio" name="key" value="LDAP_FIELD_LOGIN_SAMBA"'.(($conf->global->LDAP_KEY_USERS && $conf->global->LDAP_KEY_USERS == $conf->global->LDAP_FIELD_LOGIN_SAMBA) ? ' checked' : '')."></td>";
 print '</tr>';
 
 // Password not crypted
@@ -219,35 +219,35 @@ print '</tr>';
 print '<tr class="oddeven"><td>'.$langs->trans("LDAPFieldMail").'</td><td>';
 print '<input size="25" type="text" name="fieldmail" value="'.$conf->global->LDAP_FIELD_MAIL.'">';
 print '</td><td>'.$langs->trans("LDAPFieldMailExample").'</td>';
-print '<td class="right"><input type="radio" name="key" value="LDAP_FIELD_MAIL"'.(($conf->global->LDAP_KEY_USERS && $conf->global->LDAP_KEY_USERS==$conf->global->LDAP_FIELD_MAIL)?' checked':'')."></td>";
+print '<td class="right"><input type="radio" name="key" value="LDAP_FIELD_MAIL"'.(($conf->global->LDAP_KEY_USERS && $conf->global->LDAP_KEY_USERS == $conf->global->LDAP_FIELD_MAIL) ? ' checked' : '')."></td>";
 print '</tr>';
 
 // Phone
 print '<tr class="oddeven"><td>'.$langs->trans("LDAPFieldPhone").'</td><td>';
 print '<input size="25" type="text" name="fieldphone" value="'.$conf->global->LDAP_FIELD_PHONE.'">';
 print '</td><td>'.$langs->trans("LDAPFieldPhoneExample").'</td>';
-print '<td class="right"><input type="radio" name="key" value="LDAP_FIELD_PHONE"'.(($conf->global->LDAP_KEY_USERS && $conf->global->LDAP_KEY_USERS==$conf->global->LDAP_FIELD_PHONE)?' checked':'')."></td>";
+print '<td class="right"><input type="radio" name="key" value="LDAP_FIELD_PHONE"'.(($conf->global->LDAP_KEY_USERS && $conf->global->LDAP_KEY_USERS == $conf->global->LDAP_FIELD_PHONE) ? ' checked' : '')."></td>";
 print '</tr>';
 
 // Mobile
 print '<tr class="oddeven"><td>'.$langs->trans("LDAPFieldMobile").'</td><td>';
 print '<input size="25" type="text" name="fieldmobile" value="'.$conf->global->LDAP_FIELD_MOBILE.'">';
 print '</td><td>'.$langs->trans("LDAPFieldMobileExample").'</td>';
-print '<td class="right"><input type="radio" name="key" value="LDAP_FIELD_MOBILE"'.(($conf->global->LDAP_KEY_USERS && $conf->global->LDAP_KEY_USERS==$conf->global->LDAP_FIELD_MOBILE)?' checked':'')."></td>";
+print '<td class="right"><input type="radio" name="key" value="LDAP_FIELD_MOBILE"'.(($conf->global->LDAP_KEY_USERS && $conf->global->LDAP_KEY_USERS == $conf->global->LDAP_FIELD_MOBILE) ? ' checked' : '')."></td>";
 print '</tr>';
 
 // Skype
 print '<tr class="oddeven"><td>'.$langs->trans("LDAPFieldSkype").'</td><td>';
 print '<input size="25" type="text" name="fieldskype" value="'.$conf->global->LDAP_FIELD_SKYPE.'">';
 print '</td><td>'.$langs->trans("LDAPFieldSkypeExample").'</td>';
-print '<td class="right"><input type="radio" name="key" value="LDAP_FIELD_SKYPE"'.(($conf->global->LDAP_KEY_USERS && $conf->global->LDAP_KEY_USERS==$conf->global->LDAP_FIELD_SKYPE)?' checked':'')."></td>";
+print '<td class="right"><input type="radio" name="key" value="LDAP_FIELD_SKYPE"'.(($conf->global->LDAP_KEY_USERS && $conf->global->LDAP_KEY_USERS == $conf->global->LDAP_FIELD_SKYPE) ? ' checked' : '')."></td>";
 print '</tr>';
 
 // Fax
 print '<tr class="oddeven"><td>'.$langs->trans("LDAPFieldFax").'</td><td>';
 print '<input size="25" type="text" name="fieldfax" value="'.$conf->global->LDAP_FIELD_FAX.'">';
 print '</td><td>'.$langs->trans("LDAPFieldFaxExample").'</td>';
-print '<td class="right"><input type="radio" name="key" value="LDAP_FIELD_FAX"'.(($conf->global->LDAP_KEY_USERS && $conf->global->LDAP_KEY_USERS==$conf->global->LDAP_FIELD_FAX)?' checked':'')."></td>";
+print '<td class="right"><input type="radio" name="key" value="LDAP_FIELD_FAX"'.(($conf->global->LDAP_KEY_USERS && $conf->global->LDAP_KEY_USERS == $conf->global->LDAP_FIELD_FAX) ? ' checked' : '')."></td>";
 print '</tr>';
 
 // Company
@@ -303,7 +303,7 @@ print '</tr>';
 print '<tr class="oddeven"><td>'.$langs->trans("LDAPFieldSid").'</td><td>';
 print '<input size="25" type="text" name="fieldsid" value="'.$conf->global->LDAP_FIELD_SID.'">';
 print '</td><td>'.$langs->trans("LDAPFieldSidExample").'</td>';
-print '<td class="right"><input type="radio" name="key" value="LDAP_FIELD_SID"'.(($conf->global->LDAP_KEY_USERS && $conf->global->LDAP_KEY_USERS==$conf->global->LDAP_FIELD_SID)?' checked':'')."></td>";
+print '<td class="right"><input type="radio" name="key" value="LDAP_FIELD_SID"'.(($conf->global->LDAP_KEY_USERS && $conf->global->LDAP_KEY_USERS == $conf->global->LDAP_FIELD_SID) ? ' checked' : '')."></td>";
 print '</tr>';
 
 // Group id
@@ -350,21 +350,21 @@ print '</form>';
  */
 if ($conf->global->LDAP_SYNCHRO_ACTIVE == 'dolibarr2ldap')
 {
-	$butlabel=$langs->trans("LDAPTestSynchroUser");
-	$testlabel='testuser';
-	$key=$conf->global->LDAP_KEY_USERS;
-	$dn=$conf->global->LDAP_USER_DN;
-	$objectclass=$conf->global->LDAP_USER_OBJECT_CLASS;
+	$butlabel = $langs->trans("LDAPTestSynchroUser");
+	$testlabel = 'testuser';
+	$key = $conf->global->LDAP_KEY_USERS;
+	$dn = $conf->global->LDAP_USER_DN;
+	$objectclass = $conf->global->LDAP_USER_OBJECT_CLASS;
 
 	show_ldap_test_button($butlabel, $testlabel, $key, $dn, $objectclass);
 }
 elseif ($conf->global->LDAP_SYNCHRO_ACTIVE == 'ldap2dolibarr')
 {
-	$butlabel=$langs->trans("LDAPTestSearch");
-	$testlabel='testsearchuser';
-	$key=$conf->global->LDAP_KEY_USERS;
-	$dn=$conf->global->LDAP_USER_DN;
-	$objectclass=$conf->global->LDAP_USER_OBJECT_CLASS;
+	$butlabel = $langs->trans("LDAPTestSearch");
+	$testlabel = 'testsearchuser';
+	$key = $conf->global->LDAP_KEY_USERS;
+	$dn = $conf->global->LDAP_USER_DN;
+	$objectclass = $conf->global->LDAP_USER_OBJECT_CLASS;
 	show_ldap_test_button($butlabel, $testlabel, $key, $dn, $objectclass);
 }
 
@@ -373,23 +373,23 @@ if (function_exists("ldap_connect"))
 	if ($action == 'testuser')
 	{
 		// Creation objet
-		$object=new User($db);
+		$object = new User($db);
 		$object->initAsSpecimen();
 
 		// TODO Mutualize code following with other ldap_xxxx.php pages
 
 		// Test synchro
-		$ldap=new Ldap();
-		$result=$ldap->connect_bind();
+		$ldap = new Ldap();
+		$result = $ldap->connect_bind();
 
 		if ($result > 0)
 		{
-			$info=$object->_load_ldap_info();
-			$dn=$object->_load_ldap_dn($info);
+			$info = $object->_load_ldap_info();
+			$dn = $object->_load_ldap_dn($info);
 
-			$result1=$ldap->delete($dn);			// To be sure to delete existing records
-			$result2=$ldap->add($dn, $info, $user);	// Now the test
-			$result3=$ldap->delete($dn);			// Clean what we did
+			$result1 = $ldap->delete($dn); // To be sure to delete existing records
+			$result2 = $ldap->add($dn, $info, $user); // Now the test
+			$result3 = $ldap->delete($dn); // Clean what we did
 
 			if ($result2 > 0)
 			{
@@ -423,14 +423,14 @@ if (function_exists("ldap_connect"))
 	if ($action == 'testsearchuser')
 	{
 		// Creation objet
-		$object=new User($db);
+		$object = new User($db);
 		$object->initAsSpecimen();
 
 		// TODO Mutualize code following with other ldap_xxxx.php pages
 
 		// Test synchro
-		$ldap=new Ldap();
-		$result=$ldap->connect_bind();
+		$ldap = new Ldap();
+		$result = $ldap->connect_bind();
 
 		if ($result > 0)
 		{
@@ -454,7 +454,7 @@ if (function_exists("ldap_connect"))
 			);
 
 			// Remove from required_fields all entries not configured in LDAP (empty) and duplicated
-			$required_fields=array_unique(array_values(array_filter($required_fields, "dol_validElement")));
+			$required_fields = array_unique(array_values(array_filter($required_fields, "dol_validElement")));
 
 			// Get from LDAP database an array of results
 			$ldapusers = $ldap->getRecords('*', $conf->global->LDAP_USER_DN, $conf->global->LDAP_KEY_USERS, $required_fields, 1);
@@ -462,16 +462,16 @@ if (function_exists("ldap_connect"))
 
 			if (is_array($ldapusers))
 			{
-				$liste=array();
+				$liste = array();
 				foreach ($ldapusers as $key => $ldapuser)
 				{
 					// Define the label string for this user
-					$label='';
+					$label = '';
 					foreach ($required_fields as $value)
 					{
 						if ($value)
 						{
-							$label.=$value."=".$ldapuser[$value]." ";
+							$label .= $value."=".$ldapuser[$value]." ";
 						}
 					}
 					$liste[$key] = $label;

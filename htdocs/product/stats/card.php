@@ -47,7 +47,7 @@ $search_year   = GETPOST('search_year', 'int');
 $search_categ  = GETPOST('search_categ', 'int');
 
 $error = 0;
-$mesg	= '';
+$mesg = '';
 $graphfiles = array();
 
 $socid = '';

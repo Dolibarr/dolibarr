@@ -487,10 +487,10 @@ function projectLinesa(&$inc, $parent, &$lines, &$level, $var, $showproject, &$t
 				}
 
 				// Ref of task
-				if (count($arrayfields)>0 && !empty($arrayfields['t.ref']['checked'])) {
+				if (count($arrayfields) > 0 && !empty($arrayfields['t.ref']['checked'])) {
 					print '<td class="nowraponall">';
 					if ($showlineingray) {
-						print '<i>' . img_object('', 'projecttask') . ' ' . $lines[$i]->ref . '</i>';
+						print '<i>'.img_object('', 'projecttask').' '.$lines[$i]->ref.'</i>';
 					} else {
 						print $taskstatic->getNomUrl(1, 'withproject');
 					}
@@ -498,7 +498,7 @@ function projectLinesa(&$inc, $parent, &$lines, &$level, $var, $showproject, &$t
 				}
 
 				// Title of task
-				if (count($arrayfields)>0 && !empty($arrayfields['t.label']['checked'])) {
+				if (count($arrayfields) > 0 && !empty($arrayfields['t.label']['checked'])) {
 					print "<td>";
 					if ($showlineingray)
 						print '<i>';
@@ -516,21 +516,21 @@ function projectLinesa(&$inc, $parent, &$lines, &$level, $var, $showproject, &$t
 					print "</td>\n";
 				}
 
-				if (count($arrayfields)>0 && !empty($arrayfields['t.description']['checked'])) {
+				if (count($arrayfields) > 0 && !empty($arrayfields['t.description']['checked'])) {
 					print "<td>";
 					print $lines[$i]->description;
 					print "</td>\n";
 				}
 
 				// Date start
-				if (count($arrayfields)>0 && !empty($arrayfields['t.dateo']['checked'])) {
+				if (count($arrayfields) > 0 && !empty($arrayfields['t.dateo']['checked'])) {
 					print '<td class="center">';
 					print dol_print_date($lines[$i]->date_start, 'dayhour');
 					print '</td>';
 				}
 
 				// Date end
-				if (count($arrayfields)>0 && !empty($arrayfields['t.datee']['checked'])) {
+				if (count($arrayfields) > 0 && !empty($arrayfields['t.datee']['checked'])) {
 					print '<td class="center">';
 					print dol_print_date($lines[$i]->date_end, 'dayhour');
 					if ($taskstatic->hasDelay())
@@ -544,7 +544,7 @@ function projectLinesa(&$inc, $parent, &$lines, &$level, $var, $showproject, &$t
 				if (!empty($conf->global->PROJECT_TIMES_SPENT_FORMAT)) $timespentoutputformat = $conf->global->PROJECT_TIME_SPENT_FORMAT;
 
 				// Planned Workload (in working hours)
-				if (count($arrayfields)>0 && !empty($arrayfields['t.planned_workload']['checked'])) {
+				if (count($arrayfields) > 0 && !empty($arrayfields['t.planned_workload']['checked'])) {
 					print '<td class="right">';
 					$fullhour = convertSecondToTime($lines[$i]->planned_workload, $plannedworkloadoutputformat);
 					$workingdelay = convertSecondToTime($lines[$i]->planned_workload, 'all', 86400, 7); // TODO Replace 86400 and 7 to take account working hours per day and working day per weeks
@@ -558,11 +558,11 @@ function projectLinesa(&$inc, $parent, &$lines, &$level, $var, $showproject, &$t
 				}
 
 				// Time spent
-				if (count($arrayfields)>0 && !empty($arrayfields['t.duration_effective']['checked'])) {
+				if (count($arrayfields) > 0 && !empty($arrayfields['t.duration_effective']['checked'])) {
 					print '<td class="right">';
 					if ($showlineingray)
 						print '<i>';
-					else print '<a href="' . DOL_URL_ROOT . '/projet/tasks/time.php?id=' . $lines[$i]->id . ($showproject ? '' : '&withproject=1') . '">';
+					else print '<a href="'.DOL_URL_ROOT.'/projet/tasks/time.php?id='.$lines[$i]->id.($showproject ? '' : '&withproject=1').'">';
 					if ($lines[$i]->duration)
 						print convertSecondToTime($lines[$i]->duration, $timespentoutputformat);
 					else print '--:--';
@@ -573,18 +573,18 @@ function projectLinesa(&$inc, $parent, &$lines, &$level, $var, $showproject, &$t
 				}
 
 				// Progress calculated (Note: ->duration is time spent)
-				if (count($arrayfields)>0 && !empty($arrayfields['t.progress_calculated']['checked'])) {
+				if (count($arrayfields) > 0 && !empty($arrayfields['t.progress_calculated']['checked'])) {
 					print '<td class="right">';
 					if ($lines[$i]->planned_workload || $lines[$i]->duration) {
 						if ($lines[$i]->planned_workload)
-							print round(100 * $lines[$i]->duration / $lines[$i]->planned_workload, 2) . ' %';
-						else print '<span class="opacitymedium">' . $langs->trans('WorkloadNotDefined') . '</span>';
+							print round(100 * $lines[$i]->duration / $lines[$i]->planned_workload, 2).' %';
+						else print '<span class="opacitymedium">'.$langs->trans('WorkloadNotDefined').'</span>';
 					}
 					print '</td>';
 				}
 
 				// Progress declared
-				if (count($arrayfields)>0 && !empty($arrayfields['t.progress']['checked'])) {
+				if (count($arrayfields) > 0 && !empty($arrayfields['t.progress']['checked'])) {
 					print '<td class="right">';
 					if ($lines[$i]->progress != '') {
 						print getTaskProgressBadge($taskstatic);
@@ -593,7 +593,7 @@ function projectLinesa(&$inc, $parent, &$lines, &$level, $var, $showproject, &$t
 				}
 
 				// resume
-				if (count($arrayfields)>0 && !empty($arrayfields['t.progress_summary']['checked'])) {
+				if (count($arrayfields) > 0 && !empty($arrayfields['t.progress_summary']['checked'])) {
 					print '<td class="right">';
 					if ($lines[$i]->progress != '' && $lines[$i]->duration) {
 						print getTaskProgressView($taskstatic, false, false);
@@ -604,25 +604,25 @@ function projectLinesa(&$inc, $parent, &$lines, &$level, $var, $showproject, &$t
 				if ($showbilltime)
 				{
     				// Time not billed
-					if (count($arrayfields)>0 && !empty($arrayfields['t.tobill']['checked'])) {
+					if (count($arrayfields) > 0 && !empty($arrayfields['t.tobill']['checked'])) {
 						print '<td class="right">';
 						if ($lines[$i]->usage_bill_time) {
 							print convertSecondToTime($lines[$i]->tobill, 'allhourmin');
 							$total_projectlinesa_tobill += $lines[$i]->tobill;
 						} else {
-							print '<span class="opacitymedium">' . $langs->trans("NA") . '</span>';
+							print '<span class="opacitymedium">'.$langs->trans("NA").'</span>';
 						}
 						print '</td>';
 					}
 
     				// Time billed
-					if (count($arrayfields)>0 && !empty($arrayfields['t.billed']['checked'])) {
+					if (count($arrayfields) > 0 && !empty($arrayfields['t.billed']['checked'])) {
 						print '<td class="right">';
 						if ($lines[$i]->usage_bill_time) {
 							print convertSecondToTime($lines[$i]->billed, 'allhourmin');
 							$total_projectlinesa_billed += $lines[$i]->billed;
 						} else {
-							print '<span class="opacitymedium">' . $langs->trans("NA") . '</span>';
+							print '<span class="opacitymedium">'.$langs->trans("NA").'</span>';
 						}
 						print '</td>';
 					}
@@ -650,12 +650,12 @@ function projectLinesa(&$inc, $parent, &$lines, &$level, $var, $showproject, &$t
 				}
 
 				// Extra fields
-				$extrafieldsobjectkey=$taskstatic->table_element;
-				$obj=$lines[$i];
+				$extrafieldsobjectkey = $taskstatic->table_element;
+				$obj = $lines[$i];
 				include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_print_fields.tpl.php';
 				// Fields from hook
-				$parameters=array('arrayfields'=>$arrayfields, 'obj'=>$lines[$i]);
-				$reshook=$hookmanager->executeHooks('printFieldListValue', $parameters);    // Note that $action and $object may have been modified by hook
+				$parameters = array('arrayfields'=>$arrayfields, 'obj'=>$lines[$i]);
+				$reshook = $hookmanager->executeHooks('printFieldListValue', $parameters); // Note that $action and $object may have been modified by hook
 				print $hookmanager->resPrint;
 
 				// Tick to drag and drop
@@ -693,18 +693,18 @@ function projectLinesa(&$inc, $parent, &$lines, &$level, $var, $showproject, &$t
 		print '<tr class="liste_total nodrag nodrop">';
 		print '<td class="liste_total">'.$langs->trans("Total").'</td>';
 		if ($showproject) print '<td></td><td></td>';
-		if (count($arrayfields)>0 && !empty($arrayfields['t.label']['checked'])) print '<td></td>';
-		if (count($arrayfields)>0 && !empty($arrayfields['t.dateo']['checked'])) print '<td></td>';
-		if (count($arrayfields)>0 && !empty($arrayfields['t.datee']['checked'])) print '<td></td>';
-		if (count($arrayfields)>0 && !empty($arrayfields['t.planned_workload']['checked'])) {
+		if (count($arrayfields) > 0 && !empty($arrayfields['t.label']['checked'])) print '<td></td>';
+		if (count($arrayfields) > 0 && !empty($arrayfields['t.dateo']['checked'])) print '<td></td>';
+		if (count($arrayfields) > 0 && !empty($arrayfields['t.datee']['checked'])) print '<td></td>';
+		if (count($arrayfields) > 0 && !empty($arrayfields['t.planned_workload']['checked'])) {
 			print '<td class="nowrap liste_total right">';
 			print convertSecondToTime($total_projectlinesa_planned, 'allhourmin');
 			print '</td>';
 		}
-		if (count($arrayfields)>0 && !empty($arrayfields['t.duration_effective']['checked'])) {
+		if (count($arrayfields) > 0 && !empty($arrayfields['t.duration_effective']['checked'])) {
 			print '<td class="nowrap liste_total right">';
 			if ($projectidfortotallink > 0)
-				print '<a href="' . DOL_URL_ROOT . '/projet/tasks/time.php?projectid=' . $projectidfortotallink . ($showproject ? '' : '&withproject=1') . '">';
+				print '<a href="'.DOL_URL_ROOT.'/projet/tasks/time.php?projectid='.$projectidfortotallink.($showproject ? '' : '&withproject=1').'">';
 			print convertSecondToTime($total_projectlinesa_spent, 'allhourmin');
 			if ($projectidfortotallink > 0)
 				print '</a>';
@@ -734,27 +734,27 @@ function projectLinesa(&$inc, $parent, &$lines, &$level, $var, $showproject, &$t
             }
         }
 
-		if (count($arrayfields)>0 && !empty($arrayfields['t.progress_calculated']['checked'])) {
+		if (count($arrayfields) > 0 && !empty($arrayfields['t.progress_calculated']['checked'])) {
 			print '<td class="nowrap liste_total right">';
 			if ($total_projectlinesa_planned)
-				print $totalCalculatedProgress . ' %';
+				print $totalCalculatedProgress.' %';
 			print '</td>';
 		}
-		if (count($arrayfields)>0 && !empty($arrayfields['t.progress']['checked'])) {
+		if (count($arrayfields) > 0 && !empty($arrayfields['t.progress']['checked'])) {
 			print '<td class="nowrap liste_total right">';
 			if ($total_projectlinesa_planned)
-				print '<span class="' . $badgeClass . '" >' . $totalAverageDeclaredProgress . ' %</span>';
+				print '<span class="'.$badgeClass.'" >'.$totalAverageDeclaredProgress.' %</span>';
 			print '</td>';
 		}
 
 
         // resume
-		if (count($arrayfields)>0 && !empty($arrayfields['t.progress_summary']['checked'])) {
+		if (count($arrayfields) > 0 && !empty($arrayfields['t.progress_summary']['checked'])) {
 			print '<td class="right">';
 			if ($total_projectlinesa_planned) {
 				print '</span>';
-				print '    <div class="progress sm" title="' . $totalAverageDeclaredProgress . '%" >';
-				print '        <div class="progress-bar ' . $progressBarClass . '" style="width: ' . $totalAverageDeclaredProgress . '%"></div>';
+				print '    <div class="progress sm" title="'.$totalAverageDeclaredProgress.'%" >';
+				print '        <div class="progress-bar '.$progressBarClass.'" style="width: '.$totalAverageDeclaredProgress.'%"></div>';
 				print '    </div>';
 				print '</div>';
 			}
@@ -763,12 +763,12 @@ function projectLinesa(&$inc, $parent, &$lines, &$level, $var, $showproject, &$t
 
 		if ($showbilltime)
 		{
-			if (count($arrayfields)>0 && !empty($arrayfields['t.tobill']['checked'])) {
+			if (count($arrayfields) > 0 && !empty($arrayfields['t.tobill']['checked'])) {
 				print '<td class="nowrap liste_total right">';
 				print convertSecondToTime($total_projectlinesa_tobill, 'allhourmin');
 				print '</td>';
 			}
-			if (count($arrayfields)>0 && !empty($arrayfields['t.billed']['checked'])) {
+			if (count($arrayfields) > 0 && !empty($arrayfields['t.billed']['checked'])) {
 				print '<td class="nowrap liste_total right">';
 				print convertSecondToTime($total_projectlinesa_billed, 'allhourmin');
 				print '</td>';
@@ -2073,7 +2073,7 @@ function print_projecttasks_array($db, $form, $socid, $projectsListId, $mytasks 
 
 	$listofstatus = array_keys($listofoppstatus);
 
-	if (is_array($listofstatus) && ! empty($conf->global->USE_COLOR_FOR_PROSPECTION_STATUS)) {
+	if (is_array($listofstatus) && !empty($conf->global->USE_COLOR_FOR_PROSPECTION_STATUS)) {
 		// Define $themeColorId and array $statusOppList for each $listofstatus
 		$themeColorId = 0;
 		$statusOppList = array();
@@ -2216,7 +2216,7 @@ function print_projecttasks_array($db, $form, $socid, $projectsListId, $mytasks 
 			if ($userAccess >= 0)
 			{
 				$projectstatic->ref = $objp->ref;
-				$projectstatic->statut = $objp->status;		// deprecated
+				$projectstatic->statut = $objp->status; // deprecated
 				$projectstatic->status = $objp->status;
 				$projectstatic->title = $objp->title;
 				$projectstatic->datee = $db->jdate($objp->datee);

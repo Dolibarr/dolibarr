@@ -117,7 +117,7 @@ if ($resql)
 	print '<table class="noborder nohover centpercent">';
 	print '<tr class="liste_titre"><th colspan="2">'.$langs->trans("Statistics").' - '.$langs->trans("SuppliersOrders").'</th></tr>';
 	print "</tr>\n";
-	$listofstatus=array(0, 1, 2, 3, 4, 5, 6, 9);
+	$listofstatus = array(0, 1, 2, 3, 4, 5, 6, 9);
 	foreach ($listofstatus as $status)
 	{
 		$dataseries[] = array($commandestatic->LibStatut($status, 1), (isset($vals[$status]) ? (int) $vals[$status] : 0));

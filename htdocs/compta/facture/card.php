@@ -947,7 +947,7 @@ if (empty($reshook))
 					}
 
 					$discount->tva_tx = abs($tva_tx);
-					$discount->vat_src_code =$vat_src_code;
+					$discount->vat_src_code = $vat_src_code;
 
 					$result = $discount->create($user);
 					if ($result < 0)
@@ -2608,10 +2608,10 @@ if (empty($reshook))
                     $pa_ht = $originLine->pa_ht;
                     $label = $originLine->label;
                     $array_options = $originLine->array_options;
-                    if($object->type == Facture::TYPE_SITUATION){
+                    if ($object->type == Facture::TYPE_SITUATION) {
                         $situation_percent = 0;
                     }
-                    else{
+                    else {
                         $situation_percent = 100;
                     }
                     $fk_prev_id = '';
@@ -3380,10 +3380,10 @@ if ($action == 'create')
 	        }
 
 	        $retained_warranty = GETPOST('retained_warranty', 'int');
-	        if(empty($retained_warranty)){
-                if(!empty($objectsrc->retained_warranty)){ // use previous situation value
+	        if (empty($retained_warranty)) {
+                if (!empty($objectsrc->retained_warranty)) { // use previous situation value
                     $retained_warranty = $objectsrc->retained_warranty;
-                }else{
+                } else {
                     $retained_warranty = $conf->global->INVOICE_SITUATION_DEFAULT_RETAINED_WARRANTY_PERCENT;
                 }
             }
@@ -3394,11 +3394,11 @@ if ($action == 'create')
 	        // Retained warranty payment term
 	        print '<tr class="retained-warranty-line" style="'.$rwStyle.'" ><td class="nowrap">'.$langs->trans('PaymentConditionsShortRetainedWarranty').'</td><td colspan="2">';
 	        $retained_warranty_fk_cond_reglement = GETPOST('retained_warranty_fk_cond_reglement', 'int');
-	        if(empty($retained_warranty_fk_cond_reglement)){
+	        if (empty($retained_warranty_fk_cond_reglement)) {
                 $retained_warranty_fk_cond_reglement = $conf->global->INVOICE_SITUATION_DEFAULT_RETAINED_WARRANTY_COND_ID;
-                if(!empty($objectsrc->retained_warranty_fk_cond_reglement)){ // use previous situation value
+                if (!empty($objectsrc->retained_warranty_fk_cond_reglement)) { // use previous situation value
                     $retained_warranty_fk_cond_reglement = $objectsrc->retained_warranty_fk_cond_reglement;
-                }else{
+                } else {
                     $retained_warranty_fk_cond_reglement = $conf->global->INVOICE_SITUATION_DEFAULT_RETAINED_WARRANTY_COND_ID;
                 }
             }
@@ -3981,6 +3981,20 @@ elseif ($id > 0 || !empty($ref))
 		);
 		// Ask confirmatio to clone
 		$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"].'?facid='.$object->id, $langs->trans('ToClone'), $langs->trans('ConfirmCloneInvoice', $object->ref), 'confirm_clone', $formquestion, 'yes', 1, 250);
+	}
+
+	if ($action == "remove_file_comfirm")
+	{
+		$file = GETPOST('file', 'alpha');
+
+		$formconfirm = $form->formconfirm(
+			$_SERVER["PHP_SELF"].'?facid='.$object->id.'&file='.$file,
+			$langs->trans('DeleteFileHeader'),
+			$langs->trans('DeleteFileText')."<br><br>".$file,
+			'remove_file',
+			'',
+			'no',
+			2);
 	}
 
 	// Call Hook formConfirm
@@ -5111,14 +5125,16 @@ elseif ($id > 0 || !empty($ref))
 			}
 
 			// Send by mail
-			if (($object->statut == Facture::STATUS_VALIDATED || $object->statut == Facture::STATUS_CLOSED) || !empty($conf->global->FACTURE_SENDBYEMAIL_FOR_ALL_STATUS)) {
-				if ($objectidnext) {
-					print '<span class="butActionRefused classfortooltip" title="'.$langs->trans("DisabledBecauseReplacedInvoice").'">'.$langs->trans('SendMail').'</span>';
-				} else {
-					if ($usercansend) {
-						print '<a class="butAction" href="'.$_SERVER['PHP_SELF'].'?facid='.$object->id.'&action=presend&mode=init#formmailbeforetitle">'.$langs->trans('SendMail').'</a>';
-					} else
-						print '<a class="butActionRefused classfortooltip" href="#">'.$langs->trans('SendMail').'</a>';
+			if (empty($user->socid)) {
+				if (($object->statut == Facture::STATUS_VALIDATED || $object->statut == Facture::STATUS_CLOSED) || !empty($conf->global->FACTURE_SENDBYEMAIL_FOR_ALL_STATUS)) {
+					if ($objectidnext) {
+						print '<span class="butActionRefused classfortooltip" title="'.$langs->trans("DisabledBecauseReplacedInvoice").'">'.$langs->trans('SendMail').'</span>';
+					} else {
+						if ($usercansend) {
+							print '<a class="butAction" href="'.$_SERVER['PHP_SELF'].'?facid='.$object->id.'&action=presend&mode=init#formmailbeforetitle">'.$langs->trans('SendMail').'</a>';
+						} else
+							print '<a class="butActionRefused classfortooltip" href="#">'.$langs->trans('SendMail').'</a>';
+					}
 				}
 			}
 
@@ -5359,7 +5375,11 @@ elseif ($id > 0 || !empty($ref))
 		$genallowed = $usercanread;
 		$delallowed = $usercancreate;
 
-		print $formfile->showdocuments('facture', $filename, $filedir, $urlsource, $genallowed, $delallowed, $object->modelpdf, 1, 0, 0, 28, 0, '', '', '', $soc->default_lang, '', $object);
+		print $formfile->showdocuments(
+			'facture', $filename, $filedir, $urlsource, $genallowed,
+			$delallowed, $object->modelpdf, 1, 0, 0, 28, 0, '', '', '',
+			$soc->default_lang, '', $object, 0, 'remove_file_comfirm');
+
 		$somethingshown = $formfile->numoffiles;
 
 		// Show links to link elements

@@ -1660,7 +1660,7 @@ function dol_banner_tab($object, $paramid, $morehtml = '', $shownav = 1, $fieldi
 			$morehtmlref .= '</div>';
 		}
 	}
-	if (!empty($conf->global->MAIN_SHOW_TECHNICAL_ID) && ($conf->global->MAIN_SHOW_TECHNICAL_ID == '1' || preg_match('/'.preg_quote($object->element, '/').'/i', $conf->global->MAIN_SHOW_TECHNICAL_ID)) && ! empty($object->id))
+	if (!empty($conf->global->MAIN_SHOW_TECHNICAL_ID) && ($conf->global->MAIN_SHOW_TECHNICAL_ID == '1' || preg_match('/'.preg_quote($object->element, '/').'/i', $conf->global->MAIN_SHOW_TECHNICAL_ID)) && !empty($object->id))
 	{
 		$morehtmlref .= '<div style="clear: both;"></div><div class="refidno">';
 		$morehtmlref .= $langs->trans("TechnicalID").': '.$object->id;
@@ -2269,7 +2269,7 @@ function dol_print_email($email, $cid = 0, $socid = 0, $addlink = 0, $max = 64, 
 		}
 	}
 
-	$rep = '<div class="nospan" style="margin-right: 10px">'.($withpicto ?img_picto($langs->trans("EMail"), 'object_email.png').' ' : '').$newemail.'</div>';
+	$rep = '<div class="nospan" style="margin-right: 10px">'.($withpicto ?img_picto($langs->trans("EMail").' : '.$email, 'object_email.png').' ' : '').$newemail.'</div>';
 	if ($hookmanager) {
 		$parameters = array('cid' => $cid, 'socid' => $socid, 'addlink' => $addlink, 'picto' => $withpicto);
 		$reshook = $hookmanager->executeHooks('printEmail', $parameters, $email);
@@ -2378,6 +2378,7 @@ function dol_print_phone($phone, $countrycode = '', $cid = 0, $socid = 0, $addli
 	// Clean phone parameter
 	$phone = preg_replace("/[\s.-]/", "", trim($phone));
 	if (empty($phone)) { return ''; }
+	if ($conf->global->MAIN_PHONE_SEPAR) $separ = $conf->global->MAIN_PHONE_SEPAR;
 	if (empty($countrycode)) $countrycode = $mysoc->country_code;
 
 	// Short format for small screens
@@ -2679,8 +2680,9 @@ function dol_print_phone($phone, $countrycode = '', $cid = 0, $socid = 0, $addli
 	{
 		if ($conf->browser->layout == 'phone' || (!empty($conf->clicktodial->enabled) && !empty($conf->global->CLICKTODIAL_USE_TEL_LINK_ON_PHONE_NUMBERS)))	// If phone or option for, we use link of phone
 		{
+			$newphoneform = $newphone;
 			$newphone = '<a href="tel:'.$phone.'"';
-			$newphone .= '>'.$phone.'</a>';
+			$newphone .= '>'.$newphoneform.'</a>';
 		}
 		elseif (!empty($conf->clicktodial->enabled) && $addlink == 'AC_TEL')		// If click to dial, we use click to dial url
 		{
@@ -3132,13 +3134,13 @@ function img_picto($titlealt, $picto, $moreatt = '', $pictoisfullpath = false, $
 
         if (empty($srconly) && in_array($pictowithouttext, array(
         		'1downarrow', '1uparrow', '1leftarrow', '1rightarrow', '1uparrow_selected', '1downarrow_selected', '1leftarrow_selected', '1rightarrow_selected',
-        		'address', 'barcode', 'bank', 'bookmark', 'building', 'cash-register', 'check', 'close_title', 'cubes', 'delete', 'dolly', 'edit', 'ellipsis-h',
-        		'filter', 'file-code', 'folder', 'folder-open', 'grip', 'grip_title', 'language', 'list', 'listlight', 'note',
+        		'address', 'bank_account', 'barcode', 'bank', 'bookmark', 'building', 'cash-register', 'check', 'close_title', 'cubes', 'delete', 'dolly', 'edit', 'ellipsis-h',
+        		'filter', 'file-code', 'folder', 'folder-open', 'grip', 'grip_title', 'help', 'language', 'list', 'listlight', 'note',
         		'object_action', 'object_account', 'object_barcode', 'object_phoning', 'object_phoning_fax', 'object_email',
         		'object_bookmark', 'object_bug', 'object_generic', 'object_list-alt', 'object_calendar', 'object_calendarweek', 'object_calendarmonth', 'object_calendarday', 'object_calendarperuser',
         		'object_cash-register', 'object_holiday', 'object_hrm', 'object_accounting', 'object_category', 'object_multicurrency',
         		'object_printer', 'object_resource', 'object_technic', 'object_trip', 'object_user', 'object_group', 'object_member', 'object_other',
-        		'off', 'on', 'play', 'playdisabled', 'printer', 'resize', 'stats',
+        		'off', 'on', 'play', 'playdisabled', 'printer', 'resize', 'stats', 'trip',
 				'note', 'setup', 'sign-out', 'split', 'switch_off', 'switch_on', 'tools', 'unlink', 'uparrow', 'user', 'wrench', 'globe',
 				'jabber', 'skype', 'twitter', 'facebook', 'linkedin', 'instagram', 'snapchat', 'youtube', 'google-plus-g', 'whatsapp',
 				'chevron-left', 'chevron-right', 'chevron-down', 'chevron-top',
@@ -3160,20 +3162,22 @@ function img_picto($titlealt, $picto, $moreatt = '', $pictoisfullpath = false, $
 			$pictowithouttext = str_replace('object_', '', $pictowithouttext);
 
 		    $arrayconvpictotofa = array(
-		    	'action'=>'calendar-alt', 'address'=> 'address-book', 'setup'=>'cog', 'companies'=>'building', 'products'=>'cube', 'commercial'=>'suitcase', 'invoicing'=>'coins', 'accountancy'=>'money-check-alt',
-		    	'account'=>'university', 'accounting'=>'chart-line', 'category'=>'tag',
+		    	'account'=>'university', 'action'=>'calendar-alt', 'address'=> 'address-book', 'bank_account'=>'university',
+		    	'setup'=>'cog', 'companies'=>'building', 'products'=>'cube', 'commercial'=>'suitcase', 'invoicing'=>'coins', 'accountancy'=>'money-check-alt',
+		    	'accounting'=>'chart-line', 'category'=>'tag',
 		    	'hrm'=>'umbrella-beach', 'members'=>'users', 'ticket'=>'ticket-alt', 'globe'=>'external-link-alt',
 		    	'email'=>'at',
-		    	'edit'=>'pencil-alt', 'grip_title'=>'arrows-alt', 'grip'=>'arrows-alt',
+		    	'edit'=>'pencil-alt', 'grip_title'=>'arrows-alt', 'grip'=>'arrows-alt', 'help'=>'info-circle',
 		    	'generic'=>'file', 'holiday'=>'umbrella-beach', 'member'=>'users', 'trip'=>'wallet', 'group'=>'users',
 		    	'sign-out'=>'sign-out-alt',
 		    	'switch_off'=>'toggle-off', 'switch_on'=>'toggle-on', 'check'=>'check', 'bookmark'=>'star', 'bookmark'=>'star', 'stats' => 'chart-bar',
-		    	'bank'=>'university', 'close_title'=>'window-close', 'delete'=>'trash', 'edit'=>'pencil', 'filter'=>'filter', 'split'=>'code-branch',
+		    	'bank'=>'university', 'close_title'=>'window-close', 'delete'=>'trash', 'edit'=>'pencil-alt', 'filter'=>'filter', 'split'=>'code-branch',
 		    	'list-alt'=>'list-alt', 'calendar'=>'calendar-alt', 'calendarweek'=>'calendar-week', 'calendarmonth'=>'calendar-alt', 'calendarday'=>'calendar-day', 'calendarperuser'=>'table',
 		    	'multicurrency'=>'dollar-sign', 'other'=>'square', 'resource'=>'laptop-house',
 		    	'error'=>'exclamation-triangle', 'warning'=>'exclamation-triangle',
 		    	'phoning'=>'phone', 'phoning_fax'=>'fax', 'printer'=>'print', 'technic'=>'cogs',
-		    	'title_setup'=>'tools', 'title_accountancy'=>'money-check-alt', 'title_bank'=>'university', 'title_hrm'=>'umbrella-beach', 'title_agenda'=>'calendar-alt',
+		    	'title_setup'=>'tools', 'title_accountancy'=>'money-check-alt', 'title_bank'=>'university', 'title_hrm'=>'umbrella-beach',
+		    	'title_agenda'=>'calendar-alt',
 		    	'playdisabled'=>'play', 'preview'=>'binoculars', 'project'=>'sitemap', 'resize'=>'crop',
 		    	'uparrow'=>'mail-forward',
 		    	'jabber'=>'comment-o'
@@ -3218,25 +3222,29 @@ function img_picto($titlealt, $picto, $moreatt = '', $pictoisfullpath = false, $
 				'grip_title', 'grip', 'listlight', 'note', 'on', 'off', 'playdisabled', 'printer', 'resize', 'sign-out', 'stats', 'switch_on', 'switch_off',
 				'uparrow', '1uparrow', '1downarrow', '1leftarrow', '1rightarrow', '1uparrow_selected', '1downarrow_selected', '1leftarrow_selected', '1rightarrow_selected'
 			);
-			if (! isset($arrayconvpictotomarginleftonly[$pictowithouttext])) {
+			if (!isset($arrayconvpictotomarginleftonly[$pictowithouttext])) {
 				$marginleftonlyshort = 0;
 			}
 
 			// Add CSS
 			$arrayconvpictotomorcess = array(
-				'action'=>'bg-infoxbox-action', 'account'=>'bg-infoxbox-bank_account', 'multicurrency'=>'bg-infoxbox-bank_account',
-				'check'=>'font-status4', 'hrm'=>'bg-infoxbox-adherent', 'group'=>'bg-infoxbox-adherent', 'member'=>'bg-infoxbox-adherent', 'user'=>'bg-infoxbox-adherent', 'users'=>'bg-infoxbox-adherent',
+				'action'=>'bg-infoxbox-action', 'account'=>'bg-infoxbox-bank_account', 'bank_account'=>'bg-infoxbox-bank_account', 'cash-register'=>'bg-infoxbox-bank_account',
+				'multicurrency'=>'bg-infoxbox-bank_account',
+				'check'=>'font-status4',
+				'hrm'=>'bg-infoxbox-adherent', 'group'=>'bg-infoxbox-adherent',
+				'members'=>'bg-infoxbox-adherent', 'member'=>'bg-infoxbox-adherent', 'user'=>'bg-infoxbox-adherent', 'users'=>'bg-infoxbox-adherent',
 				'error'=>'pictoerror', 'warning'=>'pictowarning', 'switch_on'=>'font-status4',
-				'holiday'=>'bg-infoxbox-holiday', 'resource'=>'bg-infoxbox-action', 'trip'=>'bg-infoxbox-expensereport',
+				'holiday'=>'bg-infoxbox-holiday', 'resource'=>'bg-infoxbox-action', 'title_hrm'=>'bg-infoxbox-holiday', 'trip'=>'bg-infoxbox-expensereport',
+				'title_agenda'=>'bg-infoxbox-action',
 				'list-alt'=>'imgforviewmode', 'calendar'=>'imgforviewmode', 'calendarweek'=>'imgforviewmode', 'calendarmonth'=>'imgforviewmode', 'calendarday'=>'imgforviewmode', 'calendarperuser'=>'imgforviewmode'
 			);
-			if (! empty($arrayconvpictotomorcess[$pictowithouttext])) {
+			if (!empty($arrayconvpictotomorcess[$pictowithouttext])) {
 				$morecss .= ($morecss ? ' ' : '').$arrayconvpictotomorcess[$pictowithouttext];
 			}
 
 			// Define $color
 			$arrayconvpictotocolor = array(
-				'category'=>'#666', 'edit'=>'#444', 'note'=>'#999', 'error'=>'', 'listlight'=>'#999',
+				'edit'=>'#444', 'note'=>'#999', 'error'=>'', 'listlight'=>'#999',
 				'other'=>'#ddd',
 				'playdisabled'=>'#ccc', 'printer'=>'#444', 'resize'=>'#444',
 				'stats'=>'#444', 'switch_off'=>'#999', 'uparrow'=>'#555', 'warning'=>''
@@ -3504,15 +3512,16 @@ function img_view($titlealt = 'default', $float = 0, $other = '')
  *
  *  @param	string	$titlealt   Text on alt and title of image. Alt only if param notitle is set to 1. If text is "TextA:TextB", use Text A on alt and Text B on title.
  *	@param  string	$other      Add more attributes on img
+ *  @param	string	$morecss	More CSS
  *  @return string      		Retourne tag img
  */
-function img_delete($titlealt = 'default', $other = 'class="pictodelete"')
+function img_delete($titlealt = 'default', $other = 'class="pictodelete"', $morecss = '')
 {
 	global $langs;
 
 	if ($titlealt == 'default') $titlealt = $langs->trans('Delete');
 
-	return img_picto($titlealt, 'delete.png', $other);
+	return img_picto($titlealt, 'delete.png', $other, false, 0, 0, '', $morecss);
 }
 
 /**
@@ -4166,12 +4175,12 @@ function getTitleFieldOfList($name, $thead = 0, $file = "", $field = "", $begin 
 			if (preg_match('/^DESC/', $sortorder)) {
 				//$out.= '<a href="'.$file.'?sortfield='.$field.'&sortorder=asc&begin='.$begin.$options.'">'.img_down("A-Z",0).'</a>';
 				//$out.= '<a href="'.$file.'?sortfield='.$field.'&sortorder=desc&begin='.$begin.$options.'">'.img_up("Z-A",1).'</a>';
-				$sortimg .= '<span class="nowrap">'.img_up("Z-A", 0).'</span>';
+				$sortimg .= '<span class="nowrap">'.img_up("Z-A", 0, 'paddingleft').'</span>';
 			}
 			if (preg_match('/^ASC/', $sortorder)) {
 				//$out.= '<a href="'.$file.'?sortfield='.$field.'&sortorder=asc&begin='.$begin.$options.'">'.img_down("A-Z",1).'</a>';
 				//$out.= '<a href="'.$file.'?sortfield='.$field.'&sortorder=desc&begin='.$begin.$options.'">'.img_up("Z-A",0).'</a>';
-				$sortimg .= '<span class="nowrap">'.img_down("A-Z", 0).'</span>';
+				$sortimg .= '<span class="nowrap">'.img_down("A-Z", 0, 'paddingleft').'</span>';
 			}
 		}
 	}
@@ -5640,7 +5649,7 @@ function dol_string_onlythesehtmltags($stringtoclean, $cleanalsosomestyles = 1)
 	$allowed_tags_string = '<'.$allowed_tags_string.'>';
 
 	if ($cleanalsosomestyles) {
-		$stringtoclean = preg_replace('/position\s*:\s*(absolute|fixed)\s*!\s*important/', '', $stringtoclean);	// Note: If hacker try to introduce css comment into string to bypass this regex, the string must also be encoded by the dol_htmlentitiesbr during output so it become harmless
+		$stringtoclean = preg_replace('/position\s*:\s*(absolute|fixed)\s*!\s*important/', '', $stringtoclean); // Note: If hacker try to introduce css comment into string to bypass this regex, the string must also be encoded by the dol_htmlentitiesbr during output so it become harmless
 	}
 
 	$temp = strip_tags($stringtoclean, $allowed_tags_string);

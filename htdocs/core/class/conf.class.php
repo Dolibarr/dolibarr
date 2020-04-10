@@ -172,10 +172,10 @@ class Conf
 				if ($key)
 				{
 					// Allow constants values to be overridden by environment variables
-					if (isset($_SERVER['DOLIBARR_' . $key])) {
-						$value=$_SERVER['DOLIBARR_' . $key];
-					} elseif (isset($_ENV['DOLIBARR_' . $key])) {
-						$value=$_ENV['DOLIBARR_' . $key];
+					if (isset($_SERVER['DOLIBARR_'.$key])) {
+						$value = $_SERVER['DOLIBARR_'.$key];
+					} elseif (isset($_ENV['DOLIBARR_'.$key])) {
+						$value = $_ENV['DOLIBARR_'.$key];
 					}
 
 					//if (! defined("$key")) define("$key", $value);	// In some cases, the constant might be already forced (Example: SYSLOG_HANDLERS during install)

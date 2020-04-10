@@ -33,7 +33,7 @@ function dolMd2Html($content, $parser = 'parsedown', $replaceimagepath = null)
 {
     if (is_array($replaceimagepath))
     {
-        foreach($replaceimagepath as $key => $val)
+        foreach ($replaceimagepath as $key => $val)
         {
             $keytoreplace = ']('.$key;
             $valafter = ']('.$val;
@@ -67,7 +67,7 @@ function dolMd2Asciidoc($content, $parser = 'dolibarr', $replaceimagepath = null
 {
     if (is_array($replaceimagepath))
     {
-        foreach($replaceimagepath as $key => $val)
+        foreach ($replaceimagepath as $key => $val)
         {
             $keytoreplace = ']('.$key;
             $valafter = ']('.$val;
