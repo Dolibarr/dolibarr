@@ -379,7 +379,6 @@ if ($result > 0)
 		print $formfile->getDocumentsViewSmall('supplier_payment', $object, $societe->default_lang);
 
 		$somethingshown = $formfile->numoffiles;
-
 	}
 
 	print '</div><div class="fichehalfright"><div class="ficheaddleft">';

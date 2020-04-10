@@ -2046,7 +2046,7 @@ class FormFile
 	private function _getDocumentRootPath($module, CommonObject $object = null)
 	{
 		global $conf;
-		
+
 		// hard-coded
 		// TODO: should be replaced with a single dir or a multi dir in the next time (Sekan. T, 2020-04-10)
 		switch($module)
@@ -2058,11 +2058,11 @@ class FormFile
 
 			// TODO: please check if this is correct
 			case "bom":						return $conf->bom->dir_output."/bom";
-			
+
 			// TODO: please check if this is correct
 			case "mrp:mo":					return $conf->mrp->dir_output."/mo";
 		}
-		
+
 		// single dir
 		switch($module)
 		{
@@ -2110,7 +2110,7 @@ class FormFile
 
 	/**
 	 * Check if the given user can generate document in the given module
-	 * 
+	 *
 	 * @param User			$user		The user to check
 	 * @param string		$module		The module to check
 	 * @param CommonObject	$name		(optional) A additional object that contains extra security parameters to check
@@ -2155,7 +2155,7 @@ class FormFile
 			case "usergroup":				return $user->rights->user->user->creer;
 			case "website":					return $user->rights->website->read;
 		}
-		
+
 		// extended checks (donation, project, product) need a object
 
 		if($module === "donation")
@@ -2202,7 +2202,7 @@ class FormFile
 
 	/**
 	 * Check if the given user can delete documents in the given module
-	 * 
+	 *
 	 * @param User			$user		The user to check
 	 * @param string		$module		The module to check
 	 * @param CommonObject	$name		(optional) A additional object that contains extra security parameters to check
