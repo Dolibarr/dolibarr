@@ -168,7 +168,7 @@ class Lettering extends BookKeeping
 					if ($object->code_compta_fournisseur != "") {
 						$sql .= "   bk.subledger_account = '".$object->code_compta_fournisseur."' ";
 					}
-					$sql .= " )  ";
+					$sql .= " )";
 
 					$resql2 = $this->db->query($sql);
 					if ($resql2) {
@@ -217,7 +217,7 @@ class Lettering extends BookKeeping
 		}
 		if ($error) {
 			foreach ($this->errors as $errmsg) {
-				dol_syslog(get_class($this)."::".__METHOD__.$errmsg, LOG_ERR);
+				dol_syslog(__METHOD__.' '.$errmsg, LOG_ERR);
 				$this->error .= ($this->error ? ', '.$errmsg : $errmsg);
 			}
 			return -1 * $error;
@@ -236,8 +236,6 @@ class Lettering extends BookKeeping
 	{
 		$error = 0;
 		$lettre = 'AAA';
-
-		dol_syslog(get_class($this)."::".__METHOD__, LOG_DEBUG);
 
 		$sql = "SELECT DISTINCT lettering_code FROM ".MAIN_DB_PREFIX."accounting_bookkeeping WHERE ";
 		$sql .= " lettering_code != '' ORDER BY lettering_code DESC limit 1;  ";
