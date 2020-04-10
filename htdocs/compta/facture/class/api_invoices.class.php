@@ -1570,4 +1570,56 @@ class Invoices extends DolibarrApi
         }
         return $invoice;
     }
+
+    /**
+     * Generate an invoice document
+     *
+     * @param   int $id             Invoice ID
+     * @param   string $modele      Generator to use.
+     * @param   int $hidedetails    Hide details of lines
+     * @param   int $hidedesc       Hide description
+     * @param   int $hideref        Hide ref
+     *
+     * @url PUT    {id}/generatedocument
+     *
+     * @return  array
+     * FIXME An error 403 is returned if the request has an empty body.
+     * Error message: "Forbidden: Content type `text/plain` is not supported."
+     * Workaround: send this in the body
+     * {
+     *   "modele": '',
+     *   "hidedetails": 0,
+     *   "hidedesc": 0,
+     *   "hideref": 0
+     * }
+     */
+    public function generateDocument($id, $modele="crabe", $hidedetails=0, $hidedesc=0, $hideref=0)
+    {
+        if(! DolibarrApiAccess::$user->rights->facture->creer) {
+            throw new RestException(401);
+        }
+        $result = $this->invoice->fetch($id);
+        if( ! $result ) {
+            throw new RestException(404, 'Invoice not found');
+        }
+
+        if( ! DolibarrApi::_checkAccessToResource('facture',$this->invoice->id)) {
+            throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
+        }
+
+        $result = $this->invoice->generateDocument($modele, NULL, $hidedetails, $hidedesc, $hideref);
+        if ($result == 0) {
+            throw new RestException(500, 'Error nothing done. May be object is already generated');
+        }
+        if ($result < 0) {
+            throw new RestException(500, 'Error when validating invoice: '.$this->invoice->error);
+        }
+
+        return array(
+            'success' => array(
+                'code' => 200,
+                'message' => 'Invoice document generated',
+            )
+        );
+    }
 }
