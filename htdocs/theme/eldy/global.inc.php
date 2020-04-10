@@ -3241,7 +3241,7 @@ td.evenodd, tr.nohoverpair td, #trlinefordates td {
 	background: var(--colorbacklinepair1) !important;
 }
 .trforbreak td {
-	font-weight: bold;
+	font-weight: 500;
     border-bottom: 1pt solid black !important;
 	/* background-color: #<?php echo colorArrayToHex(colorStringToArray($colorbacklinebreak)); ?> !important; */
 }

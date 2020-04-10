@@ -343,7 +343,7 @@ if ($result)
     		// Show break line
     		print '<tr class="oddeven trforbreak">';
     		print '<td class="maxwidthonsmartphone tdoverflowonsmartphone">';
-    		print img_object('', $picto, 'class="pictoobjectwidth"').' '.$objMod->getName();
+    		print img_object('', $picto, 'class="pictoobjectwidth paddingright"').' '.$objMod->getName();
     		print '<a name="'.$objMod->getName().'"></a>';
     		print '</td>';
     		if (($caneditperms && empty($objMod->rights_admin_allowed)) || empty($object->admin))
