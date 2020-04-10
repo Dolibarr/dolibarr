@@ -485,8 +485,8 @@ class Entrepot extends CommonObject
 				$this->zip            = $obj->zip;
 				$this->town           = $obj->town;
 				$this->country_id     = $obj->country_id;
-				$this->phone     	  = $obj->phone;
-				$this->fax	     	  = $obj->fax;
+				$this->phone = $obj->phone;
+				$this->fax = $obj->fax;
 
                 // Retreive all extrafield
                 // fetch optionals attributes and labels

@@ -36,7 +36,7 @@ class MyObjectTest extends \PHPUnit_Framework_TestCase
 	 */
 	public static function setUpBeforeClass()
 	{
-		fwrite(STDOUT, __METHOD__ . "\n");
+		fwrite(STDOUT, __METHOD__."\n");
 	}
 
 	/**
@@ -45,7 +45,7 @@ class MyObjectTest extends \PHPUnit_Framework_TestCase
 	 */
 	protected function setUp()
 	{
-		fwrite(STDOUT, __METHOD__ . "\n");
+		fwrite(STDOUT, __METHOD__."\n");
 	}
 
 	/**
@@ -54,7 +54,7 @@ class MyObjectTest extends \PHPUnit_Framework_TestCase
 	 */
 	protected function assertPreConditions()
 	{
-		fwrite(STDOUT, __METHOD__ . "\n");
+		fwrite(STDOUT, __METHOD__."\n");
 	}
 
 	/**
@@ -63,7 +63,7 @@ class MyObjectTest extends \PHPUnit_Framework_TestCase
 	 */
 	public function testSomething()
 	{
-		fwrite(STDOUT, __METHOD__ . "\n");
+		fwrite(STDOUT, __METHOD__."\n");
 		// TODO: test something
 		$this->assertTrue(true);
 	}
@@ -74,7 +74,7 @@ class MyObjectTest extends \PHPUnit_Framework_TestCase
 	 */
 	protected function assertPostConditions()
 	{
-		fwrite(STDOUT, __METHOD__ . "\n");
+		fwrite(STDOUT, __METHOD__."\n");
 	}
 
 	/**
@@ -83,7 +83,7 @@ class MyObjectTest extends \PHPUnit_Framework_TestCase
 	 */
 	protected function tearDown()
 	{
-		fwrite(STDOUT, __METHOD__ . "\n");
+		fwrite(STDOUT, __METHOD__."\n");
 	}
 
 	/**
@@ -92,7 +92,7 @@ class MyObjectTest extends \PHPUnit_Framework_TestCase
 	 */
 	public static function tearDownAfterClass()
 	{
-		fwrite(STDOUT, __METHOD__ . "\n");
+		fwrite(STDOUT, __METHOD__."\n");
 	}
 
 	/**
@@ -104,7 +104,7 @@ class MyObjectTest extends \PHPUnit_Framework_TestCase
 	 */
 	protected function onNotSuccessfulTest(Exception $e)
 	{
-		fwrite(STDOUT, __METHOD__ . "\n");
+		fwrite(STDOUT, __METHOD__."\n");
 		throw $e;
 	}
 }

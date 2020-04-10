@@ -42,11 +42,11 @@ class ActionsCardCompany extends ActionsCardCommon
 	 */
     public function __construct($db, $dirmodule, $targetmodule, $canvas, $card)
 	{
-        $this->db				= $db;
-        $this->dirmodule		= $dirmodule;
-        $this->targetmodule		= $targetmodule;
-        $this->canvas			= $canvas;
-        $this->card				= $card;
+        $this->db = $db;
+        $this->dirmodule = $dirmodule;
+        $this->targetmodule = $targetmodule;
+        $this->canvas = $canvas;
+        $this->card = $card;
 	}
 
     /**
@@ -59,11 +59,11 @@ class ActionsCardCompany extends ActionsCardCommon
     {
         global $langs;
 
-        $out='';
+        $out = '';
 
-        if ($action == 'view')      $out.= $langs->trans("ThirdParty");
-        if ($action == 'edit')      $out.= $langs->trans("EditCompany");
-        if ($action == 'create')    $out.= $langs->trans("NewCompany");
+        if ($action == 'view')      $out .= $langs->trans("ThirdParty");
+        if ($action == 'edit')      $out .= $langs->trans("EditCompany");
+        if ($action == 'create')    $out .= $langs->trans("NewCompany");
 
         return $out;
     }
@@ -90,7 +90,7 @@ class ActionsCardCompany extends ActionsCardCommon
 
         $this->tpl['title'] = load_fiche_titre($this->getTitle($action));
 
-        $this->tpl['profid1'] 	= $this->object->idprof1;
+        $this->tpl['profid1'] = $this->object->idprof1;
 		$this->tpl['profid2'] 	= $this->object->idprof2;
 		$this->tpl['profid3'] 	= $this->object->idprof3;
 		$this->tpl['profid4'] 	= $this->object->idprof4;
@@ -98,25 +98,25 @@ class ActionsCardCompany extends ActionsCardCommon
 		if ($conf->use_javascript_ajax && empty($conf->global->MAIN_DISABLEVATCHECK))
 		{
 			$js = "\n";
-	        $js.= '<script language="JavaScript" type="text/javascript">';
-	        $js.= "function CheckVAT(a) {\n";
-	        $js.= "newpopup('".DOL_URL_ROOT."/societe/checkvat/checkVatPopup.php?vatNumber='+a,'".dol_escape_js($langs->trans("VATIntraCheckableOnEUSite"))."',500,230);\n";
-	        $js.= "}\n";
-	        $js.= '</script>';
-	        $js.= "\n";
+	        $js .= '<script language="JavaScript" type="text/javascript">';
+	        $js .= "function CheckVAT(a) {\n";
+	        $js .= "newpopup('".DOL_URL_ROOT."/societe/checkvat/checkVatPopup.php?vatNumber='+a,'".dol_escape_js($langs->trans("VATIntraCheckableOnEUSite"))."',500,230);\n";
+	        $js .= "}\n";
+	        $js .= '</script>';
+	        $js .= "\n";
 			$this->tpl['js_checkVatPopup'] = $js;
 		}
 
 		if ($action == 'create' || $action == 'edit')
 		{
-			for ($i=1; $i<=4; $i++)
+			for ($i = 1; $i <= 4; $i++)
 			{
 				$this->tpl['langprofid'.$i]		= $langs->transcountry('ProfId'.$i, $this->object->country_code);
 				$this->tpl['showprofid'.$i]		= $formcompany->get_input_id_prof($i, 'idprof'.$i, $this->tpl['profid'.$i], $this->object->country_code);
 			}
 
 			// Type
-			$this->tpl['select_companytype']	= $form->selectarray("typent_id", $formcompany->typent_array(0), $this->object->typent_id);
+			$this->tpl['select_companytype'] = $form->selectarray("typent_id", $formcompany->typent_array(0), $this->object->typent_id);
 
 			// Juridical Status
 			$this->tpl['select_juridicalstatus'] = $formcompany->select_juridicalstatus($this->object->forme_juridique_code, $this->object->country_code);
@@ -125,19 +125,19 @@ class ActionsCardCompany extends ActionsCardCommon
 			$this->tpl['select_workforce'] = $form->selectarray("effectif_id", $formcompany->effectif_array(0), $this->object->effectif_id);
 
 			// VAT intra
-			$s='<input type="text" class="flat" name="tva_intra" size="12" maxlength="20" value="'.$this->object->tva_intra.'">';
+			$s = '<input type="text" class="flat" name="tva_intra" size="12" maxlength="20" value="'.$this->object->tva_intra.'">';
 			if (empty($conf->global->MAIN_DISABLEVATCHECK))
 			{
-				$s.=' ';
+				$s .= ' ';
 
 				if ($conf->use_javascript_ajax)
 				{
-					$s.='<a href="#" onclick="javascript: CheckVAT(document.formsoc.tva_intra.value);">'.$langs->trans("VATIntraCheck").'</a>';
-					$this->tpl['tva_intra'] =  $form->textwithpicto($s, $langs->trans("VATIntraCheckDesc", $langs->transnoentitiesnoconv("VATIntraCheck")), 1);
+					$s .= '<a href="#" onclick="javascript: CheckVAT(document.formsoc.tva_intra.value);">'.$langs->trans("VATIntraCheck").'</a>';
+					$this->tpl['tva_intra'] = $form->textwithpicto($s, $langs->trans("VATIntraCheckDesc", $langs->transnoentitiesnoconv("VATIntraCheck")), 1);
 				}
 				else
 				{
-					$this->tpl['tva_intra'] =  $s.'<a href="'.$langs->transcountry("VATIntraCheckURL", $this->object->country_id).'" target="_blank">'.img_picto($langs->trans("VATIntraCheckableOnEUSite"), 'help').'</a>';
+					$this->tpl['tva_intra'] = $s.'<a href="'.$langs->transcountry("VATIntraCheckURL", $this->object->country_id).'" target="_blank">'.img_picto($langs->trans("VATIntraCheckableOnEUSite"), 'help').'</a>';
 				}
 			}
 			else
@@ -153,25 +153,25 @@ class ActionsCardCompany extends ActionsCardCommon
 				$this->tpl['action_delete'] = $form->formconfirm($_SERVER["PHP_SELF"]."?socid=".$this->object->id, $langs->trans("DeleteACompany"), $langs->trans("ConfirmDeleteCompany"), "confirm_delete", '', 0, "1,action-delete");
 			}
 
-			for ($i=1; $i<=4; $i++)
+			for ($i = 1; $i <= 4; $i++)
 			{
 				$this->tpl['langprofid'.$i]		= $langs->transcountry('ProfId'.$i, $this->object->country_code);
 				$this->tpl['checkprofid'.$i]	= $this->object->id_prof_check($i, $this->object);
-				$this->tpl['urlprofid'.$i]		= $this->object->id_prof_url($i, $this->object);
+				$this->tpl['urlprofid'.$i] = $this->object->id_prof_url($i, $this->object);
 			}
 
 			// TVA intra
 			if ($this->object->tva_intra)
 			{
-				$s=$this->object->tva_intra;
-				$s.='<input type="hidden" name="tva_intra" size="12" maxlength="20" value="'.$this->object->tva_intra.'">';
+				$s = $this->object->tva_intra;
+				$s .= '<input type="hidden" name="tva_intra" size="12" maxlength="20" value="'.$this->object->tva_intra.'">';
 				if (empty($conf->global->MAIN_DISABLEVATCHECK))
 				{
-					$s.=' &nbsp; ';
+					$s .= ' &nbsp; ';
 
 					if ($conf->use_javascript_ajax)
 					{
-						$s.='<a href="#" onclick="javascript: CheckVAT(document.formsoc.tva_intra.value);">'.$langs->trans("VATIntraCheck").'</a>';
+						$s .= '<a href="#" onclick="javascript: CheckVAT(document.formsoc.tva_intra.value);">'.$langs->trans("VATIntraCheck").'</a>';
 						$this->tpl['tva_intra'] = $form->textwithpicto($s, $langs->trans("VATIntraCheckDesc", $langs->transnoentitiesnoconv("VATIntraCheck")), 1);
 					}
 					else
@@ -194,8 +194,8 @@ class ActionsCardCompany extends ActionsCardCommon
 			{
 				$socm = new Societe($this->db);
 				$socm->fetch($this->object->parent);
-				$this->tpl['parent_company'] = $socm->getNomUrl(1).' '.($socm->code_client?"(".$socm->code_client.")":"");
-				$this->tpl['parent_company'].= ($socm->town ? ' - ' . $socm->town : '');
+				$this->tpl['parent_company'] = $socm->getNomUrl(1).' '.($socm->code_client ? "(".$socm->code_client.")" : "");
+				$this->tpl['parent_company'] .= ($socm->town ? ' - '.$socm->town : '');
 			}
 			else
 			{

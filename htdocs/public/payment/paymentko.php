@@ -265,7 +265,7 @@ $tag = GETPOST('tag', 'alpha');
 require_once DOL_DOCUMENT_ROOT.'/core/lib/payments.lib.php';
 if ($type || $tag)
 {
-	$urlsubscription =getOnlinePaymentUrl(0, ($type?$type:'free'), $ref, $FinalPaymentAmt, $tag);
+	$urlsubscription = getOnlinePaymentUrl(0, ($type ? $type : 'free'), $ref, $FinalPaymentAmt, $tag);
 
 	print $langs->trans("ClickHereToTryAgain", $urlsubscription);
 }

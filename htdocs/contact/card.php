@@ -76,15 +76,15 @@ if (!empty($canvas))
 }
 
 // Security check
-if ($user->socid) $socid=$user->socid;
+if ($user->socid) $socid = $user->socid;
 $result = restrictedArea($user, 'contact', $id, 'socpeople&societe', '', '', 'rowid', $objcanvas); // If we create a contact with no company (shared contacts), no check on write permission
 
 // Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
-$hookmanager->initHooks(array('contactcard','globalcard'));
+$hookmanager->initHooks(array('contactcard', 'globalcard'));
 
 if ($id > 0) $object->fetch($id);
 
-if (! ($object->id > 0) && $action == 'view')
+if (!($object->id > 0) && $action == 'view')
 {
 	$langs->load("errors");
 	print($langs->trans('ErrorRecordNotFound'));
@@ -95,14 +95,14 @@ if (! ($object->id > 0) && $action == 'view')
  *	Actions
  */
 
-$parameters=array('id'=>$id, 'objcanvas'=>$objcanvas);
-$reshook=$hookmanager->executeHooks('doActions', $parameters, $object, $action);    // Note that $action and $object may have been modified by some hooks
+$parameters = array('id'=>$id, 'objcanvas'=>$objcanvas);
+$reshook = $hookmanager->executeHooks('doActions', $parameters, $object, $action); // Note that $action and $object may have been modified by some hooks
 if ($reshook < 0) setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
 
 if (empty($reshook))
 {
     // Cancel
-    if (GETPOST('cancel', 'alpha') && ! empty($backtopage))
+    if (GETPOST('cancel', 'alpha') && !empty($backtopage))
     {
         header("Location: ".$backtopage);
         exit;

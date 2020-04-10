@@ -854,8 +854,8 @@ class Task extends CommonObject
 		if ($filteronprojstatus && $filteronprojstatus != '-1') $sql .= " AND p.fk_statut IN (".$filteronprojstatus.")";
 		if ($morewherefilter) $sql .= $morewherefilter;
 		// Add where from extra fields
-		$extrafieldsobjectkey='projet_task';
-		$extrafieldsobjectprefix='efpt.';
+		$extrafieldsobjectkey = 'projet_task';
+		$extrafieldsobjectprefix = 'efpt.';
 		include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_sql.tpl.php';
 		// Add where from hooks
 		$parameters = array();

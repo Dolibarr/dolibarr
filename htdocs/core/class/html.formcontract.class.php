@@ -35,7 +35,7 @@ class FormContract
     /**
 	 * @var string Error code (or message)
 	 */
-	public $error='';
+	public $error = '';
 
 
     /**
@@ -63,31 +63,31 @@ class FormContract
     public function select_contract($socid = -1, $selected = '', $htmlname = 'contrattid', $maxlength = 16, $showempty = 1)
     {
         // phpcs:enable
-		global $db,$user,$conf,$langs;
+		global $db, $user, $conf, $langs;
 
 		$hideunselectables = false;
-		if (! empty($conf->global->CONTRACT_HIDE_UNSELECTABLES)) $hideunselectables = true;
+		if (!empty($conf->global->CONTRACT_HIDE_UNSELECTABLES)) $hideunselectables = true;
 
 		// Search all contacts
 		$sql = 'SELECT c.rowid, c.ref, c.fk_soc, c.statut';
-		$sql.= ' FROM '.MAIN_DB_PREFIX .'contrat as c';
-		$sql.= " WHERE c.entity = ".$conf->entity;
+		$sql .= ' FROM '.MAIN_DB_PREFIX.'contrat as c';
+		$sql .= " WHERE c.entity = ".$conf->entity;
 		//if ($contratListId) $sql.= " AND c.rowid IN (".$contratListId.")";
 		if ($socid > 0)
 		{
 			// CONTRACT_ALLOW_TO_LINK_FROM_OTHER_COMPANY is 'all' or a list of ids separated by coma.
 		    if (empty($conf->global->CONTRACT_ALLOW_TO_LINK_FROM_OTHER_COMPANY)) {
-		        $sql.= " AND (c.fk_soc=".$socid." OR c.fk_soc IS NULL)";
+		        $sql .= " AND (c.fk_soc=".$socid." OR c.fk_soc IS NULL)";
 			} elseif ($conf->global->CONTRACT_ALLOW_TO_LINK_FROM_OTHER_COMPANY != 'all') {
-		        $sql.= " AND (c.fk_soc IN (".$socid.", ".$conf->global->CONTRACT_ALLOW_TO_LINK_FROM_OTHER_COMPANY.") ";
-				$sql.= " OR c.fk_soc IS NULL)";
+		        $sql .= " AND (c.fk_soc IN (".$socid.", ".$conf->global->CONTRACT_ALLOW_TO_LINK_FROM_OTHER_COMPANY.") ";
+				$sql .= " OR c.fk_soc IS NULL)";
 		    }
 		}
-		if ($socid == 0) $sql.= " AND (c.fk_soc = 0 OR c.fk_soc IS NULL)";
-		$sql.= " ORDER BY c.ref ";
+		if ($socid == 0) $sql .= " AND (c.fk_soc = 0 OR c.fk_soc IS NULL)";
+		$sql .= " ORDER BY c.ref ";
 
 		dol_syslog(get_class($this)."::select_contract", LOG_DEBUG);
-		$resql=$db->query($sql);
+		$resql = $db->query($sql);
 		if ($resql)
 		{
 			print '<select class="flat" name="'.$htmlname.'">';
@@ -100,13 +100,13 @@ class FormContract
 				{
 					$obj = $db->fetch_object($resql);
 					// If we ask to filter on a company and user has no permission to see all companies and project is linked to another company, we hide project.
-					if ($socid > 0 && (empty($obj->fk_soc) || $obj->fk_soc == $socid) && ! $user->rights->societe->lire)
+					if ($socid > 0 && (empty($obj->fk_soc) || $obj->fk_soc == $socid) && !$user->rights->societe->lire)
 					{
 						// Do nothing
 					}
 					else
 					{
-						$labeltoshow=dol_trunc($obj->ref, 18);
+						$labeltoshow = dol_trunc($obj->ref, 18);
 						//if ($obj->public) $labeltoshow.=' ('.$langs->trans("SharedProject").')';
 						//else $labeltoshow.=' ('.$langs->trans("Private").')';
 						if (!empty($selected) && $selected == $obj->rowid && $obj->statut > 0)
@@ -115,30 +115,30 @@ class FormContract
 						}
 						else
 						{
-							$disabled=0;
-							if ( $obj->statut ==  0)
+							$disabled = 0;
+							if ($obj->statut == 0)
 							{
-								$disabled=1;
-								$labeltoshow.=' ('.$langs->trans("Draft").')';
+								$disabled = 1;
+								$labeltoshow .= ' ('.$langs->trans("Draft").')';
 							}
-							if ( empty($conf->global->CONTRACT_ALLOW_TO_LINK_FROM_OTHER_COMPANY) &&  $socid > 0 && (! empty($obj->fk_soc) && $obj->fk_soc != $socid))
+							if (empty($conf->global->CONTRACT_ALLOW_TO_LINK_FROM_OTHER_COMPANY) && $socid > 0 && (!empty($obj->fk_soc) && $obj->fk_soc != $socid))
 							{
-								$disabled=1;
-								$labeltoshow.=' - '.$langs->trans("LinkedToAnotherCompany");
+								$disabled = 1;
+								$labeltoshow .= ' - '.$langs->trans("LinkedToAnotherCompany");
 							}
 
 							if ($hideunselectables && $disabled)
 							{
-								$resultat='';
+								$resultat = '';
 							}
 							else
 							{
-								$resultat='<option value="'.$obj->rowid.'"';
-								if ($disabled) $resultat.=' disabled';
+								$resultat = '<option value="'.$obj->rowid.'"';
+								if ($disabled) $resultat .= ' disabled';
 								//if ($obj->public) $labeltoshow.=' ('.$langs->trans("Public").')';
 								//else $labeltoshow.=' ('.$langs->trans("Private").')';
-								$resultat.='>'.$labeltoshow;
-								$resultat.='</option>';
+								$resultat .= '>'.$labeltoshow;
+								$resultat .= '</option>';
 							}
 							print $resultat;
 						}
@@ -152,7 +152,7 @@ class FormContract
 			if (!empty($conf->use_javascript_ajax))
 			{
 				// Make select dynamic
-				include_once DOL_DOCUMENT_ROOT . '/core/lib/ajax.lib.php';
+				include_once DOL_DOCUMENT_ROOT.'/core/lib/ajax.lib.php';
 				print ajax_combobox($htmlname);
 			}
 

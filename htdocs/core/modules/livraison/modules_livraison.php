@@ -39,7 +39,7 @@ abstract class ModelePDFDeliveryOrder extends CommonDocGenerator
 	/**
 	 * @var string Error code (or message)
 	 */
-	public $error='';
+	public $error = '';
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
@@ -54,11 +54,11 @@ abstract class ModelePDFDeliveryOrder extends CommonDocGenerator
 		// phpcs:enable
 		global $conf;
 
-		$type='delivery';
-		$liste=array();
+		$type = 'delivery';
+		$liste = array();
 
 		include_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
-		$liste=getListOfModels($db, $type, $maxfilenamelength);
+		$liste = getListOfModels($db, $type, $maxfilenamelength);
 
 		return $liste;
 	}
@@ -75,7 +75,7 @@ abstract class ModeleNumRefDeliveryOrder
 	/**
 	 * @var string Error code (or message)
 	 */
-	public $error='';
+	public $error = '';
 
 	/**
 	 * Return if a module can be used or not

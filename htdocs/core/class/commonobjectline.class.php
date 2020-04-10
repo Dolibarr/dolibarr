@@ -76,7 +76,7 @@ abstract class CommonObjectLine extends CommonObject
 
 		$sql = 'select '.$label_type.' from '.MAIN_DB_PREFIX.'c_units where rowid='.$this->fk_unit;
 		$resql = $this->db->query($sql);
-		if($resql && $this->db->num_rows($resql) > 0)
+		if ($resql && $this->db->num_rows($resql) > 0)
 		{
 			$res = $this->db->fetch_array($resql);
 			$label = $res[$label_type];
@@ -85,7 +85,7 @@ abstract class CommonObjectLine extends CommonObject
 		}
 		else
 		{
-			$this->error=$this->db->error().' sql='.$sql;
+			$this->error = $this->db->error().' sql='.$sql;
 			dol_syslog(get_class($this)."::getLabelOfUnit Error ".$this->error, LOG_ERR);
 			return -1;
 		}

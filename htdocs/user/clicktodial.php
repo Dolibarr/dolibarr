@@ -28,25 +28,25 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/usergroups.lib.php';
 // Load translation files required by page
 $langs->loadLangs(array('users', 'admin'));
 
-$action=GETPOST('action', 'alpha');
-$id=GETPOST('id', 'int');
+$action = GETPOST('action', 'alpha');
+$id = GETPOST('id', 'int');
 
 // Security check
-$socid=0;
+$socid = 0;
 if ($user->socid > 0) $socid = $user->socid;
-$feature2 = (($socid && $user->rights->user->self->creer)?'':'user');
+$feature2 = (($socid && $user->rights->user->self->creer) ? '' : 'user');
 
 $result = restrictedArea($user, 'user', $id, 'user&user', $feature2);
 
 // Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
-$hookmanager->initHooks(array('usercard','globalcard'));
+$hookmanager->initHooks(array('usercard', 'globalcard'));
 
 /*
  * Actions
  */
 
-$parameters=array('id'=>$socid);
-$reshook=$hookmanager->executeHooks('doActions', $parameters, $object, $action);    // Note that $action and $object may have been modified by some hooks
+$parameters = array('id'=>$socid);
+$reshook = $hookmanager->executeHooks('doActions', $parameters, $object, $action); // Note that $action and $object may have been modified by some hooks
 if ($reshook < 0) setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
 
 if (empty($reshook)) {

@@ -36,7 +36,7 @@ class ActionsCardService
 	public $tpl = array();
 
 	// List of fiels for action=list
-	public $field_list =array();
+	public $field_list = array();
     public $list_datas = array();
 
 
@@ -50,15 +50,15 @@ class ActionsCardService
 	 */
 	public function __construct($db, $targetmodule, $canvas, $card)
 	{
-		$this->db 				= $db;
-		$this->targetmodule     = $targetmodule;
+		$this->db = $db;
+		$this->targetmodule = $targetmodule;
         $this->canvas           = $canvas;
         $this->card             = $card;
 
-		$this->module 			= "service";
-		$this->name 			= "service";
-		$this->definition 		= "Services canvas";
-		$this->fieldListName	= "product_service";
+		$this->module = "service";
+		$this->name = "service";
+		$this->definition = "Services canvas";
+		$this->fieldListName = "product_service";
 		$this->next_prev_filter = "canvas='service'";
 	}
 
@@ -80,12 +80,12 @@ class ActionsCardService
 		global $form, $formproduct;
 
    		$tmpobject = new Product($this->db);
-   		if (! empty($id) || ! empty($ref)) $tmpobject->fetch($id, $ref);
+   		if (!empty($id) || !empty($ref)) $tmpobject->fetch($id, $ref);
         $this->object = $tmpobject;
 
 		//parent::assign_values($action);
 
-	    foreach($this->object as $key => $value)
+	    foreach ($this->object as $key => $value)
         {
             $this->tpl[$key] = $value;
         }
@@ -130,10 +130,10 @@ class ActionsCardService
 
             $this->tpl['showrefnav'] = $form->showrefnav($this->object, 'ref', '', 1, 'ref');
 
-    		$titre=$langs->trans("CardProduct".$this->object->type);
-    		$picto=($this->object->type==Product::TYPE_SERVICE?'service':'product');
-    		$this->tpl['showhead']=dol_get_fiche_head($head, 'card', $titre, 0, $picto);
-            $this->tpl['showend']=dol_get_fiche_end();
+    		$titre = $langs->trans("CardProduct".$this->object->type);
+    		$picto = ($this->object->type == Product::TYPE_SERVICE ? 'service' : 'product');
+    		$this->tpl['showhead'] = dol_get_fiche_head($head, 'card', $titre, 0, $picto);
+            $this->tpl['showend'] = dol_get_fiche_end();
 
 			// Accountancy buy code
 			$this->tpl['accountancyBuyCodeKey'] = $form->editfieldkey("ProductAccountancyBuyCode", 'productaccountancycodesell', $this->accountancy_code_sell, $this, $user->rights->produit->creer);
@@ -169,10 +169,10 @@ class ActionsCardService
 		if ($action == 'create' || $action == 'edit')
 		{
     		// Status
-    		$statutarray=array('1' => $langs->trans("OnSell"), '0' => $langs->trans("NotOnSell"));
+    		$statutarray = array('1' => $langs->trans("OnSell"), '0' => $langs->trans("NotOnSell"));
     		$this->tpl['status'] = $form->selectarray('statut', $statutarray, $this->object->status);
 
-    		$statutarray=array('1' => $langs->trans("ProductStatusOnBuy"), '0' => $langs->trans("ProductStatusNotOnBuy"));
+    		$statutarray = array('1' => $langs->trans("ProductStatusOnBuy"), '0' => $langs->trans("ProductStatusNotOnBuy"));
     		$this->tpl['status_buy'] = $form->selectarray('statut_buy', $statutarray, $this->object->status_buy);
 
     		$this->tpl['description'] = $this->description;
@@ -180,15 +180,15 @@ class ActionsCardService
 
 		    // Duration unit
 			// TODO creer fonction
-			$duration_unit = '<input name="duration_unit" type="radio" value="h"'.($this->object->duration_unit=='h'?' checked':'').'>'.$langs->trans("Hour");
-			$duration_unit.= '&nbsp; ';
-			$duration_unit.= '<input name="duration_unit" type="radio" value="d"'.($this->object->duration_unit=='d'?' checked':'').'>'.$langs->trans("Day");
-			$duration_unit.= '&nbsp; ';
-			$duration_unit.= '<input name="duration_unit" type="radio" value="w"'.($this->object->duration_unit=='w'?' checked':'').'>'.$langs->trans("Week");
-			$duration_unit.= '&nbsp; ';
-			$duration_unit.= '<input name="duration_unit" type="radio" value="m"'.($this->object->duration_unit=='m'?' checked':'').'>'.$langs->trans("Month");
-			$duration_unit.= '&nbsp; ';
-			$duration_unit.= '<input name="duration_unit" type="radio" value="y"'.($this->object->duration_unit=='y'?' checked':'').'>'.$langs->trans("Year");
+			$duration_unit = '<input name="duration_unit" type="radio" value="h"'.($this->object->duration_unit == 'h' ? ' checked' : '').'>'.$langs->trans("Hour");
+			$duration_unit .= '&nbsp; ';
+			$duration_unit .= '<input name="duration_unit" type="radio" value="d"'.($this->object->duration_unit == 'd' ? ' checked' : '').'>'.$langs->trans("Day");
+			$duration_unit .= '&nbsp; ';
+			$duration_unit .= '<input name="duration_unit" type="radio" value="w"'.($this->object->duration_unit == 'w' ? ' checked' : '').'>'.$langs->trans("Week");
+			$duration_unit .= '&nbsp; ';
+			$duration_unit .= '<input name="duration_unit" type="radio" value="m"'.($this->object->duration_unit == 'm' ? ' checked' : '').'>'.$langs->trans("Month");
+			$duration_unit .= '&nbsp; ';
+			$duration_unit .= '<input name="duration_unit" type="radio" value="y"'.($this->object->duration_unit == 'y' ? ' checked' : '').'>'.$langs->trans("Year");
 			$this->tpl['duration_unit'] = $duration_unit;
 		}
 
@@ -204,15 +204,15 @@ class ActionsCardService
 			// Duration
 			if ($this->object->duration_value > 1)
 			{
-				$dur=array("h"=>$langs->trans("Hours"),"d"=>$langs->trans("Days"),"w"=>$langs->trans("Weeks"),"m"=>$langs->trans("Months"),"y"=>$langs->trans("Years"));
+				$dur = array("h"=>$langs->trans("Hours"), "d"=>$langs->trans("Days"), "w"=>$langs->trans("Weeks"), "m"=>$langs->trans("Months"), "y"=>$langs->trans("Years"));
 			}
 			elseif ($this->object->duration_value > 0)
 			{
-				$dur=array("h"=>$langs->trans("Hour"),"d"=>$langs->trans("Day"),"w"=>$langs->trans("Week"),"m"=>$langs->trans("Month"),"y"=>$langs->trans("Year"));
+				$dur = array("h"=>$langs->trans("Hour"), "d"=>$langs->trans("Day"), "w"=>$langs->trans("Week"), "m"=>$langs->trans("Month"), "y"=>$langs->trans("Year"));
 			}
 			$this->tpl['duration_unit'] = $langs->trans($dur[$this->object->duration_unit]);
 
-			$this->tpl['fiche_end']=dol_get_fiche_end();
+			$this->tpl['fiche_end'] = dol_get_fiche_end();
 		}
 
 		if ($action == 'list')
@@ -234,10 +234,10 @@ class ActionsCardService
         $this->field_list = array();
 
 		$sql = "SELECT rowid, name, alias, title, align, sort, search, visible, enabled, rang";
-		$sql.= " FROM ".MAIN_DB_PREFIX."c_field_list";
-		$sql.= " WHERE element = '".$this->db->escape($this->fieldListName)."'";
-		$sql.= " AND entity = ".$conf->entity;
-		$sql.= " ORDER BY rang ASC";
+		$sql .= " FROM ".MAIN_DB_PREFIX."c_field_list";
+		$sql .= " WHERE element = '".$this->db->escape($this->fieldListName)."'";
+		$sql .= " AND entity = ".$conf->entity;
+		$sql .= " ORDER BY rang ASC";
 
 		$resql = $this->db->query($sql);
 		if ($resql)
@@ -251,12 +251,12 @@ class ActionsCardService
 
 				$obj = $this->db->fetch_object($resql);
 
-				$fieldlist["id"]		= $obj->rowid;
-				$fieldlist["name"]		= $obj->name;
+				$fieldlist["id"] = $obj->rowid;
+				$fieldlist["name"] = $obj->name;
 				$fieldlist["alias"]		= $obj->alias;
 				$fieldlist["title"]		= $langs->trans($obj->title);
 				$fieldlist["align"]		= $obj->align;
-				$fieldlist["sort"]		= $obj->sort;
+				$fieldlist["sort"] = $obj->sort;
 				$fieldlist["search"]	= $obj->search;
 				$fieldlist["visible"]	= $obj->visible;
 				$fieldlist["enabled"]	= verifCond($obj->enabled);
@@ -288,53 +288,53 @@ class ActionsCardService
 	{
         // phpcs:enable
 		global $conf;
-		global $search_categ,$sall,$sref,$search_barcode,$snom,$catid;
+		global $search_categ, $sall, $sref, $search_barcode, $snom, $catid;
 
         $this->getFieldList();
 
 		$sql = 'SELECT DISTINCT p.rowid, p.ref, p.label, p.barcode, p.price, p.price_ttc, p.price_base_type,';
-		$sql.= ' p.fk_product_type, p.tms as datem,';
-		$sql.= ' p.duration, p.tosell as statut, p.seuil_stock_alerte';
-		$sql.= ' FROM '.MAIN_DB_PREFIX.'product as p';
+		$sql .= ' p.fk_product_type, p.tms as datem,';
+		$sql .= ' p.duration, p.tosell as statut, p.seuil_stock_alerte';
+		$sql .= ' FROM '.MAIN_DB_PREFIX.'product as p';
 		// We'll need this table joined to the select in order to filter by categ
-		if ($search_categ) $sql.= ", ".MAIN_DB_PREFIX."categorie_product as cp";
+		if ($search_categ) $sql .= ", ".MAIN_DB_PREFIX."categorie_product as cp";
 		if (GETPOST("fourn_id", 'int') > 0)
 		{
 			$fourn_id = GETPOST("fourn_id", 'int');
-			$sql.= ", ".MAIN_DB_PREFIX."product_fournisseur_price as pfp";
+			$sql .= ", ".MAIN_DB_PREFIX."product_fournisseur_price as pfp";
 		}
-		$sql.= " WHERE p.entity IN (".getEntity('product').")";
-		if ($search_categ) $sql.= " AND p.rowid = cp.fk_product";	// Join for the needed table to filter by categ
+		$sql .= " WHERE p.entity IN (".getEntity('product').")";
+		if ($search_categ) $sql .= " AND p.rowid = cp.fk_product"; // Join for the needed table to filter by categ
 		if ($sall)
 		{
-			$sql.= " AND (p.ref LIKE '%".$this->db->escape($sall)."%' OR p.label LIKE '%".$this->db->escape($sall)."%' OR p.description LIKE '%".$this->db->escape($sall)."%' OR p.note LIKE '%".$this->db->escape($sall)."%')";
+			$sql .= " AND (p.ref LIKE '%".$this->db->escape($sall)."%' OR p.label LIKE '%".$this->db->escape($sall)."%' OR p.description LIKE '%".$this->db->escape($sall)."%' OR p.note LIKE '%".$this->db->escape($sall)."%')";
 		}
-		if ($sref)     $sql.= " AND p.ref LIKE '%".$sref."%'";
-		if ($search_barcode) $sql.= " AND p.barcode LIKE '%".$search_barcode."%'";
-		if ($snom)     $sql.= " AND p.label LIKE '%".$this->db->escape($snom)."%'";
+		if ($sref)     $sql .= " AND p.ref LIKE '%".$sref."%'";
+		if ($search_barcode) $sql .= " AND p.barcode LIKE '%".$search_barcode."%'";
+		if ($snom)     $sql .= " AND p.label LIKE '%".$this->db->escape($snom)."%'";
 		if (isset($_GET["tosell"]) && dol_strlen($_GET["tosell"]) > 0)
 		{
-			$sql.= " AND p.tosell = ".$this->db->escape($_GET["tosell"]);
+			$sql .= " AND p.tosell = ".$this->db->escape($_GET["tosell"]);
 		}
 		if (isset($_GET["canvas"]) && dol_strlen($_GET["canvas"]) > 0)
 		{
-			$sql.= " AND p.canvas = '".$this->db->escape($_GET["canvas"])."'";
+			$sql .= " AND p.canvas = '".$this->db->escape($_GET["canvas"])."'";
 		}
-		if($catid)
+		if ($catid)
 		{
-			$sql.= " AND cp.fk_categorie = ".$catid;
+			$sql .= " AND cp.fk_categorie = ".$catid;
 		}
 		if ($fourn_id > 0)
 		{
-			$sql.= " AND p.rowid = pfp.fk_product AND pfp.fk_soc = ".$fourn_id;
+			$sql .= " AND p.rowid = pfp.fk_product AND pfp.fk_soc = ".$fourn_id;
 		}
 		// Insert categ filter
 		if ($search_categ)
 		{
 			$sql .= " AND cp.fk_categorie = ".$this->db->escape($search_categ);
 		}
-		$sql.= $this->db->order($sortfield, $sortorder);
-		$sql.= $this->db->plimit($limit+1, $offset);
+		$sql .= $this->db->order($sortfield, $sortorder);
+		$sql .= $this->db->plimit($limit + 1, $offset);
 
 		$this->list_datas = array();
 

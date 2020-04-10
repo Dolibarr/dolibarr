@@ -128,17 +128,17 @@ if ($object->id)
 	dol_fiche_head($head, 'photos', $title, -1, 'category');
 
 	$linkback = '<a href="'.DOL_URL_ROOT.'/categories/index.php?leftmenu=cat&type='.$type.'">'.$langs->trans("BackToList").'</a>';
-	$object->next_prev_filter = ' type = ' . $object->type;
+	$object->next_prev_filter = ' type = '.$object->type;
 	$object->ref = $object->label;
-	$morehtmlref='<br><div class="refidno"><a href="'.DOL_URL_ROOT.'/categories/index.php?leftmenu=cat&type='.$type.'">'.$langs->trans("Root").'</a> >> ';
+	$morehtmlref = '<br><div class="refidno"><a href="'.DOL_URL_ROOT.'/categories/index.php?leftmenu=cat&type='.$type.'">'.$langs->trans("Root").'</a> >> ';
 	$ways = $object->print_all_ways(" &gt;&gt; ", '', 1);
 	foreach ($ways as $way)
 	{
-	    $morehtmlref.=$way."<br>\n";
+	    $morehtmlref .= $way."<br>\n";
 	}
-	$morehtmlref.='</div>';
+	$morehtmlref .= '</div>';
 
-	dol_banner_tab($object, 'label', $linkback, ($user->socid?0:1), 'label', 'label', $morehtmlref, '&type=' . $type, 0, '', '', 1);
+	dol_banner_tab($object, 'label', $linkback, ($user->socid ? 0 : 1), 'label', 'label', $morehtmlref, '&type='.$type, 0, '', '', 1);
 
 	/*
 	 * Confirmation de la suppression de photo

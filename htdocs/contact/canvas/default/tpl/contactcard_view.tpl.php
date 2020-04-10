@@ -16,7 +16,7 @@
  */
 
 // Protection to avoid direct call of template
-if (empty($conf) || ! is_object($conf))
+if (empty($conf) || !is_object($conf))
 {
 	print "Error, template page can't be called as URL";
 	exit;
@@ -30,8 +30,8 @@ echo $this->control->tpl['showhead'];
 
 dol_htmloutput_errors($this->control->tpl['error'], $this->control->tpl['errors']);
 
-if (! empty($this->control->tpl['action_create_user'])) echo $this->control->tpl['action_create_user'];
-if (! empty($this->control->tpl['action_delete'])) echo $this->control->tpl['action_delete']; ?>
+if (!empty($this->control->tpl['action_create_user'])) echo $this->control->tpl['action_create_user'];
+if (!empty($this->control->tpl['action_delete'])) echo $this->control->tpl['action_delete']; ?>
 
 <table class="border allwidth">
 
@@ -139,7 +139,7 @@ if (empty($user->socid)) {
 		print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$this->control->tpl['id'].'&amp;action=edit&amp;canvas='.$canvas.'">'.$langs->trans('Modify').'</a>';
 	}
 
-	if (! $this->control->tpl['user_id'] && $user->rights->user->user->creer) {
+	if (!$this->control->tpl['user_id'] && $user->rights->user->user->creer) {
 		print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$this->control->tpl['id'].'&amp;action=create_user&amp;canvas='.$canvas.'">'.$langs->trans("CreateDolibarrLogin").'</a>';
 	}
 

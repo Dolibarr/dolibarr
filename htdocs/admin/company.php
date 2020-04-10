@@ -533,7 +533,7 @@ print '<td class="titlefield">'.$langs->trans("SocialNetworksInformation").'</td
 print "</tr>\n";
 
 $listofnetworks = array('facebook'=>'facebook', 'twitter'=>'twitter', 'linkedin'=>'linkedin', 'instagram'=>'instagram', 'youtube'=>'youtube', 'github'=>'github');
-foreach($listofnetworks as $networkkey => $networkicon) {
+foreach ($listofnetworks as $networkkey => $networkicon) {
 	print '<tr class="oddeven"><td>';
 	print '<label for="'.$networkkey.'url">'.$langs->trans("SocialNetworks".ucfirst($networkkey)."URL").'</label></td><td>';
 	$networkconst = 'MAIN_INFO_SOCIETE_'.strtoupper($networkkey).'_URL';

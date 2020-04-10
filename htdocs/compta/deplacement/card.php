@@ -122,7 +122,7 @@ elseif ($action == 'add' && $user->rights->deplacement->creer)
         $object->socid = (int) GETPOST('socid', 'int');
         $object->fk_user = (int) GETPOST('fk_user', 'int');
         $object->note_private = GETPOST('note_private', 'alpha');
-        $object->note_public	= GETPOST('note_public', 'alpha');
+        $object->note_public = GETPOST('note_public', 'alpha');
         $object->statut = Deplacement::STATUS_DRAFT;
 
         if (!$object->date)

@@ -45,7 +45,7 @@ function resource_prepare_head($object)
 	    $nbContact = count($object->liste_contact(-1, 'internal')) + count($object->liste_contact(-1, 'external'));
 	    $head[$h][0] = DOL_URL_ROOT.'/resource/contact.php?id='.$object->id;
 		$head[$h][1] = $langs->trans('ContactsAddresses');
-		if ($nbContact > 0) $head[$h][1].= '<span class="badge marginleftonlyshort">'.$nbContact.'</span>';
+		if ($nbContact > 0) $head[$h][1] .= '<span class="badge marginleftonlyshort">'.$nbContact.'</span>';
 		$head[$h][2] = 'contact';
 		$h++;
 	}
@@ -59,30 +59,30 @@ function resource_prepare_head($object)
 	if (empty($conf->global->MAIN_DISABLE_NOTES_TAB))
 	{
 		$nbNote = 0;
-		if(!empty($object->note_private)) $nbNote++;
-		if(!empty($object->note_public)) $nbNote++;
+		if (!empty($object->note_private)) $nbNote++;
+		if (!empty($object->note_public)) $nbNote++;
 		$head[$h][0] = DOL_URL_ROOT.'/resource/note.php?id='.$object->id;
 		$head[$h][1] = $langs->trans('Notes');
-		if ($nbNote > 0) $head[$h][1].= '<span class="badge marginleftonlyshort">'.$nbNote.'</span>';
+		if ($nbNote > 0) $head[$h][1] .= '<span class="badge marginleftonlyshort">'.$nbNote.'</span>';
 		$head[$h][2] = 'note';
 		$h++;
 	}
 
 	require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
-	$upload_dir = $conf->resource->dir_output . "/" . dol_sanitizeFileName($object->ref);
+	$upload_dir = $conf->resource->dir_output."/".dol_sanitizeFileName($object->ref);
 	$nbFiles = count(dol_dir_list($upload_dir, 'files', 0, '', '(\.meta|_preview.*\.png)$'));
 	$head[$h][0] = DOL_URL_ROOT.'/resource/document.php?id='.$object->id;
 	$head[$h][1] = $langs->trans("Documents");
-	if($nbFiles > 0) $head[$h][1].= '<span class="badge marginleftonlyshort">'.$nbFiles.'</span>';
+	if ($nbFiles > 0) $head[$h][1] .= '<span class="badge marginleftonlyshort">'.$nbFiles.'</span>';
 	$head[$h][2] = 'documents';
 	$h++;
 
 	$head[$h][0] = DOL_URL_ROOT.'/resource/agenda.php?id='.$object->id;
 	$head[$h][1] = $langs->trans("Events");
-	if (! empty($conf->agenda->enabled) && (!empty($user->rights->agenda->myactions->read) || !empty($user->rights->agenda->allactions->read) ))
+	if (!empty($conf->agenda->enabled) && (!empty($user->rights->agenda->myactions->read) || !empty($user->rights->agenda->allactions->read)))
 	{
-		$head[$h][1].= '/';
-		$head[$h][1].= $langs->trans("Agenda");
+		$head[$h][1] .= '/';
+		$head[$h][1] .= $langs->trans("Agenda");
 	}
 	$head[$h][2] = 'agenda';
 	$h++;

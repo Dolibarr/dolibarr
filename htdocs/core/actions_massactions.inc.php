@@ -294,7 +294,7 @@ if (!$error && $massaction == 'confirm_presend')
 				if (empty($sendto))
 				{
 					if ($objectobj->element == 'societe') {
-						$objectobj->thirdparty = $objectobj;	// Hack so following code is comaptible when objectobj is a thirdparty
+						$objectobj->thirdparty = $objectobj; // Hack so following code is comaptible when objectobj is a thirdparty
 					}
 
 				   	//print "No recipient for thirdparty ".$objectobj->thirdparty->name;
@@ -836,7 +836,7 @@ if ($massaction == 'confirm_createbills')   // Create bills from orders
 			// Builddoc
 			$donotredirect = 1;
 			$upload_dir = $conf->facture->dir_output;
-			$permissiontoadd=$user->rights->facture->creer;
+			$permissiontoadd = $user->rights->facture->creer;
 
 			// Call action to build doc
 			$savobject = $object;

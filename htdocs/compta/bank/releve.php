@@ -205,9 +205,9 @@ $paymentvatstatic = new TVA($db);
 $bankstatic = new Account($db);
 $banklinestatic = new AccountLine($db);
 $remisestatic = new RemiseCheque($db);
-$paymentdonationstatic=new PaymentDonation($db);
-$paymentloanstatic=new PaymentLoan($db);
-$paymentvariousstatic=new PaymentVarious($db);
+$paymentdonationstatic = new PaymentDonation($db);
+$paymentloanstatic = new PaymentLoan($db);
+$paymentvariousstatic = new PaymentVarious($db);
 
 // Must be before button action
 $param = '';
@@ -518,28 +518,28 @@ else
 					print '</a>';
 					$newline = 0;
 				}
-				elseif ($links[$key]['type']=='payment_donation')
+				elseif ($links[$key]['type'] == 'payment_donation')
 				{
-					$paymentdonationstatic->id=$links[$key]['url_id'];
-					$paymentdonationstatic->ref=$langs->trans("Payment");
+					$paymentdonationstatic->id = $links[$key]['url_id'];
+					$paymentdonationstatic->ref = $langs->trans("Payment");
 					print ' '.$paymentdonationstatic->getNomUrl(1);
 					$newline = 0;
 				}
-				elseif ($links[$key]['type']=='payment_loan')
+				elseif ($links[$key]['type'] == 'payment_loan')
 				{
-					$paymentloanstatic->id=$links[$key]['url_id'];
-					$paymentloanstatic->ref=$langs->trans("Payment");
+					$paymentloanstatic->id = $links[$key]['url_id'];
+					$paymentloanstatic->ref = $langs->trans("Payment");
 					print ' '.$paymentloanstatic->getNomUrl(1);
 					$newline = 0;
 				}
-				elseif ($links[$key]['type']=='payment_various')
+				elseif ($links[$key]['type'] == 'payment_various')
 				{
-					$paymentvariousstatic->id=$links[$key]['url_id'];
-					$paymentvariousstatic->ref=$langs->trans("Payment");
+					$paymentvariousstatic->id = $links[$key]['url_id'];
+					$paymentvariousstatic->ref = $langs->trans("Payment");
 					print ' '.$paymentvariousstatic->getNomUrl(1);
 					$newline = 0;
 				}
-				elseif ($links[$key]['type']=='banktransfert') {
+				elseif ($links[$key]['type'] == 'banktransfert') {
 					// Do not show link to transfer since there is no transfer card (avoid confusion). Can already be accessed from transaction detail.
 					if ($objp->amount > 0)
 					{

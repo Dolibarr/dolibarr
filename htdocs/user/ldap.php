@@ -31,12 +31,12 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/ldap.lib.php';
 $langs->loadLangs(array('users', 'admin', 'companies', 'ldap'));
 
 $id = GETPOST('id', 'int');
-$contextpage=GETPOST('contextpage', 'aZ')?GETPOST('contextpage', 'aZ'):'userldap';   // To manage different context of search
+$contextpage = GETPOST('contextpage', 'aZ') ?GETPOST('contextpage', 'aZ') : 'userldap'; // To manage different context of search
 
 // Security check
-$socid=0;
+$socid = 0;
 if ($user->socid > 0) $socid = $user->socid;
-$feature2 = (($socid && $user->rights->user->self->creer)?'':'user');
+$feature2 = (($socid && $user->rights->user->self->creer) ? '' : 'user');
 
 $result = restrictedArea($user, 'user', $id, 'user&user', $feature2);
 
@@ -45,7 +45,7 @@ $object->fetch($id, '', '', 1);
 $object->getrights();
 
 // Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
-$hookmanager->initHooks(array('usercard','userldap','globalcard'));
+$hookmanager->initHooks(array('usercard', 'userldap', 'globalcard'));
 
 
 /*
@@ -53,8 +53,8 @@ $hookmanager->initHooks(array('usercard','userldap','globalcard'));
  */
 
 
-$parameters=array('id'=>$socid);
-$reshook=$hookmanager->executeHooks('doActions', $parameters, $object, $action);    // Note that $action and $object may have been modified by some hooks
+$parameters = array('id'=>$socid);
+$reshook = $hookmanager->executeHooks('doActions', $parameters, $object, $action); // Note that $action and $object may have been modified by some hooks
 if ($reshook < 0) setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
 
 if (empty($reshook))
@@ -68,7 +68,7 @@ if (empty($reshook))
 		{
 			$info = $object->_load_ldap_info();
 			$dn = $object->_load_ldap_dn($info);
-			$olddn = $dn;    // We can say that old dn = dn as we force synchro
+			$olddn = $dn; // We can say that old dn = dn as we force synchro
 
 			$result = $ldap->update($dn, $info, $user, $olddn);
 		}
@@ -180,12 +180,12 @@ print '<td>'.$langs->trans("Value").'</td>';
 print '</tr>';
 
 // Lecture LDAP
-$ldap=new Ldap();
-$result=$ldap->connect_bind();
+$ldap = new Ldap();
+$result = $ldap->connect_bind();
 if ($result > 0)
 {
-	$info=$object->_load_ldap_info();
-	$dn=$object->_load_ldap_dn($info, 1);
+	$info = $object->_load_ldap_info();
+	$dn = $object->_load_ldap_dn($info, 1);
 	$search = "(".$object->_load_ldap_dn($info, 2).")";
 
 	$records = $ldap->getAttribute($dn, $search);
@@ -193,15 +193,15 @@ if ($result > 0)
 	//print_r($records);
 
 	// Affichage arbre
-	if (((! is_numeric($records)) || $records != 0) && (! isset($records['count']) || $records['count'] > 0))
+	if (((!is_numeric($records)) || $records != 0) && (!isset($records['count']) || $records['count'] > 0))
 	{
-		if (! is_array($records))
+		if (!is_array($records))
 		{
 			print '<tr class="oddeven"><td colspan="2"><font class="error">'.$langs->trans("ErrorFailedToReadLDAP").'</font></td></tr>';
 		}
 		else
 		{
-			$result=show_ldap_content($records, 0, $records['count'], true);
+			$result = show_ldap_content($records, 0, $records['count'], true);
 		}
 	}
 	else

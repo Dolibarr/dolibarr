@@ -335,28 +335,28 @@ class Form
 
 		// List of extra languages
 		$arrayoflangcode = array();
-		if (! empty($conf->global->PDF_USE_ALSO_LANGUAGE_CODE)) $arrayoflangcode[] = $conf->global->PDF_USE_ALSO_LANGUAGE_CODE;
+		if (!empty($conf->global->PDF_USE_ALSO_LANGUAGE_CODE)) $arrayoflangcode[] = $conf->global->PDF_USE_ALSO_LANGUAGE_CODE;
 
 		if (is_array($arrayoflangcode) && count($arrayoflangcode)) {
-			if (! is_object($extralanguages)) {
+			if (!is_object($extralanguages)) {
 				include_once DOL_DOCUMENT_ROOT.'/core/class/extralanguages.class.php';
 				$extralanguages = new ExtraLanguages($this->db);
 			}
 			$extralanguages->fetch_name_extralanguages('societe');
 
-			if (! is_array($extralanguages->attributes[$object->element]) || empty($extralanguages->attributes[$object->element][$fieldname])) {
-				return '';		// No extralang field to show
+			if (!is_array($extralanguages->attributes[$object->element]) || empty($extralanguages->attributes[$object->element][$fieldname])) {
+				return ''; // No extralang field to show
 			}
 
-			$result .='<div class="inline-block paddingleft image-'.$object->element.'-'.$fieldname.'">';
-			$s=img_picto($langs->trans("ShowOtherLanguages"), 'language', '', false, 0, 0, '', 'fa-15 editfieldlang');
+			$result .= '<div class="inline-block paddingleft image-'.$object->element.'-'.$fieldname.'">';
+			$s = img_picto($langs->trans("ShowOtherLanguages"), 'language', '', false, 0, 0, '', 'fa-15 editfieldlang');
 			$result .= $s;
 			$result .= '</div>';
 
-			$result .='<div class="inline-block hidden field-'.$object->element.'-'.$fieldname.'">';
+			$result .= '<div class="inline-block hidden field-'.$object->element.'-'.$fieldname.'">';
 
 			$resultforextrlang = '';
-			foreach($arrayoflangcode as $langcode)
+			foreach ($arrayoflangcode as $langcode)
 			{
 				$valuetoshow = GETPOSTISSET('field-'.$object->element."-".$fieldname."-".$langcode) ? GETPOST('field-'.$object->element.'-'.$fieldname."-".$langcode, $check) : '';
 				if (empty($valuetoshow)) {
@@ -365,7 +365,7 @@ class Form
 					$valuetoshow = $object->array_languages[$fieldname][$langcode];
 				}
 
-				$s=picto_from_langcode($langcode, 'class="pictoforlang paddingright"');
+				$s = picto_from_langcode($langcode, 'class="pictoforlang paddingright"');
 				$resultforextrlang .= $s;
 				if ($typeofdata == 'textarea') {
 					$resultforextrlang .= '<textarea name="field-'.$object->element."-".$fieldname."-".$langcode.'" id="'.$fieldname."-".$langcode.'" class="'.$morecss.'" rows="'.ROWS_2.'" wrap="soft">';
@@ -3635,7 +3635,7 @@ class Form
 			elseif ($format == 2) print '<option value="'.$arraytypes['code'].'"';
 			elseif ($format == 3) print '<option value="'.$id.'"';
 			// Print attribute selected or not
-			if ($format==1 || $format==2) {
+			if ($format == 1 || $format == 2) {
 				if ($selected == $arraytypes['code']) print ' selected';
 			} else {
 				if ($selected == $id) print ' selected';
@@ -7380,23 +7380,23 @@ class Form
 
 			// List of extra languages
 			$arrayoflangcode = array();
-			if (! empty($conf->global->PDF_USE_ALSO_LANGUAGE_CODE)) $arrayoflangcode[] = $conf->global->PDF_USE_ALSO_LANGUAGE_CODE;
+			if (!empty($conf->global->PDF_USE_ALSO_LANGUAGE_CODE)) $arrayoflangcode[] = $conf->global->PDF_USE_ALSO_LANGUAGE_CODE;
 
 			if (is_array($arrayoflangcode) && count($arrayoflangcode)) {
-				if (! is_object($extralanguages)) {
+				if (!is_object($extralanguages)) {
 					include_once DOL_DOCUMENT_ROOT.'/core/class/extralanguages.class.php';
 					$extralanguages = new ExtraLanguages($this->db);
 				}
 				$extralanguages->fetch_name_extralanguages('societe');
 
-				if (! empty($extralanguages->attributes['societe']['name']))
+				if (!empty($extralanguages->attributes['societe']['name']))
 				{
 					$object->fetchValuesForExtraLanguages();
 
 					$htmltext = '';
 					// If there is extra languages
-					foreach($arrayoflangcode as $extralangcode) {
-						$s=picto_from_langcode($extralangcode, 'class="pictoforlang paddingright"');
+					foreach ($arrayoflangcode as $extralangcode) {
+						$s = picto_from_langcode($extralangcode, 'class="pictoforlang paddingright"');
 						$htmltext .= $s.$object->array_languages['name'][$extralangcode];
 					}
 					$ret .= $this->textwithpicto('', $htmltext, -1, 'language', 'opacitymedium paddingleft');
@@ -7779,7 +7779,7 @@ class Form
 		global $conf, $langs;
 
 		$out = '';
-		$id=uniqid();
+		$id = uniqid();
 		if (!empty($conf->use_javascript_ajax)) $out .= '<div class="inline-block checkallactions"><input type="checkbox" id="checkallactions'.$id.'" name="checkallactions" class="checkallactions"></div>';
 		$out .= '<script>
             $(document).ready(function() {

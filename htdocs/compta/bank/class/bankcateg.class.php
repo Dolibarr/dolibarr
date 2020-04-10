@@ -33,7 +33,7 @@ class BankCateg // extends CommonObject
     /**
 	 * @var string String with name of icon for myobject. Must be the part after the 'object_' into object_myobject.png
 	 */
-	public $picto='generic';
+	public $picto = 'generic';
 
 	/**
      * @var int ID
@@ -211,10 +211,10 @@ class BankCateg // extends CommonObject
 		$this->db->begin();
 
 		// Delete link between tag and bank account
-		if (! $error)
+		if (!$error)
 		{
 		    $sql = "DELETE FROM ".MAIN_DB_PREFIX."categorie_account";
-    		$sql.= " WHERE fk_categorie = ".$this->id;
+    		$sql .= " WHERE fk_categorie = ".$this->id;
 
     		$resql = $this->db->query($sql);
     		if (!$resql)
@@ -225,10 +225,10 @@ class BankCateg // extends CommonObject
 		}
 
 		// Delete link between tag and bank lines
-		if (! $error)
+		if (!$error)
 		{
 		    $sql = "DELETE FROM ".MAIN_DB_PREFIX."bank_class";
-		    $sql.= " WHERE fk_categ = ".$this->id;
+		    $sql .= " WHERE fk_categ = ".$this->id;
 
 		    $resql = $this->db->query($sql);
 		    if (!$resql)
@@ -239,7 +239,7 @@ class BankCateg // extends CommonObject
 		}
 
 		// Delete bank categ
-		if (! $error)
+		if (!$error)
 		{
     		$sql = "DELETE FROM ".MAIN_DB_PREFIX."bank_categ";
     		$sql .= " WHERE rowid=".$this->id;

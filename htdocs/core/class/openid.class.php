@@ -185,7 +185,7 @@ class SimpleOpenID
     {
         // phpcs:enable
         $e = $this->error;
-        return array('code'=>$e[0],'description'=>$e[1]);
+        return array('code'=>$e[0], 'description'=>$e[1]);
     }
 
     // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
@@ -200,10 +200,10 @@ class SimpleOpenID
     {
         // phpcs:enable
         $errs['OPENID_NOSERVERSFOUND'] = 'Cannot find OpenID Server TAG on Identity page.';
-        if ($desc == null){
+        if ($desc == null) {
             $desc = $errs[$code];
         }
-        $this->error = array($code,$desc);
+        $this->error = array($code, $desc);
     }
 
     // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
@@ -235,7 +235,7 @@ class SimpleOpenID
     {
         $r = array();
         $response = explode("\n", $response);
-        foreach($response as $line) {
+        foreach ($response as $line) {
             $line = trim($line);
             if ($line != "") {
                 list($key, $value) = explode(":", $line, 2);
@@ -263,13 +263,13 @@ class SimpleOpenID
         if (!isset($u['path']) || ($u['path'] == '/')) {
             $u['path'] = '';
         }
-        if(substr($u['path'], -1, 1) == '/'){
-            $u['path'] = substr($u['path'], 0, strlen($u['path'])-1);
+        if (substr($u['path'], -1, 1) == '/') {
+            $u['path'] = substr($u['path'], 0, strlen($u['path']) - 1);
         }
-        if (isset($u['query'])){ // If there is a query string, then use identity as is
-            return $u['host'] . $u['path'] . '?' . $u['query'];
-        }else{
-            return $u['host'] . $u['path'];
+        if (isset($u['query'])) { // If there is a query string, then use identity as is
+            return $u['host'].$u['path'].'?'.$u['query'];
+        } else {
+            return $u['host'].$u['path'];
         }
     }
 
@@ -282,12 +282,12 @@ class SimpleOpenID
     public function array2url($arr)
     {
         // converts associated array to URL Query String
-        if (!is_array($arr)){
+        if (!is_array($arr)) {
             return false;
         }
         $query = '';
-        foreach($arr as $key => $value){
-            $query .= $key . "=" . $value . "&";
+        foreach ($arr as $key => $value) {
+            $query .= $key."=".$value."&";
         }
         return $query;
     }
@@ -309,7 +309,7 @@ class SimpleOpenID
             $this->ErrorStore('OPENID_SOCKETERROR', $errstr);
             return false;
         } else {
-            $request = $method . " /server HTTP/1.0\r\n";
+            $request = $method." /server HTTP/1.0\r\n";
             $request .= "User-Agent: Dolibarr\r\n";
             $request .= "Connection: close\r\n\r\n";
             fwrite($fp, $request);
@@ -341,7 +341,7 @@ class SimpleOpenID
         // Remember, SSL MUST BE SUPPORTED
         if (is_array($params)) $params = $this->array2url($params);
 
-        $curl = curl_init($url . ($method == "GET" && $params != "" ? "?" . $params : ""));
+        $curl = curl_init($url.($method == "GET" && $params != "" ? "?".$params : ""));
         @curl_setopt($curl, CURLOPT_FOLLOWLOCATION, true);
         curl_setopt($curl, CURLOPT_HEADER, false);
         curl_setopt($curl, CURLOPT_SSL_VERIFYPEER, false);
@@ -351,9 +351,9 @@ class SimpleOpenID
         curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
         $response = curl_exec($curl);
 
-        if (curl_errno($curl) == 0){
+        if (curl_errno($curl) == 0) {
             $response;
-        }else{
+        } else {
             $this->ErrorStore('OPENID_CURL', curl_error($curl));
         }
         return $response;
@@ -400,7 +400,7 @@ class SimpleOpenID
         global $conf;
 
         include_once DOL_DOCUMENT_ROOT.'/core/lib/geturl.lib.php';
-        if (empty($url)) $url=$conf->global->MAIN_AUTHENTICATION_OPENID_URL;
+        if (empty($url)) $url = $conf->global->MAIN_AUTHENTICATION_OPENID_URL;
 
         $response = getURLContent($url);
 
@@ -440,7 +440,7 @@ class SimpleOpenID
         && (count($this->fields['optional']) > 0)) {
             $params['openid.sreg.optional'] = implode(',', $this->fields['optional']);
         }
-        return $this->URLs['openid_server'] . "?". $this->array2url($params);
+        return $this->URLs['openid_server']."?".$this->array2url($params);
     }
 
     // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
@@ -461,7 +461,7 @@ class SimpleOpenID
         }
         else
         {	// Default Header Redirect
-            header('Location: ' . $redirect_to);
+            header('Location: '.$redirect_to);
         }
     }
 
@@ -485,9 +485,9 @@ class SimpleOpenID
         for ($i = 0; $i < $num; $i++)
         {
             $s = str_replace('sreg_', 'sreg.', $arr_signed[$i]);
-            $c = $_GET['openid_' . $arr_signed[$i]];
+            $c = $_GET['openid_'.$arr_signed[$i]];
             // if ($c != ""){
-            $params['openid.' . $s] = urlencode($c);
+            $params['openid.'.$s] = urlencode($c);
             // }
         }
         $params['openid.mode'] = "check_authentication";
@@ -523,11 +523,11 @@ class SimpleOpenID
         global $conf;
 
         include_once DOL_DOCUMENT_ROOT.'/core/lib/geturl.lib.php';
-        if (empty($url)) $url=$conf->global->MAIN_AUTHENTICATION_OPENID_URL;
+        if (empty($url)) $url = $conf->global->MAIN_AUTHENTICATION_OPENID_URL;
 
         dol_syslog(get_class($this).'::sendDiscoveryRequestToGetXRDS get XRDS');
 
-        $addheaders=array('Accept: application/xrds+xml');
+        $addheaders = array('Accept: application/xrds+xml');
         $response = getURLContent($url, 'GET', '', 1, $addheaders);
         /* response should like this:
         <?xml version="1.0" encoding="UTF-8"?>
@@ -542,12 +542,12 @@ class SimpleOpenID
         </XRD>
         </xrds:XRDS>
         */
-        $content=$response['content'];
+        $content = $response['content'];
 
-        $server='';
+        $server = '';
         if (preg_match('/'.preg_quote('<URI>', '/').'(.*)'.preg_quote('</URI>', '/').'/is', $content, $reg))
         {
-            $server=$reg[1];
+            $server = $reg[1];
         }
 
         if (empty($server))

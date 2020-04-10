@@ -873,88 +873,88 @@ if ($resql)
 		print '</div>'."\n";
 	}
 
-    $varpage=empty($contextpage)?$_SERVER["PHP_SELF"]:$contextpage;
-    $selectedfields=$form->multiSelectArrayWithCheckbox('selectedfields', $arrayfields, $varpage);	// This also change content of $arrayfields
+    $varpage = empty($contextpage) ? $_SERVER["PHP_SELF"] : $contextpage;
+    $selectedfields = $form->multiSelectArrayWithCheckbox('selectedfields', $arrayfields, $varpage); // This also change content of $arrayfields
 
     print '<div class="div-table-responsive">';
-    print '<table class="tagtable liste'.($moreforfilter?" listwithfilterbefore":"").'">'."\n";
+    print '<table class="tagtable liste'.($moreforfilter ? " listwithfilterbefore" : "").'">'."\n";
 
 
 	print '<tr class="liste_titre_filter">';
-	if (! empty($arrayfields['b.rowid']['checked']))
+	if (!empty($arrayfields['b.rowid']['checked']))
 	{
 	    print '<td class="liste_titre">';
     	print '<input type="text" class="flat" name="search_ref" size="2" value="'.dol_escape_htmltag($search_ref).'">';
 	    print '</td>';
 	}
-	if (! empty($arrayfields['b.label']['checked']))
+	if (!empty($arrayfields['b.label']['checked']))
 	{
 	    print '<td class="liste_titre">';
     	print '<input type="text" class="flat maxwidth100" name="search_description" value="'.dol_escape_htmltag($search_description).'">';
     	print '</td>';
 	}
-	if (! empty($arrayfields['b.dateo']['checked']))
+	if (!empty($arrayfields['b.dateo']['checked']))
 	{
         print '<td class="liste_titre">&nbsp;</td>';
 	}
-	if (! empty($arrayfields['b.datev']['checked']))
+	if (!empty($arrayfields['b.datev']['checked']))
 	{
         print '<td class="liste_titre">&nbsp;</td>';
 	}
-	if (! empty($arrayfields['type']['checked']))
+	if (!empty($arrayfields['type']['checked']))
 	{
         print '<td class="liste_titre" align="center">';
-        $form->select_types_paiements(empty($search_type)?'':$search_type, 'search_type', '', 2, 1, 1, 0, 1, 'maxwidth100');
+        $form->select_types_paiements(empty($search_type) ? '' : $search_type, 'search_type', '', 2, 1, 1, 0, 1, 'maxwidth100');
         print '</td>';
 	}
-	if (! empty($arrayfields['b.num_chq']['checked']))
+	if (!empty($arrayfields['b.num_chq']['checked']))
 	{
         // Numero
         print '<td class="liste_titre" align="center"><input type="text" class="flat" name="req_nb" value="'.dol_escape_htmltag($search_req_nb).'" size="2"></td>';
 	}
-	if (! empty($arrayfields['bu.label']['checked']))
+	if (!empty($arrayfields['bu.label']['checked']))
 	{
 	    print '<td class="liste_titre"><input type="text" class="flat maxwidth75" name="search_thirdparty" value="'.dol_escape_htmltag($search_thirdparty).'"></td>';
 	}
-	if (! empty($arrayfields['ba.ref']['checked']))
+	if (!empty($arrayfields['ba.ref']['checked']))
 	{
     	print '<td class="liste_titre">';
-    	$form->select_comptes($search_account, 'search_account', 0, '', 1, ($id > 0 || ! empty($ref)?' disabled="disabled"':''), 0, 'maxwidth100');
+    	$form->select_comptes($search_account, 'search_account', 0, '', 1, ($id > 0 || !empty($ref) ? ' disabled="disabled"' : ''), 0, 'maxwidth100');
     	print '</td>';
 	}
-	if (! empty($arrayfields['b.debit']['checked']))
+	if (!empty($arrayfields['b.debit']['checked']))
 	{
     	print '<td class="liste_titre right">';
     	print '<input type="text" class="flat width50" name="search_debit" value="'.dol_escape_htmltag($search_debit).'">';
     	print '</td>';
 	}
-	if (! empty($arrayfields['b.credit']['checked']))
+	if (!empty($arrayfields['b.credit']['checked']))
 	{
     	print '<td class="liste_titre right">';
     	print '<input type="text" class="flat width50" name="search_credit" value="'.dol_escape_htmltag($search_credit).'">';
     	print '</td>';
 	}
-	if (! empty($arrayfields['balancebefore']['checked']))
+	if (!empty($arrayfields['balancebefore']['checked']))
 	{
 		print '<td class="liste_titre right">';
-		$htmltext=$langs->trans("BalanceVisibilityDependsOnSortAndFilters", $langs->transnoentitiesnoconv("DateValue"));
+		$htmltext = $langs->trans("BalanceVisibilityDependsOnSortAndFilters", $langs->transnoentitiesnoconv("DateValue"));
 		print $form->textwithpicto('', $htmltext, 1);
 		print '</td>';
 	}
-	if (! empty($arrayfields['balance']['checked']))
+	if (!empty($arrayfields['balance']['checked']))
 	{
 		print '<td class="liste_titre right">';
-		$htmltext=$langs->trans("BalanceVisibilityDependsOnSortAndFilters", $langs->transnoentitiesnoconv("DateValue"));
+		$htmltext = $langs->trans("BalanceVisibilityDependsOnSortAndFilters", $langs->transnoentitiesnoconv("DateValue"));
 		print $form->textwithpicto('', $htmltext, 1);
 		print '</td>';
 	}
 	// Numero statement
-	if (! empty($arrayfields['b.num_releve']['checked']))
+	if (!empty($arrayfields['b.num_releve']['checked']))
 	{
         print '<td class="liste_titre" align="center"><input type="text" class="flat" name="search_num_releve" value="'.dol_escape_htmltag($search_num_releve).'" size="3"></td>';
 	}
 	// Conciliated
-	if (! empty($arrayfields['b.conciliated']['checked']))
+	if (!empty($arrayfields['b.conciliated']['checked']))
 	{
         print '<td class="liste_titre" align="center">';
         print $form->selectyesno('search_conciliated', $search_conciliated, 1, false, 1);
@@ -1116,7 +1116,7 @@ if ($resql)
 						});
 						</script>';
 				print '</td>';
-				print '<td colspan="'.($tmpnbfieldafterbalance+2).'">';
+				print '<td colspan="'.($tmpnbfieldafterbalance + 2).'">';
 				print '&nbsp;';
 				print '</td>';
             	print '</tr>';

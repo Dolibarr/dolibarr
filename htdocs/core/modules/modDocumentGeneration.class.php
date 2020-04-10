@@ -25,7 +25,7 @@
  *	\brief      	Fichier de description et activation du module Generation document
  */
 
-include_once DOL_DOCUMENT_ROOT .'/core/modules/DolibarrModules.class.php';
+include_once DOL_DOCUMENT_ROOT.'/core/modules/DolibarrModules.class.php';
 
 
 /**
@@ -53,7 +53,7 @@ class modDocumentGeneration extends DolibarrModules
 		$this->version = 'development';
 
 		$this->const_name = 'MAIN_MODULE_'.strtoupper($this->name);
-		$this->picto='email';
+		$this->picto = 'email';
 
 		// Data directories to create when module is enabled
 		$this->dirs = array("/documentgeneration/temp");
@@ -65,7 +65,7 @@ class modDocumentGeneration extends DolibarrModules
 		$this->depends = array();
 		$this->requiredby = array();
 		$this->conflictwith = array();
-		$this->langfiles = array("orders","bills","companies","mails");
+		$this->langfiles = array("orders", "bills", "companies", "mails");
 
 		// Constants
 
@@ -78,7 +78,7 @@ class modDocumentGeneration extends DolibarrModules
 		$this->rights = array();
 		$this->rights_class = 'document';
 
-		$r=0;
+		$r = 0;
 
 		$this->rights[$r][0] = 1521;
 		$this->rights[$r][1] = 'Lire les documents';

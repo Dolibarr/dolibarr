@@ -231,10 +231,10 @@ class AgendaEvents extends DolibarrApi
      */
     public function put($id, $request_data = null)
     {
-        if (! DolibarrApiAccess::$user->rights->agenda->myactions->create) {
+        if (!DolibarrApiAccess::$user->rights->agenda->myactions->create) {
             throw new RestException(401, "Insufficient rights to create your Agenda Event");
         }
-        if (! DolibarrApiAccess::$user->rights->agenda->allactions->create && DolibarrApiAccess::$user->id != $request_data['userownerid']) {
+        if (!DolibarrApiAccess::$user->rights->agenda->allactions->create && DolibarrApiAccess::$user->id != $request_data['userownerid']) {
             throw new RestException(401, "Insufficient rights to create an Agenda Event for owner id ".$request_data['userownerid'].' Your id is '.DolibarrApiAccess::$user->id);
         }
 
@@ -244,14 +244,14 @@ class AgendaEvents extends DolibarrApi
             $this->actioncomm->fetch_userassigned();
             $this->actioncomm->oldcopy = clone $this->actioncomm;
         }
-        if (! $result ) {
+        if (!$result) {
             throw new RestException(404, 'actioncomm not found');
         }
 
-        if (! DolibarrApi::_checkAccessToResource('actioncomm', $this->actioncomm->id)) {
+        if (!DolibarrApi::_checkAccessToResource('actioncomm', $this->actioncomm->id)) {
             throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
         }
-        foreach($request_data as $field => $value) {
+        foreach ($request_data as $field => $value) {
             if ($field == 'id') continue;
             $this->actioncomm->$field = $value;
         }

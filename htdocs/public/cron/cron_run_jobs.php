@@ -23,15 +23,15 @@
  *  \ingroup    cron
  *  \brief      Execute pendings jobs
  */
-if (! defined('NOTOKENRENEWAL')) define('NOTOKENRENEWAL', '1'); // Disables token renewal
-if (! defined('NOREQUIREMENU'))  define('NOREQUIREMENU', '1');
-if (! defined('NOREQUIREHTML'))  define('NOREQUIREHTML', '1');
-if (! defined('NOREQUIREAJAX'))  define('NOREQUIREAJAX', '1');
-if (! defined('NOLOGIN'))        define('NOLOGIN', '1');
+if (!defined('NOTOKENRENEWAL')) define('NOTOKENRENEWAL', '1'); // Disables token renewal
+if (!defined('NOREQUIREMENU'))  define('NOREQUIREMENU', '1');
+if (!defined('NOREQUIREHTML'))  define('NOREQUIREHTML', '1');
+if (!defined('NOREQUIREAJAX'))  define('NOREQUIREAJAX', '1');
+if (!defined('NOLOGIN'))        define('NOLOGIN', '1');
 
 // For MultiCompany module.
 // Do not use GETPOST here, function is not defined and define must be done before including main.inc.php
-$entity=(! empty($_GET['entity']) ? (int) $_GET['entity'] : (! empty($_POST['entity']) ? (int) $_POST['entity'] : 1));
+$entity = (!empty($_GET['entity']) ? (int) $_GET['entity'] : (!empty($_POST['entity']) ? (int) $_POST['entity'] : 1));
 if (is_numeric($entity)) define("DOLENTITY", $entity);
 
 // Error if CLI mode
@@ -61,7 +61,7 @@ $langs->loadLangs(array("admin", "cron", "dict"));
  */
 
 // current date
-$now=dol_now();
+$now = dol_now();
 
 // Check the key, avoid that a stranger starts cron
 $key = GETPOST('securitykey', 'alpha');
@@ -70,7 +70,7 @@ if (empty($key))
 	echo 'Securitykey is required. Check setup of cron jobs module.';
 	exit;
 }
-if($key != $conf->global->CRON_KEY)
+if ($key != $conf->global->CRON_KEY)
 {
 	echo 'Securitykey is wrong.';
 	exit;
@@ -83,8 +83,8 @@ if (empty($userlogin))
 	exit;
 }
 require_once DOL_DOCUMENT_ROOT.'/user/class/user.class.php';
-$user=new User($db);
-$result=$user->fetch('', $userlogin);
+$user = new User($db);
+$result = $user->fetch('', $userlogin);
 if ($result < 0)
 {
 	echo "User Error:".$user->error;
@@ -100,25 +100,25 @@ else
 		exit;
 	}
 }
-$id = GETPOST('id', 'alpha');	// We accept non numeric id. We will filter later.
+$id = GETPOST('id', 'alpha'); // We accept non numeric id. We will filter later.
 
 
 // create a jobs object
 $object = new Cronjob($db);
 
-$filter=array();
-if (! empty($id)) {
-	if (! is_numeric($id))
+$filter = array();
+if (!empty($id)) {
+	if (!is_numeric($id))
 	{
 		echo "Error: Bad value for parameter job id";
 		dol_syslog("cron_run_jobs.php Bad value for parameter job id", LOG_WARNING);
 		exit;
 	}
-	$filter['t.rowid']=$id;
+	$filter['t.rowid'] = $id;
 }
 
 $result = $object->fetch_all('ASC,ASC,ASC', 't.priority,t.entity,t.rowid', 0, 0, 1, $filter, 0);
-if ($result<0)
+if ($result < 0)
 {
 	echo "Error: ".$object->error;
 	dol_syslog("cron_run_jobs.php fetch Error".$object->error, LOG_ERR);
@@ -126,25 +126,25 @@ if ($result<0)
 }
 
 $qualifiedjobs = array();
-foreach($object->lines as $val)
+foreach ($object->lines as $val)
 {
-	if (! verifCond($val->test)) continue;
+	if (!verifCond($val->test)) continue;
 	$qualifiedjobs[] = $val;
 }
 
 // TODO Duplicate code. This sequence of code must be shared with code into cron_run_jobs.php script.
 
 // current date
-$nbofjobs=count($qualifiedjobs);
-$nbofjobslaunchedok=0;
-$nbofjobslaunchedko=0;
+$nbofjobs = count($qualifiedjobs);
+$nbofjobslaunchedok = 0;
+$nbofjobslaunchedko = 0;
 
-if (is_array($qualifiedjobs) && (count($qualifiedjobs)>0))
+if (is_array($qualifiedjobs) && (count($qualifiedjobs) > 0))
 {
     $savconf = dol_clone($conf);
 
     // Loop over job
-	foreach($qualifiedjobs as $line)
+	foreach ($qualifiedjobs as $line)
 	{
 	    dol_syslog("cron_run_jobs.php cronjobid: ".$line->id." priority=".$line->priority." entity=".$line->entity." label=".$line->label, LOG_DEBUG);
 	    echo "cron_run_jobs.php cronjobid: ".$line->id." priority=".$line->priority." entity=".$line->entity." label=".$line->label;
@@ -155,13 +155,13 @@ if (is_array($qualifiedjobs) && (count($qualifiedjobs)>0))
 		    dol_syslog("cron_run_jobs.php we work on another entity so we reload user and conf", LOG_DEBUG);
 		    echo " -> we change entity so we reload user and conf";
 
-		    $conf->entity = (empty($line->entity)?1:$line->entity);
-		    $conf->setValues($db);        // This make also the $mc->setValues($conf); that reload $mc->sharings
+		    $conf->entity = (empty($line->entity) ? 1 : $line->entity);
+		    $conf->setValues($db); // This make also the $mc->setValues($conf); that reload $mc->sharings
 
 		    // Force recheck that user is ok for the entity to process and reload permission for entity
 		    if ($conf->entity != $user->entity && $user->entity != 0)
 		    {
-		        $result=$user->fetch('', $userlogin, '', 0, $conf->entity);
+		        $result = $user->fetch('', $userlogin, '', 0, $conf->entity);
 		        if ($result < 0)
 		        {
 		            echo "\nUser Error: ".$user->error."\n";
@@ -188,9 +188,9 @@ if (is_array($qualifiedjobs) && (count($qualifiedjobs)>0))
 
 		    dol_syslog("cron_run_jobs.php line->datenextrun:".dol_print_date($line->datenextrun, 'dayhourrfc')." line->datestart:".dol_print_date($line->datestart, 'dayhourrfc')." line->dateend:".dol_print_date($line->dateend, 'dayhourrfc')." now:".dol_print_date($now, 'dayhourrfc'));
 
-			$cronjob=new Cronjob($db);
-			$result=$cronjob->fetch($line->id);
-			if ($result<0)
+			$cronjob = new Cronjob($db);
+			$result = $cronjob->fetch($line->id);
+			if ($result < 0)
 			{
 			    echo "Error cronjobid: ".$line->id." cronjob->fetch: ".$cronjob->error."\n";
 			    echo "Failed to fetch job ".$line->id."\n";
@@ -198,7 +198,7 @@ if (is_array($qualifiedjobs) && (count($qualifiedjobs)>0))
 				exit;
 			}
 			// Execute job
-			$result=$cronjob->run_jobs($userlogin);
+			$result = $cronjob->run_jobs($userlogin);
 			if ($result < 0)
 			{
 			    echo "Error cronjobid: ".$line->id." cronjob->run_job: ".$cronjob->error."\n";
@@ -215,8 +215,8 @@ if (is_array($qualifiedjobs) && (count($qualifiedjobs)>0))
 			echo " - result of run_jobs = ".$result;
 
 			// We re-program the next execution and stores the last execution time for this job
-			$result=$cronjob->reprogram_jobs($userlogin, $now);
-			if ($result<0)
+			$result = $cronjob->reprogram_jobs($userlogin, $now);
+			if ($result < 0)
 			{
 			    echo "Error cronjobid: ".$line->id." cronjob->reprogram_job: ".$cronjob->error."\n";
 			    echo "Enable module Log if not yet enabled, run again and take a look into dolibarr.log file\n";
@@ -236,7 +236,7 @@ if (is_array($qualifiedjobs) && (count($qualifiedjobs)>0))
 
 	$conf = $savconf;
 
-	echo "Result: ".($nbofjobs)." jobs - ".($nbofjobslaunchedok+$nbofjobslaunchedko)." launched = ".$nbofjobslaunchedok." OK + ".$nbofjobslaunchedko." KO";
+	echo "Result: ".($nbofjobs)." jobs - ".($nbofjobslaunchedok + $nbofjobslaunchedko)." launched = ".$nbofjobslaunchedok." OK + ".$nbofjobslaunchedko." KO";
 }
 else
 {

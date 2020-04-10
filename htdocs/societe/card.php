@@ -931,7 +931,7 @@ else
          *  Creation
          */
 		$private = GETPOST("private", "int");
-		if (!empty($conf->global->THIRDPARTY_DEFAULT_CREATE_CONTACT) && ! GETPOSTISSET('private')) $private = 1;
+		if (!empty($conf->global->THIRDPARTY_DEFAULT_CREATE_CONTACT) && !GETPOSTISSET('private')) $private = 1;
     	if (empty($private)) $private = 0;
 
         // Load object modCodeTiers

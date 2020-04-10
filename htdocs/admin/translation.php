@@ -224,21 +224,21 @@ print load_fiche_titre($langs->trans("Translation"), $enabledisablehtml, 'title_
 //print '<span class="opacitymedium">'.$langs->trans("TranslationDesc")."</span><br>\n";
 //print "<br>\n";
 
-$current_language_code=$langs->defaultlang;
-$s=picto_from_langcode($current_language_code);
+$current_language_code = $langs->defaultlang;
+$s = picto_from_langcode($current_language_code);
 print '<span class="opacitymedium">'.$form->textwithpicto($langs->trans("CurrentUserLanguage").': <strong>'.$s.' '.$current_language_code.'</strong>', $langs->trans("TranslationDesc")).'</span><br>';
 
 print '<br>';
 
-if (! empty($contextpage) && $contextpage != $_SERVER["PHP_SELF"]) $param.='&contextpage='.urlencode($contextpage);
-if ($limit > 0 && $limit != $conf->liste_limit) $param.='&limit='.urlencode($limit);
-if ($optioncss != '') $param.='&optioncss='.urlencode($optioncss);
-if ($langcode)        $param.='&langcode='.urlencode($langcode);
-if ($transkey)        $param.='&transkey='.urlencode($transkey);
-if ($transvalue)      $param.='&transvalue='.urlencode($transvalue);
+if (!empty($contextpage) && $contextpage != $_SERVER["PHP_SELF"]) $param .= '&contextpage='.urlencode($contextpage);
+if ($limit > 0 && $limit != $conf->liste_limit) $param .= '&limit='.urlencode($limit);
+if ($optioncss != '') $param .= '&optioncss='.urlencode($optioncss);
+if ($langcode)        $param .= '&langcode='.urlencode($langcode);
+if ($transkey)        $param .= '&transkey='.urlencode($transkey);
+if ($transvalue)      $param .= '&transvalue='.urlencode($transvalue);
 
 
-print '<form action="'.$_SERVER["PHP_SELF"].((empty($user->entity) && $debug)?'?debug=1':'').'" method="POST">';
+print '<form action="'.$_SERVER["PHP_SELF"].((empty($user->entity) && $debug) ? '?debug=1' : '').'" method="POST">';
 if ($optioncss != '') print '<input type="hidden" name="optioncss" value="'.$optioncss.'">';
 print '<input type="hidden" name="token" value="'.newToken().'">';
 print '<input type="hidden" name="formfilteraction" id="formfilteraction" value="list">';
@@ -456,7 +456,7 @@ if ($mode == 'searchkey')
 
     //print 'param='.$param.' $_SERVER["PHP_SELF"]='.$_SERVER["PHP_SELF"].' num='.$num.' page='.$page.' nbtotalofrecords='.$nbtotalofrecords." sortfield=".$sortfield." sortorder=".$sortorder;
     $title = $langs->trans("TranslationKeySearch");
-    if ($nbtotalofrecords > 0) $title.=' ('.$nbtotalofrecords.' / '.$nbtotalofrecordswithoutfilters.' - '.$nbtotaloffiles.' '.$langs->trans("Files").')';
+    if ($nbtotalofrecords > 0) $title .= ' ('.$nbtotalofrecords.' / '.$nbtotalofrecordswithoutfilters.' - '.$nbtotaloffiles.' '.$langs->trans("Files").')';
     print_barre_liste($title, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, '', $num, -1 * $nbtotalofrecords, '', 0, '', '', $limit);
 
     print '<input type="hidden" id="action" name="action" value="search">';

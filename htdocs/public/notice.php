@@ -34,7 +34,7 @@ require '../main.inc.php';
  * View
  */
 
-if (! GETPOST('transkey', 'alphanohtml') && ! GETPOST('transphrase', 'alphanohtml'))
+if (!GETPOST('transkey', 'alphanohtml') && !GETPOST('transphrase', 'alphanohtml'))
 {
 	print 'Sorry, it seems your internet connexion is off.<br>';
 	print 'You need to be connected to network to use this software.<br>';

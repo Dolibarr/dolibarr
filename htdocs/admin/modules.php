@@ -1010,19 +1010,19 @@ if ($mode == 'deploy')
 {
 	dol_fiche_head($head, $mode, '', -1);
 
-	$dolibarrdataroot=preg_replace('/([\\/]+)$/i', '', DOL_DATA_ROOT);
-	$allowonlineinstall=true;
-	$allowfromweb=1;
-	if (dol_is_file($dolibarrdataroot.'/installmodules.lock')) $allowonlineinstall=false;
+	$dolibarrdataroot = preg_replace('/([\\/]+)$/i', '', DOL_DATA_ROOT);
+	$allowonlineinstall = true;
+	$allowfromweb = 1;
+	if (dol_is_file($dolibarrdataroot.'/installmodules.lock')) $allowonlineinstall = false;
 
-	$fullurl='<a href="'.$urldolibarrmodules.'" target="_blank">'.$urldolibarrmodules.'</a>';
-	$message='';
-	if (! empty($allowonlineinstall))
+	$fullurl = '<a href="'.$urldolibarrmodules.'" target="_blank">'.$urldolibarrmodules.'</a>';
+	$message = '';
+	if (!empty($allowonlineinstall))
 	{
-		if (! in_array('/custom', explode(',', $dolibarr_main_url_root_alt)))
+		if (!in_array('/custom', explode(',', $dolibarr_main_url_root_alt)))
 		{
-			$message=info_admin($langs->trans("ConfFileMustContainCustom", DOL_DOCUMENT_ROOT.'/custom', DOL_DOCUMENT_ROOT));
-			$allowfromweb=-1;
+			$message = info_admin($langs->trans("ConfFileMustContainCustom", DOL_DOCUMENT_ROOT.'/custom', DOL_DOCUMENT_ROOT));
+			$allowfromweb = -1;
 		}
 		else
 		{
@@ -1031,21 +1031,21 @@ if ($mode == 'deploy')
 				if (!is_writable(dol_osencode($dirins)))
 				{
 					$langs->load("errors");
-					$message=info_admin($langs->trans("ErrorFailedToWriteInDir", $dirins), 0, 0, '1', 'warning');
-					$allowfromweb=0;
+					$message = info_admin($langs->trans("ErrorFailedToWriteInDir", $dirins), 0, 0, '1', 'warning');
+					$allowfromweb = 0;
 				}
 			}
 			else
 			{
-				$message=info_admin($langs->trans("NotExistsDirect", $dirins).$langs->trans("InfDirAlt").$langs->trans("InfDirExample"));
-				$allowfromweb=0;
+				$message = info_admin($langs->trans("NotExistsDirect", $dirins).$langs->trans("InfDirAlt").$langs->trans("InfDirExample"));
+				$allowfromweb = 0;
 			}
 		}
 	}
 	else
 	{
-		$message=info_admin($langs->trans("InstallModuleFromWebHasBeenDisabledByFile", $dolibarrdataroot.'/installmodules.lock'));
-		$allowfromweb=0;
+		$message = info_admin($langs->trans("InstallModuleFromWebHasBeenDisabledByFile", $dolibarrdataroot.'/installmodules.lock'));
+		$allowfromweb = 0;
 	}
 
 	if ($allowfromweb < 1)
