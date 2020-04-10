@@ -257,12 +257,12 @@ if (! empty($extrafields->attributes[$object->table_element]['label'])) {
 $parameters=array();
 $reshook=$hookmanager->executeHooks('printFieldListGroupBy',$parameters);    // Note that $action and $object may have been modified by hook
 $sql.=$hookmanager->resPrint;
-$sql=preg_replace('/,\s*$/','', $sql);
+$sql=preg_replace('/,\s*$/', '', $sql);
 $totalnboflines = 0;
 $result = $db->query($sql);
 if ($result)
 {
-    $totalnboflines = $db->num_rows($result);
+	$totalnboflines = $db->num_rows($result);
 	// fetch totals
 	$line = $total = $totalsell = $totalStock = 0;
 	while ($line < $totalnboflines)

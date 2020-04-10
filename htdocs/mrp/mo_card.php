@@ -574,7 +574,9 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
     	if (empty($reshook))
     	{
     	    // Send
-            //print '<a class="butAction" href="' . $_SERVER["PHP_SELF"] . '?id=' . $object->id . '&action=presend&mode=init#formmailbeforetitle">' . $langs->trans('SendMail') . '</a>'."\n";
+    		//if (empty($user->socid)) {
+    		//	print '<a class="butAction" href="' . $_SERVER["PHP_SELF"] . '?id=' . $object->id . '&action=presend&mode=init#formmailbeforetitle">' . $langs->trans('SendMail') . '</a>'."\n";
+    		//}
 
     		// Back to draft
     		if ($object->status == $object::STATUS_VALIDATED)
