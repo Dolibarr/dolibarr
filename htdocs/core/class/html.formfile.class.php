@@ -2055,13 +2055,19 @@ class FormFile
 			case "expedition":				return $conf->expedition->dir_output."/sending";
 			case "livraison":				return $conf->expedition->dir_output."/receipt";
 			case "remisecheque":			return $conf->bank->dir_output."/checkdeposits";
-		}
 
+			// TODO: please check if this is correct
+			case "bom":						return $conf->bom->dir_output."/bom";
+			
+			// TODO: please check if this is correct
+			case "mrp:mo":					return $conf->mrp->dir_output."/mo";
+		}
+		
 		// single dir
 		switch($module)
 		{
 			case "asset":				return $conf->asset->dir_output;
-			case "bom":					return $conf->bom->dir_output;
+			//case "bom":					return $conf->bom->dir_output;
 			case "contract":			return $conf->contrat->dir_output;
 			case "donation":			return $conf->don->dir_output;
 			case "emailcollector":		return $conf->emailcollector->dir_output;
@@ -2069,7 +2075,7 @@ class FormFile
 			case "facture_fournisseur":	return $conf->fournisseur->facture->dir_output;
 			case "ficheinter":			return $conf->ficheinter->dir_output;
 			case "member":				return $conf->adherent->dir_output;
-			case "mrp:mo":				return $conf->mrp->dir_output;
+			//case "mrp:mo":				return $conf->mrp->dir_output;
 			case "product":				return $conf->product->dir_output;
 			case "project":				return $conf->projet->dir_output;
 			case "reception":			return $conf->reception->dir_output;
