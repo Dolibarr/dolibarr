@@ -31,20 +31,20 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php';
 // Load translation files required by the page
 $langs->loadLangs(array("zapier@zapier"));
 
-$action=GETPOST('action', 'alpha');
+$action = GETPOST('action', 'alpha');
 
 
 // Securite acces client
-if (! $user->rights->zapier->read) accessforbidden();
-$socid=GETPOST('socid', 'int');
+if (!$user->rights->zapier->read) accessforbidden();
+$socid = GETPOST('socid', 'int');
 if (isset($user->socid) && $user->socid > 0)
 {
 	$action = '';
 	$socid = $user->socid;
 }
 
-$max=5;
-$now=dol_now();
+$max = 5;
+$now = dol_now();
 
 
 /*
@@ -151,8 +151,8 @@ END MODULEBUILDER DRAFT MYOBJECT */
 print '</div><div class="fichetwothirdright"><div class="ficheaddleft">';
 
 
-$NBMAX=3;
-$max=3;
+$NBMAX = 3;
+$max = 3;
 
 /* BEGIN MODULEBUILDER LASTMODIFIED MYOBJECT
 // Last modified myobject

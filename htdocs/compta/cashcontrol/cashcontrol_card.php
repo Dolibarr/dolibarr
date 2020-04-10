@@ -184,7 +184,7 @@ elseif ($action == "add")
 			$action = "view";
 		}
 	}
-	if ($contextpage == 'takepos'){
+	if ($contextpage == 'takepos') {
 		print "
 		<script>
 		parent.location.href='../../takepos/index.php?place='+parent.place;
@@ -224,7 +224,7 @@ if ($action == "valid")	// validate = close
 		$db->commit();
 	}
 
-	if ($contextpage == 'takepos'){
+	if ($contextpage == 'takepos') {
 		print "
 		<script>
 		parent.location.href='../../takepos/index.php?place='+parent.place;
@@ -383,7 +383,7 @@ if ($action == "create" || $action == "start" || $action == 'close')
 		print load_fiche_titre($langs->trans("CashControl")." - ".$langs->trans("New"), '', 'cash-register');
 
 		print '<form method="POST" action="'.$_SERVER["PHP_SELF"].'">';
-	    print '<input type="hidden" name="token" value="' . newToken() . '">';
+	    print '<input type="hidden" name="token" value="'.newToken().'">';
 		if ($contextpage == 'takepos') print '<input type="hidden" name="contextpage" value="takepos">';
 	    if ($action == 'start' && GETPOST('posnumber', 'int') != '' && GETPOST('posnumber', 'int') != '' && GETPOST('posnumber', 'int') != '-1')
 	    {
@@ -419,7 +419,7 @@ if ($action == "create" || $action == "start" || $action == 'close')
 
 	    $array = array();
 	    $numterminals = max(1, $conf->global->TAKEPOS_NUM_TERMINALS);
-	    for($i = 1; $i <= $numterminals; $i++) {
+	    for ($i = 1; $i <= $numterminals; $i++) {
 	    	$array[$i] = $i;
 	    }
 	    $selectedposnumber = 0; $showempty = 1;
@@ -701,7 +701,7 @@ if (empty($action) || $action == "view" || $action == "close")
 			if ($contextpage != 'takepos') print '<center><iframe src="report.php?id='.$id.'" width="60%" height="800"></iframe></center>';
 	    } else {
 	    	print '<form method="POST" action="'.$_SERVER["PHP_SELF"].'" name="formclose">';
-	    	print '<input type="hidden" name="token" value="' . newToken() . '">';
+	    	print '<input type="hidden" name="token" value="'.newToken().'">';
 			if ($contextpage == 'takepos') print '<input type="hidden" name="contextpage" value="takepos">';
 	    	if ($action == 'start' && GETPOST('posnumber', 'int') != '' && GETPOST('posnumber', 'int') != '' && GETPOST('posnumber', 'int') != '-1')
 	    	{

@@ -41,7 +41,7 @@ abstract class ModelePDFHoliday extends CommonDocGenerator
 	/**
 	 * @var string Error code (or message)
 	 */
-	public $error='';
+	public $error = '';
 
 
     // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
@@ -76,7 +76,7 @@ class ModelNumRefHolidays
 	/**
 	 * @var string Error code (or message)
 	 */
-	public $error='';
+	public $error = '';
 
 	/**
 	 *	Return if a module can be used or not

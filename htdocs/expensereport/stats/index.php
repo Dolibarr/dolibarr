@@ -47,14 +47,14 @@ if ($user->socid > 0)
 	$action = '';
 	$socid = $user->socid;
 }
-if ($user->socid) $socid=$user->socid;
+if ($user->socid) $socid = $user->socid;
 $result = restrictedArea($user, 'expensereport', $id, '');
 
-$nowyear=strftime("%Y", dol_now());
-$year = GETPOST('year')>0?GETPOST('year'):$nowyear;
+$nowyear = strftime("%Y", dol_now());
+$year = GETPOST('year') > 0 ?GETPOST('year') : $nowyear;
 //$startyear=$year-2;
-$startyear=$year-1;
-$endyear=$year;
+$startyear = $year - 1;
+$endyear = $year;
 
 
 
@@ -88,13 +88,13 @@ $fileurlnb = DOL_URL_ROOT.'/viewimage.php?modulepart=tripsexpensesstats&amp;file
 
 $px1 = new DolGraph();
 $mesg = $px1->isGraphKo();
-if (! $mesg)
+if (!$mesg)
 {
 	$px1->SetData($data);
-	$i=$startyear;$legend=array();
+	$i = $startyear; $legend = array();
 	while ($i <= $endyear)
 	{
-		$legend[]=$i;
+		$legend[] = $i;
 		$i++;
 	}
 	$px1->SetLegend($legend);
@@ -104,7 +104,7 @@ if (! $mesg)
 	$px1->SetYLabel($langs->trans("Number"));
 	$px1->SetShading(3);
 	$px1->SetHorizTickIncrement(1);
-	$px1->mode='depth';
+	$px1->mode = 'depth';
 	$px1->SetTitle($langs->trans("NumberByMonth"));
 
 	$px1->draw($filenamenb, $fileurlnb);
@@ -137,7 +137,7 @@ if (!$mesg)
 	$px2->SetYLabel($langs->trans("Amount"));
 	$px2->SetShading(3);
 	$px2->SetHorizTickIncrement(1);
-	$px2->mode='depth';
+	$px2->mode = 'depth';
 	$px2->SetTitle($langs->trans("AmountTotal"));
 
 	$px2->draw($filenameamount, $fileurlamount);
@@ -178,7 +178,7 @@ if (!$mesg)
     $px3->SetHeight($HEIGHT);
     $px3->SetShading(3);
     $px3->SetHorizTickIncrement(1);
-    $px3->mode='depth';
+    $px3->mode = 'depth';
     $px3->SetTitle($langs->trans("AmountAverage"));
 
     $px3->draw($filename_avg, $fileurl_avg);

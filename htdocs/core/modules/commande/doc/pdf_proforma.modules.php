@@ -48,7 +48,7 @@ class pdf_proforma extends pdf_eratosthene
 	 */
 	public function __construct($db)
 	{
-		global $conf,$langs,$mysoc;
+		global $conf, $langs, $mysoc;
 
 		parent::__construct($db);
 
@@ -72,7 +72,7 @@ class pdf_proforma extends pdf_eratosthene
 	protected function _pagehead(&$pdf, $object, $showaddress, $outputlangs, $titlekey = "InvoiceProForma")
 	{
 		// phpcs:enable
-		global $conf,$langs,$hookmanager;
+		global $conf, $langs, $hookmanager;
 
 		return parent::_pagehead($pdf, $object, $showaddress, $outputlangs, $titlekey);
 	}

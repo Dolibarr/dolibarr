@@ -37,13 +37,13 @@ $extrafields = new ExtraFields($db);
 $form = new Form($db);
 
 // List of supported format
-$tmptype2label=ExtraFields::$type2label;
-$type2label=array('');
-foreach ($tmptype2label as $key => $val) $type2label[$key]=$langs->transnoentitiesnoconv($val);
+$tmptype2label = ExtraFields::$type2label;
+$type2label = array('');
+foreach ($tmptype2label as $key => $val) $type2label[$key] = $langs->transnoentitiesnoconv($val);
 
-$action=GETPOST('action', 'alpha');
-$attrname=GETPOST('attrname', 'alpha');
-$elementtype='fichinter';  //Must be the $element of the class that manage extrafield
+$action = GETPOST('action', 'alpha');
+$attrname = GETPOST('attrname', 'alpha');
+$elementtype = 'fichinter'; //Must be the $element of the class that manage extrafield
 
 if (!$user->admin) accessforbidden();
 
@@ -60,14 +60,14 @@ require DOL_DOCUMENT_ROOT.'/core/actions_extrafields.inc.php';
  * View
  */
 
-$textobject=$langs->transnoentitiesnoconv("Interventions");
+$textobject = $langs->transnoentitiesnoconv("Interventions");
 
 llxHeader();
 
-$linkback='<a href="'.DOL_URL_ROOT.'/admin/modules.php?restore_lastsearch_values=1">'.$langs->trans("BackToModuleList").'</a>';
+$linkback = '<a href="'.DOL_URL_ROOT.'/admin/modules.php?restore_lastsearch_values=1">'.$langs->trans("BackToModuleList").'</a>';
 print load_fiche_titre($langs->trans("InterventionsSetup"), $linkback, 'title_setup');
 
-$head=fichinter_admin_prepare_head();
+$head = fichinter_admin_prepare_head();
 
 dol_fiche_head($head, 'attributes', $langs->trans("Interventions"), -1, 'intervention');
 
@@ -104,7 +104,7 @@ if ($action == 'create')
 /* Edition of an optional field                                               */
 /*                                                                            */
 /* ************************************************************************** */
-if ($action == 'edit' && ! empty($attrname))
+if ($action == 'edit' && !empty($attrname))
 {
 	print "<br>";
 	print load_fiche_titre($langs->trans("FieldEdition", $attrname));

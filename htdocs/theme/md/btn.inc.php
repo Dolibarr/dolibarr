@@ -1,5 +1,5 @@
 <?php
-if (! defined('ISLOADEDBYSTEELSHEET')) die('Must be call by steelsheet'); ?>
+if (!defined('ISLOADEDBYSTEELSHEET')) die('Must be call by steelsheet'); ?>
 /* <style type="text/css" > */
 
 
@@ -26,8 +26,8 @@ span.butAction, span.butActionDelete {
 .button, .buttonDelete, .butAction, .butActionDelete, .butActionRefused, .butActionNewRefused {
 	border-color: rgba(0, 0, 0, 0.15) rgba(0, 0, 0, 0.15) rgba(0, 0, 0, 0.25);
 	display: inline-block;
-	padding: 0.4em <?php echo ($dol_optimize_smallscreen?'0.4':'0.7'); ?>em;
-	margin: 0em <?php echo ($dol_optimize_smallscreen?'0.7':'0.9'); ?>em;
+	padding: 0.4em <?php echo ($dol_optimize_smallscreen ? '0.4' : '0.7'); ?>em;
+	margin: 0em <?php echo ($dol_optimize_smallscreen ? '0.7' : '0.9'); ?>em;
 	line-height: 20px;
 	text-align: center;
 	vertical-align: middle;
@@ -55,8 +55,8 @@ span.butAction, span.butActionDelete {
 	text-decoration: none;
 	/* border-color: rgba(0, 0, 0, 0.15) rgba(0, 0, 0, 0.15) rgba(0, 0, 0, 0.25); */
 	display: inline-block;
-	padding: 0.2em <?php echo ($dol_optimize_smallscreen?'0.4':'0.7'); ?>em;
-	margin: 0em <?php echo ($dol_optimize_smallscreen?'0.7':'0.9'); ?>em;
+	padding: 0.2em <?php echo ($dol_optimize_smallscreen ? '0.4' : '0.7'); ?>em;
+	margin: 0em <?php echo ($dol_optimize_smallscreen ? '0.7' : '0.9'); ?>em;
 	line-height: 20px;
 	/* text-align: center;  New button are on right of screen */
 	vertical-align: middle;
@@ -243,7 +243,7 @@ div.pagination .btnTitle:hover .btnTitle-label{
 
 
 
-<?php if (! empty($conf->global->MAIN_BUTTON_HIDE_UNAUTHORIZED) && (! $user->admin)) { ?>
+<?php if (!empty($conf->global->MAIN_BUTTON_HIDE_UNAUTHORIZED) && (!$user->admin)) { ?>
 .butActionRefused, .butActionNewRefused, .btnTitle.refused {
     display: none !important;
 }

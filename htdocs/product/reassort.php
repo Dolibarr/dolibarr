@@ -36,18 +36,18 @@ require_once DOL_DOCUMENT_ROOT.'/product/class/html.formproduct.class.php';
 $langs->loadLangs(array('products', 'stocks'));
 
 // Security check
-if ($user->socid) $socid=$user->socid;
-$result=restrictedArea($user, 'produit|service');
+if ($user->socid) $socid = $user->socid;
+$result = restrictedArea($user, 'produit|service');
 
 
-$action=GETPOST('action', 'alpha');
-$sref=GETPOST("sref", 'alpha');
-$snom=GETPOST("snom", 'alpha');
-$sall=trim((GETPOST('search_all', 'alphanohtml')!='')?GETPOST('search_all', 'alphanohtml'):GETPOST('sall', 'alphanohtml'));
-$type=GETPOST("type", "int");
-$search_barcode=GETPOST("search_barcode", 'alpha');
-$catid=GETPOST('catid', 'int');
-$toolowstock=GETPOST('toolowstock');
+$action = GETPOST('action', 'alpha');
+$sref = GETPOST("sref", 'alpha');
+$snom = GETPOST("snom", 'alpha');
+$sall = trim((GETPOST('search_all', 'alphanohtml') != '') ?GETPOST('search_all', 'alphanohtml') : GETPOST('sall', 'alphanohtml'));
+$type = GETPOST("type", "int");
+$search_barcode = GETPOST("search_barcode", 'alpha');
+$catid = GETPOST('catid', 'int');
+$toolowstock = GETPOST('toolowstock');
 $tosell = GETPOST("tosell");
 $tobuy = GETPOST("tobuy");
 $fourn_id = GETPOST("fourn_id", 'int');

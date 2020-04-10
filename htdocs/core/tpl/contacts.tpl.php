@@ -147,7 +147,7 @@ if ($permission)
 		</div>
 		<div class="tagtd maxwidthonsmartphone noborderbottom">
 			<?php
-			$tmpobject=$object;
+			$tmpobject = $object;
 			if (($object->element == 'shipping' || $object->element == 'reception') && is_object($objectsrc)) $tmpobject = $objectsrc;
 			$formcompany->selectTypeContact($tmpobject, $preselectedtypeofcontact, 'type', 'external', 'position', 0, 'minwidth100imp');
 			?>
@@ -172,7 +172,7 @@ if ($permission)
 
 // TODO: replace this with direct SQL string to use $db->sort($sortfield, $sortorder)
 $list = array();
-foreach(array('internal', 'external') as $source)
+foreach (array('internal', 'external') as $source)
 {
 	if (($object->element == 'shipping' || $object->element == 'reception') && is_object($objectsrc))
 	{

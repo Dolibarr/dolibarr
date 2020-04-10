@@ -1,5 +1,5 @@
 <?php
-if (! defined('ISLOADEDBYSTEELSHEET')) die('Must be call by steelsheet'); ?>
+if (!defined('ISLOADEDBYSTEELSHEET')) die('Must be call by steelsheet'); ?>
 /* <style type="text/css" > */
 /*
  progress style is based on boostrap and admin lte framework

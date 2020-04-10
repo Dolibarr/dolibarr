@@ -41,7 +41,7 @@ class ActionsContactCardDefault extends ActionsContactCardCommon
     public function __construct($db, $dirmodule, $targetmodule, $canvas, $card)
     {
         $this->db               = $db;
-        $this->dirmodule		= $dirmodule;
+        $this->dirmodule = $dirmodule;
         $this->targetmodule     = $targetmodule;
         $this->canvas           = $canvas;
         $this->card             = $card;
@@ -57,11 +57,11 @@ class ActionsContactCardDefault extends ActionsContactCardCommon
 	{
 		global $langs;
 
-		$out='';
+		$out = '';
 
-		if ($action == 'view') 		$out.= (! empty($conf->global->SOCIETE_ADDRESSES_MANAGEMENT) ? $langs->trans("Contact") : $langs->trans("ContactAddress"));
-		if ($action == 'edit') 		$out.= (! empty($conf->global->SOCIETE_ADDRESSES_MANAGEMENT) ? $langs->trans("EditContact") : $langs->trans("EditContactAddress"));
-		if ($action == 'create')	$out.= (! empty($conf->global->SOCIETE_ADDRESSES_MANAGEMENT) ? $langs->trans("NewContact") : $langs->trans("NewContactAddress"));
+		if ($action == 'view') 		$out .= (!empty($conf->global->SOCIETE_ADDRESSES_MANAGEMENT) ? $langs->trans("Contact") : $langs->trans("ContactAddress"));
+		if ($action == 'edit') 		$out .= (!empty($conf->global->SOCIETE_ADDRESSES_MANAGEMENT) ? $langs->trans("EditContact") : $langs->trans("EditContactAddress"));
+		if ($action == 'create')	$out .= (!empty($conf->global->SOCIETE_ADDRESSES_MANAGEMENT) ? $langs->trans("NewContact") : $langs->trans("NewContactAddress"));
 
 		return $out;
 	}
@@ -87,7 +87,7 @@ class ActionsContactCardDefault extends ActionsContactCardCommon
 
         $this->tpl['title'] = $this->getTitle($action);
         $this->tpl['error'] = $this->error;
-        $this->tpl['errors']= $this->errors;
+        $this->tpl['errors'] = $this->errors;
 
 		if ($action == 'view')
 		{
@@ -95,15 +95,15 @@ class ActionsContactCardDefault extends ActionsContactCardCommon
             $head = contact_prepare_head($this->object);
             $title = $this->getTitle($action);
 
-		    $this->tpl['showhead']=dol_get_fiche_head($head, 'card', $title, 0, 'contact');
-		    $this->tpl['showend']=dol_get_fiche_end();
+		    $this->tpl['showhead'] = dol_get_fiche_head($head, 'card', $title, 0, 'contact');
+		    $this->tpl['showend'] = dol_get_fiche_end();
 
         	$objsoc = new Societe($db);
             $objsoc->fetch($this->object->socid);
 
-            $this->tpl['actionstodo']=show_actions_todo($conf, $langs, $db, $objsoc, $this->object, 1);
+            $this->tpl['actionstodo'] = show_actions_todo($conf, $langs, $db, $objsoc, $this->object, 1);
 
-            $this->tpl['actionsdone']=show_actions_done($conf, $langs, $db, $objsoc, $this->object, 1);
+            $this->tpl['actionsdone'] = show_actions_done($conf, $langs, $db, $objsoc, $this->object, 1);
 		}
 		else
 		{

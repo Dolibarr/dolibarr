@@ -1749,22 +1749,22 @@ class ActionComm extends CommonObject
             }
             else
             {
-                $this->error=$this->db->lasterror();
+                $this->error = $this->db->lasterror();
                 return -1;
             }
 
-			if($exportholiday == 1)
+			if ($exportholiday == 1)
             {
                 $langs->load("holidays");
                 $title = $langs->trans("Holidays");
 
                 $sql = "SELECT u.rowid as uid, u.lastname, u.firstname, u.email, u.statut, x.rowid, x.date_debut as date_start, x.date_fin as date_end, x.halfday, x.statut as status";
-                $sql.= " FROM ".MAIN_DB_PREFIX."holiday as x, ".MAIN_DB_PREFIX."user as u";
-                $sql.= " WHERE u.rowid = x.fk_user";
-                $sql.= " AND u.statut = '1'";                           // Show only active users  (0 = inactive user, 1 = active user)
-                $sql.= " AND (x.statut = '2' OR x.statut = '3')";       // Show only public leaves (2 = leave wait for approval, 3 = leave approved)
+                $sql .= " FROM ".MAIN_DB_PREFIX."holiday as x, ".MAIN_DB_PREFIX."user as u";
+                $sql .= " WHERE u.rowid = x.fk_user";
+                $sql .= " AND u.statut = '1'"; // Show only active users  (0 = inactive user, 1 = active user)
+                $sql .= " AND (x.statut = '2' OR x.statut = '3')"; // Show only public leaves (2 = leave wait for approval, 3 = leave approved)
 
-                $resql=$this->db->query($sql);
+                $resql = $this->db->query($sql);
                 if ($resql)
                 {
                     $num = $this->db->num_rows($resql);
@@ -1775,14 +1775,14 @@ class ActionComm extends CommonObject
                         $obj   = $this->db->fetch_object($resql);
                         $event = array();
 
-                        if($obj->halfday == -1)
+                        if ($obj->halfday == -1)
                         {
                             $event['fulldayevent'] = false;
 
                             $timestampStart = dol_stringtotime($obj->date_start." 00:00:00", 0);
                             $timestampEnd   = dol_stringtotime($obj->date_end." 12:00:00", 0);
                         }
-                        elseif($obj->halfday == 1)
+                        elseif ($obj->halfday == 1)
                         {
                             $event['fulldayevent'] = false;
 
@@ -1797,10 +1797,10 @@ class ActionComm extends CommonObject
                             $timestampEnd   = dol_stringtotime($obj->date_end." 23:59:59", 0);
                         }
 
-                        if(!empty($conf->global->AGENDA_EXPORT_FIX_TZ))
+                        if (!empty($conf->global->AGENDA_EXPORT_FIX_TZ))
                         {
-                            $timestampStart =- ($conf->global->AGENDA_EXPORT_FIX_TZ * 3600);
-                            $timestampEnd   =- ($conf->global->AGENDA_EXPORT_FIX_TZ * 3600);
+                            $timestampStart = - ($conf->global->AGENDA_EXPORT_FIX_TZ * 3600);
+                            $timestampEnd   = - ($conf->global->AGENDA_EXPORT_FIX_TZ * 3600);
                         }
 
                         $urlwithouturlroot = preg_replace('/'.preg_quote(DOL_URL_ROOT, '/').'$/i', '', trim($dolibarr_main_url_root));
@@ -1820,7 +1820,7 @@ class ActionComm extends CommonObject
                         $event['duration']     = $timestampEnd - $timestampStart;
                         $event['url']          = $url;
 
-                        if($obj->status == 2)
+                        if ($obj->status == 2)
                         {
                             // 2 = leave wait for approval
                             $event['summary'] = $title." - ".$obj->lastname." (wait for approval)";
@@ -1841,42 +1841,42 @@ class ActionComm extends CommonObject
             $langs->load("agenda");
 
             // Define title and desc
-            $more='';
-            if ($login)  $more=$langs->transnoentities("User").' '.$login;
-            if ($logina) $more=$langs->transnoentities("ActionsAskedBy").' '.$logina;
-            if ($logint) $more=$langs->transnoentities("ActionsToDoBy").' '.$logint;
-            if ($logind) $more=$langs->transnoentities("ActionsDoneBy").' '.$logind;
+            $more = '';
+            if ($login)  $more = $langs->transnoentities("User").' '.$login;
+            if ($logina) $more = $langs->transnoentities("ActionsAskedBy").' '.$logina;
+            if ($logint) $more = $langs->transnoentities("ActionsToDoBy").' '.$logint;
+            if ($logind) $more = $langs->transnoentities("ActionsDoneBy").' '.$logind;
             if ($more)
             {
-                $title='Dolibarr actions '.$mysoc->name.' - '.$more;
-                $desc=$more;
-                $desc.=' ('.$mysoc->name.' - built by Dolibarr)';
+                $title = 'Dolibarr actions '.$mysoc->name.' - '.$more;
+                $desc = $more;
+                $desc .= ' ('.$mysoc->name.' - built by Dolibarr)';
             }
             else
             {
-                $title='Dolibarr actions '.$mysoc->name;
-                $desc=$langs->transnoentities('ListOfActions');
-                $desc.=' ('.$mysoc->name.' - built by Dolibarr)';
+                $title = 'Dolibarr actions '.$mysoc->name;
+                $desc = $langs->transnoentities('ListOfActions');
+                $desc .= ' ('.$mysoc->name.' - built by Dolibarr)';
             }
 
             // Create temp file
-            $outputfiletmp=tempnam($conf->agenda->dir_temp, 'tmp');  // Temporary file (allow call of function by different threads
+            $outputfiletmp = tempnam($conf->agenda->dir_temp, 'tmp'); // Temporary file (allow call of function by different threads
             @chmod($outputfiletmp, octdec($conf->global->MAIN_UMASK));
 
             // Write file
-            if ($format == 'vcal') $result=build_calfile($format, $title, $desc, $eventarray, $outputfiletmp);
-            elseif ($format == 'ical') $result=build_calfile($format, $title, $desc, $eventarray, $outputfiletmp);
-            elseif ($format == 'rss')  $result=build_rssfile($format, $title, $desc, $eventarray, $outputfiletmp);
+            if ($format == 'vcal') $result = build_calfile($format, $title, $desc, $eventarray, $outputfiletmp);
+            elseif ($format == 'ical') $result = build_calfile($format, $title, $desc, $eventarray, $outputfiletmp);
+            elseif ($format == 'rss')  $result = build_rssfile($format, $title, $desc, $eventarray, $outputfiletmp);
 
             if ($result >= 0)
             {
-                if (dol_move($outputfiletmp, $outputfile, 0, 1)) $result=1;
+                if (dol_move($outputfiletmp, $outputfile, 0, 1)) $result = 1;
                 else
                 {
-                	$this->error='Failed to rename '.$outputfiletmp.' into '.$outputfile;
+                	$this->error = 'Failed to rename '.$outputfiletmp.' into '.$outputfile;
                     dol_syslog(get_class($this)."::build_exportfile ".$this->error, LOG_ERR);
                     dol_delete_file($outputfiletmp, 0, 1);
-                    $result=-1;
+                    $result = -1;
                 }
             }
             else

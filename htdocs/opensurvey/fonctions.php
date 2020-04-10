@@ -158,11 +158,11 @@ function get_server_name()
 {
 	global $dolibarr_main_url_root;
 
-	$urlwithouturlroot=preg_replace('/'.preg_quote(DOL_URL_ROOT, '/').'$/i', '', trim($dolibarr_main_url_root));
+	$urlwithouturlroot = preg_replace('/'.preg_quote(DOL_URL_ROOT, '/').'$/i', '', trim($dolibarr_main_url_root));
 	//$urlwithroot=$urlwithouturlroot.DOL_URL_ROOT;		// This is to use external domain name found into config file
 	//$urlwithroot=DOL_MAIN_URL_ROOT;					// This is to use same domain name than current
 
-	$url=$urlwithouturlroot.dol_buildpath('/opensurvey/', 1);
+	$url = $urlwithouturlroot.dol_buildpath('/opensurvey/', 1);
 
 	if (!preg_match("|/$|", $url)) {
 		$url = $url."/";
@@ -217,8 +217,8 @@ function dol_survey_random($car)
 {
 	$string = "";
 	$chaine = "abcdefghijklmnopqrstuvwxyz123456789";
-	mt_srand((double) microtime()*1000000);
-	for($i=0; $i<$car; $i++) {
+	mt_srand((double) microtime() * 1000000);
+	for ($i = 0; $i < $car; $i++) {
 		$string .= $chaine[mt_rand() % strlen($chaine)];
 	}
 	return $string;
@@ -235,7 +235,7 @@ function ajouter_sondage()
 
 	require_once DOL_DOCUMENT_ROOT.'/opensurvey/class/opensurveysondage.class.php';
 
-	$sondage=dol_survey_random(16);
+	$sondage = dol_survey_random(16);
 
 	$allow_comments = empty($_SESSION['allow_comments']) ? 0 : 1;
 	$allow_spy = empty($_SESSION['allow_spy']) ? 0 : 1;
@@ -272,7 +272,7 @@ function ajouter_sondage()
 	unset($_SESSION['totalchoixjour']);
 	unset($_SESSION['champdatefin']);
 
-	$urlback=dol_buildpath('/opensurvey/card.php', 1).'?id='.$sondage;
+	$urlback = dol_buildpath('/opensurvey/card.php', 1).'?id='.$sondage;
 
 	header("Location: ".$urlback);
 	exit();

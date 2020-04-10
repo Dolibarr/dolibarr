@@ -1,5 +1,5 @@
 <?php
-if (! defined('ISLOADEDBYSTEELSHEET')) die('Must be call by steelsheet'); ?>
+if (!defined('ISLOADEDBYSTEELSHEET')) die('Must be call by steelsheet'); ?>
 /* <style type="text/css" > */
 
 /*
@@ -107,8 +107,8 @@ a.info-box-text{ text-decoration: none;}
 }
 <?php
 include_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
-if (! isset($conf->global->THEME_AGRESSIVENESS_RATIO)) $conf->global->THEME_AGRESSIVENESS_RATIO=-100;
-if (GETPOSTISSET('THEME_AGRESSIVENESS_RATIO')) $conf->global->THEME_AGRESSIVENESS_RATIO=GETPOST('THEME_AGRESSIVENESS_RATIO', 'int');
+if (!isset($conf->global->THEME_AGRESSIVENESS_RATIO)) $conf->global->THEME_AGRESSIVENESS_RATIO = -100;
+if (GETPOSTISSET('THEME_AGRESSIVENESS_RATIO')) $conf->global->THEME_AGRESSIVENESS_RATIO = GETPOST('THEME_AGRESSIVENESS_RATIO', 'int');
 ?>
 .bg-infoxbox-project i.fa{
 	color: <?php print colorAgressiveness('#605ca8', $conf->global->THEME_AGRESSIVENESS_RATIO); ?> !important;

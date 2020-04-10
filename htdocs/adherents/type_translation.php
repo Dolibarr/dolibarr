@@ -71,21 +71,21 @@ if ($action == 'vadd' && $cancel != $langs->trans("Cancel") && $user->rights->ad
 	$current_lang = $langs->getDefaultLang();
 
 	// update of object
-	if ( $_POST["forcelangprod"] == $current_lang )
+	if ($_POST["forcelangprod"] == $current_lang)
 	{
 		$object->label			= $_POST["libelle"];
-		$object->description	= dol_htmlcleanlastbr($_POST["desc"]);
+		$object->description = dol_htmlcleanlastbr($_POST["desc"]);
 		$object->other			= dol_htmlcleanlastbr($_POST["other"]);
 	}
 	else
 	{
 		$object->multilangs[$_POST["forcelangprod"]]["label"]		= $_POST["libelle"];
-		$object->multilangs[$_POST["forcelangprod"]]["description"]	= dol_htmlcleanlastbr($_POST["desc"]);
+		$object->multilangs[$_POST["forcelangprod"]]["description"] = dol_htmlcleanlastbr($_POST["desc"]);
 		$object->multilangs[$_POST["forcelangprod"]]["other"]		= dol_htmlcleanlastbr($_POST["other"]);
 	}
 
 	// backup into database
-	if ( $object->setMultiLangs($user) > 0 )
+	if ($object->setMultiLangs($user) > 0)
 	{
 		$action = '';
 	}

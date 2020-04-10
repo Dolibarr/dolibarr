@@ -627,7 +627,7 @@ class Expedition extends CommonObject
 				if (!empty($conf->multicurrency->enabled))
 				{
 					if (!empty($this->multicurrency_code)) $this->multicurrency_code = $this->thirdparty->multicurrency_code;
-					if (!empty($conf->global->MULTICURRENCY_USE_ORIGIN_TX) && !empty($objectsrc->multicurrency_tx))	$this->multicurrency_tx =  $this->thirdparty->multicurrency_tx;
+					if (!empty($conf->global->MULTICURRENCY_USE_ORIGIN_TX) && !empty($objectsrc->multicurrency_tx))	$this->multicurrency_tx = $this->thirdparty->multicurrency_tx;
 				}
 
 				/*
@@ -1477,7 +1477,7 @@ class Expedition extends CommonObject
 				$line->surface_units = $obj->surface_units;
 				$line->volume         	= $obj->volume;
 				$line->volume_units   	= $obj->volume_units;
-				$line->fk_unit 			= $obj->fk_unit;
+				$line->fk_unit = $obj->fk_unit;
 
 				$line->pa_ht = $obj->pa_ht;
 

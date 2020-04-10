@@ -52,7 +52,7 @@ $cancel = GETPOST('cancel', 'alpha');
 $search_user_id = GETPOST('search_user_id', 'int');
 $search_taskref = GETPOST('search_taskref');
 $search_tasklabel = GETPOST('search_tasklabel');
-$search_taskdescription=GETPOST('search_taskdescription');
+$search_taskdescription = GETPOST('search_taskdescription');
 $search_dtstartday = GETPOST('search_dtstartday');
 $search_dtstartmonth = GETPOST('search_dtstartmonth');
 $search_dtstartyear = GETPOST('search_dtstartyear');
@@ -114,8 +114,8 @@ $arrayfields = array(
 	't.progress_summary'=>array('label'=>$langs->trans("TaskProgressSummary"), 'checked'=>1, 'position'=>10),
 );
 if ($object->usage_bill_time) {
-	$arrayfields['t.tobill']=array('label'=>$langs->trans("TimeToBill"), 'checked'=>0, 'position'=>11);
-	$arrayfields['t.billed']=array('label'=>$langs->trans("TimeBilled"), 'checked'=>0, 'position'=>12);
+	$arrayfields['t.tobill'] = array('label'=>$langs->trans("TimeToBill"), 'checked'=>0, 'position'=>11);
+	$arrayfields['t.billed'] = array('label'=>$langs->trans("TimeBilled"), 'checked'=>0, 'position'=>12);
 }
 
 // Extra fields
@@ -693,59 +693,59 @@ elseif ($id > 0 || !empty($ref))
 
 	if (!empty($arrayfields['t.ref']['checked'])) {
 		print '<td class="liste_titre">';
-		print '<input class="flat searchstring maxwidth50" type="text" name="search_taskref" value="' . dol_escape_htmltag($search_taskref) . '">';
+		print '<input class="flat searchstring maxwidth50" type="text" name="search_taskref" value="'.dol_escape_htmltag($search_taskref).'">';
 		print '</td>';
 	}
 
 	if (!empty($arrayfields['t.label']['checked'])) {
 		print '<td class="liste_titre">';
-		print '<input class="flat searchstring maxwidth100" type="text" name="search_tasklabel" value="' . dol_escape_htmltag($search_tasklabel) . '">';
+		print '<input class="flat searchstring maxwidth100" type="text" name="search_tasklabel" value="'.dol_escape_htmltag($search_tasklabel).'">';
 		print '</td>';
 	}
 
 	if (!empty($arrayfields['t.description']['checked'])) {
 		print '<td class="liste_titre">';
-		print '<input class="flat searchstring maxwidth100" type="text" name="search_taskdescription" value="' . dol_escape_htmltag($search_taskdescription) . '">';
+		print '<input class="flat searchstring maxwidth100" type="text" name="search_taskdescription" value="'.dol_escape_htmltag($search_taskdescription).'">';
 		print '</td>';
 	}
 
 	if (!empty($arrayfields['t.dateo']['checked'])) {
 		print '<td class="liste_titre center">';
-		print '<input class="flat valignmiddle" type="text" size="1" maxlength="2" name="search_dtstartday" value="' . $search_dtstartday . '">';
-		print '<input class="flat valignmiddle" type="text" size="1" maxlength="2" name="search_dtstartmonth" value="' . $search_dtstartmonth . '">';
+		print '<input class="flat valignmiddle" type="text" size="1" maxlength="2" name="search_dtstartday" value="'.$search_dtstartday.'">';
+		print '<input class="flat valignmiddle" type="text" size="1" maxlength="2" name="search_dtstartmonth" value="'.$search_dtstartmonth.'">';
 		$formother->select_year($search_dtstartyear ? $search_dtstartyear : -1, 'search_dtstartyear', 1, 20, 5);
 		print '</td>';
 	}
 
 	if (!empty($arrayfields['t.datee']['checked'])) {
 		print '<td class="liste_titre center">';
-		print '<input class="flat valignmiddle" type="text" size="1" maxlength="2" name="search_dtendday" value="' . $search_dtendday . '">';
-		print '<input class="flat valignmiddle" type="text" size="1" maxlength="2" name="search_dtendmonth" value="' . $search_dtendmonth . '">';
+		print '<input class="flat valignmiddle" type="text" size="1" maxlength="2" name="search_dtendday" value="'.$search_dtendday.'">';
+		print '<input class="flat valignmiddle" type="text" size="1" maxlength="2" name="search_dtendmonth" value="'.$search_dtendmonth.'">';
 		$formother->select_year($search_dtendyear ? $search_dtendyear : -1, 'search_dtendyear', 1, 20, 5);
 		print '</td>';
 	}
 
 	if (!empty($arrayfields['t.planned_workload']['checked'])) {
 		print '<td class="liste_titre right">';
-		print '<input class="flat" type="text" size="4" name="search_planedworkload" value="' . $search_planedworkload . '">';
+		print '<input class="flat" type="text" size="4" name="search_planedworkload" value="'.$search_planedworkload.'">';
 		print '</td>';
 	}
 
 	if (!empty($arrayfields['t.duration_effective']['checked'])) {
 		print '<td class="liste_titre right">';
-		print '<input class="flat" type="text" size="4" name="search_timespend" value="' . $search_timespend . '">';
+		print '<input class="flat" type="text" size="4" name="search_timespend" value="'.$search_timespend.'">';
 		print '</td>';
 	}
 
 	if (!empty($arrayfields['t.progress_calculated']['checked'])) {
 		print '<td class="liste_titre right">';
-		print '<input class="flat" type="text" size="4" name="search_progresscalc" value="' . $search_progresscalc . '">';
+		print '<input class="flat" type="text" size="4" name="search_progresscalc" value="'.$search_progresscalc.'">';
 		print '</td>';
 	}
 
 	if (!empty($arrayfields['t.progress']['checked'])) {
 		print '<td class="liste_titre right">';
-		print '<input class="flat" type="text" size="4" name="search_progressdeclare" value="' . $search_progressdeclare . '">';
+		print '<input class="flat" type="text" size="4" name="search_progressdeclare" value="'.$search_progressdeclare.'">';
 		print '</td>';
 	}
 
@@ -767,7 +767,7 @@ elseif ($id > 0 || !empty($ref))
 
 	if (!empty($conf->global->PROJECT_SHOW_CONTACTS_IN_LIST)) print '<td class="liste_titre"></td>';
 
-	$extrafieldsobjectkey=$taskstatic->table_element;
+	$extrafieldsobjectkey = $taskstatic->table_element;
 	include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_input.tpl.php';
 
 	// Action column
@@ -796,7 +796,7 @@ elseif ($id > 0 || !empty($ref))
 	}
 	if (!empty($conf->global->PROJECT_SHOW_CONTACTS_IN_LIST)) print_liste_field_titre("TaskRessourceLinks", $_SERVER["PHP_SELF"], '', '', $param, $sortfield, $sortorder);
 	// Extra fields
-	$disablesortlink=1;
+	$disablesortlink = 1;
 	include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_title.tpl.php';
 	// Hook fields
 	$parameters = array('arrayfields'=>$arrayfields, 'param'=>$param, 'sortfield'=>$sortfield, 'sortorder'=>$sortorder);

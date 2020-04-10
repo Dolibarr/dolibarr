@@ -419,7 +419,7 @@ abstract class ActionsCardCommon
         if ($this->object->country_id)
         {
             $tmparray = getCountry($this->object->country_id, 'all', $this->db, $langs, 0);
-            $this->object->country_code	= $tmparray['code'];
+            $this->object->country_code = $tmparray['code'];
             $this->object->country_label = $tmparray['label'];
         }
     }

@@ -73,10 +73,10 @@ print $formadvtargetemaling->selectAdvtargetemailingTemplate('template_id', $def
 print '<input type="button" name="loadfilter" id="loadfilter" value="'.$langs->trans('AdvTgtLoadFilter').'" class="button"/>';
 print '<input type="button" name="deletefilter" id="deletefilter" value="'.$langs->trans('AdvTgtDeleteFilter').'" class="button"/>';
 print '<input type="button" name="savefilter" id="savefilter" value="'.$langs->trans('AdvTgtSaveFilter').'" class="button"/>';
-print '</td><td>' . "\n";
-print '</td></tr>' . "\n";
+print '</td><td>'."\n";
+print '</td></tr>'."\n";
 
-print '<tr><td>' . $langs->trans('AdvTgtOrCreateNewFilter') . '</td><td>';
+print '<tr><td>'.$langs->trans('AdvTgtOrCreateNewFilter').'</td><td>';
 print '<input type="text" name="template_name" id="template_name" value=""/>';
 print '<input type="button" name="createfilter" id="createfilter" value="'.$langs->trans('AdvTgtCreateFilter').'" class="button"/>';
 print '</td><td>'."\n";
@@ -263,7 +263,7 @@ if (!empty($conf->categorie->enabled) && $user->rights->categorie->lire) {
 
 // Standard Extrafield feature
 if (empty($conf->global->MAIN_EXTRAFIELDS_DISABLED)) {
-	$socstatic=new Societe($db);
+	$socstatic = new Societe($db);
 	$elementtype = $socstatic->table_element;
 	// fetch optionals attributes and labels
 	dol_include_once('/core/class/extrafields.class.php');

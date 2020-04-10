@@ -22,7 +22,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/modules/syslog/logHandlerInterface.php';
  */
 class LogHandler
 {
-	protected $ident=0;
+	protected $ident = 0;
 
 
 	/**
@@ -95,6 +95,6 @@ class LogHandler
 	 */
 	public function setIdent($ident)
 	{
-		$this->ident+=$ident;
+		$this->ident += $ident;
 	}
 }

@@ -60,7 +60,7 @@ function printDropdownBookmarksList()
     }
 
     $searchForm = '<!-- form with POST method by default, will be replaced with GET for external link by js -->'."\n";
-    $searchForm .= '<form id="top-menu-action-bookmark" name="actionbookmark" method="POST" action=""'.(empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER)?'onsubmit="return false"':'').'>';
+    $searchForm .= '<form id="top-menu-action-bookmark" name="actionbookmark" method="POST" action=""'.(empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER) ? 'onsubmit="return false"' : '').'>';
     $searchForm .= '<input type="hidden" name="token" value="'.newToken().'">';
 
 
@@ -106,9 +106,9 @@ function printDropdownBookmarksList()
     		$searchForm .= ' data-html="'.dol_escape_htmltag(img_picto('', 'bookmark').' '.($user->rights->bookmark->creer ? $langs->trans('EditBookmarks') : $langs->trans('ListOfBookmarks')).'...').'">';
     		$searchForm .= dol_escape_htmltag($user->rights->bookmark->creer ? $langs->trans('EditBookmarks') : $langs->trans('ListOfBookmarks')).'...</option>';
     		// Url to go on create new bookmark page
-    		if (! empty($user->rights->bookmark->creer))
+    		if (!empty($user->rights->bookmark->creer))
     		{
-    			$urltoadd=DOL_URL_ROOT.'/bookmarks/card.php?action=create&amp;url='.urlencode($url);
+    			$urltoadd = DOL_URL_ROOT.'/bookmarks/card.php?action=create&amp;url='.urlencode($url);
     			$searchForm .= '<option value="newbookmark" class="optionblue" rel="'.dol_escape_htmltag($urltoadd).'"';
     			$searchForm .= ' data-html="'.dol_escape_htmltag(img_picto('', 'bookmark').' '.$langs->trans('AddThisPageToBookmarks').'...').'">'.dol_escape_htmltag($langs->trans('AddThisPageToBookmarks').'...').'</option>';
     		}
@@ -131,10 +131,10 @@ function printDropdownBookmarksList()
     $searchForm .= '</form>';
 
     // Generate the return string
-    if (! empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER)) {
+    if (!empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER)) {
     	$html = $searchForm;
 
-    	$html.='<!-- script to open selected choice -->
+    	$html .= '<!-- script to open selected choice -->
 				<script>
 	        	$(document).ready(function () {
     			    jQuery("#boxbookmark").change(function() {

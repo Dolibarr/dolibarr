@@ -34,7 +34,7 @@ class GoogleAPI
     /**
      * @var string Error code (or message)
      */
-    public $error='';
+    public $error = '';
 
     public $key;
 
@@ -46,8 +46,8 @@ class GoogleAPI
      */
     public function __construct($db, $key)
     {
-        $this->db=$db;
-        $this->key=$key;
+        $this->db = $db;
+        $this->key = $key;
     }
 
 
@@ -63,7 +63,7 @@ class GoogleAPI
     {
         global $conf;
 
-        $i=0;
+        $i = 0;
 
         // Desired address
         $urladdress = "https://maps.google.com/maps/geo?q=".urlencode($address)."&output=xml&key=".$this->key;
@@ -73,12 +73,12 @@ class GoogleAPI
 
         $code = strstr($page, '<coordinates>');
         $code = strstr($code, '>');
-        $val=strpos($code, "<");
-        $code = substr($code, 1, $val-1);
+        $val = strpos($code, "<");
+        $code = substr($code, 1, $val - 1);
         //print $code;
         //print "<br>";
         $latitude = substr($code, 0, strpos($code, ","));
-        $longitude = substr($code, strpos($code, ",")+1, dol_strlen(strpos($code, ","))-3);
+        $longitude = substr($code, strpos($code, ",") + 1, dol_strlen(strpos($code, ",")) - 3);
 
         // Output the coordinates
         //echo "Longitude: $longitude ',' Latitude: $latitude";

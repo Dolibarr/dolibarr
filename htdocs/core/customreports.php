@@ -262,7 +262,7 @@ if (is_array($search_groupby) && count($search_groupby)) {
 			}
 			if (!empty($object->fields[$gvalwithoutprefix]['arrayofkeyval'])) {
 				$valuetranslated = $object->fields[$gvalwithoutprefix]['arrayofkeyval'][$obj->val];
-				if (is_null($valuetranslated)) $valuetranslated =  $langs->transnoentitiesnoconv("UndefinedKey");
+				if (is_null($valuetranslated)) $valuetranslated = $langs->transnoentitiesnoconv("UndefinedKey");
 				$valuetranslated = $langs->trans($valuetranslated);
 			}
 

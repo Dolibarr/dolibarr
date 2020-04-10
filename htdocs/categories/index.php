@@ -54,17 +54,17 @@ $typetext = $type;
 if ($type == Categorie::TYPE_ACCOUNT) 			$title = $langs->trans('AccountsCategoriesArea');
 elseif ($type == Categorie::TYPE_WAREHOUSE) 	$title = $langs->trans('StocksCategoriesArea');
 elseif ($type == Categorie::TYPE_ACTIONCOMM)	$title = $langs->trans('ActionCommCategoriesArea');
-else 											$title = $langs->trans(ucfirst($type). 'sCategoriesArea');
+else 											$title = $langs->trans(ucfirst($type).'sCategoriesArea');
 
-$arrayofjs=array('/includes/jquery/plugins/jquerytreeview/jquery.treeview.js', '/includes/jquery/plugins/jquerytreeview/lib/jquery.cookie.js');
-$arrayofcss=array('/includes/jquery/plugins/jquerytreeview/jquery.treeview.css');
+$arrayofjs = array('/includes/jquery/plugins/jquerytreeview/jquery.treeview.js', '/includes/jquery/plugins/jquerytreeview/lib/jquery.cookie.js');
+$arrayofcss = array('/includes/jquery/plugins/jquerytreeview/jquery.treeview.css');
 
 llxHeader('', $title, '', '', 0, 0, $arrayofjs, $arrayofcss);
 
 
-$newcardbutton='';
-if (! empty($user->rights->categorie->creer)) {
-	$newcardbutton.= dolGetButtonTitle($langs->trans('NewCategory'), '', 'fa fa-plus-circle', DOL_URL_ROOT.'/categories/card.php?action=create&type='.$type.'&backtopage='.urlencode($_SERVER["PHP_SELF"].'?type='.$type));
+$newcardbutton = '';
+if (!empty($user->rights->categorie->creer)) {
+	$newcardbutton .= dolGetButtonTitle($langs->trans('NewCategory'), '', 'fa fa-plus-circle', DOL_URL_ROOT.'/categories/card.php?action=create&type='.$type.'&backtopage='.urlencode($_SERVER["PHP_SELF"].'?type='.$type));
 }
 
 print load_fiche_titre($title, $newcardbutton, 'object_category');
@@ -151,7 +151,7 @@ $cate_arbo = $categstatic->get_full_arbo($typetext);
 $fulltree = $cate_arbo;
 
 // Load possible missing includes
-if($conf->global->CATEGORY_SHOW_COUNTS)
+if ($conf->global->CATEGORY_SHOW_COUNTS)
 {
 	if ($type == Categorie::TYPE_MEMBER)	require_once DOL_DOCUMENT_ROOT.'/adherents/class/adherent.class.php';
 	if ($type == Categorie::TYPE_ACCOUNT)	require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
@@ -173,7 +173,7 @@ foreach ($fulltree as $key => $val)
 
 	$counter = '';
 
-	if($conf->global->CATEGORY_SHOW_COUNTS)
+	if ($conf->global->CATEGORY_SHOW_COUNTS)
 	{
 		// we need only a count of the elements, so it is enough to consume only the id's from the database
 		$elements = $categstatic->getObjectsInCateg($type, 1);

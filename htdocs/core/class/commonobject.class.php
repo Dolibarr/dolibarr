@@ -90,7 +90,7 @@ abstract class CommonObject
 	/**
 	 * @var mixed		Array to store alternative languages values of object
 	 */
-	public $array_languages = null;			// Value is array() when load already tried
+	public $array_languages = null; // Value is array() when load already tried
 
 	/**
 	 * @var int[][]		Array of linked objects ids. Loaded by ->fetchObjectLinked
@@ -675,23 +675,23 @@ abstract class CommonObject
 
 			// List of extra languages
 			$arrayoflangcode = array();
-			if (! empty($conf->global->PDF_USE_ALSO_LANGUAGE_CODE)) $arrayoflangcode[] = $conf->global->PDF_USE_ALSO_LANGUAGE_CODE;
+			if (!empty($conf->global->PDF_USE_ALSO_LANGUAGE_CODE)) $arrayoflangcode[] = $conf->global->PDF_USE_ALSO_LANGUAGE_CODE;
 
 			if (is_array($arrayoflangcode) && count($arrayoflangcode)) {
-				if (! is_object($extralanguages)) {
+				if (!is_object($extralanguages)) {
 					include_once DOL_DOCUMENT_ROOT.'/core/class/extralanguages.class.php';
 					$extralanguages = new ExtraLanguages($this->db);
 				}
 				$extralanguages->fetch_name_extralanguages('societe');
 
-				if (! empty($extralanguages->attributes['societe']['address']) || ! empty($extralanguages->attributes['societe']['town']))
+				if (!empty($extralanguages->attributes['societe']['address']) || !empty($extralanguages->attributes['societe']['town']))
 				{
 					$this->fetchValuesForExtraLanguages();
-					if (! is_object($form)) $form = new Form($this->db);
+					if (!is_object($form)) $form = new Form($this->db);
 					$htmltext = '';
 					// If there is extra languages
-					foreach($arrayoflangcode as $extralangcode) {
-						$s=picto_from_langcode($extralangcode, 'class="pictoforlang paddingright"');
+					foreach ($arrayoflangcode as $extralangcode) {
+						$s = picto_from_langcode($extralangcode, 'class="pictoforlang paddingright"');
 						$coords = $this->getFullAddress(1, ', ', $conf->global->MAIN_SHOW_REGION_IN_STATE_SELECT, $extralangcode);
 						$htmltext .= $s.dol_print_address($coords, 'address_'.$htmlkey.'_'.$this->id, $this->element, $this->id, 1, ', ');
 					}
@@ -5086,7 +5086,7 @@ abstract class CommonObject
 		if (!$this->element) {
 			return 0;
 		}
-		if (! ($this->id > 0)) {
+		if (!($this->id > 0)) {
 			return 0;
 		}
 		if (is_array($this->array_languages)) {
@@ -5156,7 +5156,7 @@ abstract class CommonObject
 		global $_POST, $langs;
 
 		// Get extra fields
-		foreach($_POST as $postfieldkey => $postfieldvalue) {
+		foreach ($_POST as $postfieldkey => $postfieldvalue) {
 			$tmparray = explode('-', $postfieldkey);
 			if ($tmparray[0] != 'field') continue;
 
@@ -5738,8 +5738,8 @@ abstract class CommonObject
 
 			dol_syslog(get_class($this)."::insertExtraLanguages delete then insert", LOG_DEBUG);
 
-			foreach($new_array_languages as $key => $langcodearray) {	// $key = 'name', 'town', ...
-				foreach($langcodearray as $langcode => $value) {
+			foreach ($new_array_languages as $key => $langcodearray) {	// $key = 'name', 'town', ...
+				foreach ($langcodearray as $langcode => $value) {
 					$sql_del = "DELETE FROM ".MAIN_DB_PREFIX."object_lang";
 					$sql_del .= " WHERE fk_object = ".$this->id." AND property = '".$this->db->escape($key)."' AND type_object = '".$this->db->escape($table_element)."'";
 					$sql_del .= " AND lang = '".$this->db->escape($langcode)."'";

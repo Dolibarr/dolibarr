@@ -118,23 +118,23 @@ if ($user->socid > 0)	// Protection if external user
 //$result = restrictedArea($user, 'mymodule', $id, '');
 
 // Initialize array of search criterias
-$search_all=trim(GETPOST("search_all", 'alpha'));
-$search=array();
-foreach($object->fields as $key => $val)
+$search_all = trim(GETPOST("search_all", 'alpha'));
+$search = array();
+foreach ($object->fields as $key => $val)
 {
-	if (GETPOST('search_'.$key, 'alpha') !== '') $search[$key]=GETPOST('search_'.$key, 'alpha');
+	if (GETPOST('search_'.$key, 'alpha') !== '') $search[$key] = GETPOST('search_'.$key, 'alpha');
 }
 
 // List of fields to search into when doing a "search in all"
 $fieldstosearchall = array();
-foreach($object->fields as $key => $val)
+foreach ($object->fields as $key => $val)
 {
-	if ($val['searchall']) $fieldstosearchall['t.'.$key]=$val['label'];
+	if ($val['searchall']) $fieldstosearchall['t.'.$key] = $val['label'];
 }
 
 // Definition of fields for list
-$arrayfields=array();
-foreach($object->fields as $key => $val)
+$arrayfields = array();
+foreach ($object->fields as $key => $val)
 {
 	// If $val['visible']==0, then we never show the field
 	if (!empty($val['visible'])) $arrayfields['t.'.$key] = array('label'=>$val['label'], 'checked'=>(($val['visible'] < 0) ? 0 : 1), 'enabled'=>($val['enabled'] && ($val['visible'] != 3)), 'position'=>$val['position']);
