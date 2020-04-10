@@ -132,7 +132,7 @@ class dolReceiptPrinter extends Printer
     public $tags;
     public $printer;
     public $template;
-    
+
     /**
      * Number of order printer
      * @var int
