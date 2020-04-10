@@ -58,13 +58,13 @@ class Subscriptions extends DolibarrApi
      */
     public function get($id)
     {
-        if(! DolibarrApiAccess::$user->rights->adherent->cotisation->lire) {
+        if (!DolibarrApiAccess::$user->rights->adherent->cotisation->lire) {
             throw new RestException(401);
         }
 
         $subscription = new Subscription($this->db);
         $result = $subscription->fetch($id);
-        if( ! $result ) {
+        if (!$result) {
             throw new RestException(404, 'Subscription not found');
         }
 
@@ -91,45 +91,45 @@ class Subscriptions extends DolibarrApi
 
         $obj_ret = array();
 
-        if(! DolibarrApiAccess::$user->rights->adherent->cotisation->lire) {
+        if (!DolibarrApiAccess::$user->rights->adherent->cotisation->lire) {
             throw new RestException(401);
         }
 
         $sql = "SELECT rowid";
-        $sql.= " FROM ".MAIN_DB_PREFIX."subscription as t";
-        $sql.= ' WHERE 1 = 1';
+        $sql .= " FROM ".MAIN_DB_PREFIX."subscription as t";
+        $sql .= ' WHERE 1 = 1';
         // Add sql filters
         if ($sqlfilters)
         {
-            if (! DolibarrApi::_checkFilters($sqlfilters))
+            if (!DolibarrApi::_checkFilters($sqlfilters))
             {
                 throw new RestException(503, 'Error when validating parameter sqlfilters '.$sqlfilters);
             }
-	        $regexstring='\(([^:\'\(\)]+:[^:\'\(\)]+:[^:\(\)]+)\)';
-            $sql.=" AND (".preg_replace_callback('/'.$regexstring.'/', 'DolibarrApi::_forge_criteria_callback', $sqlfilters).")";
+	        $regexstring = '\(([^:\'\(\)]+:[^:\'\(\)]+:[^:\(\)]+)\)';
+            $sql .= " AND (".preg_replace_callback('/'.$regexstring.'/', 'DolibarrApi::_forge_criteria_callback', $sqlfilters).")";
         }
 
-        $sql.= $db->order($sortfield, $sortorder);
-        if ($limit)    {
+        $sql .= $db->order($sortfield, $sortorder);
+        if ($limit) {
             if ($page < 0)
             {
                 $page = 0;
             }
             $offset = $limit * $page;
 
-            $sql.= $db->plimit($limit + 1, $offset);
+            $sql .= $db->plimit($limit + 1, $offset);
         }
 
         $result = $db->query($sql);
         if ($result)
         {
-            $i=0;
+            $i = 0;
             $num = $db->num_rows($result);
             while ($i < min($limit, $num))
             {
                 $obj = $db->fetch_object($result);
                 $subscription = new Subscription($this->db);
-                if($subscription->fetch($obj->rowid)) {
+                if ($subscription->fetch($obj->rowid)) {
                     $obj_ret[] = $this->_cleanObjectDatas($subscription);
                 }
                 $i++;
@@ -138,7 +138,7 @@ class Subscriptions extends DolibarrApi
         else {
             throw new RestException(503, 'Error when retrieve subscription list : '.$db->lasterror());
         }
-        if( ! count($obj_ret)) {
+        if (!count($obj_ret)) {
             throw new RestException(404, 'No Subscription found');
         }
 
@@ -153,14 +153,14 @@ class Subscriptions extends DolibarrApi
      */
     public function post($request_data = null)
     {
-        if(! DolibarrApiAccess::$user->rights->adherent->cotisation->creer) {
+        if (!DolibarrApiAccess::$user->rights->adherent->cotisation->creer) {
             throw new RestException(401);
         }
         // Check mandatory fields
         $result = $this->_validate($request_data);
 
         $subscription = new Subscription($this->db);
-        foreach($request_data as $field => $value) {
+        foreach ($request_data as $field => $value) {
             $subscription->$field = $value;
         }
         if ($subscription->create(DolibarrApiAccess::$user) < 0) {
@@ -178,17 +178,17 @@ class Subscriptions extends DolibarrApi
      */
     public function put($id, $request_data = null)
     {
-        if(! DolibarrApiAccess::$user->rights->adherent->creer) {
+        if (!DolibarrApiAccess::$user->rights->adherent->creer) {
             throw new RestException(401);
         }
 
         $subscription = new Subscription($this->db);
         $result = $subscription->fetch($id);
-        if( ! $result ) {
+        if (!$result) {
             throw new RestException(404, 'Subscription not found');
         }
 
-        foreach($request_data as $field => $value) {
+        foreach ($request_data as $field => $value) {
             if ($field == 'id') continue;
             $subscription->$field = $value;
         }
@@ -212,16 +212,16 @@ class Subscriptions extends DolibarrApi
     public function delete($id)
     {
         // The right to delete a subscription comes with the right to create one.
-        if(! DolibarrApiAccess::$user->rights->adherent->cotisation->creer) {
+        if (!DolibarrApiAccess::$user->rights->adherent->cotisation->creer) {
             throw new RestException(401);
         }
         $subscription = new Subscription($this->db);
         $result = $subscription->fetch($id);
-        if( ! $result ) {
+        if (!$result) {
             throw new RestException(404, 'Subscription not found');
         }
 
-        if (! $subscription->delete(DolibarrApiAccess::$user)) {
+        if (!$subscription->delete(DolibarrApiAccess::$user)) {
             throw new RestException(401, 'error when deleting subscription');
         }
 

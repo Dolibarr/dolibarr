@@ -1280,7 +1280,13 @@ else
 			// Accountancy_code_buy
 			print '<tr><td>'.$langs->trans("ProductAccountancyBuyCode").'</td>';
 			print '<td>';
-			print $formaccounting->select_account(GETPOST('accountancy_code_buy', 'alpha'), 'accountancy_code_buy', 1, null, 1, 1, '');
+            if ($type == 0)
+            {
+                $accountancy_code_buy = (GETPOST('accountancy_code_buy', 'alpha') ? (GETPOST('accountancy_code_buy', 'alpha')) : $conf->global->ACCOUNTING_PRODUCT_BUY_ACCOUNT);
+            } else {
+                $accountancy_code_buy = GETPOST('accountancy_code_buy', 'alpha');
+            }
+			print $formaccounting->select_account($accountancy_code_buy, 'accountancy_code_buy', 1, null, 1, 1, '');
 			print '</td></tr>';
 
 			// Accountancy_code_buy_intra
@@ -1487,7 +1493,7 @@ else
                 // Default warehouse
                 print '<tr><td>'.$langs->trans("DefaultWarehouse").'</td><td>';
                 print $formproduct->selectWarehouses($object->fk_default_warehouse, 'fk_default_warehouse', 'warehouseopen', 1);
-                print ' <a href="'.DOL_URL_ROOT.'/product/stock/card.php?action=create&amp;backtopage='.urlencode($_SERVER['PHP_SELF'].'?action=create&type='.GETPOST('type', 'int')).'">'.$langs->trans("AddWarehouse").'</a>';
+                print ' <a href="'.DOL_URL_ROOT.'/product/stock/card.php?action=create&amp;backtopage='.urlencode($_SERVER['PHP_SELF'].'?action=create&type='.GETPOST('type', 'int')).'"><span class="fa fa-plus-circle valignmiddle paddingleft" title="'.$langs->trans("AddWarehouse").'"></span></a>';
                 print '</td>';
                 /*
                 print "<tr>".'<td>'.$langs->trans("StockLimit").'</td><td>';

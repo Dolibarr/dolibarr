@@ -45,6 +45,7 @@ UPDATE llx_accounting_system SET fk_country = NULL, active = 0 WHERE pcg_version
 
 
 -- For v12
+DELETE FROM llx_menu where module='supplier_proposal';
 
 UPDATE llx_website SET lang = 'en' WHERE lang like 'en_%';
 UPDATE llx_website SET lang = 'fr' WHERE lang like 'fr_%';
@@ -64,10 +65,21 @@ ALTER TABLE llx_website ADD COLUMN otherlang varchar(255);
 
 ALTER TABLE llx_website_page ADD COLUMN author_alias varchar(64);
 
+UPDATE llx_rights_def SET perms = 'order_advance', subperms = 'close' WHERE module = 'commande' AND perms = 'cloturer';
+UPDATE llx_rights_def SET perms = 'propal_advance', subperms = 'close' WHERE module = 'propale' AND perms = 'cloturer';
+
 ALTER TABLE llx_holiday_users DROP INDEX uk_holiday_users;
 ALTER TABLE llx_holiday_users ADD UNIQUE INDEX uk_holiday_users(fk_user, fk_type);
 
 ALTER TABLE llx_ticket ADD COLUMN import_key varchar(14);
+
+ALTER TABLE llx_ticket ADD UNIQUE uk_ticket_ref (ref, entity);
+ALTER TABLE llx_ticket ADD INDEX idx_ticket_entity (entity);
+ALTER TABLE llx_ticket ADD INDEX idx_ticket_fk_soc (fk_soc);
+ALTER TABLE llx_ticket ADD INDEX idx_ticket_fk_user_assign (fk_user_assign);
+ALTER TABLE llx_ticket ADD INDEX idx_ticket_fk_project (fk_project);
+ALTER TABLE llx_ticket ADD INDEX idx_ticket_fk_statut (fk_statut);
+
 
 --ALTER TABLE llx_facturerec DROP COLUMN vat_src_code;
 
@@ -121,7 +133,7 @@ create table llx_object_lang
 (
   rowid          integer AUTO_INCREMENT PRIMARY KEY,
   fk_object      integer      DEFAULT 0 NOT NULL,
-  type_object    varchar(32)  NOT NULL,
+  type_object    varchar(32)  NOT NULL,				-- value found into $object->element
   property       varchar(32)  NOT NULL,
   lang           varchar(5)   DEFAULT 0 NOT NULL,
   value          text,
@@ -193,8 +205,39 @@ ALTER TABLE llx_accounting_account DROP COLUMN pcg_subtype;
 ALTER TABLE llx_product ADD COLUMN accountancy_code_buy_intra varchar(32) AFTER accountancy_code_buy;
 ALTER TABLE llx_product ADD COLUMN accountancy_code_buy_export varchar(32) AFTER accountancy_code_buy_intra;
 
-ALTER TABLE llx_entrepot ADD COLUMN fax varchar(20) DEFAULT NULL AFTER fk_pays;
-ALTER TABLE llx_entrepot ADD COLUMN phone varchar(20) DEFAULT NULL AFTER fk_pays;
+ALTER TABLE llx_entrepot ADD COLUMN fax varchar(20) DEFAULT NULL;
+ALTER TABLE llx_entrepot ADD COLUMN phone varchar(20) DEFAULT NULL;
 
 ALTER TABLE llx_accounting_account ADD COLUMN reconcilable tinyint DEFAULT 0 NOT NULL after active;
 
+ALTER TABLE llx_categorie MODIFY type integer NOT NULL DEFAULT 1;
+
+ALTER TABLE llx_societe_remise_except ADD COLUMN vat_src_code varchar(10) DEFAULT '';
+
+ALTER TABLE llx_blockedlog MODIFY COLUMN object_data mediumtext;
+ALTER TABLE llx_blockedlog ADD COLUMN object_version varchar(32) DEFAULT '';
+
+ALTER TABLE llx_product_lot MODIFY COLUMN batch varchar(128);
+ALTER TABLE llx_product_batch MODIFY COLUMN batch varchar(128);
+ALTER TABLE llx_commande_fournisseur_dispatch MODIFY COLUMN batch varchar(128);
+ALTER TABLE llx_stock_mouvement MODIFY COLUMN batch varchar(128);
+ALTER TABLE llx_mrp_production MODIFY COLUMN batch varchar(128);
+
+create table llx_categorie_website_page
+(
+  fk_categorie  	integer NOT NULL,
+  fk_website_page   integer NOT NULL,
+  import_key    	varchar(14)
+)ENGINE=innodb;
+
+ALTER TABLE llx_categorie_website_page ADD PRIMARY KEY pk_categorie_website_page (fk_categorie, fk_website_page);
+ALTER TABLE llx_categorie_website_page ADD INDEX idx_categorie_website_page_fk_categorie (fk_categorie);
+ALTER TABLE llx_categorie_website_page ADD INDEX idx_categorie_website_page_fk_website_page (fk_website_page);
+
+ALTER TABLE llx_categorie_website_page ADD CONSTRAINT fk_categorie_website_page_categorie_rowid FOREIGN KEY (fk_categorie) REFERENCES llx_categorie (rowid);
+ALTER TABLE llx_categorie_website_page ADD CONSTRAINT fk_categorie_website_page_website_page_rowid FOREIGN KEY (fk_website_page) REFERENCES llx_website_page (rowid);
+
+ALTER TABLE llx_categorie ADD COLUMN date_creation	datetime; 
+ALTER TABLE llx_categorie ADD COLUMN tms     		timestamp;
+ALTER TABLE llx_categorie ADD COLUMN fk_user_creat	integer;
+ALTER TABLE llx_categorie ADD COLUMN fk_user_modif	integer;

@@ -253,7 +253,11 @@ if (!$error && $massaction == 'confirm_presend')
 				// Test recipient
 				if (empty($sendto)) 	// For the case, no recipient were set (multi thirdparties send)
 				{
-					if ($objectobj->element == 'expensereport')
+					if ($objectobj->element == 'societe')
+					{
+						$sendto = $objectobj->email;
+					}
+					elseif ($objectobj->element == 'expensereport')
 					{
 						$fuser = new User($db);
 						$fuser->fetch($objectobj->fk_user_author);
@@ -289,6 +293,10 @@ if (!$error && $massaction == 'confirm_presend')
 
 				if (empty($sendto))
 				{
+					if ($objectobj->element == 'societe') {
+						$objectobj->thirdparty = $objectobj; // Hack so following code is comaptible when objectobj is a thirdparty
+					}
+
 				   	//print "No recipient for thirdparty ".$objectobj->thirdparty->name;
 				   	$nbignored++;
 				   	if (empty($thirdpartywithoutemail[$objectobj->thirdparty->id]))
@@ -491,9 +499,11 @@ if (!$error && $massaction == 'confirm_presend')
 					//var_dump($trackid);exit;
 					//var_dump($subjectreplaced);
 
+					if (empty($sendcontext)) $sendcontext = 'standard';
+
 					// Send mail (substitutionarray must be done just before this)
                     require_once DOL_DOCUMENT_ROOT.'/core/class/CMailFile.class.php';
-                    $mailfile = new CMailFile($subjectreplaced, $sendto, $from, $messagereplaced, $filepath, $mimetype, $filename, $sendtocc, $sendtobcc, $deliveryreceipt, -1, '', '', $trackid);
+                    $mailfile = new CMailFile($subjectreplaced, $sendto, $from, $messagereplaced, $filepath, $mimetype, $filename, $sendtocc, $sendtobcc, $deliveryreceipt, -1, '', '', $trackid, '', $sendcontext);
 					if ($mailfile->error)
 					{
 						$resaction .= '<div class="error">'.$mailfile->error.'</div>';
@@ -550,12 +560,10 @@ if (!$error && $massaction == 'confirm_presend')
 
 								if (!empty($triggername))
 								{
-									// Appel des triggers
-                                    include_once DOL_DOCUMENT_ROOT."/core/class/interfaces.class.php";
-									$interface = new Interfaces($db);
-                                    $result = $interface->run_triggers($triggername, $objectobj2, $user, $langs, $conf);
-									if ($result < 0) { $error++; $errors = $interface->errors; }
-									// Fin appel triggers
+									// Call trigger
+									$result = $objectobj2->call_trigger($triggername, $user);
+									if ($result < 0) $error++;
+									// End call triggers
 
 									if ($error)
 									{
@@ -744,7 +752,7 @@ if ($massaction == 'confirm_createbills')   // Create bills from orders
 
 						// Extrafields
 						if (empty($conf->global->MAIN_EXTRAFIELDS_DISABLED) && method_exists($lines[$i], 'fetch_optionals')) {
-							$lines[$i]->fetch_optionals($lines[$i]->rowid);
+							$lines[$i]->fetch_optionals();
 							$array_options = $lines[$i]->array_options;
 						}
 
@@ -828,7 +836,7 @@ if ($massaction == 'confirm_createbills')   // Create bills from orders
 			// Builddoc
 			$donotredirect = 1;
 			$upload_dir = $conf->facture->dir_output;
-			$permissiontoadd=$user->rights->facture->creer;
+			$permissiontoadd = $user->rights->facture->creer;
 
 			// Call action to build doc
 			$savobject = $object;

@@ -49,7 +49,8 @@ function dolSaveMasterFile($filemaster)
 }
 
 /**
- * Save content of a page on disk
+ * Save content of a page on disk.
+ * It can save file into root directory or into language subdirectory.
  *
  * @param	string		$filealias			Full path of filename to generate
  * @param	Website		$object				Object website
@@ -98,7 +99,8 @@ function dolSavePageAlias($filealias, $object, $objectpage)
 
 
 /**
- * Save content of a page on disk
+ * Save content of a page on disk.
+ * Page contents are always saved into root directory.
  *
  * @param	string		$filetpl			Full path of filename to generate
  * @param	Website		$object				Object website
@@ -246,18 +248,19 @@ function dolSaveIndexPage($pathofwebsite, $fileindex, $filetpl, $filewrapper)
 	$indexcontent .= "include_once './".basename($filetpl)."'\n";
 	$indexcontent .= '// END PHP ?>'."\n";
 	$result1 = file_put_contents($fileindex, $indexcontent);
-	if (!empty($conf->global->MAIN_UMASK))
+	if (!empty($conf->global->MAIN_UMASK)) {
 		@chmod($fileindex, octdec($conf->global->MAIN_UMASK));
+	}
+	dol_delete_file($filewrapper);
 
-		dol_delete_file($filewrapper);
+	$wrappercontent = file_get_contents(DOL_DOCUMENT_ROOT.'/website/samples/wrapper.php');
 
-		$wrappercontent = file_get_contents(DOL_DOCUMENT_ROOT.'/website/samples/wrapper.html');
+	$result2 = file_put_contents($filewrapper, $wrappercontent);
+	if (!empty($conf->global->MAIN_UMASK)) {
+		@chmod($filewrapper, octdec($conf->global->MAIN_UMASK));
+	}
 
-		$result2 = file_put_contents($filewrapper, $wrappercontent);
-		if (!empty($conf->global->MAIN_UMASK))
-			@chmod($filewrapper, octdec($conf->global->MAIN_UMASK));
-
-			return ($result1 && $result2);
+	return ($result1 && $result2);
 }
 
 
@@ -418,7 +421,6 @@ function dolSaveReadme($file, $content)
 function showWebsiteTemplates(Website $website)
 {
 	global $conf, $langs, $db, $form;
-	global $bc;
 
 	$dirthemes = array('/doctemplates/websites');
 	if (!empty($conf->modules_parts['websitetemplates']))		// Using this feature slow down application

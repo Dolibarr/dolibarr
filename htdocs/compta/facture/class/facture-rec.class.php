@@ -120,7 +120,7 @@ class FactureRec extends CommonInvoice
 	/**
 	 * @var array  Array with all fields and their property. Do not use it as a static var. It may be modified by constructor.
 	 */
-	public $fields=array(
+	public $fields = array(
 		'rowid' =>array('type'=>'integer', 'label'=>'TechnicalID', 'enabled'=>1, 'visible'=>-1, 'notnull'=>1, 'position'=>10),
 		'titre' =>array('type'=>'varchar(100)', 'label'=>'Titre', 'enabled'=>1, 'visible'=>-1, 'position'=>15),
 		'entity' =>array('type'=>'integer', 'label'=>'Entity', 'default'=>1, 'enabled'=>1, 'visible'=>-2, 'notnull'=>1, 'position'=>20, 'index'=>1),
@@ -324,6 +324,23 @@ class FactureRec extends CommonInvoice
 					if ($result_insert < 0)
 					{
 						$error++;
+					}
+					else {
+					    $objectline = new FactureLigneRec($this->db);
+					    if ($objectline->fetch($result_insert))
+					    {
+					        // Extrafields
+					        if (empty($conf->global->MAIN_EXTRAFIELDS_DISABLED) && method_exists($facsrc->lines[$i], 'fetch_optionals')) {
+					            $facsrc->lines[$i]->fetch_optionals($facsrc->lines[$i]->rowid);
+					            $objectline->array_options = $facsrc->lines[$i]->array_options;
+					        }
+
+					        $result = $objectline->insertExtraFields();
+					        if ($result < 0)
+					        {
+					            $error++;
+					        }
+					    }
 					}
 				}
 
@@ -677,7 +694,7 @@ class FactureRec extends CommonInvoice
 				$line->price            = $objp->price;
 				$line->remise           = $objp->remise;
 
-				$line->fetch_optionals($line->id);
+				$line->fetch_optionals();
 
 				// Multicurrency
 				$line->fk_multicurrency = $objp->fk_multicurrency;

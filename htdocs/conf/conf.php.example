@@ -218,7 +218,7 @@ $dolibarr_main_authentication='dolibarr';
 // 0 = No forced redirect
 // 1 = Force redirect to https, until SCRIPT_URI start with https into response
 // 2 = Force redirect to https, until SERVER["HTTPS"] is 'on' into response
-// 'https://my.domain.com' = Force reditect to https using this domain name.
+// 'https://my.domain.com' = Force redirect to https using this domain name.
 // Warning: If you enable this parameter, your web server must be configured to
 // respond URL with https protocol.
 // According to your web server setup, some values may works and other not. Try
@@ -226,7 +226,7 @@ $dolibarr_main_authentication='dolibarr';
 // Default value: 0
 // Possible values: 0, 1, 2 or 'https://my.domain.com'
 // Examples:
-// $dolibarr_main_force_https='0';
+// $dolibarr_main_force_https='1';
 //
 $dolibarr_main_force_https='0';
 

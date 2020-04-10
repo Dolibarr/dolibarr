@@ -95,7 +95,7 @@ echo $line->qty_frozen ? yn($line->qty_frozen) : '';
 print '</td>';
 print '<td class="linecoldisablestockchange nowrap right">';
 $coldisplay++;
-echo $line->disable_stock_change ? yn($line->disable_stock_change) : '';  // Yes, it is a quantity, not a price, but we just want the formating role of function price
+echo $line->disable_stock_change ? yn($line->disable_stock_change) : ''; // Yes, it is a quantity, not a price, but we just want the formating role of function price
 print '</td>';
 
 print '<td class="linecolefficiency nowrap right">';
@@ -103,12 +103,17 @@ $coldisplay++;
 echo $line->efficiency;
 print '</td>';
 
-if ($this->status == 0 && ($object_rights->write) && $action != 'selectlines' ) {
+print '<td class="linecolcost nowrap right">';
+$coldisplay++;
+echo price($line->total_cost);
+print '</td>';
+
+if ($this->status == 0 && ($object_rights->write) && $action != 'selectlines') {
 	print '<td class="linecoledit center">';
 	$coldisplay++;
-    if (($line->info_bits & 2) == 2 || ! empty($disableedit)) {
+    if (($line->info_bits & 2) == 2 || !empty($disableedit)) {
     } else {
-        print '<a href="'.$_SERVER["PHP_SELF"].'?id='.$this->id.'&amp;action=editline&amp;lineid='.$line->id.'#line_'.$line->id.'">'.img_edit().'</a>';
+        print '<a class="editfielda reposition" href="'.$_SERVER["PHP_SELF"].'?id='.$this->id.'&amp;action=editline&amp;lineid='.$line->id.'#line_'.$line->id.'">'.img_edit().'</a>';
     }
     print '</td>';
 
@@ -116,7 +121,7 @@ if ($this->status == 0 && ($object_rights->write) && $action != 'selectlines' ) 
     $coldisplay++;
     if (($line->fk_prev_id == null) && empty($disableremove)) {
         //La suppression n'est autorisée que si il n'y a pas de ligne dans une précédente situation
-        print '<a href="'.$_SERVER["PHP_SELF"].'?id='.$this->id.'&amp;action=deleteline&amp;lineid='.$line->id.'">';
+        print '<a class="reposition" href="'.$_SERVER["PHP_SELF"].'?id='.$this->id.'&amp;action=deleteline&amp;lineid='.$line->id.'">';
         print img_delete();
         print '</a>';
     }

@@ -63,10 +63,10 @@ print '<div class="fichecenter"><div class="fichethirdleft">';
 
 if ($conf->use_javascript_ajax)
 {
-    $sql= "SELECT COUNT(t.rowid) as nb, status";
-    $sql.=" FROM ".MAIN_DB_PREFIX."mrp_mo as t";
-	$sql.=" GROUP BY t.status";
-	$sql.=" ORDER BY t.status ASC";
+    $sql = "SELECT COUNT(t.rowid) as nb, status";
+    $sql .= " FROM ".MAIN_DB_PREFIX."mrp_mo as t";
+	$sql .= " GROUP BY t.status";
+	$sql .= " ORDER BY t.status ASC";
     $resql = $db->query($sql);
 
     if ($resql)
@@ -74,7 +74,7 @@ if ($conf->use_javascript_ajax)
     	$num = $db->num_rows($resql);
     	$i = 0;
 
-    	$totalnb=0;
+    	$totalnb = 0;
     	$dataseries = array();
 		$colorseries = array();
 		$vals = array();
@@ -86,7 +86,7 @@ if ($conf->use_javascript_ajax)
     		$obj = $db->fetch_object($resql);
     		if ($obj)
     		{
-    			$vals[$obj->status]=$obj->nb;
+    			$vals[$obj->status] = $obj->nb;
 
    				$totalnb += $obj->nb;
     		}

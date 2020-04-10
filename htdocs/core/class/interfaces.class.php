@@ -112,7 +112,7 @@ class Interfaces
             	$fullpathfiles = array();
                 while (($file = readdir($handle)) !== false)
                 {
-                	$reg=array();
+                	$reg = array();
                     if (is_readable($newdir."/".$file) && preg_match('/^interface_([0-9]+)_([^_]+)_(.+)\.class\.php$/i', $file, $reg))
                     {
                         $part1 = $reg[1];

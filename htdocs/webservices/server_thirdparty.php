@@ -290,35 +290,35 @@ $server->register(
  */
 function getThirdParty($authentication, $id = '', $ref = '', $ref_ext = '')
 {
-	global $db,$conf,$langs;
+	global $db, $conf, $langs;
 
 	dol_syslog("Function: getThirdParty login=".$authentication['login']." id=".$id." ref=".$ref." ref_ext=".$ref_ext);
 
-	if ($authentication['entity']) $conf->entity=$authentication['entity'];
+	if ($authentication['entity']) $conf->entity = $authentication['entity'];
 
     // Init and check authentication
-    $objectresp=array();
-    $errorcode='';$errorlabel='';
-    $error=0;
-    $fuser=check_authentication($authentication, $error, $errorcode, $errorlabel);
+    $objectresp = array();
+    $errorcode = ''; $errorlabel = '';
+    $error = 0;
+    $fuser = check_authentication($authentication, $error, $errorcode, $errorlabel);
     // Check parameters
-	if (! $error && (($id && $ref) || ($id && $ref_ext) || ($ref && $ref_ext)))
+	if (!$error && (($id && $ref) || ($id && $ref_ext) || ($ref && $ref_ext)))
 	{
 		$error++;
-		$errorcode='BAD_PARAMETERS'; $errorlabel="Parameter id, ref and ref_ext can't be both provided. You must choose one or other but not both.";
+		$errorcode = 'BAD_PARAMETERS'; $errorlabel = "Parameter id, ref and ref_ext can't be both provided. You must choose one or other but not both.";
 	}
 
-	if (! $error)
+	if (!$error)
 	{
 		$fuser->getrights();
 
 		if ($fuser->rights->societe->lire)
 		{
-			$thirdparty=new Societe($db);
-			$result=$thirdparty->fetch($id, $ref, $ref_ext);
+			$thirdparty = new Societe($db);
+			$result = $thirdparty->fetch($id, $ref, $ref_ext);
 			if ($result > 0)
 			{
-				$thirdparty_result_fields=array(
+				$thirdparty_result_fields = array(
 				    	'id' => $thirdparty->id,
 			   			'ref' => $thirdparty->name,
 			   			'ref_ext' => $thirdparty->ref_ext,
@@ -541,104 +541,104 @@ function createThirdParty($authentication, $thirdparty)
  */
 function updateThirdParty($authentication, $thirdparty)
 {
-	global $db,$conf,$langs;
+	global $db, $conf, $langs;
 
-	$now=dol_now();
+	$now = dol_now();
 
 	dol_syslog("Function: updateThirdParty login=".$authentication['login']);
 
-	if ($authentication['entity']) $conf->entity=$authentication['entity'];
+	if ($authentication['entity']) $conf->entity = $authentication['entity'];
 
 	// Init and check authentication
-	$objectresp=array();
-	$errorcode='';$errorlabel='';
-	$error=0;
-	$fuser=check_authentication($authentication, $error, $errorcode, $errorlabel);
+	$objectresp = array();
+	$errorcode = ''; $errorlabel = '';
+	$error = 0;
+	$fuser = check_authentication($authentication, $error, $errorcode, $errorlabel);
 	// Check parameters
-	if (empty($thirdparty['id']))	{
-		$error++; $errorcode='KO'; $errorlabel="Thirdparty id is mandatory.";
+	if (empty($thirdparty['id'])) {
+		$error++; $errorcode = 'KO'; $errorlabel = "Thirdparty id is mandatory.";
 	}
 
-	if (! $error)
+	if (!$error)
 	{
-		$objectfound=false;
+		$objectfound = false;
 
 		include_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
 
-		$object=new Societe($db);
-		$result=$object->fetch($thirdparty['id']);
+		$object = new Societe($db);
+		$result = $object->fetch($thirdparty['id']);
 
 		if (!empty($object->id)) {
-			$objectfound=true;
+			$objectfound = true;
 
-			$object->ref=$thirdparty['ref'];
-			$object->name=$thirdparty['ref'];
-			$object->ref_ext=$thirdparty['ref_ext'];
-			$object->status=$thirdparty['status'];
-			$object->client=$thirdparty['client'];
-			$object->fournisseur=$thirdparty['supplier'];
-			$object->code_client=$thirdparty['customer_code'];
-			$object->code_fournisseur=$thirdparty['supplier_code'];
-			$object->code_compta=$thirdparty['customer_code_accountancy'];
-			$object->code_compta_fournisseur=$thirdparty['supplier_code_accountancy'];
-			$object->date_creation=$now;
-			$object->note_private=$thirdparty['note_private'];
-			$object->note_public=$thirdparty['note_public'];
-			$object->address=$thirdparty['address'];
-			$object->zip=$thirdparty['zip'];
-			$object->town=$thirdparty['town'];
+			$object->ref = $thirdparty['ref'];
+			$object->name = $thirdparty['ref'];
+			$object->ref_ext = $thirdparty['ref_ext'];
+			$object->status = $thirdparty['status'];
+			$object->client = $thirdparty['client'];
+			$object->fournisseur = $thirdparty['supplier'];
+			$object->code_client = $thirdparty['customer_code'];
+			$object->code_fournisseur = $thirdparty['supplier_code'];
+			$object->code_compta = $thirdparty['customer_code_accountancy'];
+			$object->code_compta_fournisseur = $thirdparty['supplier_code_accountancy'];
+			$object->date_creation = $now;
+			$object->note_private = $thirdparty['note_private'];
+			$object->note_public = $thirdparty['note_public'];
+			$object->address = $thirdparty['address'];
+			$object->zip = $thirdparty['zip'];
+			$object->town = $thirdparty['town'];
 
-			$object->country_id=$thirdparty['country_id'];
-			if ($thirdparty['country_code']) $object->country_id=getCountry($thirdparty['country_code'], 3);
-			$object->province_id=$thirdparty['province_id'];
+			$object->country_id = $thirdparty['country_id'];
+			if ($thirdparty['country_code']) $object->country_id = getCountry($thirdparty['country_code'], 3);
+			$object->province_id = $thirdparty['province_id'];
 			//if ($thirdparty['province_code']) $newobject->province_code=getCountry($thirdparty['province_code'],3);
 
-			$object->phone=$thirdparty['phone'];
-			$object->fax=$thirdparty['fax'];
-			$object->email=$thirdparty['email'];
-			$object->url=$thirdparty['url'];
-			$object->idprof1=$thirdparty['profid1'];
-			$object->idprof2=$thirdparty['profid2'];
-			$object->idprof3=$thirdparty['profid3'];
-			$object->idprof4=$thirdparty['profid4'];
-			$object->idprof5=$thirdparty['profid5'];
-			$object->idprof6=$thirdparty['profid6'];
+			$object->phone = $thirdparty['phone'];
+			$object->fax = $thirdparty['fax'];
+			$object->email = $thirdparty['email'];
+			$object->url = $thirdparty['url'];
+			$object->idprof1 = $thirdparty['profid1'];
+			$object->idprof2 = $thirdparty['profid2'];
+			$object->idprof3 = $thirdparty['profid3'];
+			$object->idprof4 = $thirdparty['profid4'];
+			$object->idprof5 = $thirdparty['profid5'];
+			$object->idprof6 = $thirdparty['profid6'];
 
-			$object->capital=$thirdparty['capital'];
+			$object->capital = $thirdparty['capital'];
 
-			$object->barcode=$thirdparty['barcode'];
-			$object->tva_assuj=$thirdparty['vat_used'];
-			$object->tva_intra=$thirdparty['vat_number'];
+			$object->barcode = $thirdparty['barcode'];
+			$object->tva_assuj = $thirdparty['vat_used'];
+			$object->tva_intra = $thirdparty['vat_number'];
 
-			$object->canvas=$thirdparty['canvas'];
+			$object->canvas = $thirdparty['canvas'];
 
 			$elementtype = 'societe';
 
 			// Retrieve all extrafields for thirdsparty
 			// fetch optionals attributes and labels
-			$extrafields=new ExtraFields($db);
+			$extrafields = new ExtraFields($db);
 			$extrafields->fetch_name_optionals_label($elementtype, true);
 			if (is_array($extrafields->attributes[$elementtype]['label']) && count($extrafields->attributes[$elementtype]['label']))
 			{
-				foreach($extrafields->attributes[$elementtype]['label'] as $key=>$label)
+				foreach ($extrafields->attributes[$elementtype]['label'] as $key=>$label)
 				{
-					$key='options_'.$key;
-					$object->array_options[$key]=$thirdparty[$key];
+					$key = 'options_'.$key;
+					$object->array_options[$key] = $thirdparty[$key];
 				}
 			}
 
 			$db->begin();
 
-			$result=$object->update($thirdparty['id'], $fuser);
+			$result = $object->update($thirdparty['id'], $fuser);
 			if ($result <= 0) {
 				$error++;
 			}
 		}
 
-		if ((! $error) && ($objectfound))
+		if ((!$error) && ($objectfound))
 		{
 			$db->commit();
-			$objectresp=array(
+			$objectresp = array(
 					'result'=>array('result_code'=>'OK', 'result_label'=>''),
 					'id'=>$object->id
 			);

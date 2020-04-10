@@ -35,7 +35,7 @@ $action = GETPOST('action', 'aZ09');
 
 if (!$user->admin) accessforbidden();
 
-$entity=$conf->entity;
+$entity = $conf->entity;
 
 
 /*
@@ -168,8 +168,8 @@ if ($result)
         		$family = $modules[$obj->module]->family_position;
         		$familyposition = 0;
         		$sqlupdate = 'UPDATE '.MAIN_DB_PREFIX."rights_def SET module_position = ".$modules[$obj->module]->module_position.",";
-        		$sqlupdate.= " family_position = ".$familyposition;
-        		$sqlupdate.= " WHERE module_position = 0 AND module = '".$db->escape($obj->module)."'";
+        		$sqlupdate .= " family_position = ".$familyposition;
+        		$sqlupdate .= " WHERE module_position = 0 AND module = '".$db->escape($obj->module)."'";
         		$db->query($sqlupdate);
         	}
         }

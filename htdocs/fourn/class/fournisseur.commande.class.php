@@ -104,6 +104,8 @@ class CommandeFournisseur extends CommonOrder
     //  Note: billed or not is on another field "billed"
     public $statuts; // List of status
 
+    public $billed;
+
     public $socid;
     public $fourn_id;
     public $date;
@@ -354,6 +356,7 @@ class CommandeFournisseur extends CommonOrder
             $this->socid = $obj->fk_soc;
             $this->fourn_id = $obj->fk_soc;
             $this->statut				= $obj->fk_statut;
+            $this->status				= $obj->fk_statut;
             $this->billed				= $obj->billed;
             $this->user_author_id = $obj->fk_user_author;
             $this->user_valid_id = $obj->fk_user_valid;
@@ -694,7 +697,7 @@ class CommandeFournisseur extends CommonOrder
      *  Return label of a status
      *
      * 	@param  int		$status		Id statut
-     *  @param  int		$mode       0=Long label, 1=Short label, 2=Picto + Short label, 3=Picto, 4=Picto + Long label, 5=Short label + Picto
+	 *  @param  int		$mode       0=long label, 1=short label, 2=Picto + short label, 3=Picto, 4=Picto + long label, 5=Short label + Picto, 6=Long label + Picto
      *  @param  int     $billed     1=Billed
      *  @return string				Label of status
      */
@@ -731,14 +734,14 @@ class CommandeFournisseur extends CommonOrder
 
         $statustrans = array(
             0 => 'status0',
-            1 => 'status1',
-            2 => 'status3',
-            3 => 'status3',
-            4 => 'status3',
-            5 => 'status4',
-            6 => 'status5',
-            7 => 'status5',
-            9 => 'status5',
+            1 => 'status1b',
+            2 => 'status1',
+            3 => 'status4',
+            4 => 'status4b',
+            5 => 'status6',
+            6 => 'status9',
+            7 => 'status9',
+            9 => 'status9',
         );
 
         $statusClass = 'status0';
@@ -747,9 +750,10 @@ class CommandeFournisseur extends CommonOrder
         }
 
         $billedtext = '';
-        if ($mode == 4 && $billed) {
-            $billedtext = ' - '.$langs->trans("Billed");
+        if ($billed) {
+        	$billedtext = ' - '.$langs->trans("Billed");
         }
+        if ($status == 5 && $billed) $statusClass = 'status6';
 
         $statusLong = $langs->trans($this->statuts[$status]).$billedtext;
         $statusShort = $langs->trans($this->statutshort[$status]);
@@ -1492,7 +1496,7 @@ class CommandeFournisseur extends CommonOrder
 		$this->db->begin();
 
         // get extrafields so they will be clone
-        foreach($this->lines as $line)
+        foreach ($this->lines as $line)
             $line->fetch_optionals();
 
 		// Load source object

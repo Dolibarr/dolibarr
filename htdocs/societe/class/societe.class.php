@@ -712,6 +712,7 @@ class Societe extends CommonObject
      */
 	public $multicurrency_code;
 
+
 	/**
 	 *    Constructor
 	 *
@@ -1402,6 +1403,15 @@ class Societe extends CommonObject
 						$error++;
 					}
 				}
+				// Actions on extra languages
+				if (!$error && empty($conf->global->MAIN_EXTRALANGUAGES_DISABLED)) // For avoid conflicts if trigger used
+				{
+					$result = $this->insertExtraLanguages();
+					if ($result < 0)
+					{
+						$error++;
+					}
+				}
 
 				if (!$error && $call_trigger)
 				{
@@ -1986,11 +1996,11 @@ class Societe extends CommonObject
 	 *    	@param	float	$remise     	Amount of discount
 	 *    	@param  User	$user       	User adding discount
 	 *    	@param  string	$desc			Reason of discount
-	 *      @param  float	$tva_tx     	VAT rate
+	 *      @param  string	$vatrate     	VAT rate (may contain the vat code too). Exemple: '1.23', '1.23 (ABC)', ...
 	 *      @param	int		$discount_type	0 => customer discount, 1 => supplier discount
-	 *		@return	int					<0 if KO, id of discount record if OK
+	 *		@return	int						<0 if KO, id of discount record if OK
 	 */
-    public function set_remise_except($remise, User $user, $desc, $tva_tx = 0, $discount_type = 0)
+    public function set_remise_except($remise, User $user, $desc, $vatrate = '', $discount_type = 0)
 	{
         // phpcs:enable
 		global $langs;
@@ -2011,8 +2021,17 @@ class Societe extends CommonObject
 			return -2;
 		}
 
-		if ($this->id)
+		if ($this->id > 0)
 		{
+			// Clean vat code
+			$reg = array();
+			$vat_src_code = '';
+			if (preg_match('/\((.*)\)/', $vatrate, $reg))
+			{
+				$vat_src_code = $reg[1];
+				$vatrate = preg_replace('/\s*\(.*\)/', '', $vatrate); // Remove code into vatrate.
+			}
+
 			require_once DOL_DOCUMENT_ROOT.'/core/class/discount.class.php';
 
 			$discount = new DiscountAbsolute($this->db);
@@ -2021,10 +2040,12 @@ class Societe extends CommonObject
 			$discount->discount_type = $discount_type;
 
 			$discount->amount_ht = $discount->multicurrency_amount_ht = price2num($remise, 'MT');
-			$discount->amount_tva = $discount->multicurrency_amount_tva = price2num($remise * $tva_tx / 100, 'MT');
+			$discount->amount_tva = $discount->multicurrency_amount_tva = price2num($remise * $vatrate / 100, 'MT');
 			$discount->amount_ttc = $discount->multicurrency_amount_ttc = price2num($discount->amount_ht + $discount->amount_tva, 'MT');
 
-			$discount->tva_tx = price2num($tva_tx, 'MT');
+			$discount->tva_tx = price2num($vatrate, 'MT');
+			$discount->vat_src_code = $vat_src_code;
+
 			$discount->description = $desc;
 
 			$result = $discount->create($user);
@@ -3604,6 +3625,7 @@ class Societe extends CommonObject
 		$this->phone = $member->phone; // Prof phone
 		$this->email = $member->email;
         $this->socialnetworks = $member->socialnetworks;
+		$this->entity=$member->entity;
 
 		$this->client = 1; // A member is a customer by default
 		$this->code_client = ($customercode ? $customercode : -1);

@@ -41,11 +41,11 @@ class ActionsCardIndividual extends ActionsCardCommon
      */
     public function __construct($db, $dirmodule, $targetmodule, $canvas, $card)
     {
-        $this->db				= $db;
-        $this->dirmodule		= $dirmodule;
-        $this->targetmodule		= $targetmodule;
-        $this->canvas			= $canvas;
-        $this->card				= $card;
+        $this->db = $db;
+        $this->dirmodule = $dirmodule;
+        $this->targetmodule = $targetmodule;
+        $this->canvas = $canvas;
+        $this->card = $card;
     }
 
 
@@ -59,11 +59,11 @@ class ActionsCardIndividual extends ActionsCardCommon
     {
         global $langs;
 
-        $out='';
+        $out = '';
 
-        if ($action == 'view')      $out.= $langs->trans("Individual");
-        if ($action == 'edit')      $out.= $langs->trans("EditCompany");
-        if ($action == 'create')    $out.= $langs->trans("NewCompany");
+        if ($action == 'view')      $out .= $langs->trans("Individual");
+        if ($action == 'edit')      $out .= $langs->trans("EditCompany");
+        if ($action == 'create')    $out .= $langs->trans("NewCompany");
 
         return $out;
     }

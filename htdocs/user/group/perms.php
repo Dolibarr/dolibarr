@@ -241,13 +241,13 @@ if ($object->id > 0)
     print '</tr>';
 
     $sql = "SELECT r.id, r.libelle as label, r.module";
-    $sql.= " FROM ".MAIN_DB_PREFIX."rights_def as r";
-    $sql.= " WHERE r.libelle NOT LIKE 'tou%'";    // On ignore droits "tous"
-    $sql.= " AND r.entity = " . $entity;
-    if (empty($conf->global->MAIN_USE_ADVANCED_PERMS)) $sql.= " AND r.perms NOT LIKE '%_advance'";  // Hide advanced perms if option is disable
-    $sql.= " ORDER BY r.module, r.id";
+    $sql .= " FROM ".MAIN_DB_PREFIX."rights_def as r";
+    $sql .= " WHERE r.libelle NOT LIKE 'tou%'"; // On ignore droits "tous"
+    $sql .= " AND r.entity = ".$entity;
+    if (empty($conf->global->MAIN_USE_ADVANCED_PERMS)) $sql .= " AND r.perms NOT LIKE '%_advance'"; // Hide advanced perms if option is disable
+    $sql .= " ORDER BY r.module, r.id";
 
-    $result=$db->query($sql);
+    $result = $db->query($sql);
     if ($result)
     {
         $i = 0;
@@ -327,8 +327,8 @@ if ($object->id > 0)
             	print '<td>&nbsp</td>';
             }
 
-            $perm_libelle=($conf->global->MAIN_USE_ADVANCED_PERMS && ($langs->trans("PermissionAdvanced".$obj->id)!=("PermissionAdvanced".$obj->id))?$langs->trans("PermissionAdvanced".$obj->id):(($langs->trans("Permission".$obj->id)!=("Permission".$obj->id))?$langs->trans("Permission".$obj->id):$langs->trans($obj->label)));
-            print '<td>'.$perm_libelle. '</td>';
+            $perm_libelle = ($conf->global->MAIN_USE_ADVANCED_PERMS && ($langs->trans("PermissionAdvanced".$obj->id) != ("PermissionAdvanced".$obj->id)) ? $langs->trans("PermissionAdvanced".$obj->id) : (($langs->trans("Permission".$obj->id) != ("Permission".$obj->id)) ? $langs->trans("Permission".$obj->id) : $langs->trans($obj->label)));
+            print '<td>'.$perm_libelle.'</td>';
 
             print '</tr>';
 

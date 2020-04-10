@@ -1183,7 +1183,7 @@ class Fichinter extends CommonObject
 
 		// get extrafields so they will be clone
 		foreach ($this->lines as $line)
-			$line->fetch_optionals($line->rowid);
+			$line->fetch_optionals();
 
 		// Load source object
 		$objFrom = clone $this;

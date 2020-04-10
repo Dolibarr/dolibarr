@@ -43,17 +43,17 @@ $hookmanager->initHooks('hrmindex');
 // Load translation files required by the page
 $langs->loadLangs(array('users', 'holidays', 'trips', 'boxes'));
 
-$socid=GETPOST("socid", "int");
+$socid = GETPOST("socid", "int");
 
 // Protection if external user
 if ($user->socid > 0) accessforbidden();
 
-if (empty($conf->global->MAIN_INFO_SOCIETE_NOM) || empty($conf->global->MAIN_INFO_SOCIETE_COUNTRY)) $setupcompanynotcomplete=1;
+if (empty($conf->global->MAIN_INFO_SOCIETE_NOM) || empty($conf->global->MAIN_INFO_SOCIETE_COUNTRY)) $setupcompanynotcomplete = 1;
 
 $holiday = new Holiday($db);
-$holidaystatic=new Holiday($db);
+$holidaystatic = new Holiday($db);
 
-$max=3;
+$max = 3;
 
 
 
@@ -93,22 +93,22 @@ if (!empty($setupcompanynotcomplete))
 
 print '<div class="fichecenter"><div class="fichethirdleft">';
 
-if (! empty($conf->global->MAIN_SEARCH_FORM_ON_HOME_AREAS))     // This is useless due to the global search combo
+if (!empty($conf->global->MAIN_SEARCH_FORM_ON_HOME_AREAS))     // This is useless due to the global search combo
 {
-    if (! empty($conf->holiday->enabled) && $user->rights->holiday->read)
+    if (!empty($conf->holiday->enabled) && $user->rights->holiday->read)
     {
     	$langs->load("holiday");
-        $listofsearchfields['search_holiday']=array('text'=>'TitreRequestCP');
+        $listofsearchfields['search_holiday'] = array('text'=>'TitreRequestCP');
     }
-    if (! empty($conf->deplacement->enabled) && $user->rights->deplacement->lire)
+    if (!empty($conf->deplacement->enabled) && $user->rights->deplacement->lire)
     {
     	$langs->load("trips");
-        $listofsearchfields['search_deplacement']=array('text'=>'ExpenseReport');
+        $listofsearchfields['search_deplacement'] = array('text'=>'ExpenseReport');
     }
-    if (! empty($conf->expensereport->enabled) && $user->rights->expensereport->lire)
+    if (!empty($conf->expensereport->enabled) && $user->rights->expensereport->lire)
     {
     	$langs->load("trips");
-        $listofsearchfields['search_expensereport']=array('text'=>'ExpenseReport');
+        $listofsearchfields['search_expensereport'] = array('text'=>'ExpenseReport');
     }
     if (count($listofsearchfields))
     {
@@ -116,8 +116,8 @@ if (! empty($conf->global->MAIN_SEARCH_FORM_ON_HOME_AREAS))     // This is usele
     	print '<input type="hidden" name="token" value="'.newToken().'">';
         print '<div class="div-table-responsive-no-min">';
     	print '<table class="noborder nohover centpercent">';
-    	$i=0;
-    	foreach($listofsearchfields as $key => $value)
+    	$i = 0;
+    	foreach ($listofsearchfields as $key => $value)
     	{
     		if ($i == 0) print '<tr class="liste_titre"><td colspan="3">'.$langs->trans("Search").'</td></tr>';
     		print '<tr '.$bc[false].'>';
@@ -173,29 +173,29 @@ print '</div><div class="fichetwothirdright"><div class="ficheaddleft">';
 
 
 // Latest leave requests
-if (! empty($conf->holiday->enabled) && $user->rights->holiday->read)
+if (!empty($conf->holiday->enabled) && $user->rights->holiday->read)
 {
     $sql = "SELECT u.rowid as uid, u.lastname, u.firstname, u.login, u.email, u.photo, u.statut, x.rowid, x.rowid as ref, x.fk_type, x.date_debut as date_start, x.date_fin as date_end, x.halfday, x.tms as dm, x.statut as status";
-    $sql.= " FROM ".MAIN_DB_PREFIX."holiday as x, ".MAIN_DB_PREFIX."user as u";
-    $sql.= " WHERE u.rowid = x.fk_user";
-    $sql.= " AND x.entity = ".$conf->entity;
-    if (empty($user->rights->holiday->read_all)) $sql.=' AND x.fk_user IN ('.join(',', $childids).')';
+    $sql .= " FROM ".MAIN_DB_PREFIX."holiday as x, ".MAIN_DB_PREFIX."user as u";
+    $sql .= " WHERE u.rowid = x.fk_user";
+    $sql .= " AND x.entity = ".$conf->entity;
+    if (empty($user->rights->holiday->read_all)) $sql .= ' AND x.fk_user IN ('.join(',', $childids).')';
     //if (!$user->rights->societe->client->voir && !$user->socid) $sql.= " AND x.fk_soc = s. rowid AND s.rowid = sc.fk_soc AND sc.fk_user = " .$user->id;
     //if (!empty($socid)) $sql.= " AND x.fk_soc = ".$socid;
-    $sql.= $db->order("x.tms", "DESC");
-    $sql.= $db->plimit($max, 0);
+    $sql .= $db->order("x.tms", "DESC");
+    $sql .= $db->plimit($max, 0);
 
     $result = $db->query($sql);
     if ($result)
     {
-        $var=false;
+        $var = false;
         $num = $db->num_rows($result);
 
-        $holidaystatic=new Holiday($db);
-        $userstatic=new User($db);
+        $holidaystatic = new Holiday($db);
+        $userstatic = new User($db);
 
-        $listhalfday=array('morning'=>$langs->trans("Morning"),"afternoon"=>$langs->trans("Afternoon"));
-        $typeleaves=$holidaystatic->getTypes(1, -1);
+        $listhalfday = array('morning'=>$langs->trans("Morning"), "afternoon"=>$langs->trans("Afternoon"));
+        $typeleaves = $holidaystatic->getTypes(1, -1);
 
         $i = 0;
 
@@ -214,24 +214,24 @@ if (! empty($conf->holiday->enabled) && $user->rights->holiday->read)
             {
                 $obj = $db->fetch_object($result);
 
-                $holidaystatic->id=$obj->rowid;
-                $holidaystatic->ref=$obj->ref;
+                $holidaystatic->id = $obj->rowid;
+                $holidaystatic->ref = $obj->ref;
 
-                $userstatic->id=$obj->uid;
-                $userstatic->lastname=$obj->lastname;
-                $userstatic->firstname=$obj->firstname;
-                $userstatic->login=$obj->login;
-                $userstatic->photo=$obj->photo;
-                $userstatic->email=$obj->email;
-                $userstatic->statut=$obj->statut;
+                $userstatic->id = $obj->uid;
+                $userstatic->lastname = $obj->lastname;
+                $userstatic->firstname = $obj->firstname;
+                $userstatic->login = $obj->login;
+                $userstatic->photo = $obj->photo;
+                $userstatic->email = $obj->email;
+                $userstatic->statut = $obj->statut;
 
                 print '<tr class="oddeven">';
                 print '<td class="nowraponall">'.$holidaystatic->getNomUrl(1).'</td>';
                 print '<td class="tdoverflowmax150">'.$userstatic->getNomUrl(-1, 'leave').'</td>';
                 print '<td>'.$typeleaves[$obj->fk_type]['label'].'</td>';
 
-                $starthalfday=($obj->halfday == -1 || $obj->halfday == 2)?'afternoon':'morning';
-                $endhalfday=($obj->halfday == 1 || $obj->halfday == 2)?'morning':'afternoon';
+                $starthalfday = ($obj->halfday == -1 || $obj->halfday == 2) ? 'afternoon' : 'morning';
+                $endhalfday = ($obj->halfday == 1 || $obj->halfday == 2) ? 'morning' : 'afternoon';
 
                 print '<td>'.dol_print_date($db->jdate($obj->date_start), 'day').' '.$langs->trans($listhalfday[$starthalfday]);
                 print '<td>'.dol_print_date($db->jdate($obj->date_end), 'day').' '.$langs->trans($listhalfday[$endhalfday]);
@@ -255,18 +255,18 @@ if (! empty($conf->holiday->enabled) && $user->rights->holiday->read)
 
 
 // Latest expense report
-if (! empty($conf->expensereport->enabled) && $user->rights->expensereport->lire)
+if (!empty($conf->expensereport->enabled) && $user->rights->expensereport->lire)
 {
 	$sql = "SELECT u.rowid as uid, u.lastname, u.firstname, u.login, u.email, u.statut, u.photo, x.rowid, x.ref, x.date_debut as date, x.tms as dm, x.total_ttc, x.fk_statut as status";
-	$sql.= " FROM ".MAIN_DB_PREFIX."expensereport as x, ".MAIN_DB_PREFIX."user as u";
+	$sql .= " FROM ".MAIN_DB_PREFIX."expensereport as x, ".MAIN_DB_PREFIX."user as u";
 	//if (!$user->rights->societe->client->voir && !$user->socid) $sql.= ", ".MAIN_DB_PREFIX."societe as s, ".MAIN_DB_PREFIX."societe_commerciaux as sc";
-	$sql.= " WHERE u.rowid = x.fk_user_author";
-	$sql.= " AND x.entity = ".$conf->entity;
-	if (empty($user->rights->expensereport->readall) && empty($user->rights->expensereport->lire_tous)) $sql.=' AND x.fk_user_author IN ('.join(',', $childids).')';
+	$sql .= " WHERE u.rowid = x.fk_user_author";
+	$sql .= " AND x.entity = ".$conf->entity;
+	if (empty($user->rights->expensereport->readall) && empty($user->rights->expensereport->lire_tous)) $sql .= ' AND x.fk_user_author IN ('.join(',', $childids).')';
 	//if (!$user->rights->societe->client->voir && !$user->socid) $sql.= " AND x.fk_soc = s. rowid AND s.rowid = sc.fk_soc AND sc.fk_user = " .$user->id;
 	//if (!empty($socid)) $sql.= " AND x.fk_soc = ".$socid;
-	$sql.= $db->order("x.tms", "DESC");
-	$sql.= $db->plimit($max, 0);
+	$sql .= $db->order("x.tms", "DESC");
+	$sql .= $db->plimit($max, 0);
 
 	$result = $db->query($sql);
 	if ($result)

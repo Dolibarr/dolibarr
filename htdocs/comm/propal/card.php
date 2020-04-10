@@ -112,8 +112,9 @@ $hookmanager->initHooks(array('propalcard', 'globalcard'));
 
 $usercanread = $user->rights->propal->lire;
 $usercancreate = $user->rights->propal->creer;
-$usercanclose = $user->rights->propal->cloturer;
 $usercandelete = $user->rights->propal->supprimer;
+
+$usercanclose = ((empty($conf->global->MAIN_USE_ADVANCED_PERMS) && $usercancreate) || (!empty($conf->global->MAIN_USE_ADVANCED_PERMS) && !empty($user->rights->propal->propal_advance->close)));
 $usercanvalidate = ((empty($conf->global->MAIN_USE_ADVANCED_PERMS) && $usercancreate) || (!empty($conf->global->MAIN_USE_ADVANCED_PERMS) && !empty($user->rights->propal->propal_advance->validate)));
 $usercansend = (empty($conf->global->MAIN_USE_ADVANCED_PERMS) || $user->rights->propal->propal_advance->send);
 
@@ -726,7 +727,7 @@ if (empty($reshook))
 	            $originLine = new $lineClassName($db);
 	            if (intval($fromElementid) > 0 && $originLine->fetch($lineId) > 0)
 	            {
-	                $originLine->fetch_optionals($lineId);
+	                $originLine->fetch_optionals();
 	                $desc = $originLine->desc;
 	                $pu_ht = $originLine->subprice;
 	                $qty = $originLine->qty;
@@ -1438,7 +1439,7 @@ if (empty($reshook))
 
 	// Actions to build doc
 	$upload_dir = $conf->propal->multidir_output[$object->entity];
-	$permissiontoadd=$usercancreate;
+	$permissiontoadd = $usercancreate;
 	include DOL_DOCUMENT_ROOT.'/core/actions_builddoc.inc.php';
 }
 
@@ -1523,7 +1524,7 @@ if ($action == 'create')
 			$dateinvoice = (empty($dateinvoice) ? (empty($conf->global->MAIN_AUTOFILL_DATE) ?-1 : '') : $dateinvoice);
 
 			// Replicate extrafields
-			$objectsrc->fetch_optionals($originid);
+			$objectsrc->fetch_optionals();
 			$object->array_options = $objectsrc->array_options;
 
 			if (!empty($conf->multicurrency->enabled))
@@ -1541,7 +1542,7 @@ if ($action == 'create')
 	$object = new Propal($db);
 
 	print '<form name="addprop" action="'.$_SERVER["PHP_SELF"].'" method="POST">';
-	print '<input type="hidden" name="token" value="'.$_SESSION ['newtoken'].'">';
+	print '<input type="hidden" name="token" value="'.newToken().'">';
 	print '<input type="hidden" name="action" value="add">';
 	if ($origin != 'project' && $originid) {
 		print '<input type="hidden" name="origin" value="'.$origin.'">';
@@ -1675,7 +1676,7 @@ if ($action == 'create')
 		$langs->load("projects");
 		print '<tr>';
 		print '<td>'.$langs->trans("Project").'</td><td>';
-		$numprojet = $formproject->select_projects(($soc->id > 0 ? $soc->id : -1), $projectid, 'projectid', 0, 0, 1, 1);
+		$numprojet = $formproject->select_projects(($soc->id > 0 ? $soc->id : -1), $projectid, 'projectid', 0, 0, 1, 1, 0, 0, 0, '', 0, 0, 'maxwidth500');
 		print ' <a href="'.DOL_URL_ROOT.'/projet/card.php?socid='.$soc->id.'&action=create&status=1&backtopage='.urlencode($_SERVER["PHP_SELF"].'?action=create&socid='.$soc->id).'"><span class="fa fa-plus-circle valignmiddle paddingleft" title="'.$langs->trans("AddProject").'"></span></a>';
 		print '</td>';
 		print '</tr>';
@@ -2052,7 +2053,7 @@ if ($action == 'create')
 	print '</td><td>';
 	if ($object->statut == Propal::STATUS_DRAFT && $action == 'editdate' && $usercancreate) {
 		print '<form name="editdate" action="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'" method="post">';
-		print '<input type="hidden" name="token" value="'.$_SESSION ['newtoken'].'">';
+		print '<input type="hidden" name="token" value="'.newToken().'">';
 		print '<input type="hidden" name="action" value="setdate">';
 		print $form->selectDate($object->date, 're', '', '', 0, "editdate");
 		print '<input type="submit" class="button" value="'.$langs->trans('Modify').'">';
@@ -2078,7 +2079,7 @@ if ($action == 'create')
 	print '</td><td>';
 	if ($object->statut == Propal::STATUS_DRAFT && $action == 'editecheance' && $usercancreate) {
 		print '<form name="editecheance" action="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'" method="post">';
-		print '<input type="hidden" name="token" value="'.$_SESSION ['newtoken'].'">';
+		print '<input type="hidden" name="token" value="'.newToken().'">';
 		print '<input type="hidden" name="action" value="setecheance">';
 		print $form->selectDate($object->fin_validite, 'ech', '', '', '', "editecheance");
 		print '<input type="submit" class="button" value="'.$langs->trans('Modify').'">';
@@ -2412,7 +2413,7 @@ if ($action == 'create')
 	$result = $object->getLinesArray();
 
 	print '	<form name="addproduct" id="addproduct" action="'.$_SERVER["PHP_SELF"].'?id='.$object->id.(($action != 'editline') ? '#addline' : '#line_'.GETPOST('lineid')).'" method="POST">
-	<input type="hidden" name="token" value="' . $_SESSION ['newtoken'].'">
+	<input type="hidden" name="token" value="' . newToken().'">
 	<input type="hidden" name="action" value="' . (($action != 'editline') ? 'addline' : 'updateline').'">
 	<input type="hidden" name="mode" value="">
 	<input type="hidden" name="id" value="' . $object->id.'">
@@ -2498,11 +2499,13 @@ if ($action == 'create')
 				}
 
 				// Send
-				if ($object->statut == Propal::STATUS_VALIDATED || $object->statut == Propal::STATUS_SIGNED || !empty($conf->global->PROPOSAL_SENDBYEMAIL_FOR_ALL_STATUS)) {
-					if ($usercansend) {
-						print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=presend&mode=init#formmailbeforetitle">'.$langs->trans('SendMail').'</a>';
-					} else
-						print '<a class="butActionRefused classfortooltip" href="#" title="'.$langs->trans("NotEnoughPermissions").'">'.$langs->trans('SendMail').'</a>';
+				if (empty($user->socid)) {
+					if ($object->statut == Propal::STATUS_VALIDATED || $object->statut == Propal::STATUS_SIGNED || !empty($conf->global->PROPOSAL_SENDBYEMAIL_FOR_ALL_STATUS)) {
+						if ($usercansend) {
+							print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=presend&mode=init#formmailbeforetitle">'.$langs->trans('SendMail').'</a>';
+						} else
+							print '<a class="butActionRefused classfortooltip" href="#" title="'.$langs->trans("NotEnoughPermissions").'">'.$langs->trans('SendMail').'</a>';
+					}
 				}
 
 				// Create a sale order

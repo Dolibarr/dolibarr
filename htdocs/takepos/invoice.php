@@ -44,11 +44,11 @@ $langs->loadLangs(array("companies", "commercial", "bills", "cashdesk", "stocks"
 $id = GETPOST('id', 'int');
 $action = GETPOST('action', 'alpha');
 $idproduct = GETPOST('idproduct', 'int');
-$place = (GETPOST('place', 'int') > 0 ? GETPOST('place', 'int') : 0); // $place is id of table for Bar or Restaurant
+$place = (GETPOST('place', 'aZ09') ? GETPOST('place', 'aZ09') : 0); // $place is id of table for Bar or Restaurant
 $placeid = 0; // $placeid is ID of invoice
 
 if (empty($user->rights->takepos->run)) {
-	access_forbidden();
+	accessforbidden();
 }
 
 
@@ -330,7 +330,7 @@ if ($action == "addline")
 	if (!empty($conf->global->TAKEPOS_GROUP_SAME_PRODUCT)) {
 		foreach ($invoice->lines as $line) {
 			if ($line->product_ref == $prod->ref) {
-				$result = $invoice->updateline($line->id, $line->desc, $line->subprice, $line->qty+1, $line->remise_percent, $line->date_start, $line->date_end, $line->tva_tx, $line->localtax1_tx, $line->localtax2_tx, 'HT', $line->info_bits, $line->product_type, $line->fk_parent_line, 0, $line->fk_fournprice, $line->pa_ht, $line->label, $line->special_code, $line->array_options, $line->situation_percent, $line->fk_unit);
+				$result = $invoice->updateline($line->id, $line->desc, $line->subprice, $line->qty + 1, $line->remise_percent, $line->date_start, $line->date_end, $line->tva_tx, $line->localtax1_tx, $line->localtax2_tx, 'HT', $line->info_bits, $line->product_type, $line->fk_parent_line, 0, $line->fk_fournprice, $line->pa_ht, $line->label, $line->special_code, $line->array_options, $line->situation_percent, $line->fk_unit);
 				if ($result < 0) {
 					dol_htmloutput_errors($invoice->error, $invoice->errors, 1);
 				} else {
@@ -341,7 +341,7 @@ if ($action == "addline")
 		}
 	}
 	if ($idoflineadded <= 0) {
-		$idoflineadded = $invoice->addline($prod->description, $price, 1, $tva_tx, $localtax1_tx, $localtax2_tx, $idproduct, $customer->remise_percent, '', 0, 0, 0, '', $price_base_type, $price_ttc, $prod->type, -1, 0, '', 0, $parent_line, null, 0, '', 0, 100, '', null, 0);
+		$idoflineadded = $invoice->addline($prod->description, $price, 1, $tva_tx, $localtax1_tx, $localtax2_tx, $idproduct, $customer->remise_percent, '', 0, 0, 0, '', $price_base_type, $price_ttc, $prod->type, -1, 0, '', 0, $parent_line, null, '', '', 0, 100, '', null, 0);
 	}
 
     $invoice->fetch($placeid);
@@ -362,7 +362,7 @@ if ($action == "freezone") {
     $localtax1_tx = get_localtax($tva_tx, 1, $customer, $mysoc, $tva_npr);
     $localtax2_tx = get_localtax($tva_tx, 2, $customer, $mysoc, $tva_npr);
 
-    $invoice->addline($desc, $number, 1, $tva_tx, $localtax1_tx, $localtax2_tx, 0, 0, '', 0, 0, 0, '', 'TTC', $number, 0, -1, 0, '', 0, 0, null, 0, '', 0, 100, '', null, 0);
+    $invoice->addline($desc, $number, 1, $tva_tx, $localtax1_tx, $localtax2_tx, 0, 0, '', 0, 0, 0, '', 'TTC', $number, 0, -1, 0, '', 0, 0, null, '', '', 0, 100, '', null, 0);
     $invoice->fetch($placeid);
 }
 
@@ -395,6 +395,14 @@ if ($action == "deleteline") {
 
 if ($action == "delete") {
 	// $placeid is the invoice id (it differs from place) and is defined if the place is set and the ref of invoice is '(PROV-POS'.$_SESSION["takeposterminal"].'-'.$place.')', so the fetch at begining of page works.
+
+	/*$reg = array();
+	if (preg_match('/^(\d+)-(\d+)$/', $place, $reg)) {
+
+		$place = $reg[1];
+		var_dump($place);
+	}*/
+
 	if ($placeid > 0) {
         $result = $invoice->fetch($placeid);
 
@@ -407,7 +415,8 @@ if ($action == "delete") {
         	$resql1 = $db->query($sql);
         	$sql = "DELETE FROM ".MAIN_DB_PREFIX."facturedet where fk_facture = ".$placeid;
             $resql2 = $db->query($sql);
-			$sql = "UPDATE ".MAIN_DB_PREFIX."facture set fk_soc=".$conf->global->{'CASHDESK_ID_THIRDPARTY'.$_SESSION["takeposterminal"]}." where ref='(PROV-POS".$_SESSION["takeposterminal"]."-".$place.")'";
+			$sql = "UPDATE ".MAIN_DB_PREFIX."facture set fk_soc=".$conf->global->{'CASHDESK_ID_THIRDPARTY'.$_SESSION["takeposterminal"]};
+			$sql .= " WHERE ref='(PROV-POS".$_SESSION["takeposterminal"]."-".$place.")'";
 			$resql3 = $db->query($sql);
 
             if ($resql1 && $resql2 && $resql3)
@@ -517,6 +526,7 @@ if ($action == "order" and $placeid != 0)
         $result = array_intersect($catsprinter1, $existing);
         $count = count($result);
         if ($count > 0) {
+            $linestoprint++;
             $sql = "UPDATE ".MAIN_DB_PREFIX."facturedet set special_code='1' where rowid=".$line->id; //Set to print on printer 1
             $db->query($sql);
             $order_receipt_printer1 .= '<tr>'.$line->product_label.'<td class="right">'.$line->qty;
@@ -524,13 +534,15 @@ if ($action == "order" and $placeid != 0)
 			$order_receipt_printer1 .= '</td></tr>';
         }
     }
-	if ($conf->global->TAKEPOS_PRINT_METHOD == "receiptprinter") {
+    if ($conf->global->TAKEPOS_PRINT_METHOD == "receiptprinter" && $linestoprint > 0) {
 		$invoice->fetch($placeid); //Reload object before send to printer
-		$ret = $printer->sendToPrinter($invoice, $conf->global->{'TAKEPOS_TEMPLATE_TO_USE_FOR_ORDERS'.$_SESSION["takeposterminal"]}, $conf->global->{'TAKEPOS_PRINTER_TO_USE'.$_SESSION["takeposterminal"]}); // PRINT TO PRINTER 1
+		$printer->orderprinter=1;
+		$ret = $printer->sendToPrinter($invoice, $conf->global->{'TAKEPOS_TEMPLATE_TO_USE_FOR_ORDERS'.$_SESSION["takeposterminal"]}, $conf->global->{'TAKEPOS_ORDER_PRINTER1_TO_USE'.$_SESSION["takeposterminal"]}); // PRINT TO PRINTER 1
 	}
 	$sql = "UPDATE ".MAIN_DB_PREFIX."facturedet set special_code='4' where special_code='1' and fk_facture=".$invoice->id; // Set as printed
 	$db->query($sql);
 	$invoice->fetch($placeid); //Reload object after set lines as printed
+	$linestoprint=0;
 
     foreach ($invoice->lines as $line)
     {
@@ -542,6 +554,7 @@ if ($action == "order" and $placeid != 0)
         $result = array_intersect($catsprinter2, $existing);
         $count = count($result);
         if ($count > 0) {
+            $linestoprint++;
             $sql = "UPDATE ".MAIN_DB_PREFIX."facturedet set special_code='2' where rowid=".$line->id; //Set to print on printer 2
             $db->query($sql);
             $order_receipt_printer2 .= '<tr>'.$line->product_label.'<td class="right">'.$line->qty;
@@ -549,9 +562,10 @@ if ($action == "order" and $placeid != 0)
 			$order_receipt_printer2 .= '</td></tr>';
         }
     }
-	if ($conf->global->TAKEPOS_PRINT_METHOD == "receiptprinter") {
+    if ($conf->global->TAKEPOS_PRINT_METHOD == "receiptprinter" && $linestoprint > 0) {
 		$invoice->fetch($placeid); //Reload object before send to printer
-		$ret = $printer->sendToPrinter($invoice, $conf->global->{'TAKEPOS_TEMPLATE_TO_USE_FOR_ORDERS'.$_SESSION["takeposterminal"]}, $conf->global->{'TAKEPOS_PRINTER_TO_USE'.$_SESSION["takeposterminal"]}); // PRINT TO PRINTER 2
+		$printer->orderprinter=2;
+		$ret = $printer->sendToPrinter($invoice, $conf->global->{'TAKEPOS_TEMPLATE_TO_USE_FOR_ORDERS'.$_SESSION["takeposterminal"]}, $conf->global->{'TAKEPOS_ORDER_PRINTER2_TO_USE'.$_SESSION["takeposterminal"]}); // PRINT TO PRINTER 2
 	}
 	$sql = "UPDATE ".MAIN_DB_PREFIX."facturedet set special_code='4' where special_code='2' and fk_facture=".$invoice->id; // Set as printed
 	$db->query($sql);
@@ -708,14 +722,37 @@ $( document ).ready(function() {
 
     <?php
     $s = $langs->trans("Customer");
-    if ($invoice->socid != $conf->global->$constforcompanyid) {
+    if ($invoice->id > 0 && ($invoice->socid != $conf->global->$constforcompanyid)) {
     	$s = $soc->name;
     }
     ?>
 
-    $("a#customer").html('<?php print dol_escape_js($s); ?>');
+    $("#customerandsales").html('<a class="valignmiddle" id="customer" onclick="Customer();"><?php print dol_escape_js($s); ?></a>');
 
 	<?php
+	$sql = "SELECT rowid, datec, ref FROM ".MAIN_DB_PREFIX."facture";
+	$sql .= " WHERE ref LIKE '(PROV-POS".$_SESSION["takeposterminal"]."-0%'";
+	$sql .= $db->order('datec', 'ASC');
+	$resql = $db->query($sql);
+	if ($resql) {
+		while ($obj = $db->fetch_object($resql)) {
+			echo '$("#customerandsales").append(\'';
+			if ($placeid == $obj->rowid) echo "<b>";
+			echo '<a class="valignmiddle" onclick="place=\\\'';
+			$num_sale = str_replace(")", "", str_replace("(PROV-POS".$_SESSION["takeposterminal"]."-", "", $obj->ref));
+			echo $num_sale;
+			if (str_replace("-", "", $num_sale) > $max_sale) $max_sale = str_replace("-", "", $num_sale);
+			echo '\\\';Refresh();">'.date('H:i', strtotime($obj->datec));
+			if ($placeid == $obj->rowid) echo "</b>";
+			echo '</a>\');';
+		}
+		echo '$("#customerandsales").append(\'<a onclick="place=\\\'0-';
+		echo $max_sale + 1;
+		echo '\\\';Refresh();"><span class="fa fa-plus-square" title="'.dol_escape_htmltag($langs->trans("StartAParallelSale")).'"></a>\');';
+	} else {
+		dol_print_error($db);
+	}
+
 	$s = '';
 
     $constantforkey = 'CASHDESK_NO_DECREASE_STOCK'.$_SESSION["takeposterminal"];
@@ -746,26 +783,26 @@ $( document ).ready(function() {
 		if ($result > 0)
 		{
 			$adh->ref = $adh->getFullName($langs);
-			$s.= $adh->getFullName($langs);
-			$s.= ' - '.$adh->type;
+			$s .= $adh->getFullName($langs);
+			$s .= ' - '.$adh->type;
 			if ($adh->datefin)
 			{
-				$s.= '<br>'.$langs->trans("SubscriptionEndDate").': '.dol_print_date($adh->datefin, 'day');
+				$s .= '<br>'.$langs->trans("SubscriptionEndDate").': '.dol_print_date($adh->datefin, 'day');
 				if ($adh->hasDelay()) {
-					$s.= " ".img_warning($langs->trans("Late"));
+					$s .= " ".img_warning($langs->trans("Late"));
 				}
 			}
 			else
 			{
-				$s.= '<br>'.$langs->trans("SubscriptionNotReceived");
-				if ($adh->statut > 0) $s.= " ".img_warning($langs->trans("Late")); // displays delay Pictogram only if not a draft and not terminated
+				$s .= '<br>'.$langs->trans("SubscriptionNotReceived");
+				if ($adh->statut > 0) $s .= " ".img_warning($langs->trans("Late")); // displays delay Pictogram only if not a draft and not terminated
 			}
 		}
 		else
 		{
-			$s.= '<br>'.$langs->trans("ThirdpartyNotLinkedToMember");
+			$s .= '<br>'.$langs->trans("ThirdpartyNotLinkedToMember");
 		}
-		$s.= '</span>';
+		$s .= '</span>';
 	}
 	?>
 	$("#moreinfo").html('<?php print dol_escape_js($s); ?>');
@@ -967,8 +1004,7 @@ if ($placeid > 0)
 				$moreinfo = '';
 				$moreinfo .= $langs->transcountry("TotalHT", $mysoc->country_code).': '.price($line->total_ht);
 				if ($line->vat_src_code) $moreinfo .= '<br>'.$langs->trans("VATCode").': '.$line->vat_src_code;
-				$moreinfo .= '<br>'.$langs->transcountry("TotalVAT", $mysoc->country_code).': '.price($line->total_vat);
-				//$moreinfo .= '<br>'.$langs->transcountry("VATRate", $mysoc->country_code).': '.price($line->);
+				$moreinfo .= '<br>'.$langs->transcountry("TotalVAT", $mysoc->country_code).': '.price($line->total_tva);
 				$moreinfo .= '<br>'.$langs->transcountry("TotalLT1", $mysoc->country_code).': '.price($line->total_localtax1);
 				$moreinfo .= '<br>'.$langs->transcountry("TotalLT2", $mysoc->country_code).': '.price($line->total_localtax2);
 				$moreinfo .= '<br>'.$langs->transcountry("TotalTTC", $mysoc->country_code).': '.price($line->total_ttc);

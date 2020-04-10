@@ -24,7 +24,7 @@
  */
 
 if ($_GET['action'] == 'dl' || $_POST['action'] == 'dl') {	// To not replace token when downloading file
-	if (! defined('NOTOKENRENEWAL'))           define('NOTOKENRENEWAL', '1');
+	if (!defined('NOTOKENRENEWAL'))           define('NOTOKENRENEWAL', '1');
 }
 
 require '../main.inc.php';

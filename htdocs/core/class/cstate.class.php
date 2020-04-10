@@ -120,18 +120,6 @@ class Cstate // extends CommonObject
 
         if (!$error) {
             $this->id = $this->db->last_insert_id(MAIN_DB_PREFIX."c_departements");
-
-            //if (! $notrigger) {
-                // Uncomment this and change MYOBJECT to your own tag if you
-                // want this action call a trigger.
-
-                //// Call triggers
-                //include_once DOL_DOCUMENT_ROOT . '/core/class/interfaces.class.php';
-                //$interface=new Interfaces($this->db);
-                //$result=$interface->run_triggers('MYOBJECT_CREATE',$this,$user,$langs,$conf);
-                //if ($result < 0) { $error++; $this->errors=$interface->errors; }
-                //// End call triggers
-            //}
         }
 
         // Commit or rollback
@@ -231,27 +219,11 @@ class Cstate // extends CommonObject
         $resql = $this->db->query($sql);
     	if (!$resql) { $error++; $this->errors[] = "Error ".$this->db->lasterror(); }
 
-		//if (! $error)
-		//{
-		//    if (! $notrigger)
-		//    {
-	            // Uncomment this and change MYOBJECT to your own tag if you
-	            // want this action call a trigger.
-
-	            //// Call triggers
-	            //include_once DOL_DOCUMENT_ROOT . '/core/class/interfaces.class.php';
-	            //$interface=new Interfaces($this->db);
-	            //$result=$interface->run_triggers('MYOBJECT_MODIFY',$this,$user,$langs,$conf);
-	            //if ($result < 0) { $error++; $this->errors=$interface->errors; }
-	            //// End call triggers
-	    //    }
-        //}
-
 	    // Commit or rollback
 	    if ($error) {
 		    foreach ($this->errors as $errmsg) {
-			    dol_syslog(get_class($this) . "::update " . $errmsg, LOG_ERR);
-			    $this->error .= ($this->error ? ', ' . $errmsg : $errmsg);
+			    dol_syslog(get_class($this)."::update ".$errmsg, LOG_ERR);
+			    $this->error .= ($this->error ? ', '.$errmsg : $errmsg);
 		    }
 		    $this->db->rollback();
 		    return -1 * $error;
@@ -281,22 +253,6 @@ class Cstate // extends CommonObject
 		dol_syslog(get_class($this)."::delete", LOG_DEBUG);
 		$resql = $this->db->query($sql);
     	if (!$resql) { $error++; $this->errors[] = "Error ".$this->db->lasterror(); }
-
-		//if (! $error)
-		//{
-		//	if (! $notrigger)
-		//	{
-				// Uncomment this and change MYOBJECT to your own tag if you
-		        // want this action call a trigger.
-
-		        //// Call triggers
-		        //include_once DOL_DOCUMENT_ROOT . '/core/class/interfaces.class.php';
-		        //$interface=new Interfaces($this->db);
-		        //$result=$interface->run_triggers('MYOBJECT_DELETE',$this,$user,$langs,$conf);
-		        //if ($result < 0) { $error++; $this->errors=$interface->errors; }
-		        //// End call triggers
-		//	}
-		//}
 
         // Commit or rollback
 		if ($error)

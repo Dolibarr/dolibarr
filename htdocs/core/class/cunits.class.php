@@ -123,19 +123,6 @@ class CUnits // extends CommonObject
 		if (!$error)
         {
             $this->id = $this->db->last_insert_id(MAIN_DB_PREFIX."c_units");
-
-			//if (! $notrigger)
-			//{
-	            // Uncomment this and change MYOBJECT to your own tag if you
-	            // want this action call a trigger.
-
-	            //// Call triggers
-	            //include_once DOL_DOCUMENT_ROOT . '/core/class/interfaces.class.php';
-	            //$interface=new Interfaces($this->db);
-	            //$result=$interface->run_triggers('MYOBJECT_CREATE',$this,$user,$langs,$conf);
-	            //if ($result < 0) { $error++; $this->errors=$interface->errors; }
-	            //// End call triggers
-			//}
         }
 
         // Commit or rollback
@@ -235,48 +222,48 @@ class CUnits // extends CommonObject
     	dol_syslog(__METHOD__, LOG_DEBUG);
 
     	$sql = 'SELECT';
-    	$sql.= " t.rowid,";
-    	$sql.= " t.code,";
-    	$sql.= " t.label,";
-    	$sql.= " t.short_label,";
-    	$sql.= " t.unit_type,";
-    	$sql.= " t.scale,";
-    	$sql.= " t.active";
-    	$sql .= ' FROM ' . MAIN_DB_PREFIX . 'c_units as t';
+    	$sql .= " t.rowid,";
+    	$sql .= " t.code,";
+    	$sql .= " t.label,";
+    	$sql .= " t.short_label,";
+    	$sql .= " t.unit_type,";
+    	$sql .= " t.scale,";
+    	$sql .= " t.active";
+    	$sql .= ' FROM '.MAIN_DB_PREFIX.'c_units as t';
     	// Manage filter
     	$sqlwhere = array();
     	if (count($filter) > 0) {
     		foreach ($filter as $key => $value) {
-    			if ($key=='t.rowid' || $key=='t.active' || $key=='t.scale') {
-    				$sqlwhere[] = $key . '='. (int) $value;
+    			if ($key == 't.rowid' || $key == 't.active' || $key == 't.scale') {
+    				$sqlwhere[] = $key.'='.(int) $value;
     			}
     			elseif (strpos($key, 'date') !== false) {
     				$sqlwhere[] = $key.' = \''.$this->db->idate($value).'\'';
     			}
-    			elseif ($key=='t.unit_type' || $key=='t.code' || $key=='t.short_label') {
-    				$sqlwhere[] =  $key.' = \''.$this->db->escape($value).'\'';
+    			elseif ($key == 't.unit_type' || $key == 't.code' || $key == 't.short_label') {
+    				$sqlwhere[] = $key.' = \''.$this->db->escape($value).'\'';
     			}
     			else {
-    				$sqlwhere[] = $key . ' LIKE \'%' . $this->db->escape($value) . '%\'';
+    				$sqlwhere[] = $key.' LIKE \'%'.$this->db->escape($value).'%\'';
     			}
     		}
     	}
     	if (count($sqlwhere) > 0) {
-    		$sql .= ' WHERE (' . implode(' '.$filtermode.' ', $sqlwhere).')';
+    		$sql .= ' WHERE ('.implode(' '.$filtermode.' ', $sqlwhere).')';
     	}
 
     	if (!empty($sortfield)) {
     		$sql .= $this->db->order($sortfield, $sortorder);
     	}
     	if (!empty($limit)) {
-    		$sql .=  ' ' . $this->db->plimit($limit, $offset);
+    		$sql .= ' '.$this->db->plimit($limit, $offset);
     	}
 
     	$resql = $this->db->query($sql);
     	if ($resql) {
-    		$this->records=array();
+    		$this->records = array();
     		$num = $this->db->num_rows($resql);
-    		if ($num>0) {
+    		if ($num > 0) {
 	    		while ($obj = $this->db->fetch_object($resql))
 	    		{
 	    			$record = new self($this->db);
@@ -342,22 +329,6 @@ class CUnits // extends CommonObject
         $resql = $this->db->query($sql);
     	if (!$resql) { $error++; $this->errors[] = "Error ".$this->db->lasterror(); }
 
-		//if (! $error)
-		//{
-		//	if (! $notrigger)
-		//	{
-	            // Uncomment this and change MYOBJECT to your own tag if you
-	            // want this action call a trigger.
-
-	            //// Call triggers
-	            //include_once DOL_DOCUMENT_ROOT . '/core/class/interfaces.class.php';
-	            //$interface=new Interfaces($this->db);
-	            //$result=$interface->run_triggers('MYOBJECT_MODIFY',$this,$user,$langs,$conf);
-	            //if ($result < 0) { $error++; $this->errors=$interface->errors; }
-	            //// End call triggers
-	    //	}
-		//}
-
         // Commit or rollback
 		if ($error)
 		{
@@ -397,22 +368,6 @@ class CUnits // extends CommonObject
 		dol_syslog(get_class($this)."::delete", LOG_DEBUG);
 		$resql = $this->db->query($sql);
     	if (!$resql) { $error++; $this->errors[] = "Error ".$this->db->lasterror(); }
-
-		//if (! $error)
-		//{
-		//	if (! $notrigger)
-		//	{
-				// Uncomment this and change MYOBJECT to your own tag if you
-		        // want this action call a trigger.
-
-		        //// Call triggers
-		        //include_once DOL_DOCUMENT_ROOT . '/core/class/interfaces.class.php';
-		        //$interface=new Interfaces($this->db);
-		        //$result=$interface->run_triggers('MYOBJECT_DELETE',$this,$user,$langs,$conf);
-		        //if ($result < 0) { $error++; $this->errors=$interface->errors; }
-		        //// End call triggers
-		//	}
-		//}
 
         // Commit or rollback
 		if ($error)

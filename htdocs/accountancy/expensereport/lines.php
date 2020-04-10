@@ -287,7 +287,7 @@ if ($result) {
 
 	while ($i < min($num_lines, $limit)) {
 		$objp = $db->fetch_object($result);
-		$codeCompta = length_accountg($objp->account_number).' - '.$objp->label;
+		$codeCompta = length_accountg($objp->account_number).' - <span class="opacitymedium">'.$objp->label.'</span>';
 
 		$expensereport_static->ref = $objp->ref;
 		$expensereport_static->id = $objp->erid;
@@ -315,7 +315,7 @@ if ($result) {
 
 		print '<td>'.$codeCompta.'</td>';
 
-		print '<td class="left"><a href="./card.php?id='.$objp->rowid.'&backtopage='.urlencode($_SERVER["PHP_SELF"].($param ? '?'.$param : '')).'">';
+		print '<td class="left"><a class="editfielda" href="./card.php?id='.$objp->rowid.'&backtopage='.urlencode($_SERVER["PHP_SELF"].($param ? '?'.$param : '')).'">';
 		print img_edit();
 		print '</a></td>';
 

@@ -84,6 +84,7 @@ $search_montant_vat = GETPOST('search_montant_vat', 'alpha');
 $search_montant_localtax1 = GETPOST('search_montant_localtax1', 'alpha');
 $search_montant_localtax2 = GETPOST('search_montant_localtax2', 'alpha');
 $search_montant_ttc = GETPOST('search_montant_ttc', 'alpha');
+$search_login = GETPOST('search_login', 'alpha');
 $search_multicurrency_code = GETPOST('search_multicurrency_code', 'alpha');
 $search_multicurrency_tx = GETPOST('search_multicurrency_tx', 'alpha');
 $search_multicurrency_montant_ht = GETPOST('search_multicurrency_montant_ht', 'alpha');
@@ -170,6 +171,7 @@ $arrayfields = array(
 	'f.total_localtax1'=>array('label'=>$langs->transcountry("AmountLT1", $mysoc->country_code), 'checked'=>0, 'enabled'=>$mysoc->localtax1_assuj == "1"),
 	'f.total_localtax2'=>array('label'=>$langs->transcountry("AmountLT2", $mysoc->country_code), 'checked'=>0, 'enabled'=>$mysoc->localtax2_assuj == "1"),
 	'f.total_ttc'=>array('label'=>$langs->trans("AmountTTC"), 'checked'=>0),
+	'u.login'=>array('label'=>"Author", 'checked'=>1),
 	'dynamount_payed'=>array('label'=>$langs->trans("Payed"), 'checked'=>0),
 	'rtp'=>array('label'=>$langs->trans("Rest"), 'checked'=>0),
 	'f.multicurrency_code'=>array('label'=>'Currency', 'checked'=>0, 'enabled'=>(empty($conf->multicurrency->enabled) ? 0 : 1)),
@@ -230,6 +232,7 @@ if (empty($reshook))
 		$search_montant_localtax1 = '';
 		$search_montant_localtax2 = '';
 		$search_montant_ttc = '';
+		$search_login = '';
 		$search_multicurrency_code = '';
 		$search_multicurrency_tx = '';
 		$search_multicurrency_montant_ht = '';
@@ -288,11 +291,13 @@ $sql .= " f.total_ht, f.total_ttc, f.total_tva as total_vat, f.paye as paye, f.f
 $sql .= " f.localtax1 as total_localtax1, f.localtax2 as total_localtax2,";
 $sql .= ' f.fk_multicurrency, f.multicurrency_code, f.multicurrency_tx, f.multicurrency_total_ht, f.multicurrency_total_tva as multicurrency_total_vat, f.multicurrency_total_ttc,';
 $sql .= " f.note_public, f.note_private,";
+$sql .= " f.fk_user_author,";
 $sql .= " s.rowid as socid, s.nom as name, s.email, s.town, s.zip, s.fk_pays, s.client, s.fournisseur, s.code_client, s.code_fournisseur, s.code_compta as code_compta_client, s.code_compta_fournisseur,";
 $sql .= " typent.code as typent_code,";
 $sql .= " state.code_departement as state_code, state.nom as state_name,";
 $sql .= " country.code as country_code,";
-$sql .= " p.rowid as project_id, p.ref as project_ref, p.title as project_label";
+$sql .= " p.rowid as project_id, p.ref as project_ref, p.title as project_label,";
+$sql .= " u.login";
 // We need dynamount_payed to be able to sort on status (value is surely wrong because we can count several lines several times due to other left join or link with contacts. But what we need is just 0 or > 0)
 // TODO Better solution to be able to sort on already payed or remain to pay is to store amount_payed in a denormalized field.
 if (!$search_all) $sql .= ', SUM(pf.amount) as dynamount_payed';
@@ -321,6 +326,7 @@ if ($search_user > 0)
 	$sql .= ", ".MAIN_DB_PREFIX."element_contact as ec";
 	$sql .= ", ".MAIN_DB_PREFIX."c_type_contact as tc";
 }
+$sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'user AS u ON f.fk_user_author = u.rowid';
 $sql .= ' WHERE f.fk_soc = s.rowid';
 $sql .= ' AND f.entity IN ('.getEntity('facture_fourn').')';
 if (!$user->rights->societe->client->voir && !$socid) $sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".$user->id;
@@ -359,6 +365,7 @@ if ($search_multicurrency_tx != '') $sql .= natural_search('f.multicurrency_tx',
 if ($search_multicurrency_montant_ht != '') $sql .= natural_search('f.multicurrency_total_ht', $search_multicurrency_montant_ht, 1);
 if ($search_multicurrency_montant_vat != '') $sql .= natural_search('f.multicurrency_total_tva', $search_multicurrency_montant_vat, 1);
 if ($search_multicurrency_montant_ttc != '') $sql .= natural_search('f.multicurrency_total_ttc', $search_multicurrency_montant_ttc, 1);
+if ($search_login) $sql .= natural_search('u.login', $search_login);
 if ($search_status != '' && $search_status >= 0) $sql .= " AND f.fk_statut = ".$db->escape($search_status);
 if ($search_paymentmode > 0) $sql .= " AND f.fk_mode_reglement = ".$search_paymentmode."";
 $sql .= dolSqlDateFilter("f.datef", $day, $month, $year);
@@ -470,6 +477,7 @@ if ($resql)
 	if ($search_type != '')		$param .= '&search_type='.urlencode($search_type);
 	if ($search_label)      	$param .= '&search_label='.urlencode($search_label);
 	if ($search_company)      	$param .= '&search_company='.urlencode($search_company);
+	if ($search_login)          $param .= '&search_login='.urlencode($search_login);
 	if ($search_montant_ht != '')  $param .= '&search_montant_ht='.urlencode($search_montant_ht);
 	if ($search_montant_vat != '')  $param .= '&search_montant_vat='.urlencode($search_montant_vat);
 	if ($search_montant_localtax1 != '')  $param .= '&search_montant_localtax1='.urlencode($search_montant_localtax1);
@@ -759,6 +767,13 @@ if ($resql)
 		print '<input class="flat" type="text" size="5" name="search_montant_ttc" value="'.dol_escape_htmltag($search_montant_ttc).'">';
 		print '</td>';
 	}
+	if (!empty($arrayfields['u.login']['checked']))
+	{
+		// Author
+		print '<td class="liste_titre" align="center">';
+		print '<input class="flat" size="4" type="text" name="search_login" value="'.dol_escape_htmltag($search_login).'">';
+		print '</td>';
+	}
 	if (!empty($arrayfields['dynamount_payed']['checked']))
 	{
 		print '<td class="liste_titre right">';
@@ -869,6 +884,7 @@ if ($resql)
 	if (!empty($arrayfields['f.total_localtax1']['checked']))    print_liste_field_titre($arrayfields['f.total_localtax1']['label'], $_SERVER['PHP_SELF'], 'f.localtax1', '', $param, '', $sortfield, $sortorder, 'right ');
 	if (!empty($arrayfields['f.total_localtax2']['checked']))    print_liste_field_titre($arrayfields['f.total_localtax2']['label'], $_SERVER['PHP_SELF'], 'f.localtax2', '', $param, '', $sortfield, $sortorder, 'right ');
 	if (!empty($arrayfields['f.total_ttc']['checked']))          print_liste_field_titre($arrayfields['f.total_ttc']['label'], $_SERVER['PHP_SELF'], 'f.total_ttc', '', $param, '', $sortfield, $sortorder, 'right ');
+	if (!empty($arrayfields['u.login']['checked']))              print_liste_field_titre($arrayfields['u.login']['label'], $_SERVER["PHP_SELF"], 'u.login', '', $param, 'align="center"', $sortfield, $sortorder);
 	if (!empty($arrayfields['dynamount_payed']['checked']))      print_liste_field_titre($arrayfields['dynamount_payed']['label'], $_SERVER['PHP_SELF'], '', '', $param, '', $sortfield, $sortorder, 'right ');
 	if (!empty($arrayfields['rtp']['checked']))                  print_liste_field_titre($arrayfields['rtp']['label'], $_SERVER['PHP_SELF'], '', '', $param, '', $sortfield, $sortorder, 'right ');
 	if (!empty($arrayfields['f.multicurrency_code']['checked']))          print_liste_field_titre($arrayfields['f.multicurrency_code']['label'], $_SERVER['PHP_SELF'], 'f.multicurrency_code', '', $param, '', $sortfield, $sortorder);
@@ -893,6 +909,7 @@ if ($resql)
 	$facturestatic = new FactureFournisseur($db);
 	$supplierstatic = new Fournisseur($db);
 	$projectstatic = new Project($db);
+	$userstatic = new User($db);
 
 	if ($num > 0)
 	{
@@ -1129,6 +1146,18 @@ if ($resql)
 				if (!$i) $totalarray['nbfield']++;
 				if (!$i) $totalarray['pos'][$totalarray['nbfield']] = 'f.total_ttc';
 				$totalarray['val']['f.total_ttc'] += $obj->total_ttc;
+			}
+
+			// Author
+			if (!empty($arrayfields['u.login']['checked']))
+			{
+				$userstatic->id = $obj->fk_user_author;
+				$userstatic->login = $obj->login;
+				print '<td align="center">';
+				if ($userstatic->id) print $userstatic->getLoginUrl(1);
+				else print '&nbsp;';
+				print "</td>\n";
+				if (!$i) $totalarray['nbfield']++;
 			}
 
 			if (!empty($arrayfields['dynamount_payed']['checked']))

@@ -1316,64 +1316,25 @@ class ActionComm extends CommonObject
         // phpcs:enable
         global $langs;
 
-        if ($mode == 0)
-        {
-            if ($percent == -1 && !$hidenastatus) return $langs->trans('StatusNotApplicable');
-            elseif ($percent == 0) return $langs->trans('StatusActionToDo').' (0%)';
-            elseif ($percent > 0 && $percent < 100) return $langs->trans('StatusActionInProcess').' ('.$percent.'%)';
-            elseif ($percent >= 100) return $langs->trans('StatusActionDone').' (100%)';
-        }
-        elseif ($mode == 1)
-        {
-        	if ($percent == -1 && !$hidenastatus) return $langs->trans('StatusNotApplicable');
-        	elseif ($percent == 0) return $langs->trans('StatusActionToDo');
-        	elseif ($percent > 0 && $percent < 100) return $percent.'%';
-        	elseif ($percent >= 100) return $langs->trans('StatusActionDone');
-        }
-        elseif ($mode == 2)
-        {
-        	if ($percent == -1 && !$hidenastatus) return img_picto($langs->trans('StatusNotApplicable'), 'statut9').' '.$langs->trans('StatusNotApplicable');
-        	elseif ($percent == 0) return img_picto($langs->trans('StatusActionToDo'), 'statut1').' '.$langs->trans('StatusActionToDo');
-        	elseif ($percent > 0 && $percent < 100) return img_picto($langs->trans('StatusActionInProcess'), 'statut3').' '.$percent.'%';
-        	elseif ($percent >= 100) return img_picto($langs->trans('StatusActionDone'), 'statut6').' '.$langs->trans('StatusActionDone');
-        }
-        elseif ($mode == 3)
-        {
-        	if ($percent == -1 && !$hidenastatus) return img_picto($langs->trans("Status").': '.$langs->trans('StatusNotApplicable'), 'statut9');
-        	elseif ($percent == 0) return img_picto($langs->trans("Status").': '.$langs->trans('StatusActionToDo').' (0%)', 'statut1');
-        	elseif ($percent > 0 && $percent < 100) return img_picto($langs->trans("Status").': '.$langs->trans('StatusActionInProcess').' ('.$percent.'%)', 'statut3');
-        	elseif ($percent >= 100) return img_picto($langs->trans("Status").': '.$langs->trans('StatusActionDone').' (100%)', 'statut6');
-        }
-        elseif ($mode == 4)
-        {
-        	if ($percent == -1 && !$hidenastatus) return img_picto($langs->trans('StatusNotApplicable'), 'statut9').' '.$langs->trans('StatusNotApplicable');
-        	elseif ($percent == 0) return img_picto($langs->trans('StatusActionToDo'), 'statut1').' '.$langs->trans('StatusActionToDo').' (0%)';
-        	elseif ($percent > 0 && $percent < 100) return img_picto($langs->trans('StatusActionInProcess'), 'statut3').' '.$langs->trans('StatusActionInProcess').' ('.$percent.'%)';
-        	elseif ($percent >= 100) return img_picto($langs->trans('StatusActionDone'), 'statut6').' '.$langs->trans('StatusActionDone').' (100%)';
-        }
-        elseif ($mode == 5)
-        {
-        	if ($percent == -1 && !$hidenastatus) return img_picto($langs->trans('StatusNotApplicable'), 'statut9');
-        	elseif ($percent == 0) return '0% '.img_picto($langs->trans('StatusActionToDo'), 'statut1');
-        	elseif ($percent > 0 && $percent < 100) return $percent.'% '.img_picto($langs->trans('StatusActionInProcess').' - '.$percent.'%', 'statut3');
-        	elseif ($percent >= 100) return $langs->trans('StatusActionDone').' '.img_picto($langs->trans('StatusActionDone'), 'statut6');
-        }
-        elseif ($mode == 6)
-        {
-        	if ($percent == -1 && !$hidenastatus) return $langs->trans('StatusNotApplicable').' '.img_picto($langs->trans('StatusNotApplicable'), 'statut9');
-        	elseif ($percent == 0) return $langs->trans('StatusActionToDo').' (0%) '.img_picto($langs->trans('StatusActionToDo'), 'statut1');
-        	elseif ($percent > 0 && $percent < 100) return $langs->trans('StatusActionInProcess').' ('.$percent.'%) '.img_picto($langs->trans('StatusActionInProcess').' - '.$percent.'%', 'statut3');
-        	elseif ($percent >= 100) return $langs->trans('StatusActionDone').' (100%) '.img_picto($langs->trans('StatusActionDone'), 'statut6');
-        }
-        elseif ($mode == 7)
-        {
-            if ($percent == -1 && !$hidenastatus) return img_picto($langs->trans('StatusNotApplicable'), 'statut9');
-            elseif ($percent == 0) return '0% '.img_picto($langs->trans('StatusActionToDo'), 'statut1');
-            elseif ($percent > 0 && $percent < 100) return $percent.'% '.img_picto($langs->trans('StatusActionInProcess').' - '.$percent.'%', 'statut3');
-            elseif ($percent >= 100) return img_picto($langs->trans('StatusActionDone'), 'statut6');
-        }
+        $labelStatus = $langs->trans('StatusNotApplicable');
+       	if ($percent == -1 && !$hidenastatus) $labelStatus = $langs->trans('StatusNotApplicable');
+       	elseif ($percent == 0) $labelStatus = $langs->trans('StatusActionToDo').' (0%)';
+       	elseif ($percent > 0 && $percent < 100) $labelStatus = $langs->trans('StatusActionInProcess').' ('.$percent.'%)';
+       	elseif ($percent >= 100) $labelStatus = $langs->trans('StatusActionDone').' (100%)';
 
-        return '';
+        $labelStatusShort = $langs->trans('StatusNotApplicable');
+        if ($percent == -1 && !$hidenastatus) $labelStatusShort = $langs->trans('NA');
+        elseif ($percent == 0) $labelStatusShort = '0%';
+        elseif ($percent > 0 && $percent < 100) $labelStatusShort = $percent.'%';
+        elseif ($percent >= 100) $labelStatusShort = '100%';
+
+        $statusType = 'status9';
+        if ($percent == -1 && !$hidenastatus) $statusType = 'status9';
+        if ($percent == 0) $statusType = 'status1';
+        if ($percent > 0 && $percent < 100) $statusType = 'status3';
+        if ($percent >= 100) $statusType = 'status6';
+
+        return dolGetStatus($labelStatus, $labelStatusShort, '', $statusType, $mode);
     }
 
     /**
@@ -1504,7 +1465,7 @@ class ActionComm extends CommonObject
         }
 
         $result .= $linkstart;
-        if ($withpicto)	$result .= img_object(($notooltip ? '' : $langs->trans("ShowAction").': '.$libelle), ($overwritepicto ? $overwritepicto : 'action'), ($notooltip ? 'class="'.(($withpicto != 2) ? 'paddingright ' : '').'valigntextbottom"' : 'class="'.(($withpicto != 2) ? 'paddingright ' : '').'classfortooltip valigntextbottom"'), 0, 0, $notooltip ? 0 : 1);
+        if ($withpicto)	$result .= img_object(($notooltip ? '' : $langs->trans("ShowAction").': '.$libelle), ($overwritepicto ? $overwritepicto : 'action'), ($notooltip ? 'class="'.(($withpicto != 2) ? 'paddingright ' : '').'"' : 'class="'.(($withpicto != 2) ? 'paddingright ' : '').'classfortooltip"'), 0, 0, $notooltip ? 0 : 1);
         $result .= $libelleshort;
         $result .= $linkend;
 
@@ -1788,22 +1749,22 @@ class ActionComm extends CommonObject
             }
             else
             {
-                $this->error=$this->db->lasterror();
+                $this->error = $this->db->lasterror();
                 return -1;
             }
 
-			if($exportholiday == 1)
+			if ($exportholiday == 1)
             {
                 $langs->load("holidays");
                 $title = $langs->trans("Holidays");
 
                 $sql = "SELECT u.rowid as uid, u.lastname, u.firstname, u.email, u.statut, x.rowid, x.date_debut as date_start, x.date_fin as date_end, x.halfday, x.statut as status";
-                $sql.= " FROM ".MAIN_DB_PREFIX."holiday as x, ".MAIN_DB_PREFIX."user as u";
-                $sql.= " WHERE u.rowid = x.fk_user";
-                $sql.= " AND u.statut = '1'";                           // Show only active users  (0 = inactive user, 1 = active user)
-                $sql.= " AND (x.statut = '2' OR x.statut = '3')";       // Show only public leaves (2 = leave wait for approval, 3 = leave approved)
+                $sql .= " FROM ".MAIN_DB_PREFIX."holiday as x, ".MAIN_DB_PREFIX."user as u";
+                $sql .= " WHERE u.rowid = x.fk_user";
+                $sql .= " AND u.statut = '1'"; // Show only active users  (0 = inactive user, 1 = active user)
+                $sql .= " AND (x.statut = '2' OR x.statut = '3')"; // Show only public leaves (2 = leave wait for approval, 3 = leave approved)
 
-                $resql=$this->db->query($sql);
+                $resql = $this->db->query($sql);
                 if ($resql)
                 {
                     $num = $this->db->num_rows($resql);
@@ -1814,14 +1775,14 @@ class ActionComm extends CommonObject
                         $obj   = $this->db->fetch_object($resql);
                         $event = array();
 
-                        if($obj->halfday == -1)
+                        if ($obj->halfday == -1)
                         {
                             $event['fulldayevent'] = false;
 
                             $timestampStart = dol_stringtotime($obj->date_start." 00:00:00", 0);
                             $timestampEnd   = dol_stringtotime($obj->date_end." 12:00:00", 0);
                         }
-                        elseif($obj->halfday == 1)
+                        elseif ($obj->halfday == 1)
                         {
                             $event['fulldayevent'] = false;
 
@@ -1836,10 +1797,10 @@ class ActionComm extends CommonObject
                             $timestampEnd   = dol_stringtotime($obj->date_end." 23:59:59", 0);
                         }
 
-                        if(!empty($conf->global->AGENDA_EXPORT_FIX_TZ))
+                        if (!empty($conf->global->AGENDA_EXPORT_FIX_TZ))
                         {
-                            $timestampStart =- ($conf->global->AGENDA_EXPORT_FIX_TZ * 3600);
-                            $timestampEnd   =- ($conf->global->AGENDA_EXPORT_FIX_TZ * 3600);
+                            $timestampStart = - ($conf->global->AGENDA_EXPORT_FIX_TZ * 3600);
+                            $timestampEnd   = - ($conf->global->AGENDA_EXPORT_FIX_TZ * 3600);
                         }
 
                         $urlwithouturlroot = preg_replace('/'.preg_quote(DOL_URL_ROOT, '/').'$/i', '', trim($dolibarr_main_url_root));
@@ -1859,7 +1820,7 @@ class ActionComm extends CommonObject
                         $event['duration']     = $timestampEnd - $timestampStart;
                         $event['url']          = $url;
 
-                        if($obj->status == 2)
+                        if ($obj->status == 2)
                         {
                             // 2 = leave wait for approval
                             $event['summary'] = $title." - ".$obj->lastname." (wait for approval)";
@@ -1880,42 +1841,42 @@ class ActionComm extends CommonObject
             $langs->load("agenda");
 
             // Define title and desc
-            $more='';
-            if ($login)  $more=$langs->transnoentities("User").' '.$login;
-            if ($logina) $more=$langs->transnoentities("ActionsAskedBy").' '.$logina;
-            if ($logint) $more=$langs->transnoentities("ActionsToDoBy").' '.$logint;
-            if ($logind) $more=$langs->transnoentities("ActionsDoneBy").' '.$logind;
+            $more = '';
+            if ($login)  $more = $langs->transnoentities("User").' '.$login;
+            if ($logina) $more = $langs->transnoentities("ActionsAskedBy").' '.$logina;
+            if ($logint) $more = $langs->transnoentities("ActionsToDoBy").' '.$logint;
+            if ($logind) $more = $langs->transnoentities("ActionsDoneBy").' '.$logind;
             if ($more)
             {
-                $title='Dolibarr actions '.$mysoc->name.' - '.$more;
-                $desc=$more;
-                $desc.=' ('.$mysoc->name.' - built by Dolibarr)';
+                $title = 'Dolibarr actions '.$mysoc->name.' - '.$more;
+                $desc = $more;
+                $desc .= ' ('.$mysoc->name.' - built by Dolibarr)';
             }
             else
             {
-                $title='Dolibarr actions '.$mysoc->name;
-                $desc=$langs->transnoentities('ListOfActions');
-                $desc.=' ('.$mysoc->name.' - built by Dolibarr)';
+                $title = 'Dolibarr actions '.$mysoc->name;
+                $desc = $langs->transnoentities('ListOfActions');
+                $desc .= ' ('.$mysoc->name.' - built by Dolibarr)';
             }
 
             // Create temp file
-            $outputfiletmp=tempnam($conf->agenda->dir_temp, 'tmp');  // Temporary file (allow call of function by different threads
+            $outputfiletmp = tempnam($conf->agenda->dir_temp, 'tmp'); // Temporary file (allow call of function by different threads
             @chmod($outputfiletmp, octdec($conf->global->MAIN_UMASK));
 
             // Write file
-            if ($format == 'vcal') $result=build_calfile($format, $title, $desc, $eventarray, $outputfiletmp);
-            elseif ($format == 'ical') $result=build_calfile($format, $title, $desc, $eventarray, $outputfiletmp);
-            elseif ($format == 'rss')  $result=build_rssfile($format, $title, $desc, $eventarray, $outputfiletmp);
+            if ($format == 'vcal') $result = build_calfile($format, $title, $desc, $eventarray, $outputfiletmp);
+            elseif ($format == 'ical') $result = build_calfile($format, $title, $desc, $eventarray, $outputfiletmp);
+            elseif ($format == 'rss')  $result = build_rssfile($format, $title, $desc, $eventarray, $outputfiletmp);
 
             if ($result >= 0)
             {
-                if (dol_move($outputfiletmp, $outputfile, 0, 1)) $result=1;
+                if (dol_move($outputfiletmp, $outputfile, 0, 1)) $result = 1;
                 else
                 {
-                	$this->error='Failed to rename '.$outputfiletmp.' into '.$outputfile;
+                	$this->error = 'Failed to rename '.$outputfiletmp.' into '.$outputfile;
                     dol_syslog(get_class($this)."::build_exportfile ".$this->error, LOG_ERR);
                     dol_delete_file($outputfiletmp, 0, 1);
-                    $result=-1;
+                    $result = -1;
                 }
             }
             else

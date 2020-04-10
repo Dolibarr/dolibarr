@@ -562,7 +562,7 @@ function getStructuredData($type, $data = array())
 	}
 	elseif ($type == 'blogpost')
 	{
-		if (! empty($websitepage->author_alias))
+		if (!empty($websitepage->author_alias))
 		{
 			//include_once DOL_DOCUMENT_ROOT.'/user/class/user.class.php';
 			//$tmpuser = new User($db);
@@ -664,25 +664,25 @@ function getSocialNetworkSharingLinks()
 	$fullurl = $website->alias.'/'.$websitepage->pageurl.'.php';
 	$hashtags = trim(join(' #', array_map('trim', explode(',', $websitepage->keywords))));
 
-	print '<!-- section for social network sharing of page -->'."\n";
-	print '<div class="dol-social-share">'."\n";
+	$out = '<!-- section for social network sharing of page -->'."\n";
+	$out .= '<div class="dol-social-share">'."\n";
 
 	// Twitter
-	print '<div class="dol-social-share-tw">'."\n";
-    print '<a href="https://twitter.com/share" class="twitter-share-button" data-url="'.$fullurl.'" data-text="'.dol_escape_htmltag($websitepage->description).'" data-lang="'.$websitepage->lang.'" data-size="small" data-related="" data-hashtags="'.preg_replace('/^#/', '', $hashtags).'" data-count="horizontal">Tweet</a>';
-	print '<script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0],p=/^http:/.test(d.location)?\'http\':\'https\';if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src=p+\'://platform.twitter.com/widgets.js\';fjs.parentNode.insertBefore(js,fjs);}}(document, \'script\', \'twitter-wjs\');</script>';
-	print '</div>'."\n";
+	$out .= '<div class="dol-social-share-tw">'."\n";
+	$out .= '<a href="https://twitter.com/share" class="twitter-share-button" data-url="'.$fullurl.'" data-text="'.dol_escape_htmltag($websitepage->description).'" data-lang="'.$websitepage->lang.'" data-size="small" data-related="" data-hashtags="'.preg_replace('/^#/', '', $hashtags).'" data-count="horizontal">Tweet</a>';
+	$out .= '<script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0],p=/^http:/.test(d.location)?\'http\':\'https\';if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src=p+\'://platform.twitter.com/widgets.js\';fjs.parentNode.insertBefore(js,fjs);}}(document, \'script\', \'twitter-wjs\');</script>';
+	$out .= '</div>'."\n";
 
 	// Reddit
-	print '<div class="dol-social-share-reddit">'."\n";
-	print '<a href="https://www.reddit.com/submit" target="_blank" onclick="window.location = \'https://www.reddit.com/submit?url='.$fullurl.'\'; return false">';
-    print '<img src="https://www.reddit.com/static/spreddit7.gif" alt="Submit to reddit" border="0" /> </a>';
-	print '</div>'."\n";
+	$out .= '<div class="dol-social-share-reddit">'."\n";
+	$out .= '<a href="https://www.reddit.com/submit" target="_blank" onclick="window.location = \'https://www.reddit.com/submit?url='.$fullurl.'\'; return false">';
+	$out .= '<img src="https://www.reddit.com/static/spreddit7.gif" alt="Submit to reddit" border="0" /> </a>';
+	$out .= '</div>'."\n";
 
 	// Facebook
-	print '<div class="dol-social-share-fbl">'."\n";
-	print '<div id="fb-root"></div>'."\n";
-	print '<script>(function(d, s, id) {
+	$out .= '<div class="dol-social-share-fbl">'."\n";
+	$out .= '<div id="fb-root"></div>'."\n";
+	$out .= '<script>(function(d, s, id) {
 			  var js, fjs = d.getElementsByTagName(s)[0];
 			  if (d.getElementById(id)) return;
 			  js = d.createElement(s); js.id = id;
@@ -697,23 +697,27 @@ function getSocialNetworkSharingLinks()
 			        colorscheme="light"
 			        share="1"
 			        action="like" ></fb:like>'."\n";
-	print '</div>'."\n";
+	$out .= '</div>'."\n";
 
-	print "\n</div>\n";
-	print '<!-- section end for social network sharing of page -->'."\n";
+	$out .= "\n</div>\n";
+	$out .= '<!-- section end for social network sharing of page -->'."\n";
+
+	return $out;
 }
 
 /**
  * Return list of containers object that match a criteria.
  * WARNING: This function can be used by websites.
  *
- * @param 	string		$type				Type of container to search into (Example: 'page')
- * @param 	string		$algo				Algorithm used for search (Example: 'meta' is searching into meta information like title and description, 'content', 'sitefiles', or any combination, ...)
+ * @param 	string		$type				Type of container to search into (Example: '', 'page', 'blogpost', 'page,blogpost', ...)
+ * @param 	string		$algo				Algorithm used for search (Example: 'meta' is searching into meta information like title and description, 'content', 'sitefiles', or any combination 'meta,content,...')
  * @param	string		$searchstring		Search string
  * @param	int			$max				Max number of answers
+ * @param	string		$sortfield			Sort Fields
+ * @param	string		$sortorder			Sort order ('DESC' or 'ASC')
  * @return  string							HTML content
  */
-function getPagesFromSearchCriterias($type, $algo, $searchstring, $max = 25)
+function getPagesFromSearchCriterias($type, $algo, $searchstring, $max = 25, $sortfield = 'date_creation', $sortorder = 'DESC')
 {
 	global $conf, $db, $hookmanager, $langs, $mysoc, $user, $website, $websitepage, $weblangs; // Very important. Required to have var available when running inluded containers.
 
@@ -735,11 +739,17 @@ function getPagesFromSearchCriterias($type, $algo, $searchstring, $max = 25)
 		$arrayresult['code'] = 'KO';
 		$arrayresult['message'] = $weblangs->trans("ErrorSearchCriteriaTooSmall");
 	}
-	elseif (!in_array($type, array('', 'page')))
+	else
 	{
-		$error++;
-		$arrayresult['code'] = 'KO';
-		$arrayresult['message'] = 'Bad value for parameter $type';
+		$tmparrayoftype = explode(',', $type);
+		foreach ($tmparrayoftype as $tmptype) {
+			if (!in_array($tmptype, array('', 'page', 'blogpost'))) {
+				$error++;
+				$arrayresult['code'] = 'KO';
+				$arrayresult['message'] = 'Bad value for parameter type';
+				break;
+			}
+		}
 	}
 
 	$searchdone = 0;
@@ -749,7 +759,14 @@ function getPagesFromSearchCriterias($type, $algo, $searchstring, $max = 25)
 	{
 		$sql = 'SELECT rowid FROM '.MAIN_DB_PREFIX.'website_page';
 		$sql .= " WHERE fk_website = ".$website->id;
-		if ($type) $sql .= " AND type_container = '".$db->escape($type)."'";
+		if ($type) {
+			$tmparrayoftype = explode(',', $type);
+			$typestring = '';
+			foreach ($tmparrayoftype as $tmptype) {
+				$typestring .= ($typestring ? ", " : "")."'".trim($tmptype)."'";
+			}
+			$sql .= " AND type_container IN (".$typestring.")";
+		}
 		$sql .= " AND (";
 		$searchalgo = '';
 		if (preg_match('/meta/', $algo))
@@ -763,6 +780,7 @@ function getPagesFromSearchCriterias($type, $algo, $searchstring, $max = 25)
 		}
 		$sql .= $searchalgo;
 		$sql .= ")";
+		$sql .= $db->order($sortfield, $sortorder);
 		$sql .= $db->plimit($max);
 
 		$resql = $db->query($sql);
@@ -881,6 +899,7 @@ function getAllImages($object, $objectpage, $urltograb, &$tmp, &$action, $modify
 	$urltograb = dirname($urltograb); // So urltograb is now http://www.nltechno.com or http://www.nltechno.com/dir1
 
 	// Search X in "img...src=X"
+	$regs = array();
 	preg_match_all('/<img([^\.\/]+)src="([^>"]+)"([^>]*)>/i', $tmp, $regs);
 
 	foreach ($regs[0] as $key => $val)

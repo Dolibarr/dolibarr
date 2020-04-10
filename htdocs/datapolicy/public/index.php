@@ -23,9 +23,9 @@
  */
 
 if (!defined('NOLOGIN'))
-    define("NOLOGIN", 1);   // This means this output page does not require to be logged.
+    define("NOLOGIN", 1); // This means this output page does not require to be logged.
 if (!defined('NOCSRFCHECK'))
-    define('NOCSRFCHECK', '1');  // Do not check anti CSRF attack test
+    define('NOCSRFCHECK', '1'); // Do not check anti CSRF attack test
 if (!defined('NOREQUIREMENU'))
     define('NOREQUIREMENU', '1');
 
@@ -43,8 +43,8 @@ $action = GETPOST('action', 'alpha');
 $lang = GETPOST('l', 'alpha');
 $code = GETPOST('key', 'alpha');
 
-$acc = "DATAPOLICIESACCEPT_" . $lang;
-$ref = "DATAPOLICIESREFUSE_" . $lang;
+$acc = "DATAPOLICIESACCEPT_".$lang;
+$ref = "DATAPOLICIESREFUSE_".$lang;
 $langs->load('datapolicy@datapolicy', 0, 0, $lang);
 
 if (empty($action) || (empty($idc) && empty($ids) && empty($ida))) {
@@ -117,26 +117,26 @@ if (empty($action) || (empty($idc) && empty($ids) && empty($ida))) {
     $adherent->update($newuser);
 }
 
-header("Content-type: text/html; charset=" . $conf->file->character_set_client);
+header("Content-type: text/html; charset=".$conf->file->character_set_client);
 
 print '<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">';
 print "\n";
 print "<html>\n";
 print "<head>\n";
-print '<meta name="robots" content="noindex,nofollow">' . "\n";
-print '<meta name="keywords" content="dolibarr">' . "\n";
-print '<meta name="description" content="Dolibarr DATAPOLICIES">' . "\n";
-print "<title>" . $langs->trans("DATAPOLICIESReturn") . "</title>\n";
-print '<link rel="stylesheet" type="text/css" href="' . DOL_URL_ROOT . $conf->css . '?lang=' . $lang . '">' . "\n";
+print '<meta name="robots" content="noindex,nofollow">'."\n";
+print '<meta name="keywords" content="dolibarr">'."\n";
+print '<meta name="description" content="Dolibarr DATAPOLICIES">'."\n";
+print "<title>".$langs->trans("DATAPOLICIESReturn")."</title>\n";
+print '<link rel="stylesheet" type="text/css" href="'.DOL_URL_ROOT.$conf->css.'?lang='.$lang.'">'."\n";
 print '<style type="text/css">';
 print '.CTableRow1      { margin: 1px; padding: 3px; font: 12px verdana,arial; background: #e6E6eE; color: #000000; -moz-border-radius-topleft:6px; -moz-border-radius-topright:6px; -moz-border-radius-bottomleft:6px; -moz-border-radius-bottomright:6px;}';
 print '.CTableRow2      { margin: 1px; padding: 3px; font: 12px verdana,arial; background: #FFFFFF; color: #000000; -moz-border-radius-topleft:6px; -moz-border-radius-topright:6px; -moz-border-radius-bottomleft:6px; -moz-border-radius-bottomright:6px;}';
 print '</style>';
 
 print "</head>\n";
-print '<body style="margin: 10% 40%">' . "\n";
+print '<body style="margin: 10% 40%">'."\n";
 print '<table class="CTableRow1" ><tr><td style="text_align:center;">';
-print $return . "<br>\n";
+print $return."<br>\n";
 print '</td></tr></table>';
 print "</body>\n";
 print "</html>\n";

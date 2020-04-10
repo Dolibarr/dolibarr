@@ -35,11 +35,11 @@ require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.product.class.php';
 $langs->loadLangs(array('admin', 'products'));
 
 // Security check
-if (! $user->admin) accessforbidden();
+if (!$user->admin) accessforbidden();
 
 $action = GETPOST('action', 'alpha');
-$oldvatrate=GETPOST('oldvatrate', 'alpha');
-$newvatrate=GETPOST('newvatrate', 'alpha');
+$oldvatrate = GETPOST('oldvatrate', 'alpha');
+$newvatrate = GETPOST('newvatrate', 'alpha');
 //$price_base_type=GETPOST('price_base_type');
 
 
@@ -50,7 +50,7 @@ $newvatrate=GETPOST('newvatrate', 'alpha');
 
 if ($action == 'convert')
 {
-	$error=0;
+	$error = 0;
 
 	if ($oldvatrate == $newvatrate)
 	{
@@ -59,41 +59,41 @@ if ($action == 'convert')
 		$error++;
 	}
 
-	if (! $error)
+	if (!$error)
 	{
-		$country_id=$mysoc->country_id;	// TODO Allow to choose country into form
+		$country_id = $mysoc->country_id; // TODO Allow to choose country into form
 
-		$nbrecordsmodified=0;
+		$nbrecordsmodified = 0;
 
 		$db->begin();
 
 		// Clean vat code old
-		$vat_src_code_old='';
+		$vat_src_code_old = '';
 		if (preg_match('/\((.*)\)/', $oldvatrate, $reg))
 		{
 			$vat_src_code_old = $reg[1];
-			$oldvatrateclean = preg_replace('/\s*\(.*\)/', '', $oldvatrate);    // Remove code into vatrate.
-		} else $oldvatrateclean=$oldvatrate;
+			$oldvatrateclean = preg_replace('/\s*\(.*\)/', '', $oldvatrate); // Remove code into vatrate.
+		} else $oldvatrateclean = $oldvatrate;
 
 		// Clean vat code new
-		$vat_src_code_new='';
+		$vat_src_code_new = '';
 		if (preg_match('/\((.*)\)/', $newvatrate, $reg))
 		{
 			$vat_src_code_new = $reg[1];
-			$newvatrateclean = preg_replace('/\s*\(.*\)/', '', $newvatrate);    // Remove code into vatrate.
-		} else $newvatrateclean=$newvatrate;
+			$newvatrateclean = preg_replace('/\s*\(.*\)/', '', $newvatrate); // Remove code into vatrate.
+		} else $newvatrateclean = $newvatrate;
 
 		// If country to edit is my country, so we change customer prices
 		if ($country_id == $mysoc->country_id)
 		{
 			$sql = 'SELECT rowid';
-			$sql.= ' FROM '.MAIN_DB_PREFIX.'product';
-			$sql.= ' WHERE entity IN ('.getEntity('product').')';
-			$sql.= " AND tva_tx = '".$db->escape($oldvatrateclean)."'";
-			if ($vat_src_code_old) $sql.= " AND default_vat_code = '".$vat_src_code_old."'";
+			$sql .= ' FROM '.MAIN_DB_PREFIX.'product';
+			$sql .= ' WHERE entity IN ('.getEntity('product').')';
+			$sql .= " AND tva_tx = '".$db->escape($oldvatrateclean)."'";
+			if ($vat_src_code_old) $sql .= " AND default_vat_code = '".$vat_src_code_old."'";
 			else " AND default_vat_code = IS NULL";
 
-			$resql=$db->query($sql);
+			$resql = $db->query($sql);
 			if ($resql)
 			{
 				$num = $db->num_rows($resql);
@@ -103,70 +103,70 @@ if ($action == 'convert')
 				{
 					$obj = $db->fetch_object($resql);
 
-					$objectstatic = new Product($db);          // Object init must be into loop to avoid to get value of previous step
-					$ret=$objectstatic->fetch($obj->rowid);
+					$objectstatic = new Product($db); // Object init must be into loop to avoid to get value of previous step
+					$ret = $objectstatic->fetch($obj->rowid);
 					if ($ret > 0)
 					{
-						$ret=0; $retm=0; $updatelevel1=false;
+						$ret = 0; $retm = 0; $updatelevel1 = false;
 
 						// Update multiprice
-						$listofmulti=array_reverse($objectstatic->multiprices, true);	// To finish with level 1
+						$listofmulti = array_reverse($objectstatic->multiprices, true); // To finish with level 1
 						foreach ($listofmulti as $level => $multiprices)
 						{
-							$price_base_type = $objectstatic->multiprices_base_type[$level];	// Get price_base_type of product/service to keep the same for update
-							if (empty($price_base_type)) continue;	// Discard not defined price levels
+							$price_base_type = $objectstatic->multiprices_base_type[$level]; // Get price_base_type of product/service to keep the same for update
+							if (empty($price_base_type)) continue; // Discard not defined price levels
 
 							if ($price_base_type == 'TTC')
 							{
-								$newprice=price2num($objectstatic->multiprices_ttc[$level], 'MU');    // Second param must be MU (we want a unit price so 'MU'. If unit price was on 4 decimal, we must keep 4 decimals)
-								$newminprice=$objectstatic->multiprices_min_ttc[$level];
+								$newprice = price2num($objectstatic->multiprices_ttc[$level], 'MU'); // Second param must be MU (we want a unit price so 'MU'. If unit price was on 4 decimal, we must keep 4 decimals)
+								$newminprice = $objectstatic->multiprices_min_ttc[$level];
 							}
 							else
 							{
-								$newprice=price2num($objectstatic->multiprices[$level], 'MU');    // Second param must be MU (we want a unit price so 'MU'. If unit price was on 4 decimal, we must keep 4 decimals)
-								$newminprice=$objectstatic->multiprices_min[$level];
+								$newprice = price2num($objectstatic->multiprices[$level], 'MU'); // Second param must be MU (we want a unit price so 'MU'. If unit price was on 4 decimal, we must keep 4 decimals)
+								$newminprice = $objectstatic->multiprices_min[$level];
 							}
-							if ($newminprice > $newprice) $newminprice=$newprice;
+							if ($newminprice > $newprice) $newminprice = $newprice;
 
-							$newvat=str_replace('*', '', $newvatrate);
-							$localtaxes_type=getLocalTaxesFromRate($newvat, 0, $mysoc, $mysoc);
-							$newnpr=$objectstatic->multiprices_recuperableonly[$level];
-							$newdefaultvatcode=$vat_src_code_new;
-							$newlevel=$level;
+							$newvat = str_replace('*', '', $newvatrate);
+							$localtaxes_type = getLocalTaxesFromRate($newvat, 0, $mysoc, $mysoc);
+							$newnpr = $objectstatic->multiprices_recuperableonly[$level];
+							$newdefaultvatcode = $vat_src_code_new;
+							$newlevel = $level;
 
 							//print "$objectstatic->id $newprice, $price_base_type, $newvat, $newminprice, $newlevel, $newnpr<br>\n";
-							$retm=$objectstatic->updatePrice($newprice, $price_base_type, $user, $newvatrateclean, $newminprice, $newlevel, $newnpr, 0, 0, $localtaxes_type, $newdefaultvatcode);
+							$retm = $objectstatic->updatePrice($newprice, $price_base_type, $user, $newvatrateclean, $newminprice, $newlevel, $newnpr, 0, 0, $localtaxes_type, $newdefaultvatcode);
 							if ($retm < 0)
 							{
 								$error++;
 								break;
 							}
 
-							if ($newlevel == 1) $updatelevel1=true;
+							if ($newlevel == 1) $updatelevel1 = true;
 						}
 
 						// Update single price
-						$price_base_type = $objectstatic->price_base_type;	// Get price_base_type of product/service to keep the same for update
+						$price_base_type = $objectstatic->price_base_type; // Get price_base_type of product/service to keep the same for update
 						if ($price_base_type == 'TTC')
 						{
-							$newprice=price2num($objectstatic->price_ttc, 'MU');    // Second param must be MU (we want a unit price so 'MU'. If unit price was on 4 decimal, we must keep 4 decimals)
-							$newminprice=$objectstatic->price_min_ttc;
+							$newprice = price2num($objectstatic->price_ttc, 'MU'); // Second param must be MU (we want a unit price so 'MU'. If unit price was on 4 decimal, we must keep 4 decimals)
+							$newminprice = $objectstatic->price_min_ttc;
 						}
 						else
 						{
-							$newprice=price2num($objectstatic->price, 'MU');    // Second param must be MU (we want a unit price so 'MU'. If unit price was on 4 decimal, we must keep 4 decimals)
-							$newminprice=$objectstatic->price_min;
+							$newprice = price2num($objectstatic->price, 'MU'); // Second param must be MU (we want a unit price so 'MU'. If unit price was on 4 decimal, we must keep 4 decimals)
+							$newminprice = $objectstatic->price_min;
 						}
-						if ($newminprice > $newprice) $newminprice=$newprice;
-						$newvat=str_replace('*', '', $newvatrate);
-						$localtaxes_type=getLocalTaxesFromRate($newvat, 0, $mysoc, $mysoc);
-						$newnpr=$objectstatic->recuperableonly;
-						$newdefaultvatcode=$vat_src_code_new;
-						$newlevel=0;
-						if (! empty($price_base_type) && ! $updatelevel1)
+						if ($newminprice > $newprice) $newminprice = $newprice;
+						$newvat = str_replace('*', '', $newvatrate);
+						$localtaxes_type = getLocalTaxesFromRate($newvat, 0, $mysoc, $mysoc);
+						$newnpr = $objectstatic->recuperableonly;
+						$newdefaultvatcode = $vat_src_code_new;
+						$newlevel = 0;
+						if (!empty($price_base_type) && !$updatelevel1)
 						{
 							//print "$objectstatic->id $newprice, $price_base_type, $newvat, $newminprice, $newlevel, $newnpr<br>\n";
-							$ret=$objectstatic->updatePrice($newprice, $price_base_type, $user, $newvatrateclean, $newminprice, $newlevel, $newnpr, 0, 0, $localtaxes_type, $newdefaultvatcode);
+							$ret = $objectstatic->updatePrice($newprice, $price_base_type, $user, $newvatrateclean, $newminprice, $newlevel, $newnpr, 0, 0, $localtaxes_type, $newdefaultvatcode);
 						}
 
 						if ($ret < 0 || $retm < 0) $error++;
@@ -184,14 +184,14 @@ if ($action == 'convert')
 
 		// Change supplier prices
 		$sql = 'SELECT pfp.rowid, pfp.fk_soc, pfp.price as price, pfp.quantity as qty, pfp.fk_availability, pfp.ref_fourn';
-		$sql.= ' FROM '.MAIN_DB_PREFIX.'product_fournisseur_price as pfp, '.MAIN_DB_PREFIX.'societe as s';
-		$sql.= ' WHERE pfp.fk_soc = s.rowid AND pfp.entity IN ('.getEntity('product').')';
-		$sql.= " AND tva_tx = '".$db->escape($oldvatrate)."'";
-		if ($vat_src_code_old) $sql.= " AND default_vat_code = '".$vat_src_code_old."'";
+		$sql .= ' FROM '.MAIN_DB_PREFIX.'product_fournisseur_price as pfp, '.MAIN_DB_PREFIX.'societe as s';
+		$sql .= ' WHERE pfp.fk_soc = s.rowid AND pfp.entity IN ('.getEntity('product').')';
+		$sql .= " AND tva_tx = '".$db->escape($oldvatrate)."'";
+		if ($vat_src_code_old) $sql .= " AND default_vat_code = '".$vat_src_code_old."'";
 		else " AND default_vat_code = IS NULL";
-		$sql.= " AND s.fk_pays = '".$country_id."'";
+		$sql .= " AND s.fk_pays = '".$country_id."'";
 		//print $sql;
-		$resql=$db->query($sql);
+		$resql = $db->query($sql);
 		if ($resql)
 		{
 			$num = $db->num_rows($resql);
@@ -201,13 +201,13 @@ if ($action == 'convert')
 			{
 				$obj = $db->fetch_object($resql);
 
-                $objectstatic2 = new ProductFournisseur($db);          // Object init must be into loop to avoid to get value of previous step
-				$ret=$objectstatic2->fetch_product_fournisseur_price($obj->rowid);
+				$objectstatic2 = new ProductFournisseur($db); // Object init must be into loop to avoid to get value of previous step
+				$ret = $objectstatic2->fetch_product_fournisseur_price($obj->rowid);
 				if ($ret > 0)
 				{
-					$ret=0; $retm=0; $updatelevel1=false;
+					$ret = 0; $retm = 0; $updatelevel1 = false;
 
-					$price_base_type='HT';
+					$price_base_type = 'HT';
 					//$price_base_type = $objectstatic2->price_base_type;	// Get price_base_type of product/service to keep the same for update
 					//if ($price_base_type == 'TTC')
 					//{
@@ -216,26 +216,26 @@ if ($action == 'convert')
 					//}
 					//else
 					//{
-						$newprice=price2num($obj->price, 'MU');    // Second param must be MU (we want a unit price so 'MU'. If unit price was on 4 decimal, we must keep 4 decimals)
+						$newprice = price2num($obj->price, 'MU'); // Second param must be MU (we want a unit price so 'MU'. If unit price was on 4 decimal, we must keep 4 decimals)
 						//$newminprice=$objectstatic2->fourn_price_min;
 					//}
 					//if ($newminprice > $newprice) $newminprice=$newprice;
-					$newvat=str_replace('*', '', $newvatrate);
-					$localtaxes_type=getLocalTaxesFromRate($newvat, 0, $mysoc, $mysoc);
+					$newvat = str_replace('*', '', $newvatrate);
+					$localtaxes_type = getLocalTaxesFromRate($newvat, 0, $mysoc, $mysoc);
 					//$newnpr=$objectstatic2->recuperableonly;
-					$newnpr=0;
-					$newdefaultvatcode=$vat_src_code_new;
+					$newnpr = 0;
+					$newdefaultvatcode = $vat_src_code_new;
 
 					$newpercent = $objectstatic2->fourn_remise_percent;
 					$newdeliverydelay = $objectstatic2->delivery_time_days;
 					$newsupplierreputation = $objectstatic2->supplier_reputation;
 
-					$newlevel=0;
-					if (! empty($price_base_type) && ! $updatelevel1)
+					$newlevel = 0;
+					if (!empty($price_base_type) && !$updatelevel1)
 					{
 						//print "$objectstatic2->id $newprice, $price_base_type, $newvat, $newminprice, $newlevel, $newnpr<br>\n";
-						$fourn->id=$obj->fk_soc;
-						$ret=$objectstatic2->update_buyprice($obj->qty, $newprice, $user, $price_base_type, $fourn, $obj->fk_availability, $obj->ref_fourn, $newvat, '', $newpercent, 0, $newnpr, $newdeliverydelay, $newsupplierreputation, $localtaxes_type, $newdefaultvatcode);
+						$fourn->id = $obj->fk_soc;
+						$ret = $objectstatic2->update_buyprice($obj->qty, $newprice, $user, $price_base_type, $fourn, $obj->fk_availability, $obj->ref_fourn, $newvat, '', $newpercent, 0, $newnpr, $newdeliverydelay, $newsupplierreputation, $localtaxes_type, $newdefaultvatcode);
 					}
 
 					if ($ret < 0 || $retm < 0) $error++;
@@ -248,7 +248,7 @@ if ($action == 'convert')
 		}
 		else dol_print_error($db);
 
-		if (! $error)
+		if (!$error)
 		{
 			$db->commit();
 		}
@@ -258,7 +258,7 @@ if ($action == 'convert')
 		}
 
 		// Output result
-		if (! $error)
+		if (!$error)
 		{
 			if ($nbrecordsmodified > 0) setEventMessages($langs->trans("RecordsModified", $nbrecordsmodified), null, 'mesgs');
 			else setEventMessages($langs->trans("NoRecordFound"), null, 'warnings');
@@ -274,7 +274,7 @@ if ($action == 'convert')
  * View
  */
 
-$form=new Form($db);
+$form = new Form($db);
 
 $title = $langs->trans('ProductVatMassChange');
 
@@ -287,7 +287,7 @@ print $langs->trans("ProductVatMassChangeDesc").'<br><br>';
 if (empty($mysoc->country_code))
 {
 	$langs->load("errors");
-	$warnpicto=img_error($langs->trans("WarningMandatorySetupNotComplete"));
+	$warnpicto = img_error($langs->trans("WarningMandatorySetupNotComplete"));
 	print '<br><a href="'.DOL_URL_ROOT.'/admin/company.php?mainmenu=home">'.$warnpicto.' '.$langs->trans("WarningMandatorySetupNotComplete").'</a>';
 }
 else

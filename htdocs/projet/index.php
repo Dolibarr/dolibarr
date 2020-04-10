@@ -40,65 +40,63 @@ $hookmanager->initHooks(array('projectsindex'));
 $langs->loadLangs(array('projects', 'companies'));
 
 $search_project_user = GETPOST('search_project_user', 'int');
-$mine = GETPOST('mode', 'aZ09')=='mine' ? 1 : 0;
+$mine = GETPOST('mode', 'aZ09') == 'mine' ? 1 : 0;
 if ($search_project_user == $user->id) $mine = 1;
 
 // Security check
-$socid=0;
+$socid = 0;
 //if ($user->socid > 0) $socid = $user->socid;    // For external user, no check is done on company because readability is managed by public status of project and assignement.
 if (!$user->rights->projet->lire) accessforbidden();
 
 $sortfield = GETPOST("sortfield", 'alpha');
 $sortorder = GETPOST("sortorder", 'alpha');
 
-$max=3;
+$max = 3;
 
 
 /*
  * View
  */
 
-$companystatic=new Societe($db);
-$projectstatic=new Project($db);
-$form=new Form($db);
-$formfile=new FormFile($db);
+$companystatic = new Societe($db);
+$projectstatic = new Project($db);
+$form = new Form($db);
+$formfile = new FormFile($db);
 
-$projectset = ($mine?$mine:(empty($user->rights->projet->all->lire)?0:2));
+$projectset = ($mine ? $mine : (empty($user->rights->projet->all->lire) ? 0 : 2));
 $projectsListId = $projectstatic->getProjectsAuthorizedForUser($user, $projectset, 1);
 //var_dump($projectsListId);
 
 llxHeader("", $langs->trans("Projects"), "EN:Module_Projects|FR:Module_Projets|ES:M&oacute;dulo_Proyectos");
 
-$title=$langs->trans("ProjectsArea");
+$title = $langs->trans("ProjectsArea");
 //if ($mine) $title=$langs->trans("MyProjectsArea");
 
 
 // Title for combo list see all projects
-$titleall=$langs->trans("AllAllowedProjects");
-if (! empty($user->rights->projet->all->lire) && ! $socid) $titleall=$langs->trans("AllProjects");
-else $titleall=$langs->trans("AllAllowedProjects").'<br><br>';
+$titleall = $langs->trans("AllAllowedProjects");
+if (!empty($user->rights->projet->all->lire) && !$socid) $titleall = $langs->trans("AllProjects");
+else $titleall = $langs->trans("AllAllowedProjects").'<br><br>';
 
-$morehtml='';
-$morehtml.='<form name="projectform" method="POST">';
-$morehtml.='<input type="hidden" name="token" value="'.newToken().'">';
-$morehtml.='<SELECT name="search_project_user">';
-$morehtml.='<option name="all" value="0"'.($mine?'':' selected').'>'.$titleall.'</option>';
-$morehtml.='<option name="mine" value="'.$user->id.'"'.(($search_project_user == $user->id)?' selected':'').'>'.$langs->trans("ProjectsImContactFor").'</option>';
-$morehtml.='</SELECT>';
-$morehtml.='<input type="submit" class="button" name="refresh" value="'.$langs->trans("Refresh").'">';
-$morehtml.='</form>';
+$morehtml = '';
+$morehtml .= '<form name="projectform" method="POST">';
+$morehtml .= '<input type="hidden" name="token" value="'.newToken().'">';
+$morehtml .= '<SELECT name="search_project_user">';
+$morehtml .= '<option name="all" value="0"'.($mine ? '' : ' selected').'>'.$titleall.'</option>';
+$morehtml .= '<option name="mine" value="'.$user->id.'"'.(($search_project_user == $user->id) ? ' selected' : '').'>'.$langs->trans("ProjectsImContactFor").'</option>';
+$morehtml .= '</SELECT>';
+$morehtml .= '<input type="submit" class="button" name="refresh" value="'.$langs->trans("Refresh").'">';
+$morehtml .= '</form>';
 
-print_barre_liste($title, 0, $_SERVER["PHP_SELF"], '', '', '', '', 0, -1, 'project', 0, $morehtml);
-
-// Show description of content
-print '<div class="opacitymedium">';
-if ($mine) print $langs->trans("MyProjectsDesc").'<br><br>';
+if ($mine) $tooltiphelp = $langs->trans("MyProjectsDesc");
 else
 {
-	if (!empty($user->rights->projet->all->lire) && !$socid) print $langs->trans("ProjectsDesc").'<br><br>';
-	else print $langs->trans("ProjectsPublicDesc").'<br><br>';
+	if (!empty($user->rights->projet->all->lire) && !$socid) $tooltiphelp = $langs->trans("ProjectsDesc");
+	else $tooltiphelp = $langs->trans("ProjectsPublicDesc");
 }
-print '</div>';
+
+print_barre_liste($form->textwithpicto($title, $tooltiphelp), 0, $_SERVER["PHP_SELF"], '', '', '', '', 0, -1, 'project', 0, $morehtml);
+
 
 // Get list of ponderated percent for each status
 $listofoppstatus = array(); $listofopplabel = array(); $listofoppcode = array();
@@ -309,7 +307,6 @@ if ($resql)
 		else
 		{
 			print $langs->trans("OthersNotLinkedToThirdParty");
-			$i--;
 		}
 		print '</td>';
 		print '<td class="right">';

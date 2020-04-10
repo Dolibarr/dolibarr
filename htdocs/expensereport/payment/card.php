@@ -26,17 +26,17 @@ require_once DOL_DOCUMENT_ROOT.'/expensereport/class/expensereport.class.php';
 require_once DOL_DOCUMENT_ROOT.'/expensereport/class/paymentexpensereport.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/modules/expensereport/modules_expensereport.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/expensereport.lib.php';
-if (! empty($conf->banque->enabled)) require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
+if (!empty($conf->banque->enabled)) require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
 
 // Load translation files required by the page
 $langs->loadLangs(array('bills', 'banks', 'companies', 'trips'));
 
-$id=GETPOST('rowid')?GETPOST('rowid', 'int'):GETPOST('id', 'int');
-$action=GETPOST('action', 'aZ09');
-$confirm=GETPOST('confirm');
+$id = GETPOST('rowid') ?GETPOST('rowid', 'int') : GETPOST('id', 'int');
+$action = GETPOST('action', 'aZ09');
+$confirm = GETPOST('confirm');
 
 // Security check
-if ($user->socid) $socid=$user->socid;
+if ($user->socid) $socid = $user->socid;
 // TODO Add rule to restrict access payment
 //$result = restrictedArea($user, 'facture', $id,'');
 
@@ -44,8 +44,8 @@ $object = new PaymentExpenseReport($db);
 
 if ($id > 0)
 {
-	$result=$object->fetch($id);
-	if (! $result) dol_print_error($db, 'Failed to get payment id '.$id);
+	$result = $object->fetch($id);
+	if (!$result) dol_print_error($db, 'Failed to get payment id '.$id);
 }
 
 
@@ -77,20 +77,20 @@ if ($action == 'confirm_valide' && $confirm == 'yes' && $user->rights->expensere
 {
 	$db->begin();
 
-	$result=$object->valide();
+	$result = $object->valide();
 
 	if ($result > 0)
 	{
 		$db->commit();
 
-		$factures=array();	// TODO Get all id of invoices linked to this payment
-		foreach($factures as $invoiceid)
+		$factures = array(); // TODO Get all id of invoices linked to this payment
+		foreach ($factures as $invoiceid)
 		{
 			$fac = new Facture($db);
 			$fac->fetch($invoiceid);
 
 			$outputlangs = $langs;
-			if (! empty($_REQUEST['lang_id']))
+			if (!empty($_REQUEST['lang_id']))
 			{
 				$outputlangs = new Translate("", $conf);
 				$outputlangs->setDefaultLang($_REQUEST['lang_id']);
@@ -167,11 +167,11 @@ print '<tr><td class="tdtop">'.$langs->trans('Note').'</td><td colspan="3">'.nl2
 
 $disable_delete = 0;
 // Bank account
-if (! empty($conf->banque->enabled))
+if (!empty($conf->banque->enabled))
 {
     if ($object->bank_account)
     {
-    	$bankline=new AccountLine($db);
+    	$bankline = new AccountLine($db);
     	$bankline->fetch($object->bank_line);
         if ($bankline->rappro)
         {
@@ -189,7 +189,7 @@ if (! empty($conf->banque->enabled))
     	print '<tr>';
     	print '<td>'.$langs->trans('BankAccount').'</td>';
 		print '<td colspan="3">';
-		$accountstatic=new Account($db);
+		$accountstatic = new Account($db);
 		$accountstatic->fetch($bankline->fk_account);
         print $accountstatic->getNomUrl(1);
     	print '</td>';
@@ -209,13 +209,13 @@ dol_fiche_end();
  */
 
 $sql = 'SELECT er.rowid as eid, er.paid, er.total_ttc, per.amount';
-$sql.= ' FROM '.MAIN_DB_PREFIX.'payment_expensereport as per,'.MAIN_DB_PREFIX.'expensereport as er';
-$sql.= ' WHERE per.fk_expensereport = er.rowid';
-$sql.= ' AND er.entity IN ('.getEntity('expensereport').')';
-$sql.= ' AND per.rowid = '.$id;
+$sql .= ' FROM '.MAIN_DB_PREFIX.'payment_expensereport as per,'.MAIN_DB_PREFIX.'expensereport as er';
+$sql .= ' WHERE per.fk_expensereport = er.rowid';
+$sql .= ' AND er.entity IN ('.getEntity('expensereport').')';
+$sql .= ' AND per.rowid = '.$id;
 
 dol_syslog("expensereport/payment/card.php", LOG_DEBUG);
-$resql=$db->query($sql);
+$resql = $db->query($sql);
 if ($resql)
 {
 	$num = $db->num_rows($resql);
@@ -243,7 +243,7 @@ if ($resql)
 
 			print '<tr class="oddeven">';
 
-			$expensereport=new ExpenseReport($db);
+			$expensereport = new ExpenseReport($db);
 			$expensereport->fetch($objp->eid);
 
 			// Expense report
@@ -297,7 +297,7 @@ if ($action == '')
 {
 	if ($user->rights->expensereport->supprimer)
 	{
-		if (! $disable_delete)
+		if (!$disable_delete)
 		{
 			print '<a class="butActionDelete" href="'.$_SERVER['PHP_SELF'].'?id='.$id.'&amp;action=delete">'.$langs->trans('Delete').'</a>';
 		}

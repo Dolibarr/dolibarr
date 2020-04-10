@@ -32,21 +32,21 @@ if (!defined('NOREQUIREHTML'))		define('NOREQUIREHTML', '1');
 if (!defined('NOREQUIREAJAX'))		define('NOREQUIREAJAX', '1');
 
 require '../main.inc.php'; // Load $user and permissions
-require_once DOL_DOCUMENT_ROOT . '/core/lib/functions.lib.php';
-require_once DOL_DOCUMENT_ROOT . '/compta/facture/class/facture.class.php';
-require_once DOL_DOCUMENT_ROOT . '/societe/class/societe.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/functions.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
+require_once DOL_DOCUMENT_ROOT.'/societe/class/societe.class.php';
 
 global $mysoc;
 
 $langs->loadLangs(array("bills", "cashdesk"));
 
-$place = (GETPOST('place', 'int') > 0 ? GETPOST('place', 'int') : 0); // $place is id of table for Ba or Restaurant
+$place = (GETPOST('place', 'aZ09') ? GETPOST('place', 'aZ09') : '0'); // $place is id of table for Bar or Restaurant
 
 $idline = GETPOST('idline', 'int');
 $action = GETPOST('action', 'alpha');
 
 if (empty($user->rights->takepos->run)) {
-	access_forbidden();
+	accessforbidden();
 }
 
 // get invoice
@@ -83,15 +83,17 @@ top_htmlhead($head, '', 0, 0, $arrayofjs, $arrayofcss);
 	 * @param   {string}    rate        VAT rate
 	 */
 	function ApplyVATRate(id, rate) {
+		console.log("Save selected VAT Rate into vatRate variable with value "+rate);
 		vatRate = rate;
 		jQuery('button.vat_rate').removeClass('selected');
-		jQuery('#vat_rate_' + id).addClass('selected');
+		jQuery('#vat_rate_'+id).addClass('selected');
 	}
 
 	/**
 	 * Save (validate)
 	 */
 	function Save() {
+		console.log("We click so we call page invoice.php with place=<?php echo $place; ?> tva_tx="+vatRate);
 		$.get( "invoice.php", { action: "<?php echo $action; ?>", place: "<?php echo $place; ?>", desc:$('#desc').val(), number:$('#number').val(), tva_tx: vatRate} );
 		parent.$.colorbox.close();
 	}
@@ -113,15 +115,15 @@ if ($action == "addnote") echo '<input type="hidden" id="number" name="number" v
 <input type="button" class="button takepospay clearboth" value="OK" onclick="Save();">
 <?php
 if ($action == 'freezone') {
-	require_once DOL_DOCUMENT_ROOT . '/core/class/html.form.class.php';
+	require_once DOL_DOCUMENT_ROOT.'/core/class/html.form.class.php';
 
 	$form = new Form($db);
-	$num = $form->load_cache_vatrates("'" . $mysoc->country_code . "'");
+	$num = $form->load_cache_vatrates("'".$mysoc->country_code."'");
 	if ($num > 0) {
 		print '<br><br>';
-		print $langs->trans('VAT') . ' : ';
+		print $langs->trans('VAT').' : ';
 		foreach ($form->cache_vatrates as $rate) {
-			print '<button type="button" class="button item_value vat_rate' . ($rate['txtva'] == $vatRateDefault ? ' selected' : '') . '" id="vat_rate_' . $rate['rowid'] . '" onclick="ApplyVATRate(\'' . $rate['rowid'] . '\', \'' . $rate['txtva'] .'\');">' . $rate['txtva'] . ' %</button>';
+			print '<button type="button" class="button item_value vat_rate'.($rate['txtva'] == $vatRateDefault ? ' selected' : '').'" id="vat_rate_'.$rate['rowid'].'" onclick="ApplyVATRate(\''.$rate['rowid'].'\', \''.$rate['txtva'].'\');">'.$rate['txtva'].' %</button>';
 		}
 	}
 }

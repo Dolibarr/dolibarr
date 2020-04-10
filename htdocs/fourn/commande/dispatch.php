@@ -379,7 +379,7 @@ $warehouse_static = new Entrepot($db);
 $supplierorderdispatch = new CommandeFournisseurDispatch($db);
 
 $help_url = 'EN:Module_Suppliers_Orders|FR:CommandeFournisseur|ES:Módulo_Pedidos_a_proveedores';
-llxHeader('', $langs->trans("Order"), $help_url, '', 0, 0, array('/fourn/js/lib_dispatch.js'));
+llxHeader('', $langs->trans("Order"), $help_url, '', 0, 0, array('/fourn/js/lib_dispatch.js.php'));
 
 if ($id > 0 || !empty($ref)) {
 	$soc = new Societe($db);
@@ -568,7 +568,7 @@ if ($id > 0 || !empty($ref)) {
 
 			if ($num) {
 				$entrepot = new Entrepot($db);
-				$listwarehouses=$entrepot->list_array(1);
+				$listwarehouses = $entrepot->list_array(1);
 
 				print '<tr class="liste_titre">';
 
@@ -602,11 +602,11 @@ if ($id > 0 || !empty($ref)) {
 				print '<td align="right">'.$langs->trans("Warehouse");
 
 				// Select warehouse to force it everywhere
-				if (count($listwarehouses)>1)
+				if (count($listwarehouses) > 1)
 				{
 					print '<br>'.$langs->trans("ForceTo").' '.$form->selectarray('fk_default_warehouse', $listwarehouses, $fk_default_warehouse, 1, 0, 0, '', 0, 0, $disabled);
 				}
-				elseif  (count($listwarehouses)==1)
+				elseif (count($listwarehouses) == 1)
 				{
 					print '<br>'.$langs->trans("ForceTo").' '.$form->selectarray('fk_default_warehouse', $listwarehouses, $fk_default_warehouse, 0, 0, 0, '', 0, 0, $disabled);
 				}
@@ -801,38 +801,36 @@ if ($id > 0 || !empty($ref)) {
 
 						// Qty to dispatch
 						print '<td class="right">';
-						print '<input id="qty' . $suffix . '" name="qty' . $suffix . '" type="text" class="width50 right" value="' . (GETPOSTISSET('qty' . $suffix) ? GETPOST('qty' . $suffix, 'int') : (empty($conf->global->SUPPLIER_ORDER_DISPATCH_FORCE_QTY_INPUT_TO_ZERO) ? $remaintodispatch : 0)) .'">';
+						print '<input id="qty'.$suffix.'" name="qty'.$suffix.'" type="text" class="width50 right" value="'.(GETPOSTISSET('qty'.$suffix) ? GETPOST('qty'.$suffix, 'int') : (empty($conf->global->SUPPLIER_ORDER_DISPATCH_FORCE_QTY_INPUT_TO_ZERO) ? $remaintodispatch : 0)).'">';
 						print '</td>';
 
 						print '<td>';
-						if (! empty($conf->productbatch->enabled) && $objp->tobatch == 1) {
+						if (!empty($conf->productbatch->enabled) && $objp->tobatch == 1) {
 						    $type = 'batch';
-						    //print img_picto($langs->trans('AddDispatchBatchLine'), 'split.png', 'class="splitbutton" onClick="addDispatchLine(' . $i . ',\'' . $type . '\')"');
-						    print img_picto($langs->trans('AddStockLocationLine'), 'split.png', 'class="splitbutton" onClick="addDispatchLine(' . $i . ',\'' . $type . '\')"');
+						    print img_picto($langs->trans('AddStockLocationLine'), 'split.png', 'class="splitbutton" onClick="addDispatchLine('.$i.', \''.$type.'\')"');
 						}
 						else
 						{
 						    $type = 'dispatch';
-						    print img_picto($langs->trans('AddStockLocationLine'), 'split.png', 'class="splitbutton" onClick="addDispatchLine(' . $i . ',\'' . $type . '\')"');
+						    print img_picto($langs->trans('AddStockLocationLine'), 'split.png', 'class="splitbutton" onClick="addDispatchLine('.$i.', \''.$type.'\')"');
 						}
-
 						print '</td>';
 
-						if (! empty($conf->global->SUPPLIER_ORDER_CAN_UPDATE_BUYINGPRICE_DURING_RECEIPT)) {
+						if (!empty($conf->global->SUPPLIER_ORDER_CAN_UPDATE_BUYINGPRICE_DURING_RECEIPT)) {
 							if (empty($conf->multicurrency->enabled) && empty($conf->dynamicprices->enabled)) {
 								// Price
 								print '<td class="right">';
-								print '<input id="pu' . $suffix . '" name="pu' . $suffix . '" type="text" size="8" value="' . price((GETPOST('pu' . $suffix) != '' ? GETPOST('pu' . $suffix) : $up_ht_disc)) . '">';
+								print '<input id="pu'.$suffix.'" name="pu'.$suffix.'" type="text" size="8" value="'.price((GETPOST('pu'.$suffix) != '' ? GETPOST('pu'.$suffix) : $up_ht_disc)).'">';
 								print '</td>';
 
 								// Discount
 								print '<td class="right">';
-								print '<input id="pu' . $suffix . '" name="dto' . $suffix . '" type="text" size="8" value="' . (GETPOST('dto' . $suffix) != '' ? GETPOST('dto' . $suffix) : '') . '">';
+								print '<input id="pu'.$suffix.'" name="dto'.$suffix.'" type="text" size="8" value="'.(GETPOST('dto'.$suffix) != '' ? GETPOST('dto'.$suffix) : '').'">';
 								print '</td>';
 
 								// Save price
 								print '<td class="center">';
-								print '<input class="flat checkformerge" type="checkbox" name="saveprice' . $suffix . '" value="' . (GETPOST('saveprice' . $suffix) != '' ? GETPOST('saveprice' . $suffix) : '') . '">';
+								print '<input class="flat checkformerge" type="checkbox" name="saveprice'.$suffix.'" value="'.(GETPOST('saveprice'.$suffix) != '' ? GETPOST('saveprice'.$suffix) : '').'">';
 								print '</td>';
 							}
 						}
@@ -894,7 +892,8 @@ if ($id > 0 || !empty($ref)) {
 
                     print '<input type="checkbox" checked="checked" name="closeopenorder"> '.$checkboxlabel;
                 }
-                empty($conf->reception->enabled) ? $dispatchBt = $langs->trans("DispatchVerb") : $dispatchBt = $langs->trans("Receive");
+
+                $dispatchBt = empty($conf->reception->enabled) ? $langs->trans("Receive") : $langs->trans("CreateReception");
 
                 print '<br><input type="submit" class="button" name="dispatch" value="'.dol_escape_htmltag($dispatchBt).'"';
                 if (count($listwarehouses) <= 0)

@@ -198,7 +198,7 @@ abstract class Stats
 			// $data = array('xval'=>array(0=>xlabel,1=>yval1,2=>yval2...),...)
 			for ($i = 0; $i < 12; $i++)
 			{
-				$data[$i][] = $datay[$endyear][($i + $sm) % 12]['label']; // set label
+				$data[$i][] = isset($datay[$endyear][($i + $sm) % 12]['label']) ? $datay[$endyear][($i + $sm) % 12]['label'] : $datay[$endyear][($i + $sm) % 12][0]; // set label
 				$year = $startyear;
 				while ($year <= $endyear)
 				{

@@ -87,6 +87,7 @@ $search_montant_vat = GETPOST('search_montant_vat', 'alpha');
 $search_montant_localtax1 = GETPOST('search_montant_localtax1', 'alpha');
 $search_montant_localtax2 = GETPOST('search_montant_localtax2', 'alpha');
 $search_montant_ttc = GETPOST('search_montant_ttc', 'alpha');
+$search_login = GETPOST('search_login', 'alpha');
 $search_multicurrency_code = GETPOST('search_multicurrency_code', 'alpha');
 $search_multicurrency_tx = GETPOST('search_multicurrency_tx', 'alpha');
 $search_multicurrency_montant_ht = GETPOST('search_multicurrency_montant_ht', 'alpha');
@@ -106,6 +107,8 @@ $search_user = GETPOST('search_user', 'int');
 $search_sale = GETPOST('search_sale', 'int');
 $search_date_start = dol_mktime(0, 0, 0, GETPOST('search_date_startmonth', 'int'), GETPOST('search_date_startday', 'int'), GETPOST('search_date_startyear', 'int'));
 $search_date_end = dol_mktime(23, 59, 59, GETPOST('search_date_endmonth', 'int'), GETPOST('search_date_endday', 'int'), GETPOST('search_date_endyear', 'int'));
+$search_date_valid_start = dol_mktime(0, 0, 0, GETPOST('search_date_valid_startmonth', 'int'), GETPOST('search_date_valid_startday', 'int'), GETPOST('search_date_valid_startyear', 'int'));
+$search_date_valid_end = dol_mktime(23, 59, 59, GETPOST('search_date_valid_endmonth', 'int'), GETPOST('search_date_valid_endday', 'int'), GETPOST('search_date_valid_endyear', 'int'));
 $search_datelimit_start = dol_mktime(0, 0, 0, GETPOST('search_datelimit_startmonth', 'int'), GETPOST('search_datelimit_startday', 'int'), GETPOST('search_datelimit_startyear', 'int'));
 $search_datelimit_end = dol_mktime(23, 59, 59, GETPOST('search_datelimit_endmonth', 'int'), GETPOST('search_datelimit_endday', 'int'), GETPOST('search_datelimit_endyear', 'int'));
 $search_categ_cus = trim(GETPOST("search_categ_cus", 'int'));
@@ -157,6 +160,9 @@ $fieldstosearchall = array(
 	'f.ref_client'=>'RefCustomer',
 	'pd.description'=>'Description',
 	's.nom'=>"ThirdParty",
+	's.name_alias'=>"AliasNameShort",
+	's.zip'=>"Zip",
+	's.town'=>"Town",
 	'f.note_public'=>'NotePublic',
 );
 if (empty($user->socid)) $fieldstosearchall["f.note_private"] = "NotePrivate";
@@ -167,6 +173,7 @@ $arrayfields = array(
 	'f.ref_client'=>array('label'=>"RefCustomer", 'checked'=>1, 'position'=>10),
 	'f.type'=>array('label'=>"Type", 'checked'=>0, 'position'=>15),
 	'f.date'=>array('label'=>"DateInvoice", 'checked'=>1, 'position'=>20),
+	'f.date_valid'=>array('label'=>"DateValidation", 'checked'=>0, 'position'=>22),
 	'f.date_lim_reglement'=>array('label'=>"DateDue", 'checked'=>1, 'position'=>25),
 	'f.date_closing'=>array('label'=>"DateClosing", 'checked'=>0, 'position'=>30),
 	'p.ref'=>array('label'=>"ProjectRef", 'checked'=>1, 'enabled'=>(empty($conf->projet->enabled) ? 0 : 1), 'position'=>40),
@@ -186,6 +193,7 @@ $arrayfields = array(
 	'f.total_localtax1'=>array('label'=>$langs->transcountry("AmountLT1", $mysoc->country_code), 'checked'=>0, 'enabled'=>($mysoc->localtax1_assuj == "1"), 'position'=>110),
 	'f.total_localtax2'=>array('label'=>$langs->transcountry("AmountLT2", $mysoc->country_code), 'checked'=>0, 'enabled'=>($mysoc->localtax2_assuj == "1"), 'position'=>120),
 	'f.total_ttc'=>array('label'=>"AmountTTC", 'checked'=>0, 'position'=>130),
+	'u.login'=>array('label'=>"Author", 'checked'=>1, 'position'=>135),
 	'dynamount_payed'=>array('label'=>"Received", 'checked'=>0, 'position'=>140),
 	'rtp'=>array('label'=>"Rest", 'checked'=>0, 'position'=>150), // Not enabled by default because slow
 	'f.multicurrency_code'=>array('label'=>'Currency', 'checked'=>0, 'enabled'=>(empty($conf->multicurrency->enabled) ? 0 : 1), 'position'=>160),
@@ -248,6 +256,7 @@ if (GETPOST('button_removefilter_x', 'alpha') || GETPOST('button_removefilter', 
 	$search_montant_localtax1 = '';
 	$search_montant_localtax2 = '';
 	$search_montant_ttc = '';
+	$search_login = '';
 	$search_multicurrency_code = '';
 	$search_multicurrency_tx = '';
 	$search_multicurrency_montant_ht = '';
@@ -266,6 +275,8 @@ if (GETPOST('button_removefilter_x', 'alpha') || GETPOST('button_removefilter', 
 	$search_type_thirdparty = '';
 	$search_date_start = '';
 	$search_date_end = '';
+	$search_date_valid_start = '';
+	$search_date_valid_end = '';
 	$search_datelimit_start = '';
 	$search_datelimit_end = '';
 	$option = '';
@@ -400,8 +411,9 @@ $sql = 'SELECT';
 if ($sall || $search_product_category > 0) $sql = 'SELECT DISTINCT';
 $sql .= ' f.rowid as id, f.ref, f.ref_client, f.type, f.note_private, f.note_public, f.increment, f.fk_mode_reglement, f.fk_cond_reglement, f.total as total_ht, f.tva as total_vat, f.total_ttc,';
 $sql .= ' f.localtax1 as total_localtax1, f.localtax2 as total_localtax2,';
+$sql .= ' f.fk_user_author,';
 $sql .= ' f.fk_multicurrency, f.multicurrency_code, f.multicurrency_tx, f.multicurrency_total_ht, f.multicurrency_total_tva as multicurrency_total_vat, f.multicurrency_total_ttc,';
-$sql .= ' f.datef as df, f.date_lim_reglement as datelimite, f.module_source, f.pos_source,';
+$sql .= ' f.datef as df, f.date_valid, f.date_lim_reglement as datelimite, f.module_source, f.pos_source,';
 $sql .= ' f.paye as paye, f.fk_statut, f.close_code,';
 $sql .= ' f.datec as date_creation, f.tms as date_update, f.date_closing as date_closing,';
 $sql .= ' f.retained_warranty, f.retained_warranty_date_limit, f.situation_final, f.situation_cycle_ref, f.situation_counter,';
@@ -409,7 +421,8 @@ $sql .= ' s.rowid as socid, s.nom as name, s.email, s.town, s.zip, s.fk_pays, s.
 $sql .= " typent.code as typent_code,";
 $sql .= " state.code_departement as state_code, state.nom as state_name,";
 $sql .= " country.code as country_code,";
-$sql .= " p.rowid as project_id, p.ref as project_ref, p.title as project_label";
+$sql .= " p.rowid as project_id, p.ref as project_ref, p.title as project_label,";
+$sql .= " u.login";
 // We need dynamount_payed to be able to sort on status (value is surely wrong because we can count several lines several times due to other left join or link with contacts. But what we need is just 0 or > 0)
 // TODO Better solution to be able to sort on already payed or remain to pay is to store amount_payed in a denormalized field.
 if (!$sall) $sql .= ', SUM(pf.amount) as dynamount_payed, SUM(pf.multicurrency_amount) as multicurrency_dynamount_payed';
@@ -441,6 +454,7 @@ if ($search_user > 0)
 	$sql .= ", ".MAIN_DB_PREFIX."element_contact as ec";
 	$sql .= ", ".MAIN_DB_PREFIX."c_type_contact as tc";
 }
+$sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'user AS u ON f.fk_user_author = u.rowid';
 $sql .= ' WHERE f.fk_soc = s.rowid';
 $sql .= ' AND f.entity IN ('.getEntity('invoice').')';
 if (!$user->rights->societe->client->voir && !$socid) $sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".$user->id;
@@ -482,6 +496,7 @@ if ($search_multicurrency_tx != '') $sql .= natural_search('f.multicurrency_tx',
 if ($search_multicurrency_montant_ht != '') $sql .= natural_search('f.multicurrency_total_ht', $search_multicurrency_montant_ht, 1);
 if ($search_multicurrency_montant_vat != '') $sql .= natural_search('f.multicurrency_total_tva', $search_multicurrency_montant_vat, 1);
 if ($search_multicurrency_montant_ttc != '') $sql .= natural_search('f.multicurrency_total_ttc', $search_multicurrency_montant_ttc, 1);
+if ($search_login) $sql .= natural_search('u.login', $search_login);
 if ($search_categ_cus > 0) $sql .= " AND cc.fk_categorie = ".$db->escape($search_categ_cus);
 if ($search_categ_cus == -2)   $sql .= " AND cc.fk_categorie IS NULL";
 if ($search_status != '-1' && $search_status != '')
@@ -505,6 +520,8 @@ if ($search_module_source)    $sql .= natural_search("f.module_source", $search_
 if ($search_pos_source)       $sql .= natural_search("f.pos_source", $search_pos_source);
 if ($search_date_start)       $sql .= " AND f.datef >= '".$db->idate($search_date_start)."'";
 if ($search_date_end)         $sql .= " AND f.datef <= '".$db->idate($search_date_end)."'";
+if ($search_date_valid_start) $sql .= " AND f.date_valid >= '".$db->idate($search_date_valid_start)."'";
+if ($search_date_valid_end)   $sql .= " AND f.date_valid <= '".$db->idate($search_date_valid_end)."'";
 if ($search_datelimit_start)  $sql .= " AND f.date_lim_reglement >= '".$db->idate($search_datelimit_start)."'";
 if ($search_datelimit_end)    $sql .= " AND f.date_lim_reglement <= '".$db->idate($search_datelimit_end)."'";
 if ($option == 'late') $sql .= " AND f.date_lim_reglement < '".$db->idate(dol_now() - $conf->facture->client->warning_delay)."'";
@@ -524,7 +541,7 @@ if (!$sall)
 {
 	$sql .= ' GROUP BY f.rowid, f.ref, ref_client, f.type, f.note_private, f.note_public, f.increment, f.fk_mode_reglement, f.fk_cond_reglement, f.total, f.tva, f.total_ttc,';
 	$sql .= ' f.localtax1, f.localtax2,';
-	$sql .= ' f.datef, f.date_lim_reglement, f.module_source, f.pos_source,';
+	$sql .= ' f.datef, f.date_valid, f.date_lim_reglement, f.module_source, f.pos_source,';
 	$sql .= ' f.paye, f.fk_statut, f.close_code,';
 	$sql .= ' f.datec, f.tms, f.date_closing,';
 	$sql .= ' f.retained_warranty, f.retained_warranty_date_limit, f.situation_final, f.situation_cycle_ref, f.situation_counter,';
@@ -596,6 +613,8 @@ if ($resql)
 	if ($sall)				 $param .= '&sall='.urlencode($sall);
 	if ($search_date_start)				$param .= '&search_date_start='.urlencode($search_date_start);
 	if ($search_date_end)				$param .= '&search_date_end='.urlencode($search_date_end);
+	if ($search_date_valid_start)		$param .= '&search_date_valid_start='.urlencode($search_date_valid_start);
+	if ($search_date_valid_end)			$param .= '&search_date_valid_end='.urlencode($search_date_valid_end);
 	if ($search_datelimit_start)		$param .= '&search_datelimit_start='.urlencode($search_datelimit_start);
 	if ($search_datelimit_end)			$param .= '&search_datelimit_end='.urlencode($search_datelimit_end);
 	if ($search_ref)         $param .= '&search_ref='.urlencode($search_ref);
@@ -608,6 +627,7 @@ if ($resql)
 	if ($search_zip)         $param .= '&search_zip='.urlencode($search_zip);
 	if ($search_sale > 0)    $param .= '&search_sale='.urlencode($search_sale);
 	if ($search_user > 0)    $param .= '&search_user='.urlencode($search_user);
+	if ($search_login)       $param .= '&search_login='.urlencode($search_login);
 	if ($search_product_category > 0)   $param .= '&search_product_category='.urlencode($search_product_category);
 	if ($search_montant_ht != '')  $param .= '&search_montant_ht='.urlencode($search_montant_ht);
 	if ($search_montant_vat != '')  $param .= '&search_montant_vat='.urlencode($search_montant_vat);
@@ -743,6 +763,10 @@ if ($resql)
 
 	// Filters lines
 	print '<tr class="liste_titre_filter">';
+	if (!empty($conf->global->MAIN_VIEW_LINE_NUMBER_IN_LIST)) {
+		print '<td class="liste_titre">';
+		print '</td>';
+	}
 	// Ref
 	if (!empty($arrayfields['f.ref']['checked']))
 	{
@@ -786,6 +810,20 @@ if ($resql)
 		print '<div class="nowrap">';
 		print $langs->trans('to').' ';
 		print $form->selectDate($search_date_end ? $search_date_end : -1, 'search_date_end', 0, 0, 1);
+		print '</div>';
+		print '</td>';
+	}
+	// Date valid
+	if (!empty($arrayfields['f.date_valid']['checked']))
+	{
+		print '<td class="liste_titre center">';
+		print '<div class="nowrap">';
+		print $langs->trans('From').' ';
+		print $form->selectDate($search_date_valid_start ? $search_date_valid_start : -1, 'search_date_valid_start', 0, 0, 1);
+		print '</div>';
+		print '<div class="nowrap">';
+		print $langs->trans('to').' ';
+		print $form->selectDate($search_date_valid_end ? $search_date_valid_end : -1, 'search_date_valid_end', 0, 0, 1);
 		print '</div>';
 		print '</td>';
 	}
@@ -906,6 +944,13 @@ if ($resql)
 		print '<input class="flat" type="text" size="4" name="search_montant_ttc" value="'.dol_escape_htmltag($search_montant_ttc).'">';
 		print '</td>';
 	}
+	if (!empty($arrayfields['u.login']['checked']))
+	{
+		// Author
+		print '<td class="liste_titre" align="center">';
+		print '<input class="flat" size="4" type="text" name="search_login" value="'.dol_escape_htmltag($search_login).'">';
+		print '</td>';
+	}
 	if (!empty($arrayfields['f.retained_warranty']['checked']))
 	{
 	    print '<td class="liste_titre" align="right">';
@@ -1007,10 +1052,12 @@ if ($resql)
 	print "</tr>\n";
 
 	print '<tr class="liste_titre">';
+	if (!empty($conf->global->MAIN_VIEW_LINE_NUMBER_IN_LIST))    		  print_liste_field_titre('#', $_SERVER['PHP_SELF'], '', '', $param, '', $sortfield, $sortorder);
 	if (!empty($arrayfields['f.ref']['checked']))                         print_liste_field_titre($arrayfields['f.ref']['label'], $_SERVER['PHP_SELF'], 'f.ref', '', $param, '', $sortfield, $sortorder);
 	if (!empty($arrayfields['f.ref_client']['checked']))                  print_liste_field_titre($arrayfields['f.ref_client']['label'], $_SERVER["PHP_SELF"], 'f.ref_client', '', $param, '', $sortfield, $sortorder);
 	if (!empty($arrayfields['f.type']['checked']))                        print_liste_field_titre($arrayfields['f.type']['label'], $_SERVER["PHP_SELF"], 'f.type', '', $param, '', $sortfield, $sortorder);
 	if (!empty($arrayfields['f.date']['checked']))                        print_liste_field_titre($arrayfields['f.date']['label'], $_SERVER['PHP_SELF'], 'f.datef', '', $param, 'align="center"', $sortfield, $sortorder);
+	if (!empty($arrayfields['f.date_valid']['checked']))                  print_liste_field_titre($arrayfields['f.date_valid']['label'], $_SERVER['PHP_SELF'], 'f.date_valid', '', $param, 'align="center"', $sortfield, $sortorder);
 	if (!empty($arrayfields['f.date_lim_reglement']['checked']))          print_liste_field_titre($arrayfields['f.date_lim_reglement']['label'], $_SERVER['PHP_SELF'], "f.date_lim_reglement", '', $param, 'align="center"', $sortfield, $sortorder);
 	if (!empty($arrayfields['p.ref']['checked']))                         print_liste_field_titre($arrayfields['p.ref']['label'], $_SERVER['PHP_SELF'], "p.ref", '', $param, '', $sortfield, $sortorder);
 	if (!empty($arrayfields['p.title']['checked']))                       print_liste_field_titre($arrayfields['p.title']['label'], $_SERVER['PHP_SELF'], "p.title", '', $param, '', $sortfield, $sortorder);
@@ -1029,6 +1076,7 @@ if ($resql)
 	if (!empty($arrayfields['f.total_localtax1']['checked']))             print_liste_field_titre($arrayfields['f.total_localtax1']['label'], $_SERVER['PHP_SELF'], 'f.localtax1', '', $param, 'class="right"', $sortfield, $sortorder);
 	if (!empty($arrayfields['f.total_localtax2']['checked']))             print_liste_field_titre($arrayfields['f.total_localtax2']['label'], $_SERVER['PHP_SELF'], 'f.localtax2', '', $param, 'class="right"', $sortfield, $sortorder);
 	if (!empty($arrayfields['f.total_ttc']['checked']))                   print_liste_field_titre($arrayfields['f.total_ttc']['label'], $_SERVER['PHP_SELF'], 'f.total_ttc', '', $param, 'class="right"', $sortfield, $sortorder);
+	if (!empty($arrayfields['u.login']['checked']))                       print_liste_field_titre($arrayfields['u.login']['label'], $_SERVER["PHP_SELF"], 'u.login', '', $param, 'align="center"', $sortfield, $sortorder);
 	if (!empty($arrayfields['f.retained_warranty']['checked']))           print_liste_field_titre($arrayfields['f.retained_warranty']['label'], $_SERVER['PHP_SELF'], '', '', $param, 'align="right"', $sortfield, $sortorder);
 	if (!empty($arrayfields['dynamount_payed']['checked']))               print_liste_field_titre($arrayfields['dynamount_payed']['label'], $_SERVER['PHP_SELF'], '', '', $param, 'class="right"', $sortfield, $sortorder);
 	if (!empty($arrayfields['rtp']['checked']))                           print_liste_field_titre($arrayfields['rtp']['label'], $_SERVER['PHP_SELF'], '', '', $param, 'class="right"', $sortfield, $sortorder);
@@ -1054,6 +1102,7 @@ if ($resql)
 
 	$projectstatic = new Project($db);
 	$discount = new DiscountAbsolute($db);
+	$userstatic = new User($db);
 
 	if ($num > 0)
 	{
@@ -1082,8 +1131,12 @@ if ($resql)
 			$facturestatic->total_ttc = $obj->total_ttc;
             $facturestatic->paye = $obj->paye;
             $facturestatic->fk_soc = $obj->fk_soc;
-			$facturestatic->date_lim_reglement = $db->jdate($obj->datelimite);
-			$facturestatic->note_public = $obj->note_public;
+
+            $facturestatic->date = $db->jdate($obj->df);
+            $facturestatic->date_valid = $db->jdate($obj->date_valid);
+            $facturestatic->date_lim_reglement = $db->jdate($obj->datelimite);
+
+            $facturestatic->note_public = $obj->note_public;
 			$facturestatic->note_private = $obj->note_private;
 			if ($conf->global->INVOICE_USE_SITUATION && $conf->global->INVOICE_USE_SITUATION_RETAINED_WARRANTY)
 			{
@@ -1141,6 +1194,13 @@ if ($resql)
                 print ' onclick="parent.$(\'#poslines\').load(\'invoice.php?action=history&placeid='.$obj->id.'\', function() {parent.$.colorbox.close();});"';
             }
             print '>';
+
+            // No
+            if (!empty($conf->global->MAIN_VIEW_LINE_NUMBER_IN_LIST)) {
+            	print '<td>'.(($offset * $limit) + $i).'</td>';
+            }
+
+            // Ref
 			if (!empty($arrayfields['f.ref']['checked']))
 			{
 				print '<td class="nowrap">';
@@ -1192,6 +1252,15 @@ if ($resql)
 			{
 				print '<td align="center" class="nowrap">';
 				print dol_print_date($db->jdate($obj->df), 'day');
+				print '</td>';
+				if (!$i) $totalarray['nbfield']++;
+			}
+
+			// Date
+			if (!empty($arrayfields['f.date_valid']['checked']))
+			{
+				print '<td align="center" class="nowrap">';
+				print dol_print_date($db->jdate($obj->date_valid), 'day');
 				print '</td>';
 				if (!$i) $totalarray['nbfield']++;
 			}
@@ -1372,6 +1441,18 @@ if ($resql)
 				if (!$i) $totalarray['nbfield']++;
 				if (!$i) $totalarray['pos'][$totalarray['nbfield']] = 'f.total_ttc';
 				$totalarray['val']['f.total_ttc'] += $obj->total_ttc;
+			}
+
+			// Author
+			if (!empty($arrayfields['u.login']['checked']))
+			{
+				$userstatic->id = $obj->fk_user_author;
+				$userstatic->login = $obj->login;
+				print '<td align="center">';
+				if ($userstatic->id) print $userstatic->getLoginUrl(1);
+				else print '&nbsp;';
+				print "</td>\n";
+				if (!$i) $totalarray['nbfield']++;
 			}
 
 			if (!empty($arrayfields['f.retained_warranty']['checked']))
