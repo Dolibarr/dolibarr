@@ -97,6 +97,7 @@ foreach ($object->fields as $key => $val)
 
 // List of fields to search into when doing a "search in all"
 $fieldstosearchall = array(
+	's.nom'=>"ThirdParty",
 	's.name_alias'=>"AliasNameShort",
 	's.zip'=>"Zip",
 	's.town'=>"Town",
