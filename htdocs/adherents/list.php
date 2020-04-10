@@ -106,6 +106,9 @@ $fieldstosearchall = array(
 	'd.address'=>'Address',
 	'd.zip'=>'Zip',
 	'd.town'=>'Town',
+	'd.phone'=>"Phone",
+	'd.phone_perso'=>"PhonePerso",
+	'd.phone_mobile'=>"PhoneMobile"?
 	'd.note_public'=>'NotePublic',
 	'd.note_private'=>'NotePrivate',
 );
