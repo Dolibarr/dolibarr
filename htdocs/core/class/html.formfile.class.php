@@ -2113,7 +2113,7 @@ class FormFile
 	 * 
 	 * @param User			$user		The user to check
 	 * @param string		$module		The module to check
-	 * @param CommonObject	$name		(optional) A additional object that contains extra security parameters to check
+	 * @param CommonObject	$object		(optional) A additional object that contains extra security parameters to check
 	 * @return bool						true if a user can generate documents, otherwise false
 	 */
 	private function _canUserGenerateDocuments(User $user, $module, CommonObject $object = null)
@@ -2205,7 +2205,7 @@ class FormFile
 	 * 
 	 * @param User			$user		The user to check
 	 * @param string		$module		The module to check
-	 * @param CommonObject	$name		(optional) A additional object that contains extra security parameters to check
+	 * @param CommonObject	$object		(optional) A additional object that contains extra security parameters to check
 	 * @return bool						true if a user can delete documents, otherwise false
 	 */
 	private function _canUserDeleteDocuments(User $user, $module, CommonObject $object = null)
