@@ -187,7 +187,7 @@ foreach($modulesdir as $dir)
 
 $db->commit();
 
-// Lecture des droits utilisateurs
+// Read permissions of user
 $permsuser = array();
 
 $sql = "SELECT DISTINCT ur.fk_id";
@@ -247,7 +247,7 @@ else
 
 
 /*
- * Ecran ajout/suppression permission
+ * Part to add/remove permissions
  */
 
 $linkback = '';
@@ -292,7 +292,7 @@ print '<td>'.$langs->trans("Permissions").'</td>';
 print '</tr>'."\n";
 
 //print "xx".$conf->global->MAIN_USE_ADVANCED_PERMS;
-$sql = "SELECT r.id, r.libelle as label, r.module, r.module_position";
+$sql = "SELECT r.id, r.libelle as label, r.module, r.perms, r.subperms, r.module_position";
 $sql.= " FROM ".MAIN_DB_PREFIX."rights_def as r";
 $sql.= " WHERE r.libelle NOT LIKE 'tou%'";    // On ignore droits "tous"
 $sql.= " AND r.entity = " . $entity;
@@ -368,6 +368,7 @@ if ($result)
     		print '</tr>'."\n";
         }
 
+        print '<!-- '.$obj->module.'->'.$obj->perms.($obj->subperms ? '->'.$obj->subperms : '').' -->'."\n";
 		print '<tr class="oddeven">';
 
 		// Picto and label of module

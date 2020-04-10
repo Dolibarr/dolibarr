@@ -118,21 +118,21 @@ class modCommande extends DolibarrModules
 
 		$r++;
 		$this->rights[$r][0] = 81;
-		$this->rights[$r][1] = 'Lire les commandes clients';
+		$this->rights[$r][1] = 'Read sales orders';
 		$this->rights[$r][2] = 'r';
 		$this->rights[$r][3] = 0;
 		$this->rights[$r][4] = 'lire';
 
 		$r++;
 		$this->rights[$r][0] = 82;
-		$this->rights[$r][1] = 'Creer/modifier les commandes clients';
+		$this->rights[$r][1] = 'Creeat/modify sales orders';
 		$this->rights[$r][2] = 'w';
 		$this->rights[$r][3] = 0;
 		$this->rights[$r][4] = 'creer';
 
 		$r++;
 		$this->rights[$r][0] = 84;
-		$this->rights[$r][1] = 'Valider les commandes clients';
+		$this->rights[$r][1] = 'Validate sales orders';
 		$this->rights[$r][2] = 'd';
 		$this->rights[$r][3] = 0;
 		$this->rights[$r][4] = 'order_advance';
@@ -140,7 +140,7 @@ class modCommande extends DolibarrModules
 
 		$r++;
 		$this->rights[$r][0] = 86;
-		$this->rights[$r][1] = 'Envoyer les commandes clients';
+		$this->rights[$r][1] = 'Send sale orders by email';
 		$this->rights[$r][2] = 'd';
 		$this->rights[$r][3] = 0;
 		$this->rights[$r][4] = 'order_advance';
@@ -148,14 +148,15 @@ class modCommande extends DolibarrModules
 
 		$r++;
 		$this->rights[$r][0] = 87;
-		$this->rights[$r][1] = 'Cloturer les commandes clients';
+		$this->rights[$r][1] = 'Close sale orders';
 		$this->rights[$r][2] = 'd';
 		$this->rights[$r][3] = 0;
-		$this->rights[$r][4] = 'cloturer';
+		$this->rights[$r][4] = 'order_advance';
+		$this->rights[$r][5] = 'close';
 
 		$r++;
 		$this->rights[$r][0] = 88;
-		$this->rights[$r][1] = 'Annuler les commandes clients';
+		$this->rights[$r][1] = 'Cancel sale orders';
 		$this->rights[$r][2] = 'd';
 		$this->rights[$r][3] = 0;
 		$this->rights[$r][4] = 'order_advance';
@@ -163,14 +164,14 @@ class modCommande extends DolibarrModules
 
 		$r++;
 		$this->rights[$r][0] = 89;
-		$this->rights[$r][1] = 'Supprimer les commandes clients';
+		$this->rights[$r][1] = 'Delete sales orders';
 		$this->rights[$r][2] = 'd';
 		$this->rights[$r][3] = 0;
 		$this->rights[$r][4] = 'supprimer';
 
 		$r++;
 		$this->rights[$r][0] = 1421;
-		$this->rights[$r][1] = 'Exporter les commandes clients et attributs';
+		$this->rights[$r][1] = 'Export sales orders and attributes';
 		$this->rights[$r][2] = 'r';
 		$this->rights[$r][3] = 0;
 		$this->rights[$r][4] = 'commande';
