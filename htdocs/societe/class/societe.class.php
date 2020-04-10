@@ -3338,6 +3338,7 @@ class Societe extends CommonObject
 		$this->skype=$member->skype;
 		$this->twitter=$member->twitter;
 		$this->facebook=$member->facebook;
+		$this->entity=$member->entity;
 
 		$this->client = 1;				// A member is a customer by default
 		$this->code_client = ($customercode?$customercode:-1);
