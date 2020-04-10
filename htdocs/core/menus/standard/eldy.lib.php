@@ -559,62 +559,62 @@ function print_eldy_menu($db, $atarget, $type_user, &$tabMenu, &$menu, $noout = 
 function print_submenu($db, &$tabMenu, $parentMenu)
 {
 	global $user, $conf, $langs ;
-  $menuTmp = new Menu();
-  print_left_eldy_menu($db,[],[],$tabMenu,$menuTmp,1,$parentMenu,1,null);
-  $subMenu = $menuTmp->liste; 
+	$menuTmp = new Menu();
+	print_left_eldy_menu($db, [], [], $tabMenu, $menuTmp, 1, $parentMenu, 1, null);
+	$subMenu = $menuTmp->liste;
 
-  print_start_menu_array();
-  $end_menu_to_close = 0;
-  $onlyLevel0 = false;//!$user->admin;
-  $subMenuCount = count($subMenu);
-  for($s = 0; $s < $subMenuCount; $s++ )
-  {
-      $showMenu = (!empty($conf->global->MAIN_MENU_HIDE_UNAUTHORIZED) AND $subMenu[$s]["enabled"]);
-      $sub = $subMenu[$s];
-      if (1 /*$sub["enabled"]*/){
-          if ( !$onlyLevel0 OR $sub["level"]==0 )
-          {
-            print_start_menu_entry($parentMenu, " class='submenu hideonsmartphone submenu".$sub["level"]."' ", 1); // li div/div div
-            $parentMenuArgs = ( strpos($sub["url"],"?") > -1 ? "&": "?" )."mainmenu=".$parentMenu;
-            if ($subMenu[$s]["enabled"])
-            {
-                print_text_menu_entry($langs->trans($sub["titre"]), 1, DOL_URL_ROOT.$sub["url"].$parentMenuArgs, ""/*$id*/, ""/*$idsel*/, ( ($subMenu[$s+1]["level"]>$sub["level"] AND !$onlyLevel0)?" class='hasSubmenu hideonsmartphone' ":"")/*$classname*/, $sub["target"]);
-            }else
-            {
-                print_text_menu_entry($langs->trans($sub["titre"]), 1, "#", ""/*$id*/, ""/*$idsel*/, ( ($subMenu[$s+1]["level"]>$sub["level"] AND !$onlyLevel0)?" class='hasSubmenu hideonsmartphone disabledLink' ": "class='disabledLink'")/*$classname*/, $sub["target"]);          
-            }
+	print_start_menu_array();
+	$end_menu_to_close = 0;
+	$onlyLevel0 = false;//!$user->admin;
+	$subMenuCount = count($subMenu);
+	for($s = 0; $s < $subMenuCount; $s++ )
+	{
+		$showMenu = (!empty($conf->global->MAIN_MENU_HIDE_UNAUTHORIZED) AND $subMenu[$s]["enabled"]);
+		$sub = $subMenu[$s];
+		if (1 /*$sub["enabled"]*/){
+			if ( !$onlyLevel0 OR $sub["level"]==0 )
+			{
+				print_start_menu_entry($parentMenu, " class='submenu hideonsmartphone submenu".$sub["level"]."' ", 1); // li div/div div
+				$parentMenuArgs = ( strpos($sub["url"], "?") > -1 ? "&": "?" )."mainmenu=".$parentMenu;
+				if ($subMenu[$s]["enabled"])
+				{
+					print_text_menu_entry($langs->trans($sub["titre"]), 1, DOL_URL_ROOT.$sub["url"].$parentMenuArgs, ""/*$id*/, ""/*$idsel*/, ( ($subMenu[$s+1]["level"]>$sub["level"] AND !$onlyLevel0)?" class='hasSubmenu hideonsmartphone' ":"")/*$classname*/, $sub["target"]);
+				}else
+				{
+					print_text_menu_entry($langs->trans($sub["titre"]), 1, "#", ""/*$id*/, ""/*$idsel*/, ( ($subMenu[$s+1]["level"]>$sub["level"] AND !$onlyLevel0)?" class='hasSubmenu hideonsmartphone disabledLink' ": "class='disabledLink'")/*$classname*/, $sub["target"]);
+				}
 
-      if (!$onlyLevel0 AND $s<count($subMenu)-1)//not last element
-      {
-        if ($subMenu[$s+1]["level"] == $sub["level"])
-        {
-          print_end_menu_entry(1);// /div /li
-        }else if ($subMenu[$s+1]["level"]>$sub["level"])
-        {
-          $end_menu_to_close++;
-          print_start_menu_array(); // div ul
-        }
-        else if ($subMenu[$s+1]["level"]<$sub["level"])
-        {
-          for ($t=0; $t<$sub["level"]-$subMenu[$s+1]["level"]; $t++)
-          {
-            $end_menu_to_close--;
-            print_end_menu_entry(1);// /div /li
-            print_end_menu_array(); // /ul /div
-          }
-          print_end_menu_entry(1);
-        }
-      }else
-        print_end_menu_entry(1);
-      }
-    }
-  }
+				if (!$onlyLevel0 AND $s<count($subMenu)-1)//not last element
+				{
+					if ($subMenu[$s+1]["level"] == $sub["level"])
+					  {
+						print_end_menu_entry(1);// /div /li
+					}elseif ($subMenu[$s+1]["level"]>$sub["level"])
+					{
+						$end_menu_to_close++;
+						print_start_menu_array(); // div ul
+					}
+					elseif ($subMenu[$s+1]["level"]<$sub["level"])
+					{
+						for ($t=0; $t<$sub["level"]-$subMenu[$s+1]["level"]; $t++)
+						{
+							$end_menu_to_close--;
+							print_end_menu_entry(1);// /div /li
+							print_end_menu_array(); // /ul /div
+						}
+						print_end_menu_entry(1);
+					}
+				}else
+				print_end_menu_entry(1);
+		    }
+	    }
+	}
 	for ($s=0;$s<$end_menu_to_close;$s++)
 	{
 		print_end_menu_array();
 		print_end_menu_entry(1);
 	}
-  print_end_menu_array();
+	print_end_menu_array();
 }
 
 
