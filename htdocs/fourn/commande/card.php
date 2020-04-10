@@ -1086,7 +1086,7 @@ if (empty($reshook))
 	if ($action == 'add' && $user->rights->fournisseur->commande->creer)
 	{
 	 	$error = 0;
-
+        $selectedLines = GETPOST('toselect', 'array');
 		if ($socid < 1)
 		{
 			setEventMessages($langs->trans('ErrorFieldRequired', $langs->transnoentities('Supplier')), null, 'errors');
@@ -1178,6 +1178,7 @@ if (empty($reshook))
 
 							for ($i = 0; $i < $num; $i++)
 							{
+                                if (!in_array($lines[$i]->id, $selectedLines)) continue;
 								if (empty($lines[$i]->subprice) || $lines[$i]->qty <= 0)
 									continue;
 
@@ -1756,7 +1757,7 @@ if ($action == 'create')
 	print '<input type="button" class="button" value="'.$langs->trans("Cancel").'" onClick="javascript:history.go(-1)">';
 	print '</div>';
 
-	print "</form>\n";
+
 
 	// Show origin lines
 	if (!empty($origin) && !empty($originid) && is_object($objectsrc))
@@ -1766,10 +1767,11 @@ if ($action == 'create')
 
 		print '<table class="noborder centpercent">';
 
-		$objectsrc->printOriginLinesList();
+		$objectsrc->printOriginLinesList('', $selectedLines);
 
 		print '</table>';
 	}
+    print "</form>\n";
 }
 elseif (!empty($object->id))
 {
