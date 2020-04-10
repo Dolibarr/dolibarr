@@ -1178,8 +1178,7 @@ if (empty($reshook))
 
 							for ($i = 0; $i < $num; $i++)
 							{
-                                if (!in_array($lines[$i]->id, $selectedLines)) continue;
-								if (empty($lines[$i]->subprice) || $lines[$i]->qty <= 0)
+								if (empty($lines[$i]->subprice) || $lines[$i]->qty <= 0 || !in_array($lines[$i]->id, $selectedLines))
 									continue;
 
 								$label = (!empty($lines[$i]->label) ? $lines[$i]->label : '');
