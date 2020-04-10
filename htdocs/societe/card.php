@@ -2799,20 +2799,13 @@ else
 		{
 			print '<div class="fichecenter"><div class="fichehalfleft">';
 
-	        if (empty($conf->global->SOCIETE_DISABLE_BUILDDOC))
-	        {
+			if (empty($conf->global->SOCIETE_DISABLE_BUILDDOC))
+			{
 				print '<a name="builddoc"></a>'; // ancre
 
-	            /*
-	             * Documents generes
-	             */
-	            $filedir = $conf->societe->multidir_output[$object->entity].'/'.$object->id;
-	            $urlsource = $_SERVER["PHP_SELF"]."?socid=".$object->id;
-	            $genallowed = $user->rights->societe->lire;
-	            $delallowed = $user->rights->societe->creer;
-
-	            print $formfile->showdocuments('company', $object->id, $filedir, $urlsource, $genallowed, $delallowed, $object->modelpdf, 0, 0, 0, 28, 0, 'entity='.$object->entity, 0, '', $object->default_lang);
-	        }
+				// Documents generes
+				print $formfile->getDocumentsViewSmall('company', $object, $object->default_lang);
+			}
 
 			// Subsidiaries list
 			if (empty($conf->global->SOCIETE_DISABLE_SUBSIDIARIES))

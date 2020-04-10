@@ -2686,15 +2686,9 @@ if ($action == 'create' && $usercancreate)
 		{
 			print '<div class="fichecenter"><div class="fichehalfleft">';
 			print '<a name="builddoc"></a>'; // ancre
-			// Documents
-			$comref = dol_sanitizeFileName($object->ref);
-			$relativepath = $comref.'/'.$comref.'.pdf';
-			$filedir = $conf->commande->multidir_output[$object->entity].'/'.$comref;
-			$urlsource = $_SERVER["PHP_SELF"]."?id=".$object->id;
-			$genallowed = $usercanread;
-			$delallowed = $usercancreate;
-			print $formfile->showdocuments('commande', $comref, $filedir, $urlsource, $genallowed, $delallowed, $object->modelpdf, 1, 0, 0, 28, 0, '', '', '', $soc->default_lang, '', $object);
 
+			// Documents
+			print $formfile->getDocumentsViewSmall('commande', $object, $soc->default_lang);
 
 			// Show links to link elements
 			$linktoelem = $form->showLinkToObjectBlock($object, null, array('order'));

@@ -1352,16 +1352,8 @@ elseif ($object->id > 0)
 		print '<div class="fichecenter"><div class="fichehalfleft">';
 		print '<a name="builddoc"></a>'; // ancre
 
-		/*
-         * Documents generes
-         */
-		$filename = dol_sanitizeFileName($object->ref);
-		$filedir = $conf->projet->dir_output."/".dol_sanitizeFileName($object->ref);
-		$urlsource = $_SERVER["PHP_SELF"]."?id=".$object->id;
-		$genallowed = ($user->rights->projet->lire && $userAccess > 0);
-		$delallowed = ($user->rights->projet->creer && $userWrite > 0);
-
-		print $formfile->showdocuments('project', $filename, $filedir, $urlsource, $genallowed, $delallowed, $object->modelpdf);
+		// Documents generes
+		print $formfile->getDocumentsViewSmall('project', $object);
 
 		print '</div><div class="fichehalfright"><div class="ficheaddleft">';
 

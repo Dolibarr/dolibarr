@@ -2824,13 +2824,8 @@ if ($action != 'presend')
 
 	if ($user->rights->expensereport->creer && $action != 'create' && $action != 'edit')
 	{
-		$filename = dol_sanitizeFileName($object->ref);
-		$filedir = $conf->expensereport->dir_output."/".dol_sanitizeFileName($object->ref);
-		$urlsource = $_SERVER["PHP_SELF"]."?id=".$object->id;
-		$genallowed	= $user->rights->expensereport->creer;
-		$delallowed	= $user->rights->expensereport->creer;
-		$var = true;
-		print $formfile->showdocuments('expensereport', $filename, $filedir, $urlsource, $genallowed, $delallowed);
+		print $formfile->getDocumentsViewSmall('expensereport', $object);
+
 		$somethingshown = $formfile->numoffiles;
 	}
 

@@ -8,6 +8,7 @@
  * Copyright (C) 2015		Bahfir Abbes		<bafbes@gmail.com>
  * Copyright (C) 2016-2017	Ferran Marcet		<fmarcet@2byte.es>
  * Copyright (C) 2019       Frédéric France     <frederic.france@netlogic.fr>
+ * Copyright (C) 2020		Tobias Sekan		<tobias.sekan@startmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -1936,5 +1937,341 @@ class FormFile
 			}
 		}
 		return $out;
+	}
+
+	/**
+	 * Return the HTML code for a small document view for the given module (typical used on the card tab of a module)
+	 *
+	 * @param	string			$module		The name of the module
+	 * @param	CommonObject	$object		The currrent used object of the module
+	 * @param	string			$lang		(optional) The language for the small document view
+	 * @return	string						The full HTML code for the small document view
+	 */
+	public function getDocumentsViewSmall($module, CommonObject $object, $lang = null)
+	{
+		global $conf, $user;
+
+		// security checks
+		$genallowed = $this->_canUserGenerateDocuments($user, $module, $object);
+		$delallowed = $this->_canUserDeleteDocuments($user, $module, $object);
+
+		// same/easy values for the most types of modules
+		$filename			= dol_sanitizeFileName($object->ref);
+		$subdir				= $filename;
+		$filedir			= $this->_getDocumentRootPath($module, $object)."/".$subdir;
+		$urlsource			= $_SERVER['PHP_SELF']."?id=".$object->id;
+		$modelpdf			= $object->modelpdf;
+		$allowgenifempty	= 1;
+		$param				= "";
+		$lang				= $lang == null ? $object->default_lang : $lang;
+
+		// TODO: will be 'remove_file_comfirm', when all module cards have a confirm delete (Sekan T., 2020-04-01)
+		$deleteaction		= 'remove_file';
+
+		// different/complex values for a hand of modules
+		switch($module)
+		{
+			case "actions":
+				$subdir				= $object->id;
+				$filedir			= $this->_getDocumentRootPath($module, $object)."/".$subdir;
+				$modelpdf			= "";
+				$allowgenifempty	= 0;
+
+			case "company":
+				$subdir				= $object->id;
+				$filedir			= $this->_getDocumentRootPath($module, $object)."/".$subdir;
+				$urlsource 			= $_SERVER["PHP_SELF"]."?socid=".$object->id;
+				$allowgenifempty	= 0;
+				$param				= "entity=".$object->entity;
+				break;
+
+			case "donation":
+				$urlsource			= $_SERVER['PHP_SELF'].'?rowid='.$object->id;
+				break;
+
+			case "facture":
+				$urlsource			= $_SERVER['PHP_SELF']."?facid=".$object->id;
+				$deleteaction		= "remove_file_comfirm";
+				break;
+
+			case "facture_fournisseur":
+				$subdir				= get_exdir($object->id, 2, 0, 0, $object, "invoice_supplier").$filename;
+				$filedir			= $this->_getDocumentRootPath($module, $object)."/".$subdir;
+				$modelpdf			= (!empty($object->modelpdf) ? $object->modelpdf : (empty($conf->global->INVOICE_SUPPLIER_ADDON_PDF) ? "" : $conf->global->INVOICE_SUPPLIER_ADDON_PDF));
+				break;
+
+			case "member":
+				$filedir			= $this->_getDocumentRootPath($module, $object)."/".get_exdir(0, 0, 0, 0, $object, "member");
+				break;
+
+			case "product":
+				$subdir				= $object->ref;
+				$modelpdf			= '';
+				$allowgenifempty	= 0;
+				break;
+
+			case "product_batch":
+				$filedir			= $this->_getDocumentRootPath($module, $object)."/".get_exdir(0, 0, 0, 0, $object, 'product_batch').$filename;
+				$allowgenifempty	= 0;
+				break;
+
+			case "remisecheque":
+				$filedir 			= $this->_getDocumentRootPath($module, $object)."/".get_exdir($object->ref, 0, 1, 0, $object, "cheque").$filename;
+				break;
+
+			case "stock":
+				$subdir				= $object->ref;
+				$modelpdf			= '';
+				$allowgenifempty	= 0;
+				break;
+
+			case "supplier_payment":
+				$modelpdf 			= (! empty($object->modelpdf) ? $object->modelpdf : (empty($conf->global->SUPPLIER_PAYMENT_ADDON_PDF) ? "" : $conf->global->SUPPLIER_PAYMENT_ADDON_PDF));
+				break;
+		}
+
+		return $this->showdocuments(
+			$module, $subdir, $filedir, $urlsource, $genallowed, $delallowed, $modelpdf, $allowgenifempty,
+			0 /* forcenomultilang */, 0 /* iconPDF */, 0 /* notused */, 0 /* noform */, $param, '' /* title */, '' /* buttonlabel */,
+			$lang, '' /* morepicto */, $object, 0 /* hideifempty */, $deleteaction);
+	}
+
+	/**
+	 * Return the root document folder of a given module and object
+	 *
+	 * @param	string			$module		The name of the module
+	 * @param	CommonObject	$object		(optional) The current used object of the module
+	 * @return	string						The root document folder
+	 */
+	private function _getDocumentRootPath($module, CommonObject $object = null)
+	{
+		global $conf;
+		
+		// hard-coded
+		// TODO: should be replaced with a single dir or a multi dir in the next time (Sekan. T, 2020-04-10)
+		switch($module)
+		{
+			case "commande_fournisseur":	return $conf->fournisseur->dir_output.'/commande';
+			case "expedition":				return $conf->expedition->dir_output."/sending";
+			case "livraison":				return $conf->expedition->dir_output."/receipt";
+			case "remisecheque":			return $conf->bank->dir_output."/checkdeposits";
+		}
+
+		// single dir
+		switch($module)
+		{
+			case "asset":				return $conf->asset->dir_output;
+			case "bom":					return $conf->bom->dir_output;
+			case "contract":			return $conf->contrat->dir_output;
+			case "donation":			return $conf->don->dir_output;
+			case "emailcollector":		return $conf->emailcollector->dir_output;
+			case "expensereport":		return $conf->expensereport->dir_output;
+			case "facture_fournisseur":	return $conf->fournisseur->facture->dir_output;
+			case "ficheinter":			return $conf->ficheinter->dir_output;
+			case "member":				return $conf->adherent->dir_output;
+			case "mrp:mo":				return $conf->mrp->dir_output;
+			case "product":				return $conf->product->dir_output;
+			case "project":				return $conf->projet->dir_output;
+			case "reception":			return $conf->reception->dir_output;
+			case "stock":				return $conf->stock->dir_output;
+			case "supplier_payment":	return $conf->fournisseur->payment->dir_output;
+			case "supplier_proposal":	return $conf->supplier_proposal->dir_output;
+			case "user":				return $conf->user->dir_output;
+			case "usergroup":			return $conf->usergroup->dir_output;
+			case "website":				return $conf->website->dir_output;
+		}
+
+		if($object == null)
+		{
+			dol_print_error('', "multi-dir modules need a object to find the document root directory");
+			return "";
+		}
+
+		// multi dir (need the optional object)
+		switch($module)
+		{
+			case "actions":			return $conf->agenda->multidir_output[$conf->entity];
+			case "commande":		return $conf->commande->multidir_output[$object->entity];
+			case "company":			return $conf->societe->multidir_output[$object->entity];
+			case "facture":			return $conf->facture->multidir_output[$object->entity];
+			case "product_batch":	return $conf->productbatch->multidir_output[$object->entity];
+			case "propal":			return $conf->propal->multidir_output[$object->entity];
+		}
+
+		dol_print_error('', "[".$module."] is currently not supported by [_getDocumentRootPath]");
+		return "";
+	}
+
+	/**
+	 * Check if the given user can generate document in the given module
+	 * 
+	 * @param User			$user		The user to check
+	 * @param string		$module		The module to check
+	 * @param CommonObject	$name		(optional) A additional object that contains extra security parameters to check
+	 * @return bool						true if a user can generate documents, otherwise false
+	 */
+	private function _canUserGenerateDocuments(User $user, $module, CommonObject $object = null)
+	{
+		if(empty($user))
+		{
+			dol_print_error("", "User can't be empty");
+			return false;
+		}
+
+		// simple checks (most modules)
+
+		switch($module)
+		{
+			case "actions":					return $user->rights->agenda->myactions->read;
+			case "asset":					return $user->rights->asset->create;
+			case "bom":						return $user->rights->bom->read;
+			case "commande":				return $user->rights->commande->lire;
+			case "commande_fournisseur":	return $user->rights->fournisseur->commande->lire;
+			case "company":					return $user->rights->societe->lire;
+			case "contract":				return $user->rights->contrat->lire;
+			case 'emailcollector':			return $user->rights->emailcollector->read;
+			case "expedition":				return $user->rights->expedition->lire;
+			case "expensereport":			return $user->rights->expensereport->creer;
+			case "facture_fournisseur":		return $user->rights->fournisseur->facture->lire;
+			case "facture":					return $user->rights->facture->lire;
+			case "ficheinter":				return $user->rights->ficheinter->lire;
+			case "livraison":				return $user->rights->expedition->livraison->lire;
+			case "member":					return $user->rights->adherent->lire;
+			case "mrp:mo":					return $user->rights->mrp->read;
+			case "product_batch":			return $user->rights->produit->lire;
+			case "propal":					return $user->rights->propal->lire;
+			case "stock":					return $user->rights->stock->lire;
+			case "reception":				return $user->rights->reception->lire;
+			case "remisecheque":			return true;
+			case "supplier_payment":		return $user->rights->fournisseur->facture->lire;
+			case "supplier_proposal":		return $user->rights->supplier_proposal->lire;
+			case "user":					return $user->rights->user->user->lire;
+			case "usergroup":				return $user->rights->user->user->creer;
+			case "website":					return $user->rights->website->read;
+		}
+		
+		// extended checks (donation, project, product) need a object
+
+		if($module === "donation")
+		{
+			require_once DOL_DOCUMENT_ROOT.'/core/modules/dons/modules_don.php';
+
+			if(!($object instanceof Don))
+			{
+				return false;
+			}
+
+			return $user->rights->don->lire && ($object->paid == 0 || $user->admin);
+		}
+
+		if($module === "project")
+		{
+			require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
+
+			if(!($object instanceof Project))
+			{
+				return false;
+			}
+
+			return $user->rights->projet->lire
+				&& ($object->restrictedProjectArea($user, 'read') > 0);
+		}
+
+		if($module === "product")
+		{
+			require_once DOL_DOCUMENT_ROOT."/product/class/product.class.php";
+
+			if(!($object instanceof Product))
+			{
+				return false;
+			}
+
+			return ($object->type == Product::TYPE_PRODUCT && $user->rights->produit->lire)
+				|| ($object->type == Product::TYPE_SERVICE && $user->rights->service->lire);
+		}
+
+		dol_print_error('', "[".$module."] is currently not supported by [isGenerationAllowed]");
+		return false;
+	}
+
+	/**
+	 * Check if the given user can delete documents in the given module
+	 * 
+	 * @param User			$user		The user to check
+	 * @param string		$module		The module to check
+	 * @param CommonObject	$name		(optional) A additional object that contains extra security parameters to check
+	 * @return bool						true if a user can delete documents, otherwise false
+	 */
+	private function _canUserDeleteDocuments(User $user, $module, CommonObject $object = null)
+	{
+		if(empty($user))
+		{
+			dol_print_error("", "User can't be empty");
+			return false;
+		}
+
+		// simple checks (most modules)
+
+		switch($module)
+		{
+			case "actions":					return $user->rights->agenda->myactions->create;
+			case "asset":					return $user->rights->asset->read;
+			case "bom":						return $user->rights->bom->write;
+			case "commande":				return $user->rights->commande->creer;
+			case 'commande_fournisseur':	return $user->rights->fournisseur->commande->creer;
+			case "company":					return $user->rights->societe->creer;
+			case "contract":				return $user->rights->contrat->creer;
+			case "donation":				return $user->rights->don->creer;
+			case 'emailcollector':			return $user->rights->emailcollector->create;
+			case "expedition":				return $user->rights->expedition->creer;
+			case "expensereport":			return $user->rights->expensereport->creer;
+			case "facture_fournisseur":		return $user->rights->fournisseur->facture->creer;
+			case "facture":					return $user->rights->facture->creer;
+			case 'ficheinter':				return $user->rights->ficheinter->creer;
+			case "livraison":				return $user->rights->expedition->livraison->creer;
+			case "member":					return $user->rights->adherent->creer;
+			case "mrp:mo":					return $user->rights->mrp->create;
+			case "product_batch":			return $user->rights->produit->creer;
+			case "propal":					return $user->rights->propal->creer;
+			case "reception":				return $user->rights->reception->creer;
+			case "remisecheque":			return true;
+			case "stock":					return $user->rights->stock->creer;
+			case "supplier_payment":		return $user->rights->fournisseur->facture->creer;
+			case "supplier_proposal":		return $user->rights->supplier_proposal->creer;
+			case "user":					return $user->rights->user->user->creer;
+			case "usergroup":				return $user->rights->user->user->supprimer;
+			case "website":					return $user->rights->website->create;
+		}
+
+		// extended checks (project, product) need a object
+
+		if($module === "project")
+		{
+			require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
+
+			if(!($object instanceof Project))
+			{
+				return false;
+			}
+
+			return $user->rights->projet->creer
+				&& ($object->restrictedProjectArea($user, 'write') > 0);
+		}
+
+		if($module === "product")
+		{
+			require_once DOL_DOCUMENT_ROOT."/product/class/product.class.php";
+
+			if(!($object instanceof Product))
+			{
+				return false;
+			}
+
+			return (($object->type == Product::TYPE_PRODUCT && $user->rights->produit->creer)
+				|| ($object->type == Product::TYPE_SERVICE && $user->rights->service->creer));
+		}
+
+		dol_print_error('', "[".$module."] is currently not supported by [isDeleteAllowed]");
+		return false;
 	}
 }

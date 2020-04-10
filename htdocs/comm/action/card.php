@@ -1893,18 +1893,8 @@ if ($id > 0)
 			print '<div style="clear:both;"></div><div class="fichecenter"><div class="fichehalfleft">';
             print '<a name="builddoc"></a>'; // ancre
 
-            /*
-             * Documents generes
-             */
-
-            $filedir = $conf->agenda->multidir_output[$conf->entity].'/'.$object->id;
-            $urlsource = $_SERVER["PHP_SELF"]."?id=".$object->id;
-
-            $genallowed = $user->rights->agenda->myactions->read;
-	        $delallowed = $user->rights->agenda->myactions->create;
-
-
-            print $formfile->showdocuments('actions', $object->id, $filedir, $urlsource, $genallowed, $delallowed, '', 0, 0, 0, 0, 0, '', '', '', $object->default_lang);
+			// Documents generes
+			print $formfile->getDocumentsViewSmall('actions', $object, $object->default_lang);
 
 			print '</div><div class="fichehalfright"><div class="ficheaddleft">';
 

@@ -5369,16 +5369,7 @@ elseif ($id > 0 || !empty($ref))
 		print '<a name="builddoc"></a>'; // ancre
 
 		// Documents generes
-		$filename = dol_sanitizeFileName($object->ref);
-		$filedir = $conf->facture->multidir_output[$object->entity].'/'.dol_sanitizeFileName($object->ref);
-		$urlsource = $_SERVER['PHP_SELF'].'?facid='.$object->id;
-		$genallowed = $usercanread;
-		$delallowed = $usercancreate;
-
-		print $formfile->showdocuments(
-			'facture', $filename, $filedir, $urlsource, $genallowed,
-			$delallowed, $object->modelpdf, 1, 0, 0, 28, 0, '', '', '',
-			$soc->default_lang, '', $object, 0, 'remove_file_comfirm');
+		print $formfile->getDocumentsViewSmall('facture', $object, $soc->default_lang);
 
 		$somethingshown = $formfile->numoffiles;
 

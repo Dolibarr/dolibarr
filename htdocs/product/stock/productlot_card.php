@@ -398,19 +398,15 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 
 if (empty($action))
 {
-    print '<div class="fichecenter"><div class="fichehalfleft">';
-    print '<a name="builddoc"></a>'; // ancre
+	print '<div class="fichecenter"><div class="fichehalfleft">';
+	print '<a name="builddoc"></a>'; // ancre
 
-    // Documents
-	$filedir = $conf->productbatch->multidir_output[$object->entity].'/'.get_exdir(0, 0, 0, 0, $object, 'product_batch').dol_sanitizeFileName($object->ref);
-    $urlsource = $_SERVER["PHP_SELF"]."?id=".$object->id;
-    $genallowed = $usercanread;
-    $delallowed = $usercancreate;
+	// Documents
+	print $formfile->getDocumentsViewSmall('product_batch', $object, $object->default_lang);
 
-    print $formfile->showdocuments('product_batch', dol_sanitizeFileName($object->ref), $filedir, $urlsource, $genallowed, $delallowed, '', 0, 0, 0, 28, 0, '', 0, '', $object->default_lang, '', $object);
-    $somethingshown = $formfile->numoffiles;
+	$somethingshown = $formfile->numoffiles;
 
-    print '</div>';
+	print '</div>';
 }
 
 // End of page

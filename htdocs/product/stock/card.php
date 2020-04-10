@@ -83,9 +83,9 @@ if ($id > 0 || !empty($ref)) {
 
 $error = 0;
 
-$usercanread = (($user->rights->stock->lire));
-$usercancreate = (($user->rights->stock->creer));
-$usercandelete = (($user->rights->stock->supprimer));
+$usercanread = $user->rights->stock->lire;
+$usercancreate = $user->rights->stock->creer;
+$usercandelete = $user->rights->stock->supprimer;
 
 $parameters = array('id'=>$id, 'ref'=>$ref);
 $reshook = $hookmanager->executeHooks('doActions', $parameters, $object, $action); // Note that $action and $object may have been modified by some hooks
@@ -791,25 +791,16 @@ else
 
 if ($conf->global->MAIN_FEATURES_LEVEL >= 2)
 {
-	$modulepart = 'stock';
-
 	if ($action != 'create' && $action != 'edit' && $action != 'delete')
 	{
 		print '<br/>';
 	    print '<div class="fichecenter"><div class="fichehalfleft">';
 	    print '<a name="builddoc"></a>'; // ancre
 
-	    // Documents
-	    $objectref = dol_sanitizeFileName($object->ref);
-	    $relativepath = $comref.'/'.$objectref.'.pdf';
-	    $filedir = $conf->stock->dir_output.'/'.$objectref;
-	    $urlsource = $_SERVER["PHP_SELF"]."?id=".$object->id;
-	    $genallowed = $usercanread;
-	    $delallowed = $usercancreate;
-	    $modulepart = 'stock';
+		// Documents
+		print $formfile->getDocumentsViewSmall('stock', $object, $object->default_lang);
 
-	    print $formfile->showdocuments($modulepart, $object->ref, $filedir, $urlsource, $genallowed, $delallowed, '', 0, 0, 0, 28, 0, '', 0, '', $object->default_lang, '', $object);
-	    $somethingshown = $formfile->numoffiles;
+		$somethingshown = $formfile->numoffiles;
 
 	    print '</div><div class="fichehalfright"><div class="ficheaddleft">';
 

@@ -790,11 +790,8 @@ if ($action != 'new')
 {
 	if ($object->statut == 1)
 	{
-		$filename = dol_sanitizeFileName($object->ref);
-		$filedir = $dir.get_exdir($object->ref, 0, 1, 0, $object, 'cheque').dol_sanitizeFileName($object->ref);
-		$urlsource = $_SERVER["PHP_SELF"]."?id=".$object->id;
-
-		print $formfile->showdocuments('remisecheque', $filename, $filedir, $urlsource, 1, 1);
+		// documents
+		print $formfile->getDocumentsViewSmall('remisecheque', $object);
 
 		print '<br>';
 	}

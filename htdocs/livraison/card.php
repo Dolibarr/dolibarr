@@ -687,18 +687,8 @@ else	// View
 
 			print '<table width="100%" cellspacing="2"><tr><td width="50%" valign="top">';
 
-			/*
-		 	 * Documents generated
-			 */
-
-			$objectref = dol_sanitizeFileName($object->ref);
-			$filedir = $conf->expedition->dir_output."/receipt/".$objectref;
-			$urlsource = $_SERVER["PHP_SELF"]."?id=".$object->id;
-
-			$genallowed = $user->rights->expedition->livraison->lire;
-			$delallowed = $user->rights->expedition->livraison->creer;
-
-			print $formfile->showdocuments('livraison', $objectref, $filedir, $urlsource, $genallowed, $delallowed, $object->modelpdf, 1, 0, 0, 28, 0, '', '', '', $soc->default_lang);
+			// Documents generated
+			print $formfile->getDocumentsViewSmall('livraison', $object, $soc->default_lang);
 
 			/*
 		 	 * Linked object block (of linked shipment)

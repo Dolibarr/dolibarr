@@ -3279,18 +3279,9 @@ else
 	            {
 					print '<div class="fichecenter"><div class="fichehalfleft">';
 
-					/*
-	                 * Documents generes
-	                 */
-					$ref = dol_sanitizeFileName($object->ref);
-					$subdir = get_exdir($object->id, 2, 0, 0, $object, 'invoice_supplier').$ref;
-					$filedir = $conf->fournisseur->facture->dir_output.'/'.$subdir;
-					$urlsource = $_SERVER['PHP_SELF'].'?id='.$object->id;
-					$genallowed = $user->rights->fournisseur->facture->lire;
-					$delallowed = $user->rights->fournisseur->facture->creer;
-					$modelpdf = (!empty($object->modelpdf) ? $object->modelpdf : (empty($conf->global->INVOICE_SUPPLIER_ADDON_PDF) ? '' : $conf->global->INVOICE_SUPPLIER_ADDON_PDF));
+					// Documents generes
+					print $formfile->getDocumentsViewSmall('facture_fournisseur', $object, $societe->default_lang);
 
-					print $formfile->showdocuments('facture_fournisseur', $subdir, $filedir, $urlsource, $genallowed, $delallowed, $modelpdf, 1, 0, 0, 40, 0, '', '', '', $societe->default_lang);
 					$somethingshown = $formfile->numoffiles;
 
 					// Show links to link elements
@@ -3303,6 +3294,7 @@ else
 
 					// List of actions on element
 					include_once DOL_DOCUMENT_ROOT.'/core/class/html.formactions.class.php';
+					$genallowed = $user->rights->fournisseur->facture->lire;
 					$formactions = new FormActions($db);
 					$somethingshown = $formactions->showactions($object, 'invoice_supplier', $socid, 1, 'listaction'.($genallowed ? 'largetitle' : ''));
 

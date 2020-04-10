@@ -708,14 +708,8 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 	    print '<div class="fichecenter"><div class="fichehalfleft">';
 	    print '<a name="builddoc"></a>'; // ancre
 
-	    // Documents
-	    $objref = dol_sanitizeFileName($object->ref);
-	    $relativepath = $objref.'/'.$objref.'.pdf';
-	    $filedir = $conf->bom->dir_output.'/'.$objref;
-	    $urlsource = $_SERVER["PHP_SELF"]."?id=".$object->id;
-	    $genallowed = $user->rights->bom->read; // If you can read, you can build the PDF to read content
-	    $delallowed = $user->rights->bom->write; // If you can create/edit, you can remove a file on card
-	    print $formfile->showdocuments('bom', $objref, $filedir, $urlsource, $genallowed, $delallowed, $object->modelpdf, 1, 0, 0, 28, 0, '', '', '', $langs->defaultlang);
+		// Documents
+		print $formfile->getDocumentsViewSmall('bom', $object, $langs->defaultlang);
 
 	    // Show links to link elements
 	    $linktoelem = $form->showLinkToObjectBlock($object, null, array('bom'));

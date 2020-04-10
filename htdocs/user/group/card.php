@@ -509,28 +509,19 @@ else
 
 			print '<div class="fichecenter"><div class="fichehalfleft">';
 
-			/*
-	         * Documents generes
-	         */
-	        $filename = dol_sanitizeFileName($object->ref);
-	        $filedir = $conf->usergroup->dir_output."/".dol_sanitizeFileName($object->ref);
-	        $urlsource = $_SERVER["PHP_SELF"]."?id=".$object->id;
-	        $genallowed = $user->rights->user->user->creer;
-	        $delallowed = $user->rights->user->user->supprimer;
+			// Documents generes
+			print $formfile->getDocumentsViewSmall('usergroup', $object, $soc->default_lang);
 
-	        $somethingshown = $formfile->showdocuments('usergroup', $filename, $filedir, $urlsource, $genallowed, $delallowed, $object->modelpdf, 1, 0, 0, 28, 0, '', 0, '', $soc->default_lang);
+			// Show links to link elements
+			$linktoelem = $form->showLinkToObjectBlock($object, null, null);
+			$somethingshown = $form->showLinkedObjectBlock($object, $linktoelem);
 
-	        // Show links to link elements
-	        $linktoelem = $form->showLinkToObjectBlock($object, null, null);
-	        $somethingshown = $form->showLinkedObjectBlock($object, $linktoelem);
-
-	        print '</div><div class="fichehalfright"><div class="ficheaddleft">';
+			print '</div><div class="fichehalfright"><div class="ficheaddleft">';
 
 			// List of actions on element
 			/*include_once DOL_DOCUMENT_ROOT . '/core/class/html.formactions.class.php';
 			$formactions = new FormActions($db);
 			$somethingshown = $formactions->showactions($object, 'usergroup', $socid, 1);*/
-
 
 	        print '</div></div></div>';
         }

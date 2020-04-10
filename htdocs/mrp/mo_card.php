@@ -658,17 +658,11 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 
 	if ($action != 'presend')
 	{
-	    print '<div class="fichecenter"><div class="fichehalfleft">';
-	    print '<a name="builddoc"></a>'; // ancre
+		print '<div class="fichecenter"><div class="fichehalfleft">';
+		print '<a name="builddoc"></a>'; // ancre
 
-	    // Documents
-	    $objref = dol_sanitizeFileName($object->ref);
-	    $relativepath = $objref.'/'.$objref.'.pdf';
-	    $filedir = $conf->mrp->dir_output.'/'.$objref;
-	    $urlsource = $_SERVER["PHP_SELF"]."?id=".$object->id;
-	    $genallowed = $user->rights->mrp->read; // If you can read, you can build the PDF to read content
-	    $delallowed = $user->rights->mrp->create; // If you can create/edit, you can remove a file on card
-	    print $formfile->showdocuments('mrp:mo', $objref, $filedir, $urlsource, $genallowed, $delallowed, $object->modelpdf, 1, 0, 0, 28, 0, '', '', '', $mysoc->default_lang);
+		// Documents
+		print $formfile->getDocumentsViewSmall('mrp:mo', $object, $mysoc->default_lang);
 
 	    // Show links to link elements
 	    $linktoelem = $form->showLinkToObjectBlock($object, null, array('mo'));

@@ -2591,16 +2591,7 @@ elseif ($id || $ref)
 	{
         print '<div class="fichecenter"><div class="fichehalfleft">';
 
-        $objectref = dol_sanitizeFileName($object->ref);
-		$filedir = $conf->expedition->dir_output."/sending/".$objectref;
-
-		$urlsource = $_SERVER["PHP_SELF"]."?id=".$object->id;
-
-		$genallowed = $user->rights->expedition->lire;
-		$delallowed = $user->rights->expedition->creer;
-
-		print $formfile->showdocuments('expedition', $objectref, $filedir, $urlsource, $genallowed, $delallowed, $object->modelpdf, 1, 0, 0, 28, 0, '', '', '', $soc->default_lang);
-
+		print $formfile->getDocumentsViewSmall('expedition', $object, $soc->default_lang);
 
 		// Show links to link elements
 		//$linktoelem = $form->showLinkToObjectBlock($object, null, array('order'));

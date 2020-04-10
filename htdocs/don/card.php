@@ -849,16 +849,8 @@ if (!empty($id) && $action != 'edit')
 
     print '<div class="fichecenter"><div class="fichehalfleft">';
 
-	/*
-	 * Documents generes
-	 */
-	$filename = dol_sanitizeFileName($object->id);
-	$filedir = $conf->don->dir_output."/".dol_sanitizeFileName($object->id);
-	$urlsource = $_SERVER['PHP_SELF'].'?rowid='.$object->id;
-	$genallowed	= (($object->paid == 0 || $user->admin) && $user->rights->don->lire);
-	$delallowed	= $user->rights->don->creer;
-
-	print $formfile->showdocuments('donation', $filename, $filedir, $urlsource, $genallowed, $delallowed, $object->modelpdf);
+	// Documents generes
+	print $formfile->getDocumentsViewSmall('donation', $object);
 
 	// Show links to link elements
 	$linktoelem = $form->showLinkToObjectBlock($object, null, array('don'));

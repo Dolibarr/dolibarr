@@ -1711,15 +1711,8 @@ elseif ($id > 0 || !empty($ref))
 	{
 		print '<div class="fichecenter"><div class="fichehalfleft">';
 
-		/*
-		 * Built documents
-		 */
-		$filename = dol_sanitizeFileName($object->ref);
-		$filedir = $conf->ficheinter->dir_output."/".$filename;
-		$urlsource = $_SERVER["PHP_SELF"]."?id=".$object->id;
-		$genallowed = $user->rights->ficheinter->lire;
-		$delallowed = $user->rights->ficheinter->creer;
-		print $formfile->showdocuments('ficheinter', $filename, $filedir, $urlsource, $genallowed, $delallowed, $object->modelpdf, 1, 0, 0, 28, 0, '', '', '', $soc->default_lang);
+		// Show documents
+		print $formfile->getDocumentsViewSmall('ficheinter', $object, $soc->default_lang);
 
 		// Show links to link elements
 		$linktoelem = $form->showLinkToObjectBlock($object, null, array('fichinter'));

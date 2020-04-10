@@ -376,15 +376,10 @@ if ($result > 0)
 	$modellist = ModelePDFSuppliersPayments::liste_modeles($db);
 	if (is_array($modellist))
 	{
-		$ref = dol_sanitizeFileName($object->ref);
-		$filedir = $conf->fournisseur->payment->dir_output.'/'.dol_sanitizeFileName($object->ref);
-		$urlsource = $_SERVER['PHP_SELF'].'?id='.$object->id;
-		$genallowed = $user->rights->fournisseur->facture->lire;
-		$delallowed = $user->rights->fournisseur->facture->creer;
-		$modelpdf = (!empty($object->modelpdf) ? $object->modelpdf : (empty($conf->global->SUPPLIER_PAYMENT_ADDON_PDF) ? '' : $conf->global->SUPPLIER_PAYMENT_ADDON_PDF));
+		print $formfile->getDocumentsViewSmall('supplier_payment', $object, $societe->default_lang);
 
-		print $formfile->showdocuments('supplier_payment', $ref, $filedir, $urlsource, $genallowed, $delallowed, $modelpdf, 1, 0, 0, 40, 0, '', '', '', $societe->default_lang);
 		$somethingshown = $formfile->numoffiles;
+
 	}
 
 	print '</div><div class="fichehalfright"><div class="ficheaddleft">';

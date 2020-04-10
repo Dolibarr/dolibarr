@@ -101,8 +101,6 @@ if ($id > 0 || !empty($ref))
     }
 }
 
-$modulepart = 'product';
-
 // Get object canvas (By default, this is not defined, so standard usage of dolibarr)
 $canvas = !empty($object->canvas) ? $object->canvas : GETPOST("canvas");
 $objcanvas = null;
@@ -2369,14 +2367,8 @@ if ($action != 'create' && $action != 'edit' && $action != 'delete')
     print '<a name="builddoc"></a>'; // ancre
 
     // Documents
-    $objectref = dol_sanitizeFileName($object->ref);
-    $relativepath = $comref.'/'.$objectref.'.pdf';
-    $filedir = $conf->product->dir_output.'/'.$objectref;
-    $urlsource = $_SERVER["PHP_SELF"]."?id=".$object->id;
-    $genallowed = $usercanread;
-    $delallowed = $usercancreate;
+    print $formfile->getDocumentsViewSmall('product', $object, $object->default_lang);
 
-    print $formfile->showdocuments($modulepart, $object->ref, $filedir, $urlsource, $genallowed, $delallowed, '', 0, 0, 0, 28, 0, '', 0, '', $object->default_lang, '', $object);
     $somethingshown = $formfile->numoffiles;
 
     print '</div><div class="fichehalfright"><div class="ficheaddleft">';

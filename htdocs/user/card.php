@@ -2827,16 +2827,10 @@ else
 		if ($action != 'edit' && $action != 'presend')
 		{
 			print '<div class="fichecenter"><div class="fichehalfleft">';
-			/*
-             * Documents generes
-             */
-			$filename = dol_sanitizeFileName($object->ref);
-			$filedir = $conf->user->dir_output."/".dol_sanitizeFileName($object->ref);
-			$urlsource = $_SERVER["PHP_SELF"]."?id=".$object->id;
-			$genallowed = $user->rights->user->user->lire;
-			$delallowed = $user->rights->user->user->creer;
 
-			print $formfile->showdocuments('user', $filename, $filedir, $urlsource, $genallowed, $delallowed, $object->modelpdf, 1, 0, 0, 28, 0, '', 0, '', $soc->default_lang);
+			// Documents generes
+			print $formfile->getDocumentsViewSmall('user', $object, $soc->default_lang);
+
 			$somethingshown = $formfile->numoffiles;
 
 			// Show links to link elements

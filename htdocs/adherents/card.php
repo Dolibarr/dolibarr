@@ -1921,15 +1921,8 @@ else
 			print '<a name="builddoc"></a>'; // ancre
 
 			// Documents generes
-			$filename = dol_sanitizeFileName($object->ref);
-			//$filename =  'tmp_cards.php';
-			//$filedir = $conf->adherent->dir_output . '/' . get_exdir($object->id, 2, 0, 0, $object, 'member') . dol_sanitizeFileName($object->ref);
-			$filedir = $conf->adherent->dir_output.'/'.get_exdir(0, 0, 0, 0, $object, 'member');
-			$urlsource = $_SERVER['PHP_SELF'].'?id='.$object->id;
-			$genallowed = $user->rights->adherent->lire;
-			$delallowed = $user->rights->adherent->creer;
+			print $formfile->getDocumentsViewSmall('member', $object, $object->default_lang);
 
-			print $formfile->showdocuments('member', $filename, $filedir, $urlsource, $genallowed, $delallowed, $object->modelpdf, 1, 0, 0, 28, 0, '', '', '', $object->default_lang, '', $object);
 			$somethingshown = $formfile->numoffiles;
 
 			// Show links to link elements
