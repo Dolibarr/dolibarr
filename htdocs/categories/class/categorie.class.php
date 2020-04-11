@@ -346,10 +346,10 @@ class Categorie extends CommonObject
 				$this->type = $res['type'];
 				$this->ref_ext = $res['ref_ext'];
 				$this->entity = $res['entity'];
-				$this->date_creation = $this->db->jdate($$res['date_creation']);
+				$this->date_creation = $this->db->jdate($res['date_creation']);
 				$this->date_modification = $this->db->jdate($res['tms']);
-				$this->fk_user_creat = $res['fk_user_creat'];
-				$this->fk_user_modif = $res['fk_user_modif'];
+				$this->user_creation = $res['fk_user_creat'];
+				$this->user_modification = $res['fk_user_modif'];
 
 				// Retreive all extrafield
 				// fetch optionals attributes and labels
