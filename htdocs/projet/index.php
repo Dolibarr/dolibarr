@@ -260,8 +260,8 @@ $companystatic = new Societe($db); // We need a clean new object for next loop b
 print '<div class="div-table-responsive-no-min">';
 print '<table class="noborder centpercent">';
 print '<tr class="liste_titre">';
-print_liste_field_titre("OpenedProjectsByThirdparties", $_SERVER["PHP_SELF"], "s.nom", "", "", '', $sortfield, $sortorder);
-print_liste_field_titre("NbOfProjects", "", "", "", "", '', $sortfield, $sortorder, 'right ');
+print_liste_field_titre("OpenedProjectsByThirdparties", $_SERVER["PHP_SELF"], "", "", "", '', $sortfield, $sortorder);
+print_liste_field_titre("NbOfProjects", $_SERVER["PHP_SELF"], "nb", "", "", '', $sortfield, $sortorder, 'right ');
 print "</tr>\n";
 
 $sql = "SELECT COUNT(p.rowid) as nb, SUM(p.opp_amount)";

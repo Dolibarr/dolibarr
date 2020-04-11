@@ -231,7 +231,7 @@ if ($error)
 
 print load_fiche_titre($langs->trans("MenuBankInternalTransfer"), '', 'bank_account');
 
-print $langs->trans("TransferDesc");
+print '<span class="opacitymedium">'.$langs->trans("TransferDesc").'</span>';
 print "<br><br>";
 
 print '<form name="add" method="post" action="'.$_SERVER["PHP_SELF"].'">';

@@ -3410,7 +3410,7 @@ if ($action == 'replacesite' || $action == 'replacesiteconfirm')
 	print '<!-- Replace string -->'."\n";
 	print '<div class="fiche"><br>';
 
-	print load_fiche_titre($langs->trans("ReplaceWebsiteContent"));
+	print load_fiche_titre($langs->trans("ReplaceWebsiteContent"), '', 'search');
 
 	print '<div class="tagtable">';
 
@@ -3447,7 +3447,7 @@ if ($action == 'replacesite' || $action == 'replacesiteconfirm')
 		if (GETPOST('optioncontent')) $algo .= 'content';
 		if (GETPOST('optionsitefiles')) $algo .= 'sitefiles';
 
-		$listofpages = getPagesFromSearchCriterias('', $algo, $searchkey, 1000);
+		$listofpages = getPagesFromSearchCriterias('', $algo, $searchkey, 1000, $sortfield, $sortorder);
 
 		print '<br>';
 		print '<br>';
@@ -3471,13 +3471,19 @@ if ($action == 'replacesite' || $action == 'replacesiteconfirm')
 				print '<br>';
 			}
 
+			$param = 'action=replacesiteconfirm&website='.urlencode($website->ref);
+			$param .= '&searchstring='.urlencode($searchkey);
+			if (GETPOST('optioncontent')) $param .= '&optioncontent=content';
+			if (GETPOST('optionmeta')) $param .= '&optionmeta=meta';
+			if (GETPOST('optionsitefiles')) $param .= '&optionsitefiles=optionsitefiles';
+
 			print '<div class="div-table-responsive-no-min">';
 			print '<table class="noborder centpercent">';
 			print '<tr class="liste_titre">';
-			print '<th>'.$langs->trans("Type").'</th>';
-			print '<th>'.$langs->trans("Link").'</th>';
-			print '<th>'.$langs->trans("Description").'</th>';
-			print '<th></th>';
+			print getTitleFieldOfList("Type", 0, $_SERVER['PHP_SELF'], 'type_container', '', $param, '', $sortfield, $sortorder, '')."\n";
+			print getTitleFieldOfList("Link", 0, $_SERVER['PHP_SELF'], 'title', '', $param, '', $sortfield, $sortorder, '')."\n";
+			print getTitleFieldOfList("Description", 0, $_SERVER['PHP_SELF'], '', '', $param, '', $sortfield, $sortorder, '')."\n";
+			print getTitleFieldOfList("", 0 , $_SERVER['PHP_SELF']);
 			print '</tr>';
 
 			foreach ($listofpages['list'] as $answerrecord)
@@ -3485,7 +3491,7 @@ if ($action == 'replacesite' || $action == 'replacesiteconfirm')
 				if (get_class($answerrecord) == 'WebsitePage')
 				{
 					print '<tr>';
-					print '<td>'.$langs->trans("Container").' - ';
+					print '<td class="nowraponall">'.$langs->trans("Container").' - ';
 					print $langs->trans($answerrecord->type_container); // TODO Use label of container
 					print '</td>';
 					print '<td>';
@@ -3506,7 +3512,7 @@ if ($action == 'replacesite' || $action == 'replacesiteconfirm')
 						$disabled = ' disabled';
 						$urltoedithtmlsource = '';
 					}
-					print '<a class="'.$disabled.'" href="'.$urltoedithtmlsource.'" title="'.$langs->trans("EditHTMLSource").'">'.img_picto($langs->trans("EditHTMLSource"), 'edit').'</a>';
+					print '<a class="editfielda '.$disabled.'" href="'.$urltoedithtmlsource.'" title="'.$langs->trans("EditHTMLSource").'">'.img_picto($langs->trans("EditHTMLSource"), 'edit').'</a>';
 					print '</td>';
 					print '</tr>';
 				}

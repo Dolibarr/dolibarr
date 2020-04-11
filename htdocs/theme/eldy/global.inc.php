@@ -24,7 +24,7 @@
 	--colortextlink: rgb(<?php print $colortextlink; ?>);
 	--colortextbackhmenu: #<?php echo $colortextbackhmenu; ?>;
 	--colortextbackvmenu: #<?php print $colortextbackvmenu; ?>;
-	--listetotal: #551188;
+	--listetotal: #888888;
 	--inputbackgroundcolor: #FFF;
 	--inputbordercolor: rgba(0,0,0,.2);
 	--tooltipbgcolor: <?php print $toolTipBgColor; ?>;
@@ -1455,6 +1455,9 @@ body.onlinepaymentbody div.fiche {	/* For online payment page */
 div.fiche>table:first-child {
 	margin-bottom: 15px !important;
 }
+div.fiche>table.table-fiche-title {
+	margin-bottom: 7px !important;
+}
 div.fichecenter {
 	width: 100%;
 	clear: both;	/* This is to have div fichecenter that are true rectangles */
@@ -1568,9 +1571,9 @@ div.nopadding {
 	margin : 0px auto;
 }
 
-td.nobordernopadding.widthpictotitle.opacityhigh.valignmiddle.col-picto {
+td.nobordernopadding.widthpictotitle.col-picto {
     color: var(--colortexttitlenotab);
-    opacity: 0.6;
+    opacity: 0.7;
 }
 .pictotitle {
 	margin-<?php echo $right; ?>: 8px;
@@ -2606,7 +2609,7 @@ div.tabBar {
 div.tabBar tr.titre td {
 	padding-top: 20px;
 }
-div.fiche tr.titre td {
+div.fiche table:not(.table-fiche-title) tr.titre td {
 	padding-top: 10px;
 }
 

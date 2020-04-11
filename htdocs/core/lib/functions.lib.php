@@ -3234,7 +3234,7 @@ function img_picto($titlealt, $picto, $moreatt = '', $pictoisfullpath = false, $
 				'hrm'=>'bg-infoxbox-adherent', 'group'=>'bg-infoxbox-adherent',
 				'members'=>'bg-infoxbox-adherent', 'member'=>'bg-infoxbox-adherent', 'user'=>'bg-infoxbox-adherent', 'users'=>'bg-infoxbox-adherent',
 				'error'=>'pictoerror', 'warning'=>'pictowarning', 'switch_on'=>'font-status4',
-				'holiday'=>'bg-infoxbox-holiday', 'resource'=>'bg-infoxbox-action', 'title_hrm'=>'bg-infoxbox-holiday', 'trip'=>'bg-infoxbox-expensereport',
+				'holiday'=>'bg-infoxbox-holiday', 'project'=>'bg-infoxbox-project', 'resource'=>'bg-infoxbox-action', 'title_hrm'=>'bg-infoxbox-holiday', 'trip'=>'bg-infoxbox-expensereport',
 				'title_agenda'=>'bg-infoxbox-action',
 				'list-alt'=>'imgforviewmode', 'calendar'=>'imgforviewmode', 'calendarweek'=>'imgforviewmode', 'calendarmonth'=>'imgforviewmode', 'calendarday'=>'imgforviewmode', 'calendarperuser'=>'imgforviewmode'
 			);
@@ -4247,7 +4247,7 @@ function load_fiche_titre($titre, $morehtmlright = '', $picto = 'generic', $pict
 	$return .= "\n";
 	$return .= '<table '.($id ? 'id="'.$id.'" ' : '').'class="centpercent notopnoleftnoright table-fiche-title'.($morecssontable ? ' '.$morecssontable : '').'">'; // maring bottom must be same than into print_barre_list
 	$return .= '<tr class="titre">';
-	if ($picto) $return .= '<td class="nobordernopadding widthpictotitle opacityhigh valignmiddle col-picto">'.img_picto('', $picto, 'class="valignmiddle widthpictotitle pictotitle"', $pictoisfullpath).'</td>';
+	if ($picto) $return .= '<td class="nobordernopadding widthpictotitle valignmiddle col-picto">'.img_picto('', $picto, 'class="valignmiddle widthpictotitle pictotitle"', $pictoisfullpath).'</td>';
 	$return .= '<td class="nobordernopadding valignmiddle col-title">';
 	$return .= '<div class="titre inline-block">'.$titre.'</div>';
 	$return .= '</td>';
@@ -4313,7 +4313,7 @@ function print_barre_liste($titre, $page, $file, $options = '', $sortfield = '',
 
 	// Left
 
-	if ($picto && $titre) print '<td class="nobordernopadding widthpictotitle opacityhigh valignmiddle col-picto">'.img_picto('', $picto, 'class="valignmiddle pictotitle widthpictotitle"', $pictoisfullpath).'</td>';
+	if ($picto && $titre) print '<td class="nobordernopadding widthpictotitle valignmiddle col-picto">'.img_picto('', $picto, 'class="valignmiddle pictotitle widthpictotitle"', $pictoisfullpath).'</td>';
 	print '<td class="nobordernopadding valignmiddle col-title">';
 	print '<div class="titre inline-block">'.$titre;
 	if (!empty($titre) && $savtotalnboflines >= 0 && (string) $savtotalnboflines != '') print '<span class="opacitymedium colorblack paddingleft">('.$totalnboflines.')</span>';
