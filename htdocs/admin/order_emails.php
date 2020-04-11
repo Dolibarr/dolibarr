@@ -42,8 +42,8 @@ $constantes=array(
     //'MEMBER_REMINDER_EMAIL'=>array('type'=>'yesno', 'label'=>$langs->trans('MEMBER_REMINDER_EMAIL', $langs->transnoentities("Module2300Name"))),
     'ORDER_EMAIL_TEMPLATE_VALIDATED'	=>'emailtemplate:order_send',
     'ORDER_EMAIL_TEMPLATE_SHIPMENTONPROCESS'		=>'emailtemplate:order_send',
-    'ORDER_EMAIL_TEMPLATE_CLOSED'	=>'emailtemplate:order_send',		
-    'ORDER_EMAIL_TEMPLATE_CANCELED'		=>'emailtemplate:order_send',		
+    'ORDER_EMAIL_TEMPLATE_CLOSED'	=>'emailtemplate:order_send',
+    'ORDER_EMAIL_TEMPLATE_CANCELED'		=>'emailtemplate:order_send',
     'ORDER_MAIL_FROM'=>'string',
 );
 

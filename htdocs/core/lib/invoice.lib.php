@@ -132,13 +132,13 @@ function invoice_admin_prepare_head()
 	$head[$h][2] = 'general';
 	$h++;
 
-	if ($conf->global->MAIN_FEATURES_LEVEL >= 2) { 
-	$head[$h][0] = DOL_URL_ROOT.'/admin/invoice_emails.php';
-	$head[$h][1] = $langs->trans("EMails");
-	$head[$h][2] = 'emails';
-	$h++;
+	if ($conf->global->MAIN_FEATURES_LEVEL >= 2) {
+		$head[$h][0] = DOL_URL_ROOT.'/admin/invoice_emails.php';
+		$head[$h][1] = $langs->trans("EMails");
+		$head[$h][2] = 'emails';
+		$h++;
 	}
-	
+
 	$head[$h][0] = DOL_URL_ROOT.'/admin/payment.php';
 	$head[$h][1] = $langs->trans("Payments");
 	$head[$h][2] = 'payment';
