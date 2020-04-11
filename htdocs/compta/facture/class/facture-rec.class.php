@@ -69,6 +69,11 @@ class FactureRec extends CommonInvoice
 	 */
 	public $entity;
 
+	/**
+	 * {@inheritdoc}
+	 */
+	protected $table_ref_field = 'titre';
+
 	public $number;
 	public $date;
 	public $remise;
@@ -82,7 +87,14 @@ class FactureRec extends CommonInvoice
 	public $nb_gen_done;
 	public $nb_gen_max;
 
+	/**
+	 * @var int Frequency
+	 */
 	public $frequency;
+
+    /**
+	 * @var string Unit frequency
+	 */
 	public $unit_frequency;
 
 	public $rang;
