@@ -145,6 +145,26 @@ class Categorie extends CommonObject
 	);
 
     /**
+     * @var array Title Area mapping from type string
+     *
+     * @note Move to const array when PHP 5.6 will be our minimum target
+     */
+    public static $MAP_TYPE_TITLE_AREA = array(
+        'product' => 'ProductsCategoriesArea',
+        'customer' => 'CustomersCategoriesArea',
+        'supplier' => 'SuppliersCategoriesArea',
+        'member' => 'MembersCategoriesArea',
+        'contact' => 'ContactsCategoriesArea',
+        'user' => 'UsersCategoriesArea',
+        'account' => 'AccountsCategoriesArea', // old for bank account
+        'bank_account' => 'AccountsCategoriesArea',
+        'project' => 'ProjectsCategoriesArea',
+        'warehouse'=> 'StocksCategoriesArea',
+        'actioncomm' => 'ActioncommCategoriesArea',
+        'website_page' => 'WebsitePageCategoriesArea'
+    );
+
+    /**
 	 * @var array Object table mapping from type string (table llx_...) when value of key does not match table name.
 	 *
 	 * @note Move to const array when PHP 5.6 will be our minimum target
@@ -291,6 +311,7 @@ class Categorie extends CommonObject
 		if (!is_numeric($type)) $type = $this->MAP_ID[$type];
 
 		$sql = "SELECT rowid, fk_parent, entity, label, description, color, fk_soc, visible, type, ref_ext";
+		$sql .= ", date_creation, tms, fk_user_creat, fk_user_modif";
 		$sql .= " FROM ".MAIN_DB_PREFIX."categorie";
 		if ($id > 0)
 		{
@@ -315,16 +336,20 @@ class Categorie extends CommonObject
 				$res = $this->db->fetch_array($resql);
 
 				$this->id = $res['rowid'];
-				//$this->ref			= $res['rowid'];
+				//$this->ref = $res['rowid'];
 				$this->fk_parent	= $res['fk_parent'];
 				$this->label		= $res['label'];
 				$this->description = $res['description'];
 				$this->color    	= $res['color'];
 				$this->socid		= $res['fk_soc'];
 				$this->visible = $res['visible'];
-				$this->type			= $res['type'];
+				$this->type = $res['type'];
 				$this->ref_ext = $res['ref_ext'];
 				$this->entity = $res['entity'];
+				$this->date_creation = $this->db->jdate($$res['date_creation']);
+				$this->date_modification = $this->db->jdate($res['tms']);
+				$this->fk_user_create = $res['fk_user_create'];
+				$this->fk_user_modif = $res['fk_user_modif'];
 
 				// Retreive all extrafield
 				// fetch optionals attributes and labels

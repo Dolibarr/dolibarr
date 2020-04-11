@@ -112,20 +112,12 @@ $formother = new FormOther($db);
 
 if ($object->id)
 {
-	if ($type == Categorie::TYPE_PRODUCT)       $title = $langs->trans("ProductsCategoryShort");
-	elseif ($type == Categorie::TYPE_SUPPLIER)  $title = $langs->trans("SuppliersCategoryShort");
-	elseif ($type == Categorie::TYPE_CUSTOMER)  $title = $langs->trans("CustomersCategoryShort");
-	elseif ($type == Categorie::TYPE_MEMBER)    $title = $langs->trans("MembersCategoryShort");
-	elseif ($type == Categorie::TYPE_CONTACT)   $title = $langs->trans("ContactCategoriesShort");
-	elseif ($type == Categorie::TYPE_ACCOUNT)   $title = $langs->trans("AccountsCategoriesShort");
-	elseif ($type == Categorie::TYPE_PROJECT)   $title = $langs->trans("ProjectsCategoriesShort");
-	elseif ($type == Categorie::TYPE_USER)      $title = $langs->trans("UsersCategoriesShort");
-	else                                        $title = $langs->trans("Category");
+	$title = Categorie::$MAP_TYPE_TITLE_AREA[$type];
 
 	$head = categories_prepare_head($object, $type);
 
 
-	dol_fiche_head($head, 'photos', $title, -1, 'category');
+	dol_fiche_head($head, 'photos', $langs->trans($title), -1, 'category');
 
 	$linkback = '<a href="'.DOL_URL_ROOT.'/categories/index.php?leftmenu=cat&type='.$type.'">'.$langs->trans("BackToList").'</a>';
 	$object->next_prev_filter = ' type = '.$object->type;
