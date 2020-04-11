@@ -3,6 +3,7 @@
  * Copyright (C) 2005-2015 Laurent Destailleur  <eldy@users.sourceforge.org>
  * Copyright (C) 2013      Juanjo Menent		<jmenent@2byte.es>
  * Copyright (C) 2015      Bahfir Abbes         <contact@dolibarrpar.org>
+ * Copyright (C) 2020	   Thibault FOUCART  	<support@ptibogxiv.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -185,10 +186,13 @@ foreach ($listofnotifiedevents as $notifiedevent)
 }
 print '</td></tr>';
 
+//TODO: option to select on demand notifications by thirdparty or general automatic notifications
+
 print '</table>';
 print '<div class="opacitymedium">';
 print '* '.$langs->trans("GoOntoUserCardToAddMore").'<br>';
 if (!empty($conf->societe->enabled)) print '** '.$langs->trans("GoOntoContactCardToAddMore").'<br>';
+if ($conf->global->MAIN_FEATURES_LEVEL >= 2) print 'NB: '.$langs->trans("GoOntoObjectSettingsToPersonalizeEmails").'<br>';
 print '</div>';
 print '<br><br>';
 
