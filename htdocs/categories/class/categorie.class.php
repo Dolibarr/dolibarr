@@ -348,7 +348,7 @@ class Categorie extends CommonObject
 				$this->entity = $res['entity'];
 				$this->date_creation = $this->db->jdate($$res['date_creation']);
 				$this->date_modification = $this->db->jdate($res['tms']);
-				$this->fk_user_create = $res['fk_user_create'];
+				$this->fk_user_creat = $res['fk_user_creat'];
 				$this->fk_user_modif = $res['fk_user_modif'];
 
 				// Retreive all extrafield
@@ -414,7 +414,7 @@ class Categorie extends CommonObject
 		}
 
 		$this->db->begin();
-
+		$now = dol_now();
 		$sql = "INSERT INTO ".MAIN_DB_PREFIX."categorie (";
 		$sql .= "fk_parent,";
 		$sql .= " label,";
@@ -428,7 +428,9 @@ class Categorie extends CommonObject
 		$sql .= " type,";
 		$sql .= " import_key,";
 		$sql .= " ref_ext,";
-		$sql .= " entity";
+		$sql .= " entity,";
+		$sql .= " date_creation,";
+		$sql .= " fk_user_creat";
 		$sql .= ") VALUES (";
 		$sql .= $this->db->escape($this->fk_parent).",";
 		$sql .= "'".$this->db->escape($this->label)."',";
@@ -442,7 +444,9 @@ class Categorie extends CommonObject
 		$sql .= $this->db->escape($type).",";
 		$sql .= (!empty($this->import_key) ? "'".$this->db->escape($this->import_key)."'" : 'null').",";
 		$sql .= (!empty($this->ref_ext) ? "'".$this->db->escape($this->ref_ext)."'" : 'null').",";
-		$sql .= $this->db->escape($conf->entity);
+		$sql .= $this->db->escape($conf->entity).",";
+		$sql .= "'".$this->db->idate($now)."', ";
+		$sql .= (int) $user->id;
 		$sql .= ")";
 
 		$res = $this->db->query($sql);
@@ -540,6 +544,7 @@ class Categorie extends CommonObject
 		}
 		$sql .= ", visible = '".$this->db->escape($this->visible)."'";
 		$sql .= ", fk_parent = ".$this->fk_parent;
+		$sql .= ", fk_user_modif = ". (int) $user->id;
 		$sql .= " WHERE rowid = ".$this->id;
 
 		dol_syslog(get_class($this)."::update", LOG_DEBUG);
