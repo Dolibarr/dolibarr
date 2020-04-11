@@ -1724,7 +1724,7 @@ div#id-top {
 	display:none;
 <?php } else { ?>
 	background: var(--colorbackhmenu1);
-	background-image: linear-gradient(-45deg, <?php echo colorAdjustBrightness(colorArrayToHex(colorStringToArray($colorbackhmenu1)), '5'); ?>, var(--colorbackhmenu1));
+	/* background-image: linear-gradient(-45deg, <?php echo colorAdjustBrightness(colorArrayToHex(colorStringToArray($colorbackhmenu1)), '5'); ?>, var(--colorbackhmenu1)); */
 	/* box-shadow: 0px 0px 5px #eee; */
 <?php } ?>
 }

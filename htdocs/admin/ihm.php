@@ -241,9 +241,9 @@ print '<input type="hidden" name="action" value="update">';
 clearstatcache();
 
 print '<br>';
-print '<table summary="edit" class="noborder centpercent">';
-print '<tr class="liste_titre"><td>'.$langs->trans("Language").'</td><td></td>';
-print '<td width="20">&nbsp;</td>';
+print '<table summary="edit" class="noborder centpercent editmode">';
+print '<tr class="liste_titre"><th>'.$langs->trans("Language").'</th><th></th>';
+print '<th width="20">&nbsp;</td>';
 print '</tr>';
 
 // Default language
@@ -268,9 +268,9 @@ showSkins(null, 1);
 print '<br>';
 
 // Other
-print '<table summary="otherparameters" class="noborder centpercent">';
-print '<tr class="liste_titre"><td class="titlefield">'.$langs->trans("Miscellaneous").'</td><td></td>';
-print '<td width="20">&nbsp;</td>';
+print '<table summary="otherparameters" class="noborder centpercent editmode">';
+print '<tr class="liste_titre"><th>'.$langs->trans("Miscellaneous").'</th><th></th>';
+print '<th width="20">&nbsp;</tg>';
 print '</tr>';
 
 // Disable javascript and ajax
@@ -385,9 +385,9 @@ print '<br>';
 
 // Other
 print '<div class="div-table-responsive-no-min">';
-print '<table summary="edit" class="noborder centpercent">';
-print '<tr class="liste_titre"><td class="titlefield">'.$langs->trans("LoginPage").'</td><td></td>';
-print '<td width="20">&nbsp;</td>';
+print '<table summary="edit" class="noborder centpercent editmode">';
+print '<tr class="liste_titre"><th class="titlefield">'.$langs->trans("LoginPage").'</th><th></th>';
+print '<th width="20">&nbsp;</th>';
 print '</tr>';
 
 // Message on login page
