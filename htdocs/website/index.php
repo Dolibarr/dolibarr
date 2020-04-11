@@ -3447,6 +3447,10 @@ if ($action == 'replacesite' || $action == 'replacesiteconfirm')
 		if (GETPOST('optioncontent')) $algo .= 'content';
 		if (GETPOST('optionsitefiles')) $algo .= 'sitefiles';
 
+		if (empty($sortfield)) {
+			$sortfield = 'pageurl'; $sortorder = 'ASC';
+		}
+
 		$listofpages = getPagesFromSearchCriterias('', $algo, $searchkey, 1000, $sortfield, $sortorder);
 
 		print '<br>';
@@ -3481,7 +3485,7 @@ if ($action == 'replacesite' || $action == 'replacesiteconfirm')
 			print '<table class="noborder centpercent">';
 			print '<tr class="liste_titre">';
 			print getTitleFieldOfList("Type", 0, $_SERVER['PHP_SELF'], 'type_container', '', $param, '', $sortfield, $sortorder, '')."\n";
-			print getTitleFieldOfList("Link", 0, $_SERVER['PHP_SELF'], 'title', '', $param, '', $sortfield, $sortorder, '')."\n";
+			print getTitleFieldOfList("Link", 0, $_SERVER['PHP_SELF'], 'pageurl', '', $param, '', $sortfield, $sortorder, '')."\n";
 			print getTitleFieldOfList("Description", 0, $_SERVER['PHP_SELF'], '', '', $param, '', $sortfield, $sortorder, '')."\n";
 			print getTitleFieldOfList("", 0 , $_SERVER['PHP_SELF']);
 			print '</tr>';
