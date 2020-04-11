@@ -1765,7 +1765,7 @@ if (($action == 'updatesource' || $action == 'updatecontent' || $action == 'conf
 				// Now generate the master.inc.php page
 				$result = dolSaveMasterFile($filemaster);
 
-				if (!$result) setEventMessages('Failed to write file '.$filemaster, null, 'errors');
+				if (!$result) setEventMessages('Failed to write the master file file '.$filemaster, null, 'errors');
 
 
 				// Now generate the alias.php page
@@ -1777,7 +1777,7 @@ if (($action == 'updatesource' || $action == 'updatecontent' || $action == 'conf
 
 				// Save page alias
 				$result = dolSavePageAlias($filealias, $object, $objectpage);
-				if (!$result) setEventMessages('Failed to write file '.basename($filealias), null, 'errors');
+				if (!$result) setEventMessages('Failed to write the alias file '.basename($filealias), null, 'errors');
 
 				// Save page content
 				$result = dolSavePageContent($filetpl, $object, $objectpage);
@@ -3485,8 +3485,8 @@ if ($action == 'replacesite' || $action == 'replacesiteconfirm')
 			print '<table class="noborder centpercent">';
 			print '<tr class="liste_titre">';
 			print getTitleFieldOfList("Type", 0, $_SERVER['PHP_SELF'], 'type_container', '', $param, '', $sortfield, $sortorder, '')."\n";
-			print getTitleFieldOfList("Link", 0, $_SERVER['PHP_SELF'], 'pageurl', '', $param, '', $sortfield, $sortorder, '')."\n";
-			print getTitleFieldOfList("Description", 0, $_SERVER['PHP_SELF'], '', '', $param, '', $sortfield, $sortorder, '')."\n";
+			print getTitleFieldOfList("Page", 0, $_SERVER['PHP_SELF'], 'pageurl', '', $param, '', $sortfield, $sortorder, '')."\n";
+			//print getTitleFieldOfList("Description", 0, $_SERVER['PHP_SELF'], '', '', $param, '', $sortfield, $sortorder, '')."\n";
 			print getTitleFieldOfList("", 0 , $_SERVER['PHP_SELF']);
 			print '</tr>';
 
@@ -3501,8 +3501,11 @@ if ($action == 'replacesite' || $action == 'replacesiteconfirm')
 					print '<td>';
 					print $answerrecord->getNomUrl(1);
 					print ' <span class="opacitymedium">('.($answerrecord->title ? $answerrecord->title : $langs->trans("NoTitle")).')</span>';
+					//print '</td>';
+					//print '<td class="tdoverflow100">';
+					print '<br>';
+					print '<span class="opacitymedium">'.$answerrecord->description.'</span>';
 					print '</td>';
-					print '<td class="tdoverflow100">'.$answerrecord->description.'</td>';
 					print '<td>';
 					$param = '?action=replacesiteconfirm';
 					$param .= '&websiteid='.$website->id;
