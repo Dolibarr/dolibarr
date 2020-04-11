@@ -793,7 +793,7 @@ function getPagesFromSearchCriterias($type, $algo, $searchstring, $max = 25, $so
 				{
 					$tmpwebsitepage = new WebsitePage($db);
 					$tmpwebsitepage->fetch($obj->rowid);
-					if ($tmpwebsitepage->id > 0) $arrayresult['list'][] = $tmpwebsitepage;
+					if ($tmpwebsitepage->id > 0) $arrayresult['list'][$obj->rowid] = $tmpwebsitepage;
 					$found++;
 				}
 				$i++;

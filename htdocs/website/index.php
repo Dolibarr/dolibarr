@@ -52,9 +52,12 @@ $websitekey = GETPOST('website', 'alpha');
 $page = GETPOST('page', 'alpha');
 $pageid = GETPOST('pageid', 'int');
 $pageref = GETPOST('pageref', 'alphanohtml');
+
 $action = GETPOST('action', 'aZ09');
+$massaction = GETPOST('massaction', 'alpha'); // The bulk action (combo box choice into lists)
 $confirm = GETPOST('confirm', 'alpha');
 $cancel = GETPOST('cancel', 'alpha');
+$toselect   = GETPOST('toselect', 'array'); // Array of ids of elements selected into a list
 $contextpage = GETPOST('contextpage', 'aZ') ?GETPOST('contextpage', 'aZ') : 'bomlist'; // To manage different context of search
 $backtopage = GETPOST('backtopage', 'alpha'); // Go back to a dedicated page
 $optioncss  = GETPOST('optioncss', 'aZ'); // Option for the css output (always '' except when 'print')
@@ -260,6 +263,23 @@ $manifestjsoncontentdefault .= '{
 	}]
 }';
 
+$listofpages = array();
+
+$algo = '';
+if (GETPOST('optionmeta')) $algo .= 'meta';
+if (GETPOST('optioncontent')) $algo .= 'content';
+if (GETPOST('optionsitefiles')) $algo .= 'sitefiles';
+
+if (empty($sortfield)) {
+	$sortfield = 'pageurl'; $sortorder = 'ASC';
+}
+
+$searchkey = GETPOST('searchstring', 'none');
+
+if ($action == 'replacesiteconfirm') {
+	$listofpages = getPagesFromSearchCriterias('', $algo, $searchkey, 1000, $sortfield, $sortorder);
+}
+
 
 
 /*
@@ -340,9 +360,65 @@ if ($action == 'unsetshowsubcontainers')
 	exit;
 }
 
-if (($action == 'replacesite' || $action == 'replacesiteconfirm') && empty(GETPOST('searchstring')))
+if (($action == 'replacesite' || $action == 'replacesiteconfirm') && ! $searchkey)
 {
 	$action = 'replacesite';
+}
+
+// Replacement of string into pages
+if ($massaction == 'replace')
+{
+	$replacestring = GETPOST('replacestring', 'alphanohtml');
+	if (! $replacestring) {
+		setEventMessages("ErrorReplaceStringEmpty", null, 'errors');
+	}
+	else {
+		$nbreplacement = 0;
+
+		foreach($toselect as $keyselected) {
+			$objectpage = $listofpages['list'][$keyselected];
+			if ($objectpage->pageurl) {
+				dol_syslog("Replace string into page ".$objectpage->pageurl);
+
+				if (GETPOST('optioncontent', 'aZ09')) {
+					$objectpage->content = str_replace($searchkey, $replacestring, $objectpage->content);
+				}
+				if (GETPOST('optionmeta', 'aZ09')) {
+					$objectpage->title = str_replace($searchkey, $replacestring, $objectpage->title);
+					$objectpage->description = str_replace($searchkey, $replacestring, $objectpage->description);
+					$objectpage->keywords = str_replace($searchkey, $replacestring, $objectpage->keywords);
+				}
+
+				if (!empty($objectpage->content))
+				{
+					$filealias = $pathofwebsite.'/'.$objectpage->pageurl.'.php';
+					$filetpl = $pathofwebsite.'/page'.$objectpage->id.'.tpl.php';
+
+					// Save page alias
+					$result = dolSavePageAlias($filealias, $object, $objectpage);
+					if (!$result)
+					{
+						setEventMessages('Failed to write file '.basename($filealias), null, 'errors');
+					}
+
+					// Save page of content
+					$result = dolSavePageContent($filetpl, $object, $objectpage);
+					if ($result)
+					{
+						$nbreplacement++;
+					} else {
+						$error++;
+						setEventMessages('Failed to write file '.$filetpl, null, 'errors');
+						$action = 'createcontainer';
+						break;
+					}
+				}
+			}
+		}
+		if (! $error) {
+			setEventMessages($langs->trans("ReplacementDoneInXPages", $nbreplacement), null, 'mesgs');
+		}
+	}
 }
 
 
@@ -3397,10 +3473,8 @@ print "</div>\n";
 print "</form>\n";
 
 
-if ($action == 'replacesite' || $action == 'replacesiteconfirm')
+if ($action == 'replacesite' || $action == 'replacesiteconfirm' || $massaction == 'replace')
 {
-	$searchkey = GETPOST('searchstring', 'none');
-
 	print '<form action="'.$_SERVER["PHP_SELF"].'" method="POST">';
 	print '<input type="hidden" name="token" value="'.newToken().'">';
 	print '<input type="hidden" name="action" value="replacesiteconfirm">';
@@ -3431,37 +3505,53 @@ if ($action == 'replacesite' || $action == 'replacesiteconfirm')
 	print '</div>';
 	print '<div class="tagtd">';
 	print '<input type="text" name="searchstring" value="'.dol_escape_htmltag($searchkey).'" autofocus>';
-	print '</div>';
-	print '</div>';
-
-	print '</div>';
-
-	print '<br>';
 
 	print '<input type="submit" class="button" name="buttonreplacesitesearch" value="'.$langs->trans("Search").'">';
 
+	print '</div>';
+	print '</div>';
+
+	print '</div>';
+
+
 	if ($action == 'replacesiteconfirm')
 	{
-		$algo = '';
-		if (GETPOST('optionmeta')) $algo .= 'meta';
-		if (GETPOST('optioncontent')) $algo .= 'content';
-		if (GETPOST('optionsitefiles')) $algo .= 'sitefiles';
-
-		if (empty($sortfield)) {
-			$sortfield = 'pageurl'; $sortorder = 'ASC';
-		}
-
-		$listofpages = getPagesFromSearchCriterias('', $algo, $searchkey, 1000, $sortfield, $sortorder);
-
 		print '<br>';
 		print '<br>';
 
 		if ($listofpages['code'] == 'OK')
 		{
+			$arrayofselected = is_array($toselect) ? $toselect : array();
+			$param = '';
+			$nbtotalofrecords = count($listofpages['list']);
+			$num = $nbtotalofrecords = $limit;
+			$permissiontodelete = 0;
+
+			// List of mass actions available
+			$arrayofmassactions = array(
+				//'validate'=>$langs->trans("Validate"),
+				//'generate_doc'=>$langs->trans("ReGeneratePDF"),
+				//'builddoc'=>$langs->trans("PDFMerge"),
+				'replace'=>$langs->trans("Replace"),
+			);
+			if ($permissiontodelete) $arrayofmassactions['predelete'] = '<span class="fa fa-trash paddingrightonly"></span>'.$langs->trans("Delete");
+			if (GETPOST('nomassaction', 'int') || in_array($massaction, array('presend', 'predelete'))) $arrayofmassactions = array();
+			$massactionbutton = $form->selectMassAction('', $arrayofmassactions);
+			$massactionbutton .= '<div class="massactionother hidden">';
+			$massactionbutton .= $langs->trans("ReplaceString");
+			$massactionbutton .= '<input type="text" name="replacestring" value="'.dol_escape_htmltag(GETPOST('replacestring', 'none')).'">';
+			$massactionbutton .='</div>';
+
+			$varpage = empty($contextpage) ? $_SERVER["PHP_SELF"] : $contextpage;
+			//$selectedfields = $form->multiSelectArrayWithCheckbox('selectedfields', $arrayfields, $varpage); // This also change content of $arrayfields
+			$selectedfields .= $form->showCheckAddButtons('checkforselect', 1);
+
+			print_barre_liste('', $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, $massactionbutton, $num, $nbtotalofrecords, 'title_companies', 0, '', '', $limit, 1, 1, 1);
+
 			print '<!-- List of search result -->'."\n";
 			print '<div class="rowsearchresult">';
 
-			if ($action == 'replacesiteconfirm' && $conf->global->MAIN_FEATURES_LEVEL >= 2)
+			/*if ($action == 'replacesiteconfirm')
 			{
 				print '<div class="tagtr">';
 				print '<div class="tagtd paddingrightonly">';
@@ -3469,11 +3559,11 @@ if ($action == 'replacesite' || $action == 'replacesiteconfirm')
 				print '</div>';
 				print '<div class="tagtd">';
 				print '<input type="text" name="replacestring" value="'.dol_escape_htmltag(GETPOST('replacestring', 'none')).'">';
-				print '<input type="submit" disabled class="button" name="buttonreplacesitesearch" value="'.$langs->trans("Replace").'">';
+				print '<input type="submit" class="button" name="buttonreplacesitereplace" value="'.$langs->trans("Replace").'">';
 				print '</div>';
 				print '</div>';
 				print '<br>';
-			}
+			}*/
 
 			$param = 'action=replacesiteconfirm&website='.urlencode($website->ref);
 			$param .= '&searchstring='.urlencode($searchkey);
@@ -3488,6 +3578,7 @@ if ($action == 'replacesite' || $action == 'replacesiteconfirm')
 			print getTitleFieldOfList("Page", 0, $_SERVER['PHP_SELF'], 'pageurl', '', $param, '', $sortfield, $sortorder, '')."\n";
 			//print getTitleFieldOfList("Description", 0, $_SERVER['PHP_SELF'], '', '', $param, '', $sortfield, $sortorder, '')."\n";
 			print getTitleFieldOfList("", 0 , $_SERVER['PHP_SELF']);
+			print getTitleFieldOfList($selectedfields, 0, $_SERVER["PHP_SELF"], '', '', '', '', $sortfield, $sortorder, 'center maxwidthsearch ')."\n";
 			print '</tr>';
 
 			foreach ($listofpages['list'] as $answerrecord)
@@ -3521,6 +3612,17 @@ if ($action == 'replacesite' || $action == 'replacesiteconfirm')
 					}
 					print '<a class="editfielda '.$disabled.'" href="'.$urltoedithtmlsource.'" title="'.$langs->trans("EditHTMLSource").'">'.img_picto($langs->trans("EditHTMLSource"), 'edit').'</a>';
 					print '</td>';
+
+					// Action column
+					print '<td class="nowrap center">';
+					if ($massactionbutton || $massaction)
+					{
+						$selected = 0;
+						if (in_array($answerrecord->id, $arrayofselected)) $selected = 1;
+						print '<input id="'.$answerrecord->id.'" class="flat checkforselect" type="checkbox" name="toselect[]" value="'.$answerrecord->id.'"'.($selected ? ' checked="checked"' : '').'>';
+					}
+					print '</td>';
+
 					print '</tr>';
 				}
 				else
@@ -3550,11 +3652,17 @@ if ($action == 'replacesite' || $action == 'replacesiteconfirm')
 					print '<td class="tdoverflow100">';
 					print '</td>';
 					print '<td></td>';
+
+					// Action column
+					print '<td class="nowrap center">';
+					print '</td>';
+
 					print '</tr>';
 				}
 			}
 			print '</table>';
 			print '</div></div>';
+			print '<br>';
 		}
 		else
 		{

@@ -722,6 +722,7 @@ class Form
     	  			else
     	  			{
     	  				jQuery(".massaction").hide();
+						jQuery(".massactionother").hide();
     	            }
         		}
 
@@ -743,10 +744,12 @@ class Form
         			if ($(this).val() != \'0\')
     	  			{
     	  				jQuery(".massactionconfirmed").prop(\'disabled\', false);
+						jQuery(".massactionother").show();
     	  			}
     	  			else
     	  			{
     	  				jQuery(".massactionconfirmed").prop(\'disabled\', true);
+						jQuery(".massactionother").hide();
     	  			}
     	        });
         	});
