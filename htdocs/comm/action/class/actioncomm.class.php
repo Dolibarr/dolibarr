@@ -5,7 +5,7 @@
  * Copyright (C) 2011-2017  Juanjo Menent           <jmenent@2byte.es>
  * Copyright (C) 2015	    Marcos García		    <marcosgdf@gmail.com>
  * Copyright (C) 2018	    Nicolas ZABOURI	        <info@inovea-conseil.com>
- * Copyright (C) 2018       Frédéric France         <frederic.france@netlogic.fr>
+ * Copyright (C) 2018-2020  Frédéric France         <frederic.france@netlogic.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -900,14 +900,27 @@ class ActionComm extends CommonObject
 
         $this->db->begin();
 
-        $sql = "DELETE FROM ".MAIN_DB_PREFIX."actioncomm";
-        $sql .= " WHERE id=".$this->id;
+        // remove categorie association
+        $sql = "DELETE FROM ".MAIN_DB_PREFIX."categorie_actioncomm";
+        $sql .= " WHERE fk_actioncomm=".$this->id;
 
-        dol_syslog(get_class($this)."::delete", LOG_DEBUG);
+        dol_syslog(get_class($this)."::delete categorie", LOG_DEBUG);
         $res = $this->db->query($sql);
         if ($res < 0) {
-        	$this->error = $this->db->lasterror();
-        	$error++;
+            $this->error = $this->db->lasterror();
+            $error++;
+        }
+        // remove actioncomm
+        if (!$error) {
+            $sql = "DELETE FROM ".MAIN_DB_PREFIX."actioncomm";
+            $sql .= " WHERE id=".$this->id;
+
+            dol_syslog(get_class($this)."::delete", LOG_DEBUG);
+            $res = $this->db->query($sql);
+            if ($res < 0) {
+                $this->error = $this->db->lasterror();
+                $error++;
+            }
         }
 
         if (!$error) {
