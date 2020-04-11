@@ -89,7 +89,7 @@ function expedition_admin_prepare_head()
 		$head[$h][2] = 'shipment';
 		$h++;
 	}
-	
+
 	if (!empty($conf->global->MAIN_SUBMODULE_EXPEDITION) && $conf->global->MAIN_FEATURES_LEVEL >= 2) {
 		$head[$h][0] = DOL_URL_ROOT.'/admin/shipping_emails.php';
 		$head[$h][1] = $langs->trans("EMails");

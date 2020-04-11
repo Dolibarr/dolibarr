@@ -41,7 +41,7 @@ $error = 0;
 $constantes=array(
     //'MEMBER_REMINDER_EMAIL'=>array('type'=>'yesno', 'label'=>$langs->trans('MEMBER_REMINDER_EMAIL', $langs->transnoentities("Module2300Name"))),
     'SHIPPING_EMAIL_TEMPLATE_VALIDATED'	=>'emailtemplate:shipping_send',
-    'SHIPPING_EMAIL_TEMPLATE_CLOSED'		=>'emailtemplate:shipping_send',				
+    'SHIPPING_EMAIL_TEMPLATE_CLOSED'		=>'emailtemplate:shipping_send',
     'SHIPPING_MAIL_FROM'=>'string',
 );
 
