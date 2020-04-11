@@ -41,8 +41,8 @@ $error = 0;
 $constantes=array(
     //'MEMBER_REMINDER_EMAIL'=>array('type'=>'yesno', 'label'=>$langs->trans('MEMBER_REMINDER_EMAIL', $langs->transnoentities("Module2300Name"))),
     'INVOICE_EMAIL_TEMPLATE_VALIDATED'	=>'emailtemplate:invoice_send',
-    'INVOICE_EMAIL_TEMPLATE_CLOSED'	=>'emailtemplate:invoice_send',		
-    'INVOICE_EMAIL_TEMPLATE_ABANDONED'		=>'emailtemplate:invoice_send',		
+    'INVOICE_EMAIL_TEMPLATE_CLOSED'	=>'emailtemplate:invoice_send',
+    'INVOICE_EMAIL_TEMPLATE_ABANDONED'		=>'emailtemplate:invoice_send',
     'INVOICE_MAIL_FROM'=>'string',
 );
 
