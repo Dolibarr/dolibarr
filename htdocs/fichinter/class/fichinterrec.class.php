@@ -44,6 +44,11 @@ class FichinterRec extends Fichinter
     public $fk_element = 'fk_fichinter';
 
     /**
+	 * {@inheritdoc}
+	 */
+	protected $table_ref_field = 'titre';
+
+    /**
      * @var string String with name of icon for myobject. Must be the part after the 'object_' into object_myobject.png
      */
     public $picto = 'intervention';
