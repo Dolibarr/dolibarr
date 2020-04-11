@@ -40,9 +40,9 @@ $error = 0;
 // Editing global variables not related to a specific theme
 $constantes=array(
     //'MEMBER_REMINDER_EMAIL'=>array('type'=>'yesno', 'label'=>$langs->trans('MEMBER_REMINDER_EMAIL', $langs->transnoentities("Module2300Name"))),
-    'INVOICE_EMAIL_TEMPLATE_VALIDATED'	=>'emailtemplate:invoice_send',
-    'INVOICE_EMAIL_TEMPLATE_CLOSED'	=>'emailtemplate:invoice_send',
-    'INVOICE_EMAIL_TEMPLATE_ABANDONED'		=>'emailtemplate:invoice_send',
+    'INVOICE_EMAIL_TEMPLATE_VALIDATED'	=>'emailtemplate:facture_send',
+    'INVOICE_EMAIL_TEMPLATE_CLOSED'	=>'emailtemplate:facture_send',
+    'INVOICE_EMAIL_TEMPLATE_ABANDONED'		=>'emailtemplate:facture_send',
     'INVOICE_MAIL_FROM'=>'string',
 );
 
