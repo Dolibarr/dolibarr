@@ -461,8 +461,8 @@ if ($action != 'edit' && $action != 'create')		// If not bank account yet, $acco
 		print '<tr><td colspan="'.$colspan.'" class="opacitymedium">'.$langs->trans("NoBANRecord").'</td></tr>';
 	}
 
-print '</table>';
-print '</div>';
+	print '</table>';
+	print '</div>';
 }
 
 // Edit
