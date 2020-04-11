@@ -121,7 +121,7 @@ function propal_admin_prepare_head()
 	$head[$h][2] = 'general';
 	$h++;
 
-	if ($conf->global->MAIN_FEATURES_LEVEL >= 2) {
+	if ($conf->global->MAIN_FEATURES_LEVEL >= 2 && !empty($conf->notification->enabled)) {
 		$head[$h][0] = DOL_URL_ROOT.'/admin/proposal_emails.php';
 		$head[$h][1] = $langs->trans("EMails");
 		$head[$h][2] = 'emails';
