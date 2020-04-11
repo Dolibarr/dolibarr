@@ -41,9 +41,9 @@ $error = 0;
 $constantes=array(
     //'MEMBER_REMINDER_EMAIL'=>array('type'=>'yesno', 'label'=>$langs->trans('MEMBER_REMINDER_EMAIL', $langs->transnoentities("Module2300Name"))),
     'PROPOSAL_EMAIL_TEMPLATE_VALIDATED'	=>'emailtemplate:propal_send',
-    'PROPOSAL_EMAIL_TEMPLATE_SIGNED'	=>'emailtemplate:propal_send',		
+    'PROPOSAL_EMAIL_TEMPLATE_SIGNED'	=>'emailtemplate:propal_send',
     'PROPOSAL_EMAIL_TEMPLATE_NOTSIGNED'		=>'emailtemplate:propal_send',
-    'PROPOSAL_EMAIL_TEMPLATE_BILLED'		=>'emailtemplate:propal_send',				
+    'PROPOSAL_EMAIL_TEMPLATE_BILLED'		=>'emailtemplate:propal_send',
     'PROPOSAL_MAIL_FROM'=>'string',
 );
 
