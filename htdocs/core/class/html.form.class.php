@@ -6032,6 +6032,11 @@ class Form
 			}
 			if ($tmpfieldstoshow) $fieldstoshow = $tmpfieldstoshow;
 		}
+        else
+        {
+            $fieldstoshow = 't.ref'; // Keep compatibility with old object not declare yet fields
+        }
+
 		if (empty($fieldstoshow))
 		{
 			if (isset($objecttmp->fields['ref'])) {
