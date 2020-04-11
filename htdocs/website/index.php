@@ -389,35 +389,38 @@ if ($massaction == 'replace')
 					$objectpage->keywords = str_replace($searchkey, $replacestring, $objectpage->keywords);
 				}
 
-				if (!empty($objectpage->content))
+				$filealias = $pathofwebsite.'/'.$objectpage->pageurl.'.php';
+				$filetpl = $pathofwebsite.'/page'.$objectpage->id.'.tpl.php';
+
+				// Save page alias
+				$result = dolSavePageAlias($filealias, $object, $objectpage);
+				if (!$result)
 				{
-					$filealias = $pathofwebsite.'/'.$objectpage->pageurl.'.php';
-					$filetpl = $pathofwebsite.'/page'.$objectpage->id.'.tpl.php';
+					setEventMessages('Failed to write file '.basename($filealias), null, 'errors');
+				}
 
-					// Save page alias
-					$result = dolSavePageAlias($filealias, $object, $objectpage);
-					if (!$result)
-					{
-						setEventMessages('Failed to write file '.basename($filealias), null, 'errors');
-					}
-
-					// Save page of content
-					$result = dolSavePageContent($filetpl, $object, $objectpage);
-					if ($result)
-					{
-						$nbreplacement++;
-					} else {
-						$error++;
-						setEventMessages('Failed to write file '.$filetpl, null, 'errors');
-						$action = 'createcontainer';
-						break;
-					}
+				// Save page of content
+				$result = dolSavePageContent($filetpl, $object, $objectpage);
+				if ($result)
+				{
+					$nbreplacement++;
+					//var_dump($objectpage->content);exit;
+					$objectpage->update($user);
+				} else {
+					$error++;
+					setEventMessages('Failed to write file '.$filetpl, null, 'errors');
+					$action = 'createcontainer';
+					break;
 				}
 			}
 		}
-		if (! $error) {
+
+		if ($nbreplacement > 0) {
 			setEventMessages($langs->trans("ReplacementDoneInXPages", $nbreplacement), null, 'mesgs');
 		}
+
+		// Now we reload list
+		$listofpages = getPagesFromSearchCriterias('', $algo, $searchkey, 1000, $sortfield, $sortorder);
 	}
 }
 
