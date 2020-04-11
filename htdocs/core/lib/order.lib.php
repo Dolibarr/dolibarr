@@ -131,6 +131,13 @@ function order_admin_prepare_head()
 	$head[$h][1] = $langs->trans("Miscellaneous");
 	$head[$h][2] = 'general';
 	$h++;
+	
+	if ($conf->global->MAIN_FEATURES_LEVEL >= 2) { 
+	$head[$h][0] = DOL_URL_ROOT.'/admin/commande_emails.php';
+	$head[$h][1] = $langs->trans("EMails");
+	$head[$h][2] = 'emails';
+	$h++;
+	}
 
 	complete_head_from_modules($conf, $langs, null, $head, $h, 'order_admin');
 
