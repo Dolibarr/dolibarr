@@ -6,6 +6,7 @@
  * Copyright (C) 2018       Francis Appels          <francis.appels@z-application.com>
  * Copyright (C) 2019       Markus Welters          <markus@welters.de>
  * Copyright (C) 2019       Rafael Ingenleuf        <ingenleuf@welters.de>
+ * Copyright (C) 2020       Marc Guenneugues        <marc.guenneugues@simicar.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -350,13 +351,18 @@ class pdf_standard extends ModeleExpenseReport
 				$initialY = $tab_top + 7;
 				$nexY = $tab_top + 7;
 
+				$showpricebeforepagebreak = 1;
+				$pdf->setTopMargin($tab_top_newpage);
 				// Loop on each lines
-				for ($i = 0 ; $i < $nblines ; $i++) {
+				$i = 0;
+                while ($i < $nblines) {
 					$pdf->SetFont('', '', $default_font_size - 2);   // Into loop to work with multipage
 					$pdf->SetTextColor(0, 0, 0);
-
-					$pdf->setTopMargin($tab_top_newpage);
-					$pdf->setPageOrientation('', 1, $heightforfooter+$heightforfreetext+$heightforinfotot);	// The only function to edit the bottom margin of current page to set it.
+                    if (empty($showpricebeforepagebreak)) {
+                        $pdf->setPageOrientation('', 1, $heightforfooter);  // The only function to edit the bottom margin of current page to set it.
+                    } else {
+                        $pdf->setPageOrientation('', 1, $heightforfooter + $heightforfreetext + $heightforinfotot); // The only function to edit the bottom margin of current page to set it.
+                    }
 					$pageposbefore = $pdf->getPage();
                     $curY = $nexY;
                     $pdf->startTransaction();
@@ -367,7 +373,27 @@ class pdf_standard extends ModeleExpenseReport
 						$pdf->rollbackTransaction(true);
 						$pageposafter = $pageposbefore;
 						//print $pageposafter.'-'.$pageposbefore;exit;
-						$pdf->setPageOrientation('', 1, $heightforfooter);	// The only function to edit the bottom margin of current page to set it.
+						if (empty($showpricebeforepagebreak)) {
+                            $pdf->AddPage('', '', true);
+                            if (!empty($tplidx)) {
+                                $pdf->useTemplate($tplidx);
+                            }
+                            if (empty($conf->global->MAIN_PDF_DONOTREPEAT_HEAD)) {
+                                 $this->_pagehead($pdf, $object, 0, $outputlangs);
+                            }
+                            $pdf->setPage($pageposafter + 1);
+                            $showpricebeforepagebreak = 1;
+                            $nexY = $tab_top_newpage;
+                            $nexY += ($pdf->getFontSize() * 1.3);    // Passe espace entre les lignes
+                            $pdf->SetFont('', '', $default_font_size - 2);   // Into loop to work with multipage
+                            $pdf->SetTextColor(0, 0, 0);
+
+                            $pdf->setTopMargin($tab_top_newpage);
+                            continue;
+                        } else {
+                            $pdf->setPageOrientation('', 1, $heightforfooter);
+                            $showpricebeforepagebreak = 0;
+                        }
 						$this->printLine($pdf, $object, $i, $curY, $default_font_size, $outputlangs, $hidedetails);
 						$pageposafter = $pdf->getPage();
 						$posyafter = $pdf->GetY();
@@ -397,6 +423,7 @@ class pdf_standard extends ModeleExpenseReport
 					{
 						$pdf->commitTransaction();
 					}
+					$i++;
                     //nexY
                     $nexY = $pdf->GetY();
                     $pageposafter = $pdf->getPage();
@@ -426,6 +453,7 @@ class pdf_standard extends ModeleExpenseReport
 					while ($pagenb < $pageposafter)
 					{
 						$pdf->setPage($pagenb);
+						$pdf->setPageOrientation('', 1, 0); // The only function to edit the bottom margin of current page to set it.
 						if ($pagenb == 1)
 						{
 							$this->_tableau($pdf, $tab_top, $this->page_hauteur - $tab_top - $heightforfooter, 0, $outputlangs, 0, 1);
