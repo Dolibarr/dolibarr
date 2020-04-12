@@ -590,7 +590,8 @@ if ($action == "valid" || $action == "history")
     }
     $sectionwithinvoicelink .= '</span>';
     if ($conf->global->TAKEPOS_PRINT_METHOD == "takeposconnector") {
-         $sectionwithinvoicelink .= ' <button id="buttonprint" type="button" onclick="TakeposPrinting('.$placeid.');">'.$langs->trans('PrintTicket').'</button>';
+		if (filter_var($conf->global->TAKEPOS_PRINT_SERVER, FILTER_VALIDATE_URL) == true) $sectionwithinvoicelink .= ' <button id="buttonprint" type="button" onclick="TakeposConnector('.$placeid.');">'.$langs->trans('PrintTicket').'</button>';
+		else $sectionwithinvoicelink .= ' <button id="buttonprint" type="button" onclick="TakeposPrinting('.$placeid.');">'.$langs->trans('PrintTicket').'</button>';
     } elseif ($conf->global->TAKEPOS_PRINT_METHOD == "receiptprinter") {
         $sectionwithinvoicelink .= ' <button id="buttonprint" type="button" onclick="DolibarrTakeposPrinting('.$placeid.');">'.$langs->trans('PrintTicket').'</button>';
     } else {
@@ -708,6 +709,20 @@ function TakeposPrinting(id){
         });
     });
 }
+
+function TakeposConnector(id){
+	var invoice='<?php
+	$data=json_encode($invoice);
+	$data=base64_encode($data);
+	echo $data;
+	?>';
+    $.ajax({
+        type: "POST",
+        url: '<?php print $conf->global->TAKEPOS_PRINT_SERVER; ?>/print.php',
+        data: 'invoice='+invoice
+    });
+}
+
 function DolibarrTakeposPrinting(id) {
     console.log('Printing invoice ticket ' + id)
     $.ajax({
