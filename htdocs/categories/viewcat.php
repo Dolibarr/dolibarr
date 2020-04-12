@@ -207,21 +207,12 @@ $arrayofcss = array('/includes/jquery/plugins/jquerytreeview/jquery.treeview.css
 $helpurl = '';
 llxHeader("", $langs->trans("Categories"), $helpurl, '', 0, 0, $arrayofjs, $arrayofcss);
 
-if ($type == Categorie::TYPE_PRODUCT) { $title = $langs->trans("ProductsCategoriesArea"); $typetext = 'product'; }
-elseif ($type == Categorie::TYPE_SUPPLIER) { $title = $langs->trans("SuppliersCategoriesArea"); $typetext = 'supplier'; }
-elseif ($type == Categorie::TYPE_CUSTOMER) { $title = $langs->trans("CustomersCategoriesArea"); $typetext = 'customer'; }
-elseif ($type == Categorie::TYPE_MEMBER) { $title = $langs->trans("MembersCategoriesArea"); $typetext = 'member'; }
-elseif ($type == Categorie::TYPE_CONTACT) { $title = $langs->trans("ContactsCategoriesArea"); $typetext = 'contact'; }
-elseif ($type == Categorie::TYPE_ACCOUNT) { $title = $langs->trans("AccountsCategoriesArea"); $typetext = 'bank_account'; }
-elseif ($type == Categorie::TYPE_PROJECT) { $title = $langs->trans("ProjectsCategoriesArea"); $typetext = 'project'; }
-elseif ($type == Categorie::TYPE_USER) { $title = $langs->trans("UsersCategoriesArea"); $typetext = 'user'; }
-elseif ($type == Categorie::TYPE_WAREHOUSE) { $title = $langs->trans("StocksCategoriesArea"); $typetext = 'warehouse'; }
-else { $title = $langs->trans("CategoriesArea"); $typetext = 'unknown'; }
+$title = Categorie::$MAP_TYPE_TITLE_AREA[$type];
 
 $head = categories_prepare_head($object, $type);
 
 
-dol_fiche_head($head, 'card', $title, -1, 'category');
+dol_fiche_head($head, 'card', $langs->trans($title), -1, 'category');
 $backtolist = (GETPOST('backtolist') ? GETPOST('backtolist') : DOL_URL_ROOT.'/categories/index.php?leftmenu=cat&type='.$type);
 $linkback = '<a href="'.$backtolist.'">'.$langs->trans("BackToList").'</a>';
 $object->next_prev_filter = ' type = '.$object->type;
@@ -350,7 +341,7 @@ else
 {
 	$categstatic = new Categorie($db);
 
-	$fulltree = $categstatic->get_full_arbo($typetext, $object->id, 1);
+	$fulltree = $categstatic->get_full_arbo($type, $object->id, 1);
 
 	// Load possible missing includes
 	if ($conf->global->CATEGORY_SHOW_COUNTS)
