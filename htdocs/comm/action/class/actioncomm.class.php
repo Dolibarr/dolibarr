@@ -898,13 +898,14 @@ class ActionComm extends CommonObject
 
         $error = 0;
 
+        dol_syslog(get_class($this)."::delete", LOG_DEBUG);
+
         $this->db->begin();
 
         // remove categorie association
         $sql = "DELETE FROM ".MAIN_DB_PREFIX."categorie_actioncomm";
         $sql .= " WHERE fk_actioncomm=".$this->id;
 
-        dol_syslog(get_class($this)."::delete categorie", LOG_DEBUG);
         $res = $this->db->query($sql);
         if ($res < 0) {
             $this->error = $this->db->lasterror();
@@ -915,7 +916,6 @@ class ActionComm extends CommonObject
             $sql = "DELETE FROM ".MAIN_DB_PREFIX."actioncomm";
             $sql .= " WHERE id=".$this->id;
 
-            dol_syslog(get_class($this)."::delete", LOG_DEBUG);
             $res = $this->db->query($sql);
             if ($res < 0) {
                 $this->error = $this->db->lasterror();
@@ -927,7 +927,6 @@ class ActionComm extends CommonObject
             $sql = "DELETE FROM ".MAIN_DB_PREFIX."actioncomm_resources";
             $sql .= " WHERE fk_actioncomm=".$this->id;
 
-            dol_syslog(get_class($this)."::delete", LOG_DEBUG);
             $res = $this->db->query($sql);
             if ($res < 0) {
                 $this->error = $this->db->lasterror();
