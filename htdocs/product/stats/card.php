@@ -104,7 +104,7 @@ if (!$id && empty($ref))
         $title = $langs->trans("Statistics");
     }
 
-    print load_fiche_titre($title, $mesg, 'products');
+    print load_fiche_titre($title, $mesg, 'product');
 }
 else
 {
