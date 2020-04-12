@@ -1385,7 +1385,7 @@ if ($socid && $action != 'edit' && $action != 'create' && $action != 'editcard' 
 
     $morehtmlright = dolGetButtonTitle($langs->trans('Add'), '', 'fa fa-plus-circle', $_SERVER["PHP_SELF"].'?socid='.$object->id.'&amp;action=create');
 
-	print load_fiche_titre($langs->trans("BankAccounts"), $morehtmlright, '');
+	print load_fiche_titre($langs->trans("BankAccounts"), $morehtmlright, 'bank');
 
 	$rib_list = $object->get_all_rib();
 	if (is_array($rib_list))
