@@ -73,6 +73,14 @@ ALTER TABLE llx_holiday_users ADD UNIQUE INDEX uk_holiday_users(fk_user, fk_type
 
 ALTER TABLE llx_ticket ADD COLUMN import_key varchar(14);
 
+ALTER TABLE llx_ticket ADD UNIQUE uk_ticket_ref (ref, entity);
+ALTER TABLE llx_ticket ADD INDEX idx_ticket_entity (entity);
+ALTER TABLE llx_ticket ADD INDEX idx_ticket_fk_soc (fk_soc);
+ALTER TABLE llx_ticket ADD INDEX idx_ticket_fk_user_assign (fk_user_assign);
+ALTER TABLE llx_ticket ADD INDEX idx_ticket_fk_project (fk_project);
+ALTER TABLE llx_ticket ADD INDEX idx_ticket_fk_statut (fk_statut);
+
+
 --ALTER TABLE llx_facturerec DROP COLUMN vat_src_code;
 
 

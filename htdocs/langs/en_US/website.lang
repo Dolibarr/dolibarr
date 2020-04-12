@@ -127,3 +127,4 @@ OtherLanguages=Other languages
 UseManifest=Provide a manifest.json file
 PublicAuthorAlias=Public author alias
 AvailableLanguagesAreDefinedIntoWebsiteProperties=Available languages are defined into website properties
+ReplacementDoneInXPages=Replacement done in %s pages or containers

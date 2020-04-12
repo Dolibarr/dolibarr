@@ -72,6 +72,9 @@ function dolSavePageAlias($filealias, $object, $objectpage)
 	$aliascontent .= 'else require $dolibarr_main_data_root.\'/website/\'.$website->ref.\'/page'.$objectpage->id.'.tpl.php\';'."\n";
 	$aliascontent .= '?>'."\n";
 	$result = file_put_contents($filealias, $aliascontent);
+	if ($result === false) {
+		dol_syslog("Failed to write file ".$filealias, LOG_WARNING);
+	}
 	if (!empty($conf->global->MAIN_UMASK)) {
 		@chmod($filealias, octdec($conf->global->MAIN_UMASK));
 	}
@@ -89,6 +92,9 @@ function dolSavePageAlias($filealias, $object, $objectpage)
 		$aliascontent .= 'else require $dolibarr_main_data_root.\'/website/\'.$website->ref.\'/page'.$objectpage->id.'.tpl.php\';'."\n";
 		$aliascontent .= '?>'."\n";
 		$result = file_put_contents($filealias, $aliascontent);
+		if ($result === false) {
+			dol_syslog("Failed to write file ".$filealias, LOG_WARNING);
+		}
 		if (!empty($conf->global->MAIN_UMASK)) {
 			@chmod($filealias, octdec($conf->global->MAIN_UMASK));
 		}

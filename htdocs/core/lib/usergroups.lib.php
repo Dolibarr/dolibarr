@@ -331,7 +331,7 @@ function showSkins($fuser, $edit = 0, $foruserprofile = false)
 	if ($foruserprofile) $colspan = 4;
 
 	$thumbsbyrow = 6;
-	print '<table class="noborder centpercent">';
+	print '<table class="noborder centpercent'.($edit ? ' editmode' : '').'">';
 
 	// Title
 	if ($foruserprofile)
