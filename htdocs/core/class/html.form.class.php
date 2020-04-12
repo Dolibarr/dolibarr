@@ -6034,7 +6034,7 @@ class Form
 		}
         else
         {
-            $fieldstoshow = 't.ref'; // Keep compatibility with old object not declare yet fields
+			$objecttmp->fields['ref']=array('type'=>'varchar(30)', 'label'=>'Ref');
         }
 
 		if (empty($fieldstoshow))
