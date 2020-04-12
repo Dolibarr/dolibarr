@@ -317,6 +317,7 @@ if ($id > 0 || ! empty($ref))
 		print load_fiche_titre($langs->trans("ProductAssociationList"), '', '');
 
 		print '<form name="formComposedProduct" action="'.$_SERVER['PHP_SELF'].'" method="post">';
+		print '<input type="hidden" name="token" value="'.newToken().'" />';
 		print '<input type="hidden" name="action" value="save_composed_product" />';
 		print '<input type="hidden" name="id" value="'.$id.'" />';
 
