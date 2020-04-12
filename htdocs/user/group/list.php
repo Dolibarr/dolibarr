@@ -155,7 +155,7 @@ if ($resql)
     print '<input type="hidden" name="mode" value="'.$mode.'">';
     print '<input type="hidden" name="contextpage" value="'.$contextpage.'">';
 
-    print_barre_liste($text, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, "", $num, $nbtotalofrecords, 'generic', 0, $newcardbutton, '', $limit, 0, 0, 1);
+    print_barre_liste($text, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, "", $num, $nbtotalofrecords, 'object_group', 0, $newcardbutton, '', $limit, 0, 0, 1);
 
     if ($sall)
     {
