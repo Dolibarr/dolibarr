@@ -248,7 +248,7 @@ llxHeader("", $langs->trans("WarehouseCard"), $help_url);
 
 if ($action == 'create')
 {
-	print load_fiche_titre($langs->trans("NewWarehouse"));
+	print load_fiche_titre($langs->trans("NewWarehouse"), '', 'stock');
 
 	dol_set_focus('input[name="libelle"]');
 
