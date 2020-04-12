@@ -6034,7 +6034,8 @@ class Form
 		}
         else
         {
-			$objecttmp->fields['ref']=array('type'=>'varchar(30)', 'label'=>'Ref');
+			// For backward compatibility
+			$objecttmp->fields['ref']=array('type'=>'varchar(30)', 'label'=>'Ref', 'showoncombobox'=>1); 
         }
 
 		if (empty($fieldstoshow))
