@@ -709,7 +709,6 @@ if (empty($conf->global->MAIN_DISABLE_GLOBAL_WORKBOARD)) {
                         $classe = $classes[$keyIndex];
                         if (isset($boardloaded[$classe]) && is_object($boardloaded[$classe]))
                         {
-
                             $groupElement['globalStats']['total'] = $boardloaded[$classe]->nb[$globalStatsKey] ? $boardloaded[$classe]->nb[$globalStatsKey] : 0;
                             $nbTotal = doubleval($groupElement['globalStats']['total']);
                             if ($nbTotal >= 10000) { $nbTotal = round($nbTotal / 1000, 2).'k'; }
