@@ -190,7 +190,7 @@ class ActionComm extends CommonObject
      * Object user of owner
      * @var User
      * @deprecated
-     * @see userownerid
+     * @see $userownerid
      */
     public $usertodo;
 
@@ -198,7 +198,7 @@ class ActionComm extends CommonObject
      * Object user that did action
      * @var User
      * @deprecated
-     * @see userdoneid
+     * @see $userdoneid
      */
     public $userdone;
 
@@ -209,7 +209,7 @@ class ActionComm extends CommonObject
      * Company linked to action (optional)
      * @var Societe|null
      * @deprecated
-     * @see socid
+     * @see $socid
      */
     public $societe;
 
@@ -217,7 +217,7 @@ class ActionComm extends CommonObject
      * Contact linked to action (optional)
      * @var Contact|null
      * @deprecated
-     * @see contactid
+     * @see $contactid
      */
     public $contact;
 
@@ -797,7 +797,7 @@ class ActionComm extends CommonObject
 
         dol_syslog(get_class($this)."::delete", LOG_DEBUG);
         $res=$this->db->query($sql);
-        if ($res < 0) {
+        if (!$res) {
         	$this->error=$this->db->lasterror();
         	$error++;
         }
@@ -808,7 +808,7 @@ class ActionComm extends CommonObject
 
             dol_syslog(get_class($this)."::delete", LOG_DEBUG);
             $res=$this->db->query($sql);
-            if ($res < 0) {
+            if (!$res) {
                 $this->error=$this->db->lasterror();
                 $error++;
             }
