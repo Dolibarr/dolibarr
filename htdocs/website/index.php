@@ -366,9 +366,9 @@ if (($action == 'replacesite' || $action == 'replacesiteconfirm') && ! $searchke
 }
 
 // Replacement of string into pages
-if ($massaction == 'replace')
+if ($massaction == 'replace' && GETPOST('confirmmassaction', 'alpha'))
 {
-	$replacestring = GETPOST('replacestring', 'alphanohtml');
+	$replacestring = GETPOST('replacestring', 'none');
 
 	if (empty($user->rights->website->writephp)) {
 		setEventMessages("NotAllowedToAddDynamicContent", null, 'errors');
