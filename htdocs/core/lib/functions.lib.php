@@ -3256,10 +3256,10 @@ function img_picto($titlealt, $picto, $moreatt = '', $pictoisfullpath = false, $
 
 			// Define $color
 			$arrayconvpictotocolor = array(
-				'address'=>'#37a', 'building'=>'#37a', 'bom'=>'#993',
-				'companies'=>'#37a', 'company'=>'#37a', 'contact'=>'#37a', 'dynamicprice'=>'#993',
+				'address'=>'#37a', 'building'=>'#37a', 'bom'=>'#a69944',
+				'companies'=>'#37a', 'company'=>'#37a', 'contact'=>'#37a', 'dynamicprice'=>'#a69944',
 				'edit'=>'#444', 'note'=>'#999', 'error'=>'', 'listlight'=>'#999',
-				'lot'=>'#993', 'mrp'=>'#993', 'product'=>'#993', 'service'=>'#993', 'stock'=>'#993',
+				'lot'=>'#a69944', 'mrp'=>'#a69944', 'product'=>'#a69944', 'service'=>'#a69944', 'stock'=>'#a69944',
 				'other'=>'#ddd',
 				'playdisabled'=>'#ccc', 'printer'=>'#444', 'resize'=>'#444', 'rss'=>'#cba',
 				'stats'=>'#444', 'switch_off'=>'#999', 'uparrow'=>'#555', 'warning'=>''

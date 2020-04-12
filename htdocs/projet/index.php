@@ -98,8 +98,9 @@ else
 print_barre_liste($form->textwithpicto($title, $tooltiphelp), 0, $_SERVER["PHP_SELF"], '', '', '', '', 0, -1, 'project', 0, $morehtml);
 
 
-// Get list of ponderated percent for each status
-$listofoppstatus = array(); $listofopplabel = array(); $listofoppcode = array();
+// Get list of ponderated percent and colors for each status
+include_once DOL_DOCUMENT_ROOT.'/theme/'.$conf->theme.'/theme_vars.inc.php';
+$listofoppstatus = array(); $listofopplabel = array(); $listofoppcode = array(); $colorseries = array();
 $sql = "SELECT cls.rowid, cls.code, cls.percent, cls.label";
 $sql .= " FROM ".MAIN_DB_PREFIX."c_lead_status as cls";
 $sql .= " WHERE active=1";
@@ -115,11 +116,34 @@ if ($resql)
 		$listofoppstatus[$objp->rowid] = $objp->percent;
 		$listofopplabel[$objp->rowid] = $objp->label;
 		$listofoppcode[$objp->rowid] = $objp->code;
+		switch($objp->code) {
+			case 'PROSP':
+				$colorseries[$objp->rowid] = "-".$badgeStatus0;
+				break;
+			case 'QUAL':
+				$colorseries[$objp->rowid] = "-".$badgeStatus1;
+				break;
+			case 'PROPO':
+				$colorseries[$objp->rowid] = $badgeStatus1;
+				break;
+			case 'NEGO':
+				$colorseries[$objp->rowid] = $badgeStatus4;
+				break;
+			case 'LOST':
+				$colorseries[$objp->rowid] = $badgeStatus9;
+				break;
+			case 'WON':
+				$colorseries[$objp->rowid] = $badgeStatus6;
+				break;
+			default:
+				$colorseries[$objp->rowid] = $badgeStatus2;
+				break;
+		}
 		$i++;
 	}
 }
 else dol_print_error($db);
-
+//var_dump($listofoppcode);
 
 
 print '<div class="fichecenter"><div class="fichethirdleft">';
