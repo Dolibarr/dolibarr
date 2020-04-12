@@ -61,7 +61,7 @@ span.info-box-icon-text {	/* hide box text number due to problems */
 	max-width: 100%;
 }
 .info-box-module .info-box-icon > img {
-    max-width: 50%;
+    max-width: 55%;
 }
 .info-box-content {
 	padding: 5px 10px;
@@ -126,11 +126,11 @@ if (GETPOSTISSET('THEME_AGRESSIVENESS_RATIO')) $conf->global->THEME_AGRESSIVENES
 .bg-infoxbox-order_supplier i.fa{
 	color: <?php print colorAgressiveness('#40b0cf', $conf->global->THEME_AGRESSIVENESS_RATIO); ?>  !important;
 }
-.bg-infoxbox-contrat i.fa{
+.bg-infoxbox-contrat i.fa, .bg-infoxbox-ticket i.fa{
 	color: <?php print colorAgressiveness('#20a68a', $conf->global->THEME_AGRESSIVENESS_RATIO); ?>  !important;
 }
 .bg-infoxbox-bank_account i.fa{
-	color: <?php print colorAgressiveness('#e39c42', $conf->global->THEME_AGRESSIVENESS_RATIO); ?>  !important;
+	color: <?php print colorAgressiveness('#b0a53e', $conf->global->THEME_AGRESSIVENESS_RATIO); ?>  !important;
 }
 .bg-infoxbox-adherent i.fa{
 	color: <?php print colorAgressiveness('#f39c12', $conf->global->THEME_AGRESSIVENESS_RATIO); ?>  !important;

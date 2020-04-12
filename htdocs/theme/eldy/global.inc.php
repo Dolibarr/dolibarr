@@ -3826,8 +3826,8 @@ div.boximport {
 
 .fieldrequired { font-weight: bold; color: var(--fieldrequiredcolor); }
 
-.widthpictotitle { width: 32px; text-align: <?php echo $left; ?>; }
-span.widthpictotitle { font-size: 2em; };
+.widthpictotitle { width: 26px; text-align: <?php echo $left; ?>; }
+span.widthpictotitle { font-size: 1.7em; };
 
 .dolgraphtitle { margin-top: 6px; margin-bottom: 4px; }
 .dolgraphtitlecssboxes { /* margin: 0px; */ }

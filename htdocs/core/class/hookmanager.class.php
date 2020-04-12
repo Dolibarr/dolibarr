@@ -149,7 +149,7 @@ class HookManager
         $parameters['context'] = join(':', $this->contextarray);
         //dol_syslog(get_class($this).'::executeHooks method='.$method." action=".$action." context=".$parameters['context']);
 
-        // Define type of hook ('output' or 'addreplace'. 'returnvalue' is deprecated because a 'addreplace' hook can also return resPrint and resArray).
+        // Define type of hook ('output' or 'addreplace'). Type 'returnvalue' is deprecated because a 'addreplace' hook can also return resPrint and resArray).
         $hooktype = 'output';
         if (in_array(
 			$method,
@@ -199,6 +199,7 @@ class HookManager
 			    'pdf_getlinetotalwithtax',
 				'paymentsupplierinvoices',
 				'printAddress',
+				'printEmail',
 				'printSearchForm',
 				'printTabsHead',
 				'printObjectLine',

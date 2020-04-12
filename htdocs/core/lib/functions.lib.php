@@ -3144,7 +3144,7 @@ function img_picto($titlealt, $picto, $moreatt = '', $pictoisfullpath = false, $
         		'filter', 'file-code', 'folder', 'folder-open', 'grip', 'grip_title', 'help', 'language', 'list', 'listlight', 'note',
         		'object_action', 'object_account', 'object_barcode', 'object_phoning', 'object_phoning_fax', 'object_email',
         		'object_accounting', 'object_category', 'object_bookmark', 'object_bug', 'object_generic', 'object_list-alt', 'object_calendar', 'object_calendarweek', 'object_calendarmonth', 'object_calendarday', 'object_calendarperuser',
-        		'object_cash-register', 'object_company', 'object_contact', 'object_holiday', 'object_hrm', 'object_multicurrency', 'object_payment',
+        		'object_cash-register', 'object_company', 'object_contact', 'object_contract', 'object_holiday', 'object_hrm', 'object_multicurrency', 'object_payment',
         		'object_paragraph', 'object_printer', 'object_resource', 'object_rss', 'object_technic', 'object_ticket', 'object_trip', 'object_user', 'object_group', 'object_member', 'object_other',
         		'off', 'on', 'paiment', 'play', 'playdisabled', 'printer', 'resize', 'stats', 'trip',
 				'note', 'setup', 'sign-out', 'split', 'switch_off', 'switch_on', 'tools', 'unlink', 'uparrow', 'user', 'wrench', 'globe',
@@ -3169,7 +3169,7 @@ function img_picto($titlealt, $picto, $moreatt = '', $pictoisfullpath = false, $
 
 		    $arrayconvpictotofa = array(
 		    	'account'=>'university', 'action'=>'calendar-alt', 'address'=> 'address-book', 'bank_account'=>'university',
-		    	'company'=>'building', 'contact'=>'address-book',
+		    	'company'=>'building', 'contact'=>'address-book', 'contract'=>'suitcase',
 		    	'setup'=>'cog', 'companies'=>'building', 'products'=>'cube', 'commercial'=>'suitcase', 'invoicing'=>'coins', 'accountancy'=>'money-check-alt',
 		    	'accounting'=>'chart-line', 'category'=>'tag',
 		    	'hrm'=>'umbrella-beach', 'members'=>'users', 'ticket'=>'ticket-alt', 'globe'=>'external-link-alt',
@@ -3236,6 +3236,7 @@ function img_picto($titlealt, $picto, $moreatt = '', $pictoisfullpath = false, $
 			// Add CSS
 			$arrayconvpictotomorcess = array(
 				'action'=>'bg-infoxbox-action', 'account'=>'bg-infoxbox-bank_account', 'bank_account'=>'bg-infoxbox-bank_account', 'cash-register'=>'bg-infoxbox-bank_account',
+				'contract'=>'bg-infoxbox-contrat',
 				'multicurrency'=>'bg-infoxbox-bank_account',
 				'check'=>'font-status4',
 				'hrm'=>'bg-infoxbox-adherent', 'group'=>'bg-infoxbox-adherent',

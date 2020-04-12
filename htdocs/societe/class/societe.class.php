@@ -2407,7 +2407,7 @@ class Societe extends CommonObject
 		// By default
 		if (empty($linkstart))
 		{
-			$label .= '<u>'.$langs->trans("ShowCompany").'</u>';
+			$label .= '<u>'.$langs->trans("ThirdParty").'</u>';
 			$linkstart = '<a href="'.DOL_URL_ROOT.'/societe/card.php?socid='.$this->id;
 		}
 

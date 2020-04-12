@@ -742,7 +742,9 @@ if (empty($action) || $action == 'view' || $action == 'addlink' || $action == 'd
             $head = societe_prepare_head($object->thirdparty);
 
             dol_fiche_head($head, 'ticket', $langs->trans("ThirdParty"), 0, 'company');
+
             dol_banner_tab($object->thirdparty, 'socid', '', ($user->socid ? 0 : 1), 'rowid', 'nom');
+
             dol_fiche_end();
         }
 
@@ -790,7 +792,7 @@ if (empty($action) || $action == 'view' || $action == 'addlink' || $action == 'd
         if (!empty($conf->projet->enabled))
         {
         	$langs->load("projects");
-        	$morehtmlref .= '<br>'.$langs->trans('Project');
+        	$morehtmlref .= '<br>'.$langs->trans('Project').' ';
         	if ($user->rights->ticket->write)
         	{
         		if ($action != 'classify')
