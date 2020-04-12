@@ -774,7 +774,7 @@ class ActionComm extends CommonObject
 
         dol_syslog(get_class($this)."::delete", LOG_DEBUG);
         $res=$this->db->query($sql);
-        if ($res < 0) {
+        if (!$res) {
         	$this->error=$this->db->lasterror();
         	$error++;
         }
@@ -785,7 +785,7 @@ class ActionComm extends CommonObject
 
 	        dol_syslog(get_class($this)."::delete", LOG_DEBUG);
 	        $res=$this->db->query($sql);
-	        if ($res < 0) {
+	        if (!$res) {
 	        	$this->error=$this->db->lasterror();
 	        	$error++;
 	        }
