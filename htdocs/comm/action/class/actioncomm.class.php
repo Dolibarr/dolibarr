@@ -904,16 +904,16 @@ class ActionComm extends CommonObject
 
         // remove categorie association
         if (!$error) {
-          $sql = "DELETE FROM ".MAIN_DB_PREFIX."categorie_actioncomm";
-          $sql .= " WHERE fk_actioncomm=".$this->id;
+			$sql = "DELETE FROM ".MAIN_DB_PREFIX."categorie_actioncomm";
+			$sql .= " WHERE fk_actioncomm=".$this->id;
 
-          $res = $this->db->query($sql);
-          if (!$res) {
-              $this->error = $this->db->lasterror();
-              $error++;
-          }
+			$res = $this->db->query($sql);
+			if (!$res) {
+				$this->error = $this->db->lasterror();
+				$error++;
+			}
         }
-      
+
         // remove actioncomm_resources
         if (!$error) {
             $sql = "DELETE FROM ".MAIN_DB_PREFIX."actioncomm_resources";
