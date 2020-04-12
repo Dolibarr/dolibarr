@@ -903,45 +903,49 @@ class ActionComm extends CommonObject
         $this->db->begin();
 
         // remove categorie association
-        $sql = "DELETE FROM ".MAIN_DB_PREFIX."categorie_actioncomm";
-        $sql .= " WHERE fk_actioncomm=".$this->id;
-
-        $res = $this->db->query($sql);
-        if ($res < 0) {
-            $this->error = $this->db->lasterror();
-            $error++;
-        }
-        // remove actioncomm
         if (!$error) {
-            $sql = "DELETE FROM ".MAIN_DB_PREFIX."actioncomm";
-            $sql .= " WHERE id=".$this->id;
+          $sql = "DELETE FROM ".MAIN_DB_PREFIX."categorie_actioncomm";
+          $sql .= " WHERE fk_actioncomm=".$this->id;
 
-            $res = $this->db->query($sql);
-            if ($res < 0) {
-                $this->error = $this->db->lasterror();
-                $error++;
-            }
+          $res = $this->db->query($sql);
+          if (!$res) {
+              $this->error = $this->db->lasterror();
+              $error++;
+          }
         }
-
+      
+        // remove actioncomm_resources
         if (!$error) {
             $sql = "DELETE FROM ".MAIN_DB_PREFIX."actioncomm_resources";
             $sql .= " WHERE fk_actioncomm=".$this->id;
 
             $res = $this->db->query($sql);
-            if ($res < 0) {
-                $this->error = $this->db->lasterror();
+            if (!$res) {
+                $this->error=$this->db->lasterror();
                 $error++;
             }
         }
 
         // Removed extrafields
         if (!$error) {
-        	$result = $this->deleteExtraFields();
+        	  $result = $this->deleteExtraFields();
           	if ($result < 0)
            	{
            		$error++;
            		dol_syslog(get_class($this)."::delete error -3 ".$this->error, LOG_ERR);
            	}
+        }
+
+        // remove actioncomm
+        if (!$error) {
+            $sql = "DELETE FROM ".MAIN_DB_PREFIX."actioncomm";
+            $sql .= " WHERE id=".$this->id;
+
+            $res = $this->db->query($sql);
+            if (!$res) {
+                $this->error = $this->db->lasterror();
+                $error++;
+            }
         }
 
         if (!$error)

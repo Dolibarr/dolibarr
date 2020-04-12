@@ -2436,7 +2436,7 @@ class SupplierProposal extends CommonObject
 
     // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
     /**
-     *      Charge indicateurs this->nb de tableau de bord
+     *      Load indicator this->nb of global stats widget
      *
      *      @return     int         <0 if ko, >0 if ok
      */

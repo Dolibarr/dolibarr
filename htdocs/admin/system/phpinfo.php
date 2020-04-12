@@ -401,7 +401,7 @@ function getTableColumnFunction(array $functions)
  * @param array $loaded			A list with all loaded PHP extensions
  * @param array $functions		A list with all PHP functions to check
  *
- * @return array
+ * @return string
  */
 function getResultColumn($name, array $activated, array $loaded, array $functions)
 {

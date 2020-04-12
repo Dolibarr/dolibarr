@@ -108,7 +108,6 @@ if (!empty($conf->global->MAIN_MOTD))
  * Hidden for external users
  */
 
-
 $boxstatItems = array();
 $boxstatFromHook = '';
 
@@ -128,26 +127,27 @@ if (empty($user->socid) && empty($conf->global->MAIN_DISABLE_GLOBAL_BOXSTATS))
     {
 	    // Condition to be checked for each display line dashboard
 	    $conditions = array(
-	    $user->rights->user->user->lire,
-	    !empty($conf->societe->enabled) && $user->rights->societe->lire && empty($conf->global->SOCIETE_DISABLE_CUSTOMERS) && empty($conf->global->SOCIETE_DISABLE_CUSTOMERS_STATS),
-	    !empty($conf->societe->enabled) && $user->rights->societe->lire && empty($conf->global->SOCIETE_DISABLE_PROSPECTS) && empty($conf->global->SOCIETE_DISABLE_PROSPECTS_STATS),
-	    !empty($conf->fournisseur->enabled) && $user->rights->fournisseur->lire && empty($conf->global->SOCIETE_DISABLE_SUPPLIERS_STATS),
-	    !empty($conf->societe->enabled) && $user->rights->societe->contact->lire,
-	    !empty($conf->adherent->enabled) && $user->rights->adherent->lire,
-	    !empty($conf->product->enabled) && $user->rights->produit->lire,
-	    !empty($conf->service->enabled) && $user->rights->service->lire,
-	    !empty($conf->propal->enabled) && $user->rights->propale->lire,
-	    !empty($conf->commande->enabled) && $user->rights->commande->lire,
-	    !empty($conf->facture->enabled) && $user->rights->facture->lire,
-	    !empty($conf->contrat->enabled) && $user->rights->contrat->lire,
-	    !empty($conf->ficheinter->enabled) && $user->rights->ficheinter->lire,
-		!empty($conf->supplier_order->enabled) && $user->rights->fournisseur->commande->lire && empty($conf->global->SOCIETE_DISABLE_SUPPLIERS_ORDERS_STATS),
-		!empty($conf->supplier_invoice->enabled) && $user->rights->fournisseur->facture->lire && empty($conf->global->SOCIETE_DISABLE_SUPPLIERS_INVOICES_STATS),
-		!empty($conf->supplier_proposal->enabled) && $user->rights->supplier_proposal->lire && empty($conf->global->SOCIETE_DISABLE_SUPPLIERS_PROPOSAL_STATS),
-	    !empty($conf->projet->enabled) && $user->rights->projet->lire,
-	    !empty($conf->expensereport->enabled) && $user->rights->expensereport->lire,
-        !empty($conf->holiday->enabled) && $user->rights->holiday->read,
-		!empty($conf->don->enabled) && $user->rights->don->lire
+		    $user->rights->user->user->lire,
+		    !empty($conf->societe->enabled) && $user->rights->societe->lire && empty($conf->global->SOCIETE_DISABLE_CUSTOMERS) && empty($conf->global->SOCIETE_DISABLE_CUSTOMERS_STATS),
+		    !empty($conf->societe->enabled) && $user->rights->societe->lire && empty($conf->global->SOCIETE_DISABLE_PROSPECTS) && empty($conf->global->SOCIETE_DISABLE_PROSPECTS_STATS),
+		    !empty($conf->fournisseur->enabled) && $user->rights->fournisseur->lire && empty($conf->global->SOCIETE_DISABLE_SUPPLIERS_STATS),
+		    !empty($conf->societe->enabled) && $user->rights->societe->contact->lire,
+		    !empty($conf->adherent->enabled) && $user->rights->adherent->lire,
+		    !empty($conf->product->enabled) && $user->rights->produit->lire,
+		    !empty($conf->service->enabled) && $user->rights->service->lire,
+		    !empty($conf->propal->enabled) && $user->rights->propale->lire,
+		    !empty($conf->commande->enabled) && $user->rights->commande->lire,
+		    !empty($conf->facture->enabled) && $user->rights->facture->lire,
+		    !empty($conf->contrat->enabled) && $user->rights->contrat->lire,
+		    !empty($conf->ficheinter->enabled) && $user->rights->ficheinter->lire,
+			!empty($conf->supplier_order->enabled) && $user->rights->fournisseur->commande->lire && empty($conf->global->SOCIETE_DISABLE_SUPPLIERS_ORDERS_STATS),
+			!empty($conf->supplier_invoice->enabled) && $user->rights->fournisseur->facture->lire && empty($conf->global->SOCIETE_DISABLE_SUPPLIERS_INVOICES_STATS),
+			!empty($conf->supplier_proposal->enabled) && $user->rights->supplier_proposal->lire && empty($conf->global->SOCIETE_DISABLE_SUPPLIERS_PROPOSAL_STATS),
+		    !empty($conf->projet->enabled) && $user->rights->projet->lire,
+		    !empty($conf->expensereport->enabled) && $user->rights->expensereport->lire,
+	        !empty($conf->holiday->enabled) && $user->rights->holiday->read,
+			!empty($conf->don->enabled) && $user->rights->don->lire,
+		    !empty($conf->ticket->enabled) && $user->rights->ticket->read
 	    );
 	    // Class file containing the method load_state_board for each line
 	    $includes = array(
@@ -170,7 +170,8 @@ if (empty($user->socid) && empty($conf->global->MAIN_DISABLE_GLOBAL_BOXSTATS))
             DOL_DOCUMENT_ROOT."/projet/class/project.class.php",
 	        DOL_DOCUMENT_ROOT."/expensereport/class/expensereport.class.php",
             DOL_DOCUMENT_ROOT."/holiday/class/holiday.class.php",
-			DOL_DOCUMENT_ROOT."/don/class/don.class.php"
+			DOL_DOCUMENT_ROOT."/don/class/don.class.php",
+	    	DOL_DOCUMENT_ROOT."/ticket/class/ticket.class.php"
 	    );
 	    // Name class containing the method load_state_board for each line
 	    $classes = array('User',
@@ -192,7 +193,8 @@ if (empty($user->socid) && empty($conf->global->MAIN_DISABLE_GLOBAL_BOXSTATS))
 	                   'Project',
 	                   'ExpenseReport',
                        'Holiday',
-					   'Don'
+					   'Don',
+	    			   'Ticket',
 	    );
 	    // Cle array returned by the method load_state_board for each line
 	    $keys = array('users',
@@ -206,15 +208,16 @@ if (empty($user->socid) && empty($conf->global->MAIN_DISABLE_GLOBAL_BOXSTATS))
 	                'proposals',
 	                'orders',
 	                'invoices',
-	                'Contracts',
-	                'fichinters',
+	                'contracts',
+	                'interventions',
 	                'supplier_orders',
 	                'supplier_invoices',
 	                'askprice',
 	                'projects',
 	                'expensereports',
                     'holidays',
-					'donations'
+					'donations',
+	    			'ticket'
 	    );
 	    // Dashboard Icon lines
 	    $icons = array('user',
@@ -228,15 +231,16 @@ if (empty($user->socid) && empty($conf->global->MAIN_DISABLE_GLOBAL_BOXSTATS))
 	                 'propal',
 	                 'order',
 	                 'bill',
-	                 'order',
-	                 'order',
+	                 'contract',
+	                 'intervention',
 	                 'order',
 	                 'bill',
 	                 'propal',
 	                 'projectpub',
 					 'trip',
                      'holiday',
-					 'generic'
+					 'generic',
+	    			 'ticket',
 	    );
 	    // Translation keyword
 	    $titres = array("Users",
@@ -258,7 +262,8 @@ if (empty($user->socid) && empty($conf->global->MAIN_DISABLE_GLOBAL_BOXSTATS))
 	                  "Projects",
 					  "ExpenseReports",
                       "Holidays",
-					  "Donations"
+					  "Donations",
+	    			  "Ticket",
 	    );
 	    // Dashboard Link lines
 	    $links = array(
@@ -282,7 +287,8 @@ if (empty($user->socid) && empty($conf->global->MAIN_DISABLE_GLOBAL_BOXSTATS))
 	        DOL_URL_ROOT.'/projet/list.php?mainmenu=project',
     		DOL_URL_ROOT.'/expensereport/list.php?mainmenu=hrm&leftmenu=expensereport',
             DOL_URL_ROOT.'/holiday/list.php?mainmenu=hrm&leftmenu=holiday',
-			DOL_URL_ROOT.'/don/list.php?leftmenu=donations'
+			DOL_URL_ROOT.'/don/list.php?leftmenu=donations',
+	    	DOL_URL_ROOT.'/ticket/list.php?leftmenu=ticket'
 	    );
 	    // Translation lang files
 	    $langfile = array(
@@ -306,12 +312,13 @@ if (empty($user->socid) && empty($conf->global->MAIN_DISABLE_GLOBAL_BOXSTATS))
 			"trips",
             "holiday",
 			"donations",
+	    	"ticket"
 	    );
 
 
 	    // Loop and displays each line of table
 		$boardloaded = array();
-	    foreach ($keys as $key=>$val)
+	    foreach ($keys as $key => $val)
 	    {
 	        if ($conditions[$key])
 	        {
@@ -330,7 +337,6 @@ if (empty($user->socid) && empty($conf->global->MAIN_DISABLE_GLOBAL_BOXSTATS))
 	            {
 	                $board = $boardloaded[$classe];
 	            }
-
 
 	            if (!empty($langfile[$key])) $langs->load($langfile[$key]);
 	            $text = $langs->trans($titres[$key]);
@@ -415,7 +421,7 @@ if (empty($conf->global->MAIN_DISABLE_GLOBAL_WORKBOARD)) {
         $dashboardlines[$board->element.'_awaiting'] = $board->load_board($user, 'awaiting');
     }
 
-    // Number of services enabled (delayed)
+    // Number of contract / services enabled (delayed)
     if (!empty($conf->contrat->enabled) && $user->rights->contrat->lire) {
         include_once DOL_DOCUMENT_ROOT.'/contrat/class/contrat.class.php';
         $board = new Contrat($db);
@@ -423,6 +429,16 @@ if (empty($conf->global->MAIN_DISABLE_GLOBAL_WORKBOARD)) {
         // Number of active services (expired)
         $dashboardlines[$board->element.'_active'] = $board->load_board($user, "active");
     }
+
+    // Number of tickets open
+    if (!empty($conf->ticket->enabled) && $user->rights->ticket->read) {
+    	include_once DOL_DOCUMENT_ROOT.'/ticket/class/ticket.class.php';
+    	$board = new Ticket($db);
+    	$dashboardlines[$board->element.'_opened'] = $board->load_board($user, "opened");
+    	// Number of active services (expired)
+    	//$dashboardlines[$board->element.'_active'] = $board->load_board($user, "active");
+    }
+
     // Number of invoices customers (has paid)
     if (!empty($conf->facture->enabled) && $user->rights->facture->lire) {
         include_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
@@ -526,13 +542,6 @@ if (empty($conf->global->MAIN_DISABLE_GLOBAL_WORKBOARD)) {
                 'stats' =>
                     array('facture'),
             ),
-        'contrat' =>
-            array(
-                'groupName' => 'Contracts',
-                'globalStatsKey' => 'Contracts',
-                'stats' =>
-                    array('contrat_inactive', 'contrat_active'),
-            ),
         'supplier_proposal' =>
             array(
                 'groupName' => 'SupplierProposals',
@@ -554,7 +563,21 @@ if (empty($conf->global->MAIN_DISABLE_GLOBAL_WORKBOARD)) {
                 'stats' =>
                     array('invoice_supplier'),
             ),
-        'bank_account' =>
+    	'contrat' =>
+	    	array(
+	    		'groupName' => 'Contracts',
+	    		'globalStatsKey' => 'Contracts',
+	    		'stats' =>
+	    		array('contrat_inactive', 'contrat_active'),
+	    	),
+    	'ticket' =>
+	    	array(
+	    		'groupName' => 'Tickets',
+	    		'globalStatsKey' => 'OpenTickets',
+	    		'stats' =>
+	    			array('ticket_opened'),
+	    	),
+    	'bank_account' =>
             array(
                 'groupName' => 'BankAccount',
                 'stats' =>
@@ -587,8 +610,7 @@ if (empty($conf->global->MAIN_DISABLE_GLOBAL_WORKBOARD)) {
     $parameters = array(
         'dashboardgroup' => $dashboardgroup
     );
-    $reshook = $hookmanager->executeHooks('addOpenElementsDashboardGroup', $parameters, $object,
-        $action); // Note that $action and $object may have been modified by some hooks
+    $reshook = $hookmanager->executeHooks('addOpenElementsDashboardGroup', $parameters, $object, $action); // Note that $action and $object may have been modified by some hooks
     if ($reshook == 0) {
         $dashboardgroup = array_merge($dashboardgroup, $hookmanager->resArray);
     }

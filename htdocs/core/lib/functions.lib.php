@@ -2269,10 +2269,15 @@ function dol_print_email($email, $cid = 0, $socid = 0, $addlink = 0, $max = 64, 
 		}
 	}
 
-	$rep = '<div class="nospan" style="margin-right: 10px">'.($withpicto ?img_picto($langs->trans("EMail").' : '.$email, 'object_email.png').' ' : '').$newemail.'</div>';
+	//$rep = '<div class="nospan" style="margin-right: 10px">';
+	$rep .= ($withpicto ?img_picto($langs->trans("EMail").' : '.$email, 'object_email.png').' ' : '').$newemail;
+	//$rep .= '</div>';
 	if ($hookmanager) {
 		$parameters = array('cid' => $cid, 'socid' => $socid, 'addlink' => $addlink, 'picto' => $withpicto);
 		$reshook = $hookmanager->executeHooks('printEmail', $parameters, $email);
+		if ($reshook > 0) {
+			$rep = '';
+		}
 		$rep .= $hookmanager->resPrint;
 	}
 
@@ -3134,13 +3139,14 @@ function img_picto($titlealt, $picto, $moreatt = '', $pictoisfullpath = false, $
 
         if (empty($srconly) && in_array($pictowithouttext, array(
         		'1downarrow', '1uparrow', '1leftarrow', '1rightarrow', '1uparrow_selected', '1downarrow_selected', '1leftarrow_selected', '1rightarrow_selected',
-        		'address', 'bank_account', 'barcode', 'bank', 'bookmark', 'building', 'cash-register', 'check', 'close_title', 'cubes', 'delete', 'dolly', 'edit', 'ellipsis-h',
+        		'address', 'bank_account', 'barcode', 'bank', 'bookmark', 'building', 'cash-register', 'check', 'close_title', 'company', 'contact', 'cubes',
+        		'delete', 'dolly', 'edit', 'ellipsis-h',
         		'filter', 'file-code', 'folder', 'folder-open', 'grip', 'grip_title', 'help', 'language', 'list', 'listlight', 'note',
         		'object_action', 'object_account', 'object_barcode', 'object_phoning', 'object_phoning_fax', 'object_email',
-        		'object_bookmark', 'object_bug', 'object_generic', 'object_list-alt', 'object_calendar', 'object_calendarweek', 'object_calendarmonth', 'object_calendarday', 'object_calendarperuser',
-        		'object_cash-register', 'object_holiday', 'object_hrm', 'object_accounting', 'object_category', 'object_multicurrency',
-        		'object_printer', 'object_resource', 'object_technic', 'object_trip', 'object_user', 'object_group', 'object_member', 'object_other',
-        		'off', 'on', 'play', 'playdisabled', 'printer', 'resize', 'stats', 'trip',
+        		'object_accounting', 'object_category', 'object_bookmark', 'object_bug', 'object_generic', 'object_list-alt', 'object_calendar', 'object_calendarweek', 'object_calendarmonth', 'object_calendarday', 'object_calendarperuser',
+        		'object_cash-register', 'object_company', 'object_contact', 'object_contract', 'object_holiday', 'object_hrm', 'object_multicurrency', 'object_payment',
+        		'object_paragraph', 'object_printer', 'object_resource', 'object_rss', 'object_technic', 'object_ticket', 'object_trip', 'object_user', 'object_group', 'object_member', 'object_other',
+        		'off', 'on', 'paiment', 'play', 'playdisabled', 'printer', 'resize', 'stats', 'trip',
 				'note', 'setup', 'sign-out', 'split', 'switch_off', 'switch_on', 'tools', 'unlink', 'uparrow', 'user', 'wrench', 'globe',
 				'jabber', 'skype', 'twitter', 'facebook', 'linkedin', 'instagram', 'snapchat', 'youtube', 'google-plus-g', 'whatsapp',
 				'chevron-left', 'chevron-right', 'chevron-down', 'chevron-top',
@@ -3163,6 +3169,7 @@ function img_picto($titlealt, $picto, $moreatt = '', $pictoisfullpath = false, $
 
 		    $arrayconvpictotofa = array(
 		    	'account'=>'university', 'action'=>'calendar-alt', 'address'=> 'address-book', 'bank_account'=>'university',
+		    	'company'=>'building', 'contact'=>'address-book', 'contract'=>'suitcase',
 		    	'setup'=>'cog', 'companies'=>'building', 'products'=>'cube', 'commercial'=>'suitcase', 'invoicing'=>'coins', 'accountancy'=>'money-check-alt',
 		    	'accounting'=>'chart-line', 'category'=>'tag',
 		    	'hrm'=>'umbrella-beach', 'members'=>'users', 'ticket'=>'ticket-alt', 'globe'=>'external-link-alt',
@@ -3175,7 +3182,7 @@ function img_picto($titlealt, $picto, $moreatt = '', $pictoisfullpath = false, $
 		    	'list-alt'=>'list-alt', 'calendar'=>'calendar-alt', 'calendarweek'=>'calendar-week', 'calendarmonth'=>'calendar-alt', 'calendarday'=>'calendar-day', 'calendarperuser'=>'table',
 		    	'multicurrency'=>'dollar-sign', 'other'=>'square', 'resource'=>'laptop-house',
 		    	'error'=>'exclamation-triangle', 'warning'=>'exclamation-triangle',
-		    	'phoning'=>'phone', 'phoning_fax'=>'fax', 'printer'=>'print', 'technic'=>'cogs',
+		    	'payment'=>'money-bill-alt', 'phoning'=>'phone', 'phoning_fax'=>'fax', 'printer'=>'print', 'technic'=>'cogs', 'ticket'=>'ticket-alt',
 		    	'title_setup'=>'tools', 'title_accountancy'=>'money-check-alt', 'title_bank'=>'university', 'title_hrm'=>'umbrella-beach',
 		    	'title_agenda'=>'calendar-alt',
 		    	'playdisabled'=>'play', 'preview'=>'binoculars', 'project'=>'sitemap', 'resize'=>'crop',
@@ -3229,13 +3236,14 @@ function img_picto($titlealt, $picto, $moreatt = '', $pictoisfullpath = false, $
 			// Add CSS
 			$arrayconvpictotomorcess = array(
 				'action'=>'bg-infoxbox-action', 'account'=>'bg-infoxbox-bank_account', 'bank_account'=>'bg-infoxbox-bank_account', 'cash-register'=>'bg-infoxbox-bank_account',
+				'contract'=>'bg-infoxbox-contrat',
 				'multicurrency'=>'bg-infoxbox-bank_account',
 				'check'=>'font-status4',
 				'hrm'=>'bg-infoxbox-adherent', 'group'=>'bg-infoxbox-adherent',
 				'members'=>'bg-infoxbox-adherent', 'member'=>'bg-infoxbox-adherent', 'user'=>'bg-infoxbox-adherent', 'users'=>'bg-infoxbox-adherent',
 				'error'=>'pictoerror', 'warning'=>'pictowarning', 'switch_on'=>'font-status4',
-				'holiday'=>'bg-infoxbox-holiday', 'project'=>'bg-infoxbox-project', 'resource'=>'bg-infoxbox-action', 'title_hrm'=>'bg-infoxbox-holiday', 'trip'=>'bg-infoxbox-expensereport',
-				'title_agenda'=>'bg-infoxbox-action',
+				'holiday'=>'bg-infoxbox-holiday', 'payment'=>'bg-infoxbox-bank_account', 'project'=>'bg-infoxbox-project', 'resource'=>'bg-infoxbox-action',
+				'ticket'=>'bg-infoxbox-contrat', 'title_hrm'=>'bg-infoxbox-holiday', 'trip'=>'bg-infoxbox-expensereport', 'title_agenda'=>'bg-infoxbox-action',
 				'list-alt'=>'imgforviewmode', 'calendar'=>'imgforviewmode', 'calendarweek'=>'imgforviewmode', 'calendarmonth'=>'imgforviewmode', 'calendarday'=>'imgforviewmode', 'calendarperuser'=>'imgforviewmode'
 			);
 			if (!empty($arrayconvpictotomorcess[$pictowithouttext])) {
@@ -3244,9 +3252,9 @@ function img_picto($titlealt, $picto, $moreatt = '', $pictoisfullpath = false, $
 
 			// Define $color
 			$arrayconvpictotocolor = array(
-				'edit'=>'#444', 'note'=>'#999', 'error'=>'', 'listlight'=>'#999',
+				'address'=>'#37a', 'building'=>'#37a', 'companies'=>'#37a', 'company'=>'#37a', 'contact'=>'#37a', 'edit'=>'#444', 'note'=>'#999', 'error'=>'', 'listlight'=>'#999',
 				'other'=>'#ddd',
-				'playdisabled'=>'#ccc', 'printer'=>'#444', 'resize'=>'#444',
+				'playdisabled'=>'#ccc', 'printer'=>'#444', 'resize'=>'#444', 'rss'=>'#cba',
 				'stats'=>'#444', 'switch_off'=>'#999', 'uparrow'=>'#555', 'warning'=>''
 			);
 			if (isset($arrayconvpictotocolor[$pictowithouttext])) {

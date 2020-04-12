@@ -21,7 +21,7 @@
  require_once DOL_DOCUMENT_ROOT.'/fichinter/class/fichinter.class.php';
 
 /**
- * API class for fichinters
+ * API class for Interventions
  *
  * @access protected
  * @class  DolibarrApiAccess {@requires user,external}
