@@ -482,8 +482,8 @@ if ($nbofactivatedmodules <= 1) $moreinfo .= ' '.img_warning($langs->trans("YouM
 print load_fiche_titre($langs->trans("ModulesSetup"), '', 'title_setup');
 
 // Start to show page
-if ($mode == 'common')       print '<span class="opacitymedium hideonsmartphone">'.$langs->trans("ModulesDesc")."<br></span>\n";
-if ($mode == 'commonkanban') print '<span class="opacitymedium hideonsmartphone">'.$langs->trans("ModulesDesc")."<br></span>\n";
+if ($mode == 'common')       print '<span class="opacitymedium hideonsmartphone">'.$langs->trans("ModulesDesc", img_picto('', 'switch_off'))."<br></span>\n";
+if ($mode == 'commonkanban') print '<span class="opacitymedium hideonsmartphone">'.$langs->trans("ModulesDesc", img_picto('', 'switch_off'))."<br></span>\n";
 if ($mode == 'marketplace')  print '<span class="opacitymedium hideonsmartphone">'.$langs->trans("ModulesMarketPlaceDesc")."<br></span>\n";
 if ($mode == 'deploy')       print '<span class="opacitymedium hideonsmartphone">'.$langs->trans("ModulesDeployDesc", $langs->transnoentitiesnoconv("AvailableModules"))."<br></span>\n";
 if ($mode == 'develop')      print '<span class="opacitymedium hideonsmartphone">'.$langs->trans("ModulesDevelopDesc")."<br></span>\n";
