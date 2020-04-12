@@ -5,7 +5,7 @@
  * Copyright (C) 2011-2017  Juanjo Menent           <jmenent@2byte.es>
  * Copyright (C) 2015	    Marcos García		    <marcosgdf@gmail.com>
  * Copyright (C) 2018	    Nicolas ZABOURI	        <info@inovea-conseil.com>
- * Copyright (C) 2018       Frédéric France         <frederic.france@netlogic.fr>
+ * Copyright (C) 2018-2020  Frédéric France         <frederic.france@netlogic.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -898,23 +898,27 @@ class ActionComm extends CommonObject
 
         $error = 0;
 
+        dol_syslog(get_class($this)."::delete", LOG_DEBUG);
+
         $this->db->begin();
 
-        $sql = "DELETE FROM ".MAIN_DB_PREFIX."actioncomm";
-        $sql .= " WHERE id=".$this->id;
+        // remove categorie association
+        if (!$error) {
+			$sql = "DELETE FROM ".MAIN_DB_PREFIX."categorie_actioncomm";
+			$sql .= " WHERE fk_actioncomm=".$this->id;
 
-        dol_syslog(get_class($this)."::delete", LOG_DEBUG);
-        $res = $this->db->query($sql);
-        if (!$res) {
-        	$this->error=$this->db->lasterror();
-        	$error++;
+			$res = $this->db->query($sql);
+			if (!$res) {
+				$this->error = $this->db->lasterror();
+				$error++;
+			}
         }
 
+        // remove actioncomm_resources
         if (!$error) {
             $sql = "DELETE FROM ".MAIN_DB_PREFIX."actioncomm_resources";
             $sql .= " WHERE fk_actioncomm=".$this->id;
 
-            dol_syslog(get_class($this)."::delete", LOG_DEBUG);
             $res = $this->db->query($sql);
             if (!$res) {
                 $this->error=$this->db->lasterror();
@@ -924,12 +928,24 @@ class ActionComm extends CommonObject
 
         // Removed extrafields
         if (!$error) {
-        	$result = $this->deleteExtraFields();
+        	  $result = $this->deleteExtraFields();
           	if ($result < 0)
            	{
            		$error++;
            		dol_syslog(get_class($this)."::delete error -3 ".$this->error, LOG_ERR);
            	}
+        }
+
+        // remove actioncomm
+        if (!$error) {
+            $sql = "DELETE FROM ".MAIN_DB_PREFIX."actioncomm";
+            $sql .= " WHERE id=".$this->id;
+
+            $res = $this->db->query($sql);
+            if (!$res) {
+                $this->error = $this->db->lasterror();
+                $error++;
+            }
         }
 
         if (!$error)
