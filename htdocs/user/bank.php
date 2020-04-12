@@ -381,7 +381,7 @@ if ($action != 'edit' && $action != 'create')		// If not bank account yet, $acco
 		$morehtmlright = dolGetButtonTitle($langs->trans('Add'), '', 'fa fa-plus-circle', $_SERVER["PHP_SELF"] . '?id=' . $object->id . '&amp;action=create');
 	}
 
-	print load_fiche_titre($langs->trans("BankAccounts"), $morehtmlright, 'bank');
+	print load_fiche_titre($langs->trans("BankAccounts"), $morehtmlright, 'bank_account');
 
 	print '<div class="div-table-responsive-no-min">'; // You can use div-table-responsive-no-min if you dont need reserved height for your table
 	print '<table class="liste centpercent">';

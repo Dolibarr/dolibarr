@@ -114,7 +114,7 @@ if ($id > 0)
 
         if ($user->admin)
         {
-            print '<tr><td width="25%" valign="top">ClickToDial URL</td>';
+            print '<tr><td class="titlefield fieldrequired">ClickToDial URL</td>';
             print '<td class="valeur">';
             print '<input name="url" value="'.(!empty($object->clicktodial_url) ? $object->clicktodial_url : '').'" size="92">';
             if (empty($conf->global->CLICKTODIAL_URL) && empty($object->clicktodial_url))
@@ -130,7 +130,7 @@ if ($id > 0)
             print '</tr>';
         }
 
-        print '<tr><td class="titlefield">ClickToDial '.$langs->trans("IdPhoneCaller").'</td>';
+        print '<tr><td class="titlefield fieldrequired">ClickToDial '.$langs->trans("IdPhoneCaller").'</td>';
         print '<td class="valeur">';
         print '<input name="poste" value="'.(!empty($object->clicktodial_poste) ? $object->clicktodial_poste : '').'"></td>';
         print "</tr>\n";
@@ -153,7 +153,7 @@ if ($id > 0)
 
         if (!empty($user->admin))
         {
-        	print '<tr><td class="titlefield fieldrequired">ClickToDial URL</td>';
+        	print '<tr><td class="titlefield">ClickToDial URL</td>';
         	print '<td class="valeur">';
         	$url = $conf->global->CLICKTODIAL_URL;
         	if (!empty($object->clicktodial_url)) $url = $object->clicktodial_url;
@@ -170,7 +170,7 @@ if ($id > 0)
         	print '</tr>';
         }
 
-        print '<tr><td class="titlefield fieldrequired">ClickToDial '.$langs->trans("IdPhoneCaller").'</td>';
+        print '<tr><td class="titlefield">ClickToDial '.$langs->trans("IdPhoneCaller").'</td>';
         print '<td class="valeur">'.(!empty($object->clicktodial_poste) ? $object->clicktodial_poste : '').'</td>';
         print "</tr>";
 
@@ -189,6 +189,7 @@ if ($id > 0)
 
     if ($action == 'edit')
     {
+    	print '<br>';
         print '<div class="center"><input class="button" type="submit" value="'.$langs->trans("Save").'">';
         print '&nbsp;&nbsp;&nbsp;&nbsp&nbsp;';
         print '<input class="button" type="submit" name="cancel" value="'.$langs->trans("Cancel").'">';
