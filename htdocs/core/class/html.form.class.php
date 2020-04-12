@@ -7788,7 +7788,7 @@ class Form
             $(document).ready(function() {
             	$("#checkallactions'.$id.'").click(function() {
                     if($(this).is(\':checked\')){
-                        console.log("We check all");
+                        console.log("We check all '.$cssclass.'");
                 		$(".'.$cssclass.'").prop(\'checked\', true).trigger(\'change\');
                     }
                     else

@@ -369,7 +369,11 @@ if (($action == 'replacesite' || $action == 'replacesiteconfirm') && ! $searchke
 if ($massaction == 'replace')
 {
 	$replacestring = GETPOST('replacestring', 'alphanohtml');
-	if (! $replacestring) {
+
+	if (empty($user->rights->website->writephp)) {
+		setEventMessages("NotAllowedToAddDynamicContent", null, 'errors');
+	}
+	elseif (! $replacestring) {
 		setEventMessages("ErrorReplaceStringEmpty", null, 'errors');
 	}
 	else {
@@ -3531,12 +3535,8 @@ if ($action == 'replacesite' || $action == 'replacesiteconfirm' || $massaction =
 			$permissiontodelete = 0;
 
 			// List of mass actions available
-			$arrayofmassactions = array(
-				//'validate'=>$langs->trans("Validate"),
-				//'generate_doc'=>$langs->trans("ReGeneratePDF"),
-				//'builddoc'=>$langs->trans("PDFMerge"),
-				'replace'=>$langs->trans("Replace"),
-			);
+			$arrayofmassactions = array();
+			if ($user->rights->website->writephp) $arrayofmassactions['replace'] = $langs->trans("Replace");
 			if ($permissiontodelete) $arrayofmassactions['predelete'] = '<span class="fa fa-trash paddingrightonly"></span>'.$langs->trans("Delete");
 			if (GETPOST('nomassaction', 'int') || in_array($massaction, array('presend', 'predelete'))) $arrayofmassactions = array();
 			$massactionbutton = $form->selectMassAction('', $arrayofmassactions);

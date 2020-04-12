@@ -203,7 +203,7 @@ if ($result)
             // Show break line
             print '<tr class="oddeven trforbreak">';
             print '<td class="maxwidthonsmartphone tdoverflowonsmartphone">';
-            print img_object('', $picto, 'class="pictoobjectwidth"').' '.$objMod->getName();
+            print img_object('', $picto, 'class="pictoobjectwidth paddingright"').' '.$objMod->getName();
             print '<a name="'.$objMod->getName().'"></a>';
             print '</td>';
            	print '<td>&nbsp;</td>';
@@ -218,8 +218,6 @@ if ($result)
 
         // Picto and label of module
         print '<td class="maxwidthonsmartphone tdoverflowonsmartphone">';
-		//print img_object('', $picto, 'class="pictoobjectwidth"').' '.$objMod->getName();
-        //print '<a name="'.$objMod->getName().'">&nbsp;</a>';
 		print '</td>';
 
 		// Tick
