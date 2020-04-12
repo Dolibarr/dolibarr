@@ -475,10 +475,9 @@ class FactureRec extends CommonInvoice
 	 *	@param      int		$rowid       	Id of object to load
 	 * 	@param		string	$ref			Reference of recurring invoice
 	 * 	@param		string	$ref_ext		External reference of invoice
-	 * 	@param		int		$ref_int		Internal reference of other object
 	 *	@return     int         			>0 if OK, <0 if KO, 0 if not found
 	 */
-	public function fetch($rowid, $ref = '', $ref_ext = '', $ref_int = '')
+	public function fetch($rowid, $ref = '', $ref_ext = '')
 	{
 		$sql = 'SELECT f.rowid, f.entity, f.titre as title, f.suspended, f.fk_soc, f.tva, f.localtax1, f.localtax2, f.total, f.total_ttc';
 		$sql .= ', f.remise_percent, f.remise_absolue, f.remise';

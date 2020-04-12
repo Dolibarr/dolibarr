@@ -304,7 +304,6 @@ class User extends CommonObject
 		$sql .= " u.color,";
 		$sql .= " u.dateemployment, u.dateemploymentend,";
 		$sql .= " u.fk_warehouse,";
-		$sql .= " u.ref_int,";
 		$sql .= " u.ref_ext,";
 		$sql .= " u.default_range, u.default_c_exp_tax_cat,"; // Expense report default mode
 		$sql .= " c.code as country_code, c.label as country,";
@@ -359,7 +358,6 @@ class User extends CommonObject
 				$this->id = $obj->rowid;
 				$this->ref = $obj->rowid;
 
-				$this->ref_int 		= $obj->ref_int;
 				$this->ref_ext 		= $obj->ref_ext;
 
 				$this->ldap_sid 	= $obj->ldap_sid;

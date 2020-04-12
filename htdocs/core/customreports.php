@@ -214,6 +214,7 @@ if ($action == 'viewgraph') {
 }
 
 // Get all possible values of fields when a 'group by' is set, and save this into $arrayofvaluesforgroupby
+// $arrayofvaluesforgroupby will be used to forge lael of each grouped series
 if (is_array($search_groupby) && count($search_groupby)) {
 	foreach ($search_groupby as $gkey => $gval) {
 		$gvalwithoutprefix = preg_replace('/^[a-z]+\./', '', $gval);
@@ -260,10 +261,29 @@ if (is_array($search_groupby) && count($search_groupby)) {
 				$keytouse = (string) $obj->val;
 				$valuetranslated = $obj->val;
 			}
+
+			$regs = array();
 			if (!empty($object->fields[$gvalwithoutprefix]['arrayofkeyval'])) {
 				$valuetranslated = $object->fields[$gvalwithoutprefix]['arrayofkeyval'][$obj->val];
 				if (is_null($valuetranslated)) $valuetranslated = $langs->transnoentitiesnoconv("UndefinedKey");
 				$valuetranslated = $langs->trans($valuetranslated);
+			}
+			elseif (preg_match('/integer:([^:]+):([^:]+)$/', $object->fields[$gvalwithoutprefix]['type'], $regs)) {
+				$classname = $regs[1];
+				$classpath = $regs[2];
+				dol_include_once($classpath);
+				if (class_exists($classname)) {
+					$tmpobject = new $classname($db);
+					$tmpobject->fetch($obj->val);
+					foreach($tmpobject->fields as $fieldkey => $field) {
+						if ($field['showoncombobox']) {
+							$valuetranslated = $tmpobject->$fieldkey;
+							//if ($valuetranslated == '-') $valuetranslated = $langs->transnoentitiesnoconv("Unknown")
+							break;
+						}
+					}
+					//$valuetranslated = $tmpobject->ref.'eee';
+				}
 			}
 
 			$arrayofvaluesforgroupby['g_'.$gkey][$keytouse] = $valuetranslated;
@@ -578,6 +598,8 @@ if ($sql) {
     		$fieldforxkey = 'x_0';
     		$xlabel = $obj->$fieldforxkey;
     		$xvalwithoutprefix = preg_replace('/^[a-z]+\./', '', $xval);
+
+    		// Define $xlabel
     		if (!empty($object->fields[$xvalwithoutprefix]['arrayofkeyval'])) {
     			$xlabel = $object->fields[$xvalwithoutprefix]['arrayofkeyval'][$obj->$fieldforxkey];
     		}
@@ -657,6 +679,7 @@ if ($sql) {
     		$xlabel = $obj->$fieldforxkey;
     		$xvalwithoutprefix = preg_replace('/^[a-z]+\./', '', $xval);
 
+    		// Define $xlabel
     		if (!empty($object->fields[$xvalwithoutprefix]['arrayofkeyval'])) {
     			$xlabel = $object->fields[$xvalwithoutprefix]['arrayofkeyval'][$obj->$fieldforxkey];
     		}
