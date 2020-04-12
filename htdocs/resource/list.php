@@ -55,7 +55,15 @@ if (!is_array($search_array_options)) $search_array_options = array();
 $search_ref = GETPOST("search_ref", 'alpha');
 $search_type = GETPOST("search_type", 'alpha');
 
+// Load variable for pagination
+$limit = GETPOST('limit', 'int') ?GETPOST('limit', 'int') : $conf->liste_limit;
+
+
 $filter = array();
+
+$param = '';
+if (!empty($contextpage) && $contextpage != $_SERVER["PHP_SELF"]) $param .= '&amp;contextpage='.urlencode($contextpage);
+if ($limit > 0 && $limit != $conf->liste_limit) $param .= '&amp;limit='.urlencode($limit);
 
 if ($search_ref != '') {
 	$param .= '&search_ref='.urlencode($search_ref);
@@ -170,7 +178,6 @@ print '<input type="hidden" name="formfilteraction" id="formfilteraction" value=
 print '<input type="hidden" name="action" value="list">';
 print '<input type="hidden" name="sortfield" value="'.$sortfield.'">';
 print '<input type="hidden" name="sortorder" value="'.$sortorder.'">';
-print '<input type="hidden" name="page" value="'.$page.'">';
 print '<input type="hidden" name="contextpage" value="'.$contextpage.'">';
 
 if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST))
@@ -196,7 +203,7 @@ if ($ret == -1) {
         $newcardbutton .= dolGetButtonTitle($langs->trans('MenuResourceAdd'), '', 'fa fa-plus-circle', DOL_URL_ROOT.'/resource/card.php?action=create');
     }
 
-	print_barre_liste($pagetitle, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, '', $ret + 1, $nbtotalofrecords, 'generic', 0, $newcardbutton, '', $limit);
+	print_barre_liste($pagetitle, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, '', $ret + 1, $nbtotalofrecords, 'generic', 0, $newcardbutton, '', $limit, 0, 0, 1);
 }
 
 $moreforfilter = '';
@@ -261,12 +268,12 @@ if ($ret)
         include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_print_fields.tpl.php';
 
         print '<td class="center">';
-        print '<a href="./card.php?action=edit&id='.$resource->id.'">';
+        print '<a class="editfielda" href="./card.php?action=edit&id='.$resource->id.'">';
         print img_edit();
         print '</a>';
         print '&nbsp;';
         print '<a href="./card.php?action=delete&id='.$resource->id.'">';
-        print img_delete();
+        print img_delete('', 'class="marginleftonly"');
         print '</a>';
         print '</td>';
         if (!$i) $totalarray['nbfield']++;
