@@ -648,14 +648,14 @@ function MoreActions(totalactions){
 	if (pageactions==0){
 		pageactions=1;
 		for (i = 0; i <= totalactions; i++){
-			if (i<9) $("#action"+i).hide();
+			if (i<12) $("#action"+i).hide();
 			else $("#action"+i).show();
 		}
 	}
 	else if (pageactions==1){
 		pageactions=0;
 		for (i = 0; i <= totalactions; i++){
-			if (i<9) $("#action"+i).show();
+			if (i<12) $("#action"+i).show();
 			else $("#action"+i).hide();
 		}
 	}
@@ -936,12 +936,12 @@ if (!empty($conf->global->TAKEPOS_HIDE_HEAD_BAR)) {
         foreach ($menus as $menu)
         {
         	$i++;
-        	if (count($menus) > 9 and $i == 9)
+        	if (count($menus) > 12 and $i == 12)
         	{
         		echo '<button style="'.$menu['style'].'" type="button" id="actionnext" class="actionbutton" onclick="MoreActions('.count($menus).');">'.$langs->trans("Next").'</button>';
         		echo '<button style="display: none;" type="button" id="action'.$i.'" class="actionbutton" onclick="'.$menu['action'].'">'.$menu['title'].'</button>';
         	}
-            elseif ($i > 9) echo '<button style="display: none;" type="button" id="action'.$i.'" class="actionbutton" onclick="'.$menu['action'].'">'.$menu['title'].'</button>';
+            elseif ($i > 12) echo '<button style="display: none;" type="button" id="action'.$i.'" class="actionbutton" onclick="'.$menu['action'].'">'.$menu['title'].'</button>';
             else echo '<button style="'.$menu['style'].'" type="button" id="action'.$i.'" class="actionbutton" onclick="'.$menu['action'].'">'.$menu['title'].'</button>';
         }
 
