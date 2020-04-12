@@ -6,7 +6,7 @@
  * Copyright (C) 2012       Cedric Salvador         <csalvador@gpcsolutions.fr>
  * Copyright (C) 2013       Florian Henry		  	<florian.henry@open-concept.pro>
  * Copyright (C) 2015       Marcos García           <marcosgdf@gmail.com>
- * Copyright (C) 2017       Frédéric France         <frederic.france@netlogic.fr>
+ * Copyright (C) 2017-2020  Frédéric France         <frederic.france@netlogic.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -69,6 +69,11 @@ class FactureRec extends CommonInvoice
 	 */
 	public $entity;
 
+	/**
+	 * {@inheritdoc}
+	 */
+	protected $table_ref_field = 'titre';
+
 	public $number;
 	public $date;
 	public $remise;
@@ -82,7 +87,14 @@ class FactureRec extends CommonInvoice
 	public $nb_gen_done;
 	public $nb_gen_max;
 
+	/**
+	 * @var int Frequency
+	 */
 	public $frequency;
+
+    /**
+	 * @var string Unit frequency
+	 */
 	public $unit_frequency;
 
 	public $rang;
@@ -122,7 +134,7 @@ class FactureRec extends CommonInvoice
 	 */
 	public $fields = array(
 		'rowid' =>array('type'=>'integer', 'label'=>'TechnicalID', 'enabled'=>1, 'visible'=>-1, 'notnull'=>1, 'position'=>10),
-		'titre' =>array('type'=>'varchar(100)', 'label'=>'Titre', 'enabled'=>1, 'visible'=>-1, 'position'=>15),
+		'titre' =>array('type'=>'varchar(100)', 'label'=>'Titre', 'enabled'=>1, 'showoncombobox' => 1, 'visible'=>-1, 'position'=>15),
 		'entity' =>array('type'=>'integer', 'label'=>'Entity', 'default'=>1, 'enabled'=>1, 'visible'=>-2, 'notnull'=>1, 'position'=>20, 'index'=>1),
 		'fk_soc' =>array('type'=>'integer:Societe:societe/class/societe.class.php', 'label'=>'ThirdParty', 'enabled'=>1, 'visible'=>-1, 'notnull'=>1, 'position'=>25),
 		'datec' =>array('type'=>'datetime', 'label'=>'DateCreation', 'enabled'=>1, 'visible'=>-1, 'position'=>30),
