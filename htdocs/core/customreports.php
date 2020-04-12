@@ -14,7 +14,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  *
- * This tool can be included into a list page with
+ * Note: This tool can be included into a list page with :
  * define('USE_CUSTOME_REPORT_AS_INCLUDE', 1);
  * include DOL_DOCUMENT_ROOT.'/core/customreports.php';
  */
@@ -723,7 +723,12 @@ if ($mode == 'graph') {
 
     	$px1->draw($filenamenb, $fileurlnb);
 
-    	print $px1->show($totalnbofrecord ? 0 : $langs->trans("SelectYourGraphOptionsFirst"));
+    	$texttoshow = $langs->trans("NoRecordFound");
+    	if (! GETPOSTISSET('search_measures') || ! GETPOSTISSET('search_xaxis')) {
+    		$texttoshow = $langs->trans("SelectYourGraphOptionsFirst");
+    	}
+
+    	print $px1->show($totalnbofrecord ? 0 : $texttoshow);
     }
 }
 
