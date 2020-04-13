@@ -68,15 +68,13 @@ if (!empty($conf->multicompany->enabled) && $conf->entity > 1 && $conf->global->
 }
 
 $object = new Usergroup($db);
-if ($id > 0)
-{
-	$object->fetch($id);
-	$object->getrights();
-}
-
 $extrafields = new ExtraFields($db);
 // fetch optionals attributes and labels
 $extrafields->fetch_name_optionals_label($object->table_element);
+
+// Load object
+include DOL_DOCUMENT_ROOT.'/core/actions_fetchobject.inc.php'; // Must be include, not include_once.
+$object->getrights();
 
 // Initialize technical object to manage hooks. Note that conf->hooks_modules contains array
 $hookmanager->initHooks(array('groupcard', 'globalcard'));
@@ -325,6 +323,8 @@ else
 {
     if ($id)
     {
+		$res = $object->fetch_optionals();
+
         $head = group_prepare_head($object);
         $title = $langs->trans("Group");
 
@@ -374,6 +374,8 @@ else
 				print '<td class="valeur">'.dol_escape_htmltag($mc->label);
 				print "</td></tr>\n";
 			}
+
+			unset($object->fields['nom']); // Name already displayed in banner
 
 			// Common attributes
 			$keyforbreak = '';
