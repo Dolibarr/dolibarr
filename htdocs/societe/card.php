@@ -2714,16 +2714,18 @@ else
 					}
 				}
 
-		        if (!empty($object->email) || $at_least_one_email_contact)
-		        {
-		        	$langs->load("mails");
-		        	print '<a class="butAction" href="'.$_SERVER['PHP_SELF'].'?socid='.$object->id.'&amp;action=presend&amp;mode=init#formmailbeforetitle">'.$langs->trans('SendMail').'</a>';
-		        }
-		        else
-				{
-		        	$langs->load("mails");
-		       		print '<a class="butActionRefused classfortooltip" href="#" title="'.dol_escape_htmltag($langs->trans("NoEMail")).'">'.$langs->trans('SendMail').'</a>';
-		        }
+				if (empty($user->socid)) {
+					if (!empty($object->email) || $at_least_one_email_contact)
+			        {
+			        	$langs->load("mails");
+			        	print '<a class="butAction" href="'.$_SERVER['PHP_SELF'].'?socid='.$object->id.'&action=presend&mode=init#formmailbeforetitle">'.$langs->trans('SendMail').'</a>';
+			        }
+			        else
+					{
+			        	$langs->load("mails");
+			       		print '<a class="butActionRefused classfortooltip" href="#" title="'.dol_escape_htmltag($langs->trans("NoEMail")).'">'.$langs->trans('SendMail').'</a>';
+			        }
+				}
 
 		        if ($user->rights->societe->creer)
 		        {

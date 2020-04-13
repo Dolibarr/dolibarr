@@ -207,7 +207,8 @@ class HookManager
 				'sendMailAfter',
 				'showLinkToObjectBlock',
 				'setContentSecurityPolicy',
-				'setHtmlTitle'
+				'setHtmlTitle',
+                'completeTabsHead'
 				)
 			)) $hooktype='addreplace';
 

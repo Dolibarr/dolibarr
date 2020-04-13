@@ -239,6 +239,7 @@ if ($modecompta == 'CREANCES-DETTES')
 	}
 	$sql.= " WHERE l.fk_facture = f.rowid";
 	$sql.= " AND f.fk_statut in (1,2)";
+	$sql.= " AND l.product_type in (0,1)";
 	if (! empty($conf->global->FACTURE_DEPOSITS_ARE_JUST_PAYMENTS)) {
 		$sql.= " AND f.type IN (0,1,2,5)";
 	} else {
