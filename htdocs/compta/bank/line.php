@@ -8,6 +8,7 @@
  * Copyright (C) 2015      Jean-François Ferry	<jfefe@aternatik.fr>
  * Copyright (C) 2016      Marcos García        <marcosgdf@gmail.com>
  * Copyright (C) 2018       Frédéric France         <frederic.france@netlogic.fr>
+ * Copyright (C) 2020       Pierre Ardoin         <mapiolca@me.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -386,7 +387,7 @@ if ($result)
                     print '</a>';
                 }
                 elseif ($links[$key]['type']=='payment_salary') {
-                    print '<a href="'.DOL_URL_ROOT.'/compta/salaries/card.php?id='.$links[$key]['url_id'].'">';
+                    print '<a href="'.DOL_URL_ROOT.'/salaries/card.php?id='.$links[$key]['url_id'].'">';
                     print img_object($langs->trans('ShowPaymentSalary'), 'payment').' ';
                     print $langs->trans("SalaryPayment");
                     print '</a>';
