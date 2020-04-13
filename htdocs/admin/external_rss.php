@@ -228,9 +228,8 @@ print '</div>';
 
 print '</form>';
 
-print '<br>'.$langs->trans('RssNote');
-print '<br><a href="'.DOL_MAIN_URL_ROOT.'/admin/boxes.php">'.$langs->trans('JumpToBoxes').'<a>';
-
+print '<br><br>';
+print '<span class="opacitymedium">'.$langs->trans('RssNote').'</span> - <a href="'.DOL_MAIN_URL_ROOT.'/admin/boxes.php">'.$langs->trans('JumpToBoxes').'</a>';
 print '<br><br>';
 
 $sql = "SELECT rowid, file, note FROM ".MAIN_DB_PREFIX."boxes_def";
@@ -259,12 +258,12 @@ if ($resql)
 		$result = $rssparser->parser($conf->global->$keyrssurl, 5, 300, $conf->externalrss->dir_temp);
 
 		print "<br>";
-		print '<form name="externalrssconfig" action="'.$_SERVER["PHP_SELF"].'" method="post">';
+		print '<form name="externalrssconfig" action="'.$_SERVER["PHP_SELF"].'" method="post">'."\n";
 
-		print '<table class="noborder centpercent">';
-		print '<input type="hidden" name="token" value="'.newToken().'">';
+		print '<table class="noborder centpercent">'."\n";
+		print '<input type="hidden" name="token" value="'.newToken().'">'."\n";
 
-		print "<tr class=\"liste_titre\">";
+		print '<tr class="liste_titre">';
 		print "<td>".$langs->trans("RSS")." ".($i + 1)."</td>";
         print '<td class="right">';
         print '<input type="submit" class="button buttongen" name="modify" value="'.$langs->trans("Modify").'">';
@@ -272,19 +271,19 @@ if ($resql)
 		print '<input type="submit" class="button buttongen" name="delete" value="'.$langs->trans("Delete").'">';
 		print '<input type="hidden" name="norss" value="'.$idrss.'">';
 		print '</td>';
-		print "</tr>";
+		print "</tr>"."\n";
 
 
 		print '<tr class="oddeven">';
 		print "<td width=\"100px\">".$langs->trans("Title")."</td>";
 		print "<td><input type=\"text\" class=\"flat minwidth300\" name=\"external_rss_title_".$idrss."\" value=\"".dol_escape_htmltag($conf->global->$keyrsstitle)."\"></td>";
-		print "</tr>";
+		print "</tr>"."\n";
 
 
 		print '<tr class="oddeven">';
 		print "<td>".$langs->trans("URL")."</td>";
 		print "<td><input type=\"text\" class=\"flat minwidth300\" name=\"external_rss_urlrss_".$idrss."\" value=\"".dol_escape_htmltag($conf->global->$keyrssurl)."\"></td>";
-		print "</tr>";
+		print "</tr>"."\n";
 
 
 		print '<tr class="oddeven">';
@@ -302,7 +301,7 @@ if ($resql)
 			print '</div>';
 		}
 		print "</td>";
-		print "</tr>";
+		print "</tr>"."\n";
 
 		// Logo
 	    if ($result > 0 && empty($rss->error))
@@ -316,19 +315,19 @@ if ($resql)
 			if ($imageurl) print '<img height="32" src="'.$imageurl.'">';
 			else print $langs->trans("None");
 			print '</td>';
-			print "</tr>";
+			print "</tr>"."\n";
 		}
 
 		// Active
 		$active = _isInBoxList($idrss, $boxlist) ? 'yes' : 'no';
 		print '<tr class="oddeven">';
 		print '<td>'.$langs->trans('WidgetEnabled').'</td>';
-		print '<td>'.yesno($active).'</td>';
-		print "</tr>";
+		print '<td>'.yn($active).'</td>';
+		print "</tr>"."\n";
 
-		print '</table>';
+		print '</table>'."\n";
 
-		print "</form>";
+		print "</form>"."\n";
 
 		$i++;
 	}
