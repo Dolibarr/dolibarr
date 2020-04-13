@@ -357,15 +357,18 @@ class pdf_crabe extends ModelePDFFactures
 				$pdf->SetKeyWords($outputlangs->convToOutputCharset($object->ref)." ".$outputlangs->transnoentities("PdfInvoiceTitle")." ".$outputlangs->convToOutputCharset($object->thirdparty->name));
 				if (! empty($conf->global->MAIN_DISABLE_PDF_COMPRESSION)) $pdf->SetCompression(false);
 
-				$cert=file_get_contents(DOL_DATA_ROOT."/users/".$user->id."/certificates/signature.crt");
-				// si l'utilisateur n'a pas de certificat, on prend le certificat
-				if (!$cert)
-					$cert=file_get_contents(DOL_DATA_ROOT."/mycompany/certificates/signature.crt");
+				// Set certificate
+				$cert=empty($user->conf->CERTIFICATE_CRT) ? '' : $user->conf->CERTIFICATE_CRT;
+				// If use has no certificate, we try to take the company one
+				if (!$cert) {
+					$cert = empty($conf->global->CERTIFICATE_CRT) ? '' : $conf->global->CERTIFICATE_CRT;
+				}
+				// If a certificate is found
 				if ($cert) {
 					$info = array(
 						'Name' => $this->emetteur->name, 
 						'Location' => getCountry($this->emetteur->country_code, 0),
-						'Reason' => 'FACTURE',
+						'Reason' => 'INVOICE',
 						'ContactInfo' => $this->emetteur->email
 					);
 					$pdf->setSignature($cert, $cert, $this->emetteur->name, '', 2, $info);
