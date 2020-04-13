@@ -1153,7 +1153,7 @@ class Thirdparties extends DolibarrApi
 		if ($account->update(DolibarrApiAccess::$user) < 0)
 			throw new RestException(500, 'Error updating values');
 
-		return $account;
+		return $this->_cleanObjectDatas($account);
 	}
 
 	/**
@@ -1191,7 +1191,7 @@ class Thirdparties extends DolibarrApi
 		if ($account->update(DolibarrApiAccess::$user) < 0)
 			throw new RestException(500, 'Error updating values');
 
-		return $account;
+		return $this->_cleanObjectDatas($account);
 	}
 
 	/**
