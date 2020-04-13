@@ -536,13 +536,13 @@ if ($action == "order" and $placeid != 0)
     }
     if ($conf->global->TAKEPOS_PRINT_METHOD == "receiptprinter" && $linestoprint > 0) {
 		$invoice->fetch($placeid); //Reload object before send to printer
-		$printer->orderprinter=1;
+		$printer->orderprinter = 1;
 		$ret = $printer->sendToPrinter($invoice, $conf->global->{'TAKEPOS_TEMPLATE_TO_USE_FOR_ORDERS'.$_SESSION["takeposterminal"]}, $conf->global->{'TAKEPOS_ORDER_PRINTER1_TO_USE'.$_SESSION["takeposterminal"]}); // PRINT TO PRINTER 1
 	}
 	$sql = "UPDATE ".MAIN_DB_PREFIX."facturedet set special_code='4' where special_code='1' and fk_facture=".$invoice->id; // Set as printed
 	$db->query($sql);
 	$invoice->fetch($placeid); //Reload object after set lines as printed
-	$linestoprint=0;
+	$linestoprint = 0;
 
     foreach ($invoice->lines as $line)
     {
@@ -564,7 +564,7 @@ if ($action == "order" and $placeid != 0)
     }
     if ($conf->global->TAKEPOS_PRINT_METHOD == "receiptprinter" && $linestoprint > 0) {
 		$invoice->fetch($placeid); //Reload object before send to printer
-		$printer->orderprinter=2;
+		$printer->orderprinter = 2;
 		$ret = $printer->sendToPrinter($invoice, $conf->global->{'TAKEPOS_TEMPLATE_TO_USE_FOR_ORDERS'.$_SESSION["takeposterminal"]}, $conf->global->{'TAKEPOS_ORDER_PRINTER2_TO_USE'.$_SESSION["takeposterminal"]}); // PRINT TO PRINTER 2
 	}
 	$sql = "UPDATE ".MAIN_DB_PREFIX."facturedet set special_code='4' where special_code='2' and fk_facture=".$invoice->id; // Set as printed
@@ -712,8 +712,8 @@ function TakeposPrinting(id){
 
 function TakeposConnector(id){
 	var invoice='<?php
-	$data=json_encode($invoice);
-	$data=base64_encode($data);
+	$data = json_encode($invoice);
+	$data = base64_encode($data);
 	echo $data;
 	?>';
     $.ajax({

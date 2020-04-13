@@ -6,6 +6,7 @@
  * Copyright (C) 2004      Benoit Mortier       <benoit.mortier@opensides.be>
  * Copyright (C) 2005-2011 Regis Houssin        <regis.houssin@inodbox.com>
  * Copyright (C) 2011 	   Juanjo Menent		<jmenent@2byte.es>
+ * Copyright (C) 2020		Tobias Sekan		<tobias.sekan@startmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -30,6 +31,7 @@
 require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/rssparser.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/class/infobox.class.php';
 
 // Load translation files required by the page
 $langs->load("admin");
@@ -222,10 +224,14 @@ print '<br><div class="center">';
 print '<input type="submit" class="button" value="'.$langs->trans("Add").'">';
 print '<input type="hidden" name="action" value="add">';
 print '<input type="hidden" name="norss" value="'.($lastexternalrss + 1).'">';
-print '</div><br><br>';
+print '</div>';
 
 print '</form>';
 
+print '<br>'.$langs->trans('RssNote');
+print '<br><a href="'.DOL_MAIN_URL_ROOT.'/admin/boxes.php">'.$langs->trans('JumpToBoxes').'<a>';
+
+print '<br><br>';
 
 $sql = "SELECT rowid, file, note FROM ".MAIN_DB_PREFIX."boxes_def";
 $sql .= " WHERE file = 'box_external_rss.php'";
@@ -235,8 +241,9 @@ dol_syslog("select rss boxes", LOG_DEBUG);
 $resql = $db->query($sql);
 if ($resql)
 {
-	$num = $db->num_rows($resql);
-	$i = 0;
+	$boxlist	= InfoBox::listBoxes($db, 'activated', -1, null);
+	$num		= $db->num_rows($resql);
+	$i			= 0;
 
 	while ($i < $num)
 	{
@@ -312,6 +319,13 @@ if ($resql)
 			print "</tr>";
 		}
 
+		// Active
+		$active = _isInBoxList($idrss, $boxlist) ? 'yes' : 'no';
+		print '<tr class="oddeven">';
+		print '<td>'.$langs->trans('WidgetEnabled').'</td>';
+		print '<td>'.yesno($active).'</td>';
+		print "</tr>";
+
 		print '</table>';
 
 		print "</form>";
@@ -327,3 +341,23 @@ else
 // End of page
 llxFooter();
 $db->close();
+
+/**
+ * Check if the given RSS feed if inside the list of boxes/widgets
+ *
+ * @param	int		$idrss		The id of the RSS feed
+ * @param	array	$boxlist	A list with boxes/widgets
+ * @return	bool				true if the rss feed is inside the box/widget list, otherwise false
+ */
+function _isInBoxList($idrss, array $boxlist)
+{
+	foreach($boxlist as $box)
+	{
+		if($box->boxcode === "lastrssinfos" && strpos($box->note, $idrss) !== false)
+		{
+			return true;
+		}
+	}
+
+	return false;
+}
