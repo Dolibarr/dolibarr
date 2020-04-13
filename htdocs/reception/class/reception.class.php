@@ -206,6 +206,8 @@ class Reception extends CommonObject
 		$this->brouillon = 1;
 		$this->tracking_number = dol_sanitizeFileName($this->tracking_number);
 		if (empty($this->fk_project)) $this->fk_project = 0;
+		if (empty($this->weight_units)) $this->weight_units = 0;
+		if (empty($this->size_units)) $this->size_units = 0;
 
 		$this->user = $user;
 
