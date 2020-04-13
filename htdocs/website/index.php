@@ -3554,20 +3554,6 @@ if ($action == 'replacesite' || $action == 'replacesiteconfirm' || $massaction =
 			print '<!-- List of search result -->'."\n";
 			print '<div class="rowsearchresult">';
 
-			/*if ($action == 'replacesiteconfirm')
-			{
-				print '<div class="tagtr">';
-				print '<div class="tagtd paddingrightonly">';
-				print $langs->trans("ReplaceString");
-				print '</div>';
-				print '<div class="tagtd">';
-				print '<input type="text" name="replacestring" value="'.dol_escape_htmltag(GETPOST('replacestring', 'none')).'">';
-				print '<input type="submit" class="button" name="buttonreplacesitereplace" value="'.$langs->trans("Replace").'">';
-				print '</div>';
-				print '</div>';
-				print '<br>';
-			}*/
-
 			$param = 'action=replacesiteconfirm&website='.urlencode($website->ref);
 			$param .= '&searchstring='.urlencode($searchkey);
 			if (GETPOST('optioncontent')) $param .= '&optioncontent=content';
@@ -3589,9 +3575,11 @@ if ($action == 'replacesite' || $action == 'replacesiteconfirm' || $massaction =
 				if (get_class($answerrecord) == 'WebsitePage')
 				{
 					print '<tr>';
+
 					print '<td class="nowraponall">'.$langs->trans("Container").' - ';
 					print $langs->trans($answerrecord->type_container); // TODO Use label of container
 					print '</td>';
+
 					print '<td>';
 					print $answerrecord->getNomUrl(1);
 					print ' <span class="opacitymedium">('.($answerrecord->title ? $answerrecord->title : $langs->trans("NoTitle")).')</span>';
@@ -3600,6 +3588,7 @@ if ($action == 'replacesite' || $action == 'replacesiteconfirm' || $massaction =
 					print '<br>';
 					print '<span class="opacitymedium">'.$answerrecord->description.'</span>';
 					print '</td>';
+
 					print '<td>';
 					$param = '?action=replacesiteconfirm';
 					$param .= '&websiteid='.$website->id;
@@ -3631,8 +3620,8 @@ if ($action == 'replacesite' || $action == 'replacesiteconfirm' || $massaction =
 				else
 				{
 					print '<tr>';
-					print '<td>';
 
+					print '<td>';
 					$translateofrecordtype = array(
 						'website_csscontent'=>'WEBSITE_CSS_INLINE',
 						'website_jscontent'=>'WEBSITE_JS_INLINE',
@@ -3648,13 +3637,14 @@ if ($action == 'replacesite' || $action == 'replacesiteconfirm' || $massaction =
 						print $answerrecord['type'];
 					}
 					print '</td>';
+
 					print '<td>';
 					$backtopageurl = $_SERVER["PHP_SELF"].'?action=replacesiteconfirm&searchstring='.urlencode($searchkey).'&optioncontent='.GETPOST('optioncontent', 'aZ09').'&optionmeta='.GETPOST('optionmeta', 'aZ09').'&optionsitefiles='.GETPOST('optionsitefiles', 'aZ09');
 					print '<a href="'.$_SERVER["PHP_SELF"].'?action=editcss&website='.$website->ref.'&backtopage='.urlencode($backtopageurl).'">'.$langs->trans("EditCss").'</a>';
 					print '</td>';
+
 					print '<td class="tdoverflow100">';
 					print '</td>';
-					print '<td></td>';
 
 					// Action column
 					print '<td class="nowrap center">';
