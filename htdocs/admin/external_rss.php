@@ -252,7 +252,7 @@ if ($resql)
 		$result = $rssparser->parser($conf->global->$keyrssurl, 5, 300, $conf->externalrss->dir_temp);
 
 		print "<br>";
-		print "<form name=\"externalrssconfig\" action=\"".$_SERVER["PHP_SELF"]."\" method=\"post\">";
+		print '<form name="externalrssconfig" action="'.$_SERVER["PHP_SELF"].'" method="post">';
 
 		print '<table class="noborder centpercent">';
 		print '<input type="hidden" name="token" value="'.newToken().'">';
@@ -260,10 +260,10 @@ if ($resql)
 		print "<tr class=\"liste_titre\">";
 		print "<td>".$langs->trans("RSS")." ".($i + 1)."</td>";
         print '<td class="right">';
-        print "<input type=\"submit\" class=\"button\" name=\"modify\" value=\"".$langs->trans("Modify")."\">";
+        print '<input type="submit" class="button buttongen" name="modify" value="'.$langs->trans("Modify").'">';
 		print " &nbsp; ";
-		print "<input type=\"submit\" class=\"button\" name=\"delete\" value=\"".$langs->trans("Delete")."\">";
-		print "<input type=\"hidden\" name=\"norss\"  value=\"".$idrss."\">";
+		print '<input type="submit" class="button buttongen" name="delete" value="'.$langs->trans("Delete").'">';
+		print '<input type="hidden" name="norss" value="'.$idrss.'">';
 		print '</td>';
 		print "</tr>";
 
