@@ -3052,7 +3052,6 @@ if ($action == 'importsite')
 
 	showWebsiteTemplates($website);
 
-
 	dol_fiche_end();
 
 	print '</div>';

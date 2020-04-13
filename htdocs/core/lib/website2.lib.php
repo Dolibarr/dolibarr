@@ -441,11 +441,13 @@ function showWebsiteTemplates(Website $website)
 
 	$colspan = 2;
 
-	$thumbsbyrow = 6;
+	print '<!-- For to import website template -->'."\n";
 	print '<table class="noborder centpercent">';
 
 	// Title
-	print '<tr class="liste_titre"><th class="titlefield"></th>';
+	print '<tr class="liste_titre"><th class="titlefield">';
+	print $form->textwithpicto($langs->trans("Templates"), $langs->trans("ThemeDir").' : '.join(", ", $dirthemes));
+	print '</th>';
 	print '<th class="right">';
 	$url = 'https://www.dolistore.com/43-web-site-templates';
 	print '<a href="'.$url.'" target="_blank">';
@@ -453,72 +455,67 @@ function showWebsiteTemplates(Website $website)
 	print '</a>';
 	print '</th></tr>';
 
-	print '<tr>';
-	print '<td>'.$langs->trans("ThemeDir").'</td>';
-	print '<td>';
-	foreach ($dirthemes as $dirtheme)
-	{
-		echo '"'.$dirtheme.'" ';
-	}
-	print '</td>';
-	print '</tr>';
-
 	print '<tr><td colspan="'.$colspan.'">';
 
 	print '<table class="nobordernopadding" width="100%"><tr><td><div class="center">';
 
-	$i = 0;
-	foreach ($dirthemes as $dir)
-	{
-		//print $dirroot.$dir;exit;
-		$dirtheme = DOL_DATA_ROOT.$dir; // This include loop on $conf->file->dol_document_root
-		if (is_dir($dirtheme))
+	if (count($dirthemes)) {
+		$i = 0;
+		foreach ($dirthemes as $dir)
 		{
-			$handle = opendir($dirtheme);
-			if (is_resource($handle))
+			//print $dirroot.$dir;exit;
+			$dirtheme = DOL_DATA_ROOT.$dir; // This include loop on $conf->file->dol_document_root
+			if (is_dir($dirtheme))
 			{
-				while (($subdir = readdir($handle)) !== false)
+				$handle = opendir($dirtheme);
+				if (is_resource($handle))
 				{
-					if (is_file($dirtheme."/".$subdir) && substr($subdir, 0, 1) <> '.'
-						&& substr($subdir, 0, 3) <> 'CVS' && preg_match('/\.zip$/i', $subdir))
+					while (($subdir = readdir($handle)) !== false)
 					{
-						$subdirwithoutzip = preg_replace('/\.zip$/i', '', $subdir);
+						if (is_file($dirtheme."/".$subdir) && substr($subdir, 0, 1) <> '.'
+							&& substr($subdir, 0, 3) <> 'CVS' && preg_match('/\.zip$/i', $subdir))
+						{
+							$subdirwithoutzip = preg_replace('/\.zip$/i', '', $subdir);
 
-						// Disable not stable themes (dir ends with _exp or _dev)
-						if ($conf->global->MAIN_FEATURES_LEVEL < 2 && preg_match('/_dev$/i', $subdir)) continue;
-						if ($conf->global->MAIN_FEATURES_LEVEL < 1 && preg_match('/_exp$/i', $subdir)) continue;
+							// Disable not stable themes (dir ends with _exp or _dev)
+							if ($conf->global->MAIN_FEATURES_LEVEL < 2 && preg_match('/_dev$/i', $subdir)) continue;
+							if ($conf->global->MAIN_FEATURES_LEVEL < 1 && preg_match('/_exp$/i', $subdir)) continue;
 
-						print '<div class="inline-block" style="margin-top: 10px; margin-bottom: 10px; margin-right: 20px; margin-left: 20px;">';
+							print '<div class="inline-block" style="margin-top: 10px; margin-bottom: 10px; margin-right: 20px; margin-left: 20px;">';
 
-						$file = $dirtheme."/".$subdirwithoutzip.".jpg";
-						$url = DOL_URL_ROOT.'/viewimage.php?modulepart=doctemplateswebsite&file='.$subdirwithoutzip.".jpg";
+							$file = $dirtheme."/".$subdirwithoutzip.".jpg";
+							$url = DOL_URL_ROOT.'/viewimage.php?modulepart=doctemplateswebsite&file='.$subdirwithoutzip.".jpg";
 
-						if (!file_exists($file)) $url = DOL_URL_ROOT.'/public/theme/common/nophoto.png';
+							if (!file_exists($file)) $url = DOL_URL_ROOT.'/public/theme/common/nophoto.png';
 
-						$originalfile = basename($file);
-						$entity = $conf->entity;
-						$modulepart = 'doctemplateswebsite';
-						$cache = '';
-						$title = $file;
+							$originalfile = basename($file);
+							$entity = $conf->entity;
+							$modulepart = 'doctemplateswebsite';
+							$cache = '';
+							$title = $file;
 
-						$ret = '';
-						$urladvanced = getAdvancedPreviewUrl($modulepart, $originalfile, 1, '&entity='.$entity);
-						if (!empty($urladvanced)) $ret .= '<a class="'.$urladvanced['css'].'" target="'.$urladvanced['target'].'" mime="'.$urladvanced['mime'].'" href="'.$urladvanced['url'].'">';
-						else $ret .= '<a href="'.DOL_URL_ROOT.'/viewimage.php?modulepart='.$modulepart.'&entity='.$entity.'&file='.urlencode($originalfile).'&cache='.$cache.'">';
-						print $ret;
-						print '<img class="img-skinthumb shadow" src="'.$url.'" border="0" alt="'.$title.'" title="'.$title.'" style="margin-bottom: 5px;">';
-						print '</a>';
+							$ret = '';
+							$urladvanced = getAdvancedPreviewUrl($modulepart, $originalfile, 1, '&entity='.$entity);
+							if (!empty($urladvanced)) $ret .= '<a class="'.$urladvanced['css'].'" target="'.$urladvanced['target'].'" mime="'.$urladvanced['mime'].'" href="'.$urladvanced['url'].'">';
+							else $ret .= '<a href="'.DOL_URL_ROOT.'/viewimage.php?modulepart='.$modulepart.'&entity='.$entity.'&file='.urlencode($originalfile).'&cache='.$cache.'">';
+							print $ret;
+							print '<img class="img-skinthumb shadow" src="'.$url.'" border="0" alt="'.$title.'" title="'.$title.'" style="margin-bottom: 5px;">';
+							print '</a>';
 
-						print '<br>';
-						print $subdir.' ('.dol_print_size(dol_filesize($dirtheme."/".$subdir), 1, 1).')';
-						print '<br><a href="'.$_SERVER["PHP_SELF"].'?action=importsiteconfirm&website='.$website->ref.'&templateuserfile='.$subdir.'" class="button">'.$langs->trans("Load").'</a>';
-						print '</div>';
+							print '<br>';
+							print $subdir.' ('.dol_print_size(dol_filesize($dirtheme."/".$subdir), 1, 1).')';
+							print '<br><a href="'.$_SERVER["PHP_SELF"].'?action=importsiteconfirm&website='.$website->ref.'&templateuserfile='.$subdir.'" class="button">'.$langs->trans("Load").'</a>';
+							print '</div>';
 
-						$i++;
+							$i++;
+						}
 					}
 				}
 			}
 		}
+	}
+	else {
+		print '<span class="opacitymedium">'.$langs->trans("None").'</span>';
 	}
 
 	print '</div></td></tr></table>';
