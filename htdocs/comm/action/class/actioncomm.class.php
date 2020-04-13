@@ -921,7 +921,7 @@ class ActionComm extends CommonObject
 
             $res = $this->db->query($sql);
             if (!$res) {
-                $this->error=$this->db->lasterror();
+                $this->error = $this->db->lasterror();
                 $error++;
             }
         }

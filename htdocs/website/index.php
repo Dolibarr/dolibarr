@@ -360,7 +360,7 @@ if ($action == 'unsetshowsubcontainers')
 	exit;
 }
 
-if (($action == 'replacesite' || $action == 'replacesiteconfirm') && ! $searchkey)
+if (($action == 'replacesite' || $action == 'replacesiteconfirm') && !$searchkey)
 {
 	$action = 'replacesite';
 }
@@ -373,13 +373,13 @@ if ($massaction == 'replace' && GETPOST('confirmmassaction', 'alpha'))
 	if (empty($user->rights->website->writephp)) {
 		setEventMessages("NotAllowedToAddDynamicContent", null, 'errors');
 	}
-	elseif (! $replacestring) {
+	elseif (!$replacestring) {
 		setEventMessages("ErrorReplaceStringEmpty", null, 'errors');
 	}
 	else {
 		$nbreplacement = 0;
 
-		foreach($toselect as $keyselected) {
+		foreach ($toselect as $keyselected) {
 			$objectpage = $listofpages['list'][$keyselected];
 			if ($objectpage->pageurl) {
 				dol_syslog("Replace string into page ".$objectpage->pageurl);
@@ -3543,7 +3543,7 @@ if ($action == 'replacesite' || $action == 'replacesiteconfirm' || $massaction =
 			$massactionbutton .= '<div class="massactionother hidden">';
 			$massactionbutton .= $langs->trans("ReplaceString");
 			$massactionbutton .= '<input type="text" name="replacestring" value="'.dol_escape_htmltag(GETPOST('replacestring', 'none')).'">';
-			$massactionbutton .='</div>';
+			$massactionbutton .= '</div>';
 
 			$varpage = empty($contextpage) ? $_SERVER["PHP_SELF"] : $contextpage;
 			//$selectedfields = $form->multiSelectArrayWithCheckbox('selectedfields', $arrayfields, $varpage); // This also change content of $arrayfields

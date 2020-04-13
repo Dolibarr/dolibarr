@@ -378,7 +378,7 @@ if ($action != 'edit' && $action != 'create')		// If not bank account yet, $acco
 
 	$morehtmlright = '';
 	if ($account->id == 0) {
-		$morehtmlright = dolGetButtonTitle($langs->trans('Add'), '', 'fa fa-plus-circle', $_SERVER["PHP_SELF"] . '?id=' . $object->id . '&amp;action=create');
+		$morehtmlright = dolGetButtonTitle($langs->trans('Add'), '', 'fa fa-plus-circle', $_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=create');
 	}
 
 	print load_fiche_titre($langs->trans("BankAccounts"), $morehtmlright, 'bank_account');
@@ -395,49 +395,49 @@ if ($action != 'edit' && $action != 'create')		// If not bank account yet, $acco
 	print_liste_field_titre('', $_SERVER["PHP_SELF"], "", '', '', '', $sortfield, $sortorder, 'maxwidthsearch ');
 	print "</tr>\n";
 
-	if($account->id > 0) {
+	if ($account->id > 0) {
 		print '<tr class="oddeven">';
 		// Label
-		print '<td>' . $account->label . '</td>';
+		print '<td>'.$account->label.'</td>';
 		// Bank name
-		print '<td>' . $account->bank . '</td>';
+		print '<td>'.$account->bank.'</td>';
 		// Account number
 		print '<td>';
 		$string = '';
 		foreach ($account->getFieldsToShow() as $val) {
 			if ($val == 'BankCode') {
-				$string .= $account->code_banque . ' ';
+				$string .= $account->code_banque.' ';
 			} elseif ($val == 'BankAccountNumber') {
-				$string .= $account->number . ' ';
+				$string .= $account->number.' ';
 			} elseif ($val == 'DeskCode') {
-				$string .= $account->code_guichet . ' ';
+				$string .= $account->code_guichet.' ';
 			} elseif ($val == 'BankAccountNumberKey') {
-				$string .= $account->cle_rib . ' ';
+				$string .= $account->cle_rib.' ';
 			}
 		}
 		if (!empty($account->label) && $account->number) {
 			if (!checkBanForAccount($account)) {
-				$string .= ' ' . img_picto($langs->trans("ValueIsNotValid"), 'warning');
+				$string .= ' '.img_picto($langs->trans("ValueIsNotValid"), 'warning');
 			} else {
-				$string .= ' ' . img_picto($langs->trans("ValueIsValid"), 'info');
+				$string .= ' '.img_picto($langs->trans("ValueIsValid"), 'info');
 			}
 		}
 
 		print $string;
 		print '</td>';
 		// IBAN
-		print '<td>' . $account->iban;
+		print '<td>'.$account->iban;
 		if (!empty($account->iban)) {
 			if (!checkIbanForAccount($account)) {
-				print ' ' . img_picto($langs->trans("IbanNotValid"), 'warning');
+				print ' '.img_picto($langs->trans("IbanNotValid"), 'warning');
 			}
 		}
 		print '</td>';
 		// BIC
-		print '<td>' . $account->bic;
+		print '<td>'.$account->bic;
 		if (!empty($account->bic)) {
 			if (!checkSwiftForAccount($account)) {
-				print ' ' . img_picto($langs->trans("SwiftNotValid"), 'warning');
+				print ' '.img_picto($langs->trans("SwiftNotValid"), 'warning');
 			}
 		}
 		print '</td>';
@@ -445,7 +445,7 @@ if ($action != 'edit' && $action != 'create')		// If not bank account yet, $acco
 		// Edit/Delete
 		print '<td class="right nowraponall">';
 		if ($user->rights->hrm->employee->write || $user->rights->user->creer) {
-			print '<a href="' . $_SERVER["PHP_SELF"] . '?id=' . $object->id . '&bankid=' . $account->id . '&action=edit">';
+			print '<a href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&bankid='.$account->id.'&action=edit">';
 			print img_picto($langs->trans("Modify"), 'edit');
 			print '</a>';
 		}
