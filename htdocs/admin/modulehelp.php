@@ -31,7 +31,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
 
 // Load translation files required by the page
-$langs->loadLangs(array('errors', 'admin'));
+$langs->loadLangs(array('errors', 'admin', 'modulebuilder'));
 
 $mode = GETPOST('mode', 'alpha');
 $action = GETPOST('action', 'alpha');
@@ -317,6 +317,9 @@ if ($mode == 'desc')
     if ($moduledesc) $text .= '<br>'.$moduledesc.'<br><br><br>';
 
     $text .= '<span class="opacitymedium">'.$langs->trans("Version").':</span> '.$version;
+
+    $moduledescriptorfile = get_class($objMod).'.class.php';
+    $text .= '<br><span class="opacitymedium">'.$langs->trans("DescriptorFile").':</span> '.$moduledescriptorfile;
 
     $textexternal = '';
     if ($objMod->isCoreOrExternalModule() == 'external')

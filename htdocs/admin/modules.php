@@ -541,8 +541,8 @@ if ($mode == 'common' || $mode == 'commonkanban')
 	$moreforfilter .= '</div>';
 
 	$moreforfilter .= '<div class="floatright right">';
-	$moreforfilter .= dolGetButtonTitle($langs->trans('ViewList'), '', 'fa fa-list-alt paddingleft imgforviewmode', $_SERVER["PHP_SELF"].'?mode=common'.$param, '', 1, array('morecss'=>'reposition'));
 	$moreforfilter .= dolGetButtonTitle($langs->trans('ViewKanban'), '', 'fa fa-th-list paddingleft imgforviewmode', $_SERVER["PHP_SELF"].'?mode=commonkanban'.$param, '', 1, array('morecss'=>'reposition'));
+	$moreforfilter .= dolGetButtonTitle($langs->trans('ViewList'), '', 'fa fa-list-alt paddingleft imgforviewmode', $_SERVER["PHP_SELF"].'?mode=common'.$param, '', 1, array('morecss'=>'reposition'));
 	$moreforfilter .= '</div>';
 
 	$moreforfilter .= '<div class="floatright right margintoponly marginrightonly" style="padding-top: 3px">'.$moreinfo.'</div>';
