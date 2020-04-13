@@ -8264,7 +8264,7 @@ abstract class CommonObject
 			}
 		}
 
-		if (!$error)
+		if (!$error && !empty($this->isextrafieldmanaged))
 		{
 			$result = $this->deleteExtraFields();
 			if ($result < 0) { $error++; }
