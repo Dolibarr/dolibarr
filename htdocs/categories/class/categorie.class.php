@@ -544,7 +544,7 @@ class Categorie extends CommonObject
 		}
 		$sql .= ", visible = '".$this->db->escape($this->visible)."'";
 		$sql .= ", fk_parent = ".$this->fk_parent;
-		$sql .= ", fk_user_modif = ". (int) $user->id;
+		$sql .= ", fk_user_modif = ".(int) $user->id;
 		$sql .= " WHERE rowid = ".$this->id;
 
 		dol_syslog(get_class($this)."::update", LOG_DEBUG);
