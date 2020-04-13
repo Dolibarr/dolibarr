@@ -1673,6 +1673,15 @@ div.nopadding {
 .pictoobjectwidth {
 	width: 14px;
 }
+.table-list-of-attached-files .col-picto, .table-list-of-links .col-picto {
+    opacity: 0.7 !important;
+    font-size: 1em;
+    width: 20px;
+}
+.table-list-of-attached-files .col-picto .widthpictotitle, .table-list-of-links .col-picto .widthpictotitle {
+	width: unset;
+    color: #999;
+}
 .pictosubstatus {
     padding-left: 2px;
     padding-right: 2px;

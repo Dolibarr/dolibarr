@@ -1582,6 +1582,7 @@ td.nobordernopadding.widthpictotitle.col-picto {
 }
 .table-list-of-attached-files .col-picto .widthpictotitle, .table-list-of-links .col-picto .widthpictotitle {
 	width: unset;
+    color: #999;
 }
 .pictotitle {
 	margin-<?php echo $right; ?>: 8px;
