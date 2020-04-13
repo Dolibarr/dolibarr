@@ -1188,6 +1188,13 @@ class Thirdparties extends DolibarrApi
 			$account->$field = $value;
 		}
 
+		if (empty($account->rum)) {
+			require_once DOL_DOCUMENT_ROOT.'/compta/prelevement/class/bonprelevement.class.php';
+			$prelevement = new BonPrelevement($this->db);
+			$account->rum = $prelevement->buildRumNumber($this->company->code_client, $account->datec, $account->id);
+			$account->date_rum = dol_now();
+		}
+
 		if ($account->update(DolibarrApiAccess::$user) < 0)
 			throw new RestException(500, 'Error updating values');
 
