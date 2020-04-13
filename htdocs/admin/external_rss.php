@@ -322,8 +322,8 @@ if ($resql)
 		// Active
 		$active = _isInBoxList($idrss, $boxlist) ? 'yes' : 'no';
 		print '<tr class="oddeven">';
-		print '<td>'.$langs->trans('Active').'</td>';
-		print '<td>'.$langs->trans($active).'</td>';
+		print '<td>'.$langs->trans('WidgetEnabled').'</td>';
+		print '<td>'.yesno($active).'</td>';
 		print "</tr>";
 
 		print '</table>';
