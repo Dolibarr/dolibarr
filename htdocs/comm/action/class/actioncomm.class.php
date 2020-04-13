@@ -1397,7 +1397,7 @@ class ActionComm extends CommonObject
 		    if ($this->type_code != 'AC_OTH_AUTO') $labeltype = $langs->trans('ActionAC_MANUAL');
 		}
 
-		$tooltip = '<u>'.$langs->trans('ShowAction').'</u>';
+		$tooltip = '<u>'.$langs->trans('Action').'</u>';
 		if (!empty($this->ref))
 			$tooltip .= '<br><b>'.$langs->trans('Ref').':</b> '.$this->ref;
 		if (!empty($label))
