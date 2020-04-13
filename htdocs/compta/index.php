@@ -546,8 +546,8 @@ if (!empty($conf->fournisseur->enabled) && $user->rights->fournisseur->facture->
 
 
 
-// Last donations
-if (!empty($conf->don->enabled) && $user->rights->societe->lire)
+// Latest donations
+if (!empty($conf->don->enabled) && $user->rights->don->lire)
 {
 	include_once DOL_DOCUMENT_ROOT.'/don/class/don.class.php';
 
