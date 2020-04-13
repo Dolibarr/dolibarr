@@ -118,7 +118,7 @@ if (!defined('ISLOADEDBYSTEELSHEET')) die('Must be call by steelsheet'); ?>
     transition: opacity 0.5s, visibility 0s 0.5s;
 }
 .box-flex-item.info-box-module.info-box-module-disabled {
-    opacity: 0.6;
+    /* opacity: 0.6; */
 }
 
 .info-box-actions {

@@ -324,7 +324,7 @@ if ($mode == 'desc')
     $textexternal = '';
     if ($objMod->isCoreOrExternalModule() == 'external')
     {
-        $textexternal .= '<br><span class="opacitymedium">'.$langs->trans("Origin").':</span> '.$langs->trans("ExternalModule", $dirofmodule);
+        $textexternal .= '<br><span class="opacitymedium">'.$langs->trans("Origin").':</span> '.$langs->trans("ExternalModule").' - '.$langs->trans("InstalledInto", $dirofmodule);
         if ($objMod->editor_name != 'dolibarr') $textexternal .= '<br><span class="opacitymedium">'.$langs->trans("Publisher").':</span> '.(empty($objMod->editor_name) ? $langs->trans("Unknown") : $objMod->editor_name);
         $editor_url = $objMod->editor_url;
         if (!preg_match('/^http/', $editor_url)) $editor_url = 'http://'.$editor_url;
