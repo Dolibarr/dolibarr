@@ -1549,24 +1549,26 @@ function dol_banner_tab($object, $paramid, $morehtml = '', $shownav = 1, $fieldi
 				}
 			}
 
-			if (!$phototoshow)      // Show No photo link (picto of pbject)
+			if (!$phototoshow)      // Show No photo link (picto of object)
 			{
 			    $morehtmlleft .= '<div class="floatleft inline-block valignmiddle divphotoref">';
 				if ($object->element == 'action')
 				{
 					$width = 80;
 					$cssclass = 'photorefcenter';
-					$nophoto = img_picto('', 'title_agenda', '', false, 1);
+					$nophoto = img_picto('No photo', 'title_agenda');
 				}
 				else
 				{
 					$width = 14; $cssclass = 'photorefcenter';
 					$picto = $object->picto;
 					if ($object->element == 'project' && !$object->public) $picto = 'project'; // instead of projectpub
-					$nophoto = img_picto('', 'object_'.$picto, '', false, 1);
+					$nophoto = img_picto('No photo', 'object_'.$picto);
 				}
 				$morehtmlleft .= '<!-- No photo to show -->';
-				$morehtmlleft .= '<div class="floatleft inline-block valignmiddle divphotoref"><div class="photoref"><img class="photo'.$modulepart.($cssclass ? ' '.$cssclass : '').'" alt="No photo"'.($width ? ' style="width: '.$width.'px"' : '').' src="'.$nophoto.'"></div></div>';
+				$morehtmlleft .= '<div class="floatleft inline-block valignmiddle divphotoref"><div class="photoref">';
+				$morehtmlleft .= $nophoto;
+				$morehtmlleft .= '</div></div>';
 
 				$morehtmlleft .= '</div>';
 			}
@@ -3140,8 +3142,8 @@ function img_picto($titlealt, $picto, $moreatt = '', $pictoisfullpath = false, $
         if (empty($srconly) && in_array($pictowithouttext, array(
         		'1downarrow', '1uparrow', '1leftarrow', '1rightarrow', '1uparrow_selected', '1downarrow_selected', '1leftarrow_selected', '1rightarrow_selected',
         		'address', 'bank_account', 'barcode', 'bank', 'bookmark', 'bom', 'building', 'cash-register', 'check', 'close_title', 'company', 'contact', 'cubes',
-        		'delete', 'dolly', 'edit', 'ellipsis-h',
-        		'filter', 'file-code', 'folder', 'folder-open', 'grip', 'grip_title', 'help', 'language', 'list', 'listlight', 'lot', 'mrp', 'note', 'stock',
+        		'delete', 'dolly', 'edit', 'ellipsis-h', 'external-link-alt', 'external-link-square-alt',
+        		'filter', 'file-code', 'file-export', 'file-import', 'file-upload', 'folder', 'folder-open', 'grip', 'grip_title', 'help', 'language', 'list', 'listlight', 'lot', 'mrp', 'note', 'stock',
         		'object_accounting', 'object_action', 'object_account', 'object_barcode', 'object_bom',
         		'object_category', 'object_bookmark', 'object_bug', 'object_generic', 'object_list-alt', 'object_calendar', 'object_calendarweek', 'object_calendarmonth', 'object_calendarday', 'object_calendarperuser',
         		'object_cash-register', 'object_company', 'object_contact', 'object_contract', 'object_dynamicprice',

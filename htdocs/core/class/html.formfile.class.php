@@ -110,7 +110,7 @@ class FormFile
 
 			$maxlength = $size;
 
-			$out = "\n\n<!-- Start form attach new file -->\n";
+			$out = "\n\n".'<!-- Start form attach new file --><div class="formattachnewfile">'."\n";
 
 			if (empty($title)) $title = $langs->trans("AttachANewFile");
 			if ($title != 'none') $out .= load_fiche_titre($title, null, null);
@@ -220,11 +220,11 @@ class FormFile
 	       		if (empty($sectionid)) $out .= '<br>';
 			}
 
-			$out .= "\n<!-- End form attach new file -->\n";
+			$out .= "\n</div><!-- End form attach new file -->\n";
 
 			if ($linkfiles)
 			{
-				$out .= "\n<!-- Start form link new url -->\n";
+				$out .= "\n".'<!-- Start form link new url --><div class="formlinknewurl">'."\n";
 				$langs->load('link');
 				$title = $langs->trans("LinkANewFile");
 				$out .= load_fiche_titre($title, null, null);
@@ -260,7 +260,7 @@ class FormFile
                     $out .= '</form><br>';
 				}
 
-				$out .= "\n<!-- End form link new url -->\n";
+				$out .= "\n</div><!-- End form link new url -->\n";
 			}
 
 			$parameters = array('socid'=>(isset($GLOBALS['socid']) ? $GLOBALS['socid'] : ''), 'id'=>(isset($GLOBALS['id']) ? $GLOBALS['id'] : ''), 'url'=>$url, 'perm'=>$perm);
@@ -1174,7 +1174,7 @@ class FormFile
 			}
 
 			// Show list of existing files
-			if ((empty($useinecm) || $useinecm == 6) && $title != 'none') print load_fiche_titre($title ? $title : $langs->trans("AttachedFiles"));
+			if ((empty($useinecm) || $useinecm == 6) && $title != 'none') print load_fiche_titre($title ? $title : $langs->trans("AttachedFiles"), '', 'file-upload', 0, '', 'table-list-of-attached-files');
 			if (empty($url)) $url = $_SERVER["PHP_SELF"];
 
 			print '<!-- html.formfile::list_of_documents -->'."\n";
@@ -1790,7 +1790,7 @@ class FormFile
 		print '<!-- listOfLinks -->'."\n";
 
 		// Show list of associated links
-		print load_fiche_titre($langs->trans("LinkedFiles"));
+		print load_fiche_titre($langs->trans("LinkedFiles"), '', 'external-link-square-alt', 0, '', 'table-list-of-links');
 
 		print '<form action="'.$_SERVER['PHP_SELF'].($param ? '?'.$param : '').'" method="POST">';
 		print '<input type="hidden" name="token" value="'.newToken().'">';
