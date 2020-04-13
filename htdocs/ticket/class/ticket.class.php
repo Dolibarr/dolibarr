@@ -2826,7 +2826,7 @@ class Ticket extends CommonObject
     		}
 
     		$response = new WorkboardResponse();
-    		$response->warning_delay = $delay_warning / 60 / 60 / 24;
+    		//$response->warning_delay = $delay_warning / 60 / 60 / 24;
     		$response->label = $label;
     		$response->labelShort = $labelShort;
     		$response->url = DOL_URL_ROOT.'/ticket/list.php?search_fk_statut[]='.$status;
