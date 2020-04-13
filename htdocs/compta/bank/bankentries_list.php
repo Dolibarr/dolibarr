@@ -8,7 +8,8 @@
  * Copyright (C) 2016       Juanjo Menent        <jmenent@2byte.es>
  * Copyright (C) 2017-2019  Alexandre Spangaro   <aspangaro@open-dsi.fr>
  * Copyright (C) 2018       Ferran Marcet        <fmarcet@2byte.es>
- * Copyright (C) 2018       Frédéric France         <frederic.france@netlogic.fr>
+ * Copyright (C) 2018       Frédéric France      <frederic.france@netlogic.fr>
+ * Copyright (C) 2020       Pierre Ardoin        <mapiolca@me.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -480,6 +481,7 @@ $sql .= " b.fk_account, b.fk_type,";
 $sql .= " ba.rowid as bankid, ba.ref as bankref,";
 $sql .= " bu.url_id,";
 $sql .= " s.nom, s.name_alias, s.client, s.fournisseur, s.email, s.code_client, s.code_fournisseur, s.code_compta, s.code_compta_fournisseur";
+$sql .= ", u.lastname, u.firstname, u.employee, u.job, u.email, u.statut";
 // Add fields from extrafields
 if (!empty($extrafields->attributes[$object->table_element]['label'])) {
 	foreach ($extrafields->attributes[$object->table_element]['label'] as $key => $val) $sql .= ($extrafields->attributes[$object->table_element]['type'][$key] != 'separate' ? ", ef.".$key.' as options_'.$key : '');
@@ -493,8 +495,9 @@ if ($search_bid > 0) $sql .= MAIN_DB_PREFIX."bank_class as l,";
 $sql .= " ".MAIN_DB_PREFIX."bank_account as ba,";
 $sql .= " ".MAIN_DB_PREFIX."bank as b";
 if (is_array($extrafields->attributes[$object->table_element]['label']) && count($extrafields->attributes[$object->table_element]['label'])) $sql .= " LEFT JOIN ".MAIN_DB_PREFIX.$object->table_element."_extrafields as ef on (b.rowid = ef.fk_object)";
-$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."bank_url as bu ON bu.fk_bank = b.rowid AND type = 'company'";
+$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."bank_url as bu ON bu.fk_bank = b.rowid AND (type = 'company' OR type = 'user')";
 $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s ON bu.url_id = s.rowid";
+$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."user as u ON bu.url_id = u.rowid";
 $sql .= " WHERE b.fk_account = ba.rowid";
 $sql .= " AND ba.entity IN (".getEntity('bank_account').")";
 if ($search_account > 0) $sql .= " AND b.fk_account = ".$search_account;
@@ -1375,24 +1378,56 @@ if ($resql)
     	if (!empty($arrayfields['bu.label']['checked']))
     	{
         	print "<td>";
-			if ($objp->url_id)
-			{
-				$companystatic->id = $objp->url_id;
-				$companystatic->name = $objp->nom;
-				$companystatic->name_alias = $objp->name_alias;
-				$companystatic->client = $objp->client;
-				$companystatic->email = $objp->email;
-				$companystatic->fournisseur = $objp->fournisseur;
-				$companystatic->code_client = $objp->code_client;
-				$companystatic->code_fournisseur = $objp->code_fournisseur;
-				$companystatic->code_compta = $objp->code_compta;
-				$companystatic->code_compta_fournisseur = $objp->code_compta_fournisseur;
-				print $companystatic->getNomUrl(1);
+			
+        	$links = $bankaccountstatic->get_url($objp->rowid);
+    	    $cachebankaccount = array();
+    	    foreach ($links as $key=>$val)
+    	    {
+				if ($links[$key]['type'] == 'payment' || $links[$key]['type'] == 'payment_supplier')
+    	        {
+    	            if ($objp->url_id)
+					{
+			
+    	            $companystatic->id = $objp->url_id;
+					$companystatic->name = $objp->nom;
+					$companystatic->name_alias = $objp->name_alias;
+					$companystatic->client = $objp->client;
+					$companystatic->email = $objp->email;
+					$companystatic->fournisseur = $objp->fournisseur;
+					$companystatic->code_client = $objp->code_client;
+					$companystatic->code_fournisseur = $objp->code_fournisseur;
+					$companystatic->code_compta = $objp->code_compta;
+					$companystatic->code_compta_fournisseur = $objp->code_compta_fournisseur;
+					print $companystatic->getNomUrl(1);
+					}
+					else
+					{
+						print '&nbsp;';
+					}
+							
+    	        }
+				elseif ($links[$key]['type'] == 'payment_salary')
+    	        {
+    	        	if ($objp->url_id)
+					{	//u.lastname, u.firstname, u.employee, u.job, u.email, u.statut
+						$userstatic->id = $objp->url_id;
+						$userstatic->lastname = $objp->lastname;
+						$userstatic->firstname = $objp->firstname;
+						$userstatic->employee = $objp->employee;
+						$userstatic->job = $objp->job;
+						$userstatic->email = $objp->email;
+						$userstatic->statut = $objp->statut;
+						print $userstatic->getNomUrl(1);
+
+					}
+					else
+					{
+						print '&nbsp;';
+					}
+    	            
+    	        }
 			}
-			else
-			{
-				print '&nbsp;';
-			}
+
 			print '</td>';
             if (!$i) $totalarray['nbfield']++;
     	}
