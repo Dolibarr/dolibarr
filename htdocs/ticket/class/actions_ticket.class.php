@@ -23,11 +23,11 @@
  *    \brief      File Class ticket
  */
 
-require_once DOL_DOCUMENT_ROOT . '/ticket/class/ticket.class.php';
-require_once DOL_DOCUMENT_ROOT . '/core/lib/files.lib.php';
-require_once DOL_DOCUMENT_ROOT . '/core/class/extrafields.class.php';
-require_once DOL_DOCUMENT_ROOT . '/contrat/class/contrat.class.php';
-require_once DOL_DOCUMENT_ROOT . '/fichinter/class/fichinter.class.php';
+require_once DOL_DOCUMENT_ROOT.'/ticket/class/ticket.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
+require_once DOL_DOCUMENT_ROOT.'/contrat/class/contrat.class.php';
+require_once DOL_DOCUMENT_ROOT.'/fichinter/class/fichinter.class.php';
 
 
 /**
@@ -183,21 +183,21 @@ class ActionsTicket
         if (!empty($user->rights->ticket->manage) && $action == 'edit_message_init') {
             // MESSAGE
 
-            print '<form action="' . $_SERVER['PHP_SELF'] . '" method="post">';
-            print '<input type="hidden" name="token" value="' . $_SESSION['newtoken'] . '">';
-            print '<input type="hidden" name="track_id" value="' . $object->track_id . '">';
+            print '<form action="'.$_SERVER['PHP_SELF'].'" method="post">';
+            print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+            print '<input type="hidden" name="track_id" value="'.$object->track_id.'">';
             print '<input type="hidden" name="action" value="set_message">';
         }
 
         // Initial message
         print '<div class="underbanner clearboth"></div>';
-        print '<div class="div-table-responsive-no-min">';		// You can use div-table-responsive-no-min if you dont need reserved height for your table
-        print '<table class="border centpercent margintable">';
+        print '<div class="div-table-responsive-no-min">'; // You can use div-table-responsive-no-min if you dont need reserved height for your table
+        print '<table class="noborder centpercent margintable">';
         print '<tr class="liste_titre"><td class="nowrap titlefield">';
         print $langs->trans("InitialMessage");
         print '</td><td>';
         if ($user->rights->ticket->manage) {
-            print '<a class="editfielda" href="' . $_SERVER['PHP_SELF'] . '?action=edit_message_init&amp;track_id=' . $object->track_id . '">' . img_edit($langs->trans('Modify')) . '</a>';
+            print '<a class="editfielda" href="'.$_SERVER['PHP_SELF'].'?action=edit_message_init&amp;track_id='.$object->track_id.'">'.img_edit($langs->trans('Modify')).'</a>';
         }
         print '</td></tr>';
 
@@ -206,7 +206,7 @@ class ActionsTicket
         if (!empty($user->rights->ticket->manage) && $action == 'edit_message_init') {
             // MESSAGE
             $msg = GETPOST('message_initial', 'alpha') ? GETPOST('message_initial', 'alpha') : $object->message;
-            include_once DOL_DOCUMENT_ROOT . '/core/class/doleditor.class.php';
+            include_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
             $uselocalbrowser = true;
             $doleditor = new DolEditor('message_initial', $msg, '100%', 250, 'dolibarr_details', 'In', true, $uselocalbrowser, $conf->global->FCKEDITOR_ENABLE_TICKET, ROWS_4, '95%');
             $doleditor->Create();
@@ -222,8 +222,8 @@ class ActionsTicket
         }
         if (!empty($user->rights->ticket->manage) && $action == 'edit_message_init') {
             print '<div class="center">';
-            print ' <input type="submit" class="button" value="' . $langs->trans('Modify') . '">';
-            print ' <input type="submit" class="button" name="cancel" value="' . $langs->trans('Cancel') . '">';
+            print ' <input type="submit" class="button" value="'.$langs->trans('Modify').'">';
+            print ' <input type="submit" class="button" name="cancel" value="'.$langs->trans('Cancel').'">';
             print '</div>';
         }
         print '</td>';
@@ -306,7 +306,7 @@ class ActionsTicket
 
             print '</table>';
         } else {
-            print '<div class="info">' . $langs->trans('NoMsgForThisTicket') . '</div>';
+            print '<div class="info">'.$langs->trans('NoMsgForThisTicket').'</div>';
         }
     }
 
@@ -364,7 +364,7 @@ class ActionsTicket
             }
             print '</section>';
         } else {
-            print '<div class="info">' . $langs->trans('NoMsgForThisTicket') . '</div>';
+            print '<div class="info">'.$langs->trans('NoMsgForThisTicket').'</div>';
         }
     }
 
@@ -381,9 +381,6 @@ class ActionsTicket
         print '<div class="div-table-responsive-no-min">';
         print '<div class="tagtable centpercent">';
         print '<div class="tagtr liste_titre">';
-        print '<div class="tagtd">';
-        print '<strong>' . $langs->trans('TicketChangeStatus') . '</strong>';
-        print '</div>';
         // Exclude status which requires specific method
         $exclude_status = array(Ticket::STATUS_CLOSED, Ticket::STATUS_CANCELED);
         // Exclude actual status
@@ -394,19 +391,19 @@ class ActionsTicket
 
         foreach ($object->statuts_short as $status => $status_label) {
             if (!in_array($status, $exclude_status)) {
-                print '<div class="tagtd">';
+                print '<div class="tagtd center">';
 
                 if ($status == 1)
                 {
-                    $urlforbutton = $_SERVER['PHP_SELF'] . '?track_id=' . $object->track_id . '&action=mark_ticket_read';	// To set as read, we use a dedicated action
+                    $urlforbutton = $_SERVER['PHP_SELF'].'?track_id='.$object->track_id.'&action=mark_ticket_read'; // To set as read, we use a dedicated action
                 }
                 else
                 {
-                    $urlforbutton = $_SERVER['PHP_SELF'] . '?track_id=' . $object->track_id . '&action=set_status&new_status=' . $status;
+                    $urlforbutton = $_SERVER['PHP_SELF'].'?track_id='.$object->track_id.'&action=set_status&new_status='.$status;
                 }
 
-                print '<a class="button buttonticket" href="' . $urlforbutton . '">';
-                print img_picto($langs->trans($object->statuts_short[$status]), 'statut' . $status . '.png@ticket') . ' ' . $langs->trans($object->statuts_short[$status]);
+                print '<a class="button buttonticket" href="'.$urlforbutton.'">';
+                print img_picto($langs->trans($object->statuts_short[$status]), 'statut'.$status.'.png@ticket').' '.$langs->trans($object->statuts_short[$status]);
                 print '</a>';
                 print '</div>';
             }
@@ -433,7 +430,7 @@ class ActionsTicket
             $this->results = array('ticket_send' => $langs->trans('MailToSendTicketMessage'));
         }
 
-        if (! $error) {
+        if (!$error) {
             return 0; // or return 1 to replace standard code
         } else {
             $this->errors[] = 'Error message';

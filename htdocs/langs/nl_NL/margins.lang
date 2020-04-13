@@ -16,6 +16,7 @@ MarginDetails=Marge details
 ProductMargins=Product marge
 CustomerMargins=Klant marges
 SalesRepresentativeMargins=Vertegenwoordiger marges
+ContactOfInvoice=Contact bij factuur
 UserMargins=Gebruiker marges
 ProductService=Trainning of Dienst
 AllProducts=Alle Trainingen en Diensten
@@ -31,12 +32,12 @@ MARGIN_TYPE=Inkoop/kostprijs voorgesteld al standaard bij margeberekening
 MargeType1=Marge op de beste verkoopprijs
 MargeType2=Marge op gewogen inkoopprijs (GIP)
 MargeType3=Marge inkoopprijs
-MarginTypeDesc=* Marge op beste aankoopprijs = verkoopprijs - beste leveranciersprijs gedefinieerd op productkaart <br> * Marge op gewogen gemiddelde prijs (GGP) = verkoopprijs - product gewogen gemiddelde prijs (GGP) of beste leverancier prijs als GGP nog niet is gedefinieerd <br> * Marge op kostprijs = Verkoopprijs - Kostprijs gedefinieerd op productkaart of GGP als kostprijs niet is gedefinieerd, of beste leverancier prijs als GGP nog niet is gedefinieerd
+MarginTypeDesc=* Marge op beste koopprijs = Verkoopprijs - Beste leveranciersprijs gedefinieerd op productkaart <br> * Marge op gewogen gemiddelde prijs (WAP) = verkoopprijs - Productgewogen gemiddelde prijs (WAP) of beste leveranciersprijs als WAP nog niet is gedefinieerd <br> * Marge op kostprijs = verkoopprijs - kostprijs gedefinieerd op productkaart of WAP als kostprijs niet is gedefinieerd, of beste leveranciersprijs als WAP nog niet is gedefinieerd
 CostPrice=Kostprijs
 UnitCharges=Unit toeslag
 Charges=Toeslag
 AgentContactType=Contact type used voor commissie
-AgentContactTypeDetails=Definiëren welk contact type (gekoppeld aan facturen) zal worden gebruikt voor het marge rapport per verkoop vertegenwoordiger
+AgentContactTypeDetails=Definieer welk contacttype (gekoppeld op facturen) zal worden gebruikt voor margerapport per contact / adres. Houd er rekening mee dat het lezen van statistieken over een contactpersoon niet betrouwbaar is, omdat de contactpersoon in de meeste gevallen mogelijk niet expliciet op de facturen wordt gedefinieerd.
 rateMustBeNumeric=Tarief moet een numerieke waarde zijn
 markRateShouldBeLesserThan100=Markeer tarief moet lager zijn dan 100 zijn
 ShowMarginInfos=Toon marge info

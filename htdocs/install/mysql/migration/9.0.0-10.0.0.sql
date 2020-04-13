@@ -328,6 +328,9 @@ UPDATE llx_c_shipment_mode SET label = 'https://www.laposte.fr/outils/suivre-vos
 UPDATE llx_c_shipment_mode SET label = 'https://www.laposte.fr/outils/suivre-vos-envois?code={TRACKID}' WHERE code IN ('LETTREMAX');
 
 
+-- VMYSQL4.3 ALTER TABLE llx_holiday MODIFY COLUMN ref varchar(30) NULL;
+-- VPGSQL8.2 ALTER TABLE llx_holiday ALTER COLUMN ref DROP NOT NULL;
+
 
 create table llx_reception
 (

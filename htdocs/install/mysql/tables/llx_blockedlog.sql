@@ -32,7 +32,8 @@ CREATE TABLE llx_blockedlog
 	date_object	datetime,
 	signature varchar(100) NOT NULL, 
 	signature_line varchar(100) NOT NULL, 
-	object_data	text,
+	object_data	mediumtext,
+	object_version varchar(32) DEFAULT '',
 	certified integer
 ) ENGINE=innodb;
 

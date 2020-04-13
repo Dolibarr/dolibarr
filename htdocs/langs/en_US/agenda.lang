@@ -60,7 +60,7 @@ MemberSubscriptionModifiedInDolibarr=Subscription %s for member %s modified
 MemberSubscriptionDeletedInDolibarr=Subscription %s for member %s deleted
 ShipmentValidatedInDolibarr=Shipment %s validated
 ShipmentClassifyClosedInDolibarr=Shipment %s classified billed
-ShipmentUnClassifyCloseddInDolibarr=Shipment %s classified reopened
+ShipmentUnClassifyCloseddInDolibarr=Shipment %s classified re-open
 ShipmentBackToDraftInDolibarr=Shipment %s go back to draft status
 ShipmentDeletedInDolibarr=Shipment %s deleted
 OrderCreatedInDolibarr=Order %s created
@@ -84,12 +84,14 @@ InterventionSentByEMail=Intervention %s sent by email
 ProposalDeleted=Proposal deleted
 OrderDeleted=Order deleted
 InvoiceDeleted=Invoice deleted
+DraftInvoiceDeleted=Draft invoice deleted
 PRODUCT_CREATEInDolibarr=Product %s created
 PRODUCT_MODIFYInDolibarr=Product %s modified
 PRODUCT_DELETEInDolibarr=Product %s deleted
 HOLIDAY_CREATEInDolibarr=Request for leave %s created
 HOLIDAY_MODIFYInDolibarr=Request for leave %s modified
-HOLIDAY_VALIDATEDInDolibarr=Request for leave %s validated
+HOLIDAY_APPROVEInDolibarr=Request for leave %s approved
+HOLIDAY_VALIDATEInDolibarr=Request for leave %s validated
 HOLIDAY_DELETEInDolibarr=Request for leave %s deleted
 EXPENSE_REPORT_CREATEInDolibarr=Expense report %s created
 EXPENSE_REPORT_VALIDATEInDolibarr=Expense report %s validated
@@ -109,9 +111,9 @@ BOM_UNVALIDATEInDolibarr=BOM unvalidated
 BOM_CLOSEInDolibarr=BOM disabled
 BOM_REOPENInDolibarr=BOM reopen
 BOM_DELETEInDolibarr=BOM deleted
-MO_VALIDATEInDolibarr=MO validated
-MO_PRODUCEDInDolibarr=MO produced
-MO_DELETEInDolibarr=MO deleted
+MRP_MO_VALIDATEInDolibarr=MO validated
+MRP_MO_PRODUCEDInDolibarr=MO produced
+MRP_MO_DELETEInDolibarr=MO deleted
 ##### End agenda events #####
 AgendaModelModule=Document templates for event
 DateActionStart=Start date
@@ -122,6 +124,7 @@ AgendaUrlOptionsNotAdmin=<b>logina=!%s</b> to restrict output to actions not own
 AgendaUrlOptions4=<b>logint=%s</b> to restrict output to actions assigned to user <b>%s</b> (owner and others).
 AgendaUrlOptionsProject=<b>project=__PROJECT_ID__</b> to restrict output to actions linked to project <b>__PROJECT_ID__</b>.
 AgendaUrlOptionsNotAutoEvent=<b>notactiontype=systemauto</b> to exclude automatic events.
+AgendaUrlOptionsIncludeHolidays=<b>includeholidays=1</b> to include events of holidays. 
 AgendaShowBirthdayEvents=Show birthdays of contacts
 AgendaHideBirthdayEvents=Hide birthdays of contacts
 Busy=Busy

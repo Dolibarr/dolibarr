@@ -28,7 +28,7 @@
 
 require_once DOL_DOCUMENT_ROOT.'/core/class/commondocgenerator.class.php';
 require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
-require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';   // Requis car utilise dans les classes qui heritent
+require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php'; // Requis car utilise dans les classes qui heritent
 
 /**
  *  \class      ModeleNumRefChequeReceipts
@@ -39,7 +39,7 @@ abstract class ModeleNumRefChequeReceipts
 	/**
 	 * @var string Error code (or message)
 	 */
-	public $error='';
+	public $error = '';
 
 	/**
 	 *	Return if a module can be used or not
@@ -76,11 +76,11 @@ abstract class ModeleNumRefChequeReceipts
 	}
 
 	/**
-     *  Checks if the numbers already in force in the data base do not
-     *  cause conflicts that would prevent this numbering from working.
-     *
-     *	@return     boolean     false if conflict, true if ok
-     */
+	 *  Checks if the numbers already in the database do not
+	 *  cause conflicts that would prevent this numbering working.
+	 *
+	 *	@return     boolean     false if conflict, true if ok
+	 */
 	public function canBeActivated()
 	{
 		return true;
@@ -126,26 +126,26 @@ abstract class ModeleChequeReceipts extends CommonDocGenerator
 	/**
 	 * @var string Error code (or message)
 	 */
-	public $error='';
+	public $error = '';
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
+	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 *  Return list of active generation modules
 	 *
-     *  @param	DoliDB	$db     			Database handler
-     *  @param  integer	$maxfilenamelength  Max length of value to show
-     *  @return	array						List of templates
+	 *  @param	DoliDB	$db     			Database handler
+	 *  @param  integer	$maxfilenamelength  Max length of value to show
+	 *  @return	array						List of templates
 	 */
 	public static function liste_modeles($db, $maxfilenamelength = 0)
 	{
-        // phpcs:enable
+		// phpcs:enable
 		global $conf;
 
-		$type='chequereceipt';
-		$liste=array();
+		$type = 'chequereceipt';
+		$liste = array();
 
 		include_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
-		$liste=getListOfModels($db, $type, $maxfilenamelength);
+		$liste = getListOfModels($db, $type, $maxfilenamelength);
 		// TODO Remove this to use getListOfModels only
 		$liste = array('blochet'=>'blochet');
 
@@ -167,15 +167,15 @@ abstract class ModeleChequeReceipts extends CommonDocGenerator
  */
 function chequereceipt_pdf_create($db, $id, $message, $modele, $outputlangs)
 {
-	global $conf,$langs;
+	global $conf, $langs;
 	$langs->load("bills");
 
-	$dir = DOL_DOCUMENT_ROOT . "/core/modules/cheque/doc/";
+	$dir = DOL_DOCUMENT_ROOT."/core/modules/cheque/doc/";
 
 	// Positionne modele sur le nom du modele a utiliser
-	if (! dol_strlen($modele))
+	if (!dol_strlen($modele))
 	{
-		if (! empty($conf->global->CHEQUERECEIPT_ADDON_PDF))
+		if (!empty($conf->global->CHEQUERECEIPT_ADDON_PDF))
 		{
 			$modele = $conf->global->CHEQUERECEIPT_ADDON_PDF;
 		}
@@ -198,15 +198,15 @@ function chequereceipt_pdf_create($db, $id, $message, $modele, $outputlangs)
 
 		// We save charset_output to restore it because write_file can change it if needed for
 		// output format that does not support UTF8.
-		$sav_charset_output=$outputlangs->charset_output;
+		$sav_charset_output = $outputlangs->charset_output;
 		if ($obj->write_file($id, $outputlangs) > 0)
 		{
-			$outputlangs->charset_output=$sav_charset_output;
+			$outputlangs->charset_output = $sav_charset_output;
 			return 1;
 		}
 		else
 		{
-			$outputlangs->charset_output=$sav_charset_output;
+			$outputlangs->charset_output = $sav_charset_output;
 			dol_print_error($db, "chequereceipt_pdf_create Error: ".$obj->error);
 			return -1;
 		}

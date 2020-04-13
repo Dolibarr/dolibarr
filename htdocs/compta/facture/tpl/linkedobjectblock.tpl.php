@@ -18,7 +18,7 @@
  */
 
 // Protection to avoid direct call of template
-if (empty($conf) || ! is_object($conf))
+if (empty($conf) || !is_object($conf))
 {
 	print "Error, template page can't be called as URL";
 	exit;
@@ -36,14 +36,14 @@ $langs->load("bills");
 
 $linkedObjectBlock = dol_sort_array($linkedObjectBlock, 'date', 'desc', 0, 0, 1);
 
-$total=0;
-$ilink=0;
-foreach($linkedObjectBlock as $key => $objectlink)
+$total = 0;
+$ilink = 0;
+foreach ($linkedObjectBlock as $key => $objectlink)
 {
     $ilink++;
 
-    $trclass='oddeven';
-    if ($ilink == count($linkedObjectBlock) && empty($noMoreLinkedObjectBlockAfter) && count($linkedObjectBlock) <= 1) $trclass.=' liste_sub_total';
+    $trclass = 'oddeven';
+    if ($ilink == count($linkedObjectBlock) && empty($noMoreLinkedObjectBlockAfter) && count($linkedObjectBlock) <= 1) $trclass .= ' liste_sub_total';
 	print '<tr class="'.$trclass.'" data-element="'.$objectlink->element.'"  data-id="'.$objectlink->id.'" >';
 	print '<td class="linkedcol-element">';
 	switch ($objectlink->type) {
@@ -86,12 +86,12 @@ foreach($linkedObjectBlock as $key => $objectlink)
 	}
     print '</td>';
     print '<td class="linkedcol-statut right">'.$objectlink->getLibStatut(3).'</td>';
-    print '<td class="linkedcol-action right"><a href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=dellink&dellinkid='.$key.'">'.img_picto($langs->transnoentitiesnoconv("RemoveLink"), 'unlink').'</a></td>';
+    print '<td class="linkedcol-action right"><a class="reposition" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=dellink&dellinkid='.$key.'">'.img_picto($langs->transnoentitiesnoconv("RemoveLink"), 'unlink').'</a></td>';
     print "</tr>\n";
 }
 if (count($linkedObjectBlock) > 1)
 {
-    print '<tr class="liste_total '.(empty($noMoreLinkedObjectBlockAfter)?'liste_sub_total':'').'">';
+    print '<tr class="liste_total '.(empty($noMoreLinkedObjectBlockAfter) ? 'liste_sub_total' : '').'">';
     print '<td>'.$langs->trans("Total").'</td>';
     print '<td></td>';
     print '<td class="center"></td>';

@@ -11,17 +11,8 @@ YourEMail=E-posti aadress makse kinnituse saamiseks
 Creditor=Kreeditor
 PaymentCode=Makse kood
 PayBoxDoPayment=Pay with Paybox
-ToPay=Soorita makse
 YouWillBeRedirectedOnPayBox=Teid suunatakse turvalisele Payboxi lehele krediitkaardi info sisestamiseks
 Continue=Järgmine
-ToOfferALinkForOnlinePayment=Makse %s URL
-ToOfferALinkForOnlinePaymentOnOrder=URL to offer a %s online payment user interface for a sales order
-ToOfferALinkForOnlinePaymentOnInvoice=Müügiarve eest maksmiseks kasutatava %s online makseteenuse URL
-ToOfferALinkForOnlinePaymentOnContractLine=Lepingu rea eest maksmiseks kasutatava %s online makseteenuse URL
-ToOfferALinkForOnlinePaymentOnFreeAmount=Vaba rea eest maksmiseks kasutatava %s online makseteenuse URL
-ToOfferALinkForOnlinePaymentOnMemberSubscription=Liikmemaksu eest maksmiseks kasutatava %s online makseteenuse URL
-ToOfferALinkForOnlinePaymentOnDonation=URL to offer a %s online payment, user interface for payment of donation
-YouCanAddTagOnUrl=Samuti võid lisa URL parameetri <b>&tag=<i>value</i></b> igale nendest URLidest (nõutud vaid vaba makse jaoks) oma loodud makse kommentaari sildi jaoks.
 SetupPayBoxToHavePaymentCreatedAutomatically=Setup your Paybox with url <b>%s</b> to have payment created automatically when validated by Paybox.
 YourPaymentHasBeenRecorded=See lehekülg kinnitab, et makse on registreeritud. Täname!
 YourPaymentHasNotBeenRecorded=Your payment has NOT been recorded and the transaction has been canceled. Thank you.

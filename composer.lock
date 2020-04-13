@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "content-hash": "16c94fd4f22ac17820d85ee57b0616e1",
+    "content-hash": "17e906996157e8a94564f686a6096dc5",
     "packages": [
         {
             "name": "ckeditor/ckeditor",
@@ -49,24 +49,31 @@
         },
         {
             "name": "mike42/escpos-php",
-            "version": "v1.2.1",
+            "version": "v2.2",
             "source": {
                 "type": "git",
                 "url": "https://github.com/mike42/escpos-php.git",
-                "reference": "cfea4c4fc95516ac953e1e5b623f854632afa2ee"
+                "reference": "e5496cf819b048b11877117bd14a9cea4fb17c03"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/mike42/escpos-php/zipball/cfea4c4fc95516ac953e1e5b623f854632afa2ee",
-                "reference": "cfea4c4fc95516ac953e1e5b623f854632afa2ee",
+                "url": "https://api.github.com/repos/mike42/escpos-php/zipball/e5496cf819b048b11877117bd14a9cea4fb17c03",
+                "reference": "e5496cf819b048b11877117bd14a9cea4fb17c03",
                 "shasum": ""
             },
             "require": {
-                "php": ">=5.3.0"
+                "ext-mbstring": "*",
+                "php": ">=5.4.0"
             },
             "require-dev": {
-                "phpunit/phpunit": "4.5.*",
-                "squizlabs/php_codesniffer": "2.*"
+                "guzzlehttp/guzzle": "^5.3",
+                "phpunit/phpunit": "^4.8",
+                "squizlabs/php_codesniffer": "^3.2"
+            },
+            "suggest": {
+                "ext-gd": "Used for image printing if present.",
+                "ext-imagick": "Will be used for image printing if present. Required for PDF printing or use of custom fonts.",
+                "guzzlehttp/guzzle": "Allows the use of the ApiConnector to send print jobs over HTTP."
             },
             "type": "library",
             "autoload": {
@@ -80,27 +87,11 @@
             ],
             "authors": [
                 {
-                    "name": "Roni Saha",
-                    "email": "roni.cse@gmail.com"
-                },
-                {
                     "name": "Michael Billington",
                     "email": "michael.billington@gmail.com"
-                },
-                {
-                    "name": "Gergely Radics",
-                    "email": "gerifield@ustream.tv"
-                },
-                {
-                    "name": "Warren Doyle",
-                    "email": "w.doyle@fuelled.co"
-                },
-                {
-                    "name": "vharo",
-                    "email": "vharo@geepok.com"
                 }
             ],
-            "description": "Thermal receipt printer library, for use with ESC/POS compatible printers",
+            "description": "PHP receipt printer library for use with ESC/POS-compatible thermal and impact printers",
             "homepage": "https://github.com/mike42/escpos-php",
             "keywords": [
                 "ESC-POS",
@@ -109,20 +100,20 @@
                 "print",
                 "receipt"
             ],
-            "time": "2016-04-25T01:14:07+00:00"
+            "time": "2019-10-05T05:59:00+00:00"
         },
         {
             "name": "mobiledetect/mobiledetectlib",
-            "version": "2.8.33",
+            "version": "2.8.34",
             "source": {
                 "type": "git",
                 "url": "https://github.com/serbanghita/Mobile-Detect.git",
-                "reference": "cd385290f9a0d609d2eddd165a1e44ec1bf12102"
+                "reference": "6f8113f57a508494ca36acbcfa2dc2d923c7ed5b"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/serbanghita/Mobile-Detect/zipball/cd385290f9a0d609d2eddd165a1e44ec1bf12102",
-                "reference": "cd385290f9a0d609d2eddd165a1e44ec1bf12102",
+                "url": "https://api.github.com/repos/serbanghita/Mobile-Detect/zipball/6f8113f57a508494ca36acbcfa2dc2d923c7ed5b",
+                "reference": "6f8113f57a508494ca36acbcfa2dc2d923c7ed5b",
                 "shasum": ""
             },
             "require": {
@@ -161,7 +152,48 @@
                 "mobile detector",
                 "php mobile detect"
             ],
-            "time": "2018-09-01T15:05:15+00:00"
+            "time": "2019-09-18T18:44:20+00:00"
+        },
+        {
+            "name": "nnnick/chartjs",
+            "version": "v2.9.3",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/chartjs/Chart.js.git",
+                "reference": "06f73dc3590084b2c464bf08189c7aee2b6b92d2"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/chartjs/Chart.js/zipball/06f73dc3590084b2c464bf08189c7aee2b6b92d2",
+                "reference": "06f73dc3590084b2c464bf08189c7aee2b6b92d2",
+                "shasum": ""
+            },
+            "require": {
+                "php": ">=5.3.3"
+            },
+            "type": "library",
+            "extra": {
+                "branch-alias": {
+                    "release/2.0": "v2.0-dev"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "NICK DOWNIE",
+                    "email": "hello@nickdownie.com"
+                }
+            ],
+            "description": "Simple HTML5 charts using the canvas element.",
+            "homepage": "https://www.chartjs.org/",
+            "keywords": [
+                "JS",
+                "chart"
+            ],
+            "time": "2019-11-14T18:37:30+00:00"
         },
         {
             "name": "phpoffice/phpexcel",
@@ -281,6 +313,62 @@
                 "server"
             ],
             "time": "2019-05-12T15:15:11+00:00"
+        },
+        {
+            "name": "stripe/stripe-php",
+            "version": "v6.43.1",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/stripe/stripe-php.git",
+                "reference": "42fcdaf99c44bb26937223f8eae1f263491d5ab8"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/stripe/stripe-php/zipball/42fcdaf99c44bb26937223f8eae1f263491d5ab8",
+                "reference": "42fcdaf99c44bb26937223f8eae1f263491d5ab8",
+                "shasum": ""
+            },
+            "require": {
+                "ext-curl": "*",
+                "ext-json": "*",
+                "ext-mbstring": "*",
+                "php": ">=5.4.0"
+            },
+            "require-dev": {
+                "php-coveralls/php-coveralls": "1.*",
+                "phpunit/phpunit": "~4.0",
+                "squizlabs/php_codesniffer": "~2.0",
+                "symfony/process": "~2.8"
+            },
+            "type": "library",
+            "extra": {
+                "branch-alias": {
+                    "dev-master": "2.0-dev"
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "Stripe\\": "lib/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Stripe and contributors",
+                    "homepage": "https://github.com/stripe/stripe-php/contributors"
+                }
+            ],
+            "description": "Stripe PHP Library",
+            "homepage": "https://stripe.com/",
+            "keywords": [
+                "api",
+                "payment processing",
+                "stripe"
+            ],
+            "time": "2019-08-29T16:56:12+00:00"
         },
         {
             "name": "tecnickcom/tcpdf",
@@ -1815,7 +1903,7 @@
     "prefer-stable": false,
     "prefer-lowest": false,
     "platform": {
-        "php": ">=5.3.0",
+        "php": ">=5.5.0",
         "ext-curl": "*"
     },
     "platform-dev": []

@@ -1,7 +1,7 @@
 # Dolibarr language file - Source file is en_US - opensurvey
 Survey=Enquesta
 Surveys=Enquestes
-OrganizeYourMeetingEasily=Organitzi les seves reunions i enquestes fàcilment. Primer seleccioneu el tipus d'enquesta...
+OrganizeYourMeetingEasily=Organitza fàcilment les teves reunions i enquestes. Primer, selecciona el tipus d'enquesta...
 NewSurvey=Nova enquesta
 OpenSurveyArea=Àrea enquestes
 AddACommentForPoll=Pot afegir un comentari a  l'enquesta...
@@ -11,7 +11,7 @@ PollTitle=Títol de l'enquesta
 ToReceiveEMailForEachVote=Rebre un correu electrònic per cada vot
 TypeDate=Tipus de data
 TypeClassic=Tipus estándar
-OpenSurveyStep2=Seleccioneu les dates entre els dies lliures (en gris). Els dies seleccionats són de color verd. Vostè pot cancel·lar la selecció d'un dia prèviament seleccionat fent clic de nou sobre el mateix
+OpenSurveyStep2=Selecciona les dates entre els dies lliures (gris). Els dies seleccionats són verds. Pots anul·lar la selecció d'un dia prèviament seleccionat fent clic de nou en ell
 RemoveAllDays=Eliminar tots els dies
 CopyHoursOfFirstDay=Copia hores del primer dia
 RemoveAllHours=Eliminar totes les hores
@@ -35,7 +35,7 @@ TitleChoice=Títol de l'opció
 ExportSpreadsheet=Exportar resultats a un full de càlcul
 ExpireDate=Data límit
 NbOfSurveys=Número d'enquestes
-NbOfVoters=Núm. de votants
+NbOfVoters=Nº de votants
 SurveyResults=Resultats
 PollAdminDesc=Està autoritzat per canviar totes les línies de l'enquesta amb el botó "Editar". Pot, també, eliminar una columna o una línia amb %s. També podeu afegir una nova columna amb %s.
 5MoreChoices=5 opcions més

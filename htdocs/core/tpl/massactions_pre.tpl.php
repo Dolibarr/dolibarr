@@ -45,7 +45,7 @@ if ($massaction == 'presend')
 	$listofselectedthirdparties = array();
 	$listofselectedref = array();
 
-	if (! GETPOST('cancel', 'alpha'))
+	if (!GETPOST('cancel', 'alpha'))
 	{
 		foreach ($arrayofselected as $toselectid)
 		{
@@ -66,25 +66,25 @@ if ($massaction == 'presend')
 
 	print '<input type="hidden" name="massaction" value="confirm_presend">';
 
-	include_once DOL_DOCUMENT_ROOT . '/core/class/html.formmail.class.php';
+	include_once DOL_DOCUMENT_ROOT.'/core/class/html.formmail.class.php';
 	$formmail = new FormMail($db);
 
 	dol_fiche_head(null, '', '');
 
 	// Cree l'objet formulaire mail
-	include_once DOL_DOCUMENT_ROOT . '/core/class/html.formmail.class.php';
+	include_once DOL_DOCUMENT_ROOT.'/core/class/html.formmail.class.php';
 	$formmail = new FormMail($db);
 	$formmail->withform = -1;
-	$formmail->fromtype = (GETPOST('fromtype') ? GETPOST('fromtype') : (! empty($conf->global->MAIN_MAIL_DEFAULT_FROMTYPE) ? $conf->global->MAIN_MAIL_DEFAULT_FROMTYPE : 'user'));
+	$formmail->fromtype = (GETPOST('fromtype') ? GETPOST('fromtype') : (!empty($conf->global->MAIN_MAIL_DEFAULT_FROMTYPE) ? $conf->global->MAIN_MAIL_DEFAULT_FROMTYPE : 'user'));
 
 	if ($formmail->fromtype === 'user')
 	{
 		$formmail->fromid = $user->id;
 	}
 	$formmail->trackid = $trackid;
-	if (! empty($conf->global->MAIN_EMAIL_ADD_TRACK_ID) && ($conf->global->MAIN_EMAIL_ADD_TRACK_ID & 2)) // If bit 2 is set
+	if (!empty($conf->global->MAIN_EMAIL_ADD_TRACK_ID) && ($conf->global->MAIN_EMAIL_ADD_TRACK_ID & 2)) // If bit 2 is set
 	{
-		include DOL_DOCUMENT_ROOT . '/core/lib/functions2.lib.php';
+		include DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
 		$formmail->frommail = dolAddEmailTrackId($formmail->frommail, $trackid);
 	}
 	$formmail->withfrom = 1;
@@ -112,10 +112,10 @@ if ($massaction == 'presend')
 		$formmail->withtoreadonly = 1;
 	}
 
-	$formmail->withoptiononeemailperrecipient = ((count($listofselectedref) == 1 && count(reset($listofselectedref)) == 1) || empty($liste)) ? 0 : ((GETPOST('oneemailperrecipient')=='on')?1:-1);
+	$formmail->withoptiononeemailperrecipient = ((count($listofselectedref) == 1 && count(reset($listofselectedref)) == 1) || empty($liste)) ? 0 : ((GETPOST('oneemailperrecipient') == 'on') ? 1 : -1);
 
-	$formmail->withto = empty($liste)?(GETPOST('sendto', 'alpha')?GETPOST('sendto', 'alpha'):array()):$liste;
-	$formmail->withtofree = empty($liste)?1:0;
+	$formmail->withto = empty($liste) ? (GETPOST('sendto', 'alpha') ?GETPOST('sendto', 'alpha') : array()) : $liste;
+	$formmail->withtofree = empty($liste) ? 1 : 0;
 	$formmail->withtocc = 1;
 	$formmail->withtoccc = $conf->global->MAIN_EMAIL_USECCC;
 	$formmail->withtopic = $langs->transnoentities($topicmail, '__REF__', '__REFCLIENT__');
@@ -134,8 +134,8 @@ if ($massaction == 'presend')
 	$substitutionarray = getCommonSubstitutionArray($langs, 0, null, $object);
 
 	$substitutionarray['__EMAIL__'] = $sendto;
-	$substitutionarray['__CHECK_READ__'] = (is_object($object) && is_object($object->thirdparty)) ? '<img src="' . DOL_MAIN_URL_ROOT . '/public/emailing/mailing-read.php?tag=' . $object->thirdparty->tag . '&securitykey=' . urlencode($conf->global->MAILING_EMAIL_UNSUBSCRIBE_KEY) . '" width="1" height="1" style="width:1px;height:1px" border="0"/>' : '';
-	$substitutionarray['__PERSONALIZED__'] = '';	// deprecated
+	$substitutionarray['__CHECK_READ__'] = (is_object($object) && is_object($object->thirdparty)) ? '<img src="'.DOL_MAIN_URL_ROOT.'/public/emailing/mailing-read.php?tag='.$object->thirdparty->tag.'&securitykey='.urlencode($conf->global->MAILING_EMAIL_UNSUBSCRIBE_KEY).'" width="1" height="1" style="width:1px;height:1px" border="0"/>' : '';
+	$substitutionarray['__PERSONALIZED__'] = ''; // deprecated
 	$substitutionarray['__CONTACTCIVNAME__'] = '';
 
 	$parameters = array(
@@ -152,11 +152,11 @@ if ($massaction == 'presend')
 	$formmail->param['models_id'] = GETPOST('modelmailselected', 'int');
 	$formmail->param['id'] = join(',', $arrayofselected);
 	// $formmail->param['returnurl']=$_SERVER["PHP_SELF"].'?id='.$object->id;
-	if (! empty($conf->global->MAILING_LIMIT_SENDBYWEB) && count($listofselectedthirdparties) > $conf->global->MAILING_LIMIT_SENDBYWEB)
+	if (!empty($conf->global->MAILING_LIMIT_SENDBYWEB) && count($listofselectedthirdparties) > $conf->global->MAILING_LIMIT_SENDBYWEB)
 	{
 		$langs->load("errors");
-		print img_warning() . ' ' . $langs->trans('WarningNumberOfRecipientIsRestrictedInMassAction', $conf->global->MAILING_LIMIT_SENDBYWEB);
-		print ' - <a href="javascript: window.history.go(-1)">' . $langs->trans("GoBack") . '</a>';
+		print img_warning().' '.$langs->trans('WarningNumberOfRecipientIsRestrictedInMassAction', $conf->global->MAILING_LIMIT_SENDBYWEB);
+		print ' - <a href="javascript: window.history.go(-1)">'.$langs->trans("GoBack").'</a>';
 		$arrayofmassactions = array();
 	}
 	else
@@ -165,4 +165,16 @@ if ($massaction == 'presend')
 	}
 
 	dol_fiche_end();
+}
+// Allow Pre-Mass-Action hook (eg for confirmation dialog)
+$parameters = array(
+	'toselect' => $toselect,
+	'uploaddir' => $uploaddir
+);
+
+$reshook = $hookmanager->executeHooks('doPreMassActions', $parameters, $object, $action);
+if ($reshook < 0) {
+    setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
+} else {
+    print $hookmanager->resPrint;
 }

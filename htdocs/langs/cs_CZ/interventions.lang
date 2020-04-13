@@ -60,6 +60,7 @@ InterDateCreation=Datum vytvoření intervence
 InterDuration=doba trvání intervence
 InterStatus=stav intervence
 InterNote=Poznámka intervence
+InterLine=Řádek intervence
 InterLineId=Linka ID intervence
 InterLineDate=Řádek data intervence
 InterLineDuration=Linka trvání intervence

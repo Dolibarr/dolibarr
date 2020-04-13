@@ -37,7 +37,7 @@ class PriceExpression
     /**
      * @var string Error code (or message)
      */
-    public $error='';
+    public $error = '';
 
     /**
      * @var string[] Error codes (or messages)
@@ -77,27 +77,27 @@ class PriceExpression
      */
     public function create($user, $notrigger = 0)
     {
-        $error=0;
+        $error = 0;
 
         // Clean parameters
-        if (isset($this->title)) $this->title=trim($this->title);
-        if (isset($this->expression)) $this->expression=trim($this->expression);
+        if (isset($this->title)) $this->title = trim($this->title);
+        if (isset($this->expression)) $this->expression = trim($this->expression);
 
         // Insert request
         $sql = "INSERT INTO ".MAIN_DB_PREFIX.$this->table_element." (";
-        $sql.= "title, expression";
-        $sql.= ") VALUES (";
-        $sql.= " ".(isset($this->title)?"'".$this->db->escape($this->title)."'":"''").",";
-        $sql.= " ".(isset($this->expression)?"'".$this->db->escape($this->expression)."'":"''");
-        $sql.= ")";
+        $sql .= "title, expression";
+        $sql .= ") VALUES (";
+        $sql .= " ".(isset($this->title) ? "'".$this->db->escape($this->title)."'" : "''").",";
+        $sql .= " ".(isset($this->expression) ? "'".$this->db->escape($this->expression)."'" : "''");
+        $sql .= ")";
 
         $this->db->begin();
 
         dol_syslog(__METHOD__, LOG_DEBUG);
-        $resql=$this->db->query($sql);
-        if (! $resql) { $error++; $this->errors[]="Error ".$this->db->lasterror(); }
+        $resql = $this->db->query($sql);
+        if (!$resql) { $error++; $this->errors[] = "Error ".$this->db->lasterror(); }
 
-        if (! $error)
+        if (!$error)
         {
             $this->id = $this->db->last_insert_id(MAIN_DB_PREFIX.$this->table_element);
 
@@ -116,13 +116,13 @@ class PriceExpression
         // Commit or rollback
         if ($error)
         {
-            foreach($this->errors as $errmsg)
+            foreach ($this->errors as $errmsg)
             {
                 dol_syslog(__METHOD__." ".$errmsg, LOG_ERR);
-                $this->error.=($this->error?', '.$errmsg:$errmsg);
+                $this->error .= ($this->error ? ', '.$errmsg : $errmsg);
             }
             $this->db->rollback();
-            return -1*$error;
+            return -1 * $error;
         }
         else
         {
@@ -143,24 +143,24 @@ class PriceExpression
         // Check parameters
         if (empty($id))
         {
-            $this->error='ErrorWrongParameters';
+            $this->error = 'ErrorWrongParameters';
             return -1;
         }
 
         $sql = "SELECT title, expression";
-        $sql.= " FROM ".MAIN_DB_PREFIX.$this->table_element;
-        $sql.= " WHERE rowid = ".$id;
+        $sql .= " FROM ".MAIN_DB_PREFIX.$this->table_element;
+        $sql .= " WHERE rowid = ".$id;
 
         dol_syslog(__METHOD__);
-        $resql=$this->db->query($sql);
+        $resql = $this->db->query($sql);
         if ($resql)
         {
             $obj = $this->db->fetch_object($resql);
             if ($obj)
             {
-                $this->id			= $id;
-                $this->title		= $obj->title;
-                $this->expression	= $obj->expression;
+                $this->id = $id;
+                $this->title = $obj->title;
+                $this->expression = $obj->expression;
                 return 1;
             }
             else
@@ -170,7 +170,7 @@ class PriceExpression
         }
         else
         {
-              $this->error="Error ".$this->db->lasterror();
+              $this->error = "Error ".$this->db->lasterror();
             return -1;
         }
     }
@@ -185,11 +185,11 @@ class PriceExpression
     {
         // phpcs:enable
         $sql = "SELECT rowid, title, expression";
-        $sql.= " FROM ".MAIN_DB_PREFIX.$this->table_element;
-        $sql.= " ORDER BY title";
+        $sql .= " FROM ".MAIN_DB_PREFIX.$this->table_element;
+        $sql .= " ORDER BY title";
 
         dol_syslog(__METHOD__, LOG_DEBUG);
-        $resql=$this->db->query($sql);
+        $resql = $this->db->query($sql);
         if ($resql)
         {
             $retarray = array();
@@ -197,10 +197,10 @@ class PriceExpression
             while ($record = $this->db->fetch_array($resql))
             {
                 $price_expression_obj = new PriceExpression($this->db);
-                $price_expression_obj->id			= $record["rowid"];
-                $price_expression_obj->title		= $record["title"];
-                $price_expression_obj->expression	= $record["expression"];
-                $retarray[]=$price_expression_obj;
+                $price_expression_obj->id = $record["rowid"];
+                $price_expression_obj->title = $record["title"];
+                $price_expression_obj->expression = $record["expression"];
+                $retarray[] = $price_expression_obj;
             }
 
             $this->db->free($resql);
@@ -208,7 +208,7 @@ class PriceExpression
         }
         else
         {
-            $this->error=$this->db->error();
+            $this->error = $this->db->error();
             return -1;
         }
     }
@@ -225,11 +225,11 @@ class PriceExpression
     {
         // phpcs:enable
         $sql = "SELECT rowid";
-        $sql.= " FROM ".MAIN_DB_PREFIX.$this->table_element;
-        $sql.= " WHERE title = '".$this->db->escape($title)."'";
+        $sql .= " FROM ".MAIN_DB_PREFIX.$this->table_element;
+        $sql .= " WHERE title = '".$this->db->escape($title)."'";
 
         dol_syslog(__METHOD__, LOG_DEBUG);
-        $resql=$this->db->query($sql);
+        $resql = $this->db->query($sql);
         if ($resql)
         {
             $obj = $this->db->fetch_object($resql);
@@ -244,7 +244,7 @@ class PriceExpression
         }
         else
         {
-              $this->error="Error ".$this->db->lasterror();
+              $this->error = "Error ".$this->db->lasterror();
             return -1;
         }
     }
@@ -259,23 +259,23 @@ class PriceExpression
      */
     public function update($user = 0, $notrigger = 0)
     {
-        $error=0;
+        $error = 0;
 
         // Clean parameters
-        if (isset($this->title)) $this->title=trim($this->title);
-        if (isset($this->expression)) $this->expression=trim($this->expression);
+        if (isset($this->title)) $this->title = trim($this->title);
+        if (isset($this->expression)) $this->expression = trim($this->expression);
 
         // Update request
         $sql = "UPDATE ".MAIN_DB_PREFIX.$this->table_element." SET";
-        $sql.= " title = ".(isset($this->title)?"'".$this->db->escape($this->title)."'":"''").",";
-        $sql.= " expression = ".(isset($this->expression)?"'".$this->db->escape($this->expression)."'":"''")."";
-        $sql.= " WHERE rowid = ".$this->id;
+        $sql .= " title = ".(isset($this->title) ? "'".$this->db->escape($this->title)."'" : "''").",";
+        $sql .= " expression = ".(isset($this->expression) ? "'".$this->db->escape($this->expression)."'" : "''")."";
+        $sql .= " WHERE rowid = ".$this->id;
 
         $this->db->begin();
 
         dol_syslog(__METHOD__);
         $resql = $this->db->query($sql);
-        if (! $resql) { $error++; $this->errors[]="Error ".$this->db->lasterror(); }
+        if (!$resql) { $error++; $this->errors[] = "Error ".$this->db->lasterror(); }
 
         // if (! $error)
         // {
@@ -294,13 +294,13 @@ class PriceExpression
         // Commit or rollback
         if ($error)
         {
-            foreach($this->errors as $errmsg)
+            foreach ($this->errors as $errmsg)
             {
                 dol_syslog(__METHOD__." ".$errmsg, LOG_ERR);
-                $this->error.=($this->error?', '.$errmsg:$errmsg);
+                $this->error .= ($this->error ? ', '.$errmsg : $errmsg);
             }
             $this->db->rollback();
-            return -1*$error;
+            return -1 * $error;
         }
         else
         {
@@ -319,7 +319,7 @@ class PriceExpression
      */
     public function delete(User $user, $notrigger = 0)
     {
-        $error=0;
+        $error = 0;
 
         $rowid = $this->id;
 
@@ -339,26 +339,26 @@ class PriceExpression
         //    }
         //}
 
-        if (! $error)
+        if (!$error)
         {
             $sql = "DELETE FROM ".MAIN_DB_PREFIX.$this->table_element;
-            $sql.= " WHERE rowid = ".$rowid;
+            $sql .= " WHERE rowid = ".$rowid;
 
             dol_syslog(__METHOD__);
             $resql = $this->db->query($sql);
-            if (! $resql) { $error++; $this->errors[]="Error ".$this->db->lasterror(); }
+            if (!$resql) { $error++; $this->errors[] = "Error ".$this->db->lasterror(); }
         }
 
         // Commit or rollback
         if ($error)
         {
-            foreach($this->errors as $errmsg)
+            foreach ($this->errors as $errmsg)
             {
                 dol_syslog(__METHOD__." ".$errmsg, LOG_ERR);
-                $this->error.=($this->error?', '.$errmsg:$errmsg);
+                $this->error .= ($this->error ? ', '.$errmsg : $errmsg);
             }
             $this->db->rollback();
-            return -1*$error;
+            return -1 * $error;
         }
         else
         {
@@ -375,7 +375,7 @@ class PriceExpression
      */
     public function initAsSpecimen()
     {
-        $this->id=0;
-        $this->expression='';
+        $this->id = 0;
+        $this->expression = '';
     }
 }

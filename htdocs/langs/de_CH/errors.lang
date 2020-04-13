@@ -24,6 +24,7 @@ ErrorFieldCanNotContainSpecialNorUpperCharacters=Das Feld <b>%s</b> darf keine S
 ErrorFieldMustHaveXChar=Das Feld <b>%s</b> muss mindestens %s Zeichen haben.
 ErrorCantSaveADoneUserWithZeroPercentage=Ereignisse können nicht mit Status "Nicht begonnen" gespeichert werden, wenn das Feld "Erledigt durch" schon ausgefüllt ist.
 ErrorPleaseTypeBankTransactionReportName=Gib hier den Bankkontoauszug im Format YYYYMM oder YYYYMMDD an, in den du diesen Eintrag eintragen willst.
+ErrorSelectAtLeastOne=Error, select at least one entry.
 ErrorProdIdAlreadyExist=%s wurde bereits einem Geschäftspartner zugewiesen
 ErrorForbidden3=Es scheint keine ordnungsgemässe Authentifizierung für das System vorzuliegen. Bitte werfen Sie einen Blick auf die Systemdokumentation um die entsprechenden Authentifizierungsoptionen zu verwalten (htaccess, mod_auth oder andere...)
 ErrorBadValueForCode=Unzulässiger Code-Wert. Versuchen Sie es mit einem anderen Wert erneut...

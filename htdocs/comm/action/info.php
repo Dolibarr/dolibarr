@@ -28,9 +28,9 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/contact/class/contact.class.php';
 require_once DOL_DOCUMENT_ROOT.'/comm/action/class/cactioncomm.class.php';
 require_once DOL_DOCUMENT_ROOT.'/comm/action/class/actioncomm.class.php';
-if (! empty($conf->projet->enabled)) {
-    require_once DOL_DOCUMENT_ROOT . '/projet/class/project.class.php';
-    require_once DOL_DOCUMENT_ROOT . '/core/class/html.formprojet.class.php';
+if (!empty($conf->projet->enabled)) {
+    require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
+    require_once DOL_DOCUMENT_ROOT.'/core/class/html.formprojet.class.php';
 }
 
 // Load translation files required by the page
@@ -52,57 +52,57 @@ $result = restrictedArea($user, 'agenda', $id, 'actioncomm&societe', 'myactions|
  * View
  */
 
-$form=new Form($db);
+$form = new Form($db);
 
-$help_url='EN:Module_Agenda_En|FR:Module_Agenda|ES:M&omodulodulo_Agenda';
+$help_url = 'EN:Module_Agenda_En|FR:Module_Agenda|ES:M&omodulodulo_Agenda';
 llxHeader('', $langs->trans("Agenda"), $help_url);
 
 $object = new ActionComm($db);
 $object->fetch($id);
 $object->info($object->id);
 
-$head=actions_prepare_head($object);
+$head = actions_prepare_head($object);
 dol_fiche_head($head, 'info', $langs->trans("Action"), -1, 'action');
 
 $linkback = img_picto($langs->trans("BackToList"), 'object_list', 'class="hideonsmartphone pictoactionview"');
-$linkback.= '<a href="'.DOL_URL_ROOT.'/comm/action/index.php">'.$langs->trans("BackToList").'</a>';
+$linkback .= '<a href="'.DOL_URL_ROOT.'/comm/action/index.php">'.$langs->trans("BackToList").'</a>';
 
 // Link to other agenda views
-$out='';
-$out.='</li><li class="noborder litext">'.img_picto($langs->trans("ViewPerUser"), 'object_calendarperuser', 'class="hideonsmartphone pictoactionview"');
-$out.='<a href="'.DOL_URL_ROOT.'/comm/action/peruser.php?action=show_peruser&year='.dol_print_date($object->datep, '%Y').'&month='.dol_print_date($object->datep, '%m').'&day='.dol_print_date($object->datep, '%d').'">'.$langs->trans("ViewPerUser").'</a>';
-$out.='</li><li class="noborder litext">'.img_picto($langs->trans("ViewCal"), 'object_calendar', 'class="hideonsmartphone pictoactionview"');
-$out.='<a href="'.DOL_URL_ROOT.'/comm/action/index.php?action=show_month&year='.dol_print_date($object->datep, '%Y').'&month='.dol_print_date($object->datep, '%m').'&day='.dol_print_date($object->datep, '%d').'">'.$langs->trans("ViewCal").'</a>';
-$out.='</li><li class="noborder litext">'.img_picto($langs->trans("ViewWeek"), 'object_calendarweek', 'class="hideonsmartphone pictoactionview"');
-$out.='<a href="'.DOL_URL_ROOT.'/comm/action/index.php?action=show_day&year='.dol_print_date($object->datep, '%Y').'&month='.dol_print_date($object->datep, '%m').'&day='.dol_print_date($object->datep, '%d').'">'.$langs->trans("ViewWeek").'</a>';
-$out.='</li><li class="noborder litext">'.img_picto($langs->trans("ViewDay"), 'object_calendarday', 'class="hideonsmartphone pictoactionview"');
-$out.='<a href="'.DOL_URL_ROOT.'/comm/action/index.php?action=show_day&year='.dol_print_date($object->datep, '%Y').'&month='.dol_print_date($object->datep, '%m').'&day='.dol_print_date($object->datep, '%d').'">'.$langs->trans("ViewDay").'</a>';
+$out = '';
+$out .= '</li><li class="noborder litext">'.img_picto($langs->trans("ViewPerUser"), 'object_calendarperuser', 'class="hideonsmartphone pictoactionview"');
+$out .= '<a href="'.DOL_URL_ROOT.'/comm/action/peruser.php?action=show_peruser&year='.dol_print_date($object->datep, '%Y').'&month='.dol_print_date($object->datep, '%m').'&day='.dol_print_date($object->datep, '%d').'">'.$langs->trans("ViewPerUser").'</a>';
+$out .= '</li><li class="noborder litext">'.img_picto($langs->trans("ViewCal"), 'object_calendar', 'class="hideonsmartphone pictoactionview"');
+$out .= '<a href="'.DOL_URL_ROOT.'/comm/action/index.php?action=show_month&year='.dol_print_date($object->datep, '%Y').'&month='.dol_print_date($object->datep, '%m').'&day='.dol_print_date($object->datep, '%d').'">'.$langs->trans("ViewCal").'</a>';
+$out .= '</li><li class="noborder litext">'.img_picto($langs->trans("ViewWeek"), 'object_calendarweek', 'class="hideonsmartphone pictoactionview"');
+$out .= '<a href="'.DOL_URL_ROOT.'/comm/action/index.php?action=show_day&year='.dol_print_date($object->datep, '%Y').'&month='.dol_print_date($object->datep, '%m').'&day='.dol_print_date($object->datep, '%d').'">'.$langs->trans("ViewWeek").'</a>';
+$out .= '</li><li class="noborder litext">'.img_picto($langs->trans("ViewDay"), 'object_calendarday', 'class="hideonsmartphone pictoactionview"');
+$out .= '<a href="'.DOL_URL_ROOT.'/comm/action/index.php?action=show_day&year='.dol_print_date($object->datep, '%Y').'&month='.dol_print_date($object->datep, '%m').'&day='.dol_print_date($object->datep, '%d').'">'.$langs->trans("ViewDay").'</a>';
 
-$linkback.=$out;
+$linkback .= $out;
 
-$morehtmlref='<div class="refidno">';
+$morehtmlref = '<div class="refidno">';
 // Thirdparty
 //$morehtmlref.='<br>'.$langs->trans('ThirdParty') . ' : ' . $object->thirdparty->getNomUrl(1);
 // Project
-if (! empty($conf->projet->enabled))
+if (!empty($conf->projet->enabled))
 {
     $langs->load("projects");
     //$morehtmlref.='<br>'.$langs->trans('Project') . ' ';
-    $morehtmlref.=$langs->trans('Project') . ': ';
-    if (! empty($object->fk_project)) {
+    $morehtmlref .= $langs->trans('Project').': ';
+    if (!empty($object->fk_project)) {
         $proj = new Project($db);
         $proj->fetch($object->fk_project);
-        $morehtmlref.='<a href="'.DOL_URL_ROOT.'/projet/card.php?id=' . $object->fk_project . '" title="' . $langs->trans('ShowProject') . '">';
-        $morehtmlref.=$proj->ref;
-        $morehtmlref.='</a>';
-        if ($proj->title) $morehtmlref.=' - '.$proj->title;
+        $morehtmlref .= '<a href="'.DOL_URL_ROOT.'/projet/card.php?id='.$object->fk_project.'" title="'.$langs->trans('ShowProject').'">';
+        $morehtmlref .= $proj->ref;
+        $morehtmlref .= '</a>';
+        if ($proj->title) $morehtmlref .= ' - '.$proj->title;
     } else {
-        $morehtmlref.='';
+        $morehtmlref .= '';
     }
 }
-$morehtmlref.='</div>';
+$morehtmlref .= '</div>';
 
-dol_banner_tab($object, 'id', $linkback, ($user->socid?0:1), 'id', 'ref', $morehtmlref);
+dol_banner_tab($object, 'id', $linkback, ($user->socid ? 0 : 1), 'id', 'ref', $morehtmlref);
 
 print '<div class="underbanner clearboth"></div>';
 

@@ -28,11 +28,12 @@
 		"ext-curl" : "*",
 		"ckeditor/ckeditor" : "4.12.1",
 		"mike42/escpos-php" : "2.2",
-		"mobiledetect/mobiledetectlib" : "2.8.33",
+		"mobiledetect/mobiledetectlib" : "2.8.34",
 		"phpoffice/phpexcel" : "1.8.1",
 		"restler/framework" : "3.0.0-RC6",
-		"tecnickcom/tcpdf" : "^6.2",
-		"luracast/restler" : "^3.0"
+		"tecnickcom/tcpdf" : "6.3.2",
+		"nnnick/chartjs" : "^2.9",
+		"stripe/stripe-php" : "6.43.1"
 	},
 	"require-dev" : {
 		"jakub-onderka/php-parallel-lint" : "^0",

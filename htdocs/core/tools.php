@@ -25,11 +25,11 @@
 require '../main.inc.php';
 
 // Load translation files required by the page
-$langs->loadLangs(array("companies","other"));
+$langs->loadLangs(array("companies", "other"));
 
 // Security check
-$socid=0;
-if ($user->socid > 0) $socid=$user->socid;
+$socid = 0;
+if ($user->socid > 0) $socid = $user->socid;
 
 
 
@@ -37,11 +37,11 @@ if ($user->socid > 0) $socid=$user->socid;
  * View
  */
 
-$socstatic=new Societe($db);
+$socstatic = new Societe($db);
 
 llxHeader("", $langs->trans("Tools"), "");
 
-$text=$langs->trans("Tools");
+$text = $langs->trans("Tools");
 
 print load_fiche_titre($text, '', 'wrench');
 

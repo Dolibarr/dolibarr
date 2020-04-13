@@ -88,7 +88,7 @@ class PrestaShopWebservice
 	protected function checkStatusCode($status_code)
 	{
 		$error_label = 'This call to PrestaShop Web Services failed and returned an HTTP status of %d. That means: %s.';
-		switch($status_code)
+		switch ($status_code)
 		{
 			case 200:
 			case 201:
@@ -106,7 +106,7 @@ class PrestaShopWebservice
 			case 500:
 				throw new PrestaShopWebserviceException(sprintf($error_label, $status_code, 'Internal Server Error'));
 			default:
-				throw new PrestaShopWebserviceException('This call to PrestaShop Web Services returned an unexpected HTTP status of:' . $status_code);
+				throw new PrestaShopWebserviceException('This call to PrestaShop Web Services returned an unexpected HTTP status of:'.$status_code);
 		}
 	}
 
@@ -125,7 +125,7 @@ class PrestaShopWebservice
 			CURLINFO_HEADER_OUT => true,
 			CURLOPT_HTTPAUTH => CURLAUTH_BASIC,
 			CURLOPT_USERPWD => $this->key.':',
-			CURLOPT_HTTPHEADER => array( 'Expect:' )
+			CURLOPT_HTTPHEADER => array('Expect:')
 		);
 
 		dol_syslog("curl_init url=".$url);
@@ -328,7 +328,7 @@ class PrestaShopWebservice
 			throw new PrestaShopWebserviceException('Bad parameters given ');
 
 		$request = self::executeRequest($url, array(CURLOPT_CUSTOMREQUEST => 'GET'));
-		self::checkStatusCode($request['status_code']);// check the response validity
+		self::checkStatusCode($request['status_code']); // check the response validity
 		return self::parseXML($request['response']);
 	}
 
@@ -360,7 +360,7 @@ class PrestaShopWebservice
 		else
 			throw new PrestaShopWebserviceException('Bad parameters given');
 		$request = self::executeRequest($url, array(CURLOPT_CUSTOMREQUEST => 'HEAD', CURLOPT_NOBODY => true));
-		self::checkStatusCode($request['status_code']);// check the response validity
+		self::checkStatusCode($request['status_code']); // check the response validity
 		return $request['header'];
 	}
 	/**
@@ -392,7 +392,7 @@ class PrestaShopWebservice
 			throw new PrestaShopWebserviceException('Bad parameters given');
 
 		$request = self::executeRequest($url, array(CURLOPT_CUSTOMREQUEST => 'PUT', CURLOPT_POSTFIELDS => $xml));
-		self::checkStatusCode($request['status_code']);// check the response validity
+		self::checkStatusCode($request['status_code']); // check the response validity
 		return self::parseXML($request['response']);
 	}
 }

@@ -41,7 +41,7 @@ function datapolicyAdminPrepareHead()
     $head[$h][2] = 'settings';
     $h++;
 
-    if (! empty($conf->global->DATAPOLICIES_ENABLE_EMAILS)) {
+    if (!empty($conf->global->DATAPOLICIES_ENABLE_EMAILS)) {
         $head[$h][0] = DOL_URL_ROOT."/datapolicy/admin/setupmail.php";
         $head[$h][1] = $langs->trans("DATAPOLICIESMail");
         $head[$h][2] = 'settings';

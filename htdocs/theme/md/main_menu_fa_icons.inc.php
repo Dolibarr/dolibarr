@@ -1,4 +1,4 @@
-<?php if (! defined('ISLOADEDBYSTEELSHEET')) die('Must be call by steelsheet'); ?>
+<?php if (!defined('ISLOADEDBYSTEELSHEET')) die('Must be call by steelsheet'); ?>
 /* <style type="text/css" > */
 
 .mainmenu::before{
@@ -14,4 +14,31 @@
     text-align:center;
 	text-decoration:none;
 	color: #<?php echo $colortextbackhmenu; ?>;
+}
+
+
+
+div.mainmenu.ticket::before {
+    content: "\f3ff";
+}
+div.mainmenu.ticket {
+    background-image: none !important;
+}
+
+
+
+div.mainmenu.generic1::before {
+    content: "\f249";
+}
+
+div.mainmenu.generic2::before {
+    content: "\f249";
+}
+
+div.mainmenu.generic3::before {
+    content: "\f249";
+}
+
+div.mainmenu.generic4::before {
+    content: "\f249";
 }

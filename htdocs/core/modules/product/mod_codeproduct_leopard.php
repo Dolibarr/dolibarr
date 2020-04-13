@@ -44,26 +44,26 @@ class mod_codeproduct_leopard extends ModeleProductCode
 	 * @deprecated
 	 * @see $name
 	 */
-	public $nom='Leopard';
+	public $nom = 'Leopard';
 
 	/**
 	 * @var string model name
 	 */
-	public $name='Leopard';
+	public $name = 'Leopard';
 
-	public $code_modifiable;				// Code modifiable
+	public $code_modifiable; // Code modifiable
 
-	public $code_modifiable_invalide;		// Code modifiable si il est invalide
+	public $code_modifiable_invalide; // Code modifiable si il est invalide
 
-	public $code_modifiable_null;			// Code modifiables si il est null
+	public $code_modifiable_null; // Code modifiables si il est null
 
-	public $code_null;						// Code facultatif
+	public $code_null; // Code facultatif
 
 	/**
      * Dolibarr version of the loaded document
      * @var string
      */
-	public $version = 'dolibarr';    		// 'development', 'experimental', 'dolibarr'
+	public $version = 'dolibarr'; // 'development', 'experimental', 'dolibarr'
 
 	/**
 	 * @var int Automatic numbering
@@ -128,16 +128,16 @@ class mod_codeproduct_leopard extends ModeleProductCode
 	{
 		global $conf;
 
-		$result=0;
+		$result = 0;
 		$code = strtoupper(trim($code));
 
 		if (empty($code) && $this->code_null && empty($conf->global->MAIN_COMPANY_CODE_ALWAYS_REQUIRED))
 		{
-			$result=0;
+			$result = 0;
 		}
-		elseif (empty($code) && (! $this->code_null || ! empty($conf->global->MAIN_COMPANY_CODE_ALWAYS_REQUIRED)))
+		elseif (empty($code) && (!$this->code_null || !empty($conf->global->MAIN_COMPANY_CODE_ALWAYS_REQUIRED)))
 		{
-			$result=-2;
+			$result = -2;
 		}
 
 		dol_syslog("mod_codeproduct_leopard::verif type=".$type." result=".$result);

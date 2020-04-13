@@ -9,4 +9,5 @@ SaleRepresentativesOfThirdParty=Représentants commerciaux de tiers
 LastDoneTasks=Dernières %s actions complétées
 LastActionsToDo=Le plus ancien %s actions non complétées
 ActionAC_OTH_AUTO=Événements insérés automatiquement
-SignatureProposalRef=Signature de la proposition commerciale %s
+ThisScreenAllowsYouToSignDocFrom=Cet écran vous permet d'accepter et signer ou de refuser le devis ou la proposition commerciale
+ThisIsInformationOnDocumentToSign=Ceci est une information sur le document à accepter ou à refuser

@@ -1,4 +1,5 @@
-# Dolibarr language file - en_US - Accounting Expert
+# Dolibarr language file - en_US - Accountancy (Double entries)
+Accountancy=Contabilidade
 Accounting=Contabilidade
 ACCOUNTING_EXPORT_SEPARATORCSV=Separador de coluna para o ficheiro exportadocc
 ACCOUNTING_EXPORT_DATE=Formato da data para o ficheiro exportado
@@ -97,6 +98,8 @@ MenuExpenseReportAccounts=Contas de relatório de despesas
 MenuLoanAccounts=Contas de empréstimo
 MenuProductsAccounts=Contas de produtos
 MenuClosureAccounts=Closure accounts
+MenuAccountancyClosure=Closure
+MenuAccountancyValidationMovements=Validate movements
 ProductsBinding=Contas de produtos
 TransferInAccounting=Transfer in accounting
 RegistrationInAccounting=Registration in accounting
@@ -164,12 +167,14 @@ ACCOUNTING_ACCOUNT_SUSPENSE=Conta contabilística de espera
 DONATION_ACCOUNTINGACCOUNT=Conta contabilística para registar donativos
 ADHERENT_SUBSCRIPTION_ACCOUNTINGACCOUNT=Accounting account to register subscriptions
 
-ACCOUNTING_PRODUCT_BUY_ACCOUNT=Conta contabilística padrão para produtos comprados (usado se não for definida na folha de produto)
+ACCOUNTING_PRODUCT_BUY_ACCOUNT=Accounting account by default for the bought products (used if not defined in the product sheet)
 ACCOUNTING_PRODUCT_SOLD_ACCOUNT=Conta contabilística padrão para produtos vendidos (utilizada se não for definida na folha de produto)
-ACCOUNTING_PRODUCT_SOLD_INTRA_ACCOUNT=Accounting account by default for the sold products in EEC (used if not defined in the product sheet)
-ACCOUNTING_PRODUCT_SOLD_EXPORT_ACCOUNT=Accounting account by default for the sold products export out of EEC (used if not defined in the product sheet)
+ACCOUNTING_PRODUCT_SOLD_INTRA_ACCOUNT=Accounting account by default for the products sold in EEC (used if not defined in the product sheet)
+ACCOUNTING_PRODUCT_SOLD_EXPORT_ACCOUNT=Accounting account by default for the products sold and exported out of EEC (used if not defined in the product sheet)
 ACCOUNTING_SERVICE_BUY_ACCOUNT=Conta contabilística padrão para compra de serviços (usada se não for definida na folha de serviço)
 ACCOUNTING_SERVICE_SOLD_ACCOUNT=Conta contabilística padrão para serviços vendidos (usada se não for definida na folha de serviço)
+ACCOUNTING_SERVICE_SOLD_INTRA_ACCOUNT=Accounting account by default for the services sold in EEC (used if not defined in the service sheet)
+ACCOUNTING_SERVICE_SOLD_EXPORT_ACCOUNT=Accounting account by default for the services sold and exported out of EEC (used if not defined in the service sheet)
 
 Doctype=Tipo de documento
 Docdate=Data
@@ -192,9 +197,10 @@ ByPersonalizedAccountGroups=Por grupos personalizados
 ByYear=por ano
 NotMatch=Não configurado
 DeleteMvt=Eliminar as linhas do Livro Razão
+DelMonth=Month to delete
 DelYear=Ano a apagar
 DelJournal=Diário a apagar
-ConfirmDeleteMvt=This will delete all lines of the Ledger for year and/or from a specific journal. At least one criterion is required.
+ConfirmDeleteMvt=This will delete all lines of the Ledger for the year/month and/or from a specific journal (At least one criterion is required). You will have to reuse the feature 'Registration in accounting' to have the deleted record back in the ledger.
 ConfirmDeleteMvtPartial=Isso excluirá a transação do razão (todas as linhas relacionadas à mesma transação serão excluídas)
 FinanceJournal=Diário financeiro
 ExpenseReportsJournal=Diário de relatórios de despesas
@@ -218,13 +224,15 @@ ListAccounts=Lista de contas contabilísticas
 UnknownAccountForThirdparty=Unknown third-party account. We will use %s
 UnknownAccountForThirdpartyBlocking=Unknown third-party account. Blocking error
 ThirdpartyAccountNotDefinedOrThirdPartyUnknown=Third-party account not defined or third party unknown. We will use %s
+ThirdpartyAccountNotDefinedOrThirdPartyUnknownSubledgerIgnored=Third-party unknown and subledger not defined on the payment. We will keep the subledger account value empty.
 ThirdpartyAccountNotDefinedOrThirdPartyUnknownBlocking=Third-party account not defined or third party unknown. Blocking error.
 UnknownAccountForThirdpartyAndWaitingAccountNotDefinedBlocking=Unknown third-party account and waiting account not defined. Blocking error
 PaymentsNotLinkedToProduct=Pagamento não vinculado a nenhum produto / serviço
+ShowOpeningBalance=Show opening balance
+HideOpeningBalance=Hide opening balance
 
 Pcgtype=Grupo de conta
-Pcgsubtype=Subgrupo de conta
-PcgtypeDesc=Grupo e subgrupo de conta são usados ​​como critérios predefinidos de 'filtro' e 'agrupamento' para alguns relatórios contábeis. Por exemplo, 'RENDA' ou 'DESPESA' são usados ​​como grupos para contas contábeis de produtos para criar o relatório de despesas / receitas.
+PcgtypeDesc=Group of account are used as predefined 'filter' and 'grouping' criteria for some accounting reports. For example, 'INCOME' or 'EXPENSE' are used as groups for accounting accounts of products to build the expense/income report.
 
 TotalVente=Total de volume de negócios sem impostos
 TotalMarge=Margem total de vendas
@@ -235,12 +243,18 @@ DescVentilDoneCustomer=Consulte aqui a lista das linhas de faturas a clientes e 
 DescVentilTodoCustomer=Vincular linhas da fatura que não estejam vinculadas a uma conta contabilística de produto
 ChangeAccount=Alterar a conta contabilística de produto/serviço para as linhas selecionadas com a seguinte conta contabilística:
 Vide=-
-DescVentilSupplier=Consulte aqui a lista de linhas de faturas do fornecedor vinculadas ou ainda não ligadas a uma conta de contabilidade do produto
+DescVentilSupplier=Consult here the list of vendor invoice lines bound or not yet bound to a product accounting account (only record not already transfered in accountancy are visible)
 DescVentilDoneSupplier=Consult here the list of the lines of vendor invoices and their accounting account
 DescVentilTodoExpenseReport=Vincule as linhas do relatórios de despesas de não vinculados a um honorário de uma conta de contabilística
 DescVentilExpenseReport=Consulte aqui a lista de linhas do relatório de despesas vinculadas (ou não) a um honorário da conta contabilística
 DescVentilExpenseReportMore=Se você configurar uma conta contábil no tipo de linhas de relatório de despesas, o aplicativo poderá fazer toda a ligação entre suas linhas de relatório de despesas e a conta contábil do seu plano de contas, em apenas um clique com o botão <strong> "%s" </ strong>. Se a conta não foi definida no dicionário de taxas ou se você ainda tiver algumas linhas não vinculadas a nenhuma conta, será necessário fazer uma ligação manual no menu "<strong> %s </ strong>".
 DescVentilDoneExpenseReport=Consulte aqui a lista das linhas de relatórios de despesas e os seus honorários da conta contabilística
+
+DescClosure=Consult here the number of movements by month who are not validated & fiscal years already open
+OverviewOfMovementsNotValidated=Step 1/ Overview of movements not validated. (Necessary to close a fiscal year)
+ValidateMovements=Validate movements
+DescValidateMovements=Any modification or deletion of writing, lettering and deletes will be prohibited. All entries for an exercise must be validated otherwise closing will not be possible
+SelectMonthAndValidate=Select month and validate movements
 
 ValidateHistory=Vincular automaticamente
 AutomaticBindingDone=Vinculação automática efetuada
@@ -256,6 +270,8 @@ ListOfProductsWithoutAccountingAccount=Lista de produtos não vinculados a qualq
 ChangeBinding=Alterar vinculação
 Accounted=Contabilizado no ledger
 NotYetAccounted=Ainda não contabilizado no razão
+ShowTutorial=Show Tutorial
+NotReconciled=Not reconciled
 
 ## Admin
 ApplyMassCategories=Aplicar categorias em massa
@@ -264,7 +280,7 @@ CategoryDeleted=Categoria para a conta contabilística foi removida
 AccountingJournals=Diários contabilisticos
 AccountingJournal=Diário contabilistico
 NewAccountingJournal=Novo diário contabilistico
-ShowAccoutingJournal=Mostrar diário contabilistico
+ShowAccountingJournal=Mostrar diário contabilistico
 NatureOfJournal=Nature of Journal
 AccountingJournalType1=Operações diversas
 AccountingJournalType2=Vendas

@@ -1,17 +1,18 @@
 # Dolibarr language file - en_US - hrm
 # Admin
-HRM_EMAIL_EXTERNAL_SERVICE=Email to prevent HRM external service
-Establishments=Establishments
-Establishment=Establishment
-NewEstablishment=New establishment
-DeleteEstablishment=Delete establishment
-ConfirmDeleteEstablishment=Are-you sure to delete this establishment?
-OpenEtablishment=Open establishment
-CloseEtablishment=Close establishment
+HRM_EMAIL_EXTERNAL_SERVICE=電子郵件以阻止HRM外部服務
+Establishments=營業所
+Establishment=營業所
+NewEstablishment=新營業所
+DeleteEstablishment=刪除營業所
+ConfirmDeleteEstablishment=您確定要刪除此營業所嗎？
+OpenEtablishment=開啟營業所
+CloseEtablishment=關閉營業所
 # Dictionary
-DictionaryDepartment=HRM - Department list
-DictionaryFunction=HRM - Function list
+DictionaryPublicHolidays=HRM-公共假期
+DictionaryDepartment=HRM-部門清單
+DictionaryFunction=HRM-功能清單
 # Module
-Employees=Employees
+Employees=員工
 Employee=員工
-NewEmployee=New employee
+NewEmployee=新員工

@@ -18,7 +18,7 @@
  */
 
 // Protection to avoid direct call of template
-if (empty($conf) || ! is_object($conf))
+if (empty($conf) || !is_object($conf))
 {
 	print "Error, template page can't be called as URL";
 	exit;
@@ -32,8 +32,8 @@ $langs = $GLOBALS['langs'];
 $linkedObjectBlock = $GLOBALS['linkedObjectBlock'];
 $langs->load("members");
 
-$total=0;
-foreach($linkedObjectBlock as $key => $objectlink)
+$total = 0;
+foreach ($linkedObjectBlock as $key => $objectlink)
 {
     echo '<tr class="oddeven">';
     echo '<td>'.$langs->trans("Subscription").'</td>';
@@ -47,7 +47,7 @@ foreach($linkedObjectBlock as $key => $objectlink)
 	}
 	echo '</td>';
 	echo '<td class="right"></td>';
-	echo '<td class="right"><a href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=dellink&dellinkid='.$key.'">'.img_picto($langs->transnoentitiesnoconv("RemoveLink"), 'unlink').'</a></td>';
+	echo '<td class="right"><a class="reposition" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=dellink&dellinkid='.$key.'">'.img_picto($langs->transnoentitiesnoconv("RemoveLink"), 'unlink').'</a></td>';
     echo '</tr>';
 }
 

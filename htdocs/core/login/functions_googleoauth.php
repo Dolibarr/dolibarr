@@ -41,14 +41,14 @@
  */
 function check_user_password_googleoauth($usertotest, $passwordtotest, $entitytotest)
 {
-    global $_POST,$db,$conf,$langs;
+    global $_POST, $db, $conf, $langs;
 
     dol_syslog("functions_googleoauth::check_user_password_googleoauth usertotest=".$usertotest);
 
-    $login='';
+    $login = '';
 
     // Get identity from user and redirect browser to Google OAuth Server
-    if (isset($_POST['username']))
+    if (GETPOSTISSET('username'))
     {
         /*$openid = new SimpleOpenID();
         $openid->SetIdentity($_POST['username']);

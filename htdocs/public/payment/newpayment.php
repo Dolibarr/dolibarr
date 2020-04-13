@@ -23,7 +23,7 @@
  * For Stripe test: Use credit card 4242424242424242 .More example on https://stripe.com/docs/testing
  *
  * Variants:
- * - When option STRIPE_USE_INTENT_WITH_AUTOMATIC_CONFIRMATION is on, we use the new checkout API
+ * - When option STRIPE_USE_INTENT_WITH_AUTOMATIC_CONFIRMATION is on, we use the new PaymentIntent API
  * - When option STRIPE_USE_NEW_CHECKOUT is on, we use the new checkout API
  * - If no option set, we use old APIS (charge)
  */
@@ -34,8 +34,9 @@
  *		\brief      File to offer a way to make a payment for a particular Dolibarr object
  */
 
-define("NOLOGIN", 1); // This means this output page does not require to be logged.
-define("NOCSRFCHECK", 1); // We accept to go on this page from external web site.
+if (!defined('NOLOGIN'))		define("NOLOGIN", 1); // This means this output page does not require to be logged.
+if (!defined('NOCSRFCHECK'))	define("NOCSRFCHECK", 1); // We accept to go on this page from external web site.
+if (!defined('NOIPCHECK'))		define('NOIPCHECK', '1'); // Do not check IP defined into conf $dolibarr_main_restrict_ip
 
 // For MultiCompany module.
 // Do not use GETPOST here, function is not defined and get of entity must be done before including main.inc.php
@@ -49,10 +50,11 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
 require_once DOL_DOCUMENT_ROOT.'/societe/class/societeaccount.class.php';
 
+// Load translation files
+$langs->loadLangs(array("main", "other", "dict", "bills", "companies", "errors", "paybox", "paypal", "stripe")); // File with generic data
+
 // Security check
 // No check on module enabled. Done later according to $validpaymentmethod
-
-$langs->loadLangs(array("main", "other", "dict", "bills", "companies", "errors", "paybox", "paypal", "stripe")); // File with generic data
 
 $action = GETPOST('action', 'aZ09');
 
@@ -65,24 +67,24 @@ $action = GETPOST('action', 'aZ09');
 
 $suffix = GETPOST("suffix", 'aZ09');
 $amount = price2num(GETPOST("amount", 'alpha'));
-if (! GETPOST("currency", 'alpha')) $currency = $conf->currency;
+if (!GETPOST("currency", 'alpha')) $currency = $conf->currency;
 else $currency = GETPOST("currency", 'alpha');
-$source = GETPOST("s", 'alpha')?GETPOST("s", 'alpha'):GETPOST("source", 'alpha');
-$download = GETPOST('d', 'int')?GETPOST('d', 'int'):GETPOST('download', 'int');
+$source = GETPOST("s", 'alpha') ?GETPOST("s", 'alpha') : GETPOST("source", 'alpha');
+$download = GETPOST('d', 'int') ?GETPOST('d', 'int') : GETPOST('download', 'int');
 
-if (! $action)
+if (!$action)
 {
-	if (! GETPOST("amount", 'alpha') && ! $source)
+	if (!GETPOST("amount", 'alpha') && !$source)
 	{
 		print $langs->trans('ErrorBadParameters')." - amount or source";
 		exit;
 	}
-	if (is_numeric($amount) && ! GETPOST("tag", 'alpha') && ! $source)
+	if (is_numeric($amount) && !GETPOST("tag", 'alpha') && !$source)
 	{
 		print $langs->trans('ErrorBadParameters')." - tag or source";
 		exit;
 	}
-	if ($source && ! GETPOST("ref", 'alpha'))
+	if ($source && !GETPOST("ref", 'alpha'))
 	{
 		print $langs->trans('ErrorBadParameters')." - ref";
 		exit;
@@ -107,70 +109,70 @@ foreach ($_POST as $key => $val)
 // Define $urlwithroot
 //$urlwithouturlroot=preg_replace('/'.preg_quote(DOL_URL_ROOT,'/').'$/i','',trim($dolibarr_main_url_root));
 //$urlwithroot=$urlwithouturlroot.DOL_URL_ROOT;		// This is to use external domain name found into config file
-$urlwithroot=DOL_MAIN_URL_ROOT;						// This is to use same domain name than current. For Paypal payment, we can use internal URL like localhost.
+$urlwithroot = DOL_MAIN_URL_ROOT; // This is to use same domain name than current. For Paypal payment, we can use internal URL like localhost.
 
-$urlok=$urlwithroot.'/public/payment/paymentok.php?';
-$urlko=$urlwithroot.'/public/payment/paymentko.php?';
+$urlok = $urlwithroot.'/public/payment/paymentok.php?';
+$urlko = $urlwithroot.'/public/payment/paymentko.php?';
 
 // Complete urls for post treatment
-$ref=$REF=GETPOST('ref', 'alpha');
-$TAG=GETPOST("tag", 'alpha');
-$FULLTAG=GETPOST("fulltag", 'alpha');		// fulltag is tag with more informations
-$SECUREKEY=GETPOST("securekey");	        // Secure key
-if ($paymentmethod && ! preg_match('/'.preg_quote('PM='.$paymentmethod, '/').'/', $FULLTAG)) $FULLTAG.=($FULLTAG?'.':'').'PM='.$paymentmethod;
+$ref = $REF = GETPOST('ref', 'alpha');
+$TAG = GETPOST("tag", 'alpha');
+$FULLTAG = GETPOST("fulltag", 'alpha'); // fulltag is tag with more informations
+$SECUREKEY = GETPOST("securekey"); // Secure key
+if ($paymentmethod && !preg_match('/'.preg_quote('PM='.$paymentmethod, '/').'/', $FULLTAG)) $FULLTAG .= ($FULLTAG ? '.' : '').'PM='.$paymentmethod;
 
-if (! empty($suffix))
+if (!empty($suffix))
 {
-	$urlok.='suffix='.urlencode($suffix).'&';
-	$urlko.='suffix='.urlencode($suffix).'&';
+	$urlok .= 'suffix='.urlencode($suffix).'&';
+	$urlko .= 'suffix='.urlencode($suffix).'&';
 }
 if ($source)
 {
-	$urlok.='s='.urlencode($source).'&';
-	$urlko.='s='.urlencode($source).'&';
+	$urlok .= 's='.urlencode($source).'&';
+	$urlko .= 's='.urlencode($source).'&';
 }
-if (! empty($REF))
+if (!empty($REF))
 {
-	$urlok.='ref='.urlencode($REF).'&';
-	$urlko.='ref='.urlencode($REF).'&';
+	$urlok .= 'ref='.urlencode($REF).'&';
+	$urlko .= 'ref='.urlencode($REF).'&';
 }
-if (! empty($TAG))
+if (!empty($TAG))
 {
-	$urlok.='tag='.urlencode($TAG).'&';
-	$urlko.='tag='.urlencode($TAG).'&';
+	$urlok .= 'tag='.urlencode($TAG).'&';
+	$urlko .= 'tag='.urlencode($TAG).'&';
 }
-if (! empty($FULLTAG))
+if (!empty($FULLTAG))
 {
-	$urlok.='fulltag='.urlencode($FULLTAG).'&';
-	$urlko.='fulltag='.urlencode($FULLTAG).'&';
+	$urlok .= 'fulltag='.urlencode($FULLTAG).'&';
+	$urlko .= 'fulltag='.urlencode($FULLTAG).'&';
 }
-if (! empty($SECUREKEY))
+if (!empty($SECUREKEY))
 {
-	$urlok.='securekey='.urlencode($SECUREKEY).'&';
-	$urlko.='securekey='.urlencode($SECUREKEY).'&';
+	$urlok .= 'securekey='.urlencode($SECUREKEY).'&';
+	$urlko .= 'securekey='.urlencode($SECUREKEY).'&';
 }
-if (! empty($entity))
+if (!empty($entity))
 {
-	$urlok.='e='.urlencode($entity).'&';
-	$urlko.='e='.urlencode($entity).'&';
+	$urlok .= 'e='.urlencode($entity).'&';
+	$urlko .= 'e='.urlencode($entity).'&';
 }
-$urlok=preg_replace('/&$/', '', $urlok);  // Remove last &
-$urlko=preg_replace('/&$/', '', $urlko);  // Remove last &
+$urlok = preg_replace('/&$/', '', $urlok); // Remove last &
+$urlko = preg_replace('/&$/', '', $urlko); // Remove last &
 
 
 
 // Make special controls
 
-if ((empty($paymentmethod) || $paymentmethod == 'paypal') && ! empty($conf->paypal->enabled))
+if ((empty($paymentmethod) || $paymentmethod == 'paypal') && !empty($conf->paypal->enabled))
 {
 	require_once DOL_DOCUMENT_ROOT.'/paypal/lib/paypal.lib.php';
 	require_once DOL_DOCUMENT_ROOT.'/paypal/lib/paypalfunctions.lib.php';
 
 	// Check parameters
-	$PAYPAL_API_OK="";
-	if ($urlok) $PAYPAL_API_OK=$urlok;
-	$PAYPAL_API_KO="";
-	if ($urlko) $PAYPAL_API_KO=$urlko;
+	$PAYPAL_API_OK = "";
+	if ($urlok) $PAYPAL_API_OK = $urlok;
+	$PAYPAL_API_KO = "";
+	if ($urlko) $PAYPAL_API_KO = $urlko;
 	if (empty($PAYPAL_API_USER))
 	{
 		dol_print_error('', "Paypal setup param PAYPAL_API_USER not defined");
@@ -187,13 +189,13 @@ if ((empty($paymentmethod) || $paymentmethod == 'paypal') && ! empty($conf->payp
 		return -1;
 	}
 }
-if ((empty($paymentmethod) || $paymentmethod == 'paybox') && ! empty($conf->paybox->enabled))
+if ((empty($paymentmethod) || $paymentmethod == 'paybox') && !empty($conf->paybox->enabled))
 {
 	// No specific test for the moment
 }
-if ((empty($paymentmethod) || $paymentmethod == 'stripe') && ! empty($conf->stripe->enabled))
+if ((empty($paymentmethod) || $paymentmethod == 'stripe') && !empty($conf->stripe->enabled))
 {
-	require_once DOL_DOCUMENT_ROOT.'/stripe/config.php';	// This include also /stripe/lib/stripe.lib.php, /includes/stripe/init.php, ...
+	require_once DOL_DOCUMENT_ROOT.'/stripe/config.php'; // This include also /stripe/lib/stripe.lib.php, /includes/stripe/stripe-php/init.php, ...
 }
 
 // Initialize $validpaymentmethod
@@ -482,7 +484,7 @@ if ($action == 'charge' && !empty($conf->stripe->enabled))
 	    					'metadata' => $metadata,
 	    					'customer' => $customer->id,
 	    					'source' => $card,
-	    				    'statement_descriptor' => dol_trunc($FULLTAG, 10, 'right', 'UTF-8', 1), // 22 chars that appears on bank receipt (company + description)
+	    				  'statement_descriptor_suffix' => dol_trunc($FULLTAG, 10, 'right', 'UTF-8', 1), // 22 chars that appears on bank receipt (company + description)
 	    				), array("idempotency_key" => "$FULLTAG", "stripe_account" => "$stripeacc"));
 	    				// Return $charge = array('id'=>'ch_XXXX', 'status'=>'succeeded|pending|failed', 'failure_code'=>, 'failure_message'=>...)
 	    				if (empty($charge))
@@ -645,7 +647,7 @@ if ($action == 'charge' && !empty($conf->stripe->enabled))
         \Stripe\Stripe::setApiKey($stripearrayofkeysbyenv[$servicestatus]['secret_key']);
 
         try {
-            if (empty($key)) {				// If the Stripe connect account not set, we use common API usage
+        	if (empty($stripeacc)) {				// If the Stripe connect account not set, we use common API usage
                 $paymentintent = \Stripe\PaymentIntent::retrieve($paymentintent_id);
             } else {
                 $paymentintent = \Stripe\PaymentIntent::retrieve($paymentintent_id, array("stripe_account" => $stripeacc));
@@ -663,9 +665,9 @@ if ($action == 'charge' && !empty($conf->stripe->enabled))
         if ($paymentintent->status != 'succeeded')
         {
             $error++;
-            $errormessage = "StatusOfRetreivedIntent is not succeeded: ".$e->getMessage();
+            $errormessage = "StatusOfRetreivedIntent is not succeeded: ".$paymentintent->status;
             dol_syslog($errormessage, LOG_WARNING, 0, '_stripe');
-            setEventMessages($e->getMessage(), null, 'errors');
+            setEventMessages($paymentintent->status, null, 'errors');
             $action = '';
         }
         else
@@ -717,7 +719,8 @@ if (!empty($conf->global->ONLINE_PAYMENT_CSS_URL)) $head = '<link rel="styleshee
 $conf->dol_hide_topmenu = 1;
 $conf->dol_hide_leftmenu = 1;
 
-llxHeader($head, $langs->trans("PaymentForm"), '', '', 0, 0, '', '', '', 'onlinepaymentbody');
+$replacemainarea = (empty($conf->dol_hide_leftmenu) ? '<div>' : '').'<div>';
+llxHeader($head, $langs->trans("PaymentForm"), '', '', 0, 0, '', '', '', 'onlinepaymentbody', $replacemainarea);
 
 // Check link validity
 if ($source && in_array($ref, array('member_ref', 'contractline_ref', 'invoice_ref', 'order_ref', '')))
@@ -745,7 +748,7 @@ if ((empty($paymentmethod) || $paymentmethod == 'stripe') && !empty($conf->strip
 print '<span id="dolpaymentspan"></span>'."\n";
 print '<div class="center">'."\n";
 print '<form id="dolpaymentform" class="center" name="paymentform" action="'.$_SERVER["PHP_SELF"].'" method="POST">'."\n";
-print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">'."\n";
+print '<input type="hidden" name="token" value="'.newToken().'">'."\n";
 print '<input type="hidden" name="action" value="dopayment">'."\n";
 print '<input type="hidden" name="tag" value="'.GETPOST("tag", 'alpha').'">'."\n";
 print '<input type="hidden" name="suffix" value="'.dol_escape_htmltag($suffix).'">'."\n";
@@ -753,27 +756,7 @@ print '<input type="hidden" name="securekey" value="'.dol_escape_htmltag($SECURE
 print '<input type="hidden" name="e" value="'.$entity.'" />';
 print '<input type="hidden" name="forcesandbox" value="'.GETPOST('forcesandbox', 'int').'" />';
 print "\n";
-print '<!-- Form to send a payment -->'."\n";
-print '<!-- creditor = '.$creditor.' -->'."\n";
-// Additionnal information for each payment system
-if (!empty($conf->paypal->enabled))
-{
-	print '<!-- PAYPAL_API_SANDBOX = '.$conf->global->PAYPAL_API_SANDBOX.' -->'."\n";
-	print '<!-- PAYPAL_API_INTEGRAL_OR_PAYPALONLY = '.$conf->global->PAYPAL_API_INTEGRAL_OR_PAYPALONLY.' -->'."\n";
-}
-if (!empty($conf->paybox->enabled))
-{
-	print '<!-- PAYBOX_CGI_URL = '.$conf->global->PAYBOX_CGI_URL_V2.' -->'."\n";
-}
-if (!empty($conf->stripe->enabled))
-{
-	print '<!-- STRIPE_LIVE = '.$conf->global->STRIPE_LIVE.' -->'."\n";
-}
-print '<!-- urlok = '.$urlok.' -->'."\n";
-print '<!-- urlko = '.$urlko.' -->'."\n";
-print "\n";
 
-print '<table id="dolpaymenttable" summary="Payment form" class="center">'."\n";
 
 // Show logo (search order: logo defined by PAYMENT_LOGO_suffix, then PAYMENT_LOGO, then small company logo, large company logo, theme logo, common logo)
 $width = 0;
@@ -803,12 +786,42 @@ elseif (!empty($logo) && is_readable($conf->mycompany->dir_output.'/logos/'.$log
 // Output html code for logo
 if ($urllogo)
 {
-	print '<tr>';
-	print '<td align="center"><img id="dolpaymentlogo" title="'.$title.'" src="'.$urllogo.'"';
+	print '<div class="backgreypublicpayment">';
+	print '<div class="logopublicpayment">';
+	print '<img id="dolpaymentlogo" src="'.$urllogo.'"';
 	if ($width) print ' width="'.$width.'"';
-	print '></td>';
-	print '</tr>'."\n";
+	print '>';
+	print '</div>';
+	if (empty($conf->global->MAIN_HIDE_POWERED_BY)) {
+		print '<div class="poweredbypublicpayment opacitymedium right"><a href="https://www.dolibarr.org" target="dolibarr">'.$langs->trans("PoweredBy").'<br><img src="'.DOL_URL_ROOT.'/theme/dolibarr_logo.png" width="80px"></a></div>';
+	}
+	print '</div>';
 }
+
+
+
+
+print '<!-- Form to send a payment -->'."\n";
+print '<!-- creditor = '.$creditor.' -->'."\n";
+// Additionnal information for each payment system
+if (!empty($conf->paypal->enabled))
+{
+	print '<!-- PAYPAL_API_SANDBOX = '.$conf->global->PAYPAL_API_SANDBOX.' -->'."\n";
+	print '<!-- PAYPAL_API_INTEGRAL_OR_PAYPALONLY = '.$conf->global->PAYPAL_API_INTEGRAL_OR_PAYPALONLY.' -->'."\n";
+}
+if (!empty($conf->paybox->enabled))
+{
+	print '<!-- PAYBOX_CGI_URL = '.$conf->global->PAYBOX_CGI_URL_V2.' -->'."\n";
+}
+if (!empty($conf->stripe->enabled))
+{
+	print '<!-- STRIPE_LIVE = '.$conf->global->STRIPE_LIVE.' -->'."\n";
+}
+print '<!-- urlok = '.$urlok.' -->'."\n";
+print '<!-- urlko = '.$urlko.' -->'."\n";
+print "\n";
+
+print '<table id="dolpaymenttable" summary="Payment form" class="center">'."\n";
 
 // Output introduction text
 $text = '';
@@ -843,7 +856,11 @@ if (!$source)
 {
 	$found = true;
 	$tag = GETPOST("tag", 'alpha');
-	$fulltag = "TAG=".$tag;
+	if (GETPOST('fulltag', 'alpha')) {
+		$fulltag = GETPOST('fulltag', 'alpha');
+	} else {
+		$fulltag = "TAG=".$tag;
+	}
 
 	// Creditor
 	print '<tr class="CTableRow'.($var ? '1' : '2').'"><td class="CTableRow'.($var ? '1' : '2').'">'.$langs->trans("Creditor");
@@ -910,8 +927,12 @@ if ($source == 'order')
 		$amount = price2num($amount);
 	}
 
-	$fulltag = 'ORD='.$order->id.'.CUS='.$order->thirdparty->id;
-	if (!empty($TAG)) { $tag = $TAG; $fulltag .= '.TAG='.$TAG; }
+	if (GETPOST('fulltag', 'alpha')) {
+		$fulltag = GETPOST('fulltag', 'alpha');
+	} else {
+		$fulltag = 'ORD='.$order->id.'.CUS='.$order->thirdparty->id;
+		if (!empty($TAG)) { $tag = $TAG; $fulltag .= '.TAG='.$TAG; }
+	}
 	$fulltag = dol_string_unaccent($fulltag);
 
 	// Creditor
@@ -1029,9 +1050,12 @@ if ($source == 'invoice')
 		$amount = price2num($amount);
 	}
 
-	$fulltag = 'INV='.$invoice->id.'.CUS='.$invoice->thirdparty->id;
-	//$fulltag.='.NAM='.strtr($invoice->thirdparty->name,"-"," ");
-	if (!empty($TAG)) { $tag = $TAG; $fulltag .= '.TAG='.$TAG; }
+	if (GETPOST('fulltag', 'alpha')) {
+		$fulltag = GETPOST('fulltag', 'alpha');
+	} else {
+		$fulltag = 'INV='.$invoice->id.'.CUS='.$invoice->thirdparty->id;
+		if (!empty($TAG)) { $tag = $TAG; $fulltag .= '.TAG='.$TAG; }
+	}
 	$fulltag = dol_string_unaccent($fulltag);
 
 	// Creditor
@@ -1202,9 +1226,12 @@ if ($source == 'contractline')
 		$amount = price2num($amount);
 	}
 
-	$fulltag = 'COL='.$contractline->id.'.CON='.$contract->id.'.CUS='.$contract->thirdparty->id.'.DAT='.dol_print_date(dol_now(), '%Y%m%d%H%M');
-	//$fulltag.='.NAM='.strtr($contract->thirdparty->name,"-"," ");
-	if (!empty($TAG)) { $tag = $TAG; $fulltag .= '.TAG='.$TAG; }
+	if (GETPOST('fulltag', 'alpha')) {
+		$fulltag = GETPOST('fulltag', 'alpha');
+	} else {
+		$fulltag = 'COL='.$contractline->id.'.CON='.$contract->id.'.CUS='.$contract->thirdparty->id.'.DAT='.dol_print_date(dol_now(), '%Y%m%d%H%M%S');
+		if (!empty($TAG)) { $tag = $TAG; $fulltag .= '.TAG='.$TAG; }
+	}
 	$fulltag = dol_string_unaccent($fulltag);
 
 	$qty = 1;
@@ -1367,8 +1394,12 @@ if ($source == 'membersubscription')
 		$amount = price2num($amount);
 	}
 
-	$fulltag = 'MEM='.$member->id.'.DAT='.dol_print_date(dol_now(), '%Y%m%d%H%M');
-	if (!empty($TAG)) { $tag = $TAG; $fulltag .= '.TAG='.$TAG; }
+	if (GETPOST('fulltag', 'alpha')) {
+		$fulltag = GETPOST('fulltag', 'alpha');
+	} else {
+		$fulltag = 'MEM='.$member->id.'.DAT='.dol_print_date(dol_now(), '%Y%m%d%H%M%S');
+		if (!empty($TAG)) { $tag = $TAG; $fulltag .= '.TAG='.$TAG; }
+	}
 	$fulltag = dol_string_unaccent($fulltag);
 
 	// Creditor
@@ -1531,8 +1562,12 @@ if ($source == 'donation')
 		$amount = price2num($amount);
 	}
 
-	$fulltag = 'DON='.$don->ref.'.DAT='.dol_print_date(dol_now(), '%Y%m%d%H%M');
-	if (!empty($TAG)) { $tag = $TAG; $fulltag .= '.TAG='.$TAG; }
+	if (GETPOST('fulltag', 'alpha')) {
+		$fulltag = GETPOST('fulltag', 'alpha');
+	} else {
+		$fulltag = 'DON='.$don->ref.'.DAT='.dol_print_date(dol_now(), '%Y%m%d%H%M%S');
+		if (!empty($TAG)) { $tag = $TAG; $fulltag .= '.TAG='.$TAG; }
+	}
 	$fulltag = dol_string_unaccent($fulltag);
 
 	// Creditor
@@ -1684,7 +1719,6 @@ if ($action != 'dopayment')
 
 			if ((empty($paymentmethod) || $paymentmethod == 'paybox') && !empty($conf->paybox->enabled))
 			{
-				// If STRIPE_PICTO_FOR_PAYMENT is 'cb' we show a picto of a crdit card instead of paybox
 				print '<br><div class="button buttonpayment" id="div_dopayment_paybox"><span class="fa fa-credit-card"></span> <input class="" type="submit" id="dopayment_paybox" name="dopayment_paybox" value="'.$langs->trans("PayBoxDoPayment").'">';
 				print '<br>';
 				print '<span class="buttonpaymentsmall">'.$langs->trans("CreditOrDebitCard").'</span>';
@@ -1705,7 +1739,6 @@ if ($action != 'dopayment')
 
 			if ((empty($paymentmethod) || $paymentmethod == 'stripe') && !empty($conf->stripe->enabled))
 			{
-				// If STRIPE_PICTO_FOR_PAYMENT is 'cb' we show a picto of a crdit card instead of stripe
 				print '<br><div class="button buttonpayment" id="div_dopayment_stripe"><span class="fa fa-credit-card"></span> <input class="" type="submit" id="dopayment_stripe" name="dopayment_stripe" value="'.$langs->trans("StripeDoPayment").'">';
 				print '<input type="hidden" name="noidempotency" value="'.GETPOST('noidempotency', 'int').'">';
 				print '<br>';
@@ -1819,7 +1852,7 @@ if (preg_match('/^dopayment/', $action))			// If we choosed/click on the payment
 		print '<!-- Form payment-form STRIPE_USE_INTENT_WITH_AUTOMATIC_CONFIRMATION = '.$conf->global->STRIPE_USE_INTENT_WITH_AUTOMATIC_CONFIRMATION.' STRIPE_USE_NEW_CHECKOUT = '.$conf->global->STRIPE_USE_NEW_CHECKOUT.' -->'."\n";
 		print '<form action="'.$_SERVER['REQUEST_URI'].'" method="POST" id="payment-form">'."\n";
 
-		print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">'."\n";
+		print '<input type="hidden" name="token" value="'.newToken().'">'."\n";
 		print '<input type="hidden" name="dopayment_stripe" value="1">'."\n";
 		print '<input type="hidden" name="action" value="charge">'."\n";
 		print '<input type="hidden" name="tag" value="'.$TAG.'">'."\n";

@@ -21,6 +21,7 @@ ToOfferALinkForOnlinePaymentOnInvoice=URL per il pagamento %s di una fattura
 ToOfferALinkForOnlinePaymentOnContractLine=URL per il pagamento %s di una riga di contratto
 ToOfferALinkForOnlinePaymentOnFreeAmount=URL per il pagamento %s di un importo
 ToOfferALinkForOnlinePaymentOnMemberSubscription=URL per il pagamento %s dell'adesione di un membro
+ToOfferALinkForOnlinePaymentOnDonation=URL to offer a %s online payment page for payment of a donation
 YouCanAddTagOnUrl=Puoi anche aggiungere a qualunque di questi url il parametro <b>&tag=<i>value</i></b> (richiesto solo per il pagamento gratuito) per aggiungere una tag con un tuo commento.
 SetupStripeToHavePaymentCreatedAutomatically=Setup your Stripe with url <b>%s</b> to have payment created automatically when validated by Stripe.
 AccountParameter=Dati account
@@ -67,3 +68,4 @@ ToOfferALinkForTestWebhook=Link to setup Stripe WebHook to call the IPN (test mo
 ToOfferALinkForLiveWebhook=Link to setup Stripe WebHook to call the IPN (live mode)
 PaymentWillBeRecordedForNextPeriod=Payment will be recorded for the next period.
 ClickHereToTryAgain=<a href="%s">Click here to try again...</a>
+CreationOfPaymentModeMustBeDoneFromStripeInterface=Due to Strong Customer Authenticatin rules, creation of a card must be done from Stripe backoffice. You can click here to switch on Stripe customer record: %s

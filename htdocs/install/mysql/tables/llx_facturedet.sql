@@ -63,8 +63,9 @@ create table llx_facturedet
 
   fk_code_ventilation			integer    DEFAULT 0 NOT NULL,		-- Id in table llx_accounting_bookeeping to know accounting account for product line
   
-  situation_percent real,   										-- % progression of lines invoicing
+  situation_percent real DEFAULT 100, 								-- % progression of lines invoicing
   fk_prev_id        integer, 										-- id of the line in the previous situation
+
   fk_user_author	integer,                						-- user making creation
   fk_user_modif     integer,                						-- user making last change
 

@@ -25,27 +25,27 @@ abstract class ModelePDFSuppliersPayments extends CommonDocGenerator
 	/**
 	 * @var string Error code (or message)
 	 */
-	public $error='';
+	public $error = '';
 
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
+	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 *  Return list of active generation models
 	 *
-     *  @param	DoliDB	$db     			Database handler
-     *  @param  integer	$maxfilenamelength  Max length of value to show
-     *  @return	array						List of numbers
-     */
+	 *  @param	DoliDB	$db     			Database handler
+	 *  @param  integer	$maxfilenamelength  Max length of value to show
+	 *  @return	array						List of numbers
+	 */
 	public static function liste_modeles($db, $maxfilenamelength = 0)
 	{
-        // phpcs:enable
+		// phpcs:enable
 		global $conf;
 
-		$type='supplier_payment';
-		$liste=array();
+		$type = 'supplier_payment';
+		$liste = array();
 
 		include_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
-		$liste=getListOfModels($db, $type, $maxfilenamelength);
+		$liste = getListOfModels($db, $type, $maxfilenamelength);
 
 		return $liste;
 	}
@@ -61,7 +61,7 @@ abstract class ModeleNumRefSupplierPayments
 	/**
 	 * @var string Error code (or message)
 	 */
-	public $error='';
+	public $error = '';
 
 	/**
 	 *	Return if a module can be used or not
@@ -98,11 +98,11 @@ abstract class ModeleNumRefSupplierPayments
 	}
 
 	/**
-     *  Checks if the numbers already in force in the data base do not
-     *  cause conflicts that would prevent this numbering from working.
-     *
-     *	@return     boolean     false if conflict, true if ok
-     */
+	 *  Checks if the numbers already in the database do not
+	 *  cause conflicts that would prevent this numbering working.
+	 *
+	 *	@return     boolean     false if conflict, true if ok
+	 */
 	public function canBeActivated()
 	{
 		return true;

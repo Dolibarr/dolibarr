@@ -20,7 +20,7 @@
  */
 
 /**
- * \file 		htdocs/accountancy/admin/export-thirdpartyaccount.php
+ * \file 		scripts/accountancy/export-thirdpartyaccount.php
  * \ingroup		Accounting Expert
  * \brief		Page to detect empty accounting account
  */
@@ -33,7 +33,7 @@ $langs->loadLangs(array("companies", "compta", "main", "accountancy"));
 
 // Security check
 if (!$user->admin)
-    accessforbidden();
+	accessforbidden();
 
 // Date range
 $year = GETPOST("year");

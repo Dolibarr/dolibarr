@@ -18,7 +18,7 @@
  */
 
 // Protection to avoid direct call of template
-if (empty($conf) || ! is_object($conf))
+if (empty($conf) || !is_object($conf))
 {
 	print "Error, template page can't be called as URL";
 	exit;
@@ -35,7 +35,7 @@ $linkedObjectBlock = $GLOBALS['linkedObjectBlock'];
 
 $var = true;
 $total = 0;
-foreach($linkedObjectBlock as $key => $objectlink)
+foreach ($linkedObjectBlock as $key => $objectlink)
 {
 	?>
 <tr <?php echo $GLOBALS['bc'][$var]; ?> >
@@ -49,7 +49,7 @@ foreach($linkedObjectBlock as $key => $objectlink)
 		echo price($objectlink->total_ht);
 	} ?></td>
 	<td class="right"><?php echo $objectlink->getLibStatut(3); ?></td>
-	<td class="right"><a href="<?php echo $_SERVER["PHP_SELF"].'?id='.$object->id.'&action=dellink&dellinkid='.$key; ?>"><?php echo img_picto($langs->transnoentitiesnoconv("RemoveLink"), 'unlink'); ?></a></td>
+	<td class="right"><a class="reposition" href="<?php echo $_SERVER["PHP_SELF"].'?id='.$object->id.'&action=dellink&dellinkid='.$key; ?>"><?php echo img_picto($langs->transnoentitiesnoconv("RemoveLink"), 'unlink'); ?></a></td>
 </tr>
 	<?php
 }

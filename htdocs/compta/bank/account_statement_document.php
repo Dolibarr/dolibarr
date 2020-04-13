@@ -26,13 +26,13 @@
  * 	\brief      Page de gestion des documents attaches a un compte bancaire
  */
 require '../../main.inc.php';
-require_once DOL_DOCUMENT_ROOT . "/core/lib/bank.lib.php";
-require_once DOL_DOCUMENT_ROOT . "/core/lib/files.lib.php";
-require_once DOL_DOCUMENT_ROOT . "/core/lib/images.lib.php";
-require_once DOL_DOCUMENT_ROOT . "/core/class/html.formfile.class.php";
-require_once DOL_DOCUMENT_ROOT . '/compta/bank/class/account.class.php';
+require_once DOL_DOCUMENT_ROOT."/core/lib/bank.lib.php";
+require_once DOL_DOCUMENT_ROOT."/core/lib/files.lib.php";
+require_once DOL_DOCUMENT_ROOT."/core/lib/images.lib.php";
+require_once DOL_DOCUMENT_ROOT."/core/class/html.formfile.class.php";
+require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
 
-global $conf,$db,$langs;
+global $conf, $db, $langs;
 // Load translation files required by the page
 $langs->loadLangs(array('banks', 'companies', 'other'));
 
@@ -59,7 +59,7 @@ if ($user->socid)
 // Get parameters
 $sortfield = GETPOST("sortfield", 'alpha');
 $sortorder = GETPOST("sortorder", 'alpha');
-$page = GETPOST("page", 'int');
+$page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOST("page", 'int');
 if (empty($page) || $page == -1) { $page = 0; }
 $offset = $conf->liste_limit * $page;
 $pageprev = $page - 1;
@@ -70,7 +70,7 @@ if (!$sortfield)
 	$sortfield = "name";
 
 $object = new Account($db);
-if ($id > 0 || ! empty($ref)) $object->fetch($id, $ref);
+if ($id > 0 || !empty($ref)) $object->fetch($id, $ref);
 
 $result = restrictedArea($user, 'banque', $object->id, 'bank_account', '', '');
 
@@ -82,51 +82,47 @@ $result = restrictedArea($user, 'banque', $object->id, 'bank_account', '', '');
 if (!empty($num))
 {
 	$object->fetch_thirdparty();
-	$upload_dir = $conf->bank->dir_output . "/".$id."/statement/" . dol_sanitizeFileName($num);
+	$upload_dir = $conf->bank->dir_output."/".$id."/statement/".dol_sanitizeFileName($num);
 }
 $backtopage = $_SERVER['PHP_SELF']."?account=".$id."&num=".$num;
-include_once DOL_DOCUMENT_ROOT . '/core/actions_linkedfiles.inc.php';
+include_once DOL_DOCUMENT_ROOT.'/core/actions_linkedfiles.inc.php';
 
 
 /*
  * View
  */
 
+$form = new Form($db);
+
 $title = $langs->trans("FinancialAccount").' - '.$langs->trans("Documents");
 $helpurl = "";
 llxHeader('', $title, $helpurl);
 
-$form = new Form($db);
-
 if ($id > 0 || !empty($ref)) {
 	if ($object->fetch($id, $ref)) {
-		$upload_dir = $conf->bank->dir_output . "/".$id."/statement/" . dol_sanitizeFileName($num);
+		$upload_dir = $conf->bank->dir_output."/".$id."/statement/".dol_sanitizeFileName($num);
 
 		// Onglets
 		$head = account_statement_prepare_head($object, $num);
-		dol_fiche_head($head, 'document', $langs->trans("FinancialAccount"), -1, 'account');
+		dol_fiche_head($head, 'document', $langs->trans("AccountStatement"), -1, 'account');
 
 
 		// Build file list
 		$filearray = dol_dir_list($upload_dir, "files", 0, '', '\.meta$', $sortfield, (strtolower($sortorder) == 'desc' ? SORT_DESC : SORT_ASC), 1);
 		$totalsize = 0;
 		foreach ($filearray as $key => $file) {
-			$totalsize+=$file['size'];
+			$totalsize += $file['size'];
 		}
 
-		$morehtmlref = '';
-
-
-		$title=$langs->trans("AccountStatement").' '.$num.' - '.$langs->trans("BankAccount").' '.$object->getNomUrl(1, 'receipts');
-		print load_fiche_titre($title, '', 'title_bank.png');
-
+		$title = $langs->trans("AccountStatement").' '.$num.' - '.$langs->trans("BankAccount").' '.$object->getNomUrl(1, 'receipts');
+		print load_fiche_titre($title, '', '');
 
 		print '<div class="fichecenter">';
 		print '<div class="underbanner clearboth"></div>';
 
 		print '<table class="border tableforfield centpercent">';
-		print '<tr><td class="titlefield">' . $langs->trans("NbOfAttachedFiles") . '</td><td colspan="3">' . count($filearray) . '</td></tr>';
-		print '<tr><td>' . $langs->trans("TotalSizeOfAttachedFiles") . '</td><td colspan="3">' .dol_print_size($totalsize, 1, 1).'</td></tr>';
+		print '<tr><td class="titlefield">'.$langs->trans("NbOfAttachedFiles").'</td><td colspan="3">'.count($filearray).'</td></tr>';
+		print '<tr><td>'.$langs->trans("TotalSizeOfAttachedFiles").'</td><td colspan="3">'.dol_print_size($totalsize, 1, 1).'</td></tr>';
 		print "</table>\n";
 
 		print '</div>';
@@ -137,10 +133,10 @@ if ($id > 0 || !empty($ref)) {
 		$modulepart = 'bank';
 		$permission = $user->rights->banque->modifier;
 		$permtoedit = $user->rights->banque->modifier;
-		$param = '&id=' . $object->id.'&num='.$num;
-		$uri = '&num='.$num;
-		$relativepathwithnofile = $id."/statement/".$num."/";
-		include_once DOL_DOCUMENT_ROOT . '/core/tpl/document_actions_post_headers.tpl.php';
+		$param = '&id='.$object->id.'&num='.urlencode($num);
+		$moreparam = '&num='.urlencode($num); ;
+		$relativepathwithnofile = $id."/statement/".dol_sanitizeFileName($num)."/";
+		include_once DOL_DOCUMENT_ROOT.'/core/tpl/document_actions_post_headers.tpl.php';
 	}
 	else {
 		dol_print_error($db);

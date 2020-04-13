@@ -16,6 +16,9 @@
  */
 
 
+.opacitymedium {
+	opacity: 0.5;
+}
 
 body {
 	font-size:14px;
@@ -50,10 +53,9 @@ div.titre {
 }
 
 span.titre {
-	font-size: 90%;
 	font-weight: bold;
 	background: #FFFFFF;
-	color: #444;
+	color: rgb(0,113,121);
 	border: 1px solid #bbb;
 	padding: 10px 10px 10px 10px;
 	margin: 0 0 10px 10px;
@@ -204,7 +206,7 @@ input:-webkit-autofill {
 
 table.listofchoices, table.listofchoices tr, table.listofchoices td {
 	border-collapse: collapse;
-    padding: 4px;
+    padding: 8px;
     color: #000000;
 	border: 1px solid #ccc !important;
 	line-height: 18px;
@@ -273,6 +275,7 @@ div.header {
 
 a:link,a:visited,a:active {
 	text-decoration:none;
+	color: #114466;
 }
 a:hover {
 	text-decoration:underline;
@@ -342,15 +345,27 @@ ul {
 	padding-bottom: 0;
 }
 
+tr.choiceselected td.listofchoicesdesc {
+    color: #000 !important;
+}
 
+tr.choiceselected td .button {
+    background: rgb(0,113,121);
+    color: #fff;
+}
+
+a.button:link,a.button:visited,a.button:active {
+    color: #888;
+}
 .button {
-    background: #fcfcfc;
-    border: 1px solid #e0e0e0;
+    background: #ddd;
+    color: #fff;
+    /* border: 1px solid #e0e0e0; */
     padding: 0.3em 0.7em;
     margin: 0 0.5em;
-    -moz-border-radius: 5px 5px 5px 5px;
-    -webkit-border-radius: 5px 5px 5px 5px;
-    border-radius: 5px 5px 5px 5px;
+    -moz-border-radius: 3px;
+    -webkit-border-radius: 3px;
+    border-radius: 3px;
     -moz-box-shadow: 2px 2px 3px #ddd;
     -webkit-box-shadow: 2px 2px 3px #ddd;
     box-shadow: 2px 2px 3px #ddd;
@@ -360,7 +375,7 @@ a.button:hover {
 }
 
 .choiceselected {
-	background-color: #dfd;
+	background-color: #f4f6f4;
 	background-repeat: repeat-x;
 	background-position: top left;
 }

@@ -266,12 +266,12 @@ $formfile = new FormFile($db);
 
 if ($action == 'create')
 {
-    print load_fiche_titre($langs->trans("NewGroup"));
+    print load_fiche_titre($langs->trans("NewGroup"), '', 'object_group');
 
     print dol_set_focus('#nom');
 
     print '<form action="'.$_SERVER["PHP_SELF"].'" method="post">';
-    print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+    print '<input type="hidden" name="token" value="'.newToken().'">';
     print '<input type="hidden" name="action" value="add">';
 
     dol_fiche_head('', '', '', 0, '');
@@ -304,7 +304,7 @@ if ($action == 'create')
     print "</td></tr>\n";
 
 	// Other attributes
-    $parameters = array('object' => $object, 'colspan' => ' colspan="2"');
+    $parameters = array('object' => $object);
     $reshook = $hookmanager->executeHooks('formObjectOptions', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
     print $hookmanager->resPrint;
     if (empty($reshook))
@@ -386,7 +386,9 @@ else
 
 			// Note
 			print '<tr><td class="titlefield tdtop">'.$langs->trans("Description").'</td>';
-			print '<td class="valeur">'.dol_htmlentitiesbr($object->note).'&nbsp;</td>';
+			print '<td class="valeur sensiblehtmlcontent"">';
+			print dol_string_onlythesehtmltags(dol_htmlentitiesbr($object->note));
+			print '</td>';
 			print "</tr>\n";
 
 			// Other attributes
@@ -402,6 +404,7 @@ else
 			/*
 			 * Barre d'actions
 			 */
+
 			print '<div class="tabsAction">';
 
 			if ($caneditperms)
@@ -441,7 +444,7 @@ else
 				if ($caneditperms)
 				{
 					print '<form action="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'" method="POST">'."\n";
-					print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+					print '<input type="hidden" name="token" value="'.newToken().'">';
 					print '<input type="hidden" name="action" value="adduser">';
 					print '<table class="noborder centpercent">'."\n";
 					print '<tr class="liste_titre"><td class="titlefield liste_titre">'.$langs->trans("NonAffectedUsers").'</td>'."\n";
@@ -510,6 +513,7 @@ else
 			/*
 	         * Documents generes
 	         */
+
 	        $filename = dol_sanitizeFileName($object->ref);
 	        $filedir = $conf->usergroup->dir_output."/".dol_sanitizeFileName($object->ref);
 	        $urlsource = $_SERVER["PHP_SELF"]."?id=".$object->id;
@@ -529,17 +533,17 @@ else
 			$formactions = new FormActions($db);
 			$somethingshown = $formactions->showactions($object, 'usergroup', $socid, 1);*/
 
-
 	        print '</div></div></div>';
         }
 
         /*
          * Fiche en mode edition
          */
+
         if ($action == 'edit' && $caneditperms)
         {
             print '<form action="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'" method="post" name="updategroup" enctype="multipart/form-data">';
-            print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+            print '<input type="hidden" name="token" value="'.newToken().'">';
             print '<input type="hidden" name="action" value="update">';
 
             dol_fiche_head($head, 'group', $title, 0, 'group');

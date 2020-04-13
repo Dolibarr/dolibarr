@@ -28,16 +28,16 @@ require_once DOL_DOCUMENT_ROOT.'/exports/class/export.class.php';
 $langs->load("exports");
 
 // Security check
-$result=restrictedArea($user, 'export');
+$result = restrictedArea($user, 'export');
 
-$export=new Export($db);
+$export = new Export($db);
 $export->load_arrays($user);
 
 /*
  * View
  */
 
-$form=new Form($db);
+$form = new Form($db);
 
 llxHeader('', $langs->trans("ExportsArea"), 'EN:Module_Exports_En|FR:Module_Exports|ES:M&oacute;dulo_Exportaciones');
 
@@ -59,7 +59,7 @@ print '<br>';
 
 // List of available export formats
 
-print '<div class="div-table-responsive-no-min">';		// You can use div-table-responsive-no-min if you dont need reserved height for your table
+print '<div class="div-table-responsive-no-min">'; // You can use div-table-responsive-no-min if you dont need reserved height for your table
 print '<table class="noborder centpercent">';
 print '<tr class="liste_titre">';
 print '<td colspan="2">'.$langs->trans("AvailableFormats").'</td>';
@@ -68,20 +68,20 @@ print '<td class="right">'.$langs->trans("LibraryVersion").'</td>';
 print '</tr>';
 
 include_once DOL_DOCUMENT_ROOT.'/core/modules/export/modules_export.php';
-$model=new ModeleExports($db);
-$liste=$model->liste_modeles($db);    // This is not a static method for exports because method load non static properties
+$model = new ModeleExports($db);
+$liste = $model->liste_modeles($db); // This is not a static method for exports because method load non static properties
 
-foreach($liste as $key => $val)
+foreach ($liste as $key => $val)
 {
     if (preg_match('/__\(Disabled\)__/', $liste[$key]))
     {
-    	$liste[$key]=preg_replace('/__\(Disabled\)__/', '('.$langs->transnoentitiesnoconv("Disabled").')', $liste[$key]);
+    	$liste[$key] = preg_replace('/__\(Disabled\)__/', '('.$langs->transnoentitiesnoconv("Disabled").')', $liste[$key]);
     }
 
 	print '<tr class="oddeven">';
 	print '<td width="16">'.img_picto_common($model->getDriverLabelForKey($key), $model->getPictoForKey($key)).'</td>';
-	$text=$model->getDriverDescForKey($key);
-	$label=$liste[$key];
+	$text = $model->getDriverDescForKey($key);
+	$label = $liste[$key];
 	print '<td>'.$form->textwithpicto($label, $text).'</td>';
 	print '<td>'.$model->getLibLabelForKey($key).'</td>';
 	print '<td class="nowrap right">'.$model->getLibVersionForKey($key).'</td>';

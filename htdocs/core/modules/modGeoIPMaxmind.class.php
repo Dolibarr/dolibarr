@@ -23,7 +23,7 @@
  *	\brief      File of geoipmaxmind module descriptor
  */
 
-include_once DOL_DOCUMENT_ROOT .'/core/modules/DolibarrModules.class.php';
+include_once DOL_DOCUMENT_ROOT.'/core/modules/DolibarrModules.class.php';
 
 
 /**
@@ -65,13 +65,13 @@ class modGeoIPMaxmind extends DolibarrModules
 		$this->config_page_url = array("geoipmaxmind.php");
 
 		// Dependencies
-		$this->hidden = false;			// A condition to hide module
-		$this->depends = array();		// List of module class names as string that must be enabled if this module is enabled
-		$this->requiredby = array();	// List of module ids to disable if this one is disabled
-		$this->conflictwith = array();	// List of module class names as string this module is in conflict with
-		$this->phpmin = array(5,4);
+		$this->hidden = false; // A condition to hide module
+		$this->depends = array(); // List of module class names as string that must be enabled if this module is enabled
+		$this->requiredby = array(); // List of module ids to disable if this one is disabled
+		$this->conflictwith = array(); // List of module class names as string this module is in conflict with
+		$this->phpmin = array(5, 4);
 		$this->phpmax = array();
-		$this->need_dolibarr_version = array(2,7,-1);	// Minimum version of Dolibarr required by module
+		$this->need_dolibarr_version = array(2, 7, -1); // Minimum version of Dolibarr required by module
 		$this->need_javascript_ajax = 1;
 
 		// Constants
@@ -83,6 +83,6 @@ class modGeoIPMaxmind extends DolibarrModules
 		// Permissions
 		$this->rights = array();
 		$this->rights_class = 'geoipmaxmind';
-		$r=0;
+		$r = 0;
 	}
 }

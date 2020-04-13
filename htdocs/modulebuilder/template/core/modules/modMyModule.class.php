@@ -334,15 +334,21 @@ class modMyModule extends DolibarrModules
         $this->export_code[$r]=$this->rights_class.'_'.$r;
         $this->export_label[$r]='MyObjectLines';	// Translation key (used only if key ExportDataset_xxx_z not found)
         $this->export_icon[$r]='myobject@mymodule';
-        $keyforclass = 'MyObject'; $keyforclassfile='/mymobule/class/myobject.class.php'; $keyforelement='myobject';
+        // Define $this->export_fields_array, $this->export_TypeFields_array and $this->export_entities_array
+        $keyforclass = 'MyObject'; $keyforclassfile='/mymobule/class/myobject.class.php'; $keyforelement='myobject@mymodule';
         include DOL_DOCUMENT_ROOT.'/core/commonfieldsinexport.inc.php';
-   		//$keyforclass = 'MyObjectLine'; $keyforclassfile='/mymodule/class/myobject.class.php'; $keyforelement='myobjectline'; $keyforalias='tl';
+        //$this->export_fields_array[$r]['t.fieldtoadd']='FieldToAdd'; $this->export_TypeFields_array[$r]['t.fieldtoadd']='Text';
+        //unset($this->export_fields_array[$r]['t.fieldtoremove']);
+   		//$keyforclass = 'MyObjectLine'; $keyforclassfile='/mymodule/class/myobject.class.php'; $keyforelement='myobjectline@mymodule'; $keyforalias='tl';
 		//include DOL_DOCUMENT_ROOT.'/core/commonfieldsinexport.inc.php';
-        $keyforselect='myobject'; $keyforaliasextra='extra'; $keyforelement='myobject';
+        $keyforselect='myobject'; $keyforaliasextra='extra'; $keyforelement='myobject@mymodule';
         include DOL_DOCUMENT_ROOT.'/core/extrafieldsinexport.inc.php';
-        //$keyforselect='myobjectline'; $keyforaliasextra='extraline'; $keyforelement='myobjectline';
+        //$keyforselect='myobjectline'; $keyforaliasextra='extraline'; $keyforelement='myobjectline@mymodule';
         //include DOL_DOCUMENT_ROOT.'/core/extrafieldsinexport.inc.php';
-        //$this->export_dependencies_array[$r]=array('myobjectline'=>array('tl.rowid','tl.ref')); // To force to activate one or several fields if we select some fields that need same (like to select a unique key if we ask a field of a child to avoid the DISTINCT to discard them, or for computed field than need several other fields)
+        //$this->export_dependencies_array[$r] = array('myobjectline'=>array('tl.rowid','tl.ref')); // To force to activate one or several fields if we select some fields that need same (like to select a unique key if we ask a field of a child to avoid the DISTINCT to discard them, or for computed field than need several other fields)
+        //$this->export_special_array[$r] = array('t.field'=>'...');
+        //$this->export_examplevalues_array[$r] = array('t.field'=>'Example');
+        //$this->export_help_array[$r] = array('t.field'=>'FieldDescHelp');
         $this->export_sql_start[$r]='SELECT DISTINCT ';
         $this->export_sql_end[$r]  =' FROM '.MAIN_DB_PREFIX.'myobject as t';
         //$this->export_sql_end[$r]  =' LEFT JOIN '.MAIN_DB_PREFIX.'myobject_line as tl ON tl.fk_myobject = t.rowid';
@@ -359,9 +365,9 @@ class modMyModule extends DolibarrModules
          $this->export_code[$r]=$this->rights_class.'_'.$r;
          $this->export_label[$r]='MyObjectLines';	// Translation key (used only if key ExportDataset_xxx_z not found)
          $this->export_icon[$r]='myobject@mymodule';
-         $keyforclass = 'MyObject'; $keyforclassfile='/mymobule/class/myobject.class.php'; $keyforelement='myobject';
+         $keyforclass = 'MyObject'; $keyforclassfile='/mymobule/class/myobject.class.php'; $keyforelement='myobject@mymodule';
          include DOL_DOCUMENT_ROOT.'/core/commonfieldsinexport.inc.php';
-         $keyforselect='myobject'; $keyforaliasextra='extra'; $keyforelement='myobject';
+         $keyforselect='myobject'; $keyforaliasextra='extra'; $keyforelement='myobject@mymodule';
          include DOL_DOCUMENT_ROOT.'/core/extrafieldsinexport.inc.php';
          //$this->export_dependencies_array[$r]=array('mysubobject'=>'ts.rowid', 't.myfield'=>array('t.myfield2','t.myfield3')); // To force to activate one or several fields if we select some fields that need same (like to select a unique key if we ask a field of a child to avoid the DISTINCT to discard them, or for computed field than need several other fields)
          $this->export_sql_start[$r]='SELECT DISTINCT ';

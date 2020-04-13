@@ -23,7 +23,7 @@
  *     \ingroup     ticket
  *     \brief       This box shows latest modified tickets
  */
-require_once DOL_DOCUMENT_ROOT . "/core/boxes/modules_boxes.php";
+require_once DOL_DOCUMENT_ROOT."/core/boxes/modules_boxes.php";
 
 /**
  * Class to manage the box
@@ -86,23 +86,23 @@ class box_last_modified_ticket extends ModeleBoxes
 
         if ($user->rights->ticket->read) {
             $sql = "SELECT t.rowid as id, t.ref, t.track_id, t.fk_soc, t.fk_user_create, t.fk_user_assign, t.subject, t.message, t.fk_statut, t.type_code, t.category_code, t.severity_code, t.datec, t.date_read, t.date_close, t.origin_email ";
-            $sql.= ", type.label as type_label, category.label as category_label, severity.label as severity_label";
-            $sql.= ", s.nom as company_name, s.email as socemail, s.client, s.fournisseur";
-            $sql.= " FROM ".MAIN_DB_PREFIX."ticket as t";
-            $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."c_ticket_type as type ON type.code=t.type_code";
-            $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."c_ticket_category as category ON category.code=t.category_code";
-            $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."c_ticket_severity as severity ON severity.code=t.severity_code";
-            $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s ON s.rowid=t.fk_soc";
+            $sql .= ", type.label as type_label, category.label as category_label, severity.label as severity_label";
+            $sql .= ", s.nom as company_name, s.email as socemail, s.client, s.fournisseur";
+            $sql .= " FROM ".MAIN_DB_PREFIX."ticket as t";
+            $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."c_ticket_type as type ON type.code=t.type_code";
+            $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."c_ticket_category as category ON category.code=t.category_code";
+            $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."c_ticket_severity as severity ON severity.code=t.severity_code";
+            $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s ON s.rowid=t.fk_soc";
 
-            $sql.= " WHERE t.entity = ".$conf->entity;
+            $sql .= " WHERE t.entity = ".$conf->entity;
             //  		$sql.= " AND e.rowid = er.fk_event";
             //if (!$user->rights->societe->client->voir && !$user->socid) $sql.= " WHERE s.rowid = sc.fk_soc AND sc.fk_user = " .$user->id;
             if ($user->socid) {
-                $sql.= " AND t.fk_soc= ".$user->socid;
+                $sql .= " AND t.fk_soc= ".$user->socid;
             }
 
-            $sql.= " ORDER BY t.tms DESC, t.rowid DESC ";
-            $sql.= $this->db->plimit($max, 0);
+            $sql .= " ORDER BY t.tms DESC, t.rowid DESC ";
+            $sql .= $this->db->plimit($max, 0);
 
             $resql = $this->db->query($sql);
             if ($resql) {
@@ -112,9 +112,9 @@ class box_last_modified_ticket extends ModeleBoxes
 
                 while ($i < $num) {
                     $objp = $this->db->fetch_object($resql);
-                    $datec=$this->db->jdate($objp->datec);
-                    $dateterm=$this->db->jdate($objp->fin_validite);
-                    $dateclose=$this->db->jdate($objp->date_cloture);
+                    $datec = $this->db->jdate($objp->datec);
+                    $dateterm = $this->db->jdate($objp->fin_validite);
+                    $dateclose = $this->db->jdate($objp->date_cloture);
                     $late = '';
 
                     $ticket = new Ticket($this->db);
@@ -136,7 +136,7 @@ class box_last_modified_ticket extends ModeleBoxes
                     }
 
 
-                    $r=0;
+                    $r = 0;
 
                     // Ticket
                     $this->info_box_contents[$i][0] = array(
@@ -149,7 +149,7 @@ class box_last_modified_ticket extends ModeleBoxes
                     // Subject
                     $this->info_box_contents[$i][$r] = array(
                         'td' => 'class="nowrap"',
-                        'text' => $objp->subject,    // Some event have no ref
+                        'text' => $objp->subject, // Some event have no ref
                         'url' => DOL_URL_ROOT."/ticket/card.php?track_id=".$objp->track_id,
                     );
                     $r++;
@@ -180,8 +180,8 @@ class box_last_modified_ticket extends ModeleBoxes
                     $i++;
                 }
 
-                if ($num==0) {
-                    $this->info_box_contents[$i][0] = array('td' => 'class="center"','text'=>$langs->trans("BoxLastModifiedTicketNoRecordedTickets"));
+                if ($num == 0) {
+                    $this->info_box_contents[$i][0] = array('td' => 'class="center"', 'text'=>$langs->trans("BoxLastModifiedTicketNoRecordedTickets"));
                 }
             } else {
                 dol_print_error($this->db);
