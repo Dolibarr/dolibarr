@@ -1378,7 +1378,7 @@ if ($resql)
     	if (!empty($arrayfields['bu.label']['checked']))
     	{
         	print "<td>";
-			
+
         	$links = $bankaccountstatic->get_url($objp->rowid);
     	    $cachebankaccount = array();
     	    foreach ($links as $key=>$val)
@@ -1387,24 +1387,22 @@ if ($resql)
     	        {
     	            if ($objp->url_id)
 					{
-			
-    	            $companystatic->id = $objp->url_id;
-					$companystatic->name = $objp->nom;
-					$companystatic->name_alias = $objp->name_alias;
-					$companystatic->client = $objp->client;
-					$companystatic->email = $objp->email;
-					$companystatic->fournisseur = $objp->fournisseur;
-					$companystatic->code_client = $objp->code_client;
-					$companystatic->code_fournisseur = $objp->code_fournisseur;
-					$companystatic->code_compta = $objp->code_compta;
-					$companystatic->code_compta_fournisseur = $objp->code_compta_fournisseur;
-					print $companystatic->getNomUrl(1);
+						$companystatic->id = $objp->url_id;
+						$companystatic->name = $objp->nom;
+						$companystatic->name_alias = $objp->name_alias;
+						$companystatic->client = $objp->client;
+						$companystatic->email = $objp->email;
+						$companystatic->fournisseur = $objp->fournisseur;
+						$companystatic->code_client = $objp->code_client;
+						$companystatic->code_fournisseur = $objp->code_fournisseur;
+						$companystatic->code_compta = $objp->code_compta;
+						$companystatic->code_compta_fournisseur = $objp->code_compta_fournisseur;
+						print $companystatic->getNomUrl(1);
 					}
 					else
 					{
 						print '&nbsp;';
 					}
-							
     	        }
 				elseif ($links[$key]['type'] == 'payment_salary')
     	        {
@@ -1418,13 +1416,11 @@ if ($resql)
 						$userstatic->email = $objp->email;
 						$userstatic->statut = $objp->statut;
 						print $userstatic->getNomUrl(1);
-
 					}
 					else
 					{
 						print '&nbsp;';
 					}
-    	            
     	        }
 			}
 
