@@ -2535,7 +2535,7 @@ elseif ($id || $ref)
 
 			// This is just to generate a delivery receipt
 			//var_dump($object->linkedObjectsIds['delivery']);
-			if ($conf->livraison_bon->enabled && ($object->statut == Expedition::STATUS_VALIDATED || $object->statut == Expedition::STATUS_CLOSED) && $user->rights->expedition->livraison->creer && count($object->linkedObjectsIds['delivery']) == 0)
+			if ($conf->livraison_bon->enabled && ($object->statut == Expedition::STATUS_VALIDATED || $object->statut == Expedition::STATUS_CLOSED) && $user->rights->expedition->livraison->creer && empty($object->linkedObjectsIds['delivery']))
 			{
 				print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=create_delivery">'.$langs->trans("CreateDeliveryOrder").'</a>';
 			}
