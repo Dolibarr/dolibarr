@@ -6327,8 +6327,18 @@ div.tabsElem a.tab {
 
 
 /* ============================================================================== */
-/* Dropdown Megamenu Menu                                                                     */
+/* Dropdown Megamenu Menu                                                         */
 /* ============================================================================== */
+
+:root {
+  --menu-bg-color: rgb(<?php echo colorStringToArray($colorbackhmenu1)[0]/2 .",".colorStringToArray($colorbackhmenu1)[1]/2 .",".colorStringToArray($colorbackhmenu1)[2]/2; ?>);
+	/*join(',', colorStringToArray($colorbackhmenu1)); */	
+	--reduc1-width: <?php echo (empty($conf->global->THEME_ELDY_WITDHOFFSET_FOR_REDUC1) ? round($nbtopmenuentries * 90, 0) + 240 : $conf->global->THEME_ELDY_WITDHOFFSET_FOR_REDUC1); ?>px;
+	--reduc2-width: <?php echo (empty($conf->global->THEME_ELDY_WITDHOFFSET_FOR_REDUC2) ? round($nbtopmenuentries * 69, 0) + 130 : $conf->global->THEME_ELDY_WITDHOFFSET_FOR_REDUC2); ?>px;
+	--reduc3-width: <?php echo (empty($conf->global->THEME_ELDY_WITDHOFFSET_FOR_REDUC3) ? round($nbtopmenuentries * 47, 0) +  40 : $conf->global->THEME_ELDY_WITDHOFFSET_FOR_REDUC3); ?>px;
+}
+
+
 /* hide menu by default */
 div.submenuroot { 
 	visibility:hidden;
@@ -6336,10 +6346,19 @@ div.submenuroot {
 	display:none;
 }
 
+
+	/* TRANSITION SETUP */
+div.submenuroot {
+  transition: visibility 0s linear 0.2s, opacity 0.2s linear 0.2s, margin 0.2s linear 0.2s;
+	margin-top: 10px;
+}
+	/* END TRANSITION SETUP */
+
+
 /* Reduc2 setup */
 @media only screen
 	and
-(min-width: <?php echo (empty($conf->global->THEME_ELDY_WITDHOFFSET_FOR_REDUC3) ? round($nbtopmenuentries * 47, 0) + 40 : $conf->global->THEME_ELDY_WITDHOFFSET_FOR_REDUC3); ?>px ) 
+(min-width: <?php echo (empty($conf->global->THEME_ELDY_WITDHOFFSET_FOR_REDUC3) ? round($nbtopmenuentries * 47, 0) +  40 : $conf->global->THEME_ELDY_WITDHOFFSET_FOR_REDUC3); ?>px ) 
 	and
 (max-width: <?php echo (empty($conf->global->THEME_ELDY_WITDHOFFSET_FOR_REDUC2) ? round($nbtopmenuentries * 69, 0) + 130 : $conf->global->THEME_ELDY_WITDHOFFSET_FOR_REDUC2); ?>px )  
 {
@@ -6355,11 +6374,9 @@ div.submenuroot {
 /* Reduc1 setup */
 @media only screen
 	and 
-(min-width: <?php echo (empty($conf->global->THEME_ELDY_WITDHOFFSET_FOR_REDUC3) ? round($nbtopmenuentries * 47, 0) + 40 : $conf->global->THEME_ELDY_WITDHOFFSET_FOR_REDUC3); ?>px ) 
+(min-width: <?php echo (empty($conf->global->THEME_ELDY_WITDHOFFSET_FOR_REDUC3) ? round($nbtopmenuentries * 47, 0) +  40 : $conf->global->THEME_ELDY_WITDHOFFSET_FOR_REDUC3); ?>px ) 
 {
-	/* TRANSITION SETUP */
 
-	/* END TRANSITION SETUP */
 	li:not(.nohover):not(.menuhider).tmenu:not(.submenu), li.tmenusel:not(.submenu){
 		border-left:solid 1px transparent;
 		border-right:solid 1px transparent;
@@ -6377,7 +6394,7 @@ div.submenuroot {
 		max-width: calc(100% - 2px);
 	}
 	li.tmenu:not(.nohover):not(.menuhider):not(.submenu):hover, li.tmenusel:not(.nohover):not(.menuhider):not(.submenu):hover{
-		background-color: rgb(".join(',', colorStringToArray($colorbackhmenu1)).");
+		background-color: var(--menu-bg-color);
 		border-left:solid 1px #aaa;
 		border-right:solid 1px #aaa;
 	}
@@ -6404,7 +6421,8 @@ div.submenuroot {
 	li:not(.nohover).tmenusel::after, li:not(.nohover).tmenu::after {
 		left:auto;
 		margin-left:-6px;
-	}						/* setup megamenu bgcolor, width, spacing, etc...  */
+	}
+	/* setup megamenu bgcolor, width, spacing, etc...  */
 	div.submenuroot
 	{
 		position: absolute;
@@ -6412,14 +6430,16 @@ div.submenuroot {
 		left: 0px;
 		margin-left: 0px;
 		min-width: calc(100% - 2px);
-		min-height: 150px;
-		margin-top: 2px;
-		
-		background-color: rgb( <?php echo join(',', colorStringToArray($colorbackhmenu1)); ?>);
+		min-height: 250px;
+		background-color: var(--menu-bg-color);;
 		border:solid 1px #aaa;
 		box-shadow: 4px 4px 8px #777;
 		padding:0px !important;
 		padding-bottom:0px !important;
+	}
+	li:not(.nohover):not(.menuhider):hover div.submenuroot
+	{	
+		margin-top: 2px;
 	}
 	div.submenuroot>.tmenudiv
 	{
@@ -6464,7 +6484,7 @@ div.submenuroot {
 	}
 	/* setup menu indicator (gray arrow) to highlight current hovered menu item */
 	li.tmenu:not(.nohover):hover::after, li.tmenusel:not(.nohover):hover::after {
-		background-color: rgb( <?php echo join(',', colorStringToArray($colorbackhmenu1)); ?>);
+		background-color: var(--menu-bg-color);;
 		height:3px;
 		border:0px;
 		position: relative;
