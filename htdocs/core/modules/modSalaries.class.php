@@ -62,7 +62,7 @@ class modSalaries extends DolibarrModules
 		$this->version = 'dolibarr';
 
 		$this->const_name = 'MAIN_MODULE_'.strtoupper($this->name);
-		$this->picto = 'bill';
+		$this->picto = 'payment';
 
 		// Data directories to create when module is enabled
 		$this->dirs = array("/salaries/temp");

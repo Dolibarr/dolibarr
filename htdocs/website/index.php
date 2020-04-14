@@ -360,22 +360,26 @@ if ($action == 'unsetshowsubcontainers')
 	exit;
 }
 
-if (($action == 'replacesite' || $action == 'replacesiteconfirm') && ! $searchkey)
+if (($action == 'replacesite' || $action == 'replacesiteconfirm') && !$searchkey)
 {
 	$action = 'replacesite';
 }
 
 // Replacement of string into pages
-if ($massaction == 'replace')
+if ($massaction == 'replace' && GETPOST('confirmmassaction', 'alpha'))
 {
-	$replacestring = GETPOST('replacestring', 'alphanohtml');
-	if (! $replacestring) {
+	$replacestring = GETPOST('replacestring', 'none');
+
+	if (empty($user->rights->website->writephp)) {
+		setEventMessages("NotAllowedToAddDynamicContent", null, 'errors');
+	}
+	elseif (!$replacestring) {
 		setEventMessages("ErrorReplaceStringEmpty", null, 'errors');
 	}
 	else {
 		$nbreplacement = 0;
 
-		foreach($toselect as $keyselected) {
+		foreach ($toselect as $keyselected) {
 			$objectpage = $listofpages['list'][$keyselected];
 			if ($objectpage->pageurl) {
 				dol_syslog("Replace string into page ".$objectpage->pageurl);
@@ -2277,7 +2281,8 @@ if (!GETPOST('hide_websitemenu'))
     		$htmltext .= '<br>'.$langs->trans("CheckVirtualHostPerms", $langs->transnoentitiesnoconv("ReadPerm"), DOL_DOCUMENT_ROOT);
     		$htmltext .= '<br>'.$langs->trans("CheckVirtualHostPerms", $langs->transnoentitiesnoconv("WritePerm"), DOL_DATA_ROOT.'/website<br>'.DOL_DATA_ROOT.'/medias');
 
-    		$examplewithapache = '<Directory "'.DOL_DOCUMENT_ROOT.'">'."\n";
+    		$examplewithapache = '#php_admin_value open_basedir /tmp/:'.DOL_DOCUMENT_ROOT.':'.DOL_DATA_ROOT.':/dev/urandom'."\n";
+    		$examplewithapache .= '<Directory "'.DOL_DOCUMENT_ROOT.'">'."\n";
     		$examplewithapache .= 'AllowOverride FileInfo Options
     		Options       -Indexes -MultiViews -FollowSymLinks -ExecCGI
     		Require all granted
@@ -3048,7 +3053,6 @@ if ($action == 'importsite')
 
 	showWebsiteTemplates($website);
 
-
 	dol_fiche_end();
 
 	print '</div>';
@@ -3531,19 +3535,15 @@ if ($action == 'replacesite' || $action == 'replacesiteconfirm' || $massaction =
 			$permissiontodelete = 0;
 
 			// List of mass actions available
-			$arrayofmassactions = array(
-				//'validate'=>$langs->trans("Validate"),
-				//'generate_doc'=>$langs->trans("ReGeneratePDF"),
-				//'builddoc'=>$langs->trans("PDFMerge"),
-				'replace'=>$langs->trans("Replace"),
-			);
+			$arrayofmassactions = array();
+			if ($user->rights->website->writephp) $arrayofmassactions['replace'] = $langs->trans("Replace");
 			if ($permissiontodelete) $arrayofmassactions['predelete'] = '<span class="fa fa-trash paddingrightonly"></span>'.$langs->trans("Delete");
 			if (GETPOST('nomassaction', 'int') || in_array($massaction, array('presend', 'predelete'))) $arrayofmassactions = array();
 			$massactionbutton = $form->selectMassAction('', $arrayofmassactions);
 			$massactionbutton .= '<div class="massactionother hidden">';
 			$massactionbutton .= $langs->trans("ReplaceString");
 			$massactionbutton .= '<input type="text" name="replacestring" value="'.dol_escape_htmltag(GETPOST('replacestring', 'none')).'">';
-			$massactionbutton .='</div>';
+			$massactionbutton .= '</div>';
 
 			$varpage = empty($contextpage) ? $_SERVER["PHP_SELF"] : $contextpage;
 			//$selectedfields = $form->multiSelectArrayWithCheckbox('selectedfields', $arrayfields, $varpage); // This also change content of $arrayfields
@@ -3553,20 +3553,6 @@ if ($action == 'replacesite' || $action == 'replacesiteconfirm' || $massaction =
 
 			print '<!-- List of search result -->'."\n";
 			print '<div class="rowsearchresult">';
-
-			/*if ($action == 'replacesiteconfirm')
-			{
-				print '<div class="tagtr">';
-				print '<div class="tagtd paddingrightonly">';
-				print $langs->trans("ReplaceString");
-				print '</div>';
-				print '<div class="tagtd">';
-				print '<input type="text" name="replacestring" value="'.dol_escape_htmltag(GETPOST('replacestring', 'none')).'">';
-				print '<input type="submit" class="button" name="buttonreplacesitereplace" value="'.$langs->trans("Replace").'">';
-				print '</div>';
-				print '</div>';
-				print '<br>';
-			}*/
 
 			$param = 'action=replacesiteconfirm&website='.urlencode($website->ref);
 			$param .= '&searchstring='.urlencode($searchkey);
@@ -3580,7 +3566,7 @@ if ($action == 'replacesite' || $action == 'replacesiteconfirm' || $massaction =
 			print getTitleFieldOfList("Type", 0, $_SERVER['PHP_SELF'], 'type_container', '', $param, '', $sortfield, $sortorder, '')."\n";
 			print getTitleFieldOfList("Page", 0, $_SERVER['PHP_SELF'], 'pageurl', '', $param, '', $sortfield, $sortorder, '')."\n";
 			//print getTitleFieldOfList("Description", 0, $_SERVER['PHP_SELF'], '', '', $param, '', $sortfield, $sortorder, '')."\n";
-			print getTitleFieldOfList("", 0 , $_SERVER['PHP_SELF']);
+			print getTitleFieldOfList("", 0, $_SERVER['PHP_SELF']);
 			print getTitleFieldOfList($selectedfields, 0, $_SERVER["PHP_SELF"], '', '', '', '', $sortfield, $sortorder, 'center maxwidthsearch ')."\n";
 			print '</tr>';
 
@@ -3589,9 +3575,11 @@ if ($action == 'replacesite' || $action == 'replacesiteconfirm' || $massaction =
 				if (get_class($answerrecord) == 'WebsitePage')
 				{
 					print '<tr>';
+
 					print '<td class="nowraponall">'.$langs->trans("Container").' - ';
 					print $langs->trans($answerrecord->type_container); // TODO Use label of container
 					print '</td>';
+
 					print '<td>';
 					print $answerrecord->getNomUrl(1);
 					print ' <span class="opacitymedium">('.($answerrecord->title ? $answerrecord->title : $langs->trans("NoTitle")).')</span>';
@@ -3600,6 +3588,7 @@ if ($action == 'replacesite' || $action == 'replacesiteconfirm' || $massaction =
 					print '<br>';
 					print '<span class="opacitymedium">'.$answerrecord->description.'</span>';
 					print '</td>';
+
 					print '<td>';
 					$param = '?action=replacesiteconfirm';
 					$param .= '&websiteid='.$website->id;
@@ -3631,8 +3620,8 @@ if ($action == 'replacesite' || $action == 'replacesiteconfirm' || $massaction =
 				else
 				{
 					print '<tr>';
-					print '<td>';
 
+					print '<td>';
 					$translateofrecordtype = array(
 						'website_csscontent'=>'WEBSITE_CSS_INLINE',
 						'website_jscontent'=>'WEBSITE_JS_INLINE',
@@ -3648,13 +3637,14 @@ if ($action == 'replacesite' || $action == 'replacesiteconfirm' || $massaction =
 						print $answerrecord['type'];
 					}
 					print '</td>';
+
 					print '<td>';
 					$backtopageurl = $_SERVER["PHP_SELF"].'?action=replacesiteconfirm&searchstring='.urlencode($searchkey).'&optioncontent='.GETPOST('optioncontent', 'aZ09').'&optionmeta='.GETPOST('optionmeta', 'aZ09').'&optionsitefiles='.GETPOST('optionsitefiles', 'aZ09');
 					print '<a href="'.$_SERVER["PHP_SELF"].'?action=editcss&website='.$website->ref.'&backtopage='.urlencode($backtopageurl).'">'.$langs->trans("EditCss").'</a>';
 					print '</td>';
+
 					print '<td class="tdoverflow100">';
 					print '</td>';
-					print '<td></td>';
 
 					// Action column
 					print '<td class="nowrap center">';

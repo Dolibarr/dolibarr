@@ -3598,11 +3598,11 @@ class Product extends CommonObject
     	// phpcs:enable
     	global $conf, $user;
 
-    	$sql = "SELECT sum(c.qty), date_format(c.date_valid, '%Y%m')";
+    	$sql = "SELECT sum(d.qty), date_format(d.date_valid, '%Y%m')";
     	if ($mode == 'bynumber') {
     		$sql .= ", count(DISTINCT c.rowid)";
     	}
-    	$sql .= " FROM ".MAIN_DB_PREFIX."mrp_mo as c LEFT JOIN  ".MAIN_DB_PREFIX."societe as s ON c.fk_soc = s.rowid";
+    	$sql .= " FROM ".MAIN_DB_PREFIX."mrp_mo as d LEFT JOIN  ".MAIN_DB_PREFIX."societe as s ON d.fk_soc = s.rowid";
     	if ($filteronproducttype >= 0) {
     		$sql .= ", ".MAIN_DB_PREFIX."product as p";
     	}
@@ -3610,27 +3610,27 @@ class Product extends CommonObject
     		$sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
     	}
 
-    	$sql .= " WHERE c.entity IN (".getEntity('mo').")";
-    	$sql .= " AND c.status > 0";
+    	$sql .= " WHERE d.entity IN (".getEntity('mo').")";
+    	$sql .= " AND d.status > 0";
 
     	if ($this->id > 0) {
-    		$sql .= " AND c.fk_product =".$this->id;
+    		$sql .= " AND d.fk_product =".$this->id;
     	} else {
-    		$sql .= " AND c.fk_product > 0";
+    		$sql .= " AND d.fk_product > 0";
     	}
     	if ($filteronproducttype >= 0) {
-    		$sql .= " AND p.rowid = c.fk_product AND p.fk_product_type =".$filteronproducttype;
+    		$sql .= " AND p.rowid = d.fk_product AND p.fk_product_type =".$filteronproducttype;
     	}
 
     	if (!$user->rights->societe->client->voir && !$socid) {
-    		$sql .= " AND c.fk_soc = sc.fk_soc AND sc.fk_user = ".$user->id;
+    		$sql .= " AND d.fk_soc = sc.fk_soc AND sc.fk_user = ".$user->id;
     	}
     	if ($socid > 0) {
-    		$sql .= " AND c.fk_soc = ".$socid;
+    		$sql .= " AND d.fk_soc = ".$socid;
     	}
     	$sql .= $morefilter;
-    	$sql .= " GROUP BY date_format(c.date_valid,'%Y%m')";
-    	$sql .= " ORDER BY date_format(c.date_valid,'%Y%m') DESC";
+    	$sql .= " GROUP BY date_format(d.date_valid,'%Y%m')";
+    	$sql .= " ORDER BY date_format(d.date_valid,'%Y%m') DESC";
 
     	return $this->_get_stats($sql, $mode, $year);
     }
@@ -4415,9 +4415,9 @@ class Product extends CommonObject
         if ($maxlength) { $newref = dol_trunc($newref, $maxlength, 'middle');
         }
 
-        if ($this->type == Product::TYPE_PRODUCT) { $label = '<u>'.$langs->trans("ShowProduct").'</u>';
+        if ($this->type == Product::TYPE_PRODUCT) { $label = '<u>'.$langs->trans("Product").'</u>';
         }
-        if ($this->type == Product::TYPE_SERVICE) { $label = '<u>'.$langs->trans("ShowService").'</u>';
+        if ($this->type == Product::TYPE_SERVICE) { $label = '<u>'.$langs->trans("Service").'</u>';
         }
         if (!empty($this->ref)) {
             $label .= '<br><b>'.$langs->trans('ProductRef').':</b> '.$this->ref;

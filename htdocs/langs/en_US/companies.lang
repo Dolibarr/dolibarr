@@ -325,7 +325,6 @@ CompanyDeleted=Company "%s" deleted from database.
 ListOfContacts=List of contacts/addresses
 ListOfContactsAddresses=List of contacts/addresses
 ListOfThirdParties=List of Third Parties
-ShowCompany=Show Third Party
 ShowContact=Show contact
 ContactsAllShort=All (No filter)
 ContactType=Contact type

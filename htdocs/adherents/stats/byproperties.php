@@ -58,7 +58,7 @@ llxHeader('', $langs->trans("MembersStatisticsByProperties"), '', '', 0, 0, arra
 
 $title = $langs->trans("MembersStatisticsByProperties");
 
-print load_fiche_titre($title, '');
+print load_fiche_titre($title, '', 'object_group');
 
 dol_mkdir($dir);
 
@@ -113,7 +113,8 @@ if (!count($data))
 }
 else
 {
-	print load_fiche_titre($langs->trans("MembersByNature"), '', '');
+	print $langs->trans("MembersByNature").'<br>';
+	print '<br>';
 }
 
 // Print array

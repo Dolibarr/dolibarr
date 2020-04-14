@@ -486,7 +486,7 @@ $head[1][1] = $langs->trans("ReplenishmentOrders");
 $head[1][2] = 'replenishorders';
 
 
-print load_fiche_titre($langs->trans('Replenishment'), '', 'generic');
+print load_fiche_titre($langs->trans('Replenishment'), '', 'stock');
 
 dol_fiche_head($head, 'replenish', '', -1, '');
 

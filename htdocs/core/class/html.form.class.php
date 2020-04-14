@@ -2354,6 +2354,8 @@ class Form
 		{
 			require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
 			require_once DOL_DOCUMENT_ROOT.'/product/dynamic_price/class/price_parser.class.php';
+			require_once DOL_DOCUMENT_ROOT.'/core/lib/product.lib.php';
+
 			$num = $this->db->num_rows($result);
 
 			$events = null;
@@ -2882,6 +2884,7 @@ class Form
 		if ($result)
 		{
 			require_once DOL_DOCUMENT_ROOT.'/product/dynamic_price/class/price_parser.class.php';
+			require_once DOL_DOCUMENT_ROOT.'/core/lib/product.lib.php';
 
 			$num = $this->db->num_rows($result);
 
@@ -6117,6 +6120,12 @@ class Form
 			}
 			if ($tmpfieldstoshow) $fieldstoshow = $tmpfieldstoshow;
 		}
+        else
+        {
+			// For backward compatibility
+			$objecttmp->fields['ref'] = array('type'=>'varchar(30)', 'label'=>'Ref', 'showoncombobox'=>1);
+        }
+
 		if (empty($fieldstoshow))
 		{
 			if (isset($objecttmp->fields['ref'])) {
@@ -7788,7 +7797,7 @@ class Form
             $(document).ready(function() {
             	$("#checkallactions'.$id.'").click(function() {
                     if($(this).is(\':checked\')){
-                        console.log("We check all");
+                        console.log("We check all '.$cssclass.'");
                 		$(".'.$cssclass.'").prop(\'checked\', true).trigger(\'change\');
                     }
                     else

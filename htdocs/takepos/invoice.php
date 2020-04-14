@@ -344,7 +344,7 @@ if ($action == "addline")
 		$idoflineadded = $invoice->addline($prod->description, $price, 1, $tva_tx, $localtax1_tx, $localtax2_tx, $idproduct, $customer->remise_percent, '', 0, 0, 0, '', $price_base_type, $price_ttc, $prod->type, -1, 0, '', 0, $parent_line, null, '', '', 0, 100, '', null, 0);
 	}
 
-    $invoice->fetch($placeid);
+	$invoice->fetch($placeid);
 }
 
 if ($action == "freezone") {
@@ -536,13 +536,13 @@ if ($action == "order" and $placeid != 0)
     }
     if ($conf->global->TAKEPOS_PRINT_METHOD == "receiptprinter" && $linestoprint > 0) {
 		$invoice->fetch($placeid); //Reload object before send to printer
-		$printer->orderprinter=1;
+		$printer->orderprinter = 1;
 		$ret = $printer->sendToPrinter($invoice, $conf->global->{'TAKEPOS_TEMPLATE_TO_USE_FOR_ORDERS'.$_SESSION["takeposterminal"]}, $conf->global->{'TAKEPOS_ORDER_PRINTER1_TO_USE'.$_SESSION["takeposterminal"]}); // PRINT TO PRINTER 1
 	}
 	$sql = "UPDATE ".MAIN_DB_PREFIX."facturedet set special_code='4' where special_code='1' and fk_facture=".$invoice->id; // Set as printed
 	$db->query($sql);
 	$invoice->fetch($placeid); //Reload object after set lines as printed
-	$linestoprint=0;
+	$linestoprint = 0;
 
     foreach ($invoice->lines as $line)
     {
@@ -564,7 +564,7 @@ if ($action == "order" and $placeid != 0)
     }
     if ($conf->global->TAKEPOS_PRINT_METHOD == "receiptprinter" && $linestoprint > 0) {
 		$invoice->fetch($placeid); //Reload object before send to printer
-		$printer->orderprinter=2;
+		$printer->orderprinter = 2;
 		$ret = $printer->sendToPrinter($invoice, $conf->global->{'TAKEPOS_TEMPLATE_TO_USE_FOR_ORDERS'.$_SESSION["takeposterminal"]}, $conf->global->{'TAKEPOS_ORDER_PRINTER2_TO_USE'.$_SESSION["takeposterminal"]}); // PRINT TO PRINTER 2
 	}
 	$sql = "UPDATE ".MAIN_DB_PREFIX."facturedet set special_code='4' where special_code='2' and fk_facture=".$invoice->id; // Set as printed
@@ -590,7 +590,8 @@ if ($action == "valid" || $action == "history")
     }
     $sectionwithinvoicelink .= '</span>';
     if ($conf->global->TAKEPOS_PRINT_METHOD == "takeposconnector") {
-         $sectionwithinvoicelink .= ' <button id="buttonprint" type="button" onclick="TakeposPrinting('.$placeid.');">'.$langs->trans('PrintTicket').'</button>';
+		if (filter_var($conf->global->TAKEPOS_PRINT_SERVER, FILTER_VALIDATE_URL) == true) $sectionwithinvoicelink .= ' <button id="buttonprint" type="button" onclick="TakeposConnector('.$placeid.');">'.$langs->trans('PrintTicket').'</button>';
+		else $sectionwithinvoicelink .= ' <button id="buttonprint" type="button" onclick="TakeposPrinting('.$placeid.');">'.$langs->trans('PrintTicket').'</button>';
     } elseif ($conf->global->TAKEPOS_PRINT_METHOD == "receiptprinter") {
         $sectionwithinvoicelink .= ' <button id="buttonprint" type="button" onclick="DolibarrTakeposPrinting('.$placeid.');">'.$langs->trans('PrintTicket').'</button>';
     } else {
@@ -708,6 +709,20 @@ function TakeposPrinting(id){
         });
     });
 }
+
+function TakeposConnector(id){
+	var invoice='<?php
+	$data = json_encode($invoice);
+	$data = base64_encode($data);
+	echo $data;
+	?>';
+    $.ajax({
+        type: "POST",
+        url: '<?php print $conf->global->TAKEPOS_PRINT_SERVER; ?>/print.php',
+        data: 'invoice='+invoice
+    });
+}
+
 function DolibarrTakeposPrinting(id) {
     console.log('Printing invoice ticket ' + id)
     $.ajax({

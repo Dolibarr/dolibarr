@@ -77,7 +77,7 @@ if (!defined('ISLOADEDBYSTEELSHEET')) die('Must be call by steelsheet'); ?>
 	max-width: 100%;
 }
 .info-box-module .info-box-icon > img {
-    max-width: 50%;
+    max-width: 55%;
 }
 
 .info-box-icon-text{
@@ -118,7 +118,7 @@ if (!defined('ISLOADEDBYSTEELSHEET')) die('Must be call by steelsheet'); ?>
     transition: opacity 0.5s, visibility 0s 0.5s;
 }
 .box-flex-item.info-box-module.info-box-module-disabled {
-    opacity: 0.6;
+    /* opacity: 0.6; */
 }
 
 .info-box-actions {
@@ -208,7 +208,7 @@ if (GETPOSTISSET('THEME_AGRESSIVENESS_RATIO')) $conf->global->THEME_AGRESSIVENES
 	<?php echo $prefix; ?>color: <?php print colorAgressiveness('#6c6a98', $conf->global->THEME_AGRESSIVENESS_RATIO); ?> !important;
 }
 .bg-infoxbox-action{
-	<?php echo $prefix; ?>color: <?php print colorAgressiveness('#b46080', $conf->global->THEME_AGRESSIVENESS_RATIO); ?>  !important;
+	<?php echo $prefix; ?>color: <?php print colorAgressiveness('#a47080', $conf->global->THEME_AGRESSIVENESS_RATIO); ?>  !important;
 }
 .bg-infoxbox-propal,
 .bg-infoxbox-facture,
@@ -220,11 +220,11 @@ if (GETPOSTISSET('THEME_AGRESSIVENESS_RATIO')) $conf->global->THEME_AGRESSIVENES
 .bg-infoxbox-order_supplier{
 	<?php echo $prefix; ?>color: <?php print colorAgressiveness('#599caf', $conf->global->THEME_AGRESSIVENESS_RATIO); ?>  !important;
 }
-.bg-infoxbox-contrat{
-	<?php echo $prefix; ?>color: <?php print colorAgressiveness('#469686', $conf->global->THEME_AGRESSIVENESS_RATIO); ?>  !important;
+.bg-infoxbox-contrat, .bg-infoxbox-ticket{
+	<?php echo $prefix; ?>color: <?php print colorAgressiveness('#46a676', $conf->global->THEME_AGRESSIVENESS_RATIO); ?>  !important;
 }
 .bg-infoxbox-bank_account{
-	<?php echo $prefix; ?>color: <?php print colorAgressiveness('#c5903e', $conf->global->THEME_AGRESSIVENESS_RATIO); ?>  !important;
+	<?php echo $prefix; ?>color: <?php print colorAgressiveness('#b0a53e', $conf->global->THEME_AGRESSIVENESS_RATIO); ?>  !important;
 }
 .bg-infoxbox-adherent{
 	<?php echo $prefix; ?>color: <?php print colorAgressiveness('#79633f', $conf->global->THEME_AGRESSIVENESS_RATIO); ?>  !important;
@@ -257,6 +257,9 @@ if (GETPOSTISSET('THEME_AGRESSIVENESS_RATIO')) $conf->global->THEME_AGRESSIVENES
 }
 .fa-dol-contrat:before {
 	content: "\f1e6";
+}
+.fa-dol-ticket:before {
+	content: "\f3ff";
 }
 .fa-dol-bank_account:before {
 	content: "\f19c";
@@ -296,37 +299,6 @@ if (GETPOSTISSET('THEME_AGRESSIVENESS_RATIO')) $conf->global->THEME_AGRESSIVENES
 	content: "\f0e7";
 	color : #b91f1f;
 }
-
-/* USING IMAGES FOR WEATHER INTEAD OF FONT AWESOME */
-/* For other themes just uncomment this part */
-/*.info-box-weather-level0,
-.info-box-weather-level1,
-.info-box-weather-level2,
-.info-box-weather-level3,
-.info-box-weather-level4 {
-	background-position: 15px 50%;
-	background-repeat: no-repeat;
-}
-
-.info-box-weather .info-box-icon{
-	display: none !important;
-}
-.info-box-weather-level0 {
-	background-image: url("img/weather/weather-clear.png");
-}
-.info-box-weather-level1 {
-	background-image: url("img/weather/weather-few-clouds.png");
-}
-.info-box-weather-level2 {
-	background-image: url("img/weather/weather-clouds.png");
-}
-.info-box-weather-level3 {
-	background-image: url("img/weather/weather-many-clouds.png");
-}
-.info-box-weather-level4 {
-	background-image: url("img/weather/weather-storm.png");
-}*/
-
 
 
 .box-flex-container{

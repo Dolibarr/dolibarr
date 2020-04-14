@@ -69,16 +69,32 @@ function print_actions_filter($form, $canedit, $status, $year, $month, $day, $sh
 	print '<div class="fichecenter">';
 
 	if ($conf->browser->layout == 'phone') print '<div class="fichehalfleft">';
-	else print '<table class="nobordernopadding" width="100%"><tr><td class="borderright">';
+	else print '<table class="nobordernopadding centpercent"><tr><td class="borderright">';
 
-	print '<table class="nobordernopadding centpercent">';
+	print '<table class="nobordernopadding centpercent tableforfield">';
 
 	if ($canedit)
 	{
+		// Type
+		print '<tr>';
+		print '<td class="nowrap" style="padding-bottom: 2px; padding-right: 4px;">';
+		print $langs->trans("Type");
+		print '</td><td class="nowrap" style="padding-bottom: 2px; padding-right: 4px;">';
+		$multiselect = 0;
+		if (!empty($conf->global->MAIN_ENABLE_MULTISELECT_TYPE))     // We use an option here because it adds bugs when used on agenda page "peruser" and "list"
+		{
+			$multiselect = (!empty($conf->global->AGENDA_USE_EVENT_TYPE));
+		}
+		print '<span class="fas fa-square" style=" color: #ddd;"></span>';
+		print $formactions->select_type_actions($actioncode, "search_actioncode", $excludetype, (empty($conf->global->AGENDA_USE_EVENT_TYPE) ? 1 : -1), 0, $multiselect);
+		print '</td></tr>';
+
+		// Assigned to
 		print '<tr>';
 		print '<td class="nowrap" style="padding-bottom: 2px; padding-right: 4px;">';
 		print $langs->trans("ActionsToDoBy").' &nbsp; ';
 		print '</td><td style="padding-bottom: 2px; padding-right: 4px;">';
+		print img_picto('', 'user');
 		print $form->select_dolusers($filtert, 'search_filtert', 1, '', !$canedit, '', '', 0, 0, 0, '', 0, '', 'maxwidth300');
 		if (empty($conf->dol_optimize_smallscreen)) print ' &nbsp; '.$langs->trans("or").' '.$langs->trans("ToUserOfGroup").' &nbsp; ';
 		print $form->select_dolgroups($usergroupid, 'usergroup', 1, '', !$canedit);
@@ -93,23 +109,11 @@ function print_actions_filter($form, $canedit, $status, $year, $month, $day, $sh
     		print '<tr>';
     		print '<td class="nowrap" style="padding-bottom: 2px; padding-right: 4px;">';
     		print $langs->trans("Resource");
-    		print ' &nbsp;</td><td class="nowrap maxwidthonsmartphone" style="padding-bottom: 2px; padding-right: 4px;">';
-            print $formresource->select_resource_list($resourceid, "search_resourceid", '', 1, 0, 0, null, '', 2);
+    		print '</td><td class="nowrap maxwidthonsmartphone" style="padding-bottom: 2px; padding-right: 4px;">';
+    		print img_picto('', 'object_resource');
+    		print $formresource->select_resource_list($resourceid, "search_resourceid", '', 1, 0, 0, null, '', 2);
     		print '</td></tr>';
 		}
-
-		// Type
-		print '<tr>';
-		print '<td class="nowrap" style="padding-bottom: 2px; padding-right: 4px;">';
-		print $langs->trans("Type");
-		print ' &nbsp;</td><td class="nowrap" style="padding-bottom: 2px; padding-right: 4px;">';
-		$multiselect = 0;
-		if (!empty($conf->global->MAIN_ENABLE_MULTISELECT_TYPE))     // We use an option here because it adds bugs when used on agenda page "peruser" and "list"
-		{
-            $multiselect = (!empty($conf->global->AGENDA_USE_EVENT_TYPE));
-		}
-        print $formactions->select_type_actions($actioncode, "search_actioncode", $excludetype, (empty($conf->global->AGENDA_USE_EVENT_TYPE) ? 1 : -1), 0, $multiselect);
-		print '</td></tr>';
 	}
 
 	if (!empty($conf->societe->enabled) && $user->rights->societe->lire)
@@ -118,6 +122,7 @@ function print_actions_filter($form, $canedit, $status, $year, $month, $day, $sh
 		print '<td class="nowrap" style="padding-bottom: 2px; padding-right: 4px;">';
 		print $langs->trans("ThirdParty").' &nbsp; ';
 		print '</td><td class="nowrap" style="padding-bottom: 2px;">';
+		print img_picto('', 'company');
 		print $form->select_company($socid, 'search_socid', '', 'SelectThirdParty', 0, 0, null, 0);
 		print '</td></tr>';
 	}
@@ -131,6 +136,7 @@ function print_actions_filter($form, $canedit, $status, $year, $month, $day, $sh
 		print '<td class="nowrap" style="padding-bottom: 2px;">';
 		print $langs->trans("Project").' &nbsp; ';
 		print '</td><td class="nowrap" style="padding-bottom: 2px;">';
+		print img_picto('', 'project');
 		print $formproject->select_projects($socid ? $socid : -1, $pid, 'search_projectid', 0, 0, 1, 0, 0, 0, 0, '', 1, 0, 'maxwidth500');
 		print '</td></tr>';
 	}

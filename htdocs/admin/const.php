@@ -215,11 +215,11 @@ print "</tr>\n";
 // Line to add new record
 print "\n";
 
-print '<tr class="oddeven"><td><input type="text" class="flat" size="24" name="constname" value="'.$constname.'"></td>'."\n";
+print '<tr class="oddeven nohover"><td><input type="text" class="flat minwidth100" name="constname" value="'.$constname.'"></td>'."\n";
 print '<td>';
-print '<input type="text" class="flat" size="30" name="constvalue" value="'.$constvalue.'">';
+print '<input type="text" class="flat minwidth100" name="constvalue" value="'.$constvalue.'">';
 print '</td><td>';
-print '<input type="text" class="flat" size="40" name="constnote" value="'.$constnote.'">';
+print '<input type="text" class="flat minwidth100" name="constnote" value="'.$constnote.'">';
 print '</td>';
 print '<td>';
 print '</td>';
