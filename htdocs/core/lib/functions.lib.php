@@ -8847,3 +8847,41 @@ function currentToken()
 {
 	return $_SESSION['token'];
 }
+
+/**
+ * Determines whether the start of the given string matches the specified substring
+ *
+ * @param   string  $string     The string to check
+ * @param   string  $substring  The substring to compare to the substring at the start
+ * @return  bool                true if the substring matches the start of the string, otherwise false
+ */
+function startsWith($string, $substring)
+{
+    return substr_compare($string, $substring, 0, strlen($substring)) === 0;
+}
+
+/**
+ * Determines whether the end of the given string matches the specified substring
+ *
+ * @param   string  $string     The string to check
+ * @param   string  $substring  The substring to compare to the substring at the end
+ * @return  bool                true if the substring matches the end of the string, otherwise false
+ */
+
+function endsWith($string, $value)
+{
+    return substr_compare($string, $value, -strlen($value)) === 0;
+}
+
+/**
+ * Remove the specified substring from end the of the given string, when found at the end
+ *
+ * @param   string $string      The string that possible ends with the substring
+ * @param   string $substring   The substring to remove
+ * @return  string              The resulting string
+ */
+function removeStringFromEnd($string, $substring)
+{
+    return endsWith($string, $substring) ? substr($string, 0, -strlen($substring)) : $string;
+}
+

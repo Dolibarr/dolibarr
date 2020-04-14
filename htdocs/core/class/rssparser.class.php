@@ -1,25 +1,28 @@
 <?php
-/* Copyright (C) 2011-2012 Laurent Destailleur  <eldy@users.sourceforge.net>
+/* Copyright (C) 2011-2012  Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2020       Tobias Sekan         <tobias.sekan@startpage.com>
  *
-* This program is free software; you can redistribute it and/or modify
-* it under the terms of the GNU General Public License as published by
-* the Free Software Foundation; either version 3 of the License, or
-* (at your option) any later version.
-*
-* This program is distributed in the hope that it will be useful,
-* but WITHOUT ANY WARRANTY; without even the implied warranty of
-* MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-* GNU General Public License for more details.
-*
-* You should have received a copy of the GNU General Public License
-* along with this program. If not, see <https://www.gnu.org/licenses/>.
-*/
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
+ */
 
 /**
  *      \file       htdocs/core/class/rssparser.class.php
  *      \ingroup    core
  *      \brief      File of class to parse RSS feeds
  */
+
+require_once DOL_DOCUMENT_ROOT.'/core/lib/functions.lib.php';
 
 /**
  * 	Class to parse RSS files
@@ -135,7 +138,18 @@ class RssParser
      */
     public function getLink()
     {
-        return $this->_link;
+        // only check links without arguments
+        if(strpos($this->_link, "?") > 0 || strpos($this->_link, "=") > 0 || strpos($this->_link, "&") > 0)
+        {
+            return $this->_link;
+        }
+
+        $result = removeStringFromEnd($this->_link, "/rss/");
+        $result = removeStringFromEnd($result, "/rss");
+        $result = removeStringFromEnd($result, "/atom/");
+        $result = removeStringFromEnd($result, "/atom");
+
+        return $result;
     }
     /**
      * getTitle
