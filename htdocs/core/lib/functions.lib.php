@@ -8867,10 +8867,9 @@ function startsWith($string, $substring)
  * @param   string  $substring  The substring to compare to the substring at the end
  * @return  bool                true if the substring matches the end of the string, otherwise false
  */
-
-function endsWith($string, $value)
+function endsWith($string, $substring)
 {
-    return substr_compare($string, $value, -strlen($value)) === 0;
+    return substr_compare($string, $substring, -strlen($substring)) === 0;
 }
 
 /**
@@ -8884,4 +8883,3 @@ function removeStringFromEnd($string, $substring)
 {
     return endsWith($string, $substring) ? substr($string, 0, -strlen($substring)) : $string;
 }
-
