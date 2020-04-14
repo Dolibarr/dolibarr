@@ -20,18 +20,18 @@
  *       \brief      File to load field value
  */
 
-if (! defined('NOTOKENRENEWAL')) define('NOTOKENRENEWAL', '1'); // Disables token renewal
-if (! defined('NOREQUIREMENU'))  define('NOREQUIREMENU', '1');
-if (! defined('NOREQUIREAJAX'))  define('NOREQUIREAJAX', '1');
-if (! defined('NOREQUIRESOC'))   define('NOREQUIRESOC', '1');
+if (!defined('NOTOKENRENEWAL')) define('NOTOKENRENEWAL', '1'); // Disables token renewal
+if (!defined('NOREQUIREMENU'))  define('NOREQUIREMENU', '1');
+if (!defined('NOREQUIREAJAX'))  define('NOREQUIREAJAX', '1');
+if (!defined('NOREQUIRESOC'))   define('NOREQUIRESOC', '1');
 
 require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/genericobject.class.php';
 
-$field			= GETPOST('field', 'alpha');
-$element		= GETPOST('element', 'alpha');
-$table_element	= GETPOST('table_element', 'alpha');
-$fk_element		= GETPOST('fk_element', 'alpha');
+$field = GETPOST('field', 'alpha');
+$element = GETPOST('element', 'alpha');
+$table_element = GETPOST('table_element', 'alpha');
+$fk_element = GETPOST('fk_element', 'alpha');
 
 /*
  * View
@@ -42,11 +42,11 @@ top_httphead();
 //print '<!-- Ajax page called with url '.dol_escape_htmltag($_SERVER["PHP_SELF"]).'?'.dol_escape_htmltag($_SERVER["QUERY_STRING"]).' -->'."\n";
 
 // Load original field value
-if (! empty($field) && ! empty($element) && ! empty($table_element) && ! empty($fk_element))
+if (!empty($field) && !empty($element) && !empty($table_element) && !empty($fk_element))
 {
 	$ext_element	= GETPOST('ext_element', 'alpha');
-	$field			= substr($field, 8); // remove prefix val_
-	$type			= GETPOST('type', 'alpha');
+	$field = substr($field, 8); // remove prefix val_
+	$type = GETPOST('type', 'alpha');
 	$loadmethod		= (GETPOST('loadmethod', 'alpha') ? GETPOST('loadmethod', 'alpha') : 'getValueFrom');
 
 	if ($element != 'order_supplier' && $element != 'invoice_supplier' && preg_match('/^([^_]+)_([^_]+)/i', $element, $regs))
@@ -75,7 +75,7 @@ if (! empty($field) && ! empty($element) && ! empty($table_element) && ! empty($
 	{
 		if ($type == 'select')
 		{
-			$methodname	= 'load_cache_'.$loadmethod;
+			$methodname = 'load_cache_'.$loadmethod;
 			$cachename = 'cache_'.GETPOST('loadmethod', 'alpha');
 
 			$form = new Form($db);
@@ -84,7 +84,7 @@ if (! empty($field) && ! empty($element) && ! empty($table_element) && ! empty($
 				$ret = $form->$methodname();
 				if ($ret > 0) echo json_encode($form->$cachename);
 			}
-			elseif (! empty($ext_element))
+			elseif (!empty($ext_element))
 			{
 				$module = $subelement = $ext_element;
 				if (preg_match('/^([^_]+)_([^_]+)/i', $ext_element, $regs))
@@ -103,7 +103,7 @@ if (! empty($field) && ! empty($element) && ! empty($table_element) && ! empty($
 		else
 		{
 			$object = new GenericObject($db);
-			$value=$object->$loadmethod($table_element, $fk_element, $field);
+			$value = $object->$loadmethod($table_element, $fk_element, $field);
 			echo $value;
 		}
 	}

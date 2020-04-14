@@ -61,8 +61,8 @@ $colorbacktabcard1 = '255,255,255'; // card
 $colorbacktabactive = '234,234,234';
 $colorbacklineimpair1 = '255,255,255'; // line impair
 $colorbacklineimpair2 = '255,255,255'; // line impair
-$colorbacklinepair1 = '250,250,250'; // line pair
-$colorbacklinepair2 = '250,250,250'; // line pair
+$colorbacklinepair1 = '251,251,251'; // line pair
+$colorbacklinepair2 = '251,251,251'; // line pair
 $colorbacklinepairhover = '230,237,244'; // line hover
 $colorbacklinepairchecked = '230,237,244'; // line checked
 $colorbacklinebreak = '233,228,230'; // line break
@@ -105,10 +105,10 @@ $colorblind_deuteranopes_badgeDanger    = $badgeDanger; // currently not tested 
 *  So this badges status uses default value according to theme eldy status img
 *  TODO: use color definition vars above for define badges color status X -> exemple $badgeStatusValidate, $badgeStatusClosed, $badgeStatusActive ....
 */
-$badgeStatus0 = '#cbd3d3';	// draft
-$badgeStatus1 = '#bc9526';	// validated
-$badgeStatus1b = '#bc9526';	// validated
-$badgeStatus2 = '#9c9c26';	// approved
+$badgeStatus0 = '#cbd3d3'; // draft
+$badgeStatus1 = '#bc9526'; // validated
+$badgeStatus1b = '#bc9526'; // validated
+$badgeStatus2 = '#9c9c26'; // approved
 $badgeStatus3 = '#bca52b';
 $badgeStatus4 = '#55a580'; // Color ok
 $badgeStatus4b = '#55a580'; // Color ok

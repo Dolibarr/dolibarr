@@ -141,7 +141,6 @@ if (GETPOST('button_removefilter_x', 'alpha') || GETPOST('button_removefilter.x'
 }
 
 
-
 /*
  * View
  */
@@ -267,7 +266,7 @@ print '<input type="hidden" name="sortorder" value="'.$sortorder.'">';
 print '<input type="hidden" name="page" value="'.$page.'">';
 print '<input type="hidden" name="viewstatut" value="'.$viewstatut.'">';
 
-print_barre_liste($title, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, '', $num, $nbtotalofrecords, 'bank', 0, $newcardbutton, '', $limit, 1);
+print_barre_liste($title, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, '', $num, $nbtotalofrecords, 'bank_account', 0, $newcardbutton, '', $limit, 1);
 
 $topicmail = "Information";
 //$modelmail="subscription";
@@ -313,14 +312,14 @@ print '<tr class="liste_titre_filter">';
 if (!empty($arrayfields['b.ref']['checked']))
 {
     print '<td class="liste_titre">';
-    print '<input class="flat" size="6" type="text" name="search_ref" value="'.$search_ref.'">';
+    print '<input class="flat" size="6" type="text" name="search_ref" value="'.dol_escape_htmltag($search_ref).'">';
     print '</td>';
 }
 // Label
 if (!empty($arrayfields['b.label']['checked']))
 {
     print '<td class="liste_titre">';
-    print '<input class="flat" size="6" type="text" name="search_label" value="'.$search_label.'">';
+    print '<input class="flat" size="6" type="text" name="search_label" value="'.dol_escape_htmltag($search_label).'">';
     print '</td>';
 }
 // Account type
@@ -333,7 +332,7 @@ if (!empty($arrayfields['accountype']['checked']))
 if (!empty($arrayfields['b.number']['checked']))
 {
     print '<td class="liste_titre">';
-    print '<input class="flat" size="6" type="text" name="search_number" value="'.$search_number.'">';
+    print '<input class="flat" size="6" type="text" name="search_number" value="'.dol_escape_htmltag($search_number).'">';
     print '</td>';
 }
 // Account number
@@ -527,26 +526,28 @@ foreach ($accounts as $key=>$type)
     // Transactions to reconcile
     if (!empty($arrayfields['toreconcile']['checked']))
     {
-        print '<td class="center">';
-		if ($objecttmp->rappro)
-		{
-			$result = $objecttmp->load_board($user, $objecttmp->id);
-            if ($result < 0) {
-                setEventMessages($objecttmp->error, $objecttmp->errors, 'errors');
-            } else {
-                print '<span class="badge badge-info classfortooltip" title="'.dol_htmlentities($langs->trans("TransactionsToConciliate")).'">'.$result->nbtodo.'</span>';
-                if ($result->nbtodolate) {
-                    print '<span title="'.dol_htmlentities($langs->trans("Late")).'" class="classfortooltip badge badge-danger marginleftonlyshort">';
-                    print '<i class="fa fa-exclamation-triangle"></i> '.$result->nbtodolate;
-                    print '</span>';
-                }
-            }
-		}
-		else
-		{
-			print '<span class="opacitymedium">'.$langs->trans("FeatureDisabled").'</span>';
-		}
-	    print '</td>';
+    	print '<td class="center">';
+
+    	$conciliate = $objecttmp->canBeConciliated();
+    	if ($conciliate == -2) print '<span class="opacitymedium">'.$langs->trans("CashAccount").'</span>';
+    	elseif ($conciliate == -3) print '<span class="opacitymedium">'.$langs->trans("Closed").'</span>';
+    	elseif (empty($objecttmp->rappro)) {
+    		print '<span class="opacitymedium">'.$langs->trans("ConciliationDisabled").'</span>';
+    	} else {
+    		$result = $objecttmp->load_board($user, $objecttmp->id);
+    		if ($result < 0) {
+    			setEventMessages($objecttmp->error, $objecttmp->errors, 'errors');
+    		} else {
+    			print '<span class="badge badge-info classfortooltip" title="'.dol_htmlentities($langs->trans("TransactionsToConciliate")).'">'.$result->nbtodo.'</span>';
+    			if ($result->nbtodolate) {
+    				print '<span title="'.dol_htmlentities($langs->trans("Late")).'" class="classfortooltip badge badge-danger marginleftonlyshort">';
+    				print '<i class="fa fa-exclamation-triangle"></i> '.$result->nbtodolate;
+    				print '</span>';
+    			}
+    		}
+    	}
+
+    	print '</td>';
 	    if (!$i) $totalarray['nbfield']++;
     }
 

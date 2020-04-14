@@ -110,7 +110,7 @@ class FormFile
 
 			$maxlength = $size;
 
-			$out = "\n\n<!-- Start form attach new file -->\n";
+			$out = "\n\n".'<!-- Start form attach new file --><div class="formattachnewfile">'."\n";
 
 			if (empty($title)) $title = $langs->trans("AttachANewFile");
 			if ($title != 'none') $out .= load_fiche_titre($title, null, null);
@@ -220,11 +220,11 @@ class FormFile
 	       		if (empty($sectionid)) $out .= '<br>';
 			}
 
-			$out .= "\n<!-- End form attach new file -->\n";
+			$out .= "\n</div><!-- End form attach new file -->\n";
 
 			if ($linkfiles)
 			{
-				$out .= "\n<!-- Start form link new url -->\n";
+				$out .= "\n".'<!-- Start form link new url --><div class="formlinknewurl">'."\n";
 				$langs->load('link');
 				$title = $langs->trans("LinkANewFile");
 				$out .= load_fiche_titre($title, null, null);
@@ -260,7 +260,7 @@ class FormFile
                     $out .= '</form><br>';
 				}
 
-				$out .= "\n<!-- End form link new url -->\n";
+				$out .= "\n</div><!-- End form link new url -->\n";
 			}
 
 			$parameters = array('socid'=>(isset($GLOBALS['socid']) ? $GLOBALS['socid'] : ''), 'id'=>(isset($GLOBALS['id']) ? $GLOBALS['id'] : ''), 'url'=>$url, 'perm'=>$perm);
@@ -331,9 +331,10 @@ class FormFile
 	 * 		@param		string				$morepicto			Add more HTML content into cell with picto
 	 *      @param      Object              $object             Object when method is called from an object card.
 	 *      @param		int					$hideifempty		Hide section of generated files if there is no file
+	 *      @param      string              $removeaction       (optional) The action to remove a file
 	 * 		@return		string              					Output string with HTML array of documents (might be empty string)
 	 */
-	public function showdocuments($modulepart, $modulesubdir, $filedir, $urlsource, $genallowed, $delallowed = 0, $modelselected = '', $allowgenifempty = 1, $forcenomultilang = 0, $iconPDF = 0, $notused = 0, $noform = 0, $param = '', $title = '', $buttonlabel = '', $codelang = '', $morepicto = '', $object = null, $hideifempty = 0)
+	public function showdocuments($modulepart, $modulesubdir, $filedir, $urlsource, $genallowed, $delallowed = 0, $modelselected = '', $allowgenifempty = 1, $forcenomultilang = 0, $iconPDF = 0, $notused = 0, $noform = 0, $param = '', $title = '', $buttonlabel = '', $codelang = '', $morepicto = '', $object = null, $hideifempty = 0, $removeaction = 'remove_file')
 	{
 		// Deprecation warning
 		if (!empty($iconPDF)) {
@@ -859,7 +860,7 @@ class FormFile
 						if ($delallowed)
 						{
 							$tmpurlsource = preg_replace('/#[a-zA-Z0-9_]*$/', '', $urlsource);
-							$out .= '<a href="'.$tmpurlsource.((strpos($tmpurlsource, '?') === false) ? '?' : '&amp;').'action=remove_file&amp;file='.urlencode($relativepath);
+							$out .= '<a href="'.$tmpurlsource.((strpos($tmpurlsource, '?') === false) ? '?' : '&amp;').'action='.$removeaction.'&amp;file='.urlencode($relativepath);
 							$out .= ($param ? '&amp;'.$param : '');
 							//$out.= '&modulepart='.$modulepart; // TODO obsolete ?
 							//$out.= '&urlsource='.urlencode($urlsource); // TODO obsolete ?
@@ -1173,7 +1174,7 @@ class FormFile
 			}
 
 			// Show list of existing files
-			if ((empty($useinecm) || $useinecm == 6) && $title != 'none') print load_fiche_titre($title ? $title : $langs->trans("AttachedFiles"));
+			if ((empty($useinecm) || $useinecm == 6) && $title != 'none') print load_fiche_titre($title ? $title : $langs->trans("AttachedFiles"), '', 'file-upload', 0, '', 'table-list-of-attached-files');
 			if (empty($url)) $url = $_SERVER["PHP_SELF"];
 
 			print '<!-- html.formfile::list_of_documents -->'."\n";
@@ -1281,7 +1282,7 @@ class FormFile
 					$sizetoshow = dol_print_size($file['size'], 1, 1);
 					$sizetoshowbytes = dol_print_size($file['size'], 0, 1);
 
-					print '<td class="right" style="width: 80px">';
+					print '<td class="right nowraponall">';
 					if ($sizetoshow == $sizetoshowbytes) print $sizetoshow;
 					else {
 						print $form->textwithpicto($sizetoshow, $sizetoshowbytes, -1);
@@ -1316,7 +1317,7 @@ class FormFile
 							} else {
 								print '<a href="'.$urlforhref['url'].'" class="'.$urlforhref['css'].'" target="'.$urlforhref['target'].'" mime="'.$urlforhref['mime'].'">';
 							}
-							print '<img class="photo" height="'.(($useinecm == 4 || $useinecm == 5 || $useinecm == 6) ? '12' : $maxheightmini).'" src="'.DOL_URL_ROOT.'/viewimage.php?modulepart='.$modulepart.'&entity='.(!empty($object->entity) ? $object->entity : $conf->entity).'&file='.urlencode($relativepath.$smallfile).'" title="">';
+							print '<img class="photo maxwidth200" height="'.(($useinecm == 4 || $useinecm == 5 || $useinecm == 6) ? '12' : $maxheightmini).'" src="'.DOL_URL_ROOT.'/viewimage.php?modulepart='.$modulepart.'&entity='.(!empty($object->entity) ? $object->entity : $conf->entity).'&file='.urlencode($relativepath.$smallfile).'" title="">';
 							print '</a>';
 						}
 						else print '&nbsp;';
@@ -1508,10 +1509,10 @@ class FormFile
 		if (!empty($addfilterfields))
 		{
 			print '<tr class="liste_titre nodrag nodrop">';
-			print '<td></td>';
-			print '<td><input type="text" class="maxwidth100onsmartphone" name="search_doc_ref" value="'.dol_escape_htmltag($search_doc_ref).'"></td>';
-			print '<td></td>';
-			print '<td></td>';
+			print '<td class="liste_titre"></td>';
+			print '<td class="liste_titre"><input type="text" class="maxwidth100onsmartphone" name="search_doc_ref" value="'.dol_escape_htmltag($search_doc_ref).'"></td>';
+			print '<td class="liste_titre"></td>';
+			print '<td class="liste_titre"></td>';
 			// Action column
 			print '<td class="liste_titre center">';
 			$searchpicto = $form->showFilterButtons();
@@ -1789,7 +1790,7 @@ class FormFile
 		print '<!-- listOfLinks -->'."\n";
 
 		// Show list of associated links
-		print load_fiche_titre($langs->trans("LinkedFiles"));
+		print load_fiche_titre($langs->trans("LinkedFiles"), '', 'external-link-square-alt', 0, '', 'table-list-of-links');
 
 		print '<form action="'.$_SERVER['PHP_SELF'].($param ? '?'.$param : '').'" method="POST">';
 		print '<input type="hidden" name="token" value="'.newToken().'">';

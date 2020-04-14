@@ -24,7 +24,7 @@
 	--colortextlink: rgb(<?php print $colortextlink; ?>);
 	--colortextbackhmenu: #<?php echo $colortextbackhmenu; ?>;
 	--colortextbackvmenu: #<?php print $colortextbackvmenu; ?>;
-	--listetotal: #551188;
+	--listetotal: #888888;
 	--inputbackgroundcolor: #FFF;
 	--inputbordercolor: rgba(0,0,0,.2);
 	--tooltipbgcolor: <?php print $toolTipBgColor; ?>;
@@ -115,6 +115,9 @@ a:link, a:visited, a:hover, a:active { font-family: <?php print $fontlist ?>; co
 a:hover { text-decoration: underline; color: var(--colortextlink); }
 a.commonlink { color: var(--colortextlink) !important; text-decoration: none; }
 th.liste_titre a div div:hover, th.liste_titre_sel a div div:hover { text-decoration: underline; }
+tr.liste_titre th.liste_titre_sel:not(.maxwidthsearch), tr.liste_titre td.liste_titre_sel:not(.maxwidthsearch),
+tr.liste_titre th.liste_titre:not(.maxwidthsearch), tr.liste_titre td.liste_titre:not(.maxwidthsearch) { opacity: 0.8; }
+/* th.liste_titre_sel a, th.liste_titre a, td.liste_titre_sel a, td.liste_titre a { color: #766; } */
 input, input.flat, textarea, textarea.flat, form.flat select, select, select.flat, .dataTables_length label select {
 	background-color: var(--inputbackgroundcolor);
 	color: var(--colortext);
@@ -180,8 +183,8 @@ input, select {
     border-collapse: collapse;
     border: none;
 }
-#mainbody input.buttongen {
-	padding: 4px 4px;
+#mainbody input.buttongen, #mainbody button.buttongen {
+	padding: 3px 4px;
 }
 
 input.button:focus {
@@ -405,7 +408,7 @@ div#moretabsList, div#moretabsListaction {
 hr { border: 0; border-top: 1px solid #ccc; }
 .tabBar hr { margin-top: 20px; margin-bottom: 17px; }
 
-.button, .buttonDelete, input[name="sbmtConnexion"] {
+.button:not(.bordertransp), .buttonDelete:not(.bordertransp) {
 	margin-bottom: 0;
 	margin-top: 0;
 	margin-left: 5px;
@@ -1452,6 +1455,9 @@ body.onlinepaymentbody div.fiche {	/* For online payment page */
 div.fiche>table:first-child {
 	margin-bottom: 15px !important;
 }
+div.fiche>table.table-fiche-title {
+	margin-bottom: 7px !important;
+}
 div.fichecenter {
 	width: 100%;
 	clear: both;	/* This is to have div fichecenter that are true rectangles */
@@ -1565,9 +1571,18 @@ div.nopadding {
 	margin : 0px auto;
 }
 
-td.nobordernopadding.widthpictotitle.opacityhigh.valignmiddle.col-picto {
+td.nobordernopadding.widthpictotitle.col-picto {
     color: var(--colortexttitlenotab);
-    opacity: 0.45;
+    opacity: 0.85;
+}
+.table-list-of-attached-files .col-picto, .table-list-of-links .col-picto {
+    opacity: 0.7 !important;
+    font-size: 0.7em;
+    width: 20px;
+}
+.table-list-of-attached-files .col-picto .widthpictotitle, .table-list-of-links .col-picto .widthpictotitle {
+	width: unset;
+    color: #999;
 }
 .pictotitle {
 	margin-<?php echo $right; ?>: 8px;
@@ -1721,7 +1736,7 @@ div#id-top {
 	display:none;
 <?php } else { ?>
 	background: var(--colorbackhmenu1);
-	background-image: linear-gradient(-45deg, <?php echo colorAdjustBrightness(colorArrayToHex(colorStringToArray($colorbackhmenu1)), '5'); ?>, var(--colorbackhmenu1));
+	/* background-image: linear-gradient(-45deg, <?php echo colorAdjustBrightness(colorArrayToHex(colorStringToArray($colorbackhmenu1)), '5'); ?>, var(--colorbackhmenu1)); */
 	/* box-shadow: 0px 0px 5px #eee; */
 <?php } ?>
 }
@@ -2603,7 +2618,7 @@ div.tabBar {
 div.tabBar tr.titre td {
 	padding-top: 20px;
 }
-div.fiche tr.titre td {
+div.fiche table:not(.table-fiche-title) tr.titre td {
 	padding-top: 10px;
 }
 
@@ -3194,7 +3209,7 @@ table.hidepaginationnext .paginationnext {
 <?php } ?>
 
 .nohover:hover {
-	background: unset;
+	background: unset !important;
 }
 .nohoverborder:hover {
 	border: unset;
@@ -3238,7 +3253,7 @@ td.evenodd, tr.nohoverpair td, #trlinefordates td {
 	background: var(--colorbacklinepair1) !important;
 }
 .trforbreak td {
-	font-weight: bold;
+	font-weight: 500;
     border-bottom: 1pt solid black !important;
 	/* background-color: #<?php echo colorArrayToHex(colorStringToArray($colorbacklinebreak)); ?> !important; */
 }
@@ -3443,7 +3458,7 @@ div.tabBar .noborder {
 
 /* Prepare to remove class pair - impair */
 
-.noborder > tbody > tr:nth-child(even):not(.liste_titre), .liste > tbody > tr:nth-child(even):not(.liste_titre),
+.noborder:not(.editmode) > tbody > tr:nth-child(even):not(.liste_titre), .liste > tbody > tr:nth-child(even):not(.liste_titre),
 div:not(.fichecenter):not(.fichehalfleft):not(.fichehalfright):not(.ficheaddleft) > .border > tbody > tr:nth-of-type(even):not(.liste_titre), .liste > tbody > tr:nth-of-type(even):not(.liste_titre),
 div:not(.fichecenter):not(.fichehalfleft):not(.fichehalfright):not(.ficheaddleft) .oddeven.tagtr:nth-of-type(even):not(.liste_titre)
 {
@@ -3459,7 +3474,7 @@ div:not(.fichecenter):not(.fichehalfleft):not(.fichehalfright):not(.ficheaddleft
 	border-bottom: 1px solid #e0e0e0;
 }
 
-.noborder > tbody > tr:nth-child(odd):not(.liste_titre), .liste > tbody > tr:nth-child(odd):not(.liste_titre),
+.noborder:not(.editmode) > tbody > tr:nth-child(odd):not(.liste_titre), .liste > tbody > tr:nth-child(odd):not(.liste_titre),
 div:not(.fichecenter):not(.fichehalfleft):not(.fichehalfright):not(.ficheaddleft) > .border > tbody > tr:nth-of-type(odd):not(.liste_titre), .liste > tbody > tr:nth-of-type(odd):not(.liste_titre),
 div:not(.fichecenter):not(.fichehalfleft):not(.fichehalfright):not(.ficheaddleft) .oddeven.tagtr:nth-of-type(odd):not(.liste_titre)
 {
@@ -3820,8 +3835,8 @@ div.boximport {
 
 .fieldrequired { font-weight: bold; color: var(--fieldrequiredcolor); }
 
-.widthpictotitle { width: 32px; text-align: <?php echo $left; ?>; }
-span.widthpictotitle { font-size: 2.1em; };
+.widthpictotitle { width: 26px; text-align: <?php echo $left; ?>; }
+span.widthpictotitle { font-size: 1.7em; };
 
 .dolgraphtitle { margin-top: 6px; margin-bottom: 4px; }
 .dolgraphtitlecssboxes { /* margin: 0px; */ }
@@ -4195,6 +4210,8 @@ span[phptag] {
 	padding: 2px 5px 3px 5px !important;
 	margin: 2px 4px 2px 4px  !important;
     line-height: normal;
+    background: #f5f5f5 !important;
+    border: 1px solid #ccc !important;
 }
 .websiteselection {
 	/* display: inline-block; */

@@ -102,7 +102,7 @@ $search_parent_name = GETPOST('search_parent_name', 'alpha');
 $type = GETPOST('type', 'alpha');
 $optioncss = GETPOST('optioncss', 'alpha');
 $mode = GETPOST("mode", 'alpha');
-$place = GETPOST('place', 'aZ09') ? GETPOST('place', 'aZ09') : '0';	// $place is string id of table for Bar or Restaurant
+$place = GETPOST('place', 'aZ09') ? GETPOST('place', 'aZ09') : '0'; // $place is string id of table for Bar or Restaurant
 
 $diroutputmassaction = $conf->societe->dir_output.'/temp/massgeneration/'.$user->id;
 
@@ -1148,7 +1148,7 @@ while ($i < min($num, $limit))
 	}
 	if (!empty($arrayfields['s.email']['checked']))
 	{
-		print "<td>".$obj->email."</td>\n";
+		print '<td class="tdoverflowmax150">'.dol_print_email($obj->email, $obj->rowid, $obj->socid, 'AC_EMAIL', 0, 0, 1)."</td>\n";
 		if (!$i) $totalarray['nbfield']++;
 	}
 	if (!empty($arrayfields['s.phone']['checked']))

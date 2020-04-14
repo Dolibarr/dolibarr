@@ -153,15 +153,15 @@ print '<tr class="liste_titre">';
 print '<td>'.$langs->trans("Parameters").'</td><td>'.$langs->trans("Value").'</td>';
 print "</tr>\n";
 
-if ($conf->global->TAKEPOS_PRINT_METHOD == "takeposconnector"){
+if ($conf->global->TAKEPOS_PRINT_METHOD == "takeposconnector") {
 	print '<tr class="oddeven value"><td>';
-	print $langs->trans("IPAddress").' (<a href="http://en.takepos.com/connector" target="_blank">'.$langs->trans("TakeposConnectorNecesary").'</a>)';
+	print $langs->trans("URL")." / ".$langs->trans("IPAddress").' (<a href="http://en.takepos.com/connector" target="_blank">'.$langs->trans("TakeposConnectorNecesary").'</a>)';
 	print '<td colspan="2">';
 	print '<input type="text" size="20" id="TAKEPOS_PRINT_SERVER" name="TAKEPOS_PRINT_SERVER" value="'.$conf->global->TAKEPOS_PRINT_SERVER.'">';
 	print '</td></tr>';
 }
 
-if ($conf->global->TAKEPOS_PRINT_METHOD == "browser" || $conf->global->TAKEPOS_PRINT_METHOD == "takeposconnector"){
+if ($conf->global->TAKEPOS_PRINT_METHOD == "browser" || $conf->global->TAKEPOS_PRINT_METHOD == "takeposconnector") {
 	$substitutionarray = pdf_getSubstitutionArray($langs, null, null, 2);
 	$substitutionarray['__(AnyTranslationKey)__'] = $langs->trans("Translation");
 	$htmltext = '<i>'.$langs->trans("AvailableVariables").':<br>';

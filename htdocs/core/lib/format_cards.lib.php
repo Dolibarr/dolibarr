@@ -38,22 +38,22 @@ if ($resql)
 {
     while ($row = $db->fetch_array($resql))
     {
-        $_Avery_Labels[$row['code']]['name']=$row['name'];
-        $_Avery_Labels[$row['code']]['paper-size']=$row['paper_size'];
-        $_Avery_Labels[$row['code']]['orientation']=$row['orientation'];
-        $_Avery_Labels[$row['code']]['metric']=$row['metric'];
-        $_Avery_Labels[$row['code']]['marginLeft']=$row['leftmargin'];
-        $_Avery_Labels[$row['code']]['marginTop']=$row['topmargin'];
-        $_Avery_Labels[$row['code']]['marginTop']=$row['topmargin'];
-        $_Avery_Labels[$row['code']]['NX']=$row['nx'];
-        $_Avery_Labels[$row['code']]['NY']=$row['ny'];
-        $_Avery_Labels[$row['code']]['SpaceX']=$row['spacex'];
-        $_Avery_Labels[$row['code']]['SpaceY']=$row['spacey'];
-        $_Avery_Labels[$row['code']]['width']=$row['width'];
-        $_Avery_Labels[$row['code']]['height']=$row['height'];
-        $_Avery_Labels[$row['code']]['font-size']=$row['font_size'];
-        $_Avery_Labels[$row['code']]['custom_x']=$row['custom_x'];
-        $_Avery_Labels[$row['code']]['custom_y']=$row['custom_y'];
+        $_Avery_Labels[$row['code']]['name'] = $row['name'];
+        $_Avery_Labels[$row['code']]['paper-size'] = $row['paper_size'];
+        $_Avery_Labels[$row['code']]['orientation'] = $row['orientation'];
+        $_Avery_Labels[$row['code']]['metric'] = $row['metric'];
+        $_Avery_Labels[$row['code']]['marginLeft'] = $row['leftmargin'];
+        $_Avery_Labels[$row['code']]['marginTop'] = $row['topmargin'];
+        $_Avery_Labels[$row['code']]['marginTop'] = $row['topmargin'];
+        $_Avery_Labels[$row['code']]['NX'] = $row['nx'];
+        $_Avery_Labels[$row['code']]['NY'] = $row['ny'];
+        $_Avery_Labels[$row['code']]['SpaceX'] = $row['spacex'];
+        $_Avery_Labels[$row['code']]['SpaceY'] = $row['spacey'];
+        $_Avery_Labels[$row['code']]['width'] = $row['width'];
+        $_Avery_Labels[$row['code']]['height'] = $row['height'];
+        $_Avery_Labels[$row['code']]['font-size'] = $row['font_size'];
+        $_Avery_Labels[$row['code']]['custom_x'] = $row['custom_x'];
+        $_Avery_Labels[$row['code']]['custom_y'] = $row['custom_y'];
     }
 }
 else
@@ -62,7 +62,7 @@ else
 }
 
 // We add characteristics to the name
-foreach($_Avery_Labels as $key => $val)
+foreach ($_Avery_Labels as $key => $val)
 {
-	$_Avery_Labels[$key]['name'].=' ('.$_Avery_Labels[$key]['paper-size'].' - '.$_Avery_Labels[$key]['NX'].'x'.$_Avery_Labels[$key]['NY'].')';
+	$_Avery_Labels[$key]['name'] .= ' ('.$_Avery_Labels[$key]['paper-size'].' - '.$_Avery_Labels[$key]['NX'].'x'.$_Avery_Labels[$key]['NY'].')';
 }

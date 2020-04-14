@@ -202,7 +202,7 @@ class Fichinter extends CommonObject
 		{
 			while ($obj = $this->db->fetch_object($resql))
 			{
-				$this->nb["fichinters"] = $obj->nb;
+				$this->nb["interventions"] = $obj->nb;
 			}
 			$this->db->free($resql);
 			return 1;

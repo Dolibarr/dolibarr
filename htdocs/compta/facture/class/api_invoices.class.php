@@ -591,7 +591,7 @@ class Invoices extends DolibarrApi
             }
         }
 
-        if($this->invoice->update(DolibarrApiAccess::$user))
+        if ($this->invoice->update(DolibarrApiAccess::$user))
             return $this->get($id);
 
         return false;
@@ -961,11 +961,11 @@ class Invoices extends DolibarrApi
 
 
         $result = $this->invoice->fetch($id);
-        if (! $result) {
+        if (!$result) {
             throw new RestException(404, 'Invoice not found');
         }
 
-        if (! DolibarrApi::_checkAccessToResource('facture', $this->invoice->id)) {
+        if (!DolibarrApi::_checkAccessToResource('facture', $this->invoice->id)) {
             throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
         }
 
@@ -987,7 +987,7 @@ class Invoices extends DolibarrApi
      */
     public function markAsCreditAvailable($id)
     {
-        if( ! DolibarrApiAccess::$user->rights->facture->creer) {
+        if (!DolibarrApiAccess::$user->rights->facture->creer) {
             throw new RestException(401);
         }
 

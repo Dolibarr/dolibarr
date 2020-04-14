@@ -161,20 +161,20 @@ foreach ($dirmodels as $reldir)
 		$handle = opendir($dir);
 		if (is_resource($handle))
 		{
-			$var=true;
+			$var = true;
 
-			while (($file = readdir($handle))!==false)
+			while (($file = readdir($handle)) !== false)
 			{
-				if (substr($file, 0, 16) == 'mod_takepos_ref_' && substr($file, dol_strlen($file)-3, 3) == 'php')
+				if (substr($file, 0, 16) == 'mod_takepos_ref_' && substr($file, dol_strlen($file) - 3, 3) == 'php')
 				{
-					$file = substr($file, 0, dol_strlen($file)-4);
+					$file = substr($file, 0, dol_strlen($file) - 4);
 
 					require_once $dir.$file.'.php';
 
 					$module = new $file;
 
 					// Show modules according to features level
-					if ($module->version == 'development'  && $conf->global->MAIN_FEATURES_LEVEL < 2) continue;
+					if ($module->version == 'development' && $conf->global->MAIN_FEATURES_LEVEL < 2) continue;
 					if ($module->version == 'experimental' && $conf->global->MAIN_FEATURES_LEVEL < 1) continue;
 
 					if ($module->isEnabled())
@@ -185,9 +185,9 @@ foreach ($dirmodels as $reldir)
 
 						// Show example of numbering module
 						print '<td class="nowrap">';
-						$tmp=$module->getExample();
+						$tmp = $module->getExample();
 						if (preg_match('/^Error/', $tmp)) print '<div class="error">'.$langs->trans($tmp).'</div>';
-						elseif ($tmp=='NotConfigured') print $langs->trans($tmp);
+						elseif ($tmp == 'NotConfigured') print $langs->trans($tmp);
 						else print $tmp;
 						print '</td>'."\n";
 
@@ -211,17 +211,17 @@ foreach ($dirmodels as $reldir)
 						$invoice->pos_source = 1;
 
 						// Info
-						$htmltooltip='';
-						$htmltooltip.=''.$langs->trans("Version").': <b>'.$module->getVersion().'</b><br>';
-						$nextval=$module->getNextValue($mysoc, $invoice);
+						$htmltooltip = '';
+						$htmltooltip .= ''.$langs->trans("Version").': <b>'.$module->getVersion().'</b><br>';
+						$nextval = $module->getNextValue($mysoc, $invoice);
 						if ("$nextval" != $langs->trans("NotAvailable")) {  // Keep " on nextval
-							$htmltooltip.=''.$langs->trans("NextValue").': ';
+							$htmltooltip .= ''.$langs->trans("NextValue").': ';
 							if ($nextval) {
-								if (preg_match('/^Error/', $nextval) || $nextval=='NotConfigured')
+								if (preg_match('/^Error/', $nextval) || $nextval == 'NotConfigured')
 									$nextval = $langs->trans($nextval);
-								$htmltooltip.=$nextval.'<br>';
+								$htmltooltip .= $nextval.'<br>';
 							} else {
-								$htmltooltip.=$langs->trans($module->error).'<br>';
+								$htmltooltip .= $langs->trans($module->error).'<br>';
 							}
 						}
 
@@ -368,6 +368,13 @@ if (is_array($formmail->lines_model)) {
 //var_dump($arraydefaultmessage);
 //var_dump($arrayofmessagename);
 print $form->selectarray('TAKEPOS_EMAIL_TEMPLATE_INVOICE', $arrayofmessagename, $conf->global->TAKEPOS_EMAIL_TEMPLATE_INVOICE, 'None', 1, 0, '', 0, 0, 0, '', '', 1);
+print "</td></tr>\n";
+
+// Control cash box at opening pos
+print '<tr class="oddeven"><td>';
+print $langs->trans('ControlCashOpening');
+print '<td colspan="2">';
+print ajax_constantonoff("TAKEPOS_CONTROL_CASH_OPENING", array(), $conf->entity, 0, 0, 1, 0);
 print "</td></tr>\n";
 
 // Numbering module

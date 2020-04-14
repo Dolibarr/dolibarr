@@ -39,7 +39,7 @@ abstract class ModelePdfExpedition extends CommonDocGenerator
     /**
 	 * @var string Error code (or message)
 	 */
-	public $error='';
+	public $error = '';
 
 
     // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
@@ -55,8 +55,8 @@ abstract class ModelePdfExpedition extends CommonDocGenerator
         // phpcs:enable
 		global $conf;
 
-		$type='shipping';
-		$list=array();
+		$type = 'shipping';
+		$list = array();
 
 		include_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
 		$list = getListOfModels($db, $type, $maxfilenamelength);
@@ -74,7 +74,7 @@ abstract class ModelNumRefExpedition
 	/**
 	 * @var string Error code (or message)
 	 */
-	public $error='';
+	public $error = '';
 
 	/** Return if a model can be used or not
 	 *

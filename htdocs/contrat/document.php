@@ -49,7 +49,7 @@ $ref		= GETPOST('ref', 'alpha');
 if ($user->socid > 0)
 {
 	unset($_GET["action"]);
-	$action='';
+	$action = '';
 	$socid = $user->socid;
 }
 $result = restrictedArea($user, 'contrat', $id);

@@ -40,13 +40,13 @@ class DolibarrCollector extends DataCollector implements Renderable, AssetProvid
 	{
 		global $conf, $langs;
 
-		$info  = $langs->trans('Host') . ': <strong>' . $conf->db->host . '</strong><br>';
-		$info .= $langs->trans('Port') . ': <strong>' . $conf->db->port . '</strong><br>';
-		$info .= $langs->trans('Name') . ': <strong>' . $conf->db->name . '</strong><br>';
-		$info .= $langs->trans('User') . ': <strong>' . $conf->db->user . '</strong><br>';
-		$info .= $langs->trans('Type') . ': <strong>' . $conf->db->type . '</strong><br>';
-		$info .= $langs->trans('Prefix') . ': <strong>' . $conf->db->prefix . '</strong><br>';
-		$info .= $langs->trans('Charset') . ': <strong>' . $conf->db->character_set . '</strong>';
+		$info  = $langs->trans('Host').': <strong>'.$conf->db->host.'</strong><br>';
+		$info .= $langs->trans('Port').': <strong>'.$conf->db->port.'</strong><br>';
+		$info .= $langs->trans('Name').': <strong>'.$conf->db->name.'</strong><br>';
+		$info .= $langs->trans('User').': <strong>'.$conf->db->user.'</strong><br>';
+		$info .= $langs->trans('Type').': <strong>'.$conf->db->type.'</strong><br>';
+		$info .= $langs->trans('Prefix').': <strong>'.$conf->db->prefix.'</strong><br>';
+		$info .= $langs->trans('Charset').': <strong>'.$conf->db->character_set.'</strong>';
 
 		return $info;
 	}
@@ -60,13 +60,13 @@ class DolibarrCollector extends DataCollector implements Renderable, AssetProvid
 	{
 		global $conf, $langs;
 
-		$info  = $langs->trans('Version') . ': <strong>' . DOL_VERSION . '</strong><br>';
-		$info .= $langs->trans('Theme') . ': <strong>' . $conf->theme . '</strong><br>';
-		$info .= $langs->trans('Locale') . ': <strong>' . $conf->global->MAIN_LANG_DEFAULT . '</strong><br>';
-		$info .= $langs->trans('Currency') . ': <strong>' . $conf->currency . '</strong><br>';
-		$info .= $langs->trans('DolEntity') . ': <strong>' . $conf->entity . '</strong><br>';
-		$info .= $langs->trans('ListLimit') . ': <strong>' . ($conf->liste_limit ?: $conf->global->MAIN_SIZE_LISTE_LIMIT) . '</strong><br>';
-		$info .= $langs->trans('MaxSizeForUploadedFiles') . ': <strong>' . $conf->global->MAIN_UPLOAD_DOC . '</strong>';
+		$info  = $langs->trans('Version').': <strong>'.DOL_VERSION.'</strong><br>';
+		$info .= $langs->trans('Theme').': <strong>'.$conf->theme.'</strong><br>';
+		$info .= $langs->trans('Locale').': <strong>'.$conf->global->MAIN_LANG_DEFAULT.'</strong><br>';
+		$info .= $langs->trans('Currency').': <strong>'.$conf->currency.'</strong><br>';
+		$info .= $langs->trans('DolEntity').': <strong>'.$conf->entity.'</strong><br>';
+		$info .= $langs->trans('ListLimit').': <strong>'.($conf->liste_limit ?: $conf->global->MAIN_SIZE_LISTE_LIMIT).'</strong><br>';
+		$info .= $langs->trans('MaxSizeForUploadedFiles').': <strong>'.$conf->global->MAIN_UPLOAD_DOC.'</strong>';
 
 		return $info;
 	}
@@ -80,13 +80,13 @@ class DolibarrCollector extends DataCollector implements Renderable, AssetProvid
 	{
 		global $conf, $langs;
 
-		$info  = $langs->trans('Method') . ': <strong>' . $conf->global->MAIN_MAIL_SENDMODE . '</strong><br>';
-		$info .= $langs->trans('Server') . ': <strong>' . $conf->global->MAIN_MAIL_SMTP_SERVER . '</strong><br>';
-		$info .= $langs->trans('Port') . ': <strong>' . $conf->global->MAIN_MAIL_SMTP_PORT . '</strong><br>';
-		$info .= $langs->trans('ID') . ': <strong>' . $conf->global->MAIN_MAIL_SMTPS_ID . '</strong><br>';
-		$info .= $langs->trans('Pwd') . ': <strong>' . preg_replace('/./', '*', $conf->global->MAIN_MAIL_SMTPS_PW) . '</strong><br>';
-		$info .= $langs->trans('TLS/STARTTLS') . ': <strong>' . $conf->global->MAIN_MAIL_EMAIL_TLS . '</strong> / <strong>' . $conf->global->MAIN_MAIL_EMAIL_STARTTLS . '</strong><br>';
-		$info .= $langs->trans('MAIN_DISABLE_ALL_MAILS') . ': <strong>' . ($conf->global->MAIN_DISABLE_ALL_MAILS ? $langs->trans('Yes') : $langs->trans('No')) . '</strong>';
+		$info  = $langs->trans('Method').': <strong>'.$conf->global->MAIN_MAIL_SENDMODE.'</strong><br>';
+		$info .= $langs->trans('Server').': <strong>'.$conf->global->MAIN_MAIL_SMTP_SERVER.'</strong><br>';
+		$info .= $langs->trans('Port').': <strong>'.$conf->global->MAIN_MAIL_SMTP_PORT.'</strong><br>';
+		$info .= $langs->trans('ID').': <strong>'.$conf->global->MAIN_MAIL_SMTPS_ID.'</strong><br>';
+		$info .= $langs->trans('Pwd').': <strong>'.preg_replace('/./', '*', $conf->global->MAIN_MAIL_SMTPS_PW).'</strong><br>';
+		$info .= $langs->trans('TLS/STARTTLS').': <strong>'.$conf->global->MAIN_MAIL_EMAIL_TLS.'</strong> / <strong>'.$conf->global->MAIN_MAIL_EMAIL_STARTTLS.'</strong><br>';
+		$info .= $langs->trans('MAIN_DISABLE_ALL_MAILS').': <strong>'.($conf->global->MAIN_DISABLE_ALL_MAILS ? $langs->trans('Yes') : $langs->trans('No')).'</strong>';
 
 		return $info;
 	}

@@ -329,36 +329,54 @@ class Form
 	 */
 	public function widgetForTranslation($fieldname, $object, $perm, $typeofdata = 'string', $check = '', $morecss = '')
 	{
-		global $conf, $langs;
+		global $conf, $langs, $extralanguages;
 
 		$result = '';
 
-		if (! empty($conf->global->PDF_USE_ALSO_LANGUAGE_CODE)) {
-			$langcode = $conf->global->PDF_USE_ALSO_LANGUAGE_CODE;
+		// List of extra languages
+		$arrayoflangcode = array();
+		if (!empty($conf->global->PDF_USE_ALSO_LANGUAGE_CODE)) $arrayoflangcode[] = $conf->global->PDF_USE_ALSO_LANGUAGE_CODE;
 
-			$result .='<div class="inline-block paddingleft image-'.$object->element.'-'.$fieldname.'">';
-			$s=img_picto($langs->trans("ShowOtherLanguages"), 'language', '', false, 0, 0, '', 'fa-15 editfieldlang');
+		if (is_array($arrayoflangcode) && count($arrayoflangcode)) {
+			if (!is_object($extralanguages)) {
+				include_once DOL_DOCUMENT_ROOT.'/core/class/extralanguages.class.php';
+				$extralanguages = new ExtraLanguages($this->db);
+			}
+			$extralanguages->fetch_name_extralanguages('societe');
+
+			if (!is_array($extralanguages->attributes[$object->element]) || empty($extralanguages->attributes[$object->element][$fieldname])) {
+				return ''; // No extralang field to show
+			}
+
+			$result .= '<div class="inline-block paddingleft image-'.$object->element.'-'.$fieldname.'">';
+			$s = img_picto($langs->trans("ShowOtherLanguages"), 'language', '', false, 0, 0, '', 'fa-15 editfieldlang');
 			$result .= $s;
 			$result .= '</div>';
 
-			$result .='<div class="inline-block hidden field-'.$object->element.'-'.$fieldname.'">';
+			$result .= '<div class="inline-block hidden field-'.$object->element.'-'.$fieldname.'">';
 
-			$valuetoshow = GETPOSTISSET('field-'.$object->element."-".$fieldname."-".$langcode) ? GETPOST('field-'.$object->element.'-'.$fieldname."-".$langcode, $check) : '';
-			if (empty($valuetoshow)) {
-				$object->fetchValueForAlternateLanguages();
-				//var_dump($object->array_languages);
-				$valuetoshow = $object->array_languages[$fieldname][$langcode];
-			}
+			$resultforextrlang = '';
+			foreach ($arrayoflangcode as $langcode)
+			{
+				$valuetoshow = GETPOSTISSET('field-'.$object->element."-".$fieldname."-".$langcode) ? GETPOST('field-'.$object->element.'-'.$fieldname."-".$langcode, $check) : '';
+				if (empty($valuetoshow)) {
+					$object->fetchValuesForExtraLanguages();
+					//var_dump($object->array_languages);
+					$valuetoshow = $object->array_languages[$fieldname][$langcode];
+				}
 
-			$s=picto_from_langcode($conf->global->PDF_USE_ALSO_LANGUAGE_CODE, 'class="pictoforlang"');
-			$result .= $s;
-			if ($typeofdata == 'textarea') {
-				$result .= '<textarea name="field-'.$object->element."-".$fieldname."-".$langcode.'" id="'.$fieldname."-".$langcode.'" class="'.$morecss.'" rows="'.ROWS_2.'" wrap="soft">';
-				$result .= $valuetoshow;
-				$result .= '</textarea>';
-			} else {
-				$result .= '<input type="text" class="inputfieldforlang '.($morecss ? ' '.$morecss : '').'" name="field-'.$object->element.'-'.$fieldname.'-'.$langcode.'" value="'.$valuetoshow.'">';
+				$s = picto_from_langcode($langcode, 'class="pictoforlang paddingright"');
+				$resultforextrlang .= $s;
+				if ($typeofdata == 'textarea') {
+					$resultforextrlang .= '<textarea name="field-'.$object->element."-".$fieldname."-".$langcode.'" id="'.$fieldname."-".$langcode.'" class="'.$morecss.'" rows="'.ROWS_2.'" wrap="soft">';
+					$resultforextrlang .= $valuetoshow;
+					$resultforextrlang .= '</textarea>';
+				} else {
+					$resultforextrlang .= '<input type="text" class="inputfieldforlang '.($morecss ? ' '.$morecss : '').'" name="field-'.$object->element.'-'.$fieldname.'-'.$langcode.'" value="'.$valuetoshow.'">';
+				}
 			}
+			$result .= $resultforextrlang;
+
 			$result .= '</div>';
 			$result .= '<script>$(".image-'.$object->element.'-'.$fieldname.'").click(function() { console.log("Toggle lang widget"); jQuery(".field-'.$object->element.'-'.$fieldname.'").toggle(); });</script>';
 		}
@@ -704,6 +722,7 @@ class Form
     	  			else
     	  			{
     	  				jQuery(".massaction").hide();
+						jQuery(".massactionother").hide();
     	            }
         		}
 
@@ -725,10 +744,12 @@ class Form
         			if ($(this).val() != \'0\')
     	  			{
     	  				jQuery(".massactionconfirmed").prop(\'disabled\', false);
+						jQuery(".massactionother").show();
     	  			}
     	  			else
     	  			{
     	  				jQuery(".massactionconfirmed").prop(\'disabled\', true);
+						jQuery(".massactionother").hide();
     	  			}
     	        });
         	});
@@ -2333,6 +2354,8 @@ class Form
 		{
 			require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
 			require_once DOL_DOCUMENT_ROOT.'/product/dynamic_price/class/price_parser.class.php';
+			require_once DOL_DOCUMENT_ROOT.'/core/lib/product.lib.php';
+
 			$num = $this->db->num_rows($result);
 
 			$events = null;
@@ -2861,6 +2884,7 @@ class Form
 		if ($result)
 		{
 			require_once DOL_DOCUMENT_ROOT.'/product/dynamic_price/class/price_parser.class.php';
+			require_once DOL_DOCUMENT_ROOT.'/core/lib/product.lib.php';
 
 			$num = $this->db->num_rows($result);
 
@@ -3617,7 +3641,7 @@ class Form
 			elseif ($format == 2) print '<option value="'.$arraytypes['code'].'"';
 			elseif ($format == 3) print '<option value="'.$id.'"';
 			// Print attribute selected or not
-			if ($format==1 || $format==2) {
+			if ($format == 1 || $format == 2) {
 				if ($selected == $arraytypes['code']) print ' selected';
 			} else {
 				if ($selected == $id) print ' selected';
@@ -5455,7 +5479,7 @@ class Form
 	 * 	@param 	int			$disabled		Disable input fields
 	 *  @param  int			$fullday        When a checkbox with this html name is on, hour and day are set with 00:00 or 23:59
 	 *  @param	string		$addplusone		Add a link "+1 hour". Value must be name of another selectDate field.
-	 *  @param  datetime    $adddateof      Add a link "Date of invoice" using the following date. See also $labeladddateof for the label used.
+	 *  @param  datetime    $adddateof      Add a link "Date of ..." using the following date. See also $labeladddateof for the label used.
      *  @param  string      $openinghours   Specify hour start and hour end for the select ex 8,20
      *  @param  int         $stepminutes    Specify step for minutes between 1 and 30
      *  @param	string		$labeladddateof Label to use for the $adddateof parameter.
@@ -6096,6 +6120,12 @@ class Form
 			}
 			if ($tmpfieldstoshow) $fieldstoshow = $tmpfieldstoshow;
 		}
+        else
+        {
+			// For backward compatibility
+			$objecttmp->fields['ref'] = array('type'=>'varchar(30)', 'label'=>'Ref', 'showoncombobox'=>1);
+        }
+
 		if (empty($fieldstoshow))
 		{
 			if (isset($objecttmp->fields['ref'])) {
@@ -6805,10 +6835,10 @@ class Form
 			$toprint = array();
 			foreach ($categories as $c)
 			{
-				$ways = $c->print_all_ways(); // $ways[0] = "ccc2 >> ccc2a >> ccc2a1" with html formated text
+				$ways = $c->print_all_ways(' &gt;&gt; ', '', 0, 1); // $ways[0] = "ccc2 >> ccc2a >> ccc2a1" with html formated text
 				foreach ($ways as $way)
 				{
-					$toprint[] = '<li class="select2-search-choice-dolibarr noborderoncategories"'.($c->color ? ' style="background: #'.$c->color.';"' : ' style="background: #aaa"').'>'.img_object('', 'category').' '.$way.'</li>';
+					$toprint[] = '<li class="select2-search-choice-dolibarr noborderoncategories"'.($c->color ? ' style="background: #'.$c->color.';"' : ' style="background: #aaa"').'>'.$way.'</li>';
 				}
 			}
 			return '<div class="select2-container-multi-dolibarr" style="width: 90%;"><ul class="select2-choices-dolibarr">'.implode(' ', $toprint).'</ul></div>';
@@ -7260,7 +7290,7 @@ class Form
 	 */
     public function showrefnav($object, $paramid, $morehtml = '', $shownav = 1, $fieldid = 'rowid', $fieldref = 'ref', $morehtmlref = '', $moreparam = '', $nodbprefix = 0, $morehtmlleft = '', $morehtmlstatus = '', $morehtmlright = '')
 	{
-		global $langs, $conf, $hookmanager;
+		global $langs, $conf, $hookmanager, $extralanguages;
 
 		$ret = '';
 		if (empty($fieldid))  $fieldid = 'rowid';
@@ -7359,6 +7389,31 @@ class Form
 		if ($object->element == 'societe')
 		{
 			$ret .= dol_htmlentities($object->name);
+
+			// List of extra languages
+			$arrayoflangcode = array();
+			if (!empty($conf->global->PDF_USE_ALSO_LANGUAGE_CODE)) $arrayoflangcode[] = $conf->global->PDF_USE_ALSO_LANGUAGE_CODE;
+
+			if (is_array($arrayoflangcode) && count($arrayoflangcode)) {
+				if (!is_object($extralanguages)) {
+					include_once DOL_DOCUMENT_ROOT.'/core/class/extralanguages.class.php';
+					$extralanguages = new ExtraLanguages($this->db);
+				}
+				$extralanguages->fetch_name_extralanguages('societe');
+
+				if (!empty($extralanguages->attributes['societe']['name']))
+				{
+					$object->fetchValuesForExtraLanguages();
+
+					$htmltext = '';
+					// If there is extra languages
+					foreach ($arrayoflangcode as $extralangcode) {
+						$s = picto_from_langcode($extralangcode, 'class="pictoforlang paddingright"');
+						$htmltext .= $s.$object->array_languages['name'][$extralangcode];
+					}
+					$ret .= $this->textwithpicto('', $htmltext, -1, 'language', 'opacitymedium paddingleft');
+				}
+			}
 		}
 		elseif ($object->element == 'member')
 		{
@@ -7736,12 +7791,13 @@ class Form
 		global $conf, $langs;
 
 		$out = '';
-		if (!empty($conf->use_javascript_ajax)) $out .= '<div class="inline-block checkallactions"><input type="checkbox" id="checkallactions" name="checkallactions" class="checkallactions"></div>';
+		$id = uniqid();
+		if (!empty($conf->use_javascript_ajax)) $out .= '<div class="inline-block checkallactions"><input type="checkbox" id="checkallactions'.$id.'" name="checkallactions" class="checkallactions"></div>';
 		$out .= '<script>
             $(document).ready(function() {
-            	$("#checkallactions").click(function() {
+            	$("#checkallactions'.$id.'").click(function() {
                     if($(this).is(\':checked\')){
-                        console.log("We check all");
+                        console.log("We check all '.$cssclass.'");
                 		$(".'.$cssclass.'").prop(\'checked\', true).trigger(\'change\');
                     }
                     else

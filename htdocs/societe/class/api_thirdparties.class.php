@@ -1120,7 +1120,7 @@ class Thirdparties extends DolibarrApi
 	 * @param int  $id ID of thirdparty
 	 * @param array $request_data Request data
 	 *
-	 * @return object  ID of thirdparty
+	 * @return object  BankAccount of thirdparty
 	 *
 	 * @url POST {id}/bankaccounts
 	 */
@@ -1129,7 +1129,9 @@ class Thirdparties extends DolibarrApi
 		if (!DolibarrApiAccess::$user->rights->societe->creer) {
 			throw new RestException(401);
 		}
-
+		if ($this->company->fetch($id) <= 0) {
+			throw new RestException(404, 'Error creating Company Bank account, Company doesn\'t exists');
+		}
 		$account = new CompanyBankAccount($this->db);
 
 		$account->socid = $id;
@@ -1141,11 +1143,17 @@ class Thirdparties extends DolibarrApi
 		if ($account->create(DolibarrApiAccess::$user) < 0)
 			throw new RestException(500, 'Error creating Company Bank account');
 
+		if (empty($account->rum)) {
+			require_once DOL_DOCUMENT_ROOT.'/compta/prelevement/class/bonprelevement.class.php';
+			$prelevement = new BonPrelevement($this->db);
+			$account->rum = $prelevement->buildRumNumber($this->company->code_client, $account->datec, $account->id);
+			$account->date_rum = dol_now();
+		}
 
 		if ($account->update(DolibarrApiAccess::$user) < 0)
 			throw new RestException(500, 'Error updating values');
 
-		return $account;
+		return $this->_cleanObjectDatas($account);
 	}
 
 	/**
@@ -1155,7 +1163,7 @@ class Thirdparties extends DolibarrApi
 	 * @param int  $bankaccount_id ID of CompanyBankAccount
 	 * @param array $request_data Request data
 	 *
-	 * @return object  ID of thirdparty
+	 * @return object  BankAccount of thirdparty
 	 *
 	 * @url PUT {id}/bankaccounts/{bankaccount_id}
 	 */
@@ -1164,7 +1172,9 @@ class Thirdparties extends DolibarrApi
 		if (!DolibarrApiAccess::$user->rights->societe->creer) {
 			throw new RestException(401);
 		}
-
+		if ($this->company->fetch($id) <= 0) {
+			throw new RestException(404, 'Error creating Company Bank account, Company doesn\'t exists');
+		}
 		$account = new CompanyBankAccount($this->db);
 
 		$account->fetch($bankaccount_id, $id, -1, '');
@@ -1178,10 +1188,17 @@ class Thirdparties extends DolibarrApi
 			$account->$field = $value;
 		}
 
+		if (empty($account->rum)) {
+			require_once DOL_DOCUMENT_ROOT.'/compta/prelevement/class/bonprelevement.class.php';
+			$prelevement = new BonPrelevement($this->db);
+			$account->rum = $prelevement->buildRumNumber($this->company->code_client, $account->datec, $account->id);
+			$account->date_rum = dol_now();
+		}
+
 		if ($account->update(DolibarrApiAccess::$user) < 0)
 			throw new RestException(500, 'Error updating values');
 
-		return $account;
+		return $this->_cleanObjectDatas($account);
 	}
 
 	/**
@@ -1687,7 +1704,7 @@ class Thirdparties extends DolibarrApi
 		unset($object->particulier);
 		unset($object->prefix_comm);
 
-		unset($object->commercial_id);	// This property is used in create/update only. It does not exists in read mode because there is several sales representatives.
+		unset($object->commercial_id); // This property is used in create/update only. It does not exists in read mode because there is several sales representatives.
 
 		unset($object->total_ht);
 		unset($object->total_tva);

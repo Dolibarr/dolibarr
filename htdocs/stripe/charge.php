@@ -97,7 +97,7 @@ if (!$rowid)
 	$param = '';
 	//if (!empty($contextpage) && $contextpage != $_SERVER["PHP_SELF"]) $param .= '&contextpage='.urlencode($contextpage);
 	if ($limit > 0 && $limit != $conf->liste_limit) $param .= '&limit='.urlencode($limit);
-	$param.='&starting_after_'.($page+1).'='.$list->data[($limit-1)]->id;
+	$param .= '&starting_after_'.($page + 1).'='.$list->data[($limit - 1)]->id;
 	//$param.='&ending_before_'.($page+1).'='.$list->data[($limit-1)]->id;
 
 	$moreforfilter = '';
@@ -138,26 +138,26 @@ if (!$rowid)
 			break;
 		}
 
-	    if ($charge->refunded=='1') {
+	    if ($charge->refunded == '1') {
 	    	$status = img_picto($langs->trans("refunded"), 'statut6');
-	    } elseif ($charge->paid=='1') {
+	    } elseif ($charge->paid == '1') {
             $status = img_picto($langs->trans((string) $charge->status), 'statut4');
 	    } else {
 	    	$label = $langs->trans("Message").": ".$charge->failure_message."<br>";
-	    	$label.= $langs->trans("Network").": ".$charge->outcome->network_status."<br>";
-	    	$label.= $langs->trans("Status").": ".$langs->trans((string) $charge->outcome->seller_message);
+	    	$label .= $langs->trans("Network").": ".$charge->outcome->network_status."<br>";
+	    	$label .= $langs->trans("Status").": ".$langs->trans((string) $charge->outcome->seller_message);
 	    	$status = $form->textwithpicto(img_picto($langs->trans((string) $charge->status), 'statut8'), $label, -1);
 	    }
 
-        if ($charge->payment_method_details->type=='card') {
+        if ($charge->payment_method_details->type == 'card') {
 		    $type = $langs->trans("card");
-	    } elseif ($charge->source->type=='card'){
+	    } elseif ($charge->source->type == 'card') {
 			$type = $langs->trans("card");
-	    } elseif ($charge->payment_method_details->type=='three_d_secure'){
+	    } elseif ($charge->payment_method_details->type == 'three_d_secure') {
 			$type = $langs->trans("card3DS");
-	    } elseif ($charge->payment_method_details->type=='sepa_debit'){
+	    } elseif ($charge->payment_method_details->type == 'sepa_debit') {
 			$type = $langs->trans("sepadebit");
-	    } elseif ($charge->payment_method_details->type=='ideal'){
+	    } elseif ($charge->payment_method_details->type == 'ideal') {
 			$type = $langs->trans("iDEAL");
 	    }
 
@@ -240,7 +240,7 @@ if (!$rowid)
 
 		// Origin
 		print "<td>";
-		if ($charge->metadata->dol_type=="order" || $charge->metadata->dol_type=="commande") {
+		if ($charge->metadata->dol_type == "order" || $charge->metadata->dol_type == "commande") {
 			$object = new Commande($db);
 			$object->fetch($charge->metadata->dol_id);
             if ($object->id > 0) {
@@ -248,7 +248,7 @@ if (!$rowid)
             } else {
                 print $FULLTAG;
             }
-		} elseif ($charge->metadata->dol_type=="invoice" || $charge->metadata->dol_type=="facture") {
+		} elseif ($charge->metadata->dol_type == "invoice" || $charge->metadata->dol_type == "facture") {
 			print $charge->metadata->dol_type.' '.$charge->metadata->dol_id.' - ';
 			$object = new Facture($db);
 			$object->fetch($charge->metadata->dol_id);

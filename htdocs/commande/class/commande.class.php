@@ -752,8 +752,10 @@ class Commande extends CommonOrder
 
 		$error = 0;
 
-		if ((empty($conf->global->MAIN_USE_ADVANCED_PERMS) && !empty($user->rights->commande->creer))
-			|| (!empty($conf->global->MAIN_USE_ADVANCED_PERMS) && !empty($user->rights->commande->order_advance->validate)))
+		$usercanclose = ((empty($conf->global->MAIN_USE_ADVANCED_PERMS) && !empty($user->rights->commande->creer))
+			|| (!empty($conf->global->MAIN_USE_ADVANCED_PERMS) && !empty($user->rights->commande->order_advance->close)));
+
+		if ($usercanclose)
 		{
 			$this->db->begin();
 
@@ -931,7 +933,7 @@ class Commande extends CommonOrder
 			dol_syslog(get_class($this)."::create ".$this->error, LOG_ERR);
 			return -2;
 		}
-		if (!empty($conf->global->COMMANDE_REQUIRE_SOURCE) && $this->source < 0)
+		if (!empty($conf->global->ORDER_REQUIRE_SOURCE) && $this->source < 0)
 		{
 			$this->error = $langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Source"));
 			dol_syslog(get_class($this)."::create ".$this->error, LOG_ERR);
@@ -1016,12 +1018,12 @@ class Commande extends CommonOrder
 					$vatrate = $line->tva_tx;
 					if ($line->vat_src_code && !preg_match('/\(.*\)/', $vatrate)) $vatrate .= ' ('.$line->vat_src_code.')';
 
-					if(!empty($conf->global->MAIN_CREATEFROM_KEEP_LINE_ORIGIN_INFORMATION)) {
-						$originid=$line->origin_id;
-						$origintype=$line->origin;
+					if (!empty($conf->global->MAIN_CREATEFROM_KEEP_LINE_ORIGIN_INFORMATION)) {
+						$originid = $line->origin_id;
+						$origintype = $line->origin;
 					} else {
-						$originid=$line->id;
-						$origintype=$this->element;
+						$originid = $line->id;
+						$origintype = $this->element;
 					}
 
                     $result = $this->addline(
@@ -1412,8 +1414,8 @@ class Commande extends CommonOrder
 
 			if (!$error)
 			{
-				// Ne pas passer par la commande provisoire
-				if ($conf->global->COMMANDE_VALID_AFTER_CLOSE_PROPAL == 1)
+				// Validate immediatly the order
+				if (!empty($conf->global->ORDER_VALID_AFTER_CLOSE_PROPAL))
 				{
 					$this->fetch($ret);
 					$this->valid($user);
@@ -4420,7 +4422,7 @@ class OrderLine extends CommonOrderLine
 
 			foreach ($this->errors as $errmsg)
 			{
-				dol_syslog(get_class($this)."::delete ".$errmsg, LOG_ERR);
+				dol_syslog(get_class($this)."::insert ".$errmsg, LOG_ERR);
 				$this->error .= ($this->error ? ', '.$errmsg : $errmsg);
 			}
 			$this->db->rollback();

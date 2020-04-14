@@ -1469,12 +1469,12 @@ class Facture extends CommonInvoice
 	/**
 	 *	Get object from database. Get also lines.
 	 *
-	 *	@param      int		$rowid       	Id of object to load
-	 * 	@param		string	$ref			Reference of invoice
-	 * 	@param		string	$ref_ext		External reference of invoice
+	 *	@param      int		$rowid       		Id of object to load
+	 * 	@param		string	$ref				Reference of invoice
+	 * 	@param		string	$ref_ext			External reference of invoice
 	 * 	@param		int		$notused			Not used
 	 *  @param		bool	$fetch_situation	Fetch the previous and next situation in $tab_previous_situation_invoice and $tab_next_situation_invoice
-	 *	@return     int         			>0 if OK, <0 if KO, 0 if not found
+	 *	@return     int         				>0 if OK, <0 if KO, 0 if not found
 	 */
 	public function fetch($rowid, $ref = '', $ref_ext = '', $notused = '', $fetch_situation = false)
 	{
@@ -2452,9 +2452,9 @@ class Facture extends CommonInvoice
 		$productStatic = null;
 		$warehouseStatic = null;
 		if ($batch_rule > 0) {
-			require_once DOL_DOCUMENT_ROOT . '/product/class/product.class.php';
-			require_once DOL_DOCUMENT_ROOT . '/product/class/productbatch.class.php';
-			require_once DOL_DOCUMENT_ROOT . '/product/stock/class/entrepot.class.php';
+			require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
+			require_once DOL_DOCUMENT_ROOT.'/product/class/productbatch.class.php';
+			require_once DOL_DOCUMENT_ROOT.'/product/stock/class/entrepot.class.php';
 			$productStatic = new Product($this->db);
 			$warehouseStatic = new Entrepot($this->db);
 		}
@@ -2634,7 +2634,7 @@ class Facture extends CommonInvoice
 												$langs->load('errors');
 												$warehouseStatic->fetch($idwarehouse);
 												$this->error = $langs->trans('ErrorBatchNoFoundForProductInWarehouse', $productStatic->label, $warehouseStatic->ref);
-												dol_syslog(__METHOD__ . ' Error: ' . $langs->transnoentitiesnoconv('ErrorBatchNoFoundForProductInWarehouse', $productStatic->label, $warehouseStatic->ref), LOG_ERR);
+												dol_syslog(__METHOD__.' Error: '.$langs->transnoentitiesnoconv('ErrorBatchNoFoundForProductInWarehouse', $productStatic->label, $warehouseStatic->ref), LOG_ERR);
 											}
 
 											foreach ($batchList as $batch) {
@@ -2673,7 +2673,7 @@ class Facture extends CommonInvoice
 													$langs->load('errors');
 													$warehouseStatic->fetch($idwarehouse);
 													$this->error = $langs->trans('ErrorBatchNoFoundEnoughQuantityForProductInWarehouse', $productStatic->label, $warehouseStatic->ref);
-													dol_syslog(__METHOD__ . ' Error: ' . $langs->transnoentitiesnoconv('ErrorBatchNoFoundEnoughQuantityForProductInWarehouse', $productStatic->label, $warehouseStatic->ref), LOG_ERR);
+													dol_syslog(__METHOD__.' Error: '.$langs->transnoentitiesnoconv('ErrorBatchNoFoundEnoughQuantityForProductInWarehouse', $productStatic->label, $warehouseStatic->ref), LOG_ERR);
 												}
 											}
 										}
@@ -3749,8 +3749,8 @@ class Facture extends CommonInvoice
 
 				// Load file with numbering class (if found)
 				if (is_file($dir . $file) && is_readable($dir . $file)) {
-                    $mybool |= include_once $dir.$file;
-                }
+					$mybool |= include_once $dir . $file;
+				}
 			}
 
 			// For compatibility
@@ -3763,9 +3763,9 @@ class Facture extends CommonInvoice
 					$dir = $dirroot . '/core/modules/' . $moduleName . '/';
 
 					// Load file with numbering class (if found)
-					if (is_file($dir.$file) && is_readable($dir.$file)) {
-                        $mybool |= include_once $dir.$file;
-                    }
+					if (is_file($dir . $file) && is_readable($dir . $file)) {
+						$mybool |= include_once $dir . $file;
+					}
 				}
 			}
 

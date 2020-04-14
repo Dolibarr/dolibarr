@@ -16,7 +16,7 @@
  */
 
 // Protection to avoid direct call of template
-if (empty($conf) || ! is_object($conf))
+if (empty($conf) || !is_object($conf))
 {
 	print "Error, template page can't be called as URL";
 	exit;
@@ -45,7 +45,7 @@ dol_fiche_head($head, 'card', $langs->trans("ThirdParty"), 0, 'company');
 	<td colspan="3"><?php echo $this->control->tpl['showrefnav']; ?></td>
 </tr>
 
-<?php if (! empty($conf->global->SOCIETE_USEPREFIX)) { ?>
+<?php if (!empty($conf->global->SOCIETE_USEPREFIX)) { ?>
 <tr>
 	<td><?php echo $langs->trans('Prefix'); ?></td>
 	<td colspan="3"><?php echo $this->control->tpl['prefix_comm']; ?></td>
@@ -74,7 +74,7 @@ dol_fiche_head($head, 'card', $langs->trans("ThirdParty"), 0, 'company');
 </tr>
 <?php } ?>
 
-<?php if (! empty($conf->barcode->enabled)) { ?>
+<?php if (!empty($conf->barcode->enabled)) { ?>
 <tr>
 	<td><?php echo $langs->trans('Gencod'); ?></td>
 	<td colspan="3"><?php echo $this->control->tpl['barcode']; ?></td>
@@ -118,9 +118,9 @@ dol_fiche_head($head, 'card', $langs->trans("ThirdParty"), 0, 'company');
 </tr>
 
 <?php
-for ($i=1; $i<=4; $i++) {
-	if ($this->control->tpl['langprofid'.$i]!='-')	{
-		if ($i==1 || $i==3) echo '<tr>';
+for ($i = 1; $i <= 4; $i++) {
+	if ($this->control->tpl['langprofid'.$i] != '-') {
+		if ($i == 1 || $i == 3) echo '<tr>';
 		echo '<td>'.$this->control->tpl['langprofid'.$i].'</td>';
 		echo '<td>'.$this->control->tpl['profid'.$i];
 		if ($this->control->tpl['profid'.$i]) {
@@ -128,12 +128,12 @@ for ($i=1; $i<=4; $i++) {
 			else echo ' <font class="error">('.$langs->trans("ErrorWrongValue").')</font>';
 		}
 		echo '</td>';
-		if ($i==2 || $i==4) echo '</tr>';
+		if ($i == 2 || $i == 4) echo '</tr>';
 	} else {
-		if ($i==1 || $i==3) echo '<tr>';
+		if ($i == 1 || $i == 3) echo '<tr>';
 		echo '<td>&nbsp;</td>';
 		echo '<td>&nbsp;</td>';
-		if ($i==2 || $i==4) echo '</tr>';
+		if ($i == 2 || $i == 4) echo '</tr>';
 	}
 }
 ?>
@@ -145,7 +145,7 @@ for ($i=1; $i<=4; $i++) {
 	<td><?php echo $this->control->tpl['tva_intra']; ?></td>
 </tr>
 
-<?php if(!empty($this->control->tpl['localtax'])) echo $this->control->tpl['localtax']; ?>
+<?php if (!empty($this->control->tpl['localtax'])) echo $this->control->tpl['localtax']; ?>
 
 <tr>
 	<td><?php echo $langs->trans('Capital'); ?></td>
@@ -169,7 +169,7 @@ for ($i=1; $i<=4; $i++) {
 	<td><?php echo $this->control->tpl['effectif']; ?></td>
 </tr>
 
-<?php if (! empty($conf->global->MAIN_MULTILANGS)) { ?>
+<?php if (!empty($conf->global->MAIN_MULTILANGS)) { ?>
 <tr>
 	<td><?php echo $langs->trans("DefaultLang"); ?></td>
 	<td colspan="3"><?php echo $this->control->tpl['default_lang']; ?></td>
@@ -223,10 +223,10 @@ for ($i=1; $i<=4; $i++) {
 		</tr>
 	</table>
 	</td>
-	<td colspan="3"><?php echo $this->control->tpl['sales_representatives'];	?></td>
+	<td colspan="3"><?php echo $this->control->tpl['sales_representatives']; ?></td>
 </tr>
 
-<?php if (! empty($conf->adherent->enabled)) { ?>
+<?php if (!empty($conf->adherent->enabled)) { ?>
 <tr>
 	<td width="25%" valign="top"><?php echo $langs->trans("LinkedToDolibarrMember"); ?></td>
 	<td colspan="3"><?php echo $this->control->tpl['linked_member']; ?></td>
@@ -245,7 +245,7 @@ for ($i=1; $i<=4; $i++) {
 <?php if ($user->rights->societe->supprimer) { ?>
 	<?php if ($conf->use_javascript_ajax) { ?>
 		<span id="action-delete" class="butActionDelete"><?php echo $langs->trans('Delete'); ?></span>
-	<?php }	else { ?>
+	<?php } else { ?>
 		<a class="butActionDelete" href="<?php echo $_SERVER["PHP_SELF"].'?socid='.$this->control->tpl['id'].'&amp;action=delete&amp;canvas='.$canvas; ?>"><?php echo $langs->trans('Delete'); ?></a>
 	<?php } ?>
 <?php } ?>
@@ -260,10 +260,10 @@ for ($i=1; $i<=4; $i++) {
 /*
  * Documents generes
  */
-$filedir=$conf->societe->multidir_output[$this->control->tpl['entity']].'/'.$socid;
-$urlsource=$_SERVER["PHP_SELF"]."?socid=".$socid;
-$genallowed=$user->rights->societe->lire;
-$delallowed=$user->rights->societe->creer;
+$filedir = $conf->societe->multidir_output[$this->control->tpl['entity']].'/'.$socid;
+$urlsource = $_SERVER["PHP_SELF"]."?socid=".$socid;
+$genallowed = $user->rights->societe->lire;
+$delallowed = $user->rights->societe->creer;
 
 print $formfile->showdocuments('company', $socid, $filedir, $urlsource, $genallowed, $delallowed, '', 0, 0, 0, 28, 0, '', 0, '', $objcanvas->control->object->default_lang);
 ?>
@@ -277,13 +277,13 @@ print $formfile->showdocuments('company', $socid, $filedir, $urlsource, $genallo
 
 <?php
 // Subsidiaries list
-$result=show_subsidiaries($conf, $langs, $db, $soc);
+$result = show_subsidiaries($conf, $langs, $db, $soc);
 
 // Contacts list
-$result=show_contacts($conf, $langs, $db, $soc);
+$result = show_contacts($conf, $langs, $db, $soc);
 
 // Projects list
-$result=show_projects($conf, $langs, $db, $soc);
+$result = show_projects($conf, $langs, $db, $soc);
 ?>
 
 <!-- END PHP TEMPLATE -->

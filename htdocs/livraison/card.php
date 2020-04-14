@@ -34,30 +34,30 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/sendings.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
-if (! empty($conf->product->enabled) || ! empty($conf->service->enabled))
+if (!empty($conf->product->enabled) || !empty($conf->service->enabled))
 	require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
-if (! empty($conf->expedition_bon->enabled))
+if (!empty($conf->expedition_bon->enabled))
 	require_once DOL_DOCUMENT_ROOT.'/expedition/class/expedition.class.php';
-if (! empty($conf->stock->enabled))
+if (!empty($conf->stock->enabled))
 	require_once DOL_DOCUMENT_ROOT.'/product/stock/class/entrepot.class.php';
-if (! empty($conf->projet->enabled)) {
+if (!empty($conf->projet->enabled)) {
     require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
     require_once DOL_DOCUMENT_ROOT.'/core/class/html.formprojet.class.php';
 }
 
 // Load translation files required by the page
-$langs->loadLangs(array("sendings","bills",'deliveries','orders'));
+$langs->loadLangs(array("sendings", "bills", 'deliveries', 'orders'));
 
 if (!empty($conf->incoterm->enabled)) $langs->load('incoterm');
 
-$action=GETPOST('action', 'alpha');
-$confirm=GETPOST('confirm', 'alpha');
-$backtopage=GETPOST('backtopage', 'alpha');
+$action = GETPOST('action', 'alpha');
+$confirm = GETPOST('confirm', 'alpha');
+$backtopage = GETPOST('backtopage', 'alpha');
 
 // Security check
 $id = GETPOST('id', 'int');
-if ($user->socid) $socid=$user->socid;
-$result=restrictedArea($user, 'expedition', $id, 'livraison', 'livraison');
+if ($user->socid) $socid = $user->socid;
+$result = restrictedArea($user, 'expedition', $id, 'livraison', 'livraison');
 
 $object = new Livraison($db);
 $extrafields = new ExtraFields($db);

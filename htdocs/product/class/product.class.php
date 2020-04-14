@@ -1452,6 +1452,8 @@ class Product extends CommonObject
     {
         global $user, $langs, $conf;
 
+        $error = 0;
+
         $this->db->begin();
 
         if ($type == 'buy') {
@@ -1478,16 +1480,15 @@ class Product extends CommonObject
         $resql = $this->db->query($sql);
 
         if ($resql) {
-            // Call triggers
-            include_once DOL_DOCUMENT_ROOT.'/core/class/interfaces.class.php';
-            $interface = new Interfaces($this->db);
-            $result = $interface->run_triggers('PRODUCT_MODIFY', $this, $user, $langs, $conf);
-            if ($result < 0) {
-                $this->errors = $interface->errors;
+        	// Call trigger
+        	$result = $this->call_trigger('PRODUCT_MODIFY', $user);
+        	if ($result < 0) $error++;
+        	// End call triggers
+
+            if ($error) {
                 $this->db->rollback();
                 return -1;
             }
-            // End call triggers
 
             $this->$field = $value;
 
@@ -3597,11 +3598,11 @@ class Product extends CommonObject
     	// phpcs:enable
     	global $conf, $user;
 
-    	$sql = "SELECT sum(c.qty), date_format(c.date_valid, '%Y%m')";
+    	$sql = "SELECT sum(d.qty), date_format(d.date_valid, '%Y%m')";
     	if ($mode == 'bynumber') {
     		$sql .= ", count(DISTINCT c.rowid)";
     	}
-    	$sql .= " FROM ".MAIN_DB_PREFIX."mrp_mo as c LEFT JOIN  ".MAIN_DB_PREFIX."societe as s ON c.fk_soc = s.rowid";
+    	$sql .= " FROM ".MAIN_DB_PREFIX."mrp_mo as d LEFT JOIN  ".MAIN_DB_PREFIX."societe as s ON d.fk_soc = s.rowid";
     	if ($filteronproducttype >= 0) {
     		$sql .= ", ".MAIN_DB_PREFIX."product as p";
     	}
@@ -3609,27 +3610,27 @@ class Product extends CommonObject
     		$sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
     	}
 
-    	$sql .= " WHERE c.entity IN (".getEntity('mo').")";
-    	$sql .= " AND c.status > 0";
+    	$sql .= " WHERE d.entity IN (".getEntity('mo').")";
+    	$sql .= " AND d.status > 0";
 
     	if ($this->id > 0) {
-    		$sql .= " AND c.fk_product =".$this->id;
+    		$sql .= " AND d.fk_product =".$this->id;
     	} else {
-    		$sql .= " AND c.fk_product > 0";
+    		$sql .= " AND d.fk_product > 0";
     	}
     	if ($filteronproducttype >= 0) {
-    		$sql .= " AND p.rowid = c.fk_product AND p.fk_product_type =".$filteronproducttype;
+    		$sql .= " AND p.rowid = d.fk_product AND p.fk_product_type =".$filteronproducttype;
     	}
 
     	if (!$user->rights->societe->client->voir && !$socid) {
-    		$sql .= " AND c.fk_soc = sc.fk_soc AND sc.fk_user = ".$user->id;
+    		$sql .= " AND d.fk_soc = sc.fk_soc AND sc.fk_user = ".$user->id;
     	}
     	if ($socid > 0) {
-    		$sql .= " AND c.fk_soc = ".$socid;
+    		$sql .= " AND d.fk_soc = ".$socid;
     	}
     	$sql .= $morefilter;
-    	$sql .= " GROUP BY date_format(c.date_valid,'%Y%m')";
-    	$sql .= " ORDER BY date_format(c.date_valid,'%Y%m') DESC";
+    	$sql .= " GROUP BY date_format(d.date_valid,'%Y%m')";
+    	$sql .= " ORDER BY date_format(d.date_valid,'%Y%m') DESC";
 
     	return $this->_get_stats($sql, $mode, $year);
     }
@@ -4414,9 +4415,9 @@ class Product extends CommonObject
         if ($maxlength) { $newref = dol_trunc($newref, $maxlength, 'middle');
         }
 
-        if ($this->type == Product::TYPE_PRODUCT) { $label = '<u>'.$langs->trans("ShowProduct").'</u>';
+        if ($this->type == Product::TYPE_PRODUCT) { $label = '<u>'.$langs->trans("Product").'</u>';
         }
-        if ($this->type == Product::TYPE_SERVICE) { $label = '<u>'.$langs->trans("ShowService").'</u>';
+        if ($this->type == Product::TYPE_SERVICE) { $label = '<u>'.$langs->trans("Service").'</u>';
         }
         if (!empty($this->ref)) {
             $label .= '<br><b>'.$langs->trans('ProductRef').':</b> '.$this->ref;
@@ -4441,13 +4442,13 @@ class Product extends CommonObject
             }
             $labelsize = "";
             if ($this->length) {
-            	$labelsize .= ($labelsize ? " - ": "")."<b>".$langs->trans("Length").'</b>: '.$this->length.' '.measuringUnitString(0, 'size', $this->length_units);
+            	$labelsize .= ($labelsize ? " - " : "")."<b>".$langs->trans("Length").'</b>: '.$this->length.' '.measuringUnitString(0, 'size', $this->length_units);
             }
             if ($this->width) {
-            	$labelsize .= ($labelsize ? " - ": "")."<b>".$langs->trans("Width").'</b>: '.$this->width.' '.measuringUnitString(0, 'size', $this->width_units);
+            	$labelsize .= ($labelsize ? " - " : "")."<b>".$langs->trans("Width").'</b>: '.$this->width.' '.measuringUnitString(0, 'size', $this->width_units);
             }
             if ($this->height) {
-            	$labelsize .= ($labelsize ? " - ": "")."<b>".$langs->trans("Height").'</b>: '.$this->height.' '.measuringUnitString(0, 'size', $this->height_units);
+            	$labelsize .= ($labelsize ? " - " : "")."<b>".$langs->trans("Height").'</b>: '.$this->height.' '.measuringUnitString(0, 'size', $this->height_units);
             }
             if ($labelsize) $label .= "<br>".$labelsize;
 

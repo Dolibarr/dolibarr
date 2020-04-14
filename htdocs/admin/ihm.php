@@ -154,8 +154,10 @@ if ($action == 'update')
 	//dolibarr_set_const($db, "MAIN_DISABLE_JAVASCRIPT", GETPOST("MAIN_DISABLE_JAVASCRIPT", 'aZ09'), 'chaine', 0, '', $conf->entity);
 	dolibarr_set_const($db, "MAIN_BUTTON_HIDE_UNAUTHORIZED", GETPOST("MAIN_BUTTON_HIDE_UNAUTHORIZED", 'aZ09'), 'chaine', 0, '', $conf->entity);
 	dolibarr_set_const($db, "MAIN_START_WEEK", GETPOST("MAIN_START_WEEK", 'int'), 'chaine', 0, '', $conf->entity);
-	dolibarr_set_const($db, "MAIN_DEFAULT_WORKING_DAYS", GETPOST("MAIN_DEFAULT_WORKING_DAYS", 'int'), 'chaine', 0, '', $conf->entity);
-	dolibarr_set_const($db, "MAIN_DEFAULT_WORKING_HOURS", GETPOST("MAIN_DEFAULT_WORKING_HOURS", 'int'), 'chaine', 0, '', $conf->entity);
+
+	dolibarr_set_const($db, "MAIN_DEFAULT_WORKING_DAYS", GETPOST("MAIN_DEFAULT_WORKING_DAYS", 'alphanohtml'), 'chaine', 0, '', $conf->entity);
+	dolibarr_set_const($db, "MAIN_DEFAULT_WORKING_HOURS", GETPOST("MAIN_DEFAULT_WORKING_HOURS", 'alphanohtml'), 'chaine', 0, '', $conf->entity);
+
 	dolibarr_set_const($db, "MAIN_FIRSTNAME_NAME_POSITION", GETPOST("MAIN_FIRSTNAME_NAME_POSITION", 'aZ09'), 'chaine', 0, '', $conf->entity);
 
 	dolibarr_set_const($db, "MAIN_HELPCENTER_DISABLELINK", GETPOST('MAIN_HELPCENTER_DISABLELINK', 'aZ09'), 'chaine', 0, '', 0); // Param for all entities
@@ -241,9 +243,9 @@ print '<input type="hidden" name="action" value="update">';
 clearstatcache();
 
 print '<br>';
-print '<table summary="edit" class="noborder centpercent">';
-print '<tr class="liste_titre"><td>'.$langs->trans("Language").'</td><td></td>';
-print '<td width="20">&nbsp;</td>';
+print '<table summary="edit" class="noborder centpercent editmode">';
+print '<tr class="liste_titre"><th>'.$langs->trans("Language").'</th><th></th>';
+print '<th width="20">&nbsp;</td>';
 print '</tr>';
 
 // Default language
@@ -268,9 +270,9 @@ showSkins(null, 1);
 print '<br>';
 
 // Other
-print '<table summary="otherparameters" class="noborder centpercent">';
-print '<tr class="liste_titre"><td class="titlefield">'.$langs->trans("Miscellaneous").'</td><td></td>';
-print '<td width="20">&nbsp;</td>';
+print '<table summary="otherparameters" class="noborder centpercent editmode">';
+print '<tr class="liste_titre"><th>'.$langs->trans("Miscellaneous").'</th><th></th>';
+print '<th width="20">&nbsp;</tg>';
 print '</tr>';
 
 // Disable javascript and ajax
@@ -385,9 +387,9 @@ print '<br>';
 
 // Other
 print '<div class="div-table-responsive-no-min">';
-print '<table summary="edit" class="noborder centpercent">';
-print '<tr class="liste_titre"><td class="titlefield">'.$langs->trans("LoginPage").'</td><td></td>';
-print '<td width="20">&nbsp;</td>';
+print '<table summary="edit" class="noborder centpercent editmode">';
+print '<tr class="liste_titre"><th class="titlefield">'.$langs->trans("LoginPage").'</th><th></th>';
+print '<th width="20">&nbsp;</th>';
 print '</tr>';
 
 // Message on login page

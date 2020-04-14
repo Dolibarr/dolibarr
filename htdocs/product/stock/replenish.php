@@ -486,7 +486,7 @@ $head[1][1] = $langs->trans("ReplenishmentOrders");
 $head[1][2] = 'replenishorders';
 
 
-print load_fiche_titre($langs->trans('Replenishment'), '', 'generic');
+print load_fiche_titre($langs->trans('Replenishment'), '', 'stock');
 
 dol_fiche_head($head, 'replenish', '', -1, '');
 
@@ -703,7 +703,7 @@ while ($i < ($limit ? min($num, $limit) : $num))
 		//depending on conf, use either physical stock or
 		//virtual stock to compute the stock to buy value
 
-		if(empty($usevirtualstock)) $stocktobuy = max(max($desiredstock, $alertstock) - $stock - $ordered, 0);
+		if (empty($usevirtualstock)) $stocktobuy = max(max($desiredstock, $alertstock) - $stock - $ordered, 0);
 		else $stocktobuy = max(max($desiredstock, $alertstock) - $stock, 0); //ordered is already in $stock in virtual mode
 
 		$disabled = '';

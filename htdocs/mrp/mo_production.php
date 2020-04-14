@@ -863,7 +863,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
     		$nblinetoproducecursor = 0;
     		foreach ($object->lines as $line) {
     			if ($line->role == 'toproduce') {
-    				$i=1;
+    				$i = 1;
 
     				$nblinetoproducecursor++;
 

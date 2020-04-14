@@ -417,7 +417,7 @@ class Stripe extends CommonObject
     			"currency" => $currency_code,
     		    "payment_method_types" => array("card"),
     		    "description" => $description,
-    		    "statement_descriptor_suffix" => dol_trunc($tag, 10, 'right', 'UTF-8', 1),     // 22 chars that appears on bank receipt (company + description)
+    		    "statement_descriptor_suffix" => dol_trunc($tag, 10, 'right', 'UTF-8', 1), // 22 chars that appears on bank receipt (company + description)
     			//"save_payment_method" => true,
 				"setup_future_usage" => "on_session",
     			"metadata" => $metadata
@@ -764,7 +764,7 @@ class Stripe extends CommonObject
 							{
 								dol_syslog("Try to create card with dataforcard = ".json_encode($dataforcard));
 								$card = $cu->sources->create($dataforcard);
-								if (! $card)
+								if (!$card)
 								{
 									$this->error = 'Creation of card on Stripe has failed';
 								}
@@ -788,7 +788,7 @@ class Stripe extends CommonObject
 							{
 								dol_syslog("Try to create card with dataforcard = ".json_encode($dataforcard));
 								$card = $cu->sources->create($dataforcard, array("stripe_account" => $stripeacc));
-								if (! $card)
+								if (!$card)
 								{
 									$this->error = 'Creation of card on Stripe has failed';
 								}
@@ -960,7 +960,7 @@ class Stripe extends CommonObject
                     $charge = \Stripe\Charge::create(array(
 						"amount" => "$stripeamount",
 						"currency" => "$currency",
-                        "statement_descriptor_suffix" => dol_trunc($description, 10, 'right', 'UTF-8', 1),     // 22 chars that appears on bank receipt (company + description)
+                        "statement_descriptor_suffix" => dol_trunc($description, 10, 'right', 'UTF-8', 1), // 22 chars that appears on bank receipt (company + description)
 						"description" => "Stripe payment: ".$description,
 						"capture"  => $capture,
 						"metadata" => $metadata,
@@ -970,7 +970,7 @@ class Stripe extends CommonObject
 					$paymentarray = array(
 						"amount" => "$stripeamount",
 						"currency" => "$currency",
-					    "statement_descriptor_suffix" => dol_trunc($description, 10, 'right', 'UTF-8', 1),     // 22 chars that appears on bank receipt (company + description)
+					    "statement_descriptor_suffix" => dol_trunc($description, 10, 'right', 'UTF-8', 1), // 22 chars that appears on bank receipt (company + description)
 						"description" => "Stripe payment: ".$description,
 						"capture"  => $capture,
 						"metadata" => $metadata,
@@ -1000,7 +1000,7 @@ class Stripe extends CommonObject
 				$paymentarray = array(
 					"amount" => "$stripeamount",
 					"currency" => "$currency",
-				"statement_descriptor_suffix" => dol_trunc($description, 10, 'right', 'UTF-8', 1),     // 22 chars that appears on bank receipt (company + description)
+				"statement_descriptor_suffix" => dol_trunc($description, 10, 'right', 'UTF-8', 1), // 22 chars that appears on bank receipt (company + description)
 					"description" => "Stripe payment: ".$description,
 					"capture"  => $capture,
 					"metadata" => $metadata,

@@ -245,13 +245,13 @@ function _printInputFormPart($confkey, $title = false, $desc = '', $metas = arra
 
     print '<input type="hidden" name="action" value="setModuleOptions">';
     if ($type=='textarea') {
-		print '<textarea ' . $metascompil . '  >' . dol_htmlentities($conf->global->{$confkey}) . '</textarea>';
+        print '<textarea '.$metascompil.'  >'.dol_htmlentities($conf->global->{$confkey}).'</textarea>';
 	}elseif($type=='input'){
         print '<input '.$metascompil.'  />';
     }
 	else{
 		// custom
 		print $type;
-	}
+    }
     print '</td></tr>';
 }

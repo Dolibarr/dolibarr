@@ -971,10 +971,16 @@ else
 			print '<input type="hidden" name="barcode_auto" value="1">';
 		print '<input type="hidden" name="backtopage" value="'.$backtopage.'">';
 
-        if ($type == 1) $title = $langs->trans("NewService");
-        else $title = $langs->trans("NewProduct");
+		if ($type == 1) {
+			$picto = 'service';
+			$title = $langs->trans("NewService");
+		}
+		else {
+			$picto = 'product';
+			$title = $langs->trans("NewProduct");
+		}
         $linkback = "";
-        print load_fiche_titre($title, $linkback, 'products');
+        print load_fiche_titre($title, $linkback, $picto);
 
         dol_fiche_head('');
 
@@ -1280,7 +1286,13 @@ else
 			// Accountancy_code_buy
 			print '<tr><td>'.$langs->trans("ProductAccountancyBuyCode").'</td>';
 			print '<td>';
-			print $formaccounting->select_account(GETPOST('accountancy_code_buy', 'alpha'), 'accountancy_code_buy', 1, null, 1, 1, '');
+            if ($type == 0)
+            {
+                $accountancy_code_buy = (GETPOST('accountancy_code_buy', 'alpha') ? (GETPOST('accountancy_code_buy', 'alpha')) : $conf->global->ACCOUNTING_PRODUCT_BUY_ACCOUNT);
+            } else {
+                $accountancy_code_buy = GETPOST('accountancy_code_buy', 'alpha');
+            }
+			print $formaccounting->select_account($accountancy_code_buy, 'accountancy_code_buy', 1, null, 1, 1, '');
 			print '</td></tr>';
 
 			// Accountancy_code_buy_intra

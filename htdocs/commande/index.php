@@ -115,11 +115,11 @@ if ($resql)
         {
             //if ($row[1]!=-1 && ($row[1]!=3 || $row[2]!=1))
             {
-                if (! isset($vals[$row[1]])) $vals[$row[1]]=0;
-                $vals[$row[1]]+=$row[0];
-                $totalinprocess+=$row[0];
+                if (!isset($vals[$row[1]])) $vals[$row[1]] = 0;
+                $vals[$row[1]] += $row[0];
+                $totalinprocess += $row[0];
             }
-            $total+=$row[0];
+            $total += $row[0];
         }
         $i++;
     }
@@ -130,7 +130,7 @@ if ($resql)
     print '<div class="div-table-responsive-no-min">';
     print '<table class="noborder nohover centpercent">';
     print '<tr class="liste_titre"><th colspan="2">'.$langs->trans("Statistics").' - '.$langs->trans("CustomersOrders").'</th></tr>'."\n";
-    $listofstatus=array(0,1,2,3,-1);
+    $listofstatus = array(0, 1, 2, 3, -1);
     foreach ($listofstatus as $status)
     {
     	$dataseries[] = array($commandestatic->LibStatut($status, 0, 1, 1), (isset($vals[$status]) ? (int) $vals[$status] : 0));

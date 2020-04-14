@@ -28,11 +28,11 @@
 // This is a standalone feature with no information from Dolibarr to show
 // and no database access to do.
 include_once 'inc.php';
-$uri=preg_replace('/^http(s?):\/\//i', '', $dolibarr_main_url_root);
-$pos = strstr($uri, '/');      // $pos contient alors url sans nom domaine
-if ($pos == '/') $pos = '';     // si $pos vaut /, on le met a ''
-if (! defined('DOL_URL_ROOT'))
-	define('DOL_URL_ROOT', $pos);	// URL racine relative
+$uri = preg_replace('/^http(s?):\/\//i', '', $dolibarr_main_url_root);
+$pos = strstr($uri, '/'); // $pos contient alors url sans nom domaine
+if ($pos == '/') $pos = ''; // si $pos vaut /, on le met a ''
+if (!defined('DOL_URL_ROOT'))
+	define('DOL_URL_ROOT', $pos); // URL racine relative
 
 $langs->loadLangs(array("other", $langs->load("help")));
 
@@ -47,17 +47,17 @@ print $langs->trans("HelpCenterDesc2")."<br>\n";
 
 print '<br>';
 
-$homeurl=DOL_URL_ROOT.'/';
-if (GETPOST('dol_hide_toptmenu'))  $homeurl.=(strpos($homeurl, '?')===false?'?':'&').'dol_hide_toptmenu=1';
-if (GETPOST('dol_hide_leftmenu'))  $homeurl.=(strpos($homeurl, '?')===false?'?':'&').'dol_hide_leftmenu=1';
-if (GETPOST('dol_no_mouse_hover')) $homeurl.=(strpos($homeurl, '?')===false?'?':'&').'dol_no_mouse_hover=1';
-if (GETPOST('dol_use_jmobile'))    $homeurl.=(strpos($homeurl, '?')===false?'?':'&').'dol_use_jmobile=1';
+$homeurl = DOL_URL_ROOT.'/';
+if (GETPOST('dol_hide_toptmenu'))  $homeurl .= (strpos($homeurl, '?') === false ? '?' : '&').'dol_hide_toptmenu=1';
+if (GETPOST('dol_hide_leftmenu'))  $homeurl .= (strpos($homeurl, '?') === false ? '?' : '&').'dol_hide_leftmenu=1';
+if (GETPOST('dol_no_mouse_hover')) $homeurl .= (strpos($homeurl, '?') === false ? '?' : '&').'dol_no_mouse_hover=1';
+if (GETPOST('dol_use_jmobile'))    $homeurl .= (strpos($homeurl, '?') === false ? '?' : '&').'dol_use_jmobile=1';
 print $langs->trans("ToGoBackToDolibarr", $homeurl);
 
 print '<br><br>';
 
-$style1='color: #333344; font-size: 16px; font-weight: bold';
-$style2='color: #5D4455; font-weight: bold;';
+$style1 = 'color: #333344; font-size: 16px; font-weight: bold';
+$style2 = 'color: #5D4455; font-weight: bold;';
 
 print "\n";
 print '<div style="width: 100%; text-align: center"><div class="inline-block blocksupport">';
@@ -84,17 +84,17 @@ print '<td align="center" valign="middle">';
 
 print '<table class="nocellnopadd">';
 print '<tr><td align="center">';
-$urlwiki='https://wiki.dolibarr.org';
-if (preg_match('/fr/i', $langs->defaultlang)) $urlwiki='https://wiki.dolibarr.org/index.php/Accueil';
-if (preg_match('/es/i', $langs->defaultlang)) $urlwiki='https://wiki.dolibarr.org/index.php/Portada';
+$urlwiki = 'https://wiki.dolibarr.org';
+if (preg_match('/fr/i', $langs->defaultlang)) $urlwiki = 'https://wiki.dolibarr.org/index.php/Accueil';
+if (preg_match('/es/i', $langs->defaultlang)) $urlwiki = 'https://wiki.dolibarr.org/index.php/Portada';
 print '<br>'.$langs->trans("ForDocumentationSeeWiki", $urlwiki, $urlwiki);
 print '<br>';
-$urlforum='https://www.dolibarr.org/forum/';
-$urlforumlocal='https://www.dolibarr.org/forum/';
-if (preg_match('/fr/i', $langs->defaultlang)) $urlforumlocal='https://www.dolibarr.fr/forum/';
-if (preg_match('/es/i', $langs->defaultlang)) $urlforumlocal='https://www.dolibarr.es/foro/';
-if (preg_match('/it/i', $langs->defaultlang)) $urlforumlocal='http://www.dolibarr.it/forum/';
-if (preg_match('/gr/i', $langs->defaultlang)) $urlforumlocal='https://www.dolibarr.gr/forum/';
+$urlforum = 'https://www.dolibarr.org/forum/';
+$urlforumlocal = 'https://www.dolibarr.org/forum/';
+if (preg_match('/fr/i', $langs->defaultlang)) $urlforumlocal = 'https://www.dolibarr.fr/forum/';
+if (preg_match('/es/i', $langs->defaultlang)) $urlforumlocal = 'https://www.dolibarr.es/foro/';
+if (preg_match('/it/i', $langs->defaultlang)) $urlforumlocal = 'http://www.dolibarr.it/forum/';
+if (preg_match('/gr/i', $langs->defaultlang)) $urlforumlocal = 'https://www.dolibarr.gr/forum/';
 print '<br>'.$langs->trans("ForAnswersSeeForum", $urlforumlocal, $urlforumlocal).'<br>';
 if ($urlforumlocal != $urlforum) print '<b><a href="'.$urlforum.'">'.$urlforum.'</a></b>';
 print '</td></tr></table>';
@@ -121,7 +121,7 @@ print '</td></tr></table>';
 
 print '</td>';
 print '</tr><tr>';
-$urlwiki='https://partners.dolibarr.org';
+$urlwiki = 'https://partners.dolibarr.org';
 print '<td align="center" valign="top">';
 print '<table class="nocellnopadd">';
 print '<tr><td align="center">';
@@ -155,7 +155,7 @@ print '</td></tr></table>';
 
 print '</td>';
 print '</tr><tr>';
-$urlwiki='https://partners.dolibarr.org';
+$urlwiki = 'https://partners.dolibarr.org';
 print '<td align="center" valign="top">';
 print '<table class="nocellnopadd">';
 print '<tr><td align="center">';

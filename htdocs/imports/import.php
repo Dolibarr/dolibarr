@@ -542,7 +542,7 @@ if ($step == 3 && $datatoimport)
 	dol_fiche_end();
 
 
-	if ($format == 'xlsx' && ! class_exists('XMLWriter')) {
+	if ($format == 'xlsx' && !class_exists('XMLWriter')) {
 		$langs->load("install");
 		print info_admin($langs->trans("ErrorPHPDoesNotSupport", 'php-xml'), 0, 0, 1, 'error');
 	}

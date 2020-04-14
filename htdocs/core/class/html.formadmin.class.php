@@ -69,36 +69,36 @@ class FormAdmin
 
 		if (!empty($conf->global->MAIN_DEFAULT_LANGUAGE_FILTER)) $filter[$conf->global->MAIN_DEFAULT_LANGUAGE_FILTER] = 1;
 
-		$langs_available=$langs->get_available_languages(DOL_DOCUMENT_ROOT, 12, 0, $mainlangonly);
+		$langs_available = $langs->get_available_languages(DOL_DOCUMENT_ROOT, 12, 0, $mainlangonly);
 
-		$out='';
+		$out = '';
 
-		$out.= '<select '.($multiselect ? 'multiple="multiple" ' : '').'class="flat'.($morecss?' '.$morecss:'').'" id="'.$htmlname.'" name="'.$htmlname.($multiselect?'[]':'').'"'.($disabled?' disabled':'').'>';
-		if ($showempty && ! $multiselect)
+		$out .= '<select '.($multiselect ? 'multiple="multiple" ' : '').'class="flat'.($morecss ? ' '.$morecss : '').'" id="'.$htmlname.'" name="'.$htmlname.($multiselect ? '[]' : '').'"'.($disabled ? ' disabled' : '').'>';
+		if ($showempty && !$multiselect)
 		{
-			$out.= '<option value="0"';
-			if ($selected == '') $out.= ' selected';
-			$out.= '>';
-			if ($showempty != '1') $out.=$showempty;
-			else $out.='&nbsp;';
-			$out.='</option>';
+			$out .= '<option value="0"';
+			if ($selected == '') $out .= ' selected';
+			$out .= '>';
+			if ($showempty != '1') $out .= $showempty;
+			else $out .= '&nbsp;';
+			$out .= '</option>';
 		}
 		if ($showauto)
 		{
-			$out.= '<option value="auto"';
-			if ($selected == 'auto') $out.= ' selected';
-			$out.= '>'.$langs->trans("AutoDetectLang").'</option>';
+			$out .= '<option value="auto"';
+			if ($selected == 'auto') $out .= ' selected';
+			$out .= '>'.$langs->trans("AutoDetectLang").'</option>';
 		}
 
 		asort($langs_available);
 
 		foreach ($langs_available as $key => $value)
 		{
-			$valuetoshow=$value;
-			if ($showcode == 1) $valuetoshow=$key.' - '.$value;
+			$valuetoshow = $value;
+			if ($showcode == 1) $valuetoshow = $key.' - '.$value;
 			if ($showcode == 2) {
-				if ($mainlangonly) $valuetoshow=$value.' ('.preg_replace('/[_-].*$/', '', $key).')';
-				else $valuetoshow=$value.' ('.$key.')';
+				if ($mainlangonly) $valuetoshow = $value.' ('.preg_replace('/[_-].*$/', '', $key).')';
+				else $valuetoshow = $value.' ('.$key.')';
 			}
 
 			$keytouse = $key;
@@ -107,26 +107,26 @@ class FormAdmin
 			if ($filter && is_array($filter) && array_key_exists($keytouse, $filter)) {
 				continue;
 			}
-			if ($onlykeys && is_array($onlykeys) && ! array_key_exists($keytouse, $onlykeys)) {
+			if ($onlykeys && is_array($onlykeys) && !array_key_exists($keytouse, $onlykeys)) {
 				continue;
 			}
 
 			if ($selected == $keytouse)
 			{
-				$out.= '<option value="'.$keytouse.'" selected>'.$valuetoshow.'</option>';
+				$out .= '<option value="'.$keytouse.'" selected>'.$valuetoshow.'</option>';
 			}
 			else
 			{
-				$out.= '<option value="'.$keytouse.'">'.$valuetoshow.'</option>';
+				$out .= '<option value="'.$keytouse.'">'.$valuetoshow.'</option>';
 			}
 		}
-		$out.= '</select>';
+		$out .= '</select>';
 
 		// Make select dynamic
-		if (! $forcecombo)
+		if (!$forcecombo)
 		{
-			include_once DOL_DOCUMENT_ROOT . '/core/lib/ajax.lib.php';
-			$out.= ajax_combobox($htmlname);
+			include_once DOL_DOCUMENT_ROOT.'/core/lib/ajax.lib.php';
+			$out .= ajax_combobox($htmlname);
 		}
 
 		return $out;

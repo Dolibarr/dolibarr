@@ -1551,7 +1551,6 @@ function dol_add_file_process($upload_dir, $allowoverwrite = 0, $donotupdatesess
 				{
 					$destfull = $upload_dir."/".preg_replace('/__file__/', $TFile['name'][$i], $savingdocmask);
 					$destfile = preg_replace('/__file__/', $TFile['name'][$i], $savingdocmask);
-
 				}
 
 				// dol_sanitizeFileName the file name and lowercase extension

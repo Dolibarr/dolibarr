@@ -183,7 +183,7 @@ class Ticket extends CommonObject
     	'ref' => array('type'=>'varchar(128)', 'label'=>'Ref', 'visible'=>1, 'enabled'=>1, 'position'=>10, 'notnull'=>1, 'index'=>1, 'searchall'=>1, 'comment'=>"Reference of object", 'css'=>''),
 	    'track_id' => array('type'=>'varchar(255)', 'label'=>'TicketTrackId', 'visible'=>-2, 'enabled'=>1, 'position'=>11, 'notnull'=>-1, 'searchall'=>1, 'help'=>"Help text"),
 	    'fk_user_create' => array('type'=>'integer:User:user/class/user.class.php', 'label'=>'Author', 'visible'=>1, 'enabled'=>1, 'position'=>15, 'notnull'=>1, 'css'=>'tdoverflowmax150 maxwidth150onsmartphone'),
-    	'origin_email' => array('type'=>'mail', 'label'=>'OriginEmail', 'visible'=>-2, 'enabled'=>1, 'position'=>16, 'notnull'=>1, 'index'=>1, 'searchall'=>1, 'comment'=>"Reference of object"),
+    	'origin_email' => array('type'=>'mail', 'label'=>'OriginEmail', 'visible'=>-2, 'enabled'=>1, 'position'=>16, 'notnull'=>1, 'index'=>1, 'searchall'=>1, 'comment'=>"Reference of object", 'css'=>'tdoverflowmax150'),
     	'subject' => array('type'=>'varchar(255)', 'label'=>'Subject', 'visible'=>1, 'enabled'=>1, 'position'=>18, 'notnull'=>-1, 'searchall'=>1, 'help'=>"", 'css'=>'maxwidth75'),
     	'type_code' => array('type'=>'varchar(32)', 'label'=>'Type', 'visible'=>1, 'enabled'=>1, 'position'=>20, 'notnull'=>-1, 'searchall'=>1, 'help'=>"", 'css'=>'maxwidth100'),
     	'category_code' => array('type'=>'varchar(32)', 'label'=>'TicketGroup', 'visible'=>-1, 'enabled'=>1, 'position'=>21, 'notnull'=>-1, 'help'=>"", 'css'=>'maxwidth100'),
@@ -1315,7 +1315,7 @@ class Ticket extends CommonObject
         $result = '';
         $companylink = '';
 
-        $label = '<u>'.$langs->trans("ShowTicket").'</u>';
+        $label = '<u>'.$langs->trans("Ticket").'</u>';
         $label .= '<br>';
         $label .= '<b>'.$langs->trans('Ref').':</b> '.$this->ref.'<br>';
         $label .= '<b>'.$langs->trans('TicketTrackId').':</b> '.$this->track_id.'<br>';
@@ -2780,6 +2780,122 @@ class Ticket extends CommonObject
             $langs->load("other");
             setEventMessages($langs->trans('ErrorMailRecipientIsEmptyForSendTicketMessage'), null, 'warnings');
         }
+    }
+
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
+    /**
+     *      Load indicators for dashboard (this->nbtodo and this->nbtodolate)
+     *
+     *      @param          User	$user   Object user
+     *      @param          int		$mode   "opened" for askprice to close, "signed" for proposal to invoice
+     *      @return         int             <0 if KO, >0 if OK
+     */
+    public function load_board($user, $mode)
+    {
+    	// phpcs:enable
+    	global $conf, $user, $langs;
+
+    	$now = dol_now();
+
+    	$this->nbtodo = $this->nbtodolate = 0;
+    	$clause = " WHERE";
+
+    	$sql = "SELECT p.rowid, p.ref, p.datec as datec";
+    	$sql .= " FROM ".MAIN_DB_PREFIX."ticket as p";
+    	if (!$user->rights->societe->client->voir && !$user->socid)
+    	{
+    		$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."societe_commerciaux as sc ON p.fk_soc = sc.fk_soc";
+    		$sql .= " WHERE sc.fk_user = ".$user->id;
+    		$clause = " AND";
+    	}
+    	$sql .= $clause." p.entity IN (".getEntity('ticket').")";
+    	if ($mode == 'opened') $sql .= " AND p.fk_statut in (".Ticket::STATUS_CLOSED.", ".Ticket::STATUS_CANCELED.")";
+    	if ($user->socid) $sql .= " AND p.fk_soc = ".$user->socid;
+
+    	$resql = $this->db->query($sql);
+    	if ($resql)
+    	{
+    		$label = $labelShort = '';
+    		$status = '';
+    		if ($mode == 'opened') {
+    			$status = 'openall';
+    			//$delay_warning = $conf->ticket->warning_delay;
+    			$delay_warning = 0;
+    			$label = $langs->trans("MenuListNonClosed");
+    			$labelShort = $langs->trans("MenuListNonClosed");
+    		}
+
+    		$response = new WorkboardResponse();
+    		//$response->warning_delay = $delay_warning / 60 / 60 / 24;
+    		$response->label = $label;
+    		$response->labelShort = $labelShort;
+    		$response->url = DOL_URL_ROOT.'/ticket/list.php?search_fk_statut[]='.$status;
+    		$response->img = img_object('', "ticket");
+
+    		// This assignment in condition is not a bug. It allows walking the results.
+    		while ($obj = $this->db->fetch_object($resql))
+    		{
+    			$response->nbtodo++;
+    			if ($mode == 'opened')
+    			{
+    				$datelimit = $this->db->jdate($obj->datefin);
+    				if ($datelimit < ($now - $delay_warning))
+    				{
+    					//$response->nbtodolate++;
+    				}
+    			}
+    		}
+    		return $response;
+    	}
+    	else
+    	{
+    		$this->error = $this->db->lasterror();
+    		return -1;
+    	}
+    }
+
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
+    /**
+     *      Load indicator this->nb of global stats widget
+     *
+     *      @return     int         <0 if ko, >0 if ok
+     */
+    public function load_state_board()
+    {
+    	// phpcs:enable
+    	global $conf, $user;
+
+    	$this->nb = array();
+    	$clause = "WHERE";
+
+    	$sql = "SELECT count(p.rowid) as nb";
+    	$sql .= " FROM ".MAIN_DB_PREFIX."ticket as p";
+    	$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s ON p.fk_soc = s.rowid";
+    	if (!$user->rights->societe->client->voir && !$user->socid)
+    	{
+    		$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."societe_commerciaux as sc ON s.rowid = sc.fk_soc";
+    		$sql .= " WHERE sc.fk_user = ".$user->id;
+    		$clause = "AND";
+    	}
+    	$sql .= " ".$clause." p.entity IN (".getEntity('ticket').")";
+
+    	$resql = $this->db->query($sql);
+    	if ($resql)
+    	{
+    		// This assignment in condition is not a bug. It allows walking the results.
+    		while ($obj = $this->db->fetch_object($resql))
+    		{
+    			$this->nb["ticket"] = $obj->nb;
+    		}
+    		$this->db->free($resql);
+    		return 1;
+    	}
+    	else
+    	{
+    		dol_print_error($this->db);
+    		$this->error = $this->db->lasterror();
+    		return -1;
+    	}
     }
 }
 

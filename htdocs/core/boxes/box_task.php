@@ -84,7 +84,7 @@ class box_task extends ModeleBoxes
         $projectstatic = new Project($this->db);
 		$taskstatic = new Task($this->db);
 		$form = new Form($this->db);
-        $cookie_name = 'boxfilter_task';
+        $cookie_name = 'DOLUSERCOOKIE_boxfilter_task';
         $boxcontent = '';
         $socid = $user->socid;
 
@@ -124,10 +124,10 @@ class box_task extends ModeleBoxes
             $boxcontent .= '<input type="hidden" name="token" value="'.newToken().'">'."\n";
             $selectArray = array('all' => $langs->trans("NoFilter"), 'im_task_contact' => $langs->trans("WhichIamLinkedTo"), 'im_project_contact' => $langs->trans("WhichIamLinkedToProject"));
             $boxcontent .= $form->selectArray($cookie_name, $selectArray, $filterValue);
-            $boxcontent .= '<button type="submit" class="button">'.$langs->trans("Refresh").'</button>';
+            $boxcontent .= '<button type="submit" class="button buttongen">'.$langs->trans("Refresh").'</button>';
             $boxcontent .= '</form>'."\n";
             $boxcontent .= '</div>'."\n";
-            if (! empty($conf->use_javascript_ajax)) {
+            if (!empty($conf->use_javascript_ajax)) {
 	            $boxcontent .= '<script type="text/javascript" language="javascript">
 						jQuery(document).ready(function() {
 							jQuery("#idsubimg'.$this->boxcode.'").click(function() {

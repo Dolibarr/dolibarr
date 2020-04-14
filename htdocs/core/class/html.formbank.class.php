@@ -37,7 +37,7 @@ class FormBank
     /**
 	 * @var string Error code (or message)
 	 */
-	public $error='';
+	public $error = '';
 
 
     /**

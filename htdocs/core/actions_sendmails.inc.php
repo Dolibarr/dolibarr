@@ -455,16 +455,19 @@ if (($action == 'send' || $action == 'relance') && !$_POST['addfile'] && !$_POST
 						$object->email_subject = $subject;
 						$object->email_msgid = $mailfile->msgid;
 
-						// Call of triggers (you should have set $triggersendname to execute trigger. $trigger_name is deprcated)
+						// Call of triggers (you should have set $triggersendname to execute trigger. $trigger_name is deprecated)
 						if (!empty($triggersendname) || !empty($trigger_name))
 						{
-    						include_once DOL_DOCUMENT_ROOT.'/core/class/interfaces.class.php';
-    						$interface = new Interfaces($db);
-    						$result = $interface->run_triggers(empty($triggersendname) ? $trigger_name : $triggersendname, $object, $user, $langs, $conf);
-							if ($result < 0) {
-    							setEventMessages($interface->error, $interface->errors, 'errors');
+							// Call trigger
+							$result = $object->call_trigger(empty($triggersendname) ? $trigger_name : $triggersendname, $user);
+							if ($result < 0) $error++;
+							// End call triggers
+
+							if ($error) {
+								setEventMessages($object->error, $object->errors, 'errors');
     						}
 						}
+						// End call of triggers
 					}
 
 					// Redirect here
