@@ -448,6 +448,7 @@ class modSociete extends DolibarrModules
             's.fk_multicurrency' => 'MulticurrencyUsed',
             's.multicurrency_code' => 'MulticurrencyCurrency'
         );
+        if (! empty($conf->global->PRODUIT_MULTIPRICES)) $this->import_fields_array[$r]['s.price_level']='PriceLevel';
         // Add extra fields
         $sql = "SELECT name, label, fieldrequired FROM ".MAIN_DB_PREFIX."extrafields WHERE elementtype = 'societe' AND entity IN (0, ".$conf->entity.")";
         $resql = $this->db->query($sql);
