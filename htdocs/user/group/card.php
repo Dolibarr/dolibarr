@@ -90,7 +90,6 @@ $reshook = $hookmanager->executeHooks('doActions', $parameters, $object, $action
 if ($reshook < 0) setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
 
 if (empty($reshook)) {
-
 	$backurlforlist = DOL_URL_ROOT.'/user/group/list.php';
 
 	if (empty($backtopage) || ($cancel && empty($id))) {
