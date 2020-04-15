@@ -133,8 +133,8 @@ class Thirdparties extends DolibarrApi
     	}
 		if ((!DolibarrApiAccess::$user->rights->societe->client->voir && !$socids) || $search_sale > 0) $sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc"; // We need this table joined to the select in order to filter by sale
 		$sql .= ", ".MAIN_DB_PREFIX."c_stcomm as st";
-		$sql .= " WHERE t.fk_stcomm = st.id";
-		$sql .= ' AND t.entity IN ('.getEntity('societe').')';
+		$sql .= " WHERE t.entity IN ('.getEntity('societe').')";
+		$sql .= " AND t.fk_stcomm = st.id";
 
 		if ($mode == 1) $sql .= " AND t.client IN (1, 3)";
 		if ($mode == 2) $sql .= " AND t.client IN (2, 3)";
@@ -143,9 +143,9 @@ class Thirdparties extends DolibarrApi
 
     	// Select thirdparties of given category
     	if ($category > 0) {
-        if (!empty($mode) && $mode != 4) { $sql .= " AND c.fk_categorie = ".$db->escape($category)." AND c.fk_soc = t.rowid "; }
-        elseif (!empty($mode) && $mode == 4) { $sql .= " AND cc.fk_categorie = ".$db->escape($category)." AND cc.fk_soc = t.rowid "; }
-        else { $sql .= " AND ((c.fk_categorie = ".$db->escape($category)." AND c.fk_soc = t.rowid) OR (cc.fk_categorie = ".$db->escape($category)." AND cc.fk_soc = t.rowid)) "; }
+        if (!empty($mode) && $mode != 4) { $sql .= " AND c.fk_categorie = ".$db->escape($category)." AND c.fk_soc = t.rowid"; }
+        elseif (!empty($mode) && $mode == 4) { $sql .= " AND cc.fk_categorie = ".$db->escape($category)." AND cc.fk_soc = t.rowid"; }
+        else { $sql .= " AND ((c.fk_categorie = ".$db->escape($category)." AND c.fk_soc = t.rowid) OR (cc.fk_categorie = ".$db->escape($category)." AND cc.fk_soc = t.rowid))"; }
     	}
 
 		if ((!DolibarrApiAccess::$user->rights->societe->client->voir && !$socids) || $search_sale > 0) $sql .= " AND t.rowid = sc.fk_soc";
