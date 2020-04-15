@@ -404,7 +404,7 @@ class UserGroup extends CommonObject
 				$this->context = array('audit'=>$langs->trans("PermissionsAdd").($rid ? ' (id='.$rid.')' : ''));
 
 			    // Call trigger
-			    $result = $this->call_trigger('GROUP_MODIFY', $user);
+			    $result = $this->call_trigger('USERGROUP_MODIFY', $user);
 			    if ($result < 0) { $error++; }
 			    // End call triggers
 			}
@@ -528,7 +528,7 @@ class UserGroup extends CommonObject
 				$this->context = array('audit'=>$langs->trans("PermissionsDelete").($rid ? ' (id='.$rid.')' : ''));
 
 			    // Call trigger
-			    $result = $this->call_trigger('GROUP_MODIFY', $user);
+			    $result = $this->call_trigger('USERGROUP_MODIFY', $user);
 			    if ($result < 0) { $error++; }
 			    // End call triggers
 			}
