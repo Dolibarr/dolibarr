@@ -3389,16 +3389,16 @@ if ($action == 'create')
 
 	if($conf->global->INVOICE_USE_RETAINED_WARRANTY){
 	        $rwStyle = 'display:none;';
-			if(in_array(GETPOST('type', 'int'), $retainedWarrantyInvoiceAvailableType)){
-	            $rwStyle = '';
-	        }
+		if(in_array(GETPOST('type', 'int'), $retainedWarrantyInvoiceAvailableType)){
+			$rwStyle = '';
+		}
 
 	        $retained_warranty = GETPOST('retained_warranty', 'int');
-	        if(empty($retained_warranty)){
-                if(!empty($objectsrc->retained_warranty)){ // use previous situation value
-                    $retained_warranty = $objectsrc->retained_warranty;
-                }
-            }
+		if(empty($retained_warranty)){
+			if(!empty($objectsrc->retained_warranty)){ // use previous situation value
+				$retained_warranty = $objectsrc->retained_warranty;
+			}
+		}
 			$retained_warranty_js_default = !empty($retained_warranty)?$retained_warranty:$conf->global->INVOICE_SITUATION_DEFAULT_RETAINED_WARRANTY_PERCENT;
 
 	        print '<tr class="retained-warranty-line" style="'.$rwStyle.'" ><td class="nowrap">'.$langs->trans('RetainedWarranty').'</td><td colspan="2">';
@@ -3407,14 +3407,14 @@ if ($action == 'create')
 	        // Retained warranty payment term
 	        print '<tr class="retained-warranty-line" style="'.$rwStyle.'" ><td class="nowrap">'.$langs->trans('PaymentConditionsShortRetainedWarranty').'</td><td colspan="2">';
 	        $retained_warranty_fk_cond_reglement = GETPOST('retained_warranty_fk_cond_reglement', 'int');
-	        if(empty($retained_warranty_fk_cond_reglement)){
-                $retained_warranty_fk_cond_reglement = $conf->global->INVOICE_SITUATION_DEFAULT_RETAINED_WARRANTY_COND_ID;
-                if(!empty($objectsrc->retained_warranty_fk_cond_reglement)){ // use previous situation value
-                    $retained_warranty_fk_cond_reglement = $objectsrc->retained_warranty_fk_cond_reglement;
-                }else{
-                    $retained_warranty_fk_cond_reglement = $conf->global->INVOICE_SITUATION_DEFAULT_RETAINED_WARRANTY_COND_ID;
-                }
-            }
+		if(empty($retained_warranty_fk_cond_reglement)){
+			$retained_warranty_fk_cond_reglement = $conf->global->INVOICE_SITUATION_DEFAULT_RETAINED_WARRANTY_COND_ID;
+			if(!empty($objectsrc->retained_warranty_fk_cond_reglement)){ // use previous situation value
+				$retained_warranty_fk_cond_reglement = $objectsrc->retained_warranty_fk_cond_reglement;
+			}else{
+				$retained_warranty_fk_cond_reglement = $conf->global->INVOICE_SITUATION_DEFAULT_RETAINED_WARRANTY_COND_ID;
+			}
+		}
 	        $form->select_conditions_paiements($retained_warranty_fk_cond_reglement, 'retained_warranty_fk_cond_reglement', -1, 1);
 	        print '</td></tr>';
 
