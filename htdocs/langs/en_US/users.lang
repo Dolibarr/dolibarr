@@ -113,3 +113,5 @@ CantDisableYourself=You can't disable your own user record
 ForceUserExpenseValidator=Force expense report validator
 ForceUserHolidayValidator=Force leave request validator
 ValidatorIsSupervisorByDefault=By default, the validator is the supervisor of the user. Keep empty to keep this behaviour.
+UserPersonalEmail=Personal email
+UserPersonalMobile=Personal mobile phone
