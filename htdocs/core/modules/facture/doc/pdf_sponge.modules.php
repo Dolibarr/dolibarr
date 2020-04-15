@@ -391,7 +391,7 @@ class pdf_sponge extends ModelePDFFactures
 	            	);
 	            	$pdf->setSignature($cert, $cert, $this->emetteur->name, '', 2, $info);
 	            }
-	            
+
 	            $pdf->SetMargins($this->marge_gauche, $this->marge_haute, $this->marge_droite); // Left, Top, Right
 
 	            // Does we have at least one line with discount $this->atleastonediscount
