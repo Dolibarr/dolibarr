@@ -73,7 +73,7 @@ $offset = $limit * $page;
 $pageprev = $page - 1;
 $pagenext = $page + 1;
 
-$viewstatut = GETPOST('viewstatut');
+$search_status = GETPOST('search_status');
 
 $diroutputmassaction = $conf->expedition->dir_output.'/sending/temp/massgeneration/'.$user->id;
 
@@ -156,7 +156,7 @@ if (GETPOST('button_removefilter_x', 'alpha') || GETPOST('button_removefilter.x'
 	$search_country = '';
 	$search_type_thirdparty = '';
 	$search_billed = '';
-	$viewstatut = '';
+	$search_status = '';
     $toselect = '';
 	$search_array_options = array();
 }
@@ -221,8 +221,8 @@ if ($socid)
 {
 	$sql .= " AND e.fk_soc = ".$socid;
 }
-if ($viewstatut <> '' && $viewstatut >= 0) {
-	$sql .= " AND e.fk_statut = ".$viewstatut;
+if ($search_status <> '' && $search_status >= 0) {
+	$sql .= " AND e.fk_statut = ".$search_status;
 }
 if ($search_ref_customer != '') $sql .= natural_search('e.ref_customer', $search_ref_customer);
 if ($search_billed != '' && $search_billed >= 0) $sql .= ' AND e.billed = '.$search_billed;
@@ -280,7 +280,7 @@ if ($resql)
 	if ($search_company)   $param .= "&amp;search_company=".urlencode($search_company);
 	if ($search_town)      $param .= '&search_town='.urlencode($search_town);
 	if ($search_zip)       $param .= '&search_zip='.urlencode($search_zip);
-	if ($viewstatut != '') $param .= '&viewstatut='.urlencode($viewstatut);
+	if ($search_status != '') $param .= '&search_status='.urlencode($search_status);
 	if ($optioncss != '')  $param .= '&amp;optioncss='.urlencode($optioncss);
 	// Add $param from extra fields
 	include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_param.tpl.php';
@@ -428,7 +428,7 @@ if ($resql)
 	if (!empty($arrayfields['e.fk_statut']['checked']))
 	{
 		print '<td class="liste_titre maxwidthonsmartphone right">';
-		print $form->selectarray('viewstatut', array('0'=>$langs->trans('StatusSendingDraftShort'), '1'=>$langs->trans('StatusSendingValidatedShort'), '2'=>$langs->trans('StatusSendingProcessedShort')), $viewstatut, 1);
+		print $form->selectarray('search_status', array('0'=>$langs->trans('StatusSendingDraftShort'), '1'=>$langs->trans('StatusSendingValidatedShort'), '2'=>$langs->trans('StatusSendingProcessedShort')), $search_status, 1);
 		print '</td>';
 	}
 	// Status billed

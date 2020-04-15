@@ -58,7 +58,7 @@ $socid = GETPOST('socid', 'int');
 $selected = GETPOST('orders_to_invoice');
 $sortfield = GETPOST("sortfield", 'alpha');
 $sortorder = GETPOST("sortorder", 'alpha');
-$viewstatut = GETPOST('viewstatut');
+$search_status = GETPOST('search_status');
 
 if (!$sortfield)
 	$sortfield = 'c.rowid';
