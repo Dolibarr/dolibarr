@@ -128,8 +128,8 @@ class Thirdparties extends DolibarrApi
 		if ((!DolibarrApiAccess::$user->rights->societe->client->voir && !$socids) || $search_sale > 0) $sql .= ", sc.fk_soc, sc.fk_user"; // We need these fields in order to filter by sale (including the case where the user can only see his prospects)
 		$sql .= " FROM ".MAIN_DB_PREFIX."societe as t";
     	if ($category > 0) {
-        if ($mode != 4) $sql .= ", ".MAIN_DB_PREFIX."categorie_societe as c";
-        if (!in_array($mode, array(1,2,3))) $sql .= ", ".MAIN_DB_PREFIX."categorie_fournisseur as cc";
+			if ($mode != 4) $sql .= ", ".MAIN_DB_PREFIX."categorie_societe as c";
+			if (!in_array($mode, array(1,2,3))) $sql .= ", ".MAIN_DB_PREFIX."categorie_fournisseur as cc";
     	}
 		if ((!DolibarrApiAccess::$user->rights->societe->client->voir && !$socids) || $search_sale > 0) $sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc"; // We need this table joined to the select in order to filter by sale
 		$sql .= ", ".MAIN_DB_PREFIX."c_stcomm as st";
@@ -143,9 +143,9 @@ class Thirdparties extends DolibarrApi
 
     	// Select thirdparties of given category
     	if ($category > 0) {
-        if (!empty($mode) && $mode != 4) { $sql .= " AND c.fk_categorie = ".$db->escape($category)." AND c.fk_soc = t.rowid"; }
-        elseif (!empty($mode) && $mode == 4) { $sql .= " AND cc.fk_categorie = ".$db->escape($category)." AND cc.fk_soc = t.rowid"; }
-        else { $sql .= " AND ((c.fk_categorie = ".$db->escape($category)." AND c.fk_soc = t.rowid) OR (cc.fk_categorie = ".$db->escape($category)." AND cc.fk_soc = t.rowid))"; }
+			if (!empty($mode) && $mode != 4) { $sql .= " AND c.fk_categorie = ".$db->escape($category)." AND c.fk_soc = t.rowid"; }
+			elseif (!empty($mode) && $mode == 4) { $sql .= " AND cc.fk_categorie = ".$db->escape($category)." AND cc.fk_soc = t.rowid"; }
+			else { $sql .= " AND ((c.fk_categorie = ".$db->escape($category)." AND c.fk_soc = t.rowid) OR (cc.fk_categorie = ".$db->escape($category)." AND cc.fk_soc = t.rowid))"; }
     	}
 
 		if ((!DolibarrApiAccess::$user->rights->societe->client->voir && !$socids) || $search_sale > 0) $sql .= " AND t.rowid = sc.fk_soc";
