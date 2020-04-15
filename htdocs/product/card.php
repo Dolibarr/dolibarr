@@ -971,10 +971,16 @@ else
 			print '<input type="hidden" name="barcode_auto" value="1">';
 		print '<input type="hidden" name="backtopage" value="'.$backtopage.'">';
 
-        if ($type == 1) $title = $langs->trans("NewService");
-        else $title = $langs->trans("NewProduct");
+		if ($type == 1) {
+			$picto = 'service';
+			$title = $langs->trans("NewService");
+		}
+		else {
+			$picto = 'product';
+			$title = $langs->trans("NewProduct");
+		}
         $linkback = "";
-        print load_fiche_titre($title, $linkback, 'products');
+        print load_fiche_titre($title, $linkback, $picto);
 
         dol_fiche_head('');
 

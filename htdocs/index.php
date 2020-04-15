@@ -508,7 +508,7 @@ if (empty($conf->global->MAIN_DISABLE_GLOBAL_WORKBOARD)) {
         $dashboardlines = array_merge($dashboardlines, $hookmanager->resArray);
     }
 
-    /* grouping dashboard stats */
+    /* Open object dashboard */
     $dashboardgroup = array(
         'action' =>
             array(
@@ -573,7 +573,7 @@ if (empty($conf->global->MAIN_DISABLE_GLOBAL_WORKBOARD)) {
     	'ticket' =>
 	    	array(
 	    		'groupName' => 'Tickets',
-	    		'globalStatsKey' => 'OpenTickets',
+	    		'globalStatsKey' => 'ticket',
 	    		'stats' =>
 	    			array('ticket_opened'),
 	    	),
@@ -718,7 +718,6 @@ if (empty($conf->global->MAIN_DISABLE_GLOBAL_WORKBOARD)) {
                         }
                     }
                 }
-
 
                 $openedDashBoard .= '<div class="box-flex-item">'."\n";
                 $openedDashBoard .= '	<div class="info-box '.$openedDashBoardSize.'">'."\n";

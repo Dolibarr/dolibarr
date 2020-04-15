@@ -90,6 +90,7 @@ if (GETPOST('removedfile', 'alpha') && !GETPOST('add', 'alpha')) {
     dol_remove_file_process($_POST['removedfile'], 0, 0);
     $action = 'create_ticket';
 }
+
 if ($action == 'create_ticket' && GETPOST('add', 'alpha')) {
     $error = 0;
     $origin_email = GETPOST('email', 'alpha');
@@ -241,11 +242,8 @@ if ($action == 'create_ticket' && GETPOST('add', 'alpha')) {
                     $conf->global->MAIN_MAIL_AUTOCOPY_TO = $old_MAIN_MAIL_AUTOCOPY_TO;
                 }
 
-
                 // Send email to TICKET_NOTIFICATION_EMAIL_TO
-
                 $sendto = $conf->global->TICKET_NOTIFICATION_EMAIL_TO;
-
                 if ($sendto)
                 {
 	                $subject = '['.$conf->global->MAIN_INFO_SOCIETE_NOM.'] '.$langs->transnoentities('TicketNewEmailSubjectAdmin', $object->ref, $object->track_id);
@@ -282,7 +280,7 @@ if ($action == 'create_ticket' && GETPOST('add', 'alpha')) {
 	                $message_admin .= '<p>'.$langs->trans('Message').' : <br>'.$object->message.'</p>';
 	                $message_admin .= '<p><a href="'.dol_buildpath('/ticket/card.php', 2).'?track_id='.$object->track_id.'">'.$langs->trans('SeeThisTicketIntomanagementInterface').'</a></p>';
 
-	                $from = $conf->global->MAIN_INFO_SOCIETE_NOM.'<'.$conf->global->TICKET_NOTIFICATION_EMAIL_FROM.'>';
+	                $from = $conf->global->MAIN_INFO_SOCIETE_NOM.' <'.$conf->global->TICKET_NOTIFICATION_EMAIL_FROM.'>';
 	                $replyto = $from;
 
 	                $message_admin = dol_nl2br($message_admin);
@@ -349,7 +347,7 @@ $arrayofcss = array('/opensurvey/css/style.css', '/ticket/css/styles.css.php');
 llxHeaderTicket($langs->trans("CreateTicket"), "", 0, 0, $arrayofjs, $arrayofcss);
 
 
-print '<div style="width:60%; margin: 0 auto;" class="ticketpublicarea">';
+print '<div class="ticketpublicarea">';
 
 if ($action != "infos_success") {
     $formticket->withfromsocid = isset($socid) ? $socid : $user->socid;

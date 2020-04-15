@@ -31,7 +31,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
 
 // Load translation files required by the page
-$langs->loadLangs(array('errors', 'admin'));
+$langs->loadLangs(array('errors', 'admin', 'modulebuilder'));
 
 $mode = GETPOST('mode', 'alpha');
 $action = GETPOST('action', 'alpha');
@@ -318,10 +318,13 @@ if ($mode == 'desc')
 
     $text .= '<span class="opacitymedium">'.$langs->trans("Version").':</span> '.$version;
 
+    $moduledescriptorfile = get_class($objMod).'.class.php';
+    $text .= '<br><span class="opacitymedium">'.$langs->trans("DescriptorFile").':</span> '.$moduledescriptorfile;
+
     $textexternal = '';
     if ($objMod->isCoreOrExternalModule() == 'external')
     {
-        $textexternal .= '<br><span class="opacitymedium">'.$langs->trans("Origin").':</span> '.$langs->trans("ExternalModule", $dirofmodule);
+        $textexternal .= '<br><span class="opacitymedium">'.$langs->trans("Origin").':</span> '.$langs->trans("ExternalModule").' - '.$langs->trans("InstalledInto", $dirofmodule);
         if ($objMod->editor_name != 'dolibarr') $textexternal .= '<br><span class="opacitymedium">'.$langs->trans("Publisher").':</span> '.(empty($objMod->editor_name) ? $langs->trans("Unknown") : $objMod->editor_name);
         $editor_url = $objMod->editor_url;
         if (!preg_match('/^http/', $editor_url)) $editor_url = 'http://'.$editor_url;

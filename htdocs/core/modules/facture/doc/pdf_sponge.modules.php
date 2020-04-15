@@ -375,6 +375,23 @@ class pdf_sponge extends ModelePDFFactures
 	            $pdf->SetKeyWords($outputlangs->convToOutputCharset($object->ref)." ".$outputlangs->transnoentities("PdfInvoiceTitle")." ".$outputlangs->convToOutputCharset($object->thirdparty->name));
 	            if (!empty($conf->global->MAIN_DISABLE_PDF_COMPRESSION)) $pdf->SetCompression(false);
 
+	            // Set certificate
+	            $cert=empty($user->conf->CERTIFICATE_CRT) ? '' : $user->conf->CERTIFICATE_CRT;
+	            // If use has no certificate, we try to take the company one
+	            if (!$cert) {
+	            	$cert = empty($conf->global->CERTIFICATE_CRT) ? '' : $conf->global->CERTIFICATE_CRT;
+	            }
+	            // If a certificate is found
+	            if ($cert) {
+	            	$info = array(
+	            		'Name' => $this->emetteur->name,
+	            		'Location' => getCountry($this->emetteur->country_code, 0),
+	            		'Reason' => 'INVOICE',
+	            		'ContactInfo' => $this->emetteur->email
+	            	);
+	            	$pdf->setSignature($cert, $cert, $this->emetteur->name, '', 2, $info);
+	            }
+	            
 	            $pdf->SetMargins($this->marge_gauche, $this->marge_haute, $this->marge_droite); // Left, Top, Right
 
 	            // Does we have at least one line with discount $this->atleastonediscount
@@ -759,14 +776,13 @@ class pdf_sponge extends ModelePDFFactures
 	                $parameters = array(
 	                    'object' => $object,
 	                    'i' => $i,
-	                    'pdf' =>& $pdf,
-	                    'curY' =>& $curY,
-	                    'nexY' =>& $nexY,
+	                    'pdf' => &$pdf,
+	                    'curY' => &$curY,
+	                    'nexY' => &$nexY,
 	                    'outputlangs' => $outputlangs,
 	                    'hidedetails' => $hidedetails
 	                );
 	                $reshook = $hookmanager->executeHooks('printPDFline', $parameters, $this); // Note that $object may have been modified by hook
-
 
 
 	                $sign = 1;
@@ -1249,7 +1265,7 @@ class pdf_sponge extends ModelePDFFactures
 	 */
 	protected function drawTotalTable(&$pdf, $object, $deja_regle, $posy, $outputlangs)
 	{
-		global $conf, $mysoc;
+		global $conf, $mysoc, $hookmanager;
 
         $sign = 1;
         if ($object->type == 2 && !empty($conf->global->INVOICE_POSITIVE_CREDIT_NOTE)) $sign = -1;
@@ -1278,16 +1294,22 @@ class pdf_sponge extends ModelePDFFactures
 			$outputlangsbis->loadLangs(array("main", "dict", "companies", "bills", "products", "propal"));
 		}
 
+		// Add trigger to allow to edit $object
+		$parameters = array(
+			'object' => &$object,
+			'outputlangs' => $outputlangs,
+		);
+		$hookmanager->executeHooks('beforePercentCalculation', $parameters, $this); // Note that $object may have been modified by hook
+
 		// overall percentage of advancement
 		$percent = 0;
 		$i = 0;
 		foreach ($object->lines as $line)
 		{
-		    if (!class_exists('TSubtotal') || !TSubtotal::isModSubtotalLine($line)) {
-		        $percent += $line->situation_percent;
-		        $i++;
-		    }
+	        $percent += $line->situation_percent;
+	        $i++;
 		}
+
 		if (!empty($i)) {
 		    $avancementGlobal = $percent / $i;
 		}
@@ -1316,7 +1338,6 @@ class pdf_sponge extends ModelePDFFactures
 		    $total_a_payer_ttc = 0;
 		}
 
-		$deja_paye = 0;
 		$i = 1;
 		if (!empty($TPreviousIncoice)) {
 		    $pdf->setY($tab2_top);
@@ -1348,7 +1369,6 @@ class pdf_sponge extends ModelePDFFactures
 		        $pdf->MultiCell($largcol2, $tab2_hl, $displayAmount, 0, 'R', 1);
 
 		        $i++;
-		        $deja_paye += $fac->total_ht;
 		        $posy += $tab2_hl;
 
 		        $pdf->setY($posy);
@@ -1675,7 +1695,7 @@ class pdf_sponge extends ModelePDFFactures
 				    $pdf->SetXY($col1x, $tab2_top + $tab2_hl * $index);
 				    $pdf->MultiCell($col2x-$col1x, $tab2_hl, $outputlangs->transnoentities('SituationTotalRayToRest'), 0, 'L', 1);
 				    $pdf->SetXY($col2x, $tab2_top + $tab2_hl * $index);
-				    $pdf->MultiCell($largcol2, $tab2_hl, price($total_a_payer_ttc-$deja_paye, 0, $outputlangs), 0, 'R', 1);
+				    $pdf->MultiCell($largcol2, $tab2_hl, price($total_a_payer_ttc-$deja_regle, 0, $outputlangs), 0, 'R', 1);
 				}*/
 
 

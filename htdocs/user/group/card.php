@@ -266,7 +266,7 @@ $formfile = new FormFile($db);
 
 if ($action == 'create')
 {
-    print load_fiche_titre($langs->trans("NewGroup"));
+    print load_fiche_titre($langs->trans("NewGroup"), '', 'object_group');
 
     print dol_set_focus('#nom');
 
@@ -404,6 +404,7 @@ else
 			/*
 			 * Barre d'actions
 			 */
+
 			print '<div class="tabsAction">';
 
 			if ($caneditperms)
@@ -512,6 +513,7 @@ else
 			/*
 	         * Documents generes
 	         */
+
 	        $filename = dol_sanitizeFileName($object->ref);
 	        $filedir = $conf->usergroup->dir_output."/".dol_sanitizeFileName($object->ref);
 	        $urlsource = $_SERVER["PHP_SELF"]."?id=".$object->id;
@@ -531,13 +533,13 @@ else
 			$formactions = new FormActions($db);
 			$somethingshown = $formactions->showactions($object, 'usergroup', $socid, 1);*/
 
-
 	        print '</div></div></div>';
         }
 
         /*
          * Fiche en mode edition
          */
+
         if ($action == 'edit' && $caneditperms)
         {
             print '<form action="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'" method="post" name="updategroup" enctype="multipart/form-data">';

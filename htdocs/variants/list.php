@@ -62,7 +62,7 @@ if ($user->rights->produit->creer)
     $newcardbutton .= dolGetButtonTitle($langs->trans('Create'), '', 'fa fa-plus-circle', DOL_URL_ROOT.'/variants/create.php');
 }
 
-print load_fiche_titre($title, $newcardbutton, 'products');
+print load_fiche_titre($title, $newcardbutton, 'product');
 
 $forcereloadpage = empty($conf->global->MAIN_FORCE_RELOAD_PAGE) ? 0 : 1;
 ?>

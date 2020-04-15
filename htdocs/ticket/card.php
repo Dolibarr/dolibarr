@@ -803,7 +803,7 @@ if (empty($action) || $action == 'view' || $action == 'addlink' || $action == 'd
        				$morehtmlref .= '<form method="post" action="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'">';
        				$morehtmlref .= '<input type="hidden" name="action" value="classin">';
        				$morehtmlref .= '<input type="hidden" name="token" value="'.newToken().'">';
-       				$morehtmlref .= $formproject->select_projects($object->socid, $object->fk_project, 'projectid', 0, 0, 1, 0, 1, 0, 0, '', 1);
+       				$morehtmlref .= $formproject->select_projects($object->socid, $object->fk_project, 'projectid', 0, 0, 1, 0, 1, 0, 0, '', 1, 0, 'maxwidth500');
        				$morehtmlref .= '<input type="submit" class="button valignmiddle" value="'.$langs->trans("Modify").'">';
        				$morehtmlref .= '</form>';
        			} else {

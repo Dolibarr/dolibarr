@@ -1187,7 +1187,13 @@ if ($resql)
     	    $reg = array();
     	    preg_match('/\((.+)\)/i', $objp->label, $reg); // Si texte entoure de parenthee on tente recherche de traduction
     	    if ($reg[1] && $langs->trans($reg[1]) != $reg[1]) print $langs->trans($reg[1]);
-    	    else print dol_trunc($objp->label, 40);
+    	    else {
+    	    	if ($objp->label == '(payment_salary)') {
+    	    		print dol_trunc($langs->trans("SalaryPayment", 40));
+    	    	} else {
+    	    		print dol_trunc($objp->label, 40);
+    	    	}
+    	    }
     	    //print "</a>&nbsp;";
 
     	    // Add links after description
@@ -1195,6 +1201,7 @@ if ($resql)
     	    $cachebankaccount = array();
     	    foreach ($links as $key=>$val)
     	    {
+    	    	print '<!-- '.$links[$key]['type'].' -->';
     	    	if ($links[$key]['type'] == 'withdraw')
     	    	{
     	    		$banktransferstatic->id = $links[$key]['url_id'];
@@ -1540,7 +1547,7 @@ if ($resql)
     	    if ($user->rights->banque->modifier)
     	    {
     	        print '<a href="'.$_SERVER["PHP_SELF"].'?action=delete&amp;rowid='.$objp->rowid.'&amp;id='.$objp->bankid.'&amp;page='.$page.'">';
-    	        print img_delete();
+    	        print img_delete('', 'class="marginleftonly"');
     	        print '</a>';
     	    }
     	}

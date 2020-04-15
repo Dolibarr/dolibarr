@@ -145,6 +145,26 @@ class Categorie extends CommonObject
 	);
 
     /**
+     * @var array Title Area mapping from type string
+     *
+     * @note Move to const array when PHP 5.6 will be our minimum target
+     */
+    public static $MAP_TYPE_TITLE_AREA = array(
+        'product' => 'ProductsCategoriesArea',
+        'customer' => 'CustomersCategoriesArea',
+        'supplier' => 'SuppliersCategoriesArea',
+        'member' => 'MembersCategoriesArea',
+        'contact' => 'ContactsCategoriesArea',
+        'user' => 'UsersCategoriesArea',
+        'account' => 'AccountsCategoriesArea', // old for bank account
+        'bank_account' => 'AccountsCategoriesArea',
+        'project' => 'ProjectsCategoriesArea',
+        'warehouse'=> 'StocksCategoriesArea',
+        'actioncomm' => 'ActioncommCategoriesArea',
+        'website_page' => 'WebsitePageCategoriesArea'
+    );
+
+    /**
 	 * @var array Object table mapping from type string (table llx_...) when value of key does not match table name.
 	 *
 	 * @note Move to const array when PHP 5.6 will be our minimum target
@@ -291,6 +311,7 @@ class Categorie extends CommonObject
 		if (!is_numeric($type)) $type = $this->MAP_ID[$type];
 
 		$sql = "SELECT rowid, fk_parent, entity, label, description, color, fk_soc, visible, type, ref_ext";
+		$sql .= ", date_creation, tms, fk_user_creat, fk_user_modif";
 		$sql .= " FROM ".MAIN_DB_PREFIX."categorie";
 		if ($id > 0)
 		{
@@ -315,16 +336,20 @@ class Categorie extends CommonObject
 				$res = $this->db->fetch_array($resql);
 
 				$this->id = $res['rowid'];
-				//$this->ref			= $res['rowid'];
+				//$this->ref = $res['rowid'];
 				$this->fk_parent	= $res['fk_parent'];
 				$this->label		= $res['label'];
 				$this->description = $res['description'];
 				$this->color    	= $res['color'];
 				$this->socid		= $res['fk_soc'];
 				$this->visible = $res['visible'];
-				$this->type			= $res['type'];
+				$this->type = $res['type'];
 				$this->ref_ext = $res['ref_ext'];
 				$this->entity = $res['entity'];
+				$this->date_creation = $this->db->jdate($res['date_creation']);
+				$this->date_modification = $this->db->jdate($res['tms']);
+				$this->user_creation = $res['fk_user_creat'];
+				$this->user_modification = $res['fk_user_modif'];
 
 				// Retreive all extrafield
 				// fetch optionals attributes and labels
@@ -389,7 +414,7 @@ class Categorie extends CommonObject
 		}
 
 		$this->db->begin();
-
+		$now = dol_now();
 		$sql = "INSERT INTO ".MAIN_DB_PREFIX."categorie (";
 		$sql .= "fk_parent,";
 		$sql .= " label,";
@@ -403,7 +428,9 @@ class Categorie extends CommonObject
 		$sql .= " type,";
 		$sql .= " import_key,";
 		$sql .= " ref_ext,";
-		$sql .= " entity";
+		$sql .= " entity,";
+		$sql .= " date_creation,";
+		$sql .= " fk_user_creat";
 		$sql .= ") VALUES (";
 		$sql .= $this->db->escape($this->fk_parent).",";
 		$sql .= "'".$this->db->escape($this->label)."',";
@@ -417,7 +444,9 @@ class Categorie extends CommonObject
 		$sql .= $this->db->escape($type).",";
 		$sql .= (!empty($this->import_key) ? "'".$this->db->escape($this->import_key)."'" : 'null').",";
 		$sql .= (!empty($this->ref_ext) ? "'".$this->db->escape($this->ref_ext)."'" : 'null').",";
-		$sql .= $this->db->escape($conf->entity);
+		$sql .= $this->db->escape($conf->entity).",";
+		$sql .= "'".$this->db->idate($now)."', ";
+		$sql .= (int) $user->id;
 		$sql .= ")";
 
 		$res = $this->db->query($sql);
@@ -515,6 +544,7 @@ class Categorie extends CommonObject
 		}
 		$sql .= ", visible = '".$this->db->escape($this->visible)."'";
 		$sql .= ", fk_parent = ".$this->fk_parent;
+		$sql .= ", fk_user_modif = ".(int) $user->id;
 		$sql .= " WHERE rowid = ".$this->id;
 
 		dol_syslog(get_class($this)."::update", LOG_DEBUG);

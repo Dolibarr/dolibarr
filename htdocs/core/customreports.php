@@ -14,7 +14,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  *
- * This tool can be included into a list page with
+ * Note: This tool can be included into a list page with :
  * define('USE_CUSTOME_REPORT_AS_INCLUDE', 1);
  * include DOL_DOCUMENT_ROOT.'/core/customreports.php';
  */
@@ -214,6 +214,7 @@ if ($action == 'viewgraph') {
 }
 
 // Get all possible values of fields when a 'group by' is set, and save this into $arrayofvaluesforgroupby
+// $arrayofvaluesforgroupby will be used to forge lael of each grouped series
 if (is_array($search_groupby) && count($search_groupby)) {
 	foreach ($search_groupby as $gkey => $gval) {
 		$gvalwithoutprefix = preg_replace('/^[a-z]+\./', '', $gval);
@@ -260,10 +261,29 @@ if (is_array($search_groupby) && count($search_groupby)) {
 				$keytouse = (string) $obj->val;
 				$valuetranslated = $obj->val;
 			}
+
+			$regs = array();
 			if (!empty($object->fields[$gvalwithoutprefix]['arrayofkeyval'])) {
 				$valuetranslated = $object->fields[$gvalwithoutprefix]['arrayofkeyval'][$obj->val];
 				if (is_null($valuetranslated)) $valuetranslated = $langs->transnoentitiesnoconv("UndefinedKey");
 				$valuetranslated = $langs->trans($valuetranslated);
+			}
+			elseif (preg_match('/integer:([^:]+):([^:]+)$/', $object->fields[$gvalwithoutprefix]['type'], $regs)) {
+				$classname = $regs[1];
+				$classpath = $regs[2];
+				dol_include_once($classpath);
+				if (class_exists($classname)) {
+					$tmpobject = new $classname($db);
+					$tmpobject->fetch($obj->val);
+					foreach($tmpobject->fields as $fieldkey => $field) {
+						if ($field['showoncombobox']) {
+							$valuetranslated = $tmpobject->$fieldkey;
+							//if ($valuetranslated == '-') $valuetranslated = $langs->transnoentitiesnoconv("Unknown")
+							break;
+						}
+					}
+					//$valuetranslated = $tmpobject->ref.'eee';
+				}
 			}
 
 			$arrayofvaluesforgroupby['g_'.$gkey][$keytouse] = $valuetranslated;
@@ -313,7 +333,7 @@ foreach ($arrayoftype as $key => $val) {
 	}
 }
 print $form->selectarray('objecttype', $newarrayoftype, $objecttype, 0, 0, 0, '', 1, 0, 0, '', 'minwidth200', 1);
-if (empty($conf->use_javascript_ajax)) print '<input type="submit" class="button" name="changeobjecttype" value="'.$langs->trans("Refresh").'">';
+if (empty($conf->use_javascript_ajax)) print '<input type="submit" class="button buttongen" name="changeobjecttype" value="'.$langs->trans("Refresh").'">';
 else {
     print '<script type="text/javascript" language="javascript">
         jQuery(document).ready(function() {
@@ -414,7 +434,7 @@ if ($mode == 'graph') {
     print '</div>';
 }
 print '<div class="divadvancedsearchfield">';
-print '<input type="submit" class="button" value="'.$langs->trans("Refresh").'">';
+print '<input type="submit" class="button buttongen" value="'.$langs->trans("Refresh").'">';
 print '</div>';
 print '</div>';
 print '</form>';
@@ -578,6 +598,8 @@ if ($sql) {
     		$fieldforxkey = 'x_0';
     		$xlabel = $obj->$fieldforxkey;
     		$xvalwithoutprefix = preg_replace('/^[a-z]+\./', '', $xval);
+
+    		// Define $xlabel
     		if (!empty($object->fields[$xvalwithoutprefix]['arrayofkeyval'])) {
     			$xlabel = $object->fields[$xvalwithoutprefix]['arrayofkeyval'][$obj->$fieldforxkey];
     		}
@@ -657,6 +679,7 @@ if ($sql) {
     		$xlabel = $obj->$fieldforxkey;
     		$xvalwithoutprefix = preg_replace('/^[a-z]+\./', '', $xval);
 
+    		// Define $xlabel
     		if (!empty($object->fields[$xvalwithoutprefix]['arrayofkeyval'])) {
     			$xlabel = $object->fields[$xvalwithoutprefix]['arrayofkeyval'][$obj->$fieldforxkey];
     		}
@@ -723,7 +746,12 @@ if ($mode == 'graph') {
 
     	$px1->draw($filenamenb, $fileurlnb);
 
-    	print $px1->show($totalnbofrecord ? 0 : $langs->trans("SelectYourGraphOptionsFirst"));
+    	$texttoshow = $langs->trans("NoRecordFound");
+    	if (! GETPOSTISSET('search_measures') || ! GETPOSTISSET('search_xaxis')) {
+    		$texttoshow = $langs->trans("SelectYourGraphOptionsFirst");
+    	}
+
+    	print $px1->show($totalnbofrecord ? 0 : $texttoshow);
     }
 }
 

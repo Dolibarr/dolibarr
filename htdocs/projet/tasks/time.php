@@ -1157,7 +1157,7 @@ if (($id > 0 || !empty($ref)) || $projectidforalltimes > 0)
 			}
 
 			// Contributor
-			print '<td class="maxwidthonsmartphone">';
+			print '<td class="maxwidthonsmartphone nowraponall">';
 			print img_object('', 'user', 'class="hideonsmartphone"');
 			$contactsofproject = $projectstatic->getListContactId('internal');
 			if (count($contactsofproject) > 0)
@@ -1202,9 +1202,8 @@ if (($id > 0 || !empty($ref)) || $projectidforalltimes > 0)
 			}
 
 			print '<td class="center">';
-			print '<input type="submit" name="save" class="button" value="'.$langs->trans("Add").'">';
-			print ' &nbsp; ';
-			print '<input type="submit" name="cancel" class="button" value="'.$langs->trans("Cancel").'">';
+			print '<input type="submit" name="save" class="button buttongen marginleftonly marginbottomonly" value="'.$langs->trans("Add").'">';
+			print '<input type="submit" name="cancel" class="button buttongen marginleftonly" value="'.$langs->trans("Cancel").'">';
 			print '</td></tr>';
 
 			print '</table>';

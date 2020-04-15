@@ -323,7 +323,7 @@ $title = $langs->trans('MassMovement');
 
 llxHeader('', $title);
 
-print load_fiche_titre($langs->trans("MassStockTransferShort"));
+print load_fiche_titre($langs->trans("MassStockTransferShort"), '', 'stock');
 
 $titletoadd = $langs->trans("Select");
 $buttonrecord = $langs->trans("RecordMovement");

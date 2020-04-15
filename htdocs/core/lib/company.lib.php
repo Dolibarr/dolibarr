@@ -1228,7 +1228,7 @@ function show_contacts($conf, $langs, $db, $object, $backtopage = '')
             // Edit
             if ($user->rights->societe->contact->creer)
             {
-                print '<a href="'.DOL_URL_ROOT.'/contact/card.php?action=edit&id='.$obj->rowid.'&backtopage='.urlencode($backtopage).'">';
+                print '<a class="editfielda paddingleft" href="'.DOL_URL_ROOT.'/contact/card.php?action=edit&id='.$obj->rowid.'&backtopage='.urlencode($backtopage).'">';
                 print img_edit();
                 print '</a>';
             }

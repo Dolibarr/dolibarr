@@ -251,11 +251,11 @@ if ($result > 0)
  			$label = ($langs->trans("Notify_".$managedeventfornotification['code']) != "Notify_".$managedeventfornotification['code'] ? $langs->trans("Notify_".$managedeventfornotification['code']) : $managedeventfornotification['label']);
             $actions[$managedeventfornotification['rowid']] = $label;
         }
-        print '<tr class="oddeven"><td class="maxwidthonsmartphone">';
-        print $form->selectarray("contactid", $listofemails, '', 0, 0, 0, '', 0, 0, 0, '', 'maxwidthonsmartphone');
+        print '<tr class="oddeven nohover"><td class="maxwidthonsmartphone">';
+        print img_picto('', 'contact', '', false, 0, 0, '', 'paddingright').$form->selectarray("contactid", $listofemails, '', 0, 0, 0, '', 0, 0, 0, '', 'maxwidthonsmartphone');
         print '</td>';
         print '<td class="maxwidthonsmartphone">';
-        print $form->selectarray("actionid", $actions, '', 1, 0, 0, '', 0, 0, 0, '', 'maxwidthonsmartphone');
+        print img_picto('', 'object_action', '', false, 0, 0, '', 'paddingright').$form->selectarray("actionid", $actions, '', 1, 0, 0, '', 0, 0, 0, '', 'maxwidthonsmartphone');
         print '</td>';
         print '<td>';
         $type = array('email'=>$langs->trans("EMail"));
@@ -343,7 +343,7 @@ if ($result > 0)
             print '</td>';
             print '<td>';
             $label = ($langs->trans("Notify_".$obj->code) != "Notify_".$obj->code ? $langs->trans("Notify_".$obj->code) : $obj->label);
-            print $label;
+            print img_picto('', 'object_action', '', false, 0, 0, '', 'paddingright').$label;
             print '</td>';
             print '<td>';
             if ($obj->type == 'email') print $langs->trans("Email");
@@ -522,6 +522,8 @@ if ($result > 0)
             $i++;
         }
         $db->free($resql);
+    } else {
+    	print '<tr><td colspan="4"><span class="opacitymedium">'.$langs->trans("None").'</span></td></tr>';
     }
 
     print '</table>';

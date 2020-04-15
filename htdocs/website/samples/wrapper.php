@@ -101,7 +101,11 @@ if ($rss) {
 
     $MAXNEWS = 20;
     $arrayofblogs = $websitepage->fetchAll($website->id, 'DESC', 'date_creation', $MAXNEWS, 0, $filters);
-	$eventarray = $arrayofblogs;
+	$eventarray = array();
+	foreach($arrayofblogs as $blog) {
+		$blog->fullpageurl = $website->virtualhost.'/'.$blog->pageurl.'.php';
+		$eventarray[] = $blog;
+	}
 
     require_once DOL_DOCUMENT_ROOT."/core/lib/xcal.lib.php";
     require_once DOL_DOCUMENT_ROOT."/core/lib/date.lib.php";
@@ -137,14 +141,15 @@ if ($rss) {
 
     if ($buildfile)
     {
-    	$title = $desc = $langs->transnoentities('LastBlogPosts');
+    	$langs->load("other");
+    	$title = $desc = $langs->transnoentities('LatestBlogPosts');
 
     	// Create temp file
     	$outputfiletmp = tempnam($dir_temp, 'tmp'); // Temporary file (allow call of function by different threads
     	@chmod($outputfiletmp, octdec($conf->global->MAIN_UMASK));
 
     	// Write file
-    	$result = build_rssfile($format, $title, $desc, $eventarray, $outputfiletmp);
+    	$result = build_rssfile($format, $title, $desc, $eventarray, $outputfiletmp, '', $website->virtualhost.'/wrapper.php?rss=1');
 
     	if ($result >= 0)
     	{

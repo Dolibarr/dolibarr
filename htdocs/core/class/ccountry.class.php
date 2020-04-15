@@ -157,7 +157,6 @@ class Ccountry // extends CommonObject
      */
     public function fetch($id, $code = '', $code_iso = '')
     {
-    	global $langs;
         $sql = "SELECT";
   		$sql .= " t.rowid,";
   		$sql .= " t.code,";

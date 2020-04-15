@@ -296,6 +296,7 @@ input.buttonpaymentstripe {
 a.buttonticket {
 	padding-left: 5px;
 	padding-right: 5px;
+    /* height: 40px; */
 }
 
 /* Used by timesheets */
@@ -1574,6 +1575,15 @@ div.nopadding {
 td.nobordernopadding.widthpictotitle.col-picto {
     color: var(--colortexttitlenotab);
     opacity: 0.85;
+}
+.table-list-of-attached-files .col-picto, .table-list-of-links .col-picto {
+    opacity: 0.7 !important;
+    font-size: 0.7em;
+    width: 20px;
+}
+.table-list-of-attached-files .col-picto .widthpictotitle, .table-list-of-links .col-picto .widthpictotitle {
+	width: unset;
+    color: #999;
 }
 .pictotitle {
 	margin-<?php echo $right; ?>: 8px;
@@ -5808,7 +5818,8 @@ div.tabsElem a.tab {
 }
 
 .ticketpublicarea {
-	width: 70%;
+	margin-left: 15%;
+    margin-right: 15%;
 }
 .publicnewticketform {
 	/* margin-top: 25px !important; */
@@ -5824,7 +5835,8 @@ div.tabsElem a.tab {
 		padding-left: 5px; padding-right: 5px;
 	}
 	.ticketpublicarea {
-		width: 100% !important;
+		margin-left: 10px;
+		margin-right: 10px;
 	}
 }
 

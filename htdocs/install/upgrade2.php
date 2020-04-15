@@ -477,6 +477,7 @@ if (!GETPOST('action', 'aZ09') || preg_match('/upgrade/i', GETPOST('action', 'aZ
 			'MAIN_MODULE_DON'=>'newboxdefonly',
 			'MAIN_MODULE_ECM'=>'newboxdefonly',
 			'MAIN_MODULE_EXTERNALSITE'=>'newboxdefonly',
+			'MAIN_MODULE_EXPENSEREPORT'=>'newboxdefonly',
 			'MAIN_MODULE_FACTURE'=>'newboxdefonly',
 			'MAIN_MODULE_FOURNISSEUR'=>'newboxdefonly',
 			'MAIN_MODULE_HOLIDAY'=>'newboxdefonly',
@@ -4693,6 +4694,16 @@ function migrate_reload_modules($db, $langs, $conf, $listofmodule = array(), $fo
 			$res = @include_once DOL_DOCUMENT_ROOT.'/core/modules/modDeplacement.class.php';
 			if ($res) {
 				$mod = new modDeplacement($db);
+				//$mod->remove('noboxes');
+				$mod->init($reloadmode);
+			}
+		}
+		elseif ($moduletoreload == 'MAIN_MODULE_EXPENSEREPORT')
+		{
+			dolibarr_install_syslog("upgrade2::migrate_reload_modules Reactivate Expense Report module");
+			$res = @include_once DOL_DOCUMENT_ROOT.'/core/modules/modExpenseReport.class.php';
+			if ($res) {
+				$mod = new modExpenseReport($db);
 				//$mod->remove('noboxes');
 				$mod->init($reloadmode);
 			}

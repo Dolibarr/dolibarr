@@ -2592,7 +2592,6 @@ class Ticket extends CommonObject
                         $message .= "\n".$langs->trans('TicketNotificationEmailBodyInfosTrackUrlinternal').' : '.'<a href="'.$url_internal_ticket.'">'.$object->track_id.'</a>'."\n";
 
                         // Add global email address recipient
-                        // altairis: use new TICKET_NOTIFICATION_EMAIL_TO configuration variable
                         if ($conf->global->TICKET_NOTIFICATION_ALSO_MAIN_ADDRESS && !in_array($conf->global->TICKET_NOTIFICATION_EMAIL_TO, $sendto)) {
                             if (!empty($conf->global->TICKET_NOTIFICATION_EMAIL_TO)) $sendto[] = $conf->global->TICKET_NOTIFICATION_EMAIL_TO;
                         }
@@ -2826,7 +2825,7 @@ class Ticket extends CommonObject
     		}
 
     		$response = new WorkboardResponse();
-    		$response->warning_delay = $delay_warning / 60 / 60 / 24;
+    		//$response->warning_delay = $delay_warning / 60 / 60 / 24;
     		$response->label = $label;
     		$response->labelShort = $labelShort;
     		$response->url = DOL_URL_ROOT.'/ticket/list.php?search_fk_statut[]='.$status;
