@@ -378,9 +378,9 @@ class ActionsTicket
     {
         global $langs;
 
-        print '<div class="div-table-responsive-no-min">';
+        print '<div class="div-table-responsive-no-min margintoponly">';
         print '<div class="tagtable centpercent">';
-        print '<div class="tagtr liste_titre">';
+        print '<div class="tagtr">';
         // Exclude status which requires specific method
         $exclude_status = array(Ticket::STATUS_CLOSED, Ticket::STATUS_CANCELED);
         // Exclude actual status
@@ -402,7 +402,7 @@ class ActionsTicket
                     $urlforbutton = $_SERVER['PHP_SELF'].'?track_id='.$object->track_id.'&action=set_status&new_status='.$status;
                 }
 
-                print '<a class="button buttonticket" href="'.$urlforbutton.'">';
+                print '<a class="butAction buttonticket" href="'.$urlforbutton.'">';
                 print img_picto($langs->trans($object->statuts_short[$status]), 'statut'.$status.'.png@ticket').' '.$langs->trans($object->statuts_short[$status]);
                 print '</a>';
                 print '</div>';
