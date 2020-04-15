@@ -242,8 +242,8 @@ if ($action == 'create_ticket' && GETPOST('add', 'alpha')) {
                     $conf->global->MAIN_MAIL_AUTOCOPY_TO = $old_MAIN_MAIL_AUTOCOPY_TO;
                 }
 
-                // Send email to TICKET_NOTIFICATION_EMAIL_TO (Use TICKET_NOTIFICATION_EMAIL_FROM if not defined)
-                $sendto = (!empty($conf->global->TICKET_NOTIFICATION_EMAIL_TO) ? $conf->global->TICKET_NOTIFICATION_EMAIL_TO : $conf->global->TICKET_NOTIFICATION_EMAIL_FROM);
+                // Send email to TICKET_NOTIFICATION_EMAIL_TO
+                $sendto = $conf->global->TICKET_NOTIFICATION_EMAIL_TO;
                 if ($sendto)
                 {
 	                $subject = '['.$conf->global->MAIN_INFO_SOCIETE_NOM.'] '.$langs->transnoentities('TicketNewEmailSubjectAdmin', $object->ref, $object->track_id);
