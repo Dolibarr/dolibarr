@@ -129,7 +129,7 @@ class Projects extends DolibarrApi
         {
             $sql .= " AND sc.fk_user = ".$search_sale;
         }
-    	// Select products of given category
+    	// Select projects of given category
     	if ($category > 0) {
 			$sql .= " AND c.fk_categorie = ".$db->escape($category)." AND c.fk_project = t.rowid ";
     	}
