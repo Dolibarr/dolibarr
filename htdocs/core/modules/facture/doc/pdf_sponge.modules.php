@@ -375,6 +375,23 @@ class pdf_sponge extends ModelePDFFactures
 	            $pdf->SetKeyWords($outputlangs->convToOutputCharset($object->ref)." ".$outputlangs->transnoentities("PdfInvoiceTitle")." ".$outputlangs->convToOutputCharset($object->thirdparty->name));
 	            if (!empty($conf->global->MAIN_DISABLE_PDF_COMPRESSION)) $pdf->SetCompression(false);
 
+	            // Set certificate
+	            $cert=empty($user->conf->CERTIFICATE_CRT) ? '' : $user->conf->CERTIFICATE_CRT;
+	            // If use has no certificate, we try to take the company one
+	            if (!$cert) {
+	            	$cert = empty($conf->global->CERTIFICATE_CRT) ? '' : $conf->global->CERTIFICATE_CRT;
+	            }
+	            // If a certificate is found
+	            if ($cert) {
+	            	$info = array(
+	            		'Name' => $this->emetteur->name,
+	            		'Location' => getCountry($this->emetteur->country_code, 0),
+	            		'Reason' => 'INVOICE',
+	            		'ContactInfo' => $this->emetteur->email
+	            	);
+	            	$pdf->setSignature($cert, $cert, $this->emetteur->name, '', 2, $info);
+	            }
+	            
 	            $pdf->SetMargins($this->marge_gauche, $this->marge_haute, $this->marge_droite); // Left, Top, Right
 
 	            // Does we have at least one line with discount $this->atleastonediscount
