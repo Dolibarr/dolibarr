@@ -67,7 +67,7 @@ $arrayofcss = array('/ticket/css/styles.css.php');
 
 llxHeaderTicket($langs->trans("Tickets"), "", 0, 0, $arrayofjs, $arrayofcss);
 
-print '<div style="margin: 0 auto; width:60%" class="ticketpublicarea">';
+print '<div class="ticketpublicarea">';
 print '<p style="text-align: center">'.($conf->global->TICKET_PUBLIC_TEXT_HOME ? $conf->global->TICKET_PUBLIC_TEXT_HOME : $langs->trans("TicketPublicDesc")).'</p>';
 print '<div class="ticketform">';
 print '<a href="create_ticket.php" class=""><div class="index_create orange bigrounded">'.dol_escape_htmltag($langs->trans("CreateTicket")).'</div></a>';

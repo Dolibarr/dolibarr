@@ -349,7 +349,7 @@ $arrayofcss = array('/opensurvey/css/style.css', '/ticket/css/styles.css.php');
 llxHeaderTicket($langs->trans("CreateTicket"), "", 0, 0, $arrayofjs, $arrayofcss);
 
 
-print '<div style="width:60%; margin: 0 auto;" class="ticketpublicarea">';
+print '<div class="ticketpublicarea">';
 
 if ($action != "infos_success") {
     $formticket->withfromsocid = isset($socid) ? $socid : $user->socid;

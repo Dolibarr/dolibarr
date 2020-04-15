@@ -195,7 +195,7 @@ dol_fiche_end();
  * Projects Numbering model
  */
 
-print load_fiche_titre($langs->trans("TicketNumberingModules"));
+print load_fiche_titre($langs->trans("TicketNumberingModules"), '', '');
 
 print '<div class="div-table-responsive-no-min">';
 print '<table class="noborder centpercent">';
@@ -298,7 +298,7 @@ if (!$conf->use_javascript_ajax) {
     print '<input type="hidden" name="action" value="setvarother">';
 }
 
-print load_fiche_titre($langs->trans("TicketParams"));
+print load_fiche_titre($langs->trans("Other"), '', '');
 print '<table class="noborder centpercent">';
 
 print '<tr class="liste_titre">';
@@ -306,78 +306,6 @@ print '<td>'.$langs->trans("Parameter").'</td>';
 print '<td></td>';
 print '<td></td>';
 print "</tr>\n";
-
-// Activate email notifications
-/*
-print '<tr class="pair"><td>' . $langs->trans("TicketsDisableEmail") . '</td>';
-print '<td class="left">';
-if ($conf->use_javascript_ajax) {
-    print ajax_constantonoff('TICKET_DISABLE_ALL_MAILS');
-} else {
-    $arrval = array('0' => $langs->trans("No"), '1' => $langs->trans("Yes"));
-    print $form->selectarray("TICKET_DISABLE_ALL_MAILS", $arrval, $conf->global->TICKET_DISABLE_ALL_MAILS);
-}
-print '</td>';
-print '<td class="center">';
-print $form->textwithpicto('', $langs->trans("TicketsDisableEmailHelp"), 1, 'help');
-print '</td>';
-print '</tr>';
-
-// Activate log by email
-print '<tr class="pair"><td>' . $langs->trans("TicketsLogEnableEmail") . '</td>';
-print '<td class="left">';
-if ($conf->use_javascript_ajax) {
-    print ajax_constantonoff('TICKET_ACTIVATE_LOG_BY_EMAIL');
-} else {
-    $arrval = array('0' => $langs->trans("No"), '1' => $langs->trans("Yes"));
-    print $form->selectarray("TICKET_ACTIVATE_LOG_BY_EMAIL", $arrval, $conf->global->TICKET_ACTIVATE_LOG_BY_EMAIL);
-}
-print '</td>';
-print '<td class="center">';
-print $form->textwithpicto('', $langs->trans("TicketsLogEnableEmailHelp"), 1, 'help');
-print '</td>';
-print '</tr>';
-*/
-
-// Also send to main email address
-if ($conf->global->MAIN_FEATURES_LEVEL >= 2)
-{
-	print '<tr class="oddeven"><td>'.$langs->trans("TicketsEmailAlsoSendToMainAddress").'</td>';
-	print '<td class="left">';
-	if ($conf->use_javascript_ajax) {
-	    print ajax_constantonoff('TICKET_NOTIFICATION_ALSO_MAIN_ADDRESS');
-	} else {
-	    $arrval = array('0' => $langs->trans("No"), '1' => $langs->trans("Yes"));
-	    print $form->selectarray("TICKET_NOTIFICATION_ALSO_MAIN_ADDRESS", $arrval, $conf->global->TICKET_NOTIFICATION_ALSO_MAIN_ADDRESS);
-	}
-	print '</td>';
-	print '<td class="center">';
-	print $form->textwithpicto('', $langs->trans("TicketsEmailAlsoSendToMainAddressHelp"), 1, 'help');
-	print '</td>';
-	print '</tr>';
-}
-
-// Limiter la vue des tickets à ceux assignés à l'utilisateur
-/*
-print '<tr class="pair"><td>' . $langs->trans("TicketsLimitViewAssignedOnly") . '</td>';
-print '<td class="left">';
-if ($conf->use_javascript_ajax) {
-    print ajax_constantonoff('TICKET_LIMIT_VIEW_ASSIGNED_ONLY');
-} else {
-    $arrval = array('0' => $langs->trans("No"), '1' => $langs->trans("Yes"));
-    print $form->selectarray("TICKET_LIMIT_VIEW_ASSIGNED_ONLY", $arrval, $conf->global->TICKET_LIMIT_VIEW_ASSIGNED_ONLY);
-}
-print '</td>';
-print '<td class="center">';
-print $form->textwithpicto('', $langs->trans("TicketsLimitViewAssignedOnlyHelp"), 1, 'help');
-print '</td>';
-print '</tr>';
-*/
-
-/*if (!$conf->use_javascript_ajax) {
-    print '<tr class="impair"><td colspan="3" align="center"><input type="submit" class="button" value="' . $langs->trans("Save") . '"></td>';
-    print '</tr>';
-}*/
 
 // Auto assign ticket at user who created it
 print '<tr class="oddeven"><td>'.$langs->trans("TicketsAutoAssignTicket").'</td>';
@@ -401,7 +329,7 @@ if (!$conf->use_javascript_ajax) {
 }
 
 // Admin var of module
-print load_fiche_titre($langs->trans("Notification"));
+print load_fiche_titre($langs->trans("Notification"), '', '');
 
 print '<table class="noborder centpercent">';
 
@@ -418,22 +346,6 @@ if (empty($conf->global->FCKEDITOR_ENABLE_MAIL)) {
     print '<td colspan="3"><div class="info">'.$langs->trans("TicketCkEditorEmailNotActivated").'</div></td>';
     print "</tr>\n";
 }
-
-// Activate log by email
-/*print '<tr class="pair"><td>' . $langs->trans("TicketsLogEnableEmail") . '</td>';
-print '<td class="left">';
-if ($conf->use_javascript_ajax) {
-    print ajax_constantonoff('TICKET_ACTIVATE_LOG_BY_EMAIL');
-} else {
-    $arrval = array('0' => $langs->trans("No"), '1' => $langs->trans("Yes"));
-    print $form->selectarray("TICKET_ACTIVATE_LOG_BY_EMAIL", $arrval, $conf->global->TICKET_ACTIVATE_LOG_BY_EMAIL);
-}
-print '</td>';
-print '<td class="center">';
-print $form->textwithpicto('', $langs->trans("TicketsLogEnableEmailHelp"), 1, 'help');
-print '</td>';
-print '</tr>';
-*/
 
 // @todo Use module notification instead...
 
@@ -454,6 +366,24 @@ print '<td class="center">';
 print $form->textwithpicto('', $langs->trans("TicketEmailNotificationToHelp"), 1, 'help');
 print '</td>';
 print '</tr>';
+
+// Also send to main email address
+if ($conf->global->MAIN_FEATURES_LEVEL >= 2)
+{
+	print '<tr class="oddeven"><td>'.$langs->trans("TicketsEmailAlsoSendToMainAddress").'</td>';
+	print '<td class="left">';
+	if ($conf->use_javascript_ajax) {
+		print ajax_constantonoff('TICKET_NOTIFICATION_ALSO_MAIN_ADDRESS');
+	} else {
+		$arrval = array('0' => $langs->trans("No"), '1' => $langs->trans("Yes"));
+		print $form->selectarray("TICKET_NOTIFICATION_ALSO_MAIN_ADDRESS", $arrval, $conf->global->TICKET_NOTIFICATION_ALSO_MAIN_ADDRESS);
+	}
+	print '</td>';
+	print '<td class="center">';
+	print $form->textwithpicto('', $langs->trans("TicketsEmailAlsoSendToMainAddressHelp"), 1, 'help');
+	print '</td>';
+	print '</tr>';
+}
 
 // Texte d'introduction
 $mail_intro = $conf->global->TICKET_MESSAGE_MAIL_INTRO ? $conf->global->TICKET_MESSAGE_MAIL_INTRO : $langs->trans('TicketMessageMailIntroText');

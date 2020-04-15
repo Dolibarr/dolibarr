@@ -5817,7 +5817,8 @@ div.tabsElem a.tab {
 }
 
 .ticketpublicarea {
-	width: 70%;
+	margin-left: 15%;
+    margin-right: 15%;
 }
 .publicnewticketform {
 	/* margin-top: 25px !important; */
@@ -5833,7 +5834,8 @@ div.tabsElem a.tab {
 		padding-left: 5px; padding-right: 5px;
 	}
 	.ticketpublicarea {
-		width: 100% !important;
+		margin-left: 100%;
+		margin-right: 100%;
 	}
 }
 
