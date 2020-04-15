@@ -116,7 +116,7 @@ class Projects extends DolibarrApi
         if ((!DolibarrApiAccess::$user->rights->societe->client->voir && !$socids) || $search_sale > 0) $sql .= ", sc.fk_soc, sc.fk_user"; // We need these fields in order to filter by sale (including the case where the user can only see his prospects)
         $sql .= " FROM ".MAIN_DB_PREFIX."projet as t";
     	if ($category > 0) {
-        $sql .= ", ".MAIN_DB_PREFIX."categorie_project as c";
+			$sql .= ", ".MAIN_DB_PREFIX."categorie_project as c";
     	}
         if ((!DolibarrApiAccess::$user->rights->societe->client->voir && !$socids) || $search_sale > 0) $sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc"; // We need this table joined to the select in order to filter by sale
 
@@ -131,7 +131,7 @@ class Projects extends DolibarrApi
         }
     	// Select products of given category
     	if ($category > 0) {
-        $sql .= " AND c.fk_categorie = ".$db->escape($category)." AND c.fk_project = t.rowid ";
+			$sql .= " AND c.fk_categorie = ".$db->escape($category)." AND c.fk_project = t.rowid ";
     	}
         // Add sql filters
         if ($sqlfilters)
