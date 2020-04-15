@@ -1362,8 +1362,14 @@ if (empty($reshook))
 					$object->situation_cycle_ref = $object->newCycle();
 				}
 
-				$object->retained_warranty = GETPOST('retained_warranty', 'int');
-				$object->retained_warranty_fk_cond_reglement = GETPOST('retained_warranty_fk_cond_reglement', 'int');
+				if(in_array($object->type, $retainedWarrantyInvoiceAvailableType)){
+					$object->retained_warranty = GETPOST('retained_warranty', 'int');
+					$object->retained_warranty_fk_cond_reglement = GETPOST('retained_warranty_fk_cond_reglement', 'int');
+				}
+				else{
+					$object->retained_warranty = 0;
+					$object->retained_warranty_fk_cond_reglement = 0;
+				}
 
 			    $retained_warranty_date_limit = GETPOST('retained_warranty_date_limit');
 			    if (!empty($retained_warranty_date_limit) && $db->jdate($retained_warranty_date_limit)) {
