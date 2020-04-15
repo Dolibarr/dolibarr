@@ -333,7 +333,7 @@ function build_calfile($format, $title, $desc, $events_array, $outputfile)
  *  @param      array	$events_array       Array of events ("uid","startdate","summary","url","desc","author","category") or Array of WebsitePage
  *  @param      string	$outputfile         Output file
  *  @param      string	$filter             (optional) Filter
- *  @param		string	$url				Url
+ *  @param		string	$url				Url (If empty, forge URL for agenda RSS export)
  *  @return     int                         < 0 if ko, Nb of events in file if ok
  */
 function build_rssfile($format, $title, $desc, $events_array, $outputfile, $filter = '', $url = '')
@@ -402,9 +402,10 @@ function build_rssfile($format, $title, $desc, $events_array, $outputfile, $filt
             		$tmpevent['uid'] = $event->id;
             		$tmpevent['startdate'] = $event->date_creation;
             		$tmpevent['summary'] = $event->title;
-            		$tmpevent['url'] = $event->urlpage.'.php';
+            		$tmpevent['url'] = $event->fullpageurl ? $event->fullpageurl : $event->pageurl.'.php';
             		$tmpevent['author'] = $event->author_alias ? $event->author_alias : 'unknown';
             		//$tmpevent['category'] = '';
+            		$tmpevent['desc'] = $event->description;
 
             		$event = $tmpevent;
             	}
