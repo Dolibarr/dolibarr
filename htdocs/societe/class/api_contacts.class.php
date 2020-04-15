@@ -158,7 +158,7 @@ class Contacts extends DolibarrApi
 			$sql .= " AND sc.fk_user = ".$search_sale;
 		}
 
-    	// Select products of given category
+    	// Select contacts of given category
     	if ($category > 0) {
 			$sql .= " AND c.fk_categorie = ".$db->escape($category);
 			$sql .= " AND c.fk_socpeople = t.rowid ";
