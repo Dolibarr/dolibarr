@@ -107,10 +107,11 @@ class Thirdparties extends DolibarrApi
 	 *                              Set to 2 to show only prospects
 	 *                              Set to 3 to show only those are not customer neither prospect
 	 *								Set to 4 to show only suppliers
+	 * @param  int    $category   Use this param to filter list by category
 	 * @param   string  $sqlfilters Other criteria to filter answers separated by a comma. Syntax example "(t.nom:like:'TheCompany%') and (t.date_creation:<:'20160101')"
 	 * @return  array               Array of thirdparty objects
 	 */
-    public function index($sortfield = "t.rowid", $sortorder = 'ASC', $limit = 100, $page = 0, $mode = 0, $sqlfilters = '')
+    public function index($sortfield = "t.rowid", $sortorder = 'ASC', $limit = 100, $page = 0, $mode = 0, $category = 0, $sqlfilters = '')
     {
 		global $db;
 
@@ -126,15 +127,25 @@ class Thirdparties extends DolibarrApi
 		$sql = "SELECT t.rowid";
 		if ((!DolibarrApiAccess::$user->rights->societe->client->voir && !$socids) || $search_sale > 0) $sql .= ", sc.fk_soc, sc.fk_user"; // We need these fields in order to filter by sale (including the case where the user can only see his prospects)
 		$sql .= " FROM ".MAIN_DB_PREFIX."societe as t";
-
+    	if ($category > 0) {
+        $sql .= ", ".MAIN_DB_PREFIX."categorie_societe as c";
+    	}
 		if ((!DolibarrApiAccess::$user->rights->societe->client->voir && !$socids) || $search_sale > 0) $sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc"; // We need this table joined to the select in order to filter by sale
 		$sql .= ", ".MAIN_DB_PREFIX."c_stcomm as st";
 		$sql .= " WHERE t.fk_stcomm = st.id";
+		$sql .= ' AND t.entity IN ('.getEntity('societe').')';
+    
 		if ($mode == 1) $sql .= " AND t.client IN (1, 3)";
 		if ($mode == 2) $sql .= " AND t.client IN (2, 3)";
 		if ($mode == 3) $sql .= " AND t.client IN (0)";
 		if ($mode == 4) $sql .= " AND t.fournisseur IN (1)";
-		$sql .= ' AND t.entity IN ('.getEntity('societe').')';
+    
+    	// Select products of given category
+    	if ($category > 0) {
+        $sql .= " AND c.fk_categorie = ".$db->escape($category);
+        $sql .= " AND c.fk_soc = t.rowid ";
+    	}
+		
 		if ((!DolibarrApiAccess::$user->rights->societe->client->voir && !$socids) || $search_sale > 0) $sql .= " AND t.rowid = sc.fk_soc";
 		//if ($email != NULL) $sql.= " AND s.email = \"".$email."\"";
 		if ($socids) $sql .= " AND t.rowid IN (".$socids.")";
