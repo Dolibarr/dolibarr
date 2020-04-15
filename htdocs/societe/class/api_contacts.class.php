@@ -137,7 +137,7 @@ class Contacts extends DolibarrApi
 		$sql = "SELECT t.rowid";
 		$sql .= " FROM ".MAIN_DB_PREFIX."socpeople as t";
     	if ($category > 0) {
-        $sql .= ", ".MAIN_DB_PREFIX."categorie_contact as c";
+			$sql .= ", ".MAIN_DB_PREFIX."categorie_contact as c";
     	}
 		$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."socpeople_extrafields as te ON te.fk_object = t.rowid";
 		if ((!DolibarrApiAccess::$user->rights->societe->client->voir && !$socids) || $search_sale > 0) {
@@ -160,8 +160,8 @@ class Contacts extends DolibarrApi
 
     	// Select products of given category
     	if ($category > 0) {
-    	$sql .= " AND c.fk_categorie = ".$db->escape($category);
-        $sql .= " AND c.fk_socpeople = t.rowid ";
+			$sql .= " AND c.fk_categorie = ".$db->escape($category);
+			$sql .= " AND c.fk_socpeople = t.rowid ";
     	}
 
 	    // Add sql filters
