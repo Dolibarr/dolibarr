@@ -74,54 +74,11 @@ div.ticketform {
 div.ticketform .index_create, .index_display {
 	display: inline-block;
     width: 200px;
-    height: 58px;
+    height: 45px;
     text-align: center;
     vertical-align: middle;
     margin: 20px;
     text-transform: uppercase;
-}
-
-div.ticketform .orange {
-    color: #fef4e9;
-    border: solid 1px #da7c0c;
-    background: #f78d1d;
-    background: -webkit-gradient(linear, left top, left bottom, from(#faa51a), to(#f47a20));
-    background: -moz-linear-gradient(top, #faa51a, #f47a20);
-    filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#faa51a', endColorstr='#f47a20');
-}
-div.ticketform .orange:active {
-    color: #fcd3a5;
-    background: -webkit-gradient(linear, left top, left bottom, from(#f47a20), to(#faa51a));
-    background: -moz-linear-gradient(top, #f47a20, #faa51a);
-    filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#f47a20', endColorstr='#faa51a');
-}
-
-div.ticketform .orange:hover {
-    background: #f47c20;
-    background: -webkit-gradient(linear, left top, left bottom, from(#f88e11), to(#f06015));
-    background: -moz-linear-gradient(top, #f88e11, #f06015);
-    filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#f88e11', endColorstr='#f06015');
-}
-
-div.ticketform .blue {
-    color: #d9eef7;
-    border: solid 1px #0076a3;
-    background: #0095cd;
-    background: -webkit-gradient(linear, left top, left bottom, from(#00adee), to(#0078a5));
-    background: -moz-linear-gradient(top, #00adee, #0078a5);
-    filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#00adee', endColorstr='#0078a5');
-}
-div.ticketform .blue:active {
-    color: #80bed6;
-    background: -webkit-gradient(linear, left top, left bottom, from(#0078a5), to(#00adee));
-    background: -moz-linear-gradient(top, #0078a5, #00adee);
-    filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#0078a5', endColorstr='#00adee');
-}
-div.ticketform .blue:hover {
-    background: #007ead;
-    background: -webkit-gradient(linear, left top, left bottom, from(#0095cc), to(#00678e));
-    background: -moz-linear-gradient(top, #0095cc, #00678e);
-    filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#0095cc', endColorstr='#00678e');
 }
 
 #form_create_ticket, #form_view_ticket

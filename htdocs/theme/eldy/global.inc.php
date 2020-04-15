@@ -5834,8 +5834,8 @@ div.tabsElem a.tab {
 		padding-left: 5px; padding-right: 5px;
 	}
 	.ticketpublicarea {
-		margin-left: 100%;
-		margin-right: 100%;
+		margin-left: 10px;
+		margin-right: 10px;
 	}
 }
 
