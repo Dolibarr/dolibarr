@@ -87,13 +87,13 @@ class Users extends DolibarrApi
         }
 	    $sql .= ' WHERE t.entity IN ('.getEntity('user').')';
 	    if ($user_ids) $sql .= " AND t.rowid IN (".$user_ids.")";
-		
+
     	// Select products of given category
     	if ($category > 0) {
-        $sql .= " AND c.fk_categorie = ".$db->escape($category);
-        $sql .= " AND c.fk_user = t.rowid ";
+			$sql .= " AND c.fk_categorie = ".$db->escape($category);
+			$sql .= " AND c.fk_user = t.rowid ";
     	}
-		
+
 	    // Add sql filters
         if ($sqlfilters)
         {
