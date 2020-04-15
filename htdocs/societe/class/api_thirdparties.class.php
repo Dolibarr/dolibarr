@@ -140,7 +140,7 @@ class Thirdparties extends DolibarrApi
 		if ($mode == 3) $sql .= " AND t.client IN (0)";
 		if ($mode == 4) $sql .= " AND t.fournisseur IN (1)";
 
-    	// Select products of given category
+    	// Select thirdparties of given category
     	if ($category > 0) {
 			$sql .= " AND c.fk_categorie = ".$db->escape($category);
 			$sql .= " AND c.fk_soc = t.rowid ";
