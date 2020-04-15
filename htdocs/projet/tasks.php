@@ -131,6 +131,7 @@ $arrayfields = dol_sort_array($arrayfields, 'position');
 
 $varpage = empty($contextpage) ? $_SERVER["PHP_SELF"] : $contextpage;
 
+
 /*
  * Actions
  */
@@ -358,7 +359,7 @@ if ($id > 0 || !empty($ref))
 	$head = project_prepare_head($object);
 	dol_fiche_head($head, $tab, $langs->trans("Project"), -1, ($object->public ? 'projectpub' : 'project'));
 
-	$param = 'id='.$object->id;
+	$param = '&id='.$object->id;
 	if (!empty($contextpage) && $contextpage != $_SERVER["PHP_SELF"]) $param .= '&contextpage='.urlencode($contextpage);
 	if ($search_user_id)                 		$param .= '&search_user_id='.urlencode($search_user_id);
 	if ($search_taskref)              		$param .= '&search_taskref='.urlencode($search_taskref);
@@ -634,7 +635,7 @@ elseif ($id > 0 || !empty($ref))
         }
     }
 
-    $linktocreatetask = dolGetButtonTitle($langs->trans('AddTask'), '', 'fa fa-plus-circle', DOL_URL_ROOT.'/projet/tasks.php?id='.$object->id.'&action=create'.$param.'&backtopage='.urlencode($_SERVER['PHP_SELF'].'?id='.$object->id), '', $linktocreatetaskUserRight, $linktocreatetaskParam);
+    $linktocreatetask = dolGetButtonTitle($langs->trans('AddTask'), '', 'fa fa-plus-circle', DOL_URL_ROOT.'/projet/tasks.php?action=create'.$param.'&backtopage='.urlencode($_SERVER['PHP_SELF'].'?id='.$object->id), '', $linktocreatetaskUserRight, $linktocreatetaskParam);
 
 	print '<form method="POST" id="searchFormList" action="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'">';
 	if ($optioncss != '') print '<input type="hidden" name="optioncss" value="'.$optioncss.'">';
@@ -686,7 +687,7 @@ elseif ($id > 0 || !empty($ref))
 	}
 
 	print '<div class="div-table-responsive">';
-	print '<table id="tablelines" class="tagtable nobottomiftotal liste'.($moreforfilter ? " listwithfilterbefore" : "").'">';
+	print '<table id="tablelines" class="tagtable nobottom liste'.($moreforfilter ? " listwithfilterbefore" : "").'">';
 
 	// Fields title search
 	print '<tr class="liste_titre_filter">';
