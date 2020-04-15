@@ -3397,12 +3397,11 @@ if ($action == 'create')
 	        if(empty($retained_warranty)){
                 if(!empty($objectsrc->retained_warranty)){ // use previous situation value
                     $retained_warranty = $objectsrc->retained_warranty;
-                }else{
-                    $retained_warranty = $conf->global->INVOICE_SITUATION_DEFAULT_RETAINED_WARRANTY_PERCENT;
                 }
             }
+			$retained_warranty_js_default = !empty($retained_warranty)?$retained_warranty:$conf->global->INVOICE_SITUATION_DEFAULT_RETAINED_WARRANTY_PERCENT;
 
-	        print '<tr class="retained-warranty-line" style="'.$rwStyle.'" ><td class="nowrap">'.$langs->trans('RetainedWarranty').'</td><td colspan="2">';
+			print '<tr class="retained-warranty-line" style="'.$rwStyle.'" ><td class="nowrap">'.$langs->trans('RetainedWarranty').'</td><td colspan="2">';
 	        print '<input id="new-situation-invoice-retained-warranty" name="retained_warranty" type="number" value="'.$retained_warranty.'" step="0.01" min="0" max="100" />%';
 
 	        // Retained warranty payment term
@@ -3421,16 +3420,19 @@ if ($action == 'create')
 
 	        print '<script type="text/javascript" language="javascript">
     		$(document).ready(function() {
-			$("[name=\'type\']").change(function() {
-
-				if($( this ).prop("checked") && $.inArray(parseInt($( this ).val()), '.json_encode($retainedWarrantyInvoiceAvailableType).' ) !== -1)
+				$("[name=\'type\']").change(function() {
+					if($( this ).prop("checked") && $.inArray($( this ).val(), '.json_encode($retainedWarrantyInvoiceAvailableType).' ) !== -1)
                     {
                         $(".retained-warranty-line").show();
+                        $("#new-situation-invoice-retained-warranty").val("'.doubleval($retained_warranty_js_default).'");
                     }
                     else{
                         $(".retained-warranty-line").hide();
+                        $("#new-situation-invoice-retained-warranty").val("");
                     }
     			});
+
+				$("[name=\'type\']").trigger("change");
     		});
     		</script>';
 	}
