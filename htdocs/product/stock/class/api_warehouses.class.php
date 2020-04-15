@@ -87,12 +87,13 @@ class Warehouses extends DolibarrApi
      * @param string	$sortorder	Sort order
      * @param int		$limit		Limit for list
      * @param int		$page		Page number
+	 * @param  int    $category   Use this param to filter list by category
      * @param string    $sqlfilters Other criteria to filter answers separated by a comma. Syntax example "(t.label:like:'WH-%') and (t.date_creation:<:'20160101')"
      * @return array                Array of warehouse objects
      *
      * @throws RestException
      */
-    public function index($sortfield = "t.rowid", $sortorder = 'ASC', $limit = 100, $page = 0, $sqlfilters = '')
+    public function index($sortfield = "t.rowid", $sortorder = 'ASC', $limit = 100, $page = 0, $category = 0, $sqlfilters = '')
     {
         global $db, $conf;
 
@@ -104,7 +105,15 @@ class Warehouses extends DolibarrApi
 
         $sql = "SELECT t.rowid";
         $sql .= " FROM ".MAIN_DB_PREFIX."entrepot as t";
+    	if ($category > 0) {
+        $sql .= ", ".MAIN_DB_PREFIX."categorie_societe as c";
+    	}
         $sql .= ' WHERE t.entity IN ('.getEntity('stock').')';
+    	// Select warehouses of given category
+    	if ($category > 0) {
+        $sql .= " AND c.fk_categorie = ".$db->escape($category);
+        $sql .= " AND c.fk_warehouse = t.rowid ";
+    	}
         // Add sql filters
         if ($sqlfilters)
         {
