@@ -106,7 +106,7 @@ class Members extends DolibarrApi
         $sql = "SELECT t.rowid";
         $sql .= " FROM ".MAIN_DB_PREFIX."adherent as t";
     	if ($category > 0) {
-        $sql .= ", ".MAIN_DB_PREFIX."categorie_member as c";
+			$sql .= ", ".MAIN_DB_PREFIX."categorie_member as c";
     	}
         $sql .= ' WHERE t.entity IN ('.getEntity('adherent').')';
         if (!empty($typeid))
@@ -115,8 +115,8 @@ class Members extends DolibarrApi
         }
     	// Select members of given category
     	if ($category > 0) {
-        $sql .= " AND c.fk_categorie = ".$db->escape($category);
-        $sql .= " AND c.fk_member = t.rowid ";
+			$sql .= " AND c.fk_categorie = ".$db->escape($category);
+			$sql .= " AND c.fk_member = t.rowid ";
     	}
         // Add sql filters
         if ($sqlfilters)
