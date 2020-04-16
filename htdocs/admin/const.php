@@ -377,7 +377,7 @@ function getOptionList()
 	foreach($constClass->getConstList() as $entry)
 	{
 		$module		= trim($entry[0]);
-		$version	= (int)$entry[1];
+		$version	= (int) $entry[1];
 		$name		= trim($entry[2]);
 
 		if($last_module !== $module)
