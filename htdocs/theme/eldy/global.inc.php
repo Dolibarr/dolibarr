@@ -296,6 +296,7 @@ input.buttonpaymentstripe {
 a.buttonticket {
 	padding-left: 5px;
 	padding-right: 5px;
+    /* height: 40px; */
 }
 
 /* Used by timesheets */
@@ -797,8 +798,14 @@ select.flat.selectlimit {
 .margintoponly {
 	margin-top: 10px !important;
 }
+.margintoponlyshort {
+	margin-top: 3px !important;
+}
 .marginbottomonly {
 	margin-bottom: 10px !important;
+}
+.marginbottomonlyshort {
+	margin-bottom: 3px !important;
 }
 .nomargintop {
     margin-top: 0 !important;
@@ -5817,7 +5824,8 @@ div.tabsElem a.tab {
 }
 
 .ticketpublicarea {
-	width: 70%;
+	margin-left: 15%;
+    margin-right: 15%;
 }
 .publicnewticketform {
 	/* margin-top: 25px !important; */
@@ -5833,7 +5841,8 @@ div.tabsElem a.tab {
 		padding-left: 5px; padding-right: 5px;
 	}
 	.ticketpublicarea {
-		width: 100% !important;
+		margin-left: 10px;
+		margin-right: 10px;
 	}
 }
 

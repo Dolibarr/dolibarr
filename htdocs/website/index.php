@@ -936,7 +936,7 @@ if ($action == 'addcontainer')
 				} else {
 					$filetpl = $pathofwebsite.'/page'.$pageid.'.tpl.php';
 
-					// Generate the index.php page to be the home page
+					// Generate the index.php page (to be the home page) and wrapper.php file
 					$result = dolSaveIndexPage($pathofwebsite, $fileindex, $filetpl, $filewrapper);
 
 					if ($result <= 0) setEventMessages('Failed to write file '.$fileindex, null, 'errors');

@@ -67,12 +67,12 @@ $arrayofcss = array('/ticket/css/styles.css.php');
 
 llxHeaderTicket($langs->trans("Tickets"), "", 0, 0, $arrayofjs, $arrayofcss);
 
-print '<div style="margin: 0 auto; width:60%" class="ticketpublicarea">';
+print '<div class="ticketpublicarea">';
 print '<p style="text-align: center">'.($conf->global->TICKET_PUBLIC_TEXT_HOME ? $conf->global->TICKET_PUBLIC_TEXT_HOME : $langs->trans("TicketPublicDesc")).'</p>';
 print '<div class="ticketform">';
-print '<a href="create_ticket.php" class=""><div class="index_create orange bigrounded">'.dol_escape_htmltag($langs->trans("CreateTicket")).'</div></a>';
-print '<a href="list.php" class=""><div class="index_display blue bigrounded">'.dol_escape_htmltag($langs->trans("ShowListTicketWithTrackId")).'</div></a>';
-print '<a href="view.php" class=""><div class="index_display blue bigrounded">'.dol_escape_htmltag($langs->trans("ShowTicketWithTrackId")).'</div></a>';
+print '<a href="create_ticket.php" class="butAction marginbottomonly"><div class="index_create bigrounded"><span class="fa fa-plus-circle valignmiddle btnTitle-icon"></span><br>'.dol_escape_htmltag($langs->trans("CreateTicket")).'</div></a>';
+print '<a href="list.php" class="butAction marginbottomonly"><div class="index_display bigrounded"><span class="fa fa-list-alt valignmiddle btnTitle-icon"></span><br>'.dol_escape_htmltag($langs->trans("ViewMyTicketList")).'</div></a>';
+print '<a href="view.php" class="butAction marginbottomonly"><div class="index_display bigrounded">'.img_picto('', 'ticket').'<br>'.dol_escape_htmltag($langs->trans("ShowTicketWithTrackId")).'</div></a>';
 print '<div style="clear:both;"></div>';
 print '</div>';
 print '</div>';
