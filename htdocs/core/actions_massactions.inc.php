@@ -861,7 +861,7 @@ if ($massaction == 'confirm_createbills')   // Create bills from orders
 		if ($limit > 0 && $limit != $conf->liste_limit) $param .= '&limit='.urlencode($limit);
 		if ($sall)					$param .= '&sall='.urlencode($sall);
 		if ($socid > 0)             $param .= '&socid='.urlencode($socid);
-		if ($viewstatut != '')      $param .= '&viewstatut='.urlencode($viewstatut);
+		if ($search_status != '')      $param .= '&search_status='.urlencode($search_status);
 		if ($search_orderday)      		$param .= '&search_orderday='.urlencode($search_orderday);
 		if ($search_ordermonth)      		$param .= '&search_ordermonth='.urlencode($search_ordermonth);
 		if ($search_orderyear)       		$param .= '&search_orderyear='.urlencode($search_orderyear);
