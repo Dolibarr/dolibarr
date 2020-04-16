@@ -26,6 +26,7 @@
 
 require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/admin/class/const.class.php';
 
 // Load translation files required by the page
 $langs->load("admin");
@@ -56,6 +57,13 @@ $pagenext = $page + 1;
 if (empty($sortfield)) $sortfield = 'entity,name';
 if (empty($sortorder)) $sortorder = 'ASC';
 
+if (GETPOST('preselectadd'))
+{
+	$action     = 'add';
+	$constname  = GETPOST('preselectconstname', 'alphanohtml');
+	$constvalue = GETPOST('preselectconstvalue', 'none');
+	$constnote  = GETPOST('preselectconstnote', 'alpha');
+}
 
 /*
  * Actions
@@ -215,6 +223,20 @@ print "</tr>\n";
 // Line to add new record
 print "\n";
 
+print '<tr class="oddeven"><td><select style="width:100%;" name="preselectconstname">';
+print getOptionList();
+print '</select></td>'."\n";
+print '<td>';
+print '<input type="text" class="flat" size="30" name="preselectconstvalue">';
+print '</td><td>';
+print '<input type="text" class="flat" size="40" name="preselectconstnote">';
+print '</td>';
+print '<td>';
+print '</td>';
+print '<td>';
+print '<input type="submit" class="button" value="'.$langs->trans("Add").'" name="preselectadd">';
+print '</td>';
+
 print '<tr class="oddeven nohover"><td><input type="text" class="flat minwidth100" name="constname" value="'.$constname.'"></td>'."\n";
 print '<td>';
 print '<input type="text" class="flat minwidth100" name="constvalue" value="'.$constvalue.'">';
@@ -340,3 +362,52 @@ print "</form>\n";
 // End of page
 llxFooter();
 $db->close();
+
+/**
+ * Return a HTML option list
+ *
+ * @return	string	A HTML option list
+ */
+function getOptionList()
+{
+	$constClass		= new ConstClass();
+	$majorVersion	= 5; //versiondolibarrarray()[0];
+	$last_module	= "";
+
+	foreach($constClass->getConstList() as $entry)
+	{
+		$module		= trim($entry[0]);
+		$version	= (int)$entry[1];
+		$name		= trim($entry[2]);
+
+		if($last_module !== $module)
+		{
+			$result .= '<option disabled=disabled>';
+			$result .= '--------------------------';
+			$result .= '</option>';
+		}
+
+		if($version > $majorVersion)
+		{
+			$result .= '<option disabled=disabled>';
+			$result .= $module.' > '.$name.' (v'.$version.'.0)';
+			$result .= '</option>';
+		}
+		elseif($version < 0)
+		{
+			$result .= '<option disabled=disabled>';
+			$result .= $module.' > '.$name.' (deprecated)';
+			$result .= '</option>';
+		}
+		else
+		{
+			$result .= '<option value="'.$name.'">';
+			$result .= $module.' > '.$name;
+			$result .= '</option>';
+		}
+
+		$last_module = $module;
+	}
+
+	return $result;
+}
