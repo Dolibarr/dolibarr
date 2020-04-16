@@ -4683,9 +4683,10 @@ class Product extends CommonObject
      * This function need a lot of load. If you use it on list, use a cache to execute it once for each product id.
      * If ENTREPOT_EXTRA_STATUS set, filtering on warehouse status possible.
      *
-     * @param  string $option 		'' = Load all stock info, also from closed and internal warehouses, 'nobatch', 'novirtual'
-     * @return int                  < 0 if KO, > 0 if OK
-     * @see    load_virtual_stock(), loadBatchInfo()
+     * @param  	string 	$option 					'' = Load all stock info, also from closed and internal warehouses, 'nobatch', 'novirtual'
+     * @param	int		$includedraftpoforvirtual	Include draft status of PO for virtual stock calculation
+     * @return 	int                  				< 0 if KO, > 0 if OK
+     * @see    	load_virtual_stock(), loadBatchInfo()
      */
     public function load_stock($option = '', $includedraftpoforvirtual = null)
     {
@@ -4755,11 +4756,12 @@ class Product extends CommonObject
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
-	 *    Load value ->stock_theorique of a product. Property this->id must be defined.
-	 *    This function need a lot of load. If you use it on list, use a cache to execute it one for each product id.
+	 *  Load value ->stock_theorique of a product. Property this->id must be defined.
+	 *  This function need a lot of load. If you use it on list, use a cache to execute it one for each product id.
 	 *
-	 *    @return   int             < 0 if KO, > 0 if OK
-	 *    @see		load_stock(), loadBatchInfo()
+	 * 	@param	int		$includedraftpoforvirtual	Include draft status of PO for virtual stock calculation
+	 *  @return int     							< 0 if KO, > 0 if OK
+	 *  @see	load_stock(), loadBatchInfo()
 	 */
 	public function load_virtual_stock($includedraftpoforvirtual = null)
 	{
