@@ -371,7 +371,7 @@ $db->close();
 function getOptionList()
 {
 	$constClass		= new ConstClass();
-	$majorVersion	= 5; //versiondolibarrarray()[0];
+	$majorVersion	= versiondolibarrarray()[0];
 	$last_module	= "";
 
 	foreach($constClass->getConstList() as $entry)
