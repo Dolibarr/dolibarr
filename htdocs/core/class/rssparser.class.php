@@ -364,7 +364,7 @@ class RssParser
 					if (!empty($rss->channel['title']))				$this->_title = (string) $rss->channel['title'];
 					//if (!empty($rss->channel['rss_description']))	$this->_description = (string) $rss->channel['rss_description'];
 
-					$this->_imageurl = _getAtomImageUrl($rss->channel);
+					$this->_imageurl = $this->getAtomImageUrl($rss->channel);
 				}
 				if (!empty($conf->global->EXTERNALRSS_USE_SIMPLEXML)) {
 					$tmprss = xml2php($rss); $items = $tmprss['entry'];
@@ -418,7 +418,7 @@ class RssParser
 						{
 							$itemLink = (isset($item['link']) ? (string) $item['link'] : '');
 							$itemTitle = (string) $item['title'];
-							$itemDescription = _getAtomItemDescription($item);
+							$itemDescription = $this->getAtomItemDescription($item);
 							$itemPubDate = (string) $item['created'];
 							$itemId = (string) $item['id'];
 							$itemAuthor = (string) ($item['author'] ? $item['author'] : $item['author_name']);
@@ -427,7 +427,7 @@ class RssParser
 						{
 							$itemLink = (isset($item['link']) ? (string) $item['link'] : '');
 							$itemTitle = (string) $item['title'];
-							$itemDescription = _getAtomItemDescription($item);
+							$itemDescription = $this->getAtomItemDescription($item);
 							$itemPubDate = (string) $item['created'];
 							$itemId = (string) $item['id'];
 							$itemAuthor = (string) ($item['author'] ? $item['author'] : $item['author_name']);
@@ -741,6 +741,77 @@ class RssParser
 			}
 		}
 	}
+
+	/**
+	 * Return a description/summary for one item from a ATOM feed
+	 *
+	 * @param	array	$item		A parsed item of a ATOM feed
+	 * @param	int		$maxlength	(optional) The maximum length for the description
+	 * @return	string				A summary description
+	 */
+	private function getAtomItemDescription(array $item, $maxlength = 500)
+	{
+		$result = "";
+
+		if (isset($item['summary']))
+		{
+			$result = $item['summary'];
+		}
+		elseif (isset($item['atom_content']))
+		{
+			$result = $item['atom_content'];
+		}
+
+		// remove all HTML elements that can possible break the maximum size of a tooltip,
+		// like headings, image, video etc. and allow only simple style elements
+		$result = strip_tags($result, "<br><p><ul><ol><li>");
+
+		$result = str_replace("\n", "", $result);
+
+		if (strlen($result) > $maxlength)
+		{
+			$result = substr($result, 0, $maxlength);
+			$result .= "...";
+		}
+
+		return $result;
+	}
+
+	/**
+	 * Return a URL to a image of the given ATOM feed
+	 *
+	 * @param	array	$feed	The ATOM feed that possible contain a link to a logo or icon
+	 * @return	string			A URL to a image from a ATOM feed when found, otherwise a empty string
+	 */
+	private function getAtomImageUrl(array $feed)
+	{
+		if (isset($feed['icon']))
+		{
+			return $feed['logo'];
+		}
+
+		if (isset($feed['icon']))
+		{
+			return $feed['logo'];
+		}
+
+		if (isset($feed['webfeeds:logo']))
+		{
+			return $feed['webfeeds:logo'];
+		}
+
+		if (isset($feed['webfeeds:icon']))
+		{
+			return $feed['webfeeds:icon'];
+		}
+
+		if (isset($feed['webfeeds:wordmark']))
+		{
+			return $feed['webfeeds:wordmark'];
+		}
+
+		return "";
+	}
 }
 
 
@@ -796,75 +867,4 @@ function xml2php($xml)
 	}
 
 	return $array;
-}
-
-/**
- * Return a description/summary for one item from a ATOM feed
- *
- * @param	array	$item		A parsed item of a ATOM feed
- * @param	int		$maxlength	(optional) The maximum length for the description
- * @return	string				A summary description
- */
-function _getAtomItemDescription(array $item, $maxlength = 500)
-{
-	$result = "";
-
-	if (isset($item['summary']))
-	{
-		$result = $item['summary'];
-	}
-	elseif (isset($item['atom_content']))
-	{
-		$result = $item['atom_content'];
-	}
-
-	// remove all HTML elements that can possible break the maximum size of a tooltip,
-	// like headings, image, video etc. and allow only simple style elements
-	$result = strip_tags($result, "<br><p><ul><ol><li>");
-
-	$result = str_replace("\n", "", $result);
-
-	if (strlen($result) > $maxlength)
-	{
-		$result = substr($result, 0, $maxlength);
-		$result .= "...";
-	}
-
-	return $result;
-}
-
-/**
- * Return a URL to a image of the given ATOM feed
- *
- * @param	array	$feed	The ATOM feed that possible contain a link to a logo or icon
- * @return	string			A URL to a image from a ATOM feed when found, otherwise a empty string
- */
-function _getAtomImageUrl(array $feed)
-{
-	if (isset($feed['icon']))
-	{
-		return $feed['logo'];
-	}
-
-	if (isset($feed['icon']))
-	{
-		return $feed['logo'];
-	}
-
-	if (isset($feed['webfeeds:logo']))
-	{
-		return $feed['webfeeds:logo'];
-	}
-
-	if (isset($feed['webfeeds:icon']))
-	{
-		return $feed['webfeeds:icon'];
-	}
-
-	if (isset($feed['webfeeds:wordmark']))
-	{
-		return $feed['webfeeds:wordmark'];
-	}
-
-	return "";
 }
