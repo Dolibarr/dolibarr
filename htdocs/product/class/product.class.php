@@ -4810,7 +4810,7 @@ class Product extends CommonObject
      * @return int                  < 0 if KO, > 0 if OK
      * @see    load_virtual_stock(), loadBatchInfo()
      */
-    public function load_stock($option = '')
+    public function load_stock($option = '', $includedraftpoforvirtual = null)
     {
         // phpcs:enable
         global $conf;
@@ -4863,7 +4863,7 @@ class Product extends CommonObject
             $this->db->free($result);
 
             if (!preg_match('/novirtual/', $option)) {
-                $this->load_virtual_stock(); // This also load stats_commande_fournisseur, ...
+                $this->load_virtual_stock($includedraftpoforvirtual); // This also load stats_commande_fournisseur, ...
             }
 
             return 1;
@@ -4884,7 +4884,7 @@ class Product extends CommonObject
 	 *    @return   int             < 0 if KO, > 0 if OK
 	 *    @see		load_stock(), loadBatchInfo()
 	 */
-	public function load_virtual_stock()
+	public function load_virtual_stock($includedraftpoforvirtual = null)
 	{
 		// phpcs:enable
 		global $conf, $hookmanager, $action;
@@ -4918,19 +4918,25 @@ class Product extends CommonObject
 		}
 		if (!empty($conf->fournisseur->enabled))
 		{
-			$result = $this->load_stats_commande_fournisseur(0, '1,2,3,4', 1);
+		    $filterStatus = '1,2,3,4';
+            if (isset($includedraftpoforvirtual)) $filterStatus = '0,'.$filterStatus;
+			$result = $this->load_stats_commande_fournisseur(0, $filterStatus, 1);
 			if ($result < 0) dol_print_error($this->db, $this->error);
 			$stock_commande_fournisseur = $this->stats_commande_fournisseur['qty'];
 		}
 		if (!empty($conf->fournisseur->enabled) && empty($conf->reception->enabled))
 		{
-			$result = $this->load_stats_reception(0, '4', 1);
+            $filterStatus = '4';
+            if (isset($includedraftpoforvirtual)) $filterStatus = '0,'.$filterStatus;
+			$result = $this->load_stats_reception(0, $filterStatus, 1);
 			if ($result < 0) dol_print_error($this->db, $this->error);
 			$stock_reception_fournisseur = $this->stats_reception['qty'];
 		}
 		if (!empty($conf->fournisseur->enabled) && !empty($conf->reception->enabled))
 		{
-			$result = $this->load_stats_reception(0, '4', 1); // Use same tables than when module reception is not used.
+            $filterStatus = '4';
+            if (isset($includedraftpoforvirtual)) $filterStatus = '0,'.$filterStatus;
+			$result = $this->load_stats_reception(0, $filterStatus, 1);			// Use same tables than when module reception is not used.
 			if ($result < 0) dol_print_error($this->db, $this->error);
 			$stock_reception_fournisseur = $this->stats_reception['qty'];
 		}
@@ -4972,7 +4978,7 @@ class Product extends CommonObject
 			$hookmanager = new HookManager($this->db);
 		}
 		$hookmanager->initHooks(array('productdao'));
-		$parameters = array('id'=>$this->id);
+		$parameters = array('id'=>$this->id, 'includedraftpoforvirtual' => $includedraftpoforvirtual);
 		// Note that $action and $object may have been modified by some hooks
 		$reshook = $hookmanager->executeHooks('loadvirtualstock', $parameters, $this, $action);
 		if ($reshook > 0) $this->stock_theorique = $hookmanager->resArray['stock_theorique'];
