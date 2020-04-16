@@ -1025,7 +1025,7 @@ class pdf_cyan extends ModelePDFPropales
 		}
 
 		// Show payments conditions
-		if (empty($conf->global->PROPALE_PDF_HIDE_PAYMENTTERMCOND) && ($object->cond_reglement_code || $object->cond_reglement))
+		if (empty($conf->global->PROPOSAL_PDF_HIDE_PAYMENTTERM) && ($object->cond_reglement_code || $object->cond_reglement))
 		{
 			$pdf->SetFont('', 'B', $default_font_size - 2);
 			$pdf->SetXY($this->marge_gauche, $posy);
@@ -1041,7 +1041,7 @@ class pdf_cyan extends ModelePDFPropales
 			$posy = $pdf->GetY() + 3;
 		}
 
-		if (empty($conf->global->PROPALE_PDF_HIDE_PAYMENTTERMMODE))
+		if (empty($conf->global->PROPOSAL_PDF_HIDE_PAYMENTMODE))
 		{
 			// Check a payment mode is defined
 			/* Not required on a proposal
