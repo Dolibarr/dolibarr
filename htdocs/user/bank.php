@@ -145,6 +145,22 @@ if ($action == 'update' && !$cancel)
     }
 }
 
+// update personal email
+if ($action == 'setpersonal_email')
+{
+	$object->personal_email = GETPOST('personal_email');
+	$result = $object->update($user);
+	if ($result < 0) setEventMessages($object->error, $object->errors, 'errors');
+}
+
+// update personal mobile
+if ($action == 'setpersonal_mobile')
+{
+	$object->personal_mobile = GETPOST('personal_mobile');
+	$result = $object->update($user);
+	if ($result < 0) setEventMessages($object->error, $object->errors, 'errors');
+}
+
 
 /*
  *	View
@@ -196,6 +212,22 @@ if ($action != 'edit' && $action != 'create')		// If not bank account yet, $acco
     print '<tr><td class="titlefield">'.$langs->trans("Login").'</td>';
     print '<td>'.$object->login.'</td>';
     print '</tr>';
+
+	print '<tr class="nowrap">';
+	print '<td>';
+	print $form->editfieldkey("UserPersonalEmail", 'personal_email', $object->personal_email, $object, $user->rights->user->user->creer);
+	print '</td><td>';
+	print $form->editfieldval("UserPersonalEmail", 'personal_email', $object->personal_email, $object, $user->rights->user->user->creer, 'email', ($object->personal_email != '' ? dol_print_email($object->personal_email) : ''));
+	print '</td>';
+	print '</tr>';
+
+	print '<tr class="nowrap">';
+	print '<td>';
+	print $form->editfieldkey("UserPersonalMobile", 'personal_mobile', $object->personal_mobile, $object, $user->rights->user->user->creer);
+	print '</td><td>';
+	print $form->editfieldval("UserPersonalMobile", 'personal_mobile', $object->personal_mobile, $object, $user->rights->user->user->creer, 'string', ($object->personal_mobile != '' ? dol_print_phone($object->personal_mobile) : ''));
+	print '</td>';
+	print '</tr>';
 
     print '</table>';
 

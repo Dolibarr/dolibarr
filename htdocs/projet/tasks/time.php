@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2005		Rodolphe Quiedeville	<rodolphe@quiedeville.org>
- * Copyright (C) 2006-2018	Laurent Destailleur		<eldy@users.sourceforge.net>
+ * Copyright (C) 2006-2020	Laurent Destailleur		<eldy@users.sourceforge.net>
  * Copyright (C) 2010-2012	Regis Houssin			<regis.houssin@inodbox.com>
  * Copyright (C) 2011		Juanjo Menent			<jmenent@2byte.es>
  * Copyright (C) 2018		Ferran Marcet			<fmarcet@2byte.es>
@@ -53,6 +53,7 @@ $projectid	= GETPOST('projectid', 'int');
 $ref		= GETPOST('ref', 'alpha');
 $withproject = GETPOST('withproject', 'int');
 $project_ref = GETPOST('project_ref', 'alpha');
+$tab        = GETPOST('tab', 'aZ09');
 
 $search_day = GETPOST('search_day', 'int');
 $search_month = GETPOST('search_month', 'int');
@@ -620,8 +621,9 @@ if (($id > 0 || !empty($ref)) || $projectidforalltimes > 0)
 		if ($withproject)
 		{
 			// Tabs for project
-			if (empty($id)) $tab = 'timespent';
+			if (empty($id) || $tab == 'timespent') $tab = 'timespent';
 			else $tab = 'tasks';
+
 			$head = project_prepare_head($projectstatic);
 			dol_fiche_head($head, $tab, $langs->trans("Project"), -1, ($projectstatic->public ? 'projectpub' : 'project'));
 
@@ -958,6 +960,7 @@ if (($id > 0 || !empty($ref)) || $projectidforalltimes > 0)
 		print '<input type="hidden" name="id" value="'.$id.'">';
 		print '<input type="hidden" name="projectid" value="'.$projectidforalltimes.'">';
 		print '<input type="hidden" name="withproject" value="'.$withproject.'">';
+		print '<input type="hidden" name="tab" value="'.$tab.'">';
 
 		if ($massaction == 'generateinvoice')
 		{
@@ -1139,7 +1142,7 @@ if (($id > 0 || !empty($ref)) || $projectidforalltimes > 0)
 			print '<td></td>';
 			print "</tr>\n";
 
-			print '<tr class="oddeven">';
+			print '<tr class="oddeven nohover">';
 
 			// Date
 			print '<td class="maxwidthonsmartphone">';
@@ -1149,28 +1152,31 @@ if (($id > 0 || !empty($ref)) || $projectidforalltimes > 0)
 			print '</td>';
 
 			// Task
+			$nboftasks = 0;
 			if (empty($id))
 			{
 				print '<td class="maxwidthonsmartphone">';
-				$formproject->selectTasks(-1, GETPOST('taskid', 'int'), 'taskid', 0, 0, 1, 1, 0, 0, 'maxwidth300', $projectstatic->id, '');
+				$nboftasks = $formproject->selectTasks(-1, GETPOST('taskid', 'int'), 'taskid', 0, 0, 1, 1, 0, 0, 'maxwidth300', $projectstatic->id, '');
 				print '</td>';
 			}
 
 			// Contributor
 			print '<td class="maxwidthonsmartphone nowraponall">';
-			print img_object('', 'user', 'class="hideonsmartphone"');
 			$contactsofproject = $projectstatic->getListContactId('internal');
 			if (count($contactsofproject) > 0)
 			{
+				print img_object('', 'user', 'class="hideonsmartphone"');
 				if (in_array($user->id, $contactsofproject)) $userid = $user->id;
 				else $userid = $contactsofproject[0];
 
 				if ($projectstatic->public) $contactsofproject = array();
-				print $form->select_dolusers((GETPOST('userid', 'int') ?GETPOST('userid', 'int') : $userid), 'userid', 0, '', 0, '', $contactsofproject, 0, 0, 0, '', 0, $langs->trans("ResourceNotAssignedToProject"), 'maxwidth200');
+				print $form->select_dolusers((GETPOST('userid', 'int') ? GETPOST('userid', 'int') : $userid), 'userid', 0, '', 0, '', $contactsofproject, 0, 0, 0, '', 0, $langs->trans("ResourceNotAssignedToProject"), 'maxwidth200');
 			}
 			else
 			{
-				print img_error($langs->trans('FirstAddRessourceToAllocateTime')).$langs->trans('FirstAddRessourceToAllocateTime');
+				if ($nboftasks) {
+					print img_error($langs->trans('FirstAddRessourceToAllocateTime')).' '.$langs->trans('FirstAddRessourceToAllocateTime');
+				}
 			}
 			print '</td>';
 
@@ -1202,8 +1208,8 @@ if (($id > 0 || !empty($ref)) || $projectidforalltimes > 0)
 			}
 
 			print '<td class="center">';
-			print '<input type="submit" name="save" class="button buttongen marginleftonly marginbottomonly" value="'.$langs->trans("Add").'">';
-			print '<input type="submit" name="cancel" class="button buttongen marginleftonly" value="'.$langs->trans("Cancel").'">';
+			print '<input type="submit" name="save" class="button buttongen marginleftonly margintoponlyshort marginbottomonlyshort" value="'.$langs->trans("Add").'">';
+			print '<input type="submit" name="cancel" class="button buttongen marginleftonly margintoponlyshort marginbottomonlyshort" value="'.$langs->trans("Cancel").'">';
 			print '</td></tr>';
 
 			print '</table>';
@@ -1504,9 +1510,9 @@ if (($id > 0 || !empty($ref)) || $projectidforalltimes > 0)
 			if (($action == 'editline' || $action == 'splitline') && $_GET['lineid'] == $task_time->rowid)
 			{
 				print '<input type="hidden" name="lineid" value="'.$_GET['lineid'].'">';
-				print '<input type="submit" class="button" name="save" value="'.$langs->trans("Save").'">';
+				print '<input type="submit" class="button buttongen margintoponlyshort marginbottomonlyshort" name="save" value="'.$langs->trans("Save").'">';
 				print '<br>';
-				print '<input type="submit" class="button" name="cancel" value="'.$langs->trans('Cancel').'">';
+				print '<input type="submit" class="button buttongen margintoponlyshort marginbottomonlyshort" name="cancel" value="'.$langs->trans('Cancel').'">';
 			}
 			elseif ($user->rights->projet->lire || $user->rights->projet->all->creer)	 // Read project and enter time consumed on assigned tasks
 			{
@@ -1515,19 +1521,19 @@ if (($id > 0 || !empty($ref)) || $projectidforalltimes > 0)
 					if ($conf->MAIN_FEATURES_LEVEL >= 2)
 					{
 						print '&nbsp;';
-						print '<a class="reposition" href="'.$_SERVER["PHP_SELF"].'?id='.$task_time->fk_task.'&amp;action=splitline&amp;lineid='.$task_time->rowid.$param.'">';
+						print '<a class="reposition" href="'.$_SERVER["PHP_SELF"].'?id='.$task_time->fk_task.'&amp;action=splitline&amp;lineid='.$task_time->rowid.$param.((empty($id) || $tab == 'timespent') ? '&tab=timespent' : '').'">';
 						print img_split();
 						print '</a>';
 					}
 
 					print '&nbsp;';
-					print '<a class="reposition" href="'.$_SERVER["PHP_SELF"].'?id='.$task_time->fk_task.'&amp;action=editline&amp;lineid='.$task_time->rowid.$param.'">';
+					print '<a class="reposition editfielda" href="'.$_SERVER["PHP_SELF"].'?id='.$task_time->fk_task.'&amp;action=editline&amp;lineid='.$task_time->rowid.$param.((empty($id) || $tab == 'timespent') ? '&tab=timespent' : '').'">';
 					print img_edit();
 					print '</a>';
 
 					print '&nbsp;';
-					print '<a class="reposition" href="'.$_SERVER["PHP_SELF"].'?id='.$task_time->fk_task.'&amp;action=deleteline&amp;lineid='.$task_time->rowid.$param.'">';
-					print img_delete();
+					print '<a class="reposition paddingleft" href="'.$_SERVER["PHP_SELF"].'?id='.$task_time->fk_task.'&amp;action=deleteline&amp;lineid='.$task_time->rowid.$param.((empty($id) || $tab == 'timespent') ? '&tab=timespent' : '').'">';
+					print img_delete('default', 'class="pictodelete paddingleft"');
 					print '</a>';
 
 					if ($massactionbutton || $massaction)	// If we are in select mode (massactionbutton defined) or if we have already selected and sent an action ($massaction) defined
@@ -1543,6 +1549,7 @@ if (($id > 0 || !empty($ref)) || $projectidforalltimes > 0)
 			if (!$i) $totalarray['nbfield']++;
 
 			print "</tr>\n";
+
 
 			// Add line to split
 
