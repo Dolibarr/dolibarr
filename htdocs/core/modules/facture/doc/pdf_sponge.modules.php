@@ -1338,7 +1338,6 @@ class pdf_sponge extends ModelePDFFactures
 		    $total_a_payer_ttc = 0;
 		}
 
-		$deja_paye = 0;
 		$i = 1;
 		if (!empty($TPreviousIncoice)) {
 		    $pdf->setY($tab2_top);
@@ -1370,7 +1369,6 @@ class pdf_sponge extends ModelePDFFactures
 		        $pdf->MultiCell($largcol2, $tab2_hl, $displayAmount, 0, 'R', 1);
 
 		        $i++;
-		        $deja_paye += $fac->total_ht;
 		        $posy += $tab2_hl;
 
 		        $pdf->setY($posy);
