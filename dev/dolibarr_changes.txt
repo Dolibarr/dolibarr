@@ -104,6 +104,27 @@ with
 				//return false;	
 			}
 			
+* Replace in tcpdf.php
+
+		if (($imgsrc[0] === '/') AND !empty($_SERVER['DOCUMENT_ROOT']) AND ($_SERVER['DOCUMENT_ROOT'] != '/')) {
+
+with
+
+		// @CHANGE LDR Add support for src="file://..." links
+		if (strpos($imgsrc, 'file://') === 0) {
+			$imgsrc = str_replace('file://', '/', $imgsrc);
+			$imgsrc = urldecode($imgsrc);
+			$testscrtype = @parse_url($imgsrc);
+			if (empty($testscrtype['query'])) {
+				// convert URL to server path
+				$imgsrc = str_replace(K_PATH_URL, K_PATH_MAIN, $imgsrc);
+			} elseif (preg_match('|^https?://|', $imgsrc) !== 1) {
+				// convert URL to server path
+				$imgsrc = str_replace(K_PATH_MAIN, K_PATH_URL, $imgsrc);
+			}
+		}
+		elseif (($imgsrc[0] === '/') AND !empty($_SERVER['DOCUMENT_ROOT']) AND ($_SERVER['DOCUMENT_ROOT'] != '/')) {
+					
 
 
 * In tecnickcom/tcpdf/include/tcpdf_static, in function fopenLocal, replace
