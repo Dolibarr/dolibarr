@@ -751,8 +751,8 @@ if ($resql)
 			print '</td>';
 		}*/
 		print '<td class="center">';
-		print '<input type="submit" name="save" class="button" value="'.$langs->trans("Add").'"><br>';
-		print '<input type="submit" name="cancel" class="button" value="'.$langs->trans("Cancel").'">';
+		print '<input type="submit" name="save" class="button buttongen marginbottomonly" value="'.$langs->trans("Add").'"><br>';
+		print '<input type="submit" name="cancel" class="button buttongen marginbottomonly" value="'.$langs->trans("Cancel").'">';
 		print '</td></tr>';
 
 		print '</table>';
@@ -815,7 +815,7 @@ if ($resql)
 		$morehtml .= $buttonreconcile;
 	}
 
-	$morehtml .= $newcardbutton;
+	$morehtml .= '<!-- Add New button -->'.$newcardbutton;
 
 	$picto = 'bank_account';
 	if ($id > 0 || !empty($ref)) $picto = '';
