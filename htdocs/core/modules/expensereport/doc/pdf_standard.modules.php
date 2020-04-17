@@ -745,7 +745,7 @@ class pdf_standard extends ModeleExpenseReport
    		$pdf->SetXY($posx, $posy);
    		$pdf->SetFont('', 'B', $default_font_size + 2);
    		$pdf->SetTextColor(111, 81, 124);
-		$pdf->MultiCell($this->page_largeur - $this->marge_droite - $posx, 3, $object->getLibStatut(0), '', 'R');
+   		$pdf->MultiCell($this->page_largeur - $this->marge_droite - $posx, 3, $outputlangs->transnoentities($object->statuts_short[$object->status]), '', 'R');
 
 		if ($showaddress) {
 			// Sender properties
