@@ -445,8 +445,7 @@ class Invoices extends DolibarrApi
 		}
 
         $result = $this->invoice->delete_contact($rowid);
-
-        if (!$result) {
+        if ($result < 0) {
             throw new RestException(500, 'Error when deleted the contact');
         }
 
@@ -543,7 +542,7 @@ class Invoices extends DolibarrApi
     /**
      * Delete invoice
      *
-     * @param int   $id Invoice ID
+     * @param int   $id 	Invoice ID
      * @return array
      */
     public function delete($id)
@@ -560,7 +559,8 @@ class Invoices extends DolibarrApi
 			throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
 		}
 
-        if ($this->invoice->delete($id) < 0)
+		$result = $this->invoice->delete(DolibarrApiAccess::$user);
+        if ($result < 0)
         {
             throw new RestException(500);
         }
