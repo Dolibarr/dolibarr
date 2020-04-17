@@ -145,12 +145,13 @@ if ($action == 'confirm_deletefile' && $confirm == 'yes')
 
     if (is_object($object) && $object->id > 0) {
         if ($backtopage) {
-            header('Location: '.$backtopage);
+        	header('Location: '.$backtopage);
             exit;
         }
         else
         {
-            header('Location: '.$_SERVER["PHP_SELF"].'?id='.$object->id.(GETPOST('section_dir', 'alpha') ? '&section_dir='.urlencode(GETPOST('section_dir', 'alpha')) : '').(!empty($withproject) ? '&withproject=1' : ''));
+        	$tmpurl = $_SERVER["PHP_SELF"].'?id='.$object->id.(GETPOST('section_dir', 'alpha') ? '&section_dir='.urlencode(GETPOST('section_dir', 'alpha')) : '').(!empty($withproject) ? '&withproject=1' : '');
+        	header('Location: '.$tmpurl);
             exit;
         }
     }

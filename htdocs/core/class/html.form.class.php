@@ -4386,7 +4386,7 @@ class Form
                     buttons: {
                         "'.dol_escape_js($langs->transnoentities("Yes")).'": function() {
                         	var options = "&token='.urlencode(newToken()).'";
-                        	var inputok = '.json_encode($inputok).';
+                        	var inputok = '.json_encode($inputok).';	/* List of fields into form */
                          	var pageyes = "'.dol_escape_js(!empty($pageyes) ? $pageyes : '').'";
                          	if (inputok.length>0) {
                          		$.each(inputok, function(i, inputname) {
@@ -4405,7 +4405,7 @@ class Form
                         },
                         "'.dol_escape_js($langs->transnoentities("No")).'": function() {
                         	var options = "&token='.urlencode(newToken()).'";
-                         	var inputko = '.json_encode($inputko).';
+                         	var inputko = '.json_encode($inputko).';	/* List of fields into form */
                          	var pageno="'.dol_escape_js(!empty($pageno) ? $pageno : '').'";
                          	if (inputko.length>0) {
                          		$.each(inputko, function(i, inputname) {
