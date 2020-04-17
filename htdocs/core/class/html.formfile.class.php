@@ -76,7 +76,7 @@ class FormFile
 	 *  @param	integer		$linkfiles		1=Also add form to link files, 0=Do not show form to link files
 	 *  @param	string		$htmlname		Name and id of HTML form ('formuserfile' by default, 'formuserfileecm' when used to upload a file in ECM)
 	 *  @param	string		$accept			Specifies the types of files accepted (This is not a security check but an user interface facility. eg '.pdf,image/*' or '.png,.jpg' or 'video/*')
-	 *	@param	string		$sectiondir		If upload must be done inside a particular directory (is sectiondir defined, sectionid must not be)
+	 *	@param	string		$sectiondir		If upload must be done inside a particular directory (if sectiondir defined, sectionid must not be)
 	 *  @param  int         $usewithoutform 0=Default, 1=Disable <form> and style to use in existing area
 	 * 	@return	int							<0 if KO, >0 if OK
 	 */
@@ -107,8 +107,6 @@ class FormFile
 			if (!$perm && !empty($conf->global->MAIN_BUTTON_HIDE_UNAUTHORIZED)) {
 				return 1;
 			}
-
-			$maxlength = $size;
 
 			$out = "\n\n".'<!-- Start form attach new file --><div class="formattachnewfile">'."\n";
 
@@ -174,6 +172,10 @@ class FormFile
 			$out .= (!empty($accept) ? ' accept="'.$accept.'"' : ' accept=""');
 			$out .= '>';
 			$out .= ' ';
+			if ($sectionid) {	// Show overwrite if exists for ECM module only
+				$langs->load('link');
+				$out .= '<input style="margin-right: 2px;" type="checkbox" id="overwritefile" name="overwritefile" value="1"><label for="overwritefile">'.$langs->trans("OverwriteIfExists").'</label>';
+			}
 			$out .= '<input type="submit" class="button reposition" name="sendit" value="'.$langs->trans("Upload").'"';
 			$out .= (empty($conf->global->MAIN_UPLOAD_DOC) || empty($perm) ? ' disabled' : '');
 			$out .= '>';
