@@ -1297,7 +1297,7 @@ class FormFile
 					{
 						$fileinfo = pathinfo($file['name']);
 						print '<td class="center">';
-						if (image_format_supported($file['name']) > 0)
+						if (image_format_supported($file['name']) >= 0)
 						{
 						    if ($useinecm == 5 || $useinecm == 6)
 						    {
