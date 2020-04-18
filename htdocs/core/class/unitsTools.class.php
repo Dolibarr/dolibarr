@@ -63,9 +63,10 @@ class UnitsTools
 	 */
 	static public function scaleOfUnitPow($id)
 	{
+		global $db;
 		$base = 10;
 		// TODO : add base col into unit dictionary table
-		$unit = self::dbGetRow('SELECT scale, unit_type from '.MAIN_DB_PREFIX.'c_units WHERE rowid = '.intval($id));
+		$unit = $db->getRow('SELECT scale, unit_type from '.MAIN_DB_PREFIX.'c_units WHERE rowid = '.intval($id));
 		if($unit){
 			// TODO : if base exist in unit dictionary table remove this convertion exception and update convertion infos in database exemple time hour currently scale 3600 will become scale 2 base 60
 			if($unit->unit_type == 'time'){
@@ -76,44 +77,5 @@ class UnitsTools
 		}
 
 		return 0;
-	}
-
-	/**
-	 * return first result from query
-	 * @param string $sql the sql query string
-	 * @return bool| var
-	 */
-	static public function dbGetvalue($sql)
-	{
-		global $db;
-		$sql .= ' LIMIT 1;';
-
-		$res = $db->query($sql);
-		if ($res)
-		{
-			$Tresult = $db->fetch_row($res);
-			return $Tresult[0];
-		}
-
-		return false;
-	}
-
-	/**
-	 * return first result from query
-	 * @param string $sql the sql query string
-	 * @return bool| var
-	 */
-	static public function dbGetRow($sql)
-	{
-		global $db;
-		$sql .= ' LIMIT 1;';
-
-		$res = $db->query($sql);
-		if ($res)
-		{
-			return $db->fetch_object($res);
-		}
-
-		return false;
 	}
 }

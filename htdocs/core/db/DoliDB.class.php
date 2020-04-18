@@ -297,4 +297,42 @@ abstract class DoliDB implements Database
 	{
 		return $this->lastqueryerror;
 	}
+
+
+	/**
+	 * return first result value from query
+	 * @param string $sql the sql query string
+	 * @return bool| var
+	 */
+	public function getvalue($sql)
+	{
+		$sql .= ' LIMIT 1;';
+
+		$res = $this->query($sql);
+		if ($res)
+		{
+			$Tresult = $this->fetch_row($res);
+			return $Tresult[0];
+		}
+
+		return false;
+	}
+
+	/**
+	 * return first result from query as object
+	 * @param string $sql the sql query string
+	 * @return bool| var
+	 */
+	public function getRow($sql)
+	{
+		$sql .= ' LIMIT 1;';
+
+		$res = $this->query($sql);
+		if ($res)
+		{
+			return $this->fetch_object($res);
+		}
+
+		return false;
+	}
 }
