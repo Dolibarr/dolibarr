@@ -313,8 +313,10 @@ abstract class DoliDB implements Database
 		$res = $this->query($sql);
 		if ($res)
 		{
-			$Tresult = $this->fetch_row($res);
-			return $Tresult[0];
+			if($this->num_rows($res) > 0) {
+				$Tresult = $this->fetch_row($res);
+				return reset($Tresult);
+			}
 		}
 
 		return false;
