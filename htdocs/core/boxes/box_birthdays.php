@@ -89,7 +89,7 @@ class box_birthdays extends ModeleBoxes
 			$sql = "SELECT u.rowid, u.firstname, u.lastname, u.birth";
 			$sql.= " FROM ".MAIN_DB_PREFIX."user as u";
 			$sql.= " WHERE u.entity IN (".getEntity('user').")";
-			$sql.= dolSqlDateFilter('u.birth', 0, $tmparray['mon'], $tmparray['year']);
+			$sql.= dolSqlDateFilter('u.birth', 0, $tmparray['mon'], 0);
 			$sql.= " ORDER BY u.birth ASC";
 			$sql.= $this->db->plimit($max, 0);
 
