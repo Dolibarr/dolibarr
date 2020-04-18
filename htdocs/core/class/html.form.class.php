@@ -6120,11 +6120,11 @@ class Form
 			}
 			if ($tmpfieldstoshow) $fieldstoshow = $tmpfieldstoshow;
 		}
-        else
-        {
+		else
+		{
 			// For backward compatibility
 			$objecttmp->fields['ref'] = array('type'=>'varchar(30)', 'label'=>'Ref', 'showoncombobox'=>1);
-        }
+		}
 
 		if (empty($fieldstoshow))
 		{
@@ -6146,107 +6146,100 @@ class Form
 
 		// Search data
 		$sql = "SELECT t.rowid, ".$fieldstoshow." FROM ".MAIN_DB_PREFIX.$objecttmp->table_element." as t";
-		if (isset($objecttmp->ismultientitymanaged) && !is_numeric($objecttmp->ismultientitymanaged)) {
-			$tmparray = explode('@', $objecttmp->ismultientitymanaged);
-			$sql .= ' INNER JOIN '.MAIN_DB_PREFIX.$tmparray[1].' as parenttable ON parenttable.rowid = t.'.$tmparray[0];
-		}
-		if ($objecttmp->ismultientitymanaged == 'fk_soc@societe')
+		if ($objecttmp->ismultientitymanaged == 2)
 			if (!$user->rights->societe->client->voir && !$user->socid) $sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
-		$sql .= " WHERE 1=1";
-		if (isset($objecttmp->ismultientitymanaged) && $objecttmp->ismultientitymanaged == 1) $sql .= " AND t.entity IN (".getEntity($objecttmp->table_element).")";
-		if (isset($objecttmp->ismultientitymanaged) && !is_numeric($objecttmp->ismultientitymanaged)) {
-			$sql .= ' AND parenttable.entity = t.'.$tmparray[0];
-		}
-		if ($objecttmp->ismultientitymanaged == 1 && !empty($user->socid)) {
-			if ($objecttmp->element == 'societe') $sql .= " AND t.rowid = ".$user->socid;
-			else $sql .= " AND t.fk_soc = ".$user->socid;
-		}
-		if ($searchkey != '') $sql .= natural_search(explode(',', $fieldstoshow), $searchkey);
-		if ($objecttmp->ismultientitymanaged == 'fk_soc@societe') {
-			if (!$user->rights->societe->client->voir && !$user->socid) $sql .= " AND t.rowid = sc.fk_soc AND sc.fk_user = ".$user->id;
-		}
-		if ($objecttmp->filter) {	 // Syntax example "(t.ref:like:'SO-%') and (t.date_creation:<:'20160101')"
-			/*if (! DolibarrApi::_checkFilters($objecttmp->filter))
-			{
-				throw new RestException(503, 'Error when validating parameter sqlfilters '.$objecttmp->filter);
-			}*/
-			$regexstring = '\(([^:\'\(\)]+:[^:\'\(\)]+:[^:\(\)]+)\)';
-			$sql .= " AND (".preg_replace_callback('/'.$regexstring.'/', 'Form::forgeCriteriaCallback', $objecttmp->filter).")";
-		}
-		$sql .= $this->db->order($fieldstoshow, "ASC");
-		//$sql.=$this->db->plimit($limit, 0);
-		//print $sql;
-
-		// Build output string
-		$resql = $this->db->query($sql);
-		if ($resql)
-		{
-			if (!$forcecombo)
-			{
-				include_once DOL_DOCUMENT_ROOT.'/core/lib/ajax.lib.php';
-				$out .= ajax_combobox($htmlname, null, $conf->global->$confkeyforautocompletemode);
+			$sql .= " WHERE 1=1";
+			if (!empty($objecttmp->ismultientitymanaged)) $sql .= " AND t.entity IN (".getEntity($objecttmp->table_element).")";
+			if ($objecttmp->ismultientitymanaged == 1 && !empty($user->socid)) {
+				if ($objecttmp->element == 'societe') $sql .= " AND t.rowid = ".$user->socid;
+				else $sql .= " AND t.fk_soc = ".$user->socid;
 			}
-
-			// Construct $out and $outarray
-			$out .= '<select id="'.$htmlname.'" class="flat'.($morecss ? ' '.$morecss : '').'"'.($disabled ? ' disabled="disabled"' : '').($moreparams ? ' '.$moreparams : '').' name="'.$htmlname.'">'."\n";
-
-			// Warning: Do not use textifempty = ' ' or '&nbsp;' here, or search on key will search on ' key'. Seems it is no more true with selec2 v4
-			$textifempty = '&nbsp;';
-
-			//if (! empty($conf->use_javascript_ajax) || $forcecombo) $textifempty='';
-			if (!empty($conf->global->$confkeyforautocompletemode))
-			{
-				if ($showempty && !is_numeric($showempty)) $textifempty = $langs->trans($showempty);
-				else $textifempty .= $langs->trans("All");
+			if ($searchkey != '') $sql .= natural_search(explode(',', $fieldstoshow), $searchkey);
+			if ($objecttmp->ismultientitymanaged == 2) {
+				if (!$user->rights->societe->client->voir && !$user->socid) $sql .= " AND t.rowid = sc.fk_soc AND sc.fk_user = ".$user->id;
 			}
-			if ($showempty) $out .= '<option value="-1">'.$textifempty.'</option>'."\n";
+			if ($objecttmp->filter) {	 // Syntax example "(t.ref:like:'SO-%') and (t.date_creation:<:'20160101')"
+				/*if (! DolibarrApi::_checkFilters($objecttmp->filter))
+				 {
+				 throw new RestException(503, 'Error when validating parameter sqlfilters '.$objecttmp->filter);
+				 }*/
+				$regexstring = '\(([^:\'\(\)]+:[^:\'\(\)]+:[^:\(\)]+)\)';
+				$sql .= " AND (".preg_replace_callback('/'.$regexstring.'/', 'Form::forgeCriteriaCallback', $objecttmp->filter).")";
+			}
+			$sql .= $this->db->order($fieldstoshow, "ASC");
+			//$sql.=$this->db->plimit($limit, 0);
+			//print $sql;
 
-			$num = $this->db->num_rows($resql);
-			$i = 0;
-			if ($num)
+			// Build output string
+			$resql = $this->db->query($sql);
+			if ($resql)
 			{
-				while ($i < $num)
+				if (!$forcecombo)
 				{
-					$obj = $this->db->fetch_object($resql);
-					$label = '';
-					$tmparray = explode(',', $fieldstoshow);
-					foreach ($tmparray as $key => $val)
+					include_once DOL_DOCUMENT_ROOT.'/core/lib/ajax.lib.php';
+					$out .= ajax_combobox($htmlname, null, $conf->global->$confkeyforautocompletemode);
+				}
+
+				// Construct $out and $outarray
+				$out .= '<select id="'.$htmlname.'" class="flat'.($morecss ? ' '.$morecss : '').'"'.($disabled ? ' disabled="disabled"' : '').($moreparams ? ' '.$moreparams : '').' name="'.$htmlname.'">'."\n";
+
+				// Warning: Do not use textifempty = ' ' or '&nbsp;' here, or search on key will search on ' key'. Seems it is no more true with selec2 v4
+				$textifempty = '&nbsp;';
+
+				//if (! empty($conf->use_javascript_ajax) || $forcecombo) $textifempty='';
+				if (!empty($conf->global->$confkeyforautocompletemode))
+				{
+					if ($showempty && !is_numeric($showempty)) $textifempty = $langs->trans($showempty);
+					else $textifempty .= $langs->trans("All");
+				}
+				if ($showempty) $out .= '<option value="-1">'.$textifempty.'</option>'."\n";
+
+				$num = $this->db->num_rows($resql);
+				$i = 0;
+				if ($num)
+				{
+					while ($i < $num)
 					{
-						$val = preg_replace('/t\./', '', $val);
-						$label .= (($label && $obj->$val) ? ' - ' : '').$obj->$val;
-					}
-					if (empty($outputmode))
-					{
-						if ($preselectedvalue > 0 && $preselectedvalue == $obj->rowid)
+						$obj = $this->db->fetch_object($resql);
+						$label = '';
+						$tmparray = explode(',', $fieldstoshow);
+						foreach ($tmparray as $key => $val)
 						{
-							$out .= '<option value="'.$obj->rowid.'" selected>'.$label.'</option>';
+							$val = preg_replace('/t\./', '', $val);
+							$label .= (($label && $obj->$val) ? ' - ' : '').$obj->$val;
+						}
+						if (empty($outputmode))
+						{
+							if ($preselectedvalue > 0 && $preselectedvalue == $obj->rowid)
+							{
+								$out .= '<option value="'.$obj->rowid.'" selected>'.$label.'</option>';
+							}
+							else
+							{
+								$out .= '<option value="'.$obj->rowid.'">'.$label.'</option>';
+							}
 						}
 						else
 						{
-							$out .= '<option value="'.$obj->rowid.'">'.$label.'</option>';
+							array_push($outarray, array('key'=>$obj->rowid, 'value'=>$label, 'label'=>$label));
 						}
-					}
-					else
-					{
-						array_push($outarray, array('key'=>$obj->rowid, 'value'=>$label, 'label'=>$label));
-					}
 
-					$i++;
-					if (($i % 10) == 0) $out .= "\n";
+						$i++;
+						if (($i % 10) == 0) $out .= "\n";
+					}
 				}
+
+				$out .= '</select>'."\n";
+			}
+			else
+			{
+				dol_print_error($this->db);
 			}
 
-			$out .= '</select>'."\n";
-		}
-		else
-		{
-			dol_print_error($this->db);
-		}
+			$this->result = array('nbofelement'=>$num);
 
-		$this->result = array('nbofelement'=>$num);
-
-		if ($outputmode) return $outarray;
-		return $out;
+			if ($outputmode) return $outarray;
+			return $out;
 	}
 
 

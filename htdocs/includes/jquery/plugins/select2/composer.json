@@ -4,6 +4,9 @@
   "type": "component",
   "homepage": "https://select2.org/",
   "license": "MIT",
+  "require": {
+    "robloach/component-installer": "*"
+  },
   "extra": {
     "component": {
       "scripts": [
