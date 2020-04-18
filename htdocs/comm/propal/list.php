@@ -572,40 +572,40 @@ if ($resql)
 	if (!empty($arrayfields['p.ref']['checked']))
 	{
 		print '<td class="liste_titre">';
-		print '<input class="flat" size="6" type="text" name="search_ref" value="'.dol_escape_htmltag($search_ref).'">';
+		print '<input class="flat maxwidth50" type="text" name="search_ref" value="'.dol_escape_htmltag($search_ref).'">';
  		print '</td>';
 	}
 	if (!empty($arrayfields['p.ref_client']['checked']))
 	{
 		print '<td class="liste_titre">';
-		print '<input class="flat" size="6" type="text" name="search_refcustomer" value="'.dol_escape_htmltag($search_refcustomer).'">';
+		print '<input class="flat maxwidth50" type="text" name="search_refcustomer" value="'.dol_escape_htmltag($search_refcustomer).'">';
 	    print '</td>';
 	}
 	if (!empty($arrayfields['pr.ref']['checked']))
 	{
     	print '<td class="liste_titre">';
-    	print '<input class="flat" size="6" type="text" name="search_refproject" value="'.dol_escape_htmltag($search_refproject).'">';
+    	print '<input class="flat maxwidth50" type="text" name="search_refproject" value="'.dol_escape_htmltag($search_refproject).'">';
 	    print '</td>';
 	}
 	if (!empty($arrayfields['pr.title']['checked']))
 	{
 	    print '<td class="liste_titre">';
-	    print '<input class="flat" size="6" type="text" name="search_project" value="'.dol_escape_htmltag($search_project).'">';
+	    print '<input class="flat maxwidth50" type="text" name="search_project" value="'.dol_escape_htmltag($search_project).'">';
 	    print '</td>';
 	}
 	if (!empty($arrayfields['s.nom']['checked']))
 	{
 		print '<td class="liste_titre" align="left">';
-		print '<input class="flat" type="text" size="10" name="search_societe" value="'.dol_escape_htmltag($search_societe).'">';
+		print '<input class="flat maxwidth100" type="text" name="search_societe" value="'.dol_escape_htmltag($search_societe).'">';
 	    print '</td>';
 	}
-	if (!empty($arrayfields['s.town']['checked'])) print '<td class="liste_titre"><input class="flat" type="text" size="6" name="search_town" value="'.$search_town.'"></td>';
-	if (!empty($arrayfields['s.zip']['checked'])) print '<td class="liste_titre"><input class="flat" type="text" size="4" name="search_zip" value="'.$search_zip.'"></td>';
+	if (!empty($arrayfields['s.town']['checked'])) print '<td class="liste_titre"><input class="flat maxwidth50" type="text" name="search_town" value="'.$search_town.'"></td>';
+	if (!empty($arrayfields['s.zip']['checked'])) print '<td class="liste_titre"><input class="flat maxwidth50" type="text" name="search_zip" value="'.$search_zip.'"></td>';
 	// State
 	if (!empty($arrayfields['state.nom']['checked']))
 	{
 		print '<td class="liste_titre">';
-		print '<input class="flat" size="4" type="text" name="search_state" value="'.dol_escape_htmltag($search_state).'">';
+		print '<input class="flat maxwidth50" type="text" name="search_state" value="'.dol_escape_htmltag($search_state).'">';
 		print '</td>';
 	}
 	// Country
@@ -618,7 +618,7 @@ if ($resql)
 	// Company type
 	if (!empty($arrayfields['typent.code']['checked']))
 	{
-		print '<td class="liste_titre maxwidthonsmartphone" align="center">';
+		print '<td class="liste_titre maxwidth100onsmartphone" align="center">';
 		print $form->selectarray("search_type_thirdparty", $formcompany->typent_array(0), $search_type_thirdparty, 0, 0, 0, '', 0, 0, 0, (empty($conf->global->SOCIETE_SORT_ON_TYPEENT) ? 'ASC' : $conf->global->SOCIETE_SORT_ON_TYPEENT));
 		print ajax_combobox('search_type_thirdparty');
 		print '</td>';
@@ -668,7 +668,7 @@ if ($resql)
 	// Availability
 	if (!empty($arrayfields['ava.rowid']['checked']))
 	{
-		print '<td class="liste_titre maxwidthonsmartphone" align="center">';
+		print '<td class="liste_titre maxwidth100onsmartphone center">';
 		$form->selectAvailabilityDelay($search_availability, 'search_availability', '', 1);
 		print ajax_combobox('search_availability');
 		print '</td>';
