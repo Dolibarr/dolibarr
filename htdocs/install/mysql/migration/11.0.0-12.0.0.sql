@@ -241,3 +241,5 @@ ALTER TABLE llx_categorie ADD COLUMN date_creation	datetime;
 ALTER TABLE llx_categorie ADD COLUMN tms     		timestamp;
 ALTER TABLE llx_categorie ADD COLUMN fk_user_creat	integer;
 ALTER TABLE llx_categorie ADD COLUMN fk_user_modif	integer;
+
+ALTER TABLE llx_commandedet ADD CONSTRAINT fk_commandedet_fk_commandefourndet FOREIGN KEY (fk_commandefourndet) REFERENCES llx_commande_fournisseurdet (rowid);
