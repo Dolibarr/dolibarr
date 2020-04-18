@@ -76,10 +76,10 @@ $original_file = str_replace("../", "/", $original_file);
 // Cache or not
 if (GETPOST("cache", 'none') || image_format_supported($original_file) >= 0)
 {
-    // Important: Following code is to avoid page request by browser and PHP CPU at
-    // each Dolibarr page access.
-    header('Cache-Control: max-age=3600, public, must-revalidate');
-    header('Pragma: cache'); // This is to avoid having Pragma: no-cache
+	// Important: Following code is to avoid page request by browser and PHP CPU at
+	// each Dolibarr page access.
+	header('Cache-Control: max-age=3600, public, must-revalidate');
+	header('Pragma: cache'); // This is to avoid having Pragma: no-cache
 }
 
 $refname = basename(dirname($original_file)."/");
@@ -99,107 +99,107 @@ if ($rss) {
 
 	$website->fetch('', $websitekey);
 
-    $MAXNEWS = 20;
-    $arrayofblogs = $websitepage->fetchAll($website->id, 'DESC', 'date_creation', $MAXNEWS, 0, $filters);
+	$MAXNEWS = 20;
+	$arrayofblogs = $websitepage->fetchAll($website->id, 'DESC', 'date_creation', $MAXNEWS, 0, $filters);
 	$eventarray = array();
-	foreach($arrayofblogs as $blog) {
+	foreach ($arrayofblogs as $blog) {
 		$blog->fullpageurl = $website->virtualhost.'/'.$blog->pageurl.'.php';
 		$eventarray[] = $blog;
 	}
 
-    require_once DOL_DOCUMENT_ROOT."/core/lib/xcal.lib.php";
-    require_once DOL_DOCUMENT_ROOT."/core/lib/date.lib.php";
-    require_once DOL_DOCUMENT_ROOT."/core/lib/files.lib.php";
+	require_once DOL_DOCUMENT_ROOT."/core/lib/xcal.lib.php";
+	require_once DOL_DOCUMENT_ROOT."/core/lib/date.lib.php";
+	require_once DOL_DOCUMENT_ROOT."/core/lib/files.lib.php";
 
-    dol_syslog("build_exportfile Build export file format=".$format.", type=".$type.", cachedelay=".$cachedelay.", filename=".$filename.", filters size=".count($filters), LOG_DEBUG);
+	dol_syslog("build_exportfile Build export file format=".$format.", type=".$type.", cachedelay=".$cachedelay.", filename=".$filename.", filters size=".count($filters), LOG_DEBUG);
 
-    // Clean parameters
-    if (!$filename)
-    {
-    	$extension = 'rss';
-    	$filename = $format.'.'.$extension;
-    }
+	// Clean parameters
+	if (!$filename)
+	{
+		$extension = 'rss';
+		$filename = $format.'.'.$extension;
+	}
 
-    // Create dir and define output file (definitive and temporary)
-    $result = dol_mkdir($dir_temp);
-    $outputfile = $dir_temp.'/'.$filename;
+	// Create dir and define output file (definitive and temporary)
+	$result = dol_mkdir($dir_temp);
+	$outputfile = $dir_temp.'/'.$filename;
 
-    $result = 0;
+	$result = 0;
 
-    $buildfile = true;
+	$buildfile = true;
 
-    if ($cachedelay)
-    {
-    	$nowgmt = dol_now();
-    	include_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
-    	if (dol_filemtime($outputfile) > ($nowgmt - $cachedelay))
-    	{
-    		dol_syslog("build_exportfile file ".$outputfile." is not older than now - cachedelay (".$nowgmt." - ".$cachedelay."). Build is canceled");
-    		$buildfile = false;
-    	}
-    }
+	if ($cachedelay)
+	{
+		$nowgmt = dol_now();
+		include_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
+		if (dol_filemtime($outputfile) > ($nowgmt - $cachedelay))
+		{
+			dol_syslog("build_exportfile file ".$outputfile." is not older than now - cachedelay (".$nowgmt." - ".$cachedelay."). Build is canceled");
+			$buildfile = false;
+		}
+	}
 
-    if ($buildfile)
-    {
-    	$langs->load("other");
-    	$title = $desc = $langs->transnoentities('LatestBlogPosts');
+	if ($buildfile)
+	{
+		$langs->load("other");
+		$title = $desc = $langs->transnoentities('LatestBlogPosts');
 
-    	// Create temp file
-    	$outputfiletmp = tempnam($dir_temp, 'tmp'); // Temporary file (allow call of function by different threads
-    	@chmod($outputfiletmp, octdec($conf->global->MAIN_UMASK));
+		// Create temp file
+		$outputfiletmp = tempnam($dir_temp, 'tmp'); // Temporary file (allow call of function by different threads
+		@chmod($outputfiletmp, octdec($conf->global->MAIN_UMASK));
 
-    	// Write file
-    	$result = build_rssfile($format, $title, $desc, $eventarray, $outputfiletmp, '', $website->virtualhost.'/wrapper.php?rss=1');
+		// Write file
+		$result = build_rssfile($format, $title, $desc, $eventarray, $outputfiletmp, '', $website->virtualhost.'/wrapper.php?rss=1');
 
-    	if ($result >= 0)
-    	{
-    		if (dol_move($outputfiletmp, $outputfile, 0, 1)) $result = 1;
-    		else
-    		{
-    			$error = 'Failed to rename '.$outputfiletmp.' into '.$outputfile;
-    			dol_syslog("build_exportfile ".$error, LOG_ERR);
-    			dol_delete_file($outputfiletmp, 0, 1);
-    			print $error;
-    			exit(-1);
-    		}
-    	}
-    	else
-    	{
-    		dol_syslog("build_exportfile build_xxxfile function fails to for format=".$format." outputfiletmp=".$outputfile, LOG_ERR);
-    		dol_delete_file($outputfiletmp, 0, 1);
-    		$langs->load("errors");
-    		print $langs->trans("ErrorFailToCreateFile", $outputfile);
-    		exit(-1);
-    	}
-    }
+		if ($result >= 0)
+		{
+			if (dol_move($outputfiletmp, $outputfile, 0, 1)) $result = 1;
+			else
+			{
+				$error = 'Failed to rename '.$outputfiletmp.' into '.$outputfile;
+				dol_syslog("build_exportfile ".$error, LOG_ERR);
+				dol_delete_file($outputfiletmp, 0, 1);
+				print $error;
+				exit(-1);
+			}
+		}
+		else
+		{
+			dol_syslog("build_exportfile build_xxxfile function fails to for format=".$format." outputfiletmp=".$outputfile, LOG_ERR);
+			dol_delete_file($outputfiletmp, 0, 1);
+			$langs->load("errors");
+			print $langs->trans("ErrorFailToCreateFile", $outputfile);
+			exit(-1);
+		}
+	}
 
-    if ($result >= 0)
-    {
-    	$attachment = false;
-    	if (isset($_GET["attachment"])) $attachment = $_GET["attachment"];
-    	//$attachment = false;
-    	$contenttype = 'application/rss+xml';
-    	if (isset($_GET["contenttype"])) $contenttype = $_GET["contenttype"];
-    	//$contenttype='text/plain';
-    	$outputencoding = 'UTF-8';
+	if ($result >= 0)
+	{
+		$attachment = false;
+		if (isset($_GET["attachment"])) $attachment = $_GET["attachment"];
+		//$attachment = false;
+		$contenttype = 'application/rss+xml';
+		if (isset($_GET["contenttype"])) $contenttype = $_GET["contenttype"];
+		//$contenttype='text/plain';
+		$outputencoding = 'UTF-8';
 
-    	if ($contenttype)       header('Content-Type: '.$contenttype.($outputencoding ? '; charset='.$outputencoding : ''));
-    	if ($attachment) 		header('Content-Disposition: attachment; filename="'.$filename.'"');
+		if ($contenttype)       header('Content-Type: '.$contenttype.($outputencoding ? '; charset='.$outputencoding : ''));
+		if ($attachment) 		header('Content-Disposition: attachment; filename="'.$filename.'"');
 
-    	// Ajout directives pour resoudre bug IE
-    	//header('Cache-Control: Public, must-revalidate');
-    	//header('Pragma: public');
-    	if ($cachedelay) header('Cache-Control: max-age='.$cachedelay.', private, must-revalidate');
-    	else header('Cache-Control: private, must-revalidate');
+		// Ajout directives pour resoudre bug IE
+		//header('Cache-Control: Public, must-revalidate');
+		//header('Pragma: public');
+		if ($cachedelay) header('Cache-Control: max-age='.$cachedelay.', private, must-revalidate');
+		else header('Cache-Control: private, must-revalidate');
 
-    	// Clean parameters
-    	$outputfile = $dir_temp.'/'.$filename;
-    	$result = readfile($outputfile);
-    	if (!$result) print 'File '.$outputfile.' was empty.';
+		// Clean parameters
+		$outputfile = $dir_temp.'/'.$filename;
+		$result = readfile($outputfile);
+		if (!$result) print 'File '.$outputfile.' was empty.';
 
-    	// header("Location: ".DOL_URL_ROOT.'/document.php?modulepart=agenda&file='.urlencode($filename));
-    	exit;
-    }
+		// header("Location: ".DOL_URL_ROOT.'/document.php?modulepart=agenda&file='.urlencode($filename));
+		exit;
+	}
 }
 // Get logos
 elseif ($modulepart == "mycompany" && preg_match('/^\/?logos\//', $original_file))
