@@ -563,7 +563,7 @@ function print_eldy_megasubmenu($db, &$tabMenu, $parentMenu, $max_depth)
 
 	$menuTmp = new Menu();
 	print_left_eldy_menu($db, [], [], $tabMenu, $menuTmp, 1, $parentMenu, 1, null);
-	$subMenu = $menuTmp->liste;	
+	$subMenu = $menuTmp->liste;
 
 	print("<div class=submenuroot>");
 	print_start_menu_array();
@@ -623,7 +623,7 @@ function print_eldy_megasubmenu($db, &$tabMenu, $parentMenu, $max_depth)
 	print("</div>"); //class=submenuroot
 }
 
-  
+
 
 
 /**
