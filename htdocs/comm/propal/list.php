@@ -155,8 +155,8 @@ $arrayfields = array(
 	'p.ref'=>array('label'=>"Ref", 'checked'=>1),
 	'p.ref_client'=>array('label'=>"RefCustomer", 'checked'=>1),
 	'pr.ref'=>array('label'=>"ProjectRef", 'checked'=>1, 'enabled'=>(empty($conf->projet->enabled) ? 0 : 1)),
-    'pr.title'=>array('label'=>"ProjectLabel", 'checked'=>0, 'enabled'=>(empty($conf->projet->enabled) ? 0 : 1)),
-    's.nom'=>array('label'=>"ThirdParty", 'checked'=>1),
+	'pr.title'=>array('label'=>"ProjectLabel", 'checked'=>0, 'enabled'=>(empty($conf->projet->enabled) ? 0 : 1)),
+	's.nom'=>array('label'=>"ThirdParty", 'checked'=>1),
 	's.town'=>array('label'=>"Town", 'checked'=>1),
 	's.zip'=>array('label'=>"Zip", 'checked'=>1),
 	'state.nom'=>array('label'=>"StateShort", 'checked'=>0),
@@ -408,7 +408,7 @@ if ($resql)
 	$objectstatic = new Propal($db);
 	$userstatic = new User($db);
 
- 	if ($socid > 0)
+	if ($socid > 0)
 	{
 		$soc = new Societe($db);
 		$soc->fetch($socid);
@@ -473,7 +473,7 @@ if ($resql)
 	$arrayofmassactions = array(
 		'generate_doc'=>$langs->trans("ReGeneratePDF"),
 		'builddoc'=>$langs->trans("PDFMerge"),
-	    'presend'=>$langs->trans("SendByMail"),
+		'presend'=>$langs->trans("SendByMail"),
 	);
 	if ($user->rights->propal->supprimer) $arrayofmassactions['predelete'] = '<span class="fa fa-trash paddingrightonly"></span>'.$langs->trans("Delete");
 	if ($user->rights->propal->cloturer) $arrayofmassactions['closed'] = $langs->trans("Close");
@@ -483,8 +483,8 @@ if ($resql)
 	$newcardbutton = '';
 	if ($user->rights->propal->creer)
 	{
-        $newcardbutton .= dolGetButtonTitle($langs->trans('NewPropal'), '', 'fa fa-plus-circle', DOL_URL_ROOT.'/comm/propal/card.php?action=create');
-    }
+		$newcardbutton .= dolGetButtonTitle($langs->trans('NewPropal'), '', 'fa fa-plus-circle', DOL_URL_ROOT.'/comm/propal/card.php?action=create');
+	}
 
 	// Fields title search
 	print '<form method="POST" id="searchFormList" action="'.$_SERVER["PHP_SELF"].'">';
@@ -496,7 +496,7 @@ if ($resql)
 	print '<input type="hidden" name="sortorder" value="'.$sortorder.'">';
 	print '<input type="hidden" name="contextpage" value="'.$contextpage.'">';
 
-//	print_barre_liste($title, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, $massactionbutton, $num, $nbtotalofrecords, 'commercial', 0, $newcardbutton, '', $limit, 0, 0, 1);
+	print_barre_liste($title, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, $massactionbutton, $num, $nbtotalofrecords, 'commercial', 0, $newcardbutton, '', $limit, 0, 0, 1);
 
 	$topicmail = "SendPropalRef";
 	$modelmail = "proposal_send";
@@ -514,19 +514,19 @@ if ($resql)
 
 	$moreforfilter = '';
 
- 	// If the user can view prospects other than his'
- 	if ($user->rights->societe->client->voir || $socid)
- 	{
- 		$langs->load("commercial");
-	 	$moreforfilter .= '<div class="divsearchfield">';
- 		$moreforfilter .= $langs->trans('ThirdPartiesOfSaleRepresentative').': ';
-		$moreforfilter .= $formother->select_salesrepresentatives($search_sale, 'search_sale', $user, 0, 1, 'maxwidth200');
-	 	$moreforfilter .= '</div>';
- 	}
 	// If the user can view prospects other than his'
 	if ($user->rights->societe->client->voir || $socid)
 	{
-	 	$moreforfilter .= '<div class="divsearchfield">';
+		$langs->load("commercial");
+		$moreforfilter .= '<div class="divsearchfield">';
+		$moreforfilter .= $langs->trans('ThirdPartiesOfSaleRepresentative').': ';
+		$moreforfilter .= $formother->select_salesrepresentatives($search_sale, 'search_sale', $user, 0, 1, 'maxwidth200');
+		$moreforfilter .= '</div>';
+	}
+	// If the user can view prospects other than his'
+	if ($user->rights->societe->client->voir || $socid)
+	{
+		$moreforfilter .= '<div class="divsearchfield">';
 		$moreforfilter .= $langs->trans('LinkedToSpecificUsers').': ';
 		$moreforfilter .= $form->select_dolusers($search_user, 'search_user', 1, '', 0, '', '', 0, 0, 0, '', 0, '', 'maxwidth200');
 		$moreforfilter .= '</div>';
@@ -545,9 +545,9 @@ if ($resql)
 	{
 		require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
 		$moreforfilter .= '<div class="divsearchfield">';
-	 	$moreforfilter .= $langs->trans('CustomersProspectsCategoriesShort').': ';
+		$moreforfilter .= $langs->trans('CustomersProspectsCategoriesShort').': ';
 		$moreforfilter .= $formother->select_categories('customer', $search_categ_cus, 'search_categ_cus', 1);
-	 	$moreforfilter .= '</div>';
+		$moreforfilter .= '</div>';
 	}
 	$parameters = array();
 	$reshook = $hookmanager->executeHooks('printFieldPreListTitle', $parameters); // Note that $action and $object may have been modified by hook
@@ -562,8 +562,7 @@ if ($resql)
 	}
 
 	$varpage = empty($contextpage) ? $_SERVER["PHP_SELF"] : $contextpage;
-///////////
-//	$selectedfields = $form->multiSelectArrayWithCheckbox('selectedfields', $arrayfields, $varpage); // This also change content of $arrayfields
+	$selectedfields = $form->multiSelectArrayWithCheckbox('selectedfields', $arrayfields, $varpage); // This also change content of $arrayfields
 	$selectedfields .= (count($arrayofmassactions) ? $form->showCheckAddButtons('checkforselect', 1) : '');
 
 	print '<div class="div-table-responsive">';
@@ -574,31 +573,31 @@ if ($resql)
 	{
 		print '<td class="liste_titre">';
 		print '<input class="flat maxwidth50" type="text" name="search_ref" value="'.dol_escape_htmltag($search_ref).'">';
- 		print '</td>';
+		print '</td>';
 	}
 	if (!empty($arrayfields['p.ref_client']['checked']))
 	{
 		print '<td class="liste_titre">';
 		print '<input class="flat maxwidth50" type="text" name="search_refcustomer" value="'.dol_escape_htmltag($search_refcustomer).'">';
-	    print '</td>';
+		print '</td>';
 	}
 	if (!empty($arrayfields['pr.ref']['checked']))
 	{
-    	print '<td class="liste_titre">';
-    	print '<input class="flat maxwidth50" type="text" name="search_refproject" value="'.dol_escape_htmltag($search_refproject).'">';
-	    print '</td>';
+		print '<td class="liste_titre">';
+		print '<input class="flat maxwidth50" type="text" name="search_refproject" value="'.dol_escape_htmltag($search_refproject).'">';
+		print '</td>';
 	}
 	if (!empty($arrayfields['pr.title']['checked']))
 	{
-	    print '<td class="liste_titre">';
-	    print '<input class="flat maxwidth50" type="text" name="search_project" value="'.dol_escape_htmltag($search_project).'">';
-	    print '</td>';
+		print '<td class="liste_titre">';
+		print '<input class="flat maxwidth50" type="text" name="search_project" value="'.dol_escape_htmltag($search_project).'">';
+		print '</td>';
 	}
 	if (!empty($arrayfields['s.nom']['checked']))
 	{
 		print '<td class="liste_titre" align="left">';
 		print '<input class="flat maxwidth100" type="text" name="search_societe" value="'.dol_escape_htmltag($search_societe).'">';
-	    print '</td>';
+		print '</td>';
 	}
 	if (!empty($arrayfields['s.town']['checked'])) print '<td class="liste_titre"><input class="flat maxwidth50" type="text" name="search_town" value="'.$search_town.'"></td>';
 	if (!empty($arrayfields['s.zip']['checked'])) print '<td class="liste_titre"><input class="flat maxwidth50" type="text" name="search_zip" value="'.$search_zip.'"></td>';
@@ -766,7 +765,6 @@ if ($resql)
 		print '<td class="liste_titre"></td>';
 	}
 	// Extra fields
-////////////
 	include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_input.tpl.php';
 
 	// Fields from hook
@@ -785,7 +783,7 @@ if ($resql)
 		print '<td class="liste_titre">';
 		print '</td>';
 	}
-    // Date cloture
+	// Date cloture
 	if (!empty($arrayfields['p.date_cloture']['checked']))
 	{
 		print '<td class="liste_titre">';
@@ -941,24 +939,24 @@ if ($resql)
 
 		if (!empty($arrayfields['pr.ref']['checked']))
 		{
-    		// Project ref
-    		print '<td class="nowrap">';
-    		if ($obj->project_id > 0) {
+			// Project ref
+			print '<td class="nowrap">';
+			if ($obj->project_id > 0) {
 				print $projectstatic->getNomUrl(1);
 			}
-    		print '</td>';
-    		if (!$i) $totalarray['nbfield']++;
+			print '</td>';
+			if (!$i) $totalarray['nbfield']++;
 		}
 
 		if (!empty($arrayfields['pr.title']['checked']))
 		{
-		    // Project label
-		    print '<td class="nowrap">';
-		    if ($obj->project_id > 0) {
-		        print $projectstatic->title;
-		    }
-		    print '</td>';
-		    if (!$i) $totalarray['nbfield']++;
+			// Project label
+			print '<td class="nowrap">';
+			if ($obj->project_id > 0) {
+				print $projectstatic->title;
+			}
+			print '</td>';
+			if (!$i) $totalarray['nbfield']++;
 		}
 
 		// Thirdparty
@@ -1061,10 +1059,10 @@ if ($resql)
 		// Amount HT
 		if (!empty($arrayfields['p.total_ht']['checked']))
 		{
-			  print '<td class="nowrap right">'.price($obj->total_ht)."</td>\n";
-			  if (!$i) $totalarray['nbfield']++;
-			  if (!$i) $totalarray['pos'][$totalarray['nbfield']] = 'p.total_ht';
-			  $totalarray['val']['p.total_ht'] += $obj->total_ht;
+			print '<td class="nowrap right">'.price($obj->total_ht)."</td>\n";
+			if (!$i) $totalarray['nbfield']++;
+			if (!$i) $totalarray['pos'][$totalarray['nbfield']] = 'p.total_ht';
+			$totalarray['val']['p.total_ht'] += $obj->total_ht;
 		}
 		// Amount VAT
 		if (!empty($arrayfields['p.total_vat']['checked']))
@@ -1083,42 +1081,42 @@ if ($resql)
 			$totalarray['val']['p.total_ttc'] += $obj->total_ttc;
 		}
 		// Amount invoiced
-        if (!empty($arrayfields['p.total_ht_invoiced']['checked']))
-        {
-            print '<td class="nowrap right">'.price($totalInvoicedHT)."</td>\n";
-            if (!$i) $totalarray['nbfield']++;
-            if (!$i) $totalarray['pos'][$totalarray['nbfield']] = 'p.total_ht_invoiced';
-            $totalarray['val']['p.total_ht_invoiced'] += $totalInvoicedHT;
-        }
-        // Amount invoiced
-        if (!empty($arrayfields['p.total_invoiced']['checked']))
-        {
-            print '<td class="nowrap right">'.price($totalInvoicedTTC)."</td>\n";
-            if (!$i) $totalarray['nbfield']++;
-            if (!$i) $totalarray['pos'][$totalarray['nbfield']] = 'p.total_invoiced';
-            $totalarray['val']['p.total_invoiced'] += $totalInvoicedTTC;
-        }
+		if (!empty($arrayfields['p.total_ht_invoiced']['checked']))
+		{
+			print '<td class="nowrap right">'.price($totalInvoicedHT)."</td>\n";
+			if (!$i) $totalarray['nbfield']++;
+			if (!$i) $totalarray['pos'][$totalarray['nbfield']] = 'p.total_ht_invoiced';
+			$totalarray['val']['p.total_ht_invoiced'] += $totalInvoicedHT;
+		}
+		// Amount invoiced
+		if (!empty($arrayfields['p.total_invoiced']['checked']))
+		{
+			print '<td class="nowrap right">'.price($totalInvoicedTTC)."</td>\n";
+			if (!$i) $totalarray['nbfield']++;
+			if (!$i) $totalarray['pos'][$totalarray['nbfield']] = 'p.total_invoiced';
+			$totalarray['val']['p.total_invoiced'] += $totalInvoicedTTC;
+		}
 
 		// Currency
 		if (!empty($arrayfields['p.multicurrency_code']['checked']))
 		{
-			  print '<td class="nowrap">'.$obj->multicurrency_code.' - '.$langs->trans('Currency'.$obj->multicurrency_code)."</td>\n";
-			  if (!$i) $totalarray['nbfield']++;
+			print '<td class="nowrap">'.$obj->multicurrency_code.' - '.$langs->trans('Currency'.$obj->multicurrency_code)."</td>\n";
+			if (!$i) $totalarray['nbfield']++;
 		}
 
 		// Currency rate
 		if (!empty($arrayfields['p.multicurrency_tx']['checked']))
 		{
-			  print '<td class="nowrap">';
-			  $form->form_multicurrency_rate($_SERVER['PHP_SELF'].'?id='.$obj->rowid, $obj->multicurrency_tx, 'none', $obj->multicurrency_code);
-			  print "</td>\n";
-			  if (!$i) $totalarray['nbfield']++;
+			print '<td class="nowrap">';
+			$form->form_multicurrency_rate($_SERVER['PHP_SELF'].'?id='.$obj->rowid, $obj->multicurrency_tx, 'none', $obj->multicurrency_code);
+			print "</td>\n";
+			if (!$i) $totalarray['nbfield']++;
 		}
 		// Amount HT
 		if (!empty($arrayfields['p.multicurrency_total_ht']['checked']))
 		{
-			  print '<td class="right nowrap">'.price($obj->multicurrency_total_ht)."</td>\n";
-			  if (!$i) $totalarray['nbfield']++;
+			print '<td class="right nowrap">'.price($obj->multicurrency_total_ht)."</td>\n";
+			if (!$i) $totalarray['nbfield']++;
 		}
 		// Amount VAT
 		if (!empty($arrayfields['p.multicurrency_total_vat']['checked']))
@@ -1133,17 +1131,17 @@ if ($resql)
 			if (!$i) $totalarray['nbfield']++;
 		}
 		// Amount invoiced
-        if (!empty($arrayfields['p.multicurrency_total_ht_invoiced']['checked']))
-        {
-            print '<td class="nowrap right">'.price($multicurrency_totalInvoicedHT)."</td>\n";
-            if (!$i) $totalarray['nbfield']++;
-        }
-        // Amount invoiced
-        if (!empty($arrayfields['p.multicurrency_total_invoiced']['checked']))
-        {
-            print '<td class="nowrap right">'.price($multicurrency_totalInvoicedTTC)."</td>\n";
-            if (!$i) $totalarray['nbfield']++;
-        }
+		if (!empty($arrayfields['p.multicurrency_total_ht_invoiced']['checked']))
+		{
+			print '<td class="nowrap right">'.price($multicurrency_totalInvoicedHT)."</td>\n";
+			if (!$i) $totalarray['nbfield']++;
+		}
+		// Amount invoiced
+		if (!empty($arrayfields['p.multicurrency_total_invoiced']['checked']))
+		{
+			print '<td class="nowrap right">'.price($multicurrency_totalInvoicedTTC)."</td>\n";
+			if (!$i) $totalarray['nbfield']++;
+		}
 
 		$userstatic->id = $obj->fk_user_author;
 		$userstatic->login = $obj->login;
@@ -1223,7 +1221,7 @@ if ($resql)
 			print '</td>';
 			if (!$i) $totalarray['nbfield']++;
 		}
-    	// Date cloture
+		// Date cloture
 		if (!empty($arrayfields['p.date_cloture']['checked']))
 		{
 			print '<td align="center" class="nowrap">';
