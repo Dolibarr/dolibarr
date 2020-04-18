@@ -900,7 +900,7 @@ if ($resql)
 
 		if (!empty($arrayfields['p.ref']['checked']))
 		{
-			print '<td class="nowrap">';
+			print '<td class="nowraponall">';
 
 			print '<table class="nobordernopadding"><tr class="nocellnopadd">';
 			// Picto + Ref
