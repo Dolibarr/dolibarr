@@ -873,7 +873,7 @@ class FormFile
 						if ($printer)
 						{
 							//$out.= '<td class="right">';
-							$out .= '<a class="paddingleft" href="'.$urlsource.(strpos($urlsource, '?') ? '&amp;' : '?').'action=print_file&amp;printer='.$modulepart.'&amp;file='.urlencode($relativepath);
+							$out .= '<a class="marginleftonly" href="'.$urlsource.(strpos($urlsource, '?') ? '&amp;' : '?').'action=print_file&amp;printer='.$modulepart.'&amp;file='.urlencode($relativepath);
 							$out .= ($param ? '&amp;'.$param : '');
 							$out .= '">'.img_picto($langs->trans("PrintFile", $relativepath), 'printer.png').'</a>';
 						}
