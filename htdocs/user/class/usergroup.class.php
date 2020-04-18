@@ -100,6 +100,31 @@ class UserGroup extends CommonObject
 
 	public $oldcopy; // To contains a clone of this when we need to save old properties of object
 
+	public $fields = array(
+		'rowid'=>array('type'=>'integer', 'label'=>'TechnicalID', 'enabled'=>1, 'visible'=>-2, 'notnull'=>1, 'index'=>1, 'position'=>1, 'comment'=>'Id'),
+		'entity' => array('type'=>'integer', 'label'=>'Entity', 'enabled'=>1, 'visible'=>0, 'notnull'=> 1, 'default'=>1, 'index'=>1, 'position'=>5),
+		'nom'=>array('type'=>'varchar(180)', 'label'=>'Name', 'enabled'=>1, 'visible'=>1, 'notnull'=>1, 'showoncombobox'=>1, 'index'=>1, 'position'=>10, 'searchall'=>1, 'comment'=>'Group name'),
+		'note' => array('type'=>'html', 'label'=>'Description', 'enabled'=>1, 'visible'=>1, 'position'=>20, 'notnull'=>-1,),
+		'datec' => array('type'=>'datetime', 'label'=>'DateCreation', 'enabled'=>1, 'visible'=>-2, 'position'=>50, 'notnull'=>1,),
+		'tms' => array('type'=>'timestamp', 'label'=>'DateModification', 'enabled'=>1, 'visible'=>-2, 'position'=>60, 'notnull'=>1,),
+		'model_pdf' =>array('type'=>'varchar(255)', 'label'=>'ModelPDF', 'enabled'=>1, 'visible'=>0, 'position'=>100),
+	);
+
+	/**
+	 * @var int    Field with ID of parent key if this field has a parent
+	 */
+	public $fk_element = 'fk_usergroup';
+
+	/**
+	 * @var array	List of child tables. To test if we can delete object.
+	 */
+	protected $childtables=array();
+
+	/**
+	 * @var array	List of child tables. To know object to delete on cascade.
+	 */
+	protected $childtablesoncascade = array('usergroup_rights','usergroup_user');
+
 
 	/**
      *    Constructor de la classe
@@ -125,47 +150,23 @@ class UserGroup extends CommonObject
 	{
 		global $conf;
 
-		$sql = "SELECT g.rowid, g.entity, g.nom as name, g.note, g.datec, g.tms as datem";
-		$sql .= " FROM ".MAIN_DB_PREFIX."usergroup as g";
-		if ($groupname)
+		dol_syslog(get_class($this)."::fetch", LOG_DEBUG);
+		if (!empty($groupname))
 		{
-			$sql .= " WHERE g.nom = '".$this->db->escape($groupname)."'";
+			$result = $this->fetchCommon(0, '', ' AND nom = \''.$this->db->escape($groupname).'\'');
 		}
 		else
 		{
-			$sql .= " WHERE g.rowid = ".$id;
+			$result = $this->fetchCommon($id);
 		}
 
-		dol_syslog(get_class($this)."::fetch", LOG_DEBUG);
-		$result = $this->db->query($sql);
-		if ($result)
+		if($result)
 		{
-			if ($this->db->num_rows($result))
+			if ($load_members)
 			{
-				$obj = $this->db->fetch_object($result);
-
-				$this->id = $obj->rowid;
-				$this->ref = $obj->rowid;
-				$this->entity = $obj->entity;
-				$this->name = $obj->name;
-				$this->nom = $obj->name; // Deprecated
-				$this->note = $obj->note;
-				$this->datec = $obj->datec;
-				$this->datem = $obj->datem;
-
-				if ($load_members)
-					$this->members = $this->listUsersForGroup();
-
-
-				// Retreive all extrafield
-				// fetch optionals attributes and labels
-				$this->fetch_optionals();
-
-
-				// Sav current LDAP Current DN
-				//$this->ldap_dn = $this->_load_ldap_dn($this->_load_ldap_info(),0);
+				$this->members = $this->listUsersForGroup();
 			}
-			$this->db->free($result);
+
 			return 1;
 		}
 		else
@@ -403,7 +404,7 @@ class UserGroup extends CommonObject
 				$this->context = array('audit'=>$langs->trans("PermissionsAdd").($rid ? ' (id='.$rid.')' : ''));
 
 			    // Call trigger
-			    $result = $this->call_trigger('GROUP_MODIFY', $user);
+			    $result = $this->call_trigger('USERGROUP_MODIFY', $user);
 			    if ($result < 0) { $error++; }
 			    // End call triggers
 			}
@@ -527,7 +528,7 @@ class UserGroup extends CommonObject
 				$this->context = array('audit'=>$langs->trans("PermissionsDelete").($rid ? ' (id='.$rid.')' : ''));
 
 			    // Call trigger
-			    $result = $this->call_trigger('GROUP_MODIFY', $user);
+			    $result = $this->call_trigger('USERGROUP_MODIFY', $user);
 			    if ($result < 0) { $error++; }
 			    // End call triggers
 			}
@@ -637,50 +638,7 @@ class UserGroup extends CommonObject
 	 */
 	public function delete(User $user)
 	{
-		global $conf, $langs;
-
-		$error = 0;
-
-		$this->db->begin();
-
-		$sql = "DELETE FROM ".MAIN_DB_PREFIX."usergroup_rights";
-		$sql .= " WHERE fk_usergroup = ".$this->id;
-		$this->db->query($sql);
-
-		$sql = "DELETE FROM ".MAIN_DB_PREFIX."usergroup_user";
-		$sql .= " WHERE fk_usergroup = ".$this->id;
-		$this->db->query($sql);
-
-        // Remove extrafields
-        if ((!$error) && (empty($conf->global->MAIN_EXTRAFIELDS_DISABLED))) // For avoid conflicts if trigger used
-        {
-            $result = $this->deleteExtraFields();
-            if ($result < 0)
-            {
-                $error++;
-                dol_syslog(get_class($this)."::delete error -4 ".$this->error, LOG_ERR);
-            }
-        }
-
-		$sql = "DELETE FROM ".MAIN_DB_PREFIX."usergroup";
-		$sql .= " WHERE rowid = ".$this->id;
-		$result = $this->db->query($sql);
-		if ($result)
-		{
-            // Call trigger
-            $result = $this->call_trigger('GROUP_DELETE', $user);
-            if ($result < 0) { $error++; $this->db->rollback(); return -1; }
-            // End call triggers
-
-			$this->db->commit();
-			return 1;
-		}
-		else
-		{
-			$this->db->rollback();
-			dol_print_error($this->db);
-			return -1;
-		}
+		return $this->deleteCommon($user);
 	}
 
 	/**
@@ -691,67 +649,15 @@ class UserGroup extends CommonObject
 	 */
 	public function create($notrigger = 0)
 	{
-		global $user, $conf, $langs, $hookmanager;
+		global $user, $conf;
 
-		$error = 0;
-		$now = dol_now();
+		$this->datec = dol_now();
 
 		if (!isset($this->entity)) $this->entity = $conf->entity; // If not defined, we use default value
-
 		$entity = $this->entity;
 		if (!empty($conf->multicompany->enabled) && $conf->entity == 1) $entity = $this->entity;
 
-		$this->db->begin();
-
-		$sql = "INSERT INTO ".MAIN_DB_PREFIX."usergroup (";
-		$sql .= "datec";
-		$sql .= ", nom";
-		$sql .= ", entity";
-		$sql .= ") VALUES (";
-		$sql .= "'".$this->db->idate($now)."'";
-		$sql .= ",'".$this->db->escape($this->nom)."'";
-		$sql .= ",".$this->db->escape($entity);
-		$sql .= ")";
-
-		dol_syslog(get_class($this)."::create", LOG_DEBUG);
-		$result = $this->db->query($sql);
-		if ($result)
-		{
-			$this->id = $this->db->last_insert_id(MAIN_DB_PREFIX."usergroup");
-
-			if ($this->update(1) < 0) return -2;
-
-			$action = 'create';
-
-			// Actions on extra fields (by external module or standard code)
-			if (empty($conf->global->MAIN_EXTRAFIELDS_DISABLED)) // For avoid conflicts if trigger used
-			{
-				$result = $this->insertExtraFields();
-				if ($result < 0)
-				{
-					$error++;
-				}
-			}
-
-			if (!$error && !$notrigger)
-			{
-                // Call trigger
-                $result = $this->call_trigger('GROUP_CREATE', $user);
-                if ($result < 0) { $error++; $this->db->rollback(); return -1; }
-                // End call triggers
-			}
-
-			if ($error > 0) { $error++; $this->db->rollback(); return -1; }
-			else $this->db->commit();
-
-			return $this->id;
-		}
-		else
-		{
-		    $this->db->rollback();
-			$this->error = $this->db->lasterror();
-			return -1;
-		}
+		return $this->createCommon($user, $notrigger);
 	}
 
 	/**
@@ -762,9 +668,7 @@ class UserGroup extends CommonObject
 	 */
 	public function update($notrigger = 0)
 	{
-		global $user, $conf, $langs, $hookmanager;
-
-		$error = 0;
+		global $user, $conf;
 
 		$entity = $conf->entity;
 		if (!empty($conf->multicompany->enabled) && $conf->entity == 1)
@@ -772,55 +676,7 @@ class UserGroup extends CommonObject
 			$entity = $this->entity;
 		}
 
-		$this->db->begin();
-
-		$sql = "UPDATE ".MAIN_DB_PREFIX."usergroup SET ";
-		$sql .= " nom = '".$this->db->escape($this->name)."'";
-		$sql .= ", entity = ".$this->db->escape($entity);
-		$sql .= ", note = '".$this->db->escape($this->note)."'";
-		$sql .= " WHERE rowid = ".$this->id;
-
-		dol_syslog(get_class($this)."::update", LOG_DEBUG);
-		$resql = $this->db->query($sql);
-		if ($resql)
-		{
-			$action = 'update';
-
-			// Actions on extra fields (by external module or standard code)
-			if (empty($conf->global->MAIN_EXTRAFIELDS_DISABLED)) // For avoid conflicts if trigger used
-			{
-				$result = $this->insertExtraFields();
-				if ($result < 0)
-				{
-					$error++;
-				}
-			}
-
-			if (!$error && !$notrigger)
-			{
-                // Call trigger
-                $result = $this->call_trigger('GROUP_MODIFY', $user);
-                if ($result < 0) { $error++; }
-                // End call triggers
-			}
-
-			if (!$error)
-			{
-			    $this->db->commit();
-			    return 1;
-			}
-			else
-			{
-			    $this->db->rollback();
-			    return -$error;
-			}
-		}
-		else
-		{
-		    $this->db->rollback();
-			dol_print_error($this->db);
-			return -1;
-		}
+		return $this->updateCommon($user, $notrigger);
 	}
 
 
