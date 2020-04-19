@@ -160,6 +160,8 @@ class UserGroup extends CommonObject
 			$result = $this->fetchCommon($id);
 		}
 
+		$this->name = $this->nom;	// For compatibility with field name
+
 		if($result)
 		{
 			if ($load_members)
