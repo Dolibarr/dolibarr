@@ -107,16 +107,6 @@ $search_array_options = $extrafields->getOptionalsFromPost($object->table_elemen
 if (!$sortfield) $sortfield = "t.".key($object->fields); // Set here default search field. By default 1st field in definition.
 if (!$sortorder) $sortorder = "ASC";
 
-// Security check
-if (empty($conf->mymodule->enabled)) accessforbidden('Module not enabled');
-$socid = 0;
-if ($user->socid > 0)	// Protection if external user
-{
-	//$socid = $user->socid;
-	accessforbidden();
-}
-//$result = restrictedArea($user, 'mymodule', $id, '');
-
 // Initialize array of search criterias
 $search_all = trim(GETPOST("search_all", 'alpha'));
 $search = array();
@@ -160,6 +150,18 @@ $arrayfields = dol_sort_array($arrayfields, 'position');
 $permissiontoread = $user->rights->mymodule->myobject->read;
 $permissiontoadd = $user->rights->mymodule->myobject->write;
 $permissiontodelete = $user->rights->mymodule->myobject->delete;
+
+// Security check
+if (empty($conf->mymodule->enabled)) accessforbidden('Module not enabled');
+$socid = 0;
+if ($user->socid > 0)	// Protection if external user
+{
+	//$socid = $user->socid;
+	accessforbidden();
+}
+//$result = restrictedArea($user, 'mymodule', $id, '');
+//if (!$permissiontoread) accessforbidden();
+
 
 
 /*
