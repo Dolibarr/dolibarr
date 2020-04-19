@@ -1093,7 +1093,7 @@ class Mo extends CommonObject
 		if ($status == self::STATUS_VALIDATED) $statusType = 'status1';
 		if ($status == self::STATUS_INPROGRESS) $statusType = 'status4';
 		if ($status == self::STATUS_PRODUCED) $statusType = 'status6';
-		if ($status == self::STATUS_CANCELED) $statusType = 'status5';
+		if ($status == self::STATUS_CANCELED) $statusType = 'status9';
 
 		return dolGetStatus($this->labelStatus[$status], $this->labelStatusShort[$status], '', $statusType, $mode);
 	}

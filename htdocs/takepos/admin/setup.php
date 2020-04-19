@@ -43,7 +43,7 @@ if (!$user->admin) accessforbidden();
 
 $langs->loadLangs(array("admin", "cashdesk"));
 
-global $db;
+global $db, $mysoc;
 
 $sql = "SELECT code, libelle FROM ".MAIN_DB_PREFIX."c_paiement";
 $sql .= " WHERE entity IN (".getEntity('c_paiement').")";
@@ -57,28 +57,26 @@ if ($resql) {
 	}
 }
 
+$action = GETPOST('action', 'alpha');
+
+
 /*
  * Actions
  */
-if (GETPOST('action', 'alpha') == 'set')
+
+$error = 0;
+
+if ($action == 'set')
 {
 	$db->begin();
 	if (GETPOST('socid', 'int') < 0) $_POST["socid"] = '';
 
-	$res = dolibarr_set_const($db, "CASHDESK_SERVICES", GETPOST('CASHDESK_SERVICES', 'alpha'), 'chaine', 0, '', $conf->entity);
 	$res = dolibarr_set_const($db, "TAKEPOS_ROOT_CATEGORY_ID", GETPOST('TAKEPOS_ROOT_CATEGORY_ID', 'alpha'), 'chaine', 0, '', $conf->entity);
-	$res = dolibarr_set_const($db, "TAKEPOS_BAR_RESTAURANT", GETPOST('TAKEPOS_BAR_RESTAURANT', 'alpha'), 'chaine', 0, '', $conf->entity);
-	$res = dolibarr_set_const($db, "TAKEPOS_TICKET_VAT_GROUPPED", GETPOST('TAKEPOS_TICKET_VAT_GROUPPED', 'alpha'), 'chaine', 0, '', $conf->entity);
-	$res = dolibarr_set_const($db, "TAKEPOS_ORDER_PRINTERS", GETPOST('TAKEPOS_ORDER_PRINTERS', 'alpha'), 'chaine', 0, '', $conf->entity);
-	$res = dolibarr_set_const($db, "TAKEPOS_ORDER_NOTES", GETPOST('TAKEPOS_ORDER_NOTES', 'alpha'), 'chaine', 0, '', $conf->entity);
-	$res = dolibarr_set_const($db, "TAKEPOS_PHONE_BASIC_LAYOUT", GETPOST('TAKEPOS_PHONE_BASIC_LAYOUT', 'alpha'), 'chaine', 0, '', $conf->entity);
-	$res = dolibarr_set_const($db, "TAKEPOS_SUPPLEMENTS", GETPOST('TAKEPOS_SUPPLEMENTS', 'alpha'), 'chaine', 0, '', $conf->entity);
 	$res = dolibarr_set_const($db, "TAKEPOS_SUPPLEMENTS_CATEGORY", GETPOST('TAKEPOS_SUPPLEMENTS_CATEGORY', 'alpha'), 'chaine', 0, '', $conf->entity);
 	$res = dolibarr_set_const($db, "TAKEPOS_NUMPAD", GETPOST('TAKEPOS_NUMPAD', 'alpha'), 'chaine', 0, '', $conf->entity);
 	$res = dolibarr_set_const($db, "TAKEPOS_SORTPRODUCTFIELD", GETPOST('TAKEPOS_SORTPRODUCTFIELD', 'alpha'), 'chaine', 0, '', $conf->entity);
 	$res = dolibarr_set_const($db, "TAKEPOS_COLOR_THEME", GETPOST('TAKEPOS_COLOR_THEME', 'alpha'), 'chaine', 0, '', $conf->entity);
 	$res = dolibarr_set_const($db, "TAKEPOS_NUM_TERMINALS", GETPOST('TAKEPOS_NUM_TERMINALS', 'alpha'), 'chaine', 0, '', $conf->entity);
-	$res = dolibarr_set_const($db, "TAKEPOS_DIRECT_PAYMENT", GETPOST('TAKEPOS_DIRECT_PAYMENT', 'int'), 'int', 0, '', $conf->entity);
 	$res = dolibarr_set_const($db, "TAKEPOS_ADDON", GETPOST('TAKEPOS_ADDON', 'alpha'), 'int', 0, '', $conf->entity);
     $res = dolibarr_set_const($db, "TAKEPOS_EMAIL_TEMPLATE_INVOICE", GETPOST('TAKEPOS_EMAIL_TEMPLATE_INVOICE', 'alpha'), 'chaine', 0, '', $conf->entity);
 	if (!empty($conf->global->TAKEPOS_ENABLE_SUMUP)) {
@@ -98,13 +96,29 @@ if (GETPOST('action', 'alpha') == 'set')
  	if (!$error)
     {
         $db->commit();
-	    setEventMessages($langs->trans("SetupSaved"), null, 'mesgs');
     }
     else
     {
         $db->rollback();
-	    setEventMessages($langs->trans("Error"), null, 'errors');
     }
+} elseif ($action == 'updateMask') {
+	$maskconst = GETPOST('maskconst', 'alpha');
+	$maskvalue = GETPOST('maskvalue', 'alpha');
+	if ($maskconst) $res = dolibarr_set_const($db, $maskconst, $maskvalue, 'chaine', 0, '', $conf->entity);
+	if (!$res > 0) {
+		$error++;
+	}
+} elseif ($action == 'setrefmod') {
+	$value = GETPOST('value', 'alpha');
+	dolibarr_set_const($db, "TAKEPOS_REF_ADDON", $value, 'chaine', 0, '', $conf->entity);
+}
+
+if ($action != '') {
+	if (!$error) {
+		setEventMessage($langs->trans('SetupSaved'));
+	} else {
+		setEventMessages($langs->trans('Error'), null, 'errors');
+	}
 }
 
 /*
@@ -120,8 +134,110 @@ $linkback = '<a href="'.DOL_URL_ROOT.'/admin/modules.php">'.$langs->trans("BackT
 print load_fiche_titre($langs->trans("CashDeskSetup").' (TakePOS)', $linkback, 'title_setup');
 $head = takepos_prepare_head();
 dol_fiche_head($head, 'setup', 'TakePOS', -1);
-print '<br>';
 
+// Numbering modules
+$now = dol_now();
+$dirmodels = array_merge(array('/'), (array) $conf->modules_parts['models']);
+
+print load_fiche_titre($langs->trans('CashDeskRefNumberingModules'), '', '');
+
+print '<table class="noborder" width="100%">';
+print '<tr class="liste_titre">';
+print '<td>'.$langs->trans("Name")."</td>\n";
+print '<td>'.$langs->trans("Description")."</td>\n";
+print '<td class="nowrap">'.$langs->trans("Example")."</td>\n";
+print '<td align="center" width="60">'.$langs->trans("Status").'</td>';
+print '<td align="center" width="16">'.$langs->trans("ShortInfo").'</td>';
+print '</tr>'."\n";
+
+clearstatcache();
+
+foreach ($dirmodels as $reldir)
+{
+	$dir = dol_buildpath($reldir."core/modules/takepos/");
+
+	if (is_dir($dir))
+	{
+		$handle = opendir($dir);
+		if (is_resource($handle))
+		{
+			$var = true;
+
+			while (($file = readdir($handle)) !== false)
+			{
+				if (substr($file, 0, 16) == 'mod_takepos_ref_' && substr($file, dol_strlen($file) - 3, 3) == 'php')
+				{
+					$file = substr($file, 0, dol_strlen($file) - 4);
+
+					require_once $dir.$file.'.php';
+
+					$module = new $file;
+
+					// Show modules according to features level
+					if ($module->version == 'development' && $conf->global->MAIN_FEATURES_LEVEL < 2) continue;
+					if ($module->version == 'experimental' && $conf->global->MAIN_FEATURES_LEVEL < 1) continue;
+
+					if ($module->isEnabled())
+					{
+						print '<tr class="oddeven"><td>'.$module->nom."</td><td>\n";
+						print $module->info();
+						print '</td>';
+
+						// Show example of numbering module
+						print '<td class="nowrap">';
+						$tmp = $module->getExample();
+						if (preg_match('/^Error/', $tmp)) print '<div class="error">'.$langs->trans($tmp).'</div>';
+						elseif ($tmp == 'NotConfigured') print $langs->trans($tmp);
+						else print $tmp;
+						print '</td>'."\n";
+
+						print '<td align="center">';
+						if ($conf->global->TAKEPOS_REF_ADDON == "$file")
+						{
+							print img_picto($langs->trans("Activated"), 'switch_on');
+						}
+						else
+						{
+							print '<a href="'.$_SERVER["PHP_SELF"].'?action=setrefmod&amp;value='.$file.'">';
+							print img_picto($langs->trans("Disabled"), 'switch_off');
+							print '</a>';
+						}
+						print '</td>';
+
+						// example for next value
+						$invoice = new Facture($db);
+						$invoice->date = $now;
+						$invoice->module_source = 'takepos';
+						$invoice->pos_source = 1;
+
+						// Info
+						$htmltooltip = '';
+						$htmltooltip .= ''.$langs->trans("Version").': <b>'.$module->getVersion().'</b><br>';
+						$nextval = $module->getNextValue($mysoc, $invoice);
+						if ("$nextval" != $langs->trans("NotAvailable")) {  // Keep " on nextval
+							$htmltooltip .= ''.$langs->trans("NextValue").': ';
+							if ($nextval) {
+								if (preg_match('/^Error/', $nextval) || $nextval == 'NotConfigured')
+									$nextval = $langs->trans($nextval);
+								$htmltooltip .= $nextval.'<br>';
+							} else {
+								$htmltooltip .= $langs->trans($module->error).'<br>';
+							}
+						}
+
+						print '<td align="center">';
+						print $form->textwithpicto('', $htmltooltip, 1, 0);
+						print '</td>';
+
+						print "</tr>\n";
+					}
+				}
+			}
+			closedir($handle);
+		}
+	}
+}
+print "</table><br>\n";
 
 // Mode
 print '<form action="'.$_SERVER["PHP_SELF"].'" method="post">';
@@ -179,6 +295,12 @@ $array = array('rowid' => 'ID', 'ref' => 'Ref', 'label' => 'Label', 'datec' => '
 print $form->selectarray('TAKEPOS_SORTPRODUCTFIELD', $array, (empty($conf->global->TAKEPOS_SORTPRODUCTFIELD) ? 'rowid' : $conf->global->TAKEPOS_SORTPRODUCTFIELD), 0, 0, 0, '', 1);
 print "</td></tr>\n";
 
+print '<tr class="oddeven"><td>';
+print $langs->trans('TakeposGroupSameProduct');
+print '<td colspan="2">';
+print ajax_constantonoff("TAKEPOS_GROUP_SAME_PRODUCT", array(), $conf->entity, 0, 0, 1, 0);
+print "</td></tr>\n";
+
 $substitutionarray = pdf_getSubstitutionArray($langs, null, null, 2);
 $substitutionarray['__(AnyTranslationKey)__'] = $langs->trans("Translation");
 $htmltext = '<i>'.$langs->trans("AvailableVariables").':<br>';
@@ -189,7 +311,7 @@ $htmltext .= '</i>';
 print '<tr class="oddeven"><td>';
 print $langs->trans("ColorTheme");
 print '<td colspan="2">';
-$array = array(0=>"eldy", 1=>$langs->trans("Colorful"));
+$array = array(0=>"Eldy", 1=>$langs->trans("Colorful"));
 print $form->selectarray('TAKEPOS_COLOR_THEME', $array, (empty($conf->global->TAKEPOS_COLOR_THEME) ? '0' : $conf->global->TAKEPOS_COLOR_THEME), 0);
 print "</td></tr>\n";
 
@@ -248,62 +370,69 @@ if (is_array($formmail->lines_model)) {
 print $form->selectarray('TAKEPOS_EMAIL_TEMPLATE_INVOICE', $arrayofmessagename, $conf->global->TAKEPOS_EMAIL_TEMPLATE_INVOICE, 'None', 1, 0, '', 0, 0, 0, '', '', 1);
 print "</td></tr>\n";
 
-// Numbering module
+// Control cash box at opening pos
 print '<tr class="oddeven"><td>';
-print $langs->trans("BillsNumberingModule");
+print $langs->trans('ControlCashOpening');
 print '<td colspan="2">';
-$array = array(0=>$langs->trans("Default"), "terminal"=>$langs->trans("ByTerminal"));
-$dirmodels = array_merge(array('/'), (array) $conf->modules_parts['models']);
-foreach ($dirmodels as $reldir)
-{
-	$dir = dol_buildpath($reldir."core/modules/facture/");
-    if (is_dir($dir))
-    {
-        $handle = opendir($dir);
-        if (is_resource($handle))
-        {
-            while (($file = readdir($handle)) !== false)
-            {
-                if (!is_dir($dir.$file) || (substr($file, 0, 1) <> '.' && substr($file, 0, 3) <> 'CVS'))
-                {
-                    $filebis = $file;
-                    $classname = preg_replace('/\.php$/', '', $file);
-                    // For compatibility
-                    if (!is_file($dir.$filebis))
-                    {
-                        $filebis = $file."/".$file.".modules.php";
-                        $classname = "mod_facture_".$file;
-                    }
-                    // Check if there is a filter on country
-                    preg_match('/\-(.*)_(.*)$/', $classname, $reg);
-                    if (!empty($reg[2]) && $reg[2] != strtoupper($mysoc->country_code)) continue;
-
-                    $classname = preg_replace('/\-.*$/', '', $classname);
-                    if (!class_exists($classname) && is_readable($dir.$filebis) && (preg_match('/mod_/', $filebis) || preg_match('/mod_/', $classname)) && substr($filebis, dol_strlen($filebis) - 3, 3) == 'php')
-                    {
-                        // Charging the numbering class
-                        require_once $dir.$filebis;
-
-                        $module = new $classname($db);
-
-                        // Show modules according to features level
-                        if ($module->version == 'development' && $conf->global->MAIN_FEATURES_LEVEL < 2) continue;
-                        if ($module->version == 'experimental' && $conf->global->MAIN_FEATURES_LEVEL < 1) continue;
-
-                        if ($module->isEnabled())
-                        {
-							$array[preg_replace('/\-.*$/', '', preg_replace('/\.php$/', '', $file))]=preg_replace('/\-.*$/', '', preg_replace('/mod_facture_/', '', preg_replace('/\.php$/', '', $file)));
-                        }
-                    }
-                }
-            }
-            closedir($handle);
-        }
-    }
-}
-
-print $form->selectarray('TAKEPOS_ADDON', $array, (empty($conf->global->TAKEPOS_ADDON) ? '0' : $conf->global->TAKEPOS_ADDON), 0);
+print ajax_constantonoff("TAKEPOS_CONTROL_CASH_OPENING", array(), $conf->entity, 0, 0, 1, 0);
 print "</td></tr>\n";
+
+// Numbering module
+//print '<tr class="oddeven"><td>';
+//print $langs->trans("BillsNumberingModule");
+//print '<td colspan="2">';
+//$array = array(0=>$langs->trans("Default"), "terminal"=>$langs->trans("ByTerminal"));
+//$dirmodels = array_merge(array('/'), (array) $conf->modules_parts['models']);
+//foreach ($dirmodels as $reldir)
+//{
+//	$dir = dol_buildpath($reldir."core/modules/facture/");
+//    if (is_dir($dir))
+//    {
+//        $handle = opendir($dir);
+//        if (is_resource($handle))
+//        {
+//            while (($file = readdir($handle)) !== false)
+//            {
+//                if (!is_dir($dir.$file) || (substr($file, 0, 1) <> '.' && substr($file, 0, 3) <> 'CVS'))
+//                {
+//                    $filebis = $file;
+//                    $classname = preg_replace('/\.php$/', '', $file);
+//                    // For compatibility
+//                    if (!is_file($dir.$filebis))
+//                    {
+//                        $filebis = $file."/".$file.".modules.php";
+//                        $classname = "mod_facture_".$file;
+//                    }
+//                    // Check if there is a filter on country
+//                    preg_match('/\-(.*)_(.*)$/', $classname, $reg);
+//                    if (!empty($reg[2]) && $reg[2] != strtoupper($mysoc->country_code)) continue;
+//
+//                    $classname = preg_replace('/\-.*$/', '', $classname);
+//                    if (!class_exists($classname) && is_readable($dir.$filebis) && (preg_match('/mod_/', $filebis) || preg_match('/mod_/', $classname)) && substr($filebis, dol_strlen($filebis) - 3, 3) == 'php')
+//                    {
+//                        // Charging the numbering class
+//                        require_once $dir.$filebis;
+//
+//                        $module = new $classname($db);
+//
+//                        // Show modules according to features level
+//                        if ($module->version == 'development' && $conf->global->MAIN_FEATURES_LEVEL < 2) continue;
+//                        if ($module->version == 'experimental' && $conf->global->MAIN_FEATURES_LEVEL < 1) continue;
+//
+//                        if ($module->isEnabled())
+//                        {
+//							$array[preg_replace('/\-.*$/', '', preg_replace('/\.php$/', '', $file))] = preg_replace('/\-.*$/', '', preg_replace('/mod_facture_/', '', preg_replace('/\.php$/', '', $file)));
+//                        }
+//                    }
+//                }
+//            }
+//            closedir($handle);
+//        }
+//    }
+//}
+//
+//print $form->selectarray('TAKEPOS_ADDON', $array, (empty($conf->global->TAKEPOS_ADDON) ? '0' : $conf->global->TAKEPOS_ADDON), 0);
+//print "</td></tr>\n";
 
 print '</table>';
 print '</div>';

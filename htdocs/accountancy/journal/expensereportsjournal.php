@@ -321,7 +321,7 @@ if ($action == 'writebookkeeping') {
 						$accountingaccount->fetch($k, null, true);
 						$bookkeeping->label_compte = $accountingaccount->label;
 
-						$bookkeeping->label_operation = $langs->trans("VAT"). ' '.join(', ', $def_tva[$key][$k]).' %';
+						$bookkeeping->label_operation = $langs->trans("VAT").' '.join(', ', $def_tva[$key][$k]).' %';
 						$bookkeeping->montant = $mt;
 						$bookkeeping->sens = ($mt < 0) ? 'C' : 'D';
 						$bookkeeping->debit = ($mt > 0) ? $mt : 0;
@@ -448,36 +448,36 @@ if ($action == 'exportcsv') {		// ISO and not UTF8 !
 	        $accountingaccount = new AccountingAccount($db);
 	        $accountingaccount->fetch(null, $k, true);
 	        if ($mt) {
-	            print '"' . $date . '"' . $sep;
-	            print '"' . $val["ref"] . '"' . $sep;
-	            print '"' . length_accountg(html_entity_decode($k)) . '"' . $sep;
-	            print '"' . dol_trunc($accountingaccount->label, 32) . '"' . $sep;
-	            print '"' . ($mt >= 0 ? price($mt) : '') . '"' . $sep;
-	            print '"' . ($mt < 0 ? price(- $mt) : '') . '"';
+	            print '"'.$date.'"'.$sep;
+	            print '"'.$val["ref"].'"'.$sep;
+	            print '"'.length_accountg(html_entity_decode($k)).'"'.$sep;
+	            print '"'.dol_trunc($accountingaccount->label, 32).'"'.$sep;
+	            print '"'.($mt >= 0 ? price($mt) : '').'"'.$sep;
+	            print '"'.($mt < 0 ? price(-$mt) : '').'"';
 	            print "\n";
 	        }
 	    }
 	    // VAT
 	    foreach ($tabtva[$key] as $k => $mt) {
 	        if ($mt) {
-	            print '"' . $date . '"' . $sep;
-	            print '"' . $val["ref"] . '"' . $sep;
-	            print '"' . length_accountg(html_entity_decode($k)) . '"' . $sep;
-	            print '"' . dol_trunc($langs->trans("VAT")) . '"' . $sep;
-	            print '"' . ($mt >= 0 ? price($mt) : '') . '"' . $sep;
-	            print '"' . ($mt < 0 ? price(- $mt) : '') . '"';
+	            print '"'.$date.'"'.$sep;
+	            print '"'.$val["ref"].'"'.$sep;
+	            print '"'.length_accountg(html_entity_decode($k)).'"'.$sep;
+	            print '"'.dol_trunc($langs->trans("VAT")).'"'.$sep;
+	            print '"'.($mt >= 0 ? price($mt) : '').'"'.$sep;
+	            print '"'.($mt < 0 ? price(-$mt) : '').'"';
 	            print "\n";
 	        }
 	    }
 
 	    // Third party
 	    foreach ($tabttc[$key] as $k => $mt) {
-	        print '"' . $date . '"' . $sep;
-	        print '"' . $val["ref"] . '"' . $sep;
-	        print '"' . length_accounta(html_entity_decode($k)) . '"' . $sep;
-	        print '"' . dol_trunc($userstatic->name) . '"' . $sep;
-	        print '"' . ($mt < 0 ? price(- $mt) : '') . '"' . $sep;
-	        print '"' . ($mt >= 0 ? price($mt) : '') . '"';
+	        print '"'.$date.'"'.$sep;
+	        print '"'.$val["ref"].'"'.$sep;
+	        print '"'.length_accounta(html_entity_decode($k)).'"'.$sep;
+	        print '"'.dol_trunc($userstatic->name).'"'.$sep;
+	        print '"'.($mt < 0 ? price(-$mt) : '').'"'.$sep;
+	        print '"'.($mt >= 0 ? price($mt) : '').'"';
 	    }
 	    print "\n";
 	}
@@ -641,8 +641,8 @@ if (empty($action) || $action == 'view') {
 				if ($mt) {
 					print '<tr class="oddeven">';
 					print "<!-- VAT -->";
-					print "<td>" . $date . "</td>";
-					print "<td>" . $expensereportstatic->getNomUrl(1) . "</td>";
+					print "<td>".$date."</td>";
+					print "<td>".$expensereportstatic->getNomUrl(1)."</td>";
 					// Account
 					print "<td>";
 					$accountoshow = length_accountg($k);
@@ -655,10 +655,10 @@ if (empty($action) || $action == 'view') {
 					// Subledger account
 					print "<td>";
 					print '</td>';
-					print "<td>" . $userstatic->getNomUrl(0, 'user', 16) . ' - ' . $langs->trans("VAT"). ' '.join(', ', $def_tva[$key][$k]).' %'.($numtax?' - Localtax '.$numtax:'');
+					print "<td>".$userstatic->getNomUrl(0, 'user', 16).' - '.$langs->trans("VAT").' '.join(', ', $def_tva[$key][$k]).' %'.($numtax ? ' - Localtax '.$numtax : '');
 					print "</td>";
-					print '<td class="right nowraponall">' . ($mt >= 0 ? price($mt) : '') . "</td>";
-					print '<td class="right nowraponall">' . ($mt < 0 ? price(- $mt) : '') . "</td>";
+					print '<td class="right nowraponall">'.($mt >= 0 ? price($mt) : '')."</td>";
+					print '<td class="right nowraponall">'.($mt < 0 ? price(-$mt) : '')."</td>";
 					print "</tr>";
 				}
 			}

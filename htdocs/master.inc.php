@@ -122,10 +122,10 @@ if (!defined('NOREQUIREDB'))
 	if ($db->error)
 	{
 		// If we were into a website context
-		if (! defined('USEDOLIBARREDITOR') && ! defined('USEDOLIBARRSERVER') && ! empty($_SERVER['SCRIPT_FILENAME']) && (strpos($_SERVER['SCRIPT_FILENAME'], DOL_DATA_ROOT.'/website') === 0))
+		if (!defined('USEDOLIBARREDITOR') && !defined('USEDOLIBARRSERVER') && !empty($_SERVER['SCRIPT_FILENAME']) && (strpos($_SERVER['SCRIPT_FILENAME'], DOL_DATA_ROOT.'/website') === 0))
 		{
 			$sapi_type = php_sapi_name();
-			if (substr($sapi_type, 0, 3) != 'cgi') http_response_code(503);				// To tel search engine this is a temporary error
+			if (substr($sapi_type, 0, 3) != 'cgi') http_response_code(503); // To tel search engine this is a temporary error
 			print '<div class="center" style="text-align: center; margin: 100px;">';
 			if (is_object($langs))
 			{
@@ -237,31 +237,31 @@ if (!empty($conf->global->MAIN_ONLY_LOGIN_ALLOWED))
 }
 
 // Create object $mysoc (A thirdparty object that contains properties of companies managed by Dolibarr.
-if (! defined('NOREQUIREDB') && ! defined('NOREQUIRESOC'))
+if (!defined('NOREQUIREDB') && !defined('NOREQUIRESOC'))
 {
-	require_once DOL_DOCUMENT_ROOT .'/societe/class/societe.class.php';
+	require_once DOL_DOCUMENT_ROOT.'/societe/class/societe.class.php';
 
-	$mysoc=new Societe($db);
+	$mysoc = new Societe($db);
 	$mysoc->setMysoc($conf);
 
 	// For some countries, we need to invert our address with customer address
-	if ($mysoc->country_code == 'DE' && ! isset($conf->global->MAIN_INVERT_SENDER_RECIPIENT)) $conf->global->MAIN_INVERT_SENDER_RECIPIENT=1;
+	if ($mysoc->country_code == 'DE' && !isset($conf->global->MAIN_INVERT_SENDER_RECIPIENT)) $conf->global->MAIN_INVERT_SENDER_RECIPIENT = 1;
 }
 
 
 // Set default language (must be after the setValues setting global $conf->global->MAIN_LANG_DEFAULT. Page main.inc.php will overwrite langs->defaultlang with user value later)
-if (! defined('NOREQUIRETRAN'))
+if (!defined('NOREQUIRETRAN'))
 {
-    $langcode=(GETPOST('lang', 'aZ09')?GETPOST('lang', 'aZ09', 1):(empty($conf->global->MAIN_LANG_DEFAULT)?'auto':$conf->global->MAIN_LANG_DEFAULT));
-    if (defined('MAIN_LANG_DEFAULT')) $langcode=constant('MAIN_LANG_DEFAULT');
+    $langcode = (GETPOST('lang', 'aZ09') ?GETPOST('lang', 'aZ09', 1) : (empty($conf->global->MAIN_LANG_DEFAULT) ? 'auto' : $conf->global->MAIN_LANG_DEFAULT));
+    if (defined('MAIN_LANG_DEFAULT')) $langcode = constant('MAIN_LANG_DEFAULT');
     $langs->setDefaultLang($langcode);
 }
 
 
 // Create the global $hookmanager object
 include_once DOL_DOCUMENT_ROOT.'/core/class/hookmanager.class.php';
-$hookmanager=new HookManager($db);
+$hookmanager = new HookManager($db);
 
 
-if (! defined('MAIN_LABEL_MENTION_NPR') ) define('MAIN_LABEL_MENTION_NPR', 'NPR');
+if (!defined('MAIN_LABEL_MENTION_NPR')) define('MAIN_LABEL_MENTION_NPR', 'NPR');
 //if (! defined('PCLZIP_TEMPORARY_DIR')) define('PCLZIP_TEMPORARY_DIR', $conf->user->dir_temp);

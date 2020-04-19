@@ -41,7 +41,7 @@ if (!empty($_REQUEST['CASHDESK_ID_THIRDPARTY'.$terminal.'_id']))
 // Security check
 if (!$user->admin) accessforbidden();
 
-$langs->loadLangs(array("admin", "cashdesk"));
+$langs->loadLangs(array("admin", "cashdesk", "printing"));
 
 global $db;
 
@@ -85,6 +85,8 @@ if (GETPOST('action', 'alpha') == 'set')
     $res = dolibarr_set_const($db, "CASHDESK_ID_WAREHOUSE".$terminaltouse, (GETPOST('CASHDESK_ID_WAREHOUSE'.$terminaltouse, 'alpha') > 0 ? GETPOST('CASHDESK_ID_WAREHOUSE'.$terminaltouse, 'alpha') : ''), 'chaine', 0, '', $conf->entity);
     $res = dolibarr_set_const($db, "CASHDESK_NO_DECREASE_STOCK".$terminaltouse, GETPOST('CASHDESK_NO_DECREASE_STOCK'.$terminaltouse, 'alpha'), 'chaine', 0, '', $conf->entity);
     $res = dolibarr_set_const($db, "TAKEPOS_PRINTER_TO_USE".$terminaltouse, GETPOST('TAKEPOS_PRINTER_TO_USE'.$terminaltouse, 'alpha'), 'chaine', 0, '', $conf->entity);
+    $res = dolibarr_set_const($db, "TAKEPOS_ORDER_PRINTER1_TO_USE".$terminaltouse, GETPOST('TAKEPOS_ORDER_PRINTER1_TO_USE'.$terminaltouse, 'alpha'), 'chaine', 0, '', $conf->entity);
+    $res = dolibarr_set_const($db, "TAKEPOS_ORDER_PRINTER2_TO_USE".$terminaltouse, GETPOST('TAKEPOS_ORDER_PRINTER2_TO_USE'.$terminaltouse, 'alpha'), 'chaine', 0, '', $conf->entity);
     $res = dolibarr_set_const($db, "TAKEPOS_TEMPLATE_TO_USE_FOR_INVOICES".$terminaltouse, GETPOST('TAKEPOS_TEMPLATE_TO_USE_FOR_INVOICES'.$terminaltouse, 'alpha'), 'chaine', 0, '', $conf->entity);
     $res = dolibarr_set_const($db, "TAKEPOS_TEMPLATE_TO_USE_FOR_ORDERS".$terminaltouse, GETPOST('TAKEPOS_TEMPLATE_TO_USE_FOR_ORDERS'.$terminaltouse, 'alpha'), 'chaine', 0, '', $conf->entity);
 
@@ -204,7 +206,7 @@ if (!empty($conf->stock->enabled))
 	if (!$disabled)
 	{
 		print $formproduct->selectWarehouses($conf->global->{'CASHDESK_ID_WAREHOUSE'.$terminal}, 'CASHDESK_ID_WAREHOUSE'.$terminal, '', 1, $disabled);
-		print ' <a href="'.DOL_URL_ROOT.'/product/stock/card.php?action=create&backtopage='.urlencode($_SERVER["PHP_SELF"]).'">('.$langs->trans("Create").')</a>';
+		print ' <a href="'.DOL_URL_ROOT.'/product/stock/card.php?action=create&backtopage='.urlencode($_SERVER["PHP_SELF"]).'"><span class="fa fa-plus-circle valignmiddle"></span></a>';
 	}
 	else
 	{
@@ -213,9 +215,9 @@ if (!empty($conf->stock->enabled))
 	print '</td></tr>';
 
 	if (!empty($conf->productbatch->enabled) && !empty($conf->global->CASHDESK_FORCE_DECREASE_STOCK) && !$conf->global->{'CASHDESK_NO_DECREASE_STOCK'.$terminal}) {
-		print '<tr class="oddeven"><td>' . $langs->trans('CashDeskForceDecreaseStockLabel') . '</td>';
+		print '<tr class="oddeven"><td>'.$langs->trans('CashDeskForceDecreaseStockLabel').'</td>';
 		print '<td>';
-		print '<span class="opacitymedium">' . $langs->trans('CashDeskForceDecreaseStockDesc') . '</span>';
+		print '<span class="opacitymedium">'.$langs->trans('CashDeskForceDecreaseStockDesc').'</span>';
 		print '</td></tr>';
 	}
 }
@@ -229,32 +231,44 @@ if ($conf->global->TAKEPOS_PRINT_METHOD == "receiptprinter") {
 	foreach ($printer->listprinters as $key => $value) {
 		$printers[$value['rowid']] = $value['name'];
 	}
-	print '<tr class="oddeven"><td>'.$langs->trans("TakeposTerminalPrinterToUse").'</td>';
+	print '<tr class="oddeven"><td>'.$langs->trans("MainPrinterToUse").'</td>';
 	print '<td>';
 	print $form->selectarray('TAKEPOS_PRINTER_TO_USE'.$terminal, $printers, (empty($conf->global->{'TAKEPOS_PRINTER_TO_USE'.$terminal}) ? '0' : $conf->global->{'TAKEPOS_PRINTER_TO_USE'.$terminal}), 1);
 	print '</td></tr>';
+	if ($conf->global->TAKEPOS_ORDER_PRINTERS) {
+	    print '<tr class="oddeven"><td>'.$langs->trans("OrderPrinterToUse").' - '.$langs->trans("Printer").' 1</td>';
+		print '<td>';
+		print $form->selectarray('TAKEPOS_ORDER_PRINTER1_TO_USE'.$terminal, $printers, (empty($conf->global->{'TAKEPOS_ORDER_PRINTER1_TO_USE'.$terminal}) ? '0' : $conf->global->{'TAKEPOS_ORDER_PRINTER1_TO_USE'.$terminal}), 1);
+		print '</td></tr>';
+		print '<tr class="oddeven"><td>'.$langs->trans("OrderPrinterToUse").' - '.$langs->trans("Printer").' 2</td>';
+		print '<td>';
+		print $form->selectarray('TAKEPOS_ORDER_PRINTER2_TO_USE'.$terminal, $printers, (empty($conf->global->{'TAKEPOS_ORDER_PRINTER2_TO_USE'.$terminal}) ? '0' : $conf->global->{'TAKEPOS_ORDER_PRINTER2_TO_USE'.$terminal}), 1);
+		print '</td></tr>';
+	}
 	$printer->listPrintersTemplates();
 	$templates = array();
 	foreach ($printer->listprinterstemplates as $key => $value) {
 		$templates[$value['rowid']] = $value['name'];
 	}
-	print '<tr class="oddeven"><td>'.$langs->trans("TakeposTerminalTemplateToUseForInvoicesTicket").'</td>';
+	print '<tr class="oddeven"><td>'.$langs->trans("MainTemplateToUse").'</td>';
 	print '<td>';
 	print $form->selectarray('TAKEPOS_TEMPLATE_TO_USE_FOR_INVOICES'.$terminal, $templates, (empty($conf->global->{'TAKEPOS_TEMPLATE_TO_USE_FOR_INVOICES'.$terminal}) ? '0' : $conf->global->{'TAKEPOS_TEMPLATE_TO_USE_FOR_INVOICES'.$terminal}), 1);
 	print '</td></tr>';
-	print '<tr class="oddeven"><td>'.$langs->trans("TakeposTerminalTemplateToUseForOrdersTicket").'</td>';
-	print '<td>';
-	print $form->selectarray('TAKEPOS_TEMPLATE_TO_USE_FOR_ORDERS'.$terminal, $templates, (empty($conf->global->{'TAKEPOS_TEMPLATE_TO_USE_FOR_ORDERS'.$terminal}) ? '0' : $conf->global->{'TAKEPOS_TEMPLATE_TO_USE_FOR_ORDERS'.$terminal}), 1);
-	print '</td></tr>';
+	if ($conf->global->TAKEPOS_ORDER_PRINTERS) {
+		print '<tr class="oddeven"><td>'.$langs->trans("OrderTemplateToUse").'</td>';
+		print '<td>';
+		print $form->selectarray('TAKEPOS_TEMPLATE_TO_USE_FOR_ORDERS'.$terminal, $templates, (empty($conf->global->{'TAKEPOS_TEMPLATE_TO_USE_FOR_ORDERS'.$terminal}) ? '0' : $conf->global->{'TAKEPOS_TEMPLATE_TO_USE_FOR_ORDERS'.$terminal}), 1);
+		print '</td></tr>';
+	}
 }
 
-print '<tr class="oddeven"><td>' . $langs->trans('CashDeskReaderKeyCodeForEnter') . '</td>';
+print '<tr class="oddeven"><td>'.$langs->trans('CashDeskReaderKeyCodeForEnter').'</td>';
 print '<td>';
-print '<input type="text" name="' . 'CASHDESK_READER_KEYCODE_FOR_ENTER'.$terminaltouse . '" value="' . $conf->global->{'CASHDESK_READER_KEYCODE_FOR_ENTER'.$terminaltouse} . '" />';
+print '<input type="text" name="'.'CASHDESK_READER_KEYCODE_FOR_ENTER'.$terminaltouse.'" value="'.$conf->global->{'CASHDESK_READER_KEYCODE_FOR_ENTER'.$terminaltouse}.'" />';
 print '</td></tr>';
 
 // Numbering module
-if ($conf->global->TAKEPOS_ADDON=="terminal"){
+if ($conf->global->TAKEPOS_ADDON == "terminal") {
 	print '<tr class="oddeven"><td>';
 	print $langs->trans("BillsNumberingModule");
 	print '<td colspan="2">';
@@ -298,7 +312,7 @@ if ($conf->global->TAKEPOS_ADDON=="terminal"){
 
 							if ($module->isEnabled())
 							{
-								$array[preg_replace('/\-.*$/', '', preg_replace('/\.php$/', '', $file))]=preg_replace('/\-.*$/', '', preg_replace('/mod_facture_/', '', preg_replace('/\.php$/', '', $file)));
+								$array[preg_replace('/\-.*$/', '', preg_replace('/\.php$/', '', $file))] = preg_replace('/\-.*$/', '', preg_replace('/mod_facture_/', '', preg_replace('/\.php$/', '', $file)));
 							}
 						}
 					}

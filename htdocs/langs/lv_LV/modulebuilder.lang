@@ -84,6 +84,8 @@ ListOfPermissionsDefined=Noteikto atļauju saraksts
 SeeExamples=Skatiet piemērus šeit
 EnabledDesc=Nosacījums, lai šis lauks būtu aktīvs (piemēri: 1 vai $ conf-> globāla-> MYMODULE_MYOPTION)
 VisibleDesc=Vai lauks ir redzams? (Piemēri: 0 = nekad nav redzams, 1 = redzams sarakstā un izveidojiet / atjauniniet / skatiet veidlapas, 2 = ir redzams tikai sarakstā, 3 = ir redzams tikai izveides / atjaunināšanas / skata formā (nav sarakstā), 4 = ir redzams sarakstā un tikai atjaunināt / skatīt formu (neveidot), 5 = redzama tikai saraksta beigu skata formā (neveidot, ne atjaunināt.) Negatīvas vērtības līdzekļu lauka izmantošana pēc noklusējuma netiek parādīta sarakstā, bet to var atlasīt apskatei. Tas var būt izteiciens, piemēram: <br> preg_match ('/ public /', $ _SERVER ['PHP_SELF'])? 0: 1 <br> ($ user-> rights-> holiday-> define_holiday? 1: 0)
+DisplayOnPdfDesc=Parādiet šo lauku saderīgos PDF dokumentos. Varat pārvaldīt pozīciju ar lauku "Position". <br/> Pašlaik zināmie saderīgie PDF modeļi ir: eratosteēns 
+DisplayOnPdf=Displejs PDF formātā
 IsAMeasureDesc=Vai lauka vērtību var uzkrāties, lai kopsumma tiktu iekļauta sarakstā? (Piemēri: 1 vai 0)
 SearchAllDesc=Vai laukums tiek izmantots, lai veiktu meklēšanu no ātrās meklēšanas rīka? (Piemēri: 1 vai 0)
 SpecDefDesc=Ievadiet šeit visu dokumentāciju, ko vēlaties iesniegt ar savu moduli, kuru vēl nav definējušas citas cilnes. Jūs varat izmantot .md vai labāku, bagātīgo .asciidoc sintaksi.

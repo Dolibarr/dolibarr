@@ -47,7 +47,7 @@ $search_year   = GETPOST('search_year', 'int');
 $search_categ  = GETPOST('search_categ', 'int');
 
 $error = 0;
-$mesg	= '';
+$mesg = '';
 $graphfiles = array();
 
 $socid = '';
@@ -104,7 +104,10 @@ if (!$id && empty($ref))
         $title = $langs->trans("Statistics");
     }
 
-    print load_fiche_titre($title, $mesg, 'products');
+    $picto = 'product';
+    if ($type == 1) $picto = 'service';
+
+    print load_fiche_titre($title, $mesg, $picto);
 }
 else
 {

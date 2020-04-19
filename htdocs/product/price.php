@@ -1151,7 +1151,7 @@ if ($action == 'edit_vat' && ($user->rights->produit->creer || $user->rights->se
 	print load_fiche_titre($langs->trans("UpdateVAT"), '');
 
 	print '<form action="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'" method="POST">';
-	print '<input type="hidden" name="token" value="'.$_SESSION ['newtoken'].'">';
+	print '<input type="hidden" name="token" value="'.newToken().'">';
 	print '<input type="hidden" name="action" value="update_vat">';
 	print '<input type="hidden" name="id" value="'.$object->id.'">';
 
@@ -1185,7 +1185,7 @@ if ($action == 'edit_price' && $object->getRights()->creer)
 	{
 	    print '<!-- Edit price -->'."\n";
 		print '<form action="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'" method="POST">';
-		print '<input type="hidden" name="token" value="'.$_SESSION ['newtoken'].'">';
+		print '<input type="hidden" name="token" value="'.newToken().'">';
 		print '<input type="hidden" name="action" value="update_price">';
 		print '<input type="hidden" name="id" value="'.$object->id.'">';
 
@@ -1660,7 +1660,7 @@ if (!empty($conf->global->PRODUIT_CUSTOMER_PRICES))
 		print load_fiche_titre($langs->trans('PriceByCustomer'));
 
 		print '<form action="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'" method="POST">';
-		print '<input type="hidden" name="token" value="'.$_SESSION ['newtoken'].'">';
+		print '<input type="hidden" name="token" value="'.newToken().'">';
 		print '<input type="hidden" name="action" value="add_customer_price_confirm">';
 		print '<input type="hidden" name="id" value="'.$object->id.'">';
 
@@ -1747,7 +1747,7 @@ if (!empty($conf->global->PRODUIT_CUSTOMER_PRICES))
 		}
 
 		print '<form action="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'" method="POST">';
-		print '<input type="hidden" name="token" value="'.$_SESSION ['newtoken'].'">';
+		print '<input type="hidden" name="token" value="'.newToken().'">';
 		print '<input type="hidden" name="action" value="update_customer_price_confirm">';
 		print '<input type="hidden" name="lineid" value="'.$prodcustprice->id.'">';
 

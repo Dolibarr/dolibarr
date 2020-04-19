@@ -23,7 +23,7 @@ CREATE TABLE llx_mrp_production(
 	qty real NOT NULL DEFAULT 1,
 	qty_frozen smallint DEFAULT 0,
     disable_stock_change smallint DEFAULT 0,
-	batch varchar(30),
+	batch varchar(128),
 	role varchar(10),      			-- 'toconsume' or 'toproduce' (initialized at MO creation), 'consumed' or 'produced' (added after MO validation)
 	fk_mrp_production integer,		-- if role = 'consumed', id of line with role 'toconsume', if role = 'produced' id of line with role 'toproduce'
 	fk_stock_movement integer,		-- id of stock movement when movements are validated

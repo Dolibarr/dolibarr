@@ -230,7 +230,7 @@ class Setup extends DolibarrApi
                 if ($country->fetch($obj->rowid) > 0) {
                     // Translate the name of the country if needed
                     // and then apply the filter if there is one.
-                    $this->translateLabel($country, $lang);
+                    $this->translateLabel($country, $lang, 'Country');
 
                     if (empty($filter) || stripos($country->label, $filter) !== false) {
                         $list[] = $this->_cleanObjectDatas($country);
@@ -318,7 +318,7 @@ class Setup extends DolibarrApi
             throw new RestException(404, 'country not found');
         }
 
-        $this->translateLabel($country, $lang);
+        $this->translateLabel($country, $lang, 'Country');
 
         return $this->_cleanObjectDatas($country);
     }
@@ -403,14 +403,15 @@ class Setup extends DolibarrApi
     }
 
     /**
-     * Translate the name of the country to the given language.
+     * Translate the name of the object to the given language.
      *
-     * @param Ccountry $country   Country
-     * @param string   $lang      Code of the language the name of the
-     *                            country must be translated to
+     * @param object   $object    Object with label to translate
+     * @param string   $lang      Code of the language the name of the object must be translated to
+     * @param string   $prefix 	  Prefix for translation key
+     *
      * @return void
      */
-    private function translateLabel($country, $lang)
+    private function translateLabel($object, $lang, $prefix = 'Country')
     {
         if (!empty($lang)) {
             // Load the translations if this is a new language.
@@ -420,11 +421,12 @@ class Setup extends DolibarrApi
                 $this->translations->setDefaultLang($lang);
                 $this->translations->load('dict');
             }
-            if ($country->code) {
-                $key = 'Country'.$country->code;
+            if ($object->code) {
+                $key = $prefix.$object->code;
+
                 $translation = $this->translations->trans($key);
                 if ($translation != $key) {
-                    $country->label = html_entity_decode($translation);
+                    $object->label = html_entity_decode($translation);
                 }
             }
         }
@@ -1401,6 +1403,39 @@ class Setup extends DolibarrApi
         return $this->_cleanObjectDatas($mysoc);
     }
 
+
+    /**
+     * Get value of a setup variables
+     *
+     * Note that conf variables that stores security key or password hashes can't be loaded with API.
+     *
+     * @url	GET /conf
+     *
+     * @param	string			$confname	Name of conf variable to get
+     * @return  array|mixed 				Data without useless information
+     *
+     * @throws RestException 403 Forbidden
+	 * @throws RestException 500 Error Bad or unknown value for constname
+     */
+    public function getConf($confname)
+    {
+    	global $conf;
+
+    	if (!DolibarrApiAccess::$user->admin
+    		&& (empty($conf->global->API_LOGIN_ALLOWED_FOR_ADMIN_CHECK) || DolibarrApiAccess::$user->login != $conf->global->API_LOGIN_ALLOWED_FOR_ADMIN_CHECK)) {
+    		throw new RestException(403, 'Error API open to admin users only or to the login user defined with constant API_LOGIN_ALLOWED_FOR_ADMIN_CHECK');
+    	}
+
+    	if (!preg_match('/^[a-zA-Z0-9_]+$/', $confname) || !isset($conf->global->$confname)) {
+    		throw new RestException(500, 'Error Bad or unknown value for constname');
+    	}
+    	if (preg_match('/(_pass|password|secret|_key|key$)/i', $confname)) {
+    		throw new RestException(403, 'Forbidden');
+    	}
+
+    	return $conf->global->$confname;
+    }
+
     /**
      * Do a test of integrity for files and setup.
      *
@@ -1409,7 +1444,9 @@ class Setup extends DolibarrApi
      *
      * @url     GET checkintegrity
      *
-     * @throws RestException
+     * @throws RestException 404 Signature file not found
+     * @throws RestException 500 Technical error
+     * @throws RestException 503 Forbidden
      */
     public function getCheckIntegrity($target)
     {
@@ -1418,7 +1455,7 @@ class Setup extends DolibarrApi
     	if (!DolibarrApiAccess::$user->admin
     		&& (empty($conf->global->API_LOGIN_ALLOWED_FOR_INTEGRITY_CHECK) || DolibarrApiAccess::$user->login != $conf->global->API_LOGIN_ALLOWED_FOR_INTEGRITY_CHECK))
     	{
-    		throw new RestException(503, 'Error API open to admin users only or to login user defined with constant API_LOGIN_ALLOWED_FOR_INTEGRITY_CHECK');
+    		throw new RestException(503, 'Error API open to admin users only or to the login user defined with constant API_LOGIN_ALLOWED_FOR_INTEGRITY_CHECK');
     	}
 
     	require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';

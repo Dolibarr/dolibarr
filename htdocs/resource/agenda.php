@@ -38,33 +38,33 @@ require_once DOL_DOCUMENT_ROOT.'/resource/class/dolresource.class.php';
 $langs->load("companies");
 
 // Get parameters
-$id			= GETPOST('id', 'int');
+$id = GETPOST('id', 'int');
 $ref        = GETPOST('ref', 'alpha');
-$action		= GETPOST('action', 'alpha');
+$action = GETPOST('action', 'alpha');
 $cancel     = GETPOST('cancel', 'aZ09');
 $backtopage = GETPOST('backtopage', 'alpha');
 
 if (GETPOST('actioncode', 'array'))
 {
-    $actioncode=GETPOST('actioncode', 'array', 3);
-    if (! count($actioncode)) $actioncode='0';
+    $actioncode = GETPOST('actioncode', 'array', 3);
+    if (!count($actioncode)) $actioncode = '0';
 }
 else
 {
-    $actioncode=GETPOST("actioncode", "alpha", 3)?GETPOST("actioncode", "alpha", 3):(GETPOST("actioncode")=='0'?'0':(empty($conf->global->AGENDA_DEFAULT_FILTER_TYPE_FOR_OBJECT)?'':$conf->global->AGENDA_DEFAULT_FILTER_TYPE_FOR_OBJECT));
+    $actioncode = GETPOST("actioncode", "alpha", 3) ?GETPOST("actioncode", "alpha", 3) : (GETPOST("actioncode") == '0' ? '0' : (empty($conf->global->AGENDA_DEFAULT_FILTER_TYPE_FOR_OBJECT) ? '' : $conf->global->AGENDA_DEFAULT_FILTER_TYPE_FOR_OBJECT));
 }
-$search_agenda_label=GETPOST('search_agenda_label');
+$search_agenda_label = GETPOST('search_agenda_label');
 
-$limit = GETPOST('limit', 'int')?GETPOST('limit', 'int'):$conf->liste_limit;
+$limit = GETPOST('limit', 'int') ?GETPOST('limit', 'int') : $conf->liste_limit;
 $sortfield = GETPOST("sortfield", 'alpha');
 $sortorder = GETPOST("sortorder", 'alpha');
-$page = GETPOST("page", 'int');
+$page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOST("page", 'int');
 if (empty($page) || $page == -1) { $page = 0; }     // If $page is not defined, or '' or -1
 $offset = $limit * $page;
 $pageprev = $page - 1;
 $pagenext = $page + 1;
-if (! $sortfield) $sortfield='a.datep,a.id';
-if (! $sortorder) $sortorder='DESC,DESC';
+if (!$sortfield) $sortfield = 'a.datep,a.id';
+if (!$sortorder) $sortorder = 'DESC,DESC';
 
 $object = new DolResource($db);
 $object->fetch($id, $ref);
@@ -75,7 +75,7 @@ $extrafields = new ExtraFields($db);
 $hookmanager->initHooks(array('agendaresource'));
 
 // Security check
-if( ! $user->rights->resource->read)
+if (!$user->rights->resource->read)
 {
 	accessforbidden();
 }
@@ -85,14 +85,14 @@ if( ! $user->rights->resource->read)
  *	Actions
  */
 
-$parameters=array('id'=>$id);
-$reshook=$hookmanager->executeHooks('doActions', $parameters, $object, $action);    // Note that $action and $object may have been modified by some hooks
+$parameters = array('id'=>$id);
+$reshook = $hookmanager->executeHooks('doActions', $parameters, $object, $action); // Note that $action and $object may have been modified by some hooks
 if ($reshook < 0) setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
 
 if (empty($reshook))
 {
     // Cancel
-    if (GETPOST('cancel', 'alpha') && ! empty($backtopage))
+    if (GETPOST('cancel', 'alpha') && !empty($backtopage))
     {
         header("Location: ".$backtopage);
         exit;
@@ -101,8 +101,8 @@ if (empty($reshook))
     // Purge search criteria
     if (GETPOST('button_removefilter_x', 'alpha') || GETPOST('button_removefilter.x', 'alpha') || GETPOST('button_removefilter', 'alpha')) // All tests are required to be compatible with all browsers
     {
-        $actioncode='';
-        $search_agenda_label='';
+        $actioncode = '';
+        $search_agenda_label = '';
     }
 }
 
@@ -123,25 +123,25 @@ if ($object->id > 0)
 	$langs->load("companies");
 	$picto = 'resource';
 
-	$title=$langs->trans("Agenda");
-	if (! empty($conf->global->MAIN_HTML_TITLE) && preg_match('/productnameonly/', $conf->global->MAIN_HTML_TITLE) && $object->name) $title=$object->ref." - ".$title;
+	$title = $langs->trans("Agenda");
+	if (!empty($conf->global->MAIN_HTML_TITLE) && preg_match('/productnameonly/', $conf->global->MAIN_HTML_TITLE) && $object->name) $title = $object->ref." - ".$title;
 	llxHeader('', $title);
 
-	if (! empty($conf->notification->enabled)) $langs->load("mails");
+	if (!empty($conf->notification->enabled)) $langs->load("mails");
 	$type = $langs->trans('ResourceSingular');
 
 	$head = resource_prepare_head($object);
 
-	$titre=$langs->trans("ResourceSingular");
+	$titre = $langs->trans("ResourceSingular");
 	dol_fiche_head($head, 'agenda', $titre, -1, $picto);
 
     $linkback = '<a href="'.DOL_URL_ROOT.'/resource/list.php?restore_lastsearch_values=1">'.$langs->trans("BackToList").'</a>';
 
-    $morehtmlref='<div class="refidno">';
-    $morehtmlref.='</div>';
+    $morehtmlref = '<div class="refidno">';
+    $morehtmlref .= '</div>';
 
     $shownav = 1;
-    if ($user->socid && ! in_array('resource', explode(',', $conf->global->MAIN_MODULES_FOR_EXTERNAL))) $shownav=0;
+    if ($user->socid && !in_array('resource', explode(',', $conf->global->MAIN_MODULES_FOR_EXTERNAL))) $shownav = 0;
 
     dol_banner_tab($object, 'ref', $linkback, 1, 'ref', 'ref', $morehtmlref);
 
@@ -152,17 +152,17 @@ if ($object->id > 0)
 
 	dol_fiche_end();
 
-    if (! empty($conf->agenda->enabled) && (!empty($user->rights->agenda->myactions->read) || !empty($user->rights->agenda->allactions->read) ))
+    if (!empty($conf->agenda->enabled) && (!empty($user->rights->agenda->myactions->read) || !empty($user->rights->agenda->allactions->read)))
     {
-    	$param='&id='.$object->id.'&socid='.$socid;
-    	if (! empty($contextpage) && $contextpage != $_SERVER["PHP_SELF"]) $param.='&contextpage='.urlencode($contextpage);
-    	if ($limit > 0 && $limit != $conf->liste_limit) $param.='&limit='.urlencode($limit);
+    	$param = '&id='.$object->id.'&socid='.$socid;
+    	if (!empty($contextpage) && $contextpage != $_SERVER["PHP_SELF"]) $param .= '&contextpage='.urlencode($contextpage);
+    	if ($limit > 0 && $limit != $conf->liste_limit) $param .= '&limit='.urlencode($limit);
 
 		print_barre_liste($langs->trans("ActionsOnResource"), 0, $_SERVER["PHP_SELF"], '', $sortfield, $sortorder, '', 0, -1, '', 0, $morehtmlcenter, '', 0, 1, 1);
 
         // List of all actions
-		$filters=array();
-        $filters['search_agenda_label']=$search_agenda_label;
+		$filters = array();
+        $filters['search_agenda_label'] = $search_agenda_label;
 
         // TODO Replace this with same code than into list.php
         show_actions_done($conf, $langs, $db, $object, null, 0, $actioncode, '', $filters, $sortfield, $sortorder);

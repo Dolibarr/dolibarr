@@ -70,7 +70,7 @@ $month_date_when = GETPOST('month_date_when');
 $limit = GETPOST('limit', 'int') ?GETPOST('limit', 'int') : $conf->liste_limit;
 $sortfield = GETPOST("sortfield", 'alpha');
 $sortorder = GETPOST("sortorder", 'alpha');
-$page = GETPOST("page", 'int');
+$page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOST("page", 'int');
 if (empty($page) || $page == -1) { $page = 0; }     // If $page is not defined, or '' or -1
 $offset = $limit * $page;
 if (!$sortorder) $sortorder = 'DESC';
@@ -1680,7 +1680,7 @@ else
 
 		// Lines
 		print '	<form name="addproduct" id="addproduct" action="'.$_SERVER["PHP_SELF"].'?id='.$object->id.(($action != 'editline') ? '#add' : '#line_'.GETPOST('lineid')).'" method="POST">
-        	<input type="hidden" name="token" value="' . $_SESSION ['newtoken'].'">
+        	<input type="hidden" name="token" value="' . newToken().'">
         	<input type="hidden" name="action" value="' . (($action != 'editline') ? 'addline' : 'updateline').'">
         	<input type="hidden" name="mode" value="">
         	<input type="hidden" name="id" value="' . $object->id.'">

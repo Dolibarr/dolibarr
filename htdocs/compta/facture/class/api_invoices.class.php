@@ -158,7 +158,8 @@ class Invoices extends DolibarrApi
      * @param string    $sqlfilters       Other criteria to filter answers separated by a comma. Syntax example "(t.ref:like:'SO-%') and (t.date_creation:<:'20160101')"
      * @return array                      Array of invoice objects
      *
-	 * @throws RestException
+	 * @throws RestException 404 Not found
+	 * @throws RestException 503 Error
      */
     public function index($sortfield = "t.rowid", $sortorder = 'ASC', $limit = 100, $page = 0, $thirdparty_ids = '', $status = '', $sqlfilters = '')
     {
@@ -590,7 +591,7 @@ class Invoices extends DolibarrApi
             }
         }
 
-        if($this->invoice->update(DolibarrApiAccess::$user))
+        if ($this->invoice->update(DolibarrApiAccess::$user))
             return $this->get($id);
 
         return false;
@@ -960,11 +961,11 @@ class Invoices extends DolibarrApi
 
 
         $result = $this->invoice->fetch($id);
-        if (! $result) {
+        if (!$result) {
             throw new RestException(404, 'Invoice not found');
         }
 
-        if (! DolibarrApi::_checkAccessToResource('facture', $this->invoice->id)) {
+        if (!DolibarrApi::_checkAccessToResource('facture', $this->invoice->id)) {
             throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
         }
 
@@ -986,7 +987,7 @@ class Invoices extends DolibarrApi
      */
     public function markAsCreditAvailable($id)
     {
-        if( ! DolibarrApiAccess::$user->rights->facture->creer) {
+        if (!DolibarrApiAccess::$user->rights->facture->creer) {
             throw new RestException(401);
         }
 

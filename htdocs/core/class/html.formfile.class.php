@@ -76,7 +76,7 @@ class FormFile
 	 *  @param	integer		$linkfiles		1=Also add form to link files, 0=Do not show form to link files
 	 *  @param	string		$htmlname		Name and id of HTML form ('formuserfile' by default, 'formuserfileecm' when used to upload a file in ECM)
 	 *  @param	string		$accept			Specifies the types of files accepted (This is not a security check but an user interface facility. eg '.pdf,image/*' or '.png,.jpg' or 'video/*')
-	 *	@param	string		$sectiondir		If upload must be done inside a particular directory (is sectiondir defined, sectionid must not be)
+	 *	@param	string		$sectiondir		If upload must be done inside a particular directory (if sectiondir defined, sectionid must not be)
 	 *  @param  int         $usewithoutform 0=Default, 1=Disable <form> and style to use in existing area
 	 * 	@return	int							<0 if KO, >0 if OK
 	 */
@@ -108,9 +108,7 @@ class FormFile
 				return 1;
 			}
 
-			$maxlength = $size;
-
-			$out = "\n\n<!-- Start form attach new file -->\n";
+			$out = "\n\n".'<!-- Start form attach new file --><div class="formattachnewfile">'."\n";
 
 			if (empty($title)) $title = $langs->trans("AttachANewFile");
 			if ($title != 'none') $out .= load_fiche_titre($title, null, null);
@@ -125,7 +123,7 @@ class FormFile
     			$out .= '<input type="hidden" name="sortorder" value="'.GETPOST('sortorder', 'aZ09').'">';
 			}
 
-			$out .= '<table width="100%" class="nobordernopadding">';
+			$out .= '<table class="nobordernopadding cenpercent">';
 			$out .= '<tr>';
 
 			if (!empty($options)) $out .= '<td>'.$options.'</td>';
@@ -168,12 +166,16 @@ class FormFile
 				$out .= '<input type="hidden" name="max_file_size" value="'.($maxmin * 1024).'">';
 			}
 
-			$out .= '<input class="flat minwidth400" type="file"';
+			$out .= '<input class="flat minwidth400 maxwidth200onsmartphone" type="file"';
 			$out .= ((!empty($conf->global->MAIN_DISABLE_MULTIPLE_FILEUPLOAD) || $conf->browser->layout != 'classic') ? ' name="userfile"' : ' name="userfile[]" multiple');
 			$out .= (empty($conf->global->MAIN_UPLOAD_DOC) || empty($perm) ? ' disabled' : '');
 			$out .= (!empty($accept) ? ' accept="'.$accept.'"' : ' accept=""');
 			$out .= '>';
 			$out .= ' ';
+			if ($sectionid) {	// Show overwrite if exists for ECM module only
+				$langs->load('link');
+				$out .= '<input style="margin-right: 2px;" type="checkbox" id="overwritefile" name="overwritefile" value="1"><label for="overwritefile">'.$langs->trans("OverwriteIfExists").'</label>';
+			}
 			$out .= '<input type="submit" class="button reposition" name="sendit" value="'.$langs->trans("Upload").'"';
 			$out .= (empty($conf->global->MAIN_UPLOAD_DOC) || empty($perm) ? ' disabled' : '');
 			$out .= '>';
@@ -220,11 +222,11 @@ class FormFile
 	       		if (empty($sectionid)) $out .= '<br>';
 			}
 
-			$out .= "\n<!-- End form attach new file -->\n";
+			$out .= "\n</div><!-- End form attach new file -->\n";
 
 			if ($linkfiles)
 			{
-				$out .= "\n<!-- Start form link new url -->\n";
+				$out .= "\n".'<!-- Start form link new url --><div class="formlinknewurl">'."\n";
 				$langs->load('link');
 				$title = $langs->trans("LinkANewFile");
 				$out .= load_fiche_titre($title, null, null);
@@ -260,7 +262,7 @@ class FormFile
                     $out .= '</form><br>';
 				}
 
-				$out .= "\n<!-- End form link new url -->\n";
+				$out .= "\n</div><!-- End form link new url -->\n";
 			}
 
 			$parameters = array('socid'=>(isset($GLOBALS['socid']) ? $GLOBALS['socid'] : ''), 'id'=>(isset($GLOBALS['id']) ? $GLOBALS['id'] : ''), 'url'=>$url, 'perm'=>$perm);
@@ -331,9 +333,10 @@ class FormFile
 	 * 		@param		string				$morepicto			Add more HTML content into cell with picto
 	 *      @param      Object              $object             Object when method is called from an object card.
 	 *      @param		int					$hideifempty		Hide section of generated files if there is no file
+	 *      @param      string              $removeaction       (optional) The action to remove a file
 	 * 		@return		string              					Output string with HTML array of documents (might be empty string)
 	 */
-	public function showdocuments($modulepart, $modulesubdir, $filedir, $urlsource, $genallowed, $delallowed = 0, $modelselected = '', $allowgenifempty = 1, $forcenomultilang = 0, $iconPDF = 0, $notused = 0, $noform = 0, $param = '', $title = '', $buttonlabel = '', $codelang = '', $morepicto = '', $object = null, $hideifempty = 0)
+	public function showdocuments($modulepart, $modulesubdir, $filedir, $urlsource, $genallowed, $delallowed = 0, $modelselected = '', $allowgenifempty = 1, $forcenomultilang = 0, $iconPDF = 0, $notused = 0, $noform = 0, $param = '', $title = '', $buttonlabel = '', $codelang = '', $morepicto = '', $object = null, $hideifempty = 0, $removeaction = 'remove_file')
 	{
 		// Deprecation warning
 		if (!empty($iconPDF)) {
@@ -730,7 +733,9 @@ class FormFile
 					$arraykeys = array_keys($modellist);
 					$modelselected = $arraykeys[0];
 				}
-				$out .= $form->selectarray('model', $modellist, $modelselected, $showempty, 0, 0, '', 0, 0, 0, '', 'minwidth100');
+				$morecss = 'maxwidth200';
+				if ($conf->browser->layout == 'phone') $morecss = 'maxwidth100';
+				$out .= $form->selectarray('model', $modellist, $modelselected, $showempty, 0, 0, '', 0, 0, 0, '', $morecss);
 				if ($conf->use_javascript_ajax)
 				{
 					$out .= ajax_combobox('model');
@@ -859,7 +864,7 @@ class FormFile
 						if ($delallowed)
 						{
 							$tmpurlsource = preg_replace('/#[a-zA-Z0-9_]*$/', '', $urlsource);
-							$out .= '<a href="'.$tmpurlsource.((strpos($tmpurlsource, '?') === false) ? '?' : '&amp;').'action=remove_file&amp;file='.urlencode($relativepath);
+							$out .= '<a href="'.$tmpurlsource.((strpos($tmpurlsource, '?') === false) ? '?' : '&amp;').'action='.$removeaction.'&amp;file='.urlencode($relativepath);
 							$out .= ($param ? '&amp;'.$param : '');
 							//$out.= '&modulepart='.$modulepart; // TODO obsolete ?
 							//$out.= '&urlsource='.urlencode($urlsource); // TODO obsolete ?
@@ -868,7 +873,7 @@ class FormFile
 						if ($printer)
 						{
 							//$out.= '<td class="right">';
-							$out .= '<a class="paddingleft" href="'.$urlsource.(strpos($urlsource, '?') ? '&amp;' : '?').'action=print_file&amp;printer='.$modulepart.'&amp;file='.urlencode($relativepath);
+							$out .= '<a class="marginleftonly" href="'.$urlsource.(strpos($urlsource, '?') ? '&amp;' : '?').'action=print_file&amp;printer='.$modulepart.'&amp;file='.urlencode($relativepath);
 							$out .= ($param ? '&amp;'.$param : '');
 							$out .= '">'.img_picto($langs->trans("PrintFile", $relativepath), 'printer.png').'</a>';
 						}
@@ -1173,7 +1178,7 @@ class FormFile
 			}
 
 			// Show list of existing files
-			if ((empty($useinecm) || $useinecm == 6) && $title != 'none') print load_fiche_titre($title ? $title : $langs->trans("AttachedFiles"));
+			if ((empty($useinecm) || $useinecm == 6) && $title != 'none') print load_fiche_titre($title ? $title : $langs->trans("AttachedFiles"), '', 'file-upload', 0, '', 'table-list-of-attached-files');
 			if (empty($url)) $url = $_SERVER["PHP_SELF"];
 
 			print '<!-- html.formfile::list_of_documents -->'."\n";
@@ -1281,7 +1286,7 @@ class FormFile
 					$sizetoshow = dol_print_size($file['size'], 1, 1);
 					$sizetoshowbytes = dol_print_size($file['size'], 0, 1);
 
-					print '<td class="right" style="width: 80px">';
+					print '<td class="right nowraponall">';
 					if ($sizetoshow == $sizetoshowbytes) print $sizetoshow;
 					else {
 						print $form->textwithpicto($sizetoshow, $sizetoshowbytes, -1);
@@ -1296,7 +1301,7 @@ class FormFile
 					{
 						$fileinfo = pathinfo($file['name']);
 						print '<td class="center">';
-						if (image_format_supported($file['name']) > 0)
+						if (image_format_supported($file['name']) >= 0)
 						{
 						    if ($useinecm == 5 || $useinecm == 6)
 						    {
@@ -1316,7 +1321,7 @@ class FormFile
 							} else {
 								print '<a href="'.$urlforhref['url'].'" class="'.$urlforhref['css'].'" target="'.$urlforhref['target'].'" mime="'.$urlforhref['mime'].'">';
 							}
-							print '<img class="photo" height="'.(($useinecm == 4 || $useinecm == 5 || $useinecm == 6) ? '12' : $maxheightmini).'" src="'.DOL_URL_ROOT.'/viewimage.php?modulepart='.$modulepart.'&entity='.(!empty($object->entity) ? $object->entity : $conf->entity).'&file='.urlencode($relativepath.$smallfile).'" title="">';
+							print '<img class="photo maxwidth200" height="'.(($useinecm == 4 || $useinecm == 5 || $useinecm == 6) ? '12' : $maxheightmini).'" src="'.DOL_URL_ROOT.'/viewimage.php?modulepart='.$modulepart.'&entity='.(!empty($object->entity) ? $object->entity : $conf->entity).'&file='.urlencode($relativepath.$smallfile).'" title="">';
 							print '</a>';
 						}
 						else print '&nbsp;';
@@ -1387,7 +1392,7 @@ class FormFile
 							if ($permtoeditline)
 							{
 								$paramsectiondir = (in_array($modulepart, array('medias', 'ecm')) ? '&section_dir='.urlencode($relativepath) : '');
-								print '<a href="'.(($useinecm == 1 || $useinecm == 5) ? '#' : ($url.'?action=editfile&urlfile='.urlencode($filepath).$paramsectiondir.$param)).'" class="editfilelink" rel="'.$filepath.'">'.img_edit('default', 0, 'class="paddingrightonly"').'</a>';
+								print '<a class="editfielda" href="'.(($useinecm == 1 || $useinecm == 5) ? '#' : ($url.'?action=editfile&urlfile='.urlencode($filepath).$paramsectiondir.$param)).'" class="editfilelink" rel="'.$filepath.'">'.img_edit('default', 0, 'class="paddingrightonly"').'</a>';
 							}
 						}
 						if ($permonobject)
@@ -1508,10 +1513,10 @@ class FormFile
 		if (!empty($addfilterfields))
 		{
 			print '<tr class="liste_titre nodrag nodrop">';
-			print '<td></td>';
-			print '<td><input type="text" class="maxwidth100onsmartphone" name="search_doc_ref" value="'.dol_escape_htmltag($search_doc_ref).'"></td>';
-			print '<td></td>';
-			print '<td></td>';
+			print '<td class="liste_titre"></td>';
+			print '<td class="liste_titre"><input type="text" class="maxwidth100onsmartphone" name="search_doc_ref" value="'.dol_escape_htmltag($search_doc_ref).'"></td>';
+			print '<td class="liste_titre"></td>';
+			print '<td class="liste_titre"></td>';
 			// Action column
 			print '<td class="liste_titre center">';
 			$searchpicto = $form->showFilterButtons();
@@ -1789,7 +1794,7 @@ class FormFile
 		print '<!-- listOfLinks -->'."\n";
 
 		// Show list of associated links
-		print load_fiche_titre($langs->trans("LinkedFiles"));
+		print load_fiche_titre($langs->trans("LinkedFiles"), '', 'external-link-square-alt', 0, '', 'table-list-of-links');
 
 		print '<form action="'.$_SERVER['PHP_SELF'].($param ? '?'.$param : '').'" method="POST">';
 		print '<input type="hidden" name="token" value="'.newToken().'">';
@@ -1879,9 +1884,9 @@ class FormFile
 				print '<td class="center">'.dol_print_date($link->datea, "dayhour", "tzuser").'</td>';
 				print '<td class="center"></td>';
 				print '<td class="right">';
-				print '<a href="'.$_SERVER['PHP_SELF'].'?action=update&linkid='.$link->id.$param.'" class="editfilelink reposition" >'.img_edit().'</a>'; // id= is included into $param
+				print '<a href="'.$_SERVER['PHP_SELF'].'?action=update&linkid='.$link->id.$param.'" class="editfilelink editfielda reposition" >'.img_edit().'</a>'; // id= is included into $param
 				if ($permissiontodelete) {
-					print ' &nbsp; <a href="'.$_SERVER['PHP_SELF'].'?action=delete&linkid='.$link->id.$param.'" class="deletefilelink">'.img_delete().'</a>'; // id= is included into $param
+					print ' &nbsp; <a class="deletefilelink" href="'.$_SERVER['PHP_SELF'].'?action=delete&linkid='.$link->id.$param.'">'.img_delete().'</a>'; // id= is included into $param
 				} else {
 					print '&nbsp;';
 				}

@@ -122,7 +122,7 @@ elseif ($action == 'add' && $user->rights->deplacement->creer)
         $object->socid = (int) GETPOST('socid', 'int');
         $object->fk_user = (int) GETPOST('fk_user', 'int');
         $object->note_private = GETPOST('note_private', 'alpha');
-        $object->note_public	= GETPOST('note_public', 'alpha');
+        $object->note_public = GETPOST('note_public', 'alpha');
         $object->statut = Deplacement::STATUS_DRAFT;
 
         if (!$object->date)
@@ -281,7 +281,7 @@ if ($action == 'create')
     print '<td class="tdtop">'.$langs->trans('NotePublic').'</td>';
     print '<td>';
 
-    $doleditor = new DolEditor('note_public', GETPOST('note_public', 'alpha'), '', 200, 'dolibarr_notes', 'In', false, true, true, ROWS_8, '90%');
+    $doleditor = new DolEditor('note_public', GETPOST('note_public', 'restricthtml'), '', 200, 'dolibarr_notes', 'In', false, true, true, ROWS_8, '90%');
     print $doleditor->Create(1);
 
     print '</td></tr>';
@@ -293,7 +293,7 @@ if ($action == 'create')
         print '<td class="tdtop">'.$langs->trans('NotePrivate').'</td>';
         print '<td>';
 
-        $doleditor = new DolEditor('note_private', GETPOST('note_private', 'alpha'), '', 200, 'dolibarr_notes', 'In', false, true, true, ROWS_8, '90%');
+        $doleditor = new DolEditor('note_private', GETPOST('note_private', 'restricthtml'), '', 200, 'dolibarr_notes', 'In', false, true, true, ROWS_8, '90%');
         print $doleditor->Create(1);
 
         print '</td></tr>';
@@ -439,9 +439,9 @@ elseif ($id)
 
 	        // Type
             print '<tr><td>';
-            print $form->editfieldkey("Type", 'type', $langs->trans($object->type), $object, $conf->global->MAIN_EDIT_ALSO_INLINE && $user->rights->deplacement->creer, 'select:types_fees');
+            print $form->editfieldkey("Type", 'type', $langs->trans($object->type), $object, $user->rights->deplacement->creer, 'select:types_fees');
             print '</td><td>';
-            print $form->editfieldval("Type", 'type', $form->cache_types_fees[$object->type], $object, $conf->global->MAIN_EDIT_ALSO_INLINE && $user->rights->deplacement->creer, 'select:types_fees');
+            print $form->editfieldval("Type", 'type', $form->cache_types_fees[$object->type], $object, $user->rights->deplacement->creer, 'select:types_fees');
             print '</td></tr>';
 
             // Who
@@ -453,16 +453,16 @@ elseif ($id)
 
             // Date
             print '<tr><td>';
-            print $form->editfieldkey("Date", 'dated', $object->date, $object, $conf->global->MAIN_EDIT_ALSO_INLINE && $user->rights->deplacement->creer, 'datepicker');
+            print $form->editfieldkey("Date", 'dated', $object->date, $object, $user->rights->deplacement->creer, 'datepicker');
             print '</td><td>';
-            print $form->editfieldval("Date", 'dated', $object->date, $object, $conf->global->MAIN_EDIT_ALSO_INLINE && $user->rights->deplacement->creer, 'datepicker');
+            print $form->editfieldval("Date", 'dated', $object->date, $object, $user->rights->deplacement->creer, 'datepicker');
             print '</td></tr>';
 
             // Km/Price
             print '<tr><td class="tdtop">';
-            print $form->editfieldkey("FeesKilometersOrAmout", 'km', $object->km, $object, $conf->global->MAIN_EDIT_ALSO_INLINE && $user->rights->deplacement->creer, 'numeric:6');
+            print $form->editfieldkey("FeesKilometersOrAmout", 'km', $object->km, $object, $user->rights->deplacement->creer, 'numeric:6');
             print '</td><td>';
-            print $form->editfieldval("FeesKilometersOrAmout", 'km', $object->km, $object, $conf->global->MAIN_EDIT_ALSO_INLINE && $user->rights->deplacement->creer, 'numeric:6');
+            print $form->editfieldval("FeesKilometersOrAmout", 'km', $object->km, $object, $user->rights->deplacement->creer, 'numeric:6');
             print "</td></tr>";
 
             // Where

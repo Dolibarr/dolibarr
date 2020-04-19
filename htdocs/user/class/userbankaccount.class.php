@@ -26,15 +26,24 @@
  *		\brief      File of class to manage bank accounts description of users
  */
 
-require_once DOL_DOCUMENT_ROOT .'/compta/bank/class/account.class.php';
+require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
 
 
 /**
- * 	Class to manage bank accounts description of third parties
+ * 	Class to manage bank accounts description of users
  */
 class UserBankAccount extends Account
 {
-    public $socid;
+	/**
+	 * @var string ID to identify managed object
+	 */
+	public $element = 'user_bank_account';
+
+	/**
+	 * @var string Name of table without prefix where object is stored
+	 */
+	public $table_element = 'user_rib';
+
 
     /**
      * Date creation record (datec)
@@ -50,6 +59,13 @@ class UserBankAccount extends Account
      */
     public $datem;
 
+    /**
+     * User id of bank account
+     *
+     * @var integer
+     */
+    public $userid;
+
 
     /**
      *  Constructor
@@ -60,7 +76,7 @@ class UserBankAccount extends Account
     {
         $this->db = $db;
 
-        $this->socid = 0;
+        $this->userid = 0;
         $this->solde = 0;
         $this->error_number = 0;
     }
@@ -75,11 +91,11 @@ class UserBankAccount extends Account
      */
     public function create(User $user = null, $notrigger = 0)
     {
-        $now=dol_now();
+        $now = dol_now();
 
         $sql = "INSERT INTO ".MAIN_DB_PREFIX."user_rib (fk_user, datec)";
-        $sql.= " VALUES (".$this->userid.", '".$this->db->idate($now)."')";
-        $resql=$this->db->query($sql);
+        $sql .= " VALUES (".$this->userid.", '".$this->db->idate($now)."')";
+        $resql = $this->db->query($sql);
         if ($resql)
         {
             if ($this->db->affected_rows($resql))
@@ -107,28 +123,28 @@ class UserBankAccount extends Account
     {
         global $conf;
 
-        if (! $this->id)
+        if (!$this->id)
         {
             $this->create();
         }
 
         $sql = "UPDATE ".MAIN_DB_PREFIX."user_rib SET";
-        $sql.= " bank = '" .$this->db->escape($this->bank)."'";
-        $sql.= ",code_banque='".$this->db->escape($this->code_banque)."'";
-        $sql.= ",code_guichet='".$this->db->escape($this->code_guichet)."'";
-        $sql.= ",number='".$this->db->escape($this->number)."'";
-        $sql.= ",cle_rib='".$this->db->escape($this->cle_rib)."'";
-        $sql.= ",bic='".$this->db->escape($this->bic)."'";
-        $sql.= ",iban_prefix = '".$this->db->escape($this->iban)."'";
-        $sql.= ",domiciliation='".$this->db->escape($this->domiciliation)."'";
-        $sql.= ",proprio = '".$this->db->escape($this->proprio)."'";
-        $sql.= ",owner_address = '".$this->db->escape($this->owner_address)."'";
+        $sql .= " bank = '".$this->db->escape($this->bank)."'";
+        $sql .= ",code_banque='".$this->db->escape($this->code_banque)."'";
+        $sql .= ",code_guichet='".$this->db->escape($this->code_guichet)."'";
+        $sql .= ",number='".$this->db->escape($this->number)."'";
+        $sql .= ",cle_rib='".$this->db->escape($this->cle_rib)."'";
+        $sql .= ",bic='".$this->db->escape($this->bic)."'";
+        $sql .= ",iban_prefix = '".$this->db->escape($this->iban)."'";
+        $sql .= ",domiciliation='".$this->db->escape($this->domiciliation)."'";
+        $sql .= ",proprio = '".$this->db->escape($this->proprio)."'";
+        $sql .= ",owner_address = '".$this->db->escape($this->owner_address)."'";
 
         if (trim($this->label) != '')
-            $sql.= ",label = '".$this->db->escape($this->label)."'";
+            $sql .= ",label = '".$this->db->escape($this->label)."'";
         else
-            $sql.= ",label = NULL";
-        $sql.= " WHERE rowid = ".$this->id;
+            $sql .= ",label = NULL";
+        $sql .= " WHERE rowid = ".$this->id;
 
         $result = $this->db->query($sql);
         if ($result)
@@ -155,11 +171,11 @@ class UserBankAccount extends Account
         if (empty($id) && empty($ref) && empty($userid)) return -1;
 
         $sql = "SELECT rowid, fk_user, entity, bank, number, code_banque, code_guichet, cle_rib, bic, iban_prefix as iban, domiciliation, proprio,";
-        $sql.= " owner_address, label, datec, tms as datem";
-        $sql.= " FROM ".MAIN_DB_PREFIX."user_rib";
-        if ($id) $sql.= " WHERE rowid = ".$id;
-        if ($ref) $sql.= " WHERE label = '".$this->db->escape($ref)."'";
-        if ($userid) $sql.= " WHERE fk_user = '".$userid."'";
+        $sql .= " owner_address, label, datec, tms as datem";
+        $sql .= " FROM ".MAIN_DB_PREFIX."user_rib";
+        if ($id) $sql .= " WHERE rowid = ".$id;
+        if ($ref) $sql .= " WHERE label = '".$this->db->escape($ref)."'";
+        if ($userid) $sql .= " WHERE fk_user = '".$userid."'";
 
         $resql = $this->db->query($sql);
         if ($resql)
@@ -169,7 +185,7 @@ class UserBankAccount extends Account
                 $obj = $this->db->fetch_object($resql);
 
                 $this->id = $obj->rowid;
-                $this->socid = $obj->fk_soc;
+                $this->userid = $obj->fk_soc;
                 $this->bank = $obj->bank;
                 $this->code_banque = $obj->code_banque;
                 $this->code_guichet = $obj->code_guichet;

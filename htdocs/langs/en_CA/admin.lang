@@ -1,5 +1,8 @@
 # Dolibarr language file - Source file is en_US - admin
+YouCanSubmitFile=You can upload the .zip file of module package from here:
+Module50150Desc=Point of Sale module TakePOS (touchscreen POS, for shops, bars or restaurants).
 LocalTax1Management=PST Management
+ValueOfConstantKey=Value of a configuration constant
 CompanyZip=Postal code
 LDAPFieldZip=Postal code
 SuppliersCommandModel=Complete template of Purchase Order

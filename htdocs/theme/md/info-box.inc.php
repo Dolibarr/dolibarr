@@ -1,5 +1,5 @@
 <?php
-if (! defined('ISLOADEDBYSTEELSHEET')) die('Must be call by steelsheet'); ?>
+if (!defined('ISLOADEDBYSTEELSHEET')) die('Must be call by steelsheet'); ?>
 /* <style type="text/css" > */
 
 /*
@@ -60,6 +60,9 @@ span.info-box-icon-text {	/* hide box text number due to problems */
 .info-box-icon > img {
 	max-width: 100%;
 }
+.info-box-module .info-box-icon > img {
+    max-width: 55%;
+}
 .info-box-content {
 	padding: 5px 10px;
 	margin-left: 90px;
@@ -104,8 +107,8 @@ a.info-box-text{ text-decoration: none;}
 }
 <?php
 include_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
-if (! isset($conf->global->THEME_AGRESSIVENESS_RATIO)) $conf->global->THEME_AGRESSIVENESS_RATIO=-100;
-if (GETPOSTISSET('THEME_AGRESSIVENESS_RATIO')) $conf->global->THEME_AGRESSIVENESS_RATIO=GETPOST('THEME_AGRESSIVENESS_RATIO', 'int');
+if (!isset($conf->global->THEME_AGRESSIVENESS_RATIO)) $conf->global->THEME_AGRESSIVENESS_RATIO = -100;
+if (GETPOSTISSET('THEME_AGRESSIVENESS_RATIO')) $conf->global->THEME_AGRESSIVENESS_RATIO = GETPOST('THEME_AGRESSIVENESS_RATIO', 'int');
 ?>
 .bg-infoxbox-project i.fa{
 	color: <?php print colorAgressiveness('#605ca8', $conf->global->THEME_AGRESSIVENESS_RATIO); ?> !important;
@@ -123,11 +126,11 @@ if (GETPOSTISSET('THEME_AGRESSIVENESS_RATIO')) $conf->global->THEME_AGRESSIVENES
 .bg-infoxbox-order_supplier i.fa{
 	color: <?php print colorAgressiveness('#40b0cf', $conf->global->THEME_AGRESSIVENESS_RATIO); ?>  !important;
 }
-.bg-infoxbox-contrat i.fa{
+.bg-infoxbox-contrat i.fa, .bg-infoxbox-ticket i.fa{
 	color: <?php print colorAgressiveness('#20a68a', $conf->global->THEME_AGRESSIVENESS_RATIO); ?>  !important;
 }
 .bg-infoxbox-bank_account i.fa{
-	color: <?php print colorAgressiveness('#e39c42', $conf->global->THEME_AGRESSIVENESS_RATIO); ?>  !important;
+	color: <?php print colorAgressiveness('#b0a53e', $conf->global->THEME_AGRESSIVENESS_RATIO); ?>  !important;
 }
 .bg-infoxbox-adherent i.fa{
 	color: <?php print colorAgressiveness('#f39c12', $conf->global->THEME_AGRESSIVENESS_RATIO); ?>  !important;

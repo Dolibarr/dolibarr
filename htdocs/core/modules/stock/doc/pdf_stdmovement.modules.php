@@ -230,7 +230,7 @@ class pdf_stdmovement extends ModelePDFMovement
 		$search_type_mouvement = GETPOST('search_type_mouvement', 'int');
 
 		$limit = GETPOST('limit', 'int') ?GETPOST('limit', 'int') : $conf->liste_limit;
-		$page = GETPOST("page", 'int');
+		$page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOST("page", 'int');
 		$sortfield = GETPOST("sortfield", 'alpha');
 		$sortorder = GETPOST("sortorder", 'alpha');
 		if (empty($page) || $page == -1) { $page = 0; }     // If $page is not defined, or '' or -1
@@ -246,71 +246,71 @@ class pdf_stdmovement extends ModelePDFMovement
 
 		// fetch optionals attributes and labels
 		$extrafields->fetch_name_optionals_label('movement');
-		$search_array_options=$extrafields->getOptionalsFromPost('movement', '', 'search_');
+		$search_array_options = $extrafields->getOptionalsFromPost('movement', '', 'search_');
 
-		$productlot=new ProductLot($db);
-		$productstatic=new Product($db);
-		$warehousestatic=new Entrepot($db);
-		$movement=new MouvementStock($db);
-		$userstatic=new User($db);
+		$productlot = new ProductLot($db);
+		$productstatic = new Product($db);
+		$warehousestatic = new Entrepot($db);
+		$movement = new MouvementStock($db);
+		$userstatic = new User($db);
 		$element = 'movement';
 
 		$sql = "SELECT p.rowid, p.ref as product_ref, p.label as produit, p.tobatch, p.fk_product_type as type, p.entity,";
-		$sql.= " e.ref as warehouse_ref, e.rowid as entrepot_id, e.lieu,";
-		$sql.= " m.rowid as mid, m.value as qty, m.datem, m.fk_user_author, m.label, m.inventorycode, m.fk_origin, m.origintype,";
-		$sql.= " m.batch, m.price,";
-		$sql.= " m.type_mouvement,";
-		$sql.= " pl.rowid as lotid, pl.eatby, pl.sellby,";
-		$sql.= " u.login, u.photo, u.lastname, u.firstname";
+		$sql .= " e.ref as warehouse_ref, e.rowid as entrepot_id, e.lieu,";
+		$sql .= " m.rowid as mid, m.value as qty, m.datem, m.fk_user_author, m.label, m.inventorycode, m.fk_origin, m.origintype,";
+		$sql .= " m.batch, m.price,";
+		$sql .= " m.type_mouvement,";
+		$sql .= " pl.rowid as lotid, pl.eatby, pl.sellby,";
+		$sql .= " u.login, u.photo, u.lastname, u.firstname";
 		// Add fields from extrafields
-		if (! empty($extrafields->attributes[$element]['label'])) {
-			foreach ($extrafields->attributes[$element]['label'] as $key => $val) $sql.=($extrafields->attributes[$element]['type'][$key] != 'separate' ? ", ef.".$key.' as options_'.$key : '');
+		if (!empty($extrafields->attributes[$element]['label'])) {
+			foreach ($extrafields->attributes[$element]['label'] as $key => $val) $sql .= ($extrafields->attributes[$element]['type'][$key] != 'separate' ? ", ef.".$key.' as options_'.$key : '');
 		}
 		// Add fields from hooks
-		$parameters=array();
-		$reshook=$hookmanager->executeHooks('printFieldListSelect', $parameters);    // Note that $action and $object may have been modified by hook
-		$sql.=$hookmanager->resPrint;
-		$sql.= " FROM ".MAIN_DB_PREFIX."entrepot as e,";
-		$sql.= " ".MAIN_DB_PREFIX."product as p,";
-		$sql.= " ".MAIN_DB_PREFIX."stock_mouvement as m";
-		if (is_array($extrafields->attributes[$object->table_element]['label']) && count($extrafields->attributes[$object->table_element]['label'])) $sql.= " LEFT JOIN ".MAIN_DB_PREFIX.$object->table_element."_extrafields as ef on (m.rowid = ef.fk_object)";
-		$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."user as u ON m.fk_user_author = u.rowid";
-		$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."product_lot as pl ON m.batch = pl.batch AND m.fk_product = pl.fk_product";
-		$sql.= " WHERE m.fk_product = p.rowid";
+		$parameters = array();
+		$reshook = $hookmanager->executeHooks('printFieldListSelect', $parameters); // Note that $action and $object may have been modified by hook
+		$sql .= $hookmanager->resPrint;
+		$sql .= " FROM ".MAIN_DB_PREFIX."entrepot as e,";
+		$sql .= " ".MAIN_DB_PREFIX."product as p,";
+		$sql .= " ".MAIN_DB_PREFIX."stock_mouvement as m";
+		if (is_array($extrafields->attributes[$object->table_element]['label']) && count($extrafields->attributes[$object->table_element]['label'])) $sql .= " LEFT JOIN ".MAIN_DB_PREFIX.$object->table_element."_extrafields as ef on (m.rowid = ef.fk_object)";
+		$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."user as u ON m.fk_user_author = u.rowid";
+		$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."product_lot as pl ON m.batch = pl.batch AND m.fk_product = pl.fk_product";
+		$sql .= " WHERE m.fk_product = p.rowid";
 		if ($msid > 0) $sql .= " AND m.rowid = ".$msid;
-		$sql.= " AND m.fk_entrepot = e.rowid";
-		$sql.= " AND e.entity IN (".getEntity('stock').")";
-		if (empty($conf->global->STOCK_SUPPORTS_SERVICES)) $sql.= " AND p.fk_product_type = 0";
-		if ($id > 0) $sql.= " AND e.rowid ='".$id."'";
+		$sql .= " AND m.fk_entrepot = e.rowid";
+		$sql .= " AND e.entity IN (".getEntity('stock').")";
+		if (empty($conf->global->STOCK_SUPPORTS_SERVICES)) $sql .= " AND p.fk_product_type = 0";
+		if ($id > 0) $sql .= " AND e.rowid ='".$id."'";
 		if ($month > 0)
 		{
 			if ($year > 0)
-			$sql.= " AND m.datem BETWEEN '".$db->idate(dol_get_first_day($year, $month, false))."' AND '".$db->idate(dol_get_last_day($year, $month, false))."'";
+			$sql .= " AND m.datem BETWEEN '".$db->idate(dol_get_first_day($year, $month, false))."' AND '".$db->idate(dol_get_last_day($year, $month, false))."'";
 			else
-			$sql.= " AND date_format(m.datem, '%m') = '$month'";
+			$sql .= " AND date_format(m.datem, '%m') = '$month'";
 		}
 		elseif ($year > 0)
 		{
-			$sql.= " AND m.datem BETWEEN '".$db->idate(dol_get_first_day($year, 1, false))."' AND '".$db->idate(dol_get_last_day($year, 12, false))."'";
+			$sql .= " AND m.datem BETWEEN '".$db->idate(dol_get_first_day($year, 1, false))."' AND '".$db->idate(dol_get_last_day($year, 12, false))."'";
 		}
-		if ($idproduct > 0) $sql.= " AND p.rowid = '".$idproduct."'";
-		if (! empty($search_ref))			$sql.= natural_search('m.rowid', $search_ref, 1);
-		if (! empty($search_movement))      $sql.= natural_search('m.label', $search_movement);
-		if (! empty($search_inventorycode)) $sql.= natural_search('m.inventorycode', $search_inventorycode);
-		if (! empty($search_product_ref))   $sql.= natural_search('p.ref', $search_product_ref);
-		if (! empty($search_product))       $sql.= natural_search('p.label', $search_product);
-		if ($search_warehouse > 0)          $sql.= " AND e.rowid = '".$db->escape($search_warehouse)."'";
-		if (! empty($search_user))          $sql.= natural_search('u.login', $search_user);
-		if (! empty($search_batch))         $sql.= natural_search('m.batch', $search_batch);
-		if ($search_qty != '')				$sql.= natural_search('m.value', $search_qty, 1);
-		if ($search_type_mouvement > 0)		$sql.= " AND m.type_mouvement = '".$db->escape($search_type_mouvement)."'";
+		if ($idproduct > 0) $sql .= " AND p.rowid = '".$idproduct."'";
+		if (!empty($search_ref))			$sql .= natural_search('m.rowid', $search_ref, 1);
+		if (!empty($search_movement))      $sql .= natural_search('m.label', $search_movement);
+		if (!empty($search_inventorycode)) $sql .= natural_search('m.inventorycode', $search_inventorycode);
+		if (!empty($search_product_ref))   $sql .= natural_search('p.ref', $search_product_ref);
+		if (!empty($search_product))       $sql .= natural_search('p.label', $search_product);
+		if ($search_warehouse > 0)          $sql .= " AND e.rowid = '".$db->escape($search_warehouse)."'";
+		if (!empty($search_user))          $sql .= natural_search('u.login', $search_user);
+		if (!empty($search_batch))         $sql .= natural_search('m.batch', $search_batch);
+		if ($search_qty != '')				$sql .= natural_search('m.value', $search_qty, 1);
+		if ($search_type_mouvement > 0)		$sql .= " AND m.type_mouvement = '".$db->escape($search_type_mouvement)."'";
 		// Add where from extra fields
 		include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_sql.tpl.php';
 		// Add where from hooks
-		$parameters=array();
-		$reshook=$hookmanager->executeHooks('printFieldListWhere', $parameters);    // Note that $action and $object may have been modified by hook
-		$sql.=$hookmanager->resPrint;
-		$sql.= $db->order($sortfield, $sortorder);
+		$parameters = array();
+		$reshook = $hookmanager->executeHooks('printFieldListWhere', $parameters); // Note that $action and $object may have been modified by hook
+		$sql .= $hookmanager->resPrint;
+		$sql .= $db->order($sortfield, $sortorder);
 
 		$nbtotalofrecords = '';
 		if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST))
@@ -444,22 +444,22 @@ class pdf_stdmovement extends ModelePDFMovement
 				$pdf->SetCreator("Dolibarr ".DOL_VERSION);
 				$pdf->SetAuthor($outputlangs->convToOutputCharset($user->getFullName($outputlangs)));
 				$pdf->SetKeyWords($outputlangs->convToOutputCharset($object->ref)." ".$outputlangs->transnoentities("Stock")." ".$outputlangs->convToOutputCharset($object->label));
-				if (! empty($conf->global->MAIN_DISABLE_PDF_COMPRESSION)) $pdf->SetCompression(false);
+				if (!empty($conf->global->MAIN_DISABLE_PDF_COMPRESSION)) $pdf->SetCompression(false);
 
-				$pdf->SetMargins($this->marge_gauche, $this->marge_haute, $this->marge_droite);   // Left, Top, Right
+				$pdf->SetMargins($this->marge_gauche, $this->marge_haute, $this->marge_droite); // Left, Top, Right
 
 
 				// New page
 				$pdf->AddPage();
-				if (! empty($tplidx)) $pdf->useTemplate($tplidx);
+				if (!empty($tplidx)) $pdf->useTemplate($tplidx);
 				$pagenb++;
 				$this->_pagehead($pdf, $object, 1, $outputlangs);
 				$pdf->SetFont('', '', $default_font_size - 1);
-				$pdf->MultiCell(0, 3, '');		// Set interline to 3
+				$pdf->MultiCell(0, 3, ''); // Set interline to 3
 				$pdf->SetTextColor(0, 0, 0);
 
 				$tab_top = 42;
-				$tab_top_newpage = (empty($conf->global->MAIN_PDF_DONOTREPEAT_HEAD)?42:10);
+				$tab_top_newpage = (empty($conf->global->MAIN_PDF_DONOTREPEAT_HEAD) ? 42 : 10);
 				$tab_height = 130;
 				$tab_height_newpage = 150;
 
@@ -506,38 +506,38 @@ class pdf_stdmovement extends ModelePDFMovement
 						}
 
 						$curY = $nexY;
-						$pdf->SetFont('', '', $default_font_size - 1);   // Into loop to work with multipage
+						$pdf->SetFont('', '', $default_font_size - 1); // Into loop to work with multipage
 						$pdf->SetTextColor(0, 0, 0);
 
 						$pdf->setTopMargin($tab_top_newpage);
-						$pdf->setPageOrientation('', 1, $heightforfooter+$heightforfreetext+$heightforinfotot);	// The only function to edit the bottom margin of current page to set it.
-						$pageposbefore=$pdf->getPage();
+						$pdf->setPageOrientation('', 1, $heightforfooter + $heightforfreetext + $heightforinfotot); // The only function to edit the bottom margin of current page to set it.
+						$pageposbefore = $pdf->getPage();
 
 						// Description of product line
-						$curX = $this->posxdesc-1;
+						$curX = $this->posxdesc - 1;
 
-						$showpricebeforepagebreak=1;
+						$showpricebeforepagebreak = 1;
 
 						$pdf->startTransaction();
-						pdf_writelinedesc($pdf, $object, $i, $outputlangs, $this->posxtva-$curX, 3, $curX, $curY, $hideref, $hidedesc);
-						$pageposafter=$pdf->getPage();
+						pdf_writelinedesc($pdf, $object, $i, $outputlangs, $this->posxtva - $curX, 3, $curX, $curY, $hideref, $hidedesc);
+						$pageposafter = $pdf->getPage();
 						if ($pageposafter > $pageposbefore)	// There is a pagebreak
 						{
 							$pdf->rollbackTransaction(true);
-							$pageposafter=$pageposbefore;
+							$pageposafter = $pageposbefore;
 							//print $pageposafter.'-'.$pageposbefore;exit;
-							$pdf->setPageOrientation('', 1, $heightforfooter);	// The only function to edit the bottom margin of current page to set it.
-							pdf_writelinedesc($pdf, $object, $i, $outputlangs, $this->posxtva-$curX, 4, $curX, $curY, $hideref, $hidedesc);
-							$pageposafter=$pdf->getPage();
-							$posyafter=$pdf->GetY();
-							if ($posyafter > ($this->page_hauteur - ($heightforfooter+$heightforfreetext+$heightforinfotot)))	// There is no space left for total+free text
+							$pdf->setPageOrientation('', 1, $heightforfooter); // The only function to edit the bottom margin of current page to set it.
+							pdf_writelinedesc($pdf, $object, $i, $outputlangs, $this->posxtva - $curX, 4, $curX, $curY, $hideref, $hidedesc);
+							$pageposafter = $pdf->getPage();
+							$posyafter = $pdf->GetY();
+							if ($posyafter > ($this->page_hauteur - ($heightforfooter + $heightforfreetext + $heightforinfotot)))	// There is no space left for total+free text
 							{
-								if ($i == ($nblines-1))	// No more lines, and no space left to show total, so we create a new page
+								if ($i == ($nblines - 1))	// No more lines, and no space left to show total, so we create a new page
 								{
 									$pdf->AddPage('', '', true);
-									if (! empty($tplidx)) $pdf->useTemplate($tplidx);
+									if (!empty($tplidx)) $pdf->useTemplate($tplidx);
 									if (empty($conf->global->MAIN_PDF_DONOTREPEAT_HEAD)) $this->_pagehead($pdf, $object, 0, $outputlangs);
-									$pdf->setPage($pageposafter+1);
+									$pdf->setPage($pageposafter + 1);
 								}
 							}
 							else
@@ -545,7 +545,7 @@ class pdf_stdmovement extends ModelePDFMovement
 								// We found a page break
 
 								// Allows data in the first page if description is long enough to break in multiples pages
-								if(!empty($conf->global->MAIN_PDF_DATA_ON_FIRST_PAGE))
+								if (!empty($conf->global->MAIN_PDF_DATA_ON_FIRST_PAGE))
 									$showpricebeforepagebreak = 1;
 								else
 									$showpricebeforepagebreak = 0;
@@ -555,48 +555,48 @@ class pdf_stdmovement extends ModelePDFMovement
 						{
 							$pdf->commitTransaction();
 						}
-						$posYAfterDescription=$pdf->GetY();
+						$posYAfterDescription = $pdf->GetY();
 
 						$nexY = $pdf->GetY();
-						$pageposafter=$pdf->getPage();
+						$pageposafter = $pdf->getPage();
 
 						$pdf->setPage($pageposbefore);
 						$pdf->setTopMargin($this->marge_haute);
-						$pdf->setPageOrientation('', 1, 0);	// The only function to edit the bottom margin of current page to set it.
+						$pdf->setPageOrientation('', 1, 0); // The only function to edit the bottom margin of current page to set it.
 
 						// We suppose that a too long description is moved completely on next page
 						if ($pageposafter > $pageposbefore && empty($showpricebeforepagebreak)) {
 							$pdf->setPage($pageposafter); $curY = $tab_top_newpage;
 						}
 
-						$pdf->SetFont('', '', $default_font_size - 1);   // On repositionne la police par defaut
+						$pdf->SetFont('', '', $default_font_size - 1); // On repositionne la police par defaut
 
 						// $objp = $db->fetch_object($resql);
 
-						$userstatic->id=$objp->fk_user_author;
-						$userstatic->login=$objp->login;
-						$userstatic->lastname=$objp->lastname;
-						$userstatic->firstname=$objp->firstname;
-						$userstatic->photo=$objp->photo;
+						$userstatic->id = $objp->fk_user_author;
+						$userstatic->login = $objp->login;
+						$userstatic->lastname = $objp->lastname;
+						$userstatic->firstname = $objp->firstname;
+						$userstatic->photo = $objp->photo;
 
-						$productstatic->id=$objp->rowid;
-						$productstatic->ref=$objp->product_ref;
-						$productstatic->label=$objp->produit;
-						$productstatic->type=$objp->type;
-						$productstatic->entity=$objp->entity;
-						$productstatic->status_batch=$objp->tobatch;
+						$productstatic->id = $objp->rowid;
+						$productstatic->ref = $objp->product_ref;
+						$productstatic->label = $objp->produit;
+						$productstatic->type = $objp->type;
+						$productstatic->entity = $objp->entity;
+						$productstatic->status_batch = $objp->tobatch;
 
 						$productlot->id = $objp->lotid;
-						$productlot->batch= $objp->batch;
-						$productlot->eatby= $objp->eatby;
-						$productlot->sellby= $objp->sellby;
+						$productlot->batch = $objp->batch;
+						$productlot->eatby = $objp->eatby;
+						$productlot->sellby = $objp->sellby;
 
-						$warehousestatic->id=$objp->entrepot_id;
-						$warehousestatic->label=$objp->warehouse_ref;
-						$warehousestatic->lieu=$objp->lieu;
+						$warehousestatic->id = $objp->entrepot_id;
+						$warehousestatic->label = $objp->warehouse_ref;
+						$warehousestatic->lieu = $objp->lieu;
 
-						$arrayofuniqueproduct[$objp->rowid]=$objp->produit;
-						if(!empty($objp->fk_origin)) {
+						$arrayofuniqueproduct[$objp->rowid] = $objp->produit;
+						if (!empty($objp->fk_origin)) {
 							$origin = $movement->get_origin($objp->fk_origin, $objp->origintype);
 						} else {
 							$origin = '';
@@ -980,69 +980,69 @@ class pdf_stdmovement extends ModelePDFMovement
 	    $pdf->SetTextColor(0, 0, 60);
 	    $pdf->SetFont('', 'B', $default_font_size + 3);
 
-	    $posy=$this->marge_haute;
-	    $posx=$this->page_largeur-$this->marge_droite-100;
+	    $posy = $this->marge_haute;
+	    $posx = $this->page_largeur - $this->marge_droite - 100;
 
 	    $pdf->SetXY($this->marge_gauche, $posy);
 
 	    // Logo
-	    $logo=$conf->mycompany->dir_output.'/logos/'.$this->emetteur->logo;
+	    $logo = $conf->mycompany->dir_output.'/logos/'.$this->emetteur->logo;
 	    if ($this->emetteur->logo)
 	    {
 	        if (is_readable($logo))
 	        {
-	            $height=pdf_getHeightForLogo($logo);
-	            $pdf->Image($logo, $this->marge_gauche, $posy, 0, $height);	// width=0 (auto)
+	            $height = pdf_getHeightForLogo($logo);
+	            $pdf->Image($logo, $this->marge_gauche, $posy, 0, $height); // width=0 (auto)
 	        }
 	        else
 	        {
 	            $pdf->SetTextColor(200, 0, 0);
-	            $pdf->SetFont('', 'B', $default_font_size -2);
+	            $pdf->SetFont('', 'B', $default_font_size - 2);
 	            $pdf->MultiCell(100, 3, $outputlangs->transnoentities("ErrorLogoFileNotFound", $logo), 0, 'L');
 	            $pdf->MultiCell(100, 3, $outputlangs->transnoentities("ErrorGoToGlobalSetup"), 0, 'L');
 	        }
 	    }
 	    else
 	    {
-	        $text=$this->emetteur->name;
+	        $text = $this->emetteur->name;
 	        $pdf->MultiCell(100, 4, $outputlangs->convToOutputCharset($text), 0, 'L');
 	    }
 
 	    $pdf->SetFont('', 'B', $default_font_size + 3);
 	    $pdf->SetXY($posx, $posy);
 	    $pdf->SetTextColor(0, 0, 60);
-	    $title=$outputlangs->transnoentities("Warehouse");
+	    $title = $outputlangs->transnoentities("Warehouse");
 	    $pdf->MultiCell(100, 3, $title, '', 'R');
 
 	    $pdf->SetFont('', 'B', $default_font_size);
 
-	    $posy+=5;
+	    $posy += 5;
 	    $pdf->SetXY($posx, $posy);
 	    $pdf->SetTextColor(0, 0, 60);
 
-	    $pdf->MultiCell(100, 4, $outputlangs->transnoentities("Ref")." : " . $outputlangs->convToOutputCharset($object->label), '', 'R');
+	    $pdf->MultiCell(100, 4, $outputlangs->transnoentities("Ref")." : ".$outputlangs->convToOutputCharset($object->label), '', 'R');
 
-	    $posy+=5;
+	    $posy += 5;
 	    $pdf->SetFont('', '', $default_font_size - 1);
 		$pdf->SetXY($posx, $posy);
 	    $pdf->SetTextColor(0, 0, 60);
 	    $pdf->MultiCell(100, 3, $outputlangs->transnoentities("LocationSummary").' :', '', 'R');
 
-		$posy+=4;
-		$pdf->SetXY($posx-50, $posy);
+		$posy += 4;
+		$pdf->SetXY($posx - 50, $posy);
 		$pdf->MultiCell(150, 3, $object->lieu, '', 'R');
 
 
 		// Parent MouvementStock
-		$posy+=4;
+		$posy += 4;
 		$pdf->SetXY($posx, $posy);
 		$pdf->SetTextColor(0, 0, 60);
 		$pdf->MultiCell(100, 3, $outputlangs->transnoentities("ParentWarehouse").' :', '', 'R');
 
-		$posy+=4;
-		$pdf->SetXY($posx-50, $posy);
+		$posy += 4;
+		$pdf->SetXY($posx - 50, $posy);
 		$e = new MouvementStock($db);
-		if(!empty($object->fk_parent) && $e->fetch($object->fk_parent) > 0)
+		if (!empty($object->fk_parent) && $e->fetch($object->fk_parent) > 0)
 		{
 			$pdf->MultiCell(150, 3, $e->label, '', 'R');
 		}

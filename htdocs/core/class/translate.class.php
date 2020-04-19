@@ -810,7 +810,7 @@ class Translate
 						'uk'=>'uk_UA',
 						'vi'=>'vi_VN'
 					);
-					if (strtolower($regs[1]) != strtolower($regs[2]) && ! in_array($dir, $arrayofspecialmainlanguages)) continue;
+					if (strtolower($regs[1]) != strtolower($regs[2]) && !in_array($dir, $arrayofspecialmainlanguages)) continue;
 				}
 				// We must keep only languages into MAIN_LANGUAGES_ALLOWED
 				if (!empty($conf->global->MAIN_LANGUAGES_ALLOWED) && !in_array($dir, explode(',', $conf->global->MAIN_LANGUAGES_ALLOWED))) continue;

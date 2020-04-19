@@ -76,8 +76,8 @@ TypeContact_propal_external_BILLING=客戶發票聯絡人
 TypeContact_propal_external_CUSTOMER=後續提案/建議書的客戶聯絡人
 TypeContact_propal_external_SHIPPING=客戶交貨聯絡人
 # Document models
-DocModelAzurDescription=A complete proposal model 
-DocModelCyanDescription=A complete proposal model
+DocModelAzurDescription=完整的提案/建議書模型（Cyan範本的舊範本）
+DocModelCyanDescription=完整的提案/建議書模型
 DefaultModelPropalCreate=預設模型建立
 DefaultModelPropalToBill=當關閉企業提案/建議書時使用的預設範本(開立發票)
 DefaultModelPropalClosed=當關閉企業提案/建議書時使用的預設範本(未開票)

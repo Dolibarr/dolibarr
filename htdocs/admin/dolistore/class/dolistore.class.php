@@ -17,7 +17,7 @@
  */
 
 include_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
-if (! class_exists('PrestaShopWebservice')) // We keep this because some modules add this lib too into a different path. This is to avoid "Cannot declare class PrestaShopWebservice" errors.
+if (!class_exists('PrestaShopWebservice')) // We keep this because some modules add this lib too into a different path. This is to avoid "Cannot declare class PrestaShopWebservice" errors.
 {
     include_once DOL_DOCUMENT_ROOT.'/admin/dolistore/class/PSWebServiceLibrary.class.php';
 }

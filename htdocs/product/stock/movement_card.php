@@ -72,7 +72,7 @@ $search_qty = trim(GETPOST("search_qty", 'alpha'));
 $search_type_mouvement = GETPOST('search_type_mouvement', 'int');
 
 $limit = GETPOST('limit', 'int') ?GETPOST('limit', 'int') : $conf->liste_limit;
-$page = GETPOST("page", 'int');
+$page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOST("page", 'int');
 $sortfield = GETPOST("sortfield", 'alpha');
 $sortorder = GETPOST("sortorder", 'alpha');
 if (empty($page) || $page == -1) { $page = 0; }     // If $page is not defined, or '' or -1
@@ -412,18 +412,18 @@ if ($action == "transfert_stock" && !$cancel)
  */
 // The builddoc action for object of a movement must be on the movement card
 // Actions to build doc
-$upload_dir = $conf->stock->dir_output . "movement/";
+$upload_dir = $conf->stock->dir_output."movement/";
 $permissiontoadd = $user->rights->stock->creer;
 include DOL_DOCUMENT_ROOT.'/core/actions_builddoc.inc.php';
 
 
 if (empty($reshook) && $action != 'remove_file')
 {
-    $objectclass='MouvementStock';
-    $objectlabel='Movements';
+    $objectclass = 'MouvementStock';
+    $objectlabel = 'Movements';
     $permissiontoread = $user->rights->stock->lire;
     $permissiontodelete = $user->rights->stock->supprimer;
-    $uploaddir = $conf->stock->dir_output . "/movement/";
+    $uploaddir = $conf->stock->dir_output."/movement/";
 	include DOL_DOCUMENT_ROOT.'/core/actions_massactions.inc.php';
 }
 

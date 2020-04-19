@@ -497,11 +497,11 @@ if (empty($reshook))
 			}
 
 			// If some payments were already done, we change the amount to pay using same prorate
-			if (! empty($conf->global->SUPPLIER_INVOICE_ALLOW_REUSE_OF_CREDIT_WHEN_PARTIALLY_REFUNDED)) {
-				$alreadypaid = $object->getSommePaiement();		// This can be not 0 if we allow to create credit to reuse from credit notes partially refunded.
+			if (!empty($conf->global->SUPPLIER_INVOICE_ALLOW_REUSE_OF_CREDIT_WHEN_PARTIALLY_REFUNDED)) {
+				$alreadypaid = $object->getSommePaiement(); // This can be not 0 if we allow to create credit to reuse from credit notes partially refunded.
 				if ($alreadypaid && abs($alreadypaid) < abs($object->total_ttc)) {
 					$ratio = abs(($object->total_ttc - $alreadypaid) / $object->total_ttc);
-					foreach($amount_ht as $vatrate => $val) {
+					foreach ($amount_ht as $vatrate => $val) {
 						$amount_ht[$vatrate] = price2num($amount_ht[$vatrate] * $ratio, 'MU');
 						$amount_tva[$vatrate] = price2num($amount_tva[$vatrate] * $ratio, 'MU');
 						$amount_ttc[$vatrate] = price2num($amount_ttc[$vatrate] * $ratio, 'MU');
@@ -657,7 +657,7 @@ if (empty($reshook))
 				$_GET['socid'] = $_POST['socid'];
 				$error++;
 			}
-			if (! (GETPOST('fac_replacement', 'int') > 0)) {
+			if (!(GETPOST('fac_replacement', 'int') > 0)) {
 				$error++;
 				setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("ReplaceInvoice")), null, 'errors');
 			}
@@ -905,6 +905,12 @@ if (empty($reshook))
 					$objectsrc->fetch($originid);
 					$objectsrc->fetch_thirdparty();
 
+					if (!empty($object->origin) && !empty($object->origin_id))
+					{
+						$object->linkedObjectsIds[$object->origin] = $object->origin_id;
+					}
+
+					// Add also link with order if object is reception
 					if ($object->origin == 'reception')
 					{
 						$objectsrc->fetchObjectLinked();
@@ -913,13 +919,9 @@ if (empty($reshook))
 						{
 							foreach ($objectsrc->linkedObjectsIds['order_supplier'] as $key => $value)
 							{
-								$object->linked_objects['order_supplier'] = $value;
+								$object->linkedObjectsIds['order_supplier'] = $value;
 							}
 						}
-					}
-					elseif (!empty($object->origin) && !empty($object->origin_id))
- 					{
-						$object->linkedObjectsIds[$object->origin] = $object->origin_id;
 					}
 
 					$id = $object->create($user);
@@ -950,7 +952,7 @@ if (empty($reshook))
 
 								// Extrafields
 								if (empty($conf->global->MAIN_EXTRAFIELDS_DISABLED) && method_exists($lines[$i], 'fetch_optionals')) {
-									$lines[$i]->fetch_optionals($lines[$i]->rowid);
+									$lines[$i]->fetch_optionals();
 								}
 
 								// Dates
@@ -965,10 +967,22 @@ if (empty($reshook))
 								// FIXME Missing special_code  into addline and updateline methods
 								$object->special_code = $lines[$i]->special_code;
 
+								// FIXME If currency different from main currency, take multicurrency price
+								if ($object->multicurrency_code != $conf->currency || $object->multicurrency_tx != 1)
+								{
+									$pu = 0;
+									$pu_currency = $lines[$i]->multicurrency_subprice;
+								}
+								else
+								{
+									$pu = $lines[$i]->subprice;
+									$pu_currency = 0;
+								}
+
 								// FIXME Missing $lines[$i]->ref_supplier and $lines[$i]->label into addline and updateline methods. They are filled when coming from order for example.
 								$result = $object->addline(
 									$desc,
-									$lines[$i]->subprice,
+									$pu,
 									$lines[$i]->tva_tx,
 									$lines[$i]->localtax1_tx,
 									$lines[$i]->localtax2_tx,
@@ -986,7 +1000,7 @@ if (empty($reshook))
 									$lines[$i]->array_options,
 									$lines[$i]->fk_unit,
 									$lines[$i]->id,
-									0,
+									$pu_currency,
 									$lines[$i]->ref_supplier,
 									$lines[$i]->special_code
 								);
@@ -1750,7 +1764,7 @@ if ($action == 'create')
 		$datedue = ($datetmp == '' ?-1 : $datetmp);
 
 		// Replicate extrafields
-		$objectsrc->fetch_optionals($originid);
+		$objectsrc->fetch_optionals();
 		$object->array_options = $objectsrc->array_options;
 	}
 	else
@@ -1807,7 +1821,7 @@ if ($action == 'create')
 			});
 			</script>';
 		}
-		print ' <a href="'.DOL_URL_ROOT.'/societe/card.php?action=create&client=0&fournisseur=1&backtopage='.urlencode($_SERVER["PHP_SELF"].'?action=create').'"><span class="valignmiddle text-plus-circle">'.$langs->trans("AddThirdParty").'</span><span class="fa fa-plus-circle valignmiddle paddingleft"></span></a>';
+		print ' <a href="'.DOL_URL_ROOT.'/societe/card.php?action=create&client=0&fournisseur=1&backtopage='.urlencode($_SERVER["PHP_SELF"].'?action=create').'"><span class="fa fa-plus-circle valignmiddle paddingleft" title="'.$langs->trans("AddThirdParty").'"></span></a>';
 	}
 	print '</td></tr>';
 
@@ -2077,7 +2091,7 @@ if ($action == 'create')
 
 		$langs->load('projects');
 		print '<tr><td>'.$langs->trans('Project').'</td><td>';
-		$formproject->select_projects((empty($conf->global->PROJECT_CAN_ALWAYS_LINK_TO_ALL_SUPPLIERS) ? $societe->id : -1), $projectid, 'projectid', 0, 0, 1, 1);
+		$formproject->select_projects((empty($conf->global->PROJECT_CAN_ALWAYS_LINK_TO_ALL_SUPPLIERS) ? $societe->id : -1), $projectid, 'projectid', 0, 0, 1, 1, 0, 0, 0, '', 0, 0, 'maxwidth500');
 		print '</td></tr>';
 	}
 
@@ -3134,13 +3148,15 @@ else
 				}
 
 				// Send by mail
-				if (($object->statut == FactureFournisseur::STATUS_VALIDATED || $object->statut == FactureFournisseur::STATUS_CLOSED))
-				{
-					if (empty($conf->global->MAIN_USE_ADVANCED_PERMS) || $user->rights->fournisseur->supplier_invoice_advance->send)
+				if (empty($user->socid)) {
+					if (($object->statut == FactureFournisseur::STATUS_VALIDATED || $object->statut == FactureFournisseur::STATUS_CLOSED))
 					{
-						print '<div class="inline-block divButAction"><a class="butAction" href="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'&action=presend&mode=init#formmailbeforetitle">'.$langs->trans('SendMail').'</a></div>';
+						if (empty($conf->global->MAIN_USE_ADVANCED_PERMS) || $user->rights->fournisseur->supplier_invoice_advance->send)
+						{
+							print '<div class="inline-block divButAction"><a class="butAction" href="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'&action=presend&mode=init#formmailbeforetitle">'.$langs->trans('SendMail').'</a></div>';
+						}
+						else print '<div class="inline-block divButAction"><span class="butActionRefused classfortooltip">'.$langs->trans('SendMail').'</a></div>';
 					}
-					else print '<div class="inline-block divButAction"><span class="butActionRefused classfortooltip">'.$langs->trans('SendMail').'</a></div>';
 				}
 
 	            // Make payments
@@ -3180,7 +3196,7 @@ else
 					}
 					// For credit note
 					if ($object->type == FactureFournisseur::TYPE_CREDIT_NOTE && $object->statut == 1 && $object->paye == 0 && $user->rights->fournisseur->facture->creer
-						&& (! empty($conf->global->SUPPLIER_INVOICE_ALLOW_REUSE_OF_CREDIT_WHEN_PARTIALLY_REFUNDED) || $object->getSommePaiement() == 0)
+						&& (!empty($conf->global->SUPPLIER_INVOICE_ALLOW_REUSE_OF_CREDIT_WHEN_PARTIALLY_REFUNDED) || $object->getSommePaiement() == 0)
 						) {
 						print '<div class="inline-block divButAction"><a class="butAction" href="'.$_SERVER["PHP_SELF"].'?facid='.$object->id.'&amp;action=converttoreduc" title="'.dol_escape_htmltag($langs->trans("ConfirmConvertToReducSupplier2")).'">'.$langs->trans('ConvertToReduc').'</a></div>';
 					}

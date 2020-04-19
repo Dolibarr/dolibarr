@@ -78,6 +78,7 @@ CatMemberList=Danh sách thành viên thẻ/ danh mục
 CatContactList=Danh sách liên lạc thẻ/ danh mục
 CatSupLinks=Liên kết giữa nhà cung cấp và thẻ/ danh mục
 CatCusLinks=Liên kết giữa khách hàng/ tiềm năng và thẻ/ danh mục
+CatContactsLinks=Links between contacts/addresses and tags/categories
 CatProdLinks=Liên kết giữa sản phẩm/ dịch vụ và thẻ/ danh mục
 CatProJectLinks=Liên kết giữa dự án và thẻ/ danh mục
 DeleteFromCat=Xóa khỏi thẻ/ danh mục

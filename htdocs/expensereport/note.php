@@ -33,42 +33,42 @@ require_once DOL_DOCUMENT_ROOT.'/expensereport/class/expensereport.class.php';
 $langs->loadLangs(array('trips', 'companies', 'bills', 'orders'));
 
 $id = GETPOST('id', 'int');
-$ref=GETPOST('ref', 'alpha');
-$socid=GETPOST('socid', 'int');
-$action=GETPOST('action', 'alpha');
+$ref = GETPOST('ref', 'alpha');
+$socid = GETPOST('socid', 'int');
+$action = GETPOST('action', 'alpha');
 
 // Security check
-$socid=0;
-if ($user->socid) $socid=$user->socid;
-$result=restrictedArea($user, 'expensereport', $id, 'expensereport');
+$socid = 0;
+if ($user->socid) $socid = $user->socid;
+$result = restrictedArea($user, 'expensereport', $id, 'expensereport');
 
 
 $object = new ExpenseReport($db);
-if (! $object->fetch($id, $ref) > 0)
+if (!$object->fetch($id, $ref) > 0)
 {
 	dol_print_error($db);
 }
 
-$permissionnote=$user->rights->expensereport->creer;	// Used by the include of actions_setnotes.inc.php
+$permissionnote = $user->rights->expensereport->creer; // Used by the include of actions_setnotes.inc.php
 
 
 /*
  * Actions
  */
 
-include DOL_DOCUMENT_ROOT.'/core/actions_setnotes.inc.php';	// Must be include, not include_once
+include DOL_DOCUMENT_ROOT.'/core/actions_setnotes.inc.php'; // Must be include, not include_once
 
 
 /*
  * View
  */
-$title=$langs->trans("ExpenseReport") . " - " . $langs->trans("Note");
-$helpurl="EN:Module_Expense_Reports";
+$title = $langs->trans("ExpenseReport")." - ".$langs->trans("Note");
+$helpurl = "EN:Module_Expense_Reports";
 llxHeader("", $title, $helpurl);
 
 $form = new Form($db);
 
-if ($id > 0 || ! empty($ref))
+if ($id > 0 || !empty($ref))
 {
 	$object = new ExpenseReport($db);
 	$object->fetch($id, $ref);
@@ -78,18 +78,18 @@ if ($id > 0 || ! empty($ref))
 
 	dol_fiche_head($head, 'note', $langs->trans("ExpenseReport"), -1, 'trip');
 
-	$linkback = '<a href="'.DOL_URL_ROOT.'/expensereport/list.php?restore_lastsearch_values=1'.(! empty($socid)?'&socid='.$socid:'').'">'.$langs->trans("BackToList").'</a>';
+	$linkback = '<a href="'.DOL_URL_ROOT.'/expensereport/list.php?restore_lastsearch_values=1'.(!empty($socid) ? '&socid='.$socid : '').'">'.$langs->trans("BackToList").'</a>';
 
-	$morehtmlref='<div class="refidno">';
-    $morehtmlref.='</div>';
+	$morehtmlref = '<div class="refidno">';
+	$morehtmlref .= '</div>';
 
 
 	dol_banner_tab($object, 'ref', $linkback, 1, 'ref', 'ref', $morehtmlref);
 
-    print '<div class="fichecenter">';
-    print '<div class="underbanner clearboth"></div>';
+	print '<div class="fichecenter">';
+	print '<div class="underbanner clearboth"></div>';
 
-	$cssclass="titlefield";
+	$cssclass = "titlefield";
 	include DOL_DOCUMENT_ROOT.'/core/tpl/notes.tpl.php';
 
 	print '</div>';

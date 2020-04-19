@@ -26,7 +26,7 @@
  */
 
 /** Includes */
-include_once DOL_DOCUMENT_ROOT . "/core/boxes/modules_boxes.php";
+include_once DOL_DOCUMENT_ROOT."/core/boxes/modules_boxes.php";
 
 /**
  * Class to manage the box

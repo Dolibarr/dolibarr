@@ -41,7 +41,7 @@ $action = GETPOST('action', 'aZ09');
 $contextpage = GETPOST('contextpage', 'aZ') ?GETPOST('contextpage', 'aZ') : 'admincompany'; // To manage different context of search
 
 // Load translation files required by the page
-$langs->loadLangs(array('admin', 'companies'));
+$langs->loadLangs(array('admin', 'companies', 'bills'));
 
 if (!$user->admin) accessforbidden();
 
@@ -410,7 +410,7 @@ print '<form enctype="multipart/form-data" method="POST" action="'.$_SERVER["PHP
 print '<input type="hidden" name="token" value="'.newToken().'">';
 print '<input type="hidden" name="action" value="update">';
 
-print '<table class="noborder centpercent">';
+print '<table class="noborder centpercent editmode">';
 print '<tr class="liste_titre"><th class="titlefield wordbreak">'.$langs->trans("CompanyInfo").'</th><th>'.$langs->trans("Value").'</th></tr>'."\n";
 
 // Name
@@ -451,27 +451,33 @@ print '</td></tr>'."\n";
 
 // Phone
 print '<tr class="oddeven"><td><label for="phone">'.$langs->trans("Phone").'</label></td><td>';
+print img_picto('', 'object_phoning', '', false, 0, 0, '', 'paddingright');
 print '<input name="tel" id="phone" value="'.dol_escape_htmltag($conf->global->MAIN_INFO_SOCIETE_TEL).'"></td></tr>';
 print '</td></tr>'."\n";
 
 // Fax
 print '<tr class="oddeven"><td><label for="fax">'.$langs->trans("Fax").'</label></td><td>';
+print img_picto('', 'object_phoning_fax', '', false, 0, 0, '', 'paddingright');
 print '<input name="fax" id="fax" value="'.dol_escape_htmltag($conf->global->MAIN_INFO_SOCIETE_FAX).'"></td></tr>';
 print '</td></tr>'."\n";
 
 // Email
 print '<tr class="oddeven"><td><label for="email">'.$langs->trans("EMail").'</label></td><td>';
+print img_picto('', 'object_email', '', false, 0, 0, '', 'paddingright');
 print '<input name="mail" id="email" class="minwidth200" value="'.dol_escape_htmltag($conf->global->MAIN_INFO_SOCIETE_MAIL).'"></td></tr>';
 print '</td></tr>'."\n";
 
 // Web
 print '<tr class="oddeven"><td><label for="web">'.$langs->trans("Web").'</label></td><td>';
+print img_picto('', 'globe', '', false, 0, 0, '', 'paddingright');
 print '<input name="web" id="web" class="minwidth300" value="'.dol_escape_htmltag($conf->global->MAIN_INFO_SOCIETE_WEB).'"></td></tr>';
 print '</td></tr>'."\n";
 
 // Barcode
 if (!empty($conf->barcode->enabled)) {
-	print '<tr class="oddeven"><td><label for="barcode">'.$langs->trans("Gencod").'</label></td><td>';
+	print '<tr class="oddeven"><td>';
+	print '<label for="barcode">'.$langs->trans("Gencod").'</label></td><td>';
+	print '<span class="fa paddingright fa-barcode"></span>';
 	print '<input name="barcode" id="barcode" class="minwidth150" value="'.dol_escape_htmltag($conf->global->MAIN_INFO_SOCIETE_GENCOD).'"></td></tr>';
 	print '</td></tr>';
 }
@@ -480,15 +486,16 @@ if (!empty($conf->barcode->enabled)) {
 print '<tr class="oddeven"><td><label for="logo">'.$form->textwithpicto($langs->trans("Logo"), 'png, jpg').'</label></td><td>';
 print '<div class="centpertent nobordernopadding valignmiddle "><div class="inline-block marginrightonly">';
 print '<input type="file" class="flat minwidth200" name="logo" id="logo" accept="image/*">';
-print '</div><div class="inline-block valignmiddle marginrightonly">';
+print '</div>';
 if (!empty($mysoc->logo_mini)) {
-	print '<a class="reposition" href="'.$_SERVER["PHP_SELF"].'?action=removelogo">'.img_delete($langs->trans("Delete")).'</a>';
 	if (file_exists($conf->mycompany->dir_output.'/logos/thumbs/'.$mysoc->logo_mini)) {
-		print '</div><div class="inline-block valignmiddle">';
+		print '<div class="inline-block valignmiddle">';
 		print '<img src="'.DOL_URL_ROOT.'/viewimage.php?modulepart=mycompany&amp;file='.urlencode('logos/thumbs/'.$mysoc->logo_mini).'">';
+		print '</div>';
 	}
+	print '<div class="inline-block valignmiddle marginrightonly"><a class="reposition" href="'.$_SERVER["PHP_SELF"].'?action=removelogo">'.img_delete($langs->trans("Delete"), '', 'marginleftonly').'</a></div>';
 } else {
-	print '<img height="30" src="'.DOL_URL_ROOT.'/public/theme/common/nophoto.png">';
+	print '<img height="60" src="'.DOL_URL_ROOT.'/public/theme/common/nophoto.png">';
 }
 print '</div>';
 print '</td></tr>';
@@ -497,15 +504,16 @@ print '</td></tr>';
 print '<tr class="oddeven"><td><label for="logo_squarred">'.$form->textwithpicto($langs->trans("LogoSquarred"), 'png, jpg').'</label></td><td>';
 print '<div class="centpertent nobordernopadding valignmiddle"><div class="inline-block marginrightonly">';
 print '<input type="file" class="flat minwidth200" name="logo_squarred" id="logo_squarred" accept="image/*">';
-print '</div><div class="inline-block valignmiddle marginrightonly">';
+print '</div>';
 if (!empty($mysoc->logo_squarred_mini)) {
-	print '<a class="reposition" href="'.$_SERVER["PHP_SELF"].'?action=removelogosquarred">'.img_delete($langs->trans("Delete")).'</a>';
 	if (file_exists($conf->mycompany->dir_output.'/logos/thumbs/'.$mysoc->logo_squarred_mini)) {
-		print '</div><div class="inline-block valignmiddle marginrightonly">';
+		print '<div class="inline-block valignmiddle marginrightonly">';
 		print '<img src="'.DOL_URL_ROOT.'/viewimage.php?modulepart=mycompany&amp;file='.urlencode('logos/thumbs/'.$mysoc->logo_squarred_mini).'">';
+		print '</div>';
 	}
+	print '<div class="inline-block valignmiddle marginrightonly"><a class="reposition" href="'.$_SERVER["PHP_SELF"].'?action=removelogosquarred">'.img_delete($langs->trans("Delete"), '', 'marginleftonly').'</a></div>';
 } else {
-	print '<img height="30" src="'.DOL_URL_ROOT.'/public/theme/common/nophoto.png">';
+	print '<img height="60" src="'.DOL_URL_ROOT.'/public/theme/common/nophoto.png">';
 }
 print '</div>';
 print '</td></tr>';
@@ -519,47 +527,27 @@ print '</table>';
 
 // Social networks
 print '<br>';
-print '<table class="noborder centpercent">';
+print '<table class="noborder centpercent editmode">';
 print '<tr class="liste_titre">';
 print '<td class="titlefield">'.$langs->trans("SocialNetworksInformation").'</td><td>'.$langs->trans("Value").'</td>';
 print "</tr>\n";
 
-// Facebook
-print '<tr class="oddeven"><td><label for="facebookurl">'.$langs->trans("SocialNetworksFacebookURL").'</label></td><td>';
-print '<input name="facebookurl" id="facebookurl" class="minwidth300" value="'.dol_escape_htmltag($conf->global->MAIN_INFO_SOCIETE_FACEBOOK_URL).'"></td></tr>';
-print '</td></tr>'."\n";
-
-// Twitter
-print '<tr class="oddeven"><td><label for="twitterurl">'.$langs->trans("SocialNetworksTwitterURL").'</label></td><td>';
-print '<input name="twitterurl" id="twitterurl" class="minwidth300" value="'.dol_escape_htmltag($conf->global->MAIN_INFO_SOCIETE_TWITTER_URL).'"></td></tr>';
-print '</td></tr>'."\n";
-
-// LinkedIn
-print '<tr class="oddeven"><td><label for="linkedinurl">'.$langs->trans("SocialNetworksLinkedinURL").'</label></td><td>';
-print '<input name="linkedinurl" id="linkedinurl" class="minwidth300" value="'.dol_escape_htmltag($conf->global->MAIN_INFO_SOCIETE_LINKEDIN_URL).'"></td></tr>';
-print '</td></tr>'."\n";
-
-// Instagram
-print '<tr class="oddeven"><td><label for="instagramurl">'.$langs->trans("SocialNetworksInstagramURL").'</label></td><td>';
-print '<input name="instagramurl" id="instagramurl" class="minwidth300" value="'.dol_escape_htmltag($conf->global->MAIN_INFO_SOCIETE_INSTAGRAM_URL).'"></td></tr>';
-print '</td></tr>'."\n";
-
-// Youtube
-print '<tr class="oddeven"><td><label for="youtubeurl">'.$langs->trans("SocialNetworksYoutubeURL").'</label></td><td>';
-print '<input name="youtubeurl" id="youtubeurl" class="minwidth300" value="'.dol_escape_htmltag($conf->global->MAIN_INFO_SOCIETE_YOUTUBE_URL).'"></td></tr>';
-print '</td></tr>'."\n";
-
-// Github
-print '<tr class="oddeven"><td><label for="githuburl">'.$langs->trans("SocialNetworksGithubURL").'</label></td><td>';
-print '<input name="githuburl" id="githuburl" class="minwidth300" value="'.dol_escape_htmltag($conf->global->MAIN_INFO_SOCIETE_GITHUB_URL).'"></td></tr>';
-print '</td></tr>'."\n";
+$listofnetworks = array('facebook'=>'facebook', 'twitter'=>'twitter', 'linkedin'=>'linkedin', 'instagram'=>'instagram', 'youtube'=>'youtube', 'github'=>'github');
+foreach ($listofnetworks as $networkkey => $networkicon) {
+	print '<tr class="oddeven"><td>';
+	print '<label for="'.$networkkey.'url">'.$langs->trans("SocialNetworks".ucfirst($networkkey)."URL").'</label></td><td>';
+	$networkconst = 'MAIN_INFO_SOCIETE_'.strtoupper($networkkey).'_URL';
+	print '<span class="fa paddingright fa-'.($networkicon ? $networkicon : 'link').'"></span>';
+	print '<input name="'.$networkkey.'url" id="'.$networkkey.'url" class="minwidth300" value="'.dol_escape_htmltag($conf->global->$networkconst).'"></td></tr>';
+	print '</td></tr>'."\n";
+}
 
 print "</table>";
 
 print '<br>';
 
 // IDs of the company (country-specific)
-print '<table class="noborder centpercent">';
+print '<table class="noborder centpercent editmode">';
 print '<tr class="liste_titre"><td class="titlefield">'.$langs->trans("CompanyIds").'</td><td>'.$langs->trans("Value").'</td></tr>';
 
 $langs->load("companies");
@@ -692,7 +680,7 @@ print '</table>';
 
 // Fiscal year start
 print '<br>';
-print '<table class="noborder centpercent">';
+print '<table class="noborder centpercent editmode">';
 print '<tr class="liste_titre">';
 print '<td class="titlefield">'.$langs->trans("FiscalYearInformation").'</td><td>'.$langs->trans("Value").'</td>';
 print "</tr>\n";
@@ -701,123 +689,156 @@ print '<tr class="oddeven"><td><label for="SOCIETE_FISCAL_MONTH_START">'.$langs-
 print $formother->select_month($conf->global->SOCIETE_FISCAL_MONTH_START, 'SOCIETE_FISCAL_MONTH_START', 0, 1, 'maxwidth100').'</td></tr>';
 
 print "</table>";
-
-
-// Fiscal options
 print '<br>';
-print '<table class="noborder centpercent">';
+
+
+// Sales taxes (VAT, IRPF, ...)
+print load_fiche_titre($langs->trans("TypeOfSaleTaxes"));
+
+print '<table class="noborder centpercent editmode">';
 print '<tr class="liste_titre">';
-print '<td width="140">'.$langs->trans("VATManagement").'</td><td>'.$langs->trans("Description").'</td>';
+print '<td width="25%">'.$langs->trans("VATManagement").'</td><td>'.$langs->trans("Description").'</td>';
 print '<td class="right">&nbsp;</td>';
 print "</tr>\n";
 
-
+// Main tax
 print "<tr class=\"oddeven\"><td width=\"140\"><label><input type=\"radio\" name=\"optiontva\" id=\"use_vat\" value=\"1\"".(empty($conf->global->FACTURE_TVAOPTION) ? "" : " checked")."> ".$langs->trans("VATIsUsed")."</label></td>";
 print '<td colspan="2">';
-print "<table>";
-print "<tr><td><label for=\"use_vat\">".$langs->trans("VATIsUsedDesc")."</label></td></tr>";
-if ($mysoc->country_code == 'FR') print "<tr><td><i>".$langs->trans("Example").': '.$langs->trans("VATIsUsedExampleFR")."</i></td></tr>\n";
-print "</table>";
+$tooltiphelp = '';
+if ($mysoc->country_code == 'FR') $tooltiphelp = '<i>'.$langs->trans("Example").': '.$langs->trans("VATIsUsedExampleFR")."</i>";
+print "<label for=\"use_vat\">".$form->textwithpicto($langs->trans("VATIsUsedDesc"), $tooltiphelp)."</label>";
 print "</td></tr>\n";
 
 
 print "<tr class=\"oddeven\"><td width=\"140\"><label><input type=\"radio\" name=\"optiontva\" id=\"no_vat\" value=\"0\"".(empty($conf->global->FACTURE_TVAOPTION) ? " checked" : "")."> ".$langs->trans("VATIsNotUsed")."</label></td>";
 print '<td colspan="2">';
-print "<table>";
-print "<tr><td><label for=\"no_vat\">".$langs->trans("VATIsNotUsedDesc")."</label></td></tr>";
-if ($mysoc->country_code == 'FR') print "<tr><td><i>".$langs->trans("Example").': '.$langs->trans("VATIsNotUsedExampleFR")."</i></td></tr>\n";
-print "</table>";
+$tooltiphelp = '';
+if ($mysoc->country_code == 'FR') $tooltiphelp = "<i>".$langs->trans("Example").': '.$langs->trans("VATIsNotUsedExampleFR")."</i>\n";
+print "<label for=\"no_vat\">".$form->textwithpicto($langs->trans("VATIsNotUsedDesc"), $tooltiphelp)."</label>";
 print "</td></tr>\n";
 
 print "</table>";
 
-/*
- *  Local Taxes
- */
+// Second tax
+print '<br>';
+print '<table class="noborder centpercent editmode">';
+print '<tr class="liste_titre">';
+print '<td width="25%">'.$form->textwithpicto($langs->transcountry("LocalTax1Management", $mysoc->country_code), $langs->transcountry("LocalTax1IsUsedDesc", $mysoc->country_code)).'</td><td>'.$langs->trans("Description").'</td>';
+print '<td class="right">&nbsp;</td>';
+print "</tr>\n";
+
 if ($mysoc->useLocalTax(1))
 {
-	// Local Tax 1
-	print '<br>';
-	print '<table class="noborder centpercent">';
-	print '<tr class="liste_titre">';
-	print '<td width="140">'.$langs->transcountry("LocalTax1Management", $mysoc->country_code).'</td><td>'.$langs->trans("Description").'</td>';
-	print '<td class="right">&nbsp;</td>';
-	print "</tr>\n";
-
 	// Note: When option is not set, it must not appears as set on on, because there is no default value for this option
-	print "<tr class=\"oddeven\"><td width=\"140\"><input type=\"radio\" name=\"optionlocaltax1\" id=\"lt1\" value=\"localtax1on\"".(($conf->global->FACTURE_LOCAL_TAX1_OPTION == '1' || $conf->global->FACTURE_LOCAL_TAX1_OPTION == "localtax1on") ? " checked" : "")."> ".$langs->transcountry("LocalTax1IsUsed", $mysoc->country_code)."</td>";
+	print "<tr class=\"oddeven\"><td><input type=\"radio\" name=\"optionlocaltax1\" id=\"lt1\" value=\"localtax1on\"".(($conf->global->FACTURE_LOCAL_TAX1_OPTION == '1' || $conf->global->FACTURE_LOCAL_TAX1_OPTION == "localtax1on") ? " checked" : "")."> ".$langs->transcountry("LocalTax1IsUsed", $mysoc->country_code)."</td>";
 	print '<td colspan="2">';
-	print '<table class="nobordernopadding">';
-	print "<tr><td><label for=\"lt1\">".$langs->transcountry("LocalTax1IsUsedDesc", $mysoc->country_code)."</label></td></tr>";
-	$example = $langs->transcountry("LocalTax1IsUsedExample", $mysoc->country_code);
-	print ($example != "LocalTax1IsUsedExample" ? "<tr><td><i>".$langs->trans("Example").': '.$langs->transcountry("LocalTax1IsUsedExample", $mysoc->country_code)."</i></td></tr>\n" : "");
+	print '<div class="nobordernopadding">';
+	$tooltiphelp = $langs->transcountry("LocalTax1IsUsedExample", $mysoc->country_code);
+	$tooltiphelp = ($tooltiphelp != "LocalTax1IsUsedExample" ? "<i>".$langs->trans("Example").': '.$langs->transcountry("LocalTax1IsUsedExample", $mysoc->country_code)."</i>\n" : "");
+	print "<label for=\"lt1\">".$form->textwithpicto($langs->transcountry("LocalTax1IsUsedDesc", $mysoc->country_code), $tooltiphelp)."</label>";
 	if (!isOnlyOneLocalTax(1))
 	{
-		print '<tr><td class="left"><label for="lt1">'.$langs->trans("LTRate").'</label>: ';
+		print '<br><label for="lt1">'.$langs->trans("LTRate").'</label>: ';
 		$formcompany->select_localtax(1, $conf->global->MAIN_INFO_VALUE_LOCALTAX1, "lt1");
-	    print '</td></tr>';
 	}
 
 	$opcions = array($langs->trans("CalcLocaltax1").' '.$langs->trans("CalcLocaltax1Desc"), $langs->trans("CalcLocaltax2").' - '.$langs->trans("CalcLocaltax2Desc"), $langs->trans("CalcLocaltax3").' - '.$langs->trans("CalcLocaltax3Desc"));
 
-	print '<tr><td class="left"></label for="clt1">'.$langs->trans("CalcLocaltax").'</label>: ';
+	print '<br><label for="clt1">'.$langs->trans("CalcLocaltax").'</label>: ';
 	print $form->selectarray("clt1", $opcions, $conf->global->MAIN_INFO_LOCALTAX_CALC1);
-	print '</td></tr>';
-	print "</table>";
+	print "</div>";
 	print "</td></tr>\n";
 
-
-	print "<tr class=\"oddeven\"><td width=\"140\"><input type=\"radio\" name=\"optionlocaltax1\" id=\"nolt1\" value=\"localtax1off\"".((empty($conf->global->FACTURE_LOCAL_TAX1_OPTION) || $conf->global->FACTURE_LOCAL_TAX1_OPTION == "localtax1off") ? " checked" : "")."> ".$langs->transcountry("LocalTax1IsNotUsed", $mysoc->country_code)."</td>";
+	print "<tr class=\"oddeven\"><td><input type=\"radio\" name=\"optionlocaltax1\" id=\"nolt1\" value=\"localtax1off\"".((empty($conf->global->FACTURE_LOCAL_TAX1_OPTION) || $conf->global->FACTURE_LOCAL_TAX1_OPTION == "localtax1off") ? " checked" : "")."> ".$langs->transcountry("LocalTax1IsNotUsed", $mysoc->country_code)."</td>";
 	print '<td colspan="2">';
-	print "<table>";
-	print "<tr><td><label for=\"nolt1\">".$langs->transcountry("LocalTax1IsNotUsedDesc", $mysoc->country_code)."</label></td></tr>";
-	$example = $langs->transcountry("LocalTax1IsNotUsedExample", $mysoc->country_code);
-	print ($example != "LocalTax1IsNotUsedExample" ? "<tr><td><i>".$langs->trans("Example").': '.$langs->transcountry("LocalTax1IsNotUsedExample", $mysoc->country_code)."</i></td></tr>\n" : "");
-	print "</table>";
+	$tooltiphelp = $langs->transcountry("LocalTax1IsNotUsedExample", $mysoc->country_code);
+	$tooltiphelp = ($tooltiphelp != "LocalTax1IsNotUsedExample" ? "<i>".$langs->trans("Example").': '.$langs->transcountry("LocalTax1IsNotUsedExample", $mysoc->country_code)."</i>\n" : "");
+	print "<label for=\"nolt1\">".$form->textwithpicto($langs->transcountry("LocalTax1IsNotUsedDesc", $mysoc->country_code), $tooltiphelp)."</label>";
 	print "</td></tr>\n";
-	print "</table>";
+} else {
+	if (empty($mysoc->country_code))
+	{
+		print '<tr class="oddeven nohover"><td class="opacitymedium">'.$countrynotdefined.'</td><td></td><td></td></tr>';
+	} else {
+		print '<tr class="oddeven nohover"><td class="opacitymedium" colspan="3">'.$langs->trans("NoLocalTaxXForThisCountry", $langs->transnoentitiesnoconv("Setup"), $langs->transnoentitiesnoconv("Dictionaries"), $langs->transnoentitiesnoconv("DictionaryVAT"), $langs->transnoentitiesnoconv("LocalTax1Management")).'</td></tr>';
+	}
 }
+
+print "</table>";
+
+// Third tax system
+print '<br>';
+print '<table class="noborder centpercent editmode">';
+print '<tr class="liste_titre">';
+print '<td width="25%">'.$form->textwithpicto($langs->transcountry("LocalTax2Management", $mysoc->country_code), $langs->transcountry("LocalTax2IsUsedDesc", $mysoc->country_code)).'</td><td>'.$langs->trans("Description").'</td>';
+print '<td class="right">&nbsp;</td>';
+print "</tr>\n";
+
 if ($mysoc->useLocalTax(2))
 {
-	// Local Tax 2
-	print '<br>';
-	print '<table class="noborder centpercent">';
-	print '<tr class="liste_titre">';
-	print '<td>'.$langs->transcountry("LocalTax2Management", $mysoc->country_code).'</td><td>'.$langs->trans("Description").'</td>';
-	print '<td class="right">&nbsp;</td>';
-	print "</tr>\n";
-
-
 	// Note: When option is not set, it must not appears as set on on, because there is no default value for this option
-	print "<tr class=\"oddeven\"><td width=\"140\"><input type=\"radio\" name=\"optionlocaltax2\" id=\"lt2\" value=\"localtax2on\"".(($conf->global->FACTURE_LOCAL_TAX2_OPTION == '1' || $conf->global->FACTURE_LOCAL_TAX2_OPTION == "localtax2on") ? " checked" : "")."> ".$langs->transcountry("LocalTax2IsUsed", $mysoc->country_code)."</td>";
+	print "<tr class=\"oddeven\"><td><input type=\"radio\" name=\"optionlocaltax2\" id=\"lt2\" value=\"localtax2on\"".(($conf->global->FACTURE_LOCAL_TAX2_OPTION == '1' || $conf->global->FACTURE_LOCAL_TAX2_OPTION == "localtax2on") ? " checked" : "")."> ".$langs->transcountry("LocalTax2IsUsed", $mysoc->country_code)."</td>";
 	print '<td colspan="2">';
-	print '<table class="nobordernopadding">';
-	print "<tr><td><label for=\"lt2\">".$langs->transcountry("LocalTax2IsUsedDesc", $mysoc->country_code)."</label></td></tr>";
-	$example = $langs->transcountry("LocalTax2IsUsedExample", $mysoc->country_code);
-	print ($example != "LocalTax2IsUsedExample" ? "<tr><td><i>".$langs->trans("Example").': '.$langs->transcountry("LocalTax2IsUsedExample", $mysoc->country_code)."</i></td></tr>\n" : "");
+	print '<div class="nobordernopadding">';
+	print "<label for=\"lt2\">".$langs->transcountry("LocalTax2IsUsedDesc", $mysoc->country_code)."</label>";
+	$tooltiphelp = $langs->transcountry("LocalTax2IsUsedExample", $mysoc->country_code);
+	$tooltiphelp = ($tooltiphelp != "LocalTax2IsUsedExample" ? "<i>".$langs->trans("Example").': '.$langs->transcountry("LocalTax2IsUsedExample", $mysoc->country_code)."</i>\n" : "");
 	if (!isOnlyOneLocalTax(2))
 	{
-	    print '<tr><td class="left"><label for="lt2">'.$langs->trans("LTRate").'</label>: ';
+	    print '<br><label for="lt2">'.$langs->trans("LTRate").'</label>: ';
 	    $formcompany->select_localtax(2, $conf->global->MAIN_INFO_VALUE_LOCALTAX2, "lt2");
-		print '</td></tr>';
 	}
-	print '<tr><td class="left"><label for="clt2">'.$langs->trans("CalcLocaltax").'</label>: ';
+	print '<br><label for="clt2">'.$langs->trans("CalcLocaltax").'</label>: ';
 	print $form->selectarray("clt2", $opcions, $conf->global->MAIN_INFO_LOCALTAX_CALC2);
-	print '</td></tr>';
-	print "</table>";
+	print "</div>";
 	print "</td></tr>\n";
 
-
-	print "<tr class=\"oddeven\"><td width=\"140\"><input type=\"radio\" name=\"optionlocaltax2\" id=\"nolt2\" value=\"localtax2off\"".((empty($conf->global->FACTURE_LOCAL_TAX2_OPTION) || $conf->global->FACTURE_LOCAL_TAX2_OPTION == "localtax2off") ? " checked" : "")."> ".$langs->transcountry("LocalTax2IsNotUsed", $mysoc->country_code)."</td>";
+	print "<tr class=\"oddeven\"><td><input type=\"radio\" name=\"optionlocaltax2\" id=\"nolt2\" value=\"localtax2off\"".((empty($conf->global->FACTURE_LOCAL_TAX2_OPTION) || $conf->global->FACTURE_LOCAL_TAX2_OPTION == "localtax2off") ? " checked" : "")."> ".$langs->transcountry("LocalTax2IsNotUsed", $mysoc->country_code)."</td>";
 	print '<td colspan="2">';
-	print "<table>";
-	print "<tr><td><label for=\"nolt2\">".$langs->transcountry("LocalTax2IsNotUsedDesc", $mysoc->country_code)."</label></td></tr>";
-	$example = $langs->transcountry("LocalTax2IsNotUsedExample", $mysoc->country_code);
-	print ($example != "LocalTax2IsNotUsedExample" ? "<tr><td><i>".$langs->trans("Example").': '.$langs->transcountry("LocalTax2IsNotUsedExample", $mysoc->country_code)."</i></td></tr>\n" : "");
-	print "</table>";
+	print "<div>";
+	$tooltiphelp = $langs->transcountry("LocalTax2IsNotUsedExample", $mysoc->country_code);
+	$tooltiphelp = ($tooltiphelp != "LocalTax2IsNotUsedExample" ? "<i>".$langs->trans("Example").': '.$langs->transcountry("LocalTax2IsNotUsedExample", $mysoc->country_code)."</i>\n" : "");
+	print "<label for=\"nolt2\">".$form->textwithpicto($langs->transcountry("LocalTax2IsNotUsedDesc", $mysoc->country_code), $tooltiphelp)."</label>";
+	print "</div>";
 	print "</td></tr>\n";
-	print "</table>";
+} else {
+	if (empty($mysoc->country_code))
+	{
+		print '<tr class="oddeven nohover"><td class="opacitymedium">'.$countrynotdefined.'</td><td></td><td></td></tr>';
+	} else {
+		print '<tr class="oddeven nohover"><td class="opacitymedium" colspan="3">'.$langs->trans("NoLocalTaxXForThisCountry", $langs->transnoentitiesnoconv("Setup"), $langs->transnoentitiesnoconv("Dictionaries"), $langs->transnoentitiesnoconv("DictionaryVAT"), $langs->transnoentitiesnoconv("LocalTax2Management")).'</td></tr>';
+	}
 }
+
+print "</table>";
+
+
+// Tax stamp
+print '<br>';
+print '<table class="noborder centpercent editmode">';
+print '<tr class="liste_titre">';
+print '<td width="25%">'.$form->textwithpicto($langs->trans("RevenueStamp"), $langs->trans("RevenueStampDesc")).'</td><td>'.$langs->trans("Description").'</td>';
+print '<td class="right">&nbsp;</td>';
+print "</tr>\n";
+if ($mysoc->useRevenueStamp())
+{
+	// Note: When option is not set, it must not appears as set on on, because there is no default value for this option
+	print '<tr class="oddeven"><td>';
+	print $langs->trans("UseRevenueStamp");
+	print "</td>";
+	print '<td colspan="2">';
+	print $langs->trans("UseRevenueStampExample", $langs->transnoentitiesnoconv("Setup"), $langs->transnoentitiesnoconv("Dictionaries"), $langs->transnoentitiesnoconv("DictionaryRevenueStamp"));
+	print "</td></tr>\n";
+} else {
+	if (empty($mysoc->country_code))
+	{
+		print '<tr class="oddeven nohover"><td class="opacitymedium">'.$countrynotdefined.'</td><td></td><td></td></tr>';
+	} else {
+		print '<tr class="oddeven nohover"><td class="opacitymedium" colspan="3">'.$langs->trans("NoLocalTaxXForThisCountry", $langs->transnoentitiesnoconv("Setup"), $langs->transnoentitiesnoconv("Dictionaries"), $langs->transnoentitiesnoconv("DictionaryRevenueStamp"), $langs->transnoentitiesnoconv("RevenueStamp")).'</td></tr>';
+	}
+}
+
+print "</table>";
 
 
 print '<br><div class="center">';

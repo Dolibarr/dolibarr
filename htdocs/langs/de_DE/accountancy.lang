@@ -22,8 +22,8 @@ ConfigAccountingExpert=Konfiguration des Experten-Buchhaltungsmoduls
 Journalization=Journalisieren
 Journaux=Journale
 JournalFinancial=Finanzjournale
-BackToChartofaccounts=Zurück zur  Kontenplanvorlage
-Chartofaccounts=Kontenplanvorlagen
+BackToChartofaccounts=Zurück zum  Kontenplan
+Chartofaccounts=Kontenplan
 CurrentDedicatedAccountingAccount=Aktuelles dediziertes Konto
 AssignDedicatedAccountingAccount=Neues Konto zuweisen
 InvoiceLabel=Rechnungsanschrift
@@ -228,10 +228,11 @@ ThirdpartyAccountNotDefinedOrThirdPartyUnknownSubledgerIgnored=Geschäftspartner
 ThirdpartyAccountNotDefinedOrThirdPartyUnknownBlocking=Drittanbieter-Konto nicht definiert oder Drittanbieter unbekannt. Fehler beim Blockieren.
 UnknownAccountForThirdpartyAndWaitingAccountNotDefinedBlocking=Unbekanntes Drittanbieter-Konto und wartendes Konto nicht definiert. Fehler beim Blockieren
 PaymentsNotLinkedToProduct=Zahlung ist keinem Produkt oder Dienstleistung zugewisen
+ShowOpeningBalance=Eröffnungsbilanz anzeigen
+HideOpeningBalance=Eröffnungsbilanz ausblenden
 
 Pcgtype=Kontenklasse
-Pcgsubtype=Unterkontenklasse
-PcgtypeDesc=Gruppen und Untergruppen der Konten werden as vordefinierte 'Filter' und 'Gruppierungs' Merkmale in manchen Finanzberichten verwendet. z.B. 'INCOME' oder 'EXPENSE' werden als Gruppen im Kontenplan für den Bericht verwendet.
+PcgtypeDesc=Kontengruppen werden für einige Buchhaltungsberichte als vordefinierte Filter- und Gruppierungskriterien verwendet. Beispielsweise werden "EINKOMMEN" oder "AUSGABEN" als Gruppen für die Buchhaltung von Produktkonten verwendet, um die Ausgaben- / Einnahmenrechnung zu erstellen.
 
 TotalVente=Gesamtumsatz vor Steuern
 TotalMarge=Gesamtumsatzrendite
@@ -270,6 +271,7 @@ ChangeBinding=Ändern der Zuordnung
 Accounted=im Hauptbuch erfasst
 NotYetAccounted=noch nicht im Hauptbuch erfasst
 ShowTutorial=Tutorial anzeigen
+NotReconciled=nicht ausgeglichen
 
 ## Admin
 ApplyMassCategories=Massenaktualisierung der Kategorien
@@ -277,7 +279,7 @@ AddAccountFromBookKeepingWithNoCategories=Verfügbares Konto noch nicht in der p
 CategoryDeleted=Die Gruppe für das Buchhaltungskonto wurde entfernt
 AccountingJournals=Buchhaltungsjournale
 AccountingJournal=Buchhaltungsjournal
-NewAccountingJournal=neues Buchhaltungsjournal
+NewAccountingJournal=Neues Buchhaltungsjournal
 ShowAccountingJournal=Buchhaltungsjournal anzeigen
 NatureOfJournal=Art des Journals
 AccountingJournalType1=Verschiedene Aktionen

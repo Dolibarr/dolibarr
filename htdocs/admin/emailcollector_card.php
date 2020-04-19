@@ -231,7 +231,7 @@ if ($action == 'confirm_collect')
 $form = new Form($db);
 $formfile = new FormFile($db);
 
-$help_url="EN:Module_EMail_Collector|FR:Module_Collecteur_de_courrier_électronique|ES:Module_EMail_Collector";
+$help_url = "EN:Module_EMail_Collector|FR:Module_Collecteur_de_courrier_électronique|ES:Module_EMail_Collector";
 
 llxHeader('', 'EmailCollector', $help_url);
 
@@ -483,7 +483,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 	print '<input type="hidden" name="id" value="'.$object->id.'">';
 
 	// Filters
-	print '<table class="border centpercent">';
+	print '<table class="border centpercent tableforfield">';
 	print '<tr class="liste_titre">';
 	print '<td>'.$langs->trans("Filters").'</td><td></td><td></td>';
 	print '</tr>';
@@ -562,7 +562,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 	print '<div class="clearboth"></div><br>';
 
 	// Operations
-	print '<table id="tablelines" class="noborder noshadow">';
+	print '<table id="tablelines" class="noborder noshadow tableforfield">';
 	print '<tr class="liste_titre">';
 	print '<td>'.$langs->trans("EmailcollectorOperations").'</td><td></td><td></td><td></td>';
 	print '</tr>';
@@ -577,14 +577,14 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 	if ($conf->ticket->enabled) $arrayoftypes['ticket'] = 'CreateTicketAndThirdParty';
 
 	// support hook for add action
-	$parameters = array( 'arrayoftypes' => $arrayoftypes ) ;
+	$parameters = array('arrayoftypes' => $arrayoftypes);
 	$res = $hookmanager->executeHooks('addMoreActionsEmailCollector', $parameters, $object, $action);
 
-	if($res)
+	if ($res)
 		$arrayoftypes = $hookmanager->resArray;
 	else
-		foreach($hookmanager->resArray as $k=>$desc)
-			$arrayoftypes[$k]=$desc;
+		foreach ($hookmanager->resArray as $k=>$desc)
+			$arrayoftypes[$k] = $desc;
 
 
 	print $form->selectarray('operationtype', $arrayoftypes, '', 1, 0, 0, '', 1, 0, 0, '', 'maxwidth300');

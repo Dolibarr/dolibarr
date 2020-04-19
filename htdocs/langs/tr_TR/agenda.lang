@@ -60,7 +60,7 @@ MemberSubscriptionModifiedInDolibarr=%s aboneliği %s referans no'lu üye için 
 MemberSubscriptionDeletedInDolibarr=%s aboneiği %s referans no'lu üye için silindi
 ShipmentValidatedInDolibarr=%s referans no'lu sevkiyat doğrulandı
 ShipmentClassifyClosedInDolibarr=%s referans no'lu sevkiyat faturalandı olarak sınıflandırıldı
-ShipmentUnClassifyCloseddInDolibarr=%s referans no'lu sevkiyat yeniden açıldı olarak sınıflandırıldı
+ShipmentUnClassifyCloseddInDolibarr=Shipment %s classified re-open
 ShipmentBackToDraftInDolibarr=%s referans no'lu sevkiyat taslak durumuna geri döndürüldü
 ShipmentDeletedInDolibarr=%s referans no'lu sevkiyat silindi
 OrderCreatedInDolibarr=%s referans no'lu sipariş oluşturuldu
@@ -123,6 +123,7 @@ AgendaUrlOptionsNotAdmin=<b>logina=!%s</b>, <b>%s</b> kullanıcısına ait olmay
 AgendaUrlOptions4=<b>logint=%s</b>, <b>%s</b> kullanıcısına atanmış eylemlerin çıkışlarını sınırlamak içindir (sahibi ve diğerleri).
 AgendaUrlOptionsProject=<b>project=__PROJECT_ID__</b>, çıkışı <b>__PROJECT_ID__</b> projesine bağlanmış eylemlere sınırlamak için.
 AgendaUrlOptionsNotAutoEvent=Otomatik etkinlikleri hariç tutmak için <b>notactiontype=systemauto</b>
+AgendaUrlOptionsIncludeHolidays=<b>includeholidays=1</b> to include events of holidays.
 AgendaShowBirthdayEvents=Kişilerin doğum günlerini göster
 AgendaHideBirthdayEvents=Kişilerin doğum günlerini gizle
 Busy=Meşgul

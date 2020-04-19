@@ -228,10 +228,11 @@ ThirdpartyAccountNotDefinedOrThirdPartyUnknownSubledgerIgnored=Άγνωστο τ
 ThirdpartyAccountNotDefinedOrThirdPartyUnknownBlocking=Ο λογαριασμός τρίτου μέρους δεν έχει οριστεί ή είναι άγνωστος τρίτος. Σφάλμα αποκλεισμού.
 UnknownAccountForThirdpartyAndWaitingAccountNotDefinedBlocking=Ο λογαριασμός λογαριασμού τρίτου μέρους και ο λογαριασμός αναμονής δεν έχουν οριστεί. Σφάλμα αποκλεισμού
 PaymentsNotLinkedToProduct=Πληρωμή που δεν συνδέεται με κανένα προϊόν / υπηρεσία
+ShowOpeningBalance=Εμφάνιση αρχικού υπολοίπου
+HideOpeningBalance=Κρύψιμο αρχικού υπολοίπου
 
 Pcgtype=Ομάδα του λογαριασμού
-Pcgsubtype=Υποομάδα του λογαριασμού
-PcgtypeDesc=Η ομάδα και η υποομάδα λογαριασμού χρησιμοποιούνται ως προκαθορισμένα κριτήρια &quot;φίλτρου&quot; και &quot;ομαδοποίησης&quot; για ορισμένες λογιστικές εκθέσεις. Για παράδειγμα, τα &#39;ΕΙΣΟΔΗΜΑ&#39; ή &#39;ΕΞΟΔΑ&#39; χρησιμοποιούνται ως ομάδες για λογιστικούς λογαριασμούς προϊόντων για την κατάρτιση της έκθεσης δαπανών / εσόδων.
+PcgtypeDesc=Group of account are used as predefined 'filter' and 'grouping' criteria for some accounting reports. For example, 'INCOME' or 'EXPENSE' are used as groups for accounting accounts of products to build the expense/income report.
 
 TotalVente=Total turnover before tax
 TotalMarge=Συνολικό περιθώριο πωλήσεων
@@ -270,6 +271,7 @@ ChangeBinding=Αλλάξτε τη σύνδεση
 Accounted=Πληρώθηκε σε
 NotYetAccounted=Δεν έχει ακόμη καταλογιστεί στο βιβλίο
 ShowTutorial=Εμφάνιση εκπαιδευτικού προγράμματος
+NotReconciled=Δεν ταιριάζουν
 
 ## Admin
 ApplyMassCategories=Εφαρμογή κατηγοριών μάζας

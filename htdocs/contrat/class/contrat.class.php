@@ -216,7 +216,7 @@ class Contrat extends CommonObject
 	/**
 	 * @var array  Array with all fields and their property. Do not use it as a static var. It may be modified by constructor.
 	 */
-	public $fields=array(
+	public $fields = array(
 		'rowid' =>array('type'=>'integer', 'label'=>'TechnicalID', 'enabled'=>1, 'visible'=>-1, 'notnull'=>1, 'position'=>10),
 		'ref' =>array('type'=>'varchar(50)', 'label'=>'Ref', 'enabled'=>1, 'visible'=>-1, 'showoncombobox'=>1, 'position'=>15),
 		'ref_ext' =>array('type'=>'varchar(255)', 'label'=>'Ref ext', 'enabled'=>1, 'visible'=>0, 'position'=>20),
@@ -2785,7 +2785,7 @@ class ContratLigne extends CommonObjectLine
 		elseif ($status == self::STATUS_CLOSED) { $labelStatus = $langs->trans("ServiceStatusClosed"); $labelStatusShort = $langs->trans("ServiceStatusClosed"); }
 
 		$statusType = 'status'.$status;
-		if ($status == self::STATUS_OPEN && $expired == 1) $statusType = 'status3';
+		if ($status == self::STATUS_OPEN && $expired == 1) $statusType = 'status1';
 		if ($status == self::STATUS_CLOSED) $statusType = 'status6';
 
 		$params = array(); $reg = array();

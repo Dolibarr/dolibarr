@@ -228,10 +228,11 @@ ThirdpartyAccountNotDefinedOrThirdPartyUnknownSubledgerIgnored=Tercer desconegut
 ThirdpartyAccountNotDefinedOrThirdPartyUnknownBlocking=Compte de tercers no definit o tercer desconegut. Error de bloqueig.
 UnknownAccountForThirdpartyAndWaitingAccountNotDefinedBlocking=Compte de tercers desconegut i compte d'espera no definit. Error de bloqueig
 PaymentsNotLinkedToProduct=Pagament no vinculat a cap producte / servei
+ShowOpeningBalance=Mostra el saldo d'obertura
+HideOpeningBalance=Amagueu el balanç d'obertura
 
 Pcgtype=Grup de compte
-Pcgsubtype=Subgrup de compte
-PcgtypeDesc=El grup i el subconjunt del compte s'utilitzen com a criteris de "filtre" i "agrupació" predefinits per a alguns informes comptables. Per exemple, "INGRÉS" o "DESPESA" s'utilitzen com a grups per als comptes comptables de productes per generar l'informe de despeses / ingressos.
+PcgtypeDesc=S'utilitzen grups de comptes com a criteris predefinits de "filtre" i "agrupació" per a alguns informes de comptabilitat. Per exemple, "Ingressos" o "DESPESES" s'utilitzen com a grups per a comptes de comptabilitat de productes per crear l'informe de despeses / ingressos.
 
 TotalVente=Total turnover before tax
 TotalMarge=Marge total de vendes
@@ -270,6 +271,7 @@ ChangeBinding=Canvia la comptabilització
 Accounted=Comptabilitzat en el llibre major
 NotYetAccounted=Encara no comptabilitzat en el llibre major
 ShowTutorial=Mostrar Tutorial
+NotReconciled=No conciliat
 
 ## Admin
 ApplyMassCategories=Aplica categories massives

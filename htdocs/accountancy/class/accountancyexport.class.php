@@ -54,6 +54,7 @@ class AccountancyExport
 	public static $EXPORT_TYPE_QUADRATUS = 60;
 	public static $EXPORT_TYPE_OPENCONCERTO = 100;
     public static $EXPORT_TYPE_LDCOMPTA = 110;
+	public static $EXPORT_TYPE_LDCOMPTA10 = 120;
 	public static $EXPORT_TYPE_FEC = 1000;
 
 
@@ -110,8 +111,9 @@ class AccountancyExport
             self::$EXPORT_TYPE_OPENCONCERTO => $langs->trans('Modelcsv_openconcerto'),
 			self::$EXPORT_TYPE_SAGE50_SWISS => $langs->trans('Modelcsv_Sage50_Swiss'),
 			self::$EXPORT_TYPE_LDCOMPTA => $langs->trans('Modelcsv_LDCompta'),
+			self::$EXPORT_TYPE_LDCOMPTA10 => $langs->trans('Modelcsv_LDCompta10'),
 			self::$EXPORT_TYPE_FEC => $langs->trans('Modelcsv_FEC'),
-				self::$EXPORT_TYPE_CHARLEMAGNE => $langs->trans('Modelcsv_charlemagne'),
+			self::$EXPORT_TYPE_CHARLEMAGNE => $langs->trans('Modelcsv_charlemagne'),
 		);
 
 		ksort($listofexporttypes, SORT_NUMERIC);
@@ -140,6 +142,7 @@ class AccountancyExport
 			self::$EXPORT_TYPE_OPENCONCERTO => 'openconcerto',
             self::$EXPORT_TYPE_SAGE50_SWISS => 'sage50ch',
             self::$EXPORT_TYPE_LDCOMPTA => 'ldcompta',
+            self::$EXPORT_TYPE_LDCOMPTA10 => 'ldcompta10',
 			self::$EXPORT_TYPE_FEC => 'fec',
 		);
 
@@ -200,6 +203,10 @@ class AccountancyExport
 				),
                 self::$EXPORT_TYPE_LDCOMPTA => array(
                     'label' => $langs->trans('Modelcsv_LDCompta'),
+                    'ACCOUNTING_EXPORT_FORMAT' => 'csv',
+                ),
+				self::$EXPORT_TYPE_LDCOMPTA10 => array(
+                    'label' => $langs->trans('Modelcsv_LDCompta10'),
                     'ACCOUNTING_EXPORT_FORMAT' => 'csv',
                 ),
 				self::$EXPORT_TYPE_FEC => array(
@@ -279,6 +286,9 @@ class AccountancyExport
 				break;
             case self::$EXPORT_TYPE_LDCOMPTA :
                 $this->exportLDCompta($TData);
+                break;
+            case self::$EXPORT_TYPE_LDCOMPTA10 :
+                $this->exportLDCompta10($TData);
                 break;
             case self::$EXPORT_TYPE_FEC :
                 $this->exportFEC($TData);
@@ -921,7 +931,7 @@ class AccountancyExport
 
     /**
      * Export format : LD Compta version 9 & higher
-     * http://www.ldsysteme.fr/fileadmin/telechargement/np/ldcompta/Documentation/IntCptW10.pdf
+     * http://www.ldsysteme.fr/fileadmin/telechargement/np/ldcompta/Documentation/IntCptW9.pdf
      *
      * @param array $objectLines data
      *
@@ -1048,6 +1058,273 @@ class AccountancyExport
 			print $separator;
 
 			print $end_line;
+		}
+	}
+
+	/**
+	 * Export format : LD Compta version 10 & higher
+	 * http://www.ldsysteme.fr/fileadmin/telechargement/np/ldcompta/Documentation/IntCptW10.pdf
+	 *
+	 * @param array $objectLines data
+	 *
+	 * @return void
+	 */
+	public function exportLDCompta10($objectLines)
+	{
+		require_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
+
+		$separator = ';';
+		$end_line = "\r\n";
+		$last_codeinvoice = '';
+
+		foreach ($objectLines as $line) {
+			// TYPE C
+			if ($last_codeinvoice != $line->doc_ref) {
+				//recherche societe en fonction de son code client
+				$sql = "SELECT code_client, fk_forme_juridique, nom, address, zip, town, fk_pays, phone, siret FROM ".MAIN_DB_PREFIX."societe WHERE code_client = '".$line->thirdparty_code."'";
+				$resql = $this->db->query($sql);
+
+				if ($resql && $this->db->num_rows($resql) > 0)
+				{
+					$soc = $this->db->fetch_object($resql);
+
+	                $address = array('', '', '');
+                    if (strpos($soc->address, "\n") !== false) {
+	                    $address = explode("\n", $soc->address);
+	                    if (is_array($address) && count($address) > 0) {
+	                    	foreach ($address as $key=>$data) {
+			                    $address[$key] = str_replace(array("\t", "\n", "\r"), "", $data);
+			                    $address[$key] = dol_trunc($address[$key], 40, 'right', 'UTF-8', 1);
+		                    }
+	                    }
+                    } else {
+	                    $address[0] = substr(str_replace(array("\t", "\r"), " ", $soc->address), 0, 40);
+	                    $address[1] = substr(str_replace(array("\t", "\r"), " ", $soc->address), 41, 40);
+	                    $address[2] = substr(str_replace(array("\t", "\r"), " ", $soc->address), 82, 40);
+                    }
+
+					$type_enregistrement = 'C';
+                    //TYPE
+					print $type_enregistrement.$separator;
+					//NOCL
+					print $soc->code_client.$separator;
+					//NMCM
+					print $separator;
+					//LIBI
+					print $separator;
+					//TITR
+                    print $separator;
+					//RSSO
+					print $soc->nom.$separator;
+					//CAD1
+                    print  $address[0].$separator;
+					//CAD2
+                    print  $address[1].$separator;
+					//CAD3
+                    print  $address[2].$separator;
+					//COPO
+					print  $soc->zip.$separator;
+					//BUDI
+					print  substr($soc->town, 0, 40).$separator;
+					//CPAY
+					print  $separator;
+					//PAYS
+					print  substr(getCountry($soc->fk_pays), 0, 40).$separator;
+					//NTEL
+					print $soc->phone.$separator;
+					//TLEX
+					print $separator;
+					//TLPO
+					print $separator;
+					//TLCY
+					print $separator;
+					//NINT
+					print $separator;
+					//COMM
+					print $separator;
+					//SIRE
+                    print str_replace(" ", "", $soc->siret).$separator;
+					//RIBP
+					print $separator;
+					//DOBQ
+					print $separator;
+					//IBBQ
+					print $separator;
+					//COBQ
+					print $separator;
+					//GUBQ
+					print $separator;
+					//CPBQ
+					print $separator;
+					//CLBQ
+					print $separator;
+					//BIBQ
+					print $separator;
+					//MOPM
+					print $separator;
+					//DJPM
+					print $separator;
+					//DMPM
+					print $separator;
+					//REFM
+					print $separator;
+					//SLVA
+					print $separator;
+					//PLCR
+					print $separator;
+					//ECFI
+					print $separator;
+					//CREP
+					print $separator;
+					//NREP
+					print $separator;
+					//TREP
+					print $separator;
+					//MREP
+					print $separator;
+					//GRRE
+					print $separator;
+					//LTTA
+					print $separator;
+					//CACT
+					print $separator;
+					//CODV
+					print $separator;
+					//GRTR
+					print $separator;
+					//NOFP
+					print $separator;
+					//BQAF
+					print $separator;
+					//BONP
+					print $separator;
+					//CESC
+					print $separator;
+
+					print $end_line;
+				}
+			}
+
+			$date_document = dol_print_date($line->doc_date, '%Y%m%d');
+			$date_creation = dol_print_date($line->date_creation, '%Y%m%d');
+			$date_lim_reglement = dol_print_date($line->date_lim_reglement, '%Y%m%d');
+
+			// TYPE E
+			$type_enregistrement = 'E'; // For write movement
+			print $type_enregistrement.$separator;
+			// JNAL
+			print substr($line->code_journal, 0, 2).$separator;
+			// NECR
+			print $line->id.$separator;
+			// NPIE
+			print $line->piece_num.$separator;
+			// DATP
+			print $date_document.$separator;
+			// LIBE
+			print dol_trunc($line->label_operation, 25, 'right', 'UTF-8', 1).$separator;
+			// DATH
+			print $date_lim_reglement.$separator;
+			// CNPI
+			if ($line->doc_type == 'supplier_invoice') {
+				if ($line->montant < 0) {
+					$nature_piece = 'AF';
+				} else {
+					$nature_piece = 'FF';
+				}
+			} elseif ($line->doc_type == 'customer_invoice') {
+				if ($line->montant < 0) {
+					$nature_piece = 'AC';
+				} else {
+					$nature_piece = 'FC';
+				}
+			} else {
+				$nature_piece = '';
+			}
+			print $nature_piece.$separator;
+			// RACI
+			//			if (! empty($line->subledger_account)) {
+			//				if ($line->doc_type == 'supplier_invoice') {
+			//					$racine_subledger_account = '40';
+			//				} elseif ($line->doc_type == 'customer_invoice') {
+			//					$racine_subledger_account = '41';
+			//				} else {
+			//					$racine_subledger_account = '';
+			//				}
+			//			} else {
+			$racine_subledger_account = ''; // for records of type E leave this field blank
+			//			}
+
+			print $racine_subledger_account.$separator; // deprecated CPTG & CPTA use instead
+			// MONT
+			print price(abs($line->montant), 0, '', 1, 2).$separator;
+			// CODC
+			print $line->sens.$separator;
+			// CPTG
+			print length_accountg($line->numero_compte).$separator;
+			// DATE
+			print $date_document.$separator;
+			// CLET
+			print $line->lettering_code.$separator;
+			// DATL
+			print $line->date_lettering.$separator;
+			// CPTA
+			if (!empty($line->subledger_account)) {
+				print length_accounta($line->subledger_account).$separator;
+			} else {
+				print $separator;
+			}
+			// CNAT
+			if ($line->doc_type == 'supplier_invoice' && !empty($line->subledger_account)) {
+				print 'F'.$separator;
+			} elseif ($line->doc_type == 'customer_invoice' && !empty($line->subledger_account)) {
+				print 'C'.$separator;
+			} else {
+				print $separator;
+			}
+			// CTRE
+			print $separator;
+			// NORL
+			print $separator;
+			// DATV
+			print $separator;
+			// REFD
+			print $line->doc_ref.$separator;
+			// NECA
+			print '0'.$separator;
+			// CSEC
+			print $separator;
+			// CAFF
+			print $separator;
+			// CDES
+			print $separator;
+			// QTUE
+			print $separator;
+			// MTDV
+			print '0'.$separator;
+			// CODV
+			print $separator;
+			// TXDV
+			print '0'.$separator;
+			// MOPM
+			print $separator;
+			// BONP
+			print $separator;
+			// BQAF
+			print $separator;
+			// ECES
+			print $separator;
+			// TXTL
+			print $separator;
+			// ECRM
+			print $separator;
+			// DATK
+			print $separator;
+			// HEUK
+			print $separator;
+
+			print $end_line;
+
+			$last_codeinvoice = $line->doc_ref;
 		}
 	}
 

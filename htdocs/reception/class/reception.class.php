@@ -47,7 +47,7 @@ class Reception extends CommonObject
 	public $fk_element = "fk_reception";
 	public $table_element = "reception";
 	public $table_element_line = "commande_fournisseur_dispatch";
-	protected $ismultientitymanaged = 1; // 0=No test on entity, 1=Test with field entity, 2=Test with link by societe
+	public $ismultientitymanaged = 1; // 0=No test on entity, 1=Test with field entity, 2=Test with link by societe
 
 	/**
 	 * @var string String with name of icon for myobject. Must be the part after the 'object_' into object_myobject.png
@@ -212,6 +212,8 @@ class Reception extends CommonObject
 		$this->brouillon = 1;
 		$this->tracking_number = dol_sanitizeFileName($this->tracking_number);
 		if (empty($this->fk_project)) $this->fk_project = 0;
+		if (empty($this->weight_units)) $this->weight_units = 0;
+		if (empty($this->size_units)) $this->size_units = 0;
 
 		$this->user = $user;
 
@@ -477,7 +479,7 @@ class Reception extends CommonObject
 				require_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
 				$extrafields = new ExtraFields($this->db);
 				$extrafields->fetch_name_optionals_label($this->table_element, true);
-				$this->fetch_optionals($this->id);
+				$this->fetch_optionals();
 
 				/*
 				 * Lines

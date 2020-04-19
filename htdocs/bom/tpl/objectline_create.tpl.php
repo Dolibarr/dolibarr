@@ -130,7 +130,12 @@ print '</td>';
 
 $coldisplay++;
 print '<td class="bordertop nobottom nowrap linecollost right">';
-print '<input type="text" size="1" name="efficiency" id="efficiency" class="flat right" value="'.(GETPOSTISSET("efficiency")?GETPOST("efficiency", 'alpha'):1).'">';
+print '<input type="text" size="1" name="efficiency" id="efficiency" class="flat right" value="'.(GETPOSTISSET("efficiency") ?GETPOST("efficiency", 'alpha') : 1).'">';
+print '</td>';
+
+$coldisplay++;
+print '<td class="bordertop nobottom nowrap linecolcost right">';
+print '&nbsp;';
 print '</td>';
 
 $coldisplay += $colspan;

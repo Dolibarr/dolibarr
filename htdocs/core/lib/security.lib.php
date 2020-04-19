@@ -122,7 +122,7 @@ function dol_hash($chain, $type = '0')
 	}
 
 	// Salt value
-	if (! empty($conf->global->MAIN_SECURITY_SALT) && $type != '4' && $type !== 'md5openldap') $chain = $conf->global->MAIN_SECURITY_SALT.$chain;
+	if (!empty($conf->global->MAIN_SECURITY_SALT) && $type != '4' && $type !== 'md5openldap') $chain = $conf->global->MAIN_SECURITY_SALT.$chain;
 
 	if ($type == '1' || $type == 'sha1') return sha1($chain);
 	elseif ($type == '2' || $type == 'sha1md5') return sha1(md5($chain));
@@ -198,7 +198,7 @@ function restrictedArea($user, $features, $objectid = 0, $tableandshare = '', $f
 	$reshook = $hookmanager->executeHooks('restrictedArea', $parameters);
 
 	if (isset($hookmanager->resArray['result'])) {
-		if ($hookmanager->resArray['result'] == 0) accessforbidden();		// Module returns 0, so access forbidden
+		if ($hookmanager->resArray['result'] == 0) accessforbidden(); // Module returns 0, so access forbidden
 	}
 	if ($reshook > 0) {		// No other test done.
 		return 1;

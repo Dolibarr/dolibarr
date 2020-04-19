@@ -239,6 +239,7 @@ if ($modecompta == 'CREANCES-DETTES')
 	}
 	$sql .= " WHERE l.fk_facture = f.rowid";
 	$sql .= " AND f.fk_statut in (1,2)";
+	$sql .= " AND l.product_type in (0,1)";
 	if (!empty($conf->global->FACTURE_DEPOSITS_ARE_JUST_PAYMENTS)) {
 		$sql .= " AND f.type IN (0,1,2,5)";
 	} else {
@@ -290,6 +291,7 @@ if ($modecompta == 'CREANCES-DETTES')
 	// Show Array
 	$i = 0;
 	print '<form method="POST" action="'.$_SERVER["PHP_SELF"].'">';
+	print '<input type="hidden" name="token" value="'.newToken().'">'."\n";
 	// Extra parameters management
 	foreach ($headerparams as $key => $value)
 	{

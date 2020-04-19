@@ -71,3 +71,5 @@ ProductQtyToProduceByMO=Product quentity still to produce by open MO
 AddNewConsumeLines=Add new line to consume
 ProductsToConsume=Products to consume
 ProductsToProduce=Products to produce
+UnitCost=Unit cost
+TotalCost=Total cost

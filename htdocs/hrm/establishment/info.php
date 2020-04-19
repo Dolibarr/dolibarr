@@ -29,7 +29,7 @@ require_once DOL_DOCUMENT_ROOT.'/hrm/class/establishment.class.php';
 $langs->loadLangs(array('admin', 'hrm'));
 
 // Security check
-if (! $user->admin) accessforbidden();
+if (!$user->admin) accessforbidden();
 
 $id = GETPOST('id', 'int');
 
@@ -46,11 +46,11 @@ if ($id)
 
 	dol_fiche_head($head, 'info', $langs->trans("Establishment"), -1, 'building');
 
-    print '<table width="100%"><tr><td>';
-    dol_print_object_info($object);
-    print '</td></tr></table>';
+	print '<table width="100%"><tr><td>';
+	dol_print_object_info($object);
+	print '</td></tr></table>';
 
-    print '</div>';
+	print '</div>';
 }
 
 // End of page

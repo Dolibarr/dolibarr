@@ -479,7 +479,7 @@ class FormCompany extends Form
 		if ($resql)
 		{
 			$out .= '<div id="particulier2" class="visible">';
-			$out .= '<select class="flat minwidth200'.($morecss?' '.$morecss:'').'" name="'.$htmlname.'" id="'.$htmlname.'">';
+			$out .= '<select class="flat minwidth200'.($morecss ? ' '.$morecss : '').'" name="'.$htmlname.'" id="'.$htmlname.'">';
 			if ($country_codeid) $out .= '<option value="0">&nbsp;</option>'; // When country_codeid is set, we force to add an empty line because it does not appears from select. When not set, we already get the empty line from select.
 
 			$num = $this->db->num_rows($resql);
@@ -729,6 +729,7 @@ class FormCompany extends Form
 		if (is_object($object) && method_exists($object, 'liste_type_contact'))
 		{
 			$lesTypes = $object->liste_type_contact($source, $sortorder, 0, 1);
+
 			print '<select class="flat valignmiddle'.($morecss ? ' '.$morecss : '').'" name="'.$htmlname.'" id="'.$htmlname.'">';
 			if ($showempty) print '<option value="0"></option>';
 			foreach ($lesTypes as $key=>$value)
@@ -868,8 +869,8 @@ class FormCompany extends Form
         $out = '';
 
         // Execute hook getInputIdProf to complete or replace $out
-        $parameters=array('formlength'=>$formlength, 'selected'=>$preselected, 'idprof'=>$idprof, 'htmlname'=>$htmlname, 'country_code'=>$country_code);
-        $reshook=$hookmanager->executeHooks('getInputIdProf', $parameters);
+        $parameters = array('formlength'=>$formlength, 'selected'=>$preselected, 'idprof'=>$idprof, 'htmlname'=>$htmlname, 'country_code'=>$country_code);
+        $reshook = $hookmanager->executeHooks('getInputIdProf', $parameters);
         if (empty($reshook))
         {
         	$out .= '<input type="text" '.($morecss ? 'class="'.$morecss.'" ' : '').'name="'.$htmlname.'" id="'.$htmlname.'" maxlength="'.$maxlength.'" value="'.$selected.'">';

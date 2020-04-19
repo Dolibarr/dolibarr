@@ -56,7 +56,7 @@ if ($user->socid)
 // Get parameters
 $sortfield = GETPOST("sortfield", 'alpha');
 $sortorder = GETPOST("sortorder", 'alpha');
-$page = GETPOST("page", 'int');
+$page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOST("page", 'int');
 if (empty($page) || $page == -1) { $page = 0; }
 $offset = $conf->liste_limit * $page;
 $pageprev = $page - 1;
@@ -67,7 +67,7 @@ if (!$sortfield)
     $sortfield = "name";
 
 $object = new Account($db);
-if ($id > 0 || ! empty($ref)) $object->fetch($id, $ref);
+if ($id > 0 || !empty($ref)) $object->fetch($id, $ref);
 
 $result = restrictedArea($user, 'banque', $object->id, 'bank_account', '', '');
 
@@ -97,7 +97,7 @@ $form = new Form($db);
 
 if ($id > 0 || !empty($ref)) {
     if ($object->fetch($id, $ref)) {
-        $upload_dir = $conf->bank->dir_output . '/' . $object->ref;
+        $upload_dir = $conf->bank->dir_output.'/'.$object->ref;
 
         // Onglets
         $head = bank_prepare_head($object);

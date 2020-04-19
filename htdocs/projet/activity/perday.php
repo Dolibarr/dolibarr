@@ -36,73 +36,73 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/html.formcompany.class.php';
 require_once DOL_DOCUMENT_ROOT.'/holiday/class/holiday.class.php';
 
 // Load translation files required by the page
-$langs->loadLangs(array('projects','users','companies'));
+$langs->loadLangs(array('projects', 'users', 'companies'));
 
-$action=GETPOST('action', 'aZ09');
-$mode=GETPOST("mode", 'alpha');
-$id=GETPOST('id', 'int');
-$taskid=GETPOST('taskid', 'int');
+$action = GETPOST('action', 'aZ09');
+$mode = GETPOST("mode", 'alpha');
+$id = GETPOST('id', 'int');
+$taskid = GETPOST('taskid', 'int');
 
-$contextpage=GETPOST('contextpage', 'aZ')?GETPOST('contextpage', 'aZ'):'perdaycard';
+$contextpage = GETPOST('contextpage', 'aZ') ?GETPOST('contextpage', 'aZ') : 'perdaycard';
 
-$mine=0;
-if ($mode == 'mine') $mine=1;
+$mine = 0;
+if ($mode == 'mine') $mine = 1;
 
-$projectid='';
-$projectid=isset($_GET["id"])?$_GET["id"]:$_POST["projectid"];
+$projectid = '';
+$projectid = isset($_GET["id"]) ? $_GET["id"] : $_POST["projectid"];
 
 $hookmanager->initHooks(array('timesheetperdaycard'));
 
 // Security check
-$socid=0;
+$socid = 0;
 // For external user, no check is done on company because readability is managed by public status of project and assignement.
 //if ($user->socid > 0) $socid=$user->socid;
 $result = restrictedArea($user, 'projet', $projectid);
 
-$now=dol_now();
-$nowtmp=dol_getdate($now);
-$nowday=$nowtmp['mday'];
-$nowmonth=$nowtmp['mon'];
-$nowyear=$nowtmp['year'];
+$now = dol_now();
+$nowtmp = dol_getdate($now);
+$nowday = $nowtmp['mday'];
+$nowmonth = $nowtmp['mon'];
+$nowyear = $nowtmp['year'];
 
-$year=GETPOST('reyear', 'int')?GETPOST('reyear', 'int'):(GETPOST("year", "int")?GETPOST("year", "int"):(GETPOST("addtimeyear", "int")?GETPOST("addtimeyear", "int"):date("Y")));
-$month=GETPOST('remonth', 'int')?GETPOST('remonth', 'int'):(GETPOST("month", "int")?GETPOST("month", "int"):(GETPOST("addtimemonth", "int")?GETPOST("addtimemonth", "int"):date("m")));
-$day=GETPOST('reday', 'int')?GETPOST('reday', 'int'):(GETPOST("day", "int")?GETPOST("day", "int"):(GETPOST("addtimeday", "int")?GETPOST("addtimeday", "int"):date("d")));
-$week=GETPOST("week", "int")?GETPOST("week", "int"):date("W");
+$year = GETPOST('reyear', 'int') ?GETPOST('reyear', 'int') : (GETPOST("year", "int") ?GETPOST("year", "int") : (GETPOST("addtimeyear", "int") ?GETPOST("addtimeyear", "int") : date("Y")));
+$month = GETPOST('remonth', 'int') ?GETPOST('remonth', 'int') : (GETPOST("month", "int") ?GETPOST("month", "int") : (GETPOST("addtimemonth", "int") ?GETPOST("addtimemonth", "int") : date("m")));
+$day = GETPOST('reday', 'int') ?GETPOST('reday', 'int') : (GETPOST("day", "int") ?GETPOST("day", "int") : (GETPOST("addtimeday", "int") ?GETPOST("addtimeday", "int") : date("d")));
+$week = GETPOST("week", "int") ?GETPOST("week", "int") : date("W");
 
 $day = (int) $day;
 
-$search_categ=GETPOST("search_categ", 'alpha');
-$search_usertoprocessid=GETPOST('search_usertoprocessid', 'int');
-$search_task_ref=GETPOST('search_task_ref', 'alpha');
-$search_task_label=GETPOST('search_task_label', 'alpha');
-$search_project_ref=GETPOST('search_project_ref', 'alpha');
-$search_thirdparty=GETPOST('search_thirdparty', 'alpha');
-$search_declared_progress=GETPOST('search_declared_progress', 'alpha');
+$search_categ = GETPOST("search_categ", 'alpha');
+$search_usertoprocessid = GETPOST('search_usertoprocessid', 'int');
+$search_task_ref = GETPOST('search_task_ref', 'alpha');
+$search_task_label = GETPOST('search_task_label', 'alpha');
+$search_project_ref = GETPOST('search_project_ref', 'alpha');
+$search_thirdparty = GETPOST('search_thirdparty', 'alpha');
+$search_declared_progress = GETPOST('search_declared_progress', 'alpha');
 
-$monthofday=GETPOST('addtimemonth');
-$dayofday=GETPOST('addtimeday');
-$yearofday=GETPOST('addtimeyear');
+$monthofday = GETPOST('addtimemonth');
+$dayofday = GETPOST('addtimeday');
+$yearofday = GETPOST('addtimeyear');
 
 $daytoparse = $now;
-if ($yearofday && $monthofday && $dayofday) $daytoparse=dol_mktime(0, 0, 0, $monthofday, $dayofday, $yearofday);	// xxxofday is value of day after submit action 'addtime'
-elseif ($year && $month && $day) $daytoparse=dol_mktime(0, 0, 0, $month, $day, $year);							// this are value submited after submit of action 'submitdateselect'
+if ($yearofday && $monthofday && $dayofday) $daytoparse = dol_mktime(0, 0, 0, $monthofday, $dayofday, $yearofday); // xxxofday is value of day after submit action 'addtime'
+elseif ($year && $month && $day) $daytoparse = dol_mktime(0, 0, 0, $month, $day, $year); // this are value submited after submit of action 'submitdateselect'
 
 
 if (empty($search_usertoprocessid) || $search_usertoprocessid == $user->id)
 {
-	$usertoprocess=$user;
-	$search_usertoprocessid=$usertoprocess->id;
+	$usertoprocess = $user;
+	$search_usertoprocessid = $usertoprocess->id;
 }
 elseif ($search_usertoprocessid > 0)
 {
-	$usertoprocess=new User($db);
+	$usertoprocess = new User($db);
 	$usertoprocess->fetch($search_usertoprocessid);
-	$search_usertoprocessid=$usertoprocess->id;
+	$search_usertoprocessid = $usertoprocess->id;
 }
 else
 {
-	$usertoprocess=new User($db);
+	$usertoprocess = new User($db);
 }
 
 $object = new Task($db);
@@ -146,8 +146,9 @@ $search_array_options_task = $extrafields->getOptionalsFromPost($object->table_e
 /*
  * Actions
  */
+
 $parameters = array('id' => $id, 'taskid' => $taskid, 'projectid' => $projectid);
-$reshook=$hookmanager->executeHooks('doActions', $parameters, $object, $action);    // Note that $action and $object may have been modified by some hooks
+$reshook = $hookmanager->executeHooks('doActions', $parameters, $object, $action); // Note that $action and $object may have been modified by some hooks
 if ($reshook < 0) setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
 // Purge criteria
 if (GETPOST('button_removefilter_x', 'alpha') || GETPOST('button_removefilter.x', 'alpha') || GETPOST('button_removefilter', 'alpha')) // All tests are required to be compatible with all browsers
@@ -441,9 +442,10 @@ $nav = '<a class="inline-block valignmiddle" href="?year='.$prev_year."&amp;mont
 $nav .= dol_print_date(dol_mktime(0, 0, 0, $month, $day, $year), "%A").' ';
 $nav .= " <span id=\"month_name\">".dol_print_date(dol_mktime(0, 0, 0, $month, $day, $year), "day")." </span>\n";
 $nav .= '<a class="inline-block valignmiddle" href="?year='.$next_year."&amp;month=".$next_month."&amp;day=".$next_day.$param.'">'.img_next($langs->trans("Next"))."</a>\n";
-$nav .= " &nbsp; (<a href=\"?year=".$nowyear."&amp;month=".$nowmonth."&amp;day=".$nowday.$param."\">".$langs->trans("Today")."</a>)";
-$nav .= '<br>'.$form->selectDate(-1, '', 0, 0, 2, "addtime", 1, 0).' ';
-$nav .= ' <input type="submit" name="submitdateselect" class="button valignmiddle" value="'.$langs->trans("Refresh").'">';
+//$nav .= " &nbsp; (<a href=\"?year=".$nowyear."&amp;month=".$nowmonth."&amp;day=".$nowday.$param."\">".$langs->trans("Today")."</a>)";
+$nav .= ' '.$form->selectDate(-1, '', 0, 0, 2, "addtime", 1, 1).' ';
+//$nav .= ' <input type="submit" name="submitdateselect" class="button valignmiddle" value="'.$langs->trans("Refresh").'">';
+$nav .= ' <button type="submit" name="button_search_x" value="x" class="bordertransp"><span class="fa fa-search"></span></button>';
 
 $picto = 'calendarweek';
 
@@ -484,20 +486,21 @@ print '</div>';
 
 dol_fiche_end();
 
+
 print '<div class="floatright right'.($conf->dol_optimize_smallscreen ? ' centpercent' : '').'">'.$nav.'</div>'; // We move this before the assign to components so, the default submit button is not the assign to.
 
-print '<div class="colorback float valignmiddle">';
+print '<div class="colorbacktimesheet float valignmiddle">';
 $titleassigntask = $langs->transnoentities("AssignTaskToMe");
 if ($usertoprocess->id != $user->id) $titleassigntask = $langs->transnoentities("AssignTaskToUser", $usertoprocess->getFullName($langs));
 print '<div class="taskiddiv inline-block">';
-$formproject->selectTasks($socid ? $socid : -1, $taskid, 'taskid', 32, 0, 1, 1, 0, 0, '', '', 'all', $usertoprocess);
+$formproject->selectTasks($socid ? $socid : -1, $taskid, 'taskid', 32, 0, '-- '.$langs->trans("ChooseANotYetAssignedTask").' --', 1, 0, 0, '', '', 'all', $usertoprocess);
 print '</div>';
 print ' ';
 print $formcompany->selectTypeContact($object, '', 'type', 'internal', 'rowid', 0, 'maxwidth150onsmartphone');
 print '<input type="submit" class="button valignmiddle" name="assigntask" value="'.dol_escape_htmltag($titleassigntask).'">';
 print '</div>';
 
-print '<div class="clearboth" style="padding-bottom: 8px;"></div>';
+print '<div class="clearboth" style="padding-bottom: 20px;"></div>';
 
 
 $moreforfilter = '';
@@ -606,8 +609,8 @@ if (!empty($arrayfields['t.progress']['checked']))
 /*print '<td class="right maxwidth100">'.$langs->trans("TimeSpent").'</td>';
 if ($usertoprocess->id == $user->id) print '<td class="right maxwidth100">'.$langs->trans("TimeSpentByYou").'</td>';
 else print '<td class="right maxwidth100">'.$langs->trans("TimeSpentByUser").'</td>';*/
-print '<th class="right maxwidth100">'.$langs->trans("TimeSpent").'<br>('.$langs->trans("Everybody").')</th>';
-print '<th class="right maxwidth100">'.$langs->trans("TimeSpent").($usertoprocess->firstname ? '<br>('.dol_trunc($usertoprocess->firstname, 10).')' : '').'</th>';
+print '<th class="right maxwidth100">'.$langs->trans("TimeSpent").'<br><span class="opacitymedium">'.$langs->trans("Everybody").'</span></th>';
+print '<th class="right maxwidth100">'.$langs->trans("TimeSpent").($usertoprocess->firstname ? '<br><span class="opacitymedium">'.dol_trunc($usertoprocess->firstname, 10).'</span>' : '').'</th>';
 print '<th class="center leftborder">'.$langs->trans("HourStart").'</td>';
 
 // By default, we can edit only tasks we are assigned to

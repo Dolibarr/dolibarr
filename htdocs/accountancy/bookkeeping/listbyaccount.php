@@ -62,7 +62,7 @@ $search_credit = GETPOST('search_credit', 'alpha');
 $limit = GETPOST('limit', 'int') ?GETPOST('limit', 'int') : (empty($conf->global->ACCOUNTING_LIMIT_LIST_VENTILATION) ? $conf->liste_limit : $conf->global->ACCOUNTING_LIMIT_LIST_VENTILATION);
 $sortfield = GETPOST('sortfield', 'alpha');
 $sortorder = GETPOST('sortorder', 'alpha');
-$page = GETPOST('page', 'int');
+$page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOST("page", 'int');
 if (empty($page) || $page < 0) { $page = 0; }
 $offset = $limit * $page;
 $pageprev = $page - 1;
@@ -71,9 +71,9 @@ if ($sortorder == "") $sortorder = "ASC";
 if ($sortfield == "") $sortfield = "t.doc_date,t.rowid";
 
 if (empty($search_date_start) && empty($search_date_end) && GETPOSTISSET('search_date_startday') && GETPOSTISSET('search_date_startmonth') && GETPOSTISSET('search_date_starthour')) {
-	$sql = 	"SELECT date_start, date_end from ".MAIN_DB_PREFIX."accounting_fiscalyear ";
-	$sql.= " where date_start < '".$db->idate(dol_now())."' and date_end > '".$db->idate(dol_now())."'";
-	$sql.= $db->plimit(1);
+	$sql = "SELECT date_start, date_end from ".MAIN_DB_PREFIX."accounting_fiscalyear ";
+	$sql .= " where date_start < '".$db->idate(dol_now())."' and date_end > '".$db->idate(dol_now())."'";
+	$sql .= $db->plimit(1);
 	$res = $db->query($sql);
 
 	if ($res->num_rows > 0) {
@@ -220,15 +220,15 @@ if ($result < 0) {
 	setEventMessages($object->error, $object->errors, 'errors');
 }
 
-$num=count($object->lines);
+$num = count($object->lines);
 
 
 if ($action == 'delmouv') {
-	$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"] . '?mvt_num=' . GETPOST('mvt_num'), $langs->trans('DeleteMvt'), $langs->trans('ConfirmDeleteMvtPartial'), 'delmouvconfirm', '', 0, 1);
+	$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"].'?mvt_num='.GETPOST('mvt_num'), $langs->trans('DeleteMvt'), $langs->trans('ConfirmDeleteMvtPartial'), 'delmouvconfirm', '', 0, 1);
 	print $formconfirm;
 }
 if ($action == 'delbookkeepingyear') {
-	$form_question = array ();
+	$form_question = array();
 	$delyear = GETPOST('delyear');
 
 	if (empty($delyear)) {
@@ -249,7 +249,7 @@ if ($action == 'delbookkeepingyear') {
 }
 
 
-print '<form method="POST" id="searchFormList" action="' . $_SERVER["PHP_SELF"] . '">';
+print '<form method="POST" id="searchFormList" action="'.$_SERVER["PHP_SELF"].'">';
 print '<input type="hidden" name="token" value="'.newToken().'">';
 print '<input type="hidden" name="action" value="list">';
 if ($optioncss != '') print '<input type="hidden" name="optioncss" value="'.$optioncss.'">';
@@ -259,11 +259,11 @@ print '<input type="hidden" name="sortorder" value="'.$sortorder.'">';
 print '<input type="hidden" name="page" value="'.$page.'">';
 
 
-$newcardbutton.= dolGetButtonTitle($langs->trans('ViewFlatList'), '', 'fa fa-list paddingleft', DOL_URL_ROOT.'/accountancy/bookkeeping/list.php?'.$param);
-$newcardbutton.= dolGetButtonTitle($langs->trans('NewAccountingMvt'), '', 'fa fa-plus-circle paddingleft', './card.php?action=create');
+$newcardbutton .= dolGetButtonTitle($langs->trans('ViewFlatList'), '', 'fa fa-list paddingleft', DOL_URL_ROOT.'/accountancy/bookkeeping/list.php?'.$param);
+$newcardbutton .= dolGetButtonTitle($langs->trans('NewAccountingMvt'), '', 'fa fa-plus-circle paddingleft', './card.php?action=create');
 
-if (! empty($contextpage) && $contextpage != $_SERVER["PHP_SELF"]) $param.='&contextpage='.urlencode($contextpage);
-if ($limit > 0 && $limit != $conf->liste_limit) $param.='&limit='.urlencode($limit);
+if (!empty($contextpage) && $contextpage != $_SERVER["PHP_SELF"]) $param .= '&contextpage='.urlencode($contextpage);
+if ($limit > 0 && $limit != $conf->liste_limit) $param .= '&limit='.urlencode($limit);
 
 print_barre_liste($title_page, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, '', $result, $nbtotalofrecords, 'title_accountancy', 0, $viewflat.$newcardbutton, '', $limit);
 
@@ -335,7 +335,7 @@ while ($i < min($num, $limit))
 	//if (empty($accountg)) $accountg = '-';
 
 	// Is it a break ?
-	if ($accountg != $displayed_account_number || ! isset($displayed_account_number)) {
+	if ($accountg != $displayed_account_number || !isset($displayed_account_number)) {
 		// Affiche un Sous-Total par compte comptable
 		if (isset($displayed_account_number)) {
 			print '<tr class="liste_total"><td class="right" colspan="5">'.$langs->trans("SubTotal").':</td><td class="nowrap right">'.price($sous_total_debit).'</td><td class="nowrap right">'.price($sous_total_credit).'</td>';
@@ -348,7 +348,7 @@ while ($i < min($num, $limit))
 		$colspan = 9;
 		print "<tr>";
 		print '<td colspan="'.$colspan.'" style="font-weight:bold; border-bottom: 1pt solid black;">';
-		if ($line->numero_compte != "" && $line->numero_compte != '-1') print length_accountg($line->numero_compte) . ' : ' . $object->get_compte_desc($line->numero_compte);
+		if ($line->numero_compte != "" && $line->numero_compte != '-1') print length_accountg($line->numero_compte).' : '.$object->get_compte_desc($line->numero_compte);
 		else print '<span class="error">'.$langs->trans("Unknown").'</span>';
 		print '</td>';
 		print '</tr>';
@@ -373,20 +373,20 @@ while ($i < min($num, $limit))
 
 	// Affiche un lien vers la facture client/fournisseur
 	$doc_ref = preg_replace('/\(.*\)/', '', $line->doc_ref);
-	print strlen(length_accounta($line->subledger_account)) == 0 ? '<td>' . $line->label_operation . '</td>' : '<td>' . $line->label_operation . '<br><span style="font-size:0.8em">(' . length_accounta($line->subledger_account) . ')</span></td>';
+	print strlen(length_accounta($line->subledger_account)) == 0 ? '<td>'.$line->label_operation.'</td>' : '<td>'.$line->label_operation.'<br><span style="font-size:0.8em">('.length_accounta($line->subledger_account).')</span></td>';
 
 
-	print '<td class="nowrap right">' . ($line->debit ? price($line->debit) :''). '</td>';
-	print '<td class="nowrap right">' . ($line->credit ? price($line->credit) : '') . '</td>';
+	print '<td class="nowrap right">'.($line->debit ? price($line->debit) : '').'</td>';
+	print '<td class="nowrap right">'.($line->credit ? price($line->credit) : '').'</td>';
 
 	$accountingjournal = new AccountingJournal($db);
 	$result = $accountingjournal->fetch('', $line->code_journal);
-	$journaltoshow = (($result > 0)?$accountingjournal->getNomUrl(0, 0, 0, '', 0) : $line->code_journal);
-	print '<td class="center">' . $journaltoshow . '</td>';
+	$journaltoshow = (($result > 0) ? $accountingjournal->getNomUrl(0, 0, 0, '', 0) : $line->code_journal);
+	print '<td class="center">'.$journaltoshow.'</td>';
 
 	print '<td class="center">';
-	print '<a href="'.DOL_URL_ROOT.'/accountancy/bookkeeping/card.php?piece_num=' . $line->piece_num . '">' . img_edit() . '</a>&nbsp;';
-	print '<a href="' . $_SERVER['PHP_SELF'] . '?action=delmouv&mvt_num=' . $line->piece_num . $param . '&page=' . $page . '">' . img_delete() . '</a>';
+	print '<a href="'.DOL_URL_ROOT.'/accountancy/bookkeeping/card.php?piece_num='.$line->piece_num.'">'.img_edit().'</a>&nbsp;';
+	print '<a href="'.$_SERVER['PHP_SELF'].'?action=delmouv&mvt_num='.$line->piece_num.$param.'&page='.$page.'">'.img_delete().'</a>';
 	print '</td>';
 	print "</tr>\n";
 

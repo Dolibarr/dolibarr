@@ -75,6 +75,8 @@ if ($action == 'add' && !empty($permissiontoadd))
 			$value = 60 * 60 * GETPOST($key.'hour', 'int') + 60 * GETPOST($key.'min', 'int');
 		} elseif (preg_match('/^(integer|price|real|double)/', $object->fields[$key]['type'])) {
 			$value = price2num(GETPOST($key, 'none')); // To fix decimal separator according to lang setup
+		} elseif ($object->fields[$key]['type'] == 'boolean') {
+			$value = (GETPOST($key) == 'on' ? 1 : 0);
 		} else {
 			$value = GETPOST($key, 'alphanohtml');
 		}
@@ -155,7 +157,9 @@ if ($action == 'update' && !empty($permissiontoadd))
 				$value = '';
 			}
 		} elseif (preg_match('/^(integer|price|real|double)/', $object->fields[$key]['type'])) {
-            $value = price2num(GETPOST($key, 'none'));	// To fix decimal separator according to lang setup
+            $value = price2num(GETPOST($key, 'none')); // To fix decimal separator according to lang setup
+		} elseif ($object->fields[$key]['type'] == 'boolean') {
+			$value = (GETPOST($key) == 'on' ? 1 : 0);
 		} else {
 			$value = GETPOST($key, 'alpha');
 		}

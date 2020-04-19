@@ -39,16 +39,16 @@ $langs->load("orders");
 $langs->load("receptions");
 $langs->load("companies");
 
-$id=GETPOST('id', 'int');
-$ref=GETPOST('ref', 'alpha');
-$action=GETPOST('action', 'alpha');
+$id = GETPOST('id', 'int');
+$ref = GETPOST('ref', 'alpha');
+$action = GETPOST('action', 'alpha');
 
 // Security check
-if ($user->socid) $socid=$user->socid;
+if ($user->socid) $socid = $user->socid;
 $result = restrictedArea($user, 'reception', $id, '');
 
 $object = new Reception($db);
-if ($id > 0 || ! empty($ref))
+if ($id > 0 || !empty($ref))
 {
     $object->fetch($id, $ref);
     $object->fetch_thirdparty();

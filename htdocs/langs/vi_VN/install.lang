@@ -91,7 +91,7 @@ GoToSetupArea=Tới Dolibarr (setup)
 MigrationNotFinished=Phiên bản cơ sở dữ liệu không hoàn toàn cập nhật: chạy lại quá trình nâng cấp.
 GoToUpgradePage=Tới nâng cấp trang lại
 WithNoSlashAtTheEnd=Nếu không có các dấu gạch chéo "/" ở cuối
-DirectoryRecommendation=Nên sử dụng một thư mục bên ngoài các trang web.
+DirectoryRecommendation=<span class="warning">IMPORTANT</span>: You must use a directory that is outside of the web pages (so do not use a subdirectory of previous parameter).
 LoginAlreadyExists=Đã tồn tại
 DolibarrAdminLogin=Dolibarr quản trị đăng nhập
 AdminLoginAlreadyExists=Tài khoản quản trị viên Dolibarr '<b>%s</b>' đã tồn tại. Quay trở lại nếu bạn muốn tạo một cái khác.

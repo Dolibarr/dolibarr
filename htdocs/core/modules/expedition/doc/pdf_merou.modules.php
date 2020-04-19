@@ -591,7 +591,7 @@ class pdf_merou extends ModelePdfExpedition
 		$pdf->SetXY($Xoff, $Yoff);
 		$pdf->SetFont('', '', $default_font_size - 2);
 		$pdf->SetTextColor(0, 0, 0);
-		$pdf->MultiCell(0, 3, $outputlangs->transnoentities("RefSending").': '.$outputlangs->convToOutputCharset($object->ref), '', 'R');
+		$pdf->MultiCell($this->page_largeur - $this->marge_droite - $Xoff, 3, $outputlangs->transnoentities("RefSending").': '.$outputlangs->convToOutputCharset($object->ref), '', 'R');
 		//$this->Code39($Xoff+43, $Yoff+1, $object->ref,$ext = true, $cks = false, $w = 0.4, $h = 4, $wide = true);
 
 		$origin = $object->origin;
@@ -627,9 +627,9 @@ class pdf_merou extends ModelePdfExpedition
 		{
 			$Yoff += 3;
 			$posy = $Yoff;
-			$pdf->SetXY(100, $posy);
+			$pdf->SetXY($Xoff, $posy);
 			$pdf->SetTextColor(0, 0, 0);
-			$pdf->MultiCell(100, 3, $outputlangs->transnoentities("CustomerCode")." : ".$outputlangs->transnoentities($object->thirdparty->code_client), '', 'R');
+			$pdf->MultiCell($this->page_largeur - $this->marge_droite - $Xoff, 3, $outputlangs->transnoentities("CustomerCode")." : ".$outputlangs->transnoentities($object->thirdparty->code_client), '', 'R');
 		}
 
 		// Date delivery
