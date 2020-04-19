@@ -1618,7 +1618,9 @@ else
 			// Hierarchy
 			print '<tr><td>'.$langs->trans("HierarchicalResponsible").'</td>';
 			print '<td>';
-			if (empty($object->fk_user)) print $langs->trans("None");
+			if (empty($object->fk_user)) {
+				print '<span class="opacitymedium">'.$langs->trans("None").'</span>';
+			}
 			else {
 				$huser = new User($db);
 				$huser->fetch($object->fk_user);
