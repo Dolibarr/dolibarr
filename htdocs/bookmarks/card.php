@@ -280,7 +280,7 @@ if ($id > 0 && !preg_match('/^add/i', $action))
 	}
 	else
 	{
-		if ($object->fk_user)
+		if ($object->fk_user > 0)
 		{
 			$fuser = new User($db);
 			$fuser->fetch($object->fk_user);
