@@ -919,7 +919,7 @@ if ($resql)
 		// Ref
 		if (!empty($arrayfields['c.ref']['checked']))
 		{
-			print '<td class="nowrap">';
+			print '<td class="nowraponall">';
 
 			$generic_commande->getLinesArray(); // This set ->lines
 
