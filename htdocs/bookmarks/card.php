@@ -172,7 +172,7 @@ if ($action == 'create')
 
 	// Owner
 	print '<tr><td>'.$langs->trans("Owner").'</td><td>';
-	print $form->select_dolusers(isset($_POST['userid']) ? $_POST['userid'] : $user->id, 'userid', 1, '', 0, '', '', 0, 0, 0, '', 0, '', 'maxwidth300');
+	print img_picto('', 'user').' '.$form->select_dolusers(isset($_POST['userid']) ? $_POST['userid'] : $user->id, 'userid', 1, '', 0, '', '', 0, 0, 0, '', 0, '', 'maxwidth300');
 	print '</td><td class="hideonsmartphone">&nbsp;</td></tr>';
 
 	// Position
@@ -276,7 +276,7 @@ if ($id > 0 && !preg_match('/^add/i', $action))
 	print '<tr><td>'.$langs->trans("Owner").'</td><td>';
 	if ($action == 'edit' && $user->admin)
 	{
-		print $form->select_dolusers(isset($_POST['userid']) ? $_POST['userid'] : ($object->fk_user ? $object->fk_user : ''), 'userid', 1, '', 0, '', '', 0, 0, 0, '', 0, '', 'maxwidth300');
+		print img_picto('', 'user').' '.$form->select_dolusers(isset($_POST['userid']) ? $_POST['userid'] : ($object->fk_user ? $object->fk_user : ''), 'userid', 1, '', 0, '', '', 0, 0, 0, '', 0, '', 'maxwidth300');
 	}
 	else
 	{
