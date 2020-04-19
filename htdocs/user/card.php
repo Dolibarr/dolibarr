@@ -2046,7 +2046,7 @@ else
 								print '<td>';
 								if ($caneditgroup)
 								{
-									print '<a href="'.DOL_URL_ROOT.'/user/group/card.php?id='.$group->id.'">'.img_object($langs->trans("ShowGroup"), "group").' '.$group->name.'</a>';
+									print $group->getNomUrl(1);
 								}
 								else
 								{
