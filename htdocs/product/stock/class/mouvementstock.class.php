@@ -142,7 +142,7 @@ class MouvementStock extends CommonObject
 
 		require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
 		require_once DOL_DOCUMENT_ROOT.'/product/stock/class/productlot.class.php';
-		$langs->load("errors");
+
 		$error = 0;
 		dol_syslog(get_class($this)."::_create start userid=$user->id, fk_product=$fk_product, warehouse_id=$entrepot_id, qty=$qty, type=$type, price=$price, label=$label, inventorycode=$inventorycode, datem=".$datem.", eatby=".$eatby.", sellby=".$sellby.", batch=".$batch.", skip_batch=".$skip_batch);
 
@@ -408,13 +408,13 @@ class MouvementStock extends CommonObject
 			$sql .= " ".($batch ? "'".$batch."'" : "null").", ";
 			$sql .= " ".($eatby ? "'".$this->db->idate($eatby)."'" : "null").", ";
 			$sql .= " ".($sellby ? "'".$this->db->idate($sellby)."'" : "null").", ";
-			$sql .= " ".$this->entrepot_id.", ".$this->qty.", ".$this->type.",";
+			$sql .= " ".$this->entrepot_id.", ".$this->qty.", ".((int) $this->type).",";
 			$sql .= " ".$user->id.",";
 			$sql .= " '".$this->db->escape($label)."',";
 			$sql .= " ".($inventorycode ? "'".$this->db->escape($inventorycode)."'" : "null").",";
-			$sql .= " '".price2num($price)."',";
-			$sql .= " '".$fk_origin."',";
-			$sql .= " '".$origintype."',";
+			$sql .= " ".price2num($price).",";
+			$sql .= " ".$fk_origin.",";
+			$sql .= " '".$this->db->escape($origintype)."',";
 			$sql .= " ".$fk_project;
 			$sql .= ")";
 
@@ -438,7 +438,7 @@ class MouvementStock extends CommonObject
 			$oldpmp = $product->pmp;
 			$oldqtywarehouse = 0;
 
-			// Test if there is already a record for couple (warehouse / product)
+			// Test if there is already a record for couple (warehouse / product), so later we will make an update or create.
 			$alreadyarecord = 0;
 			if (!$error)
 			{
@@ -486,7 +486,7 @@ class MouvementStock extends CommonObject
 				}
 				elseif ($type == 1 || $type == 2)
 				{
-					// After a stock decrease, we don't change value of PMP for product.
+					// After a stock decrease, we don't change value of the AWP/PMP of a product.
 					$newpmp = $oldpmp;
 				}
 				else
@@ -543,7 +543,7 @@ class MouvementStock extends CommonObject
 				// $sql = "UPDATE ".MAIN_DB_PREFIX."product SET pmp = ".$newpmp.", stock = ".$this->db->ifsql("stock IS NULL", 0, "stock") . " + ".$qty;
 				// $sql.= " WHERE rowid = ".$fk_product;
     			// Update pmp + denormalized fields because we change content of produt_stock. Warning: Do not use "SET p.stock", does not works with pgsql
-				$sql = "UPDATE ".MAIN_DB_PREFIX."product as p SET pmp = ".$newpmp.", ";
+				$sql = "UPDATE ".MAIN_DB_PREFIX."product as p SET pmp = ".$newpmp.",";
 				$sql .= " stock=(SELECT SUM(ps.reel) FROM ".MAIN_DB_PREFIX."product_stock as ps WHERE ps.fk_product = p.rowid)";
 				$sql .= " WHERE rowid = ".$fk_product;
 

@@ -45,6 +45,11 @@ UPDATE llx_accounting_system SET fk_country = NULL, active = 0 WHERE pcg_version
 
 
 -- For v12
+
+-- Delete an old index that is duplicated
+-- VMYSQL4.1 DROP INDEX ix_fk_product_stock on llx_product_batch;
+-- VPGSQL8.2 DROP INDEX ix_fk_product_stock
+
 DELETE FROM llx_menu where module='supplier_proposal';
 
 UPDATE llx_website SET lang = 'en' WHERE lang like 'en_%';
