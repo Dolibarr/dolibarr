@@ -96,7 +96,7 @@ class DolEditor
             $this->cols					= (preg_match('/%/', $cols) ? $cols : max(40, $cols)); // If $cols is a percent, we keep it, otherwise, we take max
             $this->height = $height;
             $this->width				= $width;
-    	}
+        }
     }
 
     // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
@@ -259,7 +259,7 @@ class DolEditor
 						})';
 	            $out .= '</script>'."\n";
 			}
-
+var_dump($this->height);
             $out .= '<pre id="'.$this->htmlname.'aceeditorid" style="'.($this->width ? 'width: '.$this->width.'px; ' : '');
             $out .= ($this->height ? ' height: '.$this->height.'px; ' : '');
             //$out.=" min-height: 100px;";
