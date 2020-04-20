@@ -530,7 +530,7 @@ function print_eldy_menu($db, $atarget, $type_user, &$tabMenu, &$menu, $noout = 
         foreach ($menu->liste as $menuval) {
             print_start_menu_entry($menuval['idsel'], $menuval['classname'], $menuval['enabled']);
             print_text_menu_entry($menuval['titre'], $menuval['enabled'], (($menuval['url'] != '#' && !preg_match('/^(http:\/\/|https:\/\/)/i', $menuval['url'])) ? DOL_URL_ROOT:'').$menuval['url'], $menuval['id'], $menuval['idsel'], $menuval['classname'], ($menuval['target'] ? $menuval['target'] : $atarget));
-            if (!$conf->dol_no_mouse_hover)
+            if (!$conf->dol_no_mouse_hover && ($conf->global->TOP_MENU_USE_DROP_DOWN_MENU || $conf->global->MAIN_FEATURES_LEVEL >= 2))
             	print_eldy_megasubmenu($db, $tabMenu, $menuval['idsel'], 5);
             print_end_menu_entry($menuval['enabled']);
         }
@@ -674,10 +674,10 @@ function print_text_menu_entry($text, $showmode, $url, $id, $idsel, $classname, 
 	global $langs;
 
 	if ($showmode == 1) {
-		print '<a class="tmenuimage" tabindex="-1" href="'.$url.'"'.($atarget ? ' target="'.$atarget.'"' : '').' title="'./*dol_escape_htmltag($text).*/'">';
+		print '<a class="tmenuimage" tabindex="-1" href="'.$url.'"'.($atarget ? ' target="'.$atarget.'"' : '').' title="'.dol_escape_htmltag($text).'">';
 		print '<div class="'.$id.' '.$idsel.' topmenuimage"><span class="'.$id.' tmenuimage" id="mainmenuspan_'.$idsel.'"></span></div>';
 		print '</a>';
-		print '<a '.$classname.' id="mainmenua_'.$idsel.'" href="'.$url.'"'.($atarget ? ' target="'.$atarget.'"' : '').' title="'./*dol_escape_htmltag($text).*/'">';
+		print '<a '.$classname.' id="mainmenua_'.$idsel.'" href="'.$url.'"'.($atarget ? ' target="'.$atarget.'"' : '').' title="'.dol_escape_htmltag($text).'">';
 		print '<span class="mainmenuaspan">';
 		print $text;
 		print '</span>';
