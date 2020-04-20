@@ -944,6 +944,7 @@ if ($placeid > 0)
 
     if (is_array($invoice->lines) && count($invoice->lines))
     {
+    	print '<!-- Show lines of invoices -->'."\n";
         $tmplines = array_reverse($invoice->lines);
         foreach ($tmplines as $line)
         {
@@ -993,11 +994,14 @@ if ($placeid > 0)
                 else $htmlforlines .= img_object('', 'service').' ';
             }
             if (empty($conf->global->TAKEPOS_SHOW_N_FIRST_LINES)) {
-            	$tooltiptext = '<b>'.$langs->trans("Ref").'</b> : '.$line->product_ref.'<br>';
-            	$tooltiptext .= '<b>'.$langs->trans("Label").'</b> : '.$line->product_label.'<br>';
-            	if ($line->product_label != $line->desc) {
-            		if ($line->desc) $tooltiptext .= '<br>';
-    	        	$tooltiptext .= $line->desc;
+            	$tooltiptext = '';
+            	if ($line->product_ref) {
+            		$tooltiptext .= '<b>'.$langs->trans("Ref").'</b> : '.$line->product_ref.'<br>';
+            		$tooltiptext .= '<b>'.$langs->trans("Label").'</b> : '.$line->product_label.'<br>';
+	            	if ($line->product_label != $line->desc) {
+	            		if ($line->desc) $tooltiptext .= '<br>';
+	    	        	$tooltiptext .= $line->desc;
+	            	}
             	}
             	$htmlforlines .= $form->textwithpicto($line->product_label ? $line->product_label : ($line->product_ref ? $line->product_ref : dolGetFirstLineOfText($line->desc, 1)), $tooltiptext);
             } else {
