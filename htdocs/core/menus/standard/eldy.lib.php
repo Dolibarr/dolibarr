@@ -529,9 +529,11 @@ function print_eldy_menu($db, $atarget, $type_user, &$tabMenu, &$menu, $noout = 
     if (empty($noout)) {
         foreach ($menu->liste as $menuval) {
             print_start_menu_entry($menuval['idsel'], $menuval['classname'], $menuval['enabled']);
-            print_text_menu_entry($menuval['titre'], $menuval['enabled'], (($menuval['url'] != '#' && !preg_match('/^(http:\/\/|https:\/\/)/i', $menuval['url'])) ? DOL_URL_ROOT:'').$menuval['url'], $menuval['id'], $menuval['idsel'], $menuval['classname'], ($menuval['target'] ? $menuval['target'] : $atarget));
-            if (!$conf->dol_no_mouse_hover && ($conf->global->TOP_MENU_USE_DROP_DOWN_MENU || $conf->global->MAIN_FEATURES_LEVEL >= 2))
+            if (!$conf->dol_no_mouse_hover && ($conf->global->TOP_MENU_USE_DROP_DOWN_MENU || $conf->global->MAIN_FEATURES_LEVEL >= 2)){
+	            print_text_megamenu_entry($menuval['titre'], $menuval['enabled'], (($menuval['url'] != '#' && !preg_match('/^(http:\/\/|https:\/\/)/i', $menuval['url'])) ? DOL_URL_ROOT:'').$menuval['url'], $menuval['id'], $menuval['idsel'], $menuval['classname'], ($menuval['target'] ? $menuval['target'] : $atarget));
             	print_eldy_megasubmenu($db, $tabMenu, $menuval['idsel'], 5);
+			}else
+				print_text_menu_entry($menuval['titre'], $menuval['enabled'], (($menuval['url'] != '#' && !preg_match('/^(http:\/\/|https:\/\/)/i', $menuval['url'])) ? DOL_URL_ROOT:'').$menuval['url'], $menuval['id'], $menuval['idsel'], $menuval['classname'], ($menuval['target'] ? $menuval['target'] : $atarget));				
             print_end_menu_entry($menuval['enabled']);
         }
     }
@@ -692,6 +694,40 @@ function print_text_menu_entry($text, $showmode, $url, $id, $idsel, $classname, 
 	}
 }
 
+/**
+ * Output megamenu entry
+ *
+ * @param	string	$text		Text
+ * @param	int		$showmode	0 = hide, 1 = allowed or 2 = not allowed
+ * @param	string	$url		Url
+ * @param	string	$id			Id
+ * @param	string	$idsel		Id sel
+ * @param	string	$classname	Class name
+ * @param	string	$atarget	Target
+ * @return	void
+ */
+function print_text_megamenu_entry($text, $showmode, $url, $id, $idsel, $classname, $atarget)
+{
+	global $langs;
+
+	if ($showmode == 1) {
+		print '<a class="tmenuimage" tabindex="-1" href="'.$url.'"'.($atarget ? ' target="'.$atarget.'"' : '').' title="'./*dol_escape_htmltag($text).*/'">';
+		print '<div class="'.$id.' '.$idsel.' topmenuimage"><span class="'.$id.' tmenuimage" id="mainmenuspan_'.$idsel.'"></span></div>';
+		print '</a>';
+		print '<a '.$classname.' id="mainmenua_'.$idsel.'" href="'.$url.'"'.($atarget ? ' target="'.$atarget.'"' : '').' title="'./*dol_escape_htmltag($text).*/'">';
+		print '<span class="mainmenuaspan">';
+		print $text;
+		print '</span>';
+		print '</a>';
+	} elseif ($showmode == 2) {
+		print '<div class="'.$id.' '.$idsel.' topmenuimage tmenudisabled"><span class="'.$id.'" id="mainmenuspan_'.$idsel.'"></span></div>';
+		print '<a class="tmenudisabled" id="mainmenua_'.$idsel.'" href="#" title="'.dol_escape_htmltag($langs->trans("NotAllowed")).'">';
+		print '<span class="mainmenuaspan">';
+		print $text;
+		print '</span>';
+		print '</a>';
+	}
+}
 /**
  * Output end menu entry
  *
