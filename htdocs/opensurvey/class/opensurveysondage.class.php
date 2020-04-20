@@ -47,8 +47,12 @@ class Opensurveysondage extends CommonObject
     /**
      * @var string String with name of icon for myobject. Must be the part after the 'object_' into object_myobject.png
      */
-    public $picto = 'opensurvey';
+    public $picto = 'poll';
 
+
+    /**
+     * @var string	ID survey
+     */
     public $id_sondage;
     /**
      * @deprecated
@@ -462,7 +466,7 @@ class Opensurveysondage extends CommonObject
         $linkend = '</a>';
 
         $result .= $linkstart;
-        if ($withpicto) $result .= img_object(($notooltip ? '' : $label), ($this->picto ? $this->picto : 'generic'), ($notooltip ? (($withpicto != 2) ? 'class="paddingright"' : '') : 'class="'.(($withpicto != 2) ? 'paddingright ' : '').'classfortooltip"'), 0, 0, $notooltip ? 0 : 1);
+        if ($withpicto) $result .= img_object(($notooltip ? '' : $label), $this->picto, ($notooltip ? (($withpicto != 2) ? 'class="paddingright"' : '') : 'class="'.(($withpicto != 2) ? 'paddingright ' : '').'classfortooltip"'), 0, 0, $notooltip ? 0 : 1);
         if ($withpicto != 2) $result .= $this->ref;
         $result .= $linkend;
 

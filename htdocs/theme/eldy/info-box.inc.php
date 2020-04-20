@@ -77,7 +77,7 @@ if (!defined('ISLOADEDBYSTEELSHEET')) die('Must be call by steelsheet'); ?>
 	max-width: 100%;
 }
 .info-box-module .info-box-icon > img {
-    max-width: 55%;
+    max-width: 60%;
 }
 
 .info-box-icon-text{
