@@ -7124,7 +7124,14 @@ abstract class CommonObject
 						if($action=='create') $value = $extrafields->attributes[$this->table_element]['default'][$key];
 						else $value = $this->array_options['options_'.$key];
 					}
-					
+
+					// select fields use default value
+					if (in_array($extrafields->attributes[$this->table_element]['type'][$key], array('select')))
+					{
+						if($action=='create') $value = $extrafields->attributes[$this->table_element]['default'][$key];
+						else $value = $this->array_options['options_'.$key];
+					}
+
 					$labeltoshow = $langs->trans($label);
 					$helptoshow = $langs->trans($extrafields->attributes[$this->table_element]['help'][$key]);
 
