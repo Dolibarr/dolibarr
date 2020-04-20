@@ -6,6 +6,7 @@
  * Copyright (C) 2013		Florian Henry			<florian.henry@open-concept.pro>
  * Copyright (C) 2015		Alexandre Spangaro		<aspangaro@open-dsi.fr>
  * Copyright (C) 2019		Thibault Foucart		<support@ptibogxiv.net>
+ * Copyright (C) 2020		Josep Lluís Amador		<joseplluis@lliuretic.cat>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -376,13 +377,8 @@ if ($action == 'create')
 	print '</td></tr>';
 
 	// Other attributes
-	$parameters = array();
-	$reshook = $hookmanager->executeHooks('formObjectOptions', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
-    print $hookmanager->resPrint;
-	if (empty($reshook))
-	{
-		print $object->showOptionals($extrafields, 'edit', $parameters);
-	}
+	include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_add.tpl.php';
+
 	print '<tbody>';
 	print "</table>\n";
 
@@ -822,15 +818,6 @@ if ($rowid > 0)
 
 		// Other attributes
 		include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_edit.tpl.php';
-
-		// Other attributes
-		$parameters = array();
-		$reshook = $hookmanager->executeHooks('formObjectOptions', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
-        	print $hookmanager->resPrint;
-		if (empty($reshook))
-		{
-		    print $object->showOptionals($extrafields, 'edit', $parameters);
-		}
 
 		print '</table>';
 
