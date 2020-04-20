@@ -4357,16 +4357,13 @@ elseif ($id > 0 || !empty($ref))
 
 
 
-	if(!empty($object->retained_warranty) || !empty($conf->global->INVOICE_USE_RETAINED_WARRANTY)) {
-
+	if (!empty($object->retained_warranty) || !empty($conf->global->INVOICE_USE_RETAINED_WARRANTY)) {
         $displayWarranty = true;
-		if(!in_array($object->type, $retainedWarrantyInvoiceAvailableType) && empty($object->retained_warranty)){
+		if (!in_array($object->type, $retainedWarrantyInvoiceAvailableType) && empty($object->retained_warranty)) {
 			$displayWarranty = false;
 		}
 
-		if($displayWarranty)
-		{
-
+		if($displayWarranty) {
 			// Retained Warranty
 			print '<tr class="retained-warranty-lines"  ><td>';
 			print '<table id="retained-warranty-table" class="nobordernopadding" width="100%"><tr><td>';
