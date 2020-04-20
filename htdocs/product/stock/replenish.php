@@ -490,7 +490,7 @@ print load_fiche_titre($langs->trans('Replenishment'), '', 'stock');
 
 dol_fiche_head($head, 'replenish', '', -1, '');
 
-print $langs->trans("ReplenishmentStatusDesc").'<br>'."\n";
+print '<span class="opacitymedium">'.$langs->trans("ReplenishmentStatusDesc").'</span><br>'."\n";
 if ($usevirtualstock == 1)
 {
 	print $langs->trans("CurentSelectionMode").': ';
@@ -648,7 +648,7 @@ while ($i < ($limit ? min($num, $limit) : $num))
 	if (!empty($conf->global->STOCK_SUPPORTS_SERVICES) || $objp->fk_product_type == 0)
 	{
 		$prod->fetch($objp->rowid);
-		$prod->load_stock('warehouseopen, warehouseinternal');
+		$prod->load_stock('warehouseopen, warehouseinternal', $draftchecked);
 
 		// Multilangs
 		if (!empty($conf->global->MAIN_MULTILANGS))

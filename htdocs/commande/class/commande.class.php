@@ -3540,7 +3540,7 @@ class Commande extends CommonOrder
 			$response->warning_delay = $conf->commande->client->warning_delay / 60 / 60 / 24;
 			$response->label = $langs->trans("OrdersToProcess");
 			$response->labelShort = $langs->trans("Opened");
-			$response->url = DOL_URL_ROOT.'/commande/list.php?viewstatut=-3&mainmenu=commercial&leftmenu=orders';
+			$response->url = DOL_URL_ROOT.'/commande/list.php?search_status=-3&mainmenu=commercial&leftmenu=orders';
 			$response->img = img_object('', "order");
 
 			$generic_commande = new Commande($this->db);
@@ -3697,7 +3697,7 @@ class Commande extends CommonOrder
 		$label = '';
 
 		if ($user->rights->commande->lire) {
-			$label = '<u>'.$langs->trans("ShowOrder").'</u>';
+			$label = '<u>'.$langs->trans("Order").'</u>';
 			$label .= '<br><b>'.$langs->trans('Ref').':</b> '.$this->ref;
 			$label .= '<br><b>'.$langs->trans('RefCustomer').':</b> '.($this->ref_customer ? $this->ref_customer : $this->ref_client);
 			if (!empty($this->total_ht)) {
@@ -3709,6 +3709,9 @@ class Commande extends CommonOrder
 			if (!empty($this->total_ttc)) {
 				$label .= '<br><b>'.$langs->trans('AmountTTC').':</b> '.price($this->total_ttc, 0, $langs, 0, -1, -1, $conf->currency);
 			}
+			if (isset($this->statut)) {
+				$label .= '<br><b>'.$langs->trans("Status").":</b> ".$this->getLibStatut(5);
+			}
 		}
 
 		$linkclose = '';
@@ -3716,7 +3719,7 @@ class Commande extends CommonOrder
 		{
 			if (!empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER))
 			{
-				$label = $langs->trans("ShowOrder");
+				$label = $langs->trans("Order");
 				$linkclose .= ' alt="'.dol_escape_htmltag($label, 1).'"';
 			}
 			$linkclose .= ' title="'.dol_escape_htmltag($label, 1).'"';

@@ -327,6 +327,8 @@ if ($cancel)
 
 $savbacktopage = $backtopage;
 $backtopage = $_SERVER["PHP_SELF"].'?file_manager=1&website='.$websitekey.'&pageid='.$pageid.(GETPOST('section_dir', 'alpha') ? '&section_dir='.urlencode(GETPOST('section_dir', 'alpha')) : ''); // used after a confirm_deletefile into actions_linkedfiles.inc.php
+if ($sortfield) $backtopage.='&sortfield='.$sortfield;
+if ($sortorder) $backtopage.='&sortorder='.$sortorder;
 include DOL_DOCUMENT_ROOT.'/core/actions_linkedfiles.inc.php';
 $backtopage = $savbacktopage;
 
@@ -2131,7 +2133,7 @@ print '<div>';
 
 // Add a margin under toolbar ?
 $style = '';
-if ($action != 'preview' && $action != 'editcontent' && $action != 'editsource') $style = ' margin-bottom: 5px;';
+if ($action != 'preview' && $action != 'editcontent' && $action != 'editsource' && ! GETPOST('createpagefromclone', 'alphanohtml')) $style = ' margin-bottom: 5px;';
 
 
 if (!GETPOST('hide_websitemenu'))
@@ -2433,10 +2435,20 @@ if (!GETPOST('hide_websitemenu'))
 				if ($action == 'createpagefromclone') {
 					// Create an array for form
 					$preselectedlanguage = GETPOST('newlang', 'aZ09') ? GETPOST('newlang', 'aZ09') : ($objectpage->lang ? $objectpage->lang : $langs->defaultlang);
+					$onlylang = array();
+					if ($website->otherlang) {
+						foreach(explode(',', $website->otherlang) as $langkey) {
+							$onlylang[$langkey] = $langkey;
+						}
+						$textifempty = 1;
+					} else {
+						$onlylang['none'] = '';
+					}
+					$textifempty = 1;
 					$formquestion = array(
 						array('type' => 'hidden', 'name' => 'sourcepageurl', 'value'=> $objectpage->pageurl),
 						array('type' => 'checkbox', 'tdclass'=>'maxwidth200', 'name' => 'is_a_translation', 'label' => $langs->trans("PageIsANewTranslation"), 'value' => 0),
-						array('type' => 'other', 'name' => 'newlang', 'label' => $langs->trans("Language"), 'value' => $formadmin->select_language($preselectedlanguage, 'newlang', 0, null, 1, 0, 0, 'minwidth200', 0, 1)),
+						array('type' => 'other', 'name' => 'newlang', 'label' => $form->textwithpicto($langs->trans("Language"), $langs->trans("DefineListOfAltLanguagesInWebsiteProperties")), 'value' => $formadmin->select_language($preselectedlanguage, 'newlang', 0, null, $textifempty, 0, 0, 'minwidth200', 0, 1, 0, $onlylang, 1)),
 						array('type' => 'other', 'name' => 'newwebsite', 'label' => $langs->trans("WebSite"), 'value' => $formwebsite->selectWebsite($object->id, 'newwebsite', 0)),
 						array('type' => 'text', 'tdclass'=>'maxwidth200 fieldrequired', 'name' => 'newtitle', 'label'=> $langs->trans("WEBSITE_TITLE"), 'value'=> $langs->trans("CopyOf").' '.$objectpage->title),
 						array('type' => 'text', 'tdclass'=>'maxwidth200', 'name' => 'newpageurl', 'label'=> $langs->trans("WEBSITE_PAGENAME"), 'value'=> ''),
@@ -3316,6 +3328,8 @@ if ($action == 'editmeta' || $action == 'createcontainer')
 	{
 	    $fuser->fetch($pageauthorid);
 	    print $fuser->getNomUrl(1);
+	} else {
+		print '<span class="opacitymedium">'.$langs->trans("Unknown").'</span>';
 	}
 	print '</td></tr>';
 

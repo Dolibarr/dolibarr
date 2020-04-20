@@ -47,7 +47,7 @@ $shipment = new Expedition($db);
 $helpurl = 'EN:Module_Shipments|FR:Module_Exp&eacute;ditions|ES:M&oacute;dulo_Expediciones';
 llxHeader('', $langs->trans("Shipment"), $helpurl);
 
-print load_fiche_titre($langs->trans("SendingsArea"));
+print load_fiche_titre($langs->trans("SendingsArea"), '', 'dolly');
 
 
 print '<div class="fichecenter"><div class="fichethirdleft">';

@@ -536,6 +536,9 @@ textarea.centpercent {
     color: #777;
 }
 
+.flip {
+	transform: scaleX(-1);
+}
 .center {
     text-align: center;
     margin: 0px auto;
@@ -798,8 +801,14 @@ select.flat.selectlimit {
 .margintoponly {
 	margin-top: 10px !important;
 }
+.margintoponlyshort {
+	margin-top: 3px !important;
+}
 .marginbottomonly {
 	margin-bottom: 10px !important;
+}
+.marginbottomonlyshort {
+	margin-bottom: 3px !important;
 }
 .nomargintop {
     margin-top: 0 !important;
@@ -1689,8 +1698,8 @@ div.statusrefbis {
 }
 img.photoref, div.photoref {
 	/* border: 1px solid #DDD; */
-    -webkit-box-shadow: 1px 1px 4px rgba(0, 0, 0, 0.2), 0px 0px 2px rgba(0, 0, 0, 0.1);
-    box-shadow: 1px 1px 4px rgba(0, 0, 0, 0.2), 0px 0px 2px rgba(0, 0, 0, 0.1);
+    -webkit-box-shadow: 1px 1px 5px rgba(0, 0, 0, 0.2);
+    box-shadow: 1px 1px 5px rgba(0, 0, 0, 0.2);
     padding: 4px;
 	height: 80px;
 	width: 80px;

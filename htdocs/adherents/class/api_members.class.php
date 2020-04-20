@@ -86,13 +86,14 @@ class Members extends DolibarrApi
      * @param int       $limit      Limit for list
      * @param int       $page       Page number
      * @param string    $typeid     ID of the type of member
+	 * @param  int    $category   Use this param to filter list by category
      * @param string    $sqlfilters Other criteria to filter answers separated by a comma.
      *                              Example: "(t.ref:like:'SO-%') and ((t.date_creation:<:'20160101') or (t.nature:is:NULL))"
      * @return array                Array of member objects
      *
      * @throws RestException
      */
-    public function index($sortfield = "t.rowid", $sortorder = 'ASC', $limit = 100, $page = 0, $typeid = '', $sqlfilters = '')
+    public function index($sortfield = "t.rowid", $sortorder = 'ASC', $limit = 100, $page = 0, $typeid = '', $category = 0, $sqlfilters = '')
     {
         global $db, $conf;
 
@@ -104,11 +105,19 @@ class Members extends DolibarrApi
 
         $sql = "SELECT t.rowid";
         $sql .= " FROM ".MAIN_DB_PREFIX."adherent as t";
+    	if ($category > 0) {
+			$sql .= ", ".MAIN_DB_PREFIX."categorie_member as c";
+    	}
         $sql .= ' WHERE t.entity IN ('.getEntity('adherent').')';
         if (!empty($typeid))
         {
             $sql .= ' AND t.fk_adherent_type='.$typeid;
         }
+    	// Select members of given category
+    	if ($category > 0) {
+			$sql .= " AND c.fk_categorie = ".$db->escape($category);
+			$sql .= " AND c.fk_member = t.rowid ";
+    	}
         // Add sql filters
         if ($sqlfilters)
         {

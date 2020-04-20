@@ -39,19 +39,18 @@ if ($user->socid) $socid = $user->socid;
 $result = restrictedArea($user, 'prelevement', '', '', 'bons');
 
 // Get supervariables
-$page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOST("page", 'int');
+$limit = GETPOST('limit', 'int') ? GETPOST('limit', 'int') : $conf->liste_limit;
 $sortorder = GETPOST('sortorder', 'alpha');
 $sortfield = GETPOST('sortfield', 'alpha');
-
+$page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOST("page", 'int');
+$offset = $limit * $page;
+$pageprev = $page - 1;
+$pagenext = $page + 1;
 /*
  * View
  */
 
 llxHeader('', $langs->trans("WithdrawsRefused"));
-
-$offset = $conf->liste_limit * $page;
-$pageprev = $page - 1;
-$pagenext = $page + 1;
 
 if ($sortorder == "") $sortorder = "DESC";
 if ($sortfield == "") $sortfield = "p.datec";

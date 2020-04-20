@@ -96,7 +96,7 @@ class DolEditor
             $this->cols					= (preg_match('/%/', $cols) ? $cols : max(40, $cols)); // If $cols is a percent, we keep it, otherwise, we take max
             $this->height = $height;
             $this->width				= $width;
-    	}
+        }
     }
 
     // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps

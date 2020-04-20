@@ -376,7 +376,7 @@ class pdf_sponge extends ModelePDFFactures
 	            if (!empty($conf->global->MAIN_DISABLE_PDF_COMPRESSION)) $pdf->SetCompression(false);
 
 	            // Set certificate
-	            $cert=empty($user->conf->CERTIFICATE_CRT) ? '' : $user->conf->CERTIFICATE_CRT;
+	            $cert = empty($user->conf->CERTIFICATE_CRT) ? '' : $user->conf->CERTIFICATE_CRT;
 	            // If use has no certificate, we try to take the company one
 	            if (!$cert) {
 	            	$cert = empty($conf->global->CERTIFICATE_CRT) ? '' : $conf->global->CERTIFICATE_CRT;
@@ -391,7 +391,7 @@ class pdf_sponge extends ModelePDFFactures
 	            	);
 	            	$pdf->setSignature($cert, $cert, $this->emetteur->name, '', 2, $info);
 	            }
-	            
+
 	            $pdf->SetMargins($this->marge_gauche, $this->marge_haute, $this->marge_droite); // Left, Top, Right
 
 	            // Does we have at least one line with discount $this->atleastonediscount
@@ -776,9 +776,9 @@ class pdf_sponge extends ModelePDFFactures
 	                $parameters = array(
 	                    'object' => $object,
 	                    'i' => $i,
-	                    'pdf' => &$pdf,
-	                    'curY' => &$curY,
-	                    'nexY' => &$nexY,
+	                    'pdf' =>& $pdf,
+	                    'curY' =>& $curY,
+	                    'nexY' =>& $nexY,
 	                    'outputlangs' => $outputlangs,
 	                    'hidedetails' => $hidedetails
 	                );
@@ -1306,8 +1306,8 @@ class pdf_sponge extends ModelePDFFactures
 		$i = 0;
 		foreach ($object->lines as $line)
 		{
-	        $percent += $line->situation_percent;
-	        $i++;
+			$percent += $line->situation_percent;
+			$i++;
 		}
 
 		if (!empty($i)) {
@@ -1685,66 +1685,35 @@ class pdf_sponge extends ModelePDFFactures
 				$pdf->MultiCell($largcol2, $tab2_hl, price($sign * $total_ttc, 0, $outputlangs), $useborder, 'R', 1);
 
 
-				/*if($object->type == Facture::TYPE_SITUATION)
-				{
-				    // reste à payer total
-				    $index++;
-
-				    $pdf->SetFont('','', $default_font_size - 1);
-				    $pdf->SetFillColor(255,255,255);
-				    $pdf->SetXY($col1x, $tab2_top + $tab2_hl * $index);
-				    $pdf->MultiCell($col2x-$col1x, $tab2_hl, $outputlangs->transnoentities('SituationTotalRayToRest'), 0, 'L', 1);
-				    $pdf->SetXY($col2x, $tab2_top + $tab2_hl * $index);
-				    $pdf->MultiCell($largcol2, $tab2_hl, price($total_a_payer_ttc-$deja_regle, 0, $outputlangs), 0, 'R', 1);
-				}*/
 
 
 				// Retained warranty
-				if (!empty($object->situation_final) && ($object->type == Facture::TYPE_SITUATION && (!empty($object->retained_warranty))))
+				if ($object->displayRetainedWarranty())
 				{
-				    $displayWarranty = false;
+					$pdf->SetTextColor(40, 40, 40);
+					$pdf->SetFillColor(255, 255, 255);
 
-				    // Check if this situation invoice is 100% for real
-				    if (!empty($object->situation_final)) {
-				        $displayWarranty = true;
-				    }
-				    elseif (!empty($object->lines) && $object->status == Facture::STATUS_DRAFT) {
-				        // $object->situation_final need validation to be done so this test is need for draft
-				        $displayWarranty = true;
-				        foreach ($object->lines as $i => $line) {
-				            if ($line->product_type < 2 && $line->situation_percent < 100) {
-				                $displayWarranty = false;
-				                break;
-							}
-						}
-					}
+					$retainedWarranty = $object->getRetainedWarrantyAmount();
+					$billedWithRetainedWarranty = $object->total_ttc - $retainedWarranty;
 
-				    if ($displayWarranty) {
-				        $pdf->SetTextColor(40, 40, 40);
-				        $pdf->SetFillColor(255, 255, 255);
+					// Billed - retained warranty
+					$index++;
+					$pdf->SetXY($col1x, $tab2_top + $tab2_hl * $index);
+					$pdf->MultiCell($col2x - $col1x, $tab2_hl, $outputlangs->transnoentities("ToPayOn", dol_print_date($object->date_lim_reglement, 'day')), $useborder, 'L', 1);
 
-				        $retainedWarranty = $total_a_payer_ttc * $object->retained_warranty / 100;
-				        $billedWithRetainedWarranty = $object->total_ttc - $retainedWarranty;
+					$pdf->SetXY($col2x, $tab2_top + $tab2_hl * $index);
+					$pdf->MultiCell($largcol2, $tab2_hl, price($billedWithRetainedWarranty), $useborder, 'R', 1);
 
-				        // Billed - retained warranty
-				        $index++;
-				        $pdf->SetXY($col1x, $tab2_top + $tab2_hl * $index);
-				        $pdf->MultiCell($col2x - $col1x, $tab2_hl, $outputlangs->transnoentities("PDFEVOLToPayOn", dol_print_date($object->date_lim_reglement, 'day')), $useborder, 'L', 1);
+					// retained warranty
+					$index++;
+					$pdf->SetXY($col1x, $tab2_top + $tab2_hl * $index);
 
-				        $pdf->SetXY($col2x, $tab2_top + $tab2_hl * $index);
-				        $pdf->MultiCell($largcol2, $tab2_hl, price($billedWithRetainedWarranty), $useborder, 'R', 1);
+					$retainedWarrantyToPayOn = $outputlangs->transnoentities("RetainedWarranty").' ('.$object->retained_warranty.'%)';
+					$retainedWarrantyToPayOn .= !empty($object->retained_warranty_date_limit) ? ' '.$outputlangs->transnoentities("toPayOn", dol_print_date($object->retained_warranty_date_limit, 'day')) : '';
 
-				        // retained warranty
-				        $index++;
-				        $pdf->SetXY($col1x, $tab2_top + $tab2_hl * $index);
-
-				        $retainedWarrantyToPayOn = $outputlangs->transnoentities("PDFEVOLRetainedWarranty").' ('.$object->retained_warranty.'%)';
-				        $retainedWarrantyToPayOn .= !empty($object->retained_warranty_date_limit) ? ' '.$outputlangs->transnoentities("PDFEVOLtoPayOn", dol_print_date($object->retained_warranty_date_limit, 'day')) : '';
-
-				        $pdf->MultiCell($col2x - $col1x, $tab2_hl, $retainedWarrantyToPayOn, $useborder, 'L', 1);
-				        $pdf->SetXY($col2x, $tab2_top + $tab2_hl * $index);
-				        $pdf->MultiCell($largcol2, $tab2_hl, price($retainedWarranty), $useborder, 'R', 1);
-				    }
+					$pdf->MultiCell($col2x - $col1x, $tab2_hl, $retainedWarrantyToPayOn, $useborder, 'L', 1);
+					$pdf->SetXY($col2x, $tab2_top + $tab2_hl * $index);
+					$pdf->MultiCell($largcol2, $tab2_hl, price($retainedWarranty), $useborder, 'R', 1);
 				}
 			}
 		}

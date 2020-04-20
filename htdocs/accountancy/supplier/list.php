@@ -462,7 +462,7 @@ if ($result) {
 			}
 		} elseif ($objp->type_l == 0) {
 			if ($objp->country_code == $mysoc->country_code || empty($objp->country_code)) {  // If buyer in same country than seller (if not defined, we assume it is same country)
-				$objp->code_buy_l = (!empty($conf->global->ACCOUNTING_PRODUCT_SOLD_ACCOUNT) ? $conf->global->ACCOUNTING_PRODUCT_SOLD_ACCOUNT : '');
+				$objp->code_buy_l = (!empty($conf->global->ACCOUNTING_PRODUCT_BUY_ACCOUNT) ? $conf->global->ACCOUNTING_PRODUCT_BUY_ACCOUNT : '');
 				$suggestedaccountingaccountbydefaultfor = '';
 			} else {
 				if ($isSellerInEEC && $isBuyerInEEC) {          // European intravat sale

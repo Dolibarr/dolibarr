@@ -239,6 +239,8 @@ if (!$rowid && $action != 'create' && $action != 'edit')
 		$i = 0;
 
 		$param = '';
+		if (!empty($contextpage) && $contextpage != $_SERVER["PHP_SELF"]) $param .= '&contextpage='.$contextpage;
+		if ($limit > 0 && $limit != $conf->liste_limit) $param .= '&limit='.$limit;
 
 		$newcardbutton = '';
 		if ($user->rights->adherent->configurer)
@@ -252,10 +254,9 @@ if (!$rowid && $action != 'create' && $action != 'edit')
 		print '<input type="hidden" name="formfilteraction" id="formfilteraction" value="list">';
 		print '<input type="hidden" name="action" value="list">';
 		print '<input type="hidden" name="sortfield" value="'.$sortfield.'">';
-		print '<input type="hidden" name="page" value="'.$page.'">';
 		print '<input type="hidden" name="sortorder" value="'.$sortorder.'">';
 
-		print_barre_liste($langs->trans("MembersTypes"), $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, '', $num, $nbtotalofrecords, 'members', 0, $newcardbutton, '', $limit);
+		print_barre_liste($langs->trans("MembersTypes"), $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, '', $num, $nbtotalofrecords, 'members', 0, $newcardbutton, '', $limit, 0, 0, 1);
 
 		$moreforfilter = '';
 
