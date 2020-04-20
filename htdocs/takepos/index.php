@@ -763,8 +763,10 @@ if (empty($conf->global->TAKEPOS_HIDE_HEAD_BAR)) {
 			echo '<span class="hideonsmartphone"> - '.dol_print_date(dol_now(), "day").'</span>';
 			?>
 			</a></div>
+			<!-- section for customer and open sales -->
 			<div class="inline-block valignmiddle" id="customerandsales">
 			</div>
+			<!-- More info about customer -->
 			<div class="inline-block valignmiddle" id="moreinfo"></div>
 			<div class="inline-block valignmiddle" id="infowarehouse"></div>
 			</div>

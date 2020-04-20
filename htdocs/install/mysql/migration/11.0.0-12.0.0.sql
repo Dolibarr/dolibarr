@@ -45,6 +45,11 @@ UPDATE llx_accounting_system SET fk_country = NULL, active = 0 WHERE pcg_version
 
 
 -- For v12
+
+-- Delete an old index that is duplicated
+-- VMYSQL4.1 DROP INDEX ix_fk_product_stock on llx_product_batch;
+-- VPGSQL8.2 DROP INDEX ix_fk_product_stock
+
 DELETE FROM llx_menu where module='supplier_proposal';
 
 UPDATE llx_website SET lang = 'en' WHERE lang like 'en_%';
@@ -200,6 +205,8 @@ DELETE FROM llx_const WHERE name = __ENCRYPT('DONATION_ART885')__;
 ALTER TABLE llx_extrafields MODIFY COLUMN printable integer DEFAULT 0;
 ALTER TABLE llx_extrafields ADD COLUMN printable integer DEFAULT 0;
 
+UPDATE llx_const SET name = 'INVOICE_USE_RETAINED_WARRANTY' WHERE name = 'INVOICE_USE_SITUATION_RETAINED_WARRANTY';
+
 ALTER TABLE llx_accounting_account DROP COLUMN pcg_subtype;
 
 ALTER TABLE llx_product ADD COLUMN accountancy_code_buy_intra varchar(32) AFTER accountancy_code_buy;
@@ -241,3 +248,5 @@ ALTER TABLE llx_categorie ADD COLUMN date_creation	datetime;
 ALTER TABLE llx_categorie ADD COLUMN tms     		timestamp;
 ALTER TABLE llx_categorie ADD COLUMN fk_user_creat	integer;
 ALTER TABLE llx_categorie ADD COLUMN fk_user_modif	integer;
+
+ALTER TABLE llx_commandedet ADD CONSTRAINT fk_commandedet_fk_commandefourndet FOREIGN KEY (fk_commandefourndet) REFERENCES llx_commande_fournisseurdet (rowid);

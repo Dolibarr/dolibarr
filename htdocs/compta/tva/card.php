@@ -209,7 +209,7 @@ if ($id)
 	}
 }
 
-// Formulaire saisie tva
+// Form to enter VAT
 if ($action == 'create')
 {
 	print load_fiche_titre($langs->trans("VAT").' - '.$langs->trans("New"));
@@ -262,7 +262,7 @@ if ($action == 'create')
     print '</td></tr>';
 
     print '<tr><td class="fieldrequired">'.$form->textwithpicto($langs->trans("PeriodEndDate"), $langs->trans("LastDayTaxIsRelatedTo")).'</td><td>';
-    print $form->selectDate($datev, "datev", '', '', '', 'add', 1, 1);
+    print $form->selectDate((GETPOST("datevmonth", 'int') ? $datev : -1), "datev", '', '', '', 'add', 1, 1);
     print '</td></tr>';
 
 	// Label

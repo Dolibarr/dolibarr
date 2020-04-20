@@ -202,7 +202,7 @@ foreach ($arrayfields as $tmpkey => $tmpval)
 }
 
 $sql = "SELECT";
-$sql .= " f.ref, f.rowid, f.fk_statut, f.description, f.datec as date_creation, f.tms as date_update, f.note_private,";
+$sql .= " f.ref, f.rowid, f.fk_statut as status, f.description, f.datec as date_creation, f.tms as date_update, f.note_private,";
 if (empty($conf->global->FICHINTER_DISABLE_DETAILS) && $atleastonefieldinlines) $sql .= "fd.rowid as lineid, fd.description as descriptiondetail, fd.date as dp, fd.duree,";
 $sql .= " s.nom as name, s.rowid as socid, s.client, s.fournisseur, s.email, s.status as thirdpartystatus";
 if (!empty($conf->projet->enabled)) {
@@ -249,7 +249,7 @@ if ($search_desc) {
 	else $sql .= natural_search(array('f.description'), $search_desc);
 }
 if ($search_status != '' && $search_status >= 0) {
-	$sql .= ' AND f.fk_statut = '.$search_status;
+	$sql .= ' AND f.fk_statut = '.urlencode($search_status);
 }
 if (!$user->rights->societe->client->voir && empty($socid))
 	$sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".$user->id;
@@ -476,7 +476,8 @@ if ($resql)
 
 		$objectstatic->id = $obj->rowid;
 		$objectstatic->ref = $obj->ref;
-		$objectstatic->statut = $obj->fk_statut;
+		$objectstatic->statut = $obj->status;
+		$objectstatic->status = $obj->status;
 
 		$companystatic->name = $obj->name;
 		$companystatic->id = $obj->socid;
@@ -587,7 +588,7 @@ if ($resql)
 		// Status
 		if (!empty($arrayfields['f.fk_statut']['checked']))
 		{
-			print '<td class="right">'.$objectstatic->LibStatut($obj->fk_statut, 5).'</td>';
+			print '<td class="right">'.$objectstatic->getLibStatut(5).'</td>';
 			if (!$i) $totalarray['nbfield']++;
 		}
 		// Fields of detail of line

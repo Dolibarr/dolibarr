@@ -113,7 +113,7 @@ $permissionnote = $usercancreate; // Used by the include of actions_setnotes.inc
 $permissiondellink = $usercancreate; // Used by the include of actions_dellink.inc.php
 $permissiontoadd = $usercancreate; // Used by the include of actions_addupdatedelete.inc.php and actions_lineupdown.inc.php
 
-if (!empty($conf->expedition->enabled) && $conf->global->WAREHOUSE_ASK_WAREHOUSE_DURING_ORDER = 1) {
+if (!empty($conf->expedition->enabled) && !empty($conf->global->WAREHOUSE_ASK_WAREHOUSE_DURING_ORDER)) {
 	if (empty($object->warehouse_id) && !empty($conf->global->MAIN_DEFAULT_WAREHOUSE)) $object->warehouse_id = $conf->global->MAIN_DEFAULT_WAREHOUSE;
 	if (empty($object->warehouse_id) && !empty($conf->global->MAIN_DEFAULT_WAREHOUSE_USER)) $object->warehouse_id = $user->fk_warehouse;
 }
@@ -1506,9 +1506,10 @@ if ($action == 'create' && $usercancreate)
 	if (!empty($origin) && !empty($originid)) {
 		// Parse element/subelement (ex: project_task)
 		$element = $subelement = $origin;
+		$regs = array();
 		if (preg_match('/^([^_]+)_([^_]+)/i', $origin, $regs)) {
-			$element = $regs [1];
-			$subelement = $regs [2];
+			$element = $regs[1];
+			$subelement = $regs[2];
 		}
 
 		if ($element == 'project') {

@@ -147,9 +147,9 @@ class InterfaceZapierTriggers extends DolibarrTriggers
                 break;
 
             // Groups
-            //case 'GROUP_CREATE':
-            //case 'GROUP_MODIFY':
-            //case 'GROUP_DELETE':
+            //case 'USERGROUP_CREATE':
+            //case 'USERGROUP_MODIFY':
+            //case 'USERGROUP_DELETE':
 
             // Companies
             case 'COMPANY_CREATE':

@@ -327,6 +327,8 @@ if ($cancel)
 
 $savbacktopage = $backtopage;
 $backtopage = $_SERVER["PHP_SELF"].'?file_manager=1&website='.$websitekey.'&pageid='.$pageid.(GETPOST('section_dir', 'alpha') ? '&section_dir='.urlencode(GETPOST('section_dir', 'alpha')) : ''); // used after a confirm_deletefile into actions_linkedfiles.inc.php
+if ($sortfield) $backtopage.='&sortfield='.$sortfield;
+if ($sortorder) $backtopage.='&sortorder='.$sortorder;
 include DOL_DOCUMENT_ROOT.'/core/actions_linkedfiles.inc.php';
 $backtopage = $savbacktopage;
 
@@ -3326,6 +3328,8 @@ if ($action == 'editmeta' || $action == 'createcontainer')
 	{
 	    $fuser->fetch($pageauthorid);
 	    print $fuser->getNomUrl(1);
+	} else {
+		print '<span class="opacitymedium">'.$langs->trans("Unknown").'</span>';
 	}
 	print '</td></tr>';
 

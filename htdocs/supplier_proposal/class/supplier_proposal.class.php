@@ -70,7 +70,7 @@ class SupplierProposal extends CommonObject
     /**
      * @var string String with name of icon for myobject. Must be the part after the 'object_' into object_myobject.png
      */
-    public $picto = 'propal';
+    public $picto = 'supplier_proposal';
 
     /**
      * 0=No test on entity, 1=Test with field entity, 2=Test with link by societe
@@ -2225,7 +2225,7 @@ class SupplierProposal extends CommonObject
      */
     public function getLibStatut($mode = 0)
     {
-        return $this->LibStatut($this->statut, $mode);
+        return $this->LibStatut((isset($this->statut) ? $this->statut : $this->status), $mode);
     }
 
     // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
@@ -2555,17 +2555,16 @@ class SupplierProposal extends CommonObject
         $url = '';
         $result = '';
 
-        $label = '<u>'.$langs->trans("ShowSupplierProposal").'</u>';
-        if (!empty($this->ref))
-        $label .= '<br><b>'.$langs->trans('Ref').':</b> '.$this->ref;
-        if (!empty($this->ref_fourn))
-            $label .= '<br><b>'.$langs->trans('RefSupplier').':</b> '.$this->ref_fourn;
-        if (!empty($this->total_ht))
-            $label .= '<br><b>'.$langs->trans('AmountHT').':</b> '.price($this->total_ht, 0, $langs, 0, -1, -1, $conf->currency);
-        if (!empty($this->total_tva))
-            $label .= '<br><b>'.$langs->trans('VAT').':</b> '.price($this->total_tva, 0, $langs, 0, -1, -1, $conf->currency);
-        if (!empty($this->total_ttc))
-            $label .= '<br><b>'.$langs->trans('AmountTTC').':</b> '.price($this->total_ttc, 0, $langs, 0, -1, -1, $conf->currency);
+        $label = '<u>'.$langs->trans("SupplierProposal").'</u>';
+        if (!empty($this->ref)) $label .= '<br><b>'.$langs->trans('Ref').':</b> '.$this->ref;
+        if (!empty($this->ref_fourn)) $label .= '<br><b>'.$langs->trans('RefSupplier').':</b> '.$this->ref_fourn;
+        if (!empty($this->total_ht)) $label .= '<br><b>'.$langs->trans('AmountHT').':</b> '.price($this->total_ht, 0, $langs, 0, -1, -1, $conf->currency);
+        if (!empty($this->total_tva)) $label .= '<br><b>'.$langs->trans('VAT').':</b> '.price($this->total_tva, 0, $langs, 0, -1, -1, $conf->currency);
+        if (!empty($this->total_ttc)) $label .= '<br><b>'.$langs->trans('AmountTTC').':</b> '.price($this->total_ttc, 0, $langs, 0, -1, -1, $conf->currency);
+        if (isset($this->status)) {
+           	$label .= '<br><b>'.$langs->trans("Status").":</b> ".$this->getLibStatut(5);
+        }
+
         if ($option == '') {
             $url = DOL_URL_ROOT.'/supplier_proposal/card.php?id='.$this->id.$get_params;
         }
@@ -2596,8 +2595,6 @@ class SupplierProposal extends CommonObject
         $linkstart = '<a href="'.$url.'"';
         $linkstart .= $linkclose.'>';
         $linkend = '</a>';
-
-        $picto = 'supplier_proposal';
 
         $result .= $linkstart;
         if ($withpicto) $result .= img_object(($notooltip ? '' : $label), $this->picto, ($notooltip ? (($withpicto != 2) ? 'class="paddingright"' : '') : 'class="'.(($withpicto != 2) ? 'paddingright ' : '').'classfortooltip"'), 0, 0, $notooltip ? 0 : 1);
