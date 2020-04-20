@@ -348,7 +348,7 @@ if ($search_user > 0)                        $sql .= " AND ec.fk_c_type_contact 
 if ($search_total_ht != '')                  $sql .= natural_search('c.total_ht', $search_total_ht, 1);
 if ($search_total_vat != '')                 $sql .= natural_search('c.tva', $search_total_vat, 1);
 if ($search_total_ttc != '')                 $sql .= natural_search('c.total_ttc', $search_total_ttc, 1);
-if ($search_warehouse != '')		             $sql .= natural_search('c.fk_warehouse', $search_warehouse, 1);
+if ($search_warehouse != '' && $search_warehouse != '-1') $sql .= natural_search('c.fk_warehouse', $search_warehouse, 1);
 if ($search_multicurrency_code != '')        $sql .= ' AND c.multicurrency_code = "'.$db->escape($search_multicurrency_code).'"';
 if ($search_multicurrency_tx != '')          $sql .= natural_search('c.multicurrency_tx', $search_multicurrency_tx, 1);
 if ($search_multicurrency_montant_ht != '')  $sql .= natural_search('c.multicurrency_total_ht', $search_multicurrency_montant_ht, 1);
@@ -603,7 +603,7 @@ if ($resql)
 		$moreforfilter .= $formother->select_categories('customer', $search_categ_cus, 'search_categ_cus', 1);
 	 	$moreforfilter .= '</div>';
 	}
-	if (!empty($conf->expedition->enabled) && $conf->global->WAREHOUSE_ASK_WAREHOUSE_DURING_ORDER = 1) {
+	if (!empty($conf->expedition->enabled) && !empty($conf->global->WAREHOUSE_ASK_WAREHOUSE_DURING_ORDER)) {
 		require_once DOL_DOCUMENT_ROOT.'/product/class/html.formproduct.class.php';
 		$formproduct = new FormProduct($db);
 		$moreforfilter .= '<div class="divsearchfield">';
@@ -901,6 +901,7 @@ if ($resql)
 		$generic_commande->id = $obj->rowid;
 		$generic_commande->ref = $obj->ref;
 		$generic_commande->statut = $obj->fk_statut;
+		$generic_commande->billed = $obj->billed;
 		$generic_commande->date = $db->jdate($obj->date_commande);
 		$generic_commande->date_livraison = $db->jdate($obj->date_delivery);
 		$generic_commande->ref_client = $obj->ref_client;

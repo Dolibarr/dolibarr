@@ -784,7 +784,7 @@ class Fichinter extends CommonObject
 		$label = '<u>'.$langs->trans("ShowIntervention").'</u>';
 		$label .= '<br><b>'.$langs->trans('Ref').':</b> '.$this->ref;
 		if (isset($this->status)) {
-			$label .= '<br><b>'.$langs->trans("Status").":</b> ".$this->status.$this->getLibStatut(5);
+			$label .= '<br><b>'.$langs->trans("Status").":</b> ".$this->getLibStatut(5);
 		}
 
 		$url = DOL_URL_ROOT.'/fichinter/card.php?id='.$this->id;
