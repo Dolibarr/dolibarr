@@ -259,7 +259,7 @@ class DolEditor
 						})';
 	            $out .= '</script>'."\n";
 			}
-var_dump($this->height);
+
             $out .= '<pre id="'.$this->htmlname.'aceeditorid" style="'.($this->width ? 'width: '.$this->width.'px; ' : '');
             $out .= ($this->height ? ' height: '.$this->height.'px; ' : '');
             //$out.=" min-height: 100px;";
