@@ -729,7 +729,7 @@ class Fichinter extends CommonObject
 	 */
 	public function getLibStatut($mode = 0)
 	{
-		return $this->LibStatut($this->statut, $mode);
+		return $this->LibStatut((isset($this->statut) ? $this->statut : $this->status), $mode);
 	}
 
     // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
@@ -783,8 +783,8 @@ class Fichinter extends CommonObject
 
 		$label = '<u>'.$langs->trans("ShowIntervention").'</u>';
 		$label .= '<br><b>'.$langs->trans('Ref').':</b> '.$this->ref;
-		if (isset($this->statut)) {
-			$label .= '<br><b>'.$langs->trans("Status").":</b> ".$this->getLibStatut(5);
+		if (isset($this->status)) {
+			$label .= '<br><b>'.$langs->trans("Status").":</b> ".$this->status.$this->getLibStatut(5);
 		}
 
 		$url = DOL_URL_ROOT.'/fichinter/card.php?id='.$this->id;

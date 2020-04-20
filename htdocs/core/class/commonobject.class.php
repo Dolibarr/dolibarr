@@ -575,7 +575,7 @@ abstract class CommonObject
 	{
 		$return = '<div class="box-flex-item">';
 		$return .= '<div class="info-box info-box-sm">';
-		$return .= '<span class="info-box-icon bg-infoxbox-action">';
+		$return .= '<span class="info-box-icon bg-infobox-action">';
 		$return .= '<i class="fa fa-dol-action"></i>'; // Can be image
 		$return .= '</span>';
 		$return .= '<div class="info-box-content">';

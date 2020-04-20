@@ -724,7 +724,7 @@ if (empty($conf->global->MAIN_DISABLE_GLOBAL_WORKBOARD)) {
 
                 $openedDashBoard .= '<div class="box-flex-item">'."\n";
                 $openedDashBoard .= '	<div class="info-box '.$openedDashBoardSize.'">'."\n";
-                $openedDashBoard .= '		<span class="info-box-icon bg-infoxbox-'.$groupKeyLowerCase.'">'."\n";
+                $openedDashBoard .= '		<span class="info-box-icon bg-infobox-'.$groupKeyLowerCase.'">'."\n";
                 $openedDashBoard .= '		<i class="fa fa-dol-'.$groupKeyLowerCase.'"></i>'."\n";
 
                 // Show the span for the total of record
