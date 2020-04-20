@@ -7117,7 +7117,6 @@ abstract class CommonObject
 					{
 						$value = GETPOSTISSET($keyprefix.'options_'.$key.$keysuffix) ?price2num(GETPOST($keyprefix.'options_'.$key.$keysuffix, 'alpha', 3)) : $this->array_options['options_'.$key];
 					}
-					
 					// HTML, select, integer and text add default value
 					if (in_array($extrafields->attributes[$this->table_element]['type'][$key], array('html', 'text', 'select', 'int')))
 					{
