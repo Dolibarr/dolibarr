@@ -78,17 +78,6 @@ class InterfaceStripe
 	}
 
 	/**
-	 * Trigger version
-	 *
-	 * @return string Version of trigger file
-	 */
-	public function getVersion()
-	{
-		global $langs;
-		return DOL_VERSION;
-	}
-
-	/**
 	 * Function called when a Dolibarrr business event is done.
 	 * All functions "runTrigger" are triggered if file
 	 * is inside directory core/triggers
