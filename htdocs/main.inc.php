@@ -2394,7 +2394,6 @@ function main_area($title = '')
             print '<!-- End show mysoc info header -->'."\n";
         }
     }
-
 }
 
 
