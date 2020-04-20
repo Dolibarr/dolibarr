@@ -733,7 +733,7 @@ function DolibarrTakeposPrinting(id) {
 
 
 $( document ).ready(function() {
-	console.log("Set customer info in header");
+	console.log("Set customer info and sales in header");
 
     <?php
     $s = $langs->trans("Customer");
@@ -742,7 +742,9 @@ $( document ).ready(function() {
     }
     ?>
 
-    $("#customerandsales").html('<a class="valignmiddle" id="customer" onclick="Customer();"><?php print dol_escape_js($s); ?></a>');
+    $("#customerandsales").html('');
+
+	$("#customerandsales").append('<a class="valignmiddle tdoverflowmax100 minwidth100" id="customer" onclick="Customer();" title="<?php print dol_escape_js($s); ?>"><span class="fas fa-building paddingrightonly"></span><?php print dol_escape_js($s); ?></a>');
 
 	<?php
 	$sql = "SELECT rowid, datec, ref FROM ".MAIN_DB_PREFIX."facture";
@@ -752,12 +754,13 @@ $( document ).ready(function() {
 	if ($resql) {
 		while ($obj = $db->fetch_object($resql)) {
 			echo '$("#customerandsales").append(\'';
-			if ($placeid == $obj->rowid) echo "<b>";
 			echo '<a class="valignmiddle" onclick="place=\\\'';
 			$num_sale = str_replace(")", "", str_replace("(PROV-POS".$_SESSION["takeposterminal"]."-", "", $obj->ref));
 			echo $num_sale;
 			if (str_replace("-", "", $num_sale) > $max_sale) $max_sale = str_replace("-", "", $num_sale);
-			echo '\\\';Refresh();">'.date('H:i', strtotime($obj->datec));
+			echo '\\\';Refresh();">';
+			if ($placeid == $obj->rowid) echo "<b>";
+			echo date('H:i', strtotime($obj->datec));
 			if ($placeid == $obj->rowid) echo "</b>";
 			echo '</a>\');';
 		}
@@ -787,7 +790,7 @@ $( document ).ready(function() {
 	<?php
 	// Module Adherent
 	$s = '';
-	if (!empty($conf->adherent->enabled) && $invoice->socid != $conf->global->$constforcompanyid)
+	if (!empty($conf->adherent->enabled) && $invoice->socid > 0 && $invoice->socid != $conf->global->$constforcompanyid)
 	{
 		$s = '<span class="small">';
 		require_once DOL_DOCUMENT_ROOT.'/adherents/class/adherent.class.php';
