@@ -1072,7 +1072,7 @@ class doc_generic_project_odt extends ModelePDFProjects
 						'title' => "ListMouvementStockProject",
 						'class' => 'MouvementStock',
 						'table' => 'stock_mouvement',
-						'test' => ($conf->stock->enabled && $user->rights->stock->mouvement->lire && !empty($conf->global->STOCK_MOVEMENT_INTO_PROJECT_OVERVIEW))
+						'test' => ($conf->stock->enabled && $user->rights->stock->movement->read && !empty($conf->global->STOCK_MOVEMENT_INTO_PROJECT_OVERVIEW))
 					),
 					'agenda' => array(
 						'title' => "ListActionsAssociatedProject",

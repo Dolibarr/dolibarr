@@ -83,9 +83,9 @@ if ($id > 0 || !empty($ref)) {
 
 $error = 0;
 
-$usercanread = (($user->rights->stock->lire));
-$usercancreate = (($user->rights->stock->creer));
-$usercandelete = (($user->rights->stock->supprimer));
+$usercanread = (($user->rights->stock->read));
+$usercancreate = (($user->rights->stock->create));
+$usercandelete = (($user->rights->stock->delete));
 
 $parameters = array('id'=>$id, 'ref'=>$ref);
 $reshook = $hookmanager->executeHooks('doActions', $parameters, $object, $action); // Note that $action and $object may have been modified by some hooks
@@ -93,7 +93,7 @@ if ($reshook < 0) setEventMessages($hookmanager->error, $hookmanager->errors, 'e
 if (empty($reshook))
 {
 	// Ajout entrepot
-	if ($action == 'add' && $user->rights->stock->creer)
+	if ($action == 'add' && $user->rights->stock->create)
 	{
 		$object->ref         = GETPOST("ref");
 		$object->fk_parent   = GETPOST("fk_parent");
@@ -145,7 +145,7 @@ if (empty($reshook))
 	}
 
 	// Delete warehouse
-	if ($action == 'confirm_delete' && $confirm == 'yes' && $user->rights->stock->supprimer)
+	if ($action == 'confirm_delete' && $confirm == 'yes' && $user->rights->stock->delete)
 	{
 		$object->fetch(GETPOST('id', 'int'));
 		$result = $object->delete($user);
@@ -227,7 +227,7 @@ if (empty($reshook))
 
 	// Actions to build doc
 	$upload_dir = $conf->stock->dir_output;
-	$permissiontoadd = $user->rights->stock->creer;
+	$permissiontoadd = $user->rights->stock->create;
 	include DOL_DOCUMENT_ROOT.'/core/actions_builddoc.inc.php';
 }
 
@@ -437,7 +437,7 @@ else
 			print "</td></tr>";
 
 			// Last movement
-			if (!empty($user->rights->stock->mouvement->lire)) {
+			if (!empty($user->rights->stock->movement->read)) {
 				$sql = "SELECT max(m.datem) as datem";
 				$sql .= " FROM ".MAIN_DB_PREFIX."stock_mouvement as m";
 				$sql .= " WHERE m.fk_entrepot = '".$object->id."'";
@@ -491,12 +491,12 @@ else
 			{
 				if (empty($action))
 				{
-					if ($user->rights->stock->creer)
+					if ($user->rights->stock->create)
 						print "<a class=\"butAction\" href=\"card.php?action=edit&id=".$object->id."\">".$langs->trans("Modify")."</a>";
 					else
 						print "<a class=\"butActionRefused classfortooltip\" href=\"#\">".$langs->trans("Modify")."</a>";
 
-					if ($user->rights->stock->supprimer)
+					if ($user->rights->stock->delete)
 						print "<a class=\"butActionDelete\" href=\"card.php?action=delete&id=".$object->id."\">".$langs->trans("Delete")."</a>";
 					else
 						print "<a class=\"butActionRefused classfortooltip\" href=\"#\">".$langs->trans("Delete")."</a>";
@@ -527,10 +527,10 @@ else
             if (empty($conf->global->PRODUIT_MULTIPRICES)) {
                 print_liste_field_titre("EstimatedStockValueSellShort", "", "", "&amp;id=".$id, "", '', $sortfield, $sortorder, 'right ');
             }
-			if ($user->rights->stock->mouvement->creer) {
+			if ($user->rights->stock->movement->create) {
                 print_liste_field_titre('');
             }
-			if ($user->rights->stock->creer) {
+			if ($user->rights->stock->create) {
                 print_liste_field_titre('');
             }
 			print "</tr>\n";
@@ -625,14 +625,14 @@ else
                     }
                     $totalvaluesell += price2num($pricemin * $objp->value, 'MT');
 
-                    if ($user->rights->stock->mouvement->creer)
+                    if ($user->rights->stock->movement->create)
 					{
 						print '<td class="center"><a href="'.DOL_URL_ROOT.'/product/stock/product.php?dwid='.$object->id.'&id='.$objp->rowid.'&action=transfert&backtopage='.urlencode($_SERVER["PHP_SELF"].'?id='.$id).'">';
 						print img_picto($langs->trans("StockMovement"), 'uparrow.png', 'class="hideonsmartphone"').' '.$langs->trans("StockMovement");
 						print "</a></td>";
 					}
 
-					if ($user->rights->stock->creer)
+					if ($user->rights->stock->create)
 					{
 						print '<td class="center"><a href="'.DOL_URL_ROOT.'/product/stock/product.php?dwid='.$object->id.'&id='.$objp->rowid.'&action=correction&backtopage='.urlencode($_SERVER["PHP_SELF"].'?id='.$id).'">';
 						print $langs->trans("StockCorrection");

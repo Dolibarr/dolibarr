@@ -968,7 +968,7 @@ if ($type == Categorie::TYPE_USER)
 // List of Project
 if ($type == Categorie::TYPE_WAREHOUSE)
 {
-	$permission = $user->rights->stock->creer;
+	$permission = $user->rights->stock->create;
 
 	require_once DOL_DOCUMENT_ROOT.'/product/stock/class/entrepot.class.php';
 

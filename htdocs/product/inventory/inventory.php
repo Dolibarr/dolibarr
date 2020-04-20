@@ -78,8 +78,8 @@ include DOL_DOCUMENT_ROOT.'/core/actions_fetchobject.inc.php'; // Must be includ
 
 if (empty($conf->global->MAIN_USE_ADVANCED_PERMS))
 {
-	$permissiontoadd = $user->rights->stock->creer;
-	$permissiontodelete = $user->rights->stock->supprimer;
+	$permissiontoadd = $user->rights->stock->create;
+	$permissiontodelete = $user->rights->stock->delete;
 }
 else
 {

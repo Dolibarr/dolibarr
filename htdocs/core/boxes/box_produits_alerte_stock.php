@@ -64,7 +64,7 @@ class box_produits_alerte_stock extends ModeleBoxes
 	    $this->db = $db;
 
 	    $listofmodulesforexternal = explode(',', $conf->global->MAIN_MODULES_FOR_EXTERNAL);
-	    $tmpentry = array('enabled'=>((!empty($conf->product->enabled) || !empty($conf->service->enabled)) && !empty($conf->stock->enabled)), 'perms'=>($user->rights->stock->lire), 'module'=>'product|service|stock');
+	    $tmpentry = array('enabled'=>((!empty($conf->product->enabled) || !empty($conf->service->enabled)) && !empty($conf->stock->enabled)), 'perms'=>($user->rights->stock->read), 'module'=>'product|service|stock');
 	    $showmode = isVisibleToUserType(($user->socid > 0 ? 1 : 0), $tmpentry, $listofmodulesforexternal);
 	    $this->hidden = ($showmode != 1);
 	}
@@ -86,7 +86,7 @@ class box_produits_alerte_stock extends ModeleBoxes
 
 		$this->info_box_head = array('text' => $langs->trans("BoxTitleProductsAlertStock", $max));
 
-		if (($user->rights->produit->lire || $user->rights->service->lire) && $user->rights->stock->lire)
+		if (($user->rights->produit->lire || $user->rights->service->lire) && $user->rights->stock->read)
 		{
 			$sql = "SELECT p.rowid, p.label, p.price, p.ref, p.price_base_type, p.price_ttc, p.fk_product_type, p.tms, p.tosell, p.tobuy, p.seuil_stock_alerte, p.entity,";
 			$sql .= " SUM(".$this->db->ifsql("s.reel IS NULL", "0", "s.reel").") as total_stock";

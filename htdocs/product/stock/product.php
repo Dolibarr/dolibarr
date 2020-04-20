@@ -709,7 +709,7 @@ if ($id > 0 || $ref)
 			print '</tr>';
 
 			// Last movement
-			if (!empty($user->rights->stock->mouvement->lire))
+			if (!empty($user->rights->stock->movement->read))
 			{
 				$sql = "SELECT max(m.datem) as datem";
 				$sql .= " FROM ".MAIN_DB_PREFIX."stock_mouvement as m";
@@ -774,7 +774,7 @@ if (empty($reshook))
 	{
 	    print "<div class=\"tabsAction\">\n";
 
-		if ($user->rights->stock->mouvement->creer)
+		if ($user->rights->stock->movement->create)
 		{
 			if (!$variants || !empty($conf->global->VARIANT_ALLOW_STOCK_MOVEMENT_ON_VARIANT_PARENT)) {
 				print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=correction">'.$langs->trans("CorrectStock").'</a>';
@@ -789,8 +789,8 @@ if (empty($reshook))
 			print '<a class="butActionRefused classfortooltip" href="#" title="'.$langs->trans("NotEnoughPermissions").'">'.$langs->trans("CorrectStock").'</a>';
 		}
 
-		//if (($user->rights->stock->mouvement->creer) && ! $object->hasbatch())
-		if ($user->rights->stock->mouvement->creer)
+		//if (($user->rights->stock->movement->create) && ! $object->hasbatch())
+		if ($user->rights->stock->movement->create)
 		{
 			if (!$variants || !empty($conf->global->VARIANT_ALLOW_STOCK_MOVEMENT_ON_VARIANT_PARENT)) {
 				print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=transfert">'.$langs->trans("TransferStock").'</a>';

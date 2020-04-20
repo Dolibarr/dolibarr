@@ -2566,7 +2566,7 @@ class Form
 		}
 		if (!empty($conf->stock->enabled) && isset($objp->stock) && ($objp->fk_product_type == Product::TYPE_PRODUCT || !empty($conf->global->STOCK_SUPPORTS_SERVICES)))
 		{
-		    if (!empty($user->rights->stock->lire)) {
+		    if (!empty($user->rights->stock->read)) {
     			if ($objp->stock > 0) $opt .= ' class="product_line_stock_ok"';
 	       		elseif ($objp->stock <= 0) $opt .= ' class="product_line_stock_too_low"';
 		    }
@@ -2715,7 +2715,7 @@ class Form
 
 		if (!empty($conf->stock->enabled) && isset($objp->stock) && ($objp->fk_product_type == Product::TYPE_PRODUCT || !empty($conf->global->STOCK_SUPPORTS_SERVICES)))
 		{
-	        if (!empty($user->rights->stock->lire)) {
+	        if (!empty($user->rights->stock->read)) {
                 $opt .= ' - '.$langs->trans("Stock").':'.$objp->stock;
 
     			if ($objp->stock > 0) {

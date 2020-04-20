@@ -85,9 +85,9 @@ if ($id || $ref)
 $hookmanager->initHooks(array('productlotcard', 'globalcard'));
 
 
-$permissionnote = $user->rights->stock->creer; // Used by the include of actions_setnotes.inc.php
-$permissiondellink = $user->rights->stock->creer; // Used by the include of actions_dellink.inc.php
-$permissiontoadd = $user->rights->stock->creer; // Used by the include of actions_addupdatedelete.inc.php and actions_lineupdown.inc.php
+$permissionnote = $user->rights->stock->create; // Used by the include of actions_setnotes.inc.php
+$permissiondellink = $user->rights->stock->create; // Used by the include of actions_dellink.inc.php
+$permissiontoadd = $user->rights->stock->create; // Used by the include of actions_addupdatedelete.inc.php and actions_lineupdown.inc.php
 
 $usercanread = $user->rights->produit->lire;
 $usercancreate = $user->rights->produit->creer;
@@ -103,14 +103,14 @@ if ($reshook < 0) setEventMessages($hookmanager->error, $hookmanager->errors, 'e
 
 if (empty($reshook))
 {
-	if ($action == 'seteatby' && $user->rights->stock->creer)
+	if ($action == 'seteatby' && $user->rights->stock->create)
 	{
 	    $newvalue = dol_mktime(12, 0, 0, $_POST['eatbymonth'], $_POST['eatbyday'], $_POST['eatbyyear']);
 		$result = $object->setValueFrom('eatby', $newvalue, '', null, 'date', '', $user, 'PRODUCTLOT_MODIFY');
 		if ($result < 0) dol_print_error($db, $object->error);
 	}
 
-	if ($action == 'setsellby' && $user->rights->stock->creer)
+	if ($action == 'setsellby' && $user->rights->stock->create)
 	{
 	    $newvalue = dol_mktime(12, 0, 0, $_POST['sellbymonth'], $_POST['sellbyday'], $_POST['sellbyyear']);
 		$result = $object->setValueFrom('sellby', $newvalue, '', null, 'date', '', $user, 'PRODUCTLOT_MODIFY');
@@ -336,17 +336,17 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 
     // Eat by
     print '<tr><td>';
-    print $form->editfieldkey($langs->trans('EatByDate'), 'eatby', $object->eatby, $object, $user->rights->stock->creer, 'datepicker');
+    print $form->editfieldkey($langs->trans('EatByDate'), 'eatby', $object->eatby, $object, $user->rights->stock->create, 'datepicker');
     print '</td><td>';
-    print $form->editfieldval($langs->trans('EatByDate'), 'eatby', $object->eatby, $object, $user->rights->stock->creer, 'datepicker');
+    print $form->editfieldval($langs->trans('EatByDate'), 'eatby', $object->eatby, $object, $user->rights->stock->create, 'datepicker');
     print '</td>';
     print '</tr>';
 
     // Sell by
     print '<tr><td>';
-    print $form->editfieldkey($langs->trans('SellByDate'), 'sellby', $object->sellby, $object, $user->rights->stock->creer, 'datepicker');
+    print $form->editfieldkey($langs->trans('SellByDate'), 'sellby', $object->sellby, $object, $user->rights->stock->create, 'datepicker');
     print '</td><td>';
-    print $form->editfieldval($langs->trans('SellByDate'), 'sellby', $object->sellby, $object, $user->rights->stock->creer, 'datepicker');
+    print $form->editfieldval($langs->trans('SellByDate'), 'sellby', $object->sellby, $object, $user->rights->stock->create, 'datepicker');
     print '</td>';
     print '</tr>';
 
@@ -369,12 +369,12 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 
 	if (empty($reshook))
 	{
-		/*TODO      if ($user->rights->stock->lire)
+		/*TODO      if ($user->rights->stock->read)
 		{
 			print '<div class="inline-block divButAction"><a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=edit">'.$langs->trans("Modify").'</a></div>'."\n";
 		}
 
-		if ($user->rights->stock->supprimer)
+		if ($user->rights->stock->delete)
 		{
 			print '<div class="inline-block divButAction"><a class="butActionDelete" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=delete">'.$langs->trans('Delete').'</a></div>'."\n";
 		}

@@ -124,6 +124,7 @@ class Conf
 		$this->fournisseur = new stdClass();
 		$this->product			= new stdClass();
 		$this->service			= new stdClass();
+		$this->stock			= new stdClass();
 		$this->contrat			= new stdClass();
 		$this->actions			= new stdClass();
 		$this->agenda			= new stdClass();
@@ -431,6 +432,21 @@ class Conf
 					$this->supplier_invoice->dir_temp = $rootfortemp."/fournisseur/facture/temp"; // For backward compatibility
 				}
 			}
+		}
+
+		// Module stock
+		if (!empty($this->stock))
+		{
+			$this->stock->multidir_output = array($this->entity => $rootfordata."/stock");
+			$this->stock->multidir_temp = array($this->entity => $rootfortemp."/stock/temp");
+			$this->stock->dir_output = $rootfordata."/stock"; // For backward compatibility
+			$this->stock->dir_temp = $rootfortemp."/stock/temp"; // For backward compatibility
+
+			$this->stock->movement = new stdClass();
+			$this->stock->movement->multidir_output = array($this->entity => $rootfordata."/stock/movement");
+			$this->stock->movement->multidir_temp = array($this->entity => $rootfortemp."/stock/movement/temp");
+			$this->stock->movement->dir_output = $rootfordata."/stock/movement";
+			$this->stock->movement->dir_temp = $rootfortemp."/stock/movement/temp";
 		}
 
 		// Module product/service

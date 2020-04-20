@@ -118,7 +118,7 @@ function product_prepare_head($object)
 
     if ($object->isProduct() || ($object->isService() && !empty($conf->global->STOCK_SUPPORTS_SERVICES)))    // If physical product we can stock (or service with option)
     {
-        if (!empty($conf->stock->enabled) && $user->rights->stock->lire)
+        if (!empty($conf->stock->enabled) && $user->rights->stock->read)
         {
             $head[$h][0] = DOL_URL_ROOT."/product/stock/product.php?id=".$object->id;
             $head[$h][1] = $langs->trans("Stock");

@@ -122,17 +122,17 @@ $arrayfields = array(
 );
 
 // Security check
-if (!$user->rights->stock->mouvement->lire) {
+if (!$user->rights->stock->movement->read) {
 	accessforbidden();
 }
 
-$permissiontoread = $user->rights->stock->mouvement->lire;
-$permissiontoadd = $user->rights->stock->mouvement->creer;
-$permissiontodelete = $user->rights->stock->mouvement->creer; // There is no deletion permission for stock movement as we shoul dnever delete
+$permissiontoread = $user->rights->stock->movement->read;
+$permissiontoadd = $user->rights->stock->movement->create;
+$permissiontodelete = $user->rights->stock->movement->create; // There is no deletion permission for stock movement as we shoul dnever delete
 
-$usercanread = $user->rights->stock->mouvement->lire;
-$usercancreate = $user->rights->stock->mouvement->creer;
-$usercandelete = $user->rights->stock->mouvement->creer;
+$usercanread = $user->rights->stock->movement->read;
+$usercancreate = $user->rights->stock->movement->create;
+$usercandelete = $user->rights->stock->movement->create;
 
 
 /*
@@ -676,12 +676,12 @@ if ($resql)
     {
         print "<div class=\"tabsAction\">\n";
 
-        if ($user->rights->stock->mouvement->creer)
+        if ($user->rights->stock->movement->create)
         {
             print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$id.'&action=correction">'.$langs->trans("CorrectStock").'</a>';
         }
 
-        if ($user->rights->stock->mouvement->creer)
+        if ($user->rights->stock->movement->create)
         {
             print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$id.'&action=transfert">'.$langs->trans("TransferStock").'</a>';
         }

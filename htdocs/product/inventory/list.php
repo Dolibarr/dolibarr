@@ -122,9 +122,9 @@ if (is_array($extrafields->attributes[$object->table_element]['label']) && count
 $object->fields = dol_sort_array($object->fields, 'position');
 $arrayfields = dol_sort_array($arrayfields, 'position');
 
-$permissiontoread = $user->rights->stock->lire;
-$permissiontoadd = $user->rights->stock->creer;
-$permissiontodelete = $user->rights->stock->supprimer;
+$permissiontoread = $user->rights->stock->read;
+$permissiontoadd = $user->rights->stock->create;
+$permissiontodelete = $user->rights->stock->delete;
 
 
 /*
