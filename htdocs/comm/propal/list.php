@@ -287,7 +287,7 @@ $sql .= ' s.rowid as socid, s.nom as name, s.email, s.town, s.zip, s.fk_pays, s.
 $sql .= " typent.code as typent_code,";
 $sql .= " ava.rowid as availability,";
 $sql .= " state.code_departement as state_code, state.nom as state_name,";
-$sql .= ' p.rowid, p.entity, p.note_private, p.total_ht, p.tva as total_vat, p.total as total_ttc, p.localtax1, p.localtax2, p.ref, p.ref_client, p.fk_statut, p.fk_user_author, p.datep as dp, p.fin_validite as dfv,p.date_livraison as ddelivery,';
+$sql .= ' p.rowid, p.entity, p.note_private, p.total_ht, p.tva as total_vat, p.total as total_ttc, p.localtax1, p.localtax2, p.ref, p.ref_client, p.fk_statut as status, p.fk_user_author, p.datep as dp, p.fin_validite as dfv,p.date_livraison as ddelivery,';
 $sql .= ' p.fk_multicurrency, p.multicurrency_code, p.multicurrency_tx, p.multicurrency_total_ht, p.multicurrency_total_tva as multicurrency_total_vat, p.multicurrency_total_ttc,';
 $sql .= ' p.datec as date_creation, p.tms as date_update, p.date_cloture as date_cloture,';
 $sql .= ' p.note_public, p.note_private,';
@@ -862,6 +862,8 @@ if ($resql)
 		$objectstatic->ref_client = $obj->ref_client;
 		$objectstatic->note_public = $obj->note_public;
 		$objectstatic->note_private = $obj->note_private;
+		$objectstatic->statut = $obj->status;
+		$objectstatic->status = $obj->status;
 
 		$companystatic->id = $obj->socid;
 		$companystatic->name = $obj->name;
@@ -909,7 +911,7 @@ if ($resql)
 			print '</td>';
 			// Warning
 			$warnornote = '';
-			if ($obj->fk_statut == 1 && $db->jdate($obj->dfv) < ($now - $conf->propal->cloture->warning_delay)) $warnornote .= img_warning($langs->trans("Late"));
+			if ($obj->status == Propal::STATUS_VALIDATED && $db->jdate($obj->dfv) < ($now - $conf->propal->cloture->warning_delay)) $warnornote .= img_warning($langs->trans("Late"));
 			if ($warnornote)
 			{
 				print '<td style="min-width: 20px" class="nobordernopadding nowrap">';
@@ -1232,7 +1234,7 @@ if ($resql)
 		// Status
 		if (!empty($arrayfields['p.fk_statut']['checked']))
 		{
-			print '<td class="nowrap right">'.$objectstatic->LibStatut($obj->fk_statut, 5).'</td>';
+			print '<td class="nowrap right">'.$objectstatic->getLibStatut(5).'</td>';
 			if (!$i) $totalarray['nbfield']++;
 		}
 		// Action column
