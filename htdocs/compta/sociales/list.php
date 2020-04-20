@@ -191,18 +191,15 @@ if ($resql)
 	print '<input type="hidden" name="action" value="list">';
 	print '<input type="hidden" name="sortfield" value="'.$sortfield.'">';
 	print '<input type="hidden" name="sortorder" value="'.$sortorder.'">';
-    print '<input type="hidden" name="page" value="'.$page.'">';
 	print '<input type="hidden" name="search_status" value="'.$search_status.'">';
 
+	$center = '';
 	if ($year)
 	{
 	    $center = ($year ? "<a href='list.php?year=".($year - 1)."'>".img_previous()."</a> ".$langs->trans("Year")." $year <a href='list.php?year=".($year + 1)."'>".img_next()."</a>" : "");
-	    print_barre_liste($langs->trans("SocialContributions"), $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, $center, $num, $totalnboflines, 'invoicing', 0, $newcardbutton, '', $limit);
 	}
-	else
-	{
-		print_barre_liste($langs->trans("SocialContributions"), $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, '', $num, $totalnboflines, 'invoicing', 0, $newcardbutton, '', $limit);
-	}
+
+	print_barre_liste($langs->trans("SocialContributions"), $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, $center, $num, $totalnboflines, 'invoicing', 0, $newcardbutton, '', $limit, 0, 0, 1);
 
 	if (empty($mysoc->country_id) && empty($mysoc->country_code))
 	{

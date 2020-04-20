@@ -3142,10 +3142,10 @@ function img_picto($titlealt, $picto, $moreatt = '', $pictoisfullpath = false, $
         if (empty($srconly) && in_array($pictowithouttext, array(
         		'1downarrow', '1uparrow', '1leftarrow', '1rightarrow', '1uparrow_selected', '1downarrow_selected', '1leftarrow_selected', '1rightarrow_selected',
         		'address', 'bank_account', 'barcode', 'bank', 'bookmark', 'bom', 'building', 'cash-register', 'check', 'close_title', 'company', 'contact', 'cubes',
-        		'delete', 'dolly', 'edit', 'ellipsis-h', 'external-link-alt', 'external-link-square-alt',
+        		'delete', 'dolly', 'dollyrevert', 'edit', 'ellipsis-h', 'external-link-alt', 'external-link-square-alt',
         		'filter', 'file-code', 'file-export', 'file-import', 'file-upload', 'folder', 'folder-open', 'grip', 'grip_title', 'help', 'language', 'list', 'listlight', 'lot', 'mrp', 'note', 'stock',
         		'object_accounting', 'object_action', 'object_account', 'object_barcode', 'object_bom',
-        		'object_category', 'object_bookmark', 'object_bug', 'object_generic', 'object_list-alt', 'object_calendar', 'object_calendarweek', 'object_calendarmonth', 'object_calendarday', 'object_calendarperuser',
+	        	'object_category', 'object_bookmark', 'object_bug', 'object_dolly', 'object_dollyrevert', 'object_generic', 'object_list-alt', 'object_calendar', 'object_calendarweek', 'object_calendarmonth', 'object_calendarday', 'object_calendarperuser',
         		'object_cash-register', 'object_company', 'object_contact', 'object_contract', 'object_dynamicprice',
         		'object_holiday', 'object_hrm', 'object_intervention', 'object_multicurrency', 'object_order', 'object_payment',
         		'object_lot', 'object_mrp', 'object_product', 'object_propal', 'object_supplier_proposal', 'object_service', 'object_stock',
@@ -3178,7 +3178,7 @@ function img_picto($titlealt, $picto, $moreatt = '', $pictoisfullpath = false, $
 		    	'account'=>'university', 'action'=>'calendar-alt', 'address'=> 'address-book', 'bank_account'=>'university', 'bom'=>'cubes',
 		    	'company'=>'building', 'contact'=>'address-book', 'contract'=>'suitcase', 'dynamicprice'=>'hand-holding-usd',
 		    	'setup'=>'cog', 'companies'=>'building', 'products'=>'cube', 'commercial'=>'suitcase', 'invoicing'=>'coins', 'accountancy'=>'money-check-alt',
-		    	'accounting'=>'chart-line', 'category'=>'tag',
+		    	'accounting'=>'chart-line', 'category'=>'tag', 'dollyrevert'=>'dolly',
 		    	'hrm'=>'umbrella-beach', 'members'=>'users', 'ticket'=>'ticket-alt', 'globe'=>'external-link-alt', 'lot'=>'barcode',
 		    	'email'=>'at',
 		    	'edit'=>'pencil-alt', 'grip_title'=>'arrows-alt', 'grip'=>'arrows-alt', 'help'=>'info-circle',
@@ -3247,10 +3247,9 @@ function img_picto($titlealt, $picto, $moreatt = '', $pictoisfullpath = false, $
 			// Add CSS
 			$arrayconvpictotomorcess = array(
 				'action'=>'bg-infobox-action', 'account'=>'bg-infobox-bank_account', 'bank_account'=>'bg-infobox-bank_account', 'cash-register'=>'bg-infobox-bank_account',
-				'contract'=>'bg-infobox-contrat',
-				'multicurrency'=>'bg-infobox-bank_account',
-				'check'=>'font-status4',
+				'contract'=>'bg-infobox-contrat', 'check'=>'font-status4', 'dollyrevert'=>'flip',
 				'hrm'=>'bg-infobox-adherent', 'group'=>'bg-infobox-adherent', 'intervention'=>'bg-infobox-contrat',
+				'multicurrency'=>'bg-infobox-bank_account',
 				'members'=>'bg-infobox-adherent', 'member'=>'bg-infobox-adherent', 'order'=>'bg-infobox-commande',
 				'user'=>'bg-infobox-adherent', 'users'=>'bg-infobox-adherent',
 				'error'=>'pictoerror', 'warning'=>'pictowarning', 'switch_on'=>'font-status4',
@@ -3269,7 +3268,7 @@ function img_picto($titlealt, $picto, $moreatt = '', $pictoisfullpath = false, $
 				'address'=>'#37a', 'building'=>'#37a', 'bom'=>'#a69944',
 				'companies'=>'#37a', 'company'=>'#37a', 'contact'=>'#37a', 'dynamicprice'=>'#a69944',
 				'edit'=>'#444', 'note'=>'#999', 'error'=>'', 'listlight'=>'#999',
-				'lot'=>'#a69944', 'mrp'=>'#a69944', 'product'=>'#a69944', 'service'=>'#a69944', 'stock'=>'#a69944',
+				'dolly'=>'#a69944', 'dollyrevert'=>'#a69944', 'lot'=>'#a69944', 'mrp'=>'#a69944', 'product'=>'#a69944', 'service'=>'#a69944', 'stock'=>'#a69944',
 				'other'=>'#ddd',
 				'playdisabled'=>'#ccc', 'printer'=>'#444', 'projectpub'=>'#986c6a', 'resize'=>'#444', 'rss'=>'#cba',
 				'stats'=>'#444', 'switch_off'=>'#999', 'uparrow'=>'#555', 'warning'=>''

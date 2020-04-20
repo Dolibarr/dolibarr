@@ -536,6 +536,9 @@ textarea.centpercent {
     color: #777;
 }
 
+.flip {
+	transform: scaleX(-1);
+}
 .center {
     text-align: center;
     margin: 0px auto;
