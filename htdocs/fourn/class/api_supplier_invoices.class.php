@@ -650,12 +650,12 @@ class SupplierInvoices extends DolibarrApi
 		if(! DolibarrApiAccess::$user->rights->fournisseur->facture->creer) {
             throw new RestException(401);
         }
-		
+
 		$result = $this->invoice->fetch($id);
         if( ! $result ) {
             throw new RestException(404, 'Supplier invoice not found');
         }
-		
+
     	if(empty($lineid)) {
     		throw new RestException(400, 'Line ID is mandatory');
     	}
