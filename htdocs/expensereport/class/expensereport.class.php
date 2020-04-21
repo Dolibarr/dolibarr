@@ -704,8 +704,8 @@ class ExpenseReport extends CommonObject
     	// phpcs:enable
     	global $langs;
 
-    	$labelStatus = $langs->trans($this->statuts[$status]);
-    	$labelStatusShort = $langs->trans($this->statuts_short[$status]);
+    	$labelStatus = $langs->transnoentities($this->statuts[$status]);
+    	$labelStatusShort = $langs->transnoentities($this->statuts_short[$status]);
 
     	$statusType = $this->statuts_logo[$status];
 
