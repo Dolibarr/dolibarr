@@ -1,6 +1,6 @@
 # Dolibarr language file - Source file is en_US - commercial
-Commercial=Tilbud
-CommercialArea=Tilbudsområde
+Commercial=Commerce
+CommercialArea=Commerce area
 Customer=Kunde
 Customers=Kunder
 Prospect=Potentiel kunde
@@ -52,14 +52,14 @@ ActionAC_TEL=Telefonopkald
 ActionAC_FAX=Send fax
 ActionAC_PROP=Send tilbud via e-mail
 ActionAC_EMAIL=Send e-mail
-ActionAC_EMAIL_IN=Reception of Email
+ActionAC_EMAIL_IN=Modtagelse af Email
 ActionAC_RDV=Møder
 ActionAC_INT=Fremmøde på stedet
 ActionAC_FAC=Send kundefaktura via e-mail
 ActionAC_REL=Send kundefaktura via e-mail (påmindelse)
 ActionAC_CLO=Luk
 ActionAC_EMAILING=Send masse e-mail
-ActionAC_COM=Send sales order by mail
+ActionAC_COM=Send salgsordre pr. Email
 ActionAC_SHIP=Send forsendelse med posten
 ActionAC_SUP_ORD=Send indkøbsordre via post
 ActionAC_SUP_INV=Send sælgerfaktura pr. Post

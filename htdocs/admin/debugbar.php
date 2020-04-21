@@ -15,7 +15,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -32,9 +32,9 @@ global $conf;
 if (!$user->admin) accessforbidden();
 
 // Load translation files required by the page
-$langs->loadLangs(array("admin","other"));
+$langs->loadLangs(array("admin", "other"));
 
-$error=0;
+$error = 0;
 $action = GETPOST('action', 'aZ09');
 
 
@@ -54,7 +54,7 @@ if ($action == 'set')
         $error++;
     }
 
-	if (! $error)
+	if (!$error)
 	{
 		$db->commit();
 		setEventMessages($langs->trans("SetupSaved"), null, 'mesgs');
@@ -73,14 +73,14 @@ if ($action == 'set')
 
 llxHeader();
 
-$form=new Form($db);
+$form = new Form($db);
 
-$linkback='<a href="'.DOL_URL_ROOT.'/admin/modules.php?restore_lastsearch_values=1">'.$langs->trans("BackToModuleList").'</a>';
+$linkback = '<a href="'.DOL_URL_ROOT.'/admin/modules.php?restore_lastsearch_values=1">'.$langs->trans("BackToModuleList").'</a>';
 print load_fiche_titre($langs->trans("DebugBarSetup"), $linkback, 'title_setup');
 
 //print load_fiche_titre($langs->trans("DebugBar"));
 
-if (! function_exists('mb_check_encoding'))
+if (!function_exists('mb_check_encoding'))
 {
     $langs->load("errors");
     print info_admin($langs->trans("ErrorPHPNeedModule", 'mbstring'), 0, 0, 'error');
@@ -90,17 +90,17 @@ print '<br>';
 
 // Level
 print '<form action="'.$_SERVER["PHP_SELF"].'" method="post">';
-print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+print '<input type="hidden" name="token" value="'.newToken().'">';
 print '<input type="hidden" name="action" value="set">';
 
-print '<table class="noborder" width="100%">';
+print '<table class="noborder centpercent">';
 print '<tr class="liste_titre">';
 print '<td>'.$langs->trans("Parameter").'</td><td>'.$langs->trans("Value").'</td>';
 print '<td class="right"><input type="submit" class="button" '.$option.' value="'.$langs->trans("Modify").'"></td>';
 print "</tr>\n";
 
 print '<tr class="oddeven"><td>'.$langs->trans("DEBUGBAR_LOGS_LINES_NUMBER").'</td>';
-print '<td colspan="2"><input type="text" class="flat" name="DEBUGBAR_LOGS_LINES_NUMBER" value="'.(empty($conf->global->DEBUGBAR_LOGS_LINES_NUMBER) ? 250 : $conf->global->DEBUGBAR_LOGS_LINES_NUMBER).'">';   // This slow seriously output
+print '<td colspan="2"><input type="text" class="flat" name="DEBUGBAR_LOGS_LINES_NUMBER" value="'.(empty($conf->global->DEBUGBAR_LOGS_LINES_NUMBER) ? 250 : $conf->global->DEBUGBAR_LOGS_LINES_NUMBER).'">'; // This slow seriously output
 print ' '.$langs->trans("WarningValueHigherSlowsDramaticalyOutput");
 print '</td></tr>';
 

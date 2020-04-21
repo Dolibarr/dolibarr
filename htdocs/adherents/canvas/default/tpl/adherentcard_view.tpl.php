@@ -13,11 +13,11 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 // Protection to avoid direct call of template
-if (empty($conf) || ! is_object($conf))
+if (empty($conf) || !is_object($conf))
 {
 	print "Error, template page can't be called as URL";
 	exit;
@@ -26,17 +26,12 @@ if (empty($conf) || ! is_object($conf))
 
 $contact = $GLOBALS['objcanvas']->control->object;
 
-?>
+echo "<!-- BEGIN PHP TEMPLATE ADHERENTCARD_VIEW.TPL.PHP DEFAULT -->\n";
+echo $this->control->tpl['showhead'];
 
-<!-- BEGIN PHP TEMPLATE ADHERENTCARD_VIEW.TPL.PHP DEFAULT -->
-<?php echo $this->control->tpl['showhead']; ?>
-
-<?php
 dol_htmloutput_errors($this->control->tpl['error'], $this->control->tpl['errors']);
-?>
-
-<?php if (! empty($this->control->tpl['action_create_user'])) echo $this->control->tpl['action_create_user']; ?>
-<?php if (! empty($this->control->tpl['action_delete'])) echo $this->control->tpl['action_delete']; ?>
+if (!empty($this->control->tpl['action_create_user'])) echo $this->control->tpl['action_create_user'];
+if (!empty($this->control->tpl['action_delete'])) echo $this->control->tpl['action_delete']; ?>
 
 <table class="border allwidth">
 
@@ -121,29 +116,28 @@ dol_htmloutput_errors($this->control->tpl['error'], $this->control->tpl['errors'
 
 </table>
 
-<?php echo $this->control->tpl['showend']; ?>
+<?php echo $this->control->tpl['showend'];
 
-<?php if (empty($user->societe_id)) { ?>
-<div class="tabsAction">
+if (empty($user->socid)) {
+    echo '<div class="tabsAction">';
 
-<?php if ($user->rights->adherent->creer) { ?>
-<a class="butAction" href="<?php echo $_SERVER["PHP_SELF"].'?id='.$this->control->tpl['id'].'&amp;action=edit&amp;canvas='.$canvas; ?>"><?php echo $langs->trans('Modify'); ?></a>
-<?php } ?>
+    if ($user->rights->adherent->creer) {
+        echo '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$this->control->tpl['id'].'&amp;action=edit&amp;canvas='.$canvas.'">'.$langs->trans('Modify').'</a>';
+    }
 
-<?php if (! $this->control->tpl['user_id'] && $user->rights->user->user->creer) { ?>
-<a class="butAction" href="<?php echo $_SERVER["PHP_SELF"].'?id='.$this->control->tpl['id'].'&amp;action=create_user&amp;canvas='.$canvas; ?>"><?php echo $langs->trans("CreateDolibarrLogin"); ?></a>
-<?php } ?>
+    if (!$this->control->tpl['user_id'] && $user->rights->user->user->creer) {
+        echo '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$this->control->tpl['id'].'&amp;action=create_user&amp;canvas='.$canvas.'">'.$langs->trans("CreateDolibarrLogin").'</a>';
+    }
 
-<?php if ($user->rights->adherent->supprimer) { ?>
-<a class="butActionDelete" href="<?php echo $_SERVER["PHP_SELF"].'?id='.$this->control->tpl['id'].'&amp;action=delete&amp;canvas='.$canvas; ?>"><?php echo $langs->trans('Delete'); ?></a>
-<?php } ?>
+    if ($user->rights->adherent->supprimer) {
+        echo '<a class="butActionDelete" href="'.$_SERVER["PHP_SELF"].'?id='.$this->control->tpl['id'].'&amp;action=delete&amp;canvas='.$canvas.'">'.$langs->trans('Delete').'</a>';
+    }
 
-</div><br>
-<?php }
+    echo '</div><br>';
+}
 
 echo $this->control->tpl['actionstodo'];
 
 echo $this->control->tpl['actionsdone'];
-?>
 
-<!-- END PHP TEMPLATE -->
+echo "<!-- END PHP TEMPLATE -->\n";

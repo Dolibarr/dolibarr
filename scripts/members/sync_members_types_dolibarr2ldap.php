@@ -16,33 +16,33 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
- * \file scripts/user/sync_members_types_dolibarr2ldap.php
+ * \file scripts/members/sync_members_types_dolibarr2ldap.php
  * \ingroup ldap core
  * \brief Script de mise a jour des types de membres dans LDAP depuis base Dolibarr
  */
 $sapi_type = php_sapi_name();
 $script_file = basename(__FILE__);
-$path = __DIR__ . '/';
+$path = __DIR__.'/';
 
 // Test if batch mode
 if (substr($sapi_type, 0, 3) == 'cgi') {
-	echo "Error: You are using PHP for CGI. To execute " . $script_file . " from command line, you must use PHP for CLI mode.\n";
-	exit(- 1);
+	echo "Error: You are using PHP for CGI. To execute ".$script_file." from command line, you must use PHP for CLI mode.\n";
+	exit(-1);
 }
 
-if (! isset($argv[1]) || ! $argv[1]) {
-	print "Usage: " . $script_file . " now\n";
-	exit(- 1);
+if (!isset($argv[1]) || !$argv[1]) {
+	print "Usage: ".$script_file." now\n";
+	exit(-1);
 }
 $now = $argv[1];
 
-require_once $path . "../../htdocs/master.inc.php";
-require_once DOL_DOCUMENT_ROOT . "/core/class/ldap.class.php";
-require_once DOL_DOCUMENT_ROOT . "/adherents/class/adherent_type.class.php";
+require_once $path."../../htdocs/master.inc.php";
+require_once DOL_DOCUMENT_ROOT."/core/class/ldap.class.php";
+require_once DOL_DOCUMENT_ROOT."/adherents/class/adherent_type.class.php";
 
 // Global variables
 $version = DOL_VERSION;
@@ -53,8 +53,8 @@ $error = 0;
  */
 
 @set_time_limit(0);
-print "***** " . $script_file . " (" . $version . ") pid=" . dol_getmypid() . " *****\n";
-dol_syslog($script_file . " launched with arg " . join(',', $argv));
+print "***** ".$script_file." (".$version.") pid=".dol_getmypid()." *****\n";
+dol_syslog($script_file." launched with arg ".join(',', $argv));
 
 /*
  * if (! $conf->global->LDAP_SYNCHRO_ACTIVE)
@@ -65,7 +65,7 @@ dol_syslog($script_file . " launched with arg " . join(',', $argv));
  */
 
 $sql = "SELECT rowid";
-$sql .= " FROM " . MAIN_DB_PREFIX . "adherent_type";
+$sql .= " FROM ".MAIN_DB_PREFIX."adherent_type";
 
 $resql = $db->query($sql);
 if ($resql) {
@@ -85,7 +85,7 @@ if ($resql) {
 			$membertype->id = $obj->rowid;
 			$membertype->fetch($membertype->id);
 
-			print $langs->trans("UpdateMemberType") . " rowid=" . $membertype->id . " " . $membertype - label;
+			print $langs->trans("UpdateMemberType")." rowid=".$membertype->id." ".$membertype - label;
 
 			$oldobject = $membertype;
 
@@ -98,14 +98,14 @@ if ($resql) {
 			$result = $ldap->add($dn, $info, $user); // Wil fail if already exists
 			$result = $ldap->update($dn, $info, $user, $olddn);
 			if ($result > 0) {
-				print " - " . $langs->trans("OK");
+				print " - ".$langs->trans("OK");
 			} else {
-				$error ++;
-				print " - " . $langs->trans("KO") . ' - ' . $ldap->error;
+				$error++;
+				print " - ".$langs->trans("KO").' - '.$ldap->error;
 			}
 			print "\n";
 
-			$i ++;
+			$i++;
 		}
 
 		$ldap->unbind();

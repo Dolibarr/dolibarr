@@ -13,7 +13,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -31,10 +31,10 @@ require_once DOL_DOCUMENT_ROOT."/core/lib/date.lib.php";
  */
 class box_task extends ModeleBoxes
 {
-    public $boxcode="projet";
-    public $boximg="object_projecttask";
+    public $boxcode = "projettask";
+    public $boximg = "object_projecttask";
     public $boxlabel;
-    //public $depends = array("projet");
+    public $depends = array("projet");
 
     /**
      * @var DoliDB Database handler.
@@ -42,7 +42,7 @@ class box_task extends ModeleBoxes
     public $db;
 
     public $param;
-    public $enabled = 0;		// Disabled because bugged.
+    public $enabled = 1; // enable because fixed ;-).
 
     public $info_box_head = array();
     public $info_box_contents = array();
@@ -56,15 +56,15 @@ class box_task extends ModeleBoxes
      */
     public function __construct($db, $param = '')
     {
-        global $user, $langs;
+        global $conf, $user, $langs;
 
         // Load translation files required by the page
         $langs->loadLangs(array('boxes', 'projects'));
 
-        $this->boxlabel="Tasks";
+        $this->boxlabel = "Tasks";
         $this->db = $db;
 
-        $this->hidden = ! ($user->rights->projet->lire);
+        $this->hidden = (!empty($conf->global->PROJECT_HIDE_TASKS) || !($user->rights->projet->lire));
     }
 
 	/**
@@ -75,71 +75,137 @@ class box_task extends ModeleBoxes
 	 */
 	public function loadBox($max = 5)
 	{
-		global $conf, $user, $langs, $db;
+		global $conf, $user, $langs;
 
-		$this->max=$max;
-
-		$totalMnt = 0;
-		$totalnb = 0;
-		$totalDuree=0;
-		$totalplannedtot=0;
-		$totaldurationtot=0;
-
+		$this->max = $max;
 		include_once DOL_DOCUMENT_ROOT."/projet/class/task.class.php";
-		$taskstatic=new Task($db);
+		include_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
+        require_once DOL_DOCUMENT_ROOT."/core/lib/project.lib.php";
+        $projectstatic = new Project($this->db);
+		$taskstatic = new Task($this->db);
+		$form = new Form($this->db);
+        $cookie_name = 'DOLUSERCOOKIE_boxfilter_task';
+        $boxcontent = '';
+        $socid = $user->socid;
+
+        $textHead = $langs->trans("CurentlyOpenedTasks");
+
+        $filterValue = 'all';
+        if (in_array(GETPOST($cookie_name), array('all', 'im_project_contact', 'im_task_contact'))) {
+            $filterValue = GETPOST($cookie_name);
+        }
+        elseif (!empty($_COOKIE[$cookie_name])) {
+            $filterValue = $_COOKIE[$cookie_name];
+        }
+
+        if ($filterValue == 'im_task_contact') {
+            $textHead .= ' : '.$langs->trans("WhichIamLinkedTo");
+        }
+        elseif ($filterValue == 'im_project_contact') {
+            $textHead .= ' : '.$langs->trans("WhichIamLinkedToProject");
+        }
 
 
-		$textHead = $langs->trans("Tasks")."&nbsp;".date("Y");
-		$this->info_box_head = array('text' => $textHead, 'limit'=> dol_strlen($textHead));
+		$this->info_box_head = array(
+		    'text' => $textHead,
+            'limit'=> dol_strlen($textHead),
+            'sublink'=>'',
+            'subtext'=>$langs->trans("Filter"),
+            'subpicto'=>'filter.png',
+            'subclass'=>'linkobject boxfilter',
+            'target'=>'none'	// Set '' to get target="_blank"
+        );
 
 		// list the summary of the orders
 		if ($user->rights->projet->lire) {
-			// FIXME fk_statut on a task is not be used. We use the percent. This means this box is useless.
-			$sql = "SELECT pt.fk_statut, count(DISTINCT pt.rowid) as nb, sum(ptt.task_duration) as durationtot, sum(pt.planned_workload) as plannedtot";
-			$sql.= " FROM ".MAIN_DB_PREFIX."projet_task as pt, ".MAIN_DB_PREFIX."projet_task_time as ptt";
-			$sql.= " WHERE pt.datec BETWEEN '".$this->db->idate(dol_get_first_day(date("Y"), 1))."' AND '".$this->db->idate(dol_get_last_day(date("Y"), 12))."'";
-			$sql.= " AND pt.rowid = ptt.fk_task";
-			$sql.= " GROUP BY pt.fk_statut ";
-			$sql.= " ORDER BY pt.fk_statut DESC";
-			$sql.= $db->plimit($max, 0);
+            $boxcontent .= '<div id="ancor-idfilter'.$this->boxcode.'" style="display: block; position: absolute; margin-top: -100px"></div>'."\n";
+            $boxcontent .= '<div id="idfilter'.$this->boxcode.'" class="center" >'."\n";
+            $boxcontent .= '<form class="flat " method="POST" action="'.$_SERVER["PHP_SELF"].'#ancor-idfilter'.$this->boxcode.'">'."\n";
+            $boxcontent .= '<input type="hidden" name="token" value="'.newToken().'">'."\n";
+            $selectArray = array('all' => $langs->trans("NoFilter"), 'im_task_contact' => $langs->trans("WhichIamLinkedTo"), 'im_project_contact' => $langs->trans("WhichIamLinkedToProject"));
+            $boxcontent .= $form->selectArray($cookie_name, $selectArray, $filterValue);
+            $boxcontent .= '<button type="submit" class="button buttongen">'.$langs->trans("Refresh").'</button>';
+            $boxcontent .= '</form>'."\n";
+            $boxcontent .= '</div>'."\n";
+            if (!empty($conf->use_javascript_ajax)) {
+	            $boxcontent .= '<script type="text/javascript" language="javascript">
+						jQuery(document).ready(function() {
+							jQuery("#idsubimg'.$this->boxcode.'").click(function() {
+								jQuery(".showiffilter'.$this->boxcode.'").toggle();
+							});
+						});
+						</script>';
+	            // set cookie by js
+	            $boxcontent .= '<script>date = new Date(); date.setTime(date.getTime()+(30*86400000)); document.cookie = "'.$cookie_name.'='.$filterValue.'; expires= " + date.toGMTString() + "; path=/ "; </script>';
+            }
+            $this->info_box_contents[0][] = array(
+                'tr'=>'class="nohover showiffilter'.$this->boxcode.' hideobject"',
+                'td' => 'class="nohover"',
+                'textnoformat' => $boxcontent,
+            );
 
-			$result = $db->query($sql);
-			$i = 0;
+
+            // Get list of project id allowed to user (in a string list separated by coma)
+            $projectsListId = '';
+            if (!$user->rights->projet->all->lire) $projectsListId = $projectstatic->getProjectsAuthorizedForUser($user, 0, 1, $socid);
+
+            $sql = "SELECT pt.rowid, pt.ref, pt.fk_projet, pt.fk_task_parent, pt.datec, pt.dateo, pt.datee, pt.datev, pt.label, pt.description, pt.duration_effective, pt.planned_workload, pt.progress";
+			$sql .= ", p.rowid project_id, p.ref project_ref, p.title project_title";
+
+			$sql .= " FROM ".MAIN_DB_PREFIX."projet_task as pt";
+			$sql .= " JOIN ".MAIN_DB_PREFIX."projet as p ON (pt.fk_projet = p.rowid)";
+
+            if ($filterValue === 'im_task_contact') {
+                $sql .= " JOIN ".MAIN_DB_PREFIX."element_contact as ec ON (ec.element_id = pt.rowid AND ec.fk_socpeople = '".$user->id."' )";
+                $sql .= " JOIN ".MAIN_DB_PREFIX."c_type_contact  as tc ON (ec.fk_c_type_contact = tc.rowid AND tc.element = 'project_task' AND tc.source = 'internal' )";
+            }
+            elseif ($filterValue === 'im_project_contact') {
+                $sql .= " JOIN ".MAIN_DB_PREFIX."element_contact as ec ON (ec.element_id = p.rowid AND ec.fk_socpeople = '".$user->id."' )";
+                $sql .= " JOIN ".MAIN_DB_PREFIX."c_type_contact  as tc ON (ec.fk_c_type_contact = tc.rowid AND tc.element = 'project' AND tc.source = 'internal' )";
+            }
+
+			$sql .= " WHERE ";
+			$sql .= " pt.entity = ".$conf->entity;
+			$sql .= " AND p.fk_statut = ".Project::STATUS_VALIDATED;
+			$sql .= " AND (pt.progress < 100 OR pt.progress IS NULL ) "; // 100% is done and not displayed
+            $sql .= " AND p.usage_task = 1 ";
+            if (!$user->rights->projet->all->lire) $sql .= " AND p.rowid IN (".$projectsListId.")"; // public and assigned to, or restricted to company for external users
+
+			$sql .= " ORDER BY pt.datee ASC, pt.dateo ASC";
+			$sql .= $this->db->plimit($max, 0);
+
+			$result = $this->db->query($sql);
+			$i = 1;
 			if ($result) {
-				$num = $db->num_rows($result);
-                while ($i < $num) {
-                    $objp = $db->fetch_object($result);
+				$num = $this->db->num_rows($result);
+                while ($objp = $this->db->fetch_object($result)) {
+                    $taskstatic->id = $objp->rowid;
+                    $taskstatic->ref = $objp->ref;
+                    $taskstatic->label = $objp->label;
+                    $taskstatic->progress = $objp->progress;
+                    $taskstatic->fk_statut = $objp->fk_statut;
+                    $taskstatic->date_end = $objp->datee;
+                    $taskstatic->planned_workload = $objp->planned_workload;
+                    $taskstatic->duration_effective = $objp->duration_effective;
+
+                    $projectstatic->id = $objp->project_id;
+                    $projectstatic->ref = $objp->project_ref;
+                    $projectstatic->title = $objp->project_title;
+
+                    $label = $projectstatic->getNomUrl(1).' '.$taskstatic->getNomUrl(1).' '.dol_htmlentities($taskstatic->label);
+
+                    $boxcontent = getTaskProgressView($taskstatic, $label, true, false, false);
+
                     $this->info_box_contents[$i][] = array(
                         'td' => '',
-                        'text' =>$langs->trans("Task")." ".$taskstatic->LibStatut($objp->fk_statut, 0),
+                        'text' => $boxcontent,
                     );
-
-                    $this->info_box_contents[$i][] = array(
-                        'td' => 'class="right"',
-                        'text' => $objp->nb."&nbsp;".$langs->trans("Tasks"),
-                        'url' => DOL_URL_ROOT."/projet/tasks/list.php?leftmenu=projects&viewstatut=".$objp->fk_statut,
-                    );
-					$totalnb += $objp->nb;
-					$this->info_box_contents[$i][] = array('td' => 'class="right"', 'text' => ConvertSecondToTime($objp->plannedtot, 'all', 25200, 5));
-					$totalplannedtot += $objp->plannedtot;
-					$this->info_box_contents[$i][] = array('td' => 'class="right"', 'text' => ConvertSecondToTime($objp->durationtot, 'all', 25200, 5));
-					$totaldurationtot += $objp->durationtot;
-
-					$this->info_box_contents[$i][] = array('td' => 'class="right" width="18"', 'text' => $taskstatic->LibStatut($objp->fk_statut, 3));
-
 					$i++;
 				}
 			} else {
                 dol_print_error($this->db);
             }
 		}
-
-		// Add the sum at the bottom of the boxes
-		$this->info_box_contents[$i][] = array('tr' => 'class="liste_total"', 'td' => '', 'text' => $langs->trans("Total")."&nbsp;".$textHead);
-		$this->info_box_contents[$i][] = array('td' => 'class="right" ', 'text' => number_format($totalnb, 0, ',', ' ')."&nbsp;".$langs->trans("Tasks"));
-		$this->info_box_contents[$i][] = array('td' => 'class="right" ', 'text' => ConvertSecondToTime($totalplannedtot, 'all', 25200, 5));
-		$this->info_box_contents[$i][] = array('td' => 'class="right" ', 'text' => ConvertSecondToTime($totaldurationtot, 'all', 25200, 5));
-		$this->info_box_contents[$i][] = array('td' => '', 'text' => "");
 	}
 
 	/**

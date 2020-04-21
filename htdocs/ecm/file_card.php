@@ -12,7 +12,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -40,30 +40,31 @@ if (!$user->rights->ecm->setup) accessforbidden();
 $socid = GETPOST("socid", "int");
 
 // Security check
-if ($user->societe_id > 0)
+if ($user->socid > 0)
 {
     $action = '';
-    $socid = $user->societe_id;
+    $socid = $user->socid;
 }
 
+$limit = GETPOST('limit', 'int') ? GETPOST('limit', 'int') : $conf->liste_limit;
 $sortfield = GETPOST("sortfield", 'alpha');
 $sortorder = GETPOST("sortorder", 'alpha');
-$page = GETPOST("page", 'int');
+$page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOST("page", 'int');
 if (empty($page) || $page == -1) { $page = 0; }     // If $page is not defined, or '' or -1
-$offset = $conf->liste_limit * $page;
+$offset = $limit * $page;
 $pageprev = $page - 1;
 $pagenext = $page + 1;
-if (! $sortorder) $sortorder="ASC";
-if (! $sortfield) $sortfield="label";
+if (!$sortorder) $sortorder = "ASC";
+if (!$sortfield) $sortfield = "label";
 
-$section=GETPOST("section", 'alpha');
-if (! $section)
+$section = GETPOST("section", 'alpha');
+if (!$section)
 {
     dol_print_error('', 'Error, section parameter missing');
     exit;
 }
-$urlfile=GETPOST("urlfile");
-if (! $urlfile)
+$urlfile = GETPOST("urlfile");
+if (!$urlfile)
 {
     dol_print_error('', "ErrorParamNotDefined");
     exit;
@@ -71,28 +72,28 @@ if (! $urlfile)
 
 // Load ecm object
 $ecmdir = new EcmDirectory($db);
-$result=$ecmdir->fetch(GETPOST("section", 'alpha'));
-if (! $result > 0)
+$result = $ecmdir->fetch(GETPOST("section", 'alpha'));
+if (!$result > 0)
 {
     dol_print_error($db, $ecmdir->error);
     exit;
 }
-$relativepath=$ecmdir->getRelativePath();
+$relativepath = $ecmdir->getRelativePath();
 $upload_dir = $conf->ecm->dir_output.'/'.$relativepath;
 
-$fullpath=$conf->ecm->dir_output.'/'.$relativepath.$urlfile;
+$fullpath = $conf->ecm->dir_output.'/'.$relativepath.$urlfile;
 
 $file = new stdClass();
-$file->section_id=$ecmdir->id;
-$file->label=$urlfile;
+$file->section_id = $ecmdir->id;
+$file->label = $urlfile;
 
-$relativetodocument = 'ecm/'.$relativepath;		// $relativepath is relative to ECM dir, we need relative to document
-$filepath=$relativepath.$file->label;
-$filepathtodocument=$relativetodocument.$file->label;
+$relativetodocument = 'ecm/'.$relativepath; // $relativepath is relative to ECM dir, we need relative to document
+$filepath = $relativepath.$file->label;
+$filepathtodocument = $relativetodocument.$file->label;
 
 // Try to load object from index
 $object = new ECMFiles($db);
-$result=$object->fetch(0, '', $filepathtodocument);
+$result = $object->fetch(0, '', $filepathtodocument);
 if ($result < 0)
 {
 	dol_print_error($db, $object->error, $object->errors);
@@ -107,7 +108,7 @@ if ($result < 0)
 
 if ($cancel)
 {
-    $action ='';
+    $action = '';
     if ($backtopage)
     {
         header("Location: ".$backtopage);
@@ -115,7 +116,7 @@ if ($cancel)
     }
     else
     {
-    	header('Location: '.$_SERVER["PHP_SELF"].'?urlfile='.urlencode($urlfile).'&section='.urlencode($section).($module?'&module='.urlencode($module):''));
+    	header('Location: '.$_SERVER["PHP_SELF"].'?urlfile='.urlencode($urlfile).'&section='.urlencode($section).($module ? '&module='.urlencode($module) : ''));
         exit;
     }
 }
@@ -123,22 +124,22 @@ if ($cancel)
 // Rename file
 if ($action == 'update')
 {
-    $error=0;
+    $error = 0;
 
-    $oldlabel=GETPOST('urlfile', 'alpha');
-    $newlabel=GETPOST('label', 'alpha');
+    $oldlabel = GETPOST('urlfile', 'alpha');
+    $newlabel = GETPOST('label', 'alpha');
 	$shareenabled = GETPOST('shareenabled', 'alpha');
 
     //$db->begin();
 
-    $olddir=$ecmdir->getRelativePath(0);			// Relative to ecm
-    $olddirrelativetodocument = 'ecm/'.$olddir;		// Relative to document
+    $olddir = $ecmdir->getRelativePath(0); // Relative to ecm
+    $olddirrelativetodocument = 'ecm/'.$olddir; // Relative to document
     $newdirrelativetodocument = 'ecm/'.$olddir;
-    $olddir=$conf->ecm->dir_output.'/'.$olddir;
-    $newdir=$olddir;
+    $olddir = $conf->ecm->dir_output.'/'.$olddir;
+    $newdir = $olddir;
 
-    $oldfile=$olddir.$oldlabel;
-    $newfile=$newdir.$newlabel;
+    $oldfile = $olddir.$oldlabel;
+    $newfile = $newdir.$newlabel;
 
     // Now we update index of file
     $db->begin();
@@ -146,8 +147,8 @@ if ($action == 'update')
     //print $oldfile.' - '.$newfile;
     if ($newlabel != $oldlabel)
     {
-        $result=dol_move($oldfile, $newfile);		// This include update of database
-        if (! $result)
+        $result = dol_move($oldfile, $newfile); // This include update of database
+        if (!$result)
         {
             $langs->load('errors');
             setEventMessages($langs->trans('ErrorFailToRenameFile', $oldfile, $newfile), null, 'errors');
@@ -155,7 +156,7 @@ if ($action == 'update')
         }
 
         // Reload object after the move
-        $result=$object->fetch(0, '', $newdirrelativetodocument.$newlabel);
+        $result = $object->fetch(0, '', $newdirrelativetodocument.$newlabel);
         if ($result < 0)
         {
         	dol_print_error($db, $object->error, $object->errors);
@@ -163,7 +164,7 @@ if ($action == 'update')
         }
     }
 
-    if (! $error)
+    if (!$error)
     {
 		if ($shareenabled)
 		{
@@ -190,11 +191,11 @@ if ($action == 'update')
 			$object->entity = $conf->entity;
 			$object->filepath = preg_replace('/[\\/]+$/', '', $newdirrelativetodocument);
 			$object->filename = $newlabel;
-			$object->label = md5_file(dol_osencode($newfile));	// hash of file content
+			$object->label = md5_file(dol_osencode($newfile)); // hash of file content
 			$object->fullpath_orig = '';
 			$object->gen_or_uploaded = 'unknown';
-			$object->description = '';    // indexed content
-			$object->keyword = '';        // keyword content
+			$object->description = ''; // indexed content
+			$object->keyword = ''; // keyword content
 			$result = $object->create($user);
 			if ($result < 0)
 			{
@@ -207,7 +208,7 @@ if ($action == 'update')
     {
         $db->commit();
 
-        $urlfile=$newlabel;
+        $urlfile = $newlabel;
         header('Location: '.$_SERVER["PHP_SELF"].'?urlfile='.urlencode($urlfile).'&section='.urlencode($section));
         exit;
     }
@@ -223,7 +224,7 @@ if ($action == 'update')
  * View
  */
 
-$form=new Form($db);
+$form = new Form($db);
 
 llxHeader();
 
@@ -232,7 +233,7 @@ $head = ecm_file_prepare_head($file);
 if ($action == 'edit')
 {
 	print '<form name="update" action="'.$_SERVER["PHP_SELF"].'" method="POST">';
-	print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+	print '<input type="hidden" name="token" value="'.newToken().'">';
 	print '<input type="hidden" name="section" value="'.$section.'">';
 	print '<input type="hidden" name="urlfile" value="'.$urlfile.'">';
 	print '<input type="hidden" name="module" value="'.$module.'">';
@@ -243,23 +244,23 @@ if ($action == 'edit')
 dol_fiche_head($head, 'card', $langs->trans("File"), -1, 'generic');
 
 
-$s='';
-$tmpecmdir=new EcmDirectory($db);	// Need to create a new one
+$s = '';
+$tmpecmdir = new EcmDirectory($db); // Need to create a new one
 $tmpecmdir->fetch($ecmdir->id);
 $result = 1;
-$i=0;
+$i = 0;
 while ($tmpecmdir && $result > 0)
 {
-	$tmpecmdir->ref=$tmpecmdir->label;
-	$s=$tmpecmdir->getNomUrl(1).$s;
+	$tmpecmdir->ref = $tmpecmdir->label;
+	$s = $tmpecmdir->getNomUrl(1).$s;
 	if ($tmpecmdir->fk_parent)
 	{
-		$s=' -> '.$s;
-		$result=$tmpecmdir->fetch($tmpecmdir->fk_parent);
+		$s = ' -> '.$s;
+		$result = $tmpecmdir->fetch($tmpecmdir->fk_parent);
 	}
 	else
 	{
-		$tmpecmdir=0;
+		$tmpecmdir = 0;
 	}
 	$i++;
 }
@@ -268,13 +269,13 @@ $s = img_picto('', 'object_dir').' <a href="'.DOL_URL_ROOT.'/ecm/index.php">'.$l
 if ($action == 'edit') $s .= '<input type="text" name="label" class="quatrevingtpercent" value="'.$urlfile.'">';
 else $s .= $urlfile;
 
-$object->ref='';	// Force to hide ref
+$object->ref = ''; // Force to hide ref
 dol_banner_tab($object, '', $morehtml, 0, '', '', $s);
 
 print '<div class="fichecenter">';
 
 print '<div class="underbanner clearboth"></div>';
-print '<table class="border" width="100%">';
+print '<table class="border centpercent">';
 print '<tr><td class="titlefield">'.$langs->trans("ECMCreationDate").'</td><td>';
 print dol_print_date(dol_filemtime($fullpath), 'dayhour');
 print '</td></tr>';
@@ -294,7 +295,7 @@ $object = new EcmFiles($db);
 //$filenametosearch=basename($filepath);
 //$filedirtosearch=basedir($filepath);
 $object->fetch(0, '', $filepathtodocument);
-if (! empty($object->label))
+if (!empty($object->label))
 {
 	print $object->label;
 }
@@ -305,23 +306,23 @@ else
 print '</td></tr>';
 
 // Define $urlwithroot
-$urlwithouturlroot=preg_replace('/'.preg_quote(DOL_URL_ROOT, '/').'$/i', '', trim($dolibarr_main_url_root));
-$urlwithroot=$urlwithouturlroot.DOL_URL_ROOT;		// This is to use external domain name found into config file
+$urlwithouturlroot = preg_replace('/'.preg_quote(DOL_URL_ROOT, '/').'$/i', '', trim($dolibarr_main_url_root));
+$urlwithroot = $urlwithouturlroot.DOL_URL_ROOT; // This is to use external domain name found into config file
 //$urlwithroot=DOL_MAIN_URL_ROOT;					// This is to use same domain name than current
 
 // Link for internal download
 print '<tr><td>'.$langs->trans("DirectDownloadInternalLink").'</td><td>';
-$modulepart='ecm';
-$forcedownload=1;
-$rellink='/document.php?modulepart='.$modulepart;
-if ($forcedownload) $rellink.='&attachment=1';
-if (! empty($object->entity)) $rellink.='&entity='.$object->entity;
-$rellink.='&file='.urlencode($filepath);
-$fulllink=$urlwithroot.$rellink;
-print img_picto('', 'object_globe.png').' ';
+$modulepart = 'ecm';
+$forcedownload = 1;
+$rellink = '/document.php?modulepart='.$modulepart;
+if ($forcedownload) $rellink .= '&attachment=1';
+if (!empty($object->entity)) $rellink .= '&entity='.$object->entity;
+$rellink .= '&file='.urlencode($filepath);
+$fulllink = $urlwithroot.$rellink;
+print img_picto('', 'globe').' ';
 if ($action != 'edit') print '<input type="text" class="quatrevingtpercent" id="downloadinternallink" name="downloadinternellink" value="'.dol_escape_htmltag($fulllink).'">';
 else print $fulllink;
-if ($action != 'edit') print ' <a href="'.$fulllink.'">'.$langs->trans("Download").'</a>';		// No target here.
+if ($action != 'edit') print ' <a href="'.$fulllink.'">'.$langs->trans("Download").'</a>'; // No target here.
 print '</td></tr>';
 
 // Link for direct external download
@@ -329,28 +330,28 @@ print '<tr><td>';
 if ($action != 'edit') print $langs->trans("DirectDownloadLink");
 else print $langs->trans("FileSharedViaALink");
 print '</td><td>';
-if (! empty($object->share))
+if (!empty($object->share))
 {
 	if ($action != 'edit')
 	{
-		$forcedownload=0;
+		$forcedownload = 0;
 
-		$paramlink='';
-		if (! empty($object->share)) $paramlink.=($paramlink?'&':'').'hashp='.$object->share;			// Hash for public share
-		if ($forcedownload) $paramlink.=($paramlink?'&':'').'attachment=1';
+		$paramlink = '';
+		if (!empty($object->share)) $paramlink .= ($paramlink ? '&' : '').'hashp='.$object->share; // Hash for public share
+		if ($forcedownload) $paramlink .= ($paramlink ? '&' : '').'attachment=1';
 
-		$fulllink=$urlwithroot.'/document.php'.($paramlink?'?'.$paramlink:'');
+		$fulllink = $urlwithroot.'/document.php'.($paramlink ? '?'.$paramlink : '');
 		//if (! empty($object->ref))       $fulllink.='&hashn='.$object->ref;		// Hash of file path
 		//elseif (! empty($object->label)) $fulllink.='&hashc='.$object->label;		// Hash of file content
 
-		print img_picto('', 'object_globe.png').' ';
+		print img_picto('', 'globe').' ';
 		if ($action != 'edit') print '<input type="text" class="quatrevingtpercent" id="downloadlink" name="downloadexternallink" value="'.dol_escape_htmltag($fulllink).'">';
 		else print $fulllink;
-		if ($action != 'edit') print ' <a href="'.$fulllink.'">'.$langs->trans("Download").'</a>';	// No target here
+		if ($action != 'edit') print ' <a href="'.$fulllink.'">'.$langs->trans("Download").'</a>'; // No target here
 	}
 	else
 	{
-		print '<input type="checkbox" name="shareenabled"'.($object->share?' checked="checked"':'').' /> ';
+		print '<input type="checkbox" name="shareenabled"'.($object->share ? ' checked="checked"' : '').' /> ';
 	}
 }
 else
@@ -361,7 +362,7 @@ else
 	}
 	else
 	{
-		print '<input type="checkbox" name="shareenabled"'.($object->share?' checked="checked"':'').' /> ';
+		print '<input type="checkbox" name="shareenabled"'.($object->share ? ' checked="checked"' : '').' /> ';
 	}
 }
 print '</td></tr>';
@@ -400,10 +401,8 @@ if ($action != 'edit')
     if ($user->rights->ecm->setup)
     {
         print '<a class="butAction" href="'.$_SERVER['PHP_SELF'].'?action=edit&section='.urlencode($section).'&urlfile='.urlencode($urlfile).'">'.$langs->trans('Edit').'</a>';
-
-        //print '<a class="butAction" href="'.$_SERVER['PHP_SELF'].'?action=cancel&section='.$section.'&urlfile='.urlencode($urlfile).'&backtopage='.urlencode($backtourl).'">'.$langs->trans('Cancel').'</a>';
     }
-/*
+    /*
 	if ($user->rights->ecm->setup)
 	{
 		print '<a class="butAction" href="'.$_SERVER['PHP_SELF'].'?action=delete_file&section='.$section.'&urlfile='.urlencode($urlfile).'">'.$langs->trans('Delete').'</a>';
@@ -412,7 +411,7 @@ if ($action != 'edit')
 	{
 		print '<a class="butActionRefused classfortooltip" href="#" title="'.$langs->trans("NotAllowed").'">'.$langs->trans('Delete').'</a>';
 	}
-*/
+    */
 	print '</div>';
 }
 

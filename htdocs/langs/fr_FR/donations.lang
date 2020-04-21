@@ -17,6 +17,7 @@ DonationStatusPromiseNotValidatedShort=Non validée
 DonationStatusPromiseValidatedShort=Validée
 DonationStatusPaidShort=Payé
 DonationTitle=Reçu de dons
+DonationDate=Date du don
 DonationDatePayment=Date paiement
 ValidPromess=Valider promesse
 DonationReceipt=Reçu de dons

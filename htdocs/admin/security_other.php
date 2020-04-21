@@ -14,7 +14,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -29,12 +29,12 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php';
 
 // Load translation files required by the page
-$langs->loadLangs(array("users","admin","other"));
+$langs->loadLangs(array("users", "admin", "other"));
 
-if (! $user->admin)
+if (!$user->admin)
 	accessforbidden();
 
-$action=GETPOST('action', 'alpha');
+$action = GETPOST('action', 'alpha');
 
 
 
@@ -44,8 +44,8 @@ $action=GETPOST('action', 'alpha');
 
 if (preg_match('/set_([a-z0-9_\-]+)/i', $action, $reg))
 {
-	$code=$reg[1];
-	$value=(GETPOST($code, 'alpha') ? GETPOST($code, 'alpha') : 1);
+	$code = $reg[1];
+	$value = (GETPOST($code, 'alpha') ? GETPOST($code, 'alpha') : 1);
 	if (dolibarr_set_const($db, $code, $value, 'chaine', 0, '', $conf->entity) > 0)
 	{
 		Header("Location: ".$_SERVER["PHP_SELF"]);
@@ -56,7 +56,7 @@ if (preg_match('/set_([a-z0-9_\-]+)/i', $action, $reg))
 		dol_print_error($db);
 	}
 } elseif (preg_match('/del_([a-z0-9_\-]+)/i', $action, $reg)) {
-	$code=$reg[1];
+	$code = $reg[1];
 	if (dolibarr_del_const($db, $code, $conf->entity) > 0)
 	{
 		Header("Location: ".$_SERVER["PHP_SELF"]);
@@ -70,8 +70,8 @@ if (preg_match('/set_([a-z0-9_\-]+)/i', $action, $reg))
 
 elseif ($action == 'updateform')
 {
-	$res1=dolibarr_set_const($db, "MAIN_APPLICATION_TITLE", $_POST["MAIN_APPLICATION_TITLE"], 'chaine', 0, '', $conf->entity);
-    $res2=dolibarr_set_const($db, "MAIN_SESSION_TIMEOUT", $_POST["MAIN_SESSION_TIMEOUT"], 'chaine', 0, '', $conf->entity);
+	$res1 = dolibarr_set_const($db, "MAIN_APPLICATION_TITLE", GETPOST("MAIN_APPLICATION_TITLE", 'alphanohtml'), 'chaine', 0, '', $conf->entity);
+	$res2 = dolibarr_set_const($db, "MAIN_SESSION_TIMEOUT", GETPOST("MAIN_SESSION_TIMEOUT", 'alphanohtml'), 'chaine', 0, '', $conf->entity);
 	if ($res1 && $res2) setEventMessages($langs->trans("RecordModifiedSuccessfully"), null, 'mesgs');
 }
 
@@ -83,27 +83,27 @@ elseif ($action == 'updateform')
 
 $form = new Form($db);
 
-$wikihelp='EN:Setup_Security|FR:Paramétrage_Sécurité|ES:Configuración_Seguridad';
+$wikihelp = 'EN:Setup_Security|FR:Paramétrage_Sécurité|ES:Configuración_Seguridad';
 llxHeader('', $langs->trans("Miscellaneous"), $wikihelp);
 
 print load_fiche_titre($langs->trans("SecuritySetup"), '', 'title_setup');
 
-print $langs->trans("MiscellaneousDesc")."<br>\n";
+print '<span class="opacitymedium">'.$langs->trans("MiscellaneousDesc")."</span><br>\n";
 print "<br>\n";
 
 
 
 print '<form action="'.$_SERVER["PHP_SELF"].'" method="POST">';
-print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+print '<input type="hidden" name="token" value="'.newToken().'">';
 print '<input type="hidden" name="action" value="updateform">';
 
-$head=security_prepare_head();
+$head = security_prepare_head();
 
 dol_fiche_head($head, 'misc', $langs->trans("Security"), -1);
 
 
 // Other Options
-print '<table class="noborder" width="100%">';
+print '<table class="noborder centpercent">';
 print '<tr class="liste_titre">';
 print '<td colspan="3">'.$langs->trans("Parameters").'</td>';
 print '<td class="right" width="100">'.$langs->trans("Status").'</td>';
@@ -115,7 +115,7 @@ print '<td colspan="3">'.$langs->trans("UseCaptchaCode").'</td>';
 print '<td class="right">';
 if (function_exists("imagecreatefrompng"))
 {
-	if (! empty($conf->use_javascript_ajax))
+	if (!empty($conf->use_javascript_ajax))
 	{
 		print ajax_constantonoff('MAIN_SECURITY_ENABLECAPTCHA');
 	}
@@ -142,7 +142,7 @@ print '</td></tr>';
 print '<tr class="oddeven">';
 print '<td colspan="3">'.$langs->trans("UseAdvancedPerms").'</td>';
 print '<td class="right">';
-if (! empty($conf->use_javascript_ajax))
+if (!empty($conf->use_javascript_ajax))
 {
 	print ajax_constantonoff('MAIN_USE_ADVANCED_PERMS');
 }
@@ -173,8 +173,8 @@ print '<td>'.$langs->trans("Value").'</td>';
 print "</tr>\n";
 
 
-$sessiontimeout=ini_get("session.gc_maxlifetime");
-if (empty($conf->global->MAIN_SESSION_TIMEOUT)) $conf->global->MAIN_SESSION_TIMEOUT=$sessiontimeout;
+$sessiontimeout = ini_get("session.gc_maxlifetime");
+if (empty($conf->global->MAIN_SESSION_TIMEOUT)) $conf->global->MAIN_SESSION_TIMEOUT = $sessiontimeout;
 print '<tr class="oddeven">';
 print '<td>'.$langs->trans("SessionTimeOut").'</td><td class="right">';
 print $form->textwithpicto('', $langs->trans("SessionExplanation", ini_get("session.gc_probability"), ini_get("session.gc_divisor")));
@@ -185,8 +185,8 @@ print '</td>';
 print '</tr>';
 
 
-$sessiontimeout=ini_get("session.gc_maxlifetime");
-if (empty($conf->global->MAIN_APPLICATION_TITLE)) $conf->global->MAIN_APPLICATION_TITLE="";
+$sessiontimeout = ini_get("session.gc_maxlifetime");
+if (empty($conf->global->MAIN_APPLICATION_TITLE)) $conf->global->MAIN_APPLICATION_TITLE = "";
 print '<tr class="oddeven">';
 print '<td>'.$langs->trans("MAIN_APPLICATION_TITLE").'</td><td class="right">';
 print '</td>';

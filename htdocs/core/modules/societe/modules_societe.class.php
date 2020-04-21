@@ -15,8 +15,8 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
- * or see http://www.gnu.org/
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
+ * or see https://www.gnu.org/
  */
 
 /**
@@ -33,32 +33,32 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/commondocgenerator.class.php';
  */
 abstract class ModeleThirdPartyDoc extends CommonDocGenerator
 {
-    /**
+	/**
 	 * @var string Error code (or message)
 	 */
-	public $error='';
+	public $error = '';
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
-    /**
-     *  Return list of active generation modules
-     *
-     * 	@param	DoliDB		$db					Database handler
-     *  @param	integer		$maxfilenamelength  Max length of value to show
-     * 	@return	array							List of templates
-     */
-    public static function liste_modeles($db, $maxfilenamelength = 0)
-    {
-        // phpcs:enable
-        global $conf;
+	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
+	/**
+	 *  Return list of active generation modules
+	 *
+	 * 	@param	DoliDB		$db					Database handler
+	 *  @param	integer		$maxfilenamelength  Max length of value to show
+	 * 	@return	array							List of templates
+	 */
+	public static function liste_modeles($db, $maxfilenamelength = 0)
+	{
+		// phpcs:enable
+		global $conf;
 
-        $type='company';
-        $liste=array();
+		$type = 'company';
+		$liste = array();
 
-        include_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
-        $liste = getListOfModels($db, $type, $maxfilenamelength);
+		include_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
+		$liste = getListOfModels($db, $type, $maxfilenamelength);
 
-        return $liste;
-    }
+		return $liste;
+	}
 }
 
 /**
@@ -67,317 +67,318 @@ abstract class ModeleThirdPartyDoc extends CommonDocGenerator
  */
 abstract class ModeleThirdPartyCode
 {
-    /**
-     * @var string Error code (or message)
+	/**
+	 * @var string Error code (or message)
 	 */
-	public $error='';
+	public $error = '';
 
-    /**     Renvoi la description par defaut du modele de numerotation
-     *
-     *		@param	Translate	$langs		Object langs
-     *      @return string      			Texte descripif
-     */
-    public function info($langs)
-    {
-        $langs->load("bills");
-        return $langs->trans("NoDescription");
-    }
+	/**     Renvoi la description par defaut du modele de numerotation
+	 *
+	 *		@param	Translate	$langs		Object langs
+	 *      @return string      			Texte descripif
+	 */
+	public function info($langs)
+	{
+		$langs->load("bills");
+		return $langs->trans("NoDescription");
+	}
 
-    /**     Renvoi nom module
-     *
-     *		@param	Translate	$langs		Object langs
-     *      @return string      			Nom du module
-     */
-    public function getNom($langs)
-    {
-        return $this->nom;
-    }
-
-
-    /**     Renvoi un exemple de numerotation
-     *
-     *		@param	Translate	$langs		Object langs
-     *      @return string      			Example
-     */
-    public function getExample($langs)
-    {
-        $langs->load("bills");
-        return $langs->trans("NoExample");
-    }
-
-    /**     Test si les numeros deja en vigueur dans la base ne provoquent pas de
-     *      de conflits qui empechera cette numerotation de fonctionner.
-     *
-     *      @return     boolean     false si conflit, true si ok
-     */
-    public function canBeActivated()
-    {
-        return true;
-    }
-
-    /**
-     *  Return next value available
-     *
-     *	@param	Societe		$objsoc		Object thirdparty
-     *	@param	int			$type		Type
-     *  @return string      			Value
-     */
-    public function getNextValue($objsoc = 0, $type = -1)
-    {
-        global $langs;
-        return $langs->trans("Function_getNextValue_InModuleNotWorking");
-    }
+	/**     Return name of module
+	 *
+	 *		@param	Translate	$langs		Object langs
+	 *      @return string      			Nom du module
+	 */
+	public function getNom($langs)
+	{
+		return $this->name;
+	}
 
 
-    /**
-     *  Return version of module
-     *
-     *  @return     string      Version
-     */
-    public function getVersion()
-    {
-        global $langs;
-        $langs->load("admin");
+	/**     Return an example of numbering
+	 *
+	 *		@param	Translate	$langs		Object langs
+	 *      @return string      			Example
+	 */
+	public function getExample($langs)
+	{
+		$langs->load("bills");
+		return $langs->trans("NoExample");
+	}
 
-        if ($this->version == 'development') return $langs->trans("VersionDevelopment");
-        if ($this->version == 'experimental') return $langs->trans("VersionExperimental");
-        if ($this->version == 'dolibarr') return DOL_VERSION;
-        if ($this->version) return $this->version;
-        return $langs->trans("NotAvailable");
-    }
+	/**
+	 *  Checks if the numbers already in the database do not
+	 *  cause conflicts that would prevent this numbering working.
+	 *
+	 *  @return     boolean     false if conflict, true if ok
+	 */
+	public function canBeActivated()
+	{
+		return true;
+	}
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
-    /**
-     *  Renvoie la liste des modeles de numérotation
-     *
-     *  @param	DoliDB	$db     			Database handler
-     *  @param  integer	$maxfilenamelength  Max length of value to show
-     *  @return	array						List of numbers
-     */
-    public static function liste_modeles($db, $maxfilenamelength = 0)
-    {
-        // phpcs:enable
-        $liste=array();
-        $sql ="";
+	/**
+	 *  Return next value available
+	 *
+	 *	@param	Societe		$objsoc		Object thirdparty
+	 *	@param	int			$type		Type
+	 *  @return string      			Value
+	 */
+	public function getNextValue($objsoc = 0, $type = -1)
+	{
+		global $langs;
+		return $langs->trans("Function_getNextValue_InModuleNotWorking");
+	}
 
-        $resql = $db->query($sql);
-        if ($resql)
-        {
-            $num = $db->num_rows($resql);
-            $i = 0;
-            while ($i < $num)
-            {
-                $row = $db->fetch_row($resql);
-                $liste[$row[0]]=$row[1];
-                $i++;
-            }
-        }
-        else
-        {
-            return -1;
-        }
-        return $liste;
-    }
 
-    /**
-     *  Return description of module parameters
-     *
-     *  @param	Translate	$langs      Output language
-     *  @param	Societe		$soc		Third party object
-     *  @param	int			$type		-1=Nothing, 0=Customer, 1=Supplier
-     *  @return	string					HTML translated description
-     */
-    public function getToolTip($langs, $soc, $type)
-    {
-        global $conf;
+	/**
+	 *  Return version of module
+	 *
+	 *  @return     string      Version
+	 */
+	public function getVersion()
+	{
+		global $langs;
+		$langs->load("admin");
 
-        $langs->load("admin");
+		if ($this->version == 'development') return $langs->trans("VersionDevelopment");
+		if ($this->version == 'experimental') return $langs->trans("VersionExperimental");
+		if ($this->version == 'dolibarr') return DOL_VERSION;
+		if ($this->version) return $this->version;
+		return $langs->trans("NotAvailable");
+	}
 
-        $s='';
-        if ($type == -1) $s.=$langs->trans("Name").': <b>'.$this->getNom($langs).'</b><br>';
-        if ($type == -1) $s.=$langs->trans("Version").': <b>'.$this->getVersion().'</b><br>';
-        if ($type == 0)  $s.=$langs->trans("CustomerCodeDesc").'<br>';
-        if ($type == 1)  $s.=$langs->trans("SupplierCodeDesc").'<br>';
-        if ($type != -1) $s.=$langs->trans("ValidityControledByModule").': <b>'.$this->getNom($langs).'</b><br>';
-        $s.='<br>';
-        $s.='<u>'.$langs->trans("ThisIsModuleRules").':</u><br>';
-        if ($type == 0)
-        {
-            $s.=$langs->trans("RequiredIfCustomer").': ';
-            if (! empty($conf->global->MAIN_COMPANY_CODE_ALWAYS_REQUIRED) && ! empty($this->code_null)) $s.='<strike>';
-            $s.=yn(!$this->code_null, 1, 2);
-            if (! empty($conf->global->MAIN_COMPANY_CODE_ALWAYS_REQUIRED) && ! empty($this->code_null)) $s.='</strike> '.yn(1, 1, 2).' ('.$langs->trans("ForcedToByAModule", $langs->transnoentities("yes")).')';
-            $s.='<br>';
-        }
-        if ($type == 1)
-        {
-            $s.=$langs->trans("RequiredIfSupplier").': ';
-            if (! empty($conf->global->MAIN_COMPANY_CODE_ALWAYS_REQUIRED) && ! empty($this->code_null)) $s.='<strike>';
-            $s.=yn(!$this->code_null, 1, 2);
-            if (! empty($conf->global->MAIN_COMPANY_CODE_ALWAYS_REQUIRED) && ! empty($this->code_null)) $s.='</strike> '.yn(1, 1, 2).' ('.$langs->trans("ForcedToByAModule", $langs->transnoentities("yes")).')';
-            $s.='<br>';
-        }
-        if ($type == -1)
-        {
-            $s.=$langs->trans("Required").': ';
-            if (! empty($conf->global->MAIN_COMPANY_CODE_ALWAYS_REQUIRED) && ! empty($this->code_null)) $s.='<strike>';
-            $s.=yn(!$this->code_null, 1, 2);
-            if (! empty($conf->global->MAIN_COMPANY_CODE_ALWAYS_REQUIRED) && ! empty($this->code_null)) $s.='</strike> '.yn(1, 1, 2).' ('.$langs->trans("ForcedToByAModule", $langs->transnoentities("yes")).')';
-            $s.='<br>';
-        }
-        $s.=$langs->trans("CanBeModifiedIfOk").': ';
-        $s.=yn($this->code_modifiable, 1, 2);
-        $s.='<br>';
-        $s.=$langs->trans("CanBeModifiedIfKo").': '.yn($this->code_modifiable_invalide, 1, 2).'<br>';
-        $s.=$langs->trans("AutomaticCode").': '.yn($this->code_auto, 1, 2).'<br>';
-        $s.='<br>';
-        if ($type == 0 || $type == -1)
-        {
-            $nextval=$this->getNextValue($soc, 0);
-            if (empty($nextval)) $nextval=$langs->trans("Undefined");
-            $s.=$langs->trans("NextValue").($type == -1?' ('.$langs->trans("Customer").')':'').': <b>'.$nextval.'</b><br>';
-        }
-        if ($type == 1 || $type == -1)
-        {
-            $nextval=$this->getNextValue($soc, 1);
-            if (empty($nextval)) $nextval=$langs->trans("Undefined");
-            $s.=$langs->trans("NextValue").($type == -1?' ('.$langs->trans("Supplier").')':'').': <b>'.$nextval.'</b>';
-        }
-        return $s;
-    }
+	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
+	/**
+	 *  Renvoie la liste des modeles de numérotation
+	 *
+	 *  @param	DoliDB	$db     			Database handler
+	 *  @param  integer	$maxfilenamelength  Max length of value to show
+	 *  @return	array						List of numbers
+	 */
+	public static function liste_modeles($db, $maxfilenamelength = 0)
+	{
+		// phpcs:enable
+		$liste = array();
+		$sql = "";
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
+		$resql = $db->query($sql);
+		if ($resql)
+		{
+			$num = $db->num_rows($resql);
+			$i = 0;
+			while ($i < $num)
+			{
+				$row = $db->fetch_row($resql);
+				$liste[$row[0]] = $row[1];
+				$i++;
+			}
+		}
+		else
+		{
+			return -1;
+		}
+		return $liste;
+	}
+
+	/**
+	 *  Return description of module parameters
+	 *
+	 *  @param	Translate	$langs      Output language
+	 *  @param	Societe		$soc		Third party object
+	 *  @param	int			$type		-1=Nothing, 0=Customer, 1=Supplier
+	 *  @return	string					HTML translated description
+	 */
+	public function getToolTip($langs, $soc, $type)
+	{
+		global $conf;
+
+		$langs->load("admin");
+
+		$s = '';
+		if ($type == -1) $s .= $langs->trans("Name").': <b>'.$this->getNom($langs).'</b><br>';
+		if ($type == -1) $s .= $langs->trans("Version").': <b>'.$this->getVersion().'</b><br>';
+		if ($type == 0)  $s .= $langs->trans("CustomerCodeDesc").'<br>';
+		if ($type == 1)  $s .= $langs->trans("SupplierCodeDesc").'<br>';
+		if ($type != -1) $s .= $langs->trans("ValidityControledByModule").': <b>'.$this->getNom($langs).'</b><br>';
+		$s .= '<br>';
+		$s .= '<u>'.$langs->trans("ThisIsModuleRules").':</u><br>';
+		if ($type == 0)
+		{
+			$s .= $langs->trans("RequiredIfCustomer").': ';
+			if (!empty($conf->global->MAIN_COMPANY_CODE_ALWAYS_REQUIRED) && !empty($this->code_null)) $s .= '<strike>';
+			$s .= yn(!$this->code_null, 1, 2);
+			if (!empty($conf->global->MAIN_COMPANY_CODE_ALWAYS_REQUIRED) && !empty($this->code_null)) $s .= '</strike> '.yn(1, 1, 2).' ('.$langs->trans("ForcedToByAModule", $langs->transnoentities("yes")).')';
+			$s .= '<br>';
+		}
+		if ($type == 1)
+		{
+			$s .= $langs->trans("RequiredIfSupplier").': ';
+			if (!empty($conf->global->MAIN_COMPANY_CODE_ALWAYS_REQUIRED) && !empty($this->code_null)) $s .= '<strike>';
+			$s .= yn(!$this->code_null, 1, 2);
+			if (!empty($conf->global->MAIN_COMPANY_CODE_ALWAYS_REQUIRED) && !empty($this->code_null)) $s .= '</strike> '.yn(1, 1, 2).' ('.$langs->trans("ForcedToByAModule", $langs->transnoentities("yes")).')';
+			$s .= '<br>';
+		}
+		if ($type == -1)
+		{
+			$s .= $langs->trans("Required").': ';
+			if (!empty($conf->global->MAIN_COMPANY_CODE_ALWAYS_REQUIRED) && !empty($this->code_null)) $s .= '<strike>';
+			$s .= yn(!$this->code_null, 1, 2);
+			if (!empty($conf->global->MAIN_COMPANY_CODE_ALWAYS_REQUIRED) && !empty($this->code_null)) $s .= '</strike> '.yn(1, 1, 2).' ('.$langs->trans("ForcedToByAModule", $langs->transnoentities("yes")).')';
+			$s .= '<br>';
+		}
+		$s .= $langs->trans("CanBeModifiedIfOk").': ';
+		$s .= yn($this->code_modifiable, 1, 2);
+		$s .= '<br>';
+		$s .= $langs->trans("CanBeModifiedIfKo").': '.yn($this->code_modifiable_invalide, 1, 2).'<br>';
+		$s .= $langs->trans("AutomaticCode").': '.yn($this->code_auto, 1, 2).'<br>';
+		$s .= '<br>';
+		if ($type == 0 || $type == -1)
+		{
+			$nextval = $this->getNextValue($soc, 0);
+			if (empty($nextval)) $nextval = $langs->trans("Undefined");
+			$s .= $langs->trans("NextValue").($type == -1 ? ' ('.$langs->trans("Customer").')' : '').': <b>'.$nextval.'</b><br>';
+		}
+		if ($type == 1 || $type == -1)
+		{
+			$nextval = $this->getNextValue($soc, 1);
+			if (empty($nextval)) $nextval = $langs->trans("Undefined");
+			$s .= $langs->trans("NextValue").($type == -1 ? ' ('.$langs->trans("Supplier").')' : '').': <b>'.$nextval.'</b>';
+		}
+		return $s;
+	}
+
+	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 *   Check if mask/numbering use prefix
 	 *
 	 *   @return    int	    0=no, 1=yes
-     */
-    public function verif_prefixIsUsed()
-    {
-        // phpcs:enable
-        return 0;
-    }
+	 */
+	public function verif_prefixIsUsed()
+	{
+		// phpcs:enable
+		return 0;
+	}
 }
 
 
 /**
- *		\class		ModeleAccountancyCode
- *		\brief  	Parent class for third parties accountancy code generators
+ *		Parent class for third parties accountancy code generators
  */
 abstract class ModeleAccountancyCode
 {
-    /**
+	/**
 	 * @var string Error code (or message)
 	 */
-	public $error='';
+	public $error = '';
 
 
-    /**
-     *  Return description of module
-     *
-     *  @param	Translate	$langs		Object langs
-     *  @return string      			Description of module
-     */
-    public function info($langs)
-    {
-        $langs->load("bills");
-        return $langs->trans("NoDescription");
-    }
+	/**
+	 *  Return description of module
+	 *
+	 *  @param	Translate	$langs		Object langs
+	 *  @return string      			Description of module
+	 */
+	public function info($langs)
+	{
+		$langs->load("bills");
+		return $langs->trans("NoDescription");
+	}
 
-    /**
-     *  Return an example of result returned by getNextValue
-     *
-     *  @param	Translate	$langs		Object langs
-     *  @param	societe		$objsoc		Object thirdparty
-     *  @param	int			$type		Type of third party (1:customer, 2:supplier, -1:autodetect)
-     *  @return	string					Example
-     */
-    public function getExample($langs, $objsoc = 0, $type = -1)
-    {
-        $langs->load("bills");
-        return $langs->trans("NoExample");
-    }
+	/**
+	 *  Return an example of result returned by getNextValue
+	 *
+	 *  @param	Translate	$langs		Object langs
+	 *  @param	societe		$objsoc		Object thirdparty
+	 *  @param	int			$type		Type of third party (1:customer, 2:supplier, -1:autodetect)
+	 *  @return	string					Example
+	 */
+	public function getExample($langs, $objsoc = 0, $type = -1)
+	{
+		$langs->load("bills");
+		return $langs->trans("NoExample");
+	}
 
-    /**     Test si les numeros deja en vigueur dans la base ne provoquent pas de
-     *      de conflits qui empechera cette numerotation de fonctionner.
-     *
-     *      @return     boolean     false si conflit, true si ok
-     */
-    public function canBeActivated()
-    {
-        return true;
-    }
+	/**
+	 *  Checks if the numbers already in the database do not
+	 *  cause conflicts that would prevent this numbering working.
+	 *
+	 *  @return     boolean     false if conflict, true if ok
+	 */
+	public function canBeActivated()
+	{
+		return true;
+	}
 
-    /**
-     *  Return version of module
-     *
-     *  @return     string      Version
-     */
-    public function getVersion()
-    {
-        global $langs;
-        $langs->load("admin");
+	/**
+	 *  Return version of module
+	 *
+	 *  @return     string      Version
+	 */
+	public function getVersion()
+	{
+		global $langs;
+		$langs->load("admin");
 
-        if ($this->version == 'development') return $langs->trans("VersionDevelopment");
-        if ($this->version == 'experimental') return $langs->trans("VersionExperimental");
-        if ($this->version == 'dolibarr') return DOL_VERSION;
-        if ($this->version) return $this->version;
-        return $langs->trans("NotAvailable");
-    }
+		if ($this->version == 'development') return $langs->trans("VersionDevelopment");
+		if ($this->version == 'experimental') return $langs->trans("VersionExperimental");
+		if ($this->version == 'dolibarr') return DOL_VERSION;
+		if ($this->version) return $this->version;
+		return $langs->trans("NotAvailable");
+	}
 
-    /**
-     *  Return description of module parameters
-     *
-     *  @param	Translate	$langs      Output language
-     *  @param	Societe		$soc		Third party object
-     *  @param	int			$type		-1=Nothing, 0=Customer, 1=Supplier
-     *  @return	string					HTML translated description
-     */
-    public function getToolTip($langs, $soc, $type)
-    {
-        global $conf,$db;
+	/**
+	 *  Return description of module parameters
+	 *
+	 *  @param	Translate	$langs      Output language
+	 *  @param	Societe		$soc		Third party object
+	 *  @param	int			$type		-1=Nothing, 0=Customer, 1=Supplier
+	 *  @return	string					HTML translated description
+	 */
+	public function getToolTip($langs, $soc, $type)
+	{
+		global $conf, $db;
 
-        $langs->load("admin");
+		$langs->load("admin");
 
-        $s='';
-        if ($type == -1) $s.=$langs->trans("Name").': <b>'.$this->nom.'</b><br>';
-        if ($type == -1) $s.=$langs->trans("Version").': <b>'.$this->getVersion().'</b><br>';
-        //$s.='<br>';
-        //$s.='<u>'.$langs->trans("ThisIsModuleRules").':</u><br>';
-        $s.='<br>';
-        if ($type == 0 || $type == -1)
-        {
-            $result=$this->get_code($db, $soc, 'customer');
-            $nextval=$this->code;
-            if (empty($nextval)) $nextval=$langs->trans("Undefined");
-            $s.=$langs->trans("NextValue").($type == -1?' ('.$langs->trans("Customer").')':'').': <b>'.$nextval.'</b><br>';
-        }
-        if ($type == 1 || $type == -1)
-        {
-            $result=$this->get_code($db, $soc, 'supplier');
-            $nextval=$this->code;
-            if (empty($nextval)) $nextval=$langs->trans("Undefined");
-            $s.=$langs->trans("NextValue").($type == -1?' ('.$langs->trans("Supplier").')':'').': <b>'.$nextval.'</b>';
-        }
-        return $s;
-    }
+		$s = '';
+		if ($type == -1) $s .= $langs->trans("Name").': <b>'.$this->name.'</b><br>';
+		if ($type == -1) $s .= $langs->trans("Version").': <b>'.$this->getVersion().'</b><br>';
+		//$s.='<br>';
+		//$s.='<u>'.$langs->trans("ThisIsModuleRules").':</u><br>';
+		$s .= '<br>';
+		if ($type == 0 || $type == -1)
+		{
+			$result = $this->get_code($db, $soc, 'customer');
+			$nextval = $this->code;
+			if (empty($nextval)) $nextval = $langs->trans("Undefined");
+			$s .= $langs->trans("NextValue").($type == -1 ? ' ('.$langs->trans("Customer").')' : '').': <b>'.$nextval.'</b><br>';
+		}
+		if ($type == 1 || $type == -1)
+		{
+			$result = $this->get_code($db, $soc, 'supplier');
+			$nextval = $this->code;
+			if (empty($nextval)) $nextval = $langs->trans("Undefined");
+			$s .= $langs->trans("NextValue").($type == -1 ? ' ('.$langs->trans("Supplier").')' : '').': <b>'.$nextval.'</b>';
+		}
+		return $s;
+	}
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
-    /**
-     *  Set accountancy account code for a third party into this->code
-     *
-     *  @param	DoliDB	$db             Database handler
-     *  @param  Societe	$societe        Third party object
-     *  @param  int		$type			'customer' or 'supplier'
-     *  @return	int						>=0 if OK, <0 if KO
-     */
-    public function get_code($db, $societe, $type = '')
-    {
-        // phpcs:enable
-        global $langs;
+	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
+	/**
+	 *  Set accountancy account code for a third party into this->code
+	 *
+	 *  @param	DoliDB	$db             Database handler
+	 *  @param  Societe	$societe        Third party object
+	 *  @param  int		$type			'customer' or 'supplier'
+	 *  @return	int						>=0 if OK, <0 if KO
+	 */
+	public function get_code($db, $societe, $type = '')
+	{
+		// phpcs:enable
+		global $langs;
 
-        return $langs->trans("NotAvailable");
-    }
+		return $langs->trans("NotAvailable");
+	}
 }
 
 
@@ -398,7 +399,7 @@ abstract class ModeleAccountancyCode
  */
 function thirdparty_doc_create(DoliDB $db, Societe $object, $message, $modele, $outputlangs, $hidedetails = 0, $hidedesc = 0, $hideref = 0)
 {
-    dol_syslog(__METHOD__ . " is deprecated", LOG_WARNING);
+	dol_syslog(__METHOD__." is deprecated", LOG_WARNING);
 
-    return $object->generateDocument($modele, $outputlangs, $hidedetails, $hidedesc, $hideref);
+	return $object->generateDocument($modele, $outputlangs, $hidedetails, $hidedesc, $hideref);
 }

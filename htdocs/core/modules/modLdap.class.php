@@ -14,7 +14,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -24,7 +24,7 @@
  *	\ingroup    ldap
  *	\brief		File to describe and activate Ldap module
  */
-include_once DOL_DOCUMENT_ROOT .'/core/modules/DolibarrModules.class.php';
+include_once DOL_DOCUMENT_ROOT.'/core/modules/DolibarrModules.class.php';
 
 
 /**
@@ -63,28 +63,28 @@ class modLdap extends DolibarrModules
 		$this->config_page_url = array("ldap.php");
 
 		// Dependencies
-		$this->hidden = false;			// A condition to hide module
-		$this->depends = array();		// List of module class names as string that must be enabled if this module is enabled
-		$this->requiredby = array();	// List of module ids to disable if this one is disabled
-		$this->conflictwith = array();	// List of module class names as string this module is in conflict with
-		$this->phpmin = array(5,4);		// Minimum version of PHP required by module
+		$this->hidden = false; // A condition to hide module
+		$this->depends = array(); // List of module class names as string that must be enabled if this module is enabled
+		$this->requiredby = array(); // List of module ids to disable if this one is disabled
+		$this->conflictwith = array(); // List of module class names as string this module is in conflict with
+		$this->phpmin = array(5, 4); // Minimum version of PHP required by module
 
 		// Constants
 		$this->const = array(
-		0=>array('LDAP_SERVER_TYPE','chaine','openldap','',0),
-		1=>array('LDAP_SERVER_PROTOCOLVERSION','chaine','3','',0),
-		2=>array('LDAP_SERVER_HOST','chaine','localhost','',0),
-		3=>array('LDAP_USER_DN','chaine','ou=users,dc=example,dc=com','',0),
-		4=>array('LDAP_GROUP_DN','chaine','ou=groups,dc=example,dc=com','',0),
-		5=>array('LDAP_FILTER_CONNECTION','chaine','&(objectClass=inetOrgPerson)','',0),
-		6=>array('LDAP_FIELD_LOGIN','chaine','uid','',0),
-		7=>array('LDAP_FIELD_FULLNAME','chaine','cn','',0),
-		8=>array('LDAP_FIELD_NAME','chaine','sn','',0),
-		9=>array('LDAP_FIELD_FIRSTNAME','chaine','givenname','',0),
-		10=>array('LDAP_FIELD_MAIL','chaine','mail','',0),
-		11=>array('LDAP_FIELD_PHONE','chaine','telephonenumber','',0),
-		12=>array('LDAP_FIELD_FAX','chaine','facsimiletelephonenumber','',0),
-		13=>array('LDAP_FIELD_MOBILE','chaine','mobile','',0),
+		0=>array('LDAP_SERVER_TYPE', 'chaine', 'openldap', '', 0),
+		1=>array('LDAP_SERVER_PROTOCOLVERSION', 'chaine', '3', '', 0),
+		2=>array('LDAP_SERVER_HOST', 'chaine', 'localhost', '', 0),
+		3=>array('LDAP_USER_DN', 'chaine', 'ou=users,dc=example,dc=com', '', 0),
+		4=>array('LDAP_GROUP_DN', 'chaine', 'ou=groups,dc=example,dc=com', '', 0),
+		5=>array('LDAP_FILTER_CONNECTION', 'chaine', '&(objectClass=inetOrgPerson)', '', 0),
+		6=>array('LDAP_FIELD_LOGIN', 'chaine', 'uid', '', 0),
+		7=>array('LDAP_FIELD_FULLNAME', 'chaine', 'cn', '', 0),
+		8=>array('LDAP_FIELD_NAME', 'chaine', 'sn', '', 0),
+		9=>array('LDAP_FIELD_FIRSTNAME', 'chaine', 'givenname', '', 0),
+		10=>array('LDAP_FIELD_MAIL', 'chaine', 'mail', '', 0),
+		11=>array('LDAP_FIELD_PHONE', 'chaine', 'telephonenumber', '', 0),
+		12=>array('LDAP_FIELD_FAX', 'chaine', 'facsimiletelephonenumber', '', 0),
+		13=>array('LDAP_FIELD_MOBILE', 'chaine', 'mobile', '', 0),
 		);
 
 		// Boxes

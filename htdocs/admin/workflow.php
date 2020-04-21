@@ -15,7 +15,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -28,9 +28,9 @@ require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
 
 // Load translation files required by the page
-$langs->loadLangs(array("admin","workflow","propal","workflow","orders","supplier_proposals","receptions"));
+$langs->loadLangs(array("admin", "workflow", "propal", "workflow", "orders", "supplier_proposals", "receptions"));
 
-if (! $user->admin) accessforbidden();
+if (!$user->admin) accessforbidden();
 
 $action = GETPOST('action', 'alpha');
 
@@ -41,7 +41,7 @@ $action = GETPOST('action', 'alpha');
 
 if (preg_match('/set(.*)/', $action, $reg))
 {
-    if (! dolibarr_set_const($db, $reg[1], '1', 'chaine', 0, '', $conf->entity) > 0)
+    if (!dolibarr_set_const($db, $reg[1], '1', 'chaine', 0, '', $conf->entity) > 0)
     {
         dol_print_error($db);
     }
@@ -49,7 +49,7 @@ if (preg_match('/set(.*)/', $action, $reg))
 
 if (preg_match('/del(.*)/', $action, $reg))
 {
-    if (! dolibarr_set_const($db, $reg[1], '0', 'chaine', 0, '', $conf->entity) > 0)
+    if (!dolibarr_set_const($db, $reg[1], '0', 'chaine', 0, '', $conf->entity) > 0)
     {
         dol_print_error($db);
     }
@@ -62,7 +62,7 @@ if (preg_match('/del(.*)/', $action, $reg))
 
 llxHeader('', $langs->trans("WorkflowSetup"), '');
 
-$linkback='<a href="'.DOL_URL_ROOT.'/admin/modules.php?restore_lastsearch_values=1">'.$langs->trans("BackToModuleList").'</a>';
+$linkback = '<a href="'.DOL_URL_ROOT.'/admin/modules.php?restore_lastsearch_values=1">'.$langs->trans("BackToModuleList").'</a>';
 print load_fiche_titre($langs->trans("WorkflowSetup"), $linkback, 'title_setup');
 
 print '<span class="opacitymedium">'.$langs->trans("WorkflowDesc").'</span><br>';
@@ -72,29 +72,29 @@ print "<br>";
 
 clearstatcache();
 
-$workflowcodes=array(
+$workflowcodes = array(
     // Automatic creation
     'WORKFLOW_PROPAL_AUTOCREATE_ORDER'=>array('family'=>'create', 'position'=>10, 'enabled'=>'! empty($conf->propal->enabled) && ! empty($conf->commande->enabled)', 'picto'=>'order'),
 	'WORKFLOW_ORDER_AUTOCREATE_INVOICE'=>array('family'=>'create', 'position'=>20, 'enabled'=>'! empty($conf->commande->enabled) && ! empty($conf->facture->enabled)', 'picto'=>'bill'),
     'separator1'=>array('family'=>'separator', 'position'=>25),
 	// Automatic classification of proposal
-	'WORKFLOW_ORDER_CLASSIFY_BILLED_PROPAL'=>array('family'=>'classify_proposal', 'position'=>30, 'enabled'=>'! empty($conf->propal->enabled) && ! empty($conf->commande->enabled)', 'picto'=>'propal','warning'=>''),
-	'WORKFLOW_INVOICE_CLASSIFY_BILLED_PROPAL'=>array('family'=>'classify_proposal', 'position'=>31, 'enabled'=>'! empty($conf->propal->enabled) && ! empty($conf->facture->enabled)', 'picto'=>'propal','warning'=>''),
+	'WORKFLOW_ORDER_CLASSIFY_BILLED_PROPAL'=>array('family'=>'classify_proposal', 'position'=>30, 'enabled'=>'! empty($conf->propal->enabled) && ! empty($conf->commande->enabled)', 'picto'=>'propal', 'warning'=>''),
+	'WORKFLOW_INVOICE_CLASSIFY_BILLED_PROPAL'=>array('family'=>'classify_proposal', 'position'=>31, 'enabled'=>'! empty($conf->propal->enabled) && ! empty($conf->facture->enabled)', 'picto'=>'propal', 'warning'=>''),
 	// Automatic classification of order
 	'WORKFLOW_ORDER_CLASSIFY_SHIPPED_SHIPPING'=>array('family'=>'classify_order', 'position'=>40, 'enabled'=>'! empty($conf->expedition->enabled) && ! empty($conf->commande->enabled)', 'picto'=>'order'),
-	'WORKFLOW_INVOICE_AMOUNT_CLASSIFY_BILLED_ORDER'=>array('family'=>'classify_order', 'position'=>41, 'enabled'=>'! empty($conf->facture->enabled) && ! empty($conf->commande->enabled)', 'picto'=>'order','warning'=>''),	// For this option, if module invoice is disabled, it does not exists, so "Classify billed" for order must be done manually from order card.
+	'WORKFLOW_INVOICE_AMOUNT_CLASSIFY_BILLED_ORDER'=>array('family'=>'classify_order', 'position'=>41, 'enabled'=>'! empty($conf->facture->enabled) && ! empty($conf->commande->enabled)', 'picto'=>'order', 'warning'=>''), // For this option, if module invoice is disabled, it does not exists, so "Classify billed" for order must be done manually from order card.
     'separator2'=>array('family'=>'separator', 'position'=>50),
 	// Automatic classification supplier proposal
-	'WORKFLOW_ORDER_CLASSIFY_BILLED_SUPPLIER_PROPOSAL'=>array('family'=>'classify_supplier_proposal', 'position'=>60, 'enabled'=>'! empty($conf->supplier_proposal->enabled) && ! empty($conf->fournisseur->enabled)', 'picto'=>'propal','warning'=>''),
+	'WORKFLOW_ORDER_CLASSIFY_BILLED_SUPPLIER_PROPOSAL'=>array('family'=>'classify_supplier_proposal', 'position'=>60, 'enabled'=>'! empty($conf->supplier_proposal->enabled) && ! empty($conf->fournisseur->enabled)', 'picto'=>'propal', 'warning'=>''),
 	// Automatic classification supplier order
-	'WORKFLOW_INVOICE_AMOUNT_CLASSIFY_BILLED_SUPPLIER_ORDER'=>array('family'=>'classify_supplier_order', 'position'=>62, 'enabled'=>'! empty($conf->fournisseur->enabled)', 'picto'=>'order','warning'=>''),
+	'WORKFLOW_INVOICE_AMOUNT_CLASSIFY_BILLED_SUPPLIER_ORDER'=>array('family'=>'classify_supplier_order', 'position'=>62, 'enabled'=>'! empty($conf->fournisseur->enabled)', 'picto'=>'order', 'warning'=>''),
 	//Automatic classification reception
 	'WORKFLOW_BILL_ON_RECEPTION'=>array('family'=>'classify_reception', 'position'=>64, 'enabled'=>'! empty($conf->reception->enabled) && ! empty($conf->fournisseur->enabled)', 'picto'=>'bill'),
 );
 
-if (! empty($conf->modules_parts['workflow']) && is_array($conf->modules_parts['workflow']))
+if (!empty($conf->modules_parts['workflow']) && is_array($conf->modules_parts['workflow']))
 {
-	foreach($conf->modules_parts['workflow'] as $workflow)
+	foreach ($conf->modules_parts['workflow'] as $workflow)
 	{
 		$workflowcodes = array_merge($workflowcodes, $workflow);
 	}
@@ -103,26 +103,26 @@ if (! empty($conf->modules_parts['workflow']) && is_array($conf->modules_parts['
 // Sort on position
 $workflowcodes = dol_sort_array($workflowcodes, 'position');
 
-$nbqualified=0;
-$oldfamily='';
+$nbqualified = 0;
+$oldfamily = '';
 
-print '<table class="noborder" width="100%">'."\n";
+print '<table class="noborder centpercent">'."\n";
 
-foreach($workflowcodes as $key => $params)
+foreach ($workflowcodes as $key => $params)
 {
-	$picto=$params['picto'];
-	$enabled=$params['enabled'];
-	$family=$params['family'];
+	$picto = $params['picto'];
+	$enabled = $params['enabled'];
+	$family = $params['family'];
 
 	if ($family == 'separator')
 	{
 		print '</table><br>';
-		print '<table class="noborder" width="100%">'."\n";
+		print '<table class="noborder centpercent">'."\n";
 
 		continue;
 	}
 
-	if (! verifCond($enabled)) continue;
+	if (!verifCond($enabled)) continue;
 
    	$nbqualified++;
 
@@ -156,20 +156,20 @@ foreach($workflowcodes as $key => $params)
 
    	print "<tr class=\"oddeven\">\n";
    	print "<td>".img_object('', $picto).$langs->trans('desc'.$key);
-   	if (! empty($params['warning']))
+   	if (!empty($params['warning']))
    	{
    		$langs->load("errors");
    		print ' '.img_warning($langs->transnoentitiesnoconv($params['warning']));
    	}
    	print "</td>\n";
-   	print '<td align="center">';
-   	if (! empty($conf->use_javascript_ajax))
+   	print '<td class="center">';
+   	if (!empty($conf->use_javascript_ajax))
    	{
    		print ajax_constantonoff($key);
    	}
    	else
    	{
-   		if (! empty($conf->global->$key))
+   		if (!empty($conf->global->$key))
    		{
    			print '<a class="reposition" href="'.$_SERVER['PHP_SELF'].'?action=del'.$key.'">';
   			print img_picto($langs->trans("Activated"), 'switch_on');

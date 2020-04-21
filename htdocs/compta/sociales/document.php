@@ -18,7 +18,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -33,7 +33,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/images.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/tax.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php';
-if (! empty($conf->projet->enabled))
+if (!empty($conf->projet->enabled))
 {
     include_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
     include_once DOL_DOCUMENT_ROOT.'/core/class/html.formprojet.class.php';
@@ -47,36 +47,37 @@ $action = GETPOST('action', 'aZ09');
 $confirm = GETPOST('confirm', 'alpha');
 
 // Security check
-if ($user->societe_id) $socid=$user->societe_id;
+if ($user->socid) $socid = $user->socid;
 $result = restrictedArea($user, 'tax', $id, 'chargesociales', 'charges');
 
 
 // Get parameters
+$limit = GETPOST('limit', 'int') ? GETPOST('limit', 'int') : $conf->liste_limit;
 $sortfield = GETPOST("sortfield", 'alpha');
 $sortorder = GETPOST("sortorder", 'alpha');
-$page = GETPOST("page", 'int');
+$page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOST("page", 'int');
 if (empty($page) || $page == -1) {
     $page = 0;
 }
-$offset = $conf->liste_limit * $page;
+$offset = $limit * $page;
 $pageprev = $page - 1;
 $pagenext = $page + 1;
-if (! $sortorder) $sortorder="ASC";
-if (! $sortfield) $sortfield="name";
+if (!$sortorder) $sortorder = "ASC";
+if (!$sortfield) $sortfield = "name";
 
 
 $object = new ChargeSociales($db);
 if ($id > 0) $object->fetch($id);
 
 $upload_dir = $conf->tax->dir_output.'/'.dol_sanitizeFileName($object->ref);
-$modulepart='tax';
+$modulepart = 'tax';
 
 
 /*
  * Actions
  */
 
-require_once DOL_DOCUMENT_ROOT . '/core/actions_linkedfiles.inc.php';
+require_once DOL_DOCUMENT_ROOT.'/core/actions_linkedfiles.inc.php';
 
 if ($action == 'setlib' && $user->rights->tax->charges->creer)
 {
@@ -92,44 +93,44 @@ if ($action == 'setlib' && $user->rights->tax->charges->creer)
  */
 
 $form = new Form($db);
-if (! empty($conf->projet->enabled)) { $formproject = new FormProjets($db); }
+if (!empty($conf->projet->enabled)) { $formproject = new FormProjets($db); }
 
-$title = $langs->trans("SocialContribution") . ' - ' . $langs->trans("Documents");
-$help_url='EN:Module_Taxes_and_social_contributions|FR:Module Taxes et dividendes|ES:M&oacute;dulo Impuestos y cargas sociales (IVA, impuestos)';
+$title = $langs->trans("SocialContribution").' - '.$langs->trans("Documents");
+$help_url = 'EN:Module_Taxes_and_social_contributions|FR:Module Taxes et dividendes|ES:M&oacute;dulo Impuestos y cargas sociales (IVA, impuestos)';
 llxHeader("", $title, $help_url);
 
 if ($object->id)
 {
-	$alreadypayed=$object->getSommePaiement();
+	$alreadypayed = $object->getSommePaiement();
 
-    $head=tax_prepare_head($object);
+    $head = tax_prepare_head($object);
 
     dol_fiche_head($head, 'documents', $langs->trans("SocialContribution"), -1, 'bill');
 
-	$morehtmlref='<div class="refidno">';
+	$morehtmlref = '<div class="refidno">';
 	// Label of social contribution
-	$morehtmlref.=$form->editfieldkey("Label", 'lib', $object->lib, $object, $user->rights->tax->charges->creer, 'string', '', 0, 1);
-	$morehtmlref.=$form->editfieldval("Label", 'lib', $object->lib, $object, $user->rights->tax->charges->creer, 'string', '', null, null, '', 1);
+	$morehtmlref .= $form->editfieldkey("Label", 'lib', $object->label, $object, $user->rights->tax->charges->creer, 'string', '', 0, 1);
+	$morehtmlref .= $form->editfieldval("Label", 'lib', $object->label, $object, $user->rights->tax->charges->creer, 'string', '', null, null, '', 1);
     // Project
-	if (! empty($conf->projet->enabled))
+	if (!empty($conf->projet->enabled))
 	{
 	    $langs->load("projects");
-	    $morehtmlref.='<br>'.$langs->trans('Project') . ' : ';
-        if (! empty($object->fk_project)) {
+	    $morehtmlref .= '<br>'.$langs->trans('Project').' : ';
+        if (!empty($object->fk_project)) {
             $proj = new Project($db);
             $proj->fetch($object->fk_project);
-            $morehtmlref.='<a href="'.DOL_URL_ROOT.'/projet/card.php?id=' . $object->fk_project . '" title="' . $langs->trans('ShowProject') . '">';
-            $morehtmlref.=$proj->ref;
-            $morehtmlref.='</a>';
+            $morehtmlref .= '<a href="'.DOL_URL_ROOT.'/projet/card.php?id='.$object->fk_project.'" title="'.$langs->trans('ShowProject').'">';
+            $morehtmlref .= $proj->ref;
+            $morehtmlref .= '</a>';
         } else {
-            $morehtmlref.='';
+            $morehtmlref .= '';
         }
 	}
-	$morehtmlref.='</div>';
+	$morehtmlref .= '</div>';
 
-	$linkback = '<a href="' . DOL_URL_ROOT . '/compta/sociales/list.php?restore_lastsearch_values=1">' . $langs->trans("BackToList") . '</a>';
+	$linkback = '<a href="'.DOL_URL_ROOT.'/compta/sociales/list.php?restore_lastsearch_values=1">'.$langs->trans("BackToList").'</a>';
 
-	$object->totalpaye = $totalpaye;   // To give a chance to dol_banner_tab to use already paid amount to show correct status
+	$object->totalpaye = $totalpaye; // To give a chance to dol_banner_tab to use already paid amount to show correct status
 
 	dol_banner_tab($object, 'id', $linkback, 1, 'rowid', 'ref', $morehtmlref, '', 0, '', $morehtmlright);
 
@@ -137,11 +138,11 @@ if ($object->id)
 	print '<div class="underbanner clearboth"></div>';
 
     // Build file list
-    $filearray=dol_dir_list($upload_dir, "files", 0, '', '(\.meta|_preview.*\.png)$', $sortfield, (strtolower($sortorder)=='desc'?SORT_DESC:SORT_ASC), 1);
-    $totalsize=0;
-    foreach($filearray as $key => $file)
+    $filearray = dol_dir_list($upload_dir, "files", 0, '', '(\.meta|_preview.*\.png)$', $sortfield, (strtolower($sortorder) == 'desc' ?SORT_DESC:SORT_ASC), 1);
+    $totalsize = 0;
+    foreach ($filearray as $key => $file)
     {
-        $totalsize+=$file['size'];
+        $totalsize += $file['size'];
     }
 
 
@@ -160,8 +161,8 @@ if ($object->id)
     $modulepart = 'tax';
     $permission = $user->rights->tax->charges->creer;
     $permtoedit = $user->rights->fournisseur->facture->creer;
-    $param = '&id=' . $object->id;
-    include_once DOL_DOCUMENT_ROOT . '/core/tpl/document_actions_post_headers.tpl.php';
+    $param = '&id='.$object->id;
+    include_once DOL_DOCUMENT_ROOT.'/core/tpl/document_actions_post_headers.tpl.php';
 }
 else
 {

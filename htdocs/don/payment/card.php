@@ -13,7 +13,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -27,24 +27,24 @@ require_once DOL_DOCUMENT_ROOT.'/don/class/don.class.php';
 require_once DOL_DOCUMENT_ROOT.'/don/class/paymentdonation.class.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/modules/facture/modules_facture.php';
-if (! empty($conf->banque->enabled)) require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
+if (!empty($conf->banque->enabled)) require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
 
 // Load translation files required by the page
-$langs->loadLangs(array("bills","banks","companies"));
+$langs->loadLangs(array("bills", "banks", "companies"));
 
 // Security check
-$id=GETPOST('rowid')?GETPOST('rowid', 'int'):GETPOST('id', 'int');
-$action=GETPOST('action', 'aZ09');
-$confirm=GETPOST('confirm');
-if ($user->societe_id) $socid=$user->societe_id;
+$id = GETPOST('rowid') ?GETPOST('rowid', 'int') : GETPOST('id', 'int');
+$action = GETPOST('action', 'aZ09');
+$confirm = GETPOST('confirm');
+if ($user->socid) $socid = $user->socid;
 // TODO Add rule to restrict access payment
 //$result = restrictedArea($user, 'facture', $id,'');
 
 $object = new PaymentDonation($db);
 if ($id > 0)
 {
-	$result=$object->fetch($id);
-	if (! $result) dol_print_error($db, 'Failed to get payment id '.$id);
+	$result = $object->fetch($id);
+	if (!$result) dol_print_error($db, 'Failed to get payment id '.$id);
 }
 
 
@@ -76,20 +76,20 @@ if ($action == 'confirm_valide' && $confirm == 'yes' && $user->rights->don->cree
 {
 	$db->begin();
 
-	$result=$object->valide();
+	$result = $object->valide();
 
 	if ($result > 0)
 	{
 		$db->commit();
 
-		$factures=array();	// TODO Get all id of invoices linked to this payment
-		foreach($factures as $id)
+		$factures = array(); // TODO Get all id of invoices linked to this payment
+		foreach ($factures as $id)
 		{
 			$fac = new Facture($db);
 			$fac->fetch($id);
 
 			$outputlangs = $langs;
-			if (! empty($_REQUEST['lang_id']))
+			if (!empty($_REQUEST['lang_id']))
 			{
 				$outputlangs = new Translate("", $conf);
 				$outputlangs->setDefaultLang($_REQUEST['lang_id']);
@@ -119,7 +119,7 @@ llxHeader();
 $don = new Don($db);
 $form = new Form($db);
 
-$h=0;
+$h = 0;
 
 $head[$h][0] = DOL_URL_ROOT.'/don/payment/card.php?id='.$id;
 $head[$h][1] = $langs->trans("Card");
@@ -151,7 +151,7 @@ dol_banner_tab($object, 'id', '', 1, 'rowid', 'id');
 print '<div class="fichecenter">';
 print '<div class="underbanner clearboth"></div>';
 
-print '<table class="border" width="100%">';
+print '<table class="border centpercent">';
 
 // Ref
 /*print '<tr><td class=">'.$langs->trans('Ref').'</td>';
@@ -172,15 +172,15 @@ print '<tr><td>'.$langs->trans('Number').'</td><td>'.$object->num_payment.'</td>
 // Amount
 print '<tr><td>'.$langs->trans('Amount').'</td><td>'.price($object->amount, 0, $outputlangs, 1, -1, -1, $conf->currency).'</td></tr>';
 
-// Note
-print '<tr><td>'.$langs->trans('Note').'</td><td>'.nl2br($object->note).'</td></tr>';
+// Note public
+print '<tr><td>'.$langs->trans('Note').'</td><td>'.nl2br($object->note_public).'</td></tr>';
 
 // Bank account
-if (! empty($conf->banque->enabled))
+if (!empty($conf->banque->enabled))
 {
     if ($object->bank_account)
     {
-    	$bankline=new AccountLine($db);
+    	$bankline = new AccountLine($db);
     	$bankline->fetch($object->bank_line);
 
     	print '<tr>';
@@ -201,20 +201,20 @@ print '</table>';
 
 $disable_delete = 0;
 $sql = 'SELECT d.rowid as did, d.paid, d.amount as d_amount, pd.amount';
-$sql.= ' FROM '.MAIN_DB_PREFIX.'payment_donation as pd,'.MAIN_DB_PREFIX.'don as d';
-$sql.= ' WHERE pd.fk_donation = d.rowid';
-$sql.= ' AND d.entity = '.$conf->entity;
-$sql.= ' AND pd.rowid = '.$id;
+$sql .= ' FROM '.MAIN_DB_PREFIX.'payment_donation as pd,'.MAIN_DB_PREFIX.'don as d';
+$sql .= ' WHERE pd.fk_donation = d.rowid';
+$sql .= ' AND d.entity = '.$conf->entity;
+$sql .= ' AND pd.rowid = '.$id;
 
 dol_syslog("don/payment/card.php", LOG_DEBUG);
-$resql=$db->query($sql);
+$resql = $db->query($sql);
 if ($resql)
 {
 	$num = $db->num_rows($resql);
 
 	$i = 0;
 	$total = 0;
-	print '<br><table class="noborder" width="100%">';
+	print '<br><table class="noborder centpercent">';
 	print '<tr class="liste_titre">';
 	print '<td>'.$langs->trans('Donation').'</td>';
     print '<td class="right">'.$langs->trans('ExpectedToPay').'</td>';
@@ -272,7 +272,7 @@ print '<div class="tabsAction">';
 /*
 if (! empty($conf->global->BILL_ADD_PAYMENT_VALIDATION))
 {
-	if ($user->societe_id == 0 && $object->statut == 0 && $_GET['action'] == '')
+	if ($user->socid == 0 && $object->statut == 0 && $_GET['action'] == '')
 	{
 		if ($user->rights->facture->paiement)
 		{
@@ -282,11 +282,11 @@ if (! empty($conf->global->BILL_ADD_PAYMENT_VALIDATION))
 }
 */
 
-if ($_GET['action'] == '')
+if (empty($action))
 {
 	if ($user->rights->don->supprimer)
 	{
-		if (! $disable_delete)
+		if (!$disable_delete)
 		{
 			print '<a class="butActionDelete" href="card.php?id='.$_GET['id'].'&amp;action=delete">'.$langs->trans('Delete').'</a>';
 		}

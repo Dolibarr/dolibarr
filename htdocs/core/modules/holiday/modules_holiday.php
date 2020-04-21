@@ -20,8 +20,8 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
- * or see http://www.gnu.org/
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
+ * or see https://www.gnu.org/
  */
 
 /**
@@ -41,7 +41,7 @@ abstract class ModelePDFHoliday extends CommonDocGenerator
 	/**
 	 * @var string Error code (or message)
 	 */
-	public $error='';
+	public $error = '';
 
 
     // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
@@ -76,7 +76,7 @@ class ModelNumRefHolidays
 	/**
 	 * @var string Error code (or message)
 	 */
-	public $error='';
+	public $error = '';
 
 	/**
 	 *	Return if a module can be used or not
@@ -96,7 +96,7 @@ class ModelNumRefHolidays
 	public function info()
 	{
 		global $langs;
-		$langs->load("holidays");
+		$langs->load("holiday");
 		return $langs->trans("NoDescription");
 	}
 
@@ -108,7 +108,7 @@ class ModelNumRefHolidays
 	public function getExample()
 	{
 		global $langs;
-		$langs->load("holidays");
+		$langs->load("holiday");
 		return $langs->trans("NoExample");
 	}
 

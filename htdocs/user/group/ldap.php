@@ -14,7 +14,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -34,22 +34,22 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/ldap.lib.php';
 $langs->loadLangs(array('companies', 'ldap', 'users', 'admin'));
 
 // Users/Groups management only in master entity if transverse mode
-if (! empty($conf->multicompany->enabled) && $conf->entity > 1 && $conf->global->MULTICOMPANY_TRANSVERSE_MODE)
+if (!empty($conf->multicompany->enabled) && $conf->entity > 1 && $conf->global->MULTICOMPANY_TRANSVERSE_MODE)
 {
 	accessforbidden();
 }
 
-$canreadperms=true;
-if (! empty($conf->global->MAIN_USE_ADVANCED_PERMS))
+$canreadperms = true;
+if (!empty($conf->global->MAIN_USE_ADVANCED_PERMS))
 {
-	$canreadperms=($user->admin || $user->rights->user->group_advance->read);
+	$canreadperms = ($user->admin || $user->rights->user->group_advance->read);
 }
 
 $id = GETPOST('id', 'int');
 $action = GETPOST('action', 'alpha');
 
-$socid=0;
-if ($user->societe_id > 0) $socid = $user->societe_id;
+$socid = 0;
+if ($user->socid > 0) $socid = $user->socid;
 
 $object = new Usergroup($db);
 $object->fetch($id);
@@ -62,22 +62,22 @@ $object->getrights();
 
 if ($action == 'dolibarr2ldap')
 {
-	$ldap=new Ldap();
-	$result=$ldap->connect_bind();
+	$ldap = new Ldap();
+	$result = $ldap->connect_bind();
 
 	if ($result > 0)
 	{
-		$info=$object->_load_ldap_info();
+		$info = $object->_load_ldap_info();
 
 		// Get a gid number for objectclass PosixGroup
 		if (in_array('posixGroup', $info['objectclass'])) {
 			$info['gidNumber'] = $ldap->getNextGroupGid('LDAP_KEY_GROUPS');
 		}
 
-		$dn=$object->_load_ldap_dn($info);
-		$olddn=$dn;	// We can say that old dn = dn as we force synchro
+		$dn = $object->_load_ldap_dn($info);
+		$olddn = $dn; // We can say that old dn = dn as we force synchro
 
-		$result=$ldap->update($dn, $info, $user, $olddn);
+		$result = $ldap->update($dn, $info, $user, $olddn);
 	}
 
 	if ($result >= 0)
@@ -95,10 +95,9 @@ if ($action == 'dolibarr2ldap')
  *	View
  */
 
-llxHeader();
-
 $form = new Form($db);
 
+llxHeader();
 
 $head = group_prepare_head($object);
 
@@ -106,7 +105,7 @@ dol_fiche_head($head, 'ldap', $langs->trans("Group"), -1, 'group');
 
 $linkback = '<a href="'.DOL_URL_ROOT.'/user/group/list.php?restore_lastsearch_values=1">'.$langs->trans("BackToList").'</a>';
 
-dol_banner_tab($object, 'id', $linback, $user->rights->user->user->lire || $user->admin);
+dol_banner_tab($object, 'id', $linkback, $user->rights->user->user->lire || $user->admin);
 
 print '<div class="fichecenter">';
 print '<div class="underbanner clearboth"></div>';
@@ -114,7 +113,7 @@ print '<div class="underbanner clearboth"></div>';
 print '<table class="border centpercent">';
 
 // Name (already in dol_banner, we keep it to have the GlobalGroup picto, but we should move it in dol_banner)
-if (! empty($conf->mutlicompany->enabled))
+if (!empty($conf->mutlicompany->enabled))
 {
     print '<tr><td class="titlefield">'.$langs->trans("Name").'</td>';
     print '<td class="valeur">'.$object->name;
@@ -127,7 +126,9 @@ if (! empty($conf->mutlicompany->enabled))
 
 // Note
 print '<tr><td class="tdtop">'.$langs->trans("Description").'</td>';
-print '<td class="valeur">'.dol_htmlentitiesbr($object->note).'</td>';
+print '<td class="valeur sensiblehtmlcontent">';
+print dol_string_onlythesehtmltags(dol_htmlentitiesbr($object->note));
+print '</td>';
 print "</tr>\n";
 
 // LDAP DN
@@ -176,32 +177,33 @@ print '<td>'.$langs->trans("Value").'</td>';
 print '</tr>';
 
 // Lecture LDAP
-$ldap=new Ldap();
-$result=$ldap->connect_bind();
+$ldap = new Ldap();
+$result = $ldap->connect_bind();
 if ($result > 0)
 {
-	$info=$object->_load_ldap_info();
-	$dn=$object->_load_ldap_dn($info, 1);
+	$info = $object->_load_ldap_info();
+	$dn = $object->_load_ldap_dn($info, 1);
 	$search = "(".$object->_load_ldap_dn($info, 2).")";
+
 	$records = $ldap->getAttribute($dn, $search);
 
 	//var_dump($records);
 
-	// Affichage arbre
-    if ((! is_numeric($records) || $records != 0) && (! isset($records['count']) || $records['count'] > 0))
+	// Show tree
+    if (((!is_numeric($records)) || $records != 0) && (!isset($records['count']) || $records['count'] > 0))
 	{
-		if (! is_array($records))
+		if (!is_array($records))
 		{
-			print '<tr '.$bc[false].'><td colspan="2"><font class="error">'.$langs->trans("ErrorFailedToReadLDAP").'</font></td></tr>';
+			print '<tr class="oddeven"><td colspan="2"><font class="error">'.$langs->trans("ErrorFailedToReadLDAP").'</font></td></tr>';
 		}
 		else
 		{
-			$result=show_ldap_content($records, 0, $records['count'], true);
+			$result = show_ldap_content($records, 0, $records['count'], true);
 		}
 	}
 	else
 	{
-		print '<tr '.$bc[false].'><td colspan="2">'.$langs->trans("LDAPRecordNotFound").' (dn='.$dn.' - search='.$search.')</td></tr>';
+		print '<tr class="oddeven"><td colspan="2">'.$langs->trans("LDAPRecordNotFound").' (dn='.$dn.' - search='.$search.')</td></tr>';
 	}
 	$ldap->unbind();
 	$ldap->close();

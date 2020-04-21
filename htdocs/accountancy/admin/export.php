@@ -18,7 +18,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -28,12 +28,12 @@
  */
 require '../../main.inc.php';
 
-require_once DOL_DOCUMENT_ROOT . '/core/lib/admin.lib.php';
-require_once DOL_DOCUMENT_ROOT . '/core/lib/accounting.lib.php';
-require_once DOL_DOCUMENT_ROOT . '/accountancy/class/accountancyexport.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/accounting.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/accountancy/class/accountancyexport.class.php';
 
 // Load translation files required by the page
-$langs->loadLangs(array("compta","bills","admin","accountancy"));
+$langs->loadLangs(array("compta", "bills", "admin", "accountancy"));
 
 // Security access
 if (empty($user->rights->accounting->chartofaccount))
@@ -57,7 +57,7 @@ $listformat = $configuration['format'];
 $listcr = $configuration['cr'];
 
 
-$model_option = array (
+$model_option = array(
     '1' => array(
         'label' => 'ACCOUNTING_EXPORT_FORMAT',
         'param' => $listformat,
@@ -86,37 +86,37 @@ if ($action == 'update') {
 
 	$modelcsv = GETPOST('ACCOUNTING_EXPORT_MODELCSV', 'int');
 
-	if (! empty($modelcsv)) {
-		if (! dolibarr_set_const($db, 'ACCOUNTING_EXPORT_MODELCSV', $modelcsv, 'chaine', 0, '', $conf->entity)) {
-			$error ++;
+	if (!empty($modelcsv)) {
+		if (!dolibarr_set_const($db, 'ACCOUNTING_EXPORT_MODELCSV', $modelcsv, 'chaine', 0, '', $conf->entity)) {
+			$error++;
 		}
 		//if ($modelcsv==AccountancyExport::$EXPORT_TYPE_QUADRATUS || $modelcsv==AccountancyExport::$EXPORT_TYPE_CIEL) {
 		//	dolibarr_set_const($db, 'ACCOUNTING_EXPORT_FORMAT', 'txt', 'chaine', 0, '', $conf->entity);
 		//}
 	} else {
-		$error ++;
+		$error++;
 	}
 
 	foreach ($main_option as $constname) {
 		$constvalue = GETPOST($constname, 'alpha');
 
-		if (! dolibarr_set_const($db, $constname, $constvalue, 'chaine', 0, '', $conf->entity)) {
-			$error ++;
+		if (!dolibarr_set_const($db, $constname, $constvalue, 'chaine', 0, '', $conf->entity)) {
+			$error++;
 		}
 	}
 
     foreach ($listparam[$modelcsv] as $key => $value) {
         $constante = $key;
 
-        if (strpos($constante, 'ACCOUNTING')!==false) {
+        if (strpos($constante, 'ACCOUNTING') !== false) {
             $constvalue = GETPOST($key, 'alpha');
-            if (! dolibarr_set_const($db, $constante, $constvalue, 'chaine', 0, '', $conf->entity)) {
-                $error ++;
+            if (!dolibarr_set_const($db, $constante, $constvalue, 'chaine', 0, '', $conf->entity)) {
+                $error++;
             }
         }
-	}
+    }
 
-	if (! $error) {
+	if (!$error) {
         // reload
         $configuration = AccountancyExport::getTypeConfig();
         $listparam = $configuration['param'];
@@ -132,12 +132,15 @@ if ($action == 'update') {
  * View
  */
 
-llxHeader();
-
 $form = new Form($db);
 
+$title = $langs->trans('ExportOptions');
+llxHeader('', $title);
+
+
+$linkback = '';
 // $linkback = '<a href="' . DOL_URL_ROOT . '/admin/modules.php?restore_lastsearch_values=1">' . $langs->trans("BackToModuleList") . '</a>';
-print load_fiche_titre($langs->trans('ConfigAccountingExpert'), $linkback, 'title_setup');
+print load_fiche_titre($langs->trans('ExportOptions'), $linkback, 'accountancy');
 
 
 print "\n".'<script type="text/javascript" language="javascript">'."\n";
@@ -184,32 +187,31 @@ print '    });'."\n";
 print '})'."\n";
 print '</script>'."\n";
 
-print '<form action="' . $_SERVER["PHP_SELF"] . '" method="post">';
-print '<input type="hidden" name="token" value="' . $_SESSION['newtoken'] . '">';
+print '<form action="'.$_SERVER["PHP_SELF"].'" method="post">';
+print '<input type="hidden" name="token" value="'.newToken().'">';
 print '<input type="hidden" name="action" value="update">';
 
 /*
  * Main Options
  */
 
-print '<table class="noborder" width="100%">';
+print '<table class="noborder centpercent">';
 print '<tr class="liste_titre">';
-print '<td colspan="3">' . $langs->trans('Options') . '</td>';
+print '<td colspan="3">'.$langs->trans('Options').'</td>';
 print "</tr>\n";
 
 $num = count($main_option);
 if ($num) {
 	foreach ($main_option as $key) {
-
 		print '<tr class="oddeven value">';
 
 		// Param
 		$label = $langs->trans($key);
-		print '<td width="50%">' . $label . '</td>';
+		print '<td width="50%">'.$label.'</td>';
 
 		// Value
 		print '<td>';
-		print '<input type="text" size="20" id="'.$key.'" name="' . $key . '" value="' . $conf->global->$key . '">';
+		print '<input type="text" size="20" id="'.$key.'" name="'.$key.'" value="'.$conf->global->$key.'">';
 		print '</td></tr>';
 	}
 }
@@ -221,16 +223,16 @@ print "<br>\n";
 /*
  * Export model
  */
-print '<table class="noborder" width="100%">';
+print '<table class="noborder centpercent">';
 
 print '<tr class="liste_titre">';
-print '<td colspan="2">' . $langs->trans("Modelcsv") . '</td>';
+print '<td colspan="2">'.$langs->trans("Modelcsv").'</td>';
 print '</tr>';
 
 
 print '<tr class="oddeven">';
-print '<td width="50%">' . $langs->trans("Selectmodelcsv") . '</td>';
-if (! $conf->use_javascript_ajax) {
+print '<td width="50%">'.$langs->trans("Selectmodelcsv").'</td>';
+if (!$conf->use_javascript_ajax) {
 	print '<td class="nowrap">';
 	print $langs->trans("NotAvailableWhenAjaxDisabled");
 	print "</td>";
@@ -252,9 +254,9 @@ print "<br>\n";
 
 $num2 = count($model_option);
 if ($num2) {
-	print '<table class="noborder" width="100%">';
+	print '<table class="noborder centpercent">';
 	print '<tr class="liste_titre">';
-	print '<td colspan="3">' . $langs->trans('OtherOptions') . '</td>';
+	print '<td colspan="3">'.$langs->trans('OtherOptions').'</td>';
 	print "</tr>\n";
 
 	foreach ($model_option as $key) {
@@ -262,14 +264,14 @@ if ($num2) {
 
         // Param
         $label = $key['label'];
-		print '<td width="50%">' . $langs->trans($label) . '</td>';
+		print '<td width="50%">'.$langs->trans($label).'</td>';
 
 		// Value
         print '<td>';
         if (is_array($key['param'])) {
             print $form->selectarray($label, $key['param'], $conf->global->$label, 0);
         } else {
-            print '<input type="text" size="20" id="'. $label .'" name="' . $key['label'] . '" value="' . $conf->global->$label . '">';
+            print '<input type="text" size="20" id="'.$label.'" name="'.$key['label'].'" value="'.$conf->global->$label.'">';
         }
 
 		print '</td></tr>';
@@ -278,7 +280,7 @@ if ($num2) {
 	print "</table>\n";
 }
 
-print '<div class="center"><input type="submit" class="button" value="' . dol_escape_htmltag($langs->trans('Modify')) . '" name="button"></div>';
+print '<div class="center"><input type="submit" class="button" value="'.dol_escape_htmltag($langs->trans('Modify')).'" name="button"></div>';
 
 print '</form>';
 

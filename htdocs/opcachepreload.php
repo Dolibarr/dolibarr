@@ -12,7 +12,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 
@@ -25,7 +25,7 @@
 // Preload some PHP files.
 // WARNING: They won't be reloaded until you restart the Web/PHP server, event if you modify the files.
 
-$files = array(); 	/* An array of files you want to preload */
+$files = array(); /* An array of files you want to preload */
 
 foreach ($files as $file) {
 	opcache_compile_file($file);

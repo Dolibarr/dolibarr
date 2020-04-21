@@ -15,7 +15,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -25,21 +25,21 @@
  */
 $sapi_type = php_sapi_name();
 $script_file = basename(__FILE__);
-$path = __DIR__ . '/';
+$path = __DIR__.'/';
 
 // Test if batch mode
 if (substr($sapi_type, 0, 3) == 'cgi') {
-	echo "Error: You are using PHP for CGI. To execute " . $script_file . " from command line, you must use PHP for CLI mode.\n";
-	exit(- 1);
+	echo "Error: You are using PHP for CGI. To execute ".$script_file." from command line, you must use PHP for CLI mode.\n";
+	exit(-1);
 }
 
-require_once $path . "../../htdocs/master.inc.php";
-require_once DOL_DOCUMENT_ROOT . "/core/lib/date.lib.php";
-require_once DOL_DOCUMENT_ROOT . "/core/class/ldap.class.php";
-require_once DOL_DOCUMENT_ROOT . "/adherents/class/adherent.class.php";
-require_once DOL_DOCUMENT_ROOT . "/adherents/class/subscription.class.php";
+require_once $path."../../htdocs/master.inc.php";
+require_once DOL_DOCUMENT_ROOT."/core/lib/date.lib.php";
+require_once DOL_DOCUMENT_ROOT."/core/class/ldap.class.php";
+require_once DOL_DOCUMENT_ROOT."/adherents/class/adherent.class.php";
+require_once DOL_DOCUMENT_ROOT."/adherents/class/subscription.class.php";
 
-$langs->loadLangs(array("main","errors"));
+$langs->loadLangs(array("main", "errors"));
 
 // Global variables
 $version = DOL_VERSION;
@@ -52,20 +52,45 @@ $confirmed = 0;
  */
 
 @set_time_limit(0);
-print "***** " . $script_file . " (" . $version . ") pid=" . dol_getmypid() . " *****\n";
-dol_syslog($script_file . " launched with arg " . join(',', $argv));
+print "***** ".$script_file." (".$version.") pid=".dol_getmypid()." *****\n";
+dol_syslog($script_file." launched with arg ".join(',', $argv));
 
 // List of fields to get from LDAP
-$required_fields = array($conf->global->LDAP_KEY_MEMBERS,$conf->global->LDAP_FIELD_FULLNAME,$conf->global->LDAP_FIELD_LOGIN,$conf->global->LDAP_FIELD_LOGIN_SAMBA,$conf->global->LDAP_FIELD_PASSWORD,$conf->global->LDAP_FIELD_PASSWORD_CRYPTED,$conf->global->LDAP_FIELD_NAME,$conf->global->LDAP_FIELD_FIRSTNAME,$conf->global->LDAP_FIELD_MAIL,$conf->global->LDAP_FIELD_PHONE,$conf->global->LDAP_FIELD_PHONE_PERSO,$conf->global->LDAP_FIELD_MOBILE,$conf->global->LDAP_FIELD_FAX,$conf->global->LDAP_FIELD_ADDRESS,$conf->global->LDAP_FIELD_ZIP,$conf->global->LDAP_FIELD_TOWN,$conf->global->LDAP_FIELD_COUNTRY,$conf->global->LDAP_FIELD_DESCRIPTION,$conf->global->LDAP_FIELD_BIRTHDATE,$conf->global->LDAP_FIELD_MEMBER_STATUS,$conf->global->LDAP_FIELD_MEMBER_END_LASTSUBSCRIPTION,
+$required_fields = array(
+	$conf->global->LDAP_KEY_MEMBERS,
+	$conf->global->LDAP_FIELD_FULLNAME,
+	$conf->global->LDAP_FIELD_LOGIN,
+	$conf->global->LDAP_FIELD_LOGIN_SAMBA,
+	$conf->global->LDAP_FIELD_PASSWORD,
+	$conf->global->LDAP_FIELD_PASSWORD_CRYPTED,
+	$conf->global->LDAP_FIELD_NAME,
+	$conf->global->LDAP_FIELD_FIRSTNAME,
+	$conf->global->LDAP_FIELD_MAIL,
+	$conf->global->LDAP_FIELD_PHONE,
+	$conf->global->LDAP_FIELD_PHONE_PERSO,
+	$conf->global->LDAP_FIELD_MOBILE,
+	$conf->global->LDAP_FIELD_FAX,
+	$conf->global->LDAP_FIELD_ADDRESS,
+	$conf->global->LDAP_FIELD_ZIP,
+	$conf->global->LDAP_FIELD_TOWN,
+	$conf->global->LDAP_FIELD_COUNTRY,
+	$conf->global->LDAP_FIELD_DESCRIPTION,
+	$conf->global->LDAP_FIELD_BIRTHDATE,
+	$conf->global->LDAP_FIELD_MEMBER_STATUS,
+	$conf->global->LDAP_FIELD_MEMBER_END_LASTSUBSCRIPTION,
 	// Subscriptions
-	$conf->global->LDAP_FIELD_MEMBER_FIRSTSUBSCRIPTION_DATE,$conf->global->LDAP_FIELD_MEMBER_FIRSTSUBSCRIPTION_AMOUNT,$conf->global->LDAP_FIELD_MEMBER_LASTSUBSCRIPTION_DATE,$conf->global->LDAP_FIELD_MEMBER_LASTSUBSCRIPTION_AMOUNT);
+	$conf->global->LDAP_FIELD_MEMBER_FIRSTSUBSCRIPTION_DATE,
+	$conf->global->LDAP_FIELD_MEMBER_FIRSTSUBSCRIPTION_AMOUNT,
+	$conf->global->LDAP_FIELD_MEMBER_LASTSUBSCRIPTION_DATE,
+	$conf->global->LDAP_FIELD_MEMBER_LASTSUBSCRIPTION_AMOUNT
+);
 
 // Remove from required_fields all entries not configured in LDAP (empty) and duplicated
 $required_fields = array_unique(array_values(array_filter($required_fields, "dolValidElement")));
 
-if (! isset($argv[2]) || ! is_numeric($argv[2])) {
+if (!isset($argv[2]) || !is_numeric($argv[2])) {
 	print "Usage:  $script_file (nocommitiferror|commitiferror) id_member_type  [--server=ldapserverhost] [-y]\n";
-	exit(- 1);
+	exit(-1);
 }
 
 $typeid = $argv[2];
@@ -82,37 +107,37 @@ print "Mails sending disabled (useless in batch mode)\n";
 $conf->global->MAIN_DISABLE_ALL_MAILS = 1; // On bloque les mails
 print "\n";
 print "----- Synchronize all records from LDAP database:\n";
-print "host=" . $conf->global->LDAP_SERVER_HOST . "\n";
-print "port=" . $conf->global->LDAP_SERVER_PORT . "\n";
-print "login=" . $conf->global->LDAP_ADMIN_DN . "\n";
-print "pass=" . preg_replace('/./i', '*', $conf->global->LDAP_ADMIN_PASS) . "\n";
-print "DN to extract=" . $conf->global->LDAP_MEMBER_DN . "\n";
-if (! empty($conf->global->LDAP_MEMBER_FILTER))
-	print 'Filter=(' . $conf->global->LDAP_MEMBER_FILTER . ')' . "\n"; // Note: filter is defined into function getRecords
+print "host=".$conf->global->LDAP_SERVER_HOST."\n";
+print "port=".$conf->global->LDAP_SERVER_PORT."\n";
+print "login=".$conf->global->LDAP_ADMIN_DN."\n";
+print "pass=".preg_replace('/./i', '*', $conf->global->LDAP_ADMIN_PASS)."\n";
+print "DN to extract=".$conf->global->LDAP_MEMBER_DN."\n";
+if (!empty($conf->global->LDAP_MEMBER_FILTER))
+	print 'Filter=('.$conf->global->LDAP_MEMBER_FILTER.')'."\n"; // Note: filter is defined into function getRecords
 else
-	print 'Filter=(' . $conf->global->LDAP_KEY_MEMBERS . '=*)' . "\n";
+	print 'Filter=('.$conf->global->LDAP_KEY_MEMBERS.'=*)'."\n";
 print "----- To Dolibarr database:\n";
-print "type=" . $conf->db->type . "\n";
-print "host=" . $conf->db->host . "\n";
-print "port=" . $conf->db->port . "\n";
-print "login=" . $conf->db->user . "\n";
-print "database=" . $conf->db->name . "\n";
+print "type=".$conf->db->type."\n";
+print "host=".$conf->db->host."\n";
+print "port=".$conf->db->port."\n";
+print "login=".$conf->db->user."\n";
+print "database=".$conf->db->name."\n";
 print "----- Options:\n";
-print "commitiferror=" . $forcecommit . "\n";
-print "Mapped LDAP fields=" . join(',', $required_fields) . "\n";
+print "commitiferror=".$forcecommit."\n";
+print "Mapped LDAP fields=".join(',', $required_fields)."\n";
 print "\n";
 
 // Check parameters
 if (empty($conf->global->LDAP_MEMBER_DN)) {
-	print $langs->trans("Error") . ': ' . $langs->trans("LDAP setup for members not defined inside Dolibarr") . "\n";
-	exit(- 1);
+	print $langs->trans("Error").': '.$langs->trans("LDAP setup for members not defined inside Dolibarr")."\n";
+	exit(-1);
 }
 if ($typeid <= 0) {
-	print $langs->trans("Error") . ': Parameter id_member_type is not a valid ref of an existing member type' . "\n";
-	exit(- 2);
+	print $langs->trans("Error").': Parameter id_member_type is not a valid ref of an existing member type'."\n";
+	exit(-2);
 }
 
-if (! $confirmed) {
+if (!$confirmed) {
 	print "Hit Enter to continue or CTRL+C to stop...\n";
 	$input = trim(fgets(STDIN));
 }
@@ -121,7 +146,7 @@ if (! $confirmed) {
 $hashlib2rowid = array();
 $countries = array();
 $sql = "SELECT rowid, code, label, active";
-$sql .= " FROM " . MAIN_DB_PREFIX . "c_country";
+$sql .= " FROM ".MAIN_DB_PREFIX."c_country";
 $sql .= " WHERE active = 1";
 $sql .= " ORDER BY code ASC";
 $resql = $db->query($sql);
@@ -134,14 +159,14 @@ if ($resql) {
 			if ($obj) {
 				// print 'Load cache for country '.strtolower($obj->label).' rowid='.$obj->rowid."\n";
 				$hashlib2rowid[strtolower($obj->label)] = $obj->rowid;
-				$countries[$obj->rowid] = array('rowid' => $obj->rowid,'label' => $obj->label,'code' => $obj->code);
+				$countries[$obj->rowid] = array('rowid' => $obj->rowid, 'label' => $obj->label, 'code' => $obj->code);
 			}
-			$i ++;
+			$i++;
 		}
 	}
 } else {
 	dol_print_error($db);
-	exit(- 1);
+	exit(-1);
 }
 
 $ldap = new Ldap();
@@ -199,14 +224,14 @@ if ($result >= 0) {
 			$member->typeid = $typeid;
 
 			// Creation membre
-			print $langs->transnoentities("MemberCreate") . ' # ' . $key . ': login=' . $member->login . ', fullname=' . $member->getFullName($langs);
-			print ', datec=' . $member->datec;
+			print $langs->transnoentities("MemberCreate").' # '.$key.': login='.$member->login.', fullname='.$member->getFullName($langs);
+			print ', datec='.$member->datec;
 			$member_id = $member->create($user);
 			if ($member_id > 0) {
-				print ' --> Created member id=' . $member_id . ' login=' . $member->login;
+				print ' --> Created member id='.$member_id.' login='.$member->login;
 			} else {
-				$error ++;
-				print ' --> ' . $member->error;
+				$error++;
+				print ' --> '.$member->error;
 			}
 			print "\n";
 
@@ -230,7 +255,7 @@ if ($result >= 0) {
 				if ($datefirst && $datelast && $datelast <= $datefirst) {
 					// On ne va inserer que la premiere
 					$datelast = 0;
-					if (! $pricefirst && $pricelast)
+					if (!$pricefirst && $pricelast)
 						$pricefirst = $pricelast;
 				}
 			}
@@ -250,24 +275,24 @@ if ($result >= 0) {
 			}
 		}
 
-		if (! $error || $forcecommit) {
-			if (! $error)
-				print $langs->transnoentities("NoErrorCommitIsDone") . "\n";
+		if (!$error || $forcecommit) {
+			if (!$error)
+				print $langs->transnoentities("NoErrorCommitIsDone")."\n";
 			else
-				print $langs->transnoentities("ErrorButCommitIsDone") . "\n";
+				print $langs->transnoentities("ErrorButCommitIsDone")."\n";
 			$db->commit();
 		} else {
-			print $langs->transnoentities("ErrorSomeErrorWereFoundRollbackIsDone", $error) . "\n";
+			print $langs->transnoentities("ErrorSomeErrorWereFoundRollbackIsDone", $error)."\n";
 			$db->rollback();
 		}
 		print "\n";
 	} else {
 		dol_print_error('', $ldap->error);
-		$error ++;
+		$error++;
 	}
 } else {
 	dol_print_error('', $ldap->error);
-	$error ++;
+	$error++;
 }
 
 exit($error);

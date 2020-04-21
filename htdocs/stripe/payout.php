@@ -13,7 +13,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 // Put here all includes required by your class file
@@ -26,23 +26,23 @@ require_once DOL_DOCUMENT_ROOT.'/stripe/class/stripe.class.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
 require_once DOL_DOCUMENT_ROOT.'/commande/class/commande.class.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
-if (! empty($conf->accounting->enabled)) require_once DOL_DOCUMENT_ROOT . '/accountancy/class/accountingjournal.class.php';
+if (!empty($conf->accounting->enabled)) require_once DOL_DOCUMENT_ROOT.'/accountancy/class/accountingjournal.class.php';
 
 // Load translation files required by the page
 $langs->loadLangs(array('compta', 'salaries', 'bills', 'hrm', 'stripe'));
 
 // Security check
 $socid = GETPOST("socid", "int");
-if ($user->societe_id) $socid=$user->societe_id;
+if ($user->socid) $socid = $user->socid;
 //$result = restrictedArea($user, 'salaries', '', '', '');
 
-$limit = GETPOST('limit', 'int')?GETPOST('limit', 'int'):$conf->liste_limit;
+$limit = GETPOST('limit', 'int') ? GETPOST('limit', 'int') : $conf->liste_limit;
 $rowid = GETPOST("rowid", 'alpha');
 $sortfield = GETPOST("sortfield", 'alpha');
 $sortorder = GETPOST("sortorder", 'alpha');
-$page = GETPOST("page", 'int');
+$page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOST("page", 'int');
 if (empty($page) || $page == -1) { $page = 0; }     // If $page is not defined, or '' or -1
-$offset = $conf->liste_limit * $page;
+$offset = $limit * $page;
 $pageprev = $page - 1;
 $pagenext = $page + 1;
 
@@ -60,7 +60,7 @@ $stripe = new Stripe($db);
 
 llxHeader('', $langs->trans("StripePayoutList"));
 
-if (! empty($conf->stripe->enabled) && (empty($conf->global->STRIPE_LIVE) || GETPOST('forcesandbox', 'alpha'))) {
+if (!empty($conf->stripe->enabled) && (empty($conf->global->STRIPE_LIVE) || GETPOST('forcesandbox', 'alpha'))) {
 	$service = 'StripeTest';
 	$servicestatus = '0';
 	dol_htmloutput_mesg($langs->trans('YouAreCurrentlyInSandboxMode', 'Stripe'), '', 'warning');
@@ -77,26 +77,25 @@ $stripeacc = $stripe->getStripeAccount($service);
 	print $langs->trans('ErrorStripeAccountNotDefined');
 }*/
 
-if (! $rowid) {
-
-	print '<form method="POST" action="' . $_SERVER["PHP_SELF"] . '">';
+if (!$rowid) {
+	print '<form method="POST" action="'.$_SERVER["PHP_SELF"].'">';
 	if ($optioncss != '') {
-        print '<input type="hidden" name="optioncss" value="' . $optioncss . '">';
+        print '<input type="hidden" name="optioncss" value="'.$optioncss.'">';
     }
-	print '<input type="hidden" name="token" value="' . $_SESSION['newtoken'] . '">';
+	print '<input type="hidden" name="token" value="'.newToken().'">';
 	print '<input type="hidden" name="formfilteraction" id="formfilteraction" value="list">';
 	print '<input type="hidden" name="action" value="list">';
-	print '<input type="hidden" name="sortfield" value="' . $sortfield . '">';
-	print '<input type="hidden" name="sortorder" value="' . $sortorder . '">';
-	print '<input type="hidden" name="page" value="' . $page . '">';
+	print '<input type="hidden" name="sortfield" value="'.$sortfield.'">';
+	print '<input type="hidden" name="sortorder" value="'.$sortorder.'">';
+	print '<input type="hidden" name="page" value="'.$page.'">';
 
-	$title=$langs->trans("StripePayoutList");
-	$title.=($stripeaccount?' (Stripe connection with Stripe OAuth Connect account '.$stripeacc.')':' (Stripe connection with keys from Stripe module setup)');
+	$title = $langs->trans("StripePayoutList");
+	$title .= ($stripeaccount ? ' (Stripe connection with Stripe OAuth Connect account '.$stripeacc.')' : ' (Stripe connection with keys from Stripe module setup)');
 
 	print_barre_liste($title, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, '', $num, $totalnboflines, 'title_accountancy.png', 0, '', '', $limit);
 
 	print '<div class="div-table-responsive">';
-	print '<table class="tagtable liste' . ($moreforfilter ? " listwithfilterbefore" : "") . '">' . "\n";
+	print '<table class="tagtable liste'.($moreforfilter ? " listwithfilterbefore" : "").'">'."\n";
 
 	print '<tr class="liste_titre">';
 	print_liste_field_titre("Ref", $_SERVER["PHP_SELF"], "", "", "", "", $sortfield, $sortorder);
@@ -107,7 +106,6 @@ if (! $rowid) {
     print_liste_field_titre("DateOperation", $_SERVER["PHP_SELF"], "", "", "", '', $sortfield, $sortorder, 'center ');
 	print_liste_field_titre("Description", $_SERVER["PHP_SELF"], "", "", "", '', $sortfield, $sortorder, 'left ');
 	print_liste_field_titre("Paid", $_SERVER["PHP_SELF"], "", "", "", '', $sortfield, $sortorder, 'right ');
-	print_liste_field_titre("Fee", $_SERVER["PHP_SELF"], "", "", "", '', $sortfield, $sortorder, 'right ');
 	print_liste_field_titre("Status", $_SERVER["PHP_SELF"], "", "", "", '', '', '', 'right ');
 	print "</tr>\n";
 
@@ -157,19 +155,19 @@ if (! $rowid) {
 		$societestatic->admin = $obj->admin;
 		$societestatic->login = $obj->login;
 		$societestatic->email = $obj->email;
-		$societestatic->societe_id = $obj->fk_soc;
+		$societestatic->socid = $obj->fk_soc;
 
 		print '<tr class="oddeven">';
 
 		// Ref
-        if (!empty($stripeacc)) $connect=$stripeacc.'/';
+        if (!empty($stripeacc)) $connect = $stripeacc.'/';
 
-		$url='https://dashboard.stripe.com/'.$connect.'test/payouts/'.$payout->id;
+		$url = 'https://dashboard.stripe.com/'.$connect.'test/payouts/'.$payout->id;
 		if ($servicestatus) {
-			$url='https://dashboard.stripe.com/'.$connect.'payouts/'.$payout->id;
+			$url = 'https://dashboard.stripe.com/'.$connect.'payouts/'.$payout->id;
 		}
 
-        print "<td><a href='".$url."' target='_stripe'>".img_picto($langs->trans('ShowInStripe'), 'object_globe')." " . $payout->id . "</a></td>\n";
+        print "<td><a href='".$url."' target='_stripe'>".img_picto($langs->trans('ShowInStripe'), 'globe')." ".$payout->id."</a></td>\n";
 
 
 		// Stripe customer
@@ -198,25 +196,24 @@ if (! $rowid) {
 		//}
 		//print "</td>\n";
 		// Date payment
-		print '<td class="center">' . dol_print_date($payout->created, '%d/%m/%Y %H:%M') . "</td>\n";
+		print '<td class="center">'.dol_print_date($payout->created, '%d/%m/%Y %H:%M')."</td>\n";
         // Date payment
-		print '<td class="center">' . dol_print_date($payout->arrival_date, '%d/%m/%Y %H:%M') . "</td>\n";
+		print '<td class="center">'.dol_print_date($payout->arrival_date, '%d/%m/%Y %H:%M')."</td>\n";
 		// Type
-		print '<td>' . $payout->description . '</td>';
+		print '<td>'.$payout->description.'</td>';
 		// Amount
-		print '<td class="right">' . price(($payout->amount) / 100, 0, '', 1, - 1, - 1, strtoupper($payout->currency)) . "</td>";
-		print '<td class="right">' . price(($payout->fee) / 100, 0, '', 1, - 1, - 1, strtoupper($payout->currency)) . "</td>";
+		print '<td class="right">'.price(($payout->amount) / 100, 0, '', 1, -1, -1, strtoupper($payout->currency))."</td>";
 		// Status
 		print "<td class='right'>";
-		if ($payout->status=='paid') {
+		if ($payout->status == 'paid') {
             print img_picto($langs->trans("".$payout->status.""), 'statut4');
-        } elseif ($payout->status=='pending') {
+        } elseif ($payout->status == 'pending') {
             print img_picto($langs->trans("".$payout->status.""), 'statut7');
-        } elseif ($payout->status=='in_transit') {
+        } elseif ($payout->status == 'in_transit') {
             print img_picto($langs->trans("".$payout->status.""), 'statut7');
-        } elseif ($payout->status=='failed') {
+        } elseif ($payout->status == 'failed') {
             print img_picto($langs->trans("".$payout->status.""), 'statut7');
-        } elseif ($payout->status=='canceled') {
+        } elseif ($payout->status == 'canceled') {
             print img_picto($langs->trans("".$payout->status.""), 'statut8');
         }
 		print '</td>';

@@ -1,4 +1,5 @@
-# Dolibarr language file - en_US - Accounting Expert
+# Dolibarr language file - en_US - Accountancy (Double entries)
+Accountancy=Redovisning
 Accounting=Redovisning
 ACCOUNTING_EXPORT_SEPARATORCSV=Kolumnseparator för exportfil
 ACCOUNTING_EXPORT_DATE=Datumformat för exportfil
@@ -97,6 +98,8 @@ MenuExpenseReportAccounts=Utläggsrapport konton
 MenuLoanAccounts=Lån konton
 MenuProductsAccounts=Produktkonton
 MenuClosureAccounts=Avslutande konton
+MenuAccountancyClosure=Closure
+MenuAccountancyValidationMovements=Validate movements
 ProductsBinding=Produkter konton
 TransferInAccounting=Överföring i bokföring
 RegistrationInAccounting=Registrering i bokföring
@@ -164,12 +167,14 @@ ACCOUNTING_ACCOUNT_SUSPENSE=Redovisningskonto för väntan
 DONATION_ACCOUNTINGACCOUNT=Redovisningskonto för att registrera donationer
 ADHERENT_SUBSCRIPTION_ACCOUNTINGACCOUNT=Redovisningskonto för att registrera prenumerationer
 
-ACCOUNTING_PRODUCT_BUY_ACCOUNT=Redovisningskonto som standard för köpta produkter (används om det inte anges i produktbladet)
+ACCOUNTING_PRODUCT_BUY_ACCOUNT=Accounting account by default for the bought products (used if not defined in the product sheet)
 ACCOUNTING_PRODUCT_SOLD_ACCOUNT=Bokföringskonto som standard för de sålda produkterna (används om de inte anges i produktbladet)
-ACCOUNTING_PRODUCT_SOLD_INTRA_ACCOUNT=Accounting account by default for the sold products in EEC (used if not defined in the product sheet)
-ACCOUNTING_PRODUCT_SOLD_EXPORT_ACCOUNT=Accounting account by default for the sold products export out of EEC (used if not defined in the product sheet)
+ACCOUNTING_PRODUCT_SOLD_INTRA_ACCOUNT=Accounting account by default for the products sold in EEC (used if not defined in the product sheet)
+ACCOUNTING_PRODUCT_SOLD_EXPORT_ACCOUNT=Accounting account by default for the products sold and exported out of EEC (used if not defined in the product sheet)
 ACCOUNTING_SERVICE_BUY_ACCOUNT=Bokföringskonto som standard för de köpta tjänsterna (används om det inte anges i servicebladet)
 ACCOUNTING_SERVICE_SOLD_ACCOUNT=Redovisningskonto som standard för de sålda tjänsterna (används om de inte anges i servicebladet)
+ACCOUNTING_SERVICE_SOLD_INTRA_ACCOUNT=Accounting account by default for the services sold in EEC (used if not defined in the service sheet)
+ACCOUNTING_SERVICE_SOLD_EXPORT_ACCOUNT=Accounting account by default for the services sold and exported out of EEC (used if not defined in the service sheet)
 
 Doctype=Typ av dokument
 Docdate=Datum
@@ -192,9 +197,10 @@ ByPersonalizedAccountGroups=Av personliga grupper
 ByYear=Per år
 NotMatch=Inte inställd
 DeleteMvt=Ta bort linjer
+DelMonth=Month to delete
 DelYear=År att radera
 DelJournal=Loggbok att radera
-ConfirmDeleteMvt=Detta kommer att radera alla rader i huvudboken för år och / eller från en specifik loggbok. Minst ett kriterium krävs.
+ConfirmDeleteMvt=This will delete all lines of the Ledger for the year/month and/or from a specific journal (At least one criterion is required). You will have to reuse the feature 'Registration in accounting' to have the deleted record back in the ledger.
 ConfirmDeleteMvtPartial=Detta kommer att radera transaktionen från huvudboken (alla rader relaterade till samma transaktion kommer att raderas)
 FinanceJournal=Finansloggbok
 ExpenseReportsJournal=Utläggsrapporter loggbok
@@ -218,13 +224,15 @@ ListAccounts=Förteckning över redovisningskonton
 UnknownAccountForThirdparty=Okänt tredje part konto. Vi använder %s
 UnknownAccountForThirdpartyBlocking=Okänt tredje part konto. Blockeringsfel
 ThirdpartyAccountNotDefinedOrThirdPartyUnknown=Third-party account not defined or third party unknown. We will use %s
+ThirdpartyAccountNotDefinedOrThirdPartyUnknownSubledgerIgnored=Third-party unknown and subledger not defined on the payment. We will keep the subledger account value empty.
 ThirdpartyAccountNotDefinedOrThirdPartyUnknownBlocking=Third-party account not defined or third party unknown. Blocking error.
 UnknownAccountForThirdpartyAndWaitingAccountNotDefinedBlocking=Okänt tredje part konto och väntande konto inte definierat. Blockeringsfel
 PaymentsNotLinkedToProduct=Betalning som inte är kopplad till någon produkt / tjänst
+ShowOpeningBalance=Show opening balance
+HideOpeningBalance=Hide opening balance
 
 Pcgtype=Grupp av konto
-Pcgsubtype=Undergrupp av konto
-PcgtypeDesc=Grupp- och undergrupp för konto används som fördefinierade kriterier för "filter" och "gruppering" för vissa redovisningsrapporter. Till exempel används "INKOMST" eller "EXPENSATION" som grupper för bokföringskonto för produkter för att bygga kostnads- / inkomstrapporten.
+PcgtypeDesc=Group of account are used as predefined 'filter' and 'grouping' criteria for some accounting reports. For example, 'INCOME' or 'EXPENSE' are used as groups for accounting accounts of products to build the expense/income report.
 
 TotalVente=Total turnover before tax
 TotalMarge=Total försäljning marginal
@@ -235,12 +243,18 @@ DescVentilDoneCustomer=Konsultera här listan över raderna av fakturakunder och
 DescVentilTodoCustomer=Binda fakturulinjer som inte redan är bundna med ett konto för produktkonton
 ChangeAccount=Ändra produkt- / serviceredovisningskonto för utvalda linjer med följande bokföringskonto:
 Vide=-
-DescVentilSupplier=Här kan du se listan över leverantörsfakturor som är bundna eller ännu inte bundna till ett konto för produktkonton
+DescVentilSupplier=Consult here the list of vendor invoice lines bound or not yet bound to a product accounting account (only record not already transfered in accountancy are visible)
 DescVentilDoneSupplier=Här kan du se listan över leverantörsfakturor och deras bokföringskonto
 DescVentilTodoExpenseReport=Förbinda utläggsrapportsrader som inte redan är bundna med ett konto i bokföringen
 DescVentilExpenseReport=Här kan du se listan över kostnadsrapporter som är bundna (eller inte) till ett avgiftsredovisningskonto
 DescVentilExpenseReportMore=Om du ställer in bokföringskonto på typ av kostnadsrapportrader kommer applikationen att kunna göra alla bindningar mellan dina kostnadsrapporter och konton för ditt kontoplan, bara med ett klick med knappen <strong> "%s" </strong>. Om kontot inte var inställt på avgifterna eller om du fortfarande har några rader som inte är kopplade till något konto måste du göra en manuell bindning från menyn "<strong> %s </strong>".
 DescVentilDoneExpenseReport=Här kan du se listan över raderna för kostnadsrapporter och deras bokföringskonto
+
+DescClosure=Consult here the number of movements by month who are not validated & fiscal years already open
+OverviewOfMovementsNotValidated=Step 1/ Overview of movements not validated. (Necessary to close a fiscal year)
+ValidateMovements=Validate movements
+DescValidateMovements=Any modification or deletion of writing, lettering and deletes will be prohibited. All entries for an exercise must be validated otherwise closing will not be possible
+SelectMonthAndValidate=Select month and validate movements
 
 ValidateHistory=Förbind automatiskt
 AutomaticBindingDone=Automatisk bindning gjord
@@ -256,6 +270,8 @@ ListOfProductsWithoutAccountingAccount=Förteckning över produkter som inte är
 ChangeBinding=Ändra bindningen
 Accounted=Redovisas i huvudbok
 NotYetAccounted=Ännu inte redovisad i huvudbok
+ShowTutorial=Show Tutorial
+NotReconciled=Inte avstämd
 
 ## Admin
 ApplyMassCategories=Applicera masskategorier
@@ -264,7 +280,7 @@ CategoryDeleted=Kategori för bokföringskonto har tagits bort
 AccountingJournals=Bokföringsloggbok
 AccountingJournal=Bokföringsloggbok
 NewAccountingJournal=Ny bokföringsloggbok
-ShowAccoutingJournal=Visa bokföringsloggbok
+ShowAccountingJournal=Visa loggböcker
 NatureOfJournal=Nature of Journal
 AccountingJournalType1=Övrig verksamhet
 AccountingJournalType2=Försäljning

@@ -13,7 +13,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -31,16 +31,16 @@ $langs->loadLangs(array('products', 'stocks', 'companies'));
 $mesg = '';
 
 // Security check
-$result=restrictedArea($user, 'stock');
+$result = restrictedArea($user, 'stock');
 
 
 /*
  * View
  */
 
-$form=new Form($db);
+$form = new Form($db);
 
-$help_url='EN:Module_Stocks_En|FR:Module_Stock|ES:M&oacute;dulo_Stocks';
+$help_url = 'EN:Module_Stocks_En|FR:Module_Stock|ES:M&oacute;dulo_Stocks';
 llxHeader("", $langs->trans("WarehouseCard"), $help_url);
 
 if ($_GET["id"])
@@ -60,7 +60,7 @@ if ($_GET["id"])
 	dol_fiche_head($head, 'value', $langs->trans("Warehouse"), 0, 'stock');
 
 
-	print '<table class="border" width="100%">';
+	print '<table class="border centpercent">';
 
 	// Ref
 	print '<tr><td width="25%">'.$langs->trans("Ref").'</td><td colspan="3">';
@@ -86,16 +86,16 @@ if ($_GET["id"])
 	// Statut
 	print '<tr><td>'.$langs->trans("Status").'</td><td colspan="3">'.$entrepot->getLibStatut(4).'</td></tr>';
 
-	$calcproducts=$entrepot->nb_products();
+	$calcproducts = $entrepot->nb_products();
 
 	// Nb of products
 	print '<tr><td class="tdtop">'.$langs->trans("NumberOfProducts").'</td><td colspan="3">';
-	print empty($calcproducts['nb'])?'0':$calcproducts['nb'];
+	print empty($calcproducts['nb']) ? '0' : $calcproducts['nb'];
 	print "</td></tr>";
 
 	// Value
 	print '<tr><td class="tdtop">'.$langs->trans("EstimatedStockValueShort").'</td><td colspan="3">';
-	print empty($calcproducts['value'])?'0':$calcproducts['value'];
+	print empty($calcproducts['value']) ? '0' : $calcproducts['value'];
 	print "</td></tr>";
 
 	print "</table>";
@@ -111,7 +111,7 @@ if ($_GET["id"])
 	print "<div class=\"graph\">\n";
 	$year = strftime("%Y", time());
 
-	$file=$conf->stock->dir_temp.'/entrepot-'.$entrepot->id.'-'.($year).'.png';
+	$file = $conf->stock->dir_temp.'/entrepot-'.$entrepot->id.'-'.($year).'.png';
 
 	// TODO Build graph in $file from a table called llx_stock_log
 
@@ -122,13 +122,13 @@ if ($_GET["id"])
 
 	if (file_exists($file))
 	{
-		$url=DOL_URL_ROOT.'/viewimage.php?modulepart=graph_stock&amp;file=entrepot-'.$entrepot->id.'-'.$year.'.png';
+		$url = DOL_URL_ROOT.'/viewimage.php?modulepart=graph_stock&amp;file=entrepot-'.$entrepot->id.'-'.$year.'.png';
 		print '<img src="'.$url.'" alt="Valorisation du stock annee '.($year).'">';
 
-		if (file_exists(DOL_DATA_ROOT.'/entrepot/temp/entrepot-'.$entrepot->id.'-'.($year-1).'.png'))
+		if (file_exists(DOL_DATA_ROOT.'/entrepot/temp/entrepot-'.$entrepot->id.'-'.($year - 1).'.png'))
 		{
-			$url=DOL_URL_ROOT.'/viewimage.php?modulepart=graph_stock&amp;file=entrepot-'.$entrepot->id.'-'.($year-1).'.png';
-			print '<br><img src="'.$url.'" alt="Valorisation du stock annee '.($year-1).'">';
+			$url = DOL_URL_ROOT.'/viewimage.php?modulepart=graph_stock&amp;file=entrepot-'.$entrepot->id.'-'.($year - 1).'.png';
+			print '<br><img src="'.$url.'" alt="Valorisation du stock annee '.($year - 1).'">';
 		}
 	}
 	else

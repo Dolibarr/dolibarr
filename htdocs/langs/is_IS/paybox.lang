@@ -11,17 +11,8 @@ YourEMail=Netfang til staðfestingar greiðslu
 Creditor=Lánveitandi
 PaymentCode=Greiðsla kóða
 PayBoxDoPayment=Pay with Paybox
-ToPay=Ekki greiðslu
 YouWillBeRedirectedOnPayBox=Þú verður vísað á að tryggja Paybox síðu til inntak þú upplýsingar um greiðslukort
 Continue=Næsti
-ToOfferALinkForOnlinePayment=Slóð fyrir %s greiðslu
-ToOfferALinkForOnlinePaymentOnOrder=URL to offer a %s online payment user interface for a sales order
-ToOfferALinkForOnlinePaymentOnInvoice=URL að bjóða upp á %s inni greiðslu notandi tengi fyrir reikning
-ToOfferALinkForOnlinePaymentOnContractLine=URL að bjóða upp á %s inni greiðslu notandi tengi fyrir samning línu
-ToOfferALinkForOnlinePaymentOnFreeAmount=URL að bjóða upp á %s inni greiðslu notandi tengi fyrir ókeypis upphæð
-ToOfferALinkForOnlinePaymentOnMemberSubscription=URL að bjóða upp á %s inni greiðslu notandi tengi fyrir aðild áskrift
-ToOfferALinkForOnlinePaymentOnDonation=URL to offer a %s online payment, user interface for payment of donation
-YouCanAddTagOnUrl=Þú getur einnig bætt við url stika <b>& tag = <i>gildi</i></b> til allir af þessir URL (einungis fyrir frjáls greiðslu) til að bæta tag þína eigin greiðslu athugasemd.
 SetupPayBoxToHavePaymentCreatedAutomatically=Setup your Paybox with url <b>%s</b> to have payment created automatically when validated by Paybox.
 YourPaymentHasBeenRecorded=Þessi síða staðfestir að greiðsla hefur verið skráð. Þakka þér.
 YourPaymentHasNotBeenRecorded=Your payment has NOT been recorded and the transaction has been canceled. Thank you.

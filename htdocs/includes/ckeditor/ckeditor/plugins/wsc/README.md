@@ -73,7 +73,7 @@ Please use the [WSC Dialog plugin for CKEditor 4 GitHub issue page](https://gith
 License
 -------
 
-This plugin is licensed under the terms of any of the following licenses at your choice: [GPL](http://www.gnu.org/licenses/gpl.html), [LGPL](http://www.gnu.org/licenses/lgpl.html) and [MPL](http://www.mozilla.org/MPL/MPL-1.1.html).
+This plugin is licensed under the terms of any of the following licenses at your choice: [GPL](https://www.gnu.org/licenses/gpl.html), [LGPL](https://www.gnu.org/licenses/lgpl.html) and [MPL](http://www.mozilla.org/MPL/MPL-1.1.html).
 
 See LICENSE.md for more information.
 

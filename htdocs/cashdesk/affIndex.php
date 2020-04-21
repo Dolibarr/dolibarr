@@ -15,7 +15,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -27,17 +27,17 @@ require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/cashdesk/include/environnement.php';
 require_once DOL_DOCUMENT_ROOT.'/cashdesk/include/keypad.php';
 
-$error=GETPOST('error');
+$error = GETPOST('error');
 
 // Test if already logged
-if ( $_SESSION['uid'] <= 0 )
+if ($_SESSION['uid'] <= 0)
 {
 	header('Location: index.php');
 	exit;
 }
 
 // Load translation files required by the page
-$langs->loadLangs(array("companies","compta","cashdesk"));
+$langs->loadLangs(array("companies", "compta", "cashdesk"));
 
 
 /*
@@ -46,8 +46,8 @@ $langs->loadLangs(array("companies","compta","cashdesk"));
 
 $form = new Form($db);
 
-$arrayofjs=array();
-$arrayofcss=array('/cashdesk/css/style.css');
+$arrayofjs = array();
+$arrayofcss = array('/cashdesk/css/style.css');
 
 top_htmlhead($head, $langs->trans("CashDesk"), 0, 0, $arrayofjs, $arrayofcss);
 

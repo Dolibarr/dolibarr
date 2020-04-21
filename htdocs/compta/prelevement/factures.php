@@ -15,7 +15,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -35,23 +35,23 @@ require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
 $langs->loadLangs(array('banks', 'categories', 'companies', 'withdrawals', 'bills'));
 
 // Securite acces client
-if ($user->societe_id > 0) accessforbidden();
+if ($user->socid > 0) accessforbidden();
 
 // Get supervariables
 $prev_id = GETPOST('id', 'int');
 $socid = GETPOST('socid', 'int');
 $ref = GETPOST('ref', 'alpha');
 
-$limit = GETPOST('limit', 'int')?GETPOST('limit', 'int'):$conf->liste_limit;
+$limit = GETPOST('limit', 'int') ?GETPOST('limit', 'int') : $conf->liste_limit;
 $sortfield = GETPOST("sortfield", 'alpha');
 $sortorder = GETPOST("sortorder", 'alpha');
-$page = GETPOST("page", 'int');
+$page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOST("page", 'int');
 if (empty($page) || $page == -1) { $page = 0; }     // If $page is not defined, or '' or -1
 $offset = $limit * $page;
 $pageprev = $page - 1;
 $pagenext = $page + 1;
-if (! $sortfield) $sortfield='p.ref';
-if (! $sortorder) $sortorder='DESC';
+if (!$sortfield) $sortfield = 'p.ref';
+if (!$sortorder) $sortorder = 'DESC';
 
 $object = new BonPrelevement($db, "");
 
@@ -79,7 +79,7 @@ if ($prev_id > 0 || $ref)
 
 		print '<div class="fichecenter">';
 		print '<div class="underbanner clearboth"></div>';
-      	print '<table class="border" width="100%">';
+      	print '<table class="border centpercent tableforfield">';
 
 		//print '<tr><td class="titlefield">'.$langs->trans("Ref").'</td><td>'.$object->getNomUrl(1).'</td></tr>';
 		print '<tr><td class="titlefield">'.$langs->trans("Date").'</td><td>'.dol_print_date($object->datec, 'day').'</td></tr>';
@@ -87,7 +87,7 @@ if ($prev_id > 0 || $ref)
 		// Status
 		//print '<tr><td>'.$langs->trans('Status').'</td><td>'.$object->getLibStatut(1).'</td></tr>';
 
-		if($object->date_trans <> 0)
+		if ($object->date_trans <> 0)
 		{
 			$muser = new User($db);
 			$muser->fetch($object->user_trans);
@@ -99,7 +99,7 @@ if ($prev_id > 0 || $ref)
 			print $object->methodes_trans[$object->method_trans];
 			print '</td></tr>';
 		}
-		if($object->date_credit <> 0)
+		if ($object->date_credit <> 0)
 		{
 			print '<tr><td>'.$langs->trans('CreditDate').'</td><td>';
 			print dol_print_date($object->date_credit, 'day');
@@ -111,10 +111,10 @@ if ($prev_id > 0 || $ref)
 		print '<br>';
 
 		print '<div class="underbanner clearboth"></div>';
-		print '<table class="border" width="100%">';
+		print '<table class="border centpercent tableforfield">';
 
 		$acc = new Account($db);
-		$result=$acc->fetch($conf->global->PRELEVEMENT_ID_BANKACCOUNT);
+		$result = $acc->fetch($conf->global->PRELEVEMENT_ID_BANKACCOUNT);
 
 		print '<tr><td class="titlefield">';
 		print $langs->trans("BankToReceiveWithdraw");
@@ -144,21 +144,21 @@ if ($prev_id > 0 || $ref)
 
 // List of invoices
 $sql = "SELECT pf.rowid,";
-$sql.= " f.rowid as facid, f.ref as ref, f.total_ttc,";
-$sql.= " s.rowid as socid, s.nom as name, pl.statut, pl.amount as amount_requested";
-$sql.= " FROM ".MAIN_DB_PREFIX."prelevement_bons as p";
-$sql.= ", ".MAIN_DB_PREFIX."prelevement_lignes as pl";
-$sql.= ", ".MAIN_DB_PREFIX."prelevement_facture as pf";
-$sql.= ", ".MAIN_DB_PREFIX."facture as f";
-$sql.= ", ".MAIN_DB_PREFIX."societe as s";
-$sql.= " WHERE pf.fk_prelevement_lignes = pl.rowid";
-$sql.= " AND pl.fk_prelevement_bons = p.rowid";
-$sql.= " AND f.fk_soc = s.rowid";
-$sql.= " AND pf.fk_facture = f.rowid";
-$sql.= " AND f.entity IN (".getEntity('invoice').")";
-if ($object->id > 0) $sql.= " AND p.rowid=".$object->id;
-if ($socid) $sql.= " AND s.rowid = ".$socid;
-$sql.= $db->order($sortfield, $sortorder);
+$sql .= " f.rowid as facid, f.ref as ref, f.total_ttc,";
+$sql .= " s.rowid as socid, s.nom as name, pl.statut, pl.amount as amount_requested";
+$sql .= " FROM ".MAIN_DB_PREFIX."prelevement_bons as p";
+$sql .= ", ".MAIN_DB_PREFIX."prelevement_lignes as pl";
+$sql .= ", ".MAIN_DB_PREFIX."prelevement_facture as pf";
+$sql .= ", ".MAIN_DB_PREFIX."facture as f";
+$sql .= ", ".MAIN_DB_PREFIX."societe as s";
+$sql .= " WHERE pf.fk_prelevement_lignes = pl.rowid";
+$sql .= " AND pl.fk_prelevement_bons = p.rowid";
+$sql .= " AND f.fk_soc = s.rowid";
+$sql .= " AND pf.fk_facture = f.rowid";
+$sql .= " AND f.entity IN (".getEntity('invoice').")";
+if ($object->id > 0) $sql .= " AND p.rowid=".$object->id;
+if ($socid) $sql .= " AND s.rowid = ".$socid;
+$sql .= $db->order($sortfield, $sortorder);
 
 // Count total nb of records
 $nbtotalofrecords = '';
@@ -173,7 +173,7 @@ if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST))
     }
 }
 
-$sql.= $db->plimit($limit + 1, $offset);
+$sql .= $db->plimit($limit + 1, $offset);
 
 $result = $db->query($sql);
 if ($result)
@@ -186,22 +186,22 @@ if ($result)
 	// Lines of title fields
 	print '<form method="POST" id="searchFormList" action="'.$_SERVER["PHP_SELF"].'">';
     if ($optioncss != '') print '<input type="hidden" name="optioncss" value="'.$optioncss.'">';
-	print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+	print '<input type="hidden" name="token" value="'.newToken().'">';
 	print '<input type="hidden" name="formfilteraction" id="formfilteraction" value="list">';
 	print '<input type="hidden" name="action" value="list">';
 	print '<input type="hidden" name="sortfield" value="'.$sortfield.'">';
 	print '<input type="hidden" name="sortorder" value="'.$sortorder.'">';
     print '<input type="hidden" name="page" value="'.$page.'">';
 	print '<input type="hidden" name="contextpage" value="'.$contextpage.'">';
-	print '<input type="hidden" name="viewstatut" value="'.$viewstatut.'">';
+	print '<input type="hidden" name="search_status" value="'.$search_status.'">';
 
-	$massactionbutton='';
+	$massactionbutton = '';
 
 	print_barre_liste($langs->trans("Invoices"), $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, $massactionbutton, $num, $nbtotalofrecords, '', 0, '', '', $limit);
 
   	print"\n<!-- debut table -->\n";
-	print '<div class="div-table-responsive-no-min">';		// You can use div-table-responsive-no-min if you dont need reserved height for your table
-  	print '<table class="liste" width="100%">';
+	print '<div class="div-table-responsive-no-min">'; // You can use div-table-responsive-no-min if you dont need reserved height for your table
+  	print '<table class="liste centpercent">';
   	print '<tr class="liste_titre">';
   	print_liste_field_titre("Bill", $_SERVER["PHP_SELF"], "p.ref", '', $param, '', $sortfield, $sortorder);
   	print_liste_field_titre("ThirdParty", $_SERVER["PHP_SELF"], "s.nom", '', $param, '', $sortfield, $sortorder);
@@ -241,7 +241,7 @@ if ($result)
       	print '<td class="right">'.price($obj->amount_requested)."</td>\n";
 
       	// Status of requests
-      	print '<td align="center">';
+      	print '<td class="center">';
 
       	if ($obj->statut == 0)
 		{

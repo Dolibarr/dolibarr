@@ -13,17 +13,16 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
 */
 
 /**
  *		\file       htdocs/core/modules/export/export_csv.modules.php
  *		\ingroup    export
  *		\brief      File of class to build export files with format TSV
- *		\author	    Laurent Destailleur
  */
 
-require_once DOL_DOCUMENT_ROOT .'/core/modules/export/modules_export.php';
+require_once DOL_DOCUMENT_ROOT.'/core/modules/export/modules_export.php';
 
 
 /**
@@ -53,9 +52,9 @@ class ExportTsv extends ModeleExports
 
     public $version_lib;
 
-    public $separator="\t";
+    public $separator = "\t";
 
-    public $handle;    // Handle fichier
+    public $handle; // Handle fichier
 
 
     /**
@@ -68,16 +67,16 @@ class ExportTsv extends ModeleExports
         global $conf, $langs;
         $this->db = $db;
 
-        $this->id='tsv';                // Same value then xxx in file name export_xxx.modules.php
-        $this->label = 'TSV';             // Label of driver
+        $this->id = 'tsv'; // Same value then xxx in file name export_xxx.modules.php
+        $this->label = 'TSV'; // Label of driver
         $this->desc = $langs->trans('TsvFormatDesc');
-        $this->extension='tsv';         // Extension for generated file by this driver
-        $this->picto='mime/other';		// Picto
-        $this->version='1.15';         // Driver version
+        $this->extension = 'tsv'; // Extension for generated file by this driver
+        $this->picto = 'mime/other'; // Picto
+        $this->version = '1.15'; // Driver version
 
         // If driver use an external library, put its name here
-        $this->label_lib='Dolibarr';
-        $this->version_lib=DOL_VERSION;
+        $this->label_lib = 'Dolibarr';
+        $this->version_lib = DOL_VERSION;
     }
 
 	/**
@@ -166,15 +165,15 @@ class ExportTsv extends ModeleExports
 
         dol_syslog("ExportTsv::open_file file=".$file);
 
-        $ret=1;
+        $ret = 1;
 
         $outputlangs->load("exports");
 		$this->handle = fopen($file, "wt");
-        if (! $this->handle)
+        if (!$this->handle)
 		{
 			$langs->load("errors");
-			$this->error=$langs->trans("ErrorFailToCreateFile", $file);
-			$ret=-1;
+			$this->error = $langs->trans("ErrorFailToCreateFile", $file);
+			$ret = -1;
 		}
 
 		return $ret;
@@ -207,10 +206,10 @@ class ExportTsv extends ModeleExports
     public function write_title($array_export_fields_label, $array_selected_sorted, $outputlangs, $array_types)
     {
         // phpcs:enable
-        foreach($array_selected_sorted as $code => $value)
+        foreach ($array_selected_sorted as $code => $value)
         {
-            $newvalue=$outputlangs->transnoentities($array_export_fields_label[$code]);		// newvalue is now $outputlangs->charset_output encoded
-			$newvalue=$this->tsv_clean($newvalue, $outputlangs->charset_output);
+            $newvalue = $outputlangs->transnoentities($array_export_fields_label[$code]); // newvalue is now $outputlangs->charset_output encoded
+			$newvalue = $this->tsv_clean($newvalue, $outputlangs->charset_output);
 
 			fwrite($this->handle, $newvalue.$this->separator);
         }
@@ -234,20 +233,20 @@ class ExportTsv extends ModeleExports
         // phpcs:enable
     	global $conf;
 
-		$this->col=0;
- 		foreach($array_selected_sorted as $code => $value)
+		$this->col = 0;
+ 		foreach ($array_selected_sorted as $code => $value)
         {
-			if (strpos($code, ' as ') == 0) $alias=str_replace(array('.','-','(',')'), '_', $code);
-			else $alias=substr($code, strpos($code, ' as ') + 4);
+			if (strpos($code, ' as ') == 0) $alias = str_replace(array('.', '-', '(', ')'), '_', $code);
+			else $alias = substr($code, strpos($code, ' as ') + 4);
             if (empty($alias)) dol_print_error('', 'Bad value for field with code='.$code.'. Try to redefine export.');
 
-            $newvalue=$outputlangs->convToOutputCharset($objp->$alias);		// objp->$alias must be utf8 encoded as any var in memory // newvalue is now $outputlangs->charset_output encoded
-            $typefield=isset($array_types[$code])?$array_types[$code]:'';
+            $newvalue = $outputlangs->convToOutputCharset($objp->$alias); // objp->$alias must be utf8 encoded as any var in memory // newvalue is now $outputlangs->charset_output encoded
+            $typefield = isset($array_types[$code]) ? $array_types[$code] : '';
 
             // Translation newvalue
-			if (preg_match('/^\((.*)\)$/i', $newvalue, $reg)) $newvalue=$outputlangs->transnoentities($reg[1]);
+			if (preg_match('/^\((.*)\)$/i', $newvalue, $reg)) $newvalue = $outputlangs->transnoentities($reg[1]);
 
-			$newvalue=$this->tsv_clean($newvalue, $outputlangs->charset_output);
+			$newvalue = $this->tsv_clean($newvalue, $outputlangs->charset_output);
 
 			if (preg_match('/^Select:/i', $typefield, $reg) && $typefield = substr($typefield, 7))
 			{
@@ -301,15 +300,15 @@ class ExportTsv extends ModeleExports
     {
         // phpcs:enable
         // Rule Dolibarr: No HTML
-        $newvalue=dol_string_nohtmltag($newvalue, 1, $charset);
+        $newvalue = dol_string_nohtmltag($newvalue, 1, $charset);
 
         // Rule 1 TSV: No CR, LF in cells
-        $newvalue=str_replace("\r", '', $newvalue);
-        $newvalue=str_replace("\n", '\n', $newvalue);
+        $newvalue = str_replace("\r", '', $newvalue);
+        $newvalue = str_replace("\n", '\n', $newvalue);
 
         // Rule 2 TSV: If value contains tab, we must replace by space
         if (preg_match('/'.$this->separator.'/', $newvalue)) {
-            $newvalue=str_replace("\t", " ", $newvalue);
+            $newvalue = str_replace("\t", " ", $newvalue);
         }
 
         return $newvalue;

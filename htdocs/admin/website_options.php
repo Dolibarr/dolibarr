@@ -12,7 +12,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -34,21 +34,21 @@ require_once DOL_DOCUMENT_ROOT.'/website/class/website.class.php';
 // Load translation files required by the page
 $langs->loadLangs(array('errors', 'admin', 'companies', 'website'));
 
-$action=GETPOST('action', 'alpha')?GETPOST('action', 'alpha'):'view';
-$confirm=GETPOST('confirm', 'alpha');
+$action = GETPOST('action', 'alpha') ?GETPOST('action', 'alpha') : 'view';
+$confirm = GETPOST('confirm', 'alpha');
 $backtopage = GETPOST('backtopage', 'alpha');
 
-$rowid=GETPOST('rowid', 'alpha');
+$rowid = GETPOST('rowid', 'alpha');
 
 if (!$user->admin) accessforbidden();
 
 $status = 1;
 
 // Load variable for pagination
-$limit = GETPOST('limit', 'int')?GETPOST('limit', 'int'):$conf->liste_limit;
+$limit = GETPOST('limit', 'int') ?GETPOST('limit', 'int') : $conf->liste_limit;
 $sortfield = GETPOST('sortfield', 'alpha');
 $sortorder = GETPOST('sortorder', 'alpha');
-$page = GETPOST('page', 'int');
+$page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOST("page", 'int');
 if (empty($page) || $page == -1) { $page = 0; }     // If $page is not defined, or '' or -1
 $offset = $limit * $page;
 $pageprev = $page - 1;
@@ -57,7 +57,7 @@ $pagenext = $page + 1;
 // Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
 $hookmanager->initHooks(array('admin'));
 
-$arrayofparameters=array('WEBSITE_USE_WEBSITE_ACCOUNTS'=>array('css'=>'minwidth200'));
+$arrayofparameters = array('WEBSITE_USE_WEBSITE_ACCOUNTS'=>array('css'=>'minwidth200'));
 
 
 /*
@@ -72,16 +72,16 @@ include DOL_DOCUMENT_ROOT.'/core/actions_setmoduleoptions.inc.php';
  */
 
 $form = new Form($db);
-$formadmin=new FormAdmin($db);
+$formadmin = new FormAdmin($db);
 
 llxHeader('', $langs->trans("WebsiteSetup"));
 
-$titre=$langs->trans("WebsiteSetup");
-$linkback='<a href="'.($backtopage?$backtopage:DOL_URL_ROOT.'/admin/modules.php').'">'.$langs->trans("BackToModuleList").'</a>';
+$titre = $langs->trans("WebsiteSetup");
+$linkback = '<a href="'.($backtopage ? $backtopage : DOL_URL_ROOT.'/admin/modules.php').'">'.$langs->trans("BackToModuleList").'</a>';
 print load_fiche_titre($titre, $linkback, 'title_setup');
 
 // Onglets
-$head=array();
+$head = array();
 $h = 0;
 
 $head[$h][0] = DOL_URL_ROOT."/admin/website.php";
@@ -100,17 +100,17 @@ dol_fiche_head($head, 'options', '', -1);
 if ($action == 'edit')
 {
 	print '<form method="POST" action="'.$_SERVER["PHP_SELF"].'">';
-	print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+	print '<input type="hidden" name="token" value="'.newToken().'">';
 	print '<input type="hidden" name="action" value="update">';
 
-	print '<table class="noborder" width="100%">';
+	print '<table class="noborder centpercent">';
 	print '<tr class="liste_titre"><td class="titlefield">'.$langs->trans("Parameter").'</td><td>'.$langs->trans("Value").'</td></tr>';
 
-	foreach($arrayofparameters as $key => $val)
+	foreach ($arrayofparameters as $key => $val)
 	{
 		print '<tr class="oddeven"><td>';
 		print $form->textwithpicto($langs->trans($key), $langs->trans($key.'Tooltip'));
-		print '</td><td><input name="'.$key.'"  class="flat '.(empty($val['css'])?'minwidth200':$val['css']).'" value="' . $conf->global->$key . '"></td></tr>';
+		print '</td><td><input name="'.$key.'"  class="flat '.(empty($val['css']) ? 'minwidth200' : $val['css']).'" value="'.$conf->global->$key.'"></td></tr>';
 	}
 
 	print '</table>';
@@ -124,14 +124,14 @@ if ($action == 'edit')
 }
 else
 {
-	print '<table class="noborder" width="100%">';
+	print '<table class="noborder centpercent">';
 	print '<tr class="liste_titre"><td class="titlefield">'.$langs->trans("Parameter").'</td><td>'.$langs->trans("Value").'</td></tr>';
 
-	foreach($arrayofparameters as $key => $val)
+	foreach ($arrayofparameters as $key => $val)
 	{
 		print '<tr class="oddeven"><td>';
 		print $form->textwithpicto($langs->trans($key), $langs->trans($key.'Tooltip'));
-		print '</td><td>' . $conf->global->$key . '</td></tr>';
+		print '</td><td>'.$conf->global->$key.'</td></tr>';
 	}
 
 	print '</table>';

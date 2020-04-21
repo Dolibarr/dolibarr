@@ -12,14 +12,13 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
  *      \file       compta/facture/class/paymentterm.class.php
  *      \ingroup    facture
  *      \brief      This file is an example for a CRUD class file (Create/Read/Update/Delete)
- *		\author		Put author name here
  */
 
 
@@ -36,7 +35,7 @@ class PaymentTerm // extends CommonObject
 	/**
 	 * @var string Error code (or message)
 	 */
-	public $error='';
+	public $error = '';
 
 	/**
 	 * @var string[] Error codes (or messages)
@@ -45,7 +44,7 @@ class PaymentTerm // extends CommonObject
 
 	//public  $element='c_payment_term';			//!< Id that identify managed objects
 	//public  $table_element='c_payment_term';	//!< Name of table without prefix where object is stored
-	public $context =array();
+	public $context = array();
 
     /**
 	 * @var int ID
@@ -85,18 +84,18 @@ class PaymentTerm // extends CommonObject
     public function create($user, $notrigger = 0)
     {
     	global $conf, $langs;
-		$error=0;
+		$error = 0;
 
 		// Clean parameters
 
-		if (isset($this->code)) $this->code=trim($this->code);
-		if (isset($this->sortorder)) $this->sortorder=trim($this->sortorder);
-		if (isset($this->active)) $this->active=trim($this->active);
-		if (isset($this->libelle)) $this->libelle=trim($this->libelle);
-		if (isset($this->libelle_facture)) $this->libelle_facture=trim($this->libelle_facture);
-		if (isset($this->type_cdr)) $this->type_cdr=trim($this->type_cdr);
-		if (isset($this->nbjour)) $this->nbjour=trim($this->nbjour);
-		if (isset($this->decalage)) $this->decalage=trim($this->decalage);
+		if (isset($this->code)) $this->code = trim($this->code);
+		if (isset($this->sortorder)) $this->sortorder = trim($this->sortorder);
+		if (isset($this->active)) $this->active = trim($this->active);
+		if (isset($this->libelle)) $this->libelle = trim($this->libelle);
+		if (isset($this->libelle_facture)) $this->libelle_facture = trim($this->libelle_facture);
+		if (isset($this->type_cdr)) $this->type_cdr = trim($this->type_cdr);
+		if (isset($this->nbjour)) $this->nbjour = trim($this->nbjour);
+		if (isset($this->decalage)) $this->decalage = trim($this->decalage);
 
 
 		// Check parameters
@@ -104,60 +103,48 @@ class PaymentTerm // extends CommonObject
 
         // Insert request
 		$sql = "INSERT INTO ".MAIN_DB_PREFIX."c_payment_term(";
-		$sql.= "entity,";
-		$sql.= "code,";
-		$sql.= "sortorder,";
-		$sql.= "active,";
-		$sql.= "libelle,";
-		$sql.= "libelle_facture,";
-		$sql.= "type_cdr,";
-		$sql.= "nbjour,";
-		$sql.= "decalage";
-        $sql.= ") VALUES (";
-		$sql.= " ".(! isset($this->entity)?getEntity('c_payment_term'):"'".$this->db->escape($this->entity)."'").",";
-		$sql.= " ".(! isset($this->code)?'NULL':"'".$this->db->escape($this->code)."'").",";
-		$sql.= " ".(! isset($this->sortorder)?'NULL':"'".$this->db->escape($this->sortorder)."'").",";
-		$sql.= " ".(! isset($this->active)?'NULL':"'".$this->db->escape($this->active)."'").",";
-		$sql.= " ".(! isset($this->libelle)?'NULL':"'".$this->db->escape($this->libelle)."'").",";
-		$sql.= " ".(! isset($this->libelle_facture)?'NULL':"'".$this->db->escape($this->libelle_facture)."'").",";
-		$sql.= " ".(! isset($this->type_cdr)?'NULL':"'".$this->db->escape($this->type_cdr)."'").",";
-		$sql.= " ".(! isset($this->nbjour)?'NULL':"'".$this->db->escape($this->nbjour)."'").",";
-		$sql.= " ".(! isset($this->decalage)?'NULL':"'".$this->db->escape($this->decalage)."'")."";
-		$sql.= ")";
+		$sql .= "entity,";
+		$sql .= "code,";
+		$sql .= "sortorder,";
+		$sql .= "active,";
+		$sql .= "libelle,";
+		$sql .= "libelle_facture,";
+		$sql .= "type_cdr,";
+		$sql .= "nbjour,";
+		$sql .= "decalage";
+        $sql .= ") VALUES (";
+		$sql .= " ".(!isset($this->entity) ?getEntity('c_payment_term') : "'".$this->db->escape($this->entity)."'").",";
+		$sql .= " ".(!isset($this->code) ? 'NULL' : "'".$this->db->escape($this->code)."'").",";
+		$sql .= " ".(!isset($this->sortorder) ? 'NULL' : "'".$this->db->escape($this->sortorder)."'").",";
+		$sql .= " ".(!isset($this->active) ? 'NULL' : "'".$this->db->escape($this->active)."'").",";
+		$sql .= " ".(!isset($this->libelle) ? 'NULL' : "'".$this->db->escape($this->libelle)."'").",";
+		$sql .= " ".(!isset($this->libelle_facture) ? 'NULL' : "'".$this->db->escape($this->libelle_facture)."'").",";
+		$sql .= " ".(!isset($this->type_cdr) ? 'NULL' : "'".$this->db->escape($this->type_cdr)."'").",";
+		$sql .= " ".(!isset($this->nbjour) ? 'NULL' : "'".$this->db->escape($this->nbjour)."'").",";
+		$sql .= " ".(!isset($this->decalage) ? 'NULL' : "'".$this->db->escape($this->decalage)."'")."";
+		$sql .= ")";
 
 		$this->db->begin();
 
 	   	dol_syslog(get_class($this)."::create", LOG_DEBUG);
-        $resql=$this->db->query($sql);
-    	if (! $resql) { $error++; $this->errors[]="Error ".$this->db->lasterror(); }
+        $resql = $this->db->query($sql);
+    	if (!$resql) { $error++; $this->errors[] = "Error ".$this->db->lasterror(); }
 
-		if (! $error)
+		if (!$error)
         {
             $this->id = $this->db->last_insert_id(MAIN_DB_PREFIX."c_payment_term");
-
-	        // Uncomment this and change MYOBJECT to your own tag if you
-	        // want this action call a trigger.
-			//if (! $notrigger) {
-
-	        //    // Call triggers
-	        //    include_once DOL_DOCUMENT_ROOT . '/core/class/interfaces.class.php';
-	        //    $interface=new Interfaces($this->db);
-	        //    $result=$interface->run_triggers('MYOBJECT_CREATE',$this,$user,$langs,$conf);
-	        //    if ($result < 0) { $error++; $this->errors=$interface->errors; }
-	        //    // End call triggers
-			//}
         }
 
         // Commit or rollback
         if ($error)
 		{
-			foreach($this->errors as $errmsg)
+			foreach ($this->errors as $errmsg)
 			{
 	            dol_syslog(get_class($this)."::create ".$errmsg, LOG_ERR);
-	            $this->error.=($this->error?', '.$errmsg:$errmsg);
+	            $this->error .= ($this->error ? ', '.$errmsg : $errmsg);
 			}
 			$this->db->rollback();
-			return -1*$error;
+			return -1 * $error;
 		}
 		else
 		{
@@ -177,31 +164,31 @@ class PaymentTerm // extends CommonObject
     {
     	global $langs;
         $sql = "SELECT";
-		$sql.= " t.rowid,";
-		$sql.= " t.entity,";
+		$sql .= " t.rowid,";
+		$sql .= " t.entity,";
 
-		$sql.= " t.code,";
-		$sql.= " t.sortorder,";
-		$sql.= " t.active,";
-		$sql.= " t.libelle,";
-		$sql.= " t.libelle_facture,";
-		$sql.= " t.type_cdr,";
-		$sql.= " t.nbjour,";
-		$sql.= " t.decalage";
+		$sql .= " t.code,";
+		$sql .= " t.sortorder,";
+		$sql .= " t.active,";
+		$sql .= " t.libelle,";
+		$sql .= " t.libelle_facture,";
+		$sql .= " t.type_cdr,";
+		$sql .= " t.nbjour,";
+		$sql .= " t.decalage";
 
 
-        $sql.= " FROM ".MAIN_DB_PREFIX."c_payment_term as t";
-        $sql.= " WHERE t.rowid = ".$id;
+        $sql .= " FROM ".MAIN_DB_PREFIX."c_payment_term as t";
+        $sql .= " WHERE t.rowid = ".$id;
 
     	dol_syslog(get_class($this)."::fetch", LOG_DEBUG);
-        $resql=$this->db->query($sql);
+        $resql = $this->db->query($sql);
         if ($resql)
         {
             if ($this->db->num_rows($resql))
             {
                 $obj = $this->db->fetch_object($resql);
 
-                $this->id    = $obj->rowid;
+                $this->id = $obj->rowid;
 
 				$this->code = $obj->code;
 				$this->sortorder = $obj->sortorder;
@@ -218,7 +205,7 @@ class PaymentTerm // extends CommonObject
         }
         else
         {
-      	    $this->error="Error ".$this->db->lasterror();
+      	    $this->error = "Error ".$this->db->lasterror();
             return -1;
         }
     }
@@ -233,29 +220,29 @@ class PaymentTerm // extends CommonObject
 	{
 		global $langs;
 
-		$ret=0;
+		$ret = 0;
 
 		$sql = "SELECT";
-		$sql.= " t.rowid";
-		$sql.= " FROM ".MAIN_DB_PREFIX."c_payment_term as t";
-		$sql.= " WHERE t.code = 'RECEP'";
-		$sql.= " AND t.entity IN (".getEntity('c_payment_term').")";
+		$sql .= " t.rowid";
+		$sql .= " FROM ".MAIN_DB_PREFIX."c_payment_term as t";
+		$sql .= " WHERE t.code = 'RECEP'";
+		$sql .= " AND t.entity IN (".getEntity('c_payment_term').")";
 
 		dol_syslog(get_class($this)."::getDefaultId", LOG_DEBUG);
-		$resql=$this->db->query($sql);
+		$resql = $this->db->query($sql);
 		if ($resql)
 		{
 			if ($this->db->num_rows($resql))
 			{
 				$obj = $this->db->fetch_object($resql);
-				if ($obj) $ret=$obj->rowid;
+				if ($obj) $ret = $obj->rowid;
 			}
 			$this->db->free($resql);
 			return $ret;
 		}
 		else
 		{
-			$this->error="Error ".$this->db->lasterror();
+			$this->error = "Error ".$this->db->lasterror();
 			return -1;
 		}
 	}
@@ -272,18 +259,18 @@ class PaymentTerm // extends CommonObject
 	{
 		global $conf, $langs;
 
-		$error=0;
+		$error = 0;
 
 		// Clean parameters
 
-		if (isset($this->code)) $this->code=trim($this->code);
-		if (isset($this->sortorder)) $this->sortorder=trim($this->sortorder);
-		if (isset($this->active)) $this->active=trim($this->active);
-		if (isset($this->libelle)) $this->libelle=trim($this->libelle);
-		if (isset($this->libelle_facture)) $this->libelle_facture=trim($this->libelle_facture);
-		if (isset($this->type_cdr)) $this->type_cdr=trim($this->type_cdr);
-		if (isset($this->nbjour)) $this->nbjour=trim($this->nbjour);
-		if (isset($this->decalage)) $this->decalage=trim($this->decalage);
+		if (isset($this->code)) $this->code = trim($this->code);
+		if (isset($this->sortorder)) $this->sortorder = trim($this->sortorder);
+		if (isset($this->active)) $this->active = trim($this->active);
+		if (isset($this->libelle)) $this->libelle = trim($this->libelle);
+		if (isset($this->libelle_facture)) $this->libelle_facture = trim($this->libelle_facture);
+		if (isset($this->type_cdr)) $this->type_cdr = trim($this->type_cdr);
+		if (isset($this->nbjour)) $this->nbjour = trim($this->nbjour);
+		if (isset($this->decalage)) $this->decalage = trim($this->decalage);
 
 
 
@@ -292,43 +279,32 @@ class PaymentTerm // extends CommonObject
 
 		// Update request
 		$sql = "UPDATE ".MAIN_DB_PREFIX."c_payment_term SET";
-		$sql.= " code=".(isset($this->code)?"'".$this->db->escape($this->code)."'":"null").",";
-		$sql.= " sortorder=".(isset($this->sortorder)?$this->sortorder:"null").",";
-		$sql.= " active=".(isset($this->active)?$this->active:"null").",";
-		$sql.= " libelle=".(isset($this->libelle)?"'".$this->db->escape($this->libelle)."'":"null").",";
-		$sql.= " libelle_facture=".(isset($this->libelle_facture)?"'".$this->db->escape($this->libelle_facture)."'":"null").",";
-		$sql.= " type_cdr=".(isset($this->type_cdr)?$this->type_cdr:"null").",";
-		$sql.= " nbjour=".(isset($this->nbjour)?$this->nbjour:"null").",";
-		$sql.= " decalage=".(isset($this->decalage)?$this->decalage:"null")."";
-		$sql.= " WHERE rowid = " . $this->id;
+		$sql .= " code=".(isset($this->code) ? "'".$this->db->escape($this->code)."'" : "null").",";
+		$sql .= " sortorder=".(isset($this->sortorder) ? $this->sortorder : "null").",";
+		$sql .= " active=".(isset($this->active) ? $this->active : "null").",";
+		$sql .= " libelle=".(isset($this->libelle) ? "'".$this->db->escape($this->libelle)."'" : "null").",";
+		$sql .= " libelle_facture=".(isset($this->libelle_facture) ? "'".$this->db->escape($this->libelle_facture)."'" : "null").",";
+		$sql .= " type_cdr=".(isset($this->type_cdr) ? $this->type_cdr : "null").",";
+		$sql .= " nbjour=".(isset($this->nbjour) ? $this->nbjour : "null").",";
+		$sql .= " decalage=".(isset($this->decalage) ? $this->decalage : "null")."";
+		$sql .= " WHERE rowid = ".$this->id;
 
 		$this->db->begin();
 
 		dol_syslog(get_class($this)."::update", LOG_DEBUG);
 		$resql = $this->db->query($sql);
-		if (! $resql) { $error++; $this->errors[]="Error ".$this->db->lasterror(); }
-
-		// Uncomment this and change MYOBJECT to your own tag if you
-		// want this action call a trigger.
-		//if (! $error && ! $notrigger) {
-				// Call triggers
-				//include_once DOL_DOCUMENT_ROOT . '/core/class/interfaces.class.php';
-				//$interface=new Interfaces($this->db);
-				//$result=$interface->run_triggers('MYOBJECT_MODIFY',$this,$user,$langs,$conf);
-				//if ($result < 0) { $error++; $this->errors=$interface->errors; }
-				// End call triggers
-		//}
+		if (!$resql) { $error++; $this->errors[] = "Error ".$this->db->lasterror(); }
 
 		// Commit or rollback
 		if ($error)
 		{
-			foreach($this->errors as $errmsg)
+			foreach ($this->errors as $errmsg)
 			{
 				dol_syslog(get_class($this)."::update ".$errmsg, LOG_ERR);
-				$this->error.=($this->error?', '.$errmsg:$errmsg);
+				$this->error .= ($this->error ? ', '.$errmsg : $errmsg);
 			}
 			$this->db->rollback();
-			return -1*$error;
+			return -1 * $error;
 		}
 		else
 		{
@@ -348,38 +324,27 @@ class PaymentTerm // extends CommonObject
 	public function delete($user, $notrigger = 0)
 	{
 		global $conf, $langs;
-		$error=0;
+		$error = 0;
 
 		$sql = "DELETE FROM ".MAIN_DB_PREFIX."c_payment_term";
-		$sql.= " WHERE rowid = " . $this->id;
+		$sql .= " WHERE rowid = ".$this->id;
 
 		$this->db->begin();
 
 		dol_syslog(get_class($this)."::delete", LOG_DEBUG);
 		$resql = $this->db->query($sql);
-    	if (! $resql) { $error++; $this->errors[]="Error ".$this->db->lasterror(); }
-
-		// Uncomment this and change MYOBJECT to your own tag if you
-		// want this action call a trigger.
-		//if (! $error && ! $notrigger) {
-		        //// Call triggers
-		        //include_once DOL_DOCUMENT_ROOT . '/core/class/interfaces.class.php';
-		        //$interface=new Interfaces($this->db);
-		        //$result=$interface->run_triggers('MYOBJECT_DELETE',$this,$user,$langs,$conf);
-		        //if ($result < 0) { $error++; $this->errors=$interface->errors; }
-		        //// End call triggers
-		//}
+    	if (!$resql) { $error++; $this->errors[] = "Error ".$this->db->lasterror(); }
 
         // Commit or rollback
 		if ($error)
 		{
-			foreach($this->errors as $errmsg)
+			foreach ($this->errors as $errmsg)
 			{
 	            dol_syslog(get_class($this)."::delete ".$errmsg, LOG_ERR);
-	            $this->error.=($this->error?', '.$errmsg:$errmsg);
+	            $this->error .= ($this->error ? ', '.$errmsg : $errmsg);
 			}
 			$this->db->rollback();
-			return -1*$error;
+			return -1 * $error;
 		}
 		else
 		{
@@ -399,35 +364,35 @@ class PaymentTerm // extends CommonObject
 	 */
 	public function createFromClone(User $user, $fromid)
 	{
-		$error=0;
+		$error = 0;
 
-		$object=new PaymentTerm($this->db);
+		$object = new PaymentTerm($this->db);
 
 		$this->db->begin();
 
 		// Load source object
 		$object->fetch($fromid);
-		$object->id=0;
-		$object->statut=0;
+		$object->id = 0;
+		$object->statut = 0;
 
 		// Clear fields
 		// ...
 
 		// Create clone
 		$object->context['createfromclone'] = 'createfromclone';
-		$result=$object->create($user);
+		$result = $object->create($user);
 
 		// Other options
 		if ($result < 0)
 		{
-			$this->error=$object->error;
+			$this->error = $object->error;
 			$error++;
 		}
 
 		unset($object->context['createfromclone']);
 
 		// End
-		if (! $error)
+		if (!$error)
 		{
 			$this->db->commit();
 			return $object->id;
@@ -449,15 +414,15 @@ class PaymentTerm // extends CommonObject
      */
     public function initAsSpecimen()
     {
-		$this->id=0;
+		$this->id = 0;
 
-		$this->code='';
-		$this->sortorder='';
-		$this->active='';
-		$this->libelle='';
-		$this->libelle_facture='';
-		$this->type_cdr='';
-		$this->nbjour='';
-		$this->decalage='';
+		$this->code = '';
+		$this->sortorder = '';
+		$this->active = '';
+		$this->libelle = '';
+		$this->libelle_facture = '';
+		$this->type_cdr = '';
+		$this->nbjour = '';
+		$this->decalage = '';
 	}
 }

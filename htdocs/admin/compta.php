@@ -17,7 +17,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -68,7 +68,6 @@ if ($action == 'update')
 
 
     if (in_array($accounting_mode, $accounting_modes)) {
-
         if (!dolibarr_set_const($db, 'ACCOUNTING_MODE', $accounting_mode, 'chaine', 0, '', $conf->entity)) {
             $error++;
         }
@@ -84,7 +83,7 @@ if ($action == 'update')
         }
     }
 
-    if (! $error)
+    if (!$error)
     {
         setEventMessages($langs->trans("SetupSaved"), null, 'mesgs');
     }
@@ -100,18 +99,18 @@ if ($action == 'update')
 
 llxHeader();
 
-$form=new Form($db);
+$form = new Form($db);
 
-$linkback='<a href="'.DOL_URL_ROOT.'/admin/modules.php?restore_lastsearch_values=1">'.$langs->trans("BackToModuleList").'</a>';
+$linkback = '<a href="'.DOL_URL_ROOT.'/admin/modules.php?restore_lastsearch_values=1">'.$langs->trans("BackToModuleList").'</a>';
 print load_fiche_titre($langs->trans('ComptaSetup'), $linkback, 'title_setup');
 
 print '<br>';
 
 print '<form action="'.$_SERVER["PHP_SELF"].'" method="post">';
-print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+print '<input type="hidden" name="token" value="'.newToken().'">';
 print '<input type="hidden" name="action" value="update">';
 
-print '<table class="noborder" width="100%">';
+print '<table class="noborder centpercent">';
 
 // case of the parameter ACCOUNTING_MODE
 
@@ -139,7 +138,7 @@ print "</table>\n";
 
 print "<br>\n";
 
-print '<table class="noborder" width="100%">';
+print '<table class="noborder centpercent">';
 print '<tr class="liste_titre">';
 print '<td colspan="3">'.$langs->trans('OtherOptions').'</td>';
 print "</tr>\n";

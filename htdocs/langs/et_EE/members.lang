@@ -29,6 +29,7 @@ MenuMembersUpToDate=Ajakohased liikmed
 MenuMembersNotUpToDate=Aegunud liikmed
 MenuMembersResiliated=Terminated members
 MembersWithSubscriptionToReceive=Kasutajad, kelle liikmemaks on saada
+MembersWithSubscriptionToReceiveShort=Subscription to receive
 DateSubscription=Liikmemaksu kuupäev
 DateEndSubscription=Liikmemaksu  lõppkuupäev
 EndSubscription=Lõpeta liikmemaks

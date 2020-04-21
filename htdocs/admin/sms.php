@@ -14,7 +14,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -26,12 +26,14 @@ require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
 
 // Load translation files required by the page
-$langs->loadLangs(array("companies","admin","products","sms","other","errors"));
+$langs->loadLangs(array("companies", "admin", "products", "sms", "other", "errors"));
+
+$cancel = GETPOST('cancel', 'alpha'); // We click on a Cancel button
 
 if (!$user->admin)
 accessforbidden();
 
-$substitutionarrayfortest=array(
+$substitutionarrayfortest = array(
 '__ID__' => 'TESTIdRecord',
 '__PHONEFROM__' => 'TESTPhoneFrom',
 '__PHONETO__' => 'TESTPhoneTo',
@@ -39,21 +41,20 @@ $substitutionarrayfortest=array(
 '__FIRSTNAME__' => 'TESTFirstname'
 );
 
-$action=GETPOST('action', 'aZ09');
+$action = GETPOST('action', 'aZ09');
 
 
 /*
  * Actions
  */
 
-if ($action == 'update' && empty($_POST["cancel"]))
+if ($action == 'update' && !$cancel)
 {
-	dolibarr_set_const($db, "MAIN_DISABLE_ALL_SMS", $_POST["MAIN_DISABLE_ALL_SMS"], 'chaine', 0, '', $conf->entity);
+	dolibarr_set_const($db, "MAIN_DISABLE_ALL_SMS", GETPOST("MAIN_DISABLE_ALL_SMS", 'alphanohtml'), 'chaine', 0, '', $conf->entity);
 
-	dolibarr_set_const($db, "MAIN_SMS_SENDMODE", $_POST["MAIN_SMS_SENDMODE"], 'chaine', 0, '', $conf->entity);
+	dolibarr_set_const($db, "MAIN_SMS_SENDMODE", GETPOST("MAIN_SMS_SENDMODE", 'alphahtml'), 'chaine', 0, '', $conf->entity);
 
-	dolibarr_set_const($db, "MAIN_MAIL_SMS_FROM", $_POST["MAIN_MAIL_SMS_FROM"], 'chaine', 0, '', $conf->entity);
-	//dolibarr_set_const($db, "MAIN_MAIL_AUTOCOPY_TO", $_POST["MAIN_MAIL_AUTOCOPY_TO"], 'chaine', 0, '', $conf->entity);
+	dolibarr_set_const($db, "MAIN_MAIL_SMS_FROM", GETPOST("MAIN_MAIL_SMS_FROM", 'alphanohtml'), 'chaine', 0, '', $conf->entity);
 
 	header("Location: ".$_SERVER["PHP_SELF"]."?mainmenu=home&leftmenu=setup");
 	exit;
@@ -63,59 +64,59 @@ if ($action == 'update' && empty($_POST["cancel"]))
 /*
  * Send sms
  */
-if ($action == 'send' && ! $_POST['cancel'])
+if ($action == 'send' && !$_POST['cancel'])
 {
-	$error=0;
+	$error = 0;
 
-	$smsfrom='';
-	if (! empty($_POST["fromsms"])) $smsfrom=GETPOST("fromsms");
-	if (empty($smsfrom)) $smsfrom=GETPOST("fromname");
-	$sendto     = GETPOST("sendto");
-	$body       = GETPOST('message');
-	$deliveryreceipt= GETPOST("deliveryreceipt");
-    $deferred   = GETPOST('deferred');
-    $priority   = GETPOST('priority');
-    $class      = GETPOST('class');
-    $errors_to  = GETPOST("errorstosms");
+	$smsfrom = '';
+	if (!empty($_POST["fromsms"])) $smsfrom = GETPOST("fromsms", 'alphanohtml');
+	if (empty($smsfrom)) $smsfrom = GETPOST("fromname", 'alphanohtml');
+	$sendto     = GETPOST("sendto", 'alphanohtml');
+	$body       = GETPOST('message', 'alphanohtml');
+	$deliveryreceipt = GETPOST("deliveryreceipt", 'alphanohtml');
+	$deferred   = GETPOST('deferred', 'alphanohtml');
+	$priority   = GETPOST('priority', 'alphanohtml');
+	$class      = GETPOST('class', 'alphanohtml');
+	$errors_to  = GETPOST("errorstosms", 'alphanohtml');
 
 	// Create form object
 	include_once DOL_DOCUMENT_ROOT.'/core/class/html.formsms.class.php';
 	$formsms = new FormSms($db);
 
-	if (! empty($formsms->error))
+	if (!empty($formsms->error))
 	{
 		setEventMessages($formsms->error, $formsms->errors, 'errors');
-	    $action='test';
+	    $action = 'test';
 	    $error++;
 	}
     if (empty($body))
     {
         setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentities("Message")), null, 'errors');
-        $action='test';
+        $action = 'test';
         $error++;
     }
-	if (empty($smsfrom) || ! str_replace('+', '', $smsfrom))
+	if (empty($smsfrom) || !str_replace('+', '', $smsfrom))
 	{
 		setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentities("SmsFrom")), null, 'errors');
-        $action='test';
+        $action = 'test';
 		$error++;
 	}
-	if (empty($sendto) || ! str_replace('+', '', $sendto))
+	if (empty($sendto) || !str_replace('+', '', $sendto))
 	{
 		setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentities("SmsTo")), null, 'errors');
-        $action='test';
+        $action = 'test';
 		$error++;
 	}
-	if (! $error)
+	if (!$error)
 	{
 		// Make substitutions into message
         complete_substitutions_array($substitutionarrayfortest, $langs);
-	    $body=make_substitutions($body, $substitutionarrayfortest);
+	    $body = make_substitutions($body, $substitutionarrayfortest);
 
 		require_once DOL_DOCUMENT_ROOT.'/core/class/CSMSFile.class.php';
 
-		$smsfile = new CSMSFile($sendto, $smsfrom, $body, $deliveryreceipt, $deferred, $priority, $class);  // This define OvhSms->login, pass, session and account
-		$result=$smsfile->sendfile(); // This send SMS
+		$smsfile = new CSMSFile($sendto, $smsfrom, $body, $deliveryreceipt, $deferred, $priority, $class); // This define OvhSms->login, pass, session and account
+		$result = $smsfile->sendfile(); // This send SMS
 
 		if ($result)
 		{
@@ -128,7 +129,7 @@ if ($action == 'send' && ! $_POST['cancel'])
 			setEventMessages($smsfile->error, $smsfile->errors, 'errors');
 		}
 
-		$action='';
+		$action = '';
 	}
 }
 
@@ -138,35 +139,35 @@ if ($action == 'send' && ! $_POST['cancel'])
  * View
  */
 
-$linuxlike=1;
-if (preg_match('/^win/i', PHP_OS)) $linuxlike=0;
-if (preg_match('/^mac/i', PHP_OS)) $linuxlike=0;
+$linuxlike = 1;
+if (preg_match('/^win/i', PHP_OS)) $linuxlike = 0;
+if (preg_match('/^mac/i', PHP_OS)) $linuxlike = 0;
 
-$wikihelp='EN:Setup Sms|FR:Paramétrage Sms|ES:Configuración Sms';
+$wikihelp = 'EN:Setup Sms|FR:Paramétrage Sms|ES:Configuración Sms';
 llxHeader('', $langs->trans("Setup"), $wikihelp);
 
 print load_fiche_titre($langs->trans("SmsSetup"), '', 'title_setup');
 
-print $langs->trans("SmsDesc")."<br>\n";
+print '<span class="opacitymedium">'.$langs->trans("SmsDesc")."</span><br>\n";
 print "<br>\n";
 
 // List of sending methods
-$listofmethods=(is_array($conf->modules_parts['sms'])?$conf->modules_parts['sms']:array());
+$listofmethods = (is_array($conf->modules_parts['sms']) ? $conf->modules_parts['sms'] : array());
 asort($listofmethods);
 
 if ($action == 'edit')
 {
-	$form=new Form($db);
+	$form = new Form($db);
 
-	if (! count($listofmethods)) print '<div class="warning">'.$langs->trans("NoSmsEngine", '<a href="http://www.dolistore.com/search.php?orderby=position&orderway=desc&search_query=smsmanager">DoliStore</a>').'</div>';
+	if (!count($listofmethods)) print '<div class="warning">'.$langs->trans("NoSmsEngine", '<a href="http://www.dolistore.com/search.php?orderby=position&orderway=desc&search_query=smsmanager">DoliStore</a>').'</div>';
 
 	print '<form method="post" action="'.$_SERVER["PHP_SELF"].'">';
-	print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+	print '<input type="hidden" name="token" value="'.newToken().'">';
 	print '<input type="hidden" name="action" value="update">';
 
 	clearstatcache();
 
-	print '<table class="noborder" width="100%">';
+	print '<table class="noborder centpercent">';
 	print '<tr class="liste_titre"><td>'.$langs->trans("Parameter").'</td><td>'.$langs->trans("Value").'</td></tr>';
 
 	// Disable
@@ -185,7 +186,7 @@ if ($action == 'edit')
 
 	// From
 	print '<tr class="oddeven"><td>'.$langs->trans("MAIN_MAIL_SMS_FROM", $langs->transnoentities("Undefined")).'</td>';
-	print '<td><input class="flat" name="MAIN_MAIL_SMS_FROM" size="32" value="' . $conf->global->MAIN_MAIL_SMS_FROM;
+	print '<td><input class="flat" name="MAIN_MAIL_SMS_FROM" size="32" value="'.$conf->global->MAIN_MAIL_SMS_FROM;
 	print '"></td></tr>';
 
 	// Autocopy to
@@ -197,7 +198,7 @@ if ($action == 'edit')
 	print '</table>';
 
 	print '<br><div class="center">';
-	print '<input class="button" type="submit" name="save" value="'.$langs->trans("Save").'"'.(!count($listofmethods)?' disabled':'').'>';
+	print '<input class="button" type="submit" name="save" value="'.$langs->trans("Save").'"'.(!count($listofmethods) ? ' disabled' : '').'>';
 	print '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;';
 	print '<input class="button" type="submit" name="cancel" value="'.$langs->trans("Cancel").'">';
 	print '</div>';
@@ -207,10 +208,9 @@ if ($action == 'edit')
 }
 else
 {
+	if (!count($listofmethods)) print '<div class="warning">'.$langs->trans("NoSmsEngine", '<a target="_blank" href="http://www.dolistore.com/search.php?orderby=position&orderway=desc&search_query=smsmanager">DoliStore</a>').'</div>';
 
-	if (! count($listofmethods)) print '<div class="warning">'.$langs->trans("NoSmsEngine", '<a target="_blank" href="http://www.dolistore.com/search.php?orderby=position&orderway=desc&search_query=smsmanager">DoliStore</a>').'</div>';
-
-	print '<table class="noborder" width="100%">';
+	print '<table class="noborder centpercent">';
 	print '<tr class="liste_titre"><td>'.$langs->trans("Parameter").'</td><td>'.$langs->trans("Value").'</td></tr>';
 
 	// Disable
@@ -221,15 +221,15 @@ else
 
 	// Method
 	print '<tr class="oddeven"><td>'.$langs->trans("MAIN_SMS_SENDMODE").'</td><td>';
-	$text=$listofmethods[$conf->global->MAIN_SMS_SENDMODE];
-	if (empty($text)) $text=$langs->trans("Undefined").' '.img_warning();
+	$text = $listofmethods[$conf->global->MAIN_SMS_SENDMODE];
+	if (empty($text)) $text = $langs->trans("Undefined").' '.img_warning();
 	print $text;
 	print '</td></tr>';
 
 	// From
 	print '<tr class="oddeven"><td>'.$langs->trans("MAIN_MAIL_SMS_FROM", $langs->transnoentities("Undefined")).'</td>';
 	print '<td>'.$conf->global->MAIN_MAIL_SMS_FROM;
-	if (!empty($conf->global->MAIN_MAIL_SMS_FROM) && ! isValidPhone($conf->global->MAIN_MAIL_SMS_FROM)) print ' '.img_warning($langs->trans("ErrorBadPhone"));
+	if (!empty($conf->global->MAIN_MAIL_SMS_FROM) && !isValidPhone($conf->global->MAIN_MAIL_SMS_FROM)) print ' '.img_warning($langs->trans("ErrorBadPhone"));
 	print '</td></tr>';
 
 	// Autocopy to
@@ -261,13 +261,13 @@ else
 		print '<a class="butActionRefused classfortooltip" href="#" title="'.$langs->trans("FeatureNotAvailableOnLinux").'">'.$langs->trans("DoTestServerAvailability").'</a>';
 	}*/
 
-	if (count($listofmethods) && ! empty($conf->global->MAIN_SMS_SENDMODE))
+	if (count($listofmethods) && !empty($conf->global->MAIN_SMS_SENDMODE))
 	{
-	   print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?action=test&amp;mode=init">'.$langs->trans("DoTestSend").'</a>';
+	    print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?action=test&amp;mode=init">'.$langs->trans("DoTestSend").'</a>';
 	}
 	else
 	{
-       print '<a class="butActionRefused classfortooltip" href="#">'.$langs->trans("DoTestSend").'</a>';
+        print '<a class="butActionRefused classfortooltip" href="#">'.$langs->trans("DoTestSend").'</a>';
 	}
 	print '</div>';
 
@@ -304,26 +304,23 @@ else
 		// Cree l'objet formulaire mail
 		include_once DOL_DOCUMENT_ROOT.'/core/class/html.formsms.class.php';
 		$formsms = new FormSms($db);
-        $formsms->fromtype='user';
-        $formsms->fromid=$user->id;
-        $formsms->fromsms = (isset($_POST['fromsms'])?$_POST['fromsms']:($conf->global->MAIN_MAIL_SMS_FROM?$conf->global->MAIN_MAIL_SMS_FROM:$user->user_mobile));
-		$formsms->withfromreadonly=0;
-		$formsms->withsubstit=0;
-		$formsms->withfrom=1;
-		$formsms->witherrorsto=1;
-		$formsms->withto=(isset($_POST['sendto'])?$_POST['sendto']:$user->user_mobile?$user->user_mobile:1);
-		$formsms->withfile=2;
-		$formsms->withbody=(isset($_POST['message'])?(empty($_POST['message'])?1:$_POST['message']):$langs->trans("ThisIsATestMessage"));
-		$formsms->withbodyreadonly=0;
-		$formsms->withcancel=1;
-		$formsms->withfckeditor=0;
+        $formsms->fromtype = 'user';
+        $formsms->fromid = $user->id;
+        $formsms->fromsms = (isset($_POST['fromsms']) ? $_POST['fromsms'] : ($conf->global->MAIN_MAIL_SMS_FROM ? $conf->global->MAIN_MAIL_SMS_FROM : $user->user_mobile));
+		$formsms->withfromreadonly = 0;
+		$formsms->withsubstit = 0;
+		$formsms->withfrom = 1;
+		$formsms->withto = (isset($_POST['sendto']) ? $_POST['sendto'] : $user->user_mobile ? $user->user_mobile : 1);
+		$formsms->withbody = (isset($_POST['message']) ? (empty($_POST['message']) ? 1 : $_POST['message']) : $langs->trans("ThisIsATestMessage"));
+		$formsms->withbodyreadonly = 0;
+		$formsms->withcancel = 1;
 		// Tableau des substitutions
-		$formsms->substit=$substitutionarrayfortest;
+		$formsms->substit = $substitutionarrayfortest;
 		// Tableau des parametres complementaires du post
-		$formsms->param["action"]="send";
-		$formsms->param["models"]="body";
-		$formsms->param["smsid"]=0;
-		$formsms->param["returnurl"]=$_SERVER["PHP_SELF"];
+		$formsms->param["action"] = "send";
+		$formsms->param["models"] = "body";
+		$formsms->param["smsid"] = 0;
+		$formsms->param["returnurl"] = $_SERVER["PHP_SELF"];
 
 		$formsms->show_form();
 

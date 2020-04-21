@@ -12,7 +12,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -20,7 +20,7 @@
  *       \ingroup    ticket
  *       \brief      Fichier de la classe de gestion des stats des tickets
  */
-require_once DOL_DOCUMENT_ROOT . '/core/class/stats.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/class/stats.class.php';
 require_once 'ticket.class.php';
 
 
@@ -58,18 +58,18 @@ class TicketStats extends Stats
         $this->userid = $userid;
 
         $object = new Ticket($this->db);
-        $this->from = MAIN_DB_PREFIX . $object->table_element;
+        $this->from = MAIN_DB_PREFIX.$object->table_element;
         $this->field = 'timing';
 
         $this->where = " fk_statut > 0";
-        $this->where .= " AND entity = " . $conf->entity;
+        $this->where .= " AND entity = ".$conf->entity;
         if ($this->socid > 0) {
-            $this->where .= " AND fk_soc = " . $this->socid;
+            $this->where .= " AND fk_soc = ".$this->socid;
         }
         if (is_array($this->userid) && count($this->userid) > 0) {
-            $this->where .= ' AND fk_user_create IN (' . join(',', $this->userid) . ')';
+            $this->where .= ' AND fk_user_create IN ('.join(',', $this->userid).')';
         } elseif ($this->userid > 0) {
-            $this->where .= ' AND fk_user_create = ' . $this->userid;
+            $this->where .= ' AND fk_user_create = '.$this->userid;
         }
     }
 
@@ -81,9 +81,9 @@ class TicketStats extends Stats
     public function getNbByYear()
     {
         $sql = "SELECT YEAR(datec) as dm, count(*)";
-        $sql .= " FROM " . $this->from;
+        $sql .= " FROM ".$this->from;
         $sql .= " GROUP BY dm DESC";
-        $sql .= " WHERE " . $this->where;
+        $sql .= " WHERE ".$this->where;
 
         return $this->_getNbByYear($sql);
     }
@@ -97,9 +97,9 @@ class TicketStats extends Stats
     public function getNbByMonth($year)
     {
         $sql = "SELECT MONTH(datec) as dm, count(*)";
-        $sql .= " FROM " . $this->from;
-        $sql .= " WHERE YEAR(datec) = " . $year;
-        $sql .= " AND " . $this->where;
+        $sql .= " FROM ".$this->from;
+        $sql .= " WHERE YEAR(datec) = ".$year;
+        $sql .= " AND ".$this->where;
         $sql .= " GROUP BY dm";
         $sql .= $this->db->order('dm', 'DESC');
 
@@ -116,10 +116,10 @@ class TicketStats extends Stats
      */
     public function getAmountByMonth($year)
     {
-        $sql = "SELECT date_format(datec,'%m') as dm, sum(" . $this->field . ")";
-        $sql .= " FROM " . $this->from;
-        $sql .= " WHERE date_format(datec,'%Y') = '" . $year . "'";
-        $sql .= " AND " . $this->where;
+        $sql = "SELECT date_format(datec,'%m') as dm, sum(".$this->field.")";
+        $sql .= " FROM ".$this->from;
+        $sql .= " WHERE date_format(datec,'%Y') = '".$year."'";
+        $sql .= " AND ".$this->where;
         $sql .= " GROUP BY dm";
         $sql .= $this->db->order('dm', 'DESC');
 
@@ -136,10 +136,10 @@ class TicketStats extends Stats
      */
     public function getAverageByMonth($year)
     {
-        $sql = "SELECT date_format(datec,'%m') as dm, avg(" . $this->field . ")";
-        $sql .= " FROM " . $this->from;
-        $sql .= " WHERE date_format(datec,'%Y') = '" . $year . "'";
-        $sql .= " AND " . $this->where;
+        $sql = "SELECT date_format(datec,'%m') as dm, avg(".$this->field.")";
+        $sql .= " FROM ".$this->from;
+        $sql .= " WHERE date_format(datec,'%Y') = '".$year."'";
+        $sql .= " AND ".$this->where;
         $sql .= " GROUP BY dm";
         $sql .= $this->db->order('dm', 'DESC');
 
@@ -153,9 +153,9 @@ class TicketStats extends Stats
      */
     public function getAllByYear()
     {
-        $sql = "SELECT date_format(datec,'%Y') as year, count(*) as nb, sum(" . $this->field . ") as total, avg(" . $this->field . ") as avg";
-        $sql .= " FROM " . $this->from;
-        $sql .= " WHERE " . $this->where;
+        $sql = "SELECT date_format(datec,'%Y') as year, count(*) as nb, sum(".$this->field.") as total, avg(".$this->field.") as avg";
+        $sql .= " FROM ".$this->from;
+        $sql .= " WHERE ".$this->where;
         $sql .= " GROUP BY year";
         $sql .= $this->db->order('year', 'DESC');
 

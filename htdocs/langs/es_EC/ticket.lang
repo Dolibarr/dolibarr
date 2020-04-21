@@ -1,6 +1,5 @@
 # Dolibarr language file - Source file is en_US - ticket
 Module56000Desc=Sistema de tickets para gestión de problemas o solicitudes
-TicketTypeShortINCIDENT=Solicitud de asistencia
 TicketSeverityShortBLOCKING=Crítico/Bloqueo
 ErrorBadEmailAddress=Campo '%s' incorrecto
 MenuListNonClosed=Tikests abiertos
@@ -85,7 +84,6 @@ ShowTicketWithTrackId=Mostrar ticket desde ID de seguimiento
 TicketPublicDesc=Puede crear un ticket de soporte o cheque desde un ID existente.
 YourTicketSuccessfullySaved=Ticket ha sido guardado con éxito!
 PleaseRememberThisId=Por favor, mantenga el número de seguimiento que podríamos preguntarle más tarde.
-TicketNewEmailSubject=Confirmación de creación de tickets
 TicketNewEmailBody=Este es un correo electrónico automático para confirmar que ha registrado un nuevo ticket.
 TicketNewEmailBodyCustomer=Este es un correo electrónico automático para confirmar que se acaba de crear un nuevo ticket en su cuenta.
 TicketNewEmailBodyInfosTicket=Información para monitorear el boleto
@@ -95,7 +93,6 @@ TicketPublicInfoCreateTicket=Este formulario le permite registrar un ticket de s
 TicketPublicPleaseBeAccuratelyDescribe=Por favor, describa con precisión el problema. Proporcionar la mayor cantidad de información posible que nos permita recibirla de forma incorrecta.
 TicketPublicMsgViewLogIn=Ingrese el ID de seguimiento de tickets
 Subject=Tema
-TicketNewEmailSubjectAdmin=Nuevo boleto creado
 SeeThisTicketIntomanagementInterface=Ver ticket en la interfaz de administración
 TicketNotificationEmailBody=Este es un mensaje automático para notificar que el ticket %s se acaba de actualizar
 BoxLastTicketDescription=Últimos tickets %s creados

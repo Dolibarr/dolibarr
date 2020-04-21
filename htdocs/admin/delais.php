@@ -16,7 +16,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -30,11 +30,11 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
 // Load translation files required by the page
 $langs->load("admin");
 
-if (! $user->admin) accessforbidden();
+if (!$user->admin) accessforbidden();
 
-$action=GETPOST('action', 'alpha');
+$action = GETPOST('action', 'alpha');
 
-$modules=array(
+$modules = array(
 		'agenda' => array(
 				array(
 						'code' => 'MAIN_DELAY_ACTIONS_TODO',
@@ -107,6 +107,10 @@ $modules=array(
 				array(
 						'code' => 'MAIN_DELAY_MEMBERS',
 						'img' => 'user'
+				),
+        array(
+						'code' => 'MAIN_DELAY_MEMBERS_SHIFT',
+						'img' => 'user'
 				)
 		),
 		'expensereport' => array(
@@ -130,6 +134,35 @@ $modules=array(
 
 $labelmeteo = array(0=>$langs->trans("No"), 1=>$langs->trans("Yes"), 2=>$langs->trans("OnMobileOnly"));
 
+if (!isset($conf->global->MAIN_DELAY_PROJECT_TO_CLOSE)) {
+	$conf->global->MAIN_DELAY_PROJECT_TO_CLOSE = 7; // Must be same value than into conf.class.php
+}
+if (!isset($conf->global->MAIN_DELAY_TASKS_TODO)) {
+	$conf->global->MAIN_DELAY_TASKS_TODO = 7; // Must be same value than into conf.class.php
+}
+if (!isset($conf->global->MAIN_DELAY_MEMBERS)) {
+	$conf->global->MAIN_DELAY_MEMBERS = 0; // Must be same value than into conf.class.php
+}
+if (!isset($conf->global->MAIN_DELAY_ACTIONS_TODO)) {
+	$conf->global->MAIN_DELAY_ACTIONS_TODO = 7; // Must be same value than into conf.class.php
+}
+if (!isset($conf->global->MAIN_DELAY_ORDERS_TO_PROCESS)) {
+	$conf->global->MAIN_DELAY_ORDERS_TO_PROCESS = 2;
+}
+if (!isset($conf->global->MAIN_DELAY_SUPPLIER_ORDERS_TO_PROCESS)) {
+	$conf->global->MAIN_DELAY_SUPPLIER_ORDERS_TO_PROCESS = 7;
+}
+if (!isset($conf->global->MAIN_DELAY_ORDERS_TO_PROCESS)) {
+	$conf->global->MAIN_DELAY_ORDERS_TO_PROCESS = 2;
+}
+if (!isset($conf->global->MAIN_DELAY_ORDERS_TO_PROCESS)) {
+	$conf->global->MAIN_DELAY_ORDERS_TO_PROCESS = 2;
+}
+if (!isset($conf->global->MAIN_DELAY_ORDERS_TO_PROCESS)) {
+	$conf->global->MAIN_DELAY_ORDERS_TO_PROCESS = 2;
+}
+
+
 
 /*
  * Actions
@@ -137,11 +170,11 @@ $labelmeteo = array(0=>$langs->trans("No"), 1=>$langs->trans("Yes"), 2=>$langs->
 
 if ($action == 'update')
 {
-	foreach($modules as $module => $delays)
+	foreach ($modules as $module => $delays)
 	{
-		if (! empty($conf->$module->enabled))
+		if (!empty($conf->$module->enabled))
     	{
-    		foreach($delays as $delay)
+    		foreach ($delays as $delay)
     		{
     			if (GETPOST($delay['code']) != '')
     			{
@@ -155,11 +188,11 @@ if ($action == 'update')
 	dolibarr_set_const($db, "MAIN_USE_METEO_WITH_PERCENTAGE", GETPOST("MAIN_USE_METEO_WITH_PERCENTAGE"), 'chaine', 0, '', $conf->entity);
 
 	// For update value with percentage
-	$plus='';
-	if(!empty($conf->global->MAIN_USE_METEO_WITH_PERCENTAGE)) $plus = '_PERCENTAGE';
+	$plus = '';
+	if (!empty($conf->global->MAIN_USE_METEO_WITH_PERCENTAGE)) $plus = '_PERCENTAGE';
 	// Update values
-	for($i=0; $i<4; $i++) {
-    	if(isset($_POST['MAIN_METEO'.$plus.'_LEVEL'.$i])) dolibarr_set_const($db, 'MAIN_METEO'.$plus.'_LEVEL'.$i, GETPOST('MAIN_METEO'.$plus.'_LEVEL'.$i, 'int'), 'chaine', 0, '', $conf->entity);
+	for ($i = 0; $i < 4; $i++) {
+    	if (isset($_POST['MAIN_METEO'.$plus.'_LEVEL'.$i])) dolibarr_set_const($db, 'MAIN_METEO'.$plus.'_LEVEL'.$i, GETPOST('MAIN_METEO'.$plus.'_LEVEL'.$i, 'int'), 'chaine', 0, '', $conf->entity);
     }
 }
 
@@ -174,29 +207,26 @@ llxHeader();
 
 print load_fiche_titre($langs->trans("DelaysOfToleranceBeforeWarning"), '', 'title_setup');
 
-print $langs->transnoentities("DelaysOfToleranceDesc", img_warning());
-print " ".$langs->trans("OnlyActiveElementsAreShown", DOL_URL_ROOT.'/admin/modules.php')."<br>\n";
+print '<span class="opacitymedium">'.$langs->transnoentities("DelaysOfToleranceDesc", img_warning('default', '', 'pictowarning nopaddingleft'));
+print " ".$langs->trans("OnlyActiveElementsAreShown", DOL_URL_ROOT.'/admin/modules.php')."</span><br>\n";
 print "<br>\n";
-
-$countrynotdefined='<font class="error">'.$langs->trans("ErrorSetACountryFirst").' ('.$langs->trans("SeeAbove").')</font>';
 
 if ($action == 'edit')
 {
     print '<form method="post" action="'.$_SERVER['PHP_SELF'].'" name="form_index">';
-    print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+    print '<input type="hidden" name="token" value="'.newToken().'">';
     print '<input type="hidden" name="action" value="update">';
 
-    print '<table class="noborder" width="100%">';
+    print '<table class="noborder centpercent">';
     print '<tr class="liste_titre"><td colspan="2">'.$langs->trans("DelaysOfToleranceBeforeWarning").'</td><td class="center" width="120px">'.$langs->trans("Value").'</td></tr>';
 
-    foreach($modules as $module => $delays)
+    foreach ($modules as $module => $delays)
     {
-    	if (! empty($conf->$module->enabled))
+    	if (!empty($conf->$module->enabled))
     	{
-    		foreach($delays as $delay)
+    		foreach ($delays as $delay)
     		{
-
-				$value=(! empty($conf->global->{$delay['code']})?$conf->global->{$delay['code']}:0);
+				$value = (!empty($conf->global->{$delay['code']}) ? $conf->global->{$delay['code']}:0);
     			print '<tr class="oddeven">';
     			print '<td width="20px">'.img_object('', $delay['img']).'</td>';
     			print '<td>'.$langs->trans('Delays_'.$delay['code']).'</td><td>';
@@ -210,12 +240,12 @@ if ($action == 'edit')
     print '<br>';
 
 	// Show if meteo is enabled
-	print '<table class="noborder" width="100%">';
+	print '<table class="noborder centpercent">';
 	print '<tr class="liste_titre"><td>'.$langs->trans("Parameter").'</td><td class="center" width="120px">'.$langs->trans("Value").'</td></tr>';
 
 	print '<tr class="oddeven">';
 	print '<td>'.$langs->trans("MAIN_DISABLE_METEO").'</td><td class="center">';
-	print $form->selectarray('MAIN_DISABLE_METEO', $labelmeteo, (empty($conf->global->MAIN_DISABLE_METEO)?0:$conf->global->MAIN_DISABLE_METEO));
+	print $form->selectarray('MAIN_DISABLE_METEO', $labelmeteo, (empty($conf->global->MAIN_DISABLE_METEO) ? 0 : $conf->global->MAIN_DISABLE_METEO));
 	print '</td></tr>';
 
 	print '</table>';
@@ -223,20 +253,19 @@ if ($action == 'edit')
 else
 {
     /*
-     * Affichage des parametres
+     * Show parameters
      */
 
-	print '<table class="noborder" width="100%">';
+	print '<table class="noborder centpercent">';
     print '<tr class="liste_titre"><td colspan="2">'.$langs->trans("DelaysOfToleranceBeforeWarning").'</td><td class="center" width="120px">'.$langs->trans("Value").'</td></tr>';
 
-    foreach($modules as $module => $delays)
+    foreach ($modules as $module => $delays)
     {
-    	if (! empty($conf->$module->enabled))
+    	if (!empty($conf->$module->enabled))
     	{
-    		foreach($delays as $delay)
+    		foreach ($delays as $delay)
     		{
-
-				$value=(! empty($conf->global->{$delay['code']})?$conf->global->{$delay['code']}:0);
+    			$value = (!empty($conf->global->{$delay['code']}) ? $conf->global->{$delay['code']}:0);
     			print '<tr class="oddeven">';
     			print '<td width="20px">'.img_object('', $delay['img']).'</td>';
     			print '<td>'.$langs->trans('Delays_'.$delay['code']).'</td>';
@@ -250,7 +279,7 @@ else
 	print '<br>';
 
 	// Show if meteo is enabled
-	print '<table class="noborder" width="100%">';
+	print '<table class="noborder centpercent">';
 	print '<tr class="liste_titre"><td>'.$langs->trans("Parameter").'</td><td class="center" width="120px">'.$langs->trans("Value").'</td></tr>';
 
 	print '<tr class="oddeven">';
@@ -264,52 +293,49 @@ else
 print '<br>';
 
 // Show logo for weather
-print $langs->trans("DescWeather").'<br>';
+print '<span class="opacitymedium">'.$langs->trans("DescWeather").'</span> ';
 
-if($action == 'edit') {
-
+if ($action == 'edit') {
 	$str_mode_std = $langs->trans('MeteoStdModEnabled').' : '.$langs->trans('MeteoUseMod', $langs->transnoentitiesnoconv('MeteoPercentageMod'));
 	$str_mode_percentage = $langs->trans('MeteoPercentageModEnabled').' : '.$langs->trans('MeteoUseMod', $langs->transnoentitiesnoconv('MeteoStdMod'));
-	if(empty($conf->global->MAIN_USE_METEO_WITH_PERCENTAGE)) $str_mode_enabled = $str_mode_std;
+	if (empty($conf->global->MAIN_USE_METEO_WITH_PERCENTAGE)) $str_mode_enabled = $str_mode_std;
 	else $str_mode_enabled = $str_mode_percentage;
 	print '<a href="#" onclick="return false;" id="change_mode">'.$str_mode_enabled.'</a>';
 	print '<input type="hidden" id="MAIN_USE_METEO_WITH_PERCENTAGE" name="MAIN_USE_METEO_WITH_PERCENTAGE" value="'.$conf->global->MAIN_USE_METEO_WITH_PERCENTAGE.'" />';
 
 	print '<br><br>';
 } else {
-	if(empty($conf->global->MAIN_USE_METEO_WITH_PERCENTAGE)) print $langs->trans('MeteoStdModEnabled');
+	if (empty($conf->global->MAIN_USE_METEO_WITH_PERCENTAGE)) print $langs->trans('MeteoStdModEnabled');
 	else print $langs->trans('MeteoPercentageModEnabled');
 	print '<br><br>';
 }
 
-$offset=0;
-$cursor=10; // By default
+$offset = 0;
+$cursor = 10; // By default
 //if (! empty($conf->global->MAIN_METEO_OFFSET)) $offset=$conf->global->MAIN_METEO_OFFSET;
 //if (! empty($conf->global->MAIN_METEO_GAP)) $cursor=$conf->global->MAIN_METEO_GAP;
-$level0=$offset;           if (! empty($conf->global->MAIN_METEO_LEVEL0)) $level0=$conf->global->MAIN_METEO_LEVEL0;
-$level1=$offset+1*$cursor; if (! empty($conf->global->MAIN_METEO_LEVEL1)) $level1=$conf->global->MAIN_METEO_LEVEL1;
-$level2=$offset+2*$cursor; if (! empty($conf->global->MAIN_METEO_LEVEL2)) $level2=$conf->global->MAIN_METEO_LEVEL2;
-$level3=$offset+3*$cursor; if (! empty($conf->global->MAIN_METEO_LEVEL3)) $level3=$conf->global->MAIN_METEO_LEVEL3;
-$text=''; $options='class="valignmiddle" height="60px"';
+$level0 = $offset; if (!empty($conf->global->MAIN_METEO_LEVEL0)) $level0 = $conf->global->MAIN_METEO_LEVEL0;
+$level1 = $offset + 1 * $cursor; if (!empty($conf->global->MAIN_METEO_LEVEL1)) $level1 = $conf->global->MAIN_METEO_LEVEL1;
+$level2 = $offset + 2 * $cursor; if (!empty($conf->global->MAIN_METEO_LEVEL2)) $level2 = $conf->global->MAIN_METEO_LEVEL2;
+$level3 = $offset + 3 * $cursor; if (!empty($conf->global->MAIN_METEO_LEVEL3)) $level3 = $conf->global->MAIN_METEO_LEVEL3;
+$text = ''; $options = 'class="valignmiddle" height="60px"';
 
 
 if ($action == 'edit') {
-
-
 	print '<div id="standard" '.(empty($conf->global->MAIN_USE_METEO_WITH_PERCENTAGE) ? '' : 'style="display:none;"').'>';
 
 	print '<div>';
 	print '<div class="inline-block" style="padding-right: 20px">';
-	print img_weather($text, 'weather-clear.png', $options);
+	print img_weather($text, 0, $options);
 	print '= <input type="text" size="2" name="MAIN_METEO_LEVEL0" value="'.$level0.'"/></td>';
 	print '</div><div class="inline-block" style="padding-right: 20px">';
-	print img_weather($text, 'weather-few-clouds.png', $options);
+	print img_weather($text, 1, $options);
 	print '&lt;= <input type="text" size="2" name="MAIN_METEO_LEVEL1" value="'.$level1.'"/></td>';
 	print '</div><div class="inline-block" style="padding-right: 20px">';
-	print img_weather($text, 'weather-clouds.png', $options);
+	print img_weather($text, 2, $options);
 	print '&lt;= <input type="text" size="2" name="MAIN_METEO_LEVEL2" value="'.$level2.'"/></td>';
 	print '</div><div class="inline-block" style="padding-right: 20px">';
-	print img_weather($text, 'weather-many-clouds.png', $options);
+	print img_weather($text, 3, $options);
 	print '&lt;= <input type="text" size="2" name="MAIN_METEO_LEVEL3" value="'.$level3.'"/></td>';
 	print '</div>';
 	print '</div>';
@@ -320,16 +346,16 @@ if ($action == 'edit') {
 
 	print '<div>';
 	print '<div class="inline-block" style="padding-right: 20px">';
-	print img_weather($text, 'weather-clear.png', $options);
-	print '= <input type="text" size="2" name="MAIN_METEO_PERCENTAGE_LEVEL0" value="'.$conf->global->MAIN_METEO_PERCENTAGE_LEVEL0.'"/>&nbsp;%</td>';
+	print img_weather($text, 0, $options);
+	print '&lt;= <input type="text" size="2" name="MAIN_METEO_PERCENTAGE_LEVEL0" value="'.$conf->global->MAIN_METEO_PERCENTAGE_LEVEL0.'"/>&nbsp;%</td>';
 	print '</div><div class="inline-block" style="padding-right: 20px">';
-	print img_weather($text, 'weather-few-clouds.png', $options);
+	print img_weather($text, 1, $options);
 	print '&lt;= <input type="text" size="2" name="MAIN_METEO_PERCENTAGE_LEVEL1" value="'.$conf->global->MAIN_METEO_PERCENTAGE_LEVEL1.'"/>&nbsp;%</td>';
 	print '</div><div class="inline-block" style="padding-right: 20px">';
-	print img_weather($text, 'weather-clouds.png', $options);
+	print img_weather($text, 2, $options);
 	print '&lt;= <input type="text" size="2" name="MAIN_METEO_PERCENTAGE_LEVEL2" value="'.$conf->global->MAIN_METEO_PERCENTAGE_LEVEL2.'"/>&nbsp;%</td>';
 	print '</div><div class="inline-block" style="padding-right: 20px">';
-	print img_weather($text, 'weather-many-clouds.png', $options);
+	print img_weather($text, 3, $options);
 	print '&lt;= <input type="text" size="2" name="MAIN_METEO_PERCENTAGE_LEVEL3" value="'.$conf->global->MAIN_METEO_PERCENTAGE_LEVEL3.'"/>&nbsp;%</td>';
 	print '</div>';
 	print '</div>';
@@ -366,44 +392,41 @@ if ($action == 'edit') {
 
 	<?php
 } else {
-
-	if(!empty($conf->global->MAIN_USE_METEO_WITH_PERCENTAGE)) {
-
+	if (!empty($conf->global->MAIN_USE_METEO_WITH_PERCENTAGE)) {
 		print '<div>';
 		print '<div class="inline-block" style="padding-right: 20px">';
-		print img_weather($text, 'weather-clear.png', $options);
+		print img_weather($text, 0, $options);
 		print '= '.$conf->global->MAIN_METEO_PERCENTAGE_LEVEL0.'&nbsp;%</td>';
 		print '</div><div class="inline-block" style="padding-right: 20px">';
-		print img_weather($text, 'weather-few-clouds.png', $options);
+		print img_weather($text, 1, $options);
 		print '&lt;= '.$conf->global->MAIN_METEO_PERCENTAGE_LEVEL1.'&nbsp;%</td>';
 		print '</div><div class="inline-block" style="padding-right: 20px">';
-		print img_weather($text, 'weather-clouds.png', $options);
+		print img_weather($text, 2, $options);
 		print '&lt;= '.$conf->global->MAIN_METEO_PERCENTAGE_LEVEL2.'&nbsp;%</td>';
 		print '</div><div class="inline-block" style="padding-right: 20px">';
-		print img_weather($text, 'weather-many-clouds.png', $options);
+		print img_weather($text, 3, $options);
 		print '&lt;= '.$conf->global->MAIN_METEO_PERCENTAGE_LEVEL3.'&nbsp;%</td>';
 		print '</div><div class="inline-block" style="padding-right: 20px">';
-		print img_weather($text, 'weather-storm.png', $options);
+		print img_weather($text, 4, $options);
 		print '&gt; '.$conf->global->MAIN_METEO_PERCENTAGE_LEVEL3.'&nbsp;%</td>';
 		print '</div>';
 		print '</div>';
 	} else {
-
 		print '<div>';
 		print '<div class="inline-block" style="padding-right: 20px">';
-		print img_weather($text, 'weather-clear.png', $options);
+		print img_weather($text, 0, $options);
 		print '= '.$level0;
 		print '</div><div class="inline-block" style="padding-right: 20px">';
-		print img_weather($text, 'weather-few-clouds.png', $options);
+		print img_weather($text, 1, $options);
 		print '&lt;= '.$level1;
 		print '</div><div class="inline-block" style="padding-right: 20px">';
-		print img_weather($text, 'weather-clouds.png', $options);
+		print img_weather($text, 2, $options);
 		print '&lt;= '.$level2;
 		print '</div><div class="inline-block" style="padding-right: 20px">';
-		print img_weather($text, 'weather-many-clouds.png', $options);
+		print img_weather($text, 3, $options);
 		print '&lt;= '.$level3;
 		print '</div><div class="inline-block" style="padding-right: 20px">';
-		print img_weather($text, 'weather-storm.png', $options);
+		print img_weather($text, 4, $options);
 		print '&gt; '.$level3;
 		print '</div>';
 		print '</div>';
@@ -412,12 +435,10 @@ if ($action == 'edit') {
 
 print '</div>';
 
-if($action == 'edit') {
-
+if ($action == 'edit') {
 	print '<br><div class="center"><input type="submit" class="button" value="'.$langs->trans("Save").'"></div>';
 	print '<br></form>';
 } else {
-
 	print '<br><div class="tabsAction">';
 	print '<a class="butAction" href="delais.php?action=edit">'.$langs->trans("Modify").'</a></div>';
 }

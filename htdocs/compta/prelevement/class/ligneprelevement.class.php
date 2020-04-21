@@ -15,7 +15,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  *
  */
 
@@ -52,7 +52,7 @@ class LignePrelevement
 	 */
 	public function __construct($db, $user)
 	{
-		global $conf,$langs;
+		global $conf, $langs;
 
 		$this->db = $db;
 		$this->user = $user;
@@ -60,9 +60,9 @@ class LignePrelevement
 		// List of language codes for status
 
 		$langs->load("withdrawals");
-		$this->statuts[0]=$langs->trans("StatusWaiting");
-		$this->statuts[2]=$langs->trans("StatusCredited");
-		$this->statuts[3]=$langs->trans("StatusRefused");
+		$this->statuts[0] = $langs->trans("StatusWaiting");
+		$this->statuts[2] = $langs->trans("StatusCredited");
+		$this->statuts[3] = $langs->trans("StatusRefused");
 	}
 
 	/**
@@ -78,14 +78,14 @@ class LignePrelevement
 		$result = 0;
 
 		$sql = "SELECT pl.rowid, pl.amount, p.ref, p.rowid as bon_rowid";
-		$sql.= ", pl.statut, pl.fk_soc";
-		$sql.= " FROM ".MAIN_DB_PREFIX."prelevement_lignes as pl";
-		$sql.= ", ".MAIN_DB_PREFIX."prelevement_bons as p";
-		$sql.= " WHERE pl.rowid=".$rowid;
-		$sql.= " AND p.rowid = pl.fk_prelevement_bons";
-		$sql.= " AND p.entity = ".$conf->entity;
+		$sql .= ", pl.statut, pl.fk_soc";
+		$sql .= " FROM ".MAIN_DB_PREFIX."prelevement_lignes as pl";
+		$sql .= ", ".MAIN_DB_PREFIX."prelevement_bons as p";
+		$sql .= " WHERE pl.rowid=".$rowid;
+		$sql .= " AND p.rowid = pl.fk_prelevement_bons";
+		$sql .= " AND p.entity = ".$conf->entity;
 
-		$resql=$this->db->query($sql);
+		$resql = $this->db->query($sql);
 		if ($resql)
 		{
 			if ($this->db->num_rows($resql))
@@ -132,36 +132,36 @@ class LignePrelevement
 	/**
 	 *    Return status label for a status
 	 *
-	 *    @param	int		$statut     id statut
+	 *    @param	int		$status     Id status
 	 *    @param    int		$mode       0=Label, 1=Picto + label, 2=Picto, 3=Label + Picto
 	 * 	  @return   string      		Label
 	 */
-	public function LibStatut($statut, $mode = 0)
+	public function LibStatut($status, $mode = 0)
 	{
         // phpcs:enable
 		global $langs;
 
 		if ($mode == 0)
 		{
-			return $langs->trans($this->statuts[$statut]);
+			return $langs->trans($this->statuts[$status]);
 		}
 		elseif ($mode == 1)
 		{
-			if ($statut==0) return img_picto($langs->trans($this->statuts[$statut]), 'statut1').' '.$langs->trans($this->statuts[$statut]);   // Waiting
-			elseif ($statut==2) return img_picto($langs->trans($this->statuts[$statut]), 'statut6').' '.$langs->trans($this->statuts[$statut]);   // Credited
-			elseif ($statut==3) return img_picto($langs->trans($this->statuts[$statut]), 'statut8').' '.$langs->trans($this->statuts[$statut]);   // Refused
+			if ($status == 0) return img_picto($langs->trans($this->statuts[$status]), 'statut1').' '.$langs->trans($this->statuts[$status]); // Waiting
+			elseif ($status == 2) return img_picto($langs->trans($this->statuts[$status]), 'statut6').' '.$langs->trans($this->statuts[$status]); // Credited
+			elseif ($status == 3) return img_picto($langs->trans($this->statuts[$status]), 'statut8').' '.$langs->trans($this->statuts[$status]); // Refused
 		}
 		elseif ($mode == 2)
 		{
-			if ($statut==0) return img_picto($langs->trans($this->statuts[$statut]), 'statut1');
-			elseif ($statut==2) return img_picto($langs->trans($this->statuts[$statut]), 'statut6');
-			elseif ($statut==3) return img_picto($langs->trans($this->statuts[$statut]), 'statut8');
+			if ($status == 0) return img_picto($langs->trans($this->statuts[$status]), 'statut1');
+			elseif ($status == 2) return img_picto($langs->trans($this->statuts[$status]), 'statut6');
+			elseif ($status == 3) return img_picto($langs->trans($this->statuts[$status]), 'statut8');
 		}
 		elseif ($mode == 3)
 		{
-			if ($statut==0) return $langs->trans($this->statuts[$statut]).' '.img_picto($langs->trans($this->statuts[$statut]), 'statut1');
-			elseif ($statut==2) return $langs->trans($this->statuts[$statut]).' '.img_picto($langs->trans($this->statuts[$statut]), 'statut6');
-			elseif ($statut==3) return $langs->trans($this->statuts[$statut]).' '.img_picto($langs->trans($this->statuts[$statut]), 'statut8');
+			if ($status == 0) return $langs->trans($this->statuts[$status]).' '.img_picto($langs->trans($this->statuts[$status]), 'statut1');
+			elseif ($status == 2) return $langs->trans($this->statuts[$status]).' '.img_picto($langs->trans($this->statuts[$status]), 'statut6');
+			elseif ($status == 3) return $langs->trans($this->statuts[$status]).' '.img_picto($langs->trans($this->statuts[$status]), 'statut8');
 		}
 	}
 

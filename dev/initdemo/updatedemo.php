@@ -14,7 +14,7 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <https://www.gnu.org/licenses/>.
- * or see http://www.gnu.org/
+ * or see https://www.gnu.org/
  *
  * Get a distant dump file and load it into a mysql database
  */
@@ -51,6 +51,8 @@ include_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
  *	Main
  */
 
+print "***** ".$script_file." *****\n";
+print "Update dates to current year for database name = ".$db->database_name."\n";
 if (empty($confirm))
 {
 	print "Usage: $script_file confirm\n";
@@ -65,11 +67,13 @@ $tmp=dol_getdate(dol_now());
 $tables=array(
     'propal'=>array(0=>'datep', 1=>'fin_validite', 2=>'date_valid', 3=>'date_cloture'),
     'commande'=>array(0=>'date_commande', 1=>'date_valid', 2=>'date_cloture'),
-    'facture'=>array(0=>'datef', 1=>'date_valid', 2=>'date_lim_reglement'),
+	'facture'=>array(0=>'datec', 0=>'datef', 1=>'date_valid', 2=>'date_lim_reglement'),
     'paiement'=>array(0=>'datep'),
     'bank'=>array(0=>'datev', 1=>'dateo'),
     'commande_fournisseur'=>array(0=>'date_commande', 1=>'date_valid', 3=>'date_creation', 4=>'date_approve', 5=>'date_approve2', 6=>'date_livraison'),
-    'supplier_proposal'=>array(0=>'datec', 1=>'date_valid', 2=>'date_cloture')
+    'supplier_proposal'=>array(0=>'datec', 1=>'date_valid', 2=>'date_cloture'),
+	'expense_report'=>array(0=>'date_debut', 1=>'date_fin', 2=>'date_create', 3=>'date_valid', 4=>'date_approve', 5=>'date_refuse', 6=>'date_cancel'),
+	'leave'=>array(0=>'date_debut', 1=>'date_fin', 2=>'date_create', 3=>'date_valid', 5=>'date_refuse', 6=>'date_cancel')
 );
 
 $year=2010;
@@ -77,14 +81,15 @@ $currentyear=$tmp['year'];
 while ($year <= $currentyear)
 {
     //$year=2021;
-    $delta=($currentyear - $year);
+    $delta1=($currentyear - $year);
+    $delta2=($currentyear - $year - 1);
     //$delta=-1;
 
-    if ($delta)
+    if ($delta1)
     {
         foreach($tables as $tablekey => $tableval)
         {
-            print "\nCorrect ".$tablekey." for year ".$year." and move them to current year ".$currentyear." ";
+            print "Correct ".$tablekey." for year ".$year." and move them to current year ".$currentyear." ";
             $sql="select rowid from ".MAIN_DB_PREFIX.$tablekey." where ".$tableval[0]." between '".$year."-01-01' and '".$year."-12-31' and ".$tableval[0]." < DATE_ADD(NOW(), INTERVAL -1 YEAR)";
             //$sql="select rowid from ".MAIN_DB_PREFIX.$tablekey." where ".$tableval[0]." between '".$year."-01-01' and '".$year."-12-31' and ".$tableval[0]." > NOW()";
             $resql = $db->query($sql);
@@ -103,7 +108,7 @@ while ($year <= $currentyear)
                         foreach($tableval as $field)
                         {
                             if ($j) $sql2.=", ";
-                            $sql2.= $field." = DATE_ADD(".$field.", INTERVAL ".$delta." YEAR)";
+                            $sql2.= $field." = ".$db->ifsql("DATE_ADD(".$field.", INTERVAL ".$delta1." YEAR) > NOW()", "DATE_ADD(".$field.", INTERVAL ".$delta2." YEAR)", "DATE_ADD(".$field.", INTERVAL ".$delta1." YEAR)");
                             $j++;
                         }
                         $sql2.=" WHERE rowid = ".$obj->rowid;
@@ -115,6 +120,7 @@ while ($year <= $currentyear)
                 }
             }
             else dol_print_error($db);
+            print "\n";
         }
     }
 

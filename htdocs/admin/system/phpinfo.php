@@ -2,7 +2,8 @@
 /* Copyright (C) 2001-2002	Rodolphe Quiedeville	<rodolphe@quiedeville.org>
  * Copyright (C) 2004-2012	Laurent Destailleur		<eldy@users.sourceforge.net>
  * Copyright (C) 2005-2012	Regis Houssin			<regis.houssin@inodbox.com>
- * Copyright (C) 2016       Juanjo Menent		<jmenent@2byte.es>
+ * Copyright (C) 2016       Juanjo Menent			<jmenent@2byte.es>
+ * Copyright (C) 2020       Tobias Sekan			<tobias.sekan@startmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -15,7 +16,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -28,8 +29,10 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
 
 $langs->load("admin");
+$langs->load("install");
+$langs->load("errors");
 
-if (! $user->admin)
+if (!$user->admin)
 	accessforbidden();
 
 
@@ -40,7 +43,7 @@ if (! $user->admin)
 
 llxHeader();
 
-$title='InfoPHP';
+$title = 'InfoPHP';
 
 if (isset($title))
 {
@@ -49,16 +52,16 @@ if (isset($title))
 
 
 // Check PHP setup is OK
-$maxphp=@ini_get('upload_max_filesize');	// In unknown
-if (preg_match('/k$/i', $maxphp)) $maxphp=$maxphp*1;
-if (preg_match('/m$/i', $maxphp)) $maxphp=$maxphp*1024;
-if (preg_match('/g$/i', $maxphp)) $maxphp=$maxphp*1024*1024;
-if (preg_match('/t$/i', $maxphp)) $maxphp=$maxphp*1024*1024*1024;
-$maxphp2=@ini_get('post_max_size');			// In unknown
-if (preg_match('/k$/i', $maxphp2)) $maxphp2=$maxphp2*1;
-if (preg_match('/m$/i', $maxphp2)) $maxphp2=$maxphp2*1024;
-if (preg_match('/g$/i', $maxphp2)) $maxphp2=$maxphp2*1024*1024;
-if (preg_match('/t$/i', $maxphp2)) $maxphp2=$maxphp2*1024*1024*1024;
+$maxphp = @ini_get('upload_max_filesize'); // In unknown
+if (preg_match('/k$/i', $maxphp)) $maxphp = $maxphp * 1;
+if (preg_match('/m$/i', $maxphp)) $maxphp = $maxphp * 1024;
+if (preg_match('/g$/i', $maxphp)) $maxphp = $maxphp * 1024 * 1024;
+if (preg_match('/t$/i', $maxphp)) $maxphp = $maxphp * 1024 * 1024 * 1024;
+$maxphp2 = @ini_get('post_max_size'); // In unknown
+if (preg_match('/k$/i', $maxphp2)) $maxphp2 = $maxphp2 * 1;
+if (preg_match('/m$/i', $maxphp2)) $maxphp2 = $maxphp2 * 1024;
+if (preg_match('/g$/i', $maxphp2)) $maxphp2 = $maxphp2 * 1024 * 1024;
+if (preg_match('/t$/i', $maxphp2)) $maxphp2 = $maxphp2 * 1024 * 1024 * 1024;
 if ($maxphp > 0 && $maxphp2 > 0 && $maxphp > $maxphp2)
 {
 	$langs->load("errors");
@@ -67,26 +70,143 @@ if ($maxphp > 0 && $maxphp2 > 0 && $maxphp > $maxphp2)
 }
 
 
-print '<table class="noborder" width="100%">';
+print '<table class="noborder centpercent">';
 print '<tr class="liste_titre"><td>'.$langs->trans("Parameter").'</td><td>'.$langs->trans("Value").'</td></tr>';
-print "\n";
 
+$ErrorPicturePath = "../../theme/eldy/img/error.png";
+$WarningPicturePath = "../../theme/eldy/img/warning.png";
+$OkayPicturePath = "../../theme/eldy/img/tick.png";
 
-// Get PHP version
-$phpversion=version_php();
-print '<tr class="oddeven"><td  width="220px">'.$langs->trans("Version")."</td><td>".$phpversion."</td></tr>\n";
+print '<tr><td width="220">'.$langs->trans("Version").'</td><td>';
 
+$arrayphpminversionerror = array(5, 5, 0);
+$arrayphpminversionwarning = array(5, 6, 0);
+
+if (versioncompare(versionphparray(), $arrayphpminversionerror) < 0)
+{
+	print '<img src="'.$ErrorPicturePath.'" alt="Error"> '.$langs->trans("ErrorPHPVersionTooLow", versiontostring($arrayphpminversionerror));
+}
+elseif (versioncompare(versionphparray(), $arrayphpminversionwarning) < 0)
+{
+	print '<img src="'.$WarningPicturePath.'" alt="Warning"> '.$langs->trans("ErrorPHPVersionTooLow", versiontostring($arrayphpminversionwarning));
+}
+else
+{
+	print '<img src="'.$OkayPicturePath.'" alt="Ok"> '.versiontostring(versionphparray());
+}
+
+print '</td></tr>';
+print '<tr><td>GET and POST support</td><td>';
+
+if (!isset($_GET["testget"]) && !isset($_POST["testpost"]) && !isset($_GET["mainmenu"]))
+{
+	print '<img src="'.$WarningPicturePath.'" alt="Warning"> '.$langs->trans("PHPSupportPOSTGETKo");
+	print ' (<a href="'.$_SERVER["PHP_SELF"].'?testget=ok">'.$langs->trans("Recheck").'</a>)';
+}
+else
+{
+	print '<img src="'.$OkayPicturePath.'" alt="Ok"> '.$langs->trans("PHPSupportPOSTGETOk");
+}
+
+print '</td></tr>';
+print '<tr><td>Sessions support</td><td>';
+
+if (!function_exists("session_id"))
+{
+	print '<img src="'.$ErrorPicturePath.'" alt="Error"> '.$langs->trans("ErrorPHPDoesNotSupportSessions");
+}
+else
+{
+	print '<img src="'.$OkayPicturePath.'" alt="Ok"> '.$langs->trans("PHPSupportSessions");
+}
+
+print '</td></tr>';
+print '<tr><td>UTF-8 support</td><td>';
+
+if (!function_exists("utf8_encode"))
+{
+	print '<img src="'.$WarningPicturePath.'" alt="Warning"> '.$langs->trans("ErrorPHPDoesNotSupportUTF8");
+}
+else
+{
+	print '<img src="'.$OkayPicturePath.'" alt="Ok"> '.$langs->trans("PHPSupportUTF8");
+}
+
+print '</td></tr>';
 print '</table>';
+
 print '<br>';
 
+$activatedExtensions = array_map('strtolower', getActivatedExtensions());
+$loadedExtensions    = array_map('strtolower', get_loaded_extensions(false));
 
+print '<table class="noborder centpercent">';
+print '<tr class="liste_titre">';
+print '<td width="200">'.$langs->trans("Extension").'</td>';
+print '<td align="center">'.$langs->trans("EnabledInSetup").'</td>';
+print '<td align="center">'.$langs->trans("Loaded").'</td>';
+print '<td align="center">'.$langs->trans("FunctionTest").'</td>';
+print '<td>'.$langs->trans("Result").'</td>';
+print '</tr>';
+
+$functions = ["imagecreate"];
+$name      = "GD";
+
+print "<tr>";
+print "<td>".$name."</td>";
+print getTableColumn($name, $activatedExtensions);
+print getTableColumn($name, $loadedExtensions);
+print getTableColumnFunction($functions);
+print getResultColumn($name, $activatedExtensions, $loadedExtensions, $functions);
+print "</tr>";
+
+$functions = ["curl_init"];
+$name      = "Curl";
+
+print "<tr>";
+print "<td>".$name."</td>";
+print getTableColumn($name, $activatedExtensions);
+print getTableColumn($name, $loadedExtensions);
+print getTableColumnFunction($functions);
+print getResultColumn($name, $activatedExtensions, $loadedExtensions, $functions);
+print "</tr>";
+
+if (empty($_SERVER["SERVER_ADMIN"]) || $_SERVER["SERVER_ADMIN"] != 'doliwamp@localhost')
+{
+	$functions = ["locale_get_primary_language", "locale_get_region"];
+	$name      = "Intl";
+
+	print "<tr>";
+	print "<td>".$name."</td>";
+	print getTableColumn($name, $activatedExtensions);
+	print getTableColumn($name, $loadedExtensions);
+	print getTableColumnFunction($functions);
+	print getResultColumn($name, $activatedExtensions, $loadedExtensions, $functions);
+
+	print "</tr>";
+}
+
+$functions = array();
+$name      = "xDebug";
+
+print "<tr>";
+print "<td>".$name."</td>";
+print getTableColumn($name, $activatedExtensions);
+print getTableColumn($name, $loadedExtensions);
+print getTableColumnFunction($functions);
+print getResultColumn($name, $activatedExtensions, $loadedExtensions, $functions);
+print "</tr>";
+
+print '</table>';
+
+print '<br>';
 
 // Get php_info array
-$phparray=phpinfo_array();
-foreach($phparray as $key => $value)
+$phparray = phpinfo_array();
+foreach ($phparray as $key => $value)
 {
-    print '<div class="div-table-responsive-no-min">';
-    print '<table class="noborder">';
+	print '<div class="div-table-responsive-no-min">';
+	print '<table class="noborder">';
 	print '<tr class="liste_titre">';
 	//print '<td width="220px">'.$langs->trans("Parameter").'</td>';
 	print '<td width="220px">'.$key.'</td>';
@@ -94,18 +214,18 @@ foreach($phparray as $key => $value)
 	print "</tr>\n";
 
 	//var_dump($value);
-	foreach($value as $keyparam => $keyvalue)
+	foreach ($value as $keyparam => $keyvalue)
 	{
-		if (! is_array($keyvalue))
+		if (!is_array($keyvalue))
 		{
 			print '<tr class="oddeven">';
 			print '<td>'.$keyparam.'</td>';
-			$valtoshow=$keyvalue;
-			if ($keyparam == 'X-ChromePhp-Data') $valtoshow=dol_trunc($keyvalue, 80);
+			$valtoshow = $keyvalue;
+			if ($keyparam == 'X-ChromePhp-Data') $valtoshow = dol_trunc($keyvalue, 80);
 			print '<td colspan="2">';
-			if ($keyparam == 'Path') $valtoshow=implode('; ', explode(';', trim($valtoshow)));
-			if ($keyparam == 'PATH') $valtoshow=implode('; ', explode(';', trim($valtoshow)));
-			if ($keyparam == '_SERVER["PATH"]') $valtoshow=implode('; ', explode(';', trim($valtoshow)));
+			if ($keyparam == 'Path') $valtoshow = implode('; ', explode(';', trim($valtoshow)));
+			if ($keyparam == 'PATH') $valtoshow = implode('; ', explode(';', trim($valtoshow)));
+			if ($keyparam == '_SERVER["PATH"]') $valtoshow = implode('; ', explode(';', trim($valtoshow)));
 			print $valtoshow;
 			print '</td>';
 			print '</tr>';
@@ -114,12 +234,12 @@ foreach($phparray as $key => $value)
 		{
 			print '<tr class="oddeven">';
 			print '<td>'.$keyparam.'</td>';
-			$i=0;
-			foreach($keyvalue as $keyparam2 => $keyvalue2)
+			$i = 0;
+			foreach ($keyvalue as $keyparam2 => $keyvalue2)
 			{
 				print '<td>';
-				$valtoshow=$keyvalue2;
-				if ($keyparam == 'disable_functions') $valtoshow=implode(', ', explode(',', trim($valtoshow)));
+				$valtoshow = $keyvalue2;
+				if ($keyparam == 'disable_functions') $valtoshow = implode(', ', explode(',', trim($valtoshow)));
 				//print $keyparam;
 				print $valtoshow;
 				$i++;
@@ -136,3 +256,169 @@ foreach($phparray as $key => $value)
 // End of page
 llxFooter();
 $db->close();
+
+/**
+ * Return all list with all activated, but possible not loaded PHP extensions
+ *
+ * @return array
+ */
+function getActivatedExtensions()
+{
+	$file    = getConfigFilePath();
+	$handle  = fopen(GetConfigFilePath(), "r");
+	$content = fread($handle, filesize($file));
+
+	fclose($handle);
+
+	$configLines = explode("\r", $content);
+
+	$extensions = array();
+	$lastLine = "";
+
+	foreach ($configLines as $line)
+	{
+		$line = trim($line);
+
+		// ignore comment lines
+		if (substr($line, 0, 1) === ";")
+		{
+			continue;
+		}
+
+		// extension
+		if (substr($line, 0, 9) === "extension" && substr($line, 0, 10) !== "extension_")
+		{
+			$value = trim(end(explode("=", $line)));
+
+			$extensions[] = $value === "gd2" ? "gd" : $value;
+		}
+
+		// zend_extension
+		if (substr($line, 0, 14) === "zend_extension")
+		{
+			$extensions[] = str_replace("[", "", str_replace("]", "", $lastLine));
+		}
+
+		$lastLine = $line;
+	}
+
+	return array_unique($extensions);
+}
+
+/**
+ * Return the path to the current used php config file
+ *
+ * @return string
+ */
+function getConfigFilePath()
+{
+	$phparray = phpinfo_array();
+
+	foreach ($phparray as $value)
+	{
+		foreach ($value as $keyparam => $keyvalue)
+		{
+			if (strtolower($keyparam) !== "loaded configuration file")
+			{
+				continue;
+			}
+
+			return $keyvalue;
+		}
+	}
+
+	return "";
+}
+
+/**
+ * Return a table column with a indicator (okay or warning), based on the given name and list
+ *
+ * @param string $name		The name to check inside the given list
+ * @param array  $list      A list that should contains the given name
+ *
+ * @return string
+ */
+function getTableColumn($name, array $list)
+{
+	$name = strtolower($name);
+	$html = "<td align='center'>";
+
+	if (in_array($name, $list))
+	{
+		$html .= '<img src="../../theme/eldy/img/tick.png" alt="Ok">';
+	}
+	else
+	{
+		$html .= '<img src="../../theme/eldy/img/warning.png" alt="Warning">';
+	}
+
+	$html .= "</td>";
+
+	return $html;
+}
+
+/**
+ * Return a table column with a indicator (okay or warning), based on the given functions to check
+ *
+ * @param array $functions	A list with functions to check
+ *
+ * @return string
+ */
+function getTableColumnFunction(array $functions)
+{
+	if (count($functions) < 1)
+	{
+		return "<td align='center'>-</td>";
+	}
+
+	$result = true;
+	$html   = "<td align='center'>";
+
+	foreach ($functions as $function)
+	{
+		$result = $result && function_exists($function);
+	}
+
+	if ($result)
+	{
+		$html .= '<img src="../../theme/eldy/img/tick.png" alt="Ok">';
+	}
+	else
+	{
+		$html .= '<img src="../../theme/eldy/img/warning.png" alt="Warning">';
+	}
+
+	$html .= "</td>";
+
+	return $html;
+}
+
+/**
+ * Return a result column with a translated result text
+ *
+ * @param string $name			The name of the PHP extension
+ * @param array $activated		A list with all activated PHP extensions
+ * @param array $loaded			A list with all loaded PHP extensions
+ * @param array $functions		A list with all PHP functions to check
+ *
+ * @return string
+ */
+function getResultColumn($name, array $activated, array $loaded, array $functions)
+{
+	global $langs;
+
+	$result = true;
+	$result = $result && in_array(strtolower($name), $activated);
+	$result = $result && in_array(strtolower($name), $loaded);
+
+	foreach ($functions as $function)
+	{
+	 	$result = $result && function_exists($function);
+	}
+
+	$html = "<td>";
+	$html .= $result ? $langs->trans("PHPSupport".$name) : $langs->trans("ErrorPHPDoesNotSupport".$name);
+	$html .= "</td>";
+
+    return $html;
+}

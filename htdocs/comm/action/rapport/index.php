@@ -15,7 +15,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -34,22 +34,22 @@ require_once DOL_DOCUMENT_ROOT.'/core/modules/action/rapport.pdf.php';
 // Load translation files required by the page
 $langs->loadLangs(array("agenda", "commercial"));
 
-$action=GETPOST('action', 'alpha');
-$month=GETPOST('month');
-$year=GETPOST('year');
+$action = GETPOST('action', 'alpha');
+$month = GETPOST('month');
+$year = GETPOST('year');
 
-$limit = GETPOST('limit', 'int')?GETPOST('limit', 'int'):$conf->liste_limit;
+$limit = GETPOST('limit', 'int') ?GETPOST('limit', 'int') : $conf->liste_limit;
 $sortfield = GETPOST("sortfield", 'alpha');
 $sortorder = GETPOST("sortorder", 'alpha');
-$page = GETPOST("page", 'int');
-if ($page == -1 || $page == null) { $page = 0 ; }
-$offset = $limit * $page ;
-if (! $sortorder) $sortorder="DESC";
-if (! $sortfield) $sortfield="a.datep";
+$page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOST("page", 'int');
+if ($page == -1 || $page == null) { $page = 0; }
+$offset = $limit * $page;
+if (!$sortorder) $sortorder = "DESC";
+if (!$sortfield) $sortfield = "a.datep";
 
 // Security check
 $socid = GETPOST('socid', 'int');
-if ($user->societe_id) $socid=$user->societe_id;
+if ($user->socid) $socid = $user->socid;
 $result = restrictedArea($user, 'agenda', $socid, '', 'myactions');
 
 
@@ -60,7 +60,7 @@ $result = restrictedArea($user, 'agenda', $socid, '', 'myactions');
 if ($action == 'builddoc')
 {
 	$cat = new CommActionRapport($db, $month, $year);
-	$result=$cat->write_file(GETPOST('id', 'int'));
+	$result = $cat->write_file(GETPOST('id', 'int'));
 	if ($result < 0)
 	{
 		setEventMessages($cat->error, $cat->errors, 'errors');
@@ -72,21 +72,21 @@ if ($action == 'builddoc')
  * View
  */
 
-$formfile=new FormFile($db);
+$formfile = new FormFile($db);
 
 llxHeader();
 
 $sql = "SELECT count(*) as cc,";
-$sql.= " date_format(a.datep, '%m/%Y') as df,";
-$sql.= " date_format(a.datep, '%m') as month,";
-$sql.= " date_format(a.datep, '%Y') as year";
-$sql.= " FROM ".MAIN_DB_PREFIX."actioncomm as a,";
-$sql.= " ".MAIN_DB_PREFIX."user as u";
-$sql.= " WHERE a.fk_user_author = u.rowid";
-$sql.= ' AND a.entity IN ('.getEntity('agenda').')';
+$sql .= " date_format(a.datep, '%m/%Y') as df,";
+$sql .= " date_format(a.datep, '%m') as month,";
+$sql .= " date_format(a.datep, '%Y') as year";
+$sql .= " FROM ".MAIN_DB_PREFIX."actioncomm as a,";
+$sql .= " ".MAIN_DB_PREFIX."user as u";
+$sql .= " WHERE a.fk_user_author = u.rowid";
+$sql .= ' AND a.entity IN ('.getEntity('agenda').')';
 //$sql.= " AND percent = 100";
-$sql.= " GROUP BY year, month, df";
-$sql.= " ORDER BY year DESC, month DESC, df DESC";
+$sql .= " GROUP BY year, month, df";
+$sql .= " ORDER BY year DESC, month DESC, df DESC";
 
 $nbtotalofrecords = '';
 if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST))
@@ -100,21 +100,21 @@ if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST))
     }
 }
 
-$sql.= $db->plimit($limit+1, $offset);
+$sql .= $db->plimit($limit + 1, $offset);
 
 //print $sql;
 dol_syslog("select", LOG_DEBUG);
-$resql=$db->query($sql);
+$resql = $db->query($sql);
 if ($resql)
 {
 	$num = $db->num_rows($resql);
 
-	$param='';
-	if ($limit > 0 && $limit != $conf->liste_limit) $param.='&limit='.$limit;
+	$param = '';
+	if ($limit > 0 && $limit != $conf->liste_limit) $param .= '&limit='.$limit;
 
 	print '<form method="POST" id="searchFormList" action="'.$_SERVER["PHP_SELF"].'">';
     if ($optioncss != '') print '<input type="hidden" name="optioncss" value="'.$optioncss.'">';
-	print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+	print '<input type="hidden" name="token" value="'.newToken().'">';
 	print '<input type="hidden" name="formfilteraction" id="formfilteraction" value="list">';
 	print '<input type="hidden" name="action" value="list">';
 	print '<input type="hidden" name="sortfield" value="'.$sortfield.'">';
@@ -123,70 +123,69 @@ if ($resql)
 
 	print_barre_liste($langs->trans("EventReports"), $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, '', $num, $nbtotalofrecords, 'title_agenda', 0, '', '', $limit);
 
-	$moreforfilter='';
+	$moreforfilter = '';
 
 	$i = 0;
     print '<div class="div-table-responsive">';
-    print '<table class="tagtable liste'.($moreforfilter?" listwithfilterbefore":"").'">'."\n";
+    print '<table class="tagtable liste'.($moreforfilter ? " listwithfilterbefore" : "").'">'."\n";
 
     print '<tr class="liste_titre">';
 	print '<td>'.$langs->trans("Period").'</td>';
-	print '<td align="center">'.$langs->trans("EventsNb").'</td>';
-	print '<td align="center">'.$langs->trans("Action").'</td>';
+	print '<td class="center">'.$langs->trans("EventsNb").'</td>';
+	print '<td class="center">'.$langs->trans("Action").'</td>';
 	print '<td>'.$langs->trans("PDF").'</td>';
-	print '<td align="center">'.$langs->trans("Date").'</td>';
-	print '<td align="center">'.$langs->trans("Size").'</td>';
+	print '<td class="center">'.$langs->trans("Date").'</td>';
+	print '<td class="center">'.$langs->trans("Size").'</td>';
 	print "</tr>\n";
 
 	while ($i < min($num, $limit))
 	{
-		$obj=$db->fetch_object($resql);
+		$obj = $db->fetch_object($resql);
 
 		if ($obj)
 		{
-
 			print '<tr class="oddeven">';
 
 			// Date
 			print "<td>".$obj->df."</td>\n";
 
 			// Nb of events
-			print '<td align="center">'.$obj->cc.'</td>';
+			print '<td class="center">'.$obj->cc.'</td>';
 
 			// Button to build doc
-			print '<td align="center">';
+			print '<td class="center">';
 			print '<a href="'.$_SERVER["PHP_SELF"].'?action=builddoc&amp;page='.$page.'&amp;month='.$obj->month.'&amp;year='.$obj->year.'">'.img_picto($langs->trans('BuildDoc'), 'filenew').'</a>';
 			print '</td>';
 
 			$name = "actions-".$obj->month."-".$obj->year.".pdf";
-			$relativepath= $name;
+			$relativepath = $name;
 			$file = $conf->agenda->dir_temp."/".$name;
 			$modulepart = 'actionsreport';
-			$documenturl= DOL_URL_ROOT.'/document.php';
-			if (isset($conf->global->DOL_URL_ROOT_DOCUMENT_PHP)) $documenturl=$conf->global->DOL_URL_ROOT_DOCUMENT_PHP;    // To use another wrapper
+			$documenturl = DOL_URL_ROOT.'/document.php';
+			if (isset($conf->global->DOL_URL_ROOT_DOCUMENT_PHP)) $documenturl = $conf->global->DOL_URL_ROOT_DOCUMENT_PHP; // To use another wrapper
 
 			if (file_exists($file))
 			{
 				print '<td class="tdoverflowmax300">';
 				//print '<a data-ajax="false" href="'.DOL_URL_ROOT.'/document.php?page='.$page.'&amp;file='.urlencode($relativepath).'&amp;modulepart=actionsreport">'.img_pdf().'</a>';
 
-				$filearray=array('name'=>basename($file),'fullname'=>$file,'type'=>'file');
-				$out='';
+				$filearray = array('name'=>basename($file), 'fullname'=>$file, 'type'=>'file');
+				$out = '';
 
 				// Show file name with link to download
-				$out.= '<a href="'.$documenturl.'?modulepart='.$modulepart.'&amp;file='.urlencode($relativepath).($param?'&'.$param:'').'"';
-				$mime=dol_mimetype($relativepath, '', 0);
-				if (preg_match('/text/', $mime)) $out.= ' target="_blank"';
-				$out.= ' target="_blank">';
-				$out.= img_mime($filearray["name"], $langs->trans("File").': '.$filearray["name"]);
-				$out.= $filearray["name"];
-				$out.= '</a>'."\n";
-				$out.= $formfile->showPreview($filearray, $modulepart, $relativepath, 0, $param);
+				$out .= '<a href="'.$documenturl.'?modulepart='.$modulepart.'&amp;file='.urlencode($relativepath).($param ? '&'.$param : '').'"';
+				$mime = dol_mimetype($relativepath, '', 0);
+				if (preg_match('/text/', $mime)) $out .= ' target="_blank"';
+				$out .= ' target="_blank">';
+				$out .= img_mime($filearray["name"], $langs->trans("File").': '.$filearray["name"]);
+				$out .= $filearray["name"];
+				$out .= '</a>'."\n";
+				$out .= $formfile->showPreview($filearray, $modulepart, $relativepath, 0, $param);
 				print $out;
 
 				print '</td>';
-				print '<td align="center">'.dol_print_date(dol_filemtime($file), 'dayhour').'</td>';
-				print '<td align="center">'.dol_print_size(dol_filesize($file)).'</td>';
+				print '<td class="center">'.dol_print_date(dol_filemtime($file), 'dayhour').'</td>';
+				print '<td class="center">'.dol_print_size(dol_filesize($file)).'</td>';
 			}
 			else {
 				print '<td>&nbsp;</td>';

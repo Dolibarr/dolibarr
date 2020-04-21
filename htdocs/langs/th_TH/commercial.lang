@@ -1,6 +1,6 @@
 # Dolibarr language file - Source file is en_US - commercial
-Commercial=เชิงพาณิชย์
-CommercialArea=พื้นที่เชิงพาณิชย์
+Commercial=Commerce
+CommercialArea=Commerce area
 Customer=ลูกค้า
 Customers=ลูกค้า
 Prospect=โอกาส
@@ -59,7 +59,7 @@ ActionAC_FAC=ส่งใบแจ้งหนี้ลูกค้าทาง�
 ActionAC_REL=ส่งใบแจ้งหนี้ลูกค้าโดยทางไปรษณีย์ (เตือน)
 ActionAC_CLO=ใกล้
 ActionAC_EMAILING=ส่งอีเมลมวล
-ActionAC_COM=ส่งคำสั่งซื้อของลูกค้าโดยทางไปรษณีย์
+ActionAC_COM=Send sales order by mail
 ActionAC_SHIP=ส่งจัดส่งทางไปรษณีย์
 ActionAC_SUP_ORD=Send purchase order by mail
 ActionAC_SUP_INV=Send vendor invoice by mail

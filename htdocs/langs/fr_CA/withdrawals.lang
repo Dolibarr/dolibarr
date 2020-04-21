@@ -53,7 +53,6 @@ DoStandingOrdersBeforePayments=Cet onglet vous permet de demander une commande d
 WithdrawalFile=Fichier de retrait
 SetToStatusSent=Définir le statut "Fichier envoyé"
 StatisticsByLineStatus=Statistiques par état des lignes
-RUM=Unique Mandate Reference (UMR)
 RUMLong=Référence de mandat unique
 WithdrawMode=Mode de débit direct (FRST ou RECUR)
 WithdrawRequestAmount=Montant de la demande de débit direct:

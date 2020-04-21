@@ -14,7 +14,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 include_once DOL_DOCUMENT_ROOT.'/core/lib/price.lib.php';
@@ -94,7 +94,7 @@ class Facturation
      */
     public function ajoutArticle()
     {
-        global $conf,$db,$mysoc;
+        global $conf, $db, $mysoc;
 
         $thirdpartyid = $_SESSION['CASHDESK_ID_THIRDPARTY'];
 
@@ -108,21 +108,22 @@ class Facturation
         $vatrowid = $this->tva();
 
         $tmp = getTaxesFromId($vatrowid);
-        $txtva = $tmp['rate'].(empty($tmp['code'])?'':' ('.$tmp['code'].')');
+        $txtva = $tmp['rate'].(empty($tmp['code']) ? '' : ' ('.$tmp['code'].')');
         $vat_npr = $tmp['npr'];
 
         $localtaxarray = getLocalTaxesFromRate($vatrowid, 0, $societe, $mysoc, 1);
 
         // Clean vat code
-        $vat_src_code='';
+        $reg = array();
+        $vat_src_code = '';
         if (preg_match('/\((.*)\)/', $txtva, $reg))
         {
             $vat_src_code = $reg[1];
-            $txtva = preg_replace('/\s*\(.*\)/', '', $txtva);    // Remove code into vatrate.
+            $txtva = preg_replace('/\s*\(.*\)/', '', $txtva); // Remove code into vatrate.
         }
 
         // Define part of HT, VAT, TTC
-        $resultarray=calcul_price_total($this->qte, $this->prix(), $this->remisePercent(), $txtva, -1, -1, 0, 'HT', $vat_npr, $product->type, $mysoc, $localtaxarray);
+        $resultarray = calcul_price_total($this->qte, $this->prix(), $this->remisePercent(), $txtva, -1, -1, 0, 'HT', $vat_npr, $product->type, $mysoc, $localtaxarray);
 
         // Calculation of total HT without discount
         $total_ht = $resultarray[0];
@@ -141,20 +142,20 @@ class Facturation
         $montant_remise_ht = ($resultarray[6] - $resultarray[0]);
         $this->montantRemise($montant_remise_ht);
 
-        $newcartarray=$_SESSION['poscart'];
+        $newcartarray = $_SESSION['poscart'];
 
         $i = 0;
         if (!is_null($newcartarray) && !empty($newcartarray)) {
-            $i=count($newcartarray);
+            $i = count($newcartarray);
         }
 
-        $newcartarray[$i]['id']=$i;
-        $newcartarray[$i]['ref']=$product->ref;
-        $newcartarray[$i]['label']=$product->label;
-        $newcartarray[$i]['price']=$product->price;
-        $newcartarray[$i]['price_ttc']=$product->price_ttc;
+        $newcartarray[$i]['id'] = $i;
+        $newcartarray[$i]['ref'] = $product->ref;
+        $newcartarray[$i]['label'] = $product->label;
+        $newcartarray[$i]['price'] = $product->price;
+        $newcartarray[$i]['price_ttc'] = $product->price_ttc;
 
-        if (! empty($conf->global->PRODUIT_MULTIPRICES))
+        if (!empty($conf->global->PRODUIT_MULTIPRICES))
         {
             if (isset($product->multiprices[$societe->price_level]))
             {
@@ -163,17 +164,17 @@ class Facturation
             }
         }
 
-        $newcartarray[$i]['fk_article']=$this->id;
-        $newcartarray[$i]['qte']=$this->qte();
-        $newcartarray[$i]['fk_tva']=$this->tva();   // Vat rowid
-        $newcartarray[$i]['remise_percent']=$remise_percent;
-        $newcartarray[$i]['remise']=price2num($montant_remise_ht);
-        $newcartarray[$i]['total_ht']=price2num($total_ht, 'MT');
-        $newcartarray[$i]['total_ttc']=price2num($total_ttc, 'MT');
-        $newcartarray[$i]['total_vat']=price2num($total_vat, 'MT');
-        $newcartarray[$i]['total_localtax1']=price2num($total_localtax1, 'MT');
-        $newcartarray[$i]['total_localtax2']=price2num($total_localtax2, 'MT');
-        $_SESSION['poscart']=$newcartarray;
+        $newcartarray[$i]['fk_article'] = $this->id;
+        $newcartarray[$i]['qte'] = $this->qte();
+        $newcartarray[$i]['fk_tva'] = $this->tva(); // Vat rowid
+        $newcartarray[$i]['remise_percent'] = $remise_percent;
+        $newcartarray[$i]['remise'] = price2num($montant_remise_ht);
+        $newcartarray[$i]['total_ht'] = price2num($total_ht, 'MT');
+        $newcartarray[$i]['total_ttc'] = price2num($total_ttc, 'MT');
+        $newcartarray[$i]['total_vat'] = price2num($total_vat, 'MT');
+        $newcartarray[$i]['total_localtax1'] = price2num($total_localtax1, 'MT');
+        $newcartarray[$i]['total_localtax2'] = price2num($total_localtax2, 'MT');
+        $_SESSION['poscart'] = $newcartarray;
 
         $this->raz();
     }
@@ -186,22 +187,22 @@ class Facturation
      */
     public function supprArticle($aArticle)
     {
-        $poscart=$_SESSION['poscart'];
+        $poscart = $_SESSION['poscart'];
 
-        $j=0;
-        $newposcart=array();
-        foreach($poscart as $key => $val)
+        $j = 0;
+        $newposcart = array();
+        foreach ($poscart as $key => $val)
         {
             if ($poscart[$key]['id'] != $aArticle)
             {
-               $newposcart[$j]=$poscart[$key];
-               $newposcart[$j]['id']=$j;
-               $j++;
+                $newposcart[$j] = $poscart[$key];
+                $newposcart[$j]['id'] = $j;
+                $j++;
             }
         }
         unset($poscart);
         //var_dump($poscart);exit;
-        $_SESSION['poscart']=$newposcart;
+        $_SESSION['poscart'] = $newposcart;
     }
 
     /**
@@ -213,16 +214,16 @@ class Facturation
     {
         global $db;
 
-        $total_ht=0;
-        $total_ttc=0;
+        $total_ht = 0;
+        $total_ttc = 0;
         $total_vat = 0;
         $total_localtax1 = 0;
         $total_localtax2 = 0;
 
-        $tab = (! empty($_SESSION['poscart'])?$_SESSION['poscart']:array());
+        $tab = (!empty($_SESSION['poscart']) ? $_SESSION['poscart'] : array());
 
-        $tab_size=count($tab);
-        for($i=0;$i < $tab_size;$i++)
+        $tab_size = count($tab);
+        for ($i = 0; $i < $tab_size; $i++)
         {
             // Total HT
             $remise = $tab[$i]['remise'];
@@ -290,18 +291,16 @@ class Facturation
     public function id($aId = null)
     {
 
-        if ( !$aId )
+        if (!$aId)
         {
             return $this->id;
         }
-        elseif ( $aId == 'RESET' )
+        elseif ($aId == 'RESET')
         {
-
             $this->id = null;
         }
         else
         {
-
             $this->id = $aId;
         }
     }
@@ -319,7 +318,7 @@ class Facturation
         {
             return $this->ref;
         }
-        elseif ( $aRef == 'RESET' )
+        elseif ($aRef == 'RESET')
         {
             $this->ref = null;
         }
@@ -341,9 +340,8 @@ class Facturation
         {
             return $this->qte;
         }
-        elseif ( $aQte == 'RESET' )
+        elseif ($aQte == 'RESET')
         {
-
             $this->qte = null;
         }
         else
@@ -365,7 +363,7 @@ class Facturation
         {
             return $this->stock;
         }
-        elseif ( $aStock == 'RESET' )
+        elseif ($aStock == 'RESET')
         {
             $this->stock = null;
         }
@@ -408,13 +406,10 @@ class Facturation
     {
 
         if (is_null($aMontantRemise)) {
-
             return $this->montant_remise;
-        } elseif ( $aMontantRemise == 'RESET' ) {
-
+        } elseif ($aMontantRemise == 'RESET') {
             $this->montant_remise = null;
         } else {
-
             $this->montant_remise = $aMontantRemise;
         }
     }
@@ -429,13 +424,10 @@ class Facturation
     {
 
         if (is_null($aPrix)) {
-
             return $this->prix;
-        } elseif ( $aPrix == 'RESET' ) {
-
+        } elseif ($aPrix == 'RESET') {
             $this->prix = null;
         } else {
-
             $this->prix = $aPrix;
         }
     }
@@ -449,13 +441,10 @@ class Facturation
     public function tva($aTva = null)
     {
         if (is_null($aTva)) {
-
             return $this->tva;
-        } elseif ( $aTva == 'RESET' ) {
-
+        } elseif ($aTva == 'RESET') {
             $this->tva = null;
         } else {
-
             $this->tva = $aTva;
         }
     }
@@ -469,13 +458,10 @@ class Facturation
     public function numInvoice($aNumFacture = null)
     {
         if (is_null($aNumFacture)) {
-
             return $this->num_facture;
-        } elseif ( $aNumFacture == 'RESET' ) {
-
+        } elseif ($aNumFacture == 'RESET') {
             $this->num_facture = null;
         } else {
-
             $this->num_facture = $aNumFacture;
         }
     }
@@ -490,13 +476,10 @@ class Facturation
     {
 
         if (is_null($aModeReglement)) {
-
             return $this->mode_reglement;
-        } elseif ( $aModeReglement == 'RESET' ) {
-
+        } elseif ($aModeReglement == 'RESET') {
             $this->mode_reglement = null;
         } else {
-
             $this->mode_reglement = $aModeReglement;
         }
     }
@@ -511,13 +494,10 @@ class Facturation
     {
 
         if (is_null($aMontantEncaisse)) {
-
             return $this->montant_encaisse;
-        } elseif ( $aMontantEncaisse == 'RESET' ) {
-
+        } elseif ($aMontantEncaisse == 'RESET') {
             $this->montant_encaisse = null;
         } else {
-
             $this->montant_encaisse = $aMontantEncaisse;
         }
     }
@@ -532,13 +512,10 @@ class Facturation
     {
 
         if (is_null($aMontantRendu)) {
-
             return $this->montant_rendu;
-        } elseif ( $aMontantRendu == 'RESET' ) {
-
+        } elseif ($aMontantRendu == 'RESET') {
             $this->montant_rendu = null;
         } else {
-
             $this->montant_rendu = $aMontantRendu;
         }
     }
@@ -552,13 +529,10 @@ class Facturation
     public function paiementLe($aPaiementLe = null)
     {
         if (is_null($aPaiementLe)) {
-
             return $this->paiement_le;
-        } elseif ( $aPaiementLe == 'RESET' ) {
-
+        } elseif ($aPaiementLe == 'RESET') {
             $this->paiement_le = null;
         } else {
-
             $this->paiement_le = $aPaiementLe;
         }
     }
@@ -572,13 +546,10 @@ class Facturation
     public function prixTotalHt($aTotalHt = null)
     {
         if (is_null($aTotalHt)) {
-
             return $this->prix_total_ht;
-        } elseif ( $aTotalHt == 'RESET' ) {
-
+        } elseif ($aTotalHt == 'RESET') {
             $this->prix_total_ht = null;
         } else {
-
             $this->prix_total_ht = $aTotalHt;
         }
     }
@@ -592,13 +563,10 @@ class Facturation
     public function montantTva($aMontantTva = null)
     {
         if (is_null($aMontantTva)) {
-
             return $this->montant_tva;
-        } elseif ( $aMontantTva == 'RESET' ) {
-
+        } elseif ($aMontantTva == 'RESET') {
             $this->montant_tva = null;
         } else {
-
             $this->montant_tva = $aMontantTva;
         }
     }
@@ -615,7 +583,7 @@ class Facturation
         {
             return $this->prix_total_ttc;
         }
-        elseif ( $aTotalTtc == 'RESET' )
+        elseif ($aTotalTtc == 'RESET')
         {
             $this->prix_total_ttc = null;
         }

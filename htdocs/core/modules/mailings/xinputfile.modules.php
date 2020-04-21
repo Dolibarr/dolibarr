@@ -12,8 +12,8 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
- * or see http://www.gnu.org/
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
+ * or see https://www.gnu.org/
  */
 
 /**
@@ -30,13 +30,17 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
  */
 class mailing_xinputfile extends MailingTargets
 {
-    public $name='EmailsFromFile';              // Identifiant du module mailing
+    public $name = 'EmailsFromFile'; // Identifiant du module mailing
     // This label is used if no translation is found for key XXX neither MailingModuleDescXXX where XXX=name is found
-    public $desc='EMails from a file';          // Libelle utilise si aucune traduction pour MailingModuleDescXXX ou XXX=name trouv�e
-    public $require_module=array();             // Module mailing actif si modules require_module actifs
-    public $require_admin=0;                    // Module mailing actif pour user admin ou non
-    public $picto='generic';
-    public $tooltip='UseFormatFileEmailToTarget';
+    public $desc = 'EMails from a file'; // Libelle utilise si aucune traduction pour MailingModuleDescXXX ou XXX=name trouv�e
+    public $require_module = array(); // Module mailing actif si modules require_module actifs
+    public $require_admin = 0; // Module mailing actif pour user admin ou non
+
+    /**
+     * @var string String with name of icon for myobject. Must be the part after the 'object_' into object_myobject.png
+     */
+    public $picto = 'generic';
+    public $tooltip = 'UseFormatFileEmailToTarget';
 
 
     /**
@@ -46,7 +50,7 @@ class mailing_xinputfile extends MailingTargets
      */
     public function __construct($db)
     {
-        $this->db=$db;
+        $this->db = $db;
     }
 
 
@@ -63,7 +67,7 @@ class mailing_xinputfile extends MailingTargets
 		global $langs;
 		$langs->load("users");
 
-		$statssql=array();
+		$statssql = array();
 		return $statssql;
 	}
 
@@ -105,8 +109,8 @@ class mailing_xinputfile extends MailingTargets
 	{
 		global $langs;
 
-		$s='';
-		$s.='<input type="file" name="username" class="flat">';
+		$s = '';
+		$s .= '<input type="file" name="username" class="flat">';
 		return $s;
 	}
 
@@ -120,7 +124,7 @@ class mailing_xinputfile extends MailingTargets
     public function add_to_target($mailing_id)
 	{
         // phpcs:enable
-		global $conf,$langs,$_FILES;
+		global $conf, $langs, $_FILES;
 
 		require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 
@@ -129,16 +133,16 @@ class mailing_xinputfile extends MailingTargets
 
 		$cibles = array();
 
-		$upload_dir=$conf->mailing->dir_temp;
+		$upload_dir = $conf->mailing->dir_temp;
 
 		if (dol_mkdir($upload_dir) >= 0)
 		{
-			$resupload = dol_move_uploaded_file($_FILES['username']['tmp_name'], $upload_dir . "/" . $_FILES['username']['name'], 1, 0, $_FILES['username']['error']);
+			$resupload = dol_move_uploaded_file($_FILES['username']['tmp_name'], $upload_dir."/".$_FILES['username']['name'], 1, 0, $_FILES['username']['error']);
 			if (is_numeric($resupload) && $resupload > 0)
 			{
-				$cpt=0;
+				$cpt = 0;
 
-				$file=$upload_dir . "/" . $_FILES['username']['name'];
+				$file = $upload_dir."/".$_FILES['username']['name'];
 				$handle = @fopen($file, "r");
 				if ($handle)
 				{
@@ -150,15 +154,15 @@ class mailing_xinputfile extends MailingTargets
 					{
 						$cpt++;
 				        $buffer = trim(fgets($handle));
-			        	$tab=explode(';', $buffer, 4);
-				        $email=$tab[0];
-				        $name=$tab[1];
-				        $firstname=$tab[2];
-				        $other=$tab[3];
-				        if (! empty($buffer))
+			        	$tab = explode(';', $buffer, 4);
+				        $email = $tab[0];
+				        $name = $tab[1];
+				        $firstname = $tab[2];
+				        $other = $tab[3];
+				        if (!empty($buffer))
 				        {
 			        		//print 'xx'.dol_strlen($buffer).empty($buffer)."<br>\n";
-				        	$id=$cpt;
+				        	$id = $cpt;
 					        if (isValidEMail($email))
 					        {
 		   						if ($old <> $email)
@@ -181,8 +185,8 @@ class mailing_xinputfile extends MailingTargets
 					        	$i++;
 					        	$langs->load("errors");
                                 $msg = $langs->trans("ErrorFoundBadEmailInFile", $i, $cpt, $email);
-					        	if (! empty($msg)) $this->error = $msg;
-                                else $this->error = 'ErrorFoundBadEmailInFile '.$i.' '.$cpt.' '.$email;	// We experience case where $langs->trans return an empty string.
+					        	if (!empty($msg)) $this->error = $msg;
+                                else $this->error = 'ErrorFoundBadEmailInFile '.$i.' '.$cpt.' '.$email; // We experience case where $langs->trans return an empty string.
 					        }
 				        }
 				    }
@@ -221,6 +225,6 @@ class mailing_xinputfile extends MailingTargets
 
 		ini_set('auto_detect_line_endings', false);
 
-		return parent::add_to_target($mailing_id, $cibles);
+		return parent::addTargetsToDatabase($mailing_id, $cibles);
 	}
 }

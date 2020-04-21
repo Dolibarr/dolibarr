@@ -14,7 +14,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -118,8 +118,8 @@ function getMarginInfos($pvht, $remise_percent, $tva_tx, $localtax1_tx, $localta
 {
 	global $db, $conf;
 
-	$marge_tx_ret='';
-	$marque_tx_ret='';
+	$marge_tx_ret = '';
+	$marque_tx_ret = '';
 
 	if ($fk_pa > 0 && empty($paht)) {
 		require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.product.class.php';

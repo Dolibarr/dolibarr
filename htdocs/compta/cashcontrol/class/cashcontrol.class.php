@@ -15,7 +15,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -52,14 +52,15 @@ class CashControl extends CommonObject
 	/**
 	 * @var string String with name of icon for pos_cash_fence. Must be the part after the 'object_' into object_pos_cash_fence.png
 	 */
-	public $picto = 'account';
+	public $picto = 'cash-register';
 
-	public $fields=array(
+
+	public $fields = array(
 	'rowid' =>array('type'=>'integer', 'label'=>'ID', 'enabled'=>1, 'visible'=>-2, 'notnull'=>1, 'position'=>10),
 	'entity' =>array('type'=>'integer', 'label'=>'Entity', 'enabled'=>1, 'visible'=>0, 'notnull'=>1, 'position'=>15),
 	'ref' =>array('type'=>'varchar(64)', 'label'=>'Ref', 'enabled'=>1, 'visible'=>1, 'notnull'=>1, 'position'=>18),
 	'posmodule' =>array('type'=>'varchar(30)', 'label'=>'Module', 'enabled'=>1, 'visible'=>1, 'notnull'=>1, 'position'=>19),
-	'posnumber' =>array('type'=>'varchar(30)', 'label'=>'CashDesk', 'enabled'=>1, 'visible'=>1, 'notnull'=>1, 'position'=>20),
+	'posnumber' =>array('type'=>'varchar(30)', 'label'=>'Terminal', 'enabled'=>1, 'visible'=>1, 'notnull'=>1, 'position'=>20, 'css'=>'center'),
 	'label' =>array('type'=>'varchar(255)', 'label'=>'Label', 'enabled'=>1, 'visible'=>0, 'position'=>24),
 	'opening' =>array('type'=>'price', 'label'=>'Opening', 'enabled'=>1, 'visible'=>1, 'position'=>25),
 	'cash' =>array('type'=>'price', 'label'=>'Cash', 'enabled'=>1, 'visible'=>1, 'position'=>30),
@@ -86,12 +87,25 @@ class CashControl extends CommonObject
 	public $cash;
 	public $cheque;
 	public $card;
+
+	/**
+	 * @var integer|string $date_valid
+	 */
 	public $date_valid;
+
+	/**
+     * @var integer|string date_creation
+     */
 	public $date_creation;
+
+	/**
+	 * @var integer|string $date_modification
+	 */
 	public $date_modification;
 
 	const STATUS_DRAFT = 0;
 	const STATUS_VALIDATED = 1;
+	const STATUS_CLOSED = 1; // For the moment CLOSED = VALIDATED
 
 
 	/**
@@ -119,9 +133,9 @@ class CashControl extends CommonObject
 		$error = 0;
 
 		// Clean data
-		if (empty($this->cash)) $this->cash=0;
-		if (empty($this->cheque)) $this->cheque=0;
-		if (empty($this->card)) $this->card=0;
+		if (empty($this->cash)) $this->cash = 0;
+		if (empty($this->cheque)) $this->cheque = 0;
+		if (empty($this->card)) $this->card = 0;
 
 		// Insert request
 		$sql = "INSERT INTO ".MAIN_DB_PREFIX."pos_cash_fence (";
@@ -142,7 +156,7 @@ class CashControl extends CommonObject
 		//$sql .= "'(PROV)', ";
 		$sql .= $conf->entity;
 		$sql .= ", ".(is_numeric($this->opening) ? $this->opening : 0);
-		$sql .= ", 0";										// Draft by default
+		$sql .= ", 0"; // Draft by default
 		$sql .= ", '".$this->db->idate(dol_now())."'";
 		$sql .= ", '".$this->db->escape($this->posmodule)."'";
 		$sql .= ", '".$this->db->escape($this->posnumber)."'";
@@ -193,7 +207,7 @@ class CashControl extends CommonObject
 	 */
 	public function valid(User $user, $notrigger = 0)
 	{
-		global $conf,$langs;
+		global $conf, $langs;
 		require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 
 		$error = 0;
@@ -215,14 +229,14 @@ class CashControl extends CommonObject
 		 }
 		 */
 
-		$now=dol_now();
+		$now = dol_now();
 
 		// Update request
 		$sql = "UPDATE ".MAIN_DB_PREFIX."pos_cash_fence";
-		$sql.= " SET status = ".self::STATUS_VALIDATED.",";
-		$sql.= " date_valid='".$this->db->idate($now)."',";
-		$sql.= " fk_user_valid = ".$user->id;
-		$sql.= " WHERE rowid=".$this->id;
+		$sql .= " SET status = ".self::STATUS_VALIDATED.",";
+		$sql .= " date_valid='".$this->db->idate($now)."',";
+		$sql .= " fk_user_valid = ".$user->id;
+		$sql .= " WHERE rowid=".$this->id;
 
 		$this->db->begin();
 
@@ -239,10 +253,10 @@ class CashControl extends CommonObject
 			$this->fk_user_valid = $user->id;
 		}
 
-		if (! $error && ! $notrigger)
+		if (!$error && !$notrigger)
 		{
 			// Call trigger
-			$result=$this->call_trigger('CASHCONTROL_VALIDATE', $user);
+			$result = $this->call_trigger('CASHCONTROL_VALIDATE', $user);
 			if ($result < 0) $error++;
 			// End call triggers
 		}
@@ -272,8 +286,20 @@ class CashControl extends CommonObject
 	public function fetch($id, $ref = null)
 	{
 		$result = $this->fetchCommon($id, $ref);
-		if ($result > 0 && ! empty($this->table_element_line)) $this->fetchLines();
+		if ($result > 0 && !empty($this->table_element_line)) $this->fetchLines();
 		return $result;
+	}
+
+	/**
+	 * Update object into database
+	 *
+	 * @param  User $user      User that modifies
+	 * @param  bool $notrigger false=launch triggers after, true=disable triggers
+	 * @return int             <0 if KO, >0 if OK
+	 */
+	public function update(User $user, $notrigger = false)
+	{
+		return $this->updateCommon($user, $notrigger);
 	}
 
 	/**
@@ -311,47 +337,20 @@ class CashControl extends CommonObject
 	public function LibStatut($status, $mode = 0)
 	{
 		// phpcs:enable
-		if (empty($this->labelstatus))
+		if (empty($this->labelStatus) || empty($this->labelStatusShort))
 		{
 			global $langs;
 			//$langs->load("mymodule");
-			$this->labelstatus[0] = $langs->trans('Draft');
-			$this->labelstatus[1] = $langs->trans('Closed');
+			$this->labelStatus[0] = $langs->trans('Draft');
+			$this->labelStatus[1] = $langs->trans('Closed');
+			$this->labelStatusShort[0] = $langs->trans('Draft');
+			$this->labelStatusShort[1] = $langs->trans('Closed');
 		}
 
-		if ($mode == 0)
-		{
-			return $this->labelstatus[$status];
-		}
-		elseif ($mode == 1)
-		{
-			return $this->labelstatus[$status];
-		}
-		elseif ($mode == 2)
-		{
-			if ($status == 1) return img_picto($this->labelstatus[$status], 'statut6', '', false, 0, 0, '', 'valignmiddle').' '.$this->labelstatus[$status];
-			elseif ($status == 0) return img_picto($this->labelstatus[$status], 'statut0', '', false, 0, 0, '', 'valignmiddle').' '.$this->labelstatus[$status];
-		}
-		elseif ($mode == 3)
-		{
-			if ($status == 1) return img_picto($this->labelstatus[$status], 'statut6', '', false, 0, 0, '', 'valignmiddle');
-			elseif ($status == 0) return img_picto($this->labelstatus[$status], 'statut0', '', false, 0, 0, '', 'valignmiddle');
-		}
-		elseif ($mode == 4)
-		{
-			if ($status == 1) return img_picto($this->labelstatus[$status], 'statut6', '', false, 0, 0, '', 'valignmiddle').' '.$this->labelstatus[$status];
-			elseif ($status == 0) return img_picto($this->labelstatus[$status], 'statut0', '', false, 0, 0, '', 'valignmiddle').' '.$this->labelstatus[$status];
-		}
-		elseif ($mode == 5)
-		{
-			if ($status == 1) return $this->labelstatus[$status].' '.img_picto($this->labelstatus[$status], 'statut6', '', false, 0, 0, '', 'valignmiddle');
-			elseif ($status == 0) return $this->labelstatus[$status].' '.img_picto($this->labelstatus[$status], 'statut0', '', false, 0, 0, '', 'valignmiddle');
-		}
-		elseif ($mode == 6)
-		{
-			if ($status == 1) return $this->labelstatus[$status].' '.img_picto($this->labelstatus[$status], 'statut6', '', false, 0, 0, '', 'valignmiddle');
-			elseif ($status == 0) return $this->labelstatus[$status].' '.img_picto($this->labelstatus[$status], 'statut0', '', false, 0, 0, '', 'valignmiddle');
-		}
+		$statusType = 'status0';
+		if ($status == self::STATUS_VALIDATED) $statusType = 'status6';
+
+		return dolGetStatus($this->labelStatus[$status], $this->labelStatusShort[$status], '', $statusType, $mode);
 	}
 
 	/**
@@ -368,36 +367,36 @@ class CashControl extends CommonObject
 	{
 		global $conf, $langs, $hookmanager;
 
-		if (! empty($conf->dol_no_mouse_hover)) $notooltip=1;   // Force disable tooltips
+		if (!empty($conf->dol_no_mouse_hover)) $notooltip = 1; // Force disable tooltips
 
-		$result='';
+		$result = '';
 
-		$newref=($this->ref?$this->ref:$this->id);
+		$newref = ($this->ref ? $this->ref : $this->id);
 
-		$label = '<u>' . $langs->trans("ShowCashFence") . '</u>';
-		$label.= '<br>';
-		$label.= '<b>' . $langs->trans('Ref') . ':</b> ' . ($this->ref?$this->ref:$this->id);
+		$label = '<u>'.$langs->trans("CashFence").'</u>';
+		$label .= '<br>';
+		$label .= '<b>'.$langs->trans('Ref').':</b> '.($this->ref ? $this->ref : $this->id);
 
 		$url = DOL_URL_ROOT.'/compta/cashcontrol/cashcontrol_card.php?id='.$this->id;
 
 		if ($option != 'nolink')
 		{
 		    // Add param to save lastsearch_values or not
-		    $add_save_lastsearch_values=($save_lastsearch_value == 1 ? 1 : 0);
-		    if ($save_lastsearch_value == -1 && preg_match('/list\.php/', $_SERVER["PHP_SELF"])) $add_save_lastsearch_values=1;
-		    if ($add_save_lastsearch_values) $url.='&save_lastsearch_values=1';
+		    $add_save_lastsearch_values = ($save_lastsearch_value == 1 ? 1 : 0);
+		    if ($save_lastsearch_value == -1 && preg_match('/list\.php/', $_SERVER["PHP_SELF"])) $add_save_lastsearch_values = 1;
+		    if ($add_save_lastsearch_values) $url .= '&save_lastsearch_values=1';
 		}
 
-		$linkclose='';
+		$linkclose = '';
 		if (empty($notooltip))
 		{
-		    if (! empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER))
+		    if (!empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER))
 		    {
-		        $label=$langs->trans("ShowMyObject");
-		        $linkclose.=' alt="'.dol_escape_htmltag($label, 1).'"';
+		        $label = $langs->trans("ShowMyObject");
+		        $linkclose .= ' alt="'.dol_escape_htmltag($label, 1).'"';
 		    }
-		    $linkclose.=' title="'.dol_escape_htmltag($label, 1).'"';
-		    $linkclose.=' class="classfortooltip'.($morecss?' '.$morecss:'').'"';
+		    $linkclose .= ' title="'.dol_escape_htmltag($label, 1).'"';
+		    $linkclose .= ' class="classfortooltip'.($morecss ? ' '.$morecss : '').'"';
 
 		    /*
 		     $hookmanager->initHooks(array('myobjectdao'));
@@ -406,22 +405,22 @@ class CashControl extends CommonObject
 		     if ($reshook > 0) $linkclose = $hookmanager->resPrint;
 		     */
 		}
-		else $linkclose = ($morecss?' class="'.$morecss.'"':'');
+		else $linkclose = ($morecss ? ' class="'.$morecss.'"' : '');
 
 		$linkstart = '<a href="'.$url.'"';
-		$linkstart.=$linkclose.'>';
-		$linkend='</a>';
+		$linkstart .= $linkclose.'>';
+		$linkend = '</a>';
 
 		$result .= $linkstart;
-		if ($withpicto) $result.=img_object(($notooltip?'':$label), ($this->picto?$this->picto:'generic'), ($notooltip?(($withpicto != 2) ? 'class="paddingright"' : ''):'class="'.(($withpicto != 2) ? 'paddingright ' : '').'classfortooltip"'), 0, 0, $notooltip?0:1);
-		if ($withpicto != 2) $result.= $this->ref;
+		if ($withpicto) $result .= img_object(($notooltip ? '' : $label), ($this->picto ? $this->picto : 'generic'), ($notooltip ? (($withpicto != 2) ? 'class="paddingright"' : '') : 'class="'.(($withpicto != 2) ? 'paddingright ' : '').'classfortooltip"'), 0, 0, $notooltip ? 0 : 1);
+		if ($withpicto != 2) $result .= $this->ref;
 		$result .= $linkend;
 		//if ($withpicto != 2) $result.=(($addlabel && $this->label) ? $sep . dol_trunc($this->label, ($addlabel > 1 ? $addlabel : 0)) : '');
 
 		global $action;
 		$hookmanager->initHooks(array('cashfencedao'));
-		$parameters=array('id'=>$this->id, 'getnomurl'=>$result);
-		$reshook=$hookmanager->executeHooks('getNomUrl', $parameters, $this, $action);    // Note that $action and $object may have been modified by some hooks
+		$parameters = array('id'=>$this->id, 'getnomurl'=>$result);
+		$reshook = $hookmanager->executeHooks('getNomUrl', $parameters, $this, $action); // Note that $action and $object may have been modified by some hooks
 		if ($reshook > 0) { $result = $hookmanager->resPrint;
 		} else { $result .= $hookmanager->resPrint;
 		}

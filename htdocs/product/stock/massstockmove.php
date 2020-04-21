@@ -13,7 +13,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -35,10 +35,10 @@ require_once DOL_DOCUMENT_ROOT.'/product/class/html.formproduct.class.php';
 $langs->loadLangs(array('products', 'stocks', 'orders', 'productbatch'));
 
 // Security check
-if ($user->societe_id) {
-    $socid = $user->societe_id;
+if ($user->socid) {
+    $socid = $user->socid;
 }
-$result=restrictedArea($user, 'produit|service');
+$result = restrictedArea($user, 'produit|service');
 
 //checks if a product has been ordered
 
@@ -52,7 +52,7 @@ $idline = GETPOST('idline');
 
 $sortfield = GETPOST('sortfield', 'alpha');
 $sortorder = GETPOST('sortorder', 'alpha');
-$page = GETPOST('page', 'int');
+$page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOST("page", 'int');
 if (empty($page) || $page == -1) { $page = 0; }     // If $page is not defined, or '' or -1
 
 if (!$sortfield) {
@@ -62,11 +62,11 @@ if (!$sortfield) {
 if (!$sortorder) {
     $sortorder = 'ASC';
 }
-$limit = GETPOST('limit', 'int')?GETPOST('limit', 'int'):$conf->liste_limit;
-$offset = $limit * $page ;
+$limit = GETPOST('limit', 'int') ?GETPOST('limit', 'int') : $conf->liste_limit;
+$offset = $limit * $page;
 
-$listofdata=array();
-if (! empty($_SESSION['massstockmove'])) $listofdata=json_decode($_SESSION['massstockmove'], true);
+$listofdata = array();
+if (!empty($_SESSION['massstockmove'])) $listofdata = json_decode($_SESSION['massstockmove'], true);
 
 
 /*
@@ -75,17 +75,17 @@ if (! empty($_SESSION['massstockmove'])) $listofdata=json_decode($_SESSION['mass
 
 if ($action == 'addline')
 {
-	if (! ($id_product > 0))
+	if (!($id_product > 0))
 	{
 		$error++;
 		setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Product")), null, 'errors');
 	}
-	if (! ($id_sw > 0))
+	if (!($id_sw > 0))
 	{
 		$error++;
 		setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("WarehouseSource")), null, 'errors');
 	}
-	if (! ($id_tw > 0))
+	if (!($id_tw > 0))
 	{
 		$error++;
 		setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("WarehouseTarget")), null, 'errors');
@@ -96,16 +96,16 @@ if ($action == 'addline')
 		$langs->load("errors");
 		setEventMessages($langs->trans("ErrorWarehouseMustDiffers"), null, 'errors');
 	}
-	if (! $qty)
+	if (!$qty)
 	{
 		$error++;
 	    setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Qty")), null, 'errors');
 	}
 
 	// Check a batch number is provided if product need it
-	if (! $error)
+	if (!$error)
 	{
-		$producttmp=new Product($db);
+		$producttmp = new Product($db);
 		$producttmp->fetch($id_product);
 		if ($producttmp->hasbatch())
 		{
@@ -120,25 +120,23 @@ if ($action == 'addline')
 
 	// TODO Check qty is ok for stock move. Note qty may not be enough yet, but we make a check now to report a warning.
 	// What is important is to have qty when doing action 'createmovements'
-	if (! $error)
+	if (!$error)
 	{
 		// Warning, don't forget lines already added into the $_SESSION['massstockmove']
 		if ($producttmp->hasbatch())
 		{
-
 		}
 		else
 		{
-
 		}
 	}
 
-	if (! $error)
+	if (!$error)
 	{
-		if (count(array_keys($listofdata)) > 0) $id=max(array_keys($listofdata)) + 1;
-		else $id=1;
-		$listofdata[$id]=array('id'=>$id, 'id_product'=>$id_product, 'qty'=>$qty, 'id_sw'=>$id_sw, 'id_tw'=>$id_tw, 'batch'=>$batch);
-		$_SESSION['massstockmove']=json_encode($listofdata);
+		if (count(array_keys($listofdata)) > 0) $id = max(array_keys($listofdata)) + 1;
+		else $id = 1;
+		$listofdata[$id] = array('id'=>$id, 'id_product'=>$id_product, 'qty'=>$qty, 'id_sw'=>$id_sw, 'id_tw'=>$id_tw, 'batch'=>$batch);
+		$_SESSION['massstockmove'] = json_encode($listofdata);
 
 		unset($id_product);
 		//unset($id_sw);
@@ -149,16 +147,16 @@ if ($action == 'addline')
 
 if ($action == 'delline' && $idline != '')
 {
-	if (! empty($listofdata[$idline])) unset($listofdata[$idline]);
-	if (count($listofdata) > 0) $_SESSION['massstockmove']=json_encode($listofdata);
+	if (!empty($listofdata[$idline])) unset($listofdata[$idline]);
+	if (count($listofdata) > 0) $_SESSION['massstockmove'] = json_encode($listofdata);
 	else unset($_SESSION['massstockmove']);
 }
 
 if ($action == 'createmovements')
 {
-	$error=0;
+	$error = 0;
 
-	if (! GETPOST("label"))
+	if (!GETPOST("label"))
 	{
 		$error++;
 		setEventMessages($langs->trans("ErrorFieldRequired"), $langs->transnoentitiesnoconv("MovementLabel"), null, 'errors');
@@ -166,38 +164,38 @@ if ($action == 'createmovements')
 
 	$db->begin();
 
-	if (! $error)
+	if (!$error)
 	{
 		$product = new Product($db);
 
-		foreach($listofdata as $key => $val)	// Loop on each movement to do
+		foreach ($listofdata as $key => $val)	// Loop on each movement to do
 		{
-			$id=$val['id'];
-			$id_product=$val['id_product'];
-			$id_sw=$val['id_sw'];
-			$id_tw=$val['id_tw'];
-			$qty=price2num($val['qty']);
-			$batch=$val['batch'];
-			$dlc=-1;		// They are loaded later from serial
-			$dluo=-1;		// They are loaded later from serial
+			$id = $val['id'];
+			$id_product = $val['id_product'];
+			$id_sw = $val['id_sw'];
+			$id_tw = $val['id_tw'];
+			$qty = price2num($val['qty']);
+			$batch = $val['batch'];
+			$dlc = -1; // They are loaded later from serial
+			$dluo = -1; // They are loaded later from serial
 
-			if (! $error && $id_sw <> $id_tw && is_numeric($qty) && $id_product)
+			if (!$error && $id_sw <> $id_tw && is_numeric($qty) && $id_product)
 			{
-				$result=$product->fetch($id_product);
+				$result = $product->fetch($id_product);
 
-				$product->load_stock('novirtual');	// Load array product->stock_warehouse
+				$product->load_stock('novirtual'); // Load array product->stock_warehouse
 
 				// Define value of products moved
-				$pricesrc=0;
-				if (! empty($product->pmp)) $pricesrc=$product->pmp;
-				$pricedest=$pricesrc;
+				$pricesrc = 0;
+				if (!empty($product->pmp)) $pricesrc = $product->pmp;
+				$pricedest = $pricesrc;
 
 				//print 'price src='.$pricesrc.', price dest='.$pricedest;exit;
 
-				if (empty($conf->productbatch->enabled) || ! $product->hasbatch())		// If product does not need lot/serial
+				if (empty($conf->productbatch->enabled) || !$product->hasbatch())		// If product does not need lot/serial
 				{
 					// Remove stock
-    $result1=$product->correct_stock(
+					$result1 = $product->correct_stock(
 		    			$user,
 		    			$id_sw,
 		    			$qty,
@@ -213,7 +211,7 @@ if ($action == 'createmovements')
 					}
 
 					// Add stock
-    $result2=$product->correct_stock(
+					$result2 = $product->correct_stock(
 		    			$user,
 		    			$id_tw,
 		    			$qty,
@@ -230,22 +228,22 @@ if ($action == 'createmovements')
 				}
 				else
 				{
-					$arraybatchinfo=$product->loadBatchInfo($batch);
+					$arraybatchinfo = $product->loadBatchInfo($batch);
 					if (count($arraybatchinfo) > 0)
 					{
 						$firstrecord = array_shift($arraybatchinfo);
-						$dlc=$firstrecord['eatby'];
-						$dluo=$firstrecord['sellby'];
+						$dlc = $firstrecord['eatby'];
+						$dluo = $firstrecord['sellby'];
 						//var_dump($batch); var_dump($arraybatchinfo); var_dump($firstrecord); var_dump($dlc); var_dump($dluo); exit;
 					}
 					else
 					{
-						$dlc='';
-						$dluo='';
+						$dlc = '';
+						$dluo = '';
 					}
 
 					// Remove stock
-    $result1=$product->correct_stock_batch(
+					$result1 = $product->correct_stock_batch(
 		    			$user,
 		    			$id_sw,
 		    			$qty,
@@ -264,7 +262,7 @@ if ($action == 'createmovements')
 					}
 
 					// Add stock
-    $result2=$product->correct_stock_batch(
+					$result2 = $product->correct_stock_batch(
 		    			$user,
 		    			$id_tw,
 		    			$qty,
@@ -291,13 +289,13 @@ if ($action == 'createmovements')
 		}
 	}
 
-	if (! $error)
+	if (!$error)
 	{
 		unset($_SESSION['massstockmove']);
 
 		$db->commit();
 		setEventMessages($langs->trans("StockMovementRecorded"), null, 'mesgs');
-		header("Location: ".DOL_URL_ROOT.'/product/stock/index.php');		// Redirect to avoid pb when using back
+		header("Location: ".DOL_URL_ROOT.'/product/stock/index.php'); // Redirect to avoid pb when using back
 		exit;
 	}
 	else
@@ -313,10 +311,10 @@ if ($action == 'createmovements')
  * View
  */
 
-$now=dol_now();
+$now = dol_now();
 
-$form=new Form($db);
-$formproduct=new FormProduct($db);
+$form = new Form($db);
+$formproduct = new FormProduct($db);
 $productstatic = new Product($db);
 $warehousestatics = new Entrepot($db);
 $warehousestatict = new Entrepot($db);
@@ -325,26 +323,26 @@ $title = $langs->trans('MassMovement');
 
 llxHeader('', $title);
 
-print load_fiche_titre($langs->trans("MassStockTransferShort"));
+print load_fiche_titre($langs->trans("MassStockTransferShort"), '', 'stock');
 
-$titletoadd=$langs->trans("Select");
-$buttonrecord=$langs->trans("RecordMovement");
-$titletoaddnoent=$langs->transnoentitiesnoconv("Select");
-$buttonrecordnoent=$langs->transnoentitiesnoconv("RecordMovement");
+$titletoadd = $langs->trans("Select");
+$buttonrecord = $langs->trans("RecordMovement");
+$titletoaddnoent = $langs->transnoentitiesnoconv("Select");
+$buttonrecordnoent = $langs->transnoentitiesnoconv("RecordMovement");
 print '<span class="opacitymedium">'.$langs->trans("SelectProductInAndOutWareHouse", $titletoaddnoent, $buttonrecordnoent).'</span><br>';
 print '<br>'."\n";
 
 // Form to add a line
 print '<form action="'.$_SERVER["PHP_SELF"].'" method="POST" name="formulaire">';
-print '<input type="hidden" name="token" value="' .$_SESSION['newtoken'] . '">';
+print '<input type="hidden" name="token" value="'.newToken().'">';
 print '<input type="hidden" name="action" value="addline">';
 
 
 print '<div class="div-table-responsive-no-min">';
-print '<table class="liste" width="100%">';
+print '<table class="liste centpercent">';
 //print '<div class="tagtable centpercent">';
 
-$param='';
+$param = '';
 
 print '<tr class="liste_titre">';
 print getTitleFieldOfList($langs->trans('ProductRef'), 0, $_SERVER["PHP_SELF"], '', $param, '', '', $sortfield, $sortorder, 'tagtd maxwidthonsmartphone ');
@@ -361,17 +359,17 @@ print '</tr>';
 print '<tr class="oddeven">';
 // Product
 print '<td class="titlefield">';
-$filtertype=0;
-if (! empty($conf->global->STOCK_SUPPORTS_SERVICES)) $filtertype='';
+$filtertype = 0;
+if (!empty($conf->global->STOCK_SUPPORTS_SERVICES)) $filtertype = '';
 if ($conf->global->PRODUIT_LIMIT_SIZE <= 0) {
-	$limit='';
+	$limit = '';
 }
 else
 {
 	$limit = $conf->global->PRODUIT_LIMIT_SIZE;
 }
 
-print $form->select_produits($id_product, 'productid', $filtertype, $limit, 0, -1, 2, '', 0, array(), 0, '1', 0, 'minwidth200imp maxwidth300', 1);
+$form->select_produits($id_product, 'productid', $filtertype, $limit, 0, -1, 2, '', 0, array(), 0, '1', 0, 'minwidth200imp maxwidth300', 1);
 print '</td>';
 // Batch number
 if ($conf->productbatch->enabled)
@@ -396,7 +394,7 @@ print '<td class="right"><input type="submit" class="button" name="addline" valu
 print '</tr>';
 
 
-foreach($listofdata as $key => $val)
+foreach ($listofdata as $key => $val)
 {
 	$productstatic->fetch($val['id_product']);
 	$warehousestatics->fetch($val['id_sw']);
@@ -434,14 +432,14 @@ print '<br>';
 
 
 print '<form action="'.$_SERVER["PHP_SELF"].'" method="POST" name="formulaire2">';
-print '<input type="hidden" name="token" value="' .$_SESSION['newtoken'] . '">';
+print '<input type="hidden" name="token" value="'.newToken().'">';
 print '<input type="hidden" name="action" value="createmovements">';
 
 // Button to record mass movement
-$codemove=(isset($_POST["codemove"])?GETPOST("codemove", 'alpha'):dol_print_date(dol_now(), '%Y%m%d%H%M%S'));
-$labelmovement=GETPOST("label")?GETPOST('label'):$langs->trans("StockTransfer").' '.dol_print_date($now, '%Y-%m-%d %H:%M');
+$codemove = (isset($_POST["codemove"]) ?GETPOST("codemove", 'alpha') : dol_print_date(dol_now(), '%Y%m%d%H%M%S'));
+$labelmovement = GETPOST("label") ?GETPOST('label') : $langs->trans("StockTransfer").' '.dol_print_date($now, '%Y-%m-%d %H:%M');
 
-print '<table class="noborder" width="100%">';
+print '<table class="noborder centpercent">';
 	print '<tr>';
 	print '<td class="titlefield fieldrequired">'.$langs->trans("InventoryCode").'</td>';
 	print '<td>';

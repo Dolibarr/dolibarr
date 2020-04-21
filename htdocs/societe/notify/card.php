@@ -15,7 +15,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -34,31 +34,31 @@ $langs->loadLangs(array("companies", "mails", "admin", "other"));
 
 $socid     = GETPOST("socid", 'int');
 $action    = GETPOST('action', 'aZ09');
-$contactid = GETPOST('contactid');    // May be an int or 'thirdparty'
+$contactid = GETPOST('contactid'); // May be an int or 'thirdparty'
 $actionid  = GETPOST('actionid');
-$optioncss = GETPOST('optioncss', 'aZ');												// Option for the css output (always '' except when 'print')
+$optioncss = GETPOST('optioncss', 'aZ'); // Option for the css output (always '' except when 'print')
 
 // Security check
-if ($user->societe_id) $socid=$user->societe_id;
+if ($user->socid) $socid = $user->socid;
 $result = restrictedArea($user, 'societe', '', '');
 
-$limit = GETPOST('limit', 'int')?GETPOST('limit', 'int'):$conf->liste_limit;
-$sortfield=GETPOST("sortfield", 'alpha');
-$sortorder=GETPOST("sortorder", 'alpha');
-$page=GETPOST("page", 'int');
-if (! $sortorder) $sortorder="DESC";
-if (! $sortfield) $sortfield="n.daten";
+$limit = GETPOST('limit', 'int') ?GETPOST('limit', 'int') : $conf->liste_limit;
+$sortfield = GETPOST("sortfield", 'alpha');
+$sortorder = GETPOST("sortorder", 'alpha');
+$page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOST("page", 'int');
+if (!$sortorder) $sortorder = "DESC";
+if (!$sortfield) $sortfield = "n.daten";
 if (empty($page) || $page == -1) { $page = 0; }
 $offset = $limit * $page;
 $pageprev = $page - 1;
 $pagenext = $page + 1;
 
-$now=dol_now();
+$now = dol_now();
 
 $object = new Societe($db);
 
 // Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
-$hookmanager->initHooks(array('thirdpartynotification','globalcard'));
+$hookmanager->initHooks(array('thirdpartynotification', 'globalcard'));
 
 
 
@@ -66,13 +66,13 @@ $hookmanager->initHooks(array('thirdpartynotification','globalcard'));
  * Actions
  */
 
-$parameters=array('id'=>$socid);
-$reshook=$hookmanager->executeHooks('doActions', $parameters, $object, $action);    // Note that $action and $object may have been modified by some hooks
+$parameters = array('id'=>$socid);
+$reshook = $hookmanager->executeHooks('doActions', $parameters, $object, $action); // Note that $action and $object may have been modified by some hooks
 if ($reshook < 0) setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
 
 if (empty($reshook))
 {
-    $error=0;
+    $error = 0;
 
     // Add a notification
     if ($action == 'add')
@@ -88,7 +88,7 @@ if (empty($reshook))
             $error++;
         }
 
-        if (! $error)
+        if (!$error)
         {
             $db->begin();
 
@@ -99,7 +99,7 @@ if (empty($reshook))
                 $sql = "INSERT INTO ".MAIN_DB_PREFIX."notify_def (datec,fk_soc, fk_contact, fk_action)";
                 $sql .= " VALUES ('".$db->idate($now)."',".$socid.",".$contactid.",".$actionid.")";
 
-                if (! $db->query($sql))
+                if (!$db->query($sql))
                 {
                     $error++;
                     dol_print_error($db);
@@ -110,7 +110,7 @@ if (empty($reshook))
                 dol_print_error($db);
             }
 
-            if (! $error)
+            if (!$error)
             {
                 $db->commit();
             }
@@ -138,11 +138,11 @@ if (empty($reshook))
 $form = new Form($db);
 
 $object = new Societe($db);
-$result=$object->fetch($socid);
+$result = $object->fetch($socid);
 
-$title=$langs->trans("ThirdParty").' - '.$langs->trans("Notification");
-if (! empty($conf->global->MAIN_HTML_TITLE) && preg_match('/thirdpartynameonly/', $conf->global->MAIN_HTML_TITLE) && $object->name) $title=$object->name.' - '.$langs->trans("Notification");
-$help_url='EN:Module_Third_Parties|FR:Module_Tiers|ES:Empresas';
+$title = $langs->trans("ThirdParty").' - '.$langs->trans("Notification");
+if (!empty($conf->global->MAIN_HTML_TITLE) && preg_match('/thirdpartynameonly/', $conf->global->MAIN_HTML_TITLE) && $object->name) $title = $object->name.' - '.$langs->trans("Notification");
+$help_url = 'EN:Module_Third_Parties|FR:Module_Tiers|ES:Empresas';
 llxHeader('', $title, $help_url);
 
 
@@ -156,7 +156,7 @@ if ($result > 0)
 
     $linkback = '<a href="'.DOL_URL_ROOT.'/societe/list.php?restore_lastsearch_values=1">'.$langs->trans("BackToList").'</a>';
 
-    dol_banner_tab($object, 'socid', $linkback, ($user->societe_id?0:1), 'rowid', 'nom');
+    dol_banner_tab($object, 'socid', $linkback, ($user->socid ? 0 : 1), 'rowid', 'nom');
 
     print '<div class="fichecenter">';
 
@@ -164,7 +164,7 @@ if ($result > 0)
     print '<table class="border centpercent">';
 
     // Prefix
-    if (! empty($conf->global->SOCIETE_USEPREFIX))  // Old not used prefix field
+    if (!empty($conf->global->SOCIETE_USEPREFIX))  // Old not used prefix field
     {
         print '<tr><td class="titlefield">'.$langs->trans('Prefix').'</td><td colspan="3">'.$object->prefix_comm.'</td></tr>';
     }
@@ -178,7 +178,7 @@ if ($result > 0)
         print '</td></tr>';
     }
 
-    if (! empty($conf->fournisseur->enabled) && $object->fournisseur && ! empty($user->rights->fournisseur->lire))
+    if (!empty($conf->fournisseur->enabled) && $object->fournisseur && !empty($user->rights->fournisseur->lire))
     {
         print '<tr><td class="titlefield">';
         print $langs->trans('SupplierCode').'</td><td colspan="3">';
@@ -222,10 +222,10 @@ if ($result > 0)
     print load_fiche_titre($langs->trans("AddNewNotification"), '', '');
 
     print '<form action="'.$_SERVER["PHP_SELF"].'?socid='.$socid.'" method="post">';
-    print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+    print '<input type="hidden" name="token" value="'.newToken().'">';
     print '<input type="hidden" name="action" value="add">';
 
-    $param="&socid=".$socid;
+    $param = "&socid=".$socid;
 
     // Line with titles
     print '<table width="100%" class="noborder">';
@@ -236,29 +236,29 @@ if ($result > 0)
     print_liste_field_titre('');
 	print "</tr>\n";
 
-    $var=false;
-    $listofemails=$object->thirdparty_and_contact_email_array();
+    $var = false;
+    $listofemails = $object->thirdparty_and_contact_email_array();
     if (count($listofemails) > 0)
     {
-        $actions=array();
+        $actions = array();
 
         // Load array of available notifications
-        $notificationtrigger=new InterfaceNotification($db);
-        $listofmanagedeventfornotification=$notificationtrigger->getListOfManagedEvents();
+        $notificationtrigger = new InterfaceNotification($db);
+        $listofmanagedeventfornotification = $notificationtrigger->getListOfManagedEvents();
 
-        foreach($listofmanagedeventfornotification as $managedeventfornotification)
+        foreach ($listofmanagedeventfornotification as $managedeventfornotification)
         {
- 			$label=($langs->trans("Notify_".$managedeventfornotification['code'])!="Notify_".$managedeventfornotification['code']?$langs->trans("Notify_".$managedeventfornotification['code']):$managedeventfornotification['label']);
-            $actions[$managedeventfornotification['rowid']]=$label;
+ 			$label = ($langs->trans("Notify_".$managedeventfornotification['code']) != "Notify_".$managedeventfornotification['code'] ? $langs->trans("Notify_".$managedeventfornotification['code']) : $managedeventfornotification['label']);
+            $actions[$managedeventfornotification['rowid']] = $label;
         }
-        print '<tr class="oddeven"><td class="maxwidthonsmartphone">';
-        print $form->selectarray("contactid", $listofemails, '', 0, 0, 0, '', 0, 0, 0, '', 'maxwidthonsmartphone');
+        print '<tr class="oddeven nohover"><td class="maxwidthonsmartphone">';
+        print img_picto('', 'contact', '', false, 0, 0, '', 'paddingright').$form->selectarray("contactid", $listofemails, '', 0, 0, 0, '', 0, 0, 0, '', 'maxwidthonsmartphone');
         print '</td>';
         print '<td class="maxwidthonsmartphone">';
-        print $form->selectarray("actionid", $actions, '', 1, 0, 0, '', 0, 0, 0, '', 'maxwidthonsmartphone');
+        print img_picto('', 'object_action', '', false, 0, 0, '', 'paddingright').$form->selectarray("actionid", $actions, '', 1, 0, 0, '', 0, 0, 0, '', 'maxwidthonsmartphone');
         print '</td>';
         print '<td>';
-        $type=array('email'=>$langs->trans("EMail"));
+        $type = array('email'=>$langs->trans("EMail"));
         print $form->selectarray("typeid", $type);
         print '</td>';
         print '<td class="right"><input type="submit" class="button" value="'.$langs->trans("Add").'"></td>';
@@ -280,16 +280,16 @@ if ($result > 0)
 
     // List of notifications enabled for contacts
     $sql = "SELECT n.rowid, n.type,";
-    $sql.= " a.code, a.label,";
-    $sql.= " c.rowid as contactid, c.lastname, c.firstname, c.email";
-    $sql.= " FROM ".MAIN_DB_PREFIX."c_action_trigger as a,";
-    $sql.= " ".MAIN_DB_PREFIX."notify_def as n,";
-    $sql.= " ".MAIN_DB_PREFIX."socpeople c";
-    $sql.= " WHERE a.rowid = n.fk_action";
-    $sql.= " AND c.rowid = n.fk_contact";
-    $sql.= " AND c.fk_soc = ".$object->id;
+    $sql .= " a.code, a.label,";
+    $sql .= " c.rowid as contactid, c.lastname, c.firstname, c.email";
+    $sql .= " FROM ".MAIN_DB_PREFIX."c_action_trigger as a,";
+    $sql .= " ".MAIN_DB_PREFIX."notify_def as n,";
+    $sql .= " ".MAIN_DB_PREFIX."socpeople c";
+    $sql .= " WHERE a.rowid = n.fk_action";
+    $sql .= " AND c.rowid = n.fk_contact";
+    $sql .= " AND c.fk_soc = ".$object->id;
 
-    $resql=$db->query($sql);
+    $resql = $db->query($sql);
     if ($resql)
     {
         $num = $db->num_rows($resql);
@@ -318,15 +318,15 @@ if ($result > 0)
     {
         $i = 0;
 
-        $contactstatic=new Contact($db);
+        $contactstatic = new Contact($db);
 
         while ($i < $num)
         {
             $obj = $db->fetch_object($resql);
 
-            $contactstatic->id=$obj->contactid;
-            $contactstatic->lastname=$obj->lastname;
-            $contactstatic->firstname=$obj->firstname;
+            $contactstatic->id = $obj->contactid;
+            $contactstatic->lastname = $obj->lastname;
+            $contactstatic->firstname = $obj->firstname;
             print '<tr class="oddeven"><td>'.$contactstatic->getNomUrl(1);
             if ($obj->type == 'email')
             {
@@ -342,8 +342,8 @@ if ($result > 0)
             }
             print '</td>';
             print '<td>';
-            $label=($langs->trans("Notify_".$obj->code)!="Notify_".$obj->code?$langs->trans("Notify_".$obj->code):$obj->label);
-            print $label;
+            $label = ($langs->trans("Notify_".$obj->code) != "Notify_".$obj->code ? $langs->trans("Notify_".$obj->code) : $obj->label);
+            print img_picto('', 'object_action', '', false, 0, 0, '', 'paddingright').$label;
             print '</td>';
             print '<td>';
             if ($obj->type == 'email') print $langs->trans("Email");
@@ -415,14 +415,14 @@ if ($result > 0)
 
     // List
     $sql = "SELECT n.rowid, n.daten, n.email, n.objet_type as object_type, n.objet_id as object_id, n.type,";
-    $sql.= " c.rowid as id, c.lastname, c.firstname, c.email as contactemail,";
-    $sql.= " a.code, a.label";
-    $sql.= " FROM ".MAIN_DB_PREFIX."c_action_trigger as a,";
-    $sql.= " ".MAIN_DB_PREFIX."notify as n ";
-    $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."socpeople as c ON n.fk_contact = c.rowid";
-    $sql.= " WHERE a.rowid = n.fk_action";
-    $sql.= " AND n.fk_soc = ".$object->id;
-    $sql.= $db->order($sortfield, $sortorder);
+    $sql .= " c.rowid as id, c.lastname, c.firstname, c.email as contactemail,";
+    $sql .= " a.code, a.label";
+    $sql .= " FROM ".MAIN_DB_PREFIX."c_action_trigger as a,";
+    $sql .= " ".MAIN_DB_PREFIX."notify as n ";
+    $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."socpeople as c ON n.fk_contact = c.rowid";
+    $sql .= " WHERE a.rowid = n.fk_action";
+    $sql .= " AND n.fk_soc = ".$object->id;
+    $sql .= $db->order($sortfield, $sortorder);
 
     // Count total nb of records
     $nbtotalofrecords = '';
@@ -437,9 +437,9 @@ if ($result > 0)
         }
     }
 
-    $sql.= $db->plimit($limit+1, $offset);
+    $sql .= $db->plimit($limit + 1, $offset);
 
-    $resql=$db->query($sql);
+    $resql = $db->query($sql);
     if ($resql)
     {
         $num = $db->num_rows($resql);
@@ -449,13 +449,13 @@ if ($result > 0)
         dol_print_error($db);
     }
 
-    $param='&socid='.$object->id;
-    if (! empty($contextpage) && $contextpage != $_SERVER["PHP_SELF"]) $param.='&contextpage='.$contextpage;
-    if ($limit > 0 && $limit != $conf->liste_limit) $param.='&limit='.$limit;
+    $param = '&socid='.$object->id;
+    if (!empty($contextpage) && $contextpage != $_SERVER["PHP_SELF"]) $param .= '&contextpage='.$contextpage;
+    if ($limit > 0 && $limit != $conf->liste_limit) $param .= '&limit='.$limit;
 
     print '<form method="post" action="'.$_SERVER["PHP_SELF"].'" name="formfilter">';
     if ($optioncss != '') print '<input type="hidden" name="optioncss" value="'.$optioncss.'">';
-    print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+    print '<input type="hidden" name="token" value="'.newToken().'">';
     print '<input type="hidden" name="formfilteraction" id="formfilteraction" value="list">';
     print '<input type="hidden" name="sortfield" value="'.$sortfield.'">';
     print '<input type="hidden" name="sortorder" value="'.$sortorder.'">';
@@ -479,7 +479,7 @@ if ($result > 0)
     {
         $i = 0;
 
-        $contactstatic=new Contact($db);
+        $contactstatic = new Contact($db);
 
         while ($i < $num)
         {
@@ -488,11 +488,11 @@ if ($result > 0)
             print '<tr class="oddeven"><td>';
             if ($obj->id > 0)
             {
-	            $contactstatic->id=$obj->id;
-	            $contactstatic->lastname=$obj->lastname;
-	            $contactstatic->firstname=$obj->firstname;
+	            $contactstatic->id = $obj->id;
+	            $contactstatic->lastname = $obj->lastname;
+	            $contactstatic->firstname = $obj->firstname;
 	            print $contactstatic->getNomUrl(1);
-	            print $obj->email?' &lt;'.$obj->email.'&gt;':$langs->trans("NoMail");
+	            print $obj->email ? ' &lt;'.$obj->email.'&gt;' : $langs->trans("NoMail");
             }
             else
 			{
@@ -500,7 +500,7 @@ if ($result > 0)
             }
             print '</td>';
             print '<td>';
-            $label=($langs->trans("Notify_".$obj->code)!="Notify_".$obj->code?$langs->trans("Notify_".$obj->code):$obj->label);
+            $label = ($langs->trans("Notify_".$obj->code) != "Notify_".$obj->code ? $langs->trans("Notify_".$obj->code) : $obj->label);
             print $label;
             print '</td>';
             print '<td>';
@@ -522,6 +522,8 @@ if ($result > 0)
             $i++;
         }
         $db->free($resql);
+    } else {
+    	print '<tr><td colspan="4"><span class="opacitymedium">'.$langs->trans("None").'</span></td></tr>';
     }
 
     print '</table>';

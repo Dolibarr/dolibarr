@@ -13,7 +13,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -26,30 +26,31 @@ require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
 
 // Load translation files required by the page
-$langs->loadLangs(array("companies","install","users","other"));
+$langs->loadLangs(array("companies", "install", "users", "other"));
 
-if (! $user->admin)
+if (!$user->admin)
 	accessforbidden();
 
-$action=GETPOST('action', 'alpha');
-$confirm=GETPOST('confirm', 'alpha');
+$action = GETPOST('action', 'alpha');
+$confirm = GETPOST('confirm', 'alpha');
 
 // Security check
-if ($user->societe_id > 0)
+if ($user->socid > 0)
 {
-  $action = '';
-  $socid = $user->societe_id;
+    $action = '';
+    $socid = $user->socid;
 }
 
+$limit = GETPOST('limit', 'int') ? GETPOST('limit', 'int') : $conf->liste_limit;
 $sortfield = GETPOST("sortfield", 'alpha');
 $sortorder = GETPOST("sortorder", 'alpha');
-$page = GETPOST("page", 'int');
+$page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOST("page", 'int');
 if (empty($page) || $page == -1) { $page = 0; }     // If $page is not defined, or '' or -1
-$offset = $conf->liste_limit * $page ;
+$offset = $limit * $page;
 $pageprev = $page - 1;
 $pagenext = $page + 1;
-if (! $sortorder) $sortorder="DESC";
-if (! $sortfield) $sortfield="dateevent";
+if (!$sortorder) $sortorder = "DESC";
+if (!$sortfield) $sortfield = "dateevent";
 
 
 /*
@@ -59,7 +60,7 @@ if (! $sortfield) $sortfield="dateevent";
 // Purge sessions
 if ($action == 'confirm_purge' && $confirm == 'yes' && $user->admin)
 {
-	$res=purgeSessions(session_id());
+	$res = purgeSessions(session_id());
 }
 
 // Lock new sessions
@@ -88,21 +89,21 @@ if ($action == 'confirm_unlock' && $user->admin)
 
 llxHeader();
 
-$form=new Form($db);
+$form = new Form($db);
 
-$userstatic=new User($db);
-$usefilter=0;
+$userstatic = new User($db);
+$usefilter = 0;
 
-$listofsessions=listOfSessions();
-$num=count($listofsessions);
+$listofsessions = listOfSessions();
+$num = count($listofsessions);
 
-print_barre_liste($langs->trans("Sessions"), $page, $_SERVER["PHP_SELF"], "", $sortfield, $sortorder, '', $num, ($num?$num:''), 'setup');		// Do not show numer (0) if no session found (it means we can't know)
+print_barre_liste($langs->trans("Sessions"), $page, $_SERVER["PHP_SELF"], "", $sortfield, $sortorder, '', $num, ($num ? $num : ''), 'setup'); // Do not show numer (0) if no session found (it means we can't know)
 
-$savehandler=ini_get("session.save_handler");
-$savepath=ini_get("session.save_path");
-$openbasedir=ini_get("open_basedir");
-$phparray=phpinfo_array();
-$suhosin=empty($phparray['suhosin']["suhosin.session.encrypt"]["local"])?'':$phparray['suhosin']["suhosin.session.encrypt"]["local"];
+$savehandler = ini_get("session.save_handler");
+$savepath = ini_get("session.save_path");
+$openbasedir = ini_get("open_basedir");
+$phparray = phpinfo_array();
+$suhosin = empty($phparray['suhosin']["suhosin.session.encrypt"]["local"]) ? '' : $phparray['suhosin']["suhosin.session.encrypt"]["local"];
 
 print '<b>'.$langs->trans("SessionSaveHandler").'</b>: '.$savehandler.'<br>';
 print '<b>'.$langs->trans("SessionSavePath").'</b>: '.$savepath.'<br>';
@@ -112,18 +113,18 @@ print '<br>';
 
 if ($action == 'purge')
 {
-	$formquestion=array();
+	$formquestion = array();
 	print $form->formconfirm($_SERVER["PHP_SELF"].'?noparam=noparam', $langs->trans('PurgeSessions'), $langs->trans('ConfirmPurgeSessions'), 'confirm_purge', $formquestion, 'no', 2);
 }
 elseif ($action == 'lock')
 {
-	$formquestion=array();
+	$formquestion = array();
 	print $form->formconfirm($_SERVER["PHP_SELF"].'?noparam=noparam', $langs->trans('LockNewSessions'), $langs->trans('ConfirmLockNewSessions', $user->login), 'confirm_lock', $formquestion, 'no', 1);
 }
 
 if ($savehandler == 'files')
 {
-	print '<table class="liste" width="100%">';
+	print '<table class="liste centpercent">';
 	print '<tr class="liste_titre">';
 	print_liste_field_titre("Login", $_SERVER["PHP_SELF"], "login", "", "", 'align="left"', $sortfield, $sortorder);
 	print_liste_field_titre("SessionId", $_SERVER["PHP_SELF"], "id", "", "", 'align="left"', $sortfield, $sortorder);
@@ -167,7 +168,7 @@ if ($savehandler == 'files')
 
 	if (count($listofsessions) == 0)
 	{
-		print '<tr '.$bc[false].'><td colspan="6">'.$langs->trans("NoSessionFound", $savepath, $openbasedir).'</td></tr>';
+		print '<tr class="oddeven"><td colspan="7">'.$langs->trans("NoSessionFound", $savepath, $openbasedir).'</td></tr>';
 	}
 	print "</table>";
 }

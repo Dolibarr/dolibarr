@@ -15,21 +15,19 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 // Protection to avoid direct call of template
-if (empty($conf) || ! is_object($conf))
+if (empty($conf) || !is_object($conf))
 {
 	print "Error, template page can't be called as URL";
 	exit;
 }
 
-?>
 
-<!-- BEGIN PHP TEMPLATE -->
+print "<!-- BEGIN PHP TEMPLATE -->\n";
 
-<?php
 
 global $user;
 global $noMoreLinkedObjectBlockAfter;
@@ -39,42 +37,43 @@ $linkedObjectBlock = $GLOBALS['linkedObjectBlock'];
 
 $langs->load("bills");
 
-$total=0; $ilink=0;
-foreach($linkedObjectBlock as $key => $objectlink)
+$total = 0; $ilink = 0;
+foreach ($linkedObjectBlock as $key => $objectlink)
 {
     $ilink++;
 
-    $trclass='oddeven';
-    if ($ilink == count($linkedObjectBlock) && empty($noMoreLinkedObjectBlockAfter) && count($linkedObjectBlock) <= 1) $trclass.=' liste_sub_total';
-?>
+    $trclass = 'oddeven';
+    if ($ilink == count($linkedObjectBlock) && empty($noMoreLinkedObjectBlockAfter) && count($linkedObjectBlock) <= 1) $trclass .= ' liste_sub_total';
+    ?>
     <tr class="<?php echo $trclass; ?>">
         <td><?php echo $langs->trans("SupplierInvoice"); ?></td>
     	<td><a href="<?php echo DOL_URL_ROOT.'/fourn/facture/card.php?facid='.$objectlink->id ?>"><?php echo img_object($langs->trans("ShowBill"), "bill").' '.$objectlink->ref; ?></a></td>
     	<td class="left"><?php echo $objectlink->ref_supplier; ?></td>
     	<td class="center"><?php echo dol_print_date($objectlink->date, 'day'); ?></td>
     	<td class="right"><?php
-    		if ($user->rights->fournisseur->facture->lire) {
-    		    $sign = 1;
-    			if ($object->type == FactureFournisseur::TYPE_CREDIT_NOTE) $sign = -1;
-    			if ($objectlink->statut != 3)		// If not abandonned
-    			{
-    				$total = $total + $sign * $objectlink->total_ht;
-    				echo price($objectlink->total_ht);
-    			}
-    			else
-    			{
-    				echo '<strike>'.price($objectlink->total_ht).'</strike>';
-    			}
-    		} ?></td>
+    	if ($user->rights->fournisseur->facture->lire) {
+    	    $sign = 1;
+    		if ($object->type == FactureFournisseur::TYPE_CREDIT_NOTE) $sign = -1;
+    		if ($objectlink->statut != 3)
+    		{
+				// If not abandonned
+    			$total = $total + $sign * $objectlink->total_ht;
+    			echo price($objectlink->total_ht);
+    		}
+    		else
+    		{
+    			echo '<strike>'.price($objectlink->total_ht).'</strike>';
+    		}
+    	} ?></td>
     	<td class="right"><?php echo $objectlink->getLibStatut(3); ?></td>
-    	<td class="right"><a href="<?php echo $_SERVER["PHP_SELF"].'?id='.$object->id.'&action=dellink&dellinkid='.$key; ?>"><?php echo img_picto($langs->transnoentitiesnoconv("RemoveLink"), 'unlink'); ?></a></td>
+    	<td class="right"><a class="reposition" href="<?php echo $_SERVER["PHP_SELF"].'?id='.$object->id.'&action=dellink&dellinkid='.$key; ?>"><?php echo img_picto($langs->transnoentitiesnoconv("RemoveLink"), 'unlink'); ?></a></td>
     </tr>
-<?php
+    <?php
 }
 if (count($linkedObjectBlock) > 1)
 {
     ?>
-    <tr class="liste_total <?php echo (empty($noMoreLinkedObjectBlockAfter)?'liste_sub_total':''); ?>">
+    <tr class="liste_total <?php echo (empty($noMoreLinkedObjectBlockAfter) ? 'liste_sub_total' : ''); ?>">
         <td><?php echo $langs->trans("Total"); ?></td>
         <td></td>
     	<td class="center"></td>
@@ -85,6 +84,5 @@ if (count($linkedObjectBlock) > 1)
     </tr>
     <?php
 }
-?>
 
-<!-- END PHP TEMPLATE -->
+print "<!-- END PHP TEMPLATE -->\n";

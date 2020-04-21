@@ -13,7 +13,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -30,9 +30,9 @@ require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
 // Load translation files required by the page
 $langs->loadLangs(array("admin", "errors"));
 
-if (! $user->admin) accessforbidden();
+if (!$user->admin) accessforbidden();
 
-$type=array('yesno','texte','chaine');
+$type = array('yesno', 'texte', 'chaine');
 
 $action = GETPOST('action', 'aZ09');
 
@@ -43,7 +43,7 @@ $action = GETPOST('action', 'aZ09');
  */
 if (preg_match('/set_([a-z0-9_\-]+)/i', $action, $reg))
 {
-    $code=$reg[1];
+    $code = $reg[1];
     if (dolibarr_set_const($db, $code, 1, 'chaine', 0, '', $conf->entity) > 0)
     {
         header("Location: ".$_SERVER["PHP_SELF"]);
@@ -57,7 +57,7 @@ if (preg_match('/set_([a-z0-9_\-]+)/i', $action, $reg))
 
 if (preg_match('/del_([a-z0-9_\-]+)/i', $action, $reg))
 {
-    $code=$reg[1];
+    $code = $reg[1];
     if (dolibarr_del_const($db, $code, $conf->entity) > 0)
     {
         header("Location: ".$_SERVER["PHP_SELF"]);
@@ -74,16 +74,16 @@ if (preg_match('/del_([a-z0-9_\-]+)/i', $action, $reg))
  * View
  */
 
-$help_url='';
+$help_url = '';
 
 llxHeader('', $langs->trans("SocialNetworkSetup"), $help_url);
 
 
-$linkback='<a href="'.DOL_URL_ROOT.'/admin/modules.php?restore_lastsearch_values=1">'.$langs->trans("BackToModuleList").'</a>';
+$linkback = '<a href="'.DOL_URL_ROOT.'/admin/modules.php?restore_lastsearch_values=1">'.$langs->trans("BackToModuleList").'</a>';
 print load_fiche_titre($langs->trans("SocialNetworkSetup"), $linkback, 'title_setup');
 
 //$head = socialnetworks_admin_prepare_head();
-$h=0;
+$h = 0;
 $head = array();
 $head[$h][0] = DOL_URL_ROOT.'/admin/socialnetworks.php';
 $head[$h][1] = $langs->trans("Setup");
@@ -97,9 +97,9 @@ dol_fiche_head($head, 'setup', '', 0, 'user');
 
 print '<br>';
 
-$arrayofsocialnetworks=array('jabber'=>'Jabber', 'skype'=>'Skype', 'twitter'=>'Twitter', 'facebook'=>'Facebook', 'linkedin'=>'LinkedIn');
+$arrayofsocialnetworks = array('jabber'=>'Jabber', 'skype'=>'Skype', 'twitter'=>'Twitter', 'facebook'=>'Facebook', 'linkedin'=>'LinkedIn');
 
-foreach($arrayofsocialnetworks as $snkey => $snlabel) {
+foreach ($arrayofsocialnetworks as $snkey => $snlabel) {
     $consttocheck = 'SOCIALNETWORKS_'.strtoupper($snkey);
     if ($conf->use_javascript_ajax) {
         $link = ajax_constantonoff($consttocheck);

@@ -1,5 +1,4 @@
 # Dolibarr language file - Source file is en_US - banks
-WithdrawalPayment=Withdrawal payment
 CheckTransmitter=Drawer
 BankChecks=Bank cheques
 ShowCheckReceipt=Show cheque deposit receipt
@@ -14,4 +13,3 @@ DeleteARib=Delete bank account record
 RejectCheck=Cheque returned
 RejectCheckDate=Date the cheque was returned
 CheckRejected=Cheque returned
-CheckRejectedAndInvoicesReopened=Cheque returned and invoices reopened

@@ -15,7 +15,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -31,23 +31,23 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
 require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
 
 // Load translation files required by the page
-$langs->loadLangs(array("products","categories","errors",'accountancy'));
+$langs->loadLangs(array("products", "categories", "errors", 'accountancy'));
 
 // Security pack (data & check)
 $socid = GETPOST('socid', 'int');
 
-if ($user->societe_id > 0) $socid = $user->societe_id;
-if (! empty($conf->comptabilite->enabled)) $result=restrictedArea($user, 'compta', '', '', 'resultat');
-if (! empty($conf->accounting->enabled)) $result=restrictedArea($user, 'accounting', '', '', 'comptarapport');
+if ($user->socid > 0) $socid = $user->socid;
+if (!empty($conf->comptabilite->enabled)) $result = restrictedArea($user, 'compta', '', '', 'resultat');
+if (!empty($conf->accounting->enabled)) $result = restrictedArea($user, 'accounting', '', '', 'comptarapport');
 
 // Define modecompta ('CREANCES-DETTES' or 'RECETTES-DEPENSES')
 $modecompta = $conf->global->ACCOUNTING_MODE;
-if (GETPOST("modecompta")) $modecompta=GETPOST("modecompta");
+if (GETPOST("modecompta")) $modecompta = GETPOST("modecompta");
 
-$sortorder=isset($_GET["sortorder"])?$_GET["sortorder"]:$_POST["sortorder"];
-$sortfield=isset($_GET["sortfield"])?$_GET["sortfield"]:$_POST["sortfield"];
-if (! $sortorder) $sortorder="asc";
-if (! $sortfield) $sortfield="ref";
+$sortorder = isset($_GET["sortorder"]) ? $_GET["sortorder"] : $_POST["sortorder"];
+$sortfield = isset($_GET["sortfield"]) ? $_GET["sortfield"] : $_POST["sortfield"];
+if (!$sortorder) $sortorder = "asc";
+if (!$sortfield) $sortfield = "ref";
 
 // Category
 $selected_cat = (int) GETPOST('search_categ', 'int');
@@ -58,11 +58,11 @@ if (GETPOST('subcat', 'alpha') === 'yes') {
 }
 // product/service
 $selected_type = GETPOST('search_type', 'int');
-if ($selected_type =='') $selected_type = -1;
+if ($selected_type == '') $selected_type = -1;
 
 // Date range
-$year=GETPOST("year");
-$month=GETPOST("month");
+$year = GETPOST("year");
+$month = GETPOST("month");
 $date_startyear = GETPOST("date_startyear");
 $date_startmonth = GETPOST("date_startmonth");
 $date_startday = GETPOST("date_startday");
@@ -79,76 +79,78 @@ if (empty($year))
 	$month_current = strftime("%m", dol_now());
 	$year_start = $year;
 }
-$date_start=dol_mktime(0, 0, 0, GETPOST("date_startmonth"), GETPOST("date_startday"), GETPOST("date_startyear"));
-$date_end=dol_mktime(23, 59, 59, GETPOST("date_endmonth"), GETPOST("date_endday"), GETPOST("date_endyear"));
+$date_start = dol_mktime(0, 0, 0, GETPOST("date_startmonth"), GETPOST("date_startday"), GETPOST("date_startyear"));
+$date_end = dol_mktime(23, 59, 59, GETPOST("date_endmonth"), GETPOST("date_endday"), GETPOST("date_endyear"));
 // Quarter
 if (empty($date_start) || empty($date_end)) // We define date_start and date_end
 {
-	$q=GETPOST("q", "int");
+	$q = GETPOST("q", "int");
 	if (empty($q))
 	{
 		// We define date_start and date_end
-		$month_start=GETPOST("month")?GETPOST("month"):($conf->global->SOCIETE_FISCAL_MONTH_START?($conf->global->SOCIETE_FISCAL_MONTH_START):1);
-		$year_end=$year_start;
-		$month_end=$month_start;
-		if (! GETPOST("month"))	// If month not forced
+		$month_start = GETPOST("month") ?GETPOST("month") : ($conf->global->SOCIETE_FISCAL_MONTH_START ? ($conf->global->SOCIETE_FISCAL_MONTH_START) : 1);
+		$year_end = $year_start;
+		$month_end = $month_start;
+		if (!GETPOST("month"))	// If month not forced
 		{
-			if (! GETPOST('year') && $month_start > $month_current)
+			if (!GETPOST('year') && $month_start > $month_current)
 			{
 				$year_start--;
 				$year_end--;
 			}
-			$month_end=$month_start-1;
-			if ($month_end < 1) $month_end=12;
+			$month_end = $month_start - 1;
+			if ($month_end < 1) $month_end = 12;
 			else $year_end++;
 		}
-		$date_start=dol_get_first_day($year_start, $month_start, false); $date_end=dol_get_last_day($year_end, $month_end, false);
+		$date_start = dol_get_first_day($year_start, $month_start, false); $date_end = dol_get_last_day($year_end, $month_end, false);
 	}
 	else
 	{
-		if ($q==1) { $date_start=dol_get_first_day($year_start, 1, false); $date_end=dol_get_last_day($year_start, 3, false); }
-		if ($q==2) { $date_start=dol_get_first_day($year_start, 4, false); $date_end=dol_get_last_day($year_start, 6, false); }
-		if ($q==3) { $date_start=dol_get_first_day($year_start, 7, false); $date_end=dol_get_last_day($year_start, 9, false); }
-		if ($q==4) { $date_start=dol_get_first_day($year_start, 10, false); $date_end=dol_get_last_day($year_start, 12, false); }
+		if ($q == 1) { $date_start = dol_get_first_day($year_start, 1, false); $date_end = dol_get_last_day($year_start, 3, false); }
+		if ($q == 2) { $date_start = dol_get_first_day($year_start, 4, false); $date_end = dol_get_last_day($year_start, 6, false); }
+		if ($q == 3) { $date_start = dol_get_first_day($year_start, 7, false); $date_end = dol_get_last_day($year_start, 9, false); }
+		if ($q == 4) { $date_start = dol_get_first_day($year_start, 10, false); $date_end = dol_get_last_day($year_start, 12, false); }
 	}
 } else {
 	// TODO We define q
 }
 
 // $date_start and $date_end are defined. We force $year_start and $nbofyear
-$tmps=dol_getdate($date_start);
+$tmps = dol_getdate($date_start);
 $year_start = $tmps['year'];
-$tmpe=dol_getdate($date_end);
+$tmpe = dol_getdate($date_end);
 $year_end = $tmpe['year'];
 $nbofyear = ($year_end - $year_start) + 1;
 
-$commonparams=array();
-$commonparams['modecompta']=$modecompta;
-$commonparams['sortorder'] = $sortorder;
-$commonparams['sortfield'] = $sortfield;
+$commonparams = array();
+if (!empty($modecompta)) $commonparams['modecompta'] = $modecompta;
+if (!empty($sortorder)) $commonparams['sortorder'] = $sortorder;
+if (!empty($sortfield)) $commonparams['sortfield'] = $sortfield;
 
 $headerparams = array();
-$headerparams['date_startyear'] = $date_startyear;
-$headerparams['date_startmonth'] = $date_startmonth;
-$headerparams['date_startday'] = $date_startday;
-$headerparams['date_endyear'] = $date_endyear;
-$headerparams['date_endmonth'] = $date_endmonth;
-$headerparams['date_endday'] = $date_endday;
+if (!empty($date_startyear)) $headerparams['date_startyear'] = $date_startyear;
+if (!empty($date_startmonth)) $headerparams['date_startmonth'] = $date_startmonth;
+if (!empty($date_startday)) $headerparams['date_startday'] = $date_startday;
+if (!empty($date_endyear)) $headerparams['date_endyear'] = $date_endyear;
+if (!empty($date_endmonth)) $headerparams['date_endmonth'] = $date_endmonth;
+if (!empty($date_endday)) $headerparams['date_endday'] = $date_endday;
+if (!empty($year)) $headerparams['year'] = $year;
+if (!empty($month)) $headerparams['month'] = $month;
 $headerparams['q'] = $q;
 
 $tableparams = array();
-$tableparams['search_categ'] = $selected_cat;
-$tableparams['search_soc'] = $selected_soc;
-$tableparams['search_type'] = $selected_type;
-$tableparams['subcat'] = ($subcat === true)?'yes':'';
+if (!empty($selected_cat)) $tableparams['search_categ'] = $selected_cat;
+if (!empty($selected_soc)) $tableparams['search_soc'] = $selected_soc;
+if (!empty($selected_type)) $tableparams['search_type'] = $selected_type;
+$tableparams['subcat'] = ($subcat === true) ? 'yes' : '';
 
 // Adding common parameters
 $allparams = array_merge($commonparams, $headerparams, $tableparams);
 $headerparams = array_merge($commonparams, $headerparams);
 $tableparams = array_merge($commonparams, $tableparams);
 
-foreach($allparams as $key => $value) {
-	$paramslink .= '&' . $key . '=' . $value;
+foreach ($allparams as $key => $value) {
+	$paramslink .= '&'.$key.'='.$value;
 }
 
 
@@ -158,131 +160,128 @@ foreach($allparams as $key => $value) {
 
 llxHeader();
 
-$form=new Form($db);
+$form = new Form($db);
 $formother = new FormOther($db);
 
 // TODO Report from bookkeeping not yet available, so we switch on report on business events
-if ($modecompta=="BOOKKEEPING") $modecompta="CREANCES-DETTES";
-if ($modecompta=="BOOKKEEPINGCOLLECTED") $modecompta="RECETTES-DEPENSES";
+if ($modecompta == "BOOKKEEPING") $modecompta = "CREANCES-DETTES";
+if ($modecompta == "BOOKKEEPINGCOLLECTED") $modecompta = "RECETTES-DEPENSES";
 
 // Show report header
-if ($modecompta=="CREANCES-DETTES") {
-	$name=$langs->trans("Turnover").', '.$langs->trans("ByProductsAndServices");
-	$calcmode=$langs->trans("CalcModeDebt");
+if ($modecompta == "CREANCES-DETTES") {
+	$name = $langs->trans("Turnover").', '.$langs->trans("ByProductsAndServices");
+	$calcmode = $langs->trans("CalcModeDebt");
 	//$calcmode.='<br>('.$langs->trans("SeeReportInInputOutputMode",'<a href="'.$_SERVER["PHP_SELF"].'?year='.$year_start.'&modecompta=RECETTES-DEPENSES">','</a>').')';
 
-	$description=$langs->trans("RulesCADue");
-	if (! empty($conf->global->FACTURE_DEPOSITS_ARE_JUST_PAYMENTS)) {
-		$description.= $langs->trans("DepositsAreNotIncluded");
+	$description = $langs->trans("RulesCADue");
+	if (!empty($conf->global->FACTURE_DEPOSITS_ARE_JUST_PAYMENTS)) {
+		$description .= $langs->trans("DepositsAreNotIncluded");
 	} else {
-		$description.= $langs->trans("DepositsAreIncluded");
+		$description .= $langs->trans("DepositsAreIncluded");
 	}
 
-	$builddate=dol_now();
+	$builddate = dol_now();
 }
-elseif ($modecompta=="RECETTES-DEPENSES")
+elseif ($modecompta == "RECETTES-DEPENSES")
 {
-	$name=$langs->trans("TurnoverCollected").', '.$langs->trans("ByProductsAndServices");
-	$calcmode=$langs->trans("CalcModeEngagement");
+	$name = $langs->trans("TurnoverCollected").', '.$langs->trans("ByProductsAndServices");
+	$calcmode = $langs->trans("CalcModeEngagement");
 	//$calcmode.='<br>('.$langs->trans("SeeReportInDueDebtMode",'<a href="'.$_SERVER["PHP_SELF"].'?year='.$year_start.'&modecompta=CREANCES-DETTES">','</a>').')';
 
-	$description=$langs->trans("RulesCAIn");
-	$description.= $langs->trans("DepositsAreIncluded");
+	$description = $langs->trans("RulesCAIn");
+	$description .= $langs->trans("DepositsAreIncluded");
 
-	$builddate=dol_now();
+	$builddate = dol_now();
 }
-elseif ($modecompta=="BOOKKEEPING")
+elseif ($modecompta == "BOOKKEEPING")
 {
-
-
 }
-elseif ($modecompta=="BOOKKEEPINGCOLLECTED")
+elseif ($modecompta == "BOOKKEEPINGCOLLECTED")
 {
-
-
 }
 
-$period=$form->selectDate($date_start, 'date_start', 0, 0, 0, '', 1, 0).' - '.$form->selectDate($date_end, 'date_end', 0, 0, 0, '', 1, 0);
-if ($date_end == dol_time_plus_duree($date_start, 1, 'y') - 1) $periodlink='<a href="'.$_SERVER["PHP_SELF"].'?year='.($year_start-1).'&modecompta='.$modecompta.'">'.img_previous().'</a> <a href="'.$_SERVER["PHP_SELF"].'?year='.($year_start+1).'&modecompta='.$modecompta.'">'.img_next().'</a>';
+$period = $form->selectDate($date_start, 'date_start', 0, 0, 0, '', 1, 0).' - '.$form->selectDate($date_end, 'date_end', 0, 0, 0, '', 1, 0);
+if ($date_end == dol_time_plus_duree($date_start, 1, 'y') - 1) $periodlink = '<a href="'.$_SERVER["PHP_SELF"].'?year='.($year_start - 1).'&modecompta='.$modecompta.'">'.img_previous().'</a> <a href="'.$_SERVER["PHP_SELF"].'?year='.($year_start + 1).'&modecompta='.$modecompta.'">'.img_next().'</a>';
 else $periodlink = '';
 
 report_header($name, $namelink, $period, $periodlink, $description, $builddate, $exportlink, $tableparams, $calcmode);
 
-if (! empty($conf->accounting->enabled) && $modecompta != 'BOOKKEEPING')
+if (!empty($conf->accounting->enabled) && $modecompta != 'BOOKKEEPING')
 {
 	print info_admin($langs->trans("WarningReportNotReliable"), 0, 0, 1);
 }
 
 
 
-$name=array();
+$name = array();
 
 // SQL request
-$catotal=0;
-$catotal_ht=0;
-$qtytotal=0;
+$catotal = 0;
+$catotal_ht = 0;
+$qtytotal = 0;
 
 if ($modecompta == 'CREANCES-DETTES')
 {
 	$sql = "SELECT DISTINCT p.rowid as rowid, p.ref as ref, p.label as label, p.fk_product_type as product_type,";
-	$sql.= " SUM(l.total_ht) as amount, SUM(l.total_ttc) as amount_ttc,";
-	$sql.= " SUM(CASE WHEN f.type = 2 THEN -l.qty ELSE l.qty END) as qty";
-	$sql.= " FROM ".MAIN_DB_PREFIX."facture as f";
-    if($selected_soc > 0) $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."societe as soc ON (soc.rowid = f.fk_soc)";
-    $sql.= ",".MAIN_DB_PREFIX."facturedet as l";
-	$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."product as p ON l.fk_product = p.rowid";
+	$sql .= " SUM(l.total_ht) as amount, SUM(l.total_ttc) as amount_ttc,";
+	$sql .= " SUM(CASE WHEN f.type = 2 THEN -l.qty ELSE l.qty END) as qty";
+	$sql .= " FROM ".MAIN_DB_PREFIX."facture as f";
+    if ($selected_soc > 0) $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."societe as soc ON (soc.rowid = f.fk_soc)";
+    $sql .= ",".MAIN_DB_PREFIX."facturedet as l";
+	$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."product as p ON l.fk_product = p.rowid";
 	if ($selected_cat === -2)	// Without any category
 	{
-		$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."categorie_product as cp ON p.rowid = cp.fk_product";
+		$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."categorie_product as cp ON p.rowid = cp.fk_product";
 	}
 	elseif ($selected_cat) 	// Into a specific category
 	{
-		$sql.= ", ".MAIN_DB_PREFIX."categorie as c, ".MAIN_DB_PREFIX."categorie_product as cp";
+		$sql .= ", ".MAIN_DB_PREFIX."categorie as c, ".MAIN_DB_PREFIX."categorie_product as cp";
 	}
-	$sql.= " WHERE l.fk_facture = f.rowid";
-	$sql.= " AND f.fk_statut in (1,2)";
-	if (! empty($conf->global->FACTURE_DEPOSITS_ARE_JUST_PAYMENTS)) {
-		$sql.= " AND f.type IN (0,1,2,5)";
+	$sql .= " WHERE l.fk_facture = f.rowid";
+	$sql .= " AND f.fk_statut in (1,2)";
+	$sql .= " AND l.product_type in (0,1)";
+	if (!empty($conf->global->FACTURE_DEPOSITS_ARE_JUST_PAYMENTS)) {
+		$sql .= " AND f.type IN (0,1,2,5)";
 	} else {
-	$sql.= " AND f.type IN (0,1,2,3,5)";
+		$sql .= " AND f.type IN (0,1,2,3,5)";
 	}
 	if ($date_start && $date_end) {
-		$sql.= " AND f.datef >= '".$db->idate($date_start)."' AND f.datef <= '".$db->idate($date_end)."'";
+		$sql .= " AND f.datef >= '".$db->idate($date_start)."' AND f.datef <= '".$db->idate($date_end)."'";
 	}
-	if ($selected_type >=0)
+	if ($selected_type >= 0)
 	{
-		$sql.= " AND l.product_type = ".$selected_type;
+		$sql .= " AND l.product_type = ".$selected_type;
 	}
 	if ($selected_cat === -2)	// Without any category
 	{
-		$sql.=" AND cp.fk_product is null";
+		$sql .= " AND cp.fk_product is null";
 	}
 	elseif ($selected_cat) {	// Into a specific category
-		$sql.= " AND (c.rowid = ".$selected_cat;
-		if ($subcat) $sql.=" OR c.fk_parent = " . $selected_cat;
-		$sql.= ")";
-		$sql.= " AND cp.fk_categorie = c.rowid AND cp.fk_product = p.rowid";
+		$sql .= " AND (c.rowid = ".$selected_cat;
+		if ($subcat) $sql .= " OR c.fk_parent = ".$selected_cat;
+		$sql .= ")";
+		$sql .= " AND cp.fk_categorie = c.rowid AND cp.fk_product = p.rowid";
 	}
-    if($selected_soc > 0) $sql .= " AND soc.rowid=".$selected_soc;
-	$sql.= " AND f.entity IN (".getEntity('invoice').")";
-	$sql.= " GROUP BY p.rowid, p.ref, p.label, p.fk_product_type";
-	$sql.= $db->order($sortfield, $sortorder);
+    if ($selected_soc > 0) $sql .= " AND soc.rowid=".$selected_soc;
+	$sql .= " AND f.entity IN (".getEntity('invoice').")";
+	$sql .= " GROUP BY p.rowid, p.ref, p.label, p.fk_product_type";
+	$sql .= $db->order($sortfield, $sortorder);
 
 	dol_syslog("cabyprodserv", LOG_DEBUG);
 	$result = $db->query($sql);
 	if ($result) {
 		$num = $db->num_rows($result);
-		$i=0;
+		$i = 0;
 		while ($i < $num) {
 			$obj = $db->fetch_object($result);
 			$amount_ht[$obj->rowid] = $obj->amount;
 			$amount[$obj->rowid] = $obj->amount_ttc;
 			$qty[$obj->rowid] = $obj->qty;
-			$name[$obj->rowid] = $obj->ref . '&nbsp;-&nbsp;' . $obj->label;
+			$name[$obj->rowid] = $obj->ref.'&nbsp;-&nbsp;'.$obj->label;
 			$type[$obj->rowid] = $obj->product_type;
-			$catotal_ht+=$obj->amount;
-			$catotal+=$obj->amount_ttc;
-			$qtytotal+=$obj->qty;
+			$catotal_ht += $obj->amount;
+			$catotal += $obj->amount_ttc;
+			$qtytotal += $obj->qty;
 			$i++;
 		}
 	} else {
@@ -290,25 +289,26 @@ if ($modecompta == 'CREANCES-DETTES')
 	}
 
 	// Show Array
-	$i=0;
+	$i = 0;
 	print '<form method="POST" action="'.$_SERVER["PHP_SELF"].'">';
+	print '<input type="hidden" name="token" value="'.newToken().'">'."\n";
 	// Extra parameters management
-	foreach($headerparams as $key => $value)
+	foreach ($headerparams as $key => $value)
 	{
 		print '<input type="hidden" name="'.$key.'" value="'.$value.'">';
 	}
 
-    $moreforfilter='';
+    $moreforfilter = '';
 
     print '<div class="div-table-responsive">';
-    print '<table class="tagtable liste'.($moreforfilter?" listwithfilterbefore":"").'">'."\n";
+    print '<table class="tagtable liste'.($moreforfilter ? " listwithfilterbefore" : "").'">'."\n";
 
 	// Category filter
 	print '<tr class="liste_titre">';
 	print '<td>';
-	print $langs->trans("Category") . ': ' . $formother->select_categories(Categorie::TYPE_PRODUCT, $selected_cat, 'search_categ', true);
+	print $langs->trans("Category").': '.$formother->select_categories(Categorie::TYPE_PRODUCT, $selected_cat, 'search_categ', true);
 	print ' ';
-	print $langs->trans("SubCats") . '? ';
+	print $langs->trans("SubCats").'? ';
 	print '<input type="checkbox" name="subcat" value="yes"';
 	if ($subcat) {
 		print ' checked';
@@ -316,12 +316,12 @@ if ($modecompta == 'CREANCES-DETTES')
 	print '>';
     // type filter (produit/service)
     print ' ';
-    print $langs->trans("Type"). ': ';
-    $form->select_type_of_lines(isset($selected_type)?$selected_type:-1, 'search_type', 1, 1, 1);
+    print $langs->trans("Type").': ';
+    $form->select_type_of_lines(isset($selected_type) ? $selected_type : -1, 'search_type', 1, 1, 1);
 
     //select thirdparty
     print '</br>';
-    print $langs->trans("ThirdParty") . ': ' . $form->select_thirdparty_list($selected_soc, 'search_soc', '', 1);
+    print $langs->trans("ThirdParty").': '.$form->select_thirdparty_list($selected_soc, 'search_soc', '', 1);
     print '</td>';
 
     print '<td colspan="5" class="right">';
@@ -330,7 +330,7 @@ if ($modecompta == 'CREANCES-DETTES')
 
 	// Array header
 	print "<tr class=\"liste_titre\">";
-print_liste_field_titre(
+	print_liste_field_titre(
 		$langs->trans("Product"),
 		$_SERVER["PHP_SELF"],
 		"ref",
@@ -340,7 +340,7 @@ print_liste_field_titre(
 		$sortfield,
 		$sortorder
 	);
-print_liste_field_titre(
+	print_liste_field_titre(
 		$langs->trans('Quantity'),
 		$_SERVER["PHP_SELF"],
 		"qty",
@@ -350,7 +350,7 @@ print_liste_field_titre(
 		$sortfield,
 		$sortorder
 	);
-print_liste_field_titre(
+	print_liste_field_titre(
 		$langs->trans("Percentage"),
 		$_SERVER["PHP_SELF"],
 		"qty",
@@ -360,7 +360,7 @@ print_liste_field_titre(
 		$sortfield,
 		$sortorder
 	);
-print_liste_field_titre(
+	print_liste_field_titre(
 		$langs->trans('AmountHT'),
 		$_SERVER["PHP_SELF"],
 		"amount",
@@ -370,7 +370,7 @@ print_liste_field_titre(
 		$sortfield,
 		$sortorder
 	);
-print_liste_field_titre(
+	print_liste_field_titre(
 		$langs->trans("AmountTTC"),
 		$_SERVER["PHP_SELF"],
 		"amount_ttc",
@@ -380,7 +380,7 @@ print_liste_field_titre(
 		$sortfield,
 		$sortorder
 	);
-print_liste_field_titre(
+	print_liste_field_titre(
 		$langs->trans("Percentage"),
 		$_SERVER["PHP_SELF"],
 		"amount_ttc",
@@ -393,17 +393,16 @@ print_liste_field_titre(
 	print "</tr>\n";
 
 	if (count($name)) {
-		foreach($name as $key=>$value) {
-
+		foreach ($name as $key=>$value) {
 			print '<tr class="oddeven">';
 
 			// Product
 			print "<td>";
-			$fullname=$name[$key];
+			$fullname = $name[$key];
 			if ($key > 0) {
-				$linkname='<a href="'.DOL_URL_ROOT.'/product/card.php?id='.$key.'">'.img_object($langs->trans("ShowProduct"), $type[$key]==0?'product':'service').' '.$fullname.'</a>';
+				$linkname = '<a href="'.DOL_URL_ROOT.'/product/card.php?id='.$key.'">'.img_object($langs->trans("ShowProduct"), $type[$key] == 0 ? 'product' : 'service').' '.$fullname.'</a>';
 			} else {
-				$linkname=$langs->trans("PaymentsNotLinkedToProduct");
+				$linkname = $langs->trans("PaymentsNotLinkedToProduct");
 			}
 			print $linkname;
 			print "</td>\n";
@@ -468,7 +467,7 @@ print_liste_field_titre(
 	// "Calculation of part of each product for accountancy in this mode is not possible. When a partial payment (for example 5 euros) is done on an
 	// invoice with 2 product (product A for 10 euros and product B for 20 euros), what is part of paiment for product A and part of paiment for product B ?
 	// Because there is no way to know this, this report is not relevant.
-	print '<br>'.$langs->trans("TurnoverPerProductInCommitmentAccountingNotRelevant") . '<br>';
+	print '<br>'.$langs->trans("TurnoverPerProductInCommitmentAccountingNotRelevant").'<br>';
 }
 
 // End of page

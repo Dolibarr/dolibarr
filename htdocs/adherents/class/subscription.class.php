@@ -13,7 +13,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -35,17 +35,22 @@ class Subscription extends CommonObject
     /**
      * @var string ID to identify managed object
      */
-    public $element='subscription';
+    public $element = 'subscription';
 
     /**
      * @var string Name of table without prefix where object is stored
      */
-    public $table_element='subscription';
+    public $table_element = 'subscription';
+
+    /**
+     * @var int  Does myobject support multicompany module ? 0=No test on entity, 1=Test with field entity, 2=Test with link by fk_soc, 'field@table'=Test with link by field@table
+     */
+    public $ismultientitymanaged = 'fk_adherent@adherent';
 
     /**
      * @var string String with name of icon for myobject. Must be the part after the 'object_' into object_myobject.png
      */
-    public $picto='payment';
+    public $picto = 'payment';
 
     /**
      * Date creation record (datec)
@@ -88,6 +93,21 @@ class Subscription extends CommonObject
      */
     public $fk_bank;
 
+    public $fields = array(
+    	'rowid' =>array('type'=>'integer', 'label'=>'TechnicalID', 'enabled'=>1, 'visible'=>-1, 'notnull'=>1, 'position'=>10),
+    	'tms' =>array('type'=>'timestamp', 'label'=>'DateModification', 'enabled'=>1, 'visible'=>-1, 'notnull'=>1, 'position'=>15),
+    	'datec' =>array('type'=>'datetime', 'label'=>'DateCreation', 'enabled'=>1, 'visible'=>-1, 'position'=>20),
+    	'fk_adherent' =>array('type'=>'integer', 'label'=>'Member', 'enabled'=>1, 'visible'=>-1, 'position'=>25),
+    	'dateadh' =>array('type'=>'datetime', 'label'=>'DateSubscription', 'enabled'=>1, 'visible'=>-1, 'position'=>30),
+    	'datef' =>array('type'=>'date', 'label'=>'DateEndSubscription', 'enabled'=>1, 'visible'=>-1, 'position'=>35),
+    	'subscription' =>array('type'=>'double(24,8)', 'label'=>'Amount', 'enabled'=>1, 'visible'=>-1, 'position'=>40, 'isameasure'=>1),
+    	'fk_bank' =>array('type'=>'integer', 'label'=>'BankId', 'enabled'=>1, 'visible'=>-1, 'position'=>45),
+    	'note' =>array('type'=>'text', 'label'=>'Note', 'enabled'=>1, 'visible'=>-1, 'position'=>50),
+    	'fk_type' =>array('type'=>'integer', 'label'=>'MemberType', 'enabled'=>1, 'visible'=>-1, 'position'=>55),
+    	'fk_user_creat' =>array('type'=>'integer:User:user/class/user.class.php', 'label'=>'UserAuthor', 'enabled'=>1, 'visible'=>-2, 'position'=>60),
+    	'fk_user_valid' =>array('type'=>'integer:User:user/class/user.class.php', 'label'=>'UserValidation', 'enabled'=>1, 'visible'=>-1, 'position'=>65),
+    );
+
 
     /**
      *	Constructor
@@ -113,12 +133,12 @@ class Subscription extends CommonObject
 
         $error = 0;
 
-        $now=dol_now();
+        $now = dol_now();
 
         // Check parameters
         if ($this->datef <= $this->dateh)
         {
-            $this->error=$langs->trans("ErrorBadValueForDate");
+            $this->error = $langs->trans("ErrorBadValueForDate");
             return -1;
         }
         if (empty($this->datec)) $this->datec = $now;
@@ -129,37 +149,37 @@ class Subscription extends CommonObject
         $sql = "INSERT INTO ".MAIN_DB_PREFIX."subscription (fk_adherent, fk_type, datec, dateadh, datef, subscription, note)";
 
         require_once DOL_DOCUMENT_ROOT.'/adherents/class/adherent.class.php';
-        $member=new Adherent($this->db);
-        $result=$member->fetch($this->fk_adherent);
+        $member = new Adherent($this->db);
+        $result = $member->fetch($this->fk_adherent);
 
         if ($this->fk_type == null) {	// If type not defined, we use the type of member
-            $type=$member->typeid;
+            $type = $member->typeid;
         } else {
-            $type=$this->fk_type;
+            $type = $this->fk_type;
         }
-        $sql.= " VALUES (".$this->fk_adherent.", '".$type."', '".$this->db->idate($now)."',";
-        $sql.= " '".$this->db->idate($this->dateh)."',";
-        $sql.= " '".$this->db->idate($this->datef)."',";
-        $sql.= " ".$this->amount.",";
-        $sql.= " '".$this->db->escape($this->note_public?$this->note_public:$this->note)."')";
+        $sql .= " VALUES (".$this->fk_adherent.", '".$type."', '".$this->db->idate($now)."',";
+        $sql .= " '".$this->db->idate($this->dateh)."',";
+        $sql .= " '".$this->db->idate($this->datef)."',";
+        $sql .= " ".$this->amount.",";
+        $sql .= " '".$this->db->escape($this->note_public ? $this->note_public : $this->note)."')";
 
         $resql = $this->db->query($sql);
-        if (! $resql) {
+        if (!$resql) {
             $error++;
             $this->errors[] = $this->db->lasterror();
         }
 
-        if (! $error)
+        if (!$error)
         {
-            $this->id = $this->db->last_insert_id(MAIN_DB_PREFIX . $this->table_element);
+            $this->id = $this->db->last_insert_id(MAIN_DB_PREFIX.$this->table_element);
             $this->fk_type = $type;
         }
 
-        if (! $error && ! $notrigger)
+        if (!$error && !$notrigger)
         {
         	$this->context = array('member'=>$member);
         	// Call triggers
-            $result=$this->call_trigger('MEMBER_SUBSCRIPTION_CREATE', $user);
+            $result = $this->call_trigger('MEMBER_SUBSCRIPTION_CREATE', $user);
             if ($result < 0) { $error++; }
             // End call triggers
         }
@@ -183,16 +203,16 @@ class Subscription extends CommonObject
      */
     public function fetch($rowid)
     {
-        $sql ="SELECT rowid, fk_type, fk_adherent, datec,";
-        $sql.=" tms,";
-        $sql.=" dateadh as dateh,";
-        $sql.=" datef,";
-        $sql.=" subscription, note, fk_bank";
-        $sql.=" FROM ".MAIN_DB_PREFIX."subscription";
-        $sql.="	WHERE rowid=".$rowid;
+        $sql = "SELECT rowid, fk_type, fk_adherent, datec,";
+        $sql .= " tms,";
+        $sql .= " dateadh as dateh,";
+        $sql .= " datef,";
+        $sql .= " subscription, note, fk_bank";
+        $sql .= " FROM ".MAIN_DB_PREFIX."subscription";
+        $sql .= "	WHERE rowid=".$rowid;
 
         dol_syslog(get_class($this)."::fetch", LOG_DEBUG);
-        $resql=$this->db->query($sql);
+        $resql = $this->db->query($sql);
         if ($resql)
         {
             if ($this->db->num_rows($resql))
@@ -220,7 +240,7 @@ class Subscription extends CommonObject
         }
         else
         {
-            $this->error=$this->db->lasterror();
+            $this->error = $this->db->lasterror();
             return -1;
         }
     }
@@ -255,14 +275,14 @@ class Subscription extends CommonObject
         if ($resql)
         {
             require_once DOL_DOCUMENT_ROOT.'/adherents/class/adherent.class.php';
-            $member=new Adherent($this->db);
-            $result=$member->fetch($this->fk_adherent);
-            $result=$member->update_end_date($user);
+            $member = new Adherent($this->db);
+            $result = $member->fetch($this->fk_adherent);
+            $result = $member->update_end_date($user);
 
-            if (! $error && ! $notrigger) {
+            if (!$error && !$notrigger) {
             	$this->context = array('member'=>$member);
             	// Call triggers
-                $result=$this->call_trigger('MEMBER_SUBSCRIPTION_MODIFY', $user);
+                $result = $this->call_trigger('MEMBER_SUBSCRIPTION_MODIFY', $user);
                 if ($result < 0) { $error++; } //Do also here what you must do to rollback action if trigger fail
                 // End call triggers
             }
@@ -270,7 +290,7 @@ class Subscription extends CommonObject
         else
         {
             $error++;
-            $this->error=$this->db->lasterror();
+            $this->error = $this->db->lasterror();
         }
 
         // Commit or rollback
@@ -298,39 +318,39 @@ class Subscription extends CommonObject
         if ($this->fk_bank > 0)
         {
             require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
-            $accountline=new AccountLine($this->db);
-            $result=$accountline->fetch($this->fk_bank);
+            $accountline = new AccountLine($this->db);
+            $result = $accountline->fetch($this->fk_bank);
         }
 
         $this->db->begin();
 
-        if (! $error) {
-            if (! $notrigger) {
+        if (!$error) {
+            if (!$notrigger) {
                 // Call triggers
-                $result=$this->call_trigger('MEMBER_SUBSCRIPTION_DELETE', $user);
+                $result = $this->call_trigger('MEMBER_SUBSCRIPTION_DELETE', $user);
                 if ($result < 0) { $error++; } // Do also here what you must do to rollback action if trigger fail
                 // End call triggers
             }
         }
 
-        if (! $error)
+        if (!$error)
         {
             $sql = "DELETE FROM ".MAIN_DB_PREFIX."subscription WHERE rowid = ".$this->id;
             dol_syslog(get_class($this)."::delete", LOG_DEBUG);
-            $resql=$this->db->query($sql);
+            $resql = $this->db->query($sql);
             if ($resql)
             {
-                $num=$this->db->affected_rows($resql);
+                $num = $this->db->affected_rows($resql);
                 if ($num)
                 {
                     require_once DOL_DOCUMENT_ROOT.'/adherents/class/adherent.class.php';
-                    $member=new Adherent($this->db);
-                    $result=$member->fetch($this->fk_adherent);
-                    $result=$member->update_end_date($user);
+                    $member = new Adherent($this->db);
+                    $result = $member->fetch($this->fk_adherent);
+                    $result = $member->update_end_date($user);
 
                     if ($this->fk_bank > 0 && is_object($accountline) && $accountline->id > 0)	// If we found bank account line (this means this->fk_bank defined)
                     {
-                        $result=$accountline->delete($user);		// Return false if refused because line is conciliated
+                        $result = $accountline->delete($user); // Return false if refused because line is conciliated
                         if ($result > 0)
                         {
                             $this->db->commit();
@@ -338,7 +358,7 @@ class Subscription extends CommonObject
                         }
                         else
                         {
-                            $this->error=$accountline->error;
+                            $this->error = $accountline->error;
                             $this->db->rollback();
                             return -1;
                         }
@@ -358,7 +378,7 @@ class Subscription extends CommonObject
             else
             {
                 $error++;
-                $this->error=$this->db->lasterror();
+                $this->error = $this->db->lasterror();
             }
         }
 
@@ -387,29 +407,29 @@ class Subscription extends CommonObject
     {
         global $langs;
 
-        $result='';
+        $result = '';
 
         $langs->load("members");
-        $label=$langs->trans("ShowSubscription").': '.$this->ref;
+        $label = $langs->trans("ShowSubscription").': '.$this->ref;
 
         $url = DOL_URL_ROOT.'/adherents/subscription/card.php?rowid='.$this->id;
 
         if ($option != 'nolink')
         {
             // Add param to save lastsearch_values or not
-            $add_save_lastsearch_values=($save_lastsearch_value == 1 ? 1 : 0);
-            if ($save_lastsearch_value == -1 && preg_match('/list\.php/', $_SERVER["PHP_SELF"])) $add_save_lastsearch_values=1;
-            if ($add_save_lastsearch_values) $url.='&save_lastsearch_values=1';
+            $add_save_lastsearch_values = ($save_lastsearch_value == 1 ? 1 : 0);
+            if ($save_lastsearch_value == -1 && preg_match('/list\.php/', $_SERVER["PHP_SELF"])) $add_save_lastsearch_values = 1;
+            if ($add_save_lastsearch_values) $url .= '&save_lastsearch_values=1';
         }
 
         $linkstart = '<a href="'.$url.'" class="classfortooltip" title="'.dol_escape_htmltag($label, 1).'">';
         $linkend = '</a>';
 
-        $picto='payment';
+        $picto = 'payment';
 
         $result .= $linkstart;
-        if ($withpicto) $result.=img_object(($notooltip?'':$label), ($this->picto?$this->picto:'generic'), ($notooltip?(($withpicto != 2) ? 'class="paddingright"' : ''):'class="'.(($withpicto != 2) ? 'paddingright ' : '').'classfortooltip"'), 0, 0, $notooltip?0:1);
-        if ($withpicto != 2) $result.= $this->ref;
+        if ($withpicto) $result .= img_object(($notooltip ? '' : $label), ($this->picto ? $this->picto : 'generic'), ($notooltip ? (($withpicto != 2) ? 'class="paddingright"' : '') : 'class="'.(($withpicto != 2) ? 'paddingright ' : '').'classfortooltip"'), 0, 0, $notooltip ? 0 : 1);
+        if ($withpicto != 2) $result .= $this->ref;
         $result .= $linkend;
 
         return $result;
@@ -431,10 +451,10 @@ class Subscription extends CommonObject
     /**
      *  Renvoi le libelle d'un statut donne
      *
-     *  @param	int			$statut      			Id statut
+     *  @param	int			$status      			Id status
      *  @return string      						Label
      */
-    public function LibStatut($statut)
+    public function LibStatut($status)
     {
         // phpcs:enable
         global $langs;
@@ -451,11 +471,11 @@ class Subscription extends CommonObject
     public function info($id)
     {
         $sql = 'SELECT c.rowid, c.datec,';
-        $sql.= ' c.tms as datem';
-        $sql.= ' FROM '.MAIN_DB_PREFIX.'subscription as c';
-        $sql.= ' WHERE c.rowid = '.$id;
+        $sql .= ' c.tms as datem';
+        $sql .= ' FROM '.MAIN_DB_PREFIX.'subscription as c';
+        $sql .= ' WHERE c.rowid = '.$id;
 
-        $result=$this->db->query($sql);
+        $result = $this->db->query($sql);
         if ($result)
         {
             if ($this->db->num_rows($result))

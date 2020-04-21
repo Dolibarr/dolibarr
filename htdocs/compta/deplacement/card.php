@@ -4,7 +4,7 @@
  * Copyright (C) 2005-2012	Regis Houssin        <regis.houssin@inodbox.com>
  * Copyright (C) 2012		Juanjo Menent        <jmenent@2byte.es>
  * Copyright (C) 2013       Florian Henry           <florian.henry@open-concept.pro>
- * Copyright (C) 2018       Frédéric France         <frederic.france@netlogic.fr>
+ * Copyright (C) 2018-2019  Frédéric France         <frederic.france@netlogic.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -17,7 +17,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -29,7 +29,7 @@ require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/trip.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/deplacement/class/deplacement.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php';
-if (! empty($conf->projet->enabled))
+if (!empty($conf->projet->enabled))
 {
     require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
 }
@@ -40,7 +40,7 @@ $langs->load("trips");
 
 // Security check
 $id = GETPOST('id', 'int');
-if ($user->societe_id) $socid=$user->societe_id;
+if ($user->socid) $socid = $user->socid;
 $result = restrictedArea($user, 'deplacement', $id, '');
 
 $action = GETPOST('action', 'alpha');
@@ -49,26 +49,26 @@ $confirm = GETPOST('confirm', 'alpha');
 $object = new Deplacement($db);
 
 // Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
-$hookmanager->initHooks(array('tripsandexpensescard','globalcard'));
+$hookmanager->initHooks(array('tripsandexpensescard', 'globalcard'));
 
-$permissionnote=$user->rights->deplacement->creer;	// Used by the include of actions_setnotes.inc.php
+$permissionnote = $user->rights->deplacement->creer; // Used by the include of actions_setnotes.inc.php
 
 
 /*
  * Actions
  */
 
-include DOL_DOCUMENT_ROOT.'/core/actions_setnotes.inc.php';	// Must be include, not includ_once
+include DOL_DOCUMENT_ROOT.'/core/actions_setnotes.inc.php'; // Must be include, not includ_once
 
 if ($action == 'validate' && $user->rights->deplacement->creer)
 {
     $object->fetch($id);
-    if ($object->statut == 0)
+    if ($object->statut == Deplacement::STATUS_DRAFT)
     {
         $result = $object->setStatut(1);
         if ($result > 0)
         {
-            header("Location: " . $_SERVER["PHP_SELF"] . "?id=" . $id);
+            header("Location: ".$_SERVER["PHP_SELF"]."?id=".$id);
             exit;
         }
         else
@@ -81,12 +81,12 @@ if ($action == 'validate' && $user->rights->deplacement->creer)
 elseif ($action == 'classifyrefunded' && $user->rights->deplacement->creer)
 {
     $object->fetch($id);
-    if ($object->statut == 1)
+    if ($object->statut == Deplacement::STATUS_VALIDATED)
     {
-        $result = $object->setStatut(2);
+        $result = $object->setStatut(Deplacement::STATUS_REFUNDED);
         if ($result > 0)
         {
-            header("Location: " . $_SERVER["PHP_SELF"] . "?id=" . $id);
+            header("Location: ".$_SERVER["PHP_SELF"]."?id=".$id);
             exit;
         }
         else
@@ -98,7 +98,7 @@ elseif ($action == 'classifyrefunded' && $user->rights->deplacement->creer)
 
 elseif ($action == 'confirm_delete' && $confirm == "yes" && $user->rights->deplacement->supprimer)
 {
-    $result=$object->delete($id);
+    $result = $object->delete($id);
     if ($result >= 0)
     {
         header("Location: index.php");
@@ -112,20 +112,20 @@ elseif ($action == 'confirm_delete' && $confirm == "yes" && $user->rights->depla
 
 elseif ($action == 'add' && $user->rights->deplacement->creer)
 {
-    if (! GETPOST('cancel', 'alpha'))
+    if (!GETPOST('cancel', 'alpha'))
     {
-        $error=0;
+        $error = 0;
 
-        $object->date			= dol_mktime(12, 0, 0, GETPOST('remonth', 'int'), GETPOST('reday', 'int'), GETPOST('reyear', 'int'));
-        $object->km				= price2num(GETPOST('km', 'alpha'), 'MU'); // Not 'int', it may be a formated amount
-        $object->type			= GETPOST('type', 'alpha');
-        $object->socid			= GETPOST('socid', 'int');
-        $object->fk_user		= GETPOST('fk_user', 'int');
-        $object->note_private	= GETPOST('note_private', 'alpha');
-        $object->note_public	= GETPOST('note_public', 'alpha');
-        $object->statut     	= 0;
+        $object->date = dol_mktime(12, 0, 0, GETPOST('remonth', 'int'), GETPOST('reday', 'int'), GETPOST('reyear', 'int'));
+        $object->km = price2num(GETPOST('km', 'alpha'), 'MU'); // Not 'int', it may be a formated amount
+        $object->type = GETPOST('type', 'alpha');
+        $object->socid = (int) GETPOST('socid', 'int');
+        $object->fk_user = (int) GETPOST('fk_user', 'int');
+        $object->note_private = GETPOST('note_private', 'alpha');
+        $object->note_public = GETPOST('note_public', 'alpha');
+        $object->statut = Deplacement::STATUS_DRAFT;
 
-        if (! $object->date)
+        if (!$object->date)
         {
 	        setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Date")), null, 'errors');
             $error++;
@@ -135,30 +135,30 @@ elseif ($action == 'add' && $user->rights->deplacement->creer)
 	        setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Type")), null, 'errors');
             $error++;
         }
-        if (! ($object->fk_user > 0))
+        if (!($object->fk_user > 0))
         {
 	        setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Person")), null, 'errors');
             $error++;
         }
 
-        if (! $error)
+        if (!$error)
         {
             $id = $object->create($user);
 
             if ($id > 0)
             {
-                header("Location: " . $_SERVER["PHP_SELF"] . "?id=" . $id);
+                header("Location: ".$_SERVER["PHP_SELF"]."?id=".$id);
                 exit;
             }
             else
             {
 	            setEventMessages($object->error, $object->errors, 'errors');
-                $action='create';
+                $action = 'create';
             }
         }
         else
         {
-            $action='create';
+            $action = 'create';
         }
     }
     else
@@ -171,23 +171,23 @@ elseif ($action == 'add' && $user->rights->deplacement->creer)
 // Update record
 elseif ($action == 'update' && $user->rights->deplacement->creer)
 {
-    if (! GETPOST('cancel', 'alpha'))
+    if (!GETPOST('cancel', 'alpha'))
     {
         $result = $object->fetch($id);
 
         $object->date			= dol_mktime(12, 0, 0, GETPOST('remonth', 'int'), GETPOST('reday', 'int'), GETPOST('reyear', 'int'));
-        $object->km				= price2num(GETPOST('km', 'alpha'), 'MU'); // Not 'int', it may be a formated amount
+        $object->km = price2num(GETPOST('km', 'alpha'), 'MU'); // Not 'int', it may be a formated amount
         $object->type			= GETPOST('type', 'alpha');
-        $object->socid			= GETPOST('socid', 'int');
-        $object->fk_user		= GETPOST('fk_user', 'int');
-        $object->note_private	= GETPOST('note_private', 'alpha');
-        $object->note_public	= GETPOST('note_public', 'alpha');
+        $object->socid = (int) GETPOST('socid', 'int');
+        $object->fk_user = (int) GETPOST('fk_user', 'int');
+        $object->note_private = GETPOST('note_private', 'alpha');
+        $object->note_public = GETPOST('note_public', 'alpha');
 
         $result = $object->update($user);
 
         if ($result > 0)
         {
-            header("Location: " . $_SERVER["PHP_SELF"] . "?id=" . $id);
+            header("Location: ".$_SERVER["PHP_SELF"]."?id=".$id);
             exit;
         }
         else
@@ -197,7 +197,7 @@ elseif ($action == 'update' && $user->rights->deplacement->creer)
     }
     else
     {
-        header("Location: " . $_SERVER["PHP_SELF"] . "?id=" . $id);
+        header("Location: ".$_SERVER["PHP_SELF"]."?id=".$id);
         exit;
     }
 }
@@ -206,22 +206,22 @@ elseif ($action == 'update' && $user->rights->deplacement->creer)
 elseif ($action == 'classin' && $user->rights->deplacement->creer)
 {
     $object->fetch($id);
-    $result=$object->setProject(GETPOST('projectid', 'int'));
+    $result = $object->setProject(GETPOST('projectid', 'int'));
     if ($result < 0) dol_print_error($db, $object->error);
 }
 
 // Set fields
 elseif ($action == 'setdated' && $user->rights->deplacement->creer)
 {
-    $dated=dol_mktime(GETPOST('datedhour', 'int'), GETPOST('datedmin', 'int'), GETPOST('datedsec', 'int'), GETPOST('datedmonth', 'int'), GETPOST('datedday', 'int'), GETPOST('datedyear', 'int'));
+    $dated = dol_mktime(GETPOST('datedhour', 'int'), GETPOST('datedmin', 'int'), GETPOST('datedsec', 'int'), GETPOST('datedmonth', 'int'), GETPOST('datedday', 'int'), GETPOST('datedyear', 'int'));
     $object->fetch($id);
-    $result=$object->setValueFrom('dated', $dated, '', '', 'date', '', $user, 'DEPLACEMENT_MODIFY');
+    $result = $object->setValueFrom('dated', $dated, '', '', 'date', '', $user, 'DEPLACEMENT_MODIFY');
     if ($result < 0) dol_print_error($db, $object->error);
 }
 elseif ($action == 'setkm' && $user->rights->deplacement->creer)
 {
     $object->fetch($id);
-    $result=$object->setValueFrom('km', GETPOST('km', 'int'), '', null, 'text', '', $user, 'DEPLACEMENT_MODIFY');
+    $result = $object->setValueFrom('km', GETPOST('km', 'int'), '', null, 'text', '', $user, 'DEPLACEMENT_MODIFY');
     if ($result < 0) dol_print_error($db, $object->error);
 }
 
@@ -246,11 +246,11 @@ if ($action == 'create')
 
     $datec = dol_mktime(12, 0, 0, GETPOST('remonth', 'int'), GETPOST('reday', 'int'), GETPOST('reyear', 'int'));
 
-    print '<form name="add" action="' . $_SERVER["PHP_SELF"] . '" method="POST">' . "\n";
-    print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+    print '<form name="add" action="'.$_SERVER["PHP_SELF"].'" method="POST">'."\n";
+    print '<input type="hidden" name="token" value="'.newToken().'">';
     print '<input type="hidden" name="action" value="add">';
 
-    print '<table class="border" width="100%">';
+    print '<table class="border centpercent">';
 
     print "<tr>";
     print '<td class="fieldrequired">'.$langs->trans("Type").'</td><td>';
@@ -264,11 +264,11 @@ if ($action == 'create')
 
     print "<tr>";
     print '<td class="fieldrequired">'.$langs->trans("Date").'</td><td>';
-    print $form->selectDate($datec?$datec:-1, '', '', '', '', 'add', 1, 1);
+    print $form->selectDate($datec ? $datec : -1, '', '', '', '', 'add', 1, 1);
     print '</td></tr>';
 
     // Km
-    print '<tr><td class="fieldrequired">'.$langs->trans("FeesKilometersOrAmout").'</td><td><input name="km" size="10" value="' . GETPOST("km") . '"></td></tr>';
+    print '<tr><td class="fieldrequired">'.$langs->trans("FeesKilometersOrAmout").'</td><td><input name="km" size="10" value="'.GETPOST("km").'"></td></tr>';
 
     // Company
     print "<tr>";
@@ -281,27 +281,27 @@ if ($action == 'create')
     print '<td class="tdtop">'.$langs->trans('NotePublic').'</td>';
     print '<td>';
 
-    $doleditor = new DolEditor('note_public', GETPOST('note_public', 'alpha'), '', 200, 'dolibarr_notes', 'In', false, true, true, ROWS_8, '90%');
+    $doleditor = new DolEditor('note_public', GETPOST('note_public', 'restricthtml'), '', 200, 'dolibarr_notes', 'In', false, true, true, ROWS_8, '90%');
     print $doleditor->Create(1);
 
     print '</td></tr>';
 
     // Private note
-    if (empty($user->societe_id))
+    if (empty($user->socid))
     {
         print '<tr>';
         print '<td class="tdtop">'.$langs->trans('NotePrivate').'</td>';
         print '<td>';
 
-        $doleditor = new DolEditor('note_private', GETPOST('note_private', 'alpha'), '', 200, 'dolibarr_notes', 'In', false, true, true, ROWS_8, '90%');
+        $doleditor = new DolEditor('note_private', GETPOST('note_private', 'restricthtml'), '', 200, 'dolibarr_notes', 'In', false, true, true, ROWS_8, '90%');
         print $doleditor->Create(1);
 
         print '</td></tr>';
     }
 
     // Other attributes
-    $parameters=array();
-    $reshook=$hookmanager->executeHooks('formObjectOptions', $parameters, $object, $action);    // Note that $action and $object may have been modified by hook
+    $parameters = array();
+    $reshook = $hookmanager->executeHooks('formObjectOptions', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
     print $hookmanager->resPrint;
 
     print '</table>';
@@ -334,12 +334,12 @@ elseif ($id)
                 $soc->fetch($object->socid);
             }
 
-            print '<form name="update" action="' . $_SERVER["PHP_SELF"] . '" method="POST">' . "\n";
-            print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+            print '<form name="update" action="'.$_SERVER["PHP_SELF"].'" method="POST">'."\n";
+            print '<input type="hidden" name="token" value="'.newToken().'">';
             print '<input type="hidden" name="action" value="update">';
             print '<input type="hidden" name="id" value="'.$id.'">';
 
-            print '<table class="border" width="100%">';
+            print '<table class="border centpercent">';
 
             // Ref
             print "<tr>";
@@ -350,13 +350,13 @@ elseif ($id)
             // Type
             print "<tr>";
             print '<td class="fieldrequired">'.$langs->trans("Type").'</td><td>';
-            $form->select_type_fees(GETPOST('type', 'int')?GETPOST('type', 'int'):$object->type, 'type', 0);
+            $form->select_type_fees(GETPOST('type', 'int') ?GETPOST('type', 'int') : $object->type, 'type', 0);
             print '</td></tr>';
 
             // Who
             print "<tr>";
             print '<td class="fieldrequired">'.$langs->trans("Person").'</td><td>';
-            print $form->select_dolusers(GETPOST('fk_user', 'int')?GETPOST('fk_user', 'int'):$object->fk_user, 'fk_user', 0, '', 0, '', '', 0, 0, 0, '', 0, '', 'maxwidth300');
+            print $form->select_dolusers(GETPOST('fk_user', 'int') ?GETPOST('fk_user', 'int') : $object->fk_user, 'fk_user', 0, '', 0, '', '', 0, 0, 0, '', 0, '', 'maxwidth300');
             print '</td></tr>';
 
             // Date
@@ -385,7 +385,7 @@ elseif ($id)
             print "</td></tr>";
 
             // Private note
-            if (empty($user->societe_id))
+            if (empty($user->socid))
             {
                 print '<tr><td class="tdtop">'.$langs->trans("NotePrivate").'</td>';
                 print '<td>';
@@ -397,8 +397,8 @@ elseif ($id)
             }
 
             // Other attributes
-            $parameters=array();
-            $reshook=$hookmanager->executeHooks('formObjectOptions', $parameters, $object, $action);    // Note that $action and $object may have been modified by hook
+            $parameters = array();
+            $reshook = $hookmanager->executeHooks('formObjectOptions', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
             print $hookmanager->resPrint;
 
             print '</table>';
@@ -415,9 +415,9 @@ elseif ($id)
         }
         else
         {
-           /*
-            * Confirm delete trip
-            */
+            /*
+             * Confirm delete trip
+             */
             if ($action == 'delete')
             {
                 print $form->formconfirm($_SERVER["PHP_SELF"]."?id=".$id, $langs->trans("DeleteTrip"), $langs->trans("ConfirmDeleteTrip"), "confirm_delete");
@@ -426,9 +426,9 @@ elseif ($id)
             $soc = new Societe($db);
             if ($object->socid) $soc->fetch($object->socid);
 
-            print '<table class="border" width="100%">';
+            print '<table class="border centpercent">';
 
-            $linkback = '<a href="'.DOL_URL_ROOT.'/compta/deplacement/list.php'.(! empty($socid)?'?socid='.$socid:'').'">'.$langs->trans("BackToList").'</a>';
+            $linkback = '<a href="'.DOL_URL_ROOT.'/compta/deplacement/list.php'.(!empty($socid) ? '?socid='.$socid : '').'">'.$langs->trans("BackToList").'</a>';
 
             // Ref
             print '<tr><td width="25%">'.$langs->trans("Ref").'</td><td>';
@@ -439,30 +439,30 @@ elseif ($id)
 
 	        // Type
             print '<tr><td>';
-            print $form->editfieldkey("Type", 'type', $langs->trans($object->type), $object, $conf->global->MAIN_EDIT_ALSO_INLINE && $user->rights->deplacement->creer, 'select:types_fees');
+            print $form->editfieldkey("Type", 'type', $langs->trans($object->type), $object, $user->rights->deplacement->creer, 'select:types_fees');
             print '</td><td>';
-            print $form->editfieldval("Type", 'type', $form->cache_types_fees[$object->type], $object, $conf->global->MAIN_EDIT_ALSO_INLINE && $user->rights->deplacement->creer, 'select:types_fees');
+            print $form->editfieldval("Type", 'type', $form->cache_types_fees[$object->type], $object, $user->rights->deplacement->creer, 'select:types_fees');
             print '</td></tr>';
 
             // Who
             print '<tr><td>'.$langs->trans("Person").'</td><td>';
-            $userfee=new User($db);
+            $userfee = new User($db);
             $userfee->fetch($object->fk_user);
             print $userfee->getNomUrl(1);
             print '</td></tr>';
 
             // Date
             print '<tr><td>';
-            print $form->editfieldkey("Date", 'dated', $object->date, $object, $conf->global->MAIN_EDIT_ALSO_INLINE && $user->rights->deplacement->creer, 'datepicker');
+            print $form->editfieldkey("Date", 'dated', $object->date, $object, $user->rights->deplacement->creer, 'datepicker');
             print '</td><td>';
-            print $form->editfieldval("Date", 'dated', $object->date, $object, $conf->global->MAIN_EDIT_ALSO_INLINE && $user->rights->deplacement->creer, 'datepicker');
+            print $form->editfieldval("Date", 'dated', $object->date, $object, $user->rights->deplacement->creer, 'datepicker');
             print '</td></tr>';
 
             // Km/Price
             print '<tr><td class="tdtop">';
-            print $form->editfieldkey("FeesKilometersOrAmout", 'km', $object->km, $object, $conf->global->MAIN_EDIT_ALSO_INLINE && $user->rights->deplacement->creer, 'numeric:6');
+            print $form->editfieldkey("FeesKilometersOrAmout", 'km', $object->km, $object, $user->rights->deplacement->creer, 'numeric:6');
             print '</td><td>';
-            print $form->editfieldval("FeesKilometersOrAmout", 'km', $object->km, $object, $conf->global->MAIN_EDIT_ALSO_INLINE && $user->rights->deplacement->creer, 'numeric:6');
+            print $form->editfieldval("FeesKilometersOrAmout", 'km', $object->km, $object, $user->rights->deplacement->creer, 'numeric:6');
             print "</td></tr>";
 
             // Where
@@ -472,7 +472,7 @@ elseif ($id)
             print '</td></tr>';
 
             // Project
-            if (! empty($conf->projet->enabled))
+            if (!empty($conf->projet->enabled))
             {
                 $langs->load('projects');
                 print '<tr>';
@@ -505,8 +505,8 @@ elseif ($id)
             print '<tr><td>'.$langs->trans("Status").'</td><td>'.$object->getLibStatut(4).'</td></tr>';
 
         	// Other attributes
-        	$parameters=array('socid'=>$object->id);
-        	include DOL_DOCUMENT_ROOT . '/core/tpl/extrafields_view.tpl.php';
+        	$parameters = array('socid'=>$object->id);
+        	include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_view.tpl.php';
 
             print "</table><br>";
 
@@ -523,7 +523,7 @@ elseif ($id)
 
             print '<div class="tabsAction">';
 
-            if ($object->statut < 2) 	// if not refunded
+            if ($object->statut < Deplacement::STATUS_REFUNDED) 	// if not refunded
             {
 	            if ($user->rights->deplacement->creer)
 	            {
@@ -535,7 +535,7 @@ elseif ($id)
 	            }
             }
 
-            if ($object->statut == 0) 	// if draft
+            if ($object->statut == Deplacement::STATUS_DRAFT) 	// if draft
             {
                 if ($user->rights->deplacement->creer)
                 {
@@ -547,7 +547,7 @@ elseif ($id)
                 }
             }
 
-            if ($object->statut == 1) 	// if validated
+            if ($object->statut == Deplacement::STATUS_VALIDATED) 	// if validated
             {
                 if ($user->rights->deplacement->creer)
                 {

@@ -12,8 +12,8 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
- * or see http://www.gnu.org/
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
+ * or see https://www.gnu.org/
  */
 
 /**
@@ -374,7 +374,7 @@ class CoreTest extends PHPUnit\Framework\TestCase
         $result=testSqlAndScriptInject($test, 0);
         $this->assertGreaterThanOrEqual($expectedresult, $result, 'Error on testSqlAndScriptInject eee');
 
-        $test="<IMG SRC=\"jav\tascript:alert('XSS');\">";		// Is locked by some brwoser like chrome because the default directive no-referrer-when-downgrade is sent when requesting the SRC and then refused because of browser protection on img src load without referrer.
+        $test="<IMG SRC=\"jav\tascript:alert('XSS');\">";		// Is locked by some browser like chrome because the default directive no-referrer-when-downgrade is sent when requesting the SRC and then refused because of browser protection on img src load without referrer.
 		$test="<IMG SRC=\"jav&#x0D;ascript:alert('XSS');\">";	// Same
 
 		$test='<SCRIPT/XSS SRC="http://xss.rocks/xss.js"></SCRIPT>';

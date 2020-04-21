@@ -14,7 +14,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -29,7 +29,7 @@ require_once DOL_DOCUMENT_ROOT.'/ecm/class/htmlecm.form.class.php';
 require_once DOL_DOCUMENT_ROOT.'/ecm/class/ecmdirectory.class.php';
 
 // Load translation files required by the page
-$langs->loadLangs(array("ecm","companies","other","users","orders","propal","bills","contracts","categories"));
+$langs->loadLangs(array("ecm", "companies", "other", "users", "orders", "propal", "bills", "contracts", "categories"));
 
 // Get parameters
 $socid      = GETPOST('socid', 'int');
@@ -41,17 +41,17 @@ $confirm    = GETPOST('confirm', 'alpha');
 $module  = GETPOST('module', 'alpha');
 $website = GETPOST('website', 'alpha');
 $pageid  = GETPOST('pageid', 'int');
-if (empty($module)) $module='ecm';
+if (empty($module)) $module = 'ecm';
 
 // Security check
-if ($user->societe_id > 0)
+if ($user->socid > 0)
 {
     $action = '';
-    $socid = $user->societe_id;
+    $socid = $user->socid;
 }
 
-$section=$urlsection=GETPOST('section', 'alpha');
-if (empty($urlsection)) $urlsection='misc';
+$section = $urlsection = GETPOST('section', 'alpha');
+if (empty($urlsection)) $urlsection = 'misc';
 
 if ($module == 'ecm')
 {
@@ -62,21 +62,22 @@ else	// For example $module == 'medias'
 	$upload_dir = $conf->medias->multidir_output[$conf->entity];
 }
 
+$limit = GETPOST('limit', 'int') ? GETPOST('limit', 'int') : $conf->liste_limit;
 $sortfield = GETPOST("sortfield", 'alpha');
 $sortorder = GETPOST("sortorder", 'alpha');
-$page = GETPOST("page", 'int');
+$page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOST("page", 'int');
 if (empty($page) || $page == -1) { $page = 0; }     // If $page is not defined, or '' or -1
-$offset = $conf->liste_limit * $page;
+$offset = $limit * $page;
 $pageprev = $page - 1;
 $pagenext = $page + 1;
-if (! $sortorder) $sortorder="ASC";
-if (! $sortfield) $sortfield="label";
+if (!$sortorder) $sortorder = "ASC";
+if (!$sortfield) $sortfield = "label";
 
 $ecmdir = new EcmDirectory($db);
-if (! empty($section))
+if (!empty($section))
 {
-	$result=$ecmdir->fetch($section);
-	if (! $result > 0)
+	$result = $ecmdir->fetch($section);
+	if (!$result > 0)
 	{
 		dol_print_error($db, $ecmdir->error);
 		exit;
@@ -97,7 +98,7 @@ if ($module == 'medias')
 	$permtoupload = ($user->rights->mailing->creer || $user->rights->website->write);
 }
 
-if (! $permtoadd) accessforbidden();
+if (!$permtoadd) accessforbidden();
 
 
 
@@ -110,14 +111,14 @@ if ($action == 'add' && $permtoadd)
 {
 	if ($cancel)
 	{
-		if (! empty($backtopage))
+		if (!empty($backtopage))
 		{
 			header("Location: ".$backtopage);
 			exit;
 		}
 		else
 		{
-			header("Location: ".DOL_URL_ROOT.'/ecm/index.php?action=file_manager'.($module?'&module='.$module:''));
+			header("Location: ".DOL_URL_ROOT.'/ecm/index.php?action=file_manager'.($module ? '&module='.$module : ''));
 			exit;
 		}
 	}
@@ -125,10 +126,10 @@ if ($action == 'add' && $permtoadd)
 	$ref = trim(GETPOST("ref", 'alpha'));
 	$label = trim(GETPOST("label", 'alpha'));
 	$desc = trim(GETPOST("desc", 'alpha'));
-	$catParent = GETPOST("catParent", 'alpha');	// Can be an int (with ECM) or a string (with generic filemanager)
-	if ($catParent == '-1') $catParent=0;
+	$catParent = GETPOST("catParent", 'alpha'); // Can be an int (with ECM) or a string (with generic filemanager)
+	if ($catParent == '-1') $catParent = 0;
 
-	$error=0;
+	$error = 0;
 
 	if (empty($label))
 	{
@@ -137,14 +138,14 @@ if ($action == 'add' && $permtoadd)
 		$error++;
 	}
 
-	if (! $error)
+	if (!$error)
 	{
 		if ($module == 'ecm')
 		{
-			$ecmdir->ref                = $ref;
-			$ecmdir->label              = $label;
-			$ecmdir->description        = $desc;
-			$ecmdir->fk_parent          = (int) $catParent;
+			$ecmdir->ref            = $ref;
+			$ecmdir->label          = $label;
+			$ecmdir->description    = $desc;
+			$ecmdir->fk_parent      = (int) $catParent;
 
 			$id = $ecmdir->create($user);
 			if ($id <= 0)
@@ -168,9 +169,9 @@ if ($action == 'add' && $permtoadd)
 				dol_print_error('', 'Bad value for module. Not supported.');
 			}
 
-			if (! $error)
+			if (!$error)
 			{
-				$fullpathofdir = $dirfornewdir.'/'.($catParent? $catParent.'/' : '').$label;
+				$fullpathofdir = $dirfornewdir.'/'.($catParent ? $catParent.'/' : '').$label;
 				$result = dol_mkdir($fullpathofdir, DOL_DATA_ROOT);
 				if ($result < 0)
 				{
@@ -185,9 +186,9 @@ if ($action == 'add' && $permtoadd)
 		}
 	}
 
-	if (! $error)
+	if (!$error)
 	{
-		if (! empty($backtopage))
+		if (!empty($backtopage))
 		{
 			header("Location: ".$backtopage);
 			exit;
@@ -203,7 +204,7 @@ if ($action == 'add' && $permtoadd)
 // Deleting file
 elseif ($action == 'confirm_deletesection' && $confirm == 'yes')
 {
-	$result=$ecmdir->delete($user);
+	$result = $ecmdir->delete($user);
 	setEventMessages($langs->trans("ECMSectionWasRemoved", $ecmdir->label), null, 'mesgs');
 }
 
@@ -216,8 +217,8 @@ elseif ($action == 'confirm_deletesection' && $confirm == 'yes')
 
 llxHeader('', $langs->trans("ECMNewSection"));
 
-$form=new Form($db);
-$formecm=new FormEcm($db);
+$form = new Form($db);
+$formecm = new FormEcm($db);
 
 if ($action == 'create')
 {
@@ -225,19 +226,19 @@ if ($action == 'create')
 	// Create
 	//***********************
 	print '<form action="'.$_SERVER["PHP_SELF"].'" method="POST">';
-	print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+	print '<input type="hidden" name="token" value="'.newToken().'">';
 	print '<input type="hidden" name="action" value="add">';
 	print '<input type="hidden" name="module" value="'.dol_escape_htmltag($module).'">';
 	print '<input type="hidden" name="backtopage" value="'.dol_escape_htmltag($backtopage).'">';
 	if ($website) print '<input type="hidden" name="website" value="'.dol_escape_htmltag($website).'">';
 	if ($pageid)  print '<input type="hidden" name="pageid" value="'.dol_escape_htmltag($pageid).'">';
 
-	$title=$langs->trans("ECMNewSection");
+	$title = $langs->trans("ECMNewSection");
 	print load_fiche_titre($title);
 
 	dol_fiche_head();
 
-	print '<table class="border" width="100%">';
+	print '<table class="border centpercent">';
 
 	// Label
 	print '<tr><td class="titlefieldcreate fieldrequired">'.$langs->trans("Label").'</td><td><input name="label" class="minwidth100" maxlength="32" value="'.$ecmdir->label.'"></td></tr>'."\n";
@@ -277,14 +278,14 @@ if (empty($action) || $action == 'delete_section')
 	print load_fiche_titre($langs->trans("ECMSectionOfDocuments"));
 	print '<br>';
 
-/*
+    /*
 	$ecmdir->ref=$ecmdir->label;
 	print $langs->trans("ECMSection").': ';
 	print img_picto('','object_dir').' ';
 	print '<a href="'.DOL_URL_ROOT.'/ecm/dir_add_card.php">'.$langs->trans("ECMRoot").'</a>';
 	//print ' -> <b>'.$ecmdir->getNomUrl(1).'</b><br>';
 	print "<br><br>";
-*/
+    */
 
 	// Confirmation de la suppression d'une ligne categorie
 	if ($action == 'delete_section')

@@ -12,8 +12,8 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
- * or see http://www.gnu.org/
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
+ * or see https://www.gnu.org/
  */
 
 /**
@@ -22,7 +22,7 @@
  *      \brief      File to manage no password generation.
  */
 
-require_once DOL_DOCUMENT_ROOT .'/core/modules/security/generate/modules_genpassword.php';
+require_once DOL_DOCUMENT_ROOT.'/core/modules/security/generate/modules_genpassword.php';
 
 
 /**
@@ -61,10 +61,10 @@ class modGeneratePassNone extends ModeleGenPassword
 		$this->id = "none";
 		$this->length = 0;
 
-		$this->db=$db;
-		$this->conf=$conf;
-		$this->langs=$langs;
-		$this->user=$user;
+		$this->db = $db;
+		$this->conf = $conf;
+		$this->langs = $langs;
+		$this->user = $user;
 	}
 
 	/**

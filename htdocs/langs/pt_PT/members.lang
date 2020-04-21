@@ -29,6 +29,7 @@ MenuMembersUpToDate=Membros actualizados
 MenuMembersNotUpToDate=Membros não actualizados
 MenuMembersResiliated=Membros inativos
 MembersWithSubscriptionToReceive=Membros com assinatura para receber
+MembersWithSubscriptionToReceiveShort=Subscription to receive
 DateSubscription=Data filiação
 DateEndSubscription=Data fim filiação
 EndSubscription=Fim filiação

@@ -12,7 +12,7 @@
 # GNU General Public License for more details.
 #
 # You should have received a copy of the GNU General Public License
-# along with this program.  If not, see <http://www.gnu.org/licenses/>.
+# along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 #
 # Generic
@@ -30,10 +30,14 @@ Permission56005=Vedeți tichetele tuturor terților (nu sunt eficiente pentru ut
 TicketDictType=Tipuri de tichete
 TicketDictCategory=Tichet - Grupuri
 TicketDictSeverity=Tichet - Severități
+TicketDictResolution=Ticket - Resolution
 TicketTypeShortBUGSOFT=Logică disfuncţională
 TicketTypeShortBUGHARD=Material disfuncţional
 TicketTypeShortCOM=Întrebare comercială
-TicketTypeShortINCIDENT=Cerere de asistență
+
+TicketTypeShortHELP=Request for functionnal help
+TicketTypeShortISSUE=Issue, bug or problem
+TicketTypeShortREQUEST=Change or enhancement request
 TicketTypeShortPROJET=Proiect
 TicketTypeShortOTHER=Altele
 
@@ -137,6 +141,10 @@ NoUnreadTicketsFound=No unread ticket found
 TicketViewAllTickets=Vezi toate tichetele
 TicketViewNonClosedOnly=Vedeți numai tichetele deschise
 TicketStatByStatus=Tichete după statut
+OrderByDateAsc=Sort by ascending date
+OrderByDateDesc=Sort by descending date
+ShowAsConversation=Show as conversation list
+MessageListViewType=Show as table list
 
 #
 # Ticket card
@@ -222,6 +230,9 @@ TicketConfirmChangeStatus=Confirmați modificarea stării: %s?
 TicketLogStatusChanged=Starea modificată: %s la %s
 TicketNotNotifyTiersAtCreate=Nu notificați compania la crearea
 Unread=Necitită
+TicketNotCreatedFromPublicInterface=Not available. Ticket was not created from public interface.
+PublicInterfaceNotEnabled=Public interface was not enabled
+ErrorTicketRefRequired=Ticket reference name is required
 
 #
 # Logs
@@ -231,7 +242,7 @@ NoLogForThisTicket=Nu există jurnal pentru acest bilet încă
 TicketLogAssignedTo=Tichet %s alocat la %s
 TicketLogPropertyChanged=Tichet %s modificat: clasificarea de la %s la %s
 TicketLogClosedBy=Tichet %s închis de %s
-TicketLogReopen=Tichet%s redeschis
+TicketLogReopen=Ticket %s re-open
 
 #
 # Public pages
@@ -241,9 +252,9 @@ ShowListTicketWithTrackId=Afișați lista de tichete din ID-ul piesei
 ShowTicketWithTrackId=Afișați tichetul din ID-ul piesei
 TicketPublicDesc=Puteți crea un tichet de asistență sau un cec de la un ID existent.
 YourTicketSuccessfullySaved=Tichetul a fost salvat cu succes!
-MesgInfosPublicTicketCreatedWithTrackId=A fost creat un nou tichet cu ID %s.
+MesgInfosPublicTicketCreatedWithTrackId=A new ticket has been created with ID %s and Ref %s.
 PleaseRememberThisId=Păstrați numărul de urmărire pe care l-am putea întreba mai târziu.
-TicketNewEmailSubject=Confirmarea creării tichetului
+TicketNewEmailSubject=Ticket creation confirmation - Ref %s (public ticket ID %s)
 TicketNewEmailSubjectCustomer=Tichet de asistență nou
 TicketNewEmailBody=Acesta este un email automat pentru a confirma că ați înregistrat un nou tichet.
 TicketNewEmailBodyCustomer=Acesta este un email automat pentru a confirma că un nou tichet a fost creat în contul dvs.
@@ -262,7 +273,7 @@ Subject=Subiect
 ViewTicket=Vedeți tichetul
 ViewMyTicketList=Vedeți lista mea de tichete
 ErrorEmailMustExistToCreateTicket=Eroare: adresa de email nu a fost găsită în baza noastră de date
-TicketNewEmailSubjectAdmin=A fost creat un tichet nou
+TicketNewEmailSubjectAdmin=New ticket created - Ref %s (public ticket ID %s)
 TicketNewEmailBodyAdmin=<p> Tichetul tocmai a fost creat cu ID # %s, vezi informațiile: </p>
 SeeThisTicketIntomanagementInterface=Vedeți tichetul în interfața de gestionare
 TicketPublicInterfaceForbidden=Interfața publică pentru tichete nu a fost activată

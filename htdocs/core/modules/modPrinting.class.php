@@ -13,7 +13,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /** \defgroup   printing     Module printing
@@ -25,7 +25,7 @@
  *  \ingroup    printing
  *  \brief      File of class to describe and activate module Direct Printing
  */
-include_once DOL_DOCUMENT_ROOT .'/core/modules/DolibarrModules.class.php';
+include_once DOL_DOCUMENT_ROOT.'/core/modules/DolibarrModules.class.php';
 
 
 
@@ -42,7 +42,7 @@ class modPrinting extends DolibarrModules
      */
     public function __construct($db)
     {
-        $this->db = $db ;
+        $this->db = $db;
         $this->numero = 64000;
         // Family can be 'crm','financial','hr','projects','products','ecm','technic','other'
         // It is used to group modules in module setup page
@@ -52,7 +52,7 @@ class modPrinting extends DolibarrModules
         $this->name = preg_replace('/^mod/i', '', get_class($this));
         // Module description, used if translation string 'ModuleXXXDesc' not found (where XXX is value of numeric property 'numero' of module)
         $this->description = "Enable Direct Printing System.";
-        $this->version = 'dolibarr';    // 'development' or 'experimental' or 'dolibarr' or version
+        $this->version = 'dolibarr'; // 'development' or 'experimental' or 'dolibarr' or version
         $this->const_name = 'MAIN_MODULE_'.strtoupper($this->name);
         // Name of image file used for this module.
         // If file is in theme/yourtheme/img directory under name object_pictovalue.png, use this->picto='pictovalue'
@@ -66,12 +66,12 @@ class modPrinting extends DolibarrModules
         $this->config_page_url = array("printing.php@printing");
 
         // Dependencies
-        $this->hidden = false;			// A condition to hide module
-		$this->depends = array();		// List of module class names as string that must be enabled if this module is enabled
-		$this->requiredby = array();	// List of module ids to disable if this one is disabled
-		$this->conflictwith = array();	// List of module class names as string this module is in conflict with
-		$this->phpmin = array(5,4);		// Minimum version of PHP required by module
-        $this->need_dolibarr_version = array(3,7,-2);   // Minimum version of Dolibarr required by module
+        $this->hidden = false; // A condition to hide module
+		$this->depends = array(); // List of module class names as string that must be enabled if this module is enabled
+		$this->requiredby = array(); // List of module ids to disable if this one is disabled
+		$this->conflictwith = array(); // List of module class names as string this module is in conflict with
+		$this->phpmin = array(5, 4); // Minimum version of PHP required by module
+        $this->need_dolibarr_version = array(3, 7, -2); // Minimum version of Dolibarr required by module
         $this->conflictwith = array();
         $this->langfiles = array("printing");
 
@@ -85,7 +85,7 @@ class modPrinting extends DolibarrModules
         $this->rights = array();
         $this->rights_class = 'printing';
 
-        $r=0;
+        $r = 0;
         // $this->rights[$r][0]     Id permission (unique tous modules confondus)
         // $this->rights[$r][1]     Libelle par defaut si traduction de cle "PermissionXXX" non trouvee (XXX = Id permission)
         // $this->rights[$r][2]     Non utilise
@@ -101,20 +101,20 @@ class modPrinting extends DolibarrModules
         $this->rights[$r][4] = 'read';
 
         // Main menu entries
-        $this->menus = array();         // List of menus to add
-        $r=0;
+        $this->menus = array(); // List of menus to add
+        $r = 0;
 
         // This is to declare the Top Menu entry:
-        $this->menu[$r]=array(  'fk_menu'=>'fk_mainmenu=home,fk_leftmenu=admintools',               // Put 0 if this is a top menu
-                                'type'=>'left',                 // This is a Top menu entry
+        $this->menu[$r] = array('fk_menu'=>'fk_mainmenu=home,fk_leftmenu=admintools', // Put 0 if this is a top menu
+                                'type'=>'left', // This is a Top menu entry
                                 'titre'=>'MenuDirectPrinting',
                                 'url'=>'/printing/index.php?mainmenu=home&leftmenu=admintools',
-                                'langs'=>'printing',            // Lang file to use (without .lang) by module. File must be in langs/code_CODE/ directory.
+                                'langs'=>'printing', // Lang file to use (without .lang) by module. File must be in langs/code_CODE/ directory.
                                 'position'=>300,
                                 'enabled'=>'$conf->printing->enabled && preg_match(\'/^(admintools|all)/\', $leftmenu)',
-                                'perms'=>'$user->rights->printing->read',    // Use 'perms'=>'1' if you want your menu with no permission rules
+                                'perms'=>'$user->rights->printing->read', // Use 'perms'=>'1' if you want your menu with no permission rules
                                 'target'=>'',
-                                'user'=>0);                     // 0=Menu for internal users, 1=external users, 2=both
+                                'user'=>0); // 0=Menu for internal users, 1=external users, 2=both
 
         $r++;
     }

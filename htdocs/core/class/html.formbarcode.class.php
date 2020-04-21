@@ -14,7 +14,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  *
  */
 
@@ -37,7 +37,7 @@ class FormBarCode
     /**
      * @var string Error code (or message)
      */
-    public $error='';
+    public $error = '';
 
 
     /**
@@ -81,8 +81,8 @@ class FormBarCode
         }
 
         // We check if barcode is already selected by default
-        if (((! empty($conf->product->enabled) || ! empty($conf->service->enabled)) && $conf->global->PRODUIT_DEFAULT_BARCODE_TYPE == $code_id) ||
-        (! empty($conf->societe->enabled) && $conf->global->GENBARCODE_BARCODETYPE_THIRDPARTY == $code_id))
+        if (((!empty($conf->product->enabled) || !empty($conf->service->enabled)) && $conf->global->PRODUIT_DEFAULT_BARCODE_TYPE == $code_id) ||
+        (!empty($conf->societe->enabled) && $conf->global->GENBARCODE_BARCODETYPE_THIRDPARTY == $code_id))
         {
             $disable = 'disabled';
         }
@@ -90,24 +90,24 @@ class FormBarCode
         if (!empty($conf->use_javascript_ajax))
         {
             $select_encoder = '<form action="'.DOL_URL_ROOT.'/admin/barcode.php" method="POST" id="form'.$idForm.'">';
-            $select_encoder.= '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
-            $select_encoder.= '<input type="hidden" name="action" value="update">';
-            $select_encoder.= '<input type="hidden" name="code_id" value="'.$code_id.'">';
+            $select_encoder .= '<input type="hidden" name="token" value="'.newToken().'">';
+            $select_encoder .= '<input type="hidden" name="action" value="update">';
+            $select_encoder .= '<input type="hidden" name="code_id" value="'.$code_id.'">';
         }
 
-        $selectname=(!empty($conf->use_javascript_ajax)?'coder':'coder'.$code_id);
-        $select_encoder.= '<select id="select'.$idForm.'" class="flat" name="'.$selectname.'">';
-        $select_encoder.= '<option value="0"'.($selected==0?' selected':'').' '.$disable.'>'.$langs->trans('Disable').'</option>';
-        $select_encoder.= '<option value="-1" disabled>--------------------</option>';
-        foreach($barcodelist as $key => $value)
+        $selectname = (!empty($conf->use_javascript_ajax) ? 'coder' : 'coder'.$code_id);
+        $select_encoder .= '<select id="select'.$idForm.'" class="flat" name="'.$selectname.'">';
+        $select_encoder .= '<option value="0"'.($selected == 0 ? ' selected' : '').' '.$disable.'>'.$langs->trans('Disable').'</option>';
+        $select_encoder .= '<option value="-1" disabled>--------------------</option>';
+        foreach ($barcodelist as $key => $value)
         {
-            $select_encoder.= '<option value="'.$key.'"'.($selected==$key?' selected':'').'>'.$value.'</option>';
+            $select_encoder .= '<option value="'.$key.'"'.($selected == $key ? ' selected' : '').'>'.$value.'</option>';
         }
-        $select_encoder.= '</select>';
+        $select_encoder .= '</select>';
 
         if (!empty($conf->use_javascript_ajax))
         {
-            $select_encoder.= '</form>';
+            $select_encoder .= '</form>';
         }
 
         return $select_encoder;
@@ -144,10 +144,10 @@ class FormBarCode
         $out = '';
 
         $sql = "SELECT rowid, code, libelle";
-        $sql.= " FROM ".MAIN_DB_PREFIX."c_barcode_type";
-        $sql.= " WHERE coder <> '0'";
-        $sql.= " AND entity = ".$conf->entity;
-        $sql.= " ORDER BY code";
+        $sql .= " FROM ".MAIN_DB_PREFIX."c_barcode_type";
+        $sql .= " WHERE coder <> '0'";
+        $sql .= " AND entity = ".$conf->entity;
+        $sql .= " ORDER BY code";
 
         $result = $this->db->query($sql);
         if ($result) {
@@ -155,20 +155,20 @@ class FormBarCode
             $i = 0;
 
             if ($useempty && $num > 0) {
-                $out .= '<select class="flat minwidth75imp" name="' . $htmlname . '" id="select_' . $htmlname . '">';
+                $out .= '<select class="flat minwidth75imp" name="'.$htmlname.'" id="select_'.$htmlname.'">';
                 $out .= '<option value="0">&nbsp;</option>';
             } else {
                 $langs->load("errors");
-                $out .= '<select disabled class="flat minwidth75imp" name="' . $htmlname . '" id="select_' . $htmlname . '">';
-                $out .= '<option value="0" selected>' . $langs->trans('ErrorNoActivatedBarcode') . '</option>';
+                $out .= '<select disabled class="flat minwidth75imp" name="'.$htmlname.'" id="select_'.$htmlname.'">';
+                $out .= '<option value="0" selected>'.$langs->trans('ErrorNoActivatedBarcode').'</option>';
             }
 
             while ($i < $num) {
                 $obj = $this->db->fetch_object($result);
                 if ($selected == $obj->rowid) {
-                    $out .= '<option value="' . $obj->rowid . '" selected>';
+                    $out .= '<option value="'.$obj->rowid.'" selected>';
                 } else {
-                    $out .= '<option value="' . $obj->rowid . '">';
+                    $out .= '<option value="'.$obj->rowid.'">';
                 }
                 $out .= $obj->libelle;
                 $out .= '</option>';
@@ -212,14 +212,14 @@ class FormBarCode
         global $langs, $conf;
         $out = '';
         if ($htmlname != "none") {
-            $out .= '<form method="post" action="' . $page . '">';
-            $out .= '<input type="hidden" name="token" value="' . $_SESSION['newtoken'] . '">';
+            $out .= '<form method="post" action="'.$page.'">';
+            $out .= '<input type="hidden" name="token" value="'.newToken().'">';
             $out .= '<input type="hidden" name="action" value="set'.$htmlname.'">';
             $out .= '<table class="nobordernopadding" cellpadding="0" cellspacing="0">';
             $out .= '<tr><td>';
             $out .= $this->selectBarcodeType($selected, $htmlname, 1);
             $out .= '</td>';
-            $out .= '<td class="left"><input type="submit" class="button" value="' . $langs->trans("Modify") . '">';
+            $out .= '<td class="left"><input type="submit" class="button" value="'.$langs->trans("Modify").'">';
             $out .= '</td></tr></table></form>';
         }
         return $out;

@@ -29,6 +29,7 @@ MenuMembersUpToDate=На сегодняшний день членами
 MenuMembersNotUpToDate=За сегодняшний день члены
 MenuMembersResiliated=Terminated members
 MembersWithSubscriptionToReceive=Члены с подпиской на получение
+MembersWithSubscriptionToReceiveShort=Subscription to receive
 DateSubscription=Дата подписки
 DateEndSubscription=Дата окончания подписки
 EndSubscription=Конец подписке

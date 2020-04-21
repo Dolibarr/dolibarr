@@ -29,6 +29,7 @@ MenuMembersUpToDate=Atnaujinti nariai
 MenuMembersNotUpToDate=Pasenę nariai
 MenuMembersResiliated=Terminated members
 MembersWithSubscriptionToReceive=Nariai, kurių pasirašymą reikia gauti
+MembersWithSubscriptionToReceiveShort=Subscription to receive
 DateSubscription=Pasirašymo data
 DateEndSubscription=Pasirašymo pabaigos data
 EndSubscription=Pasirašymo pabaiga

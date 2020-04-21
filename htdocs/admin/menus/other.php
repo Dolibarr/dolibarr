@@ -12,7 +12,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -25,11 +25,11 @@ require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
 
 // Load translation files required by the page
-$langs->loadLangs(array("user","other","admin"));
+$langs->loadLangs(array("user", "other", "admin"));
 
-if (! $user->admin) accessforbidden();
+if (!$user->admin) accessforbidden();
 
-$action=GETPOST('action', 'alpha');
+$action = GETPOST('action', 'alpha');
 
 
 /*
@@ -81,7 +81,7 @@ dol_fiche_head($head, 'misc', $langs->trans("Menus"), -1);
 
 // Other Options
 
-print '<table class="noborder" width="100%">';
+print '<table class="noborder centpercent">';
 print '<tr class="liste_titre">';
 print '<td colspan="3">'.$langs->trans("Parameters").'</td>';
 print '<td class="center" width="80">'.$langs->trans("Status").'</td>';

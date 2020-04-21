@@ -12,8 +12,8 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
- * or see http://www.gnu.org/
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
+ * or see https://www.gnu.org/
  */
 
 /**
@@ -29,7 +29,7 @@
  */
 function stock_prepare_head($object)
 {
-	global $langs, $conf;
+	global $langs, $conf, $user;
 
 	$h = 0;
 	$head = array();
@@ -39,10 +39,13 @@ function stock_prepare_head($object)
 	$head[$h][2] = 'card';
 	$h++;
 
-	$head[$h][0] = DOL_URL_ROOT.'/product/stock/movement_list.php?id='.$object->id;
-	$head[$h][1] = $langs->trans("StockMovements");
-	$head[$h][2] = 'movements';
-	$h++;
+	if (!empty($user->rights->stock->mouvement->lire))
+	{
+		$head[$h][0] = DOL_URL_ROOT.'/product/stock/movement_list.php?id='.$object->id;
+		$head[$h][1] = $langs->trans("StockMovements");
+		$head[$h][2] = 'movements';
+		$h++;
+	}
 
 	/*
 	$head[$h][0] = DOL_URL_ROOT.'/product/stock/fiche-valo.php?id='.$object->id;

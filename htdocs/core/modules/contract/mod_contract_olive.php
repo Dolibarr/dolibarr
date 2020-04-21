@@ -14,8 +14,8 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
- * or see http://www.gnu.org/
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
+ * or see https://www.gnu.org/
  */
 
 /**
@@ -24,7 +24,7 @@
  *  \brief      File of class to manage contract numbering rules Olive
  */
 
-require_once DOL_DOCUMENT_ROOT .'/core/modules/contract/modules_contract.php';
+require_once DOL_DOCUMENT_ROOT.'/core/modules/contract/modules_contract.php';
 
 
 /**
@@ -37,28 +37,31 @@ class mod_contract_olive extends ModelNumRefContracts
 	 * @deprecated
 	 * @see $name
 	 */
-	public $nom='Olive';
+	public $nom = 'Olive';
 
 	/**
 	 * @var string model name
 	 */
-	public $name='Olive';
+	public $name = 'Olive';
 
-	public $code_modifiable = 1;				// Code modifiable
+	public $code_modifiable = 1; // Code modifiable
 
-	public $code_modifiable_invalide = 1;		// Code modifiable si il est invalide
+	public $code_modifiable_invalide = 1; // Code modifiable si il est invalide
 
-	public $code_modifiable_null = 1;			// Code modifiables si il est null
+	public $code_modifiable_null = 1; // Code modifiables si il est null
 
-	public $code_null = 1;						// Code facultatif
+	public $code_null = 1; // Code facultatif
 
 	/**
      * Dolibarr version of the loaded document
      * @var string
      */
-	public $version = 'dolibarr';    		// 'development', 'experimental', 'dolibarr'
+	public $version = 'dolibarr'; // 'development', 'experimental', 'dolibarr'
 
-	public $code_auto = 0; 	                // Numerotation automatique
+	/**
+	 * @var int Automatic numbering
+	 */
+	public $code_auto = 0;
 
 
 	/**
@@ -105,16 +108,16 @@ class mod_contract_olive extends ModelNumRefContracts
 	{
 		global $conf;
 
-		$result=0;
+		$result = 0;
 		$code = strtoupper(trim($code));
 
 		if (empty($code) && $this->code_null && empty($conf->global->MAIN_CONTARCT_CODE_ALWAYS_REQUIRED))
 		{
-			$result=0;
+			$result = 0;
 		}
-		elseif (empty($code) && (! $this->code_null || ! empty($conf->global->MAIN_CONTARCT_CODE_ALWAYS_REQUIRED)) )
+		elseif (empty($code) && (!$this->code_null || !empty($conf->global->MAIN_CONTARCT_CODE_ALWAYS_REQUIRED)))
 		{
-			$result=-2;
+			$result = -2;
 		}
 
 		dol_syslog("mod_contract_olive::verif type=".$type." result=".$result);

@@ -60,7 +60,7 @@ MemberSubscriptionModifiedInDolibarr=Subscripció %s per a membre %s, modificada
 MemberSubscriptionDeletedInDolibarr=Subscripció %s per a membre %s, eliminada
 ShipmentValidatedInDolibarr=Expedició %s validada
 ShipmentClassifyClosedInDolibarr=Expedició %s classificada com a facturada
-ShipmentUnClassifyCloseddInDolibarr=Expedició %s classificada com a reoberta
+ShipmentUnClassifyCloseddInDolibarr=Enviament %s classificat com a re-obert
 ShipmentBackToDraftInDolibarr=Enviament %s retornat a l'estat d'esborrany
 ShipmentDeletedInDolibarr=Expedició %s eliminada
 OrderCreatedInDolibarr=Comanda %s creada
@@ -76,6 +76,7 @@ ContractSentByEMail=Contracte %s enviat per correu electrònic
 OrderSentByEMail=Comanda a proveïdor %s enviada per e-mail
 InvoiceSentByEMail=Factura a client %s enviada per e-mail
 SupplierOrderSentByEMail=Comanda de compra %s enviada per e-mail
+ORDER_SUPPLIER_DELETEInDolibarr=Comanda a proveïdor %s eliminada
 SupplierInvoiceSentByEMail=Factura de proveïdor %s enviada per e-mail
 ShippingSentByEMail=Enviament %s enviat per email
 ShippingValidated= Enviament %s validat
@@ -86,6 +87,11 @@ InvoiceDeleted=Factura esborrada
 PRODUCT_CREATEInDolibarr=Producte %s creat
 PRODUCT_MODIFYInDolibarr=Producte %s modificat
 PRODUCT_DELETEInDolibarr=Producte %s eliminat
+HOLIDAY_CREATEInDolibarr=S'ha creat la sol·licitud de permís %s
+HOLIDAY_MODIFYInDolibarr=S'ha modificat la sol·licitud de permís %s
+HOLIDAY_APPROVEInDolibarr=Sol·licitud de dies lliures %s aprovada
+HOLIDAY_VALIDATEDInDolibarr=La sol·licitud d’excedència %s validada
+HOLIDAY_DELETEInDolibarr=S'ha suprimit la sol·licitud de permís %s
 EXPENSE_REPORT_CREATEInDolibarr=Creat l'informe de despeses %s
 EXPENSE_REPORT_VALIDATEInDolibarr=S'ha validat l'informe de despeses %s
 EXPENSE_REPORT_APPROVEInDolibarr=Aprovat l'informe de despeses %s
@@ -99,6 +105,14 @@ TICKET_MODIFYInDolibarr=S'ha modificat el tiquet %s
 TICKET_ASSIGNEDInDolibarr=S'ha assignat el bitllet %s
 TICKET_CLOSEInDolibarr=Tiquet %s tancat
 TICKET_DELETEInDolibarr=S'ha esborrat el tiquet %s
+BOM_VALIDATEInDolibarr=Llista de materials validada
+BOM_UNVALIDATEInDolibarr=Llista de materials desvalidada
+BOM_CLOSEInDolibarr=Llista de materials desactivada
+BOM_REOPENInDolibarr=Llista de materials reoberta
+BOM_DELETEInDolibarr=Llista de materials eliminada
+MRP_MO_VALIDATEInDolibarr=OF validada
+MRP_MO_PRODUCEDInDolibarr=OF fabricada
+MRP_MO_DELETEInDolibarr=OF eliminada
 ##### End agenda events #####
 AgendaModelModule=Plantilles de documents per esdeveniments
 DateActionStart=Data d'inici
@@ -109,6 +123,7 @@ AgendaUrlOptionsNotAdmin=<b>logina=!%s</b> ​​per a restringir la producció 
 AgendaUrlOptions4=<b>logint=%s</b> per a restringir la producció d'accions assignades a l'usuari <b>%s</b> (propietari i altres).
 AgendaUrlOptionsProject=<b>project=PROJECT_ID</b> per a restringir la sortida d'accions associades al projecta <b>PROJECT_ID</b>.
 AgendaUrlOptionsNotAutoEvent=<b>notactiontype=systemauto</b> per excloure esdeveniments automàtics.
+AgendaUrlOptionsIncludeHolidays= <b> includeholidays = 1 </b> per incloure esdeveniments de vacances.
 AgendaShowBirthdayEvents=Mostra aniversaris dels contactes
 AgendaHideBirthdayEvents=Oculta aniversaris dels contactes
 Busy=Ocupat

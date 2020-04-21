@@ -16,7 +16,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -40,13 +40,13 @@ $extrafields = new ExtraFields($db);
 $form = new Form($db);
 
 // List of supported format
-$tmptype2label=ExtraFields::$type2label;
-$type2label=array('');
-foreach ($tmptype2label as $key => $val) $type2label[$key]=$langs->transnoentitiesnoconv($val);
+$tmptype2label = ExtraFields::$type2label;
+$type2label = array('');
+foreach ($tmptype2label as $key => $val) $type2label[$key] = $langs->transnoentitiesnoconv($val);
 
-$action=GETPOST('action', 'alpha');
-$attrname=GETPOST('attrname', 'alpha');
-$elementtype='resource'; //Must be the $table_element of the class that manage extrafield
+$action = GETPOST('action', 'alpha');
+$attrname = GETPOST('attrname', 'alpha');
+$elementtype = 'resource'; //Must be the $table_element of the class that manage extrafield
 
 if (!$user->admin) accessforbidden();
 
@@ -63,15 +63,15 @@ require DOL_DOCUMENT_ROOT.'/core/actions_extrafields.inc.php';
  * View
  */
 
-$textobject=$langs->transnoentitiesnoconv("ResourceSingular");
+$textobject = $langs->transnoentitiesnoconv("ResourceSingular");
 
 llxHeader('', $langs->trans("ResourceSetup"));
 
-$linkback='<a href="'.DOL_URL_ROOT.'/admin/modules.php?restore_lastsearch_values=1">'.$langs->trans("BackToModuleList").'</a>';
+$linkback = '<a href="'.DOL_URL_ROOT.'/admin/modules.php?restore_lastsearch_values=1">'.$langs->trans("BackToModuleList").'</a>';
 print load_fiche_titre($langs->trans("ResourceSetup"), $linkback, 'title_setup');
 print "<br>\n";
 
-$head=resource_admin_prepare_head();
+$head = resource_admin_prepare_head();
 
 dol_fiche_head($head, 'attributes', $langs->trans("ResourceSingular"), -1, 'action');
 
@@ -108,7 +108,7 @@ if ($action == 'create')
 /* Edition of an optional field                                                */
 /*                                                                            */
 /* ************************************************************************** */
-if ($action == 'edit' && ! empty($attrname))
+if ($action == 'edit' && !empty($attrname))
 {
     print "<br>";
     print load_fiche_titre($langs->trans("FieldEdition", $attrname));

@@ -13,10 +13,10 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
-include_once DOL_DOCUMENT_ROOT . '/core/class/stats.class.php';
-include_once DOL_DOCUMENT_ROOT . '/core/lib/date.lib.php';
+include_once DOL_DOCUMENT_ROOT.'/core/class/stats.class.php';
+include_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 
 
 /**
@@ -58,23 +58,23 @@ class TaskStats extends Stats
 
 		$sql = "SELECT";
 		$sql .= " COUNT(t.rowid), t.priority";
-		$sql.= " FROM ". MAIN_DB_PREFIX . "projet_task as t INNER JOIN " . MAIN_DB_PREFIX . "projet as p ON p.rowid = t.fk_projet";
-		if (! $user->rights->societe->client->voir && ! $user->soc_id)
-			$sql .= " INNER JOIN " . MAIN_DB_PREFIX . "societe_commerciaux as sc ON sc.fk_soc=t.fk_soc AND sc.fk_user=" . $user->id;
+		$sql .= " FROM ".MAIN_DB_PREFIX."projet_task as t INNER JOIN ".MAIN_DB_PREFIX."projet as p ON p.rowid = t.fk_projet";
+		if (!$user->rights->societe->client->voir && !$user->soc_id)
+			$sql .= " INNER JOIN ".MAIN_DB_PREFIX."societe_commerciaux as sc ON sc.fk_soc=t.fk_soc AND sc.fk_user=".$user->id;
 		$sql .= $this->buildWhere();
 		//$sql .= " AND t.fk_statut <> 0";     // We want historic also, so all task not draft
 		$sql .= " GROUP BY t.priority";
 
-		$result = array ();
-		$res = array ();
+		$result = array();
+		$res = array();
 
-		dol_syslog(get_class($this) . '::' . __METHOD__ . "", LOG_DEBUG);
+		dol_syslog(get_class($this).'::'.__METHOD__."", LOG_DEBUG);
 		$resql = $this->db->query($sql);
 		if ($resql) {
 			$num = $this->db->num_rows($resql);
 			$i = 0;
 			$other = 0;
-			while ( $i < $num ) {
+			while ($i < $num) {
 				$row = $this->db->fetch_row($resql);
 				if ($i < $limit || $num == $limit)
 				{
@@ -88,14 +88,14 @@ class TaskStats extends Stats
 				$i++;
 			}
 			if ($num > $limit)
-				$result[$i] = array (
+				$result[$i] = array(
 						$langs->transnoentitiesnoconv("Other"),
 						$other
 				);
 			$this->db->free($resql);
 		} else {
-			$this->error = "Error " . $this->db->lasterror();
-			dol_syslog(get_class($this) . '::' . __METHOD__ . ' ' . $this->error, LOG_ERR);
+			$this->error = "Error ".$this->db->lasterror();
+			dol_syslog(get_class($this).'::'.__METHOD__.' '.$this->error, LOG_ERR);
 			return -1;
 		}
 
@@ -111,17 +111,17 @@ class TaskStats extends Stats
 	{
 		global $conf, $user, $langs;
 
-		$datay = array ();
+		$datay = array();
 
-		$wonlostfilter=0; // No filter on status WON/LOST
+		$wonlostfilter = 0; // No filter on status WON/LOST
 
 		$sql = "SELECT date_format(t.datec,'%Y') as year, COUNT(t.rowid) as nb";
-		$sql.= " FROM ". MAIN_DB_PREFIX . "projet_task as t INNER JOIN " . MAIN_DB_PREFIX . "projet as p ON p.rowid = t.fk_projet";
-		if (! $user->rights->societe->client->voir && ! $user->soc_id)
-			$sql .= " INNER JOIN " . MAIN_DB_PREFIX . "societe_commerciaux as sc ON sc.fk_soc=t.fk_soc AND sc.fk_user=" . $user->id;
-		$sql.= $this->buildWhere();
-		$sql.= " GROUP BY year";
-		$sql.= $this->db->order('year', 'DESC');
+		$sql .= " FROM ".MAIN_DB_PREFIX."projet_task as t INNER JOIN ".MAIN_DB_PREFIX."projet as p ON p.rowid = t.fk_projet";
+		if (!$user->rights->societe->client->voir && !$user->soc_id)
+			$sql .= " INNER JOIN ".MAIN_DB_PREFIX."societe_commerciaux as sc ON sc.fk_soc=t.fk_soc AND sc.fk_user=".$user->id;
+		$sql .= $this->buildWhere();
+		$sql .= " GROUP BY year";
+		$sql .= $this->db->order('year', 'DESC');
 
 		return $this->_getAllByYear($sql);
 	}
@@ -137,23 +137,23 @@ class TaskStats extends Stats
 		$sqlwhere_str = '';
 		$sqlwhere = array();
 
-		$sqlwhere[] = ' t.entity IN (' . getEntity('project') . ')';
+		$sqlwhere[] = ' t.entity IN ('.getEntity('project').')';
 
-		if (! empty($this->userid))
-			$sqlwhere[] = ' t.fk_user_resp=' . $this->userid;
+		if (!empty($this->userid))
+			$sqlwhere[] = ' t.fk_user_resp='.$this->userid;
 		// Forced filter on socid is similar to forced filter on project. TODO Use project assignement to allow to not use filter on project
-		if (! empty($this->socid))
-			$sqlwhere[] = ' p.fk_soc=' . $this->socid;		// Link on thirdparty is on project, not on task
-		if (! empty($this->year) && empty($this->yearmonth))
-			$sqlwhere[] = " date_format(t.datec,'%Y')='" . $this->db->escape($this->year) . "'";
-		if (! empty($this->yearmonth))
-			$sqlwhere[] = " t.datec BETWEEN '" . $this->db->idate(dol_get_first_day($this->yearmonth)) . "' AND '" . $this->db->idate(dol_get_last_day($this->yearmonth)) . "'";
+		if (!empty($this->socid))
+			$sqlwhere[] = ' p.fk_soc='.$this->socid; // Link on thirdparty is on project, not on task
+		if (!empty($this->year) && empty($this->yearmonth))
+			$sqlwhere[] = " date_format(t.datec,'%Y')='".$this->db->escape($this->year)."'";
+		if (!empty($this->yearmonth))
+			$sqlwhere[] = " t.datec BETWEEN '".$this->db->idate(dol_get_first_day($this->yearmonth))."' AND '".$this->db->idate(dol_get_last_day($this->yearmonth))."'";
 
-		if (! empty($this->status))
-			$sqlwhere[] = " t.priority IN (" . $this->priority . ")";
+		if (!empty($this->status))
+			$sqlwhere[] = " t.priority IN (".$this->priority.")";
 
 		if (count($sqlwhere) > 0) {
-			$sqlwhere_str = ' WHERE ' . implode(' AND ', $sqlwhere);
+			$sqlwhere_str = ' WHERE '.implode(' AND ', $sqlwhere);
 		}
 
 		return $sqlwhere_str;
@@ -163,7 +163,7 @@ class TaskStats extends Stats
 	 * Return Task number by month for a year
 	 *
 	 * @param 	int 	$year 		Year to scan
-     * @param	int		$format		0=Label of absiss is a translated text, 1=Label of absiss is month number, 2=Label of absiss is first letter of month
+     * @param	int		$format		0=Label of abscissa is a translated text, 1=Label of abscissa is month number, 2=Label of abscissa is first letter of month
 	 * @return 	array 				Array of values
 	 */
 	public function getNbByMonth($year, $format = 0)
@@ -173,14 +173,14 @@ class TaskStats extends Stats
 		$this->yearmonth = $year;
 
 		$sql = "SELECT date_format(t.datec,'%m') as dm, COUNT(t.rowid) as nb";
-		$sql.= " FROM ". MAIN_DB_PREFIX . "projet_task as t INNER JOIN " . MAIN_DB_PREFIX . "projet as p ON p.rowid = t.fk_projet";
-		if (! $user->rights->societe->client->voir && ! $user->soc_id)
-			$sql .= " INNER JOIN " . MAIN_DB_PREFIX . "societe_commerciaux as sc ON sc.fk_soc=t.fk_soc AND sc.fk_user=" . $user->id;
+		$sql .= " FROM ".MAIN_DB_PREFIX."projet_task as t INNER JOIN ".MAIN_DB_PREFIX."projet as p ON p.rowid = t.fk_projet";
+		if (!$user->rights->societe->client->voir && !$user->soc_id)
+			$sql .= " INNER JOIN ".MAIN_DB_PREFIX."societe_commerciaux as sc ON sc.fk_soc=t.fk_soc AND sc.fk_user=".$user->id;
 		$sql .= $this->buildWhere();
 		$sql .= " GROUP BY dm";
 		$sql .= $this->db->order('dm', 'DESC');
 
-		$this->yearmonth=0;
+		$this->yearmonth = 0;
 
 		$res = $this->_getNbByMonth($year, $sql, $format);
 		// var_dump($res);print '<br>';

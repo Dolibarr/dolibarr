@@ -13,7 +13,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -32,11 +32,11 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/ldap.lib.php';
 $langs->loadLangs(array('companies', 'ldap'));
 $langs->load("admin");
 
-$action=GETPOST('action', 'aZ09');
+$action = GETPOST('action', 'aZ09');
 
 // Security check
 $id = GETPOST('id', 'int');
-if ($user->societe_id) $socid=$user->societe_id;
+if ($user->socid) $socid = $user->socid;
 $result = restrictedArea($user, 'contact', $id, 'socpeople&societe');
 
 $object = new Contact($db);
@@ -54,14 +54,14 @@ if ($action == 'dolibarr2ldap')
 {
 	$db->begin();
 
-	$ldap=new Ldap();
-	$result=$ldap->connect_bind();
+	$ldap = new Ldap();
+	$result = $ldap->connect_bind();
 
-	$info=$object->_load_ldap_info();
-	$dn=$object->_load_ldap_dn($info);
-	$olddn=$dn;	// We can say that old dn = dn as we force synchro
+	$info = $object->_load_ldap_info();
+	$dn = $object->_load_ldap_dn($info);
+	$olddn = $dn; // We can say that old dn = dn as we force synchro
 
-	$result=$ldap->update($dn, $info, $user, $olddn);
+	$result = $ldap->update($dn, $info, $user, $olddn);
 
 	if ($result >= 0)
 	{
@@ -80,11 +80,11 @@ if ($action == 'dolibarr2ldap')
  *	View
  */
 
-$title = (! empty($conf->global->SOCIETE_ADDRESSES_MANAGEMENT) ? $langs->trans("Contacts") : $langs->trans("ContactsAddresses"));
+$form = new Form($db);
+
+$title = (!empty($conf->global->SOCIETE_ADDRESSES_MANAGEMENT) ? $langs->trans("Contacts") : $langs->trans("ContactsAddresses"));
 
 llxHeader('', $title, 'EN:Module_Third_Parties|FR:Module_Tiers|ES:M&oacute;dulo_Empresas');
-
-$form = new Form($db);
 
 $head = contact_prepare_head($object);
 
@@ -143,14 +143,14 @@ dol_fiche_end();
 
 print '<div class="tabsAction">';
 
-if (! empty($conf->global->LDAP_CONTACT_ACTIVE) && $conf->global->LDAP_CONTACT_ACTIVE != 'ldap2dolibarr')
+if (!empty($conf->global->LDAP_CONTACT_ACTIVE) && $conf->global->LDAP_CONTACT_ACTIVE != 'ldap2dolibarr')
 {
 	print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=dolibarr2ldap">'.$langs->trans("ForceSynchronize").'</a>';
 }
 
 print "</div>\n";
 
-if (! empty($conf->global->LDAP_CONTACT_ACTIVE) && $conf->global->LDAP_CONTACT_ACTIVE != 'ldap2dolibarr') print "<br>\n";
+if (!empty($conf->global->LDAP_CONTACT_ACTIVE) && $conf->global->LDAP_CONTACT_ACTIVE != 'ldap2dolibarr') print "<br>\n";
 
 
 
@@ -165,32 +165,33 @@ print '<td>'.$langs->trans("Value").'</td>';
 print '</tr>';
 
 // Lecture LDAP
-$ldap=new Ldap();
-$result=$ldap->connect_bind();
+$ldap = new Ldap();
+$result = $ldap->connect_bind();
 if ($result > 0)
 {
-	$info=$object->_load_ldap_info();
-	$dn=$object->_load_ldap_dn($info, 1);
+	$info = $object->_load_ldap_info();
+	$dn = $object->_load_ldap_dn($info, 1);
 	$search = "(".$object->_load_ldap_dn($info, 2).")";
+
 	$records = $ldap->getAttribute($dn, $search);
 
 	//var_dump($records);
 
-	// Affichage arbre
-    if ((! is_numeric($records) || $records != 0) && (! isset($records['count']) || $records['count'] > 0))
+	// Show tree
+    if (((!is_numeric($records)) || $records != 0) && (!isset($records['count']) || $records['count'] > 0))
 	{
-		if (! is_array($records))
+		if (!is_array($records))
 		{
-			print '<tr '.$bc[false].'><td colspan="2"><font class="error">'.$langs->trans("ErrorFailedToReadLDAP").'</font></td></tr>';
+			print '<tr class="oddeven"><td colspan="2"><font class="error">'.$langs->trans("ErrorFailedToReadLDAP").'</font></td></tr>';
 		}
 		else
 		{
-			$result=show_ldap_content($records, 0, $records['count'], true);
+			$result = show_ldap_content($records, 0, $records['count'], true);
 		}
 	}
 	else
 	{
-		print '<tr '.$bc[false].'><td colspan="2">'.$langs->trans("LDAPRecordNotFound").' (dn='.$dn.' - search='.$search.')</td></tr>';
+		print '<tr class="oddeven"><td colspan="2">'.$langs->trans("LDAPRecordNotFound").' (dn='.$dn.' - search='.$search.')</td></tr>';
 	}
 
 	$ldap->unbind();

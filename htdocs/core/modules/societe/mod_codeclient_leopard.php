@@ -13,8 +13,8 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
- * or see http://www.gnu.org/
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
+ * or see https://www.gnu.org/
  */
 
 /**
@@ -39,32 +39,28 @@ class mod_codeclient_leopard extends ModeleThirdPartyCode
 	 */
 
 	/**
-	 * @var string Nom du modele
-	 * @deprecated
-	 * @see name
-	 */
-	public $nom='Leopard';
-
-	/**
 	 * @var string model name
 	 */
-	public $name='Leopard';
+	public $name = 'Leopard';
 
-	public $code_modifiable;				// Code modifiable
+	public $code_modifiable; // Code modifiable
 
-	public $code_modifiable_invalide;		// Code modifiable si il est invalide
+	public $code_modifiable_invalide; // Code modifiable si il est invalide
 
-	public $code_modifiable_null;			// Code modifiables si il est null
+	public $code_modifiable_null; // Code modifiables si il est null
 
-	public $code_null;						// Code facultatif
+	public $code_null; // Code facultatif
 
 	/**
      * Dolibarr version of the loaded document
      * @var string
      */
-	public $version = 'dolibarr';    		// 'development', 'experimental', 'dolibarr'
+	public $version = 'dolibarr'; // 'development', 'experimental', 'dolibarr'
 
-	public $code_auto; 	                // Numerotation automatique
+	/**
+	 * @var int Automatic numbering
+	 */
+	public $code_auto;
 
 
 	/**
@@ -124,16 +120,16 @@ class mod_codeclient_leopard extends ModeleThirdPartyCode
 	{
 		global $conf;
 
-		$result=0;
+		$result = 0;
 		$code = trim($code);
 
 		if (empty($code) && $this->code_null && empty($conf->global->MAIN_COMPANY_CODE_ALWAYS_REQUIRED))
 		{
-			$result=0;
+			$result = 0;
 		}
-		elseif (empty($code) && (! $this->code_null || ! empty($conf->global->MAIN_COMPANY_CODE_ALWAYS_REQUIRED)) )
+		elseif (empty($code) && (!$this->code_null || !empty($conf->global->MAIN_COMPANY_CODE_ALWAYS_REQUIRED)))
 		{
-			$result=-2;
+			$result = -2;
 		}
 
 		dol_syslog(get_class($this)."::verif type=".$type." result=".$result);

@@ -13,7 +13,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -23,7 +23,7 @@
  *  \ingroup    paybox
  *  \brief      Description and activation file for module Paybox
  */
-include_once DOL_DOCUMENT_ROOT .'/core/modules/DolibarrModules.class.php';
+include_once DOL_DOCUMENT_ROOT.'/core/modules/DolibarrModules.class.php';
 
 
 /**
@@ -60,7 +60,7 @@ class modPayBox extends DolibarrModules
         // Name of image file used for this module.
         // If file is in theme/yourtheme/img directory under name object_pictovalue.png, use this->picto='pictovalue'
         // If file is in module/img directory, use this->picto=DOL_URL_ROOT.'/module/img/file.png'
-        $this->picto='paybox@paybox';
+        $this->picto = 'paybox@paybox';
 
         // Data directories to create when module is enabled.
         $this->dirs = array('/paybox/temp');
@@ -69,16 +69,16 @@ class modPayBox extends DolibarrModules
         $this->config_page_url = array("paybox.php@paybox");
 
         // Dependencies
-        $this->hidden = false;			// A condition to hide module
-		$this->depends = array();		// List of module class names as string that must be enabled if this module is enabled
-		$this->requiredby = array();	// List of module ids to disable if this one is disabled
-		$this->conflictwith = array();	// List of module class names as string this module is in conflict with
-		$this->phpmin = array(5,4);		// Minimum version of PHP required by module
-        $this->need_dolibarr_version = array(2,6);	// Minimum version of Dolibarr required by module
+        $this->hidden = false; // A condition to hide module
+		$this->depends = array(); // List of module class names as string that must be enabled if this module is enabled
+		$this->requiredby = array(); // List of module ids to disable if this one is disabled
+		$this->conflictwith = array(); // List of module class names as string this module is in conflict with
+		$this->phpmin = array(5, 4); // Minimum version of PHP required by module
+        $this->need_dolibarr_version = array(2, 6); // Minimum version of Dolibarr required by module
         $this->langfiles = array("paybox");
 
         // Constants
-        $this->const = array();			// List of particular constants to add when module is enabled
+        $this->const = array(); // List of particular constants to add when module is enabled
         //Example: $this->const=array(0=>array('MODULE_MY_NEW_CONST1','chaine','myvalue','This is a constant to add',0),
         //                            1=>array('MODULE_MY_NEW_CONST2','chaine','myvalue','This is another constant to add',0) );
 
@@ -87,8 +87,8 @@ class modPayBox extends DolibarrModules
 
 
         // Boxes
-        $this->boxes = array();			// List of boxes
-        $r=0;
+        $this->boxes = array(); // List of boxes
+        $r = 0;
 
         // Add here list of php file(s) stored in core/boxes that contains class to show a box.
         // Example:
@@ -99,8 +99,8 @@ class modPayBox extends DolibarrModules
 
 
         // Permissions
-        $this->rights = array();		// Permission array used by this module
-        $r=0;
+        $this->rights = array(); // Permission array used by this module
+        $r = 0;
 
         // Add here list of permission defined by an id, a label, a boolean and two constant strings.
         // Example:
@@ -113,8 +113,8 @@ class modPayBox extends DolibarrModules
 
 
         // Main menu entries
-        $this->menus = array();			// List of menus to add
-        $r=0;
+        $this->menus = array(); // List of menus to add
+        $r = 0;
 
         // Add here entries to declare new menus
         // Example to declare the Top Menu entry:
@@ -158,7 +158,7 @@ class modPayBox extends DolibarrModules
 
 
         // Exports
-        $r=1;
+        $r = 1;
 
         // Example:
         // $this->export_code[$r]=$this->rights_class.'_'.$r;

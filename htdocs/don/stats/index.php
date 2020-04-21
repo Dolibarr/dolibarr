@@ -15,7 +15,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -29,33 +29,33 @@ require_once DOL_DOCUMENT_ROOT.'/don/class/don.class.php';
 require_once DOL_DOCUMENT_ROOT.'/don/class/donstats.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/dolgraph.class.php';
 
-$WIDTH=DolGraph::getDefaultGraphSizeForStats('width');
-$HEIGHT=DolGraph::getDefaultGraphSizeForStats('height');
+$WIDTH = DolGraph::getDefaultGraphSizeForStats('width');
+$HEIGHT = DolGraph::getDefaultGraphSizeForStats('height');
 
-$userid=GETPOST('userid', 'int');
-$socid=GETPOST('socid', 'int');
+$userid = GETPOST('userid', 'int');
+$socid = GETPOST('socid', 'int');
 // Security check
-if ($user->societe_id > 0)
+if ($user->socid > 0)
 {
     $action = '';
-    $socid = $user->societe_id;
+    $socid = $user->socid;
 }
 
-$nowyear=strftime("%Y", dol_now());
-$year = GETPOST('year')>0?GETPOST('year'):$nowyear;
+$nowyear = strftime("%Y", dol_now());
+$year = GETPOST('year') > 0 ?GETPOST('year') : $nowyear;
 //$startyear=$year-2;
-$startyear=$year-1;
-$endyear=$year;
+$startyear = $year - 1;
+$endyear = $year;
 
 // Load translation files required by the page
-$langs->loadLangs(array("companies","other","sendings"));
+$langs->loadLangs(array("companies", "other", "sendings"));
 
 
 /*
  * View
  */
 
-$form=new Form($db);
+$form = new Form($db);
 
 llxHeader();
 
@@ -64,7 +64,7 @@ print load_fiche_titre($langs->trans("StatisticsOfSendings"), $mesg);
 
 dol_mkdir($dir);
 
-$stats = new DonationStats($db, $socid, '', ($userid>0?$userid:0));
+$stats = new DonationStats($db, $socid, '', ($userid > 0 ? $userid : 0));
 
 // Build graphic number of object
 $data = $stats->getNbByMonthWithPrevYear($endyear, $startyear);
@@ -72,7 +72,7 @@ $data = $stats->getNbByMonthWithPrevYear($endyear, $startyear);
 // $data = array(array('Lib',val1,val2,val3),...)
 
 
-if (!$user->rights->societe->client->voir || $user->societe_id)
+if (!$user->rights->societe->client->voir || $user->socid)
 {
     $filenamenb = $dir.'/shipmentsnbinyear-'.$user->id.'-'.$year.'.png';
 }
@@ -83,13 +83,13 @@ else
 
 $px1 = new DolGraph();
 $mesg = $px1->isGraphKo();
-if (! $mesg)
+if (!$mesg)
 {
     $px1->SetData($data);
-    $i=$startyear;$legend=array();
+    $i = $startyear; $legend = array();
     while ($i <= $endyear)
     {
-        $legend[]=$i;
+        $legend[] = $i;
         $i++;
     }
     $px1->SetLegend($legend);
@@ -100,7 +100,7 @@ if (! $mesg)
     $px1->SetYLabel($langs->trans("NbOfSendings"));
     $px1->SetShading(3);
     $px1->SetHorizTickIncrement(1);
-    $px1->mode='depth';
+    $px1->mode = 'depth';
     $px1->SetTitle($langs->trans("NumberOfShipmentsByMonth"));
 
     $px1->draw($filenamenb, $fileurlnb);
@@ -112,7 +112,7 @@ $data = $stats->getAmountByMonthWithPrevYear($endyear,$startyear);
 //var_dump($data);
 // $data = array(array('Lib',val1,val2,val3),...)
 
-if (!$user->rights->societe->client->voir || $user->societe_id)
+if (!$user->rights->societe->client->voir || $user->socid)
 {
     $filenameamount = $dir.'/shipmentsamountinyear-'.$user->id.'-'.$year.'.png';
 }
@@ -150,7 +150,7 @@ if (! $mesg)
 /*
 $data = $stats->getAverageByMonthWithPrevYear($endyear, $startyear);
 
-if (!$user->rights->societe->client->voir || $user->societe_id)
+if (!$user->rights->societe->client->voir || $user->socid)
 {
     $filename_avg = $dir.'/shipmentsaverage-'.$user->id.'-'.$year.'.png';
 }
@@ -188,22 +188,22 @@ if (! $mesg)
 
 // Show array
 $data = $stats->getAllByYear();
-$arrayyears=array();
-foreach($data as $val) {
-	if (! empty($val['year'])) {
-		$arrayyears[$val['year']]=$val['year'];
+$arrayyears = array();
+foreach ($data as $val) {
+	if (!empty($val['year'])) {
+		$arrayyears[$val['year']] = $val['year'];
 	}
 }
-if (! count($arrayyears)) $arrayyears[$nowyear]=$nowyear;
+if (!count($arrayyears)) $arrayyears[$nowyear] = $nowyear;
 
-$h=0;
+$h = 0;
 $head = array();
-$head[$h][0] = DOL_URL_ROOT . '/don/stats/index.php';
+$head[$h][0] = DOL_URL_ROOT.'/don/stats/index.php';
 $head[$h][1] = $langs->trans("ByMonthYear");
 $head[$h][2] = 'byyear';
 $h++;
 
-$type='donation_stats';
+$type = 'donation_stats';
 
 complete_head_from_modules($conf, $langs, null, $head, $h, $type);
 
@@ -217,9 +217,9 @@ print '<div class="fichecenter"><div class="fichethirdleft">';
 //{
 	// Show filter box
 	print '<form name="stats" method="POST" action="'.$_SERVER["PHP_SELF"].'">';
-	print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+	print '<input type="hidden" name="token" value="'.newToken().'">';
 
-	print '<table class="border" width="100%">';
+	print '<table class="border centpercent">';
 	print '<tr class="liste_titre"><td class="liste_titre" colspan="2">'.$langs->trans("Filter").'</td></tr>';
 	// Company
 	print '<tr><td class="left">'.$langs->trans("ThirdParty").'</td><td class="left">';
@@ -231,8 +231,8 @@ print '<div class="fichecenter"><div class="fichethirdleft">';
 	print '</td></tr>';
 	// Year
 	print '<tr><td class="left">'.$langs->trans("Year").'</td><td class="left">';
-	if (! in_array($year, $arrayyears)) $arrayyears[$year]=$year;
-	if (! in_array($nowyear, $arrayyears)) $arrayyears[$nowyear]=$nowyear;
+	if (!in_array($year, $arrayyears)) $arrayyears[$year] = $year;
+	if (!in_array($nowyear, $arrayyears)) $arrayyears[$nowyear] = $nowyear;
 	arsort($arrayyears);
 	print $form->selectarray('year', $arrayyears, $year, 0);
 	print '</td></tr>';
@@ -243,7 +243,7 @@ print '<div class="fichecenter"><div class="fichethirdleft">';
 //}
 
 print '<div class="div-table-responsive-no-min">';
-print '<table class="border" width="100%">';
+print '<table class="border centpercent">';
 print '<tr height="24">';
 print '<td class="center">'.$langs->trans("Year").'</td>';
 print '<td class="center">'.$langs->trans("NbOfSendings").'</td>';
@@ -251,11 +251,11 @@ print '<td class="center">'.$langs->trans("NbOfSendings").'</td>';
 print '<td class="center">'.$langs->trans("AmountAverage").'</td>';*/
 print '</tr>';
 
-$oldyear=0;
+$oldyear = 0;
 foreach ($data as $val)
 {
 	$year = $val['year'];
-	while (! empty($year) && $oldyear > $year+1)
+	while (!empty($year) && $oldyear > $year + 1)
 	{ // If we have empty year
 		$oldyear--;
 		print '<tr height="24">';
@@ -273,7 +273,7 @@ foreach ($data as $val)
 	/*print '<td class="right">'.price(price2num($val['total'],'MT'),1).'</td>';
 	print '<td class="right">'.price(price2num($val['avg'],'MT'),1).'</td>';*/
 	print '</tr>';
-	$oldyear=$year;
+	$oldyear = $year;
 }
 
 print '</table>';
@@ -284,7 +284,7 @@ print '</div><div class="fichetwothirdright"><div class="ficheaddleft">';
 
 
 // Show graphs
-print '<table class="border" width="100%"><tr class="pair nohover"><td class="center">';
+print '<table class="border centpercent"><tr class="pair nohover"><td class="center">';
 if ($mesg) { print $mesg; }
 else {
     print $px1->show();
@@ -305,7 +305,7 @@ dol_fiche_end();
 
 // TODO USe code similar to commande/stats/index.php instead of this one.
 /*
-print '<table class="border" width="100%">';
+print '<table class="border centpercent">';
 print '<tr><td class="center">'.$langs->trans("Year").'</td>';
 print '<td width="40%" class="center">'.$langs->trans("NbOfSendings").'</td></tr>';
 

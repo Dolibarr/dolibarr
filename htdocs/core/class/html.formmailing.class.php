@@ -12,7 +12,7 @@
 * GNU General Public License for more details.
 *
 * You should have received a copy of the GNU General Public License
-* along with this program. If not, see <http://www.gnu.org/licenses/>.
+* along with this program. If not, see <https://www.gnu.org/licenses/>.
 */
 
 /**
@@ -20,7 +20,7 @@
  *  \ingroup    core
  *	\brief      File of predefined functions for HTML forms for mailing module
  */
-require_once DOL_DOCUMENT_ROOT .'/core/class/html.form.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/class/html.form.class.php';
 
 /**
  *  Class to offer components to list and upload files
@@ -52,7 +52,7 @@ class FormMailing extends Form
         $options = array();
 
         if ($show_empty) {
-            $options[-2] = '';   // Note -1 is used for error
+            $options[-2] = ''; // Note -1 is used for error
         }
 
         $options = $options + $mailing->statut_dest;

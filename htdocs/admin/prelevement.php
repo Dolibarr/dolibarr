@@ -16,7 +16,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -31,7 +31,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
 
 // Load translation files required by the page
-$langs->loadLangs(array("admin","withdrawals"));
+$langs->loadLangs(array("admin", "withdrawals"));
 
 // Security check
 if (!$user->admin) accessforbidden();
@@ -46,15 +46,15 @@ $type = 'paymentorder';
 
 if ($action == "set")
 {
-    $db->begin();
+	$db->begin();
 
-    $id=GETPOST('PRELEVEMENT_ID_BANKACCOUNT', 'int');
-    $account = new Account($db);
-    if($account->fetch($id)>0)
-    {
-        $res = dolibarr_set_const($db, "PRELEVEMENT_ID_BANKACCOUNT", $id, 'chaine', 0, '', $conf->entity);
-        if (! $res > 0) $error++;
-        /*
+	$id = GETPOST('PRELEVEMENT_ID_BANKACCOUNT', 'int');
+	$account = new Account($db);
+	if ($account->fetch($id) > 0)
+	{
+		$res = dolibarr_set_const($db, "PRELEVEMENT_ID_BANKACCOUNT", $id, 'chaine', 0, '', $conf->entity);
+		if (!$res > 0) $error++;
+		/*
         $res = dolibarr_set_const($db, "PRELEVEMENT_CODE_BANQUE", $account->code_banque,'chaine',0,'',$conf->entity);
         if (! $res > 0) $error++;
         $res = dolibarr_set_const($db, "PRELEVEMENT_CODE_GUICHET", $account->code_guichet,'chaine',0,'',$conf->entity);
@@ -70,33 +70,33 @@ if ($action == "set")
         $res = dolibarr_set_const($db, "PRELEVEMENT_RAISON_SOCIALE", $account->proprio,'chaine',0,'',$conf->entity);
         if (! $res > 0) $error++;
         */
-    }
-    else $error++;
+	}
+	else $error++;
 
-    $res = dolibarr_set_const($db, "PRELEVEMENT_ICS", GETPOST("PRELEVEMENT_ICS"), 'chaine', 0, '', $conf->entity);
-    if (! $res > 0) $error++;
+	$res = dolibarr_set_const($db, "PRELEVEMENT_ICS", GETPOST("PRELEVEMENT_ICS"), 'chaine', 0, '', $conf->entity);
+	if (!$res > 0) $error++;
 
-    if (GETPOST("PRELEVEMENT_USER") > 0)
-    {
-        $res = dolibarr_set_const($db, "PRELEVEMENT_USER", GETPOST("PRELEVEMENT_USER"), 'chaine', 0, '', $conf->entity);
-        if (! $res > 0) $error++;
-    }
-    if (GETPOST("PRELEVEMENT_END_TO_END") || GETPOST("PRELEVEMENT_END_TO_END")=="")
-    {
-        $res = dolibarr_set_const($db, "PRELEVEMENT_END_TO_END", GETPOST("PRELEVEMENT_END_TO_END"), 'chaine', 0, '', $conf->entity);
-        if (! $res > 0) $error++;
-    }
-    if (GETPOST("PRELEVEMENT_USTRD") || GETPOST("PRELEVEMENT_USTRD")=="")
-    {
-        $res = dolibarr_set_const($db, "PRELEVEMENT_USTRD", GETPOST("PRELEVEMENT_USTRD"), 'chaine', 0, '', $conf->entity);
-        if (! $res > 0) $error++;
-    }
+	if (GETPOST("PRELEVEMENT_USER") > 0)
+	{
+		$res = dolibarr_set_const($db, "PRELEVEMENT_USER", GETPOST("PRELEVEMENT_USER"), 'chaine', 0, '', $conf->entity);
+		if (!$res > 0) $error++;
+	}
+	if (GETPOST("PRELEVEMENT_END_TO_END") || GETPOST("PRELEVEMENT_END_TO_END") == "")
+	{
+		$res = dolibarr_set_const($db, "PRELEVEMENT_END_TO_END", GETPOST("PRELEVEMENT_END_TO_END"), 'chaine', 0, '', $conf->entity);
+		if (!$res > 0) $error++;
+	}
+	if (GETPOST("PRELEVEMENT_USTRD") || GETPOST("PRELEVEMENT_USTRD") == "")
+	{
+		$res = dolibarr_set_const($db, "PRELEVEMENT_USTRD", GETPOST("PRELEVEMENT_USTRD"), 'chaine', 0, '', $conf->entity);
+		if (!$res > 0) $error++;
+	}
 
-    if (GETPOST("PRELEVEMENT_ADDDAYS") || GETPOST("PRELEVEMENT_ADDDAYS")=="")
-    {
-        $res = dolibarr_set_const($db, "PRELEVEMENT_ADDDAYS", GETPOST("PRELEVEMENT_ADDDAYS"), 'chaine', 0, '', $conf->entity);
-        if (! $res > 0) $error++;
-    } elseif (! $error)
+	if (GETPOST("PRELEVEMENT_ADDDAYS") || GETPOST("PRELEVEMENT_ADDDAYS") == "")
+	{
+		$res = dolibarr_set_const($db, "PRELEVEMENT_ADDDAYS", GETPOST("PRELEVEMENT_ADDDAYS"), 'chaine', 0, '', $conf->entity);
+		if (!$res > 0) $error++;
+	} elseif (!$error)
 	{
 		$db->commit();
 		setEventMessages($langs->trans("SetupSaved"), null, 'mesgs');
@@ -110,20 +110,20 @@ if ($action == "set")
 
 if ($action == "addnotif")
 {
-    $bon = new BonPrelevement($db);
-    $bon->AddNotification($db, GETPOST('user', 'int'), $action);
+	$bon = new BonPrelevement($db);
+	$bon->AddNotification($db, GETPOST('user', 'int'), $action);
 
-    header("Location: prelevement.php");
-    exit;
+	header("Location: prelevement.php");
+	exit;
 }
 
 if ($action == "deletenotif")
 {
-    $bon = new BonPrelevement($db);
-    $bon->DeleteNotificationById(GETPOST('notif', 'int'));
+	$bon = new BonPrelevement($db);
+	$bon->DeleteNotificationById(GETPOST('notif', 'int'));
 
-    header("Location: prelevement.php");
-    exit;
+	header("Location: prelevement.php");
+	exit;
 }
 
 /*
@@ -196,21 +196,21 @@ elseif ($action == 'setdoc')
  *	View
  */
 
-$form=new Form($db);
+$form = new Form($db);
 
-$dirmodels=array_merge(array('/'), (array) $conf->modules_parts['models']);
+$dirmodels = array_merge(array('/'), (array) $conf->modules_parts['models']);
 
 llxHeader('', $langs->trans("WithdrawalsSetup"));
 
-$linkback='<a href="'.DOL_URL_ROOT.'/admin/modules.php?restore_lastsearch_values=1">'.$langs->trans("BackToModuleList").'</a>';
+$linkback = '<a href="'.DOL_URL_ROOT.'/admin/modules.php?restore_lastsearch_values=1">'.$langs->trans("BackToModuleList").'</a>';
 
 print load_fiche_titre($langs->trans("WithdrawalsSetup"), $linkback, 'title_setup');
 print '<br>';
 
 print '<form method="post" action="prelevement.php?action=set">';
-print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+print '<input type="hidden" name="token" value="'.newToken().'">';
 
-print '<table class="noborder" width="100%">';
+print '<table class="noborder centpercent">';
 
 print '<tr class="liste_titre">';
 print '<td width="30%">'.$langs->trans("Parameter").'</td>';
@@ -251,7 +251,7 @@ print '</td></tr>';
 //ADDDAYS
 print '<tr class="pair"><td>'.$langs->trans("ADDDAYS").'</td>';
 print '<td class="left">';
-if (! $conf->global->PRELEVEMENT_ADDDAYS) $conf->global->PRELEVEMENT_ADDDAYS=0;
+if (!$conf->global->PRELEVEMENT_ADDDAYS) $conf->global->PRELEVEMENT_ADDDAYS = 0;
 print '<input type="text" name="PRELEVEMENT_ADDDAYS" value="'.$conf->global->PRELEVEMENT_ADDDAYS.'" size="15" ></td>';
 print '</td></tr>';
 print '</table>';
@@ -355,7 +355,7 @@ foreach ($dirmodels as $reldir)
                                 // Active
                                 if (in_array($name, $def))
                                 {
-                                    print '<td align="center">'."\n";
+                                    print '<td class="center">'."\n";
                                     print '<a href="'.$_SERVER["PHP_SELF"].'?action=del&value='.$name.'">';
                                     print img_picto($langs->trans("Enabled"),'switch_on');
                                     print '</a>';
@@ -363,13 +363,13 @@ foreach ($dirmodels as $reldir)
                                 }
                                 else
                                 {
-                                    print '<td align="center">'."\n";
+                                    print '<td class="center">'."\n";
                                     print '<a href="'.$_SERVER["PHP_SELF"].'?action=set&value='.$name.'&amp;scan_dir='.$module->scandir.'&amp;label='.urlencode($module->name).'">'.img_picto($langs->trans("Disabled"),'switch_off').'</a>';
                                     print "</td>";
                                 }
 
                                 // Default
-                                print '<td align="center">';
+                                print '<td class="center">';
                                 if ($conf->global->PAYMENTORDER_ADDON_PDF == $name)
                                 {
                                     print img_picto($langs->trans("Default"),'on');
@@ -397,12 +397,12 @@ foreach ($dirmodels as $reldir)
                                 $htmltooltip.='<br>'.$langs->trans("WatermarkOnDraftOrders").': '.yn($module->option_draft_watermark,1,1);
 
 
-                                print '<td align="center">';
+                                print '<td class="center">';
                                 print $form->textwithpicto('',$htmltooltip,1,0);
                                 print '</td>';
 
                                 // Preview
-                                print '<td align="center">';
+                                print '<td class="center">';
                                 if ($module->type == 'pdf')
                                 {
                                     print '<a href="'.$_SERVER["PHP_SELF"].'?action=specimen&module='.$name.'">'.img_object($langs->trans("Preview"),'bill').'</a>';
@@ -488,8 +488,8 @@ if (! empty($conf->global->MAIN_MODULE_NOTIFICATION))
 
 
     print '<form method="post" action="'.$_SERVER["PHP_SELF"].'?action=addnotif">';
-    print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
-    print '<table class="noborder" width="100%">';
+    print '<input type="hidden" name="token" value="'.newToken().'">';
+    print '<table class="noborder centpercent">';
     print '<tr class="liste_titre">';
     print '<td>'.$langs->trans("User").'</td>';
     print '<td>'.$langs->trans("Value").'</td>';

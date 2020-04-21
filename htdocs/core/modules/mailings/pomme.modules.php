@@ -13,8 +13,8 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
- * or see http://www.gnu.org/
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
+ * or see https://www.gnu.org/
  */
 
 /**
@@ -30,12 +30,16 @@ include_once DOL_DOCUMENT_ROOT.'/core/modules/mailings/modules_mailings.php';
  */
 class mailing_pomme extends MailingTargets
 {
-	public $name='DolibarrUsers';                      // Identifiant du module mailing
+	public $name = 'DolibarrUsers'; // Identifiant du module mailing
 	// This label is used if no translation is found for key XXX neither MailingModuleDescXXX where XXX=name is found
-	public $desc='Dolibarr users with emails';  		// Libelle utilise si aucune traduction pour MailingModuleDescXXX ou XXX=name trouv�e
-	public $require_module=array();                    // Module mailing actif si modules require_module actifs
-	public $require_admin=1;                           // Module mailing actif pour user admin ou non
-	public $picto='user';
+	public $desc = 'Dolibarr users with emails'; // Libelle utilise si aucune traduction pour MailingModuleDescXXX ou XXX=name trouv�e
+	public $require_module = array(); // Module mailing actif si modules require_module actifs
+	public $require_admin = 1; // Module mailing actif pour user admin ou non
+
+	/**
+	 * @var string String with name of icon for myobject. Must be the part after the 'object_' into object_myobject.png
+	 */
+	public $picto = 'user';
 
 	/**
      * @var DoliDB Database handler.
@@ -50,7 +54,7 @@ class mailing_pomme extends MailingTargets
 	 */
     public function __construct($db)
 	{
-		$this->db=$db;
+		$this->db = $db;
 	}
 
 
@@ -68,13 +72,13 @@ class mailing_pomme extends MailingTargets
 
 		$langs->load("users");
 
-		$statssql=array();
+		$statssql = array();
 		$sql = "SELECT '".$langs->trans("DolibarrUsers")."' as label,";
-		$sql.= " count(distinct(u.email)) as nb";
-		$sql.= " FROM ".MAIN_DB_PREFIX."user as u";
-		$sql.= " WHERE u.email != ''"; // u.email IS NOT NULL est implicite dans ce test
-		$sql.= " AND u.entity IN (0,".$conf->entity.")";
-		$statssql[0]=$sql;
+		$sql .= " count(distinct(u.email)) as nb";
+		$sql .= " FROM ".MAIN_DB_PREFIX."user as u";
+		$sql .= " WHERE u.email != ''"; // u.email IS NOT NULL est implicite dans ce test
+		$sql .= " AND u.entity IN (0,".$conf->entity.")";
+		$statssql[0] = $sql;
 
 		return $statssql;
 	}
@@ -93,9 +97,9 @@ class mailing_pomme extends MailingTargets
 		global $conf;
 
 		$sql = "SELECT count(distinct(u.email)) as nb";
-		$sql.= " FROM ".MAIN_DB_PREFIX."user as u";
-		$sql.= " WHERE u.email != ''"; // u.email IS NOT NULL est implicite dans ce test
-		$sql.= " AND u.entity IN (0,".$conf->entity.")";
+		$sql .= " FROM ".MAIN_DB_PREFIX."user as u";
+		$sql .= " WHERE u.email != ''"; // u.email IS NOT NULL est implicite dans ce test
+		$sql .= " AND u.entity IN (0,".$conf->entity.")";
 
 		// La requete doit retourner un champ "nb" pour etre comprise
 		// par parent::getNbOfRecipients
@@ -114,21 +118,21 @@ class mailing_pomme extends MailingTargets
 
 		$langs->load("users");
 
-		$s='';
-		$s.=$langs->trans("Status").': ';
-		$s.='<select name="filter" class="flat">';
-		$s.='<option value="-1">&nbsp;</option>';
-		$s.='<option value="1">'.$langs->trans("Enabled").'</option>';
-		$s.='<option value="0">'.$langs->trans("Disabled").'</option>';
-		$s.='</select>';
+		$s = '';
+		$s .= $langs->trans("Status").': ';
+		$s .= '<select name="filter" class="flat">';
+		$s .= '<option value="-1">&nbsp;</option>';
+		$s .= '<option value="1">'.$langs->trans("Enabled").'</option>';
+		$s .= '<option value="0">'.$langs->trans("Disabled").'</option>';
+		$s .= '</select>';
 
-		$s.=' ';
-		$s.=$langs->trans("Employee").': ';
-		$s.='<select name="filteremployee" class="flat">';
-		$s.='<option value="-1">&nbsp;</option>';
-		$s.='<option value="1">'.$langs->trans("Yes").'</option>';
-		$s.='<option value="0">'.$langs->trans("No").'</option>';
-		$s.='</select>';
+		$s .= ' ';
+		$s .= $langs->trans("Employee").': ';
+		$s .= '<select name="filteremployee" class="flat">';
+		$s .= '<option value="-1">&nbsp;</option>';
+		$s .= '<option value="1">'.$langs->trans("Yes").'</option>';
+		$s .= '<option value="0">'.$langs->trans("No").'</option>';
+		$s .= '</select>';
 
 		return $s;
 	}
@@ -163,19 +167,19 @@ class mailing_pomme extends MailingTargets
 
 		// La requete doit retourner: id, email, fk_contact, lastname, firstname
 		$sql = "SELECT u.rowid as id, u.email as email, null as fk_contact,";
-		$sql.= " u.lastname, u.firstname as firstname, u.civility as civility_id, u.login, u.office_phone";
-		$sql.= " FROM ".MAIN_DB_PREFIX."user as u";
-		$sql.= " WHERE u.email <> ''"; // u.email IS NOT NULL est implicite dans ce test
-		$sql.= " AND u.entity IN (0,".$conf->entity.")";
-		$sql.= " AND u.email NOT IN (SELECT email FROM ".MAIN_DB_PREFIX."mailing_cibles WHERE fk_mailing=".$mailing_id.")";
-		if (isset($_POST["filter"]) && $_POST["filter"] == '1') $sql.= " AND u.statut=1";
-		if (isset($_POST["filter"]) && $_POST["filter"] == '0') $sql.= " AND u.statut=0";
-		if (isset($_POST["filteremployee"]) && $_POST["filteremployee"] == '1') $sql.= " AND u.employee=1";
-		if (isset($_POST["filteremployee"]) && $_POST["filteremployee"] == '0') $sql.= " AND u.employee=0";
-		$sql.= " ORDER BY u.email";
+		$sql .= " u.lastname, u.firstname as firstname, u.civility as civility_id, u.login, u.office_phone";
+		$sql .= " FROM ".MAIN_DB_PREFIX."user as u";
+		$sql .= " WHERE u.email <> ''"; // u.email IS NOT NULL est implicite dans ce test
+		$sql .= " AND u.entity IN (0,".$conf->entity.")";
+		$sql .= " AND u.email NOT IN (SELECT email FROM ".MAIN_DB_PREFIX."mailing_cibles WHERE fk_mailing=".$mailing_id.")";
+		if (isset($_POST["filter"]) && $_POST["filter"] == '1') $sql .= " AND u.statut=1";
+		if (isset($_POST["filter"]) && $_POST["filter"] == '0') $sql .= " AND u.statut=0";
+		if (isset($_POST["filteremployee"]) && $_POST["filteremployee"] == '1') $sql .= " AND u.employee=1";
+		if (isset($_POST["filteremployee"]) && $_POST["filteremployee"] == '0') $sql .= " AND u.employee=0";
+		$sql .= " ORDER BY u.email";
 
 		// Stocke destinataires dans cibles
-		$result=$this->db->query($sql);
+		$result = $this->db->query($sql);
 		if ($result)
 		{
 			$num = $this->db->num_rows($result);
@@ -213,10 +217,10 @@ class mailing_pomme extends MailingTargets
 		else
 		{
 			dol_syslog($this->db->error());
-			$this->error=$this->db->error();
+			$this->error = $this->db->error();
 			return -1;
 		}
 
-		return parent::add_to_target($mailing_id, $cibles);
+		return parent::addTargetsToDatabase($mailing_id, $cibles);
     }
 }
