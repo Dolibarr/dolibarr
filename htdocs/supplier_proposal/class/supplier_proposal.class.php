@@ -2313,7 +2313,7 @@ class SupplierProposal extends CommonObject
             $response->warning_delay = $delay_warning/60/60/24;
             $response->label = $label;
             $response->labelShort = $labelShort;
-            $response->url = DOL_URL_ROOT.'/supplier_proposal/list.php?viewstatut='.$status;
+            $response->url = DOL_URL_ROOT.'/supplier_proposal/list.php?search_status='.$status;
             $response->img = img_object('', "propal");
 
             // This assignment in condition is not a bug. It allows walking the results.

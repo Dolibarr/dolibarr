@@ -640,7 +640,7 @@ if(!empty($conf->global->INVOICE_USE_DEFAULT_DOCUMENT)) // Hidden conf
 }
 
 /*
- *  Modes de reglement
+ *  Payment modes
  */
 print '<br>';
 print load_fiche_titre($langs->trans("SuggestedPaymentModesIfNotDefinedInInvoice"), '', '');
