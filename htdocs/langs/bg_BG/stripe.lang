@@ -32,6 +32,7 @@ VendorName=Име на доставчик
 CSSUrlForPaymentForm=URL адрес на CSS стил с формуляр за плащане
 NewStripePaymentReceived=Получено е ново Stripe плащане
 NewStripePaymentFailed=Неуспешен опит за ново Stripe плащане
+FailedToChargeCard=Неупешно таксуване на карта
 STRIPE_TEST_SECRET_KEY=Тестов Secret ключ
 STRIPE_TEST_PUBLISHABLE_KEY=Тестов Publishable ключ
 STRIPE_TEST_WEBHOOK_KEY=Тестов Webhook ключ
@@ -68,4 +69,4 @@ ToOfferALinkForTestWebhook=Връзка към настройка на Stripe We
 ToOfferALinkForLiveWebhook=Връзка към настройка на Stripe WebHook за извикване на IPN (реален режим)
 PaymentWillBeRecordedForNextPeriod=Плащането ще бъде регистрирано за следващия период.
 ClickHereToTryAgain=<a href="%s">Кликнете тук, за да опитате отново ...</a>
-CreationOfPaymentModeMustBeDoneFromStripeInterface=Поради строгите правила за автентификация на клиентите, създаването на карта трябва да се извърши от вътрешния интерфейс на Stripe. Може да кликнете тук, за да включите клиентския Stripe запис: %s
+CreationOfPaymentModeMustBeDoneFromStripeInterface=Due to Strong Customer Authentication rules, creation of a card must be done from Stripe backoffice. You can click here to switch on Stripe customer record: %s

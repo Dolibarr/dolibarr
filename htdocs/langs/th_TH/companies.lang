@@ -325,7 +325,6 @@ CompanyDeleted=บริษัท "% s" ลบออกจากฐานข้�
 ListOfContacts=รายชื่อผู้ติดต่อ / ที่อยู่
 ListOfContactsAddresses=รายชื่อผู้ติดต่อ / ที่อยู่
 ListOfThirdParties=List of Third Parties
-ShowCompany=Show Third Party
 ShowContact=แสดงรายชื่อผู้ติดต่อ
 ContactsAllShort=ทั้งหมด (ไม่กรอง)
 ContactType=ประเภทติดต่อ
@@ -447,6 +446,7 @@ SaleRepresentativeFirstname=First name of sales representative
 SaleRepresentativeLastname=Last name of sales representative
 ErrorThirdpartiesMerge=There was an error when deleting the third parties. Please check the log. Changes have been reverted.
 NewCustomerSupplierCodeProposed=Customer or Vendor code already used, a new code is suggested
+KeepEmptyIfGenericAddress=Keep this field empty if this address is a generic address
 #Imports
 PaymentTypeCustomer=Payment Type - Customer
 PaymentTermsCustomer=Payment Terms - Customer

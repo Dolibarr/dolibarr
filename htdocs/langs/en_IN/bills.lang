@@ -1,3 +1,8 @@
 # Dolibarr language file - Source file is en_US - bills
+PaymentBack=Refund
+CustomerInvoicePaymentBack=Refund
+ConfirmConvertToReduc=Do you want to convert this %s into an available credit?
+ConfirmConvertToReducSupplier=Do you want to convert this %s into an available credit?
 RelatedCommercialProposals=Related quotations
-PDFCrabeDescription=Invoice PDF template Crabe. A complete invoice template (old implementation of Sponge template)
+RevenueStamp=Tax stamp
+PDFCrabeDescription=Invoice PDF template Crabe. A complete invoice template 

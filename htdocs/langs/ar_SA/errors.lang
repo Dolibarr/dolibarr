@@ -59,6 +59,7 @@ ErrorPartialFile=الملف لم تتلق تماما بواسطة الخادم.
 ErrorNoTmpDir=%s directy مؤقتة لا وجود.
 ErrorUploadBlockedByAddon=حظر حمل من قبل البرنامج المساعد بى اباتشي /.
 ErrorFileSizeTooLarge=حجم الملف كبير جدا.
+ErrorFieldTooLong=Field %s is too long.
 ErrorSizeTooLongForIntType=طويل جدا بالنسبة نوع INT (%s أرقام كحد أقصى) حجم
 ErrorSizeTooLongForVarcharType=وقتا طويلا لنوع السلسلة (%s حرف كحد أقصى) حجم
 ErrorNoValueForSelectType=يرجى ملء قيمة لقائمة مختارة
@@ -234,7 +235,8 @@ ErrorLanguageOfTranslatedPageIsSameThanThisPage=Error, language of translated pa
 ErrorBatchNoFoundForProductInWarehouse=No lot/serial found for product "%s" in warehouse "%s".
 ErrorBatchNoFoundEnoughQuantityForProductInWarehouse=No enough quantity for this lot/serial for product "%s" in warehouse "%s".
 ErrorOnlyOneFieldForGroupByIsPossible=Only 1 field for the 'Group by' is possible (others are discarded)
-ErrorTooManyDifferentValueForSelectedGroupBy=Found too many different value (more than <b>%s</b>) for the field '<b>%s</b>', so we can't user it as a 'Group by' for graphics. The field 'Group By' has been removed. May be you wanted to use it as an X-Axis ?
+ErrorTooManyDifferentValueForSelectedGroupBy=Found too many different value (more than <b>%s</b>) for the field '<b>%s</b>', so we can't use it as a 'Group by' for graphics. The field 'Group By' has been removed. May be you wanted to use it as an X-Axis ?
+ErrorReplaceStringEmpty=Error, the string to replace into is empty
 # Warnings
 WarningParamUploadMaxFileSizeHigherThanPostMaxSize=Your PHP parameter upload_max_filesize (%s) is higher than PHP parameter post_max_size (%s). This is not a consistent setup.
 WarningPasswordSetWithNoAccount=تم تعيين كلمة مرور لهذا العضو. ومع ذلك، تم إنشاء أي حساب المستخدم. لذلك يتم تخزين كلمة المرور هذه ولكن لا يمكن استخدامها للدخول إلى Dolibarr. ويمكن استخدامه من قبل وحدة / واجهة خارجية ولكن إذا كنت لا تحتاج إلى تعريف أي تسجيل دخول أو كلمة المرور لأحد أفراد، يمكنك تعطيل خيار "إدارة تسجيل دخول لكل عضو" من إعداد وحدة الأعضاء. إذا كنت بحاجة إلى إدارة تسجيل الدخول ولكن لا تحتاج إلى أي كلمة المرور، يمكنك الحفاظ على هذا الحقل فارغا لتجنب هذا التحذير. ملاحظة: يمكن أيضا أن تستخدم البريد الإلكتروني لتسجيل الدخول إذا تم ربط عضو إلى المستخدم.

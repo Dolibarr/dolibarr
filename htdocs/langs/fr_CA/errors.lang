@@ -59,6 +59,7 @@ ErrorSpecialCharNotAllowedForField=Les caractères spéciaux ne sont pas autoris
 ErrorNumRefModel=Une référence existe dans la base de données (%s) et n'est pas compatible avec cette règle de numérotation. Supprimez l'enregistrement ou la renommée référence pour activer ce module.
 ErrorBadMaskBadRazMonth=Erreur, mauvaise valeur de réinitialisation
 ErrorCounterMustHaveMoreThan3Digits=Le compteur doit avoir plus de 3 chiffres
+ErrorSelectAtLeastOne=Error, select at least one entry.
 ErrorProdIdAlreadyExist=%s est affecté à un autre tiers
 ErrorFailedToLoadRSSFile=Impossible d'obtenir un flux RSS. Essayez d'ajouter constante MAIN_SIMPLEXMLLOAD_DEBUG si les messages d'erreur ne fournissent pas suffisamment d'informations.
 ErrorForbidden=Accès refusé. <br> Vous essayez d'accéder à une page, zone ou fonctionnalité d'un module désactivé ou sans être dans une session authentifiée ou non autorisée pour votre utilisateur.
