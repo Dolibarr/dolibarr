@@ -389,7 +389,8 @@ class doc_generic_stock_movement_odt extends ModelePDFMovement
 					}
 					if ($foundtagforlines)
 					{
-						foreach ($entrepot->lines as $line)
+						$lines = $this->get_stock_movement_lines();
+						foreach ($lines as $line)
 						{
 							$tmparray=$this->get_substitutionarray_lines($line, $outputlangs);
 							complete_substitutions_array($tmparray, $outputlangs, $entrepot, $line, "completesubstitutionarray_lines");
@@ -494,12 +495,191 @@ class doc_generic_stock_movement_odt extends ModelePDFMovement
 	 */
 	public function get_substitutionarray_object($object, $outputlangs)
 	{
+		global $langs;
+
 		$calcproductsunique = $object->nb_different_products();
 		$calcproducts = $object->nb_products();
 
-		$substitutionarray = [];
+		$substitutionarray = parent::get_substitutionarray_object($object, $outputlangs);
 		$substitutionarray['object_description'] = $object->description;
 		$substitutionarray['object_nb_products_unique'] = $calcproductsunique['nb'];
 		$substitutionarray['object_nb_products_total'] = price2num($calcproducts['nb'], 'MS');
+
+		// Last movement
+		$sql_res = $this->db->query("SELECT max(m.datem) as datem FROM " . MAIN_DB_PREFIX . "stock_mouvement as m WHERE m.fk_entrepot = '". $object->id . "'");
+		$lastmovementdate = "";
+		if ($sql_res)
+		{
+			$obj = $this->db->fetch_object($sql_res);
+			$lastmovementdate = $this->db->jdate($obj->datem);
+		}
+
+		$substitutionarray['object_last_movement'] = $lastmovementdate != "" ? dol_print_date($lastmovementdate, 'dayhour') : $langs->transnoentities("None");
+
+		return $substitutionarray;
+	}
+
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
+	/**
+	 *	Load all stock movements from the database
+	 *
+	 *  @return	array								Return an array of stock movements
+	 */
+	public function get_stock_movement_lines()
+	{
+        // phpcs:enable
+		global $conf, $hookmanager;
+
+		$idproduct = GETPOST('idproduct', 'int');
+		$year = GETPOST("year");
+		$month = GETPOST("month");
+		$search_ref = GETPOST('search_ref', 'alpha');
+		$search_movement = GETPOST("search_movement");
+		$search_product_ref = trim(GETPOST("search_product_ref"));
+		$search_product = trim(GETPOST("search_product"));
+		$search_warehouse = trim(GETPOST("search_warehouse"));
+		$search_inventorycode = trim(GETPOST("search_inventorycode"));
+		$search_user = trim(GETPOST("search_user"));
+		$search_batch = trim(GETPOST("search_batch"));
+		$search_qty = trim(GETPOST("search_qty"));
+		$search_type_mouvement = GETPOST('search_type_mouvement', 'int');
+
+		$limit = GETPOST('limit', 'int') ?GETPOST('limit', 'int') : $conf->liste_limit;
+		$page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOST("page", 'int');
+		$sortfield = GETPOST("sortfield", 'alpha');
+		$sortorder = GETPOST("sortorder", 'alpha');
+		if (empty($page) || $page == -1) { $page = 0; }     // If $page is not defined, or '' or -1
+		$offset = $limit * $page;
+		if (!$sortfield) $sortfield = "m.datem";
+		if (!$sortorder) $sortorder = "DESC";
+
+		$pdluoid = GETPOST('pdluoid', 'int');
+
+		// Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
+		$hookmanager->initHooks(array('movementlist'));
+		$extrafields = new ExtraFields($this->db);
+
+		// fetch optionals attributes and labels
+		$extrafields->fetch_name_optionals_label('movement');
+		$search_array_options = $extrafields->getOptionalsFromPost('movement', '', 'search_');
+
+		$productlot = new ProductLot($this->db);
+		$productstatic = new Product($this->db);
+		$warehousestatic = new Entrepot($this->db);
+		$movement = new MouvementStock($this->db);
+		$userstatic = new User($this->db);
+		$element = 'movement';
+
+		$warehousestatic->fetch($id);
+
+		$sql = "SELECT p.rowid, p.ref as product_ref, p.label as produit, p.tobatch, p.fk_product_type as type, p.entity,";
+		$sql .= " e.ref as warehouse_ref, e.rowid as entrepot_id, e.lieu,";
+		$sql .= " m.rowid as mid, m.value as qty, m.datem, m.fk_user_author, m.label, m.inventorycode, m.fk_origin, m.origintype,";
+		$sql .= " m.batch, m.price,";
+		$sql .= " m.type_mouvement,";
+		$sql .= " pl.rowid as lotid, pl.eatby, pl.sellby,";
+		$sql .= " u.login, u.photo, u.lastname, u.firstname";
+		// Add fields from extrafields
+		if (!empty($extrafields->attributes[$element]['label'])) {
+			foreach ($extrafields->attributes[$element]['label'] as $key => $val) $sql .= ($extrafields->attributes[$element]['type'][$key] != 'separate' ? ", ef.".$key.' as options_'.$key : '');
+		}
+		// Add fields from hooks
+		$parameters = array();
+		$reshook = $hookmanager->executeHooks('printFieldListSelect', $parameters); // Note that $action and $object may have been modified by hook
+		$sql .= $hookmanager->resPrint;
+		$sql .= " FROM ".MAIN_DB_PREFIX."entrepot as e,";
+		$sql .= " ".MAIN_DB_PREFIX."product as p,";
+		$sql .= " ".MAIN_DB_PREFIX."stock_mouvement as m";
+		if (is_array($extrafields->attributes[$warehousestatic->table_element]['label']) && count($extrafields->attributes[$warehousestatic->table_element]['label'])) $sql .= " LEFT JOIN ".MAIN_DB_PREFIX.$warehousestatic->table_element."_extrafields as ef on (m.rowid = ef.fk_object)";
+		$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."user as u ON m.fk_user_author = u.rowid";
+		$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."product_lot as pl ON m.batch = pl.batch AND m.fk_product = pl.fk_product";
+		$sql .= " WHERE m.fk_product = p.rowid";
+		if ($msid > 0) $sql .= " AND m.rowid = ".$msid;
+		$sql .= " AND m.fk_entrepot = e.rowid";
+		$sql .= " AND e.entity IN (".getEntity('stock').")";
+		if (empty($conf->global->STOCK_SUPPORTS_SERVICES)) $sql .= " AND p.fk_product_type = 0";
+		if ($id > 0) $sql .= " AND e.rowid ='".$id."'";
+		if ($month > 0)
+		{
+			if ($year > 0)
+				$sql .= " AND m.datem BETWEEN '".$this->db->idate(dol_get_first_day($year, $month, false))."' AND '".$this->db->idate(dol_get_last_day($year, $month, false))."'";
+			else
+				$sql .= " AND date_format(m.datem, '%m') = '$month'";
+		}
+		elseif ($year > 0)
+		{
+			$sql .= " AND m.datem BETWEEN '".$this->db->idate(dol_get_first_day($year, 1, false))."' AND '".$this->db->idate(dol_get_last_day($year, 12, false))."'";
+		}
+		if ($idproduct > 0) $sql .= " AND p.rowid = '".$idproduct."'";
+		if (!empty($search_ref))			$sql .= natural_search('m.rowid', $search_ref, 1);
+		if (!empty($search_movement))		$sql .= natural_search('m.label', $search_movement);
+		if (!empty($search_inventorycode))	$sql .= natural_search('m.inventorycode', $search_inventorycode);
+		if (!empty($search_product_ref))	$sql .= natural_search('p.ref', $search_product_ref);
+		if (!empty($search_product))		$sql .= natural_search('p.label', $search_product);
+		if ($search_warehouse > 0)			$sql .= " AND e.rowid = '".$this->db->escape($search_warehouse)."'";
+		if (!empty($search_user))			$sql .= natural_search('u.login', $search_user);
+		if (!empty($search_batch))			$sql .= natural_search('m.batch', $search_batch);
+		if ($search_qty != '')				$sql .= natural_search('m.value', $search_qty, 1);
+		if ($search_type_mouvement >= 0)	$sql .= " AND m.type_mouvement = '".$this->db->escape($search_type_mouvement)."'";
+		// Add where from extra fields
+		include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_sql.tpl.php';
+		// Add where from hooks
+		$parameters = array();
+		$reshook = $hookmanager->executeHooks('printFieldListWhere', $parameters); // Note that $action and $object may have been modified by hook
+		$sql .= $hookmanager->resPrint;
+		$sql .= $this->db->order($sortfield, $sortorder);
+
+		$nbtotalofrecords = '';
+		if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST))
+		{
+			$result = $this->db->query($sql);
+			$nbtotalofrecords = $this->db->num_rows($result);
+			if (($page * $limit) > $nbtotalofrecords)	// if total resultset is smaller then paging size (filtering), goto and load page 0
+			{
+				$page = 0;
+				$offset = 0;
+			}
+		}
+
+		if (empty($search_inventorycode)) $sql .= $this->db->plimit($limit + 1, $offset);
+
+		$resql = $this->db->query($sql);
+		$nbtotalofrecords = $this->db->num_rows($result);
+
+		$result = [];
+		for ($i=0; $i<$nbtotalofrecords; $i++) {
+			array_push($result, $this->db->fetch_object($resql));
+		}
+		return $result;
+	}
+
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
+	/**
+	 *	Define array with couple substitution key => substitution value
+	 *
+	 *	@param  Object			$line				Object line
+	 *	@param  Translate		$outputlangs        Lang object to use for output
+	 *  @param  int				$linenumber			The number of the line for the substitution of "object_line_pos"
+	 *  @return	array								Return a substitution array
+	 */
+	public function get_substitutionarray_lines($line, $outputlangs, $linenumber = 0)
+	{
+        // phpcs:enable
+		global $conf;
+
+		file_put_contents("debug.txt", var_export($line, true));
+
+		$resarray = array(
+			"line_id" => $line->rowid,
+			"line_product_ref" => $line->product_ref,
+			"line_qty" => abs(intval($line->qty)),
+			"line_date" => dol_print_date($line->datem, 'day'),
+			"line_label" => $line->label,
+			"line_inventory_code" => $line->inventorycode,
+			"line_price" => price2num($line->price),
+			"line_author" => trim($line->firstname . ' ' . $line->lastname)
+		);
+
+		return $resarray;
 	}
 }
