@@ -490,7 +490,6 @@ class doc_generic_stock_movement_odt extends ModelePDFMovement
 	 *
 	 * @param   Object			$object             Main object to use as data source
 	 * @param   Translate		$outputlangs        Lang object to use for output
-     * @param   string		    $array_key	        Name of the key for return array
 	 * @return	array								Array of substitution
 	 */
 	public function get_substitutionarray_object($object, $outputlangs)
