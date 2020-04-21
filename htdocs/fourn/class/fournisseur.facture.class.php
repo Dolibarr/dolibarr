@@ -3155,6 +3155,17 @@ class SupplierInvoiceLine extends CommonObjectLine
 				$this->error = $this->db->lasterror();
 			}
 		}
+		
+		// Remove extrafields
+        if ((! $error) && (empty($conf->global->MAIN_EXTRAFIELDS_DISABLED))) // For avoid conflicts if trigger used
+        {
+        	$result=$this->deleteExtraFields();
+        	if ($result < 0)
+        	{
+        		$error++;
+        		dol_syslog(get_class($this)."::delete error -4 ".$this->error, LOG_ERR);
+        	}
+        }
 
 		if (!$error)
 		{
