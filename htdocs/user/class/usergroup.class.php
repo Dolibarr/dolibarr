@@ -654,6 +654,9 @@ class UserGroup extends CommonObject
 		global $user, $conf;
 
 		$this->datec = dol_now();
+		if (empty($this->nom) && !empty($this->name)) {
+			$this->nom = $this->name;
+		}
 
 		if (!isset($this->entity)) $this->entity = $conf->entity; // If not defined, we use default value
 		$entity = $this->entity;
