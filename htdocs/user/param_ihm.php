@@ -261,8 +261,8 @@ if ($action == 'edit')
 
     clearstatcache();
 
-    print '<table class="noborder centpercent">';
-    print '<tr class="liste_titre"><td width="25%">'.$langs->trans("Parameter").'</td><td width="25%">'.$langs->trans("DefaultValue").'</td><td>&nbsp;</td><td>'.$langs->trans("PersonalValue").'</td></tr>';
+    print '<table class="noborder centpercent tableforfield">';
+    print '<tr class="liste_titre"><td>'.$langs->trans("Parameter").'</td><td>'.$langs->trans("DefaultValue").'</td><td>&nbsp;</td><td>'.$langs->trans("PersonalValue").'</td></tr>';
 
     // Landing page
     print '<tr class="oddeven"><td>'.$langs->trans("LandingPage").'</td>';
@@ -333,8 +333,8 @@ else
 
     dol_banner_tab($object, 'id', $linkback, $user->rights->user->user->lire || $user->admin);
 
-    print '<table class="noborder centpercent">';
-    print '<tr class="liste_titre"><td width="25%">'.$langs->trans("Parameter").'</td><td width="25%">'.$langs->trans("DefaultValue").'</td><td>&nbsp;</td><td>'.$langs->trans("PersonalValue").'</td></tr>';
+    print '<table class="noborder centpercent tableforfield">';
+    print '<tr class="liste_titre"><td>'.$langs->trans("Parameter").'</td><td>'.$langs->trans("DefaultValue").'</td><td>&nbsp;</td><td>'.$langs->trans("PersonalValue").'</td></tr>';
 
     // Landing page
     print '<tr class="oddeven"><td>'.$langs->trans("LandingPage").'</td>';
