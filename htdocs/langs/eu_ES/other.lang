@@ -34,7 +34,7 @@ GraphInBarsAreLimitedToNMeasures=Grapics are limited to %s measures in 'Bars' mo
 OnlyOneFieldForXAxisIsPossible=Only 1 field is currently possible as X-Axis. Only the first selected field has been selected.
 AtLeastOneMeasureIsRequired=At least 1 field for measure is required
 AtLeastOneXAxisIsRequired=At least 1 field for X-Axis is required
-
+LatestBlogPosts=Latest Blog Posts
 Notify_ORDER_VALIDATE=Sales order validated
 Notify_ORDER_SENTBYMAIL=Sales order sent by mail
 Notify_ORDER_SUPPLIER_SENTBYMAIL=Purchase order sent by email
@@ -274,7 +274,7 @@ WEBSITE_PAGEURL=URL of page
 WEBSITE_TITLE=Title
 WEBSITE_DESCRIPTION=Deskribapena
 WEBSITE_IMAGE=Image
-WEBSITE_IMAGEDesc=Relative path of the image media. You can keep this empty as this is rarely used (it can be used by dynamic content to show a thumbnail in a list of blog posts). Use __WEBSITEKEY__ in the path if path depends on website name.
+WEBSITE_IMAGEDesc=Relative path of the image media. You can keep this empty as this is rarely used (it can be used by dynamic content to show a thumbnail in a list of blog posts). Use __WEBSITE_KEY__ in the path if path depends on website name (for example: image/__WEBSITE_KEY__/stories/myimage.png).
 WEBSITE_KEYWORDS=Keywords
 LinesToImport=Lines to import
 

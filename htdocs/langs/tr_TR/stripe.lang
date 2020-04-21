@@ -32,6 +32,7 @@ VendorName=Satıcının Adı
 CSSUrlForPaymentForm=Ödeme formu için CSS stil sayfası url'si
 NewStripePaymentReceived=Yeni Stripe ödemesi alındı
 NewStripePaymentFailed=Yeni Stripe ödemesi denendi ancak başarısız oldu
+FailedToChargeCard=Failed to charge card
 STRIPE_TEST_SECRET_KEY=Gizli test anahtarı
 STRIPE_TEST_PUBLISHABLE_KEY=Yayımlanabilir test anahtarı
 STRIPE_TEST_WEBHOOK_KEY=Webhook test key
@@ -68,4 +69,4 @@ ToOfferALinkForTestWebhook=Link to setup Stripe WebHook to call the IPN (test mo
 ToOfferALinkForLiveWebhook=Link to setup Stripe WebHook to call the IPN (live mode)
 PaymentWillBeRecordedForNextPeriod=Ödeme gelecek dönem için kaydedilecektir.
 ClickHereToTryAgain=<a href="%s">Tekrar denemek için burayı tıklayın...</a>
-CreationOfPaymentModeMustBeDoneFromStripeInterface=Due to Strong Customer Authenticatin rules, creation of a card must be done from Stripe backoffice. You can click here to switch on Stripe customer record: %s
+CreationOfPaymentModeMustBeDoneFromStripeInterface=Due to Strong Customer Authentication rules, creation of a card must be done from Stripe backoffice. You can click here to switch on Stripe customer record: %s

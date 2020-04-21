@@ -141,7 +141,7 @@ OrderByEMail=Correu electrònic
 OrderByWWW=En línia
 OrderByPhone=Telèfon
 # Documents models
-PDFEinsteinDescription=Un model complet de comanda (antiga implementació de la plantilla d'Eratosthene)
+PDFEinsteinDescription=Un model complet de comanda 
 PDFEratostheneDescription=Un model complet de comanda
 PDFEdisonDescription=Model de comanda simple
 PDFProformaDescription=Una plantilla completa de factura Proforma
