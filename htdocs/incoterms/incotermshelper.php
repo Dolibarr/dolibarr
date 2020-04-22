@@ -62,11 +62,11 @@ class IncotermsHelper
 		$this->fetchIncotermListFromDatabase();
 	}
 
-/*
- * ----------------
- * Public functions
- * ----------------
- */
+	/*
+	* ----------------
+	* Public functions
+	* ----------------
+	*/
 
 	/**
 	 * Return a list with all Incoterms (inside the database)
@@ -150,11 +150,11 @@ class IncotermsHelper
 		return empty($incoterm) ? "" : $incoterm->description;
 	}
 
-/*
- * -----------------
- * Private functions
- * -----------------
- */
+	/*
+	* -----------------
+	* Private functions
+	* -----------------
+	*/
 
 	/**
 	 * Fetch the list of Incoterms from the database
