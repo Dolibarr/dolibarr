@@ -591,7 +591,7 @@ class Mo extends CommonObject
 	}
 
 	/**
-	 * Erase and update the line to produce.
+	 * Erase and update the line to consume and to produce.
 	 *
 	 * @param  User $user      User that modifies
 	 * @param  bool $notrigger false=launch triggers after, true=disable triggers
