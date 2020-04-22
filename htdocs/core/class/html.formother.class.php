@@ -262,7 +262,7 @@ class FormOther
     {
         // phpcs:enable
     	global $langs;
-    	
+
     	$out = '';
 
     	$sql = "SELECT r.taux, r.revenuestamp_type";
