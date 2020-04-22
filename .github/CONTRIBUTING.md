@@ -4,7 +4,7 @@ How to contribute to Dolibarr
 Bug reports and feature requests
 --------------------------------
 
-<a name="not-a-support-forum"></a>*Note*: Issues are not a support forum. If you need help using the software, please use [the forums](http://www.dolibarr.org/forum).
+<a name="not-a-support-forum"></a>*Note*: Issues are not a support forum. If you need help using the software, please use [the forums](https://www.dolibarr.org/forum).
 
 Issues are managed on [GitHub](https://github.com/Dolibarr/dolibarr/issues).
 
@@ -129,7 +129,7 @@ Statistics on Dolibarr project shows that 95% of submitted PR are reviewed and t
 
 
 ### Resources
-[Developer documentation](http://wiki.dolibarr.org/index.php/Developer_documentation)
+[Developer documentation](https://wiki.dolibarr.org/index.php/Developer_documentation)
 
 Translations
 ------------
@@ -145,11 +145,11 @@ to retreive all old translation of a source text, and restore the translation in
 
 
 ### Resources
-[Translator documentation](http://wiki.dolibarr.org/index.php/Translator_documentation)
+[Translator documentation](https://wiki.dolibarr.org/index.php/Translator_documentation)
 
 Documentation
 -------------
-The project's documentation is maintained on the [Wiki](http://wiki.dolibarr.org/index.php).
+The project's documentation is maintained on the [Wiki](https://wiki.dolibarr.org/index.php).
 
 *Note*: to help prevent spam, you need to create an account before being able to edit. Everybody is welcome to contribute to its content.
 
