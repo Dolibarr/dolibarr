@@ -59,6 +59,7 @@ ErrorPartialFile=Die Datei wurde nicht vollständig zum Server übertragen.
 ErrorNoTmpDir=Das temporäre Verzeichnis %s existiert nicht.
 ErrorUploadBlockedByAddon=Der Upload wurde durch ein PHP Apache-Plugin blockiert.
 ErrorFileSizeTooLarge=Die Größe der gewählten Datei übersteigt den zulässigen Maximalwert.
+ErrorFieldTooLong=Field %s is too long.
 ErrorSizeTooLongForIntType=Die Größe überschreitet das Maximum für den Typ 'int' (%s Ziffern maximal)
 ErrorSizeTooLongForVarcharType=Die Größe überschreitet das Maximum für den Typ 'string' (%s Zeichen maximal)
 ErrorNoValueForSelectType=Bitte Wert für Auswahlliste eingeben
@@ -234,7 +235,8 @@ ErrorLanguageOfTranslatedPageIsSameThanThisPage=Fehler, die Sprache der überset
 ErrorBatchNoFoundForProductInWarehouse=Für das Produkt "%s" wurde im Lager "%s" keine Los / Seriennummer gefunden.
 ErrorBatchNoFoundEnoughQuantityForProductInWarehouse=Bestand nicht ausreichend für diese Los / Seriennummer für das Produkt "%s" im Lager "%s".
 ErrorOnlyOneFieldForGroupByIsPossible=Only 1 field for the 'Group by' is possible (others are discarded)
-ErrorTooManyDifferentValueForSelectedGroupBy=Found too many different value (more than <b>%s</b>) for the field '<b>%s</b>', so we can't user it as a 'Group by' for graphics. The field 'Group By' has been removed. May be you wanted to use it as an X-Axis ?
+ErrorTooManyDifferentValueForSelectedGroupBy=Found too many different value (more than <b>%s</b>) for the field '<b>%s</b>', so we can't use it as a 'Group by' for graphics. The field 'Group By' has been removed. May be you wanted to use it as an X-Axis ?
+ErrorReplaceStringEmpty=Error, the string to replace into is empty
 # Warnings
 WarningParamUploadMaxFileSizeHigherThanPostMaxSize=Ihr PHP Parameter upload_max_filesize (%s) ist größer als Parameter post_max_size (%s). Dies ist eine inkonsistente Einstellung.
 WarningPasswordSetWithNoAccount=Es wurde ein Passwort für dieses Mitglied vergeben, aber kein Benutzer erstellt. Das Passwort wird gespeichert, aber kann nicht für die Anmeldung an Dolibarr verwendet werden. Es kann von einem externen Modul/einer Schnittstelle verwendet werden, aber wenn Sie kein Login oder Passwort für dieses Mitglied definiert müssen, können Sie die Option "Login für jedes Mitglied verwalten" in den Mitgliedseinstellungen deaktivieren. Wenn Sie ein Login aber kein Passwort benötige, lassen Sie dieses Feld leer, um diese Meldung zu deaktivieren. Anmerkung: Die E-Mail-Adresse kann auch zur Anmeldung verwendet werden, wenn das Mitglied mit einem Benutzer verbunden wird.

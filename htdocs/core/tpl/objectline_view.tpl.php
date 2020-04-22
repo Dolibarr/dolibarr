@@ -45,7 +45,7 @@ if (empty($object) || !is_object($object))
 	exit;
 }
 
-
+global $mysoc;
 global $forceall, $senderissupplier, $inputalsopricewithtax, $outputalsopricetotalwithtax;
 
 $usemargins = 0;
@@ -282,13 +282,13 @@ if ($line->special_code == 3) { ?>
 	$coldisplay++;
 	if (empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER))
 	{
-    	print '<span class="classfortooltip" title="';
-    	print $langs->transcountry("TotalHT", $mysoc->country_code).'='.price($line->total_ht);
-    	print '<br>'.$langs->transcountry("TotalVAT", ($senderissupplier ? $object->thirdparty->country_code : $mysoc->country_code)).'='.price($line->total_tva);
-    	if (price2num($line->total_localtax1)) print '<br>'.$langs->transcountry("TotalLT1", ($senderissupplier ? $object->thirdparty->country_code : $mysoc->country_code)).'='.price($line->total_localtax1);
-    	if (price2num($line->total_localtax2)) print '<br>'.$langs->transcountry("TotalLT2", ($senderissupplier ? $object->thirdparty->country_code : $mysoc->country_code)).'='.price($line->total_localtax2);
-    	print '<br>'.$langs->transcountry("TotalTTC", $mysoc->country_code).'='.price($line->total_ttc);
-    	print '">';
+		$tooltiponprice = $langs->transcountry("TotalHT", $mysoc->country_code).'='.price($line->total_ht);
+		$tooltiponprice .= '<br>'.$langs->transcountry("TotalVAT", ($senderissupplier ? $object->thirdparty->country_code : $mysoc->country_code)).'='.price($line->total_tva);
+		if (price2num($line->total_localtax1)) $tooltiponprice .= '<br>'.$langs->transcountry("TotalLT1", ($senderissupplier ? $object->thirdparty->country_code : $mysoc->country_code)).'='.price($line->total_localtax1);
+		if (price2num($line->total_localtax2)) $tooltiponprice .= '<br>'.$langs->transcountry("TotalLT2", ($senderissupplier ? $object->thirdparty->country_code : $mysoc->country_code)).'='.price($line->total_localtax2);
+		$tooltiponprice .= '<br>'.$langs->transcountry("TotalTTC", $mysoc->country_code).'='.price($line->total_ttc);
+
+		print '<span class="classfortooltip" title="'.$tooltiponprice.'">';
 	}
 	print price($line->total_ht);
 	if (empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER))

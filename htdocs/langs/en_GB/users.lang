@@ -5,6 +5,7 @@ RemoveFromGroup=Remove from a group
 ConfirmPasswordReset=Confirm password change
 NonAffectedUsers=Non-assigned users
 UsePersonalValue=Use a personal choice
+InternalExternalDesc=An <b>internal</b> user is a user that is part of your company/organization.<br>An <b>external</b> user is a customer, vendor or other (Creating an external user for a third-party can be done from the contact record of the third-party).<br><br>In both cases, permissions defines rights on Dolibarr, also external user can have a different menu manager than internal user (See Home - Setup - Display)
 PermissionInheritedFromAGroup=Permission granted through inherited rights from one of the user groups.
 UserWillBeInternalUser=Created user will be an internal user (because they are not linked to a particular third party)
 UserWillBeExternalUser=Created user will be an external user (because they are linked to a particular third party)

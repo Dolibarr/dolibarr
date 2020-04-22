@@ -53,9 +53,7 @@ NextValueForDeposit=Nächster Wert (Anzahlung)
 MustBeLowerThanPHPLimit=Hinweis: <b>Deine</b> PHP Konfigurationslimite für Uploads ist aktuell  <b>%s</b> %s pro Datei - unabhängig vom Wert dieses Parameters.
 NoMaxSizeByPHPLimit=Hinweis: In Ihren PHP-Einstellungen sind keine Grössenbeschränkungen hinterlegt
 MaxSizeForUploadedFiles=Maximale Grösse für Dateiuploads (0 verbietet jegliche Uploads)
-AntiVirusCommandExample=Beispiel für ClamWin: c:\\Program Files (x86)\\ClamWin\\bin\\clamscan.exe <br>Beispiel für ClamAV: /usr/bin/clamscan
 AntiVirusParam=Weitere Parameter auf der Kommandozeile
-AntiVirusParamExample=Beispiel für ClamWin: --database="C:\\Program Files (x86)\\ClamWin\\lib"
 MultiCurrencySetup=Mehrfachwährungen konfigurieren
 MenuIdParent=Eltern-Menü-ID
 DetailPosition=Reihungsnummer für definition der Menüposition
@@ -94,7 +92,6 @@ AddDropDatabase=DROP DATABASE Befehl hinzufügen
 AddDropTable=DROP TABLE Befehl hinzufügen
 IgnoreDuplicateRecords=Fehler durch doppelte Zeilen ignorieren (INSERT IGNORE)
 BoxesDesc=Boxen (Widgets) sind Informationsblöcke, die man für personalisierte Ansichten verwenden kann. Gib bei einer Box an, auf welcher Ansicht Sie erscheinen soll und Klicke auf "Aktivieren" - oder entferne eine Box über das Papierkorbsymbol.
-ModulesDesc=Über Module steuerst du die Funktionsvielfalt deiner Dolibarr - Umgebung. Schalte die gewünschten Module einfach mit dem Schiebeschalter daneben ein und aus. Setze dann benutzerspezifische Rechte für deine Anwender.
 ModulesMarketPlaceDesc=Sie finden weitere Module auf externen Websites
 ModulesDeployDesc=Hier kannst du Module und Apps von Drittanbietern in deine Umgebung einbinden. Dazu braucht es lokale Schreibrechte auf deiner Webserverumgebung. Diese Module erscheinen danach hier im Tab "<strong>%s</strong>"
 ModulesMarketPlaces=Suche externe Module
@@ -415,8 +412,6 @@ CompanyInfo=Firma / Organisation
 CompanyZip=PLZ
 DoNotSuggestPaymentMode=Nicht vorschlagen
 SetupDescription1=Der Setupbereich erlaubt das konfigurieren ihrer Dolibarr Installation vor der ersten Verwendung.
-SetupDescription3=<a href="%s">%s -&gt; %s</a> <br> Grundlegende Parameter zum Anpassen des Standardverhaltens Ihrer Anwendung (z. B. für länderbezogene Funktionen).
-SetupDescription4=Die Parameter im Menü <a href="%s">%s-> %s</a> sind notwenig, da Dolibarr ein modulares monolithisches ERP/CRM-System ist. Neue Funktionen werden für jedes aktivierte Modul zum Menü hinzugefügt.
 InfoDolibarr=Infos Dolibarr
 InfoBrowser=Infos Browser
 InfoOS=Infos OS

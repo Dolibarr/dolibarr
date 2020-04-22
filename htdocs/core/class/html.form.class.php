@@ -348,6 +348,7 @@ class Form
 				return ''; // No extralang field to show
 			}
 
+			$result .= '<!-- Widget for translation -->'."\n";
 			$result .= '<div class="inline-block paddingleft image-'.$object->element.'-'.$fieldname.'">';
 			$s = img_picto($langs->trans("ShowOtherLanguages"), 'language', '', false, 0, 0, '', 'fa-15 editfieldlang');
 			$result .= $s;
@@ -7408,9 +7409,14 @@ class Form
 					$htmltext = '';
 					// If there is extra languages
 					foreach ($arrayoflangcode as $extralangcode) {
-						$s = picto_from_langcode($extralangcode, 'class="pictoforlang paddingright"');
-						$htmltext .= $s.$object->array_languages['name'][$extralangcode];
+						$htmltext .= picto_from_langcode($extralangcode, 'class="pictoforlang paddingright"');
+						if ($object->array_languages['name'][$extralangcode]) {
+							$htmltext .= $object->array_languages['name'][$extralangcode];
+						} else {
+							$htmltext .= '<span class="opacitymedium">'.$langs->trans("SwitchInEditModeToAddTranslation").'</span>';
+						}
 					}
+					$ret .= '<!-- Show translations of name -->'."\n";
 					$ret .= $this->textwithpicto('', $htmltext, -1, 'language', 'opacitymedium paddingleft');
 				}
 			}

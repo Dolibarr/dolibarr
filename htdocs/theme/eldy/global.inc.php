@@ -3769,7 +3769,7 @@ div.info {
     padding-bottom: 8px;
     margin: 1em 0em 1em 0em;
     background: #eff8fc;
-    color: #666;
+    color: #668;
 }
 
 /* Warning message */

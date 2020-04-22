@@ -32,6 +32,7 @@ VendorName=Tên nhà cung cấp
 CSSUrlForPaymentForm=CSS style sheet Url cho hình thức thanh toán
 NewStripePaymentReceived=Đã nhận thanh toán Stripe mới
 NewStripePaymentFailed=Thanh toán Stripe mới đã thử nhưng không thành công
+FailedToChargeCard=Failed to charge card
 STRIPE_TEST_SECRET_KEY=Khóa kiểm tra bí mật
 STRIPE_TEST_PUBLISHABLE_KEY=Khóa kiểm tra có thể xuất bản
 STRIPE_TEST_WEBHOOK_KEY=Khóa kiểm tra webhook
@@ -68,4 +69,4 @@ ToOfferALinkForTestWebhook=Liên kết để thiết lập Stripe WebHook để 
 ToOfferALinkForLiveWebhook=Liên kết để thiết lập Stripe WebHook để gọi IPN (chế độ trực tiếp)
 PaymentWillBeRecordedForNextPeriod=Thanh toán sẽ được ghi lại cho giai đoạn tiếp theo.
 ClickHereToTryAgain=<a href="%s">Bấm vào đây để thử lại...</a>
-CreationOfPaymentModeMustBeDoneFromStripeInterface=Due to Strong Customer Authenticatin rules, creation of a card must be done from Stripe backoffice. You can click here to switch on Stripe customer record: %s
+CreationOfPaymentModeMustBeDoneFromStripeInterface=Due to Strong Customer Authentication rules, creation of a card must be done from Stripe backoffice. You can click here to switch on Stripe customer record: %s

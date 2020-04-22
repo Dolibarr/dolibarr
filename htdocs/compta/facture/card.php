@@ -5046,8 +5046,9 @@ elseif ($id > 0 || !empty($ref))
 	print '<table id="tablelines" class="noborder noshadow" width="100%">';
 
 	// Show object lines
-	if (!empty($object->lines))
+	if (!empty($object->lines)) {
 		$ret = $object->printObjectLines($action, $mysoc, $soc, $lineid, 1);
+	}
 
 	// Form to add new line
 	if ($object->statut == 0 && $usercancreate && $action != 'valid' && $action != 'editline')

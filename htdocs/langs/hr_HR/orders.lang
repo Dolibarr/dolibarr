@@ -141,7 +141,7 @@ OrderByEMail=E-pošta
 OrderByWWW=Online
 OrderByPhone=Telefon
 # Documents models
-PDFEinsteinDescription=A complete order model (old implementation of Eratosthene template)
+PDFEinsteinDescription=A complete order model 
 PDFEratostheneDescription=A complete order model
 PDFEdisonDescription=Jednostavan model narudžbe
 PDFProformaDescription=A complete Proforma invoice template

@@ -59,6 +59,7 @@ ErrorPartialFile=Fajl nije u celosti primljen na server.
 ErrorNoTmpDir=Privremeni folder %s ne postoji.
 ErrorUploadBlockedByAddon=Upload blokiran PHP/Apache pluginom.
 ErrorFileSizeTooLarge=Fajl je preveliki.
+ErrorFieldTooLong=Field %s is too long.
 ErrorSizeTooLongForIntType=Predugačka vrednost za int tip (%s cifara maksimum)
 ErrorSizeTooLongForVarcharType=Predugačka vrednost za string tip (%s karaktera maksimum)
 ErrorNoValueForSelectType=Molimo izaberite vrednost u select listi
@@ -234,7 +235,8 @@ ErrorLanguageOfTranslatedPageIsSameThanThisPage=Error, language of translated pa
 ErrorBatchNoFoundForProductInWarehouse=No lot/serial found for product "%s" in warehouse "%s".
 ErrorBatchNoFoundEnoughQuantityForProductInWarehouse=No enough quantity for this lot/serial for product "%s" in warehouse "%s".
 ErrorOnlyOneFieldForGroupByIsPossible=Only 1 field for the 'Group by' is possible (others are discarded)
-ErrorTooManyDifferentValueForSelectedGroupBy=Found too many different value (more than <b>%s</b>) for the field '<b>%s</b>', so we can't user it as a 'Group by' for graphics. The field 'Group By' has been removed. May be you wanted to use it as an X-Axis ?
+ErrorTooManyDifferentValueForSelectedGroupBy=Found too many different value (more than <b>%s</b>) for the field '<b>%s</b>', so we can't use it as a 'Group by' for graphics. The field 'Group By' has been removed. May be you wanted to use it as an X-Axis ?
+ErrorReplaceStringEmpty=Error, the string to replace into is empty
 # Warnings
 WarningParamUploadMaxFileSizeHigherThanPostMaxSize=Your PHP parameter upload_max_filesize (%s) is higher than PHP parameter post_max_size (%s). This is not a consistent setup.
 WarningPasswordSetWithNoAccount=Lozinka je podešena za ovog člana, ali korisnik nije kreiran. To znači da je lozinka sačuvana, ali se član ne može ulogovati na Dolibarr. Informaciju može koristiti neka eksterna komponenta, ali ako nemate potrebe da definišete korisnika/lozinku za članove, možete deaktivirati opciju "Upravljanje lozinkama za svakog člana" u podešavanjima modula Članovi. Ukoliko morate da kreirate login, ali Vam nije potrebna lozinka, ostavite ovo polje prazno da se ovo upozorenje ne bi prikazivalo. Napomena: email može biti korišćen kao login ako je član povezan sa korisnikom.

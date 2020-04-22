@@ -3249,7 +3249,7 @@ function img_picto($titlealt, $picto, $moreatt = '', $pictoisfullpath = false, $
 			// Add CSS
 			$arrayconvpictotomorcess = array(
 				'action'=>'bg-infobox-action', 'account'=>'bg-infobox-bank_account', 'bank_account'=>'bg-infobox-bank_account', 'cash-register'=>'bg-infobox-bank_account',
-				'contract'=>'bg-infobox-contrat', 'check'=>'font-status4', 'dollyrevert'=>'flip', 'folder'=>'bg-infobox-action',
+				'contract'=>'bg-infobox-contrat', 'check'=>'font-status4', 'dollyrevert'=>'flip', 'ecm'=>'bg-infobox-action',
 				'hrm'=>'bg-infobox-adherent', 'group'=>'bg-infobox-adherent', 'intervention'=>'bg-infobox-contrat',
 				'multicurrency'=>'bg-infobox-bank_account',
 				'members'=>'bg-infobox-adherent', 'member'=>'bg-infobox-adherent', 'money-bill-alt'=>'bg-infobox-bank_account',

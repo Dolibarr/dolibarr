@@ -1466,6 +1466,7 @@ abstract class CommonDocGenerator
                     // save curent cell padding
                     $curentCellPaddinds = $pdf->getCellPaddings();
 
+                    // Add space for lines (more if we need to show a second alternative language)
                     global $outputlangsbis;
                     if (is_object($outputlangsbis)) {
                         // set cell padding with column title definition
@@ -1480,8 +1481,8 @@ abstract class CommonDocGenerator
                     $textWidth = $colDef['width'];
                     $pdf->MultiCell($textWidth, 2, $colDef['title']['label'], '', $colDef['title']['align']);
 
-
-                    if (is_object($outputlangsbis)) {
+                    // Add variant of translation if $outputlangsbis is an object
+                    if (is_object($outputlangsbis) && trim($colDef['title']['label'])) {
                         $pdf->setCellPaddings($colDef['title']['padding'][3], 0, $colDef['title']['padding'][1], $colDef['title']['padding'][2]);
                     	$pdf->SetXY($colDef['xStartPos'], $pdf->GetY());
                     	$textbis = $outputlangsbis->transnoentities($colDef['title']['textkey']);
@@ -1495,6 +1496,7 @@ abstract class CommonDocGenerator
                 }
             }
         }
+
         return $this->tabTitleHeight;
     }
 
