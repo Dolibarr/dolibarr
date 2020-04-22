@@ -4663,9 +4663,9 @@ function price($amount, $form = 0, $outlangs = '', $trunc = 1, $rounding = -1, $
 /**
  *	Function that return a number with universal decimal format (decimal separator is '.') from an amount typed by a user.
  *	Function to use on each input amount before any numeric test or database insert. A better name for this function
- *  should be text2num().
+ *  should be roundtext2num().
  *
- *	@param	float	$amount			Amount to convert/clean
+ *	@param	float	$amount			Amount to convert/clean or round
  *	@param	string	$rounding		''=No rounding
  * 									'MU'=Round to Max unit price (MAIN_MAX_DECIMALS_UNIT)
  *									'MT'=Round to Max for totals with Tax (MAIN_MAX_DECIMALS_TOT)
