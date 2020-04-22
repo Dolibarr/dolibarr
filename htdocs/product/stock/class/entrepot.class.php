@@ -715,7 +715,7 @@ class Entrepot extends CommonObject
 
         $result = '';
 
-        $label = '<u>'.$langs->trans("ShowWarehouse").'</u>';
+        $label = '<u>'.$langs->trans("Warehouse").'</u>';
         $label .= '<br><b>'.$langs->trans('Ref').':</b> '.(empty($this->ref) ? (empty($this->label) ? $this->libelle : $this->label) : $this->ref);
         if (!empty($this->lieu)) {
             $label .= '<br><b>'.$langs->trans('LocationSummary').':</b> '.$this->lieu;
@@ -731,7 +731,7 @@ class Entrepot extends CommonObject
         {
             if (!empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER))
             {
-                $label = $langs->trans("ShowWarehouse");
+                $label = $langs->trans("Warehouse");
                 $linkclose .= ' alt="'.dol_escape_htmltag($label, 1).'"';
             }
             $linkclose .= ' title="'.dol_escape_htmltag($label, 1).'"';
