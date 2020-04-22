@@ -298,30 +298,6 @@ abstract class DoliDB implements Database
 		return $this->lastqueryerror;
 	}
 
-
-	/**
-	 * Return first result value from query
-	 * Note : This method executes a given SQL query and retrieves the first value of the first row of results. It should only be used with SELECT queries.
-	 * Dont add LIMIT to your query, it will be added by this method
-	 * @param string $sql the sql query string
-	 * @return bool| var
-	 */
-	public function getValue($sql)
-	{
-		$sql .= ' LIMIT 1;';
-
-		$res = $this->query($sql);
-		if ($res)
-		{
-			if($this->num_rows($res) > 0) {
-				$Tresult = $this->fetch_row($res);
-				return reset($Tresult);
-			}
-		}
-
-		return false;
-	}
-
 	/**
 	 * Return first result from query as object
 	 * Note : This method executes a given SQL query and retrieves the first row of results as an object. It should only be used with SELECT queries
