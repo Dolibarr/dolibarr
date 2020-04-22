@@ -112,9 +112,9 @@ a process to follow to optimize the chance to have PRs merged efficiently...
 
 Also, some code changes need a prior approbation:
 
-* if you want to include a new external library (into htdocs/includes directory), please ask before to the core project manager (mention @dolibarr-jedi in your issue) to see if such a library can be accepted.
+* if you want to include a new external library (into htdocs/includes directory), please ask before to the core project manager (mention @dolibarr-yoda in your issue) to see if such a library can be accepted.
 
-* if you add a new table, you must first create a page on https://wiki.dolibarr.org/index.php/Category:Table_SQL (copy an existing page changing its name to see it into this index page). Then ask the project manager (@dolibarr-jedi) if the new data model you plan to add is compatible with curent and future works in progress and can be accepted as you suggest.
+* if you add a new table, you must first create a page on https://wiki.dolibarr.org/index.php/Category:Table_SQL (copy an existing page changing its name to see it into this index page). Then ask the project manager (@dolibarr-yoda) if the new data model you plan to add is compatible with curent and future works in progress and can be accepted as you suggest.
 
 Once a PR has been submitted, you may need to wait for its integration. It is common that the project leader let the PR open for a long delay to allow every developer discuss about the PR (A label is added in such a case).
 
