@@ -61,7 +61,7 @@ $hookmanager->initHooks(array('userhome'));
 llxHeader();
 
 
-print load_fiche_titre($langs->trans("MenuUsersAndGroups"));
+print load_fiche_titre($langs->trans("MenuUsersAndGroups"), '', 'user');
 
 
 print '<div class="fichecenter"><div class="fichethirdleft">';
