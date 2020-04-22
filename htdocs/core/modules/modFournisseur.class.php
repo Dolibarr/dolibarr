@@ -418,7 +418,7 @@ class modFournisseur extends DolibarrModules
 			's.tva_intra'=>'VATIntra','f.rowid'=>"InvoiceId",'f.ref'=>"InvoiceRef",'f.ref_supplier'=>"RefSupplier",'f.datec'=>"InvoiceDateCreation",
 			'f.datef'=>"DateInvoice",'f.total_ht'=>"TotalHT",'f.total_ttc'=>"TotalTTC",'f.total_tva'=>"TotalVAT",'f.paye'=>"InvoicePaid",
 			'f.fk_statut'=>'InvoiceStatus','f.note_public'=>"InvoiceNote",'p.rowid'=>'PaymentId','pf.amount'=>'AmountPayment',
-			'p.datep'=>'DatePayment','p.num_paiement'=>'PaymentNumber','project.rowid'=>'ProjectId','project.ref'=>'ProjectRef','project.title'=>'ProjectLabel'
+			'p.datep'=>'DatePayment','p.num_paiement'=>'PaymentNumber','p.fk_bank'=>'IdTransaction','project.rowid'=>'ProjectId','project.ref'=>'ProjectRef','project.title'=>'ProjectLabel'
 		);
 		//$this->export_TypeFields_array[$r]=array(
 		//	's.rowid'=>"List:societe:CompanyName",'s.nom'=>'Text','s.address'=>'Text','s.zip'=>'Text','s.town'=>'Text','c.code'=>'Text','s.phone'=>'Text',
@@ -430,14 +430,14 @@ class modFournisseur extends DolibarrModules
 			's.nom'=>'Text','s.address'=>'Text','s.zip'=>'Text','s.town'=>'Text','c.code'=>'Text','s.phone'=>'Text','s.siren'=>'Text','s.siret'=>'Text','s.ape'=>'Text',
 			's.idprof4'=>'Text','s.tva_intra'=>'Text','f.ref'=>"Text",'f.ref_supplier'=>"Text",'f.datec'=>"Date",'f.datef'=>"Date",'f.total_ht'=>"Numeric",
 			'f.total_ttc'=>"Numeric",'f.total_tva'=>"Numeric",'f.paye'=>"Boolean",'f.fk_statut'=>'Status','f.note_public'=>"Text",'pf.amount'=>'Numeric',
-			'p.datep'=>'Date','p.num_paiement'=>'Numeric','project.ref'=>'Text','project.title'=>'Text'
+			'p.datep'=>'Date','p.num_paiement'=>'Numeric','p.fk_bank'=>'Numeric','project.ref'=>'Text','project.title'=>'Text'
 		);
 		$this->export_entities_array[$r]=array(
 			's.rowid'=>"company",'s.nom'=>'company','s.address'=>'company','s.zip'=>'company','s.town'=>'company','c.code'=>'company','s.phone'=>'company',
 			's.siren'=>'company','s.siret'=>'company','s.ape'=>'company','s.idprof4'=>'company','s.idprof5'=>'company','s.idprof6'=>'company','s.tva_intra'=>'company',
 			'f.rowid'=>"invoice",'f.ref'=>"invoice",'f.ref_supplier'=>"invoice",'f.datec'=>"invoice",'f.datef'=>"invoice",'f.total_ht'=>"invoice",
 			'f.total_ttc'=>"invoice",'f.total_tva'=>"invoice",'f.paye'=>"invoice",'f.fk_statut'=>'invoice','f.note_public'=>"invoice",'p.rowid'=>'payment','pf.amount'=>'payment',
-		    'p.datep'=>'payment','p.num_paiement'=>'payment','project.rowid'=>'project','project.ref'=>'project','project.title'=>'project');
+			'p.datep'=>'payment','p.num_paiement'=>'payment','p.fk_bank'=>'account','project.rowid'=>'project','project.ref'=>'project','project.title'=>'project');
 		$this->export_dependencies_array[$r]=array('payment'=>'p.rowid'); // To add unique key if we ask a field of a child to avoid the DISTINCT to discard them
 		// Add extra fields object
 		$sql="SELECT name, label, type, param FROM ".MAIN_DB_PREFIX."extrafields WHERE elementtype = 'facture_fourn' AND entity IN (0, ".$conf->entity.")";

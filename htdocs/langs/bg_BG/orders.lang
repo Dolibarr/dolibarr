@@ -141,7 +141,7 @@ OrderByEMail=Имейл
 OrderByWWW=Онлайн
 OrderByPhone=Телефон
 # Documents models
-PDFEinsteinDescription=Пълен шаблон на поръчка (стара реализация на шаблон Eratosthene))
+PDFEinsteinDescription=Пълен шаблон на поръчка 
 PDFEratostheneDescription=Пълен шаблон на поръчка
 PDFEdisonDescription=Опростен шаблон за поръчка
 PDFProformaDescription=Пълен шаблон за проформа-фактура

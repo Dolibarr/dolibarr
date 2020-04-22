@@ -325,7 +325,6 @@ CompanyDeleted=A Empresa "%s" foi Eliminada
 ListOfContacts=Lista de Contactos
 ListOfContactsAddresses=Lista de Contactos
 ListOfThirdParties=Lista de Terceiros
-ShowCompany=Mostrar terceiros
 ShowContact=Mostrar Contacto
 ContactsAllShort=Todos (sem filtro)
 ContactType=Tipo de Contacto
@@ -447,6 +446,7 @@ SaleRepresentativeFirstname=Primeiro nome do representante de vendas
 SaleRepresentativeLastname=Último nome do representante de vendas
 ErrorThirdpartiesMerge=Houve um erro ao eliminar os terceiros. Por favor, verifique o registo. As alterações foram revertidas.
 NewCustomerSupplierCodeProposed=Customer or Vendor code already used, a new code is suggested
+KeepEmptyIfGenericAddress=Keep this field empty if this address is a generic address
 #Imports
 PaymentTypeCustomer=Payment Type - Customer
 PaymentTermsCustomer=Payment Terms - Customer

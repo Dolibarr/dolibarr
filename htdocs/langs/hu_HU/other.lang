@@ -34,7 +34,7 @@ GraphInBarsAreLimitedToNMeasures=A grafikák „Sávok” módban %s mértékre 
 OnlyOneFieldForXAxisIsPossible=Jelenleg csak 1 mező lehetséges X-tengelyként. Csak az első kiválasztott mező került kiválasztásra.
 AtLeastOneMeasureIsRequired=Legalább 1 mező szükséges a méréshez
 AtLeastOneXAxisIsRequired=Legalább 1 mező szükséges az X-tengelyhez
-
+LatestBlogPosts=Latest Blog Posts
 Notify_ORDER_VALIDATE=Az értékesítési megrendelés érvényes
 Notify_ORDER_SENTBYMAIL=Az értékesítési megrendelés postai úton elküldve
 Notify_ORDER_SUPPLIER_SENTBYMAIL=A beszerzési megrendelés e-mailben elküldve
@@ -274,7 +274,7 @@ WEBSITE_PAGEURL=Az oldal URL-je
 WEBSITE_TITLE=Cím
 WEBSITE_DESCRIPTION=Leírás
 WEBSITE_IMAGE=Kép
-WEBSITE_IMAGEDesc=A képfájl relatív útja. Ezt üresen hagyhatja, mivel ezt ritkán használják (a dinamikus tartalom felhasználhatja miniatűr megjelenítésére a blogbejegyzések listájában). Használja a __WEBSITEKEY__ az elérési útban, ha az elérési út a webhely nevétől függ.
+WEBSITE_IMAGEDesc=Relative path of the image media. You can keep this empty as this is rarely used (it can be used by dynamic content to show a thumbnail in a list of blog posts). Use __WEBSITE_KEY__ in the path if path depends on website name (for example: image/__WEBSITE_KEY__/stories/myimage.png).
 WEBSITE_KEYWORDS=Kulcsszavak
 LinesToImport=Importálandó sorok
 
