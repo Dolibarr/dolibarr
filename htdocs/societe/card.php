@@ -1330,6 +1330,7 @@ else
 
         // Country
         print '<tr><td>'.$form->editfieldkey('Country', 'selectcountry_id', '', $object, 0).'</td><td colspan="3" class="maxwidthonsmartphone">';
+        print img_picto('', 'globe-americas', 'class="paddingrightonly"');
         print $form->select_country((GETPOST('country_id') != '' ?GETPOST('country_id') : $object->country_id));
         if ($user->admin) print info_admin($langs->trans("YouCanChangeValuesForThisListFromDictionarySetup"), 1);
         print '</td></tr>';
@@ -1977,6 +1978,7 @@ else
 
             // Country
             print '<tr><td>'.$form->editfieldkey('Country', 'selectcounty_id', '', $object, 0).'</td><td colspan="3">';
+            print img_picto('', 'globe-americas', 'class="paddingrightonly"');
             print $form->select_country((GETPOSTISSET('country_id') ? GETPOST('country_id') : $object->country_id), 'country_id');
             if ($user->admin) print info_admin($langs->trans("YouCanChangeValuesForThisListFromDictionarySetup"), 1);
             print '</td></tr>';

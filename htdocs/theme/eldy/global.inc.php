@@ -210,7 +210,9 @@ textarea.cke_source:focus
 {
 	box-shadow: none;
 }
-
+div#cke_dp_desc {
+    margin-top: 5px;
+}
 textarea {
 	border-radius: 0;
 	border-top:solid 1px rgba(0,0,0,.2);

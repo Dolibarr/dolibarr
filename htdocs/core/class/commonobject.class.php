@@ -667,7 +667,7 @@ abstract class CommonObject
 				$namecoords .= $this->getFullName($langs, 1).'<br>'.$coords;
 				// hideonsmatphone because copyToClipboard call jquery dialog that does not work with jmobile
 				$out .= '<a href="#" class="hideonsmartphone" onclick="return copyToClipboard(\''.dol_escape_js($namecoords).'\',\''.dol_escape_js($langs->trans("HelpCopyToClipboard")).'\');">';
-				$out .= img_picto($langs->trans("Address"), 'object_address.png');
+				$out .= img_picto($langs->trans("Address"), 'map-marker-alt');
 				$out .= '</a> ';
 			}
 			$out .= dol_print_address($coords, 'address_'.$htmlkey.'_'.$this->id, $this->element, $this->id, 1, ', '); $outdone++;
