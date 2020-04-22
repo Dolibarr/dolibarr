@@ -32,6 +32,7 @@ VendorName=Název dodavatele
 CSSUrlForPaymentForm=CSS styly url platebního formuláře
 NewStripePaymentReceived=Byla obdržena nová platba Stripe
 NewStripePaymentFailed=Pokus o novou Stripe platbu, ta ale selhala
+FailedToChargeCard=Failed to charge card
 STRIPE_TEST_SECRET_KEY=Tajný testovací klíč
 STRIPE_TEST_PUBLISHABLE_KEY=Testovatelný klíč pro publikování
 STRIPE_TEST_WEBHOOK_KEY=Testovací klíč Webhook
@@ -68,4 +69,4 @@ ToOfferALinkForTestWebhook=Odkaz na nastavení Stripe WebHook pro volání IPN (
 ToOfferALinkForLiveWebhook=Odkaz na nastavení Stripe WebHook pro volání IPN (provozní režim)
 PaymentWillBeRecordedForNextPeriod=Payment will be recorded for the next period.
 ClickHereToTryAgain=<a href="%s">Click here to try again...</a>
-CreationOfPaymentModeMustBeDoneFromStripeInterface=Due to Strong Customer Authenticatin rules, creation of a card must be done from Stripe backoffice. You can click here to switch on Stripe customer record: %s
+CreationOfPaymentModeMustBeDoneFromStripeInterface=Due to Strong Customer Authentication rules, creation of a card must be done from Stripe backoffice. You can click here to switch on Stripe customer record: %s

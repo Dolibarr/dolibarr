@@ -32,6 +32,7 @@ VendorName=Numele vânzătorului
 CSSUrlForPaymentForm=CSS foaie de URL-ul de stil pentru forma de plată
 NewStripePaymentReceived=Plata noua Stripe incasata
 NewStripePaymentFailed=Plata noua Stripe incercata dar esuata
+FailedToChargeCard=Failed to charge card
 STRIPE_TEST_SECRET_KEY=Cheie de testare secreta
 STRIPE_TEST_PUBLISHABLE_KEY=Cheia de test publicabilă
 STRIPE_TEST_WEBHOOK_KEY=Cheia de test Webhook
@@ -68,4 +69,4 @@ ToOfferALinkForTestWebhook=Link to setup Stripe WebHook to call the IPN (test mo
 ToOfferALinkForLiveWebhook=Link to setup Stripe WebHook to call the IPN (live mode)
 PaymentWillBeRecordedForNextPeriod=Payment will be recorded for the next period.
 ClickHereToTryAgain=<a href="%s">Click here to try again...</a>
-CreationOfPaymentModeMustBeDoneFromStripeInterface=Due to Strong Customer Authenticatin rules, creation of a card must be done from Stripe backoffice. You can click here to switch on Stripe customer record: %s
+CreationOfPaymentModeMustBeDoneFromStripeInterface=Due to Strong Customer Authentication rules, creation of a card must be done from Stripe backoffice. You can click here to switch on Stripe customer record: %s

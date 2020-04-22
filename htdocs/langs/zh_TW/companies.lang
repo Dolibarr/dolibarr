@@ -325,7 +325,6 @@ CompanyDeleted=已從資料庫中刪除“%s”公司。
 ListOfContacts=通訊錄/地址清單
 ListOfContactsAddresses=通訊錄/地址清單
 ListOfThirdParties=合作方清單
-ShowCompany=顯示合作方
 ShowContact=顯示連絡人
 ContactsAllShort=全部（不過濾）
 ContactType=連絡型式
@@ -447,6 +446,7 @@ SaleRepresentativeFirstname=業務代表的名字
 SaleRepresentativeLastname=業務代表的姓氏
 ErrorThirdpartiesMerge=刪除合作方時發生錯誤。請檢查日誌。原變更已被回復。
 NewCustomerSupplierCodeProposed=客戶或供應商代碼已使用，已建議新代碼
+KeepEmptyIfGenericAddress=Keep this field empty if this address is a generic address
 #Imports
 PaymentTypeCustomer=付款方式-客戶
 PaymentTermsCustomer=付款條件-客戶

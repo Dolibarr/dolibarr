@@ -94,7 +94,7 @@ $texte = $langs->trans('ReplenishmentOrders');
 
 llxHeader('', $texte, $helpurl, '');
 
-print load_fiche_titre($langs->trans('Replenishment'), '', 'generic');
+print load_fiche_titre($langs->trans('Replenishment'), '', 'stock');
 
 $head = array();
 $head[0][0] = DOL_URL_ROOT.'/product/stock/replenish.php';
@@ -151,9 +151,11 @@ if ($resql)
     $num = $db->num_rows($resql);
     $i = 0;
 
-	print $langs->trans("ReplenishmentOrdersDesc").'<br><br>';
+	print '<span class="opacitymedium">'.$langs->trans("ReplenishmentOrdersDesc").'</span><br><br>';
 
-    print_barre_liste('', $page, $_SERVER["PHP_SELF"], '', $sortfield, $sortorder, '', $num, 0, '');
+	print '<form action="'.$_SERVER["PHP_SELF"].'" method="GET">';
+
+	print_barre_liste('', $page, $_SERVER["PHP_SELF"], '', $sortfield, $sortorder, '', $num, 0, '');
 
     $param = '';
     if (!empty($contextpage) && $contextpage != $_SERVER["PHP_SELF"]) $param .= '&contextpage='.urlencode($contextpage);
@@ -166,9 +168,6 @@ if ($resql)
     if ($search_datemonth) $param .= '&search_datemonth='.urlencode($search_datemonth);
     if ($search_dateday) $param .= '&search_dateday='.urlencode($search_dateday);
     if ($optioncss != '')     $param .= '&optioncss='.urlencode($optioncss);
-
-
-    print '<form action="'.$_SERVER["PHP_SELF"].'" method="GET">';
 
     print '<table class="noborder centpercent">';
 

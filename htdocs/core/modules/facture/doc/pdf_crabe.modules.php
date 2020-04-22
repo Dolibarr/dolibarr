@@ -1419,7 +1419,6 @@ class pdf_crabe extends ModelePDFFactures
 					$pdf->MultiCell($col2x - $col1x, $tab2_hl, $retainedWarrantyToPayOn, $useborder, 'L', 1);
 					$pdf->SetXY($col2x, $tab2_top + $tab2_hl * $index);
 					$pdf->MultiCell($largcol2, $tab2_hl, price($retainedWarranty), $useborder, 'R', 1);
-
 				}
 			}
 		}

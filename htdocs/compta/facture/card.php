@@ -4357,16 +4357,13 @@ elseif ($id > 0 || !empty($ref))
 
 
 
-	if(!empty($object->retained_warranty) || !empty($conf->global->INVOICE_USE_RETAINED_WARRANTY)) {
-
+	if (!empty($object->retained_warranty) || !empty($conf->global->INVOICE_USE_RETAINED_WARRANTY)) {
         $displayWarranty = true;
-		if(!in_array($object->type, $retainedWarrantyInvoiceAvailableType) && empty($object->retained_warranty)){
+		if (!in_array($object->type, $retainedWarrantyInvoiceAvailableType) && empty($object->retained_warranty)) {
 			$displayWarranty = false;
 		}
 
-		if($displayWarranty)
-		{
-
+		if($displayWarranty) {
 			// Retained Warranty
 			print '<tr class="retained-warranty-lines"  ><td>';
 			print '<table id="retained-warranty-table" class="nobordernopadding" width="100%"><tr><td>';
@@ -5049,8 +5046,9 @@ elseif ($id > 0 || !empty($ref))
 	print '<table id="tablelines" class="noborder noshadow" width="100%">';
 
 	// Show object lines
-	if (!empty($object->lines))
+	if (!empty($object->lines)) {
 		$ret = $object->printObjectLines($action, $mysoc, $soc, $lineid, 1);
+	}
 
 	// Form to add new line
 	if ($object->statut == 0 && $usercancreate && $action != 'valid' && $action != 'editline')

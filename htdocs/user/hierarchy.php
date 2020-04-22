@@ -153,7 +153,7 @@ else
 
     $morehtmlright .= dolGetButtonTitle($langs->trans('ViewList'), '', 'fa fa-list paddingleft', DOL_URL_ROOT.'/user/list.php'.(($search_statut != '' && $search_statut >= 0) ? '?search_statut='.$search_statut : ''));
 
-    print load_fiche_titre($title, $morehtmlright.' '.$newcardbutton);
+    print load_fiche_titre($title, $morehtmlright.' '.$newcardbutton, 'user');
 
     print '<form method="POST" id="searchFormList" action="'.$_SERVER["PHP_SELF"].'">'."\n";
     if ($optioncss != '') print '<input type="hidden" name="optioncss" value="'.$optioncss.'">';
@@ -181,7 +181,7 @@ else
 
     print '<tr class="liste_titre">';
     print_liste_field_titre("HierarchicView");
-    print_liste_field_titre('<div id="iddivjstreecontrol"><a href="#">'.img_picto('', 'object_category').' '.$langs->trans("UndoExpandAll").'</a> | <a href="#">'.img_picto('', 'object_category-expanded').' '.$langs->trans("ExpandAll").'</a></div>', $_SERVER['PHP_SELF'], "", '', "", 'align="center"');
+    print_liste_field_titre('<div id="iddivjstreecontrol"><a href="#">'.img_picto('', 'folder', 'class="paddingright"').$langs->trans("UndoExpandAll").'</a> | <a href="#">'.img_picto('', 'folder-open', 'class="paddingright"').$langs->trans("ExpandAll").'</a></div>', $_SERVER['PHP_SELF'], "", '', "", 'align="center"');
     print_liste_field_titre("Status", $_SERVER['PHP_SELF'], "", '', "", 'align="right"');
     print_liste_field_titre('', $_SERVER["PHP_SELF"], "", '', '', '', '', '', 'maxwidthsearch ');
     print '</tr>';

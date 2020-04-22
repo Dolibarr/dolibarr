@@ -8,3 +8,4 @@ LinkRemoved=A hiperligação %s foi removida
 ErrorFailedToDeleteLink= falhou a remoção da ligação '<b>%s</b>'
 ErrorFailedToUpdateLink= Falha na atualização de ligação '<b>%s</b>'
 URLToLink=URL para hiperligação
+OverwriteIfExists=Overwrite file if exists

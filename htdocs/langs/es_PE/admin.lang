@@ -1,7 +1,6 @@
 # Dolibarr language file - Source file is en_US - admin
 VersionProgram=Versión del programa
 VersionLastInstall=Instalar versión inicial
-AntiVirusCommandExample=Ejemplo para ClamWin: c:\\Progra~1\\ClamWin\\bin\\clamscan.exe<br>Ejemplo para ClamAv: /usr/bin/clamscan
 ExampleOfDirectoriesForModelGen=Ejemplo de sintaxis:<br>c:\\mydir<br>/home/mydir<br>DOL_DATA_ROOT/ecm/ecmdir
 Module30Name=Facturas
 Permission91=Consultar impuestos e IGV

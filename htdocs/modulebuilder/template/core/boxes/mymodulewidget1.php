@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2004-2017  Laurent Destailleur <eldy@users.sourceforge.net>
- * Copyright (C) 2018-2019  Frédéric France     <frederic.france@netlogic.fr>
+ * Copyright (C) 2018-2020  Frédéric France     <frederic.france@netlogic.fr>
  * Copyright (C) ---Put here your own copyright and developer email---
  *
  * This program is free software: you can redistribute it and/or modify
@@ -112,7 +112,7 @@ class mymodulewidget1 extends ModeleBoxes
 		// Use configuration value for max lines count
 		$this->max = $max;
 
-		//include_once DOL_DOCUMENT_ROOT . "/mymodule/class/mymodule.class.php";
+		//dol_include_once("/mymodule/class/mymodule.class.php");
 
 		// Populate the head at runtime
 		$text = $langs->trans("MyModuleBoxDescription", $max);

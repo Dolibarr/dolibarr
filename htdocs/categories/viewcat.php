@@ -317,9 +317,9 @@ print '<td class="right">';
 if (!empty($conf->use_javascript_ajax))
 {
 	print '<div id="iddivjstreecontrol">';
-	print '<a class="notasortlink" href="#">'.img_picto('', 'object_category').' '.$langs->trans("UndoExpandAll").'</a>';
+	print '<a class="notasortlink" href="#">'.img_picto('', 'folder').' '.$langs->trans("UndoExpandAll").'</a>';
 	print " | ";
-	print '<a class="notasortlink" href="#">'.img_picto('', 'object_category-expanded').' '.$langs->trans("ExpandAll").'</a>';
+	print '<a class="notasortlink" href="#">'.img_picto('', 'folder-open').' '.$langs->trans("ExpandAll").'</a>';
 	print '</div>';
 }
 

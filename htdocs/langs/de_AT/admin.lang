@@ -19,8 +19,6 @@ InternalUsers=interne Nutzer
 ExternalUsers=externe Nutzer
 GUISetup=Anischt
 NextValue=Nächste Wert
-AntiVirusCommandExample=Beispiel für ClamWin: c:\\Program Files (x86)\\ClamWin\\bin\\clamscan.exe <br>Beispiel für ClamAV: /usr/bin/clamscan
-AntiVirusParamExample=Beispiel für ClamWin: --database="C:\\Program Files (x86)\\ClamWin\\lib"
 URL=URL oder Link
 YouCanSubmitFile=You can upload the .zip file of module package from here:
 Module50Name=Produkte und Services
