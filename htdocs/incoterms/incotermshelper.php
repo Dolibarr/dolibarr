@@ -23,16 +23,20 @@
 
 require_once DOL_DOCUMENT_ROOT.'/incoterms/class/incoterm.class.php';
 
-// TODO - First
-//
-// * Move to this place -> "htdocs\core\class\commonobject.class.php @getIncotermsForPDF"
-// * Move to this place -> "htdocs\core\class\commonobject.class.php @setIncoterms"
-
-// TODO - Near future
-// * Add selectable matrix (for easier select the correct Incoterm)
-
-// TODO - Backlog
-// * Recreate as Dolibarr module
+/**
+* TODO - First:
+* -------------
+* - Move to this place -> "htdocs\core\class\commonobject.class.php @getIncotermsForPDF"
+* - Move to this place -> "htdocs\core\class\commonobject.class.php @setIncoterms"
+* ---------------
+* TODO - Near future:
+* -------------------
+* - Add selectable matrix (for easier select the correct Incoterm)
+* ---------------
+* TODO - Backlog:
+* ---------------
+* - Recreate as Dolibarr module
+*/
 
 class IncotermsHelper
 {
@@ -45,6 +49,11 @@ class IncotermsHelper
 	 */
 	private $incotermList;
 
+	/**
+	 * Create a new Incoterm helper
+	 *
+	 * @param DoliDb	$db		The database access object
+	 */
 	public function __construct(DoliDb $db)
 	{
 		$this->db			= $db;

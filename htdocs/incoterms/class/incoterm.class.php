@@ -53,8 +53,8 @@ class Incoterm
 	 */
 	public function __construct($id, $code, $description)
 	{
-		$this->$id			= $id;
-		$this->$code		= $code;
+		$this->id			= $id;
+		$this->code			= $code;
 		$this->description	= $description;
 	}
 }
