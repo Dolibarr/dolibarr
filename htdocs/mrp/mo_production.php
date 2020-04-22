@@ -691,7 +691,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
     		print '<td class="right"><input type="text" name="qtytoadd" value="1" class="width50 right"></td>';
     		print '<td class="right"></td>';
     		print '<td>';
-    		print '<input type="submit" class="button" name="addconsumelinebutton" value="'.$langs->trans("Add").'">';
+    		print '<input type="submit" class="button buttongen" name="addconsumelinebutton" value="'.$langs->trans("Add").'">';
     		print '</td>';
     		if ($conf->productbatch->enabled) {
     			print '<td></td>';

@@ -1268,7 +1268,7 @@ class Mo extends CommonObject
 
 		print '<tr class="liste_titre">';
 		print '<td>'.$langs->trans('Ref').'</td>';
-		print '<td class="right">'.$langs->trans('Qty').' <span class="opacitymedium">('.$langs->trans("ForAQuantityOf1").')</span></td>';
+		print '<td class="right">'.$langs->trans('Qty').' <span class="opacitymedium">('.$langs->trans("ForAQuantityOf", $this->bom->qty).')</span></td>';
 		print '<td class="center">'.$langs->trans('QtyFrozen').'</td>';
 		print '<td class="center">'.$langs->trans('DisableStockChange').'</td>';
 		//print '<td class="right">'.$langs->trans('Efficiency').'</td>';
@@ -1332,6 +1332,11 @@ class Mo extends CommonObject
 		{
 			// If origin MRP line is not a product, but another MRP
 			// TODO
+		}
+
+		$this->tpl['qty_bom'] = 1;
+		if (is_object($this->bom) && $this->bom->qty > 1) {
+			$this->tpl['qty_bom'] = $this->bom->qty;
 		}
 
 		$this->tpl['qty'] = $line->qty;
