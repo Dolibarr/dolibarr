@@ -74,7 +74,7 @@ if ($permission)
 	print '<div class="div-table-responsive-no-min">'."\n";
 	print '<div class="tagtable tableforcontact centpercent noborder nobordertop allwidth">'."\n";
 
-    ?>
+	?>
 	<form class="tagtr liste_titre">
 		<div class="tagtd liste_titre"><?php echo $langs->trans("NatureOfContact"); ?></div>
 		<div class="tagtd liste_titre"><?php echo $langs->trans("ThirdParty"); ?></div>
@@ -88,8 +88,8 @@ if ($permission)
 
 	if (empty($hideaddcontactforuser))
 	{
-	    ?>
-	<form class="tagtr impair" action="<?php echo $_SERVER["PHP_SELF"].'?id='.$object->id; ?>" method="POST">
+		?>
+	<form class="tagtr impair nohover" action="<?php echo $_SERVER["PHP_SELF"].'?id='.$object->id; ?>" method="POST">
 	<input type="hidden" name="token" value="<?php echo $_SESSION['newtoken']; ?>" />
 	<input type="hidden" name="id" value="<?php echo $object->id; ?>" />
 	<input type="hidden" name="action" value="addcontact" />
@@ -113,9 +113,9 @@ if ($permission)
 
 	if (empty($hideaddcontactforthirdparty))
 	{
-	    ?>
+		?>
 
-	<form class="tagtr pair" action="<?php echo $_SERVER["PHP_SELF"].'?id='.$object->id; ?>" method="POST">
+	<form class="tagtr pair nohover" action="<?php echo $_SERVER["PHP_SELF"].'?id='.$object->id; ?>" method="POST">
 	<input type="hidden" name="token" value="<?php echo $_SESSION['newtoken']; ?>" />
 	<input type="hidden" name="id" value="<?php echo $object->id; ?>" />
 	<input type="hidden" name="action" value="addcontact" />
@@ -128,7 +128,7 @@ if ($permission)
 			// add company icon before select list
 			if ($selectedCompany)
 			{
-			    echo img_object('', 'company', 'class="hideonsmartphone"');
+				echo img_object('', 'company', 'class="hideonsmartphone"');
 			}
 			?>
 			<?php $selectedCompany = $formcompany->selectCompaniesForNewContact($object, 'id', $selectedCompany, 'newcompany', '', 0, '', 'minwidth300imp'); ?>
@@ -326,9 +326,9 @@ print "</form>";
 
 print "<!-- TEMPLATE CONTACTS HOOK BEGIN HERE -->\n";
 if (is_object($hookmanager)) {
-    $hookmanager->initHooks(array('contacttpl'));
-    $parameters = array();
-    $reshook = $hookmanager->executeHooks('formContactTpl', $parameters, $object, $action);
+	$hookmanager->initHooks(array('contacttpl'));
+	$parameters = array();
+	$reshook = $hookmanager->executeHooks('formContactTpl', $parameters, $object, $action);
 }
 print "<!-- END PHP TEMPLATE CONTACTS -->\n";
 

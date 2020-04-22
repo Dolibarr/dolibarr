@@ -253,7 +253,7 @@ if ($conf->product->enabled || $conf->product->service)
 
 	$nbno = $nbtotal = 0;
 
-	print load_fiche_titre($langs->trans("BarcodeInitForProductsOrServices"), '', 'products');
+	print load_fiche_titre($langs->trans("BarcodeInitForProductsOrServices"), '', 'product');
 	print '<br>'."\n";
 
 	$sql = "SELECT count(rowid) as nb, fk_product_type, datec";

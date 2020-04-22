@@ -307,15 +307,13 @@ if (empty($reshook))
 			{
 				$lineToTest = '';
 				foreach ($objectsrc->lines as $linesrc) {
-					if ($linesrc->id == GETPOST($idl, 'int'))$lineToTest = $linesrc;
+					if ($linesrc->id == GETPOST($idl, 'int')) $lineToTest = $linesrc;
 				}
 				$qty = "qtyl".$i;
 				$comment = "comment".$i;
 				$eatby = "dlc".$i;
 				$sellby = "dluo".$i;
 				$batch = "batch".$i;
-
-
 
 				$timeFormat = '%d/%m/%Y';
 
@@ -713,8 +711,9 @@ $warehousestatic = new Entrepot($db);
 
 if ($action == 'create2')
 {
-    print load_fiche_titre($langs->trans("CreateReception")).'<br>';
-    print $langs->trans("ReceptionCreationIsDoneFromOrder");
+    print load_fiche_titre($langs->trans("CreateReception"), '', 'dollyrevert');
+
+    print '<br>'.$langs->trans("ReceptionCreationIsDoneFromOrder");
     $action = ''; $id = ''; $ref = '';
 }
 
@@ -1235,7 +1234,7 @@ elseif ($id || $ref)
 		$res = $object->fetch_optionals();
 
 		$head = reception_prepare_head($object);
-		dol_fiche_head($head, 'reception', $langs->trans("Reception"), -1, 'reception');
+		dol_fiche_head($head, 'reception', $langs->trans("Reception"), -1, 'dollyrevert');
 
 		$formconfirm = '';
 

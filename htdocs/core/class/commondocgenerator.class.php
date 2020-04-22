@@ -6,6 +6,7 @@
  * Copyright (C) 2015       Marcos García           <marcosgdf@gmail.com>
  * Copyright (C) 2016       Charlie Benke           <charlie@patas-monkey.com>
  * Copyright (C) 2018       Frédéric France         <frederic.france@netlogic.fr>
+ * Copyright (C) 2020       Josep Lluís Amador      <joseplluis@lliuretic.cat>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -386,6 +387,12 @@ abstract class CommonDocGenerator
 			$sumcreditnote = $object->getSumCreditNotesUsed();
 			$already_payed_all = $sumpayed + $sumdeposit + $sumcreditnote;
 			$remain_to_pay = $sumpayed - $sumdeposit - $sumcreditnote;
+
+			if ($object->fk_account > 0) {
+				require_once DOL_DOCUMENT_ROOT .'/compta/bank/class/account.class.php';
+				$bank_account = new Account($this->db);
+				$bank_account->fetch($object->fk_account);
+			}
 		}
 
 		$date = ($object->element == 'contrat' ? $object->date_contrat : $object->date);
@@ -413,6 +420,9 @@ abstract class CommonDocGenerator
 		$array_key.'_payment_mode'=>($outputlangs->transnoentitiesnoconv('PaymentType'.$object->mode_reglement_code) != 'PaymentType'.$object->mode_reglement_code ? $outputlangs->transnoentitiesnoconv('PaymentType'.$object->mode_reglement_code) : $object->mode_reglement),
 		$array_key.'_payment_term_code'=>$object->cond_reglement_code,
 		$array_key.'_payment_term'=>($outputlangs->transnoentitiesnoconv('PaymentCondition'.$object->cond_reglement_code) != 'PaymentCondition'.$object->cond_reglement_code ? $outputlangs->transnoentitiesnoconv('PaymentCondition'.$object->cond_reglement_code) : ($object->cond_reglement_doc ? $object->cond_reglement_doc : $object->cond_reglement)),
+
+		$array_key.'_bank_iban'=>$bank_account->iban,
+		$array_key.'_bank_bic'=>$bank_account->bic,
 
 		$array_key.'_total_ht_locale'=>price($object->total_ht, 0, $outputlangs),
 		$array_key.'_total_vat_locale'=>(!empty($object->total_vat) ?price($object->total_vat, 0, $outputlangs) : price($object->total_tva, 0, $outputlangs)),
@@ -1456,6 +1466,7 @@ abstract class CommonDocGenerator
                     // save curent cell padding
                     $curentCellPaddinds = $pdf->getCellPaddings();
 
+                    // Add space for lines (more if we need to show a second alternative language)
                     global $outputlangsbis;
                     if (is_object($outputlangsbis)) {
                         // set cell padding with column title definition
@@ -1470,8 +1481,8 @@ abstract class CommonDocGenerator
                     $textWidth = $colDef['width'];
                     $pdf->MultiCell($textWidth, 2, $colDef['title']['label'], '', $colDef['title']['align']);
 
-
-                    if (is_object($outputlangsbis)) {
+                    // Add variant of translation if $outputlangsbis is an object
+                    if (is_object($outputlangsbis) && trim($colDef['title']['label'])) {
                         $pdf->setCellPaddings($colDef['title']['padding'][3], 0, $colDef['title']['padding'][1], $colDef['title']['padding'][2]);
                     	$pdf->SetXY($colDef['xStartPos'], $pdf->GetY());
                     	$textbis = $outputlangsbis->transnoentities($colDef['title']['textkey']);
@@ -1485,6 +1496,7 @@ abstract class CommonDocGenerator
                 }
             }
         }
+
         return $this->tabTitleHeight;
     }
 

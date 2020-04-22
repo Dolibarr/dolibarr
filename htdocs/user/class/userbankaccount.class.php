@@ -30,11 +30,20 @@ require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
 
 
 /**
- * 	Class to manage bank accounts description of third parties
+ * 	Class to manage bank accounts description of users
  */
 class UserBankAccount extends Account
 {
-    public $socid;
+	/**
+	 * @var string ID to identify managed object
+	 */
+	public $element = 'user_bank_account';
+
+	/**
+	 * @var string Name of table without prefix where object is stored
+	 */
+	public $table_element = 'user_rib';
+
 
     /**
      * Date creation record (datec)
@@ -50,6 +59,13 @@ class UserBankAccount extends Account
      */
     public $datem;
 
+    /**
+     * User id of bank account
+     *
+     * @var integer
+     */
+    public $userid;
+
 
     /**
      *  Constructor
@@ -60,7 +76,7 @@ class UserBankAccount extends Account
     {
         $this->db = $db;
 
-        $this->socid = 0;
+        $this->userid = 0;
         $this->solde = 0;
         $this->error_number = 0;
     }
@@ -169,7 +185,7 @@ class UserBankAccount extends Account
                 $obj = $this->db->fetch_object($resql);
 
                 $this->id = $obj->rowid;
-                $this->socid = $obj->fk_soc;
+                $this->userid = $obj->fk_soc;
                 $this->bank = $obj->bank;
                 $this->code_banque = $obj->code_banque;
                 $this->code_guichet = $obj->code_guichet;

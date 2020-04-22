@@ -374,7 +374,7 @@ if ($id > 0 || !empty($ref))
 		if ($action != 'editline' && $user->rights->projet->creer)
 		{
 			print '<tr class="liste_titre">';
-			print '<td>'.$langs->trans("Nature").'</td>';
+			print '<td>'.$langs->trans("NatureOfContact").'</td>';
 			print '<td>'.$langs->trans("ThirdParty").'</td>';
 			print '<td>'.$langs->trans("Users").'</td>';
 			print '<td>'.$langs->trans("ContactType").'</td>';
@@ -389,7 +389,7 @@ if ($id > 0 || !empty($ref))
 			if ($withproject) print '<input type="hidden" name="withproject" value="'.$withproject.'">';
 
 			// Ligne ajout pour contact interne
-			print '<tr class="oddeven">';
+			print '<tr class="oddeven nohover">';
 
 			print '<td class="nowrap">';
 			print img_object('', 'user').' '.$langs->trans("Users");

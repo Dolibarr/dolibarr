@@ -76,7 +76,7 @@ class FormFile
 	 *  @param	integer		$linkfiles		1=Also add form to link files, 0=Do not show form to link files
 	 *  @param	string		$htmlname		Name and id of HTML form ('formuserfile' by default, 'formuserfileecm' when used to upload a file in ECM)
 	 *  @param	string		$accept			Specifies the types of files accepted (This is not a security check but an user interface facility. eg '.pdf,image/*' or '.png,.jpg' or 'video/*')
-	 *	@param	string		$sectiondir		If upload must be done inside a particular directory (is sectiondir defined, sectionid must not be)
+	 *	@param	string		$sectiondir		If upload must be done inside a particular directory (if sectiondir defined, sectionid must not be)
 	 *  @param  int         $usewithoutform 0=Default, 1=Disable <form> and style to use in existing area
 	 * 	@return	int							<0 if KO, >0 if OK
 	 */
@@ -108,9 +108,7 @@ class FormFile
 				return 1;
 			}
 
-			$maxlength = $size;
-
-			$out = "\n\n<!-- Start form attach new file -->\n";
+			$out = "\n\n".'<!-- Start form attach new file --><div class="formattachnewfile">'."\n";
 
 			if (empty($title)) $title = $langs->trans("AttachANewFile");
 			if ($title != 'none') $out .= load_fiche_titre($title, null, null);
@@ -174,6 +172,10 @@ class FormFile
 			$out .= (!empty($accept) ? ' accept="'.$accept.'"' : ' accept=""');
 			$out .= '>';
 			$out .= ' ';
+			if ($sectionid) {	// Show overwrite if exists for ECM module only
+				$langs->load('link');
+				$out .= '<input style="margin-right: 2px;" type="checkbox" id="overwritefile" name="overwritefile" value="1"><label for="overwritefile">'.$langs->trans("OverwriteIfExists").'</label>';
+			}
 			$out .= '<input type="submit" class="button reposition" name="sendit" value="'.$langs->trans("Upload").'"';
 			$out .= (empty($conf->global->MAIN_UPLOAD_DOC) || empty($perm) ? ' disabled' : '');
 			$out .= '>';
@@ -220,11 +222,11 @@ class FormFile
 	       		if (empty($sectionid)) $out .= '<br>';
 			}
 
-			$out .= "\n<!-- End form attach new file -->\n";
+			$out .= "\n</div><!-- End form attach new file -->\n";
 
 			if ($linkfiles)
 			{
-				$out .= "\n<!-- Start form link new url -->\n";
+				$out .= "\n".'<!-- Start form link new url --><div class="formlinknewurl">'."\n";
 				$langs->load('link');
 				$title = $langs->trans("LinkANewFile");
 				$out .= load_fiche_titre($title, null, null);
@@ -260,7 +262,7 @@ class FormFile
                     $out .= '</form><br>';
 				}
 
-				$out .= "\n<!-- End form link new url -->\n";
+				$out .= "\n</div><!-- End form link new url -->\n";
 			}
 
 			$parameters = array('socid'=>(isset($GLOBALS['socid']) ? $GLOBALS['socid'] : ''), 'id'=>(isset($GLOBALS['id']) ? $GLOBALS['id'] : ''), 'url'=>$url, 'perm'=>$perm);
@@ -731,7 +733,9 @@ class FormFile
 					$arraykeys = array_keys($modellist);
 					$modelselected = $arraykeys[0];
 				}
-				$out .= $form->selectarray('model', $modellist, $modelselected, $showempty, 0, 0, '', 0, 0, 0, '', 'minwidth100');
+				$morecss = 'maxwidth200';
+				if ($conf->browser->layout == 'phone') $morecss = 'maxwidth100';
+				$out .= $form->selectarray('model', $modellist, $modelselected, $showempty, 0, 0, '', 0, 0, 0, '', $morecss);
 				if ($conf->use_javascript_ajax)
 				{
 					$out .= ajax_combobox('model');
@@ -869,7 +873,7 @@ class FormFile
 						if ($printer)
 						{
 							//$out.= '<td class="right">';
-							$out .= '<a class="paddingleft" href="'.$urlsource.(strpos($urlsource, '?') ? '&amp;' : '?').'action=print_file&amp;printer='.$modulepart.'&amp;file='.urlencode($relativepath);
+							$out .= '<a class="marginleftonly" href="'.$urlsource.(strpos($urlsource, '?') ? '&amp;' : '?').'action=print_file&amp;printer='.$modulepart.'&amp;file='.urlencode($relativepath);
 							$out .= ($param ? '&amp;'.$param : '');
 							$out .= '">'.img_picto($langs->trans("PrintFile", $relativepath), 'printer.png').'</a>';
 						}
@@ -990,7 +994,7 @@ class FormFile
 		{
 			$out = '<dl class="dropdown inline-block">
     			<dt><a data-ajax="false" href="#" onClick="return false;">'.img_picto('', 'listlight', '', 0, 0, 0, '', 'valignmiddle').'</a></dt>
-    			<dd><div class="multichoicedoc" style="position:absolute;left:100px;" ><ul class="ulselectedfields" style="display: none;">';
+    			<dd><div class="multichoicedoc" style="position:absolute;left:100px;" ><ul class="ulselectedfields">';
 			$tmpout = '';
 
 			// Loop on each file found
@@ -1174,7 +1178,7 @@ class FormFile
 			}
 
 			// Show list of existing files
-			if ((empty($useinecm) || $useinecm == 6) && $title != 'none') print load_fiche_titre($title ? $title : $langs->trans("AttachedFiles"));
+			if ((empty($useinecm) || $useinecm == 6) && $title != 'none') print load_fiche_titre($title ? $title : $langs->trans("AttachedFiles"), '', 'file-upload', 0, '', 'table-list-of-attached-files');
 			if (empty($url)) $url = $_SERVER["PHP_SELF"];
 
 			print '<!-- html.formfile::list_of_documents -->'."\n";
@@ -1297,7 +1301,7 @@ class FormFile
 					{
 						$fileinfo = pathinfo($file['name']);
 						print '<td class="center">';
-						if (image_format_supported($file['name']) > 0)
+						if (image_format_supported($file['name']) >= 0)
 						{
 						    if ($useinecm == 5 || $useinecm == 6)
 						    {
@@ -1790,7 +1794,7 @@ class FormFile
 		print '<!-- listOfLinks -->'."\n";
 
 		// Show list of associated links
-		print load_fiche_titre($langs->trans("LinkedFiles"));
+		print load_fiche_titre($langs->trans("LinkedFiles"), '', 'external-link-square-alt', 0, '', 'table-list-of-links');
 
 		print '<form action="'.$_SERVER['PHP_SELF'].($param ? '?'.$param : '').'" method="POST">';
 		print '<input type="hidden" name="token" value="'.newToken().'">';

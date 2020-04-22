@@ -103,7 +103,6 @@ CustomerPrices=Preços de cliente
 SuppliersPrices=Preços de fornecedores
 SuppliersPricesOfProductsOrServices=Preços do fornecedor (produtos ou serviços)
 CountryOrigin=Pais de origem
-Nature=Natureza do produto (matéria-prima/manufaturado)
 ShortLabel=Etiqueta curta
 set=conjunto
 se=conjunto

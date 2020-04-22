@@ -1673,6 +1673,15 @@ div.nopadding {
 .pictoobjectwidth {
 	width: 14px;
 }
+.table-list-of-attached-files .col-picto, .table-list-of-links .col-picto {
+    opacity: 0.7 !important;
+    font-size: 1em;
+    width: 20px;
+}
+.table-list-of-attached-files .col-picto .widthpictotitle, .table-list-of-links .col-picto .widthpictotitle {
+	width: unset;
+    color: #999;
+}
 .pictosubstatus {
     padding-left: 2px;
     padding-right: 2px;
@@ -5799,7 +5808,8 @@ border-top-right-radius: 6px;
 /* ============================================================================== */
 
 .ticketpublicarea {
-	width: 70%;
+	margin-left: 15%;
+    margin-right: 15%;
 }
 .publicnewticketform {
 	/* margin-top: 25px !important; */
@@ -5815,7 +5825,8 @@ border-top-right-radius: 6px;
 		padding-left: 5px; padding-right: 5px;
 	}
 	.ticketpublicarea {
-		width: 100%;
+		margin-left: 10px;
+		margin-right: 10px;
 	}
 }
 

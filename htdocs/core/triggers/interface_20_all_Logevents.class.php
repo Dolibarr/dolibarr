@@ -151,7 +151,7 @@ class InterfaceLogevents extends DolibarrTriggers
         }
 
 		// Groupes
-        elseif ($action == 'GROUP_CREATE')
+        elseif ($action == 'USERGROUP_CREATE')
         {
             dol_syslog("Trigger '".$this->name."' for action '$action' launched by ".__FILE__.". id=".$object->id);
             $langs->load("users");
@@ -159,7 +159,7 @@ class InterfaceLogevents extends DolibarrTriggers
             $text = $langs->transnoentities("NewGroupCreated", $object->name);
             $desc = $langs->transnoentities("NewGroupCreated", $object->name);
 		}
-        elseif ($action == 'GROUP_MODIFY')
+        elseif ($action == 'USERGROUP_MODIFY')
         {
             dol_syslog("Trigger '".$this->name."' for action '$action' launched by ".__FILE__.". id=".$object->id);
             $langs->load("users");
@@ -167,7 +167,7 @@ class InterfaceLogevents extends DolibarrTriggers
             $text = $langs->transnoentities("GroupModified", $object->name);
             $desc = $langs->transnoentities("GroupModified", $object->name);
 		}
-        elseif ($action == 'GROUP_DELETE')
+        elseif ($action == 'USERGROUP_DELETE')
         {
             dol_syslog("Trigger '".$this->name."' for action '$action' launched by ".__FILE__.". id=".$object->id);
             $langs->load("users");

@@ -5,7 +5,7 @@
  * Copyright (C) 2012	   Juanjo Menent        <jmenent@2byte.es>
  * Copyright (C) 2015      Jean-François Ferry	<jfefe@aternatik.fr>
  * Copyright (C) 2015      Marcos García        <marcosgdf@gmail.com>
- * Copyright (C) 2018       Frédéric France         <frederic.france@netlogic.fr>
+ * Copyright (C) 2018      Frédéric France      <frederic.france@netlogic.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -51,8 +51,8 @@ if ($action == 'add')
 
 	$dateo = dol_mktime(12, 0, 0, GETPOST('remonth', 'int'), GETPOST('reday', 'int'), GETPOST('reyear', 'int'));
 	$label = GETPOST('label', 'alpha');
-	$amount = GETPOST('amount', 'alpha');
-	$amountto = GETPOST('amountto', 'alpha');
+	$amount = price2num(GETPOST('amount', 'alpha'), 'MT');
+	$amountto = price2num(GETPOST('amountto', 'alpha'), 'MT');
 
 	if (!$label)
 	{
@@ -115,9 +115,9 @@ if ($action == 'add')
 				$typeto = 'LIQ';
 			}
 
-			if (!$error) $bank_line_id_from = $accountfrom->addline($dateo, $typefrom, $label, -1 * price2num($amount), '', '', $user);
+			if (!$error) $bank_line_id_from = $accountfrom->addline($dateo, $typefrom, $label, price2num(-1 * $amount), '', '', $user);
 			if (!($bank_line_id_from > 0)) $error++;
-			if (!$error) $bank_line_id_to = $accountto->addline($dateo, $typeto, $label, price2num($amountto), '', '', $user);
+			if (!$error) $bank_line_id_to = $accountto->addline($dateo, $typeto, $label, $amountto, '', '', $user);
 			if (!($bank_line_id_to > 0)) $error++;
 
 		    if (!$error) $result = $accountfrom->add_url_line($bank_line_id_from, $bank_line_id_to, DOL_URL_ROOT.'/compta/bank/line.php?rowid=', '(banktransfert)', 'banktransfert');
@@ -246,7 +246,6 @@ print '<td>'.$langs->trans("TransferFrom").'</td><td>'.$langs->trans("TransferTo
 print '<td style="display:none" class="multicurrency">'.$langs->trans("AmountToOthercurrency").'</td>';
 print '</tr>';
 
-$var = false;
 print '<tr class="oddeven"><td>';
 $form->select_comptes($account_from, 'account_from', 0, '', 1, '', empty($conf->multicurrency->enabled) ? 0 : 1);
 print "</td>";

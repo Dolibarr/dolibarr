@@ -610,7 +610,7 @@ class Project extends CommonObject
 		}
         elseif ($type == 'loan')
         {
-            $sql = 'SELECT l.rowid, l.fk_user_author as fk_user FROM '.MAIN_DB_PREFIX."loan as l WHERE l.entity IN (".getEntity('loan').")";
+            $sql = 'SELECT l.rowid, l.fk_user_author as fk_user FROM '.MAIN_DB_PREFIX."loan as l WHERE l.entity IN (".getEntity('loan').") AND l.fk_projet IN (".$ids.")";
         }
         else
 		{
@@ -1046,9 +1046,12 @@ class Project extends CommonObject
         $result = '';
 
         $label = '';
-        if ($option != 'nolink') $label = '<u>'.$langs->trans("ShowProject").'</u>';
+        if ($option != 'nolink') $label = '<u>'.$langs->trans("Project").'</u>';
         $label .= ($label ? '<br>' : '').'<b>'.$langs->trans('Ref').': </b>'.$this->ref; // The space must be after the : to not being explode when showing the title in img_picto
         $label .= ($label ? '<br>' : '').'<b>'.$langs->trans('Label').': </b>'.$this->title; // The space must be after the : to not being explode when showing the title in img_picto
+        if (isset($this->public)) {
+        	$label .= '<br><b>'.$langs->trans("Visibility").":</b> ".($this->public ? $langs->trans("SharedProject") : $langs->trans("PrivateProject"));
+        }
         if (!empty($this->thirdparty_name))
             $label .= ($label ? '<br>' : '').'<b>'.$langs->trans('ThirdParty').': </b>'.$this->thirdparty_name; // The space must be after the : to not being explode when showing the title in img_picto
         if (!empty($this->dateo))

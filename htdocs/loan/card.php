@@ -253,7 +253,7 @@ if ($action == 'create')
 	//WYSIWYG Editor
 	require_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
 
-	print load_fiche_titre($langs->trans("NewLoan"), '', 'title_accountancy.png');
+	print load_fiche_titre($langs->trans("NewLoan"), '', 'money-bill-alt');
 
 	$datec = dol_mktime(12, 0, 0, GETPOST('remonth', 'int'), GETPOST('reday', 'int'), GETPOST('reyear', 'int'));
 

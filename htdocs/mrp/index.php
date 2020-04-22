@@ -51,7 +51,7 @@ $staticmo = new Mo($db);
 
 llxHeader('', $langs->trans("MRP"), '');
 
-print load_fiche_titre($langs->trans("MRPArea"), '', 'cubes');
+print load_fiche_titre($langs->trans("MRPArea"), '', 'mrp');
 
 
 print '<div class="fichecenter"><div class="fichethirdleft">';

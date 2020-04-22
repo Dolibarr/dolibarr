@@ -110,35 +110,35 @@ include_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
 if (!isset($conf->global->THEME_AGRESSIVENESS_RATIO)) $conf->global->THEME_AGRESSIVENESS_RATIO = -100;
 if (GETPOSTISSET('THEME_AGRESSIVENESS_RATIO')) $conf->global->THEME_AGRESSIVENESS_RATIO = GETPOST('THEME_AGRESSIVENESS_RATIO', 'int');
 ?>
-.bg-infoxbox-project i.fa{
+.bg-infobox-project i.fa{
 	color: <?php print colorAgressiveness('#605ca8', $conf->global->THEME_AGRESSIVENESS_RATIO); ?> !important;
 }
-.bg-infoxbox-action i.fa{
+.bg-infobox-action i.fa{
 	color: <?php print colorAgressiveness('#d84b80', $conf->global->THEME_AGRESSIVENESS_RATIO); ?>  !important;
 }
-.bg-infoxbox-propal i.fa,
-.bg-infoxbox-facture i.fa,
-.bg-infoxbox-commande i.fa{
+.bg-infobox-propal i.fa,
+.bg-infobox-facture i.fa,
+.bg-infobox-commande i.fa{
 	color: <?php print colorAgressiveness('#abb87b', $conf->global->THEME_AGRESSIVENESS_RATIO); ?>  !important;
 }
-.bg-infoxbox-supplier_proposal i.fa,
-.bg-infoxbox-invoice_supplier i.fa,
-.bg-infoxbox-order_supplier i.fa{
+.bg-infobox-supplier_proposal i.fa,
+.bg-infobox-invoice_supplier i.fa,
+.bg-infobox-order_supplier i.fa{
 	color: <?php print colorAgressiveness('#40b0cf', $conf->global->THEME_AGRESSIVENESS_RATIO); ?>  !important;
 }
-.bg-infoxbox-contrat i.fa, .bg-infoxbox-ticket i.fa{
+.bg-infobox-contrat i.fa, .bg-infobox-ticket i.fa{
 	color: <?php print colorAgressiveness('#20a68a', $conf->global->THEME_AGRESSIVENESS_RATIO); ?>  !important;
 }
-.bg-infoxbox-bank_account i.fa{
+.bg-infobox-bank_account i.fa{
 	color: <?php print colorAgressiveness('#b0a53e', $conf->global->THEME_AGRESSIVENESS_RATIO); ?>  !important;
 }
-.bg-infoxbox-adherent i.fa{
+.bg-infobox-adherent i.fa{
 	color: <?php print colorAgressiveness('#f39c12', $conf->global->THEME_AGRESSIVENESS_RATIO); ?>  !important;
 }
-.bg-infoxbox-expensereport i.fa{
+.bg-infobox-expensereport i.fa{
 	color: <?php print colorAgressiveness('#755114', $conf->global->THEME_AGRESSIVENESS_RATIO); ?>  !important;
 }
-.bg-infoxbox-holiday i.fa{
+.bg-infobox-holiday i.fa{
 	color: <?php print colorAgressiveness('#755114', $conf->global->THEME_AGRESSIVENESS_RATIO); ?>  !important;
 }
 

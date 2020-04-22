@@ -575,7 +575,7 @@ abstract class CommonObject
 	{
 		$return = '<div class="box-flex-item">';
 		$return .= '<div class="info-box info-box-sm">';
-		$return .= '<span class="info-box-icon bg-infoxbox-action">';
+		$return .= '<span class="info-box-icon bg-infobox-action">';
 		$return .= '<i class="fa fa-dol-action"></i>'; // Can be image
 		$return .= '</span>';
 		$return .= '<div class="info-box-content">';
@@ -7883,6 +7883,7 @@ abstract class CommonObject
 	public function createCommon(User $user, $notrigger = false)
 	{
 		global $langs;
+		dol_syslog(get_class($this)."::createCommon create", LOG_DEBUG);
 
 		$error = 0;
 
@@ -8121,6 +8122,7 @@ abstract class CommonObject
 	public function updateCommon(User $user, $notrigger = false)
 	{
 		global $conf, $langs;
+		dol_syslog(get_class($this)."::updateCommon update", LOG_DEBUG);
 
 		$error = 0;
 
@@ -8210,6 +8212,8 @@ abstract class CommonObject
 	 */
 	public function deleteCommon(User $user, $notrigger = false, $forcechilddeletion = 0)
 	{
+		dol_syslog(get_class($this)."::deleteCommon delete", LOG_DEBUG);
+
 		$error = 0;
 
 		$this->db->begin();
@@ -8269,15 +8273,8 @@ abstract class CommonObject
 
 		if (!$error && !empty($this->isextrafieldmanaged))
 		{
-			$sql = "DELETE FROM ".MAIN_DB_PREFIX.$this->table_element."_extrafields";
-			$sql .= " WHERE fk_object=".$this->id;
-
-			$resql = $this->db->query($sql);
-			if (!$resql)
-			{
-				$this->errors[] = $this->db->lasterror();
-				$error++;
-			}
+			$result = $this->deleteExtraFields();
+			if ($result < 0) { $error++; }
 		}
 
 		if (!$error)

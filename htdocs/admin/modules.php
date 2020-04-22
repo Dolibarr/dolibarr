@@ -482,8 +482,8 @@ if ($nbofactivatedmodules <= 1) $moreinfo .= ' '.img_warning($langs->trans("YouM
 print load_fiche_titre($langs->trans("ModulesSetup"), '', 'title_setup');
 
 // Start to show page
-if ($mode == 'common')       print '<span class="opacitymedium hideonsmartphone">'.$langs->trans("ModulesDesc")."<br></span>\n";
-if ($mode == 'commonkanban') print '<span class="opacitymedium hideonsmartphone">'.$langs->trans("ModulesDesc")."<br></span>\n";
+if ($mode == 'common')       print '<span class="opacitymedium hideonsmartphone">'.$langs->trans("ModulesDesc", img_picto('', 'switch_off'))."<br></span>\n";
+if ($mode == 'commonkanban') print '<span class="opacitymedium hideonsmartphone">'.$langs->trans("ModulesDesc", img_picto('', 'switch_off'))."<br></span>\n";
 if ($mode == 'marketplace')  print '<span class="opacitymedium hideonsmartphone">'.$langs->trans("ModulesMarketPlaceDesc")."<br></span>\n";
 if ($mode == 'deploy')       print '<span class="opacitymedium hideonsmartphone">'.$langs->trans("ModulesDeployDesc", $langs->transnoentitiesnoconv("AvailableModules"))."<br></span>\n";
 if ($mode == 'develop')      print '<span class="opacitymedium hideonsmartphone">'.$langs->trans("ModulesDevelopDesc")."<br></span>\n";
@@ -541,8 +541,8 @@ if ($mode == 'common' || $mode == 'commonkanban')
 	$moreforfilter .= '</div>';
 
 	$moreforfilter .= '<div class="floatright right">';
-	$moreforfilter .= dolGetButtonTitle($langs->trans('ViewList'), '', 'fa fa-list-alt paddingleft imgforviewmode', $_SERVER["PHP_SELF"].'?mode=common'.$param, '', 1, array('morecss'=>'reposition'));
 	$moreforfilter .= dolGetButtonTitle($langs->trans('ViewKanban'), '', 'fa fa-th-list paddingleft imgforviewmode', $_SERVER["PHP_SELF"].'?mode=commonkanban'.$param, '', 1, array('morecss'=>'reposition'));
+	$moreforfilter .= dolGetButtonTitle($langs->trans('ViewList'), '', 'fa fa-list-alt paddingleft imgforviewmode', $_SERVER["PHP_SELF"].'?mode=common'.$param, '', 1, array('morecss'=>'reposition'));
 	$moreforfilter .= '</div>';
 
 	$moreforfilter .= '<div class="floatright right margintoponly marginrightonly" style="padding-top: 3px">'.$moreinfo.'</div>';
@@ -868,7 +868,7 @@ if ($mode == 'common' || $mode == 'commonkanban')
 			// Help
 			print '<td class="center nowrap" style="width: 82px;">';
 			//print $form->textwithpicto('', $text, 1, $imginfo, 'minheight20', 0, 2, 1);
-			print '<a href="javascript:document_preview(\''.DOL_URL_ROOT.'/admin/modulehelp.php?id='.$objMod->numero.'\',\'text/html\',\''.dol_escape_js($langs->trans("Module")).'\')">'.img_picto($langs->trans("ClickToShowDescription"), $imginfo).'</a>';
+			print '<a href="javascript:document_preview(\''.DOL_URL_ROOT.'/admin/modulehelp.php?id='.$objMod->numero.'\',\'text/html\',\''.dol_escape_js($langs->trans("Module")).'\')">'.img_picto(($objMod->isCoreOrExternalModule() == 'external' ? $langs->trans("ExternalModule").' - ' : '').$langs->trans("ClickToShowDescription"), $imginfo).'</a>';
 			print '</td>';
 
 			// Version

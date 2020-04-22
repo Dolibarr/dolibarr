@@ -95,10 +95,11 @@ class Projects extends DolibarrApi
      * @param int		       $limit		        Limit for list
      * @param int		       $page		        Page number
      * @param string   	       $thirdparty_ids	    Thirdparty ids to filter projects of (example '1' or '1,2,3') {@pattern /^[0-9,]*$/i}
-     * @param string           $sqlfilters          Other criteria to filter answers separated by a comma. Syntax example "(t.ref:like:'SO-%') and (t.date_creation:<:'20160101')"
+	 * @param  int    $category   Use this param to filter list by category
+	 * @param string           $sqlfilters          Other criteria to filter answers separated by a comma. Syntax example "(t.ref:like:'SO-%') and (t.date_creation:<:'20160101')"
      * @return  array                               Array of project objects
      */
-    public function index($sortfield = "t.rowid", $sortorder = 'ASC', $limit = 100, $page = 0, $thirdparty_ids = '', $sqlfilters = '')
+    public function index($sortfield = "t.rowid", $sortorder = 'ASC', $limit = 100, $page = 0, $thirdparty_ids = '', $category = 0, $sqlfilters = '')
     {
         global $db, $conf;
 
@@ -114,7 +115,9 @@ class Projects extends DolibarrApi
         $sql = "SELECT t.rowid";
         if ((!DolibarrApiAccess::$user->rights->societe->client->voir && !$socids) || $search_sale > 0) $sql .= ", sc.fk_soc, sc.fk_user"; // We need these fields in order to filter by sale (including the case where the user can only see his prospects)
         $sql .= " FROM ".MAIN_DB_PREFIX."projet as t";
-
+    	if ($category > 0) {
+			$sql .= ", ".MAIN_DB_PREFIX."categorie_project as c";
+    	}
         if ((!DolibarrApiAccess::$user->rights->societe->client->voir && !$socids) || $search_sale > 0) $sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc"; // We need this table joined to the select in order to filter by sale
 
         $sql .= ' WHERE t.entity IN ('.getEntity('project').')';
@@ -126,6 +129,10 @@ class Projects extends DolibarrApi
         {
             $sql .= " AND sc.fk_user = ".$search_sale;
         }
+    	// Select projects of given category
+    	if ($category > 0) {
+			$sql .= " AND c.fk_categorie = ".$db->escape($category)." AND c.fk_project = t.rowid ";
+    	}
         // Add sql filters
         if ($sqlfilters)
         {

@@ -536,13 +536,13 @@ if ($action == "order" and $placeid != 0)
     }
     if ($conf->global->TAKEPOS_PRINT_METHOD == "receiptprinter" && $linestoprint > 0) {
 		$invoice->fetch($placeid); //Reload object before send to printer
-		$printer->orderprinter=1;
+		$printer->orderprinter = 1;
 		$ret = $printer->sendToPrinter($invoice, $conf->global->{'TAKEPOS_TEMPLATE_TO_USE_FOR_ORDERS'.$_SESSION["takeposterminal"]}, $conf->global->{'TAKEPOS_ORDER_PRINTER1_TO_USE'.$_SESSION["takeposterminal"]}); // PRINT TO PRINTER 1
 	}
 	$sql = "UPDATE ".MAIN_DB_PREFIX."facturedet set special_code='4' where special_code='1' and fk_facture=".$invoice->id; // Set as printed
 	$db->query($sql);
 	$invoice->fetch($placeid); //Reload object after set lines as printed
-	$linestoprint=0;
+	$linestoprint = 0;
 
     foreach ($invoice->lines as $line)
     {
@@ -564,7 +564,7 @@ if ($action == "order" and $placeid != 0)
     }
     if ($conf->global->TAKEPOS_PRINT_METHOD == "receiptprinter" && $linestoprint > 0) {
 		$invoice->fetch($placeid); //Reload object before send to printer
-		$printer->orderprinter=2;
+		$printer->orderprinter = 2;
 		$ret = $printer->sendToPrinter($invoice, $conf->global->{'TAKEPOS_TEMPLATE_TO_USE_FOR_ORDERS'.$_SESSION["takeposterminal"]}, $conf->global->{'TAKEPOS_ORDER_PRINTER2_TO_USE'.$_SESSION["takeposterminal"]}); // PRINT TO PRINTER 2
 	}
 	$sql = "UPDATE ".MAIN_DB_PREFIX."facturedet set special_code='4' where special_code='2' and fk_facture=".$invoice->id; // Set as printed
@@ -712,8 +712,8 @@ function TakeposPrinting(id){
 
 function TakeposConnector(id){
 	var invoice='<?php
-	$data=json_encode($invoice);
-	$data=base64_encode($data);
+	$data = json_encode($invoice);
+	$data = base64_encode($data);
 	echo $data;
 	?>';
     $.ajax({
@@ -733,7 +733,7 @@ function DolibarrTakeposPrinting(id) {
 
 
 $( document ).ready(function() {
-	console.log("Set customer info in header");
+	console.log("Set customer info and sales in header");
 
     <?php
     $s = $langs->trans("Customer");
@@ -742,7 +742,9 @@ $( document ).ready(function() {
     }
     ?>
 
-    $("#customerandsales").html('<a class="valignmiddle" id="customer" onclick="Customer();"><?php print dol_escape_js($s); ?></a>');
+    $("#customerandsales").html('');
+
+	$("#customerandsales").append('<a class="valignmiddle tdoverflowmax100 minwidth100" id="customer" onclick="Customer();" title="<?php print dol_escape_js($s); ?>"><span class="fas fa-building paddingrightonly"></span><?php print dol_escape_js($s); ?></a>');
 
 	<?php
 	$sql = "SELECT rowid, datec, ref FROM ".MAIN_DB_PREFIX."facture";
@@ -752,12 +754,13 @@ $( document ).ready(function() {
 	if ($resql) {
 		while ($obj = $db->fetch_object($resql)) {
 			echo '$("#customerandsales").append(\'';
-			if ($placeid == $obj->rowid) echo "<b>";
 			echo '<a class="valignmiddle" onclick="place=\\\'';
 			$num_sale = str_replace(")", "", str_replace("(PROV-POS".$_SESSION["takeposterminal"]."-", "", $obj->ref));
 			echo $num_sale;
 			if (str_replace("-", "", $num_sale) > $max_sale) $max_sale = str_replace("-", "", $num_sale);
-			echo '\\\';Refresh();">'.date('H:i', strtotime($obj->datec));
+			echo '\\\';Refresh();">';
+			if ($placeid == $obj->rowid) echo "<b>";
+			echo date('H:i', strtotime($obj->datec));
 			if ($placeid == $obj->rowid) echo "</b>";
 			echo '</a>\');';
 		}
@@ -787,7 +790,7 @@ $( document ).ready(function() {
 	<?php
 	// Module Adherent
 	$s = '';
-	if (!empty($conf->adherent->enabled) && $invoice->socid != $conf->global->$constforcompanyid)
+	if (!empty($conf->adherent->enabled) && $invoice->socid > 0 && $invoice->socid != $conf->global->$constforcompanyid)
 	{
 		$s = '<span class="small">';
 		require_once DOL_DOCUMENT_ROOT.'/adherents/class/adherent.class.php';
@@ -941,6 +944,7 @@ if ($placeid > 0)
 
     if (is_array($invoice->lines) && count($invoice->lines))
     {
+    	print '<!-- Show lines of invoices -->'."\n";
         $tmplines = array_reverse($invoice->lines);
         foreach ($tmplines as $line)
         {
@@ -990,11 +994,14 @@ if ($placeid > 0)
                 else $htmlforlines .= img_object('', 'service').' ';
             }
             if (empty($conf->global->TAKEPOS_SHOW_N_FIRST_LINES)) {
-            	$tooltiptext = '<b>'.$langs->trans("Ref").'</b> : '.$line->product_ref.'<br>';
-            	$tooltiptext .= '<b>'.$langs->trans("Label").'</b> : '.$line->product_label.'<br>';
-            	if ($line->product_label != $line->desc) {
-            		if ($line->desc) $tooltiptext .= '<br>';
-    	        	$tooltiptext .= $line->desc;
+            	$tooltiptext = '';
+            	if ($line->product_ref) {
+            		$tooltiptext .= '<b>'.$langs->trans("Ref").'</b> : '.$line->product_ref.'<br>';
+            		$tooltiptext .= '<b>'.$langs->trans("Label").'</b> : '.$line->product_label.'<br>';
+	            	if ($line->product_label != $line->desc) {
+	            		if ($line->desc) $tooltiptext .= '<br>';
+	    	        	$tooltiptext .= $line->desc;
+	            	}
             	}
             	$htmlforlines .= $form->textwithpicto($line->product_label ? $line->product_label : ($line->product_ref ? $line->product_ref : dolGetFirstLineOfText($line->desc, 1)), $tooltiptext);
             } else {

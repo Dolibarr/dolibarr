@@ -53,7 +53,7 @@ class modReception extends DolibarrModules
 		$this->version = 'experimental';
 
 		$this->const_name = 'MAIN_MODULE_'.strtoupper($this->name);
-		$this->picto = "sending";
+		$this->picto = "dollyrevert";
 
 		// Data directories to create when module is enabled
 		$this->dirs = array("/reception/receipt",

@@ -325,7 +325,6 @@ CompanyDeleted=Företaget "%s" raderad från databasen.
 ListOfContacts=Lista med kontakter / adresser
 ListOfContactsAddresses=Lista med kontakter / adresser
 ListOfThirdParties=Förteckning över tredjeparter
-ShowCompany=Visa tredjepart
 ShowContact=Visa kontakt
 ContactsAllShort=Alla (inget filter)
 ContactType=Kontakttyp
@@ -447,6 +446,7 @@ SaleRepresentativeFirstname=Förnamn på försäljningsrepresentant
 SaleRepresentativeLastname=Efternamn för försäljare
 ErrorThirdpartiesMerge=Ett fel uppstod vid borttagning av tredjepart. Kontrollera loggen. Ändringar har återställts.
 NewCustomerSupplierCodeProposed=Kunder eller leverantörskod som redan används, föreslås en ny kod
+KeepEmptyIfGenericAddress=Keep this field empty if this address is a generic address
 #Imports
 PaymentTypeCustomer=Betalningstyp - Kund
 PaymentTermsCustomer=Betalningsvillkor - Kund

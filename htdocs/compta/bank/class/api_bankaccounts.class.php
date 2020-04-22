@@ -57,12 +57,13 @@ class BankAccounts extends DolibarrApi
      * @param string    $sortorder  Sort order
      * @param int       $limit      Limit for list
      * @param int       $page       Page number
+	 * @param  int    	$category   Use this param to filter list by category
      * @param string    $sqlfilters Other criteria to filter answers separated by a comma. Syntax example "(t.ref:like:'SO-%') and (t.import_key:<:'20160101')"
      * @return array                List of account objects
      *
      * @throws RestException
      */
-    public function index($sortfield = "t.rowid", $sortorder = 'ASC', $limit = 100, $page = 0, $sqlfilters = '')
+    public function index($sortfield = "t.rowid", $sortorder = 'ASC', $limit = 100, $page = 0, $category = 0, $sqlfilters = '')
     {
         $list = array();
 
@@ -71,7 +72,14 @@ class BankAccounts extends DolibarrApi
         }
 
         $sql = "SELECT rowid FROM ".MAIN_DB_PREFIX."bank_account as t";
+    	if ($category > 0) {
+            $sql .= ", ".MAIN_DB_PREFIX."categorie_account as c";
+		}
         $sql .= ' WHERE t.entity IN ('.getEntity('bank_account').')';
+    	// Select accounts of given category
+    	if ($category > 0) {
+            $sql .= " AND c.fk_categorie = ".$db->escape($category)." AND c.fk_account = t.rowid ";
+		}
         // Add sql filters
         if ($sqlfilters)
         {

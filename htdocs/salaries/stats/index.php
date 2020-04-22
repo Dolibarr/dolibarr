@@ -60,7 +60,7 @@ llxHeader();
 $title = $langs->trans("SalariesStatistics");
 $dir = $conf->salaries->dir_temp;
 
-print load_fiche_titre($title, $mesg);
+print load_fiche_titre($title, '', 'object_payment');
 
 dol_mkdir($dir);
 

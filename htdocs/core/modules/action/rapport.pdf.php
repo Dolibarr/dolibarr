@@ -141,8 +141,11 @@ class CommActionRapport
 				$hookmanager = new HookManager($this->db);
 			}
 			$hookmanager->initHooks(array('pdfgeneration'));
-			$parameters = array('file'=>$file, 'outputlangs'=>$outputlangs);
+
 			global $action;
+			$object = new stdClass();
+
+			$parameters = array('file'=>$file, 'outputlangs'=>$outputlangs);
 			$reshook = $hookmanager->executeHooks('beforePDFCreation', $parameters, $object, $action); // Note that $action and $object may have been modified by some hooks
 
             $pdf = pdf_getInstance($this->format);
@@ -171,7 +174,7 @@ class CommActionRapport
 
 			$pdf->SetMargins($this->marge_gauche, $this->marge_haute, $this->marge_droite); // Left, Top, Right
 
-			$nbpage = $this->_pages($pdf, $outputlangs);
+			$nbpage = $this->_pages($pdf, $outputlangs);	// Write content
 
 			if (method_exists($pdf, 'AliasNbPages')) $pdf->AliasNbPages();
 			$pdf->Close();
@@ -258,21 +261,23 @@ class CommActionRapport
 
 				// Calculate height of text
 				$text = '';
-				if (!preg_match('/^'.preg_quote($obj->label).'/', $obj->note)) $text = $obj->label."\n";
-				$text .= $obj->note;
-				$text = dol_trunc(dol_htmlentitiesbr_decode($text), 150);
+				if (!preg_match('/^'.preg_quote($obj->label, '/').'/', $obj->note)) $text = $obj->label."\n";
+				$text .= dolGetFirstLineOfText(dol_string_nohtmltag($obj->note), 2);
 				// Add status to text
 				$text .= "\n";
-				$status = dol_htmlentitiesbr_decode($eventstatic->getLibStatut(1, 1));
+				$status = $outputlangs->trans("Status").': '.dol_htmlentitiesbr_decode($eventstatic->getLibStatut(1, 1));
 				$text .= $status;
 				if ($obj->fk_project > 0)
 				{
 					$projectstatic->fetch($obj->fk_project);
-					$text .= ($status ? ' - ' : '').$outputlangs->transnoentitiesnoconv("Project").": ".dol_htmlentitiesbr_decode($projectstatic->getNomUrl(0, 'nolink'));
+					if ($projectstatic->ref) {
+						$text .= ($status ? ' - ' : '').$outputlangs->transnoentitiesnoconv("Project").": ".dol_htmlentitiesbr_decode($projectstatic->ref);
+					}
 				}
 
 				//print 'd'.$text; exit;
 				$nboflines = dol_nboflines($text);
+
 				$heightlinemax = max(2 * $height, $nboflines * $height);
 				// Check if there is enough space to print record
 				if ((1 + $y + $heightlinemax) >= ($this->page_hauteur - $this->marge_haute))
@@ -294,12 +299,13 @@ class CommActionRapport
 					else
 						$textdate .= " -> ".dol_print_date($this->db->jdate($obj->dp2), "hour");
 				}
-				$pdf->MultiCell(22, $height, $textdate, 0, 'L', 0);
+				$textdate = $outputlangs->trans("ID").' '.$obj->id.' - '.$textdate;
+				$pdf->MultiCell(45 - $this->marge_gauche, $height, $textdate, 0, 'L', 0);
 				$y0 = $pdf->GetY();
 
 				// Third party
-				$pdf->SetXY(26, $y);
-				$pdf->MultiCell(32, $height, dol_trunc($outputlangs->convToOutputCharset($obj->thirdparty), 32), 0, 'L', 0);
+				$pdf->SetXY(45, $y);
+				$pdf->MultiCell(28, $height, dol_trunc($outputlangs->convToOutputCharset($obj->thirdparty), 28), 0, 'L', 0);
 				$y1 = $pdf->GetY();
 
 				// Action code
@@ -309,7 +315,7 @@ class CommActionRapport
 					if ($code == 'AC_OTH')      $code = 'AC_MANUAL';
 					if ($code == 'AC_OTH_AUTO') $code = 'AC_AUTO';
 				}
-				$pdf->SetXY(60, $y);
+				$pdf->SetXY(73, $y);
 				$labelactiontype = $outputlangs->transnoentitiesnoconv("Action".$code);
 				$labelactiontypeshort = $outputlangs->transnoentitiesnoconv("Action".$code.'Short');
 				$pdf->MultiCell(32, $height, dol_trunc($outputlangs->convToOutputCharset($labelactiontypeshort == "Action".$code.'Short' ? $labelactiontype : $labelactiontypeshort), 32), 0, 'L', 0);
@@ -317,7 +323,7 @@ class CommActionRapport
 
 				// Description of event
 				$pdf->SetXY(106, $y);
-				$pdf->MultiCell(94, $height, $outputlangs->convToOutputCharset($text), 0, 'L', 0);
+				$pdf->MultiCell(94, $height, $outputlangs->convToOutputCharset(dol_string_nohtmltag($text, 0)), 0, 'L', 0);
 				$y3 = $pdf->GetY();
 
 				$i++;

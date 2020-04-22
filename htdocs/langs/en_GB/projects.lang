@@ -1,2 +1,3 @@
 # Dolibarr language file - Source file is en_US - projects
 CantRemoveProject=This project can't be removed as it is referenced by some other objects (invoice, orders or other). See referrers tab.
+FirstAddRessourceToAllocateTime=Assign a user resource as contact of project to allocate time

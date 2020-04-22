@@ -58,7 +58,7 @@ span.butAction, span.butActionDelete {
     text-transform: uppercase;
     font-weight: bold;
 
-    margin: 0em <?php echo ($dol_optimize_smallscreen ? '0.6' : '0.9'); ?>em !important;
+    margin: 0em <?php echo ($dol_optimize_smallscreen ? '0.6' : '0.9'); ?>em;
     padding: 0.6em <?php echo ($dol_optimize_smallscreen ? '0.6' : '0.7'); ?>em;
     font-family: <?php print $fontlist ?>;
     display: inline-block;

@@ -277,7 +277,7 @@ if ($action == 'create')
 	print '<input type="hidden" name="backtopage" value="'.$backtopage.'">';
 	print '<input type="hidden" name="action" value="add">';
 
-	print load_fiche_titre($langs->trans("NewVariousPayment"), '', 'invoicing');
+	print load_fiche_titre($langs->trans("NewVariousPayment"), '', 'object_payment');
 
 	dol_fiche_head('', '');
 

@@ -1513,7 +1513,6 @@ if ($action == 'create')
 
 			$projectid = (!empty($objectsrc->fk_project) ? $objectsrc->fk_project : 0);
 			$ref_client = (!empty($objectsrc->ref_client) ? $objectsrc->ref_client : '');
-			$ref_int = (!empty($objectsrc->ref_int) ? $objectsrc->ref_int : '');
 
 			$soc = $objectsrc->thirdparty;
 

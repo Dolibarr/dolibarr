@@ -1618,7 +1618,9 @@ else
 			// Hierarchy
 			print '<tr><td>'.$langs->trans("HierarchicalResponsible").'</td>';
 			print '<td>';
-			if (empty($object->fk_user)) print $langs->trans("None");
+			if (empty($object->fk_user)) {
+				print '<span class="opacitymedium">'.$langs->trans("None").'</span>';
+			}
 			else {
 				$huser = new User($db);
 				$huser->fetch($object->fk_user);
@@ -1993,6 +1995,8 @@ else
 
 				if ($canreadgroup)
 				{
+					print '<!-- Group section -->'."\n";
+
 					print load_fiche_titre($langs->trans("ListOfGroupsForUser"), '', '');
 
 					// On selectionne les groupes auquel fait parti le user
@@ -2031,13 +2035,11 @@ else
 							print $form->select_dolgroups('', 'group', 1, $exclude, 0, '', '', $object->entity);
 							print ' &nbsp; ';
 							print '<input type="hidden" name="entity" value="'.$conf->entity.'" />';
-							print '<input type="submit" class="button" value="'.$langs->trans("Add").'" />';
+							print '<input type="submit" class="button buttongen" value="'.$langs->trans("Add").'" />';
 						}
 						print '</th></tr>'."\n";
 
-						/*
-						 * Groups assigned to user
-						 */
+						// List of groups of user
 						if (!empty($groupslist))
 						{
 							foreach ($groupslist as $group)
@@ -2046,7 +2048,7 @@ else
 								print '<td>';
 								if ($caneditgroup)
 								{
-									print '<a href="'.DOL_URL_ROOT.'/user/group/card.php?id='.$group->id.'">'.img_object($langs->trans("ShowGroup"), "group").' '.$group->name.'</a>';
+									print $group->getNomUrl(1);
 								}
 								else
 								{
@@ -2085,7 +2087,7 @@ else
 		}
 
 		/*
-         * Fiche en mode edition
+         * Card in edit mode
          */
 		if ($action == 'edit' && ($canedituser || $caneditfield || $caneditpassword || ($user->id == $object->id)))
 		{

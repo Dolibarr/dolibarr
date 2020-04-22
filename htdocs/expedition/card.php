@@ -874,8 +874,9 @@ $warehousestatic = new Entrepot($db);
 
 if ($action == 'create2')
 {
-    print load_fiche_titre($langs->trans("CreateShipment")).'<br>';
-    print $langs->trans("ShipmentCreationIsDoneFromOrder");
+    print load_fiche_titre($langs->trans("CreateShipment"), '', 'dolly');
+
+    print '<br>'.$langs->trans("ShipmentCreationIsDoneFromOrder");
     $action = ''; $id = ''; $ref = '';
 }
 
@@ -884,7 +885,8 @@ if ($action == 'create')
 {
     $expe = new Expedition($db);
 
-    print load_fiche_titre($langs->trans("CreateShipment"));
+    print load_fiche_titre($langs->trans("CreateShipment"), '', 'dolly');
+
     if (!$origin)
     {
         setEventMessages($langs->trans("ErrorBadParameters"), null, 'errors');
@@ -2553,7 +2555,7 @@ elseif ($id || $ref)
 
 			// This is just to generate a delivery receipt
 			//var_dump($object->linkedObjectsIds['delivery']);
-			if ($conf->livraison_bon->enabled && ($object->statut == Expedition::STATUS_VALIDATED || $object->statut == Expedition::STATUS_CLOSED) && $user->rights->expedition->livraison->creer && count($object->linkedObjectsIds['delivery']) == 0)
+			if ($conf->livraison_bon->enabled && ($object->statut == Expedition::STATUS_VALIDATED || $object->statut == Expedition::STATUS_CLOSED) && $user->rights->expedition->livraison->creer && empty($object->linkedObjectsIds['delivery']))
 			{
 				print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=create_delivery">'.$langs->trans("CreateDeliveryOrder").'</a>';
 			}

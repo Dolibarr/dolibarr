@@ -64,7 +64,7 @@ if ($mode == 'memberbyregion') $title = $langs->trans("MembersStatisticsByRegion
 
 llxHeader('', $title, '', '', 0, 0, $arrayjs);
 
-print load_fiche_titre($title, $mesg);
+print load_fiche_titre($title, '', 'object_group');
 
 dol_mkdir($dir);
 

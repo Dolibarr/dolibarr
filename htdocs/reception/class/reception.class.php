@@ -52,7 +52,7 @@ class Reception extends CommonObject
 	/**
 	 * @var string String with name of icon for myobject. Must be the part after the 'object_' into object_myobject.png
 	 */
-	public $picto = 'reception';
+	public $picto = 'dollyrevert';
 
     public $socid;
     public $ref_supplier;
@@ -212,6 +212,8 @@ class Reception extends CommonObject
 		$this->brouillon = 1;
 		$this->tracking_number = dol_sanitizeFileName($this->tracking_number);
 		if (empty($this->fk_project)) $this->fk_project = 0;
+		if (empty($this->weight_units)) $this->weight_units = 0;
+		if (empty($this->size_units)) $this->size_units = 0;
 
 		$this->user = $user;
 
@@ -1114,7 +1116,7 @@ class Reception extends CommonObject
 	{
 		global $conf, $langs;
 		$result = '';
-        $label = '<u>'.$langs->trans("ShowReception").'</u>';
+        $label = '<u>'.$langs->trans("Reception").'</u>';
         $label .= '<br><b>'.$langs->trans('Ref').':</b> '.$this->ref;
         $label .= '<br><b>'.$langs->trans('RefSupplier').':</b> '.($this->ref_supplier ? $this->ref_supplier : $this->ref_client);
 
@@ -1127,19 +1129,18 @@ class Reception extends CommonObject
 		{
 		    if (!empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER))
 		    {
-		        $label = $langs->trans("ShowReception");
+		        $label = $langs->trans("Reception");
 		        $linkclose .= ' alt="'.dol_escape_htmltag($label, 1).'"';
 		    }
 		    $linkclose .= ' title="'.dol_escape_htmltag($label, 1).'"';
 		    $linkclose .= ' class="classfortooltip"';
 		}
 
-        $linkstart = '<a href="'.$url.'" title="'.dol_escape_htmltag($label, 1).'" class="classfortooltip">';
+        $linkstart = '<a href="'.$url.'"';
+        $linkstart .= $linkclose.'>';
 		$linkend = '</a>';
 
-		$picto = 'sending';
-
-		if ($withpicto) $result .= ($linkstart.img_object(($notooltip ? '' : $label), $picto, ($notooltip ? '' : 'class="classfortooltip"'), 0, 0, $notooltip ? 0 : 1).$linkend);
+		if ($withpicto) $result .= ($linkstart.img_object(($notooltip ? '' : $label), $this->picto, ($notooltip ? '' : 'class="classfortooltip"'), 0, 0, $notooltip ? 0 : 1).$linkend);
 		if ($withpicto && $withpicto != 2) $result .= ' ';
 		$result .= $linkstart.$this->ref.$linkend;
 		return $result;
