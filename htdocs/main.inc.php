@@ -2367,7 +2367,7 @@ function main_area($title = '')
 	if (!empty($conf->global->MAIN_ONLY_LOGIN_ALLOWED)) print info_admin($langs->trans("WarningYouAreInMaintenanceMode", $conf->global->MAIN_ONLY_LOGIN_ALLOWED));
 
     // Permit to add user company information on each printed document by set SHOW_SOCINFO_ON_PRINT
-    if ($conf->global->SHOW_SOCINFO_ON_PRINT && GETPOST('optioncss', 'aZ09') == 'print' && empty(GETPOST('disable_show_socinfo_on_print', 'az09')))
+    if (! empty($conf->global->SHOW_SOCINFO_ON_PRINT) && GETPOST('optioncss', 'aZ09') == 'print' && empty(GETPOST('disable_show_socinfo_on_print', 'az09')))
     {
         global $hookmanager;
         $hookmanager->initHooks(array('showsocinfoonprint'));
