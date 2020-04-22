@@ -229,6 +229,7 @@ ALTER TABLE llx_product_batch MODIFY COLUMN batch varchar(128);
 ALTER TABLE llx_commande_fournisseur_dispatch MODIFY COLUMN batch varchar(128);
 ALTER TABLE llx_stock_mouvement MODIFY COLUMN batch varchar(128);
 ALTER TABLE llx_mrp_production MODIFY COLUMN batch varchar(128);
+ALTER TABLE llx_mrp_production MODIFY qty real NOT NULL DEFAULT 1;
 
 create table llx_categorie_website_page
 (
