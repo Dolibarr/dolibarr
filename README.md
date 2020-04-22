@@ -5,7 +5,7 @@
 
 Dolibarr ERP & CRM is a modern software package to manage your organization's activity (contacts, suppliers, invoices, orders, stocks, agenda…).
 
-It's an Open Source Software (written in PHP language) designed for small, medium or large companies, foundations and freelances.
+It's an Open Source Software (written in PHP language) designed for small, medium or large companies, foundations and freelancers.
 
 You can freely use, study, modify or distribute it according to its Free Software licence.
 
@@ -27,7 +27,7 @@ Other licenses apply for some included dependencies. See [COPYRIGHT](https://git
 
 If you have low technical skills and you're looking to install Dolibarr ERP/CRM in just a few clicks, you can use one of the packaged versions:
 
-- DoliWamp for Windows
+- [DoliWamp for Windows](https://wiki.dolibarr.org/index.php/Dolibarr_for_Windows_(DoliWamp)
 - DoliDeb for Debian or Ubuntu
 - DoliRpm for Redhat, Fedora, OpenSuse, Mandriva or Mageia
 
@@ -67,6 +67,7 @@ You can use a Web server and a supported database (MariaDB, MySQL or PostgreSQL)
 
 If you don't have time to install it yourself, you can try some commercial 'ready to use' Cloud offers (See https://saas.dolibarr.org). However, this third solution is not free.
 
+
 ## UPGRADING
 
 - At first make a backup of your Dolibarr files & than see https://wiki.dolibarr.org/index.php/Installation_-_Upgrade#Upgrade_Dolibarr
@@ -85,28 +86,27 @@ See the [ChangeLog](https://github.com/Dolibarr/dolibarr/blob/develop/ChangeLog)
 
 ### Main application/modules (all optional)
 
-- Customers, Prospects (Leads) and/or Suppliers directory
+- Customers, Prospects (Leads) and/or Suppliers directory + Contacts
+- Members management 
 - Products and/or Services catalog
 - Commercial proposals management
-- Customer and Supplier Orders management
+- Customer & Supplier Orders management
+- Shipping management
+- Warehouse/Stock management
 - Invoices and payment management
 - Standing orders management (European SEPA)
 - Bank accounts management
 - Accounting management
 - Shared calendar/agenda (with ical and vcal export for third party tools integration)
 - Opportunities and/or project management
-- Projects management
+- Projects & Tasks management
 - Contracts management
-- Warehouse/Stock management
-- Shipping management
 - Interventions management
 - Employee's leave requests management
 - Expense reports
 - Timesheets
 - Electronic Document Management (EDM)
 - Foundations members management
-- Mass emailing
-- Surveys
 - Point of Sale (POS)
 - …
 
@@ -115,11 +115,13 @@ See the [ChangeLog](https://github.com/Dolibarr/dolibarr/blob/develop/ChangeLog)
 - Bookmarks management
 - Donations management
 - Reporting
+- Surveys
 - Data export/import
 - Barcodes support
 - Margin calculations
 - LDAP connectivity
 - ClickToDial integration
+- Mass emailing
 - RSS integration
 - Skype integration
 - Payment platforms integration (PayPal, Stripe, Paybox...)
