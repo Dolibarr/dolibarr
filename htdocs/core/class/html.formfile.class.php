@@ -733,7 +733,9 @@ class FormFile
 					$arraykeys = array_keys($modellist);
 					$modelselected = $arraykeys[0];
 				}
-				$out .= $form->selectarray('model', $modellist, $modelselected, $showempty, 0, 0, '', 0, 0, 0, '', 'minwidth100');
+				$morecss = 'maxwidth200';
+				if ($conf->browser->layout == 'phone') $morecss = 'maxwidth100';
+				$out .= $form->selectarray('model', $modellist, $modelselected, $showempty, 0, 0, '', 0, 0, 0, '', $morecss);
 				if ($conf->use_javascript_ajax)
 				{
 					$out .= ajax_combobox('model');
@@ -871,7 +873,7 @@ class FormFile
 						if ($printer)
 						{
 							//$out.= '<td class="right">';
-							$out .= '<a class="paddingleft" href="'.$urlsource.(strpos($urlsource, '?') ? '&amp;' : '?').'action=print_file&amp;printer='.$modulepart.'&amp;file='.urlencode($relativepath);
+							$out .= '<a class="marginleftonly" href="'.$urlsource.(strpos($urlsource, '?') ? '&amp;' : '?').'action=print_file&amp;printer='.$modulepart.'&amp;file='.urlencode($relativepath);
 							$out .= ($param ? '&amp;'.$param : '');
 							$out .= '">'.img_picto($langs->trans("PrintFile", $relativepath), 'printer.png').'</a>';
 						}
@@ -992,7 +994,7 @@ class FormFile
 		{
 			$out = '<dl class="dropdown inline-block">
     			<dt><a data-ajax="false" href="#" onClick="return false;">'.img_picto('', 'listlight', '', 0, 0, 0, '', 'valignmiddle').'</a></dt>
-    			<dd><div class="multichoicedoc" style="position:absolute;left:100px;" ><ul class="ulselectedfields" style="display: none;">';
+    			<dd><div class="multichoicedoc" style="position:absolute;left:100px;" ><ul class="ulselectedfields">';
 			$tmpout = '';
 
 			// Loop on each file found

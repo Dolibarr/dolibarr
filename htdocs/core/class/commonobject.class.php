@@ -575,7 +575,7 @@ abstract class CommonObject
 	{
 		$return = '<div class="box-flex-item">';
 		$return .= '<div class="info-box info-box-sm">';
-		$return .= '<span class="info-box-icon bg-infoxbox-action">';
+		$return .= '<span class="info-box-icon bg-infobox-action">';
 		$return .= '<i class="fa fa-dol-action"></i>'; // Can be image
 		$return .= '</span>';
 		$return .= '<div class="info-box-content">';
@@ -667,7 +667,7 @@ abstract class CommonObject
 				$namecoords .= $this->getFullName($langs, 1).'<br>'.$coords;
 				// hideonsmatphone because copyToClipboard call jquery dialog that does not work with jmobile
 				$out .= '<a href="#" class="hideonsmartphone" onclick="return copyToClipboard(\''.dol_escape_js($namecoords).'\',\''.dol_escape_js($langs->trans("HelpCopyToClipboard")).'\');">';
-				$out .= img_picto($langs->trans("Address"), 'object_address.png');
+				$out .= img_picto($langs->trans("Address"), 'map-marker-alt');
 				$out .= '</a> ';
 			}
 			$out .= dol_print_address($coords, 'address_'.$htmlkey.'_'.$this->id, $this->element, $this->id, 1, ', '); $outdone++;
@@ -7117,6 +7117,13 @@ abstract class CommonObject
 					{
 						$value = GETPOSTISSET($keyprefix.'options_'.$key.$keysuffix) ?price2num(GETPOST($keyprefix.'options_'.$key.$keysuffix, 'alpha', 3)) : $this->array_options['options_'.$key];
 					}
+					// HTML, select, integer and text add default value
+					if (in_array($extrafields->attributes[$this->table_element]['type'][$key], array('html', 'text', 'select', 'int')))
+					{
+						if($action=='create') $value = $extrafields->attributes[$this->table_element]['default'][$key];
+						else $value = $this->array_options['options_'.$key];
+					}
+
 					$labeltoshow = $langs->trans($label);
 					$helptoshow = $langs->trans($extrafields->attributes[$this->table_element]['help'][$key]);
 
@@ -7876,6 +7883,7 @@ abstract class CommonObject
 	public function createCommon(User $user, $notrigger = false)
 	{
 		global $langs;
+		dol_syslog(get_class($this)."::createCommon create", LOG_DEBUG);
 
 		$error = 0;
 
@@ -8114,6 +8122,7 @@ abstract class CommonObject
 	public function updateCommon(User $user, $notrigger = false)
 	{
 		global $conf, $langs;
+		dol_syslog(get_class($this)."::updateCommon update", LOG_DEBUG);
 
 		$error = 0;
 
@@ -8203,6 +8212,8 @@ abstract class CommonObject
 	 */
 	public function deleteCommon(User $user, $notrigger = false, $forcechilddeletion = 0)
 	{
+		dol_syslog(get_class($this)."::deleteCommon delete", LOG_DEBUG);
+
 		$error = 0;
 
 		$this->db->begin();
@@ -8262,15 +8273,8 @@ abstract class CommonObject
 
 		if (!$error && !empty($this->isextrafieldmanaged))
 		{
-			$sql = "DELETE FROM ".MAIN_DB_PREFIX.$this->table_element."_extrafields";
-			$sql .= " WHERE fk_object=".$this->id;
-
-			$resql = $this->db->query($sql);
-			if (!$resql)
-			{
-				$this->errors[] = $this->db->lasterror();
-				$error++;
-			}
+			$result = $this->deleteExtraFields();
+			if ($result < 0) { $error++; }
 		}
 
 		if (!$error)

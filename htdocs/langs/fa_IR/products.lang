@@ -22,6 +22,8 @@ ProductVatMassChangeDesc=این ابزار نرخ مالیات بر ارزش ا�
 MassBarcodeInit=تعریف دستجمعی بارکد
 MassBarcodeInitDesc=این صفحه می‌تواند برای تعریف بارکد اشیائی که برای آن‌ها بارکد تعریف نشده استفاده شود. قبل از استفاده، مطمئن شوید واحد بارکد به خوبی نصب و برپاسازی شده است.
 ProductAccountancyBuyCode=کد حساب‌داری (خرید)
+ProductAccountancyBuyIntraCode=Accounting code (purchase intra-community)
+ProductAccountancyBuyExportCode=Accounting code (purchase import)
 ProductAccountancySellCode=کد  حساب‌داری (فروش)
 ProductAccountancySellIntraCode=کد حساب‌داری (فروش داخل جامعه‌ای-اروپا)
 ProductAccountancySellExportCode=کد حساب‌داری (فروش صادرات)
@@ -165,7 +167,7 @@ SuppliersPrices=قیمت‌های فروشنده
 SuppliersPricesOfProductsOrServices=قیمت‌های فروشنده (مربوط به محصولات و خدمات)
 CustomCode=گمرک / کالا / کدبندی هماهنگ کالا
 CountryOrigin=کشور مبدا
-Nature=Nature of produt (material/finished)
+Nature=Nature of product (material/finished)
 ShortLabel=برچسب کوتاه
 Unit=واحد
 p=واحد

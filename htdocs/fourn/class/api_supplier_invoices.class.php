@@ -479,6 +479,203 @@ class SupplierInvoices extends DolibarrApi
         return $paiement_id;
     }
 
+    /**
+     * Get lines of a supplier invoice
+     *
+     * @param int   $id             Id of supplier invoice
+     *
+     * @url	GET {id}/lines
+     *
+     * @return array
+     */
+    public function getLines($id)
+    {
+        if(! DolibarrApiAccess::$user->rights->fournisseur->facture->creer) {
+            throw new RestException(401);
+        }
+
+        $result = $this->invoice->fetch($id);
+        if( ! $result ) {
+            throw new RestException(404, 'Supplier invoice not found');
+        }
+
+        if( ! DolibarrApi::_checkAccessToResource('fournisseur', $this->invoice->id, 'facture_fourn', 'facture')) {
+            throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
+        }
+        $this->invoice->fetch_lines();
+        $result = array();
+        foreach ($this->invoice->lines as $line) {
+            array_push($result, $this->_cleanObjectDatas($line));
+        }
+        return $result;
+    }
+
+    /**
+     * Add a line to given supplier invoice
+     *
+     * @param int   $id             Id of supplier invoice to update
+     * @param array $request_data   supplier invoice line data
+     *
+     * @url	POST {id}/lines
+     *
+     * @return int|bool
+     */
+    public function postLine($id, $request_data = null)
+    {
+        if(! DolibarrApiAccess::$user->rights->fournisseur->facture->creer) {
+            throw new RestException(401);
+        }
+
+        $result = $this->invoice->fetch($id);
+        if( ! $result ) {
+            throw new RestException(404, 'Supplier invoice not found');
+        }
+
+        if( ! DolibarrApi::_checkAccessToResource('fournisseur', $this->invoice->id, 'facture_fourn', 'facture')) {
+            throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
+        }
+        $request_data = (object) $request_data;
+
+        $updateRes = $this->invoice->addline(
+            $request_data->description,
+    		$request_data->pu_ht,
+			$request_data->tva_tx,
+    		$request_data->localtax1_tx,
+    		$request_data->localtax2_tx,
+    		$request_data->qty,
+			$request_data->fk_product,
+			$request_data->remise_percent,
+			$request_data->date_start,
+			$request_data->date_end,
+			$request_data->ventil,
+			$request_data->info_bits,
+			'HT',
+			$request_data->product_type,
+			$request_data->rang,
+			false,
+			$request_data->array_options,
+			$request_data->fk_unit,
+			$request_data->origin_id,
+			$request_data->multicurrency_subprice,
+			$request_data->ref_supplier,
+			$request_data->special_code
+        );
+
+        if ($updateRes < 0) {
+            throw new RestException(400, 'Unable to insert the new line. Check your inputs. '.$this->invoice->error);
+        }
+
+        return $updateRes;
+    }
+
+    /**
+     * Update a line to a given supplier invoice
+     *
+     * @param int   $id             Id of supplier invoice to update
+     * @param int   $lineid         Id of line to update
+     * @param array $request_data   InvoiceLine data
+     *
+     * @url	PUT {id}/lines/{lineid}
+     *
+     * @return object
+     *
+     * @throws 200
+     * @throws 304
+     * @throws 401
+     * @throws 404
+     */
+    public function putLine($id, $lineid, $request_data = null)
+    {
+    	if(! DolibarrApiAccess::$user->rights->fournisseur->facture->creer) {
+            throw new RestException(401);
+        }
+
+        $result = $this->invoice->fetch($id);
+        if( ! $result ) {
+            throw new RestException(404, 'Supplier invoice not found');
+        }
+
+        if( ! DolibarrApi::_checkAccessToResource('fournisseur', $this->invoice->id, 'facture_fourn', 'facture')) {
+            throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
+        }
+    	$request_data = (object) $request_data;
+        $updateRes = $this->invoice->updateline(
+    		$lineid,
+    		$request_data->description,
+    		$request_data->pu_ht,
+			$request_data->tva_tx,
+    		$request_data->localtax1_tx,
+    		$request_data->localtax2_tx,
+    		$request_data->qty,
+			$request_data->fk_product,
+			'HT',
+			$request_data->info_bits,
+			$request_data->product_type,
+			$request_data->remise_percent,
+			false,
+			$request_data->date_start,
+			$request_data->date_end,
+			$request_data->array_options,
+			$request_data->fk_unit,
+			$request_data->multicurrency_subprice,
+			$request_data->ref_supplier
+    	);
+
+    	if ($updateRes > 0) {
+    		$result = $this->get($id);
+    		unset($result->line);
+    		return $this->_cleanObjectDatas($result);
+	    } else {
+	    	throw new RestException(304, $this->invoice->error);
+    	}
+    }
+
+	/**
+     * Deletes a line of a given supplier invoice
+     *
+     * @param int   $id             Id of supplier invoice
+     * @param int   $lineid 		Id of the line to delete
+     *
+     * @url     DELETE {id}/lines/{lineid}
+     *
+     * @return array
+     *
+     * @throws 400
+     * @throws 401
+     * @throws 404
+     * @throws 405
+     */
+    public function deleteLine($id, $lineid)
+    {
+		if(! DolibarrApiAccess::$user->rights->fournisseur->facture->creer) {
+            throw new RestException(401);
+        }
+
+		$result = $this->invoice->fetch($id);
+        if( ! $result ) {
+            throw new RestException(404, 'Supplier invoice not found');
+        }
+
+    	if(empty($lineid)) {
+    		throw new RestException(400, 'Line ID is mandatory');
+    	}
+
+    	if( ! DolibarrApi::_checkAccessToResource('fournisseur', $this->invoice->id, 'facture_fourn', 'facture')) {
+            throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
+        }
+
+    	// TODO Check the lineid $lineid is a line of ojbect
+
+    	$updateRes = $this->invoice->deleteline($lineid);
+    	if ($updateRes > 0) {
+    		return $this->get($id);
+    	}
+    	else
+    	{
+    		throw new RestException(405, $this->invoice->error);
+    	}
+    }
+
     // phpcs:disable PEAR.NamingConventions.ValidFunctionName.PublicUnderscore
     /**
      * Clean sensible object datas

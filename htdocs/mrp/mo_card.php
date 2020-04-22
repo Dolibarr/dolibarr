@@ -293,6 +293,7 @@ if ($action == 'create')
 		print '<table class="noborder centpercent">';
 
 		$object->lines = $objectbom->lines;
+		$object->bom = $objectbom;
 
 		$object->printOriginLinesList('', array());
 

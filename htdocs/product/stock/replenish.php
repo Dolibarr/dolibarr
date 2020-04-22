@@ -490,7 +490,7 @@ print load_fiche_titre($langs->trans('Replenishment'), '', 'stock');
 
 dol_fiche_head($head, 'replenish', '', -1, '');
 
-print $langs->trans("ReplenishmentStatusDesc").'<br>'."\n";
+print '<span class="opacitymedium">'.$langs->trans("ReplenishmentStatusDesc").'</span><br>'."\n";
 if ($usevirtualstock == 1)
 {
 	print $langs->trans("CurentSelectionMode").': ';

@@ -21,7 +21,7 @@
 Module56000Name=Ticket
 Module56000Desc=Sistema di ticket per la gestione di problemi o richieste
 
-Permission56001=See tickets
+Permission56001=Visualizza tickets
 Permission56002=Modify tickets
 Permission56003=Delete tickets
 Permission56004=Manage tickets
@@ -36,7 +36,7 @@ TicketTypeShortBUGHARD=Dysfonctionnement matériel
 TicketTypeShortCOM=Commercial question
 
 TicketTypeShortHELP=Request for functionnal help
-TicketTypeShortISSUE=Issue, bug or problem
+TicketTypeShortISSUE=Issue, bug o problemi
 TicketTypeShortREQUEST=Change or enhancement request
 TicketTypeShortPROJET=Progetto
 TicketTypeShortOTHER=Altro
@@ -64,7 +64,7 @@ NotRead=Non letto
 Read=Da leggere
 Assigned=Assegnato
 InProgress=Avviato
-NeedMoreInformation=Waiting for information
+NeedMoreInformation=In attesa di informazioni
 Answered=Answered
 Waiting=In attesa
 Closed=Chiuso
@@ -90,7 +90,7 @@ TicketParamModule=Module variable setup
 TicketParamMail=Email setup
 TicketEmailNotificationFrom=Notification email from
 TicketEmailNotificationFromHelp=Used into ticket message answer by example
-TicketEmailNotificationTo=Notifications email to
+TicketEmailNotificationTo=Notifiche via email a
 TicketEmailNotificationToHelp=Invia email di notifica a questo indirizzo
 TicketNewEmailBodyLabel=Text message sent after creating a ticket
 TicketNewEmailBodyHelp=The text specified here will be inserted into the email confirming the creation of a new ticket from the public interface. Information on the consultation of the ticket are automatically added.
@@ -133,7 +133,7 @@ TicketsDisableCustomerEmail=Always disable emails when a ticket is created from 
 #
 # Index & list page
 #
-TicketsIndex=Ticket (Home)
+TicketsIndex=Area Tickets
 TicketList=List of tickets
 TicketAssignedToMeInfos=This page display ticket list created by or assigned to current user
 NoTicketsFound=No ticket found
@@ -280,7 +280,7 @@ TicketPublicInterfaceForbidden=The public interface for the tickets was not enab
 ErrorEmailOrTrackingInvalid=Bad value for tracking ID or email
 OldUser=Old user
 NewUser=Nuovo utente
-NumberOfTicketsByMonth=Number of tickets per month
+NumberOfTicketsByMonth=Numero di ticket per mese
 NbOfTickets=Number of tickets
 # notifications
 TicketNotificationEmailSubject=Ticket %s updated

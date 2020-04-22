@@ -73,12 +73,12 @@ class BankAccounts extends DolibarrApi
 
         $sql = "SELECT rowid FROM ".MAIN_DB_PREFIX."bank_account as t";
     	if ($category > 0) {
-        $sql .= ", ".MAIN_DB_PREFIX."categorie_account as c";
+            $sql .= ", ".MAIN_DB_PREFIX."categorie_account as c";
 		}
         $sql .= ' WHERE t.entity IN ('.getEntity('bank_account').')';
     	// Select accounts of given category
     	if ($category > 0) {
-        $sql .= " AND c.fk_categorie = ".$db->escape($category)." AND c.fk_account = t.rowid ";
+            $sql .= " AND c.fk_categorie = ".$this->db->escape($category)." AND c.fk_account = t.rowid ";
 		}
         // Add sql filters
         if ($sqlfilters)

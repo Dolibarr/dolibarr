@@ -874,8 +874,9 @@ $warehousestatic = new Entrepot($db);
 
 if ($action == 'create2')
 {
-    print load_fiche_titre($langs->trans("CreateShipment")).'<br>';
-    print $langs->trans("ShipmentCreationIsDoneFromOrder");
+    print load_fiche_titre($langs->trans("CreateShipment"), '', 'dolly');
+
+    print '<br>'.$langs->trans("ShipmentCreationIsDoneFromOrder");
     $action = ''; $id = ''; $ref = '';
 }
 
@@ -884,7 +885,8 @@ if ($action == 'create')
 {
     $expe = new Expedition($db);
 
-    print load_fiche_titre($langs->trans("CreateShipment"));
+    print load_fiche_titre($langs->trans("CreateShipment"), '', 'dolly');
+
     if (!$origin)
     {
         setEventMessages($langs->trans("ErrorBadParameters"), null, 'errors');

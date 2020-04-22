@@ -197,7 +197,7 @@ print '<table class="liste nohover" width="100%">';
 print '<tr class="liste_titre"><td>'.$langs->trans("Categories").'</td><td></td><td class="right">';
 if (!empty($conf->use_javascript_ajax))
 {
-	print '<div id="iddivjstreecontrol"><a class="notasortlink" href="#">'.img_picto('', 'folder').' '.$langs->trans("UndoExpandAll").'</a> | <a class="notasortlink" href="#">'.img_picto('', 'folder-open').' '.$langs->trans("ExpandAll").'</a></div>';
+	print '<div id="iddivjstreecontrol"><a class="notasortlink" href="#">'.img_picto('', 'folder', 'class="paddingright"').$langs->trans("UndoExpandAll").'</a> | <a class="notasortlink" href="#">'.img_picto('', 'folder-open', 'class="paddingright"').$langs->trans("ExpandAll").'</a></div>';
 }
 print '</td></tr>';
 

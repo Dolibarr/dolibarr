@@ -2808,7 +2808,7 @@ class Ticket extends CommonObject
 			$clause = " AND";
 		}
 		$sql .= $clause." p.entity IN (".getEntity('ticket').")";
-		if ($mode == 'opened') $sql .= " AND p.fk_statut in (".Ticket::STATUS_CLOSED.", ".Ticket::STATUS_CANCELED.")";
+		if ($mode == 'opened') $sql .= " AND p.fk_statut NOT IN (".Ticket::STATUS_CLOSED.", ".Ticket::STATUS_CANCELED.")";
 		if ($user->socid) $sql .= " AND p.fk_soc = ".$user->socid;
 
 		$resql = $this->db->query($sql);

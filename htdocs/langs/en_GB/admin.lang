@@ -10,6 +10,8 @@ ErrorDecimalLargerThanAreForbidden=Error: A precision higher than <b>%s</b> is n
 ErrorReservedTypeSystemSystemAuto=Entry of 'system' and 'systemauto' for this type is reserved. You can use 'user' as a value to add your own record
 ErrorCodeCantContainZero=Code can't contain value 0 (zero)
 MaxSizeForUploadedFiles=Maximum size for uploaded files (0 to prevent any uploads)
+AntiVirusCommandExample=Example for ClamAv Daemon (require clamav-daemon): /usr/bin/clamdscan<br>Example for ClamWin (very very slow): c:\\Progra~1\\ClamWin\\bin\\clamscan.exe
+AntiVirusParamExample=Example for ClamAv Daemon: --fdpass<br>Example for ClamWin: --database="C:\\Program Files (x86)\\ClamWin\\lib"
 CurrentValueSeparatorThousand=Thousands separator
 PositionByDefault=Default position
 MenusDesc=Menu managers set the content of the two menu bars (horizontal and vertical).
@@ -18,6 +20,7 @@ PurgeDeleteLogFile=Delete log files, including <b>%s</b> defined by Syslog modul
 ConfirmPurgeAuditEvents=Are you sure you want to purge all security events? All security logs will be deleted but no other data will be removed.
 ImportPostgreSqlDesc=To import a backup file, you must use the pg_restore command from the command line:
 CommandsToDisableForeignKeysForImportWarning=This is mandatory if you want to restore your sql dumps later
+ModulesDesc=The modules/applications determine which features are available in the software. Some modules require permissions to be granted to users after activating the module. Click the on/off button <span class="small valignmiddle">%s</span> of each module to enable or disable a module/application.
 ModulesMarketPlaceDesc=You can find more modules to download from external websites on the Internet...
 ModulesMarketPlaces=Find external applications and modules
 AvailableOnlyIfJavascriptAndAjaxNotDisabled=Available only if JavaScript is enabled
@@ -42,11 +45,16 @@ UMaskExplanation=This parameter allows you to define permissions set by default 
 ListOfDirectories=List of OpenDocument template directories
 ListOfDirectoriesForModelGenODT=List of directories containing template files in OpenDocument format.<br><br>Put here full path of directories.<br>Add a carriage return between each directory.<br>To add a directory of the GED module, add here <b>DOL_DATA_ROOT/ecm/yourdirectoryname</b>.<br><br>Files in those directories must end with <b>.odt</b> or <b>.ods</b>.
 FollowingSubstitutionKeysCanBeUsed=<br>To learn how to create your .odt document templates, before storing them in those directories, read wiki documentation:
+ExternalModule=External module
 Module50150Desc=Point of Sale module TakePOS (touchscreen POS, for shops, bars or restaurants).
 Module50200Name=PayPal
+DictionaryCivility=Honorific titles
 DictionaryAccountancyJournal=Finance journals
 ValueOfConstantKey=Value of a configuration constant
 CompanyZip=Postcode
+SetupDescription3=<a href="%s">%s -> %s</a><br><br>Basic parameters used to customize the default behavior of your application (e.g for country-related features).
+SetupDescription4=<a href="%s">%s -> %s</a><br><br>This software is a suite of many modules/applications. The modules related to your needs must be enabled and configured. Menu entries will appears with the activation of these modules.
+CompanyFundationDesc=Edit the information of your company/organization. Click on "%s" button at the bottom of the page when done.
 LDAPFieldZip=Postcode
 GenbarcodeLocation=Barcode generation command line tool (used by internal engine for some bar code types). Must be compatible with "genbarcode".<br>For example: /usr/local/bin/genbarcode
 SuppliersCommandModel=Complete template of Purchase Order

@@ -69,7 +69,6 @@ CustomerPrices=Kunden Preise
 SuppliersPrices=Lieferantenpreise
 SuppliersPricesOfProductsOrServices=Anbieterpreise
 CustomCode=Zolltarifnummer (z.B. HSN)
-Nature=Produktart (Rohmaterial / Fertigprodukt)
 kilogram=Kilo
 unitP=Teil
 unitSET=Satz

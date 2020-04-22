@@ -6,6 +6,7 @@
  * Copyright (C) 2013		Florian Henry			<florian.henry@open-concept.pro>
  * Copyright (C) 2015		Alexandre Spangaro		<aspangaro@open-dsi.fr>
  * Copyright (C) 2019		Thibault Foucart		<support@ptibogxiv.net>
+ * Copyright (C) 2020		Josep Lluís Amador		<joseplluis@lliuretic.cat>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -239,6 +240,8 @@ if (!$rowid && $action != 'create' && $action != 'edit')
 		$i = 0;
 
 		$param = '';
+		if (!empty($contextpage) && $contextpage != $_SERVER["PHP_SELF"]) $param .= '&contextpage='.$contextpage;
+		if ($limit > 0 && $limit != $conf->liste_limit) $param .= '&limit='.$limit;
 
 		$newcardbutton = '';
 		if ($user->rights->adherent->configurer)
@@ -252,10 +255,9 @@ if (!$rowid && $action != 'create' && $action != 'edit')
 		print '<input type="hidden" name="formfilteraction" id="formfilteraction" value="list">';
 		print '<input type="hidden" name="action" value="list">';
 		print '<input type="hidden" name="sortfield" value="'.$sortfield.'">';
-		print '<input type="hidden" name="page" value="'.$page.'">';
 		print '<input type="hidden" name="sortorder" value="'.$sortorder.'">';
 
-		print_barre_liste($langs->trans("MembersTypes"), $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, '', $num, $nbtotalofrecords, 'members', 0, $newcardbutton, '', $limit);
+		print_barre_liste($langs->trans("MembersTypes"), $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, '', $num, $nbtotalofrecords, 'members', 0, $newcardbutton, '', $limit, 0, 0, 1);
 
 		$moreforfilter = '';
 
@@ -375,13 +377,8 @@ if ($action == 'create')
 	print '</td></tr>';
 
 	// Other attributes
-	$parameters = array();
-	$reshook = $hookmanager->executeHooks('formObjectOptions', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
-    print $hookmanager->resPrint;
-	if (empty($reshook))
-	{
-		print $object->showOptionals($extrafields, 'edit', $parameters);
-	}
+	include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_add.tpl.php';
+
 	print '<tbody>';
 	print "</table>\n";
 
@@ -821,15 +818,6 @@ if ($rowid > 0)
 
 		// Other attributes
 		include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_edit.tpl.php';
-
-		// Other attributes
-		$parameters = array();
-		$reshook = $hookmanager->executeHooks('formObjectOptions', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
-        	print $hookmanager->resPrint;
-		if (empty($reshook))
-		{
-		    print $object->showOptionals($extrafields, 'edit', $parameters);
-		}
 
 		print '</table>';
 

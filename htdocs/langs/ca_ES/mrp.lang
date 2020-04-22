@@ -71,3 +71,5 @@ ProductQtyToProduceByMO=Quantitat de producte que encara es pot produir mitjanç
 AddNewConsumeLines=Afegiu una nova línia per consumir
 ProductsToConsume=Productes a consumir
 ProductsToProduce=Productes a produir
+UnitCost=Cost unitari
+TotalCost=Cost total
