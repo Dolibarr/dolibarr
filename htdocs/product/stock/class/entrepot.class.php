@@ -765,7 +765,7 @@ class Entrepot extends CommonObject
 
         // Initialize parameters
         $this->id = 0;
-        $this->libelle = 'WAREHOUSE SPECIMEN';
+        $this->label = 'WAREHOUSE SPECIMEN';
         $this->description = 'WAREHOUSE SPECIMEN '.dol_print_date($now, 'dayhourlog');
 		$this->statut = 1;
         $this->specimen = 1;
