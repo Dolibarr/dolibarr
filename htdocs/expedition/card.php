@@ -53,10 +53,16 @@ if (!empty($conf->projet->enabled)) {
     require_once DOL_DOCUMENT_ROOT.'/core/class/html.formprojet.class.php';
 }
 
+if (!empty($conf->incoterm->enabled))
+{
+	require_once DOL_DOCUMENT_ROOT.'/incoterms/incotermshelper.php';
+	$incoterms = new IncotermsHelper($db);
+	$langs->load('incoterm');
+}
+
 // Load translation files required by the page
 $langs->loadLangs(array("sendings", "companies", "bills", 'deliveries', 'orders', 'stocks', 'other', 'propal'));
 
-if (!empty($conf->incoterm->enabled)) $langs->load('incoterm');
 if (!empty($conf->productbatch->enabled)) $langs->load('productbatch');
 
 $origin = GETPOST('origin', 'alpha') ?GETPOST('origin', 'alpha') : 'expedition'; // Example: commande, propal
@@ -1044,7 +1050,7 @@ if ($action == 'create')
 			if (!empty($conf->incoterm->enabled))
 			{
 				print '<tr>';
-				print '<td><label for="incoterm_id">'.$form->textwithpicto($langs->trans("IncotermLabel"), $object->label_incoterms, 1).'</label></td>';
+				print '<td><label for="incoterm_id">'.$form->textwithpicto($langs->trans("IncotermLabel"), $incoterms->getDescription($object), 1).'</label></td>';
 		        print '<td colspan="3" class="maxwidthonsmartphone">';
 		        print $form->select_incoterms((!empty($object->fk_incoterms) ? $object->fk_incoterms : ''), (!empty($object->location_incoterms) ? $object->location_incoterms : ''));
 				print '</td></tr>';
@@ -1986,7 +1992,7 @@ elseif ($id || $ref)
 	        print '<td colspan="3">';
 			if ($action != 'editincoterm')
 			{
-				print $form->textwithpicto($object->display_incoterms(), $object->label_incoterms, 1);
+				print $form->textwithpicto($incoterms->getText($object), $incoterms->getDescription($object), 1);
 			}
 			else
 			{

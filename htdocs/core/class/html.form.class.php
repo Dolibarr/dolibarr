@@ -883,91 +883,65 @@ class Form
 	/**
 	 *  Return select list of incoterms
 	 *
-	 *  @param	string	$selected       		Id or Code of preselected incoterm
-	 *  @param	string	$location_incoterms     Value of input location
-	 *  @param	string	$page       			Defined the form action
-	 *  @param  string	$htmlname       		Name of html select object
-	 *  @param  string	$htmloption     		Options html on select object
+	 *  @param	string	$selected				Id or Code of preselected incoterm
+	 *  @param	string	$location_incoterms		Value of input location
+	 *  @param	string	$page					Defined the form action
+	 *  @param  string	$htmlname				Name of html select object
+	 *  @param  string	$htmloption				Options html on select object
 	 * 	@param	int		$forcecombo				Force to load all values and output a standard combobox (with no beautification)
 	 *  @param	array	$events					Event options to run on change. Example: array(array('method'=>'getContacts', 'url'=>dol_buildpath('/core/ajax/contacts.php',1), 'htmlname'=>'contactid', 'params'=>array('add-customer-contact'=>'disabled')))
-	 *  @return string           				HTML string with select and input
+	 *  @return string							HTML string with select and input
 	 */
 	public function select_incoterms($selected = '', $location_incoterms = '', $page = '', $htmlname = 'incoterm_id', $htmloption = '', $forcecombo = 1, $events = array())
 	{
-		// phpcs:enable
 		global $conf, $langs;
 
-		$langs->load("dict");
+		dol_syslog(get_class($this)."::select_incoterm", LOG_DEBUG);
 
 		$out = '';
-		$incotermArray = array();
 
-		$sql = "SELECT rowid, code";
-		$sql .= " FROM ".MAIN_DB_PREFIX."c_incoterms";
-		$sql .= " WHERE active > 0";
-		$sql .= " ORDER BY code ASC";
-
-		dol_syslog(get_class($this)."::select_incoterm", LOG_DEBUG);
-		$resql = $this->db->query($sql);
-		if ($resql)
+		if ($conf->use_javascript_ajax && !$forcecombo)
 		{
-			if ($conf->use_javascript_ajax && !$forcecombo)
-			{
-				include_once DOL_DOCUMENT_ROOT.'/core/lib/ajax.lib.php';
-				$out .= ajax_combobox($htmlname, $events);
-			}
-
-			if (!empty($page))
-			{
-				$out .= '<form method="post" action="'.$page.'">';
-				$out .= '<input type="hidden" name="action" value="set_incoterms">';
-				$out .= '<input type="hidden" name="token" value="'.newToken().'">';
-			}
-
-			$out .= '<select id="'.$htmlname.'" class="flat selectincoterm minwidth100imp noenlargeonsmartphone" name="'.$htmlname.'" '.$htmloption.'>';
-			$out .= '<option value="0">&nbsp;</option>';
-			$num = $this->db->num_rows($resql);
-			$i = 0;
-			if ($num)
-			{
-				$foundselected = false;
-
-				while ($i < $num)
-				{
-					$obj = $this->db->fetch_object($resql);
-					$incotermArray[$i]['rowid'] = $obj->rowid;
-					$incotermArray[$i]['code'] = $obj->code;
-					$i++;
-				}
-
-				foreach ($incotermArray as $row)
-				{
-					if ($selected && ($selected == $row['rowid'] || $selected == $row['code']))
-					{
-						$out .= '<option value="'.$row['rowid'].'" selected>';
-					}
-					else
-					{
-						$out .= '<option value="'.$row['rowid'].'">';
-					}
-
-					if ($row['code']) $out .= $row['code'];
-
-					$out .= '</option>';
-				}
-			}
-			$out .= '</select>';
-
-			$out .= '<input id="location_incoterms" class="maxwidth100onsmartphone" name="location_incoterms" value="'.$location_incoterms.'">';
-
-			if (!empty($page))
-			{
-				$out .= '<input type="submit" class="button valignmiddle" value="'.$langs->trans("Modify").'"></form>';
-			}
+			include_once DOL_DOCUMENT_ROOT.'/core/lib/ajax.lib.php';
+			$out .= ajax_combobox($htmlname, $events);
 		}
-		else
+
+		if (!empty($page))
 		{
-			dol_print_error($this->db);
+			$out .= '<form method="post" action="'.$page.'">';
+			$out .= '<input type="hidden" name="action" value="set_incoterms">';
+			$out .= '<input type="hidden" name="token" value="'.newToken().'">';
+		}
+
+		$out .= '<select id="'.$htmlname.'" class="flat selectincoterm minwidth100imp noenlargeonsmartphone" name="'.$htmlname.'" '.$htmloption.'>';
+		$out .= '<option value="0">&nbsp;</option>';
+
+		require_once DOL_DOCUMENT_ROOT.'/incoterms/incotermshelper.php';
+		$incotermshelper = new Incotermshelper($this->db);
+
+		foreach($incotermshelper->getIncotermList() as $incoterm)
+		{
+			if ($selected && ($selected == $incoterm->id || $selected == $incoterm->code))
+			{
+				$out .= '<option value="'.$incoterm->id.'" title="'.$incoterm->description.'" selected>';
+			}
+			else
+			{
+				$out .= '<option value="'.$incoterm->id.'" title="'.$incoterm->description.'">';
+			}
+
+			$out .= $incoterm->code;
+			$out .= '</option>';
+		}
+
+		$out .= '</select>';
+
+		$out .= '<input id="location_incoterms" class="maxwidth100onsmartphone" name="location_incoterms" value="'.$location_incoterms.'">';
+
+		if (!empty($page))
+		{
+			$langs->load("dict");
+			$out .= '<input type="submit" class="button valignmiddle" value="'.$langs->trans("Modify").'"></form>';
 		}
 
 		return $out;

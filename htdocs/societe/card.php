@@ -47,10 +47,16 @@ require_once DOL_DOCUMENT_ROOT.'/contact/class/contact.class.php';
 require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
 if (!empty($conf->adherent->enabled)) require_once DOL_DOCUMENT_ROOT.'/adherents/class/adherent.class.php';
 
+if (!empty($conf->incoterm->enabled))
+{
+	require_once DOL_DOCUMENT_ROOT.'/incoterms/incotermshelper.php';
+	$incoterms = new IncotermsHelper($db);
+	$langs->load('incoterm');
+}
+
 $langs->loadLangs(array("companies", "commercial", "bills", "banks", "users"));
 if (!empty($conf->adherent->enabled)) $langs->load("members");
 if (!empty($conf->categorie->enabled)) $langs->load("categories");
-if (!empty($conf->incoterm->enabled)) $langs->load("incoterm");
 if (!empty($conf->notification->enabled)) $langs->load("mails");
 
 $mesg = ''; $error = 0; $errors = array();
@@ -2635,7 +2641,7 @@ else
         	print '<td colspan="3">';
         	if ($action != 'editincoterm')
         	{
-        		print $form->textwithpicto($object->display_incoterms(), $object->label_incoterms, 1);
+        		print $form->textwithpicto($incoterms->getText($object), $incoterms->getDescription($object), 1);
         	}
         	else
         	{

@@ -41,8 +41,15 @@ if (!empty($conf->stock->enabled))  require_once DOL_DOCUMENT_ROOT.'/product/sto
 if (!empty($conf->propal->enabled)) require_once DOL_DOCUMENT_ROOT.'/comm/propal/class/propal.class.php';
 if (!empty($conf->product->enabled) || !empty($conf->service->enabled)) 	require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
 
+if (!empty($conf->incoterm->enabled))
+{
+	require_once DOL_DOCUMENT_ROOT.'/incoterms/incotermshelper.php';
+	$incoterms = new IncotermsHelper($db);
+	$langs->load('incoterm');
+}
+
 // Load translation files required by the page
-$langs->loadLangs(array('orders', "companies", "bills", 'propal', 'deliveries', 'stocks', "productbatch", 'incoterm', 'other'));
+$langs->loadLangs(array('orders', "companies", "bills", 'propal', 'deliveries', 'stocks', "productbatch", 'other'));
 
 $id     = GETPOST('id', 'int'); // id of order
 $ref    = GETPOST('ref', 'alpha');
@@ -529,7 +536,7 @@ if ($id > 0 || !empty($ref))
 		    print '<td colspan="3">';
 		    if ($action != 'editincoterm')
 		    {
-		        print $form->textwithpicto($object->display_incoterms(), $object->label_incoterms, 1);
+		        print $form->textwithpicto($incoterms->getText($object), $incoterms->getDescription($object), 1);
 		    }
 		    else
 		    {

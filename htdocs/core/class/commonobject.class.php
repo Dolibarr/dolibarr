@@ -3989,6 +3989,7 @@ abstract class CommonObject
 	 *    Return incoterms informations
 	 *    TODO Use a cache for label get
 	 *
+	 * 	  @deprecated 		use IncotermsHelper->getText($object) instead ("htdocs\incoterms\incotermshelper.php")
 	 *    @return	string	incoterms info
 	 */
 	public function display_incoterms()

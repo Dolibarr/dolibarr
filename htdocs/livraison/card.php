@@ -45,10 +45,15 @@ if (!empty($conf->projet->enabled)) {
     require_once DOL_DOCUMENT_ROOT.'/core/class/html.formprojet.class.php';
 }
 
+if (!empty($conf->incoterm->enabled))
+{
+	require_once DOL_DOCUMENT_ROOT.'/incoterms/incotermshelper.php';
+	$incoterms = new IncotermsHelper($db);
+	$langs->load('incoterm');
+}
+
 // Load translation files required by the page
 $langs->loadLangs(array("sendings", "bills", 'deliveries', 'orders'));
-
-if (!empty($conf->incoterm->enabled)) $langs->load('incoterm');
 
 $action = GETPOST('action', 'alpha');
 $confirm = GETPOST('confirm', 'alpha');
@@ -474,7 +479,7 @@ else	// View
 		        print '<td colspan="3">';
 				if ($action != 'editincoterm')
 				{
-					print $form->textwithpicto($object->display_incoterms(), $object->label_incoterms, 1);
+					print $form->textwithpicto($incoterms->getText($object), $incoterms->getDescription($object), 1);
 				}
 				else
 				{

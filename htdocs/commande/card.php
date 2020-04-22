@@ -58,9 +58,15 @@ if (!empty($conf->variants->enabled)) {
 	require_once DOL_DOCUMENT_ROOT.'/variants/class/ProductCombination.class.php';
 }
 
+if (!empty($conf->incoterm->enabled))
+{
+	require_once DOL_DOCUMENT_ROOT.'/incoterms/incotermshelper.php';
+	$incoterms = new IncotermsHelper($db);
+	$langs->load('incoterm');
+}
+
 // Load translation files required by the page
 $langs->loadLangs(array('orders', 'sendings', 'companies', 'bills', 'propal', 'deliveries', 'products', 'other'));
-if (!empty($conf->incoterm->enabled)) $langs->load('incoterm');
 if (!empty($conf->margin->enabled)) $langs->load('margins');
 if (!empty($conf->productbatch->enabled)) $langs->load("productbatch");
 
@@ -1753,7 +1759,7 @@ if ($action == 'create' && $usercancreate)
 	if (!empty($conf->incoterm->enabled))
 	{
 		print '<tr>';
-		print '<td><label for="incoterm_id">'.$form->textwithpicto($langs->trans("IncotermLabel"), $objectsrc->label_incoterms, 1).'</label></td>';
+		print '<td><label for="incoterm_id">'.$form->textwithpicto($langs->trans("IncotermLabel"), $incoterms->getDescription($objectsrc), 1).'</label></td>';
 		print '<td class="maxwidthonsmartphone">';
 		$incoterm_id = GETPOST('incoterm_id');
 		$incoterm_location = GETPOST('location_incoterms');
@@ -2386,7 +2392,7 @@ if ($action == 'create' && $usercancreate)
 			print '<td>';
 			if ($action != 'editincoterm')
 			{
-				print $form->textwithpicto($object->display_incoterms(), $object->label_incoterms, 1);
+				print $form->textwithpicto($incoterms->getText($object), $incoterms->getDescription($object), 1);
 			}
 			else
 			{
