@@ -733,14 +733,14 @@ class ActionComm extends CommonObject
                 $this->type_short = (($transcode != "Action".$obj->type_code.'Short') ? $transcode : '');
 
 				$this->code = $obj->code;
-                $this->label				= $obj->label;
-                $this->datep				= $this->db->jdate($obj->datep);
-                $this->datef				= $this->db->jdate($obj->datep2);
+                $this->label = $obj->label;
+                $this->datep = $this->db->jdate($obj->datep);
+                $this->datef = $this->db->jdate($obj->datep2);
 
-                $this->datec   				= $this->db->jdate($obj->datec);
-                $this->datem   				= $this->db->jdate($obj->datem);
+                $this->datec = $this->db->jdate($obj->datec);
+                $this->datem = $this->db->jdate($obj->datem);
 
-                $this->note = $obj->note;
+                $this->note = $obj->note; // deprecated
                 $this->note_private = $obj->note;
                 $this->percentage = $obj->percentage;
 
