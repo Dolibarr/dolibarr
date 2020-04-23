@@ -242,24 +242,4 @@ class EntrepotTest extends PHPUnit\Framework\TestCase
 
     	return $result;
     }
-
-    /**
-     * testEntrepotStatic
-     *
-     * @return	void
-     */
-    public function testEntrepotStatic()
-    {
-        global $conf,$user,$langs,$db;
-        $conf=$this->savconf;
-        $user=$this->savuser;
-        $langs=$this->savlangs;
-        $db=$this->savdb;
-
-        $localobject=new Entrepot($db);
-
-        //$this->assertLessThan(1, 0);
-
-        return;
-    }
 }
