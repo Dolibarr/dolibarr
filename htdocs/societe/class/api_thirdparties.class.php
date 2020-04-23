@@ -129,7 +129,7 @@ class Thirdparties extends DolibarrApi
 		$sql .= " FROM ".MAIN_DB_PREFIX."societe as t";
     	if ($category > 0) {
 			if ($mode != 4) $sql .= ", ".MAIN_DB_PREFIX."categorie_societe as c";
-			if (!in_array($mode, array(1,2,3))) $sql .= ", ".MAIN_DB_PREFIX."categorie_fournisseur as cc";
+			if (!in_array($mode, array(1, 2, 3))) $sql .= ", ".MAIN_DB_PREFIX."categorie_fournisseur as cc";
     	}
 		if ((!DolibarrApiAccess::$user->rights->societe->client->voir && !$socids) || $search_sale > 0) $sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc"; // We need this table joined to the select in order to filter by sale
 		$sql .= ", ".MAIN_DB_PREFIX."c_stcomm as st";
