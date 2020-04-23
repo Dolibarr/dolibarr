@@ -1035,7 +1035,7 @@ class Contrat extends CommonObject
 				}
 			}
 
-			if (!$error && empty($conf->global->MAIN_EXTRAFIELDS_DISABLED))
+			if (!$error)
 			{
 				$result = $this->insertExtraFields();
 				if ($result < 0)
@@ -1383,7 +1383,7 @@ class Contrat extends CommonObject
 		$resql = $this->db->query($sql);
 		if (!$resql) { $error++; $this->errors[] = "Error ".$this->db->lasterror(); }
 
-		if (!$error && empty($conf->global->MAIN_EXTRAFIELDS_DISABLED) && is_array($this->array_options) && count($this->array_options) > 0)
+		if (!$error)
 		{
 			$result = $this->insertExtraFields();
 			if ($result < 0)
@@ -1588,7 +1588,7 @@ class Contrat extends CommonObject
 			{
 				$contractlineid = $this->db->last_insert_id(MAIN_DB_PREFIX."contratdet");
 
-				if (empty($conf->global->MAIN_EXTRAFIELDS_DISABLED) && is_array($array_options) && count($array_options) > 0) // For avoid conflicts if trigger used
+				if (!$error)
 				{
 					$contractline = new ContratLigne($this->db);
 					$contractline->array_options = $array_options;
@@ -1777,7 +1777,7 @@ class Contrat extends CommonObject
 			$result = $this->update_statut($user);
 			if ($result >= 0)
 			{
-				if (empty($conf->global->MAIN_EXTRAFIELDS_DISABLED) && is_array($array_options) && count($array_options) > 0) // For avoid conflicts if trigger used
+				if (is_array($array_options) && count($array_options) > 0) // For avoid conflicts if trigger used
 				{
 					$contractline = new ContratLigne($this->db);
 					$contractline->fetch($rowid);
@@ -1859,18 +1859,15 @@ class Contrat extends CommonObject
 				$error++;
 			}
 
-			if (empty($error)) {
+			if (!$error) {
 				// Remove extrafields
-				if (empty($conf->global->MAIN_EXTRAFIELDS_DISABLED)) // For avoid conflicts if trigger used
+				$contractline = new ContratLigne($this->db);
+				$contractline->id = $idline;
+				$result = $contractline->deleteExtraFields();
+				if ($result < 0)
 				{
-					$contractline = new ContratLigne($this->db);
-					$contractline->id = $idline;
-					$result = $contractline->deleteExtraFields();
-					if ($result < 0)
-					{
-						$error++;
-						$this->error = "Error ".get_class($this)."::deleteline deleteExtraFields error -4 ".$contractline->error;
-					}
+					$error++;
+					$this->error = "Error ".get_class($this)."::deleteline deleteExtraFields error -4 ".$contractline->error;
 				}
 			}
 
@@ -3092,7 +3089,7 @@ class ContratLigne extends CommonObjectLine
 			$error++;
 		}
 
-		if (empty($conf->global->MAIN_EXTRAFIELDS_DISABLED) && is_array($this->array_options) && count($this->array_options) > 0) // For avoid conflicts if trigger used
+		if (!$error) // For avoid conflicts if trigger used
 		{
 			$result = $this->insertExtraFields();
 			if ($result < 0)
@@ -3202,6 +3199,8 @@ class ContratLigne extends CommonObjectLine
 	{
 		global $conf, $user;
 
+		$error = 0;
+
 		// Insertion dans la base
 		$sql = "INSERT INTO ".MAIN_DB_PREFIX."contratdet";
 		$sql .= " (fk_contrat, label, description, fk_product, qty, vat_src_code, tva_tx,";
@@ -3240,7 +3239,7 @@ class ContratLigne extends CommonObjectLine
 			$this->id = $this->db->last_insert_id(MAIN_DB_PREFIX.'contratdet');
 
 			// Insert of extrafields
-			if (empty($conf->global->MAIN_EXTRAFIELDS_DISABLED) && is_array($this->array_options) && count($this->array_options) > 0) // For avoid conflicts if trigger used
+			if (!$error)
 			{
 				$result = $this->insertExtraFields();
 				if ($result < 0)

@@ -461,7 +461,7 @@ class Categorie extends CommonObject
 				$action = 'create';
 
 				// Actions on extra fields
-				if (empty($conf->global->MAIN_EXTRAFIELDS_DISABLED)) // For avoid conflicts if trigger used
+				if (!$error)
 				{
 					$result = $this->insertExtraFields();
 					if ($result < 0)
@@ -553,7 +553,7 @@ class Categorie extends CommonObject
 			$action = 'update';
 
 			// Actions on extra fields
-			if (empty($conf->global->MAIN_EXTRAFIELDS_DISABLED)) // For avoid conflicts if trigger used
+			if (!$error)
 			{
 				$result = $this->insertExtraFields();
 				if ($result < 0)
@@ -646,7 +646,7 @@ class Categorie extends CommonObject
         }
 
 		// Removed extrafields
-		if (!$error && empty($conf->global->MAIN_EXTRAFIELDS_DISABLED)) // For avoid conflicts if trigger used
+		if (!$error)
 		{
 			$result = $this->deleteExtraFields();
 			if ($result < 0)

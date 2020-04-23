@@ -1452,9 +1452,10 @@ class Facture extends CommonInvoice
 		    $txttoshow = ($user->socid > 0 ? $this->note_public : $this->note_private);
 		    if ($txttoshow)
 		    {
-                $notetoshow = $langs->trans("ViewPrivateNote").':<br>'.dol_string_nohtmltag($txttoshow, 1);
+                //$notetoshow = $langs->trans("ViewPrivateNote").':<br>'.dol_string_nohtmltag($txttoshow, 1);
+		    	$notetoshow = $langs->trans("ViewPrivateNote").':<br>'.$txttoshow;
     		    $result .= ' <span class="note inline-block">';
-    		    $result .= '<a href="'.DOL_URL_ROOT.'/compta/facture/note.php?id='.$this->id.'" class="classfortooltip" title="'.dol_escape_htmltag($notetoshow).'">';
+    		    $result .= '<a href="'.DOL_URL_ROOT.'/compta/facture/note.php?id='.$this->id.'" class="classfortooltip" title="'.dol_escape_htmltag($notetoshow, 1, 1).'">';
     		    $result .= img_picto('', 'note');
     		    $result .= '</a>';
     		    //$result.=img_picto($langs->trans("ViewNote"),'object_generic');
@@ -1881,7 +1882,7 @@ class Facture extends CommonInvoice
 			$error++; $this->errors[] = "Error ".$this->db->lasterror();
 		}
 
-		if (!$error && empty($conf->global->MAIN_EXTRAFIELDS_DISABLED) && is_array($this->array_options) && count($this->array_options) > 0)
+		if (!$error)
 		{
 			$result = $this->insertExtraFields();
 			if ($result < 0)
@@ -5237,7 +5238,7 @@ class FactureLigne extends CommonInvoiceLine
 			$this->id = $this->db->last_insert_id(MAIN_DB_PREFIX.'facturedet');
 			$this->rowid = $this->id; // For backward compatibility
 
-            if (empty($conf->global->MAIN_EXTRAFIELDS_DISABLED)) // For avoid conflicts if trigger used
+            if (!$error)
             {
             	$result = $this->insertExtraFields();
             	if ($result < 0)
@@ -5423,7 +5424,7 @@ class FactureLigne extends CommonInvoiceLine
 		$resql = $this->db->query($sql);
 		if ($resql)
 		{
-        	if (empty($conf->global->MAIN_EXTRAFIELDS_DISABLED)) // For avoid conflicts if trigger used
+        	if (!$error)
         	{
         		$this->id = $this->rowid;
         		$result = $this->insertExtraFields();

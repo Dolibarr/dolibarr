@@ -380,7 +380,7 @@ class Expedition extends CommonObject
 				}
 
 				// Actions on extra fields
-				if (!$error && empty($conf->global->MAIN_EXTRAFIELDS_DISABLED))
+				if (!$error)
 				{
 					$result = $this->insertExtraFields();
 					if ($result < 0)
@@ -1046,7 +1046,8 @@ class Expedition extends CommonObject
 				}
 			}
 			$line->entrepot_id = $linebatch->entrepot_id;
-			$line->origin_line_id = $dbatch['ix_l'];
+			$line->origin_line_id = $dbatch['ix_l'];	// deprecated
+			$line->fk_origin_line = $dbatch['ix_l'];
 			$line->qty = $dbatch['qty'];
 			$line->detail_batch = $tab;
 
@@ -2617,7 +2618,7 @@ class ExpeditionLigne extends CommonObjectLine
 		{
 			$this->id = $this->db->last_insert_id(MAIN_DB_PREFIX."expeditiondet");
 
-			if (!$error && empty($conf->global->MAIN_EXTRAFIELDS_DISABLED))
+			if (!$error)
 			{
 				$result = $this->insertExtraFields();
 				if ($result < 0)
@@ -2691,7 +2692,7 @@ class ExpeditionLigne extends CommonObjectLine
 		if (!$error && $this->db->query($sql))
 		{
 			// Remove extrafields
-			if (empty($conf->global->MAIN_EXTRAFIELDS_DISABLED)) // For avoid conflicts if trigger used
+			if (!$error)
 			{
 				$result = $this->deleteExtraFields();
 				if ($result < 0)
@@ -2895,7 +2896,7 @@ class ExpeditionLigne extends CommonObjectLine
 
 		if (!$error)
 		{
-			if (empty($conf->global->MAIN_EXTRAFIELDS_DISABLED)) // For avoid conflicts if trigger used
+			if (!$error)
 			{
 				$result = $this->insertExtraFields();
 				if ($result < 0)

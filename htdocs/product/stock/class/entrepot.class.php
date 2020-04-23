@@ -185,10 +185,11 @@ class Entrepot extends CommonObject
 		$error = 0;
 
 		$this->label = trim($this->label);
-		$this->libelle = empty($this->libelle) ? $this->label : trim($this->libelle);
 
-		// Si libelle non defini, erreur
-		if ($this->libelle == '')
+    if (empty($this->label)) $this->label = $this->libelle;		// For backward compatibility
+		$this->libelle = empty($this->libelle) ? $this->label : trim($this->libelle);   // For backward compatibility
+
+		if ($this->label == '')
 		{
 			$this->error = "ErrorFieldRequired";
 			return 0;
@@ -222,7 +223,7 @@ class Entrepot extends CommonObject
                 // Actions on extra fields
                 if (!$error)
                 {
-                    if (empty($conf->global->MAIN_EXTRAFIELDS_DISABLED)) // For avoid conflicts if trigger used
+                    if (!$error)
                     {
                         $result = $this->insertExtraFields();
                         if ($result < 0)
@@ -321,7 +322,7 @@ class Entrepot extends CommonObject
             $this->errors[] = "Error ".$this->db->lasterror();
         }
 
-        if (!$error && empty($conf->global->MAIN_EXTRAFIELDS_DISABLED) && is_array($this->array_options) && count($this->array_options) > 0) {
+        if (!$error) {
             $result = $this->insertExtraFields();
             if ($result < 0)
             {
@@ -385,7 +386,7 @@ class Entrepot extends CommonObject
 		// Removed extrafields
 		if (!$error)
 		{
-			if (empty($conf->global->MAIN_EXTRAFIELDS_DISABLED)) // For avoid conflicts if trigger used
+			if (!$error)
 			{
 				$result = $this->deleteExtraFields();
 				if ($result < 0)

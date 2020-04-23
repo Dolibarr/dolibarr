@@ -489,7 +489,7 @@ class Contact extends CommonObject
 		    $action = 'update';
 
 		    // Actions on extra fields
-		    if (!$error && empty($conf->global->MAIN_EXTRAFIELDS_DISABLED))
+		    if (!$error)
 		    {
 		    	$result = $this->insertExtraFields();
 		    	if ($result < 0)
@@ -1168,7 +1168,7 @@ class Contact extends CommonObject
 		}
 
 		// Removed extrafields
-        if ((!$error) && (empty($conf->global->MAIN_EXTRAFIELDS_DISABLED))) {
+        if (!$error) {
             // For avoid conflicts if trigger used
 			$result = $this->deleteExtraFields();
 			if ($result < 0) $error++;

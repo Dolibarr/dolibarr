@@ -1146,7 +1146,7 @@ if (empty($reshook))
 						foreach ($facture_source->lines as $line)
 						{
 							// Extrafields
-							if (empty($conf->global->MAIN_EXTRAFIELDS_DISABLED) && method_exists($line, 'fetch_optionals')) {
+							if (method_exists($line, 'fetch_optionals')) {
 								// load extrafields
 								$line->fetch_optionals();
 							}
@@ -1644,7 +1644,7 @@ if (empty($reshook))
 										}
 
 										// Extrafields
-										if (empty($conf->global->MAIN_EXTRAFIELDS_DISABLED) && method_exists($lines[$i], 'fetch_optionals')) {
+										if (method_exists($lines[$i], 'fetch_optionals')) {
 											$lines[$i]->fetch_optionals();
 											$array_options = $lines[$i]->array_options;
 										}
