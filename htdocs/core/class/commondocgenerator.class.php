@@ -228,7 +228,6 @@ abstract class CommonDocGenerator
 		    $object->fetch_optionals();
 
 		    $array_thirdparty = $this->fill_substitutionarray_with_extrafields($object, $array_thirdparty, $extrafields, $array_key, $outputlangs);
-
 	    }
 		return $array_thirdparty;
 	}
@@ -292,7 +291,6 @@ abstract class CommonDocGenerator
 		    $object->fetch_optionals();
 
 		    $array_contact = $this->fill_substitutionarray_with_extrafields($object, $array_contact, $extrafields, $array_key, $outputlangs);
-
 	    }
 		return $array_contact;
 	}
@@ -509,7 +507,6 @@ abstract class CommonDocGenerator
 			$object->fetch_optionals();
 
 			$resarray = $this->fill_substitutionarray_with_extrafields($object, $resarray, $extrafields, $array_key, $outputlangs);
-
 		}
 
 		return $resarray;
@@ -688,7 +685,6 @@ abstract class CommonDocGenerator
 		    $object->fetch_optionals();
 
 		    $array_shipment = $this->fill_substitutionarray_with_extrafields($object, $array_shipment, $extrafields, $array_key, $outputlangs);
-
 	    }
 
     	return $array_shipment;
