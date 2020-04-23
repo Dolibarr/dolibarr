@@ -766,10 +766,10 @@ class Reception extends CommonObject
                 $line->array_options = $supplierorderline->array_options;
 		if (empty($conf->global->MAIN_EXTRAFIELDS_DISABLED) && is_array($array_options) && count($array_options) > 0) // For avoid conflicts if trigger used
                 {
-                    foreach ($array_options as $key => $value) {
-                        $line->array_options[$key] = $value;
-                    }
-                }
+			foreach ($array_options as $key => $value) {
+				$line->array_options[$key] = $value;
+			}
+		}
 
 		$line->fk_product = $fk_product;
 		$line->fk_commande = $supplierorderline->fk_commande;
