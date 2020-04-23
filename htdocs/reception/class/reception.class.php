@@ -305,24 +305,12 @@ class Reception extends CommonObject
 					}
 				}
 
-				// Actions on extra fields (by external module or standard code)
-				// TODO le hook fait double emploi avec le trigger !!
-				$action = 'add';
-				$hookmanager->initHooks(array('receptiondao'));
-				$parameters = array('socid'=>$this->id);
-				$reshook = $hookmanager->executeHooks('insertExtraFields', $parameters, $this, $action); // Note that $action and $object may have been modified by some hooks
-				if (empty($reshook))
+				// Create extrafields
+				if (! $error)
 				{
-					if (empty($conf->global->MAIN_EXTRAFIELDS_DISABLED)) // For avoid conflicts if trigger used
-					{
-						$result = $this->insertExtraFields();
-						if ($result < 0)
-						{
-							$error++;
-						}
-					}
+					$result=$this->insertExtraFields();
+					if ($result < 0) $error++;
 				}
-				elseif ($reshook < 0) $error++;
 
 				if (!$error && !$notrigger)
 				{
@@ -330,29 +318,22 @@ class Reception extends CommonObject
                     $result = $this->call_trigger('RECEPTION_CREATE', $user);
                     if ($result < 0) { $error++; }
                     // End call triggers
+				}
 
-					if (!$error)
-					{
-						$this->db->commit();
-						return $this->id;
-					}
-					else
-					{
-						foreach ($this->errors as $errmsg)
-						{
-							dol_syslog(get_class($this)."::create ".$errmsg, LOG_ERR);
-							$this->error .= ($this->error ? ', '.$errmsg : $errmsg);
-						}
-						$this->db->rollback();
-						return -1 * $error;
-					}
+				if (!$error)
+				{
+					$this->db->commit();
+					return $this->id;
 				}
 				else
 				{
-					$error++;
-					$this->error = $this->db->lasterror()." - sql=$sql";
+					foreach ($this->errors as $errmsg)
+					{
+						dol_syslog(get_class($this)."::create ".$errmsg, LOG_ERR);
+						$this->error .= ($this->error ? ', '.$errmsg : $errmsg);
+					}
 					$this->db->rollback();
-					return -3;
+					return -1 * $error;
 				}
 			}
 			else
