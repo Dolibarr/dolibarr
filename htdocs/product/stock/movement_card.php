@@ -49,7 +49,7 @@ if (!empty($conf->productbatch->enabled)) $langs->load("productbatch");
 // Security check
 $result = restrictedArea($user, 'stock');
 
-$id = GETPOST('id', 'int');
+$entrepot_id = GETPOST('id', 'int');
 $ref = GETPOST('ref', 'alpha');
 $msid = GETPOST('msid', 'int');
 $product_id = GETPOST("product_id", 'int');
@@ -101,7 +101,7 @@ $arrayfields = array(
     'm.batch'=>array('label'=>$langs->trans("BatchNumberShort"), 'checked'=>1, 'enabled'=>(!empty($conf->productbatch->enabled))),
 	'pl.eatby'=>array('label'=>$langs->trans("EatByDate"), 'checked'=>0, 'position'=>10, 'enabled'=>(!empty($conf->productbatch->enabled))),
     'pl.sellby'=>array('label'=>$langs->trans("SellByDate"), 'checked'=>0, 'position'=>10, 'enabled'=>(!empty($conf->productbatch->enabled))),
-    'e.ref'=>array('label'=>$langs->trans("Warehouse"), 'checked'=>1, 'enabled'=>(!$id > 0)), // If we are on specific warehouse, we hide it
+    'e.ref'=>array('label'=>$langs->trans("Warehouse"), 'checked'=>1, 'enabled'=>(!$entrepot_id > 0)), // If we are on specific warehouse, we hide it
     'm.fk_user_author'=>array('label'=>$langs->trans("Author"), 'checked'=>0),
     'm.inventorycode'=>array('label'=>$langs->trans("InventoryCodeShort"), 'checked'=>1),
     'm.label'=>array('label'=>$langs->trans("MovementLabel"), 'checked'=>1),
@@ -117,7 +117,15 @@ $usercanread = (($user->rights->stock->mouvement->lire));
 $usercancreate = (($user->rights->stock->mouvement->creer));
 $usercandelete = (($user->rights->stock->mouvement->supprimer));
 
-
+$id = -1;
+if (isset($search_inventorycode) && isset($search_type_mouvement)) {
+    $sql_res = $db->query("SELECT rowid FROM " . MAIN_DB_PREFIX . $object->table_element . " WHERE inventorycode = '$search_inventorycode' AND type_mouvement = $search_type_mouvement");
+    if ($db->num_rows($sql_res) > 0) {
+        $sql_res = $db->fetch_object($sql_res);
+        $id = $sql_res->rowid;
+        $object->fetch($id);
+    }
+}
 
 /*
  * Actions
@@ -195,7 +203,7 @@ if ($action == "correct_stock")
 
 	        $result = $product->correct_stock_batch(
 	            $user,
-	            $id,
+	            $entrepot_id,
 	            GETPOST("nbpiece", 'int'),
 	            GETPOST("mouvement", 'int'),
 	            GETPOST("label", 'san_alpha'),
@@ -212,7 +220,7 @@ if ($action == "correct_stock")
 		{
 	        $result = $product->correct_stock(
 	            $user,
-	            $id,
+	            $entrepot_id,
 	            GETPOST("nbpiece", 'int'),
 	            GETPOST("mouvement", 'alpha'),
 	            GETPOST("label", 'san_alpha'),
@@ -225,7 +233,7 @@ if ($action == "correct_stock")
 
         if ($result > 0)
         {
-            header("Location: ".$_SERVER["PHP_SELF"]."?id=".$id);
+            header("Location: ".$_SERVER["PHP_SELF"]."?id=".$entrepot_id);
             exit;
         }
         else
@@ -263,7 +271,7 @@ if ($action == "transfert_stock" && !$cancel)
         $error++;
         $action = 'transfert';
     }
-    if ($id == GETPOST("id_entrepot_destination", 'int'))
+    if ($entrepot_id == GETPOST("id_entrepot_destination", 'int'))
     {
         setEventMessages($langs->trans("ErrorSrcAndTargetWarehouseMustDiffers"), null, 'errors');
         $error++;
@@ -287,8 +295,8 @@ if ($action == "transfert_stock" && !$cancel)
     {
         if ($id)
         {
-            $object = new Entrepot($db);
-            $result = $object->fetch($id);
+            $entrepot = new Entrepot($db);
+            $result = $entrepot->fetch($entrepot_id);
 
             $db->begin();
 
@@ -321,7 +329,7 @@ if ($action == "transfert_stock" && !$cancel)
                 }
                 else
                 {
-                    $srcwarehouseid = $id;
+                    $srcwarehouseid = $entrepot_id;
                     $batch = GETPOST('batch_number', 'alpha');
                     $eatby = $d_eatby;
                     $sellby = $d_sellby;
@@ -362,7 +370,7 @@ if ($action == "transfert_stock" && !$cancel)
                 // Remove stock
                 $result1 = $product->correct_stock(
                     $user,
-                    $id,
+                    $entrepot_id,
                     GETPOST("nbpiece", 'int'),
                     1,
                     GETPOST("label", 'alpha'),
@@ -412,7 +420,7 @@ if ($action == "transfert_stock" && !$cancel)
  */
 // The builddoc action for object of a movement must be on the movement card
 // Actions to build doc
-$upload_dir = $conf->stock->dir_output."movement/";
+$upload_dir = $conf->stock->movement->dir_output;
 $permissiontoadd = $user->rights->stock->creer;
 include DOL_DOCUMENT_ROOT.'/core/actions_builddoc.inc.php';
 
@@ -423,7 +431,7 @@ if (empty($reshook) && $action != 'remove_file')
     $objectlabel = 'Movements';
     $permissiontoread = $user->rights->stock->lire;
     $permissiontodelete = $user->rights->stock->supprimer;
-    $uploaddir = $conf->stock->dir_output."/movement/";
+    $uploaddir = $conf->stock->movement->dir_output;
 	include DOL_DOCUMENT_ROOT.'/core/actions_massactions.inc.php';
 }
 
@@ -469,7 +477,7 @@ if ($msid > 0) $sql .= " AND m.rowid = ".$msid;
 $sql .= " AND m.fk_entrepot = e.rowid";
 $sql .= " AND e.entity IN (".getEntity('stock').")";
 if (empty($conf->global->STOCK_SUPPORTS_SERVICES)) $sql .= " AND p.fk_product_type = 0";
-if ($id > 0) $sql .= " AND e.rowid ='".$id."'";
+if ($entrepot_id > 0) $sql .= " AND e.rowid ='".$entrepot_id."'";
 $sql .= dolSqlDateFilter('m.datem', 0, $month, $year);
 if ($idproduct > 0) $sql .= " AND p.rowid = '".$idproduct."'";
 if (!empty($search_ref))			$sql .= natural_search('m.rowid', $search_ref, 1);
@@ -520,15 +528,15 @@ if (!empty($search_inventorycode)) $limit = $db->num_rows($resql);
 if ($resql)
 {
 	$product = new Product($db);
-	$object = new Entrepot($db);
+	$entrepot = new Entrepot($db);
 
 	if ($idproduct > 0)
     {
         $product->fetch($idproduct);
     }
-    if ($id > 0 || $ref)
+    if ($entrepot_id > 0 || $ref)
     {
-        $result = $object->fetch($id, $ref);
+        $result = $entrepot->fetch($entrepot_id, $ref);
         if ($result < 0)
         {
             dol_print_error($db);
@@ -546,16 +554,16 @@ if ($resql)
 	else
 	{
 		$texte = $langs->trans("ListOfStockMovements");
-		if ($id) $texte .= ' ('.$langs->trans("ForThisWarehouse").')';
+		if ($entrepot_id) $texte .= ' ('.$langs->trans("ForThisWarehouse").')';
 	}
     llxHeader("", $texte, $help_url);
 
     /*
      * Show tab only if we ask a particular warehouse
      */
-    if ($object->id > 0)
+    if ($entrepot->id > 0)
     {
-        $head = stock_prepare_head($object);
+        $head = stock_prepare_head($entrepot);
 
         dol_fiche_head($head, 'movements', $langs->trans("Warehouse"), -1, 'stock');
 
@@ -563,13 +571,13 @@ if ($resql)
         $linkback = '<a href="'.DOL_URL_ROOT.'/product/stock/list.php?restore_lastsearch_values=1">'.$langs->trans("BackToList").'</a>';
 
         $morehtmlref = '<div class="refidno">';
-        $morehtmlref .= $langs->trans("LocationSummary").' : '.$object->lieu;
+        $morehtmlref .= $langs->trans("LocationSummary").' : '.$entrepot->lieu;
         $morehtmlref .= '</div>';
 
         $shownav = 1;
         if ($user->socid && !in_array('stock', explode(',', $conf->global->MAIN_MODULES_FOR_EXTERNAL))) $shownav = 0;
 
-        dol_banner_tab($object, 'ref', $linkback, $shownav, 'ref', 'ref', $morehtmlref);
+        dol_banner_tab($entrepot, 'ref', $linkback, $shownav, 'ref', 'ref', $morehtmlref);
 
 
         print '<div class="fichecenter">';
@@ -583,8 +591,8 @@ if ($resql)
         // Description
         print '<td class="titlefield tdtop">'.$langs->trans("Description").'</td><td>'.dol_htmlentitiesbr($object->description).'</td></tr>';
 
-        $calcproductsunique = $object->nb_different_products();
-        $calcproducts = $object->nb_products();
+        $calcproductsunique = $entrepot->nb_different_products();
+        $calcproducts = $entrepot->nb_products();
 
         // Total nb of different products
         print '<tr><td>'.$langs->trans("NumberOfDifferentProducts").'</td><td>';
@@ -614,7 +622,7 @@ if ($resql)
         // Last movement
         $sql = "SELECT MAX(m.datem) as datem";
         $sql .= " FROM ".MAIN_DB_PREFIX."stock_mouvement as m";
-        $sql .= " WHERE m.fk_entrepot = ".(int) $object->id;
+        $sql .= " WHERE m.fk_entrepot = ".(int) $entrepot->id;
         $resqlbis = $db->query($sql);
         if ($resqlbis)
         {
@@ -670,22 +678,22 @@ if ($resql)
 
     /* ************************************************************************** */
     /*                                                                            */
-    /* Barre d'action                                                             */
+    /* Action bar                                                                 */
     /*                                                                            */
     /* ************************************************************************** */
 
-    if ((empty($action) || $action == 'list') && $id > 0)
+    if ((empty($action) || $action == 'list') && $entrepot_id > 0)
     {
         print "<div class=\"tabsAction\">\n";
 
         if ($user->rights->stock->mouvement->creer)
         {
-            print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$id.'&action=correction">'.$langs->trans("CorrectStock").'</a>';
+            print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$entrepot_id.'&action=correction">'.$langs->trans("CorrectStock").'</a>';
         }
 
         if ($user->rights->stock->mouvement->creer)
         {
-            print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$id.'&action=transfert">'.$langs->trans("TransferStock").'</a>';
+            print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$entrepot_id.'&action=transfert">'.$langs->trans("TransferStock").'</a>';
         }
 
         print '</div><br>';
@@ -694,7 +702,7 @@ if ($resql)
     $param = '';
     if (!empty($contextpage) && $contextpage != $_SERVER["PHP_SELF"]) $param .= '&contextpage='.urlencode($contextpage);
     if ($limit > 0 && $limit != $conf->liste_limit) $param .= '&limit='.urlencode($limit);
-    if ($id > 0)                 $param .= '&id='.urlencode($id);
+    if ($entrepot_id > 0)        $param .= '&id='.urlencode($id);
     if ($search_movement)        $param .= '&search_movement='.urlencode($search_movement);
     if ($search_inventorycode)   $param .= '&search_inventorycode='.urlencode($search_inventorycode);
     if ($search_type_mouvement)	 $param .= '&search_type_mouvement='.urlencode($search_type_mouvement);
@@ -725,9 +733,9 @@ if ($resql)
     print '<input type="hidden" name="sortorder" value="'.$sortorder.'">';
     print '<input type="hidden" name="page" value="'.$page.'">';
     print '<input type="hidden" name="contextpage" value="'.$contextpage.'">';
-    if ($id > 0) print '<input type="hidden" name="id" value="'.$id.'">';
+    if ($entrepot_id > 0) print '<input type="hidden" name="id" value="'.$entrepot_id.'">';
 
-    if ($id > 0) print_barre_liste($texte, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, $massactionbutton, $num, $nbtotalofrecords, '', 0, '', '', $limit);
+    if ($entrepot_id > 0) print_barre_liste($texte, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, $massactionbutton, $num, $nbtotalofrecords, '', 0, '', '', $limit);
     else print_barre_liste($texte, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, $massactionbutton, $num, $nbtotalofrecords, 'generic', 0, '', '', $limit);
 
 	if ($sall)
@@ -1165,7 +1173,7 @@ else
 //Area for doc and last events of warehouse are stored on the main card of warehouse
 $modulepart = 'movement';
 
-if ($action != 'create' && $action != 'edit' && $action != 'delete' && $id > 0)
+if ($action != 'create' && $action != 'edit' && $action != 'delete' && $entrepot_id > 0)
 {
 	print '<br/>';
     print '<div class="fichecenter"><div class="fichehalfleft">';
@@ -1173,20 +1181,28 @@ if ($action != 'create' && $action != 'edit' && $action != 'delete' && $id > 0)
 
     // Documents
     $objectref = dol_sanitizeFileName($object->ref);
-	// Add inventorycode & type_mouvement to filename of the pdf
-	if (!empty($search_inventorycode)) $objectref .= "_".$id."_".$search_inventorycode;
-	if ($search_type_mouvement) $objectref .= "_".$search_type_mouvement;
-    $relativepath = $comref.'/'.$objectref.'.pdf';
-    $filedir = $conf->stock->dir_output.'/movement/'.$objectref;
+	//if (!empty($search_inventorycode)) $objectref .= "_".$entrepot_id."_".$search_inventorycode;
+    //if ($search_type_mouvement) $objectref .= "_".$search_type_mouvement;
+    //$relativepath = $comref.'/'.$objectref.'.pdf';
+    $filedir = $conf->stock->movement->dir_output.'/'.$objectref;
 
-    $urlsource = $_SERVER["PHP_SELF"]."?id=".$object->id."&search_inventorycode=".$search_inventorycode."&search_type_mouvement=$search_type_mouvement";
-    $genallowed = $usercanread;
-    $delallowed = $usercancreate;
+    $urlsource = $_SERVER["PHP_SELF"]."?id=".$entrepot_id."&search_inventorycode=".$search_inventorycode."&search_type_mouvement=$search_type_mouvement";
 
 	$genallowed = $user->rights->stock->lire;
     $delallowed = $user->rights->stock->creer;
 
-    print $formfile->showdocuments($modulepart, $objectref, $filedir, $urlsource, $genallowed, $delallowed, '', 0, 0, 0, 28, 0, '', 0, '', $object->default_lang, '', $object);
+    include_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
+    $liste = getListOfModels($db, 'stock_movement', 0);
+
+    $defaultTamplate = 'stdmovement';
+    foreach ($liste as $key => $value) {
+        if (strpos($key, $conf->global->STOCK_MOVEMENT_ADDON_PDF) >= 0) {
+            $defaultTemplate = $key;
+            break;
+        }
+    }
+
+    print $formfile->showdocuments($modulepart, $objectref, $filedir, $urlsource, $genallowed, $delallowed, $defaultTemplate, 0, 0, 0, 28, 0, '', 0, '', $object->default_lang, '', $object);
     $somethingshown = $formfile->numoffiles;
 
     print '</div><div class="fichehalfright"><div class="ficheaddleft">';

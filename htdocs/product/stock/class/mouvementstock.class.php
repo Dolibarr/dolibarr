@@ -172,6 +172,7 @@ class MouvementStock extends CommonObject
 		$this->price = $price;
 		$this->label = $label;
 		$this->inventorycode = $inventorycode;
+		$this->ref = $inventorycode;
 		$this->datem = $now;
 		$this->batch = $batch;
 
@@ -649,7 +650,8 @@ class MouvementStock extends CommonObject
 	            $this->label = $obj->label;
 	            $this->fk_origin = $obj->fk_origin;
 	            $this->origintype = $obj->origintype;
-	            $this->inventorycode = $obj->inventorycode;
+				$this->inventorycode = $obj->inventorycode;
+				$this->ref = $obj->inventorycode;
 	            $this->batch = $obj->batch;
 	            $this->eatby = $this->db->jdate($obj->eatby);
 	            $this->sellby = $this->db->jdate($obj->sellby);
@@ -1161,7 +1163,7 @@ class MouvementStock extends CommonObject
 			}
 		}
 
-		$modelpath = "core/modules/stock/doc/";
+		$modelpath = "core/modules/stock/doc/movement/";
 
 		return $this->commonGenerateDocument($modelpath, $modele, $outputlangs, $hidedetails, $hidedesc, $hideref);
 	}

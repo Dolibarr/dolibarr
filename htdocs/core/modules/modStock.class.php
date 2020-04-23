@@ -60,7 +60,7 @@ class modStock extends DolibarrModules
 		$this->picto = 'stock';
 
 		// Data directories to create when module is enabled
-		$this->dirs = array("/stock/temp");
+		$this->dirs = array("/stock/temp", "/stock/movement/temp");
 
 		$this->config_page_url = array("stock.php");
 
@@ -86,23 +86,23 @@ class modStock extends DolibarrModules
 		$this->const[$r][4] = 0;
 
 		$r++;
-		$this->const[$r][0] = "MOUVEMENT_ADDON_PDF";
+		$this->const[$r][0] = "STOCK_MOVEMENT_ADDON_PDF";
 		$this->const[$r][1] = "chaine";
-		$this->const[$r][2] = "StdMouvement";
+		$this->const[$r][2] = "StdMovement";
 		$this->const[$r][3] = 'Name of PDF model of stock mouvement';
 		$this->const[$r][4] = 0;
 
 		$r++;
 		$this->const[$r][0] = "STOCK_ADDON_PDF_ODT_PATH";
 		$this->const[$r][1] = "chaine";
-		$this->const[$r][2] = "DOL_DATA_ROOT/doctemplates/stocks";
+		$this->const[$r][2] = "DOL_DATA_ROOT/doctemplates/stock";
 		$this->const[$r][3] = "";
 		$this->const[$r][4] = 0;
 
 		$r++;
-		$this->const[$r][0] = "MOUVEMENT_ADDON_PDF_ODT_PATH";
+		$this->const[$r][0] = "STOCK_MOVEMENT_ADDON_PDF_ODT_PATH";
 		$this->const[$r][1] = "chaine";
-		$this->const[$r][2] = "DOL_DATA_ROOT/doctemplates/stocks/mouvements";
+		$this->const[$r][2] = "DOL_DATA_ROOT/doctemplates/stock/movement";
 		$this->const[$r][3] = "";
 		$this->const[$r][4] = 0;
 
@@ -388,13 +388,30 @@ class modStock extends DolibarrModules
 			}
 		}
 
+		$src = DOL_DOCUMENT_ROOT.'/install/doctemplates/stock/movement/template_stock_movement.odt';
+		$dirodt = DOL_DATA_ROOT.'/doctemplates/stock/movement';
+		$dest = $dirodt.'/template_stock_movement.odt';
+
+		if (file_exists($src) && !file_exists($dest))
+		{
+			require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
+			dol_mkdir($dirodt);
+			$result = dol_copy($src, $dest, 0, 0);
+			if ($result < 0)
+			{
+				$langs->load("errors");
+				$this->error = $langs->trans('ErrorFailToCopyFile', $src, $dest);
+				return 0;
+			}
+		}
+
 		$sql = array();
 
 		$sql = array(
-			 "DELETE FROM ".MAIN_DB_PREFIX."document_model WHERE nom = '".$this->db->escape($this->const[1][2])."' AND type = 'stock' AND entity = ".$conf->entity,
-			 "INSERT INTO ".MAIN_DB_PREFIX."document_model (nom, type, entity) VALUES('".$this->db->escape($this->const[1][2])."','stock',".$conf->entity.")",
-			 "DELETE FROM ".MAIN_DB_PREFIX."document_model WHERE nom = '".$this->db->escape($this->const[2][2])."' AND type = 'mouvement' AND entity = ".$conf->entity,
-			 "INSERT INTO ".MAIN_DB_PREFIX."document_model (nom, type, entity) VALUES('".$this->db->escape($this->const[2][2])."','mouvement',".$conf->entity.")",
+			"DELETE FROM ".MAIN_DB_PREFIX."document_model WHERE nom = '".$this->db->escape($this->const[1][2])."' AND type = 'stock' AND entity = ".$conf->entity,
+			"INSERT INTO ".MAIN_DB_PREFIX."document_model (nom, type, entity) VALUES('".$this->db->escape($this->const[1][2])."','stock',".$conf->entity.")",
+			"DELETE FROM ".MAIN_DB_PREFIX."document_model WHERE nom = '".$this->db->escape($this->const[2][2])."' AND type = 'stock_movement' AND entity = ".$conf->entity,
+        	"INSERT INTO ".MAIN_DB_PREFIX."document_model (nom, type, entity) VALUES('".$this->db->escape($this->const[2][2])."','stock_movement',".$conf->entity.")",
 		);
 
 		return $this->_init($sql, $options);

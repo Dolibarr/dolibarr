@@ -97,6 +97,11 @@ function stock_admin_prepare_head()
     $head[$h][0] = DOL_URL_ROOT.'/admin/stock.php';
     $head[$h][1] = $langs->trans("Miscellaneous");
     $head[$h][2] = 'general';
+	$h++;
+	
+    $head[$h][0] = DOL_URL_ROOT.'/admin/stock_movements.php';
+    $head[$h][1] = $langs->trans("Movements");
+    $head[$h][2] = 'movement';
     $h++;
 
     // Show more tabs from modules

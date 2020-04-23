@@ -103,39 +103,40 @@ class Conf
 	public function __construct()
 	{
 		// Properly declare multi-modules objects.
-		$this->file = new stdClass();
-		$this->db = new stdClass();
-		$this->global = new stdClass();
-		$this->mycompany = new stdClass();
+		$this->file				= new stdClass();
+		$this->db				= new stdClass();
+		$this->global			= new stdClass();
+		$this->mycompany		= new stdClass();
 		$this->admin			= new stdClass();
 		$this->user				= new stdClass();
 		$this->syslog			= new stdClass();
-		$this->browser = new stdClass();
+		$this->browser			= new stdClass();
 		$this->medias			= new stdClass();
-		$this->multicompany = new stdClass();
+		$this->multicompany		= new stdClass();
 
 		//! Charset for HTML output and for storing data in memory
 		$this->file->character_set_client = 'UTF-8'; // UTF-8, ISO-8859-1
 
 		// First level object
 		// TODO Remove this part.
-		$this->expedition_bon = new stdClass();
-		$this->livraison_bon = new stdClass();
-		$this->fournisseur = new stdClass();
+		$this->expedition_bon	= new stdClass();
+		$this->livraison_bon	= new stdClass();
+		$this->fournisseur		= new stdClass();
 		$this->product			= new stdClass();
+		$this->stock			= new stdClass();
 		$this->service			= new stdClass();
 		$this->contrat			= new stdClass();
 		$this->actions			= new stdClass();
 		$this->agenda			= new stdClass();
-		$this->commande = new stdClass();
-		$this->propal = new stdClass();
+		$this->commande			= new stdClass();
+		$this->propal			= new stdClass();
 		$this->facture			= new stdClass();
 		$this->contrat			= new stdClass();
 		$this->usergroup		= new stdClass();
 		$this->adherent			= new stdClass();
-		$this->bank = new stdClass();
+		$this->bank				= new stdClass();
 		$this->notification		= new stdClass();
-		$this->mailing = new stdClass();
+		$this->mailing			= new stdClass();
 		$this->expensereport	= new stdClass();
 		$this->productbatch		= new stdClass();
 	}
@@ -431,6 +432,21 @@ class Conf
 					$this->supplier_invoice->dir_temp = $rootfortemp."/fournisseur/facture/temp"; // For backward compatibility
 				}
 			}
+		}
+
+		// Module stock
+		if (!empty($this->stock))
+		{
+			$this->stock->multidir_output			= array($this->entity => $rootfordata."/stock");
+			$this->stock->multidir_temp				= array($this->entity => $rootfortemp."/stock/temp");
+			$this->stock->dir_output				= $rootfordata."/stock"; // For backward compatibility
+			$this->stock->dir_temp					= $rootfortemp."/stock/temp"; // For backward compatibility
+
+			$this->stock->movement					= new stdClass();
+			$this->stock->movement->multidir_output = array($this->entity => $rootfordata."/stock/movement");
+			$this->stock->movement->multidir_temp	= array($this->entity => $rootfortemp."/stock/movement/temp");
+			$this->stock->movement->dir_output		= $rootfordata."/stock/movement";
+			$this->stock->movement->dir_temp		= $rootfortemp."/stock/movement/temp";
 		}
 
 		// Module product/service
