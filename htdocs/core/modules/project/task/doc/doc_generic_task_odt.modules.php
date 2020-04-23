@@ -181,7 +181,7 @@ class doc_generic_task_odt extends ModelePDFTask
             'task_label'=>$task->label,
             'task_description'=>$task->description,
             'task_fk_parent'=>$task->fk_parent,
-            'task_duration'=>$task->convertSecondToTime(duration_effective,'allhourmin'),
+            'task_duration'=>convertSecondToTime($task->duration_effective,'allhourmin'),
             'task_planned_workload'=>convertSecondToTime($task->planned_workload,'allhourmin'),
             'task_progress'=>$task->progress,
             'task_public'=>$task->public,
