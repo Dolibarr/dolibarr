@@ -1888,7 +1888,7 @@ class FactureLigneRec extends CommonInvoiceLine
 	            // End call triggers
 	        }
 	    }
-		
+
 		if (!$error)
         {
             $result = $this->deleteExtraFields();
