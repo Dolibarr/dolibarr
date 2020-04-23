@@ -1179,6 +1179,7 @@ if (empty($action) || $action == 'view') {
 										print '<span class="warning">'.$langs->trans("ThirdpartyAccountNotDefinedOrThirdPartyUnknownSubledgerIgnored").'</span>';
 									} else {
 										print '<span class="warning">'.$langs->trans("ThirdpartyAccountNotDefinedOrThirdPartyUnknown", $tabcompany[$key]['code_compta']).'</span>';
+									}
 								}
 								else
 								{
