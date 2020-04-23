@@ -184,8 +184,8 @@ class Entrepot extends CommonObject
 
 		$error = 0;
 
-		$this->libelle = trim($this->libelle);
-		$this->label = empty($this->label) ? $this->libelle : trim($this->label);
+		$this->label = trim($this->label);
+		$this->libelle = empty($this->libelle) ? $this->label : trim($this->libelle);
 
 		// Si libelle non defini, erreur
 		if ($this->libelle == '')
