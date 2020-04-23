@@ -79,7 +79,7 @@ class SocieteAccount extends CommonObject
 	public $fields = array(
 		'rowid' => array('type'=>'integer', 'label'=>'TechnicalID', 'visible'=>-2, 'enabled'=>1, 'position'=>1, 'notnull'=>1, 'index'=>1, 'comment'=>'Id',),
 		'entity' => array('type'=>'integer', 'label'=>'Entity', 'visible'=>0, 'enabled'=>1, 'position'=>5, 'default'=>1),
-		'login' => array('type'=>'varchar(64)', 'label'=>'Login', 'visible'=>1, 'enabled'=>1, 'notnull'=>1, 'position'=>10),
+		'login' => array('type'=>'varchar(64)', 'label'=>'Login', 'visible'=>1, 'enabled'=>1, 'notnull'=>1, 'position'=>10, 'showoncombobox'=>1),
 		'pass_encoding' => array('type'=>'varchar(24)', 'label'=>'PassEncoding', 'visible'=>0, 'enabled'=>1, 'position'=>30),
 		'pass_crypted' => array('type'=>'varchar(128)', 'label'=>'Password', 'visible'=>1, 'enabled'=>1, 'position'=>31, 'notnull'=>1),
 		'pass_temp'    => array('type'=>'varchar(128)', 'label'=>'Temp', 'visible'=>0, 'enabled'=>0, 'position'=>32, 'notnull'=>-1,),
@@ -405,11 +405,10 @@ class SocieteAccount extends CommonObject
         if (!empty($conf->dol_no_mouse_hover)) $notooltip = 1; // Force disable tooltips
 
         $result = '';
-        $companylink = '';
 
         $this->ref = $this->login;
 
-        $label = '<u>'.$langs->trans("SocieteAccount").'</u>';
+        $label = '<u>'.$langs->trans("WebsiteAccount").'</u>';
         $label .= '<br>';
         $label .= '<b>'.$langs->trans('Login').':</b> '.$this->ref;
         //$label.= '<b>' . $langs->trans('WebSite') . ':</b> ' . $this->ref;
@@ -429,7 +428,7 @@ class SocieteAccount extends CommonObject
         {
             if (!empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER))
             {
-                $label = $langs->trans("ShowsocieteAccount");
+                $label = $langs->trans("WebsiteAccount");
                 $linkclose .= ' alt="'.dol_escape_htmltag($label, 1).'"';
             }
             $linkclose .= ' title="'.dol_escape_htmltag($label, 1).'"';
