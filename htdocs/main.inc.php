@@ -11,6 +11,7 @@
  * Copyright (C) 2012       Christophe Battarel     <christophe.battarel@altairis.fr>
  * Copyright (C) 2014-2015  Marcos García           <marcosgdf@gmail.com>
  * Copyright (C) 2015       Raphaël Doursenaud      <rdoursenaud@gpcsolutions.fr>
+ * Copyright (C) 2020       Demarest Maxime         <maxime@indelog.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -2348,6 +2349,35 @@ function main_area($title = '')
 	print '<!-- Begin div class="fiche" -->'."\n".'<div class="fiche">'."\n";
 
 	if (!empty($conf->global->MAIN_ONLY_LOGIN_ALLOWED)) print info_admin($langs->trans("WarningYouAreInMaintenanceMode", $conf->global->MAIN_ONLY_LOGIN_ALLOWED));
+
+    // Permit to add user company information on each printed document by set SHOW_SOCINFO_ON_PRINT
+    if (! empty($conf->global->SHOW_SOCINFO_ON_PRINT) && GETPOST('optioncss', 'aZ09') == 'print' && empty(GETPOST('disable_show_socinfo_on_print', 'az09')))
+    {
+        global $hookmanager;
+        $hookmanager->initHooks(array('showsocinfoonprint'));
+        $parameters = array();
+        $reshook = $hookmanager->executeHooks('showSocinfoOnPrint', $parameters);
+        if (empty($reshook))
+        {
+            print '<!-- Begin show mysoc info header -->'."\n";
+            print '<div id="mysoc-info-header">'."\n";
+            print '<table class="centpercent div-table-responsive">'."\n";
+            print '<tbody>';
+            print '<tr><td rowspan="0" class="width20p">';
+            if ($conf->global->MAIN_SHOW_LOGO && empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER) && !empty($conf->global->MAIN_INFO_SOCIETE_LOGO))
+                print '<img id="mysoc-info-header-logo" style="max-width:100%" alt="" src="'.DOL_URL_ROOT.'/viewimage.php?cache=1&amp;modulepart=mycompany&amp;file='.urlencode('logos/'.dol_escape_htmltag($conf->global->MAIN_INFO_SOCIETE_LOGO)).'">';
+            print '</td><td  rowspan="0" class="width50p"></td></tr>'."\n";
+            print '<tr><td class="titre bold">'.dol_escape_htmltag($conf->global->MAIN_INFO_SOCIETE_NOM).'</td></tr>'."\n";
+            print '<tr><td>'.dol_escape_htmltag($conf->global->MAIN_INFO_SOCIETE_ADDRESS).'<br>'.dol_escape_htmltag($conf->global->MAIN_INFO_SOCIETE_ZIP).' '.dol_escape_htmltag($conf->global->MAIN_INFO_SOCIETE_TOWN).'</td></tr>'."\n";
+            if (!empty($conf->global->MAIN_INFO_SOCIETE_TEL)) print '<tr><td style="padding-left: 1em" class="small">'.$langs->trans("Phone").' : '.dol_escape_htmltag($conf->global->MAIN_INFO_SOCIETE_TEL).'</td></tr>';
+            if (!empty($conf->global->MAIN_INFO_SOCIETE_MAIL)) print '<tr><td style="padding-left: 1em" class="small">'.$langs->trans("Email").' : '.dol_escape_htmltag($conf->global->MAIN_INFO_SOCIETE_MAIL).'</td></tr>';
+            if (!empty($conf->global->MAIN_INFO_SOCIETE_WEB)) print '<tr><td style="padding-left: 1em" class="small">'.$langs->trans("Web").' : '.dol_escape_htmltag($conf->global->MAIN_INFO_SOCIETE_WEB).'</td></tr>';
+            print '</tbody>';
+            print '</table>'."\n";
+            print '</div>'."\n";
+            print '<!-- End show mysoc info header -->'."\n";
+        }
+    }
 }
 
 

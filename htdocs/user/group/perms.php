@@ -77,7 +77,7 @@ if (empty($reshook)) {
 		$editgroup = new Usergroup($db);
 		$result = $editgroup->fetch($id);
 		if ($result > 0) {
-			$result= $editgroup->addrights($rights, $module, '', $entity);
+			$result = $editgroup->addrights($rights, $module, '', $entity);
 			if ($result < 0) {
 				setEventMessages($editgroup->error, $editgroup->errors, 'errors');
 			}

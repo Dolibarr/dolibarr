@@ -1064,7 +1064,7 @@ if (empty($reshook))
 		if (!$error)
 		{
 			// Actions on extra fields
-			if (empty($conf->global->MAIN_EXTRAFIELDS_DISABLED)) // For avoid conflicts if trigger used
+			if (!$error)
 			{
 				$result = $object->insertExtraFields('ORDER_SUPPLIER_MODIFY');
 				if ($result < 0)
@@ -1190,7 +1190,7 @@ if (empty($reshook))
 								}
 
 								// Extrafields
-								if (empty($conf->global->MAIN_EXTRAFIELDS_DISABLED) && method_exists($lines[$i], 'fetch_optionals')) 							// For avoid conflicts if
+								if (method_exists($lines[$i], 'fetch_optionals')) 							// For avoid conflicts if
 								{
 									$lines[$i]->fetch_optionals();
 									$array_option = $lines[$i]->array_options;

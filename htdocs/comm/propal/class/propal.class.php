@@ -1253,13 +1253,10 @@ class Propal extends CommonObject
 						// Actions on extra fields
 						if (!$error)
 						{
-							if (empty($conf->global->MAIN_EXTRAFIELDS_DISABLED)) // For avoid conflicts if trigger used
+							$result = $this->insertExtraFields();
+							if ($result < 0)
 							{
-								$result = $this->insertExtraFields();
-								if ($result < 0)
-								{
-									$error++;
-								}
+								$error++;
 							}
 						}
 
@@ -1683,7 +1680,7 @@ class Propal extends CommonObject
 			$error++; $this->errors[] = "Error ".$this->db->lasterror();
 		}
 
-		if (!$error && empty($conf->global->MAIN_EXTRAFIELDS_DISABLED) && is_array($this->array_options) && count($this->array_options) > 0)
+		if (!$error)
 		{
 			$result = $this->insertExtraFields();
 			if ($result < 0)
@@ -3053,15 +3050,12 @@ class Propal extends CommonObject
 					// Removed extrafields
 					if (!$error)
 					{
-						if (empty($conf->global->MAIN_EXTRAFIELDS_DISABLED)) // For avoid conflicts if trigger used
+						$result = $this->deleteExtraFields();
+						if ($result < 0)
 						{
-							$result = $this->deleteExtraFields();
-							if ($result < 0)
-							{
-								$error++;
-								$errorflag = -4;
-								dol_syslog(get_class($this)."::delete erreur ".$errorflag." ".$this->error, LOG_ERR);
-							}
+							$error++;
+							$errorflag = -4;
+							dol_syslog(get_class($this)."::delete erreur ".$errorflag." ".$this->error, LOG_ERR);
 						}
 					}
 
@@ -4152,7 +4146,7 @@ class PropaleLigne extends CommonObjectLine
 		{
 			$this->rowid = $this->db->last_insert_id(MAIN_DB_PREFIX.'propaldet');
 
-			if (empty($conf->global->MAIN_EXTRAFIELDS_DISABLED)) // For avoid conflicts if trigger used
+			if (!$error)
 			{
 				$this->id = $this->rowid;
 				$result = $this->insertExtraFields();
@@ -4204,7 +4198,7 @@ class PropaleLigne extends CommonObjectLine
 		if ($this->db->query($sql))
 		{
 			// Remove extrafields
-			if ((!$error) && (empty($conf->global->MAIN_EXTRAFIELDS_DISABLED))) // For avoid conflicts if trigger used
+			if (!$error)
 			{
 				$this->id = $this->rowid;
 				$result = $this->deleteExtraFields();
@@ -4334,7 +4328,7 @@ class PropaleLigne extends CommonObjectLine
 		$resql = $this->db->query($sql);
 		if ($resql)
 		{
-			if (empty($conf->global->MAIN_EXTRAFIELDS_DISABLED)) // For avoid conflicts if trigger used
+			if (!$error)
 			{
 				$this->id = $this->rowid;
 				$result = $this->insertExtraFields();

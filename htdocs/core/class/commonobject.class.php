@@ -667,7 +667,7 @@ abstract class CommonObject
 				$namecoords .= $this->getFullName($langs, 1).'<br>'.$coords;
 				// hideonsmatphone because copyToClipboard call jquery dialog that does not work with jmobile
 				$out .= '<a href="#" class="hideonsmartphone" onclick="return copyToClipboard(\''.dol_escape_js($namecoords).'\',\''.dol_escape_js($langs->trans("HelpCopyToClipboard")).'\');">';
-				$out .= img_picto($langs->trans("Address"), 'object_address.png');
+				$out .= img_picto($langs->trans("Address"), 'map-marker-alt');
 				$out .= '</a> ';
 			}
 			$out .= dol_print_address($coords, 'address_'.$htmlkey.'_'.$this->id, $this->element, $this->id, 1, ', '); $outdone++;
@@ -5351,9 +5351,14 @@ abstract class CommonObject
 	 *	Delete all extra fields values for the current object.
 	 *
 	 *  @return	int		<0 if KO, >0 if OK
+	 *  @see deleteExtraLanguages(), insertExtraField(), updateExtraField(), setValueFrom()
 	 */
 	public function deleteExtraFields()
 	{
+		global $conf;
+
+		if (!empty($conf->global->MAIN_EXTRAFIELDS_DISABLED)) return 0;
+
 		$this->db->begin();
 
 		$table_element = $this->table_element;
@@ -5383,17 +5388,17 @@ abstract class CommonObject
 	 *  @param	string		$trigger		If defined, call also the trigger (for example COMPANY_MODIFY)
 	 *  @param	User		$userused		Object user
 	 *  @return int 						-1=error, O=did nothing, 1=OK
-	 *  @see insertExtraLanguages(), updateExtraField(), setValueFrom()
+	 *  @see insertExtraLanguages(), updateExtraField(), deleteExtraField(), setValueFrom()
 	 */
 	public function insertExtraFields($trigger = '', $userused = null)
 	{
 		global $conf, $langs, $user;
 
+		if (!empty($conf->global->MAIN_EXTRAFIELDS_DISABLED)) return 0;
+
 		if (empty($userused)) $userused = $user;
 
 		$error = 0;
-
-		if (!empty($conf->global->MAIN_EXTRAFIELDS_DISABLED)) return 0; // For avoid conflicts if trigger used
 
 		if (!empty($this->array_options))
 		{
@@ -5792,17 +5797,17 @@ abstract class CommonObject
 	 *  @param	string		$trigger		If defined, call also the trigger (for example COMPANY_MODIFY)
 	 *  @param	User		$userused		Object user
 	 *  @return int                 		-1=error, O=did nothing, 1=OK
-	 *  @see updateExtraLanguages(), setValueFrom(), insertExtraFields()
+	 *  @see updateExtraLanguages(), insertExtraFields(), deleteExtraFields(), setValueFrom()
 	 */
 	public function updateExtraField($key, $trigger = null, $userused = null)
 	{
 		global $conf, $langs, $user;
 
+		if (!empty($conf->global->MAIN_EXTRAFIELDS_DISABLED)) return 0;
+
 		if (empty($userused)) $userused = $user;
 
 		$error = 0;
-
-		if (!empty($conf->global->MAIN_EXTRAFIELDS_DISABLED)) return 0; // For avoid conflicts if trigger used
 
 		if (!empty($this->array_options) && isset($this->array_options["options_".$key]))
 		{
@@ -8174,7 +8179,7 @@ abstract class CommonObject
 		}
 
 		// Update extrafield
-		if (!$error && empty($conf->global->MAIN_EXTRAFIELDS_DISABLED) && is_array($this->array_options) && count($this->array_options) > 0)
+		if (!$error)
 		{
 			$result = $this->insertExtraFields();
 			if ($result < 0)
@@ -8335,7 +8340,7 @@ abstract class CommonObject
 
 		if (empty($error)) {
 			// Remove extrafields
-			if (empty($conf->global->MAIN_EXTRAFIELDS_DISABLED)) // For avoid conflicts if trigger used
+			if (!$error)
 			{
 				$tmpobjectline = new $tmpforobjectlineclass($this->db);
 				$tmpobjectline->id = $idline;

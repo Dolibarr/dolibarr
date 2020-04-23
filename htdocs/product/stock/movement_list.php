@@ -574,7 +574,7 @@ if ($resql)
         print '<div class="fichehalfleft">';
         print '<div class="underbanner clearboth"></div>';
 
-        print '<table class="border centpercent">';
+        print '<table class="border centpercent tableforfield">';
 
         print '<tr>';
 
@@ -602,7 +602,7 @@ if ($resql)
         print '<div class="ficheaddleft">';
         print '<div class="underbanner clearboth"></div>';
 
-        print '<table class="border centpercent">';
+        print '<table class="border centpercent tableforfield">';
 
         // Value
         print '<tr><td class="titlefield">'.$langs->trans("EstimatedStockValueShort").'</td><td>';

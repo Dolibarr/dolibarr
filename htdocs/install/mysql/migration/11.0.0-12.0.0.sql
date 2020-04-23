@@ -42,6 +42,15 @@ ALTER TABLE llx_commande_fournisseur_dispatch_extrafields ADD INDEX idx_commande
 
 UPDATE llx_accounting_system SET fk_country = NULL, active = 0 WHERE pcg_version = 'SYSCOHADA';
 
+create table llx_c_shipment_package_type
+(
+    rowid        integer  AUTO_INCREMENT PRIMARY KEY,
+    label        varchar(50) NOT NULL,  -- Short name
+    description	 varchar(255), -- Description
+    active       integer DEFAULT 1 NOT NULL, -- Active or not	
+    entity       integer DEFAULT 1 NOT NULL -- Multi company id 
+)ENGINE=innodb;
+
 
 
 -- For v12
@@ -229,6 +238,7 @@ ALTER TABLE llx_product_batch MODIFY COLUMN batch varchar(128);
 ALTER TABLE llx_commande_fournisseur_dispatch MODIFY COLUMN batch varchar(128);
 ALTER TABLE llx_stock_mouvement MODIFY COLUMN batch varchar(128);
 ALTER TABLE llx_mrp_production MODIFY COLUMN batch varchar(128);
+ALTER TABLE llx_mrp_production MODIFY qty real NOT NULL DEFAULT 1;
 
 create table llx_categorie_website_page
 (
@@ -252,11 +262,3 @@ ALTER TABLE llx_categorie ADD COLUMN fk_user_modif	integer;
 ALTER TABLE llx_commandedet ADD CONSTRAINT fk_commandedet_fk_commandefourndet FOREIGN KEY (fk_commandefourndet) REFERENCES llx_commande_fournisseurdet (rowid);
 
 --Dictionary of package type because filename in V11 was incomplete
-create table llx_c_shipment_package_type
-(
-    rowid        integer  AUTO_INCREMENT PRIMARY KEY,
-    label        varchar(50) NOT NULL,  -- Short name
-    description	 varchar(255), -- Description
-    active       integer DEFAULT 1 NOT NULL, -- Active or not	
-    entity       integer DEFAULT 1 NOT NULL -- Multi company id 
-)ENGINE=innodb;
