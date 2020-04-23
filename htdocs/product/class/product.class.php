@@ -4938,7 +4938,7 @@ class Product extends CommonObject
 		{
             $filterStatus = '4';
             if (isset($includedraftpoforvirtual)) $filterStatus = '0,'.$filterStatus;
-			$result = $this->load_stats_reception(0, $filterStatus, 1);			// Use same tables than when module reception is not used.
+			$result = $this->load_stats_reception(0, $filterStatus, 1); // Use same tables than when module reception is not used.
 			if ($result < 0) dol_print_error($this->db, $this->error);
 			$stock_reception_fournisseur = $this->stats_reception['qty'];
 		}

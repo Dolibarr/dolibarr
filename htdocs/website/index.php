@@ -327,8 +327,8 @@ if ($cancel)
 
 $savbacktopage = $backtopage;
 $backtopage = $_SERVER["PHP_SELF"].'?file_manager=1&website='.$websitekey.'&pageid='.$pageid.(GETPOST('section_dir', 'alpha') ? '&section_dir='.urlencode(GETPOST('section_dir', 'alpha')) : ''); // used after a confirm_deletefile into actions_linkedfiles.inc.php
-if ($sortfield) $backtopage.='&sortfield='.$sortfield;
-if ($sortorder) $backtopage.='&sortorder='.$sortorder;
+if ($sortfield) $backtopage .= '&sortfield='.$sortfield;
+if ($sortorder) $backtopage .= '&sortorder='.$sortorder;
 include DOL_DOCUMENT_ROOT.'/core/actions_linkedfiles.inc.php';
 $backtopage = $savbacktopage;
 
@@ -2133,7 +2133,7 @@ print '<div>';
 
 // Add a margin under toolbar ?
 $style = '';
-if ($action != 'preview' && $action != 'editcontent' && $action != 'editsource' && ! GETPOST('createpagefromclone', 'alphanohtml')) $style = ' margin-bottom: 5px;';
+if ($action != 'preview' && $action != 'editcontent' && $action != 'editsource' && !GETPOST('createpagefromclone', 'alphanohtml')) $style = ' margin-bottom: 5px;';
 
 
 if (!GETPOST('hide_websitemenu'))
@@ -2437,7 +2437,7 @@ if (!GETPOST('hide_websitemenu'))
 					$preselectedlanguage = GETPOST('newlang', 'aZ09') ? GETPOST('newlang', 'aZ09') : ($objectpage->lang ? $objectpage->lang : $langs->defaultlang);
 					$onlylang = array();
 					if ($website->otherlang) {
-						foreach(explode(',', $website->otherlang) as $langkey) {
+						foreach (explode(',', $website->otherlang) as $langkey) {
 							$onlylang[$langkey] = $langkey;
 						}
 						$textifempty = 1;
