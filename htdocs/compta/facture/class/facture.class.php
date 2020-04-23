@@ -5323,7 +5323,7 @@ class FactureLigne extends CommonInvoiceLine
             $this->db->rollback();
             return -1;
         }
-		
+
 		$sql = "DELETE FROM ".MAIN_DB_PREFIX."facturedet WHERE rowid = ".$this->rowid;
 		dol_syslog(get_class($this)."::delete", LOG_DEBUG);
 		if ($this->db->query($sql))
