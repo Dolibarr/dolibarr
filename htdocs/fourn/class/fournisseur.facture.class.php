@@ -2674,6 +2674,7 @@ class FactureFournisseur extends CommonInvoice
         if ($result < 0)
         {
             $this->error = $object->error;
+            $this->errors = $object->errors;
             $error++;
         }
 
@@ -3154,7 +3155,7 @@ class SupplierInvoiceLine extends CommonObjectLine
         		dol_syslog(get_class($this)."::delete error -4 ".$this->error, LOG_ERR);
         	}
         }
-		
+
 		if (!$error) {
 			// Supprime ligne
 			$sql = 'DELETE FROM '.MAIN_DB_PREFIX.'facture_fourn_det ';
