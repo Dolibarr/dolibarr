@@ -1180,10 +1180,14 @@ class FactureFournisseur extends CommonInvoice
 
         if (!$error)
         {
+            $main = MAIN_DB_PREFIX . 'facture_fourn_det';
+            $ef = $main . "_extrafields";
+            $sqlef = "DELETE FROM $ef WHERE fk_object IN (SELECT rowid FROM $main WHERE fk_facture_fourn = $rowid)";
+            $resqlef = $this->db->query($sqlef);
             $sql = 'DELETE FROM '.MAIN_DB_PREFIX.'facture_fourn_det WHERE fk_facture_fourn = '.$rowid.';';
             dol_syslog(get_class($this)."::delete", LOG_DEBUG);
             $resql = $this->db->query($sql);
-            if ($resql)
+            if ($resqlef && $resql)
             {
                 $sql = 'DELETE FROM '.MAIN_DB_PREFIX.'facture_fourn WHERE rowid = '.$rowid;
                 dol_syslog(get_class($this)."::delete", LOG_DEBUG);
@@ -3140,6 +3144,11 @@ class SupplierInvoiceLine extends CommonObjectLine
 		}
 
 		$this->deleteObjectLinked();
+
+                $result = $this->deleteExtraFields();
+                if ($result < 0) {
+                    $error++;
+                }
 
 		if (!$error) {
 			// Supprime ligne
