@@ -139,7 +139,7 @@ class EntrepotTest extends PHPUnit\Framework\TestCase
     	$result=$localobject->create($user);
 
         print __METHOD__." result=".$result."\n";
-    	$this->assertLessThanOrEqual($result, 0);
+        $this->assertGreaterThan(0, $result);
 
     	return $result;
     }

@@ -184,10 +184,10 @@ class Entrepot extends CommonObject
 
 		$error = 0;
 
-		$this->libelle = trim($this->libelle);
+		if (empty($this->label)) $this->label = $this->libelle;		// For backward compatibility
 
-		// Si libelle non defini, erreur
-		if ($this->libelle == '')
+		$this->label = trim($this->label);
+		if ($this->label == '')
 		{
 			$this->error = "ErrorFieldRequired";
 			return 0;
@@ -198,7 +198,7 @@ class Entrepot extends CommonObject
 		$this->db->begin();
 
 		$sql = "INSERT INTO ".MAIN_DB_PREFIX."entrepot (ref, entity, datec, fk_user_author, fk_parent)";
-		$sql .= " VALUES ('".$this->db->escape($this->libelle)."', ".$conf->entity.", '".$this->db->idate($now)."', ".$user->id.", ".($this->fk_parent > 0 ? $this->fk_parent : "NULL").")";
+		$sql .= " VALUES ('".$this->db->escape($this->label)."', ".$conf->entity.", '".$this->db->idate($now)."', ".$user->id.", ".($this->fk_parent > 0 ? $this->fk_parent : "NULL").")";
 
 		dol_syslog(get_class($this)."::create", LOG_DEBUG);
 		$result = $this->db->query($sql);
