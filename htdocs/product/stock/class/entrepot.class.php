@@ -185,6 +185,7 @@ class Entrepot extends CommonObject
 		$error = 0;
 
 		$this->libelle = trim($this->libelle);
+		$this->label = empty($this->label) ? $this->libelle : trim($this->label);
 
 		// Si libelle non defini, erreur
 		if ($this->libelle == '')
@@ -198,7 +199,7 @@ class Entrepot extends CommonObject
 		$this->db->begin();
 
 		$sql = "INSERT INTO ".MAIN_DB_PREFIX."entrepot (ref, entity, datec, fk_user_author, fk_parent)";
-		$sql .= " VALUES ('".$this->db->escape($this->libelle)."', ".$conf->entity.", '".$this->db->idate($now)."', ".$user->id.", ".($this->fk_parent > 0 ? $this->fk_parent : "NULL").")";
+		$sql .= " VALUES ('".$this->db->escape($this->label)."', ".$conf->entity.", '".$this->db->idate($now)."', ".$user->id.", ".($this->fk_parent > 0 ? $this->fk_parent : "NULL").")";
 
 		dol_syslog(get_class($this)."::create", LOG_DEBUG);
 		$result = $this->db->query($sql);
@@ -286,6 +287,7 @@ class Entrepot extends CommonObject
 		}
 
 		$this->libelle = trim($this->libelle);
+		$this->label = empty($this->label) ? $this->libelle : trim($this->label);
 		$this->description = trim($this->description);
 
 		$this->lieu = trim($this->lieu);
@@ -296,7 +298,7 @@ class Entrepot extends CommonObject
 		$this->country_id = ($this->country_id > 0 ? $this->country_id : 0);
 
 		$sql = "UPDATE ".MAIN_DB_PREFIX."entrepot ";
-		$sql .= " SET ref = '".$this->db->escape($this->libelle)."'";
+		$sql .= " SET ref = '".$this->db->escape($this->label)."'";
 		$sql .= ", fk_parent = ".(($this->fk_parent > 0) ? $this->fk_parent : "NULL");
 		$sql .= ", description = '".$this->db->escape($this->description)."'";
 		$sql .= ", statut = ".$this->statut;
