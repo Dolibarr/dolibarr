@@ -3146,9 +3146,9 @@ class SupplierInvoiceLine extends CommonObjectLine
 		$this->deleteObjectLinked();
 
                 $result = $this->deleteExtraFields();
-                if ($result < 0) {
-                    $error++;
-                }
+		if ($result < 0) {
+			$error++;
+		}
 
 		if (!$error) {
 			// Supprime ligne
