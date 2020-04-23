@@ -186,7 +186,7 @@ class Entrepot extends CommonObject
 
 		$this->label = trim($this->label);
 
-    if (empty($this->label)) $this->label = $this->libelle;		// For backward compatibility
+		if (empty($this->label)) $this->label = $this->libelle;		// For backward compatibility
 		$this->libelle = empty($this->libelle) ? $this->label : trim($this->libelle);   // For backward compatibility
 
 		if ($this->label == '')
