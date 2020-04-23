@@ -3711,7 +3711,7 @@ class CommandeFournisseurLigne extends CommonOrderLine
 
         $this->db->begin();
 
-	// extrafields
+		// extrafields
         $result = $this->deleteExtraFields();
         if ($result < 0)
         {
