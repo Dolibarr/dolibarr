@@ -342,7 +342,7 @@ class FactureRec extends CommonInvoice
 					    if ($objectline->fetch($result_insert))
 					    {
 					        // Extrafields
-					        if (empty($conf->global->MAIN_EXTRAFIELDS_DISABLED) && method_exists($facsrc->lines[$i], 'fetch_optionals')) {
+					        if (method_exists($facsrc->lines[$i], 'fetch_optionals')) {
 					            $facsrc->lines[$i]->fetch_optionals($facsrc->lines[$i]->rowid);
 					            $objectline->array_options = $facsrc->lines[$i]->array_options;
 					        }
@@ -438,7 +438,7 @@ class FactureRec extends CommonInvoice
 	    $resql = $this->db->query($sql);
 	    if ($resql)
 	    {
-	        if (empty($conf->global->MAIN_EXTRAFIELDS_DISABLED)) // For avoid conflicts if trigger used
+	        if (!$error)
 	        {
 	            $result = $this->insertExtraFields();
 	            if ($result < 0)
@@ -2112,7 +2112,7 @@ class FactureLigneRec extends CommonInvoiceLine
     	$resql = $this->db->query($sql);
         if ($resql)
         {
-    		if (empty($conf->global->MAIN_EXTRAFIELDS_DISABLED)) // For avoid conflicts if trigger used
+    		if (!$error)
     		{
     			$result = $this->insertExtraFields();
     			if ($result < 0)

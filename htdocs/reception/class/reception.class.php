@@ -750,7 +750,7 @@ class Reception extends CommonObject
 		}
 
 		// extrafields
-		if (empty($conf->global->MAIN_EXTRAFIELDS_DISABLED) && is_array($array_options) && count($array_options) > 0) // For avoid conflicts if trigger used
+		if (empty($conf->global->MAIN_EXTRAFIELDS_DISABLED) && is_array($array_options) && count($array_options) > 0)
 			$line->array_options = $array_options;
 
 		$line->fk_product = $fk_product;

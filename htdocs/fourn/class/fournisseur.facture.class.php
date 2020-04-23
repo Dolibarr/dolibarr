@@ -558,7 +558,7 @@ class FactureFournisseur extends CommonInvoice
             if ($result > 0)
             {
 				// Actions on extra fields
-            	if (empty($conf->global->MAIN_EXTRAFIELDS_DISABLED)) // For avoid conflicts if trigger used
+            	if (!$error)
 				{
 					$result = $this->insertExtraFields(); // This also set $this->error or $this->errors if errors are found
 					if ($result < 0)
@@ -977,7 +977,7 @@ class FactureFournisseur extends CommonInvoice
             }
         }
 
-		if (! $error && empty($conf->global->MAIN_EXTRAFIELDS_DISABLED) && is_array($this->array_options) && count($this->array_options)>0)
+		if (! $error)
 		{
 			$result=$this->insertExtraFields();
 			if ($result < 0)
@@ -1243,7 +1243,7 @@ class FactureFournisseur extends CommonInvoice
         }
 
         // Remove extrafields
-        if ((!$error) && (empty($conf->global->MAIN_EXTRAFIELDS_DISABLED))) // For avoid conflicts if trigger used
+        if (!$error)
         {
         	$result = $this->deleteExtraFields();
         	if ($result < 0)
@@ -3145,7 +3145,7 @@ class SupplierInvoiceLine extends CommonObjectLine
 		$this->deleteObjectLinked();
 
 		// Remove extrafields
-        if ((! $error) && (empty($conf->global->MAIN_EXTRAFIELDS_DISABLED))) // For avoid conflicts if trigger used
+        if (! $error)
         {
         	$result=$this->deleteExtraFields();
         	if ($result < 0)
@@ -3265,7 +3265,7 @@ class SupplierInvoiceLine extends CommonObjectLine
 		$this->rowid = $this->id;
 		$error = 0;
 
-		if (empty($conf->global->MAIN_EXTRAFIELDS_DISABLED)) // For avoid conflicts if trigger used
+		if (!$error)
 		{
 			$result = $this->insertExtraFields();
 			if ($result < 0)
@@ -3406,7 +3406,7 @@ class SupplierInvoiceLine extends CommonObjectLine
             $this->id = $this->db->last_insert_id(MAIN_DB_PREFIX.$this->table_element);
             $this->rowid = $this->id; // backward compatibility
 
-            if (empty($conf->global->MAIN_EXTRAFIELDS_DISABLED)) // For avoid conflicts if trigger used
+            if (!$error)
             {
                 $result = $this->insertExtraFields();
                 if ($result < 0)

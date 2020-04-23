@@ -362,7 +362,7 @@ class CommandeFournisseurDispatch extends CommonObject
 
 		if (!$error)
 		{
-			if (empty($conf->global->MAIN_EXTRAFIELDS_DISABLED)) // For avoid conflicts if trigger used
+			if (!$error)
 			{
 				if (empty($this->id) && !empty($this->rowid))$this->id = $this->rowid;
 				$result = $this->insertExtraFields();

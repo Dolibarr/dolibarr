@@ -221,7 +221,7 @@ class Entrepot extends CommonObject
                 // Actions on extra fields
                 if (!$error)
                 {
-                    if (empty($conf->global->MAIN_EXTRAFIELDS_DISABLED)) // For avoid conflicts if trigger used
+                    if (!$error)
                     {
                         $result = $this->insertExtraFields();
                         if ($result < 0)
@@ -319,7 +319,7 @@ class Entrepot extends CommonObject
             $this->errors[] = "Error ".$this->db->lasterror();
         }
 
-        if (!$error && empty($conf->global->MAIN_EXTRAFIELDS_DISABLED) && is_array($this->array_options) && count($this->array_options) > 0) {
+        if (!$error) {
             $result = $this->insertExtraFields();
             if ($result < 0)
             {
@@ -383,7 +383,7 @@ class Entrepot extends CommonObject
 		// Removed extrafields
 		if (!$error)
 		{
-			if (empty($conf->global->MAIN_EXTRAFIELDS_DISABLED)) // For avoid conflicts if trigger used
+			if (!$error)
 			{
 				$result = $this->deleteExtraFields();
 				if ($result < 0)
