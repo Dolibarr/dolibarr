@@ -1415,7 +1415,7 @@ class Setup extends DolibarrApi
      * @url     GET conf/{constantname}
      *
      * @throws RestException 403 Forbidden
-     * @throws RestException 500 Error Bad or unknown value for constname
+     * @throws RestException 500 Error Bad or unknown value for constantname
      */
     public function getConf($constantname)
     {
@@ -1427,7 +1427,7 @@ class Setup extends DolibarrApi
     	}
 
     	if (!preg_match('/^[a-zA-Z0-9_]+$/', $constantname) || ! isset($conf->global->$constantname)) {
-    		throw new RestException(500, 'Error Bad or unknown value for constname');
+    		throw new RestException(500, 'Error Bad or unknown value for constantname');
     	}
     	if (preg_match('/(_pass|password|secret|_key|key$)/i', $constantname)) {
     		throw new RestException(403, 'Forbidden');
