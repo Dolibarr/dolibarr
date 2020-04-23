@@ -365,7 +365,7 @@ abstract class CommonDocGenerator
 			$remain_to_pay = $sumpayed - $sumdeposit - $sumcreditnote;
 
 			if ($object->fk_account > 0) {
-				require_once DOL_DOCUMENT_ROOT .'/compta/bank/class/account.class.php';
+				require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
 				$bank_account = new Account($this->db);
 				$bank_account->fetch($object->fk_account);
 			}
