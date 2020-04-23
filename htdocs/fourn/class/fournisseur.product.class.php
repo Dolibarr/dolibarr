@@ -435,7 +435,7 @@ class ProductFournisseur extends Product
                 $sql .= " ".($newdefaultvatcode ? "'".$this->db->escape($newdefaultvatcode)."'" : "null").",";
                 $sql .= " ".$newnpr.",";
                 $sql .= $conf->entity.",";
-                $sql .= ($delivery_time_days != '' ? $delivery_time_days : 'null') . ",";
+                $sql .= ($delivery_time_days != '' ? $delivery_time_days : 'null').",";
                 $sql .= (empty($supplier_reputation) ? 'NULL' : "'".$this->db->escape($supplier_reputation)."'").",";
                 $sql .= (empty($barcode) ? 'NULL' : "'".$this->db->escape($barcode)."'").",";
                 $sql .= (empty($fk_barcode_type) ? 'NULL' : "'".$this->db->escape($fk_barcode_type)."'");
@@ -1057,7 +1057,8 @@ class ProductFournisseur extends Product
 
         $label = '<u>'.$langs->trans("SupplierRef").'</u>';
         $label .= '<br>';
-        $label .= '<b>'.$langs->trans('Ref').':</b> '.$this->ref_supplier;
+        $label .= '<b>'.$langs->trans('Product').':</b> '.$this->ref;
+        $label .= '<br><b>'.$langs->trans('RefSupplier').':</b> '.$this->ref_supplier;
 
         $logPrices = $this->listProductFournisseurPriceLog($this->product_fourn_price_id, 'pfpl.datec', 'DESC'); // set sort order here
         if (is_array($logPrices) && count($logPrices) > 0) {
@@ -1095,7 +1096,7 @@ class ProductFournisseur extends Product
 
         $result .= $linkstart;
         if ($withpicto) $result .= img_object(($notooltip ? '' : $label), ($this->picto ? $this->picto : 'generic'), ($notooltip ? (($withpicto != 2) ? 'class="paddingright"' : '') : 'class="'.(($withpicto != 2) ? 'paddingright ' : '').'classfortooltip"'), 0, 0, $notooltip ? 0 : 1);
-        if ($withpicto != 2) $result .= $this->fourn_ref;
+        if ($withpicto != 2) $result .= $this->ref.($this->ref_supplier ? ' ('.$this->ref_supplier.')' : '');
         $result .= $linkend;
         //if ($withpicto != 2) $result.=(($addlabel && $this->label) ? $sep . dol_trunc($this->label, ($addlabel > 1 ? $addlabel : 0)) : '');
 

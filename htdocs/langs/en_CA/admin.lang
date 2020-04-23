@@ -1,9 +1,17 @@
 # Dolibarr language file - Source file is en_US - admin
+AntiVirusCommandExample=Example for ClamAv Daemon (require clamav-daemon): /usr/bin/clamdscan<br>Example for ClamWin (very very slow): c:\\Progra~1\\ClamWin\\bin\\clamscan.exe
+AntiVirusParamExample=Example for ClamAv Daemon: --fdpass<br>Example for ClamWin: --database="C:\\Program Files (x86)\\ClamWin\\lib"
+ModulesDesc=The modules/applications determine which features are available in the software. Some modules require permissions to be granted to users after activating the module. Click the on/off button <span class="small valignmiddle">%s</span> of each module to enable or disable a module/application.
 YouCanSubmitFile=You can upload the .zip file of module package from here:
+ExternalModule=External module
 Module50150Desc=Point of Sale module TakePOS (touchscreen POS, for shops, bars or restaurants).
+DictionaryCivility=Honorific titles
 LocalTax1Management=PST Management
 ValueOfConstantKey=Value of a configuration constant
 CompanyZip=Postal code
+SetupDescription3=<a href="%s">%s -> %s</a><br><br>Basic parameters used to customize the default behavior of your application (e.g for country-related features).
+SetupDescription4=<a href="%s">%s -> %s</a><br><br>This software is a suite of many modules/applications. The modules related to your needs must be enabled and configured. Menu entries will appears with the activation of these modules.
+CompanyFundationDesc=Edit the information of your company/organization. Click on "%s" button at the bottom of the page when done.
 LDAPFieldZip=Postal code
 SuppliersCommandModel=Complete template of Purchase Order
 SuppliersInvoiceModel=Complete template of Vendor Invoice

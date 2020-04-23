@@ -6,7 +6,7 @@
  * Copyright (C) 2012       Cedric Salvador         <csalvador@gpcsolutions.fr>
  * Copyright (C) 2013       Florian Henry		  	<florian.henry@open-concept.pro>
  * Copyright (C) 2015       Marcos García           <marcosgdf@gmail.com>
- * Copyright (C) 2017       Frédéric France         <frederic.france@netlogic.fr>
+ * Copyright (C) 2017-2020  Frédéric France         <frederic.france@netlogic.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -69,6 +69,11 @@ class FactureRec extends CommonInvoice
 	 */
 	public $entity;
 
+	/**
+	 * {@inheritdoc}
+	 */
+	protected $table_ref_field = 'titre';
+
 	public $number;
 	public $date;
 	public $remise;
@@ -82,7 +87,14 @@ class FactureRec extends CommonInvoice
 	public $nb_gen_done;
 	public $nb_gen_max;
 
+	/**
+	 * @var int Frequency
+	 */
 	public $frequency;
+
+    /**
+	 * @var string Unit frequency
+	 */
 	public $unit_frequency;
 
 	public $rang;
@@ -120,9 +132,9 @@ class FactureRec extends CommonInvoice
 	/**
 	 * @var array  Array with all fields and their property. Do not use it as a static var. It may be modified by constructor.
 	 */
-	public $fields=array(
+	public $fields = array(
 		'rowid' =>array('type'=>'integer', 'label'=>'TechnicalID', 'enabled'=>1, 'visible'=>-1, 'notnull'=>1, 'position'=>10),
-		'titre' =>array('type'=>'varchar(100)', 'label'=>'Titre', 'enabled'=>1, 'visible'=>-1, 'position'=>15),
+		'titre' =>array('type'=>'varchar(100)', 'label'=>'Titre', 'enabled'=>1, 'showoncombobox' => 1, 'visible'=>-1, 'position'=>15),
 		'entity' =>array('type'=>'integer', 'label'=>'Entity', 'default'=>1, 'enabled'=>1, 'visible'=>-2, 'notnull'=>1, 'position'=>20, 'index'=>1),
 		'fk_soc' =>array('type'=>'integer:Societe:societe/class/societe.class.php', 'label'=>'ThirdParty', 'enabled'=>1, 'visible'=>-1, 'notnull'=>1, 'position'=>25),
 		'datec' =>array('type'=>'datetime', 'label'=>'DateCreation', 'enabled'=>1, 'visible'=>-1, 'position'=>30),
@@ -330,7 +342,7 @@ class FactureRec extends CommonInvoice
 					    if ($objectline->fetch($result_insert))
 					    {
 					        // Extrafields
-					        if (empty($conf->global->MAIN_EXTRAFIELDS_DISABLED) && method_exists($facsrc->lines[$i], 'fetch_optionals')) {
+					        if (method_exists($facsrc->lines[$i], 'fetch_optionals')) {
 					            $facsrc->lines[$i]->fetch_optionals($facsrc->lines[$i]->rowid);
 					            $objectline->array_options = $facsrc->lines[$i]->array_options;
 					        }
@@ -426,7 +438,7 @@ class FactureRec extends CommonInvoice
 	    $resql = $this->db->query($sql);
 	    if ($resql)
 	    {
-	        if (empty($conf->global->MAIN_EXTRAFIELDS_DISABLED)) // For avoid conflicts if trigger used
+	        if (!$error)
 	        {
 	            $result = $this->insertExtraFields();
 	            if ($result < 0)
@@ -463,10 +475,9 @@ class FactureRec extends CommonInvoice
 	 *	@param      int		$rowid       	Id of object to load
 	 * 	@param		string	$ref			Reference of recurring invoice
 	 * 	@param		string	$ref_ext		External reference of invoice
-	 * 	@param		int		$ref_int		Internal reference of other object
 	 *	@return     int         			>0 if OK, <0 if KO, 0 if not found
 	 */
-	public function fetch($rowid, $ref = '', $ref_ext = '', $ref_int = '')
+	public function fetch($rowid, $ref = '', $ref_ext = '')
 	{
 		$sql = 'SELECT f.rowid, f.entity, f.titre as title, f.suspended, f.fk_soc, f.tva, f.localtax1, f.localtax2, f.total, f.total_ttc';
 		$sql .= ', f.remise_percent, f.remise_absolue, f.remise';
@@ -2101,7 +2112,7 @@ class FactureLigneRec extends CommonInvoiceLine
     	$resql = $this->db->query($sql);
         if ($resql)
         {
-    		if (empty($conf->global->MAIN_EXTRAFIELDS_DISABLED)) // For avoid conflicts if trigger used
+    		if (!$error)
     		{
     			$result = $this->insertExtraFields();
     			if ($result < 0)

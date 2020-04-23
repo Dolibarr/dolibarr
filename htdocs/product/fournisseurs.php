@@ -274,25 +274,25 @@ if (empty($reshook))
 				$extralabels = $extrafields->fetch_name_optionals_label("product_fournisseur_price");
 				$extrafield_values = $extrafields->getOptionalsFromPost("product_fournisseur_price");
 				if (!empty($extrafield_values)) {
-                    $resql = $db->query("SELECT fk_object FROM " . MAIN_DB_PREFIX . "product_fournisseur_price_extrafields WHERE fk_object = " . $object->product_fourn_price_id);
+                    $resql = $db->query("SELECT fk_object FROM ".MAIN_DB_PREFIX."product_fournisseur_price_extrafields WHERE fk_object = ".$object->product_fourn_price_id);
                     // Insert a new extrafields row, if none exists
                     if ($db->num_rows($resql) != 1) {
-                        $sql = "INSERT INTO " . MAIN_DB_PREFIX . "product_fournisseur_price_extrafields (fk_object, ";
+                        $sql = "INSERT INTO ".MAIN_DB_PREFIX."product_fournisseur_price_extrafields (fk_object, ";
                         foreach ($extrafield_values as $key => $value) {
-                            $sql .= str_replace('options_', '', $key) . ', ';
+                            $sql .= str_replace('options_', '', $key).', ';
                         }
-                        $sql = substr($sql, 0, strlen($sql) - 2) . ") VALUES (" . $object->product_fourn_price_id . ", ";
+                        $sql = substr($sql, 0, strlen($sql) - 2).") VALUES (".$object->product_fourn_price_id.", ";
                         foreach ($extrafield_values as $key => $value) {
-                            $sql .= '"' . $value . '", ';
+                            $sql .= '"'.$value.'", ';
                         }
-                        $sql = substr($sql, 0, strlen($sql) - 2) . ')';
+                        $sql = substr($sql, 0, strlen($sql) - 2).')';
                     } // else update the existing one
                     else {
-                        $sql = "UPDATE " . MAIN_DB_PREFIX . "product_fournisseur_price_extrafields SET ";
+                        $sql = "UPDATE ".MAIN_DB_PREFIX."product_fournisseur_price_extrafields SET ";
                         foreach ($extrafield_values as $key => $value) {
-                            $sql .= str_replace('options_', '', $key) . ' = "' . $value . '", ';
+                            $sql .= str_replace('options_', '', $key).' = "'.$value.'", ';
                         }
-                        $sql = substr($sql, 0, strlen($sql) - 2) . ' WHERE fk_object = ' . $object->product_fourn_price_id;
+                        $sql = substr($sql, 0, strlen($sql) - 2).' WHERE fk_object = '.$object->product_fourn_price_id;
                     }
 
                     // Execute the sql command from above
@@ -780,7 +780,12 @@ SCRIPT;
                     if (empty($rowid)) {
                         foreach ($extralabels as $key => $value) {
                             if (!empty($extrafields->attributes["product_fournisseur_price"]['list'][$key]) && ($extrafields->attributes["product_fournisseur_price"]['list'][$key] == 1 || $extrafields->attributes["product_fournisseur_price"]['list'][$key] == 3 || ($action == "update_price" && $extrafields->attributes["product_fournisseur_price"]['list'][$key] == 4))) {
-                                print '<tr><td'.($extrafields->attributes["product_fournisseur_price"]['required'][$key] ? ' class="fieldrequired"' : '').'>'.$langs->trans($value).'</td><td>'.$extrafields->showInputField($key, GETPOSTISSET('options_' . $key) ? $extrafield_values['options_' . $key] : '', '', '', '', '', 0, 'product_fournisseur_price').'</td></tr>';
+                                if(!empty($extrafields->attributes["product_fournisseur_price"]['langfile'][$key])) $langs->load($extrafields->attributes["product_fournisseur_price"]['langfile'][$key]);
+
+                                print '<tr><td'.($extrafields->attributes["product_fournisseur_price"]['required'][$key] ? ' class="fieldrequired"' : '').'>';
+                                if (!empty($extrafields->attributes["product_fournisseur_price"]['help'][$key])) print $form->textwithpicto($langs->trans($value), $langs->trans($extrafields->attributes["product_fournisseur_price"]['help'][$key]));
+                                else print $langs->trans($value);
+                                print '</td><td>'.$extrafields->showInputField($key, GETPOSTISSET('options_' . $key) ? $extrafield_values['options_' . $key] : '', '', '', '', '', 0, 'product_fournisseur_price').'</td></tr>';
                             }
                         }
                     } else {
@@ -796,7 +801,14 @@ SCRIPT;
                             $obj = $db->fetch_object($resql);
                             foreach ($extralabels as $key => $value) {
                                 if (!empty($extrafields->attributes["product_fournisseur_price"]['list'][$key]) && ($extrafields->attributes["product_fournisseur_price"]['list'][$key] == 1 || $extrafields->attributes["product_fournisseur_price"]['list'][$key] == 3 || ($action == "update_price" && $extrafields->attributes["product_fournisseur_price"]['list'][$key] == 4))) {
-                                    print '<tr><td'.($extrafields->attributes["product_fournisseur_price"]['required'][$key] ? ' class="fieldrequired"' : '').'>'.$langs->trans($value).'</td><td>'.$extrafields->showInputField($key, GETPOSTISSET('options_' . $key) ? $extrafield_values['options_' . $key] : $obj->{$key}, '', '', '', '', 0, 'product_fournisseur_price').'</td></tr>';
+                                    if(!empty($extrafields->attributes["product_fournisseur_price"]['langfile'][$key])) $langs->load($extrafields->attributes["product_fournisseur_price"]['langfile'][$key]);
+
+                                    print '<tr><td'.($extrafields->attributes["product_fournisseur_price"]['required'][$key] ? ' class="fieldrequired"' : '').'>';
+                                    if (!empty($extrafields->attributes["product_fournisseur_price"]['help'][$key])) print $form->textwithpicto($langs->trans($value), $langs->trans($extrafields->attributes["product_fournisseur_price"]['help'][$key]));
+                                    else print $langs->trans($value);
+                                    print '</td><td>'.$extrafields->showInputField($key, GETPOSTISSET('options_' . $key) ? $extrafield_values['options_' . $key] : $obj->{$key}, '', '', '', '', 0, 'product_fournisseur_price');
+
+                                    print '</td></tr>';
                                 }
                             }
                             $db->free($resql);
@@ -900,7 +912,10 @@ SCRIPT;
 					foreach ($extralabels as $key => $value) {
 						// Show field if not hidden
 						if (!empty($extrafields->attributes["product_fournisseur_price"]['list'][$key]) && $extrafields->attributes["product_fournisseur_price"]['list'][$key] != 3) {
-							print_liste_field_titre($value, $_SERVER["PHP_SELF"], '', '', $param, '', $sortfield, $sortorder, 'right ');
+                            if(!empty($extrafields->attributes["product_fournisseur_price"]['langfile'][$key])) $langs->load($extrafields->attributes["product_fournisseur_price"]['langfile'][$key]);
+                            if (!empty($extrafields->attributes["product_fournisseur_price"]['help'][$key])) $extratitle = $form->textwithpicto($langs->trans($value), $langs->trans($extrafields->attributes["product_fournisseur_price"]['help'][$key]));
+                            else $extratitle = $langs->trans($value);
+							print_liste_field_titre($extratitle, $_SERVER["PHP_SELF"], '', '', $param, '', $sortfield, $sortorder, 'right ');
 						}
 					}
 				}
@@ -1039,10 +1054,10 @@ SCRIPT;
                             $sql  = "SELECT";
                             $sql .= " fk_object";
                             foreach ($extralabels as $key => $value) {
-                                $sql .= ", " . $key;
+                                $sql .= ", ".$key;
                             }
-                            $sql .= " FROM " . MAIN_DB_PREFIX . "product_fournisseur_price_extrafields";
-                            $sql .= " WHERE fk_object = " . $productfourn->product_fourn_price_id;
+                            $sql .= " FROM ".MAIN_DB_PREFIX."product_fournisseur_price_extrafields";
+                            $sql .= " WHERE fk_object = ".$productfourn->product_fourn_price_id;
                             $resql = $db->query($sql);
                             if ($resql) {
                                 if ($db->num_rows($resql) != 1) {

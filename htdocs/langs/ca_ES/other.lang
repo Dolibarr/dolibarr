@@ -34,7 +34,7 @@ GraphInBarsAreLimitedToNMeasures=Grapics are limited to %s measures in 'Bars' mo
 OnlyOneFieldForXAxisIsPossible=Actualment només és possible 1 camp com a Eix X. Només s’ha seleccionat el primer camp seleccionat.
 AtLeastOneMeasureIsRequired=Almenys 1 camp per a la mesura és obligatori
 AtLeastOneXAxisIsRequired=Almenys 1 camp per a l'Eix X és obligatori
-
+LatestBlogPosts=Latest Blog Posts
 Notify_ORDER_VALIDATE=Ordre de venda validat
 Notify_ORDER_SENTBYMAIL=Ordre de venda enviat per correu
 Notify_ORDER_SUPPLIER_SENTBYMAIL=Ordre de compra enviat per correu electrònic
@@ -274,7 +274,7 @@ WEBSITE_PAGEURL=URL de pàgina
 WEBSITE_TITLE=Títol
 WEBSITE_DESCRIPTION=Descripció
 WEBSITE_IMAGE=Imatge
-WEBSITE_IMAGEDesc=Camí relatiu dels mitjans d'imatge. Podeu mantenir aquest buit perquè no s'usa gaire (el contingut dinàmic pot utilitzar-se per mostrar una vista prèvia d'una llista de publicacions de bloc).
+WEBSITE_IMAGEDesc=Relative path of the image media. You can keep this empty as this is rarely used (it can be used by dynamic content to show a thumbnail in a list of blog posts). Use __WEBSITE_KEY__ in the path if path depends on website name (for example: image/__WEBSITE_KEY__/stories/myimage.png).
 WEBSITE_KEYWORDS=Paraules clau
 LinesToImport=Línies per importar
 

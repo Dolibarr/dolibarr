@@ -32,19 +32,19 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/cron.lib.php';
 // Load translation files required by the page
 $langs->loadLangs(array('admin', 'cron'));
 
-if (! $user->admin)
+if (!$user->admin)
 	accessforbidden();
 
-$actionsave=GETPOST("save");
+$actionsave = GETPOST("save");
 
 // Save parameters
 if (!empty($actionsave))
 {
-	$i=0;
+	$i = 0;
 
 	$db->begin();
 
-	$i+=dolibarr_set_const($db, 'CRON_KEY', trim(GETPOST("CRON_KEY")), 'chaine', 0, '', 0);
+	$i += dolibarr_set_const($db, 'CRON_KEY', trim(GETPOST("CRON_KEY")), 'chaine', 0, '', 0);
 
 	if ($i >= 1)
 	{
@@ -65,7 +65,7 @@ if (!empty($actionsave))
 
 llxHeader();
 
-$linkback='<a href="'.DOL_URL_ROOT.'/admin/modules.php?restore_lastsearch_values=1">'.$langs->trans("BackToModuleList").'</a>';
+$linkback = '<a href="'.DOL_URL_ROOT.'/admin/modules.php?restore_lastsearch_values=1">'.$langs->trans("BackToModuleList").'</a>';
 print load_fiche_titre($langs->trans("CronSetup"), $linkback, 'title_setup');
 
 // Configuration header
@@ -88,19 +88,19 @@ print "</tr>";
 
 print '<tr class="impair">';
 print '<td class="fieldrequired">'.$langs->trans("KeyForCronAccess").'</td>';
-$disabled='';
-if (! empty($conf->global->CRON_DISABLE_KEY_CHANGE)) $disabled=' disabled="disabled"';
+$disabled = '';
+if (!empty($conf->global->CRON_DISABLE_KEY_CHANGE)) $disabled = ' disabled="disabled"';
 print '<td>';
 if (empty($conf->global->CRON_DISABLE_KEY_CHANGE))
 {
-    print '<input type="text" class="flat minwidth200"'.$disabled.' id="CRON_KEY" name="CRON_KEY" value="'. (GETPOST('CRON_KEY')?GETPOST('CRON_KEY'):(! empty($conf->global->CRON_KEY)?$conf->global->CRON_KEY:'')) . '">';
-    if (! empty($conf->use_javascript_ajax))
+    print '<input type="text" class="flat minwidth200"'.$disabled.' id="CRON_KEY" name="CRON_KEY" value="'.(GETPOST('CRON_KEY') ?GETPOST('CRON_KEY') : (!empty($conf->global->CRON_KEY) ? $conf->global->CRON_KEY : '')).'">';
+    if (!empty($conf->use_javascript_ajax))
     	print '&nbsp;'.img_picto($langs->trans('Generate'), 'refresh', 'id="generate_token" class="linkobject"');
 }
 else
 {
-    print (! empty($conf->global->CRON_KEY)?$conf->global->CRON_KEY:'');
-    print '<input type="hidden" id="CRON_KEY" name="CRON_KEY" value="'. (GETPOST('CRON_KEY')?GETPOST('CRON_KEY'):(! empty($conf->global->CRON_KEY)?$conf->global->CRON_KEY:'')) . '">';
+    print (!empty($conf->global->CRON_KEY) ? $conf->global->CRON_KEY : '');
+    print '<input type="hidden" id="CRON_KEY" name="CRON_KEY" value="'.(GETPOST('CRON_KEY') ?GETPOST('CRON_KEY') : (!empty($conf->global->CRON_KEY) ? $conf->global->CRON_KEY : '')).'">';
 }
 print '</td>';
 print '<td>&nbsp;</td>';
@@ -120,7 +120,7 @@ print '</form>';
 print '<br><br><br>';
 
 print $langs->trans("UseMenuModuleToolsToAddCronJobs", dol_buildpath('/cron/list.php?leftmenu=admintools', 1)).'<br>';
-if (! empty($conf->global->CRON_WARNING_DELAY_HOURS)) print info_admin($langs->trans("WarningCronDelayed", $conf->global->CRON_WARNING_DELAY_HOURS)).'<br>';
+if (!empty($conf->global->CRON_WARNING_DELAY_HOURS)) print info_admin($langs->trans("WarningCronDelayed", $conf->global->CRON_WARNING_DELAY_HOURS)).'<br>';
 
 print '<br>';
 
@@ -129,7 +129,7 @@ dol_print_cron_urls();
 
 print '<br>';
 
-if (! empty($conf->use_javascript_ajax))
+if (!empty($conf->use_javascript_ajax))
 {
 	print "\n".'<script type="text/javascript">';
 	print '$(document).ready(function () {

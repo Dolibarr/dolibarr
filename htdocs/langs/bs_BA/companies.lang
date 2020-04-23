@@ -325,7 +325,6 @@ CompanyDeleted=Kompanija"%s" obrisana iz baze podataka
 ListOfContacts=Lista kontakta/adresa
 ListOfContactsAddresses=Lista kontakta/adresa
 ListOfThirdParties=List of Third Parties
-ShowCompany=Show Third Party
 ShowContact=Prikaži kontakt
 ContactsAllShort=Svi (bez filtera)
 ContactType=Tip kontakta
@@ -447,6 +446,7 @@ SaleRepresentativeFirstname=Ime predstavnika prodaje
 SaleRepresentativeLastname=Prezime predstavnika prodaje
 ErrorThirdpartiesMerge=Nastala je greška pri brisanju treće strane. Molimo vas da provjerite zapisnik. Izmjene su vraćene.
 NewCustomerSupplierCodeProposed=Customer or Vendor code already used, a new code is suggested
+KeepEmptyIfGenericAddress=Keep this field empty if this address is a generic address
 #Imports
 PaymentTypeCustomer=Payment Type - Customer
 PaymentTermsCustomer=Payment Terms - Customer

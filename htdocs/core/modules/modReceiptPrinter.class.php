@@ -25,7 +25,7 @@
  *  \ingroup    printing
  *  \brief      File of class to describe and activate module Receipt Printer
  */
-include_once DOL_DOCUMENT_ROOT .'/core/modules/DolibarrModules.class.php';
+include_once DOL_DOCUMENT_ROOT.'/core/modules/DolibarrModules.class.php';
 
 
 
@@ -42,7 +42,7 @@ class modReceiptPrinter extends DolibarrModules
      */
     public function __construct($db)
     {
-        $this->db = $db ;
+        $this->db = $db;
         $this->numero = 67000;
         // Family can be 'crm','financial','hr','projects','products','ecm','technic','other'
         // It is used to group modules in module setup page
@@ -53,7 +53,7 @@ class modReceiptPrinter extends DolibarrModules
         // Module description, used if translation string 'ModuleXXXDesc' not found (where XXX is value of numeric property 'numero' of module)
         $this->description = "ReceiptPrinterDesc";
 		// Possible values for version are: 'development', 'experimental', 'dolibarr' or 'dolibarr_deprecated' or version
-        $this->version = 'development';
+        $this->version = 'experimental';
         $this->const_name = 'MAIN_MODULE_'.strtoupper($this->name);
         // Name of image file used for this module.
         // If file is in theme/yourtheme/img directory under name object_pictovalue.png, use this->picto='pictovalue'
@@ -67,12 +67,12 @@ class modReceiptPrinter extends DolibarrModules
         $this->config_page_url = array("receiptprinter.php");
 
         // Dependencies
-        $this->hidden = false;			// A condition to hide module
-		$this->depends = array();		// List of module class names as string that must be enabled if this module is enabled
-		$this->requiredby = array();	// List of module ids to disable if this one is disabled
-		$this->conflictwith = array();	// List of module class names as string this module is in conflict with
-		$this->phpmin = array(5,4);		// Minimum version of PHP required by module
-        $this->need_dolibarr_version = array(3,9,-2);   // Minimum version of Dolibarr required by module
+        $this->hidden = false; // A condition to hide module
+		$this->depends = array(); // List of module class names as string that must be enabled if this module is enabled
+		$this->requiredby = array(); // List of module ids to disable if this one is disabled
+		$this->conflictwith = array(); // List of module class names as string this module is in conflict with
+		$this->phpmin = array(5, 4); // Minimum version of PHP required by module
+        $this->need_dolibarr_version = array(3, 9, -2); // Minimum version of Dolibarr required by module
         $this->conflictwith = array();
         $this->langfiles = array("receiptprinter");
 
@@ -86,7 +86,7 @@ class modReceiptPrinter extends DolibarrModules
         $this->rights = array();
         $this->rights_class = 'receiptprinter';
 
-        $r=0;
+        $r = 0;
         // $this->rights[$r][0]     Id permission (unique tous modules confondus)
         // $this->rights[$r][1]     Libelle par defaut si traduction de cle "PermissionXXX" non trouvee (XXX = Id permission)
         // $this->rights[$r][2]     Non utilise
@@ -102,8 +102,8 @@ class modReceiptPrinter extends DolibarrModules
         $this->rights[$r][4] = 'read';
 
         // Main menu entries
-        $this->menus = array();         // List of menus to add
-        $r=0;
+        $this->menus = array(); // List of menus to add
+        $r = 0;
 
         // This is to declare the Top Menu entry:
         //$this->menu[$r]=array(  'fk_menu'=>'fk_mainmenu=home,fk_leftmenu=admintools',               // Put 0 if this is a top menu

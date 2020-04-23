@@ -665,7 +665,7 @@ class Products extends DolibarrApi
      */
     public function addPurchasePrice($id, $qty, $buyprice, $price_base_type, $fourn_id, $availability, $ref_fourn, $tva_tx, $charges = 0, $remise_percent = 0, $remise = 0, $newnpr = 0, $delivery_time_days = 0, $supplier_reputation = '', $localtaxes_array = array(), $newdefaultvatcode = '', $multicurrency_buyprice = 0, $multicurrency_price_base_type = 'HT', $multicurrency_tx = 1, $multicurrency_code = '', $desc_fourn = '', $barcode = '', $fk_barcode_type = null)
     {
-        if(! DolibarrApiAccess::$user->rights->produit->creer) {
+        if (!DolibarrApiAccess::$user->rights->produit->creer) {
             throw new RestException(401);
         }
 
@@ -1659,9 +1659,9 @@ class Products extends DolibarrApi
         	$this->product->load_stock();
 
         	if (is_array($this->product->stock_warehouse)) {
-        		foreach($this->product->stock_warehouse as $keytmp => $valtmp) {
+        		foreach ($this->product->stock_warehouse as $keytmp => $valtmp) {
         			if (is_array($this->product->stock_warehouse[$keytmp]->detail_batch)) {
-        				foreach($this->product->stock_warehouse[$keytmp]->detail_batch as $keytmp2 => $valtmp2) {
+        				foreach ($this->product->stock_warehouse[$keytmp]->detail_batch as $keytmp2 => $valtmp2) {
         					unset($this->product->stock_warehouse[$keytmp]->detail_batch[$keytmp2]->db);
         				}
         			}

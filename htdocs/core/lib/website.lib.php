@@ -220,6 +220,8 @@ function dolWebsiteOutput($content, $contenttype = 'html', $containerid = '')
 	global $db, $langs, $conf, $user;
 	global $dolibarr_main_url_root, $dolibarr_main_data_root;
 
+	$nbrep = 0;
+
 	dol_syslog("dolWebsiteOutput start (contenttype=".$contenttype." containerid=".$containerid." USEDOLIBARREDITOR=".(defined('USEDOLIBARREDITOR') ? '1' : '')." USEDOLIBARRSERVER=".(defined('USEDOLIBARRSERVER') ? '1' : '').')');
 
 	// Define $urlwithroot
@@ -300,7 +302,6 @@ function dolWebsiteOutput($content, $contenttype = 'html', $containerid = '')
 		// <img alt="" src="/dolibarr_dev/htdocs/viewimage.php?modulepart=medias&amp;entity=1&amp;file=image/ldestailleur_166x166.jpg" style="height:166px; width:166px" />
 		// become
 		// <img alt="" src="'.$urlwithroot.'/medias/image/ldestailleur_166x166.jpg" style="height:166px; width:166px" />
-		$nbrep = 0;
 		if (!$symlinktomediaexists)
 		{
 			// <img src="image.png... => <img src="medias/image.png...
@@ -349,7 +350,11 @@ function dolWebsiteOutput($content, $contenttype = 'html', $containerid = '')
 		}
 	}
 
-	$content = preg_replace('/ contenteditable="true"/', ' contenteditable="false"', $content, -1, $nbrep);
+	$content = str_replace(' contenteditable="true"', ' contenteditable="false"', $content);
+
+	if (! empty($conf->global->WEBSITE_ADD_CSS_TO_BODY)) {
+		$content = str_replace('<body id="bodywebsite" class="bodywebsite', '<body id="bodywebsite" class="bodywebsite '.$conf->global->WEBSITE_ADD_CSS_TO_BODY, $content);
+	}
 
 	dol_syslog("dolWebsiteOutput end");
 
@@ -562,7 +567,7 @@ function getStructuredData($type, $data = array())
 	}
 	elseif ($type == 'blogpost')
 	{
-		if (! empty($websitepage->author_alias))
+		if (!empty($websitepage->author_alias))
 		{
 			//include_once DOL_DOCUMENT_ROOT.'/user/class/user.class.php';
 			//$tmpuser = new User($db);
@@ -665,24 +670,24 @@ function getSocialNetworkSharingLinks()
 	$hashtags = trim(join(' #', array_map('trim', explode(',', $websitepage->keywords))));
 
 	$out = '<!-- section for social network sharing of page -->'."\n";
-	$out.= '<div class="dol-social-share">'."\n";
+	$out .= '<div class="dol-social-share">'."\n";
 
 	// Twitter
-	$out.= '<div class="dol-social-share-tw">'."\n";
-	$out.= '<a href="https://twitter.com/share" class="twitter-share-button" data-url="'.$fullurl.'" data-text="'.dol_escape_htmltag($websitepage->description).'" data-lang="'.$websitepage->lang.'" data-size="small" data-related="" data-hashtags="'.preg_replace('/^#/', '', $hashtags).'" data-count="horizontal">Tweet</a>';
-	$out.= '<script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0],p=/^http:/.test(d.location)?\'http\':\'https\';if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src=p+\'://platform.twitter.com/widgets.js\';fjs.parentNode.insertBefore(js,fjs);}}(document, \'script\', \'twitter-wjs\');</script>';
-	$out.= '</div>'."\n";
+	$out .= '<div class="dol-social-share-tw">'."\n";
+	$out .= '<a href="https://twitter.com/share" class="twitter-share-button" data-url="'.$fullurl.'" data-text="'.dol_escape_htmltag($websitepage->description).'" data-lang="'.$websitepage->lang.'" data-size="small" data-related="" data-hashtags="'.preg_replace('/^#/', '', $hashtags).'" data-count="horizontal">Tweet</a>';
+	$out .= '<script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0],p=/^http:/.test(d.location)?\'http\':\'https\';if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src=p+\'://platform.twitter.com/widgets.js\';fjs.parentNode.insertBefore(js,fjs);}}(document, \'script\', \'twitter-wjs\');</script>';
+	$out .= '</div>'."\n";
 
 	// Reddit
-	$out.= '<div class="dol-social-share-reddit">'."\n";
-	$out.= '<a href="https://www.reddit.com/submit" target="_blank" onclick="window.location = \'https://www.reddit.com/submit?url='.$fullurl.'\'; return false">';
-	$out.= '<img src="https://www.reddit.com/static/spreddit7.gif" alt="Submit to reddit" border="0" /> </a>';
-	$out.= '</div>'."\n";
+	$out .= '<div class="dol-social-share-reddit">'."\n";
+	$out .= '<a href="https://www.reddit.com/submit" target="_blank" onclick="window.location = \'https://www.reddit.com/submit?url='.$fullurl.'\'; return false">';
+	$out .= '<img src="https://www.reddit.com/static/spreddit7.gif" alt="Submit to reddit" border="0" /> </a>';
+	$out .= '</div>'."\n";
 
 	// Facebook
-	$out.= '<div class="dol-social-share-fbl">'."\n";
-	$out.= '<div id="fb-root"></div>'."\n";
-	$out.= '<script>(function(d, s, id) {
+	$out .= '<div class="dol-social-share-fbl">'."\n";
+	$out .= '<div id="fb-root"></div>'."\n";
+	$out .= '<script>(function(d, s, id) {
 			  var js, fjs = d.getElementsByTagName(s)[0];
 			  if (d.getElementById(id)) return;
 			  js = d.createElement(s); js.id = id;
@@ -697,10 +702,10 @@ function getSocialNetworkSharingLinks()
 			        colorscheme="light"
 			        share="1"
 			        action="like" ></fb:like>'."\n";
-	$out.= '</div>'."\n";
+	$out .= '</div>'."\n";
 
-	$out.= "\n</div>\n";
-	$out.= '<!-- section end for social network sharing of page -->'."\n";
+	$out .= "\n</div>\n";
+	$out .= '<!-- section end for social network sharing of page -->'."\n";
 
 	return $out;
 }
@@ -742,7 +747,7 @@ function getPagesFromSearchCriterias($type, $algo, $searchstring, $max = 25, $so
 	else
 	{
 		$tmparrayoftype = explode(',', $type);
-		foreach($tmparrayoftype as $tmptype) {
+		foreach ($tmparrayoftype as $tmptype) {
 			if (!in_array($tmptype, array('', 'page', 'blogpost'))) {
 				$error++;
 				$arrayresult['code'] = 'KO';
@@ -762,8 +767,8 @@ function getPagesFromSearchCriterias($type, $algo, $searchstring, $max = 25, $so
 		if ($type) {
 			$tmparrayoftype = explode(',', $type);
 			$typestring = '';
-			foreach($tmparrayoftype as $tmptype) {
-				$typestring .= ($typestring ? ", ": "")."'".trim($tmptype)."'";
+			foreach ($tmparrayoftype as $tmptype) {
+				$typestring .= ($typestring ? ", " : "")."'".trim($tmptype)."'";
 			}
 			$sql .= " AND type_container IN (".$typestring.")";
 		}
@@ -793,7 +798,7 @@ function getPagesFromSearchCriterias($type, $algo, $searchstring, $max = 25, $so
 				{
 					$tmpwebsitepage = new WebsitePage($db);
 					$tmpwebsitepage->fetch($obj->rowid);
-					if ($tmpwebsitepage->id > 0) $arrayresult['list'][] = $tmpwebsitepage;
+					if ($tmpwebsitepage->id > 0) $arrayresult['list'][$obj->rowid] = $tmpwebsitepage;
 					$found++;
 				}
 				$i++;

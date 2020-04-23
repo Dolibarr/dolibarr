@@ -31,29 +31,29 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/vat.lib.php';
 // Load translation files required by the page
 $langs->loadLangs(array('compta', 'banks', 'bills'));
 
-$id=GETPOST("id", 'int');
-$action=GETPOST("action", "alpha");
-$refund=GETPOST("refund", "int");
-if (empty($refund)) $refund=0;
+$id = GETPOST("id", 'int');
+$action = GETPOST("action", "alpha");
+$refund = GETPOST("refund", "int");
+if (empty($refund)) $refund = 0;
 
-$lttype=GETPOST('localTaxType', 'int');
+$lttype = GETPOST('localTaxType', 'int');
 
 // Security check
 $socid = GETPOST('socid', 'int');
-if ($user->socid) $socid=$user->socid;
+if ($user->socid) $socid = $user->socid;
 $result = restrictedArea($user, 'tax', '', '', 'charges');
 
 $object = new Localtax($db);
 
 // Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
-$hookmanager->initHooks(array('localtaxvatcard','globalcard'));
+$hookmanager->initHooks(array('localtaxvatcard', 'globalcard'));
 
 
 /**
  * Actions
  */
 
-if ($_POST["cancel"] == $langs->trans("Cancel") && ! $id)
+if ($_POST["cancel"] == $langs->trans("Cancel") && !$id)
 {
 	header("Location: list.php?localTaxType=".$lttype);
 	exit;

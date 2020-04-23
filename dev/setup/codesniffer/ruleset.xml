@@ -222,6 +222,9 @@
     <rule ref="Squiz.ControlStructures.ForEachLoopDeclaration.SpaceBeforeClose" />
 
     <rule ref="Squiz.Functions.MultiLineFunctionDeclaration" />
+	<rule ref="Squiz.Functions.MultiLineFunctionDeclaration.SpaceAfterFunction">
+        <severity>0</severity>
+	</rule>
     <rule ref="Squiz.Functions.FunctionDeclarationArgumentSpacing">
         <properties>
             <property name="equalsSpacing" value="1"/>

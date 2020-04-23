@@ -26,5 +26,4 @@ FileIsTooBig=Dateien sind zu gross
 WebsiteSetup=Einstellungen des Webseitenmoduls
 WEBSITE_PAGEURL=URL für Seite
 WEBSITE_TITLE=Titel
-WEBSITE_IMAGEDesc=Relative path of the image media. You can keep this empty as this is rarely used (it can be used by dynamic content to show a thumbnail in a list of blog posts). Use __WEBSITEKEY__ in the path if path depends on website name.
 WEBSITE_KEYWORDS=Stichworte

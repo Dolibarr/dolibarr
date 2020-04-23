@@ -50,28 +50,28 @@ function facture_prepare_head($object)
 	    $nbContact = count($object->liste_contact(-1, 'internal')) + count($object->liste_contact(-1, 'external'));
 	    $head[$h][0] = DOL_URL_ROOT.'/compta/facture/contact.php?facid='.$object->id;
 		$head[$h][1] = $langs->trans('ContactsAddresses');
-		if ($nbContact > 0) $head[$h][1].= '<span class="badge marginleftonlyshort">'.$nbContact.'</span>';
+		if ($nbContact > 0) $head[$h][1] .= '<span class="badge marginleftonlyshort">'.$nbContact.'</span>';
 		$head[$h][2] = 'contact';
 		$h++;
 	}
 
 	//if ($fac->mode_reglement_code == 'PRE')
-	if (! empty($conf->prelevement->enabled))
+	if (!empty($conf->prelevement->enabled))
 	{
-	    $nbStandingOrders=0;
+	    $nbStandingOrders = 0;
 	    $sql = "SELECT COUNT(pfd.rowid) as nb";
 	    $sql .= " FROM ".MAIN_DB_PREFIX."prelevement_facture_demande as pfd";
 	    $sql .= " WHERE pfd.fk_facture = ".$object->id;
-        $resql=$db->query($sql);
+        $resql = $db->query($sql);
         if ($resql)
         {
-            $obj=$db->fetch_object($resql);
+            $obj = $db->fetch_object($resql);
             if ($obj) $nbStandingOrders = $obj->nb;
         }
         else dol_print_error($db);
 		$head[$h][0] = DOL_URL_ROOT.'/compta/facture/prelevement.php?facid='.$object->id;
 		$head[$h][1] = $langs->trans('StandingOrders');
-		if ($nbStandingOrders > 0) $head[$h][1].= '<span class="badge marginleftonlyshort">'.$nbStandingOrders.'</span>';
+		if ($nbStandingOrders > 0) $head[$h][1] .= '<span class="badge marginleftonlyshort">'.$nbStandingOrders.'</span>';
 		$head[$h][2] = 'standingorders';
 		$h++;
 	}
@@ -85,23 +85,23 @@ function facture_prepare_head($object)
     if (empty($conf->global->MAIN_DISABLE_NOTES_TAB))
     {
     	$nbNote = 0;
-        if(!empty($object->note_private)) $nbNote++;
-		if(!empty($object->note_public)) $nbNote++;
+        if (!empty($object->note_private)) $nbNote++;
+		if (!empty($object->note_public)) $nbNote++;
     	$head[$h][0] = DOL_URL_ROOT.'/compta/facture/note.php?facid='.$object->id;
     	$head[$h][1] = $langs->trans('Notes');
-		if ($nbNote > 0) $head[$h][1].= '<span class="badge marginleftonlyshort">'.$nbNote.'</span>';
+		if ($nbNote > 0) $head[$h][1] .= '<span class="badge marginleftonlyshort">'.$nbNote.'</span>';
     	$head[$h][2] = 'note';
     	$h++;
     }
 
 	require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
     require_once DOL_DOCUMENT_ROOT.'/core/class/link.class.php';
-	$upload_dir = $conf->facture->dir_output . "/" . dol_sanitizeFileName($object->ref);
+	$upload_dir = $conf->facture->dir_output."/".dol_sanitizeFileName($object->ref);
 	$nbFiles = count(dol_dir_list($upload_dir, 'files', 0, '', '(\.meta|_preview.*\.png)$'));
-    $nbLinks=Link::count($db, $object->element, $object->id);
+    $nbLinks = Link::count($db, $object->element, $object->id);
 	$head[$h][0] = DOL_URL_ROOT.'/compta/facture/document.php?facid='.$object->id;
 	$head[$h][1] = $langs->trans('Documents');
-	if (($nbFiles+$nbLinks) > 0) $head[$h][1].= '<span class="badge marginleftonlyshort">'.($nbFiles+$nbLinks).'</span>';
+	if (($nbFiles + $nbLinks) > 0) $head[$h][1] .= '<span class="badge marginleftonlyshort">'.($nbFiles + $nbLinks).'</span>';
 	$head[$h][2] = 'documents';
 	$h++;
 

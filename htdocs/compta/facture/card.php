@@ -139,6 +139,11 @@ if ($user->socid) $socid = $user->socid;
 $isdraft = (($object->statut == Facture::STATUS_DRAFT) ? 1 : 0);
 $result = restrictedArea($user, 'facture', $id, '', '', 'fk_soc', $fieldid, $isdraft);
 
+// retained warranty invoice available type
+$retainedWarrantyInvoiceAvailableType=array();
+if(!empty($conf->global->INVOICE_USE_RETAINED_WARRANTY)) {
+	$retainedWarrantyInvoiceAvailableType = explode('+', $conf->global->INVOICE_USE_RETAINED_WARRANTY);
+}
 
 
 /*
@@ -413,7 +418,9 @@ if (empty($reshook))
 		if ($new_date_lim_reglement > $old_date_lim_reglement) $object->date_lim_reglement = $new_date_lim_reglement;
 		if ($object->date_lim_reglement < $object->date) $object->date_lim_reglement = $object->date;
 		$result = $object->update($user);
-		if ($result < 0) dol_print_error($db, $object->error);
+		if ($result < 0) {
+			dol_print_error($db, $object->error);
+		}
 	}
 
 	elseif ($action == 'setdate_pointoftax' && $usercancreate)
@@ -422,7 +429,9 @@ if (empty($reshook))
 		$date_pointoftax = dol_mktime(12, 0, 0, $_POST['date_pointoftaxmonth'], $_POST['date_pointoftaxday'], $_POST['date_pointoftaxyear']);
 		$object->date_pointoftax = $date_pointoftax;
 		$result = $object->update($user);
-		if ($result < 0) dol_print_error($db, $object->error);
+		if ($result < 0) {
+			dol_print_error($db, $object->error);
+		}
 	}
 
 	elseif ($action == 'setconditions' && $usercancreate)
@@ -438,7 +447,9 @@ if (empty($reshook))
 		if ($new_date_lim_reglement > $old_date_lim_reglement) $object->date_lim_reglement = $new_date_lim_reglement;
 		if ($object->date_lim_reglement < $object->date) $object->date_lim_reglement = $object->date;
 		$result = $object->update($user);
-		if ($result < 0) dol_print_error($db, $object->error);
+		if ($result < 0) {
+			dol_print_error($db, $object->error);
+		}
 	}
 
 	elseif ($action == 'setpaymentterm' && $usercancreate)
@@ -450,8 +461,9 @@ if (empty($reshook))
 			setEventMessages($langs->trans("DatePaymentTermCantBeLowerThanObjectDate"), null, 'warnings');
 		}
 		$result = $object->update($user);
-		if ($result < 0)
+		if ($result < 0) {
 			dol_print_error($db, $object->error);
+		}
 	}
 
 	elseif ($action == 'setrevenuestamp' && $usercancreate)
@@ -460,8 +472,28 @@ if (empty($reshook))
 		$object->revenuestamp = GETPOST('revenuestamp');
 		$result = $object->update($user);
 		$object->update_price(1);
-		if ($result < 0)
+		if ($result < 0) {
 			dol_print_error($db, $object->error);
+		} else {
+			// Define output language
+			if (empty($conf->global->MAIN_DISABLE_PDF_AUTOUPDATE))
+			{
+				$outputlangs = $langs;
+				$newlang = '';
+				if ($conf->global->MAIN_MULTILANGS && empty($newlang) && GETPOST('lang_id', 'aZ09')) $newlang = GETPOST('lang_id', 'aZ09');
+				if ($conf->global->MAIN_MULTILANGS && empty($newlang))	$newlang = $object->thirdparty->default_lang;
+				if (!empty($newlang)) {
+					$outputlangs = new Translate("", $conf);
+					$outputlangs->setDefaultLang($newlang);
+					$outputlangs->load('products');
+				}
+				$model = $object->modelpdf;
+				$ret = $object->fetch($id); // Reload to get new records
+
+				$result = $object->generateDocument($model, $outputlangs, $hidedetails, $hidedesc, $hideref);
+				if ($result < 0) setEventMessages($object->error, $object->errors, 'errors');
+			}
+		}
 	}
 
 	// Set incoterm
@@ -1114,7 +1146,7 @@ if (empty($reshook))
 						foreach ($facture_source->lines as $line)
 						{
 							// Extrafields
-							if (empty($conf->global->MAIN_EXTRAFIELDS_DISABLED) && method_exists($line, 'fetch_optionals')) {
+							if (method_exists($line, 'fetch_optionals')) {
 								// load extrafields
 								$line->fetch_optionals();
 							}
@@ -1328,17 +1360,22 @@ if (empty($reshook))
 					$object->situation_counter = 1;
 					$object->situation_final = 0;
 					$object->situation_cycle_ref = $object->newCycle();
+				}
 
-
+				if(in_array($object->type, $retainedWarrantyInvoiceAvailableType)){
 					$object->retained_warranty = GETPOST('retained_warranty', 'int');
 					$object->retained_warranty_fk_cond_reglement = GETPOST('retained_warranty_fk_cond_reglement', 'int');
-
-				    $retained_warranty_date_limit = GETPOST('retained_warranty_date_limit');
-				    if (!empty($retained_warranty_date_limit) && $db->jdate($retained_warranty_date_limit)) {
-				        $object->retained_warranty_date_limit = $db->jdate($retained_warranty_date_limit);
-				    }
-				    $object->retained_warranty_date_limit = !empty($object->retained_warranty_date_limit) ? $object->retained_warranty_date_limit : $object->calculate_date_lim_reglement($object->retained_warranty_fk_cond_reglement);
 				}
+				else{
+					$object->retained_warranty = 0;
+					$object->retained_warranty_fk_cond_reglement = 0;
+				}
+
+			    $retained_warranty_date_limit = GETPOST('retained_warranty_date_limit');
+			    if (!empty($retained_warranty_date_limit) && $db->jdate($retained_warranty_date_limit)) {
+			        $object->retained_warranty_date_limit = $db->jdate($retained_warranty_date_limit);
+			    }
+			    $object->retained_warranty_date_limit = !empty($object->retained_warranty_date_limit) ? $object->retained_warranty_date_limit : $object->calculate_date_lim_reglement($object->retained_warranty_fk_cond_reglement);
 
 				$object->fetch_thirdparty();
 
@@ -1607,7 +1644,7 @@ if (empty($reshook))
 										}
 
 										// Extrafields
-										if (empty($conf->global->MAIN_EXTRAFIELDS_DISABLED) && method_exists($lines[$i], 'fetch_optionals')) {
+										if (method_exists($lines[$i], 'fetch_optionals')) {
 											$lines[$i]->fetch_optionals();
 											$array_options = $lines[$i]->array_options;
 										}
@@ -1729,20 +1766,31 @@ if (empty($reshook))
 				$object->fk_facture_source = $_POST['situations'];
 				$object->type = Facture::TYPE_SITUATION;
 
-
-                $object->retained_warranty = GETPOST('retained_warranty', 'int');
-                $object->retained_warranty_fk_cond_reglement = GETPOST('retained_warranty_fk_cond_reglement', 'int');
-
-                $retained_warranty_date_limit = GETPOST('retained_warranty_date_limit');
-                if (!empty($retained_warranty_date_limit) && $db->jdate($retained_warranty_date_limit)) {
-                    $object->retained_warranty_date_limit = $db->jdate($retained_warranty_date_limit);
-                }
-                $object->retained_warranty_date_limit = !empty($object->retained_warranty_date_limit) ? $object->retained_warranty_date_limit : $object->calculate_date_lim_reglement($object->retained_warranty_fk_cond_reglement);
-
-                if (!empty($origin) && !empty($originid))
+				if (!empty($origin) && !empty($originid))
 				{
 					$object->origin = $origin;
 					$object->origin_id = $originid;
+
+					// retained warranty
+					if(!empty($conf->global->INVOICE_USE_RETAINED_WARRANTY))
+					{
+					    $retained_warranty = GETPOST('retained_warranty', 'int');
+					    if(price2num($retained_warranty) > 0)
+					    {
+					        $object->retained_warranty  = price2num($retained_warranty);
+					    }
+
+					    if(GETPOST('retained_warranty_fk_cond_reglement', 'int') > 0)
+					    {
+                			$object->retained_warranty_fk_cond_reglement = GETPOST('retained_warranty_fk_cond_reglement', 'int');
+					    }
+
+				        $retained_warranty_date_limit = GETPOST('retained_warranty_date_limit');
+				        if (!empty($retained_warranty_date_limit) && $db->jdate($retained_warranty_date_limit)) {
+				            $object->retained_warranty_date_limit = $db->jdate($retained_warranty_date_limit);
+				        }
+					    $object->retained_warranty_date_limit = !empty($object->retained_warranty_date_limit) ? $object->retained_warranty_date_limit : $object->calculate_date_lim_reglement($object->retained_warranty_fk_cond_reglement);
+                	}
 
 					foreach ($object->lines as $i => &$line)
 					{
@@ -3344,54 +3392,55 @@ if ($action == 'create')
 	$form->select_conditions_paiements(GETPOSTISSET('cond_reglement_id') ? GETPOST('cond_reglement_id', 'int') : $cond_reglement_id, 'cond_reglement_id');
 	print '</td></tr>';
 
-	if (!empty($conf->global->INVOICE_USE_SITUATION))
-	{
-	    if ($conf->global->INVOICE_USE_SITUATION_RETAINED_WARRANTY) {
-	        $rwStyle = 'display:none;';
-	        if (GETPOST('type', 'int') == Facture::TYPE_SITUATION) {
-	            $rwStyle = '';
-	        }
 
-	        $retained_warranty = GETPOST('retained_warranty', 'int');
-	        if(empty($retained_warranty)){
-                if(!empty($objectsrc->retained_warranty)){ // use previous situation value
-                    $retained_warranty = $objectsrc->retained_warranty;
-                }else{
-                    $retained_warranty = $conf->global->INVOICE_SITUATION_DEFAULT_RETAINED_WARRANTY_PERCENT;
-                }
-            }
+	if($conf->global->INVOICE_USE_RETAINED_WARRANTY){
+		$rwStyle = 'display:none;';
+		if(in_array(GETPOST('type', 'int'), $retainedWarrantyInvoiceAvailableType)){
+			$rwStyle = '';
+		}
 
-	        print '<tr class="retained-warranty-line" style="'.$rwStyle.'" ><td class="nowrap">'.$langs->trans('RetainedWarranty').'</td><td colspan="2">';
-	        print '<input id="new-situation-invoice-retained-warranty" name="retained_warranty" type="number" value="'.$retained_warranty.'" step="0.01" min="0" max="100" />%';
+		$retained_warranty = GETPOST('retained_warranty', 'int');
+		if(empty($retained_warranty)){
+			if(!empty($objectsrc->retained_warranty)){ // use previous situation value
+				$retained_warranty = $objectsrc->retained_warranty;
+			}
+		}
+		$retained_warranty_js_default = !empty($retained_warranty)?$retained_warranty:$conf->global->INVOICE_SITUATION_DEFAULT_RETAINED_WARRANTY_PERCENT;
 
-	        // Retained warranty payment term
-	        print '<tr class="retained-warranty-line" style="'.$rwStyle.'" ><td class="nowrap">'.$langs->trans('PaymentConditionsShortRetainedWarranty').'</td><td colspan="2">';
-	        $retained_warranty_fk_cond_reglement = GETPOST('retained_warranty_fk_cond_reglement', 'int');
-	        if(empty($retained_warranty_fk_cond_reglement)){
-                $retained_warranty_fk_cond_reglement = $conf->global->INVOICE_SITUATION_DEFAULT_RETAINED_WARRANTY_COND_ID;
-                if(!empty($objectsrc->retained_warranty_fk_cond_reglement)){ // use previous situation value
-                    $retained_warranty_fk_cond_reglement = $objectsrc->retained_warranty_fk_cond_reglement;
-                }else{
-                    $retained_warranty_fk_cond_reglement = $conf->global->INVOICE_SITUATION_DEFAULT_RETAINED_WARRANTY_COND_ID;
-                }
-            }
-	        $form->select_conditions_paiements($retained_warranty_fk_cond_reglement, 'retained_warranty_fk_cond_reglement', -1, 1);
-	        print '</td></tr>';
+		print '<tr class="retained-warranty-line" style="'.$rwStyle.'" ><td class="nowrap">'.$langs->trans('RetainedWarranty').'</td><td colspan="2">';
+		print '<input id="new-situation-invoice-retained-warranty" name="retained_warranty" type="number" value="'.$retained_warranty.'" step="0.01" min="0" max="100" />%';
 
-	        print '<script type="text/javascript" language="javascript">
-    		$(document).ready(function() {
-    			$("[name=\'type\'").change(function() {
-    				if($( this ).prop("checked") && $( this ).val() == '.Facture::TYPE_SITUATION.')
-                    {
-                        $(".retained-warranty-line").show();
-                    }
-                    else{
-                        $(".retained-warranty-line").hide();
-                    }
-    			});
-    		});
-    		</script>';
-	    }
+		// Retained warranty payment term
+		print '<tr class="retained-warranty-line" style="'.$rwStyle.'" ><td class="nowrap">'.$langs->trans('PaymentConditionsShortRetainedWarranty').'</td><td colspan="2">';
+		$retained_warranty_fk_cond_reglement = GETPOST('retained_warranty_fk_cond_reglement', 'int');
+		if(empty($retained_warranty_fk_cond_reglement)){
+			$retained_warranty_fk_cond_reglement = $conf->global->INVOICE_SITUATION_DEFAULT_RETAINED_WARRANTY_COND_ID;
+			if(!empty($objectsrc->retained_warranty_fk_cond_reglement)){ // use previous situation value
+				$retained_warranty_fk_cond_reglement = $objectsrc->retained_warranty_fk_cond_reglement;
+			}else{
+				$retained_warranty_fk_cond_reglement = $conf->global->INVOICE_SITUATION_DEFAULT_RETAINED_WARRANTY_COND_ID;
+			}
+		}
+		$form->select_conditions_paiements($retained_warranty_fk_cond_reglement, 'retained_warranty_fk_cond_reglement', -1, 1);
+		print '</td></tr>';
+
+		print '<script type="text/javascript" language="javascript">
+		$(document).ready(function() {
+		$("[name=\'type\']").change(function() {
+				if($( this ).prop("checked") && $.inArray($( this ).val(), '.json_encode($retainedWarrantyInvoiceAvailableType).' ) !== -1)
+				{
+					$(".retained-warranty-line").show();
+					$("#new-situation-invoice-retained-warranty").val("'.doubleval($retained_warranty_js_default).'");
+				}
+				else{
+					$(".retained-warranty-line").hide();
+					$("#new-situation-invoice-retained-warranty").val("");
+				}
+			});
+
+			$("[name=\'type\']").trigger("change");
+		});
+		</script>';
 	}
 
 	// Payment mode
@@ -3956,6 +4005,20 @@ elseif ($id > 0 || !empty($ref))
 		$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"].'?facid='.$object->id, $langs->trans('ToClone'), $langs->trans('ConfirmCloneInvoice', $object->ref), 'confirm_clone', $formquestion, 'yes', 1, 250);
 	}
 
+	if ($action == "remove_file_comfirm")
+	{
+		$file = GETPOST('file', 'alpha');
+
+		$formconfirm = $form->formconfirm(
+			$_SERVER["PHP_SELF"].'?facid='.$object->id.'&file='.$file,
+			$langs->trans('DeleteFileHeader'),
+			$langs->trans('DeleteFileText')."<br><br>".$file,
+			'remove_file',
+			'',
+			'no',
+			2);
+	}
+
 	// Call Hook formConfirm
 	$parameters = array('formConfirm' => $formconfirm, 'lineid' => $lineid, 'remainingtopay' => &$resteapayer);
 	$reshook = $hookmanager->executeHooks('formConfirm', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
@@ -4292,89 +4355,79 @@ elseif ($id > 0 || !empty($ref))
 		print '</td></tr>';
 	}
 
-	$displayWarranty = false;
-	if (($object->type == Facture::TYPE_SITUATION && (!empty($object->retained_warranty) || !empty($conf->global->INVOICE_USE_SITUATION_RETAINED_WARRANTY))))
-	{
-	    // Check if this situation invoice is 100% for real
-	    if (!empty($object->situation_final) && !empty($object->lines)) {
-	        $displayWarranty = true;
-	        foreach ($object->lines as $i => $line) {
-	            if ($line->product_type < 2 && $line->situation_percent < 100) {
-	                $displayWarranty = false;
-	                break;
-	            }
-	        }
-	    }
 
 
+	if (!empty($object->retained_warranty) || !empty($conf->global->INVOICE_USE_RETAINED_WARRANTY)) {
+        $displayWarranty = true;
+		if (!in_array($object->type, $retainedWarrantyInvoiceAvailableType) && empty($object->retained_warranty)) {
+			$displayWarranty = false;
+		}
 
-    	// Retained Warranty
-    	print '<tr class="retained-warranty-lines"  ><td>';
-    	print '<table id="retained-warranty-table" class="nobordernopadding" width="100%"><tr><td>';
-    	print $langs->trans('RetainedWarranty');
-    	print '</td>';
-    	if ($action != 'editretainedwarranty' && $user->rights->facture->creer) {
-    	    print '<td align="right"><a class="editfielda" href="'.$_SERVER["PHP_SELF"].'?action=editretainedwarranty&amp;facid='.$object->id.'">'.img_edit($langs->trans('setretainedwarranty'), 1).'</a></td>';
-    	}
+		if($displayWarranty) {
+			// Retained Warranty
+			print '<tr class="retained-warranty-lines"  ><td>';
+			print '<table id="retained-warranty-table" class="nobordernopadding" width="100%"><tr><td>';
+			print $langs->trans('RetainedWarranty');
+			print '</td>';
+			if ($action != 'editretainedwarranty' && $user->rights->facture->creer) {
+			    print '<td align="right"><a class="editfielda" href="'.$_SERVER["PHP_SELF"].'?action=editretainedwarranty&amp;facid='.$object->id.'">'.img_edit($langs->trans('setretainedwarranty'), 1).'</a></td>';
+			}
 
-        print '</tr></table>';
-        print '</td><td>';
-        if ($action == 'editretainedwarranty')
-        {
-            print '<form  id="retained-warranty-form"  method="POST" action="'.$_SERVER['PHP_SELF'].'?facid='.$object->id.'">';
-            print '<input type="hidden" name="action" value="setretainedwarranty">';
-            print '<input type="hidden" name="token" value="'.newToken().'">';
-            print '<input name="retained_warranty" type="number" step="0.01" min="0" max="100" value="'.$object->retained_warranty.'" >';
-            print '<input type="submit" class="button valignmiddle" value="'.$langs->trans("Modify").'">';
-            print '</form>';
-        }
-        else
-        {
-            print price($object->retained_warranty).'%';
-        }
-        print '</td></tr>';
+		    print '</tr></table>';
+		    print '</td><td>';
+		    if ($action == 'editretainedwarranty')
+		    {
+		        print '<form  id="retained-warranty-form"  method="POST" action="'.$_SERVER['PHP_SELF'].'?facid='.$object->id.'">';
+		        print '<input type="hidden" name="action" value="setretainedwarranty">';
+		        print '<input type="hidden" name="token" value="'.newToken().'">';
+		        print '<input name="retained_warranty" type="number" step="0.01" min="0" max="100" value="'.$object->retained_warranty.'" >';
+		        print '<input type="submit" class="button valignmiddle" value="'.$langs->trans("Modify").'">';
+		        print '</form>';
+		    }
+		    else
+		    {
+		        print price($object->retained_warranty).'%';
+		    }
+		    print '</td></tr>';
 
-        // Retained warranty payment term
-        print '<tr class="retained-warranty-lines"  ><td>';
-        print '<table id="retained-warranty-cond-reglement-table"  class="nobordernopadding" width="100%"><tr><td>';
-        print $langs->trans('PaymentConditionsShortRetainedWarranty');
-        print '</td>';
-        if ($action != 'editretainedwarrantypaymentterms' && $user->rights->facture->creer) {
-            print '<td align="right"><a class="editfielda" href="'.$_SERVER["PHP_SELF"].'?action=editretainedwarrantypaymentterms&amp;facid='.$object->id.'">'.img_edit($langs->trans('setPaymentConditionsShortRetainedWarranty'), 1).'</a></td>';
-        }
+		    // Retained warranty payment term
+		    print '<tr class="retained-warranty-lines"  ><td>';
+		    print '<table id="retained-warranty-cond-reglement-table"  class="nobordernopadding" width="100%"><tr><td>';
+		    print $langs->trans('PaymentConditionsShortRetainedWarranty');
+		    print '</td>';
+		    if ($action != 'editretainedwarrantypaymentterms' && $user->rights->facture->creer) {
+		        print '<td align="right"><a class="editfielda" href="'.$_SERVER["PHP_SELF"].'?action=editretainedwarrantypaymentterms&amp;facid='.$object->id.'">'.img_edit($langs->trans('setPaymentConditionsShortRetainedWarranty'), 1).'</a></td>';
+		    }
 
-        print '</tr></table>';
-        print '</td><td>';
-        $defaultDate = !empty($object->retained_warranty_date_limit) ? $object->retained_warranty_date_limit : strtotime('-1 years', $object->date_lim_reglement);
-        if ($object->date > $defaultDate) {
-            $defaultDate = $object->date;
-        }
+		    print '</tr></table>';
+		    print '</td><td>';
+		    $defaultDate = !empty($object->retained_warranty_date_limit) ? $object->retained_warranty_date_limit : strtotime('-1 years', $object->date_lim_reglement);
+		    if ($object->date > $defaultDate) {
+		        $defaultDate = $object->date;
+		    }
 
-        if ($action == 'editretainedwarrantypaymentterms')
-        {
-            //date('Y-m-d',$object->date_lim_reglement)
-            print '<form method="POST" action="'.$_SERVER['PHP_SELF'].'?facid='.$object->id.'">';
-            print '<input type="hidden" name="action" value="setretainedwarrantyconditions">';
-            print '<input type="hidden" name="token" value="'.newToken().'">';
-            $retained_warranty_fk_cond_reglement = GETPOST('retained_warranty_fk_cond_reglement', 'int');
-            $retained_warranty_fk_cond_reglement = !empty($retained_warranty_fk_cond_reglement) ? $retained_warranty_fk_cond_reglement : $object->retained_warranty_fk_cond_reglement;
-            $retained_warranty_fk_cond_reglement = !empty($retained_warranty_fk_cond_reglement) ? $retained_warranty_fk_cond_reglement : $conf->global->INVOICE_SITUATION_DEFAULT_RETAINED_WARRANTY_COND_ID;
-            $form->select_conditions_paiements($retained_warranty_fk_cond_reglement, 'retained_warranty_fk_cond_reglement', -1, 1);
-            print '<input type="submit" class="button valignmiddle" value="'.$langs->trans("Modify").'">';
-            print '</form>';
-        }
-        else
-        {
-            $form->form_conditions_reglement($_SERVER['PHP_SELF'].'?facid='.$object->id, $object->retained_warranty_fk_cond_reglement, 'none');
-            if (!$displayWarranty) {
-                print img_picto($langs->trans('RetainedWarrantyNeed100Percent'), 'warning.png', 'class="pictowarning valignmiddle" ');
-            }
-        }
-        print '</td></tr>';
+		    if ($action == 'editretainedwarrantypaymentterms')
+		    {
+		        //date('Y-m-d',$object->date_lim_reglement)
+		        print '<form method="POST" action="'.$_SERVER['PHP_SELF'].'?facid='.$object->id.'">';
+		        print '<input type="hidden" name="action" value="setretainedwarrantyconditions">';
+		        print '<input type="hidden" name="token" value="'.newToken().'">';
+		        $retained_warranty_fk_cond_reglement = GETPOST('retained_warranty_fk_cond_reglement', 'int');
+		        $retained_warranty_fk_cond_reglement = !empty($retained_warranty_fk_cond_reglement) ? $retained_warranty_fk_cond_reglement : $object->retained_warranty_fk_cond_reglement;
+		        $retained_warranty_fk_cond_reglement = !empty($retained_warranty_fk_cond_reglement) ? $retained_warranty_fk_cond_reglement : $conf->global->INVOICE_SITUATION_DEFAULT_RETAINED_WARRANTY_COND_ID;
+		        $form->select_conditions_paiements($retained_warranty_fk_cond_reglement, 'retained_warranty_fk_cond_reglement', -1, 1);
+		        print '<input type="submit" class="button valignmiddle" value="'.$langs->trans("Modify").'">';
+		        print '</form>';
+		    }
+		    else
+		    {
+		        $form->form_conditions_reglement($_SERVER['PHP_SELF'].'?facid='.$object->id, $object->retained_warranty_fk_cond_reglement, 'none');
+		        if (!$displayWarranty) {
+		            print img_picto($langs->trans('RetainedWarrantyNeed100Percent'), 'warning.png', 'class="pictowarning valignmiddle" ');
+		        }
+		    }
+		    print '</td></tr>';
 
-
-        if ($displayWarranty)
-        {
             // Retained Warranty payment date limit
             print '<tr class="retained-warranty-lines"  ><td>';
             print '<table id="retained-warranty-date-limit-table"  class="nobordernopadding" width="100%"><tr><td>';
@@ -4480,7 +4533,7 @@ elseif ($id > 0 || !empty($ref))
 			print '<input type="hidden" name="revenuestamp" id="revenuestamp_val" value="'.price2num($object->revenuestamp).'">';
 			print $formother->select_revenue_stamp('', 'revenuestamp_type', $mysoc->country_code);
 			print ' &rarr; <span id="revenuestamp_span"></span>';
-			print ' <input type="submit" class="button" value="'.$langs->trans('Modify').'">';
+			print ' <input type="submit" class="button buttongen" value="'.$langs->trans('Modify').'">';
 			print '</form>';
 			print " <script>
                 $(document).ready(function(){
@@ -4993,8 +5046,9 @@ elseif ($id > 0 || !empty($ref))
 	print '<table id="tablelines" class="noborder noshadow" width="100%">';
 
 	// Show object lines
-	if (!empty($object->lines))
+	if (!empty($object->lines)) {
 		$ret = $object->printObjectLines($action, $mysoc, $soc, $lineid, 1);
+	}
 
 	// Form to add new line
 	if ($object->statut == 0 && $usercancreate && $action != 'valid' && $action != 'editline')
@@ -5084,14 +5138,16 @@ elseif ($id > 0 || !empty($ref))
 			}
 
 			// Send by mail
-			if (($object->statut == Facture::STATUS_VALIDATED || $object->statut == Facture::STATUS_CLOSED) || !empty($conf->global->FACTURE_SENDBYEMAIL_FOR_ALL_STATUS)) {
-				if ($objectidnext) {
-					print '<span class="butActionRefused classfortooltip" title="'.$langs->trans("DisabledBecauseReplacedInvoice").'">'.$langs->trans('SendMail').'</span>';
-				} else {
-					if ($usercansend) {
-						print '<a class="butAction" href="'.$_SERVER['PHP_SELF'].'?facid='.$object->id.'&action=presend&mode=init#formmailbeforetitle">'.$langs->trans('SendMail').'</a>';
-					} else
-						print '<a class="butActionRefused classfortooltip" href="#">'.$langs->trans('SendMail').'</a>';
+			if (empty($user->socid)) {
+				if (($object->statut == Facture::STATUS_VALIDATED || $object->statut == Facture::STATUS_CLOSED) || !empty($conf->global->FACTURE_SENDBYEMAIL_FOR_ALL_STATUS)) {
+					if ($objectidnext) {
+						print '<span class="butActionRefused classfortooltip" title="'.$langs->trans("DisabledBecauseReplacedInvoice").'">'.$langs->trans('SendMail').'</span>';
+					} else {
+						if ($usercansend) {
+							print '<a class="butAction" href="'.$_SERVER['PHP_SELF'].'?facid='.$object->id.'&action=presend&mode=init#formmailbeforetitle">'.$langs->trans('SendMail').'</a>';
+						} else
+							print '<a class="butActionRefused classfortooltip" href="#">'.$langs->trans('SendMail').'</a>';
+					}
 				}
 			}
 
@@ -5332,7 +5388,11 @@ elseif ($id > 0 || !empty($ref))
 		$genallowed = $usercanread;
 		$delallowed = $usercancreate;
 
-		print $formfile->showdocuments('facture', $filename, $filedir, $urlsource, $genallowed, $delallowed, $object->modelpdf, 1, 0, 0, 28, 0, '', '', '', $soc->default_lang, '', $object);
+		print $formfile->showdocuments(
+			'facture', $filename, $filedir, $urlsource, $genallowed,
+			$delallowed, $object->modelpdf, 1, 0, 0, 28, 0, '', '', '',
+			$soc->default_lang, '', $object, 0, 'remove_file_comfirm');
+
 		$somethingshown = $formfile->numoffiles;
 
 		// Show links to link elements

@@ -337,8 +337,8 @@ class ProductCombination
 			$new_npr = $parent->tva_npr;
 
 			// MultiPrix
-			if (! empty($conf->global->PRODUIT_MULTIPRICES)) {
-				for ($i=1; $i <= $conf->global->PRODUIT_MULTIPRICES_LIMIT; $i++)
+			if (!empty($conf->global->PRODUIT_MULTIPRICES)) {
+				for ($i = 1; $i <= $conf->global->PRODUIT_MULTIPRICES_LIMIT; $i++)
 				{
 					if ($parent->multiprices[$i] != '') {
 						$new_type = $parent->multiprices_base_type[$i];
@@ -591,7 +591,7 @@ WHERE c.fk_product_parent = ".(int) $productid." AND p.tosell = 1";
 
 			if ($forced_refvar === false) {
     			if (isset($conf->global->PRODUIT_ATTRIBUTES_SEPARATOR)) {
-					$newproduct->ref .= $conf->global->PRODUIT_ATTRIBUTES_SEPARATOR . $prodattrval->ref;
+					$newproduct->ref .= $conf->global->PRODUIT_ATTRIBUTES_SEPARATOR.$prodattrval->ref;
     			} else {
 					$newproduct->ref .= '_'.$prodattrval->ref;
     			}
@@ -738,10 +738,10 @@ WHERE c.fk_product_parent = ".(int) $productid." AND p.tosell = 1";
 	{
 		$label = '';
 		$sql = 'SELECT pav.value AS label';
-		$sql.= ' FROM '.MAIN_DB_PREFIX.'product_attribute_combination pac';
-		$sql.= ' INNER JOIN '.MAIN_DB_PREFIX.'product_attribute_combination2val pac2v ON pac2v.fk_prod_combination=pac.rowid';
-		$sql.= ' INNER JOIN '.MAIN_DB_PREFIX.'product_attribute_value pav ON pav.rowid=pac2v.fk_prod_attr_val';
-		$sql.= ' WHERE pac.fk_product_child='.$prod_child;
+		$sql .= ' FROM '.MAIN_DB_PREFIX.'product_attribute_combination pac';
+		$sql .= ' INNER JOIN '.MAIN_DB_PREFIX.'product_attribute_combination2val pac2v ON pac2v.fk_prod_combination=pac.rowid';
+		$sql .= ' INNER JOIN '.MAIN_DB_PREFIX.'product_attribute_value pav ON pav.rowid=pac2v.fk_prod_attr_val';
+		$sql .= ' WHERE pac.fk_product_child='.$prod_child;
 
 		$resql = $this->db->query($sql);
 		if ($resql) {
@@ -755,7 +755,7 @@ WHERE c.fk_product_parent = ".(int) $productid." AND p.tosell = 1";
 
 				if ($obj->label)
 				{
-					$label.=' '.$obj->label;
+					$label .= ' '.$obj->label;
 				}
 				$i++;
 			}

@@ -32,6 +32,7 @@ VendorName=Όνομα του πωλητή
 CSSUrlForPaymentForm=Url CSS φύλλο στυλ για το έντυπο πληρωμής
 NewStripePaymentReceived=Πληρωμή της νέας ταινίας Stripe
 NewStripePaymentFailed=Η πληρωμή του νέου Stripe προσπάθησε αλλά απέτυχε
+FailedToChargeCard=Failed to charge card
 STRIPE_TEST_SECRET_KEY=Μυστικό κλειδί δοκιμής
 STRIPE_TEST_PUBLISHABLE_KEY=Κλειδί ελέγχου δοκιμαστικής έκδοσης
 STRIPE_TEST_WEBHOOK_KEY=Πλήκτρο δοκιμής Webhook
@@ -68,4 +69,4 @@ ToOfferALinkForTestWebhook=Σύνδεση με τη ρύθμιση Stripe WebHoo
 ToOfferALinkForLiveWebhook=Σύνδεση στη ρύθμιση Stripe WebHook για κλήση του IPN (ζωντανή λειτουργία)
 PaymentWillBeRecordedForNextPeriod=Η πληρωμή θα καταγραφεί για την επόμενη περίοδο.
 ClickHereToTryAgain=<a href="%s">Κάντε κλικ εδώ για να δοκιμάσετε ξανά ...</a>
-CreationOfPaymentModeMustBeDoneFromStripeInterface=Λόγω ισχυρών κανόνων αυθεντικότητας πελατών, η δημιουργία μιας κάρτας πρέπει να γίνεται από το Stripe backoffice. Μπορείτε να κάνετε κλικ εδώ για να μεταφερθείτε στην εγγραφή πελάτη Stripe: %s
+CreationOfPaymentModeMustBeDoneFromStripeInterface=Due to Strong Customer Authentication rules, creation of a card must be done from Stripe backoffice. You can click here to switch on Stripe customer record: %s

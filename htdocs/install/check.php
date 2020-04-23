@@ -557,7 +557,7 @@ else
 				}
 				if ($disabled)
                 {
-                    $choice .= '<span class="button">'.$langs->trans("NotYetAvailable").'</span>';
+                    $choice .= '<span class="opacitymedium">'.$langs->trans("NotYetAvailable").'</span>';
                 }
 				else
                 {

@@ -257,7 +257,7 @@ else
 		$show1 = $px1->show();
 
 		$px1 = null;
-		$graph_datas =null;
+		$graph_datas = null;
 		$datas = null;
 		$datamin = null;
 		$dataall = null;
@@ -395,7 +395,7 @@ else
 		$show2 = $px2->show();
 
 		$px2 = null;
-		$graph_datas =null;
+		$graph_datas = null;
 		$datas = null;
 		$datamin = null;
 		$dataall = null;
@@ -509,7 +509,7 @@ else
 		$show3 = $px3->show();
 
 		$px3 = null;
-		$graph_datas =null;
+		$graph_datas = null;
 		$datas = null;
 		$datamin = null;
 		$dataall = null;

@@ -1496,7 +1496,7 @@ class CommandeFournisseur extends CommonOrder
 		$this->db->begin();
 
         // get extrafields so they will be clone
-        foreach($this->lines as $line)
+        foreach ($this->lines as $line)
             $line->fetch_optionals();
 
 		// Load source object
@@ -2063,7 +2063,7 @@ class CommandeFournisseur extends CommonOrder
         }
 
         // Remove extrafields
-        if ((!$error) && (empty($conf->global->MAIN_EXTRAFIELDS_DISABLED))) // For avoid conflicts if trigger used
+        if (!$error)
         {
         	$result = $this->deleteExtraFields();
         	if ($result < 0)
@@ -3626,7 +3626,7 @@ class CommandeFournisseurLigne extends CommonOrderLine
             $this->id = $this->db->last_insert_id(MAIN_DB_PREFIX.$this->table_element);
             $this->rowid = $this->id;
 
-            if (empty($conf->global->MAIN_EXTRAFIELDS_DISABLED)) // For avoid conflicts if trigger used
+            if (!$error)
             {
                 $result = $this->insertExtraFields();
                 if ($result < 0)
@@ -3716,7 +3716,7 @@ class CommandeFournisseurLigne extends CommonOrderLine
         $result = $this->db->query($sql);
         if ($result > 0)
         {
-            if (empty($conf->global->MAIN_EXTRAFIELDS_DISABLED)) // For avoid conflicts if trigger used
+            if (!$error)
             {
                 $result = $this->insertExtraFields();
                 if ($result < 0)

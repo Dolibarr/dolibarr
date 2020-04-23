@@ -133,7 +133,7 @@ TicketsDisableCustomerEmail=Desactiveu sempre els correus electrònics quan es c
 #
 # Index & list page
 #
-TicketsIndex=Tiquet - inici
+TicketsIndex=Àrea de tiquets
 TicketList=Llista de tiquets
 TicketAssignedToMeInfos=Aquesta pàgina mostra la llista de butlletes creada per o assignada a l'usuari actual
 NoTicketsFound=Tiquet no trobat

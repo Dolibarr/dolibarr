@@ -29,23 +29,23 @@ require_once DOL_DOCUMENT_ROOT.'/adherents/class/adherent.class.php';
 require_once DOL_DOCUMENT_ROOT.'/adherents/class/adherent_type.class.php';
 
 // Load translation files required by the page
-$langs->loadLangs(array("companies","members","bills"));
+$langs->loadLangs(array("companies", "members", "bills"));
 
-$action=GETPOST('action', 'alpha');
-$id=GETPOST('id', 'int');
+$action = GETPOST('action', 'alpha');
+$id = GETPOST('id', 'int');
 
 // Security check
-$result=restrictedArea($user, 'adherent', $id);
+$result = restrictedArea($user, 'adherent', $id);
 
 $object = new Adherent($db);
-$result=$object->fetch($id);
+$result = $object->fetch($id);
 if ($result > 0)
 {
     $adht = new AdherentType($db);
-    $result=$adht->fetch($object->typeid);
+    $result = $adht->fetch($object->typeid);
 }
 
-$permissionnote=$user->rights->adherent->creer;  // Used by the include of actions_setnotes.inc.php
+$permissionnote = $user->rights->adherent->creer; // Used by the include of actions_setnotes.inc.php
 
 /*
  * Actions
@@ -58,8 +58,8 @@ include DOL_DOCUMENT_ROOT.'/core/actions_setnotes.inc.php'; // Must be include, 
 /*
  * View
  */
-$title=$langs->trans("Member") . " - " . $langs->trans("Note");
-$helpurl="EN:Module_Foundations|FR:Module_Adh&eacute;rents|ES:M&oacute;dulo_Miembros";
+$title = $langs->trans("Member")." - ".$langs->trans("Note");
+$helpurl = "EN:Module_Foundations|FR:Module_Adh&eacute;rents|ES:M&oacute;dulo_Miembros";
 llxHeader("", $title, $helpurl);
 
 $form = new Form($db);
@@ -110,8 +110,8 @@ if ($id)
     print '</div>';
 
 
-    $cssclass='titlefield';
-    $permission = $user->rights->adherent->creer;  // Used by the include of notes.tpl.php
+    $cssclass = 'titlefield';
+    $permission = $user->rights->adherent->creer; // Used by the include of notes.tpl.php
     include DOL_DOCUMENT_ROOT.'/core/tpl/notes.tpl.php';
 
 

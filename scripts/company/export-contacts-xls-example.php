@@ -25,27 +25,27 @@
  */
 $sapi_type = php_sapi_name();
 $script_file = basename(__FILE__);
-$path = __DIR__ . '/';
+$path = __DIR__.'/';
 
 // Test if batch mode
 if (substr($sapi_type, 0, 3) == 'cgi') {
-	echo "Error: You are using PHP for CGI. To execute " . $script_file . " from command line, you must use PHP for CLI mode.\n";
-	exit(- 1);
+	echo "Error: You are using PHP for CGI. To execute ".$script_file." from command line, you must use PHP for CLI mode.\n";
+	exit(-1);
 }
 
-if (! isset($argv[1]) || ! $argv[1]) {
+if (!isset($argv[1]) || !$argv[1]) {
 	print "Usage: $script_file now\n";
-	exit(- 1);
+	exit(-1);
 }
 $now = $argv[1];
 
-require_once $path . "../../htdocs/master.inc.php";
+require_once $path."../../htdocs/master.inc.php";
 // require_once PHP_WRITEEXCEL_PATH."/class.writeexcel_workbook.inc.php";
 // require_once PHP_WRITEEXCEL_PATH."/class.writeexcel_worksheet.inc.php";
 
-require_once PHPEXCEL_PATH . "/PHPExcel.php";
+require_once PHPEXCEL_PATH."/PHPExcel.php";
 // require_once PHPEXCEL_PATH."/PHPExcel/Writer/Excel2007.php";
-require_once PHPEXCEL_PATH . "/PHPExcel/Writer/Excel5.php";
+require_once PHPEXCEL_PATH."/PHPExcel/Writer/Excel5.php";
 
 // Global variables
 $version = DOL_VERSION;
@@ -56,10 +56,10 @@ $error = 0;
  */
 
 @set_time_limit(0);
-print "***** " . $script_file . " (" . $version . ") pid=" . dol_getmypid() . " *****\n";
-dol_syslog($script_file . " launched with arg " . join(',', $argv));
+print "***** ".$script_file." (".$version.") pid=".dol_getmypid()." *****\n";
+dol_syslog($script_file." launched with arg ".join(',', $argv));
 
-$fname = DOL_DATA_ROOT . '/export-contacts.xls';
+$fname = DOL_DATA_ROOT.'/export-contacts.xls';
 
 // $objPHPExcel = new writeexcel_workbook($fname);
 $objPHPExcel = new PHPExcel();
@@ -76,14 +76,14 @@ $objPHPExcel->getActiveSheet()->setTitle('Contacts');
 // $page->set_column(0,4,18); // A
 
 $sql = "SELECT distinct c.lastname, c.firstname, c.email, s.nom as name";
-$sql .= " FROM " . MAIN_DB_PREFIX . "socpeople as c";
-$sql .= " LEFT JOIN " . MAIN_DB_PREFIX . "societe as s on s.rowid = c.fk_soc";
+$sql .= " FROM ".MAIN_DB_PREFIX."socpeople as c";
+$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s on s.rowid = c.fk_soc";
 
 $resql = $db->query($sql);
 if ($resql) {
 	$num = $db->num_rows($resql);
 
-	print "Lines " . $num . "\n";
+	print "Lines ".$num."\n";
 
 	$i = 0;
 	$j = 1;
@@ -96,13 +96,13 @@ if ($resql) {
 	while ($i < $num) {
 		$obj = $db->fetch_object($resql);
 
-		$objPHPExcel->getActiveSheet()->SetCellValue('A' . ($i + 2), $obj->firstname);
-		$objPHPExcel->getActiveSheet()->SetCellValue('B' . ($i + 2), $obj->lastname);
-		$objPHPExcel->getActiveSheet()->SetCellValue('C' . ($i + 2), $obj->email);
-		$objPHPExcel->getActiveSheet()->SetCellValue('D' . ($i + 2), $obj->name);
+		$objPHPExcel->getActiveSheet()->SetCellValue('A'.($i + 2), $obj->firstname);
+		$objPHPExcel->getActiveSheet()->SetCellValue('B'.($i + 2), $obj->lastname);
+		$objPHPExcel->getActiveSheet()->SetCellValue('C'.($i + 2), $obj->email);
+		$objPHPExcel->getActiveSheet()->SetCellValue('D'.($i + 2), $obj->name);
 
-		$j ++;
-		$i ++;
+		$j++;
+		$i++;
 	}
 }
 
@@ -112,6 +112,6 @@ $objWriter->save($fname);
 
 // $objPHPExcel->close();
 
-print 'File ' . $fname . ' was generated.' . "\n";
+print 'File '.$fname.' was generated.'."\n";
 
 exit(0);

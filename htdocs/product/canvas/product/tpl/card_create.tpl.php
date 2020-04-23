@@ -31,7 +31,7 @@ $statutarray = array('1' => $langs->trans("OnSell"), '0' => $langs->trans("NotOn
 <!-- BEGIN PHP TEMPLATE -->
 
 <?php
-print load_fiche_titre($langs->trans("NewProduct"), '', 'products');
+print load_fiche_titre($langs->trans("NewProduct"), '', 'product');
 dol_fiche_head('');
 ?>
 

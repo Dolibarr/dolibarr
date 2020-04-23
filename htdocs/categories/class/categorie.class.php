@@ -145,6 +145,26 @@ class Categorie extends CommonObject
 	);
 
     /**
+     * @var array Title Area mapping from type string
+     *
+     * @note Move to const array when PHP 5.6 will be our minimum target
+     */
+    public static $MAP_TYPE_TITLE_AREA = array(
+        'product' => 'ProductsCategoriesArea',
+        'customer' => 'CustomersCategoriesArea',
+        'supplier' => 'SuppliersCategoriesArea',
+        'member' => 'MembersCategoriesArea',
+        'contact' => 'ContactsCategoriesArea',
+        'user' => 'UsersCategoriesArea',
+        'account' => 'AccountsCategoriesArea', // old for bank account
+        'bank_account' => 'AccountsCategoriesArea',
+        'project' => 'ProjectsCategoriesArea',
+        'warehouse'=> 'StocksCategoriesArea',
+        'actioncomm' => 'ActioncommCategoriesArea',
+        'website_page' => 'WebsitePageCategoriesArea'
+    );
+
+    /**
 	 * @var array Object table mapping from type string (table llx_...) when value of key does not match table name.
 	 *
 	 * @note Move to const array when PHP 5.6 will be our minimum target
@@ -154,7 +174,7 @@ class Categorie extends CommonObject
 		'supplier' => 'societe',
 		'member'   => 'adherent',
 		'contact'  => 'socpeople',
-		'account'  => 'bank_account',	// old for bank account
+		'account'  => 'bank_account', // old for bank account
 		'project'  => 'projet',
         'warehouse'=> 'entrepot'
 	);
@@ -291,6 +311,7 @@ class Categorie extends CommonObject
 		if (!is_numeric($type)) $type = $this->MAP_ID[$type];
 
 		$sql = "SELECT rowid, fk_parent, entity, label, description, color, fk_soc, visible, type, ref_ext";
+		$sql .= ", date_creation, tms, fk_user_creat, fk_user_modif";
 		$sql .= " FROM ".MAIN_DB_PREFIX."categorie";
 		if ($id > 0)
 		{
@@ -315,16 +336,20 @@ class Categorie extends CommonObject
 				$res = $this->db->fetch_array($resql);
 
 				$this->id = $res['rowid'];
-				//$this->ref			= $res['rowid'];
+				//$this->ref = $res['rowid'];
 				$this->fk_parent	= $res['fk_parent'];
 				$this->label		= $res['label'];
 				$this->description = $res['description'];
 				$this->color    	= $res['color'];
 				$this->socid		= $res['fk_soc'];
 				$this->visible = $res['visible'];
-				$this->type			= $res['type'];
+				$this->type = $res['type'];
 				$this->ref_ext = $res['ref_ext'];
 				$this->entity = $res['entity'];
+				$this->date_creation = $this->db->jdate($res['date_creation']);
+				$this->date_modification = $this->db->jdate($res['tms']);
+				$this->user_creation = $res['fk_user_creat'];
+				$this->user_modification = $res['fk_user_modif'];
 
 				// Retreive all extrafield
 				// fetch optionals attributes and labels
@@ -389,7 +414,7 @@ class Categorie extends CommonObject
 		}
 
 		$this->db->begin();
-
+		$now = dol_now();
 		$sql = "INSERT INTO ".MAIN_DB_PREFIX."categorie (";
 		$sql .= "fk_parent,";
 		$sql .= " label,";
@@ -403,7 +428,9 @@ class Categorie extends CommonObject
 		$sql .= " type,";
 		$sql .= " import_key,";
 		$sql .= " ref_ext,";
-		$sql .= " entity";
+		$sql .= " entity,";
+		$sql .= " date_creation,";
+		$sql .= " fk_user_creat";
 		$sql .= ") VALUES (";
 		$sql .= $this->db->escape($this->fk_parent).",";
 		$sql .= "'".$this->db->escape($this->label)."',";
@@ -417,7 +444,9 @@ class Categorie extends CommonObject
 		$sql .= $this->db->escape($type).",";
 		$sql .= (!empty($this->import_key) ? "'".$this->db->escape($this->import_key)."'" : 'null').",";
 		$sql .= (!empty($this->ref_ext) ? "'".$this->db->escape($this->ref_ext)."'" : 'null').",";
-		$sql .= $this->db->escape($conf->entity);
+		$sql .= $this->db->escape($conf->entity).",";
+		$sql .= "'".$this->db->idate($now)."', ";
+		$sql .= (int) $user->id;
 		$sql .= ")";
 
 		$res = $this->db->query($sql);
@@ -432,7 +461,7 @@ class Categorie extends CommonObject
 				$action = 'create';
 
 				// Actions on extra fields
-				if (empty($conf->global->MAIN_EXTRAFIELDS_DISABLED)) // For avoid conflicts if trigger used
+				if (!$error)
 				{
 					$result = $this->insertExtraFields();
 					if ($result < 0)
@@ -515,6 +544,7 @@ class Categorie extends CommonObject
 		}
 		$sql .= ", visible = '".$this->db->escape($this->visible)."'";
 		$sql .= ", fk_parent = ".$this->fk_parent;
+		$sql .= ", fk_user_modif = ".(int) $user->id;
 		$sql .= " WHERE rowid = ".$this->id;
 
 		dol_syslog(get_class($this)."::update", LOG_DEBUG);
@@ -523,7 +553,7 @@ class Categorie extends CommonObject
 			$action = 'update';
 
 			// Actions on extra fields
-			if (empty($conf->global->MAIN_EXTRAFIELDS_DISABLED)) // For avoid conflicts if trigger used
+			if (!$error)
 			{
 				$result = $this->insertExtraFields();
 				if ($result < 0)
@@ -616,7 +646,7 @@ class Categorie extends CommonObject
         }
 
 		// Removed extrafields
-		if (!$error && empty($conf->global->MAIN_EXTRAFIELDS_DISABLED)) // For avoid conflicts if trigger used
+		if (!$error)
 		{
 			$result = $this->deleteExtraFields();
 			if ($result < 0)
@@ -1153,7 +1183,7 @@ class Categorie extends CommonObject
         // Include or exclude leaf including $markafterid from tree
         if (count($markafterid) > 0)
         {
-            $keyfiltercatid = '(' . implode('|', $markafterid) . ')';
+            $keyfiltercatid = '('.implode('|', $markafterid).')';
 
             //print "Look to discard category ".$markafterid."\n";
             $keyfilter1 = '^'.$keyfiltercatid.'$';
@@ -1362,9 +1392,10 @@ class Categorie extends CommonObject
 	 * @param	string	$sep	     Separator
 	 * @param	string	$url	     Url
 	 * @param   int     $nocolor     0
+	 * @param	string	$addpicto	 Add picto into link
 	 * @return	array
 	 */
-	public function print_all_ways($sep = " &gt;&gt; ", $url = '', $nocolor = 0)
+	public function print_all_ways($sep = ' &gt;&gt; ', $url = '', $nocolor = 0, $addpicto = 0)
 	{
         // phpcs:enable
 		$ways = array();
@@ -1397,11 +1428,11 @@ class Categorie extends CommonObject
 				{
 			        $link = '<a href="'.DOL_URL_ROOT.'/categories/viewcat.php?id='.$cat->id.'&type='.$cat->type.'" class="'.$forced_color.'">';
 			        $linkend = '</a>';
-				    $w[] = $link.$cat->label.$linkend;
+			        $w[] = $link.($addpicto ? img_object('', 'category', 'class="paddingright"') : '').$cat->label.$linkend;
 				}
 				else
 				{
-					$w[] = "<a href='".DOL_URL_ROOT."/$url?catid=".$cat->id."'>".$cat->label."</a>";
+					$w[] = "<a href='".DOL_URL_ROOT."/".$url."?catid=".$cat->id."'>".($addpicto ? img_object('', 'category') : '').$cat->label."</a>";
 				}
 			}
 			$newcategwithpath = preg_replace('/toreplace/', $forced_color, implode($sep, $w));

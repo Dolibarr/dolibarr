@@ -174,7 +174,7 @@ class Website extends CommonObject
         $this->lang = preg_replace('/[_-].*$/', '', trim($this->lang)); // en_US or en-US -> en
         $tmparray = explode(',', $this->otherlang);
 		if (is_array($tmparray)) {
-			foreach($tmparray as $key => $val) {
+			foreach ($tmparray as $key => $val) {
 				$tmparray[$key] = preg_replace('/[_-].*$/', '', trim($val)); // en_US or en-US -> en
 			}
 			$this->otherlang = join(',', $tmparray);
@@ -473,7 +473,7 @@ class Website extends CommonObject
 		$this->lang = preg_replace('/[_-].*$/', '', trim($this->lang)); // en_US or en-US -> en
 		$tmparray = explode(',', $this->otherlang);
 		if (is_array($tmparray)) {
-			foreach($tmparray as $key => $val) {
+			foreach ($tmparray as $key => $val) {
 				$tmparray[$key] = preg_replace('/[_-].*$/', '', trim($val)); // en_US or en-US -> en
 			}
 			$this->otherlang = join(',', $tmparray);

@@ -22,7 +22,7 @@
  */
 
 // define CDAV_CONTACT_TAG if not
-if(!defined('CDAV_CONTACT_TAG'))
+if (!defined('CDAV_CONTACT_TAG'))
 {
 	if (isset($conf->global->CDAV_CONTACT_TAG))
 		define('CDAV_CONTACT_TAG', $conf->global->CDAV_CONTACT_TAG);
@@ -31,7 +31,7 @@ if(!defined('CDAV_CONTACT_TAG'))
 }
 
 // define CDAV_URI_KEY if not
-if(!defined('CDAV_URI_KEY'))
+if (!defined('CDAV_URI_KEY'))
 {
 	if (isset($conf->global->CDAV_URI_KEY))
 		define('CDAV_URI_KEY', $conf->global->CDAV_URI_KEY);

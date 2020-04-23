@@ -70,7 +70,7 @@ class SupplierProposal extends CommonObject
     /**
      * @var string String with name of icon for myobject. Must be the part after the 'object_' into object_myobject.png
      */
-    public $picto = 'propal';
+    public $picto = 'supplier_proposal';
 
     /**
      * 0=No test on entity, 1=Test with field entity, 2=Test with link by societe
@@ -596,8 +596,8 @@ class SupplierProposal extends CommonObject
             //var_dump($this->line->fk_fournprice);exit;
 
             // Multicurrency
-            $this->line->fk_multicurrency			= $this->fk_multicurrency;
-            $this->line->multicurrency_code			= $this->multicurrency_code;
+            $this->line->fk_multicurrency = $this->fk_multicurrency;
+            $this->line->multicurrency_code = $this->multicurrency_code;
             $this->line->multicurrency_subprice		= $pu_ht_devise;
             $this->line->multicurrency_total_ht		= $multicurrency_total_ht;
             $this->line->multicurrency_total_tva	= $multicurrency_total_tva;
@@ -724,7 +724,7 @@ class SupplierProposal extends CommonObject
             $multicurrency_total_ht  = $tabprice[16];
             $multicurrency_total_tva = $tabprice[17];
             $multicurrency_total_ttc = $tabprice[18];
-			$pu_ht_devise			 = $tabprice[19];
+			$pu_ht_devise = $tabprice[19];
 
             //Fetch current line from the database and then clone the object and set it in $oldline property
             $line = new SupplierProposalLine($this->db);
@@ -1063,7 +1063,7 @@ class SupplierProposal extends CommonObject
                         $action = 'update';
 
                         // Actions on extra fields
-                        if (!$error && empty($conf->global->MAIN_EXTRAFIELDS_DISABLED))
+                        if (!$error)
                         {
                             $result = $this->insertExtraFields();
                             if ($result < 0)
@@ -1817,14 +1817,14 @@ class SupplierProposal extends CommonObject
             $multicurrency_tx = 1;
             $fk_multicurrency = 0;
 
-            if(empty($this->thirdparty)) $this->fetch_thirdparty();
+            if (empty($this->thirdparty)) $this->fetch_thirdparty();
 
             $ref_fourn = $product->ref_fourn;
-            if(empty($ref_fourn)) $ref_fourn = $product->ref_supplier;
-            if(!empty($conf->multicurrency->enabled) && !empty($product->multicurrency_code)) list($fk_multicurrency, $multicurrency_tx) = MultiCurrency::getIdAndTxFromCode($this->db, $product->multicurrency_code);
+            if (empty($ref_fourn)) $ref_fourn = $product->ref_supplier;
+            if (!empty($conf->multicurrency->enabled) && !empty($product->multicurrency_code)) list($fk_multicurrency, $multicurrency_tx) = MultiCurrency::getIdAndTxFromCode($this->db, $product->multicurrency_code);
             $productsupplier->id = $product->fk_product;
 
-            $productsupplier->update_buyprice($product->qty, $product->subprice, $user, 'HT', $this->thirdparty, '', $ref_fourn, $product->tva_tx, 0, 0, 0, $product->info_bits,  '',  '',  array(),  '', $product->multicurrency_subprice,  'HT', $multicurrency_tx, $product->multicurrency_code,  '',  '',  '');
+            $productsupplier->update_buyprice($product->qty, $product->subprice, $user, 'HT', $this->thirdparty, '', $ref_fourn, $product->tva_tx, 0, 0, 0, $product->info_bits, '', '', array(), '', $product->multicurrency_subprice, 'HT', $multicurrency_tx, $product->multicurrency_code, '', '', '');
         }
 
         return 1;
@@ -1886,7 +1886,7 @@ class SupplierProposal extends CommonObject
 				include_once DOL_DOCUMENT_ROOT.'/multicurrency/class/multicurrency.class.php';
 	            $multicurrency = new MultiCurrency($this->db); //need to fetch because empty fk_multicurrency and rate
                 $multicurrency->fetch(0, $product->multicurrency_code);
-                if(! empty($multicurrency->id)) {
+                if (!empty($multicurrency->id)) {
                     $values[] = $multicurrency->id;
                     $values[] = "'".$product->multicurrency_code."'";
                     $values[] = $product->multicurrency_subprice;
@@ -1894,14 +1894,14 @@ class SupplierProposal extends CommonObject
                     $values[] = $multicurrency->rate->rate;
                 }
                 else {
-                    for($i = 0; $i < 5; $i++) $values[] = 'NULL';
+                    for ($i = 0; $i < 5; $i++) $values[] = 'NULL';
                 }
             }
         }
 
         $sql = 'INSERT INTO '.MAIN_DB_PREFIX.'product_fournisseur_price ';
         $sql .= '(datec, fk_product, fk_soc, ref_fourn, price, quantity, unitprice, tva_tx, fk_user';
-        if(!empty($conf->multicurrency->enabled) && !empty($product->multicurrency_code)) $sql .= ',fk_multicurrency, multicurrency_code, multicurrency_unitprice, multicurrency_price, multicurrency_tx';
+        if (!empty($conf->multicurrency->enabled) && !empty($product->multicurrency_code)) $sql .= ',fk_multicurrency, multicurrency_code, multicurrency_unitprice, multicurrency_price, multicurrency_tx';
         $sql .= ')  VALUES ('.implode(',', $values).')';
 
         $resql = $this->db->query($sql);
@@ -2116,16 +2116,13 @@ class SupplierProposal extends CommonObject
                     // Removed extrafields
                     if (!$error)
                     {
-                        if (empty($conf->global->MAIN_EXTRAFIELDS_DISABLED)) // For avoid conflicts if trigger used
-                        {
-                            $result = $this->deleteExtraFields();
-                            if ($result < 0)
-                            {
-                                $error++;
-                                $errorflag = -4;
-                                dol_syslog(get_class($this)."::delete erreur ".$errorflag." ".$this->error, LOG_ERR);
-                            }
-                        }
+                    	$result = $this->deleteExtraFields();
+                    	if ($result < 0)
+                    	{
+                    		$error++;
+                    		$errorflag = -4;
+                    		dol_syslog(get_class($this)."::delete erreur ".$errorflag." ".$this->error, LOG_ERR);
+                    	}
                     }
 
                     if (!$error)
@@ -2225,7 +2222,7 @@ class SupplierProposal extends CommonObject
      */
     public function getLibStatut($mode = 0)
     {
-        return $this->LibStatut($this->statut, $mode);
+        return $this->LibStatut((isset($this->statut) ? $this->statut : $this->status), $mode);
     }
 
     // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
@@ -2321,7 +2318,7 @@ class SupplierProposal extends CommonObject
             $response->warning_delay = $delay_warning / 60 / 60 / 24;
             $response->label = $label;
             $response->labelShort = $labelShort;
-            $response->url = DOL_URL_ROOT.'/supplier_proposal/list.php?viewstatut='.$status;
+            $response->url = DOL_URL_ROOT.'/supplier_proposal/list.php?search_status='.$status;
             $response->img = img_object('', "propal");
 
             // This assignment in condition is not a bug. It allows walking the results.
@@ -2436,7 +2433,7 @@ class SupplierProposal extends CommonObject
 
     // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
     /**
-     *      Charge indicateurs this->nb de tableau de bord
+     *      Load indicator this->nb of global stats widget
      *
      *      @return     int         <0 if ko, >0 if ok
      */
@@ -2555,17 +2552,16 @@ class SupplierProposal extends CommonObject
         $url = '';
         $result = '';
 
-        $label = '<u>'.$langs->trans("ShowSupplierProposal").'</u>';
-        if (!empty($this->ref))
-        $label .= '<br><b>'.$langs->trans('Ref').':</b> '.$this->ref;
-        if (!empty($this->ref_fourn))
-            $label .= '<br><b>'.$langs->trans('RefSupplier').':</b> '.$this->ref_fourn;
-        if (!empty($this->total_ht))
-            $label .= '<br><b>'.$langs->trans('AmountHT').':</b> '.price($this->total_ht, 0, $langs, 0, -1, -1, $conf->currency);
-        if (!empty($this->total_tva))
-            $label .= '<br><b>'.$langs->trans('VAT').':</b> '.price($this->total_tva, 0, $langs, 0, -1, -1, $conf->currency);
-        if (!empty($this->total_ttc))
-            $label .= '<br><b>'.$langs->trans('AmountTTC').':</b> '.price($this->total_ttc, 0, $langs, 0, -1, -1, $conf->currency);
+        $label = '<u>'.$langs->trans("SupplierProposal").'</u>';
+        if (!empty($this->ref)) $label .= '<br><b>'.$langs->trans('Ref').':</b> '.$this->ref;
+        if (!empty($this->ref_fourn)) $label .= '<br><b>'.$langs->trans('RefSupplier').':</b> '.$this->ref_fourn;
+        if (!empty($this->total_ht)) $label .= '<br><b>'.$langs->trans('AmountHT').':</b> '.price($this->total_ht, 0, $langs, 0, -1, -1, $conf->currency);
+        if (!empty($this->total_tva)) $label .= '<br><b>'.$langs->trans('VAT').':</b> '.price($this->total_tva, 0, $langs, 0, -1, -1, $conf->currency);
+        if (!empty($this->total_ttc)) $label .= '<br><b>'.$langs->trans('AmountTTC').':</b> '.price($this->total_ttc, 0, $langs, 0, -1, -1, $conf->currency);
+        if (isset($this->status)) {
+           	$label .= '<br><b>'.$langs->trans("Status").":</b> ".$this->getLibStatut(5);
+        }
+
         if ($option == '') {
             $url = DOL_URL_ROOT.'/supplier_proposal/card.php?id='.$this->id.$get_params;
         }
@@ -2596,8 +2592,6 @@ class SupplierProposal extends CommonObject
         $linkstart = '<a href="'.$url.'"';
         $linkstart .= $linkclose.'>';
         $linkend = '</a>';
-
-        $picto = 'supplier_proposal';
 
         $result .= $linkstart;
         if ($withpicto) $result .= img_object(($notooltip ? '' : $label), $this->picto, ($notooltip ? (($withpicto != 2) ? 'class="paddingright"' : '') : 'class="'.(($withpicto != 2) ? 'paddingright ' : '').'classfortooltip"'), 0, 0, $notooltip ? 0 : 1);
@@ -3109,7 +3103,7 @@ class SupplierProposalLine extends CommonObjectLine
         {
             $this->id = $this->db->last_insert_id(MAIN_DB_PREFIX.'supplier_proposaldet');
 
-            if (empty($conf->global->MAIN_EXTRAFIELDS_DISABLED)) // For avoid conflicts if trigger used
+            if (!$error)
             {
                 $result = $this->insertExtraFields();
                 if ($result < 0)
@@ -3158,7 +3152,7 @@ class SupplierProposalLine extends CommonObjectLine
         if ($this->db->query($sql))
         {
             // Remove extrafields
-            if ((!$error) && (empty($conf->global->MAIN_EXTRAFIELDS_DISABLED))) // For avoid conflicts if trigger used
+            if (!$error)
             {
                 $result = $this->deleteExtraFields();
                 if ($result < 0)
@@ -3280,7 +3274,7 @@ class SupplierProposalLine extends CommonObjectLine
         $resql = $this->db->query($sql);
         if ($resql)
         {
-            if (empty($conf->global->MAIN_EXTRAFIELDS_DISABLED)) // For avoid conflicts if trigger used
+            if (!$error)
             {
                 $result = $this->insertExtraFields();
                 if ($result < 0)

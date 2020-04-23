@@ -141,7 +141,6 @@ if (GETPOST('button_removefilter_x', 'alpha') || GETPOST('button_removefilter.x'
 }
 
 
-
 /*
  * View
  */
@@ -265,9 +264,9 @@ print '<input type="hidden" name="action" value="list">';
 print '<input type="hidden" name="sortfield" value="'.$sortfield.'">';
 print '<input type="hidden" name="sortorder" value="'.$sortorder.'">';
 print '<input type="hidden" name="page" value="'.$page.'">';
-print '<input type="hidden" name="viewstatut" value="'.$viewstatut.'">';
+print '<input type="hidden" name="search_status" value="'.$search_status.'">';
 
-print_barre_liste($title, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, '', $num, $nbtotalofrecords, 'bank', 0, $newcardbutton, '', $limit, 1);
+print_barre_liste($title, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, '', $num, $nbtotalofrecords, 'bank_account', 0, $newcardbutton, '', $limit, 1);
 
 $topicmail = "Information";
 //$modelmail="subscription";
@@ -539,7 +538,11 @@ foreach ($accounts as $key=>$type)
     		if ($result < 0) {
     			setEventMessages($objecttmp->error, $objecttmp->errors, 'errors');
     		} else {
-    			print '<span class="badge badge-info classfortooltip" title="'.dol_htmlentities($langs->trans("TransactionsToConciliate")).'">'.$result->nbtodo.'</span>';
+    			print '<a href="'.DOL_URL_ROOT.'/compta/bank/bankentries_list.php?id='.$objecttmp->id.'&search_conciliated=0">';
+    			print '<span class="badge badge-info classfortooltip" title="'.dol_htmlentities($langs->trans("TransactionsToConciliate")).'">';
+    			print $result->nbtodo;
+    			print '</span>';
+				print '</a>';
     			if ($result->nbtodolate) {
     				print '<span title="'.dol_htmlentities($langs->trans("Late")).'" class="classfortooltip badge badge-danger marginleftonlyshort">';
     				print '<i class="fa fa-exclamation-triangle"></i> '.$result->nbtodolate;

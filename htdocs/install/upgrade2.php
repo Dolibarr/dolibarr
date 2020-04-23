@@ -39,52 +39,52 @@
  */
 
 include_once 'inc.php';
-if (! file_exists($conffile))
+if (!file_exists($conffile))
 {
     print 'Error: Dolibarr config file was not found. This may means that Dolibarr is not installed yet. Please call the page "/install/index.php" instead of "/install/upgrade.php").';
 }
 require_once $conffile;
-require_once $dolibarr_main_document_root . '/compta/facture/class/facture.class.php';
-require_once $dolibarr_main_document_root . '/comm/propal/class/propal.class.php';
-require_once $dolibarr_main_document_root . '/contrat/class/contrat.class.php';
-require_once $dolibarr_main_document_root . '/commande/class/commande.class.php';
-require_once $dolibarr_main_document_root . '/fourn/class/fournisseur.commande.class.php';
-require_once $dolibarr_main_document_root . '/core/lib/price.lib.php';
-require_once $dolibarr_main_document_root . '/core/class/menubase.class.php';
-require_once $dolibarr_main_document_root . '/core/lib/files.lib.php';
+require_once $dolibarr_main_document_root.'/compta/facture/class/facture.class.php';
+require_once $dolibarr_main_document_root.'/comm/propal/class/propal.class.php';
+require_once $dolibarr_main_document_root.'/contrat/class/contrat.class.php';
+require_once $dolibarr_main_document_root.'/commande/class/commande.class.php';
+require_once $dolibarr_main_document_root.'/fourn/class/fournisseur.commande.class.php';
+require_once $dolibarr_main_document_root.'/core/lib/price.lib.php';
+require_once $dolibarr_main_document_root.'/core/class/menubase.class.php';
+require_once $dolibarr_main_document_root.'/core/lib/files.lib.php';
 
 global $langs;
 
-$grant_query='';
+$grant_query = '';
 $step = 2;
 $error = 0;
 
 
 // Cette page peut etre longue. On augmente le delai autorise.
 // Ne fonctionne que si on est pas en safe_mode.
-$err=error_reporting();
+$err = error_reporting();
 error_reporting(0);
-if (! empty($conf->global->MAIN_OVERRIDE_TIME_LIMIT))
+if (!empty($conf->global->MAIN_OVERRIDE_TIME_LIMIT))
 	@set_time_limit((int) $conf->global->MAIN_OVERRIDE_TIME_LIMIT);
 else
 	@set_time_limit(600);
 error_reporting($err);
 
-$setuplang=GETPOST("selectlang", 'aZ09', 3)?GETPOST("selectlang", 'aZ09', 3):'auto';
+$setuplang = GETPOST("selectlang", 'aZ09', 3) ?GETPOST("selectlang", 'aZ09', 3) : 'auto';
 $langs->setDefaultLang($setuplang);
-$versionfrom=GETPOST("versionfrom", 'alpha', 3)?GETPOST("versionfrom", 'alpha', 3):(empty($argv[1])?'':$argv[1]);
-$versionto=GETPOST("versionto", 'alpha', 3)?GETPOST("versionto", 'alpha', 3):(empty($argv[2])?'':$argv[2]);
-$enablemodules=GETPOST("enablemodules", 'alpha', 3)?GETPOST("enablemodules", 'alpha', 3):(empty($argv[3])?'':$argv[3]);
+$versionfrom = GETPOST("versionfrom", 'alpha', 3) ?GETPOST("versionfrom", 'alpha', 3) : (empty($argv[1]) ? '' : $argv[1]);
+$versionto = GETPOST("versionto", 'alpha', 3) ?GETPOST("versionto", 'alpha', 3) : (empty($argv[2]) ? '' : $argv[2]);
+$enablemodules = GETPOST("enablemodules", 'alpha', 3) ?GETPOST("enablemodules", 'alpha', 3) : (empty($argv[3]) ? '' : $argv[3]);
 
 $langs->loadLangs(array("admin", "install", "bills", "suppliers"));
 
-if ($dolibarr_main_db_type == 'mysqli') $choix=1;
-if ($dolibarr_main_db_type == 'pgsql')  $choix=2;
-if ($dolibarr_main_db_type == 'mssql')  $choix=3;
+if ($dolibarr_main_db_type == 'mysqli') $choix = 1;
+if ($dolibarr_main_db_type == 'pgsql')  $choix = 2;
+if ($dolibarr_main_db_type == 'mssql')  $choix = 3;
 
 
 dolibarr_install_syslog("--- upgrade2: entering upgrade2.php page ".$versionfrom." ".$versionto." ".$enablemodules);
-if (! is_object($conf)) dolibarr_install_syslog("upgrade2: conf file not initialized", LOG_ERR);
+if (!is_object($conf)) dolibarr_install_syslog("upgrade2: conf file not initialized", LOG_ERR);
 
 
 
@@ -453,8 +453,8 @@ if (!GETPOST('action', 'aZ09') || preg_match('/upgrade/i', GETPOST('action', 'aZ
         }
 
         // Scripts for 11.0
-        $afterversionarray=explode('.', '10.0.9');
-        $beforeversionarray=explode('.', '11.0.9');
+        $afterversionarray = explode('.', '10.0.9');
+        $beforeversionarray = explode('.', '11.0.9');
         if (versioncompare($versiontoarray, $afterversionarray) >= 0 && versioncompare($versiontoarray, $beforeversionarray) <= 0) {
             migrate_users_socialnetworks();
             migrate_members_socialnetworks();
@@ -477,6 +477,7 @@ if (!GETPOST('action', 'aZ09') || preg_match('/upgrade/i', GETPOST('action', 'aZ
 			'MAIN_MODULE_DON'=>'newboxdefonly',
 			'MAIN_MODULE_ECM'=>'newboxdefonly',
 			'MAIN_MODULE_EXTERNALSITE'=>'newboxdefonly',
+			'MAIN_MODULE_EXPENSEREPORT'=>'newboxdefonly',
 			'MAIN_MODULE_FACTURE'=>'newboxdefonly',
 			'MAIN_MODULE_FOURNISSEUR'=>'newboxdefonly',
 			'MAIN_MODULE_HOLIDAY'=>'newboxdefonly',
@@ -4697,6 +4698,16 @@ function migrate_reload_modules($db, $langs, $conf, $listofmodule = array(), $fo
 				$mod->init($reloadmode);
 			}
 		}
+		elseif ($moduletoreload == 'MAIN_MODULE_EXPENSEREPORT')
+		{
+			dolibarr_install_syslog("upgrade2::migrate_reload_modules Reactivate Expense Report module");
+			$res = @include_once DOL_DOCUMENT_ROOT.'/core/modules/modExpenseReport.class.php';
+			if ($res) {
+				$mod = new modExpenseReport($db);
+				//$mod->remove('noboxes');
+				$mod->init($reloadmode);
+			}
+		}
 		elseif ($moduletoreload == 'MAIN_MODULE_DON')    // Permission has changed into 3.0
 		{
 			dolibarr_install_syslog("upgrade2::migrate_reload_modules Reactivate Don module");
@@ -5025,19 +5036,19 @@ function migrate_users_socialnetworks()
             }
             $socialnetworks = array_merge($arraysocialnetworks, json_decode($obj->socialnetworks, true));
             $sqlupd = 'UPDATE '.MAIN_DB_PREFIX."user SET socialnetworks='".$db->escape(json_encode($socialnetworks, true))."'";
-            $sqlupd.= ', skype=null';
-            $sqlupd.= ', twitter=null';
-            $sqlupd.= ', facebook=null';
-            $sqlupd.= ', linkedin=null';
-            $sqlupd.= ', instagram=null';
-            $sqlupd.= ', snapchat=null';
-            $sqlupd.= ', googleplus=null';
-            $sqlupd.= ', youtube=null';
-            $sqlupd.= ', whatsapp=null';
-            $sqlupd.= ' WHERE rowid='.$obj->rowid;
+            $sqlupd .= ', skype=null';
+            $sqlupd .= ', twitter=null';
+            $sqlupd .= ', facebook=null';
+            $sqlupd .= ', linkedin=null';
+            $sqlupd .= ', instagram=null';
+            $sqlupd .= ', snapchat=null';
+            $sqlupd .= ', googleplus=null';
+            $sqlupd .= ', youtube=null';
+            $sqlupd .= ', whatsapp=null';
+            $sqlupd .= ' WHERE rowid='.$obj->rowid;
             //print $sqlupd."<br>";
             $resqlupd = $db->query($sqlupd);
-            if (! $resqlupd) {
+            if (!$resqlupd) {
                 dol_print_error($db);
                 $error++;
             }
@@ -5045,7 +5056,7 @@ function migrate_users_socialnetworks()
     } else {
         $error++;
     }
-    if (! $error) {
+    if (!$error) {
         $db->commit();
     } else {
         dol_print_error($db);
@@ -5116,19 +5127,19 @@ function migrate_members_socialnetworks()
             }
             $socialnetworks = array_merge($arraysocialnetworks, json_decode($obj->socialnetworks, true));
             $sqlupd = 'UPDATE '.MAIN_DB_PREFIX."adherent SET socialnetworks='".$db->escape(json_encode($socialnetworks, true))."'";
-            $sqlupd.= ', skype=null';
-            $sqlupd.= ', twitter=null';
-            $sqlupd.= ', facebook=null';
-            $sqlupd.= ', linkedin=null';
-            $sqlupd.= ', instagram=null';
-            $sqlupd.= ', snapchat=null';
-            $sqlupd.= ', googleplus=null';
-            $sqlupd.= ', youtube=null';
-            $sqlupd.= ', whatsapp=null';
-            $sqlupd.= ' WHERE rowid='.$obj->rowid;
+            $sqlupd .= ', skype=null';
+            $sqlupd .= ', twitter=null';
+            $sqlupd .= ', facebook=null';
+            $sqlupd .= ', linkedin=null';
+            $sqlupd .= ', instagram=null';
+            $sqlupd .= ', snapchat=null';
+            $sqlupd .= ', googleplus=null';
+            $sqlupd .= ', youtube=null';
+            $sqlupd .= ', whatsapp=null';
+            $sqlupd .= ' WHERE rowid='.$obj->rowid;
             //print $sqlupd."<br>";
             $resqlupd = $db->query($sqlupd);
-            if (! $resqlupd) {
+            if (!$resqlupd) {
                 dol_print_error($db);
                 $error++;
             }
@@ -5136,7 +5147,7 @@ function migrate_members_socialnetworks()
     } else {
         $error++;
     }
-    if (! $error) {
+    if (!$error) {
         $db->commit();
     } else {
         dol_print_error($db);
@@ -5210,20 +5221,20 @@ function migrate_contacts_socialnetworks()
             }
             $socialnetworks = array_merge($arraysocialnetworks, json_decode($obj->socialnetworks, true));
             $sqlupd = 'UPDATE '.MAIN_DB_PREFIX."socpeople SET socialnetworks='".$db->escape(json_encode($socialnetworks, true))."'";
-            $sqlupd.= ', jabberid=null';
-            $sqlupd.= ', skype=null';
-            $sqlupd.= ', twitter=null';
-            $sqlupd.= ', facebook=null';
-            $sqlupd.= ', linkedin=null';
-            $sqlupd.= ', instagram=null';
-            $sqlupd.= ', snapchat=null';
-            $sqlupd.= ', googleplus=null';
-            $sqlupd.= ', youtube=null';
-            $sqlupd.= ', whatsapp=null';
-            $sqlupd.= ' WHERE rowid='.$obj->rowid;
+            $sqlupd .= ', jabberid=null';
+            $sqlupd .= ', skype=null';
+            $sqlupd .= ', twitter=null';
+            $sqlupd .= ', facebook=null';
+            $sqlupd .= ', linkedin=null';
+            $sqlupd .= ', instagram=null';
+            $sqlupd .= ', snapchat=null';
+            $sqlupd .= ', googleplus=null';
+            $sqlupd .= ', youtube=null';
+            $sqlupd .= ', whatsapp=null';
+            $sqlupd .= ' WHERE rowid='.$obj->rowid;
             //print $sqlupd."<br>";
             $resqlupd = $db->query($sqlupd);
-            if (! $resqlupd) {
+            if (!$resqlupd) {
                 dol_print_error($db);
                 $error++;
             }
@@ -5231,7 +5242,7 @@ function migrate_contacts_socialnetworks()
     } else {
         $error++;
     }
-    if (! $error) {
+    if (!$error) {
         $db->commit();
     } else {
         dol_print_error($db);
@@ -5301,19 +5312,19 @@ function migrate_thirdparties_socialnetworks()
             }
             $socialnetworks = array_merge($arraysocialnetworks, json_decode($obj->socialnetworks, true));
             $sqlupd = 'UPDATE '.MAIN_DB_PREFIX."societe SET socialnetworks='".$db->escape(json_encode($socialnetworks, true))."'";
-            $sqlupd.= ', skype=null';
-            $sqlupd.= ', twitter=null';
-            $sqlupd.= ', facebook=null';
-            $sqlupd.= ', linkedin=null';
-            $sqlupd.= ', instagram=null';
-            $sqlupd.= ', snapchat=null';
-            $sqlupd.= ', googleplus=null';
-            $sqlupd.= ', youtube=null';
-            $sqlupd.= ', whatsapp=null';
-            $sqlupd.= ' WHERE rowid='.$obj->rowid;
+            $sqlupd .= ', skype=null';
+            $sqlupd .= ', twitter=null';
+            $sqlupd .= ', facebook=null';
+            $sqlupd .= ', linkedin=null';
+            $sqlupd .= ', instagram=null';
+            $sqlupd .= ', snapchat=null';
+            $sqlupd .= ', googleplus=null';
+            $sqlupd .= ', youtube=null';
+            $sqlupd .= ', whatsapp=null';
+            $sqlupd .= ' WHERE rowid='.$obj->rowid;
             //print $sqlupd."<br>";
             $resqlupd = $db->query($sqlupd);
-            if (! $resqlupd) {
+            if (!$resqlupd) {
                 dol_print_error($db);
                 $error++;
             }
@@ -5321,7 +5332,7 @@ function migrate_thirdparties_socialnetworks()
     } else {
         $error++;
     }
-    if (! $error) {
+    if (!$error) {
         $db->commit();
     } else {
         dol_print_error($db);

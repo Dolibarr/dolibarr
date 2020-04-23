@@ -8,7 +8,6 @@ CheckReceipt=Cheque deposit
 CheckReceiptShort=Cheque deposit
 NewCheckDeposit=New cheque deposit
 DateChequeReceived=Cheque received date
-RulesResultDue=- It includes outstanding invoices, expenses, GST, donations whether they are paid or not. Is also includes paid salaries.<br>- It is based on the validation date of invoices and GST and on the due date for expenses. For salaries defined with Salary module, the value date of payment is used.
 RulesResultInOut=- It includes the real payments made on invoices, expenses, GST and salaries. <br>- It is based on the payment dates of the invoices, expenses, GST and salaries. The donation date for donation.
 VATReportByCustomersInInputOutputMode=Report by the customer GST collected and paid
 SeeVATReportInInputOutputMode=See report <b>%sGST encasement%s</b> for a standard calculation

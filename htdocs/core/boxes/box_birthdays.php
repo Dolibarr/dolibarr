@@ -32,9 +32,9 @@ include_once DOL_DOCUMENT_ROOT.'/core/boxes/modules_boxes.php';
  */
 class box_birthdays extends ModeleBoxes
 {
-    public $boxcode="birthdays";
-    public $boximg="object_user";
-    public $boxlabel="BoxTitleUserBirthdaysOfMonth";
+    public $boxcode = "birthdays";
+    public $boximg = "object_user";
+    public $boxlabel = "BoxTitleUserBirthdaysOfMonth";
     public $depends = array("user");
 
 	/**
@@ -60,7 +60,7 @@ class box_birthdays extends ModeleBoxes
 
 		$this->db = $db;
 
-		$this->hidden = ! ($user->rights->user->user->lire && empty($user->socid));
+		$this->hidden = !($user->rights->user->user->lire && empty($user->socid));
 	}
 
 	/**
@@ -74,24 +74,24 @@ class box_birthdays extends ModeleBoxes
 		global $user, $langs;
 		$langs->load("boxes");
 
-		$this->max=$max;
+		$this->max = $max;
 
 		include_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 		include_once DOL_DOCUMENT_ROOT.'/user/class/user.class.php';
-        $userstatic=new User($this->db);
+        $userstatic = new User($this->db);
 
         $this->info_box_head = array('text' => $langs->trans("BoxTitleUserBirthdaysOfMonth"));
 
 		if ($user->rights->user->user->lire)
 		{
-			$tmparray=dol_getdate(dol_now(), true);
+			$tmparray = dol_getdate(dol_now(), true);
 
 			$sql = "SELECT u.rowid, u.firstname, u.lastname, u.birth";
-			$sql.= " FROM ".MAIN_DB_PREFIX."user as u";
-			$sql.= " WHERE u.entity IN (".getEntity('user').")";
-			$sql.= dolSqlDateFilter('u.birth', 0, $tmparray['mon'], $tmparray['year']);
-			$sql.= " ORDER BY u.birth ASC";
-			$sql.= $this->db->plimit($max, 0);
+			$sql .= " FROM ".MAIN_DB_PREFIX."user as u";
+			$sql .= " WHERE u.entity IN (".getEntity('user').")";
+			$sql .= dolSqlDateFilter('u.birth', 0, $tmparray['mon'], 0);
+			$sql .= " ORDER BY u.birth ASC";
+			$sql .= $this->db->plimit($max, 0);
 
 			dol_syslog(get_class($this)."::loadBox", LOG_DEBUG);
 			$result = $this->db->query($sql);
@@ -107,7 +107,7 @@ class box_birthdays extends ModeleBoxes
                     $userstatic->firstname = $objp->firstname;
                     $userstatic->lastname = $objp->lastname;
                     $userstatic->email = $objp->email;
-                    $dateb=$this->db->jdate($objp->birth);
+                    $dateb = $this->db->jdate($objp->birth);
                     $age = date('Y', dol_now()) - date('Y', $dateb);
 
                     $this->info_box_contents[$line][] = array(
@@ -118,7 +118,7 @@ class box_birthdays extends ModeleBoxes
 
                     $this->info_box_contents[$line][] = array(
                         'td' => 'class="right"',
-                        'text' => dol_print_date($dateb, "day") . ' - ' . $age . ' ' . $langs->trans('DurationYears')
+                        'text' => dol_print_date($dateb, "day").' - '.$age.' '.$langs->trans('DurationYears')
                     );
 
                     /*$this->info_box_contents[$line][] = array(
@@ -129,7 +129,7 @@ class box_birthdays extends ModeleBoxes
 					$line++;
 				}
 
-				if ($num==0) $this->info_box_contents[$line][0] = array('td' => 'class="center opacitymedium"','text'=>$langs->trans("None"));
+				if ($num == 0) $this->info_box_contents[$line][0] = array('td' => 'class="center opacitymedium"', 'text'=>$langs->trans("None"));
 
 				$this->db->free($result);
 			}

@@ -90,7 +90,7 @@ class mod_myobject_standard extends ModeleNumRefMyObject
 		$sql .= " FROM ".MAIN_DB_PREFIX."mymodule_myobject";
 		$sql .= " WHERE ref LIKE '".$db->escape($this->prefix)."____-%'";
 		if ($object->ismultientitymanaged == 1) {
-			$sql.= " AND entity = ".$conf->entity;
+			$sql .= " AND entity = ".$conf->entity;
 		}
 		elseif ($object->ismultientitymanaged == 2) {
 			// TODO
@@ -128,7 +128,7 @@ class mod_myobject_standard extends ModeleNumRefMyObject
 		$sql .= " FROM ".MAIN_DB_PREFIX."mymodule_myobject";
 		$sql .= " WHERE ref LIKE '".$db->escape($this->prefix)."____-%'";
 		if ($object->ismultientitymanaged == 1) {
-			$sql.= " AND entity = ".$conf->entity;
+			$sql .= " AND entity = ".$conf->entity;
 		}
 		elseif ($object->ismultientitymanaged == 2) {
 			// TODO

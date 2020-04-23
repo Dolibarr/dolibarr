@@ -108,7 +108,6 @@ if (!empty($conf->global->MAIN_MOTD))
  * Hidden for external users
  */
 
-
 $boxstatItems = array();
 $boxstatFromHook = '';
 
@@ -128,41 +127,43 @@ if (empty($user->socid) && empty($conf->global->MAIN_DISABLE_GLOBAL_BOXSTATS))
     {
 	    // Condition to be checked for each display line dashboard
 	    $conditions = array(
-	    $user->rights->user->user->lire,
-	    !empty($conf->societe->enabled) && $user->rights->societe->lire && empty($conf->global->SOCIETE_DISABLE_CUSTOMERS) && empty($conf->global->SOCIETE_DISABLE_CUSTOMERS_STATS),
-	    !empty($conf->societe->enabled) && $user->rights->societe->lire && empty($conf->global->SOCIETE_DISABLE_PROSPECTS) && empty($conf->global->SOCIETE_DISABLE_PROSPECTS_STATS),
-	    !empty($conf->fournisseur->enabled) && $user->rights->fournisseur->lire && empty($conf->global->SOCIETE_DISABLE_SUPPLIERS_STATS),
-	    !empty($conf->societe->enabled) && $user->rights->societe->contact->lire,
-	    !empty($conf->adherent->enabled) && $user->rights->adherent->lire,
-	    !empty($conf->product->enabled) && $user->rights->produit->lire,
-	    !empty($conf->service->enabled) && $user->rights->service->lire,
-	    !empty($conf->propal->enabled) && $user->rights->propale->lire,
-	    !empty($conf->commande->enabled) && $user->rights->commande->lire,
-	    !empty($conf->facture->enabled) && $user->rights->facture->lire,
-	    !empty($conf->contrat->enabled) && $user->rights->contrat->lire,
-	    !empty($conf->ficheinter->enabled) && $user->rights->ficheinter->lire,
-		!empty($conf->supplier_order->enabled) && $user->rights->fournisseur->commande->lire && empty($conf->global->SOCIETE_DISABLE_SUPPLIERS_ORDERS_STATS),
-		!empty($conf->supplier_invoice->enabled) && $user->rights->fournisseur->facture->lire && empty($conf->global->SOCIETE_DISABLE_SUPPLIERS_INVOICES_STATS),
-		!empty($conf->supplier_proposal->enabled) && $user->rights->supplier_proposal->lire && empty($conf->global->SOCIETE_DISABLE_SUPPLIERS_PROPOSAL_STATS),
-	    !empty($conf->projet->enabled) && $user->rights->projet->lire,
-	    !empty($conf->expensereport->enabled) && $user->rights->expensereport->lire,
-        !empty($conf->holiday->enabled) && $user->rights->holiday->read,
-		!empty($conf->don->enabled) && $user->rights->don->lire
+		    $user->rights->user->user->lire,
+		    !empty($conf->societe->enabled) && $user->rights->societe->lire && empty($conf->global->SOCIETE_DISABLE_CUSTOMERS) && empty($conf->global->SOCIETE_DISABLE_CUSTOMERS_STATS),
+		    !empty($conf->societe->enabled) && $user->rights->societe->lire && empty($conf->global->SOCIETE_DISABLE_PROSPECTS) && empty($conf->global->SOCIETE_DISABLE_PROSPECTS_STATS),
+		    !empty($conf->fournisseur->enabled) && $user->rights->fournisseur->lire && empty($conf->global->SOCIETE_DISABLE_SUPPLIERS_STATS),
+		    !empty($conf->societe->enabled) && $user->rights->societe->contact->lire,
+		    !empty($conf->adherent->enabled) && $user->rights->adherent->lire,
+		    !empty($conf->product->enabled) && $user->rights->produit->lire,
+		    !empty($conf->service->enabled) && $user->rights->service->lire,
+		    !empty($conf->propal->enabled) && $user->rights->propale->lire,
+		    !empty($conf->commande->enabled) && $user->rights->commande->lire,
+		    !empty($conf->facture->enabled) && $user->rights->facture->lire,
+		    !empty($conf->contrat->enabled) && $user->rights->contrat->lire,
+		    !empty($conf->ficheinter->enabled) && $user->rights->ficheinter->lire,
+			!empty($conf->supplier_order->enabled) && $user->rights->fournisseur->commande->lire && empty($conf->global->SOCIETE_DISABLE_SUPPLIERS_ORDERS_STATS),
+			!empty($conf->supplier_invoice->enabled) && $user->rights->fournisseur->facture->lire && empty($conf->global->SOCIETE_DISABLE_SUPPLIERS_INVOICES_STATS),
+			!empty($conf->supplier_proposal->enabled) && $user->rights->supplier_proposal->lire && empty($conf->global->SOCIETE_DISABLE_SUPPLIERS_PROPOSAL_STATS),
+		    !empty($conf->projet->enabled) && $user->rights->projet->lire,
+		    !empty($conf->expensereport->enabled) && $user->rights->expensereport->lire,
+	        !empty($conf->holiday->enabled) && $user->rights->holiday->read,
+			!empty($conf->don->enabled) && $user->rights->don->lire,
+		    !empty($conf->ticket->enabled) && $user->rights->ticket->read
 	    );
 	    // Class file containing the method load_state_board for each line
 	    $includes = array(
 	        DOL_DOCUMENT_ROOT."/user/class/user.class.php",
-	        DOL_DOCUMENT_ROOT."/societe/class/client.class.php",
+	    	DOL_DOCUMENT_ROOT."/adherents/class/adherent.class.php",
+	    	DOL_DOCUMENT_ROOT."/societe/class/client.class.php",
 	        DOL_DOCUMENT_ROOT."/societe/class/client.class.php",
     	    DOL_DOCUMENT_ROOT."/fourn/class/fournisseur.class.php",
     	    DOL_DOCUMENT_ROOT."/contact/class/contact.class.php",
-    	    DOL_DOCUMENT_ROOT."/adherents/class/adherent.class.php",
     	    DOL_DOCUMENT_ROOT."/product/class/product.class.php",
     	    DOL_DOCUMENT_ROOT."/product/class/product.class.php",
     	    DOL_DOCUMENT_ROOT."/comm/propal/class/propal.class.php",
     	    DOL_DOCUMENT_ROOT."/commande/class/commande.class.php",
     	    DOL_DOCUMENT_ROOT."/compta/facture/class/facture.class.php",
-    	    DOL_DOCUMENT_ROOT."/contrat/class/contrat.class.php",
+	    	DOL_DOCUMENT_ROOT."/don/class/don.class.php",
+	    	DOL_DOCUMENT_ROOT."/contrat/class/contrat.class.php",
     	    DOL_DOCUMENT_ROOT."/fichinter/class/fichinter.class.php",
     	    DOL_DOCUMENT_ROOT."/fourn/class/fournisseur.commande.class.php",
     	    DOL_DOCUMENT_ROOT."/fourn/class/fournisseur.facture.class.php",
@@ -170,111 +171,119 @@ if (empty($user->socid) && empty($conf->global->MAIN_DISABLE_GLOBAL_BOXSTATS))
             DOL_DOCUMENT_ROOT."/projet/class/project.class.php",
 	        DOL_DOCUMENT_ROOT."/expensereport/class/expensereport.class.php",
             DOL_DOCUMENT_ROOT."/holiday/class/holiday.class.php",
-			DOL_DOCUMENT_ROOT."/don/class/don.class.php"
+	    	DOL_DOCUMENT_ROOT."/ticket/class/ticket.class.php"
 	    );
 	    // Name class containing the method load_state_board for each line
-	    $classes = array('User',
-	                   'Client',
-	                   'Client',
-	                   'Fournisseur',
-	                   'Contact',
-	                   'Adherent',
-	                   'Product',
-	                   'Product',
-	                   'Propal',
-	                   'Commande',
-	                   'Facture',
-	                   'Contrat',
-	                   'Fichinter',
-	                   'CommandeFournisseur',
-	                   'FactureFournisseur',
-            	       'SupplierProposal',
-	                   'Project',
-	                   'ExpenseReport',
-                       'Holiday',
-					   'Don'
+	    $classes = array(
+	    	'User',
+	    	'Adherent',
+	    	'Client',
+	    	'Client',
+	    	'Fournisseur',
+	    	'Contact',
+	    	'Product',
+	    	'Product',
+	    	'Propal',
+	    	'Commande',
+	    	'Facture',
+	    	'Don',
+	    	'Contrat',
+	    	'Fichinter',
+	    	'CommandeFournisseur',
+	    	'FactureFournisseur',
+	    	'SupplierProposal',
+	    	'Project',
+	    	'ExpenseReport',
+	    	'Holiday',
+	    	'Ticket',
 	    );
 	    // Cle array returned by the method load_state_board for each line
-	    $keys = array('users',
-	                'customers',
-	                'prospects',
-	                'suppliers',
-	                'contacts',
-	                'members',
-	                'products',
-	                'services',
-	                'proposals',
-	                'orders',
-	                'invoices',
-	                'Contracts',
-	                'fichinters',
-	                'supplier_orders',
-	                'supplier_invoices',
-	                'askprice',
-	                'projects',
-	                'expensereports',
-                    'holidays',
-					'donations'
+	    $keys = array(
+	    	'users',
+	    	'members',
+	    	'customers',
+	    	'prospects',
+	    	'suppliers',
+	    	'contacts',
+	    	'products',
+	    	'services',
+	    	'proposals',
+	    	'orders',
+	    	'invoices',
+	    	'donations',
+	    	'contracts',
+	    	'interventions',
+	    	'supplier_orders',
+	    	'supplier_invoices',
+	    	'askprice',
+	    	'projects',
+	    	'expensereports',
+	    	'holidays',
+	    	'ticket'
 	    );
 	    // Dashboard Icon lines
-	    $icons = array('user',
-	                 'company',
-	                 'company',
-	                 'company',
-	                 'contact',
-	                 'user',
-	                 'product',
-	                 'service',
-	                 'propal',
-	                 'order',
-	                 'bill',
-	                 'order',
-	                 'order',
-	                 'order',
-	                 'bill',
-	                 'propal',
-	                 'projectpub',
-					 'trip',
-                     'holiday',
-					 'generic'
+	    $icons = array(
+	    	'user',
+	    	'user',
+	    	'company',
+	    	'company',
+	    	'company',
+	    	'contact',
+	    	'product',
+	    	'service',
+	    	'propal',
+	    	'order',
+	    	'bill',
+	    	'generic',
+	    	'contract',
+	    	'intervention',
+	    	'order',
+	    	'bill',
+	    	'propal',
+	    	'project',
+	    	'trip',
+	    	'holiday',
+	    	'ticket',
 	    );
 	    // Translation keyword
-	    $titres = array("Users",
-	                  "ThirdPartyCustomersStats",
-	                  "ThirdPartyProspectsStats",
-	                  "Suppliers",
-	                  "Contacts",
-	                  "Members",
-	                  "Products",
-	                  "Services",
-	                  "CommercialProposalsShort",
-	                  "CustomersOrders",
-	                  "BillsCustomers",
-	                  "Contracts",
-	                  "Interventions",
-	                  "SuppliersOrders",
-                      "SuppliersInvoices",
-	                  "SupplierProposalShort",
-	                  "Projects",
-					  "ExpenseReports",
-                      "Holidays",
-					  "Donations"
+	    $titres = array(
+	    	"Users",
+	    	"Members",
+	    	"ThirdPartyCustomersStats",
+	    	"ThirdPartyProspectsStats",
+	    	"Suppliers",
+	    	"Contacts",
+	    	"Products",
+	    	"Services",
+	    	"CommercialProposalsShort",
+	    	"CustomersOrders",
+	    	"BillsCustomers",
+	    	"Donations",
+	    	"Contracts",
+	    	"Interventions",
+	    	"SuppliersOrders",
+	    	"SuppliersInvoices",
+	    	"SupplierProposalShort",
+	    	"Projects",
+	    	"ExpenseReports",
+	    	"Holidays",
+	    	"Ticket",
 	    );
 	    // Dashboard Link lines
 	    $links = array(
 	        DOL_URL_ROOT.'/user/list.php',
-    	    DOL_URL_ROOT.'/societe/list.php?type=c&mainmenu=companies',
+	    	DOL_URL_ROOT.'/adherents/list.php?statut=1&mainmenu=members',
+	    	DOL_URL_ROOT.'/societe/list.php?type=c&mainmenu=companies',
     	    DOL_URL_ROOT.'/societe/list.php?type=p&mainmenu=companies',
     	    DOL_URL_ROOT.'/societe/list.php?type=f&mainmenu=companies',
     	    DOL_URL_ROOT.'/contact/list.php?mainmenu=companies',
-    	    DOL_URL_ROOT.'/adherents/list.php?statut=1&mainmenu=members',
-    	    DOL_URL_ROOT.'/adherents/list.php?statut=-1&mainmenu=members',
     	    DOL_URL_ROOT.'/product/list.php?type=0&mainmenu=products',
     	    DOL_URL_ROOT.'/product/list.php?type=1&mainmenu=products',
     	    DOL_URL_ROOT.'/comm/propal/list.php?mainmenu=commercial&leftmenu=propals',
     	    DOL_URL_ROOT.'/commande/list.php?mainmenu=commercial&leftmenu=orders',
     	    DOL_URL_ROOT.'/compta/facture/list.php?mainmenu=billing&leftmenu=customers_bills',
-    	    DOL_URL_ROOT.'/contrat/list.php?mainmenu=commercial&leftmenu=contracts',
+	    	DOL_URL_ROOT.'/don/list.php?leftmenu=donations',
+	    	DOL_URL_ROOT.'/contrat/list.php?mainmenu=commercial&leftmenu=contracts',
     	    DOL_URL_ROOT.'/fichinter/list.php?mainmenu=commercial&leftmenu=ficheinter',
     	    DOL_URL_ROOT.'/fourn/commande/list.php?mainmenu=commercial&leftmenu=orders_suppliers',
 	        DOL_URL_ROOT.'/fourn/facture/list.php?mainmenu=billing&leftmenu=suppliers_bills',
@@ -282,22 +291,23 @@ if (empty($user->socid) && empty($conf->global->MAIN_DISABLE_GLOBAL_BOXSTATS))
 	        DOL_URL_ROOT.'/projet/list.php?mainmenu=project',
     		DOL_URL_ROOT.'/expensereport/list.php?mainmenu=hrm&leftmenu=expensereport',
             DOL_URL_ROOT.'/holiday/list.php?mainmenu=hrm&leftmenu=holiday',
-			DOL_URL_ROOT.'/don/list.php?leftmenu=donations'
+	    	DOL_URL_ROOT.'/ticket/list.php?leftmenu=ticket'
 	    );
 	    // Translation lang files
 	    $langfile = array(
             "users",
-            "companies",
+	    	"members",
+	    	"companies",
             "prospects",
             "suppliers",
             "companies",
-            "members",
             "products",
             "products",
             "propal",
             "orders",
             "bills",
-			"contracts",
+	    	"donations",
+	    	"contracts",
 			"interventions",
             "bills",
             "bills",
@@ -305,13 +315,13 @@ if (empty($user->socid) && empty($conf->global->MAIN_DISABLE_GLOBAL_BOXSTATS))
 	        "projects",
 			"trips",
             "holiday",
-			"donations",
+	    	"ticket"
 	    );
 
 
 	    // Loop and displays each line of table
 		$boardloaded = array();
-	    foreach ($keys as $key=>$val)
+	    foreach ($keys as $key => $val)
 	    {
 	        if ($conditions[$key])
 	        {
@@ -330,7 +340,6 @@ if (empty($user->socid) && empty($conf->global->MAIN_DISABLE_GLOBAL_BOXSTATS))
 	            {
 	                $board = $boardloaded[$classe];
 	            }
-
 
 	            if (!empty($langfile[$key])) $langs->load($langfile[$key]);
 	            $text = $langs->trans($titres[$key]);
@@ -415,7 +424,7 @@ if (empty($conf->global->MAIN_DISABLE_GLOBAL_WORKBOARD)) {
         $dashboardlines[$board->element.'_awaiting'] = $board->load_board($user, 'awaiting');
     }
 
-    // Number of services enabled (delayed)
+    // Number of contract / services enabled (delayed)
     if (!empty($conf->contrat->enabled) && $user->rights->contrat->lire) {
         include_once DOL_DOCUMENT_ROOT.'/contrat/class/contrat.class.php';
         $board = new Contrat($db);
@@ -423,6 +432,16 @@ if (empty($conf->global->MAIN_DISABLE_GLOBAL_WORKBOARD)) {
         // Number of active services (expired)
         $dashboardlines[$board->element.'_active'] = $board->load_board($user, "active");
     }
+
+    // Number of tickets open
+    if (!empty($conf->ticket->enabled) && $user->rights->ticket->read) {
+    	include_once DOL_DOCUMENT_ROOT.'/ticket/class/ticket.class.php';
+    	$board = new Ticket($db);
+    	$dashboardlines[$board->element.'_opened'] = $board->load_board($user, "opened");
+    	// Number of active services (expired)
+    	//$dashboardlines[$board->element.'_active'] = $board->load_board($user, "active");
+    }
+
     // Number of invoices customers (has paid)
     if (!empty($conf->facture->enabled) && $user->rights->facture->lire) {
         include_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
@@ -492,7 +511,7 @@ if (empty($conf->global->MAIN_DISABLE_GLOBAL_WORKBOARD)) {
         $dashboardlines = array_merge($dashboardlines, $hookmanager->resArray);
     }
 
-    /* grouping dashboard stats */
+    /* Open object dashboard */
     $dashboardgroup = array(
         'action' =>
             array(
@@ -526,13 +545,6 @@ if (empty($conf->global->MAIN_DISABLE_GLOBAL_WORKBOARD)) {
                 'stats' =>
                     array('facture'),
             ),
-        'contrat' =>
-            array(
-                'groupName' => 'Contracts',
-                'globalStatsKey' => 'Contracts',
-                'stats' =>
-                    array('contrat_inactive', 'contrat_active'),
-            ),
         'supplier_proposal' =>
             array(
                 'groupName' => 'SupplierProposals',
@@ -554,7 +566,21 @@ if (empty($conf->global->MAIN_DISABLE_GLOBAL_WORKBOARD)) {
                 'stats' =>
                     array('invoice_supplier'),
             ),
-        'bank_account' =>
+    	'contrat' =>
+	    	array(
+	    		'groupName' => 'Contracts',
+	    		'globalStatsKey' => 'Contracts',
+	    		'stats' =>
+	    		array('contrat_inactive', 'contrat_active'),
+	    	),
+    	'ticket' =>
+	    	array(
+	    		'groupName' => 'Tickets',
+	    		'globalStatsKey' => 'ticket',
+	    		'stats' =>
+	    			array('ticket_opened'),
+	    	),
+    	'bank_account' =>
             array(
                 'groupName' => 'BankAccount',
                 'stats' =>
@@ -565,7 +591,7 @@ if (empty($conf->global->MAIN_DISABLE_GLOBAL_WORKBOARD)) {
                 'groupName' => 'Members',
                 'globalStatsKey' => 'members',
                 'stats' =>
-            	array('member_shift', 'member_expired'),
+            		array('member_shift', 'member_expired'),
             ),
         'ExpenseReport' =>
             array(
@@ -587,8 +613,7 @@ if (empty($conf->global->MAIN_DISABLE_GLOBAL_WORKBOARD)) {
     $parameters = array(
         'dashboardgroup' => $dashboardgroup
     );
-    $reshook = $hookmanager->executeHooks('addOpenElementsDashboardGroup', $parameters, $object,
-        $action); // Note that $action and $object may have been modified by some hooks
+    $reshook = $hookmanager->executeHooks('addOpenElementsDashboardGroup', $parameters, $object, $action); // Note that $action and $object may have been modified by some hooks
     if ($reshook == 0) {
         $dashboardgroup = array_merge($dashboardgroup, $hookmanager->resArray);
     }
@@ -697,10 +722,9 @@ if (empty($conf->global->MAIN_DISABLE_GLOBAL_WORKBOARD)) {
                     }
                 }
 
-
                 $openedDashBoard .= '<div class="box-flex-item">'."\n";
                 $openedDashBoard .= '	<div class="info-box '.$openedDashBoardSize.'">'."\n";
-                $openedDashBoard .= '		<span class="info-box-icon bg-infoxbox-'.$groupKeyLowerCase.'">'."\n";
+                $openedDashBoard .= '		<span class="info-box-icon bg-infobox-'.$groupKeyLowerCase.'">'."\n";
                 $openedDashBoard .= '		<i class="fa fa-dol-'.$groupKeyLowerCase.'"></i>'."\n";
 
                 // Show the span for the total of record
@@ -902,6 +926,7 @@ if (empty($user->socid) && empty($conf->global->MAIN_DISABLE_GLOBAL_BOXSTATS))
     }
 
     if (!empty($boxstatFromHook) || !empty($boxstatItems)) {
+    	$boxstat .= '<!-- Database statistics -->'."\n";
         $boxstat .= '<div class="box">';
         $boxstat .= '<table summary="'.dol_escape_htmltag($langs->trans("DolibarrStateBoard")).'" class="noborder boxtable boxtablenobottom nohover" width="100%">';
         $boxstat .= '<tr class="liste_titre">';

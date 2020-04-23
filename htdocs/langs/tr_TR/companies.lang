@@ -325,7 +325,6 @@ CompanyDeleted="%s" Firması veritabanından silindi.
 ListOfContacts=Kişi/adres listesi
 ListOfContactsAddresses=Kişi/adres listesi
 ListOfThirdParties=Üçüncü Partilerin Listesi
-ShowCompany=Üçüncü Partiyi Göster
 ShowContact=Kişi göster
 ContactsAllShort=Hepsi (süzmeden)
 ContactType=Kişi tipi
@@ -447,6 +446,7 @@ SaleRepresentativeFirstname=Satış temsilcisinin adı
 SaleRepresentativeLastname=Satış temsilcisinin soyadı
 ErrorThirdpartiesMerge=Üçüncü partiler silinirken bir hata oluştu. Lütfen günlüğü denetleyin. Değişiklikler geri alındı.
 NewCustomerSupplierCodeProposed=Müşteri veya Tedarikçi kodu zaten kullanılmış, yeni bir kod önerilir
+KeepEmptyIfGenericAddress=Keep this field empty if this address is a generic address
 #Imports
 PaymentTypeCustomer=Ödeme Türü - Müşteri
 PaymentTermsCustomer=Ödeme Koşulları - Müşteri

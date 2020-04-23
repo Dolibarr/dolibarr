@@ -33,21 +33,21 @@ $langs->load("users");
 // Security check
 $id = GETPOST('id', 'int');
 $object = new User($db);
-if ($id > 0 || ! empty($ref))
+if ($id > 0 || !empty($ref))
 {
 	$result = $object->fetch($id, $ref, '', 1);
 	$object->getrights();
 }
 
 // Security check
-$socid=0;
+$socid = 0;
 if ($user->socid > 0) $socid = $user->socid;
-$feature2 = (($socid && $user->rights->user->self->creer)?'':'user');
+$feature2 = (($socid && $user->rights->user->self->creer) ? '' : 'user');
 
 $result = restrictedArea($user, 'user', $id, 'user&user', $feature2);
 
 // If user is not user that read and no permission to read other users, we stop
-if (($object->id != $user->id) && (! $user->rights->user->user->lire))
+if (($object->id != $user->id) && (!$user->rights->user->user->lire))
   accessforbidden();
 
 

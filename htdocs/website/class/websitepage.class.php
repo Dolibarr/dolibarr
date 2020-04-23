@@ -220,11 +220,11 @@ class WebsitePage extends CommonObject
 			if ($id < 0) $sql .= ' AND t.rowid <> '.abs($id);
 			if (null !== $website_id) {
 			    $sql .= " AND t.fk_website = '".$this->db->escape($website_id)."'";
-			    if ($page)		{
+			    if ($page) {
 			    	$pagetouse = $page;
 			    	$langtouse = '';
 			    	$tmppage = explode('/', $page);
-			    	if (! empty($tmppage[1])) {
+			    	if (!empty($tmppage[1])) {
 			    		$pagetouse = $tmppage[1];
 			    		if (strlen($tmppage[0])) $langtouse = $tmppage[0];
 			    	}

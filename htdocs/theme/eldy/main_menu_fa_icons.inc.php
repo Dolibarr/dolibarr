@@ -1,4 +1,4 @@
-<?php if (! defined('ISLOADEDBYSTEELSHEET')) die('Must be call by steelsheet'); ?>
+<?php if (!defined('ISLOADEDBYSTEELSHEET')) die('Must be call by steelsheet'); ?>
 /* <style type="text/css" > */
 
 .mainmenu::before{
@@ -145,7 +145,7 @@ div.mainmenu.generic4::before {
 
 /* Define color of some picto */
 
-.fa-phone, .fa-fax {
+.fa-phone, .fa-mobile-alt, .fa-fax {
 	opacity: 0.5;
 	color: #440;
 }
