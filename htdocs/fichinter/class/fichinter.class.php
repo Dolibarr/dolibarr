@@ -961,15 +961,15 @@ class Fichinter extends CommonObject
 			}
 		}
 
-                if (!$error)
+		if (!$error)
                 {
-                        $main = MAIN_DB_PREFIX . 'fichinterdet';
-                        $ef = $main . "_extrafields";
-                        $sql = "DELETE FROM $ef WHERE fk_object IN (SELECT rowid FROM $main WHERE fk_fichinter = " . $this->id . ")";
+				$main = MAIN_DB_PREFIX . 'fichinterdet';
+				$ef = $main . "_extrafields";
+				$sql = "DELETE FROM $ef WHERE fk_object IN (SELECT rowid FROM $main WHERE fk_fichinter = " . $this->id . ")";
 
-                        $resql = $this->db->query($sql);
-                        if (!$resql) $error++;
-                }
+				$resql = $this->db->query($sql);
+				if (!$resql) $error++;
+		}
 
 		if (!$error)
 		{
@@ -1715,11 +1715,11 @@ class FichinterLigne extends CommonObjectLine
 			$this->db->begin();
 
                         $result = $this->deleteExtraFields();
-                        if ($result < 0) {
-                            $error++;
-                            $this->db->rollback();
-                            return -1;
-                        }
+			if ($result < 0) {
+				$error++;
+				$this->db->rollback();
+				return -1;
+			}
 
 			$sql = "DELETE FROM ".MAIN_DB_PREFIX."fichinterdet WHERE rowid = ".$this->id;
 			$resql = $this->db->query($sql);
