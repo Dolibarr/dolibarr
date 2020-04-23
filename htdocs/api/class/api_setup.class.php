@@ -1409,15 +1409,15 @@ class Setup extends DolibarrApi
      *
      * Note that conf variables that stores security key or password hashes can't be loaded with API.
      *
-     * @url	GET /conf
-     *
-     * @param	string			$confname	Name of conf variable to get
+     * @param	string			$constantname	Name of conf variable to get
      * @return  array|mixed 				Data without useless information
      *
+     * @url     GET conf/{constantname}
+     *
      * @throws RestException 403 Forbidden
-	 * @throws RestException 500 Error Bad or unknown value for constname
+     * @throws RestException 500 Error Bad or unknown value for constname
      */
-    public function getConf($confname)
+    public function getConf($constantname)
     {
     	global $conf;
 
@@ -1426,14 +1426,14 @@ class Setup extends DolibarrApi
     		throw new RestException(403, 'Error API open to admin users only or to the login user defined with constant API_LOGIN_ALLOWED_FOR_ADMIN_CHECK');
     	}
 
-    	if (!preg_match('/^[a-zA-Z0-9_]+$/', $confname) || !isset($conf->global->$confname)) {
+    	if (!preg_match('/^[a-zA-Z0-9_]+$/', $constantname) || ! isset($conf->global->$constantname)) {
     		throw new RestException(500, 'Error Bad or unknown value for constname');
     	}
-    	if (preg_match('/(_pass|password|secret|_key|key$)/i', $confname)) {
+    	if (preg_match('/(_pass|password|secret|_key|key$)/i', $constantname)) {
     		throw new RestException(403, 'Forbidden');
     	}
 
-    	return $conf->global->$confname;
+    	return $conf->global->$constantname;
     }
 
     /**
