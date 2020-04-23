@@ -272,6 +272,7 @@ class Entrepot extends CommonObject
         $error = 0;
 
 	    if (empty($id)) $id = $this->id;
+	    if (empty($this->label)) $this->label = $this->libelle;		// For backward compatibility
 
 		// Check if new parent is already a child of current warehouse
 		if (!empty($this->fk_parent))
@@ -285,7 +286,7 @@ class Entrepot extends CommonObject
 			}
 		}
 
-		$this->libelle = trim($this->libelle);
+		$this->label = trim($this->label);
 		$this->description = trim($this->description);
 
 		$this->lieu = trim($this->lieu);
@@ -296,7 +297,7 @@ class Entrepot extends CommonObject
 		$this->country_id = ($this->country_id > 0 ? $this->country_id : 0);
 
 		$sql = "UPDATE ".MAIN_DB_PREFIX."entrepot ";
-		$sql .= " SET ref = '".$this->db->escape($this->libelle)."'";
+		$sql .= " SET ref = '".$this->db->escape($this->label)."'";
 		$sql .= ", fk_parent = ".(($this->fk_parent > 0) ? $this->fk_parent : "NULL");
 		$sql .= ", description = '".$this->db->escape($this->description)."'";
 		$sql .= ", statut = ".$this->statut;
