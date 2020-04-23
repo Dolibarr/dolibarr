@@ -186,30 +186,25 @@ if (empty($reshook))
 
 	if ($action == 'update_extras')
 	{
-	    // Fill array 'array_options' with data from update form
-	    $ret = $extrafields->setOptionalsFromPost(null, $object, GETPOST('attribute'));
-	    if ($ret < 0) $error++;
+		$object->oldcopy = dol_clone($object);
 
-	    if (!$error)
-	    {
-	        // Actions on extra fields (by external module or standard code)
-	        // TODO le hook fait double emploi avec le trigger !!
-	        $hookmanager->initHooks(array('receptiondao'));
-	        $parameters = array('id' => $object->id);
-	        $reshook = $hookmanager->executeHooks('insertExtraFields', $parameters, $object, $action); // Note that $action and $object may have been modified by some hooks
-	        if (empty($reshook)) {
-	            $result = $object->insertExtraFields();
-       			if ($result < 0)
-				{
-					setEventMessages($object->error, $object->errors, 'errors');
-					$error++;
-				}
-	        } elseif ($reshook < 0)
-	            $error++;
-	    }
+		// Fill array 'array_options' with data from update form
+		$ret = $extrafields->setOptionalsFromPost(null, $object, GETPOST('attribute', 'none'));
+		if ($ret < 0) $error++;
 
-	    if ($error)
-	        $action = 'edit_extras';
+		if (!$error)
+		{
+			// Actions on extra fields
+			$result = $object->insertExtraFields('RECEPTION_MODIFY');
+			if ($result < 0)
+			{
+				setEventMessages($object->error, $object->errors, 'errors');
+				$error++;
+			}
+		}
+
+		if ($error)
+			$action = 'edit_extras';
 	}
 
 	// Create reception

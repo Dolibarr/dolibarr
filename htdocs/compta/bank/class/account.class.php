@@ -823,13 +823,10 @@ class Account extends CommonObject
 		if ($result)
 		{
 			// Actions on extra fields (by external module or standard code)
-			if (empty($conf->global->MAIN_EXTRAFIELDS_DISABLED)) // For avoid conflicts if trigger used
+			if (!$error)
 			{
-				if (!$error)
-				{
-					$result = $this->insertExtraFields();
-					if ($result < 0) $error++;
-				}
+				$result = $this->insertExtraFields();
+				if ($result < 0) $error++;
 			}
 
 			if (!$error && !$notrigger)
@@ -1107,7 +1104,7 @@ class Account extends CommonObject
 			if ($result)
 			{
 				// Remove extrafields
-				if ((empty($conf->global->MAIN_EXTRAFIELDS_DISABLED))) // For avoid conflicts if trigger used
+				if (!$error)
 				{
 					$result = $this->deleteExtraFields();
 					if ($result < 0)

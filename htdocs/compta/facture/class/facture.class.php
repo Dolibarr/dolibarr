@@ -1881,7 +1881,7 @@ class Facture extends CommonInvoice
 			$error++; $this->errors[] = "Error ".$this->db->lasterror();
 		}
 
-		if (!$error && empty($conf->global->MAIN_EXTRAFIELDS_DISABLED) && is_array($this->array_options) && count($this->array_options) > 0)
+		if (!$error)
 		{
 			$result = $this->insertExtraFields();
 			if ($result < 0)
@@ -5237,7 +5237,7 @@ class FactureLigne extends CommonInvoiceLine
 			$this->id = $this->db->last_insert_id(MAIN_DB_PREFIX.'facturedet');
 			$this->rowid = $this->id; // For backward compatibility
 
-            if (empty($conf->global->MAIN_EXTRAFIELDS_DISABLED)) // For avoid conflicts if trigger used
+            if (!$error)
             {
             	$result = $this->insertExtraFields();
             	if ($result < 0)
@@ -5423,7 +5423,7 @@ class FactureLigne extends CommonInvoiceLine
 		$resql = $this->db->query($sql);
 		if ($resql)
 		{
-        	if (empty($conf->global->MAIN_EXTRAFIELDS_DISABLED)) // For avoid conflicts if trigger used
+        	if (!$error)
         	{
         		$this->id = $this->rowid;
         		$result = $this->insertExtraFields();
