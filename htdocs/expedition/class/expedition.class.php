@@ -180,7 +180,7 @@ class Expedition extends CommonObject
 	 * Canceled status
 	 */
 	const STATUS_CANCELED = -1;
-	
+
 
 	/**
 	 *	Constructor
@@ -1170,7 +1170,7 @@ class Expedition extends CommonObject
 		}
 	}
 
-	
+
 	/**
 	 * 	Cancel shipment.
 	 *
@@ -1291,7 +1291,7 @@ class Expedition extends CommonObject
 			}
 		}
 
-		
+
 		if (!$error)
 		{
 			$sql = "DELETE FROM ".MAIN_DB_PREFIX."expeditiondet";
@@ -1388,9 +1388,8 @@ class Expedition extends CommonObject
 			$this->db->rollback();
 			return -1;
 		}
-		
 	}
-	
+
 	/**
 	 * 	Delete shipment.
 	 * 	Warning, do not delete a shipment if a delivery is linked to (with table llx_element_element)

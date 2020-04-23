@@ -461,10 +461,9 @@ if (empty($reshook))
 	    	}
 	    }
 	}
-	
+
 	elseif ($action == 'confirm_cancel' && $confirm == 'yes' && $user->rights->expedition->supprimer)
 	{
-	
 		$also_update_stock = (GETPOST('alsoUpdateStock', 'alpha') ? 1 : 0);
 	    $result = $object->cancel(0, $also_update_stock);
 	    if ($result > 0)
@@ -475,9 +474,8 @@ if (empty($reshook))
 		{
 			setEventMessages($object->error, $object->errors, 'errors');
 	    }
-
 	}
-	
+
 	elseif ($action == 'confirm_delete' && $confirm == 'yes' && $user->rights->expedition->supprimer)
 	{
 	    $also_update_stock = (GETPOST('alsoUpdateStock', 'alpha') ? 1 : 0);
@@ -2592,15 +2590,15 @@ elseif ($id || $ref)
 				}
 			}
 
-			// Cancel			
+			// Cancel
 			if ($object->statut == Expedition::STATUS_VALIDATED)
-			{			
+			{
     			if ($user->rights->expedition->supprimer)
     			{
     				print '<a class="butActionDelete" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=cancel">'.$langs->trans("Cancel").'</a>';
     			}
 			}
-			
+
 			// Delete
 			if ($user->rights->expedition->supprimer)
 			{
