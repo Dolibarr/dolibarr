@@ -2167,12 +2167,16 @@ class Facture extends CommonInvoice
 			}
 
 
-			// Delete invoice line
+			// Delete invoice line + line extrafields
+			$main = MAIN_DB_PREFIX . 'facturedet';
+            $ef = $main . "_extrafields";
+            $sqlef = "DELETE $ef FROM $main INNER JOIN $ef WHERE ($ef.fk_object = $main.rowid AND $main.fk_facture = $rowid)";
+
 			$sql = 'DELETE FROM '.MAIN_DB_PREFIX.'facturedet WHERE fk_facture = '.$rowid;
 
 			dol_syslog(get_class($this)."::delete", LOG_DEBUG);
 
-			if ($this->db->query($sql) && $this->delete_linked_contact())
+			if ($this->db->query($sqlef) && $this->db->query($sql) && $this->delete_linked_contact())
 			{
 				$sql = 'DELETE FROM '.MAIN_DB_PREFIX.'facture WHERE rowid = '.$rowid;
 
@@ -5312,7 +5316,14 @@ class FactureLigne extends CommonInvoiceLine
 		}
 		// End call triggers
 
-
+        // extrafields
+        $result = $this->deleteExtraFields();
+        if ($result < 0)
+        {
+            $this->db->rollback();
+            return -1;
+        }
+		
 		$sql = "DELETE FROM ".MAIN_DB_PREFIX."facturedet WHERE rowid = ".$this->rowid;
 		dol_syslog(get_class($this)."::delete", LOG_DEBUG);
 		if ($this->db->query($sql))
