@@ -223,7 +223,7 @@ if (!empty($object->id))
     //show_actions_todo($conf,$langs,$db,$object,null,0,$actioncode);
 
     // List of done actions
-    //show_actions_done($conf,$langs,$db,$object,null,0,$actioncode);
+    //show_actions_done($conf,$langs,$db,$object,null,0,$actioncode, '', $filters, $sortfield, $sortorder);
 
     // List of all actions
     $filters = array();
