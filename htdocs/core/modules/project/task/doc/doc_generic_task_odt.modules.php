@@ -163,7 +163,7 @@ class doc_generic_task_odt extends ModelePDFTask
 	/**
 	 *	Define array with couple substitution key => substitution value
 	 *
-	 *	@param  array			$task				Task Object
+	 *	@param  Task			$task				Task Object
 	 *	@param  Translate		$outputlangs        Lang object to use for output
 	 *  @param  string		    $array_key	        Name of the key for return array
 	 *  @return	array								Return a substitution array
@@ -181,7 +181,8 @@ class doc_generic_task_odt extends ModelePDFTask
             'task_label'=>$task->label,
             'task_description'=>$task->description,
             'task_fk_parent'=>$task->fk_parent,
-            'task_duration'=>$task->duration,
+            'task_duration'=>$task->convertSecondToTime(duration_effective,'allhourmin'),
+            'task_planned_workload'=>convertSecondToTime($task->planned_workload,'allhourmin'),
             'task_progress'=>$task->progress,
             'task_public'=>$task->public,
             'task_date_start'=>dol_print_date($task->date_start, 'day'),
