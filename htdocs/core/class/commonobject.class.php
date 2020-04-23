@@ -1359,7 +1359,7 @@ abstract class CommonObject
 					}
 					if ($conf->{$modulename}->enabled) {
 						$libelle_element = $langs->trans('ContactDefault_'.$obj->element);
-						$transkey = "TypeContact_".$this->element."_".$source."_".$obj->code;
+						$transkey = "TypeContact_".$obj->element."_".$source."_".$obj->code;
 						$libelle_type = ($langs->trans($transkey) != $transkey ? $langs->trans($transkey) : $obj->libelle);
 						if (empty($option))
 							$tab[$obj->rowid] = $libelle_element.' - '.$libelle_type;
