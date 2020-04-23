@@ -60,7 +60,7 @@ MemberSubscriptionModifiedInDolibarr=Prenumeration %s för medlem %s modified
 MemberSubscriptionDeletedInDolibarr=Prenumeration %s för medlem %s raderad
 ShipmentValidatedInDolibarr=Leverans %s bekräftat
 ShipmentClassifyClosedInDolibarr=Sändning %s märkt fakturerad
-ShipmentUnClassifyCloseddInDolibarr=Sändning %s märkt som återöppnad
+ShipmentUnClassifyCloseddInDolibarr=Shipment %s classified re-open
 ShipmentBackToDraftInDolibarr=Leverans %s gå tillbaka till utkast status
 ShipmentDeletedInDolibarr=Frakten %s raderad
 OrderCreatedInDolibarr=Order %s skapad
@@ -76,6 +76,7 @@ ContractSentByEMail=Kontrakt %s skickat av email
 OrderSentByEMail=Försäljning order %s skickad av email
 InvoiceSentByEMail=Kund invoice %s skickad av email
 SupplierOrderSentByEMail=Purchase order %s skickad av email
+ORDER_SUPPLIER_DELETEInDolibarr=Purchase order %s deleted
 SupplierInvoiceSentByEMail=Vendor invoice %s skickad av email
 ShippingSentByEMail=Leverans %s skickad av email
 ShippingValidated= Leverans %s bekräftat
@@ -86,6 +87,11 @@ InvoiceDeleted=Faktura raderad
 PRODUCT_CREATEInDolibarr=Produkt %s skapad
 PRODUCT_MODIFYInDolibarr=Produkt %s modified
 PRODUCT_DELETEInDolibarr=Produkt %s raderad
+HOLIDAY_CREATEInDolibarr=Request for leave %s created
+HOLIDAY_MODIFYInDolibarr=Request for leave %s modified
+HOLIDAY_APPROVEInDolibarr=Request for leave %s approved
+HOLIDAY_VALIDATEDInDolibarr=Request for leave %s validated
+HOLIDAY_DELETEInDolibarr=Request for leave %s deleted
 EXPENSE_REPORT_CREATEInDolibarr=Kostnadsrapport %s skapad
 EXPENSE_REPORT_VALIDATEInDolibarr=Kostnadsrapport %s bekräftat
 EXPENSE_REPORT_APPROVEInDolibarr=Kostnadsrapport %s godkänd
@@ -99,6 +105,14 @@ TICKET_MODIFYInDolibarr=Biljett %s modified
 TICKET_ASSIGNEDInDolibarr=Ticket %s assigned
 TICKET_CLOSEInDolibarr=Biljett %s stängt
 TICKET_DELETEInDolibarr=Biljett %s raderad
+BOM_VALIDATEInDolibarr=BOM validated
+BOM_UNVALIDATEInDolibarr=BOM unvalidated
+BOM_CLOSEInDolibarr=BOM disabled
+BOM_REOPENInDolibarr=BOM reopen
+BOM_DELETEInDolibarr=BOM deleted
+MRP_MO_VALIDATEInDolibarr=MO validated
+MRP_MO_PRODUCEDInDolibarr=MO produced
+MRP_MO_DELETEInDolibarr=MO deleted
 ##### End agenda events #####
 AgendaModelModule=Dokumentmallar för event
 DateActionStart=Startdatum
@@ -109,6 +123,7 @@ AgendaUrlOptionsNotAdmin= <b> logina =! %s </b> för att begränsa produktionen
 AgendaUrlOptions4= <b> logint = %s </b> för att begränsa utdata till åtgärder som tilldelats user <b> %s </b> (ägare and andra).
 AgendaUrlOptionsProject= <b> project = __ PROJECT_ID__ </b> för att begränsa utsignalen till åtgärder linked till project <b> __PROJECT_ID__ </b>.
 AgendaUrlOptionsNotAutoEvent= <b> notactiontype = systemauto </b> för att utesluta automatisk events.
+AgendaUrlOptionsIncludeHolidays=<b>includeholidays=1</b> to include events of holidays.
 AgendaShowBirthdayEvents=Show födelsedagar av contacts
 AgendaHideBirthdayEvents=Dölj födelsedagar av contacts
 Busy=Upptagen

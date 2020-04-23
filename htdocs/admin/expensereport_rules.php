@@ -158,7 +158,7 @@ echo $langs->trans('ExpenseReportRulesDesc');
 if ($action != 'edit')
 {
 	echo '<form action="'.$_SERVER['PHP_SELF'].'" method="post">';
-	echo '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'" />';
+	echo '<input type="hidden" name="token" value="'.newToken().'" />';
 	echo '<input type="hidden" name="action" value="save" />';
 
 	echo '<table class="noborder centpercent">';
@@ -196,7 +196,7 @@ if ($action != 'edit')
 
 
 echo '<form action="'.$_SERVER['PHP_SELF'].'" method="post">';
-echo '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'" />';
+echo '<input type="hidden" name="token" value="'.newToken().'" />';
 
 if ($action == 'edit')
 {

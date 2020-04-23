@@ -105,6 +105,8 @@ if (empty($reshook))
 		$object->zip         = GETPOST("zipcode");
 		$object->town        = GETPOST("town");
 		$object->country_id  = GETPOST("country_id");
+		$object->phone = GETPOST("phone");
+		$object->fax = GETPOST("fax");
 
 		if (!empty($object->libelle))
 		{
@@ -174,6 +176,8 @@ if (empty($reshook))
 			$object->zip         = GETPOST("zipcode");
 			$object->town        = GETPOST("town");
 			$object->country_id  = GETPOST("country_id");
+			$object->phone = GETPOST("phone");
+			$object->fax = GETPOST("fax");
 
 	        // Fill array 'array_options' with data from add form
 	        $ret = $extrafields->setOptionalsFromPost(null, $object);
@@ -244,12 +248,12 @@ llxHeader("", $langs->trans("WarehouseCard"), $help_url);
 
 if ($action == 'create')
 {
-	print load_fiche_titre($langs->trans("NewWarehouse"));
+	print load_fiche_titre($langs->trans("NewWarehouse"), '', 'stock');
 
 	dol_set_focus('input[name="libelle"]');
 
 	print '<form action="'.$_SERVER["PHP_SELF"].'" method="post">'."\n";
-	print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+	print '<input type="hidden" name="token" value="'.newToken().'">';
 	print '<input type="hidden" name="action" value="add">';
 	print '<input type="hidden" name="backtopage" value="'.$backtopage.'">';
 
@@ -289,9 +293,20 @@ if ($action == 'create')
 
 	// Country
 	print '<tr><td>'.$langs->trans('Country').'</td><td>';
+	print img_picto('', 'globe-americas', 'class="paddingright"');
 	print $form->select_country((!empty($object->country_id) ? $object->country_id : $mysoc->country_code), 'country_id');
 	if ($user->admin) print info_admin($langs->trans("YouCanChangeValuesForThisListFromDictionarySetup"), 1);
 	print '</td></tr>';
+
+	// Phone / Fax
+	print '<tr><td class="titlefieldcreate fieldrequired">'.$form->editfieldkey('Phone', 'phone', '', $object, 0).'</td><td>';
+	print img_picto('', 'object_phoning', 'class="paddingright"');
+	print '<input name="phone" size="20" value="'.$object->phone.'"></td></tr>';
+	print '<tr><td class="titlefieldcreate fieldrequired">'.$form->editfieldkey('Fax', 'fax', '', $object, 0).'</td>';
+	print '<td>';
+	print img_picto('', 'object_phoning_fax', 'class="paddingright"');
+	print '<input name="fax" size="20" value="'.$object->fax.'"></td></tr>';
+
 	// Status
 	print '<tr><td>'.$langs->trans("Status").'</td><td>';
 	print '<select name="statut" class="flat">';
@@ -362,7 +377,7 @@ else
 			}
 
 			// Call Hook formConfirm
-			$parameters = array();
+			$parameters = array('formConfirm' => $formconfirm);
 			$reshook = $hookmanager->executeHooks('formConfirm', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
 			if (empty($reshook)) $formconfirm .= $hookmanager->resPrint;
 			elseif ($reshook > 0) $formconfirm = $hookmanager->resPrint;
@@ -371,14 +386,14 @@ else
 			print $formconfirm;
 
 			// Warehouse card
-			$linkback = '<a href="'.DOL_URL_ROOT.'/product/stock/list.php">'.$langs->trans("BackToList").'</a>';
+			$linkback = '<a href="'.DOL_URL_ROOT.'/product/stock/list.php?restore_lastsearch_values=1">'.$langs->trans("BackToList").'</a>';
 
-			$morehtmlref='<div class="refidno">';
-			$morehtmlref.=$langs->trans("LocationSummary").' : '.$object->lieu;
-        	$morehtmlref.='</div>';
+			$morehtmlref = '<div class="refidno">';
+			$morehtmlref .= $langs->trans("LocationSummary").' : '.$object->lieu;
+        	$morehtmlref .= '</div>';
 
             $shownav = 1;
-            if ($user->socid && ! in_array('stock', explode(',', $conf->global->MAIN_MODULES_FOR_EXTERNAL))) $shownav=0;
+            if ($user->socid && !in_array('stock', explode(',', $conf->global->MAIN_MODULES_FOR_EXTERNAL))) $shownav = 0;
 
         	dol_banner_tab($object, 'ref', $linkback, $shownav, 'ref', 'ref', $morehtmlref);
 
@@ -386,11 +401,11 @@ else
         	print '<div class="fichehalfleft">';
         	print '<div class="underbanner clearboth"></div>';
 
-        	print '<table class="border centpercent">';
+        	print '<table class="border centpercent tableforfield">';
 
 			// Parent entrepot
 			$parentwarehouse = new Entrepot($db);
-			if(!empty($object->fk_parent) && $parentwarehouse->fetch($object->fk_parent) > 0) {
+			if (!empty($object->fk_parent) && $parentwarehouse->fetch($object->fk_parent) > 0) {
 				print '<tr><td>'.$langs->trans("ParentWarehouse").'</td><td>';
 				print $parentwarehouse->getNomUrl(3);
 				print '</td></tr>';
@@ -420,7 +435,7 @@ else
 			print '<div class="ficheaddleft">';
 			print '<div class="underbanner clearboth"></div>';
 
-			print '<table class="border centpercent">';
+			print '<table class="border centpercent tableforfield">';
 
 			// Value
 			print '<tr><td class="titlefield">'.$langs->trans("EstimatedStockValueShort").'</td><td>';
@@ -430,8 +445,8 @@ else
 			// Last movement
 			if (!empty($user->rights->stock->mouvement->lire)) {
 				$sql = "SELECT max(m.datem) as datem";
-				$sql .= " FROM " . MAIN_DB_PREFIX . "stock_mouvement as m";
-				$sql .= " WHERE m.fk_entrepot = '" . $object->id . "'";
+				$sql .= " FROM ".MAIN_DB_PREFIX."stock_mouvement as m";
+				$sql .= " WHERE m.fk_entrepot = '".$object->id."'";
 				$resqlbis = $db->query($sql);
 				if ($resqlbis) {
 					$obj = $db->fetch_object($resqlbis);
@@ -439,10 +454,10 @@ else
 				} else {
 					dol_print_error($db);
 				}
-				print '<tr><td>' . $langs->trans("LastMovement") . '</td><td>';
+				print '<tr><td>'.$langs->trans("LastMovement").'</td><td>';
 				if ($lastmovementdate) {
-					print dol_print_date($lastmovementdate, 'dayhour') . ' ';
-					print '(<a href="' . DOL_URL_ROOT . '/product/stock/movement_list.php?id=' . $object->id . '">' . $langs->trans("FullList") . '</a>)';
+					print dol_print_date($lastmovementdate, 'dayhour').' ';
+					print '(<a href="'.DOL_URL_ROOT.'/product/stock/movement_list.php?id='.$object->id.'">'.$langs->trans("FullList").'</a>)';
 				} else {
 					print $langs->trans("None");
 				}
@@ -454,7 +469,7 @@ else
 			// Categories
 			if ($conf->categorie->enabled) {
 				print '<tr><td valign="middle">'.$langs->trans("Categories").'</td><td colspan="3">';
-				print $form->showCategories($object->id, 'warehouse', 1);
+				print $form->showCategories($object->id, Categorie::TYPE_WAREHOUSE, 1);
 				print "</td></tr>";
 			}
 			print "</table>";
@@ -509,6 +524,7 @@ else
 			print_liste_field_titre("Product", "", "p.ref", "&amp;id=".$id, "", "", $sortfield, $sortorder);
 			print_liste_field_titre("Label", "", "p.label", "&amp;id=".$id, "", "", $sortfield, $sortorder);
             print_liste_field_titre("Units", "", "ps.reel", "&amp;id=".$id, "", '', $sortfield, $sortorder, 'right ');
+            if (!empty($conf->global->PRODUCT_USE_UNITS)) print_liste_field_titre("Unit", "", "p.fk_unit", "&amp;id=".$id, "", 'align="left"', $sortfield, $sortorder);
             print_liste_field_titre("AverageUnitPricePMPShort", "", "p.pmp", "&amp;id=".$id, "", '', $sortfield, $sortorder, 'right ');
 			print_liste_field_titre("EstimatedStockValueShort", "", "", "&amp;id=".$id, "", '', $sortfield, $sortorder, 'right ');
             if (empty($conf->global->PRODUIT_MULTIPRICES)) {
@@ -530,6 +546,7 @@ else
 
 			$sql = "SELECT p.rowid as rowid, p.ref, p.label as produit, p.tobatch, p.fk_product_type as type, p.pmp as ppmp, p.price, p.price_ttc, p.entity,";
 			$sql .= " ps.reel as value";
+            if (!empty($conf->global->PRODUCT_USE_UNITS)) $sql .= ",fk_unit";
 			$sql .= " FROM ".MAIN_DB_PREFIX."product_stock as ps, ".MAIN_DB_PREFIX."product as p";
 			$sql .= " WHERE ps.fk_product = p.rowid";
 			$sql .= " AND ps.reel <> 0"; // We do not show if stock is 0 (no product in this warehouse)
@@ -573,6 +590,7 @@ else
 					$productstatic->type = $objp->type;
 					$productstatic->entity = $objp->entity;
 					$productstatic->status_batch = $objp->tobatch;
+					$productstatic->fk_unit = $objp->fk_unit;
 					print $productstatic->getNomUrl(1, 'stock', 16);
 					print '</td>';
 
@@ -585,6 +603,13 @@ else
 					print '</td>';
 					$totalunit += $objp->value;
 
+                    if (!empty($conf->global->PRODUCT_USE_UNITS)) {
+                        // Units
+                        print '<td align="left">';
+                        if (is_null($productstatic->fk_unit))$productstatic->fk_unit = 1;
+                        print $langs->trans($productstatic->getLabelOfUnit());
+                        print '</td>';
+                    }
                     // Price buy PMP
 					print '<td class="right">'.price(price2num($objp->ppmp, 'MU')).'</td>';
 
@@ -618,19 +643,24 @@ else
 						print '<td class="center"><a href="'.DOL_URL_ROOT.'/product/stock/product.php?dwid='.$object->id.'&id='.$objp->rowid.'&action=correction&backtopage='.urlencode($_SERVER["PHP_SELF"].'?id='.$id).'">';
 						print $langs->trans("StockCorrection");
 						print "</a></td>";
-					}
-
-					print "</tr>";
-					$i++;
-				}
-				$db->free($resql);
+                    }
+                    if (!empty($conf->global->PRODUCT_USE_UNITS)) {
+                        if ($i == 0) $units = $productstatic->fk_unit;
+                        elseif ($productstatic->fk_unit != $units) $sameunits = false;
+                    }
+                    print "</tr>";
+                    $i++;
+                }
+                $db->free($resql);
 
 				print '<tr class="liste_total"><td class="liste_total" colspan="2">'.$langs->trans("Total").'</td>';
 				print '<td class="liste_total right">';
 				$valtoshow = price2num($totalunit, 'MS');
-				print empty($valtoshow) ? '0' : $valtoshow;
+				if (empty($conf->global->PRODUCT_USE_UNITS) || $sameunits) print empty($valtoshow) ? '0' : $valtoshow;
 				print '</td>';
-				print '<td class="liste_total">&nbsp;</td>';
+				print '<td class="liste_total">';
+				if (empty($conf->global->PRODUCT_USE_UNITS) && $sameunits) print $langs->trans($productstatic->getLabelOfUnit());
+                print '</td>';
                 print '<td class="liste_total right">'.price(price2num($totalvalue, 'MT')).'</td>';
                 if (empty($conf->global->PRODUIT_MULTIPRICES))
                 {
@@ -657,7 +687,7 @@ else
 			$langs->trans("WarehouseEdit");
 
 			print '<form action="card.php" method="POST">';
-			print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+			print '<input type="hidden" name="token" value="'.newToken().'">';
 			print '<input type="hidden" name="action" value="update">';
 			print '<input type="hidden" name="id" value="'.$object->id.'">';
 
@@ -699,9 +729,18 @@ else
 
 			// Country
 			print '<tr><td>'.$langs->trans('Country').'</td><td>';
+			print img_picto('', 'globe-americas', 'class="paddingright"');
 			print $form->select_country($object->country_id ? $object->country_id : $mysoc->country_code, 'country_id');
 			if ($user->admin) print info_admin($langs->trans("YouCanChangeValuesForThisListFromDictionarySetup"), 1);
 			print '</td></tr>';
+
+			// Phone / Fax
+			print '<tr><td class="titlefieldcreate fieldrequired">'.$form->editfieldkey('Phone', 'phone', '', $object, 0).'</td><td>';
+			print img_picto('', 'object_phoning', 'class="paddingright"');
+			print '<input name="phone" size="20" value="'.$object->phone.'"></td></tr>';
+			print '<tr><td class="titlefieldcreate fieldrequired">'.$form->editfieldkey('Fax', 'fax', '', $object, 0).'</td><td>';
+			print img_picto('', 'object_phoning_fax', 'class="paddingright"');
+			print '<input name="fax" size="20" value="'.$object->fax.'"></td></tr>';
 
 			// Status
 			print '<tr><td>'.$langs->trans("Status").'</td><td>';

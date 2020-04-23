@@ -14,7 +14,7 @@
  * Copyright (C) 2015       Raphaël Doursenaud      <rdoursenaud@gpcsolutions.fr>
  * Copyright (C) 2017       Rui Strecht			    <rui.strecht@aliartalentos.com>
  * Copyright (C) 2018	    Philippe Grand	        <philippe.grand@atoo-net.com>
- * Copyright (C) 2019	    Josep Lluís Amador      <joseplluis@lliuretic.cat>
+ * Copyright (C) 2019-2020  Josep Lluís Amador      <joseplluis@lliuretic.cat>
  * Copyright (C) 2019       Frédéric France         <frederic.france@netlogic.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -59,16 +59,50 @@ class Societe extends CommonObject
 	 */
 	public $fk_element = 'fk_soc';
 
+    /**
+     * @var string Fields for combobox
+     */
 	public $fieldsforcombobox = 'nom,name_alias';
 
 	/**
 	 * @var array	List of child tables. To test if we can delete object.
 	 */
-	protected $childtables = array("supplier_proposal"=>'SupplierProposal', "propal"=>'Proposal', "commande"=>'Order', "facture"=>'Invoice', "facture_rec"=>'RecurringInvoiceTemplate', "contrat"=>'Contract', "fichinter"=>'Fichinter', "facture_fourn"=>'SupplierInvoice', "commande_fournisseur"=>'SupplierOrder', "projet"=>'Project', "expedition"=>'Shipment', "prelevement_lignes"=>'DirectDebitRecord');
+	protected $childtables = array(
+		"supplier_proposal" => 'SupplierProposal',
+		"propal" => 'Proposal',
+		"commande" => 'Order',
+		"facture" => 'Invoice',
+		"facture_rec" => 'RecurringInvoiceTemplate',
+		"contrat" => 'Contract',
+		"fichinter" => 'Fichinter',
+		"facture_fourn" => 'SupplierInvoice',
+		"commande_fournisseur" => 'SupplierOrder',
+		"projet" => 'Project',
+		"expedition" => 'Shipment',
+		"prelevement_lignes" => 'DirectDebitRecord',
+	);
+
 	/**
 	 * @var array	List of child tables. To know object to delete on cascade.
 	 */
-	protected $childtablesoncascade = array("societe_prices", "societe_log", "societe_address", "product_fournisseur_price", "product_customer_price_log", "product_customer_price", "socpeople", "adherent", "societe_account", "societe_rib", "societe_remise", "societe_remise_except", "societe_commerciaux", "categorie", "notify", "notify_def", "actioncomm");
+	protected $childtablesoncascade = array(
+		"societe_prices",
+		"societe_address",
+		"product_fournisseur_price",
+		"product_customer_price_log",
+		"product_customer_price",
+		"socpeople",
+		"adherent",
+		"societe_account",
+		"societe_rib",
+		"societe_remise",
+		"societe_remise_except",
+		"societe_commerciaux",
+		"categorie",
+		"notify",
+		"notify_def",
+		"actioncomm",
+	);
 
 	/**
 	 * @var string String with name of icon for myobject. Must be the part after the 'object_' into object_myobject.png
@@ -87,27 +121,100 @@ class Societe extends CommonObject
 	 */
 	public $restrictiononfksoc = 1;
 
-
-	// BEGIN MODULEBUILDER PROPERTIES
 	/**
 	 * @var array  Array with all fields and their property. Do not use it as a static var. It may be modified by constructor.
 	 */
 	public $fields = array(
-		'rowid'         =>array('type'=>'integer', 'label'=>'TechnicalID', 'enabled'=>1, 'visible'=>-2, 'notnull'=>1, 'index'=>1, 'position'=>1, 'comment'=>'Id'),
-		'nom'           =>array('type'=>'varchar(128)', 'label'=>'Name', 'enabled'=>1, 'visible'=>1, 'notnull'=>1, 'showoncombobox'=>1, 'index'=>1, 'position'=>10, 'searchall'=>1, 'comment'=>'Reference of object'),
-		'name_alias'    =>array('type'=>'varchar(128)', 'label'=>'Name', 'enabled'=>1, 'visible'=>1, 'notnull'=>1, 'showoncombobox'=>1, 'index'=>1, 'position'=>10, 'searchall'=>1, 'comment'=>'Reference of object'),
-		'entity'        =>array('type'=>'integer', 'label'=>'Entity', 'enabled'=>1, 'visible'=>0, 'default'=>1, 'notnull'=>1, 'index'=>1, 'position'=>20),
-		'note_public'   =>array('type'=>'text', 'label'=>'NotePublic', 'enabled'=>1, 'visible'=>0, 'position'=>60),
-		'note_private'  =>array('type'=>'text', 'label'=>'NotePrivate', 'enabled'=>1, 'visible'=>0, 'position'=>61),
-		'datec'			=>array('type'=>'datetime', 'label'=>'DateCreation', 'enabled'=>1, 'visible'=>-2, 'notnull'=>1, 'position'=>500),
-		'tms'           =>array('type'=>'timestamp', 'label'=>'DateModification', 'enabled'=>1, 'visible'=>-2, 'notnull'=>1, 'position'=>501),
-		//'date_valid'    =>array('type'=>'datetime',     'label'=>'DateCreation',     'enabled'=>1, 'visible'=>-2, 'position'=>502),
-		'fk_user_creat' =>array('type'=>'integer', 'label'=>'UserAuthor', 'enabled'=>1, 'visible'=>-2, 'notnull'=>1, 'position'=>510),
-		'fk_user_modif' =>array('type'=>'integer', 'label'=>'UserModif', 'enabled'=>1, 'visible'=>-2, 'notnull'=>-1, 'position'=>511),
-		//'fk_user_valid' =>array('type'=>'integer',      'label'=>'UserValidation',        'enabled'=>1, 'visible'=>-1, 'position'=>512),
-		'import_key'    =>array('type'=>'varchar(14)', 'label'=>'ImportId', 'enabled'=>1, 'visible'=>-2, 'notnull'=>-1, 'index'=>1, 'position'=>1000),
+		'rowid' =>array('type'=>'integer', 'label'=>'TechnicalID', 'enabled'=>1, 'visible'=>-1, 'notnull'=>1, 'position'=>10),
+		'parent' =>array('type'=>'integer', 'label'=>'Parent', 'enabled'=>1, 'visible'=>-1, 'position'=>20),
+		'tms' =>array('type'=>'timestamp', 'label'=>'DateModification', 'enabled'=>1, 'visible'=>-1, 'notnull'=>1, 'position'=>25),
+		'datec' =>array('type'=>'datetime', 'label'=>'DateCreation', 'enabled'=>1, 'visible'=>-1, 'position'=>30),
+		'nom' =>array('type'=>'varchar(128)', 'label'=>'Nom', 'enabled'=>1, 'visible'=>-1, 'position'=>35, 'showoncombobox'=>1),
+		'name_alias' =>array('type'=>'varchar(128)', 'label'=>'Name alias', 'enabled'=>1, 'visible'=>-1, 'position'=>36, 'showoncombobox'=>1),
+		'entity' =>array('type'=>'integer', 'label'=>'Entity', 'default'=>1, 'enabled'=>1, 'visible'=>-2, 'notnull'=>1, 'position'=>40, 'index'=>1),
+		'ref_ext' =>array('type'=>'varchar(255)', 'label'=>'RefExt', 'enabled'=>1, 'visible'=>0, 'position'=>45),
+		'code_client' =>array('type'=>'varchar(24)', 'label'=>'CustomerCode', 'enabled'=>1, 'visible'=>-1, 'position'=>55),
+		'code_fournisseur' =>array('type'=>'varchar(24)', 'label'=>'SupplierCode', 'enabled'=>1, 'visible'=>-1, 'position'=>60),
+		'code_compta' =>array('type'=>'varchar(24)', 'label'=>'CodeCompta', 'enabled'=>1, 'visible'=>-1, 'position'=>65),
+		'code_compta_fournisseur' =>array('type'=>'varchar(24)', 'label'=>'CodeComptaSupplier', 'enabled'=>1, 'visible'=>-1, 'position'=>70),
+		'address' =>array('type'=>'varchar(255)', 'label'=>'Address', 'enabled'=>1, 'visible'=>-1, 'position'=>75),
+		'zip' =>array('type'=>'varchar(25)', 'label'=>'Zip', 'enabled'=>1, 'visible'=>-1, 'position'=>80),
+		'town' =>array('type'=>'varchar(50)', 'label'=>'Town', 'enabled'=>1, 'visible'=>-1, 'position'=>85),
+		'fk_departement' =>array('type'=>'integer', 'label'=>'State', 'enabled'=>1, 'visible'=>-1, 'position'=>90),
+		'fk_pays' =>array('type'=>'integer:Ccountry:core/class/ccountry.class.php', 'label'=>'Country', 'enabled'=>1, 'visible'=>-1, 'position'=>95),
+		'phone' =>array('type'=>'varchar(20)', 'label'=>'Phone', 'enabled'=>1, 'visible'=>-1, 'position'=>100),
+		'fax' =>array('type'=>'varchar(20)', 'label'=>'Fax', 'enabled'=>1, 'visible'=>-1, 'position'=>105),
+		'url' =>array('type'=>'varchar(255)', 'label'=>'Url', 'enabled'=>1, 'visible'=>-1, 'position'=>110),
+		'email' =>array('type'=>'varchar(128)', 'label'=>'Email', 'enabled'=>1, 'visible'=>-1, 'position'=>115),
+		'socialnetworks' =>array('type'=>'text', 'label'=>'Socialnetworks', 'enabled'=>1, 'visible'=>-1, 'position'=>120),
+		/*'skype' =>array('type'=>'varchar(255)', 'label'=>'Skype', 'enabled'=>1, 'visible'=>-1, 'position'=>125),
+		'whatsapp' =>array('type'=>'varchar(255)', 'label'=>'Whatsapp', 'enabled'=>1, 'visible'=>-1, 'position'=>130),
+		'linkedin' =>array('type'=>'varchar(255)', 'label'=>'Linkedin', 'enabled'=>1, 'visible'=>-1, 'position'=>135),
+		'youtube' =>array('type'=>'varchar(255)', 'label'=>'Youtube', 'enabled'=>1, 'visible'=>-1, 'position'=>140),
+		'googleplus' =>array('type'=>'varchar(255)', 'label'=>'Googleplus', 'enabled'=>1, 'visible'=>-1, 'position'=>145),
+		'snapchat' =>array('type'=>'varchar(255)', 'label'=>'Snapchat', 'enabled'=>1, 'visible'=>-1, 'position'=>150),
+		'instagram' =>array('type'=>'varchar(255)', 'label'=>'Instagram', 'enabled'=>1, 'visible'=>-1, 'position'=>155),
+		'facebook' =>array('type'=>'varchar(255)', 'label'=>'Facebook', 'enabled'=>1, 'visible'=>-1, 'position'=>160),
+		'twitter' =>array('type'=>'varchar(255)', 'label'=>'Twitter', 'enabled'=>1, 'visible'=>-1, 'position'=>165),*/
+		'fk_effectif' =>array('type'=>'integer', 'label'=>'Fk effectif', 'enabled'=>1, 'visible'=>-1, 'position'=>170),
+		'fk_typent' =>array('type'=>'integer', 'label'=>'Fk typent', 'enabled'=>1, 'visible'=>-1, 'position'=>175),
+		'fk_forme_juridique' =>array('type'=>'integer', 'label'=>'JuridicalStatus', 'enabled'=>1, 'visible'=>-1, 'position'=>180),
+		'fk_currency' =>array('type'=>'varchar(3)', 'label'=>'Currency', 'enabled'=>1, 'visible'=>-1, 'position'=>185),
+		'siren' =>array('type'=>'varchar(128)', 'label'=>'Idprof1', 'enabled'=>1, 'visible'=>-1, 'position'=>190),
+		'siret' =>array('type'=>'varchar(128)', 'label'=>'Idprof2', 'enabled'=>1, 'visible'=>-1, 'position'=>195),
+		'ape' =>array('type'=>'varchar(128)', 'label'=>'Idprof3', 'enabled'=>1, 'visible'=>-1, 'position'=>200),
+		'idprof4' =>array('type'=>'varchar(128)', 'label'=>'Idprof4', 'enabled'=>1, 'visible'=>-1, 'position'=>205),
+		'idprof5' =>array('type'=>'varchar(128)', 'label'=>'Idprof5', 'enabled'=>1, 'visible'=>-1, 'position'=>206),
+		'idprof6' =>array('type'=>'varchar(128)', 'label'=>'Idprof6', 'enabled'=>1, 'visible'=>-1, 'position'=>207),
+		'tva_intra' =>array('type'=>'varchar(20)', 'label'=>'Tva intra', 'enabled'=>1, 'visible'=>-1, 'position'=>210),
+		'capital' =>array('type'=>'double(24,8)', 'label'=>'Capital', 'enabled'=>1, 'visible'=>-1, 'position'=>215),
+		'fk_stcomm' =>array('type'=>'integer', 'label'=>'Fk stcomm', 'enabled'=>1, 'visible'=>-1, 'notnull'=>1, 'position'=>220),
+		'note_private' =>array('type'=>'text', 'label'=>'NotePublic', 'enabled'=>1, 'visible'=>0, 'position'=>225),
+		'note_public' =>array('type'=>'text', 'label'=>'NotePrivate', 'enabled'=>1, 'visible'=>0, 'position'=>230),
+		'prefix_comm' =>array('type'=>'varchar(5)', 'label'=>'Prefix comm', 'enabled'=>'$conf->global->SOCIETE_USEPREFIX', 'visible'=>-1, 'position'=>235),
+		'client' =>array('type'=>'tinyint(4)', 'label'=>'Client', 'enabled'=>1, 'visible'=>-1, 'position'=>240),
+		'fournisseur' =>array('type'=>'tinyint(4)', 'label'=>'Fournisseur', 'enabled'=>1, 'visible'=>-1, 'position'=>245),
+		'supplier_account' =>array('type'=>'varchar(32)', 'label'=>'Supplier account', 'enabled'=>1, 'visible'=>-1, 'position'=>250),
+		'fk_prospectlevel' =>array('type'=>'varchar(12)', 'label'=>'ProspectLevel', 'enabled'=>1, 'visible'=>-1, 'position'=>255),
+		'customer_bad' =>array('type'=>'tinyint(4)', 'label'=>'Customer bad', 'enabled'=>1, 'visible'=>-1, 'position'=>260),
+		'customer_rate' =>array('type'=>'double', 'label'=>'Customer rate', 'enabled'=>1, 'visible'=>-1, 'position'=>265),
+		'supplier_rate' =>array('type'=>'double', 'label'=>'Supplier rate', 'enabled'=>1, 'visible'=>-1, 'position'=>270),
+		'fk_user_creat' =>array('type'=>'integer:User:user/class/user.class.php', 'label'=>'UserAuthor', 'enabled'=>1, 'visible'=>-2, 'position'=>275),
+		'fk_user_modif' =>array('type'=>'integer:User:user/class/user.class.php', 'label'=>'UserModif', 'enabled'=>1, 'visible'=>-2, 'notnull'=>-1, 'position'=>280),
+		//'remise_client' =>array('type'=>'double', 'label'=>'CustomerDiscount', 'enabled'=>1, 'visible'=>-1, 'position'=>285, 'isameasure'=>1),
+		//'remise_supplier' =>array('type'=>'double', 'label'=>'SupplierDiscount', 'enabled'=>1, 'visible'=>-1, 'position'=>290, 'isameasure'=>1),
+		'mode_reglement' =>array('type'=>'tinyint(4)', 'label'=>'Mode reglement', 'enabled'=>1, 'visible'=>-1, 'position'=>295),
+		'cond_reglement' =>array('type'=>'tinyint(4)', 'label'=>'Cond reglement', 'enabled'=>1, 'visible'=>-1, 'position'=>300),
+		'mode_reglement_supplier' =>array('type'=>'integer', 'label'=>'Mode reglement supplier', 'enabled'=>1, 'visible'=>-1, 'position'=>305),
+		'outstanding_limit' =>array('type'=>'double(24,8)', 'label'=>'OutstandingBill', 'enabled'=>1, 'visible'=>-1, 'position'=>310, 'isameasure'=>1),
+		'order_min_amount' =>array('type'=>'double(24,8)', 'label'=>'Order min amount', 'enabled'=>'!empty($conf->commande->enabled) && !empty($conf->global->ORDER_MANAGE_MIN_AMOUNT)', 'visible'=>-1, 'position'=>315, 'isameasure'=>1),
+		'supplier_order_min_amount' =>array('type'=>'double(24,8)', 'label'=>'Supplier order min amount', 'enabled'=>'!empty($conf->commande->enabled) && !empty($conf->global->ORDER_MANAGE_MIN_AMOUNT)', 'visible'=>-1, 'position'=>320, 'isameasure'=>1),
+		'cond_reglement_supplier' =>array('type'=>'integer', 'label'=>'Cond reglement supplier', 'enabled'=>1, 'visible'=>-1, 'position'=>325),
+		'fk_shipping_method' =>array('type'=>'integer', 'label'=>'Fk shipping method', 'enabled'=>1, 'visible'=>-1, 'position'=>330),
+		'tva_assuj' =>array('type'=>'tinyint(4)', 'label'=>'Tva assuj', 'enabled'=>1, 'visible'=>-1, 'position'=>335),
+		'localtax1_assuj' =>array('type'=>'tinyint(4)', 'label'=>'Localtax1 assuj', 'enabled'=>1, 'visible'=>-1, 'position'=>340),
+		'localtax1_value' =>array('type'=>'double(6,3)', 'label'=>'Localtax1 value', 'enabled'=>1, 'visible'=>-1, 'position'=>345),
+		'localtax2_assuj' =>array('type'=>'tinyint(4)', 'label'=>'Localtax2 assuj', 'enabled'=>1, 'visible'=>-1, 'position'=>350),
+		'localtax2_value' =>array('type'=>'double(6,3)', 'label'=>'Localtax2 value', 'enabled'=>1, 'visible'=>-1, 'position'=>355),
+		'barcode' =>array('type'=>'varchar(255)', 'label'=>'Barcode', 'enabled'=>1, 'visible'=>-1, 'position'=>360),
+		'price_level' =>array('type'=>'integer', 'label'=>'Price level', 'enabled'=>'$conf->global->PRODUIT_MULTIPRICES || $conf->global->PRODUIT_CUSTOMER_PRICES_BY_QTY_MULTIPRICES', 'visible'=>-1, 'position'=>365),
+		'default_lang' =>array('type'=>'varchar(6)', 'label'=>'Default lang', 'enabled'=>1, 'visible'=>-1, 'position'=>370),
+		'canvas' =>array('type'=>'varchar(32)', 'label'=>'Canvas', 'enabled'=>1, 'visible'=>-1, 'position'=>375),
+		'fk_barcode_type' =>array('type'=>'integer', 'label'=>'Fk barcode type', 'enabled'=>1, 'visible'=>-1, 'position'=>405),
+		'webservices_url' =>array('type'=>'varchar(255)', 'label'=>'Webservices url', 'enabled'=>1, 'visible'=>-1, 'position'=>410),
+		'webservices_key' =>array('type'=>'varchar(128)', 'label'=>'Webservices key', 'enabled'=>1, 'visible'=>-1, 'position'=>415),
+		'fk_incoterms' =>array('type'=>'integer', 'label'=>'Fk incoterms', 'enabled'=>1, 'visible'=>-1, 'position'=>425),
+		'location_incoterms' =>array('type'=>'varchar(255)', 'label'=>'Location incoterms', 'enabled'=>1, 'visible'=>-1, 'position'=>430),
+		'model_pdf' =>array('type'=>'varchar(255)', 'label'=>'Model pdf', 'enabled'=>1, 'visible'=>0, 'position'=>435),
+		'fk_multicurrency' =>array('type'=>'integer', 'label'=>'Fk multicurrency', 'enabled'=>1, 'visible'=>-1, 'position'=>440),
+		'multicurrency_code' =>array('type'=>'varchar(255)', 'label'=>'Multicurrency code', 'enabled'=>1, 'visible'=>-1, 'position'=>445),
+		'fk_account' =>array('type'=>'integer', 'label'=>'Fk account', 'enabled'=>1, 'visible'=>-1, 'position'=>450),
+		'fk_entrepot' =>array('type'=>'integer', 'label'=>'Fk entrepot', 'enabled'=>1, 'visible'=>-1, 'position'=>455),
+		'logo' =>array('type'=>'varchar(255)', 'label'=>'Logo', 'enabled'=>1, 'visible'=>-1, 'position'=>400),
+		'logo_squarred' =>array('type'=>'varchar(255)', 'label'=>'Logo squarred', 'enabled'=>1, 'visible'=>-1, 'position'=>401),
+		'status' =>array('type'=>'tinyint(4)', 'label'=>'Status', 'enabled'=>1, 'visible'=>-1, 'position'=>500),
+		'import_key' =>array('type'=>'varchar(14)', 'label'=>'ImportId', 'enabled'=>1, 'visible'=>-2, 'position'=>1000),
 	);
-
 
 	/**
 	 * @var int Entity
@@ -123,7 +230,7 @@ class Societe extends CommonObject
 	public $nom;
 
 	/**
-	 * @var string name
+	 * @var string Thirdparty name
 	 */
 	public $name;
 
@@ -133,6 +240,9 @@ class Societe extends CommonObject
 	 */
 	public $name_alias;
 
+    /**
+     * @var int Physical thirdparty not a company
+     */
 	public $particulier;
 
 	/**
@@ -140,7 +250,14 @@ class Societe extends CommonObject
 	 */
 	public $address;
 
+    /**
+     * @var string Zip code of thirdparty
+     */
 	public $zip;
+
+    /**
+     * @var string Town of thirdparty
+     */
 	public $town;
 
 	/**
@@ -154,7 +271,15 @@ class Societe extends CommonObject
 	 * @var int
 	 */
 	public $state_id;
+
+    /**
+     * @var string State code
+     */
 	public $state_code;
+
+    /**
+     * @var string State name
+     */
 	public $state;
 
 	/**
@@ -162,11 +287,14 @@ class Societe extends CommonObject
 	 * @var int
 	 */
 	public $region_code;
+
+    /**
+     * @var string Region name
+     */
 	public $region;
 
 	/**
-	 * State code
-	 * @var string
+	 * @var string State code
 	 * @deprecated Use state_code instead
 	 * @see $state_code
 	 */
@@ -220,25 +348,27 @@ class Societe extends CommonObject
 	 * @deprecated
 	 */
 	public $twitter;
+
 	/**
 	 * Facebook username
 	 * @var string
 	 * @deprecated
 	 */
 	public $facebook;
+
     /**
      * LinkedIn username
      * @var string
 	 * @deprecated
      */
-    public $linkedin;
+	public $linkedin;
+
 	/**
 	 * Webpage
 	 * @var string
 	 */
 	public $url;
 
-	//! barcode
 	/**
 	 * Barcode value
 	 * @var string
@@ -283,9 +413,16 @@ class Societe extends CommonObject
 	 */
 	public $idprof6;
 
+    /**
+     * @var string Prefix comm
+     */
 	public $prefix_comm;
 
+	/**
+	 * @var int Vat concerned
+	 */
 	public $tva_assuj = 1;
+
 	/**
 	 * Intracommunitary VAT ID
 	 * @var string
@@ -298,8 +435,19 @@ class Societe extends CommonObject
 	public $localtax2_assuj;
 	public $localtax2_value;
 
+    /**
+     * @var string Manager
+     */
 	public $managers;
+
+    /**
+     * @var float Capital
+     */
 	public $capital;
+
+	/**
+	 * @var int Type thirdparty
+	 */
 	public $typent_id = 0;
 	public $typent_code;
 	public $effectif;
@@ -317,6 +465,9 @@ class Societe extends CommonObject
      */
 	public $fk_prospectlevel;
 
+	/**
+	 * @var string second name
+	 */
 	public $name_bis;
 
 	//Log data
@@ -326,6 +477,7 @@ class Societe extends CommonObject
 	 * @var string
 	 */
 	public $date_modification;
+
 	/**
 	 * User that made last update
 	 * @var string
@@ -351,11 +503,13 @@ class Societe extends CommonObject
 	 * @var int
 	 */
 	public $client = 0;
+
 	/**
 	 * 0=no prospect, 1=prospect
 	 * @var int
 	 */
 	public $prospect = 0;
+
 	/**
 	 * 0=no supplier, 1=supplier
 	 * @var int
@@ -416,6 +570,7 @@ class Societe extends CommonObject
 	 * @var int
 	 */
 	public $stcomm_id;
+
 	/**
 	 * Status prospect label
 	 * @var int
@@ -427,12 +582,20 @@ class Societe extends CommonObject
 	 * @var int
 	 */
 	public $price_level;
+
+	/**
+	 * @var string outstanding limit
+	 */
 	public $outstanding_limit;
 
 	/**
-	 * Min order amounts
+	 * @var string Min order amount
 	 */
 	public $order_min_amount;
+
+    /**
+     * @var string Supplier min order amount
+     */
 	public $supplier_order_min_amount;
 
 	/**
@@ -440,11 +603,13 @@ class Societe extends CommonObject
 	 * @var int
 	 */
 	public $commercial_id;
+
 	/**
 	 * Id of parent thirdparty (if one)
 	 * @var int
 	 */
 	public $parent;
+
 	/**
 	 * Default language code of thirdparty (en_US, ...)
 	 * @var string
@@ -456,11 +621,15 @@ class Societe extends CommonObject
 	 */
 	public $ref;
 
+	/**
+	 * @var string Internal ref
+	 * @deprecated
+	 */
 	public $ref_int;
+
 	/**
 	 * External user reference.
-	 * This is to allow external systems to store their id and make self-developed synchronizing functions easier to
-	 * build.
+	 * This is to allow external systems to store their id and make self-developed synchronizing functions easier to build.
 	 * @var string
 	 */
 	public $ref_ext;
@@ -485,22 +654,49 @@ class Societe extends CommonObject
 	 */
 	public $webservices_key;
 
+    /**
+     * @var string Logo
+     */
 	public $logo;
+
+    /**
+     * @var string logo small
+     */
 	public $logo_small;
+
+    /**
+     * @var string Logo mini
+     */
 	public $logo_mini;
+
+    /**
+     * @var string Logo squarred
+     */
 	public $logo_squarred;
+
+    /**
+     * @var string Logo squarred small
+     */
 	public $logo_squarred_small;
+
+    /**
+     * @var string Logo squarred mini
+     */
 	public $logo_squarred_mini;
 
-	public $array_options;
-
-	// Incoterms
 	/**
-     * @var int ID
+     * @var int ID Incoterms
      */
 	public $fk_incoterms;
 
+	/**
+	 * @var string Incoterms Location
+	 */
 	public $location_incoterms;
+
+    /**
+     * @var string Incoterm label
+     */
 	public $label_incoterms; //Used into tooltip
 
 	// Multicurrency
@@ -509,10 +705,10 @@ class Societe extends CommonObject
      */
 	public $fk_multicurrency;
 
+    /**
+     * @var string Multicurrency code
+     */
 	public $multicurrency_code;
-
-
-	// END MODULEBUILDER PROPERTIES
 
 
 	/**
@@ -552,6 +748,7 @@ class Societe extends CommonObject
 		if (empty($this->status)) $this->status = 0;
 		$this->name = $this->name ?trim($this->name) : trim($this->nom);
 		if (!empty($conf->global->MAIN_FIRST_TO_UPPER)) $this->name = ucwords($this->name);
+		if (!empty($conf->global->MAIN_ALL_TO_UPPER)) $this->name = strtoupper($this->name);
 		$this->nom = $this->name; // For backward compatibility
 		if (empty($this->client))      $this->client = 0;
 		if (empty($this->fournisseur)) $this->fournisseur = 0;
@@ -679,7 +876,8 @@ class Societe extends CommonObject
 		$contact->firstname         = $this->firstname;
 		$contact->civility_id       = $this->civility_id;
 		$contact->socid             = $this->id; // fk_soc
-		$contact->statut            = 1;
+		$contact->statut            = 1; // deprecated
+		$contact->status            = 1;
 		$contact->priv              = 0;
 		$contact->country_id        = $this->country_id;
 		$contact->state_id          = $this->state_id;
@@ -767,7 +965,7 @@ class Societe extends CommonObject
 				}
 				elseif ($rescode == -5)
 				{
-					$this->errors[] = 'ErrorprefixRequired';
+					$this->errors[] = 'ErrorPrefixRequired';
 				}
 				$result = -3;
 			}
@@ -798,7 +996,7 @@ class Societe extends CommonObject
 					}
 				}
 
-				// Check for unicity
+				// Check for unicity on profid
 				if (!$error && $vallabel && $this->id_prof_verifiable($i))
 				{
 					if ($this->id_prof_exists($keymin, $vallabel, ($this->id > 0 ? $this->id : 0)))
@@ -867,6 +1065,8 @@ class Societe extends CommonObject
 
 		$now = dol_now();
 
+		if (!empty($conf->global->MAIN_FIRST_TO_UPPER)) $this->name = ucwords($this->name);
+		if (!empty($conf->global->MAIN_ALL_TO_UPPER)) $this->name = strtoupper($this->name);
 		// Clean parameters
 		$this->id = $id;
 		$this->entity = ((isset($this->entity) && is_numeric($this->entity)) ? $this->entity : $conf->entity);
@@ -1201,6 +1401,15 @@ class Societe extends CommonObject
 						$error++;
 					}
 				}
+				// Actions on extra languages
+				if (!$error && empty($conf->global->MAIN_EXTRALANGUAGES_DISABLED)) // For avoid conflicts if trigger used
+				{
+					$result = $this->insertExtraLanguages();
+					if ($result < 0)
+					{
+						$error++;
+					}
+				}
 
 				if (!$error && $call_trigger)
 				{
@@ -1253,7 +1462,7 @@ class Societe extends CommonObject
 	 *    @param	int		$rowid			Id of third party to load
 	 *    @param    string	$ref			Reference of third party, name (Warning, this can return several records)
 	 *    @param    string	$ref_ext       	External reference of third party (Warning, this information is a free field not provided by Dolibarr)
-	 *    @param    string	$ref_int       	Internal reference of third party (not used by dolibarr)
+	 *    @param    string	$notused       	Not used
 	 *    @param    string	$idprof1		Prof id 1 of third party (Warning, this can return several records)
 	 *    @param    string	$idprof2		Prof id 2 of third party (Warning, this can return several records)
 	 *    @param    string	$idprof3		Prof id 3 of third party (Warning, this can return several records)
@@ -1264,12 +1473,12 @@ class Societe extends CommonObject
 	 *    @param    string	$ref_alias 		Name_alias of third party (Warning, this can return several records)
 	 *    @return   int						>0 if OK, <0 if KO or if two records found for same ref or idprof, 0 if not found.
 	 */
-    public function fetch($rowid, $ref = '', $ref_ext = '', $ref_int = '', $idprof1 = '', $idprof2 = '', $idprof3 = '', $idprof4 = '', $idprof5 = '', $idprof6 = '', $email = '', $ref_alias = '')
+	public function fetch($rowid, $ref = '', $ref_ext = '', $notused = '', $idprof1 = '', $idprof2 = '', $idprof3 = '', $idprof4 = '', $idprof5 = '', $idprof6 = '', $email = '', $ref_alias = '')
 	{
 		global $langs;
 		global $conf;
 
-		if (empty($rowid) && empty($ref) && empty($ref_ext) && empty($ref_int) && empty($idprof1) && empty($idprof2) && empty($idprof3) && empty($idprof4) && empty($idprof5) && empty($idprof6) && empty($email)) return -1;
+		if (empty($rowid) && empty($ref) && empty($ref_ext) && empty($idprof1) && empty($idprof2) && empty($idprof3) && empty($idprof4) && empty($idprof5) && empty($idprof6) && empty($email)) return -1;
 
 		$sql = 'SELECT s.rowid, s.nom as name, s.name_alias, s.entity, s.ref_ext, s.ref_int, s.address, s.datec as date_creation, s.prefix_comm';
 		$sql .= ', s.status';
@@ -1307,14 +1516,14 @@ class Societe extends CommonObject
 		$sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'c_departements as d ON s.fk_departement = d.rowid';
 		$sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'c_typent as te ON s.fk_typent = te.id';
 		$sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'c_incoterms as i ON s.fk_incoterms = i.rowid';
-		$sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'societe_remise as sr ON sr.rowid = (SELECT MAX(rowid) FROM '.MAIN_DB_PREFIX.'societe_remise WHERE fk_soc = s.rowid AND entity = '.$conf->entity.')';
+		$sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'societe_remise as sr ON sr.rowid = (SELECT MAX(rowid) FROM '.MAIN_DB_PREFIX.'societe_remise WHERE fk_soc = s.rowid AND entity IN ('.getEntity('discount').'))';
 
 		$sql .= ' WHERE s.entity IN ('.getEntity($this->element).')';
 		if ($rowid)     $sql .= ' AND s.rowid = '.$rowid;
 		if ($ref)       $sql .= " AND s.nom = '".$this->db->escape($ref)."'";
 		if ($ref_alias) $sql .= " AND s.name_alias = '".$this->db->escape($ref_alias)."'";
 		if ($ref_ext)   $sql .= " AND s.ref_ext = '".$this->db->escape($ref_ext)."'";
-		if ($ref_int)   $sql .= " AND s.ref_int = '".$this->db->escape($ref_int)."'";
+		if ($notused)   $sql .= " AND s.ref_int = '".$this->db->escape($notused)."'";
 		if ($idprof1)   $sql .= " AND s.siren = '".$this->db->escape($idprof1)."'";
 		if ($idprof2)   $sql .= " AND s.siret = '".$this->db->escape($idprof2)."'";
 		if ($idprof3)   $sql .= " AND s.ape = '".$this->db->escape($idprof3)."'";
@@ -1414,7 +1623,7 @@ class Societe extends CommonObject
 				$this->effectif       = $obj->effectif_id ? $obj->effectif : '';
 
 				$this->forme_juridique_code = $obj->forme_juridique_code;
-				$this->forme_juridique     = $obj->forme_juridique_code ? $obj->forme_juridique : '';
+				$this->forme_juridique = $obj->forme_juridique_code ? $obj->forme_juridique : '';
 
 				$this->fk_prospectlevel = $obj->fk_prospectlevel;
 
@@ -1785,11 +1994,11 @@ class Societe extends CommonObject
 	 *    	@param	float	$remise     	Amount of discount
 	 *    	@param  User	$user       	User adding discount
 	 *    	@param  string	$desc			Reason of discount
-	 *      @param  float	$tva_tx     	VAT rate
+	 *      @param  string	$vatrate     	VAT rate (may contain the vat code too). Exemple: '1.23', '1.23 (ABC)', ...
 	 *      @param	int		$discount_type	0 => customer discount, 1 => supplier discount
-	 *		@return	int					<0 if KO, id of discount record if OK
+	 *		@return	int						<0 if KO, id of discount record if OK
 	 */
-    public function set_remise_except($remise, User $user, $desc, $tva_tx = 0, $discount_type = 0)
+    public function set_remise_except($remise, User $user, $desc, $vatrate = '', $discount_type = 0)
 	{
         // phpcs:enable
 		global $langs;
@@ -1810,8 +2019,17 @@ class Societe extends CommonObject
 			return -2;
 		}
 
-		if ($this->id)
+		if ($this->id > 0)
 		{
+			// Clean vat code
+			$reg = array();
+			$vat_src_code = '';
+			if (preg_match('/\((.*)\)/', $vatrate, $reg))
+			{
+				$vat_src_code = $reg[1];
+				$vatrate = preg_replace('/\s*\(.*\)/', '', $vatrate); // Remove code into vatrate.
+			}
+
 			require_once DOL_DOCUMENT_ROOT.'/core/class/discount.class.php';
 
 			$discount = new DiscountAbsolute($this->db);
@@ -1820,10 +2038,12 @@ class Societe extends CommonObject
 			$discount->discount_type = $discount_type;
 
 			$discount->amount_ht = $discount->multicurrency_amount_ht = price2num($remise, 'MT');
-			$discount->amount_tva = $discount->multicurrency_amount_tva = price2num($remise * $tva_tx / 100, 'MT');
+			$discount->amount_tva = $discount->multicurrency_amount_tva = price2num($remise * $vatrate / 100, 'MT');
 			$discount->amount_ttc = $discount->multicurrency_amount_ttc = price2num($discount->amount_ht + $discount->amount_tva, 'MT');
 
-			$discount->tva_tx = price2num($tva_tx, 'MT');
+			$discount->tva_tx = price2num($vatrate, 'MT');
+			$discount->vat_src_code = $vat_src_code;
+
 			$discount->description = $desc;
 
 			$result = $discount->create($user);
@@ -1879,7 +2099,7 @@ class Societe extends CommonObject
 
 		$reparray = array();
 
-		$sql = "SELECT DISTINCT u.rowid, u.login, u.lastname, u.firstname, u.office_phone, u.job, u.email, u.statut, u.entity, u.photo";
+		$sql = "SELECT DISTINCT u.rowid, u.login, u.lastname, u.firstname, u.office_phone, u.job, u.email, u.statut as status, u.entity, u.photo";
 		$sql .= " FROM ".MAIN_DB_PREFIX."societe_commerciaux as sc, ".MAIN_DB_PREFIX."user as u";
 		if (!empty($conf->multicompany->enabled) && !empty($conf->global->MULTICOMPANY_TRANSVERSE_MODE))
 		{
@@ -1910,7 +2130,8 @@ class Societe extends CommonObject
 					$reparray[$i]['email'] = $obj->email;
 					$reparray[$i]['phone'] = $obj->office_phone;
 					$reparray[$i]['job'] = $obj->job;
-					$reparray[$i]['statut'] = $obj->statut;
+					$reparray[$i]['statut'] = $obj->status; // deprecated
+					$reparray[$i]['status'] = $obj->status;
 					$reparray[$i]['entity'] = $obj->entity;
 					$reparray[$i]['login'] = $obj->login;
 					$reparray[$i]['photo'] = $obj->photo;
@@ -2128,7 +2349,7 @@ class Societe extends CommonObject
 		if (!empty($this->logo) && class_exists('Form'))
 		{
 			$label .= '<div class="photointooltip">';
-			$label .= Form::showphoto('societe', $this, 0, 40, 0, 'photowithmargin', 'mini', 0); // Important, we must force height so image will have height tags and if image is inside a tooltip, the tooltip manager can calculate height and position correctly the tooltip.
+			$label .= Form::showphoto('societe', $this, 0, 40, 0, '', 'mini', 0); // Important, we must force height so image will have height tags and if image is inside a tooltip, the tooltip manager can calculate height and position correctly the tooltip.
 			$label .= '</div><div style="clear: both;"></div>';
 		}
 		elseif (!empty($this->logo_squarred) && class_exists('Form'))
@@ -2184,7 +2405,7 @@ class Societe extends CommonObject
 		// By default
 		if (empty($linkstart))
 		{
-			$label .= '<u>'.$langs->trans("ShowCompany").'</u>';
+			$label .= '<u>'.$langs->trans("ThirdParty").'</u>';
 			$linkstart = '<a href="'.DOL_URL_ROOT.'/societe/card.php?socid='.$this->id;
 		}
 
@@ -2215,7 +2436,9 @@ class Societe extends CommonObject
 			$label .= '<br><b>'.$langs->trans('CustomerAccountancyCode').':</b> '.($this->code_compta ? $this->code_compta : $this->code_compta_client);
 		if (!empty($conf->accounting->enabled) && $this->fournisseur)
 			$label .= '<br><b>'.$langs->trans('SupplierAccountancyCode').':</b> '.$this->code_compta_fournisseur;
-
+		if (isset($this->status)) {
+			$label .= '<br><b>'.$langs->trans("Status").":</b> ".$this->getLibStatut(5);
+		}
 		$label .= '</div>';
 
 		// Add type of canvas
@@ -2255,7 +2478,7 @@ class Societe extends CommonObject
 		}
 
 		$result .= $linkstart;
-		if ($withpicto) $result .= img_object(($notooltip ? '' : $label), ($this->picto ? $this->picto : 'generic'), ($notooltip ? (($withpicto != 2) ? 'class="paddingright"' : '') : 'class="'.(($withpicto != 2) ? 'paddingright ' : '').'classfortooltip valignmiddle"'), 0, 0, $notooltip ? 0 : 1);
+		if ($withpicto) $result .= img_object(($notooltip ? '' : $label), ($this->picto ? $this->picto : 'generic'), ($notooltip ? (($withpicto != 2) ? 'class="paddingright"' : '') : 'class="'.(($withpicto != 2) ? 'paddingright ' : '').'classfortooltip"'), 0, 0, $notooltip ? 0 : 1);
 		if ($withpicto != 2) $result .= ($maxlen ?dol_trunc($name, $maxlen) : $name);
 		$result .= $linkend;
 
@@ -2368,7 +2591,7 @@ class Societe extends CommonObject
 		$contact_property = array();
 
 
-		$sql = "SELECT rowid, email, statut, phone_mobile, lastname, poste, firstname";
+		$sql = "SELECT rowid, email, statut as status, phone_mobile, lastname, poste, firstname";
 		$sql .= " FROM ".MAIN_DB_PREFIX."socpeople";
 		$sql .= " WHERE fk_soc = ".$this->id;
 		$sql .= " ORDER BY lastname, firstname";
@@ -2394,7 +2617,7 @@ class Societe extends CommonObject
 					else $property = $obj->$mode;
 
 					// Show all contact. If hidedisabled is 1, showonly contacts with status = 1
-					if ($obj->statut == 1 || empty($hidedisabled))
+					if ($obj->status == 1 || empty($hidedisabled))
 					{
 						if (empty($property))
 						{
@@ -3400,6 +3623,7 @@ class Societe extends CommonObject
 		$this->phone = $member->phone; // Prof phone
 		$this->email = $member->email;
         $this->socialnetworks = $member->socialnetworks;
+		$this->entity=$member->entity;
 
 		$this->client = 1; // A member is a customer by default
 		$this->code_client = ($customercode ? $customercode : -1);
@@ -3513,6 +3737,15 @@ class Societe extends CommonObject
 		$this->phone = empty($conf->global->MAIN_INFO_SOCIETE_TEL) ? '' : $conf->global->MAIN_INFO_SOCIETE_TEL;
 		$this->fax = empty($conf->global->MAIN_INFO_SOCIETE_FAX) ? '' : $conf->global->MAIN_INFO_SOCIETE_FAX;
 		$this->url = empty($conf->global->MAIN_INFO_SOCIETE_WEB) ? '' : $conf->global->MAIN_INFO_SOCIETE_WEB;
+
+		// Social networks
+		$this->facebook_url = empty($conf->global->MAIN_INFO_SOCIETE_FACEBOOK_URL) ? '' : $conf->global->MAIN_INFO_SOCIETE_FACEBOOK_URL;
+		$this->twitter_url = empty($conf->global->MAIN_INFO_SOCIETE_TWITTER_URL) ? '' : $conf->global->MAIN_INFO_SOCIETE_TWITTER_URL;
+		$this->linkedin_url = empty($conf->global->MAIN_INFO_SOCIETE_LINKEDIN_URL) ? '' : $conf->global->MAIN_INFO_SOCIETE_LINKEDIN_URL;
+		$this->instagram_url = empty($conf->global->MAIN_INFO_SOCIETE_INSTAGRAM_URL) ? '' : $conf->global->MAIN_INFO_SOCIETE_INSTAGRAM_URL;
+		$this->youtube_url = empty($conf->global->MAIN_INFO_SOCIETE_YOUTUBE_URL) ? '' : $conf->global->MAIN_INFO_SOCIETE_YOUTUBE_URL;
+		$this->github_url = empty($conf->global->MAIN_INFO_SOCIETE_GITHUB_URL) ? '' : $conf->global->MAIN_INFO_SOCIETE_GITHUB_URL;
+
 		// Id prof generiques
 		$this->idprof1 = empty($conf->global->MAIN_INFO_SIREN) ? '' : $conf->global->MAIN_INFO_SIREN;
 		$this->idprof2 = empty($conf->global->MAIN_INFO_SIRET) ? '' : $conf->global->MAIN_INFO_SIRET;
@@ -3646,6 +3879,7 @@ class Societe extends CommonObject
 
 	/**
 	 *  Check if we must use revenue stamps feature or not according to country (country of $mysocin most cases).
+	 *  Table c_revenuestamp contains the country and value of stamp per invoice.
 	 *
 	 *  @return		boolean			true or false
 	 */
@@ -3735,7 +3969,7 @@ class Societe extends CommonObject
 	 *  @param	int|string	$status        	Id or code for prospection status
 	 *  @param  int			$mode          	0=long label, 1=short label, 2=Picto + short label, 3=Picto, 4=Picto + long label, 5=Short label + Picto
 	 *  @param	string		$label			Label to use for status for added status
-	 *  @return string       	 			Libelle du statut
+	 *  @return string       	 			Label of prospection status
 	 */
     public function LibProspCommStatut($status, $mode = 0, $label = '')
 	{
@@ -3808,7 +4042,7 @@ class Societe extends CommonObject
 		$table = 'propal';
 		if ($mode == 'supplier') $table = 'supplier_proposal';
 
-		$sql  = "SELECT rowid, total_ht, total as total_ttc, fk_statut FROM ".MAIN_DB_PREFIX.$table." as f";
+		$sql  = "SELECT rowid, total_ht, total as total_ttc, fk_statut as status FROM ".MAIN_DB_PREFIX.$table." as f";
 		$sql .= " WHERE fk_soc = ".$this->id;
 		if ($mode == 'supplier') {
 			$sql .= " AND entity IN (".getEntity('supplier_proposal').")";
@@ -3826,7 +4060,7 @@ class Societe extends CommonObject
 			while ($obj = $this->db->fetch_object($resql)) {
 				$outstandingTotal += $obj->total_ht;
 				$outstandingTotalIncTax += $obj->total_ttc;
-				if ($obj->fk_statut != 0)    // Not a draft
+				if ($obj->status != 0)    // Not a draft
 				{
 					$outstandingOpened += $obj->total_ttc;
 				}
@@ -3848,7 +4082,7 @@ class Societe extends CommonObject
 		$table = 'commande';
 		if ($mode == 'supplier') $table = 'commande_fournisseur';
 
-		$sql  = "SELECT rowid, total_ht, total_ttc, fk_statut FROM ".MAIN_DB_PREFIX.$table." as f";
+		$sql  = "SELECT rowid, total_ht, total_ttc, fk_statut as status FROM ".MAIN_DB_PREFIX.$table." as f";
 		$sql .= " WHERE fk_soc = ".$this->id;
 		if ($mode == 'supplier') {
 			$sql .= " AND entity IN (".getEntity('supplier_order').")";
@@ -3866,7 +4100,7 @@ class Societe extends CommonObject
 			while ($obj = $this->db->fetch_object($resql)) {
 				$outstandingTotal += $obj->total_ht;
 				$outstandingTotalIncTax += $obj->total_ttc;
-				if ($obj->fk_statut != 0)    // Not a draft
+				if ($obj->status != 0)    // Not a draft
 				{
 					$outstandingOpened += $obj->total_ttc;
 				}
@@ -3895,8 +4129,8 @@ class Societe extends CommonObject
 		 $alreadypayed=price2num($paiement + $creditnotes + $deposits,'MT');
 		 $remaintopay=price2num($invoice->total_ttc - $paiement - $creditnotes - $deposits,'MT');
 		 */
-		if ($mode == 'supplier') $sql = "SELECT rowid, total_ht as total_ht, total_ttc, paye, type, fk_statut, close_code FROM ".MAIN_DB_PREFIX.$table." as f";
-		else $sql = "SELECT rowid, total as total_ht, total_ttc, paye, fk_statut, close_code FROM ".MAIN_DB_PREFIX.$table." as f";
+		if ($mode == 'supplier') $sql = "SELECT rowid, total_ht as total_ht, total_ttc, paye, type, fk_statut as status, close_code FROM ".MAIN_DB_PREFIX.$table." as f";
+		else $sql = "SELECT rowid, total as total_ht, total_ttc, paye, fk_statut as status, close_code FROM ".MAIN_DB_PREFIX.$table." as f";
 		$sql .= " WHERE fk_soc = ".$this->id;
 		if ($mode == 'supplier') {
 			$sql .= " AND entity IN (".getEntity('facture_fourn').")";
@@ -3924,18 +4158,18 @@ class Societe extends CommonObject
 			while ($obj = $this->db->fetch_object($resql)) {
                 $tmpobject->id = $obj->rowid;
 
-                if ($obj->fk_statut != $tmpobject::STATUS_DRAFT                                           // Not a draft
-                	&& !($obj->fk_statut == $tmpobject::STATUS_ABANDONED && $obj->close_code == 'replaced')  // Not a replaced invoice
+                if ($obj->status != $tmpobject::STATUS_DRAFT                                           // Not a draft
+                	&& !($obj->status == $tmpobject::STATUS_ABANDONED && $obj->close_code == 'replaced')  // Not a replaced invoice
 					)
 				{
 					$outstandingTotal += $obj->total_ht;
 					$outstandingTotalIncTax += $obj->total_ttc;
 				}
 				if ($obj->paye == 0
-					&& $obj->fk_statut != $tmpobject::STATUS_DRAFT    		// Not a draft
-					&& $obj->fk_statut != $tmpobject::STATUS_ABANDONED	    // Not abandonned
-					&& $obj->fk_statut != $tmpobject::STATUS_CLOSED)   		// Not classified as paid
-				//$sql .= " AND (fk_statut <> 3 OR close_code <> 'abandon')";		// Not abandonned for undefined reason
+					&& $obj->status != $tmpobject::STATUS_DRAFT    		// Not a draft
+					&& $obj->status != $tmpobject::STATUS_ABANDONED	    // Not abandonned
+					&& $obj->status != $tmpobject::STATUS_CLOSED)   		// Not classified as paid
+				//$sql .= " AND (status <> 3 OR close_code <> 'abandon')";		// Not abandonned for undefined reason
 				{
 					$paiement = $tmpobject->getSommePaiement();
 					$creditnotes = $tmpobject->getSumCreditNotesUsed();
@@ -3973,8 +4207,8 @@ class Societe extends CommonObject
 	/**
 	 *  Return the label of the customer/prospect status
 	 *
-	 *  @param	int		$status         Id statut
-	 *  @return	string          		Libelle du statut
+	 *  @param	int		$status         Id of prospection status
+	 *  @return	string          		Label of prospection status
 	 */
     public function LibCustProspStatut($status)
 	{
@@ -4188,7 +4422,6 @@ class Societe extends CommonObject
 		$tables = array(
 			'societe_address',
 			'societe_commerciaux',
-			'societe_log',
 			'societe_prices',
 			'societe_remise',
 			'societe_remise_except',

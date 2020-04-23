@@ -40,7 +40,7 @@ ModuleAssetsDesc = Assets description
 # Admin page
 #
 AssetsSetup = Assets setup
-Settings = Settings
+Settings = Налаштування
 AssetsSetupPage = Assets setup page
 ExtraFieldsAssetsType = Complementary attributes (Asset type)
 AssetsType=Asset type

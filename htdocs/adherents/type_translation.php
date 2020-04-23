@@ -71,21 +71,21 @@ if ($action == 'vadd' && $cancel != $langs->trans("Cancel") && $user->rights->ad
 	$current_lang = $langs->getDefaultLang();
 
 	// update of object
-	if ( $_POST["forcelangprod"] == $current_lang )
+	if ($_POST["forcelangprod"] == $current_lang)
 	{
 		$object->label			= $_POST["libelle"];
-		$object->description	= dol_htmlcleanlastbr($_POST["desc"]);
+		$object->description = dol_htmlcleanlastbr($_POST["desc"]);
 		$object->other			= dol_htmlcleanlastbr($_POST["other"]);
 	}
 	else
 	{
 		$object->multilangs[$_POST["forcelangprod"]]["label"]		= $_POST["libelle"];
-		$object->multilangs[$_POST["forcelangprod"]]["description"]	= dol_htmlcleanlastbr($_POST["desc"]);
+		$object->multilangs[$_POST["forcelangprod"]]["description"] = dol_htmlcleanlastbr($_POST["desc"]);
 		$object->multilangs[$_POST["forcelangprod"]]["other"]		= dol_htmlcleanlastbr($_POST["other"]);
 	}
 
 	// backup into database
-	if ( $object->setMultiLangs($user) > 0 )
+	if ($object->setMultiLangs($user) > 0)
 	{
 		$action = '';
 	}
@@ -220,7 +220,7 @@ if ($action == 'edit')
 	require_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
 
 	print '<form action="'.$_SERVER["PHP_SELF"].'" method="POST">';
-	print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+	print '<input type="hidden" name="token" value="'.newToken().'">';
 	print '<input type="hidden" name="action" value="vedit">';
 	print '<input type="hidden" name="rowid" value="'.$object->id.'">';
 
@@ -287,7 +287,7 @@ if ($action == 'add' && $user->rights->adherent->configurer)
 
 	print '<br>';
 	print '<form action="'.$_SERVER["PHP_SELF"].'" method="post">';
-	print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+	print '<input type="hidden" name="token" value="'.newToken().'">';
 	print '<input type="hidden" name="action" value="vadd">';
 	print '<input type="hidden" name="rowid" value="'.GETPOST("rowid", 'int').'">';
 

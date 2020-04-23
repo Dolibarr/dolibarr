@@ -97,7 +97,7 @@ class InterfaceMyModuleTriggers extends DolibarrTriggers
      */
     public function runTrigger($action, $object, User $user, Translate $langs, Conf $conf)
     {
-        if (empty($conf->mymodule->enabled)) return 0;     // If module is not enabled, we do nothing
+        if (empty($conf->mymodule->enabled)) return 0; // If module is not enabled, we do nothing
 
         // Put here code you want to execute when a Dolibarr business events occurs.
         // Data and type of action are stored into $object and $action
@@ -118,9 +118,9 @@ class InterfaceMyModuleTriggers extends DolibarrTriggers
             //case 'ACTION_DELETE':
 
             // Groups
-            //case 'GROUP_CREATE':
-            //case 'GROUP_MODIFY':
-            //case 'GROUP_DELETE':
+            //case 'USERGROUP_CREATE':
+            //case 'USERGROUP_MODIFY':
+            //case 'USERGROUP_DELETE':
 
             // Companies
             //case 'COMPANY_CREATE':

@@ -1,5 +1,6 @@
 <?php
 /* Copyright (C) 2015   Jean-François Ferry     <jfefe@aternatik.fr>
+/* Copyright (C) 2030   Thibault FOUCART     	<support@ptibogxiv.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -62,10 +63,11 @@ class Users extends DolibarrApi
 	 * @param int		$limit		Limit for list
 	 * @param int		$page		Page number
 	 * @param string   	$user_ids   User ids filter field. Example: '1' or '1,2,3'          {@pattern /^[0-9,]*$/i}
+     * @param  int    $category   Use this param to filter list by category
      * @param string    $sqlfilters Other criteria to filter answers separated by a comma. Syntax example "(t.ref:like:'SO-%') and (t.date_creation:<:'20160101')"
 	 * @return  array               Array of User objects
 	 */
-    public function index($sortfield = "t.rowid", $sortorder = 'ASC', $limit = 100, $page = 0, $user_ids = 0, $sqlfilters = '')
+    public function index($sortfield = "t.rowid", $sortorder = 'ASC', $limit = 100, $page = 0, $user_ids = 0, $category = 0, $sqlfilters = '')
     {
 	    global $db, $conf;
 
@@ -80,8 +82,18 @@ class Users extends DolibarrApi
 
 	    $sql = "SELECT t.rowid";
 	    $sql .= " FROM ".MAIN_DB_PREFIX."user as t";
+        if ($category > 0) {
+            $sql .= ", ".MAIN_DB_PREFIX."categorie_user as c";
+        }
 	    $sql .= ' WHERE t.entity IN ('.getEntity('user').')';
 	    if ($user_ids) $sql .= " AND t.rowid IN (".$user_ids.")";
+
+    	// Select products of given category
+    	if ($category > 0) {
+			$sql .= " AND c.fk_categorie = ".$db->escape($category);
+			$sql .= " AND c.fk_user = t.rowid ";
+    	}
+
 	    // Add sql filters
         if ($sqlfilters)
         {
@@ -132,15 +144,15 @@ class Users extends DolibarrApi
 
 	/**
 	 * Get properties of an user object
-	 *
 	 * Return an array with user informations
 	 *
-	 * @param 	int 	$id ID of user
+	 * @param 	int 	$id 					ID of user
+	 * @param	int		$includepermissions	Set this to 1 to have the array of permissions loaded (not done by default for performance purpose)
 	 * @return 	array|mixed data without useless information
 	 *
 	 * @throws 	RestException
 	 */
-    public function get($id)
+    public function get($id, $includepermissions = 0)
     {
 		//if (!DolibarrApiAccess::$user->rights->user->user->lire) {
 			//throw new RestException(401);
@@ -157,6 +169,10 @@ class Users extends DolibarrApi
 			throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
 		}
 
+		if ($includepermissions) {
+			$this->useraccount->getRights();
+		}
+
 		return $this->_cleanObjectDatas($this->useraccount);
 	}
 
@@ -167,9 +183,8 @@ class Users extends DolibarrApi
      *
      * @return  array|mixed Data without useless information
      *
-     * @throws  401     RestException       Insufficient rights
-     * @throws  404     RestException       User not found
-     * @throws  404     RestException       User group not found
+     * @throws RestException 401     Insufficient rights
+     * @throws RestException 404     User or group not found
      */
     public function getInfo()
     {
@@ -287,7 +302,8 @@ class Users extends DolibarrApi
 	 * @param int $id     Id of user
 	 * @return array      Array of group objects
 	 *
-	 * @throws RestException
+	 * @throws RestException 403 Not allowed
+     * @throws RestException 404 Not found
 	 *
 	 * @url GET {id}/groups
 	 */
@@ -296,7 +312,7 @@ class Users extends DolibarrApi
 		$obj_ret = array();
 
 		if (!DolibarrApiAccess::$user->rights->user->user->lire) {
-			throw new RestException(401);
+			throw new RestException(403);
 		}
 
 		$user = new User($this->db);
@@ -504,7 +520,7 @@ class Users extends DolibarrApi
 	 * Clean sensible object datas
 	 *
 	 * @param   object  $object    Object to clean
-	 * @return    array    Array of cleaned object properties
+	 * @return  array    			Array of cleaned object properties
 	 */
 	protected function _cleanObjectDatas($object)
 	{
@@ -544,6 +560,12 @@ class Users extends DolibarrApi
 	    unset($object->clicktodial_password);
 	    unset($object->openid);
 
+	    unset($object->lines);
+	    unset($object->modelpdf);
+	    unset($object->skype);
+	    unset($object->twitter);
+	    unset($object->facebook);
+	    unset($object->linkedin);
 
 	    $canreadsalary = ((!empty($conf->salaries->enabled) && !empty(DolibarrApiAccess::$user->rights->salaries->read))
 	    	|| (!empty($conf->hrm->enabled) && !empty(DolibarrApiAccess::$user->rights->hrm->employee->read)));

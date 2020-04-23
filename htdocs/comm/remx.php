@@ -56,7 +56,7 @@ if (GETPOST('cancel', 'alpha') && !empty($backtopage))
      exit;
 }
 
-if ($action == 'confirm_split' && GETPOST("confirm") == 'yes')
+if ($action == 'confirm_split' && GETPOST("confirm", "alpha") == 'yes')
 {
 	//if ($user->rights->societe->creer)
 	//if ($user->rights->facture->creer)
@@ -111,6 +111,7 @@ if ($action == 'confirm_split' && GETPOST("confirm") == 'yes')
 			$newdiscount1->description = $discount->description.' (1)';
 			$newdiscount2->description = $discount->description.' (2)';
 		}
+
 		$newdiscount1->fk_user = $discount->fk_user;
 		$newdiscount2->fk_user = $discount->fk_user;
 		$newdiscount1->fk_soc = $discount->fk_soc;
@@ -121,12 +122,21 @@ if ($action == 'confirm_split' && GETPOST("confirm") == 'yes')
 		$newdiscount2->datec = $discount->datec;
 		$newdiscount1->tva_tx = $discount->tva_tx;
 		$newdiscount2->tva_tx = $discount->tva_tx;
-		$newdiscount1->amount_ttc = $_POST["amount_ttc_1"];
+		$newdiscount1->vat_src_code = $discount->vat_src_code;
+		$newdiscount2->vat_src_code = $discount->vat_src_code;
+		$newdiscount1->amount_ttc = $amount_ttc_1;
 		$newdiscount2->amount_ttc = price2num($discount->amount_ttc - $newdiscount1->amount_ttc);
 		$newdiscount1->amount_ht = price2num($newdiscount1->amount_ttc / (1 + $newdiscount1->tva_tx / 100), 'MT');
 		$newdiscount2->amount_ht = price2num($newdiscount2->amount_ttc / (1 + $newdiscount2->tva_tx / 100), 'MT');
 		$newdiscount1->amount_tva = price2num($newdiscount1->amount_ttc - $newdiscount1->amount_ht);
 		$newdiscount2->amount_tva = price2num($newdiscount2->amount_ttc - $newdiscount2->amount_ht);
+
+		$newdiscount1->multicurrency_amount_ttc = $amount_ttc_1 * ($discount->multicurrency_amount_ttc / $discount->amount_ttc);
+		$newdiscount2->multicurrency_amount_ttc = price2num($discount->multicurrency_amount_ttc - $newdiscount1->multicurrency_amount_ttc);
+		$newdiscount1->multicurrency_amount_ht = price2num($newdiscount1->multicurrency_amount_ttc / (1 + $newdiscount1->tva_tx / 100), 'MT');
+		$newdiscount2->multicurrency_amount_ht = price2num($newdiscount2->multicurrency_amount_ttc / (1 + $newdiscount2->tva_tx / 100), 'MT');
+		$newdiscount1->multicurrency_amount_tva = price2num($newdiscount1->multicurrency_amount_ttc - $newdiscount1->multicurrency_amount_ht);
+		$newdiscount2->multicurrency_amount_tva = price2num($newdiscount2->multicurrency_amount_ttc - $newdiscount2->multicurrency_amount_ht);
 
 		$db->begin();
 		$discount->fk_facture_source = 0; // This is to delete only the require record (that we will recreate with two records) and not all family with same fk_facture_source
@@ -153,12 +163,12 @@ if ($action == 'setremise' && $user->rights->societe->creer)
 	//if ($user->rights->societe->creer)
 	//if ($user->rights->facture->creer)
 
-	$amount_ht = GETPOST('amount_ht');
+	$amount_ht = price2num(GETPOST('amount_ht', 'alpha'));
 	$desc = GETPOST('desc', 'alpha');
 	$tva_tx = GETPOST('tva_tx', 'alpha');
 	$discount_type = !empty($_POST['discount_type']) ?GETPOST('discount_type', 'alpha') : 0;
 
-	if (price2num($amount_ht) > 0)
+	if ($amount_ht > 0)
 	{
 		$error = 0;
 		if (empty($desc))
@@ -195,7 +205,7 @@ if ($action == 'setremise' && $user->rights->societe->creer)
 	}
 	else
 	{
-		setEventMessages($langs->trans("ErrorFieldFormat", $langs->transnoentitiesnoconv("NewGlobalDiscount")), null, 'errors');
+		setEventMessages($langs->trans("ErrorFieldFormat", $langs->transnoentitiesnoconv("AmountHT")), null, 'errors');
 	}
 }
 
@@ -248,7 +258,7 @@ if ($socid > 0)
 	$head = societe_prepare_head($object);
 
 	print '<form method="POST" action="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'">';
-	print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+	print '<input type="hidden" name="token" value="'.newToken().'">';
 	print '<input type="hidden" name="action" value="setremise">';
     print '<input type="hidden" name="backtopage" value="'.$backtopage.'">';
 
@@ -374,10 +384,10 @@ if ($socid > 0)
     	print '<span class="hideonsmartphone">&nbsp;'.$langs->trans("Currency".$conf->currency).'</span></td></tr>';
     	print '<tr><td>'.$langs->trans("VAT").'</td>';
     	print '<td>';
-    	print $form->load_tva('tva_tx', GETPOST('tva_tx'), $mysoc, $object);
+    	print $form->load_tva('tva_tx', GETPOSTISSET('tva_tx') ? GETPOST('tva_tx', 'alpha') : 0, $mysoc, $object, 0, 0, '', 0, 1);
     	print '</td></tr>';
     	print '<tr><td class="fieldrequired" >'.$langs->trans("NoteReason").'</td>';
-    	print '<td><input type="text" class="quatrevingtpercent" name="desc" value="'.GETPOST('desc', 'none').'"></td></tr>';
+    	print '<td><input type="text" class="quatrevingtpercent" name="desc" value="'.GETPOST('desc', 'alphanohtml').'"></td></tr>';
 
     	print "</table>";
 
@@ -408,7 +418,7 @@ if ($socid > 0)
 
 
 	/*
-	 * List remises fixes client restant en cours (= liees a aucune facture ni ligne de facture)
+	 * List not consumed available credits (= linked to no invoice and no invoice line)
 	 */
 
 	print load_fiche_titre($langs->trans("DiscountStillRemaining"));
@@ -420,7 +430,8 @@ if ($socid > 0)
 			print load_fiche_titre($langs->trans("CustomerDiscounts"), '', '');
 		}
 
-		$sql = "SELECT rc.rowid, rc.amount_ht, rc.amount_tva, rc.amount_ttc, rc.tva_tx, rc.multicurrency_amount_ht, rc.multicurrency_amount_tva, rc.multicurrency_amount_ttc,";
+		$sql = "SELECT rc.rowid, rc.amount_ht, rc.amount_tva, rc.amount_ttc, rc.tva_tx, rc.vat_src_code,";
+		$sql .= " rc.multicurrency_amount_ht, rc.multicurrency_amount_tva, rc.multicurrency_amount_ttc,";
 		$sql .= " rc.datec as dc, rc.description,";
 		$sql .= " rc.fk_facture_source,";
 		$sql .= " u.login, u.rowid as user_id,";
@@ -509,7 +520,7 @@ if ($socid > 0)
 	    			{
 	    			    print '<td class="right">'.price($obj->multicurrency_amount_ht).'</td>';
 	    			}
-	    			print '<td class="right">'.vatrate($obj->tva_tx, true).'</td>';
+	    			print '<td class="right">'.vatrate($obj->tva_tx.($obj->vat_src_code ? ' ('.$obj->vat_src_code.')' : ''), true).'</td>';
 	    			print '<td class="right">'.price($obj->amount_ttc).'</td>';
 	    			if (!empty($conf->multicurrency->enabled))
 	    			{
@@ -539,7 +550,7 @@ if ($socid > 0)
 			else
 			{
 				$colspan = 8;
-				if (!empty($conf->multicurrency->enabled)) $colspan+=2;
+				if (!empty($conf->multicurrency->enabled)) $colspan += 2;
 			    print '<tr><td colspan="'.$colspan.'" class="opacitymedium">'.$langs->trans("None").'</td></tr>';
 			}
 			$db->free($resql);
@@ -576,7 +587,8 @@ if ($socid > 0)
 		/*
 		 * Liste remises fixes fournisseur restant en cours (= liees a aucune facture ni ligne de facture)
 		 */
-		$sql = "SELECT rc.rowid, rc.amount_ht, rc.amount_tva, rc.amount_ttc, rc.tva_tx, rc.multicurrency_amount_ht, rc.multicurrency_amount_tva, rc.multicurrency_amount_ttc,";
+		$sql = "SELECT rc.rowid, rc.amount_ht, rc.amount_tva, rc.amount_ttc, rc.tva_tx, rc.vat_src_code,";
+		$sql .= " rc.multicurrency_amount_ht, rc.multicurrency_amount_tva, rc.multicurrency_amount_ttc,";
 		$sql .= " rc.datec as dc, rc.description,";
 		$sql .= " rc.fk_invoice_supplier_source,";
 		$sql .= " u.login, u.rowid as user_id,";
@@ -665,7 +677,7 @@ if ($socid > 0)
 					{
 					    print '<td class="right">'.price($obj->multicurrency_amount_ht).'</td>';
 					}
-					print '<td class="right">'.vatrate($obj->tva_tx, true).'</td>';
+					print '<td class="right">'.vatrate($obj->tva_tx.($obj->vat_src_code ? ' ('.$obj->vat_src_code.')' : ''), true).'</td>';
 					print '<td class="right">'.price($obj->amount_ttc).'</td>';
 					if (!empty($conf->multicurrency->enabled))
 					{
@@ -695,7 +707,7 @@ if ($socid > 0)
 			else
 			{
 				$colspan = 8;
-				if (!empty($conf->multicurrency->enabled)) $colspan+=2;
+				if (!empty($conf->multicurrency->enabled)) $colspan += 2;
 				print '<tr><td colspan="'.$colspan.'" class="opacitymedium">'.$langs->trans("None").'</td></tr>';
 			}
 			$db->free($resql);
@@ -743,7 +755,8 @@ if ($socid > 0)
 		}
 
 		// Discount linked to invoice lines
-		$sql = "SELECT rc.rowid, rc.amount_ht, rc.amount_tva, rc.amount_ttc, rc.tva_tx, rc.multicurrency_amount_ht, rc.multicurrency_amount_tva, rc.multicurrency_amount_ttc,";
+		$sql = "SELECT rc.rowid, rc.amount_ht, rc.amount_tva, rc.amount_ttc, rc.tva_tx, rc.vat_src_code,";
+		$sql .= " rc.multicurrency_amount_ht, rc.multicurrency_amount_tva, rc.multicurrency_amount_ttc,";
 		$sql .= " rc.datec as dc, rc.description, rc.fk_facture_line, rc.fk_facture_source,";
 		$sql .= " u.login, u.rowid as user_id,";
 		$sql .= " f.rowid as invoiceid, f.ref,";
@@ -761,7 +774,7 @@ if ($socid > 0)
 		$sql .= " ORDER BY dc DESC";
 		//$sql.= " UNION ";
 		// Discount linked to invoices
-		$sql2 = "SELECT rc.rowid, rc.amount_ht, rc.amount_tva, rc.amount_ttc, rc.tva_tx,";
+		$sql2 = "SELECT rc.rowid, rc.amount_ht, rc.amount_tva, rc.amount_ttc, rc.tva_tx, rc.vat_src_code,";
 		$sql2 .= " rc.datec as dc, rc.description, rc.fk_facture_line, rc.fk_facture,";
 		$sql2 .= " rc.fk_facture_source,";
 		$sql2 .= " u.login, u.rowid as user_id,";
@@ -880,7 +893,7 @@ if ($socid > 0)
 	    			{
 	    			    print '<td class="right">'.price($obj->multicurrency_amount_ht).'</td>';
 	    			}
-	    			print '<td class="right">'.vatrate($obj->tva_tx, true).'</td>';
+	    			print '<td class="right">'.vatrate($obj->tva_tx.($obj->vat_src_code ? ' ('.$obj->vat_src_code.')' : ''), true).'</td>';
 	    			print '<td class="right">'.price($obj->amount_ttc).'</td>';
 	    			if (!empty($conf->multicurrency->enabled))
 	    			{
@@ -897,7 +910,7 @@ if ($socid > 0)
 			else
 			{
 				$colspan = 8;
-				if (!empty($conf->multicurrency->enabled)) $colspan+=2;
+				if (!empty($conf->multicurrency->enabled)) $colspan += 2;
 			    print '<tr><td colspan="'.$colspan.'" class="opacitymedium">'.$langs->trans("None").'</td></tr>';
 			}
 
@@ -919,7 +932,8 @@ if ($socid > 0)
 		}
 
 		// Discount linked to invoice lines
-		$sql = "SELECT rc.rowid, rc.amount_ht, rc.amount_tva, rc.amount_ttc, rc.tva_tx, rc.multicurrency_amount_ht, rc.multicurrency_amount_tva, rc.multicurrency_amount_ttc,";
+		$sql = "SELECT rc.rowid, rc.amount_ht, rc.amount_tva, rc.amount_ttc, rc.tva_tx, rc.vat_src_code,";
+		$sql .= " rc.multicurrency_amount_ht, rc.multicurrency_amount_tva, rc.multicurrency_amount_ttc,";
 		$sql .= " rc.datec as dc, rc.description, rc.fk_invoice_supplier_line, rc.fk_invoice_supplier,";
 		$sql .= " rc.fk_invoice_supplier_source,";
 		$sql .= " u.login, u.rowid as user_id,";
@@ -938,7 +952,7 @@ if ($socid > 0)
 		$sql .= " ORDER BY dc DESC";
 		//$sql.= " UNION ";
 		// Discount linked to invoices
-		$sql2 = "SELECT rc.rowid, rc.amount_ht, rc.amount_tva, rc.amount_ttc, rc.tva_tx,";
+		$sql2 = "SELECT rc.rowid, rc.amount_ht, rc.amount_tva, rc.amount_ttc, rc.tva_tx, rc.vat_src_code,";
 		$sql2 .= " rc.datec as dc, rc.description, rc.fk_invoice_supplier_line, rc.fk_invoice_supplier,";
 		$sql2 .= " rc.fk_invoice_supplier_source,";
 		$sql2 .= " u.login, u.rowid as user_id,";
@@ -1056,13 +1070,13 @@ if ($socid > 0)
 					{
 					    print '<td class="right">'.price($obj->multicurrency_amount_ht).'</td>';
 					}
-					print '<td class="right">'.vatrate($obj->tva_tx, true).'</td>';
+					print '<td class="right">'.vatrate($obj->tva_tx.($obj->vat_src_code ? ' ('.$obj->vat_src_code.')' : ''), true).'</td>';
 					print '<td class="right">'.price($obj->amount_ttc).'</td>';
 					if (!empty($conf->multicurrency->enabled))
 					{
 					    print '<td class="right">'.price($obj->multicurrency_amount_ttc).'</td>';
 					}
-					print '<td align="center">';
+					print '<td class="center">';
 					print '<a href="'.DOL_URL_ROOT.'/user/card.php?id='.$obj->user_id.'">'.img_object($langs->trans("ShowUser"), 'user').' '.$obj->login.'</a>';
 					print '</td>';
 					print '<td>&nbsp;</td>';
@@ -1073,7 +1087,7 @@ if ($socid > 0)
 			else
 			{
 				$colspan = 8;
-				if (!empty($conf->multicurrency->enabled)) $colspan+=2;
+				if (!empty($conf->multicurrency->enabled)) $colspan += 2;
 				print '<tr><td colspan="'.$colspan.'" class="opacitymedium">'.$langs->trans("None").'</td></tr>';
 			}
 

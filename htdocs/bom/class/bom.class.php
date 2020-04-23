@@ -47,7 +47,7 @@ class BOM extends CommonObject
 	public $ismultientitymanaged = 1;
 
 	/**
-	 * @var int  Does bom support extrafields ? 0=No, 1=Yes
+	 * @var int  Does object support extrafields ? 0=No, 1=Yes
 	 */
 	public $isextrafieldmanaged = 1;
 
@@ -63,10 +63,11 @@ class BOM extends CommonObject
 
 
 	/**
-	 *  'type' if the field format.
+	 *  'type' if the field format ('integer', 'integer:ObjectClass:PathToClass[:AddCreateButtonOrNot[:Filter]]', 'varchar(x)', 'double(24,8)', 'real', 'price', 'text', 'html', 'date', 'datetime', 'timestamp', 'duration', 'mail', 'phone', 'url', 'password')
+	 *         Note: Filter can be a string like "(t.ref:like:'SO-%') or (t.date_creation:<:'20160101') or (t.nature:is:NULL)"
 	 *  'label' the translation key.
 	 *  'enabled' is a condition when the field must be managed.
-	 *  'visible' says if field is visible in list (Examples: 0=Not visible, 1=Visible on list and create/update/view forms, 2=Visible on list only, 3=Visible on create/update/view form only (not list), 4=Visible on list and update/view form only (not create). Using a negative value means field is not shown by default on list but can be selected for viewing)
+	 *  'visible' says if field is visible in list (Examples: 0=Not visible, 1=Visible on list and create/update/view forms, 2=Visible on list only, 3=Visible on create/update/view form only (not list), 4=Visible on list and update/view form only (not create). 5=Visible on list and view only (not create/not update). Using a negative value means field is not shown by default on list but can be selected for viewing)
 	 *  'noteditable' says if field is not editable (1 or 0)
 	 *  'notnull' is set to 1 if not null in database. Set to -1 if we must set data to null if empty ('' or 0).
 	 *  'default' is a default value for creation (can still be replaced by the global setup of default values)
@@ -94,7 +95,7 @@ class BOM extends CommonObject
 		'description' => array('type'=>'text', 'label'=>'Description', 'enabled'=>1, 'visible'=>-1, 'position'=>60, 'notnull'=>-1,),
 		'fk_product' => array('type'=>'integer:Product:product/class/product.class.php:1:(finished IS NULL or finished <> 0)', 'label'=>'Product', 'enabled'=>1, 'visible'=>1, 'position'=>35, 'notnull'=>1, 'index'=>1, 'help'=>'ProductBOMHelp'),
 	    'qty' => array('type'=>'real', 'label'=>'Quantity', 'enabled'=>1, 'visible'=>1, 'default'=>1, 'position'=>55, 'notnull'=>1, 'isameasure'=>'1', 'css'=>'maxwidth75imp'),
-		'efficiency' => array('type'=>'real', 'label'=>'ManufacturingEfficiency', 'enabled'=>1, 'visible'=>-1, 'default'=>1, 'position'=>100, 'notnull'=>0, 'css'=>'maxwidth50imp', 'help'=>'ValueOfMeansLoss'),
+		//'efficiency' => array('type'=>'real', 'label'=>'ManufacturingEfficiency', 'enabled'=>1, 'visible'=>-1, 'default'=>1, 'position'=>100, 'notnull'=>0, 'css'=>'maxwidth50imp', 'help'=>'ValueOfMeansLossForProductProduced'),
 		'duration' => array('type'=>'duration', 'label'=>'EstimatedDuration', 'enabled'=>1, 'visible'=>-1, 'position'=>101, 'notnull'=>-1, 'css'=>'maxwidth50imp', 'help'=>'EstimatedDurationDesc'),
 		'fk_warehouse' => array('type'=>'integer:Entrepot:product/stock/class/entrepot.class.php:0', 'label'=>'WarehouseForProduction', 'enabled'=>1, 'visible'=>-1, 'position'=>102),
 		'note_public' => array('type'=>'html', 'label'=>'NotePublic', 'enabled'=>1, 'visible'=>-2, 'position'=>161, 'notnull'=>-1,),
@@ -164,6 +165,16 @@ class BOM extends CommonObject
 	 * @var BOMLine[]     Array of subtable lines
 	 */
 	public $lines = array();
+
+	/**
+	 * @var int		Calculated cost for the BOM
+	 */
+	public $total_cost = 0;
+
+	/**
+	 * @var int		Calculated cost for 1 unit of the product in BOM
+	 */
+	public $unit_cost = 0;
 
 
 
@@ -323,6 +334,7 @@ class BOM extends CommonObject
 	{
 		$result = $this->fetchCommon($id, $ref);
 		if ($result > 0 && !empty($this->table_element_line)) $this->fetchLines();
+		$this->calculateCosts();
 		return $result;
 	}
 
@@ -532,7 +544,7 @@ class BOM extends CommonObject
 	    $error = 0;
 
 	    // Protection
-	    if ($this->statut == self::STATUS_VALIDATED)
+	    if ($this->status == self::STATUS_VALIDATED)
 	    {
 	        dol_syslog(get_class($this)."::validate action abandonned: already validated", LOG_WARNING);
 	        return 0;
@@ -560,7 +572,7 @@ class BOM extends CommonObject
 	    {
 	        $num = $this->ref;
 	    }
-	    $this->newref = $num;
+	    $this->newref = dol_sanitizeFileName($num);
 
 	    // Validate
 	    $sql = "UPDATE ".MAIN_DB_PREFIX.$this->table_element;
@@ -745,6 +757,9 @@ class BOM extends CommonObject
         $label = '<u>'.$langs->trans("BillOfMaterials").'</u>';
         $label .= '<br>';
         $label .= '<b>'.$langs->trans('Ref').':</b> '.$this->ref;
+        if (isset($this->status)) {
+        	$label .= '<br><b>'.$langs->trans("Status").":</b> ".$this->getLibStatut(5);
+        }
 
         $url = dol_buildpath('/bom/bom_card.php', 1).'?id='.$this->id;
 
@@ -829,6 +844,7 @@ class BOM extends CommonObject
 
 		$statusType = 'status'.$status;
 		if ($status == self::STATUS_VALIDATED) $statusType = 'status4';
+		if ($status == self::STATUS_CANCELED) $statusType = 'status6';
 
 		return dolGetStatus($this->labelStatus[$status], $this->labelStatus[$status], '', $statusType, $mode);
 	}
@@ -986,6 +1002,29 @@ class BOM extends CommonObject
 
 		return $error;
 	}
+
+	/**
+	 * BOM costs calculation based on cost_price or pmp of each BOM line
+	 * @return void
+	 */
+	public function calculateCosts()
+	{
+		include_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
+		$this->unit_cost = 0;
+		$this->total_cost = 0;
+
+		foreach ($this->lines as &$line) {
+			$tmpproduct = new Product($this->db);
+			$tmpproduct->fetch($line->fk_product);
+
+			$line->unit_cost = (!empty($tmpproduct->cost_price)) ? $tmpproduct->cost_price : $tmpproduct->pmp; // TODO : add option to work with cost_price or pmp
+			$line->total_cost = price2num($line->qty * $line->unit_cost, 'MT');
+			$this->total_cost += $line->total_cost;
+		}
+
+		$this->total_cost = price2num($this->total_cost, 'MT');
+		$this->unit_cost = price2num($this->total_cost / $this->qty, 'MU');
+	}
 }
 
 
@@ -1051,7 +1090,7 @@ class BOMLine extends CommonObjectLine
 		'qty' => array('type'=>'double(24,8)', 'label'=>'Quantity', 'enabled'=>1, 'visible'=>1, 'position'=>100, 'notnull'=>1, 'isameasure'=>'1',),
 		'qty_frozen' => array('type'=>'smallint', 'label'=>'QuantityFrozen', 'enabled'=>1, 'visible'=>1, 'default'=>0, 'position'=>105, 'css'=>'maxwidth50imp', 'help'=>'QuantityConsumedInvariable'),
 	    'disable_stock_change' => array('type'=>'smallint', 'label'=>'DisableStockChange', 'enabled'=>1, 'visible'=>1, 'default'=>0, 'position'=>108, 'css'=>'maxwidth50imp', 'help'=>'DisableStockChangeHelp'),
-	    //'efficiency' => array('type'=>'double(24,8)', 'label'=>'ManufacturingEfficiency', 'enabled'=>1, 'visible'=>0, 'default'=>1, 'position'=>110, 'notnull'=>1, 'css'=>'maxwidth50imp', 'help'=>'ValueOfEfficiencyConsumedMeans'),
+	    'efficiency' => array('type'=>'double(24,8)', 'label'=>'ManufacturingEfficiency', 'enabled'=>1, 'visible'=>0, 'default'=>1, 'position'=>110, 'notnull'=>1, 'css'=>'maxwidth50imp', 'help'=>'ValueOfEfficiencyConsumedMeans'),
 		'position' => array('type'=>'integer', 'label'=>'Rank', 'enabled'=>1, 'visible'=>0, 'default'=>0, 'position'=>200, 'notnull'=>1,),
 		'import_key' => array('type'=>'varchar(14)', 'label'=>'ImportId', 'enabled'=>1, 'visible'=>-2, 'position'=>1000, 'notnull'=>-1,),
 	);
@@ -1066,6 +1105,16 @@ class BOMLine extends CommonObjectLine
 	public $position;
 	public $import_key;
 	// END MODULEBUILDER PROPERTIES
+
+	/**
+	 * @var int		Calculated cost for the BOM line
+	 */
+	public $total_cost = 0;
+
+	/**
+	 * @var int		Line unit cost based on product cost price or pmp
+	 */
+	public $unit_cost = 0;
 
 
 	/**

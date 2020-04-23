@@ -103,7 +103,7 @@ print '<br>';
 
 
 print '<form method="POST" action="'.$_SERVER["PHP_SELF"].'?action=setvalue">';
-print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+print '<input type="hidden" name="token" value="'.newToken().'">';
 
 $form = new Form($db);
 

@@ -235,7 +235,7 @@ if ($conf->global->MAIN_FEATURES_LEVEL >= 2)
 
     foreach ($dirmodels as $reldir)
     {
-    	$dir = dol_buildpath($reldir."core/modules/action/doc/");
+    	$dir = dol_buildpath($reldir."core/modules/action/doc");
 
         if (is_dir($dir))
         {
@@ -257,7 +257,7 @@ if ($conf->global->MAIN_FEATURES_LEVEL >= 2)
             			print (empty($module->name) ? $name : $module->name);
             			print "</td>\n";
             			print "<td>\n";
-            			require_once $dir.$file;
+            			require_once $dir.'/'.$file;
             			$module = new $classname($db, $specimenthirdparty);
             			if (method_exists($module, 'info'))
             				print $module->info($langs);
@@ -324,7 +324,7 @@ if ($conf->global->MAIN_FEATURES_LEVEL >= 2)
 }
 
 print '<form action="'.$_SERVER["PHP_SELF"].'" name="agenda">';
-print '<input type="hidden" name="token" value="' . $_SESSION ['newtoken'] . '">';
+print '<input type="hidden" name="token" value="'.newToken().'">';
 print '<input type="hidden" name="action" value="set">';
 
 print '<table class="noborder allwidth">'."\n";

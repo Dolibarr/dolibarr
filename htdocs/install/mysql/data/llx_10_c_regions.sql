@@ -45,25 +45,16 @@ insert into llx_c_regions (fk_pays,code_region,cheflieu,tncc,nom) values ( 1,   
 insert into llx_c_regions (fk_pays,code_region,cheflieu,tncc,nom) values ( 1,   6,'97601',3,'Mayotte');
 
 insert into llx_c_regions (fk_pays,code_region,cheflieu,tncc,nom) values ( 1,  11,'75056',1,'Île-de-France');
-insert into llx_c_regions (fk_pays,code_region,cheflieu,tncc,nom) values ( 1,  21,'51108',0,'Champagne-Ardenne');
-insert into llx_c_regions (fk_pays,code_region,cheflieu,tncc,nom) values ( 1,  22,'80021',0,'Picardie');
-insert into llx_c_regions (fk_pays,code_region,cheflieu,tncc,nom) values ( 1,  23,'76540',0,'Haute-Normandie');
-insert into llx_c_regions (fk_pays,code_region,cheflieu,tncc,nom) values ( 1,  24,'45234',2,'Centre');
-insert into llx_c_regions (fk_pays,code_region,cheflieu,tncc,nom) values ( 1,  25,'14118',0,'Basse-Normandie');
-insert into llx_c_regions (fk_pays,code_region,cheflieu,tncc,nom) values ( 1,  26,'21231',0,'Bourgogne');
-insert into llx_c_regions (fk_pays,code_region,cheflieu,tncc,nom) values ( 1,  31,'59350',2,'Nord-Pas-de-Calais');
-insert into llx_c_regions (fk_pays,code_region,cheflieu,tncc,nom) values ( 1,  41,'57463',0,'Lorraine');
-insert into llx_c_regions (fk_pays,code_region,cheflieu,tncc,nom) values ( 1,  42,'67482',1,'Alsace');
-insert into llx_c_regions (fk_pays,code_region,cheflieu,tncc,nom) values ( 1,  43,'25056',0,'Franche-Comté');
+insert into llx_c_regions (fk_pays,code_region,cheflieu,tncc,nom) values ( 1,  24,'45234',2,'Centre-Val de Loire');
+insert into llx_c_regions (fk_pays,code_region,cheflieu,tncc,nom) values ( 1,  27,'21231',0,'Bourgogne-Franche-Comté');
+insert into llx_c_regions (fk_pays,code_region,cheflieu,tncc,nom) values ( 1,  28,'76540',0,'Normandie');
+insert into llx_c_regions (fk_pays,code_region,cheflieu,tncc,nom) values ( 1,  32,'59350',4,'Hauts-de-France');
+insert into llx_c_regions (fk_pays,code_region,cheflieu,tncc,nom) values ( 1,  44,'67482',2,'Grand Est');
 insert into llx_c_regions (fk_pays,code_region,cheflieu,tncc,nom) values ( 1,  52,'44109',4,'Pays de la Loire');
 insert into llx_c_regions (fk_pays,code_region,cheflieu,tncc,nom) values ( 1,  53,'35238',0,'Bretagne');
-insert into llx_c_regions (fk_pays,code_region,cheflieu,tncc,nom) values ( 1,  54,'86194',2,'Poitou-Charentes');
-insert into llx_c_regions (fk_pays,code_region,cheflieu,tncc,nom) values ( 1,  72,'33063',1,'Aquitaine');
-insert into llx_c_regions (fk_pays,code_region,cheflieu,tncc,nom) values ( 1,  73,'31555',0,'Midi-Pyrénées');
-insert into llx_c_regions (fk_pays,code_region,cheflieu,tncc,nom) values ( 1,  74,'87085',2,'Limousin');
-insert into llx_c_regions (fk_pays,code_region,cheflieu,tncc,nom) values ( 1,  82,'69123',2,'Rhône-Alpes');
-insert into llx_c_regions (fk_pays,code_region,cheflieu,tncc,nom) values ( 1,  83,'63113',1,'Auvergne');
-insert into llx_c_regions (fk_pays,code_region,cheflieu,tncc,nom) values ( 1,  91,'34172',2,'Languedoc-Roussillon');
+insert into llx_c_regions (fk_pays,code_region,cheflieu,tncc,nom) values ( 1,  75,'33063',0,'Nouvelle-Aquitaine');
+insert into llx_c_regions (fk_pays,code_region,cheflieu,tncc,nom) values ( 1,  76,'31355',1,'Occitanie');
+insert into llx_c_regions (fk_pays,code_region,cheflieu,tncc,nom) values ( 1,  84,'69123',1,'Auvergne-Rhône-Alpes');
 insert into llx_c_regions (fk_pays,code_region,cheflieu,tncc,nom) values ( 1,  93,'13055',0,'Provence-Alpes-Côte d''Azur');
 insert into llx_c_regions (fk_pays,code_region,cheflieu,tncc,nom) values ( 1,  94,'2A004',0,'Corse');
 

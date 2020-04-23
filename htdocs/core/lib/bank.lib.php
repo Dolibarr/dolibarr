@@ -172,14 +172,14 @@ function account_statement_prepare_head($object, $num)
 	$head = array();
 
 	$head[$h][0] = DOL_URL_ROOT.'/compta/bank/releve.php?account='.$object->id.'&num='.$num;
-	$head[$h][1] = $langs->trans("AccountStatements");
+	$head[$h][1] = $langs->trans("AccountStatement");
 	$head[$h][2] = 'statement';
 	$h++;
 
 	// Attached files
 	require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 	require_once DOL_DOCUMENT_ROOT.'/core/class/link.class.php';
-	$upload_dir = $conf->bank->dir_output."/".$object->id.'/'.dol_sanitizeFileName($num);
+	$upload_dir = $conf->bank->dir_output."/".$object->id.'/statement/'.dol_sanitizeFileName($num);
 	$nbFiles = count(dol_dir_list($upload_dir, 'files', 0, '', '(\.meta|_preview.*\.png)$'));
 	$nbLinks = Link::count($db, $object->element, $object->id);
 

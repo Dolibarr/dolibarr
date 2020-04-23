@@ -716,7 +716,7 @@ class Holiday extends CommonObject
 		{
 			$num = $this->ref;
 		}
-		$this->newref = $num;
+		$this->newref = dol_sanitizeFileName($num);
 
 		// Update status
 		$sql = "UPDATE ".MAIN_DB_PREFIX."holiday SET";
@@ -1273,7 +1273,7 @@ class Holiday extends CommonObject
 		}
 
 		$statusType = 'status6';
-		if (! empty($startdate) && $startdate > dol_now()) $statusType = 'status4';
+		if (!empty($startdate) && $startdate > dol_now()) $statusType = 'status4';
 		if ($status == self::STATUS_DRAFT) $statusType = 'status0';
 		if ($status == self::STATUS_VALIDATED) $statusType = 'status1';
 		if ($status == self::STATUS_CANCELED) $statusType = 'status5';
@@ -1654,21 +1654,24 @@ class Holiday extends CommonObject
 		{
 			if ($type)
 			{
-				// Si utilisateur de Dolibarr
-
-				$sql = "SELECT u.rowid";
+				// If user of Dolibarr
+				$sql = "SELECT";
+				if (!empty($conf->multicompany->enabled) && !empty($conf->global->MULTICOMPANY_TRANSVERSE_MODE)) {
+					$sql .= " DISTINCT";
+				}
+				$sql .= " u.rowid";
 				$sql .= " FROM ".MAIN_DB_PREFIX."user as u";
 
 				if (!empty($conf->multicompany->enabled) && !empty($conf->global->MULTICOMPANY_TRANSVERSE_MODE))
 				{
 					$sql .= ", ".MAIN_DB_PREFIX."usergroup_user as ug";
-					$sql .= " WHERE (ug.fk_user = u.rowid";
-					$sql .= " AND ug.entity = ".$conf->entity.")";
-					$sql .= " OR u.admin = 1";
+					$sql .= " WHERE ((ug.fk_user = u.rowid";
+					$sql .= " AND ug.entity IN (".getEntity('usergroup')."))";
+					$sql .= " OR u.entity = 0)"; // Show always superadmin
 				}
 				else
 				{
-					$sql .= " WHERE u.entity IN (0,".$conf->entity.")";
+					$sql .= " WHERE u.entity IN (".getEntity('user').")";
 				}
 				$sql .= " AND u.statut > 0";
 				if ($filters) $sql .= $filters;
@@ -1709,7 +1712,7 @@ class Holiday extends CommonObject
 				// We want only list of vacation balance for user ids
 				$sql = "SELECT DISTINCT cpu.fk_user";
 				$sql .= " FROM ".MAIN_DB_PREFIX."holiday_users as cpu, ".MAIN_DB_PREFIX."user as u";
-				$sql .= " WHERE cpu.fk_user = u.user";
+				$sql .= " WHERE cpu.fk_user = u.rowid";
 				if ($filters) $sql .= $filters;
 
 				$resql = $this->db->query($sql);
@@ -1750,23 +1753,30 @@ class Holiday extends CommonObject
 			// List for Dolibarr users
 			if ($type)
 			{
-				$sql = "SELECT u.rowid, u.lastname, u.firstname, u.gender, u.photo, u.employee, u.statut, u.fk_user";
-				$sql.= " FROM ".MAIN_DB_PREFIX."user as u";
+								// If user of Dolibarr
+				$sql = "SELECT";
+				if (!empty($conf->multicompany->enabled) && !empty($conf->global->MULTICOMPANY_TRANSVERSE_MODE)) {
+					$sql .= " DISTINCT";
+				}
+				$sql .= " u.rowid, u.lastname, u.firstname, u.gender, u.photo, u.employee, u.statut, u.fk_user";
+				$sql .= " FROM ".MAIN_DB_PREFIX."user as u";
 
-				if (! empty($conf->multicompany->enabled) && ! empty($conf->global->MULTICOMPANY_TRANSVERSE_MODE))
+				if (!empty($conf->multicompany->enabled) && !empty($conf->global->MULTICOMPANY_TRANSVERSE_MODE))
 				{
-					$sql.= ", ".MAIN_DB_PREFIX."usergroup_user as ug";
-					$sql.= " WHERE (ug.fk_user = u.rowid";
-					$sql.= " AND ug.entity = ".$conf->entity.")";
-					$sql.= " OR u.admin = 1";
-				} else {
-					$sql.= " WHERE u.entity IN (0,".$conf->entity.")";
+					$sql .= ", ".MAIN_DB_PREFIX."usergroup_user as ug";
+					$sql .= " WHERE ((ug.fk_user = u.rowid";
+					$sql .= " AND ug.entity IN (".getEntity('usergroup')."))";
+					$sql .= " OR u.entity = 0)"; // Show always superadmin
+				}
+				else
+				{
+					$sql .= " WHERE u.entity IN (".getEntity('user').")";
 				}
 
-				$sql.= " AND u.statut > 0";
-				if ($filters) $sql.=$filters;
+				$sql .= " AND u.statut > 0";
+				if ($filters) $sql .= $filters;
 
-				$resql=$this->db->query($sql);
+				$resql = $this->db->query($sql);
 
 				// Si pas d'erreur SQL
 				if ($resql)
@@ -1776,18 +1786,18 @@ class Holiday extends CommonObject
 					$num = $this->db->num_rows($resql);
 
 					// Boucles du listage des utilisateurs
-					while($i < $num) {
+					while ($i < $num) {
 						$obj = $this->db->fetch_object($resql);
 
-						$tab_result[$i]['rowid'] = $obj->rowid;		// rowid of user
-						$tab_result[$i]['name'] = $obj->lastname;       // deprecated
+						$tab_result[$i]['rowid'] = $obj->rowid; // rowid of user
+						$tab_result[$i]['name'] = $obj->lastname; // deprecated
 						$tab_result[$i]['lastname'] = $obj->lastname;
 						$tab_result[$i]['firstname'] = $obj->firstname;
 						$tab_result[$i]['gender'] = $obj->gender;
 						$tab_result[$i]['status'] = $obj->statut;
 						$tab_result[$i]['employee'] = $obj->employee;
 						$tab_result[$i]['photo'] = $obj->photo;
-						$tab_result[$i]['fk_user'] = $obj->fk_user;	// rowid of manager
+						$tab_result[$i]['fk_user'] = $obj->fk_user; // rowid of manager
 						//$tab_result[$i]['type'] = $obj->type;
 						//$tab_result[$i]['nb_holiday'] = $obj->nb_holiday;
 
@@ -1797,7 +1807,7 @@ class Holiday extends CommonObject
 					return $tab_result;
 				} else {
 					// Erreur SQL
-					$this->errors[]="Error ".$this->db->lasterror();
+					$this->errors[] = "Error ".$this->db->lasterror();
 					return -1;
 				}
 			}
@@ -2198,32 +2208,32 @@ class Holiday extends CommonObject
         // phpcs:enable
         global $conf, $langs;
 
-        if ($user->socid) return -1;   // protection pour eviter appel par utilisateur externe
+        if ($user->socid) return -1; // protection pour eviter appel par utilisateur externe
 
-        $now=dol_now();
+        $now = dol_now();
 
         $userchildids = $user->getAllChildIds(1);
 
         $sql = "SELECT h.rowid, h.date_debut";
-        $sql.= " FROM ".MAIN_DB_PREFIX."holiday as h";
-        $sql.= " WHERE h.statut = 2";
-        $sql.= " AND h.entity IN (".getEntity('holiday').")";
-        $sql.= " AND (h.fk_user IN (".join(',', $userchildids).")";
-        $sql.= " OR h.fk_validator IN (".join(',', $userchildids)."))";
+        $sql .= " FROM ".MAIN_DB_PREFIX."holiday as h";
+        $sql .= " WHERE h.statut = 2";
+        $sql .= " AND h.entity IN (".getEntity('holiday').")";
+        $sql .= " AND (h.fk_user IN (".join(',', $userchildids).")";
+        $sql .= " OR h.fk_validator IN (".join(',', $userchildids)."))";
 
-        $resql=$this->db->query($sql);
+        $resql = $this->db->query($sql);
         if ($resql)
         {
             $langs->load("members");
 
             $response = new WorkboardResponse();
-            $response->warning_delay=$conf->holiday->approve->warning_delay/60/60/24;
-            $response->label=$langs->trans("HolidaysToApprove");
-            $response->labelShort=$langs->trans("ToApprove");
-            $response->url=DOL_URL_ROOT.'/holiday/list.php?search_statut=2&amp;mainmenu=hrm&amp;leftmenu=holiday';
-            $response->img=img_object('', "holiday");
+            $response->warning_delay = $conf->holiday->approve->warning_delay / 60 / 60 / 24;
+            $response->label = $langs->trans("HolidaysToApprove");
+            $response->labelShort = $langs->trans("ToApprove");
+            $response->url = DOL_URL_ROOT.'/holiday/list.php?search_statut=2&amp;mainmenu=hrm&amp;leftmenu=holiday';
+            $response->img = img_object('', "holiday");
 
-            while ($obj=$this->db->fetch_object($resql))
+            while ($obj = $this->db->fetch_object($resql))
             {
                 $response->nbtodo++;
 

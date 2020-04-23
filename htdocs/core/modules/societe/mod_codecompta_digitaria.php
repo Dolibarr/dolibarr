@@ -2,6 +2,7 @@
 /* Copyright (C) 2004       Rodolphe Quiedeville    <rodolphe@quiedeville.org>
  * Copyright (C) 2010       Laurent Destailleur     <eldy@users.sourceforge.net>
  * Copyright (C) 2019       Alexandre Spangaro      <aspangaro@open-dsi.fr>
+ * Copyright (C) 2019       Frédéric France         <frederic.france@netlogic.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -42,8 +43,16 @@ class mod_codecompta_digitaria extends ModeleAccountancyCode
      */
     public $version = 'dolibarr'; // 'development', 'experimental', 'dolibarr'
 
+    /**
+     * Prefix customer accountancy code
+     * @var string
+     */
     public $prefixcustomeraccountancycode;
 
+    /**
+     * Prefix supplier accountancy code
+     * @var string
+     */
     public $prefixsupplieraccountancycode;
 
     public $position = 30;
@@ -117,7 +126,7 @@ class mod_codecompta_digitaria extends ModeleAccountancyCode
 	 */
 	public function getExample($langs, $objsoc = 0, $type = -1)
 	{
-	    global $mysoc;
+	    global $conf, $mysoc;
 
         $s = $langs->trans("ThirdPartyName").": ".$mysoc->name;
         $s .= "<br>\n";
@@ -142,6 +151,7 @@ class mod_codecompta_digitaria extends ModeleAccountancyCode
 	public function get_code($db, $societe, $type = '')
 	{
         // phpcs:enable
+        global $conf;
         $i = 0;
         $this->code = '';
 

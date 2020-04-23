@@ -41,7 +41,7 @@ $result = restrictedArea($user, 'prelevement', '', '', 'bons');
 $limit = GETPOST('limit', 'int')?GETPOST('limit', 'int'):$conf->liste_limit;
 $sortfield = GETPOST('sortfield', 'alpha');
 $sortorder = GETPOST('sortorder', 'alpha');
-$page = GETPOST('page', 'int');
+$page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOST("page", 'int');
 if (empty($page) || $page == -1) { $page = 0; }     // If $page is not defined, or '' or -1
 $offset = $limit * $page;
 $pageprev = $page - 1;
@@ -192,7 +192,7 @@ if ($result)
 
         print '<td align="center"><a href="card.php?id='.$obj->rowid.'">'.$obj->code_client."</a></td>\n";
 
-        print '<td align="center">'.dol_print_date($db->jdate($obj->datec), 'day')."</td>\n";
+        print '<td class="center">'.dol_print_date($db->jdate($obj->datec), 'day')."</td>\n";
 
         print '<td class="right">'.price($obj->amount)."</td>\n";
 

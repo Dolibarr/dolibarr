@@ -1,6 +1,7 @@
 <?php
 /* Copyright (C) 2015   Jean-François Ferry     <jfefe@aternatik.fr>
  * Copyright (C) 2016   Laurent Destailleur     <eldy@users.sourceforge.net>
+ * Copyright (C) 2020   Thibault FOUCART   		<support@ptibogxiv.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -64,16 +65,70 @@ class Proposals extends DolibarrApi
 	 */
 	public function get($id, $contact_list = 1)
 	{
-		if(! DolibarrApiAccess::$user->rights->propal->lire) {
+        return $this->_fetch($id, '', '', $contact_list);
+	}
+
+    /**
+     * Get properties of an proposal object by ref
+     *
+     * Return an array with proposal informations
+     *
+     * @param       string		$ref			Ref of object
+     * @param       int         $contact_list  0: Returned array of contacts/addresses contains all properties, 1: Return array contains just id
+     * @return 	array|mixed data without useless information
+     *
+     * @url GET    ref/{ref}
+     *
+     * @throws 	RestException
+     */
+    public function getByRef($ref, $contact_list = 1)
+    {
+        return $this->_fetch('', $ref, '', $contact_list);
+    }
+
+    /**
+     * Get properties of an proposal object by ref_ext
+     *
+     * Return an array with proposal informations
+     *
+     * @param       string		$ref_ext			External reference of object
+     * @param       int         $contact_list  0: Returned array of contacts/addresses contains all properties, 1: Return array contains just id
+     * @return 	array|mixed data without useless information
+     *
+     * @url GET    ref_ext/{ref_ext}
+     *
+     * @throws 	RestException
+     */
+    public function getByRefExt($ref_ext, $contact_list = 1)
+    {
+        return $this->_fetch('', '', $ref_ext, $contact_list);
+    }
+
+    /**
+     * Get properties of an proposal object
+     *
+     * Return an array with proposal informations
+     *
+     * @param       int         $id             ID of order
+	 * @param		string		$ref			Ref of object
+	 * @param		string		$ref_ext		External reference of object
+     * @param       int         $contact_list  0: Returned array of contacts/addresses contains all properties, 1: Return array contains just id
+     * @return 	array|mixed data without useless information
+     *
+     * @throws 	RestException
+     */
+    private function _fetch($id, $ref = '', $ref_ext = '', $contact_list = 1)
+    {
+		if (!DolibarrApiAccess::$user->rights->propal->lire) {
 			throw new RestException(401);
 		}
 
-		$result = $this->propal->fetch($id);
-		if( ! $result ) {
+		$result = $this->propal->fetch($id, $ref, $ref_ext);
+		if (!$result) {
 			throw new RestException(404, 'Commercial Proposal not found');
 		}
 
-		if( ! DolibarrApi::_checkAccessToResource('propal', $this->propal->id)) {
+		if (!DolibarrApi::_checkAccessToResource('propal', $this->propal->id)) {
 			throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
 		}
 
@@ -107,18 +162,18 @@ class Proposals extends DolibarrApi
 
 		// If the internal user must only see his customers, force searching by him
 		$search_sale = 0;
-		if (! DolibarrApiAccess::$user->rights->societe->client->voir && !$socids) $search_sale = DolibarrApiAccess::$user->id;
+		if (!DolibarrApiAccess::$user->rights->societe->client->voir && !$socids) $search_sale = DolibarrApiAccess::$user->id;
 
 		$sql = "SELECT t.rowid";
 		if ((!DolibarrApiAccess::$user->rights->societe->client->voir && !$socids) || $search_sale > 0) $sql .= ", sc.fk_soc, sc.fk_user"; // We need these fields in order to filter by sale (including the case where the user can only see his prospects)
-		$sql.= " FROM ".MAIN_DB_PREFIX."propal as t";
+		$sql .= " FROM ".MAIN_DB_PREFIX."propal as t";
 
-		if ((!DolibarrApiAccess::$user->rights->societe->client->voir && !$socids) || $search_sale > 0) $sql.= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc"; // We need this table joined to the select in order to filter by sale
+		if ((!DolibarrApiAccess::$user->rights->societe->client->voir && !$socids) || $search_sale > 0) $sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc"; // We need this table joined to the select in order to filter by sale
 
-		$sql.= ' WHERE t.entity IN ('.getEntity('propal').')';
-		if ((!DolibarrApiAccess::$user->rights->societe->client->voir && !$socids) || $search_sale > 0) $sql.= " AND t.fk_soc = sc.fk_soc";
-		if ($socids) $sql.= " AND t.fk_soc IN (".$socids.")";
-		if ($search_sale > 0) $sql.= " AND t.rowid = sc.fk_soc";		// Join for the needed table to filter by sale
+		$sql .= ' WHERE t.entity IN ('.getEntity('propal').')';
+		if ((!DolibarrApiAccess::$user->rights->societe->client->voir && !$socids) || $search_sale > 0) $sql .= " AND t.fk_soc = sc.fk_soc";
+		if ($socids) $sql .= " AND t.fk_soc IN (".$socids.")";
+		if ($search_sale > 0) $sql .= " AND t.rowid = sc.fk_soc"; // Join for the needed table to filter by sale
 		// Insert sale filter
 		if ($search_sale > 0)
 		{
@@ -127,23 +182,23 @@ class Proposals extends DolibarrApi
 		// Add sql filters
 		if ($sqlfilters)
 		{
-			if (! DolibarrApi::_checkFilters($sqlfilters))
+			if (!DolibarrApi::_checkFilters($sqlfilters))
 			{
 				throw new RestException(503, 'Error when validating parameter sqlfilters '.$sqlfilters);
 			}
-			$regexstring='\(([^:\'\(\)]+:[^:\'\(\)]+:[^:\(\)]+)\)';
-			$sql.=" AND (".preg_replace_callback('/'.$regexstring.'/', 'DolibarrApi::_forge_criteria_callback', $sqlfilters).")";
+			$regexstring = '\(([^:\'\(\)]+:[^:\'\(\)]+:[^:\(\)]+)\)';
+			$sql .= " AND (".preg_replace_callback('/'.$regexstring.'/', 'DolibarrApi::_forge_criteria_callback', $sqlfilters).")";
 		}
 
-		$sql.= $db->order($sortfield, $sortorder);
-		if ($limit)	{
+		$sql .= $db->order($sortfield, $sortorder);
+		if ($limit) {
 			if ($page < 0)
 			{
 				$page = 0;
 			}
 			$offset = $limit * $page;
 
-			$sql.= $db->plimit($limit + 1, $offset);
+			$sql .= $db->plimit($limit + 1, $offset);
 		}
 
         dol_syslog("API Rest request");
@@ -158,7 +213,7 @@ class Proposals extends DolibarrApi
 			{
 				$obj = $db->fetch_object($result);
 				$proposal_static = new Propal($db);
-				if($proposal_static->fetch($obj->rowid)) {
+				if ($proposal_static->fetch($obj->rowid)) {
 					// Add external contacts ids
 					$proposal_static->contacts_ids = $proposal_static->liste_contact(-1, 'external', 1);
 					$obj_ret[] = $this->_cleanObjectDatas($proposal_static);
@@ -169,7 +224,7 @@ class Proposals extends DolibarrApi
 		else {
 			throw new RestException(503, 'Error when retrieve propal list : '.$db->lasterror());
 		}
-		if( ! count($obj_ret)) {
+		if (!count($obj_ret)) {
 			throw new RestException(404, 'No proposal found');
 		}
 		return $obj_ret;
@@ -183,13 +238,13 @@ class Proposals extends DolibarrApi
 	 */
     public function post($request_data = null)
     {
-        if(! DolibarrApiAccess::$user->rights->propal->creer) {
+        if (!DolibarrApiAccess::$user->rights->propal->creer) {
             throw new RestException(401, "Insuffisant rights");
         }
         // Check mandatory fields
         $result = $this->_validate($request_data);
 
-		foreach($request_data as $field => $value) {
+		foreach ($request_data as $field => $value) {
 			$this->propal->$field = $value;
 		}
 		/*if (isset($request_data["lines"])) {
@@ -217,16 +272,16 @@ class Proposals extends DolibarrApi
 	 */
     public function getLines($id)
     {
-        if(! DolibarrApiAccess::$user->rights->propal->lire) {
+        if (!DolibarrApiAccess::$user->rights->propal->lire) {
             throw new RestException(401);
         }
 
 	    $result = $this->propal->fetch($id);
-	    if( ! $result ) {
+	    if (!$result) {
 		    throw new RestException(404, 'Commercial Proposal not found');
 	    }
 
-		if( ! DolibarrApi::_checkAccessToResource('propal', $this->propal->id)) {
+		if (!DolibarrApi::_checkAccessToResource('propal', $this->propal->id)) {
 		    throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
 	    }
 	    $this->propal->getLinesArray();
@@ -249,16 +304,16 @@ class Proposals extends DolibarrApi
 	 */
 	public function postLine($id, $request_data = null)
 	{
-		if (! DolibarrApiAccess::$user->rights->propal->creer) {
+		if (!DolibarrApiAccess::$user->rights->propal->creer) {
 		  	throw new RestException(401);
 		}
 
 		$result = $this->propal->fetch($id);
-		if (! $result) {
+		if (!$result) {
 		    throw new RestException(404, 'Commercial Proposal not found');
 		}
 
-		if (! DolibarrApi::_checkAccessToResource('propal', $this->propal->id)) {
+		if (!DolibarrApi::_checkAccessToResource('propal', $this->propal->id)) {
 			throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
 		}
 
@@ -313,16 +368,16 @@ class Proposals extends DolibarrApi
 	 */
 	public function putLine($id, $lineid, $request_data = null)
 	{
-		if(! DolibarrApiAccess::$user->rights->propal->creer) {
+		if (!DolibarrApiAccess::$user->rights->propal->creer) {
 			throw new RestException(401);
 		}
 
 		$result = $this->propal->fetch($id);
-		if($result <= 0) {
+		if ($result <= 0) {
 			throw new RestException(404, 'Proposal not found');
 		}
 
-		if( ! DolibarrApi::_checkAccessToResource('propal', $this->propal->id)) {
+		if (!DolibarrApi::_checkAccessToResource('propal', $this->propal->id)) {
 			throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
 	  	}
 
@@ -336,27 +391,27 @@ class Proposals extends DolibarrApi
 
         $updateRes = $this->propal->updateline(
             $lineid,
-            isset($request_data->subprice)?$request_data->subprice:$propalline->subprice,
-            isset($request_data->qty)?$request_data->qty:$propalline->qty,
-            isset($request_data->remise_percent)?$request_data->remise_percent:$propalline->remise_percent,
-            isset($request_data->tva_tx)?$request_data->tva_tx:$propalline->tva_tx,
-            isset($request_data->localtax1_tx)?$request_data->localtax1_tx:$propalline->localtax1_tx,
-            isset($request_data->localtax2_tx)?$request_data->localtax2_tx:$propalline->localtax2_tx,
-            isset($request_data->desc)?$request_data->desc:$propalline->desc,
+            isset($request_data->subprice) ? $request_data->subprice : $propalline->subprice,
+            isset($request_data->qty) ? $request_data->qty : $propalline->qty,
+            isset($request_data->remise_percent) ? $request_data->remise_percent : $propalline->remise_percent,
+            isset($request_data->tva_tx) ? $request_data->tva_tx : $propalline->tva_tx,
+            isset($request_data->localtax1_tx) ? $request_data->localtax1_tx : $propalline->localtax1_tx,
+            isset($request_data->localtax2_tx) ? $request_data->localtax2_tx : $propalline->localtax2_tx,
+            isset($request_data->desc) ? $request_data->desc : $propalline->desc,
             'HT',
-            isset($request_data->info_bits)?$request_data->info_bits:$propalline->info_bits,
-            isset($request_data->special_code)?$request_data->special_code:$propalline->special_code,
-            isset($request_data->fk_parent_line)?$request_data->fk_parent_line:$propalline->fk_parent_line,
+            isset($request_data->info_bits) ? $request_data->info_bits : $propalline->info_bits,
+            isset($request_data->special_code) ? $request_data->special_code : $propalline->special_code,
+            isset($request_data->fk_parent_line) ? $request_data->fk_parent_line : $propalline->fk_parent_line,
             0,
-            isset($request_data->fk_fournprice)?$request_data->fk_fournprice:$propalline->fk_fournprice,
-            isset($request_data->pa_ht)?$request_data->pa_ht:$propalline->pa_ht,
-            isset($request_data->label)?$request_data->label:$propalline->label,
-            isset($request_data->product_type)?$request_data->product_type:$propalline->product_type,
-            isset($request_data->date_start)?$request_data->date_start:$propalline->date_start,
-            isset($request_data->date_end)?$request_data->date_end:$propalline->date_end,
-            isset($request_data->array_options)?$request_data->array_options:$propalline->array_options,
-            isset($request_data->fk_unit)?$request_data->fk_unit:$propalline->fk_unit,
-            isset($request_data->multicurrency_subprice)?$request_data->multicurrency_subprice:$propalline->subprice
+            isset($request_data->fk_fournprice) ? $request_data->fk_fournprice : $propalline->fk_fournprice,
+            isset($request_data->pa_ht) ? $request_data->pa_ht : $propalline->pa_ht,
+            isset($request_data->label) ? $request_data->label : $propalline->label,
+            isset($request_data->product_type) ? $request_data->product_type : $propalline->product_type,
+            isset($request_data->date_start) ? $request_data->date_start : $propalline->date_start,
+            isset($request_data->date_end) ? $request_data->date_end : $propalline->date_end,
+            isset($request_data->array_options) ? $request_data->array_options : $propalline->array_options,
+            isset($request_data->fk_unit) ? $request_data->fk_unit : $propalline->fk_unit,
+            isset($request_data->multicurrency_subprice) ? $request_data->multicurrency_subprice : $propalline->subprice
         );
 
 	    if ($updateRes > 0) {
@@ -377,21 +432,22 @@ class Proposals extends DolibarrApi
 	 * @url	DELETE {id}/lines/{lineid}
 	 *
 	 * @return int
-     * @throws 401
-     * @throws 404
+	 *
+     * @throws RestException 401
+     * @throws RestException 404
 	 */
     public function deleteLine($id, $lineid)
     {
-		if(! DolibarrApiAccess::$user->rights->propal->creer) {
+		if (!DolibarrApiAccess::$user->rights->propal->creer) {
             throw new RestException(401);
 		}
 
 		$result = $this->propal->fetch($id);
-		if( ! $result ) {
+		if (!$result) {
 			throw new RestException(404, 'Proposal not found');
 		}
 
-		if( ! DolibarrApi::_checkAccessToResource('propal', $this->propal->id)) {
+		if (!DolibarrApi::_checkAccessToResource('propal', $this->propal->id)) {
 			throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
 		}
 
@@ -417,18 +473,19 @@ class Proposals extends DolibarrApi
 	 * @url	POST {id}/contact/{contactid}/{type}
 	 *
 	 * @return int
-     * @throws 401
-     * @throws 404
+	 *
+     * @throws RestException 401
+     * @throws RestException 404
 	 */
     public function postContact($id, $contactid, $type)
     {
-        if(!DolibarrApiAccess::$user->rights->propal->creer) {
+        if (!DolibarrApiAccess::$user->rights->propal->creer) {
             throw new RestException(401);
         }
 
         $result = $this->propal->fetch($id);
 
-		if(!$result) {
+		if (!$result) {
 			throw new RestException(404, 'Proposal not found');
 		}
 
@@ -436,7 +493,7 @@ class Proposals extends DolibarrApi
             throw new RestException(500, 'Availables types: BILLING, SHIPPING OR CUSTOMER');
         }
 
-        if(!DolibarrApi::_checkAccessToResource('propal', $this->propal->id)) {
+        if (!DolibarrApi::_checkAccessToResource('propal', $this->propal->id)) {
 			throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
 		}
 
@@ -458,23 +515,24 @@ class Proposals extends DolibarrApi
 	 * @url	DELETE {id}/contact/{rowid}
 	 *
 	 * @return int
-     * @throws 401
-     * @throws 404
-     * @throws 500
+	 *
+     * @throws RestException 401
+     * @throws RestException 404
+     * @throws RestException 500
 	 */
     public function deleteContact($id, $rowid)
     {
-        if(!DolibarrApiAccess::$user->rights->propal->creer) {
+        if (!DolibarrApiAccess::$user->rights->propal->creer) {
             throw new RestException(401);
         }
 
         $result = $this->propal->fetch($id);
 
-		if(!$result) {
+		if (!$result) {
 			throw new RestException(404, 'Proposal not found');
 		}
 
-        if(!DolibarrApi::_checkAccessToResource('propal', $this->propal->id)) {
+        if (!DolibarrApi::_checkAccessToResource('propal', $this->propal->id)) {
 			throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
 		}
 
@@ -497,16 +555,16 @@ class Proposals extends DolibarrApi
      */
     public function put($id, $request_data = null)
     {
-        if (! DolibarrApiAccess::$user->rights->propal->creer) {
+        if (!DolibarrApiAccess::$user->rights->propal->creer) {
             throw new RestException(401);
         }
 
 		$result = $this->propal->fetch($id);
-		if ( ! $result ) {
+		if (!$result) {
 			throw new RestException(404, 'Proposal not found');
 		}
 
-		if ( ! DolibarrApi::_checkAccessToResource('propal', $this->propal->id)) {
+		if (!DolibarrApi::_checkAccessToResource('propal', $this->propal->id)) {
 			throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
 		}
 		foreach ($request_data as $field => $value) {
@@ -521,7 +579,7 @@ class Proposals extends DolibarrApi
 		}
 		if (!empty($this->propal->fin_validite))
 		{
-			if($this->propal->set_echeance(DolibarrApiAccess::$user, $this->propal->fin_validite)<0)
+			if ($this->propal->set_echeance(DolibarrApiAccess::$user, $this->propal->fin_validite) < 0)
 			{
 				throw new RestException(500, $this->propal->error);
 			}
@@ -546,19 +604,19 @@ class Proposals extends DolibarrApi
 	 */
 	public function delete($id)
 	{
-		if(! DolibarrApiAccess::$user->rights->propal->supprimer) {
+		if (!DolibarrApiAccess::$user->rights->propal->supprimer) {
 			throw new RestException(401);
 		}
 		$result = $this->propal->fetch($id);
-		if( ! $result ) {
+		if (!$result) {
 			throw new RestException(404, 'Commercial Proposal not found');
 		}
 
-		if( ! DolibarrApi::_checkAccessToResource('propal', $this->propal->id)) {
+		if (!DolibarrApi::_checkAccessToResource('propal', $this->propal->id)) {
 			throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
 		}
 
-		if( ! $this->propal->delete(DolibarrApiAccess::$user)) {
+		if (!$this->propal->delete(DolibarrApiAccess::$user)) {
 			throw new RestException(500, 'Error when delete Commercial Proposal : '.$this->propal->error);
 		}
 
@@ -581,15 +639,15 @@ class Proposals extends DolibarrApi
 	*/
 	public function settodraft($id)
 	{
-		if(! DolibarrApiAccess::$user->rights->propal->creer) {
+		if (!DolibarrApiAccess::$user->rights->propal->creer) {
 			throw new RestException(401);
 		}
 		$result = $this->propal->fetch($id);
-		if( ! $result ) {
+		if (!$result) {
 			throw new RestException(404, 'Proposal not found');
 		}
 
-		if( ! DolibarrApi::_checkAccessToResource('propal', $this->propal->id)) {
+		if (!DolibarrApi::_checkAccessToResource('propal', $this->propal->id)) {
 			throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
 		}
 
@@ -602,11 +660,11 @@ class Proposals extends DolibarrApi
 		}
 
 		$result = $this->propal->fetch($id);
-		if( ! $result ) {
+		if (!$result) {
 			throw new RestException(404, 'Proposal not found');
 		}
 
-		if( ! DolibarrApi::_checkAccessToResource('propal', $this->propal->id)) {
+		if (!DolibarrApi::_checkAccessToResource('propal', $this->propal->id)) {
 			throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
 		}
 
@@ -629,24 +687,24 @@ class Proposals extends DolibarrApi
 	 *
 	 * @url POST    {id}/validate
 	 *
-	 * @throws 304
-     * @throws 401
-     * @throws 404
-     * @throws 500
+	 * @throws RestException 304
+     * @throws RestException 401
+     * @throws RestException 404
+     * @throws RestException 500
      *
      * @return array
      */
     public function validate($id, $notrigger = 0)
     {
-		if(! DolibarrApiAccess::$user->rights->propal->creer) {
+		if (!DolibarrApiAccess::$user->rights->propal->creer) {
 			throw new RestException(401);
 		}
 		$result = $this->propal->fetch($id);
-		if( ! $result ) {
+		if (!$result) {
 			throw new RestException(404, 'Commercial Proposal not found');
 		}
 
-		if( ! DolibarrApi::_checkAccessToResource('propal', $this->propal->id)) {
+		if (!DolibarrApi::_checkAccessToResource('propal', $this->propal->id)) {
 			throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
 		}
 
@@ -659,11 +717,11 @@ class Proposals extends DolibarrApi
 		}
 
         $result = $this->propal->fetch($id);
-        if( ! $result ) {
+        if (!$result) {
             throw new RestException(404, 'Commercial Proposal not found');
         }
 
-        if( ! DolibarrApi::_checkAccessToResource('propal', $this->propal->id)) {
+        if (!DolibarrApi::_checkAccessToResource('propal', $this->propal->id)) {
             throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
         }
 
@@ -686,15 +744,15 @@ class Proposals extends DolibarrApi
 	 */
 	public function close($id, $status, $note_private = '', $notrigger = 0)
 	{
-		if(! DolibarrApiAccess::$user->rights->propal->creer) {
+		if (!DolibarrApiAccess::$user->rights->propal->creer) {
 			throw new RestException(401);
 		}
 		$result = $this->propal->fetch($id);
-		if( ! $result ) {
+		if (!$result) {
 			throw new RestException(404, 'Commercial Proposal not found');
 		}
 
-		if( ! DolibarrApi::_checkAccessToResource('propal', $this->propal->id)) {
+		if (!DolibarrApi::_checkAccessToResource('propal', $this->propal->id)) {
 			throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
 		}
 
@@ -707,11 +765,11 @@ class Proposals extends DolibarrApi
 		}
 
 		$result = $this->propal->fetch($id);
-		if( ! $result ) {
+		if (!$result) {
 			throw new RestException(404, 'Proposal not found');
 		}
 
-		if( ! DolibarrApi::_checkAccessToResource('propal', $this->propal->id)) {
+		if (!DolibarrApi::_checkAccessToResource('propal', $this->propal->id)) {
 			throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
 		}
 
@@ -731,15 +789,15 @@ class Proposals extends DolibarrApi
      */
     public function setinvoiced($id)
     {
-        if (! DolibarrApiAccess::$user->rights->propal->creer) {
+        if (!DolibarrApiAccess::$user->rights->propal->creer) {
             throw new RestException(401);
         }
         $result = $this->propal->fetch($id);
-        if ( ! $result ) {
+        if (!$result) {
             throw new RestException(404, 'Commercial Proposal not found');
         }
 
-        if ( ! DolibarrApi::_checkAccessToResource('propal', $this->propal->id)) {
+        if (!DolibarrApi::_checkAccessToResource('propal', $this->propal->id)) {
             throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
         }
 
@@ -749,11 +807,11 @@ class Proposals extends DolibarrApi
         }
 
         $result = $this->propal->fetch($id);
-        if ( ! $result ) {
+        if (!$result) {
             throw new RestException(404, 'Proposal not found');
         }
 
-        if( ! DolibarrApi::_checkAccessToResource('propal', $this->propal->id)) {
+        if (!DolibarrApi::_checkAccessToResource('propal', $this->propal->id)) {
             throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
         }
 

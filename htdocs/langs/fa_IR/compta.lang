@@ -63,7 +63,7 @@ LT2SupplierES=خریدهای IRPF
 LT2CustomerIN=فروش‌های SGST
 LT2SupplierIN=خریدهای SGST
 VATCollected=مالیات‌بر‌ارزش‌افزودۀ جمع‌آوری شده
-ToPay=قابل پرداخت
+StatusToPay=قابل پرداخت
 SpecialExpensesArea=ناحیۀ انجام همۀ پرداخت‌های خاص
 SocialContribution=مالیات اجتماعی و ساختاری
 SocialContributions=مالیات‌های اجتماعی و ساختاری
@@ -112,7 +112,7 @@ ShowVatPayment=نمایش پرداخت م.ب.ا.ا
 TotalToPay=مجموع قابل پرداخت
 BalanceVisibilityDependsOnSortAndFilters=موجودی در این فهرست تنها در صورتی قابل مشاهده خواهد بود که جدول به صورت صعودی برای %s انجام شده باشد و صافی برای 1 حساب بانکی تنظیم شده باشد
 CustomerAccountancyCode=کد حسابداری مشتری
-SupplierAccountancyCode=کد حساب‌داری فروشنده
+SupplierAccountancyCode=Vendor accounting code
 CustomerAccountancyCodeShort=کد حساب‌داری مشتری
 SupplierAccountancyCodeShort=کد حساب‌داری فروشنده
 AccountNumber=شماره حساب
@@ -157,9 +157,9 @@ SeeReportInInputOutputMode=برای محاسبۀ پرداخت‌های حقیق�
 SeeReportInDueDebtMode=برای محاسبۀ صورت‌حساب‌های ثبت شده که حتی هنوز در دفترکل حساب نشده‌اند به %sتحلیل صورت‌حساب‌ها %s نگاه کنید.
 SeeReportInBookkeepingMode=برای محاسبه‌ای بر روی <b>جدول حساب‌داری دفترکل</b> به <b>%sگزارش حساب‌داری%s</b> مراجعه کنید.
 RulesAmountWithTaxIncluded=- تمام مالیات‌ها در مقادیر نمایش داده شده، گنجانده شده‌اند
-RulesResultDue=- این شامل همۀ صورت‌حساب‌های پرداخت‌نشده، هزینه‌ها، مالیات بر ارزش افزوده، کمک‌های مالی پرداخت شده و نشده است. همچنین شامل حقوق‌های پرداخت شده می‌باشد. <br> - بسته به تاریخ تائید اعتبار در خصوص صورت‌حساب‌ها و مالیات بر ارزش افزوده و بر حسب تاریخ سررسید هزینه‌ها می‌باشد. برای حقوق‌هائی که در واحد حقوق‌ها تعریف شده است، از مقدار تاریخ پرداخت استفاده می‌شود.
+RulesResultDue=- It includes outstanding invoices, expenses, VAT, donations whether they are paid or not. Is also includes paid salaries.<br>- It is based on the billing date of invoices and on the due date for expenses or tax payments. For salaries defined with Salary module, the value date of payment is used.
 RulesResultInOut=- این شامل همۀ پرداخت‌های واقعی صورت‌حساب‌ها، هزینه‌ها، مالیات بر ارزش افزوده و حقوق‌ها است. <br>- بر حسب تاریخ پرداخت صورت‌حساب‌ها، هزینه‌ها، مالیات بر ارزش افزوده و حقوق‌ها می‌باشد. تاریخ کمک‌مالی برای کمک‌های مالی
-RulesCADue=- شامل صورت‌حساب‌های به موعد رسیدۀ مشتری، چه پرداخت شده باشند یا نه می‌باشد. <br> این بر حسب تاریخ تائید اعتبار این صورت‌حساب‌ها است. <br>
+RulesCADue=- It includes the customer's due invoices whether they are paid or not. <br>- It is based on the billing date of these invoices.<br>
 RulesCAIn=- شامل همۀ پرداخت‌های دریافت‌شدۀ مؤثر صورت‌حساب‌های مشتریان است. <br> -این بسته به تاریخ پرداخت این صورت‌حساب‌هاست<br>
 RulesCATotalSaleJournal=شامل همۀ سطور بستانکار دفترفروش‌روزانه است
 RulesAmountOnInOutBookkeepingRecord=شامل همۀ ردیف‌های دفترکل دارای حساب‌حساب‌داری است که در گروه‌های "هزینه" یا "درآمد" باشند
@@ -254,3 +254,11 @@ ByVatRate=بر حسب نرخ مالیات‌برفروش
 TurnoverbyVatrate=گردش‌مالی صورت‌حساب‌شده بر حسب نرخ مالیات بر فروش
 TurnoverCollectedbyVatrate=گردش‌مالی دریافت‌شده بر حسب نرخ مالیات بر فروش
 PurchasebyVatrate=خریدها بر اساس نرخ مالیات بر فروش
+LabelToShow=برچسب کوتاه
+PurchaseTurnover=Purchase turnover
+PurchaseTurnoverCollected=Purchase turnover collected
+RulesPurchaseTurnoverDue=- It includes the supplier's due invoices whether they are paid or not. <br>- It is based on the invoice date of these invoices.<br>
+RulesPurchaseTurnoverIn=- It includes all the effective payments of invoices done to suppliers.<br>- It is based on the payment date of these invoices<br>
+RulesPurchaseTurnoverTotalPurchaseJournal=It includes all debit lines from the purchase journal.
+ReportPurchaseTurnover=Purchase turnover invoiced
+ReportPurchaseTurnoverCollected=Purchase turnover collected

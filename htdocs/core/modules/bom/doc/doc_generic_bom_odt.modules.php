@@ -112,7 +112,7 @@ class doc_generic_bom_odt extends ModelePDFBom
 
 		$texte = $this->description.".<br>\n";
 		$texte .= '<form action="'.$_SERVER["PHP_SELF"].'" method="POST">';
-		$texte .= '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+		$texte .= '<input type="hidden" name="token" value="'.newToken().'">';
 		$texte .= '<input type="hidden" name="action" value="setModuleOptions">';
 		$texte .= '<input type="hidden" name="param1" value="BOM_ADDON_PDF_ODT_PATH">';
 		$texte .= '<table class="nobordernopadding" width="100%">';
@@ -168,12 +168,12 @@ class doc_generic_bom_odt extends ModelePDFBom
    			{
                 $texte .= $file['name'].'<br>';
    			}
-   			$texte .= '<div id="div_'.get_class($this).'">';
+   			$texte .= '</div>';
 		}
 
 		$texte .= '</td>';
 
-		$texte .= '<td valign="top" rowspan="2" class="hideonsmartphone">';
+		$texte .= '<td rowspan="2" class="tdtop hideonsmartphone">';
 		$texte .= $langs->trans("ExampleOfDirectoriesForModelGen");
 		$texte .= '</td>';
 		$texte .= '</tr>';
@@ -411,9 +411,11 @@ class doc_generic_bom_odt extends ModelePDFBom
 					}
 					if ($foundtagforlines)
 					{
+						$linenumber = 0;
 						foreach ($object->lines as $line)
 						{
-							$tmparray = $this->get_substitutionarray_lines($line, $outputlangs);
+							$linenumber++;
+							$tmparray = $this->get_substitutionarray_lines($line, $outputlangs, $linenumber);
 							complete_substitutions_array($tmparray, $outputlangs, $object, $line, "completesubstitutionarray_lines");
 							// Call the ODTSubstitutionLine hook
 							$parameters = array('odfHandler'=>&$odfHandler, 'file'=>$file, 'object'=>$object, 'outputlangs'=>$outputlangs, 'substitutionarray'=>&$tmparray, 'line'=>$line);

@@ -170,7 +170,7 @@ $arrayofcss = array('/ticket/css/styles.css.php');
 llxHeaderTicket($langs->trans("Tickets"), "", 0, 0, $arrayofjs, $arrayofcss);
 
 
-print '<div style="margin: 0 auto; width:60%" class="ticketpublicarea">';
+print '<div class="ticketpublicarealist">';
 
 if ($action == "view_ticketlist")
 {
@@ -215,7 +215,7 @@ if ($action == "view_ticketlist")
             't.date_close' => array('label' => $langs->trans("TicketCloseOn"), 'checked' => 0),
             't.ref' => array('label' => $langs->trans("Ref"), 'checked' => 1),
         	//'t.track_id' => array('label' => $langs->trans("IDTracking"), 'checked' => 0),
-        	't.fk_statut' => array('label' => $langs->trans("Statut"), 'checked' => 1),
+        	't.fk_statut' => array('label' => $langs->trans("Status"), 'checked' => 1),
             't.subject' => array('label' => $langs->trans("Subject"), 'checked' => 1),
             'type.code' => array('label' => $langs->trans("Type"), 'checked' => 1),
             'category.code' => array('label' => $langs->trans("Category"), 'checked' => 1),
@@ -292,7 +292,7 @@ if ($action == "view_ticketlist")
 
         $limit = $conf->liste_limit;
 
-        $page = GETPOST("page", 'int');
+        $page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOST("page", 'int');
         if (empty($page) || $page == -1) { $page = 0; }     // If $page is not defined, or '' or -1
         $offset = $limit * $page;
         $pageprev = $page - 1;
@@ -658,7 +658,7 @@ if ($action == "view_ticketlist")
                 print '</form>';
 
                 print '<form method="post" id="form_view_ticket" name="form_view_ticket" enctype="multipart/form-data" action="'.dol_buildpath('/public/ticket/view.php', 1).'" style="display:none;">';
-                print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+                print '<input type="hidden" name="token" value="'.newToken().'">';
                 print '<input type="hidden" name="action" value="view_ticket">';
                 print '<input type="hidden" name="btn_view_ticket_list" value="1">';
                 print '<input type="hidden" name="track_id" value="">';
@@ -683,7 +683,7 @@ if ($action == "view_ticketlist")
 
     print '<div id="form_view_ticket">';
     print '<form method="post" name="form_view_ticketlist"  enctype="multipart/form-data" action="'.$_SERVER['PHP_SELF'].'">';
-    print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+    print '<input type="hidden" name="token" value="'.newToken().'">';
     print '<input type="hidden" name="action" value="view_ticketlist">';
     //print '<input type="hidden" name="search_fk_status" value="non_closed">';
 

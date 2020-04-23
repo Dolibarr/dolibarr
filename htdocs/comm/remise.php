@@ -110,7 +110,7 @@ if ($socid > 0)
 	$isSupplier = $object->fournisseur == 1;
 
 	print '<form method="POST" action="remise.php?id='.$object->id.'">';
-	print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+	print '<input type="hidden" name="token" value="'.newToken().'">';
 	print '<input type="hidden" name="action" value="setremise">';
     print '<input type="hidden" name="backtopage" value="'.$backtopage.'">';
 
@@ -222,7 +222,7 @@ if ($socid > 0)
 		$sql .= " u.login, u.rowid as user_id";
 		$sql .= " FROM ".MAIN_DB_PREFIX."societe_remise as rc, ".MAIN_DB_PREFIX."user as u";
 		$sql .= " WHERE rc.fk_soc = ".$object->id;
-		$sql .= " AND rc.entity = ".$conf->entity;
+		$sql .= " AND rc.entity IN (".getEntity('discount').")";
 		$sql .= " AND u.rowid = rc.fk_user_author";
 		$sql .= " ORDER BY rc.datec DESC";
 
@@ -235,7 +235,7 @@ if ($socid > 0)
 			print '<td width="160">'.$langs->trans("Date").'</td>';
 			print '<td width="160" align="center">'.$langs->trans("CustomerRelativeDiscountShort").'</td>';
 			print '<td class="left">'.$langs->trans("NoteReason").'</td>';
-			print '<td align="center">'.$langs->trans("User").'</td>';
+			print '<td class="center">'.$langs->trans("User").'</td>';
 			print '</tr>';
 			$num = $db->num_rows($resql);
 	        if ($num > 0)
@@ -246,7 +246,7 @@ if ($socid > 0)
 	    			$obj = $db->fetch_object($resql);
 	    			print '<tr class="oddeven">';
 	    			print '<td>'.dol_print_date($db->jdate($obj->dc), "dayhour").'</td>';
-	    			print '<td align="center">'.price2num($obj->remise_percent).'%</td>';
+	    			print '<td class="center">'.price2num($obj->remise_percent).'%</td>';
 	    			print '<td class="left">'.$obj->note.'</td>';
 	    			print '<td align="center"><a href="'.DOL_URL_ROOT.'/user/card.php?id='.$obj->user_id.'">'.img_object($langs->trans("ShowUser"), 'user').' '.$obj->login.'</a></td>';
 	    			print '</tr>';
@@ -281,7 +281,7 @@ if ($socid > 0)
 		$sql .= " u.login, u.rowid as user_id";
 		$sql .= " FROM ".MAIN_DB_PREFIX."societe_remise_supplier as rc, ".MAIN_DB_PREFIX."user as u";
 		$sql .= " WHERE rc.fk_soc = ".$object->id;
-		$sql .= " AND rc.entity = ".$conf->entity;
+		$sql .= " AND rc.entity IN (".getEntity('discount').")";
 		$sql .= " AND u.rowid = rc.fk_user_author";
 		$sql .= " ORDER BY rc.datec DESC";
 
@@ -294,7 +294,7 @@ if ($socid > 0)
 			print '<td width="160">'.$langs->trans("Date").'</td>';
 			print '<td width="160" align="center">'.$langs->trans("CustomerRelativeDiscountShort").'</td>';
 			print '<td class="left">'.$langs->trans("NoteReason").'</td>';
-			print '<td align="center">'.$langs->trans("User").'</td>';
+			print '<td class="center">'.$langs->trans("User").'</td>';
 			print '</tr>';
 			$num = $db->num_rows($resql);
 			if ($num > 0)
@@ -305,7 +305,7 @@ if ($socid > 0)
 					$obj = $db->fetch_object($resql);
 					print '<tr class="oddeven">';
 					print '<td>'.dol_print_date($db->jdate($obj->dc), "dayhour").'</td>';
-					print '<td align="center">'.price2num($obj->remise_percent).'%</td>';
+					print '<td class="center">'.price2num($obj->remise_percent).'%</td>';
 					print '<td class="left">'.$obj->note.'</td>';
 					print '<td align="center"><a href="'.DOL_URL_ROOT.'/user/card.php?id='.$obj->user_id.'">'.img_object($langs->trans("ShowUser"), 'user').' '.$obj->login.'</a></td>';
 					print '</tr>';

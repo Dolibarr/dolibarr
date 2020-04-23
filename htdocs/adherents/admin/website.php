@@ -95,7 +95,7 @@ $head = member_admin_prepare_head();
 
 print '<form action="'.$_SERVER["PHP_SELF"].'" method="post">';
 print '<input type="hidden" name="action" value="update">';
-print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+print '<input type="hidden" name="token" value="'.newToken().'">';
 
 dol_fiche_head($head, 'website', $langs->trans("Members"), -1, 'user');
 
@@ -142,14 +142,14 @@ $enabledisablehtml = $langs->trans("EnablePublicSubscriptionForm").' ';
 if (empty($conf->global->MEMBER_ENABLE_PUBLIC))
 {
 	// Button off, click to enable
-	$enabledisablehtml .= '<a class="reposition" href="'.$_SERVER["PHP_SELF"].'?action=setMEMBER_ENABLE_PUBLIC&value=1'.$param.'">';
+	$enabledisablehtml .= '<a class="reposition valignmiddle" href="'.$_SERVER["PHP_SELF"].'?action=setMEMBER_ENABLE_PUBLIC&value=1'.$param.'">';
 	$enabledisablehtml .= img_picto($langs->trans("Disabled"), 'switch_off');
 	$enabledisablehtml .= '</a>';
 }
 else
 {
 	// Button on, click to disable
-	$enabledisablehtml .= '<a class="reposition" href="'.$_SERVER["PHP_SELF"].'?action=setMEMBER_ENABLE_PUBLIC&value=0'.$param.'">';
+	$enabledisablehtml .= '<a class="reposition valignmiddle" href="'.$_SERVER["PHP_SELF"].'?action=setMEMBER_ENABLE_PUBLIC&value=0'.$param.'">';
 	$enabledisablehtml .= img_picto($langs->trans("Activated"), 'switch_on');
 	$enabledisablehtml .= '</a>';
 }
@@ -174,38 +174,38 @@ if (!empty($conf->global->MEMBER_ENABLE_PUBLIC))
 	$adht = new AdherentType($db);
 	print '<tr class="oddeven drag" id="trforcetype"><td>';
 	print $langs->trans("ForceMemberType");
-	print '</td><td width="60" class="right">';
-	$listofval = array(-1 => $langs->trans("Undefined"));
+	print '</td><td class="right">';
+	$listofval = array();
 	$listofval += $adht->liste_array();
 	$forcetype = $conf->global->MEMBER_NEWFORM_FORCETYPE ?: -1;
-	print $form->selectarray("MEMBER_NEWFORM_FORCETYPE", $listofval, $forcetype, count($listofval)>1?1:0);
+	print $form->selectarray("MEMBER_NEWFORM_FORCETYPE", $listofval, $forcetype, count($listofval) > 1 ? 1 : 0);
 	print "</td></tr>\n";
 
 	// Amount
 	print '<tr class="oddeven" id="tramount"><td>';
 	print $langs->trans("DefaultAmount");
 	print '</td><td class="right">';
-	print '<input type="text" id="MEMBER_NEWFORM_AMOUNT" name="MEMBER_NEWFORM_AMOUNT" size="5" value="'.(! empty($conf->global->MEMBER_NEWFORM_AMOUNT)?$conf->global->MEMBER_NEWFORM_AMOUNT:'').'">';
+	print '<input type="text" id="MEMBER_NEWFORM_AMOUNT" name="MEMBER_NEWFORM_AMOUNT" size="5" value="'.(!empty($conf->global->MEMBER_NEWFORM_AMOUNT) ? $conf->global->MEMBER_NEWFORM_AMOUNT : '').'">';
 	print "</td></tr>\n";
 
 	// Can edit
 	print '<tr class="oddeven" id="tredit"><td>';
 	print $langs->trans("CanEditAmount");
 	print '</td><td class="right">';
-	print $form->selectyesno("MEMBER_NEWFORM_EDITAMOUNT", (! empty($conf->global->MEMBER_NEWFORM_EDITAMOUNT)?$conf->global->MEMBER_NEWFORM_EDITAMOUNT:0), 1);
+	print $form->selectyesno("MEMBER_NEWFORM_EDITAMOUNT", (!empty($conf->global->MEMBER_NEWFORM_EDITAMOUNT) ? $conf->global->MEMBER_NEWFORM_EDITAMOUNT : 0), 1);
 	print "</td></tr>\n";
 
 	// Jump to an online payment page
 	print '<tr class="oddeven" id="trpayment"><td>';
 	print $langs->trans("MEMBER_NEWFORM_PAYONLINE");
 	print '</td><td class="right">';
-	$listofval=array();
-	$listofval['-1']=$langs->trans('No');
-	$listofval['all']=$langs->trans('Yes').' ('.$langs->trans("VisitorCanChooseItsPaymentMode").')';
-	if (! empty($conf->paybox->enabled)) $listofval['paybox']='Paybox';
-	if (! empty($conf->paypal->enabled)) $listofval['paypal']='PayPal';
-	if (! empty($conf->stripe->enabled)) $listofval['stripe']='Stripe';
-	print $form->selectarray("MEMBER_NEWFORM_PAYONLINE", $listofval, (! empty($conf->global->MEMBER_NEWFORM_PAYONLINE)?$conf->global->MEMBER_NEWFORM_PAYONLINE:''), 0);
+	$listofval = array();
+	$listofval['-1'] = $langs->trans('No');
+	$listofval['all'] = $langs->trans('Yes').' ('.$langs->trans("VisitorCanChooseItsPaymentMode").')';
+	if (!empty($conf->paybox->enabled)) $listofval['paybox'] = 'Paybox';
+	if (!empty($conf->paypal->enabled)) $listofval['paypal'] = 'PayPal';
+	if (!empty($conf->stripe->enabled)) $listofval['stripe'] = 'Stripe';
+	print $form->selectarray("MEMBER_NEWFORM_PAYONLINE", $listofval, (!empty($conf->global->MEMBER_NEWFORM_PAYONLINE) ? $conf->global->MEMBER_NEWFORM_PAYONLINE : ''), 0);
 	print "</td></tr>\n";
 
 	print '</table>';

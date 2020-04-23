@@ -194,7 +194,7 @@ class doc_generic_product_odt extends ModelePDFProduct
 
 		$texte .= '</td>';
 
-		$texte .= '<td valign="top" rowspan="2" class="hideonsmartphone">';
+		$texte .= '<td rowspan="2" class="tdtop hideonsmartphone">';
 		$texte .= $langs->trans("ExampleOfDirectoriesForModelGen");
 		$texte .= '</td>';
 		$texte .= '</tr>';

@@ -59,19 +59,19 @@ if ( GETPOST('filtre', 'alpha') ) {
 			$crit_12digit = substr($filtre, 0, 12);
 			$sql .= " OR p.barcode LIKE '%".$db->escape($crit_12digit)."%'";
 		} else {
-			$sql.= " OR p.barcode LIKE '%".$db->escape($filtre)."%'";
+			$sql .= " OR p.barcode LIKE '%".$db->escape($filtre)."%'";
 		}
 	}
-	$sql.= ")";
-	$sql.= " ORDER BY label";
+	$sql .= ")";
+	$sql .= " ORDER BY label";
 
 	dol_syslog("facturation.php", LOG_DEBUG);
-	$resql=$db->query($sql);
+	$resql = $db->query($sql);
 	if ($resql)
 	{
 		$nbr_enreg = $db->num_rows($resql);
 
-		while ($i < $conf_taille_listes && $tab = $db->fetch_array($resql) )
+		while ($i < $conf_taille_listes && $tab = $db->fetch_array($resql))
 		{
 			foreach ($tab as $cle => $valeur)
 			{
@@ -120,14 +120,14 @@ if ( GETPOST('filtre', 'alpha') ) {
 	{
 		dol_print_error($db);
 	}
-	$tab_designations=$ret;
+	$tab_designations = $ret;
 }
 
 //$nbr_enreg = count($tab_designations);
 
-if ( $nbr_enreg > 1 )
+if ($nbr_enreg > 1)
 {
-	if ( $nbr_enreg > $conf_taille_listes )
+	if ($nbr_enreg > $conf_taille_listes)
 	{
 		$top_liste_produits = '----- '.$conf_taille_listes.' '.$langs->transnoentitiesnoconv("CashDeskProducts").' '.$langs->trans("CashDeskOn").' '.$nbr_enreg.' -----';
 	}
@@ -136,21 +136,21 @@ if ( $nbr_enreg > 1 )
 		$top_liste_produits = '----- '.$nbr_enreg.' '.$langs->transnoentitiesnoconv("CashDeskProducts").' '.$langs->trans("CashDeskOn").' '.$nbr_enreg.' -----';
 	}
 }
-elseif ( $nbr_enreg == 1 )
+elseif ($nbr_enreg == 1)
 {
-	$top_liste_produits = '----- 1 '.$langs->transnoentitiesnoconv("ProductFound"). ' -----';
+	$top_liste_produits = '----- 1 '.$langs->transnoentitiesnoconv("ProductFound").' -----';
 }
 else
 {
-	$top_liste_produits = '----- '.$langs->transnoentitiesnoconv("NoProductFound"). ' -----';
+	$top_liste_produits = '----- '.$langs->transnoentitiesnoconv("NoProductFound").' -----';
 }
 
 
 // Recuperation des taux de tva
 global $mysoc;
 
-$ret=array();
-$i=0;
+$ret = array();
+$i = 0;
 
 // Reinitialisation du mode de paiement, en cas de retour aux achats apres validation
 $obj_facturation->getSetPaymentMode('RESET');

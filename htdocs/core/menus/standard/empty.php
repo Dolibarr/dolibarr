@@ -146,6 +146,7 @@ class MenuManager
 
 		    $this->menu->add('/index.php', $langs->trans("Home"), 0, $showmode, $this->atarget, 'home', '', 10, $id, $idsel, $classname);
 
+		    $substitarray = getCommonSubstitutionArray($langs, 0, null, null);
 
 		    // $this->menu->liste is top menu
 		    //var_dump($this->menu->liste);exit;
@@ -156,8 +157,6 @@ class MenuManager
 		        print '<ul class="ulmenu" data-inset="true">';
 		        print '<li class="lilevel0">';
 
-		        $substitarray = array('__LOGIN__' => $user->login, '__USER_ID__' => $user->id, '__USER_SUPERVISOR_ID__' => $user->fk_user);
-		        $substitarray['__USERID__'] = $user->id; // For backward compatibility
 		        $val['url'] = make_substitutions($val['url'], $substitarray);
 
 		        if ($val['enabled'] == 1)
@@ -257,8 +256,6 @@ class MenuManager
 
 		                if ($showmenu)		// Visible (option to hide when not allowed is off or allowed)
 		                {
-		                	$substitarray = array('__LOGIN__' => $user->login, '__USER_ID__' => $user->id, '__USER_SUPERVISOR_ID__' => $user->fk_user);
-		                	$substitarray['__USERID__'] = $user->id; // For backward compatibility
 		                	$val2['url'] = make_substitutions($val2['url'], $substitarray);
 
 		                    $relurl2 = dol_buildpath($val2['url'], 1);
@@ -453,13 +450,13 @@ class MenuManager
         /*
 		if ($mode == 'jmobile')
 		{
+			$substitarray = getCommonSubstitutionArray($langs, 0, null, null);
+
 			foreach($this->menu->liste as $key => $val)		// $val['url','titre','level','enabled'=0|1|2,'target','mainmenu','leftmenu'
 			{
 				print '<ul class="ulmenu" data-inset="true">';
 				print '<li class="lilevel0">';
 
-		        $substitarray = array('__LOGIN__' => $user->login, '__USER_ID__' => $user->id, '__USER_SUPERVISOR_ID__' => $user->fk_user);
-		        $substitarray['__USERID__'] = $user->id;	// For backward compatibility
 		        $val['url'] = make_substitutions($val['url'], $substitarray);
 
 				if ($val['enabled'] == 1)
@@ -487,8 +484,6 @@ class MenuManager
 					}
 					foreach($submenu->liste as $key2 => $val2)		// $val['url','titre','level','enabled'=0|1|2,'target','mainmenu','leftmenu'
 					{
-	                	$substitarray = array('__LOGIN__' => $user->login, '__USER_ID__' => $user->id, '__USER_SUPERVISOR_ID__' => $user->fk_user);
-	                	$substitarray['__USERID__'] = $user->id;	// For backward compatibility
 	                	$val2['url'] = make_substitutions($val2['url'], $substitarray);
 
 						$relurl2=dol_buildpath($val2['url'],1);

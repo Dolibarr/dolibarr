@@ -79,11 +79,11 @@ if ($categid) {
 llxHeader();
 
 
-print load_fiche_titre($langs->trans("RubriquesTransactions"));
+print load_fiche_titre($langs->trans("RubriquesTransactions"), '', 'object_category');
 
 print '<form method="POST" action="'.$_SERVER["PHP_SELF"].'">';
 if ($optioncss != '') print '<input type="hidden" name="optioncss" value="'.$optioncss.'">';
-print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+print '<input type="hidden" name="token" value="'.newToken().'">';
 print '<input type="hidden" name="formfilteraction" id="formfilteraction" value="list">';
 print '<input type="hidden" name="action" value="list">';
 /*print '<input type="hidden" name="sortfield" value="'.$sortfield.'">';
@@ -138,7 +138,7 @@ if ($result)
 		{
 			print "<td >".$objp->label."</td>";
 			print '<td style="text-align: center;">';
-			print '<a href="'.$_SERVER["PHP_SELF"].'?categid='.$objp->rowid.'&amp;action=edit">'.img_edit().'</a>&nbsp;&nbsp;';
+			print '<a class="editfielda reposition" href="'.$_SERVER["PHP_SELF"].'?categid='.$objp->rowid.'&amp;action=edit">'.img_edit().'</a>&nbsp;&nbsp;';
 			print '<a href="'.$_SERVER["PHP_SELF"].'?categid='.$objp->rowid.'&amp;action=delete">'.img_delete().'</a>';
 			print '</td>';
 		}

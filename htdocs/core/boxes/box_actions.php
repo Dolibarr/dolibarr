@@ -32,9 +32,9 @@ include_once DOL_DOCUMENT_ROOT.'/core/boxes/modules_boxes.php';
  */
 class box_actions extends ModeleBoxes
 {
-    public $boxcode="lastactions";
-    public $boximg="object_action";
-    public $boxlabel="BoxLastActions";
+    public $boxcode = "lastactions";
+    public $boximg = "object_action";
+    public $boxlabel = "BoxLastActions";
     public $depends = array("agenda");
 
 	/**
@@ -60,7 +60,7 @@ class box_actions extends ModeleBoxes
 
 	    $this->db = $db;
 
-	    $this->hidden = ! ($user->rights->agenda->myactions->read);
+	    $this->hidden = !($user->rights->agenda->myactions->read);
 	}
 
 	/**
@@ -73,7 +73,7 @@ class box_actions extends ModeleBoxes
 	{
 		global $user, $langs, $conf;
 
-		$this->max=$max;
+		$this->max = $max;
 
         include_once DOL_DOCUMENT_ROOT.'/societe/class/societe.class.php';
         include_once DOL_DOCUMENT_ROOT.'/comm/action/class/actioncomm.class.php';
@@ -84,28 +84,28 @@ class box_actions extends ModeleBoxes
 
         if ($user->rights->agenda->myactions->read) {
 			$sql = "SELECT a.id, a.label, a.datep as dp, a.percent as percentage";
-            $sql.= ", ta.code";
-            $sql.= ", ta.libelle as type_label";
-            $sql.= ", s.nom as name";
-            $sql.= ", s.rowid as socid";
-            $sql.= ", s.code_client";
-			$sql.= " FROM ".MAIN_DB_PREFIX."c_actioncomm AS ta, ".MAIN_DB_PREFIX."actioncomm AS a";
-			if (! $user->rights->societe->client->voir && ! $user->socid) $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."societe_commerciaux as sc ON a.fk_soc = sc.fk_soc";
-			$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s ON a.fk_soc = s.rowid";
-			$sql.= " WHERE a.fk_action = ta.id";
-			$sql.= " AND a.entity = ".$conf->entity;
-			$sql.= " AND a.percent >= 0 AND a.percent < 100";
-			if (! $user->rights->societe->client->voir && ! $user->socid) $sql.= " AND (a.fk_soc IS NULL OR sc.fk_user = " .$user->id . ")";
-			if($user->socid)   $sql.= " AND s.rowid = ".$user->socid;
-			if (! $user->rights->agenda->allactions->read) $sql.= " AND (a.fk_user_author = ".$user->id . " OR a.fk_user_action = ".$user->id . " OR a.fk_user_done = ".$user->id . ")";
-			$sql.= " ORDER BY a.datec DESC";
-			$sql.= $this->db->plimit($max, 0);
+            $sql .= ", ta.code";
+            $sql .= ", ta.libelle as type_label";
+            $sql .= ", s.nom as name";
+            $sql .= ", s.rowid as socid";
+            $sql .= ", s.code_client";
+			$sql .= " FROM ".MAIN_DB_PREFIX."c_actioncomm AS ta, ".MAIN_DB_PREFIX."actioncomm AS a";
+			if (!$user->rights->societe->client->voir && !$user->socid) $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."societe_commerciaux as sc ON a.fk_soc = sc.fk_soc";
+			$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s ON a.fk_soc = s.rowid";
+			$sql .= " WHERE a.fk_action = ta.id";
+			$sql .= " AND a.entity = ".$conf->entity;
+			$sql .= " AND a.percent >= 0 AND a.percent < 100";
+			if (!$user->rights->societe->client->voir && !$user->socid) $sql .= " AND (a.fk_soc IS NULL OR sc.fk_user = ".$user->id.")";
+			if ($user->socid)   $sql .= " AND s.rowid = ".$user->socid;
+			if (!$user->rights->agenda->allactions->read) $sql .= " AND (a.fk_user_author = ".$user->id." OR a.fk_user_action = ".$user->id." OR a.fk_user_done = ".$user->id.")";
+			$sql .= " ORDER BY a.datec DESC";
+			$sql .= $this->db->plimit($max, 0);
 
 			dol_syslog("Box_actions::loadBox", LOG_DEBUG);
 			$result = $this->db->query($sql);
             if ($result) {
-				$now=dol_now();
-				$delay_warning = $conf->global->MAIN_DELAY_ACTIONS_TODO*24*60*60;
+				$now = dol_now();
+				$delay_warning = $conf->global->MAIN_DELAY_ACTIONS_TODO * 24 * 60 * 60;
 
 				$num = $this->db->num_rows($result);
 				$line = 0;
@@ -121,11 +121,11 @@ class box_actions extends ModeleBoxes
                     $societestatic->name = $objp->name;
                     $societestatic->code_client = $objp->code_client;
 
-                    if ($objp->percentage >= 0 && $objp->percentage < 100 && $datelimite  < ($now - $delay_warning))
-                        $late=img_warning($langs->trans("Late"));
+                    if ($objp->percentage >= 0 && $objp->percentage < 100 && $datelimite < ($now - $delay_warning))
+                        $late = img_warning($langs->trans("Late"));
 
 					//($langs->transnoentities("Action".$objp->code)!=("Action".$objp->code) ? $langs->transnoentities("Action".$objp->code) : $objp->label)
-					$label = empty($objp->label)?$objp->type_label:$objp->label;
+					$label = empty($objp->label) ? $objp->type_label : $objp->label;
 
                     $this->info_box_contents[$line][] = array(
                         'td' => '',
@@ -147,7 +147,7 @@ class box_actions extends ModeleBoxes
 
                     $this->info_box_contents[$line][] = array(
                         'td' => 'class="right"',
-                        'text' => ($objp->percentage>= 0?$objp->percentage.'%':''),
+                        'text' => ($objp->percentage >= 0 ? $objp->percentage.'%' : ''),
                     );
 
                     $this->info_box_contents[$line][] = array(
@@ -158,7 +158,7 @@ class box_actions extends ModeleBoxes
                     $line++;
                 }
 
-                if ($num==0)
+                if ($num == 0)
                     $this->info_box_contents[$line][0] = array(
                         'td' => 'class="center"',
                         'text'=>$langs->trans("NoActionsToDo"),
@@ -193,63 +193,63 @@ class box_actions extends ModeleBoxes
 		global $langs, $conf;
 		$out = parent::showBox($this->info_box_head, $this->info_box_contents);
 
-        if (! empty($conf->global->SHOW_DIALOG_HOMEPAGE))
+        if (!empty($conf->global->SHOW_DIALOG_HOMEPAGE))
         {
-			$actioncejour=false;
-			$contents=$this->info_box_contents;
-			$nblines=count($contents);
+			$actioncejour = false;
+			$contents = $this->info_box_contents;
+			$nblines = count($contents);
 			if ($contents[0][0]['text'] != $langs->trans("NoActionsToDo"))
 			{
-				$out.= '<div id="dialogboxaction" title="'.$nblines." ".$langs->trans("ActionsToDo").'">';
-				$out.= '<table width=100%>';
-				for ($line=0, $n=$nblines; $line < $n; $line++)
+				$out .= '<div id="dialogboxaction" title="'.$nblines." ".$langs->trans("ActionsToDo").'">';
+				$out .= '<table width=100%>';
+				for ($line = 0, $n = $nblines; $line < $n; $line++)
 				{
 					if (isset($contents[$line]))
 					{
 						// on affiche que les évènement du jours ou passé
 						// qui ne sont pas à 100%
-						$actioncejour=true;
+						$actioncejour = true;
 
 						// TR
-						$logo=$contents[$line][0]['logo'];
-						$label=$contents[$line][1]['text'];
-						$urlevent=$contents[$line][1]['url'];
-						$logosoc=$contents[$line][2]['logo'];
-						$nomsoc=$contents[$line][3]['text'];
-						$urlsoc=$contents[$line][3]['url'];
-						$dateligne=$contents[$line][4]['text'];
-						$percentage=$contents[$line][5]['text'];
-						$out.= '<tr class="oddeven">';
-						$out.= '<td class="center">';
-						$out.= img_object("", $logo);
-						$out.= '</td>';
-						$out.= '<td class="center"><a href="'.$urlevent.'">'.$label.'</a></td>';
-						$out.= '<td class="center"><a href="'.$urlsoc.'">'.img_object("", $logosoc)." ".$nomsoc.'</a></td>';
-						$out.= '<td class="center">'.$dateligne.'</td>';
-						$out.= '<td class="center">'.$percentage.'</td>';
-						$out.= '</tr>';
+						$logo = $contents[$line][0]['logo'];
+						$label = $contents[$line][1]['text'];
+						$urlevent = $contents[$line][1]['url'];
+						$logosoc = $contents[$line][2]['logo'];
+						$nomsoc = $contents[$line][3]['text'];
+						$urlsoc = $contents[$line][3]['url'];
+						$dateligne = $contents[$line][4]['text'];
+						$percentage = $contents[$line][5]['text'];
+						$out .= '<tr class="oddeven">';
+						$out .= '<td class="center">';
+						$out .= img_object("", $logo);
+						$out .= '</td>';
+						$out .= '<td class="center"><a href="'.$urlevent.'">'.$label.'</a></td>';
+						$out .= '<td class="center"><a href="'.$urlsoc.'">'.img_object("", $logosoc)." ".$nomsoc.'</a></td>';
+						$out .= '<td class="center">'.$dateligne.'</td>';
+						$out .= '<td class="center">'.$percentage.'</td>';
+						$out .= '</tr>';
 					}
 				}
-				$out.= '</table>';
+				$out .= '</table>';
 			}
-			$out.= '</div>';
+			$out .= '</div>';
 			if ($actioncejour)
 			{
-				$out.= '<script>';
-				$out.= '$("#dialogboxaction").dialog({ autoOpen: true });';
+				$out .= '<script>';
+				$out .= '$("#dialogboxaction").dialog({ autoOpen: true });';
 				if ($conf->global->SHOW_DIALOG_HOMEPAGE > 1)    // autoclose after this delay
 				{
-					$out.= 'setTimeout(function(){';
-					$out.= '$("#dialogboxaction").dialog("close");';
-					$out.= '}, '.($conf->global->SHOW_DIALOG_HOMEPAGE*1000).');';
+					$out .= 'setTimeout(function(){';
+					$out .= '$("#dialogboxaction").dialog("close");';
+					$out .= '}, '.($conf->global->SHOW_DIALOG_HOMEPAGE * 1000).');';
 				}
-				$out.= '</script>';
+				$out .= '</script>';
 			}
 			else
 			{
-				$out.= '<script>';
-				$out.= '$("#dialogboxaction").dialog({ autoOpen: false });';
-				$out.= '</script>';
+				$out .= '<script>';
+				$out .= '$("#dialogboxaction").dialog({ autoOpen: false });';
+				$out .= '</script>';
 			}
 		}
 

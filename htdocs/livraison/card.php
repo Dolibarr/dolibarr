@@ -24,7 +24,7 @@
 /**
  *	\file       htdocs/livraison/card.php
  *	\ingroup    livraison
- *	\brief      Fiche descriptive d'un bon de livraison=reception
+ *	\brief      Page to describe a delivery receipt
  */
 
 require '../main.inc.php';
@@ -34,30 +34,30 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/sendings.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
-if (! empty($conf->product->enabled) || ! empty($conf->service->enabled))
+if (!empty($conf->product->enabled) || !empty($conf->service->enabled))
 	require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
-if (! empty($conf->expedition_bon->enabled))
+if (!empty($conf->expedition_bon->enabled))
 	require_once DOL_DOCUMENT_ROOT.'/expedition/class/expedition.class.php';
-if (! empty($conf->stock->enabled))
+if (!empty($conf->stock->enabled))
 	require_once DOL_DOCUMENT_ROOT.'/product/stock/class/entrepot.class.php';
-if (! empty($conf->projet->enabled)) {
+if (!empty($conf->projet->enabled)) {
     require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
     require_once DOL_DOCUMENT_ROOT.'/core/class/html.formprojet.class.php';
 }
 
 // Load translation files required by the page
-$langs->loadLangs(array("sendings","bills",'deliveries','orders'));
+$langs->loadLangs(array("sendings", "bills", 'deliveries', 'orders'));
 
 if (!empty($conf->incoterm->enabled)) $langs->load('incoterm');
 
-$action=GETPOST('action', 'alpha');
-$confirm=GETPOST('confirm', 'alpha');
-$backtopage=GETPOST('backtopage', 'alpha');
+$action = GETPOST('action', 'alpha');
+$confirm = GETPOST('confirm', 'alpha');
+$backtopage = GETPOST('backtopage', 'alpha');
 
 // Security check
 $id = GETPOST('id', 'int');
-if ($user->socid) $socid=$user->socid;
-$result=restrictedArea($user, 'expedition', $id, 'livraison', 'livraison');
+if ($user->socid) $socid = $user->socid;
+$result = restrictedArea($user, 'expedition', $id, 'livraison', 'livraison');
 
 $object = new Livraison($db);
 $extrafields = new ExtraFields($db);
@@ -247,49 +247,8 @@ $upload_dir = $conf->expedition->dir_output.'/receipt';
 $permissiontoadd = $user->rights->expedition->creer;
 include DOL_DOCUMENT_ROOT.'/core/actions_builddoc.inc.php';
 
-
-/*
- * Build document
- */
-/*
-if ($action == 'builddoc')	// En get ou en post
-{
-	// Save last template used to generate document
-	if (GETPOST('model')) $object->setDocModel($user, GETPOST('model','alpha'));
-
-	// Define output language
-	$outputlangs = $langs;
-	$newlang='';
-	if ($conf->global->MAIN_MULTILANGS && empty($newlang) && GETPOST('lang_id','aZ09')) $newlang=GETPOST('lang_id','aZ09');
-	if ($conf->global->MAIN_MULTILANGS && empty($newlang)) $newlang=$object->thirdparty->default_lang;
-	if (! empty($newlang))
-	{
-		$outputlangs = new Translate("",$conf);
-		$outputlangs->setDefaultLang($newlang);
-	}
-    $ret=$object->fetch($id);    // Reload to get new records
-	$result= $object->generateDocument($object->modelpdf, $outputlangs);
-	if ($result < 0)
-	{
-		setEventMessages($object->error, $object->errors, 'errors');
-        $action='';
-	}
-}
-
-// Delete file in doc form
-elseif ($action == 'remove_file')
-{
-	require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
-
-	$upload_dir =	$conf->expedition->dir_output . "/receipt";
-	$file =	$upload_dir	. '/' .	GETPOST('file');
-	$ret=dol_delete_file($file,0,0,0,$object);
-	if ($ret) setEventMessages($langs->trans("FileWasRemoved", GETPOST('urlfile')), null, 'mesgs');
-	else setEventMessages($langs->trans("ErrorFailToDeleteFile", GETPOST('urlfile')), null, 'errors');
-}
-*/
-
 include DOL_DOCUMENT_ROOT.'/core/actions_printing.inc.php';
+
 
 /*
  *	View
@@ -300,20 +259,10 @@ llxHeader('', $langs->trans('Delivery'), 'Livraison');
 $form = new Form($db);
 $formfile = new FormFile($db);
 
-/*********************************************************************
- *
- * Mode creation
- *
- *********************************************************************/
-if ($action == 'create')    // Seems to no be used
+if ($action == 'create')    // Create. Seems to no be used
 {
 }
-else
-/* *************************************************************************** */
-/*                                                                             */
-/* Mode vue et edition                                                         */
-/*                                                                             */
-/* *************************************************************************** */
+else	// View
 {
 	if ($object->id > 0)
 	{
@@ -336,7 +285,7 @@ else
 
 
 			print '<form action="'.$_SERVER["PHP_SELF"].'" method="post">';
-			print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+			print '<input type="hidden" name="token" value="'.newToken().'">';
 			print '<input type="hidden" name="action" value="update_extras_line">';
 			print '<input type="hidden" name="origin" value="'.$origin.'">';
 			print '<input type="hidden" name="id" value="'.$object->id.'">';
@@ -400,7 +349,7 @@ else
 			            // $morehtmlref.=$form->form_project($_SERVER['PHP_SELF'] . '?id=' . $expedition->id, $expedition->socid, $expedition->fk_project, 'projectid', 0, 0, 1, 1);
 			            $morehtmlref .= '<form method="post" action="'.$_SERVER['PHP_SELF'].'?id='.$expedition->id.'">';
 			            $morehtmlref .= '<input type="hidden" name="action" value="classin">';
-			            $morehtmlref .= '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+			            $morehtmlref .= '<input type="hidden" name="token" value="'.newToken().'">';
 			            $morehtmlref .= $formproject->select_projects($expedition->socid, $expedition->fk_project, 'projectid', $maxlength, 0, 1, 0, 1, 0, 0, '', 1);
 			            $morehtmlref .= '<input type="submit" class="button" value="'.$langs->trans("Modify").'">';
 			            $morehtmlref .= '</form>';
@@ -436,7 +385,7 @@ else
 			/*
 			if (($object->origin == 'shipment' || $object->origin == 'expedition') && $object->origin_id > 0)
 			{
-				$linkback = '<a href="'.DOL_URL_ROOT.'/expedition/list.php">'.$langs->trans("BackToList").'</a>';
+				$linkback = '<a href="'.DOL_URL_ROOT.'/expedition/list.php?restore_lastsearch_values=1">'.$langs->trans("BackToList").'</a>';
 
 				// Ref
 				print '<tr><td width="20%">'.$langs->trans("RefSending").'</td>';
@@ -498,7 +447,7 @@ else
 			if ($action == 'editdate_livraison')
 			{
 				print '<form name="setdate_livraison" action="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'" method="post">';
-				print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+				print '<input type="hidden" name="token" value="'.newToken().'">';
 				print '<input type="hidden" name="action" value="setdate_livraison">';
 				print $form->selectDate($object->date_delivery ? $object->date_delivery : -1, 'liv_', 1, 1, '', "setdate_livraison", 1, 1);
 				print '<input type="submit" class="button" value="'.$langs->trans('Modify').'">';
@@ -566,9 +515,8 @@ else
 			// Other attributes
 			if ($action == 'create_delivery') {
 				// copy from expedition
-				$expeditionExtrafields = new Extrafields($db);
-				$expeditionExtrafieldLabels = $expeditionExtrafields->fetch_name_optionals_label($expedition->table_element);
-				if ($expedition->fetch_optionals($object->origin_id) > 0) {
+				$extrafields->fetch_name_optionals_label($expedition->table_element);
+				if ($expedition->fetch_optionals() > 0) {
 					$object->array_options = array_merge($object->array_options, $expedition->array_options);
 				}
 			}
@@ -676,12 +624,14 @@ else
 						$colspan = 2;
 						$mode = ($object->statut == 0) ? 'edit' : 'view';
 
-						$object->lines[$i]->fetch_optionals($object->lines[$i]->id);
+						$object->lines[$i]->fetch_optionals();
+
 						if ($action == 'create_delivery') {
 							$srcLine = new ExpeditionLigne($db);
 
 							$extrafields->fetch_name_optionals_label($srcLine->table_element);
-							$srcLine->fetch_optionals($expedition->lines[$i]->id);
+							$srcLine->id = $expedition->lines[$i]->id;
+							$srcLine->fetch_optionals();
 
 							$object->lines[$i]->array_options = array_merge($object->lines[$i]->array_options, $srcLine->array_options);
 						}

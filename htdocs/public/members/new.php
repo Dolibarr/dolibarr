@@ -4,7 +4,7 @@
  * Copyright (C) 2006-2013  Laurent Destailleur     <eldy@users.sourceforge.net>
  * Copyright (C) 2012       Regis Houssin           <regis.houssin@inodbox.com>
  * Copyright (C) 2012       J. Fernando Lagrange    <fernando@demo-tic.org>
- * Copyright (C) 2018       Frédéric France         <frederic.france@netlogic.fr>
+ * Copyright (C) 2018-2019  Frédéric France         <frederic.france@netlogic.fr>
  * Copyright (C) 2018       Alexandre Spangaro      <aspangaro@open-dsi.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -48,11 +48,11 @@ $entity = (!empty($_GET['entity']) ? (int) $_GET['entity'] : (!empty($_POST['ent
 if (is_numeric($entity)) define("DOLENTITY", $entity);
 
 require '../../main.inc.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/adherents/class/adherent.class.php';
 require_once DOL_DOCUMENT_ROOT.'/adherents/class/adherent_type.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formcompany.class.php';
-require_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
 
 // Init vars
 $errmsg = '';
@@ -96,27 +96,45 @@ function llxHeaderVierge($title, $head = "", $disablejs = 0, $disablehead = 0, $
     global $user, $conf, $langs, $mysoc;
 
     top_htmlhead($head, $title, $disablejs, $disablehead, $arrayofjs, $arrayofcss); // Show html headers
-    print '<body id="mainbody" class="publicnewmemberform" style="margin-top: 10px;">';
 
-    // Print logo
-    $urllogo = DOL_URL_ROOT.'/theme/login_logo.png';
+    print '<body id="mainbody" class="publicnewmemberform">';
+
+    // Define urllogo
+    $width = 0;
+    $urllogo = DOL_URL_ROOT.'/theme/common/login_logo.png';
 
     if (!empty($mysoc->logo_small) && is_readable($conf->mycompany->dir_output.'/logos/thumbs/'.$mysoc->logo_small))
     {
         $urllogo = DOL_URL_ROOT.'/viewimage.php?cache=1&amp;modulepart=mycompany&amp;file='.urlencode('logos/thumbs/'.$mysoc->logo_small);
+        $width = 150;
     }
     elseif (!empty($mysoc->logo) && is_readable($conf->mycompany->dir_output.'/logos/'.$mysoc->logo))
     {
         $urllogo = DOL_URL_ROOT.'/viewimage.php?cache=1&amp;modulepart=mycompany&amp;file='.urlencode('logos/'.$mysoc->logo);
-        $width = 128;
+        $width = 150;
     }
     elseif (is_readable(DOL_DOCUMENT_ROOT.'/theme/dolibarr_logo.png'))
     {
         $urllogo = DOL_URL_ROOT.'/theme/dolibarr_logo.png';
+        $width = 150;
     }
-    print '<div class="center">';
-    print '<img alt="Logo" id="logosubscribe" title="" src="'.$urllogo.'" />';
-    print '</div><br>';
+
+	print '<div class="center">';
+    // Output html code for logo
+    if ($urllogo)
+    {
+    	print '<div class="backgreypublicpayment">';
+    	print '<div class="logopublicpayment">';
+    	print '<img id="dolpaymentlogo" src="'.$urllogo.'"';
+    	if ($width) print ' width="'.$width.'"';
+    	print '>';
+    	print '</div>';
+    	if (empty($conf->global->MAIN_HIDE_POWERED_BY)) {
+    		print '<div class="poweredbypublicpayment opacitymedium right"><a href="https://www.dolibarr.org" target="dolibarr">'.$langs->trans("PoweredBy").'<br><img src="'.DOL_URL_ROOT.'/theme/dolibarr_logo.png" width="80px"></a></div>';
+    	}
+    	print '</div>';
+    }
+    print '</div>';
 
     print '<div class="divmainbodylarge">';
 }
@@ -507,7 +525,7 @@ dol_htmloutput_errors($errmsg);
 
 // Print form
 print '<form action="'.$_SERVER["PHP_SELF"].'" method="POST" name="newmember">'."\n";
-print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'" / >';
+print '<input type="hidden" name="token" value="'.newToken().'" / >';
 print '<input type="hidden" name="entity" value="'.$entity.'" />';
 print '<input type="hidden" name="action" value="add" />';
 
@@ -567,7 +585,7 @@ $morphys["phy"] = $langs->trans("Physical");
 $morphys["mor"] = $langs->trans("Moral");
 if (empty($conf->global->MEMBER_NEWFORM_FORCEMORPHY))
 {
-    print '<tr class="morphy"><td class="titlefield">'.$langs->trans('Nature').' <FONT COLOR="red">*</FONT></td><td>'."\n";
+    print '<tr class="morphy"><td class="titlefield">'.$langs->trans('MemberNature').' <FONT COLOR="red">*</FONT></td><td>'."\n";
     print $form->selectarray("morphy", $morphys, GETPOST('morphy'), 1);
     print '</td></tr>'."\n";
 }

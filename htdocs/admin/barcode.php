@@ -89,17 +89,17 @@ elseif ($action == 'update')
 elseif ($action == 'updateengine')
 {
     $sql = "SELECT rowid, coder";
-    $sql.= " FROM ".MAIN_DB_PREFIX."c_barcode_type";
-    $sql.= " WHERE entity = ".$conf->entity;
-    $sql.= " ORDER BY code";
+    $sql .= " FROM ".MAIN_DB_PREFIX."c_barcode_type";
+    $sql .= " WHERE entity = ".$conf->entity;
+    $sql .= " ORDER BY code";
 
-    $resql=$db->query($sql);
+    $resql = $db->query($sql);
     if ($resql)
     {
 	    $num = $db->num_rows($resql);
 	    $i = 0;
 
-	    while ($i <	$num)
+	    while ($i < $num)
 	    {
 	        $obj = $db->fetch_object($resql);
 
@@ -109,12 +109,12 @@ elseif ($action == 'updateengine')
 	            $code_id = $obj->rowid;
 
 	            $sqlp = "UPDATE ".MAIN_DB_PREFIX."c_barcode_type";
-	            $sqlp.= " SET coder = '" . $coder."'";
-	            $sqlp.= " WHERE rowid = ". $code_id;
-	            $sqlp.= " AND entity = ".$conf->entity;
+	            $sqlp .= " SET coder = '".$coder."'";
+	            $sqlp .= " WHERE rowid = ".$code_id;
+	            $sqlp .= " AND entity = ".$conf->entity;
 
-	            $upsql=$db->query($sqlp);
-	            if (! $upsql) dol_print_error($db);
+	            $upsql = $db->query($sqlp);
+	            if (!$upsql) dol_print_error($db);
 	        }
 
 	        $i++;
@@ -196,7 +196,7 @@ print load_fiche_titre($langs->trans("BarcodeEncodeModule"), '', '');
 if (empty($conf->use_javascript_ajax))
 {
     print '<form action="'.$_SERVER["PHP_SELF"].'" method="POST" id="form_engine">';
-    print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+    print '<input type="hidden" name="token" value="'.newToken().'">';
     print '<input type="hidden" name="action" value="updateengine">';
 }
 
@@ -209,18 +209,18 @@ print '<td class="center" width="60">'.$langs->trans("CodeBarGenerator").'</td>'
 print "</tr>\n";
 
 $sql = "SELECT rowid, code as encoding, libelle as label, coder, example";
-$sql.= " FROM ".MAIN_DB_PREFIX."c_barcode_type";
-$sql.= " WHERE entity = ".$conf->entity;
-$sql.= " ORDER BY code";
+$sql .= " FROM ".MAIN_DB_PREFIX."c_barcode_type";
+$sql .= " WHERE entity = ".$conf->entity;
+$sql .= " ORDER BY code";
 
 dol_syslog("admin/barcode.php", LOG_DEBUG);
-$resql=$db->query($sql);
+$resql = $db->query($sql);
 if ($resql)
 {
 	$num = $db->num_rows($resql);
 	$i = 0;
 
-	while ($i <	$num)
+	while ($i < $num)
 	{
 		$obj = $db->fetch_object($resql);
 
@@ -306,7 +306,7 @@ print "<br>";
 print load_fiche_titre($langs->trans("OtherOptions"), '', '');
 
 print "<form method=\"post\" action=\"".$_SERVER["PHP_SELF"]."\">";
-print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+print '<input type="hidden" name="token" value="'.newToken().'">';
 print "<input type=\"hidden\" name=\"action\" value=\"update\">";
 
 print '<table class="noborder centpercent">';

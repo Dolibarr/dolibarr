@@ -2,7 +2,7 @@
 ShowExpenseReport=Показване на разходен отчет
 Trips=Разходни отчети
 TripsAndExpenses=Разходни отчети
-TripsAndExpensesStatistics=Статистика на разходните отчети
+TripsAndExpensesStatistics=Статистика на разходни отчети
 TripCard=Разходен отчет
 AddTrip=Създаване на разходен отчет
 ListOfTrips=Списък с разходни отчети
@@ -91,7 +91,7 @@ DATE_SAVE=Дата на валидиране
 DATE_CANCEL=Дата на анулиране
 DATE_PAIEMENT=Дата на плащане
 BROUILLONNER=Повторно отваряне
-ExpenseReportRef=Реф. разходен отчет
+ExpenseReportRef=Разходен отчет №
 ValidateAndSubmit=Валидиране и изпращане за одобрение
 ValidatedWaitingApproval=Валидиран (очаква одобрение)
 NOT_AUTHOR=Вие не сте автор на този разходен отчет. Операцията е анулирана.

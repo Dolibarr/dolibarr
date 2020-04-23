@@ -16,7 +16,7 @@
  */
 
 /**
- *	\file       htdocs/takepos/printsend.php
+ *	\file       htdocs/takepos/send.php
  *	\ingroup	takepos
  *	\brief      Page with the content of the popup to enter payments
  */
@@ -36,6 +36,11 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
 
 $invoiceid = GETPOST('facid', 'int');
+
+if (empty($user->rights->takepos->run)) {
+	accessforbidden();
+}
+
 
 /*
  * View
@@ -68,7 +73,7 @@ else
 $langs->loadLangs(array("main", "bills", "cashdesk"));
 
 ?>
-<link rel="stylesheet" href="css/pos.css">
+<link rel="stylesheet" href="css/pos.css.php">
 </head>
 <body class="center">
 

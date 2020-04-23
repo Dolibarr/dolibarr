@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2007-2016	Laurent Destailleur	<eldy@users.sourceforge.net>
+/* Copyright (C) 2007-2020	Laurent Destailleur	<eldy@users.sourceforge.net>
  * Copyright (C) 2009-2017	Regis Houssin		<regis.houssin@inodbox.com>
  * Copyright (C) 2017       Frédéric France     <frederic.france@free.fr>
  *
@@ -35,9 +35,9 @@ if (!$user->admin) accessforbidden();
 $id = GETPOST('rowid', 'int');
 $action = GETPOST('action', 'alpha');
 
-$langcode = GETPOST('langcode', 'alpha');
-$transkey = GETPOST('transkey', 'alpha');
-$transvalue = GETPOST('transvalue', 'alpha');
+$langcode = GETPOST('langcode', 'alphanohtml');
+$transkey = GETPOST('transkey', 'alphanohtml');
+$transvalue = GETPOST('transvalue', 'none');
 
 
 $mode = GETPOST('mode', 'aZ09') ?GETPOST('mode', 'aZ09') : 'overwrite';
@@ -45,7 +45,7 @@ $mode = GETPOST('mode', 'aZ09') ?GETPOST('mode', 'aZ09') : 'overwrite';
 $limit = GETPOST('limit', 'int') ?GETPOST('limit', 'int') : $conf->liste_limit;
 $sortfield = GETPOST("sortfield", 'alpha');
 $sortorder = GETPOST("sortorder", 'alpha');
-$page = GETPOST("page", 'int');
+$page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOST("page", 'int');
 if (empty($page) || $page == -1) { $page = 0; }     // If $page is not defined, or '' or -1
 $offset = $limit * $page;
 $pageprev = $page - 1;
@@ -190,7 +190,6 @@ if ($action == 'delete')
 
 
 
-
 /*
  * View
  */
@@ -208,14 +207,14 @@ $enabledisablehtml .= $langs->trans("EnableOverwriteTranslation").' ';
 if (empty($conf->global->MAIN_ENABLE_OVERWRITE_TRANSLATION))
 {
     // Button off, click to enable
-    $enabledisablehtml .= '<a class="reposition" href="'.$_SERVER["PHP_SELF"].'?action=setMAIN_ENABLE_OVERWRITE_TRANSLATION&value=1'.$param.'">';
+    $enabledisablehtml .= '<a class="reposition valignmiddle" href="'.$_SERVER["PHP_SELF"].'?action=setMAIN_ENABLE_OVERWRITE_TRANSLATION&value=1'.$param.'">';
     $enabledisablehtml .= img_picto($langs->trans("Disabled"), 'switch_off');
     $enabledisablehtml .= '</a>';
 }
 else
 {
     // Button on, click to disable
-    $enabledisablehtml .= '<a class="reposition" href="'.$_SERVER["PHP_SELF"].'?action=setMAIN_ENABLE_OVERWRITE_TRANSLATION&value=0'.$param.'">';
+    $enabledisablehtml .= '<a class="reposition valignmiddle" href="'.$_SERVER["PHP_SELF"].'?action=setMAIN_ENABLE_OVERWRITE_TRANSLATION&value=0'.$param.'">';
     $enabledisablehtml .= img_picto($langs->trans("Activated"), 'switch_on');
     $enabledisablehtml .= '</a>';
 }
@@ -225,23 +224,23 @@ print load_fiche_titre($langs->trans("Translation"), $enabledisablehtml, 'title_
 //print '<span class="opacitymedium">'.$langs->trans("TranslationDesc")."</span><br>\n";
 //print "<br>\n";
 
-$current_language_code=$langs->defaultlang;
-$s=picto_from_langcode($current_language_code);
+$current_language_code = $langs->defaultlang;
+$s = picto_from_langcode($current_language_code);
 print '<span class="opacitymedium">'.$form->textwithpicto($langs->trans("CurrentUserLanguage").': <strong>'.$s.' '.$current_language_code.'</strong>', $langs->trans("TranslationDesc")).'</span><br>';
 
 print '<br>';
 
-if (! empty($contextpage) && $contextpage != $_SERVER["PHP_SELF"]) $param.='&contextpage='.$contextpage;
-if ($limit > 0 && $limit != $conf->liste_limit) $param.='&limit='.$limit;
-if ($optioncss != '') $param.='&optioncss='.$optioncss;
-if ($langcode)        $param.='&langcode='.urlencode($langcode);
-if ($transkey)        $param.='&transkey='.urlencode($transkey);
-if ($transvalue)      $param.='&transvalue='.urlencode($transvalue);
+if (!empty($contextpage) && $contextpage != $_SERVER["PHP_SELF"]) $param .= '&contextpage='.urlencode($contextpage);
+if ($limit > 0 && $limit != $conf->liste_limit) $param .= '&limit='.urlencode($limit);
+if ($optioncss != '') $param .= '&optioncss='.urlencode($optioncss);
+if ($langcode)        $param .= '&langcode='.urlencode($langcode);
+if ($transkey)        $param .= '&transkey='.urlencode($transkey);
+if ($transvalue)      $param .= '&transvalue='.urlencode($transvalue);
 
 
-print '<form action="'.$_SERVER["PHP_SELF"].((empty($user->entity) && $debug)?'?debug=1':'').'" method="POST">';
+print '<form action="'.$_SERVER["PHP_SELF"].((empty($user->entity) && $debug) ? '?debug=1' : '').'" method="POST">';
 if ($optioncss != '') print '<input type="hidden" name="optioncss" value="'.$optioncss.'">';
-print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+print '<input type="hidden" name="token" value="'.newToken().'">';
 print '<input type="hidden" name="formfilteraction" id="formfilteraction" value="list">';
 print '<input type="hidden" name="sortfield" value="'.$sortfield.'">';
 print '<input type="hidden" name="sortorder" value="'.$sortorder.'">';
@@ -302,11 +301,11 @@ if ($mode == 'overwrite')
     	print '<td>';
     	print '<input type="text" class="flat" size="1" name="entity" value="'.$conf->entity.'">';
     	print '</td>';
-    	print '<td align="center">';
+    	print '<td class="center">';
     }
     else
     {*/
-    	print '<td align="center">';
+    	print '<td class="center">';
     	print '<input type="hidden" name="entity" value="'.$conf->entity.'">';
     //}
     print '<input type="submit" class="button"'.$disabled.' value="'.$langs->trans("Add").'" name="add" title="'.dol_escape_htmltag($langs->trans("YouMustEnabledTranslationOverwriteBefore")).'">';
@@ -348,15 +347,15 @@ if ($mode == 'overwrite')
     		*/
     		if ($action == 'edit' && $obj->rowid == GETPOST('rowid', 'int'))
     		{
-    			print '<input type="text" class="quatrevingtpercent" name="transvalue" value="'.$obj->transvalue.'">';
+    			print '<input type="text" class="quatrevingtpercent" name="transvalue" value="'.dol_escape_htmltag($obj->transvalue).'">';
     		}
     		else
     		{
-    			print $obj->transvalue;
+    			print dol_escape_htmltag($obj->transvalue);
     		}
     		print '</td>';
 
-    		print '<td align="center">';
+    		print '<td class="center">';
     		if ($action == 'edit' && $obj->rowid == GETPOST('rowid', 'int'))
     		{
     			print '<input type="hidden" class="button" name="rowid" value="'.$obj->rowid.'">';
@@ -457,7 +456,7 @@ if ($mode == 'searchkey')
 
     //print 'param='.$param.' $_SERVER["PHP_SELF"]='.$_SERVER["PHP_SELF"].' num='.$num.' page='.$page.' nbtotalofrecords='.$nbtotalofrecords." sortfield=".$sortfield." sortorder=".$sortorder;
     $title = $langs->trans("TranslationKeySearch");
-    if ($nbtotalofrecords > 0) $title.=' ('.$nbtotalofrecords.' / '.$nbtotalofrecordswithoutfilters.' - '.$nbtotaloffiles.' '.$langs->trans("Files").')';
+    if ($nbtotalofrecords > 0) $title .= ' ('.$nbtotalofrecords.' / '.$nbtotalofrecordswithoutfilters.' - '.$nbtotaloffiles.' '.$langs->trans("Files").')';
     print_barre_liste($title, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, '', $num, -1 * $nbtotalofrecords, '', 0, '', '', $limit);
 
     print '<input type="hidden" id="action" name="action" value="search">';

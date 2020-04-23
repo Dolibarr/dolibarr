@@ -162,7 +162,7 @@ foreach ($workflowcodes as $key => $params)
    		print ' '.img_warning($langs->transnoentitiesnoconv($params['warning']));
    	}
    	print "</td>\n";
-   	print '<td align="center">';
+   	print '<td class="center">';
    	if (!empty($conf->use_javascript_ajax))
    	{
    		print ajax_constantonoff($key);

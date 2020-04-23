@@ -36,25 +36,25 @@ require_once DOL_DOCUMENT_ROOT.'/product/class/html.formproduct.class.php';
 $langs->loadLangs(array('products', 'stocks'));
 
 // Security check
-if ($user->socid) $socid=$user->socid;
-$result=restrictedArea($user, 'produit|service');
+if ($user->socid) $socid = $user->socid;
+$result = restrictedArea($user, 'produit|service');
 
 
-$action=GETPOST('action', 'alpha');
-$sref=GETPOST("sref", 'alpha');
-$snom=GETPOST("snom", 'alpha');
-$sall=trim((GETPOST('search_all', 'alphanohtml')!='')?GETPOST('search_all', 'alphanohtml'):GETPOST('sall', 'alphanohtml'));
-$type=GETPOST("type", "int");
-$search_barcode=GETPOST("search_barcode", 'alpha');
-$catid=GETPOST('catid', 'int');
-$toolowstock=GETPOST('toolowstock');
+$action = GETPOST('action', 'alpha');
+$sref = GETPOST("sref", 'alpha');
+$snom = GETPOST("snom", 'alpha');
+$sall = trim((GETPOST('search_all', 'alphanohtml') != '') ?GETPOST('search_all', 'alphanohtml') : GETPOST('sall', 'alphanohtml'));
+$type = GETPOST("type", "int");
+$search_barcode = GETPOST("search_barcode", 'alpha');
+$catid = GETPOST('catid', 'int');
+$toolowstock = GETPOST('toolowstock');
 $tosell = GETPOST("tosell");
 $tobuy = GETPOST("tobuy");
 $fourn_id = GETPOST("fourn_id", 'int');
 
 $sortfield = GETPOST("sortfield", 'alpha');
 $sortorder = GETPOST("sortorder", 'alpha');
-$page = GETPOST("page", 'int');
+$page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOST("page", 'int');
 if (empty($page) || $page < 0) $page = 0;
 if (!$sortfield) $sortfield = "p.ref";
 if (!$sortorder) $sortorder = "ASC";
@@ -122,7 +122,8 @@ $sql .= ' p.duration, p.tosell as statut, p.tobuy, p.seuil_stock_alerte, p.desir
 $sql .= ' SUM(s.reel) as stock_physique';
 if (!empty($conf->global->PRODUCT_USE_UNITS)) $sql .= ', u.short_label as unit_short';
 $sql .= ' FROM '.MAIN_DB_PREFIX.'product as p';
-$sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'product_stock as s on p.rowid = s.fk_product';
+$sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'product_stock as s ON p.rowid = s.fk_product';
+$sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'entrepot as e ON s.fk_entrepot = e.rowid AND e.entity IN ('.getEntity('entrepot').')';
 if (!empty($conf->global->PRODUCT_USE_UNITS)) $sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'c_units as u on p.fk_unit = u.rowid';
 // We'll need this table joined to the select in order to filter by categ
 if ($search_categ) $sql .= ", ".MAIN_DB_PREFIX."categorie_product as cp";
@@ -212,13 +213,13 @@ if ($resql)
 	llxHeader("", $texte, $helpurl);
 
 	print '<form action="'.$_SERVER["PHP_SELF"].'" method="post" name="formulaire">';
-	print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+	print '<input type="hidden" name="token" value="'.newToken().'">';
 	print '<input type="hidden" name="sortfield" value="'.$sortfield.'">';
 	print '<input type="hidden" name="sortorder" value="'.$sortorder.'">';
     print '<input type="hidden" name="page" value="'.$page.'">';
 	print '<input type="hidden" name="type" value="'.$type.'">';
 
-	print_barre_liste($texte, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, '', $num, $nbtotalofrecords, 'products', 0, '', '', $limit);
+	print_barre_liste($texte, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, '', $num, $nbtotalofrecords, 'product', 0, '', '', $limit);
 
 	if (!empty($catid))
 	{
@@ -255,14 +256,14 @@ if ($resql)
     }
 
 	$param = '';
-	if ($tosell)	$param .= "&tosell=".$tosell;
-	if ($tobuy)		$param .= "&tobuy=".$tobuy;
-	if ($type)		$param .= "&type=".$type;
-	if ($fourn_id)	$param .= "&fourn_id=".$fourn_id;
-	if ($snom)		$param .= "&snom=".$snom;
-	if ($sref)		$param .= "&sref=".$sref;
-	if ($toolowstock)		$param .= "&toolowstock=".$toolowstock;
-	if ($search_categ)		$param .= "&search_categ=".$search_categ;
+	if ($tosell)	$param .= "&tosell=".urlencode($tosell);
+	if ($tobuy)		$param .= "&tobuy=".urlencode($tobuy);
+	if ($type)		$param .= "&type=".urlencode($type);
+	if ($fourn_id)	$param .= "&fourn_id=".urlencode($fourn_id);
+	if ($snom)		$param .= "&snom=".urlencode($snom);
+	if ($sref)		$param .= "&sref=".urlencode($sref);
+	if ($toolowstock)		$param .= "&toolowstock=".urlencode($toolowstock);
+	if ($search_categ)		$param .= "&search_categ=".urlencode($search_categ);
 
 	$formProduct = new FormProduct($db);
 	$formProduct->loadWarehouses();
@@ -361,7 +362,7 @@ if ($resql)
 		// Real stock
 		print '<td class="right">';
         if ($objp->seuil_stock_alerte != '' && ($objp->stock_physique < $objp->seuil_stock_alerte)) print img_warning($langs->trans("StockTooLow")).' ';
-		print $objp->stock_physique | 0;
+        print price2num($objp->stock_physique, 'MS');
 		print '</td>';
 
 		// Details per warehouse

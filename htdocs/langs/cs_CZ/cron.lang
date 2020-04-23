@@ -76,8 +76,9 @@ CronType_method=Metoda volání třídy PHP
 CronType_command=Shell příkaz
 CronCannotLoadClass=Nelze načíst soubor třídy %s (použít třídu %s)
 CronCannotLoadObject=Byl vložen soubor třídy %s, ale do něj nebyl nalezen objekt %s
-UseMenuModuleToolsToAddCronJobs=Jděte do menu "Home- Moduly nářadí- Seznam úloh" kde vidíte a upravujete naplánované úlohy.
+UseMenuModuleToolsToAddCronJobs=Chcete-li zobrazit a upravit naplánované úlohy, přejděte do nabídky „ <a href="%s">Domů - Nástroje pro správu - Naplánované úlohy</a> “.
 JobDisabled=Úloha vypnuta
 MakeLocalDatabaseDumpShort=Záloha lokální databáze
 MakeLocalDatabaseDump=Vytvoření výpisu místní databáze. Parametry jsou: komprese ('gz' nebo 'bz' nebo 'none'), zálohovací typ ('mysql', 'pgsql', 'auto'),
 WarningCronDelayed=Pozor, pokud jde o výkonnost, bez ohledu na to, co je příštím datem provedení povolených úloh, mohou být vaše úlohy zpožděny maximálně do %s hodin, než budou spuštěny.
+DATAPOLICYJob=Čistič dat a anonymizér

@@ -321,7 +321,7 @@ if ($action == 'create')
 {
 	$object = new Account($db);
 
-	print load_fiche_titre($langs->trans("NewFinancialAccount"), '', 'title_bank.png');
+	print load_fiche_titre($langs->trans("NewFinancialAccount"), '', 'bank_account');
 
 	if ($conf->use_javascript_ajax)
 	{
@@ -340,7 +340,7 @@ if ($action == 'create')
 	}
 
 	print '<form action="'.$_SERVER["PHP_SELF"].'" name="formsoc" method="post">';
-	print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+	print '<input type="hidden" name="token" value="'.newToken().'">';
 	print '<input type="hidden" name="action" value="add">';
 	print '<input type="hidden" name="clos" value="0">';
 
@@ -690,7 +690,7 @@ else
 		// Categories
 		if ($conf->categorie->enabled) {
 			print '<tr><td class="titlefield">'.$langs->trans("Categories").'</td><td>';
-			print $form->showCategories($object->id, 'bank_account', 1);
+			print $form->showCategories($object->id, Categorie::TYPE_ACCOUNT, 1);
 			print "</td></tr>";
 		}
 
@@ -804,7 +804,7 @@ else
 		$object = new Account($db);
 		$object->fetch(GETPOST('id', 'int'));
 
-		print load_fiche_titre($langs->trans("EditFinancialAccount"), '', 'title_bank.png');
+		print load_fiche_titre($langs->trans("EditFinancialAccount"), '', 'bank_account');
 
 		if ($conf->use_javascript_ajax)
 		{
@@ -826,7 +826,7 @@ else
 		}
 
 		print '<form action="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'" method="post" name="formsoc">';
-		print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+		print '<input type="hidden" name="token" value="'.newToken().'">';
 		print '<input type="hidden" name="action" value="update">';
 		print '<input type="hidden" name="id" value="'.$_REQUEST["id"].'">'."\n\n";
 

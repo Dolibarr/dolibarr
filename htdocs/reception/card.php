@@ -307,15 +307,13 @@ if (empty($reshook))
 			{
 				$lineToTest = '';
 				foreach ($objectsrc->lines as $linesrc) {
-					if ($linesrc->id == GETPOST($idl, 'int'))$lineToTest = $linesrc;
+					if ($linesrc->id == GETPOST($idl, 'int')) $lineToTest = $linesrc;
 				}
 				$qty = "qtyl".$i;
 				$comment = "comment".$i;
 				$eatby = "dlc".$i;
 				$sellby = "dluo".$i;
 				$batch = "batch".$i;
-
-
 
 				$timeFormat = '%d/%m/%Y';
 
@@ -713,8 +711,9 @@ $warehousestatic = new Entrepot($db);
 
 if ($action == 'create2')
 {
-    print load_fiche_titre($langs->trans("CreateReception")).'<br>';
-    print $langs->trans("ReceptionCreationIsDoneFromOrder");
+    print load_fiche_titre($langs->trans("CreateReception"), '', 'dollyrevert');
+
+    print '<br>'.$langs->trans("ReceptionCreationIsDoneFromOrder");
     $action = ''; $id = ''; $ref = '';
 }
 
@@ -746,7 +745,7 @@ if ($action == 'create')
             if (!empty($conf->stock->enabled)) $entrepot = new Entrepot($db);
 
             print '<form action="'.$_SERVER["PHP_SELF"].'" method="post">';
-            print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+            print '<input type="hidden" name="token" value="'.newToken().'">';
             print '<input type="hidden" name="action" value="add">';
             print '<input type="hidden" name="origin" value="'.$origin.'">';
             print '<input type="hidden" name="origin_id" value="'.$object->id.'">';
@@ -1175,8 +1174,9 @@ if ($action == 'create')
 					$extrafields->fetch_name_optionals_label($srcLine->table_element);
 					$extrafields->fetch_name_optionals_label($line->table_element);
 
-					$srcLine->fetch_optionals($line->id); // fetch extrafields also available in orderline
-					$line->fetch_optionals($object->id);
+					$srcLine->id = $line->id;
+					$srcLine->fetch_optionals(); // fetch extrafields also available in orderline
+					$line->fetch_optionals();
 
 					$line->array_options = array_merge($line->array_options, $srcLine->array_options);
 
@@ -1231,10 +1231,10 @@ elseif ($id || $ref)
 		$soc = new Societe($db);
 		$soc->fetch($object->socid);
 
-		$res = $object->fetch_optionals($object->id);
+		$res = $object->fetch_optionals();
 
 		$head = reception_prepare_head($object);
-		dol_fiche_head($head, 'reception', $langs->trans("Reception"), -1, 'reception');
+		dol_fiche_head($head, 'reception', $langs->trans("Reception"), -1, 'dollyrevert');
 
 		$formconfirm = '';
 
@@ -1277,7 +1277,7 @@ elseif ($id || $ref)
 		}
 
 		if (!$formconfirm) {
-		    $parameters = array();
+			$parameters = array('formConfirm' => $formconfirm);
 		    $reshook = $hookmanager->executeHooks('formConfirm', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
 		    if (empty($reshook)) $formconfirm .= $hookmanager->resPrint;
 		    elseif ($reshook > 0) $formconfirm = $hookmanager->resPrint;
@@ -1332,7 +1332,7 @@ elseif ($id || $ref)
                     // $morehtmlref.=$form->form_project($_SERVER['PHP_SELF'] . '?id=' . $object->id, $object->socid, $object->fk_project, 'projectid', 0, 0, 1, 1);
                     $morehtmlref .= '<form method="post" action="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'">';
                     $morehtmlref .= '<input type="hidden" name="action" value="classin">';
-                    $morehtmlref .= '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+                    $morehtmlref .= '<input type="hidden" name="token" value="'.newToken().'">';
                     $morehtmlref .= $formproject->select_projects($object->socid, $object->fk_project, 'projectid', $maxlength, 0, 1, 0, 1, 0, 0, '', 1);
                     $morehtmlref .= '<input type="submit" class="button" value="'.$langs->trans("Modify").'">';
                     $morehtmlref .= '</form>';
@@ -1412,7 +1412,7 @@ elseif ($id || $ref)
 		if ($action == 'editdate_livraison')
 		{
 			print '<form name="setdate_livraison" action="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'" method="post">';
-			print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+			print '<input type="hidden" name="token" value="'.newToken().'">';
 			print '<input type="hidden" name="action" value="setdate_livraison">';
 			print $form->selectDate($object->date_delivery ? $object->date_delivery : -1, 'liv_', 1, 1, '', "setdate_livraison", 1, 0);
 			print '<input type="submit" class="button" value="'.$langs->trans('Modify').'">';
@@ -1435,7 +1435,7 @@ elseif ($id || $ref)
 			print '<form name="settrueweight" action="'.$_SERVER["PHP_SELF"].'" method="post">';
 			print '<input name="action" value="settrueWeight" type="hidden">';
 			print '<input name="id" value="'.$object->id.'" type="hidden">';
-			print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+			print '<input type="hidden" name="token" value="'.newToken().'">';
 			print '<input id="trueWeight" name="trueWeight" value="'.$object->trueWeight.'" type="text">';
 			print $formproduct->selectMeasuringUnits("weight_units", "weight", $object->weight_units, 0, 2);
 			print ' <input class="button" name="modify" value="'.$langs->trans("Modify").'" type="submit">';
@@ -1470,7 +1470,7 @@ elseif ($id || $ref)
 			print '<form name="settrueHeight" action="'.$_SERVER["PHP_SELF"].'" method="post">';
 			print '<input name="action" value="settrueHeight" type="hidden">';
 			print '<input name="id" value="'.$object->id.'" type="hidden">';
-			print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+			print '<input type="hidden" name="token" value="'.newToken().'">';
 			print '<input id="trueHeight" name="trueHeight" value="'.$object->trueHeight.'" type="text">';
 			print $formproduct->selectMeasuringUnits("size_units", "size", $object->size_units, 0, 2);
 			print ' <input class="button" name="modify" value="'.$langs->trans("Modify").'" type="submit">';
@@ -1548,7 +1548,7 @@ elseif ($id || $ref)
 		if ($action == 'editshipping_method_id')
 		{
 			print '<form name="setshipping_method_id" action="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'" method="post">';
-			print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+			print '<input type="hidden" name="token" value="'.newToken().'">';
 			print '<input type="hidden" name="action" value="setshipping_method_id">';
 			$object->fetch_delivery_methods();
 			print $form->selectarray("shipping_method_id", $object->meths, $object->shipping_method_id, 1, 0, 0, "", 1);
@@ -1610,7 +1610,7 @@ elseif ($id || $ref)
 		if ($action == 'editline')
 		{
 			print '<form name="updateline" id="updateline" action="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;lineid='.$line_id.'" method="POST">
-			<input type="hidden" name="token" value="' . $_SESSION ['newtoken'].'">
+			<input type="hidden" name="token" value="' . newToken().'">
 			<input type="hidden" name="action" value="updateline">
 			<input type="hidden" name="mode" value="">
 			<input type="hidden" name="id" value="' . $object->id.'">';
@@ -1958,17 +1958,17 @@ elseif ($id || $ref)
 			if ($action == 'editline' && $lines[$i]->id == $line_id)
 			{
 				print '<td class="center" colspan="2" valign="middle">';
-				print '<input type="submit" class="button" id="savelinebutton" name="save" value="'.$langs->trans("Save").'"><br>';
+				print '<input type="submit" class="button" id="savelinebutton marginbottomonly" name="save" value="'.$langs->trans("Save").'"><br>';
 				print '<input type="submit" class="button" id="cancellinebutton" name="cancel" value="'.$langs->trans("Cancel").'"><br>';
 			}
-			elseif ($object->statut == 0)
+			elseif ($object->statut == Reception::STATUS_DRAFT)
 			{
 				// edit-delete buttons
 				print '<td class="linecoledit center">';
-				print '<a href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=editline&amp;lineid='.$lines[$i]->id.'">'.img_edit().'</a>';
+				print '<a class="editfielda" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=editline&amp;lineid='.$lines[$i]->id.'">'.img_edit().'</a>';
 				print '</td>';
 				print '<td class="linecoldelete" width="10">';
-				print '<a href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=deleteline&amp;lineid='.$lines[$i]->id.'">'.img_delete().'</a>';
+				print '<a class="reposition" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=deleteline&amp;lineid='.$lines[$i]->id.'">'.img_delete().'</a>';
 				print '</td>';
 
 				// Display lines extrafields
@@ -1986,7 +1986,8 @@ elseif ($id || $ref)
 			{
 				$colspan = empty($conf->productbatch->enabled) ? 8 : 9;
 				$line = new CommandeFournisseurDispatch($db);
-				$line->fetch_optionals($lines[$i]->id);
+				$line->id = $lines[$i]->id;
+				$line->fetch_optionals();
 
 				if ($action == 'editline' && $lines[$i]->id == $line_id)
 				{
@@ -2056,13 +2057,15 @@ elseif ($id || $ref)
 			}
 
 			// Send
-			if ($object->statut > 0)
-			{
-				if (empty($conf->global->MAIN_USE_ADVANCED_PERMS) || $user->rights->reception->reception_advance->send)
+			if (empty($user->socid)) {
+				if ($object->statut > 0)
 				{
-					print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=presend&mode=init#formmailbeforetitle">'.$langs->trans('SendByMail').'</a>';
+					if (empty($conf->global->MAIN_USE_ADVANCED_PERMS) || $user->rights->reception->reception_advance->send)
+					{
+						print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=presend&mode=init#formmailbeforetitle">'.$langs->trans('SendByMail').'</a>';
+					}
+					else print '<a class="butActionRefused" href="#">'.$langs->trans('SendByMail').'</a>';
 				}
-				else print '<a class="butActionRefused" href="#">'.$langs->trans('SendByMail').'</a>';
 			}
 
 			// Create bill

@@ -49,12 +49,14 @@ function dolSaveMasterFile($filemaster)
 }
 
 /**
- * Save content of a page on disk
+ * Save content of a page on disk.
+ * It can save file into root directory or into language subdirectory.
  *
  * @param	string		$filealias			Full path of filename to generate
  * @param	Website		$object				Object website
  * @param	WebsitePage	$objectpage			Object websitepage
  * @return	boolean							True if OK
+ * @see dolSavePageContent()
  */
 function dolSavePageAlias($filealias, $object, $objectpage)
 {
@@ -70,8 +72,32 @@ function dolSavePageAlias($filealias, $object, $objectpage)
 	$aliascontent .= 'else require $dolibarr_main_data_root.\'/website/\'.$website->ref.\'/page'.$objectpage->id.'.tpl.php\';'."\n";
 	$aliascontent .= '?>'."\n";
 	$result = file_put_contents($filealias, $aliascontent);
+	if ($result === false) {
+		dol_syslog("Failed to write file ".$filealias, LOG_WARNING);
+	}
 	if (!empty($conf->global->MAIN_UMASK)) {
 		@chmod($filealias, octdec($conf->global->MAIN_UMASK));
+	}
+
+	// Save also alias into language subdirectory if we have to
+	if ($objectpage->lang && in_array($objectpage->lang, explode(',', $object->otherlang))) {
+		$dirname = dirname($filealias);
+		$filename = basename($filealias);
+		$filealias = $dirname.'/'.$objectpage->lang.'/'.$filename;
+
+		$aliascontent = '<?php'."\n";
+		$aliascontent .= "// File generated to wrap the alias page - DO NOT MODIFY - It is just a wrapper to real page\n";
+		$aliascontent .= 'global $dolibarr_main_data_root;'."\n";
+		$aliascontent .= 'if (empty($dolibarr_main_data_root)) require \'../page'.$objectpage->id.'.tpl.php\'; ';
+		$aliascontent .= 'else require $dolibarr_main_data_root.\'/website/\'.$website->ref.\'/page'.$objectpage->id.'.tpl.php\';'."\n";
+		$aliascontent .= '?>'."\n";
+		$result = file_put_contents($filealias, $aliascontent);
+		if ($result === false) {
+			dol_syslog("Failed to write file ".$filealias, LOG_WARNING);
+		}
+		if (!empty($conf->global->MAIN_UMASK)) {
+			@chmod($filealias, octdec($conf->global->MAIN_UMASK));
+		}
 	}
 
 	return ($result ?true:false);
@@ -79,12 +105,14 @@ function dolSavePageAlias($filealias, $object, $objectpage)
 
 
 /**
- * Save content of a page on disk
+ * Save content of a page on disk.
+ * Page contents are always saved into root directory.
  *
  * @param	string		$filetpl			Full path of filename to generate
  * @param	Website		$object				Object website
  * @param	WebsitePage	$objectpage			Object websitepage
  * @return	boolean							True if OK
+ * @see dolSavePageAlias()
  */
 function dolSavePageContent($filetpl, Website $object, WebsitePage $objectpage)
 {
@@ -93,15 +121,19 @@ function dolSavePageContent($filetpl, Website $object, WebsitePage $objectpage)
 	// Now create the .tpl file (duplicate code with actions updatesource or updatecontent but we need this to save new header)
 	dol_syslog("We regenerate the tpl page filetpl=".$filetpl);
 
+	include_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 	dol_delete_file($filetpl);
 
 	$shortlangcode = '';
-	if ($objectpage->lang) $shortlangcode = preg_replace('/[_-].*$/', '', $objectpage->lang); // en_US or en-US -> en
+	if ($objectpage->lang) $shortlangcode = substr($objectpage->lang, 0, 2); // en_US or en-US -> en
 
 	$tplcontent = '';
 	$tplcontent .= "<?php // BEGIN PHP\n";
 	$tplcontent .= '$websitekey=basename(__DIR__); if (empty($websitepagefile)) $websitepagefile=__FILE__;'."\n";
-	$tplcontent .= "if (! defined('USEDOLIBARRSERVER') && ! defined('USEDOLIBARREDITOR')) { require_once './master.inc.php'; } // Not already loaded"."\n";
+	$tplcontent .= "if (! defined('USEDOLIBARRSERVER') && ! defined('USEDOLIBARREDITOR')) {\n";
+	$tplcontent .= '	$pathdepth = count(explode(\'/\', $_SERVER[\'SCRIPT_NAME\'])) - 2;'."\n";
+	$tplcontent .= '	require_once ($pathdepth ? str_repeat(\'../\', $pathdepth) : \'./\').\'master.inc.php\';'."\n";
+	$tplcontent .= "} // Not already loaded"."\n";
 	$tplcontent .= "require_once DOL_DOCUMENT_ROOT.'/core/lib/website.lib.php';\n";
 	$tplcontent .= "require_once DOL_DOCUMENT_ROOT.'/core/website.inc.php';\n";
 	$tplcontent .= "ob_start();\n";
@@ -125,7 +157,8 @@ function dolSavePageContent($filetpl, Website $object, WebsitePage $objectpage)
 	// Add translation reference (main language)
 	if ($object->isMultiLang()) {
 		// Add myself
-		$tplcontent .= '<link rel="alternate" hreflang="'.$shortlangcode.'" href="'.($object->fk_default_home == $objectpage->id ? '/' : '/'.$objectpage->pageurl.'.php').'" />'."\n";
+		$tplcontent .= '<link rel="alternate" hreflang="'.$shortlangcode.'" href="'.(($object->fk_default_home == $objectpage->id) ? '/' : (($shortlangcode != substr($object->lang, 0, 2) ? '/'.$shortlangcode : '')).'/'.$objectpage->pageurl.'.php').'" />'."\n";
+
 		// Add page "translation of"
 		$translationof = $objectpage->fk_page;
 		if ($translationof) {
@@ -135,7 +168,7 @@ function dolSavePageContent($filetpl, Website $object, WebsitePage $objectpage)
 				$tmpshortlangcode = '';
 				if ($tmppage->lang) $tmpshortlangcode = preg_replace('/[_-].*$/', '', $tmppage->lang); // en_US or en-US -> en
 				if ($tmpshortlangcode != $shortlangcode) {
-					$tplcontent .= '<link rel="alternate" hreflang="'.$tmpshortlangcode.'" href="'.($object->fk_default_home == $tmppage->id ? '/' : '/'.$tmppage->pageurl.'.php').'" />'."\n";
+					$tplcontent .= '<link rel="alternate" hreflang="'.$tmpshortlangcode.'" href="'.($object->fk_default_home == $tmppage->id ? '/' : (($tmpshortlangcode != substr($object->lang, 0, 2) ? '/'.$tmpshortlangcode : '')).'/'.$tmppage->pageurl.'.php').'" />'."\n";
 				}
 			}
 		}
@@ -152,7 +185,7 @@ function dolSavePageContent($filetpl, Website $object, WebsitePage $objectpage)
 					$tmpshortlangcode = '';
 					if ($obj->lang) $tmpshortlangcode = preg_replace('/[_-].*$/', '', $obj->lang); // en_US or en-US -> en
 					if ($tmpshortlangcode != $shortlangcode) {
-						$tplcontent .= '<link rel="alternate" hreflang="'.$tmpshortlangcode.'" href="'.($object->fk_default_home == $obj->id ? '/' : '/'.$obj->pageurl.'.php').'" />'."\n";
+						$tplcontent .= '<link rel="alternate" hreflang="'.$tmpshortlangcode.'" href="'.($object->fk_default_home == $obj->id ? '/' : (($tmpshortlangcode != substr($object->lang, 0, 2) ? '/'.$tmpshortlangcode : '')).'/'.$obj->pageurl.'.php').'" />'."\n";
 					}
 				}
 			}
@@ -160,11 +193,11 @@ function dolSavePageContent($filetpl, Website $object, WebsitePage $objectpage)
 		else dol_print_error($db);
 	}
 	// Add canonical reference
-	$tplcontent .= '<link href="/'.(($objectpage->id == $object->fk_default_home) ? '' : ($objectpage->pageurl.'.php')).'" rel="canonical" />'."\n";
+	$tplcontent .= '<link href="'.(($objectpage->id == $object->fk_default_home) ? '/' : (($shortlangcode != substr($object->lang, 0, 2) ? '/'.$shortlangcode : '').'/'.$objectpage->pageurl.'.php')).'" rel="canonical" />'."\n";
 	// Add manifest.json on homepage
 	$tplcontent .= '<?php if ($website->use_manifest) { print \'<link rel="manifest" href="/manifest.json.php" />\'."\n"; } ?>'."\n";
 	$tplcontent .= '<!-- Include link to CSS file -->'."\n";
-	$tplcontent .= '<link rel="stylesheet" href="styles.css.php?website=<?php echo $websitekey; ?>" type="text/css" />'."\n";
+	$tplcontent .= '<link rel="stylesheet" href="/styles.css.php?website=<?php echo $websitekey; ?>" type="text/css" />'."\n";
 	$tplcontent .= '<!-- Include HTML header from common file -->'."\n";
 	$tplcontent .= '<?php print preg_replace(\'/<\/?html>/ims\', \'\', file_get_contents(DOL_DATA_ROOT."/website/".$websitekey."/htmlheader.html")); ?>'."\n";
 	$tplcontent .= '<!-- Include HTML header from page header block -->'."\n";
@@ -221,18 +254,19 @@ function dolSaveIndexPage($pathofwebsite, $fileindex, $filetpl, $filewrapper)
 	$indexcontent .= "include_once './".basename($filetpl)."'\n";
 	$indexcontent .= '// END PHP ?>'."\n";
 	$result1 = file_put_contents($fileindex, $indexcontent);
-	if (!empty($conf->global->MAIN_UMASK))
+	if (!empty($conf->global->MAIN_UMASK)) {
 		@chmod($fileindex, octdec($conf->global->MAIN_UMASK));
+	}
+	dol_delete_file($filewrapper);
 
-		dol_delete_file($filewrapper);
+	$wrappercontent = file_get_contents(DOL_DOCUMENT_ROOT.'/website/samples/wrapper.php');
 
-		$wrappercontent = file_get_contents(DOL_DOCUMENT_ROOT.'/website/samples/wrapper.html');
+	$result2 = file_put_contents($filewrapper, $wrappercontent);
+	if (!empty($conf->global->MAIN_UMASK)) {
+		@chmod($filewrapper, octdec($conf->global->MAIN_UMASK));
+	}
 
-		$result2 = file_put_contents($filewrapper, $wrappercontent);
-		if (!empty($conf->global->MAIN_UMASK))
-			@chmod($filewrapper, octdec($conf->global->MAIN_UMASK));
-
-			return ($result1 && $result2);
+	return ($result1 && $result2);
 }
 
 
@@ -393,7 +427,6 @@ function dolSaveReadme($file, $content)
 function showWebsiteTemplates(Website $website)
 {
 	global $conf, $langs, $db, $form;
-	global $bc;
 
 	$dirthemes = array('/doctemplates/websites');
 	if (!empty($conf->modules_parts['websitetemplates']))		// Using this feature slow down application
@@ -408,11 +441,13 @@ function showWebsiteTemplates(Website $website)
 
 	$colspan = 2;
 
-	$thumbsbyrow = 6;
+	print '<!-- For to import website template -->'."\n";
 	print '<table class="noborder centpercent">';
 
 	// Title
-	print '<tr class="liste_titre"><th class="titlefield"></th>';
+	print '<tr class="liste_titre"><th class="titlefield">';
+	print $form->textwithpicto($langs->trans("Templates"), $langs->trans("ThemeDir").' : '.join(", ", $dirthemes));
+	print '</th>';
 	print '<th class="right">';
 	$url = 'https://www.dolistore.com/43-web-site-templates';
 	print '<a href="'.$url.'" target="_blank">';
@@ -420,72 +455,67 @@ function showWebsiteTemplates(Website $website)
 	print '</a>';
 	print '</th></tr>';
 
-	print '<tr>';
-	print '<td>'.$langs->trans("ThemeDir").'</td>';
-	print '<td>';
-	foreach ($dirthemes as $dirtheme)
-	{
-		echo '"'.$dirtheme.'" ';
-	}
-	print '</td>';
-	print '</tr>';
-
 	print '<tr><td colspan="'.$colspan.'">';
 
 	print '<table class="nobordernopadding" width="100%"><tr><td><div class="center">';
 
-	$i = 0;
-	foreach ($dirthemes as $dir)
-	{
-		//print $dirroot.$dir;exit;
-		$dirtheme = DOL_DATA_ROOT.$dir; // This include loop on $conf->file->dol_document_root
-		if (is_dir($dirtheme))
+	if (count($dirthemes)) {
+		$i = 0;
+		foreach ($dirthemes as $dir)
 		{
-			$handle = opendir($dirtheme);
-			if (is_resource($handle))
+			//print $dirroot.$dir;exit;
+			$dirtheme = DOL_DATA_ROOT.$dir; // This include loop on $conf->file->dol_document_root
+			if (is_dir($dirtheme))
 			{
-				while (($subdir = readdir($handle)) !== false)
+				$handle = opendir($dirtheme);
+				if (is_resource($handle))
 				{
-					if (is_file($dirtheme."/".$subdir) && substr($subdir, 0, 1) <> '.'
-						&& substr($subdir, 0, 3) <> 'CVS' && preg_match('/\.zip$/i', $subdir))
+					while (($subdir = readdir($handle)) !== false)
 					{
-						$subdirwithoutzip = preg_replace('/\.zip$/i', '', $subdir);
+						if (is_file($dirtheme."/".$subdir) && substr($subdir, 0, 1) <> '.'
+							&& substr($subdir, 0, 3) <> 'CVS' && preg_match('/\.zip$/i', $subdir))
+						{
+							$subdirwithoutzip = preg_replace('/\.zip$/i', '', $subdir);
 
-						// Disable not stable themes (dir ends with _exp or _dev)
-						if ($conf->global->MAIN_FEATURES_LEVEL < 2 && preg_match('/_dev$/i', $subdir)) continue;
-						if ($conf->global->MAIN_FEATURES_LEVEL < 1 && preg_match('/_exp$/i', $subdir)) continue;
+							// Disable not stable themes (dir ends with _exp or _dev)
+							if ($conf->global->MAIN_FEATURES_LEVEL < 2 && preg_match('/_dev$/i', $subdir)) continue;
+							if ($conf->global->MAIN_FEATURES_LEVEL < 1 && preg_match('/_exp$/i', $subdir)) continue;
 
-						print '<div class="inline-block" style="margin-top: 10px; margin-bottom: 10px; margin-right: 20px; margin-left: 20px;">';
+							print '<div class="inline-block" style="margin-top: 10px; margin-bottom: 10px; margin-right: 20px; margin-left: 20px;">';
 
-						$file = $dirtheme."/".$subdirwithoutzip.".jpg";
-						$url = DOL_URL_ROOT.'/viewimage.php?modulepart=doctemplateswebsite&file='.$subdirwithoutzip.".jpg";
+							$file = $dirtheme."/".$subdirwithoutzip.".jpg";
+							$url = DOL_URL_ROOT.'/viewimage.php?modulepart=doctemplateswebsite&file='.$subdirwithoutzip.".jpg";
 
-						if (!file_exists($file)) $url = DOL_URL_ROOT.'/public/theme/common/nophoto.png';
+							if (!file_exists($file)) $url = DOL_URL_ROOT.'/public/theme/common/nophoto.png';
 
-						$originalfile = basename($file);
-						$entity = $conf->entity;
-						$modulepart = 'doctemplateswebsite';
-						$cache = '';
-						$title = $file;
+							$originalfile = basename($file);
+							$entity = $conf->entity;
+							$modulepart = 'doctemplateswebsite';
+							$cache = '';
+							$title = $file;
 
-						$ret = '';
-						$urladvanced = getAdvancedPreviewUrl($modulepart, $originalfile, 1, '&entity='.$entity);
-						if (!empty($urladvanced)) $ret .= '<a class="'.$urladvanced['css'].'" target="'.$urladvanced['target'].'" mime="'.$urladvanced['mime'].'" href="'.$urladvanced['url'].'">';
-						else $ret .= '<a href="'.DOL_URL_ROOT.'/viewimage.php?modulepart='.$modulepart.'&entity='.$entity.'&file='.urlencode($originalfile).'&cache='.$cache.'">';
-						print $ret;
-						print '<img class="img-skinthumb shadow" src="'.$url.'" border="0" alt="'.$title.'" title="'.$title.'" style="margin-bottom: 5px;">';
-						print '</a>';
+							$ret = '';
+							$urladvanced = getAdvancedPreviewUrl($modulepart, $originalfile, 1, '&entity='.$entity);
+							if (!empty($urladvanced)) $ret .= '<a class="'.$urladvanced['css'].'" target="'.$urladvanced['target'].'" mime="'.$urladvanced['mime'].'" href="'.$urladvanced['url'].'">';
+							else $ret .= '<a href="'.DOL_URL_ROOT.'/viewimage.php?modulepart='.$modulepart.'&entity='.$entity.'&file='.urlencode($originalfile).'&cache='.$cache.'">';
+							print $ret;
+							print '<img class="img-skinthumb shadow" src="'.$url.'" border="0" alt="'.$title.'" title="'.$title.'" style="margin-bottom: 5px;">';
+							print '</a>';
 
-						print '<br>';
-						print $subdir.' ('.dol_print_size(dol_filesize($dirtheme."/".$subdir), 1, 1).')';
-						print '<br><a href="'.$_SERVER["PHP_SELF"].'?action=importsiteconfirm&website='.$website->ref.'&templateuserfile='.$subdir.'" class="button">'.$langs->trans("Load").'</a>';
-						print '</div>';
+							print '<br>';
+							print $subdir.' ('.dol_print_size(dol_filesize($dirtheme."/".$subdir), 1, 1).')';
+							print '<br><a href="'.$_SERVER["PHP_SELF"].'?action=importsiteconfirm&website='.$website->ref.'&templateuserfile='.$subdir.'" class="button">'.$langs->trans("Load").'</a>';
+							print '</div>';
 
-						$i++;
+							$i++;
+						}
 					}
 				}
 			}
 		}
+	}
+	else {
+		print '<span class="opacitymedium">'.$langs->trans("None").'</span>';
 	}
 
 	print '</div></td></tr></table>';

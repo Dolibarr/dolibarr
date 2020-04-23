@@ -224,7 +224,7 @@ $linkback = '<a href="'.DOL_URL_ROOT.'/admin/modules.php?restore_lastsearch_valu
 print load_fiche_titre($langs->trans("BankSetupModule"), $linkback, 'title_setup');
 
 print '<form name="bankmovementcolorconfig" action="'.$_SERVER["PHP_SELF"].'" method="post">';
-print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+print '<input type="hidden" name="token" value="'.newToken().'">';
 print '<input type="hidden" name="action" value="save">';
 
 $head = bank_admin_prepare_head(null);
@@ -442,7 +442,7 @@ print $langs->trans('BankColorizeMovementDesc');
 print "</td>";
 // Active
 if ($conf->global->BANK_COLORIZE_MOVEMENT) {
-    print '<td align="center">'."\n";
+    print '<td class="center">'."\n";
     print '<a href="'.$_SERVER["PHP_SELF"].'?action=unsetbankcolorizemovement">';
     print img_picto($langs->trans("Enabled"), 'switch_on');
     print '</a>';
@@ -450,7 +450,7 @@ if ($conf->global->BANK_COLORIZE_MOVEMENT) {
 }
 else
 {
-    print '<td align="center">'."\n";
+    print '<td class="center">'."\n";
     print '<a href="'.$_SERVER["PHP_SELF"].'?action=setbankcolorizemovement">'.img_picto($langs->trans("Disabled"), 'switch_off').'</a>';
     print "</td>";
 }

@@ -59,7 +59,7 @@ print '<div class="fichecenter"><div class="fichethirdleft">';
 //{
     // Recherche emails
     print '<form method="post" action="'.DOL_URL_ROOT.'/comm/mailing/list.php">';
-    print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+    print '<input type="hidden" name="token" value="'.newToken().'">';
     print '<div class="div-table-responsive-no-min">';
     print '<table class="noborder nohover centpercent">';
     print '<tr class="liste_titre"><td colspan="3">'.$langs->trans("SearchAMailing").'</td></tr>';
@@ -165,8 +165,8 @@ if ($result) {
     print '<table class="noborder centpercent">';
     print '<tr class="liste_titre">';
     print '<td colspan="2">'.$langs->trans("LastMailings", $limit).'</td>';
-    print '<td align="center">'.$langs->trans("DateCreation").'</td>';
-    print '<td align="center">'.$langs->trans("NbOfEMails").'</td>';
+    print '<td class="center">'.$langs->trans("DateCreation").'</td>';
+    print '<td class="center">'.$langs->trans("NbOfEMails").'</td>';
     print '<td class="right"><a href="'.DOL_URL_ROOT.'/comm/mailing/list.php">'.$langs->trans("AllEMailings").'</a></td></tr>';
 
     $num = $db->num_rows($result);
@@ -184,8 +184,8 @@ if ($result) {
 	        print '<tr class="oddeven">';
 	        print '<td class="nowrap">'.$mailstatic->getNomUrl(1).'</td>';
 	        print '<td>'.dol_trunc($obj->titre, 38).'</td>';
-	        print '<td align="center">'.dol_print_date($db->jdate($obj->date_creat), 'day').'</td>';
-	        print '<td align="center">'.($obj->nbemail ? $obj->nbemail : "0").'</td>';
+	        print '<td class="center">'.dol_print_date($db->jdate($obj->date_creat), 'day').'</td>';
+	        print '<td class="center">'.($obj->nbemail ? $obj->nbemail : "0").'</td>';
 	        print '<td class="right">'.$mailstatic->LibStatut($obj->statut, 5).'</td>';
             print '</tr>';
 	        $i++;

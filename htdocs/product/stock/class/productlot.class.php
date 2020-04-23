@@ -48,7 +48,7 @@ class Productlot extends CommonObject
 	/**
 	 * @var string String with name of icon for myobject. Must be the part after the 'object_' into object_myobject.png
 	 */
-	public $picto = 'barcode';
+	public $picto = 'lot';
 
 	/**
 	 * 0=No test on entity, 1=Test with field entity, 2=Test with link by societe
@@ -220,9 +220,9 @@ class Productlot extends CommonObject
 	/**
 	 * Load object in memory from the database
 	 *
-	 * @param int    $id  Id object
-	 * @param int    $product_id  Id of product, batch number parameter required
-	 * @param string $batch batch number
+	 * @param int    $id  			Id of lot/batch
+	 * @param int    $product_id  	Id of product, batch number parameter required
+	 * @param string $batch 		batch number
 	 *
 	 * @return int <0 if KO, 0 if not found, >0 if OK
 	 */

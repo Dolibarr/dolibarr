@@ -4,3 +4,5 @@ ProposalShort=Propuesta
 PropalsDraft=Borradores
 PropalStatusDraft=Borrador (necesita ser validado)
 TypeContact_propal_external_BILLING=Contacto factura cliente
+DocModelAzurDescription=A complete proposal model
+DocModelCyanDescription=A complete proposal model

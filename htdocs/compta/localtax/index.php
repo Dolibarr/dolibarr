@@ -227,7 +227,7 @@ if ($localTaxType == 1) {
 }
 
 $fsearch = '<!-- hidden fields for form -->';
-$fsearch .= '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+$fsearch .= '<input type="hidden" name="token" value="'.newToken().'">';
 $fsearch .= '<input type="hidden" name="localTaxType" value="'.$localTaxType.'">';
 $fsearch .= '<input type="hidden" name="modetax" value="'.$modetax.'">';
 

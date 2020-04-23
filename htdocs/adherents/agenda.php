@@ -41,7 +41,7 @@ $id = GETPOST('id', 'int') ?GETPOST('id', 'int') : GETPOST('rowid', 'int');
 $limit = GETPOST('limit', 'int') ?GETPOST('limit', 'int') : $conf->liste_limit;
 $sortfield = GETPOST("sortfield", 'alpha');
 $sortorder = GETPOST("sortorder", 'alpha');
-$page = GETPOST("page", 'int');
+$page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOST("page", 'int');
 if (empty($page) || $page == -1) { $page = 0; }     // If $page is not defined, or '' or -1
 $offset = $limit * $page;
 $pageprev = $page - 1;
@@ -149,24 +149,24 @@ if ($object->id > 0)
 
 
 	$newcardbutton = '';
-    if (! empty($conf->agenda->enabled))
+    if (!empty($conf->agenda->enabled))
     {
-        $newcardbutton.= dolGetButtonTitle($langs->trans('AddAction'), '', 'fa fa-plus-circle', DOL_URL_ROOT.'/comm/action/card.php?action=create&backtopage=1&origin=member&originid='.$id);
+        $newcardbutton .= dolGetButtonTitle($langs->trans('AddAction'), '', 'fa fa-plus-circle', DOL_URL_ROOT.'/comm/action/card.php?action=create&backtopage=1&origin=member&originid='.$id);
     }
 
-    if (! empty($conf->agenda->enabled) && (!empty($user->rights->agenda->myactions->read) || !empty($user->rights->agenda->allactions->read) ))
+    if (!empty($conf->agenda->enabled) && (!empty($user->rights->agenda->myactions->read) || !empty($user->rights->agenda->allactions->read)))
     {
     	print '<br>';
 
-    	$param='&id='.$id;
-    	if (! empty($contextpage) && $contextpage != $_SERVER["PHP_SELF"]) $param.='&contextpage='.$contextpage;
-    	if ($limit > 0 && $limit != $conf->liste_limit) $param.='&limit='.$limit;
+    	$param = '&id='.$id;
+    	if (!empty($contextpage) && $contextpage != $_SERVER["PHP_SELF"]) $param .= '&contextpage='.$contextpage;
+    	if ($limit > 0 && $limit != $conf->liste_limit) $param .= '&limit='.$limit;
 
     	print_barre_liste($langs->trans("ActionsOnMember"), 0, $_SERVER["PHP_SELF"], '', $sortfield, $sortorder, '', 0, -1, '', '', $newcardbutton, '', 0, 1, 1);
 
     	// List of all actions
-    	$filters=array();
-    	$filters['search_agenda_label']=$search_agenda_label;
+    	$filters = array();
+    	$filters['search_agenda_label'] = $search_agenda_label;
 
     	// TODO Replace this with same code than into list.php
     	show_actions_done($conf, $langs, $db, $object, null, 0, $actioncode, '', $filters, $sortfield, $sortorder);

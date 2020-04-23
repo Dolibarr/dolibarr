@@ -34,3 +34,6 @@ IdResource=Id de recurs
 AssetNumber=Número de serie
 ResourceTypeCode=Codi de tipus de recurs
 ImportDataset_resource_1=Recursos
+
+ErrorResourcesAlreadyInUse=Alguns recursos estan en us
+ErrorResourceUseInEvent=%s usat en %s esdeveniment

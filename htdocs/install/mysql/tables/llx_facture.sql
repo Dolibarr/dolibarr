@@ -34,7 +34,6 @@ create table llx_facture
   ref_client			varchar(255),							-- reference for customer
 
   type					smallint DEFAULT 0 NOT NULL,			-- type of invoice
-  increment				varchar(10),
   fk_soc				integer            NOT NULL,
   datec					datetime,								-- date de creation de la facture
   datef					date,									-- date invoice
@@ -43,7 +42,7 @@ create table llx_facture
   tms					timestamp,								-- date creation/modification
   date_closing				datetime,						-- date de cloture
   paye					smallint DEFAULT 0 NOT NULL,
-  amount				double(24,8)     DEFAULT 0 NOT NULL,
+  --amount				double(24,8)     DEFAULT 0 NOT NULL,
   remise_percent		real     DEFAULT 0,						-- remise relative
   remise_absolue		real     DEFAULT 0,						-- remise absolue
   remise				real     DEFAULT 0,						-- remise totale calculee
@@ -70,6 +69,7 @@ create table llx_facture
   fk_fac_rec_source		integer,								-- facture rec source
   fk_facture_source		integer,								-- facture origin if credit notes or replacement invoice
   fk_projet				integer DEFAULT NULL,					-- project invoice is linked to
+  increment				varchar(10),							-- Numero of generation if generated from recurring template invoice
 
   fk_account			integer,								-- bank account
   fk_currency			varchar(3),								-- currency code

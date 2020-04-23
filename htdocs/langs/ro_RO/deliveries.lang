@@ -2,7 +2,7 @@
 Delivery=Livrare
 DeliveryRef=Ref Livrare
 DeliveryCard=Chitanta card
-DeliveryOrder=Ordin de livrare 
+DeliveryOrder=Delivery receipt
 DeliveryDate=Data de livrare
 CreateDeliveryOrder=Generați chitanța de livrare
 DeliveryStateSaved=Stare livrare salvata
@@ -18,13 +18,14 @@ StatusDeliveryCanceled=Anulata
 StatusDeliveryDraft=Draft
 StatusDeliveryValidated=Primit
 # merou PDF model
-NameAndSignature=Nume şi Semnătura:
+NameAndSignature=Numele și semnătura:
 ToAndDate=To___________________________________ pe ____ / _____ / __________
 GoodStatusDeclaration=Au primit bunurile în bună stare de mai sus,
-Deliverer=Eliberator:
+Deliverer=Expeditor:
 Sender=Expeditor
 Recipient=Recipient
 ErrorStockIsNotEnough=Nu există stoc suficient
 Shippable=Livrabil
 NonShippable=Nelivrabil
 ShowReceiving= Afișare notă de recepție
+NonExistentOrder=Ordin inexistent

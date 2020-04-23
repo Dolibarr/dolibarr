@@ -25,68 +25,82 @@
 //if (! defined('NOREQUIREDB'))		define('NOREQUIREDB','1');		// Not disabled cause need to load personalized language
 //if (! defined('NOREQUIRESOC'))		define('NOREQUIRESOC','1');
 //if (! defined('NOREQUIRETRAN'))		define('NOREQUIRETRAN','1');
-if (! defined('NOCSRFCHECK'))		define('NOCSRFCHECK', '1');
-if (! defined('NOTOKENRENEWAL'))	define('NOTOKENRENEWAL', '1');
-if (! defined('NOREQUIREMENU'))		define('NOREQUIREMENU', '1');
-if (! defined('NOREQUIREHTML'))		define('NOREQUIREHTML', '1');
-if (! defined('NOREQUIREAJAX'))		define('NOREQUIREAJAX', '1');
+if (!defined('NOCSRFCHECK'))		define('NOCSRFCHECK', '1');
+if (!defined('NOTOKENRENEWAL'))	define('NOTOKENRENEWAL', '1');
+if (!defined('NOREQUIREMENU'))		define('NOREQUIREMENU', '1');
+if (!defined('NOREQUIREHTML'))		define('NOREQUIREHTML', '1');
+if (!defined('NOREQUIREAJAX'))		define('NOREQUIREAJAX', '1');
 
-require '../main.inc.php';	// Load $user and permissions
+require '../main.inc.php'; // Load $user and permissions
 
-$langs->loadLangs(array("bills","orders","commercial","cashdesk"));
+$langs->loadLangs(array("bills", "orders", "commercial", "cashdesk"));
 
-$floor=GETPOST('floor', 'int');
-if ($floor=="") $floor=1;
+$floor = GETPOST('floor', 'int');
+if ($floor == "") $floor = 1;
 $id = GETPOST('id', 'int');
 $action = GETPOST('action', 'alpha');
 $left = GETPOST('left', 'alpha');
 $top = GETPOST('top', 'alpha');
 
-$place = (GETPOST('place', 'int') > 0 ? GETPOST('place', 'int') : 0);   // $place is id of table for Ba or Restaurant
+$place = (GETPOST('place', 'aZ09') ? GETPOST('place', 'aZ09') : 0); // $place is id of table for Ba or Restaurant
 
 $newname = GETPOST('newname', 'alpha');
 $mode = GETPOST('mode', 'alpha');
 
-if ($action=="getTables")
+if (empty($user->rights->takepos->run)) {
+	accessforbidden();
+}
+
+
+/*
+ * Actions
+ */
+
+if ($action == "getTables")
 {
-    $sql="SELECT rowid, entity, label, leftpos, toppos, floor FROM ".MAIN_DB_PREFIX."takepos_floor_tables where floor=".$floor;
+    $sql = "SELECT rowid, entity, label, leftpos, toppos, floor FROM ".MAIN_DB_PREFIX."takepos_floor_tables where floor=".$floor;
     $resql = $db->query($sql);
     $rows = array();
-    while($row = $db->fetch_array($resql)){
+    while ($row = $db->fetch_array($resql)) {
         $rows[] = $row;
     }
     echo json_encode($rows);
     exit;
 }
 
-if ($action=="update")
+if ($action == "update")
 {
-    if ($left>95) $left=95;
-    if ($top>95) $top=95;
-    if ($left>3 or $top>4) $db->query("UPDATE ".MAIN_DB_PREFIX."takepos_floor_tables set leftpos=".$left.", toppos=".$top." WHERE rowid='".$place."'");
+    if ($left > 95) $left = 95;
+    if ($top > 95) $top = 95;
+    if ($left > 3 or $top > 4) $db->query("UPDATE ".MAIN_DB_PREFIX."takepos_floor_tables set leftpos=".$left.", toppos=".$top." WHERE rowid='".$place."'");
     else $db->query("DELETE from ".MAIN_DB_PREFIX."takepos_floor_tables where rowid='".$place."'");
 }
 
-if ($action=="updatename")
+if ($action == "updatename")
 {
     $newname = preg_replace("/[^a-zA-Z0-9\s]/", "", $newname); // Only English chars
     if (strlen($newname) > 3) $newname = substr($newname, 0, 3); // Only 3 chars
     $db->query("UPDATE ".MAIN_DB_PREFIX."takepos_floor_tables set label='".$db->escape($newname)."' WHERE rowid='".$place."'");
 }
 
-if ($action=="add")
+if ($action == "add")
 {
-    $sql="INSERT INTO ".MAIN_DB_PREFIX."takepos_floor_tables(entity, label, leftpos, toppos, floor) VALUES (".$conf->entity.", '', '45', '45', ".$floor.")";
-    $asdf=$db->query($sql);
+    $sql = "INSERT INTO ".MAIN_DB_PREFIX."takepos_floor_tables(entity, label, leftpos, toppos, floor) VALUES (".$conf->entity.", '', '45', '45', ".$floor.")";
+    $asdf = $db->query($sql);
     $db->query("update ".MAIN_DB_PREFIX."takepos_floor_tables set label=rowid where label=''"); // No empty table names
 }
 
+
+/*
+ * View
+ */
+
 // Title
-$title='TakePOS - Dolibarr '.DOL_VERSION;
-if (! empty($conf->global->MAIN_APPLICATION_TITLE)) $title='TakePOS - '.$conf->global->MAIN_APPLICATION_TITLE;
+$title = 'TakePOS - Dolibarr '.DOL_VERSION;
+if (!empty($conf->global->MAIN_APPLICATION_TITLE)) $title = 'TakePOS - '.$conf->global->MAIN_APPLICATION_TITLE;
 top_htmlhead($head, $title, $disablejs, $disablehead, $arrayofjs, $arrayofcss);
 ?>
-<link rel="stylesheet" href="css/pos.css?a=xxx">
+<link rel="stylesheet" href="css/pos.css.php?a=xxx">
 <style type="text/css">
 div.tablediv{
 background-image:url(img/table.gif);
@@ -132,7 +146,7 @@ function updatename(rowid) {
 	}
 
 function LoadPlace(place){
-	parent.location.href='takepos.php?place='+place;
+	parent.location.href='index.php?place='+place;
 }
 
 
@@ -169,10 +183,10 @@ $( document ).ready(function() {
 <body style="overflow: hidden">
 <?php if ($user->admin) {?>
 <div style="position: absolute; left: 0.1%; top: 0.8%; width:8%; height:11%;">
-    <?php if ($mode=="edit"){?>
-<a id="add" onclick="window.location.href='floors.php?mode=edit&action=add&floor=<?php echo $floor;?>';"><?php echo $langs->trans("AddTable"); ?></a>
+    <?php if ($mode == "edit") {?>
+<a id="add" onclick="window.location.href='floors.php?mode=edit&action=add&floor=<?php echo $floor; ?>';"><?php echo $langs->trans("AddTable"); ?></a>
     <?php } else { ?>
-<a onclick="window.location.href='floors.php?mode=edit&floor=<?php echo $floor;?>';"><?php echo $langs->trans("Edit"); ?></a>
+<a onclick="window.location.href='floors.php?mode=edit&floor=<?php echo $floor; ?>';"><?php echo $langs->trans("Edit"); ?></a>
     <?php } ?>
 </div>
 <?php }

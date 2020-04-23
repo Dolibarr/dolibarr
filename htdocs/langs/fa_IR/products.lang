@@ -22,6 +22,8 @@ ProductVatMassChangeDesc=این ابزار نرخ مالیات بر ارزش ا�
 MassBarcodeInit=تعریف دستجمعی بارکد
 MassBarcodeInitDesc=این صفحه می‌تواند برای تعریف بارکد اشیائی که برای آن‌ها بارکد تعریف نشده استفاده شود. قبل از استفاده، مطمئن شوید واحد بارکد به خوبی نصب و برپاسازی شده است.
 ProductAccountancyBuyCode=کد حساب‌داری (خرید)
+ProductAccountancyBuyIntraCode=Accounting code (purchase intra-community)
+ProductAccountancyBuyExportCode=Accounting code (purchase import)
 ProductAccountancySellCode=کد  حساب‌داری (فروش)
 ProductAccountancySellIntraCode=کد حساب‌داری (فروش داخل جامعه‌ای-اروپا)
 ProductAccountancySellExportCode=کد حساب‌داری (فروش صادرات)
@@ -29,10 +31,14 @@ ProductOrService=محصول یا خدمات
 ProductsAndServices=محصولات و خدمات
 ProductsOrServices=محصولات یا خدمات
 ProductsPipeServices=محصولات | خدمات
+ProductsOnSale=Products for sale
+ProductsOnPurchase=Products for purchase
 ProductsOnSaleOnly=محصولات فقط برای فروش
 ProductsOnPurchaseOnly=محصولات فقط برای خرید
 ProductsNotOnSell=محصولات نه برای خرید نه برای فروش
 ProductsOnSellAndOnBuy=محصولات هم برای خرید و هم برای فروش
+ServicesOnSale=Services for sale
+ServicesOnPurchase=Services for purchase
 ServicesOnSaleOnly=خدمات فقط برای فروش
 ServicesOnPurchaseOnly=خدمات فقط برای خرید
 ServicesNotOnSell=خدمات نه برای خرید و نه برای فروش
@@ -149,6 +155,7 @@ RowMaterial=مواد اولیه
 ConfirmCloneProduct=آیا مطمئنید می‌خواهید از خدمات یا محصولات <b>%s</b> نسخه‌برداری کنید؟
 CloneContentProduct=نسخه‌برداری از از همۀ اطلاعات اصلی محصول/خدما
 ClonePricesProduct=نسخه‌برداری از قیمت‌ها
+CloneCategoriesProduct=Clone tags/categories linked
 CloneCompositionProduct=نسخه‌برداری از محصول/خدمات مجازی
 CloneCombinationsProduct=نسخه‌برداری از انواع مختلف محصول
 ProductIsUsed=این محصول، دست‌دوم است
@@ -160,7 +167,7 @@ SuppliersPrices=قیمت‌های فروشنده
 SuppliersPricesOfProductsOrServices=قیمت‌های فروشنده (مربوط به محصولات و خدمات)
 CustomCode=گمرک / کالا / کدبندی هماهنگ کالا
 CountryOrigin=کشور مبدا
-Nature=Nature of produt (material/finished)
+Nature=Nature of product (material/finished)
 ShortLabel=برچسب کوتاه
 Unit=واحد
 p=واحد
@@ -188,13 +195,38 @@ unitSET=دسته/تنظیم
 unitS=ثانیه
 unitH=ساعت
 unitD=روز
-unitKG=کیلوگر
 unitG=گرم
 unitM=متر
 unitLM=متر خطی
 unitM2=متر مربع
 unitM3=متر مکعب
 unitL=لیتر
+unitT=ton
+unitKG=کیلوگرم
+unitG=گرم
+unitMG=میلی گرم
+unitLB=پوند
+unitOZ=اونس
+unitM=متر
+unitDM=دیابت
+unitCM=سانتی متر
+unitMM=میلیمتر
+unitFT=ft
+unitIN=in
+unitM2=متر مربع
+unitDM2=dm²
+unitCM2=cm²
+unitMM2=mm²
+unitFT2=ft²
+unitIN2=in²
+unitM3=متر مکعب
+unitDM3=dm³
+unitCM3=cm³
+unitMM3=mm³
+unitFT3=ft³
+unitIN3=in³
+unitOZ3=اونس
+unitgallon=گالن
 ProductCodeModel=قالب مرجع محصول
 ServiceCodeModel=قالب مرجع خدمات
 CurrentProductPrice=قیمت کنونی
@@ -208,8 +240,8 @@ UseMultipriceRules=استفاده از مقررات قسمت‌بندی قیمت
 PercentVariationOver=%% انواع بر حسب%s
 PercentDiscountOver=%% تخفیف بر حسب%s
 KeepEmptyForAutoCalculation=این بخش را خالی نگاه‌دارید تا به‌طور خودکار بر حسب وزن و حجم محصولات محاسبه شود
-VariantRefExample=مثال: COL
-VariantLabelExample=مثال: Color
+VariantRefExample=Examples: COL, SIZE
+VariantLabelExample=Examples: Color, Size
 ### composition fabrication
 Build=تولید
 ProductsMultiPrice=محصولات و قیمت‌ها برای هر قسمت تعیین مبلغ
@@ -287,6 +319,10 @@ ProductWeight=وزن برای 1 محصول
 ProductVolume=حجم برای 1 محصول
 WeightUnits=واحد وزن
 VolumeUnits=واحد حجم
+WidthUnits=Width unit
+LengthUnits=Length unit
+HeightUnits=Height unit
+SurfaceUnits=Surface unit
 SizeUnits=واحد اندازه
 DeleteProductBuyPrice=حذف قیمت خرید
 ConfirmDeleteProductBuyPrice=آیا مطمئن‌هستید می‌خواهید این قیمت خرید را حذف کنید؟
@@ -297,6 +333,10 @@ PossibleValues=مقادیر ممکن
 GoOnMenuToCreateVairants=برای آماده‌کردن ویژگی‌های چندگانه (مثل رنگ، اندازه و غیره) به فهرست %s - %s بروید 
 UseProductFournDesc=ایجاد یک قابلیت برای تعریف توضیحات مربوط به محصولاتی که توسط فروشندگان در ادامۀ توضیحات ارائه شده به مشتریان
 ProductSupplierDescription=توضیحات فروشنده برای محصول
+UseProductSupplierPackaging=Use packaging on supplier prices (recalculate quantities according to packaging set on supplier price when adding/updating line in supplier documents)
+PackagingForThisProduct=Packaging
+QtyRecalculatedWithPackaging=The quantity of the line were recalculated according to supplier packaging
+
 #Attributes
 VariantAttributes=انواع ویژگی
 ProductAttributes=انواع ویژگی‌های محصولات
@@ -329,7 +369,7 @@ UsePercentageVariations=استفاده از انواع درصدی
 PercentageVariation=انواع درصدی
 ErrorDeletingGeneratedProducts=خطائی در هنگام حذف انواع موجود محصول رخ داد
 NbOfDifferentValues=تعداد مقادیر مختلف
-NbProducts=تعداد محصولات
+NbProducts=Number of products
 ParentProduct=محصول مادر
 HideChildProducts=پنهان کردن انواع مختلف محصولات 
 ShowChildProducts=نمایش انواع مختلف محصولات
@@ -341,3 +381,5 @@ ErrorDestinationProductNotFound=محصول مقصد پیدا نشد
 ErrorProductCombinationNotFound=نوع محصول پیدا نشد
 ActionAvailableOnVariantProductOnly=این کنش تنها بر روی یک نوع از انواع محصول قابل اجراست
 ProductsPricePerCustomer=قیمت محصول وابسته به مشتریان
+ProductSupplierExtraFields=Additional Attributes (Supplier Prices)
+DeleteLinkedProduct=Delete the child product linked to the combination

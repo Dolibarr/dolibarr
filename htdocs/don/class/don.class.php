@@ -178,7 +178,7 @@ class Don extends CommonObject
     	}
 
     	$statusType = 'status'.$status;
-    	if ($status == self::STATUS_CANCELED) $statusType = 'status5';
+    	if ($status == self::STATUS_CANCELED) $statusType = 'status9';
     	if ($status == self::STATUS_PAID) $statusType = 'status6';
 
     	return dolGetStatus($this->labelStatus[$status], $this->labelStatusShort[$status], '', $statusType, $mode);

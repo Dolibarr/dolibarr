@@ -36,7 +36,7 @@ class ProductAttribute
 
 	/**
 	 * Ref of the product attribute
-	 * @var
+	 * @var string
 	 */
 	public $ref;
 
@@ -249,7 +249,7 @@ class ProductAttribute
 		foreach ($tmp_order as $order => $rowid) {
 			$tmp = new ProductAttribute($this->db);
 			$tmp->fetch($rowid);
-			$tmp->rang = $order+1;
+			$tmp->rang = $order + 1;
 
 			if ($tmp->update($user) < 0) {
 				return -1;

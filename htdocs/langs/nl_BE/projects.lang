@@ -1,4 +1,18 @@
 # Dolibarr language file - Source file is en_US - projects
 ProjectsArea=Project Omgeving
+AllAllowedProjects=Alle projecten die ik kan lezen (mijn + openbaar)
+MyProjectsDesc=Deze weergave is beperkt tot projecten waarvoor u een contactpersoon bent
+TasksOnProjectsPublicDesc=Deze weergave geeft alle taken weer van projecten die u mag lezen.
+TasksOnProjectsDesc=In deze weergave worden alle taken voor alle projecten weergegeven (uw gebruikersrechten geven u toestemming om alles te bekijken).
+ImportDatasetTasks=Taken van projecten
+ProjectCategories=Project tags / categorieën
 OpenedProjects=Open projecten
+OpportunitiesStatusForOpenedProjects=Aantal open projecten van leads op status
+OpportunitiesStatusForProjects=Aantal projecten van leads op status
+BillTime=Factureer de tijd besteed
+AddTimeSpent=Maak de tijd besteed
+AddHereTimeSpentForDay=Voeg hier de besteedde tijd voor deze dag / taak toe
+MyProjectsArea=Mijn projectengebied
+CurentlyOpenedTasks=Actueel openstaande taken
+WhichIamLinkedToProject=waaraan ik ben gekoppeld aan het project
 ProjectModifiedInDolibarr=Project %s gewijzigd

@@ -1,12 +1,21 @@
 # Dolibarr language file - Source file is en_US - users
+SendNewPasswordLink=Stuur link voor wachtwoord reset
 ConfirmDisableUser=Weet u zeker dat u de toegang voor gebruiker <b>%s</b> wilt uitschakelen?
 ConfirmDeleteUser=Weet u zeker dat u gebruiker <b>%s</b> wilt verwijderen?
 ConfirmDeleteGroup=Weet u zeker dat u groep <b>%s</b> wilt verwijderen?
 ConfirmEnableUser=Weet u zeker dat u gebruiker <b>%s</b> wilt activeren?
 ConfirmReinitPassword=Weet u zeker dat u voor gebruiker <b>%s</b> een nieuw wachtwoord wilt genereren?
 ConfirmSendNewPassword=Weet u zeker dat u een nieuw wachtwoord wilt genereren en verzenden voor gebruiker <b>%s</b>?
+PasswordChangeRequest=Verzoek om wachtwoord voor <b>%s</b> te wijzigen
+ConfirmPasswordReset=Bevestig wachtwoord opnieuw instellen
+LastGroupsCreated=Nieuwste %s groepen gemaakt
 LastUsersCreated=Laatste %s gemaakte gebruikers
 CreateDolibarrThirdParty=Maak Derden
+CreateInternalUserDesc=Met dit formulier kunt u een interne gebruiker in uw bedrijf / organisatie maken. Om een externe gebruiker (klant, leverancier enz.) Aan te maken, gebruikt u de knop 'Maak Dolibarr Gebruiker aan' van de contactkaart van die partij.
 ConfirmCreateContact=Weet u zeker dat u een Dolibarr account wilt maken voor deze contactpersoon?
 ConfirmCreateThirdParty=Weet u zeker dat u een 'derde' wilt maken voor dit lid?
+NbOfPermissions=Aantal toestemmingen
+UserAccountancyCode=Gebruikers boekhoudingscode
 UserLogoff=Gebruiker logout
+DateEmploymentEnd=Einddatum tewerkstelling
+ValidatorIsSupervisorByDefault=Standaard is de validator de supervisor van de gebruiker. Hou leeg om dit gedrag te behouden.

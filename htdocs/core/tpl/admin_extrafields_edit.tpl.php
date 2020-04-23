@@ -27,7 +27,7 @@
  */
 
 // Protection to avoid direct call of template
-if (empty($conf) || ! is_object($conf))
+if (empty($conf) || !is_object($conf))
 {
 	print "Error, template page can't be called as URL";
 	exit;
@@ -54,7 +54,7 @@ $langs->load("modulebuilder");
     		var list = jQuery("#list");
             var totalizable = jQuery("#totalizable");
     		<?php
-    		if ((GETPOST('type', 'alpha') != "select") &&  (GETPOST('type', 'alpha') != "sellist"))
+    		if ((GETPOST('type', 'alpha') != "select") && (GETPOST('type', 'alpha') != "sellist"))
     		{
     			print 'jQuery("#value_choice").hide();';
     		}
@@ -149,37 +149,38 @@ $langs->load("modulebuilder");
 <table summary="listofattributes" class="border centpercent">
 
 <?php
-$label=$extrafields->attributes[$elementtype]['label'][$attrname];
-$type=$extrafields->attributes[$elementtype]['type'][$attrname];
-$size=$extrafields->attributes[$elementtype]['size'][$attrname];
-$computed=$extrafields->attributes[$elementtype]['computed'][$attrname];
-$default=$extrafields->attributes[$elementtype]['default'][$attrname];
-$unique=$extrafields->attributes[$elementtype]['unique'][$attrname];
-$required=$extrafields->attributes[$elementtype]['required'][$attrname];
-$pos=$extrafields->attributes[$elementtype]['pos'][$attrname];
-$alwayseditable=$extrafields->attributes[$elementtype]['alwayseditable'][$attrname];
-$param=$extrafields->attributes[$elementtype]['param'][$attrname];
-$perms=$extrafields->attributes[$elementtype]['perms'][$attrname];
-$langfile=$extrafields->attributes[$elementtype]['langfile'][$attrname];
-$list=$extrafields->attributes[$elementtype]['list'][$attrname];
+$label = $extrafields->attributes[$elementtype]['label'][$attrname];
+$type = $extrafields->attributes[$elementtype]['type'][$attrname];
+$size = $extrafields->attributes[$elementtype]['size'][$attrname];
+$computed = $extrafields->attributes[$elementtype]['computed'][$attrname];
+$default = $extrafields->attributes[$elementtype]['default'][$attrname];
+$unique = $extrafields->attributes[$elementtype]['unique'][$attrname];
+$required = $extrafields->attributes[$elementtype]['required'][$attrname];
+$pos = $extrafields->attributes[$elementtype]['pos'][$attrname];
+$alwayseditable = $extrafields->attributes[$elementtype]['alwayseditable'][$attrname];
+$param = $extrafields->attributes[$elementtype]['param'][$attrname];
+$perms = $extrafields->attributes[$elementtype]['perms'][$attrname];
+$langfile = $extrafields->attributes[$elementtype]['langfile'][$attrname];
+$list = $extrafields->attributes[$elementtype]['list'][$attrname];
 $totalizable = $extrafields->attributes[$elementtype]['totalizable'][$attrname];
-$help=$extrafields->attributes[$elementtype]['help'][$attrname];
-$entitycurrentorall=$extrafields->attributes[$elementtype]['entityid'][$attrname];
+$help = $extrafields->attributes[$elementtype]['help'][$attrname];
+$entitycurrentorall = $extrafields->attributes[$elementtype]['entityid'][$attrname];
+$printable = $extrafields->attributes[$elementtype]['printable'][$attrname];
 
-if((($type == 'select') || ($type == 'checkbox') || ($type == 'radio')) && is_array($param))
+if ((($type == 'select') || ($type == 'checkbox') || ($type == 'radio')) && is_array($param))
 {
 	$param_chain = '';
 	foreach ($param['options'] as $key => $value)
 	{
-		if(strlen($key))
+		if (strlen($key))
 		{
 			$param_chain .= $key.','.$value."\n";
 		}
 	}
 }
-elseif (($type== 'sellist') || ($type == 'chkbxlst') || ($type == 'link') || ($type == 'password') || ($type == 'separate'))
+elseif (($type == 'sellist') || ($type == 'chkbxlst') || ($type == 'link') || ($type == 'password') || ($type == 'separate'))
 {
-	$paramlist=array_keys($param['options']);
+	$paramlist = array_keys($param['options']);
 	$param_chain = $paramlist[0];
 }
 ?>
@@ -191,10 +192,10 @@ elseif (($type== 'sellist') || ($type == 'chkbxlst') || ($type == 'link') || ($t
 <tr><td class="fieldrequired"><?php echo $langs->trans("Type"); ?></td><td class="valeur">
 <?php
 // Define list of possible type transition
-$typewecanchangeinto=array(
+$typewecanchangeinto = array(
 	'varchar'=>array('varchar', 'phone', 'mail', 'url', 'select', 'password', 'text', 'html'),
-	'text'=>array('text','html'),
-	'html'=>array('text','html'),
+	'text'=>array('text', 'html'),
+	'html'=>array('text', 'html'),
 	'password'=>array('password', 'varchar'),
 	'mail'=>array('varchar', 'phone', 'mail', 'url', 'select'),
     'url'=>array('varchar', 'phone', 'mail', 'url', 'select'),
@@ -203,12 +204,12 @@ $typewecanchangeinto=array(
 );
 if (in_array($type, array_keys($typewecanchangeinto)))
 {
-    $newarray=array();
+    $newarray = array();
     print '<select id="type" class="flat type" name="type">';
-    foreach($type2label as $key => $val)
+    foreach ($type2label as $key => $val)
     {
-        $selected='';
-        if ($key == (GETPOST('type', 'alpha')?GETPOST('type', 'alpha'):$type)) $selected=' selected="selected"';
+        $selected = '';
+        if ($key == (GETPOST('type', 'alpha') ?GETPOST('type', 'alpha') : $type)) $selected = ' selected="selected"';
         if (in_array($key, $typewecanchangeinto[$type])) print '<option value="'.$key.'"'.$selected.'>'.$val.'</option>';
         else print '<option value="'.$key.'" disabled="disabled"'.$selected.'>'.$val.'</option>';
     }
@@ -244,9 +245,9 @@ else
 </td>
 </tr>
 <!-- Position -->
-<tr><td class="titlefield"><?php echo $langs->trans("Position"); ?></td><td class="valeur"><input type="text" name="pos" size="5" value="<?php echo dol_escape_htmltag($pos);  ?>"></td></tr>
+<tr><td class="titlefield"><?php echo $langs->trans("Position"); ?></td><td class="valeur"><input type="text" name="pos" size="5" value="<?php echo dol_escape_htmltag($pos); ?>"></td></tr>
 <!-- Language file -->
-<tr><td class="titlefield"><?php echo $langs->trans("LanguageFile"); ?></td><td class="valeur"><input type="text" name="langfile" class="minwidth200" value="<?php echo dol_escape_htmltag($langfile);  ?>"></td></tr>
+<tr><td class="titlefield"><?php echo $langs->trans("LanguageFile"); ?></td><td class="valeur"><input type="text" name="langfile" class="minwidth200" value="<?php echo dol_escape_htmltag($langfile); ?>"></td></tr>
 <!-- Computed value -->
 <?php if (empty($conf->global->MAIN_STORE_COMPUTED_EXTRAFIELDS)) { ?>
 	<tr class="extra_computed_value"><td><?php echo $form->textwithpicto($langs->trans("ComputedFormula"), $langs->trans("ComputedFormulaDesc"), 1, 'help', '', 0, 2, 'tooltipcompute'); ?></td><td class="valeur"><input id="computed_value" class="quatrevingtpercent" type="text" name="computed_value" value="<?php echo dol_escape_htmltag($computed); ?>"></td></tr>
@@ -256,21 +257,24 @@ else
 <!-- Default Value (at sql setup level) -->
 <tr class="extra_default_value"><td><?php echo $langs->trans("DefaultValue").' ('.$langs->trans("Database").')'; ?></td><td class="valeur"><input id="default_value" type="text" name="default_value" size="5" value="<?php echo dol_escape_htmltag($default); ?>"></td></tr>
 <!-- Unique -->
-<tr class="extra_unique"><td><?php echo $langs->trans("Unique"); ?></td><td class="valeur"><input id="unique" type="checkbox" name="unique"<?php echo ($unique?' checked':''); ?>></td></tr>
+<tr class="extra_unique"><td><?php echo $langs->trans("Unique"); ?></td><td class="valeur"><input id="unique" type="checkbox" name="unique"<?php echo ($unique ? ' checked' : ''); ?>></td></tr>
 <!-- Required -->
-<tr class="extra_required"><td><?php echo $langs->trans("Required"); ?></td><td class="valeur"><input id="required" type="checkbox" name="required"<?php echo ($required?' checked':''); ?>></td></tr>
+<tr class="extra_required"><td><?php echo $langs->trans("Required"); ?></td><td class="valeur"><input id="required" type="checkbox" name="required"<?php echo ($required ? ' checked' : ''); ?>></td></tr>
 <!-- Always editable -->
-<tr class="extra_alwayseditable"><td><?php echo $langs->trans("AlwaysEditable"); ?></td><td class="valeur"><input id="alwayseditable" type="checkbox" name="alwayseditable"<?php echo ($alwayseditable?' checked':''); ?>></td></tr>
+<tr class="extra_alwayseditable"><td><?php echo $langs->trans("AlwaysEditable"); ?></td><td class="valeur"><input id="alwayseditable" type="checkbox" name="alwayseditable"<?php echo ($alwayseditable ? ' checked' : ''); ?>></td></tr>
+<!-- Visibility -->
 <tr><td class="extra_list"><?php echo $form->textwithpicto($langs->trans("Visibility"), $langs->trans("VisibleDesc")); ?>
-</td><td class="valeur"><input id="list" class="minwidth100" type="text" name="list" value="<?php echo ($list!=''?$list:'1'); ?>"></td></tr>
-<tr class="extra_totalizable"><td><?php echo $form->textwithpicto($langs->trans("Totalizable"), $langs->trans("TotalizableDesc")); ?></td><td class="valeur"><input id="totalizable" type="checkbox" name="totalizable"<?php echo ($totalizable?' checked':''); ?>></td></tr>
+</td><td class="valeur"><input id="list" class="minwidth100" type="text" name="list" value="<?php echo ($list != '' ? $list : '1'); ?>"></td></tr>
+<!-- Visibility for PDF-->
+<tr><td class="extra_pdf"><?php echo $form->textwithpicto($langs->trans("DisplayOnPdf"), $langs->trans("DisplayOnPdfDesc")); ?>
+</td><td class="valeur"><input id="printable" class="minwidth100" type="text" name="printable" value="<?php echo dol_escape_htmltag($printable); ?>"></td></tr>
+<tr class="extra_totalizable"><td><?php echo $form->textwithpicto($langs->trans("Totalizable"), $langs->trans("TotalizableDesc")); ?></td><td class="valeur"><input id="totalizable" type="checkbox" name="totalizable"<?php echo ($totalizable ? ' checked' : ''); ?>></td></tr>
 <!-- Help tooltip -->
 <tr class="help"><td><?php echo $form->textwithpicto($langs->trans("HelpOnTooltip"), $langs->trans("HelpOnTooltipDesc")); ?></td><td class="valeur"><input id="help" class="quatrevingtpercent" type="text" name="help" value="<?php echo dol_escape_htmltag($help); ?>"></td></tr>
 <?php if ($conf->multicompany->enabled) { ?>
 	<!-- Multicompany entity -->
-    <tr><td><?php echo $langs->trans("AllEntities"); ?></td><td class="valeur"><input id="entitycurrentorall" type="checkbox" name="entitycurrentorall"<?php echo (empty($entitycurrentorall) ?' checked':''); ?>></td></tr>
+    <tr><td><?php echo $langs->trans("AllEntities"); ?></td><td class="valeur"><input id="entitycurrentorall" type="checkbox" name="entitycurrentorall"<?php echo (empty($entitycurrentorall) ? ' checked' : ''); ?>></td></tr>
 <?php } ?>
-<!-- Visibility -->
 </table>
 
 <?php dol_fiche_end(); ?>

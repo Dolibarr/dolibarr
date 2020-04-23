@@ -1,4 +1,5 @@
-# Dolibarr language file - en_US - Accounting Expert
+# Dolibarr language file - en_US - Accountancy (Double entries)
+Accountancy=Contabilidad
 Accounting=Contabilidad
 ACCOUNTING_EXPORT_SEPARATORCSV=Separador de columnas en el archivo de exportación
 ACCOUNTING_EXPORT_DATE=Formato de fecha en el archivo de exportación
@@ -97,6 +98,8 @@ MenuExpenseReportAccounts=Cuentas de informes de pagos
 MenuLoanAccounts=Cuentas de préstamos
 MenuProductsAccounts=Cuentas contables de productos
 MenuClosureAccounts=Cerrar cuentas
+MenuAccountancyClosure=Cerrar
+MenuAccountancyValidationMovements=Validar movimientos
 ProductsBinding=Cuentas de productos
 TransferInAccounting=Transferencia en contabilidad
 RegistrationInAccounting=Registro en contabilidad
@@ -170,6 +173,8 @@ ACCOUNTING_PRODUCT_SOLD_INTRA_ACCOUNT=Cuenta contable predeterminada para los pr
 ACCOUNTING_PRODUCT_SOLD_EXPORT_ACCOUNT=Cuenta contable predeterminada para los productos vendidos fuera de la CEE (si no se define en el producto)
 ACCOUNTING_SERVICE_BUY_ACCOUNT=Cuenta contable predeterminada para los servicios comprados (si no se define en el servicio)
 ACCOUNTING_SERVICE_SOLD_ACCOUNT=Cuenta contable predeterminada para los servicios vendidos (si no se define en el servico)
+ACCOUNTING_SERVICE_SOLD_INTRA_ACCOUNT=Cuenta contable predeterminada para los servicios vendidos en la CEE (si no se define en el servico)
+ACCOUNTING_SERVICE_SOLD_EXPORT_ACCOUNT=Cuenta contable predeterminada para los servicios vendidos fuera de la CEE (si no se define en el producto)
 
 Doctype=Tipo de documento
 Docdate=Fecha
@@ -192,9 +197,10 @@ ByPersonalizedAccountGroups=Por grupos personalizados
 ByYear=Por año
 NotMatch=No establecido
 DeleteMvt=Eliminar líneas del Libro Mayor
+DelMonth=Mes a eliminar
 DelYear=Año a eliminar
 DelJournal=Diario a eliminar
-ConfirmDeleteMvt=Esto eliminará todas las lineas del Libro Mayor del año y/o de un diario específico. Se requiere al menos un criterio.
+ConfirmDeleteMvt=Esto eliminará todas las líneas del Libro mayor para el año/mes y/o de un diario específico (se requiere al menos un criterio). Deberá volver a utilizar la función 'Registro en contabilidad' para que el registro eliminado vuelva al libro mayor.
 ConfirmDeleteMvtPartial=Esto eliminará la transacción del libro mayor (se eliminarán todas las líneas relacionadas con la misma transacción)
 FinanceJournal=Diario financiero
 ExpenseReportsJournal=Diario informe de gastos
@@ -218,13 +224,15 @@ ListAccounts=Listado de cuentas contables
 UnknownAccountForThirdparty=Cuenta contable de tercero desconocida, usaremos %s
 UnknownAccountForThirdpartyBlocking=Cuenta contable de tercero desconocida. Error de bloqueo
 ThirdpartyAccountNotDefinedOrThirdPartyUnknown=Cuenta de tercero no definida o tercero desconocido. Usaremos %s
+ThirdpartyAccountNotDefinedOrThirdPartyUnknownSubledgerIgnored=Tercero desconocido y cuenta auxiliar no definida en el pago. Se mantendrá vacío el valor de la cuenta auxiliar.
 ThirdpartyAccountNotDefinedOrThirdPartyUnknownBlocking=Cuenta del tercero desconocida o tercero desconocido. Error de bloqueo
 UnknownAccountForThirdpartyAndWaitingAccountNotDefinedBlocking=Cuenta del tercero desconocida y cuenta de espera no definida. Error de bloqueo
 PaymentsNotLinkedToProduct=Pagos no vinculados a un producto/servicio
+ShowOpeningBalance=Show opening balance
+HideOpeningBalance=Hide opening balance
 
 Pcgtype=Grupo de cuenta
-Pcgsubtype=Subgrupo de cuenta
-PcgtypeDesc=Grupo y subgrupo de cuenta se utilizan como criterios predefinidos de "filtro" y "agrupación" para algunos informes de contabilidad. Por ejemplo, "INGRESOS" o "GASTOS" se usan como grupos para cuentas contables de productos para construir el informe de gastos/ingresos.
+PcgtypeDesc=Group of account are used as predefined 'filter' and 'grouping' criteria for some accounting reports. For example, 'INCOME' or 'EXPENSE' are used as groups for accounting accounts of products to build the expense/income report.
 
 TotalVente=Total facturación antes de impuestos
 TotalMarge=Total margen ventas
@@ -235,12 +243,18 @@ DescVentilDoneCustomer=Consulte aquí las líneas de facturas a clientes y las c
 DescVentilTodoCustomer=Contabilizar líneas de factura aún no contabilizadas con una cuenta contable de producto
 ChangeAccount=Cambie la cuenta del producto/servicio para las líneas seleccionadas a la cuenta:
 Vide=-
-DescVentilSupplier=Consulte aquí la lista de líneas de facturas de proveedores enlazadas (o no) a una cuenta contable de producto
+DescVentilSupplier=Consulte aquí la lista de líneas de facturas de proveedor vinculadas (o no) a una cuenta contable del producto (solo se pueden ver registros que no se han transferido a contabilidad)
 DescVentilDoneSupplier=Consulte aquí las líneas de facturas de proveedores y sus cuentas contables
 DescVentilTodoExpenseReport=Contabilizar líneas de informes de gastos aún no contabilizadas con una cuenta contable de gastos
 DescVentilExpenseReport=Consulte aquí la lista de líneas de informes de gastos (o no) a una cuenta contable de gastos
 DescVentilExpenseReportMore=Si configura la cuentas contables de los tipos de informes de gastos, la aplicación será capaz de hacer el enlace entre sus líneas de informes de gastos y las cuentas contables, simplemente con un clic en el botón <strong>"%s"</strong> , Si no se ha establecido la cuenta contable en el diccionario o si todavía tiene algunas líneas no contabilizadas a alguna cuenta, tendrá que hacer una contabilización manual desde el menú "<strong>%s</strong>".
 DescVentilDoneExpenseReport=Consulte aquí las líneas de informes de gastos y sus cuentas contables
+
+DescClosure=Consulte aquí el número de movimientos por mes que no están validados y los años fiscales ya abiertos
+OverviewOfMovementsNotValidated=Paso 1 / Resumen de movimientos no validados. (Necesario para cerrar un año fiscal)
+ValidateMovements=Validar movimientos
+DescValidateMovements=Se prohíbe cualquier modificación o eliminación de registros. Todas las entradas para un ejercicio deben validarse; de lo contrario, no será posible cerrarlo
+SelectMonthAndValidate=Seleccionar mes y validar movimientos
 
 ValidateHistory=Vincular automáticamente
 AutomaticBindingDone=Vinculación automática finalizada
@@ -256,6 +270,8 @@ ListOfProductsWithoutAccountingAccount=Listado de productos sin cuentas contable
 ChangeBinding=Cambiar la unión
 Accounted=Contabilizada en el Libro Mayor
 NotYetAccounted=Aún no contabilizada en el Libro Mayor
+ShowTutorial=Ver Tutorial
+NotReconciled=No reconciliado
 
 ## Admin
 ApplyMassCategories=Aplicar categorías en masa
@@ -264,7 +280,7 @@ CategoryDeleted=La categoría para la cuenta contable ha sido eliminada
 AccountingJournals=Diarios contables
 AccountingJournal=Diario contable
 NewAccountingJournal=Nuevo diario contable
-ShowAccoutingJournal=Mostrar diario contable
+ShowAccountingJournal=Mostrar diario contable
 NatureOfJournal=Naturaleza del diario
 AccountingJournalType1=Operaciones varias
 AccountingJournalType2=Ventas

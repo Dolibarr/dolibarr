@@ -113,7 +113,7 @@ llxHeader('', '', '', '', 0, 0, '', '', $morequerystring);
 $name = $langs->transcountry($local == 1 ? "LT1ReportByCustomers" : "LT2ReportByCustomers", $mysoc->country_code);
 
 $fsearch = '<!-- hidden fields for form -->';
-$fsearch .= '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+$fsearch .= '<input type="hidden" name="token" value="'.newToken().'">';
 $fsearch .= '<input type="hidden" name="modetax" value="'.$modetax.'">';
 $fsearch .= '<input type="hidden" name="localTaxType" value="'.$local.'">';
 $fsearch .= $langs->trans("SalesTurnoverMinimum").': ';

@@ -1,6 +1,15 @@
 # Dolibarr language file - Source file is en_US - bills
+BillsCustomers=Facturas de clientes
+BillsCustomer=Factura de cliente
+InvoiceAvoir=Nota de crédito
+InvoiceAvoirAsk=Nota de crédito para corregir factura
+InvoiceCustomer=Factura de cliente
+CustomerInvoice=Factura de cliente
+PaymentBack=Refund
+CustomerInvoicePaymentBack=Refund
 BillShortStatusClosedUnpaid=Cerrado
 ConfirmClassifyPaidPartiallyReasonDiscountNoVat=El resto a pagar <b>(%s %s)</b> es un descuento acordado después de la factura. Acepto perder el IGV de este descuento
 AmountOfBillsByMonthHT=Importe de las facturas por mes (Sin IGV)
+CreditNote=Nota de crédito
 VATIsNotUsedForInvoice=* IGV no aplicable  art-293B del CGI
-PDFCrabeDescription=Modelo de factura completo (IGV,  método de pago a mostrar, logotipo...)
+PDFCrabeDescription=Invoice PDF template Crabe. A complete invoice template 

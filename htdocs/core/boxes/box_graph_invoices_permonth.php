@@ -160,6 +160,7 @@ class box_graph_invoices_permonth extends ModeleBoxes
 						}
 						$i++;
 					}
+
 					$px1->SetLegend($legend);
 					$px1->SetMaxValue($px1->GetCeilMaxValue());
 					$px1->SetWidth($WIDTH);

@@ -24,7 +24,7 @@
  *  \ingroup    paypal
  *  \brief      Description and activation file for module Paypal
  */
-include_once DOL_DOCUMENT_ROOT .'/core/modules/DolibarrModules.class.php';
+include_once DOL_DOCUMENT_ROOT.'/core/modules/DolibarrModules.class.php';
 
 
 /**
@@ -61,7 +61,7 @@ class modPaypal extends DolibarrModules
         // Name of image file used for this module.
         // If file is in theme/yourtheme/img directory under name object_pictovalue.png, use this->picto='pictovalue'
         // If file is in module/img directory, use this->picto=DOL_URL_ROOT.'/module/img/file.png'
-        $this->picto='paypal@paypal';
+        $this->picto = 'paypal@paypal';
 
         // Data directories to create when module is enabled.
         $this->dirs = array('/paypal/temp');
@@ -70,16 +70,16 @@ class modPaypal extends DolibarrModules
         $this->config_page_url = array("paypal.php@paypal");
 
         // Dependencies
-        $this->hidden = false;			// A condition to hide module
-		$this->depends = array();		// List of module class names as string that must be enabled if this module is enabled
-		$this->requiredby = array('modPaypalPlus');	// List of module ids to disable if this one is disabled
-		$this->conflictwith = array();	// List of module class names as string this module is in conflict with
-		$this->phpmin = array(5,4);		// Minimum version of PHP required by module
-        $this->need_dolibarr_version = array(3,0);		// Minimum version of Dolibarr required by module
+        $this->hidden = false; // A condition to hide module
+		$this->depends = array(); // List of module class names as string that must be enabled if this module is enabled
+		$this->requiredby = array('modPaypalPlus'); // List of module ids to disable if this one is disabled
+		$this->conflictwith = array(); // List of module class names as string this module is in conflict with
+		$this->phpmin = array(5, 4); // Minimum version of PHP required by module
+        $this->need_dolibarr_version = array(3, 0); // Minimum version of Dolibarr required by module
         $this->langfiles = array("paypal");
 
         // Constants
-        $this->const = array();			// List of particular constants to add when module is enabled
+        $this->const = array(); // List of particular constants to add when module is enabled
         //Example: $this->const=array(0=>array('MODULE_MY_NEW_CONST1','chaine','myvalue','This is a constant to add',0),
         //                            1=>array('MODULE_MY_NEW_CONST2','chaine','myvalue','This is another constant to add',0) );
 
@@ -88,8 +88,8 @@ class modPaypal extends DolibarrModules
 
 
         // Boxes
-        $this->boxes = array();			// List of boxes
-        $r=0;
+        $this->boxes = array(); // List of boxes
+        $r = 0;
 
         // Add here list of php file(s) stored in core/boxes that contains class to show a box.
         // Example:
@@ -100,13 +100,13 @@ class modPaypal extends DolibarrModules
 
 
         // Permissions
-        $this->rights = array();		// Permission array used by this module
-        $r=0;
+        $this->rights = array(); // Permission array used by this module
+        $r = 0;
 
 
         // Main menu entries
-        $this->menus = array();			// List of menus to add
-        $r=0;
+        $this->menus = array(); // List of menus to add
+        $r = 0;
         /*$this->menu[$r]=array(
 	        'fk_menu'=>'fk_mainmenu=billing,fk_leftmenu=customers_bills_payment',		    // Use 'fk_mainmenu=xxx' or 'fk_mainmenu=xxx,fk_leftmenu=yyy' where xxx is mainmenucode and yyy is a leftmenucode
 	        'mainmenu'=>'billing',
@@ -165,7 +165,7 @@ class modPaypal extends DolibarrModules
 
 
         // Exports
-        $r=1;
+        $r = 1;
 
         // Example:
         // $this->export_code[$r]=$this->rights_class.'_'.$r;

@@ -78,7 +78,7 @@ print load_fiche_titre($langs->trans("AgendaSetup"), $linkback, 'title_setup');
 
 
 print '<form name="agendasetupform" action="'.$_SERVER["PHP_SELF"].'" method="post">';
-print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+print '<input type="hidden" name="token" value="'.newToken().'">';
 
 $head = agenda_prepare_head();
 
@@ -178,6 +178,7 @@ $message .= $langs->trans("AgendaUrlOptionsNotAdmin", $user->login, $user->login
 $message .= $langs->trans("AgendaUrlOptions4", $user->login, $user->login).'<br>';
 $message .= $langs->trans("AgendaUrlOptionsProject", $user->login, $user->login).'<br>';
 $message .= $langs->trans("AgendaUrlOptionsNotAutoEvent", 'systemauto', 'systemauto').'<br>';
+$message .= $langs->trans("AgendaUrlOptionsIncludeHolidays", '1', '1').'<br>';
 
 print info_admin($message);
 

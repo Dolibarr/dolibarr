@@ -59,6 +59,7 @@ ErrorPartialFile=فایل به طور کامل توسط سرور دریافت ن
 ErrorNoTmpDir=پوشۀ موقت %s وجود ندارد.
 ErrorUploadBlockedByAddon=امکان ارسال توسط یک افزونۀ PHP/Apache مسدود شده است
 ErrorFileSizeTooLarge=حجم فایل بسیار بزرگ است.
+ErrorFieldTooLong=Field %s is too long.
 ErrorSizeTooLongForIntType=برای این نوع عددصحیح اندازه بسیار بلند است (حداکثر %s رقم)
 ErrorSizeTooLongForVarcharType=برای این نوع رشتۀ حروقی اندازه بسیار بزرگ است (حداکثر %s نویسه)
 ErrorNoValueForSelectType=لطفا مقدار مربوط به فهرست انتخاب را وارد کنید
@@ -96,7 +97,7 @@ ErrorBadMaskFailedToLocatePosOfSequence=خطا، ماسک بدون عدد متو
 ErrorBadMaskBadRazMonth=خطا، مقدار نادرست بازنشانی
 ErrorMaxNumberReachForThisMask=حداکثر رقم انتخائی برای این ماسک
 ErrorCounterMustHaveMoreThan3Digits=شمارنده حداقل باید 3 رقمه باشد
-ErrorSelectAtLeastOne=خطا. حداقل یک ورودی انتخاب کنید.
+ErrorSelectAtLeastOne=Error, select at least one entry.
 ErrorDeleteNotPossibleLineIsConsolidated=حذف مقدور نیست زیرا ردیف به یک تراکنش بانکی متصل است که مسکوت است
 ErrorProdIdAlreadyExist=%s به یک‌سوم دیگر اختصاص داده شده
 ErrorFailedToSendPassword=ارسال گذرواژه موفقیت‌آمیز نبو
@@ -117,7 +118,9 @@ ErrorLoginDoesNotExists=کاربری که از نام‌ورود <b>%s</b> اس�
 ErrorLoginHasNoEmail=کاربر هیچ نشانی رایانامه‌‌ای ندارد. پردازش متوقف شد.
 ErrorBadValueForCode=مقدار نادرست برای کد امنیتی. با یک مقدار جدید امتحان کنید...
 ErrorBothFieldCantBeNegative=بخش‌های %s و %s نمی‌توانند هر دو منفی باشند
-ErrorFieldCantBeNegativeOnInvoice=بخش <strong>%s</strong> در این نوع از صورت‌حساب نمی‌تواند منفی باشد. در صورتی که می‌خواهید یک سطر تخفیف داشته باشید، ابتدا در روی صفحه با استفاده از پیوند %s تخفیف را ساخته و سپس آن را به این صورت‌حساب نسبت دهید. شما همچنین می‌توانید  از مدیر بخواهید گزینۀ  FACTURE_ENABLE_NEGATIVE_LINES  را به 1 تغییر دهد تا این رفتار قدیمی را تجویز کند.
+ErrorFieldCantBeNegativeOnInvoice=Field <strong>%s</strong> cannot be negative on this type of invoice. If you need to add a discount line, just create the discount first (from field '%s' in thirdparty card) and apply it to the invoice.
+ErrorLinesCantBeNegativeForOneVATRate=Total of lines can't be negative for a given VAT rate.
+ErrorLinesCantBeNegativeOnDeposits=Lines can't be negative in a deposit. You will face problems when you will need to consume the deposit in final invoice if you do so.
 ErrorQtyForCustomerInvoiceCantBeNegative=در صورت‌حساب مشتری تعداد برای یک سطر نمی‌‌تواند رقمی منفی باشد
 ErrorWebServerUserHasNotPermission=حساب کاربری <b>%s</b> برای اجرای یک سرور وب انتخاب شده اما مجوز آن را ندارد
 ErrorNoActivatedBarcode=هیچ نوع بارکدی فعال نشده
@@ -196,6 +199,7 @@ ErrorPhpMailDelivery=بررسی کنید شما تعداد بیش‌از حدی 
 ErrorUserNotAssignedToTask=کاربر برای امکان محاسبۀ زمان صرف شده باید به یک وظیفه نسبت داده شود.
 ErrorTaskAlreadyAssigned=وظیفه قبلا به کاربر محول شده است
 ErrorModuleFileSeemsToHaveAWrongFormat=ظاهرا بستۀ واحد وضعیت نامناسبی دارد
+ErrorModuleFileSeemsToHaveAWrongFormat2=At least one mandatory directory must exists into zip of module: <strong>%s</strong> or <strong>%s</strong>
 ErrorFilenameDosNotMatchDolibarrPackageRules=نام بستۀ واحد (<strong>%s</strong>) با نام مطلوب نگارش همخوان نیست: <strong>%s</strong>
 ErrorDuplicateTrigger=خطا، نام ماشه-تریگر %s تکراری است. قبلا از %s بارگذاری شده است.
 ErrorNoWarehouseDefined=خطا، هیچ انباری تعریف نشده است.
@@ -219,6 +223,20 @@ ErrorURLMustStartWithHttp=نشانی اینترنتی %s باید با http:// 
 ErrorNewRefIsAlreadyUsed=خطا، ارجاع جدید قبلا استفاده شده است
 ErrorDeletePaymentLinkedToAClosedInvoiceNotPossible=Error, delete payment linked to a closed invoice is not possible.
 ErrorSearchCriteriaTooSmall=Search criteria too small.
+ErrorObjectMustHaveStatusActiveToBeDisabled=Objects must have status 'Active' to be disabled
+ErrorObjectMustHaveStatusDraftOrDisabledToBeActivated=Objects must have status 'Draft' or 'Disabled' to be enabled
+ErrorNoFieldWithAttributeShowoncombobox=No fields has property 'showoncombobox' into definition of object '%s'. No way to show the combolist.
+ErrorFieldRequiredForProduct=Field '%s' is required for product %s
+ProblemIsInSetupOfTerminal=Problem is in setup of terminal %s.
+ErrorAddAtLeastOneLineFirst=Add at least one line first
+ErrorRecordAlreadyInAccountingDeletionNotPossible=Error, record is already transferred in accounting, deletion is not possible.
+ErrorLanguageMandatoryIfPageSetAsTranslationOfAnother=Error, language is mandatory if you set the page as a translation of another one.
+ErrorLanguageOfTranslatedPageIsSameThanThisPage=Error, language of translated page is same than this one.
+ErrorBatchNoFoundForProductInWarehouse=No lot/serial found for product "%s" in warehouse "%s".
+ErrorBatchNoFoundEnoughQuantityForProductInWarehouse=No enough quantity for this lot/serial for product "%s" in warehouse "%s".
+ErrorOnlyOneFieldForGroupByIsPossible=Only 1 field for the 'Group by' is possible (others are discarded)
+ErrorTooManyDifferentValueForSelectedGroupBy=Found too many different value (more than <b>%s</b>) for the field '<b>%s</b>', so we can't use it as a 'Group by' for graphics. The field 'Group By' has been removed. May be you wanted to use it as an X-Axis ?
+ErrorReplaceStringEmpty=Error, the string to replace into is empty
 # Warnings
 WarningParamUploadMaxFileSizeHigherThanPostMaxSize=Your PHP parameter upload_max_filesize (%s) is higher than PHP parameter post_max_size (%s). This is not a consistent setup.
 WarningPasswordSetWithNoAccount=یک گذرواژه برای این عضو تنظیم شده است. با این‌حال هیچ حساب کاربری‌ای ساخته نشده است. بنابراین این گذرواژه برای ورود به Dolibarr قابل استفاده نیست. ممکن است برای یک رابط/واحد بیرونی قابل استفاده باشد، اما اگر شما نخواهید هیچ نام کاربری ورود و گذرواژه‌ای برای یک عضو استفاده کنید، شما می‌توانید گزینۀ "ایجاد یک نام‌ورد برای هر عضو" را از برپاسازی واحد اعضاء غیرفعال کنید. در صورتی که نیاز دارید که نام‌ورود داشته باشید اما گذرواژه نداشته باشید، می‌توانید این بخش را خالی گذاشته تا از این هشدار بر حذر باشید. نکته: همچنین نشانی رایانامه می‌تواند در صورتی که عضو به یک‌کاربر متصل باشد، می‌‌تواند مورد استفاده قرار گیرد
@@ -244,3 +262,4 @@ WarningAnEntryAlreadyExistForTransKey=یک ورودی برای این کلید �
 WarningNumberOfRecipientIsRestrictedInMassAction=هشدار، در هنگام انجام عملیات انبوده روی فهرست‌ها، تعداد دریافت‌کنندگان مختلف به <b>%s</b> محدود است.
 WarningDateOfLineMustBeInExpenseReportRange=هشدار، تاریخ مربوط به سطر در بازۀ گزارش هزینه‌ها نیست
 WarningProjectClosed=طرح بسته است. ابتدا باید آن را باز کنید
+WarningSomeBankTransactionByChequeWereRemovedAfter=Some bank transaction were removed after that the receipt including them were generated. So nb of cheques and total of receipt may differ from number and total in list.

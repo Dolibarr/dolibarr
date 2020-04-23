@@ -60,7 +60,7 @@ MemberSubscriptionModifiedInDolibarr=Abonnement %s für Mitglied %s geändert
 MemberSubscriptionDeletedInDolibarr=Abonnement %s für Mitglied %s gelöscht
 ShipmentValidatedInDolibarr=Lieferung %s freigegeben
 ShipmentClassifyClosedInDolibarr=Lieferung %s als verrechnet markiert
-ShipmentUnClassifyCloseddInDolibarr=Lieferung %s als wiedereröffnet markiert
+ShipmentUnClassifyCloseddInDolibarr=Lieferung %s als wiedereröffnet markieren
 ShipmentBackToDraftInDolibarr=Sendung %s zurück zum Entwurfsstatus
 ShipmentDeletedInDolibarr=Lieferung %s gelöscht
 OrderCreatedInDolibarr= Auftragserteilung %s erstellt
@@ -76,6 +76,7 @@ ContractSentByEMail=Vertrag %s per E-Mail gesendet
 OrderSentByEMail=Kundenauftrag %s per E-Mail gesendet
 InvoiceSentByEMail=Kundenrechnung %s per E-Mail versendet
 SupplierOrderSentByEMail=Bestellung %s per E-Mail gesendet
+ORDER_SUPPLIER_DELETEInDolibarr=Bestellung %s gelöscht
 SupplierInvoiceSentByEMail=Lieferantenrechnung %s per E-Mail gesendet
 ShippingSentByEMail=Lieferung %s per E-Mail versendet
 ShippingValidated= Lieferung %s freigegeben
@@ -86,6 +87,11 @@ InvoiceDeleted=Rechnung gelöscht
 PRODUCT_CREATEInDolibarr=Produkt %s erstellt
 PRODUCT_MODIFYInDolibarr=Produkt %s aktualisiert
 PRODUCT_DELETEInDolibarr=Produkt %s gelöscht
+HOLIDAY_CREATEInDolibarr=Anfrage für Urlaubsantrag %s erstellt
+HOLIDAY_MODIFYInDolibarr=Anfrage für Urlaubsantrag %s bearbeitet
+HOLIDAY_APPROVEInDolibarr=Anfrage für Urlaubsantrag %s genehmigt
+HOLIDAY_VALIDATEDInDolibarr=Anfrage für Urlaubsantrag %s validiert
+HOLIDAY_DELETEInDolibarr=Anfrage für Urlaubsantrag %s gelöscht
 EXPENSE_REPORT_CREATEInDolibarr=Spesenabrechnung %s erstellt
 EXPENSE_REPORT_VALIDATEInDolibarr=Ausgabenbericht %s validiert
 EXPENSE_REPORT_APPROVEInDolibarr=Spesenabrechnung %s genehmigt
@@ -99,6 +105,14 @@ TICKET_MODIFYInDolibarr=Ticket %s geändert
 TICKET_ASSIGNEDInDolibarr=Ticket %s zugewiesen
 TICKET_CLOSEInDolibarr=Ticket %s geschlossen
 TICKET_DELETEInDolibarr=Ticket %s wurde gelöscht
+BOM_VALIDATEInDolibarr=Stückliste freigegeben
+BOM_UNVALIDATEInDolibarr=Stückliste unbestätigt
+BOM_CLOSEInDolibarr=Stückliste deaktiviert
+BOM_REOPENInDolibarr=Stückliste wiedereröffnet
+BOM_DELETEInDolibarr=Stückliste gelöscht
+MRP_MO_VALIDATEInDolibarr=Fertigungsauftrag freigegeben
+MRP_MO_PRODUCEDInDolibarr=Fertigungsauftrag produziert
+MRP_MO_DELETEInDolibarr=Fertigungsauftrag gelöscht
 ##### End agenda events #####
 AgendaModelModule=Dokumentvorlagen für Ereignisse
 DateActionStart=Beginnt
@@ -109,6 +123,7 @@ AgendaUrlOptionsNotAdmin=<b>logina=!%s</b> begrenzt die Ausgabe auf dem Benutzer
 AgendaUrlOptions4=<b>logint=%s</b> begrenzt die Ausgabe auf den Benutzer <b>%s</b> (Eigentümer und andere) zugewiesene Aktionen.
 AgendaUrlOptionsProject=<b>project=__PROJECT_ID__</b> um nur Aktionen zum Projekt <b> __PROJECT_ID__</b> auszugeben.
 AgendaUrlOptionsNotAutoEvent=<b>notactiontype=systemauto</b> um automatische Events auszuschliessen.
+AgendaUrlOptionsIncludeHolidays=<b> includeseholidays = 1 </b>, um Ereignisse von Feiertagen einzuschließen.
 AgendaShowBirthdayEvents=Geburtstage von Kontakten anzeigen
 AgendaHideBirthdayEvents=Geburtstage von Kontakten nicht anzeigen
 Busy=Besetzt

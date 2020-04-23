@@ -66,7 +66,7 @@ if ($conf->accounting->enabled)
 
     $resultboxes = FormOther::getBoxesArea($user, "27"); // Load $resultboxes (selectboxlist + boxactivated + boxlista + boxlistb)
 
-	$helpisexpanded = empty($resultboxes['boxactivated']); // If there is no widget, the tooltip help is expanded by default.
+    $helpisexpanded = empty($resultboxes['boxactivated']) || (empty($resultboxes['boxlista']) && empty($resultboxes['boxlistb'])); // If there is no widget, the tooltip help is expanded by default.
 	$showtutorial = '';
 
 	if (!$helpisexpanded)
@@ -90,10 +90,10 @@ if ($conf->accounting->enabled)
 
 	print load_fiche_titre($langs->trans("AccountancyArea"), $resultboxes['selectboxlist'], 'accountancy', 0, '', '', $showtutorial);
 
-    print '<div class="'.($helpisexpanded ? '' : 'hideobject').'" id="idfaq">'; 	// hideobject is to start hidden
+    print '<div class="'.($helpisexpanded ? '' : 'hideobject').'" id="idfaq">'; // hideobject is to start hidden
     print "<br>\n";
     print '<span class="opacitymedium">'.$langs->trans("AccountancyAreaDescIntro")."</span><br>\n";
-	print "<br>\n";print "<br>\n";
+	print "<br>\n"; print "<br>\n";
 
 	print load_fiche_titre('<span class="fa fa-calendar-check-o"></span> '.$langs->trans("AccountancyAreaDescActionOnce"), '', '')."\n";
 	print '<hr>';
@@ -222,10 +222,6 @@ if ($conf->accounting->enabled)
     $boxlist .= '<div class="twocolumns">';
 
     $boxlist .= '<div class="firstcolumn fichehalfleft boxhalfleft" id="boxhalfleft">';
-    if (!empty($nbworkboardcount))
-    {
-        $boxlist .= $boxwork;
-    }
 
     $boxlist .= $resultboxes['boxlista'];
 
@@ -233,7 +229,6 @@ if ($conf->accounting->enabled)
 
     $boxlist .= '<div class="secondcolumn fichehalfright boxhalfright" id="boxhalfright">';
 
-    $boxlist .= $boxstat;
     $boxlist .= $resultboxes['boxlistb'];
 
     $boxlist .= '</div>';

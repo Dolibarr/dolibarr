@@ -49,7 +49,7 @@ $typeid = GETPOST('typeid', 'int');
 $limit = GETPOST('limit', 'int') ?GETPOST('limit', 'int') : $conf->liste_limit;
 $sortfield = GETPOST('sortfield', 'alpha');
 $sortorder = GETPOST('sortorder', 'alpha');
-$page = GETPOST('page', 'int');
+$page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOST("page", 'int');
 if (empty($page) || $page == -1) { $page = 0; }     // If $page is not defined, or '' or -1
 $offset = $limit * $page;
 $pageprev = $page - 1;
@@ -81,33 +81,33 @@ if ($rowid)
     $result = $object->fetch($rowid);
 
     // Define variables to know what current user can do on users
-    $canadduser=($user->admin || $user->rights->user->user->creer);
+    $canadduser = ($user->admin || $user->rights->user->user->creer);
     // Define variables to know what current user can do on properties of user linked to edited member
     if ($object->user_id)
     {
         // $user is the user editing, $object->user_id is the user's id linked to the edited member
-        $caneditfielduser=( (($user->id == $object->user_id) && $user->rights->user->self->creer)
-        || (($user->id != $object->user_id) && $user->rights->user->user->creer) );
-        $caneditpassworduser=( (($user->id == $object->user_id) && $user->rights->user->self->password)
-        || (($user->id != $object->user_id) && $user->rights->user->user->password) );
+        $caneditfielduser = ((($user->id == $object->user_id) && $user->rights->user->self->creer)
+        || (($user->id != $object->user_id) && $user->rights->user->user->creer));
+        $caneditpassworduser = ((($user->id == $object->user_id) && $user->rights->user->self->password)
+        || (($user->id != $object->user_id) && $user->rights->user->user->password));
     }
 }
 
 // Define variables to know what current user can do on members
-$canaddmember=$user->rights->adherent->creer;
+$canaddmember = $user->rights->adherent->creer;
 // Define variables to know what current user can do on properties of a member
 if ($rowid)
 {
-    $caneditfieldmember=$user->rights->adherent->creer;
+    $caneditfieldmember = $user->rights->adherent->creer;
 }
 
 // Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
 $hookmanager->initHooks(array('subscription'));
 
 // PDF
-$hidedetails = (GETPOST('hidedetails', 'int') ? GETPOST('hidedetails', 'int') : (! empty($conf->global->MAIN_GENERATE_DOCUMENTS_HIDE_DETAILS) ? 1 : 0));
-$hidedesc = (GETPOST('hidedesc', 'int') ? GETPOST('hidedesc', 'int') : (! empty($conf->global->MAIN_GENERATE_DOCUMENTS_HIDE_DESC) ? 1 : 0));
-$hideref = (GETPOST('hideref', 'int') ? GETPOST('hideref', 'int') : (! empty($conf->global->MAIN_GENERATE_DOCUMENTS_HIDE_REF) ? 1 : 0));
+$hidedetails = (GETPOST('hidedetails', 'int') ? GETPOST('hidedetails', 'int') : (!empty($conf->global->MAIN_GENERATE_DOCUMENTS_HIDE_DETAILS) ? 1 : 0));
+$hidedesc = (GETPOST('hidedesc', 'int') ? GETPOST('hidedesc', 'int') : (!empty($conf->global->MAIN_GENERATE_DOCUMENTS_HIDE_DESC) ? 1 : 0));
+$hideref = (GETPOST('hideref', 'int') ? GETPOST('hideref', 'int') : (!empty($conf->global->MAIN_GENERATE_DOCUMENTS_HIDE_REF) ? 1 : 0));
 
 
 /*
@@ -229,7 +229,7 @@ if ($user->rights->adherent->cotisation->creer && $action == 'subscription' && !
     // Payment informations
     $accountid = $_POST["accountid"];
     $operation = $_POST["operation"]; // Payment mode
-    $num_chq = $_POST["num_chq"];
+    $num_chq = GETPOST("num_chq", "alphanohtml");
     $emetteur_nom = $_POST["chqemetteur"];
     $emetteur_banque = $_POST["chqbank"];
     $option = $_POST["paymentsave"];
@@ -464,7 +464,7 @@ if ($rowid > 0)
     if (!empty($conf->societe->enabled)) $rowspan++;
 
     print '<form action="'.$_SERVER["PHP_SELF"].'" method="POST">';
-    print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+    print '<input type="hidden" name="token" value="'.newToken().'">';
     print '<input type="hidden" name="rowid" value="'.$object->id.'">';
 
     dol_fiche_head($head, 'subscription', $langs->trans("Member"), -1, 'user');
@@ -531,7 +531,7 @@ if ($rowid > 0)
 	{
 		print '<tr><td>'.$langs->trans("Categories").'</td>';
 		print '<td colspan="2">';
-		print $form->showCategories($object->id, 'member', 1);
+		print $form->showCategories($object->id, Categorie::TYPE_MEMBER, 1);
 		print '</td></tr>';
 	}
 
@@ -579,7 +579,7 @@ if ($rowid > 0)
 			print '<form method="POST" action="'.$_SERVER['PHP_SELF'].'" name="form'.$htmlname.'">';
 			print '<input type="hidden" name="rowid" value="'.$object->id.'">';
 			print '<input type="hidden" name="action" value="set'.$htmlname.'">';
-			print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+			print '<input type="hidden" name="token" value="'.newToken().'">';
 			print '<table class="nobordernopadding" cellpadding="0" cellspacing="0">';
 			print '<tr><td>';
 			print $form->select_company($object->fk_soc, 'socid', '', 1);
@@ -691,14 +691,14 @@ if ($rowid > 0)
 
             print '<tr class="liste_titre">';
             print_liste_field_titre('Ref', $_SERVER["PHP_SELF"], 'c.rowid', '', $param, '', $sortfield, $sortorder);
-            print_liste_field_titre('DateCreation', $_SERVER["PHP_SELF"], '', '', $param, '', $sortfield, $sortorder);
-            print_liste_field_titre('Type', $_SERVER["PHP_SELF"], '', '', $param, '', $sortfield, $sortorder);
-            print_liste_field_titre('DateStart', $_SERVER["PHP_SELF"], '', '', $param, '', $sortfield, $sortorder);
-            print_liste_field_titre('DateEnd', $_SERVER["PHP_SELF"], '', '', $param, '', $sortfield, $sortorder);
-            print_liste_field_titre('Amount', $_SERVER["PHP_SELF"], '', '', $param, '', $sortfield, $sortorder);
+            print_liste_field_titre('DateCreation', $_SERVER["PHP_SELF"], '', '', $param, '', $sortfield, $sortorder, 'center ');
+            print_liste_field_titre('Type', $_SERVER["PHP_SELF"], '', '', $param, '', $sortfield, $sortorder, 'center ');
+            print_liste_field_titre('DateStart', $_SERVER["PHP_SELF"], '', '', $param, '', $sortfield, $sortorder, 'center ');
+            print_liste_field_titre('DateEnd', $_SERVER["PHP_SELF"], '', '', $param, '', $sortfield, $sortorder, 'center ');
+            print_liste_field_titre('Amount', $_SERVER["PHP_SELF"], '', '', $param, '', $sortfield, $sortorder, 'right ');
             if (!empty($conf->banque->enabled))
             {
-                print_liste_field_titre('Account', $_SERVER["PHP_SELF"], '', '', $param, '', $sortfield, $sortorder);
+            	print_liste_field_titre('Account', $_SERVER["PHP_SELF"], '', '', $param, '', $sortfield, $sortorder, 'right ');
             }
             print "</tr>\n";
 
@@ -898,14 +898,14 @@ if ($rowid > 0)
                     'moreattr' => 'maxlength="128"',
                 );
 			}
-			// @TODO Add other extrafields mandatory for thirdparty creation
+			// @todo Add other extrafields mandatory for thirdparty creation
 
 			print $form->formconfirm($_SERVER["PHP_SELF"]."?rowid=".$object->id, $langs->trans("CreateDolibarrThirdParty"), $langs->trans("ConfirmCreateThirdParty"), "confirm_create_thirdparty", $formquestion, 1);
 		}
 
 
         print '<form name="subscription" method="POST" action="'.$_SERVER["PHP_SELF"].'">';
-        print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+        print '<input type="hidden" name="token" value="'.newToken().'">';
         print '<input type="hidden" name="action" value="subscription">';
         print '<input type="hidden" name="rowid" value="'.$rowid.'">';
         print '<input type="hidden" name="memberlabel" id="memberlabel" value="'.dol_escape_htmltag($object->getFullName($langs)).'">';

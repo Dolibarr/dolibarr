@@ -39,52 +39,52 @@
  */
 
 include_once 'inc.php';
-if (! file_exists($conffile))
+if (!file_exists($conffile))
 {
     print 'Error: Dolibarr config file was not found. This may means that Dolibarr is not installed yet. Please call the page "/install/index.php" instead of "/install/upgrade.php").';
 }
 require_once $conffile;
-require_once $dolibarr_main_document_root . '/compta/facture/class/facture.class.php';
-require_once $dolibarr_main_document_root . '/comm/propal/class/propal.class.php';
-require_once $dolibarr_main_document_root . '/contrat/class/contrat.class.php';
-require_once $dolibarr_main_document_root . '/commande/class/commande.class.php';
-require_once $dolibarr_main_document_root . '/fourn/class/fournisseur.commande.class.php';
-require_once $dolibarr_main_document_root . '/core/lib/price.lib.php';
-require_once $dolibarr_main_document_root . '/core/class/menubase.class.php';
-require_once $dolibarr_main_document_root . '/core/lib/files.lib.php';
+require_once $dolibarr_main_document_root.'/compta/facture/class/facture.class.php';
+require_once $dolibarr_main_document_root.'/comm/propal/class/propal.class.php';
+require_once $dolibarr_main_document_root.'/contrat/class/contrat.class.php';
+require_once $dolibarr_main_document_root.'/commande/class/commande.class.php';
+require_once $dolibarr_main_document_root.'/fourn/class/fournisseur.commande.class.php';
+require_once $dolibarr_main_document_root.'/core/lib/price.lib.php';
+require_once $dolibarr_main_document_root.'/core/class/menubase.class.php';
+require_once $dolibarr_main_document_root.'/core/lib/files.lib.php';
 
 global $langs;
 
-$grant_query='';
+$grant_query = '';
 $step = 2;
 $error = 0;
 
 
 // Cette page peut etre longue. On augmente le delai autorise.
 // Ne fonctionne que si on est pas en safe_mode.
-$err=error_reporting();
+$err = error_reporting();
 error_reporting(0);
-if (! empty($conf->global->MAIN_OVERRIDE_TIME_LIMIT))
+if (!empty($conf->global->MAIN_OVERRIDE_TIME_LIMIT))
 	@set_time_limit((int) $conf->global->MAIN_OVERRIDE_TIME_LIMIT);
 else
 	@set_time_limit(600);
 error_reporting($err);
 
-$setuplang=GETPOST("selectlang", 'aZ09', 3)?GETPOST("selectlang", 'aZ09', 3):'auto';
+$setuplang = GETPOST("selectlang", 'aZ09', 3) ?GETPOST("selectlang", 'aZ09', 3) : 'auto';
 $langs->setDefaultLang($setuplang);
-$versionfrom=GETPOST("versionfrom", 'alpha', 3)?GETPOST("versionfrom", 'alpha', 3):(empty($argv[1])?'':$argv[1]);
-$versionto=GETPOST("versionto", 'alpha', 3)?GETPOST("versionto", 'alpha', 3):(empty($argv[2])?'':$argv[2]);
-$enablemodules=GETPOST("enablemodules", 'alpha', 3)?GETPOST("enablemodules", 'alpha', 3):(empty($argv[3])?'':$argv[3]);
+$versionfrom = GETPOST("versionfrom", 'alpha', 3) ?GETPOST("versionfrom", 'alpha', 3) : (empty($argv[1]) ? '' : $argv[1]);
+$versionto = GETPOST("versionto", 'alpha', 3) ?GETPOST("versionto", 'alpha', 3) : (empty($argv[2]) ? '' : $argv[2]);
+$enablemodules = GETPOST("enablemodules", 'alpha', 3) ?GETPOST("enablemodules", 'alpha', 3) : (empty($argv[3]) ? '' : $argv[3]);
 
 $langs->loadLangs(array("admin", "install", "bills", "suppliers"));
 
-if ($dolibarr_main_db_type == 'mysqli') $choix=1;
-if ($dolibarr_main_db_type == 'pgsql')  $choix=2;
-if ($dolibarr_main_db_type == 'mssql')  $choix=3;
+if ($dolibarr_main_db_type == 'mysqli') $choix = 1;
+if ($dolibarr_main_db_type == 'pgsql')  $choix = 2;
+if ($dolibarr_main_db_type == 'mssql')  $choix = 3;
 
 
 dolibarr_install_syslog("--- upgrade2: entering upgrade2.php page ".$versionfrom." ".$versionto." ".$enablemodules);
-if (! is_object($conf)) dolibarr_install_syslog("upgrade2: conf file not initialized", LOG_ERR);
+if (!is_object($conf)) dolibarr_install_syslog("upgrade2: conf file not initialized", LOG_ERR);
 
 
 
@@ -180,7 +180,7 @@ if (!GETPOST('action', 'aZ09') || preg_match('/upgrade/i', GETPOST('action', 'aZ
 
     /***************************************************************************************
      *
-     * Migration des donnees
+     * Migration of data
      *
      ***************************************************************************************/
     $db->begin();
@@ -453,8 +453,8 @@ if (!GETPOST('action', 'aZ09') || preg_match('/upgrade/i', GETPOST('action', 'aZ
         }
 
         // Scripts for 11.0
-        $afterversionarray=explode('.', '10.0.9');
-        $beforeversionarray=explode('.', '11.0.9');
+        $afterversionarray = explode('.', '10.0.9');
+        $beforeversionarray = explode('.', '11.0.9');
         if (versioncompare($versiontoarray, $afterversionarray) >= 0 && versioncompare($versiontoarray, $beforeversionarray) <= 0) {
             migrate_users_socialnetworks();
             migrate_members_socialnetworks();
@@ -477,6 +477,7 @@ if (!GETPOST('action', 'aZ09') || preg_match('/upgrade/i', GETPOST('action', 'aZ
 			'MAIN_MODULE_DON'=>'newboxdefonly',
 			'MAIN_MODULE_ECM'=>'newboxdefonly',
 			'MAIN_MODULE_EXTERNALSITE'=>'newboxdefonly',
+			'MAIN_MODULE_EXPENSEREPORT'=>'newboxdefonly',
 			'MAIN_MODULE_FACTURE'=>'newboxdefonly',
 			'MAIN_MODULE_FOURNISSEUR'=>'newboxdefonly',
 			'MAIN_MODULE_HOLIDAY'=>'newboxdefonly',
@@ -484,10 +485,12 @@ if (!GETPOST('action', 'aZ09') || preg_match('/upgrade/i', GETPOST('action', 'aZ
 			'MAIN_MODULE_PAYBOX'=>'newboxdefonly',
 			'MAIN_MODULE_PRINTING'=>'newboxdefonly',
 			'MAIN_MODULE_PRODUIT'=>'newboxdefonly',
+			'MAIN_MODULE_RESOURCE'=>'newboxdefonly',
 			'MAIN_MODULE_SALARIES'=>'newboxdefonly',
 			'MAIN_MODULE_SYSLOG'=>'newboxdefonly',
 			'MAIN_MODULE_SOCIETE'=>'newboxdefonly',
 			'MAIN_MODULE_SERVICE'=>'newboxdefonly',
+			'MAIN_MODULE_TAKEPOS'=>'newboxdefonly',
 			'MAIN_MODULE_USER'=>'newboxdefonly', //This one must be always done and only into last targeted version)
 			'MAIN_MODULE_VARIANTS'=>'newboxdefonly',
 			'MAIN_MODULE_WEBSITE'=>'newboxdefonly',
@@ -552,6 +555,11 @@ if (!GETPOST('action', 'aZ09') || preg_match('/upgrade/i', GETPOST('action', 'aZ
     }
 
     print '</table>';
+
+
+    $sql = 'UPDATE '.MAIN_DB_PREFIX."const SET VALUE = 'torefresh' WHERE name = 'MAIN_FIRST_PING_OK_ID'";
+    $db->query($sql, 1);
+
 
     // We always commit.
     // Process is designed so we can run it several times whatever is situation.
@@ -976,7 +984,7 @@ function migrate_contracts_det($db, $langs, $conf)
     print '<br>';
     print '<b>'.$langs->trans('MigrationContractsUpdate')."</b><br>\n";
 
-    $sql = "SELECT c.rowid as cref, c.date_contrat, c.statut, c.mise_en_service, c.fin_validite, c.date_cloture, c.fk_product, c.fk_facture, c.fk_user_author,";
+    $sql = "SELECT c.rowid as cref, c.date_contrat, c.statut, c.fk_product, c.fk_facture, c.fk_user_author,";
     $sql .= " p.ref, p.label, p.description, p.price, p.tva_tx, p.duration, cd.rowid";
     $sql .= " FROM ".MAIN_DB_PREFIX."contrat as c";
     $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."product as p";
@@ -1007,15 +1015,15 @@ function migrate_contracts_det($db, $langs, $conf)
                 $sql .= "date_ouverture_prevue, date_ouverture, date_fin_validite, tva_tx, qty,";
                 $sql .= "subprice, price_ht, fk_user_author, fk_user_ouverture)";
                 $sql .= " VALUES (";
-                $sql .= $obj->cref.",".($obj->fk_product ? $obj->fk_product : 0).",";
-                $sql .= ($obj->mise_en_service ? "4" : "0").",";
-                $sql .= "'".$db->escape($obj->label)."', null,";
-                $sql .= ($obj->mise_en_service ? "'".$obj->mise_en_service."'" : ($obj->date_contrat ? "'".$obj->date_contrat."'" : "null")).",";
-                $sql .= ($obj->mise_en_service ? "'".$obj->mise_en_service."'" : "null").",";
-                $sql .= ($obj->fin_validite ? "'".$obj->fin_validite."'" : "null").",";
-                $sql .= "'".$obj->tva_tx."', 1,";
-                $sql .= "'".$obj->price."', '".$obj->price."',".$obj->fk_user_author.",";
-                $sql .= ($obj->mise_en_service ? $obj->fk_user_author : "null");
+                $sql .= $obj->cref.", ".($obj->fk_product ? $obj->fk_product : 0).", ";
+                $sql .= "0, ";
+                $sql .= "'".$db->escape($obj->label)."', null, ";
+                $sql .= ($obj->date_contrat ? "'".$obj->date_contrat."'" : "null").", ";
+                $sql .= "null, ";
+                $sql .= "null, ";
+                $sql .= "'".$obj->tva_tx."' , 1, ";
+                $sql .= "'".$obj->price."', '".$obj->price."', ".$obj->fk_user_author.",";
+                $sql .= "null";
                 $sql .= ")";
 
                 if ($db->query($sql))
@@ -4474,7 +4482,10 @@ function migrate_delete_old_files($db, $langs, $conf)
         '/core/modules/facture/pdf_crabe.modules.php',
         '/core/modules/facture/pdf_oursin.modules.php',
 
-        '/compta/facture/class/api_invoice.class.php',
+    	'/api/class/api_generic.class.php',
+    	'/categories/class/api_category.class.php',
+    	'/categories/class/api_deprecated_category.class.php',
+    	'/compta/facture/class/api_invoice.class.php',
         '/commande/class/api_commande.class.php',
         '/user/class/api_user.class.php',
         '/product/class/api_product.class.php',
@@ -4687,6 +4698,16 @@ function migrate_reload_modules($db, $langs, $conf, $listofmodule = array(), $fo
 				$mod->init($reloadmode);
 			}
 		}
+		elseif ($moduletoreload == 'MAIN_MODULE_EXPENSEREPORT')
+		{
+			dolibarr_install_syslog("upgrade2::migrate_reload_modules Reactivate Expense Report module");
+			$res = @include_once DOL_DOCUMENT_ROOT.'/core/modules/modExpenseReport.class.php';
+			if ($res) {
+				$mod = new modExpenseReport($db);
+				//$mod->remove('noboxes');
+				$mod->init($reloadmode);
+			}
+		}
 		elseif ($moduletoreload == 'MAIN_MODULE_DON')    // Permission has changed into 3.0
 		{
 			dolibarr_install_syslog("upgrade2::migrate_reload_modules Reactivate Don module");
@@ -4737,8 +4758,19 @@ function migrate_reload_modules($db, $langs, $conf, $listofmodule = array(), $fo
 				$mod->init($reloadmode);
 			}
 		}
+		elseif ($moduletoreload == 'MAIN_MODULE_TAKEPOS')    // Permission has changed into 10.0
+		{
+			dolibarr_install_syslog("upgrade2::migrate_reload_modules Reactivate Takepos module");
+			$res = @include_once DOL_DOCUMENT_ROOT.'/core/modules/modTakePos.class.php';
+			if ($res) {
+				$mod = new modTakePos($db);
+				$mod->remove('noboxes'); // We need to remove because menu entries has changed
+				$mod->init($reloadmode);
+			}
+		}
 		else
 		{
+			$reg = array();
 			$tmp = preg_match('/MAIN_MODULE_([a-zA-Z0-9]+)/', $moduletoreload, $reg);
 			if (!empty($reg[1]))
 			{
@@ -4957,16 +4989,16 @@ function migrate_users_socialnetworks()
     $db->begin();
     print '<tr><td colspan="4">';
     $sql = 'SELECT rowid, socialnetworks';
-    $sql .= ', skype, twitter, facebook, linkedin, instagram, snapchat, googleplus, youtube, whatsapp FROM '.MAIN_DB_PREFIX.'user WHERE ';
-    $sql .= ' skype IS NOT NULL OR skype !=""';
-    $sql .= ' OR twitter IS NOT NULL OR twitter !=""';
-    $sql .= ' OR facebook IS NOT NULL OR facebook!=""';
-    $sql .= ' OR linkedin IS NOT NULL OR linkedin!=""';
-    $sql .= ' OR instagram IS NOT NULL OR instagram!=""';
-    $sql .= ' OR snapchat IS NOT NULL OR snapchat!=""';
-    $sql .= ' OR googleplus IS NOT NULL OR googleplus!=""';
-    $sql .= ' OR youtube IS NOT NULL OR youtube!=""';
-    $sql .= ' OR whatsapp IS NOT NULL OR whatsapp!=""';
+    $sql .= ', skype, twitter, facebook, linkedin, instagram, snapchat, googleplus, youtube, whatsapp FROM '.MAIN_DB_PREFIX.'user WHERE';
+    $sql .= " skype IS NOT NULL OR skype <> ''";
+    $sql .= " OR twitter IS NOT NULL OR twitter <> ''";
+    $sql .= " OR facebook IS NOT NULL OR facebook <> ''";
+    $sql .= " OR linkedin IS NOT NULL OR linkedin <> ''";
+    $sql .= " OR instagram IS NOT NULL OR instagram <> ''";
+    $sql .= " OR snapchat IS NOT NULL OR snapchat <> ''";
+    $sql .= " OR googleplus IS NOT NULL OR googleplus <> ''";
+    $sql .= " OR youtube IS NOT NULL OR youtube <> ''";
+    $sql .= " OR whatsapp IS NOT NULL OR whatsapp <> ''";
     //print $sql;
     $resql = $db->query($sql);
     if ($resql) {
@@ -5003,20 +5035,20 @@ function migrate_users_socialnetworks()
                 $obj->socialnetworks = '[]';
             }
             $socialnetworks = array_merge($arraysocialnetworks, json_decode($obj->socialnetworks, true));
-            $sqlupd = 'UPDATE '.MAIN_DB_PREFIX.'user SET socialnetworks="'.$db->escape(json_encode($socialnetworks, true)).'"';
-            $sqlupd.= ', skype=null';
-            $sqlupd.= ', twitter=null';
-            $sqlupd.= ', facebook=null';
-            $sqlupd.= ', linkedin=null';
-            $sqlupd.= ', instagram=null';
-            $sqlupd.= ', snapchat=null';
-            $sqlupd.= ', googleplus=null';
-            $sqlupd.= ', youtube=null';
-            $sqlupd.= ', whatsapp=null';
-            $sqlupd.= ' WHERE rowid='.$obj->rowid;
+            $sqlupd = 'UPDATE '.MAIN_DB_PREFIX."user SET socialnetworks='".$db->escape(json_encode($socialnetworks, true))."'";
+            $sqlupd .= ', skype=null';
+            $sqlupd .= ', twitter=null';
+            $sqlupd .= ', facebook=null';
+            $sqlupd .= ', linkedin=null';
+            $sqlupd .= ', instagram=null';
+            $sqlupd .= ', snapchat=null';
+            $sqlupd .= ', googleplus=null';
+            $sqlupd .= ', youtube=null';
+            $sqlupd .= ', whatsapp=null';
+            $sqlupd .= ' WHERE rowid='.$obj->rowid;
             //print $sqlupd."<br>";
             $resqlupd = $db->query($sqlupd);
-            if (! $resqlupd) {
+            if (!$resqlupd) {
                 dol_print_error($db);
                 $error++;
             }
@@ -5024,7 +5056,7 @@ function migrate_users_socialnetworks()
     } else {
         $error++;
     }
-    if (! $error) {
+    if (!$error) {
         $db->commit();
     } else {
         dol_print_error($db);
@@ -5049,15 +5081,15 @@ function migrate_members_socialnetworks()
     print '<tr><td colspan="4">';
     $sql = 'SELECT rowid, socialnetworks';
     $sql .= ', skype, twitter, facebook, linkedin, instagram, snapchat, googleplus, youtube, whatsapp FROM '.MAIN_DB_PREFIX.'adherent WHERE ';
-    $sql .= ' skype IS NOT NULL OR skype!=""';
-    $sql .= ' OR twitter IS NOT NULL OR twitter!=""';
-    $sql .= ' OR facebook IS NOT NULL OR facebook!=""';
-    $sql .= ' OR linkedin IS NOT NULL OR linkedin!=""';
-    $sql .= ' OR instagram IS NOT NULL OR instagram!=""';
-    $sql .= ' OR snapchat IS NOT NULL OR snapchat!=""';
-    $sql .= ' OR googleplus IS NOT NULL OR googleplus!=""';
-    $sql .= ' OR youtube IS NOT NULL OR youtube!=""';
-    $sql .= ' OR whatsapp IS NOT NULL OR whatsapp!=""';
+    $sql .= " skype IS NOT NULL OR skype <> ''";
+    $sql .= " OR twitter IS NOT NULL OR twitter <> ''";
+    $sql .= " OR facebook IS NOT NULL OR facebook <> ''";
+    $sql .= " OR linkedin IS NOT NULL OR linkedin <> ''";
+    $sql .= " OR instagram IS NOT NULL OR instagram <> ''";
+    $sql .= " OR snapchat IS NOT NULL OR snapchat <> ''";
+    $sql .= " OR googleplus IS NOT NULL OR googleplus <> ''";
+    $sql .= " OR youtube IS NOT NULL OR youtube <> ''";
+    $sql .= " OR whatsapp IS NOT NULL OR whatsapp <> ''";
     //print $sql;
     $resql = $db->query($sql);
     if ($resql) {
@@ -5094,20 +5126,20 @@ function migrate_members_socialnetworks()
                 $obj->socialnetworks = '[]';
             }
             $socialnetworks = array_merge($arraysocialnetworks, json_decode($obj->socialnetworks, true));
-            $sqlupd = 'UPDATE '.MAIN_DB_PREFIX.'adherent SET socialnetworks="'.$db->escape(json_encode($socialnetworks, true)).'"';
-            $sqlupd.= ', skype=null';
-            $sqlupd.= ', twitter=null';
-            $sqlupd.= ', facebook=null';
-            $sqlupd.= ', linkedin=null';
-            $sqlupd.= ', instagram=null';
-            $sqlupd.= ', snapchat=null';
-            $sqlupd.= ', googleplus=null';
-            $sqlupd.= ', youtube=null';
-            $sqlupd.= ', whatsapp=null';
-            $sqlupd.= ' WHERE rowid='.$obj->rowid;
+            $sqlupd = 'UPDATE '.MAIN_DB_PREFIX."adherent SET socialnetworks='".$db->escape(json_encode($socialnetworks, true))."'";
+            $sqlupd .= ', skype=null';
+            $sqlupd .= ', twitter=null';
+            $sqlupd .= ', facebook=null';
+            $sqlupd .= ', linkedin=null';
+            $sqlupd .= ', instagram=null';
+            $sqlupd .= ', snapchat=null';
+            $sqlupd .= ', googleplus=null';
+            $sqlupd .= ', youtube=null';
+            $sqlupd .= ', whatsapp=null';
+            $sqlupd .= ' WHERE rowid='.$obj->rowid;
             //print $sqlupd."<br>";
             $resqlupd = $db->query($sqlupd);
-            if (! $resqlupd) {
+            if (!$resqlupd) {
                 dol_print_error($db);
                 $error++;
             }
@@ -5115,7 +5147,7 @@ function migrate_members_socialnetworks()
     } else {
         $error++;
     }
-    if (! $error) {
+    if (!$error) {
         $db->commit();
     } else {
         dol_print_error($db);
@@ -5139,16 +5171,16 @@ function migrate_contacts_socialnetworks()
     print '<tr><td colspan="4">';
     $sql = 'SELECT rowid, socialnetworks';
     $sql .= ', jabberid, skype, twitter, facebook, linkedin, instagram, snapchat, googleplus, youtube, whatsapp FROM '.MAIN_DB_PREFIX.'socpeople WHERE ';
-    $sql .= ' jabberid IS NOT NULL OR jabberid!=""';
-    $sql .= ' OR skype IS NOT NULL OR skype!=""';
-    $sql .= ' OR twitter IS NOT NULL OR twitter!=""';
-    $sql .= ' OR facebook IS NOT NULL OR facebook!=""';
-    $sql .= ' OR linkedin IS NOT NULL OR linkedin!=""';
-    $sql .= ' OR instagram IS NOT NULL OR instagram!=""';
-    $sql .= ' OR snapchat IS NOT NULL OR snapchat!=""';
-    $sql .= ' OR googleplus IS NOT NULL OR googleplus!=""';
-    $sql .= ' OR youtube IS NOT NULL OR youtube!=""';
-    $sql .= ' OR whatsapp IS NOT NULL OR whatsapp!=""';
+    $sql .= " jabberid IS NOT NULL OR jabberid <> ''";
+    $sql .= " OR skype IS NOT NULL OR skype <> ''";
+    $sql .= " OR twitter IS NOT NULL OR twitter <> ''";
+    $sql .= " OR facebook IS NOT NULL OR facebook <> ''";
+    $sql .= " OR linkedin IS NOT NULL OR linkedin <> ''";
+    $sql .= " OR instagram IS NOT NULL OR instagram <> ''";
+    $sql .= " OR snapchat IS NOT NULL OR snapchat <> ''";
+    $sql .= " OR googleplus IS NOT NULL OR googleplus <> ''";
+    $sql .= " OR youtube IS NOT NULL OR youtube <> ''";
+    $sql .= " OR whatsapp IS NOT NULL OR whatsapp <> ''";
     //print $sql;
     $resql = $db->query($sql);
     if ($resql) {
@@ -5188,21 +5220,21 @@ function migrate_contacts_socialnetworks()
                 $obj->socialnetworks = '[]';
             }
             $socialnetworks = array_merge($arraysocialnetworks, json_decode($obj->socialnetworks, true));
-            $sqlupd = 'UPDATE '.MAIN_DB_PREFIX.'socpeople SET socialnetworks="'.$db->escape(json_encode($socialnetworks, true)).'"';
-            $sqlupd.= ', jabberid=null';
-            $sqlupd.= ', skype=null';
-            $sqlupd.= ', twitter=null';
-            $sqlupd.= ', facebook=null';
-            $sqlupd.= ', linkedin=null';
-            $sqlupd.= ', instagram=null';
-            $sqlupd.= ', snapchat=null';
-            $sqlupd.= ', googleplus=null';
-            $sqlupd.= ', youtube=null';
-            $sqlupd.= ', whatsapp=null';
-            $sqlupd.= ' WHERE rowid='.$obj->rowid;
+            $sqlupd = 'UPDATE '.MAIN_DB_PREFIX."socpeople SET socialnetworks='".$db->escape(json_encode($socialnetworks, true))."'";
+            $sqlupd .= ', jabberid=null';
+            $sqlupd .= ', skype=null';
+            $sqlupd .= ', twitter=null';
+            $sqlupd .= ', facebook=null';
+            $sqlupd .= ', linkedin=null';
+            $sqlupd .= ', instagram=null';
+            $sqlupd .= ', snapchat=null';
+            $sqlupd .= ', googleplus=null';
+            $sqlupd .= ', youtube=null';
+            $sqlupd .= ', whatsapp=null';
+            $sqlupd .= ' WHERE rowid='.$obj->rowid;
             //print $sqlupd."<br>";
             $resqlupd = $db->query($sqlupd);
-            if (! $resqlupd) {
+            if (!$resqlupd) {
                 dol_print_error($db);
                 $error++;
             }
@@ -5210,7 +5242,7 @@ function migrate_contacts_socialnetworks()
     } else {
         $error++;
     }
-    if (! $error) {
+    if (!$error) {
         $db->commit();
     } else {
         dol_print_error($db);
@@ -5234,15 +5266,15 @@ function migrate_thirdparties_socialnetworks()
     print '<tr><td colspan="4">';
     $sql = 'SELECT rowid, socialnetworks';
     $sql .= ', skype, twitter, facebook, linkedin, instagram, snapchat, googleplus, youtube, whatsapp FROM '.MAIN_DB_PREFIX.'societe WHERE ';
-    $sql .= ' skype IS NOT NULL OR skype!=""';
-    $sql .= ' OR twitter IS NOT NULL OR twitter!=""';
-    $sql .= ' OR facebook IS NOT NULL OR facebook!=""';
-    $sql .= ' OR linkedin IS NOT NULL OR linkedin!=""';
-    $sql .= ' OR instagram IS NOT NULL OR instagram!=""';
-    $sql .= ' OR snapchat IS NOT NULL OR snapchat!=""';
-    $sql .= ' OR googleplus IS NOT NULL OR googleplus!=""';
-    $sql .= ' OR youtube IS NOT NULL OR youtube!=""';
-    $sql .= ' OR whatsapp IS NOT NULL OR whatsapp!=""';
+    $sql .= " skype IS NOT NULL OR skype <> ''";
+    $sql .= " OR twitter IS NOT NULL OR twitter <> ''";
+    $sql .= " OR facebook IS NOT NULL OR facebook <> ''";
+    $sql .= " OR linkedin IS NOT NULL OR linkedin <> ''";
+    $sql .= " OR instagram IS NOT NULL OR instagram <> ''";
+    $sql .= " OR snapchat IS NOT NULL OR snapchat <> ''";
+    $sql .= " OR googleplus IS NOT NULL OR googleplus <> ''";
+    $sql .= " OR youtube IS NOT NULL OR youtube <> ''";
+    $sql .= " OR whatsapp IS NOT NULL OR whatsapp <> ''";
     //print $sql;
     $resql = $db->query($sql);
     if ($resql) {
@@ -5279,20 +5311,20 @@ function migrate_thirdparties_socialnetworks()
                 $obj->socialnetworks = '[]';
             }
             $socialnetworks = array_merge($arraysocialnetworks, json_decode($obj->socialnetworks, true));
-            $sqlupd = 'UPDATE '.MAIN_DB_PREFIX.'societe SET socialnetworks="'.$db->escape(json_encode($socialnetworks, true)).'"';
-            $sqlupd.= ', skype=null';
-            $sqlupd.= ', twitter=null';
-            $sqlupd.= ', facebook=null';
-            $sqlupd.= ', linkedin=null';
-            $sqlupd.= ', instagram=null';
-            $sqlupd.= ', snapchat=null';
-            $sqlupd.= ', googleplus=null';
-            $sqlupd.= ', youtube=null';
-            $sqlupd.= ', whatsapp=null';
-            $sqlupd.= ' WHERE rowid='.$obj->rowid;
+            $sqlupd = 'UPDATE '.MAIN_DB_PREFIX."societe SET socialnetworks='".$db->escape(json_encode($socialnetworks, true))."'";
+            $sqlupd .= ', skype=null';
+            $sqlupd .= ', twitter=null';
+            $sqlupd .= ', facebook=null';
+            $sqlupd .= ', linkedin=null';
+            $sqlupd .= ', instagram=null';
+            $sqlupd .= ', snapchat=null';
+            $sqlupd .= ', googleplus=null';
+            $sqlupd .= ', youtube=null';
+            $sqlupd .= ', whatsapp=null';
+            $sqlupd .= ' WHERE rowid='.$obj->rowid;
             //print $sqlupd."<br>";
             $resqlupd = $db->query($sqlupd);
-            if (! $resqlupd) {
+            if (!$resqlupd) {
                 dol_print_error($db);
                 $error++;
             }
@@ -5300,7 +5332,7 @@ function migrate_thirdparties_socialnetworks()
     } else {
         $error++;
     }
-    if (! $error) {
+    if (!$error) {
         $db->commit();
     } else {
         dol_print_error($db);

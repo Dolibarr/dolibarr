@@ -141,7 +141,7 @@ llxHeader('', $title, $help_url);
 $countrynotdefined = $langs->trans("ErrorSetACountryFirst").' ('.$langs->trans("SeeAbove").')';
 
 
-if (!empty($object->id)) $res = $object->fetch_optionals($object->id, null);
+if (!empty($object->id)) $res = $object->fetch_optionals();
 //if ($res < 0) { dol_print_error($db); exit; }
 
 

@@ -167,7 +167,7 @@ $linkback = '';
 print load_fiche_titre($langs->trans('ConfigAccountingExpert'), $linkback, 'accountancy');
 
 print '<form action="'.$_SERVER["PHP_SELF"].'" method="post">';
-print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+print '<input type="hidden" name="token" value="'.newToken().'">';
 print '<input type="hidden" name="action" value="update">';
 
 // Default mode for calculating turnover (parameter ACCOUNTING_MODE)

@@ -117,11 +117,11 @@ if (!empty($id)) {
 			$objp = $db->fetch_object($result);
 
 			print '<form action="'.$_SERVER["PHP_SELF"].'?id='.$id.'" method="post">'."\n";
-			print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+			print '<input type="hidden" name="token" value="'.newToken().'">';
 			print '<input type="hidden" name="action" value="ventil">';
 			print '<input type="hidden" name="backtopage" value="'.dol_escape_htmltag($backtopage).'">';
 
-			print load_fiche_titre($langs->trans('SuppliersVentilation'), '', 'title_setup');
+			print load_fiche_titre($langs->trans('SuppliersVentilation'), '', 'title_accountancy');
 
 			dol_fiche_head();
 
