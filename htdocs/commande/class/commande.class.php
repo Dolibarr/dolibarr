@@ -3398,6 +3398,19 @@ class Commande extends CommonOrder
 
 		if (!$error)
 		{
+			// Delete extrafields of order details
+                        $main = MAIN_DB_PREFIX . 'commandedet';
+                        $ef = $main . "_extrafields";
+                        $sql = "DELETE FROM $ef WHERE fk_object IN (SELECT rowid FROM $main WHERE fk_commande = " . $this->id . ")";
+			if (!$this->db->query($sql))
+			{
+				$error++;
+				$this->errors[] = $this->db->lasterror();
+			}
+		}
+
+		if (!$error)
+		{
 			// Delete order details
 			$sql = 'DELETE FROM '.MAIN_DB_PREFIX."commandedet WHERE fk_commande = ".$this->id;
 			if (!$this->db->query($sql))
