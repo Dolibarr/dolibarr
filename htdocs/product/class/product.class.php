@@ -1052,7 +1052,7 @@ class Product extends CommonObject
                 $action = 'update';
 
                 // Actions on extra fields
-                if (!$error && empty($conf->global->MAIN_EXTRAFIELDS_DISABLED)) {
+                if (!$error) {
                     $result = $this->insertExtraFields();
                     if ($result < 0) {
                         $error++;
@@ -1265,7 +1265,7 @@ class Product extends CommonObject
             }
 
             // Remove extrafields
-            if ((!$error) && (empty($conf->global->MAIN_EXTRAFIELDS_DISABLED))) // For avoid conflicts if trigger used
+            if (!$error)
             {
                 $result = $this->deleteExtraFields();
                 if ($result < 0) {
@@ -4938,7 +4938,7 @@ class Product extends CommonObject
 		{
             $filterStatus = '4';
             if (isset($includedraftpoforvirtual)) $filterStatus = '0,'.$filterStatus;
-			$result = $this->load_stats_reception(0, $filterStatus, 1);			// Use same tables than when module reception is not used.
+			$result = $this->load_stats_reception(0, $filterStatus, 1); // Use same tables than when module reception is not used.
 			if ($result < 0) dol_print_error($this->db, $this->error);
 			$stock_reception_fournisseur = $this->stats_reception['qty'];
 		}

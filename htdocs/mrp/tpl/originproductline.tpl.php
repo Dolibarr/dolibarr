@@ -24,13 +24,20 @@ if (empty($conf) || !is_object($conf))
 }
 
 if (!is_object($form)) $form = new Form($db);
+
+$qtytoconsumeforline = $this->tpl['qty'] / $this->tpl['efficiency'];
+/*if ((empty($this->tpl['qty_frozen']) && $this->tpl['qty_bom'] > 1)) {
+	$qtytoconsumeforline = $qtytoconsumeforline / $this->tpl['qty_bom'];
+}*/
+$qtytoconsumeforline = price2num($qtytoconsumeforline, 'MS');
+
 ?>
 
 <!-- BEGIN PHP TEMPLATE originproductline.tpl.php -->
 <?php
 print '<tr class="oddeven'.(empty($this->tpl['strike']) ? '' : ' strikefordisabled').'">';
 print '<td>'.$this->tpl['label'].'</td>';
-print '<td class="right">'.$this->tpl['qty'].(($this->tpl['efficiency'] > 0 && $this->tpl['efficiency'] < 1) ? ' / '.$form->textwithpicto($this->tpl['efficiency'], $langs->trans("ValueOfMeansLoss")).' = '.round($this->tpl['qty'] / $this->tpl['efficiency'], 2) : '').'</td>';
+print '<td class="right">'.$this->tpl['qty'].(($this->tpl['efficiency'] > 0 && $this->tpl['efficiency'] < 1) ? ' / '.$form->textwithpicto($this->tpl['efficiency'], $langs->trans("ValueOfMeansLoss")).' = '.$qtytoconsumeforline : '').'</td>';
 print '<td class="center">'.($this->tpl['qty_frozen'] ? yn($this->tpl['qty_frozen']) : '').'</td>';
 print '<td class="center">'.($this->tpl['disable_stock_change'] ? yn($this->tpl['disable_stock_change']) : '').'</td>';
 //print '<td class="right">'.$this->tpl['efficiency'].'</td>';

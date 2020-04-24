@@ -69,7 +69,9 @@ class ExtraLanguages
 
     // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
-	 * 	Load array this->attributes
+	 * 	Load array this->attributes with list of fields per object that need an alternate translation.
+	 *  You can set variable MAIN_USE_ALTERNATE_TRANSLATION_FOR=elementA:fieldname,fieldname2;elementB:...
+	 *  Example: MAIN_USE_ALTERNATE_TRANSLATION_FOR=societe:name,town;contact:firstname,lastname
 	 *
 	 * 	@param	string		$elementtype		Type of element ('' = all, 'adherent', 'commande', 'thirdparty', 'facture', 'propal', 'product', ...).
 	 * 	@param	boolean		$forceload			Force load of extra fields whatever is status of cache.
@@ -86,11 +88,25 @@ class ExtraLanguages
 		if ($elementtype == 'contact')        $elementtype = 'socpeople';
 		if ($elementtype == 'order_supplier') $elementtype = 'commande_fournisseur';
 
-		$array_name_label = array(
-			'societe' => array('name'=>'Name'),
-			'contact' => array('firstname' => 'Firstname', 'lastname' => 'Lastname')
-		);
 
+		$array_name_label = array();
+		if (! empty($conf->global->MAIN_USE_ALTERNATE_TRANSLATION_FOR)) {
+			$tmpelement = explode(';', $conf->global->MAIN_USE_ALTERNATE_TRANSLATION_FOR);
+			foreach($tmpelement as $elementstring) {
+				$reg=array();
+				preg_match('/^(.*):(.*)$/', $elementstring, $reg);
+				$element = $reg[1];
+				$array_name_label[$element] = array();
+				$tmpfields=explode(',', $reg[2]);
+				foreach($tmpfields as $field) {
+					//var_dump($fields);
+					//$tmpkeyvar = explode(':', $fields);
+					//$array_name_label[$element][$tmpkeyvar[0]] = $tmpkeyvar[1];
+					$array_name_label[$element][$field] = $field;
+				}
+			}
+		}
+		//var_dump($array_name_label);
 		$this->attributes = $array_name_label;
 
 		return $array_name_label;
