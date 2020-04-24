@@ -5569,7 +5569,7 @@ class FactureLigne extends CommonInvoiceLine
 				    $sql = 'SELECT fd.situation_percent FROM '.MAIN_DB_PREFIX.'facturedet fd';
 				    $sql .= ' JOIN '.MAIN_DB_PREFIX.'facture f ON (f.rowid = fd.fk_facture) ';
 				    $sql .= ' WHERE fd.fk_prev_id ='.$this->fk_prev_id;
-				    $sql .= ' AND f.situation_cycle_ref = '.$tmpinvoice->situation_cycle_ref; // Prevent cycle outed
+				    $sql .= ' AND f.situation_cycle_ref = '.$invoicecache[$invoiceid]->situation_cycle_ref; // Prevent cycle outed
 				    $sql .= ' AND f.type = '.Facture::TYPE_CREDIT_NOTE;
 
 				    $res = $this->db->query($sql);
@@ -5577,6 +5577,8 @@ class FactureLigne extends CommonInvoiceLine
 				        while ($obj = $this->db->fetch_object($res)) {
 				            $returnPercent = $returnPercent + floatval($obj->situation_percent);
 				        }
+				    } else {
+				    	dol_print_error($this->db);
 				    }
 				}
 
