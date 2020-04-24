@@ -700,7 +700,9 @@ if ($dirins && $action == 'initobject' && $module && GETPOST('createtablearray',
 			$fieldname = $obj->Field;
 			// type
 			$type = $obj->Type;
-			if ($type == 'int(11)') $type = 'integer';
+			if ($type == 'int(11)') $type='integer';
+			if ($type == 'float') $type='real';
+			if (strchr($type,'tinyint')) $type='boolean';
 			if ($obj->Field == 'fk_soc') $type = 'integer:Societe:societe/class/societe.class.php';
 			if (preg_match('/^fk_proj/', $obj->Field)) $type = 'integer:Project:projet/class/project.class.php:1:fk_statut=1';
 			if (preg_match('/^fk_prod/', $obj->Field)) $type = 'integer:Product:product/class/product.class.php:1';
