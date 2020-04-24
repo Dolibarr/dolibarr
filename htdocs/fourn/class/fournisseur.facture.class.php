@@ -66,7 +66,7 @@ class FactureFournisseur extends CommonInvoice
     /**
      * @var string String with name of icon for myobject. Must be the part after the 'object_' into object_myobject.png
      */
-    public $picto = 'bill';
+    public $picto = 'supplier_invoice';
 
     /**
      * 0=No test on entity, 1=Test with field entity, 2=Test with link by societe
