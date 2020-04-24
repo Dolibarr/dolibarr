@@ -459,7 +459,8 @@ if (!empty($conf->categorie->enabled) && $user->rights->categorie->lire) {
 
 // Standard Extrafield feature
 if (empty($conf->global->MAIN_EXTRAFIELDS_DISABLED)) {
-	$elementype = Contact::$table_element;
+	$contactstatic = new Contact($db);
+	$elementype = $contactstatic->table_element;
 	// fetch optionals attributes and labels
 	dol_include_once('/core/class/extrafields.class.php');
 	$extrafields = new ExtraFields($db);
