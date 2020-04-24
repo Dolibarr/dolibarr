@@ -5013,8 +5013,7 @@ class FactureLigne extends CommonInvoiceLine
 
 				$returnPercent = floatval($res['situation_percent']);
 
-				if($include_credit_note) {
-
+				if ($include_credit_note) {
 				    $sql = 'SELECT fd.situation_percent FROM ' . MAIN_DB_PREFIX . 'facturedet fd';
 				    $sql.= ' JOIN ' . MAIN_DB_PREFIX . 'facture f ON (f.rowid = fd.fk_facture) ';
 				    $sql.= ' WHERE fd.fk_prev_id =' . $this->fk_prev_id;
@@ -5026,6 +5025,8 @@ class FactureLigne extends CommonInvoiceLine
 				        while($obj = $this->db->fetch_object($res)) {
 				            $returnPercent = $returnPercent + floatval($obj->situation_percent);
 				        }
+				    } else {
+				    	dol_print_error($this->db);
 				    }
 				}
 
