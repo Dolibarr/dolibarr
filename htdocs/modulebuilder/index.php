@@ -711,7 +711,7 @@ if ($dirins && $action == 'initobject' && $module && GETPOST('createtablearray',
 			$notnull = ($obj->Null == 'YES' ? 0 : 1);
 			if ($fieldname == 'fk_user_modif') $notnull = -1;
 			// label
-			$label = preg_replace('/_/', ' ', ucfirst($fieldname));
+			$label = $fieldname;
 			if ($fieldname == 'rowid') $label = 'TechnicalID';
 			if ($fieldname == 'import_key') $label = 'ImportId';
 			if ($fieldname == 'fk_soc') $label = 'ThirdParty';
