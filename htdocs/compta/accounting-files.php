@@ -23,7 +23,7 @@
  *  \brief      Page to show portoflio and files of a thirdparty and download it
  */
 
-if ($_GET['action'] == 'dl' || $_POST['action'] == 'dl') {	// To not replace token when downloading file
+if ((array_key_exists('action', $_GET) && $_GET['action'] == 'dl') || (array_key_exists('action', $_POST) && $_POST['action'] == 'dl')) {	// To not replace token when downloading file
 	if (! defined('NOTOKENRENEWAL'))           define('NOTOKENRENEWAL', '1');
 }
 
