@@ -38,19 +38,19 @@ $id = GETPOST('id', 'int');
 $result = restrictedArea($user, 'contact', $id, 'socpeople&societe');
 
 
-$result=$contact->fetch($id);
+$result = $contact->fetch($id);
 if ($result <= 0)
 {
 	dol_print_error($contact->error);
 	exit;
 }
 
-$physicalperson=1;
+$physicalperson = 1;
 
 $company = new Societe($db);
 if ($contact->socid)
 {
-	$result=$company->fetch($contact->socid);
+	$result = $company->fetch($contact->socid);
 }
 
 // We create VCard
@@ -125,7 +125,7 @@ $db->close();
 
 $output = $v->getVCard();
 
-$filename =trim(urldecode($v->getFileName()));      // "Nom prenom.vcf"
+$filename = trim(urldecode($v->getFileName()));      // "Nom prenom.vcf"
 $filenameurlencoded = dol_sanitizeFileName(urlencode($filename));
 //$filename = dol_sanitizeFileName($filename);
 
