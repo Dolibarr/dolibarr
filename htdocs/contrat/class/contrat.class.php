@@ -1235,6 +1235,22 @@ class Contrat extends CommonObject
 		}
 
 		if (!$error)
+                {
+				// Delete contratdet extrafields
+				$main = MAIN_DB_PREFIX . 'contratdet';
+				$ef = $main . "_extrafields";
+				$sql = "DELETE FROM $ef WHERE fk_object IN (SELECT rowid FROM $main WHERE fk_contrat = " . $this->id . ")";
+
+				dol_syslog(get_class($this)."::delete contratdet_extrafields", LOG_DEBUG);
+				$resql = $this->db->query($sql);
+			if (!$resql)
+				{
+						$this->error = $this->db->error();
+						$error++;
+			}
+		}
+
+		if (!$error)
 		{
 			// Delete contratdet
 			$sql = "DELETE FROM ".MAIN_DB_PREFIX."contratdet";
