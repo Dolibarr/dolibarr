@@ -2678,6 +2678,7 @@ class FactureFournisseur extends CommonInvoice
         if ($result < 0)
         {
             $this->error = $object->error;
+            $this->errors = $object->errors;
             $error++;
         }
 
