@@ -64,14 +64,14 @@ if ($id > 0 || !empty($ref))
  * Actions
  */
 
-if ($cancel) $action ='';
+if ($cancel) $action = '';
 
 // Action association d'un sousproduit
 if ($action == 'add_prod' && ($user->rights->produit->creer || $user->rights->service->creer))
 {
-	$error=0;
+	$error = 0;
 	$maxprod = GETPOST("max_prod", 'int');
-	for ($i=0; $i < $maxprod; $i++)
+	for ($i = 0; $i < $maxprod; $i++)
 	{
 		$qty = price2num(GETPOST("prod_qty_".$i, 'alpha'), 'MS');
 		if ($qty > 0)
@@ -109,13 +109,13 @@ if ($action == 'add_prod' && ($user->rights->produit->creer || $user->rights->se
 		}
 	}
 
-	if (! $error)
+	if (!$error)
 	{
 		header("Location: ".$_SERVER["PHP_SELF"].'?id='.$object->id);
 		exit;
 	}
 }
-elseif($action==='save_composed_product')
+elseif ($action === 'save_composed_product')
 {
 	$TProduct = GETPOST('TProduct', 'array');
 	if (!empty($TProduct))
@@ -540,38 +540,38 @@ if ($id > 0 || !empty($ref))
 			if ($resql)
 			{
 				$num = $db->num_rows($resql);
-				$i=0;
+				$i = 0;
 
-				if($num == 0) print '<tr><td colspan="4">'.$langs->trans("NoMatchFound").'</td></tr>';
+				if ($num == 0) print '<tr><td colspan="4">'.$langs->trans("NoMatchFound").'</td></tr>';
 
 				$MAX = 100;
 
 				while ($i < min($num, $MAX))
 				{
 					$objp = $db->fetch_object($resql);
-					if($objp->rowid != $id)
+					if ($objp->rowid != $id)
 					{
 						// check if a product is not already a parent product of this one
-						$prod_arbo=new Product($db);
-						$prod_arbo->id=$objp->rowid;
+						$prod_arbo = new Product($db);
+						$prod_arbo->id = $objp->rowid;
 						// This type is not supported (not required to have virtual products working).
 						if ($prod_arbo->type == Product::TYPE_ASSEMBLYKIT || $prod_arbo->type == Product::TYPE_STOCKKIT)
 						{
-							$is_pere=0;
+							$is_pere = 0;
 							$prod_arbo->get_sousproduits_arbo();
 							// associations sousproduits
 							$prods_arbo = $prod_arbo->get_arbo_each_prod();
 							if (count($prods_arbo) > 0)
 							{
-								foreach($prods_arbo as $key => $value)
+								foreach ($prods_arbo as $key => $value)
 								{
-									if ($value[1]==$id)
+									if ($value[1] == $id)
 									{
-										$is_pere=1;
+										$is_pere = 1;
 									}
 								}
 							}
-							if ($is_pere==1)
+							if ($is_pere == 1)
 							{
 								$i++;
 								continue;

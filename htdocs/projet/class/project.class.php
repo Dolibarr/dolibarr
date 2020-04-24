@@ -316,7 +316,7 @@ class Project extends CommonObject
 
         // Update extrafield
         if (!$error) {
-        	if (empty($conf->global->MAIN_EXTRAFIELDS_DISABLED)) // For avoid conflicts if trigger used
+        	if (!$error)
         	{
         		$result = $this->insertExtraFields();
         		if ($result < 0)
@@ -405,7 +405,7 @@ class Project extends CommonObject
                 // Update extrafield
                 if (!$error)
                 {
-                	if (empty($conf->global->MAIN_EXTRAFIELDS_DISABLED)) // For avoid conflicts if trigger used
+                	if (!$error)
                 	{
                 		$result = $this->insertExtraFields();
                 		if ($result < 0)

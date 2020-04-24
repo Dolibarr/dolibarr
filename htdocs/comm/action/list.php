@@ -553,8 +553,7 @@ if ($resql)
 		$actionstatic->type_picto = $obj->type_picto;
 		$actionstatic->label = $obj->label;
 		$actionstatic->location = $obj->location;
-		$actionstatic->note = dol_htmlentitiesbr($obj->note); // deprecated
-		$actionstatic->note_public = dol_htmlentitiesbr($obj->note);
+		$actionstatic->note_private = dol_htmlentitiesbr($obj->note);
 
 		$actionstatic->fetchResources();
 
@@ -613,8 +612,8 @@ if ($resql)
 		// Description
 		if (!empty($arrayfields['a.note']['checked'])) {
 			print '<td class="tdoverflowonsmartphone">';
-			$text = dolGetFirstLineOfText(dol_string_nohtmltag($actionstatic->note, 0));
-			print $form->textwithtooltip(dol_trunc($text, 40), $actionstatic->note);
+			$text = dolGetFirstLineOfText(dol_string_nohtmltag($actionstatic->note_private, 0));
+			print $form->textwithtooltip(dol_trunc($text, 40), $actionstatic->note_private);
 			print '</td>';
 		}
 

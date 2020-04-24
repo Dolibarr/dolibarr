@@ -813,12 +813,12 @@ class Facture extends CommonInvoice
 						$vatrate = $line->tva_tx;
 						if ($line->vat_src_code && !preg_match('/\(.*\)/', $vatrate)) $vatrate .= ' ('.$line->vat_src_code.')';
 
-						if(!empty($conf->global->MAIN_CREATEFROM_KEEP_LINE_ORIGIN_INFORMATION)) {
-							$originid=$line->origin_id;
-							$origintype=$line->origin;
+						if (!empty($conf->global->MAIN_CREATEFROM_KEEP_LINE_ORIGIN_INFORMATION)) {
+							$originid = $line->origin_id;
+							$origintype = $line->origin;
 						} else {
-							$originid=$line->id;
-							$origintype=$this->element;
+							$originid = $line->id;
+							$origintype = $this->element;
 						}
 
                         $result = $this->addline(
@@ -1452,9 +1452,10 @@ class Facture extends CommonInvoice
 		    $txttoshow = ($user->socid > 0 ? $this->note_public : $this->note_private);
 		    if ($txttoshow)
 		    {
-                $notetoshow = $langs->trans("ViewPrivateNote").':<br>'.dol_string_nohtmltag($txttoshow, 1);
+                //$notetoshow = $langs->trans("ViewPrivateNote").':<br>'.dol_string_nohtmltag($txttoshow, 1);
+		    	$notetoshow = $langs->trans("ViewPrivateNote").':<br>'.$txttoshow;
     		    $result .= ' <span class="note inline-block">';
-    		    $result .= '<a href="'.DOL_URL_ROOT.'/compta/facture/note.php?id='.$this->id.'" class="classfortooltip" title="'.dol_escape_htmltag($notetoshow).'">';
+    		    $result .= '<a href="'.DOL_URL_ROOT.'/compta/facture/note.php?id='.$this->id.'" class="classfortooltip" title="'.dol_escape_htmltag($notetoshow, 1, 1).'">';
     		    $result .= img_picto('', 'note');
     		    $result .= '</a>';
     		    //$result.=img_picto($langs->trans("ViewNote"),'object_generic');
@@ -1881,7 +1882,7 @@ class Facture extends CommonInvoice
 			$error++; $this->errors[] = "Error ".$this->db->lasterror();
 		}
 
-		if (!$error && empty($conf->global->MAIN_EXTRAFIELDS_DISABLED) && is_array($this->array_options) && count($this->array_options) > 0)
+		if (!$error)
 		{
 			$result = $this->insertExtraFields();
 			if ($result < 0)
@@ -3733,44 +3734,44 @@ class Facture extends CommonInvoice
 		}
 
 		if (!empty($addon)) {
-			dol_syslog("Call getNextNumRef with " . $addonConstName . " = " . $conf->global->FACTURE_ADDON . ", thirdparty=" . $soc->nom . ", type=" . $soc->typent_code, LOG_DEBUG);
+			dol_syslog("Call getNextNumRef with ".$addonConstName." = ".$conf->global->FACTURE_ADDON.", thirdparty=".$soc->nom.", type=".$soc->typent_code, LOG_DEBUG);
 
 			$mybool = false;
 
 
-			$file = $addon . '.php';
+			$file = $addon.'.php';
 			$classname = $addon;
 
 
 			// Include file with class
 			$dirmodels = array_merge(array('/'), (array) $conf->modules_parts['models']);
 			foreach ($dirmodels as $reldir) {
-				$dir = dol_buildpath($reldir . 'core/modules/' . $moduleName . '/');
+				$dir = dol_buildpath($reldir.'core/modules/'.$moduleName.'/');
 
 				// Load file with numbering class (if found)
-				if (is_file($dir . $file) && is_readable($dir . $file)) {
-					$mybool |= include_once $dir . $file;
+				if (is_file($dir.$file) && is_readable($dir.$file)) {
+					$mybool |= include_once $dir.$file;
 				}
 			}
 
 			// For compatibility
 			if (!$mybool) {
-				$file = $addon . '/' . $addon . '.modules.php';
-				$classname = 'mod_' . $moduleName . '_' . $addon;
+				$file = $addon.'/'.$addon.'.modules.php';
+				$classname = 'mod_'.$moduleName.'_'.$addon;
 				$classname = preg_replace('/\-.*$/', '', $classname);
 				// Include file with class
 				foreach ($conf->file->dol_document_root as $dirroot) {
-					$dir = $dirroot . '/core/modules/' . $moduleName . '/';
+					$dir = $dirroot.'/core/modules/'.$moduleName.'/';
 
 					// Load file with numbering class (if found)
-					if (is_file($dir . $file) && is_readable($dir . $file)) {
-						$mybool |= include_once $dir . $file;
+					if (is_file($dir.$file) && is_readable($dir.$file)) {
+						$mybool |= include_once $dir.$file;
 					}
 				}
 			}
 
 			if (!$mybool) {
-				dol_print_error('', 'Failed to include file ' . $file);
+				dol_print_error('', 'Failed to include file '.$file);
 				return '';
 			}
 
@@ -3789,7 +3790,7 @@ class Facture extends CommonInvoice
 			return $numref;
 		} else {
 			$langs->load('errors');
-			print $langs->trans('Error') . ' ' . $langs->trans('ErrorModuleSetupNotComplete', $langs->transnoentitiesnoconv($moduleSourceName));
+			print $langs->trans('Error').' '.$langs->trans('ErrorModuleSetupNotComplete', $langs->transnoentitiesnoconv($moduleSourceName));
 			return '';
 		}
 	}
@@ -4755,7 +4756,7 @@ class Facture extends CommonInvoice
 		// note : we dont need to test INVOICE_USE_RETAINED_WARRANTY because if $this->retained_warranty is not empty it's because it was set when this conf was active
 
 		$displayWarranty = false;
-		if(!empty($this->retained_warranty)) {
+		if (!empty($this->retained_warranty)) {
 			$displayWarranty = true;
 
 			if ($this->type == Facture::TYPE_SITUATION && !empty($conf->global->INVOICE_RETAINED_WARRANTY_LIMITED_TO_FINAL_SITUATION)) {
@@ -4794,7 +4795,7 @@ class Facture extends CommonInvoice
 	    $retainedWarrantyAmount = 0;
 
 	    // Billed - retained warranty
-	    if($this->type == Facture::TYPE_SITUATION && !empty($conf->global->INVOICE_RETAINED_WARRANTY_LIMITED_TO_FINAL_SITUATION))
+	    if ($this->type == Facture::TYPE_SITUATION && !empty($conf->global->INVOICE_RETAINED_WARRANTY_LIMITED_TO_FINAL_SITUATION))
 	    {
 	        $displayWarranty = true;
 	        // Check if this situation invoice is 100% for real
@@ -4834,7 +4835,7 @@ class Facture extends CommonInvoice
 			$rounding = min($conf->global->MAIN_MAX_DECIMALS_UNIT, $conf->global->MAIN_MAX_DECIMALS_TOT);
 		}
 
-		if($rounding>0){
+		if ($rounding > 0) {
 			return round($retainedWarrantyAmount, $rounding);
 		}
 
@@ -5237,7 +5238,7 @@ class FactureLigne extends CommonInvoiceLine
 			$this->id = $this->db->last_insert_id(MAIN_DB_PREFIX.'facturedet');
 			$this->rowid = $this->id; // For backward compatibility
 
-            if (empty($conf->global->MAIN_EXTRAFIELDS_DISABLED)) // For avoid conflicts if trigger used
+            if (!$error)
             {
             	$result = $this->insertExtraFields();
             	if ($result < 0)
@@ -5423,7 +5424,7 @@ class FactureLigne extends CommonInvoiceLine
 		$resql = $this->db->query($sql);
 		if ($resql)
 		{
-        	if (empty($conf->global->MAIN_EXTRAFIELDS_DISABLED)) // For avoid conflicts if trigger used
+        	if (!$error)
         	{
         		$this->id = $this->rowid;
         		$result = $this->insertExtraFields();
