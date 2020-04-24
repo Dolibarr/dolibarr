@@ -664,9 +664,13 @@ class FactureRec extends CommonInvoice
         $error = 0;
 		$this->db->begin();
 
+		$main = MAIN_DB_PREFIX . 'facturedet_rec';
+        $ef = $main . "_extrafields";
+        $sqlef = "DELETE FROM $ef WHERE fk_object IN (SELECT rowid FROM $main WHERE fk_facture = $rowid)";
+        dol_syslog($sqlef);
 		$sql = "DELETE FROM ".MAIN_DB_PREFIX."facturedet_rec WHERE fk_facture = ".$rowid;
 		dol_syslog($sql);
-		if ($this->db->query($sql))
+		if ($this->db->query($sqlef) && $this->db->query($sql))
 		{
 			$sql = "DELETE FROM ".MAIN_DB_PREFIX."facture_rec WHERE rowid = ".$rowid;
 			dol_syslog($sql);
@@ -675,6 +679,9 @@ class FactureRec extends CommonInvoice
 				// Delete linked object
 				$res = $this->deleteObjectLinked();
 				if ($res < 0) $error = -3;
+				// Delete extrafields
+                $res = $this->deleteExtraFields();
+                if ($res < 0) $error = -4;
 			}
 			else
 			{
@@ -1881,6 +1888,14 @@ class FactureLigneRec extends CommonInvoiceLine
 	            // End call triggers
 	        }
 	    }
+
+		if (!$error)
+        {
+            $result = $this->deleteExtraFields();
+            if ($result < 0) {
+                $error++;
+            }
+        }
 
 	    if (!$error)
 	    {

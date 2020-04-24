@@ -303,6 +303,7 @@ class CommandeFournisseurDispatch extends CommonObject
 				$this->batch = $obj->batch;
 				$this->eatby = $this->db->jdate($obj->eatby);
 				$this->sellby = $this->db->jdate($obj->sellby);
+                                $this->fetch_optionals();
             }
             $this->db->free($resql);
 
@@ -436,6 +437,16 @@ class CommandeFournisseurDispatch extends CommonObject
 	            //$result=$this->call_trigger('MYOBJECT_DELETE',$user);
 	            //if ($result < 0) { $error++; //Do also what you must do to rollback action if trigger fail}
 	            //// End call triggers
+			}
+		}
+
+                // Remove extrafields
+		if (!$error) {
+			$result = $this->deleteExtraFields();
+			if ($result < 0)
+			{
+				$error++;
+				dol_syslog(get_class($this)."::delete error deleteExtraFields ".$this->error, LOG_ERR);
 			}
 		}
 
@@ -689,6 +700,7 @@ class CommandeFournisseurDispatch extends CommonObject
 				$line->batch = $obj->batch;
 				$line->eatby = $this->db->jdate($obj->eatby);
 				$line->sellby = $this->db->jdate($obj->sellby);
+                                $line->fetch_optionals();
 
 				$this->lines[$line->id] = $line;
 			}

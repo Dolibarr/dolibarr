@@ -1280,14 +1280,22 @@ class Expedition extends CommonObject
 
 		if (!$error)
 		{
+                    $main = MAIN_DB_PREFIX . 'expeditiondet';
+                    $ef = $main . "_extrafields";
+                    $sqlef = "DELETE FROM $ef WHERE fk_object IN (SELECT rowid FROM $main WHERE fk_expedition = " . $this->id . ")";
+
 			$sql = "DELETE FROM ".MAIN_DB_PREFIX."expeditiondet";
 			$sql .= " WHERE fk_expedition = ".$this->id;
 
-			if ($this->db->query($sql))
+			if ($this->db->query($sqlef) && $this->db->query($sql))
 			{
 				// Delete linked object
 				$res = $this->deleteObjectLinked();
 				if ($res < 0) $error++;
+
+                                // delete extrafields
+                                $res = $this->deleteExtraFields();
+                                if ($res < 0) $error++;
 
 				if (!$error)
 				{
