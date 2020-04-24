@@ -71,6 +71,9 @@ class Product extends CommonObject
      */
     public $ismultientitymanaged = 1;
 
+
+    public $picto = 'product';
+
     /**
      * {@inheritdoc}
      */
@@ -5631,4 +5634,14 @@ class Product extends CommonObject
             dol_print_error($this->db);
         }
     }
+}
+
+
+
+/**
+ * Class to manage products or services
+ */
+class Service extends Product
+{
+	public $picto = 'service';
 }

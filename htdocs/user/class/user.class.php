@@ -64,6 +64,8 @@ class User extends CommonObject
 	 */
 	public $ismultientitymanaged = 1;
 
+	public $picto = 'user';
+
 	public $id = 0;
 	public $statut;
 	public $ldap_sid;
