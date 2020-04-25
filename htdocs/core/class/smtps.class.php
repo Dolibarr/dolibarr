@@ -533,12 +533,9 @@ class SMTPs
     /**
      * Now send the message
      *
-     * @param  boolean $_bolTestMsg  whether to run this method in 'Test' mode.
-     * @param  boolean $_bolDebug    whether to log all communication between this Class and the Mail Server.
-     * @return boolean|null   void
-     *                 $_strMsg      If this is run in 'Test' mode, the actual message structure will be returned
+     * @return boolean|null   Result
      */
-    public function sendMsg($_bolTestMsg = false, $_bolDebug = false)
+    public function sendMsg()
     {
         global $conf;
 
