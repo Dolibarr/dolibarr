@@ -93,19 +93,19 @@ if (empty($reshook))
 
 	// Actions cancel, add, update, update_extras, confirm_validate, confirm_delete, confirm_deleteline, confirm_clone, confirm_close, confirm_setdraft, confirm_reopen
 	include DOL_DOCUMENT_ROOT.'/core/actions_addupdatedelete.inc.php';
-	
+
 	// Actions when linking object each other
 	include DOL_DOCUMENT_ROOT.'/core/actions_dellink.inc.php';
-	
+
 	// Actions when printing a doc from card
 	include DOL_DOCUMENT_ROOT.'/core/actions_printing.inc.php';
 
 	// Action to move up and down lines of object
 	//include DOL_DOCUMENT_ROOT.'/core/actions_lineupdown.inc.php';
-	
+
 	// Action to build doc
 	include DOL_DOCUMENT_ROOT.'/core/actions_builddoc.inc.php';
-	
+
 	if ($action == 'set_thirdparty' && $permissiontoadd)
 	{
 		$object->setValueFrom('fk_soc', GETPOST('fk_soc', 'int'), '', '', 'date', '', $user, 'MYOBJECT_MODIFY');
@@ -114,7 +114,7 @@ if (empty($reshook))
 	{
 		$object->setProject(GETPOST('projectid', 'int'));
 	}
-	
+
 	// Actions to send emails
 	$triggersendname = 'ASSET_SENTBYMAIL';
 	$autocopy = 'MAIN_MAIL_AUTOCOPY_ASSET_TO';
@@ -164,7 +164,7 @@ if ($action == 'create')
 	print '<input type="hidden" name="action" value="add">';
 	if ($backtopage) print '<input type="hidden" name="backtopage" value="'.$backtopage.'">';
 	if ($backtopageforcancel) print '<input type="hidden" name="backtopageforcancel" value="'.$backtopageforcancel.'">';
-	
+
 	dol_fiche_head(array(), '');
 
 	print '<table class="border centpercent tableforfieldcreate">'."\n";
@@ -186,7 +186,7 @@ if ($action == 'create')
 	print '</div>';
 
 	print '</form>';
-	
+
 	//dol_set_focus('input[name="ref"]');
 }
 
@@ -202,7 +202,7 @@ if (($id || $ref) && $action == 'edit')
 	print '<input type="hidden" name="id" value="'.$object->id.'">';
 	if ($backtopage) print '<input type="hidden" name="backtopage" value="'.$backtopage.'">';
 	if ($backtopageforcancel) print '<input type="hidden" name="backtopageforcancel" value="'.$backtopageforcancel.'">';
-	
+
 	dol_fiche_head();
 
 	print '<table class="border centpercent tableforfieldedit">'."\n";
