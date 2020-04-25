@@ -1394,11 +1394,11 @@ class Facture extends CommonInvoice
         $label = '';
 
         if ($user->rights->facture->lire) {
-            $label = '<u>'.$langs->trans("ShowInvoice").'</u>';
-            if ($this->type == self::TYPE_REPLACEMENT) $label = '<u>'.$langs->transnoentitiesnoconv("ShowInvoiceReplace").'</u>';
-            if ($this->type == self::TYPE_CREDIT_NOTE) $label = '<u>'.$langs->transnoentitiesnoconv("ShowInvoiceAvoir").'</u>';
-            if ($this->type == self::TYPE_DEPOSIT)     $label = '<u>'.$langs->transnoentitiesnoconv("ShowInvoiceDeposit").'</u>';
-            if ($this->type == self::TYPE_SITUATION)   $label = '<u>'.$langs->transnoentitiesnoconv("ShowInvoiceSituation").'</u>';
+            $label = '<u>'.$langs->trans("Invoice").'</u>';
+            if ($this->type == self::TYPE_REPLACEMENT) $label = '<u>'.$langs->transnoentitiesnoconv("ReplacementInvoice").'</u>';
+            if ($this->type == self::TYPE_CREDIT_NOTE) $label = '<u>'.$langs->transnoentitiesnoconv("CreditNote").'</u>';
+            if ($this->type == self::TYPE_DEPOSIT)     $label = '<u>'.$langs->transnoentitiesnoconv("Deposit").'</u>';
+            if ($this->type == self::TYPE_SITUATION)   $label = '<u>'.$langs->transnoentitiesnoconv("InvoiceSituation").'</u>';
             if (!empty($this->ref))
                 $label .= '<br><b>'.$langs->trans('Ref').':</b> '.$this->ref;
             if (!empty($this->ref_client))
@@ -1426,7 +1426,7 @@ class Facture extends CommonInvoice
 		{
 		    if (!empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER))
 		    {
-		        $label = $langs->trans("ShowInvoice");
+		        $label = $langs->trans("Invoice");
 		        $linkclose .= ' alt="'.dol_escape_htmltag($label, 1).'"';
 		    }
 		    $linkclose .= ' title="'.dol_escape_htmltag($label, 1).'"';
