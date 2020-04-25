@@ -144,9 +144,9 @@ if (empty($user->socid) && empty($conf->global->MAIN_DISABLE_GLOBAL_BOXSTATS))
     		'donations',
     		'contracts',
     		'interventions',
+    		'supplier_proposals',
     		'supplier_orders',
     		'supplier_invoices',
-    		'supplier_proposals',
     		'ticket'
     	);
 
