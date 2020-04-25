@@ -7130,7 +7130,7 @@ abstract class CommonObject
 					// HTML, select, integer and text add default value
 					if (in_array($extrafields->attributes[$this->table_element]['type'][$key], array('html', 'text', 'select', 'int')))
 					{
-						if($action=='create') $value = $extrafields->attributes[$this->table_element]['default'][$key];
+						if ($action == 'create') $value = $extrafields->attributes[$this->table_element]['default'][$key];
 						else $value = $this->array_options['options_'.$key];
 					}
 

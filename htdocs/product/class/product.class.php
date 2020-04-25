@@ -4737,7 +4737,7 @@ class Product extends CommonObject
             $op[1] = "-".trim($nbpiece);
 
             $movementstock = new MouvementStock($this->db);
-            $movementstock->setOrigin($origin_element, $origin_id);	// Set ->origin and ->origin->id
+            $movementstock->setOrigin($origin_element, $origin_id); // Set ->origin and ->origin->id
             $result = $movementstock->_create($user, $this->id, $id_entrepot, $op[$movement], $movement, $price, $label, $inventorycode);
 
             if ($result >= 0) {

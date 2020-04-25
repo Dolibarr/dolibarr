@@ -211,9 +211,9 @@ class CommandeFournisseurDispatch extends CommonObject
         }
 
         // Create extrafields
-        if (! $error)
+        if (!$error)
         {
-        	$result=$this->insertExtraFields();
+        	$result = $this->insertExtraFields();
         	if ($result < 0) $error++;
         }
 

@@ -977,9 +977,9 @@ class FactureFournisseur extends CommonInvoice
             }
         }
 
-		if (! $error)
+		if (!$error)
 		{
-			$result=$this->insertExtraFields();
+			$result = $this->insertExtraFields();
 			if ($result < 0)
 			{
 				$error++;
@@ -3150,9 +3150,9 @@ class SupplierInvoiceLine extends CommonObjectLine
 		$this->deleteObjectLinked();
 
 		// Remove extrafields
-        if (! $error)
+        if (!$error)
         {
-        	$result=$this->deleteExtraFields();
+        	$result = $this->deleteExtraFields();
         	if ($result < 0)
         	{
         		$error++;

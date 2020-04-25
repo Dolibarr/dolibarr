@@ -240,9 +240,9 @@ dol_syslog("select rss boxes", LOG_DEBUG);
 $resql = $db->query($sql);
 if ($resql)
 {
-	$boxlist	= InfoBox::listBoxes($db, 'activated', -1, null);
-	$num		= $db->num_rows($resql);
-	$i			= 0;
+	$boxlist = InfoBox::listBoxes($db, 'activated', -1, null);
+	$num = $db->num_rows($resql);
+	$i = 0;
 
 	while ($i < $num)
 	{
@@ -350,9 +350,9 @@ $db->close();
  */
 function _isInBoxList($idrss, array $boxlist)
 {
-	foreach($boxlist as $box)
+	foreach ($boxlist as $box)
 	{
-		if($box->boxcode === "lastrssinfos" && strpos($box->note, $idrss) !== false)
+		if ($box->boxcode === "lastrssinfos" && strpos($box->note, $idrss) !== false)
 		{
 			return true;
 		}
