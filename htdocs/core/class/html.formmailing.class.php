@@ -20,7 +20,7 @@
  *  \ingroup    core
  *	\brief      File of predefined functions for HTML forms for mailing module
  */
-require_once DOL_DOCUMENT_ROOT .'/core/class/html.form.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/class/html.form.class.php';
 
 /**
  *  Class to offer components to list and upload files
@@ -52,7 +52,7 @@ class FormMailing extends Form
         $options = array();
 
         if ($show_empty) {
-            $options[-2] = '';   // Note -1 is used for error
+            $options[-2] = ''; // Note -1 is used for error
         }
 
         $options = $options + $mailing->statut_dest;

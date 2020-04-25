@@ -35,7 +35,7 @@ $action = GETPOST('action', 'aZ09');
 
 if (!$user->admin) accessforbidden();
 
-$entity=$conf->entity;
+$entity = $conf->entity;
 
 
 /*
@@ -168,8 +168,8 @@ if ($result)
         		$family = $modules[$obj->module]->family_position;
         		$familyposition = 0;
         		$sqlupdate = 'UPDATE '.MAIN_DB_PREFIX."rights_def SET module_position = ".$modules[$obj->module]->module_position.",";
-        		$sqlupdate.= " family_position = ".$familyposition;
-        		$sqlupdate.= " WHERE module_position = 0 AND module = '".$db->escape($obj->module)."'";
+        		$sqlupdate .= " family_position = ".$familyposition;
+        		$sqlupdate .= " WHERE module_position = 0 AND module = '".$db->escape($obj->module)."'";
         		$db->query($sqlupdate);
         	}
         }
@@ -203,7 +203,7 @@ if ($result)
             // Show break line
             print '<tr class="oddeven trforbreak">';
             print '<td class="maxwidthonsmartphone tdoverflowonsmartphone">';
-            print img_object('', $picto, 'class="pictoobjectwidth"').' '.$objMod->getName();
+            print img_object('', $picto, 'class="pictoobjectwidth paddingright"').' '.$objMod->getName();
             print '<a name="'.$objMod->getName().'"></a>';
             print '</td>';
            	print '<td>&nbsp;</td>';
@@ -218,8 +218,6 @@ if ($result)
 
         // Picto and label of module
         print '<td class="maxwidthonsmartphone tdoverflowonsmartphone">';
-		//print img_object('', $picto, 'class="pictoobjectwidth"').' '.$objMod->getName();
-        //print '<a name="'.$objMod->getName().'">&nbsp;</a>';
 		print '</td>';
 
 		// Tick

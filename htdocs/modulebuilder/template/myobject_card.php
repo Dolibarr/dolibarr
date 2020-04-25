@@ -100,11 +100,6 @@ if (empty($action) && empty($id) && empty($ref)) $action = 'view';
 // Load object
 include DOL_DOCUMENT_ROOT.'/core/actions_fetchobject.inc.php'; // Must be include, not include_once.
 
-// Security check - Protection if external user
-//if ($user->socid > 0) accessforbidden();
-//if ($user->socid > 0) $socid = $user->socid;
-//$isdraft = (($object->statut == $object::STATUS_DRAFT) ? 1 : 0);
-//$result = restrictedArea($user, 'mymodule', $object->id, '', '', 'fk_soc', 'rowid', $isdraft);
 
 $permissiontoread = $user->rights->mymodule->myobject->read;
 $permissiontoadd = $user->rights->mymodule->myobject->write; // Used by the include of actions_addupdatedelete.inc.php and actions_lineupdown.inc.php
@@ -112,6 +107,14 @@ $permissiontodelete = $user->rights->mymodule->myobject->delete || ($permissiont
 $permissionnote = $user->rights->mymodule->myobject->write; // Used by the include of actions_setnotes.inc.php
 $permissiondellink = $user->rights->mymodule->myobject->write; // Used by the include of actions_dellink.inc.php
 $upload_dir = $conf->mymodule->multidir_output[isset($object->entity) ? $object->entity : 1];
+
+// Security check - Protection if external user
+//if ($user->socid > 0) accessforbidden();
+//if ($user->socid > 0) $socid = $user->socid;
+//$isdraft = (($object->statut == $object::STATUS_DRAFT) ? 1 : 0);
+//$result = restrictedArea($user, 'mymodule', $object->id, '', '', 'fk_soc', 'rowid', $isdraft);
+
+//if (!$permissiontoread) accessforbidden();
 
 
 /*
@@ -179,7 +182,9 @@ if (empty($reshook))
 $form = new Form($db);
 $formfile = new FormFile($db);
 
-llxHeader('', $langs->trans('MyObject'), '');
+$title = $langs->trans("MyObject");
+$help_url = '';
+llxHeader('', $title, $help_url);
 
 // Example : Adding jquery code
 print '<script type="text/javascript" language="javascript">
@@ -456,7 +461,9 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
     	if (empty($reshook))
     	{
     	    // Send
-            print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=presend&mode=init#formmailbeforetitle">'.$langs->trans('SendMail').'</a>'."\n";
+    		if (empty($user->socid)) {
+    			print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=presend&mode=init#formmailbeforetitle">'.$langs->trans('SendMail').'</a>'."\n";
+    		}
 
             // Back to draft
             if ($object->status == $object::STATUS_VALIDATED)
@@ -584,8 +591,8 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 	if (GETPOST('modelselected')) $action = 'presend';
 
 	// Presend form
-	$modelmail='myobject';
-	$defaulttopic='InformationMessage';
+	$modelmail = 'myobject';
+	$defaulttopic = 'InformationMessage';
 	$diroutput = $conf->mymodule->dir_output;
 	$trackid = 'myobject'.$object->id;
 

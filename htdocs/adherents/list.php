@@ -106,6 +106,9 @@ $fieldstosearchall = array(
 	'd.address'=>'Address',
 	'd.zip'=>'Zip',
 	'd.town'=>'Town',
+	'd.phone'=>"Phone",
+	'd.phone_perso'=>"PhonePerso",
+	'd.phone_mobile'=>"PhoneMobile",
 	'd.note_public'=>'NotePublic',
 	'd.note_private'=>'NotePrivate',
 );
@@ -422,10 +425,9 @@ print '<input type="hidden" name="formfilteraction" id="formfilteraction" value=
 print '<input type="hidden" name="action" value="list">';
 print '<input type="hidden" name="sortfield" value="'.$sortfield.'">';
 print '<input type="hidden" name="sortorder" value="'.$sortorder.'">';
-print '<input type="hidden" name="page" value="'.$page.'">';
 print '<input type="hidden" name="contextpage" value="'.$contextpage.'">';
 
-print_barre_liste($titre, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, $massactionbutton, $num, $nbtotalofrecords, 'members', 0, $newcardbutton, '', $limit);
+print_barre_liste($titre, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, $massactionbutton, $num, $nbtotalofrecords, 'members', 0, $newcardbutton, '', $limit, 0, 0, 1);
 
 $topicmail = "Information";
 $modelmail = "member";
@@ -946,8 +948,6 @@ print $hookmanager->resPrint;
 print "</table>\n";
 print "</div>";
 print '</form>';
-
-if ($num > $limit || $page) print_barre_liste('', $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, '', $num, $nbtotalofrecords, 'generic', 0, '', '', $limit, 1);
 
 // End of page
 llxFooter();

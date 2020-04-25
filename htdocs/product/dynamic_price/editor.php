@@ -41,7 +41,7 @@ $tab = (!empty($tab)) ? $tab : 'card';
 $tab = strtolower($tab);
 
 // Security check
-$result=restrictedArea($user, 'produit|service&fournisseur', $id, 'product&product', '', '', 'rowid');
+$result = restrictedArea($user, 'produit|service&fournisseur', $id, 'product&product', '', '', 'rowid');
 
 //Initialize objects
 $product = new Product($db);
@@ -190,23 +190,23 @@ print '</td></tr>';
 
 // Title input
 print '<tr><td class="fieldrequired">'.$langs->trans("Name").'</td><td>';
-print '<input class="flat" name="expression_title" size="15" value="'.($price_expression->title?$price_expression->title:'').'">';
+print '<input class="flat" name="expression_title" size="15" value="'.($price_expression->title ? $price_expression->title : '').'">';
 print '</td></tr>';
 
 //Help text
 $help_text = $langs->trans("PriceExpressionEditorHelp1");
-$help_text.= '<br><br>'.$langs->trans("PriceExpressionEditorHelp2");
-$help_text.= '<br><br>'.$langs->trans("PriceExpressionEditorHelp3");
-$help_text.= '<br><br>'.$langs->trans("PriceExpressionEditorHelp4");
-$help_text.= '<br><br>'.$langs->trans("PriceExpressionEditorHelp5");
+$help_text .= '<br><br>'.$langs->trans("PriceExpressionEditorHelp2");
+$help_text .= '<br><br>'.$langs->trans("PriceExpressionEditorHelp3");
+$help_text .= '<br><br>'.$langs->trans("PriceExpressionEditorHelp4");
+$help_text .= '<br><br>'.$langs->trans("PriceExpressionEditorHelp5");
 foreach ($price_globals->listGlobalVariables() as $entry) {
-	$help_text.= '<br><b>#globals_'.$entry->code.'#</b> '.$entry->description.' = '.$entry->value;
+	$help_text .= '<br><b>#globals_'.$entry->code.'#</b> '.$entry->description.' = '.$entry->value;
 }
 
 //Price expression editor
 print '<tr><td class="fieldrequired">'.$form->textwithpicto($langs->trans("PriceExpressionEditor"), $help_text, 1).'</td><td>';
 require_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
-$doleditor=new DolEditor('expression', isset($price_expression->expression)?$price_expression->expression:'', '', 300, '', '', false, false, false, ROWS_4, '90%');
+$doleditor = new DolEditor('expression', isset($price_expression->expression) ? $price_expression->expression : '', '', 300, '', '', false, false, false, ROWS_4, '90%');
 $doleditor->Create();
 print '</td></tr>';
 print '</table>';

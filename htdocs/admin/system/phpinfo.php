@@ -32,7 +32,7 @@ $langs->load("admin");
 $langs->load("install");
 $langs->load("errors");
 
-if (! $user->admin)
+if (!$user->admin)
 	accessforbidden();
 
 
@@ -43,7 +43,7 @@ if (! $user->admin)
 
 llxHeader();
 
-$title='InfoPHP';
+$title = 'InfoPHP';
 
 if (isset($title))
 {
@@ -52,16 +52,16 @@ if (isset($title))
 
 
 // Check PHP setup is OK
-$maxphp=@ini_get('upload_max_filesize');	// In unknown
-if (preg_match('/k$/i', $maxphp)) $maxphp=$maxphp*1;
-if (preg_match('/m$/i', $maxphp)) $maxphp=$maxphp*1024;
-if (preg_match('/g$/i', $maxphp)) $maxphp=$maxphp*1024*1024;
-if (preg_match('/t$/i', $maxphp)) $maxphp=$maxphp*1024*1024*1024;
-$maxphp2=@ini_get('post_max_size');			// In unknown
-if (preg_match('/k$/i', $maxphp2)) $maxphp2=$maxphp2*1;
-if (preg_match('/m$/i', $maxphp2)) $maxphp2=$maxphp2*1024;
-if (preg_match('/g$/i', $maxphp2)) $maxphp2=$maxphp2*1024*1024;
-if (preg_match('/t$/i', $maxphp2)) $maxphp2=$maxphp2*1024*1024*1024;
+$maxphp = @ini_get('upload_max_filesize'); // In unknown
+if (preg_match('/k$/i', $maxphp)) $maxphp = $maxphp * 1;
+if (preg_match('/m$/i', $maxphp)) $maxphp = $maxphp * 1024;
+if (preg_match('/g$/i', $maxphp)) $maxphp = $maxphp * 1024 * 1024;
+if (preg_match('/t$/i', $maxphp)) $maxphp = $maxphp * 1024 * 1024 * 1024;
+$maxphp2 = @ini_get('post_max_size'); // In unknown
+if (preg_match('/k$/i', $maxphp2)) $maxphp2 = $maxphp2 * 1;
+if (preg_match('/m$/i', $maxphp2)) $maxphp2 = $maxphp2 * 1024;
+if (preg_match('/g$/i', $maxphp2)) $maxphp2 = $maxphp2 * 1024 * 1024;
+if (preg_match('/t$/i', $maxphp2)) $maxphp2 = $maxphp2 * 1024 * 1024 * 1024;
 if ($maxphp > 0 && $maxphp2 > 0 && $maxphp > $maxphp2)
 {
 	$langs->load("errors");
@@ -79,8 +79,8 @@ $OkayPicturePath = "../../theme/eldy/img/tick.png";
 
 print '<tr><td width="220">'.$langs->trans("Version").'</td><td>';
 
-$arrayphpminversionerror = array(5,5,0);
-$arrayphpminversionwarning = array(5,6,0);
+$arrayphpminversionerror = array(5, 5, 0);
+$arrayphpminversionwarning = array(5, 6, 0);
 
 if (versioncompare(versionphparray(), $arrayphpminversionerror) < 0)
 {
@@ -98,7 +98,7 @@ else
 print '</td></tr>';
 print '<tr><td>GET and POST support</td><td>';
 
-if (! isset($_GET["testget"]) && ! isset($_POST["testpost"]) && ! isset($_GET["mainmenu"]))
+if (!isset($_GET["testget"]) && !isset($_POST["testpost"]) && !isset($_GET["mainmenu"]))
 {
 	print '<img src="'.$WarningPicturePath.'" alt="Warning"> '.$langs->trans("PHPSupportPOSTGETKo");
 	print ' (<a href="'.$_SERVER["PHP_SELF"].'?testget=ok">'.$langs->trans("Recheck").'</a>)';
@@ -111,7 +111,7 @@ else
 print '</td></tr>';
 print '<tr><td>Sessions support</td><td>';
 
-if (! function_exists("session_id"))
+if (!function_exists("session_id"))
 {
 	print '<img src="'.$ErrorPicturePath.'" alt="Error"> '.$langs->trans("ErrorPHPDoesNotSupportSessions");
 }
@@ -123,7 +123,7 @@ else
 print '</td></tr>';
 print '<tr><td>UTF-8 support</td><td>';
 
-if (! function_exists("utf8_encode"))
+if (!function_exists("utf8_encode"))
 {
 	print '<img src="'.$WarningPicturePath.'" alt="Warning"> '.$langs->trans("ErrorPHPDoesNotSupportUTF8");
 }
@@ -202,8 +202,8 @@ print '</table>';
 print '<br>';
 
 // Get php_info array
-$phparray=phpinfo_array();
-foreach($phparray as $key => $value)
+$phparray = phpinfo_array();
+foreach ($phparray as $key => $value)
 {
 	print '<div class="div-table-responsive-no-min">';
 	print '<table class="noborder">';
@@ -214,18 +214,18 @@ foreach($phparray as $key => $value)
 	print "</tr>\n";
 
 	//var_dump($value);
-	foreach($value as $keyparam => $keyvalue)
+	foreach ($value as $keyparam => $keyvalue)
 	{
-		if (! is_array($keyvalue))
+		if (!is_array($keyvalue))
 		{
 			print '<tr class="oddeven">';
 			print '<td>'.$keyparam.'</td>';
-			$valtoshow=$keyvalue;
-			if ($keyparam == 'X-ChromePhp-Data') $valtoshow=dol_trunc($keyvalue, 80);
+			$valtoshow = $keyvalue;
+			if ($keyparam == 'X-ChromePhp-Data') $valtoshow = dol_trunc($keyvalue, 80);
 			print '<td colspan="2">';
-			if ($keyparam == 'Path') $valtoshow=implode('; ', explode(';', trim($valtoshow)));
-			if ($keyparam == 'PATH') $valtoshow=implode('; ', explode(';', trim($valtoshow)));
-			if ($keyparam == '_SERVER["PATH"]') $valtoshow=implode('; ', explode(';', trim($valtoshow)));
+			if ($keyparam == 'Path') $valtoshow = implode('; ', explode(';', trim($valtoshow)));
+			if ($keyparam == 'PATH') $valtoshow = implode('; ', explode(';', trim($valtoshow)));
+			if ($keyparam == '_SERVER["PATH"]') $valtoshow = implode('; ', explode(';', trim($valtoshow)));
 			print $valtoshow;
 			print '</td>';
 			print '</tr>';
@@ -234,12 +234,12 @@ foreach($phparray as $key => $value)
 		{
 			print '<tr class="oddeven">';
 			print '<td>'.$keyparam.'</td>';
-			$i=0;
-			foreach($keyvalue as $keyparam2 => $keyvalue2)
+			$i = 0;
+			foreach ($keyvalue as $keyparam2 => $keyvalue2)
 			{
 				print '<td>';
-				$valtoshow=$keyvalue2;
-				if ($keyparam == 'disable_functions') $valtoshow=implode(', ', explode(',', trim($valtoshow)));
+				$valtoshow = $keyvalue2;
+				if ($keyparam == 'disable_functions') $valtoshow = implode(', ', explode(',', trim($valtoshow)));
 				//print $keyparam;
 				print $valtoshow;
 				$i++;
@@ -275,18 +275,18 @@ function getActivatedExtensions()
 	$extensions = array();
 	$lastLine = "";
 
-	foreach($configLines as $line)
+	foreach ($configLines as $line)
 	{
 		$line = trim($line);
 
 		// ignore comment lines
-		if(substr($line, 0, 1) === ";")
+		if (substr($line, 0, 1) === ";")
 		{
 			continue;
 		}
 
 		// extension
-		if(substr($line, 0, 9) === "extension" && substr($line, 0, 10) !== "extension_")
+		if (substr($line, 0, 9) === "extension" && substr($line, 0, 10) !== "extension_")
 		{
 			$value = trim(end(explode("=", $line)));
 
@@ -294,7 +294,7 @@ function getActivatedExtensions()
 		}
 
 		// zend_extension
-		if(substr($line, 0, 14) === "zend_extension")
+		if (substr($line, 0, 14) === "zend_extension")
 		{
 			$extensions[] = str_replace("[", "", str_replace("]", "", $lastLine));
 		}
@@ -314,11 +314,11 @@ function getConfigFilePath()
 {
 	$phparray = phpinfo_array();
 
-	foreach($phparray as $value)
+	foreach ($phparray as $value)
 	{
-		foreach($value as $keyparam => $keyvalue)
+		foreach ($value as $keyparam => $keyvalue)
 		{
-			if(strtolower($keyparam) !== "loaded configuration file")
+			if (strtolower($keyparam) !== "loaded configuration file")
 			{
 				continue;
 			}
@@ -340,10 +340,10 @@ function getConfigFilePath()
  */
 function getTableColumn($name, array $list)
 {
-	$name   = strtolower($name);
+	$name = strtolower($name);
 	$html = "<td align='center'>";
 
-	if(in_array($name, $list))
+	if (in_array($name, $list))
 	{
 		$html .= '<img src="../../theme/eldy/img/tick.png" alt="Ok">';
 	}
@@ -366,7 +366,7 @@ function getTableColumn($name, array $list)
  */
 function getTableColumnFunction(array $functions)
 {
-	if(count($functions) < 1)
+	if (count($functions) < 1)
 	{
 		return "<td align='center'>-</td>";
 	}
@@ -374,12 +374,12 @@ function getTableColumnFunction(array $functions)
 	$result = true;
 	$html   = "<td align='center'>";
 
-	foreach($functions as $function)
+	foreach ($functions as $function)
 	{
 		$result = $result && function_exists($function);
 	}
 
-	if($result)
+	if ($result)
 	{
 		$html .= '<img src="../../theme/eldy/img/tick.png" alt="Ok">';
 	}
@@ -401,7 +401,7 @@ function getTableColumnFunction(array $functions)
  * @param array $loaded			A list with all loaded PHP extensions
  * @param array $functions		A list with all PHP functions to check
  *
- * @return array
+ * @return string
  */
 function getResultColumn($name, array $activated, array $loaded, array $functions)
 {
@@ -411,14 +411,14 @@ function getResultColumn($name, array $activated, array $loaded, array $function
 	$result = $result && in_array(strtolower($name), $activated);
 	$result = $result && in_array(strtolower($name), $loaded);
 
-	foreach($functions as $function)
+	foreach ($functions as $function)
 	{
 	 	$result = $result && function_exists($function);
 	}
 
 	$html = "<td>";
-	$html .=  $result ? $langs->trans("PHPSupport".$name) : $langs->trans("ErrorPHPDoesNotSupport".$name);
-	$html .=  "</td>";
+	$html .= $result ? $langs->trans("PHPSupport".$name) : $langs->trans("ErrorPHPDoesNotSupport".$name);
+	$html .= "</td>";
 
     return $html;
 }

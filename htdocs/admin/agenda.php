@@ -172,7 +172,7 @@ if (!empty($triggers))
 
 		// If 'element' value is myobject@mymodule instead of mymodule
 		$tmparray = explode('@', $module);
-		if (! empty($tmparray[1])) {
+		if (!empty($tmparray[1])) {
 			$module = $tmparray[1];
 		}
 

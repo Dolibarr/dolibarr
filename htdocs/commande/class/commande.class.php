@@ -752,8 +752,10 @@ class Commande extends CommonOrder
 
 		$error = 0;
 
-		if ((empty($conf->global->MAIN_USE_ADVANCED_PERMS) && !empty($user->rights->commande->creer))
-			|| (!empty($conf->global->MAIN_USE_ADVANCED_PERMS) && !empty($user->rights->commande->order_advance->validate)))
+		$usercanclose = ((empty($conf->global->MAIN_USE_ADVANCED_PERMS) && !empty($user->rights->commande->creer))
+			|| (!empty($conf->global->MAIN_USE_ADVANCED_PERMS) && !empty($user->rights->commande->order_advance->close)));
+
+		if ($usercanclose)
 		{
 			$this->db->begin();
 
@@ -1016,12 +1018,12 @@ class Commande extends CommonOrder
 					$vatrate = $line->tva_tx;
 					if ($line->vat_src_code && !preg_match('/\(.*\)/', $vatrate)) $vatrate .= ' ('.$line->vat_src_code.')';
 
-					if(!empty($conf->global->MAIN_CREATEFROM_KEEP_LINE_ORIGIN_INFORMATION)) {
-						$originid=$line->origin_id;
-						$origintype=$line->origin;
+					if (!empty($conf->global->MAIN_CREATEFROM_KEEP_LINE_ORIGIN_INFORMATION)) {
+						$originid = $line->origin_id;
+						$origintype = $line->origin;
 					} else {
-						$originid=$line->id;
-						$origintype=$this->element;
+						$originid = $line->id;
+						$origintype = $this->element;
 					}
 
                     $result = $this->addline(
@@ -1413,7 +1415,7 @@ class Commande extends CommonOrder
 			if (!$error)
 			{
 				// Validate immediatly the order
-				if (! empty($conf->global->ORDER_VALID_AFTER_CLOSE_PROPAL))
+				if (!empty($conf->global->ORDER_VALID_AFTER_CLOSE_PROPAL))
 				{
 					$this->fetch($ret);
 					$this->valid($user);
@@ -3340,7 +3342,7 @@ class Commande extends CommonOrder
 			$error++; $this->errors[] = "Error ".$this->db->lasterror();
 		}
 
-		if (!$error && empty($conf->global->MAIN_EXTRAFIELDS_DISABLED) && is_array($this->array_options) && count($this->array_options) > 0)
+		if (!$error)
 		{
 			$result = $this->insertExtraFields();
 			if ($result < 0)
@@ -3409,6 +3411,19 @@ class Commande extends CommonOrder
 
 		if (!$error)
 		{
+			// Delete extrafields of order details
+                        $main = MAIN_DB_PREFIX . 'commandedet';
+                        $ef = $main . "_extrafields";
+                        $sql = "DELETE FROM $ef WHERE fk_object IN (SELECT rowid FROM $main WHERE fk_commande = " . $this->id . ")";
+			if (!$this->db->query($sql))
+			{
+				$error++;
+				$this->errors[] = $this->db->lasterror();
+			}
+		}
+
+		if (!$error)
+		{
 			// Delete order details
 			$sql = 'DELETE FROM '.MAIN_DB_PREFIX."commandedet WHERE fk_commande = ".$this->id;
 			if (!$this->db->query($sql))
@@ -3435,14 +3450,11 @@ class Commande extends CommonOrder
 		if (!$error)
 		{
 			// Remove extrafields
-			if ((!$error) && (empty($conf->global->MAIN_EXTRAFIELDS_DISABLED))) // For avoid conflicts if trigger used
+			$result = $this->deleteExtraFields();
+			if ($result < 0)
 			{
-				$result = $this->deleteExtraFields();
-				if ($result < 0)
-				{
-					$error++;
-					dol_syslog(get_class($this)."::delete error -4 ".$this->error, LOG_ERR);
-				}
+				$error++;
+				dol_syslog(get_class($this)."::delete error -4 ".$this->error, LOG_ERR);
 			}
 		}
 
@@ -3538,7 +3550,7 @@ class Commande extends CommonOrder
 			$response->warning_delay = $conf->commande->client->warning_delay / 60 / 60 / 24;
 			$response->label = $langs->trans("OrdersToProcess");
 			$response->labelShort = $langs->trans("Opened");
-			$response->url = DOL_URL_ROOT.'/commande/list.php?viewstatut=-3&mainmenu=commercial&leftmenu=orders';
+			$response->url = DOL_URL_ROOT.'/commande/list.php?search_status=-3&mainmenu=commercial&leftmenu=orders';
 			$response->img = img_object('', "order");
 
 			$generic_commande = new Commande($this->db);
@@ -3695,7 +3707,7 @@ class Commande extends CommonOrder
 		$label = '';
 
 		if ($user->rights->commande->lire) {
-			$label = '<u>'.$langs->trans("ShowOrder").'</u>';
+			$label = '<u>'.$langs->trans("Order").'</u>';
 			$label .= '<br><b>'.$langs->trans('Ref').':</b> '.$this->ref;
 			$label .= '<br><b>'.$langs->trans('RefCustomer').':</b> '.($this->ref_customer ? $this->ref_customer : $this->ref_client);
 			if (!empty($this->total_ht)) {
@@ -3707,6 +3719,9 @@ class Commande extends CommonOrder
 			if (!empty($this->total_ttc)) {
 				$label .= '<br><b>'.$langs->trans('AmountTTC').':</b> '.price($this->total_ttc, 0, $langs, 0, -1, -1, $conf->currency);
 			}
+			if (isset($this->statut)) {
+				$label .= '<br><b>'.$langs->trans("Status").":</b> ".$this->getLibStatut(5);
+			}
 		}
 
 		$linkclose = '';
@@ -3714,7 +3729,7 @@ class Commande extends CommonOrder
 		{
 			if (!empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER))
 			{
-				$label = $langs->trans("ShowOrder");
+				$label = $langs->trans("Order");
 				$linkclose .= ' alt="'.dol_escape_htmltag($label, 1).'"';
 			}
 			$linkclose .= ' title="'.dol_escape_htmltag($label, 1).'"';
@@ -4250,7 +4265,7 @@ class OrderLine extends CommonOrderLine
 		if ($resql)
 		{
 			// Remove extrafields
-			if ((!$error) && (empty($conf->global->MAIN_EXTRAFIELDS_DISABLED))) // For avoid conflicts if trigger used
+			if (!$error)
 			{
 				$this->id = $this->rowid;
 				$result = $this->deleteExtraFields();
@@ -4396,7 +4411,7 @@ class OrderLine extends CommonOrderLine
 			$this->id = $this->db->last_insert_id(MAIN_DB_PREFIX.'commandedet');
 			$this->rowid = $this->id;
 
-			if (empty($conf->global->MAIN_EXTRAFIELDS_DISABLED)) // For avoid conflicts if trigger used
+			if (!$error)
 			{
 				$result = $this->insertExtraFields();
 				if ($result < 0)
@@ -4529,7 +4544,7 @@ class OrderLine extends CommonOrderLine
 		$resql = $this->db->query($sql);
 		if ($resql)
 		{
-			if (empty($conf->global->MAIN_EXTRAFIELDS_DISABLED)) // For avoid conflicts if trigger used
+			if (!$error)
 			{
 				$this->id = $this->rowid;
 				$result = $this->insertExtraFields();

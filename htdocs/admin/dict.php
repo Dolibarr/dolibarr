@@ -58,7 +58,7 @@ if ($id == 10 && !empty($user->rights->accounting->chartofaccount)) $allowed = 1
 if ($id == 17 && !empty($user->rights->accounting->chartofaccount)) $allowed = 1; // Dictionary with type of expense report and accounting account allowed to manager of chart account
 if (!$allowed) accessforbidden();
 
-$acts =array(); $actl =array();
+$acts = array(); $actl = array();
 $acts[0] = "activate";
 $acts[1] = "disable";
 $actl[0] = img_picto($langs->trans("Disabled"), 'switch_off');
@@ -77,7 +77,7 @@ $pageprev = $page - 1;
 $pagenext = $page + 1;
 
 $search_country_id = GETPOST('search_country_id', 'int');
-if (! GETPOSTISSET('search_country_id') && $search_country_id == '' && ($id == 2 || $id == 3 || $id == 10))	// Not a so good idea to force on current country for all dictionaries. Some tables have entries that are for all countries, we must be able to see them, so this is done for dedicated dictionaries only.
+if (!GETPOSTISSET('search_country_id') && $search_country_id == '' && ($id == 2 || $id == 3 || $id == 10))	// Not a so good idea to force on current country for all dictionaries. Some tables have entries that are for all countries, we must be able to see them, so this is done for dedicated dictionaries only.
 {
 	$search_country_id = $mysoc->country_id;
 }
@@ -445,7 +445,7 @@ $tabcond[16] = (!empty($conf->societe->enabled) && empty($conf->global->SOCIETE_
 $tabcond[17] = (!empty($conf->deplacement->enabled) || !empty($conf->expensereport->enabled));
 $tabcond[18] = !empty($conf->expedition->enabled) || !empty($conf->reception->enabled);
 $tabcond[19] = !empty($conf->societe->enabled);
-$tabcond[20]= (! empty($conf->fournisseur->enabled) && empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD) || ! empty($conf->supplier_order->enabled));
+$tabcond[20] = (!empty($conf->fournisseur->enabled) && empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD) || !empty($conf->supplier_order->enabled));
 $tabcond[21] = !empty($conf->propal->enabled);
 $tabcond[22] = (!empty($conf->commande->enabled) || !empty($conf->propal->enabled));
 $tabcond[23] = true;
@@ -1718,7 +1718,7 @@ if ($id)
                     print "</td>";
 
                     // Modify link
-                    if ($canbemodified) print '<td align="center"><a class="reposition" href="'.$url.'action=edit">'.img_edit().'</a></td>';
+                    if ($canbemodified) print '<td align="center"><a class="reposition editfielda" href="'.$url.'action=edit">'.img_edit().'</a></td>';
                     else print '<td>&nbsp;</td>';
 
                     // Delete link

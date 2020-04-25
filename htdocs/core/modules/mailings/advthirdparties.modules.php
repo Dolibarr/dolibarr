@@ -25,17 +25,17 @@ include_once DOL_DOCUMENT_ROOT.'/contact/class/contact.class.php';
  */
 class mailing_advthirdparties extends MailingTargets
 {
-    public $name='ThirdPartyAdvancedTargeting';
+    public $name = 'ThirdPartyAdvancedTargeting';
 	// This label is used if no translation is found for key XXX neither MailingModuleDescXXX where XXX=name is found
-    public $desc="Third parties";
-    public $require_admin=0;
+    public $desc = "Third parties";
+    public $require_admin = 0;
 
-    public $require_module=array("none");	// This module should not be displayed as Selector in mailling
+    public $require_module = array("none"); // This module should not be displayed as Selector in mailling
 
     /**
      * @var string String with name of icon for myobject. Must be the part after the 'object_' into object_myobject.png
      */
-    public $picto='company';
+    public $picto = 'company';
 
 	/**
      * @var DoliDB Database handler.
@@ -50,7 +50,7 @@ class mailing_advthirdparties extends MailingTargets
 	 */
 	public function __construct($db)
 	{
-		$this->db=$db;
+		$this->db = $db;
 	}
 
 
@@ -73,18 +73,18 @@ class mailing_advthirdparties extends MailingTargets
 
 		$cibles = array();
 
-		if (($type_of_target==1) || ($type_of_target==3)) {
+		if (($type_of_target == 1) || ($type_of_target == 3)) {
 			// Select the third parties from category
-			if (count($socid)>0)
+			if (count($socid) > 0)
 			{
-				$sql= "SELECT s.rowid as id, s.email as email, s.nom as name, null as fk_contact";
-				$sql.= " FROM ".MAIN_DB_PREFIX."societe as s LEFT OUTER JOIN ".MAIN_DB_PREFIX."societe_extrafields se ON se.fk_object=s.rowid";
-				$sql.= " WHERE s.entity IN (".getEntity('societe').")";
-				$sql.= " AND s.rowid IN (".implode(',', $socid).")";
-				$sql.= " ORDER BY email";
+				$sql = "SELECT s.rowid as id, s.email as email, s.nom as name, null as fk_contact";
+				$sql .= " FROM ".MAIN_DB_PREFIX."societe as s LEFT OUTER JOIN ".MAIN_DB_PREFIX."societe_extrafields se ON se.fk_object=s.rowid";
+				$sql .= " WHERE s.entity IN (".getEntity('societe').")";
+				$sql .= " AND s.rowid IN (".implode(',', $socid).")";
+				$sql .= " ORDER BY email";
 
     			// Stock recipients emails into targets table
-    			$result=$this->db->query($sql);
+    			$result = $this->db->query($sql);
     			if ($result)
     			{
     				$num = $this->db->num_rows($result);
@@ -117,29 +117,29 @@ class mailing_advthirdparties extends MailingTargets
     			else
     			{
     				dol_syslog($this->db->error());
-    				$this->error=$this->db->error();
+    				$this->error = $this->db->error();
     				return -1;
     			}
 			}
 		}
 
-		if  (($type_of_target==1) || ($type_of_target==2) || ($type_of_target==4)) {
+		if (($type_of_target == 1) || ($type_of_target == 2) || ($type_of_target == 4)) {
 			// Select the third parties from category
-			if (count($socid)>0 || count($contactid)>0)
+			if (count($socid) > 0 || count($contactid) > 0)
 			{
-				$sql= "SELECT socp.rowid as id, socp.email as email, socp.lastname as lastname, socp.firstname as firstname";
-				$sql.= " FROM ".MAIN_DB_PREFIX."socpeople as socp";
-				$sql.= " WHERE socp.entity IN (".getEntity('socpeople').")";
-				if (count($contactid)>0) {
-					$sql.= " AND socp.rowid IN (".implode(',', $contactid).")";
+				$sql = "SELECT socp.rowid as id, socp.email as email, socp.lastname as lastname, socp.firstname as firstname";
+				$sql .= " FROM ".MAIN_DB_PREFIX."socpeople as socp";
+				$sql .= " WHERE socp.entity IN (".getEntity('socpeople').")";
+				if (count($contactid) > 0) {
+					$sql .= " AND socp.rowid IN (".implode(',', $contactid).")";
 				}
-				if (count($socid)>0) {
-					$sql.= " AND socp.fk_soc IN (".implode(',', $socid).")";
+				if (count($socid) > 0) {
+					$sql .= " AND socp.fk_soc IN (".implode(',', $socid).")";
 				}
-				$sql.= " ORDER BY email";
+				$sql .= " ORDER BY email";
 
     			// Stock recipients emails into targets table
-    			$result=$this->db->query($sql);
+    			$result = $this->db->query($sql);
     			if ($result)
     			{
     				$num = $this->db->num_rows($result);
@@ -172,7 +172,7 @@ class mailing_advthirdparties extends MailingTargets
     			else
     			{
     				dol_syslog($this->db->error());
-    				$this->error=$this->db->error();
+    				$this->error = $this->db->error();
     				return -1;
     			}
 			}
@@ -216,9 +216,9 @@ class mailing_advthirdparties extends MailingTargets
 		global $conf;
 
 		$sql = "SELECT count(distinct(s.email)) as nb";
-		$sql.= " FROM ".MAIN_DB_PREFIX."societe as s";
-		$sql.= " WHERE s.email != ''";
-		$sql.= " AND s.entity IN (".getEntity('societe').")";
+		$sql .= " FROM ".MAIN_DB_PREFIX."societe as s";
+		$sql .= " WHERE s.email != ''";
+		$sql .= " AND s.entity IN (".getEntity('societe').")";
 
 		// La requete doit retourner un champ "nb" pour etre comprise
 		// par parent::getNbOfRecipients
@@ -237,16 +237,16 @@ class mailing_advthirdparties extends MailingTargets
 
 		$langs->load("companies");
 
-		$s='';
-		$s.='<select name="filter" class="flat">';
+		$s = '';
+		$s .= '<select name="filter" class="flat">';
 
 		// Show categories
 		$sql = "SELECT rowid, label, type, visible";
-		$sql.= " FROM ".MAIN_DB_PREFIX."categorie";
-		$sql.= " WHERE type in (1,2)";	// We keep only categories for suppliers and customers/prospects
+		$sql .= " FROM ".MAIN_DB_PREFIX."categorie";
+		$sql .= " WHERE type in (1,2)"; // We keep only categories for suppliers and customers/prospects
 		// $sql.= " AND visible > 0";	// We ignore the property visible because third party's categories does not use this property (only products categories use it).
-		$sql.= " AND entity = ".$conf->entity;
-		$sql.= " ORDER BY label";
+		$sql .= " AND entity = ".$conf->entity;
+		$sql .= " ORDER BY label";
 
 		//print $sql;
 		$resql = $this->db->query($sql);
@@ -254,22 +254,22 @@ class mailing_advthirdparties extends MailingTargets
 		{
 			$num = $this->db->num_rows($resql);
 
-			if (empty($conf->categorie->enabled)) $num=0;	// Force empty list if category module is not enabled
+			if (empty($conf->categorie->enabled)) $num = 0; // Force empty list if category module is not enabled
 
-			if ($num) $s.='<option value="0">&nbsp;</option>';
-			else $s.='<option value="0">'.$langs->trans("ContactsAllShort").'</option>';
+			if ($num) $s .= '<option value="0">&nbsp;</option>';
+			else $s .= '<option value="0">'.$langs->trans("ContactsAllShort").'</option>';
 
 			$i = 0;
 			while ($i < $num)
 			{
 				$obj = $this->db->fetch_object($resql);
 
-				$type='';
-				if ($obj->type == 1) $type=$langs->trans("Supplier");
-				if ($obj->type == 2) $type=$langs->trans("Customer");
-				$s.='<option value="'.$obj->rowid.'">'.dol_trunc($obj->label, 38, 'middle');
-				if ($type) $s.=' ('.$type.')';
-				$s.='</option>';
+				$type = '';
+				if ($obj->type == 1) $type = $langs->trans("Supplier");
+				if ($obj->type == 2) $type = $langs->trans("Customer");
+				$s .= '<option value="'.$obj->rowid.'">'.dol_trunc($obj->label, 38, 'middle');
+				if ($type) $s .= ' ('.$type.')';
+				$s .= '</option>';
 				$i++;
 			}
 		}
@@ -278,7 +278,7 @@ class mailing_advthirdparties extends MailingTargets
 			dol_print_error($this->db);
 		}
 
-		$s.='</select>';
+		$s .= '</select>';
 		return $s;
 	}
 
@@ -292,12 +292,12 @@ class mailing_advthirdparties extends MailingTargets
 	 */
 	public function url($id, $type)
 	{
-		if ($type=='thirdparty') {
-			$companystatic=new Societe($this->db);
+		if ($type == 'thirdparty') {
+			$companystatic = new Societe($this->db);
 			$companystatic->fetch($id);
 			return $companystatic->getNomUrl(0, '', 0, 1);
-		} elseif ($type=='contact') {
-			$contactstatic=new Contact($this->db);
+		} elseif ($type == 'contact') {
+			$contactstatic = new Contact($this->db);
 			$contactstatic->fetch($id);
 			return $contactstatic->getNomUrl(0, '', 0, '', -1, 1);
 		}

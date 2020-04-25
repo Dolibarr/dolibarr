@@ -33,6 +33,7 @@ if (!defined('NOREQUIREHTML'))		define('NOREQUIREHTML', '1');
 if (!defined('NOREQUIREAJAX'))		define('NOREQUIREAJAX', '1');
 
 require '../main.inc.php'; // Load $user and permissions
+require_once DOL_DOCUMENT_ROOT.'/core/class/html.form.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
 require_once DOL_DOCUMENT_ROOT.'/societe/class/societe.class.php';
 require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
@@ -82,9 +83,12 @@ else $soc->fetch($conf->global->$constforcompanyid);
 $result = restrictedArea($user, 'takepos', 0, '');
 
 
+
 /*
  * View
  */
+
+$form = new Form($db);
 
 // Title
 $title = 'TakePOS - Dolibarr '.DOL_VERSION;
@@ -648,14 +652,14 @@ function MoreActions(totalactions){
 	if (pageactions==0){
 		pageactions=1;
 		for (i = 0; i <= totalactions; i++){
-			if (i<9) $("#action"+i).hide();
+			if (i<12) $("#action"+i).hide();
 			else $("#action"+i).show();
 		}
 	}
 	else if (pageactions==1){
 		pageactions=0;
 		for (i = 0; i <= totalactions; i++){
-			if (i<9) $("#action"+i).show();
+			if (i<12) $("#action"+i).show();
 			else $("#action"+i).hide();
 		}
 	}
@@ -759,8 +763,10 @@ if (empty($conf->global->TAKEPOS_HIDE_HEAD_BAR)) {
 			echo '<span class="hideonsmartphone"> - '.dol_print_date(dol_now(), "day").'</span>';
 			?>
 			</a></div>
+			<!-- section for customer and open sales -->
 			<div class="inline-block valignmiddle" id="customerandsales">
 			</div>
+			<!-- More info about customer -->
 			<div class="inline-block valignmiddle" id="moreinfo"></div>
 			<div class="inline-block valignmiddle" id="infowarehouse"></div>
 			</div>
@@ -874,7 +880,8 @@ if ($conf->global->TAKEPOS_BAR_RESTAURANT)
 	if ($conf->global->TAKEPOS_BAR_RESTAURANT)
 	{
 	    if ($conf->global->TAKEPOS_PRINT_METHOD == "takeposconnector") {
-			$menus[$r++] = array('title'=>'<span class="fa fa-receipt paddingrightonly"></span><div class="trunc">'.$langs->trans("Receipt").'</div>', 'action'=>'TakeposPrinting(placeid);');
+			if (filter_var($conf->global->TAKEPOS_PRINT_SERVER, FILTER_VALIDATE_URL) == true) $menus[$r++] = array('title'=>'<span class="fa fa-receipt paddingrightonly"></span><div class="trunc">'.$langs->trans("Receipt").'</div>', 'action'=>'TakeposConnector(placeid);');
+			else $menus[$r++] = array('title'=>'<span class="fa fa-receipt paddingrightonly"></span><div class="trunc">'.$langs->trans("Receipt").'</div>', 'action'=>'TakeposPrinting(placeid);');
 		} elseif ($conf->global->TAKEPOS_PRINT_METHOD == "receiptprinter") {
 			$menus[$r++] = array('title'=>'<span class="fa fa-receipt paddingrightonly"></span><div class="trunc">'.$langs->trans("Receipt").'</div>', 'action'=>'DolibarrTakeposPrinting(placeid);');
 		} else {
@@ -935,12 +942,12 @@ if (!empty($conf->global->TAKEPOS_HIDE_HEAD_BAR)) {
         foreach ($menus as $menu)
         {
         	$i++;
-        	if (count($menus) > 9 and $i == 9)
+        	if (count($menus) > 12 and $i == 12)
         	{
         		echo '<button style="'.$menu['style'].'" type="button" id="actionnext" class="actionbutton" onclick="MoreActions('.count($menus).');">'.$langs->trans("Next").'</button>';
         		echo '<button style="display: none;" type="button" id="action'.$i.'" class="actionbutton" onclick="'.$menu['action'].'">'.$menu['title'].'</button>';
         	}
-            elseif ($i > 9) echo '<button style="display: none;" type="button" id="action'.$i.'" class="actionbutton" onclick="'.$menu['action'].'">'.$menu['title'].'</button>';
+            elseif ($i > 12) echo '<button style="display: none;" type="button" id="action'.$i.'" class="actionbutton" onclick="'.$menu['action'].'">'.$menu['title'].'</button>';
             else echo '<button style="'.$menu['style'].'" type="button" id="action'.$i.'" class="actionbutton" onclick="'.$menu['action'].'">'.$menu['title'].'</button>';
         }
 

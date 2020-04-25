@@ -61,7 +61,7 @@ $hookmanager->initHooks(array('userhome'));
 llxHeader();
 
 
-print load_fiche_titre($langs->trans("MenuUsersAndGroups"));
+print load_fiche_titre($langs->trans("MenuUsersAndGroups"), '', 'user');
 
 
 print '<div class="fichecenter"><div class="fichethirdleft">';
@@ -92,7 +92,7 @@ print '</div><div class="fichetwothirdright"><div class="ficheaddleft">';
 
 
 /*
- * Last created users
+ * Latest created users
  */
 $max = 10;
 
@@ -128,8 +128,7 @@ if ($resql)
 	print '<div class="div-table-responsive-no-min">';
 	print '<table class="noborder centpercent">';
 	print '<tr class="liste_titre"><td colspan="3">'.$langs->trans("LastUsersCreated", min($num, $max)).'</td>';
-	print '<td class="right"><a class="commonlink" href="'.DOL_URL_ROOT.'/user/list.php?sortfield=u.datec&sortorder=DESC">'.$langs->trans("FullList").'</td>';
-	print '<td></td>';
+	print '<td class="right" colspan="2"><a class="commonlink" href="'.DOL_URL_ROOT.'/user/list.php?sortfield=u.datec&sortorder=DESC">'.$langs->trans("FullList").'</td>';
 	print '</tr>';
 	$i = 0;
 
@@ -165,7 +164,7 @@ if ($resql)
 			print img_picto($langs->trans("Administrator"), 'star');
 		}
 		print "</td>";
-		print '<td class="left">'.$obj->login.'</td>';
+		print '<td>'.$obj->login.'</td>';
 		print "<td>";
 		if ($obj->fk_soc)
 		{

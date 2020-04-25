@@ -1379,9 +1379,10 @@ class SMTPs
         $strContentAltText = '';
         if ($strType == 'html')
         {
-            // Similar code to forge a text from html is also in CMailFile.class.php
-            $strContentAltText = preg_replace("/<br\s*[^>]*>/", " ", $strContent);
-            $strContentAltText = html_entity_decode(strip_tags($strContentAltText));
+        	// Similar code to forge a text from html is also in CMailFile.class.php
+        	$strContentAltText = preg_replace('/<head><title>.*<\/style><\/head>/', '', $strContent);
+        	$strContentAltText = preg_replace("/<br\s*[^>]*>/", " ", $strContentAltText);
+        	$strContentAltText = html_entity_decode(strip_tags($strContentAltText));
             $strContentAltText = trim(wordwrap($strContentAltText, 75, "\r\n"));
         }
 

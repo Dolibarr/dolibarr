@@ -167,7 +167,7 @@ if ($action == 'validatehistory') {
 					$suggestedaccountingaccountfor = 'eecwithvat';
 				} elseif ($isSellerInEEC && $isBuyerInEEC && empty($objp->tva_intra)) {	// European intravat sale, without VAT intra community number
 					$objp->code_sell_p = $objp->code_sell;
-					$objp->aarowid_suggest = 0;		// There is a doubt, no automatic binding
+					$objp->aarowid_suggest = 0; // There is a doubt, no automatic binding
 					$suggestedaccountingaccountfor = 'eecwithoutvatnumber';
 				} elseif ($isSellerInEEC && $isBuyerInEEC) {          // European intravat sale
 					$objp->code_sell_p = $objp->code_sell_intra;

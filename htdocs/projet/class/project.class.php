@@ -68,7 +68,7 @@ class Project extends CommonObject
     /**
      * @var string String with name of icon for myobject. Must be the part after the 'object_' into object_myobject.png
      */
-    public $picto = 'projectpub';
+    public $picto = 'project';
 
     /**
      * {@inheritdoc}
@@ -164,7 +164,7 @@ class Project extends CommonObject
 	const STATUS_CLOSED = 2;
 
 
-	public $fields=array(
+	public $fields = array(
 		'rowid' =>array('type'=>'integer', 'label'=>'ID', 'enabled'=>1, 'visible'=>-1, 'notnull'=>1, 'position'=>10),
 		'fk_soc' =>array('type'=>'integer', 'label'=>'Fk soc', 'enabled'=>1, 'visible'=>-1, 'position'=>15),
 		'datec' =>array('type'=>'datetime', 'label'=>'Datec', 'enabled'=>1, 'visible'=>-1, 'position'=>20),
@@ -316,7 +316,7 @@ class Project extends CommonObject
 
         // Update extrafield
         if (!$error) {
-        	if (empty($conf->global->MAIN_EXTRAFIELDS_DISABLED)) // For avoid conflicts if trigger used
+        	if (!$error)
         	{
         		$result = $this->insertExtraFields();
         		if ($result < 0)
@@ -405,7 +405,7 @@ class Project extends CommonObject
                 // Update extrafield
                 if (!$error)
                 {
-                	if (empty($conf->global->MAIN_EXTRAFIELDS_DISABLED)) // For avoid conflicts if trigger used
+                	if (!$error)
                 	{
                 		$result = $this->insertExtraFields();
                 		if ($result < 0)
@@ -534,7 +534,7 @@ class Project extends CommonObject
                 $this->user_modification_id = $obj->fk_user_modif;
                 $this->user_close_id = $obj->fk_user_close;
                 $this->public = $obj->public;
-                $this->statut = $obj->status;	// deprecated
+                $this->statut = $obj->status; // deprecated
                 $this->status = $obj->status;
                 $this->opp_status = $obj->fk_opp_status;
                 $this->opp_amount	= $obj->opp_amount;
@@ -610,14 +610,14 @@ class Project extends CommonObject
 		}
         elseif ($type == 'loan')
         {
-            $sql = 'SELECT l.rowid, l.fk_user_author as fk_user FROM '.MAIN_DB_PREFIX."loan as l WHERE l.entity IN (".getEntity('loan').")";
+            $sql = 'SELECT l.rowid, l.fk_user_author as fk_user FROM '.MAIN_DB_PREFIX."loan as l WHERE l.entity IN (".getEntity('loan').") AND l.fk_projet IN (".$ids.")";
         }
         else
 		{
             $sql = "SELECT rowid FROM ".MAIN_DB_PREFIX.$tablename." WHERE ".$projectkey." IN (".$ids.") AND entity IN (".getEntity($type).")";
         }
 
-        if($dates > 0 && $type == 'loan'){
+        if ($dates > 0 && $type == 'loan') {
             $sql .= " AND (dateend > '".$this->db->idate($dates)."' OR dateend IS NULL)";
         }
 		elseif ($dates > 0 && ($type != 'project_task'))	// For table project_taks, we want the filter on date apply on project_time_spent table
@@ -627,7 +627,7 @@ class Project extends CommonObject
 			$sql .= " AND (".$datefieldname." >= '".$this->db->idate($dates)."' OR ".$datefieldname." IS NULL)";
 		}
 
-        if($datee > 0 && $type == 'loan'){
+        if ($datee > 0 && $type == 'loan') {
             $sql .= " AND (datestart < '".$this->db->idate($datee)."' OR datestart IS NULL)";
         }
         elseif ($datee > 0 && ($type != 'project_task'))	// For table project_taks, we want the filter on date apply on project_time_spent table
@@ -995,7 +995,7 @@ class Project extends CommonObject
      */
     public function getLibStatut($mode = 0)
     {
-    	return $this->LibStatut(isset($this->statut)?$this->statut:$this->status, $mode);
+    	return $this->LibStatut(isset($this->statut) ? $this->statut : $this->status, $mode);
     }
 
     // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
@@ -1046,9 +1046,12 @@ class Project extends CommonObject
         $result = '';
 
         $label = '';
-        if ($option != 'nolink') $label = '<u>'.$langs->trans("ShowProject").'</u>';
+        if ($option != 'nolink') $label = '<u>'.$langs->trans("Project").'</u>';
         $label .= ($label ? '<br>' : '').'<b>'.$langs->trans('Ref').': </b>'.$this->ref; // The space must be after the : to not being explode when showing the title in img_picto
         $label .= ($label ? '<br>' : '').'<b>'.$langs->trans('Label').': </b>'.$this->title; // The space must be after the : to not being explode when showing the title in img_picto
+        if (isset($this->public)) {
+        	$label .= '<br><b>'.$langs->trans("Visibility").":</b> ".($this->public ? $langs->trans("SharedProject") : $langs->trans("PrivateProject"));
+        }
         if (!empty($this->thirdparty_name))
             $label .= ($label ? '<br>' : '').'<b>'.$langs->trans('ThirdParty').': </b>'.$this->thirdparty_name; // The space must be after the : to not being explode when showing the title in img_picto
         if (!empty($this->dateo))
@@ -1238,61 +1241,61 @@ class Project extends CommonObject
         $temp = array();
 
         $sql = "SELECT ".(($mode == 0 || $mode == 1) ? "DISTINCT " : "")."p.rowid, p.ref";
-        $sql.= " FROM " . MAIN_DB_PREFIX . "projet as p";
+        $sql .= " FROM ".MAIN_DB_PREFIX."projet as p";
         if ($mode == 0)
         {
-            $sql.= " LEFT JOIN " . MAIN_DB_PREFIX . "element_contact as ec ON ec.element_id = p.rowid";
+            $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."element_contact as ec ON ec.element_id = p.rowid";
         }
         elseif ($mode == 1)
         {
-        	$sql.= ", " . MAIN_DB_PREFIX . "element_contact as ec";
+        	$sql .= ", ".MAIN_DB_PREFIX."element_contact as ec";
         }
         elseif ($mode == 2)
         {
         	// No filter. Use this if user has permission to see all project
         }
-        $sql.= " WHERE p.entity IN (".getEntity('project').")";
+        $sql .= " WHERE p.entity IN (".getEntity('project').")";
         // Internal users must see project he is contact to even if project linked to a third party he can't see.
         //if ($socid || ! $user->rights->societe->client->voir)	$sql.= " AND (p.fk_soc IS NULL OR p.fk_soc = 0 OR p.fk_soc = ".$socid.")";
-        if ($socid > 0) $sql.= " AND (p.fk_soc IS NULL OR p.fk_soc = 0 OR p.fk_soc = " . $socid . ")";
+        if ($socid > 0) $sql .= " AND (p.fk_soc IS NULL OR p.fk_soc = 0 OR p.fk_soc = ".$socid.")";
 
         // Get id of types of contacts for projects (This list never contains a lot of elements)
-        $listofprojectcontacttype=array();
+        $listofprojectcontacttype = array();
         $sql2 = "SELECT ctc.rowid, ctc.code FROM ".MAIN_DB_PREFIX."c_type_contact as ctc";
-        $sql2.= " WHERE ctc.element = '" . $this->db->escape($this->element) . "'";
-        $sql2.= " AND ctc.source = 'internal'";
+        $sql2 .= " WHERE ctc.element = '".$this->db->escape($this->element)."'";
+        $sql2 .= " AND ctc.source = 'internal'";
         $resql = $this->db->query($sql2);
         if ($resql)
         {
-            while($obj = $this->db->fetch_object($resql))
+            while ($obj = $this->db->fetch_object($resql))
             {
-                $listofprojectcontacttype[$obj->rowid]=$obj->code;
+                $listofprojectcontacttype[$obj->rowid] = $obj->code;
             }
         }
         else dol_print_error($this->db);
-        if (count($listofprojectcontacttype) == 0) $listofprojectcontacttype[0]='0';    // To avoid syntax error if not found
+        if (count($listofprojectcontacttype) == 0) $listofprojectcontacttype[0] = '0'; // To avoid syntax error if not found
 
         if ($mode == 0)
         {
-            $sql.= " AND ( p.public = 1";
-            $sql.= " OR ( ec.fk_c_type_contact IN (".join(',', array_keys($listofprojectcontacttype)).")";
-            $sql.= " AND ec.fk_socpeople = ".$user->id.")";
-            $sql.= " )";
+            $sql .= " AND ( p.public = 1";
+            $sql .= " OR ( ec.fk_c_type_contact IN (".join(',', array_keys($listofprojectcontacttype)).")";
+            $sql .= " AND ec.fk_socpeople = ".$user->id.")";
+            $sql .= " )";
         }
         elseif ($mode == 1)
         {
-            $sql.= " AND ec.element_id = p.rowid";
-            $sql.= " AND (";
-            $sql.= "  ( ec.fk_c_type_contact IN (".join(',', array_keys($listofprojectcontacttype)).")";
-            $sql.= " AND ec.fk_socpeople = ".$user->id.")";
-            $sql.= " )";
+            $sql .= " AND ec.element_id = p.rowid";
+            $sql .= " AND (";
+            $sql .= "  ( ec.fk_c_type_contact IN (".join(',', array_keys($listofprojectcontacttype)).")";
+            $sql .= " AND ec.fk_socpeople = ".$user->id.")";
+            $sql .= " )";
         }
         elseif ($mode == 2)
         {
             // No filter. Use this if user has permission to see all project
         }
 
-		$sql.= $filter;
+		$sql .= $filter;
         //print $sql;
 
         $resql = $this->db->query($sql);
@@ -1517,17 +1520,17 @@ class Project extends CommonObject
 			//Duplicate task
 			if ($clone_task)
 			{
-				require_once DOL_DOCUMENT_ROOT . '/projet/class/task.class.php';
+				require_once DOL_DOCUMENT_ROOT.'/projet/class/task.class.php';
 
 				$taskstatic = new Task($this->db);
 
 				// Security check
-				$socid=0;
+				$socid = 0;
 				if ($user->socid > 0) $socid = $user->socid;
 
-				$tasksarray=$taskstatic->getTasksArray(0, 0, $fromid, $socid, 0);
+				$tasksarray = $taskstatic->getTasksArray(0, 0, $fromid, $socid, 0);
 
-				$tab_conv_child_parent=array();
+				$tab_conv_child_parent = array();
 
 				// Loop on each task, to clone it
 			    foreach ($tasksarray as $tasktoclone)
@@ -1597,30 +1600,30 @@ class Project extends CommonObject
     {
 		global $user, $langs, $conf;
 
-		$error=0;
+		$error = 0;
 
 		$taskstatic = new Task($this->db);
 
 		// Security check
-		$socid=0;
+		$socid = 0;
 		if ($user->socid > 0) $socid = $user->socid;
 
-		$tasksarray=$taskstatic->getTasksArray(0, 0, $this->id, $socid, 0);
+		$tasksarray = $taskstatic->getTasksArray(0, 0, $this->id, $socid, 0);
 
 	    foreach ($tasksarray as $tasktoshiftdate)
 	    {
-	    	$to_update=false;
+	    	$to_update = false;
 	    	// Fetch only if update of date will be made
 	    	if ((!empty($tasktoshiftdate->date_start)) || (!empty($tasktoshiftdate->date_end)))
 	    	{
 	    		//dol_syslog(get_class($this)."::shiftTaskDate to_update", LOG_DEBUG);
-	    		$to_update=true;
+	    		$to_update = true;
 		    	$task = new Task($this->db);
 		    	$result = $task->fetch($tasktoshiftdate->id);
 		    	if (!$result)
 		    	{
 		    		$error++;
-		    		$this->error.=$task->error;
+		    		$this->error .= $task->error;
 		    	}
 	    	}
 			//print "$this->date_start + $tasktoshiftdate->date_start - $old_project_dt_start";exit;
@@ -1736,16 +1739,16 @@ class Project extends CommonObject
 	 */
 	public function generateDocument($modele, $outputlangs, $hidedetails = 0, $hidedesc = 0, $hideref = 0)
 	{
-		global $conf,$langs;
+		global $conf, $langs;
 
 		$langs->load("projects");
 
-		if (! dol_strlen($modele)) {
+		if (!dol_strlen($modele)) {
 			$modele = 'baleine';
 
 			if ($this->modelpdf) {
 				$modele = $this->modelpdf;
-			} elseif (! empty($conf->global->PROJECT_ADDON_PDF)) {
+			} elseif (!empty($conf->global->PROJECT_ADDON_PDF)) {
 				$modele = $conf->global->PROJECT_ADDON_PDF;
 			}
 		}
@@ -1767,35 +1770,35 @@ class Project extends CommonObject
 	 */
     public function loadTimeSpent($datestart, $taskid = 0, $userid = 0)
     {
-        $error=0;
+        $error = 0;
 
-        $this->weekWorkLoad=array();
-        $this->weekWorkLoadPerTask=array();
+        $this->weekWorkLoad = array();
+        $this->weekWorkLoadPerTask = array();
 
         if (empty($datestart)) dol_print_error('', 'Error datestart parameter is empty');
 
         $sql = "SELECT ptt.rowid as taskid, ptt.task_duration, ptt.task_date, ptt.task_datehour, ptt.fk_task";
-        $sql.= " FROM ".MAIN_DB_PREFIX."projet_task_time AS ptt, ".MAIN_DB_PREFIX."projet_task as pt";
-        $sql.= " WHERE ptt.fk_task = pt.rowid";
-        $sql.= " AND pt.fk_projet = ".$this->id;
-        $sql.= " AND (ptt.task_date >= '".$this->db->idate($datestart)."' ";
-        $sql.= " AND ptt.task_date <= '".$this->db->idate(dol_time_plus_duree($datestart, 1, 'w') - 1)."')";
-        if ($taskid) $sql.= " AND ptt.fk_task=".$taskid;
-        if (is_numeric($userid)) $sql.= " AND ptt.fk_user=".$userid;
+        $sql .= " FROM ".MAIN_DB_PREFIX."projet_task_time AS ptt, ".MAIN_DB_PREFIX."projet_task as pt";
+        $sql .= " WHERE ptt.fk_task = pt.rowid";
+        $sql .= " AND pt.fk_projet = ".$this->id;
+        $sql .= " AND (ptt.task_date >= '".$this->db->idate($datestart)."' ";
+        $sql .= " AND ptt.task_date <= '".$this->db->idate(dol_time_plus_duree($datestart, 1, 'w') - 1)."')";
+        if ($taskid) $sql .= " AND ptt.fk_task=".$taskid;
+        if (is_numeric($userid)) $sql .= " AND ptt.fk_user=".$userid;
 
         //print $sql;
-        $resql=$this->db->query($sql);
+        $resql = $this->db->query($sql);
         if ($resql)
         {
-				$daylareadyfound=array();
+				$daylareadyfound = array();
 
                 $num = $this->db->num_rows($resql);
                 $i = 0;
                 // Loop on each record found, so each couple (project id, task id)
 			while ($i < $num)
                 {
-					$obj=$this->db->fetch_object($resql);
-					$day=$this->db->jdate($obj->task_date);		// task_date is date without hours
+					$obj = $this->db->fetch_object($resql);
+					$day = $this->db->jdate($obj->task_date); // task_date is date without hours
 				if (empty($daylareadyfound[$day]))
 					{
 					$this->weekWorkLoad[$day] = $obj->task_duration;
@@ -1806,7 +1809,7 @@ class Project extends CommonObject
 					$this->weekWorkLoad[$day] += $obj->task_duration;
 					$this->weekWorkLoadPerTask[$day][$obj->fk_task] += $obj->task_duration;
 				}
-					$daylareadyfound[$day]=1;
+					$daylareadyfound[$day] = 1;
 					$i++;
 			}
                 $this->db->free($resql);
@@ -1830,35 +1833,35 @@ class Project extends CommonObject
 	 */
 	public function loadTimeSpentMonth($datestart, $taskid = 0, $userid = 0)
 	{
-		$error=0;
+		$error = 0;
 
-		$this->monthWorkLoad=array();
-		$this->monthWorkLoadPerTask=array();
+		$this->monthWorkLoad = array();
+		$this->monthWorkLoadPerTask = array();
 
 		if (empty($datestart)) dol_print_error('', 'Error datestart parameter is empty');
 
 		$sql = "SELECT ptt.rowid as taskid, ptt.task_duration, ptt.task_date, ptt.task_datehour, ptt.fk_task";
-		$sql.= " FROM ".MAIN_DB_PREFIX."projet_task_time AS ptt, ".MAIN_DB_PREFIX."projet_task as pt";
-		$sql.= " WHERE ptt.fk_task = pt.rowid";
-		$sql.= " AND pt.fk_projet = ".$this->id;
-		$sql.= " AND (ptt.task_date >= '".$this->db->idate($datestart)."' ";
-		$sql.= " AND ptt.task_date <= '".$this->db->idate(dol_time_plus_duree($datestart, 1, 'm') - 1)."')";
-		if ($task_id) $sql.= " AND ptt.fk_task=".$taskid;
-		if (is_numeric($userid)) $sql.= " AND ptt.fk_user=".$userid;
+		$sql .= " FROM ".MAIN_DB_PREFIX."projet_task_time AS ptt, ".MAIN_DB_PREFIX."projet_task as pt";
+		$sql .= " WHERE ptt.fk_task = pt.rowid";
+		$sql .= " AND pt.fk_projet = ".$this->id;
+		$sql .= " AND (ptt.task_date >= '".$this->db->idate($datestart)."' ";
+		$sql .= " AND ptt.task_date <= '".$this->db->idate(dol_time_plus_duree($datestart, 1, 'm') - 1)."')";
+		if ($task_id) $sql .= " AND ptt.fk_task=".$taskid;
+		if (is_numeric($userid)) $sql .= " AND ptt.fk_user=".$userid;
 
 		//print $sql;
-		$resql=$this->db->query($sql);
+		$resql = $this->db->query($sql);
 		if ($resql)
 		{
-			$weekalreadyfound=array();
+			$weekalreadyfound = array();
 
 			$num = $this->db->num_rows($resql);
 			$i = 0;
 			// Loop on each record found, so each couple (project id, task id)
 			while ($i < $num)
 			{
-				$obj=$this->db->fetch_object($resql);
-				if(!empty($obj->task_date)) {
+				$obj = $this->db->fetch_object($resql);
+				if (!empty($obj->task_date)) {
 					$date = explode('-', $obj->task_date);
 					$week_number = getWeekNumber($date[2], $date[1], $date[0]);
 				}
@@ -1872,7 +1875,7 @@ class Project extends CommonObject
 					$this->monthWorkLoad[$week_number] += $obj->task_duration;
 					$this->monthWorkLoadPerTask[$week_number][$obj->fk_task] += $obj->task_duration;
 				}
-				$weekalreadyfound[$week_number]=1;
+				$weekalreadyfound[$week_number] = 1;
 				$i++;
 			}
 			$this->db->free($resql);
@@ -1880,7 +1883,7 @@ class Project extends CommonObject
 		}
 		else
 		{
-			$this->error="Error ".$this->db->lasterror();
+			$this->error = "Error ".$this->db->lasterror();
 			dol_syslog(get_class($this)."::fetch ".$this->error, LOG_ERR);
 			return -1;
 		}

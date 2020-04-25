@@ -294,7 +294,7 @@ if (!$error && $massaction == 'confirm_presend')
 				if (empty($sendto))
 				{
 					if ($objectobj->element == 'societe') {
-						$objectobj->thirdparty = $objectobj;	// Hack so following code is comaptible when objectobj is a thirdparty
+						$objectobj->thirdparty = $objectobj; // Hack so following code is comaptible when objectobj is a thirdparty
 					}
 
 				   	//print "No recipient for thirdparty ".$objectobj->thirdparty->name;
@@ -751,7 +751,7 @@ if ($massaction == 'confirm_createbills')   // Create bills from orders
 						}
 
 						// Extrafields
-						if (empty($conf->global->MAIN_EXTRAFIELDS_DISABLED) && method_exists($lines[$i], 'fetch_optionals')) {
+						if (method_exists($lines[$i], 'fetch_optionals')) {
 							$lines[$i]->fetch_optionals();
 							$array_options = $lines[$i]->array_options;
 						}
@@ -836,7 +836,7 @@ if ($massaction == 'confirm_createbills')   // Create bills from orders
 			// Builddoc
 			$donotredirect = 1;
 			$upload_dir = $conf->facture->dir_output;
-			$permissiontoadd=$user->rights->facture->creer;
+			$permissiontoadd = $user->rights->facture->creer;
 
 			// Call action to build doc
 			$savobject = $object;
@@ -859,7 +859,7 @@ if ($massaction == 'confirm_createbills')   // Create bills from orders
 		if ($limit > 0 && $limit != $conf->liste_limit) $param .= '&limit='.urlencode($limit);
 		if ($sall)					$param .= '&sall='.urlencode($sall);
 		if ($socid > 0)             $param .= '&socid='.urlencode($socid);
-		if ($viewstatut != '')      $param .= '&viewstatut='.urlencode($viewstatut);
+		if ($search_status != '')      $param .= '&search_status='.urlencode($search_status);
 		if ($search_orderday)      		$param .= '&search_orderday='.urlencode($search_orderday);
 		if ($search_ordermonth)      		$param .= '&search_ordermonth='.urlencode($search_ordermonth);
 		if ($search_orderyear)       		$param .= '&search_orderyear='.urlencode($search_orderyear);

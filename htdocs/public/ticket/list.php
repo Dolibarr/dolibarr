@@ -170,7 +170,7 @@ $arrayofcss = array('/ticket/css/styles.css.php');
 llxHeaderTicket($langs->trans("Tickets"), "", 0, 0, $arrayofjs, $arrayofcss);
 
 
-print '<div style="margin: 0 auto; width:60%" class="ticketpublicarea">';
+print '<div class="ticketpublicarealist">';
 
 if ($action == "view_ticketlist")
 {
@@ -215,7 +215,7 @@ if ($action == "view_ticketlist")
             't.date_close' => array('label' => $langs->trans("TicketCloseOn"), 'checked' => 0),
             't.ref' => array('label' => $langs->trans("Ref"), 'checked' => 1),
         	//'t.track_id' => array('label' => $langs->trans("IDTracking"), 'checked' => 0),
-        	't.fk_statut' => array('label' => $langs->trans("Statut"), 'checked' => 1),
+        	't.fk_statut' => array('label' => $langs->trans("Status"), 'checked' => 1),
             't.subject' => array('label' => $langs->trans("Subject"), 'checked' => 1),
             'type.code' => array('label' => $langs->trans("Type"), 'checked' => 1),
             'category.code' => array('label' => $langs->trans("Category"), 'checked' => 1),

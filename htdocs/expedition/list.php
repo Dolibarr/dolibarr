@@ -85,7 +85,7 @@ $offset = $limit * $page;
 $pageprev = $page - 1;
 $pagenext = $page + 1;
 
-$viewstatut = GETPOST('viewstatut');
+$search_status = GETPOST('search_status');
 
 $diroutputmassaction = $conf->expedition->dir_output.'/sending/temp/massgeneration/'.$user->id;
 
@@ -178,8 +178,8 @@ if (GETPOST('button_removefilter_x', 'alpha') || GETPOST('button_removefilter.x'
 	$search_datedelivery_end = '';
 	$search_datereceipt_start = '';
 	$search_datereceipt_end = '';
-	$viewstatut = '';
-	$toselect = '';
+	$search_status = '';
+    $toselect = '';
 	$search_array_options = array();
 	$search_categ_cus = 0;
 }
@@ -264,8 +264,8 @@ if ($socid)
 {
 	$sql .= " AND e.fk_soc = ".$socid;
 }
-if ($viewstatut <> '' && $viewstatut >= 0) {
-	$sql .= " AND e.fk_statut = ".$viewstatut;
+if ($search_status <> '' && $search_status >= 0) {
+	$sql .= " AND e.fk_statut = ".$search_status;
 }
 if ($search_ref_customer != '') $sql .= natural_search('e.ref_customer', $search_ref_customer);
 if ($search_billed != '' && $search_billed >= 0) $sql .= ' AND e.billed = '.$search_billed;
@@ -337,10 +337,11 @@ if ($resql)
 	if ($search_datedelivery_end)	$param .= '&search_datedelivery_end='.urlencode($search_datedelivery_end);
 	if ($search_datereceipt_start)	$param .= '&search_datereceipt_start='.urlencode($search_datereceipt_start);
 	if ($search_datereceipt_end)	$param .= '&search_datereceipt_end='.urlencode($search_datereceipt_end);
+
 	if ($search_product_category != '') $param .= '&search_product_category='.urlencode($search_product_category);
 	if ($search_categ_cus > 0)      $param .= '&search_categ_cus='.urlencode($search_categ_cus);
-	if ($viewstatut != '') $param .= '&viewstatut='.urlencode($viewstatut);
-	if ($optioncss != '')  $param .= '&amp;optioncss='.urlencode($optioncss);
+	if ($search_status != '') $param .= '&viewstatut='.urlencode($search_status);
+	if ($optioncss != '')  $param .= '&optioncss='.urlencode($optioncss);
 	// Add $param from extra fields
 	include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_param.tpl.php';
 
@@ -364,11 +365,10 @@ if ($resql)
 	print '<input type="hidden" name="token" value="'.newToken().'">';
 	print '<input type="hidden" name="formfilteraction" id="formfilteraction" value="list">';
 	print '<input type="hidden" name="action" value="list">';
-	print '<input type="hidden" name="page" value="'.$page.'">';
 	print '<input type="hidden" name="sortfield" value="'.$sortfield.'">';
 	print '<input type="hidden" name="sortorder" value="'.$sortorder.'">';
 
-	print_barre_liste($langs->trans('ListOfSendings'), $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, $massactionbutton, $num, $nbtotalofrecords, '', 0, $newcardbutton, '', $limit);
+	print_barre_liste($langs->trans('ListOfSendings'), $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, $massactionbutton, $num, $nbtotalofrecords, 'dolly', 0, $newcardbutton, '', $limit, 0, 0, 1);
 
 	$topicmail = "SendShippingRef";
 	$modelmail = "shipping_send";
@@ -551,7 +551,7 @@ if ($resql)
 	if (!empty($arrayfields['e.fk_statut']['checked']))
 	{
 		print '<td class="liste_titre maxwidthonsmartphone right">';
-		print $form->selectarray('viewstatut', array('0'=>$langs->trans('StatusSendingDraftShort'), '1'=>$langs->trans('StatusSendingValidatedShort'), '2'=>$langs->trans('StatusSendingProcessedShort')), $viewstatut, 1);
+		print $form->selectarray('search_status', array('0'=>$langs->trans('StatusSendingDraftShort'), '1'=>$langs->trans('StatusSendingValidatedShort'), '2'=>$langs->trans('StatusSendingProcessedShort')), $search_status, 1);
 		print '</td>';
 	}
 	// Status billed
@@ -684,13 +684,13 @@ if ($resql)
 			if (empty($object->trueWeight))
 			{
 				$tmparray = $object->getTotalWeightVolume();
-				print showDimensionInBestUnit($tmparray['weight'], 0, "weight", $langs, isset($conf->global->MAIN_WEIGHT_DEFAULT_ROUND)?$conf->global->MAIN_WEIGHT_DEFAULT_ROUND:-1, isset($conf->global->MAIN_WEIGHT_DEFAULT_UNIT)?$conf->global->MAIN_WEIGHT_DEFAULT_UNIT:'no');
+				print showDimensionInBestUnit($tmparray['weight'], 0, "weight", $langs, isset($conf->global->MAIN_WEIGHT_DEFAULT_ROUND) ? $conf->global->MAIN_WEIGHT_DEFAULT_ROUND : -1, isset($conf->global->MAIN_WEIGHT_DEFAULT_UNIT) ? $conf->global->MAIN_WEIGHT_DEFAULT_UNIT : 'no');
 				print $form->textwithpicto('', $langs->trans('EstimatedWeight'), 1);
 			}
 			else
 			{
 				print $object->trueWeight;
-				print ($object->trueWeight && $object->weight_units!='')?' '.measuringUnitString(0, "weight", $object->weight_units):'';
+				print ($object->trueWeight && $object->weight_units != '') ? ' '.measuringUnitString(0, "weight", $object->weight_units) : '';
 			}
 			print '</td>';
 			if (!$i) $totalarray['nbfield']++;

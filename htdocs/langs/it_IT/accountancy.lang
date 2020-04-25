@@ -168,10 +168,15 @@ DONATION_ACCOUNTINGACCOUNT=Conto di contabilità per registrare le donazioni
 ADHERENT_SUBSCRIPTION_ACCOUNTINGACCOUNT=Conto contabile per registrare gli abbonamenti
 
 ACCOUNTING_PRODUCT_BUY_ACCOUNT=Conto di contabilità predefinito per i prodotti acquistati (se non definito nella scheda prodotto)
+ACCOUNTING_PRODUCT_BUY_INTRA_ACCOUNT=Accounting account by default for the bought products in EEC (used if not defined in the product sheet)
+ACCOUNTING_PRODUCT_BUY_EXPORT_ACCOUNT=Accounting account by default for the bought products and imported out of EEC (used if not defined in the product sheet)
 ACCOUNTING_PRODUCT_SOLD_ACCOUNT=Conto di contabilità predefinito per i prodotti venduti (se non definito nella scheda prodotto)
 ACCOUNTING_PRODUCT_SOLD_INTRA_ACCOUNT=Conto contabile per impostazione predefinita per i prodotti venduti in CEE (utilizzato se non definito nella scheda prodotto)
 ACCOUNTING_PRODUCT_SOLD_EXPORT_ACCOUNT=Conto contabile per impostazione predefinita per l'esportazione dei prodotti venduti fuori dalla CEE (utilizzato se non definito nella scheda prodotto)
+
 ACCOUNTING_SERVICE_BUY_ACCOUNT=Conto di contabilità per impostazione predefinita per i servizi acquistati (utilizzato se non definito nel foglio di servizio)
+ACCOUNTING_SERVICE_BUY_INTRA_ACCOUNT=Accounting account by default for the bought services in EEC (used if not defined in the service sheet)
+ACCOUNTING_SERVICE_BUY_EXPORT_ACCOUNT=Accounting account by default for the bought services and imported out of EEC (used if not defined in the service sheet)
 ACCOUNTING_SERVICE_SOLD_ACCOUNT=Conto di contabilità per impostazione predefinita per i servizi venduti (utilizzato se non definito nel foglio di servizio)
 ACCOUNTING_SERVICE_SOLD_INTRA_ACCOUNT=Conto contabile predefinito per i servizi venduti nella CEE (solo se non definito nella scheda servizio)
 ACCOUNTING_SERVICE_SOLD_EXPORT_ACCOUNT=Conto contabile predefinito per i servizi venduti ed esportati fuori dalla CEE (solo se non definito nella scheda servizio)
@@ -228,13 +233,15 @@ ThirdpartyAccountNotDefinedOrThirdPartyUnknownSubledgerIgnored=Third-party unkno
 ThirdpartyAccountNotDefinedOrThirdPartyUnknownBlocking=Third-party account not defined or third party unknown. Blocking error.
 UnknownAccountForThirdpartyAndWaitingAccountNotDefinedBlocking=Unknown third-party account and waiting account not defined. Blocking error
 PaymentsNotLinkedToProduct=Payment not linked to any product / service
-ShowOpeningBalance=Show opening balance
-HideOpeningBalance=Hide opening balance
+ShowOpeningBalance=Mostra bilancio di apertura
+HideOpeningBalance=Nascondi bilancio di apertura
 
 Pcgtype=Gruppo di conto
 PcgtypeDesc=Group of account are used as predefined 'filter' and 'grouping' criteria for some accounting reports. For example, 'INCOME' or 'EXPENSE' are used as groups for accounting accounts of products to build the expense/income report.
 
-TotalVente=Total turnover before tax
+Reconcilable=Reconcilable
+
+TotalVente=Fatturato totale al lordo delle imposte
 TotalMarge=Margine totale sulle vendite
 
 DescVentilCustomer=Consult here the list of customer invoice lines bound (or not) to a product accounting account
@@ -286,7 +293,7 @@ AccountingJournalType1=Miscellaneous operations
 AccountingJournalType2=Vendite
 AccountingJournalType3=Acquisti
 AccountingJournalType4=Banca
-AccountingJournalType5=Expenses report
+AccountingJournalType5=Rimborsi spese
 AccountingJournalType8=Inventario
 AccountingJournalType9=Has-new
 ErrorAccountingJournalIsAlreadyUse=Questo giornale è già in uso
@@ -308,6 +315,7 @@ Modelcsv_ebp=Export for EBP
 Modelcsv_cogilog=Export for Cogilog
 Modelcsv_agiris=Export for Agiris
 Modelcsv_LDCompta=Export for LD Compta (v9 & higher) (Test)
+Modelcsv_LDCompta10=Export for LD Compta (v10 & higher)
 Modelcsv_openconcerto=Export for OpenConcerto (Test)
 Modelcsv_configurable=Export CSV Configurable
 Modelcsv_FEC=Export FEC
@@ -324,10 +332,14 @@ OptionModeProductSell=Modalità vendita
 OptionModeProductSellIntra=Mode sales exported in EEC
 OptionModeProductSellExport=Mode sales exported in other countries
 OptionModeProductBuy=Modalità acquisto
+OptionModeProductBuyIntra=Mode purchases imported in EEC
+OptionModeProductBuyExport=Mode purchased imported from other countries
 OptionModeProductSellDesc=Show all products with accounting account for sales.
 OptionModeProductSellIntraDesc=Show all products with accounting account for sales in EEC.
 OptionModeProductSellExportDesc=Show all products with accounting account for other foreign sales.
 OptionModeProductBuyDesc=Show all products with accounting account for purchases.
+OptionModeProductBuyIntraDesc=Show all products with accounting account for purchases in EEC.
+OptionModeProductBuyExportDesc=Show all products with accounting account for other foreign purchases.
 CleanFixHistory=Remove accounting code from lines that not exists into charts of account
 CleanHistory=Resetta tutti i collegamenti per l'anno corrente
 PredefinedGroups=Gruppi predefiniti
@@ -338,6 +350,8 @@ AccountRemovedFromGroup=Account removed from group
 SaleLocal=Local sale
 SaleExport=Export sale
 SaleEEC=Sale in EEC
+SaleEECWithVAT=Sale in EEC with a VAT not null, so we suppose this is NOT an intracommunautary sale and the suggested account is the standard product account.
+SaleEECWithoutVATNumber=Sale in EEC with no VAT but the VAT ID of thirdparty is not defined. We fallback on the product account for standard sales. You can fix the VAT ID of thirdparty or the product account if needed.
 
 ## Dictionary
 Range=Range of accounting account

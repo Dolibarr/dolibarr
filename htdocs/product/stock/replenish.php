@@ -486,11 +486,11 @@ $head[1][1] = $langs->trans("ReplenishmentOrders");
 $head[1][2] = 'replenishorders';
 
 
-print load_fiche_titre($langs->trans('Replenishment'), '', 'generic');
+print load_fiche_titre($langs->trans('Replenishment'), '', 'stock');
 
 dol_fiche_head($head, 'replenish', '', -1, '');
 
-print $langs->trans("ReplenishmentStatusDesc").'<br>'."\n";
+print '<span class="opacitymedium">'.$langs->trans("ReplenishmentStatusDesc").'</span><br>'."\n";
 if ($usevirtualstock == 1)
 {
 	print $langs->trans("CurentSelectionMode").': ';
@@ -648,7 +648,7 @@ while ($i < ($limit ? min($num, $limit) : $num))
 	if (!empty($conf->global->STOCK_SUPPORTS_SERVICES) || $objp->fk_product_type == 0)
 	{
 		$prod->fetch($objp->rowid);
-		$prod->load_stock('warehouseopen, warehouseinternal');
+		$prod->load_stock('warehouseopen, warehouseinternal', $draftchecked);
 
 		// Multilangs
 		if (!empty($conf->global->MAIN_MULTILANGS))
@@ -703,7 +703,7 @@ while ($i < ($limit ? min($num, $limit) : $num))
 		//depending on conf, use either physical stock or
 		//virtual stock to compute the stock to buy value
 
-		if(empty($usevirtualstock)) $stocktobuy = max(max($desiredstock, $alertstock) - $stock - $ordered, 0);
+		if (empty($usevirtualstock)) $stocktobuy = max(max($desiredstock, $alertstock) - $stock - $ordered, 0);
 		else $stocktobuy = max(max($desiredstock, $alertstock) - $stock, 0); //ordered is already in $stock in virtual mode
 
 		$disabled = '';

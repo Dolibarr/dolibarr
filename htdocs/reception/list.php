@@ -74,7 +74,7 @@ $pagenext = $page + 1;
 // Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
 $contextpage = 'receptionlist';
 
-$viewstatut = GETPOST('viewstatut');
+$search_status = GETPOST('search_status');
 
 $object = new Reception($db);
 
@@ -149,7 +149,7 @@ if (GETPOST('button_removefilter_x', 'alpha') || GETPOST('button_removefilter.x'
 	$search_country = '';
 	$search_type_thirdparty = '';
 	$search_billed = '';
-    $viewstatut = '';
+    $search_status = '';
     $search_array_options = array();
 }
 
@@ -453,8 +453,8 @@ if ($socid)
 {
 	$sql .= " AND e.fk_soc = ".$socid;
 }
-if ($viewstatut <> '' && $viewstatut >= 0) {
-	$sql .= " AND e.fk_statut = ".$viewstatut;
+if ($search_status <> '' && $search_status >= 0) {
+	$sql .= " AND e.fk_statut = ".$search_status;
 }
 if ($search_billed != '' && $search_billed >= 0) $sql .= ' AND e.billed = '.$search_billed;
 if ($search_town)  $sql .= natural_search('s.town', $search_town);
@@ -519,7 +519,7 @@ if ($resql)
 	if ($search_town)  $param .= "&amp;search_town=".$search_town;
 	if ($search_zip)  $param .= "&amp;search_zip=".$search_zip;
 	if ($search_state) $param .= "&amp;search_state=".$search_state;
-	if ($viewstatut) $param .= "&amp;viewstatut=".$viewstatut;
+	if ($search_status) $param .= "&amp;search_status=".$search_status;
 	if ($search_country) $param .= "&amp;search_country=".$search_country;
 	if ($search_type_thirdparty) $param .= "&amp;search_type_thirdparty=".$search_type_thirdparty;
 	if ($search_ref_supplier) $param .= "&amp;search_ref_supplier=".$search_ref_supplier;
@@ -547,11 +547,10 @@ if ($resql)
     print '<input type="hidden" name="token" value="'.newToken().'">';
     print '<input type="hidden" name="formfilteraction" id="formfilteraction" value="list">';
     print '<input type="hidden" name="action" value="list">';
-    print '<input type="hidden" name="page" value="'.$page.'">';
     print '<input type="hidden" name="sortfield" value="'.$sortfield.'">';
     print '<input type="hidden" name="sortorder" value="'.$sortorder.'">';
 
-	print_barre_liste($langs->trans('ListOfReceptions'), $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, $massactionbutton, $num, $nbtotalofrecords, '', 0, '', '', $limit);
+	print_barre_liste($langs->trans('ListOfReceptions'), $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, $massactionbutton, $num, $nbtotalofrecords, 'dollyrevert', 0, '', '', $limit, 0, 0, 1);
 
 
 	if ($massaction == 'createbills')
@@ -716,7 +715,7 @@ if ($resql)
 	if (!empty($arrayfields['e.fk_statut']['checked']))
 	{
 	    print '<td class="liste_titre maxwidthonsmartphone right">';
-	    print $form->selectarray('viewstatut', array('0'=>$langs->trans('StatusReceptionDraftShort'), '1'=>$langs->trans('StatusReceptionValidatedShort'), '2'=>$langs->trans('StatusReceptionProcessedShort')), $viewstatut, 1);
+	    print $form->selectarray('search_status', array('0'=>$langs->trans('StatusReceptionDraftShort'), '1'=>$langs->trans('StatusReceptionValidatedShort'), '2'=>$langs->trans('StatusReceptionProcessedShort')), $search_status, 1);
 	    print '</td>';
 	}
 	// Status billed

@@ -26,7 +26,7 @@
  *	\brief      Description and activation file for module Donation
  */
 
-include_once DOL_DOCUMENT_ROOT .'/core/modules/DolibarrModules.class.php';
+include_once DOL_DOCUMENT_ROOT.'/core/modules/DolibarrModules.class.php';
 
 
 /**
@@ -54,7 +54,7 @@ class modDon extends DolibarrModules
 		$this->const_name = 'MAIN_MODULE_'.strtoupper($this->name);
 		// Name of png file (without png) used for this module.
 		// Png file must be in theme/yourtheme/img directory under name object_pictovalue.png.
-		$this->picto='bill';
+		$this->picto = 'donation';
 
 		// Data directories to create when module is enabled
 		$this->dirs = array("/don/temp");
@@ -68,7 +68,7 @@ class modDon extends DolibarrModules
 
 		// Constants
 		$this->const = array();
-		$r=0;
+		$r = 0;
 
 		$this->const[$r][0] = "DON_ADDON_MODEL";
 		$this->const[$r][1] = "chaine";
@@ -139,7 +139,7 @@ class modDon extends DolibarrModules
 
 		// Menus
 		//-------
-		$this->menu = 1;        // This module add menu entries. They are coded into menu manager.
+		$this->menu = 1; // This module add menu entries. They are coded into menu manager.
 	}
 
 

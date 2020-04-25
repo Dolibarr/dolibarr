@@ -26,9 +26,9 @@
 // This script is called with a POST method.
 // Directory to scan (full path) is inside POST['dir'].
 
-if (! defined('NOTOKENRENEWAL')) define('NOTOKENRENEWAL', 1); // Disables token renewal
-if (! defined('NOREQUIREMENU')) define('NOREQUIREMENU', '1');
-if (! defined('NOREQUIREHTML')) define('NOREQUIREHTML', '1');
+if (!defined('NOTOKENRENEWAL')) define('NOTOKENRENEWAL', 1); // Disables token renewal
+if (!defined('NOREQUIREMENU')) define('NOREQUIREMENU', '1');
+if (!defined('NOREQUIREHTML')) define('NOREQUIREHTML', '1');
 
 
 require '../../main.inc.php';
@@ -37,7 +37,7 @@ require_once DOL_DOCUMENT_ROOT.'/blockedlog/class/blockedlog.class.php';
 $id = GETPOST('id', 'int');
 $block = new BlockedLog($db);
 
-if ((! $user->admin && ! $user->rights->blockedlog->read) || empty($conf->blockedlog->enabled)) accessforbidden();
+if ((!$user->admin && !$user->rights->blockedlog->read) || empty($conf->blockedlog->enabled)) accessforbidden();
 
 
 /*
@@ -79,35 +79,35 @@ function formatObject($objtoshow, $prefix)
 	if (is_object($newobjtoshow) || is_array($newobjtoshow))
 	{
 		//var_dump($newobjtoshow);
-		foreach($newobjtoshow as $key => $val)
+		foreach ($newobjtoshow as $key => $val)
 		{
-			if (! is_object($val) && ! is_array($val))
+			if (!is_object($val) && !is_array($val))
 			{
 				// TODO $val can be '__PHP_Incomplete_Class', the is_object return false
-				$s.='<tr><td>'.($prefix?$prefix.' > ':'').$key.'</td>';
-				$s.='<td>';
-				if (in_array($key, array('date','datef','dateh','datec','datem','datep')))
+				$s .= '<tr><td>'.($prefix ? $prefix.' > ' : '').$key.'</td>';
+				$s .= '<td>';
+				if (in_array($key, array('date', 'datef', 'dateh', 'datec', 'datem', 'datep')))
 				{
 					/*var_dump(is_object($val));
 					var_dump(is_array($val));
 					var_dump(is_array($val));
 					var_dump(@get_class($val));
 					var_dump($val);*/
-					$s.=dol_print_date($val, 'dayhour');
+					$s .= dol_print_date($val, 'dayhour');
 				}
 				else
 				{
-					$s.=$val;
+					$s .= $val;
 				}
-				$s.='</td></tr>';
+				$s .= '</td></tr>';
 			}
 			elseif (is_array($val))
 			{
-				$s.=formatObject($val, ($prefix?$prefix.' > ':'').$key);
+				$s .= formatObject($val, ($prefix ? $prefix.' > ' : '').$key);
 			}
 			elseif (is_object($val))
 			{
-				$s.=formatObject($val, ($prefix?$prefix.' > ':'').$key);
+				$s .= formatObject($val, ($prefix ? $prefix.' > ' : '').$key);
 			}
 		}
 	}

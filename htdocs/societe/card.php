@@ -931,7 +931,7 @@ else
          *  Creation
          */
 		$private = GETPOST("private", "int");
-		if (!empty($conf->global->THIRDPARTY_DEFAULT_CREATE_CONTACT) && ! GETPOSTISSET('private')) $private = 1;
+		if (!empty($conf->global->THIRDPARTY_DEFAULT_CREATE_CONTACT) && !GETPOSTISSET('private')) $private = 1;
     	if (empty($private)) $private = 0;
 
         // Load object modCodeTiers
@@ -1330,6 +1330,7 @@ else
 
         // Country
         print '<tr><td>'.$form->editfieldkey('Country', 'selectcountry_id', '', $object, 0).'</td><td colspan="3" class="maxwidthonsmartphone">';
+        print img_picto('', 'globe-americas', 'class="paddingrightonly"');
         print $form->select_country((GETPOST('country_id') != '' ?GETPOST('country_id') : $object->country_id));
         if ($user->admin) print info_admin($langs->trans("YouCanChangeValuesForThisListFromDictionarySetup"), 1);
         print '</td></tr>';
@@ -1977,6 +1978,7 @@ else
 
             // Country
             print '<tr><td>'.$form->editfieldkey('Country', 'selectcounty_id', '', $object, 0).'</td><td colspan="3">';
+            print img_picto('', 'globe-americas', 'class="paddingrightonly"');
             print $form->select_country((GETPOSTISSET('country_id') ? GETPOST('country_id') : $object->country_id), 'country_id');
             if ($user->admin) print info_admin($langs->trans("YouCanChangeValuesForThisListFromDictionarySetup"), 1);
             print '</td></tr>';
@@ -2741,16 +2743,18 @@ else
 					}
 				}
 
-		        if (!empty($object->email) || $at_least_one_email_contact)
-		        {
-		        	$langs->load("mails");
-		        	print '<a class="butAction" href="'.$_SERVER['PHP_SELF'].'?socid='.$object->id.'&amp;action=presend&amp;mode=init#formmailbeforetitle">'.$langs->trans('SendMail').'</a>';
-		        }
-		        else
-				{
-		        	$langs->load("mails");
-		       		print '<a class="butActionRefused classfortooltip" href="#" title="'.dol_escape_htmltag($langs->trans("NoEMail")).'">'.$langs->trans('SendMail').'</a>';
-		        }
+				if (empty($user->socid)) {
+					if (!empty($object->email) || $at_least_one_email_contact)
+			        {
+			        	$langs->load("mails");
+			        	print '<a class="butAction" href="'.$_SERVER['PHP_SELF'].'?socid='.$object->id.'&action=presend&mode=init#formmailbeforetitle">'.$langs->trans('SendMail').'</a>';
+			        }
+			        else
+					{
+			        	$langs->load("mails");
+			       		print '<a class="butActionRefused classfortooltip" href="#" title="'.dol_escape_htmltag($langs->trans("NoEMail")).'">'.$langs->trans('SendMail').'</a>';
+			        }
+				}
 
 		        if ($user->rights->societe->creer)
 		        {

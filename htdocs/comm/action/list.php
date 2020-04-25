@@ -382,7 +382,6 @@ if ($resql)
 	print '<input type="hidden" name="formfilteraction" id="formfilteraction" value="list">';
 	print '<input type="hidden" name="sortfield" value="'.$sortfield.'">';
 	print '<input type="hidden" name="sortorder" value="'.$sortorder.'">';
-	print '<input type="hidden" name="page" value="'.$page.'">';
 	print '<input type="hidden" name="type" value="'.$type.'">';
 	$nav = '';
 
@@ -443,7 +442,7 @@ if ($resql)
         $newcardbutton .= dolGetButtonTitle($langs->trans('AddAction'), '', 'fa fa-plus-circle', DOL_URL_ROOT.'/comm/action/card.php?action=create&datep='.sprintf("%04d%02d%02d", $tmpforcreatebutton['year'], $tmpforcreatebutton['mon'], $tmpforcreatebutton['mday']).$hourminsec.'&backtopage='.urlencode($_SERVER["PHP_SELF"].($newparam ? '?'.$newparam : '')));
     }
 
-    print_barre_liste($s, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, '', $num, -1 * $nbtotalofrecords, '', 0, $nav.$newcardbutton, '', $limit);
+    print_barre_liste($s, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, '', $num, -1 * $nbtotalofrecords, '', 0, $nav.$newcardbutton, '', $limit, 0, 0, 1);
 
     $moreforfilter = '';
 
@@ -554,8 +553,7 @@ if ($resql)
 		$actionstatic->type_picto = $obj->type_picto;
 		$actionstatic->label = $obj->label;
 		$actionstatic->location = $obj->location;
-		$actionstatic->note = dol_htmlentitiesbr($obj->note); // deprecated
-		$actionstatic->note_public = dol_htmlentitiesbr($obj->note);
+		$actionstatic->note_private = dol_htmlentitiesbr($obj->note);
 
 		$actionstatic->fetchResources();
 
@@ -614,8 +612,8 @@ if ($resql)
 		// Description
 		if (!empty($arrayfields['a.note']['checked'])) {
 			print '<td class="tdoverflowonsmartphone">';
-			$text = dolGetFirstLineOfText(dol_string_nohtmltag($actionstatic->note, 0));
-			print $form->textwithtooltip(dol_trunc($text, 40), $actionstatic->note);
+			$text = dolGetFirstLineOfText(dol_string_nohtmltag($actionstatic->note_private, 0));
+			print $form->textwithtooltip(dol_trunc($text, 40), $actionstatic->note_private);
 			print '</td>';
 		}
 

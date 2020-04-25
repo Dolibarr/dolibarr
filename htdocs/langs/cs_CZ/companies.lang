@@ -325,7 +325,6 @@ CompanyDeleted=Společnost %s odstraněna z databáze.
 ListOfContacts=Seznam kontaktů/adres
 ListOfContactsAddresses=Seznam kontaktů/adres
 ListOfThirdParties=Seznam subjektů
-ShowCompany=Zobrazit subjekt
 ShowContact=Zobrazit kontakt
 ContactsAllShort=Vše (Bez filtru)
 ContactType=Typ kontaktu
@@ -447,6 +446,7 @@ SaleRepresentativeFirstname=Jméno obchodního zástupce
 SaleRepresentativeLastname=Příjmení obchodního zástupce
 ErrorThirdpartiesMerge=Při odstraňování subjektů došlo k chybě. Zkontrolujte protokol. Změny byly vráceny.
 NewCustomerSupplierCodeProposed=Kód zákazníka nebo dodavatele již byl použit, je doporučen nový kód
+KeepEmptyIfGenericAddress=Keep this field empty if this address is a generic address
 #Imports
 PaymentTypeCustomer=Typ platby - Zákazník
 PaymentTermsCustomer=Platební podmínky - Zákazník

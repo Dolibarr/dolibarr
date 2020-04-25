@@ -449,6 +449,8 @@ while ($i < min($num, $limit))
 
 	// Store properties in $object
 	$objectwebsiteaccount->id = $obj->rowid;
+	$objectwebsiteaccount->login = $obj->login;
+	$objectwebsiteaccount->ref = $obj->login;
 	foreach ($objectwebsiteaccount->fields as $key => $val)
 	{
 		if (property_exists($obj, $key)) $object->$key = $obj->$key;

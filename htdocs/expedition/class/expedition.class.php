@@ -74,7 +74,7 @@ class Expedition extends CommonObject
 	/**
 	 * @var string String with name of icon for myobject. Must be the part after the 'object_' into object_myobject.png
 	 */
-	public $picto = 'sending';
+	public $picto = 'dolly';
 
 	public $socid;
 
@@ -380,7 +380,7 @@ class Expedition extends CommonObject
 				}
 
 				// Actions on extra fields
-				if (!$error && empty($conf->global->MAIN_EXTRAFIELDS_DISABLED))
+				if (!$error)
 				{
 					$result = $this->insertExtraFields();
 					if ($result < 0)
@@ -627,7 +627,7 @@ class Expedition extends CommonObject
 				if (!empty($conf->multicurrency->enabled))
 				{
 					if (!empty($this->multicurrency_code)) $this->multicurrency_code = $this->thirdparty->multicurrency_code;
-					if (!empty($conf->global->MULTICURRENCY_USE_ORIGIN_TX) && !empty($objectsrc->multicurrency_tx))	$this->multicurrency_tx =  $this->thirdparty->multicurrency_tx;
+					if (!empty($conf->global->MULTICURRENCY_USE_ORIGIN_TX) && !empty($objectsrc->multicurrency_tx))	$this->multicurrency_tx = $this->thirdparty->multicurrency_tx;
 				}
 
 				/*
@@ -1046,7 +1046,8 @@ class Expedition extends CommonObject
 				}
 			}
 			$line->entrepot_id = $linebatch->entrepot_id;
-			$line->origin_line_id = $dbatch['ix_l'];
+			$line->origin_line_id = $dbatch['ix_l'];	// deprecated
+			$line->fk_origin_line = $dbatch['ix_l'];
 			$line->qty = $dbatch['qty'];
 			$line->detail_batch = $tab;
 
@@ -1288,14 +1289,22 @@ class Expedition extends CommonObject
 
 		if (!$error)
 		{
+                    $main = MAIN_DB_PREFIX . 'expeditiondet';
+                    $ef = $main . "_extrafields";
+                    $sqlef = "DELETE FROM $ef WHERE fk_object IN (SELECT rowid FROM $main WHERE fk_expedition = " . $this->id . ")";
+
 			$sql = "DELETE FROM ".MAIN_DB_PREFIX."expeditiondet";
 			$sql .= " WHERE fk_expedition = ".$this->id;
 
-			if ($this->db->query($sql))
+			if ($this->db->query($sqlef) && $this->db->query($sql))
 			{
 				// Delete linked object
 				$res = $this->deleteObjectLinked();
 				if ($res < 0) $error++;
+
+                                // delete extrafields
+                                $res = $this->deleteExtraFields();
+                                if ($res < 0) $error++;
 
 				if (!$error)
 				{
@@ -1477,7 +1486,7 @@ class Expedition extends CommonObject
 				$line->surface_units = $obj->surface_units;
 				$line->volume         	= $obj->volume;
 				$line->volume_units   	= $obj->volume_units;
-				$line->fk_unit 			= $obj->fk_unit;
+				$line->fk_unit = $obj->fk_unit;
 
 				$line->pa_ht = $obj->pa_ht;
 
@@ -1626,7 +1635,7 @@ class Expedition extends CommonObject
 		global $langs, $conf;
 
 		$result = '';
-		$label = '<u>'.$langs->trans("ShowSending").'</u>';
+		$label = '<u>'.$langs->trans("Shipment").'</u>';
 		$label .= '<br><b>'.$langs->trans('Ref').':</b> '.$this->ref;
 		$label .= '<br><b>'.$langs->trans('RefCustomer').':</b> '.($this->ref_customer ? $this->ref_customer : $this->ref_client);
 
@@ -1647,14 +1656,15 @@ class Expedition extends CommonObject
 		{
 			if (!empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER))
 			{
-				$label = $langs->trans("ShowSending");
+				$label = $langs->trans("Shipment");
 				$linkclose .= ' alt="'.dol_escape_htmltag($label, 1).'"';
 			}
 			$linkclose .= ' title="'.dol_escape_htmltag($label, 1).'"';
 			$linkclose .= ' class="classfortooltip"';
 		}
 
-		$linkstart = '<a href="'.$url.'" title="'.dol_escape_htmltag($label, 1).'" class="classfortooltip">';
+		$linkstart = '<a href="'.$url.'"';
+		$linkstart .= $linkclose.'>';
 		$linkend = '</a>';
 
 		$result .= $linkstart;
@@ -2616,7 +2626,7 @@ class ExpeditionLigne extends CommonObjectLine
 		{
 			$this->id = $this->db->last_insert_id(MAIN_DB_PREFIX."expeditiondet");
 
-			if (!$error && empty($conf->global->MAIN_EXTRAFIELDS_DISABLED))
+			if (!$error)
 			{
 				$result = $this->insertExtraFields();
 				if ($result < 0)
@@ -2690,7 +2700,7 @@ class ExpeditionLigne extends CommonObjectLine
 		if (!$error && $this->db->query($sql))
 		{
 			// Remove extrafields
-			if (empty($conf->global->MAIN_EXTRAFIELDS_DISABLED)) // For avoid conflicts if trigger used
+			if (!$error)
 			{
 				$result = $this->deleteExtraFields();
 				if ($result < 0)
@@ -2894,7 +2904,7 @@ class ExpeditionLigne extends CommonObjectLine
 
 		if (!$error)
 		{
-			if (empty($conf->global->MAIN_EXTRAFIELDS_DISABLED)) // For avoid conflicts if trigger used
+			if (!$error)
 			{
 				$result = $this->insertExtraFields();
 				if ($result < 0)

@@ -24,7 +24,7 @@
  *     \ingroup     ticket
  *     \brief       Description and activation file for module Ticket
  */
-require_once DOL_DOCUMENT_ROOT . "/core/modules/DolibarrModules.class.php";
+require_once DOL_DOCUMENT_ROOT."/core/modules/DolibarrModules.class.php";
 
 
 /**
@@ -67,7 +67,7 @@ class modTicket extends DolibarrModules
         $this->version = 'dolibarr';
         // Key used in llx_const table to save module status enabled/disabled
         // (where MYMODULE is value of property name of module in uppercase)
-        $this->const_name = 'MAIN_MODULE_' . strtoupper($this->name);
+        $this->const_name = 'MAIN_MODULE_'.strtoupper($this->name);
         // Name of image file used for this module.
         // If file is in theme/yourtheme/img directory under name object_pictovalue.png
         // use this->picto='pictovalue'
@@ -92,11 +92,11 @@ class modTicket extends DolibarrModules
         $this->config_page_url = array("ticket.php");
 
         // Dependencies
-        $this->hidden = false;			// A condition to hide module
-		$this->depends = array('modAgenda');		// List of module class names as string that must be enabled if this module is enabled
-		$this->requiredby = array();	// List of module ids to disable if this one is disabled
-		$this->conflictwith = array();	// List of module class names as string this module is in conflict with
-		$this->phpmin = array(5,4);		// Minimum version of PHP required by module
+        $this->hidden = false; // A condition to hide module
+		$this->depends = array('modAgenda'); // List of module class names as string that must be enabled if this module is enabled
+		$this->requiredby = array(); // List of module ids to disable if this one is disabled
+		$this->conflictwith = array(); // List of module class names as string this module is in conflict with
+		$this->phpmin = array(5, 4); // Minimum version of PHP required by module
         $this->langfiles = array("ticket");
 
         // Constants
@@ -114,9 +114,9 @@ class modTicket extends DolibarrModules
         );
 
         // Dictionaries
-        if (! isset($conf->ticket->enabled)) {
-            $conf->ticket=new stdClass();
-            $conf->ticket->enabled=0;
+        if (!isset($conf->ticket->enabled)) {
+            $conf->ticket = new stdClass();
+            $conf->ticket->enabled = 0;
         }
         $this->dictionaries = array(
             'langs' => 'ticket',
@@ -147,7 +147,7 @@ class modTicket extends DolibarrModules
         // Permissions
         $this->rights = array(); // Permission array used by this module
 
-        $r=0;
+        $r = 0;
         $this->rights[$r][0] = 56001; // id de la permission
         $this->rights[$r][1] = "Read ticket"; // libelle de la permission
         $this->rights[$r][2] = 'r'; // type de la permission (deprecie a ce jour)

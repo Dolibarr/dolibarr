@@ -59,6 +59,7 @@ ErrorPartialFile=Het bestand is niet volledig ontvangen door de server.
 ErrorNoTmpDir=Tijdelijke map %s bestaat niet.
 ErrorUploadBlockedByAddon=Upload geblokkeerd door een PHP- en / of Apache-plugin.
 ErrorFileSizeTooLarge=Bestand is te groot.
+ErrorFieldTooLong=Field %s is too long.
 ErrorSizeTooLongForIntType=Grootte te lang voor int type (%s cijfers maximum)
 ErrorSizeTooLongForVarcharType=Grootte te lang voor string type (%s tekens maximum)
 ErrorNoValueForSelectType=Vul waarde in voor selectielijst
@@ -234,7 +235,8 @@ ErrorLanguageOfTranslatedPageIsSameThanThisPage=Error, language of translated pa
 ErrorBatchNoFoundForProductInWarehouse=No lot/serial found for product "%s" in warehouse "%s".
 ErrorBatchNoFoundEnoughQuantityForProductInWarehouse=No enough quantity for this lot/serial for product "%s" in warehouse "%s".
 ErrorOnlyOneFieldForGroupByIsPossible=Only 1 field for the 'Group by' is possible (others are discarded)
-ErrorTooManyDifferentValueForSelectedGroupBy=Found too many different value (more than <b>%s</b>) for the field '<b>%s</b>', so we can't user it as a 'Group by' for graphics. The field 'Group By' has been removed. May be you wanted to use it as an X-Axis ?
+ErrorTooManyDifferentValueForSelectedGroupBy=Found too many different value (more than <b>%s</b>) for the field '<b>%s</b>', so we can't use it as a 'Group by' for graphics. The field 'Group By' has been removed. May be you wanted to use it as an X-Axis ?
+ErrorReplaceStringEmpty=Error, the string to replace into is empty
 # Warnings
 WarningParamUploadMaxFileSizeHigherThanPostMaxSize=Uw PHP-parameter upload_max_filesize (%s) is hoger dan PHP-parameter post_max_size (%s). Dit is geen consistente opstelling.
 WarningPasswordSetWithNoAccount=Er is een wachtwoord ingesteld voor dit lid. Er is echter geen gebruikersaccount gemaakt. Dus dit wachtwoord is opgeslagen maar kan niet worden gebruikt om in te loggen bij Dolibarr. Het kan worden gebruikt door een externe module / interface, maar als u geen gebruikersnaam of wachtwoord voor een lid hoeft aan te maken, kunt u de optie "Beheer een login voor elk lid" in de module-setup van Member uitschakelen. Als u een login moet beheren maar geen wachtwoord nodig heeft, kunt u dit veld leeg houden om deze waarschuwing te voorkomen. Opmerking: e-mail kan ook worden gebruikt als login als het lid aan een gebruiker is gekoppeld.

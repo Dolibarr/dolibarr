@@ -325,7 +325,6 @@ CompanyDeleted=Societatea " %s" a fost ştearsă din baza de date.
 ListOfContacts=Lista Contacte
 ListOfContactsAddresses=Lista Contacte
 ListOfThirdParties=Lista terților
-ShowCompany=Arată terțul
 ShowContact=Afişeză contact
 ContactsAllShort=Toate (fără filtru)
 ContactType=Tip Contact
@@ -447,6 +446,7 @@ SaleRepresentativeFirstname=Numele reprezentantului vânzări
 SaleRepresentativeLastname=Prenumele reprezentantului vânzări
 ErrorThirdpartiesMerge=A apărut o eroare la ștergerea terților Verificați jurnalul. S-a revenit la setarile anterioare.
 NewCustomerSupplierCodeProposed=Codul clientului sau furnizorului utilizat deja, este sugerat un nou cod
+KeepEmptyIfGenericAddress=Keep this field empty if this address is a generic address
 #Imports
 PaymentTypeCustomer=Tip de plată - Client
 PaymentTermsCustomer=Conditii de plata - Client

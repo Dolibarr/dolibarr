@@ -186,30 +186,25 @@ if (empty($reshook))
 
 	if ($action == 'update_extras')
 	{
-	    // Fill array 'array_options' with data from update form
-	    $ret = $extrafields->setOptionalsFromPost(null, $object, GETPOST('attribute'));
-	    if ($ret < 0) $error++;
+		$object->oldcopy = dol_clone($object);
 
-	    if (!$error)
-	    {
-	        // Actions on extra fields (by external module or standard code)
-	        // TODO le hook fait double emploi avec le trigger !!
-	        $hookmanager->initHooks(array('receptiondao'));
-	        $parameters = array('id' => $object->id);
-	        $reshook = $hookmanager->executeHooks('insertExtraFields', $parameters, $object, $action); // Note that $action and $object may have been modified by some hooks
-	        if (empty($reshook)) {
-	            $result = $object->insertExtraFields();
-       			if ($result < 0)
-				{
-					setEventMessages($object->error, $object->errors, 'errors');
-					$error++;
-				}
-	        } elseif ($reshook < 0)
-	            $error++;
-	    }
+		// Fill array 'array_options' with data from update form
+		$ret = $extrafields->setOptionalsFromPost(null, $object, GETPOST('attribute', 'none'));
+		if ($ret < 0) $error++;
 
-	    if ($error)
-	        $action = 'edit_extras';
+		if (!$error)
+		{
+			// Actions on extra fields
+			$result = $object->insertExtraFields('RECEPTION_MODIFY');
+			if ($result < 0)
+			{
+				setEventMessages($object->error, $object->errors, 'errors');
+				$error++;
+			}
+		}
+
+		if ($error)
+			$action = 'edit_extras';
 	}
 
 	// Create reception
@@ -307,15 +302,13 @@ if (empty($reshook))
 			{
 				$lineToTest = '';
 				foreach ($objectsrc->lines as $linesrc) {
-					if ($linesrc->id == GETPOST($idl, 'int'))$lineToTest = $linesrc;
+					if ($linesrc->id == GETPOST($idl, 'int')) $lineToTest = $linesrc;
 				}
 				$qty = "qtyl".$i;
 				$comment = "comment".$i;
 				$eatby = "dlc".$i;
 				$sellby = "dluo".$i;
 				$batch = "batch".$i;
-
-
 
 				$timeFormat = '%d/%m/%Y';
 
@@ -713,8 +706,9 @@ $warehousestatic = new Entrepot($db);
 
 if ($action == 'create2')
 {
-    print load_fiche_titre($langs->trans("CreateReception")).'<br>';
-    print $langs->trans("ReceptionCreationIsDoneFromOrder");
+    print load_fiche_titre($langs->trans("CreateReception"), '', 'dollyrevert');
+
+    print '<br>'.$langs->trans("ReceptionCreationIsDoneFromOrder");
     $action = ''; $id = ''; $ref = '';
 }
 
@@ -1235,7 +1229,7 @@ elseif ($id || $ref)
 		$res = $object->fetch_optionals();
 
 		$head = reception_prepare_head($object);
-		dol_fiche_head($head, 'reception', $langs->trans("Reception"), -1, 'reception');
+		dol_fiche_head($head, 'reception', $langs->trans("Reception"), -1, 'dollyrevert');
 
 		$formconfirm = '';
 
@@ -2058,13 +2052,15 @@ elseif ($id || $ref)
 			}
 
 			// Send
-			if ($object->statut > 0)
-			{
-				if (empty($conf->global->MAIN_USE_ADVANCED_PERMS) || $user->rights->reception->reception_advance->send)
+			if (empty($user->socid)) {
+				if ($object->statut > 0)
 				{
-					print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=presend&mode=init#formmailbeforetitle">'.$langs->trans('SendByMail').'</a>';
+					if (empty($conf->global->MAIN_USE_ADVANCED_PERMS) || $user->rights->reception->reception_advance->send)
+					{
+						print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=presend&mode=init#formmailbeforetitle">'.$langs->trans('SendByMail').'</a>';
+					}
+					else print '<a class="butActionRefused" href="#">'.$langs->trans('SendByMail').'</a>';
 				}
-				else print '<a class="butActionRefused" href="#">'.$langs->trans('SendByMail').'</a>';
 			}
 
 			// Create bill

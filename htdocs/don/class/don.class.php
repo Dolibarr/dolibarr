@@ -60,7 +60,7 @@ class Don extends CommonObject
     /**
 	 * @var string String with name of icon for object don. Must be the part after the 'object_' into object_myobject.png
 	 */
-	public $picto = 'generic';
+	public $picto = 'donation';
 
 	/**
 	 * @var string Date of the donation
@@ -432,7 +432,7 @@ class Don extends CommonObject
 
 		// Update extrafield
         if (!$error) {
-        	if (empty($conf->global->MAIN_EXTRAFIELDS_DISABLED)) // For avoid conflicts if trigger used
+        	if (!$error)
         	{
         		$result = $this->insertExtraFields();
         		if ($result < 0)
@@ -519,7 +519,7 @@ class Don extends CommonObject
             // Update extrafield
             if (!$error)
 			{
-              	if (empty($conf->global->MAIN_EXTRAFIELDS_DISABLED)) // For avoid conflicts if trigger used
+              	if (!$error)
                	{
                		$result = $this->insertExtraFields();
                		if ($result < 0)

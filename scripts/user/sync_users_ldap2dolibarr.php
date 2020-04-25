@@ -25,20 +25,20 @@
  */
 $sapi_type = php_sapi_name();
 $script_file = basename(__FILE__);
-$path = __DIR__ . '/';
+$path = __DIR__.'/';
 
 // Test if batch mode
 if (substr($sapi_type, 0, 3) == 'cgi') {
-	echo "Error: You are using PHP for CGI. To execute " . $script_file . " from command line, you must use PHP for CLI mode.\n";
-	exit(- 1);
+	echo "Error: You are using PHP for CGI. To execute ".$script_file." from command line, you must use PHP for CLI mode.\n";
+	exit(-1);
 }
 
-require_once $path . "../../htdocs/master.inc.php";
-require_once DOL_DOCUMENT_ROOT . "/core/lib/date.lib.php";
-require_once DOL_DOCUMENT_ROOT . "/core/class/ldap.class.php";
-require_once DOL_DOCUMENT_ROOT . "/user/class/user.class.php";
+require_once $path."../../htdocs/master.inc.php";
+require_once DOL_DOCUMENT_ROOT."/core/lib/date.lib.php";
+require_once DOL_DOCUMENT_ROOT."/core/class/ldap.class.php";
+require_once DOL_DOCUMENT_ROOT."/user/class/user.class.php";
 
-$langs->loadLangs(array("main","errors"));
+$langs->loadLangs(array("main", "errors"));
 
 // Global variables
 $version = DOL_VERSION;
@@ -52,23 +52,23 @@ $confirmed = 0;
  */
 
 @set_time_limit(0);
-print "***** " . $script_file . " (" . $version . ") pid=" . dol_getmypid() . " *****\n";
-dol_syslog($script_file . " launched with arg " . join(',', $argv));
+print "***** ".$script_file." (".$version.") pid=".dol_getmypid()." *****\n";
+dol_syslog($script_file." launched with arg ".join(',', $argv));
 
 // List of fields to get from LDAP
-$required_fields = array($conf->global->LDAP_KEY_USERS,$conf->global->LDAP_FIELD_FULLNAME,$conf->global->LDAP_FIELD_NAME,$conf->global->LDAP_FIELD_FIRSTNAME,$conf->global->LDAP_FIELD_LOGIN,$conf->global->LDAP_FIELD_LOGIN_SAMBA,$conf->global->LDAP_FIELD_PASSWORD,$conf->global->LDAP_FIELD_PASSWORD_CRYPTED,$conf->global->LDAP_FIELD_PHONE,$conf->global->LDAP_FIELD_FAX,$conf->global->LDAP_FIELD_MOBILE,
+$required_fields = array($conf->global->LDAP_KEY_USERS, $conf->global->LDAP_FIELD_FULLNAME, $conf->global->LDAP_FIELD_NAME, $conf->global->LDAP_FIELD_FIRSTNAME, $conf->global->LDAP_FIELD_LOGIN, $conf->global->LDAP_FIELD_LOGIN_SAMBA, $conf->global->LDAP_FIELD_PASSWORD, $conf->global->LDAP_FIELD_PASSWORD_CRYPTED, $conf->global->LDAP_FIELD_PHONE, $conf->global->LDAP_FIELD_FAX, $conf->global->LDAP_FIELD_MOBILE,
 	// $conf->global->LDAP_FIELD_ADDRESS,
 	// $conf->global->LDAP_FIELD_ZIP,
 	// $conf->global->LDAP_FIELD_TOWN,
 	// $conf->global->LDAP_FIELD_COUNTRY,
-	$conf->global->LDAP_FIELD_MAIL,$conf->global->LDAP_FIELD_TITLE,$conf->global->LDAP_FIELD_DESCRIPTION,$conf->global->LDAP_FIELD_SID);
+	$conf->global->LDAP_FIELD_MAIL, $conf->global->LDAP_FIELD_TITLE, $conf->global->LDAP_FIELD_DESCRIPTION, $conf->global->LDAP_FIELD_SID);
 
 // Remove from required_fields all entries not configured in LDAP (empty) and duplicated
 $required_fields = array_unique(array_values(array_filter($required_fields, "dolValidElement")));
 
-if (! isset($argv[1])) {
+if (!isset($argv[1])) {
 	print "Usage:  $script_file (nocommitiferror|commitiferror) [--server=ldapserverhost] [--excludeuser=user1,user2...] [-y]\n";
-	exit(- 1);
+	exit(-1);
 }
 
 foreach ($argv as $key => $val) {
@@ -86,42 +86,42 @@ print "Mails sending disabled (useless in batch mode)\n";
 $conf->global->MAIN_DISABLE_ALL_MAILS = 1; // On bloque les mails
 print "\n";
 print "----- Synchronize all records from LDAP database:\n";
-print "host=" . $conf->global->LDAP_SERVER_HOST . "\n";
-print "port=" . $conf->global->LDAP_SERVER_PORT . "\n";
-print "login=" . $conf->global->LDAP_ADMIN_DN . "\n";
-print "pass=" . preg_replace('/./i', '*', $conf->global->LDAP_ADMIN_PASS) . "\n";
-print "DN to extract=" . $conf->global->LDAP_USER_DN . "\n";
-if (! empty($conf->global->LDAP_FILTER_CONNECTION))
-	print 'Filter=(' . $conf->global->LDAP_FILTER_CONNECTION . ')' . "\n"; // Note: filter is defined into function getRecords
+print "host=".$conf->global->LDAP_SERVER_HOST."\n";
+print "port=".$conf->global->LDAP_SERVER_PORT."\n";
+print "login=".$conf->global->LDAP_ADMIN_DN."\n";
+print "pass=".preg_replace('/./i', '*', $conf->global->LDAP_ADMIN_PASS)."\n";
+print "DN to extract=".$conf->global->LDAP_USER_DN."\n";
+if (!empty($conf->global->LDAP_FILTER_CONNECTION))
+	print 'Filter=('.$conf->global->LDAP_FILTER_CONNECTION.')'."\n"; // Note: filter is defined into function getRecords
 else
-	print 'Filter=(' . $conf->global->LDAP_KEY_USERS . '=*)' . "\n";
+	print 'Filter=('.$conf->global->LDAP_KEY_USERS.'=*)'."\n";
 print "----- To Dolibarr database:\n";
-print "type=" . $conf->db->type . "\n";
-print "host=" . $conf->db->host . "\n";
-print "port=" . $conf->db->port . "\n";
-print "login=" . $conf->db->user . "\n";
-print "database=" . $conf->db->name . "\n";
+print "type=".$conf->db->type."\n";
+print "host=".$conf->db->host."\n";
+print "port=".$conf->db->port."\n";
+print "login=".$conf->db->user."\n";
+print "database=".$conf->db->name."\n";
 print "----- Options:\n";
-print "commitiferror=" . $forcecommit . "\n";
-print "excludeuser=" . join(',', $excludeuser) . "\n";
-print "Mapped LDAP fields=" . join(',', $required_fields) . "\n";
+print "commitiferror=".$forcecommit."\n";
+print "excludeuser=".join(',', $excludeuser)."\n";
+print "Mapped LDAP fields=".join(',', $required_fields)."\n";
 print "\n";
 
-if (! $confirmed) {
+if (!$confirmed) {
 	print "Hit Enter to continue or CTRL+C to stop...\n";
 	$input = trim(fgets(STDIN));
 }
 
 if (empty($conf->global->LDAP_USER_DN)) {
-	print $langs->trans("Error") . ': ' . $langs->trans("LDAP setup for users not defined inside Dolibarr");
-	exit(- 1);
+	print $langs->trans("Error").': '.$langs->trans("LDAP setup for users not defined inside Dolibarr");
+	exit(-1);
 }
 
 // Load table of correspondence of countries
 $hashlib2rowid = array();
 $countries = array();
 $sql = "SELECT rowid, code, label, active";
-$sql .= " FROM " . MAIN_DB_PREFIX . "c_country";
+$sql .= " FROM ".MAIN_DB_PREFIX."c_country";
 $sql .= " WHERE active = 1";
 $sql .= " ORDER BY code ASC";
 $resql = $db->query($sql);
@@ -134,14 +134,14 @@ if ($resql) {
 			if ($obj) {
 				// print 'Load cache for country '.strtolower($obj->label).' rowid='.$obj->rowid."\n";
 				$hashlib2rowid[strtolower($obj->label)] = $obj->rowid;
-				$countries[$obj->rowid] = array('rowid' => $obj->rowid,'label' => $obj->label,'code' => $obj->code);
+				$countries[$obj->rowid] = array('rowid' => $obj->rowid, 'label' => $obj->label, 'code' => $obj->code);
 			}
-			$i ++;
+			$i++;
 		}
 	}
 } else {
 	dol_print_error($db);
-	exit(- 1);
+	exit(-1);
 }
 
 $ldap = new Ldap();
@@ -160,7 +160,7 @@ if ($result >= 0) {
 		foreach ($ldaprecords as $key => $ldapuser) {
 			// If login into exclude list, we discard record
 			if (in_array($ldapuser[$conf->global->LDAP_FIELD_LOGIN], $excludeuser)) {
-				print $langs->transnoentities("UserDiscarded") . ' # ' . $key . ': login=' . $ldapuser[$conf->global->LDAP_FIELD_LOGIN] . ' --> Discarded' . "\n";
+				print $langs->transnoentities("UserDiscarded").' # '.$key.': login='.$ldapuser[$conf->global->LDAP_FIELD_LOGIN].' --> Discarded'."\n";
 				continue;
 			}
 
@@ -217,24 +217,24 @@ if ($result >= 0) {
 			// print_r($ldapuser);
 
 			if ($fuser->id > 0) { // User update
-				print $langs->transnoentities("UserUpdate") . ' # ' . $key . ': login=' . $fuser->login . ', fullname=' . $fuser->getFullName($langs);
+				print $langs->transnoentities("UserUpdate").' # '.$key.': login='.$fuser->login.', fullname='.$fuser->getFullName($langs);
 				$res = $fuser->update($user);
 
 				if ($res < 0) {
-					$error ++;
-					print ' --> ' . $res . ' ' . $fuser->error;
+					$error++;
+					print ' --> '.$res.' '.$fuser->error;
 				} else {
-					print ' --> Updated user id=' . $fuser->id . ' login=' . $fuser->login;
+					print ' --> Updated user id='.$fuser->id.' login='.$fuser->login;
 				}
 			} else { // User creation
-				print $langs->transnoentities("UserCreate") . ' # ' . $key . ': login=' . $fuser->login . ', fullname=' . $fuser->getFullName($langs);
+				print $langs->transnoentities("UserCreate").' # '.$key.': login='.$fuser->login.', fullname='.$fuser->getFullName($langs);
 				$res = $fuser->create($user);
 
 				if ($res > 0) {
-					print ' --> Created user id=' . $fuser->id . ' login=' . $fuser->login;
+					print ' --> Created user id='.$fuser->id.' login='.$fuser->login;
 				} else {
-					$error ++;
-					print ' --> ' . $res . ' ' . $fuser->error;
+					$error++;
+					print ' --> '.$res.' '.$fuser->error;
 				}
 			}
 			print "\n";
@@ -251,24 +251,24 @@ if ($result >= 0) {
 			 */
 		}
 
-		if (! $error || $forcecommit) {
-			if (! $error)
-				print $langs->transnoentities("NoErrorCommitIsDone") . "\n";
+		if (!$error || $forcecommit) {
+			if (!$error)
+				print $langs->transnoentities("NoErrorCommitIsDone")."\n";
 			else
-				print $langs->transnoentities("ErrorButCommitIsDone") . "\n";
+				print $langs->transnoentities("ErrorButCommitIsDone")."\n";
 			$db->commit();
 		} else {
-			print $langs->transnoentities("ErrorSomeErrorWereFoundRollbackIsDone", $error) . "\n";
+			print $langs->transnoentities("ErrorSomeErrorWereFoundRollbackIsDone", $error)."\n";
 			$db->rollback();
 		}
 		print "\n";
 	} else {
 		dol_print_error('', $ldap->error);
-		$error ++;
+		$error++;
 	}
 } else {
 	dol_print_error('', $ldap->error);
-	$error ++;
+	$error++;
 }
 
 exit($error);

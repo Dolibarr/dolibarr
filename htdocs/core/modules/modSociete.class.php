@@ -128,14 +128,14 @@ class modSociete extends DolibarrModules
 		$r++;
 		$this->boxes[$r][1] = "box_prospect.php";
 		$r++;
-        $this->boxes[$r][1] = "box_contacts.php";
-        $r++;
-        $this->boxes[$r][1] = "box_activity.php";
-        $this->boxes[$r][2] = '(WarningUsingThisBoxSlowDown)';
-        $r++;
-        $this->boxes[$r][1] = "box_goodcustomers.php";
-        $this->boxes[$r][2] = '(WarningUsingThisBoxSlowDown)';
-        $r++;
+		$this->boxes[$r][1] = "box_contacts.php";
+		$r++;
+		$this->boxes[$r][1] = "box_activity.php";
+		$this->boxes[$r][2] = '(WarningUsingThisBoxSlowDown)';
+		$r++;
+		$this->boxes[$r][1] = "box_goodcustomers.php";
+		$this->boxes[$r][2] = '(WarningUsingThisBoxSlowDown)';
+		$r++;
 		// Permissions
 		$this->rights = array();
 		$this->rights_class = 'societe';
@@ -148,7 +148,7 @@ class modSociete extends DolibarrModules
 		$this->rights[$r][3] = 0; // La permission est-elle une permission par defaut
 		$this->rights[$r][4] = 'lire';
 
-        /*$r++;
+		/*$r++;
 		$this->rights[$r][0] = 241;
 		$this->rights[$r][1] = 'Read thirdparties customers';
 		$this->rights[$r][2] = 'r';
@@ -172,7 +172,7 @@ class modSociete extends DolibarrModules
 		$this->rights[$r][3] = 0; // La permission est-elle une permission par defaut
 		$this->rights[$r][4] = 'creer';
 
-        /* $r++;
+		/* $r++;
 		$this->rights[$r][0] = 251;
 		$this->rights[$r][1] = 'Create thirdparties customers';
 		$this->rights[$r][2] = 'r';
@@ -274,8 +274,8 @@ class modSociete extends DolibarrModules
 		// Add multicompany field
 		if (!empty($conf->global->MULTICOMPANY_ENTITY_IN_EXPORT_IF_SHARED))
 		{
-		    $nbofallowedentities = count(explode(',', getEntity('societe'))); // If project are shared, nb will be > 1
-		    if (!empty($conf->multicompany->enabled) && $nbofallowedentities > 1) $this->export_fields_array[$r] += array('s.entity'=>'Entity');
+			$nbofallowedentities = count(explode(',', getEntity('societe'))); // If project are shared, nb will be > 1
+			if (!empty($conf->multicompany->enabled) && $nbofallowedentities > 1) $this->export_fields_array[$r] += array('s.entity'=>'Entity');
 		}
 		$keyforselect = 'societe'; $keyforelement = 'company'; $keyforaliasextra = 'extra';
 		include DOL_DOCUMENT_ROOT.'/core/extrafieldsinexport.inc.php';
@@ -304,7 +304,7 @@ class modSociete extends DolibarrModules
 		$this->export_examplevalues_array[$r] = array('s.client'=>'0 (no customer no prospect)/1 (customer)/2 (prospect)/3 (customer and prospect)', 's.fournisseur'=>'0 (not a supplier) or 1 (supplier)');
 		$this->export_sql_start[$r] = 'SELECT DISTINCT ';
 		$this->export_sql_end[$r]  = ' FROM '.MAIN_DB_PREFIX.'societe as s';
-        $this->export_sql_end[$r] .= ' LEFT JOIN '.MAIN_DB_PREFIX.'societe_extrafields as extra ON s.rowid = extra.fk_object';
+		$this->export_sql_end[$r] .= ' LEFT JOIN '.MAIN_DB_PREFIX.'societe_extrafields as extra ON s.rowid = extra.fk_object';
 		$this->export_sql_end[$r] .= ' LEFT JOIN '.MAIN_DB_PREFIX.'c_typent as t ON s.fk_typent = t.id';
 		$this->export_sql_end[$r] .= ' LEFT JOIN '.MAIN_DB_PREFIX.'c_country as c ON s.fk_pays = c.rowid';
 		$this->export_sql_end[$r] .= ' LEFT JOIN '.MAIN_DB_PREFIX.'c_effectif as ce ON s.fk_effectif = ce.id';
@@ -338,38 +338,38 @@ class modSociete extends DolibarrModules
 			's.rowid'=>"IdCompany", 's.nom'=>"CompanyName", 's.status'=>"Status", 's.code_client'=>"CustomerCode", 's.code_fournisseur'=>"SupplierCode",
 			's.code_compta'=>"AccountancyCode", 's.code_compta_fournisseur'=>"SupplierAccountancyCode",
 			's.client'=>'Customer', 's.fournisseur'=>'Supplier',
-            's.address'=>'Address', 's.zip'=>"Zip", 's.town'=>"Town", 's.phone'=>'Phone', 's.email'=>"Email",
-            't.libelle'=>"ThirdPartyType"
+			's.address'=>'Address', 's.zip'=>"Zip", 's.town'=>"Town", 's.phone'=>'Phone', 's.email'=>"Email",
+			't.libelle'=>"ThirdPartyType"
 		);
 		$this->export_examplevalues_array[$r] = array('s.client'=>'0 (no customer no prospect)/1 (customer)/2 (prospect)/3 (customer and prospect)', 's.fournisseur'=>'0 (not a supplier) or 1 (supplier)');
 		$this->export_TypeFields_array[$r] = array(
 			'c.civility'=>"List:c_civility:label:code", 'c.lastname'=>'Text', 'c.firstname'=>'Text', 'c.poste'=>'Text', 'c.datec'=>"Date", 'c.priv'=>"Boolean",
 			'c.address'=>"Text", 'c.zip'=>"Text", 'c.town'=>"Text", 'd.nom'=>'Text', 'co.label'=>"List:c_country:label:rowid", 'co.code'=>"Text", 'c.phone'=>"Text",
 			'c.fax'=>"Text", 'c.email'=>"Text",
-            'c.statut'=>"Status",
-            's.rowid'=>"List:societe:nom::thirdparty", 's.nom'=>"Text", 's.status'=>"Status", 's.code_client'=>"Text", 's.code_fournisseur'=>"Text",
+			'c.statut'=>"Status",
+			's.rowid'=>"List:societe:nom::thirdparty", 's.nom'=>"Text", 's.status'=>"Status", 's.code_client'=>"Text", 's.code_fournisseur'=>"Text",
 			's.code_compta'=>"Text", 's.code_compta_fournisseur'=>"Text",
 			's.client'=>"Text", 's.fournisseur'=>"Text",
-            's.address'=>"Text", 's.zip'=>"Text", 's.town'=>"Text", 's.phone'=>"Text", 's.email'=>"Text",
-            't.libelle'=>"Text"
+			's.address'=>"Text", 's.zip'=>"Text", 's.town'=>"Text", 's.phone'=>"Text", 's.email'=>"Text",
+			't.libelle'=>"Text"
 		);
 		$this->export_entities_array[$r] = array(
 			's.rowid'=>"company", 's.nom'=>"company", 's.status'=>'company', 's.code_client'=>"company", 's.code_fournisseur'=>"company",
 			's.code_compta'=>"company", 's.code_compta_fournisseur'=>"company",
 			's.client'=>"company", 's.fournisseur'=>"company",
-            's.address'=>"company", 's.zip'=>"company", 's.town'=>"company", 's.phone'=>"company", 's.email'=>"company",
-            't.libelle'=>"company"
+			's.address'=>"company", 's.zip'=>"company", 's.town'=>"company", 's.phone'=>"company", 's.email'=>"company",
+			't.libelle'=>"company"
 		); // We define here only fields that use another picto
-        if (empty($conf->fournisseur->enabled))
-        {
-            unset($this->export_fields_array[$r]['s.code_fournisseur']);
-            unset($this->export_entities_array[$r]['s.code_fournisseur']);
-        }
-        $keyforselect = 'socpeople'; $keyforelement = 'contact'; $keyforaliasextra = 'extra';
-        include DOL_DOCUMENT_ROOT.'/core/extrafieldsinexport.inc.php';
-        $keyforselect = 'societe'; $keyforelement = 'company'; $keyforaliasextra = 'extrasoc';
-        include DOL_DOCUMENT_ROOT.'/core/extrafieldsinexport.inc.php';
-        $this->export_sql_start[$r] = 'SELECT DISTINCT ';
+		if (empty($conf->fournisseur->enabled))
+		{
+			unset($this->export_fields_array[$r]['s.code_fournisseur']);
+			unset($this->export_entities_array[$r]['s.code_fournisseur']);
+		}
+		$keyforselect = 'socpeople'; $keyforelement = 'contact'; $keyforaliasextra = 'extra';
+		include DOL_DOCUMENT_ROOT.'/core/extrafieldsinexport.inc.php';
+		$keyforselect = 'societe'; $keyforelement = 'company'; $keyforaliasextra = 'extrasoc';
+		include DOL_DOCUMENT_ROOT.'/core/extrafieldsinexport.inc.php';
+		$this->export_sql_start[$r] = 'SELECT DISTINCT ';
 		$this->export_sql_end[$r]  = ' FROM '.MAIN_DB_PREFIX.'socpeople as c';
 		$this->export_sql_end[$r] .= ' LEFT JOIN '.MAIN_DB_PREFIX.'societe as s ON c.fk_soc = s.rowid';
 		$this->export_sql_end[$r] .= ' LEFT JOIN '.MAIN_DB_PREFIX.'societe_extrafields as extrasoc ON s.rowid = extrasoc.fk_object';
@@ -377,7 +377,7 @@ class modSociete extends DolibarrModules
 		$this->export_sql_end[$r] .= ' LEFT JOIN '.MAIN_DB_PREFIX.'c_departements as d ON c.fk_departement = d.rowid';
 		$this->export_sql_end[$r] .= ' LEFT JOIN '.MAIN_DB_PREFIX.'c_country as co ON c.fk_pays = co.rowid';
 		$this->export_sql_end[$r] .= ' LEFT JOIN '.MAIN_DB_PREFIX.'socpeople_extrafields as extra ON extra.fk_object = c.rowid';
-        $this->export_sql_end[$r] .= ' LEFT JOIN '.MAIN_DB_PREFIX.'c_typent as t ON s.fk_typent = t.id';
+		$this->export_sql_end[$r] .= ' LEFT JOIN '.MAIN_DB_PREFIX.'c_typent as t ON s.fk_typent = t.id';
 		$this->export_sql_end[$r] .= ' WHERE c.entity IN ('.getEntity('socpeople').')';
 		if (is_object($user) && empty($user->rights->societe->client->voir)) {
 			$this->export_sql_end[$r] .= ' AND (sc.fk_user = '.$user->id.' ';
@@ -389,337 +389,343 @@ class modSociete extends DolibarrModules
 		}
 
 
-        // Imports
-        //--------
-        $r = 0;
+		// Imports
+		//--------
+		$r = 0;
 
-        // Import list of third parties and attributes
+		// Import list of third parties and attributes
 
-        $r++;
-        $this->import_code[$r] = $this->rights_class.'_'.$r;
-        $this->import_label[$r] = 'ImportDataset_company_1';
-        $this->import_icon[$r] = 'company';
-        $this->import_entities_array[$r] = array(); // We define here only fields that use a different icon from the one defined in import_icon
-        $this->import_tables_array[$r] = array(
-            's' => MAIN_DB_PREFIX.'societe',
-            'extra' => MAIN_DB_PREFIX.'societe_extrafields'
-        ); // List of tables to insert into (insert done in same order)
-        $this->import_fields_array[$r] = array(//field order as per structure of table llx_societe
-            's.nom' => "Name*",
-            's.name_alias' => "AliasNameShort",
-            's.status' => "Status",
-            's.code_client' => "CustomerCode",
-            's.code_fournisseur' => "SupplierCode",
-            's.code_compta' => "CustomerAccountancyCode",
-            's.code_compta_fournisseur' => "SupplierAccountancyCode",
-            's.address' => "Address",
-            's.zip' => "Zip",
-            's.town' => "Town",
-            's.fk_departement' => "StateCode",
-            's.fk_pays' => "CountryCode",
-            's.phone' => "Phone",
-            's.fax' => "Fax",
-            's.url' => "Url",
-            's.email' => "Email",
-            's.skype' => "Skype",
-            's.fk_effectif' => "Staff",
-            's.fk_typent' => "ThirdPartyType",
-            "s.fk_forme_juridique" => "JuridicalStatus",
-            's.siren' => "ProfId1",
-            's.siret' => "ProfId2",
-            's.ape' => "ProfId3",
-            's.idprof4' => "ProfId4",
-            's.idprof5' => "ProfId5",
-            's.idprof6' => "ProfId6",
-            's.tva_intra' => "VATIntraShort",
-            's.capital' => "Capital",
-            's.fk_stcomm' => 'ProspectStatus',
-            's.note_private' => "NotePrivate",
-            's.note_public' => "NotePublic",
-            's.client' => "Customer*",
-            's.fournisseur' => "Supplier*",
-            's.fk_prospectlevel' => 'ProspectLevel',
-            's.mode_reglement' => 'PaymentTypeCustomer',
-            's.cond_reglement' => "PaymentTermsCustomer",
-            's.mode_reglement_supplier' => 'PaymentTypeSupplier',
-            's.cond_reglement_supplier' => "PaymentTermsSupplier",
-            's.tva_assuj' => 'VATIsUsed',
-            's.barcode' => 'BarCode',
-            's.default_lang' => 'DefaultLanguage',
-            's.canvas' => "Canvas",
-            's.datec' => "DateCreation",
-            's.fk_multicurrency' => 'MulticurrencyUsed',
-            's.multicurrency_code' => 'MulticurrencyCurrency'
-        );
-        // Add extra fields
-        $sql = "SELECT name, label, fieldrequired FROM ".MAIN_DB_PREFIX."extrafields WHERE elementtype = 'societe' AND entity IN (0, ".$conf->entity.")";
-        $resql = $this->db->query($sql);
-        if ($resql)    // This can fail when class is used on old database (during migration for example)
-        {
-            while ($obj = $this->db->fetch_object($resql)) {
-                $fieldname = 'extra.'.$obj->name;
-                $fieldlabel = ucfirst($obj->label);
-                $this->import_fields_array[$r][$fieldname] = $fieldlabel.($obj->fieldrequired ? '*' : '');
-            }
-        }
-        // End add extra fields
-        $this->import_fieldshidden_array[$r] = array(
-            's.fk_user_creat' => 'user->id',
-            'extra.fk_object' => 'lastrowid-'.MAIN_DB_PREFIX.'societe'
-        ); // aliastable.field => ('user->id' or 'lastrowid-'.tableparent)
-        $this->import_convertvalue_array[$r] = array(//field order as per structure of table llx_societe
-            's.code_client' => array('rule' => 'getcustomercodeifauto'),
-            's.code_fournisseur' => array('rule' => 'getsuppliercodeifauto'),
-            's.code_compta' => array('rule' => 'getcustomeraccountancycodeifauto'),
-            's.code_compta_fournisseur' => array('rule' => 'getsupplieraccountancycodeifauto'),
-            's.fk_departement' => array(
-                'rule' => 'fetchidfromcodeid',
-                'classfile' => '/core/class/cstate.class.php',
-                'class' => 'Cstate',
-                'method' => 'fetch',
-                'dict' => 'DictionaryState'
-            ),
-            's.fk_pays' => array(
-                'rule' => 'fetchidfromcodeid',
-                'classfile' => '/core/class/ccountry.class.php',
-                'class' => 'Ccountry',
-                'method' => 'fetch',
-                'dict' => 'DictionaryCountry'
-            ),
-            's.fk_typent' => array(
-                'rule' => 'fetchidfromcodeorlabel',
-                'classfile' => '/core/class/ctypent.class.php',
-                'class' => 'Ctypent',
-                'method' => 'fetch',
-                'dict' => 'DictionaryCompanyType'
-            ),
-            's.capital' => array('rule' => 'numeric'),
-            's.fk_stcomm' => array('rule' => 'zeroifnull'),
-        );
-        //$this->import_convertvalue_array[$r]=array('s.fk_soc'=>array('rule'=>'lastrowid',table='t');
-        $this->import_regex_array[$r] = array(//field order as per structure of table llx_societe
-            's.status' => '^[0|1]',
-            's.fk_typent' => 'id@'.MAIN_DB_PREFIX.'c_typent',
-            's.client' => '^[0|1|2|3]',
-            's.fournisseur' => '^[0|1]',
-            's.mode_reglement' => 'id@'.MAIN_DB_PREFIX.'c_paiement',
-            's.cond_reglement' => 'rowid@'.MAIN_DB_PREFIX.'c_payment_term',
-            's.mode_reglement_supplier' => 'id@'.MAIN_DB_PREFIX.'c_paiement',
-            's.cond_reglement_supplier' => 'rowid@'.MAIN_DB_PREFIX.'c_payment_term',
-            's.tva_assuj' => '^[0|1]',
-            's.fk_multicurrency' => '^[0|1]',
-            's.datec' => '^[0-9][0-9][0-9][0-9]-[0-9][0-9]-[0-9][0-9]( [0-9][0-9]:[0-9][0-9]:[0-9][0-9])?$',
-            's.multicurrency_code' => 'code_iso@'.MAIN_DB_PREFIX.'c_currencies'
-        );
+		$r++;
+		$this->import_code[$r] = $this->rights_class.'_'.$r;
+		$this->import_label[$r] = 'ImportDataset_company_1';
+		$this->import_icon[$r] = 'company';
+		$this->import_entities_array[$r] = array(); // We define here only fields that use a different icon from the one defined in import_icon
+		$this->import_tables_array[$r] = array(
+			's' => MAIN_DB_PREFIX.'societe',
+			'extra' => MAIN_DB_PREFIX.'societe_extrafields'
+		); // List of tables to insert into (insert done in same order)
+		$this->import_fields_array[$r] = array(//field order as per structure of table llx_societe
+			's.nom' => "Name*",
+			's.name_alias' => "AliasNameShort",
+			's.status' => "Status",
+			's.code_client' => "CustomerCode",
+			's.code_fournisseur' => "SupplierCode",
+			's.code_compta' => "CustomerAccountancyCode",
+			's.code_compta_fournisseur' => "SupplierAccountancyCode",
+			's.address' => "Address",
+			's.zip' => "Zip",
+			's.town' => "Town",
+			's.fk_departement' => "StateCode",
+			's.fk_pays' => "CountryCode",
+			's.phone' => "Phone",
+			's.fax' => "Fax",
+			's.url' => "Url",
+			's.email' => "Email",
+			's.skype' => "Skype",
+			's.fk_effectif' => "Staff",
+			's.fk_typent' => "ThirdPartyType",
+			"s.fk_forme_juridique" => "JuridicalStatus",
+			's.siren' => "ProfId1",
+			's.siret' => "ProfId2",
+			's.ape' => "ProfId3",
+			's.idprof4' => "ProfId4",
+			's.idprof5' => "ProfId5",
+			's.idprof6' => "ProfId6",
+			's.tva_intra' => "VATIntraShort",
+			's.capital' => "Capital",
+			's.fk_stcomm' => 'ProspectStatus',
+			's.note_private' => "NotePrivate",
+			's.note_public' => "NotePublic",
+			's.client' => "Customer*",
+			's.fournisseur' => "Supplier*",
+			's.fk_prospectlevel' => 'ProspectLevel',
+			's.mode_reglement' => 'PaymentTypeCustomer',
+			's.cond_reglement' => "PaymentTermsCustomer",
+			's.mode_reglement_supplier' => 'PaymentTypeSupplier',
+			's.cond_reglement_supplier' => "PaymentTermsSupplier",
+			's.tva_assuj' => 'VATIsUsed',
+			's.barcode' => 'BarCode',
+			's.default_lang' => 'DefaultLanguage',
+			's.canvas' => "Canvas",
+			's.datec' => "DateCreation",
+			's.fk_multicurrency' => 'MulticurrencyUsed',
+			's.multicurrency_code' => 'MulticurrencyCurrency'
+		);
+		if (!empty($conf->global->PRODUIT_MULTIPRICES)) $this->import_fields_array[$r]['s.price_level'] = 'PriceLevel';
+		// Add extra fields
+		$sql = "SELECT name, label, fieldrequired FROM ".MAIN_DB_PREFIX."extrafields WHERE elementtype = 'societe' AND entity IN (0, ".$conf->entity.")";
+		$resql = $this->db->query($sql);
+		if ($resql)    // This can fail when class is used on old database (during migration for example)
+		{
+			while ($obj = $this->db->fetch_object($resql)) {
+				$fieldname = 'extra.'.$obj->name;
+				$fieldlabel = ucfirst($obj->label);
+				$this->import_fields_array[$r][$fieldname] = $fieldlabel.($obj->fieldrequired ? '*' : '');
+			}
+		}
+		// End add extra fields
+		$this->import_fieldshidden_array[$r] = array(
+			's.fk_user_creat' => 'user->id',
+			'extra.fk_object' => 'lastrowid-'.MAIN_DB_PREFIX.'societe'
+		); // aliastable.field => ('user->id' or 'lastrowid-'.tableparent)
+		$this->import_convertvalue_array[$r] = array(//field order as per structure of table llx_societe
+			's.code_client' => array('rule' => 'getcustomercodeifauto'),
+			's.code_fournisseur' => array('rule' => 'getsuppliercodeifauto'),
+			's.code_compta' => array('rule' => 'getcustomeraccountancycodeifauto'),
+			's.code_compta_fournisseur' => array('rule' => 'getsupplieraccountancycodeifauto'),
+			's.fk_departement' => array(
+				'rule' => 'fetchidfromcodeid',
+				'classfile' => '/core/class/cstate.class.php',
+				'class' => 'Cstate',
+				'method' => 'fetch',
+				'dict' => 'DictionaryState'
+			),
+			's.fk_pays' => array(
+				'rule' => 'fetchidfromcodeid',
+				'classfile' => '/core/class/ccountry.class.php',
+				'class' => 'Ccountry',
+				'method' => 'fetch',
+				'dict' => 'DictionaryCountry'
+			),
+			's.fk_typent' => array(
+				'rule' => 'fetchidfromcodeorlabel',
+				'classfile' => '/core/class/ctypent.class.php',
+				'class' => 'Ctypent',
+				'method' => 'fetch',
+				'dict' => 'DictionaryCompanyType'
+			),
+			's.capital' => array('rule' => 'numeric'),
+			's.fk_stcomm' => array('rule' => 'zeroifnull'),
+		);
+		//$this->import_convertvalue_array[$r]=array('s.fk_soc'=>array('rule'=>'lastrowid',table='t');
+		$this->import_regex_array[$r] = array(//field order as per structure of table llx_societe
+			's.status' => '^[0|1]',
+			's.fk_typent' => 'id@'.MAIN_DB_PREFIX.'c_typent',
+			's.client' => '^[0|1|2|3]',
+			's.fournisseur' => '^[0|1]',
+			's.mode_reglement' => 'id@'.MAIN_DB_PREFIX.'c_paiement',
+			's.cond_reglement' => 'rowid@'.MAIN_DB_PREFIX.'c_payment_term',
+			's.mode_reglement_supplier' => 'id@'.MAIN_DB_PREFIX.'c_paiement',
+			's.cond_reglement_supplier' => 'rowid@'.MAIN_DB_PREFIX.'c_payment_term',
+			's.tva_assuj' => '^[0|1]',
+			's.fk_multicurrency' => '^[0|1]',
+			's.datec' => '^[0-9][0-9][0-9][0-9]-[0-9][0-9]-[0-9][0-9]( [0-9][0-9]:[0-9][0-9]:[0-9][0-9])?$',
+			's.multicurrency_code' => 'code_iso@'.MAIN_DB_PREFIX.'c_currencies'
+		);
 
-        $this->import_examplevalues_array[$r] = array(//field order as per structure of table llx_societe
-            's.nom' => "TPBigCompany",
-            's.name_alias' => "Alias for TPBigCompany",
-            's.status' => "0 (closed) / 1 (active)",
-            's.code_client' => 'eg. CU01-0001 / empty / "auto"',
-            's.code_fournisseur' => 'eg. SU01-0001 / empty / "auto"',
-            's.code_compta' => "Code or empty to be auto-created",
-            's.code_compta_fournisseur' => "Code or empty to be auto-created",
-            's.address' => "61 Jump Street",
-            's.zip' => "123456",
-            's.town' => "Bigtown",
-            's.fk_departement' => 'matches field "code_departement" in table "'.MAIN_DB_PREFIX.'c_departements"',
-            's.fk_pays' => 'US/FR/DE etc. matches field "code" in table "'.MAIN_DB_PREFIX.'c_country"',
-            's.phone' => "eg: +34123456789",
-            's.fax' => "eg. +34987654321",
-            's.url' => "e.g. https://www.mybigcompany.com",
-            's.email' => "e.g. test@mybigcompany.com",
-            's.skype' => "Skype name",
-            's.fk_effectif' => "1/2/3/5: represents one of the five ranges of employees",
-            's.fk_typent' => 'matches field "id" (1-9 etc.) OR "code" (TE_SMALL etc.) in table "'.MAIN_DB_PREFIX.'c_typent"',
-            's.fk_forme_juridique' => '1/2/3 etc...matches field "code" in table "'.MAIN_DB_PREFIX.'c_forme_juridique"',
-            's.siret' => "",
-            's.siren' => "",
-            's.ape' => "",
-            's.idprof4' => "",
-            's.idprof5' => "",
-            's.idprof6' => "",
-            's.tva_intra' => 'VAT number e.g."FR0123456789"',
-            's.capital' => "10000",
-            's.fk_stcomm' => '-1/0/1/2 etc... matches field "id" in table "'.MAIN_DB_PREFIX.'c_stcomm"',
-            's.note_private' => "Example of a PRIVATE note.",
-            's.note_public' => "Example of a PUBLIC note.",
-            's.client' => '0 (no customer no prospect) / 1 (customer) / 2 (prospect)/ 3 (customer and prospect)',
-            's.fournisseur' => '0 (not supplier) / 1 (supplier)',
-            's.fk_prospectlevel' => 'eg. "PL_MEDIUM" matches field "code" in table "'.MAIN_DB_PREFIX.'c_prospectlevel"',
-            's.mode_reglement' => '1/2/3...matches field "id" in table "'.MAIN_DB_PREFIX.'c_paiement"',
-            's.cond_reglement' => '1/2/3...matches field "rowid" in table "'.MAIN_DB_PREFIX.'c_payment_term"',
-            's.mode_reglement_supplier' => '1/2/3...matches field "id" in table "'.MAIN_DB_PREFIX.'c_paiement"',
-            's.cond_reglement_supplier' => '1/2/3...matches field "rowid" in table "'.MAIN_DB_PREFIX.'c_payment_term"',
-            's.tva_assuj' => '0 (VAT not used) / 1 (VAT used)',
-            's.barcode' => '123456789',
-            's.default_lang' => 'en_US / es_ES etc...matches a language directory in htdocs/langs/',
-            's.canvas' => "empty / a custom canvas form layout url e.g. mycanvas@mymodule",
-            's.datec' => 'formatted as '.dol_print_date(dol_now(), '%Y-%m-%d'),
-            's.fk_multicurrency' => '0 (use system default currency) / 1 (use local currency)',
-            's.multicurrency_code' => 'GBP/USD etc... matches field "code_iso" in table "'.MAIN_DB_PREFIX.'c_currencies"'
-        );
-        $this->import_updatekeys_array[$r] = array(
-            's.nom' => 'Name',
-            's.code_client' => 'CustomerCode',
-            's.code_fournisseur' => 'SupplierCode',
-            's.code_compta' => 'CustomerAccountancyCode',
-            's.code_compta_fournisseur' => 'SupplierAccountancyCode'
-        );
+		$this->import_examplevalues_array[$r] = array(//field order as per structure of table llx_societe
+			's.nom' => "TPBigCompany",
+			's.name_alias' => "Alias for TPBigCompany",
+			's.status' => "0 (closed) / 1 (active)",
+			's.code_client' => 'eg. CU01-0001 / empty / "auto"',
+			's.code_fournisseur' => 'eg. SU01-0001 / empty / "auto"',
+			's.code_compta' => "Code or empty to be auto-created",
+			's.code_compta_fournisseur' => "Code or empty to be auto-created",
+			's.address' => "61 Jump Street",
+			's.zip' => "123456",
+			's.town' => "Bigtown",
+			's.fk_departement' => 'matches field "code_departement" in table "'.MAIN_DB_PREFIX.'c_departements"',
+			's.fk_pays' => 'US/FR/DE etc. matches field "code" in table "'.MAIN_DB_PREFIX.'c_country"',
+			's.phone' => "eg: +34123456789",
+			's.fax' => "eg. +34987654321",
+			's.url' => "e.g. https://www.mybigcompany.com",
+			's.email' => "e.g. test@mybigcompany.com",
+			's.skype' => "Skype name",
+			's.fk_effectif' => "1/2/3/5: represents one of the five ranges of employees",
+			's.fk_typent' => 'matches field "id" (1-9 etc.) OR "code" (TE_SMALL etc.) in table "'.MAIN_DB_PREFIX.'c_typent"',
+			's.fk_forme_juridique' => '1/2/3 etc...matches field "code" in table "'.MAIN_DB_PREFIX.'c_forme_juridique"',
+			's.siret' => "",
+			's.siren' => "",
+			's.ape' => "",
+			's.idprof4' => "",
+			's.idprof5' => "",
+			's.idprof6' => "",
+			's.tva_intra' => 'VAT number e.g."FR0123456789"',
+			's.capital' => "10000",
+			's.fk_stcomm' => '-1/0/1/2 etc... matches field "id" in table "'.MAIN_DB_PREFIX.'c_stcomm"',
+			's.note_private' => "Example of a PRIVATE note.",
+			's.note_public' => "Example of a PUBLIC note.",
+			's.client' => '0 (no customer no prospect) / 1 (customer) / 2 (prospect)/ 3 (customer and prospect)',
+			's.fournisseur' => '0 (not supplier) / 1 (supplier)',
+			's.fk_prospectlevel' => 'eg. "PL_MEDIUM" matches field "code" in table "'.MAIN_DB_PREFIX.'c_prospectlevel"',
+			's.mode_reglement' => '1/2/3...matches field "id" in table "'.MAIN_DB_PREFIX.'c_paiement"',
+			's.cond_reglement' => '1/2/3...matches field "rowid" in table "'.MAIN_DB_PREFIX.'c_payment_term"',
+			's.mode_reglement_supplier' => '1/2/3...matches field "id" in table "'.MAIN_DB_PREFIX.'c_paiement"',
+			's.cond_reglement_supplier' => '1/2/3...matches field "rowid" in table "'.MAIN_DB_PREFIX.'c_payment_term"',
+			's.tva_assuj' => '0 (VAT not used) / 1 (VAT used)',
+			's.barcode' => '123456789',
+			's.default_lang' => 'en_US / es_ES etc...matches a language directory in htdocs/langs/',
+			's.canvas' => "empty / a custom canvas form layout url e.g. mycanvas@mymodule",
+			's.datec' => 'formatted as '.dol_print_date(dol_now(), '%Y-%m-%d'),
+			's.fk_multicurrency' => '0 (use system default currency) / 1 (use local currency)',
+			's.multicurrency_code' => 'GBP/USD etc... matches field "code_iso" in table "'.MAIN_DB_PREFIX.'c_currencies"'
+		);
+		$this->import_updatekeys_array[$r] = array(
+			's.nom' => 'Name',
+			's.code_client' => 'CustomerCode',
+			's.code_fournisseur' => 'SupplierCode',
+			's.code_compta' => 'CustomerAccountancyCode',
+			's.code_compta_fournisseur' => 'SupplierAccountancyCode'
+		);
 
-        // Import list of contacts/additional addresses and attributes
-        $r++;
-        $this->import_code[$r] = $this->rights_class.'_'.$r;
-        $this->import_label[$r] = 'ImportDataset_company_2';
-        $this->import_icon[$r] = 'contact';
-        $this->import_entities_array[$r] = array('s.fk_soc' => 'company'); // We define here only fields that use a different icon than the one defined in import_icon
-        $this->import_tables_array[$r] = array(
-            's' => MAIN_DB_PREFIX.'socpeople',
-            'extra' => MAIN_DB_PREFIX.'socpeople_extrafields'
-        ); // List of tables to insert into (insert done in same order)
-        $this->import_fields_array[$r] = array(//field order as per structure of table llx_socpeople
-            's.datec' => "DateCreation",
-            's.fk_soc' => 'ThirdPartyName',
-            's.civility' => 'UserTitle',
-            's.lastname' => "Lastname*",
-            's.firstname' => "Firstname",
-            's.address' => "Address",
-            's.zip' => "Zip",
-            's.town' => "Town",
-            's.fk_departement' => "StateCode",
-            's.fk_pays' => "CountryCode",
-            's.birthday' => "BirthdayDate",
-            's.poste' => "Role",
-            's.phone' => "Phone",
-            's.phone_perso' => "PhonePerso",
-            's.phone_mobile' => "PhoneMobile",
-            's.fax' => "Fax",
-            's.email' => "Email",
-            's.skype' => "Skype",
-            's.note_private' => "NotePrivate",
-            's.note_public' => "NotePublic"
-        );
-        // Add extra fields
-        $sql = "SELECT name, label, fieldrequired FROM ".MAIN_DB_PREFIX."extrafields WHERE elementtype = 'socpeople' AND entity IN (0, ".$conf->entity.")";
-        $resql = $this->db->query($sql);
-        if ($resql)    // This can fail when class is used on an old database (during a migration for example)
-        {
-            while ($obj = $this->db->fetch_object($resql)) {
-                $fieldname = 'extra.'.$obj->name;
-                $fieldlabel = ucfirst($obj->label);
-                $this->import_fields_array[$r][$fieldname] = $fieldlabel.($obj->fieldrequired ? '*' : '');
-            }
-        }
-        // End add extra fields
-        $this->import_fieldshidden_array[$r] = array(
-            's.fk_user_creat' => 'user->id',
-            'extra.fk_object' => 'lastrowid-'.MAIN_DB_PREFIX.'socpeople'
-        ); // aliastable.field => ('user->id' or 'lastrowid-'.tableparent)
-        $this->import_convertvalue_array[$r] = array(
-            's.fk_soc' => array(
-                'rule' => 'fetchidfromref',
-                'file' => '/societe/class/societe.class.php',
-                'class' => 'Societe',
-                'method' => 'fetch',
-                'element' => 'ThirdParty'
-            ),
-            's.fk_departement' => array(
-                'rule' => 'fetchidfromcodeid',
-                'classfile' => '/core/class/cstate.class.php',
-                'class' => 'Cstate',
-                'method' => 'fetch',
-                'dict' => 'DictionaryState'
-            ),
-            's.fk_pays' => array(
-                'rule' => 'fetchidfromcodeid',
-                'classfile' => '/core/class/ccountry.class.php',
-                'class' => 'Ccountry',
-                'method' => 'fetch',
-                'dict' => 'DictionaryCountry'
-            ),
-        );
-        //$this->import_convertvalue_array[$r]=array('s.fk_soc'=>array('rule'=>'lastrowid',table='t');
-        $this->import_regex_array[$r] = array(
-            's.birthday' => '^[0-9][0-9][0-9][0-9]-[0-9][0-9]-[0-9][0-9]$',
-            's.datec' => '^[0-9][0-9][0-9][0-9]-[0-9][0-9]-[0-9][0-9]( [0-9][0-9]:[0-9][0-9]:[0-9][0-9])?$'
-        );
-        $this->import_examplevalues_array[$r] = array(//field order as per structure of table llx_socpeople
-            's.datec' => 'formatted as '.dol_print_date(dol_now(), '%Y-%m-%d'),
-            's.fk_soc' => 'Third Party name eg. TPBigCompany',
-            's.civility' => 'Title of civility eg: MR...matches field "code" in table "'.MAIN_DB_PREFIX.'c_civility"',
-            's.lastname' => "lastname or label",
-            's.firstname' => 'John',
-            's.address' => '61 Jump street',
-            's.zip' => '75000',
-            's.town' => 'Bigtown',
-            's.fk_departement' => 'matches field "code_departement" in table "'.MAIN_DB_PREFIX.'c_departements"',
-            's.fk_pays' => 'US/FR/DE etc. matches field "code" in table "'.MAIN_DB_PREFIX.'c_country"',
-            's.birthday' => 'formatted as '.dol_print_date(dol_now(), '%Y-%m-%d'),
-            's.poste' => "Director",
-            's.phone' => "5551122",
-            's.phone_perso' => "5551133",
-            's.phone_mobile' => "5551144",
-            's.fax' => "5551155",
-            's.email' => "johnsmith@email.com",
-            's.skype' => "skype username",
-            's.note_private' => "My private note",
-            's.note_public' => "My public note"
-        );
+		// Import list of contacts/additional addresses and attributes
+		$r++;
+		$this->import_code[$r] = $this->rights_class.'_'.$r;
+		$this->import_label[$r] = 'ImportDataset_company_2';
+		$this->import_icon[$r] = 'contact';
+		$this->import_entities_array[$r] = array('s.fk_soc' => 'company'); // We define here only fields that use a different icon than the one defined in import_icon
+		$this->import_tables_array[$r] = array(
+			's' => MAIN_DB_PREFIX.'socpeople',
+			'extra' => MAIN_DB_PREFIX.'socpeople_extrafields'
+		); // List of tables to insert into (insert done in same order)
+		$this->import_fields_array[$r] = array(//field order as per structure of table llx_socpeople
+			's.rowid' => 'Id',
+			's.datec' => "DateCreation",
+			's.fk_soc' => 'ThirdPartyName',
+			's.civility' => 'UserTitle',
+			's.lastname' => "Lastname*",
+			's.firstname' => "Firstname",
+			's.address' => "Address",
+			's.zip' => "Zip",
+			's.town' => "Town",
+			's.fk_departement' => "StateCode",
+			's.fk_pays' => "CountryCode",
+			's.birthday' => "BirthdayDate",
+			's.poste' => "Role",
+			's.phone' => "Phone",
+			's.phone_perso' => "PhonePerso",
+			's.phone_mobile' => "PhoneMobile",
+			's.fax' => "Fax",
+			's.email' => "Email",
+			's.skype' => "Skype",
+			's.note_private' => "NotePrivate",
+			's.note_public' => "NotePublic"
+		);
+		// Add extra fields
+		$sql = "SELECT name, label, fieldrequired FROM ".MAIN_DB_PREFIX."extrafields WHERE elementtype = 'socpeople' AND entity IN (0, ".$conf->entity.")";
+		$resql = $this->db->query($sql);
+		if ($resql)    // This can fail when class is used on an old database (during a migration for example)
+		{
+			while ($obj = $this->db->fetch_object($resql)) {
+				$fieldname = 'extra.'.$obj->name;
+				$fieldlabel = ucfirst($obj->label);
+				$this->import_fields_array[$r][$fieldname] = $fieldlabel.($obj->fieldrequired ? '*' : '');
+			}
+		}
+		// End add extra fields
+		$this->import_fieldshidden_array[$r] = array(
+			's.fk_user_creat' => 'user->id',
+			'extra.fk_object' => 'lastrowid-'.MAIN_DB_PREFIX.'socpeople'
+		); // aliastable.field => ('user->id' or 'lastrowid-'.tableparent)
+		$this->import_convertvalue_array[$r] = array(
+			's.fk_soc' => array(
+				'rule' => 'fetchidfromref',
+				'file' => '/societe/class/societe.class.php',
+				'class' => 'Societe',
+				'method' => 'fetch',
+				'element' => 'ThirdParty'
+			),
+			's.fk_departement' => array(
+				'rule' => 'fetchidfromcodeid',
+				'classfile' => '/core/class/cstate.class.php',
+				'class' => 'Cstate',
+				'method' => 'fetch',
+				'dict' => 'DictionaryState'
+			),
+			's.fk_pays' => array(
+				'rule' => 'fetchidfromcodeid',
+				'classfile' => '/core/class/ccountry.class.php',
+				'class' => 'Ccountry',
+				'method' => 'fetch',
+				'dict' => 'DictionaryCountry'
+			),
+		);
+		//$this->import_convertvalue_array[$r]=array('s.fk_soc'=>array('rule'=>'lastrowid',table='t');
+		$this->import_regex_array[$r] = array(
+			's.birthday' => '^[0-9][0-9][0-9][0-9]-[0-9][0-9]-[0-9][0-9]$',
+			's.datec' => '^[0-9][0-9][0-9][0-9]-[0-9][0-9]-[0-9][0-9]( [0-9][0-9]:[0-9][0-9]:[0-9][0-9])?$'
+		);
+		$this->import_examplevalues_array[$r] = array(//field order as per structure of table llx_socpeople
+			's.rowid' => '1',
+			's.datec' => 'formatted as '.dol_print_date(dol_now(), '%Y-%m-%d'),
+			's.fk_soc' => 'Third Party name eg. TPBigCompany',
+			's.civility' => 'Title of civility eg: MR...matches field "code" in table "'.MAIN_DB_PREFIX.'c_civility"',
+			's.lastname' => "lastname or label",
+			's.firstname' => 'John',
+			's.address' => '61 Jump street',
+			's.zip' => '75000',
+			's.town' => 'Bigtown',
+			's.fk_departement' => 'matches field "code_departement" in table "'.MAIN_DB_PREFIX.'c_departements"',
+			's.fk_pays' => 'US/FR/DE etc. matches field "code" in table "'.MAIN_DB_PREFIX.'c_country"',
+			's.birthday' => 'formatted as '.dol_print_date(dol_now(), '%Y-%m-%d'),
+			's.poste' => "Director",
+			's.phone' => "5551122",
+			's.phone_perso' => "5551133",
+			's.phone_mobile' => "5551144",
+			's.fax' => "5551155",
+			's.email' => "johnsmith@email.com",
+			's.skype' => "skype username",
+			's.note_private' => "My private note",
+			's.note_public' => "My public note"
+		);
+		$this->import_updatekeys_array[$r] = array(
+			's.rowid' => 'Id'
+		);
 
-        // Import Bank Accounts
-        $r++;
-        $this->import_code[$r] = $this->rights_class.'_'.$r;
-        $this->import_label[$r] = "ImportDataset_company_3"; // Translation key
-        $this->import_icon[$r] = 'company';
-        $this->import_entities_array[$r] = array(); // We define here only fields that use a different icon to the one defined in import_icon
-        $this->import_tables_array[$r] = array('sr' => MAIN_DB_PREFIX.'societe_rib');
-        $this->import_fields_array[$r] = array(//field order as per structure of table llx_societe_rib
-            'sr.label' => "Label*",
-            'sr.fk_soc' => "ThirdPartyName*",
-            'sr.datec' => "DateCreation*",
-            'sr.bank' => "Bank",
-            'sr.code_banque' => "BankCode",
-            'sr.code_guichet' => "DeskCode",
-            'sr.number' => "BankAccountNumber*",
-            'sr.cle_rib' => "BankAccountNumberKey",
-            'sr.bic' => "BIC",
-            'sr.iban_prefix' => "IBAN",
-            'sr.domiciliation' => "BankAccountDomiciliation",
-            'sr.proprio' => "BankAccountOwner",
-            'sr.owner_address' => "BankAccountOwnerAddress",
-            'sr.default_rib' => 'Default',
-            'sr.rum' => 'RUM',
+		// Import Bank Accounts
+		$r++;
+		$this->import_code[$r] = $this->rights_class.'_'.$r;
+		$this->import_label[$r] = "ImportDataset_company_3"; // Translation key
+		$this->import_icon[$r] = 'company';
+		$this->import_entities_array[$r] = array(); // We define here only fields that use a different icon to the one defined in import_icon
+		$this->import_tables_array[$r] = array('sr' => MAIN_DB_PREFIX.'societe_rib');
+		$this->import_fields_array[$r] = array(//field order as per structure of table llx_societe_rib
+			'sr.label' => "Label*",
+			'sr.fk_soc' => "ThirdPartyName*",
+			'sr.datec' => "DateCreation*",
+			'sr.bank' => "Bank",
+			'sr.code_banque' => "BankCode",
+			'sr.code_guichet' => "DeskCode",
+			'sr.number' => "BankAccountNumber*",
+			'sr.cle_rib' => "BankAccountNumberKey",
+			'sr.bic' => "BIC",
+			'sr.iban_prefix' => "IBAN",
+			'sr.domiciliation' => "BankAccountDomiciliation",
+			'sr.proprio' => "BankAccountOwner",
+			'sr.owner_address' => "BankAccountOwnerAddress",
+			'sr.default_rib' => 'Default',
+			'sr.rum' => 'RUM',
 			'sr.type' => "Type ban is defaut",
-        );
+		);
 
-        $this->import_convertvalue_array[$r] = array(
-            'sr.fk_soc' => array(
-                'rule' => 'fetchidfromref',
-                'classfile' => '/societe/class/societe.class.php',
-                'class' => 'Societe',
-                'method' => 'fetch',
-                'element' => 'ThirdParty'
-            )
-        );
-        $this->import_examplevalues_array[$r] = array(//field order as per structure of table llx_societe_rib
-            'sr.label' => 'eg. "account1"',
-            'sr.fk_soc' => 'eg. "TPBigCompany"',
-            'sr.datec' => 'date used for creating direct debit UMR formatted as '.dol_print_date(dol_now(),
-                    '%Y-%m-%d'),
-            'sr.bank' => 'bank name eg: "ING-Direct"',
-            'sr.code_banque' => 'account sort code (GB)/Routing number (US) eg. "8456"',
-            'sr.code_guichet' => "bank code for office/branch",
-            'sr.number' => 'account number eg. "3333333333"',
-            'sr.cle_rib' => 'account checksum/control digits (if used) eg. "22"',
-            'sr.bic' => 'bank identifier eg. "USHINGMMXXX"',
-            'sr.iban_prefix' => 'complete account IBAN eg. "GB78CPBK08925068637123"',
-            'sr.domiciliation' => 'bank branch address eg. "PARIS"',
-            'sr.proprio' => 'name on the bank account',
-            'sr.owner_address' => 'address of account holder',
-            'sr.default_rib' => '1 (default account) / 0 (not default)',
-            'sr.rum' => 'RUM code',
+		$this->import_convertvalue_array[$r] = array(
+			'sr.fk_soc' => array(
+				'rule' => 'fetchidfromref',
+				'classfile' => '/societe/class/societe.class.php',
+				'class' => 'Societe',
+				'method' => 'fetch',
+				'element' => 'ThirdParty'
+			)
+		);
+		$this->import_examplevalues_array[$r] = array(//field order as per structure of table llx_societe_rib
+			'sr.label' => 'eg. "account1"',
+			'sr.fk_soc' => 'eg. "TPBigCompany"',
+			'sr.datec' => 'date used for creating direct debit UMR formatted as '.dol_print_date(dol_now(),
+					'%Y-%m-%d'),
+			'sr.bank' => 'bank name eg: "ING-Direct"',
+			'sr.code_banque' => 'account sort code (GB)/Routing number (US) eg. "8456"',
+			'sr.code_guichet' => "bank code for office/branch",
+			'sr.number' => 'account number eg. "3333333333"',
+			'sr.cle_rib' => 'account checksum/control digits (if used) eg. "22"',
+			'sr.bic' => 'bank identifier eg. "USHINGMMXXX"',
+			'sr.iban_prefix' => 'complete account IBAN eg. "GB78CPBK08925068637123"',
+			'sr.domiciliation' => 'bank branch address eg. "PARIS"',
+			'sr.proprio' => 'name on the bank account',
+			'sr.owner_address' => 'address of account holder',
+			'sr.default_rib' => '1 (default account) / 0 (not default)',
+			'sr.rum' => 'RUM code',
 			'sr.type' => 'ban',
-        );
+		);
 
 		// Import Company Sales representatives
 		$r++;
@@ -738,16 +744,16 @@ class modSociete extends DolibarrModules
 	}
 
 
-    /**
+	/**
 	 *  Function called when module is enabled.
 	 *  The init function add constants, boxes, permissions and menus (defined in constructor) into Dolibarr database.
 	 *  It also creates data directories
 	 *
-     *  @param      string	$options    Options when enabling module ('', 'noboxes')
+	 *  @param      string	$options    Options when enabling module ('', 'noboxes')
 	 *  @return     int             	1 if OK, 0 if KO
-     */
-    public function init($options = '')
-    {
+	 */
+	public function init($options = '')
+	{
 		global $conf, $langs;
 
 		// We disable this to prevent pb of modules not correctly disabled

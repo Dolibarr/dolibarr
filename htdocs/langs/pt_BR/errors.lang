@@ -95,6 +95,7 @@ ErrorLoginDoesNotExists=Não existe um usuário com login <b>%s</b>.
 ErrorLoginHasNoEmail=Este usuário não tem endereço de e-mail. Processo abortado.
 ErrorBadValueForCode=Valor inadequado para código de segurança. Tente novamente com um novo valor...
 ErrorBothFieldCantBeNegative=Os campos %s e %s não podem ser ambos negativos
+ErrorLinesCantBeNegativeForOneVATRate=O total de linhas não pode ser negativo para uma determinada taxa de IVA.
 ErrorLinesCantBeNegativeOnDeposits=As linhas não podem ser negativas em um depósito. Você terá problemas quando precisar apagar o depósito na fatura final, se o fizer.
 ErrorQtyForCustomerInvoiceCantBeNegative=A quantidade nas linhas das notas de clientes não pode ser negativa
 ErrorWebServerUserHasNotPermission=A conta de usuário <b>%s</b> usada para executar o servidor web não possui permissão para isto

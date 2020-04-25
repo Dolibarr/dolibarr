@@ -306,13 +306,14 @@ $formfile = new FormFile($db);
 
 if ($action == 'new')
 {
+	$head = array();
 	$h = 0;
 	$head[$h][0] = $_SERVER["PHP_SELF"].'?action=new';
 	$head[$h][1] = $langs->trans("MenuChequeDeposits");
 	$hselected = $h;
 	$h++;
 
-	print load_fiche_titre($langs->trans("Cheques"));
+	print load_fiche_titre($langs->trans("Cheques"), '', 'bank_account');
 }
 else
 {

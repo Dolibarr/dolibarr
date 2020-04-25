@@ -225,7 +225,7 @@ if ($action == 'create' || $object->fetch($id, $ref) > 0)
 {
 	if ($action == 'create')
 	{
-		print load_fiche_titre($title, '', 'generic');
+		print load_fiche_titre($title, '', 'object_resource');
 		dol_fiche_head('');
 	}
 	else
