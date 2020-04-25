@@ -2465,7 +2465,7 @@ class SupplierProposal extends CommonObject
             // This assignment in condition is not a bug. It allows walking the results.
             while ($obj = $this->db->fetch_object($resql))
             {
-                $this->nb["askprice"] = $obj->nb;
+                $this->nb["supplier_proposals"] = $obj->nb;
             }
             $this->db->free($resql);
             return 1;

@@ -292,19 +292,19 @@ if (empty($user->socid) && empty($conf->global->MAIN_DISABLE_GLOBAL_BOXSTATS))
 	        if ($conditions[$val])
 	        {
                 $boxstatItem = '';
-	            $classe = $classes[$val];
+	            $class = $classes[$val];
 	            // Search in cache if load_state_board is already realized
-	            if (!isset($boardloaded[$classe]) || !is_object($boardloaded[$classe]))
+	            if (!isset($boardloaded[$class]) || !is_object($boardloaded[$class]))
 	            {
 	            	include_once $includes[$val]; // Loading a class cost around 1Mb
 
-	                $board = new $classe($db);
+	                $board = new $class($db);
 	                $board->load_state_board($user);
-	                $boardloaded[$classe] = $board;
+	                $boardloaded[$class] = $board;
 	            }
 	            else
 	            {
-	                $board = $boardloaded[$classe];
+	                $board = $boardloaded[$class];
 	            }
 
             	$langs->load(empty($langfile[$val]) ? $val : $langfile[$val]);
