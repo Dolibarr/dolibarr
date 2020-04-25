@@ -2355,7 +2355,7 @@ class FactureFournisseur extends CommonInvoice
         if ($this->type == self::TYPE_CREDIT_NOTE) $picto .= 'a'; // Credit note
         if ($this->type == self::TYPE_DEPOSIT)     $picto .= 'd'; // Deposit invoice
 
-        $label = '<u>'.$langs->trans("ShowSupplierInvoice").'</u>';
+        $label = '<u>'.$langs->trans("SupplierInvoice").'</u>';
         if (!empty($this->ref))
             $label .= '<br><b>'.$langs->trans('Ref').':</b> '.$this->ref;
         if (!empty($this->ref_supplier))

@@ -88,7 +88,7 @@ if ($conf->accounting->enabled)
 	}
 
 
-	print load_fiche_titre($langs->trans("AccountancyArea"), $resultboxes['selectboxlist'], 'accountancy', 0, '', '', $showtutorial);
+	print load_fiche_titre($langs->trans("AccountancyArea"), $resultboxes['selectboxlist'], 'title_accountancy', 0, '', '', $showtutorial);
 
     print '<div class="'.($helpisexpanded ? '' : 'hideobject').'" id="idfaq">'; // hideobject is to start hidden
     print "<br>\n";
