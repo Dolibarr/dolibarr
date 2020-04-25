@@ -780,33 +780,33 @@ SCRIPT;
                     if (empty($rowid)) {
                         foreach ($extralabels as $key => $value) {
                             if (!empty($extrafields->attributes["product_fournisseur_price"]['list'][$key]) && ($extrafields->attributes["product_fournisseur_price"]['list'][$key] == 1 || $extrafields->attributes["product_fournisseur_price"]['list'][$key] == 3 || ($action == "update_price" && $extrafields->attributes["product_fournisseur_price"]['list'][$key] == 4))) {
-                                if(!empty($extrafields->attributes["product_fournisseur_price"]['langfile'][$key])) $langs->load($extrafields->attributes["product_fournisseur_price"]['langfile'][$key]);
+                                if (!empty($extrafields->attributes["product_fournisseur_price"]['langfile'][$key])) $langs->load($extrafields->attributes["product_fournisseur_price"]['langfile'][$key]);
 
                                 print '<tr><td'.($extrafields->attributes["product_fournisseur_price"]['required'][$key] ? ' class="fieldrequired"' : '').'>';
                                 if (!empty($extrafields->attributes["product_fournisseur_price"]['help'][$key])) print $form->textwithpicto($langs->trans($value), $langs->trans($extrafields->attributes["product_fournisseur_price"]['help'][$key]));
                                 else print $langs->trans($value);
-                                print '</td><td>'.$extrafields->showInputField($key, GETPOSTISSET('options_' . $key) ? $extrafield_values['options_' . $key] : '', '', '', '', '', 0, 'product_fournisseur_price').'</td></tr>';
+                                print '</td><td>'.$extrafields->showInputField($key, GETPOSTISSET('options_'.$key) ? $extrafield_values['options_'.$key] : '', '', '', '', '', 0, 'product_fournisseur_price').'</td></tr>';
                             }
                         }
                     } else {
                         $sql  = "SELECT";
                         $sql .= " fk_object";
                         foreach ($extralabels as $key => $value) {
-                            $sql .= ", " . $key;
+                            $sql .= ", ".$key;
                         }
-                        $sql .= " FROM " . MAIN_DB_PREFIX . "product_fournisseur_price_extrafields";
-                        $sql .= " WHERE fk_object = " . $rowid;
+                        $sql .= " FROM ".MAIN_DB_PREFIX."product_fournisseur_price_extrafields";
+                        $sql .= " WHERE fk_object = ".$rowid;
                         $resql = $db->query($sql);
                         if ($resql) {
                             $obj = $db->fetch_object($resql);
                             foreach ($extralabels as $key => $value) {
                                 if (!empty($extrafields->attributes["product_fournisseur_price"]['list'][$key]) && ($extrafields->attributes["product_fournisseur_price"]['list'][$key] == 1 || $extrafields->attributes["product_fournisseur_price"]['list'][$key] == 3 || ($action == "update_price" && $extrafields->attributes["product_fournisseur_price"]['list'][$key] == 4))) {
-                                    if(!empty($extrafields->attributes["product_fournisseur_price"]['langfile'][$key])) $langs->load($extrafields->attributes["product_fournisseur_price"]['langfile'][$key]);
+                                    if (!empty($extrafields->attributes["product_fournisseur_price"]['langfile'][$key])) $langs->load($extrafields->attributes["product_fournisseur_price"]['langfile'][$key]);
 
                                     print '<tr><td'.($extrafields->attributes["product_fournisseur_price"]['required'][$key] ? ' class="fieldrequired"' : '').'>';
                                     if (!empty($extrafields->attributes["product_fournisseur_price"]['help'][$key])) print $form->textwithpicto($langs->trans($value), $langs->trans($extrafields->attributes["product_fournisseur_price"]['help'][$key]));
                                     else print $langs->trans($value);
-                                    print '</td><td>'.$extrafields->showInputField($key, GETPOSTISSET('options_' . $key) ? $extrafield_values['options_' . $key] : $obj->{$key}, '', '', '', '', 0, 'product_fournisseur_price');
+                                    print '</td><td>'.$extrafields->showInputField($key, GETPOSTISSET('options_'.$key) ? $extrafield_values['options_'.$key] : $obj->{$key}, '', '', '', '', 0, 'product_fournisseur_price');
 
                                     print '</td></tr>';
                                 }
@@ -912,7 +912,7 @@ SCRIPT;
 					foreach ($extralabels as $key => $value) {
 						// Show field if not hidden
 						if (!empty($extrafields->attributes["product_fournisseur_price"]['list'][$key]) && $extrafields->attributes["product_fournisseur_price"]['list'][$key] != 3) {
-                            if(!empty($extrafields->attributes["product_fournisseur_price"]['langfile'][$key])) $langs->load($extrafields->attributes["product_fournisseur_price"]['langfile'][$key]);
+                            if (!empty($extrafields->attributes["product_fournisseur_price"]['langfile'][$key])) $langs->load($extrafields->attributes["product_fournisseur_price"]['langfile'][$key]);
                             if (!empty($extrafields->attributes["product_fournisseur_price"]['help'][$key])) $extratitle = $form->textwithpicto($langs->trans($value), $langs->trans($extrafields->attributes["product_fournisseur_price"]['help'][$key]));
                             else $extratitle = $langs->trans($value);
 							print_liste_field_titre($extratitle, $_SERVER["PHP_SELF"], '', '', $param, '', $sortfield, $sortorder, 'right ');

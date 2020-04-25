@@ -713,7 +713,7 @@ while ($i < min($num, $limit))
 	$object->public = $obj->public;
 	$object->ref = $obj->ref;
 	$object->datee = $db->jdate($obj->date_end);
-	$object->statut = $obj->status;		// deprecated
+	$object->statut = $obj->status; // deprecated
 	$object->status = $obj->status;
 	$object->public = $obj->public;
 	$object->opp_status = $obj->fk_opp_status;

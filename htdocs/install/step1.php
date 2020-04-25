@@ -566,21 +566,21 @@ if (!$error && $db->connected && $action == "set")
                 $error++;
             }
 
-            if (! $error)
+            if (!$error)
             {
                 if ($db->connected)
                 {
                     $resultbis = 1;
 
                     // Create user
-                    $result=$db->DDLCreateUser($dolibarr_main_db_host, $dolibarr_main_db_user, $dolibarr_main_db_pass, $dolibarr_main_db_name);
+                    $result = $db->DDLCreateUser($dolibarr_main_db_host, $dolibarr_main_db_user, $dolibarr_main_db_pass, $dolibarr_main_db_name);
 
                     // Create user bis
                     if ($databasefortest == 'mysql')
                     {
-                        if (! in_array($dolibarr_main_db_host, array('127.0.0.1', '::1', 'localhost', 'localhost.local')))
+                        if (!in_array($dolibarr_main_db_host, array('127.0.0.1', '::1', 'localhost', 'localhost.local')))
                         {
-                            $resultbis=$db->DDLCreateUser('%', $dolibarr_main_db_user, $dolibarr_main_db_pass, $dolibarr_main_db_name);
+                            $resultbis = $db->DDLCreateUser('%', $dolibarr_main_db_user, $dolibarr_main_db_pass, $dolibarr_main_db_name);
                         }
                     }
 

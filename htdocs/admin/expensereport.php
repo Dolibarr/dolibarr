@@ -368,20 +368,20 @@ foreach ($dirmodels as $reldir)
 		    	{
 		    		if (file_exists($dir.'/'.$file))
 		    		{
-		    			$name = substr($file, 4, dol_strlen($file) -16);
-		    			$classname = substr($file, 0, dol_strlen($file) -12);
+		    			$name = substr($file, 4, dol_strlen($file) - 16);
+		    			$classname = substr($file, 0, dol_strlen($file) - 12);
 
 		    			require_once $dir.'/'.$file;
 		    			$module = new $classname($db);
 
-		    			$modulequalified=1;
-		    			if ($module->version == 'development'  && $conf->global->MAIN_FEATURES_LEVEL < 2) $modulequalified=0;
-		    			if ($module->version == 'experimental' && $conf->global->MAIN_FEATURES_LEVEL < 1) $modulequalified=0;
+		    			$modulequalified = 1;
+		    			if ($module->version == 'development' && $conf->global->MAIN_FEATURES_LEVEL < 2) $modulequalified = 0;
+		    			if ($module->version == 'experimental' && $conf->global->MAIN_FEATURES_LEVEL < 1) $modulequalified = 0;
 
 		    			if ($modulequalified)
 		    			{
 		    				print '<tr class="oddeven"><td width="100">';
-		    				print (empty($module->name)?$name:$module->name);
+		    				print (empty($module->name) ? $name : $module->name);
 		    				print "</td><td>\n";
 		    				if (method_exists($module, 'info')) print $module->info($langs);
 		    				else print $module->description;

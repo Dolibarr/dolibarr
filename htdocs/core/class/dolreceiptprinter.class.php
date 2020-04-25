@@ -732,7 +732,7 @@ class dolReceiptPrinter extends Printer
                         break;
 					case 'DOL_PRINT_ORDER_LINES':
 						foreach ($object->lines as $line) {
-							if ($line->special_code==$this->orderprinter)
+							if ($line->special_code == $this->orderprinter)
 							{
 								$spacestoadd = $nbcharactbyline - strlen($line->ref) - strlen($line->qty) - 10 - 1;
 								$spaces = str_repeat(' ', $spacestoadd);

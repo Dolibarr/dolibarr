@@ -42,7 +42,7 @@ $ilink = 0;
 foreach ($linkedObjectBlock as $key => $objectlink)
 {
     $ilink++;
-    $product_static= new Product($db);
+    $product_static = new Product($db);
     $trclass = 'oddeven';
     if ($ilink == count($linkedObjectBlock) && empty($noMoreLinkedObjectBlockAfter) && count($linkedObjectBlock) <= 1) $trclass .= ' liste_sub_total';
     echo '<tr class="'.$trclass.'" >';

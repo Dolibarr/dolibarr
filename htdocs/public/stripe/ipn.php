@@ -111,54 +111,54 @@ $user = new User($db);
 $user->fetch($conf->global->STRIPE_USER_ACCOUNT_FOR_ACTIONS);
 $user->getrights();
 
-if (! empty($conf->multicompany->enabled) && ! empty($conf->stripeconnect->enabled) && is_object($mc))
+if (!empty($conf->multicompany->enabled) && !empty($conf->stripeconnect->enabled) && is_object($mc))
 {
 	$sql = "SELECT entity";
-	$sql.= " FROM ".MAIN_DB_PREFIX."oauth_token";
-	$sql.= " WHERE service = '".$db->escape($service)."' and tokenstring = '%".$db->escape($event->account)."%'";
+	$sql .= " FROM ".MAIN_DB_PREFIX."oauth_token";
+	$sql .= " WHERE service = '".$db->escape($service)."' and tokenstring = '%".$db->escape($event->account)."%'";
 
-	dol_syslog(get_class($db) . "::fetch", LOG_DEBUG);
+	dol_syslog(get_class($db)."::fetch", LOG_DEBUG);
 	$result = $db->query($sql);
 	if ($result)
 	{
 		if ($db->num_rows($result))
 		{
 			$obj = $db->fetch_object($result);
-			$key=$obj->entity;
+			$key = $obj->entity;
 		}
 		else {
-			$key=1;
+			$key = 1;
 		}
 	}
 	else {
-		$key=1;
+		$key = 1;
 	}
-	$ret=$mc->switchEntity($key);
-	if (! $res && file_exists("../../main.inc.php")) $res=@include "../../main.inc.php";
-	if (! $res) die("Include of main fails");
+	$ret = $mc->switchEntity($key);
+	if (!$res && file_exists("../../main.inc.php")) $res = @include "../../main.inc.php";
+	if (!$res) die("Include of main fails");
 }
 
 // list of  action
-$stripe=new Stripe($db);
+$stripe = new Stripe($db);
 
 // Subject
 $societeName = $conf->global->MAIN_INFO_SOCIETE_NOM;
-if (! empty($conf->global->MAIN_APPLICATION_TITLE)) $societeName = $conf->global->MAIN_APPLICATION_TITLE;
+if (!empty($conf->global->MAIN_APPLICATION_TITLE)) $societeName = $conf->global->MAIN_APPLICATION_TITLE;
 
 
 dol_syslog("***** Stripe IPN was called with event->type = ".$event->type);
 
 
 if ($event->type == 'payout.created') {
-	$error=0;
+	$error = 0;
 
-	$result=dolibarr_set_const($db, $service."_NEXTPAYOUT", date('Y-m-d H:i:s', $event->data->object->arrival_date), 'chaine', 0, '', $conf->entity);
+	$result = dolibarr_set_const($db, $service."_NEXTPAYOUT", date('Y-m-d H:i:s', $event->data->object->arrival_date), 'chaine', 0, '', $conf->entity);
 
 	if ($result > 0)
 	{
 	    $subject = $societeName.' - [NOTIFICATION] Stripe payout scheduled';
         if (!empty($user->email)) {
-            $sendto = dolGetFirstLastname($user->firstname, $user->lastname) . " <".$user->email.">";
+            $sendto = dolGetFirstLastname($user->firstname, $user->lastname)." <".$user->email.">";
         } else {
             $sendto = $conf->global->MAIN_INFO_SOCIETE_MAIL.'" <'.$conf->global->MAIN_INFO_SOCIETE_MAIL.'>';
         }
