@@ -1507,8 +1507,8 @@ class SMTPs
                     }
 
                     // always end related and end alternative after inline images
-                    $content .= "--".$this->_getBoundary('related')."--"."\r\n";
-                    $content .= "\r\n"."--".$this->_getBoundary('alternative')."--"."\r\n";
+                    $content .= "--".$this->_getBoundary('related')."--\r\n";
+                    $content .= "\r\n--".$this->_getBoundary('alternative')."--\r\n";
                     $content .= "\r\n";
                 }
                 else
