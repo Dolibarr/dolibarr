@@ -2241,7 +2241,7 @@ function print_projecttasks_array($db, $form, $socid, $projectsListId, $mytasks 
 				if (!empty($conf->global->PROJECT_USE_OPPORTUNITIES))
 				{
 					if (!in_array('prospectionstatus', $hiddenfields)) {
-						print '<td class="right">';
+						print '<td class="center">';
 						// Because color of prospection status has no meaning yet, it is used if hidden constant is set
 						if (empty($conf->global->USE_COLOR_FOR_PROSPECTION_STATUS)) {
 							$oppStatusCode = dol_getIdFromCode($db, $objp->opp_status, 'c_lead_status', 'rowid', 'code');

@@ -106,6 +106,7 @@ if ($resql)
     $total = 0;
     $totalinprocess = 0;
     $dataseries = array();
+    $colorseries = array();
     $vals = array();
     // -1=Canceled, 0=Draft, 1=Validated, 2=Accepted/On process, 3=Closed (Sent/Received, billed or not)
     while ($i < $num)

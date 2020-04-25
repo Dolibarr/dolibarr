@@ -534,7 +534,7 @@ if ($resql)
 	// Date
 	if (!empty($arrayfields['sp.date_valid']['checked']))
 	{
-		print '<td class="liste_titre center" colspan="1">';
+		print '<td class="liste_titre center">';
 		//print $langs->trans('Month').': ';
 		print '<input class="flat width25 valignmiddle" type="text" maxlength="2" name="monthvalid" value="'.dol_escape_htmltag($monthvalid).'">';
 		//print '&nbsp;'.$langs->trans('Year').': ';
@@ -545,7 +545,7 @@ if ($resql)
 	// Date
 	if (!empty($arrayfields['sp.date_livraison']['checked']))
 	{
-		print '<td class="liste_titre center" colspan="1">';
+		print '<td class="liste_titre center">';
 		//print $langs->trans('Month').': ';
 		print '<input class="flat width25 valignmiddle" type="text" maxlength="2" name="month" value="'.dol_escape_htmltag($month).'">';
 		//print '&nbsp;'.$langs->trans('Year').': ';
