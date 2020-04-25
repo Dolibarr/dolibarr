@@ -91,7 +91,7 @@ $titre = ($year ? $langs->trans("PaymentsReportsForYear", $year) : $langs->trans
 
 llxHeader('', $titre);
 
-print load_fiche_titre($titre, '', 'invoicing');
+print load_fiche_titre($titre, '', 'supplier_invoice');
 
 // Formulaire de generation
 print '<form method="post" action="rapport.php?year='.$year.'">';

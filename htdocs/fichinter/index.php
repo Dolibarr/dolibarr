@@ -62,7 +62,7 @@ $help_url = "EN:ModuleFichinters|FR:Module_Fiche_Interventions|ES:Módulo_FichaI
 
 llxHeader("", $langs->trans("Interventions"), $help_url);
 
-print load_fiche_titre($langs->trans("InterventionsArea"), '', 'commercial');
+print load_fiche_titre($langs->trans("InterventionsArea"), '', 'intervention');
 
 print '<div class="fichecenter"><div class="fichethirdleft">';
 

@@ -87,7 +87,7 @@ $thirdpartystatic = new Societe($db);
 
 llxHeader("", $langs->trans("AccountancyTreasuryArea"));
 
-print load_fiche_titre($langs->trans("AccountancyTreasuryArea"), '', 'invoicing');
+print load_fiche_titre($langs->trans("AccountancyTreasuryArea"), '', 'bill');
 
 
 print '<div class="fichecenter"><div class="fichethirdleft">';

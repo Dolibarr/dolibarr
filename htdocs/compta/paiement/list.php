@@ -217,7 +217,7 @@ if ($resql)
     print '<input type="hidden" name="sortorder" value="'.$sortorder.'">';
     print '<input type="hidden" name="search_status" value="'.$search_status.'">';
 
-    print_barre_liste($langs->trans("ReceivedCustomersPayments"), $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, '', $num, $nbtotalofrecords, 'invoicing', 0, '', '', $limit, 0, 0, 1);
+    print_barre_liste($langs->trans("ReceivedCustomersPayments"), $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, '', $num, $nbtotalofrecords, 'bill', 0, '', '', $limit, 0, 0, 1);
 
     print '<div class="div-table-responsive">';
     print '<table class="tagtable liste'.($moreforfilter ? " listwithfilterbefore" : "").'">'."\n";

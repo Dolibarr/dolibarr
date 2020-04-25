@@ -1098,7 +1098,7 @@ if ($action == 'create')
 {
 	$currency_code = $conf->currency;
 
-	print load_fiche_titre($langs->trans("NewAskPrice"));
+	print load_fiche_titre($langs->trans("NewAskPrice"), '', 'supplier_proposal');
 
 	$soc = new Societe($db);
 	if ($socid > 0)

@@ -897,7 +897,7 @@ if (empty($action) || $action == 'list')
         print '<input type="hidden" name="sortfield" value="'.$sortfield.'">';
         print '<input type="hidden" name="sortorder" value="'.$sortorder.'">';
 
-        print_barre_liste($langs->trans('SupplierPayments'), $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, '', $num, $nbtotalofrecords, 'invoicing', 0, '', '', $limit, 0, 0, 1);
+        print_barre_liste($langs->trans('SupplierPayments'), $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, '', $num, $nbtotalofrecords, 'supplier_invoice', 0, '', '', $limit, 0, 0, 1);
 
         $moreforfilter = '';
 

@@ -64,7 +64,7 @@ $help_url = "EN:Module_Customers_Orders|FR:Module_Commandes_Clients|ES:Módulo_P
 llxHeader("", $langs->trans("Orders"), $help_url);
 
 
-print load_fiche_titre($langs->trans("OrdersArea"), '', 'commercial');
+print load_fiche_titre($langs->trans("OrdersArea"), '', 'order');
 
 
 print '<div class="fichecenter"><div class="fichethirdleft">';

@@ -3141,9 +3141,11 @@ function img_picto($titlealt, $picto, $moreatt = '', $pictoisfullpath = false, $
 
         if (empty($srconly) && in_array($pictowithouttext, array(
         		'1downarrow', '1uparrow', '1leftarrow', '1rightarrow', '1uparrow_selected', '1downarrow_selected', '1leftarrow_selected', '1rightarrow_selected',
-        		'accountancy', 'address', 'bank_account', 'barcode', 'bank', 'bill', 'bookmark', 'bom', 'building', 'cash-register', 'check', 'close_title', 'company', 'contact', 'cubes',
+        		'accountancy', 'address', 'bank_account', 'barcode', 'bank', 'bill', 'bookmark', 'bom', 'building',
+        		'cash-register', 'check', 'close_title', 'company', 'contact', 'contract', 'cubes',
         		'delete', 'dolly', 'dollyrevert', 'edit', 'ellipsis-h', 'external-link-alt', 'external-link-square-alt',
-        		'filter', 'file-code', 'file-export', 'file-import', 'file-upload', 'folder', 'folder-open', 'globe', 'globe-americas', 'grip', 'grip_title', 'help', 'language', 'list', 'listlight', 'lot',
+        		'filter', 'file-code', 'file-export', 'file-import', 'file-upload', 'folder', 'folder-open', 'globe', 'globe-americas', 'grip', 'grip_title', 'help',
+        		'intervention', 'language', 'list', 'listlight', 'lot',
         		'map-marker-alt', 'money-bill-alt', 'mrp', 'note', 'stock',
         		'object_accounting', 'object_action', 'object_account', 'object_barcode', 'object_bill', 'object_billa', 'object_billd', 'object_bom',
 	        	'object_category', 'object_bookmark', 'object_bug', 'object_dolly', 'object_dollyrevert', 'object_generic', 'object_folder',
@@ -3151,17 +3153,17 @@ function img_picto($titlealt, $picto, $moreatt = '', $pictoisfullpath = false, $
         		'object_cash-register', 'object_company', 'object_contact', 'object_contract', 'object_donation', 'object_dynamicprice',
         		'object_holiday', 'object_hrm', 'object_intervention', 'object_money-bill-alt', 'object_multicurrency', 'object_order', 'object_payment',
         		'object_lot', 'object_mrp', 'object_payment', 'object_product', 'object_propal',
+        		'object_other', 'object_paragraph', 'object_poll', 'object_printer', 'object_project', 'object_projectpub', 'object_propal', 'object_resource', 'object_rss', 'object_projecttask',
         		'object_supplier_invoice', 'object_supplier_order', 'object_supplier_proposal', 'object_service', 'object_stock',
-        		'object_paragraph', 'object_poll', 'object_printer', 'object_project', 'object_projectpub', 'object_propal', 'object_resource', 'object_rss', 'object_projecttask',
-        		'object_technic', 'object_ticket', 'object_trip', 'object_user', 'object_group', 'object_member', 'object_other',
+        		'object_technic', 'object_ticket', 'object_trip', 'object_user', 'object_group', 'object_member',
         		'object_phoning', 'object_phoning_mobile', 'object_phoning_fax', 'object_email',
-        		'off', 'on',
+        		'off', 'on', 'order',
         		'paiment', 'play', 'playdisabled', 'poll', 'printer', 'product', 'propal', 'resize', 'service', 'stats', 'trip',
 				'note', 'setup', 'sign-out', 'split', 'switch_off', 'switch_on', 'tools', 'unlink', 'uparrow', 'user', 'wrench',
 				'jabber', 'skype', 'twitter', 'facebook', 'linkedin', 'instagram', 'snapchat', 'youtube', 'google-plus-g', 'whatsapp',
 				'chevron-left', 'chevron-right', 'chevron-down', 'chevron-top',
-				'home', 'companies', 'products', 'commercial', 'invoicing', 'preview', 'project', 'projectpub', 'hrm', 'members', 'ticket', 'generic',
-        		'error', 'warning',
+				'home', 'companies', 'products', 'commercial', 'invoicing', 'preview', 'project', 'projectpub', 'supplier_invoice', 'hrm', 'members', 'ticket', 'generic',
+        		'error', 'warning', 'supplier_proposal', 'supplier_order', 'supplier_invoice',
         		'title_setup', 'title_accountancy', 'title_bank', 'title_hrm', 'title_agenda'
 			)
 		)) {
