@@ -172,22 +172,22 @@ if ($resql)
     print '<table class="noborder centpercent">';
 
     print '<tr class="liste_titre_filter">';
-    print '<td class="liste_titre">'.
-         '<input type="text" class="flat" name="search_ref" value="'.dol_escape_htmltag($sref).'">'.
-         '</td>'.
-         '<td class="liste_titre">'.
-         '<input type="text" class="flat" name="search_nom" value="'.dol_escape_htmltag($snom).'">'.
-         '</td>'.
-         '<td class="liste_titre">'.
-         '<input type="text" class="flat" name="search_user" value="'.dol_escape_htmltag($suser).'">'.
-         '</td>'.
-         '<td class="liste_titre">'.
-         '<input type="text" class="flat" name="search_ttc" value="'.dol_escape_htmltag($sttc).'">'.
-         '</td>'.
-         '<td class="liste_titre">'.
-         $form->selectDate($search_date, 'search_date', 0, 0, 1, '', 1, 0, 0, '').
-         '</td>'.
-         '<td class="liste_titre right">';
+    print '<td class="liste_titre">';
+    print '<input type="text" class="flat" name="search_ref" value="'.dol_escape_htmltag($sref).'">';
+    print '</td>';
+    print '<td class="liste_titre">';
+    print '<input type="text" class="flat" name="search_nom" value="'.dol_escape_htmltag($snom).'">';
+    print '</td>';
+    print '<td class="liste_titre">';
+    print '<input type="text" class="flat" name="search_user" value="'.dol_escape_htmltag($suser).'">';
+    print '</td>';
+    print '<td class="liste_titre">';
+    print '<input type="text" class="flat" name="search_ttc" value="'.dol_escape_htmltag($sttc).'">';
+    print '</td>';
+    print '<td class="liste_titre">';
+    print $form->selectDate($search_date, 'search_date', 0, 0, 1, '', 1, 0, 0, '');
+    print '</td>';
+    print '<td class="liste_titre right">';
     $searchpicto = $form->showFilterAndCheckAddButtons(0);
     print $searchpicto;
     print '</td>';

@@ -327,7 +327,7 @@ if ($resql)
 
 		print '</table>'."\n";
 
-		print "</form>"."\n";
+		print "</form>\n";
 
 		$i++;
 	}

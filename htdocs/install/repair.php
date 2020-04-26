@@ -1440,9 +1440,9 @@ if ($ok && GETPOST('repair_link_dispatch_lines_supplier_order_lines')) {
             exit;
         }
         while ($obj_dispatch = $db->fetch_object($resql_dispatch)) {
-            $sql_line = 'SELECT line.rowid, line.qty FROM '.MAIN_DB_PREFIX.'commande_fournisseurdet AS line'
-                .       ' WHERE line.fk_commande = '.$obj_dispatch->fk_commande
-                .       ' AND   line.fk_product  = '.$obj_dispatch->fk_product;
+            $sql_line = 'SELECT line.rowid, line.qty FROM '.MAIN_DB_PREFIX.'commande_fournisseurdet AS line';
+            $sql_line .= ' WHERE line.fk_commande = '.$obj_dispatch->fk_commande;
+            $sql_line .= ' AND   line.fk_product  = '.$obj_dispatch->fk_product;
             $resql_line = $db->query($sql_line);
 
             // s’il y a plusieurs lignes avec le même produit sur cette commande fournisseur,

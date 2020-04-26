@@ -642,7 +642,7 @@ function projectLinesa(&$inc, $parent, &$lines, &$level, $var, $showproject, &$t
 								if ($source == 'internal') $c = new User($db);
 								else $c = new Contact($db);
 								$c->fetch($contacttask['id']);
-								print $c->getNomUrl(1).' ('.$contacttask['libelle'].')'.'<br>';
+								print $c->getNomUrl(1).' ('.$contacttask['libelle'].')<br>';
 							}
 						}
 					}
