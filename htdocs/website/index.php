@@ -1263,7 +1263,7 @@ if ($action == 'updatecss')
 
     		$jscontent .= "<?php // BEGIN PHP\n";
     		$jscontent .= '$websitekey=basename(__DIR__);'."\n";
-    		$jscontent .= "if (! defined('USEDOLIBARRSERVER') && ! defined('USEDOLIBARREDITOR')) { require_once __DIR__.'/master.inc.php'; } // Load env if not already loaded"."\n"; // For the css, we need to set path of master using the dirname of css file.
+    		$jscontent .= "if (! defined('USEDOLIBARRSERVER') && ! defined('USEDOLIBARREDITOR')) { require_once __DIR__.'/master.inc.php'; } // Load env if not already loaded\n"; // For the css, we need to set path of master using the dirname of css file.
     		$jscontent .= "require_once DOL_DOCUMENT_ROOT.'/core/lib/website.lib.php';\n";
     		$jscontent .= "require_once DOL_DOCUMENT_ROOT.'/core/website.inc.php';\n";
     		$jscontent .= "ob_start();\n";
@@ -1275,7 +1275,7 @@ if ($action == 'updatecss')
 
     		$jscontent .= '<?php // BEGIN PHP'."\n";
     		$jscontent .= '$tmp = ob_get_contents(); ob_end_clean(); dolWebsiteOutput($tmp, "js");'."\n";
-    		$jscontent .= "// END PHP ?>"."\n";
+    		$jscontent .= "// END PHP ?>\n";
 
     		$result = dolSaveJsFile($filejs, $jscontent);
     		if (!$result)
@@ -1329,7 +1329,7 @@ if ($action == 'updatecss')
 
        		$manifestjsoncontent .= "<?php // BEGIN PHP\n";
        		$manifestjsoncontent .= '$websitekey=basename(__DIR__);'."\n";
-       		$manifestjsoncontent .= "if (! defined('USEDOLIBARRSERVER') && ! defined('USEDOLIBARREDITOR')) { require_once __DIR__.'/master.inc.php'; } // Load env if not already loaded"."\n"; // For the css, we need to set path of master using the dirname of css file.
+       		$manifestjsoncontent .= "if (! defined('USEDOLIBARRSERVER') && ! defined('USEDOLIBARREDITOR')) { require_once __DIR__.'/master.inc.php'; } // Load env if not already loaded\n"; // For the css, we need to set path of master using the dirname of css file.
        		$manifestjsoncontent .= "require_once DOL_DOCUMENT_ROOT.'/core/lib/website.lib.php';\n";
        		$manifestjsoncontent .= "require_once DOL_DOCUMENT_ROOT.'/core/website.inc.php';\n";
        		$manifestjsoncontent .= "ob_start();\n";
@@ -1341,7 +1341,7 @@ if ($action == 'updatecss')
 
        		$manifestjsoncontent .= '<?php // BEGIN PHP'."\n";
        		$manifestjsoncontent .= '$tmp = ob_get_contents(); ob_end_clean(); dolWebsiteOutput($tmp, "manifest");'."\n";
-       		$manifestjsoncontent .= "// END PHP ?>"."\n";
+       		$manifestjsoncontent .= "// END PHP ?>\n";
 
        		$result = dolSaveManifestJson($filemanifestjson, $manifestjsoncontent);
        		if (!$result)

@@ -265,7 +265,7 @@ print '<td>'.$langs->trans("Code").'</td>';
 print '<td>'.$langs->trans("Label").'</td>';
 print '<td>'.$langs->trans("FixedEmailTarget").'</td>';
 print '<td>'.$langs->trans("Threshold").'</td>';
-print '<td>'.'</td>';
+print '<td></td>';
 print "</tr>\n";
 
 foreach ($listofnotifiedevents as $notifiedevent)
