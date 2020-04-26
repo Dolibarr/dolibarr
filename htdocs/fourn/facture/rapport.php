@@ -157,13 +157,14 @@ if ($year)
                 {
                     $tfile = $dir.'/'.$year.'/'.$file;
                     $relativepath = $year.'/'.$file;
-                    print '<tr class="oddeven">'.'<td><a data-ajax="false" href="'.DOL_URL_ROOT.'/document.php?modulepart=facture_fournisseur&amp;file=payments/'.urlencode($relativepath).'">'.img_pdf().' '.$file.'</a></td>';
+                    print '<tr class="oddeven"><td><a data-ajax="false" href="'.DOL_URL_ROOT.'/document.php?modulepart=facture_fournisseur&amp;file=payments/'.urlencode($relativepath).'">'.img_pdf().' '.$file.'</a></td>';
                     print '<td class="right">'.dol_print_size(dol_filesize($tfile)).'</td>';
                     print '<td class="right">'.dol_print_date(dol_filemtime($tfile), "dayhour").'</td></tr>';
                 }
             }
             closedir($handle);
         }
+
         print '</table>';
     }
 }

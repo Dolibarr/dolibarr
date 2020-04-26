@@ -959,15 +959,15 @@ if (empty($action) || $action == 'view') {
 			foreach ($tabother[$key] as $k => $mt) {
 				if ($mt) {
 					print '<tr class="oddeven">';
-					print "<!-- VAT counterpart NPR -->";
+					print '<!-- VAT counterpart NPR -->';
 					print "<td>".$date."</td>";
 					print "<td>".$invoicestatic->getNomUrl(1)."</td>";
 					// Account
-					print "<td>";
+					print '<td>';
 					$accountoshow = length_accountg($k);
-					if (($accountoshow == "") || $accountoshow == 'NotDefined')
+					if ($accountoshow == '' || $accountoshow == 'NotDefined')
 					{
-						print '<span class="error">'.$langs->trans("VATAccountNotDefined").' ('.$langs->trans("NPR counterpart").'). Set ACCOUNTING_COUNTERPART_VAT_NPR to the subvention account'.'</span>';
+						print '<span class="error">'.$langs->trans("VATAccountNotDefined").' ('.$langs->trans("NPR counterpart").'). Set ACCOUNTING_COUNTERPART_VAT_NPR to the subvention account</span>';
 					}
 					else print $accountoshow;
 					print '</td>';

@@ -268,7 +268,9 @@ if ($resql)
         if ($showline)
         {
             $href = DOL_URL_ROOT.'/fourn/commande/card.php?id='.$obj->rowid;
+
             print '<tr>';
+
             // Ref
             print '<td>';
             print '<a href="'.$href.'">'.img_object($langs->trans('ShowOrder'), 'order').' '.$obj->ref.'</a>';
@@ -276,10 +278,7 @@ if ($resql)
 
             // Company
             $href = DOL_URL_ROOT.'/fourn/card.php?socid='.$obj->socid;
-            print '<td>'.
-                 '<a href="'.$href.'">'.
-                 img_object($langs->trans('ShowCompany'), 'company').' '.
-                 $obj->name.'</a></td>';
+            print '<td><a href="'.$href.'">'.img_object($langs->trans('ShowCompany'), 'company').' '.$obj->name.'</a></td>';
 
             // Author
             $userstatic->id = $obj->fk_user_author;
@@ -290,6 +289,7 @@ if ($resql)
                 $txt = '&nbsp;';
             }
             print '<td>'.$txt.'</td>';
+
             // Amount
             print '<td>'.price($obj->total_ttc).'</td>';
 
@@ -300,8 +300,10 @@ if ($resql)
                 $date = '-';
             }
             print '<td>'.$date.'</td>';
+
             // Statut
             print '<td class="right">'.$commandestatic->LibStatut($obj->fk_statut, 5).'</td>';
+
             print '</tr>';
         }
         $i++;

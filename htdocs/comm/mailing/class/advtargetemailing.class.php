@@ -724,13 +724,13 @@ class AdvanceTargetingMailing extends CommonObject
 						}
 					} elseif (($extrafields->attributes[$elementtype]['type'][$key] == 'int') ||
 						($extrafields->attributes[$elementtype]['type'][$key] == 'double')) {
-						if (!empty($arrayquery['options_'.$key.'_max'.'_cnct'])) {
-							$sqlwhere[] = " (te.".$key." >= ".$arrayquery['options_'.$key.'_max'.'_cnct']." AND te.".$key." <= ".$arrayquery['options_'.$key.'_min'.'_cnct'].")";
+						if (!empty($arrayquery['options_'.$key.'_max_cnct'])) {
+							$sqlwhere[] = " (te.".$key." >= ".$arrayquery['options_'.$key.'_max'.'_cnct']." AND te.".$key." <= ".$arrayquery['options_'.$key.'_min_cnct'].")";
 						}
 					} elseif (($extrafields->attributes[$elementtype]['type'][$key] == 'date') ||
 					($extrafields->attributes[$elementtype]['type'][$key] == 'datetime')) {
-						if (!empty($arrayquery['options_'.$key.'_end_dt'.'_cnct'])) {
-							$sqlwhere[] = " (te.".$key." >= '".$this->db->idate($arrayquery['options_'.$key.'_st_dt'.'_cnct'])."' AND te.".$key." <= '".$this->db->idate($arrayquery['options_'.$key.'_end_dt'.'_cnct'])."')";
+						if (!empty($arrayquery['options_'.$key.'_end_dt_cnct'])) {
+							$sqlwhere[] = " (te.".$key." >= '".$this->db->idate($arrayquery['options_'.$key.'_st_dt'.'_cnct'])."' AND te.".$key." <= '".$this->db->idate($arrayquery['options_'.$key.'_end_dt_cnct'])."')";
 						}
 					} elseif ($extrafields->attributes[$elementtype]['type'][$key] == 'boolean') {
 						if ($arrayquery['options_'.$key.'_cnct'] != '') {

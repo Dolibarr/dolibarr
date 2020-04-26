@@ -1232,7 +1232,7 @@ if ($action == 'updatecss')
 
     		$csscontent .= "<?php // BEGIN PHP\n";
     		$csscontent .= '$websitekey=basename(__DIR__);'."\n";
-    		$csscontent .= "if (! defined('USEDOLIBARRSERVER') && ! defined('USEDOLIBARREDITOR')) { require_once __DIR__.'/master.inc.php'; } // Load env if not already loaded"."\n"; // For the css, we need to set path of master using the dirname of css file.
+    		$csscontent .= "if (! defined('USEDOLIBARRSERVER') && ! defined('USEDOLIBARREDITOR')) { require_once __DIR__.'/master.inc.php'; } // Load env if not already loaded\n"; // For the css, we need to set path of master using the dirname of css file.
     		$csscontent .= "require_once DOL_DOCUMENT_ROOT.'/core/lib/website.lib.php';\n";
     		$csscontent .= "require_once DOL_DOCUMENT_ROOT.'/core/website.inc.php';\n";
     		$csscontent .= "ob_start();\n";
@@ -1246,7 +1246,7 @@ if ($action == 'updatecss')
 
     		$csscontent .= '<?php // BEGIN PHP'."\n";
     		$csscontent .= '$tmp = ob_get_contents(); ob_end_clean(); dolWebsiteOutput($tmp, "css");'."\n";
-    		$csscontent .= "// END PHP ?>"."\n";
+    		$csscontent .= "// END PHP ?>\n";
 
     		dol_syslog("Save css content into ".$filecss);
 
