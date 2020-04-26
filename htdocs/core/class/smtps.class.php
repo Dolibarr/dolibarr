@@ -1534,34 +1534,25 @@ class SMTPs
                            $content .= "--".$this->_getBoundary('alternative')."\r\n";
                     }
 
-                    $content .= 'Content-Type: '.$_content['mimeType'].'; '
-                    //                             . 'charset="' . $this->getCharSet() . '"';
-                    . 'charset='.$this->getCharSet().'';
+                    $content .= 'Content-Type: '.$_content['mimeType'].'; charset='.$this->getCharSet();
 
-                    //                    $content .= ( $type == 'html') ? '; name="HTML Part"' : '';
                     $content .= "\r\n";
-                    //                    $content .= 'Content-Transfer-Encoding: ';
-                    //                    $content .= ($type == 'html') ? 'quoted-printable' : $this->getTransEncodeType();
-                    //                    $content .=  "\r\n"
-                    //                             . 'Content-Disposition: inline'  . "\r\n"
-                    //                             . 'Content-Description: ' . $type . ' message' . "\r\n";
 
-                    if ($this->getMD5flag())
-                    $content .= 'Content-MD5: '.$_content['md5']."\r\n";
+                    if ($this->getMD5flag()) {
+                    	$content .= 'Content-MD5: '.$_content['md5']."\r\n";
+                    }
 
                     $content .= "\r\n".$_content['data']."\r\n";
 
                     if (!key_exists('image', $this->_msgContent) && $_content['dataText'] && !empty($conf->global->MAIN_MAIL_USE_MULTI_PART))  // Add plain text message part after html part
                     {
-                        $content .= "--".$this->_getBoundary('alternative')."--"."\r\n";
+                        $content .= "--".$this->_getBoundary('alternative')."--\r\n";
                     }
 
                     $content .= "\r\n";
                 }
             }
 
-            // Close message boundries
-            //            $content .= "\r\n--" . $this->_getBoundary() . '--' . "\r\n" ;
             $content .= "--".$this->_getBoundary('mixed').'--'."\r\n";
         }
 
