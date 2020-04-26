@@ -2719,7 +2719,9 @@ if ($action == 'editcss')
 	{
 		$csscontent = GETPOST('WEBSITE_CSS_INLINE', 'none');
 	}
-	if (!trim($csscontent)) $csscontent = '/* CSS content (all pages) */'."\n"."body.bodywebsite { margin: 0; font-family: 'Open Sans', sans-serif; }\n.bodywebsite h1 { margin-top: 0; margin-bottom: 0; padding: 10px;}";
+	if (!trim($csscontent)) {
+		$csscontent = '/* CSS content (all pages) */'."\nbody.bodywebsite { margin: 0; font-family: 'Open Sans', sans-serif; }\n.bodywebsite h1 { margin-top: 0; margin-bottom: 0; padding: 10px;}";
+	}
 
 	if (!GETPOSTISSET('WEBSITE_JS_INLINE'))
 	{

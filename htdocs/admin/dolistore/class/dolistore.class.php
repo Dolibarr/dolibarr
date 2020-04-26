@@ -267,8 +267,8 @@ class Dolistore
 			// add image or default ?
 			if ($product->id_default_image != '') {
 				$image_url = DOL_URL_ROOT.'/admin/dolistore/ajax/image.php?id_product='.$product->id.'&id_image='.$product->id_default_image;
-				$images    = '<a href="'.$image_url.'" class="fancybox" rel="gallery'.$product->id.'" title="'.$product->name->language[$this->lang - 1].', '.$langs->trans('Version').' '.$product->module_version.'">'.
-					'<img src="'.$image_url.'&quality=home_default" style="max-height:250px;max-width: 210px;" alt="" /></a>';
+				$images = '<a href="'.$image_url.'" class="fancybox" rel="gallery'.$product->id.'" title="'.$product->name->language[$this->lang - 1].', '.$langs->trans('Version').' '.$product->module_version.'">';
+				$images .= '<img src="'.$image_url.'&quality=home_default" style="max-height:250px;max-width: 210px;" alt="" /></a>';
 			} else {
 				$images = '<img src="'.DOL_URL_ROOT.'/admin/dolistore/img/NoImageAvailable.png" />';
 			}

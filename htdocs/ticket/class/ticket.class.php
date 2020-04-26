@@ -1441,10 +1441,10 @@ class Ticket extends CommonObject
 
 				if ($info_sendto['source'] == 'internal') {
 					$url_internal_ticket = dol_buildpath('/ticket/card.php', 2).'?track_id='.$this->track_id;
-					$message .= "\n".$langs->transnoentities('TicketNotificationEmailBodyInfosTrackUrlinternal').' : '.'<a href="'.$url_internal_ticket.'">'.$this->track_id.'</a>'."\n";
+					$message .= "\n".$langs->transnoentities('TicketNotificationEmailBodyInfosTrackUrlinternal').' : <a href="'.$url_internal_ticket.'">'.$this->track_id.'</a>'."\n";
 				} else {
 					$url_public_ticket = ($conf->global->TICKET_URL_PUBLIC_INTERFACE ? $conf->global->TICKET_URL_PUBLIC_INTERFACE.'/' : dol_buildpath('/public/ticket/view.php', 2)).'?track_id='.$this->track_id;
-					$message .= "\n".$langs->transnoentities('TicketNewEmailBodyInfosTrackUrlCustomer').' : '.'<a href="'.$url_public_ticket.'">'.$this->track_id.'</a>'."\n";
+					$message .= "\n".$langs->transnoentities('TicketNewEmailBodyInfosTrackUrlCustomer').' : <a href="'.$url_public_ticket.'">'.$this->track_id.'</a>'."\n";
 				}
 
 				$message .= "\n";
@@ -2510,7 +2510,7 @@ class Ticket extends CommonObject
 						$url_internal_ticket = dol_buildpath('/ticket/card.php', 2).'?track_id='.$object->track_id;
 
 						// altairis: make html link on url
-						$message .= "\n".$langs->trans('TicketNotificationEmailBodyInfosTrackUrlinternal').' : '.'<a href="'.$url_internal_ticket.'">'.$object->track_id.'</a>'."\n";
+						$message .= "\n".$langs->trans('TicketNotificationEmailBodyInfosTrackUrlinternal').' : <a href="'.$url_internal_ticket.'">'.$object->track_id.'</a>'."\n";
 
 						// Add global email address recipient
 						if ($conf->global->TICKET_NOTIFICATION_ALSO_MAIN_ADDRESS && !in_array($conf->global->TICKET_NOTIFICATION_EMAIL_TO, $sendto)) {
@@ -2572,7 +2572,7 @@ class Ticket extends CommonObject
 							// If public interface is not enable, use link to internal page into mail
 							$url_public_ticket = (!empty($conf->global->TICKET_ENABLE_PUBLIC_INTERFACE) ?
 								(!empty($conf->global->TICKET_URL_PUBLIC_INTERFACE) ? $conf->global->TICKET_URL_PUBLIC_INTERFACE.'/view.php' : dol_buildpath('/public/ticket/view.php', 2)) : dol_buildpath('/ticket/card.php', 2)).'?track_id='.$object->track_id;
-							$message .= "\n".$langs->trans('TicketNewEmailBodyInfosTrackUrlCustomer').' : '.'<a href="'.$url_public_ticket.'">'.$object->track_id.'</a>'."\n";
+							$message .= "\n".$langs->trans('TicketNewEmailBodyInfosTrackUrlCustomer').' : <a href="'.$url_public_ticket.'">'.$object->track_id.'</a>'."\n";
 
 							// Build final message
 							$message = $message_intro.$message;

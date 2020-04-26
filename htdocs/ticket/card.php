@@ -864,7 +864,7 @@ if (empty($action) || $action == 'view' || $action == 'addlink' || $action == 'd
 		if (!empty($object->date_read)) {
 			print dol_print_date($object->date_read, 'dayhour');
 			print '<span class="opacitymedium"> - '.$langs->trans("TicketTimeToRead").': <i>'.convertSecondToTime(roundUpToNextMultiple($object->date_read - $object->datec, 60)).'</i>';
-			print ' - '.$langs->trans("TimeElapsedSince").': '.'<i>'.convertSecondToTime(roundUpToNextMultiple($now - $object->date_read, 60)).'</i></span>';
+			print ' - '.$langs->trans("TimeElapsedSince").': <i>'.convertSecondToTime(roundUpToNextMultiple($now - $object->date_read, 60)).'</i></span>';
 		}
 		print '</td></tr>';
 
