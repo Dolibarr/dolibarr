@@ -1393,7 +1393,7 @@ class Societe extends CommonObject
 				$action = 'update';
 
 				// Actions on extra fields
-				if (!$error && empty($conf->global->MAIN_EXTRAFIELDS_DISABLED)) // For avoid conflicts if trigger used
+				if (!$error)
 				{
 					$result = $this->insertExtraFields();
 					if ($result < 0)
@@ -1771,7 +1771,7 @@ class Societe extends CommonObject
 			}
 
 			// Removed extrafields
-			if ((!$error) && (empty($conf->global->MAIN_EXTRAFIELDS_DISABLED))) // For avoid conflicts if trigger used
+			if (!$error)
 			{
 				$result = $this->deleteExtraFields();
 				if ($result < 0)
@@ -3623,7 +3623,7 @@ class Societe extends CommonObject
 		$this->phone = $member->phone; // Prof phone
 		$this->email = $member->email;
         $this->socialnetworks = $member->socialnetworks;
-		$this->entity=$member->entity;
+		$this->entity = $member->entity;
 
 		$this->client = 1; // A member is a customer by default
 		$this->code_client = ($customercode ? $customercode : -1);

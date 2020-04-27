@@ -1063,7 +1063,7 @@ class SupplierProposal extends CommonObject
                         $action = 'update';
 
                         // Actions on extra fields
-                        if (!$error && empty($conf->global->MAIN_EXTRAFIELDS_DISABLED))
+                        if (!$error)
                         {
                             $result = $this->insertExtraFields();
                             if ($result < 0)
@@ -2069,11 +2069,14 @@ class SupplierProposal extends CommonObject
 
         if (!$error)
         {
+            $main = MAIN_DB_PREFIX . 'supplier_proposaldet';
+            $ef = $main . "_extrafields";
+            $sqlef = "DELETE FROM $ef WHERE fk_object IN (SELECT rowid FROM $main WHERE fk_supplier_proposal = " . $this->id . ")";
             $sql = "DELETE FROM ".MAIN_DB_PREFIX."supplier_proposaldet WHERE fk_supplier_proposal = ".$this->id;
             if ($this->db->query($sql))
             {
                 $sql = "DELETE FROM ".MAIN_DB_PREFIX."supplier_proposal WHERE rowid = ".$this->id;
-                if ($this->db->query($sql))
+                if ($this->db->query($sqlef) && $this->db->query($sql))
                 {
                     // Delete linked object
                     $res = $this->deleteObjectLinked();
@@ -2116,16 +2119,13 @@ class SupplierProposal extends CommonObject
                     // Removed extrafields
                     if (!$error)
                     {
-                        if (empty($conf->global->MAIN_EXTRAFIELDS_DISABLED)) // For avoid conflicts if trigger used
-                        {
-                            $result = $this->deleteExtraFields();
-                            if ($result < 0)
-                            {
-                                $error++;
-                                $errorflag = -4;
-                                dol_syslog(get_class($this)."::delete erreur ".$errorflag." ".$this->error, LOG_ERR);
-                            }
-                        }
+                    	$result = $this->deleteExtraFields();
+                    	if ($result < 0)
+                    	{
+                    		$error++;
+                    		$errorflag = -4;
+                    		dol_syslog(get_class($this)."::delete erreur ".$errorflag." ".$this->error, LOG_ERR);
+                    	}
                     }
 
                     if (!$error)
@@ -2465,7 +2465,7 @@ class SupplierProposal extends CommonObject
             // This assignment in condition is not a bug. It allows walking the results.
             while ($obj = $this->db->fetch_object($resql))
             {
-                $this->nb["askprice"] = $obj->nb;
+                $this->nb["supplier_proposals"] = $obj->nb;
             }
             $this->db->free($resql);
             return 1;
@@ -3106,7 +3106,7 @@ class SupplierProposalLine extends CommonObjectLine
         {
             $this->id = $this->db->last_insert_id(MAIN_DB_PREFIX.'supplier_proposaldet');
 
-            if (empty($conf->global->MAIN_EXTRAFIELDS_DISABLED)) // For avoid conflicts if trigger used
+            if (!$error)
             {
                 $result = $this->insertExtraFields();
                 if ($result < 0)
@@ -3155,7 +3155,7 @@ class SupplierProposalLine extends CommonObjectLine
         if ($this->db->query($sql))
         {
             // Remove extrafields
-            if ((!$error) && (empty($conf->global->MAIN_EXTRAFIELDS_DISABLED))) // For avoid conflicts if trigger used
+            if (!$error)
             {
                 $result = $this->deleteExtraFields();
                 if ($result < 0)
@@ -3277,7 +3277,7 @@ class SupplierProposalLine extends CommonObjectLine
         $resql = $this->db->query($sql);
         if ($resql)
         {
-            if (empty($conf->global->MAIN_EXTRAFIELDS_DISABLED)) // For avoid conflicts if trigger used
+            if (!$error)
             {
                 $result = $this->insertExtraFields();
                 if ($result < 0)

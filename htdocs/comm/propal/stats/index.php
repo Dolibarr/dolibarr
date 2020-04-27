@@ -67,20 +67,19 @@ $formpropal = new FormPropal($db);
 
 $langs->loadLangs(array('propal', 'other', 'companies'));
 
-if ($mode == 'customer')
-{
-    $title = $langs->trans("ProposalsStatistics");
-    $dir = $conf->propale->dir_temp;
-}
+$picto = 'propal';
+$title = $langs->trans("ProposalsStatistics");
+$dir = $conf->propale->dir_temp;
 if ($mode == 'supplier')
 {
+	$picto = 'supplier_proposal';
     $title = $langs->trans("ProposalsStatisticsSuppliers").' ('.$langs->trans("SentToSuppliers").")";
     $dir = $conf->supplier_proposal->dir_temp;
 }
 
 llxHeader('', $title);
 
-print load_fiche_titre($title, '', 'commercial');
+print load_fiche_titre($title, '', $picto);
 
 
 dol_mkdir($dir);

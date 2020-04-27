@@ -88,7 +88,7 @@ $formother = new FormOther($db);
 llxHeader();
 
 $titre = ($year ? $langs->trans("PaymentsReportsForYear", $year) : $langs->trans("PaymentsReports"));
-print load_fiche_titre($titre, '', 'invoicing');
+print load_fiche_titre($titre, '', 'bill');
 
 // Formulaire de generation
 print '<form method="post" action="rapport.php?year='.$year.'">';
@@ -154,9 +154,11 @@ if ($year)
                 {
                     $tfile = $dir.'/'.$year.'/'.$file;
                     $relativepath = $year.'/'.$file;
-                    print '<tr class="oddeven">'.'<td><a data-ajax="false" href="'.DOL_URL_ROOT.'/document.php?modulepart=facture_paiement&amp;file='.urlencode($relativepath).'">'.img_pdf().' '.$file.'</a></td>';
+                    print '<tr class="oddeven">';
+                    print '<td><a data-ajax="false" href="'.DOL_URL_ROOT.'/document.php?modulepart=facture_paiement&amp;file='.urlencode($relativepath).'">'.img_pdf().' '.$file.'</a></td>';
                     print '<td class="right">'.dol_print_size(dol_filesize($tfile)).'</td>';
-                    print '<td class="right">'.dol_print_date(dol_filemtime($tfile), "dayhour").'</td></tr>';
+                    print '<td class="right">'.dol_print_date(dol_filemtime($tfile), "dayhour").'</td>';
+                    print '</tr>';
                 }
             }
             closedir($handle);

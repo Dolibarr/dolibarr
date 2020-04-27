@@ -1440,9 +1440,9 @@ if ($ok && GETPOST('repair_link_dispatch_lines_supplier_order_lines')) {
             exit;
         }
         while ($obj_dispatch = $db->fetch_object($resql_dispatch)) {
-            $sql_line = 'SELECT line.rowid, line.qty FROM '.MAIN_DB_PREFIX.'commande_fournisseurdet AS line'
-                .       ' WHERE line.fk_commande = '.$obj_dispatch->fk_commande
-                .       ' AND   line.fk_product  = '.$obj_dispatch->fk_product;
+            $sql_line = 'SELECT line.rowid, line.qty FROM '.MAIN_DB_PREFIX.'commande_fournisseurdet AS line';
+            $sql_line .= ' WHERE line.fk_commande = '.$obj_dispatch->fk_commande;
+            $sql_line .= ' AND   line.fk_product  = '.$obj_dispatch->fk_product;
             $resql_line = $db->query($sql_line);
 
             // s’il y a plusieurs lignes avec le même produit sur cette commande fournisseur,
@@ -1465,9 +1465,9 @@ if ($ok && GETPOST('repair_link_dispatch_lines_supplier_order_lines')) {
                 }
                 $qty_for_line = min($remaining_qty, $obj_line->qty);
                 if ($first_iteration) {
-                    $sql_attach = 'UPDATE '.MAIN_DB_PREFIX.'commande_fournisseur_dispatch'
-                        .        ' SET fk_commandefourndet = '.$obj_line->rowid.', qty = '.$qty_for_line
-                        .        ' WHERE rowid = '.$obj_dispatch->rowid;
+                    $sql_attach = 'UPDATE '.MAIN_DB_PREFIX.'commande_fournisseur_dispatch';
+                    $sql_attach .= ' SET fk_commandefourndet = '.$obj_line->rowid.', qty = '.$qty_for_line;
+                    $sql_attach .= ' WHERE rowid = '.$obj_dispatch->rowid;
                     $first_iteration = false;
                 } else {
                     $sql_attach_values = array(
@@ -1487,9 +1487,9 @@ if ($ok && GETPOST('repair_link_dispatch_lines_supplier_order_lines')) {
                     );
                     $sql_attach_values = join(', ', $sql_attach_values);
 
-                    $sql_attach = 'INSERT INTO '.MAIN_DB_PREFIX.'commande_fournisseur_dispatch'
-                        .         ' (fk_commande, fk_product, fk_commandefourndet, qty, fk_entrepot, fk_user, datec, comment, status, tms, batch, eatby, sellby)'
-                        .         ' VALUES ('.$sql_attach_values.')';
+                    $sql_attach = 'INSERT INTO '.MAIN_DB_PREFIX.'commande_fournisseur_dispatch';
+                    $sql_attach .= ' (fk_commande, fk_product, fk_commandefourndet, qty, fk_entrepot, fk_user, datec, comment, status, tms, batch, eatby, sellby)';
+                    $sql_attach .= ' VALUES ('.$sql_attach_values.')';
                 }
 
                 if ($repair_link_dispatch_lines_supplier_order_lines == 'confirmed')

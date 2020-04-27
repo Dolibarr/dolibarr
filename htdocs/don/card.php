@@ -318,7 +318,7 @@ if (!empty($conf->projet->enabled)) { $formproject = new FormProjets($db); }
 
 if ($action == 'create')
 {
-	print load_fiche_titre($langs->trans("AddDonation"), '', 'invoicing');
+	print load_fiche_titre($langs->trans("AddDonation"), '', 'object_donation');
 
 	print '<form name="add" action="'.$_SERVER["PHP_SELF"].'" method="POST">';
 	print '<input type="hidden" name="token" value="'.newToken().'">';
@@ -500,7 +500,7 @@ if (!empty($id) && $action == 'edit')
 	print '<input type="hidden" name="amount" value="'.$object->amount.'">';
 
 
-	dol_fiche_head($head, $hselected, $langs->trans("Donation"), 0, 'generic');
+	dol_fiche_head($head, $hselected, $langs->trans("Donation"), 0, 'donation');
 
 	print '<table class="border centpercent">';
 
@@ -629,7 +629,7 @@ if (!empty($id) && $action != 'edit')
 	$hselected = 'card';
 
 	$head = donation_prepare_head($object);
-	dol_fiche_head($head, $hselected, $langs->trans("Donation"), -1, 'generic');
+	dol_fiche_head($head, $hselected, $langs->trans("Donation"), -1, 'donation');
 
 	// Print form confirm
 	print $formconfirm;

@@ -3342,7 +3342,7 @@ class Commande extends CommonOrder
 			$error++; $this->errors[] = "Error ".$this->db->lasterror();
 		}
 
-		if (!$error && empty($conf->global->MAIN_EXTRAFIELDS_DISABLED) && is_array($this->array_options) && count($this->array_options) > 0)
+		if (!$error)
 		{
 			$result = $this->insertExtraFields();
 			if ($result < 0)
@@ -3411,6 +3411,19 @@ class Commande extends CommonOrder
 
 		if (!$error)
 		{
+			// Delete extrafields of order details
+                        $main = MAIN_DB_PREFIX . 'commandedet';
+                        $ef = $main . "_extrafields";
+                        $sql = "DELETE FROM $ef WHERE fk_object IN (SELECT rowid FROM $main WHERE fk_commande = " . $this->id . ")";
+			if (!$this->db->query($sql))
+			{
+				$error++;
+				$this->errors[] = $this->db->lasterror();
+			}
+		}
+
+		if (!$error)
+		{
 			// Delete order details
 			$sql = 'DELETE FROM '.MAIN_DB_PREFIX."commandedet WHERE fk_commande = ".$this->id;
 			if (!$this->db->query($sql))
@@ -3437,14 +3450,11 @@ class Commande extends CommonOrder
 		if (!$error)
 		{
 			// Remove extrafields
-			if ((!$error) && (empty($conf->global->MAIN_EXTRAFIELDS_DISABLED))) // For avoid conflicts if trigger used
+			$result = $this->deleteExtraFields();
+			if ($result < 0)
 			{
-				$result = $this->deleteExtraFields();
-				if ($result < 0)
-				{
-					$error++;
-					dol_syslog(get_class($this)."::delete error -4 ".$this->error, LOG_ERR);
-				}
+				$error++;
+				dol_syslog(get_class($this)."::delete error -4 ".$this->error, LOG_ERR);
 			}
 		}
 
@@ -4255,7 +4265,7 @@ class OrderLine extends CommonOrderLine
 		if ($resql)
 		{
 			// Remove extrafields
-			if ((!$error) && (empty($conf->global->MAIN_EXTRAFIELDS_DISABLED))) // For avoid conflicts if trigger used
+			if (!$error)
 			{
 				$this->id = $this->rowid;
 				$result = $this->deleteExtraFields();
@@ -4401,7 +4411,7 @@ class OrderLine extends CommonOrderLine
 			$this->id = $this->db->last_insert_id(MAIN_DB_PREFIX.'commandedet');
 			$this->rowid = $this->id;
 
-			if (empty($conf->global->MAIN_EXTRAFIELDS_DISABLED)) // For avoid conflicts if trigger used
+			if (!$error)
 			{
 				$result = $this->insertExtraFields();
 				if ($result < 0)
@@ -4534,7 +4544,7 @@ class OrderLine extends CommonOrderLine
 		$resql = $this->db->query($sql);
 		if ($resql)
 		{
-			if (empty($conf->global->MAIN_EXTRAFIELDS_DISABLED)) // For avoid conflicts if trigger used
+			if (!$error)
 			{
 				$this->id = $this->rowid;
 				$result = $this->insertExtraFields();

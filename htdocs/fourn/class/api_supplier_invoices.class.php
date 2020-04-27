@@ -490,16 +490,16 @@ class SupplierInvoices extends DolibarrApi
      */
     public function getLines($id)
     {
-        if(! DolibarrApiAccess::$user->rights->fournisseur->facture->creer) {
+        if (!DolibarrApiAccess::$user->rights->fournisseur->facture->creer) {
             throw new RestException(401);
         }
 
         $result = $this->invoice->fetch($id);
-        if( ! $result ) {
+        if (!$result) {
             throw new RestException(404, 'Supplier invoice not found');
         }
 
-        if( ! DolibarrApi::_checkAccessToResource('fournisseur', $this->invoice->id, 'facture_fourn', 'facture')) {
+        if (!DolibarrApi::_checkAccessToResource('fournisseur', $this->invoice->id, 'facture_fourn', 'facture')) {
             throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
         }
         $this->invoice->fetch_lines();
@@ -522,16 +522,16 @@ class SupplierInvoices extends DolibarrApi
      */
     public function postLine($id, $request_data = null)
     {
-        if(! DolibarrApiAccess::$user->rights->fournisseur->facture->creer) {
+        if (!DolibarrApiAccess::$user->rights->fournisseur->facture->creer) {
             throw new RestException(401);
         }
 
         $result = $this->invoice->fetch($id);
-        if( ! $result ) {
+        if (!$result) {
             throw new RestException(404, 'Supplier invoice not found');
         }
 
-        if( ! DolibarrApi::_checkAccessToResource('fournisseur', $this->invoice->id, 'facture_fourn', 'facture')) {
+        if (!DolibarrApi::_checkAccessToResource('fournisseur', $this->invoice->id, 'facture_fourn', 'facture')) {
             throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
         }
         $request_data = (object) $request_data;
@@ -586,16 +586,16 @@ class SupplierInvoices extends DolibarrApi
      */
     public function putLine($id, $lineid, $request_data = null)
     {
-    	if(! DolibarrApiAccess::$user->rights->fournisseur->facture->creer) {
+    	if (!DolibarrApiAccess::$user->rights->fournisseur->facture->creer) {
             throw new RestException(401);
         }
 
         $result = $this->invoice->fetch($id);
-        if( ! $result ) {
+        if (!$result) {
             throw new RestException(404, 'Supplier invoice not found');
         }
 
-        if( ! DolibarrApi::_checkAccessToResource('fournisseur', $this->invoice->id, 'facture_fourn', 'facture')) {
+        if (!DolibarrApi::_checkAccessToResource('fournisseur', $this->invoice->id, 'facture_fourn', 'facture')) {
             throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
         }
     	$request_data = (object) $request_data;
@@ -647,20 +647,20 @@ class SupplierInvoices extends DolibarrApi
      */
     public function deleteLine($id, $lineid)
     {
-		if(! DolibarrApiAccess::$user->rights->fournisseur->facture->creer) {
+		if (!DolibarrApiAccess::$user->rights->fournisseur->facture->creer) {
             throw new RestException(401);
         }
 
 		$result = $this->invoice->fetch($id);
-        if( ! $result ) {
+        if (!$result) {
             throw new RestException(404, 'Supplier invoice not found');
         }
 
-    	if(empty($lineid)) {
+    	if (empty($lineid)) {
     		throw new RestException(400, 'Line ID is mandatory');
     	}
 
-    	if( ! DolibarrApi::_checkAccessToResource('fournisseur', $this->invoice->id, 'facture_fourn', 'facture')) {
+    	if (!DolibarrApi::_checkAccessToResource('fournisseur', $this->invoice->id, 'facture_fourn', 'facture')) {
             throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
         }
 

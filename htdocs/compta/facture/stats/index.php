@@ -32,6 +32,9 @@ require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facturestats.class.php';
 $WIDTH = DolGraph::getDefaultGraphSizeForStats('width');
 $HEIGHT = DolGraph::getDefaultGraphSizeForStats('height');
 
+// Load translation files required by the page
+$langs->loadLangs(array('bills', 'companies', 'other'));
+
 $mode = GETPOST("mode") ?GETPOST("mode") : 'customer';
 if ($mode == 'customer' && !$user->rights->facture->lire) accessforbidden();
 if ($mode == 'supplier' && !$user->rights->fournisseur->facture->lire) accessforbidden();
@@ -57,25 +60,24 @@ $endyear = $year;
 /*
  * View
  */
-// Load translation files required by the page
-$langs->loadLangs(array('bills', 'companies', 'other'));
 
 $form = new Form($db);
 
 llxHeader();
 
-if ($mode == 'customer')
-{
-	$title = $langs->trans("BillsStatistics");
-	$dir = $conf->facture->dir_temp;
-}
+$picto = 'bill';
+$title = $langs->trans("BillsStatistics");
+$dir = $conf->facture->dir_temp;
+
 if ($mode == 'supplier')
 {
+	$picto = 'supplier_invoice';
 	$title = $langs->trans("BillsStatisticsSuppliers");
 	$dir = $conf->fournisseur->facture->dir_temp;
 }
 
-print load_fiche_titre($title, '', 'invoicing');
+
+print load_fiche_titre($title, '', $picto);
 
 dol_mkdir($dir);
 

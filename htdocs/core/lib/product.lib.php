@@ -55,7 +55,7 @@ function product_prepare_head($object)
 
 	if (!empty($object->status_buy) || (!empty($conf->margin->enabled) && !empty($object->status)))   // If margin is on and product on sell, we may need the cost price even if product os not on purchase
 	{
-    	if ((!empty($conf->fournisseur->enabled) && $user->rights->fournisseur->lire)
+    	if (((!empty($conf->fournisseur->enabled) && empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD) || !empty($conf->supplier_order->enabled) || !empty($conf->supplier_invoice->enabled)) && $user->rights->fournisseur->lire)
     	|| (!empty($conf->margin->enabled) && $user->rights->margin->liretous)
     	)
     	{
@@ -408,7 +408,7 @@ function show_stats_for_company($product, $socid)
 		print '</tr>';
 	}
 	// Supplier orders
-	if (!empty($conf->fournisseur->enabled) && $user->rights->fournisseur->commande->lire)
+	if ((!empty($conf->fournisseur->enabled) && empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD) || !empty($conf->supplier_order->enabled)) && $user->rights->fournisseur->commande->lire)
 	{
 		$nblines++;
 		$ret = $product->load_stats_commande_fournisseur($socid);
@@ -462,7 +462,7 @@ function show_stats_for_company($product, $socid)
 		print '</tr>';
 	}
 	// Supplier invoices
-	if (!empty($conf->fournisseur->enabled) && $user->rights->fournisseur->facture->lire)
+	if ((!empty($conf->fournisseur->enabled) && empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD) || !empty($conf->supplier_invoice->enabled)) && $user->rights->fournisseur->facture->lire)
 	{
 		$nblines++;
 		$ret = $product->load_stats_facture_fournisseur($socid);

@@ -84,7 +84,7 @@ function llxHeaderSurvey($title, $head = "", $disablejs = 0, $disablehead = 0, $
 
 	print '<span id="dolpaymentspan"></span>'."\n";
 	print '<div class="center">'."\n";
-	print '<form name="formulaire" action="studs.php?sondage='.$numsondage.'"'.'#bas" method="POST">'."\n";
+	print '<form name="formulaire" action="studs.php?sondage='.urlencode($numsondage).'#bas" method="POST">'."\n";
 	print '<input type="hidden" name="sondage" value="'.$numsondage.'"/>';
 	print '<input type="hidden" name="token" value="'.newToken().'">'."\n";
 	print "\n";

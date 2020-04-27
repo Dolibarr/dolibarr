@@ -191,15 +191,15 @@ if (!empty($conf->global->MAIN_MODULE_ACCOUNTING)) $description .= '<br>'.$langs
 $description .= ($description ? '<br>' : '').$fsearch;
 if (!empty($conf->global->TAX_REPORT_EXTRA_REPORT))
 {
-    $description .= '<br>'
-        . '<input type="radio" name="extra_report" value="0" '.($special_report ? '' : 'checked="checked"').'> '
-            . $langs->trans('SimpleReport')
-            . '</input>'
-                . '<br>'
-                    . '<input type="radio" name="extra_report" value="1" '.($special_report ? 'checked="checked"' : '').'> '
-                        . $langs->trans('AddExtraReport')
-                        . '</input>'
-                            . '<br>';
+    $description .= '<br>';
+    $description .= '<input type="radio" name="extra_report" value="0" '.($special_report ? '' : 'checked="checked"').'> ';
+    $description .= $langs->trans('SimpleReport');
+    $description .= '</input>';
+    $description .= '<br>';
+    $description .= '<input type="radio" name="extra_report" value="1" '.($special_report ? 'checked="checked"' : '').'> ';
+    $description .= $langs->trans('AddExtraReport');
+    $description .= '</input>';
+    $description .= '<br>';
 }
 
 $elementcust = $langs->trans("CustomersInvoices");

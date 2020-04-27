@@ -147,7 +147,7 @@ class CUnits // extends CommonObject
     /**
      *  Load object in memory from database
      *
-     *  @param      int		$id    			Id object
+     *  @param      int		$id    			Id of CUnit object to fetch (rowid)
      *  @param		string	$code			Code
      *  @param		string	$short_label	Short Label ('g', 'kg', ...)
      *  @param		string	$unit_type		Unit type ('size', 'surface', 'volume', 'weight', ...)
@@ -168,7 +168,7 @@ class CUnits // extends CommonObject
 		$sql .= " t.active";
         $sql .= " FROM ".MAIN_DB_PREFIX."c_units as t";
         $sql_where = array();
-        if ($id)   $sql_where[] = " t.id = ".$id;
+        if ($id)   $sql_where[] = " t.rowid = ".$id;
         if ($unit_type)   $sql_where[] = " t.unit_type = '".$this->db->escape($unit_type)."'";
         if ($code) $sql_where[] = " t.code = '".$this->db->escape($code)."'";
         if ($short_label) $sql_where[] = " t.short_label = '".$this->db->escape($short_label)."'";

@@ -48,19 +48,19 @@ $action = GETPOST('action', 'aZ09');
 if ($action == 'update' || $action == 'add')
 {
 	$constlineid = GETPOST('rowid', 'int');
-	$constname=GETPOST('constname', 'alpha');
+	$constname = GETPOST('constname', 'alpha');
 
-	$constvalue=(GETPOSTISSET('constvalue_'.$constname) ? GETPOST('constvalue_'.$constname, 'alpha') : GETPOST('constvalue'));
-	$consttype=(GETPOSTISSET('consttype_'.$constname) ? GETPOST('consttype_'.$constname, 'alphanohtml') : GETPOST('consttype'));
-	$constnote=(GETPOSTISSET('constnote_'.$constname) ? GETPOST('constnote_'.$constname, 'none') : GETPOST('constnote'));
+	$constvalue = (GETPOSTISSET('constvalue_'.$constname) ? GETPOST('constvalue_'.$constname, 'alpha') : GETPOST('constvalue'));
+	$consttype = (GETPOSTISSET('consttype_'.$constname) ? GETPOST('consttype_'.$constname, 'alphanohtml') : GETPOST('consttype'));
+	$constnote = (GETPOSTISSET('constnote_'.$constname) ? GETPOST('constnote_'.$constname, 'none') : GETPOST('constnote'));
 
 	$typetouse = empty($oldtypetonewone[$consttype]) ? $consttype : $oldtypetonewone[$consttype];
 
-	$res=dolibarr_set_const($db, $constname, $constvalue, $typetouse, 0, $constnote, $conf->entity);
+	$res = dolibarr_set_const($db, $constname, $constvalue, $typetouse, 0, $constnote, $conf->entity);
 
-	if (! $res > 0) $error++;
+	if (!$res > 0) $error++;
 
-	if (! $error)
+	if (!$error)
 	{
 		setEventMessages($langs->trans("SetupSaved"), null, 'mesgs');
 	}
@@ -183,7 +183,7 @@ $listofnotifiedevents = $notificationtrigger->getListOfManagedEvents();
 
 if ($conf->global->MAIN_FEATURES_LEVEL >= 2) {
 	// Editing global variables not related to a specific theme
-	$constantes=array();
+	$constantes = array();
 	foreach ($listofnotifiedevents as $notifiedevent)
 	{
 		$label = $langs->trans("Notify_".$notifiedevent['code']); //!=$langs->trans("Notify_".$notifiedevent['code'])?$langs->trans("Notify_".$notifiedevent['code']):$notifiedevent['label'];
@@ -210,7 +210,7 @@ if ($conf->global->MAIN_FEATURES_LEVEL >= 2) {
 		$constantes[$notifiedevent['code'].'_TEMPLATE'] = array('type'=>'emailtemplate:'.$model, 'label'=>$label);
 	}
 
-	$helptext='';
+	$helptext = '';
 	form_constantes($constantes, 0, $helptext);
 } else {
 	print '<table class="noborder centpercent">';
@@ -265,7 +265,7 @@ print '<td>'.$langs->trans("Code").'</td>';
 print '<td>'.$langs->trans("Label").'</td>';
 print '<td>'.$langs->trans("FixedEmailTarget").'</td>';
 print '<td>'.$langs->trans("Threshold").'</td>';
-print '<td>'.'</td>';
+print '<td></td>';
 print "</tr>\n";
 
 foreach ($listofnotifiedevents as $notifiedevent)
