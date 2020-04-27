@@ -766,7 +766,7 @@ function getPagesFromSearchCriterias($type, $algo, $searchstring, $max = 25, $so
 		$sql = 'SELECT rowid FROM '.MAIN_DB_PREFIX.'website_page';
 		$sql .= " WHERE fk_website = ".$website->id;
 		if ($langcode) {
-			$sql .= " AND lang ='".$db->escape($langcode).'"';
+			$sql .= " AND lang ='".$db->escape($langcode)."'";
 		}
 		if ($type) {
 			$tmparrayoftype = explode(',', $type);
