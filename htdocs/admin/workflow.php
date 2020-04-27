@@ -85,11 +85,11 @@ $workflowcodes = array(
 	'WORKFLOW_INVOICE_AMOUNT_CLASSIFY_BILLED_ORDER'=>array('family'=>'classify_order', 'position'=>41, 'enabled'=>'! empty($conf->facture->enabled) && ! empty($conf->commande->enabled)', 'picto'=>'order', 'warning'=>''), // For this option, if module invoice is disabled, it does not exists, so "Classify billed" for order must be done manually from order card.
     'separator2'=>array('family'=>'separator', 'position'=>50),
 	// Automatic classification supplier proposal
-	'WORKFLOW_ORDER_CLASSIFY_BILLED_SUPPLIER_PROPOSAL'=>array('family'=>'classify_supplier_proposal', 'position'=>60, 'enabled'=>'! empty($conf->supplier_proposal->enabled) && ! empty($conf->fournisseur->enabled)', 'picto'=>'propal', 'warning'=>''),
+	'WORKFLOW_ORDER_CLASSIFY_BILLED_SUPPLIER_PROPOSAL'=>array('family'=>'classify_supplier_proposal', 'position'=>60, 'enabled'=>'! empty($conf->supplier_proposal->enabled) && (!empty($conf->fournisseur->enabled) && empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD) || !empty($conf->supplier_order->enabled) || !empty($conf->supplier_invoice->enabled))', 'picto'=>'propal', 'warning'=>''),
 	// Automatic classification supplier order
-	'WORKFLOW_INVOICE_AMOUNT_CLASSIFY_BILLED_SUPPLIER_ORDER'=>array('family'=>'classify_supplier_order', 'position'=>62, 'enabled'=>'! empty($conf->fournisseur->enabled)', 'picto'=>'order', 'warning'=>''),
+	'WORKFLOW_INVOICE_AMOUNT_CLASSIFY_BILLED_SUPPLIER_ORDER'=>array('family'=>'classify_supplier_order', 'position'=>62, 'enabled'=>'!empty($conf->fournisseur->enabled) && empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD) || !empty($conf->supplier_order->enabled) || !empty($conf->supplier_invoice->enabled)', 'picto'=>'order', 'warning'=>''),
 	//Automatic classification reception
-	'WORKFLOW_BILL_ON_RECEPTION'=>array('family'=>'classify_reception', 'position'=>64, 'enabled'=>'! empty($conf->reception->enabled) && ! empty($conf->fournisseur->enabled)', 'picto'=>'bill'),
+	'WORKFLOW_BILL_ON_RECEPTION'=>array('family'=>'classify_reception', 'position'=>64, 'enabled'=>'! empty($conf->reception->enabled) && (!empty($conf->fournisseur->enabled) && empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD) || !empty($conf->supplier_order->enabled) || !empty($conf->supplier_invoice->enabled))', 'picto'=>'bill'),
 );
 
 if (!empty($conf->modules_parts['workflow']) && is_array($conf->modules_parts['workflow']))
