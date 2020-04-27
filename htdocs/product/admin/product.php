@@ -564,7 +564,7 @@ $rowspan = 4;
 if (!empty($conf->global->PRODUIT_MULTIPRICES) || !empty($conf->global->PRODUIT_CUSTOMER_PRICES_BY_QTY_MULTIPRICES)) $rowspan++;
 if (empty($conf->global->PRODUIT_USE_SEARCH_TO_SELECT)) $rowspan++;
 if (!empty($conf->global->MAIN_MULTILANGS)) $rowspan++;
-if (!empty($conf->fournisseur->enabled)) $rowspan++;
+if (!empty($conf->fournisseur->enabled) && empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD) || ! empty($conf->supplier_order->enabled) || ! empty($conf->supplier_invoice->enabled)) $rowspan++;
 
 
 print '<tr class="oddeven">';
@@ -680,7 +680,7 @@ if (!empty($conf->global->MAIN_MULTILANGS))
 	print '</tr>';
 }
 
-if (!empty($conf->fournisseur->enabled))
+if (!empty($conf->fournisseur->enabled) && empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD) || ! empty($conf->supplier_order->enabled) || ! empty($conf->supplier_invoice->enabled))
 {
     print '<tr class="oddeven">';
     print '<td>'.$langs->trans("UseProductFournDesc").'</td>';
