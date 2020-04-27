@@ -179,32 +179,35 @@ class FormCompany extends Form
 	 *	@param	int		$empty			Add empty value in list
 	 *	@return	void
 	 */
-	function form_prospect_contact_level($page, $selected='', $htmlname='prospect_contact_level_id', $empty=0)
+	function form_prospect_contact_level($page, $selected = '', $htmlname = 'prospect_contact_level_id', $empty = 0)
 	{
 		global $user, $langs;
 
-		print '<form method="post" action="'.$page.'">';
+		print '<form method="post" action="' . $page . '">';
 		print '<input type="hidden" name="action" value="setprospectcontactlevel">';
-		print '<input type="hidden" name="token" value="'.newToken().'">';
+		print '<input type="hidden" name="token" value="' . newToken() . '">';
 
-		dol_syslog(__METHOD__,LOG_DEBUG);
+		dol_syslog(__METHOD__, LOG_DEBUG);
 		$sql = "SELECT code, label";
-		$sql.= " FROM ".MAIN_DB_PREFIX."c_prospectcontactlevel";
-		$sql.= " WHERE active > 0";
-		$sql.= " ORDER BY sortorder";
+		$sql .= " FROM " . MAIN_DB_PREFIX . "c_prospectcontactlevel";
+		$sql .= " WHERE active > 0";
+		$sql .= " ORDER BY sortorder";
 		$resql = $this->db->query($sql);
 		if ($resql)
 		{
 			$options = array();
 
-			if ($empty) {
+			if ($empty)
+			{
 				$options[''] = '';
 			}
 
-			while ($obj = $this->db->fetch_object($resql)) {
+			while ($obj = $this->db->fetch_object($resql))
+			{
 				$level = $langs->trans($obj->code);
 
-				if ($level == $obj->code) {
+				if ($level == $obj->code)
+				{
 					$level = $langs->trans($obj->label);
 				}
 
@@ -214,8 +217,8 @@ class FormCompany extends Form
 			print Form::selectarray($htmlname, $options, $selected);
 		}
 		else dol_print_error($this->db);
-		if (! empty($htmlname) && $user->admin) print ' '.info_admin($langs->trans("YouCanChangeValuesForThisListFromDictionarySetup"),1);
-		print '<input type="submit" class="button valignmiddle" value="'.$langs->trans("Modify").'">';
+		if (!empty($htmlname) && $user->admin) print ' ' . info_admin($langs->trans("YouCanChangeValuesForThisListFromDictionarySetup"), 1);
+		print '<input type="submit" class="button valignmiddle" value="' . $langs->trans("Modify") . '">';
 		print '</form>';
 	}
 

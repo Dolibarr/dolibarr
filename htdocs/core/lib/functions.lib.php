@@ -3441,13 +3441,13 @@ function img_picto_common($titlealt, $picto, $moreatt = '', $pictoisfullpath = 0
  *	@param	string		$titlealt       Text on alt and title of image. Alt only if param notitle is set to 1. If text is "TextA:TextB", use Text A on alt and Text B on title.
  *	@param  string		$numaction   	Action id or code to show
  *	@param 	string		$picto      	Name of image file to show ('filenew', ...)
- *											If no extension provided, we use '.png'. Image must be stored into theme/xxx/img directory.
- *                                  		Example: picto.png                  if picto.png is stored into htdocs/theme/mytheme/img
- *                                  		Example: picto.png@mymodule         if picto.png is stored into htdocs/mymodule/img
- *                                  		Example: /mydir/mysubdir/picto.png  if picto.png is stored into htdocs/mydir/mysubdir (pictoisfullpath must be set to 1)
+ *                                      If no extension provided, we use '.png'. Image must be stored into theme/xxx/img directory.
+ *                                      Example: picto.png                  if picto.png is stored into htdocs/theme/mytheme/img
+ *                                      Example: picto.png@mymodule         if picto.png is stored into htdocs/mymodule/img
+ *                                      Example: /mydir/mysubdir/picto.png  if picto.png is stored into htdocs/mydir/mysubdir (pictoisfullpath must be set to 1)
  *	@return string      				Return an img tag
  */
-function img_action($titlealt, $numaction, $picto='')
+function img_action($titlealt, $numaction, $picto = '')
 {
 	global $langs;
 

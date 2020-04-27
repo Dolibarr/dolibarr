@@ -93,7 +93,7 @@ $search_import_key = GETPOST("search_import_key", "alpha");
 $search_country = GETPOST("search_country", 'intcomma');
 $search_roles = GETPOST("search_roles", 'array');
 $search_level = GETPOST("search_level", "array");
-$search_stcomm = GETPOST('search_stcomm','int');
+$search_stcomm = GETPOST('search_stcomm', 'int');
 
 if ($search_status == '') $search_status = 1; // always display active customer first
 
@@ -1010,23 +1010,22 @@ while ($i < min($num, $limit))
 		print '<td class="center">';
 		print $contactstatic->getLibProspLevel();
 		print "</td>";
-		if (! $i) $totalarray['nbfield']++;
+		if (!$i) $totalarray['nbfield']++;
 	}
 
 	if (! empty($arrayfields['p.fk_stcommcontact']['checked']))
 	{
 		// Prospect status
 		print '<td class="center nowrap"><div class="nowrap">';
-		print '<div class="inline-block">'.$contactstatic->LibProspCommStatut($obj->stcomm_id,2,$contactstatic->cacheprospectstatus[$obj->stcomm_id]['label'], $obj->stcomm_picto);
+		print '<div class="inline-block">' . $contactstatic->libProspCommStatut($obj->stcomm_id, 2, $contactstatic->cacheprospectstatus[$obj->stcomm_id]['label'], $obj->stcomm_picto);
 		print '</div> - <div class="inline-block">';
-		foreach($contactstatic->cacheprospectstatus as $key => $val)
-		{
-			$titlealt='default';
-			if (! empty($val['code']) && ! in_array($val['code'], array('ST_NO', 'ST_NEVER', 'ST_TODO', 'ST_PEND', 'ST_DONE'))) $titlealt=$val['label'];
-			if ($obj->stcomm_id != $val['id']) print '<a class="pictosubstatus" href="'.$_SERVER["PHP_SELF"].'?stcommcontactid='.$obj->rowid.'&stcomm='.$val['code'].'&action=setstcomm'.$param.($page?'&page='.urlencode($page):'').'">'.img_action($titlealt,$val['code'],$val['picto']).'</a>';
+		foreach ($contactstatic->cacheprospectstatus as $key => $val) {
+			$titlealt = 'default';
+			if (!empty($val['code']) && !in_array($val['code'], array('ST_NO', 'ST_NEVER', 'ST_TODO', 'ST_PEND', 'ST_DONE'))) $titlealt = $val['label'];
+			if ($obj->stcomm_id != $val['id']) print '<a class="pictosubstatus" href="' . $_SERVER["PHP_SELF"] . '?stcommcontactid=' . $obj->rowid . '&stcomm=' . $val['code'] . '&action=setstcomm' . $param . ($page ? '&page=' . urlencode($page) : '') . '">' . img_action($titlealt, $val['code'], $val['picto']) . '</a>';
 		}
 		print '</div></div></td>';
-		if (! $i) $totalarray['nbfield']++;
+		if (!$i) $totalarray['nbfield']++;
 	}
 
 	// Extra fields

@@ -1777,7 +1777,7 @@ class Contact extends CommonObject
 	 *  @param	int		$active     1=Active only, 0=Not active only, -1=All
 	 *  @return int					<0 if KO, >0 if OK
 	 */
-	function loadCacheOfProspStatus($active=1)
+	public function loadCacheOfProspStatus($active = 1)
 	{
 		global $langs;
 
@@ -1800,7 +1800,7 @@ class Contact extends CommonObject
 	 *
 	 *  @return     string        Libelle
 	 */
-	function getLibProspLevel()
+	public function getLibProspLevel()
 	{
 		return $this->LibProspLevel($this->fk_prospectlevel);
 	}
@@ -1811,7 +1811,7 @@ class Contact extends CommonObject
 	 *  @param	int		$fk_prospectlevel   	Prospect level
 	 *  @return string        					label of level
 	 */
-	function LibProspLevel($fk_prospectlevel)
+	public function LibProspLevel($fk_prospectlevel)
 	{
 		global $langs;
 
@@ -1832,7 +1832,7 @@ class Contact extends CommonObject
 	 *	@return	int					<0 if KO, >0 if OK
 	 * @deprecated Use update function instead
 	 */
-	function set_prospect_level(User $user)
+	public function setProspectLevel(User $user)
 	{
 		return $this->update($this->id, $user);
 	}
@@ -1844,9 +1844,9 @@ class Contact extends CommonObject
 	 *  @param	string	$label		Label to use for status for added status
 	 *  @return string        		Libelle
 	 */
-	function getLibProspCommStatut($mode=0, $label='')
+	public function getLibProspCommStatut($mode = 0, $label = '')
 	{
-		return $this->LibProspCommStatut($this->stcomm_id, $mode, $label, $this->stcomm_picto);
+		return $this->libProspCommStatut($this->stcomm_id, $mode, $label, $this->stcomm_picto);
 	}
 
 	/**
@@ -1856,13 +1856,13 @@ class Contact extends CommonObject
 	 *  @param  int			$mode          	0=long label, 1=short label, 2=Picto + short label, 3=Picto, 4=Picto + long label, 5=Short label + Picto
 	 *  @param	string		$label			Label to use for status for added status
 	 *	@param 	string		$picto      	Name of image file to show ('filenew', ...)
-	 *											If no extension provided, we use '.png'. Image must be stored into theme/xxx/img directory.
-	 *                                  		Example: picto.png                  if picto.png is stored into htdocs/theme/mytheme/img
-	 *                                  		Example: picto.png@mymodule         if picto.png is stored into htdocs/mymodule/img
-	 *                                  		Example: /mydir/mysubdir/picto.png  if picto.png is stored into htdocs/mydir/mysubdir (pictoisfullpath must be set to 1)
+	 *                                      If no extension provided, we use '.png'. Image must be stored into theme/xxx/img directory.
+	 *                                      Example: picto.png                  if picto.png is stored into htdocs/theme/mytheme/img
+	 *                                      Example: picto.png@mymodule         if picto.png is stored into htdocs/mymodule/img
+	 *                                      Example: /mydir/mysubdir/picto.png  if picto.png is stored into htdocs/mydir/mysubdir (pictoisfullpath must be set to 1)
 	 *  @return string       	 			Libelle du statut
 	 */
-	function LibProspCommStatut($statut, $mode=0, $label='', $picto='')
+	public function libProspCommStatut($statut, $mode = 0, $label = '', $picto = '')
 	{
 		global $langs;
 		$langs->load('customers');

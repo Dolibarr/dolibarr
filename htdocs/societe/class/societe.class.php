@@ -3978,13 +3978,13 @@ class Societe extends CommonObject
 	 *  @param  int			$mode          	0=long label, 1=short label, 2=Picto + short label, 3=Picto, 4=Picto + long label, 5=Short label + Picto
 	 *  @param	string		$label			Label to use for status for added status
 	 *	@param 	string		$picto      	Name of image file to show ('filenew', ...)
-	 *											If no extension provided, we use '.png'. Image must be stored into theme/xxx/img directory.
-	 *                                  		Example: picto.png                  if picto.png is stored into htdocs/theme/mytheme/img
-	 *                                  		Example: picto.png@mymodule         if picto.png is stored into htdocs/mymodule/img
-	 *                                  		Example: /mydir/mysubdir/picto.png  if picto.png is stored into htdocs/mydir/mysubdir (pictoisfullpath must be set to 1)
+	 *                                      If no extension provided, we use '.png'. Image must be stored into theme/xxx/img directory.
+	 *                                      Example: picto.png                  if picto.png is stored into htdocs/theme/mytheme/img
+	 *                                      Example: picto.png@mymodule         if picto.png is stored into htdocs/mymodule/img
+	 *                                      Example: /mydir/mysubdir/picto.png  if picto.png is stored into htdocs/mydir/mysubdir (pictoisfullpath must be set to 1)
 	 *  @return string       	 			Label of prospection status
 	 */
-    public function LibProspCommStatut($status, $mode = 0, $label = '', $picto='')
+    public function LibProspCommStatut($status, $mode = 0, $label = '', $picto = '')
 	{
         // phpcs:enable
 		global $langs;
