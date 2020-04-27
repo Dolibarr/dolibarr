@@ -39,10 +39,10 @@ function check_user_password_forceuser($usertotest, $passwordtotest, $entitytote
 
 	dol_syslog("functions_forceuser::check_user_password_forceuser");
 
-	$login=$dolibarr_auto_user;
-	if (empty($login)) $login='auto';
+	$login = $dolibarr_auto_user;
+	if (empty($login)) $login = 'auto';
 
-	if ($_SESSION["dol_loginmesg"]) $login='';
+	if ($_SESSION["dol_loginmesg"]) $login = '';
 
 	dol_syslog("functions_forceuser::check_user_password_forceuser ok. forced user = ".$login);
 	return $login;

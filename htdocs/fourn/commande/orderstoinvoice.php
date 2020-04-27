@@ -58,7 +58,7 @@ $socid = GETPOST('socid', 'int');
 $selected = GETPOST('orders_to_invoice');
 $sortfield = GETPOST("sortfield", 'alpha');
 $sortorder = GETPOST("sortorder", 'alpha');
-$viewstatut = GETPOST('viewstatut');
+$search_status = GETPOST('search_status');
 
 if (!$sortfield)
 	$sortfield = 'c.rowid';
@@ -327,8 +327,6 @@ if ($action == 'create' && !$error) {
 	print '<input type="hidden" name="action" value="add">';
 	print '<input type="hidden" name="socid" value="'.$soc->id.'">'."\n";
 	print '<input name="ref" type="hidden" value="provisoire">';
-	print '<input name="ref_client" type="hidden" value="'.$ref_client.'">';
-	print '<input name="ref_int" type="hidden" value="'.$ref_int.'">';
 	print '<input type="hidden" name="origin" value="'.GETPOST('origin').'">';
 	print '<input type="hidden" name="originid" value="'.GETPOST('originid').'">';
 	print '<input type="hidden" name="socid" value="'.$soc->id.'">';

@@ -25,11 +25,11 @@ require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
 
 // Load translation files required by the page
-$langs->loadLangs(array("user","other","admin"));
+$langs->loadLangs(array("user", "other", "admin"));
 
-if (! $user->admin) accessforbidden();
+if (!$user->admin) accessforbidden();
 
-$action=GETPOST('action', 'alpha');
+$action = GETPOST('action', 'alpha');
 
 
 /*

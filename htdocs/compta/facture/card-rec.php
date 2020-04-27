@@ -979,7 +979,7 @@ $today = dol_mktime(23, 59, 59, $tmparray['mon'], $tmparray['mday'], $tmparray['
  */
 if ($action == 'create')
 {
-	print load_fiche_titre($langs->trans("CreateRepeatableInvoice"), '', 'invoicing');
+	print load_fiche_titre($langs->trans("CreateRepeatableInvoice"), '', 'bill');
 
 	$object = new Facture($db); // Source invoice
 	$product_static = new Product($db);
@@ -1680,7 +1680,7 @@ else
 
 		// Lines
 		print '	<form name="addproduct" id="addproduct" action="'.$_SERVER["PHP_SELF"].'?id='.$object->id.(($action != 'editline') ? '#add' : '#line_'.GETPOST('lineid')).'" method="POST">
-        	<input type="hidden" name="token" value="' . $_SESSION ['newtoken'].'">
+        	<input type="hidden" name="token" value="' . newToken().'">
         	<input type="hidden" name="action" value="' . (($action != 'editline') ? 'addline' : 'updateline').'">
         	<input type="hidden" name="mode" value="">
         	<input type="hidden" name="id" value="' . $object->id.'">

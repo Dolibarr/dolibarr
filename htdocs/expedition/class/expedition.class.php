@@ -12,6 +12,7 @@
  * Copyright (C) 2016		Ferran Marcet			<fmarcet@2byte.es>
  * Copyright (C) 2018       Nicolas ZABOURI			<info@inovea-conseil.com>
  * Copyright (C) 2018       Frédéric France         <frederic.france@netlogic.fr>
+ * Copyright (C) 2020       Lenin Rivas         	<lenin@leninrivas.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -74,7 +75,7 @@ class Expedition extends CommonObject
 	/**
 	 * @var string String with name of icon for myobject. Must be the part after the 'object_' into object_myobject.png
 	 */
-	public $picto = 'sending';
+	public $picto = 'dolly';
 
 	public $socid;
 
@@ -175,6 +176,10 @@ class Expedition extends CommonObject
 	 */
 	const STATUS_CLOSED = 2;
 
+	/**
+	 * Canceled status
+	 */
+	const STATUS_CANCELED = -1;
 
 
 	/**
@@ -380,7 +385,7 @@ class Expedition extends CommonObject
 				}
 
 				// Actions on extra fields
-				if (!$error && empty($conf->global->MAIN_EXTRAFIELDS_DISABLED))
+				if (!$error)
 				{
 					$result = $this->insertExtraFields();
 					if ($result < 0)
@@ -622,6 +627,13 @@ class Expedition extends CommonObject
 
 				// Retreive extrafields
 				$this->fetch_optionals();
+
+				// Fix Get multicurrency param for transmited
+				if (!empty($conf->multicurrency->enabled))
+				{
+					if (!empty($this->multicurrency_code)) $this->multicurrency_code = $this->thirdparty->multicurrency_code;
+					if (!empty($conf->global->MULTICURRENCY_USE_ORIGIN_TX) && !empty($objectsrc->multicurrency_tx))	$this->multicurrency_tx = $this->thirdparty->multicurrency_tx;
+				}
 
 				/*
 				 * Lines
@@ -1039,7 +1051,8 @@ class Expedition extends CommonObject
 				}
 			}
 			$line->entrepot_id = $linebatch->entrepot_id;
-			$line->origin_line_id = $dbatch['ix_l'];
+			$line->origin_line_id = $dbatch['ix_l']; // deprecated
+			$line->fk_origin_line = $dbatch['ix_l'];
 			$line->qty = $dbatch['qty'];
 			$line->detail_batch = $tab;
 
@@ -1155,6 +1168,226 @@ class Expedition extends CommonObject
 		{
 			$this->db->commit();
 			return 1;
+		}
+	}
+
+
+	/**
+	 * 	Cancel shipment.
+	 *
+	 *  @param  int  $notrigger 			Disable triggers
+     *  @param  bool $also_update_stock  	true if the stock should be increased back (false by default)
+	 * 	@return	int							>0 if OK, 0 if deletion done but failed to delete files, <0 if KO
+	 */
+	public function cancel($notrigger = 0, $also_update_stock = false)
+	{
+		global $conf, $langs, $user;
+
+		require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
+		require_once DOL_DOCUMENT_ROOT.'/expedition/class/expeditionbatch.class.php';
+
+		$error=0;
+		$this->error='';
+
+		$this->db->begin();
+
+		// Add a protection to refuse deleting if shipment has at least one delivery
+		$this->fetchObjectLinked($this->id, 'shipping', 0, 'delivery');	// Get deliveries linked to this shipment
+		if (count($this->linkedObjectsIds) > 0)
+		{
+			$this->error='ErrorThereIsSomeDeliveries';
+			$error++;
+		}
+
+		if (! $error)
+		{
+			if (! $notrigger)
+			{
+				// Call trigger
+				$result=$this->call_trigger('SHIPPING_CANCEL', $user);
+				if ($result < 0) { $error++; }
+				// End call triggers
+			}
+		}
+
+		// Stock control
+		if (! $error && $conf->stock->enabled &&
+			(($conf->global->STOCK_CALCULATE_ON_SHIPMENT && $this->statut > self::STATUS_DRAFT) ||
+			 ($conf->global->STOCK_CALCULATE_ON_SHIPMENT_CLOSE && $this->statut == self::STATUS_CLOSED && $also_update_stock)))
+		{
+			require_once DOL_DOCUMENT_ROOT."/product/stock/class/mouvementstock.class.php";
+
+			$langs->load("agenda");
+
+			// Loop on each product line to add a stock movement and delete features
+			$sql = "SELECT cd.fk_product, cd.subprice, ed.qty, ed.fk_entrepot, ed.rowid as expeditiondet_id";
+			$sql .= " FROM ".MAIN_DB_PREFIX."commandedet as cd,";
+			$sql .= " ".MAIN_DB_PREFIX."expeditiondet as ed";
+			$sql .= " WHERE ed.fk_expedition = ".$this->id;
+			$sql .= " AND cd.rowid = ed.fk_origin_line";
+
+			dol_syslog(get_class($this)."::delete select details", LOG_DEBUG);
+			$resql = $this->db->query($sql);
+			if ($resql)
+			{
+				$cpt = $this->db->num_rows($resql);
+				for ($i = 0; $i < $cpt; $i++)
+				{
+					dol_syslog(get_class($this)."::delete movement index ".$i);
+					$obj = $this->db->fetch_object($resql);
+
+					$mouvS = new MouvementStock($this->db);
+					// we do not log origin because it will be deleted
+					$mouvS->origin = null;
+					// get lot/serial
+					$lotArray = null;
+					if ($conf->productbatch->enabled)
+					{
+						$lotArray = ExpeditionLineBatch::fetchAll($this->db, $obj->expeditiondet_id);
+						if (!is_array($lotArray))
+						{
+							$error++; $this->errors[] = "Error ".$this->db->lasterror();
+						}
+					}
+					if (empty($lotArray)) {
+						// no lot/serial
+						// We increment stock of product (and sub-products)
+						// We use warehouse selected for each line
+						$result = $mouvS->reception($user, $obj->fk_product, $obj->fk_entrepot, $obj->qty, 0, $langs->trans("ShipmentCanceledInDolibarr", $this->ref)); // Price is set to 0, because we don't want to see WAP changed
+						if ($result < 0)
+						{
+							$error++; $this->errors = $this->errors + $mouvS->errors;
+							break;
+						}
+					}
+					else
+					{
+						// We increment stock of batches
+						// We use warehouse selected for each line
+						foreach ($lotArray as $lot)
+						{
+							$result = $mouvS->reception($user, $obj->fk_product, $obj->fk_entrepot, $lot->qty, 0, $langs->trans("ShipmentCanceledInDolibarr", $this->ref), $lot->eatby, $lot->sellby, $lot->batch); // Price is set to 0, because we don't want to see WAP changed
+							if ($result < 0)
+							{
+								$error++; $this->errors = $this->errors + $mouvS->errors;
+								break;
+							}
+						}
+						if ($error) break; // break for loop incase of error
+					}
+				}
+			}
+			else
+			{
+				$error++; $this->errors[] = "Error ".$this->db->lasterror();
+			}
+		}
+
+		// delete batch expedition line
+		if (!$error && $conf->productbatch->enabled)
+		{
+			if (ExpeditionLineBatch::deletefromexp($this->db, $this->id) < 0)
+			{
+				$error++; $this->errors[] = "Error ".$this->db->lasterror();
+			}
+		}
+
+
+		if (!$error)
+		{
+			$sql = "DELETE FROM ".MAIN_DB_PREFIX."expeditiondet";
+			$sql .= " WHERE fk_expedition = ".$this->id;
+
+			if ($this->db->query($sql))
+			{
+				// Delete linked object
+				$res = $this->deleteObjectLinked();
+				if ($res < 0) $error++;
+
+				// No delete expedition
+				if (!$error)
+				{
+					$sql = "SELECT rowid FROM ".MAIN_DB_PREFIX."expedition";
+					$sql .= " WHERE rowid = ".$this->id;
+
+					if ($this->db->query($sql))
+					{
+						if (!empty($this->origin) && $this->origin_id > 0)
+						{
+							$this->fetch_origin();
+							$origin = $this->origin;
+							if ($this->$origin->statut == Commande::STATUS_SHIPMENTONPROCESS)     // If order source of shipment is "shipment in progress"
+							{
+								// Check if there is no more shipment. If not, we can move back status of order to "validated" instead of "shipment in progress"
+								$this->$origin->loadExpeditions();
+								//var_dump($this->$origin->expeditions);exit;
+								if (count($this->$origin->expeditions) <= 0)
+								{
+									$this->$origin->setStatut(Commande::STATUS_VALIDATED);
+								}
+							}
+						}
+
+						if (!$error)
+						{
+							$this->db->commit();
+
+							// We delete PDFs
+							$ref = dol_sanitizeFileName($this->ref);
+							if (!empty($conf->expedition->dir_output))
+							{
+								$dir = $conf->expedition->dir_output.'/sending/'.$ref;
+								$file = $dir.'/'.$ref.'.pdf';
+								if (file_exists($file))
+								{
+									if (!dol_delete_file($file))
+									{
+										return 0;
+									}
+								}
+								if (file_exists($dir))
+								{
+									if (!dol_delete_dir_recursive($dir))
+									{
+										$this->error = $langs->trans("ErrorCanNotDeleteDir", $dir);
+										return 0;
+									}
+								}
+							}
+
+							return 1;
+						}
+						else
+						{
+							$this->db->rollback();
+							return -1;
+						}
+					}
+					else
+					{
+						$this->error = $this->db->lasterror()." - sql=$sql";
+						$this->db->rollback();
+						return -3;
+					}
+				}
+				else
+				{
+					$this->error = $this->db->lasterror()." - sql=$sql";
+					$this->db->rollback();
+					return -2;
+				}//*/
+			}
+			else
+			{
+				$this->error = $this->db->lasterror()." - sql=$sql";
+				$this->db->rollback();
+				return -1;
+			}
+		}
+		else
+		{
+			$this->db->rollback();
+			return -1;
 		}
 	}
 
@@ -1281,14 +1514,22 @@ class Expedition extends CommonObject
 
 		if (!$error)
 		{
+                    $main = MAIN_DB_PREFIX . 'expeditiondet';
+                    $ef = $main . "_extrafields";
+                    $sqlef = "DELETE FROM $ef WHERE fk_object IN (SELECT rowid FROM $main WHERE fk_expedition = " . $this->id . ")";
+
 			$sql = "DELETE FROM ".MAIN_DB_PREFIX."expeditiondet";
 			$sql .= " WHERE fk_expedition = ".$this->id;
 
-			if ($this->db->query($sql))
+			if ($this->db->query($sqlef) && $this->db->query($sql))
 			{
 				// Delete linked object
 				$res = $this->deleteObjectLinked();
 				if ($res < 0) $error++;
+
+                                // delete extrafields
+                                $res = $this->deleteExtraFields();
+                                if ($res < 0) $error++;
 
 				if (!$error)
 				{
@@ -1389,7 +1630,7 @@ class Expedition extends CommonObject
 		// TODO: recuperer les champs du document associe a part
 		$this->lines = array();
 
-		$sql = "SELECT cd.rowid, cd.fk_product, cd.label as custom_label, cd.description, cd.qty as qty_asked, cd.product_type";
+		$sql = "SELECT cd.rowid, cd.fk_product, cd.label as custom_label, cd.description, cd.qty as qty_asked, cd.product_type, cd.fk_unit";
 		$sql .= ", cd.total_ht, cd.total_localtax1, cd.total_localtax2, cd.total_ttc, cd.total_tva";
 		$sql .= ", cd.vat_src_code, cd.tva_tx, cd.localtax1_tx, cd.localtax2_tx, cd.localtax1_type, cd.localtax2_type, cd.info_bits, cd.price, cd.subprice, cd.remise_percent,cd.buy_price_ht as pa_ht";
 		$sql .= ", cd.fk_multicurrency, cd.multicurrency_code, cd.multicurrency_subprice, cd.multicurrency_total_ht, cd.multicurrency_total_tva, cd.multicurrency_total_ttc, cd.rang";
@@ -1470,6 +1711,7 @@ class Expedition extends CommonObject
 				$line->surface_units = $obj->surface_units;
 				$line->volume         	= $obj->volume;
 				$line->volume_units   	= $obj->volume_units;
+				$line->fk_unit = $obj->fk_unit;
 
 				$line->pa_ht = $obj->pa_ht;
 
@@ -1618,7 +1860,7 @@ class Expedition extends CommonObject
 		global $langs, $conf;
 
 		$result = '';
-		$label = '<u>'.$langs->trans("ShowSending").'</u>';
+		$label = '<u>'.$langs->trans("Shipment").'</u>';
 		$label .= '<br><b>'.$langs->trans('Ref').':</b> '.$this->ref;
 		$label .= '<br><b>'.$langs->trans('RefCustomer').':</b> '.($this->ref_customer ? $this->ref_customer : $this->ref_client);
 
@@ -1639,14 +1881,15 @@ class Expedition extends CommonObject
 		{
 			if (!empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER))
 			{
-				$label = $langs->trans("ShowSending");
+				$label = $langs->trans("Shipment");
 				$linkclose .= ' alt="'.dol_escape_htmltag($label, 1).'"';
 			}
 			$linkclose .= ' title="'.dol_escape_htmltag($label, 1).'"';
 			$linkclose .= ' class="classfortooltip"';
 		}
 
-		$linkstart = '<a href="'.$url.'" title="'.dol_escape_htmltag($label, 1).'" class="classfortooltip">';
+		$linkstart = '<a href="'.$url.'"';
+		$linkstart .= $linkclose.'>';
 		$linkend = '</a>';
 
 		$result .= $linkstart;
@@ -2608,7 +2851,7 @@ class ExpeditionLigne extends CommonObjectLine
 		{
 			$this->id = $this->db->last_insert_id(MAIN_DB_PREFIX."expeditiondet");
 
-			if (!$error && empty($conf->global->MAIN_EXTRAFIELDS_DISABLED))
+			if (!$error)
 			{
 				$result = $this->insertExtraFields();
 				if ($result < 0)
@@ -2682,7 +2925,7 @@ class ExpeditionLigne extends CommonObjectLine
 		if (!$error && $this->db->query($sql))
 		{
 			// Remove extrafields
-			if (empty($conf->global->MAIN_EXTRAFIELDS_DISABLED)) // For avoid conflicts if trigger used
+			if (!$error)
 			{
 				$result = $this->deleteExtraFields();
 				if ($result < 0)
@@ -2886,7 +3129,7 @@ class ExpeditionLigne extends CommonObjectLine
 
 		if (!$error)
 		{
-			if (empty($conf->global->MAIN_EXTRAFIELDS_DISABLED)) // For avoid conflicts if trigger used
+			if (!$error)
 			{
 				$result = $this->insertExtraFields();
 				if ($result < 0)

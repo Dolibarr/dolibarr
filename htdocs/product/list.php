@@ -540,7 +540,10 @@ if ($resql)
 	print '<input type="hidden" name="type" value="'.$type.'">';
 	if (empty($arrayfields['p.fk_product_type']['checked'])) print '<input type="hidden" name="search_type" value="'.dol_escape_htmltag($search_type).'">';
 
-	print_barre_liste($texte, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, $massactionbutton, $num, $nbtotalofrecords, 'products', 0, $newcardbutton, '', $limit, 0, 0, 1);
+	$picto = 'product';
+	if ($type == 1) $picto = 'service';
+
+	print_barre_liste($texte, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, $massactionbutton, $num, $nbtotalofrecords, $picto, 0, $newcardbutton, '', $limit, 0, 0, 1);
 
 	$topicmail = "Information";
 	$modelmail = "product";

@@ -32,6 +32,7 @@ VendorName=Namn på leverantör
 CSSUrlForPaymentForm=CSS-formatmall URL för inbetalningskort
 NewStripePaymentReceived=Ny Stripbetalning mottagen
 NewStripePaymentFailed=Ny Stripbetalning försökte men misslyckades
+FailedToChargeCard=Failed to charge card
 STRIPE_TEST_SECRET_KEY=Hemlig testnyckel
 STRIPE_TEST_PUBLISHABLE_KEY=Publicerbar testnyckel
 STRIPE_TEST_WEBHOOK_KEY=Webhook testnyckel
@@ -68,4 +69,4 @@ ToOfferALinkForTestWebhook=Link to setup Stripe WebHook to call the IPN (test mo
 ToOfferALinkForLiveWebhook=Link to setup Stripe WebHook to call the IPN (live mode)
 PaymentWillBeRecordedForNextPeriod=Payment will be recorded for the next period.
 ClickHereToTryAgain=<a href="%s">Click here to try again...</a>
-CreationOfPaymentModeMustBeDoneFromStripeInterface=Due to Strong Customer Authenticatin rules, creation of a card must be done from Stripe backoffice. You can click here to switch on Stripe customer record: %s
+CreationOfPaymentModeMustBeDoneFromStripeInterface=Due to Strong Customer Authentication rules, creation of a card must be done from Stripe backoffice. You can click here to switch on Stripe customer record: %s

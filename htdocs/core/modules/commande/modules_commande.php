@@ -30,7 +30,7 @@
  */
 
 require_once DOL_DOCUMENT_ROOT.'/core/class/commondocgenerator.class.php';
-require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';	// required for use by classes that inherit
+require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php'; // required for use by classes that inherit
 require_once DOL_DOCUMENT_ROOT.'/core/class/discount.class.php';
 
 
@@ -40,17 +40,17 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/discount.class.php';
 abstract class ModelePDFCommandes extends CommonDocGenerator
 {
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
-    /**
-     *  Return list of active generation modules
-     *
-     *  @param	DoliDB	$db     			Database handler
-     *  @param  integer	$maxfilenamelength  Max length of value to show
-     *  @return	array						List of templates
+	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
+	/**
+	 *  Return list of active generation modules
+	 *
+	 *  @param	DoliDB	$db     			Database handler
+	 *  @param  integer	$maxfilenamelength  Max length of value to show
+	 *  @return	array						List of templates
 	 */
 	public static function liste_modeles($db, $maxfilenamelength = 0)
 	{
-        // phpcs:enable
+		// phpcs:enable
 		global $conf;
 
 		$type = 'order';
@@ -73,7 +73,7 @@ abstract class ModeleNumRefCommandes
 	/**
 	 * @var string Error code (or message)
 	 */
-	public $error='';
+	public $error = '';
 
 	/**
 	 *	Return if a module can be used or not
@@ -110,8 +110,8 @@ abstract class ModeleNumRefCommandes
 	}
 
 	/**
-	 *  Checks if the numbers already in force in the data base do not
-     *  cause conflicts that would prevent this numbering from working.
+	 *  Checks if the numbers already in the database do not
+	 *  cause conflicts that would prevent this numbering working.
 	 *
 	 *	@return     boolean     false if conflict, true if ok
 	 */

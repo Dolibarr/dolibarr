@@ -88,7 +88,6 @@ AddElement=Lien vers l'élément
 PlannedWorkload=Charge de travail planifiée
 ProjectReferers=Articles connexes
 ProjectMustBeValidatedFirst=Le projet doit d'abord être validé
-FirstAddRessourceToAllocateTime=Affectez une ressource utilisateur à la tâche pour allouer du temps
 InputPerDay=Entrée par jour
 InputPerWeek=Entrée par semaine
 TimeAlreadyRecorded=Il s'agit du temps passé déjà enregistré pour cette tâche / jour et utilisateur %s

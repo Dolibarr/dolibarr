@@ -102,11 +102,11 @@ print '<input type="hidden" name="mode" value="'.$mode.'">';
 if ($mode != 'sconly')
 {
     $center = ($year ? '<a href="index.php?year='.($year - 1).$param.'">'.img_previous($langs->trans("Previous"), 'class="valignbottom"')."</a> ".$langs->trans("Year").' '.$year.' <a href="index.php?year='.($year + 1).$param.'">'.img_next($langs->trans("Next"), 'class="valignbottom"')."</a>" : "");
-    print_barre_liste($title, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, $center, $num, $totalnboflines, 'title_accountancy', 0, '', '', $limit, 1);
+    print_barre_liste($title, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, $center, $num, $totalnboflines, 'object_payment', 0, '', '', $limit, 1);
 }
 else
 {
-    print_barre_liste($title, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, $center, $num, $totalnboflines, 'title_accountancy', 0, '', '', $limit);
+    print_barre_liste($title, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, $center, $num, $totalnboflines, 'object_payment', 0, '', '', $limit, 0);
 }
 
 if ($year) $param .= '&year='.$year;

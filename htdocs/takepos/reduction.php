@@ -34,12 +34,12 @@ if (!defined('NOREQUIREAJAX'))		define('NOREQUIREAJAX', '1');
 require '../main.inc.php'; // Load $user and permissions
 require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
 
-$place = (GETPOST('place', 'alpha') ? GETPOST('place', 'alpha') : 0); // $place is id of table for Ba or Restaurant
+$place = (GETPOST('place', 'aZ09') ? GETPOST('place', 'aZ09') : 0); // $place is id of table for Ba or Restaurant
 
 $invoiceid = GETPOST('invoiceid', 'int');
 
 if (empty($user->rights->takepos->run)) {
-	access_forbidden();
+	accessforbidden();
 }
 
 
@@ -82,8 +82,8 @@ if (!empty($conf->global->TAKEPOS_NUMPAD_USE_PAYMENT_ICON)) {
 	$htmlReductionPercent = '<span class="fa fa-2x fa-percent"></span>';
 	$htmlReductionAmount = '<span class="fa fa-2x fa-money"></span>';
 } else {
-	$htmlReductionPercent = $langs->trans('ReductionShort') . '<br>%';
-	$htmlReductionAmount = $langs->trans('ReductionShort') . '<br>' . $langs->trans('Amount');
+	$htmlReductionPercent = $langs->trans('ReductionShort').'<br>%';
+	$htmlReductionAmount = $langs->trans('ReductionShort').'<br>'.$langs->trans('Amount');
 }
 ?>
 <link rel="stylesheet" href="css/pos.css.php">
@@ -213,11 +213,11 @@ if (!empty($conf->global->TAKEPOS_NUMPAD_USE_PAYMENT_ICON)) {
 print '<button type="button" class="calcbutton" onclick="AddReduction(7);">7</button>';
 print '<button type="button" class="calcbutton" onclick="AddReduction(8);">8</button>';
 print '<button type="button" class="calcbutton" onclick="AddReduction(9);">9</button>';
-print '<button type="button" class="calcbutton2" id="reduction_type_percent" onclick="Edit(\'p\');">' . $htmlReductionPercent . '</button>';
+print '<button type="button" class="calcbutton2" id="reduction_type_percent" onclick="Edit(\'p\');">'.$htmlReductionPercent.'</button>';
 print '<button type="button" class="calcbutton" onclick="AddReduction(4);">4</button>';
 print '<button type="button" class="calcbutton" onclick="AddReduction(5);">5</button>';
 print '<button type="button" class="calcbutton" onclick="AddReduction(6);">6</button>';
-print '<button type="button" class="calcbutton2" id="reduction_type_amount" onclick="Edit(\'a\');">' . $htmlReductionAmount . '</button>';
+print '<button type="button" class="calcbutton2" id="reduction_type_amount" onclick="Edit(\'a\');">'.$htmlReductionAmount.'</button>';
 print '<button type="button" class="calcbutton" onclick="AddReduction(1);">1</button>';
 print '<button type="button" class="calcbutton" onclick="AddReduction(2);">2</button>';
 print '<button type="button" class="calcbutton" onclick="AddReduction(3);">3</button>';

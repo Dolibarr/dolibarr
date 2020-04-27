@@ -142,45 +142,45 @@ class CompanyBankAccount extends Account
 		global $conf;
 		$error = 0;
 
-		if (! $this->id) return -1;
+		if (!$this->id) return -1;
 
 		if (dol_strlen($this->domiciliation) > 255) $this->domiciliation = dol_trunc($this->domiciliation, 254, 'right', 'UTF-8', 1);
 		if (dol_strlen($this->owner_address) > 255) $this->owner_address = dol_trunc($this->owner_address, 254, 'right', 'UTF-8', 1);
 
 		$sql = "UPDATE ".MAIN_DB_PREFIX."societe_rib SET";
-		$sql.= " bank = '" .$this->db->escape($this->bank)."'";
-		$sql.= ",code_banque='".$this->db->escape($this->code_banque)."'";
-		$sql.= ",code_guichet='".$this->db->escape($this->code_guichet)."'";
-		$sql.= ",number='".$this->db->escape($this->number)."'";
-		$sql.= ",cle_rib='".$this->db->escape($this->cle_rib)."'";
-		$sql.= ",bic='".$this->db->escape($this->bic)."'";
-		$sql.= ",iban_prefix = '".$this->db->escape($this->iban)."'";
-		$sql.= ",domiciliation='".$this->db->escape($this->domiciliation)."'";
-		$sql.= ",proprio = '".$this->db->escape($this->proprio)."'";
-		$sql.= ",owner_address = '".$this->db->escape($this->owner_address)."'";
-		$sql.= ",default_rib = ".$this->default_rib;
+		$sql .= " bank = '".$this->db->escape($this->bank)."'";
+		$sql .= ",code_banque='".$this->db->escape($this->code_banque)."'";
+		$sql .= ",code_guichet='".$this->db->escape($this->code_guichet)."'";
+		$sql .= ",number='".$this->db->escape($this->number)."'";
+		$sql .= ",cle_rib='".$this->db->escape($this->cle_rib)."'";
+		$sql .= ",bic='".$this->db->escape($this->bic)."'";
+		$sql .= ",iban_prefix = '".$this->db->escape($this->iban)."'";
+		$sql .= ",domiciliation='".$this->db->escape($this->domiciliation)."'";
+		$sql .= ",proprio = '".$this->db->escape($this->proprio)."'";
+		$sql .= ",owner_address = '".$this->db->escape($this->owner_address)."'";
+		$sql .= ",default_rib = ".$this->default_rib;
 		if ($conf->prelevement->enabled)
 		{
-			$sql.= ",frstrecur = '".$this->db->escape($this->frstrecur)."'";
-			$sql.= ",rum = '".$this->db->escape($this->rum)."'";
-			$sql.= ",date_rum = ".($this->date_rum ? "'".$this->db->idate($this->date_rum)."'" : "null");
+			$sql .= ",frstrecur = '".$this->db->escape($this->frstrecur)."'";
+			$sql .= ",rum = '".$this->db->escape($this->rum)."'";
+			$sql .= ",date_rum = ".($this->date_rum ? "'".$this->db->idate($this->date_rum)."'" : "null");
 		}
 		if (trim($this->label) != '')
-			$sql.= ",label = '".$this->db->escape($this->label)."'";
+			$sql .= ",label = '".$this->db->escape($this->label)."'";
 		else
-			$sql.= ",label = NULL";
-		$sql.= " WHERE rowid = ".$this->id;
+			$sql .= ",label = NULL";
+		$sql .= " WHERE rowid = ".$this->id;
 
 		$result = $this->db->query($sql);
 		if ($result)
 		{
-			if (! $notrigger)
+			if (!$notrigger)
 			{
 				// Call trigger
-				$result=$this->call_trigger('COMPANY_RIB_MODIFY', $user);
+				$result = $this->call_trigger('COMPANY_RIB_MODIFY', $user);
 				if ($result < 0) $error++;
 				// End call triggers
-				if(! $error )
+				if (!$error)
 				{
 					return 1;
 				}

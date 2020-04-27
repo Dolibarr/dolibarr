@@ -30,11 +30,11 @@ PreviousYearOfInvoice=發票日期的上一年
 NextYearOfInvoice=發票日期的下一年
 DateNextInvoiceBeforeGen=下一張發票的日期（產生前）
 DateNextInvoiceAfterGen=下一張發票的日期（產生後）
-GraphInBarsAreLimitedToNMeasures=Grapics are limited to %s measures in 'Bars' mode. The mode 'Lines' was automatically selected instead.
+GraphInBarsAreLimitedToNMeasures=於“ Bars”模式下，圖形被限制於%s小段。自動選擇了“行”模式。
 OnlyOneFieldForXAxisIsPossible=目前只能將1個欄位用作X軸。僅選擇了第一個選定欄位。
 AtLeastOneMeasureIsRequired=至少需要1個測量欄位
 AtLeastOneXAxisIsRequired=X軸至少需要1個欄位
-
+LatestBlogPosts=Latest Blog Posts
 Notify_ORDER_VALIDATE=銷售訂單已驗證
 Notify_ORDER_SENTBYMAIL=使用郵件寄送的銷售訂單
 Notify_ORDER_SUPPLIER_SENTBYMAIL=使用電子郵件寄送的採購訂單
@@ -274,7 +274,7 @@ WEBSITE_PAGEURL=頁面網址
 WEBSITE_TITLE=標題
 WEBSITE_DESCRIPTION=描述
 WEBSITE_IMAGE=圖片
-WEBSITE_IMAGEDesc=影像媒體的相對路徑。您可以將其保留為空，因為它很少使用（動態內容可以使用它在部落格文章清單中顯示縮圖）。如果路徑取決於網站名稱，請在路徑中使用__WEBSITEKEY__。
+WEBSITE_IMAGEDesc=影像媒體的相對路徑。您可以將其保留為空，因為它很少使用（動態內容可以使用它在部落格文章清單中顯示縮圖）。如果路徑取決於網站名稱，請在路徑中使用__WEBSITE_KEY __（例如：image / __ WEBSITE_KEY __ / stories / myimage.png）。
 WEBSITE_KEYWORDS=關鍵字
 LinesToImport=要匯入的行
 

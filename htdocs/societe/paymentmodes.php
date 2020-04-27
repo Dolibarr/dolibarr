@@ -1138,11 +1138,11 @@ if ($socid && $action != 'edit' && $action != 'create' && $action != 'editcard' 
 									print '<a href="'.$_SERVER['PHP_SELF'].'?action=synccardtostripe&socid='.$object->id.'&id='.$companypaymentmodetemp->id.'" class="button">'.$langs->trans("CreateCardOnStripe").'</a>';
 								}
 
-								print '<a href="'.DOL_URL_ROOT.'/societe/paymentmodes.php?socid='.$object->id.'&id='.$companypaymentmodetemp->id.'&action=editcard">';
+								print '<a class="editfielda" href="'.DOL_URL_ROOT.'/societe/paymentmodes.php?socid='.$object->id.'&id='.$companypaymentmodetemp->id.'&action=editcard">';
 								print img_picto($langs->trans("Modify"), 'edit');
 								print '</a>';
 								print '&nbsp;';
-								print '<a href="'.DOL_URL_ROOT.'/societe/paymentmodes.php?socid='.$object->id.'&id='.$companypaymentmodetemp->id.'&action=deletecard">'; // source='.$companypaymentmodetemp->stripe_card_ref.'&
+								print '<a class="marginleftonly" href="'.DOL_URL_ROOT.'/societe/paymentmodes.php?socid='.$object->id.'&id='.$companypaymentmodetemp->id.'&action=deletecard">'; // source='.$companypaymentmodetemp->stripe_card_ref.'&
 								print img_picto($langs->trans("Delete"), 'delete');
 								print '</a>';
 							}
@@ -1385,7 +1385,7 @@ if ($socid && $action != 'edit' && $action != 'create' && $action != 'editcard' 
 
     $morehtmlright = dolGetButtonTitle($langs->trans('Add'), '', 'fa fa-plus-circle', $_SERVER["PHP_SELF"].'?socid='.$object->id.'&amp;action=create');
 
-	print load_fiche_titre($langs->trans("BankAccounts"), $morehtmlright, '');
+	print load_fiche_titre($langs->trans("BankAccounts"), $morehtmlright, 'bank');
 
 	$rib_list = $object->get_all_rib();
 	if (is_array($rib_list))
@@ -1547,13 +1547,11 @@ if ($socid && $action != 'edit' && $action != 'create' && $action != 'editcard' 
 			print '<td class="right nowraponall">';
 			if ($user->rights->societe->creer)
 			{
-				print '<a href="'.$_SERVER["PHP_SELF"].'?socid='.$object->id.'&id='.$rib->id.'&action=edit">';
+				print '<a class="editfielda" href="'.$_SERVER["PHP_SELF"].'?socid='.$object->id.'&id='.$rib->id.'&action=edit">';
 				print img_picto($langs->trans("Modify"), 'edit');
 				print '</a>';
 
-		   		print '&nbsp;';
-
-		   		print '<a href="'.$_SERVER["PHP_SELF"].'?socid='.$object->id.'&id='.$rib->id.'&action=delete">';
+		   		print '<a class="marginleftonly" href="'.$_SERVER["PHP_SELF"].'?socid='.$object->id.'&id='.$rib->id.'&action=delete">';
 		   		print img_picto($langs->trans("Delete"), 'delete');
 		   		print '</a>';
 			}

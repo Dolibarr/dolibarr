@@ -64,6 +64,8 @@ class User extends CommonObject
 	 */
 	public $ismultientitymanaged = 1;
 
+	public $picto = 'user';
+
 	public $id = 0;
 	public $statut;
 	public $ldap_sid;
@@ -79,31 +81,6 @@ class User extends CommonObject
      * @var array array of socialnetworks
      */
     public $socialnetworks;
-
-    /**
-     * Skype username
-     * @var string
-     * @deprecated
-     */
-	public $skype;
-    /**
-     * Twitter username
-     * @var string
-     * @deprecated
-     */
-	public $twitter;
-    /**
-     * Facebook username
-     * @var string
-     * @deprecated
-     */
-	public $facebook;
-    /**
-     * Linkedin username
-     * @var string
-     * @deprecated
-     */
-	public $linkedin;
 
 	public $job; // job position
 	public $signature;
@@ -304,7 +281,6 @@ class User extends CommonObject
 		$sql .= " u.color,";
 		$sql .= " u.dateemployment, u.dateemploymentend,";
 		$sql .= " u.fk_warehouse,";
-		$sql .= " u.ref_int,";
 		$sql .= " u.ref_ext,";
 		$sql .= " u.default_range, u.default_c_exp_tax_cat,"; // Expense report default mode
 		$sql .= " c.code as country_code, c.label as country,";
@@ -359,7 +335,6 @@ class User extends CommonObject
 				$this->id = $obj->rowid;
 				$this->ref = $obj->rowid;
 
-				$this->ref_int 		= $obj->ref_int;
 				$this->ref_ext 		= $obj->ref_ext;
 
 				$this->ldap_sid 	= $obj->ldap_sid;
@@ -1121,7 +1096,7 @@ class User extends CommonObject
 		}
 
 		// Remove extrafields
-		if ((!$error) && (empty($conf->global->MAIN_EXTRAFIELDS_DISABLED))) // For avoid conflicts if trigger used
+		if (!$error)
 		{
 		    $result = $this->deleteExtraFields();
 		    if ($result < 0)
@@ -1789,7 +1764,7 @@ class User extends CommonObject
 			$action = 'update';
 
 			// Actions on extra fields
-			if (!$error && empty($conf->global->MAIN_EXTRAFIELDS_DISABLED))
+			if (!$error)
 			{
 				$result = $this->insertExtraFields();
 				if ($result < 0)
@@ -2381,7 +2356,7 @@ class User extends CommonObject
 		}
 		$type = ($this->socid ? $langs->trans("External").$company : $langs->trans("Internal"));
 		$label .= '<br><b>'.$langs->trans("Type").':</b> '.$type;
-		$label .= '<br><b>'.$langs->trans("Status").'</b>: '.$this->getLibStatut(0);
+		$label .= '<br><b>'.$langs->trans("Status").'</b>: '.$this->getLibStatut(4);
 		$label .= '</div>';
 		if ($infologin > 0)
 		{

@@ -128,7 +128,7 @@ if (!$user->rights->stock->mouvement->lire) {
 
 $permissiontoread = $user->rights->stock->mouvement->lire;
 $permissiontoadd = $user->rights->stock->mouvement->creer;
-$permissiontodelete = $user->rights->stock->mouvement->creer;	// There is no deletion permission for stock movement as we shoul dnever delete
+$permissiontodelete = $user->rights->stock->mouvement->creer; // There is no deletion permission for stock movement as we shoul dnever delete
 
 $usercanread = $user->rights->stock->mouvement->lire;
 $usercancreate = $user->rights->stock->mouvement->creer;
@@ -574,7 +574,7 @@ if ($resql)
         print '<div class="fichehalfleft">';
         print '<div class="underbanner clearboth"></div>';
 
-        print '<table class="border centpercent">';
+        print '<table class="border centpercent tableforfield">';
 
         print '<tr>';
 
@@ -602,7 +602,7 @@ if ($resql)
         print '<div class="ficheaddleft">';
         print '<div class="underbanner clearboth"></div>';
 
-        print '<table class="border centpercent">';
+        print '<table class="border centpercent tableforfield">';
 
         // Value
         print '<tr><td class="titlefield">'.$langs->trans("EstimatedStockValueShort").'</td><td>';
@@ -711,7 +711,7 @@ if ($resql)
 	//    'builddoc'=>$langs->trans("PDFMerge"),
 	);
 	// By default, we should never accept deletion of stock movement.
-	if (! empty($conf->global->STOCK_ALLOW_DELETE_OF_MOVEMENT) && $permissiontodelete) $arrayofmassactions['predelete']='<span class="fa fa-trash paddingrightonly"></span>'.$langs->trans("Delete");
+	if (!empty($conf->global->STOCK_ALLOW_DELETE_OF_MOVEMENT) && $permissiontodelete) $arrayofmassactions['predelete'] = '<span class="fa fa-trash paddingrightonly"></span>'.$langs->trans("Delete");
 	if (GETPOST('nomassaction', 'int') || in_array($massaction, array('presend', 'predelete'))) $arrayofmassactions = array();
 	$massactionbutton = $form->selectMassAction('', $arrayofmassactions);
 
@@ -722,13 +722,12 @@ if ($resql)
     print '<input type="hidden" name="action" value="list">';
     print '<input type="hidden" name="sortfield" value="'.$sortfield.'">';
     print '<input type="hidden" name="sortorder" value="'.$sortorder.'">';
-    print '<input type="hidden" name="page" value="'.$page.'">';
     print '<input type="hidden" name="type" value="'.$type.'">';
     print '<input type="hidden" name="contextpage" value="'.$contextpage.'">';
     if ($id > 0) print '<input type="hidden" name="id" value="'.$id.'">';
 
-    if ($id > 0) print_barre_liste($texte, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, $massactionbutton, $num, $nbtotalofrecords, '', 0, '', '', $limit);
-    else print_barre_liste($texte, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, $massactionbutton, $num, $nbtotalofrecords, 'generic', 0, '', '', $limit);
+    if ($id > 0) print_barre_liste($texte, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, $massactionbutton, $num, $nbtotalofrecords, 'stock', 0, '', '', $limit, 0, 0, 1);
+    else print_barre_liste($texte, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, $massactionbutton, $num, $nbtotalofrecords, 'stock', 0, '', '', $limit, 0, 0, 1);
 
     // Add code for pre mass action (confirmation or email presend form)
     $topicmail = "SendStockMovement";
@@ -1087,15 +1086,11 @@ if ($resql)
         if (!empty($arrayfields['m.inventorycode']['checked']))
         {
 	        // Inventory code
-	        print '<td>'.'<a href="'
-								.DOL_URL_ROOT.'/product/stock/movement_card.php'
-								.'?id='.$objp->entrepot_id
-								.'&amp;search_inventorycode='.$objp->inventorycode
-							    .'&amp;search_type_mouvement='.$objp->type_mouvement
-						.'">'
-							.$objp->inventorycode
-						.'</a>'
-					.'</td>';
+	        print '<td><a href="'
+						.DOL_URL_ROOT.'/product/stock/movement_card.php?id='.urlencode($objp->entrepot_id)
+						.'&search_inventorycode='.urlencode($objp->inventorycode)
+					    .'&search_type_mouvement='.urlencode($objp->type_mouvement)
+						.'">'.$objp->inventorycode.'</a></td>';
         }
         if (!empty($arrayfields['m.label']['checked']))
         {

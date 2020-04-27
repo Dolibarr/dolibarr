@@ -28,16 +28,16 @@ require_once DOL_DOCUMENT_ROOT.'/loan/class/loanschedule.class.php';
 require_once DOL_DOCUMENT_ROOT.'/loan/class/paymentloan.class.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
 
-$langs->loadLangs(array("bills","loan"));
+$langs->loadLangs(array("bills", "loan"));
 
-$chid=GETPOST('id', 'int');
-$action=GETPOST('action', 'aZ09');
-$cancel=GETPOST('cancel', 'alpha');
+$chid = GETPOST('id', 'int');
+$action = GETPOST('action', 'aZ09');
+$cancel = GETPOST('cancel', 'alpha');
 $line_id = GETPOST('line_id', 'int');
-$last=GETPOST('last');
+$last = GETPOST('last');
 
 // Security check
-$socid=0;
+$socid = 0;
 if ($user->socid > 0)
 {
 	$socid = $user->socid;
@@ -46,7 +46,7 @@ if ($user->socid > 0)
 $loan = new Loan($db);
 $loan->fetch($chid);
 
-if($last)
+if ($last)
 {
     $ls = new LoanSchedule($db);
     // grab all loanschedule
@@ -69,7 +69,7 @@ if (!empty($line_id))
 {
     $line = new LoanSchedule($db);
     $res = $line->fetch($line_id);
-    if ($res > 0){
+    if ($res > 0) {
         $amount_capital = price($line->amount_capital);
         $amount_insurance = price($line->amount_insurance);
         $amount_interest = price($line->amount_interest);
@@ -83,7 +83,7 @@ if (!empty($line_id))
 
 if ($action == 'add_payment')
 {
-	$error=0;
+	$error = 0;
 
 	if ($cancel)
 	{
@@ -94,7 +94,7 @@ if ($action == 'add_payment')
 
 	$datepaid = dol_mktime(12, 0, 0, GETPOST('remonth', 'int'), GETPOST('reday', 'int'), GETPOST('reyear', 'int'));
 
-	if (! GETPOST('paymenttype', 'int') > 0)
+	if (!GETPOST('paymenttype', 'int') > 0)
 	{
 		setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentities("PaymentMode")), null, 'errors');
 		$error++;
@@ -104,13 +104,13 @@ if ($action == 'add_payment')
 		setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentities("Date")), null, 'errors');
 		$error++;
 	}
-	if (! empty($conf->banque->enabled) && ! GETPOST('accountid', 'int') > 0)
+	if (!empty($conf->banque->enabled) && !GETPOST('accountid', 'int') > 0)
 	{
 		setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentities("AccountToCredit")), null, 'errors');
 		$error++;
 	}
 
-	if (! $error)
+	if (!$error)
 	{
 		$paymentid = 0;
 
@@ -121,24 +121,24 @@ if ($action == 'add_payment')
 			$error++;
 		}
 
-		if (! $error)
+		if (!$error)
 		{
 			$db->begin();
 
 			// Create a line of payments
 			$payment = new PaymentLoan($db);
-			$payment->chid				= $chid;
+			$payment->chid = $chid;
 			$payment->datep = $datepaid;
-			$payment->label             = $loan->label;
-			$payment->amount_capital	= GETPOST('amount_capital');
-			$payment->amount_insurance	= GETPOST('amount_insurance');
-			$payment->amount_interest	= GETPOST('amount_interest');
+			$payment->label = $loan->label;
+			$payment->amount_capital = GETPOST('amount_capital');
+			$payment->amount_insurance = GETPOST('amount_insurance');
+			$payment->amount_interest = GETPOST('amount_interest');
 			$payment->paymenttype = GETPOST('paymenttype', 'int');
-			$payment->num_payment		= GETPOST('num_payment');
+			$payment->num_payment = GETPOST('num_payment');
 			$payment->note_private      = GETPOST('note_private', 'none');
 			$payment->note_public       = GETPOST('note_public', 'none');
 
-			if (! $error)
+			if (!$error)
 			{
 				$paymentid = $payment->create($user);
 				if ($paymentid < 0)
@@ -148,22 +148,22 @@ if ($action == 'add_payment')
 				}
 			}
 
-			if (! $error)
+			if (!$error)
 			{
 				$result = $payment->addPaymentToBank($user, $chid, 'payment_loan', '(LoanPayment)', GETPOST('accountid', 'int'), '', '');
-				if (! $result > 0)
+				if (!$result > 0)
 				{
 					setEventMessages($payment->error, $payment->errors, 'errors');
 					$error++;
 				}
-				elseif(isset($line))
+				elseif (isset($line))
 				{
 					$line->fk_bank = $payment->fk_bank;
 					$line->update($user);
 				}
 			}
 
-			if (! $error)
+			if (!$error)
 			{
 				$db->commit();
 				$loc = DOL_URL_ROOT.'/loan/card.php?id='.$chid;
@@ -187,7 +187,7 @@ if ($action == 'add_payment')
 
 llxHeader();
 
-$form=new Form($db);
+$form = new Form($db);
 
 
 // Form to create loan's payment
@@ -216,17 +216,17 @@ if ($action == 'create')
 	print '<tr><td>'.$langs->trans("Amount").'</td><td colspan="2">'.price($loan->capital, 0, $outputlangs, 1, -1, -1, $conf->currency).'</td></tr>';
 
 	$sql = "SELECT SUM(amount_capital) as total";
-	$sql.= " FROM ".MAIN_DB_PREFIX."payment_loan";
-	$sql.= " WHERE fk_loan = ".$chid;
+	$sql .= " FROM ".MAIN_DB_PREFIX."payment_loan";
+	$sql .= " WHERE fk_loan = ".$chid;
 	$resql = $db->query($sql);
 	if ($resql)
 	{
-		$obj=$db->fetch_object($resql);
+		$obj = $db->fetch_object($resql);
 		$sumpaid = $obj->total;
 		$db->free();
 	}
 	print '<tr><td>'.$langs->trans("AlreadyPaid").'</td><td colspan="2">'.price($sumpaid, 0, $outputlangs, 1, -1, -1, $conf->currency).'</td></tr>';
-	print '<tr><td class="tdtop">'.$langs->trans("RemainderToPay").'</td><td colspan="2">'.price($total-$sumpaid, 0, $outputlangs, 1, -1, -1, $conf->currency).'</td></tr>';
+	print '<tr><td class="tdtop">'.$langs->trans("RemainderToPay").'</td><td colspan="2">'.price($total - $sumpaid, 0, $outputlangs, 1, -1, -1, $conf->currency).'</td></tr>';
 	print '</tr>';
 
 	print '</table>';
@@ -240,20 +240,20 @@ if ($action == 'create')
 
 	print '<tr><td class="titlefield fieldrequired">'.$langs->trans("Date").'</td><td colspan="2">';
 	$datepaid = dol_mktime(12, 0, 0, GETPOST('remonth', 'int'), GETPOST('reday', 'int'), GETPOST('reyear', 'int'));
-	$datepayment = empty($conf->global->MAIN_AUTOFILL_DATE)?(empty($_POST["remonth"])?-1:$datepaye):0;
+	$datepayment = empty($conf->global->MAIN_AUTOFILL_DATE) ? (empty($_POST["remonth"]) ?-1 : $datepaye) : 0;
 	print $form->selectDate($datepayment, '', '', '', '', "add_payment", 1, 1);
 	print "</td>";
 	print '</tr>';
 
 	print '<tr><td class="fieldrequired">'.$langs->trans("PaymentMode").'</td><td colspan="2">';
-	$form->select_types_paiements(isset($_POST["paymenttype"])?$_POST["paymenttype"]:$loan->paymenttype, "paymenttype");
+	$form->select_types_paiements(isset($_POST["paymenttype"]) ? $_POST["paymenttype"] : $loan->paymenttype, "paymenttype");
 	print "</td>\n";
 	print '</tr>';
 
 	print '<tr>';
 	print '<td class="fieldrequired">'.$langs->trans('AccountToDebit').'</td>';
 	print '<td colspan="2">';
-	$form->select_comptes(isset($_POST["accountid"])?$_POST["accountid"]:$loan->accountid, "accountid", 0, '', 1);  // Show opend bank account list
+	$form->select_comptes(isset($_POST["accountid"]) ? $_POST["accountid"] : $loan->accountid, "accountid", 0, '', 1); // Show opend bank account list
 	print '</td></tr>';
 
 	// Number
@@ -305,7 +305,7 @@ if ($action == 'create')
 	print '<td class="right">';
 	if ($sumpaid < $loan->capital)
 	{
-	    print $langs->trans("LoanCapital") .': <input type="text" size="8" name="amount_capital" value="'.$amount_capital.'">';
+	    print $langs->trans("LoanCapital").': <input type="text" size="8" name="amount_capital" value="'.$amount_capital.'">';
 	}
 	else
 	{
@@ -314,7 +314,7 @@ if ($action == 'create')
 	print '<br>';
 	if ($sumpaid < $loan->capital)
 	{
-		print $langs->trans("Insurance") .': <input type="text" size="8" name="amount_insurance" value="'.$amount_insurance.'">';
+		print $langs->trans("Insurance").': <input type="text" size="8" name="amount_insurance" value="'.$amount_insurance.'">';
 	}
 	else
 	{
@@ -323,7 +323,7 @@ if ($action == 'create')
 	print '<br>';
 	if ($sumpaid < $loan->capital)
 	{
-		print $langs->trans("Interest") .': <input type="text" size="8" name="amount_interest" value="'.$amount_interest.'">';
+		print $langs->trans("Interest").': <input type="text" size="8" name="amount_interest" value="'.$amount_interest.'">';
 	}
 	else
 	{

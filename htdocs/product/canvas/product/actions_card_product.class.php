@@ -36,7 +36,7 @@ class ActionsCardProduct
 	public $tpl = array();
 
 	// List of fiels for action=list
-	public $field_list =array();
+	public $field_list = array();
     public $list_datas = array();
 
 
@@ -52,13 +52,13 @@ class ActionsCardProduct
     public function __construct($db, $dirmodule, $targetmodule, $canvas, $card)
     {
         $this->db               = $db;
-        $this->dirmodule		= $dirmodule;
+        $this->dirmodule = $dirmodule;
         $this->targetmodule     = $targetmodule;
         $this->canvas           = $canvas;
         $this->card             = $card;
 
-        $this->name 			= "product";
-		$this->definition 		= "Product canvas (défaut)";
+        $this->name = "product";
+		$this->definition = "Product canvas (défaut)";
 		$this->fieldListName    = "product_default";
 		$this->next_prev_filter = "canvas='product'";
 	}
@@ -81,12 +81,12 @@ class ActionsCardProduct
 		global $form, $formproduct;
 
    		$tmpobject = new Product($this->db);
-   		if (! empty($id) || ! empty($ref)) $tmpobject->fetch($id, $ref);
+   		if (!empty($id) || !empty($ref)) $tmpobject->fetch($id, $ref);
         $this->object = $tmpobject;
 
 		//parent::assign_values($action);
 
-        foreach($this->object as $key => $value) {
+        foreach ($this->object as $key => $value) {
             $this->tpl[$key] = $value;
         }
 
@@ -130,10 +130,10 @@ class ActionsCardProduct
 
             $this->tpl['showrefnav'] = $form->showrefnav($this->object, 'ref', '', 1, 'ref');
 
-    		$titre=$langs->trans("CardProduct".$this->object->type);
-    		$picto=($this->object->type==Product::TYPE_SERVICE?'service':'product');
-    		$this->tpl['showhead']=dol_get_fiche_head($head, 'card', $titre, 0, $picto);
-            $this->tpl['showend']=dol_get_fiche_end();
+    		$titre = $langs->trans("CardProduct".$this->object->type);
+    		$picto = ($this->object->type == Product::TYPE_SERVICE ? 'service' : 'product');
+    		$this->tpl['showhead'] = dol_get_fiche_head($head, 'card', $titre, 0, $picto);
+            $this->tpl['showend'] = dol_get_fiche_end();
 
             // Accountancy buy code
 			$this->tpl['accountancyBuyCodeKey'] = $form->editfieldkey("ProductAccountancyBuyCode", 'productaccountancycodesell', $this->accountancy_code_sell, $this, $user->rights->produit->creer);
@@ -166,17 +166,17 @@ class ActionsCardProduct
 		if ($action == 'create' || $action == 'edit')
 		{
     		// Status
-    		$statutarray=array('1' => $langs->trans("OnSell"), '0' => $langs->trans("NotOnSell"));
+    		$statutarray = array('1' => $langs->trans("OnSell"), '0' => $langs->trans("NotOnSell"));
     		$this->tpl['status'] = $form->selectarray('statut', $statutarray, $this->object->status);
 
-    		$statutarray=array('1' => $langs->trans("ProductStatusOnBuy"), '0' => $langs->trans("ProductStatusNotOnBuy"));
+    		$statutarray = array('1' => $langs->trans("ProductStatusOnBuy"), '0' => $langs->trans("ProductStatusNotOnBuy"));
     		$this->tpl['status_buy'] = $form->selectarray('statut_buy', $statutarray, $this->object->status_buy);
 
     		$this->tpl['description'] = $this->description;
     		$this->tpl['note'] = $this->note;
 
 		    // Finished
-			$statutarray=array('1' => $langs->trans("Finished"), '0' => $langs->trans("RowMaterial"));
+			$statutarray = array('1' => $langs->trans("Finished"), '0' => $langs->trans("RowMaterial"));
 			$this->tpl['finished'] = $form->selectarray('finished', $statutarray, $this->object->finished);
 
 			// Weight
@@ -232,7 +232,7 @@ class ActionsCardProduct
 				$this->tpl['volume'] = $this->object->volume." ".measuringUnitString(0, "volume", $this->object->volume_units);
 			}
 
-    		$this->tpl['fiche_end']=dol_get_fiche_end();
+    		$this->tpl['fiche_end'] = dol_get_fiche_end();
 		}
 
 		if ($action == 'list')
@@ -254,10 +254,10 @@ class ActionsCardProduct
 		$this->field_list = array();
 
 		$sql = "SELECT rowid, name, alias, title, align, sort, search, visible, enabled, rang";
-		$sql.= " FROM ".MAIN_DB_PREFIX."c_field_list";
-		$sql.= " WHERE element = '".$this->db->escape($this->fieldListName)."'";
-		$sql.= " AND entity = ".$conf->entity;
-		$sql.= " ORDER BY rang ASC";
+		$sql .= " FROM ".MAIN_DB_PREFIX."c_field_list";
+		$sql .= " WHERE element = '".$this->db->escape($this->fieldListName)."'";
+		$sql .= " AND entity = ".$conf->entity;
+		$sql .= " ORDER BY rang ASC";
 
 		$resql = $this->db->query($sql);
 		if ($resql)
@@ -271,12 +271,12 @@ class ActionsCardProduct
 
 				$obj = $this->db->fetch_object($resql);
 
-				$fieldlist["id"]		= $obj->rowid;
-				$fieldlist["name"]		= $obj->name;
+				$fieldlist["id"] = $obj->rowid;
+				$fieldlist["name"] = $obj->name;
 				$fieldlist["alias"]		= $obj->alias;
 				$fieldlist["title"]		= $langs->trans($obj->title);
 				$fieldlist["align"]		= $obj->align;
-				$fieldlist["sort"]		= $obj->sort;
+				$fieldlist["sort"] = $obj->sort;
 				$fieldlist["search"]	= $obj->search;
 				$fieldlist["visible"]	= $obj->visible;
 				$fieldlist["enabled"]	= verifCond($obj->enabled);
@@ -315,9 +315,9 @@ class ActionsCardProduct
         $this->list_datas = array();
 
 		// Clean parameters
-        $sall=trim((GETPOST('search_all', 'alphanohtml')!='')?GETPOST('search_all', 'alphanohtml'):GETPOST('sall', 'alphanohtml'));
+        $sall = trim((GETPOST('search_all', 'alphanohtml') != '') ?GETPOST('search_all', 'alphanohtml') : GETPOST('sall', 'alphanohtml'));
 
-		foreach($this->field_list as $field)
+		foreach ($this->field_list as $field)
 		{
 			if ($field['enabled'])
 			{
@@ -329,55 +329,55 @@ class ActionsCardProduct
 		$sql = 'SELECT DISTINCT ';
 
 		// Fields requiered
-		$sql.= 'p.rowid, p.price_base_type, p.fk_product_type, p.seuil_stock_alerte, p.entity';
+		$sql .= 'p.rowid, p.price_base_type, p.fk_product_type, p.seuil_stock_alerte, p.entity';
 
 		// Fields not requiered
-		foreach($this->field_list as $field)
+		foreach ($this->field_list as $field)
 		{
 			if ($field['enabled'])
 			{
-				$sql.= ", ".$field['name']." as ".$field['alias'];
+				$sql .= ", ".$field['name']." as ".$field['alias'];
 			}
 		}
 
-		$sql.= ' FROM '.MAIN_DB_PREFIX.'product as p';
-		$sql.= " WHERE p.entity IN (".getEntity('product').")";
+		$sql .= ' FROM '.MAIN_DB_PREFIX.'product as p';
+		$sql .= " WHERE p.entity IN (".getEntity('product').")";
 
 		if ($sall)
 		{
 			$clause = '';
-			$sql.= " AND (";
-			foreach($this->field_list as $field)
+			$sql .= " AND (";
+			foreach ($this->field_list as $field)
 			{
 				if ($field['enabled'])
 				{
-					$sql.= $clause." ".$field['name']." LIKE '%".$this->db->escape($sall)."%'";
-					if ($clause=='') $clause = ' OR';
+					$sql .= $clause." ".$field['name']." LIKE '%".$this->db->escape($sall)."%'";
+					if ($clause == '') $clause = ' OR';
 				}
 			}
-			$sql.= ")";
+			$sql .= ")";
 		}
 
 		// Search fields
-		foreach($this->field_list as $field)
+		foreach ($this->field_list as $field)
 		{
 			if ($field['enabled'])
 			{
 				$fieldname = "s".$field['alias'];
-				if (${$fieldname}) $sql.= " AND ".$field['name']." LIKE '%".$this->db->escape(${$fieldname})."%'";
+				if (${$fieldname}) $sql .= " AND ".$field['name']." LIKE '%".$this->db->escape(${$fieldname})."%'";
 			}
 		}
 
 		if (isset($_GET["tosell"]) && dol_strlen($_GET["tosell"]) > 0)
 		{
-			$sql.= " AND p.tosell = ".$this->db->escape($_GET["tosell"]);
+			$sql .= " AND p.tosell = ".$this->db->escape($_GET["tosell"]);
 		}
 		if (isset($_GET["canvas"]) && dol_strlen($_GET["canvas"]) > 0)
 		{
-			$sql.= " AND p.canvas = '".$this->db->escape($_GET["canvas"])."'";
+			$sql .= " AND p.canvas = '".$this->db->escape($_GET["canvas"])."'";
 		}
-		$sql.= $this->db->order($sortfield, $sortorder);
-		$sql.= $this->db->plimit($limit+1, $offset);
+		$sql .= $this->db->order($sortfield, $sortorder);
+		$sql .= $this->db->plimit($limit + 1, $offset);
 		//print $sql;
 
 		$resql = $this->db->query($sql);
@@ -392,9 +392,9 @@ class ActionsCardProduct
 
 				$obj = $this->db->fetch_object($resql);
 
-				$datas["id"]        = $obj->rowid;
+				$datas["id"] = $obj->rowid;
 
-				foreach($this->field_list as $field)
+				foreach ($this->field_list as $field)
 				{
 					if ($field['enabled'])
 					{
@@ -402,11 +402,11 @@ class ActionsCardProduct
 
 						if ($alias == 'ref')
 						{
-							$this->id 		= $obj->rowid;
+							$this->id = $obj->rowid;
 							$this->ref 		= $obj->$alias;
 							$this->type 	= $obj->fk_product_type;
-							$this->entity	= $obj->entity;
-							$datas[$alias] 	= $this->getNomUrl(1, '', 24);
+							$this->entity = $obj->entity;
+							$datas[$alias] = $this->getNomUrl(1, '', 24);
 						}
 						elseif ($alias == 'stock')
 						{

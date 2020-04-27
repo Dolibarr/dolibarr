@@ -113,8 +113,8 @@ if (is_array($extrafields->attributes[$elementtype]['type']) && count($extrafiel
 			}
 			print '</td>';
 		}
-		print '<td class="right nowraponall"><a href="'.$_SERVER["PHP_SELF"].'?action=edit&attrname='.$key.'#formeditextrafield">'.img_edit().'</a>';
-		print "&nbsp; <a href=\"".$_SERVER["PHP_SELF"]."?action=delete&attrname=$key\">".img_delete()."</a></td>\n";
+		print '<td class="right nowraponall"><a class="editfielda" href="'.$_SERVER["PHP_SELF"].'?action=edit&attrname='.$key.'#formeditextrafield">'.img_edit().'</a>';
+		print '&nbsp; <a class="paddingleft" href="'.$_SERVER["PHP_SELF"].'?action=delete&attrname='.$key.'">'.img_delete().'</a></td>'."\n";
 		print "</tr>";
 	}
 }

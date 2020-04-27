@@ -87,7 +87,7 @@ $thirdpartystatic = new Societe($db);
 
 llxHeader("", $langs->trans("AccountancyTreasuryArea"));
 
-print load_fiche_titre($langs->trans("AccountancyTreasuryArea"), '', 'invoicing');
+print load_fiche_titre($langs->trans("AccountancyTreasuryArea"), '', 'bill');
 
 
 print '<div class="fichecenter"><div class="fichethirdleft">';
@@ -348,7 +348,7 @@ if (!empty($conf->facture->enabled) && $user->rights->facture->lire)
 	$sql .= " GROUP BY f.rowid, f.ref, f.fk_statut, f.type, f.total, f.tva, f.total_ttc, f.paye, f.tms, f.date_lim_reglement,";
 	$sql .= " s.nom, s.rowid, s.code_client, s.code_compta, s.email,";
 	$sql .= " cc.rowid, cc.code";
-	$sql .= " ORDER BY f.tms DESC ";
+	$sql .= " ORDER BY f.tms DESC";
 	$sql .= $db->plimit($max, 0);
 
 	$resql = $db->query($sql);
@@ -546,8 +546,8 @@ if ((!empty($conf->fournisseur->enabled) && empty($conf->global->MAIN_USE_NEW_SU
 
 
 
-// Last donations
-if (!empty($conf->don->enabled) && $user->rights->societe->lire)
+// Latest donations
+if (!empty($conf->don->enabled) && $user->rights->don->lire)
 {
 	include_once DOL_DOCUMENT_ROOT.'/don/class/don.class.php';
 
@@ -745,7 +745,7 @@ if (!empty($conf->facture->enabled) && !empty($conf->commande->enabled) && $user
             print '<div class="div-table-responsive-no-min">';
 			print '<table class="noborder centpercent">';
 			print "<tr class=\"liste_titre\">";
-			print '<th colspan="2">'.$langs->trans("OrdersDeliveredToBill").' <a href="'.DOL_URL_ROOT.'/commande/list.php?viewstatut=3&amp;billed=0"><span class="badge">'.$num.'</span></a></th>';
+			print '<th colspan="2">'.$langs->trans("OrdersDeliveredToBill").' <a href="'.DOL_URL_ROOT.'/commande/list.php?search_status=3&amp;billed=0"><span class="badge">'.$num.'</span></a></th>';
 			if (!empty($conf->global->MAIN_SHOW_HT_ON_SUMMARY)) print '<th class="right">'.$langs->trans("AmountHT").'</th>';
 			print '<th class="right">'.$langs->trans("AmountTTC").'</th>';
 			print '<th class="right">'.$langs->trans("ToBill").'</th>';

@@ -183,34 +183,34 @@ if (isset($_POST["ajoutercolonne"]) && $object->format == "D")
 	// Security check
 	if (!$user->rights->opensurvey->write) accessforbidden();
 
-	$nouveauxsujets=$object->sujet;
+	$nouveauxsujets = $object->sujet;
 
 	if (isset($_POST["nouveaujour"]) && $_POST["nouveaujour"] != "vide" &&
 		isset($_POST["nouveaumois"]) && $_POST["nouveaumois"] != "vide" &&
 		isset($_POST["nouvelleannee"]) && $_POST["nouvelleannee"] != "vide") {
-		$nouvelledate=dol_mktime(0, 0, 0, $_POST["nouveaumois"], $_POST["nouveaujour"], $_POST["nouvelleannee"]);
+		$nouvelledate = dol_mktime(0, 0, 0, $_POST["nouveaumois"], $_POST["nouveaujour"], $_POST["nouvelleannee"]);
 
-		if (isset($_POST["nouvelleheuredebut"]) && $_POST["nouvelleheuredebut"]!="vide"){
-			$nouvelledate.="@";
-			$nouvelledate.=$_POST["nouvelleheuredebut"];
-			$nouvelledate.="h";
+		if (isset($_POST["nouvelleheuredebut"]) && $_POST["nouvelleheuredebut"] != "vide") {
+			$nouvelledate .= "@";
+			$nouvelledate .= $_POST["nouvelleheuredebut"];
+			$nouvelledate .= "h";
 
-			if ($_POST["nouvelleminutedebut"]!="vide") {
-				$nouvelledate.=$_POST["nouvelleminutedebut"];
+			if ($_POST["nouvelleminutedebut"] != "vide") {
+				$nouvelledate .= $_POST["nouvelleminutedebut"];
 			}
 		}
 
-		if (isset($_POST["nouvelleheurefin"]) && $_POST["nouvelleheurefin"]!="vide"){
-			$nouvelledate.="-";
-			$nouvelledate.=$_POST["nouvelleheurefin"];
-			$nouvelledate.="h";
+		if (isset($_POST["nouvelleheurefin"]) && $_POST["nouvelleheurefin"] != "vide") {
+			$nouvelledate .= "-";
+			$nouvelledate .= $_POST["nouvelleheurefin"];
+			$nouvelledate .= "h";
 
-			if ($_POST["nouvelleminutefin"]!="vide") {
-				$nouvelledate.=$_POST["nouvelleminutefin"];
+			if ($_POST["nouvelleminutefin"] != "vide") {
+				$nouvelledate .= $_POST["nouvelleminutefin"];
 			}
 		}
 
-		if($_POST["nouvelleheuredebut"] == "vide" || (isset($_POST["nouvelleheuredebut"]) && isset($_POST["nouvelleheurefin"]) && (($_POST["nouvelleheuredebut"] < $_POST["nouvelleheurefin"]) || (($_POST["nouvelleheuredebut"] == $_POST["nouvelleheurefin"]) && ($_POST["nouvelleminutedebut"] < $_POST["nouvelleminutefin"]))))) {
+		if ($_POST["nouvelleheuredebut"] == "vide" || (isset($_POST["nouvelleheuredebut"]) && isset($_POST["nouvelleheurefin"]) && (($_POST["nouvelleheuredebut"] < $_POST["nouvelleheurefin"]) || (($_POST["nouvelleheuredebut"] == $_POST["nouvelleheurefin"]) && ($_POST["nouvelleminutedebut"] < $_POST["nouvelleminutefin"]))))) {
 			$erreur_ajout_date = false;
 		} else {
 			$erreur_ajout_date = "yes";
@@ -507,7 +507,7 @@ print '</form>'."\n";
 
 print '<div class="tabsAction">';
 
-print '<a class="butAction" href="exportcsv.php?id='.$numsondage.'">'.$langs->trans("ExportSpreadsheet").' (.CSV)'.'</a>';
+print '<a class="butAction" href="exportcsv.php?id='.urlencode($numsondage).'">'.$langs->trans("ExportSpreadsheet").' (.CSV)</a>';
 
 print '</div>';
 
@@ -522,7 +522,7 @@ if (GETPOST('ajoutsujet'))
 	print '<input type="hidden" name="backtopage" value="'.GETPOST('backtopage', 'alpha').'">';
 
 	print '<div class="center">'."\n";
-	print "<br><br>"."\n";
+	print "<br><br>\n";
 
 	// Add new column
 	if ($object->format == "A")

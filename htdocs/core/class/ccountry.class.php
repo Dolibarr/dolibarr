@@ -126,19 +126,6 @@ class Ccountry // extends CommonObject
 		if (!$error)
         {
             $this->id = $this->db->last_insert_id(MAIN_DB_PREFIX."c_country");
-
-			if (!$notrigger)
-			{
-	            // Uncomment this and change MYOBJECT to your own tag if you
-	            // want this action call a trigger.
-
-	            //// Call triggers
-	            //include_once DOL_DOCUMENT_ROOT . '/core/class/interfaces.class.php';
-	            //$interface=new Interfaces($this->db);
-	            //$result=$interface->run_triggers('MYOBJECT_CREATE',$this,$user,$langs,$conf);
-	            //if ($result < 0) { $error++; $this->errors=$interface->errors; }
-	            //// End call triggers
-			}
         }
 
         // Commit or rollback
@@ -170,27 +157,26 @@ class Ccountry // extends CommonObject
      */
     public function fetch($id, $code = '', $code_iso = '')
     {
-    	global $langs;
         $sql = "SELECT";
-  		$sql.= " t.rowid,";
-  		$sql.= " t.code,";
-  		$sql.= " t.code_iso,";
-  		$sql.= " t.label,";
-  		$sql.= " t.active";
-        $sql.= " FROM ".MAIN_DB_PREFIX."c_country as t";
-        if ($id) $sql.= " WHERE t.rowid = ".$id;
-        elseif ($code) $sql.= " WHERE t.code = '".$this->db->escape($code)."'";
-        elseif ($code_iso) $sql.= " WHERE t.code_iso = '".$this->db->escape($code_iso)."'";
+  		$sql .= " t.rowid,";
+  		$sql .= " t.code,";
+  		$sql .= " t.code_iso,";
+  		$sql .= " t.label,";
+  		$sql .= " t.active";
+        $sql .= " FROM ".MAIN_DB_PREFIX."c_country as t";
+        if ($id) $sql .= " WHERE t.rowid = ".$id;
+        elseif ($code) $sql .= " WHERE t.code = '".$this->db->escape($code)."'";
+        elseif ($code_iso) $sql .= " WHERE t.code_iso = '".$this->db->escape($code_iso)."'";
 
     	dol_syslog(get_class($this)."::fetch", LOG_DEBUG);
-        $resql=$this->db->query($sql);
+        $resql = $this->db->query($sql);
         if ($resql)
         {
             if ($this->db->num_rows($resql))
             {
                 $obj = $this->db->fetch_object($resql);
 
-                $this->id    = $obj->rowid;
+                $this->id = $obj->rowid;
 				$this->code = $obj->code;
 				$this->code_iso = $obj->code_iso;
 				$this->label = $obj->label;
@@ -247,22 +233,6 @@ class Ccountry // extends CommonObject
         $resql = $this->db->query($sql);
     	if (!$resql) { $error++; $this->errors[] = "Error ".$this->db->lasterror(); }
 
-		if (!$error)
-		{
-			if (!$notrigger)
-			{
-	            // Uncomment this and change MYOBJECT to your own tag if you
-	            // want this action call a trigger.
-
-	            //// Call triggers
-	            //include_once DOL_DOCUMENT_ROOT . '/core/class/interfaces.class.php';
-	            //$interface=new Interfaces($this->db);
-	            //$result=$interface->run_triggers('MYOBJECT_MODIFY',$this,$user,$langs,$conf);
-	            //if ($result < 0) { $error++; $this->errors=$interface->errors; }
-	            //// End call triggers
-	    	}
-		}
-
         // Commit or rollback
 		if ($error)
 		{
@@ -302,22 +272,6 @@ class Ccountry // extends CommonObject
 		dol_syslog(get_class($this)."::delete", LOG_DEBUG);
 		$resql = $this->db->query($sql);
     	if (!$resql) { $error++; $this->errors[] = "Error ".$this->db->lasterror(); }
-
-		if (!$error)
-		{
-			if (!$notrigger)
-			{
-				// Uncomment this and change MYOBJECT to your own tag if you
-		        // want this action call a trigger.
-
-		        //// Call triggers
-		        //include_once DOL_DOCUMENT_ROOT . '/core/class/interfaces.class.php';
-		        //$interface=new Interfaces($this->db);
-		        //$result=$interface->run_triggers('MYOBJECT_DELETE',$this,$user,$langs,$conf);
-		        //if ($result < 0) { $error++; $this->errors=$interface->errors; }
-		        //// End call triggers
-			}
-		}
 
         // Commit or rollback
 		if ($error)

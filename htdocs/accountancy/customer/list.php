@@ -499,7 +499,7 @@ if ($result) {
 				$suggestedaccountingaccountfor = 'eecwithvat';
         	} elseif ($isSellerInEEC && $isBuyerInEEC && empty($objp->tva_intra)) {	// European intravat sale, without VAT intra community number
         		$objp->code_sell_p = $objp->code_sell;
-        		$objp->aarowid_suggest = $objp->aarowid;	// There is a doubt for this case. Is it an error on vat or we just forgot to fill vat number ?
+        		$objp->aarowid_suggest = $objp->aarowid; // There is a doubt for this case. Is it an error on vat or we just forgot to fill vat number ?
         		$suggestedaccountingaccountfor = 'eecwithoutvatnumber';
 			} elseif ($isSellerInEEC && $isBuyerInEEC) {          // European intravat sale
                 $objp->code_sell_p = $objp->code_sell_intra;
@@ -512,7 +512,7 @@ if ($result) {
             }
         }
 
-		if (! empty($objp->code_sell_p)) {
+		if (!empty($objp->code_sell_p)) {
 			// Value was defined previously
 		} else {
 			$code_sell_p_notset = 'color:orange';
@@ -567,12 +567,12 @@ if ($result) {
 		print '<td>'.$objp->tva_intra.'</td>';
 
 		// Found accounts
-		print '<td style="'.$code_sell_p_notset.'">';
+		print '<td>';
 	    $s = '<span class="small">'.(($objp->type_l == 1) ? $langs->trans("DefaultForService") : $langs->trans("DefaultForProduct")).': </span>';
 	    $shelp = '';
 	    if ($suggestedaccountingaccountbydefaultfor == 'eec') $shelp .= $langs->trans("SaleEEC");
 	    elseif ($suggestedaccountingaccountbydefaultfor == 'export') $shelp .= $langs->trans("SaleExport");
-	    $s .= ($objp->code_sell_l > 0 ? length_accountg($objp->code_sell_l) : $langs->trans("NotDefined"));
+	    $s .= ($objp->code_sell_l > 0 ? length_accountg($objp->code_sell_l) : '<span style="'.$code_sell_p_notset.'">'.$langs->trans("NotDefined").'</span>');
 	    print $form->textwithpicto($s, $shelp, 1, 'help', '', 0, 2, '', 1);
 	    if ($objp->product_id > 0)
 		{
@@ -583,7 +583,7 @@ if ($result) {
 		    elseif ($suggestedaccountingaccountfor == 'eecwithvat') $shelp = $langs->trans("SaleEECWithVAT");
 		    elseif ($suggestedaccountingaccountfor == 'eecwithoutvatnumber') $shelp = $langs->trans("SaleEECWithoutVATNumber");
 		    elseif ($suggestedaccountingaccountfor == 'export') $shelp = $langs->trans("SaleExport");
-		    $s .= (empty($objp->code_sell_p) ? $langs->trans("NotDefined") : length_accountg($objp->code_sell_p));
+		    $s .= (empty($objp->code_sell_p) ? '<span style="'.$code_sell_p_notset.'">'.$langs->trans("NotDefined").'</span>' : length_accountg($objp->code_sell_p));
 		    print $form->textwithpicto($s, $shelp, 1, 'help', '', 0, 2, '', 1);
 		}
 		print '</td>';
@@ -595,7 +595,7 @@ if ($result) {
 		/*var_dump($suggestedid);
 		var_dump($objp->code_sell_p);
 		var_dump($objp->code_sell_l);*/
-		if (empty($suggestedid) && empty($objp->code_sell_p) && ! empty($objp->code_sell_l) && empty($conf->global->ACCOUNTANCY_DO_NOT_AUTOFILL_ACCOUNT_WITH_GENERIC))
+		if (empty($suggestedid) && empty($objp->code_sell_p) && !empty($objp->code_sell_l) && empty($conf->global->ACCOUNTANCY_DO_NOT_AUTOFILL_ACCOUNT_WITH_GENERIC))
 		{
 			if (empty($accountingaccount_codetotid_cache[$objp->code_sell_l]))
 			{
@@ -632,7 +632,7 @@ if ($result) {
 	print $db->error();
 }
 if ($db->type == 'mysqli') {
-	$db->query("SET SQL_BIG_SELECTS=0");  // Enable MAX_JOIN_SIZE limitation
+	$db->query("SET SQL_BIG_SELECTS=0"); // Enable MAX_JOIN_SIZE limitation
 }
 
 // Add code to auto check the box when we select an account

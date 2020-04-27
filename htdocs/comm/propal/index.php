@@ -58,7 +58,7 @@ $help_url = "EN:Module_Commercial_Proposals|FR:Module_Propositions_commerciales|
 
 llxHeader("", $langs->trans("ProspectionArea"), $help_url);
 
-print load_fiche_titre($langs->trans("ProspectionArea"), '', 'commercial');
+print load_fiche_titre($langs->trans("ProspectionArea"), '', 'propal');
 
 //print '<table width="100%" class="notopnoleftnoright">';
 //print '<tr><td valign="top" width="30%" class="notopnoleft">';
@@ -195,7 +195,7 @@ if (!empty($conf->propal->enabled))
 			print '<table class="noborder centpercent">';
 			print '<tr class="liste_titre">';
 			$langs->load("propal");
-			print '<td colspan="2">'.$langs->trans("DraftPropals").' <a href="'.DOL_URL_ROOT.'/comm/propal/list.php?viewstatut=0"><span class="badge">'.$num.'</span></a></td></tr>';
+			print '<td colspan="2">'.$langs->trans("DraftPropals").' <a href="'.DOL_URL_ROOT.'/comm/propal/list.php?search_status=0"><span class="badge">'.$num.'</span></a></td></tr>';
 
 			$i = 0;
 			$nbofloop = min($num, (empty($conf->global->MAIN_MAXLIST_OVERLOAD) ? 500 : $conf->global->MAIN_MAXLIST_OVERLOAD));
@@ -302,7 +302,8 @@ if ($resql)
 			print '<td>'.$companystatic->getNomUrl(1, 'customer').'</td>';
 
 			print '<td>'.dol_print_date($db->jdate($obj->datec), 'day').'</td>';
-			print '<td class="right">'.$propalstatic->LibStatut($obj->fk_statut, 5).'</td>';
+
+			print '<td class="right">'.$propalstatic->LibStatut($obj->fk_statut, 3).'</td>';
 			print '</tr>';
 			$i++;
 		}
@@ -314,7 +315,7 @@ else dol_print_error($db);
 
 
 /*
- * Opened proposals
+ * Open proposals
  */
 if (!empty($conf->propal->enabled) && $user->rights->propale->lire)
 {
@@ -344,7 +345,7 @@ if (!empty($conf->propal->enabled) && $user->rights->propale->lire)
 		{
 			print '<div class="div-table-responsive-no-min">';
 			print '<table class="noborder centpercent">';
-			print '<tr class="liste_titre"><td colspan="5">'.$langs->trans("ProposalsOpened").' <a href="'.DOL_URL_ROOT.'/comm/propal/list.php?viewstatut=1"><span class="badge">'.$num.'</span></a></td></tr>';
+			print '<tr class="liste_titre"><td colspan="5">'.$langs->trans("ProposalsOpened").' <a href="'.DOL_URL_ROOT.'/comm/propal/list.php?search_status=1"><span class="badge">'.$num.'</span></a></td></tr>';
 
 			$nbofloop = min($num, (empty($conf->global->MAIN_MAXLIST_OVERLOAD) ? 500 : $conf->global->MAIN_MAXLIST_OVERLOAD));
 			while ($i < $nbofloop)
@@ -381,9 +382,10 @@ if (!empty($conf->propal->enabled) && $user->rights->propale->lire)
 				$companystatic->canvas = $obj->canvas;
 				print '<td class="left">'.$companystatic->getNomUrl(1, 'customer', 44).'</td>'."\n";
 
-				print '<td class="right">';
-				print dol_print_date($db->jdate($obj->dp), 'day').'</td>'."\n";
+				print '<td class="right">'.dol_print_date($db->jdate($obj->dp), 'day').'</td>'."\n";
+
 				print '<td class="right">'.price($obj->total_ttc).'</td>';
+
 				print '<td align="center" width="14">'.$propalstatic->LibStatut($obj->fk_statut, 3).'</td>'."\n";
 				print '</tr>'."\n";
 				$i++;
@@ -432,7 +434,7 @@ if (! empty($conf->propal->enabled))
 		print '<div class="div-table-responsive-no-min">';
 		print '<table class="noborder centpercent">';
 		print '<tr class="liste_titre">';
-		print '<td colspan="3">'.$langs->trans("ProposalsToProcess").' <a href="'.DOL_URL_ROOT.'/commande/list.php?viewstatut=1"><span class="badge">'.$num.'</span></a></td></tr>';
+		print '<td colspan="3">'.$langs->trans("ProposalsToProcess").' <a href="'.DOL_URL_ROOT.'/commande/list.php?search_status=1"><span class="badge">'.$num.'</span></a></td></tr>';
 
 		if ($num)
 		{
@@ -505,7 +507,7 @@ if (! empty($conf->propal->enabled))
 		print '<div class="div-table-responsive-no-min">';
 		print '<table class="noborder centpercent">';
 		print '<tr class="liste_titre">';
-		print '<td colspan="3">'.$langs->trans("OnProcessOrders").' <a href="'.DOL_URL_ROOT.'/commande/list.php?viewstatut=2"><span class="badge">'.$num.'</span></a></td></tr>';
+		print '<td colspan="3">'.$langs->trans("OnProcessOrders").' <a href="'.DOL_URL_ROOT.'/commande/list.php?search_status=2"><span class="badge">'.$num.'</span></a></td></tr>';
 
 		if ($num)
 		{

@@ -92,7 +92,7 @@ $search_btn = GETPOST('button_search', 'alpha');
 $search_remove_btn = GETPOST('button_removefilter', 'alpha');
 
 $status = GETPOST('statut', 'alpha');
-$viewstatut = GETPOST('viewstatut');
+$search_status = GETPOST('search_status');
 
 // Security check
 $orderid = GETPOST('orderid', 'int');
@@ -639,12 +639,12 @@ if ($resql)
 	if ($search_multicurrency_montant_ht != '')  $param .= '&search_multicurrency_montant_ht='.urlencode($search_multicurrency_montant_ht);
 	if ($search_multicurrency_montant_vat != '')  $param .= '&search_multicurrency_montant_vat='.urlencode($search_multicurrency_montant_vat);
 	if ($search_multicurrency_montant_ttc != '') $param .= '&search_multicurrency_montant_ttc='.urlencode($search_multicurrency_montant_ttc);
-	if ($search_refsupp) 		$param .= "&search_refsupp=".$search_refsupp;
-	if ($search_status >= 0)  	$param .= "&search_status=".$search_status;
-	if ($search_project_ref >= 0) $param .= "&search_project_ref=".$search_project_ref;
-	if ($search_billed != '')   $param .= "&search_billed=".$search_billed;
-	if ($show_files)            $param .= '&show_files='.$show_files;
-	if ($optioncss != '')       $param .= '&optioncss='.$optioncss;
+	if ($search_refsupp) 		$param .= "&search_refsupp=".urlencode($search_refsupp);
+	if ($search_status >= 0)  	$param .= "&search_status=".urlencode($search_status);
+	if ($search_project_ref >= 0) $param .= "&search_project_ref=".urlencode($search_project_ref);
+	if ($search_billed != '')   $param .= "&search_billed=".urlencode($search_billed);
+	if ($show_files)            $param .= '&show_files='.urlencode($show_files);
+	if ($optioncss != '')       $param .= '&optioncss='.urlencode($optioncss);
 	// Add $param from extra fields
 	include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_param.tpl.php';
 
@@ -671,12 +671,11 @@ if ($resql)
 	print '<input type="hidden" name="token" value="'.newToken().'">';
 	print '<input type="hidden" name="formfilteraction" id="formfilteraction" value="list">';
 	print '<input type="hidden" name="action" value="list">';
-	print '<input type="hidden" name="page" value="'.$page.'">';
 	print '<input type="hidden" name="contextpage" value="'.$contextpage.'">';
 	print '<input type="hidden" name="sortfield" value="'.$sortfield.'">';
 	print '<input type="hidden" name="sortorder" value="'.$sortorder.'">';
-	print '<input type="hidden" name="viewstatut" value="'.$viewstatut.'">';
-	print_barre_liste($title, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, $massactionbutton, $num, $nbtotalofrecords, 'commercial', 0, $newcardbutton, '', $limit);
+
+	print_barre_liste($title, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, $massactionbutton, $num, $nbtotalofrecords, 'supplier_order', 0, $newcardbutton, '', $limit, 0, 0, 1);
 
 	$topicmail = "SendOrderRef";
 	$modelmail = "order_supplier_send";

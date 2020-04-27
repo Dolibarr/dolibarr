@@ -29,17 +29,20 @@ require '../../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/dolgraph.class.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facturestats.class.php';
 
-$WIDTH=DolGraph::getDefaultGraphSizeForStats('width');
-$HEIGHT=DolGraph::getDefaultGraphSizeForStats('height');
+$WIDTH = DolGraph::getDefaultGraphSizeForStats('width');
+$HEIGHT = DolGraph::getDefaultGraphSizeForStats('height');
 
-$mode=GETPOST("mode")?GETPOST("mode"):'customer';
-if ($mode == 'customer' && ! $user->rights->facture->lire) accessforbidden();
-if ($mode == 'supplier' && ! $user->rights->fournisseur->facture->lire) accessforbidden();
+// Load translation files required by the page
+$langs->loadLangs(array('bills', 'companies', 'other'));
 
-$object_status=GETPOST('object_status');
+$mode = GETPOST("mode") ?GETPOST("mode") : 'customer';
+if ($mode == 'customer' && !$user->rights->facture->lire) accessforbidden();
+if ($mode == 'supplier' && !$user->rights->fournisseur->facture->lire) accessforbidden();
 
-$userid=GETPOST('userid', 'int');
-$socid=GETPOST('socid', 'int');
+$object_status = GETPOST('object_status');
+
+$userid = GETPOST('userid', 'int');
+$socid = GETPOST('socid', 'int');
 // Security check
 if ($user->socid > 0)
 {
@@ -47,39 +50,38 @@ if ($user->socid > 0)
     $socid = $user->socid;
 }
 
-$nowyear=strftime("%Y", dol_now());
-$year = GETPOST('year')>0?GETPOST('year'):$nowyear;
+$nowyear = strftime("%Y", dol_now());
+$year = GETPOST('year') > 0 ?GETPOST('year') : $nowyear;
 //$startyear=$year-2;
-$startyear=$year-1;
-$endyear=$year;
+$startyear = $year - 1;
+$endyear = $year;
 
 
 /*
  * View
  */
-// Load translation files required by the page
-$langs->loadLangs(array('bills', 'companies', 'other'));
 
-$form=new Form($db);
+$form = new Form($db);
 
 llxHeader();
 
-if ($mode == 'customer')
-{
-	$title=$langs->trans("BillsStatistics");
-	$dir=$conf->facture->dir_temp;
-}
+$picto = 'bill';
+$title = $langs->trans("BillsStatistics");
+$dir = $conf->facture->dir_temp;
+
 if ($mode == 'supplier')
 {
-	$title=$langs->trans("BillsStatisticsSuppliers");
-	$dir=$conf->fournisseur->facture->dir_temp;
+	$picto = 'supplier_invoice';
+	$title = $langs->trans("BillsStatisticsSuppliers");
+	$dir = $conf->fournisseur->facture->dir_temp;
 }
 
-print load_fiche_titre($title, '', 'invoicing');
+
+print load_fiche_titre($title, '', $picto);
 
 dol_mkdir($dir);
 
-$stats = new FactureStats($db, $socid, $mode, ($userid>0?$userid:0));
+$stats = new FactureStats($db, $socid, $mode, ($userid > 0 ? $userid : 0));
 if ($mode == 'customer')
 {
     if ($object_status != '' && $object_status >= 0) $stats->where .= ' AND f.fk_statut IN ('.$db->escape($object_status).')';
@@ -100,13 +102,13 @@ if ($mode == 'supplier') $fileurlnb = DOL_URL_ROOT.'/viewimage.php?modulepart=bi
 
 $px1 = new DolGraph();
 $mesg = $px1->isGraphKo();
-if (! $mesg)
+if (!$mesg)
 {
 	$px1->SetData($data);
-	$i=$startyear;$legend=array();
+	$i = $startyear; $legend = array();
 	while ($i <= $endyear)
 	{
-		$legend[]=$i;
+		$legend[] = $i;
 		$i++;
 	}
 	$px1->SetLegend($legend);
@@ -116,7 +118,7 @@ if (! $mesg)
 	$px1->SetYLabel($langs->trans("NumberOfBills"));
 	$px1->SetShading(3);
 	$px1->SetHorizTickIncrement(1);
-	$px1->mode='depth';
+	$px1->mode = 'depth';
 	$px1->SetTitle($langs->trans("NumberOfBillsByMonth"));
 
 	$px1->draw($filenamenb, $fileurlnb);
@@ -133,13 +135,13 @@ if ($mode == 'supplier') $fileurlamount = DOL_URL_ROOT.'/viewimage.php?modulepar
 
 $px2 = new DolGraph();
 $mesg = $px2->isGraphKo();
-if (! $mesg)
+if (!$mesg)
 {
 	$px2->SetData($data);
-	$i=$startyear;$legend=array();
+	$i = $startyear; $legend = array();
 	while ($i <= $endyear)
 	{
-		$legend[]=$i;
+		$legend[] = $i;
 		$i++;
 	}
 	$px2->SetLegend($legend);
@@ -150,7 +152,7 @@ if (! $mesg)
 	$px2->SetYLabel($langs->trans("AmountOfBills"));
 	$px2->SetShading(3);
 	$px2->SetHorizTickIncrement(1);
-	$px2->mode='depth';
+	$px2->mode = 'depth';
 	$px2->SetTitle($langs->trans("AmountOfBillsByMonthHT"));
 
 	$px2->draw($filenameamount, $fileurlamount);
@@ -174,13 +176,13 @@ else
 
 $px3 = new DolGraph();
 $mesg = $px3->isGraphKo();
-if (! $mesg)
+if (!$mesg)
 {
     $px3->SetData($data);
-    $i = $startyear;$legend=array();
+    $i = $startyear; $legend = array();
     while ($i <= $endyear)
     {
-        $legend[]=$i;
+        $legend[] = $i;
         $i++;
     }
     $px3->SetLegend($legend);
@@ -191,7 +193,7 @@ if (! $mesg)
     $px3->SetHeight($HEIGHT);
     $px3->SetShading(3);
     $px3->SetHorizTickIncrement(1);
-    $px3->mode='depth';
+    $px3->mode = 'depth';
     $px3->SetTitle($langs->trans("AmountAverage"));
 
     $px3->draw($filename_avg, $fileurl_avg);
@@ -200,22 +202,22 @@ if (! $mesg)
 
 // Show array
 $data = $stats->getAllByYear();
-$arrayyears=array();
-foreach($data as $val) {
-    $arrayyears[$val['year']]=$val['year'];
+$arrayyears = array();
+foreach ($data as $val) {
+    $arrayyears[$val['year']] = $val['year'];
 }
-if (! count($arrayyears)) $arrayyears[$nowyear]=$nowyear;
+if (!count($arrayyears)) $arrayyears[$nowyear] = $nowyear;
 
 
-$h=0;
+$h = 0;
 $head = array();
-$head[$h][0] = DOL_URL_ROOT . '/compta/facture/stats/index.php?mode='.$mode;
+$head[$h][0] = DOL_URL_ROOT.'/compta/facture/stats/index.php?mode='.$mode;
 $head[$h][1] = $langs->trans("ByMonthYear");
 $head[$h][2] = 'byyear';
 $h++;
 
-if ($mode == 'customer') $type='invoice_stats';
-if ($mode == 'supplier') $type='supplier_invoice_stats';
+if ($mode == 'customer') $type = 'invoice_stats';
+if ($mode == 'supplier') $type = 'supplier_invoice_stats';
 
 complete_head_from_modules($conf, $langs, null, $head, $h, $type);
 
@@ -242,8 +244,8 @@ print '<table class="noborder centpercent">';
 print '<tr class="liste_titre"><td class="liste_titre" colspan="2">'.$langs->trans("Filter").'</td></tr>';
 // Company
 print '<tr><td>'.$langs->trans("ThirdParty").'</td><td>';
-if ($mode == 'customer') $filter='s.client in (1,2,3)';
-if ($mode == 'supplier') $filter='s.fournisseur = 1';
+if ($mode == 'customer') $filter = 's.client in (1,2,3)';
+if ($mode == 'supplier') $filter = 's.fournisseur = 1';
 print $form->selectarray('socid', $companies, $socid, 1, 0, 0, 'style="width: 95%"', 0, 0, 0, '', '', 1);
 print '</td></tr>';
 // User
@@ -254,19 +256,19 @@ print '</td></tr>';
 print '<tr><td class="left">'.$langs->trans("Status").'</td><td class="left">';
 if ($mode == 'customer')
 {
-    $liststatus=array('0'=>$langs->trans("BillStatusDraft"), '1'=>$langs->trans("BillStatusNotPaid"), '2'=>$langs->trans("BillStatusPaid"), '3'=>$langs->trans("BillStatusCanceled"));
+    $liststatus = array('0'=>$langs->trans("BillStatusDraft"), '1'=>$langs->trans("BillStatusNotPaid"), '2'=>$langs->trans("BillStatusPaid"), '3'=>$langs->trans("BillStatusCanceled"));
     print $form->selectarray('object_status', $liststatus, $object_status, 1);
 }
 if ($mode == 'supplier')
 {
-    $liststatus=array('0'=>$langs->trans("BillStatusDraft"),'1'=>$langs->trans("BillStatusNotPaid"), '2'=>$langs->trans("BillStatusPaid"));
+    $liststatus = array('0'=>$langs->trans("BillStatusDraft"), '1'=>$langs->trans("BillStatusNotPaid"), '2'=>$langs->trans("BillStatusPaid"));
     print $form->selectarray('object_status', $liststatus, $object_status, 1);
 }
 print '</td></tr>';
 // Year
 print '<tr><td>'.$langs->trans("Year").'</td><td>';
-if (! in_array($year, $arrayyears)) $arrayyears[$year]=$year;
-if (! in_array($nowyear, $arrayyears)) $arrayyears[$nowyear]=$nowyear;
+if (!in_array($year, $arrayyears)) $arrayyears[$year] = $year;
+if (!in_array($nowyear, $arrayyears)) $arrayyears[$nowyear] = $nowyear;
 arsort($arrayyears);
 print $form->selectarray('year', $arrayyears, $year, 0);
 print '</td></tr>';
@@ -287,16 +289,16 @@ print '<td class="right">'.$langs->trans("AmountAverage").'</td>';
 print '<td class="right">%</td>';
 print '</tr>';
 
-$oldyear=0;
+$oldyear = 0;
 foreach ($data as $val)
 {
 	$year = $val['year'];
-	while ($year && $oldyear > $year+1)
+	while ($year && $oldyear > $year + 1)
 	{	// If we have empty year
 		$oldyear--;
 
 		print '<tr class="oddeven" height="24">';
-		print '<td align="center"><a href="'.$_SERVER["PHP_SELF"].'?year='.$oldyear.'&amp;mode='.$mode.($socid>0?'&socid='.$socid:'').($userid>0?'&userid='.$userid:'').'">'.$oldyear.'</a></td>';
+		print '<td align="center"><a href="'.$_SERVER["PHP_SELF"].'?year='.$oldyear.'&amp;mode='.$mode.($socid > 0 ? '&socid='.$socid : '').($userid > 0 ? '&userid='.$userid : '').'">'.$oldyear.'</a></td>';
 		print '<td class="right">0</td>';
 		print '<td class="right"></td>';
 		print '<td class="right">0</td>';
@@ -307,15 +309,15 @@ foreach ($data as $val)
 	}
 
 	print '<tr class="oddeven" height="24">';
-	print '<td align="center"><a href="'.$_SERVER["PHP_SELF"].'?year='.$year.'&amp;mode='.$mode.($socid>0?'&socid='.$socid:'').($userid>0?'&userid='.$userid:'').'">'.$year.'</a></td>';
+	print '<td align="center"><a href="'.$_SERVER["PHP_SELF"].'?year='.$year.'&amp;mode='.$mode.($socid > 0 ? '&socid='.$socid : '').($userid > 0 ? '&userid='.$userid : '').'">'.$year.'</a></td>';
 	print '<td class="right">'.$val['nb'].'</td>';
-	print '<td class="right" style="'.(($val['nb_diff'] >= 0) ? 'color: green;':'color: red;').'">'.round($val['nb_diff']).'</td>';
+	print '<td class="right" style="'.(($val['nb_diff'] >= 0) ? 'color: green;' : 'color: red;').'">'.round($val['nb_diff']).'</td>';
 	print '<td class="right">'.price(price2num($val['total'], 'MT'), 1).'</td>';
-	print '<td class="right" style="'.(($val['total_diff'] >= 0) ? 'color: green;':'color: red;').'">'.round($val['total_diff']).'</td>';
+	print '<td class="right" style="'.(($val['total_diff'] >= 0) ? 'color: green;' : 'color: red;').'">'.round($val['total_diff']).'</td>';
 	print '<td class="right">'.price(price2num($val['avg'], 'MT'), 1).'</td>';
-	print '<td class="right" style="'.(($val['avg_diff'] >= 0) ? 'color: green;':'color: red;').'">'.round($val['avg_diff']).'</td>';
+	print '<td class="right" style="'.(($val['avg_diff'] >= 0) ? 'color: green;' : 'color: red;').'">'.round($val['avg_diff']).'</td>';
 	print '</tr>';
-	$oldyear=$year;
+	$oldyear = $year;
 }
 
 print '</table>';

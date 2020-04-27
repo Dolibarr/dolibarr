@@ -32,12 +32,12 @@ require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
 $langs->loadLangs(array('banks', 'categories', 'compta', 'bills'));
 
 // Security check
-if ($user->socid) $socid=$user->socid;
+if ($user->socid) $socid = $user->socid;
 $result = restrictedArea($user, 'banque', '', '');
 
 
-$checkdepositstatic=new RemiseCheque($db);
-$accountstatic=new Account($db);
+$checkdepositstatic = new RemiseCheque($db);
+$accountstatic = new Account($db);
 
 
 /*
@@ -46,18 +46,18 @@ $accountstatic=new Account($db);
 
 llxHeader('', $langs->trans("ChequesArea"));
 
-print load_fiche_titre($langs->trans("ChequesArea"), '', 'bank');
+print load_fiche_titre($langs->trans("ChequesArea"), '', 'bank_account');
 
 print '<div class="fichecenter"><div class="fichethirdleft">';
 
 $sql = "SELECT count(b.rowid)";
-$sql.= " FROM ".MAIN_DB_PREFIX."bank as b";
-$sql.= ", ".MAIN_DB_PREFIX."bank_account as ba";
-$sql.= " WHERE ba.rowid = b.fk_account";
-$sql.= " AND ba.entity IN (".getEntity('bank_account').")";
-$sql.= " AND b.fk_type = 'CHQ'";
-$sql.= " AND b.fk_bordereau = 0";
-$sql.= " AND b.amount > 0";
+$sql .= " FROM ".MAIN_DB_PREFIX."bank as b";
+$sql .= ", ".MAIN_DB_PREFIX."bank_account as ba";
+$sql .= " WHERE ba.rowid = b.fk_account";
+$sql .= " AND ba.entity IN (".getEntity('bank_account').")";
+$sql .= " AND b.fk_type = 'CHQ'";
+$sql .= " AND b.fk_bordereau = 0";
+$sql .= " AND b.amount > 0";
 
 $resql = $db->query($sql);
 
@@ -67,7 +67,7 @@ print '<th colspan="2">'.$langs->trans("BankChecks")."</th>\n";
 print "</tr>\n";
 
 if ($resql) {
-    if ($row = $db->fetch_row($resql) ) {
+    if ($row = $db->fetch_row($resql)) {
         $num = $row[0];
     }
     print '<tr class="oddeven">';
@@ -85,18 +85,18 @@ else
 
 print '</div><div class="fichetwothirdright"><div class="ficheaddleft">';
 
-$max=10;
+$max = 10;
 
 $sql = "SELECT bc.rowid, bc.date_bordereau as db, bc.amount, bc.ref as ref,";
-$sql.= " bc.statut, bc.nbcheque,";
-$sql.= " ba.ref as bref, ba.label, ba.rowid as bid, ba.number, ba.currency_code, ba.account_number, ba.fk_accountancy_journal,";
-$sql.= " aj.code";
-$sql.= " FROM ".MAIN_DB_PREFIX."bordereau_cheque as bc, ".MAIN_DB_PREFIX."bank_account as ba";
-$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."accounting_journal as aj ON aj.rowid = ba.fk_accountancy_journal";
-$sql.= " WHERE ba.rowid = bc.fk_bank_account";
-$sql.= " AND bc.entity = ".$conf->entity;
-$sql.= " ORDER BY bc.date_bordereau DESC, rowid DESC";
-$sql.= $db->plimit($max);
+$sql .= " bc.statut, bc.nbcheque,";
+$sql .= " ba.ref as bref, ba.label, ba.rowid as bid, ba.number, ba.currency_code, ba.account_number, ba.fk_accountancy_journal,";
+$sql .= " aj.code";
+$sql .= " FROM ".MAIN_DB_PREFIX."bordereau_cheque as bc, ".MAIN_DB_PREFIX."bank_account as ba";
+$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."accounting_journal as aj ON aj.rowid = ba.fk_accountancy_journal";
+$sql .= " WHERE ba.rowid = bc.fk_bank_account";
+$sql .= " AND bc.entity = ".$conf->entity;
+$sql .= " ORDER BY bc.date_bordereau DESC, rowid DESC";
+$sql .= $db->plimit($max);
 
 $resql = $db->query($sql);
 if ($resql)
@@ -111,20 +111,20 @@ if ($resql)
 	print '<th class="right">'.$langs->trans("Status").'</th>';
 	print "</tr>\n";
 
-	while ( $objp = $db->fetch_object($resql) )
+	while ($objp = $db->fetch_object($resql))
 	{
-        $checkdepositstatic->id=$objp->rowid;
-        $checkdepositstatic->ref=($objp->ref?$objp->ref:$objp->rowid);
-	    $checkdepositstatic->statut=$objp->statut;
+        $checkdepositstatic->id = $objp->rowid;
+        $checkdepositstatic->ref = ($objp->ref ? $objp->ref : $objp->rowid);
+	    $checkdepositstatic->statut = $objp->statut;
 
-		$accountstatic->id=$objp->bid;
-		$accountstatic->ref=$objp->bref;
-		$accountstatic->label=$objp->label;
-		$accountstatic->number=$objp->number;
-		$accountstatic->currency_code=$objp->currency_code;
-		$accountstatic->account_number=$objp->account_number;
-		$accountstatic->accountancy_journal=$objp->code;
-		$accountstatic->fk_accountancy_journal=$objp->fk_accountancy_journal;
+		$accountstatic->id = $objp->bid;
+		$accountstatic->ref = $objp->bref;
+		$accountstatic->label = $objp->label;
+		$accountstatic->number = $objp->number;
+		$accountstatic->currency_code = $objp->currency_code;
+		$accountstatic->account_number = $objp->account_number;
+		$accountstatic->accountancy_journal = $objp->code;
+		$accountstatic->fk_accountancy_journal = $objp->fk_accountancy_journal;
 
 		print '<tr class="oddeven">'."\n";
 

@@ -1,5 +1,5 @@
 <?php
-if (! defined('ISLOADEDBYSTEELSHEET')) die('Must be call by steelsheet'); ?>
+if (!defined('ISLOADEDBYSTEELSHEET')) die('Must be call by steelsheet'); ?>
 /* <style type="text/css" > dont remove this line it's an ide hack */
 /*
  * Dropdown of user popup
@@ -164,7 +164,9 @@ button.dropdown-item.global-search-item {
 }
 
 div#topmenu-global-search-dropdown, div#topmenu-bookmark-dropdown {
-    line-height: 46px;
+	<?php if (empty($conf->global->THEME_TOPMENU_DISABLE_IMAGE)) { ?>
+		line-height: 46px;
+	<?php } ?>
 }
 a.top-menu-dropdown-link {
     padding: 8px;

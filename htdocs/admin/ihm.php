@@ -154,11 +154,12 @@ if ($action == 'update')
 	//dolibarr_set_const($db, "MAIN_DISABLE_JAVASCRIPT", GETPOST("MAIN_DISABLE_JAVASCRIPT", 'aZ09'), 'chaine', 0, '', $conf->entity);
 	dolibarr_set_const($db, "MAIN_BUTTON_HIDE_UNAUTHORIZED", GETPOST("MAIN_BUTTON_HIDE_UNAUTHORIZED", 'aZ09'), 'chaine', 0, '', $conf->entity);
 	dolibarr_set_const($db, "MAIN_START_WEEK", GETPOST("MAIN_START_WEEK", 'int'), 'chaine', 0, '', $conf->entity);
-	dolibarr_set_const($db, "MAIN_DEFAULT_WORKING_DAYS", GETPOST("MAIN_DEFAULT_WORKING_DAYS", 'int'), 'chaine', 0, '', $conf->entity);
-	dolibarr_set_const($db, "MAIN_DEFAULT_WORKING_HOURS", GETPOST("MAIN_DEFAULT_WORKING_HOURS", 'int'), 'chaine', 0, '', $conf->entity);
+
+	dolibarr_set_const($db, "MAIN_DEFAULT_WORKING_DAYS", GETPOST("MAIN_DEFAULT_WORKING_DAYS", 'alphanohtml'), 'chaine', 0, '', $conf->entity);
+	dolibarr_set_const($db, "MAIN_DEFAULT_WORKING_HOURS", GETPOST("MAIN_DEFAULT_WORKING_HOURS", 'alphanohtml'), 'chaine', 0, '', $conf->entity);
+
 	dolibarr_set_const($db, "MAIN_FIRSTNAME_NAME_POSITION", GETPOST("MAIN_FIRSTNAME_NAME_POSITION", 'aZ09'), 'chaine', 0, '', $conf->entity);
 
-	dolibarr_set_const($db, "MAIN_HELPCENTER_DISABLELINK", GETPOST('MAIN_HELPCENTER_DISABLELINK', 'aZ09'), 'chaine', 0, '', 0); // Param for all entities
 	dolibarr_set_const($db, "MAIN_MOTD", dol_htmlcleanlastbr(GETPOST("main_motd", 'none')), 'chaine', 0, '', $conf->entity);
 	dolibarr_set_const($db, "MAIN_HOME", dol_htmlcleanlastbr(GETPOST("main_home", 'none')), 'chaine', 0, '', $conf->entity);
 	dolibarr_set_const($db, "MAIN_HELP_DISABLELINK", GETPOST("MAIN_HELP_DISABLELINK", 'aZ09'), 'chaine', 0, '', 0); // Param for all entities
@@ -241,9 +242,9 @@ print '<input type="hidden" name="action" value="update">';
 clearstatcache();
 
 print '<br>';
-print '<table summary="edit" class="noborder centpercent">';
-print '<tr class="liste_titre"><td>'.$langs->trans("Language").'</td><td></td>';
-print '<td width="20">&nbsp;</td>';
+print '<table summary="edit" class="noborder centpercent editmode">';
+print '<tr class="liste_titre"><th>'.$langs->trans("Language").'</th><th></th>';
+print '<th width="20">&nbsp;</td>';
 print '</tr>';
 
 // Default language
@@ -268,16 +269,18 @@ showSkins(null, 1);
 print '<br>';
 
 // Other
-print '<table summary="otherparameters" class="noborder centpercent">';
-print '<tr class="liste_titre"><td class="titlefield">'.$langs->trans("Miscellaneous").'</td><td></td>';
-print '<td width="20">&nbsp;</td>';
+print '<table summary="otherparameters" class="noborder centpercent editmode">';
+print '<tr class="liste_titre"><th>'.$langs->trans("Miscellaneous").'</th><th></th>';
+print '<th width="20">&nbsp;</tg>';
 print '</tr>';
 
 // Disable javascript and ajax
 print '<tr class="oddeven"><td>'.$langs->trans("DisableJavascript").'</td><td>';
 print ajax_constantonoff("MAIN_DISABLE_JAVASCRIPT", array(), $conf->entity, 0, 0, 1, 0);
+print ' <span class="opacitymedium"> &nbsp; &nbsp; '.$langs->trans("DisableJavascriptNote").'</span>';
 print '</td>';
-print '<td width="20">&nbsp;</td>';
+print '<td>';
+print '</td>';
 print '</tr>';
 
 // Max size of lists
@@ -385,8 +388,15 @@ print '<br>';
 
 // Other
 print '<div class="div-table-responsive-no-min">';
-print '<table summary="edit" class="noborder centpercent">';
-print '<tr class="liste_titre"><td class="titlefield">'.$langs->trans("LoginPage").'</td><td></td>';
+print '<table summary="edit" class="noborder centpercent editmode">';
+print '<tr class="liste_titre"><th class="titlefield">'.$langs->trans("LoginPage").'</th><th></th>';
+print '<th width="20">&nbsp;</th>';
+print '</tr>';
+
+// Hide helpcenter link on login page
+print '<tr class="oddeven"><td class="titlefield">'.$langs->trans("DisableLinkToHelpCenter").'</td><td>';
+print ajax_constantonoff("MAIN_HELPCENTER_DISABLELINK", array(), $conf->entity, 0, 0, 0, 0);
+print '</td>';
 print '<td width="20">&nbsp;</td>';
 print '</tr>';
 
@@ -404,13 +414,6 @@ print '</td><td colspan="2">';
 $doleditor = new DolEditor('main_home', (isset($conf->global->MAIN_HOME) ? $conf->global->MAIN_HOME : ''), '', 142, 'dolibarr_notes', 'In', false, true, true, ROWS_4, '90%');
 $doleditor->Create();
 print '</td></tr>'."\n";
-
-// Hide helpcenter link on login page
-print '<tr class="oddeven"><td class="titlefield">'.$langs->trans("DisableLinkToHelpCenter").'</td><td>';
-print $form->selectyesno('MAIN_HELPCENTER_DISABLELINK', isset($conf->global->MAIN_HELPCENTER_DISABLELINK) ? $conf->global->MAIN_HELPCENTER_DISABLELINK : 0, 1);
-print '</td>';
-print '<td width="20">&nbsp;</td>';
-print '</tr>';
 
 // Background
 print '<tr class="oddeven"><td><label for="imagebackground">'.$langs->trans("BackgroundImageLogin").' (png,jpg)</label></td><td colspan="2">';

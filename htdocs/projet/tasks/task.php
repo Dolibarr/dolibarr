@@ -37,22 +37,22 @@ require_once DOL_DOCUMENT_ROOT.'/core/modules/project/task/modules_task.php';
 // Load translation files required by the page
 $langs->loadlangs(array('projects', 'companies'));
 
-$id=GETPOST('id', 'int');
-$ref=GETPOST("ref", 'alpha', 1);          // task ref
-$taskref=GETPOST("taskref", 'alpha');    // task ref
-$action=GETPOST('action', 'alpha');
-$confirm=GETPOST('confirm', 'alpha');
-$withproject=GETPOST('withproject', 'int');
-$project_ref=GETPOST('project_ref', 'alpha');
-$planned_workload=((GETPOST('planned_workloadhour', 'int')!='' || GETPOST('planned_workloadmin', 'int')!='') ? (GETPOST('planned_workloadhour', 'int')>0?GETPOST('planned_workloadhour', 'int')*3600:0) + (GETPOST('planned_workloadmin', 'int')>0?GETPOST('planned_workloadmin', 'int')*60:0) : '');
+$id = GETPOST('id', 'int');
+$ref = GETPOST("ref", 'alpha', 1); // task ref
+$taskref = GETPOST("taskref", 'alpha'); // task ref
+$action = GETPOST('action', 'alpha');
+$confirm = GETPOST('confirm', 'alpha');
+$withproject = GETPOST('withproject', 'int');
+$project_ref = GETPOST('project_ref', 'alpha');
+$planned_workload = ((GETPOST('planned_workloadhour', 'int') != '' || GETPOST('planned_workloadmin', 'int') != '') ? (GETPOST('planned_workloadhour', 'int') > 0 ?GETPOST('planned_workloadhour', 'int') * 3600 : 0) + (GETPOST('planned_workloadmin', 'int') > 0 ?GETPOST('planned_workloadmin', 'int') * 60 : 0) : '');
 
 // Security check
-$socid=0;
+$socid = 0;
 //if ($user->socid > 0) $socid = $user->socid;    // For external user, no check is done on company because readability is managed by public status of project and assignement.
-if (! $user->rights->projet->lire) accessforbidden();
+if (!$user->rights->projet->lire) accessforbidden();
 
 // Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
-$hookmanager->initHooks(array('projecttaskcard','globalcard'));
+$hookmanager->initHooks(array('projecttaskcard', 'globalcard'));
 
 $object = new Task($db);
 $extrafields = new ExtraFields($db);

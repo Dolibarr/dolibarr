@@ -1450,7 +1450,7 @@ $ecmfilesstatic = new EcmFiles($db);
 // Create
 if ($action == 'create')
 {
-	print load_fiche_titre($langs->trans("NewTrip"));
+	print load_fiche_titre($langs->trans("NewTrip"), '', 'trip');
 
 	print '<form action="'.$_SERVER['PHP_SELF'].'" method="post" name="create">';
 	print '<input type="hidden" name="token" value="'.newToken().'">';
@@ -1574,7 +1574,7 @@ else
 				if (empty($user->rights->expensereport->readall) && empty($user->rights->expensereport->lire_tous)
 				    && (empty($conf->global->MAIN_USE_ADVANCED_PERMS) || empty($user->rights->expensereport->writeall_advance)))
 				{
-					print load_fiche_titre($langs->trans('TripCard'));
+					print load_fiche_titre($langs->trans('TripCard'), '', 'trip');
 
 					print '<div class="tabBar">';
 					print $langs->trans('NotUserRightToView');
@@ -2330,7 +2330,7 @@ else
 						    print '</a>';
 						    if (empty($conf->global->EXPENSEREPORT_DISABLE_ATTACHMENT_ON_LINES))
 						    {
-						        print ' &nbsp; - &nbsp; '.'<a href="" class="commonlink aattachtodoc reposition">'.$langs->trans("AttachTheNewLineToTheDocument");
+						        print ' &nbsp; - &nbsp; <a href="" class="commonlink aattachtodoc reposition">'.$langs->trans("AttachTheNewLineToTheDocument");
 						        print img_picto($langs->trans("AttachTheNewLineToTheDocument"), 'chevron-down', '', false, 0, 0, '', 'marginleftonly');
 						        print '</a>';
 						    }
@@ -2478,7 +2478,7 @@ else
 				    print '</a>';
 				    if (empty($conf->global->EXPENSEREPORT_DISABLE_ATTACHMENT_ON_LINES))
 				    {
-				        print ' &nbsp; - &nbsp; '.'<a href="" class="commonlink aattachtodoc reposition">'.$langs->trans("AttachTheNewLineToTheDocument");
+				        print ' &nbsp; - &nbsp; <a href="" class="commonlink aattachtodoc reposition">'.$langs->trans("AttachTheNewLineToTheDocument");
 				        print img_picto($langs->trans("AttachTheNewLineToTheDocument"), 'chevron-down', '', false, 0, 0, '', 'marginleftonly');
 				        print '</a>';
 				    }
@@ -2644,13 +2644,14 @@ if ($action != 'create' && $action != 'edit')
 	$object->fetch($id, $ref);
 
 	// Send
-	if ($object->fk_statut > ExpenseReport::STATUS_DRAFT) {
-		//if ((empty($conf->global->MAIN_USE_ADVANCED_PERMS) || $user->rights->expensereport->expensereport_advance->send)) {
-			print '<div class="inline-block divButAction"><a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=presend&mode=init#formmailbeforetitle">'.$langs->trans('SendMail').'</a></div>';
-		//} else
-		//	print '<div class="inline-block divButAction"><a class="butActionRefused classfortooltip" href="#">' . $langs->trans('SendMail') . '</a></div>';
+	if (empty($user->socid)) {
+		if ($object->fk_statut > ExpenseReport::STATUS_DRAFT) {
+			//if ((empty($conf->global->MAIN_USE_ADVANCED_PERMS) || $user->rights->expensereport->expensereport_advance->send)) {
+				print '<div class="inline-block divButAction"><a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=presend&mode=init#formmailbeforetitle">'.$langs->trans('SendMail').'</a></div>';
+			//} else
+			//	print '<div class="inline-block divButAction"><a class="butActionRefused classfortooltip" href="#">' . $langs->trans('SendMail') . '</a></div>';
+		}
 	}
-
 
 	/* Si l'état est "Brouillon"
 	 *	ET user à droit "creer/supprimer"

@@ -102,6 +102,7 @@ $search_parent_name = GETPOST('search_parent_name', 'alpha');
 $type = GETPOST('type', 'alpha');
 $optioncss = GETPOST('optioncss', 'alpha');
 $mode = GETPOST("mode", 'alpha');
+$place = GETPOST('place', 'aZ09') ? GETPOST('place', 'aZ09') : '0'; // $place is string id of table for Bar or Restaurant
 
 $diroutputmassaction = $conf->societe->dir_output.'/temp/massgeneration/'.$user->id;
 
@@ -228,7 +229,6 @@ $arrayfields = dol_sort_array($arrayfields, 'position');
 if ($action == "change")	// Change customer for TakePOS
 {
     $idcustomer = GETPOST('idcustomer', 'int');
-    $place = (GETPOST('place', 'alpha') ? GETPOST('place', 'alpha') : 0); // $place is id of table for Ba or Restaurant
 
     // Check if draft invoice already exists, if not create it
 	$sql = "SELECT rowid FROM ".MAIN_DB_PREFIX."facture where ref='(PROV-POS".$_SESSION["takeposterminal"]."-".$place.")' AND entity IN (".getEntity('invoice').")";
@@ -252,8 +252,8 @@ if ($action == "change")	// Change customer for TakePOS
     $resql = $db->query($sql);
     ?>
 	    <script>
-	    console.log("Reload page invoice.php");
-	    parent.$("#poslines").load("invoice.php?place="+<?php print $place; ?>, function() {
+	    console.log("Reload page invoice.php with place=<?php print $place; ?>");
+	    parent.$("#poslines").load("invoice.php?place=<?php print $place; ?>", function() {
 	        //parent.$("#poslines").scrollTop(parent.$("#poslines")[0].scrollHeight);
 			<?php if (!$resql) { ?>
 				alert('Error failed to update customer on draft invoice.');
@@ -1031,8 +1031,7 @@ while ($i < min($num, $limit))
 	print '<tr class="oddeven"';
 	if ($contextpage == 'poslist')
 	{
-		$place = (GETPOST('place', 'alpha') > 0 ? GETPOST('place', 'alpha') : 0); // $place is id of table for Bar or Restaurant
-	    print ' onclick="location.href=\'list.php?action=change&contextpage=poslist&idcustomer='.$obj->rowid.'&place='.$place.'\'"';
+	    print ' onclick="location.href=\'list.php?action=change&contextpage=poslist&idcustomer='.$obj->rowid.'&place='.urlencode($place).'\'"';
 	}
 	print '>';
 	if (!empty($arrayfields['s.rowid']['checked']))
@@ -1149,17 +1148,17 @@ while ($i < min($num, $limit))
 	}
 	if (!empty($arrayfields['s.email']['checked']))
 	{
-		print "<td>".$obj->email."</td>\n";
+		print '<td class="tdoverflowmax150">'.dol_print_email($obj->email, $obj->rowid, $obj->socid, 'AC_EMAIL', 0, 0, 1)."</td>\n";
 		if (!$i) $totalarray['nbfield']++;
 	}
 	if (!empty($arrayfields['s.phone']['checked']))
 	{
-		print "<td>".dol_print_phone($obj->phone, $obj->country_code, 0, $obj->rowid)."</td>\n";
+		print "<td>".dol_print_phone($obj->phone, $obj->country_code, 0, $obj->rowid, 'AC_TEL')."</td>\n";
 		if (!$i) $totalarray['nbfield']++;
 	}
 	if (!empty($arrayfields['s.fax']['checked']))
 	{
-		print "<td>".dol_print_phone($obj->fax, $obj->country_code, 0, $obj->rowid)."</td>\n";
+		print "<td>".dol_print_phone($obj->fax, $obj->country_code, 0, $obj->rowid, 'AC_TEL')."</td>\n";
 		if (!$i) $totalarray['nbfield']++;
 	}
 	if (!empty($arrayfields['s.url']['checked']))

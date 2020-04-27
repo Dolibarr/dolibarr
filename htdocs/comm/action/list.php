@@ -382,7 +382,6 @@ if ($resql)
 	print '<input type="hidden" name="formfilteraction" id="formfilteraction" value="list">';
 	print '<input type="hidden" name="sortfield" value="'.$sortfield.'">';
 	print '<input type="hidden" name="sortorder" value="'.$sortorder.'">';
-	print '<input type="hidden" name="page" value="'.$page.'">';
 	print '<input type="hidden" name="type" value="'.$type.'">';
 	$nav = '';
 
@@ -443,7 +442,7 @@ if ($resql)
         $newcardbutton .= dolGetButtonTitle($langs->trans('AddAction'), '', 'fa fa-plus-circle', DOL_URL_ROOT.'/comm/action/card.php?action=create&datep='.sprintf("%04d%02d%02d", $tmpforcreatebutton['year'], $tmpforcreatebutton['mon'], $tmpforcreatebutton['mday']).$hourminsec.'&backtopage='.urlencode($_SERVER["PHP_SELF"].($newparam ? '?'.$newparam : '')));
     }
 
-    print_barre_liste($s, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, '', $num, -1 * $nbtotalofrecords, '', 0, $nav.$newcardbutton, '', $limit);
+    print_barre_liste($s, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, '', $num, -1 * $nbtotalofrecords, '', 0, $nav.$newcardbutton, '', $limit, 0, 0, 1);
 
     $moreforfilter = '';
 
@@ -554,8 +553,7 @@ if ($resql)
 		$actionstatic->type_picto = $obj->type_picto;
 		$actionstatic->label = $obj->label;
 		$actionstatic->location = $obj->location;
-		$actionstatic->note = dol_htmlentitiesbr($obj->note); // deprecated
-		$actionstatic->note_public = dol_htmlentitiesbr($obj->note);
+		$actionstatic->note_private = dol_htmlentitiesbr($obj->note);
 
 		$actionstatic->fetchResources();
 
@@ -584,17 +582,17 @@ if ($resql)
 		// Type
 		if (!empty($arrayfields['c.libelle']['checked']))
 		{
-			print '<td>';
+			print '<td class="nowraponall">';
 			if (!empty($conf->global->AGENDA_USE_EVENT_TYPE))
 			{
 	    		if ($actionstatic->type_picto) print img_picto('', $actionstatic->type_picto);
     			else {
-    			    if ($actionstatic->type_code == 'AC_RDV')       print img_picto('', 'object_group', '', false, 0, 0, '', 'paddingright').' ';
-    			    elseif ($actionstatic->type_code == 'AC_TEL')   print img_picto('', 'object_phoning', '', false, 0, 0, '', 'paddingright').' ';
-    			    elseif ($actionstatic->type_code == 'AC_FAX')   print img_picto('', 'object_phoning_fax', '', false, 0, 0, '', 'paddingright').' ';
-    			    elseif ($actionstatic->type_code == 'AC_EMAIL') print img_picto('', 'object_email', '', false, 0, 0, '', 'paddingright').' ';
-    			    elseif ($actionstatic->type_code == 'AC_INT')   print img_picto('', 'object_intervention', '', false, 0, 0, '', 'paddingright').' ';
-    			    elseif (!preg_match('/_AUTO/', $actionstatic->type_code)) print img_picto('', 'object_action', '', false, 0, 0, '', 'paddingright').' ';
+    			    if ($actionstatic->type_code == 'AC_RDV')       print img_picto('', 'object_group', '', false, 0, 0, '', '').' ';
+    			    elseif ($actionstatic->type_code == 'AC_TEL')   print img_picto('', 'object_phoning', '', false, 0, 0, '', '').' ';
+    			    elseif ($actionstatic->type_code == 'AC_FAX')   print img_picto('', 'object_phoning_fax', '', false, 0, 0, '', '').' ';
+    			    elseif ($actionstatic->type_code == 'AC_EMAIL') print img_picto('', 'object_email', '', false, 0, 0, '', '').' ';
+    			    elseif ($actionstatic->type_code == 'AC_INT')   print img_picto('', 'object_intervention', '', false, 0, 0, '', '').' ';
+    			    elseif (!preg_match('/_AUTO/', $actionstatic->type_code)) print img_picto('', 'object_other', '', false, 0, 0, '', '').' ';
     			}
 			}
 			$labeltype = $obj->type_code;
@@ -614,10 +612,11 @@ if ($resql)
 		// Description
 		if (!empty($arrayfields['a.note']['checked'])) {
 			print '<td class="tdoverflowonsmartphone">';
-			$text = dolGetFirstLineOfText(dol_string_nohtmltag($actionstatic->note, 0));
-			print $form->textwithtooltip(dol_trunc($text, 40), $actionstatic->note);
+			$text = dolGetFirstLineOfText(dol_string_nohtmltag($actionstatic->note_private, 0));
+			print $form->textwithtooltip(dol_trunc($text, 40), $actionstatic->note_private);
 			print '</td>';
 		}
+
 		$formatToUse = $obj->fulldayevent ? 'day' : 'dayhour';
 		// Start date
 		if (!empty($arrayfields['a.datep']['checked'])) {
@@ -657,7 +656,7 @@ if ($resql)
 
 		// Contact
 		if (!empty($arrayfields['a.fk_contact']['checked'])) {
-			print '<td>';
+			print '<td class="tdoverflowmax100">';
 
             if (!empty($actionstatic->socpeopleassigned))
             {
@@ -704,7 +703,7 @@ if ($resql)
 
 		// Linked object
 		if (!empty($arrayfields['a.fk_element']['checked'])) {
-            print '<td>';
+            print '<td class="tdoverflowmax150">';
             //var_dump($obj->fkelement.' '.$obj->elementtype);
             if ($obj->fk_element > 0 && !empty($obj->elementtype)) {
                 include_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
@@ -734,7 +733,7 @@ if ($resql)
 		if (!empty($arrayfields['a.percent']['checked'])) {
 			// Status/Percent
 			$datep = $db->jdate($obj->datep);
-			print '<td align="center" class="nowrap">'.$actionstatic->LibStatut($obj->percent, 3, 0, $datep).'</td>';
+			print '<td align="center" class="nowrap">'.$actionstatic->LibStatut($obj->percent, 5, 0, $datep).'</td>';
 		}
 		print '<td></td>';
 

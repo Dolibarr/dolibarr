@@ -1,19 +1,19 @@
 <?php
-/* Copyright (C) 2000-2007	Rodolphe Quiedeville			<rodolphe@quiedeville.org>
+/* Copyright (C) 2000-2007	Rodolphe Quiedeville		<rodolphe@quiedeville.org>
  * Copyright (C) 2003		Jean-Louis Bergamo			<jlb@j1b.org>
  * Copyright (C) 2004-2018	Laurent Destailleur			<eldy@users.sourceforge.net>
  * Copyright (C) 2004		Sebastien Di Cintio			<sdicintio@ressource-toi.org>
  * Copyright (C) 2004		Benoit Mortier				<benoit.mortier@opensides.be>
- * Copyright (C) 2004		Christophe Combelles			<ccomb@free.fr>
+ * Copyright (C) 2004		Christophe Combelles		<ccomb@free.fr>
  * Copyright (C) 2005-2019	Regis Houssin				<regis.houssin@inodbox.com>
  * Copyright (C) 2008		Raphael Bertrand (Resultic)	<raphael.bertrand@resultic.fr>
  * Copyright (C) 2010-2018	Juanjo Menent				<jmenent@2byte.es>
  * Copyright (C) 2013		Cédric Salvador				<csalvador@gpcsolutions.fr>
  * Copyright (C) 2013-2017	Alexandre Spangaro			<aspangaro@open-dsi.fr>
- * Copyright (C) 2014		Cédric GROSS					<c.gross@kreiz-it.fr>
+ * Copyright (C) 2014		Cédric GROSS				<c.gross@kreiz-it.fr>
  * Copyright (C) 2014-2015	Marcos García				<marcosgdf@gmail.com>
  * Copyright (C) 2015		Jean-François Ferry			<jfefe@aternatik.fr>
- * Copyright (C) 2018-2019  Frédéric France             <frederic.france@netlogic.fr>
+ * Copyright (C) 2018-2020  Frédéric France             <frederic.france@netlogic.fr>
  * Copyright (C) 2019       Thibault Foucart            <support@ptibogxiv.net>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -66,9 +66,9 @@ function getDoliDBInstance($type, $host, $user, $pass, $name, $port)
  * 	@param	string	$element		Current element
  *									'societe', 'socpeople', 'actioncomm', 'agenda', 'resource',
  *									'product', 'productprice', 'stock', 'bom', 'mo',
- *									'propal', 'supplier_proposal', 'invoice', 'facture_fourn', 'payment_various',
+ *									'propal', 'supplier_proposal', 'invoice', 'supplier_invoice', 'payment_various',
  *									'categorie', 'bank_account', 'bank_account', 'adherent', 'user',
- *									'commande', 'commande_fournisseur', 'expedition', 'intervention', 'survey',
+ *									'commande', 'supplier_order', 'expedition', 'intervention', 'survey',
  *									'contract', 'tax', 'expensereport', 'holiday', 'multicurrency', 'project',
  *									'email_template', 'event', 'donation'
  *									'c_paiement', 'c_payment_term', ...
@@ -1549,24 +1549,26 @@ function dol_banner_tab($object, $paramid, $morehtml = '', $shownav = 1, $fieldi
 				}
 			}
 
-			if (!$phototoshow)      // Show No photo link (picto of pbject)
+			if (!$phototoshow)      // Show No photo link (picto of object)
 			{
 			    $morehtmlleft .= '<div class="floatleft inline-block valignmiddle divphotoref">';
 				if ($object->element == 'action')
 				{
 					$width = 80;
 					$cssclass = 'photorefcenter';
-					$nophoto = img_picto('', 'title_agenda', '', false, 1);
+					$nophoto = img_picto('No photo', 'title_agenda');
 				}
 				else
 				{
 					$width = 14; $cssclass = 'photorefcenter';
 					$picto = $object->picto;
 					if ($object->element == 'project' && !$object->public) $picto = 'project'; // instead of projectpub
-					$nophoto = img_picto('', 'object_'.$picto, '', false, 1);
+					$nophoto = img_picto('No photo', 'object_'.$picto);
 				}
 				$morehtmlleft .= '<!-- No photo to show -->';
-				$morehtmlleft .= '<div class="floatleft inline-block valignmiddle divphotoref"><div class="photoref"><img class="photo'.$modulepart.($cssclass ? ' '.$cssclass : '').'" alt="No photo"'.($width ? ' style="width: '.$width.'px"' : '').' src="'.$nophoto.'"></div></div>';
+				$morehtmlleft .= '<div class="floatleft inline-block valignmiddle divphotoref"><div class="photoref">';
+				$morehtmlleft .= $nophoto;
+				$morehtmlleft .= '</div></div>';
 
 				$morehtmlleft .= '</div>';
 			}
@@ -1646,12 +1648,12 @@ function dol_banner_tab($object, $paramid, $morehtml = '', $shownav = 1, $fieldi
 	if (!empty($object->name_alias)) $morehtmlref .= '<div class="refidno">'.$object->name_alias.'</div>';
 
 	// Add label
-	if ($object->element == 'product' || $object->element == 'bank_account' || $object->element == 'project_task')
+	if (in_array($object->element, array('product', 'bank_account', 'project_task')))
 	{
 		if (!empty($object->label)) $morehtmlref .= '<div class="refidno">'.$object->label.'</div>';
 	}
 
-	if (method_exists($object, 'getBannerAddress') && $object->element != 'product' && $object->element != 'bookmark' && $object->element != 'ecm_directories' && $object->element != 'ecm_files')
+	if (method_exists($object, 'getBannerAddress') && !in_array($object->element, array('product', 'bookmark', 'ecm_directories', 'ecm_files')))
 	{
 		$moreaddress = $object->getBannerAddress('refaddress', $object);
 		if ($moreaddress) {
@@ -1660,7 +1662,7 @@ function dol_banner_tab($object, $paramid, $morehtml = '', $shownav = 1, $fieldi
 			$morehtmlref .= '</div>';
 		}
 	}
-	if (!empty($conf->global->MAIN_SHOW_TECHNICAL_ID) && in_array($object->element, array('societe', 'contact', 'member', 'product')))
+	if (!empty($conf->global->MAIN_SHOW_TECHNICAL_ID) && ($conf->global->MAIN_SHOW_TECHNICAL_ID == '1' || preg_match('/'.preg_quote($object->element, '/').'/i', $conf->global->MAIN_SHOW_TECHNICAL_ID)) && !empty($object->id))
 	{
 		$morehtmlref .= '<div style="clear: both;"></div><div class="refidno">';
 		$morehtmlref .= $langs->trans("TechnicalID").': '.$object->id;
@@ -1718,10 +1720,11 @@ function dol_bc($var, $moreclass = '')
  *      @param	string		$sep			Separator to use to build string
  *      @param	Translate	$outputlangs	Object lang that contains language for text translation.
  *      @param	int			$mode			0=Standard output, 1=Remove address
+ *  	@param	string		$extralangcode	User extralanguage $langcode as values for address, town
  *      @return string						Formated string
  *      @see dol_print_address()
  */
-function dol_format_address($object, $withcountry = 0, $sep = "\n", $outputlangs = '', $mode = 0)
+function dol_format_address($object, $withcountry = 0, $sep = "\n", $outputlangs = '', $mode = 0, $extralangcode = '')
 {
 	global $conf, $langs;
 
@@ -1729,15 +1732,15 @@ function dol_format_address($object, $withcountry = 0, $sep = "\n", $outputlangs
 	$countriesusingstate = array('AU', 'CA', 'US', 'IN', 'GB', 'ES', 'UK', 'TR'); // See also MAIN_FORCE_STATE_INTO_ADDRESS
 
 	// See format of addresses on https://en.wikipedia.org/wiki/Address
-
 	// Address
 	if (empty($mode)) {
-		$ret .= $object->address;
+		$ret .= ($extralangcode ? $object->array_languages['address'][$extralangcode] : $object->address);
 	}
 	// Zip/Town/State
 	if (in_array($object->country_code, array('AU', 'CA', 'US')) || !empty($conf->global->MAIN_FORCE_STATE_INTO_ADDRESS))   	// US: title firstname name \n address lines \n town, state, zip \n country
 	{
-		$ret .= ($ret ? $sep : '').$object->town;
+		$town = ($extralangcode ? $object->array_languages['town'][$extralangcode] : $object->town);
+		$ret .= ($ret ? $sep : '').$town;
 		if ($object->state)
 		{
 			$ret .= ($ret ? ", " : '').$object->state;
@@ -1746,7 +1749,8 @@ function dol_format_address($object, $withcountry = 0, $sep = "\n", $outputlangs
 	}
 	elseif (in_array($object->country_code, array('GB', 'UK'))) // UK: title firstname name \n address lines \n town state \n zip \n country
 	{
-		$ret .= ($ret ? $sep : '').$object->town;
+		$town = ($extralangcode ? $object->array_languages['town'][$extralangcode] : $object->town);
+		$ret .= ($ret ? $sep : '').$town;
 		if ($object->state)
 		{
 			$ret .= ($ret ? ", " : '').$object->state;
@@ -1756,7 +1760,8 @@ function dol_format_address($object, $withcountry = 0, $sep = "\n", $outputlangs
 	elseif (in_array($object->country_code, array('ES', 'TR'))) // ES: title firstname name \n address lines \n zip town \n state \n country
 	{
 		$ret .= ($ret ? $sep : '').$object->zip;
-		$ret .= ($object->town ? (($object->zip ? ' ' : '').$object->town) : '');
+		$town = ($extralangcode ? $object->array_languages['town'][$extralangcode] : $object->town);
+		$ret .= ($town ? (($object->zip ? ' ' : '').$town) : '');
 		if ($object->state)
 		{
 			$ret .= "\n".$object->state;
@@ -1765,13 +1770,15 @@ function dol_format_address($object, $withcountry = 0, $sep = "\n", $outputlangs
 	elseif (in_array($object->country_code, array('IT'))) // IT: tile firstname name\n address lines \n zip (Code Departement) \n country
 	{
 		$ret .= ($ret ? $sep : '').$object->zip;
-		$ret .= ($object->town ? (($object->zip ? ' ' : '').$object->town) : '');
+		$town = ($extralangcode ? $object->array_languages['town'][$extralangcode] : $object->town);
+		$ret .= ($town ? (($object->zip ? ' ' : '').$town) : '');
 		$ret .= ($object->state_code ? (' '.($object->state_code)) : '');
 	}
 	else                                        		// Other: title firstname name \n address lines \n zip town \n country
 	{
+		$town = ($extralangcode ? $object->array_languages['town'][$extralangcode] : $object->town);
 		$ret .= $object->zip ? (($ret ? $sep : '').$object->zip) : '';
-		$ret .= ($object->town ? (($object->zip ? ' ' : ($ret ? $sep : '')).$object->town) : '');
+		$ret .= ($town ? (($object->zip ? ' ' : ($ret ? $sep : '')).$town) : '');
 		if ($object->state && in_array($object->country_code, $countriesusingstate))
 		{
 			$ret .= ($ret ? ", " : '').$object->state;
@@ -2264,10 +2271,15 @@ function dol_print_email($email, $cid = 0, $socid = 0, $addlink = 0, $max = 64, 
 		}
 	}
 
-	$rep = '<div class="nospan" style="margin-right: 10px">'.($withpicto ?img_picto($langs->trans("EMail"), 'object_email.png').' ' : '').$newemail.'</div>';
+	//$rep = '<div class="nospan" style="margin-right: 10px">';
+	$rep = ($withpicto ?img_picto($langs->trans("EMail").' : '.$email, 'object_email.png').' ' : '').$newemail;
+	//$rep .= '</div>';
 	if ($hookmanager) {
 		$parameters = array('cid' => $cid, 'socid' => $socid, 'addlink' => $addlink, 'picto' => $withpicto);
 		$reshook = $hookmanager->executeHooks('printEmail', $parameters, $email);
+		if ($reshook > 0) {
+			$rep = '';
+		}
 		$rep .= $hookmanager->resPrint;
 	}
 
@@ -2373,6 +2385,7 @@ function dol_print_phone($phone, $countrycode = '', $cid = 0, $socid = 0, $addli
 	// Clean phone parameter
 	$phone = preg_replace("/[\s.-]/", "", trim($phone));
 	if (empty($phone)) { return ''; }
+	if ($conf->global->MAIN_PHONE_SEPAR) $separ = $conf->global->MAIN_PHONE_SEPAR;
 	if (empty($countrycode)) $countrycode = $mysoc->country_code;
 
 	// Short format for small screens
@@ -2674,8 +2687,9 @@ function dol_print_phone($phone, $countrycode = '', $cid = 0, $socid = 0, $addli
 	{
 		if ($conf->browser->layout == 'phone' || (!empty($conf->clicktodial->enabled) && !empty($conf->global->CLICKTODIAL_USE_TEL_LINK_ON_PHONE_NUMBERS)))	// If phone or option for, we use link of phone
 		{
+			$newphoneform = $newphone;
 			$newphone = '<a href="tel:'.$phone.'"';
-			$newphone .= '>'.$phone.'</a>';
+			$newphone .= '>'.$newphoneform.'</a>';
 		}
 		elseif (!empty($conf->clicktodial->enabled) && $addlink == 'AC_TEL')		// If click to dial, we use click to dial url
 		{
@@ -2853,16 +2867,16 @@ function dol_user_country()
 /**
  *  Format address string
  *
- *  @param	string	$address    Address
+ *  @param	string	$address    Address string, already formatted with dol_format_address()
  *  @param  int		$htmlid     Html ID (for example 'gmap')
- *  @param  int		$mode       thirdparty|contact|member|other
+ *  @param  int		$element    'thirdparty'|'contact'|'member'|'other'
  *  @param  int		$id         Id of object
  *  @param	int		$noprint	No output. Result is the function return
  *  @param  string  $charfornl  Char to use instead of nl2br. '' means we use a standad nl2br.
  *  @return string|void			Nothing if noprint is 0, formatted address if noprint is 1
  *  @see dol_format_address()
  */
-function dol_print_address($address, $htmlid, $mode, $id, $noprint = 0, $charfornl = '')
+function dol_print_address($address, $htmlid, $element, $id, $noprint = 0, $charfornl = '')
 {
 	global $conf, $user, $langs, $hookmanager;
 
@@ -2871,7 +2885,7 @@ function dol_print_address($address, $htmlid, $mode, $id, $noprint = 0, $charfor
 	if ($address)
 	{
 		if ($hookmanager) {
-			$parameters = array('element' => $mode, 'id' => $id);
+			$parameters = array('element' => $element, 'id' => $id);
 			$reshook = $hookmanager->executeHooks('printAddress', $parameters, $address);
 			$out .= $hookmanager->resPrint;
 		}
@@ -2880,24 +2894,22 @@ function dol_print_address($address, $htmlid, $mode, $id, $noprint = 0, $charfor
 			if (empty($charfornl)) $out .= nl2br($address);
 			else $out .= preg_replace('/[\r\n]+/', $charfornl, $address);
 
+			// TODO Remove this block, we can add this using the hook now
 			$showgmap = $showomap = 0;
-
-			// TODO Add a hook here
-			if (($mode == 'thirdparty' || $mode == 'societe') && !empty($conf->google->enabled) && !empty($conf->global->GOOGLE_ENABLE_GMAPS)) $showgmap = 1;
-			if ($mode == 'contact' && !empty($conf->google->enabled) && !empty($conf->global->GOOGLE_ENABLE_GMAPS_CONTACTS)) $showgmap = 1;
-			if ($mode == 'member' && !empty($conf->google->enabled) && !empty($conf->global->GOOGLE_ENABLE_GMAPS_MEMBERS)) $showgmap = 1;
-			if (($mode == 'thirdparty' || $mode == 'societe') && !empty($conf->openstreetmap->enabled) && !empty($conf->global->OPENSTREETMAP_ENABLE_MAPS)) $showomap = 1;
-			if ($mode == 'contact' && !empty($conf->openstreetmap->enabled) && !empty($conf->global->OPENSTREETMAP_ENABLE_MAPS_CONTACTS)) $showomap = 1;
-			if ($mode == 'member' && !empty($conf->openstreetmap->enabled) && !empty($conf->global->OPENSTREETMAP_ENABLE_MAPS_MEMBERS)) $showomap = 1;
-
+			if (($element == 'thirdparty' || $element == 'societe') && !empty($conf->google->enabled) && !empty($conf->global->GOOGLE_ENABLE_GMAPS)) $showgmap = 1;
+			if ($element == 'contact' && !empty($conf->google->enabled) && !empty($conf->global->GOOGLE_ENABLE_GMAPS_CONTACTS)) $showgmap = 1;
+			if ($element == 'member' && !empty($conf->google->enabled) && !empty($conf->global->GOOGLE_ENABLE_GMAPS_MEMBERS)) $showgmap = 1;
+			if (($element == 'thirdparty' || $element == 'societe') && !empty($conf->openstreetmap->enabled) && !empty($conf->global->OPENSTREETMAP_ENABLE_MAPS)) $showomap = 1;
+			if ($element == 'contact' && !empty($conf->openstreetmap->enabled) && !empty($conf->global->OPENSTREETMAP_ENABLE_MAPS_CONTACTS)) $showomap = 1;
+			if ($element == 'member' && !empty($conf->openstreetmap->enabled) && !empty($conf->global->OPENSTREETMAP_ENABLE_MAPS_MEMBERS)) $showomap = 1;
 			if ($showgmap)
 			{
-				$url = dol_buildpath('/google/gmaps.php?mode='.$mode.'&id='.$id, 1);
+				$url = dol_buildpath('/google/gmaps.php?mode='.$element.'&id='.$id, 1);
 				$out .= ' <a href="'.$url.'" target="_gmaps"><img id="'.$htmlid.'" class="valigntextbottom" src="'.DOL_URL_ROOT.'/theme/common/gmap.png"></a>';
 			}
 			if ($showomap)
 			{
-				$url = dol_buildpath('/openstreetmap/maps.php?mode='.$mode.'&id='.$id, 1);
+				$url = dol_buildpath('/openstreetmap/maps.php?mode='.$element.'&id='.$id, 1);
 				$out .= ' <a href="'.$url.'" target="_gmaps"><img id="'.$htmlid.'_openstreetmap" class="valigntextbottom" src="'.DOL_URL_ROOT.'/theme/common/gmap.png"></a>';
 			}
 		}
@@ -3127,59 +3139,74 @@ function img_picto($titlealt, $picto, $moreatt = '', $pictoisfullpath = false, $
 	} else {
 		$pictowithouttext = preg_replace('/(\.png|\.gif|\.svg)$/', '', $picto);
 
-		//if (in_array($picto, array('switch_off', 'switch_on', 'off', 'on')))
         if (empty($srconly) && in_array($pictowithouttext, array(
         		'1downarrow', '1uparrow', '1leftarrow', '1rightarrow', '1uparrow_selected', '1downarrow_selected', '1leftarrow_selected', '1rightarrow_selected',
-        		'address', 'barcode', 'bank', 'bookmark', 'building', 'cash-register', 'check', 'close_title', 'cubes', 'delete', 'dolly', 'edit', 'ellipsis-h',
-        		'filter', 'file-code', 'grip', 'grip_title', 'list', 'listlight', 'note',
-        		'object_bookmark', 'object_list', 'object_calendar', 'object_calendarweek', 'object_calendarmonth', 'object_calendarday', 'object_calendarperuser',
-        		'off', 'on', 'play', 'playdisabled', 'printer', 'resize', 'stats',
-				'note', 'setup', 'sign-out', 'split', 'switch_off', 'switch_on', 'tools', 'unlink', 'uparrow', 'user', 'wrench', 'globe',
+        		'accountancy', 'address', 'bank_account', 'barcode', 'bank', 'bill', 'bookmark', 'bom', 'building',
+        		'cash-register', 'check', 'close_title', 'company', 'contact', 'contract', 'cubes',
+        		'delete', 'dolly', 'dollyrevert', 'edit', 'ellipsis-h', 'external-link-alt', 'external-link-square-alt',
+        		'filter', 'file-code', 'file-export', 'file-import', 'file-upload', 'folder', 'folder-open', 'globe', 'globe-americas', 'grip', 'grip_title', 'help',
+        		'intervention', 'language', 'list', 'listlight', 'lot',
+        		'map-marker-alt', 'money-bill-alt', 'mrp', 'note',
+        		'object_accounting', 'object_action', 'object_account', 'object_barcode', 'object_bill', 'object_billa', 'object_billd', 'object_bom',
+	        	'object_category', 'object_bookmark', 'object_bug', 'object_dolly', 'object_dollyrevert', 'object_generic', 'object_folder',
+        		'object_list-alt', 'object_calendar', 'object_calendarweek', 'object_calendarmonth', 'object_calendarday', 'object_calendarperuser',
+        		'object_cash-register', 'object_company', 'object_contact', 'object_contract', 'object_donation', 'object_dynamicprice',
+        		'object_holiday', 'object_hrm', 'object_intervention', 'object_margin', 'object_money-bill-alt', 'object_multicurrency', 'object_order', 'object_payment',
+        		'object_lot', 'object_mrp', 'object_payment', 'object_product', 'object_propal',
+        		'object_other', 'object_paragraph', 'object_poll', 'object_printer', 'object_project', 'object_projectpub', 'object_propal', 'object_resource', 'object_rss', 'object_projecttask',
+        		'object_supplier_invoice', 'object_supplier_order', 'object_supplier_proposal', 'object_service', 'object_stock',
+        		'object_technic', 'object_ticket', 'object_trip', 'object_user', 'object_group', 'object_member',
+        		'object_phoning', 'object_phoning_mobile', 'object_phoning_fax', 'object_email',
+        		'off', 'on', 'order',
+        		'paiment', 'play', 'playdisabled', 'poll', 'printer', 'product', 'propal',  'projecttask', 'stock', 'resize', 'service', 'stats', 'trip',
+				'setup', 'sign-out', 'split', 'switch_off', 'switch_on', 'tools', 'unlink', 'uparrow', 'user', 'wrench',
 				'jabber', 'skype', 'twitter', 'facebook', 'linkedin', 'instagram', 'snapchat', 'youtube', 'google-plus-g', 'whatsapp',
 				'chevron-left', 'chevron-right', 'chevron-down', 'chevron-top',
-				'home', 'companies', 'products', 'commercial', 'invoicing', 'accountancy', 'preview', 'project', 'hrm', 'members', 'ticket', 'generic',
-        		'error', 'warning',
+				'home', 'companies', 'products', 'commercial', 'invoicing', 'preview', 'project', 'projectpub', 'supplier_invoice', 'hrm', 'members', 'ticket', 'generic',
+        		'error', 'warning', 'supplier_proposal', 'supplier_order', 'supplier_invoice',
         		'title_setup', 'title_accountancy', 'title_bank', 'title_hrm', 'title_agenda'
 			)
 		)) {
 			$fakey = $pictowithouttext;
 			$facolor = ''; $fasize = '';
 			$fa = 'fas';
-			if (in_array($pictowithouttext, array('off', 'on', 'object_bookmark', 'bookmark'))) {
+			if (in_array($pictowithouttext, array('object_generic', 'note', 'off', 'on', 'object_bookmark', 'bookmark'))) {
 				$fa = 'far';
 			}
 			if (in_array($pictowithouttext, array('skype', 'twitter', 'facebook', 'linkedin', 'instagram', 'snapchat', 'youtube', 'google-plus-g', 'whatsapp'))) {
 				$fa = 'fab';
 			}
 
+			$pictowithouttext = str_replace('object_', '', $pictowithouttext);
+
 		    $arrayconvpictotofa = array(
-		    	'address'=> 'address-book', 'setup'=>'cog', 'companies'=>'building', 'products'=>'cube', 'commercial'=>'suitcase', 'invoicing'=>'coins', 'accountancy'=>'money-check-alt',
-		    	'hrm'=>'umbrella-beach', 'members'=>'users', 'ticket'=>'ticket-alt', 'generic'=>'folder-open',
-		    	'switch_off'=>'toggle-off', 'switch_on'=>'toggle-on', 'check'=>'check', 'object_bookmark'=>'star', 'bookmark'=>'star', 'stats' => 'chart-bar',
-		    	'bank'=>'university', 'close_title'=>'window-close', 'delete'=>'trash', 'edit'=>'pencil', 'filter'=>'filter', 'split'=>'code-branch',
-		    	'object_list'=>'list-alt', 'object_calendar'=>'calendar-alt', 'object_calendarweek'=>'calendar-week', 'object_calendarmonth'=>'calendar-alt', 'object_calendarday'=>'calendar-day', 'object_calendarperuser'=>'table',
+		    	'account'=>'university', 'accountancy'=>'money-check-alt', 'action'=>'calendar-alt', 'address'=> 'address-book',
+		    	'bank_account'=>'university', 'bill'=>'file-invoice-dollar', 'billa'=>'file-excel', 'billd'=>'file-medical', 'bom'=>'cubes',
+		    	'company'=>'building', 'contact'=>'address-book', 'contract'=>'suitcase', 'donation'=>'file-alt', 'dynamicprice'=>'hand-holding-usd',
+		    	'setup'=>'cog', 'companies'=>'building', 'products'=>'cube', 'commercial'=>'suitcase', 'invoicing'=>'coins',
+		    	'accounting'=>'chart-line', 'category'=>'tag', 'dollyrevert'=>'dolly',
+		    	'hrm'=>'umbrella-beach', 'margin'=>'calculator', 'members'=>'users', 'ticket'=>'ticket-alt', 'globe'=>'external-link-alt', 'lot'=>'barcode',
+		    	'email'=>'at',
+		    	'edit'=>'pencil-alt', 'grip_title'=>'arrows-alt', 'grip'=>'arrows-alt', 'help'=>'info-circle',
+		    	'generic'=>'file', 'holiday'=>'umbrella-beach', 'member'=>'users', 'mrp'=>'cubes', 'trip'=>'wallet', 'group'=>'users',
+		    	'sign-out'=>'sign-out-alt',
+		    	'switch_off'=>'toggle-off', 'switch_on'=>'toggle-on', 'check'=>'check', 'bookmark'=>'star', 'bookmark'=>'star',
+		    	'bank'=>'university', 'close_title'=>'window-close', 'delete'=>'trash', 'edit'=>'pencil-alt', 'filter'=>'filter',
+		    	'list-alt'=>'list-alt', 'calendar'=>'calendar-alt', 'calendarweek'=>'calendar-week', 'calendarmonth'=>'calendar-alt', 'calendarday'=>'calendar-day', 'calendarperuser'=>'table',
+		    	'intervention'=>'ambulance', 'multicurrency'=>'dollar-sign', 'order'=>'file-invoice',
 		    	'error'=>'exclamation-triangle', 'warning'=>'exclamation-triangle',
-		    	'title_setup'=>'tools', 'title_accountancy'=>'money-check-alt', 'title_bank'=>'university', 'title_hrm'=>'umbrella-beach', 'title_agenda'=>'calendar-alt',
-		    	'preview'=>'binoculars', 'project'=>'sitemap'
+		    	'other'=>'square',
+		    	'playdisabled'=>'play', 'poll'=>'check-double', 'preview'=>'binoculars', 'project'=>'sitemap', 'projectpub'=>'sitemap', 'projecttask'=>'tasks', 'propal'=>'file-signature',
+				'resize'=>'crop', 'supplier_order'=>'dol-order_supplier', 'supplier_proposal'=>'file-signature',
+		    	'payment'=>'money-check-alt', 'phoning'=>'phone', 'phoning_mobile'=>'mobile-alt', 'phoning_fax'=>'fax', 'printer'=>'print', 'product'=>'cube', 'service'=>'concierge-bell',
+		    	'resource'=>'laptop-house',
+		    	'stock'=>'box-open', 'stats' => 'chart-bar', 'split'=>'code-branch', 'supplier_invoice'=>'file-invoice-dollar', 'technic'=>'cogs', 'ticket'=>'ticket-alt',
+		    	'title_setup'=>'tools', 'title_accountancy'=>'money-check-alt', 'title_bank'=>'university', 'title_hrm'=>'umbrella-beach',
+		    	'title_agenda'=>'calendar-alt',
+		    	'uparrow'=>'mail-forward',
+		    	'jabber'=>'comment-o'
 		    );
-		    if ($pictowithouttext == 'error' || $pictowithouttext == 'warning') {
-		    	$facolor = '';
-		    	$fakey = 'fa-'.$arrayconvpictotofa[$pictowithouttext];
-		    	$marginleftonlyshort = 0;
-		    	$morecss .= ($morecss ? ' ' : '').('picto'.$pictowithouttext);
-		    } elseif ($pictowithouttext == 'switch_off') {
-				$facolor = '#999';
-				$fakey = 'fa-'.$arrayconvpictotofa[$pictowithouttext];
-			}
-			elseif ($pictowithouttext == 'switch_on') {
-				$morecss .= ($morecss ? ' ' : '').'font-status4';
-				$fakey = 'fa-'.$arrayconvpictotofa[$pictowithouttext];
-			}
-			elseif ($pictowithouttext == 'check') {
-				$morecss .= ($morecss ? ' ' : '').'font-status4';
-				$fakey = 'fa-'.$arrayconvpictotofa[$pictowithouttext];
-			}
-			elseif ($pictowithouttext == 'off') {
+			if ($pictowithouttext == 'off') {
 			    $fakey = 'fa-square';
 				$fasize = '1.3em';
 			}
@@ -3187,47 +3214,17 @@ function img_picto($titlealt, $picto, $moreatt = '', $pictoisfullpath = false, $
 			    $fakey = 'fa-check-square';
 				$fasize = '1.3em';
 			}
-			elseif ($pictowithouttext == 'bank') {
-				$fakey = 'fa-'.$arrayconvpictotofa[$pictowithouttext];
-			}
-			elseif ($pictowithouttext == 'stats') {
-				$fakey = 'fa-'.$arrayconvpictotofa[$pictowithouttext];
-				$facolor = '#444';
-			}
-			elseif ($pictowithouttext == 'delete') {
-				$fakey = 'fa-'.$arrayconvpictotofa[$pictowithouttext];
-				$facolor = '#444';
-			}
-			elseif ($pictowithouttext == 'edit') {
-				$facolor = '#444';
-				$fakey = 'fa-pencil-alt';
-			}
-			elseif ($pictowithouttext == 'grip_title' || $pictowithouttext == 'grip') {
-				$fakey = 'fa-arrows-alt';
-			}
 			elseif ($pictowithouttext == 'listlight') {
 				$fakey = 'fa-download';
-				$facolor = '#999';
 				$marginleftonlyshort = 1;
 			}
 			elseif ($pictowithouttext == 'printer') {
 				$fakey = 'fa-print';
 				$fasize = '1.2em';
-				$facolor = '#444';
-			}
-			elseif ($pictowithouttext == 'resize') {
-				$fakey = 'fa-crop';
-				$facolor = '#444';
 			}
 			elseif ($pictowithouttext == 'note') {
 			    $fakey = 'fa-sticky-note';
-			    $fa = 'far';
-				$facolor = '#999';
 				$marginleftonlyshort = 1;
-			}
-			elseif ($pictowithouttext == 'uparrow') {
-				$fakey = 'fa-mail-forward';
-				$facolor = '#555';
 			}
 			elseif (in_array($pictowithouttext, array('1uparrow', '1downarrow', '1leftarrow', '1rightarrow', '1uparrow_selected', '1downarrow_selected', '1leftarrow_selected', '1rightarrow_selected'))) {
 			    $convertarray = array('1uparrow'=>'caret-up', '1downarrow'=>'caret-down', '1leftarrow'=>'caret-left', '1rightarrow'=>'caret-right', '1uparrow_selected'=>'caret-up', '1downarrow_selected'=>'caret-down', '1leftarrow_selected'=>'caret-left', '1rightarrow_selected'=>'caret-right');
@@ -3235,44 +3232,63 @@ function img_picto($titlealt, $picto, $moreatt = '', $pictoisfullpath = false, $
 			    if (preg_match('/selected/', $pictowithouttext)) $facolor = '#888';
 				$marginleftonlyshort = 1;
 			}
-			elseif ($pictowithouttext == 'sign-out') {
-				$fakey = 'fa-sign-out-alt';
-			    $marginleftonlyshort = 0;
-			}
-			elseif ($pictowithouttext == 'unlink') {
-				$fakey = 'fa-unlink';
-				$facolor = '#555';
-			}
-			elseif ($pictowithouttext == 'playdisabled') {
-				$fakey = 'fa-play';
-				$facolor = '#ccc';
-			}
-			elseif ($pictowithouttext == 'play') {
-				$fakey = 'fa-play';
-				$facolor = '#444';
-			}
-			elseif ($pictowithouttext == 'jabber') {
-				$fakey = 'fa-comment-o';
-			}
-			// Img for type of views
-			elseif (in_array($pictowithouttext, array('object_list', 'object_calendar', 'object_calendarweek', 'object_calendarmonth', 'object_calendarday', 'object_calendarperuser'))) {
-				$fakey = 'imgforviewmode fa-'.$arrayconvpictotofa[$pictowithouttext];
-				$marginleftonlyshort = 0;
-			}
 			elseif (!empty($arrayconvpictotofa[$pictowithouttext]))
 			{
 				$fakey = 'fa-'.$arrayconvpictotofa[$pictowithouttext];
-				//$facolor = '#444';
-				$marginleftonlyshort = 0;
 			}
 			else {
 				$fakey = 'fa-'.$pictowithouttext;
-				//$facolor = '#444';
+			}
+
+			// Define $marginleftonlyshort
+			$arrayconvpictotomarginleftonly = array(
+				'bank', 'check', 'delete', 'generic', 'grip', 'grip_title', 'jabber',
+				'grip_title', 'grip', 'listlight', 'note', 'on', 'off', 'playdisabled', 'printer', 'resize', 'sign-out', 'stats', 'switch_on', 'switch_off',
+				'uparrow', '1uparrow', '1downarrow', '1leftarrow', '1rightarrow', '1uparrow_selected', '1downarrow_selected', '1leftarrow_selected', '1rightarrow_selected'
+			);
+			if (!isset($arrayconvpictotomarginleftonly[$pictowithouttext])) {
 				$marginleftonlyshort = 0;
 			}
 
-			//this snippet only needed since function img_edit accepts only one additional parameter: no separate one for css only.
-            //class/style need to be extracted to avoid duplicate class/style validation errors when $moreatt is added to the end of the attributes
+			// Add CSS
+			$arrayconvpictotomorcess = array(
+				'action'=>'bg-infobox-action', 'account'=>'bg-infobox-bank_account', 'accountancy'=>'bg-infobox-bank_account',
+				'bank_account'=>'bg-infobox-bank_account', 'bill'=>'bg-infobox-commande', 'billa'=>'bg-infobox-commande', 'billd'=>'bg-infobox-commande',
+				'cash-register'=>'bg-infobox-bank_account', 'contract'=>'bg-infobox-contrat', 'check'=>'font-status4',
+				'donation'=>'bg-infobox-commande', 'dollyrevert'=>'flip', 'ecm'=>'bg-infobox-action',
+				'hrm'=>'bg-infobox-adherent', 'group'=>'bg-infobox-adherent', 'intervention'=>'bg-infobox-contrat',
+				'multicurrency'=>'bg-infobox-bank_account',
+				'members'=>'bg-infobox-adherent', 'member'=>'bg-infobox-adherent', 'money-bill-alt'=>'bg-infobox-bank_account',
+				'order'=>'bg-infobox-commande',
+				'user'=>'bg-infobox-adherent', 'users'=>'bg-infobox-adherent',
+				'error'=>'pictoerror', 'warning'=>'pictowarning', 'switch_on'=>'font-status4',
+				'holiday'=>'bg-infobox-holiday',
+				'payment'=>'bg-infobox-bank_account', 'poll'=>'bg-infobox-adherent', 'project'=>'bg-infobox-project', 'projecttask'=>'bg-infobox-project', 'propal'=>'bg-infobox-propal',
+				'resource'=>'bg-infobox-action', 'supplier_invoice'=>'bg-infobox-order_supplier', 'supplier_order'=>'bg-infobox-order_supplier', 'supplier_proposal'=>'bg-infobox-supplier_proposal',
+				'ticket'=>'bg-infobox-contrat', 'title_accountancy'=>'bg-infobox-bank_account', 'title_hrm'=>'bg-infobox-holiday', 'trip'=>'bg-infobox-expensereport', 'title_agenda'=>'bg-infobox-action',
+				'list-alt'=>'imgforviewmode', 'calendar'=>'imgforviewmode', 'calendarweek'=>'imgforviewmode', 'calendarmonth'=>'imgforviewmode', 'calendarday'=>'imgforviewmode', 'calendarperuser'=>'imgforviewmode'
+			);
+			if (!empty($arrayconvpictotomorcess[$pictowithouttext])) {
+				$morecss .= ($morecss ? ' ' : '').$arrayconvpictotomorcess[$pictowithouttext];
+			}
+
+			// Define $color
+			$arrayconvpictotocolor = array(
+				'address'=>'#37a', 'building'=>'#37a', 'bom'=>'#a69944',
+				'companies'=>'#37a', 'company'=>'#37a', 'contact'=>'#37a', 'dynamicprice'=>'#a69944',
+				'edit'=>'#444', 'note'=>'#999', 'error'=>'', 'listlight'=>'#999',
+				'dolly'=>'#a69944', 'dollyrevert'=>'#a69944', 'lot'=>'#a69944',
+				'map-marker-alt'=>'#aaa', 'mrp'=>'#a69944', 'product'=>'#a69944', 'service'=>'#a69944', 'stock'=>'#a69944',
+				'other'=>'#ddd',
+				'playdisabled'=>'#ccc', 'printer'=>'#444', 'projectpub'=>'#986c6a', 'resize'=>'#444', 'rss'=>'#cba',
+				'stats'=>'#444', 'switch_off'=>'#999', 'uparrow'=>'#555', 'globe-americas'=>'#aaa'
+			);
+			if (isset($arrayconvpictotocolor[$pictowithouttext])) {
+				$facolor = $arrayconvpictotocolor[$pictowithouttext];
+			}
+
+			// This snippet only needed since function img_edit accepts only one additional parameter: no separate one for css only.
+            // class/style need to be extracted to avoid duplicate class/style validation errors when $moreatt is added to the end of the attributes.
             $reg = array();
 			if (preg_match('/class="([^"]+)"/', $moreatt, $reg)) {
                 $morecss .= ($morecss ? ' ' : '').$reg[1];
@@ -3305,6 +3321,7 @@ function img_picto($titlealt, $picto, $moreatt = '', $pictoisfullpath = false, $
 		}
 
 		// If we ask an image into $url/$mymodule/img (instead of default path)
+		$regs = array();
 		if (preg_match('/^([^@]+)@([^@]+)$/i', $picto, $regs)) {
 			$picto = $regs[1];
 			$path = $regs[2]; // $path is $mymodule
@@ -3349,11 +3366,12 @@ function img_picto($titlealt, $picto, $moreatt = '', $pictoisfullpath = false, $
  *	@param	int		$srconly			Return only content of the src attribute of img.
  *  @param	int		$notitle			1=Disable tag title. Use it if you add js tooltip, to avoid duplicate tooltip.
  *	@return	string						Return img tag
- *	@see	#img_picto, #img_picto_common
+ *	@see	img_picto(), img_picto_common()
  */
 function img_object($titlealt, $picto, $moreatt = '', $pictoisfullpath = false, $srconly = 0, $notitle = 0)
 {
-	return img_picto($titlealt, 'object_'.$picto, $moreatt, $pictoisfullpath, $srconly, $notitle);
+	if (strpos($picto, '^') === 0) return img_picto($titlealt, str_replace('^', '', $picto), $moreatt, $pictoisfullpath, $srconly, $notitle);
+	else return img_picto($titlealt, 'object_'.$picto, $moreatt, $pictoisfullpath, $srconly, $notitle);
 }
 
 /**
@@ -3365,7 +3383,7 @@ function img_object($titlealt, $picto, $moreatt = '', $pictoisfullpath = false, 
  *	@param		int			$pictoisfullpath	If 1, image path is a full path
  *  @param      string      $morecss            More CSS
  *	@return     string      					Return img tag
- *  @see        #img_object, #img_picto
+ *  @see        img_object(), img_picto()
  */
 function img_weather($titlealt, $picto, $moreatt = '', $pictoisfullpath = 0, $morecss = '')
 {
@@ -3392,7 +3410,7 @@ function img_weather($titlealt, $picto, $moreatt = '', $pictoisfullpath = 0, $mo
  *	@param		string		$moreatt			Add more attribute on img tag
  *	@param		int			$pictoisfullpath	If 1, image path is a full path
  *	@return     string      					Return img tag
- *  @see        #img_object, #img_picto
+ *  @see        img_object(), img_picto()
  */
 function img_picto_common($titlealt, $picto, $moreatt = '', $pictoisfullpath = 0)
 {
@@ -3529,16 +3547,16 @@ function img_view($titlealt = 'default', $float = 0, $other = '')
  *
  *  @param	string	$titlealt   Text on alt and title of image. Alt only if param notitle is set to 1. If text is "TextA:TextB", use Text A on alt and Text B on title.
  *	@param  string	$other      Add more attributes on img
+ *  @param	string	$morecss	More CSS
  *  @return string      		Retourne tag img
  */
-function img_delete($titlealt = 'default', $other = 'class="pictodelete"')
+function img_delete($titlealt = 'default', $other = 'class="pictodelete"', $morecss = '')
 {
 	global $langs;
 
 	if ($titlealt == 'default') $titlealt = $langs->trans('Delete');
 
-	return img_picto($titlealt, 'delete.png', $other);
-	//return '<span class="fa fa-trash fa-2x fa-fw" style="font-size: 1.7em;" title="'.$titlealt.'"></span>';
+	return img_picto($titlealt, 'delete.png', $other, false, 0, 0, '', $morecss);
 }
 
 /**
@@ -3763,10 +3781,13 @@ function img_allow($allow, $titlealt = 'default')
  *	Return image of a credit card according to its brand name
  *
  *	@param	string	$brand		Brand name of credit card
+ *  @param	string	$morecss	More CSS
  *	@return string     			Return img tag
  */
-function img_credit_card($brand)
+function img_credit_card($brand, $morecss = null)
 {
+	if (is_null($morecss)) $morecss = 'fa-2x';
+
 	if ($brand == 'visa' || $brand == 'Visa') {$brand = 'cc-visa'; }
 	elseif ($brand == 'mastercard' || $brand == 'MasterCard') {$brand = 'cc-mastercard'; }
 	elseif ($brand == 'amex' || $brand == 'American Express') {$brand = 'cc-amex'; }
@@ -3775,7 +3796,7 @@ function img_credit_card($brand)
 	elseif ($brand == 'diners' || $brand == 'Diners club') {$brand = 'cc-diners-club'; }
 	elseif (!in_array($brand, array('cc-visa', 'cc-mastercard', 'cc-amex', 'cc-discover', 'cc-jcb', 'cc-diners-club'))) {$brand = 'credit-card'; }
 
-	return '<span class="fa fa-'.$brand.' fa-2x fa-fw"></span>';
+	return '<span class="fa fa-'.$brand.' fa-fw'.($morecss ? ' '.$morecss : '').'"></span>';
 }
 
 /**
@@ -4189,12 +4210,12 @@ function getTitleFieldOfList($name, $thead = 0, $file = "", $field = "", $begin 
 			if (preg_match('/^DESC/', $sortorder)) {
 				//$out.= '<a href="'.$file.'?sortfield='.$field.'&sortorder=asc&begin='.$begin.$options.'">'.img_down("A-Z",0).'</a>';
 				//$out.= '<a href="'.$file.'?sortfield='.$field.'&sortorder=desc&begin='.$begin.$options.'">'.img_up("Z-A",1).'</a>';
-				$sortimg .= '<span class="nowrap">'.img_up("Z-A", 0).'</span>';
+				$sortimg .= '<span class="nowrap">'.img_up("Z-A", 0, 'paddingleft').'</span>';
 			}
 			if (preg_match('/^ASC/', $sortorder)) {
 				//$out.= '<a href="'.$file.'?sortfield='.$field.'&sortorder=asc&begin='.$begin.$options.'">'.img_down("A-Z",1).'</a>';
 				//$out.= '<a href="'.$file.'?sortfield='.$field.'&sortorder=desc&begin='.$begin.$options.'">'.img_up("Z-A",0).'</a>';
-				$sortimg .= '<span class="nowrap">'.img_down("A-Z", 0).'</span>';
+				$sortimg .= '<span class="nowrap">'.img_down("A-Z", 0, 'paddingleft').'</span>';
 			}
 		}
 	}
@@ -4261,7 +4282,7 @@ function load_fiche_titre($titre, $morehtmlright = '', $picto = 'generic', $pict
 	$return .= "\n";
 	$return .= '<table '.($id ? 'id="'.$id.'" ' : '').'class="centpercent notopnoleftnoright table-fiche-title'.($morecssontable ? ' '.$morecssontable : '').'">'; // maring bottom must be same than into print_barre_list
 	$return .= '<tr class="titre">';
-	if ($picto) $return .= '<td class="nobordernopadding widthpictotitle opacityhigh valignmiddle col-picto">'.img_picto('', $picto, 'class="valignmiddle widthpictotitle pictotitle"', $pictoisfullpath).'</td>';
+	if ($picto) $return .= '<td class="nobordernopadding widthpictotitle valignmiddle col-picto">'.img_picto('', $picto, 'class="valignmiddle widthpictotitle pictotitle"', $pictoisfullpath).'</td>';
 	$return .= '<td class="nobordernopadding valignmiddle col-title">';
 	$return .= '<div class="titre inline-block">'.$titre.'</div>';
 	$return .= '</td>';
@@ -4327,7 +4348,7 @@ function print_barre_liste($titre, $page, $file, $options = '', $sortfield = '',
 
 	// Left
 
-	if ($picto && $titre) print '<td class="nobordernopadding widthpictotitle opacityhigh valignmiddle col-picto">'.img_picto('', $picto, 'class="valignmiddle pictotitle widthpictotitle"', $pictoisfullpath).'</td>';
+	if ($picto && $titre) print '<td class="nobordernopadding widthpictotitle valignmiddle col-picto">'.img_picto('', $picto, 'class="valignmiddle pictotitle widthpictotitle"', $pictoisfullpath).'</td>';
 	print '<td class="nobordernopadding valignmiddle col-title">';
 	print '<div class="titre inline-block">'.$titre;
 	if (!empty($titre) && $savtotalnboflines >= 0 && (string) $savtotalnboflines != '') print '<span class="opacitymedium colorblack paddingleft">('.$totalnboflines.')</span>';
@@ -4629,7 +4650,7 @@ function price($amount, $form = 0, $outlangs = '', $trunc = 1, $rounding = -1, $
 	{
 		if ($currency_code == 'auto') $currency_code = $conf->currency;
 
-		$listofcurrenciesbefore = array('USD', 'GBP', 'AUD', 'HKD', 'MXN', 'PEN', 'CNY', 'CAD');
+		$listofcurrenciesbefore = array('AUD', 'CAD', 'CNY', 'COP', 'CLP', 'GBP', 'HKD', 'MXN', 'PEN', 'USD');
 		$listoflanguagesbefore = array('nl_NL');
 		if (in_array($currency_code, $listofcurrenciesbefore) || in_array($outlangs->defaultlang, $listoflanguagesbefore))
 		{
@@ -4649,13 +4670,14 @@ function price($amount, $form = 0, $outlangs = '', $trunc = 1, $rounding = -1, $
 /**
  *	Function that return a number with universal decimal format (decimal separator is '.') from an amount typed by a user.
  *	Function to use on each input amount before any numeric test or database insert. A better name for this function
- *  should be text2num().
+ *  should be roundtext2num().
  *
- *	@param	float	$amount			Amount to convert/clean
+ *	@param	float	$amount			Amount to convert/clean or round
  *	@param	string	$rounding		''=No rounding
  * 									'MU'=Round to Max unit price (MAIN_MAX_DECIMALS_UNIT)
  *									'MT'=Round to Max for totals with Tax (MAIN_MAX_DECIMALS_TOT)
  *									'MS'=Round to Max for stock quantity (MAIN_MAX_DECIMALS_STOCK)
+ *                                  'CR'=Currency rate
  *									Numeric = Nb of digits for rounding
  * 	@param	int		$alreadysqlnb	Put 1 if you know that content is already universal format number
  *	@return	string					Amount with universal numeric format (Example: '99.99999').
@@ -4709,6 +4731,7 @@ function price2num($amount, $rounding = '', $alreadysqlnb = 0)
 		if ($rounding == 'MU')     $nbofdectoround = $conf->global->MAIN_MAX_DECIMALS_UNIT;
 		elseif ($rounding == 'MT') $nbofdectoround = $conf->global->MAIN_MAX_DECIMALS_TOT;
 		elseif ($rounding == 'MS') $nbofdectoround = empty($conf->global->MAIN_MAX_DECIMALS_STOCK) ? 5 : $conf->global->MAIN_MAX_DECIMALS_STOCK;
+		elseif ($rounding == 'CR') $nbofdectoround = 8;
 		elseif (is_numeric($rounding))  $nbofdectoround = $rounding;
 		//print "RR".$amount.' - '.$nbofdectoround.'<br>';
 		if (dol_strlen($nbofdectoround)) $amount = round($amount, $nbofdectoround); // $nbofdectoround can be 0.
@@ -5661,7 +5684,7 @@ function dol_string_onlythesehtmltags($stringtoclean, $cleanalsosomestyles = 1)
 	$allowed_tags_string = '<'.$allowed_tags_string.'>';
 
 	if ($cleanalsosomestyles) {
-		$stringtoclean = preg_replace('/position\s*:\s*(absolute|fixed)\s*!\s*important/', '', $stringtoclean);	// Note: If hacker try to introduce css comment into string to bypass this regex, the string must also be encoded by the dol_htmlentitiesbr during output so it become harmless
+		$stringtoclean = preg_replace('/position\s*:\s*(absolute|fixed)\s*!\s*important/', '', $stringtoclean); // Note: If hacker try to introduce css comment into string to bypass this regex, the string must also be encoded by the dol_htmlentitiesbr during output so it become harmless
 	}
 
 	$temp = strip_tags($stringtoclean, $allowed_tags_string);
@@ -8319,7 +8342,7 @@ function roundUpToNextMultiple($n, $x = 5)
  * @param   string  $label      label of badge no html : use in alt attribute for accessibility
  * @param   string  $html       optional : label of badge with html
  * @param   string  $type       type of badge : Primary Secondary Success Danger Warning Info Light Dark status0 status1 status2 status3 status4 status5 status6 status7 status8 status9
- * @param   string  $mode       default '' , pill, dot
+ * @param   string  $mode       default '' , 'pill', 'dot'
  * @param   string  $url        the url for link
  * @param   array   $params     various params for future : recommended rather than adding more fuction arguments. array('attr'=>array('title'=>'abc'))
  * @return  string              Html badge
@@ -8425,16 +8448,16 @@ function dolGetStatus($statusLabel = '', $statusLabelShort = '', $html = '', $st
 
         // For backward compatibility. Image's filename are still in French, so we use this array to convert
         $statusImg = array(
-        	'status0' => 'statut0'
-        	,'status1' => 'statut1'
-        	,'status2' => 'statut2'
-        	,'status3' => 'statut3'
-        	,'status4' => 'statut4'
-        	,'status5' => 'statut5'
-        	,'status6' => 'statut6'
-        	,'status7' => 'statut7'
-        	,'status8' => 'statut8'
-        	,'status9' => 'statut9'
+        	'status0' => 'statut0',
+        	'status1' => 'statut1',
+        	'status2' => 'statut2',
+        	'status3' => 'statut3',
+        	'status4' => 'statut4',
+        	'status5' => 'statut5',
+        	'status6' => 'statut6',
+        	'status7' => 'statut7',
+        	'status8' => 'statut8',
+        	'status9' => 'statut9'
         );
 
         if (!empty($statusImg[$statusType])) {
@@ -8464,6 +8487,7 @@ function dolGetStatus($statusLabel = '', $statusLabelShort = '', $html = '', $st
         $statusLabelShort = !empty($statusLabelShort) ? $statusLabelShort : $statusLabel;
 
 		$dolGetBadgeParams['attr']['class'] = 'badge-status';
+		$dolGetBadgeParams['attr']['title'] = $statusLabel;
 
         if ($displayMode == 3) {
             $return = dolGetBadge($statusLabel, '', $statusType, 'dot', $url, $dolGetBadgeParams);

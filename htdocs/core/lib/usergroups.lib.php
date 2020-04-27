@@ -331,7 +331,7 @@ function showSkins($fuser, $edit = 0, $foruserprofile = false)
 	if ($foruserprofile) $colspan = 4;
 
 	$thumbsbyrow = 6;
-	print '<table class="noborder centpercent">';
+	print '<table class="noborder centpercent'.($edit ? ' editmode' : '').' tableforfield">';
 
 	// Title
 	if ($foruserprofile)
@@ -502,9 +502,8 @@ function showSkins($fuser, $edit = 0, $foruserprofile = false)
 		{
 			print yn($conf->global->THEME_TOPMENU_DISABLE_IMAGE);
 		}
-		print ' &nbsp; <span class="nowraponall">('.$langs->trans("Default").': <strong>'.$default.'</strong>) ';
+		print ' &nbsp; <span class="nowraponall opacitymedium">'.$langs->trans("Default").'</span>: <strong>'.$default.'</strong> ';
 		print $form->textwithpicto('', $langs->trans("NotSupportedByAllThemes").', '.$langs->trans("PressF5AfterChangingThis"));
-		print '</span>';
 		print '</td>';
 		print '</tr>';
 	}
@@ -549,9 +548,8 @@ function showSkins($fuser, $edit = 0, $foruserprofile = false)
 			if ($color) print '<input type="text" class="colorthumb" disabled="disabled" style="padding: 1px; margin-top: 0; margin-bottom: 0; background-color: #'.$color.'" value="'.$color.'">';
 			else print $langs->trans("Default");
 	   	}
-		print ' &nbsp; <span class="nowraponall">('.$langs->trans("Default").': <strong>ffffff</strong>) ';
+		print ' &nbsp; <span class="nowraponall opacitymedium">'.$langs->trans("Default").'</span>: <strong>ffffff</strong> ';
 		print $form->textwithpicto('', $langs->trans("NotSupportedByAllThemes").', '.$langs->trans("PressF5AfterChangingThis"));
-		print '</span>';
 		print '</td>';
 		print '</tr>';
 	}
@@ -582,11 +580,11 @@ function showSkins($fuser, $edit = 0, $foruserprofile = false)
 	}
 	else
 	{
-		$default=(empty($colorbackhmenu1) ? $langs->trans("Unknown") : colorArrayToHex(colorStringToArray($colorbackhmenu1)));
+		$default = (empty($colorbackhmenu1) ? $langs->trans("Unknown") : colorArrayToHex(colorStringToArray($colorbackhmenu1)));
 
 		print '<tr class="oddeven">';
 		print '<td>'.$langs->trans("TopMenuBackgroundColor").'</td>';
-		print '<td colspan="'.($colspan-1).'">';
+		print '<td colspan="'.($colspan - 1).'">';
 		if ($edit)
 		{
 			print $formother->selectColor(colorArrayToHex(colorStringToArray($conf->global->THEME_ELDY_TOPMENU_BACK1, array()), ''), 'THEME_ELDY_TOPMENU_BACK1', 'formcolor', 1).' ';
@@ -597,9 +595,8 @@ function showSkins($fuser, $edit = 0, $foruserprofile = false)
 			if ($color) print '<input type="text" class="colorthumb" disabled="disabled" style="padding: 1px; margin-top: 0; margin-bottom: 0; background-color: #'.$color.'" value="'.$color.'">';
 			else print $langs->trans("Default");
 	   	}
-		print ' &nbsp; <span class="nowraponall">('.$langs->trans("Default").': <strong>'.$default.'</strong>) ';
+		print ' &nbsp; <span class="nowraponall opacitymedium">'.$langs->trans("Default").'</span>: <strong>'.$default.'</strong> ';
 		print $form->textwithpicto('', $langs->trans("NotSupportedByAllThemes").', '.$langs->trans("PressF5AfterChangingThis"));
-		print '</span>';
 		print '</td>';
 		print '</tr>';
 	}
@@ -630,11 +627,11 @@ function showSkins($fuser, $edit = 0, $foruserprofile = false)
 	}
 	else
 	{
-		$default=(empty($colorbackvmenu1) ? $langs->trans("Unknown") : colorArrayToHex(colorStringToArray($colorbackvmenu1)));
+		$default = (empty($colorbackvmenu1) ? $langs->trans("Unknown") : colorArrayToHex(colorStringToArray($colorbackvmenu1)));
 
 		print '<tr class="oddeven">';
 		print '<td>'.$langs->trans("LeftMenuBackgroundColor").'</td>';
-		print '<td colspan="'.($colspan-1).'">';
+		print '<td colspan="'.($colspan - 1).'">';
 		if ($edit)
 		{
 			print $formother->selectColor(colorArrayToHex(colorStringToArray($conf->global->THEME_ELDY_VERMENU_BACK1, array()), ''), 'THEME_ELDY_VERMENU_BACK1', 'formcolor', 1).' ';
@@ -645,9 +642,8 @@ function showSkins($fuser, $edit = 0, $foruserprofile = false)
 			if ($color) print '<input type="text" class="colorthumb" disabled="disabled" style="padding: 1px; margin-top: 0; margin-bottom: 0; background-color: #'.$color.'" value="'.$color.'">';
 			else print $langs->trans("Default");
 		}
-		print ' &nbsp; <span class="nowraponall">('.$langs->trans("Default").': <strong>'.$default.'</strong>) ';
+		print ' &nbsp; <span class="nowraponall opacitymedium">'.$langs->trans("Default").'</span>: <strong>'.$default.'</strong> ';
 		print $form->textwithpicto('', $langs->trans("NotSupportedByAllThemes").', '.$langs->trans("PressF5AfterChangingThis"));
-		print '</span>';
 		print '</td>';
 		print '</tr>';
 	}
@@ -658,7 +654,7 @@ function showSkins($fuser, $edit = 0, $foruserprofile = false)
 	}
 	else
 	{
-		$default=(empty($colortexttitlenotab) ? $langs->trans("Unknown") : colorArrayToHex(colorStringToArray($colortexttitlenotab)));
+		$default = (empty($colortexttitlenotab) ? $langs->trans("Unknown") : colorArrayToHex(colorStringToArray($colortexttitlenotab)));
 
 		print '<tr class="oddeven">';
 		print '<td>'.$langs->trans("TextTitleColor").'</td>';
@@ -671,9 +667,8 @@ function showSkins($fuser, $edit = 0, $foruserprofile = false)
 		{
 			print $formother->showColor($conf->global->THEME_ELDY_TEXTTITLENOTAB, $langs->trans("Default"));
 		}
-		print ' &nbsp; <span class="nowraponall">('.$langs->trans("Default").': <strong><span style="color: #'.$default.'">'.$default.'</span></strong>) ';
+		print ' &nbsp; <span class="nowraponall opacitymedium">'.$langs->trans("Default").'</span>: <strong><span style="color: #'.$default.'">'.$default.'</span></strong> ';
 		print $form->textwithpicto('', $langs->trans("NotSupportedByAllThemes").', '.$langs->trans("PressF5AfterChangingThis"));
-		print '</span>';
 		print '</td>';
 
 		print '</tr>';
@@ -685,7 +680,7 @@ function showSkins($fuser, $edit = 0, $foruserprofile = false)
 	}
 	else
 	{
-		$default=(empty($colorbacktitle1) ? $langs->trans("Unknown") : colorArrayToHex(colorStringToArray($colorbacktitle1)));
+		$default = (empty($colorbacktitle1) ? $langs->trans("Unknown") : colorArrayToHex(colorStringToArray($colorbacktitle1)));
 
 		print '<tr class="oddeven">';
 		print '<td>'.$langs->trans("BackgroundTableTitleColor").'</td>';
@@ -698,9 +693,8 @@ function showSkins($fuser, $edit = 0, $foruserprofile = false)
 	   	{
 	   		print $formother->showColor($conf->global->THEME_ELDY_BACKTITLE1, $langs->trans("Default"));
 	   	}
-		print ' &nbsp; <span class="nowraponall">('.$langs->trans("Default").': <strong>'.$default.'</strong>) ';  // $colorbacktitle1 in CSS
+		print ' &nbsp; <span class="nowraponall opacitymedium">'.$langs->trans("Default").'</span>: <strong>'.$default.'</strong> '; // $colorbacktitle1 in CSS
 		print $form->textwithpicto('', $langs->trans("NotSupportedByAllThemes").', '.$langs->trans("PressF5AfterChangingThis"));
-		print '</span>';
 		print '</td>';
 
 		print '</tr>';
@@ -712,7 +706,7 @@ function showSkins($fuser, $edit = 0, $foruserprofile = false)
 	}
 	else
 	{
-		$default=(empty($colortexttitle) ? $langs->trans("Unknown") : colorArrayToHex(colorStringToArray($colortexttitle)));
+		$default = (empty($colortexttitle) ? $langs->trans("Unknown") : colorArrayToHex(colorStringToArray($colortexttitle)));
 
 		print '<tr class="oddeven">';
 		print '<td>'.$langs->trans("BackgroundTableTitleTextColor").'</td>';
@@ -725,9 +719,8 @@ function showSkins($fuser, $edit = 0, $foruserprofile = false)
 		{
 			print $formother->showColor($conf->global->THEME_ELDY_TEXTTITLE, $langs->trans("Default"));
 		}
-		print ' &nbsp; <span class="nowraponall">('.$langs->trans("Default").': <strong><span style="color: #'.$default.'">'.$default.'</span></strong>) ';
+		print ' &nbsp; <span class="nowraponall opacitymedium">'.$langs->trans("Default").'</span>: <strong><span style="color: #'.$default.'">'.$default.'</span></strong> ';
 		print $form->textwithpicto('', $langs->trans("NotSupportedByAllThemes").', '.$langs->trans("PressF5AfterChangingThis"));
-		print '</span>';
 		print '</td>';
 
 		print '</tr>';
@@ -739,11 +732,11 @@ function showSkins($fuser, $edit = 0, $foruserprofile = false)
 	}
 	else
 	{
-		$default=(empty($colorbacklineimpair1) ? $langs->trans("Unknown") : colorArrayToHex(colorStringToArray($colorbacklineimpair1)));
+		$default = (empty($colorbacklineimpair1) ? $langs->trans("Unknown") : colorArrayToHex(colorStringToArray($colorbacklineimpair1)));
 
 		print '<tr class="oddeven">';
 		print '<td>'.$langs->trans("BackgroundTableLineOddColor").'</td>';
-		print '<td colspan="'.($colspan-1).'">';
+		print '<td colspan="'.($colspan - 1).'">';
 		if ($edit)
 		{
 			print $formother->selectColor(colorArrayToHex(colorStringToArray($conf->global->THEME_ELDY_LINEIMPAIR1, array()), ''), 'THEME_ELDY_LINEIMPAIR1', 'formcolor', 1).' ';
@@ -754,9 +747,8 @@ function showSkins($fuser, $edit = 0, $foruserprofile = false)
 			if ($color) print '<input type="text" class="colorthumb" disabled="disabled" style="padding: 1px; margin-top: 0; margin-bottom: 0; background-color: #'.$color.'" value="'.$color.'">';
 			else print $langs->trans("Default");
 		}
-		print ' &nbsp; <span class="nowraponall">('.$langs->trans("Default").': <strong>'.$default.'</strong>) ';
+		print ' &nbsp; <span class="nowraponall opacitymedium">'.$langs->trans("Default").'</span>: <strong>'.$default.'</strong> ';
 		print $form->textwithpicto('', $langs->trans("NotSupportedByAllThemes").', '.$langs->trans("PressF5AfterChangingThis"));
-		print '</span>';
 		print '</td>';
 		print '</tr>';
 	}
@@ -767,11 +759,11 @@ function showSkins($fuser, $edit = 0, $foruserprofile = false)
 	}
 	else
 	{
-		$default=(empty($colorbacklinepair1) ? $langs->trans("Unknown") : colorArrayToHex(colorStringToArray($colorbacklinepair1)));
+		$default = (empty($colorbacklinepair1) ? $langs->trans("Unknown") : colorArrayToHex(colorStringToArray($colorbacklinepair1)));
 
 		print '<tr class="oddeven">';
 		print '<td>'.$langs->trans("BackgroundTableLineEvenColor").'</td>';
-		print '<td colspan="'.($colspan-1).'">';
+		print '<td colspan="'.($colspan - 1).'">';
 		if ($edit)
 		{
 			print $formother->selectColor(colorArrayToHex(colorStringToArray($conf->global->THEME_ELDY_LINEPAIR1, array()), ''), 'THEME_ELDY_LINEPAIR1', 'formcolor', 1).' ';
@@ -782,9 +774,8 @@ function showSkins($fuser, $edit = 0, $foruserprofile = false)
 			if ($color) print '<input type="text" class="colorthumb" disabled="disabled" style="padding: 1px; margin-top: 0; margin-bottom: 0; background-color: #'.$color.'" value="'.$color.'">';
 			else print $langs->trans("Default");
 		}
-		print ' &nbsp; <span class="nowraponall">('.$langs->trans("Default").': <strong>'.$default.'</strong>) ';
+		print ' &nbsp; <span class="nowraponall opacitymedium">'.$langs->trans("Default").'</span>: <strong>'.$default.'</strong> ';
 		print $form->textwithpicto('', $langs->trans("NotSupportedByAllThemes").', '.$langs->trans("PressF5AfterChangingThis"));
-		print '</span>';
 		print '</td>';
 		print '</tr>';
 	}
@@ -815,7 +806,7 @@ function showSkins($fuser, $edit = 0, $foruserprofile = false)
 	}
 	else
 	{
-		$default=(empty($colortextlink) ? $langs->trans("Unknown") : colorArrayToHex(colorStringToArray($colortextlink)));
+		$default = (empty($colortextlink) ? $langs->trans("Unknown") : colorArrayToHex(colorStringToArray($colortextlink)));
 
 		print '<tr class="oddeven">';
 		print '<td>'.$langs->trans("LinkColor").'</td>';
@@ -835,9 +826,8 @@ function showSkins($fuser, $edit = 0, $foruserprofile = false)
 				print $langs->trans("Default");
 			}
 		}
-		print ' &nbsp; <span class="nowraponall">('.$langs->trans("Default").': <strong><span style="color: #'.$default.'">'.$default.'</span></strong>) ';
+		print ' &nbsp; <span class="nowraponall opacitymedium">'.$langs->trans("Default").'</span>: <strong><span style="color: #'.$default.'">'.$default.'</span></strong> ';
 		print $form->textwithpicto('', $langs->trans("NotSupportedByAllThemes").', '.$langs->trans("PressF5AfterChangingThis"));
-		print '</span>';
 		print '</td>';
 		print '</tr>';
 	}
@@ -857,22 +847,22 @@ function showSkins($fuser, $edit = 0, $foruserprofile = false)
 	     */
 	}
 	else {
-		$default=(empty($colorbacklinepairhover) ? $langs->trans("Unknown") : colorArrayToHex(colorStringToArray($colorbacklinepairhover)));
+		$default = (empty($colorbacklinepairhover) ? $langs->trans("Unknown") : colorArrayToHex(colorStringToArray($colorbacklinepairhover)));
 
 		print '<tr class="oddeven">';
 		print '<td>'.$langs->trans("HighlightLinesColor").'</td>';
-		print '<td colspan="'.($colspan-1).'">';
+		print '<td colspan="'.($colspan - 1).'">';
 		//print '<input name="check_THEME_ELDY_USE_HOVER"'.($edit?'':' disabled').' type="checkbox" '.($hoverdisabled?"":" checked").'>';
 		//print ' &nbsp; ('.$langs->trans("NotSupportedByAllThemes").', '.$langs->trans("PressF5AfterChangingThis").')';
 		if ($edit)
 		{
-			if ($conf->global->THEME_ELDY_USE_HOVER == '1') $color=colorArrayToHex(colorStringToArray($colorbacklinepairhover));
+			if ($conf->global->THEME_ELDY_USE_HOVER == '1') $color = colorArrayToHex(colorStringToArray($colorbacklinepairhover));
 			else $color = colorArrayToHex(colorStringToArray($conf->global->THEME_ELDY_USE_HOVER, array()), '');
 			print $formother->selectColor($color, 'THEME_ELDY_USE_HOVER', 'formcolor', 1).' ';
 		}
 		else
 		{
-			if ($conf->global->THEME_ELDY_USE_HOVER == '1') $color=colorArrayToHex(colorStringToArray($colorbacklinepairhover));
+			if ($conf->global->THEME_ELDY_USE_HOVER == '1') $color = colorArrayToHex(colorStringToArray($colorbacklinepairhover));
 			else $color = colorArrayToHex(colorStringToArray($conf->global->THEME_ELDY_USE_HOVER, array()), '');
 			if ($color)
 			{
@@ -881,9 +871,8 @@ function showSkins($fuser, $edit = 0, $foruserprofile = false)
 			}
 			else print $langs->trans("Default");
 		}
-		print ' &nbsp; <span class="nowraponall">('.$langs->trans("Default").': <strong>'.$default.'</strong>) ';
+		print ' &nbsp; <span class="nowraponall opacitymedium">'.$langs->trans("Default").'</span>: <strong>'.$default.'</strong> ';
 		print $form->textwithpicto('', $langs->trans("NotSupportedByAllThemes").', '.$langs->trans("PressF5AfterChangingThis"));
-		print '</span>';
 		print '</td>';
 	}
 
@@ -903,7 +892,7 @@ function showSkins($fuser, $edit = 0, $foruserprofile = false)
 	}
 	else
 	{
-		$default=(empty($colorbacklinepairchecked) ? $langs->trans("Unknown") : colorArrayToHex(colorStringToArray($colorbacklinepairchecked)));
+		$default = (empty($colorbacklinepairchecked) ? $langs->trans("Unknown") : colorArrayToHex(colorStringToArray($colorbacklinepairchecked)));
 
 		print '<tr class="oddeven">';
 		print '<td>'.$langs->trans("HighlightLinesChecked").'</td>';
@@ -927,9 +916,8 @@ function showSkins($fuser, $edit = 0, $foruserprofile = false)
 			}
 			else print $langs->trans("Default");
 		}
-		print ' &nbsp; <span class="nowraponall">('.$langs->trans("Default").': <strong>'.$default.'</strong>) ';
+		print ' &nbsp; <span class="nowraponall opacitymedium">'.$langs->trans("Default").'</span>: <strong>'.$default.'</strong> ';
 		print $form->textwithpicto('', $langs->trans("NotSupportedByAllThemes").', '.$langs->trans("PressF5AfterChangingThis"));
-		print '</span>';
 		print '</td>';
 		print '</tr>';
 	}
@@ -942,6 +930,7 @@ function showSkins($fuser, $edit = 0, $foruserprofile = false)
 	    print '<tr class="oddeven">';
 	    print '<td>'.$langs->trans("MAIN_OPTIMIZEFORTEXTBROWSER").'</td>';
 	    print '<td colspan="'.($colspan - 1).'">';
+	    //print ajax_constantonoff("MAIN_OPTIMIZEFORTEXTBROWSER", array(), null, 0, 0, 1, 0);
    	    if ($edit)
    	    {
    	        print $form->selectyesno('MAIN_OPTIMIZEFORTEXTBROWSER', $fuser->conf->MAIN_OPTIMIZEFORTEXTBROWSER, 1);
@@ -958,7 +947,7 @@ function showSkins($fuser, $edit = 0, $foruserprofile = false)
    	            if (empty($fuser->conf->MAIN_OPTIMIZEFORTEXTBROWSER)) print ' ('.$langs->trans("ForcedByGlobalSetup").')';
    	        }
    	    }
-   	    print ' &nbsp; ('.$langs->trans("Default").': <strong>'.$default.'</strong>) ';
+   	    print ' &nbsp; <span class="opacitymedium">'.$langs->trans("Default").'</span>: <strong>'.$default.'</strong> ';
 	    print $form->textwithpicto('', $langs->trans("MAIN_OPTIMIZEFORTEXTBROWSERDesc"));
 	    print '</td>';
 	    print '</tr>';
@@ -978,7 +967,7 @@ function showSkins($fuser, $edit = 0, $foruserprofile = false)
 	    {
 	        print yn($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER);
 	    }
-	    print ' &nbsp; ('.$langs->trans("Default").': <strong>'.$default.'</strong>) ';
+	    print ' &nbsp; wspan class="opacitymedium">'.$langs->trans("Default").'</span>: <strong>'.$default.'</strong> ';
 	    print $form->textwithpicto('', $langs->trans("MAIN_OPTIMIZEFORTEXTBROWSERDesc"));
 	    print '</span>';
 	    print '</td>';
@@ -1017,7 +1006,7 @@ function showSkins($fuser, $edit = 0, $foruserprofile = false)
 				print yn(0);
 			}
 		}
-		print ' &nbsp; ('.$langs->trans("Default").': <strong>'.$default.'</strong>) ';
+		print ' &nbsp; <span class="opacitymedium">'.$langs->trans("Default").'</span>: <strong>'.$default.'</strong> ';
 		print $form->textwithpicto('', $langs->trans("MAIN_OPTIMIZEFORCOLORBLINDDesc"));
 		print '</td>';
 		print '</tr>';

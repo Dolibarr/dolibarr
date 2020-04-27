@@ -69,7 +69,7 @@ if (empty($date_start) || empty($date_end)) // We define date_start and date_end
         if (GETPOST("month", 'int')) { $date_start = dol_get_first_day($year_start, GETPOST("month", 'int'), false); $date_end = dol_get_last_day($year_start, GETPOST("month", 'int'), false); }
         else
         {
-            if (empty($conf->global->MAIN_INFO_VAT_RETURN) || $conf->global->MAIN_INFO_VAT_RETURN == 2)	{ // quaterly vat, we take last past complete quarter
+            if (empty($conf->global->MAIN_INFO_VAT_RETURN) || $conf->global->MAIN_INFO_VAT_RETURN == 2) { // quaterly vat, we take last past complete quarter
             	$date_start = dol_time_plus_duree(dol_get_first_day($year_start, $current_date['mon'], false), -3 - (($current_date['mon'] - $conf->global->SOCIETE_FISCAL_MONTH_START) % 3), 'm');
             	$date_end = dol_time_plus_duree($date_start, 3, 'm') - 1;
             }
@@ -191,15 +191,15 @@ if (!empty($conf->global->MAIN_MODULE_ACCOUNTING)) $description .= '<br>'.$langs
 $description .= ($description ? '<br>' : '').$fsearch;
 if (!empty($conf->global->TAX_REPORT_EXTRA_REPORT))
 {
-    $description .= '<br>'
-        . '<input type="radio" name="extra_report" value="0" '.($special_report ? '' : 'checked="checked"').'> '
-            . $langs->trans('SimpleReport')
-            . '</input>'
-                . '<br>'
-                    . '<input type="radio" name="extra_report" value="1" '.($special_report ? 'checked="checked"' : '').'> '
-                        . $langs->trans('AddExtraReport')
-                        . '</input>'
-                            . '<br>';
+    $description .= '<br>';
+    $description .= '<input type="radio" name="extra_report" value="0" '.($special_report ? '' : 'checked="checked"').'> ';
+    $description .= $langs->trans('SimpleReport');
+    $description .= '</input>';
+    $description .= '<br>';
+    $description .= '<input type="radio" name="extra_report" value="1" '.($special_report ? 'checked="checked"' : '').'> ';
+    $description .= $langs->trans('AddExtraReport');
+    $description .= '</input>';
+    $description .= '<br>';
 }
 
 $elementcust = $langs->trans("CustomersInvoices");

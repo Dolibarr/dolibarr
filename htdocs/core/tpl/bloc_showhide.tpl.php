@@ -24,8 +24,8 @@ if (empty($blocname))
 	exit;
 }
 
-$hide = true;	// Hide by default
-if (isset($parameters['showblocbydefault'])) $hide=(empty($parameters['showblocbydefault']) ? true : false);
+$hide = true; // Hide by default
+if (isset($parameters['showblocbydefault'])) $hide = (empty($parameters['showblocbydefault']) ? true : false);
 if (isset($object->extraparams[$blocname]['showhide'])) $hide = (empty($object->extraparams[$blocname]['showhide']) ? true : false);
 
 ?>

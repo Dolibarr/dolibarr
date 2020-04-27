@@ -36,8 +36,6 @@
         <exclude name="Generic.CodeAnalysis.EmptyStatement.DetectedElseif"/>
         <exclude name="Generic.CodeAnalysis.EmptyStatement.DetectedCatch"/>
         <exclude name="Generic.CodeAnalysis.EmptyStatement.DetectedForeach"/>
-        <exclude name="Generic.CodeAnalysis.EmptyStatement.NotAllowed"/>
-        <exclude name="Generic.CodeAnalysis.EmptyStatement.NotAllowedWarning"/>
     </rule>
 
     <!-- <rule ref="Generic.CodeAnalysis.ForLoopShouldBeWhileLoop" /> -->
@@ -70,9 +68,6 @@
 		<severity>0</severity>
     </rule>
 
-    <rule ref="Generic.CodeAnalysis.UselessOverridingMethod">
-   		<severity>0</severity>
-    </rule>
 
     <!--
     <rule ref="Generic.Commenting.Todo" />
@@ -125,13 +120,6 @@
 
 	<rule ref="Generic.Functions.FunctionCallArgumentSpacing" />
 
-	<rule ref="Generic.Functions.FunctionCallArgumentSpacing.NoSpaceBeforeEquals">
-		<severity>0</severity>
-	</rule>
-	<rule ref="Generic.Functions.FunctionCallArgumentSpacing.NoSpaceBeforeEquals">
-		<severity>0</severity>
-	</rule>
-
     <!-- Disallow several spaces after comma -->
 	<!-- We want to allow this because we want to be able to align params on several similare functions on different lines -->
 	<rule ref="Generic.Functions.FunctionCallArgumentSpacing.TooMuchSpaceAfterComma">
@@ -141,7 +129,7 @@
     <!-- Tweaks to metrics -->
     <rule ref="Generic.Metrics.CyclomaticComplexity">
         <properties>
-            <property name="complexity" value="120" />
+            <property name="complexity" value="150" />
             <property name="absoluteComplexity" value="300" />
         </properties>
     </rule>
@@ -179,7 +167,6 @@
 	<rule ref="Generic.Strings.UnnecessaryStringConcat" />
 
 	<rule ref="Generic.Strings.UnnecessaryStringConcat.Found">
-        <severity>0</severity>
 	</rule>
 
 	<!-- Disallow usage of tab -->
@@ -222,6 +209,9 @@
     <rule ref="Squiz.ControlStructures.ForEachLoopDeclaration.SpaceBeforeClose" />
 
     <rule ref="Squiz.Functions.MultiLineFunctionDeclaration" />
+	<rule ref="Squiz.Functions.MultiLineFunctionDeclaration.SpaceAfterFunction">
+        <severity>0</severity>
+	</rule>
     <rule ref="Squiz.Functions.FunctionDeclarationArgumentSpacing">
         <properties>
             <property name="equalsSpacing" value="1"/>

@@ -34,29 +34,29 @@ class mod_contract_serpis extends ModelNumRefContracts
      */
 	public $version = 'dolibarr';
 
-	public $prefix='CT';
+	public $prefix = 'CT';
 
 	/**
 	 * @var string Error code (or message)
 	 */
-	public $error='';
+	public $error = '';
 
 	/**
 	 * @var string Nom du modele
 	 * @deprecated
 	 * @see $name
 	 */
-	public $nom='Serpis';
+	public $nom = 'Serpis';
 
 	/**
 	 * @var string model name
 	 */
-	public $name='Serpis';
+	public $name = 'Serpis';
 
 	/**
 	 * @var int Automatic numbering
 	 */
-	public $code_auto=1;
+	public $code_auto = 1;
 
 
 	/**

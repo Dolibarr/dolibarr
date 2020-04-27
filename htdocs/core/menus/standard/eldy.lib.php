@@ -242,7 +242,7 @@ function print_eldy_menu($db, $atarget, $type_user, &$tabMenu, &$menu, $noout = 
 	    'module'=>'propal|commande|supplier_order|supplier_proposal|contrat|ficheinter'
 	);
 
-	$onlysupplierorder = ! empty($user->rights->fournisseur->commande->lire) &&
+	$onlysupplierorder = !empty($user->rights->fournisseur->commande->lire) &&
 		empty($user->rights->propal->lire) &&
 		empty($user->rights->commande->lire) &&
 		empty($user->rights->supplier_order->lire) &&
@@ -908,12 +908,12 @@ function print_left_eldy_menu($db, $menu_array_before, $menu_array_after, &$tabM
 				$newmenu->add("/comm/propal/card.php?action=create&amp;leftmenu=propals", $langs->trans("NewPropal"), 1, $user->rights->propale->creer);
 				$newmenu->add("/comm/propal/list.php?leftmenu=propals", $langs->trans("List"), 1, $user->rights->propale->lire);
 				if ($usemenuhider || empty($leftmenu) || $leftmenu == "propals") {
-                    $newmenu->add("/comm/propal/list.php?leftmenu=propals&viewstatut=0", $langs->trans("PropalsDraft"), 2, $user->rights->propale->lire);
-				    $newmenu->add("/comm/propal/list.php?leftmenu=propals&viewstatut=1", $langs->trans("PropalsOpened"), 2, $user->rights->propale->lire);
-				    $newmenu->add("/comm/propal/list.php?leftmenu=propals&viewstatut=2", $langs->trans("PropalStatusSigned"), 2, $user->rights->propale->lire);
-				    $newmenu->add("/comm/propal/list.php?leftmenu=propals&viewstatut=3", $langs->trans("PropalStatusNotSigned"), 2, $user->rights->propale->lire);
-				    $newmenu->add("/comm/propal/list.php?leftmenu=propals&viewstatut=4", $langs->trans("PropalStatusBilled"), 2, $user->rights->propale->lire);
-                    //$newmenu->add("/comm/propal/list.php?leftmenu=propals&viewstatut=2,3,4", $langs->trans("PropalStatusClosedShort"), 2, $user->rights->propale->lire);
+                    $newmenu->add("/comm/propal/list.php?leftmenu=propals&search_status=0", $langs->trans("PropalsDraft"), 2, $user->rights->propale->lire);
+				    $newmenu->add("/comm/propal/list.php?leftmenu=propals&search_status=1", $langs->trans("PropalsOpened"), 2, $user->rights->propale->lire);
+				    $newmenu->add("/comm/propal/list.php?leftmenu=propals&search_status=2", $langs->trans("PropalStatusSigned"), 2, $user->rights->propale->lire);
+				    $newmenu->add("/comm/propal/list.php?leftmenu=propals&search_status=3", $langs->trans("PropalStatusNotSigned"), 2, $user->rights->propale->lire);
+				    $newmenu->add("/comm/propal/list.php?leftmenu=propals&search_status=4", $langs->trans("PropalStatusBilled"), 2, $user->rights->propale->lire);
+                    //$newmenu->add("/comm/propal/list.php?leftmenu=propals&search_status=2,3,4", $langs->trans("PropalStatusClosedShort"), 2, $user->rights->propale->lire);
                 }
 				$newmenu->add("/comm/propal/stats/index.php?leftmenu=propals", $langs->trans("Statistics"), 1, $user->rights->propale->lire);
 			}
@@ -926,15 +926,25 @@ function print_left_eldy_menu($db, $menu_array_before, $menu_array_after, &$tabM
                 $newmenu->add("/commande/card.php?action=create&amp;leftmenu=orders", $langs->trans("NewOrder"), 1, $user->rights->commande->creer);
                 $newmenu->add("/commande/list.php?leftmenu=orders", $langs->trans("List"), 1, $user->rights->commande->lire);
                 if ($usemenuhider || empty($leftmenu) || $leftmenu == "orders") {
-                    $newmenu->add("/commande/list.php?leftmenu=orders&viewstatut=0", $langs->trans("StatusOrderDraftShort"), 2, $user->rights->commande->lire);
-                    $newmenu->add("/commande/list.php?leftmenu=orders&viewstatut=1", $langs->trans("StatusOrderValidated"), 2, $user->rights->commande->lire);
-                    if (!empty($conf->expedition->enabled)) $newmenu->add("/commande/list.php?leftmenu=orders&viewstatut=2", $langs->trans("StatusOrderSentShort"), 2, $user->rights->commande->lire);
-                    $newmenu->add("/commande/list.php?leftmenu=orders&viewstatut=3", $langs->trans("StatusOrderDelivered"), 2, $user->rights->commande->lire);
-                    //$newmenu->add("/commande/list.php?leftmenu=orders&viewstatut=4", $langs->trans("StatusOrderProcessed"), 2, $user->rights->commande->lire);
-                    $newmenu->add("/commande/list.php?leftmenu=orders&viewstatut=-1", $langs->trans("StatusOrderCanceledShort"), 2, $user->rights->commande->lire);
+                    $newmenu->add("/commande/list.php?leftmenu=orders&search_status=0", $langs->trans("StatusOrderDraftShort"), 2, $user->rights->commande->lire);
+                    $newmenu->add("/commande/list.php?leftmenu=orders&search_status=1", $langs->trans("StatusOrderValidated"), 2, $user->rights->commande->lire);
+                    if (!empty($conf->expedition->enabled)) $newmenu->add("/commande/list.php?leftmenu=orders&search_status=2", $langs->trans("StatusOrderSentShort"), 2, $user->rights->commande->lire);
+                    $newmenu->add("/commande/list.php?leftmenu=orders&search_status=3", $langs->trans("StatusOrderDelivered"), 2, $user->rights->commande->lire);
+                    //$newmenu->add("/commande/list.php?leftmenu=orders&search_status=4", $langs->trans("StatusOrderProcessed"), 2, $user->rights->commande->lire);
+                    $newmenu->add("/commande/list.php?leftmenu=orders&search_status=-1", $langs->trans("StatusOrderCanceledShort"), 2, $user->rights->commande->lire);
                 }
                 $newmenu->add("/commande/stats/index.php?leftmenu=orders", $langs->trans("Statistics"), 1, $user->rights->commande->lire);
             }
+
+			// Supplier proposal
+			if (!empty($conf->supplier_proposal->enabled))
+			{
+				$langs->load("supplier_proposal");
+				$newmenu->add("/supplier_proposal/index.php?leftmenu=propals_supplier", $langs->trans("SupplierProposalsShort"), 0, $user->rights->supplier_proposal->lire, '', $mainmenu, 'propals_supplier', 300);
+				$newmenu->add("/supplier_proposal/card.php?action=create&amp;leftmenu=supplier_proposals", $langs->trans("SupplierProposalNew"), 1, $user->rights->supplier_proposal->creer);
+				$newmenu->add("/supplier_proposal/list.php?leftmenu=supplier_proposals", $langs->trans("List"), 1, $user->rights->supplier_proposal->lire);
+				$newmenu->add("/comm/propal/stats/index.php?leftmenu=supplier_proposals&amp;mode=supplier", $langs->trans("Statistics"), 1, $user->rights->supplier_proposal->lire);
+			}
 
 			// Suppliers orders
             if (!empty($conf->supplier_order->enabled))
@@ -1049,7 +1059,7 @@ function print_left_eldy_menu($db, $menu_array_before, $menu_array_after, &$tabM
 			if (!empty($conf->commande->enabled))
 			{
 				$langs->load("orders");
-				if (!empty($conf->facture->enabled)) $newmenu->add("/commande/list.php?leftmenu=orders&amp;viewstatut=-3&amp;billed=0&amp;contextpage=billableorders", $langs->trans("MenuOrdersToBill2"), 0, $user->rights->commande->lire, '', $mainmenu, 'orders');
+				if (!empty($conf->facture->enabled)) $newmenu->add("/commande/list.php?leftmenu=orders&amp;search_status=-3&amp;billed=0&amp;contextpage=billableorders", $langs->trans("MenuOrdersToBill2"), 0, $user->rights->commande->lire, '', $mainmenu, 'orders');
 				//if ($usemenuhider || empty($leftmenu) || $leftmenu=="orders") $newmenu->add("/commande/", $langs->trans("StatusOrderToBill"), 1, $user->rights->commande->lire);
 			}
 
@@ -1366,6 +1376,27 @@ function print_left_eldy_menu($db, $menu_array_before, $menu_array_after, &$tabM
                         //$newmenu->add("/compta/stats/byratecountry.php?leftmenu=accountancy_report&modecompta=".$modecompta, $langs->trans("ByVatRate"),3,$user->rights->accounting->comptarapport->lire);
                     }
 				}
+
+				$modecompta = 'CREANCES-DETTES';
+				if (!empty($conf->accounting->enabled) && !empty($user->rights->accounting->comptarapport->lire) && $mainmenu == 'accountancy') $modecompta = 'BOOKKEEPING'; // Not yet implemented. Should be BOOKKEEPINGCOLLECTED
+				if ($modecompta && $conf->fournisseur->enabled)
+				{
+					if ($usemenuhider || empty($leftmenu) || preg_match('/accountancy_report/', $leftmenu)) {
+						$newmenu->add("/compta/stats/supplier_turnover.php?leftmenu=accountancy_report&modecompta=".$modecompta, $langs->trans("ReportPurchaseTurnover"), 2, $user->rights->accounting->comptarapport->lire);
+						$newmenu->add("/compta/stats/supplier_turnover_by_thirdparty.php?leftmenu=accountancy_report&modecompta=".$modecompta, $langs->trans("ByCompanies"), 3, $user->rights->accounting->comptarapport->lire);
+						$newmenu->add("/compta/stats/supplier_turnover_by_prodserv.php?leftmenu=accountancy_report&modecompta=".$modecompta, $langs->trans("ByProductsAndServices"), 3, $user->rights->accounting->comptarapport->lire);
+					}
+				}
+
+				$modecompta = 'RECETTES-DEPENSES';
+				//if (! empty($conf->accounting->enabled) && ! empty($user->rights->accounting->comptarapport->lire) && $mainmenu == 'accountancy') $modecompta='';	// Not yet implemented. Should be BOOKKEEPINGCOLLECTED
+				if ($modecompta && $conf->fournisseur->enabled)
+				{
+					if ($usemenuhider || empty($leftmenu) || preg_match('/accountancy_report/', $leftmenu)) {
+						$newmenu->add("/compta/stats/supplier_turnover.php?leftmenu=accountancy_report&modecompta=".$modecompta, $langs->trans("ReportPurchaseTurnoverCollected"), 2, $user->rights->accounting->comptarapport->lire);
+						$newmenu->add("/compta/stats/supplier_turnover_by_thirdparty.php?leftmenu=accountancy_report&modecompta=".$modecompta, $langs->trans("ByCompanies"), 3, $user->rights->accounting->comptarapport->lire);
+					}
+				}
             }
 
 			// Accountancy (simple)
@@ -1416,7 +1447,7 @@ function print_left_eldy_menu($db, $menu_array_before, $menu_array_after, &$tabM
 				$newmenu->add("/asset/list.php?leftmenu=asset&amp;mainmenu=accountancy", $langs->trans("MenuListAssets"), 1, $user->rights->asset->read);
 				$newmenu->add("/asset/type.php?leftmenu=asset_type", $langs->trans("MenuTypeAssets"), 1, $user->rights->asset->read, '', $mainmenu, 'asset_type');
 				if ($usemenuhider || empty($leftmenu) || preg_match('/asset_type/', $leftmenu)) {
-                    $newmenu->add("/asset/type.php?leftmenu=asset_type&amp;action=create", $langs->trans("MenuNewTypeAssets"), 2, $user->rights->asset->configurer);
+					$newmenu->add("/asset/type.php?leftmenu=asset_type&amp;action=create", $langs->trans("MenuNewTypeAssets"), 2, (empty($conf->global->MAIN_USE_ADVANCED_PERMS) && $user->rights->asset->write) || (!empty($conf->global->MAIN_USE_ADVANCED_PERMS) && $user->rights->asset->setup_advance));
                     $newmenu->add("/asset/type.php?leftmenu=asset_type", $langs->trans("MenuListTypeAssets"), 2, $user->rights->asset->read);
                 }
 			}
@@ -1596,9 +1627,9 @@ function print_left_eldy_menu($db, $menu_array_before, $menu_array_after, &$tabM
 				$newmenu->add("/expedition/card.php?action=create2&amp;leftmenu=sendings", $langs->trans("NewSending"), 1, $user->rights->expedition->creer);
 				$newmenu->add("/expedition/list.php?leftmenu=sendings", $langs->trans("List"), 1, $user->rights->expedition->lire);
 				if ($usemenuhider || empty($leftmenu) || $leftmenu == "sendings") {
-                    $newmenu->add("/expedition/list.php?leftmenu=sendings&viewstatut=0", $langs->trans("StatusSendingDraftShort"), 2, $user->rights->expedition->lire);
-				    $newmenu->add("/expedition/list.php?leftmenu=sendings&viewstatut=1", $langs->trans("StatusSendingValidatedShort"), 2, $user->rights->expedition->lire);
-                    $newmenu->add("/expedition/list.php?leftmenu=sendings&viewstatut=2", $langs->trans("StatusSendingProcessedShort"), 2, $user->rights->expedition->lire);
+                    $newmenu->add("/expedition/list.php?leftmenu=sendings&search_status=0", $langs->trans("StatusSendingDraftShort"), 2, $user->rights->expedition->lire);
+				    $newmenu->add("/expedition/list.php?leftmenu=sendings&search_status=1", $langs->trans("StatusSendingValidatedShort"), 2, $user->rights->expedition->lire);
+                    $newmenu->add("/expedition/list.php?leftmenu=sendings&search_status=2", $langs->trans("StatusSendingProcessedShort"), 2, $user->rights->expedition->lire);
                 }
 				$newmenu->add("/expedition/stats/index.php?leftmenu=sendings", $langs->trans("Statistics"), 1, $user->rights->expedition->lire);
 			}
@@ -1610,9 +1641,9 @@ function print_left_eldy_menu($db, $menu_array_before, $menu_array_after, &$tabM
 				$newmenu->add("/reception/index.php?leftmenu=receptions", $langs->trans("Receptions"), 0, $user->rights->reception->lire, '', $mainmenu, 'receptions');
 				$newmenu->add("/reception/card.php?action=create2&amp;leftmenu=receptions", $langs->trans("NewReception"), 1, $user->rights->reception->creer);
 				$newmenu->add("/reception/list.php?leftmenu=receptions", $langs->trans("List"), 1, $user->rights->reception->lire);
-				if ($usemenuhider || empty($leftmenu) || $leftmenu == "receptions") $newmenu->add("/reception/list.php?leftmenu=receptions&viewstatut=0", $langs->trans("StatusReceptionDraftShort"), 2, $user->rights->reception->lire);
-				if ($usemenuhider || empty($leftmenu) || $leftmenu == "receptions") $newmenu->add("/reception/list.php?leftmenu=receptions&viewstatut=1", $langs->trans("StatusReceptionValidatedShort"), 2, $user->rights->reception->lire);
-				if ($usemenuhider || empty($leftmenu) || $leftmenu == "receptions") $newmenu->add("/reception/list.php?leftmenu=receptions&viewstatut=2", $langs->trans("StatusReceptionProcessedShort"), 2, $user->rights->reception->lire);
+				if ($usemenuhider || empty($leftmenu) || $leftmenu == "receptions") $newmenu->add("/reception/list.php?leftmenu=receptions&search_status=0", $langs->trans("StatusReceptionDraftShort"), 2, $user->rights->reception->lire);
+				if ($usemenuhider || empty($leftmenu) || $leftmenu == "receptions") $newmenu->add("/reception/list.php?leftmenu=receptions&search_status=1", $langs->trans("StatusReceptionValidatedShort"), 2, $user->rights->reception->lire);
+				if ($usemenuhider || empty($leftmenu) || $leftmenu == "receptions") $newmenu->add("/reception/list.php?leftmenu=receptions&search_status=2", $langs->trans("StatusReceptionProcessedShort"), 2, $user->rights->reception->lire);
 				$newmenu->add("/reception/stats/index.php?leftmenu=receptions", $langs->trans("Statistics"), 1, $user->rights->reception->lire);
 			}
 		}

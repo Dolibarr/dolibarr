@@ -33,13 +33,14 @@ if (!defined('NOREQUIREHTML'))		define('NOREQUIREHTML', '1');
 if (!defined('NOREQUIREAJAX'))		define('NOREQUIREAJAX', '1');
 
 require '../main.inc.php'; // Load $user and permissions
+require_once DOL_DOCUMENT_ROOT.'/core/class/html.form.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
 require_once DOL_DOCUMENT_ROOT.'/societe/class/societe.class.php';
 require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/hookmanager.class.php';
 
-$place = (GETPOST('place', 'alpha') ? GETPOST('place', 'alpha') : 0); // $place is id of table for Bar or Restaurant or multiple sales
+$place = (GETPOST('place', 'aZ09') ? GETPOST('place', 'aZ09') : 0); // $place is id of table for Bar or Restaurant or multiple sales
 $action = GETPOST('action', 'alpha');
 $setterminal = GETPOST('setterminal', 'int');
 
@@ -50,7 +51,7 @@ if ($setterminal > 0)
 
 $_SESSION["urlfrom"] = '/takepos/index.php';
 
-$langs->loadLangs(array("bills", "orders", "commercial", "cashdesk", "receiptprinter"));
+$langs->loadLangs(array("bills", "orders", "commercial", "cashdesk", "receiptprinter", "banks"));
 
 $categorie = new Categorie($db);
 
@@ -82,9 +83,12 @@ else $soc->fetch($conf->global->$constforcompanyid);
 $result = restrictedArea($user, 'takepos', 0, '');
 
 
+
 /*
  * View
  */
+
+$form = new Form($db);
 
 // Title
 $title = 'TakePOS - Dolibarr '.DOL_VERSION;
@@ -435,12 +439,12 @@ function Floors() {
 
 function FreeZone() {
 	console.log("Open box to enter a free product");
-	$.colorbox({href:"freezone.php?action=freezone&place="+place, onClosed: function () { Refresh(); },width:"80%", height:"30%", transition:"none", iframe:"true", title:"<?php echo $langs->trans("FreeZone"); ?>"});
+	$.colorbox({href:"freezone.php?action=freezone&place="+place, onClosed: function () { Refresh(); },width:"80%", height:"200px", transition:"none", iframe:"true", title:"<?php echo $langs->trans("FreeZone"); ?>"});
 }
 
 function TakeposOrderNotes() {
 	console.log("Open box to order notes");
-	$.colorbox({href:"freezone.php?action=addnote&place="+place+"&idline="+selectedline, onClosed: function () { Refresh(); },width:"80%", height:"30%", transition:"none", iframe:"true", title:"<?php echo $langs->trans("OrderNotes"); ?>"});
+	$.colorbox({href:"freezone.php?action=addnote&place="+place+"&idline="+selectedline, onClosed: function () { Refresh(); },width:"80%", height:"250px", transition:"none", iframe:"true", title:"<?php echo $langs->trans("OrderNotes"); ?>"});
 }
 
 function Refresh() {
@@ -648,17 +652,32 @@ function MoreActions(totalactions){
 	if (pageactions==0){
 		pageactions=1;
 		for (i = 0; i <= totalactions; i++){
-			if (i<9) $("#action"+i).hide();
+			if (i<12) $("#action"+i).hide();
 			else $("#action"+i).show();
 		}
 	}
 	else if (pageactions==1){
 		pageactions=0;
 		for (i = 0; i <= totalactions; i++){
-			if (i<9) $("#action"+i).show();
+			if (i<12) $("#action"+i).show();
 			else $("#action"+i).hide();
 		}
 	}
+}
+
+function ControlCashOpening()
+{
+    $.colorbox({href:"../compta/cashcontrol/cashcontrol_card.php?action=create&contextpage=takepos", width:"90%", height:"60%", transition:"none", iframe:"true", title:"<?php echo $langs->trans("NewCashFence"); ?>"});
+}
+
+function CloseCashFence(rowid)
+{
+    $.colorbox({href:"../compta/cashcontrol/cashcontrol_card.php?id="+rowid+"&contextpage=takepos", width:"90%", height:"90%", transition:"none", iframe:"true", title:"<?php echo $langs->trans("NewCashFence"); ?>"});
+}
+
+function CashReport(rowid)
+{
+    $.colorbox({href:"../compta/cashcontrol/report.php?id="+rowid+"&contextpage=takepos", width:"60%", height:"90%", transition:"none", iframe:"true", title:"<?php echo $langs->trans("CashReport"); ?>"});
 }
 
 // Popup to select the terminal to use
@@ -689,7 +708,7 @@ function TerminalsDialog()
 
 function DirectPayment(){
 	console.log("DirectPayment");
-	$("#poslines").load("invoice.php?place"+place+"&action=valid&pay=<?php echo $langs->trans("cash"); ?>", function() {
+	$("#poslines").load("invoice.php?place="+place+"&action=valid&pay=<?php echo $langs->trans("cash"); ?>", function() {
 	});
 }
 
@@ -708,13 +727,25 @@ $( document ).ready(function() {
 		if ($conf->global->TAKEPOS_NUM_TERMINALS == "1") $_SESSION["takeposterminal"] = 1;
 		else print "TerminalsDialog();";
 	}
+	if ($conf->global->TAKEPOS_CONTROL_CASH_OPENING)
+	{
+		$sql = "SELECT rowid FROM ".MAIN_DB_PREFIX."pos_cash_fence WHERE ";
+		$sql .= "date(date_creation) = CURDATE() ";
+		$sql .= "";
+		$resql = $db->query($sql);
+		if ($resql) {
+			$obj = $db->fetch_object($resql);
+			// If there is no cash control from today open it
+			if ($obj->rowid == null) print "ControlCashOpening();";
+		}
+	}
 	?>
 });
 </script>
 
 <body class="bodytakepos" style="overflow: hidden;">
 <?php
-print '<div class="hidden" id="dialog-info" title="TakePOS">'.$langs->trans('TerminalSelect').'</div>';
+print '<div class="hidden dialog-info-takepos-terminal" id="dialog-info" title="TakePOS">'.$langs->trans('TerminalSelect').'</div>';
 $keyCodeForEnter = $conf->global->{'CASHDESK_READER_KEYCODE_FOR_ENTER'.$_SESSION['takeposterminal']} > 0 ? $conf->global->{'CASHDESK_READER_KEYCODE_FOR_ENTER'.$_SESSION['takeposterminal']} : '';
 ?>
 <div class="container">
@@ -732,9 +763,10 @@ if (empty($conf->global->TAKEPOS_HIDE_HEAD_BAR)) {
 			echo '<span class="hideonsmartphone"> - '.dol_print_date(dol_now(), "day").'</span>';
 			?>
 			</a></div>
+			<!-- section for customer and open sales -->
 			<div class="inline-block valignmiddle" id="customerandsales">
-			<a class="valignmiddle" id="customer" onclick="Customer();"></a>
 			</div>
+			<!-- More info about customer -->
 			<div class="inline-block valignmiddle" id="moreinfo"></div>
 			<div class="inline-block valignmiddle" id="infowarehouse"></div>
 			</div>
@@ -844,11 +876,14 @@ if ($conf->global->TAKEPOS_BAR_RESTAURANT)
 	{
 		$menus[$r++] = array('title'=>$langs->trans("Order"), 'action'=>'TakeposPrintingOrder();');
 	}
-	//add temp ticket button
+	//Button to print receipt before payment
 	if ($conf->global->TAKEPOS_BAR_RESTAURANT)
 	{
 	    if ($conf->global->TAKEPOS_PRINT_METHOD == "takeposconnector") {
-			$menus[$r++] = array('title'=>'<span class="fa fa-receipt paddingrightonly"></span><div class="trunc">'.$langs->trans("Receipt").'</div>', 'action'=>'TakeposPrinting(placeid);');
+			if (filter_var($conf->global->TAKEPOS_PRINT_SERVER, FILTER_VALIDATE_URL) == true) $menus[$r++] = array('title'=>'<span class="fa fa-receipt paddingrightonly"></span><div class="trunc">'.$langs->trans("Receipt").'</div>', 'action'=>'TakeposConnector(placeid);');
+			else $menus[$r++] = array('title'=>'<span class="fa fa-receipt paddingrightonly"></span><div class="trunc">'.$langs->trans("Receipt").'</div>', 'action'=>'TakeposPrinting(placeid);');
+		} elseif ($conf->global->TAKEPOS_PRINT_METHOD == "receiptprinter") {
+			$menus[$r++] = array('title'=>'<span class="fa fa-receipt paddingrightonly"></span><div class="trunc">'.$langs->trans("Receipt").'</div>', 'action'=>'DolibarrTakeposPrinting(placeid);');
 		} else {
 			$menus[$r++] = array('title'=>'<span class="fa fa-receipt paddingrightonly"></span><div class="trunc">'.$langs->trans("Receipt").'</div>', 'action'=>'Print(placeid);');
 		}
@@ -873,6 +908,20 @@ if ($conf->global->TAKEPOS_PRINT_METHOD == "receiptprinter") {
 	);
 }
 
+$sql = "SELECT rowid, status FROM ".MAIN_DB_PREFIX."pos_cash_fence WHERE ";
+$sql .= "date(date_creation) = CURDATE() ";
+$resql = $db->query($sql);
+if ($resql)
+{
+	$num = $db->num_rows($resql);
+	if ($num)
+	{
+		$obj = $db->fetch_object($resql);
+		$menus[$r++] = array('title'=>'<span class="fas fa-file-invoice-dollar paddingrightonly"></span><div class="trunc">'.$langs->trans("CashReport").'</div>', 'action'=>'CashReport('.$obj->rowid.');');
+		if ($obj->status == 0) $menus[$r++] = array('title'=>'<span class="fas fa-cash-register paddingrightonly"></span><div class="trunc">'.$langs->trans("CloseCashFence").'</div>', 'action'=>'CloseCashFence('.$obj->rowid.');');
+	}
+}
+
 $hookmanager->initHooks(array('takeposfrontend'));
 $reshook = $hookmanager->executeHooks('ActionButtons');
 if (!empty($reshook)) {
@@ -893,12 +942,12 @@ if (!empty($conf->global->TAKEPOS_HIDE_HEAD_BAR)) {
         foreach ($menus as $menu)
         {
         	$i++;
-        	if (count($menus) > 9 and $i == 9)
+        	if (count($menus) > 12 and $i == 12)
         	{
         		echo '<button style="'.$menu['style'].'" type="button" id="actionnext" class="actionbutton" onclick="MoreActions('.count($menus).');">'.$langs->trans("Next").'</button>';
         		echo '<button style="display: none;" type="button" id="action'.$i.'" class="actionbutton" onclick="'.$menu['action'].'">'.$menu['title'].'</button>';
         	}
-            elseif ($i > 9) echo '<button style="display: none;" type="button" id="action'.$i.'" class="actionbutton" onclick="'.$menu['action'].'">'.$menu['title'].'</button>';
+            elseif ($i > 12) echo '<button style="display: none;" type="button" id="action'.$i.'" class="actionbutton" onclick="'.$menu['action'].'">'.$menu['title'].'</button>';
             else echo '<button style="'.$menu['style'].'" type="button" id="action'.$i.'" class="actionbutton" onclick="'.$menu['action'].'">'.$menu['title'].'</button>';
         }
 

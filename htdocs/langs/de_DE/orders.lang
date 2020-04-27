@@ -141,7 +141,7 @@ OrderByEMail=E-Mail (Feld mit automatischer E-Mail-Syntaxprüfung)
 OrderByWWW=Online
 OrderByPhone=Telefon
 # Documents models
-PDFEinsteinDescription=Ein vollständiges Bestellmodell (alte Implementierung der Eratosthene-Vorlage)
+PDFEinsteinDescription=Ein vollständiges Bestellmodell 
 PDFEratostheneDescription=Ein komplettes Bestellmodell
 PDFEdisonDescription=Eine einfache Bestellvorlage
 PDFProformaDescription=Eine vollständige Proforma-Rechnungsvorlage

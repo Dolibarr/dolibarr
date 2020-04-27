@@ -399,7 +399,7 @@ class ExpenseReport extends CommonObject
 
         // get extrafields so they will be clone
         //foreach($this->lines as $line)
-            //$line->fetch_optionals($line->rowid);
+	        //$line->fetch_optionals();
 
         // Load source object
         $objFrom = clone $this;
@@ -588,7 +588,7 @@ class ExpenseReport extends CommonObject
                 elseif ($this->fk_user_validator > 0) $user_approver->fetch($this->fk_user_validator); // For backward compatibility
                 $this->user_validator_infos = dolGetFirstLastname($user_approver->firstname, $user_approver->lastname);
 
-                $this->fk_statut                = $obj->status;		// deprecated
+                $this->fk_statut                = $obj->status; // deprecated
                 $this->status                   = $obj->status;
                 $this->fk_c_paiement            = $obj->fk_c_paiement;
                 $this->paid                     = $obj->paid;
@@ -704,8 +704,8 @@ class ExpenseReport extends CommonObject
     	// phpcs:enable
     	global $langs;
 
-    	$labelStatus = $langs->trans($this->statuts[$status]);
-    	$labelStatusShort = $langs->trans($this->statuts_short[$status]);
+    	$labelStatus = $langs->transnoentitiesnoconv($this->statuts[$status]);
+    	$labelStatusShort = $langs->transnoentitiesnoconv($this->statuts_short[$status]);
 
     	$statusType = $this->statuts_logo[$status];
 

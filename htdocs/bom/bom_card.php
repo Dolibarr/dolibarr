@@ -256,7 +256,7 @@ jQuery(document).ready(function() {
 // Part to create
 if ($action == 'create')
 {
-	print load_fiche_titre($langs->trans("NewBOM"), '', 'cubes');
+	print load_fiche_titre($langs->trans("NewBOM"), '', 'bom');
 
 	print '<form method="POST" action="'.$_SERVER["PHP_SELF"].'">';
 	print '<input type="hidden" name="token" value="'.newToken().'">';
@@ -523,6 +523,9 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 	$keyforbreak = 'duration';
 	include DOL_DOCUMENT_ROOT.'/core/tpl/commonfields_view.tpl.php';
 
+	print '<tr><td>'.$langs->trans("TotalCost").'</td><td>'.price($object->total_cost).'</td></tr>';
+	print '<tr><td>'.$langs->trans("UnitCost").'</td><td>'.price($object->unit_cost).'</td></tr>';
+
 	// Other attributes
 	include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_view.tpl.php';
 
@@ -542,11 +545,8 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 
 	if (!empty($object->table_element_line))
 	{
-	    // Show object lines
-	    $result = $object->getLinesArray();
-
 	    print '	<form name="addproduct" id="addproduct" action="'.$_SERVER["PHP_SELF"].'?id='.$object->id.(($action != 'editline') ? '#addline' : '#line_'.GETPOST('lineid', 'int')).'" method="POST">
-    	<input type="hidden" name="token" value="' . $_SESSION ['newtoken'].'">
+    	<input type="hidden" name="token" value="' . newToken().'">
     	<input type="hidden" name="action" value="' . (($action != 'editline') ? 'addline' : 'updateline').'">
     	<input type="hidden" name="mode" value="">
     	<input type="hidden" name="id" value="' . $object->id.'">
@@ -601,7 +601,9 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
     	if (empty($reshook))
     	{
     	    // Send
-            //print '<a class="butAction" href="' . $_SERVER["PHP_SELF"] . '?id=' . $object->id . '&action=presend&mode=init#formmailbeforetitle">' . $langs->trans('SendMail') . '</a>'."\n";
+    		//if (empty($user->socid)) {
+    		//	print '<a class="butAction" href="' . $_SERVER["PHP_SELF"] . '?id=' . $object->id . '&action=presend&mode=init#formmailbeforetitle">' . $langs->trans('SendMail') . '</a>'."\n";
+    		//}
 
     		// Back to draft
     		if ($object->status == $object::STATUS_VALIDATED)

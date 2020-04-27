@@ -64,15 +64,22 @@ if (!defined('ISLOADEDBYSTEELSHEET')) die('Must be call by steelsheet'); ?>
 	line-height: 90px;
 	background: rgba(0, 0, 0, 0.2);
 }
-.info-box-sm .info-box-icon{
+.info-box-sm .info-box-icon {
     height: 80px;
     width: 80px;
     font-size: 25px;
     line-height: 80px;
 }
+.info-box-module .info-box-icon {
+	height: 106px;
+}
 .info-box-icon > img {
 	max-width: 100%;
 }
+.info-box-module .info-box-icon > img {
+    max-width: 60%;
+}
+
 .info-box-icon-text{
     box-sizing: border-box;
     display: block;
@@ -92,13 +99,41 @@ if (!defined('ISLOADEDBYSTEELSHEET')) die('Must be call by steelsheet'); ?>
     transition: opacity 0.5s, visibility 0s 0.5s;
 }
 
+.info-box-icon-version {
+    box-sizing: border-box;
+    display: block;
+    position: absolute;
+    width: 90px;
+    bottom: 0px;
+    color: #ffffff;
+    background-color: rgba(0,0,0,0.1);
+    cursor: default;
+
+    font-size: 10px;
+    line-height: 22px;
+    padding: 0px 3px;
+    text-align: center;
+    opacity: 1;
+    -webkit-transition: opacity 0.5s, visibility 0s 0.5s;
+    transition: opacity 0.5s, visibility 0s 0.5s;
+}
+.box-flex-item.info-box-module.info-box-module-disabled {
+    /* opacity: 0.6; */
+}
+
+.info-box-actions {
+	position: absolute;
+    right: 0;
+    bottom: 0;
+}
+
 <?php if (empty($conf->global->MAIN_DISABLE_GLOBAL_BOXSTATS) && !empty($conf->global->MAIN_INCLUDE_GLOBAL_STATS_IN_OPENED_DASHBOARD)) { ?>
 .info-box-icon-text{
     opacity: 1;
 }
 <?php } ?>
 
-.info-box-sm .info-box-icon-text{
+.info-box-sm .info-box-icon-text, .info-box-sm .info-box-icon-version{
     overflow: hidden;
     width: 80px;
 }
@@ -169,35 +204,35 @@ if (GETPOSTISSET('THEME_AGRESSIVENESS_RATIO')) $conf->global->THEME_AGRESSIVENES
     opacity: 0.95;
 }
 
-.bg-infoxbox-project{
-	<?php echo $prefix; ?>color: <?php print colorAgressiveness('#6c6a98', $conf->global->THEME_AGRESSIVENESS_RATIO); ?> !important;
+.bg-infobox-project{
+	<?php echo $prefix; ?>color: <?php print colorAgressiveness('#6c6aa8', $conf->global->THEME_AGRESSIVENESS_RATIO); ?> !important;
 }
-.bg-infoxbox-action{
-	<?php echo $prefix; ?>color: <?php print colorAgressiveness('#b46080', $conf->global->THEME_AGRESSIVENESS_RATIO); ?>  !important;
+.bg-infobox-action{
+	<?php echo $prefix; ?>color: <?php print colorAgressiveness('#a47080', $conf->global->THEME_AGRESSIVENESS_RATIO); ?>  !important;
 }
-.bg-infoxbox-propal,
-.bg-infoxbox-facture,
-.bg-infoxbox-commande{
+.bg-infobox-propal,
+.bg-infobox-facture,
+.bg-infobox-commande{
 	<?php echo $prefix; ?>color: <?php print colorAgressiveness('#99a17d', $conf->global->THEME_AGRESSIVENESS_RATIO); ?>  !important;
 }
-.bg-infoxbox-supplier_proposal,
-.bg-infoxbox-invoice_supplier,
-.bg-infoxbox-order_supplier{
+.bg-infobox-supplier_proposal,
+.bg-infobox-invoice_supplier,
+.bg-infobox-order_supplier{
 	<?php echo $prefix; ?>color: <?php print colorAgressiveness('#599caf', $conf->global->THEME_AGRESSIVENESS_RATIO); ?>  !important;
 }
-.bg-infoxbox-contrat{
-	<?php echo $prefix; ?>color: <?php print colorAgressiveness('#469686', $conf->global->THEME_AGRESSIVENESS_RATIO); ?>  !important;
+.bg-infobox-contrat, .bg-infobox-ticket{
+	<?php echo $prefix; ?>color: <?php print colorAgressiveness('#46a676', $conf->global->THEME_AGRESSIVENESS_RATIO); ?>  !important;
 }
-.bg-infoxbox-bank_account{
-	<?php echo $prefix; ?>color: <?php print colorAgressiveness('#c5903e', $conf->global->THEME_AGRESSIVENESS_RATIO); ?>  !important;
+.bg-infobox-bank_account{
+	<?php echo $prefix; ?>color: <?php print colorAgressiveness('#b0a53e', $conf->global->THEME_AGRESSIVENESS_RATIO); ?>  !important;
 }
-.bg-infoxbox-adherent{
+.bg-infobox-adherent{
 	<?php echo $prefix; ?>color: <?php print colorAgressiveness('#79633f', $conf->global->THEME_AGRESSIVENESS_RATIO); ?>  !important;
 }
-.bg-infoxbox-expensereport{
+.bg-infobox-expensereport{
 	<?php echo $prefix; ?>color: <?php print colorAgressiveness('#79633f', $conf->global->THEME_AGRESSIVENESS_RATIO); ?>  !important;
 }
-.bg-infoxbox-holiday{
+.bg-infobox-holiday{
 	<?php echo $prefix; ?>color: <?php print colorAgressiveness('#755114', $conf->global->THEME_AGRESSIVENESS_RATIO); ?>  !important;
 }
 
@@ -207,7 +242,7 @@ if (GETPOSTISSET('THEME_AGRESSIVENESS_RATIO')) $conf->global->THEME_AGRESSIVENES
 }
 .fa-dol-propal:before,
 .fa-dol-supplier_proposal:before {
-	content: "\f2b5";
+	content: "\f573";
 }
 .fa-dol-facture:before,
 .fa-dol-invoice_supplier:before {
@@ -222,6 +257,9 @@ if (GETPOSTISSET('THEME_AGRESSIVENESS_RATIO')) $conf->global->THEME_AGRESSIVENES
 }
 .fa-dol-contrat:before {
 	content: "\f1e6";
+}
+.fa-dol-ticket:before {
+	content: "\f3ff";
 }
 .fa-dol-bank_account:before {
 	content: "\f19c";
@@ -262,37 +300,6 @@ if (GETPOSTISSET('THEME_AGRESSIVENESS_RATIO')) $conf->global->THEME_AGRESSIVENES
 	color : #b91f1f;
 }
 
-/* USING IMAGES FOR WEATHER INTEAD OF FONT AWESOME */
-/* For other themes just uncomment this part */
-/*.info-box-weather-level0,
-.info-box-weather-level1,
-.info-box-weather-level2,
-.info-box-weather-level3,
-.info-box-weather-level4 {
-	background-position: 15px 50%;
-	background-repeat: no-repeat;
-}
-
-.info-box-weather .info-box-icon{
-	display: none !important;
-}
-.info-box-weather-level0 {
-	background-image: url("img/weather/weather-clear.png");
-}
-.info-box-weather-level1 {
-	background-image: url("img/weather/weather-few-clouds.png");
-}
-.info-box-weather-level2 {
-	background-image: url("img/weather/weather-clouds.png");
-}
-.info-box-weather-level3 {
-	background-image: url("img/weather/weather-many-clouds.png");
-}
-.info-box-weather-level4 {
-	background-image: url("img/weather/weather-storm.png");
-}*/
-
-
 
 .box-flex-container{
 	display: flex; /* or inline-flex */
@@ -316,6 +323,13 @@ if (GETPOSTISSET('THEME_AGRESSIVENESS_RATIO')) $conf->global->THEME_AGRESSIVENES
 	height: 0;
 }
 
+.info-box-module {
+	min-width: 350px;
+    max-width: 350px;
+}
+.info-box-module .info-box-content {
+	height: 7em;
+}
 /* Disabled. This break the responsive on smartphone
 .box{
 	overflow: visible;
@@ -326,5 +340,10 @@ if (GETPOSTISSET('THEME_AGRESSIVENESS_RATIO')) $conf->global->THEME_AGRESSIVENES
 {
 	.box-flex-container {
 	    margin: 0 0 0 0 !important;
+	}
+
+	.info-box-module {
+		width: 100%;
+		max-width: unset;
 	}
 }

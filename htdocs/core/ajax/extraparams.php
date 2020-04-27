@@ -20,11 +20,11 @@
  *	\brief      File to make Ajax action on setting extra parameters of elements
  */
 
-if (! defined('NOTOKENRENEWAL')) define('NOTOKENRENEWAL', '1'); // Disables token renewal
-if (! defined('NOREQUIREMENU'))  define('NOREQUIREMENU', '1');
-if (! defined('NOREQUIREHTML'))  define('NOREQUIREHTML', '1');
-if (! defined('NOREQUIREAJAX'))  define('NOREQUIREAJAX', '1');
-if (! defined('NOREQUIRESOC'))   define('NOREQUIRESOC', '1');
+if (!defined('NOTOKENRENEWAL')) define('NOTOKENRENEWAL', '1'); // Disables token renewal
+if (!defined('NOREQUIREMENU'))  define('NOREQUIREMENU', '1');
+if (!defined('NOREQUIREHTML'))  define('NOREQUIREHTML', '1');
+if (!defined('NOREQUIREAJAX'))  define('NOREQUIREAJAX', '1');
+if (!defined('NOREQUIRESOC'))   define('NOREQUIRESOC', '1');
 
 include '../../main.inc.php';
 
@@ -41,36 +41,36 @@ top_httphead();
 
 print '<!-- Ajax page called with url '.dol_escape_htmltag($_SERVER["PHP_SELF"]).'?'.dol_escape_htmltag($_SERVER["QUERY_STRING"]).' -->'."\n";
 
-if(! empty($id) && ! empty($element) && ! empty($htmlelement) && ! empty($type))
+if (!empty($id) && !empty($element) && !empty($htmlelement) && !empty($type))
 {
 	$value = GETPOST('value', 'alpha');
-	$params=array();
+	$params = array();
 
 	dol_syslog("AjaxSetExtraParameters id=".$id." element=".$element." htmlelement=".$htmlelement." type=".$type." value=".$value, LOG_DEBUG);
 
 	$classpath = $subelement = $element;
 
 	// For compatibility
-	if ($element == 'order' || $element == 'commande')    { $classpath = $subelement = 'commande'; }
-	elseif ($element == 'propal')				{ $classpath = 'comm/propal'; $subelement = 'propal'; }
-	elseif ($element == 'facture')				{ $classpath = 'compta/facture'; $subelement = 'facture'; }
-	elseif ($element == 'contract')			{ $classpath = $subelement = 'contrat'; }
-	elseif ($element == 'shipping')			{ $classpath = $subelement = 'expedition'; }
-	elseif ($element == 'deplacement')			{ $classpath = 'compta/deplacement'; $subelement = 'deplacement'; }
-	elseif ($element == 'order_supplier')		{ $classpath = 'fourn'; $subelement = 'fournisseur.commande'; }
-	elseif ($element == 'invoice_supplier')	{ $classpath = 'fourn'; $subelement = 'fournisseur.facture'; }
+	if ($element == 'order' || $element == 'commande') { $classpath = $subelement = 'commande'; }
+	elseif ($element == 'propal') { $classpath = 'comm/propal'; $subelement = 'propal'; }
+	elseif ($element == 'facture') { $classpath = 'compta/facture'; $subelement = 'facture'; }
+	elseif ($element == 'contract') { $classpath = $subelement = 'contrat'; }
+	elseif ($element == 'shipping') { $classpath = $subelement = 'expedition'; }
+	elseif ($element == 'deplacement') { $classpath = 'compta/deplacement'; $subelement = 'deplacement'; }
+	elseif ($element == 'order_supplier') { $classpath = 'fourn'; $subelement = 'fournisseur.commande'; }
+	elseif ($element == 'invoice_supplier') { $classpath = 'fourn'; $subelement = 'fournisseur.facture'; }
 
 	dol_include_once('/'.$classpath.'/class/'.$subelement.'.class.php');
 
-	if ($element == 'order_supplier')			{ $classname = 'CommandeFournisseur'; }
-	elseif ($element == 'invoice_supplier')	{ $classname = 'FactureFournisseur'; }
+	if ($element == 'order_supplier') { $classname = 'CommandeFournisseur'; }
+	elseif ($element == 'invoice_supplier') { $classname = 'FactureFournisseur'; }
 	else $classname = ucfirst($subelement);
 
-	$object	= new $classname($db);
+	$object = new $classname($db);
 	$object->fetch($id);
 
 	$params[$htmlelement] = array($type => $value);
 	$object->extraparams = array_merge($object->extraparams, $params);
 
-	$result=$object->setExtraParameters();
+	$result = $object->setExtraParameters();
 }

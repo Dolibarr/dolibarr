@@ -102,7 +102,7 @@ if (($id > 0 || $ref) && $action != 'create' && $action != 'add')
 }
 
 // Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
-$hookmanager->initHooks(array('invoicereccard', 'globalcard'));
+$hookmanager->initHooks(array('invoicereclist'));
 $extrafields = new ExtraFields($db);
 
 // fetch optionals attributes and labels
@@ -328,13 +328,12 @@ if ($resql)
 	print '<input type="hidden" name="action" value="list">';
 	print '<input type="hidden" name="sortfield" value="'.$sortfield.'">';
 	print '<input type="hidden" name="sortorder" value="'.$sortorder.'">';
-	print '<input type="hidden" name="page" value="'.$page.'">';
 	print '<input type="hidden" name="contextpage" value="'.$contextpage.'">';
-	print '<input type="hidden" name="viewstatut" value="'.$viewstatut.'">';
+	print '<input type="hidden" name="search_status" value="'.$search_status.'">';
 
 	$title = $langs->trans("RepeatableInvoices");
 
-	print_barre_liste($title, $page, $_SERVER['PHP_SELF'], $param, $sortfield, $sortorder, '', $num, $nbtotalofrecords, 'invoicing', 0, '', '', $limit);
+	print_barre_liste($title, $page, $_SERVER['PHP_SELF'], $param, $sortfield, $sortorder, '', $num, $nbtotalofrecords, 'bill', 0, '', '', $limit, 0, 0, 1);
 
 	print '<span class="opacitymedium">'.$langs->trans("ToCreateAPredefinedInvoice", $langs->transnoentitiesnoconv("ChangeIntoRepeatableInvoice")).'</span><br><br>';
 

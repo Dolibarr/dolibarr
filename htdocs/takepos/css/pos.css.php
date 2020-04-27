@@ -153,7 +153,7 @@ button.actionbutton {
 	vertical-align: middle;
 	text-align: center;
 	overflow: visible; /* removes extra width in IE */
-	width:33%;
+	width: calc(33% - 2px);
 	height: calc(25% - 2px);
 	margin: 1px;
    	border-width: 0;

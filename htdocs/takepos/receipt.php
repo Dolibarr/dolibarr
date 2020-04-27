@@ -30,12 +30,12 @@ include_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
 
 $langs->loadLangs(array("main", "cashdesk", "companies"));
 
-$place = (GETPOST('place', 'alpha') ? GETPOST('place', 'alpha') : 0); // $place is id of table for Ba or Restaurant
+$place = (GETPOST('place', 'aZ09') ? GETPOST('place', 'aZ09') : 0); // $place is id of table for Ba or Restaurant
 
 $facid = GETPOST('facid', 'int');
 
 if (empty($user->rights->takepos->run)) {
-	access_forbidden();
+	accessforbidden();
 }
 
 

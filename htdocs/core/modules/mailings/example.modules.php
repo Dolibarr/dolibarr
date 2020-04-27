@@ -26,21 +26,21 @@ include_once DOL_DOCUMENT_ROOT.'/core/modules/mailings/modules_mailings.php';
 class mailing_example extends MailingTargets
 {
     // CHANGE THIS: Put here a name not already used
-    public $name='example';
+    public $name = 'example';
     // CHANGE THIS: Put here a description of your selector module.
     // This label is used if no translation is found for key MailingModuleDescXXX where XXX=name is found
-    public $desc='Put here a description';
+    public $desc = 'Put here a description';
     // CHANGE THIS: Set to 1 if selector is available for admin users only
-    public $require_admin=0;
+    public $require_admin = 0;
     // CHANGE THIS: Add a tooltip language key to add a tooltip help icon after the email target selector
-    public $tooltip='MyTooltipLangKey';
+    public $tooltip = 'MyTooltipLangKey';
 
-    public $require_module=array();
+    public $require_module = array();
 
     /**
      * @var string String with name of icon for myobject. Must be the part after the 'object_' into object_myobject.png
      */
-    public $picto='';
+    public $picto = '';
 
     /**
      * @var DoliDB Database handler.
@@ -56,7 +56,7 @@ class mailing_example extends MailingTargets
 	 */
     public function __construct($db)
     {
-        $this->db=$db;
+        $this->db = $db;
     }
 
 
@@ -133,7 +133,7 @@ class mailing_example extends MailingTargets
     {
         // CHANGE THIS: Optionnal
 
-        $s='';
+        $s = '';
         return $s;
     }
 

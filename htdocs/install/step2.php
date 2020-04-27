@@ -36,31 +36,31 @@ $ok = 0;
 
 // Cette page peut etre longue. On augmente le delai autorise.
 // Ne fonctionne que si on est pas en safe_mode.
-$err=error_reporting();
-error_reporting(0);		// Disable all errors
+$err = error_reporting();
+error_reporting(0); // Disable all errors
 //error_reporting(E_ALL);
-@set_time_limit(900);	// Need 900 on some OS like Windows 7/64
+@set_time_limit(900); // Need 900 on some OS like Windows 7/64
 error_reporting($err);
 
-$action=GETPOST('action', 'aZ09')?GETPOST('action', 'aZ09'):(empty($argv[1])?'':$argv[1]);
-$setuplang=GETPOST('selectlang', 'aZ09', 3)?GETPOST('selectlang', 'aZ09', 3):(empty($argv[2])?'auto':$argv[2]);
+$action = GETPOST('action', 'aZ09') ?GETPOST('action', 'aZ09') : (empty($argv[1]) ? '' : $argv[1]);
+$setuplang = GETPOST('selectlang', 'aZ09', 3) ?GETPOST('selectlang', 'aZ09', 3) : (empty($argv[2]) ? 'auto' : $argv[2]);
 $langs->setDefaultLang($setuplang);
 
 $langs->loadLangs(array("admin", "install"));
 
-$choix=0;
-if ($dolibarr_main_db_type == "mysqli") $choix=1;
-if ($dolibarr_main_db_type == "pgsql")  $choix=2;
-if ($dolibarr_main_db_type == "mssql")  $choix=3;
-if ($dolibarr_main_db_type == "sqlite")  $choix=4;
-if ($dolibarr_main_db_type == "sqlite3")  $choix=5;
+$choix = 0;
+if ($dolibarr_main_db_type == "mysqli") $choix = 1;
+if ($dolibarr_main_db_type == "pgsql")  $choix = 2;
+if ($dolibarr_main_db_type == "mssql")  $choix = 3;
+if ($dolibarr_main_db_type == "sqlite")  $choix = 4;
+if ($dolibarr_main_db_type == "sqlite3")  $choix = 5;
 
 //if (empty($choix)) dol_print_error('','Database type '.$dolibarr_main_db_type.' not supported into step2.php page');
 
 // Now we load forced values from install.forced.php file.
-$useforcedwizard=false;
-$forcedfile="./install.forced.php";
-if ($conffile == "/etc/dolibarr/conf.php") $forcedfile="/etc/dolibarr/install.forced.php";
+$useforcedwizard = false;
+$forcedfile = "./install.forced.php";
+if ($conffile == "/etc/dolibarr/conf.php") $forcedfile = "/etc/dolibarr/install.forced.php";
 if (@file_exists($forcedfile)) {
 	$useforcedwizard = true;
 	include_once $forcedfile;
@@ -78,7 +78,7 @@ dolibarr_install_syslog("- step2: entering step2.php page");
 pHeader($langs->trans("CreateDatabaseObjects"), "step4");
 
 // Test if we can run a first install process
-if (! is_writable($conffile))
+if (!is_writable($conffile))
 {
     print $langs->trans("ConfFileIsNotWritable", $conffiletoshow);
     pFooter(1, $setuplang, 'jscheckparam');
@@ -90,15 +90,15 @@ if ($action == "set")
     print '<h3><img class="valigntextbottom" src="../theme/common/octicons/build/svg/database.svg" width="20" alt="Database"> '.$langs->trans("Database").'</h3>';
 
     print '<table cellspacing="0" style="padding: 4px 4px 4px 0" border="0" width="100%">';
-    $error=0;
+    $error = 0;
 
-    $db=getDoliDBInstance($conf->db->type, $conf->db->host, $conf->db->user, $conf->db->pass, $conf->db->name, $conf->db->port);
+    $db = getDoliDBInstance($conf->db->type, $conf->db->host, $conf->db->user, $conf->db->pass, $conf->db->name, $conf->db->port);
 
     if ($db->connected)
     {
         print "<tr><td>";
         print $langs->trans("ServerConnection")." : ".$conf->db->host.'</td><td><img src="../theme/eldy/img/tick.png" alt="Ok"></td></tr>';
-        $ok = 1 ;
+        $ok = 1;
     }
     else
     {
@@ -107,15 +107,15 @@ if ($action == "set")
 
     if ($ok)
     {
-        if($db->database_selected)
+        if ($db->database_selected)
         {
-            dolibarr_install_syslog("step2: successful connection to database: " . $conf->db->name);
+            dolibarr_install_syslog("step2: successful connection to database: ".$conf->db->name);
         }
         else
         {
-            dolibarr_install_syslog("step2: failed connection to database :" . $conf->db->name, LOG_ERR);
+            dolibarr_install_syslog("step2: failed connection to database :".$conf->db->name, LOG_ERR);
             print "<tr><td>Failed to select database ".$conf->db->name.'</td><td><img src="../theme/eldy/img/error.png" alt="Error"></td></tr>';
-            $ok = 0 ;
+            $ok = 0;
         }
     }
 
@@ -123,8 +123,8 @@ if ($action == "set")
     // Affiche version
     if ($ok)
     {
-        $version=$db->getVersion();
-        $versionarray=$db->getVersionArray();
+        $version = $db->getVersion();
+        $versionarray = $db->getVersionArray();
         print '<tr><td>'.$langs->trans("DatabaseVersion").'</td>';
         print '<td>'.$version.'</td></tr>';
         //print '<td class="right">'.join('.',$versionarray).'</td></tr>';
@@ -134,18 +134,18 @@ if ($action == "set")
         //print '<td class="right">'.join('.',$versionarray).'</td></tr>';
     }
 
-    $requestnb=0;
+    $requestnb = 0;
 
     // To disable some code, so you can call step2 with url like
     // http://localhost/dolibarrnew/install/step2.php?action=set&createtables=0&createkeys=0&createfunctions=0&createdata=llx_20_c_departements
-    $createtables=isset($_GET['createtables'])?GETPOST('createtables'):1;
-    $createkeys=isset($_GET['createkeys'])?GETPOST('createkeys'):1;
-    $createfunctions=isset($_GET['createfunctions'])?GETPOST('createfunction'):1;
-    $createdata=isset($_GET['createdata'])?GETPOST('createdata'):1;
+    $createtables = isset($_GET['createtables']) ?GETPOST('createtables') : 1;
+    $createkeys = isset($_GET['createkeys']) ?GETPOST('createkeys') : 1;
+    $createfunctions = isset($_GET['createfunctions']) ?GETPOST('createfunction') : 1;
+    $createdata = isset($_GET['createdata']) ?GETPOST('createdata') : 1;
 
 
     // To say sql requests are escaped for mysql so we need to unescape them
-    $db->unescapeslashquot=true;
+    $db->unescapeslashquot = true;
 
 
     /**************************************************************************************
@@ -160,18 +160,18 @@ if ($action == "set")
         $dir = "mysql/tables/";
 
         $ok = 0;
-        $handle=opendir($dir);
-        dolibarr_install_syslog("step2: open tables directory " . $dir . " handle=" . $handle);
+        $handle = opendir($dir);
+        dolibarr_install_syslog("step2: open tables directory ".$dir." handle=".$handle);
         $tablefound = 0;
-        $tabledata=array();
+        $tabledata = array();
         if (is_resource($handle))
         {
-            while (($file = readdir($handle))!==false)
+            while (($file = readdir($handle)) !== false)
             {
-                if (preg_match('/\.sql$/i', $file) && preg_match('/^llx_/i', $file) && ! preg_match('/\.key\.sql$/i', $file))
+                if (preg_match('/\.sql$/i', $file) && preg_match('/^llx_/i', $file) && !preg_match('/\.key\.sql$/i', $file))
                 {
                     $tablefound++;
-                    $tabledata[]=$file;
+                    $tabledata[] = $file;
                 }
             }
             closedir($handle);
@@ -179,7 +179,7 @@ if ($action == "set")
 
         // Sort list of sql files on alphabetical order (load order is important)
         sort($tabledata);
-        foreach($tabledata as $file)
+        foreach ($tabledata as $file)
         {
             $name = substr($file, 0, dol_strlen($file) - 4);
             $buffer = '';
@@ -191,36 +191,36 @@ if ($action == "set")
                     $buf = fgets($fp, 4096);
                     if (substr($buf, 0, 2) <> '--')
                     {
-                        $buf=preg_replace('/--(.+)*/', '', $buf);
+                        $buf = preg_replace('/--(.+)*/', '', $buf);
                         $buffer .= $buf;
                     }
                 }
                 fclose($fp);
 
-                $buffer=trim($buffer);
+                $buffer = trim($buffer);
                 if ($conf->db->type == 'mysql' || $conf->db->type == 'mysqli')	// For Mysql 5.5+, we must replace type=innodb with ENGINE=innodb
                 {
-                    $buffer=preg_replace('/type=innodb/i', 'ENGINE=innodb', $buffer);
+                    $buffer = preg_replace('/type=innodb/i', 'ENGINE=innodb', $buffer);
                 }
                 else
                 {
                     // Keyword ENGINE is MySQL-specific, so scrub it for
                     // other database types (mssql, pgsql)
-                    $buffer=preg_replace('/type=innodb/i', '', $buffer);
-                    $buffer=preg_replace('/ENGINE=innodb/i', '', $buffer);
+                    $buffer = preg_replace('/type=innodb/i', '', $buffer);
+                    $buffer = preg_replace('/ENGINE=innodb/i', '', $buffer);
                 }
 
                 // Replace the prefix tables
                 if ($dolibarr_main_db_prefix != 'llx_')
                 {
-                	$buffer=preg_replace('/llx_/i', $dolibarr_main_db_prefix, $buffer);
+                	$buffer = preg_replace('/llx_/i', $dolibarr_main_db_prefix, $buffer);
                 }
 
                 //print "<tr><td>Creation de la table $name/td>";
                 $requestnb++;
 
-                dolibarr_install_syslog("step2: request: " . $buffer);
-                $resql=$db->query($buffer, 0, 'dml');
+                dolibarr_install_syslog("step2: request: ".$buffer);
+                $resql = $db->query($buffer, 0, 'dml');
                 if ($resql)
                 {
                     // print "<td>OK requete ==== $buffer</td></tr>";
@@ -249,7 +249,7 @@ if ($action == "set")
                 print "</td>";
                 print '<td><span class="error">'.$langs->trans("Error").' Failed to open file '.$dir.$file.'</span></td></tr>';
                 $error++;
-                dolibarr_install_syslog("step2: failed to open file " . $dir . $file, LOG_ERR);
+                dolibarr_install_syslog("step2: failed to open file ".$dir.$file, LOG_ERR);
             }
         }
 
@@ -265,7 +265,7 @@ if ($action == "set")
         else
         {
             print '<tr><td>'.$langs->trans("ErrorFailedToFindSomeFiles", $dir).'</td><td><img src="../theme/eldy/img/error.png" alt="Error"></td></tr>';
-            dolibarr_install_syslog("step2: failed to find files to create database in directory " . $dir, LOG_ERR);
+            dolibarr_install_syslog("step2: failed to find files to create database in directory ".$dir, LOG_ERR);
         }
     }
 
@@ -282,18 +282,18 @@ if ($action == "set")
         $dir = "mysql/tables/";
 
         $okkeys = 0;
-        $handle=opendir($dir);
-        dolibarr_install_syslog("step2: open keys directory " . $dir . " handle=" . $handle);
+        $handle = opendir($dir);
+        dolibarr_install_syslog("step2: open keys directory ".$dir." handle=".$handle);
         $tablefound = 0;
-        $tabledata=array();
+        $tabledata = array();
         if (is_resource($handle))
         {
-            while (($file = readdir($handle))!==false)
+            while (($file = readdir($handle)) !== false)
             {
                 if (preg_match('/\.sql$/i', $file) && preg_match('/^llx_/i', $file) && preg_match('/\.key\.sql$/i', $file))
                 {
                     $tablefound++;
-                    $tabledata[]=$file;
+                    $tabledata[] = $file;
                 }
             }
             closedir($handle);
@@ -301,7 +301,7 @@ if ($action == "set")
 
         // Sort list of sql files on alphabetical order (load order is important)
         sort($tabledata);
-        foreach($tabledata as $file)
+        foreach ($tabledata as $file)
         {
             $name = substr($file, 0, dol_strlen($file) - 4);
             //print "<tr><td>Creation de la table $name</td>";
@@ -316,54 +316,54 @@ if ($action == "set")
                     // Special case of lines allowed for some version only
                     if ($choix == 1 && preg_match('/^--\sV([0-9\.]+)/i', $buf, $reg))
                     {
-                        $versioncommande=explode('.', $reg[1]);
+                        $versioncommande = explode('.', $reg[1]);
                         //print var_dump($versioncommande);
                         //print var_dump($versionarray);
                         if (count($versioncommande) && count($versionarray)
                         && versioncompare($versioncommande, $versionarray) <= 0)
                         {
                             // Version qualified, delete SQL comments
-                            $buf=preg_replace('/^--\sV([0-9\.]+)/i', '', $buf);
+                            $buf = preg_replace('/^--\sV([0-9\.]+)/i', '', $buf);
                             //print "Ligne $i qualifiee par version: ".$buf.'<br>';
                         }
                     }
                     if ($choix == 2 && preg_match('/^--\sPOSTGRESQL\sV([0-9\.]+)/i', $buf, $reg))
                     {
-                        $versioncommande=explode('.', $reg[1]);
+                        $versioncommande = explode('.', $reg[1]);
                         //print var_dump($versioncommande);
                         //print var_dump($versionarray);
                         if (count($versioncommande) && count($versionarray)
                         && versioncompare($versioncommande, $versionarray) <= 0)
                         {
                             // Version qualified, delete SQL comments
-                            $buf=preg_replace('/^--\sPOSTGRESQL\sV([0-9\.]+)/i', '', $buf);
+                            $buf = preg_replace('/^--\sPOSTGRESQL\sV([0-9\.]+)/i', '', $buf);
                             //print "Ligne $i qualifiee par version: ".$buf.'<br>';
                         }
                     }
 
                     // Ajout ligne si non commentaire
-                    if (! preg_match('/^--/i', $buf)) $buffer .= $buf;
+                    if (!preg_match('/^--/i', $buf)) $buffer .= $buf;
                 }
                 fclose($fp);
 
                 // Si plusieurs requetes, on boucle sur chaque
-                $listesql=explode(';', $buffer);
+                $listesql = explode(';', $buffer);
                 foreach ($listesql as $req)
                 {
-                    $buffer=trim($req);
+                    $buffer = trim($req);
                     if ($buffer)
                     {
                     	// Replace the prefix tables
                     	if ($dolibarr_main_db_prefix != 'llx_')
                     	{
-                    		$buffer=preg_replace('/llx_/i', $dolibarr_main_db_prefix, $buffer);
+                    		$buffer = preg_replace('/llx_/i', $dolibarr_main_db_prefix, $buffer);
                     	}
 
                         //print "<tr><td>Creation des cles et index de la table $name: '$buffer'</td>";
                         $requestnb++;
 
-                        dolibarr_install_syslog("step2: request: " . $buffer);
-                        $resql=$db->query($buffer, 0, 'dml');
+                        dolibarr_install_syslog("step2: request: ".$buffer);
+                        $resql = $db->query($buffer, 0, 'dml');
                         if ($resql)
                         {
                             //print "<td>OK requete ==== $buffer</td></tr>";
@@ -398,7 +398,7 @@ if ($action == "set")
                 print "</td>";
                 print '<td><span class="error">'.$langs->trans("Error")." Failed to open file ".$dir.$file."</span></td></tr>";
                 $error++;
-                dolibarr_install_syslog("step2: failed to open file " . $dir . $file, LOG_ERR);
+                dolibarr_install_syslog("step2: failed to open file ".$dir.$file, LOG_ERR);
             }
         }
 
@@ -419,20 +419,20 @@ if ($action == "set")
     if ($ok && $createfunctions)
     {
         // For this file, we use a directory according to database type
-        if ($choix==1) $dir = "mysql/functions/";
-        elseif ($choix==2) $dir = "pgsql/functions/";
-        elseif ($choix==3) $dir = "mssql/functions/";
-		elseif ($choix==4) { $dir = "sqlite3/functions/"; }
+        if ($choix == 1) $dir = "mysql/functions/";
+        elseif ($choix == 2) $dir = "pgsql/functions/";
+        elseif ($choix == 3) $dir = "mssql/functions/";
+		elseif ($choix == 4) { $dir = "sqlite3/functions/"; }
 
         // Creation donnees
         $file = "functions.sql";
         if (file_exists($dir.$file))
         {
             $fp = fopen($dir.$file, "r");
-            dolibarr_install_syslog("step2: open function file " . $dir . $file . " handle=" . $fp);
+            dolibarr_install_syslog("step2: open function file ".$dir.$file." handle=".$fp);
             if ($fp)
             {
-                $buffer='';
+                $buffer = '';
                 while (!feof($fp))
                 {
                     $buf = fgets($fp, 4096);
@@ -446,20 +446,20 @@ if ($action == "set")
             //$buffer=preg_replace('/;\';/',";'§",$buffer);
 
             // If several requests, we loop on each of them
-            $listesql=explode('§', $buffer);
+            $listesql = explode('§', $buffer);
             foreach ($listesql as $buffer)
             {
-                $buffer=trim($buffer);
+                $buffer = trim($buffer);
                 if ($buffer)
                 {
                     // Replace the prefix in table names
                     if ($dolibarr_main_db_prefix != 'llx_')
                     {
-                        $buffer=preg_replace('/llx_/i', $dolibarr_main_db_prefix, $buffer);
+                        $buffer = preg_replace('/llx_/i', $dolibarr_main_db_prefix, $buffer);
                     }
-                    dolibarr_install_syslog("step2: request: " . $buffer);
+                    dolibarr_install_syslog("step2: request: ".$buffer);
                     print "<!-- Insert line : ".$buffer."<br>-->\n";
-                    $resql=$db->query($buffer, 0, 'dml');
+                    $resql = $db->query($buffer, 0, 'dml');
                     if ($resql)
                     {
                         $ok = 1;
@@ -494,7 +494,7 @@ if ($action == "set")
             else
             {
                 print '<td><img src="../theme/eldy/img/error.png" alt="Error"></td></tr>';
-                $ok = 1 ;
+                $ok = 1;
             }
         }
     }
@@ -511,23 +511,23 @@ if ($action == "set")
         $dir = "mysql/data/";
 
         // Insert data
-        $handle=opendir($dir);
-        dolibarr_install_syslog("step2: open directory data " . $dir . " handle=" . $handle);
+        $handle = opendir($dir);
+        dolibarr_install_syslog("step2: open directory data ".$dir." handle=".$handle);
         $tablefound = 0;
-        $tabledata=array();
+        $tabledata = array();
         if (is_resource($handle))
         {
-            while (($file = readdir($handle))!==false)
+            while (($file = readdir($handle)) !== false)
             {
                 if (preg_match('/\.sql$/i', $file) && preg_match('/^llx_/i', $file))
                 {
-                	if (preg_match('/^llx_accounting_account_/', $file)) continue;	// We discard data file of chart of account. Will be loaded when a chart is selected.
+                	if (preg_match('/^llx_accounting_account_/', $file)) continue; // We discard data file of chart of account. Will be loaded when a chart is selected.
 
                     //print 'x'.$file.'-'.$createdata.'<br>';
                     if (is_numeric($createdata) || preg_match('/'.preg_quote($createdata).'/i', $file))
                     {
                         $tablefound++;
-                        $tabledata[]=$file;
+                        $tabledata[] = $file;
                     }
                 }
             }
@@ -536,17 +536,17 @@ if ($action == "set")
 
         // Sort list of data files on alphabetical order (load order is important)
         sort($tabledata);
-        foreach($tabledata as $file)
+        foreach ($tabledata as $file)
         {
             $name = substr($file, 0, dol_strlen($file) - 4);
             $fp = fopen($dir.$file, "r");
-            dolibarr_install_syslog("step2: open data file " . $dir . $file . " handle=" . $fp);
+            dolibarr_install_syslog("step2: open data file ".$dir.$file." handle=".$fp);
             if ($fp)
             {
-                $arrayofrequests=array();
-                $linefound=0;
-                $linegroup=0;
-                $sizeofgroup=1; // Grouping request to have 1 query for several requests does not works with mysql, so we use 1.
+                $arrayofrequests = array();
+                $linefound = 0;
+                $linegroup = 0;
+                $sizeofgroup = 1; // Grouping request to have 1 query for several requests does not works with mysql, so we use 1.
 
                 // Load all requests
                 while (!feof($fp))
@@ -561,30 +561,30 @@ if ($action == "set")
                         {
                             $linegroup++;
                         }
-                        if (empty($arrayofrequests[$linegroup])) $arrayofrequests[$linegroup]=$buffer;
-                        else $arrayofrequests[$linegroup].=" ".$buffer;
+                        if (empty($arrayofrequests[$linegroup])) $arrayofrequests[$linegroup] = $buffer;
+                        else $arrayofrequests[$linegroup] .= " ".$buffer;
 
                         $linefound++;
                     }
                 }
                 fclose($fp);
 
-                dolibarr_install_syslog("step2: found " . $linefound . " records, defined " . count($arrayofrequests) . " group(s).");
+                dolibarr_install_syslog("step2: found ".$linefound." records, defined ".count($arrayofrequests)." group(s).");
 
-                $okallfile=1;
+                $okallfile = 1;
                 $db->begin();
 
                 // We loop on each requests of file
-                foreach($arrayofrequests as $buffer)
+                foreach ($arrayofrequests as $buffer)
                 {
                 	// Replace the prefix tables
                 	if ($dolibarr_main_db_prefix != 'llx_')
                 	{
-                		$buffer=preg_replace('/llx_/i', $dolibarr_main_db_prefix, $buffer);
+                		$buffer = preg_replace('/llx_/i', $dolibarr_main_db_prefix, $buffer);
                 	}
 
                     //dolibarr_install_syslog("step2: request: " . $buffer);
-                    $resql=$db->query($buffer, 1);
+                    $resql = $db->query($buffer, 1);
                     if ($resql)
                     {
                         //$db->free($resql);     // Not required as request we launch here does not return memory needs.
@@ -617,7 +617,7 @@ if ($action == "set")
         else
         {
             print '<td><img src="../theme/eldy/img/error.png" alt="Error"></td></tr>';
-            $ok = 1;    // Data loading are not blocking errors
+            $ok = 1; // Data loading are not blocking errors
         }
     }
     print '</table>';
@@ -628,8 +628,8 @@ else
 }
 
 
-$ret=0;
-if (!$ok && isset($argv[1])) $ret=1;
+$ret = 0;
+if (!$ok && isset($argv[1])) $ret = 1;
 dolibarr_install_syslog("Exit ".$ret);
 
 dolibarr_install_syslog("- step2: end");
@@ -653,7 +653,7 @@ $out .= '</script>';
 
 print $out;
 
-pFooter($ok?0:1, $setuplang);
+pFooter($ok ? 0 : 1, $setuplang);
 
 if (isset($db) && is_object($db)) $db->close();
 

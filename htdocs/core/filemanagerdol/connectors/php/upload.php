@@ -41,23 +41,23 @@ function SendError($number, $text)
 
 
 // Check if this uploader has been enabled.
-if ( !$Config['Enabled'] )
+if (!$Config['Enabled'])
 	SendUploadResults('1', '', '', 'This file uploader is disabled. Please check the "filemanagerdol/connectors/php/config.php" file');
 
-$sCommand = 'QuickUpload' ;
+$sCommand = 'QuickUpload';
 
 // The file type (from the QueryString, by default 'File').
-$sType = isset($_GET['Type']) ? $_GET['Type'] : 'File' ;
+$sType = isset($_GET['Type']) ? $_GET['Type'] : 'File';
 
-$sCurrentFolder	= "/" ;
+$sCurrentFolder = "/";
 
 // Is enabled the upload?
-if (! IsAllowedCommand($sCommand))
-	SendUploadResults('1', '', '', 'The ""' . $sCommand . '"" command isn\'t allowed');
+if (!IsAllowedCommand($sCommand))
+	SendUploadResults('1', '', '', 'The ""'.$sCommand.'"" command isn\'t allowed');
 
 // Check if it is an allowed type.
-if (! IsAllowedType($sType))
-    SendUploadResults(1, '', '', 'Invalid type specified');
+if (!IsAllowedType($sType))
+	SendUploadResults(1, '', '', 'Invalid type specified');
 
 
 // @CHANGE

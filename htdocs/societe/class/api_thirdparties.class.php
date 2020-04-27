@@ -107,10 +107,11 @@ class Thirdparties extends DolibarrApi
 	 *                              Set to 2 to show only prospects
 	 *                              Set to 3 to show only those are not customer neither prospect
 	 *								Set to 4 to show only suppliers
+	 * @param  int    $category   Use this param to filter list by category
 	 * @param   string  $sqlfilters Other criteria to filter answers separated by a comma. Syntax example "(t.nom:like:'TheCompany%') and (t.date_creation:<:'20160101')"
 	 * @return  array               Array of thirdparty objects
 	 */
-    public function index($sortfield = "t.rowid", $sortorder = 'ASC', $limit = 100, $page = 0, $mode = 0, $sqlfilters = '')
+    public function index($sortfield = "t.rowid", $sortorder = 'ASC', $limit = 100, $page = 0, $mode = 0, $category = 0, $sqlfilters = '')
     {
 		global $db;
 
@@ -126,15 +127,27 @@ class Thirdparties extends DolibarrApi
 		$sql = "SELECT t.rowid";
 		if ((!DolibarrApiAccess::$user->rights->societe->client->voir && !$socids) || $search_sale > 0) $sql .= ", sc.fk_soc, sc.fk_user"; // We need these fields in order to filter by sale (including the case where the user can only see his prospects)
 		$sql .= " FROM ".MAIN_DB_PREFIX."societe as t";
-
+    	if ($category > 0) {
+			if ($mode != 4) $sql .= ", ".MAIN_DB_PREFIX."categorie_societe as c";
+			if (!in_array($mode, array(1, 2, 3))) $sql .= ", ".MAIN_DB_PREFIX."categorie_fournisseur as cc";
+    	}
 		if ((!DolibarrApiAccess::$user->rights->societe->client->voir && !$socids) || $search_sale > 0) $sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc"; // We need this table joined to the select in order to filter by sale
 		$sql .= ", ".MAIN_DB_PREFIX."c_stcomm as st";
-		$sql .= " WHERE t.fk_stcomm = st.id";
+		$sql .= " WHERE t.entity IN ('.getEntity('societe').')";
+		$sql .= " AND t.fk_stcomm = st.id";
+
 		if ($mode == 1) $sql .= " AND t.client IN (1, 3)";
 		if ($mode == 2) $sql .= " AND t.client IN (2, 3)";
 		if ($mode == 3) $sql .= " AND t.client IN (0)";
 		if ($mode == 4) $sql .= " AND t.fournisseur IN (1)";
-		$sql .= ' AND t.entity IN ('.getEntity('societe').')';
+
+    	// Select thirdparties of given category
+    	if ($category > 0) {
+			if (!empty($mode) && $mode != 4) { $sql .= " AND c.fk_categorie = ".$db->escape($category)." AND c.fk_soc = t.rowid"; }
+			elseif (!empty($mode) && $mode == 4) { $sql .= " AND cc.fk_categorie = ".$db->escape($category)." AND cc.fk_soc = t.rowid"; }
+			else { $sql .= " AND ((c.fk_categorie = ".$db->escape($category)." AND c.fk_soc = t.rowid) OR (cc.fk_categorie = ".$db->escape($category)." AND cc.fk_soc = t.rowid))"; }
+    	}
+
 		if ((!DolibarrApiAccess::$user->rights->societe->client->voir && !$socids) || $search_sale > 0) $sql .= " AND t.rowid = sc.fk_soc";
 		//if ($email != NULL) $sql.= " AND s.email = \"".$email."\"";
 		if ($socids) $sql .= " AND t.rowid IN (".$socids.")";
@@ -1120,7 +1133,7 @@ class Thirdparties extends DolibarrApi
 	 * @param int  $id ID of thirdparty
 	 * @param array $request_data Request data
 	 *
-	 * @return object  ID of thirdparty
+	 * @return object  BankAccount of thirdparty
 	 *
 	 * @url POST {id}/bankaccounts
 	 */
@@ -1129,7 +1142,9 @@ class Thirdparties extends DolibarrApi
 		if (!DolibarrApiAccess::$user->rights->societe->creer) {
 			throw new RestException(401);
 		}
-
+		if ($this->company->fetch($id) <= 0) {
+			throw new RestException(404, 'Error creating Company Bank account, Company doesn\'t exists');
+		}
 		$account = new CompanyBankAccount($this->db);
 
 		$account->socid = $id;
@@ -1141,11 +1156,17 @@ class Thirdparties extends DolibarrApi
 		if ($account->create(DolibarrApiAccess::$user) < 0)
 			throw new RestException(500, 'Error creating Company Bank account');
 
+		if (empty($account->rum)) {
+			require_once DOL_DOCUMENT_ROOT.'/compta/prelevement/class/bonprelevement.class.php';
+			$prelevement = new BonPrelevement($this->db);
+			$account->rum = $prelevement->buildRumNumber($this->company->code_client, $account->datec, $account->id);
+			$account->date_rum = dol_now();
+		}
 
 		if ($account->update(DolibarrApiAccess::$user) < 0)
 			throw new RestException(500, 'Error updating values');
 
-		return $account;
+		return $this->_cleanObjectDatas($account);
 	}
 
 	/**
@@ -1155,7 +1176,7 @@ class Thirdparties extends DolibarrApi
 	 * @param int  $bankaccount_id ID of CompanyBankAccount
 	 * @param array $request_data Request data
 	 *
-	 * @return object  ID of thirdparty
+	 * @return object  BankAccount of thirdparty
 	 *
 	 * @url PUT {id}/bankaccounts/{bankaccount_id}
 	 */
@@ -1164,7 +1185,9 @@ class Thirdparties extends DolibarrApi
 		if (!DolibarrApiAccess::$user->rights->societe->creer) {
 			throw new RestException(401);
 		}
-
+		if ($this->company->fetch($id) <= 0) {
+			throw new RestException(404, 'Error creating Company Bank account, Company doesn\'t exists');
+		}
 		$account = new CompanyBankAccount($this->db);
 
 		$account->fetch($bankaccount_id, $id, -1, '');
@@ -1178,10 +1201,17 @@ class Thirdparties extends DolibarrApi
 			$account->$field = $value;
 		}
 
+		if (empty($account->rum)) {
+			require_once DOL_DOCUMENT_ROOT.'/compta/prelevement/class/bonprelevement.class.php';
+			$prelevement = new BonPrelevement($this->db);
+			$account->rum = $prelevement->buildRumNumber($this->company->code_client, $account->datec, $account->id);
+			$account->date_rum = dol_now();
+		}
+
 		if ($account->update(DolibarrApiAccess::$user) < 0)
 			throw new RestException(500, 'Error updating values');
 
-		return $account;
+		return $this->_cleanObjectDatas($account);
 	}
 
 	/**
@@ -1687,7 +1717,7 @@ class Thirdparties extends DolibarrApi
 		unset($object->particulier);
 		unset($object->prefix_comm);
 
-		unset($object->commercial_id);	// This property is used in create/update only. It does not exists in read mode because there is several sales representatives.
+		unset($object->commercial_id); // This property is used in create/update only. It does not exists in read mode because there is several sales representatives.
 
 		unset($object->total_ht);
 		unset($object->total_tva);

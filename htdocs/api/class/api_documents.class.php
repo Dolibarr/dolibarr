@@ -457,6 +457,22 @@ class Documents extends DolibarrApi
 
 			$upload_dir = $conf->expensereport->dir_output.'/'.dol_sanitizeFileName($object->ref);
 		}
+		elseif ($modulepart == 'categorie' || $modulepart == 'category')
+		{
+			require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
+
+			if (!DolibarrApiAccess::$user->rights->categorie->lire) {
+				throw new RestException(401);
+			}
+
+			$object = new Categorie($this->db);
+			$result = $object->fetch($id, $ref);
+			if (!$result) {
+				throw new RestException(404, 'Category not found');
+			}
+
+			$upload_dir = $conf->categorie->multidir_output[$object->entity].'/'.get_exdir($object->id, 2, 0, 0, $object, 'category').$object->id."/photos/".dol_sanitizeFileName($object->ref);
+		}
 		else
 		{
 			throw new RestException(500, 'Modulepart '.$modulepart.' not implemented yet.');

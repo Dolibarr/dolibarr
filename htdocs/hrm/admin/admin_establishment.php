@@ -27,49 +27,54 @@ require_once DOL_DOCUMENT_ROOT.'/hrm/class/establishment.class.php';
 // Load translation files required by the page
 $langs->loadLangs(array('admin', 'hrm'));
 
-if (! $user->admin)
+if (!$user->admin)
 	accessforbidden();
 
-$error=0;
+$error = 0;
 
 // List of statut
-static $tmpstatus2label=array(
+static $tmpstatus2label = array(
 		'0'=>'OpenEtablishment',
 		'1'=>'CloseEtablishment'
 );
-$status2label=array('');
-foreach ($tmpstatus2label as $key => $val) $status2label[$key]=$langs->trans($val);
+$status2label = array('');
+foreach ($tmpstatus2label as $key => $val) $status2label[$key] = $langs->trans($val);
 
 /*
  * Actions
  */
 
+// None
+
+
 /*
  * View
  */
+
 llxHeader('', $langs->trans("Establishments"));
 
+$limit = GETPOST('limit', 'int') ? GETPOST('limit', 'int') : $conf->liste_limit;
 $sortorder     = GETPOST("sortorder");
 $sortfield     = GETPOST("sortfield");
-if (!$sortorder) $sortorder="DESC";
-if (!$sortfield) $sortfield="e.rowid";
+if (!$sortorder) $sortorder = "DESC";
+if (!$sortfield) $sortfield = "e.rowid";
 
 if (empty($page) || $page == -1) {
-	$page = 0 ;
+	$page = 0;
 }
 
-$offset = $conf->liste_limit * $page;
+$offset = $limit * $page;
 $pageprev = $page - 1;
 $pagenext = $page + 1;
-$limit = GETPOST('limit', 'int')?GETPOST('limit', 'int'):$conf->liste_limit;
+$limit = GETPOST('limit', 'int') ?GETPOST('limit', 'int') : $conf->liste_limit;
 
 $form = new Form($db);
-$establishmenttmp=new Establishment($db);
+$establishmenttmp = new Establishment($db);
 
 dol_htmloutput_mesg($mesg);
 
 // Subheader
-$linkback = '<a href="' . DOL_URL_ROOT . '/admin/modules.php?restore_lastsearch_values=1">' . $langs->trans("BackToModuleList") . '</a>';
+$linkback = '<a href="'.DOL_URL_ROOT.'/admin/modules.php?restore_lastsearch_values=1">'.$langs->trans("BackToModuleList").'</a>';
 print load_fiche_titre($langs->trans("HRMSetup"), $linkback);
 
 // Configuration header
@@ -77,10 +82,10 @@ $head = hrm_admin_prepare_head();
 dol_fiche_head($head, 'establishments', $langs->trans("HRM"), -1, "user");
 
 $sql = "SELECT e.rowid, e.name, e.address, e.zip, e.town, e.status";
-$sql.= " FROM ".MAIN_DB_PREFIX."establishment as e";
-$sql.= " WHERE e.entity IN (".getEntity('establishment').')';
-$sql.= $db->order($sortfield, $sortorder);
-$sql.= $db->plimit($limit+1, $offset);
+$sql .= " FROM ".MAIN_DB_PREFIX."establishment as e";
+$sql .= " WHERE e.entity IN (".getEntity('establishment').')';
+$sql .= $db->order($sortfield, $sortorder);
+$sql .= $db->plimit($limit + 1, $offset);
 
 $result = $db->query($sql);
 if ($result)
@@ -100,15 +105,15 @@ if ($result)
 
 	if ($num > 0)
     {
-	    $establishmentstatic=new Establishment($db);
+	    $establishmentstatic = new Establishment($db);
 
 		while ($i < min($num, $limit))
 		{
             $obj = $db->fetch_object($result);
 
-			$establishmentstatic->id=$obj->rowid;
-			$establishmentstatic->name=$obj->name;
-			$establishmentstatic->status=$obj->status;
+			$establishmentstatic->id = $obj->rowid;
+			$establishmentstatic->name = $obj->name;
+			$establishmentstatic->status = $obj->status;
 
 
 			print '<tr class="oddeven">';
