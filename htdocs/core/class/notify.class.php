@@ -314,6 +314,7 @@ class Notify
 		global $user,$conf,$langs,$mysoc;
 		global $hookmanager;
 		global $dolibarr_main_url_root;
+		global $action;
 
 		if (! in_array($notifcode, $this->arrayofnotifsupported)) return 0;
 
@@ -524,8 +525,10 @@ class Notify
 						$message.= $mesg;
 						if ($link) $message.= "\n" . $urlwithroot . $link;
 
-						$parameters=array('notifcode'=>$notifcode, 'sendto'=>$sendto, 'replyto'=>$replyto, 'file'=>$filename_list, 'mimefile'=>$mimetype_list, 'filename'=>$mimefilename_list);
-						$reshook=$hookmanager->executeHooks('formatNotificationMessage', $parameters, $object, $action);    // Note that $action and $object may have been modified by some hooks
+						$parameters = array('notifcode'=>$notifcode, 'sendto'=>$sendto, 'replyto'=>$replyto, 'file'=>$filename_list, 'mimefile'=>$mimetype_list, 'filename'=>$mimefilename_list);
+						if (!isset($action)) $action = '';
+
+						$reshook = $hookmanager->executeHooks('formatNotificationMessage', $parameters, $object, $action); // Note that $action and $object may have been modified by some hooks
 						if (empty($reshook))
 						{
 							if (! empty($hookmanager->resArray['subject'])) $subject.=$hookmanager->resArray['subject'];
@@ -694,21 +697,25 @@ class Notify
 						$mesg = $langs->transnoentitiesnoconv("EMailTextExpeditionValidated", $newref);
 						break;
 					case 'EXPENSE_REPORT_VALIDATE':
+						$link = '<a href="'.$urlwithroot.'/expensereport/card.php?id='.$object->id.'">'.$newref.'</a>';
 						$dir_output = $conf->expensereport->dir_output;
 						$object_type = 'expensereport';
 						$mesg = $langs->transnoentitiesnoconv("EMailTextExpenseReportValidated", $newref);
 						break;
 					case 'EXPENSE_REPORT_APPROVE':
+						$link = '<a href="'.$urlwithroot.'/expensereport/card.php?id='.$object->id.'">'.$newref.'</a>';
 						$dir_output = $conf->expensereport->dir_output;
 						$object_type = 'expensereport';
 						$mesg = $langs->transnoentitiesnoconv("EMailTextExpenseReportApproved", $newref);
 						break;
 					case 'HOLIDAY_VALIDATE':
+						$link = '<a href="'.$urlwithroot.'/holiday/card.php?id='.$object->id.'">'.$newref.'</a>';
 						$dir_output = $conf->holiday->dir_output;
 						$object_type = 'holiday';
 						$mesg = $langs->transnoentitiesnoconv("EMailTextHolidayValidated", $newref);
 						break;
 					case 'HOLIDAY_APPROVE':
+						$link = '<a href="'.$urlwithroot.'/holiday/card.php?id='.$object->id.'">'.$newref.'</a>';
 						$dir_output = $conf->holiday->dir_output;
 						$object_type = 'holiday';
 						$mesg = $langs->transnoentitiesnoconv("EMailTextHolidayApproved", $newref);
