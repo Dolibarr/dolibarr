@@ -1781,15 +1781,15 @@ class Contact extends CommonObject
 	{
 		global $langs;
 
-		$sql="SELECT id, code, libelle as label, picto FROM ".MAIN_DB_PREFIX."c_stcommcontact";
-		if ($active >= 0) $sql.=" WHERE active = ".$active;
-		$resql=$this->db->query($sql);
-		$num=$this->db->num_rows($resql);
-		$i=0;
+		$sql = "SELECT id, code, libelle as label, picto FROM " . MAIN_DB_PREFIX . "c_stcommcontact";
+		if ($active >= 0) $sql .= " WHERE active = " . $active;
+		$resql = $this->db->query($sql);
+		$num = $this->db->num_rows($resql);
+		$i = 0;
 		while ($i < $num)
 		{
-			$obj=$this->db->fetch_object($resql);
-			$this->cacheprospectstatus[$obj->id]=array('id'=>$obj->id, 'code'=>$obj->code, 'label'=>($langs->trans("ST_".strtoupper($obj->code))=="ST_".strtoupper($obj->code))?$obj->label:$langs->trans("ST_".strtoupper($obj->code)), 'picto'=>$obj->picto);
+			$obj = $this->db->fetch_object($resql);
+			$this->cacheprospectstatus[$obj->id] = array('id' => $obj->id, 'code' => $obj->code, 'label' => ($langs->trans("ST_" . strtoupper($obj->code)) == "ST_" . strtoupper($obj->code)) ? $obj->label : $langs->trans("ST_" . strtoupper($obj->code)), 'picto' => $obj->picto);
 			$i++;
 		}
 		return 1;
@@ -1815,11 +1815,11 @@ class Contact extends CommonObject
 	{
 		global $langs;
 
-		$lib=$langs->trans("ProspectLevel".$fk_prospectlevel);
+		$lib = $langs->trans("ProspectLevel" . $fk_prospectlevel);
 		// If lib not found in language file, we get label from cache/databse
-		if ($lib == $langs->trans("ProspectLevel".$fk_prospectlevel))
+		if ($lib == $langs->trans("ProspectLevel" . $fk_prospectlevel))
 		{
-			$lib=$langs->getLabelFromKey($this->db,$fk_prospectlevel,'c_prospectlevel','code','label');
+			$lib = $langs->getLabelFromKey($this->db, $fk_prospectlevel, 'c_prospectlevel', 'code', 'label');
 		}
 		return $lib;
 	}
@@ -1869,38 +1869,38 @@ class Contact extends CommonObject
 
 		if ($mode == 2)
 		{
-			if ($statut == '-1' || $statut == 'ST_NO')         return img_action($langs->trans("StatusProspect-1"),-1, $picto).' '.$langs->trans("StatusProspect-1");
-			elseif ($statut ==  '0' || $statut == 'ST_NEVER') return img_action($langs->trans("StatusProspect0"), 0, $picto).' '.$langs->trans("StatusProspect0");
-			elseif ($statut ==  '1' || $statut == 'ST_TODO')  return img_action($langs->trans("StatusProspect1"), 1, $picto).' '.$langs->trans("StatusProspect1");
-			elseif ($statut ==  '2' || $statut == 'ST_PEND')  return img_action($langs->trans("StatusProspect2"), 2, $picto).' '.$langs->trans("StatusProspect2");
-			elseif ($statut ==  '3' || $statut == 'ST_DONE')  return img_action($langs->trans("StatusProspect3"), 3, $picto).' '.$langs->trans("StatusProspect3");
+			if ($statut == '-1' || $statut == 'ST_NO') return img_action($langs->trans("StatusProspect-1"), -1, $picto) . ' ' . $langs->trans("StatusProspect-1");
+			elseif ($statut == '0' || $statut == 'ST_NEVER') return img_action($langs->trans("StatusProspect0"), 0, $picto) . ' ' . $langs->trans("StatusProspect0");
+			elseif ($statut == '1' || $statut == 'ST_TODO') return img_action($langs->trans("StatusProspect1"), 1, $picto) . ' ' . $langs->trans("StatusProspect1");
+			elseif ($statut == '2' || $statut == 'ST_PEND') return img_action($langs->trans("StatusProspect2"), 2, $picto) . ' ' . $langs->trans("StatusProspect2");
+			elseif ($statut == '3' || $statut == 'ST_DONE') return img_action($langs->trans("StatusProspect3"), 3, $picto) . ' ' . $langs->trans("StatusProspect3");
 			else
 			{
-				return img_action(($langs->trans("StatusProspect".$statut) != "StatusProspect".$statut) ? $langs->trans("StatusProspect".$statut) : $label, 0, $picto).' '.(($langs->trans("StatusProspect".$statut) != "StatusProspect".$statut) ? $langs->trans("StatusProspect".$statut) : $label);
+				return img_action(($langs->trans("StatusProspect" . $statut) != "StatusProspect" . $statut) ? $langs->trans("StatusProspect" . $statut) : $label, 0, $picto) . ' ' . (($langs->trans("StatusProspect" . $statut) != "StatusProspect" . $statut) ? $langs->trans("StatusProspect" . $statut) : $label);
 			}
 		}
 		if ($mode == 3)
 		{
-			if ($statut == '-1' || $statut == 'ST_NO')         return img_action($langs->trans("StatusProspect-1"),-1, $picto);
-			elseif ($statut ==  '0' || $statut == 'ST_NEVER') return img_action($langs->trans("StatusProspect0"), 0, $picto);
-			elseif ($statut ==  '1' || $statut == 'ST_TODO')  return img_action($langs->trans("StatusProspect1"), 1, $picto);
-			elseif ($statut ==  '2' || $statut == 'ST_PEND')  return img_action($langs->trans("StatusProspect2"), 2, $picto);
-			elseif ($statut ==  '3' || $statut == 'ST_DONE')  return img_action($langs->trans("StatusProspect3"), 3, $picto);
+			if ($statut == '-1' || $statut == 'ST_NO') return img_action($langs->trans("StatusProspect-1"), -1, $picto);
+			elseif ($statut == '0' || $statut == 'ST_NEVER') return img_action($langs->trans("StatusProspect0"), 0, $picto);
+			elseif ($statut == '1' || $statut == 'ST_TODO') return img_action($langs->trans("StatusProspect1"), 1, $picto);
+			elseif ($statut == '2' || $statut == 'ST_PEND') return img_action($langs->trans("StatusProspect2"), 2, $picto);
+			elseif ($statut == '3' || $statut == 'ST_DONE') return img_action($langs->trans("StatusProspect3"), 3, $picto);
 			else
 			{
-				return img_action(($langs->trans("StatusProspect".$statut) != "StatusProspect".$statut) ? $langs->trans("StatusProspect".$statut) : $label, 0, $picto);
+				return img_action(($langs->trans("StatusProspect" . $statut) != "StatusProspect" . $statut) ? $langs->trans("StatusProspect" . $statut) : $label, 0, $picto);
 			}
 		}
 		if ($mode == 4)
 		{
-			if ($statut == '-1' || $statut == 'ST_NO')         return img_action($langs->trans("StatusProspect-1"),-1, $picto).' '.$langs->trans("StatusProspect-1");
-			elseif ($statut ==  '0' || $statut == 'ST_NEVER') return img_action($langs->trans("StatusProspect0"), 0, $picto).' '.$langs->trans("StatusProspect0");
-			elseif ($statut ==  '1' || $statut == 'ST_TODO')  return img_action($langs->trans("StatusProspect1"), 1, $picto).' '.$langs->trans("StatusProspect1");
-			elseif ($statut ==  '2' || $statut == 'ST_PEND')  return img_action($langs->trans("StatusProspect2"), 2, $picto).' '.$langs->trans("StatusProspect2");
-			elseif ($statut ==  '3' || $statut == 'ST_DONE')  return img_action($langs->trans("StatusProspect3"), 3, $picto).' '.$langs->trans("StatusProspect3");
+			if ($statut == '-1' || $statut == 'ST_NO') return img_action($langs->trans("StatusProspect-1"), -1, $picto) . ' ' . $langs->trans("StatusProspect-1");
+			elseif ($statut == '0' || $statut == 'ST_NEVER') return img_action($langs->trans("StatusProspect0"), 0, $picto) . ' ' . $langs->trans("StatusProspect0");
+			elseif ($statut == '1' || $statut == 'ST_TODO') return img_action($langs->trans("StatusProspect1"), 1, $picto) . ' ' . $langs->trans("StatusProspect1");
+			elseif ($statut == '2' || $statut == 'ST_PEND') return img_action($langs->trans("StatusProspect2"), 2, $picto) . ' ' . $langs->trans("StatusProspect2");
+			elseif ($statut == '3' || $statut == 'ST_DONE') return img_action($langs->trans("StatusProspect3"), 3, $picto) . ' ' . $langs->trans("StatusProspect3");
 			else
 			{
-				return img_action(($langs->trans("StatusProspect".$statut) != "StatusProspect".$statut) ? $langs->trans("StatusProspect".$statut) : $label, 0, $picto).' '.(($langs->trans("StatusProspect".$statut) != "StatusProspect".$statut) ? $langs->trans("StatusProspect".$statut) : $label);
+				return img_action(($langs->trans("StatusProspect" . $statut) != "StatusProspect" . $statut) ? $langs->trans("StatusProspect" . $statut) : $label, 0, $picto) . ' ' . (($langs->trans("StatusProspect" . $statut) != "StatusProspect" . $statut) ? $langs->trans("StatusProspect" . $statut) : $label);
 			}
 		}
 

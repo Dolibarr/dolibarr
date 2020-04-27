@@ -485,10 +485,10 @@ if (empty($reshook))
     }
 
     if ($action == 'setprospectcontactlevel' && $user->rights->societe->contact->creer)
-	{
+    {
 		$object->fetch($id);
-		$object->fk_prospectlevel=GETPOST('prospect_contact_level_id','alpha');
-		$result=$object->update($object->id, $user);
+		$object->fk_prospectlevel = GETPOST('prospect_contact_level_id', 'alpha');
+		$result = $object->update($object->id, $user);
 		if ($result < 0) setEventMessages($object->error, $object->errors, 'errors');
 	}
 
@@ -496,8 +496,8 @@ if (empty($reshook))
 	if ($action == 'setstcomm')
 	{
 		$object->fetch($id);
-		$object->stcomm_id=dol_getIdFromCode($db, GETPOST('stcomm','alpha'), 'c_stcommcontact');
-		$result=$object->update($object->id, $user);
+		$object->stcomm_id = dol_getIdFromCode($db, GETPOST('stcomm', 'alpha'), 'c_stcommcontact');
+		$result = $object->update($object->id, $user);
 		if ($result < 0) setEventMessages($object->error, $object->errors, 'errors');
 	}
 
@@ -1411,12 +1411,12 @@ else
 			print '<table width="100%" class="nobordernopadding"><tr><td class="nowrap">';
 			print $langs->trans('ProspectLevel');
 			print '<td>';
-			if ($action != 'editlevel' && $user->rights->societe->contact->creer) print '<td align="right"><a href="'.$_SERVER["PHP_SELF"].'?action=editlevel&amp;id='.$object->id.'">'.img_edit($langs->trans('Modify'),1).'</a></td>';
+			if ($action != 'editlevel' && $user->rights->societe->contact->creer) print '<td align="right"><a href="' . $_SERVER["PHP_SELF"] . '?action=editlevel&amp;id=' . $object->id . '">' . img_edit($langs->trans('Modify'), 1) . '</a></td>';
 			print '</tr></table>';
 			print '</td><td>';
 			if ($action == 'editlevel')
 			{
-				$formcompany->form_prospect_contact_level($_SERVER['PHP_SELF'].'?id='.$object->id,$object->fk_prospectlevel,'prospect_contact_level_id',1);
+				$formcompany->form_prospect_contact_level($_SERVER['PHP_SELF'] . '?id=' . $object->id, $object->fk_prospectlevel, 'prospect_contact_level_id', 1);
 			}
 			else
 			{
@@ -1427,14 +1427,14 @@ else
 
 			// Status
 			$object->loadCacheOfProspStatus();
-			print '<tr><td>'.$langs->trans("StatusProsp").'</td><td>'.$object->getLibProspCommStatut(4, $object->cacheprospectstatus[$object->stcomm_id]['label']);
+			print '<tr><td>' . $langs->trans("StatusProsp") . '</td><td>' . $object->getLibProspCommStatut(4, $object->cacheprospectstatus[$object->stcomm_id]['label']);
 			print ' &nbsp; &nbsp; ';
 			print '<div class="floatright">';
-			foreach($object->cacheprospectstatus as $key => $val)
+			foreach ($object->cacheprospectstatus as $key => $val)
 			{
-				$titlealt='default';
-				if (! empty($val['code']) && ! in_array($val['code'], array('ST_NO', 'ST_NEVER', 'ST_TODO', 'ST_PEND', 'ST_DONE'))) $titlealt=$val['label'];
-				if ($object->stcomm_id != $val['id']) print '<a class="pictosubstatus" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&stcomm='.$val['code'].'&action=setstcomm">'.img_action($titlealt,$val['code'],$val['picto']).'</a>';
+				$titlealt = 'default';
+				if (!empty($val['code']) && !in_array($val['code'], array('ST_NO', 'ST_NEVER', 'ST_TODO', 'ST_PEND', 'ST_DONE'))) $titlealt = $val['label'];
+				if ($object->stcomm_id != $val['id']) print '<a class="pictosubstatus" href="' . $_SERVER["PHP_SELF"] . '?id=' . $object->id . '&stcomm=' . $val['code'] . '&action=setstcomm">' . img_action($titlealt, $val['code'], $val['picto']) . '</a>';
 			}
 			print '</div></td></tr>';
 			print "</table>";

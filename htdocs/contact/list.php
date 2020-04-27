@@ -92,8 +92,8 @@ $search_town = GETPOST('search_town', 'alpha');
 $search_import_key = GETPOST("search_import_key", "alpha");
 $search_country = GETPOST("search_country", 'intcomma');
 $search_roles = GETPOST("search_roles", 'array');
-$search_level      = GETPOST("search_level", "array");
-$search_stcomm=GETPOST('search_stcomm','int');
+$search_level = GETPOST("search_level", "array");
+$search_stcomm = GETPOST('search_stcomm','int');
 
 if ($search_status == '') $search_status = 1; // always display active customer first
 
@@ -286,12 +286,12 @@ if (empty($reshook))
 	if ($action == 'setstcomm')
 	{
 		$object = new Contact($db);
-		$result=$object->fetch(GETPOST('stcommcontactid'));
-		$object->stcomm_id=dol_getIdFromCode($db, GETPOST('stcomm','alpha'), 'c_stcommcontact');
-		$result=$object->update($object->id, $user);
-		if ($result < 0) setEventMessages($object->error,$object->errors,'errors');
+		$result = $object->fetch(GETPOST('stcommcontactid'));
+		$object->stcomm_id = dol_getIdFromCode($db, GETPOST('stcomm', 'alpha'), 'c_stcommcontact');
+		$result = $object->update($object->id, $user);
+		if ($result < 0) setEventMessages($object->error, $object->errors, 'errors');
 
-		$action='';
+		$action = '';
 	}
 }
 
@@ -363,7 +363,7 @@ if (!empty($userid))    // propre au commercial
 	$sql .= " AND p.fk_user_creat=".$db->escape($userid);
 }
 if ($search_level)  $sql .= natural_search("p.fk_prospectcontactlevel", join(',', $search_level), 3);
-if ($search_stcomm != '' && $search_stcomm != -2) $sql.= natural_search("p.fk_stcommcontact",$search_stcomm,2);
+if ($search_stcomm != '' && $search_stcomm != -2) $sql .= natural_search("p.fk_stcommcontact", $search_stcomm, 2);
 
 // Filter to exclude not owned private contacts
 if ($search_priv != '0' && $search_priv != '1')
@@ -820,8 +820,8 @@ if (!empty($conf->socialnetworks->enabled)) {
 }
 if (!empty($arrayfields['p.thirdparty']['checked']))          print_liste_field_titre($arrayfields['p.thirdparty']['label'], $_SERVER["PHP_SELF"], "s.nom", $begin, $param, '', $sortfield, $sortorder);
 if (!empty($arrayfields['p.priv']['checked']))                print_liste_field_titre($arrayfields['p.priv']['label'], $_SERVER["PHP_SELF"], "p.priv", $begin, $param, '', $sortfield, $sortorder, 'center ');
-if (! empty($arrayfields['p.fk_prospectcontactlevel']['checked']))	print_liste_field_titre($arrayfields['p.fk_prospectcontactlevel']['label'],$_SERVER["PHP_SELF"],"p.fk_prospectcontactlevel","",$param,'',$sortfield,$sortorder, 'center ');
-if (! empty($arrayfields['p.fk_stcommcontact']['checked']))			print_liste_field_titre($arrayfields['p.fk_stcommcontact']['label'],$_SERVER["PHP_SELF"],"p.fk_stcommcontact","",$param,'',$sortfield,$sortorder, 'center ');
+if (!empty($arrayfields['p.fk_prospectcontactlevel']['checked'])) 	print_liste_field_titre($arrayfields['p.fk_prospectcontactlevel']['label'], $_SERVER["PHP_SELF"], "p.fk_prospectcontactlevel", "", $param, '', $sortfield, $sortorder, 'center ');
+if (!empty($arrayfields['p.fk_stcommcontact']['checked'])) 			print_liste_field_titre($arrayfields['p.fk_stcommcontact']['label'], $_SERVER["PHP_SELF"], "p.fk_stcommcontact", "", $param, '', $sortfield, $sortorder, 'center ');
 // Extra fields
 include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_title.tpl.php';
 // Hook fields
