@@ -2974,6 +2974,14 @@ abstract class CommonObject
         // phpcs:enable
 		global $conf, $hookmanager, $action;
 
+        $parameters = array('exclspec' => $exclspec, 'roundingadjust' => $roundingadjust, 'nodatabaseupdate' => $nodatabaseupdate, 'seller' => $seller);
+        $reshook = $hookmanager->executeHooks('updateTotalPrice', $parameters, $this, $action); // Note that $action and $object may have been modified by some hooks
+        if ($reshook > 0) {
+            return 1; // replacement code
+        } elseif ($reshook < 0) {
+            return -1; // failure
+        } // reshook = 0 => execute normal code
+
 		// Some external module want no update price after a trigger because they have another method to calculate the total (ex: with an extrafield)
 		$MODULE = "";
 		if ($this->element == 'propal')
