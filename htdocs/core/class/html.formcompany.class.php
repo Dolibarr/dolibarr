@@ -3,6 +3,7 @@
  * Copyright (C) 2008-2012	Regis Houssin		<regis.houssin@inodbox.com>
  * Copyright (C) 2014		Juanjo Menent		<jmenent@2byte.es>
  * Copyright (C) 2017		Rui Strecht			<rui.strecht@aliartalentos.com>
+ * Copyright (C) 2020       Open-Dsi         	<support@open-dsi.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -165,6 +166,55 @@ class FormCompany extends Form
 		}
 		else dol_print_error($this->db);
 		if (!empty($htmlname) && $user->admin) print ' '.info_admin($langs->trans("YouCanChangeValuesForThisListFromDictionarySetup"), 1);
+		print '<input type="submit" class="button valignmiddle" value="'.$langs->trans("Modify").'">';
+		print '</form>';
+	}
+
+	/**
+	 *  Affiche formulaire de selection des niveau de prospection pour les contacts
+	 *
+	 *  @param	int		$page        	Page
+	 *  @param  int		$selected    	Id or code preselected
+	 *  @param  string	$htmlname   	Nom du formulaire select
+	 *	@param	int		$empty			Add empty value in list
+	 *	@return	void
+	 */
+	function form_prospect_contact_level($page, $selected='', $htmlname='prospect_contact_level_id', $empty=0)
+	{
+		global $user, $langs;
+
+		print '<form method="post" action="'.$page.'">';
+		print '<input type="hidden" name="action" value="setprospectcontactlevel">';
+		print '<input type="hidden" name="token" value="'.newToken().'">';
+
+		dol_syslog(__METHOD__,LOG_DEBUG);
+		$sql = "SELECT code, label";
+		$sql.= " FROM ".MAIN_DB_PREFIX."c_prospectcontactlevel";
+		$sql.= " WHERE active > 0";
+		$sql.= " ORDER BY sortorder";
+		$resql = $this->db->query($sql);
+		if ($resql)
+		{
+			$options = array();
+
+			if ($empty) {
+				$options[''] = '';
+			}
+
+			while ($obj = $this->db->fetch_object($resql)) {
+				$level = $langs->trans($obj->code);
+
+				if ($level == $obj->code) {
+					$level = $langs->trans($obj->label);
+				}
+
+				$options[$obj->code] = $level;
+			}
+
+			print Form::selectarray($htmlname, $options, $selected);
+		}
+		else dol_print_error($this->db);
+		if (! empty($htmlname) && $user->admin) print ' '.info_admin($langs->trans("YouCanChangeValuesForThisListFromDictionarySetup"),1);
 		print '<input type="submit" class="button valignmiddle" value="'.$langs->trans("Modify").'">';
 		print '</form>';
 	}
