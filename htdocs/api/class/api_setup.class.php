@@ -603,7 +603,7 @@ class Setup extends DolibarrApi
 
         $sql = "SELECT rowid AS id, zip, town, fk_county, fk_pays AS fk_country";
         $sql.= " FROM ".MAIN_DB_PREFIX."c_ziptown as t";
-        $sql.= " AND t.active = ".$active;
+        $sql.= " WHERE t.active = ".$active;
         if ($zipcode) $sql.=" AND t.zip LIKE '%" . $this->db->escape($zipcode) . "%'";
         if ($town)    $sql.=" AND t.town LIKE '%" . $this->db->escape($town) . "%'";
         // Add sql filters
