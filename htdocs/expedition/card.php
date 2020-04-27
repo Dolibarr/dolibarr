@@ -12,6 +12,7 @@
  * Copyright (C) 2016-2018	Ferran Marcet			<fmarcet@2byte.es>
  * Copyright (C) 2016		Yasser Carreón			<yacasia@gmail.com>
  * Copyright (C) 2018       Frédéric France         <frederic.france@netlogic.fr>
+ * Copyright (C) 2020       Lenin Rivas         	<lenin@leninrivas.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -458,6 +459,20 @@ if (empty($reshook))
 	    		$result = $object->generateDocument($model, $outputlangs, $hidedetails, $hidedesc, $hideref);
 	    		if ($result < 0) dol_print_error($db, $result);
 	    	}
+	    }
+	}
+
+	elseif ($action == 'confirm_cancel' && $confirm == 'yes' && $user->rights->expedition->supprimer)
+	{
+		$also_update_stock = (GETPOST('alsoUpdateStock', 'alpha') ? 1 : 0);
+	    $result = $object->cancel(0, $also_update_stock);
+	    if ($result > 0)
+	    {
+	        $result = $object->setStatut(-1);
+	    }
+	    else
+		{
+			setEventMessages($object->error, $object->errors, 'errors');
 	    }
 	}
 
@@ -1689,7 +1704,7 @@ elseif ($id || $ref)
 			$formconfirm = $form->formconfirm($_SERVER['PHP_SELF'].'?id='.$object->id, $langs->trans('ValidateSending'), $text, 'confirm_valid', '', 0, 1);
 		}
 		// Confirm cancelation
-		if ($action == 'annuler')
+		if ($action == 'cancel')
 		{
 			$formconfirm = $form->formconfirm($_SERVER['PHP_SELF'].'?id='.$object->id, $langs->trans('CancelSending'), $langs->trans("ConfirmCancelSending", $object->ref), 'confirm_cancel', '', 0, 1);
 		}
@@ -2575,6 +2590,16 @@ elseif ($id || $ref)
 				}
 			}
 
+			// Cancel
+			if ($object->statut == Expedition::STATUS_VALIDATED)
+			{
+    			if ($user->rights->expedition->supprimer)
+    			{
+    				print '<a class="butActionDelete" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=cancel">'.$langs->trans("Cancel").'</a>';
+    			}
+			}
+
+			// Delete
 			if ($user->rights->expedition->supprimer)
 			{
 				print '<a class="butActionDelete" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=delete">'.$langs->trans("Delete").'</a>';
