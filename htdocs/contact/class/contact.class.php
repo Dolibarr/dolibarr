@@ -1802,7 +1802,7 @@ class Contact extends CommonObject
 	 */
 	public function getLibProspLevel()
 	{
-		return $this->LibProspLevel($this->fk_prospectlevel);
+		return $this->libProspLevel($this->fk_prospectlevel);
 	}
 
 	/**
@@ -1811,7 +1811,7 @@ class Contact extends CommonObject
 	 *  @param	int		$fk_prospectlevel   	Prospect level
 	 *  @return string        					label of level
 	 */
-	public function LibProspLevel($fk_prospectlevel)
+	public function libProspLevel($fk_prospectlevel)
 	{
 		global $langs;
 

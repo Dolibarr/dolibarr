@@ -179,7 +179,7 @@ class FormCompany extends Form
 	 *	@param	int		$empty			Add empty value in list
 	 *	@return	void
 	 */
-	function form_prospect_contact_level($page, $selected = '', $htmlname = 'prospect_contact_level_id', $empty = 0)
+	public function formProspectContactLevel($page, $selected = '', $htmlname = 'prospect_contact_level_id', $empty = 0)
 	{
 		global $user, $langs;
 

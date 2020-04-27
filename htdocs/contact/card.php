@@ -1416,7 +1416,7 @@ else
 			print '</td><td>';
 			if ($action == 'editlevel')
 			{
-				$formcompany->form_prospect_contact_level($_SERVER['PHP_SELF'] . '?id=' . $object->id, $object->fk_prospectlevel, 'prospect_contact_level_id', 1);
+				$formcompany->formProspectContactLevel($_SERVER['PHP_SELF'] . '?id=' . $object->id, $object->fk_prospectlevel, 'prospect_contact_level_id', 1);
 			}
 			else
 			{
