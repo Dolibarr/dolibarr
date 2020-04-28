@@ -270,3 +270,4 @@ ALTER TABLE llx_prelevement_facture_demande ADD COLUMN fk_facture_fourn INTEGER 
 -- VPGSQL8.2 ALTER TABLE llx_prelevement_facture ALTER COLUMN fk_facture DROP NOT NULL;
 ALTER TABLE llx_prelevement_facture ADD COLUMN fk_facture_fourn INTEGER NULL;
 
+ALTER TABLE llx_menu MODIFY COLUMN module varchar(255);
