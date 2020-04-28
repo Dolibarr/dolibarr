@@ -488,6 +488,7 @@ function ajax_constantonoff($code, $input = array(), $entity = null, $revertonof
 	global $conf, $langs, $user;
 
 	$entity = ((isset($entity) && is_numeric($entity) && $entity >= 0) ? $entity : $conf->entity);
+	if (! isset($input)) $input = array();
 
 	if (empty($conf->use_javascript_ajax))
 	{
