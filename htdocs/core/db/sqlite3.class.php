@@ -1325,7 +1325,7 @@ class DoliDBSqlite3 extends DoliDB
         if ($this->db)
         {
         	$newname = preg_replace('/_/', '', $name);
-            $localname = __CLASS__.'::'.'db'.$newname;
+            $localname = __CLASS__.'::db'.$newname;
             $reflectClass = new ReflectionClass(__CLASS__);
             $reflectFunction = $reflectClass->getMethod('db'.$newname);
             if ($arg_count < 0) {

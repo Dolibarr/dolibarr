@@ -2048,7 +2048,7 @@ if (!empty($conf->global->PRODUIT_CUSTOMER_PRICES))
 
 		print '<tr class="oddeven">';
 		print "<td>".$langs->trans("Default")."</td>";
-		print "<td>"."</td>";
+		print "<td></td>";
 
 		print '<td class="center">'.$langs->trans($object->price_base_type)."</td>";
 		print '<td class="right">';

@@ -227,17 +227,15 @@ print "</tr>\n";
 if ($modecompta == 'BOOKKEEPING')
 {
 	$predefinedgroupwhere = "(";
-	//$predefinedgroupwhere.= " (pcg_type = 'EXPENSE' and pcg_subtype in ('PRODUCT','SERVICE'))";
 	$predefinedgroupwhere .= " (pcg_type = 'EXPENSE')";
 	$predefinedgroupwhere .= " OR ";
-	//$predefinedgroupwhere.= " (pcg_type = 'INCOME' and pcg_subtype in ('PRODUCT','SERVICE'))";
 	$predefinedgroupwhere .= " (pcg_type = 'INCOME')";
 	$predefinedgroupwhere .= ")";
 
 	$charofaccountstring = $conf->global->CHARTOFACCOUNTS;
 	$charofaccountstring = dol_getIdFromCode($db, $conf->global->CHARTOFACCOUNTS, 'accounting_system', 'rowid', 'pcg_version');
 
-	$sql = "SELECT f.thirdparty_code as name, -1 as socid, aa.pcg_type, aa.pcg_subtype, sum(f.credit - f.debit) as amount";
+	$sql = "SELECT f.thirdparty_code as name, -1 as socid, aa.pcg_type, SUM(f.credit - f.debit) as amount";
 	$sql .= " FROM ".MAIN_DB_PREFIX."accounting_bookkeeping as f";
 	$sql .= ", ".MAIN_DB_PREFIX."accounting_account as aa";
 	$sql .= " WHERE f.numero_compte = aa.account_number";
@@ -271,7 +269,7 @@ if ($modecompta == 'BOOKKEEPING')
 
 				print '<tr class="oddeven">';
 				print '<td>&nbsp;</td>';
-				print '<td>'.$objp->pcg_type.($objp->pcg_subtype != 'XXXXXX' ? ' - '.$objp->pcg_subtype : '').($objp->name ? ' ('.$objp->name.')' : '')."</td>\n";
+				print '<td>'.$objp->pcg_type.($objp->name ? ' ('.$objp->name.')' : '')."</td>\n";
 				print '<td class="right">'.price($objp->amount)."</td>\n";
 				print "</tr>\n";
 
@@ -282,7 +280,7 @@ if ($modecompta == 'BOOKKEEPING')
 				// This make 14 calls for each detail of account (NP, N and month m)
 				if ($showaccountdetail != 'no')
 				{
-					$tmppredefinedgroupwhere = "pcg_type = '".$db->escape($objp->pcg_type)."' AND pcg_subtype = '".$db->escape($objp->pcg_subtype)."'";
+					$tmppredefinedgroupwhere = "pcg_type = '".$db->escape($objp->pcg_type)."'";
 					$tmppredefinedgroupwhere .= " AND fk_pcg_version = '".$db->escape($charofaccountstring)."'";
 					//$tmppredefinedgroupwhere.= " AND thirdparty_code = '".$db->escape($objp->name)."'";
 

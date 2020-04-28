@@ -270,7 +270,7 @@ if (($action == 'updateline' || $action == 'updatesplitline') && !$_POST["cancel
 			$object->timespent_note = $_POST["timespent_note_line"];
 			$object->timespent_old_duration = $_POST["old_duration"];
 			$object->timespent_duration = $_POST["new_durationhour"] * 60 * 60; // We store duration in seconds
-			$object->timespent_duration += $_POST["new_durationmin"] * 60; // We store duration in seconds
+			$object->timespent_duration += ($_POST["new_durationmin"] ? $_POST["new_durationmin"] : 0) * 60; // We store duration in seconds
 			if (GETPOST("timelinehour") != '' && GETPOST("timelinehour") >= 0)	// If hour was entered
 			{
 				$object->timespent_date = dol_mktime(GETPOST("timelinehour"), GETPOST("timelinemin"), 0, GETPOST("timelinemonth"), GETPOST("timelineday"), GETPOST("timelineyear"));
@@ -1377,10 +1377,10 @@ if (($id > 0 || !empty($ref)) || $projectidforalltimes > 0)
 				}
 			}
 
-			// User
+			// By User
 			if (!empty($arrayfields['author']['checked']))
 			{
-				print '<td>';
+				print '<td class="nowrap">';
 				if ($action == 'editline' && $_GET['lineid'] == $task_time->rowid)
 				{
 					if (empty($object->id)) $object->fetch($id);
@@ -1390,7 +1390,7 @@ if (($id > 0 || !empty($ref)) || $projectidforalltimes > 0)
 					}
 					if (count($contactsoftask) > 0) {
 						print img_object('', 'user', 'class="hideonsmartphone"');
-						print $form->select_dolusers($task_time->fk_user, 'userid_line', 0, '', 0, '', $contactsoftask);
+						print $form->select_dolusers($task_time->fk_user, 'userid_line', 0, '', 0, '', $contactsoftask, '0', 0, 0, '', 0, '', 'maxwidth200');
 					} else {
 						print img_error($langs->trans('FirstAddRessourceToAllocateTime')).$langs->trans('FirstAddRessourceToAllocateTime');
 					}
@@ -1452,7 +1452,7 @@ if (($id > 0 || !empty($ref)) || $projectidforalltimes > 0)
 			// Value spent
 			if (!empty($arrayfields['value']['checked']))
 			{
-				print '<td class="right">';
+				print '<td class="nowraponall right">';
 				$value = price2num($task_time->thm * $task_time->task_duration / 3600);
 				print price($value, 1, $langs, 1, -1, -1, $conf->currency);
 				print '</td>';

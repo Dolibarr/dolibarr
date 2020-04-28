@@ -625,7 +625,7 @@ if (count($amount)) {
 	print '<td>&nbsp;</td>';
 	print '<td>&nbsp;</td>';
 	if ($modecompta != 'CREANCES-DETTES') {
-	    print '<td colspan="1"></td>';
+	    print '<td></td>';
 	} else {
 	    print '<td class="right">'.price($catotal_ht).'</td>';
 	}

@@ -58,7 +58,7 @@ $help_url = "EN:Module_Commercial_Proposals|FR:Module_Propositions_commerciales|
 
 llxHeader("", $langs->trans("ProspectionArea"), $help_url);
 
-print load_fiche_titre($langs->trans("ProspectionArea"), '', 'commercial');
+print load_fiche_titre($langs->trans("ProspectionArea"), '', 'propal');
 
 //print '<table width="100%" class="notopnoleftnoright">';
 //print '<tr><td valign="top" width="30%" class="notopnoleft">';

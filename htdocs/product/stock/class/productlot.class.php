@@ -185,7 +185,7 @@ class Productlot extends CommonObject
 			$this->id = $this->db->last_insert_id(MAIN_DB_PREFIX.$this->table_element);
 
 			// Actions on extra fields
-			if (empty($conf->global->MAIN_EXTRAFIELDS_DISABLED)) // For avoid conflicts if trigger used
+			if (!$error)
 			{
 				$result = $this->insertExtraFields();
 				if ($result < 0)
@@ -359,7 +359,7 @@ class Productlot extends CommonObject
 		}
 
 		// Actions on extra fields
-		if (empty($conf->global->MAIN_EXTRAFIELDS_DISABLED)) // For avoid conflicts if trigger used
+		if (!$error)
 		{
 			$result = $this->insertExtraFields();
 			if ($result < 0)

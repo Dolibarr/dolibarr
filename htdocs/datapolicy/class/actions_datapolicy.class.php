@@ -117,15 +117,15 @@ class ActionsDatapolicy
                 $object->state_id = '';
                 $object->skype = '';
                 $object->country_id = '';
-                $object->note_private = $object->note_private . '<br/>' . $langs->trans('ANONYMISER_AT', dol_print_date(time()));
+                $object->note_private = $object->note_private.'<br/>'.$langs->trans('ANONYMISER_AT', dol_print_date(time()));
 
                 if ($object->update($object->id, $user, 0)) {
                     // On supprime les contacts associé
-                    $sql = "DELETE FROM " . MAIN_DB_PREFIX . "socpeople WHERE fk_soc = " . $object->id;
+                    $sql = "DELETE FROM ".MAIN_DB_PREFIX."socpeople WHERE fk_soc = ".$object->id;
                     $this->db->query($sql);
 
                     setEventMessages($langs->trans('ANONYMISER_SUCCESS'), array());
-                    header('Location:' . $_SERVER["PHP_SELF"] . "?socid=" . $object->id);
+                    header('Location:'.$_SERVER["PHP_SELF"]."?socid=".$object->id);
                 }
             }
         } elseif ($parameters['currentcontext'] == 'thirdpartycard' && $action == 'datapolicy_portabilite') {
@@ -394,40 +394,40 @@ class ActionsDatapolicy
         if ($parameters['currentcontext'] == 'thirdpartycard') {
             if (GETPOST('action') == 'create' || GETPOST('action') == 'edit' || GETPOST('action') == '') {
                 $jsscript .= '<script>';
-                $jsscript .= "var elementToHide = 'tr.societe_extras_datapolicy_consentement, tr.societe_extras_datapolicy_opposition_traitement, tr.societe_extras_datapolicy_opposition_prospection';" . PHP_EOL;
-                $jsscript .= "var forme_juridique = [" . PHP_EOL;
-                $jsscript .= "11, 12, 13, 15, 17, 18, 19, 35, 60, 200, 311, 312, 316, 401, 600, 700, 1005" . PHP_EOL;
-                $jsscript .= "];" . PHP_EOL;
-                $jsscript .= "function hideRgPD() {" . PHP_EOL;
-                $jsscript .= " if ($('#typent_id').val() == 8 || forme_juridique.indexOf(parseInt($('#forme_juridique_code').val())) > -1) {" . PHP_EOL;
-                $jsscript .= " console.log(elementToHide);" . PHP_EOL;
-                $jsscript .= " $('tr.societe_extras_datapolicy_consentement, tr.societe_extras_datapolicy_opposition_traitement, tr.societe_extras_datapolicy_opposition_prospection').show(); } else { $('tr.societe_extras_datapolicy_consentement, tr.societe_extras_datapolicy_opposition_traitement, tr.societe_extras_datapolicy_opposition_prospection').hide(); }}" . PHP_EOL;
-                $jsscript .= "hideRgPD();" . PHP_EOL;
-                $jsscript .= "$('#forme_juridique_code, #typent_id').change(function(){ hideRgPD(); });" . PHP_EOL;
+                $jsscript .= "var elementToHide = 'tr.societe_extras_datapolicy_consentement, tr.societe_extras_datapolicy_opposition_traitement, tr.societe_extras_datapolicy_opposition_prospection';".PHP_EOL;
+                $jsscript .= "var forme_juridique = [".PHP_EOL;
+                $jsscript .= "11, 12, 13, 15, 17, 18, 19, 35, 60, 200, 311, 312, 316, 401, 600, 700, 1005".PHP_EOL;
+                $jsscript .= "];".PHP_EOL;
+                $jsscript .= "function hideRgPD() {".PHP_EOL;
+                $jsscript .= " if ($('#typent_id').val() == 8 || forme_juridique.indexOf(parseInt($('#forme_juridique_code').val())) > -1) {".PHP_EOL;
+                $jsscript .= " console.log(elementToHide);".PHP_EOL;
+                $jsscript .= " $('tr.societe_extras_datapolicy_consentement, tr.societe_extras_datapolicy_opposition_traitement, tr.societe_extras_datapolicy_opposition_prospection').show(); } else { $('tr.societe_extras_datapolicy_consentement, tr.societe_extras_datapolicy_opposition_traitement, tr.societe_extras_datapolicy_opposition_prospection').hide(); }}".PHP_EOL;
+                $jsscript .= "hideRgPD();".PHP_EOL;
+                $jsscript .= "$('#forme_juridique_code, #typent_id').change(function(){ hideRgPD(); });".PHP_EOL;
                 $jsscript .= '</script>';
             } elseif (GETPOST('action') == 'confirm_delete' && GETPOST('confirm') == 'yes' && GETPOST('socid') > 0) {
                 // La suppression n'a pas été possible
-                require_once DOL_DOCUMENT_ROOT . '/societe/class/societe.class.php';
+                require_once DOL_DOCUMENT_ROOT.'/societe/class/societe.class.php';
                 $societe = new Societe($this->db);
                 $societe->fetch(GETPOST('socid'));
                 // On vérifie si il est utilisé
                 if ((in_array($object->forme_juridique_code, array(11, 12, 13, 15, 17, 18, 19, 35, 60, 200, 311, 312, 316, 401, 600, 700, 1005)) || $societe->typent_id == 8) && $societe->isObjectUsed(GETPOST('socid'))) {
-                    require_once DOL_DOCUMENT_ROOT . '/core/class/html.form.class.php';
+                    require_once DOL_DOCUMENT_ROOT.'/core/class/html.form.class.php';
                     $form = new Form($this->db);
-                    echo $form->formconfirm($_SERVER["PHP_SELF"] . "?socid=" . GETPOST('socid'), substr($langs->trans("DATAPOLICIES_POPUP_ANONYME_TITLE"), 0, strlen($langs->trans("DATAPOLICIES_POPUP_ANONYME_TITLE")) - 2), $langs->trans("DATAPOLICIES_POPUP_ANONYME_TEXTE"), 'anonymiser', '', '', 1);
+                    echo $form->formconfirm($_SERVER["PHP_SELF"]."?socid=".GETPOST('socid'), substr($langs->trans("DATAPOLICIES_POPUP_ANONYME_TITLE"), 0, strlen($langs->trans("DATAPOLICIES_POPUP_ANONYME_TITLE")) - 2), $langs->trans("DATAPOLICIES_POPUP_ANONYME_TEXTE"), 'anonymiser', '', '', 1);
                 }
             }
 
             if (GETPOST('socid')) {
-                require_once DOL_DOCUMENT_ROOT . '/societe/class/societe.class.php';
+                require_once DOL_DOCUMENT_ROOT.'/societe/class/societe.class.php';
                 $societe = new Societe($this->db);
                 $societe->fetch(GETPOST('socid'));
 
                 if (!in_array($object->forme_juridique_code, array(11, 12, 13, 15, 17, 18, 19, 35, 60, 200, 311, 312, 316, 401, 600, 700, 1005)) && $societe->typent_id != 8) {
-                    require_once DOL_DOCUMENT_ROOT . '/core/class/html.form.class.php';
+                    require_once DOL_DOCUMENT_ROOT.'/core/class/html.form.class.php';
                     $jsscript .= '<script>';
-                    $jsscript .= "var elementToHide = 'td.societe_extras_datapolicy_opposition_traitement, td.societe_extras_datapolicy_opposition_prospection, td.societe_extras_datapolicy_consentement';" . PHP_EOL;
-                    $jsscript .= "$(elementToHide).parent('tr').hide();" . PHP_EOL;
+                    $jsscript .= "var elementToHide = 'td.societe_extras_datapolicy_opposition_traitement, td.societe_extras_datapolicy_opposition_prospection, td.societe_extras_datapolicy_consentement';".PHP_EOL;
+                    $jsscript .= "$(elementToHide).parent('tr').hide();".PHP_EOL;
                     $jsscript .= '</script>';
                 }
             }

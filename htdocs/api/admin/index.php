@@ -153,7 +153,7 @@ $urlwithroot = $urlwithouturlroot.DOL_URL_ROOT; // This is to use external domai
 // Show message
 $message = '';
 $url = $urlwithroot.'/api/index.php/login?login=<strong>auserlogin</strong>&password=<strong>thepassword</strong>[&reset=1]';
-$message .= $langs->trans("UrlToGetKeyToUseAPIs").':<br>';
+$message .= '<span class="opacitymedium">'.$langs->trans("UrlToGetKeyToUseAPIs").':</span><br>';
 $message .= img_picto('', 'globe').' '.$url;
 print $message;
 print '<br>';

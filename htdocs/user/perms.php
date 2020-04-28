@@ -294,9 +294,9 @@ print '</tr>'."\n";
 //print "xx".$conf->global->MAIN_USE_ADVANCED_PERMS;
 $sql = "SELECT r.id, r.libelle as label, r.module, r.perms, r.subperms, r.module_position";
 $sql .= " FROM ".MAIN_DB_PREFIX."rights_def as r";
-$sql .= " WHERE r.libelle NOT LIKE 'tou%'";    // On ignore droits "tous"
-$sql .= " AND r.entity = " . $entity;
-if (empty($conf->global->MAIN_USE_ADVANCED_PERMS)) $sql .= " AND r.perms NOT LIKE '%_advance'";  // Hide advanced perms if option is not enabled
+$sql .= " WHERE r.libelle NOT LIKE 'tou%'"; // On ignore droits "tous"
+$sql .= " AND r.entity = ".$entity;
+if (empty($conf->global->MAIN_USE_ADVANCED_PERMS)) $sql .= " AND r.perms NOT LIKE '%_advance'"; // Hide advanced perms if option is not enabled
 $sql .= " ORDER BY r.family_position, r.module_position, r.module, r.id";
 
 $result = $db->query($sql);

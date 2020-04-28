@@ -507,7 +507,7 @@ print '</form>'."\n";
 
 print '<div class="tabsAction">';
 
-print '<a class="butAction" href="exportcsv.php?id='.$numsondage.'">'.$langs->trans("ExportSpreadsheet").' (.CSV)'.'</a>';
+print '<a class="butAction" href="exportcsv.php?id='.urlencode($numsondage).'">'.$langs->trans("ExportSpreadsheet").' (.CSV)</a>';
 
 print '</div>';
 
@@ -522,7 +522,7 @@ if (GETPOST('ajoutsujet'))
 	print '<input type="hidden" name="backtopage" value="'.GETPOST('backtopage', 'alpha').'">';
 
 	print '<div class="center">'."\n";
-	print "<br><br>"."\n";
+	print "<br><br>\n";
 
 	// Add new column
 	if ($object->format == "A")

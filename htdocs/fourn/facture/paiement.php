@@ -822,7 +822,7 @@ if (empty($action) || $action == 'list')
     if (!$sortorder) $sortorder = 'DESC';
     if (!$sortfield) $sortfield = 'p.datep';
 
-    $sql = 'SELECT p.rowid as pid, p.datep as dp, p.amount as pamount, p.num_paiement,';
+    $sql = 'SELECT p.rowid as pid, p.ref, p.datep as dp, p.amount as pamount, p.num_paiement,';
     $sql .= ' s.rowid as socid, s.nom as name,';
     $sql .= ' c.code as paiement_type, c.libelle as paiement_libelle,';
     $sql .= ' ba.rowid as bid, ba.label,';
@@ -897,7 +897,7 @@ if (empty($action) || $action == 'list')
         print '<input type="hidden" name="sortfield" value="'.$sortfield.'">';
         print '<input type="hidden" name="sortorder" value="'.$sortorder.'">';
 
-        print_barre_liste($langs->trans('SupplierPayments'), $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, '', $num, $nbtotalofrecords, 'invoicing', 0, '', '', $limit, 0, 0, 1);
+        print_barre_liste($langs->trans('SupplierPayments'), $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, '', $num, $nbtotalofrecords, 'supplier_invoice', 0, '', '', $limit, 0, 0, 1);
 
         $moreforfilter = '';
 
@@ -972,16 +972,24 @@ if (empty($action) || $action == 'list')
         print_liste_field_titre('', $_SERVER["PHP_SELF"], "", '', '', '', $sortfield, $sortorder, 'maxwidthsearch ');
         print "</tr>\n";
 
+        $paymentfournstatic = new PaiementFourn($db);
+
         $i = 0;
         $totalarray = array();
         while ($i < min($num, $limit))
         {
             $objp = $db->fetch_object($resql);
 
+            $paymentfournstatic->id = $objp->pid;
+            $paymentfournstatic->ref = $objp->ref;
+            $paymentfournstatic->datepaye = $objp->dp;
+
             print '<tr class="oddeven">';
 
             // Ref payment
-            print '<td class="nowrap"><a href="'.DOL_URL_ROOT.'/fourn/paiement/card.php?id='.$objp->pid.'">'.img_object($langs->trans('ShowPayment'), 'payment').' '.$objp->pid.'</a></td>';
+            print '<td class="nowrap">';
+            print $paymentfournstatic->getNomUrl(1);
+            print '</td>';
             if (!$i) $totalarray['nbfield']++;
 
             // Date

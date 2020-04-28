@@ -224,7 +224,7 @@ if ($action == 'add') {
  *	View
  */
 
-llxHeader('', $langs->trans("RepeatableInterventional"), 'ch-fichinter.html#s-fac-fichinter-rec');
+llxHeader('', $langs->trans("RepeatableIntervention"), 'ch-fichinter.html#s-fac-fichinter-rec');
 
 $form = new Form($db);
 $companystatic = new Societe($db);
@@ -245,7 +245,7 @@ $today = dol_mktime(23, 59, 59, $tmparray['mon'], $tmparray['mday'], $tmparray['
  * Create mode
  */
 if ($action == 'create') {
-	print load_fiche_titre($langs->trans("CreateRepeatableIntervention"), '', 'fichinter');
+	print load_fiche_titre($langs->trans("CreateRepeatableIntervention"), '', 'intervention');
 
 	$object = new Fichinter($db); // Source invoice
 	//$object = new Managementfichinter($db);   // Source invoice
@@ -429,7 +429,7 @@ if ($action == 'create') {
 		dol_print_error('', "Error, no fichinter ".$object->id);
 	}
 } elseif ($action == 'selsocforcreatefrommodel') {
-	print load_fiche_titre($langs->trans("CreateRepeatableIntervention"), '', 'commercial');
+	print load_fiche_titre($langs->trans("CreateRepeatableIntervention"), '', 'intervention');
 	dol_fiche_head('');
 
 	print '<form name="fichinter" action="'.$_SERVER['PHP_SELF'].'" method="POST">';
@@ -764,20 +764,10 @@ if ($action == 'create') {
 		$resql = $db->query($sql);
 		if ($resql) {
 			$num = $db->num_rows($resql);
-            print_barre_liste(
-                $langs->trans("RepeatableInterventional"),
-                $page,
-                $_SERVER['PHP_SELF'],
-                "&socid=$socid",
-                $sortfield,
-                $sortorder,
-                '',
-                $num,
-                '',
-                'commercial'
-            );
 
-			print $langs->trans("ToCreateAPredefinedInterventional").'<br><br>';
+			print_barre_liste($langs->trans("RepeatableIntervention"), $page, $_SERVER['PHP_SELF'], "&socid=$socid", $sortfield, $sortorder, '', $num, '', 'intervention');
+
+			print '<span class="opacitymedium">'.$langs->trans("ToCreateAPredefinedIntervention").'</span><br><br>';
 
 			$i = 0;
 			print '<table class="noborder centpercent">';

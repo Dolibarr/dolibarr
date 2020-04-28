@@ -1229,6 +1229,9 @@ class BonPrelevement extends CommonObject
 		$label = '<u>'.$langs->trans("ShowWithdraw").'</u>';
 		$label .= '<br>';
 		$label .= '<b>'.$langs->trans('Ref').':</b> '.$this->ref;
+		if (isset($this->statut)) {
+			$label .= '<br><b>'.$langs->trans("Status").":</b> ".$this->getLibStatut(5);
+		}
 
 		$url = DOL_URL_ROOT.'/compta/prelevement/card.php?id='.$this->id;
 

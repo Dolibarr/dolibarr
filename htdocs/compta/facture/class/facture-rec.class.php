@@ -342,7 +342,7 @@ class FactureRec extends CommonInvoice
 					    if ($objectline->fetch($result_insert))
 					    {
 					        // Extrafields
-					        if (empty($conf->global->MAIN_EXTRAFIELDS_DISABLED) && method_exists($facsrc->lines[$i], 'fetch_optionals')) {
+					        if (method_exists($facsrc->lines[$i], 'fetch_optionals')) {
 					            $facsrc->lines[$i]->fetch_optionals($facsrc->lines[$i]->rowid);
 					            $objectline->array_options = $facsrc->lines[$i]->array_options;
 					        }
@@ -438,7 +438,7 @@ class FactureRec extends CommonInvoice
 	    $resql = $this->db->query($sql);
 	    if ($resql)
 	    {
-	        if (empty($conf->global->MAIN_EXTRAFIELDS_DISABLED)) // For avoid conflicts if trigger used
+	        if (!$error)
 	        {
 	            $result = $this->insertExtraFields();
 	            if ($result < 0)
@@ -748,9 +748,13 @@ class FactureRec extends CommonInvoice
         $error = 0;
 		$this->db->begin();
 
+		$main = MAIN_DB_PREFIX . 'facturedet_rec';
+        $ef = $main . "_extrafields";
+        $sqlef = "DELETE FROM $ef WHERE fk_object IN (SELECT rowid FROM $main WHERE fk_facture = $rowid)";
+        dol_syslog($sqlef);
 		$sql = "DELETE FROM ".MAIN_DB_PREFIX."facturedet_rec WHERE fk_facture = ".$rowid;
 		dol_syslog($sql);
-		if ($this->db->query($sql))
+		if ($this->db->query($sqlef) && $this->db->query($sql))
 		{
 			$sql = "DELETE FROM ".MAIN_DB_PREFIX."facture_rec WHERE rowid = ".$rowid;
 			dol_syslog($sql);
@@ -759,6 +763,9 @@ class FactureRec extends CommonInvoice
 				// Delete linked object
 				$res = $this->deleteObjectLinked();
 				if ($res < 0) $error = -3;
+				// Delete extrafields
+                $res = $this->deleteExtraFields();
+                if ($res < 0) $error = -4;
 			}
 			else
 			{
@@ -1966,6 +1973,14 @@ class FactureLigneRec extends CommonInvoiceLine
 	        }
 	    }
 
+		if (!$error)
+        {
+            $result = $this->deleteExtraFields();
+            if ($result < 0) {
+                $error++;
+            }
+        }
+
 	    if (!$error)
 	    {
     		$sql = 'DELETE FROM '.MAIN_DB_PREFIX.$this->table_element.' WHERE rowid='.$this->id;
@@ -2112,7 +2127,7 @@ class FactureLigneRec extends CommonInvoiceLine
     	$resql = $this->db->query($sql);
         if ($resql)
         {
-    		if (empty($conf->global->MAIN_EXTRAFIELDS_DISABLED)) // For avoid conflicts if trigger used
+    		if (!$error)
     		{
     			$result = $this->insertExtraFields();
     			if ($result < 0)

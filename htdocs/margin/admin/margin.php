@@ -39,6 +39,7 @@ $action = GETPOST('action', 'alpha');
 /*
  * Action
  */
+
 if (preg_match('/set_([a-z0-9_\-]+)/i', $action, $reg))
 {
 	$code = $reg[1];
@@ -107,6 +108,8 @@ if ($action == 'contact')
  * View
  */
 
+$form = new Form($db);
+
 llxHeader('', $langs->trans("margesSetup"));
 
 
@@ -118,15 +121,12 @@ $head = marges_admin_prepare_head();
 
 dol_fiche_head($head, 'parameters', $langs->trans("Margins"), -1, 'margin');
 
-print load_fiche_titre($langs->trans("MemberMainOptions"), '', '');
 print '<table class="noborder centpercent">';
 print '<tr class="liste_titre">';
-print '<td width=300>'.$langs->trans("Description").'</td>';
-print '<td colspan="2" class="center">'.$langs->trans("Value").'</td>'."\n";
+print '<td width=300>'.$langs->trans("MemberMainOptions").'</td>';
+print '<td colspan="2">'.$langs->trans("Value").'</td>'."\n";
 print '<td class="left">'.$langs->trans("Description").'</td>'."\n";
 print '</tr>';
-
-$form = new Form($db);
 
 // GLOBAL DISCOUNT MANAGEMENT
 print '<form method="POST" action="'.$_SERVER['PHP_SELF'].'">';
@@ -162,7 +162,7 @@ print '</form>';
 // DISPLAY MARGIN RATES
 print '<tr class="oddeven">';
 print '<td>'.$langs->trans("DisplayMarginRates").'</td>';
-print '<td colspan="2" class="center">';
+print '<td colspan="2">';
 if (!empty($conf->use_javascript_ajax))
 {
 	print ajax_constantonoff('DISPLAY_MARGIN_RATES');
@@ -185,7 +185,7 @@ print '</tr>';
 // DISPLAY MARK RATES
 print '<tr class="oddeven">';
 print '<td>'.$langs->trans("DisplayMarkRates").'</td>';
-print '<td colspan="2" class="center">';
+print '<td colspan="2">';
 if (!empty($conf->use_javascript_ajax))
 {
 	print ajax_constantonoff('DISPLAY_MARK_RATES');
@@ -208,7 +208,7 @@ print '</tr>';
 
 print '<tr class="oddeven">';
 print '<td>'.$langs->trans("ForceBuyingPriceIfNull").'</td>';
-print '<td colspan="2" class="center">';
+print '<td colspan="2">';
 if (!empty($conf->use_javascript_ajax))
 {
 	print ajax_constantonoff('ForceBuyingPriceIfNull');
