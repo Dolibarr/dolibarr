@@ -228,10 +228,11 @@ ThirdpartyAccountNotDefinedOrThirdPartyUnknownSubledgerIgnored=Onbekende relatie
 ThirdpartyAccountNotDefinedOrThirdPartyUnknownBlocking=Tegenrekening relatie niet gedefinieerd of relatie onbekend. Blokkeringsfout.
 UnknownAccountForThirdpartyAndWaitingAccountNotDefinedBlocking=Onbekend account van derden en wachtaccount niet gedefinieerd. Blokkeerfout
 PaymentsNotLinkedToProduct=Betaling niet gekoppeld aan een product / dienst
+ShowOpeningBalance=Toon beginsaldo
+HideOpeningBalance=Verberg beginsaldo
 
 Pcgtype=Rekening hoofdgroep
-Pcgsubtype=Rekening subgroep
-PcgtypeDesc=Groep en subgroep van accounts worden gebruikt als vooraf gedefinieerde criteria voor 'filter' en 'groepering' voor sommige boekhoudrapporten. 'INCOME' of 'EXPENSE' worden bijvoorbeeld gebruikt als groepen voor accountingrekeningen van producten om het declaratie- / inkomstenrapport samen te stellen.
+PcgtypeDesc=Group of account are used as predefined 'filter' and 'grouping' criteria for some accounting reports. For example, 'INCOME' or 'EXPENSE' are used as groups for accounting accounts of products to build the expense/income report.
 
 TotalVente=Total turnover before tax
 TotalMarge=Total sales margin
@@ -270,6 +271,7 @@ ChangeBinding=Wijzig koppeling
 Accounted=Geboekt in grootboek
 NotYetAccounted=Nog niet doorgeboekt in boekhouding
 ShowTutorial=Handleiding weergeven
+NotReconciled=Niet afgestemd
 
 ## Admin
 ApplyMassCategories=Categorieën  a-mass toepassen

@@ -1610,7 +1610,7 @@ elseif ($id || $ref)
 		if ($action == 'editline')
 		{
 			print '<form name="updateline" id="updateline" action="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;lineid='.$line_id.'" method="POST">
-			<input type="hidden" name="token" value="' . $_SESSION ['newtoken'].'">
+			<input type="hidden" name="token" value="' . newToken().'">
 			<input type="hidden" name="action" value="updateline">
 			<input type="hidden" name="mode" value="">
 			<input type="hidden" name="id" value="' . $object->id.'">';
@@ -2056,13 +2056,15 @@ elseif ($id || $ref)
 			}
 
 			// Send
-			if ($object->statut > 0)
-			{
-				if (empty($conf->global->MAIN_USE_ADVANCED_PERMS) || $user->rights->reception->reception_advance->send)
+			if (empty($user->socid)) {
+				if ($object->statut > 0)
 				{
-					print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=presend&mode=init#formmailbeforetitle">'.$langs->trans('SendByMail').'</a>';
+					if (empty($conf->global->MAIN_USE_ADVANCED_PERMS) || $user->rights->reception->reception_advance->send)
+					{
+						print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=presend&mode=init#formmailbeforetitle">'.$langs->trans('SendByMail').'</a>';
+					}
+					else print '<a class="butActionRefused" href="#">'.$langs->trans('SendByMail').'</a>';
 				}
-				else print '<a class="butActionRefused" href="#">'.$langs->trans('SendByMail').'</a>';
 			}
 
 			// Create bill

@@ -508,6 +508,7 @@ function GETPOST($paramname, $check = 'none', $method = 0, $filter = null, $opti
 	// We do this only if var is a GET. If it is a POST, may be we want to post the text with vars as the setup text.
 	if (!is_array($out) && empty($_POST[$paramname]) && empty($noreplace))
 	{
+		$reg = array();
 		$maxloop = 20; $loopnb = 0; // Protection against infinite loop
 		while (preg_match('/__([A-Z0-9]+_?[A-Z0-9]+)__/i', $out, $reg) && ($loopnb < $maxloop))    // Detect '__ABCDEF__' as key 'ABCDEF' and '__ABC_DEF__' as key 'ABC_DEF'. Detection is also correct when 2 vars are side by side.
 		{
@@ -1881,6 +1882,7 @@ function dol_print_date($time, $format = '', $tzoutput = 'tzserver', $outputlang
 		$format = str_replace('%a', '__a__', $format);
 		$format = str_replace('%A', '__A__', $format);
 	}
+
 
 	// Analyze date
 	$reg = array();
@@ -4546,7 +4548,7 @@ function price($amount, $form = 0, $outlangs = '', $trunc = 1, $rounding = -1, $
 	{
 		if ($currency_code == 'auto') $currency_code = $conf->currency;
 
-		$listofcurrenciesbefore = array('USD', 'GBP', 'AUD', 'HKD', 'MXN', 'PEN', 'CNY', 'CAD');
+		$listofcurrenciesbefore = array('AUD', 'CAD', 'CNY', 'COP', 'CLP', 'GBP', 'HKD', 'MXN', 'PEN', 'USD');
 		$listoflanguagesbefore = array('nl_NL');
 		if (in_array($currency_code, $listofcurrenciesbefore) || in_array($outlangs->defaultlang, $listoflanguagesbefore))
 		{
@@ -5578,7 +5580,7 @@ function dol_string_onlythesehtmltags($stringtoclean, $cleanalsosomestyles = 1)
 	$allowed_tags_string = '<'.$allowed_tags_string.'>';
 
 	if ($cleanalsosomestyles) {
-		$stringtoclean = preg_replace('/position\s*:\s*(absolute|fixed)\s*!\s*important/', '', $stringtoclean);	// Note: If hacker try to introduce css comment into string to avoid this, string should be encoded by the dol_htmlentitiesbr so be harmless
+		$stringtoclean = preg_replace('/position\s*:\s*(absolute|fixed)\s*!\s*important/', '', $stringtoclean);	// Note: If hacker try to introduce css comment into string to bypass this regex, the string must also be encoded by the dol_htmlentitiesbr during output so it become harmless
 	}
 
 	$temp = strip_tags($stringtoclean, $allowed_tags_string);
@@ -5982,7 +5984,8 @@ function getCommonSubstitutionArray($outputlangs, $onlykey = 0, $exclude = null,
         $substitutionarray = array_merge($substitutionarray, array(
 		'__USER_ID__' => (string) $user->id,
 		'__USER_LOGIN__' => (string) $user->login,
-		'__USER_LASTNAME__' => (string) $user->lastname,
+        '__USER_EMAIL__' => (string) $user->email,
+        '__USER_LASTNAME__' => (string) $user->lastname,
 		'__USER_FIRSTNAME__' => (string) $user->firstname,
 		'__USER_FULLNAME__' => (string) $user->getFullName($outputlangs),
 		'__USER_SUPERVISOR_ID__' => (string) ($user->fk_user ? $user->fk_user : '0'),
@@ -8572,11 +8575,22 @@ function isAFileWithExecutableContent($filename)
 }
 
 /**
- * Return new session token
+ * Return the value of token currently saved into session with name 'newtoken'.
+ * This token must be send by any POST as it will be used by next page for comparison with value in session.
  *
  * @return  string
  */
 function newToken()
 {
 	return $_SESSION['newtoken'];
+}
+
+/**
+ * Return the value of token currently saved into session with name 'token'.
+ *
+ * @return  string
+ */
+function currentToken()
+{
+	return $_SESSION['token'];
 }

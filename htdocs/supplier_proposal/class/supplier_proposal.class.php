@@ -1481,7 +1481,7 @@ class SupplierProposal extends CommonObject
             if (! $error && ! $notrigger)
             {
                 // Call trigger
-                $result=$this->call_trigger('SUPPLIER_PROPOSAL_VALIDATE', $user);
+                $result = $this->call_trigger('PROPOSAL_SUPPLIER_VALIDATE', $user);
                 if ($result < 0) { $error++; }
                 // End call triggers
             }
@@ -1683,7 +1683,7 @@ class SupplierProposal extends CommonObject
             if (! $notrigger)
             {
                 // Call trigger
-                $result=$this->call_trigger('SUPPLIER_PROPOSAL_REOPEN', $user);
+                $result = $this->call_trigger('PROPOSAL_SUPPLIER_REOPEN', $user);
                 if ($result < 0) { $error++; }
                 // End call triggers
             }
@@ -1736,13 +1736,13 @@ class SupplierProposal extends CommonObject
         $resql=$this->db->query($sql);
         if ($resql)
         {
-            $modelpdf=$conf->global->SUPPLIER_PROPOSAL_ADDON_PDF_ODT_CLOSED?$conf->global->SUPPLIER_PROPOSAL_ADDON_PDF_ODT_CLOSED:$this->modelpdf;
-            $triggerName = 'SUPPLIER_PROPOSAL_CLOSE_REFUSED';
+            $modelpdf = $conf->global->SUPPLIER_PROPOSAL_ADDON_PDF_ODT_CLOSED ? $conf->global->SUPPLIER_PROPOSAL_ADDON_PDF_ODT_CLOSED : $this->modelpdf;
+            $triggerName = 'PROPOSAL_SUPPLIER_CLOSE_REFUSED';
 
             if ($status == 2)
             {
-                $triggerName='SUPPLIER_PROPOSAL_CLOSE_SIGNED';
-                $modelpdf=$conf->global->SUPPLIER_PROPOSAL_ADDON_PDF_ODT_TOBILL?$conf->global->SUPPLIER_PROPOSAL_ADDON_PDF_ODT_TOBILL:$this->modelpdf;
+                $triggerName = 'PROPOSAL_SUPPLIER_CLOSE_SIGNED';
+                $modelpdf = $conf->global->SUPPLIER_PROPOSAL_ADDON_PDF_ODT_TOBILL ? $conf->global->SUPPLIER_PROPOSAL_ADDON_PDF_ODT_TOBILL : $this->modelpdf;
 
                 if (! empty($conf->global->SUPPLIER_PROPOSAL_UPDATE_PRICE_ON_SUPPlIER_PROPOSAL))     // TODO This option was not tested correctly. Error if product ref does not exists
                 {
@@ -1751,7 +1751,7 @@ class SupplierProposal extends CommonObject
             }
             if ($status == 4)
             {
-                $triggerName='SUPPLIER_PROPOSAL_CLASSIFY_BILLED';
+                $triggerName = 'PROPOSAL_SUPPLIER_CLASSIFY_BILLED';
             }
 
             if (empty($conf->global->MAIN_DISABLE_PDF_AUTOUPDATE))
@@ -1800,25 +1800,25 @@ class SupplierProposal extends CommonObject
      */
     public function updateOrCreatePriceFournisseur($user)
     {
-        $productsupplier = new ProductFournisseur($this->db);
+        global $conf;
 
         dol_syslog(get_class($this)."::updateOrCreatePriceFournisseur", LOG_DEBUG);
         foreach ($this->lines as $product)
         {
             if ($product->subprice <= 0) continue;
+            $productsupplier = new ProductFournisseur($this->db);
 
-            $idProductFourn = $productsupplier->find_min_price_product_fournisseur($product->fk_product, $product->qty);
-            $res = $productsupplier->fetch($idProductFourn);
+            $multicurrency_tx = 1;
+            $fk_multicurrency = 0;
 
-            if ($productsupplier->id) {
-                if ($productsupplier->fourn_qty == $product->qty) {
-                    $this->updatePriceFournisseur($productsupplier->product_fourn_price_id, $product, $user);
-                } else {
-                    $this->createPriceFournisseur($product, $user);
-                }
-            } else {
-                $this->createPriceFournisseur($product, $user);
-            }
+            if(empty($this->thirdparty)) $this->fetch_thirdparty();
+
+            $ref_fourn = $product->ref_fourn;
+            if(empty($ref_fourn)) $ref_fourn = $product->ref_supplier;
+            if(!empty($conf->multicurrency->enabled) && !empty($product->multicurrency_code)) list($fk_multicurrency, $multicurrency_tx) = MultiCurrency::getIdAndTxFromCode($this->db, $product->multicurrency_code);
+            $productsupplier->id = $product->fk_product;
+
+            $productsupplier->update_buyprice($product->qty, $product->subprice, $user, 'HT', $this->thirdparty, '', $ref_fourn, $product->tva_tx, 0, 0, 0, $product->info_bits,  '',  '',  array(),  '', $product->multicurrency_subprice,  'HT', $multicurrency_tx, $product->multicurrency_code,  '',  '',  '');
         }
 
         return 1;
@@ -1856,11 +1856,12 @@ class SupplierProposal extends CommonObject
      */
     public function createPriceFournisseur($product, $user)
     {
-        $price=price2num($product->subprice*$product->qty, 'MU');
+        global $conf;
+
+		$price=price2num($product->subprice*$product->qty, 'MU');
         $qty=price2num($product->qty);
         $unitPrice = price2num($product->subprice, 'MU');
         $now=dol_now();
-
         $values = array(
             "'".$this->db->idate($now)."'",
             $product->fk_product,
@@ -1872,9 +1873,28 @@ class SupplierProposal extends CommonObject
             $product->tva_tx,
             $user->id
         );
+        if (!empty($conf->multicurrency->enabled)) {
+            if (!empty($product->multicurrency_code)) {
+				include_once DOL_DOCUMENT_ROOT.'/multicurrency/class/multicurrency.class.php';
+	            $multicurrency = new MultiCurrency($this->db); //need to fetch because empty fk_multicurrency and rate
+                $multicurrency->fetch(0, $product->multicurrency_code);
+                if(! empty($multicurrency->id)) {
+                    $values[] = $multicurrency->id;
+                    $values[] = "'".$product->multicurrency_code."'";
+                    $values[] = $product->multicurrency_subprice;
+                    $values[] = $product->multicurrency_total_ht;
+                    $values[] = $multicurrency->rate->rate;
+                }
+                else {
+                    for($i = 0; $i < 5; $i++) $values[] = 'NULL';
+                }
+            }
+        }
 
         $sql = 'INSERT INTO '.MAIN_DB_PREFIX.'product_fournisseur_price ';
-        $sql .= '(datec, fk_product, fk_soc, ref_fourn, price, quantity, unitprice, tva_tx, fk_user) VALUES ('.implode(',', $values).')';
+        $sql .= '(datec, fk_product, fk_soc, ref_fourn, price, quantity, unitprice, tva_tx, fk_user';
+        if(!empty($conf->multicurrency->enabled) && !empty($product->multicurrency_code)) $sql .= ',fk_multicurrency, multicurrency_code, multicurrency_unitprice, multicurrency_price, multicurrency_tx';
+        $sql .= ')  VALUES ('.implode(',', $values).')';
 
         $resql = $this->db->query($sql);
         if (!$resql) {
@@ -1916,7 +1936,7 @@ class SupplierProposal extends CommonObject
 
             if (!$error) {
                 // Call trigger
-                $result=$this->call_trigger('SUPPLIER_PROPOSAL_UNVALIDATE', $user);
+                $result = $this->call_trigger('PROPOSAL_SUPPLIER_UNVALIDATE', $user);
                 if ($result < 0) $error++;
             }
 
@@ -2034,18 +2054,21 @@ class SupplierProposal extends CommonObject
         if (! $notrigger)
         {
             // Call trigger
-            $result=$this->call_trigger('SUPPLIER_PROPOSAL_DELETE', $user);
+            $result = $this->call_trigger('PROPOSAL_SUPPLIER_DELETE', $user);
             if ($result < 0) { $error++; }
             // End call triggers
         }
 
         if (! $error)
         {
+            $main = MAIN_DB_PREFIX . 'supplier_proposaldet';
+            $ef = $main . "_extrafields";
+            $sqlef = "DELETE FROM $ef WHERE fk_object IN (SELECT rowid FROM $main WHERE fk_supplier_proposal = " . $this->id . ")";
             $sql = "DELETE FROM ".MAIN_DB_PREFIX."supplier_proposaldet WHERE fk_supplier_proposal = ".$this->id;
             if ($this->db->query($sql))
             {
                 $sql = "DELETE FROM ".MAIN_DB_PREFIX."supplier_proposal WHERE rowid = ".$this->id;
-                if ($this->db->query($sql))
+                if ($this->db->query($sqlef) && $this->db->query($sql))
                 {
                     // Delete linked object
                     $res = $this->deleteObjectLinked();
@@ -2293,7 +2316,7 @@ class SupplierProposal extends CommonObject
             $response->warning_delay = $delay_warning/60/60/24;
             $response->label = $label;
             $response->labelShort = $labelShort;
-            $response->url = DOL_URL_ROOT.'/supplier_proposal/list.php?viewstatut='.$status;
+            $response->url = DOL_URL_ROOT.'/supplier_proposal/list.php?search_status='.$status;
             $response->img = img_object('', "propal");
 
             // This assignment in condition is not a bug. It allows walking the results.

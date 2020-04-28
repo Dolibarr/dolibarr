@@ -1967,7 +1967,7 @@ elseif ($id || $ref)
 
 		// Tracking Number
 		print '<tr><td class="titlefield">'.$form->editfieldkey("TrackingNumber", 'tracking_number', $object->tracking_number, $object, $user->rights->expedition->creer).'</td><td colspan="3">';
-		print $form->editfieldval("TrackingNumber", 'tracking_number', $object->tracking_url, $object, $user->rights->expedition->creer, 'string', $object->tracking_number);
+		print $form->editfieldval("TrackingNumber", 'tracking_number', $object->tracking_url, $object, $user->rights->expedition->creer, 'safehtmlstring', $object->tracking_number);
 		print '</td></tr>';
 
 		// Incoterms
@@ -2012,7 +2012,7 @@ elseif ($id || $ref)
 		if ($action == 'editline')
 		{
 			print '	<form name="updateline" id="updateline" action="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;lineid='.$line_id.'" method="POST">
-			<input type="hidden" name="token" value="' . $_SESSION ['newtoken'].'">
+			<input type="hidden" name="token" value="' . newToken().'">
 			<input type="hidden" name="action" value="updateline">
 			<input type="hidden" name="mode" value="">
 			<input type="hidden" name="id" value="' . $object->id.'">
@@ -2529,13 +2529,15 @@ elseif ($id || $ref)
 			}
 
 			// Send
-			if ($object->statut > 0)
-			{
-				if (empty($conf->global->MAIN_USE_ADVANCED_PERMS) || $user->rights->expedition->shipping_advance->send)
+			if (empty($user->socid)) {
+				if ($object->statut > 0)
 				{
-					print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=presend&mode=init#formmailbeforetitle">'.$langs->trans('SendMail').'</a>';
+					if (empty($conf->global->MAIN_USE_ADVANCED_PERMS) || $user->rights->expedition->shipping_advance->send)
+					{
+						print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=presend&mode=init#formmailbeforetitle">'.$langs->trans('SendMail').'</a>';
+					}
+					else print '<a class="butActionRefused classfortooltip" href="#">'.$langs->trans('SendMail').'</a>';
 				}
-				else print '<a class="butActionRefused classfortooltip" href="#">'.$langs->trans('SendMail').'</a>';
 			}
 
 			// Create bill
@@ -2551,7 +2553,7 @@ elseif ($id || $ref)
 
 			// This is just to generate a delivery receipt
 			//var_dump($object->linkedObjectsIds['delivery']);
-			if ($conf->livraison_bon->enabled && ($object->statut == Expedition::STATUS_VALIDATED || $object->statut == Expedition::STATUS_CLOSED) && $user->rights->expedition->livraison->creer && count($object->linkedObjectsIds['delivery']) == 0)
+			if ($conf->livraison_bon->enabled && ($object->statut == Expedition::STATUS_VALIDATED || $object->statut == Expedition::STATUS_CLOSED) && $user->rights->expedition->livraison->creer && empty($object->linkedObjectsIds['delivery']))
 			{
 				print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=create_delivery">'.$langs->trans("CreateDeliveryOrder").'</a>';
 			}

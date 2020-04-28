@@ -92,6 +92,7 @@ if (empty($newmask))	// This should no happen
 
 $result = restrictedArea($user, 'modulebuilder', null);
 
+$error = 0;
 
 
 /*
@@ -782,10 +783,18 @@ if ($dirins && $action == 'initobject' && $module && GETPOST('createtablearray',
 
 if ($dirins && $action == 'initobject' && $module && $objectname)
 {
+	$objectname = ucfirst($objectname);
+
 	if (preg_match('/[^a-z0-9_]/i', $objectname))
 	{
 		$error++;
 		setEventMessages($langs->trans("SpaceOrSpecialCharAreNotAllowed"), null, 'errors');
+		$tabobj = 'newobject';
+	}
+	if (class_exists($objectname)) {
+		// TODO Add a more efficient detection. Scan disk ?
+		$error++;
+		setEventMessages($langs->trans("AnObjectWithThisClassNameAlreadyExists"), null, 'errors');
 		$tabobj = 'newobject';
 	}
 
@@ -879,16 +888,31 @@ if ($dirins && $action == 'initobject' && $module && $objectname)
 		// Edit the class 'class/'.strtolower($objectname).'.class.php'
 		if (GETPOST('includerefgeneration', 'aZ09')) {
 			// Replace 'visible'=>1,  'noteditable'=>0, 'default'=>''
-			$arrayreplacement = array('/\'visible\'=>1,\s*\'noteditable\'=>0,\s*\'default\'=>\'\'/' => "'visible'=>4, 'noteditable'=>1, 'default'=>'(PROV)'");
+			$arrayreplacement = array(
+				'/\'visible\'=>1,\s*\'noteditable\'=>0,\s*\'default\'=>\'\'/' => "'visible'=>4, 'noteditable'=>1, 'default'=>'(PROV)'"
+			);
 			//var_dump($arrayreplacement);exit;
 			//var_dump($destdir.'/class/'.strtolower($objectname).'.class.php');exit;
 			dolReplaceInFile($destdir.'/class/'.strtolower($objectname).'.class.php', $arrayreplacement, '', 0, 0, 1);
+
+			$arrayreplacement = array(
+				'/\'models\' => 0,/' => '\'models\' => 1,'
+			);
+			dolReplaceInFile($destdir.'/core/modules/mod'.$module.'.class.php', $arrayreplacement, '', 0, 0, 1);
 		}
 
 		// Edit the setup file and the card page
 		if (GETPOST('includedocgeneration', 'aZ09')) {
-			// TODO
-			// dolReplaceInFile();
+			// Replace some var init into some files
+			$arrayreplacement = array(
+				'/\$includedocgeneration = 0;/' => '$includedocgeneration = 1;'
+			);
+			dolReplaceInFile($destdir.'/class/'.strtolower($objectname).'.class.php', $arrayreplacement, '', 0, 0, 1);
+
+			$arrayreplacement = array(
+				'/\'models\' => 0,/' => '\'models\' => 1,'
+			);
+			dolReplaceInFile($destdir.'/core/modules/mod'.$module.'.class.php', $arrayreplacement, '', 0, 0, 1);
 		}
 
 		// Scan for object class files
@@ -1637,12 +1661,90 @@ $head[$h][1] = '<span class="valignmiddle text-plus-circle">'.$langs->trans("New
 $head[$h][2] = 'initmodule';
 $h++;
 
-foreach ($listofmodules as $tmpmodule => $tmpmodulearray)
-{
-	$head[$h][0] = $_SERVER["PHP_SELF"].'?module='.$tmpmodulearray['modulenamewithcase'].($forceddirread ? '@'.$dirread : '');
-	$head[$h][1] = $tmpmodulearray['modulenamewithcase'];
-	$head[$h][2] = $tmpmodulearray['modulenamewithcase'];
-	$h++;
+$linktoenabledisable = '';
+$modulestatusinfo = '';
+
+if (is_array($listofmodules) && count($listofmodules) > 0) {
+	// Define $linktoenabledisable and $modulestatusinfo
+	$modulelowercase=strtolower($module);
+	$const_name = 'MAIN_MODULE_'.strtoupper($module);
+
+	$param='';
+	if ($tab)    $param.='&tab='.urlencode($tab);
+	if ($module) $param.='&module='.urlencode($module);
+	if ($tabobj) $param.='&tabobj='.urlencode($tabobj);
+
+	$urltomodulesetup='<a href="'.DOL_URL_ROOT.'/admin/modules.php?search_keyword='.urlencode($module).'">'.$langs->trans('Home').'-'.$langs->trans("Setup").'-'.$langs->trans("Modules").'</a>';
+	if (! empty($conf->global->$const_name))	// If module is already activated
+	{
+		$linktoenabledisable.='<a class="reposition asetresetmodule" href="'.$_SERVER["PHP_SELF"].'?id='.$moduleobj->numero.'&action=reset&value=mod' . $module . $param . '">';
+		$linktoenabledisable.=img_picto($langs->trans("Activated"), 'switch_on', '', false, 0, 0, '', '', 1);
+		$linktoenabledisable.='</a>';
+
+		$objMod = $moduleobj;
+		$backtourlparam = '';
+		$backtourlparam .= ($backtourlparam ? '&' : '?').'module='.$module; // No urlencode here, done later
+		if ($tab) $backtourlparam .= ($backtourlparam ? '&' : '?').'tab='.$tab; // No urlencode here, done later
+		$backtourl = $_SERVER["PHP_SELF"].$backtourlparam;
+
+		$regs = array();
+		if (is_array($objMod->config_page_url))
+		{
+			$i = 0;
+			foreach ($objMod->config_page_url as $page)
+			{
+				$urlpage = $page;
+				if ($i++)
+				{
+					$linktoenabledisable .= ' <a href="'.$urlpage.'" title="'.$langs->trans($page).'">'.img_picto(ucfirst($page), "setup").'</a>';
+					//    print '<a href="'.$page.'">'.ucfirst($page).'</a>&nbsp;';
+				}
+				else
+				{
+					if (preg_match('/^([^@]+)@([^@]+)$/i', $urlpage, $regs))
+					{
+						$urltouse = dol_buildpath('/'.$regs[2].'/admin/'.$regs[1], 1);
+						$linktoenabledisable .= ' &nbsp; <a href="'.$urltouse.(preg_match('/\?/', $urltouse) ? '&' : '?').'save_lastsearch_values=1&backtopage='.urlencode($backtourl).'" title="'.$langs->trans("Setup").'">'.img_picto($langs->trans("Setup"), "setup", 'style="padding-right: 6px"').'</a>';
+					}
+					else
+					{
+						$urltouse = $urlpage;
+						$linktoenabledisable .= ' &nbsp; <a href="'.$urltouse.(preg_match('/\?/', $urltouse) ? '&' : '?').'save_lastsearch_values=1&backtopage='.urlencode($backtourl).'" title="'.$langs->trans("Setup").'">'.img_picto($langs->trans("Setup"), "setup", 'style="padding-right: 6px"').'</a>';
+					}
+				}
+			}
+		}
+		elseif (preg_match('/^([^@]+)@([^@]+)$/i', $objMod->config_page_url, $regs))
+		{
+			$linktoenabledisable .= ' &nbsp; <a href="'.dol_buildpath('/'.$regs[2].'/admin/'.$regs[1], 1).'?save_lastsearch_values=1&backtopage='.urlencode($backtourl).'" title="'.$langs->trans("Setup").'">'.img_picto($langs->trans("Setup"), "setup", 'style="padding-right: 6px"').'</a>';
+		}
+	}
+	else
+	{
+		$linktoenabledisable.='<a class="reposition asetresetmodule" href="'.$_SERVER["PHP_SELF"].'?id='.$moduleobj->numero.'&action=set&value=mod' . $module . $param . '">';
+		$linktoenabledisable.=img_picto($langs->trans("ModuleIsNotActive", $urltomodulesetup), 'switch_off', '', false, 0, 0, '', 'classfortooltip', 1);
+		$linktoenabledisable.="</a>\n";
+	}
+
+	if (! empty($conf->$modulelowercase->enabled))
+	{
+		$modulestatusinfo=$form->textwithpicto('', $langs->trans("Warning").' : '.$langs->trans("ModuleIsLive"), -1, 'warning');
+	}
+
+	// Loop to show tab of each module
+	foreach ($listofmodules as $tmpmodule => $tmpmodulearray)
+	{
+		$head[$h][0] = $_SERVER["PHP_SELF"].'?module='.$tmpmodulearray['modulenamewithcase'].($forceddirread ? '@'.$dirread : '');
+		$head[$h][1] = $tmpmodulearray['modulenamewithcase'];
+		$head[$h][2] = $tmpmodulearray['modulenamewithcase'];
+
+		/*if ($tmpmodule == $modulelowercase) {
+			$head[$h][1] .= ' '.$modulestatusinfo;
+			$head[$h][1] .= ' '.$linktoenabledisable;
+		}*/
+
+		$h++;
+	}
 }
 
 $head[$h][0] = $_SERVER["PHP_SELF"].'?module=deletemodule';
@@ -1694,36 +1796,6 @@ elseif (! empty($module))
 		$head2 = array();
 		$h=0;
 
-		$modulelowercase=strtolower($module);
-		$const_name = 'MAIN_MODULE_'.strtoupper($module);
-
-		$param='';
-		if ($tab)    $param.='&tab='.urlencode($tab);
-		if ($module) $param.='&module='.urlencode($module);
-		if ($tabobj) $param.='&tabobj='.urlencode($tabobj);
-
-		$urltomodulesetup='<a href="'.DOL_URL_ROOT.'/admin/modules.php?search_keyword='.urlencode($module).'">'.$langs->trans('Home').'-'.$langs->trans("Setup").'-'.$langs->trans("Modules").'</a>';
-		$linktoenabledisable='';
-		if (! empty($conf->global->$const_name))	// If module is already activated
-		{
-			$linktoenabledisable.='<a class="reposition asetresetmodule" href="'.$_SERVER["PHP_SELF"].'?id='.$moduleobj->numero.'&action=reset&value=mod' . $module . $param . '">';
-			$linktoenabledisable.=img_picto($langs->trans("Activated"), 'switch_on', '', false, 0, 0, '', '', 1);
-			$linktoenabledisable.='</a>';
-		}
-		else
-		{
-			$linktoenabledisable.='<a class="reposition asetresetmodule" href="'.$_SERVER["PHP_SELF"].'?id='.$moduleobj->numero.'&action=set&value=mod' . $module . $param . '">';
-			$linktoenabledisable.=img_picto($langs->trans("Disabled"), 'switch_off', '', false, 0, 0, '', '', 1);
-			$linktoenabledisable.="</a>\n";
-		}
-		if (empty($conf->$modulelowercase->enabled))
-		{
-			$modulestatusinfo=$form->textwithpicto($langs->trans("ModuleIsNotActive", $urltomodulesetup), '', -1, 'help');
-		}
-		else
-		{
-			$modulestatusinfo=$form->textwithpicto($langs->trans("ModuleIsLive"), $langs->trans("Warning"), -1, 'warning');
-		}
 
 		$head2[$h][0] = $_SERVER["PHP_SELF"].'?tab=description&module='.$module.($forceddirread?'@'.$dirread:'');
 		$head2[$h][1] = $langs->trans("Description");
@@ -1745,14 +1817,14 @@ elseif (! empty($module))
 		$head2[$h][2] = 'objects';
 		$h++;
 
-		$head2[$h][0] = $_SERVER["PHP_SELF"].'?tab=menus&module='.$module.($forceddirread?'@'.$dirread:'');
-		$head2[$h][1] = $langs->trans("Menus");
-		$head2[$h][2] = 'menus';
-		$h++;
-
 		$head2[$h][0] = $_SERVER["PHP_SELF"].'?tab=permissions&module='.$module.($forceddirread?'@'.$dirread:'');
 		$head2[$h][1] = $langs->trans("Permissions");
 		$head2[$h][2] = 'permissions';
+		$h++;
+
+		$head2[$h][0] = $_SERVER["PHP_SELF"].'?tab=menus&module='.$module.($forceddirread?'@'.$dirread:'');
+		$head2[$h][1] = $langs->trans("Menus");
+		$head2[$h][2] = 'menus';
 		$h++;
 
 		$head2[$h][0] = $_SERVER["PHP_SELF"].'?tab=hooks&module='.$module.($forceddirread?'@'.$dirread:'');
@@ -1801,8 +1873,8 @@ elseif (! empty($module))
 		$h++;
 
 		// Link to enable / disable
-		print $modulestatusinfo;
-		print ' '.$linktoenabledisable.'<br>';
+		print '<div class="center">'.$modulestatusinfo;
+		print ' '.$linktoenabledisable.'</div>';
 
 		print '<br>';
 
@@ -2082,7 +2154,7 @@ elseif (! empty($module))
 				print_liste_field_titre("Condition", $_SERVER["PHP_SELF"], '', "", $param, '', $sortfield, $sortorder);
 				print "</tr>\n";
 
-				if (is_array($dicts))
+				if (is_array($dicts) && is_array($dicts['tabname']))
 				{
 					$i = 0;
 					$maxi = count($dicts['tabname']);
@@ -2566,6 +2638,7 @@ elseif (! empty($module))
 								print '<input class="button" type="submit" name="add" value="'.$langs->trans("Add").'">';
 								print '</td></tr>';
 
+								// List of existing properties
 								foreach ($properties as $propkey => $propval)
 								{
 									/* If from Reflection
@@ -2637,7 +2710,7 @@ elseif (! empty($module))
 									print $propenabled?$propenabled:'';
 									print '</td>';
 									print '<td class="center">';
-									print $propvisible?$propvisible:'';
+									print $propvisible?$propvisible:'0';
 									print '</td>';
 									print '<td class="center">';
 									print $propnoteditable?$propnoteditable:'';

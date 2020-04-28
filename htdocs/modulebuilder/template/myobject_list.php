@@ -409,7 +409,7 @@ $selectedfields = $form->multiSelectArrayWithCheckbox('selectedfields', $arrayfi
 $selectedfields .= (count($arrayofmassactions) ? $form->showCheckAddButtons('checkforselect', 1) : '');
 
 print '<div class="div-table-responsive">'; // You can use div-table-responsive-no-min if you dont need reserved height for your table
-print '<table class="tagtable liste'.($moreforfilter ? " listwithfilterbefore" : "").'">'."\n";
+print '<table class="tagtable nobottomiftotal liste'.($moreforfilter ? " listwithfilterbefore" : "").'">'."\n";
 
 
 // Fields title search
@@ -509,6 +509,7 @@ while ($i < ($limit ? min($num, $limit) : $num))
 	    elseif ($key == 'ref') $cssforfield .= ($cssforfield ? ' ' : '').'nowrap';
 
 	    if (in_array($val['type'], array('double(24,8)', 'double(6,3)', 'integer', 'real', 'price')) && $key != 'status') $cssforfield .= ($cssforfield ? ' ' : '').'right';
+	    //if (in_array($key, array('fk_soc', 'fk_user', 'fk_warehouse'))) $cssforfield = 'tdoverflowmax100';
 
 	    if (!empty($arrayfields['t.'.$key]['checked']))
 		{

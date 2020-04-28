@@ -16,11 +16,17 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
-/**
+
+ /**
  *  \file       htdocs/compta/accounting-files.php
  *  \ingroup    compta
  *  \brief      Page to show portoflio and files of a thirdparty and download it
  */
+
+if ((array_key_exists('action', $_GET) && $_GET['action'] == 'dl') || (array_key_exists('action', $_POST) && $_POST['action'] == 'dl')) {	// To not replace token when downloading file
+	if (! defined('NOTOKENRENEWAL'))           define('NOTOKENRENEWAL', '1');
+}
+
 require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
@@ -106,7 +112,7 @@ $error = 0;
 
 $filesarray = array();
 $result = false;
-if (($action == "searchfiles" || $action == "dl")) {
+if (($action == 'searchfiles' || $action == 'dl')) {
 	if (empty($date_start))
 	{
 		setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("DateStart")), null, 'errors');
@@ -235,7 +241,7 @@ if (($action == "searchfiles" || $action == "dl")) {
 	            {
 	                $result = true;
 
-	                $files = dol_dir_list($upload_dir, "files", 0, '', '(\.meta|_preview\.png)$', '', SORT_ASC, 1);
+	                $files = dol_dir_list($upload_dir, "files", 0, '', '(\.meta|_preview.*\.png)$', '', SORT_ASC, 1);
 	                //var_dump($upload_dir);
 	                //var_dump($files);
 
@@ -459,7 +465,7 @@ if (!empty($date_start) && !empty($date_stop))
     $param .= '&date_stopyear='.GETPOST('date_stopyear', 'int');
 
     print '<form name="dl" action="?action=dl" method="POST" >'."\n";
-    print '<input type="hidden" name="token" value="'.newToken().'">';
+    print '<input type="hidden" name="token" value="'.currentToken().'">';
 
     echo dol_print_date($date_start, 'day')." - ".dol_print_date($date_stop, 'day');
 

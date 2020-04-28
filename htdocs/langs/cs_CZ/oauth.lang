@@ -1,5 +1,5 @@
 # Dolibarr language file - Source file is en_US - oauth
-ConfigOAuth=Konfigurace Oauth
+ConfigOAuth=Konfigurace OAuth
 OAuthServices=Služby OAuth
 ManualTokenGeneration=Ruční generování tokenů
 TokenManager=Správce tokenů
@@ -20,11 +20,13 @@ TOKEN_REFRESH=Token obnovit přítomnost
 TOKEN_EXPIRED=Token vypršel
 TOKEN_EXPIRE_AT=Token vyprší na
 TOKEN_DELETE=Odstranění uloženého tokenu
-OAUTH_GOOGLE_NAME=O službě Google Oauth
+OAUTH_GOOGLE_NAME=O službě Google OAuth
 OAUTH_GOOGLE_ID=ID Google Oauth
-OAUTH_GOOGLE_SECRET=Oauth Google Secret
-OAUTH_GOOGLE_DESC=Přejděte na <a class="notasortlink" href="https://console.developers.google.com/" target="_blank"> tuto stránku </a> a poté na "pověření" pro vytvoření pověření Oauth
+OAUTH_GOOGLE_SECRET=OAuth Google Secret
+OAUTH_GOOGLE_DESC=Přejděte na <a class="notasortlink" href="https://console.developers.google.com/" target="_blank"> tuto stránku </a> a potom na pověření pro vytvoření pověření OAuth
 OAUTH_GITHUB_NAME=Služba Oauth GitHub
 OAUTH_GITHUB_ID=ID Oauth GitHub
-OAUTH_GITHUB_SECRET=Oauth GitHub Secret
+OAUTH_GITHUB_SECRET=OAuth GitHub Secret
 OAUTH_GITHUB_DESC=Přejděte na <a class="notasortlink" href="https://github.com/settings/developers" target="_blank"> tuto stránku </a> a pak na "Registrace nové aplikace" pro vytvoření pověření Oauth
+OAUTH_STRIPE_TEST_NAME=OAuth Stripe Test
+OAUTH_STRIPE_LIVE_NAME=OAuth Stripe Live

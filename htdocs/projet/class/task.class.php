@@ -3,6 +3,7 @@
  * Copyright (C) 2010-2012	Regis Houssin		<regis.houssin@inodbox.com>
  * Copyright (C) 2014       Marcos García       <marcosgdf@gmail.com>
  * Copyright (C) 2018       Frédéric France     <frederic.france@netlogic.fr>
+ * Copyright (C) 2020       Juanjo Menent		<jmenent@2byte.es>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -154,7 +155,8 @@ class Task extends CommonObject
 
 		// Insert request
 		$sql = "INSERT INTO ".MAIN_DB_PREFIX."projet_task (";
-		$sql .= "fk_projet";
+		$sql .= "entity";
+		$sql .= ", fk_projet";
 		$sql .= ", ref";
 		$sql .= ", fk_task_parent";
 		$sql .= ", label";
@@ -166,7 +168,8 @@ class Task extends CommonObject
 		$sql .= ", planned_workload";
 		$sql .= ", progress";
 		$sql .= ") VALUES (";
-		$sql .= $this->fk_project;
+		$sql .= $conf->entity;
+		$sql .= ", ".$this->fk_project;
 		$sql .= ", ".(!empty($this->ref) ? "'".$this->db->escape($this->ref)."'" : 'null');
 		$sql .= ", ".$this->fk_task_parent;
 		$sql .= ", '".$this->db->escape($this->label)."'";

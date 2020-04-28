@@ -22,6 +22,8 @@ ProductVatMassChangeDesc=این ابزار نرخ مالیات بر ارزش ا�
 MassBarcodeInit=تعریف دستجمعی بارکد
 MassBarcodeInitDesc=این صفحه می‌تواند برای تعریف بارکد اشیائی که برای آن‌ها بارکد تعریف نشده استفاده شود. قبل از استفاده، مطمئن شوید واحد بارکد به خوبی نصب و برپاسازی شده است.
 ProductAccountancyBuyCode=کد حساب‌داری (خرید)
+ProductAccountancyBuyIntraCode=Accounting code (purchase intra-community)
+ProductAccountancyBuyExportCode=Accounting code (purchase import)
 ProductAccountancySellCode=کد  حساب‌داری (فروش)
 ProductAccountancySellIntraCode=کد حساب‌داری (فروش داخل جامعه‌ای-اروپا)
 ProductAccountancySellExportCode=کد حساب‌داری (فروش صادرات)
@@ -165,7 +167,7 @@ SuppliersPrices=قیمت‌های فروشنده
 SuppliersPricesOfProductsOrServices=قیمت‌های فروشنده (مربوط به محصولات و خدمات)
 CustomCode=گمرک / کالا / کدبندی هماهنگ کالا
 CountryOrigin=کشور مبدا
-Nature=Nature of produt (material/finished)
+Nature=Nature of product (material/finished)
 ShortLabel=برچسب کوتاه
 Unit=واحد
 p=واحد
@@ -331,6 +333,10 @@ PossibleValues=مقادیر ممکن
 GoOnMenuToCreateVairants=برای آماده‌کردن ویژگی‌های چندگانه (مثل رنگ، اندازه و غیره) به فهرست %s - %s بروید 
 UseProductFournDesc=ایجاد یک قابلیت برای تعریف توضیحات مربوط به محصولاتی که توسط فروشندگان در ادامۀ توضیحات ارائه شده به مشتریان
 ProductSupplierDescription=توضیحات فروشنده برای محصول
+UseProductSupplierPackaging=Use packaging on supplier prices (recalculate quantities according to packaging set on supplier price when adding/updating line in supplier documents)
+PackagingForThisProduct=Packaging
+QtyRecalculatedWithPackaging=The quantity of the line were recalculated according to supplier packaging
+
 #Attributes
 VariantAttributes=انواع ویژگی
 ProductAttributes=انواع ویژگی‌های محصولات
@@ -363,7 +369,7 @@ UsePercentageVariations=استفاده از انواع درصدی
 PercentageVariation=انواع درصدی
 ErrorDeletingGeneratedProducts=خطائی در هنگام حذف انواع موجود محصول رخ داد
 NbOfDifferentValues=تعداد مقادیر مختلف
-NbProducts=تعداد محصولات
+NbProducts=Number of products
 ParentProduct=محصول مادر
 HideChildProducts=پنهان کردن انواع مختلف محصولات 
 ShowChildProducts=نمایش انواع مختلف محصولات
@@ -376,3 +382,4 @@ ErrorProductCombinationNotFound=نوع محصول پیدا نشد
 ActionAvailableOnVariantProductOnly=این کنش تنها بر روی یک نوع از انواع محصول قابل اجراست
 ProductsPricePerCustomer=قیمت محصول وابسته به مشتریان
 ProductSupplierExtraFields=Additional Attributes (Supplier Prices)
+DeleteLinkedProduct=Delete the child product linked to the combination

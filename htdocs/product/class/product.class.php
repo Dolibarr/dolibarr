@@ -1013,12 +1013,13 @@ class Product extends CommonObject
             $sql .= ", accountancy_code_sell= '".$this->db->escape($this->accountancy_code_sell)."'";
             $sql .= ", accountancy_code_sell_intra= '".$this->db->escape($this->accountancy_code_sell_intra)."'";
             $sql .= ", accountancy_code_sell_export= '".$this->db->escape($this->accountancy_code_sell_export)."'";
-            $sql .= ", desiredstock = ".((isset($this->desiredstock) && $this->desiredstock != '') ? (int) $this->desiredstock : "null");
+            $sql .= ", desiredstock = ".((isset($this->desiredstock) && is_numeric($this->desiredstock)) ? (int) $this->desiredstock : "null");
             $sql .= ", cost_price = ".($this->cost_price != '' ? $this->db->escape($this->cost_price) : 'null');
             $sql .= ", fk_unit= ".(!$this->fk_unit ? 'NULL' : (int) $this->fk_unit);
             $sql .= ", price_autogen = ".(!$this->price_autogen ? 0 : 1);
             $sql .= ", fk_price_expression = ".($this->fk_price_expression != 0 ? (int) $this->fk_price_expression : 'NULL');
             $sql .= ", fk_user_modif = ".($user->id > 0 ? $user->id : 'NULL');
+
             // stock field is not here because it is a denormalized value from product_stock.
             $sql .= " WHERE rowid = ".$id;
 
@@ -4682,11 +4683,12 @@ class Product extends CommonObject
      * This function need a lot of load. If you use it on list, use a cache to execute it once for each product id.
      * If ENTREPOT_EXTRA_STATUS set, filtering on warehouse status possible.
      *
-     * @param  string $option 		'' = Load all stock info, also from closed and internal warehouses, 'nobatch', 'novirtual'
-     * @return int                  < 0 if KO, > 0 if OK
-     * @see    load_virtual_stock(), loadBatchInfo()
+     * @param  	string 	$option 					'' = Load all stock info, also from closed and internal warehouses, 'nobatch', 'novirtual'
+     * @param	int		$includedraftpoforvirtual	Include draft status of PO for virtual stock calculation
+     * @return 	int                  				< 0 if KO, > 0 if OK
+     * @see    	load_virtual_stock(), loadBatchInfo()
      */
-    public function load_stock($option = '')
+    public function load_stock($option = '', $includedraftpoforvirtual = null)
     {
         // phpcs:enable
         global $conf;
@@ -4739,7 +4741,7 @@ class Product extends CommonObject
             $this->db->free($result);
 
             if (!preg_match('/novirtual/', $option)) {
-                $this->load_virtual_stock(); // This also load stats_commande_fournisseur, ...
+                $this->load_virtual_stock($includedraftpoforvirtual); // This also load stats_commande_fournisseur, ...
             }
 
             return 1;
@@ -4754,13 +4756,14 @@ class Product extends CommonObject
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
-	 *    Load value ->stock_theorique of a product. Property this->id must be defined.
-	 *    This function need a lot of load. If you use it on list, use a cache to execute it one for each product id.
+	 *  Load value ->stock_theorique of a product. Property this->id must be defined.
+	 *  This function need a lot of load. If you use it on list, use a cache to execute it one for each product id.
 	 *
-	 *    @return   int             < 0 if KO, > 0 if OK
-	 *    @see		load_stock(), loadBatchInfo()
+	 * 	@param	int		$includedraftpoforvirtual	Include draft status of PO for virtual stock calculation
+	 *  @return int     							< 0 if KO, > 0 if OK
+	 *  @see	load_stock(), loadBatchInfo()
 	 */
-	public function load_virtual_stock()
+	public function load_virtual_stock($includedraftpoforvirtual = null)
 	{
 		// phpcs:enable
 		global $conf, $hookmanager, $action;
@@ -4792,19 +4795,25 @@ class Product extends CommonObject
 		}
 		if (!empty($conf->fournisseur->enabled))
 		{
-			$result = $this->load_stats_commande_fournisseur(0, '1,2,3,4', 1);
+		    $filterStatus = '1,2,3,4';
+            if (isset($includedraftpoforvirtual)) $filterStatus = '0,'.$filterStatus;
+			$result = $this->load_stats_commande_fournisseur(0, $filterStatus, 1);
 			if ($result < 0) dol_print_error($this->db, $this->error);
 			$stock_commande_fournisseur = $this->stats_commande_fournisseur['qty'];
 		}
 		if (!empty($conf->fournisseur->enabled) && empty($conf->reception->enabled))
 		{
-			$result = $this->load_stats_reception(0, '4', 1);
+            $filterStatus = '4';
+            if (isset($includedraftpoforvirtual)) $filterStatus = '0,'.$filterStatus;
+			$result = $this->load_stats_reception(0, $filterStatus, 1);
 			if ($result < 0) dol_print_error($this->db, $this->error);
 			$stock_reception_fournisseur = $this->stats_reception['qty'];
 		}
 		if (!empty($conf->fournisseur->enabled) && !empty($conf->reception->enabled))
 		{
-			$result = $this->load_stats_reception(0, '4', 1);			// Use same tables than when module reception is not used.
+            $filterStatus = '4';
+            if (isset($includedraftpoforvirtual)) $filterStatus = '0,'.$filterStatus;
+			$result = $this->load_stats_reception(0, $filterStatus, 1);			// Use same tables than when module reception is not used.
 			if ($result < 0) dol_print_error($this->db, $this->error);
 			$stock_reception_fournisseur = $this->stats_reception['qty'];
 		}
@@ -4846,7 +4855,7 @@ class Product extends CommonObject
 			$hookmanager = new HookManager($this->db);
 		}
 		$hookmanager->initHooks(array('productdao'));
-		$parameters = array('id'=>$this->id);
+		$parameters = array('id'=>$this->id, 'includedraftpoforvirtual' => $includedraftpoforvirtual);
 		// Note that $action and $object may have been modified by some hooks
 		$reshook = $hookmanager->executeHooks('loadvirtualstock', $parameters, $this, $action);
 		if ($reshook > 0) $this->stock_theorique = $hookmanager->resArray['stock_theorique'];

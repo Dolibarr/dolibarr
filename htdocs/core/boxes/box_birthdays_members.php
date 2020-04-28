@@ -90,7 +90,7 @@ class box_birthdays_members extends ModeleBoxes
 			$sql.= " FROM ".MAIN_DB_PREFIX."adherent as u";
 			$sql.= " WHERE u.entity IN (".getEntity('adherent').")";
       		$sql.= " AND u.statut = 1";
-      		$sql.= dolSqlDateFilter('u.birth', 0, $tmparray['mon'], $tmparray['year']);
+      		$sql.= dolSqlDateFilter('u.birth', 0, $tmparray['mon'], 0);
 			$sql.= " ORDER BY u.birth ASC";
 			$sql.= $this->db->plimit($max, 0);
 

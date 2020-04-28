@@ -78,6 +78,7 @@ CatMemberList=Lista naziva/kategorija članova
 CatContactList=Lista naziva/kategorija kontakata
 CatSupLinks=Povezanost između dobavljača i naziva/kategorija
 CatCusLinks=Povezanost između kupaca/prospekta i naziva/kategorija
+CatContactsLinks=Links between contacts/addresses and tags/categories
 CatProdLinks=Povezanost između proizvoda/usluga i naziva/kategorija
 CatProJectLinks=Links between projects and tags/categories
 DeleteFromCat=Ukloni iz naziva/kategorije

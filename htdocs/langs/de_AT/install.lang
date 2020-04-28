@@ -1,5 +1,6 @@
 # Dolibarr language file - Source file is en_US - install
 GoToDolibarr=Zu dolibarr
 GoToUpgradePage=Zur Aktualisierungsseite
+DirectoryRecommendation=<span class="warning">IMPORTANT</span>: You must use a directory that is outside of the web pages (so do not use a subdirectory of previous parameter).
 DBSortingCollation=Reihenfolge der Zeichensortierung (Collation)
 MigrationActioncommElement=Update-Daten über die Maßnahmen

@@ -206,6 +206,8 @@ class Reception extends CommonObject
 		$this->brouillon = 1;
 		$this->tracking_number = dol_sanitizeFileName($this->tracking_number);
 		if (empty($this->fk_project)) $this->fk_project = 0;
+		if (empty($this->weight_units)) $this->weight_units = 0;
+		if (empty($this->size_units)) $this->size_units = 0;
 
 		$this->user = $user;
 
@@ -761,8 +763,13 @@ class Reception extends CommonObject
 		}
 
 		// extrafields
+                $line->array_options = $supplierorderline->array_options;
 		if (empty($conf->global->MAIN_EXTRAFIELDS_DISABLED) && is_array($array_options) && count($array_options) > 0) // For avoid conflicts if trigger used
-			$line->array_options = $array_options;
+                {
+			foreach ($array_options as $key => $value) {
+				$line->array_options[$key] = $value;
+			}
+		}
 
 		$line->fk_product = $fk_product;
 		$line->fk_commande = $supplierorderline->fk_commande;
@@ -936,10 +943,14 @@ class Reception extends CommonObject
 
 		if (!$error)
 		{
+                    $main = MAIN_DB_PREFIX . 'commande_fournisseur_dispatch';
+                    $ef = $main . "_extrafields";
+                    $sqlef = "DELETE FROM $ef WHERE fk_object IN (SELECT rowid FROM $main WHERE fk_reception = " . $this->id . ")";
+
 			$sql = "DELETE FROM ".MAIN_DB_PREFIX."commande_fournisseur_dispatch";
 			$sql .= " WHERE fk_reception = ".$this->id;
 
-			if ($this->db->query($sql))
+			if ($this->db->query($sqlef) && $this->db->query($sql))
 			{
 				// Delete linked object
 				$res = $this->deleteObjectLinked();

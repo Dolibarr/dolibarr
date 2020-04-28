@@ -1364,7 +1364,7 @@ class CommandeFournisseur extends CommonOrder
                         false,
 	                    $this->lines[$i]->date_start,
                         $this->lines[$i]->date_end,
-                        0,
+                        $this->lines[$i]->array_options,
                         $this->lines[$i]->fk_unit
 	                );
 	                if ($result < 0)
@@ -1474,9 +1474,9 @@ class CommandeFournisseur extends CommonOrder
 
 		$this->db->begin();
 
-		// get lines so they will be clone
-		foreach($this->lines as $line)
-			$line->fetch_optionals();
+        // get extrafields so they will be clone
+        foreach($this->lines as $line)
+            $line->fetch_optionals();
 
 		// Load source object
 		$objFrom = clone $this;
@@ -1992,6 +1992,17 @@ class CommandeFournisseur extends CommonOrder
             	return -1;
             }
             // End call triggers
+        }
+
+        $main = MAIN_DB_PREFIX . 'commande_fournisseurdet';
+        $ef = $main . "_extrafields";
+        $sql = "DELETE FROM $ef WHERE fk_object IN (SELECT rowid FROM $main WHERE fk_commande = " . $this->id . ")";
+        dol_syslog(get_class($this)."::delete extrafields lines", LOG_DEBUG);
+        if (!$this->db->query($sql))
+        {
+            $this->error = $this->db->lasterror();
+            $this->errors[] = $this->db->lasterror();
+            $error++;
         }
 
         $sql = "DELETE FROM ".MAIN_DB_PREFIX."commande_fournisseurdet WHERE fk_commande =".$this->id;
@@ -3699,6 +3710,14 @@ class CommandeFournisseurLigne extends CommonOrderLine
         $error=0;
 
         $this->db->begin();
+
+		// extrafields
+        $result = $this->deleteExtraFields();
+        if ($result < 0)
+        {
+            $this->db->rollback();
+            return -1;
+        }
 
         $sql = 'DELETE FROM '.MAIN_DB_PREFIX."commande_fournisseurdet WHERE rowid=".$this->id;
 

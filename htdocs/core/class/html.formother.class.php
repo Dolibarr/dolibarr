@@ -77,7 +77,7 @@ class FormOther
         $sql .= " FROM ".MAIN_DB_PREFIX."export_model";
         $sql .= " WHERE type = '".$this->db->escape($type)."'";
 		if (!empty($fk_user)) $sql .= " AND fk_user IN (0, ".$fk_user.")"; // An export model
-        $sql .= " ORDER BY rowid";
+        $sql .= " ORDER BY label";
         $result = $this->db->query($sql);
         if ($result)
         {
@@ -603,8 +603,6 @@ class FormOther
         $numlines = count($lines);
         for ($i = 0; $i < $numlines; $i++) {
             if ($lines[$i]->fk_parent == $parent) {
-                $var = !$var;
-
                 //var_dump($selectedproject."--".$selectedtask."--".$lines[$i]->fk_project."_".$lines[$i]->id);		// $lines[$i]->id may be empty if project has no lines
 
                 // Break on a new project

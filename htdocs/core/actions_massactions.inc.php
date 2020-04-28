@@ -253,7 +253,11 @@ if (!$error && $massaction == 'confirm_presend')
 				// Test recipient
 				if (empty($sendto)) 	// For the case, no recipient were set (multi thirdparties send)
 				{
-					if ($objectobj->element == 'expensereport')
+					if ($objectobj->element == 'societe')
+					{
+						$sendto = $objectobj->email;
+					}
+					elseif ($objectobj->element == 'expensereport')
 					{
 						$fuser = new User($db);
 						$fuser->fetch($objectobj->fk_user_author);
@@ -289,6 +293,10 @@ if (!$error && $massaction == 'confirm_presend')
 
 				if (empty($sendto))
 				{
+					if ($objectobj->element == 'societe') {
+						$objectobj->thirdparty = $objectobj;	// Hack so following code is comaptible when objectobj is a thirdparty
+					}
+
 				   	//print "No recipient for thirdparty ".$objectobj->thirdparty->name;
 				   	$nbignored++;
 				   	if (empty($thirdpartywithoutemail[$objectobj->thirdparty->id]))
@@ -491,9 +499,11 @@ if (!$error && $massaction == 'confirm_presend')
 					//var_dump($trackid);exit;
 					//var_dump($subjectreplaced);
 
+					if (empty($sendcontext)) $sendcontext = 'standard';
+
 					// Send mail (substitutionarray must be done just before this)
                     require_once DOL_DOCUMENT_ROOT.'/core/class/CMailFile.class.php';
-                    $mailfile = new CMailFile($subjectreplaced, $sendto, $from, $messagereplaced, $filepath, $mimetype, $filename, $sendtocc, $sendtobcc, $deliveryreceipt, -1, '', '', $trackid);
+                    $mailfile = new CMailFile($subjectreplaced, $sendto, $from, $messagereplaced, $filepath, $mimetype, $filename, $sendtocc, $sendtobcc, $deliveryreceipt, -1, '', '', $trackid, '', $sendcontext);
 					if ($mailfile->error)
 					{
 						$resaction .= '<div class="error">'.$mailfile->error.'</div>';
@@ -691,11 +701,11 @@ if ($massaction == 'confirm_createbills')   // Create bills from orders
 
 				for ($i = 0; $i < $num; $i++)
 				{
-					$desc = ($lines[$i]->desc ? $lines[$i]->desc : $lines[$i]->libelle);
+					$desc = ($lines[$i]->desc ? $lines[$i]->desc : '');
 					// If we build one invoice for several order, we must put the invoice of order on the line
 					if (!empty($createbills_onebythird))
 					{
-					    $desc = dol_concatdesc($desc, $langs->trans("Order").' '.$cmd->ref.' - '.dol_print_date($cmd->date, 'day', $langs));
+					    $desc = dol_concatdesc($desc, $langs->trans("Order").' '.$cmd->ref.' - '.dol_print_date($cmd->date, 'day'));
 					}
 
 					if ($lines[$i]->subprice < 0)
@@ -851,7 +861,7 @@ if ($massaction == 'confirm_createbills')   // Create bills from orders
 		if ($limit > 0 && $limit != $conf->liste_limit) $param .= '&limit='.urlencode($limit);
 		if ($sall)					$param .= '&sall='.urlencode($sall);
 		if ($socid > 0)             $param .= '&socid='.urlencode($socid);
-		if ($viewstatut != '')      $param .= '&viewstatut='.urlencode($viewstatut);
+		if ($search_status != '')      $param .= '&search_status='.urlencode($search_status);
 		if ($search_orderday)      		$param .= '&search_orderday='.urlencode($search_orderday);
 		if ($search_ordermonth)      		$param .= '&search_ordermonth='.urlencode($search_ordermonth);
 		if ($search_orderyear)       		$param .= '&search_orderyear='.urlencode($search_orderyear);
@@ -1215,6 +1225,8 @@ if (!$error && $massaction == 'closed' && $objectclass == "Propal" && $permissio
         $db->rollback();
     }
 }
+
+
 // Delete record from mass action (massaction = 'delete' for direct delete, action/confirm='delete'/'yes' with a confirmation step before)
 if (!$error && ($massaction == 'delete' || ($action == 'delete' && $confirm == 'yes')) && $permissiontodelete)
 {

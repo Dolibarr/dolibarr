@@ -129,6 +129,13 @@ if ($action == 'confirm_split' && GETPOST("confirm") == 'yes')
 		$newdiscount1->amount_tva = price2num($newdiscount1->amount_ttc - $newdiscount1->amount_ht);
 		$newdiscount2->amount_tva = price2num($newdiscount2->amount_ttc - $newdiscount2->amount_ht);
 
+		$newdiscount1->multicurrency_amount_ttc = $amount_ttc_1 * ($discount->multicurrency_amount_ttc / $discount->amount_ttc);
+		$newdiscount2->multicurrency_amount_ttc = price2num($discount->multicurrency_amount_ttc - $newdiscount1->multicurrency_amount_ttc);
+		$newdiscount1->multicurrency_amount_ht = price2num($newdiscount1->multicurrency_amount_ttc / (1 + $newdiscount1->tva_tx / 100), 'MT');
+		$newdiscount2->multicurrency_amount_ht = price2num($newdiscount2->multicurrency_amount_ttc / (1 + $newdiscount2->tva_tx / 100), 'MT');
+		$newdiscount1->multicurrency_amount_tva = price2num($newdiscount1->multicurrency_amount_ttc - $newdiscount1->multicurrency_amount_ht);
+		$newdiscount2->multicurrency_amount_tva = price2num($newdiscount2->multicurrency_amount_ttc - $newdiscount2->multicurrency_amount_ht);
+
 		$db->begin();
 		$discount->fk_facture_source = 0; // This is to delete only the require record (that we will recreate with two records) and not all family with same fk_facture_source
         // This is to delete only the require record (that we will recreate with two records) and not all family with same fk_invoice_supplier_source

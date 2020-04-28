@@ -38,6 +38,7 @@ if (!$user->admin) accessforbidden();
 
 $id = GETPOST('rowid', 'int');
 $action = GETPOST('action', 'alpha');
+$optioncss = GETPOST('optionscss', 'alphanohtml');
 
 $mode = GETPOST('mode', 'aZ09') ?GETPOST('mode', 'aZ09') : 'createform'; // 'createform', 'filters', 'sortorder', 'focus'
 
@@ -212,10 +213,10 @@ print "<br>\n";
 
 if (!empty($contextpage) && $contextpage != $_SERVER["PHP_SELF"]) $param .= '&contextpage='.urlencode($contextpage);
 if ($limit > 0 && $limit != $conf->liste_limit) $param .= '&limit='.urlencode($limit);
-if ($optioncss != '')  $param .= '&optioncss='.urlencode($optioncss);
-if ($defaulturl)        $param .= '&defaulturl='.urlencode($defaulturl);
-if ($defaultkey)        $param .= '&defaultkey='.urlencode($defaultkey);
-if ($defaultvalue)      $param .= '&defaultvalue='.urlencode($defaultvalue);
+if ($optioncss != '') $param .= '&optioncss='.urlencode($optioncss);
+if ($defaulturl)      $param .= '&defaulturl='.urlencode($defaulturl);
+if ($defaultkey)      $param .= '&defaultkey='.urlencode($defaultkey);
+if ($defaultvalue)    $param .= '&defaultvalue='.urlencode($defaultvalue);
 
 
 print '<form action="'.$_SERVER["PHP_SELF"].((empty($user->entity) && $debug) ? '?debug=1' : '').'" method="POST">';
@@ -252,7 +253,7 @@ $texthelp = $langs->trans("PageUrlForDefaultValues");
 if ($mode == 'createform') $texthelp .= $langs->trans("PageUrlForDefaultValuesCreate", 'societe/card.php', 'societe/card.php?abc=val1&def=val2');
 else $texthelp .= $langs->trans("PageUrlForDefaultValuesList", 'societe/list.php', 'societe/list.php?abc=val1&def=val2');
 $texthelp .= '<br><br>'.$langs->trans("AlsoDefaultValuesAreEffectiveForActionCreate");
-$texturl = $form->textwithpicto($langs->trans("Url"), $texthelp);
+$texturl = $form->textwithpicto($langs->trans("RelativeURL"), $texthelp);
 print_liste_field_titre($texturl, $_SERVER["PHP_SELF"], 'page,param', '', $param, '', $sortfield, $sortorder);
 // Field
 $texthelp = $langs->trans("TheKeyIsTheNameOfHtmlField");

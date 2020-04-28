@@ -272,6 +272,7 @@ dol_fiche_head($head, 'byyear', $langs->trans("Statistics"), -1, '');
 print '<div class="fichecenter"><div class="fichethirdleft">';
 
 print '<form name="stats" method="POST" action="'.$_SERVER["PHP_SELF"].'">';
+print '<input type="hidden" name="token" value="'.newToken().'">';
 
 print '<table class="noborder centpercent">';
 print '<tr class="liste_titre"><td class="liste_titre" colspan="2">'.$langs->trans("Filter").'</td></tr>';

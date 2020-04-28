@@ -109,7 +109,7 @@ class MouvementStock extends CommonObject
 	 *	@param		string	$batch			batch number
 	 *	@param		boolean	$skip_batch		If set to true, stock movement is done without impacting batch record
 	 * 	@param		int		$id_product_batch	Id product_batch (when skip_batch is false and we already know which record of product_batch to use)
-	 *	@return		int						<0 if KO, 0 if fk_product is null, >0 if OK
+	 *	@return		int						<0 if KO, 0 if fk_product is null or product id does not exists, >0 if OK
 	 */
     public function _create($user, $fk_product, $entrepot_id, $qty, $type, $price = 0, $label = '', $inventorycode = '', $datem = '', $eatby = '', $sellby = '', $batch = '', $skip_batch = false, $id_product_batch = 0)
 	{
@@ -155,12 +155,14 @@ class MouvementStock extends CommonObject
 
 		$product = new Product($this->db);
 		$result=$product->fetch($fk_product);
-		if ($result < 0)
-		{
+		if ($result < 0) {
 			$this->error = $product->error;
 			$this->errors = $product->errors;
 			dol_print_error('', "Failed to fetch product");
 			return -1;
+		}
+		if ($product->id <= 0) {	// Can happen if database is corrupted
+			return 0;
 		}
 
 		$this->db->begin();
@@ -513,6 +515,8 @@ class MouvementStock extends CommonObject
 			// Update PMP and denormalized value of stock qty at product level
 			if (! $error)
 			{
+				$newpmp = price2num($newpmp, 'MU');
+
 				// $sql = "UPDATE ".MAIN_DB_PREFIX."product SET pmp = ".$newpmp.", stock = ".$this->db->ifsql("stock IS NULL", 0, "stock") . " + ".$qty;
 				// $sql.= " WHERE rowid = ".$fk_product;
     			// Update pmp + denormalized fields because we change content of produt_stock. Warning: Do not use "SET p.stock", does not works with pgsql
@@ -1133,5 +1137,18 @@ class MouvementStock extends CommonObject
 		$modelpath = "core/modules/stock/doc/";
 
 		return $this->commonGenerateDocument($modelpath, $modele, $outputlangs, $hidedetails, $hidedesc, $hideref);
+	}
+
+	/**
+	 * Delete object in database
+	 *
+	 * @param User $user       User that deletes
+	 * @param bool $notrigger  false=launch triggers after, true=disable triggers
+	 * @return int             <0 if KO, >0 if OK
+	 */
+	public function delete(User $user, $notrigger = false)
+	{
+		return $this->deleteCommon($user, $notrigger);
+		//return $this->deleteCommon($user, $notrigger, 1);
 	}
 }

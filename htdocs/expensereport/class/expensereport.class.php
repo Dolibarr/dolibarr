@@ -704,8 +704,8 @@ class ExpenseReport extends CommonObject
     	// phpcs:enable
     	global $langs;
 
-    	$labelStatus = $langs->trans($this->statuts[$status]);
-    	$labelStatusShort = $langs->trans($this->statuts_short[$status]);
+    	$labelStatus = $langs->transnoentitiesnoconv($this->statuts[$status]);
+    	$labelStatusShort = $langs->transnoentitiesnoconv($this->statuts_short[$status]);
 
     	$statusType = $this->statuts_logo[$status];
 
@@ -1015,7 +1015,9 @@ class ExpenseReport extends CommonObject
     public function fetch_lines()
     {
         // phpcs:enable
-        $this->lines = array();
+    	global $conf;
+
+    	$this->lines = array();
 
         $sql = ' SELECT de.rowid, de.comments, de.qty, de.value_unit, de.date, de.rang,';
         $sql .= ' de.'.$this->fk_element.', de.fk_c_type_fees, de.fk_c_exp_tax_cat, de.fk_projet as fk_project, de.tva_tx, de.fk_ecm_files,';
@@ -1047,7 +1049,7 @@ class ExpenseReport extends CommonObject
                 $deplig = new ExpenseReportLine($this->db);
 
                 $deplig->rowid          = $objp->rowid;
-                $deplig->id             = $objp->id;
+                $deplig->id             = $objp->rowid;
                 $deplig->comments       = $objp->comments;
                 $deplig->qty            = $objp->qty;
                 $deplig->value_unit     = $objp->value_unit;

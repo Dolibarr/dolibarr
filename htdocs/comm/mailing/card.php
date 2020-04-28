@@ -90,13 +90,13 @@ if (empty($reshook))
 	// Action clone object
 	if ($action == 'confirm_clone' && $confirm == 'yes')
 	{
-		if (empty($_REQUEST["clone_content"]) && empty($_REQUEST["clone_receivers"]))
+		if (! GETPOST("clone_content", 'alpha') && ! GETPOST("clone_receivers", 'alpha'))
 		{
 			setEventMessages($langs->trans("NoCloneOptionsSpecified"), null, 'errors');
 		}
 		else
 		{
-			$result = $object->createFromClone($user, $object->id, $_REQUEST["clone_content"], $_REQUEST["clone_receivers"]);
+			$result = $object->createFromClone($user, $object->id, GETPOST("clone_content", 'alpha'), GETPOST("clone_receivers", 'alpha'));
 			if ($result > 0)
 			{
 				header("Location: ".$_SERVER['PHP_SELF'].'?id='.$result);
@@ -345,6 +345,7 @@ if (empty($reshook))
 
 						    if (!empty($conf->global->MAILING_DELAY))
 						    {
+						    	dol_syslog("Wait a delay of MAILING_DELAY=".$conf->global->MAILING_DELAY);
                             	sleep($conf->global->MAILING_DELAY);
                         	}
 
@@ -992,7 +993,7 @@ else
 					print '<a class="butAction" href="'.$_SERVER['PHP_SELF'].'?action=settodraft&amp;id='.$object->id.'">'.$langs->trans("SetToDraft").'</a>';
 				}
 
-				if (($object->statut == 0 || $object->statut == 1) && $user->rights->mailing->creer)
+				if (($object->statut == 0 || $object->statut == 1 || $object->statut == 2) && $user->rights->mailing->creer)
 				{
 					if (!empty($conf->fckeditor->enabled) && !empty($conf->global->FCKEDITOR_ENABLE_MAILING))
 					{

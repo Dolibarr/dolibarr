@@ -5070,15 +5070,15 @@ function migrate_members_socialnetworks()
     print '<tr><td colspan="4">';
     $sql = 'SELECT rowid, socialnetworks';
     $sql .= ', skype, twitter, facebook, linkedin, instagram, snapchat, googleplus, youtube, whatsapp FROM '.MAIN_DB_PREFIX.'adherent WHERE ';
-    $sql .= ' skype IS NOT NULL OR skype!=""';
-    $sql .= ' OR twitter IS NOT NULL OR twitter!=""';
-    $sql .= ' OR facebook IS NOT NULL OR facebook!=""';
-    $sql .= ' OR linkedin IS NOT NULL OR linkedin!=""';
-    $sql .= ' OR instagram IS NOT NULL OR instagram!=""';
-    $sql .= ' OR snapchat IS NOT NULL OR snapchat!=""';
-    $sql .= ' OR googleplus IS NOT NULL OR googleplus!=""';
-    $sql .= ' OR youtube IS NOT NULL OR youtube!=""';
-    $sql .= ' OR whatsapp IS NOT NULL OR whatsapp!=""';
+    $sql .= " skype IS NOT NULL OR skype <> ''";
+    $sql .= " OR twitter IS NOT NULL OR twitter <> ''";
+    $sql .= " OR facebook IS NOT NULL OR facebook <> ''";
+    $sql .= " OR linkedin IS NOT NULL OR linkedin <> ''";
+    $sql .= " OR instagram IS NOT NULL OR instagram <> ''";
+    $sql .= " OR snapchat IS NOT NULL OR snapchat <> ''";
+    $sql .= " OR googleplus IS NOT NULL OR googleplus <> ''";
+    $sql .= " OR youtube IS NOT NULL OR youtube <> ''";
+    $sql .= " OR whatsapp IS NOT NULL OR whatsapp <> ''";
     //print $sql;
     $resql = $db->query($sql);
     if ($resql) {
@@ -5115,7 +5115,7 @@ function migrate_members_socialnetworks()
                 $obj->socialnetworks = '[]';
             }
             $socialnetworks = array_merge($arraysocialnetworks, json_decode($obj->socialnetworks, true));
-            $sqlupd = 'UPDATE '.MAIN_DB_PREFIX.'adherent SET socialnetworks="'.$db->escape(json_encode($socialnetworks, true)).'"';
+            $sqlupd = 'UPDATE '.MAIN_DB_PREFIX."adherent SET socialnetworks='".$db->escape(json_encode($socialnetworks, true))."'";
             $sqlupd.= ', skype=null';
             $sqlupd.= ', twitter=null';
             $sqlupd.= ', facebook=null';
@@ -5160,16 +5160,16 @@ function migrate_contacts_socialnetworks()
     print '<tr><td colspan="4">';
     $sql = 'SELECT rowid, socialnetworks';
     $sql .= ', jabberid, skype, twitter, facebook, linkedin, instagram, snapchat, googleplus, youtube, whatsapp FROM '.MAIN_DB_PREFIX.'socpeople WHERE ';
-    $sql .= ' jabberid IS NOT NULL OR jabberid!=""';
-    $sql .= ' OR skype IS NOT NULL OR skype!=""';
-    $sql .= ' OR twitter IS NOT NULL OR twitter!=""';
-    $sql .= ' OR facebook IS NOT NULL OR facebook!=""';
-    $sql .= ' OR linkedin IS NOT NULL OR linkedin!=""';
-    $sql .= ' OR instagram IS NOT NULL OR instagram!=""';
-    $sql .= ' OR snapchat IS NOT NULL OR snapchat!=""';
-    $sql .= ' OR googleplus IS NOT NULL OR googleplus!=""';
-    $sql .= ' OR youtube IS NOT NULL OR youtube!=""';
-    $sql .= ' OR whatsapp IS NOT NULL OR whatsapp!=""';
+    $sql .= " jabberid IS NOT NULL OR jabberid <> ''";
+    $sql .= " OR skype IS NOT NULL OR skype <> ''";
+    $sql .= " OR twitter IS NOT NULL OR twitter <> ''";
+    $sql .= " OR facebook IS NOT NULL OR facebook <> ''";
+    $sql .= " OR linkedin IS NOT NULL OR linkedin <> ''";
+    $sql .= " OR instagram IS NOT NULL OR instagram <> ''";
+    $sql .= " OR snapchat IS NOT NULL OR snapchat <> ''";
+    $sql .= " OR googleplus IS NOT NULL OR googleplus <> ''";
+    $sql .= " OR youtube IS NOT NULL OR youtube <> ''";
+    $sql .= " OR whatsapp IS NOT NULL OR whatsapp <> ''";
     //print $sql;
     $resql = $db->query($sql);
     if ($resql) {
@@ -5209,7 +5209,7 @@ function migrate_contacts_socialnetworks()
                 $obj->socialnetworks = '[]';
             }
             $socialnetworks = array_merge($arraysocialnetworks, json_decode($obj->socialnetworks, true));
-            $sqlupd = 'UPDATE '.MAIN_DB_PREFIX.'socpeople SET socialnetworks="'.$db->escape(json_encode($socialnetworks, true)).'"';
+            $sqlupd = 'UPDATE '.MAIN_DB_PREFIX."socpeople SET socialnetworks='".$db->escape(json_encode($socialnetworks, true))."'";
             $sqlupd.= ', jabberid=null';
             $sqlupd.= ', skype=null';
             $sqlupd.= ', twitter=null';
@@ -5255,15 +5255,15 @@ function migrate_thirdparties_socialnetworks()
     print '<tr><td colspan="4">';
     $sql = 'SELECT rowid, socialnetworks';
     $sql .= ', skype, twitter, facebook, linkedin, instagram, snapchat, googleplus, youtube, whatsapp FROM '.MAIN_DB_PREFIX.'societe WHERE ';
-    $sql .= ' skype IS NOT NULL OR skype!=""';
-    $sql .= ' OR twitter IS NOT NULL OR twitter!=""';
-    $sql .= ' OR facebook IS NOT NULL OR facebook!=""';
-    $sql .= ' OR linkedin IS NOT NULL OR linkedin!=""';
-    $sql .= ' OR instagram IS NOT NULL OR instagram!=""';
-    $sql .= ' OR snapchat IS NOT NULL OR snapchat!=""';
-    $sql .= ' OR googleplus IS NOT NULL OR googleplus!=""';
-    $sql .= ' OR youtube IS NOT NULL OR youtube!=""';
-    $sql .= ' OR whatsapp IS NOT NULL OR whatsapp!=""';
+    $sql .= " skype IS NOT NULL OR skype <> ''";
+    $sql .= " OR twitter IS NOT NULL OR twitter <> ''";
+    $sql .= " OR facebook IS NOT NULL OR facebook <> ''";
+    $sql .= " OR linkedin IS NOT NULL OR linkedin <> ''";
+    $sql .= " OR instagram IS NOT NULL OR instagram <> ''";
+    $sql .= " OR snapchat IS NOT NULL OR snapchat <> ''";
+    $sql .= " OR googleplus IS NOT NULL OR googleplus <> ''";
+    $sql .= " OR youtube IS NOT NULL OR youtube <> ''";
+    $sql .= " OR whatsapp IS NOT NULL OR whatsapp <> ''";
     //print $sql;
     $resql = $db->query($sql);
     if ($resql) {
@@ -5300,7 +5300,7 @@ function migrate_thirdparties_socialnetworks()
                 $obj->socialnetworks = '[]';
             }
             $socialnetworks = array_merge($arraysocialnetworks, json_decode($obj->socialnetworks, true));
-            $sqlupd = 'UPDATE '.MAIN_DB_PREFIX.'societe SET socialnetworks="'.$db->escape(json_encode($socialnetworks, true)).'"';
+            $sqlupd = 'UPDATE '.MAIN_DB_PREFIX."societe SET socialnetworks='".$db->escape(json_encode($socialnetworks, true))."'";
             $sqlupd.= ', skype=null';
             $sqlupd.= ', twitter=null';
             $sqlupd.= ', facebook=null';

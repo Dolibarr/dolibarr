@@ -202,7 +202,7 @@ class Form
 				$ret .= '<input type="hidden" name="'.$paramid.'" value="'.$object->id.'">';
 				if (empty($notabletag)) $ret .= '<table class="nobordernopadding centpercent" cellpadding="0" cellspacing="0">';
 				if (empty($notabletag)) $ret .= '<tr><td>';
-				if (preg_match('/^(string|email)/', $typeofdata))
+				if (preg_match('/^(string|safehtmlstring|email)/', $typeofdata))
 				{
 					$tmp = explode(':', $typeofdata);
 					$ret .= '<input type="text" id="'.$htmlname.'" name="'.$htmlname.'" value="'.($editvalue ? $editvalue : $value).'"'.($tmp[1] ? ' size="'.$tmp[1].'"' : '').'>';
@@ -276,6 +276,7 @@ class Form
 				if (preg_match('/^(email)/', $typeofdata))              $ret .= dol_print_email($value, 0, 0, 0, 0, 1);
 				elseif (preg_match('/^(amount|numeric)/', $typeofdata)) $ret .= ($value != '' ? price($value, '', $langs, 0, -1, -1, $conf->currency) : '');
 				elseif (preg_match('/^text/', $typeofdata) || preg_match('/^note/', $typeofdata))  $ret .= dol_htmlentitiesbr($value);
+				elseif (preg_match('/^safehtmlstring/', $typeofdata)) $ret .= dol_string_onlythesehtmltags($value);
 				elseif ($typeofdata == 'day' || $typeofdata == 'datepicker') $ret .= dol_print_date($value, 'day');
 				elseif ($typeofdata == 'dayhour' || $typeofdata == 'datehourpicker') $ret .= dol_print_date($value, 'dayhour');
 				elseif (preg_match('/^select;/', $typeofdata))
@@ -645,12 +646,14 @@ class Form
     	  				/* console.log( index + ": " + $( this ).text() ); */
     	  				if ($(this).is(\':checked\')) atleastoneselected++;
     	  			});
+
 					console.log("initCheckForSelect mode="+mode+" atleastoneselected="+atleastoneselected);
+
     	  			if (atleastoneselected || '.$alwaysvisible.')
     	  			{
     	  				jQuery(".massaction").show();
-        			    '.($selected ? 'if (atleastoneselected) { jQuery(".massactionselect").val("'.$selected.'"); jQuery(".massactionconfirmed").prop(\'disabled\', false); }' : '').'
-        			    '.($selected ? 'if (! atleastoneselected) { jQuery(".massactionselect").val("0"); jQuery(".massactionconfirmed").prop(\'disabled\', true); } ' : '').'
+        			    '.($selected ? 'if (atleastoneselected) { jQuery(".massactionselect").val("'.$selected.'").trigger(\'change\'); jQuery(".massactionconfirmed").prop(\'disabled\', false); }' : '').'
+        			    '.($selected ? 'if (! atleastoneselected) { jQuery(".massactionselect").val("0").trigger(\'change\'); jQuery(".massactionconfirmed").prop(\'disabled\', true); } ' : '').'
     	  			}
     	  			else
     	  			{
@@ -2906,7 +2909,7 @@ class Form
 							$objp->fprice = $price_result;
 							if ($objp->quantity >= 1)
 							{
-								$objp->unitprice = $objp->fprice / $objp->quantity;
+								$objp->unitprice = $objp->fprice / $objp->quantity;	// Replace dynamically unitprice
 							}
 						}
 					}
@@ -2973,7 +2976,7 @@ class Form
 				if (empty($objp->idprodfournprice) && empty($alsoproductwithnosupplierprice)) $opt .= ' disabled';
 				if (!empty($objp->idprodfournprice) && $objp->idprodfournprice > 0)
 				{
-					$opt .= ' pbq="'.$objp->idprodfournprice.'" data-pbq="'.$objp->idprodfournprice.'" data-pbqqty="'.$objp->quantity.'" data-pbqpercent="'.$objp->remise_percent.'"';
+					$opt .= ' pbq="'.$objp->idprodfournprice.'" data-pbq="'.$objp->idprodfournprice.'" data-pbqqty="'.$objp->quantity.'" data-pbqup="'.$objp->unitprice.'" data-pbqpercent="'.$objp->remise_percent.'"';
 				}
 				$opt .= ' data-html="'.dol_escape_htmltag($optlabel).'"';
 				$opt .= '>';
@@ -2988,7 +2991,7 @@ class Form
 				// "key" value of json key array is used by jQuery automatically as selected value
 				// "label" value of json key array is used by jQuery automatically as text for combo box
 				$out .= $opt;
-				array_push($outarray, array('key'=>$outkey, 'value'=>$outref, 'label'=>$outval, 'qty'=>$outqty, 'discount'=>$outdiscount, 'type'=>$outtype, 'duration_value'=>$outdurationvalue, 'duration_unit'=>$outdurationunit, 'disabled'=>(empty($objp->idprodfournprice) ?true:false)));
+				array_push($outarray, array('key'=>$outkey, 'value'=>$outref, 'label'=>$outval, 'qty'=>$outqty, 'up'=>$objp->unitprice, 'discount'=>$outdiscount, 'type'=>$outtype, 'duration_value'=>$outdurationvalue, 'duration_unit'=>$outdurationunit, 'disabled'=>(empty($objp->idprodfournprice) ?true:false)));
 				// Exemple of var_dump $outarray
 				// array(1) {[0]=>array(6) {[key"]=>string(1) "2" ["value"]=>string(3) "ppp"
 				//           ["label"]=>string(76) "ppp (<strong>f</strong>ff2) - ppp - 20,00 Euros/1unité (20,00 Euros/unité)"
@@ -3508,11 +3511,11 @@ class Form
 	/**
 	 *      Return list of payment methods
 	 *
-	 *      @param	string	$selected       Id du mode de paiement pre-selectionne
-	 *      @param  string	$htmlname       Nom de la zone select
+	 *      @param	string	$selected       Id or code or preselected payment mode
+	 *      @param  string	$htmlname       Name of select field
 	 *      @param  string	$filtertype     To filter on field type in llx_c_paiement ('CRDT' or 'DBIT' or array('code'=>xx,'label'=>zz))
-	 *      @param  int		$format         0=id+libelle, 1=code+code, 2=code+libelle, 3=id+code
-	 *      @param  int		$empty			1=peut etre vide, 0 sinon
+	 *      @param  int		$format         0=id+label, 1=code+code, 2=code+label, 3=id+code
+	 *      @param  int		$empty			1=can be empty, 0 otherwise
 	 * 		@param	int		$noadmininfo	0=Add admin info, 1=Disable admin info
 	 *      @param  int		$maxlength      Max length of label
 	 *      @param  int     $active         Active or not, -1 = all
@@ -3550,9 +3553,12 @@ class Form
 			elseif ($format == 1) print '<option value="'.$arraytypes['code'].'"';
 			elseif ($format == 2) print '<option value="'.$arraytypes['code'].'"';
 			elseif ($format == 3) print '<option value="'.$id.'"';
-			// Si selected est text, on compare avec code, sinon avec id
-			if (preg_match('/[a-z]/i', $selected) && $selected == $arraytypes['code']) print ' selected';
-			elseif ($selected == $id) print ' selected';
+			// Print attribute selected or not
+			if ($format==1 || $format==2) {
+				if ($selected == $arraytypes['code']) print ' selected';
+			} else {
+				if ($selected == $id) print ' selected';
+			}
 			print '>';
 			if ($format == 0) $value = ($maxlength ?dol_trunc($arraytypes['label'], $maxlength) : $arraytypes['label']);
 			elseif ($format == 1) $value = $arraytypes['code'];
@@ -6026,6 +6032,12 @@ class Form
 			}
 			if ($tmpfieldstoshow) $fieldstoshow = $tmpfieldstoshow;
 		}
+        else
+        {
+			// For backward compatibility
+			$objecttmp->fields['ref'] = array('type'=>'varchar(30)', 'label'=>'Ref', 'showoncombobox'=>1);
+        }
+
 		if (empty($fieldstoshow))
 		{
 			if (isset($objecttmp->fields['ref'])) {

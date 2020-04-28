@@ -319,7 +319,7 @@ if ($action == "mark_ticket_read" && $user->rights->ticket->write) {
 }
 
 // Assign to someone
-if ($action == "assign_user" && GETPOST('btn_assign_user', 'aplha') && $user->rights->ticket->write) {
+if ($action == "assign_user" && GETPOST('btn_assign_user', 'alpha') && $user->rights->ticket->write) {
     $object->fetch('', '', GETPOST("track_id", 'alpha'));
     $useroriginassign = $object->fk_user_assign;
     $usertoassign = GETPOST('fk_user_assign', 'int');
@@ -637,7 +637,7 @@ if ($action == 'create' || $action == 'presend')
         $defaultref = '';
     }
 
-    $formticket->showForm(1);
+    $formticket->showForm(1, 'create');
 }
 
 if (empty($action) || $action == 'view' || $action == 'addlink' || $action == 'dellink' || $action == 'presend' || $action == 'presend_addmessage' || $action == 'close' || $action == 'delete' || $action == 'editcustomer' || $action == 'progression' || $action == 'reopen'

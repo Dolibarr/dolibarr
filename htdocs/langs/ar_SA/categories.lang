@@ -78,6 +78,7 @@ CatMemberList=قائمة علامات / فئات الأعضاء 
 CatContactList=قائمة  اتصال العلامات / الفئات 
 CatSupLinks=الروابط بين الموردين والعلامات / الفئات
 CatCusLinks=الروابط بين العملاء / احتمال والعلامات / فئات
+CatContactsLinks=Links between contacts/addresses and tags/categories
 CatProdLinks=الروابط بين المنتجات / الخدمات والعلامات / الفئات
 CatProJectLinks=الروابط بين المشاريع والعلامات / الفئات
 DeleteFromCat=إزالة من العلامة / الفئة

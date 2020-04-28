@@ -8,3 +8,4 @@ LinkRemoved=Tautan %s telah dihapus
 ErrorFailedToDeleteLink= gagal untuk menghapus tautan '<b>%s</b>'
 ErrorFailedToUpdateLink= Gagal untuk memperbaharui tautan '<b>%s</b>'
 URLToLink=URL to link
+OverwriteIfExists=Overwrite file if exists

@@ -1086,7 +1086,7 @@ if (empty($reshook))
 	if ($action == 'add' && $user->rights->fournisseur->commande->creer)
 	{
 	 	$error = 0;
-
+        $selectedLines = GETPOST('toselect', 'array');
 		if ($socid < 1)
 		{
 			setEventMessages($langs->trans('ErrorFieldRequired', $langs->transnoentities('Supplier')), null, 'errors');
@@ -1178,7 +1178,7 @@ if (empty($reshook))
 
 							for ($i = 0; $i < $num; $i++)
 							{
-								if (empty($lines[$i]->subprice) || $lines[$i]->qty <= 0)
+								if (empty($lines[$i]->subprice) || $lines[$i]->qty <= 0 || !in_array($lines[$i]->id, $selectedLines))
 									continue;
 
 								$label = (!empty($lines[$i]->label) ? $lines[$i]->label : '');
@@ -1242,7 +1242,7 @@ if (empty($reshook))
 									'',
 									null,
 									null,
-									array(),
+                                    $array_option,
 									$lines[$i]->fk_unit,
 									0,
 									$element,
@@ -1602,7 +1602,7 @@ if ($action == 'create')
 			});
 			</script>';
 		}
-		print ' <a href="'.DOL_URL_ROOT.'/societe/card.php?action=create&client=0&fournisseur=1&backtopage='.urlencode($_SERVER["PHP_SELF"].'?action=create').'"><span class="valignmiddle text-plus-circle">'.$langs->trans("AddThirdParty").'</span><span class="fa fa-plus-circle valignmiddle paddingleft"></span></a>';
+		print ' <a href="'.DOL_URL_ROOT.'/societe/card.php?action=create&client=0&fournisseur=1&backtopage='.urlencode($_SERVER["PHP_SELF"].'?action=create').'"><span class="fa fa-plus-circle valignmiddle paddingleft" title="'.$langs->trans("AddThirdParty").'"></span></a>';
 	}
 	print '</td>';
 
@@ -1756,7 +1756,7 @@ if ($action == 'create')
 	print '<input type="button" class="button" value="'.$langs->trans("Cancel").'" onClick="javascript:history.go(-1)">';
 	print '</div>';
 
-	print "</form>\n";
+
 
 	// Show origin lines
 	if (!empty($origin) && !empty($originid) && is_object($objectsrc))
@@ -1766,10 +1766,11 @@ if ($action == 'create')
 
 		print '<table class="noborder centpercent">';
 
-		$objectsrc->printOriginLinesList();
+		$objectsrc->printOriginLinesList('', $selectedLines);
 
 		print '</table>';
 	}
+    print "</form>\n";
 }
 elseif (!empty($object->id))
 {
@@ -2442,11 +2443,13 @@ elseif (!empty($object->id))
 			}
 
 			// Send
-			if (in_array($object->statut, array(CommandeFournisseur::STATUS_ACCEPTED, 3, 4, 5)) || !empty($conf->global->SUPPLIER_ORDER_SENDBYEMAIL_FOR_ALL_STATUS))
-			{
-				if ($user->rights->fournisseur->commande->commander)
+			if (empty($user->socid)) {
+				if (in_array($object->statut, array(CommandeFournisseur::STATUS_ACCEPTED, 3, 4, 5)) || !empty($conf->global->SUPPLIER_ORDER_SENDBYEMAIL_FOR_ALL_STATUS))
 				{
-					print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=presend&mode=init#formmailbeforetitle">'.$langs->trans('SendMail').'</a>';
+					if ($user->rights->fournisseur->commande->commander)
+					{
+						print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=presend&mode=init#formmailbeforetitle">'.$langs->trans('SendMail').'</a>';
+					}
 				}
 			}
 

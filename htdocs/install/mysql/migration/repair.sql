@@ -165,6 +165,10 @@ DELETE FROM llx_product_batch WHERE qty = 0;
 UPDATE llx_product p SET p.stock= (SELECT SUM(ps.reel) FROM llx_product_stock ps WHERE ps.fk_product = p.rowid);
 
 
+-- Fix: delete orphelins in product_association
+delete from llx_product_association where fk_product_pere NOT IN (select rowid from llx_product);
+delete from llx_product_association where fk_product_fils NOT IN (select rowid from llx_product);
+
 -- Fix: delete category child with no category parent.
 drop table tmp_categorie;
 create table tmp_categorie as select * from llx_categorie; 
@@ -346,9 +350,14 @@ UPDATE llx_c_lead_status set code = 'WON' where code = 'WIN';
 -- To replace amount on all invoice and lines when forgetting to apply a 20% vat
 -- update llx_facturedet set tva_tx = 20 where tva_tx = 0;
 -- update llx_facturedet set total_ht = round(total_ttc / 1.2, 5) where total_ht = total_ttc;
--- update llx_facturedet set total_tva = total_ttc - total_ht where total_vat = 0;
 -- update llx_facture set total = round(total_ttc / 1.2, 5) where total_ht = total_ttc;
--- update llx_facture set tva = total_ttc - total where tva = 0;
+
+-- To fix bad total of price excluding tax, vat and price tax including tax.
+-- select * from llx_facture where tva <> (total_ttc - total - localtax1 - localtax2 - revenuestamp);
+-- update llx_facture set tva = (total_ttc - total - localtax1 - localtax2 - revenuestamp) where tva <> (total_ttc - total - localtax1 - localtax2 - revenuestamp);
+-- select * from llx_facturedet where total_tva <> (total_ttc - total_ht - total_localtax1 - total_localtax2);
+-- update llx_facturedet set total_tva = (total_ttc - total_ht - total_localtax1 - total_localtax2) where total_tva <> (total_ttc - total_ht - total_localtax1 - total_localtax2);
+
 
 -- To insert elements into a category
 -- Search idcategory: select rowid from llx_categorie where type=0 and ref like '%xxx%'

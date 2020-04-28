@@ -1773,8 +1773,10 @@ else
 			if ($action != 'editlogin' && $action != 'editthirdparty')
 			{
 				// Send
-				if ($object->statut == 1) {
-					print '<div class="inline-block divButAction"><a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=presend&mode=init#formmailbeforetitle">'.$langs->trans('SendMail').'</a></div>';
+				if (empty($user->socid)) {
+					if ($object->statut == 1) {
+						print '<div class="inline-block divButAction"><a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=presend&mode=init#formmailbeforetitle">'.$langs->trans('SendMail').'</a></div>';
+					}
 				}
 
 				// Send card by email

@@ -25,6 +25,7 @@ ErrorPHPDoesNotSupportCurl=Your PHP installation does not support Curl.
 ErrorPHPDoesNotSupportCalendar=Your PHP installation does not support php calendar extensions.
 ErrorPHPDoesNotSupportUTF8=Your PHP installation does not support UTF8 functions. Dolibarr cannot work correctly. Resolve this before installing Dolibarr.
 ErrorPHPDoesNotSupportIntl=Your PHP installation does not support Intl functions.
+ErrorPHPDoesNotSupport=Your PHP installation does not support %s functions.
 ErrorDirDoesNotExists=Directory %s does not exist.
 ErrorGoBackAndCorrectParameters=Go back and check/correct the parameters.
 ErrorWrongValueForParameter=You may have typed a wrong value for parameter '%s'.

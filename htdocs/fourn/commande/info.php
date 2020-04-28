@@ -40,6 +40,17 @@ $id=GETPOST('id', 'int');
 $ref=GETPOST('ref', 'alpha');
 $action = GETPOST('action', 'alpha');
 
+$limit = GETPOST('limit', 'int') ?GETPOST('limit', 'int') : $conf->liste_limit;
+$sortfield = GETPOST("sortfield", 'alpha');
+$sortorder = GETPOST("sortorder", 'alpha');
+$page = GETPOST("page", 'int');
+if (empty($page) || $page == -1) { $page = 0; }     // If $page is not defined, or '' or -1
+$offset = $limit * $page;
+$pageprev = $page - 1;
+$pagenext = $page + 1;
+if (!$sortfield) $sortfield = 'a.datep,a.id';
+if (!$sortorder) $sortorder = 'DESC,DESC';
+
 if (GETPOST('actioncode', 'array'))
 {
     $actioncode=GETPOST('actioncode', 'array', 3);
@@ -212,12 +223,12 @@ if (!empty($object->id))
     //show_actions_todo($conf,$langs,$db,$object,null,0,$actioncode);
 
     // List of done actions
-    //show_actions_done($conf,$langs,$db,$object,null,0,$actioncode);
+    //show_actions_done($conf,$langs,$db,$object,null,0,$actioncode, '', $filters, $sortfield, $sortorder);
 
     // List of all actions
     $filters = array();
     $filters['search_agenda_label'] = $search_agenda_label;
-    show_actions_done($conf, $langs, $db, $object, null, 0, $actioncode, '', $filters);
+    show_actions_done($conf, $langs, $db, $object, null, 0, $actioncode, '', $filters, $sortfield, $sortorder);
 }
 
 // End of page

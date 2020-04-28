@@ -78,6 +78,7 @@ CatMemberList=Lista Tag-uri  / categorii Membri
 CatContactList=Lista Tag-uri / Categorii Contacte
 CatSupLinks=Legături dintre furnizori si taguri/categorii
 CatCusLinks=Legături dintre clienti/prospecti si  taguri/categorii
+CatContactsLinks=Links between contacts/addresses and tags/categories
 CatProdLinks=Legături dintre  produse/servicii si ftaguri/categorii
 CatProJectLinks=Legături între proiecte și etichete / categorii
 DeleteFromCat=Elimina din tag-uri / categoriii

@@ -669,8 +669,6 @@ class Products extends DolibarrApi
     }
 
     /**
-     * List purchase prices
-     *
      * Get a list of all purchase prices of products
      *
      * @param  string $sortfield  Sort field
@@ -702,11 +700,11 @@ class Products extends DolibarrApi
     	if ($supplier > 0) {
     		$sql .= " AND s.fk_soc = ".$db->escape($supplier);
     	}
-    	$sql .= " AND s.fk_product = t.rowid ";
+    	$sql .= " AND s.fk_product = t.rowid";
     	// Select products of given category
     	if ($category > 0) {
     		$sql .= " AND c.fk_categorie = ".$db->escape($category);
-    		$sql .= " AND c.fk_product = t.rowid ";
+    		$sql .= " AND c.fk_product = t.rowid";
     	}
     	if ($mode == 1) {
     		// Show only products
@@ -739,10 +737,15 @@ class Products extends DolibarrApi
     		while ($i < $min)
     		{
     			$obj = $db->fetch_object($result);
-    			$product_static = new Product($db);
-    			if ($product_static->fetch($obj->rowid)) {
-    				$obj_ret[] = $this->_cleanObjectDatas($product_static);
+
+    			$product_fourn = new ProductFournisseur($this->db);
+    			$product_fourn_list = $product_fourn->list_product_fournisseur_price($obj->rowid, '', '', 0, 0);
+    			foreach($product_fourn_list as $tmpobj) {
+    				$this->_cleanObjectDatas($tmpobj);
     			}
+    				//var_dump($product_fourn_list->db);exit;
+    			$obj_ret[$obj->rowid] = $product_fourn_list;
+
     			$i++;
     		}
     	}
@@ -796,11 +799,11 @@ class Products extends DolibarrApi
         }
 
         if ($result) {
-            $this->productsupplier->fetch($id, $ref);
-            $this->productsupplier->list_product_fournisseur_price($id, '', '', 0, 0);
+            $product_fourn = new ProductFournisseur($this->db);
+            $product_fourn_list = $product_fourn->list_product_fournisseur_price($this->product->id, '', '', 0, 0);
         }
 
-        return $this->_cleanObjectDatas($this->productsupplier);
+        return $this->_cleanObjectDatas($product_fourn_list);
     }
 
     /**
@@ -1527,6 +1530,7 @@ class Products extends DolibarrApi
         unset($object->prices_by_qty_id);
         unset($object->libelle);
         unset($object->product_id_already_linked);
+        unset($object->reputations);
 
         unset($object->name);
         unset($object->firstname);

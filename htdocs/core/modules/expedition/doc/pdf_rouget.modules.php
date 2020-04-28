@@ -214,9 +214,16 @@ class pdf_rouget extends ModelePdfExpedition
 
 				$objphoto = new Product($this->db);
 				$objphoto->fetch($object->lines[$i]->fk_product);
-
-				$pdir = get_exdir($object->lines[$i]->fk_product, 2, 0, 0, $objphoto, 'product').$object->lines[$i]->fk_product."/photos/";
-				$dir = $conf->product->dir_output.'/'.$pdir;
+				if (! empty($conf->global->PRODUCT_USE_OLD_PATH_FOR_PHOTO))
+				{
+					$pdir = get_exdir($object->lines[$i]->fk_product, 2, 0, 0, $objphoto, 'product') . $object->lines[$i]->fk_product ."/photos/";
+					$dir = $conf->product->dir_output.'/'.$pdir;
+				}
+				else
+				{
+					$pdir = get_exdir(0, 2, 0, 0, $objphoto, 'product') . dol_sanitizeFileName($objphoto->ref).'/';
+					$dir = $conf->product->dir_output.'/'.$pdir;
+				}
 
 				$realpath = '';
 

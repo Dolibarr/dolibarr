@@ -450,7 +450,7 @@ class Shipments extends DolibarrApi
      */
     public function delete($id)
     {
-        if(! DolibarrApiAccess::$user->rights->shipment->supprimer) {
+        if(! DolibarrApiAccess::$user->rights->expedition->supprimer) {
             throw new RestException(401);
         }
         $result = $this->shipment->fetch($id);

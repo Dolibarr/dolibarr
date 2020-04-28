@@ -814,6 +814,10 @@ class CMailFile
 				if (!empty($conf->global->$keyforsmtppw)) $this->transport->setPassword($conf->global->$keyforsmtppw);
 				//$smtps->_msgReplyTo  = 'reply@web.com';
 
+				// Switch content encoding to base64 - avoid the doubledot issue with quoted-printable
+                $contentEncoderBase64 = new Swift_Mime_ContentEncoder_Base64ContentEncoder();
+                $this->message->setEncoder($contentEncoderBase64);
+
 				// Create the Mailer using your created Transport
 				$this->mailer = new Swift_Mailer($this->transport);
 

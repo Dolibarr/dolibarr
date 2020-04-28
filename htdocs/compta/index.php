@@ -546,8 +546,8 @@ if (!empty($conf->fournisseur->enabled) && $user->rights->fournisseur->facture->
 
 
 
-// Last donations
-if (!empty($conf->don->enabled) && $user->rights->societe->lire)
+// Latest donations
+if (!empty($conf->don->enabled) && $user->rights->don->lire)
 {
 	include_once DOL_DOCUMENT_ROOT.'/don/class/don.class.php';
 
@@ -745,7 +745,7 @@ if (!empty($conf->facture->enabled) && !empty($conf->commande->enabled) && $user
             print '<div class="div-table-responsive-no-min">';
 			print '<table class="noborder centpercent">';
 			print "<tr class=\"liste_titre\">";
-			print '<th colspan="2">'.$langs->trans("OrdersDeliveredToBill").' <a href="'.DOL_URL_ROOT.'/commande/list.php?viewstatut=3&amp;billed=0"><span class="badge">'.$num.'</span></a></th>';
+			print '<th colspan="2">'.$langs->trans("OrdersDeliveredToBill").' <a href="'.DOL_URL_ROOT.'/commande/list.php?search_status=3&amp;billed=0"><span class="badge">'.$num.'</span></a></th>';
 			if (!empty($conf->global->MAIN_SHOW_HT_ON_SUMMARY)) print '<th class="right">'.$langs->trans("AmountHT").'</th>';
 			print '<th class="right">'.$langs->trans("AmountTTC").'</th>';
 			print '<th class="right">'.$langs->trans("ToBill").'</th>';

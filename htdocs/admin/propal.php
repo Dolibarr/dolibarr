@@ -512,29 +512,35 @@ foreach ($dirmodels as $reldir)
 
 print '</table>';
 
+
 /*
  *  Payment mode
  */
+
+print '<br>';
+print load_fiche_titre($langs->trans("SuggestedPaymentModesIfNotDefinedInProposal"), '', '');
+
+print '<form action="'.$_SERVER["PHP_SELF"].'" method="POST">';
+print '<input type="hidden" name="token" value="'.newToken().'" />';
+
+print '<table class="noborder centpercent">';
+
+print '<tr class="liste_titre">';
+print '<td>';
+print '<input type="hidden" name="action" value="setribchq">';
+print $langs->trans("PaymentMode").'</td>';
+print '<td align="right">';
+if (empty($conf->facture->enabled)) {
+	print '<input type="submit" class="button" value="'.$langs->trans("Modify").'">';
+}
+print '</td>';
+print "</tr>\n";
+
+print '<tr class="oddeven">';
+print "<td>".$langs->trans("SuggestPaymentByRIBOnAccount")."</td>";
+print "<td>";
 if (empty($conf->facture->enabled))
 {
-	print '<br>';
-	print load_fiche_titre($langs->trans("SuggestedPaymentModesIfNotDefinedInProposal"), '', '');
-
-	print '<form action="'.$_SERVER["PHP_SELF"].'" method="POST">';
-	print '<input type="hidden" name="token" value="'.newToken().'" />';
-
-	print '<table class="noborder centpercent">';
-
-	print '<tr class="liste_titre">';
-	print '<td>';
-	print '<input type="hidden" name="action" value="setribchq">';
-	print $langs->trans("PaymentMode").'</td>';
-	print '<td align="right"><input type="submit" class="button" value="'.$langs->trans("Modify").'"></td>';
-	print "</tr>\n";
-
-	print '<tr class="oddeven">';
-	print "<td>".$langs->trans("SuggestPaymentByRIBOnAccount")."</td>";
-	print "<td>";
 	if (!empty($conf->banque->enabled))
 	{
 		$sql = "SELECT rowid, label";
@@ -571,13 +577,19 @@ if (empty($conf->facture->enabled))
 	}
 	else
 	{
-		print $langs->trans("BankModuleNotActive");
+		print '<span class="opacitymedium">'.$langs->trans("BankModuleNotActive").'</span>';
 	}
-	print "</td></tr>";
+}
+else {
+	print '<span class="opacitymedium">'.$langs->trans("SeeSetupOfModule", $langs->transnoentitiesnoconv("Module30Name")).'</span>';
+}
+print "</td></tr>";
 
-	print '<tr class="oddeven">';
-	print "<td>".$langs->trans("SuggestPaymentByChequeToAddress")."</td>";
-	print "<td>";
+print '<tr class="oddeven">';
+print "<td>".$langs->trans("SuggestPaymentByChequeToAddress")."</td>";
+print "<td>";
+if (empty($conf->facture->enabled))
+{
 	print '<select class="flat" name="chq" id="chq">';
 	print '<option value="0">'.$langs->trans("DoNotSuggestPaymentMode").'</option>';
 	print '<option value="-1"'.($conf->global->FACTURE_CHQ_NUMBER ? ' selected' : '').'>'.$langs->trans("MenuCompanySetup").' ('.($mysoc->name ? $mysoc->name : $langs->trans("NotDefined")).')</option>';
@@ -605,10 +617,14 @@ if (empty($conf->facture->enabled))
 		}
 	}
 	print "</select>";
-	print "</td></tr>";
-	print "</table>";
-	print "</form>";
 }
+else {
+	print '<span class="opacitymedium">'.$langs->trans("SeeSetupOfModule", $langs->transnoentitiesnoconv("Module30Name")).'</span>';
+}
+print "</td></tr>";
+print "</table>";
+print "</form>";
+
 
 print '<br>';
 
