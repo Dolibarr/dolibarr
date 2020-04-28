@@ -2419,7 +2419,7 @@ function dol_check_secure_access_document($modulepart, $original_file, $entity, 
 		$original_file = $conf->agenda->dir_output.'/'.$original_file;
 	}
 	// Wrapping for categories
-	elseif ($modulepart == 'category' && !empty($conf->categorie->dir_output))
+	elseif ($modulepart == 'category' && !empty($conf->categorie->multidir_output[$entity]))
 	{
 		if (empty($entity) || empty($conf->categorie->multidir_output[$entity])) return array('accessallowed'=>0, 'error'=>'Value entity must be provided');
 		if ($fuser->rights->categorie->{$lire}) $accessallowed = 1;
@@ -2489,7 +2489,7 @@ function dol_check_secure_access_document($modulepart, $original_file, $entity, 
 	}
 
 	// Wrapping for third parties
-	elseif (($modulepart == 'company' || $modulepart == 'societe' || $modulepart == 'thirdparty') && !empty($conf->societe->dir_output))
+	elseif (($modulepart == 'company' || $modulepart == 'societe' || $modulepart == 'thirdparty') && !empty($conf->societe->multidir_output[$entity]))
 	{
 		if (empty($entity) || empty($conf->societe->multidir_output[$entity])) return array('accessallowed'=>0, 'error'=>'Value entity must be provided');
 		if ($fuser->rights->societe->{$lire} || preg_match('/^specimen/i', $original_file))
@@ -2501,7 +2501,7 @@ function dol_check_secure_access_document($modulepart, $original_file, $entity, 
 	}
 
 	// Wrapping for contact
-	elseif ($modulepart == 'contact' && !empty($conf->societe->dir_output))
+	elseif ($modulepart == 'contact' && !empty($conf->societe->multidir_output[$entity]))
 	{
 		if (empty($entity) || empty($conf->societe->multidir_output[$entity])) return array('accessallowed'=>0, 'error'=>'Value entity must be provided');
 		if ($fuser->rights->societe->{$lire})
@@ -2519,7 +2519,7 @@ function dol_check_secure_access_document($modulepart, $original_file, $entity, 
 			$accessallowed = 1;
 		}
 		$original_file = $conf->facture->multidir_output[$entity].'/'.$original_file;
-		$sqlprotectagainstexternals = "SELECT fk_soc as fk_soc FROM ".MAIN_DB_PREFIX."facture WHERE ref='".$db->escape($refname)."' AND entity=".$conf->entity;
+		$sqlprotectagainstexternals = "SELECT fk_soc as fk_soc FROM ".MAIN_DB_PREFIX."facture WHERE ref='".$db->escape($refname)."' AND entity IN (".getEntity('invoice').")";
 	}
 	// Wrapping for mass actions
 	elseif ($modulepart == 'massfilesarea_proposals' && !empty($conf->propal->multidir_output[$entity]))
@@ -2632,7 +2632,7 @@ function dol_check_secure_access_document($modulepart, $original_file, $entity, 
 			$accessallowed = 1;
 		}
 		$original_file = $conf->propal->multidir_output[$entity].'/'.$original_file;
-		$sqlprotectagainstexternals = "SELECT fk_soc as fk_soc FROM ".MAIN_DB_PREFIX."propal WHERE ref='".$db->escape($refname)."' AND entity=".$conf->entity;
+		$sqlprotectagainstexternals = "SELECT fk_soc as fk_soc FROM ".MAIN_DB_PREFIX."propal WHERE ref='".$db->escape($refname)."' AND entity IN (".getEntity('propal').")";
 	}
 
 	// Wrapping pour les commandes
@@ -2643,7 +2643,7 @@ function dol_check_secure_access_document($modulepart, $original_file, $entity, 
 			$accessallowed = 1;
 		}
 		$original_file = $conf->commande->multidir_output[$entity].'/'.$original_file;
-		$sqlprotectagainstexternals = "SELECT fk_soc as fk_soc FROM ".MAIN_DB_PREFIX."commande WHERE ref='".$db->escape($refname)."' AND entity=".$conf->entity;
+		$sqlprotectagainstexternals = "SELECT fk_soc as fk_soc FROM ".MAIN_DB_PREFIX."commande WHERE ref='".$db->escape($refname)."' AND entity IN (".getEntity('order').")";
 	}
 
 	// Wrapping pour les projets
