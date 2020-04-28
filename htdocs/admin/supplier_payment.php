@@ -152,14 +152,14 @@ elseif ($action == 'setparams')
        $res = dolibarr_set_const($db, "PAYMENTS_FOURN_REPORT_GROUP_BY_MOD", GETPOST('PAYMENTS_FOURN_REPORT_GROUP_BY_MOD', 'int'), 'chaine', 0, '', $conf->entity);
        if (!$res > 0) $error++;
 
-       if ($error)
+	if ($error)
        {
-               setEventMessages($langs->trans("Error"), null, 'errors');
-       }
-       if (!$error)
+			setEventMessages($langs->trans("Error"), null, 'errors');
+	}
+	if (!$error)
        {
-           setEventMessages($langs->trans("SetupSaved"), null, 'mesgs');
-       }
+		setEventMessages($langs->trans("SetupSaved"), null, 'mesgs');
+	}
 }
 
 /*

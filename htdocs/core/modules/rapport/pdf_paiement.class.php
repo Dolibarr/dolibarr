@@ -548,7 +548,6 @@ class pdf_paiement
                 }
                 $pdf->SetFillColor(220, 220, 220);
             }
-
 		}
 		$total += $total_page;
         $pdf->SetFillColor(255, 255, 255);
