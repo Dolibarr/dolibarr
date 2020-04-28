@@ -131,12 +131,12 @@ function print_auguria_menu($db, $atarget, $type_user, &$tabMenu, &$menu, $noout
 	{
 		//$mysoc->logo_mini=(empty($conf->global->MAIN_INFO_SOCIETE_LOGO_MINI)?'':$conf->global->MAIN_INFO_SOCIETE_LOGO_MINI);
 		$mysoc->logo_squarred_mini = (empty($conf->global->MAIN_INFO_SOCIETE_LOGO_SQUARRED_MINI) ? '' : $conf->global->MAIN_INFO_SOCIETE_LOGO_SQUARRED_MINI);
-		
+
 		$logoContainerAdditionalClass = 'backgroundforcompanylogo';
 		if (!empty($conf->global->MAIN_INFO_SOCIETE_LOGO_NO_BACKGROUND)) {
 			$logoContainerAdditionalClass = '';
 		}
-		
+
 		if (!empty($mysoc->logo_squarred_mini) && is_readable($conf->mycompany->dir_output.'/logos/thumbs/'.$mysoc->logo_squarred_mini))
 		{
 			$urllogo = DOL_URL_ROOT.'/viewimage.php?cache=1&amp;modulepart=mycompany&amp;file='.urlencode('logos/thumbs/'.$mysoc->logo_squarred_mini);
@@ -150,7 +150,7 @@ function print_auguria_menu($db, $atarget, $type_user, &$tabMenu, &$menu, $noout
 			$urllogo = DOL_URL_ROOT.'/theme/dolibarr_logo_squarred_alpha.png';
 			$logoContainerAdditionalClass = '';
 		}
-		
+
 		$title = $langs->trans("GoIntoSetupToChangeLogo");
 
 		print "\n".'<!-- Show logo on menu -->'."\n";
@@ -364,7 +364,7 @@ function print_left_auguria_menu($db, $menu_array_before, $menu_array_after, &$t
 
 	if (!empty($conf->accounting->enabled) && !empty($user->rights->accounting->comptarapport->lire) && $mainmenu == 'accountancy') 	// Entry in accountancy journal for each bank account
 	{
-		$newmenu->add('', $langs->trans("RegistrationInAccounting"), 1, $user->rights->accounting->comptarapport->lire, '', 'accountancy', 'accountancy');
+		$newmenu->add('', $langs->trans("RegistrationInAccounting"), 1, $user->rights->accounting->comptarapport->lire, '', 'accountancy', 'accountancy', 10);
 
 		// Multi journal
 		$sql = "SELECT rowid, code, label, nature";
@@ -419,36 +419,6 @@ function print_left_auguria_menu($db, $menu_array_before, $menu_array_after, &$t
 		}
 		else dol_print_error($db);
 		$db->free($resql);
-
-		/*
-		$sql = "SELECT rowid, label, accountancy_journal";
-		$sql.= " FROM ".MAIN_DB_PREFIX."bank_account";
-		$sql.= " WHERE entity = ".$conf->entity;
-		$sql.= " AND clos = 0";
-		$sql.= " ORDER BY label";
-
-		$resql = $db->query($sql);
-		if ($resql)
-		{
-			$numr = $db->num_rows($resql);
-			$i = 0;
-
-			if ($numr > 0)
-			while ($i < $numr)
-			{
-				$objp = $db->fetch_object($resql);
-				$newmenu->add('/accountancy/journal/bankjournal.php?id_account='.$objp->rowid, $langs->trans("Journal").' - '.$objp->label, 1, $user->rights->accounting->comptarapport->lire,'','accountancy','accountancy_journal');
-				$i++;
-			}
-		}
-		else dol_print_error($db);
-		$db->free($resql);
-
-		// Add other journal
-		$newmenu->add("/accountancy/journal/sellsjournal.php?leftmenu=journal",$langs->trans("SellsJournal"),1,$user->rights->accounting->comptarapport->lire,'','accountancy','accountancy_journal');
-		$newmenu->add("/accountancy/journal/purchasesjournal.php?leftmenu=journal",$langs->trans("PurchasesJournal"),1,$user->rights->accounting->comptarapport->lire,'','accountancy','accountancy_journal');
-		$newmenu->add("/accountancy/journal/expensereportsjournal.php?leftmenu=journal",$langs->trans("ExpenseReportsJournal"),1,$user->rights->accounting->comptarapport->lire,'','accountancy','accountancy_journal');
-		*/
 	}
 
 	if (!empty($conf->ftp->enabled) && $mainmenu == 'ftp')	// Entry for FTP
