@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2001-2004	Rodolphe Quiedeville	<rodolphe@quiedeville.org>
- * Copyright (C) 2004-2017	Laurent Destailleur		<eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2020	Laurent Destailleur		<eldy@users.sourceforge.net>
  * Copyright (C) 2005-2017	Regis Houssin			<regis.houssin@inodbox.com>
  * Copyright (C) 2011-2012	Juanjo Menent			<jmenent@2byte.es>
  * Copyright (C) 2015		Marcos García			<marcosgdf@gmail.com>
@@ -153,12 +153,12 @@ if (empty($user->socid) && empty($conf->global->MAIN_DISABLE_GLOBAL_BOXSTATS))
 	    // Condition to be checked for each display line dashboard
 	    $conditions = array(
 	    	'users' => $user->rights->user->user->lire,
-	    	'members' => !empty($conf->societe->enabled) && $user->rights->societe->lire && empty($conf->global->SOCIETE_DISABLE_CUSTOMERS) && empty($conf->global->SOCIETE_DISABLE_CUSTOMERS_STATS),
-	    	'customers' => !empty($conf->societe->enabled) && $user->rights->societe->lire && empty($conf->global->SOCIETE_DISABLE_PROSPECTS) && empty($conf->global->SOCIETE_DISABLE_PROSPECTS_STATS),
-	    	'prospects' => !empty($conf->fournisseur->enabled) && $user->rights->fournisseur->lire && empty($conf->global->SOCIETE_DISABLE_SUPPLIERS_STATS),
-		    'suppliers' => !empty($conf->societe->enabled) && $user->rights->societe->contact->lire,
-		    'contacts' => !empty($conf->adherent->enabled) && $user->rights->adherent->lire,
-		    'products' => !empty($conf->product->enabled) && $user->rights->produit->lire,
+	    	'members' => !empty($conf->adherent->enabled) && $user->rights->adherent->lire,
+	    	'customers' => !empty($conf->societe->enabled) && $user->rights->societe->lire && empty($conf->global->SOCIETE_DISABLE_CUSTOMERS) && empty($conf->global->SOCIETE_DISABLE_CUSTOMERS_STATS),
+	    	'prospects' => !empty($conf->societe->enabled) && $user->rights->societe->lire && empty($conf->global->SOCIETE_DISABLE_PROSPECTS) && empty($conf->global->SOCIETE_DISABLE_PROSPECTS_STATS),
+	    	'suppliers' => !empty($conf->fournisseur->enabled) && $user->rights->fournisseur->lire && empty($conf->global->SOCIETE_DISABLE_SUPPLIERS_STATS),
+		    'contacts' => !empty($conf->societe->enabled) && $user->rights->societe->contact->lire,
+		    'services' => !empty($conf->product->enabled) && $user->rights->produit->lire,
 		    'services' => !empty($conf->service->enabled) && $user->rights->service->lire,
 		    'proposals' => !empty($conf->propal->enabled) && $user->rights->propale->lire,
 		    'orders' => !empty($conf->commande->enabled) && $user->rights->commande->lire,

@@ -1905,40 +1905,6 @@ function print_left_eldy_menu($db, $menu_array_before, $menu_array_after, &$tabM
 		$newmenu = $menuArbo->menuLeftCharger($newmenu, $mainmenu, $leftmenu, (empty($user->socid) ? 0 : 1), 'eldy', $tabMenu);
 		//var_dump($newmenu->liste);    //
 
-		// We update newmenu for special dynamic menus
-		if (!empty($user->rights->banque->lire) && $mainmenu == 'bank')	// Entry for each bank account
-		{
-			require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
-
-			$sql = "SELECT rowid, label, courant, rappro";
-			$sql .= " FROM ".MAIN_DB_PREFIX."bank_account";
-			$sql .= " WHERE entity = ".$conf->entity;
-			$sql .= " AND clos = 0";
-			$sql .= " ORDER BY label";
-
-			$resql = $db->query($sql);
-			if ($resql)
-			{
-				$numr = $db->num_rows($resql);
-				$i = 0;
-
-				if ($numr > 0) 	$newmenu->add('/compta/bank/list.php', $langs->trans("BankAccounts"), 0, $user->rights->banque->lire);
-
-				while ($i < $numr)
-				{
-					$objp = $db->fetch_object($resql);
-					$newmenu->add('/compta/bank/card.php?id='.$objp->rowid, $objp->label, 1, $user->rights->banque->lire);
-					if ($objp->rappro && $objp->courant != Account::TYPE_CASH && empty($objp->clos))  // If not cash account and not closed and can be reconciliate
-					{
-						$newmenu->add('/compta/bank/bankentries_list.php?action=reconcile&contextpage=banktransactionlist-'.$objp->rowid.'&account='.$objp->rowid.'&id='.$objp->rowid.'&search_conciliated=0', $langs->trans("Conciliate"), 2, $user->rights->banque->consolidate);
-					}
-					$i++;
-				}
-			}
-			else dol_print_error($db);
-			$db->free($resql);
-		}
-
 		if (!empty($conf->ftp->enabled) && $mainmenu == 'ftp')	// Entry for FTP
 		{
 			$MAXFTP = 20;

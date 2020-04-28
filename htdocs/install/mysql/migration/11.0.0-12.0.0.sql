@@ -261,8 +261,6 @@ ALTER TABLE llx_categorie ADD COLUMN fk_user_modif	integer;
 
 ALTER TABLE llx_commandedet ADD CONSTRAINT fk_commandedet_fk_commandefourndet FOREIGN KEY (fk_commandefourndet) REFERENCES llx_commande_fournisseurdet (rowid);
 
---Dictionary of package type because filename in V11 was incomplete
-
 create table llx_c_prospectcontactlevel
 (
   code            varchar(12) PRIMARY KEY,
@@ -293,3 +291,13 @@ insert into llx_c_stcommcontact (id,code,libelle) values ( 3, 'ST_DONE',  'Conta
 
 ALTER TABLE llx_socpeople ADD COLUMN fk_prospectcontactlevel varchar(12) AFTER priv;
 ALTER TABLE llx_socpeople ADD COLUMN fk_stcommcontact integer DEFAULT 0 NOT NULL AFTER fk_prospectcontactlevel;
+
+-- VMYSQL4.3 ALTER TABLE llx_prelevement_facture_demande MODIFY COLUMN fk_facture INTEGER NULL;
+-- VPGSQL8.2 ALTER TABLE llx_prelevement_facture_demande ALTER COLUMN fk_facture DROP NOT NULL;
+ALTER TABLE llx_prelevement_facture_demande ADD COLUMN fk_facture_fourn INTEGER NULL;
+
+-- VMYSQL4.3 ALTER TABLE llx_prelevement_facture MODIFY COLUMN fk_facture INTEGER NULL;
+-- VPGSQL8.2 ALTER TABLE llx_prelevement_facture ALTER COLUMN fk_facture DROP NOT NULL;
+ALTER TABLE llx_prelevement_facture ADD COLUMN fk_facture_fourn INTEGER NULL;
+
+ALTER TABLE llx_menu MODIFY COLUMN module varchar(255);
