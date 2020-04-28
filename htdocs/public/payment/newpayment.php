@@ -1765,7 +1765,7 @@ if ($action != 'dopayment')
 
 				print '<div class="button buttonpayment" id="div_dopayment_paypal">';
 				if ($conf->global->PAYPAL_API_INTEGRAL_OR_PAYPALONLY != 'integral') {
-					print '<br>';
+					print '<div style="line-height: 1em">&nbsp;</div>';
 				}
 				print '<span class="fa fa-paypal"></span> <input class="" type="submit" id="dopayment_paypal" name="dopayment_paypal" value="'.$langs->trans("PaypalDoPayment").'">';
 				if ($conf->global->PAYPAL_API_INTEGRAL_OR_PAYPALONLY == 'integral')
