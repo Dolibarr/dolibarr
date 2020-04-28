@@ -45,12 +45,14 @@ $id = GETPOST('id', 'int');
 $search_all = trim((GETPOST('search_all', 'alphanohtml') != '') ?GETPOST('search_all', 'alphanohtml') : GETPOST('sall', 'alphanohtml'));
 $search_categ = GETPOST("search_categ", 'alpha');
 $search_project = GETPOST('search_project');
-if (!isset($_GET['search_projectstatus']) && !isset($_POST['search_projectstatus']))
+
+$search_projectstatus = GETPOST('search_projectstatus');
+if (!isset($search_projectstatus) || $search_projectstatus == '')
 {
 	if ($search_all != '') $search_projectstatus = -1;
 	else $search_projectstatus = 1;
 }
-else $search_projectstatus = GETPOST('search_projectstatus');
+
 $search_project_ref = GETPOST('search_project_ref');
 $search_project_title = GETPOST('search_project_title');
 $search_task_ref = GETPOST('search_task_ref');
