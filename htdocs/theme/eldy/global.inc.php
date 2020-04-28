@@ -149,7 +149,7 @@ input[name=duration_value]
 {
 	margin-right: 4px;
 }
-input[type=submit] {
+input[type=submit], input[type=submit]:hover {
 	margin-left: 5px;
 }
 input, input.flat, form.flat select, select, select.flat, .dataTables_length label select {
