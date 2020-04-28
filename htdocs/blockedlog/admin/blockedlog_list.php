@@ -223,20 +223,20 @@ if ($action === 'downloadblockchain') {
 				{
 					$statusofrecordnote = $langs->trans("PreviousFingerprint").': '.$previoushash.($statusofrecordnote ? ' - '.$statusofrecordnote : '');
 				}
-				print $obj->rowid
-					.';'.$obj->date_creation
-					.';"'.$obj->user_fullname.'"'
-					.';'.$obj->action
-					.';'.$obj->element
-					.';'.$obj->amounts
-					.';'.$obj->fk_object
-					.';'.$obj->date_object
-					.';"'.$obj->ref_object.'"'
-					.';'.$obj->signature
-					.';'.$statusofrecord
-					.';'.$statusofrecordnote
-					.';"'.str_replace('"', '""', $obj->object_data).'"'
-					."\n";
+				print $obj->rowid;
+				print ';'.$obj->date_creation;
+				print ';"'.str_replace('"', '""', $obj->user_fullname).'"';
+				print ';'.$obj->action;
+				print ';'.$obj->element;
+				print ';'.$obj->amounts;
+				print ';'.$obj->fk_object;
+				print ';'.$obj->date_object;
+				print ';"'.str_replace('"', '""', $obj->ref_object).'"';
+				print ';'.$obj->signature;
+				print ';'.$statusofrecord;
+				print ';'.$statusofrecordnote;
+				print ';"'.str_replace('"', '""', $obj->object_data).'"';
+				print "\n";
 
 				// Set new previous hash for next fetch
 				$previoushash = $obj->signature;

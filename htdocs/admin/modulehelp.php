@@ -387,7 +387,7 @@ if ($mode == 'feature')
     $filedata = dol_buildpath($moduledir.'/sql/data.sql');
     if (dol_is_file($filedata))
     {
-        $text .= $langs->trans("Yes").' ('.$moduledir.'/sql/data.sql'.')';
+        $text .= $langs->trans("Yes").' ('.$moduledir.'/sql/data.sql)';
     }
     else $text .= $langs->trans("No");
 

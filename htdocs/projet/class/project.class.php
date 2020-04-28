@@ -68,7 +68,7 @@ class Project extends CommonObject
     /**
      * @var string String with name of icon for myobject. Must be the part after the 'object_' into object_myobject.png
      */
-    public $picto = 'projectpub';
+    public $picto = 'project';
 
     /**
      * {@inheritdoc}
@@ -316,7 +316,7 @@ class Project extends CommonObject
 
         // Update extrafield
         if (!$error) {
-        	if (empty($conf->global->MAIN_EXTRAFIELDS_DISABLED)) // For avoid conflicts if trigger used
+        	if (!$error)
         	{
         		$result = $this->insertExtraFields();
         		if ($result < 0)
@@ -405,7 +405,7 @@ class Project extends CommonObject
                 // Update extrafield
                 if (!$error)
                 {
-                	if (empty($conf->global->MAIN_EXTRAFIELDS_DISABLED)) // For avoid conflicts if trigger used
+                	if (!$error)
                 	{
                 		$result = $this->insertExtraFields();
                 		if ($result < 0)

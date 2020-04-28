@@ -53,7 +53,7 @@ $(document).ready(function(){
 	        });
 
 
-	        var $dialog = $('<form id="' + formId + '" action="<?php print $objectUrl ; ?>"  method="post" ></form>')
+	        var $dialog = $('<form id="' + formId + '" action="<?php print $objectUrl; ?>"  method="post" ></form>')
 	        .load( page + " #tablelines", function() {
 
 	        	$("#" + formId + " #tablelines").prop("id", "ajaxloaded_tablelines"); // change id attribute

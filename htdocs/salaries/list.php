@@ -58,7 +58,7 @@ $optioncss = GETPOST('optioncss', 'alpha');
 
 $filtre = GETPOST("filtre", 'none');
 
-if (! GETPOST('typeid', 'int'))
+if (!GETPOST('typeid', 'int'))
 {
 	$newfiltre = str_replace('filtre=', '', $filtre);
 	$filterarray = explode('-', $newfiltre);

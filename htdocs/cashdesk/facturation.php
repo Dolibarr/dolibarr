@@ -32,23 +32,23 @@
  * View
  */
 
-$form=new Form($db);
+$form = new Form($db);
 
 // Get list of articles (in warehouse '$conf_fkentrepot' if defined and stock module enabled)
-if ( GETPOST('filtre', 'alpha') ) {
+if (GETPOST('filtre', 'alpha')) {
 	// Avec filtre
-	$ret=array(); $i=0;
+	$ret = array(); $i = 0;
 
 	$sql = "SELECT p.rowid, p.ref, p.label, p.tva_tx, p.fk_product_type";
-	if (! empty($conf->stock->enabled) && !empty($conf_fkentrepot)) $sql.= ", ps.reel";
-	$sql.= " FROM ".MAIN_DB_PREFIX."product as p";
-	if (! empty($conf->stock->enabled) && !empty($conf_fkentrepot)) $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."product_stock as ps ON p.rowid = ps.fk_product AND ps.fk_entrepot = '".$conf_fkentrepot."'";
-	$sql.= " WHERE p.entity IN (".getEntity('product').")";
-	$sql.= " AND p.tosell = 1";
-	if(!$conf->global->CASHDESK_SERVICES) $sql.= " AND p.fk_product_type = 0";
-	$sql.= " AND (";
-	$sql.= "p.ref LIKE '%".$db->escape(GETPOST('filtre'))."%' OR p.label LIKE '%".$db->escape(GETPOST('filtre'))."%'";
-	if (! empty($conf->barcode->enabled))
+	if (!empty($conf->stock->enabled) && !empty($conf_fkentrepot)) $sql .= ", ps.reel";
+	$sql .= " FROM ".MAIN_DB_PREFIX."product as p";
+	if (!empty($conf->stock->enabled) && !empty($conf_fkentrepot)) $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."product_stock as ps ON p.rowid = ps.fk_product AND ps.fk_entrepot = '".$conf_fkentrepot."'";
+	$sql .= " WHERE p.entity IN (".getEntity('product').")";
+	$sql .= " AND p.tosell = 1";
+	if (!$conf->global->CASHDESK_SERVICES) $sql .= " AND p.fk_product_type = 0";
+	$sql .= " AND (";
+	$sql .= "p.ref LIKE '%".$db->escape(GETPOST('filtre'))."%' OR p.label LIKE '%".$db->escape(GETPOST('filtre'))."%'";
+	if (!empty($conf->barcode->enabled))
 	{
 		$filtre = GETPOST('filtre', 'alpha');
 
@@ -85,23 +85,23 @@ if ( GETPOST('filtre', 'alpha') ) {
 	{
 		dol_print_error($db);
 	}
-	$tab_designations=$ret;
+	$tab_designations = $ret;
 } else {
 	// Sans filtre
-	$ret=array();
-	$i=0;
+	$ret = array();
+	$i = 0;
 
 	$sql = "SELECT p.rowid, ref, label, tva_tx, p.fk_product_type";
-	if (! empty($conf->stock->enabled) && !empty($conf_fkentrepot)) $sql.= ", ps.reel";
-	$sql.= " FROM ".MAIN_DB_PREFIX."product as p";
-	if (! empty($conf->stock->enabled) && !empty($conf_fkentrepot)) $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."product_stock as ps ON p.rowid = ps.fk_product AND ps.fk_entrepot = '".$conf_fkentrepot."'";
-	$sql.= " WHERE p.entity IN (".getEntity('product').")";
-	$sql.= " AND p.tosell = 1";
-	if(!$conf->global->CASHDESK_SERVICES) $sql.= " AND p.fk_product_type = 0";
-	$sql.= " ORDER BY p.label";
+	if (!empty($conf->stock->enabled) && !empty($conf_fkentrepot)) $sql .= ", ps.reel";
+	$sql .= " FROM ".MAIN_DB_PREFIX."product as p";
+	if (!empty($conf->stock->enabled) && !empty($conf_fkentrepot)) $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."product_stock as ps ON p.rowid = ps.fk_product AND ps.fk_entrepot = '".$conf_fkentrepot."'";
+	$sql .= " WHERE p.entity IN (".getEntity('product').")";
+	$sql .= " AND p.tosell = 1";
+	if (!$conf->global->CASHDESK_SERVICES) $sql .= " AND p.fk_product_type = 0";
+	$sql .= " ORDER BY p.label";
 
 	dol_syslog($sql);
-	$resql=$db->query($sql);
+	$resql = $db->query($sql);
 	if ($resql)
 	{
 		$nbr_enreg = $db->num_rows($resql);

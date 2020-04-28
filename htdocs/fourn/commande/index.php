@@ -54,7 +54,7 @@ $commandestatic = new CommandeFournisseur($db);
 $userstatic = new User($db);
 $formfile = new FormFile($db);
 
-print load_fiche_titre($langs->trans("SuppliersOrdersArea"), '', 'commercial');
+print load_fiche_titre($langs->trans("SuppliersOrdersArea"), '', 'supplier_order');
 
 print '<div class="fichecenter"><div class="fichethirdleft">';
 

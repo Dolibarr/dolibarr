@@ -1359,7 +1359,7 @@ abstract class CommonObject
 					}
 					if ($conf->{$modulename}->enabled) {
 						$libelle_element = $langs->trans('ContactDefault_'.$obj->element);
-						$transkey = "TypeContact_".$this->element."_".$source."_".$obj->code;
+						$transkey = "TypeContact_".$obj->element."_".$source."_".$obj->code;
 						$libelle_type = ($langs->trans($transkey) != $transkey ? $langs->trans($transkey) : $obj->libelle);
 						if (empty($option))
 							$tab[$obj->rowid] = $libelle_element.' - '.$libelle_type;
@@ -2974,6 +2974,14 @@ abstract class CommonObject
         // phpcs:enable
 		global $conf, $hookmanager, $action;
 
+        $parameters = array('exclspec' => $exclspec, 'roundingadjust' => $roundingadjust, 'nodatabaseupdate' => $nodatabaseupdate, 'seller' => $seller);
+        $reshook = $hookmanager->executeHooks('updateTotalPrice', $parameters, $this, $action); // Note that $action and $object may have been modified by some hooks
+        if ($reshook > 0) {
+            return 1; // replacement code
+        } elseif ($reshook < 0) {
+            return -1; // failure
+        } // reshook = 0 => execute normal code
+
 		// Some external module want no update price after a trigger because they have another method to calculate the total (ex: with an extrafield)
 		$MODULE = "";
 		if ($this->element == 'propal')
@@ -3028,8 +3036,8 @@ abstract class CommonObject
 
 		$sql = 'SELECT rowid, qty, '.$fieldup.' as up, remise_percent, total_ht, '.$fieldtva.' as total_tva, total_ttc, '.$fieldlocaltax1.' as total_localtax1, '.$fieldlocaltax2.' as total_localtax2,';
 		$sql .= ' tva_tx as vatrate, localtax1_tx, localtax2_tx, localtax1_type, localtax2_type, info_bits, product_type';
-			if ($this->table_element_line == 'facturedet') $sql .= ', situation_percent';
-			$sql .= ', multicurrency_total_ht, multicurrency_total_tva, multicurrency_total_ttc';
+		if ($this->table_element_line == 'facturedet') $sql .= ', situation_percent';
+		$sql .= ', multicurrency_total_ht, multicurrency_total_tva, multicurrency_total_ttc';
 		$sql .= ' FROM '.MAIN_DB_PREFIX.$this->table_element_line;
 		$sql .= ' WHERE '.$this->fk_element.' = '.$this->id;
 		if ($exclspec)
@@ -3068,18 +3076,23 @@ abstract class CommonObject
 
 				if (empty($reshook) && $forcedroundingmode == '0')	// Check if data on line are consistent. This may solve lines that were not consistent because set with $forcedroundingmode='auto'
 				{
-					$localtax_array = array($obj->localtax1_type, $obj->localtax1_tx, $obj->localtax2_type, $obj->localtax2_tx);
+					// This part of code is to fix data. We should not call it too often.
+					$localtax_array = array($obj->localtax1_type,$obj->localtax1_tx,$obj->localtax2_type,$obj->localtax2_tx);
 					$tmpcal = calcul_price_total($obj->qty, $obj->up, $obj->remise_percent, $obj->vatrate, $obj->localtax1_tx, $obj->localtax2_tx, 0, 'HT', $obj->info_bits, $obj->product_type, $seller, $localtax_array, (isset($obj->situation_percent) ? $obj->situation_percent : 100), $multicurrency_tx);
-					$diff = price2num($tmpcal[1] - $obj->total_tva, 'MT', 1);
-					if ($diff)
+
+					$diff_when_using_price_ht = price2num($tmpcal[1] - $obj->total_tva, 'MT', 1);	// If price was set with tax price adn unit price HT has a low number of digits, then we may have a diff on recalculation from unit price HT.
+					$diff_on_current_total = price2num($obj->total_ttc - $obj->total_ht - $obj->total_tva - $obj->total_localtax1 - $obj->total_localtax2, 'MT', 1);
+					//var_dump($obj->total_ht.' '.$obj->total_tva.' '.$obj->total_localtax1.' '.$obj->total_localtax2.' =? '.$obj->total_ttc);
+					//var_dump($diff_when_using_price_ht.' '.$diff_on_current_total);
+
+					if ($diff_when_using_price_ht && $diff_on_current_total)
 					{
 						$sqlfix = "UPDATE ".MAIN_DB_PREFIX.$this->table_element_line." SET ".$fieldtva." = ".$tmpcal[1].", total_ttc = ".$tmpcal[2]." WHERE rowid = ".$obj->rowid;
-						dol_syslog('We found unconsistent data into detailed line (difference of '.$diff.') for line rowid = '.$obj->rowid." (total vat of line calculated=".$tmpcal[1].", database=".$obj->total_tva."). We fix the total_vat and total_ttc of line by running sqlfix = ".$sqlfix);
-								$resqlfix = $this->db->query($sqlfix);
-								if (!$resqlfix) dol_print_error($this->db, 'Failed to update line');
-								$obj->total_tva = $tmpcal[1];
-								$obj->total_ttc = $tmpcal[2];
-						//
+						dol_syslog('We found unconsistent data into detailed line (diff_when_using_price_ht = '.$diff_when_using_price_ht.' and diff_on_current_total = '.$diff_on_current_total.') for line rowid = '.$obj->rowid." (total vat of line calculated=".$tmpcal[1].", database=".$obj->total_tva."). We fix the total_vat and total_ttc of line by running sqlfix = ".$sqlfix, LOG_WARNING);
+						$resqlfix = $this->db->query($sqlfix);
+						if (! $resqlfix) dol_print_error($this->db, 'Failed to update line');
+						$obj->total_tva = $tmpcal[1];
+						$obj->total_ttc = $tmpcal[2];
 					}
 				}
 
@@ -5351,9 +5364,14 @@ abstract class CommonObject
 	 *	Delete all extra fields values for the current object.
 	 *
 	 *  @return	int		<0 if KO, >0 if OK
+	 *  @see deleteExtraLanguages(), insertExtraField(), updateExtraField(), setValueFrom()
 	 */
 	public function deleteExtraFields()
 	{
+		global $conf;
+
+		if (!empty($conf->global->MAIN_EXTRAFIELDS_DISABLED)) return 0;
+
 		$this->db->begin();
 
 		$table_element = $this->table_element;
@@ -5383,17 +5401,17 @@ abstract class CommonObject
 	 *  @param	string		$trigger		If defined, call also the trigger (for example COMPANY_MODIFY)
 	 *  @param	User		$userused		Object user
 	 *  @return int 						-1=error, O=did nothing, 1=OK
-	 *  @see insertExtraLanguages(), updateExtraField(), setValueFrom()
+	 *  @see insertExtraLanguages(), updateExtraField(), deleteExtraField(), setValueFrom()
 	 */
 	public function insertExtraFields($trigger = '', $userused = null)
 	{
 		global $conf, $langs, $user;
 
+		if (!empty($conf->global->MAIN_EXTRAFIELDS_DISABLED)) return 0;
+
 		if (empty($userused)) $userused = $user;
 
 		$error = 0;
-
-		if (!empty($conf->global->MAIN_EXTRAFIELDS_DISABLED)) return 0; // For avoid conflicts if trigger used
 
 		if (!empty($this->array_options))
 		{
@@ -5792,17 +5810,17 @@ abstract class CommonObject
 	 *  @param	string		$trigger		If defined, call also the trigger (for example COMPANY_MODIFY)
 	 *  @param	User		$userused		Object user
 	 *  @return int                 		-1=error, O=did nothing, 1=OK
-	 *  @see updateExtraLanguages(), setValueFrom(), insertExtraFields()
+	 *  @see updateExtraLanguages(), insertExtraFields(), deleteExtraFields(), setValueFrom()
 	 */
 	public function updateExtraField($key, $trigger = null, $userused = null)
 	{
 		global $conf, $langs, $user;
 
+		if (!empty($conf->global->MAIN_EXTRAFIELDS_DISABLED)) return 0;
+
 		if (empty($userused)) $userused = $user;
 
 		$error = 0;
-
-		if (!empty($conf->global->MAIN_EXTRAFIELDS_DISABLED)) return 0; // For avoid conflicts if trigger used
 
 		if (!empty($this->array_options) && isset($this->array_options["options_".$key]))
 		{
@@ -7120,7 +7138,7 @@ abstract class CommonObject
 					// HTML, select, integer and text add default value
 					if (in_array($extrafields->attributes[$this->table_element]['type'][$key], array('html', 'text', 'select', 'int')))
 					{
-						if($action=='create') $value = $extrafields->attributes[$this->table_element]['default'][$key];
+						if ($action == 'create') $value = $extrafields->attributes[$this->table_element]['default'][$key];
 						else $value = $this->array_options['options_'.$key];
 					}
 
@@ -8174,7 +8192,7 @@ abstract class CommonObject
 		}
 
 		// Update extrafield
-		if (!$error && empty($conf->global->MAIN_EXTRAFIELDS_DISABLED) && is_array($this->array_options) && count($this->array_options) > 0)
+		if (!$error)
 		{
 			$result = $this->insertExtraFields();
 			if ($result < 0)
@@ -8335,7 +8353,7 @@ abstract class CommonObject
 
 		if (empty($error)) {
 			// Remove extrafields
-			if (empty($conf->global->MAIN_EXTRAFIELDS_DISABLED)) // For avoid conflicts if trigger used
+			if (!$error)
 			{
 				$tmpobjectline = new $tmpforobjectlineclass($this->db);
 				$tmpobjectline->id = $idline;

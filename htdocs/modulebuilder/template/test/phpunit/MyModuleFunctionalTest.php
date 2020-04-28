@@ -17,7 +17,7 @@
  */
 
 /**
- * \file    test/functional/MyModuleFunctionalTest.php
+ * \file    test/phpunit/MyModuleFunctionalTest.php
  * \ingroup mymodule
  * \brief   Example Selenium test.
  *

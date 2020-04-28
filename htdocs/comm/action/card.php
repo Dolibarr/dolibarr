@@ -317,7 +317,7 @@ if (empty($reshook) && $action == 'add')
 		if (GETPOST("doneby") > 0) $object->userdoneid = GETPOST("doneby", "int");
 	}
 
-	$object->note = trim(GETPOST("note"));
+	$object->note_private = trim(GETPOST("note"));
 
 	if (isset($_POST["contactid"])) $object->contact = $contact;
 
@@ -465,7 +465,6 @@ if (empty($reshook) && $action == 'update')
             $object->contactid = key($object->socpeopleassigned);
         }
 		$object->fk_project  = GETPOST("projectid", 'int');
-		$object->note        = GETPOST("note", "none"); // deprecated
 		$object->note_private = GETPOST("note", "none");
 		$object->fk_element	 = GETPOST("fk_element", "int");
 		$object->elementtype = GETPOST("elementtype", "alphanohtml");
@@ -1122,7 +1121,7 @@ if ($action == 'create')
     // Description
     print '<tr><td class="tdtop">'.$langs->trans("Description").'</td><td>';
     require_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
-    $doleditor = new DolEditor('note', (GETPOST('note', 'none') ?GETPOST('note', 'none') : $object->note), '', 180, 'dolibarr_notes', 'In', true, true, $conf->fckeditor->enabled, ROWS_4, '90%');
+    $doleditor = new DolEditor('note', (GETPOST('note', 'none') ?GETPOST('note', 'none') : $object->note_private), '', 180, 'dolibarr_notes', 'In', true, true, $conf->fckeditor->enabled, ROWS_4, '90%');
     $doleditor->Create();
     print '</td></tr>';
 
@@ -1188,7 +1187,7 @@ if ($id > 0)
 		$object->contactid   = GETPOST("contactid", 'int');
 		$object->fk_project  = GETPOST("projectid", 'int');
 
-		$object->note = GETPOST("note", 'none');
+		$object_private = GETPOST("note", 'none');
 	}
 
 	if ($result2 < 0 || $result3 < 0 || $result4 < 0 || $result5 < 0)
@@ -1540,7 +1539,7 @@ if ($id > 0)
         print '<tr><td class="tdtop">'.$langs->trans("Description").'</td><td>';
         // Editeur wysiwyg
         require_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
-        $doleditor = new DolEditor('note', $object->note, '', 200, 'dolibarr_notes', 'In', true, true, $conf->fckeditor->enabled, ROWS_5, '90%');
+        $doleditor = new DolEditor('note', $object->note_private, '', 200, 'dolibarr_notes', 'In', true, true, $conf->fckeditor->enabled, ROWS_5, '90%');
         $doleditor->Create();
         print '</td></tr>';
 

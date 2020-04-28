@@ -971,6 +971,7 @@ class FormFile
 		// Get object entity
 		if (!empty($conf->multicompany->enabled))
 		{
+			$regs = array();
 			preg_match('/\/([0-9]+)\/[^\/]+\/'.preg_quote($modulesubdir, '/').'$/', $filedir, $regs);
 			$entity = ((!empty($regs[1]) && $regs[1] > 1) ? $regs[1] : 1); // If entity id not found in $filedir this is entity 1 by default
 		}

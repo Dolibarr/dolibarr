@@ -352,7 +352,7 @@ function dolWebsiteOutput($content, $contenttype = 'html', $containerid = '')
 
 	$content = str_replace(' contenteditable="true"', ' contenteditable="false"', $content);
 
-	if (! empty($conf->global->WEBSITE_ADD_CSS_TO_BODY)) {
+	if (!empty($conf->global->WEBSITE_ADD_CSS_TO_BODY)) {
 		$content = str_replace('<body id="bodywebsite" class="bodywebsite', '<body id="bodywebsite" class="bodywebsite '.$conf->global->WEBSITE_ADD_CSS_TO_BODY, $content);
 	}
 
@@ -720,9 +720,10 @@ function getSocialNetworkSharingLinks()
  * @param	int			$max				Max number of answers
  * @param	string		$sortfield			Sort Fields
  * @param	string		$sortorder			Sort order ('DESC' or 'ASC')
+ * @param	string		$langcode			Language code ('' or 'en', 'fr', 'es', ...)
  * @return  string							HTML content
  */
-function getPagesFromSearchCriterias($type, $algo, $searchstring, $max = 25, $sortfield = 'date_creation', $sortorder = 'DESC')
+function getPagesFromSearchCriterias($type, $algo, $searchstring, $max = 25, $sortfield = 'date_creation', $sortorder = 'DESC', $langcode = '')
 {
 	global $conf, $db, $hookmanager, $langs, $mysoc, $user, $website, $websitepage, $weblangs; // Very important. Required to have var available when running inluded containers.
 
@@ -764,6 +765,9 @@ function getPagesFromSearchCriterias($type, $algo, $searchstring, $max = 25, $so
 	{
 		$sql = 'SELECT rowid FROM '.MAIN_DB_PREFIX.'website_page';
 		$sql .= " WHERE fk_website = ".$website->id;
+		if ($langcode) {
+			$sql .= " AND lang ='".$db->escape($langcode)."'";
+		}
 		if ($type) {
 			$tmparrayoftype = explode(',', $type);
 			$typestring = '';

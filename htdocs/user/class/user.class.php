@@ -64,6 +64,8 @@ class User extends CommonObject
 	 */
 	public $ismultientitymanaged = 1;
 
+	public $picto = 'user';
+
 	public $id = 0;
 	public $statut;
 	public $ldap_sid;
@@ -1094,7 +1096,7 @@ class User extends CommonObject
 		}
 
 		// Remove extrafields
-		if ((!$error) && (empty($conf->global->MAIN_EXTRAFIELDS_DISABLED))) // For avoid conflicts if trigger used
+		if (!$error)
 		{
 		    $result = $this->deleteExtraFields();
 		    if ($result < 0)
@@ -1762,7 +1764,7 @@ class User extends CommonObject
 			$action = 'update';
 
 			// Actions on extra fields
-			if (!$error && empty($conf->global->MAIN_EXTRAFIELDS_DISABLED))
+			if (!$error)
 			{
 				$result = $this->insertExtraFields();
 				if ($result < 0)

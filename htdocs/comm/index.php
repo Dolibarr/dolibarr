@@ -35,7 +35,7 @@ if (!empty($conf->contrat->enabled)) require_once DOL_DOCUMENT_ROOT.'/contrat/cl
 if (!empty($conf->propal->enabled))  require_once DOL_DOCUMENT_ROOT.'/comm/propal/class/propal.class.php';
 if (!empty($conf->supplier_proposal->enabled))  require_once DOL_DOCUMENT_ROOT.'/supplier_proposal/class/supplier_proposal.class.php';
 if (!empty($conf->commande->enabled))  require_once DOL_DOCUMENT_ROOT.'/commande/class/commande.class.php';
-if (!empty($conf->fournisseur->enabled)) require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.commande.class.php';
+if (!empty($conf->fournisseur->enabled) && empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD) || ! empty($conf->supplier_order->enabled)) require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.commande.class.php';
 
 if (!$user->rights->societe->lire) accessforbidden();
 
@@ -76,7 +76,7 @@ $companystatic = new Societe($db);
 if (!empty($conf->propal->enabled)) $propalstatic = new Propal($db);
 if (!empty($conf->supplier_proposal->enabled)) $supplierproposalstatic = new SupplierProposal($db);
 if (!empty($conf->commande->enabled)) $orderstatic = new Commande($db);
-if (!empty($conf->fournisseur->enabled)) $supplierorderstatic = new CommandeFournisseur($db);
+if (!empty($conf->fournisseur->enabled) && empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD) || !empty($conf->supplier_order->enabled)) $supplierorderstatic = new CommandeFournisseur($db);
 
 llxHeader("", $langs->trans("CommercialArea"));
 
@@ -102,7 +102,7 @@ if (!empty($conf->global->MAIN_SEARCH_FORM_ON_HOME_AREAS))     // This is useles
         $listofsearchfields['search_supplier_proposal'] = array('text'=>'SupplierProposalShort');
     }
     // Search supplier order
-    if (!empty($conf->fournisseur->enabled) && $user->rights->fournisseur->commande->lire)
+    if ((!empty($conf->fournisseur->enabled) && empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD) || !empty($conf->supplier_order->enabled)) && $user->rights->fournisseur->commande->lire)
     {
     	$listofsearchfields['search_supplier_order'] = array('text'=>'SupplierOrder');
     }
@@ -414,7 +414,7 @@ if (!empty($conf->commande->enabled) && $user->rights->commande->lire)
 /*
  * Draft suppliers orders
  */
-if (!empty($conf->fournisseur->enabled) && $user->rights->fournisseur->commande->lire)
+if ((!empty($conf->fournisseur->enabled) && empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD) || !empty($conf->supplier_order->enabled)) && $user->rights->fournisseur->commande->lire)
 {
     $langs->load("orders");
 
@@ -581,7 +581,7 @@ if (!empty($conf->societe->enabled) && $user->rights->societe->lire)
 }
 
 // Last suppliers
-if (!empty($conf->fournisseur->enabled) && $user->rights->societe->lire)
+if ((!empty($conf->fournisseur->enabled) && empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD) || !empty($conf->supplier_order->enabled) || !empty($conf->supplier_invoice->enabled)) && $user->rights->societe->lire)
 {
 	$langs->load("boxes");
 

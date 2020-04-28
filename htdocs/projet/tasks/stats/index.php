@@ -67,7 +67,7 @@ llxHeader('', $langs->trans('Tasks'));
 $title = $langs->trans("TasksStatistics");
 $dir = $conf->projet->dir_output.'/temp';
 
-print load_fiche_titre($title, '', 'project');
+print load_fiche_titre($title, '', 'projecttask');
 
 dol_mkdir($dir);
 
