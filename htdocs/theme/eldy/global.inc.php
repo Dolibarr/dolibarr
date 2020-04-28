@@ -241,6 +241,7 @@ input.buttonpayment, button.buttonpayment, div.buttonpayment {
 	min-width: 290px;
 	margin-bottom: 15px;
 	margin-top: 15px;
+	height: 60px;
 	background-image: none;
 	line-height: 24px;
 	padding: 8px;
