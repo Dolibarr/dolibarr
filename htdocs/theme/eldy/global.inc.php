@@ -240,6 +240,7 @@ input.buttongen {
 input.buttonpayment, button.buttonpayment, div.buttonpayment {
 	min-width: 290px;
 	margin-bottom: 15px;
+	margin-top: 15px;
 	background-image: none;
 	line-height: 24px;
 	padding: 8px;
@@ -251,6 +252,8 @@ input.buttonpayment, button.buttonpayment, div.buttonpayment {
 	box-shadow: 1px 1px 4px #bbb;
 	color: #fff;
 	border-radius: 4px;
+	cursor: pointer;
+	max-width: 350px;
 }
 div.buttonpayment input:focus {
     color: #008;
@@ -411,7 +414,7 @@ div#moretabsList, div#moretabsListaction {
 hr { border: 0; border-top: 1px solid #ccc; }
 .tabBar hr { margin-top: 20px; margin-bottom: 17px; }
 
-.button:not(.bordertransp), .buttonDelete:not(.bordertransp) {
+.button:not(.bordertransp):not(.buttonpayment), .buttonDelete:not(.bordertransp):not(.buttonpayment) {
 	margin-bottom: 0;
 	margin-top: 0;
 	margin-left: 5px;
