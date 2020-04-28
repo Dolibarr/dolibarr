@@ -71,6 +71,9 @@ class Product extends CommonObject
      */
     public $ismultientitymanaged = 1;
 
+
+    public $picto = 'product';
+
     /**
      * {@inheritdoc}
      */
@@ -1052,7 +1055,7 @@ class Product extends CommonObject
                 $action = 'update';
 
                 // Actions on extra fields
-                if (!$error && empty($conf->global->MAIN_EXTRAFIELDS_DISABLED)) {
+                if (!$error) {
                     $result = $this->insertExtraFields();
                     if ($result < 0) {
                         $error++;
@@ -1265,7 +1268,7 @@ class Product extends CommonObject
             }
 
             // Remove extrafields
-            if ((!$error) && (empty($conf->global->MAIN_EXTRAFIELDS_DISABLED))) // For avoid conflicts if trigger used
+            if (!$error)
             {
                 $result = $this->deleteExtraFields();
                 if ($result < 0) {
@@ -4734,7 +4737,7 @@ class Product extends CommonObject
             $op[1] = "-".trim($nbpiece);
 
             $movementstock = new MouvementStock($this->db);
-            $movementstock->setOrigin($origin_element, $origin_id);
+            $movementstock->setOrigin($origin_element, $origin_id); // Set ->origin and ->origin->id
             $result = $movementstock->_create($user, $this->id, $id_entrepot, $op[$movement], $movement, $price, $label, $inventorycode);
 
             if ($result >= 0) {
@@ -4918,7 +4921,7 @@ class Product extends CommonObject
 			if ($result < 0) dol_print_error($this->db, $this->error);
 			$stock_sending_client = $this->stats_expedition['qty'];
 		}
-		if (!empty($conf->fournisseur->enabled))
+		if (!empty($conf->fournisseur->enabled) && empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD) || ! empty($conf->supplier_order->enabled))
 		{
 		    $filterStatus = '1,2,3,4';
             if (isset($includedraftpoforvirtual)) $filterStatus = '0,'.$filterStatus;
@@ -4926,7 +4929,7 @@ class Product extends CommonObject
 			if ($result < 0) dol_print_error($this->db, $this->error);
 			$stock_commande_fournisseur = $this->stats_commande_fournisseur['qty'];
 		}
-		if (!empty($conf->fournisseur->enabled) && empty($conf->reception->enabled))
+		if ((!empty($conf->fournisseur->enabled) && empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD) || !empty($conf->supplier_order->enabled) || !empty($conf->supplier_invoice->enabled)) && empty($conf->reception->enabled))
 		{
             $filterStatus = '4';
             if (isset($includedraftpoforvirtual)) $filterStatus = '0,'.$filterStatus;
@@ -4934,11 +4937,11 @@ class Product extends CommonObject
 			if ($result < 0) dol_print_error($this->db, $this->error);
 			$stock_reception_fournisseur = $this->stats_reception['qty'];
 		}
-		if (!empty($conf->fournisseur->enabled) && !empty($conf->reception->enabled))
+		if ((!empty($conf->fournisseur->enabled) && empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD) || !empty($conf->supplier_order->enabled) || !empty($conf->supplier_invoice->enabled)) && empty($conf->reception->enabled))
 		{
             $filterStatus = '4';
             if (isset($includedraftpoforvirtual)) $filterStatus = '0,'.$filterStatus;
-			$result = $this->load_stats_reception(0, $filterStatus, 1);			// Use same tables than when module reception is not used.
+			$result = $this->load_stats_reception(0, $filterStatus, 1); // Use same tables than when module reception is not used.
 			if ($result < 0) dol_print_error($this->db, $this->error);
 			$stock_reception_fournisseur = $this->stats_reception['qty'];
 		}
@@ -5631,4 +5634,14 @@ class Product extends CommonObject
             dol_print_error($this->db);
         }
     }
+}
+
+
+
+/**
+ * Class to manage products or services
+ */
+class Service extends Product
+{
+	public $picto = 'service';
 }

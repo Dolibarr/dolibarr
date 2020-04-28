@@ -293,13 +293,19 @@ if ($action == 'create')
 
 	// Country
 	print '<tr><td>'.$langs->trans('Country').'</td><td>';
+	print img_picto('', 'globe-americas', 'class="paddingright"');
 	print $form->select_country((!empty($object->country_id) ? $object->country_id : $mysoc->country_code), 'country_id');
 	if ($user->admin) print info_admin($langs->trans("YouCanChangeValuesForThisListFromDictionarySetup"), 1);
 	print '</td></tr>';
 
 	// Phone / Fax
-	print '<tr><td class="titlefieldcreate fieldrequired">'.img_picto('', 'object_phoning').' '.$form->editfieldkey('Phone', 'phone', '', $object, 0).'</td><td><input name="phone" size="20" value="'.$object->phone.'"></td></tr>';
-	print '<tr><td class="titlefieldcreate fieldrequired">'.img_picto('', 'object_phoning_fax').' '.$form->editfieldkey('Fax', 'fax', '', $object, 0).'</td><td><input name="fax" size="20" value="'.$object->fax.'"></td></tr>';
+	print '<tr><td class="titlefieldcreate fieldrequired">'.$form->editfieldkey('Phone', 'phone', '', $object, 0).'</td><td>';
+	print img_picto('', 'object_phoning', 'class="paddingright"');
+	print '<input name="phone" size="20" value="'.$object->phone.'"></td></tr>';
+	print '<tr><td class="titlefieldcreate fieldrequired">'.$form->editfieldkey('Fax', 'fax', '', $object, 0).'</td>';
+	print '<td>';
+	print img_picto('', 'object_phoning_fax', 'class="paddingright"');
+	print '<input name="fax" size="20" value="'.$object->fax.'"></td></tr>';
 
 	// Status
 	print '<tr><td>'.$langs->trans("Status").'</td><td>';
@@ -395,7 +401,7 @@ else
         	print '<div class="fichehalfleft">';
         	print '<div class="underbanner clearboth"></div>';
 
-        	print '<table class="border centpercent">';
+        	print '<table class="border centpercent tableforfield">';
 
 			// Parent entrepot
 			$parentwarehouse = new Entrepot($db);
@@ -429,7 +435,7 @@ else
 			print '<div class="ficheaddleft">';
 			print '<div class="underbanner clearboth"></div>';
 
-			print '<table class="border centpercent">';
+			print '<table class="border centpercent tableforfield">';
 
 			// Value
 			print '<tr><td class="titlefield">'.$langs->trans("EstimatedStockValueShort").'</td><td>';
@@ -723,13 +729,18 @@ else
 
 			// Country
 			print '<tr><td>'.$langs->trans('Country').'</td><td>';
+			print img_picto('', 'globe-americas', 'class="paddingright"');
 			print $form->select_country($object->country_id ? $object->country_id : $mysoc->country_code, 'country_id');
 			if ($user->admin) print info_admin($langs->trans("YouCanChangeValuesForThisListFromDictionarySetup"), 1);
 			print '</td></tr>';
 
 			// Phone / Fax
-			print '<tr><td class="titlefieldcreate fieldrequired">'.img_picto('', 'object_phoning').' '.$form->editfieldkey('Phone', 'phone', '', $object, 0).'</td><td><input name="phone" size="20" value="'.$object->phone.'"></td></tr>';
-			print '<tr><td class="titlefieldcreate fieldrequired">'.img_picto('', 'object_phoning_fax').' '.$form->editfieldkey('Fax', 'fax', '', $object, 0).'</td><td><input name="fax" size="20" value="'.$object->fax.'"></td></tr>';
+			print '<tr><td class="titlefieldcreate fieldrequired">'.$form->editfieldkey('Phone', 'phone', '', $object, 0).'</td><td>';
+			print img_picto('', 'object_phoning', 'class="paddingright"');
+			print '<input name="phone" size="20" value="'.$object->phone.'"></td></tr>';
+			print '<tr><td class="titlefieldcreate fieldrequired">'.$form->editfieldkey('Fax', 'fax', '', $object, 0).'</td><td>';
+			print img_picto('', 'object_phoning_fax', 'class="paddingright"');
+			print '<input name="fax" size="20" value="'.$object->fax.'"></td></tr>';
 
 			// Status
 			print '<tr><td>'.$langs->trans("Status").'</td><td>';

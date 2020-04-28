@@ -398,7 +398,7 @@ if ($result) {
 		print '<td class="center">'.dol_print_date($db->jdate($objp->datef), 'day').'</td>';
 
 		// Ref product
-		print '<td>';
+		print '<td class="tdoverflowmax100">';
 		if ($product_static->id > 0) print $product_static->getNomUrl(1);
 		if ($product_static->id > 0 && $objp->product_label) print '<br>';
 	    if ($objp->product_label) print $objp->product_label;

@@ -67,6 +67,8 @@ class PaiementFourn extends Paiement
 	 */
 	public $type_code;
 
+
+
 	/**
 	 *	Constructor
 	 *
@@ -583,13 +585,14 @@ class PaiementFourn extends Paiement
 		$result = '';
 
 		$text = $this->ref; // Sometimes ref contains label
+		$reg = array();
 		if (preg_match('/^\((.*)\)$/i', $text, $reg)) {
 			// Label generique car entre parentheses. On l'affiche en le traduisant
 			if ($reg[1] == 'paiement') $reg[1] = 'Payment';
 			$text = $langs->trans($reg[1]);
 		}
 
-		$label = '<u>'.$langs->trans("ShowPayment").'</u><br>';
+		$label = '<u>'.$langs->trans("Payment").'</u><br>';
 		$label .= '<strong>'.$langs->trans("Ref").':</strong> '.$text;
 		if ($this->datepaye ? $this->datepaye : $this->date) $label .= '<br><strong>'.$langs->trans("Date").':</strong> '.dol_print_date($this->datepaye ? $this->datepaye : $this->date, 'dayhour');
 

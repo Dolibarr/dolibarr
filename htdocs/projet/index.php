@@ -116,7 +116,7 @@ if ($resql)
 		$listofoppstatus[$objp->rowid] = $objp->percent;
 		$listofopplabel[$objp->rowid] = $objp->label;
 		$listofoppcode[$objp->rowid] = $objp->code;
-		switch($objp->code) {
+		switch ($objp->code) {
 			case 'PROSP':
 				$colorseries[$objp->rowid] = "-".$badgeStatus0;
 				break;

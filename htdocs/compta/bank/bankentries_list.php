@@ -108,14 +108,6 @@ $pagenext = $page + 1;
 if (!$sortorder) $sortorder = 'desc,desc,desc';
 if (!$sortfield) $sortfield = 'b.datev,b.dateo,b.rowid';
 
-$mode_balance_ok = false;
-//if (($sortfield == 'b.datev' || $sortfield == 'b.datev,b.dateo,b.rowid'))    // TODO Manage balance when account not selected
-if (($sortfield == 'b.datev' || $sortfield == 'b.datev,b.dateo,b.rowid'))
-{
-    $sortfield = 'b.datev,b.dateo,b.rowid';
-    if ($id > 0 || !empty($ref) || $search_account > 0) $mode_balance_ok = true;
-}
-
 $object = new Account($db);
 if ($id > 0 || !empty($ref))
 {
@@ -130,6 +122,13 @@ if ($id > 0 || !empty($ref))
     }
 }
 
+$mode_balance_ok = false;
+//if (($sortfield == 'b.datev' || $sortfield == 'b.datev,b.dateo,b.rowid'))    // TODO Manage balance when account not selected
+if (($sortfield == 'b.datev' || $sortfield == 'b.datev,b.dateo,b.rowid'))
+{
+	$sortfield = 'b.datev,b.dateo,b.rowid';
+	if ($id > 0 || !empty($ref) || $search_account > 0) $mode_balance_ok = true;
+}
 
 // Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
 $hookmanager->initHooks(array('banktransactionlist', $contextpage));
@@ -574,6 +573,7 @@ if ($page >= $nbtotalofpages)
     if ($page < 0) $page = 0;
 }
 
+
 // If not account defined $mode_balance_ok=false
 if (empty($search_account)) $mode_balance_ok = false;
 // If a search is done $mode_balance_ok=false
@@ -583,7 +583,7 @@ if (!empty($search_type)) $mode_balance_ok = false;
 if (!empty($search_debit)) $mode_balance_ok = false;
 if (!empty($search_credit)) $mode_balance_ok = false;
 if (!empty($search_thirdparty)) $mode_balance_ok = false;
-if ($search_conciliated != '') $mode_balance_ok = false;
+if ($search_conciliated != '' && $search_conciliated != '-1') $mode_balance_ok = false;
 if (!empty($search_num_releve)) $mode_balance_ok = false;
 
 $sql .= $db->plimit($limit + 1, $offset);
@@ -751,8 +751,8 @@ if ($resql)
 			print '</td>';
 		}*/
 		print '<td class="center">';
-		print '<input type="submit" name="save" class="button" value="'.$langs->trans("Add").'"><br>';
-		print '<input type="submit" name="cancel" class="button" value="'.$langs->trans("Cancel").'">';
+		print '<input type="submit" name="save" class="button buttongen marginbottomonly" value="'.$langs->trans("Add").'"><br>';
+		print '<input type="submit" name="cancel" class="button buttongen marginbottomonly" value="'.$langs->trans("Cancel").'">';
 		print '</td></tr>';
 
 		print '</table>';
@@ -815,7 +815,7 @@ if ($resql)
 		$morehtml .= $buttonreconcile;
 	}
 
-	$morehtml .= $newcardbutton;
+	$morehtml .= '<!-- Add New button -->'.$newcardbutton;
 
 	$picto = 'bank_account';
 	if ($id > 0 || !empty($ref)) $picto = '';

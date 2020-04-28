@@ -395,11 +395,11 @@ if ($id > 0 || !empty($ref))
 			print img_object('', 'user').' '.$langs->trans("Users");
 			print '</td>';
 
-			print '<td colspan="1">';
+			print '<td>';
 			print $conf->global->MAIN_INFO_SOCIETE_NOM;
 			print '</td>';
 
-			print '<td colspan="1">';
+			print '<td>';
 			// On recupere les id des users deja selectionnes
 			if ($object->project->public) $contactsofproject = ''; // Everybody
 			else $contactsofproject = $projectstatic->getListContactId('internal');
@@ -430,13 +430,13 @@ if ($id > 0 || !empty($ref))
 				print img_object('', 'contact').' '.$langs->trans("ThirdPartyContacts");
 				print '</td>';
 
-				print '<td colspan="1">';
+				print '<td>';
 				$thirdpartyofproject = $projectstatic->getListContactId('thirdparty');
 				$selectedCompany = isset($_GET["newcompany"]) ? $_GET["newcompany"] : $projectstatic->socid;
 				$selectedCompany = $formcompany->selectCompaniesForNewContact($object, 'id', $selectedCompany, 'newcompany', $thirdpartyofproject, 0, '&withproject='.$withproject);
 				print '</td>';
 
-				print '<td colspan="1">';
+				print '<td>';
 				$contactofproject = $projectstatic->getListContactId('external');
 				$nbofcontacts = $form->select_contacts($selectedCompany, '', 'contactid', 0, '', $contactofproject);
 				print '</td>';

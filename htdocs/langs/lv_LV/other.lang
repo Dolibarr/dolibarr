@@ -34,7 +34,7 @@ GraphInBarsAreLimitedToNMeasures=Grafika ir ierobežota ar %s mērījumiem rež�
 OnlyOneFieldForXAxisIsPossible=Šobrīd kā X ass ir iespējams tikai 1 lauks. Ir atlasīts tikai pirmais atlasītais lauks.
 AtLeastOneMeasureIsRequired=Nepieciešams vismaz 1 lauks mērīšanai
 AtLeastOneXAxisIsRequired=X-asij ir nepieciešams vismaz 1 lauks
-
+LatestBlogPosts=Latest Blog Posts
 Notify_ORDER_VALIDATE=Pārdošanas pasūtījums apstiprināts
 Notify_ORDER_SENTBYMAIL=Pārdošanas pasūtījums nosūtīts pa pastu
 Notify_ORDER_SUPPLIER_SENTBYMAIL=Pirkuma pasūtījums, kas nosūtīts pa e-pastu
@@ -274,7 +274,7 @@ WEBSITE_PAGEURL=Lapas URL
 WEBSITE_TITLE=Virsraksts
 WEBSITE_DESCRIPTION=Apraksts
 WEBSITE_IMAGE=Attēls
-WEBSITE_IMAGEDesc=Attēlu nesēja relatīvais ceļš. Varat to atstāt tukšu, jo tas tiek reti izmantots (dinamiskais saturs to var izmantot, lai parādītu sīktēlu emuāru ziņu sarakstā). Ceļā izmantojiet __WEBSITEKEY__, ja ceļš ir atkarīgs no vietnes nosaukuma.
+WEBSITE_IMAGEDesc=Relative path of the image media. You can keep this empty as this is rarely used (it can be used by dynamic content to show a thumbnail in a list of blog posts). Use __WEBSITE_KEY__ in the path if path depends on website name (for example: image/__WEBSITE_KEY__/stories/myimage.png).
 WEBSITE_KEYWORDS=Atslēgas vārdi
 LinesToImport=Importējamās līnijas
 

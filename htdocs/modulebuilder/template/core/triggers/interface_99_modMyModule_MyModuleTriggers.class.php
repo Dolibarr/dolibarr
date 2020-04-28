@@ -118,9 +118,9 @@ class InterfaceMyModuleTriggers extends DolibarrTriggers
             //case 'ACTION_DELETE':
 
             // Groups
-            //case 'GROUP_CREATE':
-            //case 'GROUP_MODIFY':
-            //case 'GROUP_DELETE':
+            //case 'USERGROUP_CREATE':
+            //case 'USERGROUP_MODIFY':
+            //case 'USERGROUP_DELETE':
 
             // Companies
             //case 'COMPANY_CREATE':

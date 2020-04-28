@@ -220,6 +220,8 @@ function dolWebsiteOutput($content, $contenttype = 'html', $containerid = '')
 	global $db, $langs, $conf, $user;
 	global $dolibarr_main_url_root, $dolibarr_main_data_root;
 
+	$nbrep = 0;
+
 	dol_syslog("dolWebsiteOutput start (contenttype=".$contenttype." containerid=".$containerid." USEDOLIBARREDITOR=".(defined('USEDOLIBARREDITOR') ? '1' : '')." USEDOLIBARRSERVER=".(defined('USEDOLIBARRSERVER') ? '1' : '').')');
 
 	// Define $urlwithroot
@@ -300,7 +302,6 @@ function dolWebsiteOutput($content, $contenttype = 'html', $containerid = '')
 		// <img alt="" src="/dolibarr_dev/htdocs/viewimage.php?modulepart=medias&amp;entity=1&amp;file=image/ldestailleur_166x166.jpg" style="height:166px; width:166px" />
 		// become
 		// <img alt="" src="'.$urlwithroot.'/medias/image/ldestailleur_166x166.jpg" style="height:166px; width:166px" />
-		$nbrep = 0;
 		if (!$symlinktomediaexists)
 		{
 			// <img src="image.png... => <img src="medias/image.png...
@@ -349,7 +350,11 @@ function dolWebsiteOutput($content, $contenttype = 'html', $containerid = '')
 		}
 	}
 
-	$content = preg_replace('/ contenteditable="true"/', ' contenteditable="false"', $content, -1, $nbrep);
+	$content = str_replace(' contenteditable="true"', ' contenteditable="false"', $content);
+
+	if (!empty($conf->global->WEBSITE_ADD_CSS_TO_BODY)) {
+		$content = str_replace('<body id="bodywebsite" class="bodywebsite', '<body id="bodywebsite" class="bodywebsite '.$conf->global->WEBSITE_ADD_CSS_TO_BODY, $content);
+	}
 
 	dol_syslog("dolWebsiteOutput end");
 
@@ -715,9 +720,10 @@ function getSocialNetworkSharingLinks()
  * @param	int			$max				Max number of answers
  * @param	string		$sortfield			Sort Fields
  * @param	string		$sortorder			Sort order ('DESC' or 'ASC')
+ * @param	string		$langcode			Language code ('' or 'en', 'fr', 'es', ...)
  * @return  string							HTML content
  */
-function getPagesFromSearchCriterias($type, $algo, $searchstring, $max = 25, $sortfield = 'date_creation', $sortorder = 'DESC')
+function getPagesFromSearchCriterias($type, $algo, $searchstring, $max = 25, $sortfield = 'date_creation', $sortorder = 'DESC', $langcode = '')
 {
 	global $conf, $db, $hookmanager, $langs, $mysoc, $user, $website, $websitepage, $weblangs; // Very important. Required to have var available when running inluded containers.
 
@@ -759,6 +765,9 @@ function getPagesFromSearchCriterias($type, $algo, $searchstring, $max = 25, $so
 	{
 		$sql = 'SELECT rowid FROM '.MAIN_DB_PREFIX.'website_page';
 		$sql .= " WHERE fk_website = ".$website->id;
+		if ($langcode) {
+			$sql .= " AND lang ='".$db->escape($langcode)."'";
+		}
 		if ($type) {
 			$tmparrayoftype = explode(',', $type);
 			$typestring = '';

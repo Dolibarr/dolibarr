@@ -459,7 +459,8 @@ if (!empty($conf->categorie->enabled) && $user->rights->categorie->lire) {
 
 // Standard Extrafield feature
 if (empty($conf->global->MAIN_EXTRAFIELDS_DISABLED)) {
-	$elementype = Contact::$table_element;
+	$contactstatic = new Contact($db);
+	$elementype = $contactstatic->table_element;
 	// fetch optionals attributes and labels
 	dol_include_once('/core/class/extrafields.class.php');
 	$extrafields = new ExtraFields($db);
@@ -485,9 +486,9 @@ if (empty($conf->global->MAIN_EXTRAFIELDS_DISABLED)) {
 		} elseif (($extrafields->attributes[$elementtype]['type'][$key] == 'date') || ($extrafields->attributes[$elementtype]['type'][$key] == 'datetime')) {
 			print '<table class="nobordernopadding"><tr>';
 			print '<td>'.$langs->trans("AdvTgtStartDt").'</td><td>';
-			print $form->selectDate('', 'options_'.$key.'_st_dt'.'_cnct');
+			print $form->selectDate('', 'options_'.$key.'_st_dt_cnct');
 			print '</td><td>'.$langs->trans("AdvTgtEndDt").'</td><td>';
-			print $form->selectDate('', 'options_'.$key.'_end_dt'.'_cnct');
+			print $form->selectDate('', 'options_'.$key.'_end_dt_cnct');
 			print '</td></tr></table>';
 			print '</td><td>'."\n";
 			print $form->textwithpicto('', $langs->trans("AdvTgtSearchDtHelp"), 1, 'help');

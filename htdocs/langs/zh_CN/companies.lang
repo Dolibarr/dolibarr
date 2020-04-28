@@ -325,7 +325,6 @@ CompanyDeleted=公司“%的”从数据库中删除。
 ListOfContacts=联系人列表
 ListOfContactsAddresses=联系人列表
 ListOfThirdParties=List of Third Parties
-ShowCompany=Show Third Party
 ShowContact=显示联系人
 ContactsAllShort=全部 (不筛选)
 ContactType=联系人类型
@@ -447,6 +446,7 @@ SaleRepresentativeFirstname=销售代表的名字
 SaleRepresentativeLastname=销售代表的姓氏
 ErrorThirdpartiesMerge=删除第三方时出错。请检查日志。变更已被恢复。
 NewCustomerSupplierCodeProposed=Customer or Vendor code already used, a new code is suggested
+KeepEmptyIfGenericAddress=Keep this field empty if this address is a generic address
 #Imports
 PaymentTypeCustomer=Payment Type - Customer
 PaymentTermsCustomer=Payment Terms - Customer

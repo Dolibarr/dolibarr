@@ -213,19 +213,17 @@ class Dolistore
 		{
 			$cat = $this->categories[$i];
 			if ($cat->is_root_category == 1 && $parent == 0) {
-				$html .= '<li class="root"><h3 class="nomargesupinf"><a class="nomargesupinf link2cat" href="?mode=marketplace&categorie='.$cat->id.'" '
-					.'title="'.dol_escape_htmltag(strip_tags($cat->description->language[$this->lang - 1])).'"'
-						.'>'.$cat->name->language[$this->lang - 1].' <sup>'.$cat->nb_products_recursive.'</sup></a></h3>';
-						$html .= self::get_categories($cat->id);
-						$html .= "</li>\n";
+				$html .= '<li class="root"><h3 class="nomargesupinf"><a class="nomargesupinf link2cat" href="?mode=marketplace&categorie='.$cat->id.'" ';
+				$html .= 'title="'.dol_escape_htmltag(strip_tags($cat->description->language[$this->lang - 1])).'">'.$cat->name->language[$this->lang - 1].' <sup>'.$cat->nb_products_recursive.'</sup></a></h3>';
+				$html .= self::get_categories($cat->id);
+				$html .= "</li>\n";
 			} elseif (trim($cat->id_parent) == $parent && $cat->active == 1 && trim($cat->id_parent) != 0) { // si cat est de ce niveau
 				$select = ($cat->id == $this->categorie) ? ' selected' : '';
-				$html   .= '<li><a class="link2cat'.$select.'" href="?mode=marketplace&categorie='.$cat->id.'"'
-					.' title="'.dol_escape_htmltag(strip_tags($cat->description->language[$this->lang - 1])).'" '
-						.'>'.$cat->name->language[$this->lang - 1].' <sup>'.$cat->nb_products_recursive.'</sup></a>';
-						$html   .= self::get_categories($cat->id);
-						$html   .= "</li>\n";
-			} else {
+				$html .= '<li><a class="link2cat'.$select.'" href="?mode=marketplace&categorie='.$cat->id.'"';
+				$html .= ' title="'.dol_escape_htmltag(strip_tags($cat->description->language[$this->lang - 1])).'" ';
+				$html .= '>'.$cat->name->language[$this->lang - 1].' <sup>'.$cat->nb_products_recursive.'</sup></a>';
+				$html .= self::get_categories($cat->id);
+				$html .= "</li>\n";
 			}
 		}
 
@@ -269,8 +267,8 @@ class Dolistore
 			// add image or default ?
 			if ($product->id_default_image != '') {
 				$image_url = DOL_URL_ROOT.'/admin/dolistore/ajax/image.php?id_product='.$product->id.'&id_image='.$product->id_default_image;
-				$images    = '<a href="'.$image_url.'" class="fancybox" rel="gallery'.$product->id.'" title="'.$product->name->language[$this->lang - 1].', '.$langs->trans('Version').' '.$product->module_version.'">'.
-					'<img src="'.$image_url.'&quality=home_default" style="max-height:250px;max-width: 210px;" alt="" /></a>';
+				$images = '<a href="'.$image_url.'" class="fancybox" rel="gallery'.$product->id.'" title="'.$product->name->language[$this->lang - 1].', '.$langs->trans('Version').' '.$product->module_version.'">';
+				$images .= '<img src="'.$image_url.'&quality=home_default" style="max-height:250px;max-width: 210px;" alt="" /></a>';
 			} else {
 				$images = '<img src="'.DOL_URL_ROOT.'/admin/dolistore/img/NoImageAvailable.png" />';
 			}

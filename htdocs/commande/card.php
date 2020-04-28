@@ -113,7 +113,7 @@ $permissionnote = $usercancreate; // Used by the include of actions_setnotes.inc
 $permissiondellink = $usercancreate; // Used by the include of actions_dellink.inc.php
 $permissiontoadd = $usercancreate; // Used by the include of actions_addupdatedelete.inc.php and actions_lineupdown.inc.php
 
-if (!empty($conf->expedition->enabled) && $conf->global->WAREHOUSE_ASK_WAREHOUSE_DURING_ORDER = 1) {
+if (!empty($conf->expedition->enabled) && !empty($conf->global->WAREHOUSE_ASK_WAREHOUSE_DURING_ORDER)) {
 	if (empty($object->warehouse_id) && !empty($conf->global->MAIN_DEFAULT_WAREHOUSE)) $object->warehouse_id = $conf->global->MAIN_DEFAULT_WAREHOUSE;
 	if (empty($object->warehouse_id) && !empty($conf->global->MAIN_DEFAULT_WAREHOUSE_USER)) $object->warehouse_id = $user->fk_warehouse;
 }
@@ -384,7 +384,7 @@ if (empty($reshook))
 								}
 
 								// Extrafields
-								if (empty($conf->global->MAIN_EXTRAFIELDS_DISABLED) && method_exists($lines[$i], 'fetch_optionals')) // For avoid conflicts if trigger used
+								if (method_exists($lines[$i], 'fetch_optionals')) // For avoid conflicts if trigger used
 								{
 									$lines[$i]->fetch_optionals();
 									$array_options = $lines[$i]->array_options;
@@ -1493,7 +1493,7 @@ if (!empty($conf->projet->enabled)) { $formproject = new FormProjets($db); }
 // Mode creation
 if ($action == 'create' && $usercancreate)
 {
-	print load_fiche_titre($langs->trans('CreateOrder'), '', 'commercial');
+	print load_fiche_titre($langs->trans('CreateOrder'), '', 'order');
 
 	$soc = new Societe($db);
 	if ($socid > 0)
@@ -1506,9 +1506,10 @@ if ($action == 'create' && $usercancreate)
 	if (!empty($origin) && !empty($originid)) {
 		// Parse element/subelement (ex: project_task)
 		$element = $subelement = $origin;
+		$regs = array();
 		if (preg_match('/^([^_]+)_([^_]+)/i', $origin, $regs)) {
-			$element = $regs [1];
-			$subelement = $regs [2];
+			$element = $regs[1];
+			$subelement = $regs[2];
 		}
 
 		if ($element == 'project') {

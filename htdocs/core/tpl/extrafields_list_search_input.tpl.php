@@ -1,5 +1,7 @@
 <?php
 
+print '<!-- extrafields_list_search_input.tpl.php -->'."\n";
+
 // Protection to avoid direct call of template
 if (empty($conf) || !is_object($conf))
 {

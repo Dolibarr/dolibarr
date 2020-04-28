@@ -53,7 +53,7 @@ class InterfaceStripe
 	    $this->family = 'stripe';
         $this->description = "Triggers of the module Stripe";
         $this->version = 'dolibarr'; // 'development', 'experimental', 'dolibarr' or version
-        $this->picto = 'stripe@stripe';
+        $this->picto = 'stripe';
     }
 
 	/**
@@ -75,29 +75,6 @@ class InterfaceStripe
 	public function getDesc()
 	{
 		return $this->description;
-	}
-
-	/**
-	 * Trigger version
-	 *
-	 * @return string Version of trigger file
-	 */
-	public function getVersion()
-	{
-		global $langs;
-		$langs->load("admin");
-
-		if ($this->version == 'development') {
-			return $langs->trans("Development");
-		} elseif ($this->version == 'experimental') {
-			return $langs->trans("Experimental");
-		} elseif ($this->version == 'dolibarr') {
-			return DOL_VERSION;
-		} elseif ($this->version) {
-			return $this->version;
-		} else {
-			return $langs->trans("Unknown");
-		}
 	}
 
 	/**

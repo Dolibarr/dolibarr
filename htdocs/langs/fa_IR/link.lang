@@ -8,3 +8,4 @@ LinkRemoved=پیوند %s برداشته شد
 ErrorFailedToDeleteLink= امکان حذف پیوند '<b>%s</b>' نبود
 ErrorFailedToUpdateLink= امکان روزآمدسازی پیوند '<b>%s</b>' نبود
 URLToLink=نشانی برای پیوند کردن
+OverwriteIfExists=Overwrite file if exists

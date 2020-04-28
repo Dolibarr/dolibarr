@@ -259,7 +259,7 @@ if ($sall || $search_product_category > 0) $sql = 'SELECT DISTINCT';
 $sql .= ' s.rowid as socid, s.nom as name, s.town, s.zip, s.fk_pays, s.client, s.code_client,';
 $sql .= " typent.code as typent_code,";
 $sql .= " state.code_departement as state_code, state.nom as state_name,";
-$sql .= ' sp.rowid, sp.note_private, sp.total_ht, sp.tva as total_vat, sp.total as total_ttc, sp.localtax1, sp.localtax2, sp.ref, sp.fk_statut, sp.fk_user_author, sp.date_valid, sp.date_livraison as dp,';
+$sql .= ' sp.rowid, sp.note_private, sp.total_ht, sp.tva as total_vat, sp.total as total_ttc, sp.localtax1, sp.localtax2, sp.ref, sp.fk_statut as status, sp.fk_user_author, sp.date_valid, sp.date_livraison as dp,';
 $sql .= ' sp.fk_multicurrency, sp.multicurrency_code, sp.multicurrency_tx, sp.multicurrency_total_ht, sp.multicurrency_total_tva as multicurrency_total_vat, sp.multicurrency_total_ttc,';
 $sql .= ' sp.datec as date_creation, sp.tms as date_update,';
 $sql .= " p.rowid as project_id, p.ref as project_ref,";
@@ -431,7 +431,7 @@ if ($resql)
 	print '<input type="hidden" name="sortfield" value="'.$sortfield.'">';
 	print '<input type="hidden" name="sortorder" value="'.$sortorder.'">';
 
-	print_barre_liste($title, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, $massactionbutton, $num, $nbtotalofrecords, 'commercial', 0, $newcardbutton, '', $limit, 0, 0, 1);
+	print_barre_liste($title, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, $massactionbutton, $num, $nbtotalofrecords, 'supplier_proposal', 0, $newcardbutton, '', $limit, 0, 0, 1);
 
 	$topicmail = "SendSupplierProposalRef";
 	$modelmail = "supplier_proposal_send";
@@ -534,7 +534,7 @@ if ($resql)
 	// Date
 	if (!empty($arrayfields['sp.date_valid']['checked']))
 	{
-		print '<td class="liste_titre center" colspan="1">';
+		print '<td class="liste_titre center">';
 		//print $langs->trans('Month').': ';
 		print '<input class="flat width25 valignmiddle" type="text" maxlength="2" name="monthvalid" value="'.dol_escape_htmltag($monthvalid).'">';
 		//print '&nbsp;'.$langs->trans('Year').': ';
@@ -545,7 +545,7 @@ if ($resql)
 	// Date
 	if (!empty($arrayfields['sp.date_livraison']['checked']))
 	{
-		print '<td class="liste_titre center" colspan="1">';
+		print '<td class="liste_titre center">';
 		//print $langs->trans('Month').': ';
 		print '<input class="flat width25 valignmiddle" type="text" maxlength="2" name="month" value="'.dol_escape_htmltag($month).'">';
 		//print '&nbsp;'.$langs->trans('Year').': ';
@@ -695,6 +695,13 @@ if ($resql)
 		$objectstatic->ref = $obj->ref;
 		$objectstatic->note_public = $obj->note_public;
 		$objectstatic->note_private = $obj->note_private;
+		$objectstatic->status = $obj->status;
+
+		// Company
+		$companystatic->id = $obj->socid;
+		$companystatic->name = $obj->name;
+		$companystatic->client = $obj->client;
+		$companystatic->code_client = $obj->code_client;
 
 		print '<tr class="oddeven">';
 
@@ -727,14 +734,6 @@ if ($resql)
 			print "</td>\n";
 			if (!$i) $totalarray['nbfield']++;
 		}
-
-		$url = DOL_URL_ROOT.'/comm/card.php?socid='.$obj->socid;
-
-		// Company
-		$companystatic->id = $obj->socid;
-		$companystatic->name = $obj->name;
-		$companystatic->client = $obj->client;
-		$companystatic->code_client = $obj->code_client;
 
 		// Thirdparty
 		if (!empty($arrayfields['s.nom']['checked']))
@@ -901,7 +900,7 @@ if ($resql)
 		// Status
 		if (!empty($arrayfields['sp.fk_statut']['checked']))
 		{
-			print '<td class="right">'.$objectstatic->LibStatut($obj->fk_statut, 5)."</td>\n";
+			print '<td class="right">'.$objectstatic->getLibStatut(5)."</td>\n";
 			if (!$i) $totalarray['nbfield']++;
 		}
 

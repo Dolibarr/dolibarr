@@ -59,6 +59,7 @@ ErrorPartialFile=File không nhận được hoàn toàn bởi máy chủ.
 ErrorNoTmpDir=Directy tạm thời% s không tồn tại.
 ErrorUploadBlockedByAddon=Tải bị chặn bởi một plugin PHP / Apache.
 ErrorFileSizeTooLarge=Kích thước quá lớn.
+ErrorFieldTooLong=Field %s is too long.
 ErrorSizeTooLongForIntType=Kích thước quá dài cho kiểu int (tối đa số% s)
 ErrorSizeTooLongForVarcharType=Kích thước quá dài cho kiểu chuỗi (ký tự tối đa% s)
 ErrorNoValueForSelectType=Xin vui lòng điền giá trị so với danh sách lựa chọn
@@ -234,7 +235,8 @@ ErrorLanguageOfTranslatedPageIsSameThanThisPage=Error, language of translated pa
 ErrorBatchNoFoundForProductInWarehouse=No lot/serial found for product "%s" in warehouse "%s".
 ErrorBatchNoFoundEnoughQuantityForProductInWarehouse=No enough quantity for this lot/serial for product "%s" in warehouse "%s".
 ErrorOnlyOneFieldForGroupByIsPossible=Only 1 field for the 'Group by' is possible (others are discarded)
-ErrorTooManyDifferentValueForSelectedGroupBy=Found too many different value (more than <b>%s</b>) for the field '<b>%s</b>', so we can't user it as a 'Group by' for graphics. The field 'Group By' has been removed. May be you wanted to use it as an X-Axis ?
+ErrorTooManyDifferentValueForSelectedGroupBy=Found too many different value (more than <b>%s</b>) for the field '<b>%s</b>', so we can't use it as a 'Group by' for graphics. The field 'Group By' has been removed. May be you wanted to use it as an X-Axis ?
+ErrorReplaceStringEmpty=Error, the string to replace into is empty
 # Warnings
 WarningParamUploadMaxFileSizeHigherThanPostMaxSize=Tham số PHP của bạn upload_max_filesize (%s) cao hơn tham số PHP post_max_size (%s). Đây không phải là một thiết lập phù hợp.
 WarningPasswordSetWithNoAccount=Một mật khẩu đã được đặt cho thành viên này. Tuy nhiên, không có tài khoản người dùng nào được tạo. Vì vậy, mật khẩu này được lưu trữ nhưng không thể được sử dụng để đăng nhập vào Dolibarr. Nó có thể được sử dụng bởi một mô-đun / giao diện bên ngoài nhưng nếu bạn không cần xác định bất kỳ thông tin đăng nhập hay mật khẩu nào cho thành viên, bạn có thể tắt tùy chọn "Quản lý đăng nhập cho từng thành viên" từ thiết lập mô-đun Thành viên. Nếu bạn cần quản lý thông tin đăng nhập nhưng không cần bất kỳ mật khẩu nào, bạn có thể để trống trường này để tránh cảnh báo này. Lưu ý: Email cũng có thể được sử dụng làm thông tin đăng nhập nếu thành viên được liên kết với người dùng.

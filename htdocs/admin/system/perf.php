@@ -66,7 +66,7 @@ if ($test) print img_picto('', 'tick.png').' '.$langs->trans("NotInstalled");
 else
 {
 	print img_picto('', 'warning').' '.$langs->trans("ModuleActivated", $langs->transnoentities("XDebug"));
-	print ' - '.$langs->trans("MoreInformation").' <a href="'.DOL_URL_ROOT.'/admin/system/xdebug.php'.'">XDebug admin page</a>';
+	print ' - '.$langs->trans("MoreInformation").' <a href="'.DOL_URL_ROOT.'/admin/system/xdebug.php">XDebug admin page</a>';
 }
 print '<br>';
 
@@ -123,7 +123,7 @@ if (!$foundcache && $test)
 {
 	$foundcache++;
 	print img_picto('', 'tick.png').' '.$langs->trans("PHPModuleLoaded", "XCache");
-	print ' '.$langs->trans("MoreInformation").' <a href="'.DOL_URL_ROOT.'/admin/system/xcache.php'.'">Xcache admin page</a>';
+	print ' '.$langs->trans("MoreInformation").' <a href="'.DOL_URL_ROOT.'/admin/system/xcache.php">Xcache admin page</a>';
 }
 $test = function_exists('eaccelerator_info');
 if (!$foundcache && $test)

@@ -1,6 +1,7 @@
 <?php
 /* Copyright (C)           Kai Blankenhorn      <kaib@bitfolge.de>
  * Copyright (C) 2005-2017 Laurent Destailleur  <eldy@users.sourceforge.org>
+ * Copyright (C) 2020		Tobias Sekan		<tobias.sekan@startmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -135,11 +136,11 @@ class vCard
     /**
      *	mise en forme du nom complet
      *
-     *	@param	string	$family			Family
-     *	@param	string	$first			First
-     *	@param	string	$additional		Additionnal
-     *	@param	string	$prefix			Prefix
-     *	@param	string	$suffix			Suffix
+     *	@param	string	$family			Family name
+     *	@param	string	$first			First name
+     *	@param	string	$additional		Additional (e.g. second name, nick name)
+     *	@param	string	$prefix			Prefix (e.g. "Mr.", "Ms.", "Prof.")
+     *	@param	string	$suffix			Suffix (e.g. "sen." for senior, "jun." for junior)
      *	@return	void
      */
     public function setName($family = "", $first = "", $additional = "", $prefix = "", $suffix = "")
@@ -216,15 +217,17 @@ class vCard
     }
 
     /**
-     *	mise en forme de l'email
+     *	Add a e-mail address to this vCard
      *
-     *	@param	string	$address		EMail
-     *	@param	string	$type			Vcard type
+     *	@param	string	$address		E-mail address
+     *	@param	string	$type			(optional) The type of the e-mail (typical "PREF;INTERNET" or "INTERNET")
      *	@return	void
      */
-    public function setEmail($address, $type = "internet,pref")
+    public function setEmail($address, $type = "TYPE=INTERNET;PREF")
     {
-        $this->properties["EMAIL;TYPE=".$type] = $address;
+        $key = "EMAIL";
+        if ($type != "") $key .= ";".$type;
+        $this->properties[$key] = $address;
     }
 
     /**
@@ -330,4 +333,32 @@ class vCard
     {
         return $this->filename;
     }
+
+	/* Example from Microsoft Outlook 2019
+
+    BEGIN:VCARD
+    VERSION:2.1
+
+    N;LANGUAGE=de:surename;forename;secondname;Sir;jun.
+    FN:Sir surename secondname forename jun.
+    ORG:Companyname
+    TITLE:position
+    TEL;WORK;VOICE:work-phone-number
+    TEL;HOME;VOICE:private-phone-number
+    TEL;CELL;VOICE:mobile-phone-number
+    TEL;WORK;FAX:fax-phone-number
+    ADR;WORK;PREF:;;street and number;town;region;012345;Deutschland
+    LABEL;WORK;PREF;ENCODING=QUOTED-PRINTABLE:street and number=0D=0A=
+    =0D=0A=
+    012345  town  region
+    X-MS-OL-DEFAULT-POSTAL-ADDRESS:2
+    URL;WORK:www.mywebpage.de
+    EMAIL;PREF;INTERNET:test1@test1.de
+    EMAIL;INTERNET:test2@test2.de
+    EMAIL;INTERNET:test3@test3.de
+    X-MS-IMADDRESS:test@jabber.org
+    REV:20200424T104242Z
+
+    END:VCARD
+    */
 }

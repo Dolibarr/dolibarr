@@ -536,7 +536,7 @@ $errors = $hookmanager->errors;
 
 
 // Line to enter new values (input fields)
-print "<tr ".$bcnd[$var].">";
+print '<tr class="oddeven">';
 
 if (empty($reshook))
 {
@@ -754,9 +754,9 @@ if ($resql)
                 print '<td class="center">';
                 print '<input type="hidden" name="page" value="'.$page.'">';
                 print '<input type="hidden" name="rowid" value="'.$rowid.'">';
-                print '<input type="submit" class="button" name="actionmodify" value="'.$langs->trans("Modify").'">';
+                print '<input type="submit" class="button buttongen" name="actionmodify" value="'.$langs->trans("Modify").'">';
                 print '<div name="'.(!empty($obj->rowid) ? $obj->rowid : $obj->code).'"></div>';
-                print '<input type="submit" class="button" name="actioncancel" value="'.$langs->trans("Cancel").'">';
+                print '<input type="submit" class="button buttongen" name="actioncancel" value="'.$langs->trans("Cancel").'">';
                 print '</td>';
 
                 $fieldsforcontent = array('topic', 'joinfiles', 'content');
@@ -902,10 +902,10 @@ if ($resql)
 
                 // Modify link / Delete link
                 print '<td class="center nowraponall" width="64">';
-                if ($canbemodified) print '<a class="reposition" href="'.$url.'action=edit">'.img_edit().'</a>';
+                if ($canbemodified) print '<a class="reposition editfielda" href="'.$url.'action=edit">'.img_edit().'</a>';
                 if ($iserasable)
                 {
-                    print ' &nbsp; <a href="'.$url.'action=delete">'.img_delete().'</a>';
+                    print '<a class="marginleftonly" href="'.$url.'action=delete">'.img_delete().'</a>';
                     //else print '<a href="#">'.img_delete().'</a>';    // Some dictionary can be edited by other profile than admin
                 }
                 print '</td>';
@@ -976,12 +976,9 @@ function fieldList($fieldlist, $obj = '', $tabname = '', $context = '')
 {
 	global $conf, $langs, $user, $db;
 	global $form;
-	global $region_id;
-	global $elementList, $sourceList, $localtax_typeList;
-	global $bc;
+	global $elementList, $sourceList;
 
 	$formadmin = new FormAdmin($db);
-	$formcompany = new FormCompany($db);
 
 	foreach ($fieldlist as $field => $value)
 	{

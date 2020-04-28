@@ -12,7 +12,7 @@
  * Copyright (C) 2015-2019	Ferran Marcet			<fmarcet@2byte.es>
  * Copyright (C) 2016		Alexandre Spangaro		<aspangaro@open-dsi.fr>
  * Copyright (C) 2018       Nicolas ZABOURI			<info@inovea-conseil.com>
- * Copyright (C) 2018       Frédéric France         <frederic.france@netlogic.fr>
+ * Copyright (C) 2018-2020  Frédéric France         <frederic.france@netlogic.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -66,7 +66,7 @@ class FactureFournisseur extends CommonInvoice
     /**
      * @var string String with name of icon for myobject. Must be the part after the 'object_' into object_myobject.png
      */
-    public $picto = 'bill';
+    public $picto = 'supplier_invoice';
 
     /**
      * 0=No test on entity, 1=Test with field entity, 2=Test with link by societe
@@ -558,7 +558,7 @@ class FactureFournisseur extends CommonInvoice
             if ($result > 0)
             {
 				// Actions on extra fields
-            	if (empty($conf->global->MAIN_EXTRAFIELDS_DISABLED)) // For avoid conflicts if trigger used
+            	if (!$error)
 				{
 					$result = $this->insertExtraFields(); // This also set $this->error or $this->errors if errors are found
 					if ($result < 0)
@@ -977,6 +977,15 @@ class FactureFournisseur extends CommonInvoice
             }
         }
 
+		if (!$error)
+		{
+			$result = $this->insertExtraFields();
+			if ($result < 0)
+			{
+				$error++;
+			}
+		}
+
         if (!$error)
         {
             if (!$notrigger)
@@ -1171,10 +1180,14 @@ class FactureFournisseur extends CommonInvoice
 
         if (!$error)
         {
+            $main = MAIN_DB_PREFIX . 'facture_fourn_det';
+            $ef = $main . "_extrafields";
+            $sqlef = "DELETE FROM $ef WHERE fk_object IN (SELECT rowid FROM $main WHERE fk_facture_fourn = $rowid)";
+            $resqlef = $this->db->query($sqlef);
             $sql = 'DELETE FROM '.MAIN_DB_PREFIX.'facture_fourn_det WHERE fk_facture_fourn = '.$rowid.';';
             dol_syslog(get_class($this)."::delete", LOG_DEBUG);
             $resql = $this->db->query($sql);
-            if ($resql)
+            if ($resqlef && $resql)
             {
                 $sql = 'DELETE FROM '.MAIN_DB_PREFIX.'facture_fourn WHERE rowid = '.$rowid;
                 dol_syslog(get_class($this)."::delete", LOG_DEBUG);
@@ -1234,7 +1247,7 @@ class FactureFournisseur extends CommonInvoice
         }
 
         // Remove extrafields
-        if ((!$error) && (empty($conf->global->MAIN_EXTRAFIELDS_DISABLED))) // For avoid conflicts if trigger used
+        if (!$error)
         {
         	$result = $this->deleteExtraFields();
         	if ($result < 0)
@@ -2025,7 +2038,7 @@ class FactureFournisseur extends CommonInvoice
 		    $this->errors[] = $line->error;
 	    } else {
 		    // Update total price into invoice record
-		    $res = $this->update_price('', 'auto');
+		    $res = $this->update_price('', 'auto', 0, $this->thirdparty);
 	    }
 
 	    return $res;
@@ -2342,7 +2355,7 @@ class FactureFournisseur extends CommonInvoice
         if ($this->type == self::TYPE_CREDIT_NOTE) $picto .= 'a'; // Credit note
         if ($this->type == self::TYPE_DEPOSIT)     $picto .= 'd'; // Deposit invoice
 
-        $label = '<u>'.$langs->trans("ShowSupplierInvoice").'</u>';
+        $label = '<u>'.$langs->trans("SupplierInvoice").'</u>';
         if (!empty($this->ref))
             $label .= '<br><b>'.$langs->trans('Ref').':</b> '.$this->ref;
         if (!empty($this->ref_supplier))
@@ -2665,6 +2678,7 @@ class FactureFournisseur extends CommonInvoice
         if ($result < 0)
         {
             $this->error = $object->error;
+            $this->errors = $object->errors;
             $error++;
         }
 
@@ -3119,7 +3133,7 @@ class SupplierInvoiceLine extends CommonObjectLine
 	 */
 	public function delete($notrigger = 0)
 	{
-		global $user;
+		global $user, $conf;
 
 		dol_syslog(get_class($this)."::deleteline rowid=".$this->id, LOG_DEBUG);
 
@@ -3134,6 +3148,17 @@ class SupplierInvoiceLine extends CommonObjectLine
 		}
 
 		$this->deleteObjectLinked();
+
+		// Remove extrafields
+        if (!$error)
+        {
+        	$result = $this->deleteExtraFields();
+        	if ($result < 0)
+        	{
+        		$error++;
+        		dol_syslog(get_class($this)."::delete error -4 ".$this->error, LOG_ERR);
+        	}
+        }
 
 		if (!$error) {
 			// Supprime ligne
@@ -3245,7 +3270,7 @@ class SupplierInvoiceLine extends CommonObjectLine
 		$this->rowid = $this->id;
 		$error = 0;
 
-		if (empty($conf->global->MAIN_EXTRAFIELDS_DISABLED)) // For avoid conflicts if trigger used
+		if (!$error)
 		{
 			$result = $this->insertExtraFields();
 			if ($result < 0)
@@ -3386,7 +3411,7 @@ class SupplierInvoiceLine extends CommonObjectLine
             $this->id = $this->db->last_insert_id(MAIN_DB_PREFIX.$this->table_element);
             $this->rowid = $this->id; // backward compatibility
 
-            if (empty($conf->global->MAIN_EXTRAFIELDS_DISABLED)) // For avoid conflicts if trigger used
+            if (!$error)
             {
                 $result = $this->insertExtraFields();
                 if ($result < 0)

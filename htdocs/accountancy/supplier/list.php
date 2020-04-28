@@ -577,12 +577,12 @@ if ($result) {
 		print '<td>'.$objp->tva_intra.'</td>';
 
 		// Found accounts
-		print '<td style="'.$code_buy_p_notset.'">';
+		print '<td>';
 		$s = '<span class="small">'.(($objp->type_l == 1) ? $langs->trans("DefaultForService") : $langs->trans("DefaultForProduct")).': </span>';
 		$shelp = '';
 		if ($suggestedaccountingaccountbydefaultfor == 'eec') $shelp .= $langs->trans("SaleEEC");
 		elseif ($suggestedaccountingaccountbydefaultfor == 'export') $shelp .= $langs->trans("SaleExport");
-		$s .= ($objp->code_buy_l > 0 ? length_accountg($objp->code_buy_l) : $langs->trans("NotDefined"));
+		$s .= ($objp->code_buy_l > 0 ? length_accountg($objp->code_buy_l) : '<span style="'.$code_buy_p_notset.'">'.$langs->trans("NotDefined").'</span>');
 		print $form->textwithpicto($s, $shelp, 1, 'help', '', 0, 2, '', 1);
 		if ($objp->product_id > 0)
 		{
@@ -591,7 +591,7 @@ if ($result) {
 			$shelp = '';
 			if ($suggestedaccountingaccountfor == 'eec') $shelp = $langs->trans("SaleEEC");
 			elseif ($suggestedaccountingaccountfor == 'export') $shelp = $langs->trans("SaleExport");
-			$s .= (empty($objp->code_buy_p) ? $langs->trans("NotDefined") : length_accountg($objp->code_buy_p));
+			$s .= (empty($objp->code_buy_p) ? '<span style="'.$code_buy_p_notset.'">'.$langs->trans("NotDefined").'</span>' : length_accountg($objp->code_buy_p));
 			print $form->textwithpicto($s, $shelp, 1, 'help', '', 0, 2, '', 1);
 		}
 		print '</td>';

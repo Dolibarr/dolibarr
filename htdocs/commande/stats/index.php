@@ -66,20 +66,20 @@ $langs->loadLangs(array('orders', 'companies', 'other', 'suppliers'));
 $form = new Form($db);
 $formorder = new FormOrder($db);
 
-if ($mode == 'customer')
-{
-    $title = $langs->trans("OrdersStatistics");
-    $dir = $conf->commande->dir_temp;
-}
+$picto = 'order';
+$title = $langs->trans("OrdersStatistics");
+$dir = $conf->commande->dir_temp;
+
 if ($mode == 'supplier')
 {
+	$picto = 'supplier_order';
     $title = $langs->trans("OrdersStatisticsSuppliers").' ('.$langs->trans("SentToSuppliers").")";
     $dir = $conf->fournisseur->commande->dir_temp;
 }
 
 llxHeader('', $title);
 
-print load_fiche_titre($title, '', 'commercial');
+print load_fiche_titre($title, '', $picto);
 
 dol_mkdir($dir);
 

@@ -76,7 +76,7 @@ TypeContact_propal_external_BILLING=Получател на фактура
 TypeContact_propal_external_CUSTOMER=Получател на предложение
 TypeContact_propal_external_SHIPPING=Получател на доставка
 # Document models
-DocModelAzurDescription=Пълен шаблон на предложение (стара реализация на шаблон Cyan)
+DocModelAzurDescription=Пълен шаблон на предложение 
 DocModelCyanDescription=Пълен модел на предложение
 DefaultModelPropalCreate=Създаване на шаблон по подразбиране
 DefaultModelPropalToBill=Шаблон по подразбиране, когато се приключва търговско предложение (за да бъде фактурирано)

@@ -185,7 +185,7 @@ class Cpaiement
 		$sql .= ' FROM '.MAIN_DB_PREFIX.$this->table_element.' as t';
 		if (null !== $ref) {
 			$sql .= ' WHERE t.entity IN ('.getEntity('c_paiement').')';
-			$sql .= ' AND t.code = '.'\''.$ref.'\'';
+			$sql .= " AND t.code = '".$this->db->escape($ref)."'";
 		} else {
 			$sql .= ' WHERE t.id = '.$id;
 		}

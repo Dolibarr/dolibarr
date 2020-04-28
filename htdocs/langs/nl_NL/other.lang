@@ -34,7 +34,7 @@ GraphInBarsAreLimitedToNMeasures=Grapics are limited to %s measures in 'Bars' mo
 OnlyOneFieldForXAxisIsPossible=Only 1 field is currently possible as X-Axis. Only the first selected field has been selected.
 AtLeastOneMeasureIsRequired=At least 1 field for measure is required
 AtLeastOneXAxisIsRequired=At least 1 field for X-Axis is required
-
+LatestBlogPosts=Latest Blog Posts
 Notify_ORDER_VALIDATE=Klantorder gevalideerd
 Notify_ORDER_SENTBYMAIL=Klantorder verzonden per post
 Notify_ORDER_SUPPLIER_SENTBYMAIL=Aankooporder verzonden per e-mail
@@ -274,7 +274,7 @@ WEBSITE_PAGEURL=URL van pagina
 WEBSITE_TITLE=Titel
 WEBSITE_DESCRIPTION=Omschrijving
 WEBSITE_IMAGE=Beeld
-WEBSITE_IMAGEDesc=Relatief pad van de beeldmedia. Je kunt dit leeg laten, omdat dit zelden wordt gebruikt (het kan door dynamische inhoud worden gebruikt om een miniatuur in een lijst met blogberichten weer te geven). Gebruik __WEBSITEKEY__ in het pad als pad afhankelijk is van de naam van de website.
+WEBSITE_IMAGEDesc=Relative path of the image media. You can keep this empty as this is rarely used (it can be used by dynamic content to show a thumbnail in a list of blog posts). Use __WEBSITE_KEY__ in the path if path depends on website name (for example: image/__WEBSITE_KEY__/stories/myimage.png).
 WEBSITE_KEYWORDS=Sleutelwoorden
 LinesToImport=Regels om te importeren
 

@@ -107,7 +107,7 @@ function dol_print_cron_urls()
 
 	print '<u>'.$langs->trans("FileToLaunchCronJobs").':</u><br>';
 
-	$file = '/scripts/cron/cron_run_jobs.php'.' '.(empty($conf->global->CRON_KEY) ? 'securitykey' : ''.$conf->global->CRON_KEY.'').' '.$logintouse.' [cronjobid]';
+	$file = '/scripts/cron/cron_run_jobs.php '.(empty($conf->global->CRON_KEY) ? 'securitykey' : ''.$conf->global->CRON_KEY.'').' '.$logintouse.' [cronjobid]';
 	print '<textarea class="quatrevingtpercent">..'.$file."</textarea><br>\n";
 	print '<br>';
 

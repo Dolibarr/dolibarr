@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2002-2005	Rodolphe Quiedeville	<rodolphe@quiedeville.org>
  * Copyright (C) 2002-2003	Jean-Louis Bergamo		<jlb@j1b.org>
- * Copyright (C) 2004-2015	Laurent Destailleur		<eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2020	Laurent Destailleur		<eldy@users.sourceforge.net>
  * Copyright (C) 2004		Eric Seigne				<eric.seigne@ryxeo.com>
  * Copyright (C) 2005-2017	Regis Houssin			<regis.houssin@inodbox.com>
  * Copyright (C) 2012		Juanjo Menent			<jmenent@2byte.es>
@@ -42,9 +42,9 @@ $contextpage = GETPOST('contextpage', 'aZ') ?GETPOST('contextpage', 'aZ') : 'use
 
 if (!isset($id) || empty($id)) accessforbidden();
 
-// Defini si peux lire les permissions
+// Define if user can read permissions
 $canreaduser = ($user->admin || $user->rights->user->user->lire);
-// Defini si peux modifier les autres utilisateurs et leurs permisssions
+// Define if user can modify other users and permissions
 $caneditperms = ($user->admin || $user->rights->user->user->creer);
 // Advanced permissions
 if (!empty($conf->global->MAIN_USE_ADVANCED_PERMS))
@@ -132,9 +132,9 @@ if (empty($reshook)) {
  *	View
  */
 
-llxHeader('', $langs->trans("Permissions"));
-
 $form = new Form($db);
+
+llxHeader('', $langs->trans("Permissions"));
 
 $head = user_prepare_head($object);
 
@@ -294,9 +294,9 @@ print '</tr>'."\n";
 //print "xx".$conf->global->MAIN_USE_ADVANCED_PERMS;
 $sql = "SELECT r.id, r.libelle as label, r.module, r.perms, r.subperms, r.module_position";
 $sql .= " FROM ".MAIN_DB_PREFIX."rights_def as r";
-$sql .= " WHERE r.libelle NOT LIKE 'tou%'";    // On ignore droits "tous"
-$sql .= " AND r.entity = " . $entity;
-if (empty($conf->global->MAIN_USE_ADVANCED_PERMS)) $sql .= " AND r.perms NOT LIKE '%_advance'";  // Hide advanced perms if option is not enabled
+$sql .= " WHERE r.libelle NOT LIKE 'tou%'"; // On ignore droits "tous"
+$sql .= " AND r.entity = ".$entity;
+if (empty($conf->global->MAIN_USE_ADVANCED_PERMS)) $sql .= " AND r.perms NOT LIKE '%_advance'"; // Hide advanced perms if option is not enabled
 $sql .= " ORDER BY r.family_position, r.module_position, r.module, r.id";
 
 $result = $db->query($sql);

@@ -149,7 +149,7 @@ input[name=duration_value]
 {
 	margin-right: 4px;
 }
-input[type=submit] {
+input[type=submit], input[type=submit]:hover {
 	margin-left: 5px;
 }
 input, input.flat, form.flat select, select, select.flat, .dataTables_length label select {
@@ -210,7 +210,9 @@ textarea.cke_source:focus
 {
 	box-shadow: none;
 }
-
+div#cke_dp_desc {
+    margin-top: 5px;
+}
 textarea {
 	border-radius: 0;
 	border-top:solid 1px rgba(0,0,0,.2);
@@ -536,6 +538,9 @@ textarea.centpercent {
     color: #777;
 }
 
+.flip {
+	transform: scaleX(-1);
+}
 .center {
     text-align: center;
     margin: 0px auto;
@@ -1695,8 +1700,8 @@ div.statusrefbis {
 }
 img.photoref, div.photoref {
 	/* border: 1px solid #DDD; */
-    -webkit-box-shadow: 1px 1px 4px rgba(0, 0, 0, 0.2), 0px 0px 2px rgba(0, 0, 0, 0.1);
-    box-shadow: 1px 1px 4px rgba(0, 0, 0, 0.2), 0px 0px 2px rgba(0, 0, 0, 0.1);
+    -webkit-box-shadow: 1px 1px 5px rgba(0, 0, 0, 0.2);
+    box-shadow: 1px 1px 5px rgba(0, 0, 0, 0.2);
     padding: 4px;
 	height: 80px;
 	width: 80px;
@@ -3766,7 +3771,7 @@ div.info {
     padding-bottom: 8px;
     margin: 1em 0em 1em 0em;
     background: #eff8fc;
-    color: #666;
+    color: #668;
 }
 
 /* Warning message */

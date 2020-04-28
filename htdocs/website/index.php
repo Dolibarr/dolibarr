@@ -327,6 +327,8 @@ if ($cancel)
 
 $savbacktopage = $backtopage;
 $backtopage = $_SERVER["PHP_SELF"].'?file_manager=1&website='.$websitekey.'&pageid='.$pageid.(GETPOST('section_dir', 'alpha') ? '&section_dir='.urlencode(GETPOST('section_dir', 'alpha')) : ''); // used after a confirm_deletefile into actions_linkedfiles.inc.php
+if ($sortfield) $backtopage .= '&sortfield='.$sortfield;
+if ($sortorder) $backtopage .= '&sortorder='.$sortorder;
 include DOL_DOCUMENT_ROOT.'/core/actions_linkedfiles.inc.php';
 $backtopage = $savbacktopage;
 
@@ -1230,7 +1232,7 @@ if ($action == 'updatecss')
 
     		$csscontent .= "<?php // BEGIN PHP\n";
     		$csscontent .= '$websitekey=basename(__DIR__);'."\n";
-    		$csscontent .= "if (! defined('USEDOLIBARRSERVER') && ! defined('USEDOLIBARREDITOR')) { require_once __DIR__.'/master.inc.php'; } // Load env if not already loaded"."\n"; // For the css, we need to set path of master using the dirname of css file.
+    		$csscontent .= "if (! defined('USEDOLIBARRSERVER') && ! defined('USEDOLIBARREDITOR')) { require_once __DIR__.'/master.inc.php'; } // Load env if not already loaded\n"; // For the css, we need to set path of master using the dirname of css file.
     		$csscontent .= "require_once DOL_DOCUMENT_ROOT.'/core/lib/website.lib.php';\n";
     		$csscontent .= "require_once DOL_DOCUMENT_ROOT.'/core/website.inc.php';\n";
     		$csscontent .= "ob_start();\n";
@@ -1244,7 +1246,7 @@ if ($action == 'updatecss')
 
     		$csscontent .= '<?php // BEGIN PHP'."\n";
     		$csscontent .= '$tmp = ob_get_contents(); ob_end_clean(); dolWebsiteOutput($tmp, "css");'."\n";
-    		$csscontent .= "// END PHP ?>"."\n";
+    		$csscontent .= "// END PHP ?>\n";
 
     		dol_syslog("Save css content into ".$filecss);
 
@@ -1261,7 +1263,7 @@ if ($action == 'updatecss')
 
     		$jscontent .= "<?php // BEGIN PHP\n";
     		$jscontent .= '$websitekey=basename(__DIR__);'."\n";
-    		$jscontent .= "if (! defined('USEDOLIBARRSERVER') && ! defined('USEDOLIBARREDITOR')) { require_once __DIR__.'/master.inc.php'; } // Load env if not already loaded"."\n"; // For the css, we need to set path of master using the dirname of css file.
+    		$jscontent .= "if (! defined('USEDOLIBARRSERVER') && ! defined('USEDOLIBARREDITOR')) { require_once __DIR__.'/master.inc.php'; } // Load env if not already loaded\n"; // For the css, we need to set path of master using the dirname of css file.
     		$jscontent .= "require_once DOL_DOCUMENT_ROOT.'/core/lib/website.lib.php';\n";
     		$jscontent .= "require_once DOL_DOCUMENT_ROOT.'/core/website.inc.php';\n";
     		$jscontent .= "ob_start();\n";
@@ -1273,7 +1275,7 @@ if ($action == 'updatecss')
 
     		$jscontent .= '<?php // BEGIN PHP'."\n";
     		$jscontent .= '$tmp = ob_get_contents(); ob_end_clean(); dolWebsiteOutput($tmp, "js");'."\n";
-    		$jscontent .= "// END PHP ?>"."\n";
+    		$jscontent .= "// END PHP ?>\n";
 
     		$result = dolSaveJsFile($filejs, $jscontent);
     		if (!$result)
@@ -1327,7 +1329,7 @@ if ($action == 'updatecss')
 
        		$manifestjsoncontent .= "<?php // BEGIN PHP\n";
        		$manifestjsoncontent .= '$websitekey=basename(__DIR__);'."\n";
-       		$manifestjsoncontent .= "if (! defined('USEDOLIBARRSERVER') && ! defined('USEDOLIBARREDITOR')) { require_once __DIR__.'/master.inc.php'; } // Load env if not already loaded"."\n"; // For the css, we need to set path of master using the dirname of css file.
+       		$manifestjsoncontent .= "if (! defined('USEDOLIBARRSERVER') && ! defined('USEDOLIBARREDITOR')) { require_once __DIR__.'/master.inc.php'; } // Load env if not already loaded\n"; // For the css, we need to set path of master using the dirname of css file.
        		$manifestjsoncontent .= "require_once DOL_DOCUMENT_ROOT.'/core/lib/website.lib.php';\n";
        		$manifestjsoncontent .= "require_once DOL_DOCUMENT_ROOT.'/core/website.inc.php';\n";
        		$manifestjsoncontent .= "ob_start();\n";
@@ -1339,7 +1341,7 @@ if ($action == 'updatecss')
 
        		$manifestjsoncontent .= '<?php // BEGIN PHP'."\n";
        		$manifestjsoncontent .= '$tmp = ob_get_contents(); ob_end_clean(); dolWebsiteOutput($tmp, "manifest");'."\n";
-       		$manifestjsoncontent .= "// END PHP ?>"."\n";
+       		$manifestjsoncontent .= "// END PHP ?>\n";
 
        		$result = dolSaveManifestJson($filemanifestjson, $manifestjsoncontent);
        		if (!$result)
@@ -2131,7 +2133,7 @@ print '<div>';
 
 // Add a margin under toolbar ?
 $style = '';
-if ($action != 'preview' && $action != 'editcontent' && $action != 'editsource' && ! GETPOST('createpagefromclone', 'alphanohtml')) $style = ' margin-bottom: 5px;';
+if ($action != 'preview' && $action != 'editcontent' && $action != 'editsource' && !GETPOST('createpagefromclone', 'alphanohtml')) $style = ' margin-bottom: 5px;';
 
 
 if (!GETPOST('hide_websitemenu'))
@@ -2435,7 +2437,7 @@ if (!GETPOST('hide_websitemenu'))
 					$preselectedlanguage = GETPOST('newlang', 'aZ09') ? GETPOST('newlang', 'aZ09') : ($objectpage->lang ? $objectpage->lang : $langs->defaultlang);
 					$onlylang = array();
 					if ($website->otherlang) {
-						foreach(explode(',', $website->otherlang) as $langkey) {
+						foreach (explode(',', $website->otherlang) as $langkey) {
 							$onlylang[$langkey] = $langkey;
 						}
 						$textifempty = 1;
@@ -2717,7 +2719,9 @@ if ($action == 'editcss')
 	{
 		$csscontent = GETPOST('WEBSITE_CSS_INLINE', 'none');
 	}
-	if (!trim($csscontent)) $csscontent = '/* CSS content (all pages) */'."\n"."body.bodywebsite { margin: 0; font-family: 'Open Sans', sans-serif; }\n.bodywebsite h1 { margin-top: 0; margin-bottom: 0; padding: 10px;}";
+	if (!trim($csscontent)) {
+		$csscontent = '/* CSS content (all pages) */'."\nbody.bodywebsite { margin: 0; font-family: 'Open Sans', sans-serif; }\n.bodywebsite h1 { margin-top: 0; margin-bottom: 0; padding: 10px;}";
+	}
 
 	if (!GETPOSTISSET('WEBSITE_JS_INLINE'))
 	{
@@ -3326,6 +3330,8 @@ if ($action == 'editmeta' || $action == 'createcontainer')
 	{
 	    $fuser->fetch($pageauthorid);
 	    print $fuser->getNomUrl(1);
+	} else {
+		print '<span class="opacitymedium">'.$langs->trans("Unknown").'</span>';
 	}
 	print '</td></tr>';
 

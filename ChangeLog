@@ -13,7 +13,7 @@ For Developers or integrators:
   - replace $page = GETPOST('page', 'int') with $page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOST("page", 'int'); 
   - remove input field in form '<input type="hidden" name="page" value="'.$page.'">';'
   - add parameter $pagenavastextinput to value 1 when calling print_barre_liste   
-
+* UserGroup class has been refactored with new architecture. Triggers of class UserGroup are now USERGROUP_CREATE, USERGROUP_MODIFY, USERGROUP_DELETE
 
 WARNING:
 

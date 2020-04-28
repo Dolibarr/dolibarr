@@ -264,7 +264,7 @@ if ($action == 'create')
 	print '<input type="hidden" name="token" value="'.newToken().'">';
 	print '<input type="hidden" name="action" value="add">';
 
-	print load_fiche_titre($langs->trans("NewSalaryPayment"), '', 'title_accountancy.png');
+	print load_fiche_titre($langs->trans("NewSalaryPayment"), '', 'object_payment');
 
 	dol_fiche_head('', '');
 

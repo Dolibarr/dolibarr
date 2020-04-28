@@ -203,7 +203,7 @@ class FormActions
             if ($typeelement == 'project') $projectid = $object->id;
 
             $newcardbutton = '';
-			if (!empty($conf->agenda->enabled))
+            if (!empty($conf->agenda->enabled) && !empty($user->rights->agenda->myactions->create))
 			{
                 $newcardbutton .= dolGetButtonTitle($langs->trans("AddEvent"), '', 'fa fa-plus-circle', DOL_URL_ROOT.'/comm/action/card.php?action=create&datep='.dol_print_date(dol_now(), 'dayhourlog').'&origin='.$typeelement.'&originid='.$object->id.($object->socid > 0 ? '&socid='.$object->socid : ($socid > 0 ? '&socid='.$socid : '')).($projectid > 0 ? '&projectid='.$projectid : '').'&backtopage='.urlencode($urlbacktopage));
 			}

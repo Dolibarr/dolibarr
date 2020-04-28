@@ -48,7 +48,7 @@ if ($user->rights->tax->charges->creer)
     $newcardbutton .= dolGetButtonTitle($langs->trans('NewLocalTaxPayment', ($ltt + 1)), '', 'fa fa-plus-circle', DOL_URL_ROOT.'/compta/localtax/card.php?action=create&localTaxType='.$ltt);
 }
 
-print load_fiche_titre($langs->transcountry($ltt == 2 ? "LT2Payments" : "LT1Payments", $mysoc->country_code), $newcardbutton, 'invoicing');
+print load_fiche_titre($langs->transcountry($ltt == 2 ? "LT2Payments" : "LT1Payments", $mysoc->country_code), $newcardbutton, 'title_accountancy');
 
 $sql = "SELECT rowid, amount, label, f.datev, f.datep";
 $sql .= " FROM ".MAIN_DB_PREFIX."localtax as f ";

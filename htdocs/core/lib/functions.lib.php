@@ -3141,22 +3141,29 @@ function img_picto($titlealt, $picto, $moreatt = '', $pictoisfullpath = false, $
 
         if (empty($srconly) && in_array($pictowithouttext, array(
         		'1downarrow', '1uparrow', '1leftarrow', '1rightarrow', '1uparrow_selected', '1downarrow_selected', '1leftarrow_selected', '1rightarrow_selected',
-        		'address', 'bank_account', 'barcode', 'bank', 'bookmark', 'bom', 'building', 'cash-register', 'check', 'close_title', 'company', 'contact', 'cubes',
-        		'delete', 'dolly', 'edit', 'ellipsis-h', 'external-link-alt', 'external-link-square-alt',
-        		'filter', 'file-code', 'file-export', 'file-import', 'file-upload', 'folder', 'folder-open', 'grip', 'grip_title', 'help', 'language', 'list', 'listlight', 'lot', 'mrp', 'note', 'stock',
-        		'object_accounting', 'object_action', 'object_account', 'object_barcode', 'object_bom',
-        		'object_category', 'object_bookmark', 'object_bug', 'object_generic', 'object_list-alt', 'object_calendar', 'object_calendarweek', 'object_calendarmonth', 'object_calendarday', 'object_calendarperuser',
-        		'object_cash-register', 'object_company', 'object_contact', 'object_contract', 'object_dynamicprice',
-        		'object_holiday', 'object_hrm', 'object_multicurrency', 'object_payment',
-        		'object_lot', 'object_mrp', 'object_product', 'object_service', 'object_stock',
-        		'object_paragraph', 'object_printer', 'object_resource', 'object_rss', 'object_technic', 'object_ticket', 'object_trip', 'object_user', 'object_group', 'object_member', 'object_other',
-        		'object_phoning', 'object_phoning_fax', 'object_email',
-        		'off', 'on', 'paiment', 'play', 'playdisabled', 'printer', 'product', 'resize', 'service', 'stats', 'trip',
-				'note', 'setup', 'sign-out', 'split', 'switch_off', 'switch_on', 'tools', 'unlink', 'uparrow', 'user', 'wrench', 'globe',
+        		'accountancy', 'address', 'bank_account', 'barcode', 'bank', 'bill', 'bookmark', 'bom', 'building',
+        		'cash-register', 'check', 'close_title', 'company', 'contact', 'contract', 'cubes',
+        		'delete', 'dolly', 'dollyrevert', 'edit', 'ellipsis-h', 'external-link-alt', 'external-link-square-alt',
+        		'filter', 'file-code', 'file-export', 'file-import', 'file-upload', 'folder', 'folder-open', 'globe', 'globe-americas', 'grip', 'grip_title', 'help',
+        		'intervention', 'language', 'list', 'listlight', 'lot',
+        		'map-marker-alt', 'money-bill-alt', 'mrp', 'note',
+        		'object_accounting', 'object_action', 'object_account', 'object_barcode', 'object_bill', 'object_billa', 'object_billd', 'object_bom',
+	        	'object_category', 'object_bookmark', 'object_bug', 'object_dolly', 'object_dollyrevert', 'object_generic', 'object_folder',
+        		'object_list-alt', 'object_calendar', 'object_calendarweek', 'object_calendarmonth', 'object_calendarday', 'object_calendarperuser',
+        		'object_cash-register', 'object_company', 'object_contact', 'object_contract', 'object_donation', 'object_dynamicprice',
+        		'object_holiday', 'object_hrm', 'object_intervention', 'object_margin', 'object_money-bill-alt', 'object_multicurrency', 'object_order', 'object_payment',
+        		'object_lot', 'object_mrp', 'object_payment', 'object_product', 'object_propal',
+        		'object_other', 'object_paragraph', 'object_poll', 'object_printer', 'object_project', 'object_projectpub', 'object_propal', 'object_resource', 'object_rss', 'object_projecttask',
+        		'object_supplier_invoice', 'object_supplier_order', 'object_supplier_proposal', 'object_service', 'object_stock',
+        		'object_technic', 'object_ticket', 'object_trip', 'object_user', 'object_group', 'object_member',
+        		'object_phoning', 'object_phoning_mobile', 'object_phoning_fax', 'object_email',
+        		'off', 'on', 'order',
+        		'paiment', 'play', 'playdisabled', 'poll', 'printer', 'product', 'propal',  'projecttask', 'stock', 'resize', 'service', 'stats', 'trip',
+				'setup', 'sign-out', 'split', 'switch_off', 'switch_on', 'tools', 'unlink', 'uparrow', 'user', 'wrench',
 				'jabber', 'skype', 'twitter', 'facebook', 'linkedin', 'instagram', 'snapchat', 'youtube', 'google-plus-g', 'whatsapp',
 				'chevron-left', 'chevron-right', 'chevron-down', 'chevron-top',
-				'home', 'companies', 'products', 'commercial', 'invoicing', 'accountancy', 'preview', 'project', 'hrm', 'members', 'ticket', 'generic',
-        		'error', 'warning',
+				'home', 'companies', 'products', 'commercial', 'invoicing', 'preview', 'project', 'projectpub', 'supplier_invoice', 'hrm', 'members', 'ticket', 'generic',
+        		'error', 'warning', 'supplier_proposal', 'supplier_order', 'supplier_invoice',
         		'title_setup', 'title_accountancy', 'title_bank', 'title_hrm', 'title_agenda'
 			)
 		)) {
@@ -3173,25 +3180,29 @@ function img_picto($titlealt, $picto, $moreatt = '', $pictoisfullpath = false, $
 			$pictowithouttext = str_replace('object_', '', $pictowithouttext);
 
 		    $arrayconvpictotofa = array(
-		    	'account'=>'university', 'action'=>'calendar-alt', 'address'=> 'address-book', 'bank_account'=>'university', 'bom'=>'cubes',
-		    	'company'=>'building', 'contact'=>'address-book', 'contract'=>'suitcase', 'dynamicprice'=>'hand-holding-usd',
-		    	'setup'=>'cog', 'companies'=>'building', 'products'=>'cube', 'commercial'=>'suitcase', 'invoicing'=>'coins', 'accountancy'=>'money-check-alt',
-		    	'accounting'=>'chart-line', 'category'=>'tag',
-		    	'hrm'=>'umbrella-beach', 'members'=>'users', 'ticket'=>'ticket-alt', 'globe'=>'external-link-alt', 'lot'=>'barcode',
+		    	'account'=>'university', 'accountancy'=>'money-check-alt', 'action'=>'calendar-alt', 'address'=> 'address-book',
+		    	'bank_account'=>'university', 'bill'=>'file-invoice-dollar', 'billa'=>'file-excel', 'billd'=>'file-medical', 'bom'=>'cubes',
+		    	'company'=>'building', 'contact'=>'address-book', 'contract'=>'suitcase', 'donation'=>'file-alt', 'dynamicprice'=>'hand-holding-usd',
+		    	'setup'=>'cog', 'companies'=>'building', 'products'=>'cube', 'commercial'=>'suitcase', 'invoicing'=>'coins',
+		    	'accounting'=>'chart-line', 'category'=>'tag', 'dollyrevert'=>'dolly',
+		    	'hrm'=>'umbrella-beach', 'margin'=>'calculator', 'members'=>'users', 'ticket'=>'ticket-alt', 'globe'=>'external-link-alt', 'lot'=>'barcode',
 		    	'email'=>'at',
 		    	'edit'=>'pencil-alt', 'grip_title'=>'arrows-alt', 'grip'=>'arrows-alt', 'help'=>'info-circle',
 		    	'generic'=>'file', 'holiday'=>'umbrella-beach', 'member'=>'users', 'mrp'=>'cubes', 'trip'=>'wallet', 'group'=>'users',
 		    	'sign-out'=>'sign-out-alt',
-		    	'switch_off'=>'toggle-off', 'switch_on'=>'toggle-on', 'check'=>'check', 'bookmark'=>'star', 'bookmark'=>'star', 'stats' => 'chart-bar',
-		    	'bank'=>'university', 'close_title'=>'window-close', 'delete'=>'trash', 'edit'=>'pencil-alt', 'filter'=>'filter', 'split'=>'code-branch',
+		    	'switch_off'=>'toggle-off', 'switch_on'=>'toggle-on', 'check'=>'check', 'bookmark'=>'star', 'bookmark'=>'star',
+		    	'bank'=>'university', 'close_title'=>'window-close', 'delete'=>'trash', 'edit'=>'pencil-alt', 'filter'=>'filter',
 		    	'list-alt'=>'list-alt', 'calendar'=>'calendar-alt', 'calendarweek'=>'calendar-week', 'calendarmonth'=>'calendar-alt', 'calendarday'=>'calendar-day', 'calendarperuser'=>'table',
-		    	'multicurrency'=>'dollar-sign', 'other'=>'square', 'resource'=>'laptop-house',
+		    	'intervention'=>'ambulance', 'multicurrency'=>'dollar-sign', 'order'=>'file-invoice',
 		    	'error'=>'exclamation-triangle', 'warning'=>'exclamation-triangle',
-		    	'payment'=>'money-bill-alt', 'phoning'=>'phone', 'phoning_fax'=>'fax', 'printer'=>'print', 'product'=>'cube', 'service'=>'concierge-bell',
-		    	'stock'=>'box-open', 'technic'=>'cogs', 'ticket'=>'ticket-alt',
+		    	'other'=>'square',
+		    	'playdisabled'=>'play', 'poll'=>'check-double', 'preview'=>'binoculars', 'project'=>'sitemap', 'projectpub'=>'sitemap', 'projecttask'=>'tasks', 'propal'=>'file-signature',
+				'resize'=>'crop', 'supplier_order'=>'dol-order_supplier', 'supplier_proposal'=>'file-signature',
+		    	'payment'=>'money-check-alt', 'phoning'=>'phone', 'phoning_mobile'=>'mobile-alt', 'phoning_fax'=>'fax', 'printer'=>'print', 'product'=>'cube', 'service'=>'concierge-bell',
+		    	'resource'=>'laptop-house',
+		    	'stock'=>'box-open', 'stats' => 'chart-bar', 'split'=>'code-branch', 'supplier_invoice'=>'file-invoice-dollar', 'technic'=>'cogs', 'ticket'=>'ticket-alt',
 		    	'title_setup'=>'tools', 'title_accountancy'=>'money-check-alt', 'title_bank'=>'university', 'title_hrm'=>'umbrella-beach',
 		    	'title_agenda'=>'calendar-alt',
-		    	'playdisabled'=>'play', 'preview'=>'binoculars', 'project'=>'sitemap', 'resize'=>'crop',
 		    	'uparrow'=>'mail-forward',
 		    	'jabber'=>'comment-o'
 		    );
@@ -3241,15 +3252,20 @@ function img_picto($titlealt, $picto, $moreatt = '', $pictoisfullpath = false, $
 
 			// Add CSS
 			$arrayconvpictotomorcess = array(
-				'action'=>'bg-infoxbox-action', 'account'=>'bg-infoxbox-bank_account', 'bank_account'=>'bg-infoxbox-bank_account', 'cash-register'=>'bg-infoxbox-bank_account',
-				'contract'=>'bg-infoxbox-contrat',
-				'multicurrency'=>'bg-infoxbox-bank_account',
-				'check'=>'font-status4',
-				'hrm'=>'bg-infoxbox-adherent', 'group'=>'bg-infoxbox-adherent',
-				'members'=>'bg-infoxbox-adherent', 'member'=>'bg-infoxbox-adherent', 'user'=>'bg-infoxbox-adherent', 'users'=>'bg-infoxbox-adherent',
+				'action'=>'bg-infobox-action', 'account'=>'bg-infobox-bank_account', 'accountancy'=>'bg-infobox-bank_account',
+				'bank_account'=>'bg-infobox-bank_account', 'bill'=>'bg-infobox-commande', 'billa'=>'bg-infobox-commande', 'billd'=>'bg-infobox-commande',
+				'cash-register'=>'bg-infobox-bank_account', 'contract'=>'bg-infobox-contrat', 'check'=>'font-status4',
+				'donation'=>'bg-infobox-commande', 'dollyrevert'=>'flip', 'ecm'=>'bg-infobox-action',
+				'hrm'=>'bg-infobox-adherent', 'group'=>'bg-infobox-adherent', 'intervention'=>'bg-infobox-contrat',
+				'multicurrency'=>'bg-infobox-bank_account',
+				'members'=>'bg-infobox-adherent', 'member'=>'bg-infobox-adherent', 'money-bill-alt'=>'bg-infobox-bank_account',
+				'order'=>'bg-infobox-commande',
+				'user'=>'bg-infobox-adherent', 'users'=>'bg-infobox-adherent',
 				'error'=>'pictoerror', 'warning'=>'pictowarning', 'switch_on'=>'font-status4',
-				'holiday'=>'bg-infoxbox-holiday', 'payment'=>'bg-infoxbox-bank_account', 'project'=>'bg-infoxbox-project', 'resource'=>'bg-infoxbox-action',
-				'ticket'=>'bg-infoxbox-contrat', 'title_hrm'=>'bg-infoxbox-holiday', 'trip'=>'bg-infoxbox-expensereport', 'title_agenda'=>'bg-infoxbox-action',
+				'holiday'=>'bg-infobox-holiday',
+				'payment'=>'bg-infobox-bank_account', 'poll'=>'bg-infobox-adherent', 'project'=>'bg-infobox-project', 'projecttask'=>'bg-infobox-project', 'propal'=>'bg-infobox-propal',
+				'resource'=>'bg-infobox-action', 'supplier_invoice'=>'bg-infobox-order_supplier', 'supplier_order'=>'bg-infobox-order_supplier', 'supplier_proposal'=>'bg-infobox-supplier_proposal',
+				'ticket'=>'bg-infobox-contrat', 'title_accountancy'=>'bg-infobox-bank_account', 'title_hrm'=>'bg-infobox-holiday', 'trip'=>'bg-infobox-expensereport', 'title_agenda'=>'bg-infobox-action',
 				'list-alt'=>'imgforviewmode', 'calendar'=>'imgforviewmode', 'calendarweek'=>'imgforviewmode', 'calendarmonth'=>'imgforviewmode', 'calendarday'=>'imgforviewmode', 'calendarperuser'=>'imgforviewmode'
 			);
 			if (!empty($arrayconvpictotomorcess[$pictowithouttext])) {
@@ -3261,10 +3277,11 @@ function img_picto($titlealt, $picto, $moreatt = '', $pictoisfullpath = false, $
 				'address'=>'#37a', 'building'=>'#37a', 'bom'=>'#a69944',
 				'companies'=>'#37a', 'company'=>'#37a', 'contact'=>'#37a', 'dynamicprice'=>'#a69944',
 				'edit'=>'#444', 'note'=>'#999', 'error'=>'', 'listlight'=>'#999',
-				'lot'=>'#a69944', 'mrp'=>'#a69944', 'product'=>'#a69944', 'service'=>'#a69944', 'stock'=>'#a69944',
+				'dolly'=>'#a69944', 'dollyrevert'=>'#a69944', 'lot'=>'#a69944',
+				'map-marker-alt'=>'#aaa', 'mrp'=>'#a69944', 'product'=>'#a69944', 'service'=>'#a69944', 'stock'=>'#a69944',
 				'other'=>'#ddd',
-				'playdisabled'=>'#ccc', 'printer'=>'#444', 'resize'=>'#444', 'rss'=>'#cba',
-				'stats'=>'#444', 'switch_off'=>'#999', 'uparrow'=>'#555', 'warning'=>''
+				'playdisabled'=>'#ccc', 'printer'=>'#444', 'projectpub'=>'#986c6a', 'resize'=>'#444', 'rss'=>'#cba',
+				'stats'=>'#444', 'switch_off'=>'#999', 'uparrow'=>'#555', 'globe-americas'=>'#aaa'
 			);
 			if (isset($arrayconvpictotocolor[$pictowithouttext])) {
 				$facolor = $arrayconvpictotocolor[$pictowithouttext];
@@ -3349,11 +3366,12 @@ function img_picto($titlealt, $picto, $moreatt = '', $pictoisfullpath = false, $
  *	@param	int		$srconly			Return only content of the src attribute of img.
  *  @param	int		$notitle			1=Disable tag title. Use it if you add js tooltip, to avoid duplicate tooltip.
  *	@return	string						Return img tag
- *	@see	#img_picto, #img_picto_common
+ *	@see	img_picto(), img_picto_common()
  */
 function img_object($titlealt, $picto, $moreatt = '', $pictoisfullpath = false, $srconly = 0, $notitle = 0)
 {
-	return img_picto($titlealt, 'object_'.$picto, $moreatt, $pictoisfullpath, $srconly, $notitle);
+	if (strpos($picto, '^') === 0) return img_picto($titlealt, str_replace('^', '', $picto), $moreatt, $pictoisfullpath, $srconly, $notitle);
+	else return img_picto($titlealt, 'object_'.$picto, $moreatt, $pictoisfullpath, $srconly, $notitle);
 }
 
 /**
@@ -3365,7 +3383,7 @@ function img_object($titlealt, $picto, $moreatt = '', $pictoisfullpath = false, 
  *	@param		int			$pictoisfullpath	If 1, image path is a full path
  *  @param      string      $morecss            More CSS
  *	@return     string      					Return img tag
- *  @see        #img_object, #img_picto
+ *  @see        img_object(), img_picto()
  */
 function img_weather($titlealt, $picto, $moreatt = '', $pictoisfullpath = 0, $morecss = '')
 {
@@ -3392,7 +3410,7 @@ function img_weather($titlealt, $picto, $moreatt = '', $pictoisfullpath = 0, $mo
  *	@param		string		$moreatt			Add more attribute on img tag
  *	@param		int			$pictoisfullpath	If 1, image path is a full path
  *	@return     string      					Return img tag
- *  @see        #img_object, #img_picto
+ *  @see        img_object(), img_picto()
  */
 function img_picto_common($titlealt, $picto, $moreatt = '', $pictoisfullpath = 0)
 {
@@ -4632,7 +4650,7 @@ function price($amount, $form = 0, $outlangs = '', $trunc = 1, $rounding = -1, $
 	{
 		if ($currency_code == 'auto') $currency_code = $conf->currency;
 
-		$listofcurrenciesbefore = array('USD', 'GBP', 'AUD', 'HKD', 'MXN', 'PEN', 'CNY', 'CAD');
+		$listofcurrenciesbefore = array('AUD', 'CAD', 'CNY', 'COP', 'CLP', 'GBP', 'HKD', 'MXN', 'PEN', 'USD');
 		$listoflanguagesbefore = array('nl_NL');
 		if (in_array($currency_code, $listofcurrenciesbefore) || in_array($outlangs->defaultlang, $listoflanguagesbefore))
 		{
@@ -4652,9 +4670,9 @@ function price($amount, $form = 0, $outlangs = '', $trunc = 1, $rounding = -1, $
 /**
  *	Function that return a number with universal decimal format (decimal separator is '.') from an amount typed by a user.
  *	Function to use on each input amount before any numeric test or database insert. A better name for this function
- *  should be text2num().
+ *  should be roundtext2num().
  *
- *	@param	float	$amount			Amount to convert/clean
+ *	@param	float	$amount			Amount to convert/clean or round
  *	@param	string	$rounding		''=No rounding
  * 									'MU'=Round to Max unit price (MAIN_MAX_DECIMALS_UNIT)
  *									'MT'=Round to Max for totals with Tax (MAIN_MAX_DECIMALS_TOT)

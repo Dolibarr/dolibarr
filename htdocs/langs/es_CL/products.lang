@@ -109,7 +109,6 @@ CustomerPrices=Precios de cliente
 SuppliersPrices=Precios del proveedor
 SuppliersPricesOfProductsOrServices=Precios de venta (de productos o servicios).
 CustomCode=Código de Aduanas / Productos / HS
-Nature=Naturaleza del producto (material / acabado)
 ProductCodeModel=Plantilla de referencia de producto
 ServiceCodeModel=Plantilla de referencia de servicio
 AlwaysUseNewPrice=Utilice siempre el precio actual del producto/servicio

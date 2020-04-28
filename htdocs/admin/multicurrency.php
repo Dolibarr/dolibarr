@@ -281,8 +281,8 @@ if (!empty($conf->global->MAIN_MULTICURRENCY_ALLOW_SYNCHRONIZATION))
 	print '<td>'.$form->textwithpicto($langs->trans("CurrencyLayerAccount"), $langs->trans("CurrencyLayerAccount_help_to_synchronize", $urlforapilayer)).'</td>'."\n";
 	print '<td class="right">';
 	print '<textarea id="response" class="hideobject" name="response"></textarea>';
-	print '<input type="submit" name="modify_apilayer" class="button" value="'.$langs->trans("Modify").'">';
-	print '<input type="submit" id="bt_sync" name="bt_sync_apilayer" class="button" value="'.$langs->trans('Synchronize').'" />';
+	print '<input type="submit" name="modify_apilayer" class="button buttongen" value="'.$langs->trans("Modify").'">';
+	print '<input type="submit" id="bt_sync" name="bt_sync_apilayer" class="button buttongen" value="'.$langs->trans('Synchronize').'" />';
 	print '</td></tr>';
 
 	print '<tr class="oddeven">';

@@ -69,7 +69,7 @@ class modAsset extends DolibarrModules
 		// Name of image file used for this module.
 		// If file is in theme/yourtheme/img directory under name object_pictovalue.png, use this->picto='pictovalue'
 		// If file is in module/img directory under name object_pictovalue.png, use this->picto='pictovalue@module'
-		$this->picto = 'generic';
+		$this->picto = 'accounting';
 
 		// Defined all module parts (triggers, login, substitutions, menus, css, etc...)
 		// for default path (eg: /asset/core/xxxxx) (0=disable, 1=enable)
@@ -200,7 +200,7 @@ class modAsset extends DolibarrModules
         $this->rights[$r][1] = 'Setup types of asset'; // Permission label
         $this->rights[$r][2] = 'w';
         $this->rights[$r][3] = 0; // Permission by default for new user (0/1)
-        $this->rights[$r][4] = 'advanced_configurer'; // In php code, permission will be checked by test if ($user->rights->asset->level1->level2)
+        $this->rights[$r][4] = 'setup_advance'; // In php code, permission will be checked by test if ($user->rights->asset->level1->level2)
         $this->rights[$r][5] = ''; // In php code, permission will be checked by test if ($user->rights->asset->level1->level2)
 
         // Menus

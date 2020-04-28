@@ -68,7 +68,7 @@ class Project extends CommonObject
     /**
      * @var string String with name of icon for myobject. Must be the part after the 'object_' into object_myobject.png
      */
-    public $picto = 'projectpub';
+    public $picto = 'project';
 
     /**
      * {@inheritdoc}
@@ -316,7 +316,7 @@ class Project extends CommonObject
 
         // Update extrafield
         if (!$error) {
-        	if (empty($conf->global->MAIN_EXTRAFIELDS_DISABLED)) // For avoid conflicts if trigger used
+        	if (!$error)
         	{
         		$result = $this->insertExtraFields();
         		if ($result < 0)
@@ -405,7 +405,7 @@ class Project extends CommonObject
                 // Update extrafield
                 if (!$error)
                 {
-                	if (empty($conf->global->MAIN_EXTRAFIELDS_DISABLED)) // For avoid conflicts if trigger used
+                	if (!$error)
                 	{
                 		$result = $this->insertExtraFields();
                 		if ($result < 0)
@@ -1046,9 +1046,12 @@ class Project extends CommonObject
         $result = '';
 
         $label = '';
-        if ($option != 'nolink') $label = '<u>'.$langs->trans("ShowProject").'</u>';
+        if ($option != 'nolink') $label = '<u>'.$langs->trans("Project").'</u>';
         $label .= ($label ? '<br>' : '').'<b>'.$langs->trans('Ref').': </b>'.$this->ref; // The space must be after the : to not being explode when showing the title in img_picto
         $label .= ($label ? '<br>' : '').'<b>'.$langs->trans('Label').': </b>'.$this->title; // The space must be after the : to not being explode when showing the title in img_picto
+        if (isset($this->public)) {
+        	$label .= '<br><b>'.$langs->trans("Visibility").":</b> ".($this->public ? $langs->trans("SharedProject") : $langs->trans("PrivateProject"));
+        }
         if (!empty($this->thirdparty_name))
             $label .= ($label ? '<br>' : '').'<b>'.$langs->trans('ThirdParty').': </b>'.$this->thirdparty_name; // The space must be after the : to not being explode when showing the title in img_picto
         if (!empty($this->dateo))
