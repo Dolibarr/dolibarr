@@ -5243,6 +5243,25 @@ abstract class CommonObject
 
 	/* Functions for extrafields */
 
+	/**
+	 * Function to make a fetch but set environment to avoid to load computed values before.
+	 *
+	 * @param	int		$id			ID of object
+	 * @return	int					>0 if OK, 0 if not found, <0 if KO
+	 */
+	public function fetchNoCompute($id)
+	{
+		global $conf;
+
+		$savDisableCompute = $conf->disable_compute;
+		$conf->disable_compute = 1;
+
+		$ret = $this->fetch($id);
+
+		$conf->disable_compute = $savDisableCompute;
+
+		return $ret;
+	}
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
@@ -5257,7 +5276,7 @@ abstract class CommonObject
 	public function fetch_optionals($rowid = null, $optionsArray = null)
 	{
 		// phpcs:enable
-		global $extrafields;
+		global $conf, $extrafields;
 
 		if (empty($rowid)) $rowid = $this->id;
 		if (empty($rowid)) $rowid = $this->rowid;
@@ -5341,7 +5360,10 @@ abstract class CommonObject
 					foreach ($tab as $key => $value) {
 						if (!empty($extrafields) && !empty($extrafields->attributes[$this->table_element]['computed'][$key]))
 						{
-							$this->array_options["options_".$key] = dol_eval($extrafields->attributes[$this->table_element]['computed'][$key], 1, 0);
+							//var_dump($conf->disable_compute);
+							if (empty($conf->disable_compute)) {
+								$this->array_options["options_".$key] = dol_eval($extrafields->attributes[$this->table_element]['computed'][$key], 1, 0);
+							}
 						}
 					}
 				}

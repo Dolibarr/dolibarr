@@ -48,6 +48,8 @@ class Conf
 
     //! To store if javascript/ajax is enabked
     public $use_javascript_ajax;
+    //! To store if javascript/ajax is enabked
+    public $disable_compute;
 	//! Used to store current currency (ISO code like 'USD', 'EUR', ...)
 	public $currency;
 	//! Used to store current css (from theme)
