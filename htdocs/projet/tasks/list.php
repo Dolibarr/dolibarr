@@ -47,7 +47,7 @@ $search_categ = GETPOST("search_categ", 'alpha');
 $search_project = GETPOST('search_project');
 
 $search_projectstatus = GETPOST('search_projectstatus');
-if (!isset($search_projectstatus) || $search_projectstatus == '')
+if (!isset($search_projectstatus) || $search_projectstatus === '')
 {
 	if ($search_all != '') $search_projectstatus = -1;
 	else $search_projectstatus = 1;
