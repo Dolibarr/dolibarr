@@ -89,7 +89,7 @@ if ($mode == 'supplier')
     $title = $langs->trans("ProposalsStatisticsSuppliers").' ('.$langs->trans("SentToSuppliers").")";
     $dir = $conf->supplier_proposal->dir_temp;
     $cat_type = Categorie::TYPE_SUPPLIER;
-    $cat_label = $langs->trans("Category").' '.lcfirst($langs->trans("Customer"));
+    $cat_label = $langs->trans("Category").' '.lcfirst($langs->trans("Supplier"));
 }
 
 llxHeader('', $title);
