@@ -1995,3 +1995,5 @@ PDF_USE_ALSO_LANGUAGE_CODE=If you want to have some texts in your PDF duplicated
 FafaIconSocialNetworksDesc=Enter here the code of a FontAwesome icon. If you don't know what is FontAwesome, you can use the generic value fa-address-book.
 RssNote=Note: Each RSS feed definition provides a widget that you must enable to have it available in dashboard
 JumpToBoxes=Jump to Setup -> Widgets
+MeasuringUnitTypeDesc=For the product units like weight, length, area and volume use "size", "surface", "volume" or "weight" as Unit_type
+MeasuringScaleDesc=The scale for the Unit_types "size", "surface", "volume" and "weight" can only we have values from -127 up to 128.
