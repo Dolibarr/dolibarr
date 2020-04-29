@@ -263,7 +263,6 @@ print $form->selectarray("typent_id", $formcompany->typent_array(0), $typent_id,
 if ($user->admin) print ' '.info_admin($langs->trans("YouCanChangeValuesForThisListFromDictionarySetup"), 1);
 print '</td></tr>';
 // Category
-print '<tr><td>'.$cat_label.'</td><td>';
 if ($mode == 'customer')
 {
     $cat_type = Categorie::TYPE_CUSTOMER;
@@ -274,6 +273,7 @@ if ($mode == 'supplier')
     $cat_type = Categorie::TYPE_SUPPLIER;
     $cat_label = $langs->trans("Category").' '.lcfirst($langs->trans("Customer"));
 }
+print '<tr><td>'.$cat_label.'</td><td>';
 print $formother->select_categories($cat_type, $categ_id, 'categ_id', true);
 print '</td></tr>';
 // User
