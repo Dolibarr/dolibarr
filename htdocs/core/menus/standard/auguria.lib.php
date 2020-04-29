@@ -29,11 +29,11 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/menubase.class.php';
  * Core function to output top menu auguria
  *
  * @param 	DoliDB	$db				Database handler
- * @param 	string	$atarget		Target
+ * @param 	string	$atarget		Target (Example: '' or '_top')
  * @param 	int		$type_user     	0=Menu for backoffice, 1=Menu for front office
  * @param  	array	$tabMenu        If array with menu entries already loaded, we put this array here (in most cases, it's empty)
  * @param	Menu	$menu			Object Menu to return back list of menu entries
- * @param	int		$noout			Disable output (Initialise &$menu only).
+ * @param	int		$noout			1=Disable output (Initialise &$menu only).
  * @param	string	$mode			'top', 'topnb', 'left', 'jmobile'
  * @return	int						0
  */
@@ -131,27 +131,38 @@ function print_auguria_menu($db, $atarget, $type_user, &$tabMenu, &$menu, $noout
 	{
 		//$mysoc->logo_mini=(empty($conf->global->MAIN_INFO_SOCIETE_LOGO_MINI)?'':$conf->global->MAIN_INFO_SOCIETE_LOGO_MINI);
 		$mysoc->logo_squarred_mini = (empty($conf->global->MAIN_INFO_SOCIETE_LOGO_SQUARRED_MINI) ? '' : $conf->global->MAIN_INFO_SOCIETE_LOGO_SQUARRED_MINI);
+
+		$logoContainerAdditionalClass = 'backgroundforcompanylogo';
+		if (!empty($conf->global->MAIN_INFO_SOCIETE_LOGO_NO_BACKGROUND)) {
+			$logoContainerAdditionalClass = '';
+		}
+
 		if (!empty($mysoc->logo_squarred_mini) && is_readable($conf->mycompany->dir_output.'/logos/thumbs/'.$mysoc->logo_squarred_mini))
 		{
 			$urllogo = DOL_URL_ROOT.'/viewimage.php?cache=1&amp;modulepart=mycompany&amp;file='.urlencode('logos/thumbs/'.$mysoc->logo_squarred_mini);
 		}
+		/*elseif (! empty($mysoc->logo_mini) && is_readable($conf->mycompany->dir_output.'/logos/thumbs/'.$mysoc->logo_mini))
+		 {
+		 $urllogo=DOL_URL_ROOT.'/viewimage.php?cache=1&amp;modulepart=mycompany&amp;file='.urlencode('logos/thumbs/'.$mysoc->logo_mini);
+		 }*/
 		else
 		{
 			$urllogo = DOL_URL_ROOT.'/theme/dolibarr_logo_squarred_alpha.png';
+			$logoContainerAdditionalClass = '';
 		}
+
 		$title = $langs->trans("GoIntoSetupToChangeLogo");
 
 		print "\n".'<!-- Show logo on menu -->'."\n";
-		print_start_menu_entry_auguria('companylogo', 'class="tmenu tmenucompanylogo"', 1);
+		print_start_menu_entry_auguria('companylogo', 'class="tmenu tmenucompanylogo nohover"', 1);
 
-		print '<div class="center backgroundforcompanylogo"><img class="mycompany" title="'.dol_escape_htmltag($title).'" alt="" src="'.$urllogo.'" style="max-width: 100px"></div>'."\n";
+		print '<div class="center '.$logoContainerAdditionalClass.' menulogocontainer"><img class="mycompany" title="'.dol_escape_htmltag($title).'" alt="" src="'.$urllogo.'" style="max-width: 100px"></div>'."\n";
 
 		print_end_menu_entry_auguria(4);
 	}
 
 	if (empty($noout)) {
-		foreach ($menu->liste as $menuval)
-		{
+		foreach ($menu->liste as $menuval) {
 			print_start_menu_entry_auguria($menuval['idsel'], $menuval['classname'], $menuval['enabled']);
 	    	print_text_menu_entry_auguria($menuval['titre'], $menuval['enabled'], ($menuval['url'] != '#' ?DOL_URL_ROOT:'').$menuval['url'], $menuval['id'], $menuval['idsel'], $menuval['classname'], ($menuval['target'] ? $menuval['target'] : $atarget));
 		    print_end_menu_entry_auguria($menuval['enabled']);
@@ -216,8 +227,7 @@ function print_text_menu_entry_auguria($text, $showmode, $url, $id, $idsel, $cla
 {
 	global $langs;
 
-	if ($showmode == 1)
-	{
+	if ($showmode == 1) {
 		print '<a class="tmenuimage" tabindex="-1" href="'.$url.'"'.($atarget ? ' target="'.$atarget.'"' : '').' title="'.dol_escape_htmltag($text).'">';
 		print '<div class="'.$id.' '.$idsel.' topmenuimage"><span class="'.$id.' tmenuimage" id="mainmenuspan_'.$idsel.'"></span></div>';
 		print '</a>';
@@ -226,9 +236,7 @@ function print_text_menu_entry_auguria($text, $showmode, $url, $id, $idsel, $cla
 		print $text;
 		print '</span>';
 		print '</a>';
-	}
-	elseif ($showmode == 2)
-	{
+	} elseif ($showmode == 2) {
 		print '<div class="'.$id.' '.$idsel.' topmenuimage tmenudisabled"><span class="'.$id.'" id="mainmenuspan_'.$idsel.'"></span></div>';
 		print '<a class="tmenudisabled" id="mainmenua_'.$idsel.'" href="#" title="'.dol_escape_htmltag($langs->trans("NotAllowed")).'">';
 		print '<span class="mainmenuaspan">';
@@ -356,7 +364,7 @@ function print_left_auguria_menu($db, $menu_array_before, $menu_array_after, &$t
 
 	if (!empty($conf->accounting->enabled) && !empty($user->rights->accounting->comptarapport->lire) && $mainmenu == 'accountancy') 	// Entry in accountancy journal for each bank account
 	{
-		$newmenu->add('', $langs->trans("RegistrationInAccounting"), 1, $user->rights->accounting->comptarapport->lire, '', 'accountancy', 'accountancy');
+		$newmenu->add('', $langs->trans("RegistrationInAccounting"), 1, $user->rights->accounting->comptarapport->lire, '', 'accountancy', 'accountancy', 10);
 
 		// Multi journal
 		$sql = "SELECT rowid, code, label, nature";
@@ -380,13 +388,13 @@ function print_left_auguria_menu($db, $menu_array_before, $menu_array_after, &$t
 					$nature = '';
 
 					// Must match array $sourceList defined into journals_list.php
-					if ($objp->nature == 2 && !empty($conf->facture->enabled)) $nature = "sells";
-					if ($objp->nature == 3 && !empty($conf->fournisseur->enabled)) $nature = "purchases";
-					if ($objp->nature == 4 && !empty($conf->banque->enabled)) $nature = "bank";
-					if ($objp->nature == 5 && !empty($conf->expensereport->enabled)) $nature = "expensereports";
-					if ($objp->nature == 1) $nature = "various";
-					if ($objp->nature == 8) $nature = "inventory";
-					if ($objp->nature == 9) $nature = "hasnew";
+					if ($objp->nature == 2 && ! empty($conf->facture->enabled)) $nature="sells";
+					if ($objp->nature == 3 && (!empty($conf->fournisseur->enabled) && empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD) || !empty($conf->supplier_invoice->enabled))) $nature="purchases";
+					if ($objp->nature == 4 && ! empty($conf->banque->enabled)) $nature="bank";
+					if ($objp->nature == 5 && ! empty($conf->expensereport->enabled)) $nature="expensereports";
+					if ($objp->nature == 1) $nature="various";
+					if ($objp->nature == 8) $nature="inventory";
+					if ($objp->nature == 9) $nature="hasnew";
 
 					// To enable when page exists
 					if (empty($conf->global->ACCOUNTANCY_SHOW_DEVELOP_JOURNAL))
@@ -411,36 +419,6 @@ function print_left_auguria_menu($db, $menu_array_before, $menu_array_after, &$t
 		}
 		else dol_print_error($db);
 		$db->free($resql);
-
-		/*
-		$sql = "SELECT rowid, label, accountancy_journal";
-		$sql.= " FROM ".MAIN_DB_PREFIX."bank_account";
-		$sql.= " WHERE entity = ".$conf->entity;
-		$sql.= " AND clos = 0";
-		$sql.= " ORDER BY label";
-
-		$resql = $db->query($sql);
-		if ($resql)
-		{
-			$numr = $db->num_rows($resql);
-			$i = 0;
-
-			if ($numr > 0)
-			while ($i < $numr)
-			{
-				$objp = $db->fetch_object($resql);
-				$newmenu->add('/accountancy/journal/bankjournal.php?id_account='.$objp->rowid, $langs->trans("Journal").' - '.$objp->label, 1, $user->rights->accounting->comptarapport->lire,'','accountancy','accountancy_journal');
-				$i++;
-			}
-		}
-		else dol_print_error($db);
-		$db->free($resql);
-
-		// Add other journal
-		$newmenu->add("/accountancy/journal/sellsjournal.php?leftmenu=journal",$langs->trans("SellsJournal"),1,$user->rights->accounting->comptarapport->lire,'','accountancy','accountancy_journal');
-		$newmenu->add("/accountancy/journal/purchasesjournal.php?leftmenu=journal",$langs->trans("PurchasesJournal"),1,$user->rights->accounting->comptarapport->lire,'','accountancy','accountancy_journal');
-		$newmenu->add("/accountancy/journal/expensereportsjournal.php?leftmenu=journal",$langs->trans("ExpenseReportsJournal"),1,$user->rights->accounting->comptarapport->lire,'','accountancy','accountancy_journal');
-		*/
 	}
 
 	if (!empty($conf->ftp->enabled) && $mainmenu == 'ftp')	// Entry for FTP

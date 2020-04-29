@@ -90,15 +90,15 @@ class ExtraLanguages
 
 
 		$array_name_label = array();
-		if (! empty($conf->global->MAIN_USE_ALTERNATE_TRANSLATION_FOR)) {
+		if (!empty($conf->global->MAIN_USE_ALTERNATE_TRANSLATION_FOR)) {
 			$tmpelement = explode(';', $conf->global->MAIN_USE_ALTERNATE_TRANSLATION_FOR);
-			foreach($tmpelement as $elementstring) {
-				$reg=array();
+			foreach ($tmpelement as $elementstring) {
+				$reg = array();
 				preg_match('/^(.*):(.*)$/', $elementstring, $reg);
 				$element = $reg[1];
 				$array_name_label[$element] = array();
-				$tmpfields=explode(',', $reg[2]);
-				foreach($tmpfields as $field) {
+				$tmpfields = explode(',', $reg[2]);
+				foreach ($tmpfields as $field) {
 					//var_dump($fields);
 					//$tmpkeyvar = explode(':', $fields);
 					//$array_name_label[$element][$tmpkeyvar[0]] = $tmpkeyvar[1];

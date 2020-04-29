@@ -119,7 +119,7 @@ class MenuManager
 
 
     /**
-     *  Show menu
+     *  Show menu.
      *  Menu defined in sql tables were stored into $this->tabMenu BEFORE this is called.
      *
      *	@param	string	$mode		    'top', 'topnb', 'left', 'jmobile' (used to get full xml ul/li menu)

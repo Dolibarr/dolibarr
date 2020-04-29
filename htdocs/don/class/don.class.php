@@ -60,7 +60,7 @@ class Don extends CommonObject
     /**
 	 * @var string String with name of icon for object don. Must be the part after the 'object_' into object_myobject.png
 	 */
-	public $picto = 'generic';
+	public $picto = 'donation';
 
 	/**
 	 * @var string Date of the donation
@@ -924,14 +924,18 @@ class Don extends CommonObject
     {
         global $langs;
 
+        if (!empty($conf->dol_no_mouse_hover)) $notooltip = 1; // Force disable tooltips
+
         $result = '';
-        $label = $langs->trans("ShowDonation").': '.$this->id;
+        $label = '<u>'.$langs->trans("Donation").'</u>';
+        if (!empty($this->id))
+        	$label .= '<br><b>'.$langs->trans('Ref').':</b> '.$this->id;
 
         $linkstart = '<a href="'.DOL_URL_ROOT.'/don/card.php?id='.$this->id.'" title="'.dol_escape_htmltag($label, 1).'" class="classfortooltip">';
         $linkend = '</a>';
 
         $result .= $linkstart;
-        if ($withpicto) $result .= img_object(($notooltip ? '' : $label), ($this->picto ? $this->picto : 'generic'), ($notooltip ? (($withpicto != 2) ? 'class="paddingright"' : '') : 'class="'.(($withpicto != 2) ? 'paddingright ' : '').'classfortooltip"'), 0, 0, $notooltip ? 0 : 1);
+        if ($withpicto) $result .= img_object(($notooltip ? '' : $label), $this->picto, ($notooltip ? (($withpicto != 2) ? 'class="paddingright"' : '') : 'class="'.(($withpicto != 2) ? 'paddingright ' : '').'classfortooltip"'), 0, 0, $notooltip ? 0 : 1);
         if ($withpicto != 2) $result .= $this->ref;
         $result .= $linkend;
 

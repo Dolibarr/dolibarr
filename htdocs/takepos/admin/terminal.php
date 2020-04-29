@@ -264,7 +264,7 @@ if ($conf->global->TAKEPOS_PRINT_METHOD == "receiptprinter") {
 
 print '<tr class="oddeven"><td>'.$langs->trans('CashDeskReaderKeyCodeForEnter').'</td>';
 print '<td>';
-print '<input type="text" name="'.'CASHDESK_READER_KEYCODE_FOR_ENTER'.$terminaltouse.'" value="'.$conf->global->{'CASHDESK_READER_KEYCODE_FOR_ENTER'.$terminaltouse}.'" />';
+print '<input type="text" name="CASHDESK_READER_KEYCODE_FOR_ENTER'.$terminaltouse.'" value="'.$conf->global->{'CASHDESK_READER_KEYCODE_FOR_ENTER'.$terminaltouse}.'" />';
 print '</td></tr>';
 
 // Numbering module

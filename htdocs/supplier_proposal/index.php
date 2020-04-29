@@ -58,14 +58,12 @@ $help_url = "EN:Module_Ask_Price_Supplier|FR:Module_Demande_de_prix_fournisseur"
 
 llxHeader("", $langs->trans("SupplierProposalArea"), $help_url);
 
-print load_fiche_titre($langs->trans("SupplierProposalArea"), '', 'commercial');
+print load_fiche_titre($langs->trans("SupplierProposalArea"), '', 'supplier_proposal');
 
 print '<div class="fichecenter"><div class="fichethirdleft">';
 
 
-/*
- * Search form
- */
+// Search form
 
 if (!empty($conf->global->MAIN_SEARCH_FORM_ON_HOME_AREAS))     // This is useless due to the global search combo
 {
@@ -81,9 +79,7 @@ if (!empty($conf->global->MAIN_SEARCH_FORM_ON_HOME_AREAS))     // This is useles
 }
 
 
-/*
- * Statistics
- */
+// Statistics
 
 $sql = "SELECT count(p.rowid), p.fk_statut";
 $sql .= " FROM ".MAIN_DB_PREFIX."societe as s";

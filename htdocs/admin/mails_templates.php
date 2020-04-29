@@ -536,7 +536,7 @@ $errors = $hookmanager->errors;
 
 
 // Line to enter new values (input fields)
-print "<tr ".$bcnd[$var].">";
+print '<tr class="oddeven">';
 
 if (empty($reshook))
 {
@@ -976,12 +976,9 @@ function fieldList($fieldlist, $obj = '', $tabname = '', $context = '')
 {
 	global $conf, $langs, $user, $db;
 	global $form;
-	global $region_id;
-	global $elementList, $sourceList, $localtax_typeList;
-	global $bc;
+	global $elementList, $sourceList;
 
 	$formadmin = new FormAdmin($db);
-	$formcompany = new FormCompany($db);
 
 	foreach ($fieldlist as $field => $value)
 	{

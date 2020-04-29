@@ -70,14 +70,14 @@ if ($action == 'delete')
 	);
 }
 
-$formfile=new FormFile($db);
+$formfile = new FormFile($db);
 
 
 // We define var to enable the feature to add prefix of uploaded files.
 // Caller of this include can make
 // $savingdocmask=dol_sanitizeFileName($object->ref).'-__file__';
 if (!isset($savingdocmask) || !empty($conf->global->MAIN_DISABLE_SUGGEST_REF_AS_PREFIX)) {
-	$savingdocmask='';
+	$savingdocmask = '';
 	if (empty($conf->global->MAIN_DISABLE_SUGGEST_REF_AS_PREFIX)) {
 		//var_dump($modulepart);
 		if (in_array($modulepart, array(

@@ -1858,7 +1858,7 @@ elseif ($id || $ref)
 						print '<!-- case edit 1 -->';
 						print '<tr>';
 						// Qty to receive or received
-						print '<td>'.'<input name="qtyl'.$line_id.'" id="qtyl'.$line_id.'" type="text" size="4" value="'.$lines[$i]->qty.'">'.'</td>';
+						print '<td><input name="qtyl'.$line_id.'" id="qtyl'.$line_id.'" type="text" size="4" value="'.$lines[$i]->qty.'"></td>';
 						// Warehouse source
 						print '<td>'.$formproduct->selectWarehouses($lines[$i]->fk_entrepot, 'entl'.$line_id, '', 1, 0, $lines[$i]->fk_product, '', 1).'</td>';
 						// Batch number managment
@@ -1878,11 +1878,11 @@ elseif ($id || $ref)
 						print '<!-- case edit 2 -->';
 						print '<tr>';
 						// Qty to receive or received
-						print '<td>'.'<input name="qtyl'.$line_id.'" id="qtyl'.$line_id.'" type="text" size="4" value="'.$lines[$i]->qty.'">'.'</td>';
+						print '<td><input name="qtyl'.$line_id.'" id="qtyl'.$line_id.'" type="text" size="4" value="'.$lines[$i]->qty.'"></td>';
 						// Warehouse source
-						print '<td>'.'</td>';
+						print '<td></td>';
 						// Batch number managment
-						print '<td>'.'</td>';
+						print '<td></td>';
 						print '</tr>';
 					}
 				}

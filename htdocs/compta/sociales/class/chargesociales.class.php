@@ -556,7 +556,7 @@ class ChargeSociales extends CommonObject
 
         if (empty($this->ref)) $this->ref = $this->label;
 
-        $label = '<u>'.$langs->trans("ShowSocialContribution").'</u>';
+        $label = '<u>'.$langs->trans("SocialContribution").'</u>';
         if (!empty($this->ref))
         	$label .= '<br><b>'.$langs->trans('Ref').':</b> '.$this->ref;
         if (!empty($this->label))
@@ -569,7 +569,7 @@ class ChargeSociales extends CommonObject
         {
         	if (!empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER))
         	{
-        		$label = $langs->trans("ShowSocialContribution");
+        		$label = $langs->trans("SocialContribution");
         		$linkclose .= ' alt="'.dol_escape_htmltag($label, 1).'"';
         	}
         	$linkclose .= ' title="'.dol_escape_htmltag($label, 1).'"';

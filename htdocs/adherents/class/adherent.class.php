@@ -60,6 +60,9 @@ class Adherent extends CommonObject
 	 */
 	public $ismultientitymanaged = 1;
 
+	public $picto = 'member';
+
+
 	public $mesgs;
 
 	/**
