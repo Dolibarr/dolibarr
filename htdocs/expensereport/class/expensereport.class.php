@@ -970,7 +970,7 @@ class ExpenseReport extends CommonObject
     {
         // phpcs:enable
 		global $conf;
-		
+
         $this->lines=array();
 
         $sql = ' SELECT de.rowid, de.comments, de.qty, de.value_unit, de.date, de.rang,';
@@ -1065,6 +1065,36 @@ class ExpenseReport extends CommonObject
             $resql=$this->db->query($sql);
             if ($resql)
             {
+            	// On efface le repertoire de pdf provisoire
+            	$ref = dol_sanitizeFileName($this->ref);
+            	if ($conf->facture->dir_output && !empty($this->ref))
+            	{
+            		$dir = $conf->expensereport->dir_output . "/" . $ref;
+            		$file = $conf->expensereport->dir_output . "/" . $ref . "/" . $ref . ".pdf";
+            		if (file_exists($file))	// We must delete all files before deleting directory
+            		{
+            			$ret=dol_delete_preview($this);
+
+            			if (! dol_delete_file($file, 0, 0, 0, $this)) // For triggers
+            			{
+            				$langs->load("errors");
+            				$this->error=$langs->trans("ErrorFailToDeleteFile", $file);
+            				$this->db->rollback();
+            				return 0;
+            			}
+            		}
+            		if (file_exists($dir))
+            		{
+            			if (! dol_delete_dir_recursive($dir)) // For remove dir and meta
+            			{
+            				$langs->load("errors");
+            				$this->error=$langs->trans("ErrorFailToDeleteDir", $dir);
+            				$this->db->rollback();
+            				return 0;
+            			}
+            		}
+            	}
+
                 $this->db->commit();
                 return 1;
             }
