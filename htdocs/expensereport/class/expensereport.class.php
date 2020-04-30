@@ -1067,7 +1067,7 @@ class ExpenseReport extends CommonObject
             {
             	// On efface le repertoire de pdf provisoire
             	$ref = dol_sanitizeFileName($this->ref);
-            	if ($conf->facture->dir_output && !empty($this->ref))
+            	if ($conf->expensereport->dir_output && !empty($this->ref))
             	{
             		$dir = $conf->expensereport->dir_output . "/" . $ref;
             		$file = $conf->expensereport->dir_output . "/" . $ref . "/" . $ref . ".pdf";
