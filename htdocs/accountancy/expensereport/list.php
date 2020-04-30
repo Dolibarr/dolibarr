@@ -42,6 +42,9 @@ $massaction = GETPOST('massaction', 'alpha');
 $show_files = GETPOST('show_files', 'int');
 $confirm = GETPOST('confirm', 'alpha');
 $toselect = GETPOST('toselect', 'array');
+$contextpage = GETPOST('contextpage', 'aZ') ? GETPOST('contextpage', 'aZ') : 'myobjectlist'; // To manage different context of search
+$optioncss  = GETPOST('optioncss', 'aZ'); // Option for the css output (always '' except when 'print')
+
 
 // Select Box
 $mesCasesCochees = GETPOST('toselect', 'array');
@@ -240,8 +243,8 @@ if ($result) {
 	$arrayofselected = is_array($toselect) ? $toselect : array();
 
 	$param = '';
-	if (!empty($contextpage) && $contextpage != $_SERVER["PHP_SELF"]) $param .= '&contextpage='.$contextpage;
-	if ($limit > 0 && $limit != $conf->liste_limit) $param .= '&limit='.$limit;
+	if (!empty($contextpage) && $contextpage != $_SERVER["PHP_SELF"]) $param .= '&contextpage='.urlencode($contextpage);
+	if ($limit > 0 && $limit != $conf->liste_limit) $param .= '&limit='.urlencode($limit);
 	if ($search_lineid)      $param .= '&search_lineid='.urlencode($search_lineid);
 	if ($search_day)         $param .= '&search_day='.urlencode($search_day);
 	if ($search_month)       $param .= '&search_month='.urlencode($search_month);
@@ -308,7 +311,7 @@ if ($result) {
 	print '<tr class="liste_titre">';
 	print_liste_field_titre("LineId", $_SERVER["PHP_SELF"], "erd.rowid", "", $param, '', $sortfield, $sortorder);
 	print_liste_field_titre("ExpenseReport", $_SERVER["PHP_SELF"], "er.ref", "", $param, '', $sortfield, $sortorder);
-	print_liste_field_titre("Date", $_SERVER["PHP_SELF"], "erd.date, erd.rowid", "", $param, '', $sortfield, $sortorder, 'center ');
+	print_liste_field_titre("DateOfLine", $_SERVER["PHP_SELF"], "erd.date, erd.rowid", "", $param, '', $sortfield, $sortorder, 'center ');
 	print_liste_field_titre("TypeFees", $_SERVER["PHP_SELF"], "f.label", "", $param, '', $sortfield, $sortorder);
 	print_liste_field_titre("Description", $_SERVER["PHP_SELF"], "erd.comments", "", $param, '', $sortfield, $sortorder);
 	print_liste_field_titre("Amount", $_SERVER["PHP_SELF"], "erd.total_ht", "", $param, '', $sortfield, $sortorder, 'right maxwidth50 ');
