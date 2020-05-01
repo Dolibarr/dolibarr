@@ -184,8 +184,8 @@ else                        	// If external user
 }
 
 // Load the menu manager (only if not already done)
-$file_menu=$conf->standard_menu;
-if (GETPOST('menu')) $file_menu=GETPOST('menu');     // example: menu=eldy_menu.php
+$file_menu = $conf->standard_menu;
+if (GETPOST('menu', 'aZ09')) $file_menu = GETPOST('menu', 'aZ09');     // example: menu=eldy_menu.php
 if (! class_exists('MenuManager'))
 {
 	$menufound=0;
