@@ -371,7 +371,6 @@ if ($result) {
 
 	// We add search filter
 	print '<tr class="liste_titre_filter">';
-	print '<td class="liste_titre"><input type="text" class="flat maxwidth75imp" name="search_societe" value="' . dol_escape_htmltag($search_societe) . '"></td>';
 	print '<td class="liste_titre"><input type="text" class="flat maxwidth25" name="search_lineid" value="'.dol_escape_htmltag($search_lineid).'"></td>';
 	print '<td class="liste_titre"><input type="text" class="flat maxwidth50" name="search_invoice" value="'.dol_escape_htmltag($search_invoice).'"></td>';
 	print '<td class="liste_titre"><input type="text" class="flat maxwidth50" name="search_label" value="'.dol_escape_htmltag($search_label).'"></td>';
@@ -384,6 +383,7 @@ if ($result) {
 	print '<td class="liste_titre"><input type="text" class="flat maxwidth100" name="search_desc" value="'.dol_escape_htmltag($search_desc).'"></td>';
 	print '<td class="liste_titre right"><input type="text" class="right flat maxwidth50" name="search_amount" value="'.dol_escape_htmltag($search_amount).'"></td>';
 	print '<td class="liste_titre right"><input type="text" class="right flat maxwidth50" name="search_vat" placeholder="%" size="1" value="'.dol_escape_htmltag($search_vat).'"></td>';
+	print '<td class="liste_titre"><input type="text" class="flat maxwidth75imp" name="search_societe" value="' . dol_escape_htmltag($search_societe) . '"></td>';
 	print '<td class="liste_titre">';
 	print $form->select_country($search_country, 'search_country', '', 0, 'maxwidth150', 'code2', 1, 0, 1);
 	//print '<input type="text" class="flat maxwidth50" name="search_country" value="' . dol_escape_htmltag($search_country) . '">';
@@ -398,7 +398,6 @@ if ($result) {
 	print "</tr>\n";
 
 	print '<tr class="liste_titre">';
-	print_liste_field_titre("ThirdParty", $_SERVER["PHP_SELF"], "s.nom", "", $param, '', $sortfield, $sortorder);
 	print_liste_field_titre("LineId", $_SERVER["PHP_SELF"], "l.rowid", "", $param, '', $sortfield, $sortorder);
 	print_liste_field_titre("Invoice", $_SERVER["PHP_SELF"], "f.ref", "", $param, '', $sortfield, $sortorder);
 	print_liste_field_titre("InvoiceLabel", $_SERVER["PHP_SELF"], "f.libelle", "", $param, '', $sortfield, $sortorder);
@@ -408,6 +407,7 @@ if ($result) {
 	print_liste_field_titre("ProductDescription", $_SERVER["PHP_SELF"], "l.description", "", $param, '', $sortfield, $sortorder);
 	print_liste_field_titre("Amount", $_SERVER["PHP_SELF"], "l.total_ht", "", $param, '', $sortfield, $sortorder, 'right maxwidth50 ');
 	print_liste_field_titre("VATRate", $_SERVER["PHP_SELF"], "l.tva_tx", "", $param, '', $sortfield, $sortorder, 'right ');
+	print_liste_field_titre("ThirdParty", $_SERVER["PHP_SELF"], "s.nom", "", $param, '', $sortfield, $sortorder);
 	print_liste_field_titre("Country", $_SERVER["PHP_SELF"], "co.label", "", $param, '', $sortfield, $sortorder);
 	print_liste_field_titre("VATIntra", $_SERVER["PHP_SELF"], "s.tva_intra", "", $param, '', $sortfield, $sortorder);
 	print_liste_field_titre("AccountAccountingSuggest", '', '', '', '', '', '', '', 'nowraponall ');
@@ -527,9 +527,6 @@ if ($result) {
 
 		print '<tr class="oddeven">';
 
-		// Thirdparty
-		print '<td>' . $thirdpartystatic->getNomUrl(1, 'supplier') . '</td>';
-
 		// Line id
 		print '<td>'.$objp->rowid.'</td>';
 
@@ -566,6 +563,9 @@ if ($result) {
 		print '<td style="'.$code_vat_differ.'" class="right">';
 		print vatrate($objp->tva_tx_line.($objp->vat_src_code ? ' ('.$objp->vat_src_code.')' : ''));
 		print '</td>';
+
+		// Thirdparty
+		print '<td class="tdoverflowmax100">' . $thirdpartystatic->getNomUrl(1, 'supplier') . '</td>';
 
 		// Country
         print '<td>';
