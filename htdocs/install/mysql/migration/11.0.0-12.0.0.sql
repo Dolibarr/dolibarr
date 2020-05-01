@@ -271,3 +271,11 @@ ALTER TABLE llx_prelevement_facture_demande ADD COLUMN fk_facture_fourn INTEGER 
 ALTER TABLE llx_prelevement_facture ADD COLUMN fk_facture_fourn INTEGER NULL;
 
 ALTER TABLE llx_menu MODIFY COLUMN module varchar(255);
+
+
+-- VMYSQL4.3 ALTER TABLE llx_c_typent CHANGE COLUMN id id INTEGER NOT NULL AUTO_INCREMENT;
+-- VPGSQL8.2 CREATE SEQUENCE llx_c_typent_id_seq OWNED BY llx_c_typent.id;
+-- VPGSQL8.2 ALTER TABLE llx_c_typent ADD PRIMARY KEY (id);
+-- VPGSQL8.2 ALTER TABLE llx_c_typent ALTER COLUMN id SET DEFAULT nextval('llx_c_typent_id_seq');
+-- VPGSQL8.2 SELECT setval('llx_c_typent_id_seq', MAX(id)) FROM llx_c_typent;
+
