@@ -55,7 +55,7 @@ session_cache_limiter('public');
 // Load user to have $user->conf loaded (not done by default here because of NOLOGIN constant defined) and load permission if we need to use them in CSS
 /*if (empty($user->id) && ! empty($_SESSION['dol_login']))
 {
-    $user->fetch('',$_SESSION['dol_login']);
+	$user->fetch('',$_SESSION['dol_login']);
 	$user->getrights();
 }*/
 
@@ -70,10 +70,10 @@ else header('Cache-Control: no-cache');
 ?>
 
 div.mainmenu.mymodule::before {
-    content: "\f249";
+	content: "\f249";
 }
 div.mainmenu.mymodule {
-    background-image: none;
+	background-image: none;
 }
 
 .myclasscss {
