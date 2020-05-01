@@ -47,14 +47,14 @@ class doc_generic_myobject_odt extends ModelePDFMyObject
 	public $emetteur;
 
 	/**
-     * @var array Minimum version of PHP required by module.
-     * e.g.: PHP ≥ 5.5 = array(5, 5)
-     */
+	 * @var array Minimum version of PHP required by module.
+	 * e.g.: PHP ≥ 5.5 = array(5, 5)
+	 */
 	public $phpmin = array(5, 5);
 
 	/**
-     * @var string Dolibarr version of the loaded document
-     */
+	 * @var string Dolibarr version of the loaded document
+	 */
 	public $version = 'dolibarr';
 
 
@@ -63,12 +63,12 @@ class doc_generic_myobject_odt extends ModelePDFMyObject
 	 *
 	 *  @param		DoliDB		$db      Database handler
 	 */
-    public function __construct($db)
+	public function __construct($db)
 	{
 		global $conf, $langs, $mysoc;
 
 		// Load translation files required by the page
-        $langs->loadLangs(array("main", "companies"));
+		$langs->loadLangs(array("main", "companies"));
 
 		$this->db = $db;
 		$this->name = "ODT templates";
@@ -108,12 +108,12 @@ class doc_generic_myobject_odt extends ModelePDFMyObject
 	 *	@param	Translate	$langs      Lang object to use for output
 	 *	@return string       			Description
 	 */
-    public function info($langs)
+	public function info($langs)
 	{
 		global $conf, $langs;
 
 		// Load translation files required by the page
-        $langs->loadLangs(array("errors", "companies"));
+		$langs->loadLangs(array("errors", "companies"));
 
 		$form = new Form($this->db);
 
@@ -170,12 +170,12 @@ class doc_generic_myobject_odt extends ModelePDFMyObject
 
 		if ($nbofiles)
 		{
-   			$texte .= '<div id="div_'.get_class($this).'" class="hidden">';
-   			foreach ($listoffiles as $file)
-   			{
-                $texte .= $file['name'].'<br>';
-   			}
-   			$texte .= '</div>';
+			$texte .= '<div id="div_'.get_class($this).'" class="hidden">';
+			foreach ($listoffiles as $file)
+			{
+				$texte .= $file['name'].'<br>';
+			}
+			$texte .= '</div>';
 		}
 
 		$texte .= '</td>';
@@ -191,7 +191,7 @@ class doc_generic_myobject_odt extends ModelePDFMyObject
 		return $texte;
 	}
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
+	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 *  Function to build a document on disk using the generic odt module.
 	 *
@@ -203,9 +203,9 @@ class doc_generic_myobject_odt extends ModelePDFMyObject
 	 *  @param		int			$hideref			Do not show ref
 	 *	@return		int         					1 if OK, <=0 if KO
 	 */
-    public function write_file($object, $outputlangs, $srctemplatepath, $hidedetails = 0, $hidedesc = 0, $hideref = 0)
+	public function write_file($object, $outputlangs, $srctemplatepath, $hidedetails = 0, $hidedesc = 0, $hideref = 0)
 	{
-        // phpcs:enable
+		// phpcs:enable
 		global $user, $langs, $conf, $mysoc, $hookmanager;
 
 		if (empty($srctemplatepath))
@@ -271,8 +271,8 @@ class doc_generic_myobject_odt extends ModelePDFMyObject
 				$newfileformat = substr($newfile, strrpos($newfile, '.') + 1);
 				if (!empty($conf->global->MAIN_DOC_USE_TIMING))
 				{
-				    $format = $conf->global->MAIN_DOC_USE_TIMING;
-				    if ($format == '1') $format = '%Y%m%d%H%M%S';
+					$format = $conf->global->MAIN_DOC_USE_TIMING;
+					if ($format == '1') $format = '%Y%m%d%H%M%S';
 					$filename = $newfiletmp.'-'.dol_print_date(dol_now(), $format).'.'.$newfileformat;
 				}
 				else
@@ -304,10 +304,10 @@ class doc_generic_myobject_odt extends ModelePDFMyObject
 					// On peut utiliser le nom de la societe du contact
 					if (!empty($conf->global->MAIN_USE_COMPANY_NAME_OF_CONTACT)) $socobject = $object->contact;
 					else {
-                        $socobject = $object->thirdparty;
-               			// if we have a CUSTOMER contact and we dont use it as recipient we store the contact object for later use
-            			$contactobject = $object->contact;
-                    }
+						$socobject = $object->thirdparty;
+						// if we have a CUSTOMER contact and we dont use it as recipient we store the contact object for later use
+						$contactobject = $object->contact;
+					}
 				}
 				else
 				{
@@ -338,7 +338,7 @@ class doc_generic_myobject_odt extends ModelePDFMyObject
 				// Open and load template
 				require_once ODTPHP_PATH.'odf.php';
 				try {
-                    $odfHandler = new odf(
+					$odfHandler = new odf(
 						$srctemplatepath,
 						array(
 						'PATH_TO_TMP'	  => $conf->commande->dir_temp,
@@ -367,7 +367,7 @@ class doc_generic_myobject_odt extends ModelePDFMyObject
 				}
 				catch (OdfException $e)
 				{
-                    dol_syslog($e->getMessage(), LOG_INFO);
+					dol_syslog($e->getMessage(), LOG_INFO);
 				}
 
 				// Define substitution array
@@ -404,7 +404,7 @@ class doc_generic_myobject_odt extends ModelePDFMyObject
 					}
 					catch (OdfException $e)
 					{
-                        dol_syslog($e->getMessage(), LOG_INFO);
+						dol_syslog($e->getMessage(), LOG_INFO);
 					}
 				}
 				// Replace tags of lines
@@ -439,11 +439,11 @@ class doc_generic_myobject_odt extends ModelePDFMyObject
 								}
 								catch (OdfException $e)
 								{
-                                    dol_syslog($e->getMessage(), LOG_INFO);
+									dol_syslog($e->getMessage(), LOG_INFO);
 								}
 								catch (SegmentException $e)
 								{
-                                    dol_syslog($e->getMessage(), LOG_INFO);
+									dol_syslog($e->getMessage(), LOG_INFO);
 								}
 							}
 							$listlines->merge();
@@ -467,7 +467,7 @@ class doc_generic_myobject_odt extends ModelePDFMyObject
 					}
 					catch (OdfException $e)
 					{
-                        dol_syslog($e->getMessage(), LOG_INFO);
+						dol_syslog($e->getMessage(), LOG_INFO);
 					}
 				}
 
@@ -481,8 +481,8 @@ class doc_generic_myobject_odt extends ModelePDFMyObject
 					try {
 						$odfHandler->exportAsAttachedPDF($file);
 					} catch (Exception $e) {
-                        $this->error = $e->getMessage();
-                        dol_syslog($e->getMessage(), LOG_INFO);
+						$this->error = $e->getMessage();
+						dol_syslog($e->getMessage(), LOG_INFO);
 						return -1;
 					}
 				}
@@ -490,8 +490,8 @@ class doc_generic_myobject_odt extends ModelePDFMyObject
 					try {
 						$odfHandler->saveToDisk($file);
 					} catch (Exception $e) {
-                        $this->error = $e->getMessage();
-                        dol_syslog($e->getMessage(), LOG_INFO);
+						$this->error = $e->getMessage();
+						dol_syslog($e->getMessage(), LOG_INFO);
 						return -1;
 					}
 				}

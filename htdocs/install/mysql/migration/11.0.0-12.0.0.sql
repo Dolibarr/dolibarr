@@ -271,3 +271,5 @@ ALTER TABLE llx_prelevement_facture_demande ADD COLUMN fk_facture_fourn INTEGER 
 ALTER TABLE llx_prelevement_facture ADD COLUMN fk_facture_fourn INTEGER NULL;
 
 ALTER TABLE llx_menu MODIFY COLUMN module varchar(255);
+
+
