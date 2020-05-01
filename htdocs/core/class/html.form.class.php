@@ -6634,11 +6634,11 @@ class Form
 		// Add code for jquery to use multiselect
 		if (!empty($conf->global->MAIN_USE_JQUERY_MULTISELECT) || defined('REQUIRE_JQUERY_MULTISELECT'))
 		{
-			$out .= "\n".'<!-- JS CODE TO ENABLE '.$tmpplugin.' for id '.$htmlname.' -->
-						<script>'."\n";
 			if ($addjscombo == 1)
 			{
 				$tmpplugin = empty($conf->global->MAIN_USE_JQUERY_MULTISELECT) ?constant('REQUIRE_JQUERY_MULTISELECT') : $conf->global->MAIN_USE_JQUERY_MULTISELECT;
+				$out .= "\n".'<!-- JS CODE TO ENABLE '.$tmpplugin.' for id '.$htmlname.' -->'."\n";
+				$out .= '<script>'."\n";
 				$out .= 'function formatResult(record) {'."\n";
 				if ($elemtype == 'category')
 				{
@@ -6676,6 +6676,8 @@ class Form
 				// Add other js lib
 				// TODO external lib multiselect/jquery.multi-select.js must have been loaded to use this multiselect plugin
 				// ...
+				$out .= "\n".'<!-- JS CODE TO ENABLE external lib for id '.$htmlname.' -->'."\n";
+				$out .= '<script>'."\n";
 				$out .= '$(document).ready(function () {
 							$(\'#'.$htmlname.'\').multiSelect({
 								containerHTML: \'<div class="multi-select-container">\',

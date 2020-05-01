@@ -597,7 +597,7 @@ if ($action == "valid" || $action == "history")
     } else {
         $sectionwithinvoicelink .= ' <button id="buttonprint" type="button" onclick="Print('.$placeid.');">'.$langs->trans('PrintTicket').'</button>';
     }
-    if ($conf->global->MAIN_FEATURES_LEVEL >= 2)
+    if ($conf->global->TAKEPOS_EMAIL_TEMPLATE_INVOICE > 0)
     {
     	$sectionwithinvoicelink .= ' <button id="buttonsend" type="button" onclick="SendTicket('.$placeid.');">'.$langs->trans('SendTicket').'</button>';
     }
@@ -690,7 +690,7 @@ if ($action == "search") {
 function SendTicket(id)
 {
     console.log("Open box to select the Print/Send form");
-    $.colorbox({href:"send.php?facid="+id, width:"90%", height:"50%", transition:"none", iframe:"true", title:"<?php echo $langs->trans("SendTicket"); ?>"});
+    $.colorbox({href:"send.php?facid="+id, width:"70%", height:"30%", transition:"none", iframe:"true", title:"<?php echo $langs->trans("SendTicket"); ?>"});
 }
 
 function Print(id){
