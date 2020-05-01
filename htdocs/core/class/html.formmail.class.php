@@ -630,7 +630,7 @@ class FormMail extends Form
 			if (!empty($this->withto) || is_array($this->withto))
 			{
 				$out .= '<tr><td class="fieldrequired">';
-				if ($this->withtofree) $out .= $form->textwithpicto($langs->trans("MailTo"), $langs->trans("YouCanUseCommaSeparatorForSeveralRecipients"));
+				if ($this->withtofree) $out .= $form->textwithpicto($langs->trans("MailTo"), $langs->trans("YouCanUseFreeEmailsForRecipients"));
 				else $out .= $langs->trans("MailTo");
 				$out .= '</td><td>';
 				if ($this->withtoreadonly)
@@ -670,14 +670,14 @@ class FormMail extends Form
 				else
 				{
 					// The free input of email
-					if (!empty($this->withtofree))
-					{
-						$out .= '<input class="minwidth200" id="sendto" name="sendto" value="'.(($this->withtofree && !is_numeric($this->withtofree)) ? $this->withtofree : (!is_array($this->withto) && !is_numeric($this->withto) ? (isset($_REQUEST["sendto"]) ? $_REQUEST["sendto"] : $this->withto) : "")).'" />';
-					}
+					// if (!empty($this->withtofree))
+					// {
+					// 	$out .= '<input class="minwidth200" id="sendto" name="sendto" value="'.(($this->withtofree && !is_numeric($this->withtofree)) ? $this->withtofree : (!is_array($this->withto) && !is_numeric($this->withto) ? (isset($_REQUEST["sendto"]) ? $_REQUEST["sendto"] : $this->withto) : "")).'" />';
+					// }
 					// The select combo
 					if (!empty($this->withto) && is_array($this->withto))
 					{
-						if (!empty($this->withtofree)) $out .= " ".$langs->trans("and")."/".$langs->trans("or")." ";
+						//if (!empty($this->withtofree)) $out .= " ".$langs->trans("and")."/".$langs->trans("or")." ";
 						// multiselect array convert html entities into options tags, even if we dont want this, so we encode them a second time
 						$tmparray = $this->withto;
 						foreach ($tmparray as $key => $val)
@@ -689,7 +689,7 @@ class FormMail extends Form
 						{
 							$withtoselected = array_keys($tmparray);
 						}
-						$out .= $form->multiselectarray("receiver", $tmparray, $withtoselected, null, null, 'inline-block minwidth500', null, "");
+						$out .= $form->multiselectarray("receiver", $tmparray, $withtoselected, null, null, 'inline-block minwidth500', 0, '', '', 'email', '', -1, !empty($this->withtofree)?1:0);
 					}
 				}
 				$out .= "</td></tr>\n";
@@ -736,7 +736,7 @@ class FormMail extends Form
 			if (!empty($this->withtocc) || is_array($this->withtocc))
 			{
 				$out .= '<tr><td>';
-				$out .= $form->textwithpicto($langs->trans("MailCC"), $langs->trans("YouCanUseCommaSeparatorForSeveralRecipients"));
+				$out .= $form->textwithpicto($langs->trans("MailCC"), $langs->trans("YouCanUseFreeEmailsForRecipients"));
 				$out .= '</td><td>';
 				if ($this->withtoccreadonly)
 				{
@@ -744,10 +744,10 @@ class FormMail extends Form
 				}
 				else
 				{
-				    $out .= '<input class="minwidth200" id="sendtocc" name="sendtocc" value="'.(GETPOST("sendtocc", "alpha") ? GETPOST("sendtocc", "alpha") : ((!is_array($this->withtocc) && !is_numeric($this->withtocc)) ? $this->withtocc : '')).'" />';
+				    //$out .= '<input class="minwidth200" id="sendtocc" name="sendtocc" value="'.(GETPOST("sendtocc", "alpha") ? GETPOST("sendtocc", "alpha") : ((!is_array($this->withtocc) && !is_numeric($this->withtocc)) ? $this->withtocc : '')).'" />';
 					if (!empty($this->withtocc) && is_array($this->withtocc))
 					{
-						$out .= " ".$langs->trans("and")."/".$langs->trans("or")." ";
+						//$out .= " ".$langs->trans("and")."/".$langs->trans("or")." ";
 						// multiselect array convert html entities into options tags, even if we dont want this, so we encode them a second time
 						$tmparray = $this->withtocc;
 						foreach ($tmparray as $key => $val)
@@ -755,7 +755,7 @@ class FormMail extends Form
 							$tmparray[$key] = dol_htmlentities($tmparray[$key], null, 'UTF-8', true);
 						}
 						$withtoccselected = GETPOST("receivercc"); // Array of selected value
-						$out .= $form->multiselectarray("receivercc", $tmparray, $withtoccselected, null, null, 'inline-block minwidth500', null, "");
+						$out .= $form->multiselectarray("receivercc", $tmparray, $withtoccselected, null, null, 'inline-block minwidth500', 0, '', '', 'email', '', -1, !empty($this->withtofree)?1:0);
 					}
 				}
 				$out .= "</td></tr>\n";
