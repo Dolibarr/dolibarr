@@ -570,7 +570,8 @@ class AdvanceTargetingMailing extends CommonObject
 
 			//Standard Extrafield feature
 			if (empty($conf->global->MAIN_EXTRAFIELDS_DISABLED)) {
-				$elementtype = Societe::$table_element;
+				$socstatic = new Societe($this->db);
+				$elementtype = $socstatic->table_element;
 
 				$extrafields->fetch_name_optionals_label($elementtype);
 
@@ -707,7 +708,8 @@ class AdvanceTargetingMailing extends CommonObject
 
 			//Standard Extrafield feature
 			if (empty($conf->global->MAIN_EXTRAFIELDS_DISABLED)) {
-				$elementtype = Contact::$table_element;
+				$contactstatic = new Contact($this->db);
+				$elementtype = $contactstatic->table_element;
 
 				// fetch optionals attributes and labels
 				dol_include_once('/core/class/extrafields.class.php');
@@ -809,7 +811,8 @@ class AdvanceTargetingMailing extends CommonObject
 
 					//Standard Extrafield feature
 					if (empty($conf->global->MAIN_EXTRAFIELDS_DISABLED)) {
-						$elementtype = Societe::$table_element;
+						$socstatic = new Societe($this->db);
+						$elementtype = $socstatic->table_element;
 
 						// fetch optionals attributes and labels
 						dol_include_once('/core/class/extrafields.class.php');
