@@ -362,7 +362,7 @@ if (is_array($formmail->lines_model)) {
         if (!empty($arrayofmessagename[$modelmail->label])) {
             $moreonlabel = ' <span class="opacitymedium">('.$langs->trans("SeveralLangugeVariatFound").')</span>';
         }
-        $arrayofmessagename[$modelmail->label] = $langs->trans(preg_replace('/\(|\)/', '', $modelmail->label)).$moreonlabel;
+        $arrayofmessagename[$modelmail->id] = $langs->trans(preg_replace('/\(|\)/', '', $modelmail->topic)).$moreonlabel;
     }
 }
 //var_dump($arraydefaultmessage);
