@@ -90,16 +90,16 @@ class MyObject extends CommonObject
 
 	// BEGIN MODULEBUILDER PROPERTIES
 	/**
-     * @var array  Array with all fields and their property. Do not use it as a static var. It may be modified by constructor.
-     */
+	 * @var array  Array with all fields and their property. Do not use it as a static var. It may be modified by constructor.
+	 */
 	public $fields = array(
-	    'rowid'         => array('type'=>'integer', 'label'=>'TechnicalID', 'enabled'=>1, 'visible'=>-2, 'noteditable'=>1, 'notnull'=> 1, 'index'=>1, 'position'=>1, 'comment'=>'Id'),
+		'rowid'         => array('type'=>'integer', 'label'=>'TechnicalID', 'enabled'=>1, 'visible'=>-2, 'noteditable'=>1, 'notnull'=> 1, 'index'=>1, 'position'=>1, 'comment'=>'Id'),
 		'ref'           => array('type'=>'varchar(128)', 'label'=>'Ref', 'enabled'=>1, 'visible'=>1, 'noteditable'=>0, 'default'=>'', 'notnull'=> 1, 'showoncombobox'=>1, 'index'=>1, 'position'=>10, 'searchall'=>1, 'comment'=>'Reference of object'),
-	    'entity'        => array('type'=>'integer', 'label'=>'Entity', 'enabled'=>1, 'visible'=>0, 'notnull'=> 1, 'default'=>1, 'index'=>1, 'position'=>20),
-	    'label'         => array('type'=>'varchar(255)', 'label'=>'Label', 'enabled'=>1, 'visible'=>1, 'position'=>30, 'searchall'=>1, 'css'=>'minwidth200', 'help'=>'Help text', 'showoncombobox'=>1),
-	    'amount'        => array('type'=>'price', 'label'=>'Amount', 'enabled'=>1, 'visible'=>1, 'default'=>'null', 'position'=>40, 'searchall'=>0, 'isameasure'=>1, 'help'=>'Help text for amount'),
-	    'qty'           => array('type'=>'real', 'label'=>'Qty', 'enabled'=>1, 'visible'=>1, 'default'=>'0', 'position'=>45, 'searchall'=>0, 'isameasure'=>1, 'help'=>'Help text for quantity', 'css'=>'maxwidth75imp'),
-	    'fk_soc' 		=> array('type'=>'integer:Societe:societe/class/societe.class.php:1:status=1 AND entity IN (__SHARED_ENTITIES__)', 'label'=>'ThirdParty', 'visible'=> 1, 'enabled'=>1, 'position'=>50, 'notnull'=>-1, 'index'=>1, 'help'=>'LinkToThirparty'),
+		'entity'        => array('type'=>'integer', 'label'=>'Entity', 'enabled'=>1, 'visible'=>0, 'notnull'=> 1, 'default'=>1, 'index'=>1, 'position'=>20),
+		'label'         => array('type'=>'varchar(255)', 'label'=>'Label', 'enabled'=>1, 'visible'=>1, 'position'=>30, 'searchall'=>1, 'css'=>'minwidth200', 'help'=>'Help text', 'showoncombobox'=>1),
+		'amount'        => array('type'=>'price', 'label'=>'Amount', 'enabled'=>1, 'visible'=>1, 'default'=>'null', 'position'=>40, 'searchall'=>0, 'isameasure'=>1, 'help'=>'Help text for amount'),
+		'qty'           => array('type'=>'real', 'label'=>'Qty', 'enabled'=>1, 'visible'=>1, 'default'=>'0', 'position'=>45, 'searchall'=>0, 'isameasure'=>1, 'help'=>'Help text for quantity', 'css'=>'maxwidth75imp'),
+		'fk_soc' 		=> array('type'=>'integer:Societe:societe/class/societe.class.php:1:status=1 AND entity IN (__SHARED_ENTITIES__)', 'label'=>'ThirdParty', 'visible'=> 1, 'enabled'=>1, 'position'=>50, 'notnull'=>-1, 'index'=>1, 'help'=>'LinkToThirparty'),
 		'fk_project'    => array('type'=>'integer:Project:projet/class/project.class.php:1', 'label'=>'Project', 'enabled'=>1, 'visible'=>-1, 'position'=>52, 'notnull'=>-1, 'index'=>1),
 		'description'   => array('type'=>'text', 'label'=>'Description', 'enabled'=>1, 'visible'=>3, 'position'=>60),
 		'note_public'   => array('type'=>'html', 'label'=>'NotePublic', 'enabled'=>1, 'visible'=>0, 'position'=>61),
@@ -112,7 +112,7 @@ class MyObject extends CommonObject
 		//'fk_user_valid' => array('type'=>'integer:User:user/class/user.class.php',      'label'=>'UserValidation',        'enabled'=>1, 'visible'=>-1, 'position'=>512),
 		'import_key'    => array('type'=>'varchar(14)', 'label'=>'ImportId', 'enabled'=>1, 'visible'=>-2, 'notnull'=>-1, 'index'=>0, 'position'=>1000),
 		'model_pdf' 	=> array('type'=>'varchar(255)', 'label'=>'Model pdf', 'enabled'=>1, 'visible'=>0, 'notnull'=>-1, 'position'=>1010),
-	    'status'        => array('type'=>'smallint', 'label'=>'Status', 'enabled'=>1, 'visible'=>1, 'notnull'=> 1, 'default'=>0, 'index'=>1, 'position'=>1000, 'arrayofkeyval'=>array(0=>'Draft', 1=>'Validated', 9=>'Canceled')),
+		'status'        => array('type'=>'smallint', 'label'=>'Status', 'enabled'=>1, 'visible'=>1, 'notnull'=> 1, 'default'=>0, 'index'=>1, 'position'=>1000, 'arrayofkeyval'=>array(0=>'Draft', 1=>'Validated', 9=>'Canceled')),
 	);
 
 	/**
@@ -131,13 +131,13 @@ class MyObject extends CommonObject
 	public $entity;
 
 	/**
-     * @var string label
-     */
-    public $label;
+	 * @var string label
+	 */
+	public $label;
 
-    /**
-     * @var string amount
-     */
+	/**
+	 * @var string amount
+	 */
 	public $amount;
 
 	/**
@@ -146,28 +146,28 @@ class MyObject extends CommonObject
 	public $status;
 
 	/**
-     * @var integer|string date_creation
-     */
+	 * @var integer|string date_creation
+	 */
 	public $date_creation;
 
 	/**
-     * @var integer tms
-     */
+	 * @var integer tms
+	 */
 	public $tms;
 
 	/**
-     * @var int ID
-     */
+	 * @var int ID
+	 */
 	public $fk_user_creat;
 
 	/**
-     * @var int ID
-     */
+	 * @var int ID
+	 */
 	public $fk_user_modif;
 
 	/**
-     * @var string import_key
-     */
+	 * @var string import_key
+	 */
 	public $import_key;
 	// END MODULEBUILDER PROPERTIES
 
@@ -273,86 +273,86 @@ class MyObject extends CommonObject
 	public function createFromClone(User $user, $fromid)
 	{
 		global $langs, $extrafields;
-	    $error = 0;
+		$error = 0;
 
-	    dol_syslog(__METHOD__, LOG_DEBUG);
+		dol_syslog(__METHOD__, LOG_DEBUG);
 
-	    $object = new self($this->db);
+		$object = new self($this->db);
 
-	    $this->db->begin();
+		$this->db->begin();
 
-	    // Load source object
-	    $result = $object->fetchCommon($fromid);
-	    if ($result > 0 && !empty($object->table_element_line)) $object->fetchLines();
+		// Load source object
+		$result = $object->fetchCommon($fromid);
+		if ($result > 0 && !empty($object->table_element_line)) $object->fetchLines();
 
-	    // get lines so they will be clone
-	    //foreach($this->lines as $line)
-	    //	$line->fetch_optionals();
+		// get lines so they will be clone
+		//foreach($this->lines as $line)
+		//	$line->fetch_optionals();
 
-	    // Reset some properties
-	    unset($object->id);
-	    unset($object->fk_user_creat);
-	    unset($object->import_key);
+		// Reset some properties
+		unset($object->id);
+		unset($object->fk_user_creat);
+		unset($object->import_key);
 
 
-	    // Clear fields
-	    $object->ref = empty($this->fields['ref']['default']) ? "copy_of_".$object->ref : $this->fields['ref']['default'];
-	    $object->label = empty($this->fields['label']['default']) ? $langs->trans("CopyOf")." ".$object->label : $this->fields['label']['default'];
-	    $object->status = self::STATUS_DRAFT;
-	    // ...
-	    // Clear extrafields that are unique
-	    if (is_array($object->array_options) && count($object->array_options) > 0)
-	    {
-	    	$extrafields->fetch_name_optionals_label($this->table_element);
-	    	foreach ($object->array_options as $key => $option)
-	    	{
-	    		$shortkey = preg_replace('/options_/', '', $key);
-	    		if (!empty($extrafields->attributes[$this->element]['unique'][$shortkey]))
-	    		{
-	    			//var_dump($key); var_dump($clonedObj->array_options[$key]); exit;
-	    			unset($object->array_options[$key]);
-	    		}
-	    	}
-	    }
+		// Clear fields
+		$object->ref = empty($this->fields['ref']['default']) ? "copy_of_".$object->ref : $this->fields['ref']['default'];
+		$object->label = empty($this->fields['label']['default']) ? $langs->trans("CopyOf")." ".$object->label : $this->fields['label']['default'];
+		$object->status = self::STATUS_DRAFT;
+		// ...
+		// Clear extrafields that are unique
+		if (is_array($object->array_options) && count($object->array_options) > 0)
+		{
+			$extrafields->fetch_name_optionals_label($this->table_element);
+			foreach ($object->array_options as $key => $option)
+			{
+				$shortkey = preg_replace('/options_/', '', $key);
+				if (!empty($extrafields->attributes[$this->element]['unique'][$shortkey]))
+				{
+					//var_dump($key); var_dump($clonedObj->array_options[$key]); exit;
+					unset($object->array_options[$key]);
+				}
+			}
+		}
 
-	    // Create clone
+		// Create clone
 		$object->context['createfromclone'] = 'createfromclone';
-	    $result = $object->createCommon($user);
-	    if ($result < 0) {
-	        $error++;
-	        $this->error = $object->error;
-	        $this->errors = $object->errors;
-	    }
+		$result = $object->createCommon($user);
+		if ($result < 0) {
+			$error++;
+			$this->error = $object->error;
+			$this->errors = $object->errors;
+		}
 
-	    if (!$error)
-	    {
-	    	// copy internal contacts
-	    	if ($this->copy_linked_contact($object, 'internal') < 0)
-	    	{
-	    		$error++;
-	    	}
-	    }
+		if (!$error)
+		{
+			// copy internal contacts
+			if ($this->copy_linked_contact($object, 'internal') < 0)
+			{
+				$error++;
+			}
+		}
 
-	    if (!$error)
-	    {
-	    	// copy external contacts if same company
-	    	if (property_exists($this, 'socid') && $this->socid == $object->socid)
-	    	{
-	    		if ($this->copy_linked_contact($object, 'external') < 0)
-	    			$error++;
-	    	}
-	    }
+		if (!$error)
+		{
+			// copy external contacts if same company
+			if (property_exists($this, 'socid') && $this->socid == $object->socid)
+			{
+				if ($this->copy_linked_contact($object, 'external') < 0)
+					$error++;
+			}
+		}
 
-	    unset($object->context['createfromclone']);
+		unset($object->context['createfromclone']);
 
-	    // End
-	    if (!$error) {
-	        $this->db->commit();
-	        return $object;
-	    } else {
-	        $this->db->rollback();
-	        return -1;
-	    }
+		// End
+		if (!$error) {
+			$this->db->commit();
+			return $object;
+		} else {
+			$this->db->rollback();
+			return -1;
+		}
 	}
 
 	/**
@@ -439,10 +439,10 @@ class MyObject extends CommonObject
 		$resql = $this->db->query($sql);
 		if ($resql) {
 			$num = $this->db->num_rows($resql);
-            $i = 0;
+			$i = 0;
 			while ($i < min($limit, $num))
 			{
-			    $obj = $this->db->fetch_object($resql);
+				$obj = $this->db->fetch_object($resql);
 
 				$record = new self($this->db);
 				$record->setVarsFromFetchObj($obj);
@@ -714,53 +714,53 @@ class MyObject extends CommonObject
 		return $this->setStatusCommon($user, self::STATUS_VALIDATED, $notrigger, 'MYOBJECT_REOPEN');
 	}
 
-    /**
-     *  Return a link to the object card (with optionaly the picto)
-     *
-     *  @param  int     $withpicto                  Include picto in link (0=No picto, 1=Include picto into link, 2=Only picto)
-     *  @param  string  $option                     On what the link point to ('nolink', ...)
-     *  @param  int     $notooltip                  1=Disable tooltip
-     *  @param  string  $morecss                    Add more css on link
-     *  @param  int     $save_lastsearch_value      -1=Auto, 0=No save of lastsearch_values when clicking, 1=Save lastsearch_values whenclicking
-     *  @return	string                              String with URL
-     */
-    public function getNomUrl($withpicto = 0, $option = '', $notooltip = 0, $morecss = '', $save_lastsearch_value = -1)
-    {
-        global $conf, $langs, $hookmanager;
+	/**
+	 *  Return a link to the object card (with optionaly the picto)
+	 *
+	 *  @param  int     $withpicto                  Include picto in link (0=No picto, 1=Include picto into link, 2=Only picto)
+	 *  @param  string  $option                     On what the link point to ('nolink', ...)
+	 *  @param  int     $notooltip                  1=Disable tooltip
+	 *  @param  string  $morecss                    Add more css on link
+	 *  @param  int     $save_lastsearch_value      -1=Auto, 0=No save of lastsearch_values when clicking, 1=Save lastsearch_values whenclicking
+	 *  @return	string                              String with URL
+	 */
+	public function getNomUrl($withpicto = 0, $option = '', $notooltip = 0, $morecss = '', $save_lastsearch_value = -1)
+	{
+		global $conf, $langs, $hookmanager;
 
-        if (!empty($conf->dol_no_mouse_hover)) $notooltip = 1; // Force disable tooltips
+		if (!empty($conf->dol_no_mouse_hover)) $notooltip = 1; // Force disable tooltips
 
-        $result = '';
+		$result = '';
 
-        $label = '<u>'.$langs->trans("MyObject").'</u>';
-        $label .= '<br>';
-        $label .= '<b>'.$langs->trans('Ref').':</b> '.$this->ref;
-        if (isset($this->status)) {
-        	$label .= '<br><b>'.$langs->trans("Status").":</b> ".$this->getLibStatut(5);
-        }
+		$label = '<u>'.$langs->trans("MyObject").'</u>';
+		$label .= '<br>';
+		$label .= '<b>'.$langs->trans('Ref').':</b> '.$this->ref;
+		if (isset($this->status)) {
+			$label .= '<br><b>'.$langs->trans("Status").":</b> ".$this->getLibStatut(5);
+		}
 
-        $url = dol_buildpath('/mymodule/myobject_card.php', 1).'?id='.$this->id;
+		$url = dol_buildpath('/mymodule/myobject_card.php', 1).'?id='.$this->id;
 
-        if ($option != 'nolink')
-        {
-            // Add param to save lastsearch_values or not
-            $add_save_lastsearch_values = ($save_lastsearch_value == 1 ? 1 : 0);
-            if ($save_lastsearch_value == -1 && preg_match('/list\.php/', $_SERVER["PHP_SELF"])) $add_save_lastsearch_values = 1;
-            if ($add_save_lastsearch_values) $url .= '&save_lastsearch_values=1';
-        }
+		if ($option != 'nolink')
+		{
+			// Add param to save lastsearch_values or not
+			$add_save_lastsearch_values = ($save_lastsearch_value == 1 ? 1 : 0);
+			if ($save_lastsearch_value == -1 && preg_match('/list\.php/', $_SERVER["PHP_SELF"])) $add_save_lastsearch_values = 1;
+			if ($add_save_lastsearch_values) $url .= '&save_lastsearch_values=1';
+		}
 
-        $linkclose = '';
-        if (empty($notooltip))
-        {
-            if (!empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER))
-            {
-                $label = $langs->trans("ShowMyObject");
-                $linkclose .= ' alt="'.dol_escape_htmltag($label, 1).'"';
-            }
-            $linkclose .= ' title="'.dol_escape_htmltag($label, 1).'"';
-            $linkclose .= ' class="classfortooltip'.($morecss ? ' '.$morecss : '').'"';
-        }
-        else $linkclose = ($morecss ? ' class="'.$morecss.'"' : '');
+		$linkclose = '';
+		if (empty($notooltip))
+		{
+			if (!empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER))
+			{
+				$label = $langs->trans("ShowMyObject");
+				$linkclose .= ' alt="'.dol_escape_htmltag($label, 1).'"';
+			}
+			$linkclose .= ' title="'.dol_escape_htmltag($label, 1).'"';
+			$linkclose .= ' class="classfortooltip'.($morecss ? ' '.$morecss : '').'"';
+		}
+		else $linkclose = ($morecss ? ' class="'.$morecss.'"' : '');
 
 		$linkstart = '<a href="'.$url.'"';
 		$linkstart .= $linkclose.'>';
@@ -810,7 +810,7 @@ class MyObject extends CommonObject
 		else $result .= $hookmanager->resPrint;
 
 		return $result;
-    }
+	}
 
 	/**
 	 *  Return label of the status
@@ -823,7 +823,7 @@ class MyObject extends CommonObject
 		return $this->LibStatut($this->status, $mode);
 	}
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
+	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 *  Return the status
 	 *
@@ -924,22 +924,22 @@ class MyObject extends CommonObject
 	 */
 	public function getLinesArray()
 	{
-	    $this->lines = array();
+		$this->lines = array();
 
-	    $objectline = new MyObjectLine($this->db);
-	    $result = $objectline->fetchAll('ASC', 'position', 0, 0, array('customsql'=>'fk_myobject = '.$this->id));
+		$objectline = new MyObjectLine($this->db);
+		$result = $objectline->fetchAll('ASC', 'position', 0, 0, array('customsql'=>'fk_myobject = '.$this->id));
 
-	    if (is_numeric($result))
-	    {
-	        $this->error = $this->error;
-	        $this->errors = $this->errors;
-	        return $result;
-	    }
-	    else
-	    {
-	        $this->lines = $result;
-	        return $this->lines;
-	    }
+		if (is_numeric($result))
+		{
+			$this->error = $this->error;
+			$this->errors = $this->errors;
+			return $result;
+		}
+		else
+		{
+			$this->lines = $result;
+			return $this->lines;
+		}
 	}
 
 	/**
