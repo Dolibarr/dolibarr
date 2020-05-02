@@ -716,18 +716,18 @@ class Products extends DolibarrApi
         if (!DolibarrApiAccess::$user->rights->produit->supprimer) {
             throw new RestException(401);
         }
-        $result = $this->product->fetch($id);
+        $result = $this->productsupplier->fetch($id);
         if (!$result) {
             throw new RestException(404, 'Product not found');
         }
 
-        if (!DolibarrApi::_checkAccessToResource('product', $this->product->id)) {
+        if (!DolibarrApi::_checkAccessToResource('product', $this->productsupplier->id)) {
             throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
         }
+
         $resultsupplier = 0;
-        if ($result) {
-            $this->productsupplier->fetch($id);
-            $resultsupplier = $this->product->remove_product_fournisseur_price($priceid);
+        if ($result > 0) {
+            $resultsupplier = $this->productsupplier->remove_product_fournisseur_price($priceid);
         }
 
         return $resultsupplier;
