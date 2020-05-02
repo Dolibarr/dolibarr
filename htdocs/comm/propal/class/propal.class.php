@@ -2999,9 +2999,9 @@ class Propal extends CommonObject
 
 		if (!$error)
 		{
-                    $main = MAIN_DB_PREFIX . 'propaldet';
-                    $ef = $main . "_extrafields";
-                    $sqlef = "DELETE FROM $ef WHERE fk_object IN (SELECT rowid FROM $main WHERE fk_propal = " . $this->id . ")";
+                    $main = MAIN_DB_PREFIX.'propaldet';
+                    $ef = $main."_extrafields";
+                    $sqlef = "DELETE FROM $ef WHERE fk_object IN (SELECT rowid FROM $main WHERE fk_propal = ".$this->id.")";
 			$sql = "DELETE FROM ".MAIN_DB_PREFIX."propaldet WHERE fk_propal = ".$this->id;
 			if ($this->db->query($sqlef) && $this->db->query($sql))
 			{

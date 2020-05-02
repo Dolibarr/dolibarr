@@ -2069,9 +2069,9 @@ class SupplierProposal extends CommonObject
 
         if (!$error)
         {
-            $main = MAIN_DB_PREFIX . 'supplier_proposaldet';
-            $ef = $main . "_extrafields";
-            $sqlef = "DELETE FROM $ef WHERE fk_object IN (SELECT rowid FROM $main WHERE fk_supplier_proposal = " . $this->id . ")";
+            $main = MAIN_DB_PREFIX.'supplier_proposaldet';
+            $ef = $main."_extrafields";
+            $sqlef = "DELETE FROM $ef WHERE fk_object IN (SELECT rowid FROM $main WHERE fk_supplier_proposal = ".$this->id.")";
             $sql = "DELETE FROM ".MAIN_DB_PREFIX."supplier_proposaldet WHERE fk_supplier_proposal = ".$this->id;
             if ($this->db->query($sql))
             {

@@ -930,9 +930,9 @@ class Reception extends CommonObject
 
 		if (!$error)
 		{
-                    $main = MAIN_DB_PREFIX . 'commande_fournisseur_dispatch';
-                    $ef = $main . "_extrafields";
-                    $sqlef = "DELETE FROM $ef WHERE fk_object IN (SELECT rowid FROM $main WHERE fk_reception = " . $this->id . ")";
+                    $main = MAIN_DB_PREFIX.'commande_fournisseur_dispatch';
+                    $ef = $main."_extrafields";
+                    $sqlef = "DELETE FROM $ef WHERE fk_object IN (SELECT rowid FROM $main WHERE fk_reception = ".$this->id.")";
 
 			$sql = "DELETE FROM ".MAIN_DB_PREFIX."commande_fournisseur_dispatch";
 			$sql .= " WHERE fk_reception = ".$this->id;

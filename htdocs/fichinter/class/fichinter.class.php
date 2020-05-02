@@ -994,9 +994,9 @@ class Fichinter extends CommonObject
 
 		if (!$error)
                 {
-				$main = MAIN_DB_PREFIX . 'fichinterdet';
-				$ef = $main . "_extrafields";
-				$sql = "DELETE FROM $ef WHERE fk_object IN (SELECT rowid FROM $main WHERE fk_fichinter = " . $this->id . ")";
+				$main = MAIN_DB_PREFIX.'fichinterdet';
+				$ef = $main."_extrafields";
+				$sql = "DELETE FROM $ef WHERE fk_object IN (SELECT rowid FROM $main WHERE fk_fichinter = ".$this->id.")";
 
 				$resql = $this->db->query($sql);
 				if (!$resql) $error++;
