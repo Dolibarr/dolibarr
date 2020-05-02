@@ -102,9 +102,11 @@ if ($rss) {
 	$MAXNEWS = 20;
 	$arrayofblogs = $websitepage->fetchAll($website->id, 'DESC', 'date_creation', $MAXNEWS, 0, $filters);
 	$eventarray = array();
-	foreach ($arrayofblogs as $blog) {
-		$blog->fullpageurl = $website->virtualhost.'/'.$blog->pageurl.'.php';
-		$eventarray[] = $blog;
+	if (is_array($arrayofblogs)) {
+		foreach ($arrayofblogs as $blog) {
+			$blog->fullpageurl = $website->virtualhost.'/'.$blog->pageurl.'.php';
+			$eventarray[] = $blog;
+		}
 	}
 
 	require_once DOL_DOCUMENT_ROOT."/core/lib/xcal.lib.php";
