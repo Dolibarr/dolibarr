@@ -2035,9 +2035,9 @@ class CommandeFournisseur extends CommonOrder
             // End call triggers
         }
 
-        $main = MAIN_DB_PREFIX . 'commande_fournisseurdet';
-        $ef = $main . "_extrafields";
-        $sql = "DELETE FROM $ef WHERE fk_object IN (SELECT rowid FROM $main WHERE fk_commande = " . $this->id . ")";
+        $main = MAIN_DB_PREFIX.'commande_fournisseurdet';
+        $ef = $main."_extrafields";
+        $sql = "DELETE FROM $ef WHERE fk_object IN (SELECT rowid FROM $main WHERE fk_commande = ".$this->id.")";
         dol_syslog(get_class($this)."::delete extrafields lines", LOG_DEBUG);
         if (!$this->db->query($sql))
         {
