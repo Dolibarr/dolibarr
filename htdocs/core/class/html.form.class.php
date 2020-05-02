@@ -706,7 +706,7 @@ class Form
 		{
 			$ret .= '<!-- JS CODE TO ENABLE mass action select -->
     		<script>
-                        function initCheckForSelect(mode, name, cssclass)	/* mode is 0 during init of page or click all, 1 when we click on 1 checkboxi, 'name' refers to the class of the massaction button, 'cssclass' to the class of the checkfor select boxes */
+                        function initCheckForSelect(mode, name, cssclass)	/* mode is 0 during init of page or click all, 1 when we click on 1 checkboxi, "name" refers to the class of the massaction button, "cssclass" to the class of the checkfor select boxes */
         		{
         			atleastoneselected=0;
                                 jQuery("."+cssclass).each(function( index ) {
