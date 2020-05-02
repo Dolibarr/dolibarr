@@ -50,7 +50,7 @@ $placeid = 0; // $placeid is ID of invoice
 if ($_SESSION["publicterminal"]) {
 	$_SESSION["takeposterminal"] = 1; // Use Terminal 1 for public customers
 }
-else if (empty($user->rights->takepos->run)) {
+elseif (empty($user->rights->takepos->run)) {
 	accessforbidden();
 }
 
