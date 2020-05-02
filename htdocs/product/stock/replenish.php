@@ -546,6 +546,9 @@ print '<input type="hidden" name="salert" value="'.$salert.'">';
 print '<input type="hidden" name="allalert" value="'.$allalert.'">';
 print '<input type="hidden" name="draftorder" value="'.$draftorder.'">';
 print '<input type="hidden" name="mode" value="'.$mode.'">';
+if ($limit > 0 && $limit != $conf->liste_limit) {
+    print '<input type="hidden" name="limit" value="'.$limit.'">';
+}
 if (!empty($conf->global->STOCK_ALLOW_ADD_LIMIT_STOCK_BY_WAREHOUSE))
 {
 	print '<div class="inline-block valignmiddle" style="padding-right: 20px;">';
@@ -587,6 +590,9 @@ $filters .= '&draftorder='.$draftorder;
 $filters .= '&mode='.$mode;
 $filters .= '&fk_supplier='.$fk_supplier;
 $filters .= '&fk_entrepot='.$fk_entrepot;
+if ($limit > 0 && $limit != $conf->liste_limit) {
+    $filters .= '&limit=' . urlencode($limit);
+}
 
 $param = (isset($type) ? '&type='.$type : '');
 $param .= '&fourn_id='.$fourn_id.'&snom='.$snom.'&allalert='.$allalert.'&salert='.$salert.'&draftorder='.$draftorder;
@@ -594,6 +600,7 @@ $param .= '&sref='.$sref;
 $param .= '&mode='.$mode;
 $param .= '&fk_supplier='.$fk_supplier;
 $param .= '&fk_entrepot='.$fk_entrepot;
+
 $stocklabel = $langs->trans('Stock');
 if ($usevirtualstock == 1) $stocklabel = $langs->trans('VirtualStock');
 if ($usevirtualstock == 0) $stocklabel = $langs->trans('PhysicalStock');
