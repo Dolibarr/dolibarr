@@ -748,8 +748,8 @@ class FactureRec extends CommonInvoice
         $error = 0;
 		$this->db->begin();
 
-		$main = MAIN_DB_PREFIX . 'facturedet_rec';
-        $ef = $main . "_extrafields";
+		$main = MAIN_DB_PREFIX.'facturedet_rec';
+        $ef = $main."_extrafields";
         $sqlef = "DELETE FROM $ef WHERE fk_object IN (SELECT rowid FROM $main WHERE fk_facture = $rowid)";
         dol_syslog($sqlef);
 		$sql = "DELETE FROM ".MAIN_DB_PREFIX."facturedet_rec WHERE fk_facture = ".$rowid;

@@ -372,7 +372,7 @@ class pdf_crabe extends ModelePDFFactures
 					$pdf->setSignature($cert, $cert, $this->emetteur->name, '', 2, $info);
 				}
 
-				$pdf->SetMargins($this->marge_gauche, $this->marge_haute, $this->marge_droite);   // Left, Top, Right
+				$pdf->SetMargins($this->marge_gauche, $this->marge_haute, $this->marge_droite); // Left, Top, Right
 
 				// Set $this->atleastonediscount if you have at least one discount
 				for ($i = 0; $i < $nblines; $i++)
