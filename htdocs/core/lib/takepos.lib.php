@@ -42,7 +42,7 @@ function takepos_prepare_head()
 	$head[$h][1] = $langs->trans("Receipt");
 	$head[$h][2] = 'receipt';
 	$h++;
-	
+
 	if ($conf->global->TAKEPOS_BAR_RESTAURANT)
 	{
 		$head[$h][0] = DOL_URL_ROOT.'/takepos/admin/bar.php';
