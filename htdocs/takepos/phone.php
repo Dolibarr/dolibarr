@@ -56,7 +56,7 @@ $langs->loadLangs(array("bills", "orders", "commercial", "cashdesk", "receiptpri
 if ($_SESSION["publicterminal"]) {
 	$_SESSION["takeposterminal"] = 1; // Use Terminal 1 for public customers
 }
-else if (empty($user->rights->takepos->run)) {
+elseif (empty($user->rights->takepos->run)) {
 	accessforbidden();
 }
 
