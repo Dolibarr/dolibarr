@@ -119,6 +119,7 @@ CurentlyUsingPhysicalStock=Physical stock
 RuleForStockReplenishment=Rule for stocks replenishment
 SelectProductWithNotNullQty=Select at least one product with a qty not null and a vendor
 AlertOnly= Alerts only
+IncludeProductWithUndefinedAlerts = Include products with no defined alerts
 WarehouseForStockDecrease=The warehouse <b>%s</b> will be used for stock decrease
 WarehouseForStockIncrease=The warehouse <b>%s</b> will be used for stock increase
 ForThisWarehouse=For this warehouse

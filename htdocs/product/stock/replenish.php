@@ -55,6 +55,7 @@ $sall = trim((GETPOST('search_all', 'alphanohtml') != '') ?GETPOST('search_all',
 $type = GETPOST('type', 'int');
 $tobuy = GETPOST('tobuy', 'int');
 $salert = GETPOST('salert', 'alpha');
+$allalert = GETPOST('allalert', 'alpha');
 $mode = GETPOST('mode', 'alpha');
 $draftorder = GETPOST('draftorder', 'alpha');
 
@@ -108,6 +109,7 @@ if (GETPOST('button_removefilter_x', 'alpha') || GETPOST('button_removefilter.x'
     $snom = '';
     $sal = '';
     $salert = '';
+    $allalert = '';
 	$draftorder = '';
 }
 if ($draftorder == 'on') $draftchecked = "checked";
@@ -430,33 +432,64 @@ if ($usevirtualstock)
 	$sql .= ' ('.$sqldesiredtock.' >= 0 AND ('.$sqldesiredtock.' > SUM('.$db->ifsql("s.reel IS NULL", "0", "s.reel").')';
 	$sql .= ' - ('.$sqlCommandesCli.' - '.$sqlExpeditionsCli.') + ('.$sqlCommandesFourn.' - '.$sqlReceptionFourn.') + ('.$sqlProductionToProduce.' - '.$sqlProductionToConsume.')))';
 	$sql .= ' OR ';
-	$sql .= ' ('.$sqlalertstock.' >= 0 AND ('.$sqlalertstock.' > SUM('.$db->ifsql("s.reel IS NULL", "0", "s.reel").')';
+        if ($allalert == 'on') {
+            $sql .= ' (('.$sqlalertstock.' >= 0 OR '.$sqlalertstock.' IS NULL) AND ('.$db->ifsql("$sqlalertstock IS NULL", "0", $sqlalertstock).' > SUM('.$db->ifsql("s.reel IS NULL", "0", "s.reel").')';
+        } else {
+            $sql .= ' ('.$sqlalertstock.' >= 0 AND ('.$sqlalertstock.' > SUM('.$db->ifsql("s.reel IS NULL", "0", "s.reel").')';
+        }
 	$sql .= ' - ('.$sqlCommandesCli.' - '.$sqlExpeditionsCli.') + ('.$sqlCommandesFourn.' - '.$sqlReceptionFourn.') + ('.$sqlProductionToProduce.' - '.$sqlProductionToConsume.')))';
 	$sql .= ')';
 
 	if ($salert == 'on')	// Option to see when stock is lower than alert
 	{
-		$sql .= ' AND (';
-		$sql .= $sqlalertstock.' >= 0 AND ('.$sqlalertstock.' > SUM('.$db->ifsql("s.reel IS NULL", "0", "s.reel").')';
+            $sql .= ' AND ((';
+            if ($allalert == 'on') {
+                $sql .= $sqlalertstock.' >= 0 OR '.$sqlalertstock.' IS NULL) AND ('.$db->ifsql("$sqlalertstock IS NULL", "0", $sqlalertstock).' > SUM('.$db->ifsql("s.reel IS NULL", "0", "s.reel").')';
+            } else {
+                $sql .= $sqlalertstock.' >= 0 AND ('.$sqlalertstock.' > SUM('.$db->ifsql("s.reel IS NULL", "0", "s.reel").')';
+            }
 		$sql .= ' - ('.$sqlCommandesCli.' - '.$sqlExpeditionsCli.') + ('.$sqlCommandesFourn.' - '.$sqlReceptionFourn.')  + ('.$sqlProductionToProduce.' - '.$sqlProductionToConsume.'))';
 		$sql .= ')';
 		$alertchecked = 'checked';
 	}
 } else {
 	$sql .= ' HAVING (('.$sqldesiredtock.' >= 0 AND ('.$sqldesiredtock.' > SUM('.$db->ifsql("s.reel IS NULL", "0", "s.reel").')))';
-	$sql .= ' OR ('.$sqlalertstock.' >= 0 AND ('.$sqlalertstock.' > SUM('.$db->ifsql("s.reel IS NULL", "0", "s.reel").'))))';
+        if ($allalert == 'on') {
+            $sql .= ' OR (('.$sqlalertstock.' >= 0 OR '.$sqlalertstock.' IS NULL) AND ('.$db->ifsql("$sqlalertstock IS NULL", "0", $sqlalertstock).' > SUM('.$db->ifsql("s.reel IS NULL", "0", "s.reel").'))))';
+        } else {
+            $sql .= ' OR ('.$sqlalertstock.' >= 0 AND ('.$sqlalertstock.' > SUM('.$db->ifsql("s.reel IS NULL", "0", "s.reel").'))))';
+        }
 
 	if ($salert == 'on')	// Option to see when stock is lower than alert
 	{
-		$sql .= ' AND ('.$sqlalertstock.' >= 0 AND ('.$sqlalertstock.' > SUM('.$db->ifsql("s.reel IS NULL", "0", "s.reel").')))';
+            if ($allalert == 'on') {
+               $sql .= ' AND (('.$sqlalertstock.' >= 0 OR '.$sqlalertstock.' IS NULL) AND ('.$db->ifsql("$sqlalertstock IS NULL", "0", $sqlalertstock).' > SUM('.$db->ifsql("s.reel IS NULL", "0", "s.reel").')))';
+            } else {
+                $sql .= ' AND ('.$sqlalertstock.' >= 0 AND ('.$sqlalertstock.' > SUM('.$db->ifsql("s.reel IS NULL", "0", "s.reel").')))';
+            }
 		$alertchecked = 'checked';
 	}
+}
+
+$allalertchecked = '';
+if ($allalert == 'on') {
+    $allalertchecked = 'checked';
 }
 
 // Add where from hooks
 $parameters = array();
 $reshook = $hookmanager->executeHooks('printFieldListWhere', $parameters); // Note that $action and $object may have been modified by hook
 $sql .= $hookmanager->resPrint;
+
+$nbtotalofrecords = '';
+if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST)) {
+    $result = $db->query($sql);
+    $nbtotalofrecords = $db->num_rows($result);
+    if (($page * $limit) > $nbtotalofrecords) {
+        $page = 0;
+        $offset = 0;
+    }
+}
 
 $sql .= $db->order($sortfield, $sortorder);
 $sql .= $db->plimit($limit + 1, $offset);
@@ -510,6 +543,7 @@ print '<input type="hidden" name="action" value="filter">';
 print '<input type="hidden" name="sref" value="'.$sref.'">';
 print '<input type="hidden" name="snom" value="'.$snom.'">';
 print '<input type="hidden" name="salert" value="'.$salert.'">';
+print '<input type="hidden" name="allalert" value="'.$allalert.'">';
 print '<input type="hidden" name="draftorder" value="'.$draftorder.'">';
 print '<input type="hidden" name="mode" value="'.$mode.'">';
 if (!empty($conf->global->STOCK_ALLOW_ADD_LIMIT_STOCK_BY_WAREHOUSE))
@@ -532,72 +566,78 @@ print '</div>';
 
 print '</form>';
 
-if ($sref || $snom || $sall || $salert || $draftorder || GETPOST('search', 'alpha')) {
-	$filters = '&sref='.$sref.'&snom='.$snom;
-	$filters .= '&sall='.$sall;
-	$filters .= '&salert='.$salert;
-	$filters .= '&draftorder='.$draftorder;
-	$filters .= '&mode='.$mode;
-	$filters .= '&fk_supplier='.$fk_supplier;
-	$filters .= '&fk_entrepot='.$fk_entrepot;
-	print_barre_liste(
-		$texte,
-		$page,
-		'replenish.php',
-		$filters,
-		$sortfield,
-		$sortorder,
-		'',
-		$num
-	);
-} else {
-	$filters = '&sref='.$sref.'&snom='.$snom;
-	$filters .= '&fourn_id='.$fourn_id;
-	$filters .= (isset($type) ? '&type='.$type : '');
-	$filters .= '&='.$salert;
-	$filters .= '&draftorder='.$draftorder;
-	$filters .= '&mode='.$mode;
-	$filters .= '&fk_supplier='.$fk_supplier;
-	$filters .= '&fk_entrepot='.$fk_entrepot;
-	print_barre_liste(
-		$texte,
-		$page,
-		'replenish.php',
-		$filters,
-		$sortfield,
-		$sortorder,
-		'',
-		$num
-	);
-}
+print '<form action="'.$_SERVER["PHP_SELF"].'" method="POST" name="formulaire">'.
+       '<input type="hidden" name="token" value="'.newToken().'">'.
+       '<input type="hidden" name="fk_supplier" value="'.$fk_supplier.'">'.
+       '<input type="hidden" name="fk_entrepot" value="'.$fk_entrepot.'">'.
+       '<input type="hidden" name="sortfield" value="'.$sortfield.'">'.
+       '<input type="hidden" name="sortorder" value="'.$sortorder.'">'.
+       '<input type="hidden" name="type" value="'.$type.'">'.
+       '<input type="hidden" name="linecount" value="'.$num.'">'.
+       '<input type="hidden" name="action" value="order">'.
+       '<input type="hidden" name="mode" value="'.$mode.'">';
 
-print '<div class="div-table-responsive">'; // You can use div-table-responsive-no-min if you dont need reserved height for your table
-print '<table class="liste centpercent">';
+$filters = '&sref='.$sref.'&snom='.$snom;
+$filters .= '&fourn_id='.$fourn_id;
+$filters .= (isset($type) ? '&type='.$type : '');
+$filters .= '&sall='.$sall;
+$filters .= '&salert='.$salert;
+$filters .= '&allalert='.$allalert;
+$filters .= '&draftorder='.$draftorder;
+$filters .= '&mode='.$mode;
+$filters .= '&fk_supplier='.$fk_supplier;
+$filters .= '&fk_entrepot='.$fk_entrepot;
 
 $param = (isset($type) ? '&type='.$type : '');
-$param .= '&fourn_id='.$fourn_id.'&snom='.$snom.'&salert='.$salert.'&draftorder='.$draftorder;
+$param .= '&fourn_id='.$fourn_id.'&snom='.$snom.'&allalert='.$allalert.'&salert='.$salert.'&draftorder='.$draftorder;
 $param .= '&sref='.$sref;
 $param .= '&mode='.$mode;
 $param .= '&fk_supplier='.$fk_supplier;
 $param .= '&fk_entrepot='.$fk_entrepot;
-
 $stocklabel = $langs->trans('Stock');
 if ($usevirtualstock == 1) $stocklabel = $langs->trans('VirtualStock');
 if ($usevirtualstock == 0) $stocklabel = $langs->trans('PhysicalStock');
 if (!empty($conf->global->STOCK_ALLOW_ADD_LIMIT_STOCK_BY_WAREHOUSE) && $fk_entrepot > 0)
 {
-	$stocklabel .= ' ('.$langs->trans("AllWarehouses").')';
+    $stocklabel .= ' ('.$langs->trans("AllWarehouses").')';
 }
-print '<form action="'.$_SERVER["PHP_SELF"].'" method="POST" name="formulaire">';
-print '<input type="hidden" name="token" value="'.newToken().'">';
-print '<input type="hidden" name="fk_supplier" value="'.$fk_supplier.'">';
-print '<input type="hidden" name="fk_entrepot" value="'.$fk_entrepot.'">';
-print '<input type="hidden" name="sortfield" value="'.$sortfield.'">';
-print '<input type="hidden" name="sortorder" value="'.$sortorder.'">';
-print '<input type="hidden" name="type" value="'.$type.'">';
-print '<input type="hidden" name="linecount" value="'.$num.'">';
-print '<input type="hidden" name="action" value="order">';
-print '<input type="hidden" name="mode" value="'.$mode.'">';
+$texte = $langs->trans('Replenishment');
+
+print '<div class="div-table-responsive">'; // You can use div-table-responsive-no-min if you dont need reserved height for your table
+
+if (!empty($conf->global->REPLENISH_ALLOW_VARIABLESIZELIST)) {
+    print_barre_liste(
+        $texte,
+        $page,
+        'replenish.php',
+        $filters,
+        $sortfield,
+        $sortorder,
+        '',
+        $num,
+        $nbtotalofrecords,
+        'object_stock.png',
+        0,
+        '',
+        '',
+        $limit
+    );
+} else {
+    print_barre_liste(
+        $texte,
+        $page,
+        'replenish.php',
+        $filters,
+        $sortfield,
+        $sortorder,
+        '',
+        $num,
+        $nbtotalofrecords,
+        'object_stock.png'
+    );
+}
+
+print '<table class="liste centpercent">';
 
 // Fields title search
 print '<tr class="liste_titre_filter">';
@@ -606,7 +646,7 @@ print '<td class="liste_titre"><input class="flat" type="text" name="sref" size=
 print '<td class="liste_titre"><input class="flat" type="text" name="snom" size="8" value="'.dol_escape_htmltag($snom).'"></td>';
 if (!empty($conf->service->enabled) && $type == 1) print '<td class="liste_titre">&nbsp;</td>';
 print '<td class="liste_titre">&nbsp;</td>';
-print '<td class="liste_titre right">&nbsp;</td>';
+print '<td class="liste_titre right">'.$langs->trans('IncludeProductWithUndefinedAlerts').'&nbsp;<input type="checkbox" id="allalert" name="allalert" '.(!empty($allalertchecked) ? $allalertchecked : '').'></td>';
 print '<td class="liste_titre right">'.$langs->trans('AlertOnly').'&nbsp;<input type="checkbox" id="salert" name="salert" '.(!empty($alertchecked) ? $alertchecked : '').'></td>';
 print '<td class="liste_titre right">'.$langs->trans('IncludeAlsoDraftOrders').'&nbsp;<input type="checkbox" id="draftorder" name="draftorder" '.(!empty($draftchecked) ? $draftchecked : '').'></td>';
 print '<td class="liste_titre">&nbsp;</td>';
