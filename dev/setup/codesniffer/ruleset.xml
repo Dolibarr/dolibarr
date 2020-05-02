@@ -23,13 +23,12 @@
 
 	<!-- Rules from Internal Standard -->
 
-	<rule ref="Internal.NoCodeFound">
-		<severity>0</severity>
-	</rule>
+	<rule ref="Internal.NoCodeFound" />
 
 
 	<!-- Rules from Generic Standard -->
-
+	
+	<!-- We want to allow empty statement: It allows to put some code comments into the else for examples -->
 	<rule ref="Generic.CodeAnalysis.EmptyStatement">
         <exclude name="Generic.CodeAnalysis.EmptyStatement.DetectedIf"/>
         <exclude name="Generic.CodeAnalysis.EmptyStatement.DetectedElse"/>
@@ -38,8 +37,7 @@
         <exclude name="Generic.CodeAnalysis.EmptyStatement.DetectedForeach"/>
     </rule>
 
-    <!-- <rule ref="Generic.CodeAnalysis.ForLoopShouldBeWhileLoop" /> -->
-
+    <rule ref="Generic.CodeAnalysis.ForLoopShouldBeWhileLoop" />
     <rule ref="Generic.CodeAnalysis.ForLoopWithTestFunctionCall" />
 
     <rule ref="Generic.CodeAnalysis.JumbledIncrementer" />
