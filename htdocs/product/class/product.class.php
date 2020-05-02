@@ -5639,9 +5639,10 @@ class Product extends CommonObject
 
 
 /**
- * Class to manage products or services
+ * Class to manage products or services.
+ * Do not use 'Service' as class name since it is already used by APIs.
  */
-class Service extends Product
+class ProductService extends Product
 {
 	public $picto = 'service';
 }
