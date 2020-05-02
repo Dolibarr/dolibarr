@@ -47,13 +47,16 @@ $idproduct = GETPOST('idproduct', 'int');
 $place = (GETPOST('place', 'aZ09') ? GETPOST('place', 'aZ09') : 0); // $place is id of table for Bar or Restaurant
 $placeid = 0; // $placeid is ID of invoice
 
-if (empty($user->rights->takepos->run)) {
+if ($_SESSION["publicterminal"]) {
+	$_SESSION["takeposterminal"] = 1; // Use Terminal 1 for public customers
+}
+else if (empty($user->rights->takepos->run)) {
 	accessforbidden();
 }
 
 
 
-if ($conf->global->TAKEPOS_PHONE_BASIC_LAYOUT == 1 && $conf->browser->layout == 'phone')
+if (($conf->global->TAKEPOS_PHONE_BASIC_LAYOUT == 1 && $conf->browser->layout == 'phone') || $_SESSION["publicterminal"])
 {
 	// DIRECT LINK TO THIS PAGE FROM MOBILE AND NO TERMINAL SELECTED
 	if ($_SESSION["takeposterminal"] == "")
