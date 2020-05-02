@@ -3077,10 +3077,10 @@ abstract class CommonObject
 				if (empty($reshook) && $forcedroundingmode == '0')	// Check if data on line are consistent. This may solve lines that were not consistent because set with $forcedroundingmode='auto'
 				{
 					// This part of code is to fix data. We should not call it too often.
-					$localtax_array = array($obj->localtax1_type,$obj->localtax1_tx,$obj->localtax2_type,$obj->localtax2_tx);
+					$localtax_array = array($obj->localtax1_type, $obj->localtax1_tx, $obj->localtax2_type, $obj->localtax2_tx);
 					$tmpcal = calcul_price_total($obj->qty, $obj->up, $obj->remise_percent, $obj->vatrate, $obj->localtax1_tx, $obj->localtax2_tx, 0, 'HT', $obj->info_bits, $obj->product_type, $seller, $localtax_array, (isset($obj->situation_percent) ? $obj->situation_percent : 100), $multicurrency_tx);
 
-					$diff_when_using_price_ht = price2num($tmpcal[1] - $obj->total_tva, 'MT', 1);	// If price was set with tax price adn unit price HT has a low number of digits, then we may have a diff on recalculation from unit price HT.
+					$diff_when_using_price_ht = price2num($tmpcal[1] - $obj->total_tva, 'MT', 1); // If price was set with tax price adn unit price HT has a low number of digits, then we may have a diff on recalculation from unit price HT.
 					$diff_on_current_total = price2num($obj->total_ttc - $obj->total_ht - $obj->total_tva - $obj->total_localtax1 - $obj->total_localtax2, 'MT', 1);
 					//var_dump($obj->total_ht.' '.$obj->total_tva.' '.$obj->total_localtax1.' '.$obj->total_localtax2.' =? '.$obj->total_ttc);
 					//var_dump($diff_when_using_price_ht.' '.$diff_on_current_total);
@@ -3090,7 +3090,7 @@ abstract class CommonObject
 						$sqlfix = "UPDATE ".MAIN_DB_PREFIX.$this->table_element_line." SET ".$fieldtva." = ".$tmpcal[1].", total_ttc = ".$tmpcal[2]." WHERE rowid = ".$obj->rowid;
 						dol_syslog('We found unconsistent data into detailed line (diff_when_using_price_ht = '.$diff_when_using_price_ht.' and diff_on_current_total = '.$diff_on_current_total.') for line rowid = '.$obj->rowid." (total vat of line calculated=".$tmpcal[1].", database=".$obj->total_tva."). We fix the total_vat and total_ttc of line by running sqlfix = ".$sqlfix, LOG_WARNING);
 						$resqlfix = $this->db->query($sqlfix);
-						if (! $resqlfix) dol_print_error($this->db, 'Failed to update line');
+						if (!$resqlfix) dol_print_error($this->db, 'Failed to update line');
 						$obj->total_tva = $tmpcal[1];
 						$obj->total_ttc = $tmpcal[2];
 					}

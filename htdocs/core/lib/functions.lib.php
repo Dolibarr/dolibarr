@@ -3159,7 +3159,7 @@ function img_picto($titlealt, $picto, $moreatt = '', $pictoisfullpath = false, $
         		'object_technic', 'object_ticket', 'object_trip', 'object_user', 'object_group', 'object_member',
         		'object_phoning', 'object_phoning_mobile', 'object_phoning_fax', 'object_email',
         		'off', 'on', 'order',
-        		'paiment', 'play', 'playdisabled', 'poll', 'printer', 'product', 'propal',  'projecttask', 'stock', 'resize', 'service', 'stats', 'trip',
+        		'paiment', 'play', 'playdisabled', 'poll', 'printer', 'product', 'propal', 'projecttask', 'stock', 'resize', 'service', 'stats', 'trip',
 				'setup', 'sign-out', 'split', 'switch_off', 'switch_on', 'tools', 'unlink', 'uparrow', 'user', 'wrench',
 				'jabber', 'skype', 'twitter', 'facebook', 'linkedin', 'instagram', 'snapchat', 'youtube', 'google-plus-g', 'whatsapp',
 				'chevron-left', 'chevron-right', 'chevron-down', 'chevron-top',
