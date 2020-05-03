@@ -106,3 +106,5 @@ MainPrinterToUse=Main printer to use
 OrderPrinterToUse=Order printer to use
 MainTemplateToUse=Main template to use
 OrderTemplateToUse=Order template to use
+BarRestaurant=Bar Restaurant
+AutoOrder=Customer auto order
