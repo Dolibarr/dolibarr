@@ -1132,6 +1132,9 @@ table[summary="list_of_modules"] .fa-cog {
     	padding-left: 5px;
     	padding-right: 5px;
     }
+
+    .hideonsmartphone { display: none; }
+    .hideonsmartphoneimp { display: none !important; }
 }
 
 /* Force values for small screen 570 */
@@ -1189,8 +1192,6 @@ table[summary="list_of_modules"] .fa-cog {
 		max-width: 138px;	/* length of input text in the quick search box when using a smartphone and without dolidroid */
 	}
 
-    .hideonsmartphone { display: none; }
-    .hideonsmartphoneimp { display: none !important; }
     .noenlargeonsmartphone { width : 50px !important; display: inline !important; }
     .maxwidthonsmartphone, #search_newcompany.ui-autocomplete-input { max-width: 100px; }
     .maxwidth50onsmartphone { max-width: 40px; }

@@ -271,7 +271,11 @@ if (GETPOST('optioncontent')) $algo .= 'content';
 if (GETPOST('optionsitefiles')) $algo .= 'sitefiles';
 
 if (empty($sortfield)) {
-	$sortfield = 'pageurl'; $sortorder = 'ASC';
+	if ($action == 'file_manager') {
+		$sortfield='name'; $sortorder = 'ASC';
+	} else {
+		$sortfield = 'pageurl'; $sortorder = 'ASC';
+	}
 }
 
 $searchkey = GETPOST('searchstring', 'none');
