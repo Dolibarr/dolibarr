@@ -275,7 +275,7 @@ class Invoices extends DolibarrApi
         $this->invoice->fetchObjectLinked();
         return $this->_cleanObjectDatas($this->invoice);
     }
-	
+
 	 /**
      * Create an invoice using an existing shipment.
      *
@@ -321,7 +321,7 @@ class Invoices extends DolibarrApi
         $this->_cleanObjectDatas($this->invoice);  // return invoice object
         return $this->invoice->id;
     }
-    
+
     /**
      * Get lines of an invoice
      *
