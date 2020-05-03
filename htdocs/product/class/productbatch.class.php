@@ -548,18 +548,18 @@ class Productbatch extends CommonObject
      *  @param	int			$idwarehouse		id of warehouse
      *  @return array         					<0 if KO, array of infos
      */
-    public static function findFIFO($db,  $fk_product = 0, $idw = Null)
+    public static function findFIFO($db, $fk_product = 0, $idw = null)
     {
     	global $langs;
 		$ret = array();
-        
-        
+
+
 		$sql = "SELECT t.rowid, t.batch, ps.reel, t.qty";
         $sql .= " FROM ".MAIN_DB_PREFIX."product_stock as ps";
         $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."product_batch as t ON t.fk_product_stock = ps.rowid";
         $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."product_lot as pl ON pl.fk_product = ps.fk_product and pl.batch = t.batch";
 		$sql .= " WHERE ps.fk_product=".$fk_product." AND ps.fk_entrepot = ".$idw." AND t.qty > 0";
-		$sql .= " ORDER BY pl.tms";  
+		$sql .= " ORDER BY pl.tms";
 
 		dol_syslog("productbatch::findFIFO", LOG_DEBUG);
 		$resql = $db->query($sql);
@@ -570,7 +570,7 @@ class Productbatch extends CommonObject
             {
                 $obj = $db->fetch_object($resql);
 				$reel = $obj->reel;
-				$ret[$obj->rowid] = array( 'qty' => $obj->qty, 'batch' => $obj->batch, 'qtytotwarehouse' => $obj->reel); // $ret 
+				$ret[$obj->rowid] = array( 'qty' => $obj->qty, 'batch' => $obj->batch, 'qtytotwarehouse' => $obj->reel); // $ret
 				$i++;
             }
             $db->free($resql);
