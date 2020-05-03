@@ -253,12 +253,12 @@ class FormProduct
 			$comboenhancement = ajax_combobox($htmlname, $events);
 			$out .= $comboenhancement;
 		}
-		
+
 		if ($htmlname != 'search_warehouse'){
 			if (empty($selected) && !empty($conf->global->MAIN_DEFAULT_WAREHOUSE)) $selected = $conf->global->MAIN_DEFAULT_WAREHOUSE;
 			if (empty($selected) && !empty($conf->global->MAIN_DEFAULT_WAREHOUSE_USER)) $selected = $user->fk_warehouse;
 		}
-		
+
 		$out .= '<select class="flat'.($morecss ? ' '.$morecss : '').'"'.($disabled ? ' disabled' : '').' id="'.$htmlname.'" name="'.($htmlname.($disabled ? '_disabled' : '')).'">';
 		if ($empty) $out .= '<option value="-1">'.($empty_label ? $empty_label : '&nbsp;').'</option>';
 		foreach ($this->cache_warehouses as $id => $arraytypes)
