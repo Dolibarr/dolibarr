@@ -129,6 +129,9 @@ if ($action == 'other')
 		}
 	}
 
+	$value = GETPOST('price_base_type', 'alpha');
+	$res = dolibarr_set_const($db, "PRODUCT_PRICE_BASE_TYPE", $value, 'chaine', 0, '', $conf->entity);
+	
 	$value = GETPOST('PRODUIT_SOUSPRODUITS', 'alpha');
 	$res = dolibarr_set_const($db, "PRODUIT_SOUSPRODUITS", $value, 'chaine', 0, '', $conf->entity);
 
@@ -598,6 +601,14 @@ if (!empty($conf->global->PRODUIT_MULTIPRICES) || !empty($conf->global->PRODUIT_
 	print '</tr>';
 }
 
+//Default product price base type
+print '<tr class="oddeven">';
+print '<td>'.$langs->trans("DefaultPriceType").'</td>';
+print '<td width="60" class="right">';
+print $form->selectPriceBaseType($conf->global->PRODUCT_PRICE_BASE_TYPE, "price_base_type");
+print '</td>';
+print '</tr>';
+ 
 // sousproduits activation/desactivation
 
 print '<tr class="oddeven">';
