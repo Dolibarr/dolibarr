@@ -254,7 +254,7 @@ class FormProduct
 			$out .= $comboenhancement;
 		}
 
-		if ($htmlname != 'search_warehouse'){
+		if (strpos($htmlname, 'search_') !== 0) {
 			if (empty($selected) && !empty($conf->global->MAIN_DEFAULT_WAREHOUSE)) $selected = $conf->global->MAIN_DEFAULT_WAREHOUSE;
 			if (empty($selected) && !empty($conf->global->MAIN_DEFAULT_WAREHOUSE_USER)) $selected = $user->fk_warehouse;
 		}
