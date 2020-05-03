@@ -121,6 +121,10 @@ if ($action == 'update')
 	$val = (implode(',', (colorStringToArray(GETPOST('THEME_ELDY_TEXTTITLE'), array()))));
 	if ($val == '') dolibarr_del_const($db, 'THEME_ELDY_TEXTTITLE', $conf->entity);
 	else dolibarr_set_const($db, 'THEME_ELDY_TEXTTITLE', $val, 'chaine', 0, '', $conf->entity);
+	
+	$val=(implode(',', (colorStringToArray(GETPOST('THEME_ELDY_TEXTTITLELINK'), array()))));
+	if ($val == '') dolibarr_del_const($db, 'THEME_ELDY_TEXTTITLELINK', $conf->entity);
+	else dolibarr_set_const($db, 'THEME_ELDY_TEXTTITLELINK', $val, 'chaine', 0, '', $conf->entity);
 
 	$val = (implode(',', (colorStringToArray(GETPOST('THEME_ELDY_LINEIMPAIR1'), array()))));
 	if ($val == '') dolibarr_del_const($db, 'THEME_ELDY_LINEIMPAIR1', $conf->entity);
