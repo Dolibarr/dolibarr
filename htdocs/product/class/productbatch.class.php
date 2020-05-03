@@ -540,4 +540,47 @@ class Productbatch extends CommonObject
             return -1;
         }
     }
+	    /**
+     * Return all batch records for a given product and warehouse with FIFO lot in array
+     *
+     *  @param	DoliDB		$db    				database object
+     *  @param  int         $fk_product         If set to a product id, get eatby and sellby from table llx_product_lot
+     *  @param	int			$idwarehouse		id of warehouse
+     *  @return array         					<0 if KO, array of infos
+     */
+    public static function findFIFO($db,  $fk_product = 0, $idw = Null)
+    {
+    	global $langs;
+		$ret = array();
+        
+        
+		$sql = "SELECT t.rowid, t.batch, ps.reel, t.qty";
+        $sql .= " FROM ".MAIN_DB_PREFIX."product_stock as ps";
+        $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."product_batch as t ON t.fk_product_stock = ps.rowid";
+        $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."product_lot as pl ON pl.fk_product = ps.fk_product and pl.batch = t.batch";
+		$sql .= " WHERE ps.fk_product=".$fk_product." AND ps.fk_entrepot = ".$idw." AND t.qty > 0";
+		$sql .= " ORDER BY pl.tms";  
+
+		dol_syslog("productbatch::findFIFO", LOG_DEBUG);
+		$resql = $db->query($sql);
+        if ($resql) {
+            $num = $db->num_rows($resql);
+            $i = 0;
+            while ($i < $num)
+            {
+                $obj = $db->fetch_object($resql);
+				$reel = $obj->reel;
+				$ret[$obj->rowid] = array( 'qty' => $obj->qty, 'batch' => $obj->batch, 'qtytotwarehouse' => $obj->reel); // $ret 
+				$i++;
+            }
+            $db->free($resql);
+
+            return $ret;
+        }
+        else
+        {
+            $this->error = "Error ".$db->lasterror();
+            return -1;
+        }
+    }
 }
