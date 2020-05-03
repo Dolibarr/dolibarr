@@ -732,7 +732,7 @@ function showSkins($fuser, $edit = 0, $foruserprofile = false)
 
 		print '</tr>';
 	}
-	
+
 	// TextTitleLinkColor
 	if ($foruserprofile)
 	{
@@ -759,7 +759,7 @@ function showSkins($fuser, $edit = 0, $foruserprofile = false)
 
 		print '</tr>';
 	}
-	
+
 	// BackgroundTableLineOddColor
 	if ($foruserprofile)
 	{
