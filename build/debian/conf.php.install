@@ -231,3 +231,8 @@ $dolibarr_main_prod='0';
 # Default value: 0 (use database value if exist)
 # Examples:
 # $dolibarr_mailing_limit_sendbycli='0';
+
+# dolibarr_distrib
+# A key to identify the distribution used for first installation
+$dolibarr_distrib = 'deb';
+

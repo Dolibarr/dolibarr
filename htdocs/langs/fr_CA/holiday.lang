@@ -5,7 +5,6 @@ MenuAddCP=Nouvelle demande de congé
 AddCP=Demander un congé
 DateDebCP=Date de début
 DateFinCP=Date de fin
-DateCreateCP=Date création
 ApprovedCP=Approuver
 CancelCP=Annulé
 RefuseCP=Refusé

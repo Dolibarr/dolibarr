@@ -16,12 +16,13 @@ StripeDoPayment=Pay with Stripe
 YouWillBeRedirectedOnStripe=Du bliver omdirigeret på sikret stripeside for at indtaste dig kreditkortoplysninger
 Continue=Næste
 ToOfferALinkForOnlinePayment=URL til %s betaling
-ToOfferALinkForOnlinePaymentOnOrder=URL to offer a %s online payment user interface for a sales order
-ToOfferALinkForOnlinePaymentOnInvoice=URL til at tilbyde en %s online betaling brugergrænseflade til en faktura
-ToOfferALinkForOnlinePaymentOnContractLine=URL til at tilbyde en %s online betaling brugergrænseflade til en kontrakt linje
-ToOfferALinkForOnlinePaymentOnFreeAmount=URL til at tilbyde en %s online betaling brugergrænseflade til et frit beløb
-ToOfferALinkForOnlinePaymentOnMemberSubscription=URL til at tilbyde en %s online betaling brugergrænseflade til et medlem abonnement
-YouCanAddTagOnUrl=Du kan også tilføje webadresseparameter <b>& tag= <i>værdi</i></b> til nogen af disse URL (kræves kun for fri betaling) for at tilføje din egen betaling kommentere tag.
+ToOfferALinkForOnlinePaymentOnOrder=URL to offer a %s online payment page for a sales order
+ToOfferALinkForOnlinePaymentOnInvoice=URL to offer a %s online payment page for a customer invoice
+ToOfferALinkForOnlinePaymentOnContractLine=URL to offer a %s online payment page for a contract line
+ToOfferALinkForOnlinePaymentOnFreeAmount=URL to offer a %s online payment page of any amount with no existing object
+ToOfferALinkForOnlinePaymentOnMemberSubscription=URL to offer a %s online payment page for a member subscription
+ToOfferALinkForOnlinePaymentOnDonation=URL to offer a %s online payment page for payment of a donation
+YouCanAddTagOnUrl=You can also add url parameter <b>&tag=<i>value</i></b> to any of those URL (mandatory only for payment not linked to an object) to add your own payment comment tag.<br>For the URL of payments with no existing object, you may also add the parameter <strong>&noidempotency=1</strong> so the same link with same tag can be used several times (some payment mode may limit the payment to 1 for each different link without this parameter)
 SetupStripeToHavePaymentCreatedAutomatically=Indstil din stripe med url <b> %s </ b> for at få betaling oprettet automatisk, når bekræftet af Stripe.
 AccountParameter=Kontoparametre
 UsageParameter=Anvendelsesparametre
@@ -31,6 +32,7 @@ VendorName=Navn på leverandør
 CSSUrlForPaymentForm=CSS stilark url for betalingsformular
 NewStripePaymentReceived=Ny Stripe betaling modtaget
 NewStripePaymentFailed=Ny Stripe betaling forsøgt men mislykkedes
+FailedToChargeCard=Failed to charge card
 STRIPE_TEST_SECRET_KEY=Hemmelig testnøgle
 STRIPE_TEST_PUBLISHABLE_KEY=Udgivelig testnøgle
 STRIPE_TEST_WEBHOOK_KEY=Webhook testnøgle
@@ -67,3 +69,4 @@ ToOfferALinkForTestWebhook=Link to setup Stripe WebHook to call the IPN (test mo
 ToOfferALinkForLiveWebhook=Link to setup Stripe WebHook to call the IPN (live mode)
 PaymentWillBeRecordedForNextPeriod=Payment will be recorded for the next period.
 ClickHereToTryAgain=<a href="%s">Click here to try again...</a>
+CreationOfPaymentModeMustBeDoneFromStripeInterface=Due to Strong Customer Authentication rules, creation of a card must be done from Stripe backoffice. You can click here to switch on Stripe customer record: %s

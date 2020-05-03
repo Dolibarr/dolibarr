@@ -33,7 +33,6 @@ if (!empty($idcontact)) {
     $contact->fetch($idcontact);
     DataPolicy::sendMailDataPolicyContact($contact);
 } else {
-
     $contacts = new DataPolicy($db);
     $contacts->getAllContactNotInformed();
     $contacts->getAllCompaniesNotInformed();

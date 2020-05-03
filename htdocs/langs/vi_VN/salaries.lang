@@ -1,21 +1,21 @@
 # Dolibarr language file - Source file is en_US - salaries
-SALARIES_ACCOUNTING_ACCOUNT_PAYMENT=Accounting account used for user third parties
-SALARIES_ACCOUNTING_ACCOUNT_PAYMENT_Desc=The dedicated accounting account defined on user card will be used for Subledger accounting only. This one will be used for General Ledger and as default value of Subledger accounting if dedicated user accounting account on user is not defined.
-SALARIES_ACCOUNTING_ACCOUNT_CHARGE=Accounting account by default for wage payments
+SALARIES_ACCOUNTING_ACCOUNT_PAYMENT=Tài khoản kế toán được sử dụng cho bên thứ ba của người dùng
+SALARIES_ACCOUNTING_ACCOUNT_PAYMENT_Desc=Tài khoản kế toán chuyên dụng được xác định trên thẻ người dùng sẽ chỉ được sử dụng cho kế toán Sổ phụ. Tài khoản này sẽ được sử dụng cho Sổ cái chung và là giá trị mặc định của kế toán Sổ phụ nếu tài khoản kế toán chuyên dụng trên người dùng không được xác định.
+SALARIES_ACCOUNTING_ACCOUNT_CHARGE=Tài khoản kế toán theo mặc định cho các khoản thanh toán tiền lương
 Salary=Mức lương
 Salaries=Tiền lương
 NewSalaryPayment=Thanh toán tiền lương mới
-AddSalaryPayment=Add salary payment
+AddSalaryPayment=Thêm thanh toán tiền lương
 SalaryPayment=Thanh toán tiền lương
 SalariesPayments=Lương thanh toán
 ShowSalaryPayment=Hiện thanh toán tiền lương
-THM=Average hourly rate
-TJM=Average daily rate
-CurrentSalary=Current salary
-THMDescription=This value may be used to calculate the cost of time consumed on a project entered by users if module project is used
-TJMDescription=This value is currently for information only and is not used for any calculation
-LastSalaries=Latest %s salary payments
-AllSalaries=All salary payments
-SalariesStatistics=Salary statistics
+THM=Tỷ lệ trung bình mỗi giờ
+TJM=Tỷ lệ trung bình hàng ngày
+CurrentSalary=Mức lương hiện tại
+THMDescription=Giá trị này có thể được sử dụng để tính chi phí thời gian tiêu thụ cho một dự án được nhập bởi người dùng nếu mô-đun dự án được sử dụng
+TJMDescription=Giá trị này hiện chỉ là thông tin và không được sử dụng cho bất kỳ phép tính nào
+LastSalaries=Thanh toán tiền lương %s mới nhất
+AllSalaries=Tất cả các khoản thanh toán tiền lương
+SalariesStatistics=Thống kê lương
 # Export
-SalariesAndPayments=Salaries and payments
+SalariesAndPayments=Lương và thanh toán

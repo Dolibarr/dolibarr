@@ -1,8 +1,16 @@
 # Dolibarr language file - Source file is en_US - admin
+VersionProgram=Versión del programa
+VersionLastInstall=Instalar versión inicial
+ExampleOfDirectoriesForModelGen=Ejemplo de sintaxis:<br>c:\\mydir<br>/home/mydir<br>DOL_DATA_ROOT/ecm/ecmdir
+Module30Name=Facturas
 Permission91=Consultar impuestos e IGV
 Permission92=Crear/modificar impuestos e IGV
 Permission93=Eliminar impuestos e IGV
-DictionaryVAT=Tasa de IGV (Impuesto sobre ventas en EEUU)
+DictionaryVAT=Tasa de IGV o tasa de impuesto a las ventas
 UnitPriceOfProduct=Precio unitario sin IGV de un producto
-OptionVatMode=Opción de carga de IGV
+OptionVatMode=IGV adeudado
+SuppliersCommandModel=Complete template of Purchase Order
+SuppliersInvoiceModel=Complete template of Vendor Invoice
+MailToSendInvoice=Facturas de Clientes
 OperationParamDesc=Define values to use for action, or how to extract values. For example:<br>objproperty1=SET:abc<br>objproperty1=SET:a value with replacement of __objproperty1__<br>objproperty3=SETIFEMPTY:abc<br>objproperty4=EXTRACT:HEADER:X-Myheaderkey.*[^\\s]+(.*)<br>options_myextrafield=EXTRACT:SUBJECT:([^\\s]*)<br>object.objproperty5=EXTRACT:BODY:My company name is\\s([^\\s]*)<br><br>Use a ; char as separator to extract or set several properties.
+EmailCollectorLoadThirdPartyHelp=You can use this action to use the email content to find and load an existing thirdparty in your database. The found (or created) thirdparty will be used for following actions that need it. In the parameter field you can use for example 'EXTRACT:BODY:Name:\\s([^\\s]*)' if you want to extract the name of the thirdparty from a string 'Name: name to find' found into the body.

@@ -35,7 +35,7 @@ AgendaAutoActionDesc= Here you may define events which you want Dolibarr to crea
 AgendaSetupOtherDesc= This page provides options to allow the export of your Dolibarr events into an external calendar (Thunderbird, Google Calendar etc...)
 AgendaExtSitesDesc=Questa pagina consente di configurare i calendari esterni da includere nell'agenda di dolibarr.
 ActionsEvents=Eventi per i quali creare un'azione
-EventRemindersByEmailNotEnabled=I promemoria degli eventi via e-mail non sono stati abilitati nell'impostazione del modulo %s. 
+EventRemindersByEmailNotEnabled=I promemoria degli eventi via e-mail non sono stati abilitati nell'impostazione del modulo %s.
 ##### Agenda event labels #####
 NewCompanyToDolibarr=Soggetto terzo %s creato
 COMPANY_DELETEInDolibarr=Third party %s deleted
@@ -76,6 +76,7 @@ ContractSentByEMail=Contratto %s inviato via email
 OrderSentByEMail=Sales order %s sent by email
 InvoiceSentByEMail=Fattura cliente %s inviata via email
 SupplierOrderSentByEMail=Purchase order %s sent by email
+ORDER_SUPPLIER_DELETEInDolibarr=Ordine d'acquisto %s eliminato
 SupplierInvoiceSentByEMail=Vendor invoice %s sent by email
 ShippingSentByEMail=Shipment %s sent by email
 ShippingValidated= Spedizione %s convalidata
@@ -86,6 +87,11 @@ InvoiceDeleted=Fattura cancellata
 PRODUCT_CREATEInDolibarr=Prodotto %s creato
 PRODUCT_MODIFYInDolibarr=Prodotto %s  modificato
 PRODUCT_DELETEInDolibarr=Prodotto %s cancellato
+HOLIDAY_CREATEInDolibarr=Richiesta di congedo %s creata
+HOLIDAY_MODIFYInDolibarr=Richiesta di congedo %s modificata
+HOLIDAY_APPROVEInDolibarr=Richiesta di ferie %s approvata
+HOLIDAY_VALIDATEDInDolibarr=Richiesta di congedo %s validata
+HOLIDAY_DELETEInDolibarr=Richiesta di congedo %s eliminata
 EXPENSE_REPORT_CREATEInDolibarr=Nota spese %s creata
 EXPENSE_REPORT_VALIDATEInDolibarr=Nota spese %s validata
 EXPENSE_REPORT_APPROVEInDolibarr=Nota spede %s approvata
@@ -99,6 +105,14 @@ TICKET_MODIFYInDolibarr=Ticket %s modificato
 TICKET_ASSIGNEDInDolibarr=Ticket %s assigned
 TICKET_CLOSEInDolibarr=Ticket %s chiuso
 TICKET_DELETEInDolibarr=Ticket %s eliminato
+BOM_VALIDATEInDolibarr=DBA convalidata
+BOM_UNVALIDATEInDolibarr=DBA non convalidata
+BOM_CLOSEInDolibarr=DBA disabilitata
+BOM_REOPENInDolibarr=DBA riaperta
+BOM_DELETEInDolibarr=BOM eliminata
+MRP_MO_VALIDATEInDolibarr=MO convalidato
+MRP_MO_PRODUCEDInDolibarr=MO prodotto
+MRP_MO_DELETEInDolibarr=MO eliminato
 ##### End agenda events #####
 AgendaModelModule=Modelli di documento per eventi
 DateActionStart=Data di inizio
@@ -109,6 +123,7 @@ AgendaUrlOptionsNotAdmin=<b>logina=!%s</b> per limitare l'output alle azioni non
 AgendaUrlOptions4=<b>logint=%s</b> per limitare l'output alle azioni assegnate all'utente <b>%s</b> (proprietario e altri).
 AgendaUrlOptionsProject=<b>project= __PROJECT_ID__</b> per limitare l'output alle azioni collegate al progetto <b>__PROJECT_ID__ </b>.
 AgendaUrlOptionsNotAutoEvent=<b>notactiontype=systemauto</b> per escludere gli eventi automatici.
+AgendaUrlOptionsIncludeHolidays=<b>includeholidays=1</b> to include events of holidays.
 AgendaShowBirthdayEvents=Visualizza i compleanni dei contatti
 AgendaHideBirthdayEvents=Nascondi i compleanni dei contatti
 Busy=Occupato

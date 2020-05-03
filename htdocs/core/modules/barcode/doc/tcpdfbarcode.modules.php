@@ -24,7 +24,7 @@
  */
 
 require_once DOL_DOCUMENT_ROOT.'/core/modules/barcode/modules_barcode.class.php';
-require_once DOL_DOCUMENT_ROOT.'/core/lib/barcode.lib.php';	   // This is to include def like $genbarcode_loc and $font_loc
+require_once DOL_DOCUMENT_ROOT.'/core/lib/barcode.lib.php'; // This is to include def like $genbarcode_loc and $font_loc
 
 /**
  *	Class to generate barcode images using tcpdf barcode generator
@@ -35,12 +35,12 @@ class modTcpdfbarcode extends ModeleBarCode
      * Dolibarr version of the loaded document
      * @var string
      */
-	public $version = 'dolibarr';		// 'development', 'experimental', 'dolibarr'
+	public $version = 'dolibarr'; // 'development', 'experimental', 'dolibarr'
 
 	/**
 	 * @var string Error code (or message)
 	 */
-	public $error='';
+	public $error = '';
 
 	public $is2d = false;
 
@@ -67,8 +67,8 @@ class modTcpdfbarcode extends ModeleBarCode
 	}
 
 	/**
-	 *  Checks if the numbers already in force in the data base do not
-	 *  cause conflicts that would prevent this numbering from working.
+	 *  Checks if the numbers already in the database do not
+	 *  cause conflicts that would prevent this numbering working.
 	 *
 	 *	@return		boolean		false if conflict, true if ok
 	 */
@@ -112,11 +112,11 @@ class modTcpdfbarcode extends ModeleBarCode
 		$tcpdfEncoding = $this->getTcpdfEncodingType($encoding);
 		if (empty($tcpdfEncoding)) return -1;
 
-		$color = array(0,0,0);
+		$color = array(0, 0, 0);
 
-		$_GET["code"]=$code;
-		$_GET["type"]=$encoding;
-		$_GET["readable"]=$readable;
+		$_GET["code"] = $code;
+		$_GET["type"] = $encoding;
+		$_GET["readable"] = $readable;
 
 		if ($code) {
 			// Load the tcpdf barcode class
@@ -153,19 +153,19 @@ class modTcpdfbarcode extends ModeleBarCode
 	 */
 	public function writeBarCode($code, $encoding, $readable = 'Y', $scale = 1, $nooutputiferror = 0)
 	{
-		global $conf,$_GET;
+		global $conf, $_GET;
 
 		dol_mkdir($conf->barcode->dir_temp);
-		$file=$conf->barcode->dir_temp.'/barcode_'.$code.'_'.$encoding.'.png';
+		$file = $conf->barcode->dir_temp.'/barcode_'.$code.'_'.$encoding.'.png';
 
 		$tcpdfEncoding = $this->getTcpdfEncodingType($encoding);
 		if (empty($tcpdfEncoding)) return -1;
 
-		$color = array(0,0,0);
+		$color = array(0, 0, 0);
 
-		$_GET["code"]=$code;
-		$_GET["type"]=$encoding;
-		$_GET["readable"]=$readable;
+		$_GET["code"] = $code;
+		$_GET["type"] = $encoding;
+		$_GET["readable"] = $readable;
 
 		if ($code) {
 			// Load the tcpdf barcode class

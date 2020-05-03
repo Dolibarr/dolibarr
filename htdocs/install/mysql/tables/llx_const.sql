@@ -29,7 +29,7 @@ create table llx_const
   name        varchar(180) NOT NULL,
   entity      integer DEFAULT 1 NOT NULL,	-- multi company id
   value       text NOT NULL, 				-- max 65535 caracteres
-  type        varchar(64) DEFAULT 'string',
+  type        varchar(64) DEFAULT 'string', -- null or 'encrypted' if param has been encrypted 
   visible     tinyint DEFAULT 1 NOT NULL,
   note        text,
   tms         timestamp

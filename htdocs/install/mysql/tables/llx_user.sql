@@ -24,7 +24,7 @@ create table llx_user
 
   ref_ext			varchar(50),				-- reference into an external system (not used by dolibarr)
   ref_int			varchar(50),				-- reference into an internal system (deprecated)
-  
+
   employee          tinyint        DEFAULT 1,	-- 1 if user is an employee
   fk_establishment  integer        DEFAULT 0,
 
@@ -48,14 +48,15 @@ create table llx_user
   fk_state          integer        DEFAULT 0,
   fk_country        integer        DEFAULT 0,
   birth             date,						-- birthday
-  job				        varchar(128),
+  job		        varchar(128),
   office_phone      varchar(20),
   office_fax        varchar(20),
   user_mobile       varchar(20),
   personal_mobile   varchar(20),
   email             varchar(255),
   personal_email    varchar(255),
-  
+
+  socialnetworks    text DEFAULT NULL,       -- json with socialnetworks
   jabberid			varchar(255),
   skype				varchar(255),
   twitter			varchar(255),                        		--
@@ -66,7 +67,7 @@ create table llx_user
   googleplus               varchar(255),                        		--
   youtube                  varchar(255),                        		--
   whatsapp                 varchar(255),                        		--
-  
+
   signature         text DEFAULT NULL,
   admin             smallint DEFAULT 0,
   module_comm       smallint DEFAULT 1,

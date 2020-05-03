@@ -118,11 +118,11 @@ class ImagesLibTest extends PHPUnit\Framework\TestCase
     	print __METHOD__."\n";
     }
 
-   /**
-    * testDolCountNbOfLine
-    *
-    * @return	int
-    */
+    /**
+     * testDolCountNbOfLine
+     *
+     * @return	int
+     */
     public function testgetImageSize()
     {
 		$file=dirname(__FILE__).'/img250x50.jpg';

@@ -128,12 +128,12 @@ class ProductCombination2ValuePair
 
 		$return = array();
 
-		while ($result = $this->db->fetch_object($query)) {
+		while ($obj = $this->db->fetch_object($query)) {
 			$tmp = new ProductCombination2ValuePair($this->db);
-			$tmp->fk_prod_attr_val = $result->fk_prod_attr_val;
-			$tmp->fk_prod_attr = $result->fk_prod_attr;
-			$tmp->fk_prod_combination = $result->fk_prod_combination;
-			$tmp->id = $result->rowid;
+			$tmp->fk_prod_attr_val = $obj->fk_prod_attr_val;
+			$tmp->fk_prod_attr = $obj->fk_prod_attr;
+			$tmp->fk_prod_combination = $obj->fk_prod_combination;
+			$tmp->id = $obj->rowid;
 
 			$return[] = $tmp;
 		}

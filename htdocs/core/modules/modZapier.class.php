@@ -23,7 +23,7 @@
  *  \ingroup    zapier
  *  \brief      Description and activation file for module Zapier
  */
-include_once DOL_DOCUMENT_ROOT .'/core/modules/DolibarrModules.class.php';
+include_once DOL_DOCUMENT_ROOT.'/core/modules/DolibarrModules.class.php';
 
 /**
  *  Description and activation class for module Zapier
@@ -37,19 +37,19 @@ class modZapier extends DolibarrModules
      */
     public function __construct($db)
     {
-        global $langs,$conf;
+        global $langs, $conf;
 
         $this->db = $db;
         // Id for module (must be unique).
         // Use here a free id (See in Home -> System information -> Dolibarr for list of used modules id).
-        $this->numero = 792000; // TODO Go on page https://wiki.dolibarr.org/index.php/List_of_modules_id to reserve id number for your module
+        $this->numero = 50330;
         // Key text used to identify module (for permissions, menus, etc...)
         $this->rights_class = 'zapier';
         // Family can be 'base' (core modules),'crm','financial','hr','projects','products','ecm','technic' (transverse modules),'interface' (link with external tools),'other','...'
         // It is used to group modules by family in module setup page
         $this->family = "interface";
         // Module position in the family on 2 digits ('01', '10', '20', ...)
-        $this->module_position = 100;
+        $this->module_position = '22';
         // Gives the possibility for the module, to provide his own family info and position of this family (Overwrite $this->family and $this->module_position. Avoid this)
         //$this->familyinfo = array('myownfamily' => array('position' => '01', 'label' => $langs->trans("MyOwnFamily")));
         // Module label (no space allowed), used if translation string 'ModuleZapierName' not found (Zapier is name of module).
@@ -149,9 +149,9 @@ class modZapier extends DolibarrModules
             'en_US:ParentCompany'=>'Parent company or reseller',
             'fr_FR:ParentCompany'=>'Maison mère ou revendeur'
         )*/
-        if (! isset($conf->zapier) || ! isset($conf->zapier->enabled)) {
+        if (!isset($conf->zapier) || !isset($conf->zapier->enabled)) {
             $conf->zapier = new stdClass();
-            $conf->zapier->enabled=0;
+            $conf->zapier->enabled = 0;
         }
         // Array to add new pages in new tabs
         $this->tabs = array();
@@ -181,7 +181,7 @@ class modZapier extends DolibarrModules
         // 'thirdparty'       to add a tab in third party view
         // 'user'             to add a tab in user view
         // Dictionaries
-        $this->dictionaries=array();
+        $this->dictionaries = array();
         /* Example:
         $this->dictionaries=array(
             'langs'=>'mylangfile@zapier',
@@ -242,7 +242,7 @@ class modZapier extends DolibarrModules
         // Permission array used by this module
         $this->rights = array();
 
-        $r=0;
+        $r = 0;
         // Permission id (must not be already used)
         $this->rights[$r][0] = $this->numero + $r;
         // Permission label
@@ -267,8 +267,8 @@ class modZapier extends DolibarrModules
         $this->rights[$r][5] = '';
 
         // Main menu entries
-        $this->menu = array();  // List of menus to add
-        $r=0;
+        $this->menu = array(); // List of menus to add
+        $r = 0;
 
         // Add here entries to declare new menus
         // $this->menu[$r++]=array(
@@ -316,24 +316,6 @@ class modZapier extends DolibarrModules
             'user'=>2,                              // 0=Menu for internal users, 1=external users, 2=both
         );
         */
-        // Exports
-        $r=1;
-        /* EXPORT */
-        /*
-        $langs->load("zapier@zapier");
-        $this->export_code[$r]=$this->rights_class.'_'.$r;
-        $this->export_label[$r]='MyObjectLines';	// Translation key (used only if key ExportDataset_xxx_z not found)
-        $this->export_icon[$r]='myobject@zapier';
-        $keyforclass = 'MyObject'; $keyforclassfile='/mymobule/class/myobject.class.php'; $keyforelement='myobject';
-        include DOL_DOCUMENT_ROOT.'/core/commonfieldsinexport.inc.php';
-        $keyforselect='myobject'; $keyforaliasextra='extra'; $keyforelement='myobject';
-        include DOL_DOCUMENT_ROOT.'/core/extrafieldsinexport.inc.php';
-        //$this->export_dependencies_array[$r]=array('mysubobject'=>'ts.rowid', 't.myfield'=>array('t.myfield2','t.myfield3')); // To force to activate one or several fields if we select some fields that need same (like to select a unique key if we ask a field of a child to avoid the DISTINCT to discard them, or for computed field than need several other fields)
-        $this->export_sql_start[$r]='SELECT DISTINCT ';
-        $this->export_sql_end[$r]  =' FROM '.MAIN_DB_PREFIX.'myobject as t';
-        $this->export_sql_end[$r] .=' WHERE 1 = 1';
-        $this->export_sql_end[$r] .=' AND t.entity IN ('.getEntity('myobject').')';
-        $r++; */
     }
 
     /**

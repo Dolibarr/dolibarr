@@ -241,7 +241,7 @@ class FactureTest extends PHPUnit\Framework\TestCase
         return $localobject;
     }
 
-   /**
+    /**
      * testFactureOther
      *
      * @param   Object $localobject Invoice

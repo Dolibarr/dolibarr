@@ -24,17 +24,16 @@
 		"vendor-dir" : "htdocs/includes"
 	},
 	"require" : {
-		"php" : ">=5.3.0",
+		"php" : ">=5.5.0",
 		"ext-curl" : "*",
-		"ccampbell/chromephp" : "4.1.0",
-		"ckeditor/ckeditor" : "4.6.2",
-		"mike42/escpos-php" : "1.2.1",
-		"mobiledetect/mobiledetectlib" : "2.8.17",
+		"ckeditor/ckeditor" : "4.12.1",
+		"mike42/escpos-php" : "2.2",
+		"mobiledetect/mobiledetectlib" : "2.8.34",
 		"phpoffice/phpexcel" : "1.8.1",
 		"restler/framework" : "3.0.0-RC6",
-		"tecnickcom/tcpdf" : "^6.2",
-		"atgp/factur-x" : "^1.0",
-		"luracast/restler": "^3.0"
+		"tecnickcom/tcpdf" : "6.3.2",
+		"nnnick/chartjs" : "^2.9",
+		"stripe/stripe-php" : "6.43.1"
 	},
 	"require-dev" : {
 		"jakub-onderka/php-parallel-lint" : "^0",
@@ -50,13 +49,12 @@
 		"ext-mssql" : "To use with MSSQL (experimental)",
 		"ext-pdo_sqlite" : "To use with SQLite (experimental)",
 		"ext-gd" : "Image manipulation (Required but maybe built-in PHP)",
-		"ext-imagick" : "Image manipulation (TCPDF)",
+		"ext-imagick" : "Generation of thumbs from PDF",
 		"ext-mcrypt" : "(Required but maybe built-in PHP)",
 		"ext-openssl" : "Secure connections (Emails, SOAP\u2026)",
-		"ext-mbstring" : "Handle non UTF-8 databases",
+		"ext-mbstring" : "Handle non UTF-8 characters",
 		"ext-soap" : "Native SOAP",
-		"ext-zip" : "ODT and Excel support",
-		"ext-xml" : "Excel support",
-		"firephp/firephp-core" : "Logging to Firebug console support"
+		"ext-zip" : "ODT, Excel and file compression support",
+		"ext-xml" : "Excel support"
 	}
 }

@@ -108,6 +108,7 @@ class BankAccountTest extends PHPUnit\Framework\TestCase
 
         print __METHOD__."\n";
     }
+
     /**
      * End phpunit tests
      *
@@ -168,7 +169,7 @@ class BankAccountTest extends PHPUnit\Framework\TestCase
         return $localobject;
     }
 
-   /**
+    /**
      * testBankAccountOther
      *
      * @param   Object  $localobject    Object contract

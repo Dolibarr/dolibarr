@@ -1,0 +1,81 @@
+html,body {
+    box-sizing: border-box;
+	padding:3px;
+    margin:0;
+    height:100%;
+	width:100%;
+}
+
+.container{
+	width: 100%;
+	height: 100%;
+	margin: 0 auto;
+	overflow: visible;
+	box-sizing: border-box;
+}
+
+.phonerow1{
+	margin: 0 auto;
+	width: 100%;
+	height: 40%;
+	min-height: 40%;
+}
+
+.phonerow2{
+	margin: 0 auto;
+	width: 100%;
+	height: 40%;
+}
+
+.phonebuttonsrow{
+	margin: 0 auto;
+	width: 100%;
+	height: 5%;
+}
+
+.phonediv1{
+	height:100%;
+	min-height: 100%;
+	width: 100%;
+	text-align: center;
+	box-sizing: border-box;
+	overflow: auto;
+	padding-top: 0;
+	padding-bottom: 10px;
+	padding-right: 5px;
+	padding-left: 5px;
+}
+
+.phonediv2{
+	height: 100%;
+	width: 100%;
+	box-sizing: border-box;
+	padding-top: 0;
+	padding-bottom: 10px;
+	padding-right: 5px;
+	padding-left: 5px;
+}
+
+.phonediv3{
+	height: 100%;
+	width: 100%;
+	box-sizing: border-box;
+	padding-top: 0;
+	padding-bottom: 10px;
+	padding-right: 5px;
+	padding-left: 5px;
+}
+
+button.phonebutton {
+	display: inline-block;
+	position: relative;
+	padding: 0;
+	line-height: normal;
+	cursor: pointer;
+	vertical-align: middle;
+	text-align: center;
+	overflow: visible; /* removes extra width in IE */
+	width:24%;
+	height:90%;
+	font-weight: bold;
+}

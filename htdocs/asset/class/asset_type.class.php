@@ -68,7 +68,18 @@ class AssetType extends CommonObject
 	public $note;
 
 	/** @var array Array of asset */
-	public $asset=array();
+	public $asset = array();
+
+	public $fields = array(
+		'rowid' =>array('type'=>'integer', 'label'=>'TechnicalID', 'enabled'=>1, 'visible'=>-1, 'notnull'=>1, 'position'=>10),
+		'entity' =>array('type'=>'integer', 'label'=>'Entity', 'default'=>1, 'enabled'=>1, 'visible'=>-2, 'notnull'=>1, 'position'=>15, 'index'=>1),
+		'tms' =>array('type'=>'timestamp', 'label'=>'DateModification', 'enabled'=>1, 'visible'=>-1, 'notnull'=>1, 'position'=>20),
+		'label' =>array('type'=>'varchar(50)', 'label'=>'Label', 'enabled'=>1, 'visible'=>-1, 'notnull'=>1, 'position'=>25, 'showoncombobox'=>1),
+		'accountancy_code_asset' =>array('type'=>'varchar(32)', 'label'=>'Accountancy code asset', 'enabled'=>1, 'visible'=>-1, 'position'=>30),
+		'accountancy_code_depreciation_asset' =>array('type'=>'varchar(32)', 'label'=>'Accountancy code depreciation asset', 'enabled'=>1, 'visible'=>-1, 'position'=>35),
+		'accountancy_code_depreciation_expense' =>array('type'=>'varchar(32)', 'label'=>'Accountancy code depreciation expense', 'enabled'=>1, 'visible'=>-1, 'position'=>40),
+		'note' =>array('type'=>'mediumtext', 'label'=>'Note', 'enabled'=>1, 'visible'=>-1, 'position'=>45),
+	);
 
 
 	/**
@@ -93,9 +104,9 @@ class AssetType extends CommonObject
     {
 		global $conf;
 
-		$error=0;
+		$error = 0;
 
-		$this->label=trim($this->label);
+		$this->label = trim($this->label);
 		$this->accountancy_code_asset = trim($this->accountancy_code_asset);
 		$this->accountancy_code_depreciation_asset = trim($this->accountancy_code_depreciation_asset);
 		$this->accountancy_code_depreciation_expense = trim($this->accountancy_code_depreciation_expense);
@@ -103,20 +114,20 @@ class AssetType extends CommonObject
 		$this->db->begin();
 
 		$sql = "INSERT INTO ".MAIN_DB_PREFIX."asset_type (";
-		$sql.= "label";
-		$sql.= ", accountancy_code_asset";
-		$sql.= ", accountancy_code_depreciation_asset";
-		$sql.= ", accountancy_code_depreciation_expense";
-		$sql.= ", note";
-		$sql.= ", entity";
-		$sql.= ") VALUES (";
-		$sql.= "'".$this->db->escape($this->label)."'";
-		$sql.= ", '".$this->db->escape($this->accountancy_code_asset)."'";
-		$sql.= ", '".$this->db->escape($this->accountancy_code_depreciation_asset)."'";
-		$sql.= ", '".$this->db->escape($this->accountancy_code_depreciation_expense)."'";
-		$sql.= ", '".$this->db->escape($this->note)."'";
-		$sql.= ", ".$conf->entity;
-		$sql.= ")";
+		$sql .= "label";
+		$sql .= ", accountancy_code_asset";
+		$sql .= ", accountancy_code_depreciation_asset";
+		$sql .= ", accountancy_code_depreciation_expense";
+		$sql .= ", note";
+		$sql .= ", entity";
+		$sql .= ") VALUES (";
+		$sql .= "'".$this->db->escape($this->label)."'";
+		$sql .= ", '".$this->db->escape($this->accountancy_code_asset)."'";
+		$sql .= ", '".$this->db->escape($this->accountancy_code_depreciation_asset)."'";
+		$sql .= ", '".$this->db->escape($this->accountancy_code_depreciation_expense)."'";
+		$sql .= ", '".$this->db->escape($this->note)."'";
+		$sql .= ", ".$conf->entity;
+		$sql .= ")";
 
 		dol_syslog("Asset_type::create", LOG_DEBUG);
 		$result = $this->db->query($sql);
@@ -131,15 +142,15 @@ class AssetType extends CommonObject
 				return -3;
 			}
 
-			if (! $notrigger)
+			if (!$notrigger)
 			{
 				// Call trigger
-				$result=$this->call_trigger('ASSET_TYPE_CREATE', $user);
+				$result = $this->call_trigger('ASSET_TYPE_CREATE', $user);
 				if ($result < 0) { $error++; }
 				// End call triggers
 			}
 
-			if (! $error)
+			if (!$error)
 			{
 				$this->db->commit();
 				return $this->id;
@@ -153,7 +164,7 @@ class AssetType extends CommonObject
 		}
 		else
 		{
-			$this->error=$this->db->lasterror();
+			$this->error = $this->db->lasterror();
 			$this->db->rollback();
 			return -1;
 		}
@@ -170,45 +181,45 @@ class AssetType extends CommonObject
 	{
 		global $conf, $hookmanager;
 
-		$error=0;
+		$error = 0;
 
-		$this->label=trim($this->label);
+		$this->label = trim($this->label);
 
 		$this->db->begin();
 
 		$sql = "UPDATE ".MAIN_DB_PREFIX."asset_type ";
-		$sql.= "SET ";
-		$sql.= "label = '".$this->db->escape($this->label) ."',";
-		$sql.= "accountancy_code_asset = '".$this->db->escape($this->accountancy_code_asset)."',";
-		$sql.= "accountancy_code_depreciation_asset = '".$this->db->escape($this->accountancy_code_depreciation_asset)."',";
-		$sql.= "accountancy_code_depreciation_expense = '".$this->db->escape($this->accountancy_code_depreciation_expense)."',";
-		$sql.= "note = '".$this->db->escape($this->note) ."'";
-		$sql.= " WHERE rowid =".$this->id;
+		$sql .= "SET ";
+		$sql .= "label = '".$this->db->escape($this->label)."',";
+		$sql .= "accountancy_code_asset = '".$this->db->escape($this->accountancy_code_asset)."',";
+		$sql .= "accountancy_code_depreciation_asset = '".$this->db->escape($this->accountancy_code_depreciation_asset)."',";
+		$sql .= "accountancy_code_depreciation_expense = '".$this->db->escape($this->accountancy_code_depreciation_expense)."',";
+		$sql .= "note = '".$this->db->escape($this->note)."'";
+		$sql .= " WHERE rowid =".$this->id;
 
 		$result = $this->db->query($sql);
 		if ($result)
 		{
-			$action='update';
+			$action = 'update';
 
 			// Actions on extra fields
-			if (empty($conf->global->MAIN_EXTRAFIELDS_DISABLED)) // For avoid conflicts if trigger used
+			if (!$error)
 			{
-				$result=$this->insertExtraFields();
+				$result = $this->insertExtraFields();
 				if ($result < 0)
 				{
 					$error++;
 				}
 			}
 
-			if (! $error && ! $notrigger)
+			if (!$error && !$notrigger)
 			{
 				// Call trigger
-				$result=$this->call_trigger('ASSET_TYPE_MODIFY', $user);
+				$result = $this->call_trigger('ASSET_TYPE_MODIFY', $user);
 				if ($result < 0) { $error++; }
 				// End call triggers
 			}
 
-			if (! $error)
+			if (!$error)
 			{
 				$this->db->commit();
 				return 1;
@@ -222,7 +233,7 @@ class AssetType extends CommonObject
 		}
 		else
 		{
-			$this->error=$this->db->lasterror();
+			$this->error = $this->db->lasterror();
 			$this->db->rollback();
 			return -1;
 		}
@@ -240,13 +251,13 @@ class AssetType extends CommonObject
 		$error = 0;
 
 		$sql = "DELETE FROM ".MAIN_DB_PREFIX."asset_type";
-		$sql.= " WHERE rowid = ".$this->id;
+		$sql .= " WHERE rowid = ".$this->id;
 
-		$resql=$this->db->query($sql);
+		$resql = $this->db->query($sql);
 		if ($resql)
 		{
 			// Call trigger
-			$result=$this->call_trigger('ASSET_TYPE_DELETE', $user);
+			$result = $this->call_trigger('ASSET_TYPE_DELETE', $user);
 			if ($result < 0) { $error++; $this->db->rollback(); return -2; }
 			// End call triggers
 
@@ -256,7 +267,7 @@ class AssetType extends CommonObject
 		else
 		{
 			$this->db->rollback();
-			$this->error=$this->db->lasterror();
+			$this->error = $this->db->lasterror();
 			return -1;
 		}
 	}
@@ -275,7 +286,7 @@ class AssetType extends CommonObject
 
 		dol_syslog("Asset_type::fetch", LOG_DEBUG);
 
-		$resql=$this->db->query($sql);
+		$resql = $this->db->query($sql);
 		if ($resql)
 		{
 			if ($this->db->num_rows($resql))
@@ -295,7 +306,7 @@ class AssetType extends CommonObject
 		}
 		else
 		{
-			$this->error=$this->db->lasterror();
+			$this->error = $this->db->lasterror();
 			return -1;
 		}
 	}
@@ -309,15 +320,15 @@ class AssetType extends CommonObject
 	public function liste_array()
 	{
         // phpcs:enable
-		global $conf,$langs;
+		global $conf, $langs;
 
 		$assettypes = array();
 
 		$sql = "SELECT rowid, label as label";
-		$sql.= " FROM ".MAIN_DB_PREFIX."asset_type";
-		$sql.= " WHERE entity IN (".getEntity('asset_type').")";
+		$sql .= " FROM ".MAIN_DB_PREFIX."asset_type";
+		$sql .= " WHERE entity IN (".getEntity('asset_type').")";
 
-		$resql=$this->db->query($sql);
+		$resql = $this->db->query($sql);
 		if ($resql)
 		{
 			$nump = $this->db->num_rows($resql);
@@ -354,13 +365,13 @@ class AssetType extends CommonObject
 	{
 		global $conf, $user;
 
-		$ret=array();
+		$ret = array();
 
 		$sql = "SELECT a.rowid";
-		$sql.= " FROM ".MAIN_DB_PREFIX."asset as a";
-		$sql.= " WHERE a.entity IN (".getEntity('asset').")";
-		$sql.= " AND a.fk_asset_type = ".$this->id;
-		if (! empty($excludefilter)) $sql.=' AND ('.$excludefilter.')';
+		$sql .= " FROM ".MAIN_DB_PREFIX."asset as a";
+		$sql .= " WHERE a.entity IN (".getEntity('asset').")";
+		$sql .= " AND a.fk_asset_type = ".$this->id;
+		if (!empty($excludefilter)) $sql .= ' AND ('.$excludefilter.')';
 
 		dol_syslog(get_class($this)."::listAssetsForGroup", LOG_DEBUG);
 		$resql = $this->db->query($sql);
@@ -368,31 +379,31 @@ class AssetType extends CommonObject
 		{
 			while ($obj = $this->db->fetch_object($resql))
 			{
-				if (! array_key_exists($obj->rowid, $ret))
+				if (!array_key_exists($obj->rowid, $ret))
 				{
 					if ($mode < 2)
 					{
-						$assetstatic=new Asset($this->db);
+						$assetstatic = new Asset($this->db);
 						if ($mode == 1) {
 							$assetstatic->fetch($obj->rowid, '', '', '', false, false);
 						} else {
 							$assetstatic->fetch($obj->rowid);
 						}
-						$ret[$obj->rowid]=$assetstatic;
+						$ret[$obj->rowid] = $assetstatic;
 					}
-					else $ret[$obj->rowid]=$obj->rowid;
+					else $ret[$obj->rowid] = $obj->rowid;
 				}
 			}
 
 			$this->db->free($resql);
 
-			$this->asset=$ret;
+			$this->asset = $ret;
 
 			return $ret;
 		}
 		else
 		{
-			$this->error=$this->db->lasterror();
+			$this->error = $this->db->lasterror();
 			return -1;
 		}
 	}
@@ -409,15 +420,15 @@ class AssetType extends CommonObject
 	{
 		global $langs;
 
-		$result='';
-		$label=$langs->trans("ShowTypeCard", $this->label);
+		$result = '';
+		$label = $langs->trans("ShowTypeCard", $this->label);
 
 		$linkstart = '<a href="'.DOL_URL_ROOT.'/asset/type.php?rowid='.$this->id.'" title="'.dol_escape_htmltag($label, 1).'" class="classfortooltip">';
-		$linkend='</a>';
+		$linkend = '</a>';
 
 		$result .= $linkstart;
-		if ($withpicto) $result.=img_object(($notooltip?'':$label), ($this->picto?$this->picto:'generic'), ($notooltip?(($withpicto != 2) ? 'class="paddingright"' : ''):'class="'.(($withpicto != 2) ? 'paddingright ' : '').'classfortooltip"'), 0, 0, $notooltip?0:1);
-		if ($withpicto != 2) $result.= ($maxlen?dol_trunc($this->label, $maxlen):$this->label);
+		if ($withpicto) $result .= img_object(($notooltip ? '' : $label), ($this->picto ? $this->picto : 'generic'), ($notooltip ? (($withpicto != 2) ? 'class="paddingright"' : '') : 'class="'.(($withpicto != 2) ? 'paddingright ' : '').'classfortooltip"'), 0, 0, $notooltip ? 0 : 1);
+		if ($withpicto != 2) $result .= ($maxlen ?dol_trunc($this->label, $maxlen) : $this->label);
 		$result .= $linkend;
 
 		return $result;
@@ -437,13 +448,13 @@ class AssetType extends CommonObject
 		// Initialize parameters
 		$this->id = 0;
 		$this->ref = 'ATSPEC';
-		$this->specimen=1;
+		$this->specimen = 1;
 
-		$this->label='ASSET TYPE SPECIMEN';
-		$this->note='This is a note';
+		$this->label = 'ASSET TYPE SPECIMEN';
+		$this->note = 'This is a note';
 
 		// Assets of this asset type is just me
-		$this->asset=array(
+		$this->asset = array(
 			$user->id => $user
 		);
     }

@@ -166,7 +166,7 @@ class ContratTest extends PHPUnit\Framework\TestCase
         return $localobject;
     }
 
-   /**
+    /**
      * testContratOther
      *
      * @param	Object	$localobject	Object contract

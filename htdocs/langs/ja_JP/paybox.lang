@@ -11,17 +11,8 @@ YourEMail=入金確認を受信する電子メール
 Creditor=債権者
 PaymentCode=支払いコード
 PayBoxDoPayment=Pay with Paybox
-ToPay=支払いを行う
 YouWillBeRedirectedOnPayBox=あなたが入力するクレジットカード情報をセキュリティで保護された切符売り場のページにリダイレクトされます。
 Continue=次の
-ToOfferALinkForOnlinePayment=%s支払いのURL
-ToOfferALinkForOnlinePaymentOnOrder=URL to offer a %s online payment user interface for a sales order
-ToOfferALinkForOnlinePaymentOnInvoice=顧客の請求書の%sオンライン決済のユーザインタフェースを提供するためのURL
-ToOfferALinkForOnlinePaymentOnContractLine=契約回線の%sオンライン決済のユーザインタフェースを提供するためのURL
-ToOfferALinkForOnlinePaymentOnFreeAmount=空き容量のため夜中オンライン決済のユーザインタフェースを提供するためのURL
-ToOfferALinkForOnlinePaymentOnMemberSubscription=メンバーのサブスクリプションの%sオンライン決済のユーザインタフェースを提供するためのURL
-ToOfferALinkForOnlinePaymentOnDonation=URL to offer a %s online payment, user interface for payment of donation
-YouCanAddTagOnUrl=また、独自の支払いコメントタグを追加するには、それらのURL（無料支払のためにのみ必要）のいずれかにurlパラメータ<b>·タグ= <i>値を</i></b>追加<i><b>する</b></i>こと<i><b>が</b></i>できます。
 SetupPayBoxToHavePaymentCreatedAutomatically=Setup your Paybox with url <b>%s</b> to have payment created automatically when validated by Paybox.
 YourPaymentHasBeenRecorded=このページでは、あなたの支払が記録されていることを確認します。ありがとうございます。
 YourPaymentHasNotBeenRecorded=Your payment has NOT been recorded and the transaction has been canceled. Thank you.

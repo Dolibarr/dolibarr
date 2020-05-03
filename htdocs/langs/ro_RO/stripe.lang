@@ -16,12 +16,13 @@ StripeDoPayment=Pay with Stripe
 YouWillBeRedirectedOnStripe=Veți fi redirecționat pe pagina Stripe securizată pentru a vă introduce informațiile despre cardul de credit
 Continue=Următor
 ToOfferALinkForOnlinePayment=URL-ul pentru plata %s
-ToOfferALinkForOnlinePaymentOnOrder=URL pentru a oferi o  %s interfață utilizator de plată online pentru o comandă de vânzări
-ToOfferALinkForOnlinePaymentOnInvoice=URL-ul pentru a oferi un %s interfaţă de utilizator pentru plata online pentru o factura client.
-ToOfferALinkForOnlinePaymentOnContractLine=URL-ul pentru a oferi un %s plata online interfaţă cu utilizatorul pentru un contract de linie
-ToOfferALinkForOnlinePaymentOnFreeAmount=URL-ul pentru a oferi un %s plata online interfaţă de utilizator pentru o suma de liber
-ToOfferALinkForOnlinePaymentOnMemberSubscription=URL-ul pentru a oferi o plată %s interfata online pentru un abonament de membru
-YouCanAddTagOnUrl=Puteţi, de asemenea, să adăugaţi URL-ul parametru <b>& tag= <i>valoarea</i></b> la oricare dintre aceste URL-ul (necesar doar pentru liber de plată) pentru a adăuga propriul plată comentariu tag.
+ToOfferALinkForOnlinePaymentOnOrder=URL to offer a %s online payment page for a sales order
+ToOfferALinkForOnlinePaymentOnInvoice=URL to offer a %s online payment page for a customer invoice
+ToOfferALinkForOnlinePaymentOnContractLine=URL to offer a %s online payment page for a contract line
+ToOfferALinkForOnlinePaymentOnFreeAmount=URL to offer a %s online payment page of any amount with no existing object
+ToOfferALinkForOnlinePaymentOnMemberSubscription=URL to offer a %s online payment page for a member subscription
+ToOfferALinkForOnlinePaymentOnDonation=URL to offer a %s online payment page for payment of a donation
+YouCanAddTagOnUrl=You can also add url parameter <b>&tag=<i>value</i></b> to any of those URL (mandatory only for payment not linked to an object) to add your own payment comment tag.<br>For the URL of payments with no existing object, you may also add the parameter <strong>&noidempotency=1</strong> so the same link with same tag can be used several times (some payment mode may limit the payment to 1 for each different link without this parameter)
 SetupStripeToHavePaymentCreatedAutomatically=Configurați-vă Stripe cu URL <b> %s </b> pentru a avea o plată creată automat când este validată de Stripe.
 AccountParameter=Parametri Cont
 UsageParameter=Utilizarea parametrilor
@@ -31,6 +32,7 @@ VendorName=Numele vânzătorului
 CSSUrlForPaymentForm=CSS foaie de URL-ul de stil pentru forma de plată
 NewStripePaymentReceived=Plata noua Stripe incasata
 NewStripePaymentFailed=Plata noua Stripe incercata dar esuata
+FailedToChargeCard=Failed to charge card
 STRIPE_TEST_SECRET_KEY=Cheie de testare secreta
 STRIPE_TEST_PUBLISHABLE_KEY=Cheia de test publicabilă
 STRIPE_TEST_WEBHOOK_KEY=Cheia de test Webhook
@@ -67,3 +69,4 @@ ToOfferALinkForTestWebhook=Link to setup Stripe WebHook to call the IPN (test mo
 ToOfferALinkForLiveWebhook=Link to setup Stripe WebHook to call the IPN (live mode)
 PaymentWillBeRecordedForNextPeriod=Payment will be recorded for the next period.
 ClickHereToTryAgain=<a href="%s">Click here to try again...</a>
+CreationOfPaymentModeMustBeDoneFromStripeInterface=Due to Strong Customer Authentication rules, creation of a card must be done from Stripe backoffice. You can click here to switch on Stripe customer record: %s

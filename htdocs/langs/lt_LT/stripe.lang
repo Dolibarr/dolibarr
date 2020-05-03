@@ -16,12 +16,13 @@ StripeDoPayment=Pay with Stripe
 YouWillBeRedirectedOnStripe=You will be redirected on secured Stripe page to input you credit card information
 Continue=Kitas
 ToOfferALinkForOnlinePayment=URL %s mokėjimui
-ToOfferALinkForOnlinePaymentOnOrder=URL to offer a %s online payment user interface for a sales order
-ToOfferALinkForOnlinePaymentOnInvoice=URL siūlo %s interneto mokėjimui vartotojo sąsają kliento sąskaitai-faktūrai
-ToOfferALinkForOnlinePaymentOnContractLine=URL siūlo %s interneto mokėjimui vartotojo sąsają sutarties eilutei.
-ToOfferALinkForOnlinePaymentOnFreeAmount=URL siūlo %s interneto mokėjimui vartotojo sąsaja nemokamam kiekiui.
-ToOfferALinkForOnlinePaymentOnMemberSubscription=URL pasiūlymui %s interneto mokėjimui vartotojo sąsają nario pasirašymui.
-YouCanAddTagOnUrl=Taip pat galite pridėti URL parametrą <b>&tag=<i>value</i></b> į bet kurį URL (reikalingas tik nemokamam mokėjimui) pridėti nuosavo mokėjimo komentaro žymę.
+ToOfferALinkForOnlinePaymentOnOrder=URL to offer a %s online payment page for a sales order
+ToOfferALinkForOnlinePaymentOnInvoice=URL to offer a %s online payment page for a customer invoice
+ToOfferALinkForOnlinePaymentOnContractLine=URL to offer a %s online payment page for a contract line
+ToOfferALinkForOnlinePaymentOnFreeAmount=URL to offer a %s online payment page of any amount with no existing object
+ToOfferALinkForOnlinePaymentOnMemberSubscription=URL to offer a %s online payment page for a member subscription
+ToOfferALinkForOnlinePaymentOnDonation=URL to offer a %s online payment page for payment of a donation
+YouCanAddTagOnUrl=You can also add url parameter <b>&tag=<i>value</i></b> to any of those URL (mandatory only for payment not linked to an object) to add your own payment comment tag.<br>For the URL of payments with no existing object, you may also add the parameter <strong>&noidempotency=1</strong> so the same link with same tag can be used several times (some payment mode may limit the payment to 1 for each different link without this parameter)
 SetupStripeToHavePaymentCreatedAutomatically=Setup your Stripe with url <b>%s</b> to have payment created automatically when validated by Stripe.
 AccountParameter=Sąskaitos parametrai
 UsageParameter=Naudojimo parametrai
@@ -31,6 +32,7 @@ VendorName=Paravėjo vardas
 CSSUrlForPaymentForm=CSS stiliaus lapo URL mokėjimo formai
 NewStripePaymentReceived=New Stripe payment received
 NewStripePaymentFailed=New Stripe payment tried but failed
+FailedToChargeCard=Failed to charge card
 STRIPE_TEST_SECRET_KEY=Secret test key
 STRIPE_TEST_PUBLISHABLE_KEY=Publishable test key
 STRIPE_TEST_WEBHOOK_KEY=Webhook test key
@@ -67,3 +69,4 @@ ToOfferALinkForTestWebhook=Link to setup Stripe WebHook to call the IPN (test mo
 ToOfferALinkForLiveWebhook=Link to setup Stripe WebHook to call the IPN (live mode)
 PaymentWillBeRecordedForNextPeriod=Payment will be recorded for the next period.
 ClickHereToTryAgain=<a href="%s">Click here to try again...</a>
+CreationOfPaymentModeMustBeDoneFromStripeInterface=Due to Strong Customer Authentication rules, creation of a card must be done from Stripe backoffice. You can click here to switch on Stripe customer record: %s

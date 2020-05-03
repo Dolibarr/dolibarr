@@ -19,7 +19,7 @@
 require '../../main.inc.php';
 
 // Security check
-if (!$user->admin && $user->societe_id > 0)
+if (!$user->admin && $user->socid > 0)
   accessforbidden();
 
 

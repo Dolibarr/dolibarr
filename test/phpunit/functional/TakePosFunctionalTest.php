@@ -67,14 +67,14 @@ class TakePosFunctionalTest extends \PHPUnit_Extensions_Selenium2TestCase
 		),
 		// Geckodriver does not keep the session at the moment?!
 		// XPath selectors also don't seem to work
-//        array(
-//            'browser' => 'Mozilla Firefox on Linux',
-//            'browserName' => 'firefox',
-//            'sessionStrategy' => 'shared',
-//            'desiredCapabilities' => array(
-//                'marionette' => true
-//            )
-//        )
+        //array(
+        //    'browser' => 'Mozilla Firefox on Linux',
+        //    'browserName' => 'firefox',
+        //    'sessionStrategy' => 'shared',
+        //    'desiredCapabilities' => array(
+        //        'marionette' => true
+        //    )
+        //)
 	);
 
 	/**

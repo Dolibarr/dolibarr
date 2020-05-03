@@ -20,7 +20,7 @@
 ## @category   PHPExcel
 ## @package    PHPExcel_Calculation
 ## @copyright  Copyright (c) 2006 - 2013 PHPExcel (http://www.codeplex.com/PHPExcel)
-## @license    https://www.gnu.org/licenses/old-licenses/lgpl-2.1.txt	LGPL
+## @license    http://www.gnu.org/licenses/old-licenses/lgpl-2.1.txt	LGPL
 ## @version    ##VERSION##, ##DATE##
 ##
 ## Data in this file derived from http://www.piuha.fi/excel-function-name-translation/

@@ -1,6 +1,6 @@
 # Dolibarr language file - Source file is en_US - commercial
-Commercial=Handel
-CommercialArea=Obszar zamówień
+Commercial=Commerce
+CommercialArea=Commerce area
 Customer=Klient
 Customers=Klienci
 Prospect=Widok
@@ -59,7 +59,7 @@ ActionAC_FAC=Wyślij fakturę/rozliczenie pocztą
 ActionAC_REL=Wyślij fakturę/rozliczenie pocztą (ponaglenie)
 ActionAC_CLO=Blisko
 ActionAC_EMAILING=Wyślij mass maila
-ActionAC_COM=Wyślij zamówienie klienta pocztą
+ActionAC_COM=Send sales order by mail
 ActionAC_SHIP=Wyślij wysyłki za pośrednictwem poczty
 ActionAC_SUP_ORD=Send purchase order by mail
 ActionAC_SUP_INV=Send vendor invoice by mail

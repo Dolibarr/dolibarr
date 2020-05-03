@@ -28,9 +28,9 @@ include_once DOL_DOCUMENT_ROOT.'/core/boxes/modules_boxes.php';
  */
 class box_bookmarks extends ModeleBoxes
 {
-    public $boxcode="bookmarks";
-    public $boximg="object_bookmark";
-    public $boxlabel="BoxMyLastBookmarks";
+    public $boxcode = "bookmarks";
+    public $boximg = "bookmark";
+    public $boxlabel = "BoxMyLastBookmarks";
     public $depends = array("bookmark");
 
 	/**
@@ -56,7 +56,7 @@ class box_bookmarks extends ModeleBoxes
 
 	    $this->db = $db;
 
-	    $this->hidden = ! ($user->rights->bookmark->lire);
+	    $this->hidden = !($user->rights->bookmark->lire);
 	}
 
 	/**
@@ -70,30 +70,30 @@ class box_bookmarks extends ModeleBoxes
 		global $user, $langs, $conf;
 		$langs->load("boxes");
 
-		$this->max=$max;
+		$this->max = $max;
 
 		$this->info_box_head = array(
             'text' => $langs->trans("BoxMyLastBookmarks", $max),
             'sublink' => DOL_URL_ROOT.'/bookmarks/list.php',
         );
         if ($user->rights->bookmark->creer) {
-			$this->info_box_head['subpicto']='object_bookmark';
-			$this->info_box_head['subtext']=$langs->trans("BookmarksManagement");
+			$this->info_box_head['subpicto'] = 'bookmark';
+			$this->info_box_head['subtext'] = $langs->trans("BookmarksManagement");
 		}
 		else
 		{
-			$this->info_box_head['subpicto']='object_bookmark';
-			$this->info_box_head['subtext']=$langs->trans("ListOfBookmark");
+			$this->info_box_head['subpicto'] = 'bookmark';
+			$this->info_box_head['subtext'] = $langs->trans("ListOfBookmark");
 		}
 
 		if ($user->rights->bookmark->lire)
 		{
 			$sql = "SELECT b.title, b.url, b.target, b.favicon";
-			$sql.= " FROM ".MAIN_DB_PREFIX."bookmark as b";
-			$sql.= " WHERE fk_user = ".$user->id;
-            $sql.= " AND b.entity = ".$conf->entity;
-			$sql.= $this->db->order("position", "ASC");
-			$sql.= $this->db->plimit($max, 0);
+			$sql .= " FROM ".MAIN_DB_PREFIX."bookmark as b";
+			$sql .= " WHERE fk_user = ".$user->id;
+            $sql .= " AND b.entity = ".$conf->entity;
+			$sql .= $this->db->order("position", "ASC");
+			$sql .= $this->db->plimit($max, 0);
 
 			$result = $this->db->query($sql);
 			if ($result)
@@ -110,22 +110,22 @@ class box_bookmarks extends ModeleBoxes
                         'logo' => $this->boximg,
                         'url' => $objp->url,
                         'tooltip' => $objp->title,
-                        'target' => $objp->target?'newtab':'',
+                        'target' => $objp->target ? 'newtab' : '',
                     );
                     $this->info_box_contents[$line][1] = array(
                         'td' => '',
                         'text' => $objp->title,
                         'url' => $objp->url,
                         'tooltip' => $objp->title,
-                        'target' => $objp->target?'newtab':'',
+                        'target' => $objp->target ? 'newtab' : '',
                     );
 
                     $line++;
                 }
 
-                if ($num==0) {
-                    $mytxt=$langs->trans("NoRecordedBookmarks");
-                    if ($user->rights->bookmark->creer) $mytxt.=' '.$langs->trans("ClickToAdd");
+                if ($num == 0) {
+                    $mytxt = $langs->trans("NoRecordedBookmarks");
+                    if ($user->rights->bookmark->creer) $mytxt .= ' '.$langs->trans("ClickToAdd");
                     $this->info_box_contents[$line][0] = array(
                         'td' => 'class="center" colspan="2"',
                         'tooltip' => $mytxt,

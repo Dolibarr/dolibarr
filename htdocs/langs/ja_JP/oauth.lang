@@ -1,8 +1,8 @@
 # Dolibarr language file - Source file is en_US - oauth
-ConfigOAuth=Oauth 設定
-OAuthServices=OAuth サービス
+ConfigOAuth=OAuth Configuration
+OAuthServices=OAuth Services
 ManualTokenGeneration=手動トークン生成
-TokenManager=トークンマネージャー
+TokenManager=Token Manager
 IsTokenGenerated=トークンは生成されましたか？
 NoAccessToken=アクセストークンはローカルデータベースに保存されていません
 HasAccessToken=トークンを生成し、ローカルデータベースに保存されました
@@ -11,8 +11,8 @@ ToCheckDeleteTokenOnProvider=ここをクリックすると %s OAuth プロバ�
 TokenDeleted=トークンを削除しました
 RequestAccess=ここをクリックすると、アクセスをリクエスト/更新し、新しいトークンを受け取って保存します
 DeleteAccess=ここをクリックするとトークンを削除します
-UseTheFollowingUrlAsRedirectURI=OAuth プロバイダで資格情報を作成するときに、次の URL をリダイレクト URI として使用します:
-ListOfSupportedOauthProviders=ここにOAuth2プロバイダが提供する資格情報を入力してください。 サポートされているOAuth2プロバイダのみがここに表示されます。 この設定は、OAuth2認証を必要とする他のモジュールで使用されることがあります。
+UseTheFollowingUrlAsRedirectURI=Use the following URL as the Redirect URI when creating your credentials with your OAuth provider:
+ListOfSupportedOauthProviders=Enter the credentials provided by your OAuth2 provider. Only supported OAuth2 providers are listedd here. These services may be used by other modules that need OAuth2 authentication.
 OAuthSetupForLogin=OAuth トークンを生成するページ
 SeePreviousTab=前のタブを表示
 OAuthIDSecret=OAuth ID とシークレット
@@ -20,11 +20,13 @@ TOKEN_REFRESH=現在のトークンを更新
 TOKEN_EXPIRED=トークンの有効期限切れ
 TOKEN_EXPIRE_AT=トークンの有効期限
 TOKEN_DELETE=保存されたトークンを削除
-OAUTH_GOOGLE_NAME=OAuth Google サービス
-OAUTH_GOOGLE_ID=OAuth Google ID
-OAUTH_GOOGLE_SECRET=OAuth Google シークレット
-OAUTH_GOOGLE_DESC=<a class="notasortlink" href="https://console.developers.google.com/" target="_blank">このページ</a> に移動して、"資格情報" で、OAuth 資格情報を作成します
-OAUTH_GITHUB_NAME=OAuth GitHub サービス
-OAUTH_GITHUB_ID=OAuth GitHub ID
-OAUTH_GITHUB_SECRET=OAuth GitHub シークレット
-OAUTH_GITHUB_DESC=<a class="notasortlink" href="https://github.com/settings/developers" target="_blank">このページ</a> に移動して、"新しいアプリケーションを登録" で、OAuth 資格情報を作成します
+OAUTH_GOOGLE_NAME=OAuth Google service
+OAUTH_GOOGLE_ID=OAuth Google Id
+OAUTH_GOOGLE_SECRET=OAuth Google Secret
+OAUTH_GOOGLE_DESC=Go to <a class="notasortlink" href="https://console.developers.google.com/" target="_blank">this page</a> then "Credentials" to create OAuth credentials
+OAUTH_GITHUB_NAME=OAuth GitHub service
+OAUTH_GITHUB_ID=OAuth GitHub Id
+OAUTH_GITHUB_SECRET=OAuth GitHub Secret
+OAUTH_GITHUB_DESC=Go to <a class="notasortlink" href="https://github.com/settings/developers" target="_blank">this page</a> then "Register a new application" to create OAuth credentials
+OAUTH_STRIPE_TEST_NAME=OAuth Stripe Test
+OAUTH_STRIPE_LIVE_NAME=OAuth Stripe Live

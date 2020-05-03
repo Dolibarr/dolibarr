@@ -22,6 +22,7 @@ CREATE TABLE llx_comment (
     tms timestamp,
     description text NOT NULL,
     fk_user_author integer DEFAULT NULL,
+    fk_user_modif integer DEFAULT NULL,
     fk_element integer DEFAULT NULL,
     element_type varchar(50) DEFAULT NULL,
     entity integer DEFAULT 1,

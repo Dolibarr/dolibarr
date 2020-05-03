@@ -1,7 +1,7 @@
 # Dolibarr language file - Source file is en_US - donations
 Donation=Дарение
 Donations=Дарения
-DonationRef=Реф. дарение
+DonationRef=Дарение №
 Donor=Дарител
 AddDonation=Създаване на дарение
 NewDonation=Ново дарение
@@ -17,10 +17,11 @@ DonationStatusPromiseNotValidatedShort=Чернова
 DonationStatusPromiseValidatedShort=Валидирано
 DonationStatusPaidShort=Получено
 DonationTitle=Разписка за дарение
+DonationDate=Дата на дарение
 DonationDatePayment=Дата на плащане
 ValidPromess=Валидиране на дарение
 DonationReceipt=Разписка за дарение
-DonationsModels=Модели на документи за разписки за дарения
+DonationsModels=Шаблони на документи за разписки по дарения
 LastModifiedDonations=Дарения: %s последно променени
 DonationRecipient=Получател на дарение
 IConfirmDonationReception=Получателят декларира полученото като дарение на следната сума
