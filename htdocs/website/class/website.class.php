@@ -249,6 +249,12 @@ class Website extends CommonObject
             // }
         }
 
+	    if (! $error) {
+	    	$stringtodolibarrfile = "# Some properties for Dolibarr web site CMS\n";
+	    	$stringtodolibarrfile .= "noclone=dir_list_to_exclude_when_cloning_separated_with_comma\n";
+			file_put_contents('.dolibarr', $stringtodolibarrfile);
+        }
+
 		// Commit or rollback
 		if ($error) {
 			$this->db->rollback();
