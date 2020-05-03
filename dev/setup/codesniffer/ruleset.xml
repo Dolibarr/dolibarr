@@ -187,6 +187,13 @@
 	  </properties>
 	</rule>
 
+    <!-- Check for duplicate class names -->
+    <!-- Disabled: We need this for dependency injection. 
+    <rule ref="Generic.Classes.DuplicateClassName" /> 
+    -->
+
+
+ 	<!-- Rules from Squiz Standard -->
 
     <rule ref="Squiz.WhiteSpace.ScopeClosingBrace.Indent" />
 
@@ -222,23 +229,16 @@
     </rule>
     <rule ref="Squiz.Scope.MethodScope.Missing" />
 
+
     <!-- Rules from PEAR Standard -->
 
     <rule ref="PEAR.Classes.ClassDeclaration" />
 
-    <!-- Check for duplicate class names -->
-    <!-- <rule ref="Generic.Classes.DuplicateClassName" /> -->
-
     <rule ref="PEAR.Commenting.ClassComment" />
 
-    <!-- TODO Remove this and fix reported errors -->
-    <rule ref="PEAR.Commenting.ClassComment.Missing">
-        <severity>0</severity>
-    </rule>
+    <rule ref="PEAR.Commenting.ClassComment.Missing" />
 
-    <rule ref="PEAR.Commenting.ClassComment.MissingTag">
-		<severity>0</severity>
-    </rule>
+    <rule ref="PEAR.Commenting.ClassComment.MissingTag" />
 
     <rule ref="PEAR.Commenting.ClassComment.MissingAuthorTag">
         <severity>0</severity>
@@ -247,66 +247,37 @@
     <rule ref="PEAR.Commenting.ClassComment.MissingCategoryTag">
         <severity>0</severity>
     </rule>
-
     <rule ref="PEAR.Commenting.ClassComment.MissingLicenseTag">
         <severity>0</severity>
     </rule>
-
     <rule ref="PEAR.Commenting.ClassComment.MissingLinkTag">
         <severity>0</severity>
     </rule>
-
     <rule ref="PEAR.Commenting.ClassComment.MissingPackageTag">
         <severity>0</severity>
     </rule>
 
-
-
-    <!--
-    <rule ref="PEAR.Commenting.FileComment" />
-    <rule ref="PEAR.Commenting.FileComment.WrongStyle">
-        <severity>0</severity>
-    </rule>
-    <rule ref="PEAR.Commenting.FileComment.MissingVersion">
-        <severity>0</severity>
-    </rule>
-    <rule ref="PEAR.Commenting.FileComment.MissingTag">
-        <severity>0</severity>
-    </rule>
-    -->
-
     <rule ref="PEAR.Commenting.FunctionComment" />
 
-    <rule ref="PEAR.Commenting.FunctionComment.Empty">
-        <severity>5</severity>
-    </rule>
-
-	<!--<rule ref="PEAR.Commenting.FunctionComment.MissingReturn">
-        <severity>0</severity>
-    </rule>-->
-    <!--<rule ref="PEAR.Commenting.FunctionComment.Missing">
-        <severity>0</severity>
-    </rule>-->
+    <rule ref="PEAR.Commenting.FunctionComment.Empty" />
 
     <rule ref="PEAR.Commenting.FunctionComment.SpacingAfterParamType" />
 
     <rule ref="PEAR.Commenting.FunctionComment.SpacingAfterParamName">
         <severity>0</severity>
     </rule>
-
     <rule ref="PEAR.Commenting.FunctionComment.SpacingAfterParamType">
         <severity>0</severity>
     </rule>
 
-    <rule ref="PEAR.Commenting.FunctionComment.SpacingAfterParamName" />
-
-    <rule ref="PEAR.Commenting.FunctionComment.ReturnNotRequired">
-        <severity>0</severity>
-    </rule>
+    <rule ref="PEAR.Commenting.FunctionComment.ReturnNotRequired" />
 
     <rule ref="PEAR.Commenting.FunctionComment.WrongStyle">
-        <severity>0</severity>
     </rule>
+
+
+
+
 
     <rule ref="PEAR.Commenting.FunctionComment.SpacingBeforeParamType">
         <severity>0</severity>
@@ -344,6 +315,7 @@
     <rule ref="PEAR.Files.IncludingFile.UseInclude">
         <severity>0</severity>
     </rule>
+    
     <!-- TODO Enable this test. We should use require for include in prior of include when out of if -->
     <rule ref="PEAR.Files.IncludingFile.UseIncludeOnce">
         <severity>0</severity>
