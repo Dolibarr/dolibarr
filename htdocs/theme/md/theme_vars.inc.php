@@ -65,6 +65,7 @@ $colorbacklinebreak = '214,218,220';
 $colorbackbody = '248,248,248';
 $colortexttitlenotab = '80,71,5';
 $colortexttitle = '20,20,20';
+$colortexttitlelink = '0,0,120';
 $colortext = '0,0,0';
 $colortextlink = '0,0,120';
 $fontsize = '14';
