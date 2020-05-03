@@ -251,8 +251,9 @@ class Website extends CommonObject
 
 	    if (! $error) {
 	    	$stringtodolibarrfile = "# Some properties for Dolibarr web site CMS\n";
-	    	$stringtodolibarrfile .= "noclone=dir_list_to_exclude_when_cloning_separated_with_comma\n";
-			file_put_contents('.dolibarr', $stringtodolibarrfile);
+	    	$stringtodolibarrfile .= "param=value\n";
+	    	//print $conf->website->dir_output.'/'.$this->ref.'/.dolibarr';exit;
+	    	file_put_contents($conf->website->dir_output.'/'.$this->ref.'/.dolibarr', $stringtodolibarrfile);
         }
 
 		// Commit or rollback
@@ -674,7 +675,7 @@ class Website extends CommonObject
 
 		if (!$error)
 		{
-			dolCopyDir($pathofwebsiteold, $pathofwebsitenew, $conf->global->MAIN_UMASK, 0);
+			dolCopyDir($pathofwebsiteold, $pathofwebsitenew, $conf->global->MAIN_UMASK, 0, null, 2);
 
 			// Check symlink to medias and restore it if ko
 			$pathtomedias = DOL_DATA_ROOT.'/medias'; // Target
