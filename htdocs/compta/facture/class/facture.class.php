@@ -1332,12 +1332,12 @@ class Facture extends CommonInvoice
 	{
 		global $conf, $hookmanager;
 		$error = 0;
-		require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';  
+		require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 		// Closed order
 		$this->date = dol_now();
 		$this->source = 0;
 		dol_syslog(get_class($this)."::createFromShipment()".$object->origin." ".$object->origin_id, LOG_DEBUG);
-		//recherche de la commande origine 
+		//recherche de la commande origine
 		$order = $object->origin;
 		$idcom = $object->origin_id;
 		if ($order == 'commande'){
@@ -1408,7 +1408,7 @@ class Facture extends CommonInvoice
             $this->note_public = $object->note_public;
 		}
 
-		$this->origin = $object->element;			
+		$this->origin = $object->element;
 		$this->origin_id = $object->id;
 
         // get extrafields from original line
@@ -1424,7 +1424,7 @@ class Facture extends CommonInvoice
 		}
 
 		$ret = $this->create($user);
-		
+
 		if ($ret > 0)
 		{
 			// Actions hooked (by external module)
