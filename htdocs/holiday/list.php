@@ -1,9 +1,9 @@
 <?php
 /* Copyright (C) 2011	   Dimitri Mouillard	<dmouillard@teclib.com>
- * Copyright (C) 2013-2018 Laurent Destailleur	<eldy@users.sourceforge.net>
+ * Copyright (C) 2013-2020 Laurent Destailleur	<eldy@users.sourceforge.net>
  * Copyright (C) 2012-2016 Regis Houssin	<regis.houssin@inodbox.com>
  * Copyright (C) 2018      Charlene Benke	<charlie@patas-monkey.com>
- * Copyright (C) 2019		Frédéric France		<frederic.france@netlogic.fr>
+ * Copyright (C) 2019	   Frédéric France		<frederic.france@netlogic.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -476,7 +476,7 @@ if ($resql)
 
 
 	$include = '';
-	if (!empty($user->rights->holiday->read_all)) $include = 'hierarchyme'; // Can see all
+	if (empty($user->rights->holiday->read_all)) $include = 'hierarchyme'; // Can see only its hierarchyl
 
 	print '<div class="div-table-responsive">';
 	print '<table class="tagtable liste'.($moreforfilter ? " listwithfilterbefore" : "").'">'."\n";
@@ -488,7 +488,7 @@ if ($resql)
 	if (!empty($arrayfields['cp.ref']['checked']))
 	{
 		print '<td class="liste_titre">';
-		print '<input class="flat" size="4" type="text" name="search_ref" value="'.dol_escape_htmltag($search_ref).'">';
+		print '<input class="flat maxwidth50" type="text" name="search_ref" value="'.dol_escape_htmltag($search_ref).'">';
 		print '</td>';
 	}
 

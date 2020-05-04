@@ -1574,16 +1574,16 @@ class Form
 
     // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
-	 *	Return select list of users
+	 *	Return the HTML select list of users
 	 *
-	 *  @param	string	$selected       Id user preselected
-	 *  @param  string	$htmlname       Field name in form
-	 *  @param  int		$show_empty     0=liste sans valeur nulle, 1=ajoute valeur inconnue
-	 *  @param  array	$exclude        Array list of users id to exclude
-	 * 	@param	int		$disabled		If select list must be disabled
-	 *  @param  array	$include        Array list of users id to include
-	 * 	@param	int		$enableonly		Array list of users id to be enabled. All other must be disabled
-	 *  @param	string	$force_entity	'0' or Ids of environment to force
+	 *  @param	string			$selected       Id user preselected
+	 *  @param  string			$htmlname       Field name in form
+	 *  @param  int				$show_empty     0=liste sans valeur nulle, 1=ajoute valeur inconnue
+	 *  @param  array			$exclude        Array list of users id to exclude
+	 * 	@param	int				$disabled		If select list must be disabled
+	 *  @param  array|string	$include        Array list of users id to include. User '' for all users or 'hierarchy' to have only supervised users or 'hierarchyme' to have supervised + me
+	 * 	@param	int				$enableonly		Array list of users id to be enabled. All other must be disabled
+	 *  @param	string			$force_entity	'0' or Ids of environment to force
 	 * 	@return	void
 	 *  @deprecated		Use select_dolusers instead
 	 *  @see select_dolusers()
@@ -1598,24 +1598,24 @@ class Form
 	/**
 	 *	Return select list of users
 	 *
-	 *  @param	string	$selected       User id or user object of user preselected. If 0 or < -2, we use id of current user. If -1, keep unselected (if empty is allowed)
-	 *  @param  string	$htmlname       Field name in form
-	 *  @param  int		$show_empty     0=list with no empty value, 1=add also an empty value into list
-	 *  @param  array	$exclude        Array list of users id to exclude
-	 * 	@param	int		$disabled		If select list must be disabled
-	 *  @param  array|string	$include        Array list of users id to include or 'hierarchy' to have only supervised users or 'hierarchyme' to have supervised + me
-	 * 	@param	array	$enableonly		Array list of users id to be enabled. If defined, it means that others will be disabled
-	 *  @param	string	$force_entity	'0' or Ids of environment to force
-	 *  @param	int		$maxlength		Maximum length of string into list (0=no limit)
-	 *  @param	int		$showstatus		0=show user status only if status is disabled, 1=always show user status into label, -1=never show user status
-	 *  @param	string	$morefilter		Add more filters into sql request (Example: 'employee = 1')
-	 *  @param	integer	$show_every		0=default list, 1=add also a value "Everybody" at beginning of list
-	 *  @param	string	$enableonlytext	If option $enableonlytext is set, we use this text to explain into label why record is disabled. Not used if enableonly is empty.
-	 *  @param	string	$morecss		More css
-	 *  @param  int     $noactive       Show only active users (this will also happened whatever is this option if USER_HIDE_INACTIVE_IN_COMBOBOX is on).
-	 *  @param  int		$outputmode     0=HTML select string, 1=Array
-	 *  @param  bool	$multiple       add [] in the name of element and add 'multiple' attribut
-	 * 	@return	string					HTML select string
+	 *  @param	string			$selected       User id or user object of user preselected. If 0 or < -2, we use id of current user. If -1, keep unselected (if empty is allowed)
+	 *  @param  string			$htmlname       Field name in form
+	 *  @param  int				$show_empty     0=list with no empty value, 1=add also an empty value into list
+	 *  @param  array			$exclude        Array list of users id to exclude
+	 * 	@param	int				$disabled		If select list must be disabled
+	 *  @param  array|string	$include        Array list of users id to include. User '' for all users or 'hierarchy' to have only supervised users or 'hierarchyme' to have supervised + me
+	 * 	@param	array			$enableonly		Array list of users id to be enabled. If defined, it means that others will be disabled
+	 *  @param	string			$force_entity	'0' or Ids of environment to force
+	 *  @param	int				$maxlength		Maximum length of string into list (0=no limit)
+	 *  @param	int				$showstatus		0=show user status only if status is disabled, 1=always show user status into label, -1=never show user status
+	 *  @param	string			$morefilter		Add more filters into sql request (Example: 'employee = 1')
+	 *  @param	integer			$show_every		0=default list, 1=add also a value "Everybody" at beginning of list
+	 *  @param	string			$enableonlytext	If option $enableonlytext is set, we use this text to explain into label why record is disabled. Not used if enableonly is empty.
+	 *  @param	string			$morecss		More css
+	 *  @param  int     		$noactive       Show only active users (this will also happened whatever is this option if USER_HIDE_INACTIVE_IN_COMBOBOX is on).
+	 *  @param  int				$outputmode     0=HTML select string, 1=Array
+	 *  @param  bool			$multiple       add [] in the name of element and add 'multiple' attribut
+	 * 	@return	string							HTML select string
 	 *  @see select_dolgroups()
 	 */
     public function select_dolusers($selected = '', $htmlname = 'userid', $show_empty = 0, $exclude = null, $disabled = 0, $include = '', $enableonly = '', $force_entity = '0', $maxlength = 0, $showstatus = 0, $morefilter = '', $show_every = 0, $enableonlytext = '', $morecss = '', $noactive = 0, $outputmode = 0, $multiple = false)
