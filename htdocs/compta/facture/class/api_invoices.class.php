@@ -276,6 +276,52 @@ class Invoices extends DolibarrApi
         return $this->_cleanObjectDatas($this->invoice);
     }
 
+	/**
+     * Create an invoice using an existing shipment.
+     *
+     *
+     * @param int   $shipmentid       Id of the shipment
+     *
+     * @url     POST /createfromshipment/{shipmentid}
+     *
+     * @return int
+     * @throws 400
+     * @throws 401
+     * @throws 404
+     * @throws 405
+     */
+    public function createInvoiceFromShipment($shipmentid)
+    {
+
+        require_once DOL_DOCUMENT_ROOT.'/expedition/class/expedition.class.php';
+
+        if (!DolibarrApiAccess::$user->rights->expedition->lire) {
+            throw new RestException(401);
+        }
+        if (!DolibarrApiAccess::$user->rights->facture->creer) {
+            throw new RestException(401);
+        }
+        if (empty($shipmentid)) {
+            throw new RestException(400, 'Shipment ID is mandatory');
+        }
+
+        $expedition = new Expedition($this->db);
+        $result = $expedition->fetch($shipmentid);
+        if (!$result) {
+            throw new RestException(404, 'Shipment not found');
+        }
+		require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
+		dol_syslog(get_class($this)."::createInvoiceFromShipment()", LOG_DEBUG);
+
+        $result = $this->invoice->createFromShipment($expedition, DolibarrApiAccess::$user);
+        if ($result < 0) {
+            throw new RestException(405, $this->invoice->error);
+        }
+        $this->invoice->fetchObjectLinked();
+        $this->_cleanObjectDatas($this->invoice);  // return invoice object
+        return $this->invoice->id;
+    }
+
     /**
      * Get lines of an invoice
      *
