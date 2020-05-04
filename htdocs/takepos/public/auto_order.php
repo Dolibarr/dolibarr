@@ -16,14 +16,14 @@
  */
 
 /**
- *       \file       htdocs/takepos/auto_order.php
+ *       \file       htdocs/takepos/public/auto_order.php
  *       \ingroup    takepos
  *       \brief      Public orders for customers
  */
 
 if (!defined("NOLOGIN"))       define("NOLOGIN", '1'); // If this page is public (can be called outside logged session)
-if (!defined('NOIPCHECK'))		define('NOIPCHECK', '1'); // Do not check IP defined into conf $dolibarr_main_restrict_ip
+if (!defined('NOIPCHECK'))	   define('NOIPCHECK', '1'); // Do not check IP defined into conf $dolibarr_main_restrict_ip
 
 $_SESSION["basiclayout"] = 1;
 $_SESSION["publicterminal"] = true; // Is a public customer
-require 'phone.php';
+require '../phone.php';

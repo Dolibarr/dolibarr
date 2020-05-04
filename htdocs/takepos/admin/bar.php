@@ -155,9 +155,9 @@ if ($conf->global->TAKEPOS_AUTO_ORDER)
         print '<tr class="oddeven value"><td>';
 		print $langs->trans("Table")." ".$row['label'];
 		print '<td>';
-		print "<a target='_blank' href='".$urlwithroot."/takepos/auto_order.php?key=".dol_encode($row['rowid'])."'>".$urlwithroot."/takepos/auto_order.php?key=".dol_encode($row['rowid'])."</a>";
+		print "<a target='_blank' href='".$urlwithroot."/takepos/public/auto_order.php?key=".dol_encode($row['rowid'])."'>".$urlwithroot."/takepos/public/auto_order.php?key=".dol_encode($row['rowid'])."</a>";
 		print '<td>';
-		print "<img src='../genimg/qr.php?id=".dol_encode($row['rowid'])."' height='42' width='42'>";
+		print "<img src='".DOL_DOCUMENT_ROOT."/takepos/genimg/qr.php?id=".dol_encode($row['rowid'])."' height='42' width='42'>";
 		print '</td></tr>';
     }
 
