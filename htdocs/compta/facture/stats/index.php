@@ -58,8 +58,8 @@ if ($user->socid > 0)
 
 $nowyear = strftime("%Y", dol_now());
 $year = GETPOST('year') > 0 ?GETPOST('year') : $nowyear;
-//$startyear=$year-2;
-$startyear = $year - 1;
+if(!empty($conf->global->INVOICE_STATS_GRAPHS_SHOW_2_YEARS)) $startyear=$year-2;
+else $startyear=$year-1;
 $endyear = $year;
 
 
