@@ -275,4 +275,4 @@ ALTER TABLE llx_prelevement_facture ADD COLUMN fk_facture_fourn INTEGER NULL;
 
 ALTER TABLE llx_menu MODIFY COLUMN module varchar(255);
 
-
+INSERT INTO llx_const (rowid, name, entity, value, type, visible, note, tms) VALUES (NULL, 'PRODUCT_PRICE_BASE_TYPE', '1', 'HT', 'string', '0', NULL, CURRENT_TIMESTAMP);
