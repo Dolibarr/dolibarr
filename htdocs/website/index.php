@@ -282,7 +282,6 @@ $searchkey = GETPOST('searchstring', 'none');
 
 if ($action == 'replacesiteconfirm') {
 	$listofpages = getPagesFromSearchCriterias('', $algo, $searchkey, 1000, $sortfield, $sortorder);
-	var_dump($listofpages);
 }
 
 
