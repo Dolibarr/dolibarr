@@ -32,6 +32,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/html.formcompany.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
 require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facturestats.class.php';
+if(!empty($conf->category->enabled)) require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
 
 $WIDTH = DolGraph::getDefaultGraphSizeForStats('width');
 $HEIGHT = DolGraph::getDefaultGraphSizeForStats('height');
@@ -49,6 +50,7 @@ $categ_id = GETPOST('categ_id', 'categ_id');
 
 $userid = GETPOST('userid', 'int');
 $socid = GETPOST('socid', 'int');
+$custcats = GETPOST('custcats', 'array');
 // Security check
 if ($user->socid > 0)
 {
@@ -66,7 +68,7 @@ $endyear = $year;
 /*
  * View
  */
-
+if(!empty($conf->category->enabled)) $langs->load('categories');
 $form = new Form($db);
 $formcompany = new FormCompany($db);
 $formother = new FormOther($db);
@@ -93,6 +95,10 @@ $stats = new FactureStats($db, $socid, $mode, ($userid > 0 ? $userid : 0), ($typ
 if ($mode == 'customer')
 {
     if ($object_status != '' && $object_status >= 0) $stats->where .= ' AND f.fk_statut IN ('.$db->escape($object_status).')';
+    if (is_array($custcats) && !empty($custcats)) {
+        $stats->from .= ' LEFT JOIN '.MAIN_DB_PREFIX.'categorie_societe as cat ON (f.fk_soc = cat.fk_soc)';
+        $stats->where .= ' AND cat.fk_categorie IN ('.implode(',', $custcats).')';
+    }
 }
 if ($mode == 'supplier')
 {
@@ -256,6 +262,13 @@ if ($mode == 'customer') $filter = 's.client in (1,2,3)';
 if ($mode == 'supplier') $filter = 's.fournisseur = 1';
 print $form->selectarray('socid', $companies, $socid, 1, 0, 0, 'style="width: 95%"', 0, 0, 0, '', '', 1);
 print '</td></tr>';
+if(!empty($conf->category->enabled) && $mode == 'customer') {
+        // Customer Category
+        print '<tr><td>'.$langs->trans("CustomersProspectsCategoriesShort").'</td><td>';
+        $cate_arbo = $form->select_all_categories(Categorie::TYPE_CUSTOMER, null, 'parent', null, null, 1);
+        print $form->multiselectarray('custcats', $cate_arbo, GETPOST('custcats', 'array'), null, null, null, null, "90%");
+        print '</td></tr>';
+    }
 // ThirdParty Type
 print '<tr><td>'.$langs->trans("ThirdPartyType").'</td><td>';
 $sortparam_typent = (empty($conf->global->SOCIETE_SORT_ON_TYPEENT) ? 'ASC' : $conf->global->SOCIETE_SORT_ON_TYPEENT); // NONE means we keep sort of original array, so we sort on position. ASC, means next function will sort on label.
