@@ -528,7 +528,7 @@ class Notify
 						$message.= $outputlangs->transnoentities("YouReceiveMailBecauseOfNotification2", $application, $mysoc->name)."\n";
 						$message.= "\n";
 						$message.= $mesg;
-						if ($link) $message.= "\n" . $urlwithroot . $link;
+						if ($link) $message.= "\n" . $urlwithroot . $link;	// if link is already added around the ref into the translation text, then $link must be set to ''
 
 						$parameters = array('notifcode'=>$notifcode, 'sendto'=>$sendto, 'replyto'=>$replyto, 'file'=>$filename_list, 'mimefile'=>$mimetype_list, 'filename'=>$mimefilename_list);
 						if (!isset($action)) $action = '';
@@ -600,6 +600,7 @@ class Notify
 		{
 			foreach($conf->global as $key => $val)
 			{
+				$reg = array();
 				if ($val == '' || ! preg_match('/^NOTIFICATION_FIXEDEMAIL_'.$notifcode.'_THRESHOLD_HIGHER_(.*)$/', $key, $reg)) continue;
 
 				$threshold = (float) $reg[1];
@@ -743,7 +744,7 @@ class Notify
 				$message.= $langs->transnoentities("YouReceiveMailBecauseOfNotification2", $application, $mysoc->name)."\n";
 				$message.= "\n";
 				$message.= $mesg;
-				//if ($link) $message.= "\n" . $urlwithroot . $link;	// link already added around the ref into the text
+				if ($link) $message.= "\n" . $urlwithroot . $link;	// if link is already added around the ref into the translation text, then $link must be set to ''
 
 				$message = nl2br($message);
 
