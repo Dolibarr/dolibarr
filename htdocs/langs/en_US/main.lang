@@ -953,6 +953,7 @@ SearchIntoMembers=Members
 SearchIntoUsers=Users
 SearchIntoProductsOrServices=Products or services
 SearchIntoProjects=Projects
+SearchIntoMO=Manufacturing Orders
 SearchIntoTasks=Tasks
 SearchIntoCustomerInvoices=Customer invoices
 SearchIntoSupplierInvoices=Vendor invoices
