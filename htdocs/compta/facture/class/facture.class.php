@@ -1322,6 +1322,136 @@ class Facture extends CommonInvoice
 	}
 
 	/**
+	 *  Load an object from an shipment and create a new invoice into database
+	 *
+	 *  @param      Object			$object         	Object source
+	 *  @param		User			$user				Object user
+	 *  @return     int             					<0 if KO, 0 if nothing done, 1 if OK
+	 */
+    public function createFromShipment($object, User $user)
+	{
+		global $conf, $hookmanager;
+		$error = 0;
+		require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';  
+		// Closed order
+		$this->date = dol_now();
+		$this->source = 0;
+		dol_syslog(get_class($this)."::createFromShipment()".$object->origin." ".$object->origin_id, LOG_DEBUG);
+		//recherche de la commande origine 
+		$order = $object->origin;
+		$idcom = $object->origin_id;
+		if ($order == 'commande'){
+			require_once DOL_DOCUMENT_ROOT.'/commande/class/commande.class.php';
+				$classname = ucfirst($order);
+				$com = new $classname($this->db);
+				$com->fetch($idcom);
+		}
+		$num = count($object->lines);
+		for ($i = 0; $i < $num; $i++)
+		{
+			$line = new FactureLigne($this->db);
+			$line->libelle = $object->lines[$i]->libelle;
+			$line->desc				= $object->lines[$i]->desc;
+			$line->subprice			= $object->lines[$i]->subprice;
+			$line->total_ht			= $object->lines[$i]->total_ht;
+			$line->total_tva		= $object->lines[$i]->total_tva;
+			$line->total_localtax1	= $object->lines[$i]->total_localtax1;
+			$line->total_localtax2	= $object->lines[$i]->total_localtax2;
+			$line->total_ttc		= $object->lines[$i]->total_ttc;
+			$line->tva_tx = $object->lines[$i]->tva_tx;
+			$line->qty = $object->lines[$i]->qty;
+			$line->remise_percent = $object->lines[$i]->remise_percent;
+			$line->fk_product = $object->lines[$i]->fk_product;
+			$line->rang = $object->lines[$i]->rang;
+			$line->fk_unit = $object->lines[$i]->fk_unit;
+
+			// Multicurrency
+			$line->fk_multicurrency = $object->lines[$i]->fk_multicurrency;
+			$line->multicurrency_code = $object->lines[$i]->multicurrency_code;
+			$line->multicurrency_subprice = $object->lines[$i]->multicurrency_subprice;
+			$line->multicurrency_total_ht = $object->lines[$i]->multicurrency_total_ht;
+			$line->multicurrency_total_tva = $object->lines[$i]->multicurrency_total_tva;
+			$line->multicurrency_total_ttc = $object->lines[$i]->multicurrency_total_ttc;
+
+			//$line->fk_fournprice = $object->lines[$i]->fk_fournprice;// KO NOOO
+			//$marginInfos			= getMarginInfos($object->lines[$i]->subprice, $object->lines[$i]->remise_percent, $object->lines[$i]->tva_tx, $object->lines[$i]->localtax1_tx, $object->lines[$i]->localtax2_tx, $object->lines[$i]->fk_fournprice, $object->lines[$i]->pa_ht);// KO NOOO
+			//$line->pa_ht			= $marginInfos[0];// KO NOOO
+
+            // get extrafields from original line
+			$object->lines[$i]->fetch_optionals();
+			foreach ($object->lines[$i]->array_options as $options_key => $value)
+				$line->array_options[$options_key] = $value;
+
+			$this->lines[$i] = $line;
+		}
+
+		$this->socid                = $object->socid;
+		$this->fk_project           = $object->fk_project;
+		$this->fk_account = $object->fk_account;
+		$this->cond_reglement_id    = $object->cond_reglement_id;
+		$this->mode_reglement_id    = $object->mode_reglement_id;
+		if ($order == 'commande'){
+			$this->mode_reglement_id    = $com->mode_reglement_id;
+			$this->availability_id      = $com->availability_id;
+			$this->demand_reason_id     = $com->demand_reason_id;
+			$this->module_source = $com->module_source;
+			$this->pos_source = $com->pos_source;
+		}
+		$this->date_livraison       = $object->date_livraison;
+		$this->fk_delivery_address  = $object->fk_delivery_address;		// deprecated
+		$this->contact_id           = $object->contactid;
+		$this->ref_client           = $object->ref_customer;
+
+		if (empty($conf->global->MAIN_DISABLE_PROPAGATE_NOTES_FROM_ORIGIN))
+		{
+		    $this->note_private = $object->note_private;
+            $this->note_public = $object->note_public;
+		}
+
+		$this->origin = $object->element;			
+		$this->origin_id = $object->id;
+
+        // get extrafields from original line
+		$object->fetch_optionals($object->id);
+		foreach ($object->array_options as $options_key => $value)
+			$this->array_options[$options_key] = $value;
+
+		// Possibility to add external linked objects with hooks
+		$this->linked_objects[$this->origin] = $this->origin_id;
+		if (!empty($object->other_linked_objects) && is_array($object->other_linked_objects))
+		{
+			$this->linked_objects = array_merge($this->linked_objects, $object->other_linked_objects);
+		}
+
+		$ret = $this->create($user);
+		
+		if ($ret > 0)
+		{
+			// Actions hooked (by external module)
+			$hookmanager->initHooks(array('invoicedao'));
+
+			$parameters = array('objFrom'=>$object);
+			$action = '';
+			$reshook = $hookmanager->executeHooks('createFrom', $parameters, $this, $action); // Note that $action and $object may have been modified by some hooks
+			if ($reshook < 0) $error++;
+
+			if (!$error)
+			{
+				if ($order == 'commande'){
+					$ret = $this->add_object_linked('commande', $idcom);
+	            	if (!$ret)
+	            	{
+	                	return -1;
+	            	}
+				}
+				return 1;
+			}
+			else return -1;
+		}
+		else return -1;
+	}
+
+	/**
 	 *  Return clicable link of object (with eventually picto)
 	 *
 	 *  @param	int		$withpicto       			Add picto into link
