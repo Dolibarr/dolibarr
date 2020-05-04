@@ -1178,7 +1178,7 @@ class Facture extends CommonInvoice
 			    unset($object->lines[$i]);
 			    unset($object->products[$i]); // Tant que products encore utilise
 			}
-			
+
 			// Bloc to update dates of service (month by month only if previously filled at 1d near start or end of month)
 			// If it's a service with start and end dates
 			if ($line->product_type == 1 && !empty($line->date_start) && !empty($line->date_end) ) {
@@ -1187,41 +1187,35 @@ class Facture extends CommonInvoice
 				$end = new DateTime();
 				$start->setTimestamp($line->date_start);
 				$end->setTimestamp($line->date_end);
-				
+
 				// Get the first and last day of the month
 				$first = new DateTime();
 				$last = new DateTime();
 				$first->modify('first day of '.$start->format('Y-M'));
 				$last->modify('last day of '.$end->format('Y-M'));
-					
+
 				// Get diff betweend start/end of month and previously filled
 				$diffFirst = date_diff($start, $first);
 				$diffLast = date_diff($end, $last);
-				
+
 				// If there is <= 1d of start/or/end of month
-				if ($diffFirst->y == 0 && 
+				if ($diffFirst->y == 0 &&
 					$diffFirst->m == 0 &&
 					$diffFirst->d <= 1 &&
 					$diffLast->y == 0 &&
 					$diffLast->m == 0 &&
 					$diffLast->d <= 1) {
-					
 					// Get first day of next month
 					$newFirst = clone $last;
 					$newFirst->add(date_interval_create_from_date_string('1 day'));
 					// Get last day of new month
 					$newLast = new DateTime();
 					$newLast->modify('last day of '.$newFirst->format('Y-M'));
-					
+
 					$this->lines[$i]->date_start = $newFirst->getTimestamp();
 					$this->lines[$i]->date_end = $newLast->getTimestamp();
-					
 				}
 			}
-			
-			
-			
-			
 		}
 
 		// Create clone
