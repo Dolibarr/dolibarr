@@ -50,7 +50,7 @@ if (defined('NOLOGIN')){
 	$_SESSION["takeposterminal"] = 1; // Use Terminal 1 for public customers
 	if (!$conf->global->TAKEPOS_AUTO_ORDER) accessforbidden(); // If Auto Order is disabled never allow NO LOGIN access
 }
-else if (empty($user->rights->takepos->run)) {
+elseif (empty($user->rights->takepos->run)) {
 	accessforbidden();
 }
 
