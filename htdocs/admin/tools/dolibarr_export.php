@@ -200,7 +200,6 @@ if (in_array($type, array('mysql', 'mysqli'))) {
     print '<div class="formelementrow">';
     print '<input type="checkbox" name="use_transaction" value="yes" id="checkbox_use_transaction" />';
     print '<label for="checkbox_use_transaction">'.$langs->trans("UseTransactionnalMode").'</label>';
-
     print '</div>';
 
     if (! empty($conf->global->MYSQL_OLD_OPTION_DISABLE_FK)) {
