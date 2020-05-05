@@ -761,8 +761,17 @@ function dolCopyDir($srcfile, $destfile, $newmask, $overwriteifexists, $arrayrep
 				if (is_dir($ossrcfile."/".$file))
 				{
 					if (empty($excludesubdir) || ($excludesubdir == 2 && strlen($file) == 2)) {
+						$newfile = $file;
+						// Replace destination filename with a new one
+						if (is_array($arrayreplacement))
+						{
+							foreach ($arrayreplacement as $key => $val)
+							{
+								$newfile = str_replace($key, $val, $newfile);
+							}
+						}
 						//var_dump("xxx dolCopyDir $srcfile/$file, $destfile/$file, $newmask, $overwriteifexists");
-						$tmpresult = dolCopyDir($srcfile."/".$file, $destfile."/".$file, $newmask, $overwriteifexists, $arrayreplacement, $excludesubdir);
+						$tmpresult = dolCopyDir($srcfile."/".$file, $destfile."/".$newfile, $newmask, $overwriteifexists, $arrayreplacement, $excludesubdir);
 					}
 				}
 				else
