@@ -300,7 +300,7 @@ if (empty($reshook))
 if($massaction == 'reglement'){
 	$arrayofselected=is_array($toselect)?$toselect:array();
 
-	$loc = dol_buildpath('/compta/paiement.php', 2).'?facids='.implode(',', $arrayofselected);
+	$loc = dol_buildpath('/compta/paiement.php', 2).'?action=create&facids='.implode(',', $arrayofselected);
 
 	header('Location: '.$loc);
 	exit;
