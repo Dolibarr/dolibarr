@@ -138,13 +138,13 @@ print '</td></tr>';
 print '</table>';
 
 if ($conf->global->TAKEPOS_AUTO_ORDER)
-{
+{	
 	print '<br>';
 	print '<table class="noborder centpercent">';
 	print '<tr class="liste_titre">';
 	print '<td>'.$langs->trans("Table").'</td><td>'.$langs->trans("URL").'</td><td>'.$langs->trans("QR").'</td>';
 	print "</tr>\n";
-
+	
 	//global $dolibarr_main_url_root;
 	$urlwithouturlroot = preg_replace('/'.preg_quote(DOL_URL_ROOT, '/').'$/i', '', trim($dolibarr_main_url_root));
 	$urlwithroot = $urlwithouturlroot.DOL_URL_ROOT; // This is to use external domain name found into config file
@@ -155,9 +155,9 @@ if ($conf->global->TAKEPOS_AUTO_ORDER)
         print '<tr class="oddeven value"><td>';
 		print $langs->trans("Table")." ".$row['label'];
 		print '<td>';
-		print "<a target='_blank' href='".$urlwithroot."/takepos/public/auto_order.php?key=".dol_encode($row['rowid'])."'>".$urlwithroot."/takepos/public/auto_order.php?key=".dol_encode($row['rowid'])."</a>";
+		print "<a target='_blank' href='".$urlwithroot."/takepos/auto_order.php?key=".dol_encode($row['rowid'])."'>".$urlwithroot."/takepos/auto_order.php?key=".dol_encode($row['rowid'])."</a>";
 		print '<td>';
-		print "<img src='".DOL_DOCUMENT_ROOT."/takepos/genimg/qr.php?id=".dol_encode($row['rowid'])."' height='42' width='42'>";
+		print "<img src='../genimg/qr.php?key=".dol_encode($row['rowid'])."' height='42' width='42'>";
 		print '</td></tr>';
     }
 

@@ -31,7 +31,6 @@ if (!defined('NOTOKENRENEWAL')) { define('NOTOKENRENEWAL', '1'); }
 if (!defined('NOREQUIREMENU')) { define('NOREQUIREMENU', '1'); }
 if (!defined('NOREQUIREHTML')) { define('NOREQUIREHTML', '1'); }
 if (!defined('NOREQUIREAJAX')) { define('NOREQUIREAJAX', '1'); }
-
 require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/paiement/class/paiement.class.php';
@@ -47,14 +46,13 @@ $idproduct = GETPOST('idproduct', 'int');
 $place = (GETPOST('place', 'aZ09') ? GETPOST('place', 'aZ09') : 0); // $place is id of table for Bar or Restaurant
 $placeid = 0; // $placeid is ID of invoice
 
-if ($_SESSION["publicterminal"]) {
+if (defined('NOLOGIN')){
 	$_SESSION["takeposterminal"] = 1; // Use Terminal 1 for public customers
+	if (!$conf->global->TAKEPOS_AUTO_ORDER) accessforbidden(); // If Auto Order is disabled never allow NO LOGIN access
 }
-elseif (empty($user->rights->takepos->run)) {
+else if (empty($user->rights->takepos->run)) {
 	accessforbidden();
 }
-
-
 
 if (($conf->global->TAKEPOS_PHONE_BASIC_LAYOUT == 1 && $conf->browser->layout == 'phone') || $_SESSION["publicterminal"])
 {
@@ -349,7 +347,6 @@ if ($action == "addline")
 
 	$invoice->fetch($placeid);
 }
-
 if ($action == "freezone") {
     $customer = new Societe($db);
     $customer->fetch($invoice->socid);
@@ -629,6 +626,12 @@ $(document).ready(function() {
         if (selectedline==this.id) return; // If is already selected
         else selectedline=this.id;
         selectedtext=$('#'+selectedline).find("td:first").html();
+		<?php
+		if ($_SESSION["publicterminal"]){
+			print '$("#phonediv1").load("auto_order.php?action=editline&placeid="+placeid+"&selectedline="+selectedline, function() {
+			});';
+		}
+		?>
     });
 
     /* Autoselect the line */
@@ -878,7 +881,6 @@ if ($_SESSION["basiclayout"] != 1)
 }
 print "</tr>\n";
 
-
 if ($_SESSION["basiclayout"] == 1)
 {
 	if ($mobilepage == "cats")
@@ -913,7 +915,7 @@ if ($_SESSION["basiclayout"] == 1)
 			$htmlforlines .= '" onclick="AddProduct(\''.$place.'\', '.$row->id.')">';
 			$htmlforlines .= '<td class="left">';
 			$htmlforlines .= $row->label;
-			$htmlforlines .= '</td>';
+			$htmlforlines .= '<div class="right">'.price($row->price_ttc, 1, $langs, 1, -1, -1, $conf->currency).'</div>';
 			$htmlforlines .= '</tr>'."\n";
 		}
 		$htmlforlines .= '</table>';
@@ -990,6 +992,7 @@ if ($placeid > 0)
             }
             $htmlforlines .= '" id="'.$line->id.'">';
             $htmlforlines .= '<td class="left">';
+			if ($_SESSION["basiclayout"] == 1) $htmlforlines .= $line->qty." x ";
             //if ($line->product_label) $htmlforlines.= '<b>'.$line->product_label.'</b>';
             if (isset($line->product_type))
             {

@@ -30,8 +30,13 @@ if (!defined('NOTOKENRENEWAL'))	define('NOTOKENRENEWAL', '1');
 if (!defined('NOREQUIREMENU'))		define('NOREQUIREMENU', '1');
 if (!defined('NOREQUIREHTML'))		define('NOREQUIREHTML', '1');
 if (!defined('NOREQUIREAJAX'))		define('NOREQUIREAJAX', '1');
-
 require '../main.inc.php'; // Load $user and permissions
+if (defined('NOLOGIN')){
+	if (!$conf->global->TAKEPOS_AUTO_ORDER) accessforbidden(); // If Auto Order is disabled never allow NO LOGIN access
+	// If NOLOGIN is defined mean is called from auto_order.php (For PUBLIC customers)
+	$_SESSION["publicterminal"] = true; // Is a public customer
+	$_SESSION["basiclayout"] = 1;
+}
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
 require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
@@ -45,6 +50,7 @@ if ($_SESSION["publicterminal"]){
 else $place = (GETPOST('place', 'aZ09') ? GETPOST('place', 'aZ09') : 0); // $place is id of table for Ba or Restaurant
 $action = GETPOST('action', 'alpha');
 $setterminal = GETPOST('setterminal', 'int');
+$idproduct = GETPOST('idproduct', 'int');
 
 if ($setterminal > 0)
 {
@@ -52,14 +58,12 @@ if ($setterminal > 0)
 }
 
 $langs->loadLangs(array("bills", "orders", "commercial", "cashdesk", "receiptprinter"));
-
 if ($_SESSION["publicterminal"]) {
 	$_SESSION["takeposterminal"] = 1; // Use Terminal 1 for public customers
 }
-elseif (empty($user->rights->takepos->run)) {
+else if (empty($user->rights->takepos->run)) {
 	accessforbidden();
 }
-
 
 /*
  * View
@@ -76,6 +80,41 @@ top_htmlhead($head, $title, $disablejs, $disablehead, $arrayofjs, $arrayofcss);
 
 ?>
 <link rel="stylesheet" href="css/phone.css">
+<?php
+if ($action=="productinfo"){
+	$prod = new Product($db);
+    $prod->fetch($idproduct);
+	print "<b>".$prod->label."</b><br>";
+	print '<img class="imgwrapper" width="60%" src="genimg/index.php?query=pro&id='.$idproduct.'">';
+	print "<br>".$prod->description;
+	print "<br><b>".price($prod->price_ttc, 1, $langs, 1, -1, -1, $conf->currency)."</b>";
+	print '<br>';
+	print '<button type="button" class="publicphonebutton2" onclick="AddProductConfirm(place, '.$idproduct.');">'.$langs->trans('Add').'</button>';
+}
+elseif ($action=="editline"){
+	$placeid = GETPOST('placeid', 'int');
+	$selectedline = GETPOST('selectedline', 'int');
+	$invoice = new Facture($db);
+	$invoice->fetch($placeid);
+	foreach ($invoice->lines as $line)
+    {
+        if ($line->id == $selectedline)
+		{
+			$prod = new Product($db);
+			$prod->fetch($line->fk_product);
+			print "<b>".$prod->label."</b><br>";
+			print '<img class="imgwrapper" width="60%" src="genimg/index.php?query=pro&id='.$line->fk_product.'">';
+			print "<br>".$prod->description;
+			print "<br><b>".price($prod->price_ttc, 1, $langs, 1, -1, -1, $conf->currency)."</b>";
+			print '<br>';
+			print '<button type="button" class="publicphonebutton2" onclick="SetQty(place, '.$selectedline.', '.($line->qty-1).');">-</button>';
+			print '<button type="button" class="publicphonebutton2" onclick="SetQty(place, '.$selectedline.', '.($line->qty+1).');">+</button>';
+			print '<button type="button" class="publicphonebutton2" onclick="SetNote(place, '.$selectedline.');">'.$langs->trans('Note').'</button>';
+        }
+    }
+}
+else {
+?>
 <script language="javascript">
 <?php
 $categorie = new Categorie($db);
@@ -131,33 +170,96 @@ var editnumber="";
 
 $( document ).ready(function() {
     console.log("Refresh");
-    $("#phonediv1").load("invoice.php?mobilepage=places", function() {
-    });
-    $("#phonediv2").load("invoice.php?mobilepage=invoice&place="+place, function() {
-    });
+	LoadPlace(place);
 });
 
 function LoadPlace(placeid){
     place=placeid;
-    $("#phonediv2").load("invoice.php?mobilepage=invoice&place="+place, function() {
-    });
+	<?php
+	if ($_SESSION["publicterminal"]){
+		echo '$("#phonediv2").load("auto_order.php?mobilepage=invoice&place="+place, function() {
+		});';
+	}
+	else{
+		echo '$("#phonediv2").load("invoice.php?mobilepage=invoice&place="+place, function() {
+		});';
+	}
+	?>
     LoadCats();
 }
 
 function AddProduct(placeid, productid){
-    place=placeid;
-    $("#phonediv2").load("invoice.php?mobilepage=invoice&action=addline&place="+place+"&idproduct="+productid, function() {
+	<?php
+	// If is a public terminal first show product information
+	if ($_SESSION["publicterminal"]){
+		print 'place=placeid;
+		$("#phonediv1").load("auto_order.php?action=productinfo&place="+place+"&idproduct="+productid, function() {
+		});';
+	}
+	else{
+		print 'AddProductConfirm(placeid, productid);';
+	}
+	?>
+}
+
+function AddProductConfirm(placeid, productid){
+	place=placeid;
+	<?php
+	if ($_SESSION["publicterminal"]){
+		echo '$("#phonediv2").load("auto_order.php?mobilepage=invoice&action=addline&place="+place+"&idproduct="+productid, function() {
+		});';
+	}
+	else{
+		echo '$("#phonediv2").load("invoice.php?mobilepage=invoice&action=addline&place="+place+"&idproduct="+productid, function() {
+		});';
+	}
+	?>
+}
+
+function SetQty(place, selectedline, qty){
+	if (qty==0){
+		$("#phonediv2").load("auto_order.php?mobilepage=invoice&action=deleteline&place="+place+"&idline="+selectedline, function() {
+		});
+	}
+	else{
+		$("#phonediv2").load("auto_order.php?mobilepage=invoice&action=updateqty&place="+place+"&idline="+selectedline+"&number="+qty, function() {
+		});
+	}
+	LoadCats();
+}
+
+function SetNote(place, selectedline){
+	var note = prompt("<?php $langs->trans('Note'); ?>", "Harry Potter");
+	$("#phonediv2").load("auto_order.php?mobilepage=invoice&action=updateqty&place="+place+"&idline="+selectedline+"&number="+qty, function() {
     });
+	LoadCats();
 }
 
 function LoadCats(){
-    $("#phonediv1").load("invoice.php?mobilepage=cats&place="+place, function() {
-    });
+	<?php
+	if ($_SESSION["publicterminal"]){
+		echo '$("#phonediv1").load("auto_order.php?mobilepage=cats&place="+place, function() {
+		});';
+	}
+	else{
+		echo '$("#phonediv1").load("invoice.php?mobilepage=cats&place="+place, function() {
+		});';
+	}
+	?>
 }
 
 function LoadProducts(idcat){
-    $("#phonediv1").load("invoice.php?mobilepage=products&catid="+idcat+"&place="+place, function() {
-    });
+    
+	<?php
+	if ($_SESSION["publicterminal"]){
+		echo '$("#phonediv1").load("auto_order.php?mobilepage=products&catid="+idcat+"&place="+place, function() {
+		});';
+	}
+	else{
+		echo '$("#phonediv1").load("invoice.php?mobilepage=products&catid="+idcat+"&place="+place, function() {
+		});';
+	}
+	?>
 }
 
 function LoadPlacesList(){
@@ -167,8 +269,16 @@ function LoadPlacesList(){
 
 function TakeposPrintingOrder(){
     console.log("TakeposPrintingOrder");
-    $("#phonediv2").load("invoice.php?action=order&place="+place, function() {
-    });
+	<?php
+	if ($_SESSION["publicterminal"]){
+		echo '$("#phonediv2").load("auto_order.php?action=order&place="+place, function() {
+		});';
+	}
+	else{
+		echo '$("#phonediv2").load("invoice.php?action=order&place="+place, function() {
+		});';
+	}
+	?>
 }
 
 function Exit(){
@@ -192,11 +302,17 @@ if ($conf->global->TAKEPOS_NUM_TERMINALS != "1" && $_SESSION["takeposterminal"] 
 <div class="container">
 	<div class="phonebuttonsrow">
 		<?php
-		if (!$_SESSION["publicterminal"]) print '<button type="button" class="phonebutton" onclick="LoadPlacesList();">'.strtoupper(substr($langs->trans('Floors'), 0, 3)).'</button>';
-		print '<button type="button" class="phonebutton" onclick="LoadCats();">'.strtoupper(substr($langs->trans('Categories'), 0, 3)).'</button>';
-		print '<button type="button" class="phonebutton" onclick="TakeposPrintingOrder();">'.strtoupper(substr($langs->trans('Order'), 0, 3)).'</button>';
-		print '<button type="button" class="phonebutton" onclick="Exit();">'.strtoupper(substr($langs->trans('Logout'), 0, 3)).'</button>';
-		if ($_SESSION["publicterminal"]) print '<button type="button" class="phonebutton" onclick="CheckPlease();">'.strtoupper(substr($langs->trans('Payment'), 0, 3)).'</button>';
+		if (!$_SESSION["publicterminal"]){
+			print '<button type="button" class="phonebutton" onclick="LoadPlacesList();">'.strtoupper(substr($langs->trans('Floors'), 0, 3)).'</button>';
+			print '<button type="button" class="phonebutton" onclick="LoadCats();">'.strtoupper(substr($langs->trans('Categories'), 0, 3)).'</button>';
+			print '<button type="button" class="phonebutton" onclick="TakeposPrintingOrder();">'.strtoupper(substr($langs->trans('Order'), 0, 3)).'</button>';
+			print '<button type="button" class="phonebutton" onclick="Exit();">'.strtoupper(substr($langs->trans('Logout'), 0, 3)).'</button>';
+		}
+		if ($_SESSION["publicterminal"]){
+			print '<button type="button" class="publicphonebutton" onclick="LoadCats();">'.strtoupper(substr($langs->trans('Categories'), 0, 5)).'</button>';
+			print '<button type="button" class="publicphonebutton" onclick="TakeposPrintingOrder();">'.strtoupper(substr($langs->trans('Order'), 0, 5)).'</button>';
+			print '<button type="button" class="publicphonebutton" onclick="CheckPlease();">'.strtoupper(substr($langs->trans('Payment'), 0, 5)).'</button>';
+		}
 		?>
 	</div>
 	<div class="row1">
@@ -208,6 +324,7 @@ if ($conf->global->TAKEPOS_NUM_TERMINALS != "1" && $_SESSION["takeposterminal"] 
 </div>
 </body>
 <?php
+}
 
 llxFooter();
 
