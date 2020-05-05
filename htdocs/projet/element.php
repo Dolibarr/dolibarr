@@ -526,6 +526,32 @@ $listofreferent = array(
 */
 );
 
+// Change rules for benefit calculation
+if (! empty($conf->global->PROJECT_ELEMENTS_FOR_PLUS_MARGIN)) {
+	foreach($listofreferent as $key => $element) {
+		if ($listofreferent[$key]['margin'] == 'add') {
+			unset($listofreferent[$key]['margin']);
+		}
+	}
+	$newelementforplusmargin = explode(',', $conf->global->PROJECT_ELEMENTS_FOR_PLUS_MARGIN);
+	foreach($newelementforplusmargin as $value) {
+		$listofreferent[$value]['margin']='add';
+	}
+}
+if (! empty($conf->global->PROJECT_ELEMENTS_FOR_MINUS_MARGIN)) {
+	foreach($listofreferent as $key => $element) {
+		if ($listofreferent[$key]['margin'] == 'add') {
+			unset($listofreferent[$key]['margin']);
+		}
+	}
+	$newelementforplusmargin = explode(',', $conf->global->PROJECT_ELEMENTS_FOR_MINUS_MARGIN);
+	foreach($newelementforplusmargin as $value) {
+		$listofreferent[$value]['margin']='minus';
+	}
+}
+
+
+
 $parameters = array('listofreferent'=>$listofreferent);
 $resHook = $hookmanager->executeHooks('completeListOfReferent', $parameters, $object, $action);
 
