@@ -1803,6 +1803,7 @@ TopMenuDisableImages=Hide images in Top menu
 LeftMenuBackgroundColor=Background color for Left menu
 BackgroundTableTitleColor=Background color for Table title line
 BackgroundTableTitleTextColor=Text color for Table title line
+BackgroundTableTitleTextlinkColor=Text color for Table title link line
 BackgroundTableLineOddColor=Background color for odd table lines
 BackgroundTableLineEvenColor=Background color for even table lines
 MinimumNoticePeriod=Minimum notice period (Your leave request must be done before this delay)

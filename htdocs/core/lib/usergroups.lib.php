@@ -726,6 +726,33 @@ function showSkins($fuser, $edit = 0, $foruserprofile = false)
 		print '</tr>';
 	}
 
+	// TextTitleLinkColor
+	if ($foruserprofile)
+	{
+	}
+	else
+	{
+		$default=(empty($colortexttitlelink) ? $langs->trans("Unknown") : colorArrayToHex(colorStringToArray($colortexttitlelink)));
+
+		print '<tr class="oddeven">';
+		print '<td>'.$langs->trans("BackgroundTableTitleTextlinkColor").'</td>';
+		print '<td colspan="'.($colspan - 1).'">';
+		if ($edit)
+		{
+			print $formother->selectColor(colorArrayToHex(colorStringToArray($conf->global->THEME_ELDY_TEXTTITLELINK, array()), ''), 'THEME_ELDY_TEXTTITLELINK', 'formcolor', 1).' ';
+		}
+		else
+		{
+			print $formother->showColor($conf->global->THEME_ELDY_TEXTTITLELINK, $langs->trans("Default"));
+		}
+		print ' &nbsp; <span class="nowraponall">('.$langs->trans("Default").': <strong><span style="color: #'.$default.'">'.$default.'</span></strong>) ';
+		print $form->textwithpicto('', $langs->trans("NotSupportedByAllThemes").', '.$langs->trans("PressF5AfterChangingThis"));
+		print '</span>';
+		print '</td>';
+
+		print '</tr>';
+	}
+
 	// BackgroundTableLineOddColor
 	if ($foruserprofile)
 	{

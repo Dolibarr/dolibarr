@@ -69,6 +69,7 @@ $colorbacklinebreak = '233,228,230'; // line break
 $colorbackbody = '255,255,255';
 $colortexttitlenotab = '0,113,120'; // 150,90,121 140,80,10 or 10,140,80  #875a7b  green=0,113,120, violet: 0,50,120
 $colortexttitle = '0,0,0';
+$colortexttitlelink = '10, 20, 100';
 $colortext = '0,0,0';
 $colortextlink = '10, 20, 100';
 $fontsize = '0.86em';
