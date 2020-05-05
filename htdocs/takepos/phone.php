@@ -114,47 +114,47 @@ elseif ($action=="editline"){
     }
 }
 else {
-?>
+	?>
 <script language="javascript">
-<?php
-$categorie = new Categorie($db);
-$categories = $categorie->get_full_arbo('product', (($conf->global->TAKEPOS_ROOT_CATEGORY_ID > 0) ? $conf->global->TAKEPOS_ROOT_CATEGORY_ID : 0), 1);
+	<?php
+	$categorie = new Categorie($db);
+	$categories = $categorie->get_full_arbo('product', (($conf->global->TAKEPOS_ROOT_CATEGORY_ID > 0) ? $conf->global->TAKEPOS_ROOT_CATEGORY_ID : 0), 1);
 
-// Search root category to know its level
-//$conf->global->TAKEPOS_ROOT_CATEGORY_ID=0;
-$levelofrootcategory = 0;
-if ($conf->global->TAKEPOS_ROOT_CATEGORY_ID > 0)
-{
-    foreach ($categories as $key => $categorycursor)
-    {
-        if ($categorycursor['id'] == $conf->global->TAKEPOS_ROOT_CATEGORY_ID)
-        {
-            $levelofrootcategory = $categorycursor['level'];
-            break;
-        }
-    }
-}
-$levelofmaincategories = $levelofrootcategory + 1;
+	// Search root category to know its level
+	//$conf->global->TAKEPOS_ROOT_CATEGORY_ID=0;
+	$levelofrootcategory = 0;
+	if ($conf->global->TAKEPOS_ROOT_CATEGORY_ID > 0)
+	{
+    	foreach ($categories as $key => $categorycursor)
+    	{
+        	if ($categorycursor['id'] == $conf->global->TAKEPOS_ROOT_CATEGORY_ID)
+        	{
+            	$levelofrootcategory = $categorycursor['level'];
+            	break;
+        	}
+    	}
+	}
+	$levelofmaincategories = $levelofrootcategory + 1;
 
-$maincategories = array();
-$subcategories = array();
-foreach ($categories as $key => $categorycursor)
-{
-    if ($categorycursor['level'] == $levelofmaincategories)
-    {
-        $maincategories[$key] = $categorycursor;
-    }
-    else
-    {
-        $subcategories[$key] = $categorycursor;
-    }
-}
+	$maincategories = array();
+	$subcategories = array();
+	foreach ($categories as $key => $categorycursor)
+	{
+    	if ($categorycursor['level'] == $levelofmaincategories)
+    	{
+    	    $maincategories[$key] = $categorycursor;
+    	}
+    	else
+    	{
+    	    $subcategories[$key] = $categorycursor;
+    	}
+	}
 
-sort($maincategories);
-sort($subcategories);
+	sort($maincategories);
+	sort($subcategories);
 
 
-?>
+	?>
 
 var categories = <?php echo json_encode($maincategories); ?>;
 var subcategories = <?php echo json_encode($subcategories); ?>;
@@ -296,9 +296,9 @@ function CheckPlease(){
 </script>
 
 <body style="overflow: hidden; background-color:#D1D1D1;">
-<?php
-if ($conf->global->TAKEPOS_NUM_TERMINALS != "1" && $_SESSION["takeposterminal"] == "") print '<div class="dialog-info-takepos-terminal" id="dialog-info" title="TakePOS">'.$langs->trans('TerminalSelect').'</div>';
-?>
+	<?php
+	if ($conf->global->TAKEPOS_NUM_TERMINALS != "1" && $_SESSION["takeposterminal"] == "") print '<div class="dialog-info-takepos-terminal" id="dialog-info" title="TakePOS">'.$langs->trans('TerminalSelect').'</div>';
+	?>
 <div class="container">
 	<div class="phonebuttonsrow">
 		<?php
@@ -323,7 +323,7 @@ if ($conf->global->TAKEPOS_NUM_TERMINALS != "1" && $_SESSION["takeposterminal"] 
 	</div>
 </div>
 </body>
-<?php
+	<?php
 }
 
 llxFooter();
