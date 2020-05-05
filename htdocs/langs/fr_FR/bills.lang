@@ -579,3 +579,4 @@ AutoFillDateToShort=Définir la date de fin
 MaxNumberOfGenerationReached=Nb maximum de gén. atteint
 BILL_DELETEInDolibarr=Facture supprimée
 BILL_SUPPLIER_DELETEInDolibarr=Facture fournisseur supprimée
+InvoicePaymentsLimits=Réglements
