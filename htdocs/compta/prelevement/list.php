@@ -56,6 +56,7 @@ $search_company = GETPOST('search_company', 'alpha');
 $statut = GETPOST('statut', 'int');
 
 $bon=new BonPrelevement($db, "");
+$hookmanager->initHooks(array('withdrawalsreceiptslineslist'));
 $ligne=new LignePrelevement($db, $user);
 
 
