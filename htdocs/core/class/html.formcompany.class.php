@@ -32,6 +32,10 @@
 
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.form.class.php';
 
+
+/**
+ * Class of forms component to manage companies
+ */
 class FormCompany extends Form
 {
 

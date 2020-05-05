@@ -67,18 +67,10 @@
     </rule>
 
 
-    <!--
+    <!-- Warnings on TODO -->
+    <!-- Disabled: We want to keep TODO as normal
     <rule ref="Generic.Commenting.Todo" />
     -->
-
-	<!-- Warning if action on same line than if -->
-	<!--
-		<rule ref="Generic.ControlStructures.InlineControlStructure">
-		<properties>
-			<property name="error" value="false"/>
-		</properties>
-		</rule>
-	-->
 
 
     <!-- PHP code MUST use only UTF-8 without BOM. -->
@@ -99,19 +91,33 @@
 		</properties>
 	</rule>
 
+
     <!-- Disallow several statements on same line -->
+
+	<!-- Warning if action on same line than if -->
+	<!-- Disabled: We want to allow this for better code compacity and readability
+		<rule ref="Generic.ControlStructures.InlineControlStructure">
+		<properties>
+			<property name="error" value="false"/>
+		</properties>
+		</rule>
+	-->    
 	<!--  We want to allow 'if () { ...small code... }' on same line for better code compacity and readability -->
 	<rule ref="Generic.Formatting.DisallowMultipleStatements">
 		<severity>0</severity>
 	</rule>
 
-	<!-- Have 2 chars padding maximum and always show as errors -->
-	<!--
-		<rule ref="Generic.Formatting.MultipleStatementAlignment">
-		<properties> <property name="maxPadding" value="2"/> <property
-		name="ignoreMultiLine" value="true"/> </properties> </rule>
-	-->
 
+	<!-- Check assignement have the = align on each line. Have 20 chars padding maximum and always show as errors -->
+	<!--  Disabled: Report some false warning
+		<rule ref="Generic.Formatting.MultipleStatementAlignment">
+		<properties>
+		<property name="maxPadding" value="20"/>
+		<property name="ignoreMultiLine" value="true"/>
+		</properties>
+		</rule>
+	-->
+	
 	<rule ref="Generic.Formatting.SpaceAfterCast" />
 
     <rule ref="Generic.Functions.CallTimePassByReference" />
@@ -127,7 +133,7 @@
     <!-- Tweaks to metrics -->
     <rule ref="Generic.Metrics.CyclomaticComplexity">
         <properties>
-            <property name="complexity" value="150" />
+            <property name="complexity" value="250" />
             <property name="absoluteComplexity" value="300" />
         </properties>
     </rule>
@@ -181,6 +187,13 @@
 	  </properties>
 	</rule>
 
+    <!-- Check for duplicate class names -->
+    <!-- Disabled: We need this for dependency injection. 
+    <rule ref="Generic.Classes.DuplicateClassName" /> 
+    -->
+
+
+ 	<!-- Rules from Squiz Standard -->
 
     <rule ref="Squiz.WhiteSpace.ScopeClosingBrace.Indent" />
 
@@ -190,13 +203,10 @@
             <property name="ignoreBlankLines" value="false"/>
         </properties>
     </rule>
-    <rule ref="Squiz.WhiteSpace.SuperfluousWhitespace.StartFile">
-        <severity>0</severity>
-    </rule>
-    <rule ref="Squiz.WhiteSpace.SuperfluousWhitespace.EndFile">
-        <severity>0</severity>
-    </rule>
-    <rule ref="Squiz.WhiteSpace.SuperfluousWhitespace.EmptyLines">
+    <rule ref="Squiz.WhiteSpace.SuperfluousWhitespace.StartFile" />
+    <rule ref="Squiz.WhiteSpace.SuperfluousWhitespace.EndFile" />
+    <!-- Disabled: We want to have 2 empty line as separator sometimes -->
+    <rule ref="Squiz.WhiteSpace.SuperfluousWhitespace.EmptyLines" >
         <severity>0</severity>
     </rule>
 
@@ -208,7 +218,6 @@
 
     <rule ref="Squiz.Functions.MultiLineFunctionDeclaration" />
 	<rule ref="Squiz.Functions.MultiLineFunctionDeclaration.SpaceAfterFunction">
-        <severity>0</severity>
 	</rule>
     <rule ref="Squiz.Functions.FunctionDeclarationArgumentSpacing">
         <properties>
@@ -220,23 +229,16 @@
     </rule>
     <rule ref="Squiz.Scope.MethodScope.Missing" />
 
+
     <!-- Rules from PEAR Standard -->
 
     <rule ref="PEAR.Classes.ClassDeclaration" />
 
-    <!-- Check for duplicate class names -->
-    <!-- <rule ref="Generic.Classes.DuplicateClassName" /> -->
-
     <rule ref="PEAR.Commenting.ClassComment" />
 
-    <!-- TODO Remove this and fix reported errors -->
-    <rule ref="PEAR.Commenting.ClassComment.Missing">
-        <severity>0</severity>
-    </rule>
+    <rule ref="PEAR.Commenting.ClassComment.Missing" />
 
-    <rule ref="PEAR.Commenting.ClassComment.MissingTag">
-		<severity>0</severity>
-    </rule>
+    <rule ref="PEAR.Commenting.ClassComment.MissingTag" />
 
     <rule ref="PEAR.Commenting.ClassComment.MissingAuthorTag">
         <severity>0</severity>
@@ -245,66 +247,37 @@
     <rule ref="PEAR.Commenting.ClassComment.MissingCategoryTag">
         <severity>0</severity>
     </rule>
-
     <rule ref="PEAR.Commenting.ClassComment.MissingLicenseTag">
         <severity>0</severity>
     </rule>
-
     <rule ref="PEAR.Commenting.ClassComment.MissingLinkTag">
         <severity>0</severity>
     </rule>
-
     <rule ref="PEAR.Commenting.ClassComment.MissingPackageTag">
         <severity>0</severity>
     </rule>
 
-
-
-    <!--
-    <rule ref="PEAR.Commenting.FileComment" />
-    <rule ref="PEAR.Commenting.FileComment.WrongStyle">
-        <severity>0</severity>
-    </rule>
-    <rule ref="PEAR.Commenting.FileComment.MissingVersion">
-        <severity>0</severity>
-    </rule>
-    <rule ref="PEAR.Commenting.FileComment.MissingTag">
-        <severity>0</severity>
-    </rule>
-    -->
-
     <rule ref="PEAR.Commenting.FunctionComment" />
 
-    <rule ref="PEAR.Commenting.FunctionComment.Empty">
-        <severity>5</severity>
-    </rule>
-
-	<!--<rule ref="PEAR.Commenting.FunctionComment.MissingReturn">
-        <severity>0</severity>
-    </rule>-->
-    <!--<rule ref="PEAR.Commenting.FunctionComment.Missing">
-        <severity>0</severity>
-    </rule>-->
+    <rule ref="PEAR.Commenting.FunctionComment.Empty" />
 
     <rule ref="PEAR.Commenting.FunctionComment.SpacingAfterParamType" />
 
     <rule ref="PEAR.Commenting.FunctionComment.SpacingAfterParamName">
         <severity>0</severity>
     </rule>
-
     <rule ref="PEAR.Commenting.FunctionComment.SpacingAfterParamType">
         <severity>0</severity>
     </rule>
 
-    <rule ref="PEAR.Commenting.FunctionComment.SpacingAfterParamName" />
-
-    <rule ref="PEAR.Commenting.FunctionComment.ReturnNotRequired">
-        <severity>0</severity>
-    </rule>
+    <rule ref="PEAR.Commenting.FunctionComment.ReturnNotRequired" />
 
     <rule ref="PEAR.Commenting.FunctionComment.WrongStyle">
-        <severity>0</severity>
     </rule>
+
+
+
+
 
     <rule ref="PEAR.Commenting.FunctionComment.SpacingBeforeParamType">
         <severity>0</severity>
@@ -342,6 +315,7 @@
     <rule ref="PEAR.Files.IncludingFile.UseInclude">
         <severity>0</severity>
     </rule>
+    
     <!-- TODO Enable this test. We should use require for include in prior of include when out of if -->
     <rule ref="PEAR.Files.IncludingFile.UseIncludeOnce">
         <severity>0</severity>

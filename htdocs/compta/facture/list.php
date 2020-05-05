@@ -297,7 +297,15 @@ if (empty($reshook))
 	include DOL_DOCUMENT_ROOT.'/core/actions_massactions.inc.php';
 }
 
-if ($massaction == 'withdrawrequest')
+if ($massaction == 'makepayment'){
+	$arrayofselected=is_array($toselect)?$toselect:array();
+
+	$loc = dol_buildpath('/compta/paiement.php', 2).'?action=create&facids='.implode(',', $arrayofselected);
+
+	header('Location: '.$loc);
+	exit;
+}
+elseif ($massaction == 'withdrawrequest')
 {
 	$langs->load("withdrawals");
 
@@ -657,6 +665,7 @@ if ($resql)
 		'generate_doc'=>$langs->trans("ReGeneratePDF"),
 		'builddoc'=>$langs->trans("PDFMerge"),
 		'presend'=>$langs->trans("SendByMail"),
+		//'makepayment'=>$langs->trans("InvoicePaymentsLimits"),   TODO Blank page when using this
 	);
 	if ($conf->prelevement->enabled) {
         	$langs->load("withdrawals");

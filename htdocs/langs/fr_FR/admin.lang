@@ -1803,6 +1803,7 @@ TopMenuDisableImages=Cacher les images du menu principal
 LeftMenuBackgroundColor=Couleur de fond pour le menu Gauche
 BackgroundTableTitleColor=Couleur de fond pour la ligne de titres des liste/tableaux
 BackgroundTableTitleTextColor=Couleur du texte pour la ligne de titre des tableaux
+BackgroundTableTitleTextlinkColor=Couleur du texte pour la ligne de titre lien des tableaux
 BackgroundTableLineOddColor=Couleur de fond pour les lignes impaires des tables
 BackgroundTableLineEvenColor=Couleur de fond pour les lignes paires des tales
 MinimumNoticePeriod=Période de préavis minimum (Votre demande de congé doit être faite avant ce délai)

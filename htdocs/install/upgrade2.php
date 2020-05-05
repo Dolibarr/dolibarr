@@ -1,4 +1,6 @@
 <?php
+use Sabre\VObject\Recur\EventIterator\HandleRDateExpandTest;
+
 /* Copyright (C) 2005       Marc Barilley / Ocebo   <marc@ocebo.com>
  * Copyright (C) 2005-2018  Laurent Destailleur     <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2011  Regis Houssin           <regis.houssin@inodbox.com>
@@ -1185,8 +1187,13 @@ function migrate_contracts_date1($db, $langs, $conf)
     print '</td></tr>';
 }
 
-/*
- * Mise a jour date contrat avec date min effective mise en service si inferieur
+/**
+ * Update contracts with date min real if service date is lower
+ *
+ * @param	DoliDB		$db		Database handler
+ * @param	Translate	$langs	Language
+ * @param	Conf		$conf	Conf
+ * @return	void
  */
 function migrate_contracts_date2($db, $langs, $conf)
 {

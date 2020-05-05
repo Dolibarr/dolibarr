@@ -556,6 +556,12 @@ foreach ($accounts as $key=>$type)
     }
 
     // Extra fields
+	if (is_array($objecttmp->array_options)) {
+		$obj = new stdClass();
+		foreach ($objecttmp->array_options as $k => $v) {
+			$obj->$k = $v;
+		}
+	}
     include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_print_fields.tpl.php';
     // Fields from hook
     $parameters = array('arrayfields'=>$arrayfields);
