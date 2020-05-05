@@ -138,13 +138,13 @@ print '</td></tr>';
 print '</table>';
 
 if ($conf->global->TAKEPOS_AUTO_ORDER)
-{	
+{
 	print '<br>';
 	print '<table class="noborder centpercent">';
 	print '<tr class="liste_titre">';
 	print '<td>'.$langs->trans("Table").'</td><td>'.$langs->trans("URL").'</td><td>'.$langs->trans("QR").'</td>';
 	print "</tr>\n";
-	
+
 	//global $dolibarr_main_url_root;
 	$urlwithouturlroot = preg_replace('/'.preg_quote(DOL_URL_ROOT, '/').'$/i', '', trim($dolibarr_main_url_root));
 	$urlwithroot = $urlwithouturlroot.DOL_URL_ROOT; // This is to use external domain name found into config file
