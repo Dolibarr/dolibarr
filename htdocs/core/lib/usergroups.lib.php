@@ -745,7 +745,7 @@ function showSkins($fuser, $edit = 0, $foruserprofile = false)
 		{
 			print $formother->showColor($conf->global->THEME_ELDY_TEXTTITLELINK, $langs->trans("Default"));
 		}
-		print ' &nbsp; <span class="nowraponall">('.$langs->trans("Default").': <strong><span style="color: #'.$default.'">'.$default.'</span></strong>) ';
+		print ' &nbsp; <span class="nowraponall opacitymedium">'.$langs->trans("Default").'</span>: <strong><span style="color: #'.$default.'">'.$default.'</span></strong> ';
 		print $form->textwithpicto('', $langs->trans("NotSupportedByAllThemes").', '.$langs->trans("PressF5AfterChangingThis"));
 		print '</span>';
 		print '</td>';
