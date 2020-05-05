@@ -328,10 +328,10 @@ if ($conf->use_javascript_ajax)
 {
 	print '<br>';
 	print '<div id="updateconst" class="right">';
-	print '<input type="submit" name="update" class="button" value="'.$langs->trans("Modify").'">';
+	print '<input type="submit" name="update" class="button marginbottomonly" value="'.$langs->trans("Modify").'">';
 	print '</div>';
 	print '<div id="delconst" class="right">';
-	print '<input type="submit" name="delete" class="button" value="'.$langs->trans("Delete").'">';
+	print '<input type="submit" name="delete" class="button marginbottomonly" value="'.$langs->trans("Delete").'">';
 	print '</div>';
 }
 
