@@ -28,7 +28,8 @@
 require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/stock.lib.php';
-
+require_once DOL_DOCUMENT_ROOT.'/product/class/html.formproduct.class.php';
+		
 // Load translation files required by the page
 $langs->loadLangs(array("admin", "stocks"));
 
@@ -69,6 +70,16 @@ if (preg_match('/del_([a-z0-9_\-]+)/i', $action, $reg))
     }
 }
 
+if ($action == 'warehouse')
+{
+	$value = GETPOST('default_warehouse', 'alpha');
+	$res = dolibarr_set_const($db, "MAIN_DEFAULT_WAREHOUSE", $value, 'chaine', 0, '', $conf->entity);
+	if ($value == -1 || empty($value) && !empty($conf->global->MAIN_DEFAULT_WAREHOUSE)){
+		$res = dolibarr_del_const($db, "MAIN_DEFAULT_WAREHOUSE", $conf->entity);
+	}
+	if (!$res > 0) $error++;
+}
+
 /*
  * View
  */
@@ -83,6 +94,8 @@ $head = stock_admin_prepare_head();
 dol_fiche_head($head, 'general', $langs->trans("StockSetup"), -1, 'stock');
 
 $form = new Form($db);
+$formproduct = new FormProduct($db);
+
 
 
 $disabled = '';
@@ -413,6 +426,68 @@ if ($virtualdiffersfromphysical)
 	print '<br>';
 }
 
+print '<form method="POST" action="'.$_SERVER['PHP_SELF'].'">';
+print '<input type="hidden" name="token" value="'.newToken().'">';
+print '<input type="hidden" name="action" value="warehouse">';
+
+$rowspan = 4;
+
+print '<table class="noborder centpercent">';
+
+print '<tr class="liste_titre">';
+print "<td>".$langs->trans("RuleForWarehouse")."</td>\n";
+print '<td class="right">'.$langs->trans("Status").'</td>'."\n";
+print '<td width="80">&nbsp;</td></tr>'."\n";
+print '</tr>'."\n";
+
+print '<tr class="oddeven">';
+print '<td>'.$langs->trans("WarehouseAskWarehouseDuringOrder").'</td>';
+print '<td class="right">';
+if ($conf->use_javascript_ajax) {
+    print ajax_constantonoff('WAREHOUSE_ASK_WAREHOUSE_DURING_ORDER');
+} else {
+    $arrval = array('0' => $langs->trans("No"), '1' => $langs->trans("Yes"));
+    print $form->selectarray("WAREHOUSE_ASK_WAREHOUSE_DURING_ORDER", $arrval, $conf->global->WAREHOUSE_ASK_WAREHOUSE_DURING_ORDER);
+}
+print "</td>";
+print '<td rowspan="'.$rowspan.'" class="nohover right">';
+print '<input type="submit" class="button" value="'.$langs->trans("Modify").'">';
+print '</td>';
+print "</tr>\n";
+
+print '<tr class="oddeven">';
+print '<td>'.$langs->trans("UserDefaultWarehouse").'</td>';
+print '<td class="right">';
+if ($conf->use_javascript_ajax) {
+    print ajax_constantonoff('USER_DEFAULT_WAREHOUSE');
+} else {
+    $arrval = array('0' => $langs->trans("No"), '1' => $langs->trans("Yes"));
+    print $form->selectarray("USER_DEFAULT_WAREHOUSE", $arrval, $conf->global->USER_DEFAULT_WAREHOUSE);
+}
+print "</td>\n";
+print "</tr>\n";
+
+print '<tr class="oddeven">';
+print '<td>'.$langs->trans("MainDefaultWarehouse").'</td>';
+print '<td class="right">';
+print $formproduct->selectWarehouses($conf->global->MAIN_DEFAULT_WAREHOUSE, 'default_warehouse', '', 1);
+print "</td>";
+print "</tr>\n";
+
+print '<tr class="oddeven">';
+print '<td>'.$form->textwithpicto($langs->trans("MainDefaultWarehouseUser"), $langs->trans("MainDefaultWarehouseUserDesc")).'</td>';
+print '<td class="right">';
+if ($conf->use_javascript_ajax) {
+    print ajax_constantonoff('MAIN_DEFAULT_WAREHOUSE_USER');
+} else {
+    $arrval = array('0' => $langs->trans("No"), '1' => $langs->trans("Yes"));
+    print $form->selectarray("MAIN_DEFAULT_WAREHOUSE_USER", $arrval, $conf->global->MAIN_DEFAULT_WAREHOUSE_USER);
+}
+print "</td>\n";
+print "</tr>\n";
+print '</table>';
+print '<br>';
+print '</form>';
 
 print '<table class="noborder centpercent">';
 
@@ -458,7 +533,6 @@ if ($conf->use_javascript_ajax) {
 }
 print "</td>\n";
 print "</tr>\n";
-
 print '</table>';
 
 /*
