@@ -234,7 +234,7 @@ function print_eldy_menu($db, $atarget, $type_user, &$tabMenu, &$menu, $noout = 
 	        ) ? 1 : 0,
 		'perms'=>(!empty($user->rights->propal->lire) ||
 				  !empty($user->rights->commande->lire) ||
-				  !empty($user->rights->supplier_order->lire) ||
+				  !empty($user->rights->fournisseur->lire) ||
 				  !empty($user->rights->supplier_proposal->lire) ||
 				  !empty($user->rights->contrat->lire) ||
 				  !empty($user->rights->ficheinter->lire)
