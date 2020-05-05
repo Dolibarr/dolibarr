@@ -253,7 +253,7 @@ class FormProduct
 			$comboenhancement = ajax_combobox($htmlname, $events);
 			$out .= $comboenhancement;
 		}
-		
+
 		if (strpos($htmlname, 'search_') !== 0) {
 			if (empty($user->fk_warehouse) || $user->fk_warehouse == -1){
 				if (empty($selected) && !empty($conf->global->MAIN_DEFAULT_WAREHOUSE)) $selected = $conf->global->MAIN_DEFAULT_WAREHOUSE;
