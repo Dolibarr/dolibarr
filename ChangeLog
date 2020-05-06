@@ -4,7 +4,6 @@ English Dolibarr ChangeLog
 
 ***** ChangeLog for 11.0.4 compared to 11.0.3 *****
 FIX: #13749
-FIX: #7594
 FIX: #7594 Expense report multi pagebreak
 FIX: Access to undeclared static property: Contact::$table_element
 FIX: actions on supplier proposal not saved (bad trigger name)
