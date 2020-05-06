@@ -1838,7 +1838,7 @@ class User extends CommonObject
 	/**
 	 *  Change password of a user
 	 *
-	 *  @param	User	$user             		Object user of user making change
+	 *  @param	User	$user             		Object user of user requesting the change (not the user for who we change the password). May be unknown.
 	 *  @param  string	$password         		New password in clear text (to generate if not provided)
 	 *	@param	int		$changelater			1=Change password only after clicking on confirm email
 	 *	@param	int		$notrigger				1=Does not launch triggers
@@ -2029,7 +2029,7 @@ class User extends CommonObject
 
 			$mesg .= $outputlangs->transnoentitiesnoconv("ClickHereToGoTo", $appli).': '.$url."\n\n";
 			$mesg .= "--\n";
-			$mesg .= $user->getFullName($outputlangs); // Username that send email
+			$mesg .= $user->getFullName($outputlangs); // Username that send the email (not the user for who we want to reset password)
 
 			dol_syslog(get_class($this)."::send_password changelater is off, url=".$url);
 		}
