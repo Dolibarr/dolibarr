@@ -78,7 +78,7 @@ if ($action == 'validatenewpassword' && $username && $passwordhash)
         if (dol_verifyHash($edituser->pass_temp, $passwordhash))
         {
         	// Clear session
-        	$_SESSION['dol_login'] = '';
+        	unset($_SESSION['dol_login']);
         	$_SESSION['dol_loginmesg'] = $langs->trans('NewPasswordValidated');	// Save message for the session page
 
         	$newpassword = $edituser->setPassword($user, $edituser->pass_temp, 0);
