@@ -148,7 +148,7 @@ function getPieChart($socid = 0)
 
 	$total = 0;
 	$vals = [];
-	
+
 	while ($i < $num)
 	{
 		$row = $db->fetch_row($resql);
@@ -157,10 +157,10 @@ function getPieChart($socid = 0)
 			$vals[$row[1]] = $row[0];
 			$total += $row[0];
 		}
-		
+
 		$i++;
 	}
-	
+
 	$db->free($resql);
 
 	$result = '<div class="div-table-responsive-no-min">';
@@ -169,7 +169,7 @@ function getPieChart($socid = 0)
 	$result .= '<tr class="liste_titre">';
 	$result .= '<td colspan="2">'.$langs->trans("Statistics").' - '.$langs->trans("SupplierInvoice").'</td>';
 	$result .= '</tr>';
-	
+
 	$objectstatic = new FactureFournisseur($db);
 	$array = [FactureFournisseur::STATUS_DRAFT, FactureFournisseur::STATUS_VALIDATED, FactureFournisseur::STATUS_CLOSED, FactureFournisseur::STATUS_ABANDONED];
 	$dataseries = [];
@@ -217,7 +217,7 @@ function getPieChart($socid = 0)
 
 /**
  * Return a HTML table that contains a list with supplier invoice drafts
- * 
+ *
  * @param	int		$maxCount	(Optional) The maximum count of elements inside the table
  * @param	int		$socid		(Optional) Show only results from the supplier with this id
  * @return	string				A HTML table that contains a list with supplier invoice drafts
@@ -243,9 +243,9 @@ function getDraftTable($maxCount = 500, $socid = 0)
 		dol_print_error($db);
 		return '';
 	}
-	
+
 	$num = $db->num_rows($resql);
-	
+
 	$result = '<div class="div-table-responsive-no-min">';
 	$result .= '<table class="noborder centpercent">';
 
@@ -277,12 +277,12 @@ function getDraftTable($maxCount = 500, $socid = 0)
 
 		$objectstatic->id = $obj->rowid;
 		$objectstatic->ref = $obj->ref;
-		
+
 		$companystatic->id = $obj->socid;
 		$companystatic->name = $obj->socname;
 		$companystatic->client = $obj->client;
 		$companystatic->canvas = $obj->canvas;
-		
+
 		$result .= '<tr class="oddeven">';
 		$result .= '<td class="nowrap">'.$objectstatic->getNomUrl(1).'</td>';
 		$result .= '<td>'.$companystatic->getNomUrl(1, 'supplier', 24).'</td>';
@@ -313,11 +313,11 @@ function getDraftTable($maxCount = 500, $socid = 0)
 }
 
 /**
- * Return a HTML table that contains a list with latest edited supplier invoices 
+ * Return a HTML table that contains a list with latest edited supplier invoices
  *
  * @param	int		$maxCount	(Optional) The maximum count of elements inside the table
  * @param	int		$socid		(Optional) Show only results from the supplier with this id
- * @return	string				A HTML table that contains a list with latest edited supplier invoices 
+ * @return	string				A HTML table that contains a list with latest edited supplier invoices
  */
 function getLatestEditTable($maxCount = 5, $socid = 0)
 {
@@ -431,7 +431,7 @@ function getOpenTable($maxCount = 500, $socid = 0)
 	if ($socid) $sql .= " AND s.rowid = ".$socid;
 	$sql .= " ORDER BY f.rowid DESC";
 	$sql .= $db->plimit($maxCount, 0);
-	
+
 	$resql = $db->query($sql);
 	if (!$resql)
 	{
