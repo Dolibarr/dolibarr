@@ -39,7 +39,10 @@ function dolSaveMasterFile($filemaster)
 
 	$mastercontent = '<?php'."\n";
 	$mastercontent .= '// File generated to link to the master file - DO NOT MODIFY - It is just an include'."\n";
-	$mastercontent .= "if (! defined('USEDOLIBARRSERVER') && ! defined('USEDOLIBARREDITOR')) require_once '".DOL_DOCUMENT_ROOT."/master.inc.php';\n";
+	$mastercontent .= "if (! defined('USEDOLIBARRSERVER') && ! defined('USEDOLIBARREDITOR')) {\n";
+	$mastercontent .= "    if (! defined('USEEXTERNALSERVER')) define('USEEXTERNALSERVER', 1);\n";
+	$mastercontent .= "    require_once '".DOL_DOCUMENT_ROOT."/master.inc.php';\n";
+	$mastercontent .= "}\n";
 	$mastercontent .= '?>'."\n";
 	$result = file_put_contents($filemaster, $mastercontent);
 	if (!empty($conf->global->MAIN_UMASK))

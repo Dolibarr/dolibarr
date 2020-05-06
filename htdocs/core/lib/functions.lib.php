@@ -1078,6 +1078,13 @@ function dol_syslog($message, $level = LOG_INFO, $ident = 0, $suffixinfilename =
 	// If syslog module enabled
 	if (empty($conf->syslog->enabled)) return;
 
+	// Check if we are into execution of code of a website
+	if (defined('USEEXTERNALSERVER') && ! defined('USEDOLIBARRSERVER') && ! defined('USEDOLIBARREDITOR')) {
+		global $website, $websitekey;
+		if (is_object($website) && ! empty($website->ref)) $suffixinfilename.='_website_'.$website->ref;
+		elseif (! empty($websitekey)) $suffixinfilename.='_website_'.$websitekey;
+	}
+
 	if ($ident < 0)
 	{
 		foreach ($conf->loghandlers as $loghandlerinstance)
