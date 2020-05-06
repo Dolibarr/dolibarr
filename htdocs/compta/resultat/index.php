@@ -860,7 +860,6 @@ if (!empty($conf->global->ACCOUNTING_REPORTS_INCLUDE_VARPAY) && !empty($conf->ba
     {
     	dol_print_error($db);
     }
-
 }
 // Useless with BOOKKEEPING
 //elseif ($modecompta == 'BOOKKEEPING') {
@@ -899,7 +898,6 @@ if (!empty($conf->global->ACCOUNTING_REPORTS_INCLUDE_LOAN) && !empty($conf->loan
     {
     	dol_print_error($db);
     }
-
 }
 // Useless with BOOKKEEPING
 //elseif ($modecompta == 'BOOKKEEPING') {
