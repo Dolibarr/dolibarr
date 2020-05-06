@@ -78,7 +78,7 @@ $form = new Form($db);
 
 print load_fiche_titre($langs->trans("Purge"), '', 'title_setup');
 
-print $langs->trans("PurgeAreaDesc", $dolibarr_main_data_root).'<br>';
+print '<span class="opacitymedium">'.$langs->trans("PurgeAreaDesc", $dolibarr_main_data_root).'</span><br>';
 print '<br>';
 
 
