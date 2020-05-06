@@ -977,7 +977,6 @@ else
         $result = $db->query($sql);
         if ($result)
         {
-
             // Debit
             $obj = $db->fetch_object($result);
             if (isset($obj->amount))
@@ -987,7 +986,7 @@ else
             }
             print '<tr class="oddeven"><td>&nbsp;</td>';
             print "<td>".$langs->trans("Debit")."</td>\n";
-	        if ($modecompta == 'CREANCES-DETTES') print '<td class="right">'.price(-$obj->amount).'</td>';
+            if ($modecompta == 'CREANCES-DETTES') print '<td class="right">'.price(-$obj->amount).'</td>';
             print '<td class="right">'.price(-$obj->amount)."</td>\n";
             print "</tr>\n";
 
@@ -1000,7 +999,7 @@ else
             }
             print '<tr class="oddeven"><td>&nbsp;</td>';
             print "<td>".$langs->trans("Credit")."</td>\n";
-	        if ($modecompta == 'CREANCES-DETTES') print '<td class="right">'.price($obj->amount).'</td>';
+            if ($modecompta == 'CREANCES-DETTES') print '<td class="right">'.price($obj->amount).'</td>';
             print '<td class="right">'.price($obj->amount)."</td>\n";
             print "</tr>\n";
 
@@ -1012,7 +1011,6 @@ else
                 print '<td colspan="3" class="right">'.price($subtotal_ht).'</td>';
             print '<td colspan="3" class="right">'.price($subtotal_ttc).'</td>';
             print '</tr>';
-
         }
         else dol_print_error($db);
     }
@@ -1055,7 +1053,6 @@ else
                 $subtotal_ht -= $obj->amount;
                 $subtotal_ttc -= $obj->amount;
             }
-
             $total_ht += $subtotal_ht;
             $total_ttc += $subtotal_ttc;
             print '<tr class="liste_total">';
@@ -1066,7 +1063,6 @@ else
         }
         else dol_print_error($db);
     }
-
 
 	/*
 	 * VAT

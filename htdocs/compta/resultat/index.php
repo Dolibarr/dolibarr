@@ -801,7 +801,6 @@ elseif ($modecompta == 'BOOKKEEPING') {
 
 if (!empty($conf->global->ACCOUNTING_REPORTS_INCLUDE_VARPAY) && !empty($conf->banque->enabled) && ($modecompta == 'CREANCES-DETTES' || $modecompta == "RECETTES-DEPENSES"))
 {
-
     // decaiss
 
     $sql = "SELECT date_format(p.datep, '%Y-%m') AS dm, SUM(p.amount) AS amount FROM ".MAIN_DB_PREFIX."payment_various as p";
@@ -863,9 +862,9 @@ if (!empty($conf->global->ACCOUNTING_REPORTS_INCLUDE_VARPAY) && !empty($conf->ba
     }
 
 }
-elseif ($modecompta == 'BOOKKEEPING') {
-	// Useless with BOOKKEEPING
-}
+// Useless with BOOKKEEPING
+//elseif ($modecompta == 'BOOKKEEPING') {
+//}
 
 /*
  * Payement Loan
@@ -873,7 +872,6 @@ elseif ($modecompta == 'BOOKKEEPING') {
 
 if (!empty($conf->global->ACCOUNTING_REPORTS_INCLUDE_LOAN) && !empty($conf->loan->enabled) && ($modecompta == 'CREANCES-DETTES' || $modecompta == "RECETTES-DEPENSES"))
 {
-
     $sql = "SELECT date_format(p.datep, '%Y-%m') AS dm, SUM(p.amount_capital + p.amount_insurance + p.amount_interest) AS amount FROM ".MAIN_DB_PREFIX."payment_loan AS p";
     $sql .= ' WHERE 1 = 1';
     if (!empty($date_start) && !empty($date_end))
@@ -903,9 +901,9 @@ if (!empty($conf->global->ACCOUNTING_REPORTS_INCLUDE_LOAN) && !empty($conf->loan
     }
 
 }
-elseif ($modecompta == 'BOOKKEEPING') {
-	// Not use with BOOKKEEPING
-}
+// Useless with BOOKKEEPING
+//elseif ($modecompta == 'BOOKKEEPING') {
+//}
 
 
 /*
