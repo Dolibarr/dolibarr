@@ -6,6 +6,7 @@
  * Copyright (C) 2014       Juanjo Menent           <jmenent@2byte.es>
  * Copyright (C) 2014       Florian Henry           <florian.henry@open-concept.pro>
  * Copyright (C) 2018       Frédéric France         <frederic.france@netlogic.fr>
+ * Copyright (C) 2020       Maxime DEMAREST         <maxime@indelog.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -794,6 +795,117 @@ elseif ($modecompta == 'BOOKKEEPING') {
 	// Nothing from this table
 }
 
+/*
+ * Various Payments
+ */
+
+if (!empty($conf->global->ACCOUNTING_REPORTS_INCLUDE_VARPAY) && !empty($conf->banque->enabled) && ($modecompta == 'CREANCES-DETTES' || $modecompta == "RECETTES-DEPENSES"))
+{
+
+    // decaiss
+
+    $sql = "SELECT date_format(p.datep, '%Y-%m') AS dm, SUM(p.amount) AS amount FROM ".MAIN_DB_PREFIX."payment_various as p";
+    $sql .= ' WHERE p.sens = 0';
+    if (!empty($date_start) && !empty($date_end))
+        $sql .= " AND p.datep >= '".$db->idate($date_start)."' AND p.datep <= '".$db->idate($date_end)."'";
+    $sql .= ' GROUP BY dm';
+
+    dol_syslog("get various payments");
+    $result = $db->query($sql);
+    if ($result)
+    {
+    	$num = $db->num_rows($result);
+    	$i = 0;
+    	if ($num)
+    	{
+    		while ($i < $num)
+    		{
+    			$obj = $db->fetch_object($result);
+    			if (!isset($decaiss_ttc[$obj->dm])) $decaiss_ttc[$obj->dm] = 0;
+                if (isset($obj->amount)) $decaiss_ttc[$obj->dm] += $obj->amount;
+    			$i++;
+    		}
+    	}
+    }
+    else
+    {
+    	dol_print_error($db);
+    }
+
+    // encaiss
+
+    $sql = "SELECT date_format(p.datep, '%Y-%m') AS dm, SUM(p.amount) AS amount FROM ".MAIN_DB_PREFIX."payment_various AS p";
+    $sql .= ' WHERE p.sens = 1';
+    if (!empty($date_start) && !empty($date_end))
+        $sql .= " AND p.datep >= '".$db->idate($date_start)."' AND p.datep <= '".$db->idate($date_end)."'";
+    $sql .= ' GROUP BY dm';
+
+    dol_syslog("get various payments");
+    $result = $db->query($sql);
+    if ($result)
+    {
+    	$num = $db->num_rows($result);
+    	$i = 0;
+    	if ($num)
+    	{
+    		while ($i < $num)
+    		{
+    			$obj = $db->fetch_object($result);
+    			if (!isset($encaiss_ttc[$obj->dm])) $encaiss_ttc[$obj->dm] = 0;
+                if (isset($obj->amount)) $encaiss_ttc[$obj->dm] += $obj->amount;
+    			$i++;
+    		}
+    	}
+    }
+    else
+    {
+    	dol_print_error($db);
+    }
+
+}
+elseif ($modecompta == 'BOOKKEEPING') {
+	// Useless with BOOKKEEPING
+}
+
+/*
+ * Payement Loan
+ */
+
+if (!empty($conf->global->ACCOUNTING_REPORTS_INCLUDE_LOAN) && !empty($conf->loan->enabled) && ($modecompta == 'CREANCES-DETTES' || $modecompta == "RECETTES-DEPENSES"))
+{
+
+    $sql = "SELECT date_format(p.datep, '%Y-%m') AS dm, SUM(p.amount_capital + p.amount_insurance + p.amount_interest) AS amount FROM ".MAIN_DB_PREFIX."payment_loan AS p";
+    $sql .= ' WHERE 1 = 1';
+    if (!empty($date_start) && !empty($date_end))
+        $sql .= " AND p.datep >= '".$db->idate($date_start)."' AND p.datep <= '".$db->idate($date_end)."'";
+    $sql .= ' GROUP BY dm';
+
+    dol_syslog("get loan payments");
+    $result = $db->query($sql);
+    if ($result)
+    {
+    	$num = $db->num_rows($result);
+    	$i = 0;
+    	if ($num)
+    	{
+    		while ($i < $num)
+    		{
+    			$obj = $db->fetch_object($result);
+    			if (!isset($decaiss_ttc[$obj->dm])) $decaiss_ttc[$obj->dm] = 0;
+                if (isset($obj->amount)) $decaiss_ttc[$obj->dm] += $obj->amount;
+    			$i++;
+    		}
+    	}
+    }
+    else
+    {
+    	dol_print_error($db);
+    }
+
+}
+elseif ($modecompta == 'BOOKKEEPING') {
+	// Not use with BOOKKEEPING
+}
 
 
 /*
