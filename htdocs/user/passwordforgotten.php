@@ -77,7 +77,10 @@ if ($action == 'validatenewpassword' && $username && $passwordhash)
     {
         if (dol_verifyHash($edituser->pass_temp, $passwordhash))
         {
-            setEventMessages('NewPasswordValidated', null, 'mesgs');
+        	// Clear session
+        	$_SESSION['dol_login'] = '';
+        	$_SESSION['dol_loginmesg'] = $langs->trans('NewPasswordValidated');	// Save message for the session page
+
         	$newpassword = $edituser->setPassword($user, $edituser->pass_temp, 0);
             dol_syslog("passwordforgotten.php new password for user->id=".$edituser->id." validated in database");
             header("Location: ".DOL_URL_ROOT.'/');
