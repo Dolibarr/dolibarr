@@ -3268,6 +3268,7 @@ function img_picto($titlealt, $picto, $moreatt = '', $pictoisfullpath = false, $
 				'payment'=>'bg-infobox-bank_account', 'poll'=>'bg-infobox-adherent', 'project'=>'bg-infobox-project', 'projecttask'=>'bg-infobox-project', 'propal'=>'bg-infobox-propal',
 				'resource'=>'bg-infobox-action', 'supplier_invoice'=>'bg-infobox-order_supplier', 'supplier_order'=>'bg-infobox-order_supplier', 'supplier_proposal'=>'bg-infobox-supplier_proposal',
 				'ticket'=>'bg-infobox-contrat', 'title_accountancy'=>'bg-infobox-bank_account', 'title_hrm'=>'bg-infobox-holiday', 'trip'=>'bg-infobox-expensereport', 'title_agenda'=>'bg-infobox-action',
+				//'title_setup'=>'bg-infobox-action', 'tools'=>'bg-infobox-action',
 				'list-alt'=>'imgforviewmode', 'calendar'=>'imgforviewmode', 'calendarweek'=>'imgforviewmode', 'calendarmonth'=>'imgforviewmode', 'calendarday'=>'imgforviewmode', 'calendarperuser'=>'imgforviewmode'
 			);
 			if (!empty($arrayconvpictotomorcess[$pictowithouttext])) {

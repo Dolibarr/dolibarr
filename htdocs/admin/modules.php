@@ -412,11 +412,13 @@ foreach ($modulesdir as $dir)
 									}
 
 									$familyposition = $familyinfo[$familykey]['position'];
-									if ($external)
+									$listOfOfficialModuleGroups = array('hr', 'technic', 'interface', 'technic', 'portal', 'financial', 'crm', 'base', 'products', 'srm', 'ecm', 'projects', 'other');
+									if ($external && ! in_array($familykey, $listOfOfficialModuleGroups))
 									{
-										// TODO Find a solution so modules with their own family are always at end
-										//var_dump($familyposition);
-										//$familyposition += 100;
+										// If module is extern and into a custom group (not into an official predefined one), it must appear at end (custom groups should not be before official groups).
+										if (is_numeric($familyposition)) {
+											$familyposition = sprintf("%03d", (int) $familyposition + 100);
+										}
 									}
 
 									$orders[$i] = $familyposition."_".$familykey."_".$moduleposition."_".$j; // Sort by family, then by module position then number

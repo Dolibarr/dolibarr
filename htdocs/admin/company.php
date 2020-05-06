@@ -693,7 +693,7 @@ print '<br>';
 
 
 // Sales taxes (VAT, IRPF, ...)
-print load_fiche_titre($langs->trans("TypeOfSaleTaxes"));
+print load_fiche_titre($langs->trans("TypeOfSaleTaxes"), '', 'object_payment');
 
 print '<table class="noborder centpercent editmode">';
 print '<tr class="liste_titre">';
