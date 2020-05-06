@@ -1443,14 +1443,14 @@ class Product extends CommonObject
         }
     }
 
-    /*
-    * Sets an accountancy code for a product.
-    * Also calls PRODUCT_MODIFY trigger when modified
-    *
-    * @param string $type It can be 'buy', 'buy_intra', 'buy_export', 'sell', 'sell_intra' or 'sell_export'
-    * @param string $value Accountancy code
-    * @return int <0 KO >0 OK
-    */
+    /**
+     * Sets an accountancy code for a product.
+     * Also calls PRODUCT_MODIFY trigger when modified
+     *
+     * @param 	string $type 	It can be 'buy', 'buy_intra', 'buy_export', 'sell', 'sell_intra' or 'sell_export'
+     * @param 	string $value 	Accountancy code
+     * @return 	int 			<0 KO >0 OK
+     */
     public function setAccountancyCode($type, $value)
     {
         global $user, $langs, $conf;
@@ -5639,9 +5639,10 @@ class Product extends CommonObject
 
 
 /**
- * Class to manage products or services
+ * Class to manage products or services.
+ * Do not use 'Service' as class name since it is already used by APIs.
  */
-class Service extends Product
+class ProductService extends Product
 {
 	public $picto = 'service';
 }

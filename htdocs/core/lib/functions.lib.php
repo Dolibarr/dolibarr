@@ -1078,6 +1078,13 @@ function dol_syslog($message, $level = LOG_INFO, $ident = 0, $suffixinfilename =
 	// If syslog module enabled
 	if (empty($conf->syslog->enabled)) return;
 
+	// Check if we are into execution of code of a website
+	if (defined('USEEXTERNALSERVER') && ! defined('USEDOLIBARRSERVER') && ! defined('USEDOLIBARREDITOR')) {
+		global $website, $websitekey;
+		if (is_object($website) && ! empty($website->ref)) $suffixinfilename.='_website_'.$website->ref;
+		elseif (! empty($websitekey)) $suffixinfilename.='_website_'.$websitekey;
+	}
+
 	if ($ident < 0)
 	{
 		foreach ($conf->loghandlers as $loghandlerinstance)
@@ -3145,20 +3152,21 @@ function img_picto($titlealt, $picto, $moreatt = '', $pictoisfullpath = false, $
         		'cash-register', 'check', 'close_title', 'company', 'contact', 'contract', 'cubes',
         		'delete', 'dolly', 'dollyrevert', 'edit', 'ellipsis-h', 'external-link-alt', 'external-link-square-alt',
         		'filter', 'file-code', 'file-export', 'file-import', 'file-upload', 'folder', 'folder-open', 'globe', 'globe-americas', 'grip', 'grip_title', 'help',
-        		'intervention', 'language', 'list', 'listlight', 'lot',
+        		'intervention', 'label', 'language', 'list', 'listlight', 'lot',
         		'map-marker-alt', 'money-bill-alt', 'mrp', 'note',
         		'object_accounting', 'object_action', 'object_account', 'object_barcode', 'object_bill', 'object_billa', 'object_billd', 'object_bom',
 	        	'object_category', 'object_bookmark', 'object_bug', 'object_dolly', 'object_dollyrevert', 'object_generic', 'object_folder',
         		'object_list-alt', 'object_calendar', 'object_calendarweek', 'object_calendarmonth', 'object_calendarday', 'object_calendarperuser',
         		'object_cash-register', 'object_company', 'object_contact', 'object_contract', 'object_donation', 'object_dynamicprice',
-        		'object_holiday', 'object_hrm', 'object_intervention', 'object_margin', 'object_money-bill-alt', 'object_multicurrency', 'object_order', 'object_payment',
+        		'object_holiday', 'object_hrm', 'object_invoice', 'object_intervention', 'object_label',
+        		'object_margin', 'object_money-bill-alt', 'object_multicurrency', 'object_order', 'object_payment',
         		'object_lot', 'object_mrp', 'object_payment', 'object_product', 'object_propal',
         		'object_other', 'object_paragraph', 'object_poll', 'object_printer', 'object_project', 'object_projectpub', 'object_propal', 'object_resource', 'object_rss', 'object_projecttask',
         		'object_supplier_invoice', 'object_supplier_order', 'object_supplier_proposal', 'object_service', 'object_stock',
         		'object_technic', 'object_ticket', 'object_trip', 'object_user', 'object_group', 'object_member',
         		'object_phoning', 'object_phoning_mobile', 'object_phoning_fax', 'object_email',
         		'off', 'on', 'order',
-        		'paiment', 'play', 'playdisabled', 'poll', 'printer', 'product', 'propal',  'projecttask', 'stock', 'resize', 'service', 'stats', 'trip',
+        		'paiment', 'play', 'playdisabled', 'poll', 'printer', 'product', 'propal', 'projecttask', 'stock', 'resize', 'service', 'stats', 'trip',
 				'setup', 'sign-out', 'split', 'switch_off', 'switch_on', 'tools', 'unlink', 'uparrow', 'user', 'wrench',
 				'jabber', 'skype', 'twitter', 'facebook', 'linkedin', 'instagram', 'snapchat', 'youtube', 'google-plus-g', 'whatsapp',
 				'chevron-left', 'chevron-right', 'chevron-down', 'chevron-top',
@@ -3188,12 +3196,13 @@ function img_picto($titlealt, $picto, $moreatt = '', $pictoisfullpath = false, $
 		    	'hrm'=>'umbrella-beach', 'margin'=>'calculator', 'members'=>'users', 'ticket'=>'ticket-alt', 'globe'=>'external-link-alt', 'lot'=>'barcode',
 		    	'email'=>'at',
 		    	'edit'=>'pencil-alt', 'grip_title'=>'arrows-alt', 'grip'=>'arrows-alt', 'help'=>'info-circle',
-		    	'generic'=>'file', 'holiday'=>'umbrella-beach', 'member'=>'users', 'mrp'=>'cubes', 'trip'=>'wallet', 'group'=>'users',
+		    	'generic'=>'file', 'holiday'=>'umbrella-beach', 'label'=>'layer-group',
+		    	'member'=>'users', 'mrp'=>'cubes', 'trip'=>'wallet', 'group'=>'users',
 		    	'sign-out'=>'sign-out-alt',
 		    	'switch_off'=>'toggle-off', 'switch_on'=>'toggle-on', 'check'=>'check', 'bookmark'=>'star', 'bookmark'=>'star',
 		    	'bank'=>'university', 'close_title'=>'window-close', 'delete'=>'trash', 'edit'=>'pencil-alt', 'filter'=>'filter',
 		    	'list-alt'=>'list-alt', 'calendar'=>'calendar-alt', 'calendarweek'=>'calendar-week', 'calendarmonth'=>'calendar-alt', 'calendarday'=>'calendar-day', 'calendarperuser'=>'table',
-		    	'intervention'=>'ambulance', 'multicurrency'=>'dollar-sign', 'order'=>'file-invoice',
+		    	'intervention'=>'ambulance', 'invoice'=>'file-invoice-dollar', 'multicurrency'=>'dollar-sign', 'order'=>'file-invoice',
 		    	'error'=>'exclamation-triangle', 'warning'=>'exclamation-triangle',
 		    	'other'=>'square',
 		    	'playdisabled'=>'play', 'poll'=>'check-double', 'preview'=>'binoculars', 'project'=>'sitemap', 'projectpub'=>'sitemap', 'projecttask'=>'tasks', 'propal'=>'file-signature',
@@ -3262,10 +3271,11 @@ function img_picto($titlealt, $picto, $moreatt = '', $pictoisfullpath = false, $
 				'order'=>'bg-infobox-commande',
 				'user'=>'bg-infobox-adherent', 'users'=>'bg-infobox-adherent',
 				'error'=>'pictoerror', 'warning'=>'pictowarning', 'switch_on'=>'font-status4',
-				'holiday'=>'bg-infobox-holiday',
+				'holiday'=>'bg-infobox-holiday', 'invoice'=>'bg-infobox-commande',
 				'payment'=>'bg-infobox-bank_account', 'poll'=>'bg-infobox-adherent', 'project'=>'bg-infobox-project', 'projecttask'=>'bg-infobox-project', 'propal'=>'bg-infobox-propal',
 				'resource'=>'bg-infobox-action', 'supplier_invoice'=>'bg-infobox-order_supplier', 'supplier_order'=>'bg-infobox-order_supplier', 'supplier_proposal'=>'bg-infobox-supplier_proposal',
 				'ticket'=>'bg-infobox-contrat', 'title_accountancy'=>'bg-infobox-bank_account', 'title_hrm'=>'bg-infobox-holiday', 'trip'=>'bg-infobox-expensereport', 'title_agenda'=>'bg-infobox-action',
+				//'title_setup'=>'bg-infobox-action', 'tools'=>'bg-infobox-action',
 				'list-alt'=>'imgforviewmode', 'calendar'=>'imgforviewmode', 'calendarweek'=>'imgforviewmode', 'calendarmonth'=>'imgforviewmode', 'calendarday'=>'imgforviewmode', 'calendarperuser'=>'imgforviewmode'
 			);
 			if (!empty($arrayconvpictotomorcess[$pictowithouttext])) {
@@ -6520,7 +6530,7 @@ function make_substitutions($text, $substitutionarray, $outputlangs = null)
 		if (dol_textishtml($text, 1)) $msgishtml = 1;
 
 		$keyfound = $reg[1];
-		if (preg_match('/(_pass|password|secret|_key|key$)/i', $keyfound)) $newval = '*****forbidden*****';
+		if (preg_match('/(_pass|_pw|password|secret|_key|key$)/i', $keyfound)) $newval = '*****forbidden*****';
 		else $newval = empty($conf->global->$keyfound) ? '' : $conf->global->$keyfound;
 		$text = preg_replace('/__\['.preg_quote($keyfound, '/').'\]__/', $msgishtml ?dol_htmlentitiesbr($newval) : $newval, $text);
 	}

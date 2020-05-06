@@ -30,6 +30,9 @@
 
 -- Missing in v11
 
+UPDATE llx_c_units set scale = 3600 where code  = 'H' and unit_type = 'time';
+UPDATE llx_c_units set scale = 86400 where code = 'D' and unit_type = 'time';
+
 create table llx_commande_fournisseur_dispatch_extrafields
 (
   rowid            integer AUTO_INCREMENT PRIMARY KEY,
@@ -271,3 +274,5 @@ ALTER TABLE llx_prelevement_facture_demande ADD COLUMN fk_facture_fourn INTEGER 
 ALTER TABLE llx_prelevement_facture ADD COLUMN fk_facture_fourn INTEGER NULL;
 
 ALTER TABLE llx_menu MODIFY COLUMN module varchar(255);
+
+

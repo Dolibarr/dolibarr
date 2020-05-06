@@ -1298,11 +1298,11 @@ class Form
 			// Construct $out and $outarray
 			$out .= '<select id="'.$htmlname.'" class="flat'.($morecss ? ' '.$morecss : '').'"'.($moreparam ? ' '.$moreparam : '').' name="'.$htmlname.($multiple ? '[]' : '').'" '.($multiple ? 'multiple' : '').'>'."\n";
 
-			$textifempty = '';
-			// Do not use textifempty = ' ' or '&nbsp;' here, or search on key will search on ' key'.
-			//if (! empty($conf->use_javascript_ajax) || $forcecombo) $textifempty='';
+			$textifempty = (($showempty && !is_numeric($showempty)) ? $langs->trans($showempty) : '');
 			if (!empty($conf->global->COMPANY_USE_SEARCH_TO_SELECT))
 			{
+				// Do not use textifempty = ' ' or '&nbsp;' here, or search on key will search on ' key'.
+				//if (! empty($conf->use_javascript_ajax) || $forcecombo) $textifempty='';
 				if ($showempty && !is_numeric($showempty)) $textifempty = $langs->trans($showempty);
 				else $textifempty .= $langs->trans("All");
 			}
@@ -1554,7 +1554,7 @@ class Form
 
 			if ($htmlname != 'none' && !$options_only) $out .= '<select class="flat'.($moreclass ? ' '.$moreclass : '').'" id="'.$htmlid.'" name="'.$htmlname.($multiple ? '[]' : '').'" '.($multiple ? 'multiple' : '').' '.(!empty($moreparam) ? $moreparam : '').'>';
 			if (($showempty == 1 || ($showempty == 3 && $num > 1)) && !$multiple) $out .= '<option value="0"'.(in_array(0, $selected) ? ' selected' : '').'>&nbsp;</option>';
-			if ($showempty == 2) $out .= '<option value="0"'.(in_array(0, $selected) ? ' selected' : '').'>'.$langs->trans("Internal").'</option>';
+			if ($showempty == 2) $out .= '<option value="0"'.(in_array(0, $selected) ? ' selected' : '').'>-- '.$langs->trans("Internal").' --</option>';
 
 			$num = $this->db->num_rows($resql);
 			$i = 0;
@@ -1669,24 +1669,24 @@ class Form
 	/**
 	 *	Return select list of users
 	 *
-	 *  @param	string	$selected       User id or user object of user preselected. If 0 or < -2, we use id of current user. If -1, keep unselected (if empty is allowed)
-	 *  @param  string	$htmlname       Field name in form
-	 *  @param  int		$show_empty     0=list with no empty value, 1=add also an empty value into list
-	 *  @param  array	$exclude        Array list of users id to exclude
-	 * 	@param	int		$disabled		If select list must be disabled
-	 *  @param  array|string	$include        Array list of users id to include or 'hierarchy' to have only supervised users or 'hierarchyme' to have supervised + me
-	 * 	@param	array	$enableonly		Array list of users id to be enabled. If defined, it means that others will be disabled
-	 *  @param	string	$force_entity	'0' or Ids of environment to force
-	 *  @param	int		$maxlength		Maximum length of string into list (0=no limit)
-	 *  @param	int		$showstatus		0=show user status only if status is disabled, 1=always show user status into label, -1=never show user status
-	 *  @param	string	$morefilter		Add more filters into sql request (Example: 'employee = 1')
-	 *  @param	integer	$show_every		0=default list, 1=add also a value "Everybody" at beginning of list
-	 *  @param	string	$enableonlytext	If option $enableonlytext is set, we use this text to explain into label why record is disabled. Not used if enableonly is empty.
-	 *  @param	string	$morecss		More css
-	 *  @param  int     $noactive       Show only active users (this will also happened whatever is this option if USER_HIDE_INACTIVE_IN_COMBOBOX is on).
-	 *  @param  int		$outputmode     0=HTML select string, 1=Array
-	 *  @param  bool	$multiple       add [] in the name of element and add 'multiple' attribut
-	 * 	@return	string					HTML select string
+	 *  @param	string			$selected       User id or user object of user preselected. If 0 or < -2, we use id of current user. If -1, keep unselected (if empty is allowed)
+	 *  @param  string			$htmlname       Field name in form
+	 *  @param  int				$show_empty     0=list with no empty value, 1=add also an empty value into list
+	 *  @param  array			$exclude        Array list of users id to exclude
+	 * 	@param	int				$disabled		If select list must be disabled
+	 *  @param  array|string	$include        Array list of users id to include. User '' for all users or 'hierarchy' to have only supervised users or 'hierarchyme' to have supervised + me
+	 * 	@param	array			$enableonly		Array list of users id to be enabled. If defined, it means that others will be disabled
+	 *  @param	string			$force_entity	'0' or Ids of environment to force
+	 *  @param	int				$maxlength		Maximum length of string into list (0=no limit)
+	 *  @param	int				$showstatus		0=show user status only if status is disabled, 1=always show user status into label, -1=never show user status
+	 *  @param	string			$morefilter		Add more filters into sql request (Example: 'employee = 1')
+	 *  @param	integer			$show_every		0=default list, 1=add also a value "Everybody" at beginning of list
+	 *  @param	string			$enableonlytext	If option $enableonlytext is set, we use this text to explain into label why record is disabled. Not used if enableonly is empty.
+	 *  @param	string			$morecss		More css
+	 *  @param  int     		$noactive       Show only active users (this will also happened whatever is this option if USER_HIDE_INACTIVE_IN_COMBOBOX is on).
+	 *  @param  int				$outputmode     0=HTML select string, 1=Array
+	 *  @param  bool			$multiple       add [] in the name of element and add 'multiple' attribut
+	 * 	@return	string							HTML select string
 	 *  @see select_dolgroups()
 	 */
 	public function select_dolusers($selected = '', $htmlname = 'userid', $show_empty = 0, $exclude = null, $disabled = 0, $include = '', $enableonly = '', $force_entity = '0', $maxlength = 0, $showstatus = 0, $morefilter = '', $show_every = 0, $enableonlytext = '', $morecss = '', $noactive = 0, $outputmode = 0, $multiple = false)
@@ -2507,7 +2507,7 @@ class Form
 
 		$label = $objp->label;
 		if (!empty($objp->label_translated)) $label = $objp->label_translated;
-		if (!empty($filterkey) && $filterkey != '') $label = preg_replace('/('.preg_quote($filterkey).')/i', '<strong>$1</strong>', $label, 1);
+		if (!empty($filterkey) && $filterkey != '') $label = preg_replace('/('.preg_quote($filterkey, '/').')/i', '<strong>$1</strong>', $label, 1);
 
 		$outkey = $objp->rowid;
 		$outref = $objp->ref;
@@ -2579,7 +2579,7 @@ class Form
 		if ($outorigin && !empty($conf->global->PRODUCT_SHOW_ORIGIN_IN_COMBO)) $opt .= ' ('.getCountry($outorigin, 1).')';
 
 		$objRef = $objp->ref;
-		if (!empty($filterkey) && $filterkey != '') $objRef = preg_replace('/('.preg_quote($filterkey).')/i', '<strong>$1</strong>', $objRef, 1);
+		if (!empty($filterkey) && $filterkey != '') $objRef = preg_replace('/('.preg_quote($filterkey, '/').')/i', '<strong>$1</strong>', $objRef, 1);
 		$outval .= $objRef;
 		if ($outbarcode) $outval .= ' ('.$outbarcode.')';
 		$outval .= ' - '.dol_trunc($label, $maxlengtharticle);
@@ -2948,11 +2948,11 @@ class Form
                 }
 
 				$objRef = $objp->ref;
-				if ($filterkey && $filterkey != '') $objRef = preg_replace('/('.preg_quote($filterkey).')/i', '<strong>$1</strong>', $objRef, 1);
+				if ($filterkey && $filterkey != '') $objRef = preg_replace('/('.preg_quote($filterkey, '/').')/i', '<strong>$1</strong>', $objRef, 1);
 				$objRefFourn = $objp->ref_fourn;
-				if ($filterkey && $filterkey != '') $objRefFourn = preg_replace('/('.preg_quote($filterkey).')/i', '<strong>$1</strong>', $objRefFourn, 1);
+				if ($filterkey && $filterkey != '') $objRefFourn = preg_replace('/('.preg_quote($filterkey, '/').')/i', '<strong>$1</strong>', $objRefFourn, 1);
 				$label = $objp->label;
-				if ($filterkey && $filterkey != '') $label = preg_replace('/('.preg_quote($filterkey).')/i', '<strong>$1</strong>', $label, 1);
+				if ($filterkey && $filterkey != '') $label = preg_replace('/('.preg_quote($filterkey, '/').')/i', '<strong>$1</strong>', $label, 1);
 
 				$optlabel = $objp->ref;
 				if (!empty($objp->idprodfournprice) && ($objp->ref != $objp->ref_fourn)) {
@@ -6634,11 +6634,11 @@ class Form
 		// Add code for jquery to use multiselect
 		if (!empty($conf->global->MAIN_USE_JQUERY_MULTISELECT) || defined('REQUIRE_JQUERY_MULTISELECT'))
 		{
-			$out .= "\n".'<!-- JS CODE TO ENABLE '.$tmpplugin.' for id '.$htmlname.' -->
-						<script>'."\n";
 			if ($addjscombo == 1)
 			{
 				$tmpplugin = empty($conf->global->MAIN_USE_JQUERY_MULTISELECT) ?constant('REQUIRE_JQUERY_MULTISELECT') : $conf->global->MAIN_USE_JQUERY_MULTISELECT;
+				$out .= "\n".'<!-- JS CODE TO ENABLE '.$tmpplugin.' for id '.$htmlname.' -->'."\n";
+				$out .= '<script>'."\n";
 				$out .= 'function formatResult(record) {'."\n";
 				if ($elemtype == 'category')
 				{
@@ -6676,6 +6676,8 @@ class Form
 				// Add other js lib
 				// TODO external lib multiselect/jquery.multi-select.js must have been loaded to use this multiselect plugin
 				// ...
+				$out .= "\n".'<!-- JS CODE TO ENABLE external lib for id '.$htmlname.' -->'."\n";
+				$out .= '<script>'."\n";
 				$out .= '$(document).ready(function () {
 							$(\'#'.$htmlname.'\').multiSelect({
 								containerHTML: \'<div class="multi-select-container">\',

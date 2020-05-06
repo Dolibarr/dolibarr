@@ -247,22 +247,31 @@ if ($search_name)     $sql .= " AND s.nom LIKE '%".$db->escape($search_name)."%'
 if ($search_contract) $sql .= " AND c.ref LIKE '%".$db->escape($search_contract)."%' ";
 if ($search_service)  $sql .= " AND (p.ref LIKE '%".$db->escape($search_service)."%' OR p.description LIKE '%".$db->escape($search_service)."%' OR cd.description LIKE '%".$db->escape($search_service)."%')";
 if ($socid > 0)       $sql .= " AND s.rowid = ".$socid;
-$filter_dateouvertureprevue = dol_mktime(0, 0, 0, $opouvertureprevuemonth, $opouvertureprevueday, $opouvertureprevueyear);
-if ($filter_dateouvertureprevue != '' && $filter_opouvertureprevue == -1) $filter_opouvertureprevue = '=';
 
-$filter_date1 = dol_mktime(0, 0, 0, $op1month, $op1day, $op1year);
-if ($filter_date1 != '' && $filter_op1 == -1) $filter_op1 = '=';
+$filter_dateouvertureprevue_start=dol_mktime(0, 0, 0, $opouvertureprevuemonth, $opouvertureprevueday, $opouvertureprevueyear);
+$filter_dateouvertureprevue_end=dol_mktime(23, 59, 59, $opouvertureprevuemonth, $opouvertureprevueday, $opouvertureprevueyear);
+if ($filter_dateouvertureprevue_start != '' && $filter_opouvertureprevue == -1) $filter_opouvertureprevue = ' BETWEEN ';
 
-$filter_date2 = dol_mktime(0, 0, 0, $op2month, $op2day, $op2year);
-if ($filter_date2 != '' && $filter_op2 == -1) $filter_op2 = '=';
+$filter_date1_start =dol_mktime(0, 0, 0, $op1month, $op1day, $op1year);
+$filter_date1_end =dol_mktime(23, 59, 59, $op1month, $op1day, $op1year);
+if ($filter_date1_start != '' && $filter_op1 == -1) $filter_op1 = ' BETWEEN ';
 
-$filter_datecloture = dol_mktime(0, 0, 0, $opcloturemonth, $opclotureday, $opclotureyear);
-if ($filter_datecloture != '' && $filter_opcloture == -1) $filter_opcloture = '=';
+$filter_date2_start=dol_mktime(0, 0, 0, $op2month, $op2day, $op2year);
+$filter_date2_end=dol_mktime(23, 59, 59, $op2month, $op2day, $op2year);
+if ($filter_date2_start != '' && $filter_op2 == -1) $filter_op2 = ' BETWEEN ';
 
-if (!empty($filter_opouvertureprevue) && $filter_opouvertureprevue != -1 && $filter_dateouvertureprevue != '') $sql .= " AND cd.date_ouverture_prevue ".$filter_opouvertureprevue." '".$db->idate($filter_dateouvertureprevue)."'";
-if (!empty($filter_op1) && $filter_op1 != -1 && $filter_date1 != '') $sql .= " AND cd.date_ouverture ".$filter_op1." '".$db->idate($filter_date1)."'";
-if (!empty($filter_op2) && $filter_op2 != -1 && $filter_date2 != '') $sql .= " AND cd.date_fin_validite ".$filter_op2." '".$db->idate($filter_date2)."'";
-if (!empty($filter_opcloture) && $filter_opcloture != -1 && $filter_datecloture != '') $sql .= " AND cd.date_cloture ".$filter_opcloture." '".$db->idate($filter_datecloture)."'";
+$filter_datecloture_start=dol_mktime(0, 0, 0, $opcloturemonth, $opclotureday, $opclotureyear);
+$filter_datecloture_end=dol_mktime(23, 59, 59, $opcloturemonth, $opclotureday, $opclotureyear);
+if ($filter_datecloture_start != '' && $filter_opcloture == -1) $filter_opcloture = ' BETWEEN ';
+
+if (! empty($filter_opouvertureprevue) && $filter_opouvertureprevue != -1 && $filter_opouvertureprevue != ' BETWEEN ' && $filter_dateouvertureprevue_start != '') $sql.= " AND cd.date_ouverture_prevue ".$filter_opouvertureprevue." '".$db->idate($filter_dateouvertureprevue_start)."'";
+if (! empty($filter_opouvertureprevue) && $filter_opouvertureprevue == ' BETWEEN ') $sql.= " AND '".$db->idate($filter_dateouvertureprevue_end)."'";
+if (! empty($filter_op1) && $filter_op1 != -1 && $filter_op1 != ' BETWEEN ' && $filter_date1_start != '') $sql.= " AND cd.date_ouverture ".$filter_op1." '".$db->idate($filter_date1_start)."'";
+if (! empty($filter_op1) && $filter_op1==' BETWEEN ')  $sql.= " AND '".$db->idate($filter_date1_end)."'";
+if (! empty($filter_op2) && $filter_op2 != -1 && $filter_op2 != ' BETWEEN ' && $filter_date2_start != '') $sql.= " AND cd.date_fin_validite ".$filter_op2." '".$db->idate($filter_date2_start)."'";
+if (! empty($filter_op2) && $filter_op2==' BETWEEN ')  $sql.= " AND '".$db->idate($filter_date2_end)."'";
+if (! empty($filter_opcloture) && $filter_opcloture != ' BETWEEN ' && $filter_opcloture != -1 && $filter_datecloture_start != '') $sql.= " AND cd.date_cloture ".$filter_opcloture." '".$db->idate($filter_datecloture_start)."'";
+if (! empty($filter_opcloture) && $filter_opcloture==' BETWEEN ')  $sql.= " AND '".$db->idate($filter_datecloture_end)."'";
 // Add where from extra fields
 include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_sql.tpl.php';
 $sql .= $db->order($sortfield, $sortorder);

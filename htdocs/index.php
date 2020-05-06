@@ -207,7 +207,7 @@ if (empty($user->socid) && empty($conf->global->MAIN_DISABLE_GLOBAL_BOXSTATS))
 	    	'suppliers' => 'Fournisseur',
 	    	'contacts' => 'Contact',
 	    	'products' => 'Product',
-	    	'services' => 'Service',
+	    	'services' => 'ProductService',
 	    	'proposals' => 'Propal',
 	    	'orders' => 'Commande',
 	    	'invoices' => 'Facture',

@@ -271,7 +271,11 @@ if (GETPOST('optioncontent')) $algo .= 'content';
 if (GETPOST('optionsitefiles')) $algo .= 'sitefiles';
 
 if (empty($sortfield)) {
-	$sortfield = 'pageurl'; $sortorder = 'ASC';
+	if ($action == 'file_manager') {
+		$sortfield='name'; $sortorder = 'ASC';
+	} else {
+		$sortfield = 'pageurl'; $sortorder = 'ASC';
+	}
 }
 
 $searchkey = GETPOST('searchstring', 'none');
@@ -3527,9 +3531,10 @@ if ($action == 'replacesite' || $action == 'replacesiteconfirm' || $massaction =
 	print $langs->trans("SearchString");
 	print '</div>';
 	print '<div class="tagtd">';
-	print '<input type="text" name="searchstring" value="'.dol_escape_htmltag($searchkey).'" autofocus>';
 
-	print '<input type="submit" class="button" name="buttonreplacesitesearch" value="'.$langs->trans("Search").'">';
+	print '<input type="text" name="searchstring" value="'.dol_escape_htmltag($searchkey, 0, 0, '', 1).'" autofocus>';
+
+	print '<input type="submit" class="button" name="buttonreplacesitesearch" value="'.dol_escape_htmltag($langs->trans("Search")).'">';
 
 	print '</div>';
 	print '</div>';

@@ -19,7 +19,7 @@
 /**
  *	\file			htdocs/core/website.inc.php
  *  \brief			Common file loaded by all website pages (after master.inc.php). It set the new object $weblangs, using parameter 'l'.
- *  				This file is included in top of all container pages.
+ *  				This file is included in top of all container pages and is run only when a web page is called.
  *  			    The global variable $websitekey must be defined.
  */
 
