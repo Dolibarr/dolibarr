@@ -147,7 +147,7 @@ if ($object->id)
 			if (!empty($object->fk_project)) {
 				$proj = new Project($db);
 				$proj->fetch($object->fk_project);
-				$morehtmlref .= $proj->getNomUrl();
+				$morehtmlref .= ': '.$proj->getNomUrl();
 			} else {
 				$morehtmlref .= '';
 			}

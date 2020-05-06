@@ -6,6 +6,11 @@ if (!defined('ISLOADEDBYSTEELSHEET')) die('Must be call by steelsheet'); ?>
  * Component: Info Box
  * -------------------
  */
+
+.info-box-module-external span.info-box-icon-version {
+    background: #999;
+}
+
 .info-box {
 	display: block;
     position: relative;

@@ -1078,6 +1078,13 @@ function dol_syslog($message, $level = LOG_INFO, $ident = 0, $suffixinfilename =
 	// If syslog module enabled
 	if (empty($conf->syslog->enabled)) return;
 
+	// Check if we are into execution of code of a website
+	if (defined('USEEXTERNALSERVER') && ! defined('USEDOLIBARRSERVER') && ! defined('USEDOLIBARREDITOR')) {
+		global $website, $websitekey;
+		if (is_object($website) && ! empty($website->ref)) $suffixinfilename.='_website_'.$website->ref;
+		elseif (! empty($websitekey)) $suffixinfilename.='_website_'.$websitekey;
+	}
+
 	if ($ident < 0)
 	{
 		foreach ($conf->loghandlers as $loghandlerinstance)
@@ -3268,6 +3275,7 @@ function img_picto($titlealt, $picto, $moreatt = '', $pictoisfullpath = false, $
 				'payment'=>'bg-infobox-bank_account', 'poll'=>'bg-infobox-adherent', 'project'=>'bg-infobox-project', 'projecttask'=>'bg-infobox-project', 'propal'=>'bg-infobox-propal',
 				'resource'=>'bg-infobox-action', 'supplier_invoice'=>'bg-infobox-order_supplier', 'supplier_order'=>'bg-infobox-order_supplier', 'supplier_proposal'=>'bg-infobox-supplier_proposal',
 				'ticket'=>'bg-infobox-contrat', 'title_accountancy'=>'bg-infobox-bank_account', 'title_hrm'=>'bg-infobox-holiday', 'trip'=>'bg-infobox-expensereport', 'title_agenda'=>'bg-infobox-action',
+				//'title_setup'=>'bg-infobox-action', 'tools'=>'bg-infobox-action',
 				'list-alt'=>'imgforviewmode', 'calendar'=>'imgforviewmode', 'calendarweek'=>'imgforviewmode', 'calendarmonth'=>'imgforviewmode', 'calendarday'=>'imgforviewmode', 'calendarperuser'=>'imgforviewmode'
 			);
 			if (!empty($arrayconvpictotomorcess[$pictowithouttext])) {
@@ -6522,7 +6530,7 @@ function make_substitutions($text, $substitutionarray, $outputlangs = null)
 		if (dol_textishtml($text, 1)) $msgishtml = 1;
 
 		$keyfound = $reg[1];
-		if (preg_match('/(_pass|password|secret|_key|key$)/i', $keyfound)) $newval = '*****forbidden*****';
+		if (preg_match('/(_pass|_pw|password|secret|_key|key$)/i', $keyfound)) $newval = '*****forbidden*****';
 		else $newval = empty($conf->global->$keyfound) ? '' : $conf->global->$keyfound;
 		$text = preg_replace('/__\['.preg_quote($keyfound, '/').'\]__/', $msgishtml ?dol_htmlentitiesbr($newval) : $newval, $text);
 	}

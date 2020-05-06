@@ -1644,13 +1644,13 @@ else
 					}
 					if ($user->rights->contrat->creer && ($object->statut >= 0))
 					{
-						print '<a class="reposition" style="padding-left: 5px;" href="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'&amp;action=editline&amp;rowid='.$objp->rowid.'">';
+						print '<a class="reposition marginrightonly editfielda" href="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'&amp;action=editline&amp;rowid='.$objp->rowid.'">';
 						print img_edit();
 						print '</a>';
 					}
 					if ($user->rights->contrat->creer && ($object->statut >= 0))
 					{
-						print '<a style="padding-left: 5px;" href="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'&amp;action=deleteline&amp;rowid='.$objp->rowid.'">';
+						print '<a class="reposition marginrightonly" href="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'&amp;action=deleteline&amp;rowid='.$objp->rowid.'">';
 						print img_delete();
 						print '</a>';
 					}
