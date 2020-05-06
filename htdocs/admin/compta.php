@@ -177,20 +177,14 @@ foreach ($list as $key)
 print '<tr class="oddeven value">'."\n";
 print '<td><label for="ACCOUNTING_REPORTS_INCLUDE_VARPAY">'.$langs->trans('IncludeVarpaysInResults').'</label></td>'."\n";
 print '<td class="center">'."\n";
-print '<select id="ACCOUNTING_REPORTS_INCLUDE_VARPAY" name="ACCOUNTING_REPORTS_INCLUDE_VARPAY">'."\n";
-print '<option value="no" '.(empty($conf->global->ACCOUNTING_REPORTS_INCLUDE_VARPAY)?'selected':'').'>'.$langs->trans('No').'</option>'."\n";
-print '<option value="yes" '.(!empty($conf->global->ACCOUNTING_REPORTS_INCLUDE_VARPAY)?'selected':'').'>'.$langs->trans('Yes').'</option>'."\n";
-print '</select>'."\n";
+print $form->selectyesno('ACCOUNTING_REPORTS_INCLUDE_VARPAY', (!empty($conf->global->ACCOUNTING_REPORTS_INCLUDE_VARPAY)));
 print '</td></tr>';
 
 // Option to include loan in results
 print '<tr class="oddeven value">'."\n";
 print '<td><label for="ACCOUNTING_REPORTS_INCLUDE_LOAN">'.$langs->trans('IncludeLoansInResults').'</label></td>'."\n";
 print '<td class="center">'."\n";
-print '<select id="ACCOUNTING_REPORTS_INCLUDE_LOAN" name="ACCOUNTING_REPORTS_INCLUDE_LOAN">'."\n";
-print '<option value="no" '.(empty($conf->global->ACCOUNTING_REPORTS_INCLUDE_LOAN)?'selected':'').'>'.$langs->trans('No').'</option>'."\n";
-print '<option value="yes" '.(!empty($conf->global->ACCOUNTING_REPORTS_INCLUDE_LOAN)?'selected':'').'>'.$langs->trans('Yes').'</option>'."\n";
-print '</select>'."\n";
+print $form->selectyesno('ACCOUNTING_REPORTS_INCLUDE_LOAN', (!empty($conf->global->ACCOUNTING_REPORTS_INCLUDE_LOAN)));
 print '</td></tr>';
 
 print "</table>\n";
