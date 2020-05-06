@@ -262,13 +262,13 @@ if ($mode == 'customer') $filter = 's.client in (1,2,3)';
 if ($mode == 'supplier') $filter = 's.fournisseur = 1';
 print $form->selectarray('socid', $companies, $socid, 1, 0, 0, 'style="width: 95%"', 0, 0, 0, '', '', 1);
 print '</td></tr>';
-if(!empty($conf->category->enabled) && $mode == 'customer') {
-        // Customer Category
-        print '<tr><td>'.$langs->trans("CustomersProspectsCategoriesShort").'</td><td>';
-        $cate_arbo = $form->select_all_categories(Categorie::TYPE_CUSTOMER, null, 'parent', null, null, 1);
-        print $form->multiselectarray('custcats', $cate_arbo, GETPOST('custcats', 'array'), null, null, null, null, "90%");
-        print '</td></tr>';
-    }
+if(! empty($conf->category->enabled) && $mode == 'customer') {
+    // Customer Category
+    print '<tr><td>'.$langs->trans("CustomersProspectsCategoriesShort").'</td><td>';
+    $cate_arbo = $form->select_all_categories(Categorie::TYPE_CUSTOMER, null, 'parent', null, null, 1);
+    print $form->multiselectarray('custcats', $cate_arbo, GETPOST('custcats', 'array'), null, null, null, null, "90%");
+    print '</td></tr>';
+}
 // ThirdParty Type
 print '<tr><td>'.$langs->trans("ThirdPartyType").'</td><td>';
 $sortparam_typent = (empty($conf->global->SOCIETE_SORT_ON_TYPEENT) ? 'ASC' : $conf->global->SOCIETE_SORT_ON_TYPEENT); // NONE means we keep sort of original array, so we sort on position. ASC, means next function will sort on label.
