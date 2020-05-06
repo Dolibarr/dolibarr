@@ -1972,12 +1972,12 @@ class User extends CommonObject
 	/**
 	 *  Send new password by email
 	 *
-	 *  @param	User	$user           Object user that send email
+	 *  @param	User	$fuser           Object user that send email
 	 *  @param	string	$password       New password
 	 *	@param	int		$changelater	0=Send clear passwod into email, 1=Change password only after clicking on confirm email. @todo Add method 2 = Send link to reset password
 	 *  @return int 		            < 0 si erreur, > 0 si ok
 	 */
-	public function send_password($user, $password = '', $changelater = 0)
+	public function send_password($fuser, $password = '', $changelater = 0)
 	{
         // phpcs:enable
 		global $conf, $langs;
@@ -1997,8 +1997,8 @@ class User extends CommonObject
 		{	// If user has defined its own language (rare because in most cases, auto is used)
 			$outputlangs->getDefaultLang($this->conf->MAIN_LANG_DEFAULT);
 		}
-		if ($user->conf->MAIN_LANG_DEFAULT) {
-            $outputlangs->setDefaultLang($user->conf->MAIN_LANG_DEFAULT);
+		if ($fuser->conf->MAIN_LANG_DEFAULT) {
+            $outputlangs->setDefaultLang($fuser->conf->MAIN_LANG_DEFAULT);
         }
 		else
 		{	// If user has not defined its own language, we used current language
@@ -2028,7 +2028,7 @@ class User extends CommonObject
 
 			$mesg .= $outputlangs->transnoentitiesnoconv("ClickHereToGoTo", $appli).': '.$url."\n\n";
 			$mesg .= "--\n";
-			$mesg .= $user->getFullName($outputlangs); // Username that make then sending
+			$mesg .= $fuser->getFullName($outputlangs); // Username that make then sending
 
 			dol_syslog(get_class($this)."::send_password changelater is off, url=".$url);
 		}
@@ -2048,6 +2048,8 @@ class User extends CommonObject
 			dol_syslog(get_class($this)."::send_password changelater is on, url=".$url);
 		}
 
+		$trackid = 'use'.$fuser->id;
+
         $mailfile = new CMailFile(
             $subject,
 			$this->email,
@@ -2059,7 +2061,10 @@ class User extends CommonObject
 			'',
 			'',
 			0,
-            $msgishtml
+            $msgishtml,
+        	'',
+        	'',
+        	$trackid
         );
 
 		if ($mailfile->sendfile())
