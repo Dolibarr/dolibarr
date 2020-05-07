@@ -83,18 +83,16 @@ class BonPrelevement extends CommonObject
 	 *	Constructor
 	 *
 	 *  @param		DoliDB		$db      	Database handler
-	 *  @param		string		$filename	Filename of withdraw receipt
 	 */
-	public function __construct($db, $filename = '')
+	public function __construct($db)
 	{
 		global $conf, $langs;
 
-		$error = 0;
 		$this->db = $db;
 
-		$this->filename = $filename;
+		$this->filename = '';
 
-		$this->date_echeance = time();
+		$this->date_echeance = dol_now();
 		$this->raison_sociale = "";
 		$this->reference_remise = "";
 
@@ -892,7 +890,7 @@ class BonPrelevement extends CommonObject
 							if ($bac->verif() >= 1)
 							{
 								$factures_prev[$i] = $fac;
-								/* second tableau necessaire pour BonPrelevement */
+								/* second array necessary for BonPrelevement */
 								$factures_prev_id[$i] = $fac[0];
 								$i++;
 								//dol_syslog(__METHOD__."::RIB is ok", LOG_DEBUG);

@@ -57,7 +57,7 @@ if ($sortorder == "") $sortorder = "DESC";
 if ($sortfield == "") $sortfield = "p.datec";
 
 $rej = new RejetPrelevement($db, $user);
-$line = new LignePrelevement($db, $user);
+$line = new LignePrelevement($db);
 
 $hookmanager->initHooks(array('withdrawalsreceiptsrejectedlist'));
 

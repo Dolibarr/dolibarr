@@ -90,7 +90,7 @@ if ($action == 'confirm_rejet')
 
 		if (!$error)
 		{
-			$lipre = new LignePrelevement($db, $user);
+			$lipre = new LignePrelevement($db);
 
 			if ($lipre->fetch($id) == 0)
 
@@ -132,7 +132,7 @@ $h++;
 
 if ($id)
 {
-	$lipre = new LignePrelevement($db, $user);
+	$lipre = new LignePrelevement($db);
 
 	if ($lipre->fetch($id) == 0)
 	{
