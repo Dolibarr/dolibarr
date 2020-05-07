@@ -50,7 +50,7 @@ $pageprev = $page - 1;
 $pagenext = $page + 1;
 
 
-$object = new BonPrelevement($db, "");
+$object = new BonPrelevement($db);
 
 
 /*
@@ -142,7 +142,7 @@ if ($prev_id > 0 || $ref)
 	/*
 	 * Stats
 	 */
-	$ligne = new LignePrelevement($db, $user);
+	$ligne = new LignePrelevement($db);
 
 	$sql = "SELECT sum(pl.amount), pl.statut";
 	$sql .= " FROM ".MAIN_DB_PREFIX."prelevement_lignes as pl";

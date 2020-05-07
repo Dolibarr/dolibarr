@@ -64,9 +64,12 @@ $search_code = GETPOST('search_code', 'alpha');
 $search_company = GETPOST('search_company', 'alpha');
 $statut = GETPOST('statut', 'int');
 
-$bon = new BonPrelevement($db, "");
-$ligne = new LignePrelevement($db, $user);
+$bon = new BonPrelevement($db);
+$line = new LignePrelevement($db);
 $company = new Societe($db);
+
+$hookmanager->initHooks(array('withdrawalsreceiptslineslist'));
+
 
 /*
  * Actions
@@ -194,7 +197,7 @@ if ($result)
         print '<tr class="oddeven">';
 
         print '<td>';
-        print $ligne->LibStatut($obj->statut_ligne, 2);
+        print $line->LibStatut($obj->statut_ligne, 2);
         print "&nbsp;";
         print '<a href="'.DOL_URL_ROOT.'/compta/prelevement/line.php?id='.$obj->rowid_ligne.'">';
         print substr('000000'.$obj->rowid_ligne, -6);

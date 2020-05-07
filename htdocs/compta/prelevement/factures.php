@@ -53,7 +53,7 @@ $pagenext = $page + 1;
 if (!$sortfield) $sortfield = 'p.ref';
 if (!$sortorder) $sortorder = 'DESC';
 
-$object = new BonPrelevement($db, "");
+$object = new BonPrelevement($db);
 
 
 

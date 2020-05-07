@@ -2,6 +2,83 @@
 English Dolibarr ChangeLog
 --------------------------------------------------------------
 
+***** ChangeLog for 11.0.4 compared to 11.0.3 *****
+FIX: #13749
+FIX: #7594 Expense report multi pagebreak
+FIX: Access to undeclared static property: Contact::$table_element
+FIX: actions on supplier proposal not saved (bad trigger name)
+FIX: Add function "completeTabsHead" to "addreplace" type hook.
+FIX: All forms must use newToken()
+FIX: Another "Access to undeclared static property: Contact::$table_element" && "Societe::$table_element"
+FIX: author search supplier proposal list
+FIX: A variable was erased by a temporary variable
+FIX: Avoid infinite loop when a fetch is inside a compute field.
+FIX: Backto link
+FIX: Bad position of total in column
+FIX: bad value in currency into discount created from down payment
+FIX: buyprice extrafield langfile and tooltip
+FIX: Buyprice was updated only if min price for this qty had same qty
+FIX: Can switch from double to price type for extrafields
+FIX: Can use decimal value in virtual products
+FIX: child categories only with good entity rights
+FIX: cloning of emailing when no content selected
+FIX: closing tags
+FIX: Combo list of available users to filter on the list of leaves.
+FIX: Compatibility with multicompany, bad numerotation of task.
+FIX: consistency of price w/wo vat wrong when price entered with tax
+FIX: default value of selectMasssAction broken
+FIX: draftordered replenish virtual stock
+FIX: Error update SQL into stock reception
+FIX: expensereport status in generated pdf
+FIX: extra date field incorrect check
+FIX: Extrafields of type price must be '' and not '0' if not defined
+FIX: Foreign currency lost when splitting a discount
+FIX: get remain to pay with rounding decimals
+FIX: gzip and bzip2 must use option -f
+FIX: IHM, unexpected quote
+FIX: keep viewstatut for doli 3.5
+FIX: Link missing into email of some notification
+FIX: Look and feel v11
+FIX: md stylesheet to be included by external modules like eldy
+FIX: missing array option
+FIX: missing default accountancy product buy code
+FIX: missing fk_bank during export of suppliers invoices
+FIX: missing member entity
+FIX: missing selectedlines on supplier order but checkbox are displayed
+FIX: Missing token and take into account max date when it can.
+FIX: model export list must be sorted by label
+FIX: multicurrency manage on hidden conf SUPPLIER_PROPOSAL_UPDATE_PRICE_ON_SUPPlIER_PROPOSAL
+FIX: Must escape shell
+FIX: Must exclude logs and some dirs for compressed backup
+FIX: ordered stock already in $stock
+FIX: picture migration script from doli 9.0
+FIX: print pictures on shipment docs
+FIX: product get purchase prices
+FIX: product purchase prices
+FIX: Protection when database has a corrupted product id
+FIX: remove unused var, $usercancreate can be change by Multicompany
+FIX: replenish stock to buy
+FIX: Sanitizing menu parameter
+FIX: Send email from bulk action of list of thirdparties
+FIX: setup of suggested payment mode on proposals and orders
+FIX: Several pb in export of documents
+FIX: Situation invoice take into account the credit notes.
+FIX: some others modules (like subtotal) use other product_type than 0 or 1 AND must not be considered in this report
+FIX: sort by default role makes no sense
+FIX: sort on company on member list
+FIX: TakePOS buying price
+FIX: text version of html emailing (removed the body style)
+FIX: The "test smtp connectivity" failed on page to setup mass emailing
+FIX: Error logs an Orderline::delete error, but this is an Orderline::insert error
+FIX: Translation of tooltips of extrafields
+FIX: Use getNomURL instead of hard coded link. Fix limit.
+FIX: Use of image into free text for PDF if DOL_DATA_DIR is outside of
+FIX: viewstatut to search status
+FIX: we must export company mail address on contact vcard only if contact email address is empty
+FIX: when we filter a list on a view status, we want this filter to be on bookmark that we create
+FIX: Wrong Sql on getListOfTowns api method
+FIX: wrong user right's name to top menu "commercial"
+FIX: XSS Vulnerability
 
 ***** ChangeLog for 12.0.0 compared to 11.0.0 *****
 For Users:

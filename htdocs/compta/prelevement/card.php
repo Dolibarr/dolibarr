@@ -58,7 +58,7 @@ $pagenext = $page + 1;
 if (!$sortfield) $sortfield = 'pl.fk_soc';
 if (!$sortorder) $sortorder = 'DESC';
 
-$object = new BonPrelevement($db, "");
+$object = new BonPrelevement($db);
 
 // Load object
 include DOL_DOCUMENT_ROOT.'/core/actions_fetchobject.inc.php'; // Must be include, not include_once  // Must be include, not include_once. Include fetch and fetch_thirdparty but not fetch_optionals
@@ -321,7 +321,7 @@ if ($id > 0 || $ref)
 	}
 
 
-	$ligne = new LignePrelevement($db, $user);
+	$ligne = new LignePrelevement($db);
 
 	/*
 	 * Lines into withdraw request
