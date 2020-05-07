@@ -1324,7 +1324,7 @@ if (empty($action) || $action == 'view' || $action == 'addlink' || $action == 'd
 			show_ticket_messaging($conf, $langs, $db, $object, null, 0, $actioncode, '', $filters, $sortfield, $sortorder);
 		}
 
-		if ($action != 'presend' && $action != 'presend_addmessage') {
+		if ($action != 'presend' && $action != 'presend_addmessage' && $action != 'add_message') {
 			print '<div class="fichecenter"><div class="fichehalfleft">';
 			print '<a name="builddoc"></a>'; // ancre
 
