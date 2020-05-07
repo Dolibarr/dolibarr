@@ -896,15 +896,23 @@ function num_open_day($timestampStart, $timestampEnd, $inhour = 0, $lastday = 0,
 	if ($timestampStart < $timestampEnd)
 	{
 		$numdays = num_between_day($timestampStart, $timestampEnd, $lastday);
+
 		$numholidays = num_public_holiday($timestampStart, $timestampEnd, $country_code, $lastday);
 		$nbOpenDay = $numdays - $numholidays;
-		$nbOpenDay.= " " . $langs->trans("Days");
+		$nbOpenDay.= ' '.$langs->trans("Days");
 		if ($inhour == 1 && $nbOpenDay <= 3) $nbOpenDay = $nbOpenDay*24 . $langs->trans("HourShort");
 		return $nbOpenDay - (($inhour == 1 ? 12 : 0.5) * abs($halfday));
 	}
 	elseif ($timestampStart == $timestampEnd)
 	{
+		$numholidays = 0;
+		if ($lastday) {
+			$numholidays = num_public_holiday($timestampStart, $timestampEnd, $country_code, $lastday);
+			if ($numholidays == 1) return 0;
+		}
+
 		$nbOpenDay=$lastday;
+
 		if ($inhour == 1) $nbOpenDay = $nbOpenDay*24 . $langs->trans("HourShort");
 		return $nbOpenDay - (($inhour == 1 ? 12 : 0.5) * abs($halfday));
 	}
