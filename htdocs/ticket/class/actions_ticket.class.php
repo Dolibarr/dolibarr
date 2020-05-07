@@ -380,8 +380,7 @@ class ActionsTicket
 		global $langs;
 
 		print '<div class="div-table-responsive-no-min margintoponly">';
-		print '<div class="tagtable centpercent">';
-		print '<div class="tagtr">';
+		print '<div class="centpercent right">';
 		// Exclude status which requires specific method
 		$exclude_status = array(Ticket::STATUS_CLOSED, Ticket::STATUS_CANCELED);
 		// Exclude actual status
@@ -392,7 +391,7 @@ class ActionsTicket
 
 		foreach ($object->statuts_short as $status => $status_label) {
 			if (!in_array($status, $exclude_status)) {
-				print '<div class="tagtd center">';
+				print '<div class="inline-block center marginbottomonly">';
 
 				if ($status == 1)
 				{
@@ -403,13 +402,13 @@ class ActionsTicket
 					$urlforbutton = $_SERVER['PHP_SELF'].'?track_id='.$object->track_id.'&action=set_status&new_status='.$status;
 				}
 
-				print '<a class="butAction buttonticket" href="'.$urlforbutton.'">';
+				print '<a class="butAction buttonticket marginbottomonly" href="'.$urlforbutton.'">';
 				print img_picto($langs->trans($object->statuts_short[$status]), 'statut'.$status.'.png@ticket').' '.$langs->trans($object->statuts_short[$status]);
 				print '</a>';
 				print '</div>';
 			}
 		}
-		print '</div></div></div><br>';
+		print '</div></div><br>';
 	}
 
 	/**
