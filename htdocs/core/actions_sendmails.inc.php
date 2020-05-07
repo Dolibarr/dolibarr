@@ -265,7 +265,6 @@ if (($action == 'send' || $action == 'relance') && !$_POST['addfile'] && !$_POST
 			}
 		}
 		$sendtocc = implode(',', $tmparray);
-		//var_dump($sendto, $sendtocc);exit;
 
 		if (dol_strlen($sendto))
 		{
