@@ -1180,7 +1180,7 @@ class Facture extends CommonInvoice
 			}
 						// Bloc to update dates of service (month by month only if previously filled at 1d near start or end of month)
 			// If it's a service with start and end dates
-			if ($line->product_type == 1 && !empty($line->date_start) && !empty($line->date_end) ) {
+			if (!empty($line->date_start) && !empty($line->date_end) ) {
 				// Get the dates
 				$start = dol_getdate($line->date_start);
 				$end = dol_getdate($line->date_end);
