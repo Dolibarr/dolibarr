@@ -32,6 +32,11 @@ if (!defined('NOLOGIN'))         define('NOLOGIN', 1); // File must be accessed 
 if (!defined('NOREQUIREHTML'))   define('NOREQUIREHTML', 1);
 if (!defined('NOREQUIREAJAX'))   define('NOREQUIREAJAX', '1');
 
+session_cache_limiter('public');
+// false or '' = keep cache instruction added by server
+// 'public'  = remove cache instruction added by server
+// and if no cache-control added later, a default cache delay (10800) will be added by PHP.
+
 // Load Dolibarr environment
 $res = 0;
 // Try main.inc.php into web root known defined into CONTEXT_DOCUMENT_ROOT (not always defined)
@@ -47,10 +52,6 @@ if (!$res && file_exists("../../../main.inc.php")) $res = @include "../../../mai
 if (!$res) die("Include of main fails");
 
 require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
-
-session_cache_limiter('public');
-// false or '' = keep cache instruction added by server
-// 'public'  = remove cache instruction added by server and if no cache-control added later, a default cache delay (10800) will be added by PHP.
 
 // Load user to have $user->conf loaded (not done by default here because of NOLOGIN constant defined) and load permission if we need to use them in CSS
 /*if (empty($user->id) && ! empty($_SESSION['dol_login']))
