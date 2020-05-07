@@ -272,6 +272,7 @@ class ActionsTicket
 				print $langs->trans('User');
 				print '</td>';
 			}
+			print '</tr>';
 
 			foreach ($this->dao->cache_msgs_ticket as $id => $arraymsgs) {
 				if (!$arraymsgs['private']
@@ -280,7 +281,7 @@ class ActionsTicket
 					//print '<tr>';
 					print '<tr class="oddeven">';
 					print '<td><strong>';
-					print dol_print_date($arraymsgs['datec'], 'dayhour');
+					print img_picto('', 'actioncomm', 'class="paddingright"').dol_print_date($arraymsgs['datec'], 'dayhour');
 					print '<strong></td>';
 					if ($show_user) {
 						print '<td>';

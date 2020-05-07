@@ -242,7 +242,7 @@ include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_param.tpl.php';
 $sql = "SELECT";
 if ($usergroup > 0) $sql .= " DISTINCT";
 $sql .= " s.nom as societe, s.rowid as socid, s.client, s.email as socemail,";
-$sql .= " a.id, a.label, a.note, a.datep as dp, a.datep2 as dp2, a.fulldayevent, a.location,";
+$sql .= " a.id, a.code, a.label, a.note, a.datep as dp, a.datep2 as dp2, a.fulldayevent, a.location,";
 $sql .= ' a.fk_user_author,a.fk_user_action,';
 $sql .= " a.fk_contact, a.note, a.percent as percent,";
 $sql .= " a.fk_element, a.elementtype, a.datec, a.tms as datem,";
@@ -385,14 +385,8 @@ if ($resql)
 	print '<input type="hidden" name="type" value="'.$type.'">';
 	$nav = '';
 
-	//if ($actioncode)    $nav.='<input type="hidden" name="actioncode" value="'.$actioncode.'">';
-	//if ($resourceid)      $nav.='<input type="hidden" name="resourceid" value="'.$resourceid.'">';
 	if ($filter)          $nav .= '<input type="hidden" name="search_filter" value="'.$filter.'">';
-	//if ($filtert)         $nav.='<input type="hidden" name="filtert" value="'.$filtert.'">';
-	//if ($socid)           $nav.='<input type="hidden" name="socid" value="'.$socid.'">';
 	if ($showbirthday)    $nav .= '<input type="hidden" name="search_showbirthday" value="1">';
-	//if ($pid)             $nav.='<input type="hidden" name="projectid" value="'.$pid.'">';
-	//if ($usergroup)       $nav.='<input type="hidden" name="usergroup" value="'.$usergroup.'">';
 	print $nav;
 
     dol_fiche_head($head, $tabactive, $langs->trans('Agenda'), 0, 'action');
@@ -548,6 +542,7 @@ if ($resql)
 
 		$actionstatic->id = $obj->id;
 		$actionstatic->ref = $obj->id;
+		$actionstatic->code = $obj->code;
 		$actionstatic->type_code = $obj->type_code;
 		$actionstatic->type_label = $obj->type_label;
 		$actionstatic->type_picto = $obj->type_picto;
@@ -583,21 +578,31 @@ if ($resql)
 		if (!empty($arrayfields['c.libelle']['checked']))
 		{
 			print '<td class="nowraponall">';
+			$actioncomm = $actionstatic;
+			// TODO Code common with code into showactions
+			$imgpicto = '';
 			if (!empty($conf->global->AGENDA_USE_EVENT_TYPE))
 			{
-	    		if ($actionstatic->type_picto) print img_picto('', $actionstatic->type_picto);
-    			else {
-    			    if ($actionstatic->type_code == 'AC_RDV')       print img_picto('', 'object_group', '', false, 0, 0, '', '').' ';
-    			    elseif ($actionstatic->type_code == 'AC_TEL')   print img_picto('', 'object_phoning', '', false, 0, 0, '', '').' ';
-    			    elseif ($actionstatic->type_code == 'AC_FAX')   print img_picto('', 'object_phoning_fax', '', false, 0, 0, '', '').' ';
-    			    elseif ($actionstatic->type_code == 'AC_EMAIL') print img_picto('', 'object_email', '', false, 0, 0, '', '').' ';
-    			    elseif ($actionstatic->type_code == 'AC_INT')   print img_picto('', 'object_intervention', '', false, 0, 0, '', '').' ';
-    			    elseif (!preg_match('/_AUTO/', $actionstatic->type_code)) print img_picto('', 'object_other', '', false, 0, 0, '', '').' ';
-    			}
+				if ($actioncomm->type_picto) {
+					$imgpicto = img_picto('', $actioncomm->type_picto);
+				}
+				else {
+					if ($actioncomm->type_code == 'AC_RDV')         $imgpicto = img_picto('', 'object_group', '', false, 0, 0, '', 'paddingright').' ';
+					elseif ($actioncomm->type_code == 'AC_TEL')     $imgpicto = img_picto('', 'object_phoning', '', false, 0, 0, '', 'paddingright').' ';
+					elseif ($actioncomm->type_code == 'AC_FAX')     $imgpicto = img_picto('', 'object_phoning_fax', '', false, 0, 0, '', 'paddingright').' ';
+					elseif ($actioncomm->type_code == 'AC_EMAIL')   $imgpicto = img_picto('', 'object_email', '', false, 0, 0, '', 'paddingright').' ';
+					elseif ($actioncomm->type_code == 'AC_INT')     $imgpicto = img_picto('', 'object_intervention', '', false, 0, 0, '', 'paddingright').' ';
+					elseif ($actioncomm->type_code == 'AC_OTH' && $actioncomm->code == 'TICKET_MSG') $imgpicto = img_picto('', 'object_conversation', '', false, 0, 0, '', 'paddingright').' ';
+					elseif (!preg_match('/_AUTO/', $actioncomm->type_code)) $imgpicto = img_picto('', 'object_other', '', false, 0, 0, '', 'paddingright').' ';
+				}
 			}
+			print $imgpicto;
+
 			$labeltype = $obj->type_code;
 			if (empty($conf->global->AGENDA_USE_EVENT_TYPE) && empty($arraylist[$labeltype])) $labeltype = 'AC_OTH';
-			if (!empty($arraylist[$labeltype])) $labeltype = $arraylist[$labeltype];
+			if ($actioncomm->type_code == 'AC_OTH' && $actioncomm->code == 'TICKET_MSG') {
+				$labeltype = $langs->trans("Message");
+			} elseif (!empty($arraylist[$labeltype])) $labeltype = $arraylist[$labeltype];
 			print dol_trunc($labeltype, 28);
 			print '</td>';
 		}
