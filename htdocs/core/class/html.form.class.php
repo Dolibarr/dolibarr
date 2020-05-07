@@ -1645,16 +1645,16 @@ class Form
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
-	 *	Return select list of users
+	 *	Return the HTML select list of users
 	 *
-	 *  @param	string	$selected       Id user preselected
-	 *  @param  string	$htmlname       Field name in form
-	 *  @param  int		$show_empty     0=liste sans valeur nulle, 1=ajoute valeur inconnue
-	 *  @param  array	$exclude        Array list of users id to exclude
-	 * 	@param	int		$disabled		If select list must be disabled
-	 *  @param  array	$include        Array list of users id to include
-	 * 	@param	int		$enableonly		Array list of users id to be enabled. All other must be disabled
-	 *  @param	string	$force_entity	'0' or Ids of environment to force
+	 *  @param	string			$selected       Id user preselected
+	 *  @param  string			$htmlname       Field name in form
+	 *  @param  int				$show_empty     0=liste sans valeur nulle, 1=ajoute valeur inconnue
+	 *  @param  array			$exclude        Array list of users id to exclude
+	 * 	@param	int				$disabled		If select list must be disabled
+	 *  @param  array|string	$include        Array list of users id to include. User '' for all users or 'hierarchy' to have only supervised users or 'hierarchyme' to have supervised + me
+	 * 	@param	int				$enableonly		Array list of users id to be enabled. All other must be disabled
+	 *  @param	string			$force_entity	'0' or Ids of environment to force
 	 * 	@return	void
 	 *  @deprecated		Use select_dolusers instead
 	 *  @see select_dolusers()
