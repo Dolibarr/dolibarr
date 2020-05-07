@@ -1184,7 +1184,7 @@ class Facture extends CommonInvoice
 				// Get the dates
 				$start = dol_getdate($line->date_start);
 				$end = dol_getdate($line->date_end);
-				
+
 				// Get the first and last day of the month
 				$first = dol_get_first_day($start['year'], $start['mon']);
 				$last = dol_get_first_day($end['year'], $end['mon']);
@@ -1196,8 +1196,8 @@ class Facture extends CommonInvoice
 				// If there is <= 1d (or 2?) of start/or/end of month
 				if ($diffFirst <= 2 && $diffLast <= 2) {
 					$nextMonth = dol_get_next_month($end['mon'], $end['year']);
-					$newFirst = dol_get_first_day($nextMonth['year'],$nextMonth['month']);
-					$newLast = dol_get_last_day($nextMonth['year'],$nextMonth['month']);
+					$newFirst = dol_get_first_day($nextMonth['year'], $nextMonth['month']);
+					$newLast = dol_get_last_day($nextMonth['year'], $nextMonth['month']);
 					$object->lines[$i]->date_start = $newFirst;
 					$object->lines[$i]->date_end = $newLast;
 				}
