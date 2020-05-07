@@ -1183,37 +1183,24 @@ class Facture extends CommonInvoice
 			// If it's a service with start and end dates
 			if ($line->product_type == 1 && !empty($line->date_start) && !empty($line->date_end) ) {
 				// Get the dates
-				$start = new DateTime();
-				$end = new DateTime();
-				$start->setTimestamp($line->date_start);
-				$end->setTimestamp($line->date_end);
-
+				$start = dol_getdate($line->date_start);
+				$end = dol_getdate($line->date_end);
+				
 				// Get the first and last day of the month
-				$first = new DateTime();
-				$last = new DateTime();
-				$first->modify('first day of '.$start->format('Y-M'));
-				$last->modify('last day of '.$end->format('Y-M'));
+				$first = dol_get_first_day($start['year'], $start['mon']);
+				$last = dol_get_first_day($end['year'], $end['mon']);
 
 				// Get diff betweend start/end of month and previously filled
-				$diffFirst = date_diff($start, $first);
-				$diffLast = date_diff($end, $last);
+				$diffFirst = num_between_day($first, dol_mktime($start['hours'], $start['minutes'], $start['seconds'], $start['mon'], $start['mday'], $start['year'], 'user'));
+				$diffLast = num_between_day(dol_mktime($end['hours'], $end['minutes'], $end['seconds'], $end['mon'], $end['mday'], $end['year'], 'user'), $last);
 
-				// If there is <= 1d of start/or/end of month
-				if ($diffFirst->y == 0 &&
-					$diffFirst->m == 0 &&
-					$diffFirst->d <= 1 &&
-					$diffLast->y == 0 &&
-					$diffLast->m == 0 &&
-					$diffLast->d <= 1) {
-					// Get first day of next month
-					$newFirst = clone $last;
-					$newFirst->add(date_interval_create_from_date_string('1 day'));
-					// Get last day of new month
-					$newLast = new DateTime();
-					$newLast->modify('last day of '.$newFirst->format('Y-M'));
-
-					$this->lines[$i]->date_start = $newFirst->getTimestamp();
-					$this->lines[$i]->date_end = $newLast->getTimestamp();
+				// If there is <= 1d (or 2?) of start/or/end of month
+				if ($diffFirst <= 2 && $diffLast <= 2) {
+					$nextMonth = dol_get_next_month($end['mon'], $end['year']);
+					$newFirst = dol_get_first_day($nextMonth['year'],$nextMonth['month']);
+					$newLast = dol_get_last_day($nextMonth['year'],$nextMonth['month']);
+					$object->lines[$i]->date_start = $newFirst;
+					$object->lines[$i]->date_end = $newLast;
 				}
 			}
 		}
