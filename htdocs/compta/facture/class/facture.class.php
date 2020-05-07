@@ -1178,6 +1178,30 @@ class Facture extends CommonInvoice
 			    unset($object->lines[$i]);
 			    unset($object->products[$i]); // Tant que products encore utilise
 			}
+						// Bloc to update dates of service (month by month only if previously filled at 1d near start or end of month)
+			// If it's a service with start and end dates
+			if ($line->product_type == 1 && !empty($line->date_start) && !empty($line->date_end) ) {
+				// Get the dates
+				$start = dol_getdate($line->date_start);
+				$end = dol_getdate($line->date_end);
+				
+				// Get the first and last day of the month
+				$first = dol_get_first_day($start['year'], $start['mon']);
+				$last = dol_get_first_day($end['year'], $end['mon']);
+
+				// Get diff betweend start/end of month and previously filled
+				$diffFirst = num_between_day($first, dol_mktime($start['hours'], $start['minutes'], $start['seconds'], $start['mon'], $start['mday'], $start['year'], 'user'));
+				$diffLast = num_between_day(dol_mktime($end['hours'], $end['minutes'], $end['seconds'], $end['mon'], $end['mday'], $end['year'], 'user'), $last);
+
+				// If there is <= 1d (or 2?) of start/or/end of month
+				if ($diffFirst <= 2 && $diffLast <= 2) {
+					$nextMonth = dol_get_next_month($end['mon'], $end['year']);
+					$newFirst = dol_get_first_day($nextMonth['year'],$nextMonth['month']);
+					$newLast = dol_get_last_day($nextMonth['year'],$nextMonth['month']);
+					$object->lines[$i]->date_start = $newFirst;
+					$object->lines[$i]->date_end = $newLast;
+				}
+			}
 		}
 
 		// Create clone
