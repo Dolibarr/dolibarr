@@ -669,15 +669,8 @@ class FormMail extends Form
 				}
 				else
 				{
-					// The free input of email
-					// if (!empty($this->withtofree))
-					// {
-					// 	$out .= '<input class="minwidth200" id="sendto" name="sendto" value="'.(($this->withtofree && !is_numeric($this->withtofree)) ? $this->withtofree : (!is_array($this->withto) && !is_numeric($this->withto) ? (isset($_REQUEST["sendto"]) ? $_REQUEST["sendto"] : $this->withto) : "")).'" />';
-					// }
-					// The select combo
 					if (!empty($this->withto) && is_array($this->withto))
 					{
-						//if (!empty($this->withtofree)) $out .= " ".$langs->trans("and")."/".$langs->trans("or")." ";
 						// multiselect array convert html entities into options tags, even if we dont want this, so we encode them a second time
 						$tmparray = $this->withto;
 						foreach ($tmparray as $key => $val)
@@ -744,10 +737,8 @@ class FormMail extends Form
 				}
 				else
 				{
-				    //$out .= '<input class="minwidth200" id="sendtocc" name="sendtocc" value="'.(GETPOST("sendtocc", "alpha") ? GETPOST("sendtocc", "alpha") : ((!is_array($this->withtocc) && !is_numeric($this->withtocc)) ? $this->withtocc : '')).'" />';
 					if (!empty($this->withtocc) && is_array($this->withtocc))
 					{
-						//$out .= " ".$langs->trans("and")."/".$langs->trans("or")." ";
 						// multiselect array convert html entities into options tags, even if we dont want this, so we encode them a second time
 						$tmparray = $this->withtocc;
 						foreach ($tmparray as $key => $val)
