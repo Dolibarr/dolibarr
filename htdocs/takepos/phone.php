@@ -31,7 +31,7 @@ if (!defined('NOREQUIREMENU'))		define('NOREQUIREMENU', '1');
 if (!defined('NOREQUIREHTML'))		define('NOREQUIREHTML', '1');
 if (!defined('NOREQUIREAJAX'))		define('NOREQUIREAJAX', '1');
 
-if (!defined('INCLUDE_PHONEPAGE_FROM_PUBLIC_PAGE') && isset($_GET['key'])) require '../main.inc.php';
+if (!defined('INCLUDE_PHONEPAGE_FROM_PUBLIC_PAGE')) require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
 require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
@@ -71,14 +71,13 @@ $head = '<meta name="apple-mobile-web-app-title" content="TakePOS"/>
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"/>';
 top_htmlhead($head, $title, $disablejs, $disablehead, $arrayofjs, $arrayofcss);
 
-?>
-<link rel="stylesheet" href="../css/phone.css">
-<?php
+print '<link rel="stylesheet" href="'.DOL_URL_ROOT.'/takepos/css/phone.css">';
+
 if ($action=="productinfo"){
 	$prod = new Product($db);
     $prod->fetch($idproduct);
 	print "<b>".$prod->label."</b><br>";
-	print '<img class="imgwrapper" width="60%" src="../genimg/index.php?query=pro&id='.$idproduct.'">';
+	print '<img class="imgwrapper" width="60%" src="'.DOL_URL_ROOT.'/takepos/genimg/index.php?query=pro&id='.$idproduct.'">';
 	print "<br>".$prod->description;
 	print "<br><b>".price($prod->price_ttc, 1, $langs, 1, -1, -1, $conf->currency)."</b>";
 	print '<br>';
