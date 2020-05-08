@@ -561,7 +561,7 @@ class AccountancyExport
 
 	/**
 	 * Export format : WinFic - eWinfic - WinSis Compta
-	 * 
+	 *
 	 *
 	 * @param array $TData data
 	 * @return void
