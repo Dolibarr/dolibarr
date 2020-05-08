@@ -85,7 +85,7 @@ print '<input type="hidden" name="action" value="set">';
 print '<div class="div-table-responsive">';
 print '<table class="noborder centpercent">';
 print '<tr class="liste_titre">';
-print '<td>'.$langs->trans("Parameters").'</td><td>'.$langs->trans("Value").'</td>';
+print '<td class="titlefieldcreate">'.$langs->trans("Parameters").'</td><td>'.$langs->trans("Value").'</td>';
 print "</tr>\n";
 
 if ($conf->global->TAKEPOS_BAR_RESTAURANT && $conf->global->TAKEPOS_PRINT_METHOD != "browser") {
