@@ -693,7 +693,10 @@ class Form
 
 		$ret .= '</select>';
 
-		if (empty($conf->dol_optimize_smallscreen)) $ret .= ajax_combobox('.massactionselect');
+		if (!empty($conf->use_javascript_ajax))
+		{
+			if (empty($conf->dol_optimize_smallscreen)) $ret .= ajax_combobox('.massactionselect');
+		}
 
 		// Warning: if you set submit button to disabled, post using 'Enter' will no more work if there is no another input submit. So we add a hidden button
 		$ret .= '<input type="submit" name="confirmmassactioninvisible" style="display: none" tabindex="-1">'; // Hidden button BEFORE so it is the one used when we submit with ENTER.
