@@ -5,11 +5,12 @@
  * Copyright (C) 2015       Florian Henry       <florian.henry@open-concept.pro>
  * Copyright (C) 2015       Raphaël Doursenaud  <rdoursenaud@gpcsolutions.fr>
  * Copyright (C) 2016       Pierre-Henry Favre  <phf@atm-consulting.fr>
- * Copyright (C) 2016-2019  Alexandre Spangaro  <aspangaro@open-dsi.fr>
+ * Copyright (C) 2016-2020  Alexandre Spangaro  <aspangaro@open-dsi.fr>
  * Copyright (C) 2013-2017  Olivier Geffroy     <jeff@jeffinfo.com>
  * Copyright (C) 2017       Elarifr. Ari Elbaz  <github@accedinfo.com>
  * Copyright (C) 2017-2019  Frédéric France     <frederic.france@netlogic.fr>
  * Copyright (C) 2017       André Schild        <a.schild@aarboard.ch>
+ * Copyright (C) 2020       Guillaume Alexandre <guillaume@tag-info.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -52,6 +53,7 @@ class AccountancyExport
 	public static $EXPORT_TYPE_SAGE50_SWISS = 45;
 	public static $EXPORT_TYPE_CHARLEMAGNE = 50;
 	public static $EXPORT_TYPE_QUADRATUS = 60;
+	public static $EXPORT_TYPE_WINFIC = 70;
 	public static $EXPORT_TYPE_OPENCONCERTO = 100;
     public static $EXPORT_TYPE_LDCOMPTA = 110;
 	public static $EXPORT_TYPE_LDCOMPTA10 = 120;
@@ -105,6 +107,7 @@ class AccountancyExport
 			self::$EXPORT_TYPE_BOB50 => $langs->trans('Modelcsv_bob50'),
 			self::$EXPORT_TYPE_CIEL => $langs->trans('Modelcsv_ciel'),
 			self::$EXPORT_TYPE_QUADRATUS => $langs->trans('Modelcsv_quadratus'),
+			self::$EXPORT_TYPE_WINFIC => $langs->trans('Modelcsv_winfic'),
 			self::$EXPORT_TYPE_EBP => $langs->trans('Modelcsv_ebp'),
 			self::$EXPORT_TYPE_COGILOG => $langs->trans('Modelcsv_cogilog'),
 			self::$EXPORT_TYPE_AGIRIS => $langs->trans('Modelcsv_agiris'),
@@ -136,6 +139,7 @@ class AccountancyExport
 			self::$EXPORT_TYPE_BOB50 => 'bob50',
 			self::$EXPORT_TYPE_CIEL => 'ciel',
 			self::$EXPORT_TYPE_QUADRATUS => 'quadratus',
+			self::$EXPORT_TYPE_WINFIC => 'winfic',
 			self::$EXPORT_TYPE_EBP => 'ebp',
 			self::$EXPORT_TYPE_COGILOG => 'cogilog',
 			self::$EXPORT_TYPE_AGIRIS => 'agiris',
@@ -182,6 +186,10 @@ class AccountancyExport
 				),
 				self::$EXPORT_TYPE_QUADRATUS => array(
 					'label' => $langs->trans('Modelcsv_quadratus'),
+					'ACCOUNTING_EXPORT_FORMAT' => 'txt',
+				),
+				self::$EXPORT_TYPE_WINFIC => array(
+					'label' => $langs->trans('Modelcsv_winfic'),
 					'ACCOUNTING_EXPORT_FORMAT' => 'txt',
 				),
 				self::$EXPORT_TYPE_EBP => array(
@@ -246,7 +254,7 @@ class AccountancyExport
 		$filename = 'general_ledger-'.$this->getFormatCode($formatexportset);
 		$type_export = 'general_ledger';
 
-		global $db; // The tpl file use $db
+		global $db; 	// The tpl file use $db
 		include DOL_DOCUMENT_ROOT.'/accountancy/tpl/export_journal.tpl.php';
 
 
@@ -268,6 +276,9 @@ class AccountancyExport
 				break;
 			case self::$EXPORT_TYPE_QUADRATUS :
 				$this->exportQuadratus($TData);
+				break;
+			case self::$EXPORT_TYPE_WINFIC :
+				$this->exportWinfic($TData);
 				break;
 			case self::$EXPORT_TYPE_EBP :
 				$this->exportEbp($TData);
@@ -545,6 +556,85 @@ class AccountancyExport
 			$Tab['end_line'] = $end_line;
 
 			print implode($Tab);
+		}
+	}
+
+	/**
+	 * Export format : WinFic - eWinfic - WinSis Compta
+	 * 
+	 *
+	 * @param array $TData data
+	 * @return void
+	 */
+	public function exportWinfic(&$TData)
+	{
+		global $conf;
+
+		$end_line = "\r\n";
+
+		//We should use dol_now function not time however this is wrong date to transfert in accounting
+		//$date_ecriture = dol_print_date(dol_now(), $conf->global->ACCOUNTING_EXPORT_DATE); // format must be ddmmyy
+		//$date_ecriture = dol_print_date(time(), $conf->global->ACCOUNTING_EXPORT_DATE); // format must be ddmmyy
+		foreach ($TData as $data) {
+			$code_compta = $data->numero_compte;
+			if (!empty($data->subledger_account))
+				$code_compta = $data->subledger_account;
+
+			$Tab = array();
+			//$Tab['type_ligne'] = 'M';
+			$Tab['code_journal'] = str_pad(self::trunc($data->code_journal, 2), 2);
+
+			//We use invoice date $data->doc_date not $date_ecriture which is the transfert date
+			//maybe we should set an option for customer who prefer to keep in accounting software the tranfert date instead of invoice date ?
+			//$Tab['date_ecriture'] = $date_ecriture;
+			$Tab['date_operation'] = dol_print_date($data->doc_date, '%d%m%Y');
+
+			$Tab['folio'] = '     1';
+
+			$Tab['num_ecriture'] = str_pad(self::trunc($data->piece_num, 6), 6, ' ', STR_PAD_LEFT);
+
+			$Tab['jour_ecriture'] = dol_print_date($data->doc_date, '%d%m%y');
+
+			$Tab['num_compte'] = str_pad(self::trunc($code_compta, 6), 6, '0');
+
+			if($data->sens == 'D'){
+				$Tab['montant_debit']  =  str_pad(number_format(abs($data->montant), 2, ',', ''), 13, ' ', STR_PAD_LEFT);
+
+				$Tab['montant_crebit'] = str_pad(number_format(0, 2, ',', ''), 13, ' ', STR_PAD_LEFT);
+			}
+			else{
+				$Tab['montant_debit']  = str_pad(number_format(0, 2, ',', ''), 13, ' ', STR_PAD_LEFT);
+
+				$Tab['montant_crebit'] = str_pad(number_format(abs($data->montant), 2, ',', ''), 13, ' ', STR_PAD_LEFT);
+			}
+
+			$Tab['libelle_ecriture'] = str_pad(self::trunc(dol_string_unaccent($data->doc_ref).' '.dol_string_unaccent($data->label_operation), 30), 30);
+
+			$Tab['lettrage'] = str_repeat(' ', 2);
+
+			$Tab['code_piece'] = str_repeat(' ', 5);
+
+			$Tab['code_stat'] = str_repeat(' ', 4);
+
+			if (!empty($data->date_echeance))
+				//$Tab['date_echeance'] = dol_print_date($data->date_echeance, $conf->global->ACCOUNTING_EXPORT_DATE);
+				$Tab['date_echeance'] = dol_print_date($data->date_echeance, '%d%m%Y');
+			else
+				$Tab['date_echeance'] = dol_print_date($data->doc_date, '%d%m%Y');
+
+			$Tab['monnaie'] = '1';
+
+			$Tab['filler'] = ' ';
+
+			$Tab['ind_compteur'] = ' ';
+
+			$Tab['quantite'] = '0,000000000';
+
+			$Tab['code_pointage'] = str_repeat(' ', 2);
+
+			$Tab['end_line'] = $end_line;
+
+			print implode('|', $Tab);
 		}
 	}
 
@@ -930,7 +1020,7 @@ class AccountancyExport
     }
 
     /**
-     * Export format : LD Compta version 9 & higher
+     * Export format : LD Compta version 9
      * http://www.ldsysteme.fr/fileadmin/telechargement/np/ldcompta/Documentation/IntCptW9.pdf
      *
      * @param array $objectLines data
