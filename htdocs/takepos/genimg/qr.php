@@ -29,5 +29,8 @@ require '../../core/modules/barcode/doc/tcpdfbarcode.modules.php';
 
 $key = GETPOST('key');
 
-$module = new modTcpdfbarcode($db);
-$result = $module->buildBarCode("http://www.takepos.com", 'QRCODE', 'Y');
+$urlwithouturlroot = preg_replace('/'.preg_quote(DOL_URL_ROOT, '/').'$/i', '', trim($dolibarr_main_url_root));
+$urlwithroot = $urlwithouturlroot.DOL_URL_ROOT; // This is to use external domain name found into config file
+
+$module = new modtcpdfbarcode($db);
+$result = $module->buildBarCode($urlwithroot."/takepos/auto_order.php?key=".dol_encode($key), 'QRCODE', 'Y');
