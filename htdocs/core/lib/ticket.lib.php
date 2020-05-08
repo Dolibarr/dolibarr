@@ -709,7 +709,7 @@ function show_ticket_messaging($conf, $langs, $db, $filterobj, $objcon = '', $no
 				$out .= $histo[$key]['id'];
 				$out .= '</a> ';
 			} else {
-				$out .= $actionstatic->getNomUrl(1, -1).' ';
+				$out .= $actionstatic->getNomUrl(1, -1, 'valignmiddle').' ';
 			}
 
             //if ($user->rights->agenda->allactions->read || $actionstatic->authorid == $user->id)

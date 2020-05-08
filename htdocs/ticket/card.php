@@ -143,6 +143,7 @@ if (empty($reshook)) {
 		$action = 'view';
 	}
 
+	// Action to add an action (not a message)
 	if (GETPOST('add', 'alpha') && $user->rights->ticket->write) {
 		$error = 0;
 
@@ -381,6 +382,7 @@ if (empty($reshook)) {
 		$action = 'view';
 	}
 
+	// Action to add an action (not a message)
 	if ($action == 'add_message' && GETPOSTISSET('btn_add_message') && $user->rights->ticket->read) {
 		$ret = $object->newMessage($user, $action, (GETPOST('private_message', 'alpha') == "on" ? 1 : 0));
 
@@ -1218,7 +1220,8 @@ if (empty($action) || $action == 'view' || $action == 'addlink' || $action == 'd
 		if (GETPOSTISSET('actionbis') && $action == 'presend') $action = 'presend_addmessage';
 
 		// add a message
-		if ($action == 'presend' || $action == 'presend_addmessage') {
+		if ($action == 'presend' || $action == 'presend_addmessage')
+		{
 			$action = 'add_message'; // action to use to post the message
 			$modelmail = 'ticket_send';
 
@@ -1293,8 +1296,8 @@ if (empty($action) || $action == 'view' || $action == 'addlink' || $action == 'd
 			print '</div>';
 		}
 
-		// Show messages on card
-		if (empty($conf->global->TICKET_HIDE_MESSAGES_ON_CARD)) {
+		// Show messages on card (Note: this is a duplicate of the view Events/Agenda but on the main tab)
+		if (! empty($conf->global->TICKET_SHOW_MESSAGES_ON_CARD)) {
 			$param = '&id='.$object->id;
 			if (!empty($contextpage) && $contextpage != $_SERVER["PHP_SELF"]) $param .= '&contextpage='.$contextpage;
 			if ($limit > 0 && $limit != $conf->liste_limit) $param .= '&limit='.$limit;
@@ -1337,16 +1340,23 @@ if (empty($action) || $action == 'view' || $action == 'addlink' || $action == 'd
 			print showDirectPublicLink($object).'<br>';
 			print '</div>';
 
-			if (!empty($conf->global->TICKET_HIDE_MESSAGES_ON_CARD)) {
+			if (empty($conf->global->TICKET_SHOW_MESSAGES_ON_CARD)) {
 				print '<div class="fichehalfright"><div class="ficheaddleft">';
+
+				$MAXEVENT = 10;
+
+				$morehtmlcenter = dolGetButtonTitle($langs->trans('FullConversation'), '', 'fa fa-comments imgforviewmode', DOL_URL_ROOT.'/ticket/messaging.php?id='.$object->id);
+				$morehtmlcenter .= ' ';
+				$morehtmlcenter .= dolGetButtonTitle($langs->trans('FullList'), '', 'fa fa-list-alt imgforviewmode', DOL_URL_ROOT.'/ticket/agenda.php?id='.$object->id);
 
 				// List of actions on element
 				include_once DOL_DOCUMENT_ROOT . '/core/class/html.formactions.class.php';
 				$formactions = new FormActions($db);
-				$somethingshown = $formactions->showactions($object, 'ticket', $socid, 1);
+				$somethingshown = $formactions->showactions($object, 'ticket', $socid, 1, 'listactions', $MAXEVENT, '', $morehtmlcenter);
 
 				print '</div></div>';
 			}
+
 			print '</div>';
 		}
 	}

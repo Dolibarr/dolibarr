@@ -165,13 +165,12 @@ class FormActions
      *  @param  string  $morecss        		More css on table
      *  @param	int		$max					Max number of record
      *  @param	string	$moreparambacktopage	More param for the backtopage
-     *  @param	string	$morehtmlright			More html text on right of title line
+     *  @param	string	$morehtmlcenter			More html text on center of title line
      *	@return	int								<0 if KO, >=0 if OK
      */
-    public function showactions($object, $typeelement, $socid = 0, $forceshowtitle = 0, $morecss = 'listactions', $max = 0, $moreparambacktopage = '', $morehtmlright = '')
+    public function showactions($object, $typeelement, $socid = 0, $forceshowtitle = 0, $morecss = 'listactions', $max = 0, $moreparambacktopage = '', $morehtmlcenter = '')
     {
         global $langs, $conf, $user;
-        global $bc;
 
         require_once DOL_DOCUMENT_ROOT.'/comm/action/class/actioncomm.class.php';
 
@@ -208,8 +207,9 @@ class FormActions
                 $newcardbutton .= dolGetButtonTitle($langs->trans("AddEvent"), '', 'fa fa-plus-circle', DOL_URL_ROOT.'/comm/action/card.php?action=create&datep='.dol_print_date(dol_now(), 'dayhourlog').'&origin='.$typeelement.'&originid='.$object->id.($object->socid > 0 ? '&socid='.$object->socid : ($socid > 0 ? '&socid='.$socid : '')).($projectid > 0 ? '&projectid='.$projectid : '').'&backtopage='.urlencode($urlbacktopage));
 			}
 
+
         	print '<!-- formactions->showactions -->'."\n";
-        	print load_fiche_titre($title, $newcardbutton, '', 0, 0, '', $morehtmlright);
+        	print load_fiche_titre($title, $newcardbutton, '', 0, 0, '', $morehtmlcenter);
 
         	$page = 0; $param = '';
 
@@ -230,29 +230,29 @@ class FormActions
         		$cacheusers = array();
 
 	        	$cursorevent = 0;
-	        	foreach ($listofactions as $action)
+	        	foreach ($listofactions as $actioncomm)
 	        	{
 	        		if ($max && $cursorevent >= $max) break;
 
-	        		$ref = $action->getNomUrl(1, -1);
-	        		$label = $action->getNomUrl(0, 38);
+	        		$ref = $actioncomm->getNomUrl(1, -1);
+	        		$label = $actioncomm->getNomUrl(0, 38);
 
 	        		print '<tr class="oddeven">';
 	        		// Ref
 					print '<td class="nowraponall">'.$ref.'</td>';
 					// Onwer
 	        		print '<td class="tdoverflowmax150">';
-	        		if (!empty($action->userownerid))
+	        		if (!empty($actioncomm->userownerid))
 	        		{
-	        			if (is_object($cacheusers[$action->userownerid]))
+	        			if (is_object($cacheusers[$actioncomm->userownerid]))
 	        			{
-	        				$tmpuser = $cacheusers[$action->userownerid];
+	        				$tmpuser = $cacheusers[$actioncomm->userownerid];
 	        			}
 	        			else
 	        			{
 	        				$tmpuser = new User($this->db);
-	        				$tmpuser->fetch($action->userownerid);
-	        				$cacheusers[$action->userownerid] = $tmpuser;
+	        				$tmpuser->fetch($actioncomm->userownerid);
+	        				$cacheusers[$actioncomm->userownerid] = $tmpuser;
 	        			}
 	        			if ($tmpuser->id > 0)
 	        			{
@@ -260,41 +260,50 @@ class FormActions
 	        			}
 	        		}
 	        		print '</td>';
+
 					// Type
 	        		print '<td>';
+	        		// TODO Code common with code into comm/action/list.php
 					$imgpicto = '';
 					if (!empty($conf->global->AGENDA_USE_EVENT_TYPE))
 					{
-						if ($action->type_picto) $imgpicto = img_picto('', $action->type_picto);
+						if ($actioncomm->type_picto) {
+							$imgpicto = img_picto('', $actioncomm->type_picto);
+						}
 						else {
-							if ($action->type_code == 'AC_RDV')       $imgpicto = img_picto('', 'object_group', '', false, 0, 0, '', 'paddingright').' ';
-							elseif ($action->type_code == 'AC_TEL')   $imgpicto = img_picto('', 'object_phoning', '', false, 0, 0, '', 'paddingright').' ';
-							elseif ($action->type_code == 'AC_FAX')   $imgpicto = img_picto('', 'object_phoning_fax', '', false, 0, 0, '', 'paddingright').' ';
-							elseif ($action->type_code == 'AC_EMAIL') $imgpicto = img_picto('', 'object_email', '', false, 0, 0, '', 'paddingright').' ';
-							elseif ($action->type_code == 'AC_INT')   $imgpicto = img_picto('', 'object_intervention', '', false, 0, 0, '', 'paddingright').' ';
-							elseif (!preg_match('/_AUTO/', $action->type_code)) $imgpicto = img_picto('', 'object_action', '', false, 0, 0, '', 'paddingright').' ';
+							if ($actioncomm->type_code == 'AC_RDV')         $imgpicto = img_picto('', 'object_group', '', false, 0, 0, '', 'paddingright').' ';
+							elseif ($actioncomm->type_code == 'AC_TEL')     $imgpicto = img_picto('', 'object_phoning', '', false, 0, 0, '', 'paddingright').' ';
+							elseif ($actioncomm->type_code == 'AC_FAX')     $imgpicto = img_picto('', 'object_phoning_fax', '', false, 0, 0, '', 'paddingright').' ';
+							elseif ($actioncomm->type_code == 'AC_EMAIL')   $imgpicto = img_picto('', 'object_email', '', false, 0, 0, '', 'paddingright').' ';
+							elseif ($actioncomm->type_code == 'AC_INT')     $imgpicto = img_picto('', 'object_intervention', '', false, 0, 0, '', 'paddingright').' ';
+							elseif ($actioncomm->type_code == 'AC_OTH' && $actioncomm->code == 'TICKET_MSG') $imgpicto = img_picto('', 'object_conversation', '', false, 0, 0, '', 'paddingright').' ';
+							elseif (!preg_match('/_AUTO/', $actioncomm->type_code)) $imgpicto = img_picto('', 'object_action', '', false, 0, 0, '', 'paddingright').' ';
 						}
 					}
 					print $imgpicto;
-	        		print $action->type_short ? $action->type_short : $action->type;
+					if ($actioncomm->type_code == 'AC_OTH' && $actioncomm->code == 'TICKET_MSG') {
+						print $langs->trans("Message");
+					} else {
+						print $actioncomm->type_short ? $actioncomm->type_short : $actioncomm->type;
+					}
 	        		print '</td>';
 	        		// Label
 	        		print '<td>'.$label.'</td>';
 	        		// Date
-	        		print '<td class="center">'.dol_print_date($action->datep, 'dayhour', 'tzuserrel');
-	        		if ($action->datef)
+	        		print '<td class="center">'.dol_print_date($actioncomm->datep, 'dayhour', 'tzuserrel');
+	        		if ($actioncomm->datef)
 	        		{
-		        		$tmpa = dol_getdate($action->datep);
-		        		$tmpb = dol_getdate($action->datef);
+		        		$tmpa = dol_getdate($actioncomm->datep);
+		        		$tmpb = dol_getdate($actioncomm->datef);
 		        		if ($tmpa['mday'] == $tmpb['mday'] && $tmpa['mon'] == $tmpb['mon'] && $tmpa['year'] == $tmpb['year'])
 		        		{
-		        			if ($tmpa['hours'] != $tmpb['hours'] || $tmpa['minutes'] != $tmpb['minutes'] && $tmpa['seconds'] != $tmpb['seconds']) print '-'.dol_print_date($action->datef, 'hour', 'tzuserrel');
+		        			if ($tmpa['hours'] != $tmpb['hours'] || $tmpa['minutes'] != $tmpb['minutes'] && $tmpa['seconds'] != $tmpb['seconds']) print '-'.dol_print_date($actioncomm->datef, 'hour', 'tzuserrel');
 		        		}
-		        		else print '-'.dol_print_date($action->datef, 'dayhour', 'tzuserrel');
+		        		else print '-'.dol_print_date($actioncomm->datef, 'dayhour', 'tzuserrel');
 	        		}
 	        		print '</td>';
 	        		print '<td class="right">';
-        			print $action->getLibStatut(3);
+        			print $actioncomm->getLibStatut(3);
 	        		print '</td>';
 	        		print '</tr>';
 
