@@ -1272,6 +1272,7 @@ RuleForGeneratedPasswords=Rules to generate and validate passwords
 DisableForgetPasswordLinkOnLogonPage=Do not show the "Password Forgotten" link on the Login page
 UsersSetup=Users module setup
 UserMailRequired=Email required to create a new user
+UserHideInactive=Hide inactive users
 UsersDocModules=Document templates for documents generated from user record 
 GroupsDocModules=Document templates for documents generated from a group record 
 ##### HRM setup #####
