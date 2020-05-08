@@ -33,11 +33,6 @@ if (!is_object($website))
 	$website = new Website($db);
 	$website->fetch(0, $websitekey);
 }
-// Define $weblangs
-if (!is_object($weblangs))
-{
-	$weblangs = dol_clone($langs); // TODO Use an object lang from a language set into $website object instead of backoffice
-}
 // Define $websitepage if we have $websitepagefile defined
 if (!$pageid && !empty($websitepagefile))
 {
@@ -48,9 +43,16 @@ if (!is_object($websitepage))
 {
     $websitepage = new WebsitePage($db);
 }
+// Define $weblangs
+if (!is_object($weblangs))
+{
+	$weblangs = new Translate($db);
+}
 if ($pageid > 0)
 {
 	$websitepage->fetch($pageid);
+
+	$weblangs->setDefaultLang($websitepage->lang ? $websitepage->lang : 'auto');
 
 	if (!defined('USEDOLIBARREDITOR') && in_array($websitepage->type_container, array('menu', 'other')))
 	{
