@@ -46,7 +46,7 @@ if (!is_object($websitepage))
 // Define $weblangs
 if (!is_object($weblangs))
 {
-	$weblangs = new Translate($db);
+	$weblangs = new Translate($db, $conf);
 }
 if ($pageid > 0)
 {
