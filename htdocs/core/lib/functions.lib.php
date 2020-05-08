@@ -3155,7 +3155,7 @@ function img_picto($titlealt, $picto, $moreatt = '', $pictoisfullpath = false, $
         		'intervention', 'label', 'language', 'list', 'listlight', 'lot',
         		'map-marker-alt', 'money-bill-alt', 'mrp', 'note',
         		'object_accounting', 'object_action', 'object_account', 'object_barcode', 'object_bill', 'object_billa', 'object_billd', 'object_bom',
-	        	'object_category', 'object_bookmark', 'object_bug', 'object_dolly', 'object_dollyrevert', 'object_generic', 'object_folder',
+	        	'object_category', 'object_conversation', 'object_bookmark', 'object_bug', 'object_dolly', 'object_dollyrevert', 'object_generic', 'object_folder',
         		'object_list-alt', 'object_calendar', 'object_calendarweek', 'object_calendarmonth', 'object_calendarday', 'object_calendarperuser',
         		'object_cash-register', 'object_company', 'object_contact', 'object_contract', 'object_donation', 'object_dynamicprice',
         		'object_holiday', 'object_hrm', 'object_invoice', 'object_intervention', 'object_label',
@@ -3190,7 +3190,7 @@ function img_picto($titlealt, $picto, $moreatt = '', $pictoisfullpath = false, $
 		    $arrayconvpictotofa = array(
 		    	'account'=>'university', 'accountancy'=>'money-check-alt', 'action'=>'calendar-alt', 'address'=> 'address-book',
 		    	'bank_account'=>'university', 'bill'=>'file-invoice-dollar', 'billa'=>'file-excel', 'billd'=>'file-medical', 'bom'=>'cubes',
-		    	'company'=>'building', 'contact'=>'address-book', 'contract'=>'suitcase', 'donation'=>'file-alt', 'dynamicprice'=>'hand-holding-usd',
+		    	'company'=>'building', 'contact'=>'address-book', 'contract'=>'suitcase', 'conversation'=>'comments', 'donation'=>'file-alt', 'dynamicprice'=>'hand-holding-usd',
 		    	'setup'=>'cog', 'companies'=>'building', 'products'=>'cube', 'commercial'=>'suitcase', 'invoicing'=>'coins',
 		    	'accounting'=>'chart-line', 'category'=>'tag', 'dollyrevert'=>'dolly',
 		    	'hrm'=>'umbrella-beach', 'margin'=>'calculator', 'members'=>'users', 'ticket'=>'ticket-alt', 'globe'=>'external-link-alt', 'lot'=>'barcode',
@@ -3263,7 +3263,7 @@ function img_picto($titlealt, $picto, $moreatt = '', $pictoisfullpath = false, $
 			$arrayconvpictotomorcess = array(
 				'action'=>'bg-infobox-action', 'account'=>'bg-infobox-bank_account', 'accountancy'=>'bg-infobox-bank_account',
 				'bank_account'=>'bg-infobox-bank_account', 'bill'=>'bg-infobox-commande', 'billa'=>'bg-infobox-commande', 'billd'=>'bg-infobox-commande',
-				'cash-register'=>'bg-infobox-bank_account', 'contract'=>'bg-infobox-contrat', 'check'=>'font-status4',
+				'cash-register'=>'bg-infobox-bank_account', 'contract'=>'bg-infobox-contrat', 'check'=>'font-status4', 'conversation'=>'bg-infobox-contrat',
 				'donation'=>'bg-infobox-commande', 'dollyrevert'=>'flip', 'ecm'=>'bg-infobox-action',
 				'hrm'=>'bg-infobox-adherent', 'group'=>'bg-infobox-adherent', 'intervention'=>'bg-infobox-contrat',
 				'multicurrency'=>'bg-infobox-bank_account',
@@ -6358,6 +6358,17 @@ function getCommonSubstitutionArray($outputlangs, $onlykey = 0, $exclude = null,
 					{
 						foreach ($extrafields->attributes[$object->table_element]['label'] as $key => $label) {
 							$substitutionarray['__EXTRAFIELD_'.strtoupper($key).'__'] = $object->array_options['options_'.$key];
+                            if ($extrafields->attribute_type[$key] == 'date') {
+                                $substitutionarray['__EXTRAFIELD_' . strtoupper($key) . '__'] = dol_print_date($object->array_options['options_' . $key], 'day');
+                                $substitutionarray['__EXTRAFIELD_' . strtoupper($key) . '_LOCALE__'] = dol_print_date($object->array_options['options_' . $key], 'day', 'tzserver', $outputlangs);
+                                $substitutionarray['__EXTRAFIELD_' . strtoupper($key) . '_RFC__'] = dol_print_date($object->array_options['options_' . $key], 'dayrfc');
+                            } elseif ($extrafields->attribute_type[$key] == 'datetime') {
+                                $datetime = $object->array_options['options_'.$key];
+                                $substitutionarray['__EXTRAFIELD_' . strtoupper($key) . '__'] = ($datetime != "0000-00-00 00:00:00" ? dol_print_date($datetime, 'dayhour') : '');
+                                $substitutionarray['__EXTRAFIELD_' . strtoupper($key) . '_LOCALE__'] = ($datetime != "0000-00-00 00:00:00" ? dol_print_date($datetime, 'dayhour', 'tzserver', $outputlangs) : '');
+                                $substitutionarray['__EXTRAFIELD_' . strtoupper($key) . '_DAY_LOCALE__'] = ($datetime != "0000-00-00 00:00:00" ? dol_print_date($datetime, 'day', 'tzserver', $outputlangs) : '');
+                                $substitutionarray['__EXTRAFIELD_' . strtoupper($key) . '_RFC__'] = ($datetime != "0000-00-00 00:00:00" ? dol_print_date($datetime, 'dayhourrfc') : '');
+                            }
 						}
 					}
 				}

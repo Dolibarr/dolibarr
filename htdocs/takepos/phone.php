@@ -31,14 +31,14 @@ if (!defined('NOREQUIREMENU'))		define('NOREQUIREMENU', '1');
 if (!defined('NOREQUIREHTML'))		define('NOREQUIREHTML', '1');
 if (!defined('NOREQUIREAJAX'))		define('NOREQUIREAJAX', '1');
 
-require '../main.inc.php'; // Load $user and permissions
+if (!defined('INCLUDE_PHONEPAGE_FROM_PUBLIC_PAGE')) require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
 require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/hookmanager.class.php';
 
-if ($_SESSION["publicterminal"]){
-	// Decode place if is a order from customer phone
+if (defined('INCLUDE_PHONEPAGE_FROM_PUBLIC_PAGE')) {
+	// Decode place if it is an order from customer phone
 	$key = GETPOST('key');
 	$place=dol_decode($key);
 }
@@ -53,7 +53,7 @@ if ($setterminal > 0)
 
 $langs->loadLangs(array("bills", "orders", "commercial", "cashdesk", "receiptprinter"));
 
-if ($_SESSION["publicterminal"]) {
+if (defined('INCLUDE_PHONEPAGE_FROM_PUBLIC_PAGE')) {
 	$_SESSION["takeposterminal"] = 1; // Use Terminal 1 for public customers
 }
 elseif (empty($user->rights->takepos->run)) {

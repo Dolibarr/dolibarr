@@ -426,6 +426,7 @@ Modules=Modules/Applications
 Option=Option
 List=List
 FullList=Full list
+FullConversation=Full conversation
 Statistics=Statistics
 OtherStatistics=Other statistics
 Status=Status

@@ -1004,6 +1004,7 @@ class BOM extends CommonObject
 
 	/**
 	 * BOM costs calculation based on cost_price or pmp of each BOM line
+	 *
 	 * @return void
 	 */
 	public function calculateCosts()
@@ -1022,7 +1023,9 @@ class BOM extends CommonObject
 		}
 
 		$this->total_cost = price2num($this->total_cost, 'MT');
-		$this->unit_cost = price2num($this->total_cost / $this->qty, 'MU');
+		if ($this->qty) {
+			$this->unit_cost = price2num($this->total_cost / $this->qty, 'MU');
+		}
 	}
 }
 
