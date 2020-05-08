@@ -27,7 +27,7 @@
 /**
  * Show filter form in agenda view
  *
- * @param	Object	$form			Form object
+ * @param	Form	$form			Form object
  * @param	int		$canedit		Can edit filter fields
  * @param	int		$status			Status
  * @param 	int		$year			Year
@@ -123,7 +123,7 @@ function print_actions_filter($form, $canedit, $status, $year, $month, $day, $sh
 		print $langs->trans("ThirdParty").' &nbsp; ';
 		print '</td><td class="nowrap" style="padding-bottom: 2px;">';
 		print img_picto('', 'company');
-		print $form->select_company($socid, 'search_socid', '', 'SelectThirdParty', 0, 0, null, 0);
+		print $form->select_company($socid, 'search_socid', '', '&nbsp;', 0, 0, null, 0);
 		print '</td></tr>';
 	}
 
