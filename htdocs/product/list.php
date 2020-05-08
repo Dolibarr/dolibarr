@@ -1253,11 +1253,11 @@ if ($resql)
 					{
 						$objp = $db->fetch_object($resultp);
 						print '<td class="right nowraponall">';
-							if ($obj->tosell)
+						if ($obj->tosell)
 							{
-								if ($obj->price_base_type == 'TTC') print price($objp->price_ttc).' '.$langs->trans("TTC");
-								else print price($objp->price).' '.$langs->trans("HT");
-							}
+							if ($obj->price_base_type == 'TTC') print price($objp->price_ttc).' '.$langs->trans("TTC");
+							else print price($objp->price).' '.$langs->trans("HT");
+						}
 							print '</td>';
 							$db->free($resultp);
 					} else {
