@@ -211,6 +211,17 @@ $arrayfields = array(
 	'p.tosell'=>array('label'=>$langs->trans("Status").' ('.$langs->trans("Sell").')', 'checked'=>1, 'position'=>1000),
 	'p.tobuy'=>array('label'=>$langs->trans("Status").' ('.$langs->trans("Buy").')', 'checked'=>1, 'position'=>1000)
 );
+
+// MultiPrices
+if ($conf->global->PRODUIT_MULTIPRICES){
+	for ($i = 1; $i <= $conf->global->PRODUIT_MULTIPRICES_LIMIT; $i++)
+	{
+		$arrayfields['p.sellprice'.$i] = array('label'=>$langs->trans("SellingPrice")." ".$i, 'checked'=>1, 'enabled'=>$conf->global->PRODUIT_MULTIPRICES, 'position'=>40);
+		$arraypricelevel[$i] = array($i);
+	}
+}
+
+//var_dump($arraypricelevel);
 // Extra fields
 if (is_array($extrafields->attributes[$object->table_element]['label']) && count($extrafields->attributes[$object->table_element]['label']))
 {
@@ -733,6 +744,19 @@ if ($resql)
 		print '<td class="liste_titre right">';
 		print '</td>';
 	}
+
+	// Multiprice
+	if ($conf->global->PRODUIT_MULTIPRICES){
+		foreach ($arraypricelevel as $key => $value)
+		{
+			if (!empty($arrayfields['p.sellprice'.$key]['checked']))
+			{
+				print '<td class="liste_titre right">';
+				print '</td>';
+			}
+		}
+	}
+
 	// Minimum buying Price
 	if (!empty($arrayfields['p.minbuyprice']['checked']))
 	{
@@ -865,6 +889,18 @@ if ($resql)
     if (!empty($arrayfields['p.sellprice']['checked'])) {
         print_liste_field_titre($arrayfields['p.sellprice']['label'], $_SERVER["PHP_SELF"], "", "", $param, '', $sortfield, $sortorder, 'right ');
     }
+
+	// Multiprices
+	if ($conf->global->PRODUIT_MULTIPRICES){
+		foreach ($arraypricelevel as $key => $value)
+		{
+			if (!empty($arrayfields['p.sellprice'.$key]['checked']))
+			{
+				print_liste_field_titre($arrayfields['p.sellprice'.$key]['label'], $_SERVER["PHP_SELF"], "", "", $param, '', $sortfield, $sortorder, 'right ');
+			}
+		}
+	}
+
     if (!empty($arrayfields['p.minbuyprice']['checked'])) {
         print_liste_field_titre($arrayfields['p.minbuyprice']['label'], $_SERVER["PHP_SELF"], "", "", $param, '', $sortfield, $sortorder, 'right ');
     }
@@ -1198,6 +1234,38 @@ if ($resql)
 			}
 			print '</td>';
 			if (!$i) $totalarray['nbfield']++;
+		}
+
+
+		// Multiprices
+		if ($conf->global->PRODUIT_MULTIPRICES){
+			foreach ($arraypricelevel as $key => $value)
+			{
+				if (!empty($arrayfields['p.sellprice'.$key]['checked']))
+				{
+					$resultp = "SELECT p.rowid, p.fk_product, p.price, p.price_ttc, p.price_level, p.date_price";
+					$resultp .= " FROM ".MAIN_DB_PREFIX."product_price as p";
+					$resultp .= " WHERE fk_product = ".$obj->rowid;
+					if (!empty($conf->global->PRODUIT_MULTIPRICES)) $resultp .= " AND p.price_level = ".$key;
+					$resultp .= " ORDER BY p.date_price DESC, p.rowid DESC, p.price_level ASC";
+					$resultp = $db->query($resultp);
+					if ($resultp)
+					{
+						$objp = $db->fetch_object($resultp);
+						print '<td class="right nowraponall">';
+							if ($obj->tosell)
+							{
+								if ($obj->price_base_type == 'TTC') print price($objp->price_ttc).' '.$langs->trans("TTC");
+								else print price($objp->price).' '.$langs->trans("HT");
+							}
+							print '</td>';
+							$db->free($resultp);
+					} else {
+						dol_print_error($db);
+					}
+					if (!$i) $totalarray['nbfield']++;
+				}
+			}
 		}
 
 		// Better buy price
