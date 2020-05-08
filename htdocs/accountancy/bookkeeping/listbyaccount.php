@@ -120,17 +120,18 @@ $arrayfields = array(
 
 if (empty($conf->global->ACCOUNTING_ENABLE_LETTERING)) unset($arrayfields['t.lettering_code']);
 
-
-$object = new BookKeeping($db);
-
 /*
  * Action
  */
+if (GETPOST('cancel', 'alpha')) { $action = 'list'; $massaction = ''; }
+if (!GETPOST('confirmmassaction', 'alpha') && $massaction != 'presend' && $massaction != 'confirm_presend') { $massaction = ''; }
+
 $parameters = array('socid'=>$socid);
 $reshook = $hookmanager->executeHooks('doActions', $parameters, $object, $action); // Note that $action and $object may have been modified by some hooks
 if ($reshook < 0) setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
 
-if (empty($reshook)) {
+if (empty($reshook))
+{
 	include DOL_DOCUMENT_ROOT . '/core/actions_changeselectedfields.inc.php';
 
 	if (GETPOST('button_removefilter_x', 'alpha') || GETPOST('button_removefilter.x', 'alpha') || GETPOST('button_removefilter', 'alpha')) // All tests are required to be compatible with all browsers
@@ -328,15 +329,22 @@ print $langs->trans('to').' ';
 print $formaccounting->select_account($search_accountancy_code_end, 'search_accountancy_code_end', 1, array(), 1, 1, 'maxwidth200');
 print '</div>';
 print '</td>';
+// Movement number
+if (!empty($arrayfields['t.piece_num']['checked']))
+{
+	print '<td class="liste_titre"><input type="text" name="search_mvt_num" size="6" value="'.dol_escape_htmltag($search_mvt_num).'"></td>';
+}
 // Date document
 if (!empty($arrayfields['t.doc_date']['checked'])) {
-	print '<td class="liste_titre"></td>';
 	print '<td class="liste_titre center">';
+	print '<div class="nowrap">';
 	print $langs->trans('From') . ': ';
 	print $form->selectDate($search_date_start, 'search_date_start', 0, 0, 1);
-	print '<br>';
+	print '</div>';
+	print '<div class="nowrap">';
 	print $langs->trans('to') . ': ';
 	print $form->selectDate($search_date_end, 'search_date_end', 0, 0, 1);
+	print '</div>';
 	print '</td>';
 }
 // Ref document
@@ -374,7 +382,7 @@ print "</tr>\n";
 
 print '<tr class="liste_titre">';
 print_liste_field_titre("AccountAccountingShort", $_SERVER['PHP_SELF']);
-if (!empty($arrayfields['t.piece_num']['checked']))				print_liste_field_titre($arrayfields['t.piece_num']['label'], $_SERVER['PHP_SELF'], "t.piece_num", "", $param, '', $sortfield, $sortorder, 'right ');
+if (!empty($arrayfields['t.piece_num']['checked']))				print_liste_field_titre($arrayfields['t.piece_num']['label'], $_SERVER['PHP_SELF'], "t.piece_num", "", $param, '', $sortfield, $sortorder);
 if (!empty($arrayfields['t.doc_date']['checked']))				print_liste_field_titre($arrayfields['t.doc_date']['label'], $_SERVER['PHP_SELF'], "t.doc_date", "", $param, '', $sortfield, $sortorder, 'center ');
 if (!empty($arrayfields['t.doc_ref']['checked']))				print_liste_field_titre($arrayfields['t.doc_ref']['label'], $_SERVER['PHP_SELF'], "t.doc_ref", "", $param, "", $sortfield, $sortorder);
 if (!empty($arrayfields['t.label_operation']['checked']))		print_liste_field_titre($arrayfields['t.label_operation']['label'], $_SERVER['PHP_SELF'], "t.label_operation", "", $param, "", $sortfield, $sortorder);
@@ -436,7 +444,18 @@ while ($i < min($num, $limit))
 
 	print '<tr class="oddeven">';
 	print '<td>&nbsp;</td>';
-	print '<td class="right"><a href="./card.php?piece_num='.$line->piece_num.'">'.$line->piece_num.'</a></td>';
+	if (!$i) $totalarray['nbfield']++;
+
+	// Piece number
+	if (!empty($arrayfields['t.piece_num']['checked']))
+	{
+		print '<td>';
+		$object->id = $line->id;
+		$object->piece_num = $line->piece_num;
+		print $object->getNomUrl(1, '', 0, '', 1);
+		print '</td>';
+		if (!$i) $totalarray['nbfield']++;
+	}
 
 	// Document date
 	if (!empty($arrayfields['t.doc_date']['checked']))
@@ -553,6 +572,7 @@ while ($i < min($num, $limit))
 		$result = $accountingjournal->fetch('', $line->code_journal);
 		$journaltoshow = (($result > 0) ? $accountingjournal->getNomUrl(0, 0, 0, '', 0) : $line->code_journal);
 		print '<td class="center">'.$journaltoshow.'</td>';
+		if (!$i) $totalarray['nbfield']++;
 	}
 
 	// Fields from hook
@@ -585,7 +605,7 @@ while ($i < min($num, $limit))
 
 // Show sub-total of last shown account
 print '<tr class="liste_total">';
-print '<td class="right" colspan="5">'.$langs->trans("SubTotal").':</td><td class="nowrap right">'.price($sous_total_debit).'</td><td class="nowrap right">'.price($sous_total_credit).'</td>';
+print '<td class="right" colspan="'.$totalarray['nbfield'].'">'.$langs->trans("SubTotal").':</td><td class="nowrap right">'.price($sous_total_debit).'</td><td class="nowrap right">'.price($sous_total_credit).'</td>';
 print '<td class="nowraponall center">';
 print price($sous_total_debit - $sous_total_credit);
 print '</td>';
