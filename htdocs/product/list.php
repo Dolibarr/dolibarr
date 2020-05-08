@@ -216,7 +216,16 @@ $arrayfields = array(
 if ($conf->global->PRODUIT_MULTIPRICES){
 	for ($i = 1; $i <= $conf->global->PRODUIT_MULTIPRICES_LIMIT; $i++)
 	{
-		$arrayfields['p.sellprice'.$i] = array('label'=>$langs->trans("SellingPrice")." ".$i, 'checked'=>1, 'enabled'=>$conf->global->PRODUIT_MULTIPRICES, 'position'=>40);
+		$keyforlabel = 'PRODUIT_MULTIPRICES_LABEL'.$i;
+		if (!empty($conf->global->$keyforlabel))
+		{
+			$labelp = $i.' - '.$langs->trans($conf->global->$keyforlabel);
+		}
+		else
+		{
+			$labelp = $langs->trans("SellingPrice")." ".$i;
+		}
+		$arrayfields['p.sellprice'.$i] = array('label'=>$labelp, 'checked'=>1, 'enabled'=>$conf->global->PRODUIT_MULTIPRICES, 'position'=>40);
 		$arraypricelevel[$i] = array($i);
 	}
 }
