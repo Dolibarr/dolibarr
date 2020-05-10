@@ -77,27 +77,29 @@ function print_actions_filter($form, $canedit, $status, $year, $month, $day, $sh
 	{
 		// Type
 		print '<tr>';
-		print '<td class="nowrap" style="padding-bottom: 2px; padding-right: 4px;">';
+		print '<td class="nowrap">';
 		print $langs->trans("Type");
-		print '</td><td class="nowrap" style="padding-bottom: 2px; padding-right: 4px;">';
+		print '</td><td class="nowraponall">';
 		$multiselect = 0;
 		if (!empty($conf->global->MAIN_ENABLE_MULTISELECT_TYPE))     // We use an option here because it adds bugs when used on agenda page "peruser" and "list"
 		{
 			$multiselect = (!empty($conf->global->AGENDA_USE_EVENT_TYPE));
 		}
-		print '<span class="fas fa-square" style=" color: #ddd;"></span>';
-		print $formactions->select_type_actions($actioncode, "search_actioncode", $excludetype, (empty($conf->global->AGENDA_USE_EVENT_TYPE) ? 1 : -1), 0, $multiselect);
+		print '<span class="fas fa-square inline-block fawidth30" style=" color: #ddd;"></span>';
+		print $formactions->select_type_actions($actioncode, "search_actioncode", $excludetype, (empty($conf->global->AGENDA_USE_EVENT_TYPE) ? 1 : -1), 0, $multiselect, 0, 'maxwidth500');
 		print '</td></tr>';
 
 		// Assigned to
 		print '<tr>';
-		print '<td class="nowrap" style="padding-bottom: 2px; padding-right: 4px;">';
+		print '<td class="nowrap">';
 		print $langs->trans("ActionsToDoBy").' &nbsp; ';
-		print '</td><td style="padding-bottom: 2px; padding-right: 4px;">';
-		print img_picto('', 'user');
-		print $form->select_dolusers($filtert, 'search_filtert', 1, '', !$canedit, '', '', 0, 0, 0, '', 0, '', 'maxwidth300');
+		print '</td><td>';
+		print img_picto('', 'user', 'class="fawidth30 inline-block"');
+		print $form->select_dolusers($filtert, 'search_filtert', 1, '', !$canedit, '', '', 0, 0, 0, '', 0, '', 'maxwidth500');
 		if (empty($conf->dol_optimize_smallscreen)) print ' &nbsp; '.$langs->trans("or").' '.$langs->trans("ToUserOfGroup").' &nbsp; ';
-		print $form->select_dolgroups($usergroupid, 'usergroup', 1, '', !$canedit);
+		else print '<br>';
+		print img_picto('', 'object_group', 'class="fawidth30 inline-block"');
+		print $form->select_dolgroups($usergroupid, 'usergroup', 1, '', !$canedit, '', '', '0', false, 'maxwidth500');
 		print '</td></tr>';
 
 		if ($conf->resource->enabled)
@@ -109,9 +111,9 @@ function print_actions_filter($form, $canedit, $status, $year, $month, $day, $sh
     		print '<tr>';
     		print '<td class="nowrap" style="padding-bottom: 2px; padding-right: 4px;">';
     		print $langs->trans("Resource");
-    		print '</td><td class="nowrap maxwidthonsmartphone" style="padding-bottom: 2px; padding-right: 4px;">';
-    		print img_picto('', 'object_resource');
-    		print $formresource->select_resource_list($resourceid, "search_resourceid", '', 1, 0, 0, null, '', 2);
+    		print '</td><td class="nowraponall maxwidthonsmartphone">';
+    		print img_picto('', 'object_resource', 'class="fawidth30 inline-block"');
+    		print $formresource->select_resource_list($resourceid, "search_resourceid", '', 1, 0, 0, null, '', 2, 0, 'maxwidth500');
     		print '</td></tr>';
 		}
 	}
@@ -119,11 +121,11 @@ function print_actions_filter($form, $canedit, $status, $year, $month, $day, $sh
 	if (!empty($conf->societe->enabled) && $user->rights->societe->lire)
 	{
 		print '<tr>';
-		print '<td class="nowrap" style="padding-bottom: 2px; padding-right: 4px;">';
+		print '<td class="nowrap">';
 		print $langs->trans("ThirdParty").' &nbsp; ';
-		print '</td><td class="nowrap" style="padding-bottom: 2px;">';
-		print img_picto('', 'company');
-		print $form->select_company($socid, 'search_socid', '', '&nbsp;', 0, 0, null, 0);
+		print '</td><td class="nowraponall">';
+		print img_picto('', 'company', 'class="fawidth30 inline-block"');
+		print $form->select_company($socid, 'search_socid', '', '&nbsp;', 0, 0, null, 0, 'minwidth100 maxwidth500');
 		print '</td></tr>';
 	}
 
@@ -133,10 +135,10 @@ function print_actions_filter($form, $canedit, $status, $year, $month, $day, $sh
 		$formproject = new FormProjets($db);
 
 		print '<tr>';
-		print '<td class="nowrap" style="padding-bottom: 2px;">';
+		print '<td class="nowrap">';
 		print $langs->trans("Project").' &nbsp; ';
-		print '</td><td class="nowrap" style="padding-bottom: 2px;">';
-		print img_picto('', 'project');
+		print '</td><td class="nowraponall">';
+		print img_picto('', 'project', 'class="fawidth30 inline-block"');
 		print $formproject->select_projects($socid ? $socid : -1, $pid, 'search_projectid', 0, 0, 1, 0, 0, 0, 0, '', 1, 0, 'maxwidth500');
 		print '</td></tr>';
 	}
@@ -145,9 +147,9 @@ function print_actions_filter($form, $canedit, $status, $year, $month, $day, $sh
 	{
 		// Status
 		print '<tr>';
-		print '<td class="nowrap" style="padding-bottom: 2px; padding-right: 4px;">';
+		print '<td class="nowrap">';
 		print $langs->trans("Status");
-		print ' &nbsp;</td><td class="nowrap" style="padding-bottom: 2px; padding-right: 4px;">';
+		print ' &nbsp;</td><td class="nowraponall">';
 		$formactions->form_select_status_action('formaction', $status, 1, 'search_status', 1, 2, 'minwidth100');
 		print '</td></tr>';
 	}

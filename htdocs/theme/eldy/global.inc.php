@@ -670,7 +670,9 @@ body[class*="colorblind-"] .text-success{
 .editfielda span.fa-pencil-alt:hover, .editfielda span.fa-trash:hover, .editfieldlang:hover {
     color: var(--colortexttitle) !important;
 }
-
+.fawidth30 {
+	width: 20px;
+}
 .floatnone {
 	float: none !important;
 }
@@ -1137,6 +1139,19 @@ table[summary="list_of_modules"] .fa-cog {
 
     .hideonsmartphone { display: none; }
     .hideonsmartphoneimp { display: none !important; }
+
+	span.pictotitle {
+		margin-<?php echo $left; ?>: 0 !important;
+	}
+	div.fiche>table.table-fiche-title {
+		margin-top: 7px !important;
+		margin-bottom: 15px !important;
+	}
+
+	select.minwidth100imp, select.minwidth100, select.minwidth200, .widthcentpercentminusx {
+		width: calc(100% - 30px) !important;
+		display: inline-block;
+	}
 }
 
 /* Force values for small screen 570 */
@@ -1144,6 +1159,10 @@ table[summary="list_of_modules"] .fa-cog {
 {
 	body {
 		font-size: <?php print is_numeric($fontsize) ? ($fontsize + 3).'px' : $fontsize; ?>;
+	}
+
+	.box-flex-item {
+		margin: 3px 2px 3px 2px !important;
 	}
 	div.refidno {
 		font-size: <?php print is_numeric($fontsize) ? ($fontsize + 3).'px' : $fontsize; ?> !important;
@@ -1472,10 +1491,10 @@ body.onlinepaymentbody div.fiche {	/* For online payment page */
 	margin: 20px !important;
 }
 div.fiche>table:first-child {
-	margin-bottom: 15px !important;
+	margin-bottom: 15px;
 }
 div.fiche>table.table-fiche-title {
-	margin-bottom: 7px !important;
+	margin-bottom: 7px;
 }
 div.fichecenter {
 	width: 100%;
@@ -1606,12 +1625,6 @@ td.nobordernopadding.widthpictotitle.col-picto {
 .pictotitle {
 	margin-<?php echo $right; ?>: 8px;
 	/* margin-bottom: 4px; */
-}
-@media only screen and (max-width: 767px)
-{
-	span.pictotitle {
-		margin-<?php echo $left; ?>: 0 !important;
-	}
 }
 .pictoobjectwidth {
 	width: 14px;
