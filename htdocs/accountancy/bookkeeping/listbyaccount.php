@@ -57,6 +57,12 @@ $search_direction = GETPOST('search_direction', 'alpha');
 $search_ledger_code = GETPOST('search_ledger_code', 'alpha');
 $search_debit = GETPOST('search_debit', 'alpha');
 $search_credit = GETPOST('search_credit', 'alpha');
+$search_lettering_code = GETPOST('search_lettering_code', 'alpha');
+$search_not_reconciled = GETPOST('search_reconciled_option', 'alpha');
+
+if (GETPOST("button_delmvt_x") || GETPOST("button_delmvt.x") || GETPOST("button_delmvt")) {
+	$action = 'delbookkeepingyear';
+}
 
 // Load variable for pagination
 $limit = GETPOST('limit', 'int') ?GETPOST('limit', 'int') : (empty($conf->global->ACCOUNTING_LIMIT_LIST_VENTILATION) ? $conf->liste_limit : $conf->global->ACCOUNTING_LIMIT_LIST_VENTILATION);
@@ -105,6 +111,7 @@ if (empty($search_date_start) && empty($search_date_end) && GETPOSTISSET('search
 
 $arrayfields = array(
 	// 't.subledger_account'=>array('label'=>$langs->trans("SubledgerAccount"), 'checked'=>1),
+	't.code_journal'=>array('label'=>$langs->trans("Codejournal"), 'checked'=>1),
 	't.piece_num'=>array('label'=>$langs->trans("TransactionNumShort"), 'checked'=>1),
 	't.doc_date'=>array('label'=>$langs->trans("Docdate"), 'checked'=>1),
 	't.doc_ref'=>array('label'=>$langs->trans("Piece"), 'checked'=>1),
@@ -112,10 +119,6 @@ $arrayfields = array(
 	't.debit'=>array('label'=>$langs->trans("Debit"), 'checked'=>1),
 	't.credit'=>array('label'=>$langs->trans("Credit"), 'checked'=>1),
 	't.lettering_code'=>array('label'=>$langs->trans("LetteringCode"), 'checked'=>1),
-	't.code_journal'=>array('label'=>$langs->trans("Codejournal"), 'checked'=>1),
-	// 't.date_creation'=>array('label'=>$langs->trans("DateCreation"), 'checked'=>0),
-	// 't.tms'=>array('label'=>$langs->trans("DateModification"), 'checked'=>0),
-	// 't.date_export'=>array('label'=>$langs->trans("DateExport"), 'checked'=>1),
 );
 
 if (empty($conf->global->ACCOUNTING_ENABLE_LETTERING)) unset($arrayfields['t.lettering_code']);
@@ -155,6 +158,8 @@ if (empty($reshook))
 		$search_date_endday = '';
 		$search_debit = '';
 		$search_credit = '';
+		$search_lettering_code = '';
+		$search_not_reconciled = '';
 	}
 
 	// Must be after the remove filter action, before the export.
@@ -209,9 +214,62 @@ if (empty($reshook))
 		$filter['t.credit'] = $search_credit;
 		$param .= '&search_credit=' . urlencode($search_credit);
 	}
+	if (!empty($search_lettering_code)) {
+		$filter['t.lettering_code'] = $search_lettering_code;
+		$param .= '&search_lettering_code='.urlencode($search_lettering_code);
+	}
+	if (!empty($search_not_reconciled)) {
+		$filter['t.reconciled_option'] = $search_not_reconciled;
+		$param .= '&search_not_reconciled='.urlencode($search_not_reconciled);
+	}
 }
 
-if ($action == 'delmouvconfirm') {
+if ($action == 'delbookkeeping' && $user->rights->accounting->mouvements->supprimer) {
+	$import_key = GETPOST('importkey', 'alpha');
+
+	if (!empty($import_key)) {
+		$result = $object->deleteByImportkey($import_key);
+		if ($result < 0) {
+			setEventMessages($object->error, $object->errors, 'errors');
+		}
+
+		// Make a redirect to avoid to launch the delete later after a back button
+		header("Location: listbyaccount.php".($param ? '?'.$param : ''));
+		exit;
+	}
+}
+if ($action == 'delbookkeepingyearconfirm' && $user->rights->accounting->mouvements->supprimer_tous) {
+	$delmonth = GETPOST('delmonth', 'int');
+	$delyear = GETPOST('delyear', 'int');
+	if ($delyear == -1) {
+		$delyear = 0;
+	}
+	$deljournal = GETPOST('deljournal', 'alpha');
+	if ($deljournal == -1) {
+		$deljournal = 0;
+	}
+
+	if (!empty($delmonth) || !empty($delyear) || !empty($deljournal))
+	{
+		$result = $object->deleteByYearAndJournal($delyear, $deljournal, '', ($delmonth > 0 ? $delmonth : 0));
+		if ($result < 0) {
+			setEventMessages($object->error, $object->errors, 'errors');
+		}
+		else
+		{
+			setEventMessages("RecordDeleted", null, 'mesgs');
+		}
+
+		// Make a redirect to avoid to launch the delete later after a back button
+		header("Location: listbyaccount.php".($param ? '?'.$param : ''));
+		exit;
+	}
+	else
+	{
+		setEventMessages("NoRecordDeleted", null, 'warnings');
+	}
+}
+if ($action == 'delmouvconfirm' && $user->rights->accounting->mouvements->supprimer) {
 	$mvt_num = GETPOST('mvt_num', 'int');
 
 	if (!empty($mvt_num)) {
@@ -219,8 +277,13 @@ if ($action == 'delmouvconfirm') {
 		if ($result < 0) {
 			setEventMessages($object->error, $object->errors, 'errors');
 		}
-		Header("Location: listbyaccount.php");
-		exit();
+		else
+		{
+			setEventMessages($langs->trans("RecordDeleted"), null, 'mesgs');
+		}
+
+		header("Location: listbyaccount.php?noreset=1".($param ? '&'.$param : ''));
+		exit;
 	}
 }
 
@@ -262,22 +325,42 @@ if ($action == 'delmouv') {
 }
 if ($action == 'delbookkeepingyear') {
 	$form_question = array();
-	$delyear = GETPOST('delyear');
+	$delyear = GETPOST('delyear', 'int');
+	$deljournal = GETPOST('deljournal', 'alpha');
 
 	if (empty($delyear)) {
 		$delyear = dol_print_date(dol_now(), '%Y');
 	}
+	$month_array = array();
+	for ($i = 1; $i <= 12; $i++) {
+		$month_array[$i] = $langs->trans("Month".sprintf("%02d", $i));
+	}
 	$year_array = $formaccounting->selectyear_accountancy_bookkepping($delyear, 'delyear', 0, 'array');
+	$journal_array = $formaccounting->select_journal($deljournal, 'deljournal', '', 1, 1, 1, '', 0, 1);
 
+	$form_question['delmonth'] = array(
+		'name' => 'delmonth',
+		'type' => 'select',
+		'label' => $langs->trans('DelMonth'),
+		'values' => $month_array,
+		'default' => ''
+	);
 	$form_question['delyear'] = array(
-			'name' => 'delyear',
-			'type' => 'select',
-			'label' => $langs->trans('DelYear'),
-			'values' => $year_array,
-			'default' => $delyear
+		'name' => 'delyear',
+		'type' => 'select',
+		'label' => $langs->trans('DelYear'),
+		'values' => $year_array,
+		'default' => $delyear
+	);
+	$form_question['deljournal'] = array(
+		'name' => 'deljournal',
+		'type' => 'other', // We don't use select here, the journal_array is already a select html component
+		'label' => $langs->trans('DelJournal'),
+		'value' => $journal_array,
+		'default' => $deljournal
 	);
 
-	$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"], $langs->trans('DeleteMvt'), $langs->trans('ConfirmDeleteMvt'), 'delbookkeepingyearconfirm', $form_question, 0, 1, 250);
+	$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"].'?'.$param, $langs->trans('DeleteMvt'), $langs->trans('ConfirmDeleteMvt'), 'delbookkeepingyearconfirm', $form_question, '', 1, 300);
 	print $formconfirm;
 }
 
@@ -304,35 +387,41 @@ $varpage = empty($contextpage) ? $_SERVER["PHP_SELF"] : $contextpage;
 $selectedfields = $form->multiSelectArrayWithCheckbox('selectedfields', $arrayfields, $varpage); // This also change content of $arrayfields
 if ($massactionbutton) $selectedfields .= $form->showCheckAddButtons('checkforselect', 1);
 
+// Reverse sort order
+if (preg_match('/^asc/i', $sortorder)) $sortorder = "asc";
+else $sortorder = "desc";
+
+$moreforfilter = '';
+
+// Accountancy account
+$moreforfilter .= '<div class="divsearchfield">';
+$moreforfilter .= $langs->trans('AccountAccounting').': ';
+$moreforfilter .= '<div class="nowrap">';
+$moreforfilter .= $langs->trans('From').' ';
+$moreforfilter .= $formaccounting->select_account($search_accountancy_code_start, 'search_accountancy_code_start', 1, array(), 1, 1, 'maxwidth200');
+$moreforfilter .= $langs->trans('to').' ';
+$moreforfilter .= $formaccounting->select_account($search_accountancy_code_end, 'search_accountancy_code_end', 1, array(), 1, 1, 'maxwidth200');
+$moreforfilter .= '</div>';
+$moreforfilter .= '</div>';
+
 $parameters = array();
 $reshook = $hookmanager->executeHooks('printFieldPreListTitle', $parameters); // Note that $action and $object may have been modified by hook
 if (empty($reshook)) $moreforfilter .= $hookmanager->resPrint;
 else $moreforfilter = $hookmanager->resPrint;
 
-// Reverse sort order
-if (preg_match('/^asc/i', $sortorder)) $sortorder = "asc";
-else $sortorder = "desc";
+print '<div class="liste_titre liste_titre_bydiv centpercent">';
+print $moreforfilter;
+print '</div>';
 
 print '<div class="div-table-responsive">';
 print '<table class="tagtable liste centpercent">';
 
 // Filters lines
 print '<tr class="liste_titre_filter">';
-// Accountancy account
-print '<td class="liste_titre">';
-print '<div class="nowrap">';
-print $langs->trans('From').' ';
-print $formaccounting->select_account($search_accountancy_code_start, 'search_accountancy_code_start', 1, array(), 1, 1, 'maxwidth200');
-print '</div>';
-print '<div class="nowrap">';
-print $langs->trans('to').' ';
-print $formaccounting->select_account($search_accountancy_code_end, 'search_accountancy_code_end', 1, array(), 1, 1, 'maxwidth200');
-print '</div>';
-print '</td>';
-// Movement number
-if (!empty($arrayfields['t.piece_num']['checked']))
-{
-	print '<td class="liste_titre"><input type="text" name="search_mvt_num" size="6" value="'.dol_escape_htmltag($search_mvt_num).'"></td>';
+
+// Code journal
+if (!empty($arrayfields['t.code_journal']['checked'])) {
+	print '<td class="liste_titre center"><input type="text" name="search_ledger_code" size="3" value="' . dol_escape_htmltag($search_ledger_code) . '"></td>';
 }
 // Date document
 if (!empty($arrayfields['t.doc_date']['checked'])) {
@@ -346,6 +435,11 @@ if (!empty($arrayfields['t.doc_date']['checked'])) {
 	print $form->selectDate($search_date_end, 'search_date_end', 0, 0, 1);
 	print '</div>';
 	print '</td>';
+}
+// Movement number
+if (!empty($arrayfields['t.piece_num']['checked']))
+{
+	print '<td class="liste_titre"><input type="text" name="search_mvt_num" size="6" value="'.dol_escape_htmltag($search_mvt_num).'"></td>';
 }
 // Ref document
 if (!empty($arrayfields['t.doc_ref']['checked'])) {
@@ -363,9 +457,13 @@ if (!empty($arrayfields['t.debit']['checked'])) {
 if (!empty($arrayfields['t.credit']['checked'])) {
 	print '<td class="liste_titre right"><input type="text" class="flat" name="search_credit" size="4" value="' . dol_escape_htmltag($search_credit) . '"></td>';
 }
-// Code journal
-if (!empty($arrayfields['t.code_journal']['checked'])) {
-	print '<td class="liste_titre center"><input type="text" name="search_ledger_code" size="3" value="' . dol_escape_htmltag($search_ledger_code) . '"></td>';
+// Lettering code
+if (!empty($arrayfields['t.lettering_code']['checked']))
+{
+	print '<td class="liste_titre center">';
+	print '<input type="text" size="3" class="flat" name="search_lettering_code" value="'.$search_lettering_code.'"/>';
+	print '<br><span class="nowrap"><input type="checkbox" name="search_reconciled_option" value="notreconciled"'.($search_not_reconciled == 'notreconciled' ? ' checked' : '').'>'.$langs->trans("NotReconciled").'</span>';
+	print '</td>';
 }
 
 // Fields from hook
@@ -381,14 +479,14 @@ print '</td>';
 print "</tr>\n";
 
 print '<tr class="liste_titre">';
-print_liste_field_titre("AccountAccountingShort", $_SERVER['PHP_SELF']);
-if (!empty($arrayfields['t.piece_num']['checked']))				print_liste_field_titre($arrayfields['t.piece_num']['label'], $_SERVER['PHP_SELF'], "t.piece_num", "", $param, '', $sortfield, $sortorder);
+if (!empty($arrayfields['t.code_journal']['checked']))			print_liste_field_titre($arrayfields['t.code_journal']['label'], $_SERVER['PHP_SELF'], "t.code_journal", "", $param, '', $sortfield, $sortorder, 'center ');
 if (!empty($arrayfields['t.doc_date']['checked']))				print_liste_field_titre($arrayfields['t.doc_date']['label'], $_SERVER['PHP_SELF'], "t.doc_date", "", $param, '', $sortfield, $sortorder, 'center ');
+if (!empty($arrayfields['t.piece_num']['checked']))				print_liste_field_titre($arrayfields['t.piece_num']['label'], $_SERVER['PHP_SELF'], "t.piece_num", "", $param, '', $sortfield, $sortorder);
 if (!empty($arrayfields['t.doc_ref']['checked']))				print_liste_field_titre($arrayfields['t.doc_ref']['label'], $_SERVER['PHP_SELF'], "t.doc_ref", "", $param, "", $sortfield, $sortorder);
 if (!empty($arrayfields['t.label_operation']['checked']))		print_liste_field_titre($arrayfields['t.label_operation']['label'], $_SERVER['PHP_SELF'], "t.label_operation", "", $param, "", $sortfield, $sortorder);
 if (!empty($arrayfields['t.debit']['checked']))					print_liste_field_titre($arrayfields['t.debit']['label'], $_SERVER['PHP_SELF'], "t.debit", "", $param, '', $sortfield, $sortorder, 'right ');
 if (!empty($arrayfields['t.credit']['checked']))				print_liste_field_titre($arrayfields['t.credit']['label'], $_SERVER['PHP_SELF'], "t.credit", "", $param, '', $sortfield, $sortorder, 'right ');
-if (!empty($arrayfields['t.code_journal']['checked']))			print_liste_field_titre($arrayfields['t.code_journal']['label'], $_SERVER['PHP_SELF'], "t.code_journal", "", $param, '', $sortfield, $sortorder, 'center ');
+if (!empty($arrayfields['t.lettering_code']['checked']))		print_liste_field_titre($arrayfields['t.lettering_code']['label'], $_SERVER['PHP_SELF'], "t.lettering_code", "", $param, '', $sortfield, $sortorder, 'center ');
 // Hook fields
 $parameters = array('arrayfields'=>$arrayfields, 'param'=>$param, 'sortfield'=>$sortfield, 'sortorder'=>$sortorder);
 $reshook = $hookmanager->executeHooks('printFieldListTitle', $parameters); // Note that $action and $object may have been modified by hook
@@ -419,18 +517,42 @@ while ($i < min($num, $limit))
 
 	// Is it a break ?
 	if ($accountg != $displayed_account_number || !isset($displayed_account_number)) {
-		// Affiche un Sous-Total par compte comptable
+
+		$colspan = $totalarray['nbfield'] - 3;
+		$colspanend = $totalarray['nbfield'] - 7;
+		// Show a subtotal by accounting account
 		if (isset($displayed_account_number)) {
-			print '<tr class="liste_total"><td class="right" colspan="5">'.$langs->trans("SubTotal").':</td><td class="nowrap right">'.price($sous_total_debit).'</td><td class="nowrap right">'.price($sous_total_credit).'</td>';
-			print "<td>&nbsp;</td>\n";
-			print "<td>&nbsp;</td>\n";
+			print '<tr class="liste_total">';
+			print '<td class="right" colspan="'.$colspan.'">'.$langs->trans("TotalForAccount").' '.length_accountg($displayed_account_number).':</td>';
+			print '<td class="nowrap right">'.price($sous_total_debit).'</td>';
+			print '<td class="nowrap right">'.price($sous_total_credit).'</td>';
+			print '<td colspan="'.$colspanend.'"></td>';
+			print '</tr>';
+			// Show balance of last shown account
+			$balance = $sous_total_debit - $sous_total_credit;
+			print '<tr class="liste_total">';
+			print '<td class="right" colspan="'.$colspan.'">'.$langs->trans("Balance").':</td>';
+			if ($balance > 0 )
+			{
+				print '<td class="nowraponall right">';
+				print price($sous_total_debit - $sous_total_credit);
+				print '</td>';
+				print '<td></td>';
+			}
+			else
+			{
+				print '<td></td>';
+				print '<td class="nowraponall right">';
+				print price($sous_total_credit - $sous_total_debit);
+				print '</td>';
+			}
+			print '<td colspan="'.$colspanend.'"></td>';
 			print '</tr>';
 		}
 
 		// Show the break account
-		$colspan = 9;
 		print "<tr>";
-		print '<td colspan="'.$colspan.'" style="font-weight:bold; border-bottom: 1pt solid black;">';
+		print '<td colspan="'.$totalarray['nbfield'].'" style="font-weight:bold; border-bottom: 1pt solid black;">';
 		if ($line->numero_compte != "" && $line->numero_compte != '-1') print length_accountg($line->numero_compte).' : '.$object->get_compte_desc($line->numero_compte);
 		else print '<span class="error">'.$langs->trans("Unknown").'</span>';
 		print '</td>';
@@ -440,11 +562,28 @@ while ($i < min($num, $limit))
 		//if (empty($displayed_account_number)) $displayed_account_number='-';
 		$sous_total_debit = 0;
 		$sous_total_credit = 0;
+
+		$colspan = 0;
 	}
 
 	print '<tr class="oddeven">';
-	print '<td>&nbsp;</td>';
-	if (!$i) $totalarray['nbfield']++;
+
+	// Journal code
+	if (!empty($arrayfields['t.code_journal']['checked']))
+	{
+		$accountingjournal = new AccountingJournal($db);
+		$result = $accountingjournal->fetch('', $line->code_journal);
+		$journaltoshow = (($result > 0) ? $accountingjournal->getNomUrl(0, 0, 0, '', 0) : $line->code_journal);
+		print '<td class="center">'.$journaltoshow.'</td>';
+		if (!$i) $totalarray['nbfield']++;
+	}
+
+	// Document date
+	if (!empty($arrayfields['t.doc_date']['checked']))
+	{
+		print '<td class="center">'.dol_print_date($line->doc_date, 'day').'</td>';
+		if (!$i) $totalarray['nbfield']++;
+	}
 
 	// Piece number
 	if (!empty($arrayfields['t.piece_num']['checked']))
@@ -454,13 +593,6 @@ while ($i < min($num, $limit))
 		$object->piece_num = $line->piece_num;
 		print $object->getNomUrl(1, '', 0, '', 1);
 		print '</td>';
-		if (!$i) $totalarray['nbfield']++;
-	}
-
-	// Document date
-	if (!empty($arrayfields['t.doc_date']['checked']))
-	{
-		print '<td class="center">'.dol_print_date($line->doc_date, 'day').'</td>';
 		if (!$i) $totalarray['nbfield']++;
 	}
 
@@ -565,16 +697,6 @@ while ($i < min($num, $limit))
 		if (!$i) $totalarray['nbfield']++;
 	}
 
-	// Journal code
-	if (!empty($arrayfields['t.code_journal']['checked']))
-	{
-		$accountingjournal = new AccountingJournal($db);
-		$result = $accountingjournal->fetch('', $line->code_journal);
-		$journaltoshow = (($result > 0) ? $accountingjournal->getNomUrl(0, 0, 0, '', 0) : $line->code_journal);
-		print '<td class="center">'.$journaltoshow.'</td>';
-		if (!$i) $totalarray['nbfield']++;
-	}
-
 	// Fields from hook
 	$parameters = array('arrayfields'=>$arrayfields, 'obj'=>$obj);
 	$reshook = $hookmanager->executeHooks('printFieldListValue', $parameters); // Note that $action and $object may have been modified by hook
@@ -591,12 +713,11 @@ while ($i < min($num, $limit))
 		}
 	}
 	print '</td>';
+	if (!$i) $totalarray['nbfield']++;
 
 	// Comptabilise le sous-total
 	$sous_total_debit += $line->debit;
 	$sous_total_credit += $line->credit;
-
-	if (!$i) $totalarray['nbfield']++;
 
 	print "</tr>\n";
 
@@ -604,12 +725,33 @@ while ($i < min($num, $limit))
 }
 
 // Show sub-total of last shown account
+$colspan = $totalarray['nbfield'] - 3;
+$colspanend = $totalarray['nbfield'] - 8;
 print '<tr class="liste_total">';
-print '<td class="right" colspan="'.$totalarray['nbfield'].'">'.$langs->trans("SubTotal").':</td><td class="nowrap right">'.price($sous_total_debit).'</td><td class="nowrap right">'.price($sous_total_credit).'</td>';
-print '<td class="nowraponall center">';
-print price($sous_total_debit - $sous_total_credit);
-print '</td>';
-print '<td></td>';
+print '<td class="right" colspan="'.$colspan.'">'.$langs->trans("TotalForAccount").' '.$accountg.':</td>';
+print '<td class="nowrap right">'.price($sous_total_debit).'</td>';
+print '<td class="nowrap right">'.price($sous_total_credit).'</td>';
+print '<td colspan="'.$colspanend.'"></td>';
+print '</tr>';
+// Show balance of last shown account
+$balance = $sous_total_debit - $sous_total_credit;
+print '<tr class="liste_total">';
+print '<td class="right" colspan="'.$colspan.'">'.$langs->trans("Balance").':</td>';
+if ($balance > 0 )
+{
+	print '<td class="nowraponall right">';
+	print price($sous_total_debit - $sous_total_credit);
+	print '</td>';
+	print '<td></td>';
+}
+else
+{
+	print '<td></td>';
+	print '<td class="nowraponall right">';
+	print price($sous_total_credit - $sous_total_debit);
+	print '</td>';
+}
+print '<td colspan="'.$colspanend.'"></td>';
 print '</tr>';
 
 // Show total line
