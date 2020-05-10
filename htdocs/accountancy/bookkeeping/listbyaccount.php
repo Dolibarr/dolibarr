@@ -517,7 +517,6 @@ while ($i < min($num, $limit))
 
 	// Is it a break ?
 	if ($accountg != $displayed_account_number || !isset($displayed_account_number)) {
-
 		$colspan = $totalarray['nbfield'] - 3;
 		$colspanend = $totalarray['nbfield'] - 7;
 		// Show a subtotal by accounting account
