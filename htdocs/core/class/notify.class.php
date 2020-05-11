@@ -314,6 +314,7 @@ class Notify
 		global $user, $conf, $langs, $mysoc;
 		global $hookmanager;
 		global $dolibarr_main_url_root;
+		global $action;
 
 		if (!in_array($notifcode, $this->arrayofnotifsupported)) return 0;
 
@@ -400,6 +401,9 @@ class Notify
 
 					$sendto = dolGetFirstLastname($obj->firstname, $obj->lastname) . " <".$obj->email.">";
 					$notifcodedefid = $obj->adid;
+					$trackid = '';
+					if ($obj->type_target == 'tocontactid') $trackid = 'con'.$obj->id;
+					if ($obj->type_target == 'touserid') $trackid = 'use'.$obj->id;
 
 					if (dol_strlen($obj->email))
 					{
@@ -416,95 +420,100 @@ class Notify
 
 						switch ($notifcode) {
 							case 'BILL_VALIDATE':
-								$link = '/compta/facture/card.php?facid='.$object->id;
+								$link = '<a href="' . $urlwithroot . '/compta/facture/card.php?facid=' . $object->id . '">' . $newref . '</a>';
 								$dir_output = $conf->facture->dir_output;
 								$object_type = 'facture';
-								$mesg = $outputlangs->transnoentitiesnoconv("EMailTextInvoiceValidated", $newref);
+								$mesg = $outputlangs->transnoentitiesnoconv("EMailTextInvoiceValidated", $link);
 								break;
 							case 'BILL_PAYED':
-								$link = '/compta/facture/card.php?facid='.$object->id;
+								$link ='<a href="' . $urlwithroot . '/compta/facture/card.php?facid='.$object->id . '">' . $newref . '</a>';
 								$dir_output = $conf->facture->dir_output;
 								$object_type = 'facture';
-								$mesg = $outputlangs->transnoentitiesnoconv("EMailTextInvoicePayed", $newref);
+								$mesg = $outputlangs->transnoentitiesnoconv("EMailTextInvoicePayed", $link);
 								break;
 							case 'ORDER_VALIDATE':
-								$link = '/commande/card.php?id='.$object->id;
+								$link = '<a href="' . $urlwithroot . '/commande/card.php?id='.$object->id . '">' . $newref . '</a>';
 								$dir_output = $conf->commande->dir_output;
 								$object_type = 'order';
-								$mesg = $outputlangs->transnoentitiesnoconv("EMailTextOrderValidated", $newref);
+								$mesg = $outputlangs->transnoentitiesnoconv("EMailTextOrderValidated", $link);
 								break;
 							case 'PROPAL_VALIDATE':
-								$link = '/comm/propal/card.php?id='.$object->id;
+								$link = '<a href="' . $urlwithroot . '/comm/propal/card.php?id='.$object->id . '">' . $newref . '</a>';
 								$dir_output = $conf->propal->multidir_output[$object->entity];
 								$object_type = 'propal';
-								$mesg = $outputlangs->transnoentitiesnoconv("EMailTextProposalValidated", $newref);
+								$mesg = $outputlangs->transnoentitiesnoconv("EMailTextProposalValidated", $link);
 								break;
 							case 'PROPAL_CLOSE_SIGNED':
-								$link = '/comm/propal/card.php?id='.$object->id;
+								$link = '<a href="' . $urlwithroot . '/comm/propal/card.php?id='.$object->id . '">' . $newref . '</a>';
 								$dir_output = $conf->propal->multidir_output[$object->entity];
 								$object_type = 'propal';
-								$mesg = $outputlangs->transnoentitiesnoconv("EMailTextProposalClosedSigned", $newref);
+								$mesg = $outputlangs->transnoentitiesnoconv("EMailTextProposalClosedSigned", $link);
 								break;
 							case 'FICHINTER_ADD_CONTACT':
-								$link = '/fichinter/card.php?id='.$object->id;
+								$link = '<a href="'.$urlwithroot.'/fichinter/card.php?id='.$object->id.'">'.$newref.'</a>';
 								$dir_output = $conf->ficheinter->dir_output;
 								$object_type = 'ficheinter';
-								$mesg = $outputlangs->transnoentitiesnoconv("EMailTextInterventionAddedContact", $newref);
+								$mesg = $outputlangs->transnoentitiesnoconv("EMailTextInterventionAddedContact", $link);
 								break;
 							case 'FICHINTER_VALIDATE':
-								$link = '/fichinter/card.php?id='.$object->id;
+								$link = '<a href="'.$urlwithroot.'/fichinter/card.php?id='.$object->id.'">'.$newref.'</a>';
 								$dir_output = $conf->ficheinter->dir_output;
 								$object_type = 'ficheinter';
-								$mesg = $outputlangs->transnoentitiesnoconv("EMailTextInterventionValidated", $newref);
+								$mesg = $outputlangs->transnoentitiesnoconv("EMailTextInterventionValidated", $link);
 								break;
 							case 'ORDER_SUPPLIER_VALIDATE':
-								$link = '/fourn/commande/card.php?id='.$object->id;
+								$link = '<a href="'.$urlwithroot.'/fourn/commande/card.php?id='.$object->id.'">'.$newref.'</a>';
 								$dir_output = $conf->fournisseur->commande->dir_output;
 								$object_type = 'order_supplier';
 								$mesg = $outputlangs->transnoentitiesnoconv("Hello").",\n\n";
-								$mesg .= $outputlangs->transnoentitiesnoconv("EMailTextOrderValidatedBy", $newref, $user->getFullName($outputlangs));
+								$mesg .= $outputlangs->transnoentitiesnoconv("EMailTextOrderValidatedBy", $link, $user->getFullName($outputlangs));
 								$mesg .= "\n\n".$outputlangs->transnoentitiesnoconv("Sincerely").".\n\n";
 								break;
 							case 'ORDER_SUPPLIER_APPROVE':
-								$link = '/fourn/commande/card.php?id='.$object->id;
+								$link = '<a href="'.$urlwithroot.'/fourn/commande/card.php?id='.$object->id.'">'.$newref.'</a>';
 								$dir_output = $conf->fournisseur->commande->dir_output;
 								$object_type = 'order_supplier';
 								$mesg = $outputlangs->transnoentitiesnoconv("Hello").",\n\n";
-								$mesg .= $outputlangs->transnoentitiesnoconv("EMailTextOrderApprovedBy", $newref, $user->getFullName($outputlangs));
+								$mesg .= $outputlangs->transnoentitiesnoconv("EMailTextOrderApprovedBy", $link, $user->getFullName($outputlangs));
 								$mesg .= "\n\n".$outputlangs->transnoentitiesnoconv("Sincerely").".\n\n";
 								break;
 							case 'ORDER_SUPPLIER_REFUSE':
-								$link = '/fourn/commande/card.php?id='.$object->id;
+								$link = '<a href="' . $urlwithroot . '/fourn/commande/card.php?id='.$object->id . '">' . $newref . '</a>';
 								$dir_output = $conf->fournisseur->commande->dir_output;
 								$object_type = 'order_supplier';
 								$mesg = $outputlangs->transnoentitiesnoconv("Hello").",\n\n";
-								$mesg .= $outputlangs->transnoentitiesnoconv("EMailTextOrderRefusedBy", $newref, $user->getFullName($outputlangs));
+								$mesg .= $outputlangs->transnoentitiesnoconv("EMailTextOrderRefusedBy", $link, $user->getFullName($outputlangs));
 								$mesg .= "\n\n".$outputlangs->transnoentitiesnoconv("Sincerely").".\n\n";
 								break;
 							case 'SHIPPING_VALIDATE':
+								$link = '<a href="'.$urlwithroot.'/expedition/card.php?id='.$object->id.'">'.$newref.'</a>';
 								$dir_output = $conf->expedition->dir_output.'/sending/';
-								$object_type = 'order_supplier';
-								$mesg = $outputlangs->transnoentitiesnoconv("EMailTextExpeditionValidated", $newref);
+								$object_type = 'expedition';
+								$mesg = $outputlangs->transnoentitiesnoconv("EMailTextExpeditionValidated", $link);
 								break;
 							case 'EXPENSE_REPORT_VALIDATE':
+								$link = '<a href="'.$urlwithroot.'/expensereport/card.php?id='.$object->id.'">'.$newref.'</a>';
 								$dir_output = $conf->expensereport->dir_output;
 								$object_type = 'expensereport';
-								$mesg = $outputlangs->transnoentitiesnoconv("EMailTextExpenseReportValidated", $newref);
+								$mesg = $outputlangs->transnoentitiesnoconv("EMailTextExpenseReportValidated", $link);
 								break;
 							case 'EXPENSE_REPORT_APPROVE':
+								$link = '<a href="'.$urlwithroot.'/expensereport/card.php?id='.$object->id.'">'.$newref.'</a>';
 								$dir_output = $conf->expensereport->dir_output;
 								$object_type = 'expensereport';
-								$mesg = $outputlangs->transnoentitiesnoconv("EMailTextExpenseReportApproved", $newref);
+								$mesg = $outputlangs->transnoentitiesnoconv("EMailTextExpenseReportApproved", $link);
 								break;
 							case 'HOLIDAY_VALIDATE':
+								$link = '<a href="'.$urlwithroot.'/holiday/card.php?id='.$object->id.'">'.$newref.'</a>';
 								$dir_output = $conf->holiday->dir_output;
 								$object_type = 'holiday';
-								$mesg = $outputlangs->transnoentitiesnoconv("EMailTextHolidayValidated", $newref);
+								$mesg = $outputlangs->transnoentitiesnoconv("EMailTextHolidayValidated", $link);
 								break;
 							case 'HOLIDAY_APPROVE':
+								$link = '<a href="'.$urlwithroot.'/holiday/card.php?id='.$object->id.'">'.$newref.'</a>';
 								$dir_output = $conf->holiday->dir_output;
 								$object_type = 'holiday';
-								$mesg = $outputlangs->transnoentitiesnoconv("EMailTextHolidayApproved", $newref);
+								$mesg = $outputlangs->transnoentitiesnoconv("EMailTextHolidayApproved", $link);
 								break;
 						}
 						$ref = dol_sanitizeFileName($newref);
@@ -523,9 +532,10 @@ class Notify
 						$message .= $outputlangs->transnoentities("YouReceiveMailBecauseOfNotification2", $application, $mysoc->name)."\n";
 						$message .= "\n";
 						$message .= $mesg;
-						if ($link) $message .= "\n".$urlwithroot.$link;
 
 						$parameters = array('notifcode'=>$notifcode, 'sendto'=>$sendto, 'replyto'=>$replyto, 'file'=>$filename_list, 'mimefile'=>$mimetype_list, 'filename'=>$mimefilename_list);
+						if (!isset($action)) $action = '';
+
 						$reshook = $hookmanager->executeHooks('formatNotificationMessage', $parameters, $object, $action); // Note that $action and $object may have been modified by some hooks
 						if (empty($reshook))
 						{
@@ -547,7 +557,7 @@ class Notify
 							-1,
                             '',
                             '',
-                            '',
+                            $trackid,
                             '',
                             'notification'
                         );
@@ -598,6 +608,7 @@ class Notify
 		{
 			foreach ($conf->global as $key => $val)
 			{
+				$reg = array();
 				if ($val == '' || !preg_match('/^NOTIFICATION_FIXEDEMAIL_'.$notifcode.'_THRESHOLD_HIGHER_(.*)$/', $key, $reg)) continue;
 
 				$threshold = (float) $reg[1];
@@ -612,6 +623,7 @@ class Notify
 				$sendto = $conf->global->$param;
 				$notifcodedefid = dol_getIdFromCode($this->db, $notifcode, 'c_action_trigger', 'code', 'rowid');
 				if ($notifcodedefid <= 0) dol_print_error($this->db, 'Failed to get id from code');
+				$trackid = '';
 
 				$object_type = '';
 				$link = '';
@@ -652,7 +664,7 @@ class Notify
 						break;
 					case 'FICHINTER_ADD_CONTACT':
 						$link = '<a href="'.$urlwithroot.'/fichinter/card.php?id='.$object->id.'">'.$newref.'</a>';
-						$dir_output = $conf->facture->dir_output;
+						$dir_output = $conf->ficheinter->dir_output;
 						$object_type = 'ficheinter';
 						$mesg = $langs->transnoentitiesnoconv("EMailTextInterventionAddedContact", $link);
 						break;
@@ -695,29 +707,34 @@ class Notify
 						$mesg .= "\n\n".$langs->transnoentitiesnoconv("Sincerely").".\n\n";
 						break;
 					case 'SHIPPING_VALIDATE':
+						$link = '<a href="'.$urlwithroot.'/expedition/card.php?id='.$object->id.'">'.$newref.'</a>';
 						$dir_output = $conf->expedition->dir_output.'/sending/';
 						$object_type = 'order_supplier';
-						$mesg = $langs->transnoentitiesnoconv("EMailTextExpeditionValidated", $newref);
+						$mesg = $langs->transnoentitiesnoconv("EMailTextExpeditionValidated", $link);
 						break;
 					case 'EXPENSE_REPORT_VALIDATE':
+						$link = '<a href="'.$urlwithroot.'/expensereport/card.php?id='.$object->id.'">'.$newref.'</a>';
 						$dir_output = $conf->expensereport->dir_output;
 						$object_type = 'expensereport';
-						$mesg = $langs->transnoentitiesnoconv("EMailTextExpenseReportValidated", $newref);
+						$mesg = $langs->transnoentitiesnoconv("EMailTextExpenseReportValidated", $link);
 						break;
 					case 'EXPENSE_REPORT_APPROVE':
+						$link = '<a href="'.$urlwithroot.'/expensereport/card.php?id='.$object->id.'">'.$newref.'</a>';
 						$dir_output = $conf->expensereport->dir_output;
 						$object_type = 'expensereport';
-						$mesg = $langs->transnoentitiesnoconv("EMailTextExpenseReportApproved", $newref);
+						$mesg = $langs->transnoentitiesnoconv("EMailTextExpenseReportApproved", $link);
 						break;
 					case 'HOLIDAY_VALIDATE':
+						$link = '<a href="'.$urlwithroot.'/holiday/card.php?id='.$object->id.'">'.$newref.'</a>';
 						$dir_output = $conf->holiday->dir_output;
 						$object_type = 'holiday';
-						$mesg = $langs->transnoentitiesnoconv("EMailTextHolidayValidated", $newref);
+						$mesg = $langs->transnoentitiesnoconv("EMailTextHolidayValidated", $link);
 						break;
 					case 'HOLIDAY_APPROVE':
+						$link = '<a href="'.$urlwithroot.'/holiday/card.php?id='.$object->id.'">'.$newref.'</a>';
 						$dir_output = $conf->holiday->dir_output;
 						$object_type = 'holiday';
-						$mesg = $langs->transnoentitiesnoconv("EMailTextHolidayApproved", $newref);
+						$mesg = $langs->transnoentitiesnoconv("EMailTextHolidayApproved", $link);
 						break;
 				}
 				$ref = dol_sanitizeFileName($newref);
@@ -732,11 +749,9 @@ class Notify
 					$filepdf = $pdf_path;
 				}
 
-				$message = $langs->transnoentities("YouReceiveMailBecauseOfNotification", $application, $mysoc->name)."\n";
 				$message .= $langs->transnoentities("YouReceiveMailBecauseOfNotification2", $application, $mysoc->name)."\n";
 				$message .= "\n";
 				$message .= $mesg;
-				//if ($link) $message.= "\n" . $urlwithroot . $link;	// link already added around the ref into the text
 
 				$message = nl2br($message);
 
@@ -779,7 +794,7 @@ class Notify
 						0,
 						1,
                         '',
-                        '',
+                        $trackid,
                         '',
                         '',
                         'notification'

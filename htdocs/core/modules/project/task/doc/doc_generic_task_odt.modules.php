@@ -474,7 +474,6 @@ class doc_generic_task_odt extends ModelePDFTask
 
 			if (!file_exists($dir))
 			{
-				print '$dir'.$dir;
 				if (dol_mkdir($dir) < 0)
 				{
 					$this->error = $langs->transnoentities("ErrorCanNotCreateDir", $dir);

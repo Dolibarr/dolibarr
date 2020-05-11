@@ -1681,7 +1681,8 @@ class ExtraFields
 		}
 		elseif ($type == 'price')
 		{
-			$value = price($value, 0, $langs, 0, 0, -1, $conf->currency);
+			//$value = price($value, 0, $langs, 0, 0, -1, $conf->currency);
+			if ($value || $value == '0') $value = price($value, 0, $langs, 0, 0, -1);
 		}
 		elseif ($type == 'select')
 		{

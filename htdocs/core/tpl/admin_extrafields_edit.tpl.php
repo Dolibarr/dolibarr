@@ -193,14 +193,17 @@ elseif (($type== 'sellist') || ($type == 'chkbxlst') || ($type == 'link') || ($t
 // Define list of possible type transition
 $typewecanchangeinto=array(
 	'varchar'=>array('varchar', 'phone', 'mail', 'url', 'select', 'password', 'text', 'html'),
-	'text'=>array('text','html'),
-	'html'=>array('text','html'),
+	'double'=>array('double', 'price'),
+	'price'=>array('double', 'price'),
+	'text'=>array('text', 'html'),
+	'html'=>array('text', 'html'),
 	'password'=>array('password', 'varchar'),
 	'mail'=>array('varchar', 'phone', 'mail', 'url', 'select'),
     'url'=>array('varchar', 'phone', 'mail', 'url', 'select'),
     'phone'=>array('varchar', 'phone', 'mail', 'url', 'select'),
     'select'=>array('varchar', 'phone', 'mail', 'url', 'select')
 );
+
 if (in_array($type, array_keys($typewecanchangeinto)))
 {
     $newarray=array();

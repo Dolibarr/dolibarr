@@ -58,6 +58,8 @@ $statut = GETPOST('statut', 'int');
 $bon = new BonPrelevement($db, "");
 $ligne = new LignePrelevement($db, $user);
 
+$hookmanager->initHooks(array('withdrawalsreceiptslineslist'));
+
 
 /*
  * Actions

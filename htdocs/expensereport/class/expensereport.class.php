@@ -1049,7 +1049,7 @@ class ExpenseReport extends CommonObject
                 $deplig = new ExpenseReportLine($this->db);
 
                 $deplig->rowid          = $objp->rowid;
-                $deplig->id             = $objp->id;
+                $deplig->id             = $objp->rowid;
                 $deplig->comments       = $objp->comments;
                 $deplig->qty            = $objp->qty;
                 $deplig->value_unit     = $objp->value_unit;
