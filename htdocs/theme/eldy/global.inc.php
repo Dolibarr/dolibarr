@@ -670,7 +670,9 @@ body[class*="colorblind-"] .text-success{
 .editfielda span.fa-pencil-alt:hover, .editfielda span.fa-trash:hover, .editfieldlang:hover {
     color: var(--colortexttitle) !important;
 }
-
+.fawidth30 {
+	width: 20px;
+}
 .floatnone {
 	float: none !important;
 }
@@ -1027,6 +1029,7 @@ table[summary="list_of_modules"] .fa-cog {
 /* rule for not too small screen only */
 @media only screen and (min-width: <?php echo empty($conf->global->THEME_ELDY_WITDHOFFSET_FOR_REDUC3) ? round($nbtopmenuentries * 47, 0) + 130 : $conf->global->THEME_ELDY_WITDHOFFSET_FOR_REDUC3; ?>px)
 {
+	.width20  { width: 20px; }
 	.width25  { width: 25px; }
     .width50  { width: 50px; }
     .width75  { width: 75px; }
@@ -1048,6 +1051,7 @@ table[summary="list_of_modules"] .fa-cog {
     .minwidth500imp { min-width: 500px !important; }
 }
 .widthauto { width: auto; }
+.width20  { width: 20px; }
 .width25  { width: 25px; }
 .width50  { width: 50px; }
 .width75  { width: 75px; }
@@ -1135,6 +1139,19 @@ table[summary="list_of_modules"] .fa-cog {
 
     .hideonsmartphone { display: none; }
     .hideonsmartphoneimp { display: none !important; }
+
+	span.pictotitle {
+		margin-<?php echo $left; ?>: 0 !important;
+	}
+	div.fiche>table.table-fiche-title {
+		margin-top: 7px !important;
+		margin-bottom: 15px !important;
+	}
+
+	select.minwidth100imp, select.minwidth100, select.minwidth200, .widthcentpercentminusx {
+		width: calc(100% - 30px) !important;
+		display: inline-block;
+	}
 }
 
 /* Force values for small screen 570 */
@@ -1142,6 +1159,10 @@ table[summary="list_of_modules"] .fa-cog {
 {
 	body {
 		font-size: <?php print is_numeric($fontsize) ? ($fontsize + 3).'px' : $fontsize; ?>;
+	}
+
+	.box-flex-item {
+		margin: 3px 2px 3px 2px !important;
 	}
 	div.refidno {
 		font-size: <?php print is_numeric($fontsize) ? ($fontsize + 3).'px' : $fontsize; ?> !important;
@@ -1470,10 +1491,10 @@ body.onlinepaymentbody div.fiche {	/* For online payment page */
 	margin: 20px !important;
 }
 div.fiche>table:first-child {
-	margin-bottom: 15px !important;
+	margin-bottom: 15px;
 }
 div.fiche>table.table-fiche-title {
-	margin-bottom: 7px !important;
+	margin-bottom: 7px;
 }
 div.fichecenter {
 	width: 100%;
@@ -1604,12 +1625,6 @@ td.nobordernopadding.widthpictotitle.col-picto {
 .pictotitle {
 	margin-<?php echo $right; ?>: 8px;
 	/* margin-bottom: 4px; */
-}
-@media only screen and (max-width: 767px)
-{
-	span.pictotitle {
-		margin-<?php echo $left; ?>: 0 !important;
-	}
 }
 .pictoobjectwidth {
 	width: 14px;
@@ -1884,8 +1899,8 @@ div.tmenuleft
 }
 div.tmenucenter
 {
-	padding-left: 0px;
-	padding-right: 3px;
+	padding-left: 2px;
+	padding-right: 2px;
 	<?php if ($disableimages) { ?>
 	padding-top: 8px;
 	height: 26px;
@@ -3585,6 +3600,12 @@ ul.noborder li:nth-child(even):not(.liste_titre) {
 
 @media only screen and (max-width: 767px)
 {
+	a.tmenu:link, a.tmenu:visited, a.tmenu:hover, a.tmenu:active {
+		padding: 0px 0px 0px 0px;
+	}
+	a.tmenusel:link, a.tmenusel:visited, a.tmenusel:hover, a.tmenusel:active {
+		padding: 0px 0px 0px 0px;
+	}
 	.boxstats, .boxstats130 {
 		margin: 3px;
     }
@@ -4867,7 +4888,7 @@ ul.ecmjqft li {
 ul.ecmjqft a {
 	line-height: 24px;
 	vertical-align: middle;
-	color: #333;
+	color: unset;
 	padding: 0px 0px;
 	font-weight:normal;
 	display: inline-block !important;
@@ -6309,7 +6330,9 @@ div.tabsElem a.tab {
 	div.login_block_user, div.login_block_other { clear: both; }
 	.atoplogin, .atoplogin:hover
 	{
-		color: #000 !important;
+		color:unset !important;
+		padding-left: 4px;
+		padding-right: 4px;
 	}
 	.login_block_elem {
 		padding: 0 !important;
