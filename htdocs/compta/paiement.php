@@ -64,10 +64,10 @@ if ($user->socid > 0)
     $socid = $user->socid;
 }
 // list of limit id for invoice
-$facids		= GETPOST('facids','alpha');
+$facids		= GETPOST('facids', 'alpha');
 if(empty($facid) && !empty($facids)) {
-	$r =explode(',', $facids); 
-	$facid = (int)$r[0]; 
+	$r =explode(',', $facids);
+	$facid = (int) $r[0];
 }
 
 $object = new Facture($db);
@@ -571,11 +571,11 @@ if ($action == 'create' || $action == 'confirm_paiement' || $action == 'add_paie
         {
             $sql .= ' AND type = 2'; // If paying back a credit note, we show all credit notes
         }
-		
-		// limits of invoice ids 
+
+		// limits of invoice ids
 		if(!empty($facids) )
 			$sql .= ' AND f.rowid IN('.$facids.')';
-		
+
         // Sort invoices by date and serial number: the older one comes first
         $sql .= ' ORDER BY f.datef ASC, f.ref ASC';
 
