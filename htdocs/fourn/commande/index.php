@@ -189,7 +189,7 @@ if ($resql)
 		$obj = $db->fetch_object($resql);
 
 		print '<tr class="oddeven">';
-		print '<td>'.$commandestatic->LibStatut($obj->nb).'</td>';
+		print '<td>'.$commandestatic->LibStatut($obj->fk_statut).'</td>';
 		print '<td class="right"><a href="list.php?statut='.$obj->fk_statut.'">'.$obj->nb.' '.$commandestatic->LibStatut($obj->fk_statut, 3).'</a></td>';
 
 		print "</tr>\n";

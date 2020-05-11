@@ -1332,7 +1332,7 @@ if (($id > 0 || !empty($ref)) || $projectidforalltimes > 0)
             */
 
 			// Fields from hook
-			$parameters = array('arrayfields'=>$arrayfields, 'obj'=>$task_time);
+			$parameters = array('arrayfields'=>$arrayfields, 'obj'=>$task_time, 'i'=>$i, 'totalarray'=>&$totalarray);
 			$reshook = $hookmanager->executeHooks('printFieldListValue', $parameters); // Note that $action and $object may have been modified by hook
 			print $hookmanager->resPrint;
 
