@@ -67,7 +67,7 @@ if ($user->socid > 0)
 $facids		= GETPOST('facids','alpha');
 if(empty($facid) && !empty($facids)) {
 	$r =explode(',', $facids); 
-	$facid = $r[0]; 
+	$facid = (int)$r[0]; 
 }
 
 $object = new Facture($db);
