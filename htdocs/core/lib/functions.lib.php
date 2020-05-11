@@ -4523,15 +4523,17 @@ function print_fleche_navigation($page, $file, $options = '', $nextpage = 0, $be
 	}
 	if ($page > 0)
 	{
-		print '<li class="pagination"><a class="paginationprevious" href="'.$file.'?page='.($page - 1).$options.'"><i class="fa fa-chevron-left" title="'.dol_escape_htmltag($langs->trans("Previous")).'"></i></a></li>';
+		print '<li class="pagination paginationpage"><a class="paginationprevious" href="'.$file.'?page='.($page - 1).$options.'"><i class="fa fa-chevron-left" title="'.dol_escape_htmltag($langs->trans("Previous")).'"></i></a></li>';
 	}
 	if ($betweenarrows)
 	{
+		print '<!--<div class="betweenarrows nowraponall inline-block">-->';
 		print $betweenarrows;
+		print '<!--</div>-->';
 	}
 	if ($nextpage > 0)
 	{
-		print '<li class="pagination"><a class="paginationnext" href="'.$file.'?page='.($page + 1).$options.'"><i class="fa fa-chevron-right" title="'.dol_escape_htmltag($langs->trans("Next")).'"></i></a></li>';
+		print '<li class="pagination paginationpage"><a class="paginationnext" href="'.$file.'?page='.($page + 1).$options.'"><i class="fa fa-chevron-right" title="'.dol_escape_htmltag($langs->trans("Next")).'"></i></a></li>';
 	}
 	if ($afterarrows)
 	{
@@ -8623,11 +8625,8 @@ function dolGetButtonTitle($label, $helpText = '', $iconClass = 'fa fa-file', $u
     }
 
     $class = 'btnTitle';
+    if ($iconClass == 'fa fa-plus-circle') $class .= ' btnTitlePlus';
 
-    // hidden conf keep during button transition TODO: remove this block
-    if (!empty($conf->global->MAIN_USE_OLD_TITLE_BUTTON)) {
-        $class = 'butActionNew';
-    }
     if (!empty($params['morecss'])) $class .= ' '.$params['morecss'];
 
     $attr = array(
@@ -8641,11 +8640,6 @@ function dolGetButtonTitle($label, $helpText = '', $iconClass = 'fa fa-file', $u
 
     if ($status <= 0) {
         $attr['class'] .= ' refused';
-
-        // hidden conf keep during button transition TODO: remove this block
-        if (!empty($conf->global->MAIN_USE_OLD_TITLE_BUTTON)) {
-            $attr['class'] = 'butActionNewRefused';
-        }
 
         $attr['href'] = '';
 
@@ -8698,17 +8692,11 @@ function dolGetButtonTitle($label, $helpText = '', $iconClass = 'fa fa-file', $u
 
     $tag = (empty($attr['href']) ? 'span' : 'a');
 
-    $button = '<'.$tag.' '.$compiledAttributes.' >';
+    $button = '';
+    $button .= '<'.$tag.' '.$compiledAttributes.' >';
     $button .= '<span class="'.$iconClass.' valignmiddle btnTitle-icon"></span>';
     $button .= '<span class="valignmiddle text-plus-circle btnTitle-label'.(empty($params['forcenohideoftext']) ? ' hideonsmartphone' : '').'">'.$label.'</span>';
     $button .= '</'.$tag.'>';
-
-    // hidden conf keep during button transition TODO: remove this block
-    if (!empty($conf->global->MAIN_USE_OLD_TITLE_BUTTON)) {
-        $button = '<'.$tag.' '.$compiledAttributes.' ><span class="text-plus-circle">'.$label.'</span>';
-        $button .= '<span class="'.$iconClass.' valignmiddle"></span>';
-        $button .= '</'.$tag.'>';
-    }
 
     return $button;
 }
