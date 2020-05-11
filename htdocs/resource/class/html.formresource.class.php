@@ -101,10 +101,12 @@ class FormResource
     		{
     			//$minLength = (is_numeric($conf->global->RESOURCE_USE_SEARCH_TO_SELECT)?$conf->global->RESOURCE_USE_SEARCH_TO_SELECT:2);
     			$out .= ajax_combobox($htmlname, $event, $conf->global->RESOURCE_USE_SEARCH_TO_SELECT);
+    		} else {
+    			$out .= ajax_combobox($htmlname);
     		}
 
     		// Construct $out and $outarray
-    		$out .= '<select id="'.$htmlname.'" class="flat minwidth200'.($morecss ? ' '.$morecss : '').'" name="'.$htmlname.'">'."\n";
+    		$out .= '<select id="'.$htmlname.'" class="flat minwidth100'.($morecss ? ' '.$morecss : '').'" name="'.$htmlname.'">'."\n";
     		if ($showempty) $out .= '<option value="-1">&nbsp;</option>'."\n";
 
     		$num = 0;
@@ -137,7 +139,6 @@ class FormResource
     			}
     		}
     		$out .= '</select>'."\n";
-    		$out .= ajax_combobox($htmlname);
 
     		if ($outputmode != 2)
     		{

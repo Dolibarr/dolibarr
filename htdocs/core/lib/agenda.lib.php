@@ -109,9 +109,9 @@ function print_actions_filter($form, $canedit, $status, $year, $month, $day, $sh
 
     		// Resource
     		print '<tr>';
-    		print '<td class="nowrap" style="padding-bottom: 2px; padding-right: 4px;">';
+    		print '<td class="nowrap">';
     		print $langs->trans("Resource");
-    		print '</td><td class="nowraponall maxwidthonsmartphone">';
+    		print '</td><td class="nowraponall">';
     		print img_picto('', 'object_resource', 'class="fawidth30 inline-block"');
     		print $formresource->select_resource_list($resourceid, "search_resourceid", '', 1, 0, 0, null, '', 2, 0, 'maxwidth500');
     		print '</td></tr>';
@@ -158,7 +158,7 @@ function print_actions_filter($form, $canedit, $status, $year, $month, $day, $sh
 	{
 		// Filter on hours
 		print '<tr>';
-		print '<td class="nowrap" style="padding-bottom: 2px; padding-right: 4px;">'.$langs->trans("VisibleTimeRange").'</td>';
+		print '<td class="nowrap">'.$langs->trans("VisibleTimeRange").'</td>';
 		print "<td class='nowrap'>";
 		print '<div class="ui-grid-a"><div class="ui-block-a">';
 		print '<input type="number" class="short" name="begin_h" value="'.$begin_h.'" min="0" max="23">';
