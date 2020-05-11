@@ -353,10 +353,13 @@ class FormActions
         require_once DOL_DOCUMENT_ROOT.'/core/class/html.form.class.php';
         $caction = new CActionComm($this->db);
 
-       	// Suggest a list with manual events or all auto events
-       	$arraylist = $caction->liste_array(1, 'code', $excludetype, $onlyautoornot);
-       	array_unshift($arraylist, '&nbsp;'); // Add empty line at start
-       	//asort($arraylist);
+        // Suggest a list with manual events or all auto events
+        $arraylist = $caction->liste_array(1, 'code', $excludetype, $onlyautoornot);
+        if (empty($multiselect)) {
+            // Add empty line at start only if no multiselect
+            array_unshift($arraylist, '&nbsp;');
+        }
+        //asort($arraylist);
 
        	if ($selected == 'manual') $selected = 'AC_OTH';
        	if ($selected == 'auto')   $selected = 'AC_OTH_AUTO';
