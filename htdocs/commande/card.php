@@ -557,14 +557,17 @@ if (empty($reshook))
 		}
 	}
 
-	elseif ($action == 'setdate_livraison' && $usercancreate) {
-		// print "x ".$_POST['liv_month'].", ".$_POST['liv_day'].", ".$_POST['liv_year'];
-		$datelivraison = dol_mktime(0, 0, 0, GETPOST('liv_month'), GETPOST('liv_day'), GETPOST('liv_year'));
+	elseif ($action == 'setdate_livraison' && $usercancreate)
+	{
+	    //print "x ".$_POST['liv_month'].", ".$_POST['liv_day'].", ".$_POST['liv_year'];
+	    $datedelivery = dol_mktime(GETPOST('liv_hour', 'int'), GETPOST('liv_min', 'int'), 0, GETPOST('liv_month', 'int'), GETPOST('liv_day', 'int'), GETPOST('liv_year', 'int'));
 
-		$result = $object->set_date_livraison($user, $datelivraison);
-		if ($result < 0) {
-			setEventMessages($object->error, $object->errors, 'errors');
-		}
+	    $object->fetch($id);
+	    $result = $object->set_date_livraison($user, $datedelivery);
+	    if ($result < 0)
+	    {
+	        setEventMessages($object->error, $object->errors, 'errors');
+	    }
 	}
 
 	elseif ($action == 'setmode' && $usercancreate) {
@@ -1681,15 +1684,14 @@ if ($action == 'create' && $usercancreate)
 	print $form->selectDate('', 're', '', '', '', "crea_commande", 1, 1); // Always autofill date with current date
 	print '</td></tr>';
 
-	// Delivery date planed
-	print "<tr><td>".$langs->trans("DateDeliveryPlanned").'</td><td>';
-	if (empty($datedelivery))
-	{
-		if (!empty($conf->global->DATE_LIVRAISON_WEEK_DELAY)) $datedelivery = time() + ((7 * $conf->global->DATE_LIVRAISON_WEEK_DELAY) * 24 * 60 * 60);
-		else $datedelivery = empty($conf->global->MAIN_AUTOFILL_DATE_DELIVERY) ?-1 : '';
-	}
-	print $form->selectDate($datedelivery, 'liv_', '', '', '', "crea_commande", 1, 1);
-	print "</td></tr>";
+  // Date delivery planned
+  print '<tr><td>'.$langs->trans("DateDeliveryPlanned").'</td>';
+  print '<td colspan="3">';
+  //print dol_print_date($object->date_livraison, "day");	// date_livraison come from order and will be stored into date_delivery planed.
+  $date_delivery = ($date_delivery ? $date_delivery : $object->date_livraison); // $date_delivery comes from GETPOST
+  print $form->selectDate($date_delivery ? $date_delivery : -1, 'date_delivery', 1, 1, 1);
+  print "</td>\n";
+  print '</tr>';
 
 	// terms of the settlement
 	print '<tr><td class="nowrap">'.$langs->trans('PaymentConditionsShort').'</td><td>';
@@ -2209,11 +2211,11 @@ if ($action == 'create' && $usercancreate)
 			print '<form name="setdate_livraison" action="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'" method="post">';
 			print '<input type="hidden" name="token" value="'.newToken().'">';
 			print '<input type="hidden" name="action" value="setdate_livraison">';
-			print $form->selectDate($object->date_livraison ? $object->date_livraison : - 1, 'liv_', '', '', '', "setdate_livraison");
+			print $form->selectDate($object->date_delivery ? $object->date_delivery : -1, 'liv_', 1, 1, '', "setdate_livraison", 1, 0);
 			print '<input type="submit" class="button" value="'.$langs->trans('Modify').'">';
 			print '</form>';
 		} else {
-			print $object->date_livraison ? dol_print_date($object->date_livraison, 'daytext') : '&nbsp;';
+			print $object->date_livraison ? dol_print_date($object->date_livraison, 'dayhour') : '&nbsp;';
 			if ($object->hasDelay() && !empty($object->date_livraison)) {
 				print ' '.img_picto($langs->trans("Late").' : '.$object->showDelay(), "warning");
 			}
