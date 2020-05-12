@@ -33,4 +33,4 @@ $urlwithouturlroot = preg_replace('/'.preg_quote(DOL_URL_ROOT, '/').'$/i', '', t
 $urlwithroot = $urlwithouturlroot.DOL_URL_ROOT; // This is to use external domain name found into config file
 
 $module = new modTcpdfbarcode($db);
-$result = $module->buildBarCode($urlwithroot."/takepos/auto_order.php?key=".dol_encode($key), 'QRCODE', 'Y');
+$result = $module->buildBarCode($urlwithroot."/takepos/public/auto_order.php?key=".dol_encode($key), 'QRCODE', 'Y');
