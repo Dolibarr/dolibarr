@@ -7551,6 +7551,10 @@ abstract class CommonObject
 	{
 		if (is_null($value)) return 'NULL';
 		elseif (preg_match('/^(int|double|real|price)/i', $fieldsentry['type'])) return $this->db->escape("$value");
+		elseif($fieldsentry['type']=='boolean'){
+		    if($value) return 'true';
+		    else return 'false';
+        }
 		else return "'".$this->db->escape($value)."'";
 	}
 
