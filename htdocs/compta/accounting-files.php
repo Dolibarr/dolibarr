@@ -37,8 +37,10 @@ require_once DOL_DOCUMENT_ROOT.'/compta/sociales/class/chargesociales.class.php'
 require_once DOL_DOCUMENT_ROOT.'/don/class/don.class.php';
 require_once DOL_DOCUMENT_ROOT.'/expensereport/class/expensereport.class.php';
 require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.facture.class.php';
+require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.facture.class.php';
+require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/paymentvarious.class.php';
 
-$langs->loadLangs(array("accountancy", "bills", "companies", "salaries", "compta", "trips"));
+$langs->loadLangs(array("accountancy", "bills", "companies", "salaries", "compta", "trips", "banks"));
 
 $date_start = GETPOST('date_start', 'alpha');
 $date_startDay = GETPOST('date_startday', 'int');
@@ -176,7 +178,7 @@ if (($action == 'searchfiles' || $action == 'dl')) {
 	    // Paiements of salaries
 		if (GETPOST('selectpaymentsofsalaries')) {
 			if (!empty($sql)) $sql .= " UNION ALL";
-			$sql .= " SELECT t.rowid as id, t.entity, t.ref as ref, 1 as paid, amount as total_ht, amount as total_ttc, 0 as total_vat, t.fk_user as fk_soc, t.datep as date, t.dateep as date_due, 'SalaryPayment' as item, CONCAT(CONCAT(u.lastname, ' '), u.firstname)  as thirdparty_name, '' as thirdparty_code, c.code as country_code, '' as vatnum";
+			$sql .= " SELECT t.rowid as id, t.entity, t.label as ref, 1 as paid, amount as total_ht, amount as total_ttc, 0 as total_vat, t.fk_user as fk_soc, t.datep as date, t.dateep as date_due, 'SalaryPayment' as item, CONCAT(CONCAT(u.lastname, ' '), u.firstname)  as thirdparty_name, '' as thirdparty_code, c.code as country_code, '' as vatnum";
 		    $sql .= " FROM ".MAIN_DB_PREFIX."payment_salary as t LEFT JOIN ".MAIN_DB_PREFIX."user as u ON u.rowid = t.fk_user LEFT JOIN ".MAIN_DB_PREFIX."c_country as c ON c.rowid = u.fk_country";
 		    $sql .= " WHERE datep between ".$wheretail;
 		    $sql .= " AND t.entity IN (".($entity == 1 ? '0,1' : $entity).')';
@@ -190,6 +192,14 @@ if (($action == 'searchfiles' || $action == 'dl')) {
 		    $sql .= " WHERE date_creation between ".$wheretail;
 		    $sql .= " AND t.entity IN (".($entity == 1 ? '0,1' : $entity).')';
 		    //$sql.=" AND fk_statut <> ".ChargeSociales::STATUS_DRAFT;
+		}
+	    // Various payments
+		if (GETPOST('selectvariouspayment')) {
+			if (!empty($sql)) $sql .= " UNION ALL";
+			$sql .= " SELECT t.rowid as id, t.entity, t.label as ref, 1 as paid, t.amount as total_ht, t.amount as total_ttc, 0 as total_tva, 0 as fk_soc, t.datec as date, t.datep as date_due, 'VariousPayment' as item, '' as thirdparty_name, '' as thirdparty_code, '' as country_code, '' as vatnum";
+		    $sql .= " FROM ".MAIN_DB_PREFIX."payment_various as t";
+		    $sql .= " WHERE datec between ".$wheretail;
+		    $sql .= " AND t.entity IN (".($entity == 1 ? '0,1' : $entity).')';
 		}
 
 		if ($sql) {
@@ -253,6 +263,12 @@ if (($action == 'searchfiles' || $action == 'dl')) {
 		                	$subdir .= ($subdir ? '/' : '').dol_sanitizeFileName($objd->id);
 		                	$upload_dir = $conf->tax->dir_output.'/'.$subdir;
 		                	$link = "document.php?modulepart=tax&file=".str_replace('/', '%2F', $subdir).'%2F';
+		                	break;
+		                case "VariousPayment":
+		                	$subdir = '';
+		                	$subdir .= ($subdir ? '/' : '').dol_sanitizeFileName($objd->id);
+		                	$upload_dir = $conf->bank->dir_output.'/'.$subdir;
+                            $link = "document.php?modulepart=banque&file=".str_replace('/', '%2F', $subdir).'%2F';
 		                	break;
 		                default:
 		                    $subdir = '';
@@ -394,11 +410,13 @@ if ($result && $action == "dl" && !$error)
     {
         foreach ($filesarray as $key => $file)
         {
-        	foreach ($file['files'] as $filecursor) {
-        		if (file_exists($filecursor["fullname"])) {
-        			$zip->addFile($filecursor["fullname"], $filecursor["relpathnamelang"]);
-        		}
-        	}
+            if (!empty($file['files'])) {
+                foreach ($file['files'] as $filecursor) {
+                    if (file_exists($filecursor["fullname"])) {
+                        $zip->addFile($filecursor["fullname"], $filecursor["relpathnamelang"]);
+                    }
+                }
+            }
 
             $log .= '"'.$langs->trans($file['item']).'"';
             if (!empty($conf->multicompany->enabled) && is_object($mc))
@@ -448,6 +466,11 @@ $form = new Form($db);
 $userstatic = new User($db);
 $invoice = new Facture($db);
 $supplier_invoice = new FactureFournisseur($db);
+$expensereport = new ExpenseReport($db);
+$don = new Don($db);
+$salary_payment = new PaymentSalary($db);
+$charge_sociales = new ChargeSociales($db);
+$various_payment = new PaymentVarious($db);
 
 $title = $langs->trans("ComptaFiles").' - '.$langs->trans("List");
 $help_url = '';
@@ -492,7 +515,8 @@ $listofchoices = array(
 	'selectexpensereports'=>array('label'=>'ExpenseReports', 'lang'=>'trips'),
 	'selectdonations'=>array('label'=>'Donations', 'lang'=>'donation'),
 	'selectpaymentsofsalaries'=>array('label'=>'SalariesPayments', 'lang'=>'salaries'),
-	'selectsocialcontributions'=>array('label'=>'SocialContributions')
+	'selectsocialcontributions'=>array('label'=>'SocialContributions'),
+	'selectvariouspayment'=>array('label'=>'VariousPayment')
 );
 foreach ($listofchoices as $choice => $val) {
 	$checked = (((!GETPOSTISSET('search') && $action != 'searchfiles') || GETPOST($choice)) ? ' checked="checked"' : '');
@@ -592,14 +616,34 @@ if (!empty($date_start) && !empty($date_stop))
                 // Ref
                 print '<td class="nowraponall">';
 
-                if ($data['item'] == 'Invoice') {
-                	$invoice->id = $data['id'];
+            if ($data['item'] == 'Invoice') {
+                $invoice->id = $data['id'];
                 	$invoice->ref = $data['ref'];
                 	print $invoice->getNomUrl(1, '', 0, 0, '', 0, 0, 0);
                 } elseif ($data['item'] == 'SupplierInvoice') {
                 	$supplier_invoice->id = $data['id'];
                 	$supplier_invoice->ref = $data['ref'];
                 	print $supplier_invoice->getNomUrl(1, '', 0, 0, '', 0, 0, 0);
+                } elseif ($data['item'] == 'ExpenseReport') {
+                    $expensereport->id = $data['id'];
+                	$expensereport->ref = $data['ref'];
+                	print $expensereport->getNomUrl(1, '', 0, 0, '', 0, 0, 0);
+                } elseif ($data['item'] == 'SalaryPayment') {
+                    $salary_payment->id = $data['id'];
+                	$salary_payment->ref = $data['ref'];
+                	print $salary_payment->getNomUrl(1, '', 0, 0, '', 0, 0, 0);
+                } elseif ($data['item'] == 'Donation') {
+                    $don->id = $data['id'];
+                	$don->ref = $data['ref'];
+                	print $don->getNomUrl(1, '', 0, 0, '', 0, 0, 0);
+                } elseif ($data['item'] == 'SocialContributions') {
+                    $charge_sociales->id = $data['id'];
+                	$charge_sociales->ref = $data['ref'];
+                	print $charge_sociales->getNomUrl(1, '', 0, 0, '', 0, 0, 0);
+                } elseif ($data['item'] == 'VariousPayment') {
+                    $various_payment->id = $data['id'];
+                	$various_payment->ref = $data['ref'];
+                	print $various_payment->getNomUrl(1, '', 0, 0, '', 0, 0, 0);
                 } else {
                 	print $data['ref'];
                 }
