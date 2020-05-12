@@ -6035,11 +6035,9 @@ abstract class CommonObject
 						$obj = $this->db->fetch_object($resql);
 
 						// Several field into label (eq table:code|libelle:rowid)
-						$notrans = false;
 						$fields_label = explode('|', $InfoFieldList[1]);
 						if (is_array($fields_label))
 						{
-							$notrans = true;
 							foreach ($fields_label as $field_toshow)
 							{
 								$labeltoshow .= $obj->$field_toshow.' ';
@@ -6062,14 +6060,11 @@ abstract class CommonObject
 							}
 							$out .= '<option value="'.$obj->rowid.'" selected>'.$labeltoshow.'</option>';
 						} else {
-							if (!$notrans)
-							{
-								$translabel = $langs->trans($obj->{$InfoFieldList[1]});
-								if ($translabel != $obj->{$InfoFieldList[1]}) {
-									$labeltoshow = dol_trunc($translabel, 18);
-								} else {
-									$labeltoshow = dol_trunc($obj->{$InfoFieldList[1]}, 18);
-								}
+							$translabel = $langs->trans($obj->{$InfoFieldList[1]});
+							if ($translabel != $obj->{$InfoFieldList[1]}) {
+								$labeltoshow = dol_trunc($translabel, 18);
+							} else {
+								$labeltoshow = dol_trunc($obj->{$InfoFieldList[1]}, 18);
 							}
 							if (empty($labeltoshow)) $labeltoshow = '(not defined)';
 							if ($value == $obj->rowid)
