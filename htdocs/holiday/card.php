@@ -1291,7 +1291,9 @@ else
                 if ($includesunday) $htmlhelp.='<br>'.$langs->trans("DayIsANonWorkingDay", $langs->trans("Sunday"));
                 print $form->textwithpicto($langs->trans('NbUseDaysCP'), $htmlhelp);
                 print '</td>';
-                print '<td>'.num_open_day($object->date_debut_gmt, $object->date_fin_gmt, 0, 1, $object->halfday).'</td>';
+                print '<td>';
+                print num_open_day($object->date_debut_gmt, $object->date_fin_gmt, 0, 1, $object->halfday);
+                print '</td>';
                 print '</tr>';
 
                 if ($object->statut == Holiday::STATUS_REFUSED)
