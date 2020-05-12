@@ -302,11 +302,10 @@ if ($action != 'export_csv')
 			if (empty($displayed_account) || $root_account_description != $displayed_account) {
 				// Affiche un Sous-Total par compte comptable
 				if ($displayed_account != "") {
-					print '<tr class="liste_total"><td class="right" colspan="2">' . $langs->trans("SubTotal") . ':</td>';
+					print '<tr class="liste_total"><td class="right" colspan="3">' . $langs->trans("SubTotal") . ':</td>';
 					print '<td class="nowrap right">' . price($sous_total_debit) . '</td>';
 					print '<td class="nowrap right">' . price($sous_total_credit) . '</td>';
 					print '<td class="nowrap right">' . price(price2num($sous_total_credit - $sous_total_debit)) . '</td>';
-					print "<td></td>\n";
 					print "<td></td>\n";
 					print '</tr>';
 				}
