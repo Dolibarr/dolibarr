@@ -983,7 +983,7 @@ select.flat.selectlimit {
     max-width: 0;
     overflow: auto;
 }
-.divintdwithtwolinesmax {
+.divintodwithtwolinesmax {
     width: 75px;
     display: -webkit-box;
     -webkit-box-orient: vertical;
@@ -1122,6 +1122,7 @@ table[summary="list_of_modules"] .fa-cog {
 /* rule for not too small screen only */
 @media only screen and (min-width: <?php echo round($nbtopmenuentries * $fontsize * 3.4, 0) + 7; ?>px)
 {
+	.width20  { width: 20px; }
 	.width25  { width: 25px; }
     .width50  { width: 50px; }
     .width75  { width: 75px; }
@@ -1143,6 +1144,7 @@ table[summary="list_of_modules"] .fa-cog {
 	.minwidth500imp { min-width: 500px !important; }
 }
 .widthauto { width: auto; }
+.width20  { width: 20px; }
 .width25  { width: 25px; }
 .width50  { width: 50px; }
 .width75  { width: 75px; }

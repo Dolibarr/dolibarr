@@ -1,9 +1,9 @@
 <?php
 /* Copyright (C) 2001-2002	Rodolphe Quiedeville	<rodolphe@quiedeville.org>
  * Copyright (C) 2003		Jean-Louis Bergamo	<jlb@j1b.org>
- * Copyright (C) 2004-2017	Laurent Destailleur	<eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2020	Laurent Destailleur	<eldy@users.sourceforge.net>
  * Copyright (C) 2005-2012	Regis Houssin		<regis.houssin@inodbox.com>
- * Copyright (C) 2019           Nicolas ZABOURI         <info@inovea-conseil.com>
+ * Copyright (C) 2019       Nicolas ZABOURI         <info@inovea-conseil.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -22,7 +22,7 @@
 /**
  *       \file       htdocs/adherents/index.php
  *       \ingroup    member
- *       \brief      Page accueil module adherents
+ *       \brief      Home page of membership module
  */
 
 require '../main.inc.php';
@@ -339,7 +339,7 @@ if ($resql)
 			$staticmember->ref = $staticmember->getFullName($langs);
 			$statictype->id = $obj->typeid;
 			$statictype->label = $obj->label;
-			print '<td>'.$staticmember->getNomUrl(1, 32).'</td>';
+			print '<td class="nowraponall">'.$staticmember->getNomUrl(1, 32).'</td>';
 			print '<td>'.$statictype->getNomUrl(1, 32).'</td>';
 			print '<td>'.dol_print_date($db->jdate($obj->datem), 'dayhour').'</td>';
 			print '<td class="right">'.$staticmember->LibStatut($obj->statut, ($obj->subscription == 'yes' ? 1 : 0), $db->jdate($obj->date_end_subscription), 3).'</td>';
@@ -399,12 +399,12 @@ if ($resql)
 				$staticmember->name = $obj->company;
 			}
 			$staticmember->ref = $staticmember->getFullName($langs);
-			print '<td>'.$subscriptionstatic->getNomUrl(1).'</td>';
-			print '<td>'.$staticmember->getNomUrl(1, 32, 'subscription').'</td>';
-			print '<td>'.get_date_range($db->jdate($obj->date_start), $db->jdate($obj->date_end)).'</td>';
+			print '<td class="nowraponall">'.$subscriptionstatic->getNomUrl(1).'</td>';
+			print '<td class="nowraponall">'.$staticmember->getNomUrl(1, 32, 'subscription').'</td>';
+			print '<td class="nowraponall">'.get_date_range($db->jdate($obj->date_start), $db->jdate($obj->date_end)).'</td>';
 			print '<td class="right">'.price($obj->subscription).'</td>';
 			//print '<td class="right">'.$staticmember->LibStatut($obj->statut,($obj->subscription=='yes'?1:0),$db->jdate($obj->date_end_subscription),5).'</td>';
-			print '<td class="right">'.dol_print_date($db->jdate($obj->datem ? $obj->datem : $obj->datec), 'dayhour').'</td>';
+			print '<td class="right nowraponall">'.dol_print_date($db->jdate($obj->datem ? $obj->datem : $obj->datec), 'dayhour').'</td>';
 			print '</tr>';
 			$i++;
 		}

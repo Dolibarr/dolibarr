@@ -227,11 +227,13 @@ if (is_array($qualifiedjobs) && (count($qualifiedjobs) > 0)) {
 				echo "You can also enable module Log if not yet enabled, run again and take a look into dolibarr.log file\n";
 				dol_syslog("cron_run_jobs.php::run_jobs Error ".$cronjob->error, LOG_ERR);
 				$nbofjobslaunchedko++;
+				$resultstring = 'KO';
 			} else {
 				$nbofjobslaunchedok++;
+				$resultstring = 'OK';
 			}
 
-			echo " - result of run_jobs = ".$result;
+			echo " - run_jobs ".$resultstring." result = ".$result;
 
 			// We re-program the next execution and stores the last execution time for this job
 			$result = $cronjob->reprogram_jobs($userlogin, $now);

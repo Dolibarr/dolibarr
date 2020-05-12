@@ -339,9 +339,10 @@ class FormActions
      *  @param	int		        $hideinfohelp	1=Do not show info help, 0=Show, -1=Show+Add info to tell how to set default value
      *  @param  int		        $multiselect    1=Allow multiselect of action type
      *  @param  int             $nooutput       1=No output
+     *  @param	string			$morecss		More css to add to SELECT component.
      * 	@return	string
      */
-    public function select_type_actions($selected = '', $htmlname = 'actioncode', $excludetype = '', $onlyautoornot = 0, $hideinfohelp = 0, $multiselect = 0, $nooutput = 0)
+    public function select_type_actions($selected = '', $htmlname = 'actioncode', $excludetype = '', $onlyautoornot = 0, $hideinfohelp = 0, $multiselect = 0, $nooutput = 0, $morecss = '')
     {
         // phpcs:enable
         global $langs, $user, $form, $conf;
@@ -352,10 +353,13 @@ class FormActions
         require_once DOL_DOCUMENT_ROOT.'/core/class/html.form.class.php';
         $caction = new CActionComm($this->db);
 
-       	// Suggest a list with manual events or all auto events
-       	$arraylist = $caction->liste_array(1, 'code', $excludetype, $onlyautoornot);
-       	array_unshift($arraylist, '&nbsp;'); // Add empty line at start
-       	//asort($arraylist);
+        // Suggest a list with manual events or all auto events
+        $arraylist = $caction->liste_array(1, 'code', $excludetype, $onlyautoornot);
+        if (empty($multiselect)) {
+            // Add empty line at start only if no multiselect
+            array_unshift($arraylist, '&nbsp;');
+        }
+        //asort($arraylist);
 
        	if ($selected == 'manual') $selected = 'AC_OTH';
        	if ($selected == 'auto')   $selected = 'AC_OTH_AUTO';
@@ -371,7 +375,7 @@ class FormActions
 		}
 		else
 		{
-			$out .= $form->selectarray($htmlname, $arraylist, $selected, 0, 0, 0, '', 0, 0, 0, '', 'minwidth200', 1);
+			$out .= $form->selectarray($htmlname, $arraylist, $selected, 0, 0, 0, '', 0, 0, 0, '', 'minwidth200'.($morecss ? ' '.$morecss : ''), 1);
 		}
 
         if ($user->admin && empty($onlyautoornot) && $hideinfohelp <= 0)

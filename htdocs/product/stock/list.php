@@ -549,7 +549,15 @@ if ($num)
 			{
 				print '<td'.($cssforfield ? ' class="'.$cssforfield.'"' : '').'>';
 				if ($key == 'statut') print $warehouse->getLibStatut(5);
-				else print $warehouse->showOutputField($val, $key, $warehouse->$key, '');
+				if ($key == 'phone') {
+					print dol_print_phone($obj->phone, '', 0, $obj->rowid, 'AC_TEL');
+				}
+				elseif ($key == 'fax') {
+					print dol_print_phone($obj->fax, '', 0, $obj->rowid, 'AC_FAX');
+				}
+				else {
+					print $warehouse->showOutputField($val, $key, $warehouse->$key, '');
+				}
 				print '</td>';
 				if (!$i) $totalarray['nbfield']++;
 				if (!empty($val['isameasure']))
@@ -593,7 +601,7 @@ if ($num)
 		// Extra fields
 		include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_print_fields.tpl.php';
 		// Fields from hook
-		$parameters = array('arrayfields'=>$arrayfields, 'obj'=>$obj);
+		$parameters = array('arrayfields'=>$arrayfields, 'obj'=>$obj, 'i'=>$i, 'totalarray'=>&$totalarray);
 		$reshook = $hookmanager->executeHooks('printFieldListValue', $parameters, $object); // Note that $action and $object may have been modified by hook
 		print $hookmanager->resPrint;
 

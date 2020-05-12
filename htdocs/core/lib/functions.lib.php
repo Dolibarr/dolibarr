@@ -3158,13 +3158,13 @@ function img_picto($titlealt, $picto, $moreatt = '', $pictoisfullpath = false, $
 	        	'object_category', 'object_conversation', 'object_bookmark', 'object_bug', 'object_dolly', 'object_dollyrevert', 'object_generic', 'object_folder',
         		'object_list-alt', 'object_calendar', 'object_calendarweek', 'object_calendarmonth', 'object_calendarday', 'object_calendarperuser',
         		'object_cash-register', 'object_company', 'object_contact', 'object_contract', 'object_donation', 'object_dynamicprice',
-        		'object_holiday', 'object_hrm', 'object_invoice', 'object_intervention', 'object_label',
+        		'object_globe', 'object_holiday', 'object_hrm', 'object_invoice', 'object_intervention', 'object_label',
         		'object_margin', 'object_money-bill-alt', 'object_multicurrency', 'object_order', 'object_payment',
         		'object_lot', 'object_mrp', 'object_payment', 'object_product', 'object_propal',
         		'object_other', 'object_paragraph', 'object_poll', 'object_printer', 'object_project', 'object_projectpub', 'object_propal', 'object_resource', 'object_rss', 'object_projecttask',
-        		'object_supplier_invoice', 'object_supplier_order', 'object_supplier_proposal', 'object_service', 'object_stock',
+        		'object_shipment', 'object_supplier_invoice', 'object_supplier_order', 'object_supplier_proposal', 'object_service', 'object_stock',
         		'object_technic', 'object_ticket', 'object_trip', 'object_user', 'object_group', 'object_member',
-        		'object_phoning', 'object_phoning_mobile', 'object_phoning_fax', 'object_email',
+        		'object_phoning', 'object_phoning_mobile', 'object_phoning_fax', 'object_email', 'object_website',
         		'off', 'on', 'order',
         		'paiment', 'play', 'playdisabled', 'poll', 'printer', 'product', 'propal', 'projecttask', 'stock', 'resize', 'service', 'stats', 'trip',
 				'setup', 'sign-out', 'split', 'switch_off', 'switch_on', 'tools', 'unlink', 'uparrow', 'user', 'wrench',
@@ -3209,11 +3209,12 @@ function img_picto($titlealt, $picto, $moreatt = '', $pictoisfullpath = false, $
 				'resize'=>'crop', 'supplier_order'=>'dol-order_supplier', 'supplier_proposal'=>'file-signature',
 		    	'payment'=>'money-check-alt', 'phoning'=>'phone', 'phoning_mobile'=>'mobile-alt', 'phoning_fax'=>'fax', 'printer'=>'print', 'product'=>'cube', 'service'=>'concierge-bell',
 		    	'resource'=>'laptop-house',
-		    	'stock'=>'box-open', 'stats' => 'chart-bar', 'split'=>'code-branch', 'supplier_invoice'=>'file-invoice-dollar', 'technic'=>'cogs', 'ticket'=>'ticket-alt',
+		    	'shipment'=>'dolly', 'stock'=>'box-open', 'stats' => 'chart-bar', 'split'=>'code-branch', 'supplier_invoice'=>'file-invoice-dollar', 'technic'=>'cogs', 'ticket'=>'ticket-alt',
 		    	'title_setup'=>'tools', 'title_accountancy'=>'money-check-alt', 'title_bank'=>'university', 'title_hrm'=>'umbrella-beach',
 		    	'title_agenda'=>'calendar-alt',
 		    	'uparrow'=>'mail-forward',
-		    	'jabber'=>'comment-o'
+		    	'jabber'=>'comment-o',
+		    	'website'=>'globe-americas'
 		    );
 			if ($pictowithouttext == 'off') {
 			    $fakey = 'fa-square';
@@ -3273,7 +3274,8 @@ function img_picto($titlealt, $picto, $moreatt = '', $pictoisfullpath = false, $
 				'error'=>'pictoerror', 'warning'=>'pictowarning', 'switch_on'=>'font-status4',
 				'holiday'=>'bg-infobox-holiday', 'invoice'=>'bg-infobox-commande',
 				'payment'=>'bg-infobox-bank_account', 'poll'=>'bg-infobox-adherent', 'project'=>'bg-infobox-project', 'projecttask'=>'bg-infobox-project', 'propal'=>'bg-infobox-propal',
-				'resource'=>'bg-infobox-action', 'supplier_invoice'=>'bg-infobox-order_supplier', 'supplier_order'=>'bg-infobox-order_supplier', 'supplier_proposal'=>'bg-infobox-supplier_proposal',
+				'resource'=>'bg-infobox-action',
+				'supplier_invoice'=>'bg-infobox-order_supplier', 'supplier_order'=>'bg-infobox-order_supplier', 'supplier_proposal'=>'bg-infobox-supplier_proposal',
 				'ticket'=>'bg-infobox-contrat', 'title_accountancy'=>'bg-infobox-bank_account', 'title_hrm'=>'bg-infobox-holiday', 'trip'=>'bg-infobox-expensereport', 'title_agenda'=>'bg-infobox-action',
 				//'title_setup'=>'bg-infobox-action', 'tools'=>'bg-infobox-action',
 				'list-alt'=>'imgforviewmode', 'calendar'=>'imgforviewmode', 'calendarweek'=>'imgforviewmode', 'calendarmonth'=>'imgforviewmode', 'calendarday'=>'imgforviewmode', 'calendarperuser'=>'imgforviewmode'
@@ -3291,7 +3293,8 @@ function img_picto($titlealt, $picto, $moreatt = '', $pictoisfullpath = false, $
 				'map-marker-alt'=>'#aaa', 'mrp'=>'#a69944', 'product'=>'#a69944', 'service'=>'#a69944', 'stock'=>'#a69944',
 				'other'=>'#ddd',
 				'playdisabled'=>'#ccc', 'printer'=>'#444', 'projectpub'=>'#986c6a', 'resize'=>'#444', 'rss'=>'#cba',
-				'stats'=>'#444', 'switch_off'=>'#999', 'uparrow'=>'#555', 'globe-americas'=>'#aaa'
+				'shipment'=>'#a69944', 'stats'=>'#444', 'switch_off'=>'#999', 'uparrow'=>'#555', 'globe-americas'=>'#aaa',
+				'website'=>'#304'
 			);
 			if (isset($arrayconvpictotocolor[$pictowithouttext])) {
 				$facolor = $arrayconvpictotocolor[$pictowithouttext];
@@ -4522,15 +4525,17 @@ function print_fleche_navigation($page, $file, $options = '', $nextpage = 0, $be
 	}
 	if ($page > 0)
 	{
-		print '<li class="pagination"><a class="paginationprevious" href="'.$file.'?page='.($page - 1).$options.'"><i class="fa fa-chevron-left" title="'.dol_escape_htmltag($langs->trans("Previous")).'"></i></a></li>';
+		print '<li class="pagination paginationpage"><a class="paginationprevious" href="'.$file.'?page='.($page - 1).$options.'"><i class="fa fa-chevron-left" title="'.dol_escape_htmltag($langs->trans("Previous")).'"></i></a></li>';
 	}
 	if ($betweenarrows)
 	{
+		print '<!--<div class="betweenarrows nowraponall inline-block">-->';
 		print $betweenarrows;
+		print '<!--</div>-->';
 	}
 	if ($nextpage > 0)
 	{
-		print '<li class="pagination"><a class="paginationnext" href="'.$file.'?page='.($page + 1).$options.'"><i class="fa fa-chevron-right" title="'.dol_escape_htmltag($langs->trans("Next")).'"></i></a></li>';
+		print '<li class="pagination paginationpage"><a class="paginationnext" href="'.$file.'?page='.($page + 1).$options.'"><i class="fa fa-chevron-right" title="'.dol_escape_htmltag($langs->trans("Next")).'"></i></a></li>';
 	}
 	if ($afterarrows)
 	{
@@ -8622,11 +8627,8 @@ function dolGetButtonTitle($label, $helpText = '', $iconClass = 'fa fa-file', $u
     }
 
     $class = 'btnTitle';
+    if ($iconClass == 'fa fa-plus-circle') $class .= ' btnTitlePlus';
 
-    // hidden conf keep during button transition TODO: remove this block
-    if (!empty($conf->global->MAIN_USE_OLD_TITLE_BUTTON)) {
-        $class = 'butActionNew';
-    }
     if (!empty($params['morecss'])) $class .= ' '.$params['morecss'];
 
     $attr = array(
@@ -8640,11 +8642,6 @@ function dolGetButtonTitle($label, $helpText = '', $iconClass = 'fa fa-file', $u
 
     if ($status <= 0) {
         $attr['class'] .= ' refused';
-
-        // hidden conf keep during button transition TODO: remove this block
-        if (!empty($conf->global->MAIN_USE_OLD_TITLE_BUTTON)) {
-            $attr['class'] = 'butActionNewRefused';
-        }
 
         $attr['href'] = '';
 
@@ -8697,17 +8694,11 @@ function dolGetButtonTitle($label, $helpText = '', $iconClass = 'fa fa-file', $u
 
     $tag = (empty($attr['href']) ? 'span' : 'a');
 
-    $button = '<'.$tag.' '.$compiledAttributes.' >';
+    $button = '';
+    $button .= '<'.$tag.' '.$compiledAttributes.' >';
     $button .= '<span class="'.$iconClass.' valignmiddle btnTitle-icon"></span>';
     $button .= '<span class="valignmiddle text-plus-circle btnTitle-label'.(empty($params['forcenohideoftext']) ? ' hideonsmartphone' : '').'">'.$label.'</span>';
     $button .= '</'.$tag.'>';
-
-    // hidden conf keep during button transition TODO: remove this block
-    if (!empty($conf->global->MAIN_USE_OLD_TITLE_BUTTON)) {
-        $button = '<'.$tag.' '.$compiledAttributes.' ><span class="text-plus-circle">'.$label.'</span>';
-        $button .= '<span class="'.$iconClass.' valignmiddle"></span>';
-        $button .= '</'.$tag.'>';
-    }
 
     return $button;
 }
