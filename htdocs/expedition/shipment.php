@@ -353,7 +353,7 @@ if ($id > 0 || !empty($ref))
 		// Date
 		print '<tr><td>'.$langs->trans('Date').'</td>';
 		print '<td colspan="2">';
-		print dol_print_date($object->date, 'dayhour');
+		print dol_print_date($object->date, 'day');
 		if ($object->hasDelay() && empty($object->date_livraison)) {
 		    print ' '.img_picto($langs->trans("Late").' : '.$object->showDelay(), "warning");
 		}
