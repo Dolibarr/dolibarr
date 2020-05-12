@@ -1044,6 +1044,9 @@ class Project extends CommonObject
         if (!empty($conf->dol_no_mouse_hover)) $notooltip = 1; // Force disable tooltips
 
         $result = '';
+        if (! empty($conf->global->PROJECT_OPEN_ALWAYS_ON_TAB)) {
+        	$option = $conf->global->PROJECT_OPEN_ALWAYS_ON_TAB;
+        }
 
         $label = '';
         if ($option != 'nolink') $label = '<u>'.$langs->trans("Project").'</u>';
@@ -1072,6 +1075,10 @@ class Project extends CommonObject
             elseif ($option == 'task')
             {
                 $url = DOL_URL_ROOT.'/projet/tasks.php?id='.$this->id;
+            }
+            elseif ($option == 'preview')
+            {
+            	$url = DOL_URL_ROOT.'/projet/element.php?id='.$this->id;
             }
             else
             {
