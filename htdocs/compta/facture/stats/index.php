@@ -32,7 +32,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/html.formcompany.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
 require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facturestats.class.php';
-if(!empty($conf->category->enabled)) require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
+if (!empty($conf->category->enabled)) require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
 
 $WIDTH = DolGraph::getDefaultGraphSizeForStats('width');
 $HEIGHT = DolGraph::getDefaultGraphSizeForStats('height');
@@ -60,15 +60,15 @@ if ($user->socid > 0)
 
 $nowyear = strftime("%Y", dol_now());
 $year = GETPOST('year') > 0 ?GETPOST('year') : $nowyear;
-if(!empty($conf->global->INVOICE_STATS_GRAPHS_SHOW_2_YEARS)) $startyear=$year-2;
-else $startyear=$year-1;
+if (!empty($conf->global->INVOICE_STATS_GRAPHS_SHOW_2_YEARS)) $startyear = $year - 2;
+else $startyear = $year - 1;
 $endyear = $year;
 
 
 /*
  * View
  */
-if(!empty($conf->category->enabled)) $langs->load('categories');
+if (!empty($conf->category->enabled)) $langs->load('categories');
 $form = new Form($db);
 $formcompany = new FormCompany($db);
 $formother = new FormOther($db);
@@ -271,7 +271,7 @@ if ($user->admin) print ' '.info_admin($langs->trans("YouCanChangeValuesForThisL
 print '</td></tr>';
 
 // Category
-if (! empty($conf->category->enabled)) {
+if (!empty($conf->category->enabled)) {
 	if ($mode == 'customer')
 	{
 	    $cat_type = Categorie::TYPE_CUSTOMER;

@@ -910,9 +910,9 @@ function num_open_day($timestampStart, $timestampEnd, $inhour = 0, $lastday = 0,
 			if ($numholidays == 1) return 0;
 		}
 
-		$nbOpenDay=$lastday;
+		$nbOpenDay = $lastday;
 
-		if ($inhour == 1) $nbOpenDay = $nbOpenDay*24 . $langs->trans("HourShort");
+		if ($inhour == 1) $nbOpenDay = $nbOpenDay * 24.$langs->trans("HourShort");
 		return $nbOpenDay - (($inhour == 1 ? 12 : 0.5) * abs($halfday));
 	}
 	else

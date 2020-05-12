@@ -1044,7 +1044,7 @@ class Project extends CommonObject
         if (!empty($conf->dol_no_mouse_hover)) $notooltip = 1; // Force disable tooltips
 
         $result = '';
-        if (! empty($conf->global->PROJECT_OPEN_ALWAYS_ON_TAB)) {
+        if (!empty($conf->global->PROJECT_OPEN_ALWAYS_ON_TAB)) {
         	$option = $conf->global->PROJECT_OPEN_ALWAYS_ON_TAB;
         }
 
