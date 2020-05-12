@@ -262,33 +262,33 @@ if ($mode == 'customer') $filter = 's.client in (1,2,3)';
 if ($mode == 'supplier') $filter = 's.fournisseur = 1';
 print $form->selectarray('socid', $companies, $socid, 1, 0, 0, 'style="width: 95%"', 0, 0, 0, '', '', 1);
 print '</td></tr>';
-if(! empty($conf->category->enabled) && $mode == 'customer') {
-    // Customer Category
-    print '<tr><td>'.$langs->trans("CustomersProspectsCategoriesShort").'</td><td>';
-    $cate_arbo = $form->select_all_categories(Categorie::TYPE_CUSTOMER, null, 'parent', null, null, 1);
-    print $form->multiselectarray('custcats', $cate_arbo, GETPOST('custcats', 'array'), null, null, null, null, "90%");
-    print '</td></tr>';
-}
+
 // ThirdParty Type
 print '<tr><td>'.$langs->trans("ThirdPartyType").'</td><td>';
 $sortparam_typent = (empty($conf->global->SOCIETE_SORT_ON_TYPEENT) ? 'ASC' : $conf->global->SOCIETE_SORT_ON_TYPEENT); // NONE means we keep sort of original array, so we sort on position. ASC, means next function will sort on label.
 print $form->selectarray("typent_id", $formcompany->typent_array(0), $typent_id, 0, 0, 0, '', 0, 0, 0, $sortparam_typent);
 if ($user->admin) print ' '.info_admin($langs->trans("YouCanChangeValuesForThisListFromDictionarySetup"), 1);
 print '</td></tr>';
+
 // Category
-if ($mode == 'customer')
-{
-    $cat_type = Categorie::TYPE_CUSTOMER;
-    $cat_label = $langs->trans("Category").' '.lcfirst($langs->trans("Customer"));
+if (! empty($conf->category->enabled)) {
+	if ($mode == 'customer')
+	{
+	    $cat_type = Categorie::TYPE_CUSTOMER;
+	    $cat_label = $langs->trans("Category").' '.lcfirst($langs->trans("Customer"));
+	}
+	if ($mode == 'supplier')
+	{
+	    $cat_type = Categorie::TYPE_SUPPLIER;
+	    $cat_label = $langs->trans("Category").' '.lcfirst($langs->trans("Supplier"));
+	}
+	print '<tr><td>'.$cat_label.'</td><td>';
+	$cate_arbo = $form->select_all_categories(Categorie::TYPE_CUSTOMER, null, 'parent', null, null, 1);
+	print $form->multiselectarray('custcats', $cate_arbo, GETPOST('custcats', 'array'), null, null, null, null, "90%");
+	//print $formother->select_categories($cat_type, $categ_id, 'categ_id', true);
+	print '</td></tr>';
 }
-if ($mode == 'supplier')
-{
-    $cat_type = Categorie::TYPE_SUPPLIER;
-    $cat_label = $langs->trans("Category").' '.lcfirst($langs->trans("Supplier"));
-}
-print '<tr><td>'.$cat_label.'</td><td>';
-print $formother->select_categories($cat_type, $categ_id, 'categ_id', true);
-print '</td></tr>';
+
 // User
 print '<tr><td>'.$langs->trans("CreatedBy").'</td><td>';
 print $form->select_dolusers($userid, 'userid', 1, '', 0, '', '', 0, 0, 0, '', 0, '', 'maxwidth300');
