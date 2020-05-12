@@ -1707,6 +1707,7 @@ div.statusref {
 	margin-top: 8px;
 	margin-bottom: 10px;
 	clear: both;
+    text-align: right;
 }
 div.statusref img {
     padding-left: 8px;
