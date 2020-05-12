@@ -2099,7 +2099,7 @@ else
 
 				print '<tr><td>'.$langs->trans('DefaultUnitToShow').'</td><td>';
 				if ($unit !== '') {
-					print $unit;
+					print $langs->trans($unit);
 				}
 				print '</td></tr>';
 			}
