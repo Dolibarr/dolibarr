@@ -424,11 +424,7 @@
 	<rule ref="PSR2.Files.EndFileNewline.NoneFound" />
 	<rule ref="PSR2.Methods.FunctionCallSignature.SpaceBeforeOpenBracket" />
 	<rule ref="PSR2.Classes.PropertyDeclaration.VarUsed" />
-	
-
-	<!-- Rules from Zend Standard-->
-
     <!-- The closing ?> tag MUST be omitted from files containing only PHP. -->
-    <rule ref="Zend.Files.ClosingTag"/>
+    <rule ref="PSR2.Files.ClosingTag"/>
 	
 </ruleset>
