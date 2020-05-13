@@ -1611,7 +1611,7 @@ div.nopadding {
 }
 
 td.nobordernopadding.widthpictotitle.col-picto {
-    color: var(--colortexttitlenotab);
+    color: #bbb;
     opacity: 0.85;
 }
 .table-list-of-attached-files .col-picto, .table-list-of-links .col-picto {
@@ -1707,6 +1707,7 @@ div.statusref {
 	margin-top: 8px;
 	margin-bottom: 10px;
 	clear: both;
+    text-align: right;
 }
 div.statusref img {
     padding-left: 8px;
@@ -1750,7 +1751,7 @@ img.photorefnoborder {
 	border-bottom: <?php echo $borderwidth ?>px solid rgb(<?php echo $colortopbordertitle1 ?>);
 	/* border-bottom: 2px solid var(--colorbackhmenu1); */
 }
-.trextrafieldseparator td {
+.trextrafieldseparator td, .trextrafields_collapse_last td {
     /* border-bottom: 2px solid var(--colorbackhmenu1) !important; */
     border-bottom: 2px solid rgb(<?php echo $colortopbordertitle1 ?>) !important;
 }

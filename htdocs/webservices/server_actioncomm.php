@@ -153,8 +153,8 @@ $server->wsdl->addComplexType(
 	'sequence',
 	'',
 	array(
-	'code' => array('name'=>'code', 'type'=>'xsd:string'),
-	'libelle' => array('name'=>'libelle', 'type'=>'xsd:string')
+		'code' => array('name'=>'code', 'type'=>'xsd:string'),
+		'libelle' => array('name'=>'libelle', 'type'=>'xsd:string')
 	)
 );
 
@@ -164,7 +164,7 @@ $server->wsdl->addComplexType(
 	'array',
 	'sequence',
 	'',
-	 array(
+	array(
         'actioncommtype' => array(
             'name' => 'actioncommtype',
             'type' => 'tns:actioncommtype',

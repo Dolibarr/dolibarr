@@ -1799,7 +1799,7 @@ img.photorefnoborder {
 	border-bottom: <?php echo $borderwidth ?>px solid rgb(<?php echo $colortopbordertitle1 ?>);
 }
 
-.trextrafieldseparator td {
+.trextrafieldseparator td, .trextrafields_collapse_last td {
     border-bottom: 1px solid rgb(<?php echo $colortopbordertitle1 ?>) !important;
 }
 .tdhrthin {

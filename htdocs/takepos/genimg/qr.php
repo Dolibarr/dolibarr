@@ -29,5 +29,5 @@ require '../../core/modules/barcode/doc/tcpdfbarcode.modules.php';
 
 $key = GETPOST('key');
 
-$module = new modTcpdfbarcode($db);
+$module = new modTcpdfbarcode();
 $result = $module->buildBarCode("http://www.takepos.com", 'QRCODE', 'Y');
