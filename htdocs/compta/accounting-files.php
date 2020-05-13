@@ -42,6 +42,10 @@ require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.facture.class.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/paymentvarious.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php';
 
+// Constant to define payment sens
+const PAY_DEBIT = 0;
+const PAY_CREDIT = 1;
+
 $langs->loadLangs(array("accountancy", "bills", "companies", "salaries", "compta", "trips", "banks"));
 
 $date_start = GETPOST('date_start', 'alpha');
@@ -144,7 +148,7 @@ if (($action == 'searchfiles' || $action == 'dl')) {
 		// Customer invoices
 		if (GETPOST('selectinvoices')) {
 			if (!empty($sql)) $sql .= " UNION ALL";
-			$sql .= "SELECT t.rowid as id, t.entity, t.ref, t.paye as paid, t.total as total_ht, t.total_ttc, t.tva as total_vat, t.fk_soc, t.datef as date, t.date_lim_reglement as date_due, 'Invoice' as item, s.nom as thirdparty_name, s.code_client as thirdparty_code, c.code as country_code, s.tva_intra as vatnum";
+			$sql .= "SELECT t.rowid as id, t.entity, t.ref, t.paye as paid, t.total as total_ht, t.total_ttc, t.tva as total_vat, t.fk_soc, t.datef as date, t.date_lim_reglement as date_due, 'Invoice' as item, s.nom as thirdparty_name, s.code_client as thirdparty_code, c.code as country_code, s.tva_intra as vatnum, ".PAY_CREDIT." as sens";
 		    $sql .= " FROM ".MAIN_DB_PREFIX."facture as t LEFT JOIN ".MAIN_DB_PREFIX."societe as s ON s.rowid = t.fk_soc LEFT JOIN ".MAIN_DB_PREFIX."c_country as c ON c.rowid = s.fk_pays";
 		    $sql .= " WHERE datef between ".$wheretail;
 		    $sql .= " AND t.entity IN (".($entity == 1 ? '0,1' : $entity).')';
@@ -153,7 +157,7 @@ if (($action == 'searchfiles' || $action == 'dl')) {
 	    // Vendor invoices
 		if (GETPOST('selectsupplierinvoices')) {
 			if (!empty($sql)) $sql .= " UNION ALL";
-			$sql .= " SELECT t.rowid as id, t.entity, t.ref, t.paye as paid, t.total_ht, t.total_ttc, t.total_tva as total_vat, t.fk_soc, t.datef as date, t.date_lim_reglement as date_due, 'SupplierInvoice' as item, s.nom as thirdparty_name, s.code_fournisseur as thirdparty_code, c.code as country_code, s.tva_intra as vatnum";
+			$sql .= " SELECT t.rowid as id, t.entity, t.ref, t.paye as paid, t.total_ht, t.total_ttc, t.total_tva as total_vat, t.fk_soc, t.datef as date, t.date_lim_reglement as date_due, 'SupplierInvoice' as item, s.nom as thirdparty_name, s.code_fournisseur as thirdparty_code, c.code as country_code, s.tva_intra as vatnum, ".PAY_DEBIT." as sens";
 		    $sql .= " FROM ".MAIN_DB_PREFIX."facture_fourn as t LEFT JOIN ".MAIN_DB_PREFIX."societe as s ON s.rowid = t.fk_soc LEFT JOIN ".MAIN_DB_PREFIX."c_country as c ON c.rowid = s.fk_pays";
 		    $sql .= " WHERE datef between ".$wheretail;
 		    $sql .= " AND t.entity IN (".($entity == 1 ? '0,1' : $entity).')';
@@ -162,7 +166,7 @@ if (($action == 'searchfiles' || $action == 'dl')) {
 	    // Expense reports
 		if (GETPOST('selectexpensereports')) {
 			if (!empty($sql)) $sql .= " UNION ALL";
-			$sql .= " SELECT t.rowid as id, t.entity, t.ref, t.paid, t.total_ht, t.total_ttc, t.total_tva as total_vat, t.fk_user_author as fk_soc, t.date_fin as date, t.date_fin as date_due, 'ExpenseReport' as item, CONCAT(CONCAT(u.lastname, ' '), u.firstname) as thirdparty_name, '' as thirdparty_code, c.code as country_code, '' as vatnum";
+			$sql .= " SELECT t.rowid as id, t.entity, t.ref, t.paid, t.total_ht, t.total_ttc, t.total_tva as total_vat, t.fk_user_author as fk_soc, t.date_fin as date, t.date_fin as date_due, 'ExpenseReport' as item, CONCAT(CONCAT(u.lastname, ' '), u.firstname) as thirdparty_name, '' as thirdparty_code, c.code as country_code, '' as vatnum, ".PAY_DEBIT." as sens";
 		    $sql .= " FROM ".MAIN_DB_PREFIX."expensereport as t LEFT JOIN ".MAIN_DB_PREFIX."user as u ON u.rowid = t.fk_user_author LEFT JOIN ".MAIN_DB_PREFIX."c_country as c ON c.rowid = u.fk_country";
 		    $sql .= " WHERE date_fin between  ".$wheretail;
 		    $sql .= " AND t.entity IN (".($entity == 1 ? '0,1' : $entity).')';
@@ -171,7 +175,7 @@ if (($action == 'searchfiles' || $action == 'dl')) {
 	    // Donations
 		if (GETPOST('selectdonations')) {
 			if (!empty($sql)) $sql .= " UNION ALL";
-			$sql .= " SELECT t.rowid as id, t.entity, t.ref, paid, amount as total_ht, amount as total_ttc, 0 as total_vat, 0 as fk_soc, t.datedon as date, t.datedon as date_due, 'Donation' as item, t.societe as thirdparty_name, '' as thirdparty_code, c.code as country_code, '' as vatnum";
+			$sql .= " SELECT t.rowid as id, t.entity, t.ref, paid, amount as total_ht, amount as total_ttc, 0 as total_vat, 0 as fk_soc, t.datedon as date, t.datedon as date_due, 'Donation' as item, t.societe as thirdparty_name, '' as thirdparty_code, c.code as country_code, '' as vatnum, ".PAY_CREDIT." as sens";
 		    $sql .= " FROM ".MAIN_DB_PREFIX."don as t LEFT JOIN ".MAIN_DB_PREFIX."c_country as c ON c.rowid = t.fk_country";
 		    $sql .= " WHERE datedon between ".$wheretail;
 		    $sql .= " AND t.entity IN (".($entity == 1 ? '0,1' : $entity).')';
@@ -180,7 +184,7 @@ if (($action == 'searchfiles' || $action == 'dl')) {
 	    // Paiements of salaries
 		if (GETPOST('selectpaymentsofsalaries')) {
 			if (!empty($sql)) $sql .= " UNION ALL";
-			$sql .= " SELECT t.rowid as id, t.entity, t.label as ref, 1 as paid, amount as total_ht, amount as total_ttc, 0 as total_vat, t.fk_user as fk_soc, t.datep as date, t.dateep as date_due, 'SalaryPayment' as item, CONCAT(CONCAT(u.lastname, ' '), u.firstname)  as thirdparty_name, '' as thirdparty_code, c.code as country_code, '' as vatnum";
+			$sql .= " SELECT t.rowid as id, t.entity, t.label as ref, 1 as paid, amount as total_ht, amount as total_ttc, 0 as total_vat, t.fk_user as fk_soc, t.datep as date, t.dateep as date_due, 'SalaryPayment' as item, CONCAT(CONCAT(u.lastname, ' '), u.firstname)  as thirdparty_name, '' as thirdparty_code, c.code as country_code, '' as vatnum, ".PAY_DEBIT." as sens";
 		    $sql .= " FROM ".MAIN_DB_PREFIX."payment_salary as t LEFT JOIN ".MAIN_DB_PREFIX."user as u ON u.rowid = t.fk_user LEFT JOIN ".MAIN_DB_PREFIX."c_country as c ON c.rowid = u.fk_country";
 		    $sql .= " WHERE datep between ".$wheretail;
 		    $sql .= " AND t.entity IN (".($entity == 1 ? '0,1' : $entity).')';
@@ -189,7 +193,7 @@ if (($action == 'searchfiles' || $action == 'dl')) {
 	    // Social contributions
 		if (GETPOST('selectsocialcontributions')) {
 			if (!empty($sql)) $sql .= " UNION ALL";
-			$sql .= " SELECT t.rowid as id, t.entity, t.libelle as ref, t.paye as paid, t.amount as total_ht, t.amount as total_ttc, 0 as total_tva, 0 as fk_soc, t.date_creation as date, t.date_ech as date_due, 'SocialContributions' as item, '' as thirdparty_name, '' as thirdparty_code, '' as country_code, '' as vatnum";
+			$sql .= " SELECT t.rowid as id, t.entity, t.libelle as ref, t.paye as paid, t.amount as total_ht, t.amount as total_ttc, 0 as total_tva, 0 as fk_soc, t.date_creation as date, t.date_ech as date_due, 'SocialContributions' as item, '' as thirdparty_name, '' as thirdparty_code, '' as country_code, '' as vatnum, ".PAY_DEBIT." as sens";
 		    $sql .= " FROM ".MAIN_DB_PREFIX."chargesociales as t";
 		    $sql .= " WHERE date_creation between ".$wheretail;
 		    $sql .= " AND t.entity IN (".($entity == 1 ? '0,1' : $entity).')';
@@ -198,7 +202,7 @@ if (($action == 'searchfiles' || $action == 'dl')) {
 	    // Various payments
 		if (GETPOST('selectvariouspayment')) {
 			if (!empty($sql)) $sql .= " UNION ALL";
-			$sql .= " SELECT t.rowid as id, t.entity, t.label as ref, 1 as paid, t.amount as total_ht, t.amount as total_ttc, 0 as total_tva, 0 as fk_soc, t.datep as date, t.datep as date_due, 'VariousPayment' as item, '' as thirdparty_name, '' as thirdparty_code, '' as country_code, '' as vatnum";
+			$sql .= " SELECT t.rowid as id, t.entity, t.label as ref, 1 as paid, t.amount as total_ht, t.amount as total_ttc, 0 as total_tva, 0 as fk_soc, t.datep as date, t.datep as date_due, 'VariousPayment' as item, '' as thirdparty_name, '' as thirdparty_code, '' as country_code, '' as vatnum, sens";
 		    $sql .= " FROM ".MAIN_DB_PREFIX."payment_various as t";
 		    $sql .= " WHERE datep between ".$wheretail;
 		    $sql .= " AND t.entity IN (".($entity == 1 ? '0,1' : $entity).')';
@@ -311,6 +315,7 @@ if (($action == 'searchfiles' || $action == 'dl')) {
 		                    $nofile['thirdparty_code'] = $objd->thirdparty_code;
 		                    $nofile['country_code'] = $objd->country_code;
 		                    $nofile['vatnum'] = $objd->vatnum;
+		                    $nofile['sens'] = $objd->sens;
 
 		                    $filesarray[$nofile['item'].'_'.$nofile['id']] = $nofile;
 		                }
@@ -329,11 +334,11 @@ if (($action == 'searchfiles' || $action == 'dl')) {
 		                        $file['ref'] = ($objd->ref ? $objd->ref : $objd->id);
 		                        $file['fk'] = $objd->fk_soc;
 		                        $file['item'] = $objd->item;
-
 		                        $file['thirdparty_name'] = $objd->thirdparty_name;
 		                        $file['thirdparty_code'] = $objd->thirdparty_code;
 		                        $file['country_code'] = $objd->country_code;
 		                        $file['vatnum'] = $objd->vatnum;
+                                $file['sens'] = $objd->sens;
 
 		                        // Save record into array (only the first time it is found)
 		                        if (empty($filesarray[$file['item'].'_'.$file['id']])) {
@@ -417,7 +422,8 @@ if ($result && $action == "dl" && !$error)
     $log .= ','.$langs->transnoentitiesnoconv("ThirdParty");
     $log .= ','.$langs->transnoentitiesnoconv("Code");
     $log .= ','.$langs->transnoentitiesnoconv("Country");
-    $log .= ','.$langs->transnoentitiesnoconv("VATIntra")."\n";
+    $log .= ','.$langs->transnoentitiesnoconv("VATIntra");
+    $log .= ','.$langs->transnoentitiesnoconv("Sens")."\n";
     $zipname = $dirfortmpfile.'/'.dol_print_date($date_start, 'dayrfc')."-".dol_print_date($date_stop, 'dayrfc').'_export.zip';
 
     dol_delete_file($zipname);
@@ -454,6 +460,7 @@ if ($result && $action == "dl" && !$error)
             $log .= ',"'.$file['thirdparty_code'].'"';
             $log .= ',"'.$file['country_code'].'"';
             $log .= ',"'.$file['vatnum'].'"';
+            $log .= ',"'.$file['sens'].'"';
             $log .= "\n";
         }
         $zip->addFromString('transactions.csv', $log);
@@ -605,11 +612,12 @@ if (!empty($date_start) && !empty($date_stop))
         {
             // Sort array by date ASC to calculate balance
 
-            $totalET = 0;
-            $totalIT = 0;
-            $totalVAT = 0;
-            $totalDebit = 0;
-            $totalCredit = 0;
+            $totalET_debit = 0;
+            $totalIT_debit = 0;
+            $totalVAT_debit = 0;
+            $totalET_credit = 0;
+            $totalIT_credit = 0;
+            $totalVAT_credit = 0;
 
             // Display array
             foreach ($TData as $data)
@@ -682,11 +690,11 @@ if (!empty($date_start) && !empty($date_stop))
                 print '<td aling="left">'.$data['paid'].'</td>';
 
                 // Total ET
-                print '<td align="right">'.price($data['amount_ht'])."</td>\n";
+                print '<td align="right">'.price($data['sens']?$data['amount_ht']:-$data['amount_ht'])."</td>\n";
                 // Total IT
-                print '<td align="right">'.price($data['amount_ttc'])."</td>\n";
+                print '<td align="right">'.price($data['sens']?$data['amount_ttc']:-$data['amount_ttc'])."</td>\n";
                 // Total VAT
-                print '<td align="right">'.price($data['amount_vat'])."</td>\n";
+                print '<td align="right">'.price($data['sens']?$data['amount_vat']:-$data['amount_vat'])."</td>\n";
 
                 print '<td>'.$data['thirdparty_name']."</td>\n";
 
@@ -696,42 +704,42 @@ if (!empty($date_start) && !empty($date_stop))
 
                 print '<td align="right">'.$data['vatnum']."</td>\n";
 
-                // Debit
-                //print '<td align="right">'.(($data['amount_ttc'] > 0) ? price(abs($data['amount_ttc'])) : '')."</td>\n";
-                // Credit
-                //print '<td align="right">'.(($data['amount_ttc'] > 0) ? '' : price(abs($data['amount_ttc'])))."</td>\n";
-
-                $totalET += $data['amount_ht'];
-                $totalIT += $data['amount_ttc'];
-                $totalVAT += $data['amount_vat'];
-
-                $totalDebit += ($data['amount_ttc'] > 0) ? abs($data['amount_ttc']) : 0;
-                $totalCredit += ($data['amount_ttc'] > 0) ? 0 : abs($data['amount_ttc']);
-
-                // Balance
-                //print '<td align="right">'.price($data['balance'])."</td>\n";
+                if ($data['sens']) {
+                    $totalET_credit += $data['amount_ht'];
+                    $totalIT_credit += $data['amount_ttc'];
+                    $totalVAT_credit += $data['amount_vat'];
+                } else {
+                    $totalET_debit -= $data['amount_ht'];
+                    $totalIT_debit -= $data['amount_ttc'];
+                    $totalVAT_debit -= $data['amount_vat'];
+                }
 
                 print "</tr>\n";
             }
 
+            // Total credits
             print '<tr class="liste_total">';
-            print '<td></td>';
-            print '<td></td>';
-            print '<td></td>';
-            print '<td></td>';
-            print '<td></td>';
-            print '<td></td>';
-            print '<td align="right">'.price(price2num($totalET, 'MT')).'</td>';
-            print '<td align="right">'.price(price2num($totalIT, 'MT')).'</td>';
-            print '<td align="right">'.price(price2num($totalVAT, 'MT')).'</td>';
-            print '<td></td>';
-            print '<td></td>';
-            print '<td></td>';
-            print '<td></td>';
-            /*print '<td align="right">'.price($totalDebit).'</td>';
-            print '<td align="right">'.price($totalCredit).'</td>';
-            print '<td align="right">'.price(price2num($totalDebit - $totalCredit, 'MT')).'</td>';
-			*/
+            print '<td colspan="6" class="right">'.$langs->trans('Total').' '.$langs->trans('Income').'</td>';
+            print '<td align="right">'.price(price2num($totalET_credit, 'MT')).'</td>';
+            print '<td align="right">'.price(price2num($totalIT_credit, 'MT')).'</td>';
+            print '<td align="right">'.price(price2num($totalVAT_credit, 'MT')).'</td>';
+            print '<td colspan="4"></td>';
+            print "</tr>\n";
+            // Total debits
+            print '<tr class="liste_total">';
+            print '<td colspan="6" class="right">'.$langs->trans('Total').' '.$langs->trans('Outcome').'</td>';
+            print '<td align="right">'.price(price2num($totalET_debit, 'MT')).'</td>';
+            print '<td align="right">'.price(price2num($totalIT_debit, 'MT')).'</td>';
+            print '<td align="right">'.price(price2num($totalVAT_debit, 'MT')).'</td>';
+            print '<td colspan="4"></td>';
+            print "</tr>\n";
+            // Balance
+            print '<tr class="liste_total">';
+            print '<td colspan="6" class="right">'.$langs->trans('Total').'</td>';
+            print '<td align="right">'.price(price2num($totalET_credit+$totalET_debit, 'MT')).'</td>';
+            print '<td align="right">'.price(price2num($totalIT_credit+$totalIT_debit, 'MT')).'</td>';
+            print '<td align="right">'.price(price2num($totalVAT_credit+$totalVAT_debit, 'MT')).'</td>';
+            print '<td colspan="4"></td>';
             print "</tr>\n";
         }
     }
