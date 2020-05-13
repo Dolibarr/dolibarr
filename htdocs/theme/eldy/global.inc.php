@@ -1751,7 +1751,7 @@ img.photorefnoborder {
 	border-bottom: <?php echo $borderwidth ?>px solid rgb(<?php echo $colortopbordertitle1 ?>);
 	/* border-bottom: 2px solid var(--colorbackhmenu1); */
 }
-.trextrafieldseparator td {
+.trextrafieldseparator td, .trextrafields_collapse_last td {
     /* border-bottom: 2px solid var(--colorbackhmenu1) !important; */
     border-bottom: 2px solid rgb(<?php echo $colortopbordertitle1 ?>) !important;
 }
