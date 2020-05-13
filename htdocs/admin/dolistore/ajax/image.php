@@ -1,6 +1,7 @@
 <?php
 /* Copyright (C) 2017		 Oscss-Shop              <support@oscss-shop.fr>.
  * Copyright (C) 2008-2011   Laurent Destailleur     <eldy@users.sourceforge.net>
+ * Copyright (C) 2020       Frédéric France         <frederic.france@netlogic.fr>
  *
  * This program is free software; you can redistribute it and/or modifyion 2.0 (the "License");
  * it under the terms of the GNU General Public License as published bypliance with the License.
@@ -17,6 +18,9 @@
  */
 
 if (!defined('REQUIRE_JQUERY_BLOCKUI')) define('REQUIRE_JQUERY_BLOCKUI', 1);
+if (!defined('NOTOKENRENEWAL')) {
+    define('NOTOKENRENEWAL', 1);
+}
 
 
 /**
