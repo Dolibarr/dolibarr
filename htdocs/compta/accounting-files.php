@@ -41,12 +41,13 @@ require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.facture.class.php';
 require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.facture.class.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/paymentvarious.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php';
+require_once DOL_DOCUMENT_ROOT.'/loan/class/paymentloan.class.php';
 
 // Constant to define payment sens
 const PAY_DEBIT = 0;
 const PAY_CREDIT = 1;
 
-$langs->loadLangs(array("accountancy", "bills", "companies", "salaries", "compta", "trips", "banks"));
+$langs->loadLangs(array("accountancy", "bills", "companies", "salaries", "compta", "trips", "banks", "loan"));
 
 $date_start = GETPOST('date_start', 'alpha');
 $date_startDay = GETPOST('date_startday', 'int');
@@ -207,6 +208,14 @@ if (($action == 'searchfiles' || $action == 'dl')) {
 		    $sql .= " WHERE datep between ".$wheretail;
 		    $sql .= " AND t.entity IN (".($entity == 1 ? '0,1' : $entity).')';
 		}
+        // Loan payments
+		if (GETPOST('selectloanspayment')) {
+			if (!empty($sql)) $sql .= " UNION ALL";
+			$sql .= " SELECT t.rowid as id, l.entity, l.label as ref, 1 as paid, (t.amount_capital+t.amount_insurance+t.amount_interest) as total_ht, (t.amount_capital+t.amount_insurance+t.amount_interest) as total_ttc, 0 as total_tva, 0 as fk_soc, t.datep as date, t.datep as date_due, 'LoanPayment' as item, '' as thirdparty_name, '' as thirdparty_code, '' as country_code, '' as vatnum, ".PAY_DEBIT." as sens";
+		    $sql .= " FROM ".MAIN_DB_PREFIX."payment_loan as t LEFT JOIN ".MAIN_DB_PREFIX."loan as l ON l.rowid = t.fk_loan";
+		    $sql .= " WHERE datep between ".$wheretail;
+		    $sql .= " AND l.entity IN (".($entity == 1 ? '0,1' : $entity).')';
+		}
 
 		if ($sql) {
 		    $sql .= $db->order($sortfield, $sortorder);
@@ -282,6 +291,13 @@ if (($action == 'searchfiles' || $action == 'dl')) {
 		                	$upload_dir = $conf->bank->dir_output.'/'.$subdir;
                             $link = "document.php?modulepart=banque&file=".str_replace('/', '%2F', $subdir).'%2F';
                             $modulepart = "banque";
+		                	break;
+		                case "LoanPayment":
+                            // Loan payment has no linked file
+		                	$subdir = '';
+		                	$upload_dir = $conf->loan->dir_output.'/'.$subdir;
+                            $link = "";
+                            $modulepart = "";
 		                	break;
 		                default:
 		                    $subdir = '';
@@ -497,6 +513,7 @@ $don = new Don($db);
 $salary_payment = new PaymentSalary($db);
 $charge_sociales = new ChargeSociales($db);
 $various_payment = new PaymentVarious($db);
+$payment_loan = new PaymentLoan($db);
 
 $title = $langs->trans("ComptaFiles").' - '.$langs->trans("List");
 $help_url = '';
@@ -542,7 +559,8 @@ $listofchoices = array(
 	'selectdonations'=>array('label'=>'Donations', 'lang'=>'donation'),
 	'selectpaymentsofsalaries'=>array('label'=>'SalariesPayments', 'lang'=>'salaries'),
 	'selectsocialcontributions'=>array('label'=>'SocialContributions'),
-	'selectvariouspayment'=>array('label'=>'VariousPayment')
+	'selectvariouspayment'=>array('label'=>'VariousPayment'),
+	'selectloanspayment'=>array('label'=>'PaymentLoan'),
 );
 foreach ($listofchoices as $choice => $val) {
 	$checked = (((!GETPOSTISSET('search') && $action != 'searchfiles') || GETPOST($choice)) ? ' checked="checked"' : '');
@@ -671,6 +689,10 @@ if (!empty($date_start) && !empty($date_stop))
                     $various_payment->id = $data['id'];
                 	$various_payment->ref = $data['ref'];
                 	print $various_payment->getNomUrl(1, '', 0, 0, '', 0, 0, 0);
+				} elseif ($data['item'] == 'LoanPayment') {
+                    $payment_loan->id = $data['id'];
+                	$payment_loan->ref = $data['ref'];
+                	print $payment_loan->getNomUrl(1, '', 0, 0, '', 0, 0, 0);
 				} else {
                 	print $data['ref'];
 				}
