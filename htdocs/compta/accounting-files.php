@@ -616,37 +616,37 @@ if (!empty($date_start) && !empty($date_stop))
                 // Ref
                 print '<td class="nowraponall">';
 
-            if ($data['item'] == 'Invoice') {
-                $invoice->id = $data['id'];
+				if ($data['item'] == 'Invoice') {
+					$invoice->id = $data['id'];
                 	$invoice->ref = $data['ref'];
                 	print $invoice->getNomUrl(1, '', 0, 0, '', 0, 0, 0);
-                } elseif ($data['item'] == 'SupplierInvoice') {
+				} elseif ($data['item'] == 'SupplierInvoice') {
                 	$supplier_invoice->id = $data['id'];
                 	$supplier_invoice->ref = $data['ref'];
                 	print $supplier_invoice->getNomUrl(1, '', 0, 0, '', 0, 0, 0);
-                } elseif ($data['item'] == 'ExpenseReport') {
+				} elseif ($data['item'] == 'ExpenseReport') {
                     $expensereport->id = $data['id'];
                 	$expensereport->ref = $data['ref'];
                 	print $expensereport->getNomUrl(1, '', 0, 0, '', 0, 0, 0);
-                } elseif ($data['item'] == 'SalaryPayment') {
+				} elseif ($data['item'] == 'SalaryPayment') {
                     $salary_payment->id = $data['id'];
                 	$salary_payment->ref = $data['ref'];
                 	print $salary_payment->getNomUrl(1, '', 0, 0, '', 0, 0, 0);
-                } elseif ($data['item'] == 'Donation') {
+				} elseif ($data['item'] == 'Donation') {
                     $don->id = $data['id'];
                 	$don->ref = $data['ref'];
                 	print $don->getNomUrl(1, '', 0, 0, '', 0, 0, 0);
-                } elseif ($data['item'] == 'SocialContributions') {
+				} elseif ($data['item'] == 'SocialContributions') {
                     $charge_sociales->id = $data['id'];
                 	$charge_sociales->ref = $data['ref'];
                 	print $charge_sociales->getNomUrl(1, '', 0, 0, '', 0, 0, 0);
-                } elseif ($data['item'] == 'VariousPayment') {
+				} elseif ($data['item'] == 'VariousPayment') {
                     $various_payment->id = $data['id'];
                 	$various_payment->ref = $data['ref'];
                 	print $various_payment->getNomUrl(1, '', 0, 0, '', 0, 0, 0);
-                } else {
+				} else {
                 	print $data['ref'];
-                }
+				}
                 print '</td>';
 
                 // File link
