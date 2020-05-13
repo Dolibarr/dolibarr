@@ -2,6 +2,7 @@
 /* Copyright (C) 2001-2006 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2019 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2017      Pierre-Henry Favre   <support@atm-consulting.fr>
+ * Copyright (C) 2020      Maxime DEMAREST      <maxime@indelog.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -196,9 +197,9 @@ if (($action == 'searchfiles' || $action == 'dl')) {
 	    // Various payments
 		if (GETPOST('selectvariouspayment')) {
 			if (!empty($sql)) $sql .= " UNION ALL";
-			$sql .= " SELECT t.rowid as id, t.entity, t.label as ref, 1 as paid, t.amount as total_ht, t.amount as total_ttc, 0 as total_tva, 0 as fk_soc, t.datec as date, t.datep as date_due, 'VariousPayment' as item, '' as thirdparty_name, '' as thirdparty_code, '' as country_code, '' as vatnum";
+			$sql .= " SELECT t.rowid as id, t.entity, t.label as ref, 1 as paid, t.amount as total_ht, t.amount as total_ttc, 0 as total_tva, 0 as fk_soc, t.datep as date, t.datep as date_due, 'VariousPayment' as item, '' as thirdparty_name, '' as thirdparty_code, '' as country_code, '' as vatnum";
 		    $sql .= " FROM ".MAIN_DB_PREFIX."payment_various as t";
-		    $sql .= " WHERE datec between ".$wheretail;
+		    $sql .= " WHERE datep between ".$wheretail;
 		    $sql .= " AND t.entity IN (".($entity == 1 ? '0,1' : $entity).')';
 		}
 
