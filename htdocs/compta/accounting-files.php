@@ -194,9 +194,9 @@ if (($action == 'searchfiles' || $action == 'dl')) {
 	    // Social contributions
 		if (GETPOST('selectsocialcontributions')) {
 			if (!empty($sql)) $sql .= " UNION ALL";
-			$sql .= " SELECT t.rowid as id, t.entity, t.libelle as ref, t.paye as paid, t.amount as total_ht, t.amount as total_ttc, 0 as total_tva, 0 as fk_soc, t.date_creation as date, t.date_ech as date_due, 'SocialContributions' as item, '' as thirdparty_name, '' as thirdparty_code, '' as country_code, '' as vatnum, ".PAY_DEBIT." as sens";
+			$sql .= " SELECT t.rowid as id, t.entity, t.libelle as ref, t.paye as paid, t.amount as total_ht, t.amount as total_ttc, 0 as total_tva, 0 as fk_soc, t.date_ech as date, t.periode as date_due, 'SocialContributions' as item, '' as thirdparty_name, '' as thirdparty_code, '' as country_code, '' as vatnum, ".PAY_DEBIT." as sens";
 		    $sql .= " FROM ".MAIN_DB_PREFIX."chargesociales as t";
-		    $sql .= " WHERE date_creation between ".$wheretail;
+		    $sql .= " WHERE t.date_ech between ".$wheretail;
 		    $sql .= " AND t.entity IN (".($entity == 1 ? '0,1' : $entity).')';
 		    //$sql.=" AND fk_statut <> ".ChargeSociales::STATUS_DRAFT;
 		}
