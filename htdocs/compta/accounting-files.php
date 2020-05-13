@@ -40,6 +40,7 @@ require_once DOL_DOCUMENT_ROOT.'/expensereport/class/expensereport.class.php';
 require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.facture.class.php';
 require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.facture.class.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/paymentvarious.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php';
 
 $langs->loadLangs(array("accountancy", "bills", "companies", "salaries", "compta", "trips", "banks"));
 
@@ -232,6 +233,7 @@ if (($action == 'searchfiles' || $action == 'dl')) {
 		                	$subdir .= ($subdir ? '/' : '').dol_sanitizeFileName($objd->ref);
 		                	$upload_dir = $conf->facture->dir_output.'/'.$subdir;
 		                	$link = "document.php?modulepart=facture&file=".str_replace('/', '%2F', $subdir).'%2F';
+                            $modulepart = "facture";
 		                	break;
 		                case "SupplierInvoice":
 		                	$tmpinvoicesupplier->fetch($objd->id);
@@ -239,18 +241,21 @@ if (($action == 'searchfiles' || $action == 'dl')) {
 		                	$subdir .= ($subdir ? '/' : '').dol_sanitizeFileName($objd->ref);
 		                	$upload_dir = $conf->fournisseur->facture->dir_output.'/'.$subdir;
 		                	$link = "document.php?modulepart=facture_fournisseur&file=".str_replace('/', '%2F', $subdir).'%2F';
+                            $modulepart = "facture_fournisseur";
 		                	break;
 		                case "ExpenseReport":
 		                	$subdir = '';
 		                	$subdir .= ($subdir ? '/' : '').dol_sanitizeFileName($objd->ref);
 		                	$upload_dir = $conf->expensereport->dir_output.'/'.$subdir;
 		                	$link = "document.php?modulepart=expensereport&file=".str_replace('/', '%2F', $subdir).'%2F';
+                            $modulepart = "expensereport";
 		                	break;
 		                case "SalaryPayment":
 		                	$subdir = '';
 		                	$subdir .= ($subdir ? '/' : '').dol_sanitizeFileName($objd->id);
 		                	$upload_dir = $conf->salaries->dir_output.'/'.$subdir;
 		                	$link = "document.php?modulepart=salaries&file=".str_replace('/', '%2F', $subdir).'%2F';
+                            $modulepart = "salaries";
 		                	break;
 		                case "Donation":
 		                	$tmpdonation->fetch($objp->id);
@@ -258,18 +263,21 @@ if (($action == 'searchfiles' || $action == 'dl')) {
 		                	$subdir .= ($subdir ? '/' : '').dol_sanitizeFileName($objd->id);
 		                	$upload_dir = $conf->don->dir_output.'/'.$subdir;
 		                	$link = "document.php?modulepart=don&file=".str_replace('/', '%2F', $subdir).'%2F';
+                            $modulepart = "don";
 		                	break;
 		                case "SocialContributions":
 		                	$subdir = '';
 		                	$subdir .= ($subdir ? '/' : '').dol_sanitizeFileName($objd->id);
 		                	$upload_dir = $conf->tax->dir_output.'/'.$subdir;
 		                	$link = "document.php?modulepart=tax&file=".str_replace('/', '%2F', $subdir).'%2F';
+                            $modulepart = "tax";
 		                	break;
 		                case "VariousPayment":
 		                	$subdir = '';
 		                	$subdir .= ($subdir ? '/' : '').dol_sanitizeFileName($objd->id);
 		                	$upload_dir = $conf->bank->dir_output.'/'.$subdir;
                             $link = "document.php?modulepart=banque&file=".str_replace('/', '%2F', $subdir).'%2F';
+                            $modulepart = "banque";
 		                	break;
 		                default:
 		                    $subdir = '';
@@ -336,7 +344,16 @@ if (($action == 'searchfiles' || $action == 'dl')) {
 		                        if (empty($filesarray[$file['item'].'_'.$file['id']]['files'])) {
 		                        	$filesarray[$file['item'].'_'.$file['id']]['files'] = array();
 		                        }
-		                        $filesarray[$file['item'].'_'.$file['id']]['files'][] = array('link' => $link.$file['name'], 'name'=>$file['name'], 'ref'=>$file['ref'], 'fullname' => $file['fullname'], 'relpathnamelang' => $langs->trans($file['item']).'/'.$file['name']);
+                                $filesarray[$file['item'].'_'.$file['id']]['files'][] = array(
+                                    'link' => $link.urlencode($file['name']),
+                                    'name'=>$file['name'],
+                                    'ref'=>$file['ref'],
+                                    'fullname' => $file['fullname'],
+                                    'relpath' => '/'.$file['name'],
+                                    'relpathnamelang' => $langs->trans($file['item']).'/'.$file['name'],
+                                    'modulepart' => $modulepart,
+                                    'subdir' => $subdir,
+                                );
 		                        //var_dump($file['item'].'_'.$file['id']);
 		                        //var_dump($filesarray[$file['item'].'_'.$file['id']]['files']);
 		                    }
@@ -463,7 +480,8 @@ if ($result && $action == "dl" && !$error)
  * View
  */
 
-$form = new Form($db);
+$form = new form($db);
+$formfile = new FormFile($db);
 $userstatic = new User($db);
 $invoice = new Facture($db);
 $supplier_invoice = new FactureFournisseur($db);
@@ -654,8 +672,8 @@ if (!empty($date_start) && !empty($date_stop))
                 print '<td>';
                 if (!empty($data['files']))
                 {
-                	foreach ($data['files'] as $filecursor) {
-                		print '<a href='.DOL_URL_ROOT.'/'.$filecursor['link'].' target="_blank">'.($filecursor['name'] ? $filecursor['name'] : $filecursor['ref']).'</a><br>';
+                	foreach ($data['files'] as $id=>$filecursor) {
+                        print '<a href='.DOL_URL_ROOT.'/'.$filecursor['link'].' target="_blank">'.($filecursor['name'] ? $filecursor['name'] : $filecursor['ref']).'</a>&nbsp;'.$formfile->showPreview($filecursor, $filecursor['modulepart'], $filecursor['subdir'].'/'.$filecursor['name']).'<br>';
                 	}
                 }
                 print "</td>\n";
