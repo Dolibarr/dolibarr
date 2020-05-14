@@ -43,9 +43,9 @@ if (!empty($user->socid)) {
 	$socid = $user->socid;
 }
 
-if (empty($conf->global->MAIN_DIRECT_STATUS_UPDATE)) {
+/*if (empty($conf->global->MAIN_DIRECT_STATUS_UPDATE)) {
 	accessforbidden('Calling this file is allowed only when MAIN_DIRECT_STATUS_UPDATE is set');
-}
+}*/
 
 
 /*
@@ -75,5 +75,10 @@ if (($action == 'set') && !empty($id)) {
 		$triggerkey = 'COMPANY_UPDATE';
 	}
 
-	$object->setValueFrom($field, $value, $element, $id, $user, $triggerkey);
+	$tablename = $element;
+	if ($tablename == 'websitepage') $tablename = 'website_page';
+
+	$format = 'int';
+
+	$object->setValueFrom($field, $value, $tablename, $id, $format, '', $user, $triggerkey);
 }
