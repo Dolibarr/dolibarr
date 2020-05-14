@@ -329,8 +329,10 @@ class WebsitePage extends CommonObject
 		$sqlwhere = array();
 		if (count($filter) > 0) {
 			foreach ($filter as $key => $value) {
-				if ($key == 't.rowid' || $key == 't.fk_website') {
+				if ($key == 't.rowid' || $key == 't.fk_website' || $key == 'status') {
 					$sqlwhere[] = $key.'='.$value;
+				} elseif ($key == 'type_container') {
+					$sqlwhere[] = $key."='".$value."'";
 				} elseif ($key == 'lang' || $key == 't.lang') {
 					$listoflang = array();
 					$foundnull = 0;
