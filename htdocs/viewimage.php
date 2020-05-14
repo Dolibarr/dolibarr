@@ -59,6 +59,14 @@ if ((isset($_GET["modulepart"]) && $_GET["modulepart"] == 'medias'))
 	if (!defined("NOIPCHECK"))		define("NOIPCHECK", 1); // Do not check IP defined into conf $dolibarr_main_restrict_ip
 }
 
+// Used by TakePOS Auto Order
+if (isset($_GET["publictakepos"]))
+{
+	if (!defined("NOLOGIN"))		define("NOLOGIN", 1);
+	if (!defined("NOCSRFCHECK"))	define("NOCSRFCHECK", 1); // We accept to go on this page from external web site.
+	if (!defined("NOIPCHECK"))		define("NOIPCHECK", 1); // Do not check IP defined into conf $dolibarr_main_restrict_ip
+}
+
 // For multicompany
 $entity = (!empty($_GET['entity']) ? (int) $_GET['entity'] : (!empty($_POST['entity']) ? (int) $_POST['entity'] : 1));
 if (is_numeric($entity)) define("DOLENTITY", $entity);
@@ -194,6 +202,10 @@ if (!empty($hashp))
 {
 	$accessallowed = 1; // When using hashp, link is public so we force $accessallowed
 	$sqlprotectagainstexternals = '';
+}
+elseif ($conf->global->TAKEPOS_AUTO_ORDER && isset($_GET["publictakepos"]))
+{
+	$accessallowed = 1; // Only if TakePOS Public Auto Order is enabled and received publictakepos variable
 }
 else
 {
