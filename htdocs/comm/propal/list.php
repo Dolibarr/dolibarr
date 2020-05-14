@@ -468,7 +468,7 @@ if ($resql)
 	print_barre_liste($title, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, $massactionbutton, $num, $nbtotalofrecords, 'commercial', 0, $newcardbutton, '', $limit);
 
 	$topicmail = "SendPropalRef";
-	$modelmail = "proposal_send";
+	$modelmail = "propal_send";
 	$objecttmp = new Propal($db);
 	$trackid = 'pro'.$object->id;
 	include DOL_DOCUMENT_ROOT.'/core/tpl/massactions_pre.tpl.php';
