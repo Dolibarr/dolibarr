@@ -142,7 +142,10 @@ class box_goodcustomers extends ModeleBoxes
 					$line++;
 				}
 
-				if ($num == 0) $this->info_box_contents[$line][0] = array('td' => 'class="center"', 'text'=>$langs->trans("NoRecordedCustomers"));
+				if ($num == 0) $this->info_box_contents[$line][0] = array(
+					'td' => 'class="center opacitymedium"',
+					'text'=>$langs->trans("NoRecordedCustomers")
+				);
 
 				$this->db->free($result);
 			}

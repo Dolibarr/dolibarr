@@ -33,7 +33,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/triggers/dolibarrtriggers.class.php';
 /**
  *  Class of triggers for stripe module
  */
-class InterfaceStripe
+class InterfaceStripe extends DolibarrTriggers
 {
     /**
      * @var DoliDB Database handler.
