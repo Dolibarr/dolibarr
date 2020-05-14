@@ -2295,9 +2295,11 @@ class DolibarrModules // Can not be abstract, because we need to instantiate it 
 		{
 			print img_object($alttext, 'generic', 'class="inline-block valignmiddle"');
 		}
-		print '<span class="info-box-icon-version" title="'.$langs->trans("Version").' '.$this->getVersion(1).'">';
-		print $this->getVersion(1);
-		print '</span>';
+		if ($this->isCoreOrExternalModule() == 'external') {
+			print '<span class="info-box-icon-version" title="'.$langs->trans("Version").' '.$this->getVersion(1).'">';
+			print $this->getVersion(1);
+			print '</span>';
+		}
 
 		/*print '<span class="info-box-icon-action">';
 		print '<div class="valignmiddle inline-block">';
@@ -2313,7 +2315,7 @@ class DolibarrModules // Can not be abstract, because we need to instantiate it 
 
 		print '</div>
 	    <div class="info-box-content info-box-text-module">
-	    <span class="info-box-title">'.$this->getName().'</span>
+	    <span class="info-box-title marginbottomonly">'.$this->getName().'</span>
 	    <span class="info-box-desc twolinesmax opacitymedium" title="'.dol_escape_htmltag($this->getDesc()).'">'.nl2br($this->getDesc()).'</span>';
 
 		/*print '<span class="info-box-icon-version" title="'.$langs->trans("Version").' '.$this->getVersion(1).'">';
