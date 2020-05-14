@@ -1265,7 +1265,7 @@ if ($resql)
 						{
 							$objp = $db->fetch_object($resultp);
 								if ($obj->price_base_type == 'TTC') print price($objp->price_ttc).' '.$langs->trans("TTC");
-								else print price($objp->price).' '.$langs->trans("HT");
+							else print price($objp->price).' '.$langs->trans("HT");
 								$db->free($resultp);
 						} else {
 							dol_print_error($db);
