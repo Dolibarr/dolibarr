@@ -333,10 +333,17 @@ class WebsitePage extends CommonObject
 					$sqlwhere[] = $key.'='.$value;
 				} elseif ($key == 'lang' || $key == 't.lang') {
 					$listoflang = array();
+					$foundnull = 0;
 					foreach(explode(',', $value) as $tmpvalue) {
+						if ($tmpvalue == 'null') {
+							$foundnull++;
+							continue;
+						}
 						$listoflang[] = "'".$this->db->escape(substr(str_replace("'", '', $tmpvalue), 0, 2))."'";
 					}
-					$sqlwhere[] = $key." IN (".join(',', $listoflang).")";
+					$stringtouse = $key." IN (".join(',', $listoflang).")";
+					if ($foundnull) $stringtouse = '('.$stringtouse.' OR '.$key.' IS NULL)';
+					$sqlwhere[] = $stringtouse;
 				} else {
 					$sqlwhere[] = $key.' LIKE \'%'.$this->db->escape($value).'%\'';
 				}
