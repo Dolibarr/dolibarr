@@ -1252,26 +1252,26 @@ if ($resql)
 			{
 				if (!empty($arrayfields['p.sellprice'.$key]['checked']))
 				{
-					$resultp = "SELECT p.rowid, p.fk_product, p.price, p.price_ttc, p.price_level, p.date_price";
-					$resultp .= " FROM ".MAIN_DB_PREFIX."product_price as p";
-					$resultp .= " WHERE fk_product = ".$obj->rowid;
-					if (!empty($conf->global->PRODUIT_MULTIPRICES)) $resultp .= " AND p.price_level = ".$key;
-					$resultp .= " ORDER BY p.date_price DESC, p.rowid DESC, p.price_level ASC";
-					$resultp = $db->query($resultp);
-					if ($resultp)
+					print '<td class="right nowraponall">';
+					if ($obj->tosell)
 					{
-						$objp = $db->fetch_object($resultp);
-						print '<td class="right nowraponall">';
-						if ($obj->tosell)
-							{
-							if ($obj->price_base_type == 'TTC') print price($objp->price_ttc).' '.$langs->trans("TTC");
-							else print price($objp->price).' '.$langs->trans("HT");
+						$resultp = "SELECT p.rowid, p.fk_product, p.price, p.price_ttc, p.price_level, p.date_price";
+						$resultp .= " FROM ".MAIN_DB_PREFIX."product_price as p";
+						$resultp .= " WHERE fk_product = ".$obj->rowid;
+						$resultp .= " AND p.price_level = ".$key;
+						$resultp .= " ORDER BY p.date_price DESC, p.rowid DESC, p.price_level ASC";
+						$resultp = $db->query($resultp);
+						if ($resultp)
+						{
+							$objp = $db->fetch_object($resultp);
+								if ($obj->price_base_type == 'TTC') print price($objp->price_ttc).' '.$langs->trans("TTC");
+								else print price($objp->price).' '.$langs->trans("HT");
+								$db->free($resultp);
+						} else {
+							dol_print_error($db);
 						}
-							print '</td>';
-							$db->free($resultp);
-					} else {
-						dol_print_error($db);
 					}
+					print '</td>';
 					if (!$i) $totalarray['nbfield']++;
 				}
 			}
