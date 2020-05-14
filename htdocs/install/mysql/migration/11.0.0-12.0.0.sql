@@ -54,6 +54,15 @@ create table llx_c_shipment_package_type
     entity       integer DEFAULT 1 NOT NULL -- Multi company id 
 )ENGINE=innodb;
 
+create table llx_facturedet_rec_extrafields
+(
+  rowid            integer AUTO_INCREMENT PRIMARY KEY,
+  tms              timestamp,
+  fk_object        integer NOT NULL,    -- object id
+  import_key       varchar(14)      	-- import key
+)ENGINE=innodb;
+
+ALTER TABLE llx_facturedet_rec_extrafields ADD INDEX idx_facturedet_rec_extrafields (fk_object);
 
 
 -- For v12
@@ -275,4 +284,6 @@ ALTER TABLE llx_prelevement_facture ADD COLUMN fk_facture_fourn INTEGER NULL;
 
 ALTER TABLE llx_menu MODIFY COLUMN module varchar(255);
 
-ALTER TABLE llx_actioncomm SET fk_action = 50 where fk_action = 40 AND code = 'TICKET_MSG'; 
+UPDATE llx_actioncomm SET fk_action = 50 where fk_action = 40 AND code = 'TICKET_MSG'; 
+
+ALTER TABLE llx_emailcollector_emailcollector ADD COLUMN hostcharset varchar(16) DEFAULT 'UTF-8';

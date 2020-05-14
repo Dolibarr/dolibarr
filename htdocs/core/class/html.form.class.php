@@ -7676,10 +7676,11 @@ class Form
 	 * 	@param	int		$enableonly		Array list of groups id to be enabled. All other must be disabled
 	 * 	@param	string	$force_entity	'0' or Ids of environment to force
 	 * 	@param	bool	$multiple		add [] in the name of element and add 'multiple' attribut (not working with ajax_autocompleter)
+	 *  @param  string	$morecss		More css to add to html component
 	 *  @return	string
 	 *  @see select_dolusers()
 	 */
-    public function select_dolgroups($selected = '', $htmlname = 'groupid', $show_empty = 0, $exclude = '', $disabled = 0, $include = '', $enableonly = '', $force_entity = '0', $multiple = false)
+    public function select_dolgroups($selected = '', $htmlname = 'groupid', $show_empty = 0, $exclude = '', $disabled = 0, $include = '', $enableonly = '', $force_entity = '0', $multiple = false, $morecss = '')
 	{
         // phpcs:enable
 		global $conf, $user, $langs;
@@ -7722,7 +7723,7 @@ class Form
 			include_once DOL_DOCUMENT_ROOT.'/core/lib/ajax.lib.php';
 		   	$out .= ajax_combobox($htmlname);
 
-			$out .= '<select class="flat minwidth200" id="'.$htmlname.'" name="'.$htmlname.($multiple ? '[]' : '').'" '.($multiple ? 'multiple' : '').' '.($disabled ? ' disabled' : '').'>';
+			$out .= '<select class="flat minwidth200'.($morecss ? ' '.$morecss : '').'" id="'.$htmlname.'" name="'.$htmlname.($multiple ? '[]' : '').'" '.($multiple ? 'multiple' : '').' '.($disabled ? ' disabled' : '').'>';
 
 			$num = $this->db->num_rows($resql);
 			$i = 0;

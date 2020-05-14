@@ -2180,7 +2180,7 @@ function left_menu($menu_array_before, $helppagename = '', $notused = '', $menu_
             } else {
                 if (is_array($arrayresult)) {
                     foreach ($arrayresult as $key => $val) {
-                        $searchform .= printSearchForm($val['url'], $val['url'], $val['label'], 'maxwidth125', 'sall', $val['shortcut'], 'searchleft'.$key, img_picto('', $val['img'], '', false, 1, 1));
+                        $searchform .= printSearchForm($val['url'], $val['url'], $val['label'], 'maxwidth125', 'sall', $val['shortcut'], 'searchleft'.$key, $val['img']);
                     }
                 }
             }
@@ -2453,14 +2453,14 @@ function printSearchForm($urlaction, $urlobject, $title, $htmlmorecss, $htmlinpu
 	$ret .= '<input type="hidden" name="savelogin" value="'.dol_escape_htmltag($user->login).'">';
 	if ($showtitlebefore) $ret .= '<div class="tagtd left">'.$title.'</div> ';
 	$ret .= '<div class="tagtd">';
+	$ret .= img_picto('', $img, '', false, 0, 0, '', 'paddingright width20');
 	$ret .= '<input type="text" class="flat '.$htmlmorecss.'"';
-	$ret .= ' style="text-indent: 22px; background-image: url(\''.$img.'\'); background-repeat: no-repeat; background-position: 3px;"';
+	$ret .= ' style="background-repeat: no-repeat; background-position: 3px;"';
 	$ret .= ($accesskey ? ' accesskey="'.$accesskey.'"' : '');
 	$ret .= ' placeholder="'.strip_tags($title).'"';
 	$ret .= ($autofocus ? ' autofocus' : '');
 	$ret .= ' name="'.$htmlinputname.'" id="'.$prefhtmlinputname.$htmlinputname.'" />';
-	//$ret.='<input type="submit" class="button" style="padding-top: 4px; padding-bottom: 4px; padding-left: 6px; padding-right: 6px" value="'.$langs->trans("Go").'">';
-	$ret .= '<button type="submit" class="button" style="padding-top: 4px; padding-bottom: 4px; padding-left: 6px; padding-right: 6px">';
+	$ret .= '<button type="submit" class="button bordertransp" style="padding-top: 4px; padding-bottom: 4px; padding-left: 6px; padding-right: 6px">';
 	$ret .= '<span class="fa fa-search"></span>';
 	$ret .= '</button>';
 	$ret .= '</div>';

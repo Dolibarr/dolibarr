@@ -308,7 +308,7 @@ class Translate
 									    continue;
 									}
 									else {
-										// Convert some strings: Parse and render carriage returns. Also, change '\\s' int '\s' because transifex sync pull the string '\s' into string '\\s'
+										// Convert some strings: Parse and render carriage returns. Also, change '\\s' into '\s' because transifex sync pull the string '\s' into string '\\s'
 										$this->tab_translate[$key] = str_replace(array('\\n', '\\\\s'), array("\n", '\s'), $value);
 										if ($usecachekey) {
 											$tabtranslatedomain[$key] = $value;
