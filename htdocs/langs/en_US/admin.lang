@@ -40,6 +40,7 @@ WebUserGroup=Web server user/group
 NoSessionFound=Your PHP configuration seems to not allow listing of active sessions. The directory used to save sessions (<b>%s</b>) may be protected (for example by OS permissions or by PHP directive open_basedir).
 DBStoringCharset=Database charset to store data
 DBSortingCharset=Database charset to sort data
+HostCharset=Host charset
 ClientCharset=Client charset
 ClientSortingCharset=Client collation
 WarningModuleNotActive=Module <b>%s</b> must be enabled
@@ -1938,7 +1939,7 @@ WithoutDolTrackingID=Dolibarr Reference not found in Message ID
 FormatZip=Zip
 MainMenuCode=Menu entry code (mainmenu)
 ECMAutoTree=Show automatic ECM tree
-OperationParamDesc=Define values to use for action, or how to extract values. For example:<br>objproperty1=SET:abc<br>objproperty1=SET:a value with replacement of __objproperty1__<br>objproperty3=SETIFEMPTY:abc<br>objproperty4=EXTRACT:HEADER:X-Myheaderkey.*[^\s]+(.*)<br>options_myextrafield=EXTRACT:SUBJECT:([^\s]*)<br>object.objproperty5=EXTRACT:BODY:My company name is\s([^\s]*)<br><br>Use a ; char as separator to extract or set several properties.
+OperationParamDesc=Define the values to use for the object of the action, or how to extract values. For example:<br>objproperty1=SET:the value to set<br>objproperty2=SET:a value with replacement of __objproperty1__<br>objproperty3=SETIFEMPTY:value used if objproperty3 is not already defined<br>objproperty4=EXTRACT:HEADER:X-Myheaderkey:\s*([^\s]*)<br>options_myextrafield1=EXTRACT:SUBJECT:([^&#92;n]*)<br>object.objproperty5=EXTRACT:BODY:My company name is\s([^\s]*)<br><br>Use a ; char as separator to extract or set several properties.
 OpeningHours=Opening hours
 OpeningHoursDesc=Enter here the regular opening hours of your company.
 ResourceSetup=Configuration of Resource module

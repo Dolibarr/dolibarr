@@ -8070,7 +8070,10 @@ abstract class CommonObject
 	{
 		if (empty($id) && empty($ref) && empty($morewhere)) return -1;
 
-		$sql = 'SELECT '.$this->getFieldList();
+		$fieldlist = $this->getFieldList();
+		if (empty($fieldlist)) return 0;
+
+		$sql = 'SELECT '.$fieldlist;
 		$sql .= ' FROM '.MAIN_DB_PREFIX.$this->table_element;
 
 		if (!empty($id))  $sql .= ' WHERE rowid = '.$id;

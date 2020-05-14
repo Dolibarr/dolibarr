@@ -285,3 +285,5 @@ ALTER TABLE llx_prelevement_facture ADD COLUMN fk_facture_fourn INTEGER NULL;
 ALTER TABLE llx_menu MODIFY COLUMN module varchar(255);
 
 UPDATE llx_actioncomm SET fk_action = 50 where fk_action = 40 AND code = 'TICKET_MSG'; 
+
+ALTER TABLE llx_emailcollector_emailcollector ADD COLUMN hostcharset varchar(16) DEFAULT 'UTF-8';

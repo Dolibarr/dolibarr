@@ -329,10 +329,23 @@ class WebsitePage extends CommonObject
 		$sqlwhere = array();
 		if (count($filter) > 0) {
 			foreach ($filter as $key => $value) {
-				if ($key == 't.rowid' || $key == 't.fk_website') {
+				if ($key == 't.rowid' || $key == 't.fk_website' || $key == 'status') {
 					$sqlwhere[] = $key.'='.$value;
+				} elseif ($key == 'type_container') {
+					$sqlwhere[] = $key."='".$value."'";
 				} elseif ($key == 'lang' || $key == 't.lang') {
-					$sqlwhere[] = $key." = '".$this->db->escape(substr($value, 0, 2))."'";
+					$listoflang = array();
+					$foundnull = 0;
+					foreach(explode(',', $value) as $tmpvalue) {
+						if ($tmpvalue == 'null') {
+							$foundnull++;
+							continue;
+						}
+						$listoflang[] = "'".$this->db->escape(substr(str_replace("'", '', $tmpvalue), 0, 2))."'";
+					}
+					$stringtouse = $key." IN (".join(',', $listoflang).")";
+					if ($foundnull) $stringtouse = '('.$stringtouse.' OR '.$key.' IS NULL)';
+					$sqlwhere[] = $stringtouse;
 				} else {
 					$sqlwhere[] = $key.' LIKE \'%'.$this->db->escape($value).'%\'';
 				}

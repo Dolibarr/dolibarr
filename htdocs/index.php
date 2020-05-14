@@ -142,11 +142,11 @@ if (empty($user->socid) && empty($conf->global->MAIN_DISABLE_GLOBAL_BOXSTATS))
     		'orders',
     		'invoices',
     		'donations',
-    		'contracts',
-    		'interventions',
     		'supplier_proposals',
     		'supplier_orders',
     		'supplier_invoices',
+    		'contracts',
+    		'interventions',
     		'ticket'
     	);
 
