@@ -4837,7 +4837,7 @@ elseif ($id > 0 || ! empty($ref))
 			{
 				if (! $objectidnext)
 				{
-					print '<div class="inline-block divButAction"><a class="butAction" href="' . $_SERVER['PHP_SELF'] . '?socid=' . $object->socid .'&amp;fac_avoir=' . $object->id . '&amp;action=create&amp;type=2'.($object->fk_project > 0 ? '&amp;projectid='.$object->fk_project : '').'' . $object->id . '&amp;action=create&amp;type=2'.($object->entity > 0 ? '&amp;originentity='.$object->entity : '').'">' . $langs->trans("CreateCreditNote") . '</a></div>';
+					print '<div class="inline-block divButAction"><a class="butAction" href="' . $_SERVER['PHP_SELF'] . '?socid=' . $object->socid .'&amp;fac_avoir=' . $object->id . '&amp;action=create&amp;type=2'.($object->fk_project > 0 ? '&amp;projectid='.$object->fk_project : '').'' . ($object->entity > 0 ? '&amp;originentity='.$object->entity : '').'">' . $langs->trans("CreateCreditNote") . '</a></div>';
 				}
 			}
 
