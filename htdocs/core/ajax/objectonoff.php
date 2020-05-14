@@ -75,5 +75,10 @@ if (($action == 'set') && !empty($id)) {
 		$triggerkey = 'COMPANY_UPDATE';
 	}
 
-	$object->setValueFrom($field, $value, $element, $id, $user, $triggerkey);
+	$tablename = $element;
+	if ($tablename == 'websitepage') $tablename = 'website_page';
+
+	$format = 'int';
+
+	$object->setValueFrom($field, $value, $tablename, $id, $format, '', $user, $triggerkey);
 }
