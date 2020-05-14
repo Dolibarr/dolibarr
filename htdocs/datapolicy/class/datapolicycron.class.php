@@ -461,7 +461,7 @@ class DataPolicyCron
                 )
             ),
         );
-		
+
         $this->db->begin();
 
         foreach ($arrayofparameters as $key => $params)
