@@ -100,8 +100,9 @@ class EmailCollector extends CommonObject
         'ref'           => array('type'=>'varchar(128)', 'label'=>'Ref', 'enabled'=>1, 'visible'=>1, 'notnull'=>1, 'showoncombobox'=>1, 'index'=>1, 'position'=>10, 'searchall'=>1, 'help'=>'Example: MyCollector1'),
         'label'         => array('type'=>'varchar(255)', 'label'=>'Label', 'visible'=>1, 'enabled'=>1, 'position'=>30, 'notnull'=>-1, 'searchall'=>1, 'help'=>'Example: My Email collector'),
         'description'   => array('type'=>'text', 'label'=>'Description', 'visible'=>-1, 'enabled'=>1, 'position'=>60, 'notnull'=>-1),
-        'host'          => array('type'=>'varchar(255)', 'label'=>'EMailHost', 'visible'=>1, 'enabled'=>1, 'position'=>100, 'notnull'=>1, 'searchall'=>1, 'comment'=>"IMAP server", 'help'=>'Example: imap.gmail.com'),
-        'login'         => array('type'=>'varchar(128)', 'label'=>'Login', 'visible'=>1, 'enabled'=>1, 'position'=>101, 'notnull'=>-1, 'index'=>1, 'comment'=>"IMAP login", 'help'=>'Example: myaccount@gmail.com'),
+        'host'          => array('type'=>'varchar(255)', 'label'=>'EMailHost', 'visible'=>1, 'enabled'=>1, 'position'=>90, 'notnull'=>1, 'searchall'=>1, 'comment'=>"IMAP server", 'help'=>'Example: imap.gmail.com'),
+    	'hostcharset'   => array('type'=>'varchar(16)', 'label'=>'HostCharset', 'visible'=>-1, 'enabled'=>1, 'position'=>91, 'notnull'=>0, 'searchall'=>0, 'comment'=>"IMAP server charset", 'help'=>'Example: "UTF-8" (May be "US-ASCII" with some Office365)'),
+    	'login'         => array('type'=>'varchar(128)', 'label'=>'Login', 'visible'=>1, 'enabled'=>1, 'position'=>101, 'notnull'=>-1, 'index'=>1, 'comment'=>"IMAP login", 'help'=>'Example: myaccount@gmail.com'),
         'password'      => array('type'=>'password', 'label'=>'Password', 'visible'=>-1, 'enabled'=>1, 'position'=>102, 'notnull'=>-1, 'comment'=>"IMAP password", 'help'=>'WithGMailYouCanCreateADedicatedPassword'),
         'source_directory' => array('type'=>'varchar(255)', 'label'=>'MailboxSourceDirectory', 'visible'=>-1, 'enabled'=>1, 'position'=>103, 'notnull'=>1, 'default' => 'Inbox', 'help'=>'Example: INBOX'),
         //'filter' => array('type'=>'text', 'label'=>'Filter', 'visible'=>1, 'enabled'=>1, 'position'=>105),
@@ -173,6 +174,7 @@ class EmailCollector extends CommonObject
 
 
     public $host;
+    public $hostcharset;
     public $login;
     public $password;
     public $source_directory;
@@ -985,9 +987,10 @@ class EmailCollector extends CommonObject
         $nbemailprocessed = 0;
         $nbemailok = 0;
         $nbactiondone = 0;
+        $charset = ($this->hostcharset ? $this->hostcharset : "UTF-8");
 
         // Scan IMAP inbox
-        $arrayofemail = imap_search($connection, $search, null, "UTF-8");
+        $arrayofemail = imap_search($connection, $search, null, $charset);
         if ($arrayofemail === false)
         {
             // Nothing found or search string not understood
@@ -1086,6 +1089,7 @@ class EmailCollector extends CommonObject
                 }
 
                 $header = imap_fetchheader($connection, $imapemail, 0);
+                $header = preg_replace('/\r\n\s+/m', ' ', $header);	// When a header line is on several lines, merge lines
                 $matches = array();
                 preg_match_all('/([^: ]+): (.+?(?:\r\n\s(?:.+?))*)\r\n/m', $header, $matches);
                 $headers = array_combine($matches[1], $matches[2]);
@@ -1132,7 +1136,10 @@ class EmailCollector extends CommonObject
                 // Can use also imap_mime_header_decode($str)
                 // Can use also mb_decode_mimeheader($str)
                 // Can use also iconv_mime_decode($str, ICONV_MIME_DECODE_CONTINUE_ON_ERROR, 'UTF-8')
-                if (function_exists('imap_mime_header_decode')) {
+                if (function_exists('iconv_mime_decode')) {
+                	$overview[0]->subject = iconv_mime_decode($overview[0]->subject, ICONV_MIME_DECODE_CONTINUE_ON_ERROR, 'UTF-8');
+                }
+                elseif (function_exists('imap_mime_header_decode')) {
                 	$elements = imap_mime_header_decode($overview[0]->subject);
                 	$newstring = '';
                 	if (!empty($elements)) {
@@ -1146,6 +1153,8 @@ class EmailCollector extends CommonObject
                 elseif (function_exists('mb_decode_mimeheader')) {
                 	$overview[0]->subject = mb_decode_mimeheader($overview[0]->subject);
                 }
+                // Removed emojis
+                $overview[0]->subject = preg_replace('/[\x{10000}-\x{10FFFF}]/u', "\xEF\xBF\xBD", $overview[0]->subject);
 
                 // Parse IMAP email structure
                 global $htmlmsg, $plainmsg, $charset, $attachments;
@@ -1153,6 +1162,9 @@ class EmailCollector extends CommonObject
 
                 //$htmlmsg,$plainmsg,$charset,$attachments
                 $messagetext = $plainmsg ? $plainmsg : dol_string_nohtmltag($htmlmsg, 0);
+                // Removed emojis
+                $messagetext = preg_replace('/[\x{10000}-\x{10FFFF}]/u', "\xEF\xBF\xBD", $messagetext);
+
                 /*var_dump($plainmsg);
                 var_dump($htmlmsg);
                 var_dump($messagetext);*/

@@ -40,6 +40,7 @@ WebUserGroup=Web server user/group
 NoSessionFound=Your PHP configuration seems to not allow listing of active sessions. The directory used to save sessions (<b>%s</b>) may be protected (for example by OS permissions or by PHP directive open_basedir).
 DBStoringCharset=Database charset to store data
 DBSortingCharset=Database charset to sort data
+HostCharset=Host charset
 ClientCharset=Client charset
 ClientSortingCharset=Client collation
 WarningModuleNotActive=Module <b>%s</b> must be enabled
