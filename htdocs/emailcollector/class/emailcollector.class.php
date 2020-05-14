@@ -937,8 +937,8 @@ class EmailCollector extends CommonObject
         }
         imap_errors(); // Clear stack of errors.
 
-        // $conf->global->MAIL_PREFIX_FOR_EMAIL_ID must be defined
         $host = dol_getprefix('email');
+		//$host = '123456';
 
         // Define the IMAP search string
         // See https://tools.ietf.org/html/rfc3501#section-6.4.4 for IMAPv4 (PHP not yet compatible)
@@ -1081,6 +1081,7 @@ class EmailCollector extends CommonObject
 
             dol_syslog("Start of loop on email", LOG_INFO, 1);
 
+            $i = 0;
             foreach ($arrayofemail as $imapemail)
             {
                 if ($nbemailprocessed > 1000)
@@ -1088,12 +1089,16 @@ class EmailCollector extends CommonObject
                     break; // Do not process more than 1000 email per launch (this is a different protection than maxnbcollectedpercollect
                 }
 
+                $i++;
+
                 $header = imap_fetchheader($connection, $imapemail, 0);
                 $header = preg_replace('/\r\n\s+/m', ' ', $header);	// When a header line is on several lines, merge lines
                 $matches = array();
                 preg_match_all('/([^: ]+): (.+?(?:\r\n\s(?:.+?))*)\r\n/m', $header, $matches);
                 $headers = array_combine($matches[1], $matches[2]);
                 //var_dump($headers);
+
+                dol_syslog("** Process email ".$i." References: ".$headers['References']);
 
                 // If there is a filter on trackid
                 if ($searchfilterdoltrackid > 0)
@@ -1130,7 +1135,7 @@ class EmailCollector extends CommonObject
                 // GET Email meta datas
                 $overview = imap_fetch_overview($connection, $imapemail, 0);
 
-                dol_syslog("** Process email - msgid=".$overview[0]->message_id." date=".dol_print_date($overview[0]->udate, 'dayrfc', 'gmt')." subject=".$overview[0]->subject);
+                dol_syslog("msgid=".$overview[0]->message_id." date=".dol_print_date($overview[0]->udate, 'dayrfc', 'gmt')." subject=".$overview[0]->subject);
 
                 // Decode $overview[0]->subject according to RFC2047
                 // Can use also imap_mime_header_decode($str)

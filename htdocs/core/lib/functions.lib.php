@@ -5794,7 +5794,8 @@ function dolGetFirstLineOfText($text, $nboflines = 1, $charset = 'UTF-8')
 
 
 /**
- * Replace CRLF in string with a HTML BR tag
+ * Replace CRLF in string with a HTML BR tag.
+ * WARNING: The content after operation contains some HTML tags (the <br>) so be sure to also have encode the special chars of stringtoencode into HTML before.
  *
  * @param	string	$stringtoencode		String to encode
  * @param	int     $nl2brmode			0=Adding br before \n, 1=Replacing \n by br
@@ -6048,7 +6049,7 @@ function dol_textishtml($msg, $option = 0)
  *
  *  @param  string  $text1          Text 1
  *  @param  string  $text2          Text 2
- *  @param  bool    $forxml         false=Use <br>instead of \n if html content detected, true=Use <br /> instead of \n if html content detected
+ *  @param  bool    $forxml         true=Use <br /> instead of <br> if we have to add a br tag
  *  @param  bool    $invert         invert order of description lines (we often use config MAIN_CHANGE_ORDER_CONCAT_DESCRIPTION in this parameter)
  *  @return string                  Text 1 + new line + Text2
  *  @see    dol_textishtml()
@@ -6063,9 +6064,9 @@ function dol_concatdesc($text1, $text2, $forxml = false, $invert = false)
     }
 
     $ret = '';
-    $ret .= (!dol_textishtml($text1) && dol_textishtml($text2)) ?dol_nl2br($text1, 0, $forxml) : $text1;
+    $ret .= (!dol_textishtml($text1) && dol_textishtml($text2)) ? dol_nl2br(dol_escape_htmltag($text1, 0, 1, '', 1), 0, $forxml) : $text1;
     $ret .= (!empty($text1) && !empty($text2)) ? ((dol_textishtml($text1) || dol_textishtml($text2)) ? ($forxml ? "<br \>\n" : "<br>\n") : "\n") : "";
-    $ret .= (dol_textishtml($text1) && !dol_textishtml($text2)) ?dol_nl2br($text2, 0, $forxml) : $text2;
+    $ret .= (dol_textishtml($text1) && !dol_textishtml($text2)) ? dol_nl2br(dol_escape_htmltag($text2, 0, 1, '', 1), 0, $forxml) : $text2;
     return $ret;
 }
 
