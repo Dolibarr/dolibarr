@@ -332,7 +332,11 @@ class WebsitePage extends CommonObject
 				if ($key == 't.rowid' || $key == 't.fk_website') {
 					$sqlwhere[] = $key.'='.$value;
 				} elseif ($key == 'lang' || $key == 't.lang') {
-					$sqlwhere[] = $key." = '".$this->db->escape(substr($value, 0, 2))."'";
+					$listoflang = array();
+					foreach(explode(',', $value) as $tmpvalue) {
+						$listoflang[] = "'".$this->db->escape(substr(str_replace("'", '', $tmpvalue), 0, 2))."'";
+					}
+					$sqlwhere[] = $key." IN (".join(',', $listoflang).")";
 				} else {
 					$sqlwhere[] = $key.' LIKE \'%'.$this->db->escape($value).'%\'';
 				}
