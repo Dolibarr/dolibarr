@@ -365,9 +365,9 @@ if ($mode == 'overwrite')
     		}
     		else
     		{
-    			print '<a href="'.$_SERVER['PHP_SELF'].'?rowid='.$obj->rowid.'&entity='.$obj->entity.'&action=edit'.((empty($user->entity) && $debug) ? '&debug=1' : '').'">'.img_edit().'</a>';
+    			print '<a class="reposition editfielda paddingrightonly" href="'.$_SERVER['PHP_SELF'].'?rowid='.$obj->rowid.'&entity='.$obj->entity.'&action=edit'.((empty($user->entity) && $debug) ? '&debug=1' : '').'">'.img_edit().'</a>';
 				print ' &nbsp; ';
-    			print '<a href="'.$_SERVER['PHP_SELF'].'?rowid='.$obj->rowid.'&entity='.$obj->entity.'&action=delete'.((empty($user->entity) && $debug) ? '&debug=1' : '').'">'.img_delete().'</a>';
+    			print '<a class="reposition" href="'.$_SERVER['PHP_SELF'].'?rowid='.$obj->rowid.'&entity='.$obj->entity.'&action=delete'.((empty($user->entity) && $debug) ? '&debug=1' : '').'">'.img_delete().'</a>';
     		}
     		print '</td>';
 
@@ -531,8 +531,8 @@ if ($mode == 'searchkey')
                 {
                     $obj = $db->fetch_object($result);
                 }
-                print '<a href="'.$_SERVER['PHP_SELF'].'?rowid='.$obj->rowid.'&entity='.$conf->entity.'&action=edit">'.img_edit().'</a>';
-                print '&nbsp;&nbsp;';
+                print '<a class="editfielda reposition paddingrightonly" href="'.$_SERVER['PHP_SELF'].'?rowid='.$obj->rowid.'&entity='.$conf->entity.'&action=edit">'.img_edit().'</a>';
+                print ' ';
                 print '<a href="'.$_SERVER['PHP_SELF'].'?rowid='.$obj->rowid.'&entity='.$conf->entity.'&action=delete">'.img_delete().'</a>';
                 print '&nbsp;&nbsp;';
                 $htmltext = $langs->trans("OriginalValueWas", $newlangfileonly->tab_translate[$key]);
@@ -541,7 +541,7 @@ if ($mode == 'searchkey')
             elseif (!empty($conf->global->MAIN_ENABLE_OVERWRITE_TRANSLATION))
             {
             	//print $key.'-'.$val;
-                print '<a href="'.$_SERVER['PHP_SELF'].'?mode=overwrite&amp;langcode='.$langcode.'&amp;transkey='.$key.'">'.img_edit_add($langs->trans("Overwrite")).'</a>';
+                print '<a class="reposition paddingrightonly" href="'.$_SERVER['PHP_SELF'].'?mode=overwrite&amp;langcode='.$langcode.'&amp;transkey='.$key.'">'.img_edit_add($langs->trans("Overwrite")).'</a>';
             }
 
             if (!empty($conf->global->MAIN_FEATURES_LEVEL))

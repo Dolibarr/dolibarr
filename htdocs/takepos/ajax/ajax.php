@@ -142,4 +142,10 @@ elseif ($action == 'search' && $term != '') {
 	}
 
 	echo json_encode($object);
+} elseif ($action == 'thecheck') {
+	$place = GETPOST('place', 'alpha');
+	require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
+	require_once DOL_DOCUMENT_ROOT.'/core/class/dolreceiptprinter.class.php';
+    $printer = new dolReceiptPrinter($db);
+    $printer->sendToPrinter($object, $conf->global->{'TAKEPOS_TEMPLATE_TO_USE_FOR_INVOICES'.$term}, $conf->global->{'TAKEPOS_PRINTER_TO_USE'.$term});
 }

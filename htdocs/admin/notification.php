@@ -34,10 +34,12 @@ require_once DOL_DOCUMENT_ROOT.'/core/triggers/interface_50_modNotification_Noti
 $langs->loadLangs(array('admin', 'other', 'orders', 'propal', 'bills', 'errors', 'mails'));
 
 // Security check
-if (!$user->admin)
-  accessforbidden();
+if (!$user->admin) {
+	accessforbidden();
+}
 
 $action = GETPOST('action', 'aZ09');
+$error = 0;
 
 
 /*
@@ -45,27 +47,48 @@ $action = GETPOST('action', 'aZ09');
  */
 
 // Action to update or add a constant
-if ($action == 'update' || $action == 'add')
+if ($action == 'settemplates')
 {
-	$constlineid = GETPOST('rowid', 'int');
-	$constname = GETPOST('constname', 'alpha');
+	$db->begin();
 
-	$constvalue = (GETPOSTISSET('constvalue_'.$constname) ? GETPOST('constvalue_'.$constname, 'alpha') : GETPOST('constvalue'));
-	$consttype = (GETPOSTISSET('consttype_'.$constname) ? GETPOST('consttype_'.$constname, 'alphanohtml') : GETPOST('consttype'));
-	$constnote = (GETPOSTISSET('constnote_'.$constname) ? GETPOST('constnote_'.$constname, 'none') : GETPOST('constnote'));
+	if (!$error && is_array($_POST))
+	{
+		$reg = array();
+		foreach ($_POST as $key => $val)
+		{
+			if (!preg_match('/^constvalue_(.*)_TEMPLATE/', $key, $reg)) continue;
 
-	$typetouse = empty($oldtypetonewone[$consttype]) ? $consttype : $oldtypetonewone[$consttype];
+			$triggername = $reg[1];
+			$constvalue = GETPOST($key, 'alpha');
+			$consttype = 'emailtemplate:xxx';
+			$tmparray=explode(':', $constvalue);
+			if (! empty($tmparray[0]) && ! empty($tmparray[1])) {
+				$constvalue = $tmparray[0];
+				$consttype = 'emailtemplate:'.$tmparray[1];
+				//var_dump($constvalue);
+				//var_dump($consttype);
+				$res = dolibarr_set_const($db, $triggername.'_TEMPLATE', $constvalue, $consttype, 0, '', $conf->entity);
+				if ($res < 0) {
+					$error++;
+					break;
+				}
+			} else {
+				$res = dolibarr_del_const($db, $triggername.'_TEMPLATE', $conf->entity);
+			}
+		}
+	}
 
-	$res = dolibarr_set_const($db, $constname, $constvalue, $typetouse, 0, $constnote, $conf->entity);
-
-	if (!$res > 0) $error++;
 
 	if (!$error)
 	{
+		$db->commit();
+
 		setEventMessages($langs->trans("SetupSaved"), null, 'mesgs');
 	}
 	else
 	{
+		$db->rollback();
+
 		setEventMessages($langs->trans("Error"), null, 'errors');
 	}
 }
@@ -74,12 +97,31 @@ if ($action == 'setvalue' && $user->admin)
 {
 	$db->begin();
 
-	$result = dolibarr_set_const($db, "NOTIFICATION_EMAIL_FROM", $_POST["email_from"], 'chaine', 0, '', $conf->entity);
+	$result = dolibarr_set_const($db, "NOTIFICATION_EMAIL_FROM", GETPOST("email_from", "none"), 'chaine', 0, '', $conf->entity);
     if ($result < 0) $error++;
+
+
+    if (!$error)
+    {
+    	$db->commit();
+
+    	setEventMessages($langs->trans("SetupSaved"), null, 'mesgs');
+    }
+    else
+    {
+    	$db->rollback();
+
+    	setEventMessages($langs->trans("Error"), null, 'errors');
+    }
+}
+
+
+if ($action == 'setfixednotif' && $user->admin)
+{
+	$db->begin();
 
     if (!$error && is_array($_POST))
     {
-    	//var_dump($_POST);
     	$reg = array();
 	    foreach ($_POST as $key => $val)
 	    {
@@ -101,7 +143,7 @@ if ($action == 'setvalue' && $user->admin)
 	    	}
 	    	elseif (preg_match('/^NOTIF_(.*)_new_key/', $key, $reg))
 	    	{
-		    	// Add a new entry
+	    		// Add a new entry
 	    		$newkey = 'NOTIFICATION_FIXEDEMAIL_'.$reg[1].'_THRESHOLD_HIGHER_'.((int) GETPOST($shortkey.'_amount'));
 	    		$newval = GETPOST($shortkey.'_key');
 	    	}
@@ -168,8 +210,17 @@ print '</td>';
 print '</tr>';
 print '</table>';
 
+print '<div class="center"><input type="submit" class="button" value="'.$langs->trans("Save").'"></div>';
+
+print '</form>';
+
+
 print '<br><br>';
 
+
+print '<form method="post" action="'.$_SERVER["PHP_SELF"].'">';
+print '<input type="hidden" name="token" value="'.newToken().'">';
+print '<input type="hidden" name="action" value="settemplates">';
 
 // Notification per contacts
 $title = $langs->trans("ListOfNotificationsPerUser");
@@ -211,7 +262,7 @@ if ($conf->global->MAIN_FEATURES_LEVEL >= 2) {
 	}
 
 	$helptext = '';
-	form_constantes($constantes, 0, $helptext);
+	form_constantes($constantes, 2, $helptext);
 } else {
 	print '<table class="noborder centpercent">';
 	print '<tr class="liste_titre">';
@@ -248,13 +299,17 @@ if ($conf->global->MAIN_FEATURES_LEVEL >= 2) {
 	print '</table>';
 }
 
-print '<div class="opacitymedium">';
-print '* '.$langs->trans("GoOntoUserCardToAddMore").'<br>';
-if (!empty($conf->societe->enabled)) print '** '.$langs->trans("GoOntoContactCardToAddMore").'<br>';
+print '<div class="center"><input type="submit" class="button" value="'.$langs->trans("Save").'"></div>';
 
-print '</div>';
+print '</form>';
+
+
 print '<br><br>';
 
+
+print '<form method="post" action="'.$_SERVER["PHP_SELF"].'">';
+print '<input type="hidden" name="token" value="'.newToken().'">';
+print '<input type="hidden" name="action" value="setfixednotif">';
 
 print load_fiche_titre($langs->trans("ListOfFixedNotifications"), '', '');
 
@@ -332,6 +387,12 @@ foreach ($listofnotifiedevents as $notifiedevent)
     print '</tr>';
 }
 print '</table>';
+
+print '<div class="opacitymedium">';
+print '* '.$langs->trans("GoOntoUserCardToAddMore").'<br>';
+if (!empty($conf->societe->enabled)) print '** '.$langs->trans("GoOntoContactCardToAddMore").'<br>';
+
+print '</div>';
 
 print '<br>';
 

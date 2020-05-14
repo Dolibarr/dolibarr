@@ -1443,14 +1443,14 @@ class Product extends CommonObject
         }
     }
 
-    /*
-    * Sets an accountancy code for a product.
-    * Also calls PRODUCT_MODIFY trigger when modified
-    *
-    * @param string $type It can be 'buy', 'buy_intra', 'buy_export', 'sell', 'sell_intra' or 'sell_export'
-    * @param string $value Accountancy code
-    * @return int <0 KO >0 OK
-    */
+    /**
+     * Sets an accountancy code for a product.
+     * Also calls PRODUCT_MODIFY trigger when modified
+     *
+     * @param 	string $type 	It can be 'buy', 'buy_intra', 'buy_export', 'sell', 'sell_intra' or 'sell_export'
+     * @param 	string $value 	Accountancy code
+     * @return 	int 			<0 KO >0 OK
+     */
     public function setAccountancyCode($type, $value)
     {
         global $user, $langs, $conf;
@@ -5387,11 +5387,11 @@ class Product extends CommonObject
             $label_type = 'short_label';
         }
 
-        $sql = 'select '.$label_type.' from '.MAIN_DB_PREFIX.'c_units where rowid='.$this->fk_unit;
+        $sql = 'select '.$label_type.', code from '.MAIN_DB_PREFIX.'c_units where rowid='.$this->fk_unit;
         $resql = $this->db->query($sql);
         if ($resql && $this->db->num_rows($resql) > 0) {
             $res = $this->db->fetch_array($resql);
-            $label = $res[$label_type];
+            $label = ($label_type == 'short' ? $res[$label_type] : 'unit'.$res['code']);
             $this->db->free($resql);
             return $label;
         }

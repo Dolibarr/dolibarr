@@ -20,24 +20,21 @@ class Diff
 	const DELETED = 1;
 	const INSERTED = 2;
 
-	/* Returns the diff for two strings. The return value is an array, each of
+	/**
+	 * Returns the diff for two strings. The return value is an array, each of
      * whose values is an array containing two values: a line (or character, if
      * $compareCharacters is true), and one of the constants DIFF::UNMODIFIED (the
      * line or character is in both strings), DIFF::DELETED (the line or character
      * is only in the first string), and DIFF::INSERTED (the line or character is
      * only in the second string). The parameters are:
      *
-     * $string1           - the first string
-     * $string2           - the second string
-     * $compareCharacters - true to compare characters, and false to compare
-     *                      lines; this optional parameter defaults to false
+     * @param	string	$string1            First string
+     * @param	string	$string2            Second string
+     * @param	string	$compareCharacters  true to compare characters, and false to compare lines; this optional parameter defaults to false
+     * @return	array						Array of diff
      */
-	public static function compare(
-		$string1,
-		$string2,
-		$compareCharacters = false
-	) {
-
+	public static function compare($string1, $string2, $compareCharacters = false)
+	{
 		// initialise the sequences and comparison start and end positions
 		$start = 0;
 		if ($compareCharacters) {
@@ -90,12 +87,13 @@ class Diff
 		return $diff;
 	}
 
-	/* Returns the diff for two files. The parameters are:
+	/**
+	 * Returns the diff for two files. The parameters are:
      *
-     * $file1             - the path to the first file
-     * $file2             - the path to the second file
-     * $compareCharacters - true to compare characters, and false to compare
-     *                      lines; this optional parameter defaults to false
+     * @param	string	$file1              Path to the first file
+     * @param	string	$file2              Path to the second file
+     * @param	boolean	$compareCharacters  true to compare characters, and false to compare lines; this optional parameter defaults to false
+     * @return	array						Array of diff
      */
 	public static function compareFiles(
 		$file1,
@@ -111,23 +109,18 @@ class Diff
 		);
 	}
 
-	/* Returns the table of longest common subsequence lengths for the specified
-     * sequences. The parameters are:
+	/**
+	 * Returns the table of longest common subsequence lengths for the specified sequences. The parameters are:
      *
-     * $sequence1 - the first sequence
-     * $sequence2 - the second sequence
-     * $start     - the starting index
-     * $end1      - the ending index for the first sequence
-     * $end2      - the ending index for the second sequence
+     * @param	string	$sequence1 	the first sequence
+     * @param	string	$sequence2 	the second sequence
+     * @param	string	$start     	the starting index
+     * @param	string	$end1      	the ending index for the first sequence
+     * @param	string	$end2      	the ending index for the second sequence
+     * @return	array				array of diff
      */
-	private static function computeTable(
-		$sequence1,
-		$sequence2,
-		$start,
-		$end1,
-		$end2
-	) {
-
+	private static function computeTable($sequence1, $sequence2, $start, $end1, $end2)
+	{
 		// determine the lengths to be compared
 		$length1 = $end1 - $start + 1;
 		$length2 = $end2 - $start + 1;
@@ -156,21 +149,18 @@ class Diff
 		return $table;
 	}
 
-	/* Returns the partial diff for the specificed sequences, in reverse order.
-     * The parameters are:
+	/**
+	 * Returns the partial diff for the specificed sequences, in reverse order.
+	 * The parameters are:
      *
-     * $table     - the table returned by the computeTable function
-     * $sequence1 - the first sequence
-     * $sequence2 - the second sequence
-     * $start     - the starting index
+     * @param	string	$table     	the table returned by the computeTable function
+     * @param	string	$sequence1 	the first sequence
+     * @param	string	$sequence2 	the second sequence
+     * @param	string	$start     	the starting index
+     * @return	array				array of diff
      */
-	private static function generatePartialDiff(
-		$table,
-		$sequence1,
-		$sequence2,
-		$start
-	) {
-
+	private static function generatePartialDiff($table,	$sequence1,	$sequence2, $start)
+	{
 		//  initialise the diff
 		$diff = array();
 
@@ -205,17 +195,17 @@ class Diff
 		return $diff;
 	}
 
-	/* Returns a diff as a string, where unmodified lines are prefixed by '  ',
+	/**
+	 * Returns a diff as a string, where unmodified lines are prefixed by '  ',
      * deletions are prefixed by '- ', and insertions are prefixed by '+ '. The
      * parameters are:
      *
-     * $diff      - the diff array
-     * $separator - the separator between lines; this optional parameter defaults
-     *              to "\n"
+     * @param	array	$diff      	the diff array
+     * @param	string	$separator 	the separator between lines; this optional parameter defaults to "\n"
+     * @return	string				String
      */
 	public static function toString($diff, $separator = "\n")
 	{
-
 		// initialise the string
 		$string = '';
 
@@ -242,17 +232,17 @@ class Diff
 		return $string;
 	}
 
-	/* Returns a diff as an HTML string, where unmodified lines are contained
+	/**
+	 * Returns a diff as an HTML string, where unmodified lines are contained
      * within 'span' elements, deletions are contained within 'del' elements, and
      * insertions are contained within 'ins' elements. The parameters are:
      *
-     * $diff      - the diff array
-     * $separator - the separator between lines; this optional parameter defaults
-     *              to '<br>'
+     * @param	string	$diff      	the diff array
+     * @param	string	$separator 	the separator between lines; this optional parameter defaults to '<br>'
+     * @return	string				HTML string
      */
 	public static function toHTML($diff, $separator = '<br>')
 	{
-
 		// initialise the HTML
 		$html = '';
 
@@ -283,17 +273,16 @@ class Diff
 		return $html;
 	}
 
-	/* Returns a diff as an HTML table. The parameters are:
+	/**
+	 * Returns a diff as an HTML table. The parameters are:
      *
-     * $diff        - the diff array
-     * $indentation - indentation to add to every line of the generated HTML; this
-     *                optional parameter defaults to ''
-     * $separator   - the separator between lines; this optional parameter
-     *                defaults to '<br>'
+     * @param	string	$diff        	the diff array
+     * @param	string	$indentation 	indentation to add to every line of the generated HTML; this optional parameter defaults to ''
+     * @param	string	$separator   	the separator between lines; this optional parameter defaults to '<br>'
+     * @return	string					HTML string
      */
 	public static function toTable($diff, $indentation = '', $separator = '<br>')
 	{
-
 		// initialise the HTML
 		$html = $indentation."<table class=\"diff\">\n";
 
@@ -373,14 +362,16 @@ class Diff
 		return $html.$indentation."</table>\n";
 	}
 
-	/* Returns the content of the cell, for use in the toTable function. The
+	/**
+	 * Returns the content of the cell, for use in the toTable function. The
      * parameters are:
      *
-     * $diff        - the diff array
-     * $indentation - indentation to add to every line of the generated HTML
-     * $separator   - the separator between lines
-     * $index       - the current index, passes by reference
-     * $type        - the type of line
+     * @param	string	$diff        	the diff array
+     * @param	string	$indentation 	indentation to add to every line of the generated HTML
+     * @param	string	$separator   	the separator between lines
+     * @param	string	$index       	the current index, passes by reference
+     * @param	string	$type        	the type of line
+     * @return	string					HTML string
      */
 	private static function getCellContent($diff, $indentation, $separator, &$index, $type)
 	{

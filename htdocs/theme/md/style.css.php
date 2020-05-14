@@ -130,6 +130,7 @@ $colorbacklinebreak  = empty($user->conf->THEME_ELDY_ENABLE_PERSONALIZED) ? (emp
 $colorbackbody       = empty($user->conf->THEME_ELDY_ENABLE_PERSONALIZED) ? (empty($conf->global->THEME_ELDY_BACKBODY) ? $colorbackbody : $conf->global->THEME_ELDY_BACKBODY) : (empty($user->conf->THEME_ELDY_BACKBODY) ? $colorbackbody : $user->conf->THEME_ELDY_BACKBODY);
 $colortexttitlenotab = empty($user->conf->THEME_ELDY_ENABLE_PERSONALIZED) ? (empty($conf->global->THEME_ELDY_TEXTTITLENOTAB) ? $colortexttitlenotab : $conf->global->THEME_ELDY_TEXTTITLENOTAB) : (empty($user->conf->THEME_ELDY_TEXTTITLENOTAB) ? $colortexttitlenotab : $user->conf->THEME_ELDY_TEXTTITLENOTAB);
 $colortexttitle      = empty($user->conf->THEME_ELDY_ENABLE_PERSONALIZED) ? (empty($conf->global->THEME_ELDY_TEXTTITLE) ? $colortext : $conf->global->THEME_ELDY_TEXTTITLE) : (empty($user->conf->THEME_ELDY_TEXTTITLE) ? $colortexttitle : $user->conf->THEME_ELDY_TEXTTITLE);
+$colortexttitlelink  = empty($user->conf->THEME_ELDY_ENABLE_PERSONALIZED) ? (empty($conf->global->THEME_ELDY_TEXTTITLELINK) ? $colortexttitlelink : $conf->global->THEME_ELDY_TEXTTITLELINK) : (empty($user->conf->THEME_ELDY_TEXTTITLELINK) ? $colortexttitlelink : $user->conf->THEME_ELDY_TEXTTITLELINK);
 $colortext           = empty($user->conf->THEME_ELDY_ENABLE_PERSONALIZED) ? (empty($conf->global->THEME_ELDY_TEXT) ? $colortext : $conf->global->THEME_ELDY_TEXT) : (empty($user->conf->THEME_ELDY_TEXT) ? $colortext : $user->conf->THEME_ELDY_TEXT);
 $colortextlink       = empty($user->conf->THEME_ELDY_ENABLE_PERSONALIZED) ? (empty($conf->global->THEME_ELDY_TEXTLINK) ? $colortext : $conf->global->THEME_ELDY_TEXTLINK) : (empty($user->conf->THEME_ELDY_TEXTLINK) ? $colortextlink : $user->conf->THEME_ELDY_TEXTLINK);
 $fontsize            = empty($user->conf->THEME_ELDY_ENABLE_PERSONALIZED) ? (empty($conf->global->THEME_ELDY_FONT_SIZE1) ? $fontsize : $conf->global->THEME_ELDY_FONT_SIZE1) : (empty($user->conf->THEME_ELDY_FONT_SIZE1) ? $fontsize : $user->conf->THEME_ELDY_FONT_SIZE1);
@@ -982,7 +983,7 @@ select.flat.selectlimit {
     max-width: 0;
     overflow: auto;
 }
-.divintdwithtwolinesmax {
+.divintodwithtwolinesmax {
     width: 75px;
     display: -webkit-box;
     -webkit-box-orient: vertical;
@@ -1118,9 +1119,11 @@ table[summary="list_of_modules"] .fa-cog {
 .clearboth  { clear:both; }
 .hideobject { display: none; }
 .minwidth50  { min-width: 50px; }
+.minwidth75  { min-width: 75px; }
 /* rule for not too small screen only */
 @media only screen and (min-width: <?php echo round($nbtopmenuentries * $fontsize * 3.4, 0) + 7; ?>px)
 {
+	.width20  { width: 20px; }
 	.width25  { width: 25px; }
     .width50  { width: 50px; }
     .width75  { width: 75px; }
@@ -1142,6 +1145,7 @@ table[summary="list_of_modules"] .fa-cog {
 	.minwidth500imp { min-width: 500px !important; }
 }
 .widthauto { width: auto; }
+.width20  { width: 20px; }
 .width25  { width: 25px; }
 .width50  { width: 50px; }
 .width75  { width: 75px; }
@@ -1795,7 +1799,7 @@ img.photorefnoborder {
 	border-bottom: <?php echo $borderwidth ?>px solid rgb(<?php echo $colortopbordertitle1 ?>);
 }
 
-.trextrafieldseparator td {
+.trextrafieldseparator td, .trextrafields_collapse_last td {
     border-bottom: 1px solid rgb(<?php echo $colortopbordertitle1 ?>) !important;
 }
 .tdhrthin {
@@ -3398,6 +3402,7 @@ tr.liste_titre th, th.liste_titre, tr.liste_titre td, td.liste_titre, form.liste
 }
 tr.liste_titre th a, th.liste_titre a, tr.liste_titre td a, td.liste_titre a, form.liste_titre div a, div.liste_titre a {
 	text-shadow: none !important;
+	color: rgb(<?php echo $colortexttitlelink ?>);
 }
 tr.liste_titre_topborder td {
 	border-top-width: <?php echo $borderwidth; ?>px;

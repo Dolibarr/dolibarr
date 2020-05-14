@@ -7,6 +7,10 @@ if (!defined('ISLOADEDBYSTEELSHEET')) die('Must be call by steelsheet'); ?>
  * -------------------
  */
 
+.info-box-module-external span.info-box-icon-version {
+    background: #999;
+}
+
 span.info-box-icon-text {	/* hide box text number due to problems */
     display: none;
 }

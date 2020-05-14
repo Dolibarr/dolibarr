@@ -47,13 +47,16 @@ $idproduct = GETPOST('idproduct', 'int');
 $place = (GETPOST('place', 'aZ09') ? GETPOST('place', 'aZ09') : 0); // $place is id of table for Bar or Restaurant
 $placeid = 0; // $placeid is ID of invoice
 
-if (empty($user->rights->takepos->run)) {
+if ($_SESSION["publicterminal"]) {
+	$_SESSION["takeposterminal"] = 1; // Use Terminal 1 for public customers
+}
+elseif (empty($user->rights->takepos->run)) {
 	accessforbidden();
 }
 
 
 
-if ($conf->global->TAKEPOS_PHONE_BASIC_LAYOUT == 1 && $conf->browser->layout == 'phone')
+if (($conf->global->TAKEPOS_PHONE_BASIC_LAYOUT == 1 && $conf->browser->layout == 'phone') || $_SESSION["publicterminal"])
 {
 	// DIRECT LINK TO THIS PAGE FROM MOBILE AND NO TERMINAL SELECTED
 	if ($_SESSION["takeposterminal"] == "")
@@ -744,7 +747,7 @@ $( document ).ready(function() {
 
     $("#customerandsales").html('');
 
-	$("#customerandsales").append('<a class="valignmiddle tdoverflowmax100 minwidth100" id="customer" onclick="Customer();" title="<?php print dol_escape_js($s); ?>"><span class="fas fa-building paddingrightonly"></span><?php print dol_escape_js($s); ?></a>');
+	$("#customerandsales").append('<a class="valignmiddle tdoverflowmax100 minwidth75" id="customer" onclick="Customer();" title="<?php print dol_escape_js($s); ?>"><span class="fas fa-building paddingrightonly"></span><?php print dol_escape_js($s); ?></a>');
 
 	<?php
 	$sql = "SELECT rowid, datec, ref FROM ".MAIN_DB_PREFIX."facture";

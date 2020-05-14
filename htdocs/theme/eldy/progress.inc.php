@@ -123,7 +123,7 @@ if (!defined('ISLOADEDBYSTEELSHEET')) die('Must be call by steelsheet'); ?>
     width: 3px;
 }
 .progress-group .progress-text {
-    font-weight: 600;
+    /* font-weight: 600; */
 }
 .progress-group .progress-number {
     float: right;

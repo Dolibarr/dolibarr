@@ -2279,7 +2279,7 @@ class DolibarrModules // Can not be abstract, because we need to instantiate it 
     	$const_name = 'MAIN_MODULE_'.strtoupper(preg_replace('/^mod/i', '', get_class($this)));
 
 		print '
-    	<div class="box-flex-item info-box-module'.(empty($conf->global->$const_name) ? ' info-box-module-disabled' : ' ').'">
+    	<div class="box-flex-item info-box-module'.(empty($conf->global->$const_name) ? ' info-box-module-disabled' : '').($this->isCoreOrExternalModule() == 'external' ? ' info-box-module-external' : '').'">
 	    <div class="info-box info-box-sm info-box-module">
 	    <div class="info-box-icon">';
 
@@ -2314,7 +2314,7 @@ class DolibarrModules // Can not be abstract, because we need to instantiate it 
 		print '</div>
 	    <div class="info-box-content info-box-text-module">
 	    <span class="info-box-title">'.$this->getName().'</span>
-	    <span class="info-box-desc twolinesmax" title="'.dol_escape_htmltag($this->getDesc()).'">'.nl2br($this->getDesc()).'</span>';
+	    <span class="info-box-desc twolinesmax opacitymedium" title="'.dol_escape_htmltag($this->getDesc()).'">'.nl2br($this->getDesc()).'</span>';
 
 		/*print '<span class="info-box-icon-version" title="'.$langs->trans("Version").' '.$this->getVersion(1).'">';
 		print $this->getVersion(1);

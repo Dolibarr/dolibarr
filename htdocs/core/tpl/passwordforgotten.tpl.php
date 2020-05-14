@@ -40,6 +40,7 @@ if (!empty($conf->dol_use_jmobile)) $conf->use_javascript_ajax = 1;
 
 $php_self = $_SERVER['PHP_SELF'];
 $php_self .= dol_escape_htmltag($_SERVER["QUERY_STRING"]) ? '?'.dol_escape_htmltag($_SERVER["QUERY_STRING"]) : '';
+$php_self = str_replace('action=validatenewpassword', '', $php_self);
 
 $titleofpage = $langs->trans('SendNewPassword');
 

@@ -31,13 +31,18 @@ if (!defined('NOREQUIREMENU'))		define('NOREQUIREMENU', '1');
 if (!defined('NOREQUIREHTML'))		define('NOREQUIREHTML', '1');
 if (!defined('NOREQUIREAJAX'))		define('NOREQUIREAJAX', '1');
 
-require '../main.inc.php'; // Load $user and permissions
+if (!defined('INCLUDE_PHONEPAGE_FROM_PUBLIC_PAGE')) require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
 require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/hookmanager.class.php';
 
-$place = (GETPOST('place', 'aZ09') ? GETPOST('place', 'aZ09') : 0); // $place is id of table for Ba or Restaurant
+if (defined('INCLUDE_PHONEPAGE_FROM_PUBLIC_PAGE')) {
+	// Decode place if it is an order from customer phone
+	$key = GETPOST('key');
+	$place=dol_decode($key);
+}
+else $place = (GETPOST('place', 'aZ09') ? GETPOST('place', 'aZ09') : 0); // $place is id of table for Ba or Restaurant
 $action = GETPOST('action', 'alpha');
 $setterminal = GETPOST('setterminal', 'int');
 
@@ -48,7 +53,10 @@ if ($setterminal > 0)
 
 $langs->loadLangs(array("bills", "orders", "commercial", "cashdesk", "receiptprinter"));
 
-if (empty($user->rights->takepos->run)) {
+if (defined('INCLUDE_PHONEPAGE_FROM_PUBLIC_PAGE')) {
+	$_SESSION["takeposterminal"] = 1; // Use Terminal 1 for public customers
+}
+elseif (empty($user->rights->takepos->run)) {
 	accessforbidden();
 }
 
@@ -167,6 +175,14 @@ function Exit(){
     window.location.href='../user/logout.php';
 }
 
+function CheckPlease(){
+	console.log("Request the check to the waiter");
+	$.ajax({
+		type: "GET",
+		url: "<?php print dol_buildpath('/takepos/ajax/ajax.php', 1).'?action=thecheck&=place='.$place; ?>",
+	});
+}
+
 </script>
 
 <body style="overflow: hidden; background-color:#D1D1D1;">
@@ -175,10 +191,13 @@ if ($conf->global->TAKEPOS_NUM_TERMINALS != "1" && $_SESSION["takeposterminal"] 
 ?>
 <div class="container">
 	<div class="phonebuttonsrow">
-		<button type="button" class="phonebutton" onclick="LoadPlacesList();"><?php echo strtoupper(substr($langs->trans('Floors'), 0, 3)); ?></button>
-		<button type="button" class="phonebutton" onclick="LoadCats();"><?php echo strtoupper(substr($langs->trans('Categories'), 0, 3)); ?></button>
-		<button type="button" class="phonebutton" onclick="TakeposPrintingOrder();"><?php echo strtoupper(substr($langs->trans('Order'), 0, 3)); ?></button>
-		<button type="button" class="phonebutton" onclick="Exit();"><?php echo strtoupper(substr($langs->trans('Logout'), 0, 3)); ?></button>
+		<?php
+		if (!$_SESSION["publicterminal"]) print '<button type="button" class="phonebutton" onclick="LoadPlacesList();">'.strtoupper(substr($langs->trans('Floors'), 0, 3)).'</button>';
+		print '<button type="button" class="phonebutton" onclick="LoadCats();">'.strtoupper(substr($langs->trans('Categories'), 0, 3)).'</button>';
+		print '<button type="button" class="phonebutton" onclick="TakeposPrintingOrder();">'.strtoupper(substr($langs->trans('Order'), 0, 3)).'</button>';
+		print '<button type="button" class="phonebutton" onclick="Exit();">'.strtoupper(substr($langs->trans('Logout'), 0, 3)).'</button>';
+		if ($_SESSION["publicterminal"]) print '<button type="button" class="phonebutton" onclick="CheckPlease();">'.strtoupper(substr($langs->trans('Payment'), 0, 3)).'</button>';
+		?>
 	</div>
 	<div class="row1">
 		<div id="phonediv1" class="phonediv1"></div>

@@ -1559,7 +1559,7 @@ class Ticket extends CommonObject
 		// Insert entry into agenda with code 'TICKET_MSG'
 		include_once DOL_DOCUMENT_ROOT.'/comm/action/class/actioncomm.class.php';
 		$actioncomm = new ActionComm($this->db);
-		$actioncomm->type_code = 'AC_OTH_AUTO';
+		$actioncomm->type_code = 'AC_OTH';
 		$actioncomm->code = 'TICKET_MSG';
 		if ($this->private) {
 			$actioncomm->code = 'TICKET_MSG_PRIVATE';

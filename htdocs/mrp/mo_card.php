@@ -427,7 +427,8 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 	$morehtmlref.=$form->editfieldkey("RefBis", 'ref_client', $object->ref_client, $object, $user->rights->mrp->creer, 'string', '', 0, 1);
 	$morehtmlref.=$form->editfieldval("RefBis", 'ref_client', $object->ref_client, $object, $user->rights->mrp->creer, 'string', '', null, null, '', 1);*/
 	// Thirdparty
-	$morehtmlref .= $langs->trans('ThirdParty').' : '.(is_object($object->thirdparty) ? $object->thirdparty->getNomUrl(1) : '');
+	$morehtmlref .= $langs->trans('ThirdParty').' ';
+	$morehtmlref .= ': '.(is_object($object->thirdparty) ? $object->thirdparty->getNomUrl(1) : '');
 	// Project
 	if (!empty($conf->projet->enabled))
 	{
@@ -452,7 +453,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 	        if (!empty($object->fk_project)) {
 	            $proj = new Project($db);
 	            $proj->fetch($object->fk_project);
-	            $morehtmlref .= $proj->getNomUrl();
+	            $morehtmlref .= ' : '.$proj->getNomUrl();
 	        } else {
 	            $morehtmlref .= '';
 	        }
@@ -639,7 +640,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
     		}
 
     		// Delete (need delete permission, or if draft, just need create/modify permission)
-    		if ($permissiontodelete)
+    		if ($permissiontodelete || ($object->status == $object::STATUS_DRAFT && $permissiontoadd))
     		{
     			print '<a class="butActionDelete" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=delete">'.$langs->trans('Delete').'</a>'."\n";
     		}
