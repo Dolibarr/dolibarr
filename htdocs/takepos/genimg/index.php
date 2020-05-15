@@ -77,7 +77,10 @@ elseif ($query == "pro")
 	preg_match('@src="([^"]+)"@', $image, $match);
 	$file = array_pop($match);
 	if ($file == "") header('Location: ../../public/theme/common/nophoto.png');
-	else header('Location: '.$file.'&cache=1&publictakepos=1&modulepart=product');
+	else{
+		if (!defined('INCLUDE_PHONEPAGE_FROM_PUBLIC_PAGE')) header('Location: '.$file.'&cache=1');
+		else header('Location: '.$file.'&cache=1&publictakepos=1&modulepart=product');
+	}
 }
 else
 {
