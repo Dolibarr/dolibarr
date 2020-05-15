@@ -60,11 +60,16 @@ if (!is_object($weblangs))
 {
 	$weblangs = new Translate('', $conf);
 }
+if (!is_object($pagelangs))
+{
+	$pagelangs = new Translate('', $conf);
+}
 if ($pageid > 0)
 {
 	$websitepage->fetch($pageid);
 
-	$weblangs->setDefaultLang($websitepage->lang ? $websitepage->lang : 'auto');
+	$weblangs->setDefaultLang(empty($_COOKIE['weblangs-shortcode']) ? 'auto' : $_COOKIE['weblangs-shortcode']);
+	$pagelangs->setDefaultLang($websitepage->lang ? $websitepage->lang : $weblangs->shortlang);
 
 	if (!defined('USEDOLIBARREDITOR') && in_array($websitepage->type_container, array('menu', 'other')))
 	{
