@@ -2226,7 +2226,7 @@ function print_projecttasks_array($db, $form, $socid, $projectsListId, $mytasks 
 				print '<tr class="oddeven">';
 
 				print '<td>';
-				print $projectstatic->getNomUrl(1, '', 0, '', '-', 0 , -1, 'nowraponall');
+				print $projectstatic->getNomUrl(1, '', 0, '', '-', 0, -1, 'nowraponall');
 				if (!in_array('projectlabel', $hiddenfields)) print '<br><span class="opacitymedium">'.dol_trunc($objp->title, 24).'</span>';
 				print '</td>';
 				print '<td class="nowraponall tdoverflowmax100">';
@@ -2288,7 +2288,7 @@ function print_projecttasks_array($db, $form, $socid, $projectsListId, $mytasks 
 					$total_plannedworkload += $plannedworkload;
 					if (!in_array('plannedworkload', $hiddenfields))
 					{
-						print '<td class="right">'.($plannedworkload ?convertSecondToTime($plannedworkload) : '').'</td>';
+						print '<td class="right">'.($plannedworkload ? convertSecondToTime($plannedworkload) : '').'</td>';
 					}
 					if (!in_array('declaredprogress', $hiddenfields))
 					{
