@@ -328,6 +328,8 @@ class Interfaces
                 continue;
             }
 
+            $text = '';
+
             try {
 	            $objMod = new $modName($db);
 
