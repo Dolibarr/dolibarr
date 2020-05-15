@@ -6690,6 +6690,14 @@ class Form
 											text: $.trim(match[1]) + " <" + match[2] + ">"
 										}
 									}
+									var match = params.term.match(new RegExp("^" + REGEX_EMAIL + "$", "i"));
+									// console.log(match);
+									if (match !== null) {
+										return {
+											id: $.trim(match[1]) + " <" + match[1] + ">",
+											text: $.trim(match[1]) + " <" + match[1] + ">"
+										}
+									}
 									return null;
 								}';
 				}
