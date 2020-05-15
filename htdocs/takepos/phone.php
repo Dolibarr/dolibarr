@@ -243,7 +243,7 @@ function SetQty(place, selectedline, qty){
 }
 
 function SetNote(place, selectedline){
-	var note = prompt("<?php $langs->trans('Note'); ?>", "Harry Potter");
+	var note = prompt("<?php $langs->trans('Note'); ?>", "");
 	$("#phonediv2").load("auto_order.php?mobilepage=invoice&action=updateqty&place="+place+"&idline="+selectedline+"&number="+qty, function() {
     });
 	LoadCats();
