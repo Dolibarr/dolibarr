@@ -465,14 +465,14 @@ class pdf_paiement
 				if ($yp > $this->tab_height - 15)
 				{
                     $pdf->SetFillColor(255, 255, 255);
-                    $pdf->Rect($this->marge_gauche +1, $this->tab_top + 10 + $yp, $this->posxpaymentamount - $this->marge_droite -3, $this->line_height, 'F', array(), array());
+                    $pdf->Rect($this->marge_gauche + 1, $this->tab_top + 10 + $yp, $this->posxpaymentamount - $this->marge_droite - 3, $this->line_height, 'F', array(), array());
                     $pdf->line($this->marge_gauche, $this->tab_top + 10 + $yp, $this->page_largeur - $this->marge_droite, $this->tab_top + 10 + $yp, array('dash'=>1));
                     $pdf->line($this->marge_gauche, $this->tab_top + 15 + $yp, $this->page_largeur - $this->marge_droite, $this->tab_top + 15 + $yp);
                     $pdf->SetFont('', 'B', $default_font_size - 1);
-                    $pdf->SetXY($this->posxdate -1, $this->tab_top + 10 + $yp);
+                    $pdf->SetXY($this->posxdate - 1, $this->tab_top + 10 + $yp);
                     $pdf->MultiCell($this->posxpaymentamount - 2 - $this->marge_droite, $this->line_height, $langs->transnoentities('SubTotal')." : ", 0, 'R', 1);
-                    $pdf->SetXY($this->posxpaymentamount -1, $this->tab_top + 10 + $yp);
-                    $pdf->MultiCell($this->page_largeur - $this->marge_droite - $this->posxpaymentamount +1, $this->line_height, price($total_page), 0, 'R', 1);
+                    $pdf->SetXY($this->posxpaymentamount - 1, $this->tab_top + 10 + $yp);
+                    $pdf->MultiCell($this->page_largeur - $this->marge_droite - $this->posxpaymentamount + 1, $this->line_height, price($total_page), 0, 'R', 1);
                     $pdf->SetFont('', '', $default_font_size - 1);
                     $pdf->SetFillColor(220, 220, 220);
 					$page++;
@@ -523,19 +523,19 @@ class pdf_paiement
 			}
 
             // Add line to add total by payment mode if mode reglement for nex line change
-            if ((($this->doc_type == 'client' && !empty($conf->global->PAYMENTS_REPORT_GROUP_BY_MOD)) || ($this->doc_type == 'fourn' && !empty($conf->global->PAYMENTS_FOURN_REPORT_GROUP_BY_MOD))) && ($mod != $lines[$j+1][2]))
+            if ((($this->doc_type == 'client' && !empty($conf->global->PAYMENTS_REPORT_GROUP_BY_MOD)) || ($this->doc_type == 'fourn' && !empty($conf->global->PAYMENTS_FOURN_REPORT_GROUP_BY_MOD))) && ($mod != $lines[$j + 1][2]))
             {
                 $pdf->SetFillColor(245, 245, 245);
-                $pdf->Rect($this->marge_gauche +1, $this->tab_top + 10 + $yp, $this->posxpaymentamount - $this->marge_droite -3, $this->line_height, 'F', array(), array());
+                $pdf->Rect($this->marge_gauche + 1, $this->tab_top + 10 + $yp, $this->posxpaymentamount - $this->marge_droite - 3, $this->line_height, 'F', array(), array());
                 $pdf->line($this->marge_gauche, $this->tab_top + 10 + $yp, $this->page_largeur - $this->marge_droite, $this->tab_top + 10 + $yp, array('dash'=>1));
                 $pdf->line($this->marge_gauche, $this->tab_top + 15 + $yp, $this->page_largeur - $this->marge_droite, $this->tab_top + 15 + $yp);
-                $pdf->SetXY($this->posxdate -1, $this->tab_top + 10 + $yp);
+                $pdf->SetXY($this->posxdate - 1, $this->tab_top + 10 + $yp);
 				$pdf->SetFont('', 'I', $default_font_size - 1);
                 $pdf->MultiCell($this->posxpaymentamount - 2 - $this->marge_droite, $this->line_height, $langs->transnoentities('Total').' '.$mod." : ", 0, 'R', 1);
-                $pdf->SetXY($this->posxpaymentamount -1, $this->tab_top + 10 + $yp);
-                $pdf->MultiCell($this->page_largeur - $this->marge_droite - $this->posxpaymentamount +1, $this->line_height, price($total_mod), 0, 'R', 1);
+                $pdf->SetXY($this->posxpaymentamount - 1, $this->tab_top + 10 + $yp);
+                $pdf->MultiCell($this->page_largeur - $this->marge_droite - $this->posxpaymentamount + 1, $this->line_height, price($total_mod), 0, 'R', 1);
 				$pdf->SetFont('', '', $default_font_size - 1);
-                $mod = $lines[$j+1][2];
+                $mod = $lines[$j + 1][2];
                 $total_mod = 0;
 				$yp = $yp + 5;
                 if ($yp > $this->tab_height - 5)
@@ -551,14 +551,14 @@ class pdf_paiement
 		}
 		$total += $total_page;
         $pdf->SetFillColor(255, 255, 255);
-        $pdf->Rect($this->marge_gauche +1, $this->tab_top + 10 + $yp, $this->posxpaymentamount - $this->marge_droite -3, $this->line_height, 'F', array(), array());
+        $pdf->Rect($this->marge_gauche + 1, $this->tab_top + 10 + $yp, $this->posxpaymentamount - $this->marge_droite - 3, $this->line_height, 'F', array(), array());
         $pdf->line($this->marge_gauche, $this->tab_top + 10 + $yp, $this->page_largeur - $this->marge_droite, $this->tab_top + 10 + $yp, array('dash'=>1));
         $pdf->line($this->marge_gauche, $this->tab_top + 15 + $yp, $this->page_largeur - $this->marge_droite, $this->tab_top + 15 + $yp);
-        $pdf->SetXY($this->posxdate -1, $this->tab_top + 10 + $yp);
+        $pdf->SetXY($this->posxdate - 1, $this->tab_top + 10 + $yp);
         $pdf->SetFont('', 'B');
         $pdf->MultiCell($this->posxpaymentamount - 2 - $this->marge_droite, $this->line_height, $langs->transnoentities('Total')." : ", 0, 'R', 1);
-        $pdf->SetXY($this->posxpaymentamount -1, $this->tab_top + 10 + $yp);
-        $pdf->MultiCell($this->page_largeur - $this->marge_droite - $this->posxpaymentamount +1, $this->line_height, price($total), 0, 'R', 1);
+        $pdf->SetXY($this->posxpaymentamount - 1, $this->tab_top + 10 + $yp);
+        $pdf->MultiCell($this->page_largeur - $this->marge_droite - $this->posxpaymentamount + 1, $this->line_height, price($total), 0, 'R', 1);
         $pdf->SetFillColor(220, 220, 220);
 	}
 }

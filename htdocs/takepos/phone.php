@@ -40,7 +40,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/hookmanager.class.php';
 if (defined('INCLUDE_PHONEPAGE_FROM_PUBLIC_PAGE')) {
 	// Decode place if it is an order from customer phone
 	$key = GETPOST('key');
-	$place=dol_decode($key);
+	$place = dol_decode($key);
 }
 else $place = (GETPOST('place', 'aZ09') ? GETPOST('place', 'aZ09') : 0); // $place is id of table for Ba or Restaurant
 $action = GETPOST('action', 'alpha');
@@ -73,17 +73,17 @@ top_htmlhead($head, $title, $disablejs, $disablehead, $arrayofjs, $arrayofcss);
 
 print '<link rel="stylesheet" href="'.DOL_URL_ROOT.'/takepos/css/phone.css">';
 
-if ($action=="productinfo"){
+if ($action == "productinfo") {
 	$prod = new Product($db);
     $prod->fetch($idproduct);
 	print "<b>".$prod->label."</b><br>";
-	print '<img class="imgwrapper" width="60%" src="'.DOL_URL_ROOT.'/takepos/genimg/index.php?query=pro&id='.$idproduct.'">';
+	print '<img class="imgwrapper" width="60%" src="'.DOL_URL_ROOT.'/takepos/public/auto_order.php?genimg=pro&query=pro&id='.$idproduct.'">';
 	print "<br>".$prod->description;
 	print "<br><b>".price($prod->price_ttc, 1, $langs, 1, -1, -1, $conf->currency)."</b>";
 	print '<br>';
 	print '<button type="button" class="publicphonebutton2" onclick="AddProductConfirm(place, '.$idproduct.');">'.$langs->trans('Add').'</button>';
 }
-elseif ($action=="editline"){
+elseif ($action == "editline") {
 	$placeid = GETPOST('placeid', 'int');
 	$selectedline = GETPOST('selectedline', 'int');
 	$invoice = new Facture($db);
@@ -95,12 +95,12 @@ elseif ($action=="editline"){
 			$prod = new Product($db);
 			$prod->fetch($line->fk_product);
 			print "<b>".$prod->label."</b><br>";
-			print '<img class="imgwrapper" width="60%" src="genimg/index.php?query=pro&id='.$line->fk_product.'">';
+			print '<img class="imgwrapper" width="60%" src="'.DOL_URL_ROOT.'/takepos/public/auto_order.php?genimg=pro&query=pro&id='.$line->fk_product.'">';
 			print "<br>".$prod->description;
 			print "<br><b>".price($prod->price_ttc, 1, $langs, 1, -1, -1, $conf->currency)."</b>";
 			print '<br>';
-			print '<button type="button" class="publicphonebutton2" onclick="SetQty(place, '.$selectedline.', '.($line->qty-1).');">-</button>';
-			print '<button type="button" class="publicphonebutton2" onclick="SetQty(place, '.$selectedline.', '.($line->qty+1).');">+</button>';
+			print '<button type="button" class="publicphonebutton2" onclick="SetQty(place, '.$selectedline.', '.($line->qty - 1).');">-</button>';
+			print '<button type="button" class="publicphonebutton2" onclick="SetQty(place, '.$selectedline.', '.($line->qty + 1).');">+</button>';
 			print '<button type="button" class="publicphonebutton2" onclick="SetNote(place, '.$selectedline.');">'.$langs->trans('Note').'</button>';
         }
     }
@@ -168,11 +168,11 @@ $( document ).ready(function() {
 function LoadPlace(placeid){
     place=placeid;
 	<?php
-	if (defined('INCLUDE_PHONEPAGE_FROM_PUBLIC_PAGE')){
+	if (defined('INCLUDE_PHONEPAGE_FROM_PUBLIC_PAGE')) {
 		echo '$("#phonediv2").load("auto_order.php?mobilepage=invoice&place="+place, function() {
 		});';
 	}
-	else{
+	else {
 		echo '$("#phonediv2").load("invoice.php?mobilepage=invoice&place="+place, function() {
 		});';
 	}
@@ -183,12 +183,12 @@ function LoadPlace(placeid){
 function AddProduct(placeid, productid){
 	<?php
 	// If is a public terminal first show product information
-	if (defined('INCLUDE_PHONEPAGE_FROM_PUBLIC_PAGE')){
+	if (defined('INCLUDE_PHONEPAGE_FROM_PUBLIC_PAGE')) {
 		print 'place=placeid;
 		$("#phonediv1").load("auto_order.php?action=productinfo&place="+place+"&idproduct="+productid, function() {
 		});';
 	}
-	else{
+	else {
 		print 'AddProductConfirm(placeid, productid);';
 	}
 	?>
@@ -197,11 +197,11 @@ function AddProduct(placeid, productid){
 function AddProductConfirm(placeid, productid){
 	place=placeid;
 	<?php
-	if (defined('INCLUDE_PHONEPAGE_FROM_PUBLIC_PAGE')){
+	if (defined('INCLUDE_PHONEPAGE_FROM_PUBLIC_PAGE')) {
 		echo '$("#phonediv2").load("auto_order.php?mobilepage=invoice&action=addline&place="+place+"&idproduct="+productid, function() {
 		});';
 	}
-	else{
+	else {
 		echo '$("#phonediv2").load("invoice.php?mobilepage=invoice&action=addline&place="+place+"&idproduct="+productid, function() {
 		});';
 	}
@@ -229,11 +229,11 @@ function SetNote(place, selectedline){
 
 function LoadCats(){
 	<?php
-	if (defined('INCLUDE_PHONEPAGE_FROM_PUBLIC_PAGE')){
+	if (defined('INCLUDE_PHONEPAGE_FROM_PUBLIC_PAGE')) {
 		echo '$("#phonediv1").load("auto_order.php?mobilepage=cats&place="+place, function() {
 		});';
 	}
-	else{
+	else {
 		echo '$("#phonediv1").load("invoice.php?mobilepage=cats&place="+place, function() {
 		});';
 	}
@@ -243,11 +243,11 @@ function LoadCats(){
 function LoadProducts(idcat){
     
 	<?php
-	if (defined('INCLUDE_PHONEPAGE_FROM_PUBLIC_PAGE')){
+	if (defined('INCLUDE_PHONEPAGE_FROM_PUBLIC_PAGE')) {
 		echo '$("#phonediv1").load("auto_order.php?mobilepage=products&catid="+idcat+"&place="+place, function() {
 		});';
 	}
-	else{
+	else {
 		echo '$("#phonediv1").load("invoice.php?mobilepage=products&catid="+idcat+"&place="+place, function() {
 		});';
 	}
@@ -262,11 +262,11 @@ function LoadPlacesList(){
 function TakeposPrintingOrder(){
     console.log("TakeposPrintingOrder");
 	<?php
-	if (defined('INCLUDE_PHONEPAGE_FROM_PUBLIC_PAGE')){
+	if (defined('INCLUDE_PHONEPAGE_FROM_PUBLIC_PAGE')) {
 		echo '$("#phonediv2").load("auto_order.php?action=order&place="+place, function() {
 		});';
 	}
-	else{
+	else {
 		echo '$("#phonediv2").load("invoice.php?action=order&place="+place, function() {
 		});';
 	}
@@ -294,13 +294,13 @@ function CheckPlease(){
 <div class="container">
 	<div class="phonebuttonsrow">
 		<?php
-		if (!defined('INCLUDE_PHONEPAGE_FROM_PUBLIC_PAGE')){
+		if (!defined('INCLUDE_PHONEPAGE_FROM_PUBLIC_PAGE')) {
 			print '<button type="button" class="phonebutton" onclick="LoadPlacesList();">'.strtoupper(substr($langs->trans('Floors'), 0, 3)).'</button>';
 			print '<button type="button" class="phonebutton" onclick="LoadCats();">'.strtoupper(substr($langs->trans('Categories'), 0, 3)).'</button>';
 			print '<button type="button" class="phonebutton" onclick="TakeposPrintingOrder();">'.strtoupper(substr($langs->trans('Order'), 0, 3)).'</button>';
 			print '<button type="button" class="phonebutton" onclick="Exit();">'.strtoupper(substr($langs->trans('Logout'), 0, 3)).'</button>';
 		}
-		else{
+		else {
 			print '<button type="button" class="publicphonebutton" onclick="LoadCats();">'.strtoupper(substr($langs->trans('Categories'), 0, 5)).'</button>';
 			print '<button type="button" class="publicphonebutton" onclick="TakeposPrintingOrder();">'.strtoupper(substr($langs->trans('Order'), 0, 5)).'</button>';
 			print '<button type="button" class="publicphonebutton" onclick="CheckPlease();">'.strtoupper(substr($langs->trans('Payment'), 0, 5)).'</button>';

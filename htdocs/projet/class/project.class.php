@@ -1026,18 +1026,19 @@ class Project extends CommonObject
     }
 
     /**
-     * 	Return clicable name (with picto eventually)
+     * 	Return clickable name (with picto eventually)
      *
      * 	@param	int		$withpicto		          0=No picto, 1=Include picto into link, 2=Only picto
-     * 	@param	string	$option			          Variant ('', 'nolink')
+     * 	@param	string	$option			          Variant where the link point to ('', 'nolink')
      * 	@param	int		$addlabel		          0=Default, 1=Add label into string, >1=Add first chars into string
      *  @param	string	$moreinpopup	          Text to add into popup
      *  @param	string	$sep			          Separator between ref and label if option addlabel is set
      *  @param	int   	$notooltip		          1=Disable tooltip
      *  @param  int     $save_lastsearch_value    -1=Auto, 0=No save of lastsearch_values when clicking, 1=Save lastsearch_values whenclicking
+     *  @param	string	$morecss				  More css on a link
      * 	@return	string					          String with URL
      */
-    public function getNomUrl($withpicto = 0, $option = '', $addlabel = 0, $moreinpopup = '', $sep = ' - ', $notooltip = 0, $save_lastsearch_value = -1)
+    public function getNomUrl($withpicto = 0, $option = '', $addlabel = 0, $moreinpopup = '', $sep = ' - ', $notooltip = 0, $save_lastsearch_value = -1, $morecss = '')
     {
         global $conf, $langs, $user, $hookmanager;
 
@@ -1115,6 +1116,7 @@ class Project extends CommonObject
         if (!$this->public) $picto = 'project';
 
         $linkstart = '<a href="'.$url.'"';
+        $linkstart .= ($morecss ? ' class="'.$morecss.'"' : '');
         $linkstart .= $linkclose.'>';
         $linkend = '</a>';
 

@@ -672,27 +672,27 @@ if (!empty($date_start) && !empty($date_stop))
 				} elseif ($data['item'] == 'ExpenseReport') {
                     $expensereport->id = $data['id'];
                 	$expensereport->ref = $data['ref'];
-                	print $expensereport->getNomUrl(1, '', 0, 0, '', 0, 0, 0);
+                	print $expensereport->getNomUrl(1, 0, 0, '', 0, 0);
 				} elseif ($data['item'] == 'SalaryPayment') {
                     $salary_payment->id = $data['id'];
                 	$salary_payment->ref = $data['ref'];
-                	print $salary_payment->getNomUrl(1, '', 0, 0, '', 0, 0, 0);
+                	print $salary_payment->getNomUrl(1, '', 0, '', 0);
 				} elseif ($data['item'] == 'Donation') {
                     $don->id = $data['id'];
                 	$don->ref = $data['ref'];
-                	print $don->getNomUrl(1, '', 0, 0, '', 0, 0, 0);
+                	print $don->getNomUrl(1, 0, '', 0);
 				} elseif ($data['item'] == 'SocialContributions') {
                     $charge_sociales->id = $data['id'];
                 	$charge_sociales->ref = $data['ref'];
-                	print $charge_sociales->getNomUrl(1, '', 0, 0, '', 0, 0, 0);
+                	print $charge_sociales->getNomUrl(1, 0, 0, 0, 0);
 				} elseif ($data['item'] == 'VariousPayment') {
                     $various_payment->id = $data['id'];
                 	$various_payment->ref = $data['ref'];
-                	print $various_payment->getNomUrl(1, '', 0, 0, '', 0, 0, 0);
+                	print $various_payment->getNomUrl(1, '', 0, 0);
 				} elseif ($data['item'] == 'LoanPayment') {
                     $payment_loan->id = $data['id'];
                 	$payment_loan->ref = $data['ref'];
-                	print $payment_loan->getNomUrl(1, '', 0, 0, '', 0, 0, 0);
+                	print $payment_loan->getNomUrl(1, 0, 0, '', 0);
 				} else {
                 	print $data['ref'];
 				}
@@ -712,11 +712,11 @@ if (!empty($date_start) && !empty($date_stop))
                 print '<td aling="left">'.$data['paid'].'</td>';
 
                 // Total ET
-                print '<td align="right">'.price($data['sens']?$data['amount_ht']:-$data['amount_ht'])."</td>\n";
+                print '<td align="right">'.price($data['sens'] ? $data['amount_ht'] : -$data['amount_ht'])."</td>\n";
                 // Total IT
-                print '<td align="right">'.price($data['sens']?$data['amount_ttc']:-$data['amount_ttc'])."</td>\n";
+                print '<td align="right">'.price($data['sens'] ? $data['amount_ttc'] : -$data['amount_ttc'])."</td>\n";
                 // Total VAT
-                print '<td align="right">'.price($data['sens']?$data['amount_vat']:-$data['amount_vat'])."</td>\n";
+                print '<td align="right">'.price($data['sens'] ? $data['amount_vat'] : -$data['amount_vat'])."</td>\n";
 
                 print '<td>'.$data['thirdparty_name']."</td>\n";
 
@@ -758,9 +758,9 @@ if (!empty($date_start) && !empty($date_stop))
             // Balance
             print '<tr class="liste_total">';
             print '<td colspan="6" class="right">'.$langs->trans('Total').'</td>';
-            print '<td align="right">'.price(price2num($totalET_credit+$totalET_debit, 'MT')).'</td>';
-            print '<td align="right">'.price(price2num($totalIT_credit+$totalIT_debit, 'MT')).'</td>';
-            print '<td align="right">'.price(price2num($totalVAT_credit+$totalVAT_debit, 'MT')).'</td>';
+            print '<td align="right">'.price(price2num($totalET_credit + $totalET_debit, 'MT')).'</td>';
+            print '<td align="right">'.price(price2num($totalIT_credit + $totalIT_debit, 'MT')).'</td>';
+            print '<td align="right">'.price(price2num($totalVAT_credit + $totalVAT_debit, 'MT')).'</td>';
             print '<td colspan="4"></td>';
             print "</tr>\n";
         }
