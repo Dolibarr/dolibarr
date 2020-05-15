@@ -680,7 +680,7 @@ if ($action == 'create' && $user->rights->projet->creer)
 		print '<tr><td>'.$langs->trans("Categories").'</td><td colspan="3">';
 		$cate_arbo = $form->select_all_categories(Categorie::TYPE_PROJECT, '', 'parent', 64, 0, 1);
 		$arrayselected = GETPOST('categories', 'array');
-		print img_picto('', 'category').$form->multiselectarray('categories', $cate_arbo, $arrayselected, '', 0, 'widthcentpercentminusx', 0, 0);
+		print img_picto('', 'category').$form->multiselectarray('categories', $cate_arbo, $arrayselected, '', 0, 'quatrevingtpercent widthcentpercentminusx', 0, 0);
 		print "</td></tr>";
 	}
 
@@ -963,14 +963,14 @@ elseif ($object->id > 0)
 		// Tags-Categories
 		if ($conf->categorie->enabled)
 		{
-			print '<tr><td class="tdtop">'.$langs->trans("Categories").'</td><td>';
+			print '<tr><td>'.$langs->trans("Categories").'</td><td>';
 			$cate_arbo = $form->select_all_categories(Categorie::TYPE_PROJECT, '', 'parent', 64, 0, 1);
 			$c = new Categorie($db);
 			$cats = $c->containing($object->id, Categorie::TYPE_PROJECT);
 			foreach ($cats as $cat) {
 				$arrayselected[] = $cat->id;
 			}
-			print $form->multiselectarray('categories', $cate_arbo, $arrayselected, '', 0, '', 0, '100%');
+			print img_picto('', 'category').$form->multiselectarray('categories', $cate_arbo, $arrayselected, 0, 0, 'quatrevingtpercent widthcentpercentminusx', 0, '0');
 			print "</td></tr>";
 		}
 
