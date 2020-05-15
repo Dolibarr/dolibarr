@@ -77,7 +77,7 @@ if ($action == "productinfo") {
 	$prod = new Product($db);
     $prod->fetch($idproduct);
 	print "<b>".$prod->label."</b><br>";
-	print '<img class="imgwrapper" width="60%" src="'.DOL_URL_ROOT.'/takepos/genimg/index.php?query=pro&id='.$idproduct.'">';
+	print '<img class="imgwrapper" width="60%" src="'.DOL_URL_ROOT.'/takepos/public/auto_order.php?genimg=pro&query=pro&id='.$idproduct.'">';
 	print "<br>".$prod->description;
 	print "<br><b>".price($prod->price_ttc, 1, $langs, 1, -1, -1, $conf->currency)."</b>";
 	print '<br>';
@@ -95,7 +95,7 @@ elseif ($action == "editline") {
 			$prod = new Product($db);
 			$prod->fetch($line->fk_product);
 			print "<b>".$prod->label."</b><br>";
-			print '<img class="imgwrapper" width="60%" src="genimg/index.php?query=pro&id='.$line->fk_product.'">';
+			print '<img class="imgwrapper" width="60%" src="'.DOL_URL_ROOT.'/takepos/public/auto_order.php?genimg=pro&query=pro&id='.$line->fk_product.'">';
 			print "<br>".$prod->description;
 			print "<br><b>".price($prod->price_ttc, 1, $langs, 1, -1, -1, $conf->currency)."</b>";
 			print '<br>';
