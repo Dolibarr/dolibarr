@@ -558,6 +558,19 @@ if ($action == 'create' && $user->rights->projet->creer)
 		print '<input type="checkbox" id="usage_opportunity" name="usage_opportunity"'.(GETPOSTISSET('usage_opportunity') ? (GETPOST('usage_opportunity', 'alpha') != '' ? ' checked="checked"' : '') : ' checked="checked"').'"> ';
 		$htmltext = $langs->trans("ProjectFollowOpportunity");
 		print $form->textwithpicto($langs->trans("ProjectFollowOpportunity"), $htmltext);
+		print '<script>';
+		print '$( document ).ready(function() {
+				jQuery("#usage_opportunity").change(function() {
+					if (jQuery("#usage_opportunity").prop("checked")) {
+						console.log("Show opportunities fields");
+						jQuery(".classuseopportunity").show();
+					} else {
+						console.log("Hide opportunities fields "+jQuery("#usage_opportunity").prop("checked"));
+						jQuery(".classuseopportunity").hide();
+					}
+				});
+			});';
+		print '</script>';
 		print '<br>';
 	}
 	if (empty($conf->global->PROJECT_HIDE_TASKS))
@@ -632,20 +645,20 @@ if ($action == 'create' && $user->rights->projet->creer)
 	if (!empty($conf->global->PROJECT_USE_OPPORTUNITIES))
 	{
 		// Opportunity status
-		print '<tr><td>'.$langs->trans("OpportunityStatus").'</td>';
+		print '<tr class="classuseopportunity"><td>'.$langs->trans("OpportunityStatus").'</td>';
 		print '<td class="maxwidthonsmartphone">';
 		print $formproject->selectOpportunityStatus('opp_status', GETPOST('opp_status') ?GETPOST('opp_status') : $object->opp_status);
 		print '</tr>';
 
 		// Opportunity probability
-		print '<tr><td>'.$langs->trans("OpportunityProbability").'</td>';
+		print '<tr class="classuseopportunity"><td>'.$langs->trans("OpportunityProbability").'</td>';
 		print '<td><input size="5" type="text" id="opp_percent" name="opp_percent" value="'.dol_escape_htmltag(GETPOSTISSET('opp_percent') ? GETPOST('opp_percent') : '').'"><span class="hideonsmartphone"> %</span>';
 		print '<input type="hidden" name="opp_percent_not_set" id="opp_percent_not_set" value="'.dol_escape_htmltag(GETPOSTISSET('opp_percent') ? '0' : '1').'">';
 		print '</td>';
 		print '</tr>';
 
 		// Opportunity amount
-		print '<tr><td>'.$langs->trans("OpportunityAmount").'</td>';
+		print '<tr class="classuseopportunity"><td>'.$langs->trans("OpportunityAmount").'</td>';
 		print '<td><input size="5" type="text" name="opp_amount" value="'.dol_escape_htmltag(GETPOSTISSET('opp_amount') ? GETPOST('opp_amount') : '').'"></td>';
 		print '</tr>';
 	}

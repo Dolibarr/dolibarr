@@ -242,6 +242,7 @@ print '*/'."\n";
 	--colorbacklinepair2: rgb(<?php print $colorbacklinepair2; ?>);
 	--colorbacklinepairhover: rgb(<?php print $colorbacklinepairhover; ?>);
 	--colorbacklinepairchecked: rgb(<?php print $colorbacklinepairchecked; ?>);
+	--colorbacklinebreak: rgb(<?php print $colorbacklinebreak; ?>);
 	--colorbackbody: rgb(<?php print $colorbackbody; ?>);
 	--colortexttitlenotab: rgb(<?php print $colortexttitlenotab; ?>);
 	--colortexttitle: rgb(<?php print $colortexttitle; ?>);
@@ -3284,10 +3285,10 @@ ul.noborder li:nth-child(odd):not(.liste_titre) {
 }
 .impair, .nohover .impair:hover, tr.impair td.nohover
 {
-	background: #<?php echo colorArrayToHex(colorStringToArray($colorbacklineimpair1)); ?>;
+	background: var(--colorbacklineimpair1);
 }
 #GanttChartDIV {
-	background-color: #<?php echo colorArrayToHex(colorStringToArray($colorbacklineimpair1)); ?>;
+	background-color: var(--colorbacklineimpair1);
 }
 
 .oddeven, .evenodd, .pair, .nohover .pair:hover, tr.pair td.nohover, .tagtr.oddeven {
@@ -3296,25 +3297,26 @@ ul.noborder li:nth-child(odd):not(.liste_titre) {
 	color: #202020;
 }
 .pair, .nohover .pair:hover, tr.pair td.nohover {
-	background-color: #<?php echo colorArrayToHex(colorStringToArray($colorbacklinepair1)); ?>;
+	background-color: var(--colorbacklinepair1);
 }
+
 table.dataTable tr.oddeven {
-	background-color: #<?php echo colorArrayToHex(colorStringToArray($colorbacklinepair1)); ?> !important;
+	background-color: var(--colorbacklinepair1) !important;
 }
 
 /* For no hover style */
 td.oddeven, table.nohover tr.impair, table.nohover tr.pair, table.nohover tr.impair td, table.nohover tr.pair td, tr.nohover td, form.nohover, form.nohover:hover {
-	background-color: #<?php echo colorArrayToHex(colorStringToArray($colorbacklineimpair1)); ?> !important;
-	background: #<?php echo colorArrayToHex(colorStringToArray($colorbacklineimpair1)); ?> !important;
+	background-color: var(--colorbacklineimpair1) !important; !important;
+	background: var(--colorbacklineimpair1) !important; !important;
 }
 td.evenodd, tr.nohoverpair td, #trlinefordates td {
-	background-color: #<?php echo colorArrayToHex(colorStringToArray($colorbacklinepair1)); ?> !important;
-	background: #<?php echo colorArrayToHex(colorStringToArray($colorbacklinepair1)); ?> !important;
+	background-color: var(--colorbacklinepair1) !important; !important;
+	background: var(--colorbacklinepair1) !important; !important;
 }
 .trforbreak td {
 	font-weight: bold;
     border-bottom: 1pt solid black !important;
-	/* background-color: #<?php echo colorArrayToHex(colorStringToArray($colorbacklinebreak)); ?> !important; */
+	background-color: var(--colorbacklinebreak) !important;
 }
 
 table.dataTable td {
