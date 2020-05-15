@@ -672,27 +672,27 @@ if (!empty($date_start) && !empty($date_stop))
 				} elseif ($data['item'] == 'ExpenseReport') {
                     $expensereport->id = $data['id'];
                 	$expensereport->ref = $data['ref'];
-                	print $expensereport->getNomUrl(1, '', 0, 0, '', 0, 0, 0);
+                	print $expensereport->getNomUrl(1, 0, 0, '', 0, 0);
 				} elseif ($data['item'] == 'SalaryPayment') {
                     $salary_payment->id = $data['id'];
                 	$salary_payment->ref = $data['ref'];
-                	print $salary_payment->getNomUrl(1, '', 0, 0, '', 0, 0, 0);
+                	print $salary_payment->getNomUrl(1, '', 0, '', 0);
 				} elseif ($data['item'] == 'Donation') {
                     $don->id = $data['id'];
                 	$don->ref = $data['ref'];
-                	print $don->getNomUrl(1, '', 0, 0, '', 0, 0, 0);
+                	print $don->getNomUrl(1, 0, '', 0);
 				} elseif ($data['item'] == 'SocialContributions') {
                     $charge_sociales->id = $data['id'];
                 	$charge_sociales->ref = $data['ref'];
-                	print $charge_sociales->getNomUrl(1, '', 0, 0, '', 0, 0, 0);
+                	print $charge_sociales->getNomUrl(1, 0, 0, 0, 0);
 				} elseif ($data['item'] == 'VariousPayment') {
                     $various_payment->id = $data['id'];
                 	$various_payment->ref = $data['ref'];
-                	print $various_payment->getNomUrl(1, '', 0, 0, '', 0, 0, 0);
+                	print $various_payment->getNomUrl(1, '', 0, 0);
 				} elseif ($data['item'] == 'LoanPayment') {
                     $payment_loan->id = $data['id'];
                 	$payment_loan->ref = $data['ref'];
-                	print $payment_loan->getNomUrl(1, '', 0, 0, '', 0, 0, 0);
+                	print $payment_loan->getNomUrl(1, 0, 0, '', 0);
 				} else {
                 	print $data['ref'];
 				}
