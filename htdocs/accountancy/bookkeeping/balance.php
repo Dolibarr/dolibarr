@@ -296,23 +296,23 @@ if ($action != 'export_csv')
 		}
 		print '<tr class="oddeven">';
 
-		if(!empty($show_subgroup))
+		if (!empty($show_subgroup))
 		{
 			// Permet d'afficher le compte comptable
 			if (empty($displayed_account) || $root_account_description != $displayed_account) {
 				// Affiche un Sous-Total par compte comptable
 				if ($displayed_account != "") {
-					print '<tr class="liste_total"><td class="right" colspan="3">' . $langs->trans("SubTotal") . ':</td>';
-					print '<td class="nowrap right">' . price($sous_total_debit) . '</td>';
-					print '<td class="nowrap right">' . price($sous_total_credit) . '</td>';
-					print '<td class="nowrap right">' . price(price2num($sous_total_credit - $sous_total_debit)) . '</td>';
+					print '<tr class="liste_total"><td class="right" colspan="3">'.$langs->trans("SubTotal").':</td>';
+					print '<td class="nowrap right">'.price($sous_total_debit).'</td>';
+					print '<td class="nowrap right">'.price($sous_total_credit).'</td>';
+					print '<td class="nowrap right">'.price(price2num($sous_total_credit - $sous_total_debit)).'</td>';
 					print "<td></td>\n";
 					print '</tr>';
 				}
 
 				// Show first line of a break
 				print '<tr class="trforbreak">';
-				print '<td colspan="7" style="font-weight:bold; border-bottom: 1pt solid black;">' . $line->numero_compte . ($root_account_description ? ' - ' . $root_account_description : '') . '</td>';
+				print '<td colspan="7" style="font-weight:bold; border-bottom: 1pt solid black;">'.$line->numero_compte.($root_account_description ? ' - '.$root_account_description : '').'</td>';
 				print '</tr>';
 
 				$displayed_account = $root_account_description;
@@ -337,9 +337,9 @@ if ($action != 'export_csv')
 		$sous_total_credit += $line->credit;
 	}
 
-	if(!empty($show_subgroup))
+	if (!empty($show_subgroup))
 	{
-		print '<tr class="liste_total"><td class="right" colspan="3">' . $langs->trans("SubTotal") . ':</td><td class="nowrap right">' . price($sous_total_debit) . '</td><td class="nowrap right">' . price($sous_total_credit) . '</td><td class="nowrap right">' . price(price2num($sous_total_debit - $sous_total_credit)) . '</td>';
+		print '<tr class="liste_total"><td class="right" colspan="3">'.$langs->trans("SubTotal").':</td><td class="nowrap right">'.price($sous_total_debit).'</td><td class="nowrap right">'.price($sous_total_credit).'</td><td class="nowrap right">'.price(price2num($sous_total_debit - $sous_total_credit)).'</td>';
 		print "<td></td>\n";
 		print '</tr>';
 	}

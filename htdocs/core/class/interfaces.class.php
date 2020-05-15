@@ -379,7 +379,7 @@ class Interfaces
 	            	print 'Error: Trigger '.$modName.' does not extends DolibarrTriggers<br>';
 	            }
             }
-            catch(Exception $e) {
+            catch (Exception $e) {
             	print $e->getMessage();
             }
 

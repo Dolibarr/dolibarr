@@ -2302,7 +2302,7 @@ class DolibarrModules // Can not be abstract, because we need to instantiate it 
 		if (preg_match('/experimental/i', $version)) $versiontrans .= 'warning';
 		if (preg_match('/deprecated/i', $version))   $versiontrans .= 'warning';
 		if ($this->isCoreOrExternalModule() == 'external' || preg_match('/development|experimental|deprecated/i', $version)) {
-			print '<span class="info-box-icon-version'.($versiontrans? ' '.$versiontrans : '').'" title="'.$langs->trans("Version").' '.$this->getVersion(1).'">';
+			print '<span class="info-box-icon-version'.($versiontrans ? ' '.$versiontrans : '').'" title="'.$langs->trans("Version").' '.$this->getVersion(1).'">';
 			print $this->getVersion(1);
 			print '</span>';
 		}
