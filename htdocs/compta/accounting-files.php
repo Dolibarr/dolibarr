@@ -712,11 +712,11 @@ if (!empty($date_start) && !empty($date_stop))
                 print '<td aling="left">'.$data['paid'].'</td>';
 
                 // Total ET
-                print '<td align="right">'.price($data['sens']?$data['amount_ht']:-$data['amount_ht'])."</td>\n";
+                print '<td align="right">'.price($data['sens'] ? $data['amount_ht'] : -$data['amount_ht'])."</td>\n";
                 // Total IT
-                print '<td align="right">'.price($data['sens']?$data['amount_ttc']:-$data['amount_ttc'])."</td>\n";
+                print '<td align="right">'.price($data['sens'] ? $data['amount_ttc'] : -$data['amount_ttc'])."</td>\n";
                 // Total VAT
-                print '<td align="right">'.price($data['sens']?$data['amount_vat']:-$data['amount_vat'])."</td>\n";
+                print '<td align="right">'.price($data['sens'] ? $data['amount_vat'] : -$data['amount_vat'])."</td>\n";
 
                 print '<td>'.$data['thirdparty_name']."</td>\n";
 
@@ -758,9 +758,9 @@ if (!empty($date_start) && !empty($date_stop))
             // Balance
             print '<tr class="liste_total">';
             print '<td colspan="6" class="right">'.$langs->trans('Total').'</td>';
-            print '<td align="right">'.price(price2num($totalET_credit+$totalET_debit, 'MT')).'</td>';
-            print '<td align="right">'.price(price2num($totalIT_credit+$totalIT_debit, 'MT')).'</td>';
-            print '<td align="right">'.price(price2num($totalVAT_credit+$totalVAT_debit, 'MT')).'</td>';
+            print '<td align="right">'.price(price2num($totalET_credit + $totalET_debit, 'MT')).'</td>';
+            print '<td align="right">'.price(price2num($totalIT_credit + $totalIT_debit, 'MT')).'</td>';
+            print '<td align="right">'.price(price2num($totalVAT_credit + $totalVAT_debit, 'MT')).'</td>';
             print '<td colspan="4"></td>';
             print "</tr>\n";
         }
