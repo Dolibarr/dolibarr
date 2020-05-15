@@ -203,7 +203,7 @@ if (!empty($hashp))
 	$accessallowed = 1; // When using hashp, link is public so we force $accessallowed
 	$sqlprotectagainstexternals = '';
 }
-elseif ($conf->global->TAKEPOS_AUTO_ORDER && isset($_GET["publictakepos"]))
+elseif (! empty($conf->global->TAKEPOS_AUTO_ORDER) && isset($_GET["publictakepos"]))
 {
 	$accessallowed = 1; // Only if TakePOS Public Auto Order is enabled and received publictakepos variable
 }
