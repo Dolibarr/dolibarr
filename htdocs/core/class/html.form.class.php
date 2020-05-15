@@ -6699,9 +6699,10 @@ class Form
 									var match = params.term.match(new RegExp("^" + REGEX_EMAIL + "$", "i"));
 									// console.log(match);
 									if (match !== null) {
+										var pos = params.term.indexOf("@");
 										return {
-											id: $.trim(match[1]) + " <" + match[1] + ">",
-											text: $.trim(match[1]) + " <" + match[1] + ">"
+											id: $.trim(match[1].substring(0, pos)) + " <" + match[1] + ">",
+											text: $.trim(match[1].substring(0, pos)) + " <" + match[1] + ">"
 										}
 									}
 									return null;
