@@ -1331,7 +1331,7 @@ else
         // Country
         print '<tr><td>'.$form->editfieldkey('Country', 'selectcountry_id', '', $object, 0).'</td><td colspan="3" class="maxwidthonsmartphone">';
         print img_picto('', 'globe-americas', 'class="paddingrightonly"');
-        print $form->select_country((GETPOST('country_id') != '' ?GETPOST('country_id') : $object->country_id));
+        print $form->select_country((GETPOST('country_id') != '' ? GETPOST('country_id') : $object->country_id), 'country_id', '', 0, 'minwidth300 widthcentpercentminusx');
         if ($user->admin) print info_admin($langs->trans("YouCanChangeValuesForThisListFromDictionarySetup"), 1);
         print '</td></tr>';
 
@@ -1354,16 +1354,16 @@ else
 
         // Phone / Fax
         print '<tr><td>'.$form->editfieldkey('Phone', 'phone', '', $object, 0).'</td>';
-        print '<td'.($conf->browser->layout == 'phone' ? ' colspan="3"': '').'>'.img_picto('', 'object_phoning').' <input type="text" name="phone" id="phone" class="maxwidth200" value="'.(GETPOSTISSET('phone') ?GETPOST('phone', 'alpha') : $object->phone).'"></td>';
+        print '<td'.($conf->browser->layout == 'phone' ? ' colspan="3"': '').'>'.img_picto('', 'object_phoning').' <input type="text" name="phone" id="phone" class="maxwidth200 widthcentpercentminusx" value="'.(GETPOSTISSET('phone') ?GETPOST('phone', 'alpha') : $object->phone).'"></td>';
         if ($conf->browser->layout == 'phone') print '</tr><tr>';
         print '<td>'.$form->editfieldkey('Fax', 'fax', '', $object, 0).'</td>';
-        print '<td'.($conf->browser->layout == 'phone' ? ' colspan="3"': '').'>'.img_picto('', 'object_phoning_fax').' <input type="text" name="fax" id="fax" class="maxwidth200" value="'.(GETPOSTISSET('fax') ?GETPOST('fax', 'alpha') : $object->fax).'"></td></tr>';
+        print '<td'.($conf->browser->layout == 'phone' ? ' colspan="3"': '').'>'.img_picto('', 'object_phoning_fax').' <input type="text" name="fax" id="fax" class="maxwidth200 widthcentpercentminusx" value="'.(GETPOSTISSET('fax') ?GETPOST('fax', 'alpha') : $object->fax).'"></td></tr>';
 
         // Email / Web
         print '<tr><td>'.$form->editfieldkey('EMail', 'email', '', $object, 0, 'string', '', $conf->global->SOCIETE_EMAIL_MANDATORY).'</td>';
-	    print '<td colspan="3">'.img_picto('', 'object_email').' <input type="text" name="email" id="email" value="'.$object->email.'"></td></tr>';
+	    print '<td colspan="3">'.img_picto('', 'object_email').' <input type="text" class="widthcentpercentminusx" name="email" id="email" value="'.$object->email.'"></td></tr>';
         print '<tr><td>'.$form->editfieldkey('Web', 'url', '', $object, 0).'</td>';
-	    print '<td colspan="3">'.img_picto('', 'globe').' <input type="text" name="url" id="url" value="'.$object->url.'"></td></tr>';
+	    print '<td colspan="3">'.img_picto('', 'globe').' <input type="text" class="widthcentpercentminusx" name="url" id="url" value="'.$object->url.'"></td></tr>';
 
         if (!empty($conf->socialnetworks->enabled)) {
             foreach ($socialnetworks as $key => $value) {
@@ -1379,42 +1379,6 @@ else
                 }
             }
         }
-
-        // if (! empty($conf->socialnetworks->enabled))
-        // {
-        // 	// Skype
-        // 	if (! empty($conf->global->SOCIALNETWORKS_SKYPE))
-        // 	{
-        // 		print '<tr><td>'.$form->editfieldkey('Skype', 'skype', '', $object, 0).'</td>';
-		// 		print '<td colspan="3">';
-		// 		print '<input type="text" name="skype" class="minwidth100" maxlength="80" id="skype" value="'.dol_escape_htmltag(GETPOSTISSET("skype")?GETPOST("skype", 'alpha'):$object->skype).'">';
-		// 		print '</td></tr>';
-        // 	}
-        // 	// Twitter
-        // 	if (! empty($conf->global->SOCIALNETWORKS_TWITTER))
-        // 	{
-        // 		print '<tr><td>'.$form->editfieldkey('Twitter', 'twitter', '', $object, 0).'</td>';
-		// 		print '<td colspan="3">';
-		// 		print '<input type="text" name="twitter" class="minwidth100" maxlength="80" id="twitter" value="'.dol_escape_htmltag(GETPOSTISSET("twitter")?GETPOST("twitter", 'alpha'):$object->twitter).'">';
-		// 		print '</td></tr>';
-        // 	}
-        // 	// Facebook
-        //     if (! empty($conf->global->SOCIALNETWORKS_FACEBOOK))
-        //     {
-        //         print '<tr><td>'.$form->editfieldkey('Facebook', 'facebook', '', $object, 0).'</td>';
-        //         print '<td colspan="3">';
-        //         print '<input type="text" name="facebook" class="minwidth100" maxlength="80" id="facebook" value="'.dol_escape_htmltag(GETPOSTISSET("facebook")?GETPOST("facebook", 'alpha'):$object->facebook).'">';
-        //         print '</td></tr>';
-        //     }
-        //     // LinkedIn
-        //     if (! empty($conf->global->SOCIALNETWORKS_LINKEDIN))
-        //     {
-        //         print '<tr><td>'.$form->editfieldkey('LinkedIn', 'linkedin', '', $object, 0).'</td>';
-        //         print '<td colspan="3">';
-        //         print '<input type="text" name="linkedin" class="minwidth100" maxlength="80" id="linkedin" value="'.dol_escape_htmltag(GETPOSTISSET("linkedin")?GETPOST("linkedin", 'alpha'):$object->linkedin).'">';
-        //         print '</td></tr>';
-        //     }
-        // }
 
         // Prof ids
         $i = 1; $j = 0; $NBCOLS = ($conf->browser->layout == 'phone' ? 1 : 2);
@@ -1481,9 +1445,10 @@ else
         //TODO: Place into a function to control showing by country or study better option
         if ($mysoc->localtax1_assuj == "1" && $mysoc->localtax2_assuj == "1")
         {
-            print '<tr><td>'.$langs->transcountry("LocalTax1IsUsed", $mysoc->country_code).'</td><td>';
+            print '<tr><td>'.$langs->transcountry("LocalTax1IsUsed", $mysoc->country_code).'</td><td colspan="3">';
             print $form->selectyesno('localtax1assuj_value', (isset($conf->global->THIRDPARTY_DEFAULT_USELOCALTAX1) ? $conf->global->THIRDPARTY_DEFAULT_USELOCALTAX1 : 0), 1);
-            print '</td><td>'.$langs->transcountry("LocalTax2IsUsed", $mysoc->country_code).'</td><td>';
+            print '</td></tr>';
+            print '<tr><td>'.$langs->transcountry("LocalTax2IsUsed", $mysoc->country_code).'</td><td colspan="3">';
             print $form->selectyesno('localtax2assuj_value', (isset($conf->global->THIRDPARTY_DEFAULT_USELOCALTAX2) ? $conf->global->THIRDPARTY_DEFAULT_USELOCALTAX2 : 0), 1);
             print '</td></tr>';
         }
