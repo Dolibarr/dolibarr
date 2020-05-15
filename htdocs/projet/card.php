@@ -639,20 +639,20 @@ if ($action == 'create' && $user->rights->projet->creer)
 
 		// Opportunity probability
 		print '<tr><td>'.$langs->trans("OpportunityProbability").'</td>';
-		print '<td><input size="5" type="text" id="opp_percent" name="opp_percent" value="'.dol_escape_htmltag(GETPOST('opp_percent') != '' ?GETPOST('opp_percent') : '').'"><span class="hideonsmartphone"> %</span>';
-		print '<input type="hidden" name="opp_percent_not_set" id="opp_percent_not_set" value="'.dol_escape_htmltag(GETPOST('opp_percent') != '' ? '0' : '1').'">';
+		print '<td><input size="5" type="text" id="opp_percent" name="opp_percent" value="'.dol_escape_htmltag(GETPOSTISSET('opp_percent') ? GETPOST('opp_percent') : '').'"><span class="hideonsmartphone"> %</span>';
+		print '<input type="hidden" name="opp_percent_not_set" id="opp_percent_not_set" value="'.dol_escape_htmltag(GETPOSTISSET('opp_percent') ? '0' : '1').'">';
 		print '</td>';
 		print '</tr>';
 
 		// Opportunity amount
 		print '<tr><td>'.$langs->trans("OpportunityAmount").'</td>';
-		print '<td><input size="5" type="text" name="opp_amount" value="'.dol_escape_htmltag(GETPOST('opp_amount') != '' ?GETPOST('opp_amount') : '').'"></td>';
+		print '<td><input size="5" type="text" name="opp_amount" value="'.dol_escape_htmltag(GETPOSTISSET('opp_amount') ? GETPOST('opp_amount') : '').'"></td>';
 		print '</tr>';
 	}
 
 	// Budget
 	print '<tr><td>'.$langs->trans("Budget").'</td>';
-	print '<td><input size="5" type="text" name="budget_amount" value="'.dol_escape_htmltag(GETPOST('budget_amount') != '' ?GETPOST('budget_amount') : '').'"></td>';
+	print '<td><input size="5" type="text" name="budget_amount" value="'.dol_escape_htmltag(GETPOSTISSET('budget_amount') ? GETPOST('budget_amount') : '').'"></td>';
 	print '</tr>';
 
 	// Description
@@ -897,14 +897,14 @@ elseif ($object->id > 0)
 
 		    // Opportunity probability
 		    print '<tr><td>'.$langs->trans("OpportunityProbability").'</td>';
-		    print '<td><input size="5" type="text" id="opp_percent" name="opp_percent" value="'.(isset($_POST['opp_percent']) ?GETPOST('opp_percent') : (strcmp($object->opp_percent, '') ?vatrate($object->opp_percent) : '')).'"> %';
+		    print '<td><input size="5" type="text" id="opp_percent" name="opp_percent" value="'.(GETPOSTISSET('opp_percent') ? GETPOST('opp_percent') : (strcmp($object->opp_percent, '') ?vatrate($object->opp_percent) : '')).'"> %';
             print '<span id="oldopppercent"></span>';
 		    print '</td>';
 		    print '</tr>';
 
 		    // Opportunity amount
 		    print '<tr><td>'.$langs->trans("OpportunityAmount").'</td>';
-		    print '<td><input size="5" type="text" name="opp_amount" value="'.(isset($_POST['opp_amount']) ?GETPOST('opp_amount') : (strcmp($object->opp_amount, '') ?price2num($object->opp_amount) : '')).'"></td>';
+		    print '<td><input size="5" type="text" name="opp_amount" value="'.(GETPOSTISSET('opp_amount') ? GETPOST('opp_amount') : (strcmp($object->opp_amount, '') ? price2num($object->opp_amount) : '')).'"></td>';
 		    print '</tr>';
 	    }
 
@@ -923,7 +923,7 @@ elseif ($object->id > 0)
 
 		// Budget
 		print '<tr><td>'.$langs->trans("Budget").'</td>';
-		print '<td><input size="5" type="text" name="budget_amount" value="'.(isset($_POST['budget_amount']) ?GETPOST('budget_amount') : (strcmp($object->budget_amount, '') ?price($object->budget_amount, 0, $langs, 1, 0) : '')).'"></td>';
+		print '<td><input size="5" type="text" name="budget_amount" value="'.(GETPOSTISSET('budget_amount') ? GETPOST('budget_amount') : (strcmp($object->budget_amount, '') ? price2num($object->budget_amount) : '')).'"></td>';
 		print '</tr>';
 
 		// Description
