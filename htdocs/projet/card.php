@@ -833,9 +833,22 @@ elseif ($object->id > 0)
 		print '<td>';
 		if (!empty($conf->global->PROJECT_USE_OPPORTUNITIES))
 		{
-			print '<input type="checkbox" name="usage_opportunity"'.(GETPOSTISSET('usage_opportunity') ? (GETPOST('usage_opportunity', 'alpha') != '' ? ' checked="checked"' : '') : ($object->usage_opportunity ? ' checked="checked"' : '')).'"> ';
+			print '<input type="checkbox" id="usage_opportunity" name="usage_opportunity"'.(GETPOSTISSET('usage_opportunity') ? (GETPOST('usage_opportunity', 'alpha') != '' ? ' checked="checked"' : '') : ($object->usage_opportunity ? ' checked="checked"' : '')).'"> ';
 			$htmltext = $langs->trans("ProjectFollowOpportunity");
 			print $form->textwithpicto($langs->trans("ProjectFollowOpportunity"), $htmltext);
+			print '<script>';
+			print '$( document ).ready(function() {
+				jQuery("#usage_opportunity").change(function() {
+					if (jQuery("#usage_opportunity").prop("checked")) {
+						console.log("Show opportunities fields");
+						jQuery(".classuseopportunity").show();
+					} else {
+						console.log("Hide opportunities fields "+jQuery("#usage_opportunity").prop("checked"));
+						jQuery(".classuseopportunity").hide();
+					}
+				});
+			});';
+			print '</script>';
 			print '<br>';
 		}
 		if (empty($conf->global->PROJECT_HIDE_TASKS))
@@ -884,8 +897,9 @@ elseif ($object->id > 0)
 
 		if (!empty($conf->global->PROJECT_USE_OPPORTUNITIES))
 		{
+			$classfortr = ($object->usage_opportunity ? '' : ' hideobject');
 			// Opportunity status
-			print '<tr><td>'.$langs->trans("OpportunityStatus").'</td>';
+			print '<tr class="classuseopportunity'.$classfortr.'"><td>'.$langs->trans("OpportunityStatus").'</td>';
 			print '<td>';
 			print $formproject->selectOpportunityStatus('opp_status', $object->opp_status, 1, 0, 0, 0, 'inline-block valignmiddle');
 			print '<div id="divtocloseproject" class="inline-block valign" style="display: none;"> &nbsp; &nbsp; ';
@@ -896,14 +910,14 @@ elseif ($object->id > 0)
 			print '</tr>';
 
 		    // Opportunity probability
-		    print '<tr><td>'.$langs->trans("OpportunityProbability").'</td>';
+		    print '<tr class="classuseopportunity'.$classfortr.'"><td>'.$langs->trans("OpportunityProbability").'</td>';
 		    print '<td><input size="5" type="text" id="opp_percent" name="opp_percent" value="'.(GETPOSTISSET('opp_percent') ? GETPOST('opp_percent') : (strcmp($object->opp_percent, '') ?vatrate($object->opp_percent) : '')).'"> %';
             print '<span id="oldopppercent"></span>';
 		    print '</td>';
 		    print '</tr>';
 
 		    // Opportunity amount
-		    print '<tr><td>'.$langs->trans("OpportunityAmount").'</td>';
+		    print '<tr class="classuseopportunity'.$classfortr.'"><td>'.$langs->trans("OpportunityAmount").'</td>';
 		    print '<td><input size="5" type="text" name="opp_amount" value="'.(GETPOSTISSET('opp_amount') ? GETPOST('opp_amount') : (strcmp($object->opp_amount, '') ? price2num($object->opp_amount) : '')).'"></td>';
 		    print '</tr>';
 	    }
