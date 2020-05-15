@@ -298,11 +298,12 @@ if ($action != 'export_csv')
 
 		if (!empty($show_subgroup))
 		{
-			// Permet d'afficher le compte comptable
+			// Show accounting account
 			if (empty($displayed_account) || $root_account_description != $displayed_account) {
-				// Affiche un Sous-Total par compte comptable
+				// Show subtotal per accounting account
 				if ($displayed_account != "") {
-					print '<tr class="liste_total"><td class="right" colspan="3">'.$langs->trans("SubTotal").':</td>';
+					print '<tr class="liste_total">';
+					print '<td class="right" colspan="3">'.$langs->trans("SubTotal").':</td>';
 					print '<td class="nowrap right">'.price($sous_total_debit).'</td>';
 					print '<td class="nowrap right">'.price($sous_total_credit).'</td>';
 					print '<td class="nowrap right">'.price(price2num($sous_total_credit - $sous_total_debit)).'</td>';

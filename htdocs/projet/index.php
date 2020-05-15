@@ -318,7 +318,7 @@ if ($resql)
 		}
 
 		print '<tr class="oddeven">';
-		print '<td class="nowrap">';
+		print '<td class="nowraponall tdoverflowmax100">';
 		if ($obj->socid)
 		{
 			$companystatic->id = $obj->socid;
