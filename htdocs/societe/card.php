@@ -1401,7 +1401,7 @@ else
             }
             $i++;
         }
-        if ($j % 2 == 1) print '<td colspan="2"></td></tr>';
+        if ($NBCOLS > 1 && ($j % 2 == 1)) print '<td colspan="2"></td></tr>';
 
         // Vat is used
         print '<tr><td>'.$form->editfieldkey('VATIsUsed', 'assujtva_value', '', $object, 0).'</td>';
@@ -1445,11 +1445,11 @@ else
         //TODO: Place into a function to control showing by country or study better option
         if ($mysoc->localtax1_assuj == "1" && $mysoc->localtax2_assuj == "1")
         {
-            print '<tr><td>'.$langs->transcountry("LocalTax1IsUsed", $mysoc->country_code).'</td><td colspan="3">';
+            print '<tr><td>'.$langs->transcountry("LocalTax1IsUsed", $mysoc->country_code).'</td><td>';
             print $form->selectyesno('localtax1assuj_value', (isset($conf->global->THIRDPARTY_DEFAULT_USELOCALTAX1) ? $conf->global->THIRDPARTY_DEFAULT_USELOCALTAX1 : 0), 1);
-            print '</td></tr>';
+            print '</td>';
             if ($conf->browser->layout == 'phone') print '</tr><tr>';
-            print '<tr><td>'.$langs->transcountry("LocalTax2IsUsed", $mysoc->country_code).'</td><td colspan="3">';
+            print '<td>'.$langs->transcountry("LocalTax2IsUsed", $mysoc->country_code).'</td><td>';
             print $form->selectyesno('localtax2assuj_value', (isset($conf->global->THIRDPARTY_DEFAULT_USELOCALTAX2) ? $conf->global->THIRDPARTY_DEFAULT_USELOCALTAX2 : 0), 1);
             print '</td></tr>';
         }
@@ -2019,7 +2019,7 @@ else
                 }
                 $i++;
             }
-            if ($j % 2 == 1) print '<td colspan="2"></td></tr>';
+            if ($NBCOLS > 0 && $j % 2 == 1) print '<td colspan="2"></td></tr>';
 
             // VAT is used
             print '<tr><td>'.$form->editfieldkey('VATIsUsed', 'assujtva_value', '', $object, 0).'</td><td colspan="3">';
