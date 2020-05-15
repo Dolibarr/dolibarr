@@ -52,7 +52,7 @@ if (isset($_GET["hashp"]) && !defined("NOLOGIN"))
 	if (!defined("NOIPCHECK"))		define("NOIPCHECK", 1); // Do not check IP defined into conf $dolibarr_main_restrict_ip
 }
 // Some value of modulepart can be used to get resources that are public so no login are required.
-if ((isset($_GET["modulepart"]) && $_GET["modulepart"] == 'medias'))
+if (isset($_GET["modulepart"]) && $_GET["modulepart"] == 'medias')
 {
 	if (!defined("NOLOGIN"))		define("NOLOGIN", 1);
 	if (!defined("NOCSRFCHECK"))	define("NOCSRFCHECK", 1); // We accept to go on this page from external web site.
@@ -60,7 +60,7 @@ if ((isset($_GET["modulepart"]) && $_GET["modulepart"] == 'medias'))
 }
 
 // Used by TakePOS Auto Order
-if (isset($_GET["publictakepos"]))
+if (isset($_GET["modulepart"]) && $_GET["modulepart"] == 'product' && isset($_GET["publictakepos"]))
 {
 	if (!defined("NOLOGIN"))		define("NOLOGIN", 1);
 	if (!defined("NOCSRFCHECK"))	define("NOCSRFCHECK", 1); // We accept to go on this page from external web site.
@@ -203,9 +203,11 @@ if (!empty($hashp))
 	$accessallowed = 1; // When using hashp, link is public so we force $accessallowed
 	$sqlprotectagainstexternals = '';
 }
-elseif (! empty($conf->global->TAKEPOS_AUTO_ORDER) && isset($_GET["publictakepos"]))
+elseif (isset($_GET["publictakepos"]))
 {
-	$accessallowed = 1; // Only if TakePOS Public Auto Order is enabled and received publictakepos variable
+	if (! empty($conf->global->TAKEPOS_AUTO_ORDER)) {
+		$accessallowed = 1; // Only if TakePOS Public Auto Order is enabled and received publictakepos variable
+	}
 }
 else
 {
