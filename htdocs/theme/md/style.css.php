@@ -2471,9 +2471,6 @@ font.vsmenudisabledmargin { margin: 1px 1px 1px 8px; }
 
 a.help:link, a.help:visited, a.help:hover, a.help:active, span.help { text-align: <?php print $left; ?>; font-weight: normal; color: #999; text-decoration: none; }
 
-.demologo {
-	width: 200px;
-}
 div.blockvmenulogo
 {
 	border-bottom: 0 !important;

@@ -1362,9 +1362,6 @@ td.showDragHandle {
 	transition: left 0.5s ease;
 }
 
-.demologo {
-	width: 200px;
-}
 div.blockvmenulogo
 {
 	border-bottom: 0 !important;
