@@ -6692,6 +6692,10 @@ class Form
 											text: $.trim(match[1]) + " <" + match[2] + ">"
 										}
 									}
+									if (params.term.indexOf("<") >= 0) {
+										// Return null to disable tag creation
+										return null;
+									}
 									var match = params.term.match(new RegExp("^" + REGEX_EMAIL + "$", "i"));
 									// console.log(match);
 									if (match !== null) {
