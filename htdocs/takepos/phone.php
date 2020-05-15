@@ -114,15 +114,15 @@ elseif ($action == "editline") {
     }
 }
 else {
-// Title
-$title = 'TakePOS - Dolibarr '.DOL_VERSION;
-if (!empty($conf->global->MAIN_APPLICATION_TITLE)) $title = 'TakePOS - '.$conf->global->MAIN_APPLICATION_TITLE;
-$head = '<meta name="apple-mobile-web-app-title" content="TakePOS"/>
+	// Title
+	$title = 'TakePOS - Dolibarr '.DOL_VERSION;
+	if (!empty($conf->global->MAIN_APPLICATION_TITLE)) $title = 'TakePOS - '.$conf->global->MAIN_APPLICATION_TITLE;
+	$head = '<meta name="apple-mobile-web-app-title" content="TakePOS"/>
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"/>';
-$arrayofcss = array('/takepos/css/phone.css');
-top_htmlhead($head, $title, $disablejs, $disablehead, $arrayofjs, $arrayofcss);
+	$arrayofcss = array('/takepos/css/phone.css');
+	top_htmlhead($head, $title, $disablejs, $disablehead, $arrayofjs, $arrayofcss);
 	?>
 <script language="javascript">
 	<?php
@@ -211,7 +211,7 @@ function AddProduct(placeid, productid){
 	?>
 }
 
-function PublicPreOrder(){ //echo '$("#phonediv1").load("auto_order.php?mobilepage=cats&place="+place, function() {
+function PublicPreOrder(){
 	$("#phonediv1").load("auto_order.php?action=publicpreorder&place="+place, function() {
 	});
 }
