@@ -6767,7 +6767,7 @@ abstract class CommonObject
 					// Convert float submited string into real php numeric (value in memory must be a php numeric)
 					if (in_array($extrafields->attributes[$this->table_element]['type'][$key], array('price', 'double')))
 					{
-						$value = GETPOSTISSET($keyprefix.'options_'.$key.$keysuffix) ?price2num(GETPOST($keyprefix.'options_'.$key.$keysuffix, 'alpha', 3)) : $this->array_options['options_'.$key];
+						$value = (!empty($value)) ? price2num($value) : $this->array_options['options_'.$key];
 					}
 					$labeltoshow = $langs->trans($label);
 					$helptoshow = $langs->trans($extrafields->attributes[$this->table_element]['help'][$key]);
