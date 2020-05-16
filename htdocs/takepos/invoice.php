@@ -32,7 +32,7 @@ if (!defined('NOREQUIREMENU')) { define('NOREQUIREMENU', '1'); }
 if (!defined('NOREQUIREHTML')) { define('NOREQUIREHTML', '1'); }
 if (!defined('NOREQUIREAJAX')) { define('NOREQUIREAJAX', '1'); }
 
-require '../main.inc.php';
+if (!defined('INCLUDE_PHONEPAGE_FROM_PUBLIC_PAGE')) require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/paiement/class/paiement.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.form.class.php';
@@ -47,13 +47,11 @@ $idproduct = GETPOST('idproduct', 'int');
 $place = (GETPOST('place', 'aZ09') ? GETPOST('place', 'aZ09') : 0); // $place is id of table for Bar or Restaurant
 $placeid = 0; // $placeid is ID of invoice
 
-if (empty($user->rights->takepos->run)) {
+if (empty($user->rights->takepos->run) && !defined('INCLUDE_PHONEPAGE_FROM_PUBLIC_PAGE')) {
 	accessforbidden();
 }
 
-
-
-if ($conf->global->TAKEPOS_PHONE_BASIC_LAYOUT == 1 && $conf->browser->layout == 'phone')
+if (($conf->global->TAKEPOS_PHONE_BASIC_LAYOUT == 1 && $conf->browser->layout == 'phone') || defined('INCLUDE_PHONEPAGE_FROM_PUBLIC_PAGE'))
 {
 	// DIRECT LINK TO THIS PAGE FROM MOBILE AND NO TERMINAL SELECTED
 	if ($_SESSION["takeposterminal"] == "")
@@ -597,7 +595,7 @@ if ($action == "valid" || $action == "history")
     } else {
         $sectionwithinvoicelink .= ' <button id="buttonprint" type="button" onclick="Print('.$placeid.');">'.$langs->trans('PrintTicket').'</button>';
     }
-    if ($conf->global->MAIN_FEATURES_LEVEL >= 2)
+    if ($conf->global->TAKEPOS_EMAIL_TEMPLATE_INVOICE > 0)
     {
     	$sectionwithinvoicelink .= ' <button id="buttonsend" type="button" onclick="SendTicket('.$placeid.');">'.$langs->trans('SendTicket').'</button>';
     }
@@ -626,6 +624,12 @@ $(document).ready(function() {
         if (selectedline==this.id) return; // If is already selected
         else selectedline=this.id;
         selectedtext=$('#'+selectedline).find("td:first").html();
+		<?php
+		if (defined('INCLUDE_PHONEPAGE_FROM_PUBLIC_PAGE')) {
+			print '$("#phonediv1").load("auto_order.php?action=editline&placeid="+placeid+"&selectedline="+selectedline, function() {
+			});';
+		}
+		?>
     });
 
     /* Autoselect the line */
@@ -690,7 +694,7 @@ if ($action == "search") {
 function SendTicket(id)
 {
     console.log("Open box to select the Print/Send form");
-    $.colorbox({href:"send.php?facid="+id, width:"90%", height:"50%", transition:"none", iframe:"true", title:"<?php echo $langs->trans("SendTicket"); ?>"});
+    $.colorbox({href:"send.php?facid="+id, width:"70%", height:"30%", transition:"none", iframe:"true", title:"<?php echo $langs->trans("SendTicket"); ?>"});
 }
 
 function Print(id){
@@ -733,7 +737,7 @@ function DolibarrTakeposPrinting(id) {
 
 
 $( document ).ready(function() {
-	console.log("Set customer info in header");
+	console.log("Set customer info and sales in header");
 
     <?php
     $s = $langs->trans("Customer");
@@ -742,7 +746,9 @@ $( document ).ready(function() {
     }
     ?>
 
-    $("#customerandsales").html('<a class="valignmiddle" id="customer" onclick="Customer();"><?php print dol_escape_js($s); ?></a>');
+    $("#customerandsales").html('');
+
+	$("#customerandsales").append('<a class="valignmiddle tdoverflowmax100 minwidth75" id="customer" onclick="Customer();" title="<?php print dol_escape_js($s); ?>"><span class="fas fa-building paddingrightonly"></span><?php print dol_escape_js($s); ?></a>');
 
 	<?php
 	$sql = "SELECT rowid, datec, ref FROM ".MAIN_DB_PREFIX."facture";
@@ -752,12 +758,13 @@ $( document ).ready(function() {
 	if ($resql) {
 		while ($obj = $db->fetch_object($resql)) {
 			echo '$("#customerandsales").append(\'';
-			if ($placeid == $obj->rowid) echo "<b>";
 			echo '<a class="valignmiddle" onclick="place=\\\'';
 			$num_sale = str_replace(")", "", str_replace("(PROV-POS".$_SESSION["takeposterminal"]."-", "", $obj->ref));
 			echo $num_sale;
 			if (str_replace("-", "", $num_sale) > $max_sale) $max_sale = str_replace("-", "", $num_sale);
-			echo '\\\';Refresh();">'.date('H:i', strtotime($obj->datec));
+			echo '\\\';Refresh();">';
+			if ($placeid == $obj->rowid) echo "<b>";
+			echo date('H:i', strtotime($obj->datec));
 			if ($placeid == $obj->rowid) echo "</b>";
 			echo '</a>\');';
 		}
@@ -787,7 +794,7 @@ $( document ).ready(function() {
 	<?php
 	// Module Adherent
 	$s = '';
-	if (!empty($conf->adherent->enabled) && $invoice->socid != $conf->global->$constforcompanyid)
+	if (!empty($conf->adherent->enabled) && $invoice->socid > 0 && $invoice->socid != $conf->global->$constforcompanyid)
 	{
 		$s = '<span class="small">';
 		require_once DOL_DOCUMENT_ROOT.'/adherents/class/adherent.class.php';
@@ -907,7 +914,7 @@ if ($_SESSION["basiclayout"] == 1)
 			$htmlforlines .= '" onclick="AddProduct(\''.$place.'\', '.$row->id.')">';
 			$htmlforlines .= '<td class="left">';
 			$htmlforlines .= $row->label;
-			$htmlforlines .= '</td>';
+			$htmlforlines .= '<div class="right">'.price($row->price_ttc, 1, $langs, 1, -1, -1, $conf->currency).'</div>';
 			$htmlforlines .= '</tr>'."\n";
 		}
 		$htmlforlines .= '</table>';
@@ -941,6 +948,7 @@ if ($placeid > 0)
 
     if (is_array($invoice->lines) && count($invoice->lines))
     {
+    	print '<!-- Show lines of invoices -->'."\n";
         $tmplines = array_reverse($invoice->lines);
         foreach ($tmplines as $line)
         {
@@ -983,6 +991,7 @@ if ($placeid > 0)
             }
             $htmlforlines .= '" id="'.$line->id.'">';
             $htmlforlines .= '<td class="left">';
+			if ($_SESSION["basiclayout"] == 1) $htmlforlines .= $line->qty." x ";
             //if ($line->product_label) $htmlforlines.= '<b>'.$line->product_label.'</b>';
             if (isset($line->product_type))
             {
@@ -990,11 +999,14 @@ if ($placeid > 0)
                 else $htmlforlines .= img_object('', 'service').' ';
             }
             if (empty($conf->global->TAKEPOS_SHOW_N_FIRST_LINES)) {
-            	$tooltiptext = '<b>'.$langs->trans("Ref").'</b> : '.$line->product_ref.'<br>';
-            	$tooltiptext .= '<b>'.$langs->trans("Label").'</b> : '.$line->product_label.'<br>';
-            	if ($line->product_label != $line->desc) {
-            		if ($line->desc) $tooltiptext .= '<br>';
-    	        	$tooltiptext .= $line->desc;
+            	$tooltiptext = '';
+            	if ($line->product_ref) {
+            		$tooltiptext .= '<b>'.$langs->trans("Ref").'</b> : '.$line->product_ref.'<br>';
+            		$tooltiptext .= '<b>'.$langs->trans("Label").'</b> : '.$line->product_label.'<br>';
+	            	if ($line->product_label != $line->desc) {
+	            		if ($line->desc) $tooltiptext .= '<br>';
+	    	        	$tooltiptext .= $line->desc;
+	            	}
             	}
             	$htmlforlines .= $form->textwithpicto($line->product_label ? $line->product_label : ($line->product_ref ? $line->product_ref : dolGetFirstLineOfText($line->desc, 1)), $tooltiptext);
             } else {

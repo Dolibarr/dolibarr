@@ -128,7 +128,7 @@ print '<input name="town" class="minwidth100" id="town" value="'.($conf->global-
 
 // Country
 print '<tr class="oddeven"><td><label for="selectcountry_id">'.$langs->trans("Country").'</label></td><td class="maxwidthonsmartphone">';
-//if (empty($country_selected)) $country_selected=substr($langs->defaultlang,-2);    // By default, country of localization
+print img_picto('', 'globe-americas', 'class="paddingrightonly"');
 print $form->select_country($conf->global->MAIN_INFO_ACCOUNTANT_COUNTRY, 'country_id');
 if ($user->admin) print info_admin($langs->trans("YouCanChangeValuesForThisListFromDictionarySetup"), 1);
 print '</td></tr>'."\n";

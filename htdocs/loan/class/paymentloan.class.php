@@ -507,25 +507,39 @@ class PaymentLoan extends CommonObject
 	/**
 	 *  Return clicable name (with eventually a picto)
 	 *
-	 *	@param	int		$withpicto		0=No picto, 1=Include picto into link, 2=No picto
-	 * 	@param	int		$maxlen			Max length label
-	 *	@return	string					Chaine with URL
+	 *	@param	int		$withpicto					0=No picto, 1=Include picto into link, 2=No picto
+	 * 	@param	int		$maxlen						Max length label
+     *	@param	int  	$notooltip					1=Disable tooltip
+     *	@param	string	$moretitle					Add more text to title tooltip
+     *  @param  int     $save_lastsearch_value    	-1=Auto, 0=No save of lastsearch_values when clicking, 1=Save lastsearch_values whenclicking
+	 *	@return	string								String with URL
 	 */
-	public function getNomUrl($withpicto = 0, $maxlen = 0)
+	public function getNomUrl($withpicto = 0, $maxlen = 0, $notooltip = 0, $moretitle = '', $save_lastsearch_value = -1)
 	{
-		global $langs;
+		global $langs, $conf;
+
+		if (!empty($conf->dol_no_mouse_hover)) $notooltip = 1; // Force disable tooltips
 
 		$result = '';
-
-		if (!empty($this->id))
-		{
-			$link = '<a href="'.DOL_URL_ROOT.'/loan/payment/card.php?id='.$this->id.'">';
-			$linkend = '</a>';
-
-			if ($withpicto) $result .= ($link.img_object($langs->trans("ShowPayment").': '.$this->ref, 'payment').$linkend.' ');
-			if ($withpicto && $withpicto != 2) $result .= ' ';
-			if ($withpicto != 2) $result .= $link.($maxlen ?dol_trunc($this->ref, $maxlen) : $this->ref).$linkend;
+		$label = '<u>'.$langs->trans("Loan").'</u>';
+		if (!empty($this->id)) {
+			$label .= '<br><b>'.$langs->trans('Ref').':</b> '.$this->id;
 		}
+		if ($moretitle) $label .= ' - '.$moretitle;
+
+		$url = DOL_URL_ROOT.'/loan/payment/card.php?id='.$this->id;
+
+		$add_save_lastsearch_values = ($save_lastsearch_value == 1 ? 1 : 0);
+		if ($save_lastsearch_value == -1 && preg_match('/list\.php/', $_SERVER["PHP_SELF"])) $add_save_lastsearch_values = 1;
+		if ($add_save_lastsearch_values) $url .= '&save_lastsearch_values=1';
+
+		$linkstart = '<a href="'.$url.'" title="'.dol_escape_htmltag($label, 1).'" class="classfortooltip">';
+		$linkend = '</a>';
+
+		$result .= $linkstart;
+		if ($withpicto) $result .= img_object(($notooltip ? '' : $label), $this->picto, ($notooltip ? (($withpicto != 2) ? 'class="paddingright"' : '') : 'class="'.(($withpicto != 2) ? 'paddingright ' : '').'classfortooltip"'), 0, 0, $notooltip ? 0 : 1);
+		if ($withpicto != 2) $result .= $this->ref;
+		$result .= $linkend;
 
 		return $result;
 	}

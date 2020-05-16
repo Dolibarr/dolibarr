@@ -825,7 +825,7 @@ if ($action == 'create')
 
 	$soc = new Societe($db);
 
-	print load_fiche_titre($langs->trans("AddIntervention"), '', 'title_commercial');
+	print load_fiche_titre($langs->trans("AddIntervention"), '', 'intervention');
 
 	dol_htmloutput_mesg($mesg);
 
@@ -1395,7 +1395,6 @@ elseif ($id > 0 || !empty($ref))
 				print '<td class="liste_titre right">'.(empty($conf->global->FICHINTER_WITHOUT_DURATION) ? $langs->trans('Duration') : '').'</td>';
 				print '<td class="liste_titre">&nbsp;</td>';
 				print '<td class="liste_titre">&nbsp;</td>';
-				print '<td class="liste_titre">&nbsp;</td>';
 				print "</tr>\n";
 			}
 			while ($i < $num)
@@ -1420,16 +1419,14 @@ elseif ($id > 0 || !empty($ref))
 					print "</td>\n";
 
 
-					// Icone d'edition et suppression
+					// Econ to edit and delete
 					if ($object->statut == 0 && $user->rights->ficheinter->creer)
 					{
 						print '<td class="center">';
-						print '<a href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=editline&amp;line_id='.$objp->rowid.'#'.$objp->rowid.'">';
+						print '<a class="editfielda marginrightonly" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=editline&amp;line_id='.$objp->rowid.'#'.$objp->rowid.'">';
 						print img_edit();
 						print '</a>';
-						print '</td>';
-						print '<td class="center">';
-						print '<a href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=ask_deleteline&amp;line_id='.$objp->rowid.'">';
+						print '<a class="marginleftonly" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=ask_deleteline&amp;line_id='.$objp->rowid.'">';
 						print img_delete();
 						print '</a></td>';
 						print '<td class="center">';
@@ -1437,13 +1434,13 @@ elseif ($id > 0 || !empty($ref))
 						{
 							if ($i > 0)
 							{
-								print '<a href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=up&amp;line_id='.$objp->rowid.'">';
+								print '<a class="marginleftonly" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=up&amp;line_id='.$objp->rowid.'">';
 								print img_up();
 								print '</a>';
 							}
 							if ($i < $num - 1)
 							{
-								print '<a href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=down&amp;line_id='.$objp->rowid.'">';
+								print '<a class="marginleftonly" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=down&amp;line_id='.$objp->rowid.'">';
 								print img_down();
 								print '</a>';
 							}
@@ -1452,7 +1449,7 @@ elseif ($id > 0 || !empty($ref))
 					}
 					else
 					{
-						print '<td colspan="3">&nbsp;</td>';
+						print '<td colspan="2">&nbsp;</td>';
 					}
 
 					print '</tr>';
@@ -1470,7 +1467,7 @@ elseif ($id > 0 || !empty($ref))
 				// Line in update mode
 				if ($object->statut == 0 && $action == 'editline' && $user->rights->ficheinter->creer && GETPOST('line_id', 'int') == $objp->rowid)
 				{
-					print '<tr class="oddeven">';
+					print '<tr class="oddeven nohover">';
 					print '<td>';
 					print '<a name="'.$objp->rowid.'"></a>'; // ancre pour retourner sur la ligne
 
@@ -1499,8 +1496,9 @@ elseif ($id > 0 || !empty($ref))
                     }
                     print '</td>';
 
-                    print '<td class="center" colspan="5" valign="center"><input type="submit" class="button" name="save" value="'.$langs->trans("Save").'">';
-					print '<br><input type="submit" class="button" name="cancel" value="'.$langs->trans("Cancel").'"></td>';
+                    print '<td class="center" colspan="5" valign="center">';
+                    print '<input type="submit" class="button buttongen marginbottomonly" name="save" value="'.$langs->trans("Save").'">';
+					print '<input type="submit" class="button buttongen marginbottomonly" name="cancel" value="'.$langs->trans("Cancel").'"></td>';
 					print '</tr>'."\n";
 
 					$line = new FichinterLigne($db);
@@ -1534,7 +1532,7 @@ elseif ($id > 0 || !empty($ref))
     				print "</tr>\n";
 				}
 
-				print '<tr class="oddeven">'."\n";
+				print '<tr class="oddeven nohover">'."\n";
                 print '<td>';
                 // editeur wysiwyg
                 if (empty($conf->global->FICHINTER_EMPTY_LINE_DESC)) {

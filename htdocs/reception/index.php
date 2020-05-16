@@ -47,7 +47,7 @@ $reception = new Reception($db);
 $helpurl = 'EN:Module_Receptions|FR:Module_Receptions|ES:M&oacute;dulo_Receptiones';
 llxHeader('', $langs->trans("Reception"), $helpurl);
 
-print load_fiche_titre($langs->trans("ReceptionsArea"));
+print load_fiche_titre($langs->trans("ReceptionsArea"), '', 'dollyrevert');
 
 
 print '<div class="fichecenter"><div class="fichethirdleft">';

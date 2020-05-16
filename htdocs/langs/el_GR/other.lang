@@ -34,7 +34,7 @@ GraphInBarsAreLimitedToNMeasures=Grapics are limited to %s measures in 'Bars' mo
 OnlyOneFieldForXAxisIsPossible=Μόνο 1 πεδίο είναι επί του παρόντος δυνατός ως Άξονας Χ. Έχει επιλεγεί μόνο το πρώτο επιλεγμένο πεδίο.
 AtLeastOneMeasureIsRequired=Απαιτείται τουλάχιστον 1 πεδίο για μέτρηση
 AtLeastOneXAxisIsRequired=Απαιτείται τουλάχιστον 1 πεδίο για τον άξονα Χ
-
+LatestBlogPosts=Latest Blog Posts
 Notify_ORDER_VALIDATE=Η εντολή πώλησης έχει επικυρωθεί
 Notify_ORDER_SENTBYMAIL=Η εντολή πωλήσεων αποστέλλεται μέσω ταχυδρομείου
 Notify_ORDER_SUPPLIER_SENTBYMAIL=Η εντολή αγοράς στάλθηκε μέσω ηλεκτρονικού ταχυδρομείου
@@ -274,7 +274,7 @@ WEBSITE_PAGEURL=Σύνδεσμος URL της σελίδας
 WEBSITE_TITLE=Τίτλος
 WEBSITE_DESCRIPTION=Περιγραφή
 WEBSITE_IMAGE=Εικόνα
-WEBSITE_IMAGEDesc=Σχετική διαδρομή των μέσων εικόνας. Μπορείτε να το κρατήσετε κενό, καθώς σπάνια χρησιμοποιείται (μπορεί να χρησιμοποιηθεί από το δυναμικό περιεχόμενο για να εμφανιστεί μια μικρογραφία σε μια λίστα με αναρτήσεις ιστολογίου). Χρησιμοποιήστε το __WEBSITEKEY__ στη διαδρομή εάν η διαδρομή εξαρτάται από το όνομα του ιστότοπου.
+WEBSITE_IMAGEDesc=Relative path of the image media. You can keep this empty as this is rarely used (it can be used by dynamic content to show a thumbnail in a list of blog posts). Use __WEBSITE_KEY__ in the path if path depends on website name (for example: image/__WEBSITE_KEY__/stories/myimage.png).
 WEBSITE_KEYWORDS=Λέξεις κλειδιά
 LinesToImport=Γραμμές για εισαγωγή
 

@@ -208,7 +208,7 @@ if (!empty($conf->multicompany->enabled) && !$user->entity)
 {
 	print getTitleFieldOfList('Entity', 0, $_SERVER['PHP_SELF'], 'tms', '', $param, '', $sortfield, $sortorder, 'center ')."\n";
 }
-print getTitleFieldOfList("Action", 0, $_SERVER["PHP_SELF"], '', '', $param, '', $sortfield, $sortorder, 'center ');
+print getTitleFieldOfList("", 0, $_SERVER["PHP_SELF"], '', '', $param, '', $sortfield, $sortorder, 'center ');
 print "</tr>\n";
 
 
@@ -328,10 +328,10 @@ if ($conf->use_javascript_ajax)
 {
 	print '<br>';
 	print '<div id="updateconst" class="right">';
-	print '<input type="submit" name="update" class="button" value="'.$langs->trans("Modify").'">';
+	print '<input type="submit" name="update" class="button marginbottomonly" value="'.$langs->trans("Modify").'">';
 	print '</div>';
 	print '<div id="delconst" class="right">';
-	print '<input type="submit" name="delete" class="button" value="'.$langs->trans("Delete").'">';
+	print '<input type="submit" name="delete" class="button marginbottomonly" value="'.$langs->trans("Delete").'">';
 	print '</div>';
 }
 

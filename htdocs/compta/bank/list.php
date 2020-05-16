@@ -538,7 +538,11 @@ foreach ($accounts as $key=>$type)
     		if ($result < 0) {
     			setEventMessages($objecttmp->error, $objecttmp->errors, 'errors');
     		} else {
-    			print '<span class="badge badge-info classfortooltip" title="'.dol_htmlentities($langs->trans("TransactionsToConciliate")).'">'.$result->nbtodo.'</span>';
+    			print '<a href="'.DOL_URL_ROOT.'/compta/bank/bankentries_list.php?id='.$objecttmp->id.'&search_conciliated=0">';
+    			print '<span class="badge badge-info classfortooltip" title="'.dol_htmlentities($langs->trans("TransactionsToConciliate")).'">';
+    			print $result->nbtodo;
+    			print '</span>';
+				print '</a>';
     			if ($result->nbtodolate) {
     				print '<span title="'.dol_htmlentities($langs->trans("Late")).'" class="classfortooltip badge badge-danger marginleftonlyshort">';
     				print '<i class="fa fa-exclamation-triangle"></i> '.$result->nbtodolate;
@@ -552,9 +556,15 @@ foreach ($accounts as $key=>$type)
     }
 
     // Extra fields
+	if (is_array($objecttmp->array_options)) {
+		$obj = new stdClass();
+		foreach ($objecttmp->array_options as $k => $v) {
+			$obj->$k = $v;
+		}
+	}
     include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_print_fields.tpl.php';
     // Fields from hook
-    $parameters = array('arrayfields'=>$arrayfields);
+    $parameters = array('arrayfields'=>$arrayfields, 'obj'=>$obj, 'i'=>$i, 'totalarray'=>&$totalarray);
     $reshook = $hookmanager->executeHooks('printFieldListValue', $parameters, $objecttmp); // Note that $action and $objecttmpect may have been modified by hook
     print $hookmanager->resPrint;
 	// Date creation

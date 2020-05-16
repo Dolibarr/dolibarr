@@ -132,7 +132,7 @@ if (empty($reshook)) {
 				$action = "create"; // Go back to create page
 			} else {
 				$object->name	= trim(GETPOST("nom", 'nohtml'));
-				$object->nom = $object->name; // For backward compatibility
+				//$object->nom = $object->name; // For backward compatibility
 				$object->note	= dol_htmlcleanlastbr(trim(GETPOST("note", 'none')));
 
 				// Fill array 'array_options' with data from add form
@@ -215,7 +215,7 @@ if (empty($reshook)) {
 			$object->oldcopy = clone $object;
 
 			$object->name	= trim(GETPOST("nom", 'nohtml'));
-			$object->nom = $object->name; // For backward compatibility
+			//$object->nom = $object->name; // For backward compatibility
 			$object->note	= dol_htmlcleanlastbr(trim(GETPOST("note", 'none')));
 
 			// Fill array 'array_options' with data from add form
@@ -447,7 +447,7 @@ else
 					print $form->select_dolusers('', 'user', 1, $exclude, 0, '', '', $object->entity, 0, 0, '', 0, '', 'maxwidth300');
 					print ' &nbsp; ';
 					print '<input type="hidden" name="entity" value="'.$conf->entity.'">';
-					print '<input type="submit" class="button" value="'.$langs->trans("Add").'">';
+					print '<input type="submit" class="button buttongen" value="'.$langs->trans("Add").'">';
 					print '</td></tr>'."\n";
 					print '</table></form>'."\n";
 					print '<br>';
@@ -456,6 +456,7 @@ else
 				/*
 				 * Group members
 				 */
+
 				print '<table class="noborder centpercent">';
 				print '<tr class="liste_titre">';
 				print '<td class="liste_titre">'.$langs->trans("Login").'</td>';

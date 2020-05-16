@@ -23,6 +23,10 @@
 
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.form.class.php';
 
+
+/**
+ *	Class to manage forms for categories
+ */
 class FormCategory extends Form
 {
 	/**

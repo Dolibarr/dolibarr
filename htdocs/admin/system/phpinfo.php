@@ -143,7 +143,7 @@ $loadedExtensions    = array_map('strtolower', get_loaded_extensions(false));
 print '<table class="noborder centpercent">';
 print '<tr class="liste_titre">';
 print '<td width="200">'.$langs->trans("Extension").'</td>';
-print '<td align="center">'.$langs->trans("EnabledInSetup").'</td>';
+//print '<td align="center">'.$langs->trans("EnabledInSetup").'</td>';
 print '<td align="center">'.$langs->trans("Loaded").'</td>';
 print '<td align="center">'.$langs->trans("FunctionTest").'</td>';
 print '<td>'.$langs->trans("Result").'</td>';
@@ -154,7 +154,7 @@ $name      = "GD";
 
 print "<tr>";
 print "<td>".$name."</td>";
-print getTableColumn($name, $activatedExtensions);
+//print getTableColumn($name, $activatedExtensions);
 print getTableColumn($name, $loadedExtensions);
 print getTableColumnFunction($functions);
 print getResultColumn($name, $activatedExtensions, $loadedExtensions, $functions);
@@ -165,7 +165,7 @@ $name      = "Curl";
 
 print "<tr>";
 print "<td>".$name."</td>";
-print getTableColumn($name, $activatedExtensions);
+//print getTableColumn($name, $activatedExtensions);
 print getTableColumn($name, $loadedExtensions);
 print getTableColumnFunction($functions);
 print getResultColumn($name, $activatedExtensions, $loadedExtensions, $functions);
@@ -178,7 +178,7 @@ if (empty($_SERVER["SERVER_ADMIN"]) || $_SERVER["SERVER_ADMIN"] != 'doliwamp@loc
 
 	print "<tr>";
 	print "<td>".$name."</td>";
-	print getTableColumn($name, $activatedExtensions);
+	//print getTableColumn($name, $activatedExtensions);
 	print getTableColumn($name, $loadedExtensions);
 	print getTableColumnFunction($functions);
 	print getResultColumn($name, $activatedExtensions, $loadedExtensions, $functions);
@@ -191,7 +191,7 @@ $name      = "xDebug";
 
 print "<tr>";
 print "<td>".$name."</td>";
-print getTableColumn($name, $activatedExtensions);
+//print getTableColumn($name, $activatedExtensions);
 print getTableColumn($name, $loadedExtensions);
 print getTableColumnFunction($functions);
 print getResultColumn($name, $activatedExtensions, $loadedExtensions, $functions);
@@ -208,7 +208,6 @@ foreach ($phparray as $key => $value)
 	print '<div class="div-table-responsive-no-min">';
 	print '<table class="noborder">';
 	print '<tr class="liste_titre">';
-	//print '<td width="220px">'.$langs->trans("Parameter").'</td>';
 	print '<td width="220px">'.$key.'</td>';
 	print '<td colspan="2">'.$langs->trans("Value").'</td>';
 	print "</tr>\n";
@@ -408,7 +407,7 @@ function getResultColumn($name, array $activated, array $loaded, array $function
 	global $langs;
 
 	$result = true;
-	$result = $result && in_array(strtolower($name), $activated);
+	//$result = $result && in_array(strtolower($name), $activated);
 	$result = $result && in_array(strtolower($name), $loaded);
 
 	foreach ($functions as $function)

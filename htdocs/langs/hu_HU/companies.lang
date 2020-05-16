@@ -325,7 +325,6 @@ CompanyDeleted="%s" cég törölve az adatbázisból.
 ListOfContacts=Névjegyek / címek
 ListOfContactsAddresses=Névjegyek / címek
 ListOfThirdParties=Partnerek listája
-ShowCompany=Mutasd a partnereket
 ShowContact=Kapcsolat mutatása
 ContactsAllShort=Minden (nincs szűrő)
 ContactType=Kapcsolat típusa
@@ -447,6 +446,7 @@ SaleRepresentativeFirstname=Az értékesítési képviselő vezetékneve
 SaleRepresentativeLastname=Az értékesítési képviselő vezetékneve
 ErrorThirdpartiesMerge=Hiba történt a partner(ek) törlésekor. Kérjük, ellenőrizze a naplót. A változtatások visszavonva.
 NewCustomerSupplierCodeProposed=A vevő vagy az eladó kódja már használatban van, egy új kód javasolt
+KeepEmptyIfGenericAddress=Keep this field empty if this address is a generic address
 #Imports
 PaymentTypeCustomer=Fizetés típusa - Ügyfél
 PaymentTermsCustomer=Fizetési feltételek - Ügyfél

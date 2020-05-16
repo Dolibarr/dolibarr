@@ -59,6 +59,7 @@ ErrorPartialFile=Handlingar den mottagit inte helt av server.
 ErrorNoTmpDir=Tillfälliga directy %s inte existerar.
 ErrorUploadBlockedByAddon=Ladda upp blockeras av en PHP / Apache plugin.
 ErrorFileSizeTooLarge=Filen är för stor.
+ErrorFieldTooLong=Field %s is too long.
 ErrorSizeTooLongForIntType=Storlek för lång för int typ (%s siffror max)
 ErrorSizeTooLongForVarcharType=Storlek för lång för sträng typ (%s tecken max)
 ErrorNoValueForSelectType=Vänligen fyll i värde för utvald lista
@@ -234,7 +235,8 @@ ErrorLanguageOfTranslatedPageIsSameThanThisPage=Error, language of translated pa
 ErrorBatchNoFoundForProductInWarehouse=No lot/serial found for product "%s" in warehouse "%s".
 ErrorBatchNoFoundEnoughQuantityForProductInWarehouse=No enough quantity for this lot/serial for product "%s" in warehouse "%s".
 ErrorOnlyOneFieldForGroupByIsPossible=Only 1 field for the 'Group by' is possible (others are discarded)
-ErrorTooManyDifferentValueForSelectedGroupBy=Found too many different value (more than <b>%s</b>) for the field '<b>%s</b>', so we can't user it as a 'Group by' for graphics. The field 'Group By' has been removed. May be you wanted to use it as an X-Axis ?
+ErrorTooManyDifferentValueForSelectedGroupBy=Found too many different value (more than <b>%s</b>) for the field '<b>%s</b>', so we can't use it as a 'Group by' for graphics. The field 'Group By' has been removed. May be you wanted to use it as an X-Axis ?
+ErrorReplaceStringEmpty=Error, the string to replace into is empty
 # Warnings
 WarningParamUploadMaxFileSizeHigherThanPostMaxSize=Your PHP parameter upload_max_filesize (%s) is higher than PHP parameter post_max_size (%s). This is not a consistent setup.
 WarningPasswordSetWithNoAccount=Ett lösenord har ställts för den här medlemmen. Men inget användarkonto skapades. Så det här lösenordet är lagrat men kan inte användas för att logga in till Dolibarr. Den kan användas av en extern modul / gränssnitt men om du inte behöver definiera någon inloggning eller ett lösenord för en medlem kan du inaktivera alternativet "Hantera en inloggning för varje medlem" från inställningen av medlemsmodulen. Om du behöver hantera en inloggning men inte behöver något lösenord, kan du hålla fältet tomt för att undvika denna varning. Obs! Email kan också användas som inloggning om medlemmen är länkad till en användare.

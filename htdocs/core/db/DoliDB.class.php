@@ -297,4 +297,48 @@ abstract class DoliDB implements Database
 	{
 		return $this->lastqueryerror;
 	}
+
+	/**
+	 * Return first result from query as object
+	 * Note : This method executes a given SQL query and retrieves the first row of results as an object. It should only be used with SELECT queries
+	 * Dont add LIMIT to your query, it will be added by this method
+	 * @param string $sql the sql query string
+	 * @return bool| object
+	 */
+	public function getRow($sql)
+	{
+		$sql .= ' LIMIT 1;';
+
+		$res = $this->query($sql);
+		if ($res)
+		{
+			return $this->fetch_object($res);
+		}
+
+		return false;
+	}
+
+	/**
+	 * return all results from query as an array of objects
+	 * Note : This method executes a given SQL query and retrieves all row of results as an array of objects. It should only be used with SELECT queries
+	 * be carefull with this method use it only with some limit of results to avoid performences loss
+	 * @param string $sql the sql query string
+	 * @return bool| array
+	 */
+	public function getRows($sql)
+	{
+		$res = $this->query($sql);
+		if ($res)
+		{
+			$results = array();
+			if($this->num_rows($res) > 0){
+				while ($obj = $this->fetch_object($res)){
+					$results[] = $obj;
+				}
+			}
+			return $results;
+		}
+
+		return false;
+	}
 }

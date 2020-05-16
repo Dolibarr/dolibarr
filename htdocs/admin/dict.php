@@ -503,7 +503,7 @@ $tabhelp[33] = array('code'=>$langs->trans("EnterAnyCode"));
 $tabhelp[34] = array('code'=>$langs->trans("EnterAnyCode"));
 $tabhelp[35] = array();
 $tabhelp[36] = array('range_ik'=>$langs->trans('PrevRangeToThisRange'));
-$tabhelp[37] = array('code'=>$langs->trans("EnterAnyCode"));
+$tabhelp[37] = array('code'=>$langs->trans("EnterAnyCode"), 'unit_type' => $langs->trans('MeasuringUnitTypeDesc'), 'scale' => $langs->trans('MeasuringScaleDesc'));
 $tabhelp[38] = array('code'=>$langs->trans("EnterAnyCode"), 'url' => $langs->trans('UrlSocialNetworksDesc'), 'icon' => $langs->trans('FafaIconSocialNetworksDesc'));
 
 // List of check for fields (NOT USED YET)
@@ -1718,7 +1718,7 @@ if ($id)
                     print "</td>";
 
                     // Modify link
-                    if ($canbemodified) print '<td align="center"><a class="reposition" href="'.$url.'action=edit">'.img_edit().'</a></td>';
+                    if ($canbemodified) print '<td align="center"><a class="reposition editfielda" href="'.$url.'action=edit">'.img_edit().'</a></td>';
                     else print '<td>&nbsp;</td>';
 
                     // Delete link

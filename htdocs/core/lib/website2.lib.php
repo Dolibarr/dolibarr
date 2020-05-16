@@ -39,7 +39,10 @@ function dolSaveMasterFile($filemaster)
 
 	$mastercontent = '<?php'."\n";
 	$mastercontent .= '// File generated to link to the master file - DO NOT MODIFY - It is just an include'."\n";
-	$mastercontent .= "if (! defined('USEDOLIBARRSERVER') && ! defined('USEDOLIBARREDITOR')) require_once '".DOL_DOCUMENT_ROOT."/master.inc.php';\n";
+	$mastercontent .= "if (! defined('USEDOLIBARRSERVER') && ! defined('USEDOLIBARREDITOR')) {\n";
+	$mastercontent .= "    if (! defined('USEEXTERNALSERVER')) define('USEEXTERNALSERVER', 1);\n";
+	$mastercontent .= "    require_once '".DOL_DOCUMENT_ROOT."/master.inc.php';\n";
+	$mastercontent .= "}\n";
 	$mastercontent .= '?>'."\n";
 	$result = file_put_contents($filemaster, $mastercontent);
 	if (!empty($conf->global->MAIN_UMASK))
@@ -133,7 +136,7 @@ function dolSavePageContent($filetpl, Website $object, WebsitePage $objectpage)
 	$tplcontent .= "if (! defined('USEDOLIBARRSERVER') && ! defined('USEDOLIBARREDITOR')) {\n";
 	$tplcontent .= '	$pathdepth = count(explode(\'/\', $_SERVER[\'SCRIPT_NAME\'])) - 2;'."\n";
 	$tplcontent .= '	require_once ($pathdepth ? str_repeat(\'../\', $pathdepth) : \'./\').\'master.inc.php\';'."\n";
-	$tplcontent .= "} // Not already loaded"."\n";
+	$tplcontent .= "} // Not already loaded\n";
 	$tplcontent .= "require_once DOL_DOCUMENT_ROOT.'/core/lib/website.lib.php';\n";
 	$tplcontent .= "require_once DOL_DOCUMENT_ROOT.'/core/website.inc.php';\n";
 	$tplcontent .= "ob_start();\n";
@@ -212,7 +215,7 @@ function dolSavePageContent($filetpl, Website $object, WebsitePage $objectpage)
 
 	$tplcontent .= '<?php // BEGIN PHP'."\n";
 	$tplcontent .= '$tmp = ob_get_contents(); ob_end_clean(); dolWebsiteOutput($tmp, "html", '.$objectpage->id.');'."\n";
-	$tplcontent .= "// END PHP ?>"."\n";
+	$tplcontent .= "// END PHP ?>\n";
 
 	//var_dump($filetpl);exit;
 	$result = file_put_contents($filetpl, $tplcontent);

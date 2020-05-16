@@ -39,25 +39,28 @@ if ($user->socid) $socid = $user->socid;
 $result = restrictedArea($user, 'prelevement', '', '', 'bons');
 
 // Get supervariables
-$page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOST("page", 'int');
+$limit = GETPOST('limit', 'int') ? GETPOST('limit', 'int') : $conf->liste_limit;
 $sortorder = GETPOST('sortorder', 'alpha');
 $sortfield = GETPOST('sortfield', 'alpha');
-
+$page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOST("page", 'int');
+if (empty($page) || $page == -1) { $page = 0; }     // If $page is not defined, or '' or -1
+$offset = $limit * $page;
+$pageprev = $page - 1;
+$pagenext = $page + 1;
 /*
  * View
  */
 
 llxHeader('', $langs->trans("WithdrawsRefused"));
 
-$offset = $conf->liste_limit * $page;
-$pageprev = $page - 1;
-$pagenext = $page + 1;
-
 if ($sortorder == "") $sortorder = "DESC";
 if ($sortfield == "") $sortfield = "p.datec";
 
 $rej = new RejetPrelevement($db, $user);
-$ligne = new LignePrelevement($db, $user);
+$line = new LignePrelevement($db);
+
+$hookmanager->initHooks(array('withdrawalsreceiptsrejectedlist'));
+
 
 /*
  * Liste des factures
@@ -85,7 +88,7 @@ if ($result)
 
 	print_barre_liste($langs->trans("WithdrawsRefused"), $page, $_SERVER["PHP_SELF"], $urladd, $sortfield, $sortorder, '', $num);
 	print"\n<!-- debut table -->\n";
-	print '<table class="noborder" width="100%" cellspacing="0" cellpadding="4">';
+	print '<table class="noborder tagtable liste" width="100%" cellspacing="0" cellpadding="4">';
 	print '<tr class="liste_titre">';
 	print_liste_field_titre("Line", $_SERVER["PHP_SELF"], "p.ref", '', $urladd);
 	print_liste_field_titre("ThirdParty", $_SERVER["PHP_SELF"], "s.nom", '', $urladd);
@@ -99,7 +102,7 @@ if ($result)
 		$obj = $db->fetch_object($result);
 
 		print '<tr class="oddeven"><td>';
-		print $ligne->LibStatut($obj->statut, 2).'&nbsp;';
+		print $line->LibStatut($obj->statut, 2).'&nbsp;';
 		print '<a href="'.DOL_URL_ROOT.'/compta/prelevement/line.php?id='.$obj->rowid.'">';
 
 		print substr('000000'.$obj->rowid, -6)."</a></td>";

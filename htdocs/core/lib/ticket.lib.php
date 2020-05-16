@@ -230,8 +230,8 @@ function llxHeaderTicket($title, $head = "", $disablejs = 0, $disablehead = 0, $
         	} elseif (!empty($mysoc->logo) && is_readable($conf->mycompany->dir_output.'/logos/'.$mysoc->logo)) {
         		$urllogo = DOL_URL_ROOT.'/viewimage.php?modulepart=mycompany&amp;entity='.$conf->entity.'&amp;file='.urlencode('logos/'.$mysoc->logo);
         		$width = 150;
-        	} elseif (is_readable(DOL_DOCUMENT_ROOT.'/theme/dolibarr_logo.png')) {
-        		$urllogo = DOL_URL_ROOT.'/theme/dolibarr_logo.png';
+        	} elseif (is_readable(DOL_DOCUMENT_ROOT.'/theme/dolibarr_logo.svg')) {
+        		$urllogo = DOL_URL_ROOT.'/theme/dolibarr_logo.svg';
         	}
         }
     }
@@ -254,7 +254,7 @@ function llxHeaderTicket($title, $head = "", $disablejs = 0, $disablehead = 0, $
     	}
     	print '</div>';
     	if (empty($conf->global->MAIN_HIDE_POWERED_BY)) {
-    		print '<div class="poweredbypublicpayment opacitymedium right"><a href="https://www.dolibarr.org" target="dolibarr">'.$langs->trans("PoweredBy").'<br><img src="'.DOL_URL_ROOT.'/theme/dolibarr_logo.png" width="80px"></a></div>';
+    		print '<div class="poweredbypublicpayment opacitymedium right"><a href="https://www.dolibarr.org" target="dolibarr">'.$langs->trans("PoweredBy").'<br><img src="'.DOL_URL_ROOT.'/theme/dolibarr_logo.svg" width="80px"></a></div>';
     	}
     	print '</div>';
     }
@@ -709,7 +709,7 @@ function show_ticket_messaging($conf, $langs, $db, $filterobj, $objcon = '', $no
 				$out .= $histo[$key]['id'];
 				$out .= '</a> ';
 			} else {
-				$out .= $actionstatic->getNomUrl(1, -1).' ';
+				$out .= $actionstatic->getNomUrl(1, -1, 'valignmiddle').' ';
 			}
 
             //if ($user->rights->agenda->allactions->read || $actionstatic->authorid == $user->id)

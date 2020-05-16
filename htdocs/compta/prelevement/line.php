@@ -43,9 +43,22 @@ $action = GETPOST('action', 'alpha');
 $id = GETPOST('id', 'int');
 $socid = GETPOST('socid', 'int');
 
-$page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOST("page", 'int');
+$limit = GETPOST('limit', 'int') ? GETPOST('limit', 'int') : $conf->liste_limit;
 $sortorder = GETPOST('sortorder', 'alpha');
 $sortfield = GETPOST('sortfield', 'alpha');
+$page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOST("page", 'int');
+if ($page == -1 || $page == null) { $page = 0; }
+$offset = $limit * $page;
+$pageprev = $page - 1;
+$pagenext = $page + 1;
+
+if ($sortorder == "") $sortorder = "DESC";
+if ($sortfield == "") $sortfield = "pl.fk_soc";
+
+
+/*
+ * Actions
+ */
 
 if ($action == 'confirm_rejet')
 {
@@ -77,7 +90,7 @@ if ($action == 'confirm_rejet')
 
 		if (!$error)
 		{
-			$lipre = new LignePrelevement($db, $user);
+			$lipre = new LignePrelevement($db);
 
 			if ($lipre->fetch($id) == 0)
 
@@ -119,7 +132,7 @@ $h++;
 
 if ($id)
 {
-	$lipre = new LignePrelevement($db, $user);
+	$lipre = new LignePrelevement($db);
 
 	if ($lipre->fetch($id) == 0)
 	{
@@ -245,17 +258,6 @@ if ($id)
 	}
 
 	print "</div>";
-
-
-
-	if ($page == -1 || $page == null) { $page = 0; }
-
-	$offset = $conf->liste_limit * $page;
-	$pageprev = $page - 1;
-	$pagenext = $page + 1;
-
-	if ($sortorder == "") $sortorder = "DESC";
-	if ($sortfield == "") $sortfield = "pl.fk_soc";
 
 	/*
 	 * List of invoices

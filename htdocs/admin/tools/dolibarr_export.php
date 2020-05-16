@@ -200,7 +200,6 @@ if (in_array($type, array('mysql', 'mysqli'))) {
     print '<div class="formelementrow">';
     print '<input type="checkbox" name="use_transaction" value="yes" id="checkbox_use_transaction" />';
     print '<label for="checkbox_use_transaction">'.$langs->trans("UseTransactionnalMode").'</label>';
-
     print '</div>';
 
     if (!empty($conf->global->MYSQL_OLD_OPTION_DISABLE_FK)) {
@@ -303,7 +302,7 @@ if (in_array($type, array('mysql', 'mysqli'))) {
 
     print '<br>';
     print '<fieldset><legend>'.$langs->trans('ExportStructure').'</legend>';
-    print '<input type="checkbox" name="nobin_drop"'.((!isset($_GET["nobin_drop"]) && !isset($_POST["nobin_drop"])) || GETPOST('nobin_drop')) ? ' checked' : ''.' id="checkbox_dump_drop" />';
+    print '<input type="checkbox" name="nobin_drop"'.((! GETPOSTISSET("nobin_drop") || GETPOST('nobin_drop')) ? ' checked' : '').' id="checkbox_dump_drop" />';
     print '<label for="checkbox_dump_drop">'.$langs->trans("AddDropTable").'</label>';
     print '<br>';
     print '</fieldset>';

@@ -8,3 +8,4 @@ LinkRemoved=Länken %s har tagits bort
 ErrorFailedToDeleteLink= Det gick inte att ta bort länk '<b>%s</b>'
 ErrorFailedToUpdateLink= Det gick inte att uppdatera länken '<b>%s</b>'
 URLToLink=URL för länk
+OverwriteIfExists=Overwrite file if exists

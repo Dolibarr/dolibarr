@@ -84,7 +84,7 @@ function llxHeaderSurvey($title, $head = "", $disablejs = 0, $disablehead = 0, $
 
 	print '<span id="dolpaymentspan"></span>'."\n";
 	print '<div class="center">'."\n";
-	print '<form name="formulaire" action="studs.php?sondage='.$numsondage.'"'.'#bas" method="POST">'."\n";
+	print '<form name="formulaire" action="studs.php?sondage='.urlencode($numsondage).'#bas" method="POST">'."\n";
 	print '<input type="hidden" name="sondage" value="'.$numsondage.'"/>';
 	print '<input type="hidden" name="token" value="'.newToken().'">'."\n";
 	print "\n";
@@ -121,7 +121,7 @@ function llxHeaderSurvey($title, $head = "", $disablejs = 0, $disablehead = 0, $
 		print '>';
 		print '</div>';
 		if (empty($conf->global->MAIN_HIDE_POWERED_BY)) {
-			print '<div class="poweredbypublicpayment opacitymedium right"><a href="https://www.dolibarr.org" target="dolibarr">'.$langs->trans("PoweredBy").'<br><img src="'.DOL_URL_ROOT.'/theme/dolibarr_logo.png" width="80px"></a></div>';
+			print '<div class="poweredbypublicpayment opacitymedium right"><a href="https://www.dolibarr.org" target="dolibarr">'.$langs->trans("PoweredBy").'<br><img src="'.DOL_URL_ROOT.'/theme/dolibarr_logo.svg" width="80px"></a></div>';
 		}
 		print '</div>';
 	}

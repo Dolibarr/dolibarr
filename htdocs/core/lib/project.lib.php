@@ -87,7 +87,8 @@ function project_prepare_head($object)
 		$h++;
 	}
 
-	if (!empty($conf->fournisseur->enabled) || !empty($conf->propal->enabled) || !empty($conf->commande->enabled)
+	if ((!empty($conf->fournisseur->enabled) && empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD) || !empty($conf->supplier_order->enabled) || !empty($conf->supplier_invoice->enabled))
+		|| !empty($conf->propal->enabled) || !empty($conf->commande->enabled)
 		|| !empty($conf->facture->enabled) || !empty($conf->contrat->enabled)
 		|| !empty($conf->ficheinter->enabled) || !empty($conf->agenda->enabled) || !empty($conf->deplacement->enabled))
 	{
@@ -642,7 +643,7 @@ function projectLinesa(&$inc, $parent, &$lines, &$level, $var, $showproject, &$t
 								if ($source == 'internal') $c = new User($db);
 								else $c = new Contact($db);
 								$c->fetch($contacttask['id']);
-								print $c->getNomUrl(1).' ('.$contacttask['libelle'].')'.'<br>';
+								print $c->getNomUrl(1).' ('.$contacttask['libelle'].')<br>';
 							}
 						}
 					}
@@ -2225,10 +2226,10 @@ function print_projecttasks_array($db, $form, $socid, $projectsListId, $mytasks 
 				print '<tr class="oddeven">';
 
 				print '<td>';
-				print $projectstatic->getNomUrl(1);
+				print $projectstatic->getNomUrl(1, '', 0, '', '-', 0 , -1, 'nowraponall');
 				if (!in_array('projectlabel', $hiddenfields)) print '<br><span class="opacitymedium">'.dol_trunc($objp->title, 24).'</span>';
 				print '</td>';
-				print '<td>';
+				print '<td class="nowraponall tdoverflowmax100">';
 				if ($objp->fk_soc > 0)
 				{
 					$thirdpartystatic->id = $objp->fk_soc;
@@ -2241,7 +2242,7 @@ function print_projecttasks_array($db, $form, $socid, $projectsListId, $mytasks 
 				if (!empty($conf->global->PROJECT_USE_OPPORTUNITIES))
 				{
 					if (!in_array('prospectionstatus', $hiddenfields)) {
-						print '<td class="right">';
+						print '<td class="center">';
 						// Because color of prospection status has no meaning yet, it is used if hidden constant is set
 						if (empty($conf->global->USE_COLOR_FOR_PROSPECTION_STATUS)) {
 							$oppStatusCode = dol_getIdFromCode($db, $objp->opp_status, 'c_lead_status', 'rowid', 'code');

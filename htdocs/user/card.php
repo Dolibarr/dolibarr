@@ -481,16 +481,21 @@ if (empty($reshook)) {
 
 				if (!$error && GETPOSTISSET('contactid')) {
 					$contactid = GETPOST('contactid', 'int');
+					$socid = GETPOST('socid', 'int');
 
-					if ($contactid > 0) {
+					if ($contactid > 0) {	// The 'contactid' is used inpriority over the 'socid'
 						$contact = new Contact($db);
 						$contact->fetch($contactid);
 
 						$sql = "UPDATE ".MAIN_DB_PREFIX."user";
-						$sql .= " SET fk_socpeople=".$db->escape($contactid);
+						$sql .= " SET fk_socpeople=".((int) $contactid);
 						if (!empty($contact->socid)) {
-							$sql .= ", fk_soc=".$db->escape($contact->socid);
+							$sql .= ", fk_soc=".((int) $contact->socid);
 						}
+						$sql .= " WHERE rowid=".$object->id;
+					} elseif ($socid > 0) {
+						$sql = "UPDATE ".MAIN_DB_PREFIX."user";
+						$sql .= " SET fk_socpeople=NULL, fk_soc=".((int) $socid);
 						$sql .= " WHERE rowid=".$object->id;
 					} else {
 						$sql = "UPDATE ".MAIN_DB_PREFIX."user";
@@ -1618,7 +1623,9 @@ else
 			// Hierarchy
 			print '<tr><td>'.$langs->trans("HierarchicalResponsible").'</td>';
 			print '<td>';
-			if (empty($object->fk_user)) print $langs->trans("None");
+			if (empty($object->fk_user)) {
+				print '<span class="opacitymedium">'.$langs->trans("None").'</span>';
+			}
 			else {
 				$huser = new User($db);
 				$huser->fetch($object->fk_user);
@@ -1829,7 +1836,7 @@ else
 					$contact->fetch($object->contactid);
 					if ($object->socid > 0) print ' / ';
 					else print '<br>';
-					print '<a href="'.DOL_URL_ROOT.'/contact/card.php?id='.$object->contactid.'">'.img_object($langs->trans("ShowContact"), 'contact').' '.dol_trunc($contact->getFullName($langs), 32).'</a>';
+					print $contact->getNomUrl(1, '');
 				}
 				print '</td>';
 				print '</tr>'."\n";
@@ -1993,6 +2000,8 @@ else
 
 				if ($canreadgroup)
 				{
+					print '<!-- Group section -->'."\n";
+
 					print load_fiche_titre($langs->trans("ListOfGroupsForUser"), '', '');
 
 					// On selectionne les groupes auquel fait parti le user
@@ -2031,13 +2040,11 @@ else
 							print $form->select_dolgroups('', 'group', 1, $exclude, 0, '', '', $object->entity);
 							print ' &nbsp; ';
 							print '<input type="hidden" name="entity" value="'.$conf->entity.'" />';
-							print '<input type="submit" class="button" value="'.$langs->trans("Add").'" />';
+							print '<input type="submit" class="button buttongen" value="'.$langs->trans("Add").'" />';
 						}
 						print '</th></tr>'."\n";
 
-						/*
-						 * Groups assigned to user
-						 */
+						// List of groups of user
 						if (!empty($groupslist))
 						{
 							foreach ($groupslist as $group)
@@ -2046,7 +2053,7 @@ else
 								print '<td>';
 								if ($caneditgroup)
 								{
-									print '<a href="'.DOL_URL_ROOT.'/user/group/card.php?id='.$group->id.'">'.img_object($langs->trans("ShowGroup"), "group").' '.$group->name.'</a>';
+									print $group->getNomUrl(1);
 								}
 								else
 								{
@@ -2085,7 +2092,7 @@ else
 		}
 
 		/*
-         * Fiche en mode edition
+         * Card in edit mode
          */
 		if ($action == 'edit' && ($canedituser || $caneditfield || $caneditpassword || ($user->id == $object->id)))
 		{
@@ -2285,6 +2292,7 @@ else
 		   	print '<td>';
 		   	if ($user->id == $object->id || !$user->admin)
 		   	{
+		   		// Read mode
 			   	$type = $langs->trans("Internal");
 			   	if ($object->socid) $type = $langs->trans("External");
 			   	print $form->textwithpicto($type, $langs->trans("InternalExternalDesc"));
@@ -2292,10 +2300,22 @@ else
 		   	}
 		   	else
 			{
+				// Select mode
 				$type = 0;
 				if ($object->contactid) $type = $object->contactid;
-				print $form->selectcontacts(0, $type, 'contactid', 2, '', '', 1, '', false, 1);
-			   	if ($object->ldap_sid) print ' ('.$langs->trans("DomainUser").')';
+
+				if ($object->socid > 0 && ! ($object->contactid > 0)) {	// external user but no link to a contact
+					print img_picto('', 'company').$form->select_company($object->socid, 'socid', '', '&nbsp;');
+					print img_picto('', 'contact').$form->selectcontacts(0, 0, 'contactid', 1, '', '', 1, '', false, 1);
+					if ($object->ldap_sid) print ' ('.$langs->trans("DomainUser").')';
+				} elseif ($object->socid > 0 && $object->contactid > 0) {	// external user with a link to a contact
+					print img_picto('', 'company').$form->select_company(0, 'socid', '', '&nbsp;');	// We keep thirdparty empty, contact is already set
+					print img_picto('', 'contact').$form->selectcontacts(0, $object->contactid, 'contactid', 1, '', '', 1, '', false, 1);
+			   		if ($object->ldap_sid) print ' ('.$langs->trans("DomainUser").')';
+				} else {	// $object->socid is not > 0 here
+					print img_picto('', 'company').$form->select_company(0, 'socid', '', '&nbsp;');	// We keep thirdparty empty, contact is already set
+					print img_picto('', 'contact').$form->selectcontacts(0, 0, 'contactid', 1, '', '', 1, '', false, 1);
+				}
 			}
 		   	print '</td></tr>';
 

@@ -30,6 +30,9 @@
 
 -- Missing in v11
 
+UPDATE llx_c_units set scale = 3600 where code  = 'H' and unit_type = 'time';
+UPDATE llx_c_units set scale = 86400 where code = 'D' and unit_type = 'time';
+
 create table llx_commande_fournisseur_dispatch_extrafields
 (
   rowid            integer AUTO_INCREMENT PRIMARY KEY,
@@ -42,9 +45,32 @@ ALTER TABLE llx_commande_fournisseur_dispatch_extrafields ADD INDEX idx_commande
 
 UPDATE llx_accounting_system SET fk_country = NULL, active = 0 WHERE pcg_version = 'SYSCOHADA';
 
+create table llx_c_shipment_package_type
+(
+    rowid        integer  AUTO_INCREMENT PRIMARY KEY,
+    label        varchar(50) NOT NULL,  -- Short name
+    description	 varchar(255), -- Description
+    active       integer DEFAULT 1 NOT NULL, -- Active or not	
+    entity       integer DEFAULT 1 NOT NULL -- Multi company id 
+)ENGINE=innodb;
+
+create table llx_facturedet_rec_extrafields
+(
+  rowid            integer AUTO_INCREMENT PRIMARY KEY,
+  tms              timestamp,
+  fk_object        integer NOT NULL,    -- object id
+  import_key       varchar(14)      	-- import key
+)ENGINE=innodb;
+
+ALTER TABLE llx_facturedet_rec_extrafields ADD INDEX idx_facturedet_rec_extrafields (fk_object);
 
 
 -- For v12
+
+-- Delete an old index that is duplicated
+-- VMYSQL4.1 DROP INDEX ix_fk_product_stock on llx_product_batch;
+-- VPGSQL8.2 DROP INDEX ix_fk_product_stock
+
 DELETE FROM llx_menu where module='supplier_proposal';
 
 UPDATE llx_website SET lang = 'en' WHERE lang like 'en_%';
@@ -224,6 +250,7 @@ ALTER TABLE llx_product_batch MODIFY COLUMN batch varchar(128);
 ALTER TABLE llx_commande_fournisseur_dispatch MODIFY COLUMN batch varchar(128);
 ALTER TABLE llx_stock_mouvement MODIFY COLUMN batch varchar(128);
 ALTER TABLE llx_mrp_production MODIFY COLUMN batch varchar(128);
+ALTER TABLE llx_mrp_production MODIFY qty real NOT NULL DEFAULT 1;
 
 create table llx_categorie_website_page
 (
@@ -245,3 +272,18 @@ ALTER TABLE llx_categorie ADD COLUMN fk_user_creat	integer;
 ALTER TABLE llx_categorie ADD COLUMN fk_user_modif	integer;
 
 ALTER TABLE llx_commandedet ADD CONSTRAINT fk_commandedet_fk_commandefourndet FOREIGN KEY (fk_commandefourndet) REFERENCES llx_commande_fournisseurdet (rowid);
+
+
+-- VMYSQL4.3 ALTER TABLE llx_prelevement_facture_demande MODIFY COLUMN fk_facture INTEGER NULL;
+-- VPGSQL8.2 ALTER TABLE llx_prelevement_facture_demande ALTER COLUMN fk_facture DROP NOT NULL;
+ALTER TABLE llx_prelevement_facture_demande ADD COLUMN fk_facture_fourn INTEGER NULL;
+
+-- VMYSQL4.3 ALTER TABLE llx_prelevement_facture MODIFY COLUMN fk_facture INTEGER NULL;
+-- VPGSQL8.2 ALTER TABLE llx_prelevement_facture ALTER COLUMN fk_facture DROP NOT NULL;
+ALTER TABLE llx_prelevement_facture ADD COLUMN fk_facture_fourn INTEGER NULL;
+
+ALTER TABLE llx_menu MODIFY COLUMN module varchar(255);
+
+UPDATE llx_actioncomm SET fk_action = 50 where fk_action = 40 AND code = 'TICKET_MSG'; 
+
+ALTER TABLE llx_emailcollector_emailcollector ADD COLUMN hostcharset varchar(16) DEFAULT 'UTF-8';

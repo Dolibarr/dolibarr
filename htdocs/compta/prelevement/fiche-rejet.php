@@ -51,7 +51,7 @@ $offset = $limit * $page;
 $pageprev = $page - 1;
 $pagenext = $page + 1;
 
-$object = new BonPrelevement($db, "");
+$object = new BonPrelevement($db);
 
 
 

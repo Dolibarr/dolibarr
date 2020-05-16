@@ -384,10 +384,10 @@ if ($action == "set" && $success)
 
 		print "<br>";
 
-		print $langs->trans("YouNeedToPersonalizeSetup")."<br><br>";
+		print $langs->trans("YouNeedToPersonalizeSetup")."<br><br><br>";
 
 		print '<div class="center"><a href="../admin/index.php?mainmenu=home&leftmenu=setup'.(isset($login) ? '&username='.urlencode($login) : '').'">';
-		print $langs->trans("GoToSetupArea");
+		print '<span class="fas fa-external-link-alt"></span> '.$langs->trans("GoToSetupArea");
 		print '</a></div>';
 	}
 	else
@@ -399,7 +399,7 @@ if ($action == "set" && $success)
 		print "<br>";
 
 		print '<div class="center"><a href="'.$dolibarr_main_url_root.'/install/index.php">';
-		print $langs->trans("GoToUpgradePage");
+		print '<span class="fas fa-link-alt"></span> '.$langs->trans("GoToUpgradePage");
 		print '</a></div>';
 	}
 }
@@ -435,7 +435,7 @@ elseif (empty($action) || preg_match('/upgrade/i', $action))
 		print "<br><br>";
 
 		print '<div class="center"><a href="../index.php?mainmenu=home'.(isset($login) ? '&username='.urlencode($login) : '').'">';
-		print $langs->trans("GoToDolibarr").'...';
+		print '<span class="fas fa-link-alt"></span> '.$langs->trans("GoToDolibarr").'...';
 		print '</a></div><br>';
 	}
 	else
@@ -447,7 +447,7 @@ elseif (empty($action) || preg_match('/upgrade/i', $action))
 		print "<br>";
 
 		print '<div class="center"><a href="../install/index.php">';
-		print $langs->trans("GoToUpgradePage");
+		print '<span class="fas fa-link-alt"></span> '.$langs->trans("GoToUpgradePage");
 		print '</a></div>';
 	}
 }

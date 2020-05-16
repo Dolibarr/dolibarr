@@ -61,6 +61,9 @@ abstract class ModelePDFProduct extends CommonDocGenerator
 	}
 }
 
+/**
+ * Class template for classes of numbering product
+ */
 abstract class ModeleProductCode
 {
 	/**
@@ -97,7 +100,6 @@ abstract class ModeleProductCode
 	 */
 	public function getExample($langs)
 	{
-		$langs->load("bills");
 		return $langs->trans("NoExample");
 	}
 

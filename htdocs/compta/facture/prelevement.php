@@ -24,7 +24,7 @@
 /**
  *	\file       htdocs/compta/facture/prelevement.php
  *	\ingroup    facture
- *	\brief      Gestion des prelevement d'une facture
+ *	\brief      Management of direct debit order of invoices
  */
 
 require '../../main.inc.php';
@@ -32,9 +32,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/invoice.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/prelevement/class/bonprelevement.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/discount.class.php';
-if (!empty($conf->projet->enabled)) {
-	require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
-}
+require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
 
 if (!$user->rights->facture->lire) accessforbidden();
 

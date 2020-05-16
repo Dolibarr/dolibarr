@@ -57,11 +57,12 @@ if ($user->socid > 0)
 $fichinterstatic = new Fichinter($db);
 $form = new Form($db);
 $formfile = new FormFile($db);
+
 $help_url = "EN:ModuleFichinters|FR:Module_Fiche_Interventions|ES:Módulo_FichaInterventiones";
 
 llxHeader("", $langs->trans("Interventions"), $help_url);
 
-print load_fiche_titre($langs->trans("InterventionsArea"));
+print load_fiche_titre($langs->trans("InterventionsArea"), '', 'intervention');
 
 print '<div class="fichecenter"><div class="fichethirdleft">';
 

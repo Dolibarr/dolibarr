@@ -325,7 +325,6 @@ CompanyDeleted=Công ty "%s" đã xóa khỏi cơ sở dữ liệu.
 ListOfContacts=Danh sách liên lạc/địa chỉ
 ListOfContactsAddresses=Danh sách liên lạc/địa chỉ
 ListOfThirdParties=Danh sách các bên thứ ba
-ShowCompany=Hiển thị bên thứ ba
 ShowContact=Hiện liên lạc
 ContactsAllShort=Tất cả (không lọc)
 ContactType=Loại liên lạc
@@ -447,6 +446,7 @@ SaleRepresentativeFirstname=Tên đại diện bán hàng
 SaleRepresentativeLastname=Họ của đại diện bán hàng
 ErrorThirdpartiesMerge=Có lỗi khi xóa các bên thứ ba. Vui lòng kiểm tra nhật ký. Những thay đổi đã được hoàn nguyên.
 NewCustomerSupplierCodeProposed=Mã khách hàng hoặc nhà cung cấp đã được sử dụng, một mã mới được đề xuất
+KeepEmptyIfGenericAddress=Keep this field empty if this address is a generic address
 #Imports
 PaymentTypeCustomer=Loại thanh toán - Khách hàng
 PaymentTermsCustomer=Điều khoản thanh toán - Khách hàng

@@ -11,6 +11,7 @@
  * Copyright (C) 2012       Christophe Battarel     <christophe.battarel@altairis.fr>
  * Copyright (C) 2014-2015  Marcos García           <marcosgdf@gmail.com>
  * Copyright (C) 2015       Raphaël Doursenaud      <rdoursenaud@gpcsolutions.fr>
+ * Copyright (C) 2020       Demarest Maxime         <maxime@indelog.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -316,7 +317,7 @@ if (!defined('NOLOGIN') && !defined('NOIPCHECK') && !empty($dolibarr_main_restri
 
 // Loading of additional presentation includes
 if (!defined('NOREQUIREHTML')) require_once DOL_DOCUMENT_ROOT.'/core/class/html.form.class.php'; // Need 660ko memory (800ko in 2.2)
-if (!defined('NOREQUIREAJAX') && $conf->use_javascript_ajax) require_once DOL_DOCUMENT_ROOT.'/core/lib/ajax.lib.php'; // Need 22ko memory
+require_once DOL_DOCUMENT_ROOT.'/core/lib/ajax.lib.php'; // Need 22ko memory
 
 // If install or upgrade process not done or not completely finished, we call the install page.
 if (!empty($conf->global->MAIN_NOT_INSTALLED) || !empty($conf->global->MAIN_NOT_UPGRADED))
@@ -2025,7 +2026,7 @@ function top_menu_search()
 
     $defaultAction = '';
     $buttonList = '<div class="dropdown-global-search-button-list" >';
-    // Menu with all bookmarks
+    // Menu with all searchable items
     foreach ($arrayresult as $keyItem => $item)
     {
         if (empty($defaultAction)) {
@@ -2040,9 +2041,7 @@ function top_menu_search()
 
     $searchInput = '<input name="sall" id="top-global-search-input" class="dropdown-search-input" placeholder="'.$langs->trans('Search').'" autocomplete="off" >';
 
-
-    $dropDownHtml = '<!-- form with POST method by default, will be replaced with GET for external link by js -->'."\n";
-    $dropDownHtml .= '<form id="top-menu-action-bookmark" name="actionbookmark" method="POST" action="'.$defaultAction.'" >';
+    $dropDownHtml = '<form id="top-menu-action-search" name="actionsearch" method="GET" action="'.$defaultAction.'" >';
 
     $dropDownHtml .= '
         <!-- search input -->
@@ -2091,8 +2090,8 @@ function top_menu_search()
 
         // submit form action
         $(".dropdown-global-search-button-list .global-search-item").on("click", function(event) {
-            $("#top-menu-action-bookmark").attr("action", $(this).data("target"));
-            $("#top-menu-action-bookmark").submit();
+            $("#top-menu-action-search").attr("action", $(this).data("target"));
+            $("#top-menu-action-search").submit();
         });
 
         // close drop down
@@ -2179,7 +2178,7 @@ function left_menu($menu_array_before, $helppagename = '', $notused = '', $menu_
             } else {
                 if (is_array($arrayresult)) {
                     foreach ($arrayresult as $key => $val) {
-                        $searchform .= printSearchForm($val['url'], $val['url'], $val['label'], 'maxwidth125', 'sall', $val['shortcut'], 'searchleft'.$key, img_picto('', $val['img'], '', false, 1, 1));
+                        $searchform .= printSearchForm($val['url'], $val['url'], $val['label'], 'maxwidth125', 'sall', $val['shortcut'], 'searchleft'.$key, $val['img']);
                     }
                 }
             }
@@ -2348,6 +2347,35 @@ function main_area($title = '')
 	print '<!-- Begin div class="fiche" -->'."\n".'<div class="fiche">'."\n";
 
 	if (!empty($conf->global->MAIN_ONLY_LOGIN_ALLOWED)) print info_admin($langs->trans("WarningYouAreInMaintenanceMode", $conf->global->MAIN_ONLY_LOGIN_ALLOWED));
+
+    // Permit to add user company information on each printed document by set SHOW_SOCINFO_ON_PRINT
+    if (!empty($conf->global->SHOW_SOCINFO_ON_PRINT) && GETPOST('optioncss', 'aZ09') == 'print' && empty(GETPOST('disable_show_socinfo_on_print', 'az09')))
+    {
+        global $hookmanager;
+        $hookmanager->initHooks(array('showsocinfoonprint'));
+        $parameters = array();
+        $reshook = $hookmanager->executeHooks('showSocinfoOnPrint', $parameters);
+        if (empty($reshook))
+        {
+            print '<!-- Begin show mysoc info header -->'."\n";
+            print '<div id="mysoc-info-header">'."\n";
+            print '<table class="centpercent div-table-responsive">'."\n";
+            print '<tbody>';
+            print '<tr><td rowspan="0" class="width20p">';
+            if ($conf->global->MAIN_SHOW_LOGO && empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER) && !empty($conf->global->MAIN_INFO_SOCIETE_LOGO))
+                print '<img id="mysoc-info-header-logo" style="max-width:100%" alt="" src="'.DOL_URL_ROOT.'/viewimage.php?cache=1&amp;modulepart=mycompany&amp;file='.urlencode('logos/'.dol_escape_htmltag($conf->global->MAIN_INFO_SOCIETE_LOGO)).'">';
+            print '</td><td  rowspan="0" class="width50p"></td></tr>'."\n";
+            print '<tr><td class="titre bold">'.dol_escape_htmltag($conf->global->MAIN_INFO_SOCIETE_NOM).'</td></tr>'."\n";
+            print '<tr><td>'.dol_escape_htmltag($conf->global->MAIN_INFO_SOCIETE_ADDRESS).'<br>'.dol_escape_htmltag($conf->global->MAIN_INFO_SOCIETE_ZIP).' '.dol_escape_htmltag($conf->global->MAIN_INFO_SOCIETE_TOWN).'</td></tr>'."\n";
+            if (!empty($conf->global->MAIN_INFO_SOCIETE_TEL)) print '<tr><td style="padding-left: 1em" class="small">'.$langs->trans("Phone").' : '.dol_escape_htmltag($conf->global->MAIN_INFO_SOCIETE_TEL).'</td></tr>';
+            if (!empty($conf->global->MAIN_INFO_SOCIETE_MAIL)) print '<tr><td style="padding-left: 1em" class="small">'.$langs->trans("Email").' : '.dol_escape_htmltag($conf->global->MAIN_INFO_SOCIETE_MAIL).'</td></tr>';
+            if (!empty($conf->global->MAIN_INFO_SOCIETE_WEB)) print '<tr><td style="padding-left: 1em" class="small">'.$langs->trans("Web").' : '.dol_escape_htmltag($conf->global->MAIN_INFO_SOCIETE_WEB).'</td></tr>';
+            print '</tbody>';
+            print '</table>'."\n";
+            print '</div>'."\n";
+            print '<!-- End show mysoc info header -->'."\n";
+        }
+    }
 }
 
 
@@ -2423,14 +2451,14 @@ function printSearchForm($urlaction, $urlobject, $title, $htmlmorecss, $htmlinpu
 	$ret .= '<input type="hidden" name="savelogin" value="'.dol_escape_htmltag($user->login).'">';
 	if ($showtitlebefore) $ret .= '<div class="tagtd left">'.$title.'</div> ';
 	$ret .= '<div class="tagtd">';
+	$ret .= img_picto('', $img, '', false, 0, 0, '', 'paddingright width20');
 	$ret .= '<input type="text" class="flat '.$htmlmorecss.'"';
-	$ret .= ' style="text-indent: 22px; background-image: url(\''.$img.'\'); background-repeat: no-repeat; background-position: 3px;"';
+	$ret .= ' style="background-repeat: no-repeat; background-position: 3px;"';
 	$ret .= ($accesskey ? ' accesskey="'.$accesskey.'"' : '');
 	$ret .= ' placeholder="'.strip_tags($title).'"';
 	$ret .= ($autofocus ? ' autofocus' : '');
 	$ret .= ' name="'.$htmlinputname.'" id="'.$prefhtmlinputname.$htmlinputname.'" />';
-	//$ret.='<input type="submit" class="button" style="padding-top: 4px; padding-bottom: 4px; padding-left: 6px; padding-right: 6px" value="'.$langs->trans("Go").'">';
-	$ret .= '<button type="submit" class="button" style="padding-top: 4px; padding-bottom: 4px; padding-left: 6px; padding-right: 6px">';
+	$ret .= '<button type="submit" class="button bordertransp" style="padding-top: 4px; padding-bottom: 4px; padding-left: 6px; padding-right: 6px">';
 	$ret .= '<span class="fa fa-search"></span>';
 	$ret .= '</button>';
 	$ret .= '</div>';

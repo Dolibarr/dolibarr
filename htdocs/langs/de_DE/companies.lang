@@ -325,7 +325,6 @@ CompanyDeleted=Firma "%s" aus der Datenbank gelöscht.
 ListOfContacts=Liste der Kontakte
 ListOfContactsAddresses=Liste der Kontakte
 ListOfThirdParties=Liste der Partner
-ShowCompany=Partner anzeigen
 ShowContact=Kontakt  anzeigen
 ContactsAllShort=Alle  (kein Filter)
 ContactType=Kontaktart
@@ -447,6 +446,7 @@ SaleRepresentativeFirstname=Vorname des Vertreter
 SaleRepresentativeLastname=Nachname des Vertreter
 ErrorThirdpartiesMerge=Es gab einen Fehler beim Löschen des Partners. Bitte Details sind im Prokoll zu finden. Die Löschung wurden rückgängig gemacht.
 NewCustomerSupplierCodeProposed=Kunden- oder Lieferantennummer wird bereits verwendet. \nEine neue Nummer wird empfohlen.
+KeepEmptyIfGenericAddress=Keep this field empty if this address is a generic address
 #Imports
 PaymentTypeCustomer=Zahlungsart - Kunde
 PaymentTermsCustomer=Zahlungsbedingung - Kunde

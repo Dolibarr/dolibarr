@@ -301,7 +301,7 @@ function dolSqlDateFilter($datefield, $day_date, $month_date, $year_date, $exclu
 			$sqldate .= ($excludefirstand ? "" : " AND ").$datefield." BETWEEN '".$db->idate(dol_mktime(0, 0, 0, $month_date, $day_date, $year_date));
 			$sqldate .= "' AND '".$db->idate(dol_mktime(23, 59, 59, $month_date, $day_date, $year_date))."'";
 		} else
-			$sqldate .= ($excludefirstand ? "" : " AND ")." date_format( ".$datefield.", '%m') = '".$db->escape($month_date)."'";
+			$sqldate .= ($excludefirstand ? "" : " AND ")." date_format( ".$datefield.", '%c') = '".$db->escape($month_date)."'";
 	} elseif ($year_date > 0) {
 		$sqldate .= ($excludefirstand ? "" : " AND ").$datefield." BETWEEN '".$db->idate(dol_get_first_day($year_date, 1, false));
 		$sqldate .= "' AND '".$db->idate(dol_get_last_day($year_date, 12, false))."'";
@@ -896,6 +896,7 @@ function num_open_day($timestampStart, $timestampEnd, $inhour = 0, $lastday = 0,
 	if ($timestampStart < $timestampEnd)
 	{
 		$numdays = num_between_day($timestampStart, $timestampEnd, $lastday);
+
 		$numholidays = num_public_holiday($timestampStart, $timestampEnd, $country_code, $lastday);
 		$nbOpenDay = ($numdays - $numholidays);
 		if ($inhour == 1 && $nbOpenDay <= 3) $nbOpenDay = ($nbOpenDay * 24);
@@ -903,7 +904,14 @@ function num_open_day($timestampStart, $timestampEnd, $inhour = 0, $lastday = 0,
 	}
 	elseif ($timestampStart == $timestampEnd)
 	{
+		$numholidays = 0;
+		if ($lastday) {
+			$numholidays = num_public_holiday($timestampStart, $timestampEnd, $country_code, $lastday);
+			if ($numholidays == 1) return 0;
+		}
+
 		$nbOpenDay = $lastday;
+
 		if ($inhour == 1) $nbOpenDay = ($nbOpenDay * 24);
 		return $nbOpenDay - (($inhour == 1 ? 12 : 0.5) * abs($halfday));
 	}

@@ -8,3 +8,4 @@ LinkRemoved=A %s hivatkozás törölve
 ErrorFailedToDeleteLink= A '<b>%s</b>' hivakozás törlése sikertelen
 ErrorFailedToUpdateLink= A '<b>%s</b>' hivakozás frissítése sikertelen
 URLToLink=A hivatkozás címe
+OverwriteIfExists=Overwrite file if exists

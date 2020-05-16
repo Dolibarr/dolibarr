@@ -57,7 +57,7 @@ class mod_myobject_standard extends ModeleNumRefMyObject
 	public function info()
 	{
 		global $langs;
-	  	return $langs->trans("SimpleNumRefModelDesc", $this->prefix);
+		return $langs->trans("SimpleNumRefModelDesc", $this->prefix);
 	}
 
 

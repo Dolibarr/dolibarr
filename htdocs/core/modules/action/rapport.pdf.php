@@ -174,7 +174,7 @@ class CommActionRapport
 
 			$pdf->SetMargins($this->marge_gauche, $this->marge_haute, $this->marge_droite); // Left, Top, Right
 
-			$nbpage = $this->_pages($pdf, $outputlangs);	// Write content
+			$nbpage = $this->_pages($pdf, $outputlangs); // Write content
 
 			if (method_exists($pdf, 'AliasNbPages')) $pdf->AliasNbPages();
 			$pdf->Close();

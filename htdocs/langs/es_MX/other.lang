@@ -2,4 +2,3 @@
 Tools=Herramientas
 TMenuTools=Herramientas
 Notify_COMPANY_CREATE=Tercero creado
-WEBSITE_IMAGEDesc=Relative path of the image media. You can keep this empty as this is rarely used (it can be used by dynamic content to show a thumbnail in a list of blog posts). Use __WEBSITEKEY__ in the path if path depends on website name.

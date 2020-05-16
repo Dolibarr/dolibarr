@@ -112,7 +112,7 @@ class Entrepot extends CommonObject
 	/**
 	 * @var array  Array with all fields and their property. Do not use it as a static var. It may be modified by constructor.
 	 */
-	public $fields=array(
+	public $fields = array(
 		'rowid' =>array('type'=>'integer', 'label'=>'ID', 'enabled'=>1, 'visible'=>0, 'notnull'=>1, 'position'=>10),
 		'ref' =>array('type'=>'varchar(255)', 'label'=>'Ref', 'enabled'=>1, 'visible'=>1, 'showoncombobox'=>1, 'position'=>25),
 		'entity' =>array('type'=>'integer', 'label'=>'Entity', 'enabled'=>1, 'visible'=>0, 'notnull'=>1, 'position'=>30),
@@ -184,10 +184,10 @@ class Entrepot extends CommonObject
 
 		$error = 0;
 
-		$this->libelle = trim($this->libelle);
+		if (empty($this->label)) $this->label = $this->libelle; // For backward compatibility
 
-		// Si libelle non defini, erreur
-		if ($this->libelle == '')
+		$this->label = trim($this->label);
+		if ($this->label == '')
 		{
 			$this->error = "ErrorFieldRequired";
 			return 0;
@@ -198,7 +198,7 @@ class Entrepot extends CommonObject
 		$this->db->begin();
 
 		$sql = "INSERT INTO ".MAIN_DB_PREFIX."entrepot (ref, entity, datec, fk_user_author, fk_parent)";
-		$sql .= " VALUES ('".$this->db->escape($this->libelle)."', ".$conf->entity.", '".$this->db->idate($now)."', ".$user->id.", ".($this->fk_parent > 0 ? $this->fk_parent : "NULL").")";
+		$sql .= " VALUES ('".$this->db->escape($this->label)."', ".$conf->entity.", '".$this->db->idate($now)."', ".$user->id.", ".($this->fk_parent > 0 ? $this->fk_parent : "NULL").")";
 
 		dol_syslog(get_class($this)."::create", LOG_DEBUG);
 		$result = $this->db->query($sql);
@@ -221,7 +221,7 @@ class Entrepot extends CommonObject
                 // Actions on extra fields
                 if (!$error)
                 {
-                    if (empty($conf->global->MAIN_EXTRAFIELDS_DISABLED)) // For avoid conflicts if trigger used
+                    if (!$error)
                     {
                         $result = $this->insertExtraFields();
                         if ($result < 0)
@@ -272,6 +272,7 @@ class Entrepot extends CommonObject
         $error = 0;
 
 	    if (empty($id)) $id = $this->id;
+	    if (empty($this->label)) $this->label = $this->libelle; // For backward compatibility
 
 		// Check if new parent is already a child of current warehouse
 		if (!empty($this->fk_parent))
@@ -285,7 +286,7 @@ class Entrepot extends CommonObject
 			}
 		}
 
-		$this->libelle = trim($this->libelle);
+		$this->label = trim($this->label);
 		$this->description = trim($this->description);
 
 		$this->lieu = trim($this->lieu);
@@ -296,7 +297,7 @@ class Entrepot extends CommonObject
 		$this->country_id = ($this->country_id > 0 ? $this->country_id : 0);
 
 		$sql = "UPDATE ".MAIN_DB_PREFIX."entrepot ";
-		$sql .= " SET ref = '".$this->db->escape($this->libelle)."'";
+		$sql .= " SET ref = '".$this->db->escape($this->label)."'";
 		$sql .= ", fk_parent = ".(($this->fk_parent > 0) ? $this->fk_parent : "NULL");
 		$sql .= ", description = '".$this->db->escape($this->description)."'";
 		$sql .= ", statut = ".$this->statut;
@@ -319,7 +320,7 @@ class Entrepot extends CommonObject
             $this->errors[] = "Error ".$this->db->lasterror();
         }
 
-        if (!$error && empty($conf->global->MAIN_EXTRAFIELDS_DISABLED) && is_array($this->array_options) && count($this->array_options) > 0) {
+        if (!$error) {
             $result = $this->insertExtraFields();
             if ($result < 0)
             {
@@ -383,7 +384,7 @@ class Entrepot extends CommonObject
 		// Removed extrafields
 		if (!$error)
 		{
-			if (empty($conf->global->MAIN_EXTRAFIELDS_DISABLED)) // For avoid conflicts if trigger used
+			if (!$error)
 			{
 				$result = $this->deleteExtraFields();
 				if ($result < 0)
@@ -715,7 +716,7 @@ class Entrepot extends CommonObject
 
         $result = '';
 
-        $label = '<u>'.$langs->trans("ShowWarehouse").'</u>';
+        $label = '<u>'.$langs->trans("Warehouse").'</u>';
         $label .= '<br><b>'.$langs->trans('Ref').':</b> '.(empty($this->ref) ? (empty($this->label) ? $this->libelle : $this->label) : $this->ref);
         if (!empty($this->lieu)) {
             $label .= '<br><b>'.$langs->trans('LocationSummary').':</b> '.$this->lieu;
@@ -731,7 +732,7 @@ class Entrepot extends CommonObject
         {
             if (!empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER))
             {
-                $label = $langs->trans("ShowWarehouse");
+                $label = $langs->trans("Warehouse");
                 $linkclose .= ' alt="'.dol_escape_htmltag($label, 1).'"';
             }
             $linkclose .= ' title="'.dol_escape_htmltag($label, 1).'"';
@@ -765,7 +766,7 @@ class Entrepot extends CommonObject
 
         // Initialize parameters
         $this->id = 0;
-        $this->libelle = 'WAREHOUSE SPECIMEN';
+        $this->label = 'WAREHOUSE SPECIMEN';
         $this->description = 'WAREHOUSE SPECIMEN '.dol_print_date($now, 'dayhourlog');
 		$this->statut = 1;
         $this->specimen = 1;

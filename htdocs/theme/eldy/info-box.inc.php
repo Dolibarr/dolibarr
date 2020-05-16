@@ -6,14 +6,20 @@ if (!defined('ISLOADEDBYSTEELSHEET')) die('Must be call by steelsheet'); ?>
  * Component: Info Box
  * -------------------
  */
+
+.info-box-module-external span.info-box-icon-version {
+    background: #bbb;
+}
+
 .info-box {
 	display: block;
     position: relative;
 	min-height: 90px;
-	background: #fff;
+	/* background: #fff; */
 	width: 100%;
-	box-shadow: 1px 1px 4px rgba(0, 0, 0, 0.2), 0px 0px 2px rgba(0, 0, 0, 0.1);
-	border-radius: 2px;
+	box-shadow: 1px 1px 2px rgba(0, 0, 0, 0.1);
+    border-radius: 2px;
+    border: 1px solid #eee;
 	margin-bottom: 15px;
 }
 .info-box.info-box-sm{
@@ -62,13 +68,13 @@ if (!defined('ISLOADEDBYSTEELSHEET')) die('Must be call by steelsheet'); ?>
 	text-align: center;
 	font-size: 45px;
 	line-height: 90px;
-	background: rgba(0, 0, 0, 0.2);
+	background: rgba(0, 0, 0, 0.08) !important
 }
 .info-box-sm .info-box-icon {
     height: 80px;
     width: 80px;
     font-size: 25px;
-    line-height: 80px;
+    line-height: 100px;
 }
 .info-box-module .info-box-icon {
 	height: 106px;
@@ -77,7 +83,7 @@ if (!defined('ISLOADEDBYSTEELSHEET')) die('Must be call by steelsheet'); ?>
 	max-width: 100%;
 }
 .info-box-module .info-box-icon > img {
-    max-width: 55%;
+    max-width: 60%;
 }
 
 .info-box-icon-text{
@@ -198,41 +204,39 @@ if (GETPOSTISSET('THEME_AGRESSIVENESS_RATIO')) $conf->global->THEME_AGRESSIVENES
 .info-box-icon {
 	<?php if ($prefix) { ?>
 	color: #fff !important;
-	<?php } else { ?>
-	background-color: #eee !important;
 	<?php } ?>
     opacity: 0.95;
 }
 
-.bg-infoxbox-project{
-	<?php echo $prefix; ?>color: <?php print colorAgressiveness('#6c6a98', $conf->global->THEME_AGRESSIVENESS_RATIO); ?> !important;
+.bg-infobox-project{
+	<?php echo $prefix; ?>color: <?php print colorAgressiveness('#6c6aa8', $conf->global->THEME_AGRESSIVENESS_RATIO); ?> !important;
 }
-.bg-infoxbox-action{
+.bg-infobox-action{
 	<?php echo $prefix; ?>color: <?php print colorAgressiveness('#a47080', $conf->global->THEME_AGRESSIVENESS_RATIO); ?>  !important;
 }
-.bg-infoxbox-propal,
-.bg-infoxbox-facture,
-.bg-infoxbox-commande{
+.bg-infobox-propal,
+.bg-infobox-facture,
+.bg-infobox-commande{
 	<?php echo $prefix; ?>color: <?php print colorAgressiveness('#99a17d', $conf->global->THEME_AGRESSIVENESS_RATIO); ?>  !important;
 }
-.bg-infoxbox-supplier_proposal,
-.bg-infoxbox-invoice_supplier,
-.bg-infoxbox-order_supplier{
+.bg-infobox-supplier_proposal,
+.bg-infobox-invoice_supplier,
+.bg-infobox-order_supplier{
 	<?php echo $prefix; ?>color: <?php print colorAgressiveness('#599caf', $conf->global->THEME_AGRESSIVENESS_RATIO); ?>  !important;
 }
-.bg-infoxbox-contrat, .bg-infoxbox-ticket{
+.bg-infobox-contrat, .bg-infobox-ticket{
 	<?php echo $prefix; ?>color: <?php print colorAgressiveness('#46a676', $conf->global->THEME_AGRESSIVENESS_RATIO); ?>  !important;
 }
-.bg-infoxbox-bank_account{
+.bg-infobox-bank_account{
 	<?php echo $prefix; ?>color: <?php print colorAgressiveness('#b0a53e', $conf->global->THEME_AGRESSIVENESS_RATIO); ?>  !important;
 }
-.bg-infoxbox-adherent{
+.bg-infobox-adherent{
 	<?php echo $prefix; ?>color: <?php print colorAgressiveness('#79633f', $conf->global->THEME_AGRESSIVENESS_RATIO); ?>  !important;
 }
-.bg-infoxbox-expensereport{
+.bg-infobox-expensereport{
 	<?php echo $prefix; ?>color: <?php print colorAgressiveness('#79633f', $conf->global->THEME_AGRESSIVENESS_RATIO); ?>  !important;
 }
-.bg-infoxbox-holiday{
+.bg-infobox-holiday{
 	<?php echo $prefix; ?>color: <?php print colorAgressiveness('#755114', $conf->global->THEME_AGRESSIVENESS_RATIO); ?>  !important;
 }
 
@@ -242,7 +246,7 @@ if (GETPOSTISSET('THEME_AGRESSIVENESS_RATIO')) $conf->global->THEME_AGRESSIVENES
 }
 .fa-dol-propal:before,
 .fa-dol-supplier_proposal:before {
-	content: "\f2b5";
+	content: "\f573";
 }
 .fa-dol-facture:before,
 .fa-dol-invoice_supplier:before {

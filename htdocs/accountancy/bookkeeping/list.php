@@ -1006,7 +1006,7 @@ while ($i < min($num, $limit))
 	// Amount debit
 	if (!empty($arrayfields['t.debit']['checked']))
 	{
-		print '<td class="nowrap right">'.($line->debit ? price($line->debit) : '').'</td>';
+		print '<td class="nowrap right">'.($line->debit != 0 ? price($line->debit) : '').'</td>';
 		if (!$i) $totalarray['nbfield']++;
 		if (!$i) $totalarray['pos'][$totalarray['nbfield']] = 'totaldebit';
 		$totalarray['val']['totaldebit'] += $line->debit;
@@ -1015,7 +1015,7 @@ while ($i < min($num, $limit))
 	// Amount credit
 	if (!empty($arrayfields['t.credit']['checked']))
 	{
-		print '<td class="nowrap right">'.($line->credit ? price($line->credit) : '').'</td>';
+		print '<td class="nowrap right">'.($line->credit != 0 ? price($line->credit) : '').'</td>';
 		if (!$i) $totalarray['nbfield']++;
 		if (!$i) $totalarray['pos'][$totalarray['nbfield']] = 'totalcredit';
 		$totalarray['val']['totalcredit'] += $line->credit;
@@ -1039,7 +1039,7 @@ while ($i < min($num, $limit))
 	}
 
 	// Fields from hook
-	$parameters = array('arrayfields'=>$arrayfields, 'obj'=>$obj);
+	$parameters = array('arrayfields'=>$arrayfields, 'obj'=>$obj, 'i'=>$i, 'totalarray'=>&$totalarray);
 	$reshook = $hookmanager->executeHooks('printFieldListValue', $parameters); // Note that $action and $object may have been modified by hook
 	print $hookmanager->resPrint;
 

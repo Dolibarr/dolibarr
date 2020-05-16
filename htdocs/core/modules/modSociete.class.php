@@ -451,7 +451,7 @@ class modSociete extends DolibarrModules
 			's.fk_multicurrency' => 'MulticurrencyUsed',
 			's.multicurrency_code' => 'MulticurrencyCurrency'
 		);
-		if (! empty($conf->global->PRODUIT_MULTIPRICES)) $this->import_fields_array[$r]['s.price_level']='PriceLevel';
+		if (!empty($conf->global->PRODUIT_MULTIPRICES)) $this->import_fields_array[$r]['s.price_level'] = 'PriceLevel';
 		// Add extra fields
 		$sql = "SELECT name, label, fieldrequired FROM ".MAIN_DB_PREFIX."extrafields WHERE elementtype = 'societe' AND entity IN (0, ".$conf->entity.")";
 		$resql = $this->db->query($sql);
@@ -579,6 +579,7 @@ class modSociete extends DolibarrModules
 			'extra' => MAIN_DB_PREFIX.'socpeople_extrafields'
 		); // List of tables to insert into (insert done in same order)
 		$this->import_fields_array[$r] = array(//field order as per structure of table llx_socpeople
+			's.rowid' => 'Id',
 			's.datec' => "DateCreation",
 			's.fk_soc' => 'ThirdPartyName',
 			's.civility' => 'UserTitle',
@@ -645,6 +646,7 @@ class modSociete extends DolibarrModules
 			's.datec' => '^[0-9][0-9][0-9][0-9]-[0-9][0-9]-[0-9][0-9]( [0-9][0-9]:[0-9][0-9]:[0-9][0-9])?$'
 		);
 		$this->import_examplevalues_array[$r] = array(//field order as per structure of table llx_socpeople
+			's.rowid' => '1',
 			's.datec' => 'formatted as '.dol_print_date(dol_now(), '%Y-%m-%d'),
 			's.fk_soc' => 'Third Party name eg. TPBigCompany',
 			's.civility' => 'Title of civility eg: MR...matches field "code" in table "'.MAIN_DB_PREFIX.'c_civility"',
@@ -665,6 +667,9 @@ class modSociete extends DolibarrModules
 			's.skype' => "skype username",
 			's.note_private' => "My private note",
 			's.note_public' => "My public note"
+		);
+		$this->import_updatekeys_array[$r] = array(
+			's.rowid' => 'Id'
 		);
 
 		// Import Bank Accounts

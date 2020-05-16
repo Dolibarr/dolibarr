@@ -32,6 +32,7 @@ class Translate
 	public $dir; // Directories that contains /langs subdirectory
 
 	public $defaultlang; // Current language for current user
+	public $shortlang; // Short language for current user
 	public $charset_output = 'UTF-8'; // Codage used by "trans" method outputs
 
 	public $tab_translate = array(); // Array of all translations key=>value
@@ -122,6 +123,7 @@ class Translate
 		}
 
 		$this->defaultlang = $srclang;
+		$this->shortlang = substr($srclang, 0, 2);
 		//print 'this->defaultlang='.$this->defaultlang;
 	}
 
@@ -306,7 +308,7 @@ class Translate
 									    continue;
 									}
 									else {
-										// Convert some strings: Parse and render carriage returns. Also, change '\\s' int '\s' because transifex sync pull the string '\s' into string '\\s'
+										// Convert some strings: Parse and render carriage returns. Also, change '\\s' into '\s' because transifex sync pull the string '\s' into string '\\s'
 										$this->tab_translate[$key] = str_replace(array('\\n', '\\\\s'), array("\n", '\s'), $value);
 										if ($usecachekey) {
 											$tabtranslatedomain[$key] = $value;

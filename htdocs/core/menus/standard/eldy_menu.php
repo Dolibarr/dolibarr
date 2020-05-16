@@ -308,8 +308,6 @@ class MenuManager
 	        				        $lastlevel2[$val2['level']] = 'greyed';
 	        				    }
 	        				}
-                            //var_dump($val2['level']);
-	        				//var_dump($lastlevel2);
                             print $val2['titre'];
 	        				if ($relurl2)
 	        				{

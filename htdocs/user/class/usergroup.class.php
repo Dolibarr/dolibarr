@@ -118,12 +118,12 @@ class UserGroup extends CommonObject
 	/**
 	 * @var array	List of child tables. To test if we can delete object.
 	 */
-	protected $childtables=array();
+	protected $childtables = array();
 
 	/**
 	 * @var array	List of child tables. To know object to delete on cascade.
 	 */
-	protected $childtablesoncascade = array('usergroup_rights','usergroup_user');
+	protected $childtablesoncascade = array('usergroup_rights', 'usergroup_user');
 
 
 	/**
@@ -160,7 +160,9 @@ class UserGroup extends CommonObject
 			$result = $this->fetchCommon($id);
 		}
 
-		if($result)
+		$this->name = $this->nom;	// For compatibility with field name
+
+		if ($result)
 		{
 			if ($load_members)
 			{
@@ -652,6 +654,9 @@ class UserGroup extends CommonObject
 		global $user, $conf;
 
 		$this->datec = dol_now();
+		if (empty($this->nom) && !empty($this->name)) {
+			$this->nom = $this->name;
+		}
 
 		if (!isset($this->entity)) $this->entity = $conf->entity; // If not defined, we use default value
 		$entity = $this->entity;

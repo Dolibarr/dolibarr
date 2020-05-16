@@ -61,7 +61,7 @@ $form = new Form($db);
 
 llxHeader();
 
-print load_fiche_titre($langs->trans("StatisticsOfReceptions"), $mesg);
+print load_fiche_titre($langs->trans("StatisticsOfReceptions"), '', 'dollyrevert');
 
 
 dol_mkdir($dir);
@@ -200,7 +200,7 @@ if (!count($arrayyears)) $arrayyears[$nowyear] = $nowyear;
 
 $h = 0;
 $head = array();
-$head[$h][0] = DOL_URL_ROOT.'/commande/stats/index.php';
+$head[$h][0] = DOL_URL_ROOT.'/reception/stats/index.php';
 $head[$h][1] = $langs->trans("ByMonthYear");
 $head[$h][2] = 'byyear';
 $h++;

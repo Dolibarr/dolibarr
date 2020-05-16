@@ -22,7 +22,6 @@ LinkedToDolibarrThirdParty=Mit Geschäftspartner verknüpft
 CreateDolibarrThirdParty=Neuen Geschäftspartner erstellen
 ExportDataset_user_1=Benutzer und Eigenschaften
 CreateInternalUserDesc=Hier kannst du interne Benutzer erzeugen.\nExterne Benutzer erzeugst du in den Kontakten deiner Partner.
-InternalExternalDesc=Ein interner Benutzer gehört zu deiner Firma.\nExterne User sind Partner, die Zugriff auf das System erhalten.\nSo oder wird die Reichweite mit Benutzerberechtigungen gesteuert. Man kann internen und externen Benutzern auch verschiedene Ansichten und Menus zuweisen.
 PermissionInheritedFromAGroup=Berechtigung durch eine Gruppenzugehörigkeit gererbt.
 UserWillBeInternalUser=Erstellter Benutzer ist ein intern Benutzer (da mit keinem bestimmten Geschäftspartner verknüpft)
 UserWillBeExternalUser=Erstellter Benutzer ist ein externer Benutzer (da mit einem bestimmten Geschäftspartner verknüpft)
