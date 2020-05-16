@@ -317,7 +317,7 @@ if (!defined('NOLOGIN') && !defined('NOIPCHECK') && !empty($dolibarr_main_restri
 
 // Loading of additional presentation includes
 if (!defined('NOREQUIREHTML')) require_once DOL_DOCUMENT_ROOT.'/core/class/html.form.class.php'; // Need 660ko memory (800ko in 2.2)
-if (!defined('NOREQUIREAJAX') && $conf->use_javascript_ajax) require_once DOL_DOCUMENT_ROOT.'/core/lib/ajax.lib.php'; // Need 22ko memory
+require_once DOL_DOCUMENT_ROOT.'/core/lib/ajax.lib.php'; // Need 22ko memory
 
 // If install or upgrade process not done or not completely finished, we call the install page.
 if (!empty($conf->global->MAIN_NOT_INSTALLED) || !empty($conf->global->MAIN_NOT_UPGRADED))
@@ -2026,7 +2026,7 @@ function top_menu_search()
 
     $defaultAction = '';
     $buttonList = '<div class="dropdown-global-search-button-list" >';
-    // Menu with all bookmarks
+    // Menu with all searchable items
     foreach ($arrayresult as $keyItem => $item)
     {
         if (empty($defaultAction)) {
@@ -2041,9 +2041,7 @@ function top_menu_search()
 
     $searchInput = '<input name="sall" id="top-global-search-input" class="dropdown-search-input" placeholder="'.$langs->trans('Search').'" autocomplete="off" >';
 
-
-    $dropDownHtml = '<!-- form with POST method by default, will be replaced with GET for external link by js -->'."\n";
-    $dropDownHtml .= '<form id="top-menu-action-bookmark" name="actionbookmark" method="POST" action="'.$defaultAction.'" >';
+    $dropDownHtml = '<form id="top-menu-action-search" name="actionsearch" method="GET" action="'.$defaultAction.'" >';
 
     $dropDownHtml .= '
         <!-- search input -->
@@ -2092,8 +2090,8 @@ function top_menu_search()
 
         // submit form action
         $(".dropdown-global-search-button-list .global-search-item").on("click", function(event) {
-            $("#top-menu-action-bookmark").attr("action", $(this).data("target"));
-            $("#top-menu-action-bookmark").submit();
+            $("#top-menu-action-search").attr("action", $(this).data("target"));
+            $("#top-menu-action-search").submit();
         });
 
         // close drop down

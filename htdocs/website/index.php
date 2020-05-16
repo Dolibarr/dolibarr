@@ -3170,6 +3170,7 @@ if ($action == 'editmeta' || $action == 'createcontainer')
 		$pageauthorid = $objectpage->fk_user_creat;
 		$pageusermodifid = $objectpage->fk_user_modif;
 		$pageauthoralias = $objectpage->author_alias;
+ 		$pagestatus = $objectpage->status;
 	}
 	else
 	{
@@ -3178,6 +3179,7 @@ if ($action == 'editmeta' || $action == 'createcontainer')
 		$pageauthorid = $user->id;
 		$pageusermodifid = 0;
 		$pageauthoralias = '';
+		$pagestatus = 1;
 	}
 	if (GETPOST('WEBSITE_TITLE', 'alpha'))       $pagetitle = GETPOST('WEBSITE_TITLE', 'alpha');
 	if (GETPOST('WEBSITE_PAGENAME', 'alpha'))    $pageurl = GETPOST('WEBSITE_PAGENAME', 'alpha');
@@ -3186,7 +3188,7 @@ if ($action == 'editmeta' || $action == 'createcontainer')
 	if (GETPOST('WEBSITE_IMAGE', 'alpha'))       $pageimage = GETPOST('WEBSITE_IMAGE', 'alpha');
 	if (GETPOST('WEBSITE_KEYWORDS', 'alpha'))    $pagekeywords = GETPOST('WEBSITE_KEYWORDS', 'alpha');
 	if (GETPOST('WEBSITE_LANG', 'aZ09'))         $pagelang = GETPOST('WEBSITE_LANG', 'aZ09');
-	if (GETPOST('htmlheader', 'none'))			$pagehtmlheader = GETPOST('htmlheader', 'none');
+	if (GETPOST('htmlheader', 'none'))			 $pagehtmlheader = GETPOST('htmlheader', 'none');
 
 	// Title
 	print '<tr><td class="fieldrequired">';
@@ -3380,6 +3382,16 @@ if ($action == 'editmeta' || $action == 'createcontainer')
 	$doleditor = new DolEditor('htmlheader', $pagehtmlheader, '', '120', 'ace', 'In', true, false, 'ace', ROWS_3, '100%', '');
 	print $doleditor->Create(1, '', true, 'HTML Header', 'html');
 	print '</td></tr>';
+
+	if ($action != 'createcontainer')
+	{
+		print '<tr><td>';
+		print $langs->trans('Status');
+		print '</td><td>';
+		print ajax_object_onoff($objectpage, 'status', 'status', 'Enabled', 'Disabled');
+		//print dol_print_date($pagedatecreation, 'dayhour');
+		print '</td></tr>';
+	}
 
 	print '</table>';
 	if ($action == 'createcontainer')

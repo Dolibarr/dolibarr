@@ -8,7 +8,7 @@ if (!defined('ISLOADEDBYSTEELSHEET')) die('Must be call by steelsheet'); ?>
  */
 
 .info-box-module-external span.info-box-icon-version {
-    background: #999;
+    background: #bbb;
 }
 
 .info-box {
@@ -74,7 +74,7 @@ if (!defined('ISLOADEDBYSTEELSHEET')) die('Must be call by steelsheet'); ?>
     height: 80px;
     width: 80px;
     font-size: 25px;
-    line-height: 80px;
+    line-height: 100px;
 }
 .info-box-module .info-box-icon {
 	height: 106px;
