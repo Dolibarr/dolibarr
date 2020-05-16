@@ -2058,8 +2058,8 @@ div.mainmenu.members {
 
 div.mainmenu.menu {
 	background-image: url(<?php echo dol_buildpath($path.'/theme/'.$theme.'/img/menus/menu.png', 1) ?>);
-	top: 7px;
-	left: 5px;
+	top: 10px;
+	left: 1px;
 }
 
 div.mainmenu.products {

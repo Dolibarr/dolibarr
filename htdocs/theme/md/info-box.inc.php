@@ -2,10 +2,47 @@
 if (!defined('ISLOADEDBYSTEELSHEET')) die('Must be call by steelsheet'); ?>
 /* <style type="text/css" > */
 
-/*
- * Component: Info Box
- * -------------------
- */
+
+/* ICONS INFO BOX */
+<?php
+include_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
+
+$prefix = '';
+//$prefix = 'background-';
+if (!empty($conf->global->THEME_INFOBOX_COLOR_ON_BACKGROUND)) $prefix = 'background-';
+?>
+
+.bg-infobox-project{
+	<?php echo $prefix; ?>color: <?php print colorAgressiveness('#6c6aa8', $conf->global->THEME_AGRESSIVENESS_RATIO); ?> !important;
+}
+.bg-infobox-action{
+	<?php echo $prefix; ?>color: <?php print colorAgressiveness('#a47080', $conf->global->THEME_AGRESSIVENESS_RATIO); ?>  !important;
+}
+.bg-infobox-propal,
+.bg-infobox-facture,
+.bg-infobox-commande{
+	<?php echo $prefix; ?>color: <?php print colorAgressiveness('#99a17d', $conf->global->THEME_AGRESSIVENESS_RATIO); ?>  !important;
+}
+.bg-infobox-supplier_proposal,
+.bg-infobox-invoice_supplier,
+.bg-infobox-order_supplier{
+	<?php echo $prefix; ?>color: <?php print colorAgressiveness('#599caf', $conf->global->THEME_AGRESSIVENESS_RATIO); ?>  !important;
+}
+.bg-infobox-contrat, .bg-infobox-ticket{
+	<?php echo $prefix; ?>color: <?php print colorAgressiveness('#46a676', $conf->global->THEME_AGRESSIVENESS_RATIO); ?>  !important;
+}
+.bg-infobox-bank_account{
+	<?php echo $prefix; ?>color: <?php print colorAgressiveness('#b0a53e', $conf->global->THEME_AGRESSIVENESS_RATIO); ?>  !important;
+}
+.bg-infobox-adherent{
+	<?php echo $prefix; ?>color: <?php print colorAgressiveness('#79633f', $conf->global->THEME_AGRESSIVENESS_RATIO); ?>  !important;
+}
+.bg-infobox-expensereport{
+	<?php echo $prefix; ?>color: <?php print colorAgressiveness('#79633f', $conf->global->THEME_AGRESSIVENESS_RATIO); ?>  !important;
+}
+.bg-infobox-holiday{
+	<?php echo $prefix; ?>color: <?php print colorAgressiveness('#755114', $conf->global->THEME_AGRESSIVENESS_RATIO); ?>  !important;
+}
 
 .info-box-module-external span.info-box-icon-version {
     background: #bbb;
