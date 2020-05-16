@@ -80,7 +80,7 @@ if (!defined('ISLOADEDBYSTEELSHEET')) die('Must be call by steelsheet'); ?>
     line-height: 80px;
 }
 .info-box-module .info-box-icon {
-	height: 106px;
+	height: 107px;
 }
 .info-box-icon > img {
 	max-width: 100%;
@@ -175,6 +175,7 @@ if (!defined('ISLOADEDBYSTEELSHEET')) die('Must be call by steelsheet'); ?>
 .info-box-title{
 	text-transform: uppercase;
 	font-weight: bold;
+	padding-bottom: 4px;
 }
 .info-box-text{
 	font-size: 0.92em;

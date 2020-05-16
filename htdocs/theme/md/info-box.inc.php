@@ -8,21 +8,25 @@ if (!defined('ISLOADEDBYSTEELSHEET')) die('Must be call by steelsheet'); ?>
  */
 
 .info-box-module-external span.info-box-icon-version {
-    background: #999;
-}
-
-span.info-box-icon-text {	/* hide box text number due to problems */
-    display: none;
+    background: #bbb;
 }
 
 .info-box {
 	display: block;
+	position: relative;
 	min-height: 90px;
 	background: #fff;
 	width: 100%;
+	/* box-shadow: 1px 1px 2px rgba(0, 0, 0, 0.1); */
+	border-radius: 2px;
 	margin-bottom: 15px;
 	border: 1px solid #ddd;
 }
+.info-box.info-box-sm{
+    min-height: 80px;
+    margin-bottom: 10px;
+}
+
 .info-box small {
 	font-size: 14px;
 }
@@ -53,13 +57,25 @@ span.info-box-icon-text {	/* hide box text number due to problems */
 }
 .info-box-icon {
 	display: block;
+	overflow: hidden;
 	float: left;
-	height: 90px;
+	/* height: 90px; */
 	width: 90px;
 	text-align: center;
 	font-size: 45px;
 	line-height: 90px;
 	background: #eee;
+}
+.info-box-sm .info-box-icon {
+    width: 80px;
+    font-size: 25px;
+    line-height: 100px;
+}
+.opened-dash-board-wrap .info-box-sm .info-box-icon {
+    line-height: 80px;
+}
+.info-box-module .info-box-icon {
+	height: 108px;
 }
 .info-box-icon > img {
 	max-width: 100%;
@@ -71,6 +87,74 @@ span.info-box-icon-text {	/* hide box text number due to problems */
 	padding: 5px 10px;
 	margin-left: 90px;
 }
+
+.info-box-icon-text{
+    box-sizing: border-box;
+    display: block;
+    position: absolute;
+    width: 90px;
+    bottom: 0px;
+    color: #ffffff;
+    background-color: rgba(0,0,0,0.1);
+    cursor: default;
+
+    font-size: 10px;
+    line-height: 15px;
+    padding: 0px 3px;
+    text-align: center;
+    opacity: 0;
+    -webkit-transition: opacity 0.5s, visibility 0s 0.5s;
+    transition: opacity 0.5s, visibility 0s 0.5s;
+}
+
+.info-box-icon-version {
+    box-sizing: border-box;
+    display: block;
+    position: absolute;
+    width: 90px;
+    bottom: 0px;
+    color: #ffffff;
+    background-color: rgba(0,0,0,0.1);
+    cursor: default;
+
+    font-size: 10px;
+    line-height: 22px;
+    padding: 0px 3px;
+    text-align: center;
+    opacity: 1;
+    -webkit-transition: opacity 0.5s, visibility 0s 0.5s;
+    transition: opacity 0.5s, visibility 0s 0.5s;
+}
+
+.box-flex-item.info-box-module.info-box-module-disabled {
+    /* opacity: 0.6; */
+}
+
+.info-box-actions {
+	position: absolute;
+    right: 0;
+    bottom: 0;
+}
+
+<?php if (empty($conf->global->MAIN_DISABLE_GLOBAL_BOXSTATS) && !empty($conf->global->MAIN_INCLUDE_GLOBAL_STATS_IN_OPENED_DASHBOARD)) { ?>
+.info-box-icon-text{
+    opacity: 1;
+}
+<?php } ?>
+
+.info-box-sm .info-box-icon-text, .info-box-sm .info-box-icon-version{
+    overflow: hidden;
+    width: 80px;
+}
+.info-box:hover .info-box-icon-text{
+    opacity: 1;
+}
+
+.info-box-content {
+	padding: 5px 10px;
+	margin-left: 90px;
+}
+
 .info-box-number {
 	display: block;
 	font-weight: bold;
@@ -88,6 +172,7 @@ span.info-box-icon-text {	/* hide box text number due to problems */
 .info-box-title{
 	text-transform: uppercase;
 	font-weight: bold;
+	padding-bottom: 5px;
 }
 .info-box-text{
 	font-size: 12px;
@@ -152,7 +237,7 @@ if (GETPOSTISSET('THEME_AGRESSIVENESS_RATIO')) $conf->global->THEME_AGRESSIVENES
 }
 .fa-dol-propal:before,
 .fa-dol-supplier_proposal:before {
-	content: "\f2b5";
+	content: "\f573";
 }
 .fa-dol-facture:before,
 .fa-dol-invoice_supplier:before {
@@ -167,6 +252,9 @@ if (GETPOSTISSET('THEME_AGRESSIVENESS_RATIO')) $conf->global->THEME_AGRESSIVENES
 }
 .fa-dol-contrat:before {
 	content: "\f1e6";
+}
+.fa-dol-ticket:before {
+	content: "\f3ff";
 }
 .fa-dol-bank_account:before {
 	content: "\f19c";
@@ -261,3 +349,10 @@ if (GETPOSTISSET('THEME_AGRESSIVENESS_RATIO')) $conf->global->THEME_AGRESSIVENES
 	height: 0;
 }
 
+.info-box-module {
+	min-width: 350px;
+    max-width: 350px;
+}
+.info-box-module .info-box-content {
+	height: 7em;
+}
