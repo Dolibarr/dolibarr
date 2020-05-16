@@ -68,7 +68,7 @@ if ($pageid > 0)
 {
 	$websitepage->fetch($pageid);
 
-	$weblangs->setDefaultLang(empty($_COOKIE['weblangs-shortcode']) ? 'auto' : $_COOKIE['weblangs-shortcode']);
+	$weblangs->setDefaultLang(GETPOSTISSET('lang') ? GETPOST('lang', 'aZ09') : (empty($_COOKIE['weblangs-shortcode']) ? 'auto' : $_COOKIE['weblangs-shortcode']));
 	$pagelangs->setDefaultLang($websitepage->lang ? $websitepage->lang : $weblangs->shortlang);
 
 	if (!defined('USEDOLIBARREDITOR') && in_array($websitepage->type_container, array('menu', 'other')))
