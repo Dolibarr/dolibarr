@@ -1624,6 +1624,13 @@ td.nobordernopadding.widthpictotitle.col-picto {
 	width: unset;
     color: #999;
 }
+
+span.widthpictotitle.pictotitle {
+/*    background: var(--colortexttitlenotab);
+    color: #fff;
+    padding: 10px;
+    border-radius: 2px;*/
+}
 .pictotitle {
 	margin-<?php echo $right; ?>: 8px;
 	/* margin-bottom: 4px; */
