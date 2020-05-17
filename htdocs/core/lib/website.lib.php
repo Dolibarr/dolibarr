@@ -551,7 +551,7 @@ function getStructuredData($type, $data = array())
 			"@type": "SoftwareApplication",
 			"name": "'.dol_escape_json($data['name']).'",
 			"operatingSystem": "'.dol_escape_json($data['os']).'",
-			"applicationCategory": "https://schema.org/GameApplication",
+			"applicationCategory": "https://schema.org/'.$data['applicationCategory'].'",
 			"aggregateRating": {
 				"@type": "AggregateRating",
 				"ratingValue": "'.$data['ratingvalue'].'",
