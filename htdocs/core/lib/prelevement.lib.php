@@ -40,7 +40,7 @@ function prelevement_prepare_head(BonPrelevement $object)
 	$head = array();
 
 	$head[$h][0] = DOL_URL_ROOT.'/compta/prelevement/card.php?id='.$object->id;
-	$head[$h][1] = $langs->trans("Card");
+	$head[$h][1] = $langs->trans("WithdrawalsReceipts");
 	$head[$h][2] = 'prelevement';
 	$h++;
 
