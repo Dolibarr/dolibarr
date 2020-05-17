@@ -6393,7 +6393,6 @@ div.tabsElem a.tab {
 	    word-break: break-word;
 	}
 	.badge {
-		line-height: 1.2em;
 		min-width: auto;
 		font-size: 12px;
 	}
