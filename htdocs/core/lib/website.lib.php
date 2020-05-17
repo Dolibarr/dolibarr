@@ -582,14 +582,17 @@ function getStructuredData($type, $data = array())
 				"@type": "ContactPoint",
 				"contactType": "Contact",
 				"email": "'.dol_escape_json($mysoc->email).'"
-			},';
+			},'."\n";
 		if (is_array($mysoc->socialnetworks) && count($mysoc->socialnetworks) > 0) {
 			$ret .= '"sameAs": [';
 			$i = 0;
 			foreach($mysoc->socialnetworks as $key => $value) {
 				if ($key == 'linkedin') {
 					$ret.= '"https://www.'.$key.'.com/company/'.dol_escape_json($value).'"';
-				} else {
+				} elseif ($key == 'youtube') {
+					$ret.= '"https://www.'.$key.'.com/user/'.dol_escape_json($value).'"';
+				}
+				else {
 					$ret.= '"https://www.'.$key.'.com/'.dol_escape_json($value).'"';
 				}
 				$i++;
