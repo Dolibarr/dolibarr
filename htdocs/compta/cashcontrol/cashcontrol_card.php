@@ -612,7 +612,7 @@ if (empty($action) || $action == "view" || $action == "close")
     else {
     	$head = array();
     	$head[0][0] = DOL_URL_ROOT.'/compta/cashcontrol/cashcontrol_card.php?id='.$object->id;
-    	$head[0][1] = $langs->trans("Card");
+    	$head[0][1] = $langs->trans("CashControl");
     	$head[0][2] = 'cashcontrol';
 
 	    dol_fiche_head($head, 'cashcontrol', $langs->trans("CashControl"), -1, 'account');
