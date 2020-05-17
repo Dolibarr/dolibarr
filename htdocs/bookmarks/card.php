@@ -135,7 +135,7 @@ $head = array();
 $h = 1;
 
 $head[$h][0] = $_SERVER["PHP_SELF"].($object->id ? 'id='.$object->id : '');
-$head[$h][1] = $langs->trans("Card");
+$head[$h][1] = $langs->trans("Bookmark");
 $head[$h][2] = 'card';
 $h++;
 

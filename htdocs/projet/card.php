@@ -580,7 +580,7 @@ if ($action == 'create' && $user->rights->projet->creer)
 		print $form->textwithpicto($langs->trans("ProjectFollowTasks"), $htmltext);
 		print '<br>';
 	}
-	if (!empty($conf->global->PROJECT_BILL_TIME_SPENT))
+	if (empty($conf->global->PROJECT_HIDE_TASKS) && !empty($conf->global->PROJECT_BILL_TIME_SPENT))
 	{
 		print '<input type="checkbox" id="usage_bill_time" name="usage_bill_time"'.(GETPOST('usage_bill_time', 'alpha') != '' ? ' checked="checked"' : '').'"> ';
 		$htmltext = $langs->trans("ProjectBillTimeDescription");
@@ -871,7 +871,7 @@ elseif ($object->id > 0)
 			print $form->textwithpicto($langs->trans("ProjectFollowTasks"), $htmltext);
 			print '<br>';
 		}
-		if (!empty($conf->global->PROJECT_BILL_TIME_SPENT))
+		if (empty($conf->global->PROJECT_HIDE_TASKS) && !empty($conf->global->PROJECT_BILL_TIME_SPENT))
 		{
 			print '<input type="checkbox" name="usage_bill_time"'.(GETPOSTISSET('usage_bill_time') ? (GETPOST('usage_bill_time', 'alpha') != '' ? ' checked="checked"' : '') : ($object->usage_bill_time ? ' checked="checked"' : '')).'"> ';
 			$htmltext = $langs->trans("ProjectBillTimeDescription");

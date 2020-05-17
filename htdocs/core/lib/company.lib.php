@@ -46,7 +46,7 @@ function societe_prepare_head(Societe $object)
     $head = array();
 
     $head[$h][0] = DOL_URL_ROOT.'/societe/card.php?socid='.$object->id;
-    $head[$h][1] = $langs->trans("Card");
+    $head[$h][1] = $langs->trans("ThirdParty");
     $head[$h][2] = 'card';
     $h++;
 
@@ -367,7 +367,7 @@ function societe_prepare_head2($object)
     $head = array();
 
     $head[$h][0] = DOL_URL_ROOT.'/societe/card.php?socid='.$object->id;
-    $head[$h][1] = $langs->trans("Card");
+    $head[$h][1] = $langs->trans("ThirdParty");
     $head[$h][2] = 'company';
     $h++;
 

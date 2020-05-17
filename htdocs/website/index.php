@@ -2207,17 +2207,24 @@ if (!GETPOST('hide_websitemenu'))
 
 		print '<input type="submit" class="button bordertransp"'.$disabled.' value="'.dol_escape_htmltag($langs->trans("EditCss")).'" name="editcss">';
 
+		$importlabel = $langs->trans("ImportSite");
+		$exportlabel = $langs->trans("ExportSite");
+		if (! empty($conf->dol_optimize_smallscreen)) {
+			$importlabel = $langs->trans("Import");
+			$exportlabel = $langs->trans("Export");
+		}
+
 		if ($atleastonepage)
 		{
-			print '<input type="submit" class="button bordertransp" disabled="disabled" value="'.dol_escape_htmltag($langs->trans("ImportSite")).'" name="importsite">';
+			print '<input type="submit" class="button bordertransp" disabled="disabled" value="'.dol_escape_htmltag($importlabel).'" name="importsite">';
 		}
 		else
 		{
-			print '<input type="submit" class="button bordertransp"'.$disabled.' value="'.dol_escape_htmltag($langs->trans("ImportSite")).'" name="importsite">';
+			print '<input type="submit" class="button bordertransp"'.$disabled.' value="'.dol_escape_htmltag($importlabel).'" name="importsite">';
 		}
 
 		//print '<input type="submit" class="button"'.$disabled.' value="'.dol_escape_htmltag($langs->trans("EditMenu")).'" name="editmenu">';
-		print '<input type="submit" class="button bordertransp"'.$disabled.' value="'.dol_escape_htmltag($langs->trans("ExportSite")).'" name="exportsite">';
+		print '<input type="submit" class="button bordertransp"'.$disabled.' value="'.dol_escape_htmltag($exportlabel).'" name="exportsite">';
 		print '<input type="submit" class="button bordertransp"'.$disabled.' value="'.dol_escape_htmltag($langs->trans("CloneSite")).'" name="createfromclone">';
 
 		print '<input type="submit" class="buttonDelete bordertransp" name="deletesite" value="'.$langs->trans("Delete").'"'.($atleastonepage ? ' disabled="disabled"' : '').'>';
@@ -2261,7 +2268,7 @@ if (!GETPOST('hide_websitemenu'))
 
 		print '<span class="websiteinputurl valignmiddle" id="websiteinputurl">';
 		$linktotestonwebserver = '<a href="'.($virtualurl ? $virtualurl : '#').'" class="valignmiddle">';
-		$linktotestonwebserver .= $langs->trans("TestDeployOnWeb", $virtualurl).' '.img_picto('', 'globe');
+		$linktotestonwebserver .= '<span class="hideonsmartphone">'.$langs->trans("TestDeployOnWeb", $virtualurl).' </span>'.img_picto('', 'globe');
 		$linktotestonwebserver .= '</a>';
 		$htmltext = '';
 		if (empty($object->fk_default_home))
