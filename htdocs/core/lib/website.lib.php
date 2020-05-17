@@ -540,7 +540,7 @@ function includeContainer($containerref)
  */
 function getStructuredData($type, $data = array())
 {
-	global $conf, $db, $hookmanager, $langs, $mysoc, $user, $website, $websitepage, $weblangs; // Very important. Required to have var available when running inluded containers.
+	global $conf, $db, $hookmanager, $langs, $mysoc, $user, $website, $websitepage, $weblangs, $pagelangs; // Very important. Required to have var available when running inluded containers.
 
 	if ($type == 'software')
 	{
@@ -565,6 +565,41 @@ function getStructuredData($type, $data = array())
 		}'."\n";
 		$ret .= '</script>'."\n";
 	}
+	elseif ($type == 'organization')
+	{
+		$companyname = $mysoc->name;
+		$url = $mysoc->url;
+
+		$ret = '<!-- Add structured data for blog post -->'."\n";
+		$ret .= '<script type="application/ld+json">'."\n";
+		$ret .= '{
+			"@context": "https://schema.org",
+			"@type": "Organization",
+			"name": "'.dol_escape_json($companyname).'",
+			"url": "'.$url.'",
+			"logo": "/wrapper.php?modulepart=mycompany&file=logos%2F'.urlencode($mysoc->logo).'",
+			"contactPoint": {
+				"@type": "ContactPoint",
+				"contactType": "Contact",
+				"email": "'.dol_escape_json($mysoc->email).'"
+			},';
+		if (is_array($mysoc->socialnetworks) && count($mysoc->socialnetworks) > 0) {
+			$ret .= '"sameAs": [';
+			$i = 0;
+			foreach($mysoc->socialnetworks as $key => $value) {
+				if ($key == 'linkedin') {
+					$ret.= '"https://www.'.$key.'.com/company/'.dol_escape_json($value).'"';
+				} else {
+					$ret.= '"https://www.'.$key.'.com/'.dol_escape_json($value).'"';
+				}
+				$i++;
+				if ($i < count($mysoc->socialnetworks)) $ret .= ', ';
+			}
+			$ret .= '],'."\n";
+		}
+		$ret .= "\n".'}'."\n";
+		$ret .= '</script>'."\n";
+	}
 	elseif ($type == 'blogpost')
 	{
 		if (!empty($websitepage->author_alias))
@@ -581,7 +616,7 @@ function getStructuredData($type, $data = array())
 
 			$pageurl = str_replace('__WEBSITE_KEY__', $website->ref, $pageurl);
 			$title = str_replace('__WEBSITE_KEY__', $website->ref, $title);
-			$image = str_replace('__WEBSITE_KEY__', $website->ref, $image);
+			$image = 'medias/'.str_replace('__WEBSITE_KEY__', $website->ref, $image);
 			$companyname = str_replace('__WEBSITE_KEY__', $website->ref, $companyname);
 			$description = str_replace('__WEBSITE_KEY__', $website->ref, $description);
 
@@ -598,6 +633,7 @@ function getStructuredData($type, $data = array())
 				  "image": [
 				    "'.dol_escape_json($image).'"
 				   ],
+				  "dateCreated": "'.dol_print_date($websitepage->date_creation, 'dayhourrfc').'",
 				  "datePublished": "'.dol_print_date($websitepage->date_creation, 'dayhourrfc').'",
 				  "dateModified": "'.dol_print_date($websitepage->date_modification, 'dayhourrfc').'",
 				  "author": {
@@ -611,9 +647,20 @@ function getStructuredData($type, $data = array())
 				        "@type": "ImageObject",
 				        "url": "/wrapper.php?modulepart=mycompany&file=logos%2F'.urlencode($mysoc->logo).'"
 				     }
-				   },
-				  "description": "'.dol_escape_json($description).'"
-				}'."\n";
+				   },'."\n";
+			if ($websitepage->keywords) {
+				$ret .= '"keywords": [';
+				$i = 0;
+				$arrayofkeywords = explode(',', $websitepage->keywords);
+				foreach($arrayofkeywords as $keyword) {
+					$ret.= '"'.dol_escape_json($keyword).'"';
+					$i++;
+					if ($i < count($arrayofkeywords)) $ret .= ', ';
+				}
+				$ret .= '],'."\n";
+			}
+			$ret .= '"description": "'.dol_escape_json($description).'"';
+			$ret .= "\n".'}'."\n";
 			$ret .= '</script>'."\n";
 		}
 	}
