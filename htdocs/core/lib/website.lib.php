@@ -609,7 +609,7 @@ function getStructuredData($type, $data = array())
 				     "name": "'.dol_escape_json($companyname).'",
 				     "logo": {
 				        "@type": "ImageObject",
-				        "url": "/viewimage.php?modulepart=mycompany&file=logos%2F'.urlencode($mysoc->logo).'"
+				        "url": "/wrapper.php?modulepart=mycompany&file=logos%2F'.urlencode($mysoc->logo).'"
 				     }
 				   },
 				  "description": "'.dol_escape_json($description).'"
