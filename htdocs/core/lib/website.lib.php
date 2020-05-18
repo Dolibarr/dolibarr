@@ -520,7 +520,7 @@ function includeContainer($containerref)
 	$tmpoutput = ob_get_contents();
 	ob_end_clean();
 
-	print "\n".'<!-- include '.$fullpathfile.' level = '.$includehtmlcontentopened.' -->'."\n";
+	print "\n".'<!-- include '.$websitekey.'/'.$containerref.' level = '.$includehtmlcontentopened.' -->'."\n";
 	print preg_replace(array('/^.*<body[^>]*>/ims', '/<\/body>.*$/ims'), array('', ''), $tmpoutput);
 
 	if (!$res)
@@ -533,8 +533,9 @@ function includeContainer($containerref)
 
 /**
  * Return HTML content to add structured data for an article, news or Blog Post.
+ * Use the json-ld format.
  *
- * @param 	string		$type				'blogpost', 'product', 'software'...
+ * @param 	string		$type				'blogpost', 'product', 'software', 'organization', ...
  * @param	array		$data				Array of data parameters for structured data
  * @return  string							HTML content
  */
@@ -551,7 +552,7 @@ function getStructuredData($type, $data = array())
 			"@type": "SoftwareApplication",
 			"name": "'.dol_escape_json($data['name']).'",
 			"operatingSystem": "'.dol_escape_json($data['os']).'",
-			"applicationCategory": "https://schema.org/GameApplication",
+			"applicationCategory": "https://schema.org/'.$data['applicationCategory'].'",
 			"aggregateRating": {
 				"@type": "AggregateRating",
 				"ratingValue": "'.$data['ratingvalue'].'",
@@ -575,21 +576,24 @@ function getStructuredData($type, $data = array())
 		$ret .= '{
 			"@context": "https://schema.org",
 			"@type": "Organization",
-			"name": "'.dol_escape_json($companyname).'",
-			"url": "'.$url.'",
-			"logo": "/wrapper.php?modulepart=mycompany&file=logos%2F'.urlencode($mysoc->logo).'",
+			"name": "'.dol_escape_json($data['name'] ? $data['name'] : $companyname).'",
+			"url": "'.dol_escape_json($data['url'] ? $data['url'] : $url).'",
+			"logo": "'.($data['logo'] ? dol_escape_json($data['logo']) : '/wrapper.php?modulepart=mycompany&file=logos%2F'.urlencode($mysoc->logo)).'",
 			"contactPoint": {
 				"@type": "ContactPoint",
 				"contactType": "Contact",
-				"email": "'.dol_escape_json($mysoc->email).'"
-			},';
+				"email": "'.dol_escape_json($data['email'] ? $data['email'] : $mysoc->email).'"
+			},'."\n";
 		if (is_array($mysoc->socialnetworks) && count($mysoc->socialnetworks) > 0) {
 			$ret .= '"sameAs": [';
 			$i = 0;
 			foreach($mysoc->socialnetworks as $key => $value) {
 				if ($key == 'linkedin') {
 					$ret.= '"https://www.'.$key.'.com/company/'.dol_escape_json($value).'"';
-				} else {
+				} elseif ($key == 'youtube') {
+					$ret.= '"https://www.'.$key.'.com/user/'.dol_escape_json($value).'"';
+				}
+				else {
 					$ret.= '"https://www.'.$key.'.com/'.dol_escape_json($value).'"';
 				}
 				$i++;
