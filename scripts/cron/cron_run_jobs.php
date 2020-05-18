@@ -223,7 +223,7 @@ if (is_array($qualifiedjobs) && (count($qualifiedjobs)>0))
 		    // Reload langs
 		    $langcode = (empty($conf->global->MAIN_LANG_DEFAULT)?'auto':$conf->global->MAIN_LANG_DEFAULT);
 		    if (! empty($user->conf->MAIN_LANG_DEFAULT)) $langcode = $user->conf->MAIN_LANG_DEFAULT;
-		    if($langs->getDefaultLang() != $langcode) $langs->setDefaultLang($langcode);
+		    if ($langs->getDefaultLang() != $langcode) $langs->setDefaultLang($langcode);
 		}
 
 		//If date_next_jobs is less of current date, execute the program, and store the execution time of the next execution in database
