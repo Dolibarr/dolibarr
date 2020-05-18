@@ -177,7 +177,11 @@ $sessiontimeout = ini_get("session.gc_maxlifetime");
 if (empty($conf->global->MAIN_SESSION_TIMEOUT)) $conf->global->MAIN_SESSION_TIMEOUT = $sessiontimeout;
 print '<tr class="oddeven">';
 print '<td>'.$langs->trans("SessionTimeOut").'</td><td class="right">';
-print $form->textwithpicto('', $langs->trans("SessionExplanation", ini_get("session.gc_probability"), ini_get("session.gc_divisor")));
+if (ini_get("session.gc_probability") == 0) {
+	print $form->textwithpicto('', $langs->trans("SessionsPurgedByExternalSystem", ini_get("session.gc_maxlifetime")));
+} else {
+	print $form->textwithpicto('', $langs->trans("SessionExplanation", ini_get("session.gc_probability"), ini_get("session.gc_divisor"), ini_get("session.gc_maxlifetime")));
+}
 print '</td>';
 print '<td class="nowrap">';
 print '<input class="flat" name="MAIN_SESSION_TIMEOUT" type="text" size="6" value="'.htmlentities($conf->global->MAIN_SESSION_TIMEOUT).'"> '.strtolower($langs->trans("Seconds"));
@@ -185,7 +189,6 @@ print '</td>';
 print '</tr>';
 
 
-$sessiontimeout = ini_get("session.gc_maxlifetime");
 if (empty($conf->global->MAIN_APPLICATION_TITLE)) $conf->global->MAIN_APPLICATION_TITLE = "";
 print '<tr class="oddeven">';
 print '<td>'.$langs->trans("MAIN_APPLICATION_TITLE").'</td><td class="right">';
