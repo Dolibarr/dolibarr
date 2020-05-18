@@ -533,8 +533,9 @@ function includeContainer($containerref)
 
 /**
  * Return HTML content to add structured data for an article, news or Blog Post.
+ * Use the json-ld format.
  *
- * @param 	string		$type				'blogpost', 'product', 'software'...
+ * @param 	string		$type				'blogpost', 'product', 'software', 'organization', ...
  * @param	array		$data				Array of data parameters for structured data
  * @return  string							HTML content
  */
@@ -575,13 +576,13 @@ function getStructuredData($type, $data = array())
 		$ret .= '{
 			"@context": "https://schema.org",
 			"@type": "Organization",
-			"name": "'.dol_escape_json($companyname).'",
-			"url": "'.$url.'",
-			"logo": "/wrapper.php?modulepart=mycompany&file=logos%2F'.urlencode($mysoc->logo).'",
+			"name": "'.dol_escape_json($data['name'] ? $data['name'] : $companyname).'",
+			"url": "'.dol_escape_json($data['url'] ? $data['url'] : $url).'",
+			"logo": "'.($data['logo'] ? dol_escape_json($data['logo']) : '/wrapper.php?modulepart=mycompany&file=logos%2F'.urlencode($mysoc->logo)).'",
 			"contactPoint": {
 				"@type": "ContactPoint",
 				"contactType": "Contact",
-				"email": "'.dol_escape_json($mysoc->email).'"
+				"email": "'.dol_escape_json($data['email'] ? $data['email'] : $mysoc->email).'"
 			},'."\n";
 		if (is_array($mysoc->socialnetworks) && count($mysoc->socialnetworks) > 0) {
 			$ret .= '"sameAs": [';
