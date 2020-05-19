@@ -235,7 +235,7 @@ class FormProduct
      *
      *  @throws Exception
 	 */
-	public function selectWarehouses($selected = '', $htmlname = 'idwarehouse', $filterstatus = '', $empty = 0, $disabled = 0, $fk_product = 0, $empty_label = '', $showstock = 0, $forcecombo = 0, $events = array(), $morecss = 'minwidth200', $exclude = '', $showfullpath = 1, $stockMin = false, $orderBy = 'e.ref')
+	public function selectWarehouses($selected = '', $htmlname = 'idwarehouse', $filterstatus = '', $empty = 0, $disabled = 0, $fk_product = 0, $empty_label = '', $showstock = 0, $forcecombo = 0, $events = array(), $morecss = 'minwidth200', $exclude = array(), $showfullpath = 1, $stockMin = false, $orderBy = 'e.ref')
 	{
 		global $conf,$langs,$user, $hookmanager;
 
@@ -244,7 +244,6 @@ class FormProduct
 		$out='';
 		if (empty($conf->global->ENTREPOT_EXTRA_STATUS)) $filterstatus = '';
         if (!empty($fk_product))  $this->cache_warehouses = array();
-        if(empty($exclude)) $exclude = array();
 
         $parameters = array(
             'exclude' =>& $exclude,
