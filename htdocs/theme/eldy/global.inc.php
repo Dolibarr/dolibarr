@@ -1638,10 +1638,14 @@ td.nobordernopadding.widthpictotitle.col-picto {
 }
 
 span.widthpictotitle.pictotitle {
-/*    background: var(--colortexttitlenotab);
-    color: #fff;
-    padding: 10px;
-    border-radius: 2px;*/
+	/* background: rgba(70, 3, 62, 0.5); */
+    background: var(--colortexttitlenotab);
+    opacity: 0.8;
+    color: #fff !important;
+    padding: 7px;
+    border-radius: 2px;
+    min-width: 30px;
+    text-align: center;
 }
 .pictotitle {
 	margin-<?php echo $right; ?>: 8px;
@@ -3913,7 +3917,7 @@ div.boximport {
 
 .fieldrequired { font-weight: bold; color: var(--fieldrequiredcolor); }
 
-.widthpictotitle { width: 26px; text-align: <?php echo $left; ?>; }
+td.widthpictotitle { width: 26px; text-align: <?php echo $left; ?>; }
 span.widthpictotitle { font-size: 1.7em; };
 
 .dolgraphtitle { margin-top: 6px; margin-bottom: 4px; }
