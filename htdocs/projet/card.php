@@ -106,7 +106,7 @@ if (empty($reshook))
 			else
 			{
 				dol_syslog($object->error, LOG_DEBUG);
-				setEventMessages($langs->trans("CantRemoveProject"), null, 'errors');
+				setEventMessages($langs->trans("CantRemoveProject", $langs->transnoentitiesnoconv("ProjectOverview")), null, 'errors');
 			}
 		}
 		if ($backtopage)
