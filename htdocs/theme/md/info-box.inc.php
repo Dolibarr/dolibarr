@@ -2,27 +2,68 @@
 if (!defined('ISLOADEDBYSTEELSHEET')) die('Must be call by steelsheet'); ?>
 /* <style type="text/css" > */
 
-/*
- * Component: Info Box
- * -------------------
- */
 
-.info-box-module-external span.info-box-icon-version {
-    background: #999;
+/* ICONS INFO BOX */
+<?php
+include_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
+
+$prefix = '';
+//$prefix = 'background-';
+if (!empty($conf->global->THEME_INFOBOX_COLOR_ON_BACKGROUND)) $prefix = 'background-';
+?>
+
+.bg-infobox-project{
+	<?php echo $prefix; ?>color: <?php print colorAgressiveness('#6c6aa8', $conf->global->THEME_AGRESSIVENESS_RATIO); ?> !important;
+}
+.bg-infobox-action{
+	<?php echo $prefix; ?>color: <?php print colorAgressiveness('#a47080', $conf->global->THEME_AGRESSIVENESS_RATIO); ?>  !important;
+}
+.bg-infobox-propal,
+.bg-infobox-facture,
+.bg-infobox-commande{
+	<?php echo $prefix; ?>color: <?php print colorAgressiveness('#99a17d', $conf->global->THEME_AGRESSIVENESS_RATIO); ?>  !important;
+}
+.bg-infobox-supplier_proposal,
+.bg-infobox-invoice_supplier,
+.bg-infobox-order_supplier{
+	<?php echo $prefix; ?>color: <?php print colorAgressiveness('#599caf', $conf->global->THEME_AGRESSIVENESS_RATIO); ?>  !important;
+}
+.bg-infobox-contrat, .bg-infobox-ticket{
+	<?php echo $prefix; ?>color: <?php print colorAgressiveness('#46a676', $conf->global->THEME_AGRESSIVENESS_RATIO); ?>  !important;
+}
+.bg-infobox-bank_account{
+	<?php echo $prefix; ?>color: <?php print colorAgressiveness('#b0a53e', $conf->global->THEME_AGRESSIVENESS_RATIO); ?>  !important;
+}
+.bg-infobox-adherent{
+	<?php echo $prefix; ?>color: <?php print colorAgressiveness('#79633f', $conf->global->THEME_AGRESSIVENESS_RATIO); ?>  !important;
+}
+.bg-infobox-expensereport{
+	<?php echo $prefix; ?>color: <?php print colorAgressiveness('#79633f', $conf->global->THEME_AGRESSIVENESS_RATIO); ?>  !important;
+}
+.bg-infobox-holiday{
+	<?php echo $prefix; ?>color: <?php print colorAgressiveness('#755114', $conf->global->THEME_AGRESSIVENESS_RATIO); ?>  !important;
 }
 
-span.info-box-icon-text {	/* hide box text number due to problems */
-    display: none;
+.info-box-module-external span.info-box-icon-version {
+    background: #bbb;
 }
 
 .info-box {
 	display: block;
+	position: relative;
 	min-height: 90px;
 	background: #fff;
 	width: 100%;
+	/* box-shadow: 1px 1px 2px rgba(0, 0, 0, 0.1); */
+	border-radius: 2px;
 	margin-bottom: 15px;
 	border: 1px solid #ddd;
 }
+.info-box.info-box-sm{
+    min-height: 80px;
+    margin-bottom: 10px;
+}
+
 .info-box small {
 	font-size: 14px;
 }
@@ -53,13 +94,25 @@ span.info-box-icon-text {	/* hide box text number due to problems */
 }
 .info-box-icon {
 	display: block;
+	overflow: hidden;
 	float: left;
-	height: 90px;
+	/* height: 90px; */
 	width: 90px;
 	text-align: center;
 	font-size: 45px;
 	line-height: 90px;
 	background: #eee;
+}
+.info-box-sm .info-box-icon {
+    width: 80px;
+    font-size: 25px;
+    line-height: 100px;
+}
+.opened-dash-board-wrap .info-box-sm .info-box-icon {
+    line-height: 80px;
+}
+.info-box-module .info-box-icon {
+	height: 108px;
 }
 .info-box-icon > img {
 	max-width: 100%;
@@ -71,6 +124,74 @@ span.info-box-icon-text {	/* hide box text number due to problems */
 	padding: 5px 10px;
 	margin-left: 90px;
 }
+
+.info-box-icon-text{
+    box-sizing: border-box;
+    display: block;
+    position: absolute;
+    width: 90px;
+    bottom: 0px;
+    color: #ffffff;
+    background-color: rgba(0,0,0,0.1);
+    cursor: default;
+
+    font-size: 10px;
+    line-height: 15px;
+    padding: 0px 3px;
+    text-align: center;
+    opacity: 0;
+    -webkit-transition: opacity 0.5s, visibility 0s 0.5s;
+    transition: opacity 0.5s, visibility 0s 0.5s;
+}
+
+.info-box-icon-version {
+    box-sizing: border-box;
+    display: block;
+    position: absolute;
+    width: 90px;
+    bottom: 0px;
+    color: #ffffff;
+    background-color: rgba(0,0,0,0.1);
+    cursor: default;
+
+    font-size: 10px;
+    line-height: 22px;
+    padding: 0px 3px;
+    text-align: center;
+    opacity: 1;
+    -webkit-transition: opacity 0.5s, visibility 0s 0.5s;
+    transition: opacity 0.5s, visibility 0s 0.5s;
+}
+
+.box-flex-item.info-box-module.info-box-module-disabled {
+    /* opacity: 0.6; */
+}
+
+.info-box-actions {
+	position: absolute;
+    right: 0;
+    bottom: 0;
+}
+
+<?php if (empty($conf->global->MAIN_DISABLE_GLOBAL_BOXSTATS) && !empty($conf->global->MAIN_INCLUDE_GLOBAL_STATS_IN_OPENED_DASHBOARD)) { ?>
+.info-box-icon-text{
+    opacity: 1;
+}
+<?php } ?>
+
+.info-box-sm .info-box-icon-text, .info-box-sm .info-box-icon-version{
+    overflow: hidden;
+    width: 80px;
+}
+.info-box:hover .info-box-icon-text{
+    opacity: 1;
+}
+
+.info-box-content {
+	padding: 5px 10px;
+	margin-left: 90px;
+}
+
 .info-box-number {
 	display: block;
 	font-weight: bold;
@@ -88,6 +209,7 @@ span.info-box-icon-text {	/* hide box text number due to problems */
 .info-box-title{
 	text-transform: uppercase;
 	font-weight: bold;
+	padding-bottom: 5px;
 }
 .info-box-text{
 	font-size: 12px;
@@ -152,7 +274,7 @@ if (GETPOSTISSET('THEME_AGRESSIVENESS_RATIO')) $conf->global->THEME_AGRESSIVENES
 }
 .fa-dol-propal:before,
 .fa-dol-supplier_proposal:before {
-	content: "\f2b5";
+	content: "\f573";
 }
 .fa-dol-facture:before,
 .fa-dol-invoice_supplier:before {
@@ -167,6 +289,9 @@ if (GETPOSTISSET('THEME_AGRESSIVENESS_RATIO')) $conf->global->THEME_AGRESSIVENES
 }
 .fa-dol-contrat:before {
 	content: "\f1e6";
+}
+.fa-dol-ticket:before {
+	content: "\f3ff";
 }
 .fa-dol-bank_account:before {
 	content: "\f19c";
@@ -261,3 +386,10 @@ if (GETPOSTISSET('THEME_AGRESSIVENESS_RATIO')) $conf->global->THEME_AGRESSIVENES
 	height: 0;
 }
 
+.info-box-module {
+	min-width: 350px;
+    max-width: 350px;
+}
+.info-box-module .info-box-content {
+	height: 7em;
+}

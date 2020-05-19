@@ -135,7 +135,7 @@ elseif (in_array($compression, array('gz', 'bz')))
 
     $file .= '.tar';
     // We also exclude '/temp/' dir and 'documents/admin/documents'
-    $cmd = "tar -cf ".$outputdir."/".$file." --exclude-vcs --exclude 'temp' --exclude 'dolibarr.log' --exclude='documents/admin/documents' -C ".dirname(DOL_DATA_ROOT)." ".basename(DOL_DATA_ROOT);
+    $cmd = "tar -cf ".$outputdir."/".$file." --exclude-vcs --exclude 'temp' --exclude 'dolibarr.log' --exclude 'dolibarr_*.log' --exclude 'documents/admin/documents' -C ".dirname(DOL_DATA_ROOT)." ".basename(DOL_DATA_ROOT);
 
     $result = $utils->executeCLI($cmd, $outputfile);
 

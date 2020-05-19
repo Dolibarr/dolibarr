@@ -38,7 +38,7 @@ function contact_prepare_head(Contact $object)
 	$head = array();
 
 	$head[$tab][0] = DOL_URL_ROOT.'/contact/card.php?id='.$object->id;
-	$head[$tab][1] = $langs->trans("Card");
+	$head[$tab][1] = $langs->trans("Contact");
 	$head[$tab][2] = 'card';
 	$tab++;
 

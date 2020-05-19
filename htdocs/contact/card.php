@@ -1454,7 +1454,7 @@ else
         print '<tr><td>';
         print $langs->trans("VCard").'</td><td colspan="3">';
 		print '<a href="'.DOL_URL_ROOT.'/contact/vcard.php?id='.$object->id.'">';
-		print img_picto($langs->trans("Download"), 'vcard.png').' ';
+		print img_picto($langs->trans("Download"), 'vcard.png', 'class="paddingrightonly"');
 		print $langs->trans("Download");
 		print '</a>';
         print '</td></tr>';

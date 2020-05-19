@@ -32,4 +32,6 @@
 
 
 -- For v13
+
+ALTER TABLE llx_website ADD COLUMN position integer DEFAULT 0;
 INSERT INTO llx_const (rowid, name, entity, value, type, visible, note, tms) VALUES (NULL, 'PRODUCT_PRICE_BASE_TYPE', '1', 'HT', 'string', '0', NULL, CURRENT_TIMESTAMP);

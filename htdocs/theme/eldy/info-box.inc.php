@@ -76,8 +76,11 @@ if (!defined('ISLOADEDBYSTEELSHEET')) die('Must be call by steelsheet'); ?>
     font-size: 25px;
     line-height: 100px;
 }
+.opened-dash-board-wrap .info-box-sm .info-box-icon {
+    line-height: 80px;
+}
 .info-box-module .info-box-icon {
-	height: 106px;
+	height: 107px;
 }
 .info-box-icon > img {
 	max-width: 100%;
@@ -172,6 +175,7 @@ if (!defined('ISLOADEDBYSTEELSHEET')) die('Must be call by steelsheet'); ?>
 .info-box-title{
 	text-transform: uppercase;
 	font-weight: bold;
+	padding-bottom: 4px;
 }
 .info-box-text{
 	font-size: 0.92em;
@@ -200,6 +204,7 @@ if (!empty($conf->global->THEME_INFOBOX_COLOR_ON_BACKGROUND)) $prefix = 'backgro
 if (!isset($conf->global->THEME_AGRESSIVENESS_RATIO) && $prefix) $conf->global->THEME_AGRESSIVENESS_RATIO = -50;
 if (GETPOSTISSET('THEME_AGRESSIVENESS_RATIO')) $conf->global->THEME_AGRESSIVENESS_RATIO = GETPOST('THEME_AGRESSIVENESS_RATIO', 'int');
 //var_dump($conf->global->THEME_AGRESSIVENESS_RATIO);
+
 ?>
 .info-box-icon {
 	<?php if ($prefix) { ?>
