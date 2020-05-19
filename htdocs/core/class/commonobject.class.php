@@ -3280,7 +3280,9 @@ abstract class CommonObject
 				foreach ($tmparray as $objecttype => $objectids)       // $objecttype is a module name ('facture', 'mymodule', ...) or a module name with a suffix ('project_task', 'mymodule_myobj', ...)
 				{
 					// Parse element/subelement (ex: project_task, cabinetmed_consultation, ...)
-					$module = $element = $subelement = $objecttype;
+                    list($module,$element)=explode(':',$objecttype);
+                    if(empty($element)) $element =$subelement = $objecttype;
+                    else $subelement = $element;
 					if ($objecttype != 'supplier_proposal' && $objecttype != 'order_supplier' && $objecttype != 'invoice_supplier'
 						&& preg_match('/^([^_]+)_([^_]+)/i', $objecttype, $regs))
 					{
@@ -3311,6 +3313,7 @@ abstract class CommonObject
 					} elseif ($objecttype == 'contact') {
 						 $module = 'societe';
 					}
+                    }else $classpath = "$module/class";
 
 					// Set classfile
 					$classfile = strtolower($subelement); $classname = ucfirst($subelement);
