@@ -246,8 +246,21 @@ class FormProduct
         if (!empty($fk_product))  $this->cache_warehouses = array();
 
         $parameters = array(
+            'selected' => & $selected,
+            'htmlname' =>& $htmlname,
+            'filterstatus' =>& $filterstatus,
+            'empty' =>& $empty,
+            'disabled ' =>& $disabled,
+            'fk_product' =>& $fk_product,
+            'empty_label' =>& $empty_label,
+            'showstock' =>& $showstock,
+            'forcecombo' =>& $forcecombo,
+            'events' =>& $events,
+            'morecss' =>& $morecss,
             'exclude' =>& $exclude,
-            'htmlname' =>& $htmlname
+            'showfullpath' =>& $showfullpath,
+            'stockMin' =>& $stockMin,
+            'orderBy' =>& $orderBy
         );
 
         $reshook = $hookmanager->executeHooks('selectWarehouses', $parameters);
