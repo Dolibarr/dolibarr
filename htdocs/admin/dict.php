@@ -644,6 +644,7 @@ if (GETPOST('actionadd') || GETPOST('actionmodify'))
         if ($value == 'localtax2' && empty($_POST['localtax2_type'])) continue;
         if ($value == 'color' && empty($_POST['color'])) continue;
 		if ($value == 'formula' && empty($_POST['formula'])) continue;
+		if ($value == 'dayrule' && empty($_POST['dayrule'])) continue;
 		if ($value == 'sortorder') continue; // For a column name 'sortorder', we use the field name 'position'
 		if ((!isset($_POST[$value]) || $_POST[$value] == '')
         	&& (!in_array($listfield[$f], array('decalage', 'module', 'accountancy_code', 'accountancy_code_sell', 'accountancy_code_buy', 'tracking'))  // Fields that are not mandatory
