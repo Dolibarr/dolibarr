@@ -405,7 +405,6 @@ class ActionComm extends CommonObject
         	$this->userassigned[$tmpid] = array('id'=>$tmpid, 'transparency'=>$this->transparency);
         }
 
-
         $userownerid = $this->userownerid;
         $userdoneid = $this->userdoneid;
 
@@ -484,7 +483,7 @@ class ActionComm extends CommonObject
         $sql .= (strval($this->datef) != '' ? "'".$this->db->idate($this->datef)."'" : "null").", ";
         $sql .= ((isset($this->durationp) && $this->durationp >= 0 && $this->durationp != '') ? "'".$this->db->escape($this->durationp)."'" : "null").", "; // deprecated
         $sql .= (isset($this->type_id) ? $this->type_id : "null").",";
-        $sql .= ($code ? ("'".$code."'") : "null").", ";
+        $sql .= ($code ? ("'".$this->db->escape($code)."'") : "null").", ";
         $sql .= ($this->ref_ext ? ("'".$this->db->idate($this->ref_ext)."'") : "null").", ";
         $sql .= ((isset($this->socid) && $this->socid > 0) ? $this->socid : "null").", ";
         $sql .= ((isset($this->fk_project) && $this->fk_project > 0) ? $this->fk_project : "null").", ";
@@ -680,6 +679,7 @@ class ActionComm extends CommonObject
 
         $sql = "SELECT a.id,";
         $sql .= " a.id as ref,";
+        $sql .= " a.entity,";
         $sql .= " a.ref_ext,";
         $sql .= " a.datep,";
         $sql .= " a.datep2,";
@@ -716,6 +716,7 @@ class ActionComm extends CommonObject
                 $obj = $this->db->fetch_object($resql);
 
                 $this->id         = $obj->id;
+				$this->entity     = $obj->entity;
                 $this->ref        = $obj->ref;
                 $this->ref_ext    = $obj->ref_ext;
 

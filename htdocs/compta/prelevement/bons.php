@@ -54,7 +54,8 @@ $statut = GETPOST('statut', 'int');
 $search_ref = GETPOST('search_ref', 'alpha');
 $search_amount = GETPOST('search_amount', 'alpha');
 
-$bon = new BonPrelevement($db, "");
+$bon = new BonPrelevement($db);
+$hookmanager->initHooks(array('withdrawalsreceiptslist'));
 
 
 /*

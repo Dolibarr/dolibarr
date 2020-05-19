@@ -742,7 +742,7 @@ if ($action == 'create')
 
 
 	// Print mail form
-	print load_fiche_titre($langs->trans("NewMailing"), $availablelink, 'generic');
+	print load_fiche_titre($langs->trans("NewMailing"), $availablelink, 'object_email');
 
 	dol_fiche_head();
 

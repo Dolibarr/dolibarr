@@ -8,6 +8,7 @@
  * Copyright (C) 2014       Juanjo Menent           <jmenent@2byte.es>
  * Copyright (C) 2014       Florian Henry           <florian.henry@open-concept.pro>
  * Copyright (C) 2018       Frédéric France         <frederic.france@netlogic.fr>
+ * Copyright (C) 2020       Maxime DEMAREST         <maxime@indelog.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -38,7 +39,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/accountancy/class/accountancycategory.class.php';
 
 // Load translation files required by the page
-$langs->loadLangs(array('compta', 'bills', 'donation', 'salaries', 'accountancy'));
+$langs->loadLangs(array('compta', 'bills', 'donation', 'salaries', 'accountancy', 'loan'));
 
 $date_startmonth = GETPOST('date_startmonth', 'int');
 $date_startday = GETPOST('date_startday', 'int');
@@ -953,6 +954,115 @@ else
 		print '</tr>';
 	}
 
+    /*
+     * Various Payments
+     */
+
+    if (!empty($conf->global->ACCOUNTING_REPORTS_INCLUDE_VARPAY) && !empty($conf->banque->enabled) && ($modecompta == 'CREANCES-DETTES' || $modecompta == "RECETTES-DEPENSES"))
+    {
+        $subtotal_ht = 0;
+        $subtotal_ttc = 0;
+
+        print '<tr class="trforbreak"><td colspan="4">'.$langs->trans("VariousPayment").'</td></tr>';
+
+        // Debit
+        $sql = "SELECT SUM(p.amount) AS amount FROM ".MAIN_DB_PREFIX."payment_various as p";
+        $sql .= ' WHERE 1 = 1';
+        if (!empty($date_start) && !empty($date_end))
+            $sql .= " AND p.datep >= '".$db->idate($date_start)."' AND p.datep <= '".$db->idate($date_end)."'";
+        $sql .= ' GROUP BY p.sens';
+        $sql .= ' ORDER BY p.sens';
+
+        dol_syslog('get various payments', LOG_DEBUG);
+        $result = $db->query($sql);
+        if ($result)
+        {
+            // Debit
+            $obj = $db->fetch_object($result);
+            if (isset($obj->amount))
+            {
+                $subtotal_ht += -$obj->amount;
+                $subtotal_ttc += -$obj->amount;
+            }
+            print '<tr class="oddeven"><td>&nbsp;</td>';
+            print "<td>".$langs->trans("Debit")."</td>\n";
+            if ($modecompta == 'CREANCES-DETTES') print '<td class="right">'.price(-$obj->amount).'</td>';
+            print '<td class="right">'.price(-$obj->amount)."</td>\n";
+            print "</tr>\n";
+
+            // Credit
+            $obj = $db->fetch_object($result);
+            if (isset($obj->amount))
+            {
+                $subtotal_ht += $obj->amount;
+                $subtotal_ttc += $obj->amount;
+            }
+            print '<tr class="oddeven"><td>&nbsp;</td>';
+            print "<td>".$langs->trans("Credit")."</td>\n";
+            if ($modecompta == 'CREANCES-DETTES') print '<td class="right">'.price($obj->amount).'</td>';
+            print '<td class="right">'.price($obj->amount)."</td>\n";
+            print "</tr>\n";
+
+            // Total
+            $total_ht += $subtotal_ht;
+            $total_ttc += $subtotal_ttc;
+            print '<tr class="liste_total">';
+            if ($modecompta == 'CREANCES-DETTES')
+                print '<td colspan="3" class="right">'.price($subtotal_ht).'</td>';
+            print '<td colspan="3" class="right">'.price($subtotal_ttc).'</td>';
+            print '</tr>';
+        }
+        else dol_print_error($db);
+    }
+
+    /*
+     * Payement Loan
+     */
+
+    if (!empty($conf->global->ACCOUNTING_REPORTS_INCLUDE_LOAN) && !empty($conf->loan->enabled) && ($modecompta == 'CREANCES-DETTES' || $modecompta == "RECETTES-DEPENSES"))
+    {
+        $subtotal_ht = 0;
+        $subtotal_ttc = 0;
+
+        print '<tr class="trforbreak"><td colspan="4">'.$langs->trans("PaymentLoan").'</td></tr>';
+
+        $sql = 'SELECT l.rowid as id, l.label AS label, SUM(p.amount_capital + p.amount_insurance + p.amount_interest) as amount FROM '.MAIN_DB_PREFIX.'payment_loan as p';
+        $sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'loan AS l ON l.rowid = p.fk_loan';
+        $sql .= ' WHERE 1 = 1';
+        if (!empty($date_start) && !empty($date_end))
+            $sql .= " AND p.datep >= '".$db->idate($date_start)."' AND p.datep <= '".$db->idate($date_end)."'";
+        $sql .= ' GROUP BY p.fk_loan';
+        $sql .= ' ORDER BY p.fk_loan';
+
+        dol_syslog('get loan payments', LOG_DEBUG);
+        $result = $db->query($sql);
+        if ($result)
+        {
+            require_once DOL_DOCUMENT_ROOT.'/loan/class/loan.class.php';
+            $loan_static = new Loan($db);
+            while ($obj = $db->fetch_object($result))
+            {
+                $loan_static->id = $obj->id;
+                $loan_static->ref = $obj->id;
+                $loan_static->label = $obj->label;
+                print '<tr class="oddeven"><td>&nbsp;</td>';
+                print "<td>".$loan_static->getNomUrl(1).' - '.$obj->label."</td>\n";
+                if ($modecompta == 'CREANCES-DETTES') print '<td class="right">'.price(-$obj->amount).'</td>';
+                print '<td class="right">'.price(-$obj->amount)."</td>\n";
+                print "</tr>\n";
+                $subtotal_ht -= $obj->amount;
+                $subtotal_ttc -= $obj->amount;
+            }
+            $total_ht += $subtotal_ht;
+            $total_ttc += $subtotal_ttc;
+            print '<tr class="liste_total">';
+            if ($modecompta == 'CREANCES-DETTES')
+                print '<td colspan="3" class="right">'.price($subtotal_ht).'</td>';
+            print '<td colspan="3" class="right">'.price($subtotal_ttc).'</td>';
+            print '</tr>';
+        }
+        else dol_print_error($db);
+    }
 
 	/*
 	 * VAT

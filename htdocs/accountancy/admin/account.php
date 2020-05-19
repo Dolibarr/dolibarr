@@ -161,7 +161,7 @@ if (empty($reshook))
     if ($action == 'disable') {
     	if ($accounting->fetch($id)) {
             $mode = GETPOST('mode', 'int');
-    		$result = $accounting->account_desactivate($id, $mode);
+    		$result = $accounting->accountDeactivate($id, $mode);
     	}
 
     	$action = 'update';

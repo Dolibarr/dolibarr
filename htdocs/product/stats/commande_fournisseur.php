@@ -44,9 +44,7 @@ if (!empty($user->socid))
 $result = restrictedArea($user, 'produit|service', $fieldvalue, 'product&product', '', '', $fieldtype);
 
 // Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
-$hookmanager->initHooks(array(
-		'productstatssupplyorder'
-));
+$hookmanager->initHooks(array('productstatssupplyorder'));
 
 $mesg = '';
 

@@ -1015,7 +1015,7 @@ class Product extends CommonObject
             $sql .= ", volume = ".($this->volume != '' ? "'".$this->db->escape($this->volume)."'" : 'null');
             $sql .= ", volume_units = ".($this->volume_units != '' ? "'".$this->db->escape($this->volume_units)."'" : 'null');
             $sql .= ", fk_default_warehouse = ".($this->fk_default_warehouse > 0 ? $this->db->escape($this->fk_default_warehouse) : 'null');
-            $sql .= ", seuil_stock_alerte = ".((isset($this->seuil_stock_alerte) && $this->seuil_stock_alerte != '') ? "'".$this->db->escape($this->seuil_stock_alerte)."'" : "null");
+            $sql .= ", seuil_stock_alerte = ".((isset($this->seuil_stock_alerte) && is_numeric($this->seuil_stock_alerte)) ? (int) $this->seuil_stock_alerte : 'null');
             $sql .= ", description = '".$this->db->escape($this->description)."'";
             $sql .= ", url = ".($this->url ? "'".$this->db->escape($this->url)."'" : 'null');
             $sql .= ", customcode = '".$this->db->escape($this->customcode)."'";
@@ -5387,11 +5387,11 @@ class Product extends CommonObject
             $label_type = 'short_label';
         }
 
-        $sql = 'select '.$label_type.' from '.MAIN_DB_PREFIX.'c_units where rowid='.$this->fk_unit;
+        $sql = 'select '.$label_type.', code from '.MAIN_DB_PREFIX.'c_units where rowid='.$this->fk_unit;
         $resql = $this->db->query($sql);
         if ($resql && $this->db->num_rows($resql) > 0) {
             $res = $this->db->fetch_array($resql);
-            $label = $res[$label_type];
+            $label = ($label_type == 'short' ? $res[$label_type] : 'unit'.$res['code']);
             $this->db->free($resql);
             return $label;
         }

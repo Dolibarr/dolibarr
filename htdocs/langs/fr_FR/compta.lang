@@ -262,3 +262,5 @@ RulesPurchaseTurnoverIn=- It includes all the effective payments of invoices don
 RulesPurchaseTurnoverTotalPurchaseJournal=It includes all debit lines from the purchase journal.
 ReportPurchaseTurnover=Purchase turnover invoiced
 ReportPurchaseTurnoverCollected=Purchase turnover collected
+IncludeVarpaysInResults = Inclure les payments divers dans les rapports
+IncludeLoansInResults = Inclure les emprunts dans les rapports
