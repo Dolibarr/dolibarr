@@ -2035,7 +2035,7 @@ class ActionComm extends CommonObject
 
         return $error;
     }
-	
+
 	/**
 	 * Udpate the percent value of a event with the given id
 	 *
