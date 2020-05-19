@@ -33,4 +33,4 @@
 
 -- For v13
 
-
+ALTER TABLE llx_website ADD COLUMN position integer DEFAULT 0;

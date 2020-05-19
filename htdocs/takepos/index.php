@@ -772,15 +772,17 @@ if (empty($conf->global->TAKEPOS_HIDE_HEAD_BAR)) {
 			<div class="inline-block valignmiddle" id="customerandsales">
 			</div>
 			<!-- More info about customer -->
-			<div class="inline-block valignmiddle" id="moreinfo"></div>
-			<div class="inline-block valignmiddle" id="infowarehouse"></div>
+			<div class="inline-block valignmiddle tdoverflowmax150onsmartphone" id="moreinfo"></div>
+			<div class="inline-block valignmiddle tdoverflowmax150onsmartphone" id="infowarehouse"></div>
 			</div>
 			<div class="topnav-right">
 				<div class="login_block_other">
 				<input type="text" id="search" name="search" onkeyup="Search2(<?php echo $keyCodeForEnter; ?>);"  placeholder="<?php echo $langs->trans("Search"); ?>" autofocus>
 				<a onclick="ClearSearch();"><span class="fa fa-backspace"></span></a>
 				<a onclick="window.location.href='<?php echo DOL_URL_ROOT; ?>';"><span class="fas fa-home"></span></a>
+				<?php if (empty($conf->dol_use_jmobile)) { ?>
 				<a onclick="FullScreen();"><span class="fa fa-expand-arrows-alt"></span></a>
+				<?php } ?>
 				</div>
 				<div class="login_block_user">
 				<?php
