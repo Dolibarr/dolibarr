@@ -326,11 +326,18 @@ class ProductCombination
 
 		$child = new Product($this->db);
 		$child->fetch($this->fk_product_child);
-		$child->price_autogen = $parent->price_autogen;
-		$child->weight = $parent->weight + $this->variation_weight;
-		$child->weight_units = $parent->weight_units;
-		$varlabel = $this->getCombinationLabel($this->fk_product_child);
-		$child->label = $parent->label.$varlabel;
+
+		// Get the label of the child from the DB to preserve user changes
+        $childDataSqlQuery = 'SELECT label FROM ' . MAIN_DB_PREFIX . "product "
+                            .'WHERE rowid = ' . $this->fk_product_child;
+        $childQuery = $this->db->query($childDataSqlQuery);
+        $childLabel = $this->db->fetch_row($childQuery);
+
+        $child->price_autogen   = $parent->price_autogen;
+        $child->weight          = $parent->weight + $this->variation_weight;
+        $child->weight_units    = $parent->weight_units;
+        $varlabel               = $this->getCombinationLabel($this->fk_product_child);
+        $child->label           = $childLabel[0];
 
 		if ($child->update($child->id, $user) > 0) {
 			$new_vat = $parent->tva_tx;
