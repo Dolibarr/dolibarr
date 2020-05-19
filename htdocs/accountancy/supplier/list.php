@@ -320,7 +320,7 @@ if ($result) {
 	$param = '';
 	if (!empty($contextpage) && $contextpage != $_SERVER["PHP_SELF"]) $param .= '&contextpage='.urlencode($contextpage);
 	if ($limit > 0 && $limit != $conf->liste_limit) $param .= '&limit='.urlencode($limit);
-	if ($search_societe)     $param.='&search_societe='.urlencode($search_societe);
+	if ($search_societe)     $param .= '&search_societe='.urlencode($search_societe);
 	if ($search_lineid)      $param .= '&search_lineid='.urlencode($search_lineid);
 	if ($search_day)         $param .= '&search_day='.urlencode($search_day);
 	if ($search_month)       $param .= '&search_month='.urlencode($search_month);
