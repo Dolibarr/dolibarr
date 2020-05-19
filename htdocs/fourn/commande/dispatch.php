@@ -38,6 +38,8 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/fourn.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.commande.class.php';
 require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.commande.dispatch.class.php';
 require_once DOL_DOCUMENT_ROOT.'/product/class/html.formproduct.class.php';
+require_once DOL_DOCUMENT_ROOT . '/product/stock/class/mouvementstock.class.php';
+
 if (!empty($conf->projet->enabled))
 	require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
 
@@ -371,29 +373,121 @@ if ($action == 'dispatch' && $user->rights->fournisseur->commande->receptionner)
 // Remove a dispatched line
 if ($action == 'confirm_deleteline' && $confirm == 'yes' && $user->rights->fournisseur->commande->receptionner)
 {
+	$db->begin();
+
 	$supplierorderdispatch = new CommandeFournisseurDispatch($db);
 	$result = $supplierorderdispatch->fetch($lineid);
-	if ($result > 0) $result = $supplierorderdispatch->delete($user);
+	if ($result > 0)
+	{
+		$qty = $supplierorderdispatch->qty;
+		$entrepot = $supplierorderdispatch->fk_entrepot;
+		$product = $supplierorderdispatch->fk_product;
+		$price = GETPOST('price');
+		$comment = $supplierorderdispatch->comment;
+		$eatby = $supplierorderdispatch->fk_product;
+		$sellby = $supplierorderdispatch->sellby;
+		$batch = $supplierorderdispatch->batch;
+
+		$result = $supplierorderdispatch->delete($user);
+	}
 	if ($result < 0)
 	{
-		setEventMessages($object->error, $object->errors, 'errors');
+		$errors = $object->errors;
+		$error++;
+	}
+	else
+	{
+		// If module stock is enabled and the stock increase is done on purchase order dispatching
+		if ($entrepot > 0 && ! empty($conf->stock->enabled) && ! empty($conf->global->STOCK_CALCULATE_ON_SUPPLIER_DISPATCH_ORDER))
+		{
+			$mouv = new MouvementStock($db);
+			if ($product > 0)
+			{
+				$mouv->origin = &$object;
+				$result=$mouv->livraison($user, $product, $entrepot, $qty, $price, $comment, '', $eatby, $sellby, $batch);
+				if ($result < 0)
+				{
+					$errors=$mouv->errors;
+					$error++;
+				}
+			}
+		}
+	}
+	if ($error > 0)
+	{
+		$db->rollback();
+		setEventMessages($error, $errors, 'errors');
+	}
+	else
+	{
+		$db->commit();
 	}
 }
 
 // Update a dispatched line
 if ($action == 'updateline' && $user->rights->fournisseur->commande->receptionner)
 {
+	$db->begin();
+	$error = 0;
+
 	$supplierorderdispatch = new CommandeFournisseurDispatch($db);
 	$result = $supplierorderdispatch->fetch($lineid);
 	if ($result > 0)
 	{
+		$qty = $supplierorderdispatch->qty;
+		$entrepot = $supplierorderdispatch->fk_entrepot;
+		$product = $supplierorderdispatch->fk_product;
+		$price = GETPOST('price');
+		$comment = $supplierorderdispatch->comment;
+		$eatby = $supplierorderdispatch->fk_product;
+		$sellby = $supplierorderdispatch->sellby;
+		$batch = $supplierorderdispatch->batch;
+
 		$supplierorderdispatch->qty = GETPOST('qty', 'int');
 		$supplierorderdispatch->fk_entrepot = GETPOST('fk_entrepot');
 		$result = $supplierorderdispatch->update($user);
 	}
 	if ($result < 0)
 	{
-		setEventMessages($object->error, $object->errors, 'errors');
+		$error++;
+		$errors=$supplierorderdispatch->errors;
+	}
+	else
+	{
+		// If module stock is enabled and the stock increase is done on purchase order dispatching
+		if ($entrepot > 0 && ! empty($conf->stock->enabled) && ! empty($conf->global->STOCK_CALCULATE_ON_SUPPLIER_DISPATCH_ORDER))
+		{
+			$mouv = new MouvementStock($db);
+			if ($product > 0)
+			{
+				$mouv->origin = &$object;
+				$result=$mouv->livraison($user, $product, $entrepot, $qty, $price, $comment, '', $eatby, $sellby, $batch);
+				if ($result < 0)
+				{
+					$errors=$mouv->errors;
+					$error++;
+				}
+				else
+				{
+					$mouv->origin = &$object;
+					$result=$mouv->reception($user, $product, $supplierorderdispatch->fk_entrepot, $supplierorderdispatch->qty, $price, $comment, $eatby, $sellby, $batch);
+					if ($result < 0)
+					{
+						$errors=$mouv->errors;
+						$error++;
+					}
+				}
+			}
+		}
+	}
+	if ($error > 0)
+	{
+		$db->rollback();
+		setEventMessages($error, $errors, 'errors');
+	}
+	else
+	{
+		$db->commit();
 	}
 }
 
@@ -979,9 +1073,11 @@ if ($id > 0 || !empty($ref)) {
 	$sql = "SELECT p.ref, p.label,";
 	$sql .= " e.rowid as warehouse_id, e.ref as entrepot,";
 	$sql .= " cfd.rowid as dispatchlineid, cfd.fk_product, cfd.qty, cfd.eatby, cfd.sellby, cfd.batch, cfd.comment, cfd.status, cfd.datec";
+	$sql.=" ,cd.rowid, cd.subprice";
 	if ($conf->reception->enabled)$sql .= " ,cfd.fk_reception, r.date_delivery";
 	$sql .= " FROM ".MAIN_DB_PREFIX."product as p,";
 	$sql .= " ".MAIN_DB_PREFIX."commande_fournisseur_dispatch as cfd";
+	$sql .= " LEFT JOIN " . MAIN_DB_PREFIX . "commande_fournisseurdet as cd ON cd.rowid = cfd.fk_commandefourndet";
 	$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."entrepot as e ON cfd.fk_entrepot = e.rowid";
 	if ($conf->reception->enabled)$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."reception as r ON cfd.fk_reception = r.rowid";
 	$sql .= " WHERE cfd.fk_commande = ".$object->id;
@@ -1067,14 +1163,17 @@ if ($id > 0 || !empty($ref)) {
 				}
 
 				// Qty
+				print '<td class="right">';
 				if ($action == 'editline' && $lineid == $objp->dispatchlineid)
 				{
-					print '<td class="right"><input style="width: 50px;" type="number" min="1" name="qty" value="' . $objp->qty . '" /></td>';
+					print '<input style="width: 50px;" type="number" min="1" name="qty" value="' . $objp->qty . '" />';
 				}
 				else
 				{
-					print '<td class="right">'.$objp->qty.'</td>';
+					print $objp->qty;
 				}
+				print '<input type="hidden" name="price" value="'.$objp->subprice.'" />';
+				print '</td>';
 
 				// Warehouse
 				print '<td>';
