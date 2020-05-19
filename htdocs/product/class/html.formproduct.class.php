@@ -263,7 +263,7 @@ class FormProduct
             'orderBy' =>& $orderBy
         );
 
-        $reshook = $hookmanager->executeHooks('selectWarehouses', $parameters);
+        $reshook = $hookmanager->executeHooks('selectWarehouses', $parameters, $this);
         if ($reshook < 0) setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
 
 		$this->loadWarehouses($fk_product, '', $filterstatus, true, $exclude, $stockMin, $orderBy);
