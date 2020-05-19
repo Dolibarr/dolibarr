@@ -272,10 +272,6 @@ if ($id > 0 || $ref)
 		print '<tr class="oddeven"><td>'.$langs->trans("TransMetod").'</td><td>';
 		print $form->selectarray("methode", $object->methodes_trans);
 		print '</td></tr>';
-        /*print '<tr><td width="20%">'.$langs->trans("File").'</td><td>';
-		print '<input type="hidden" name="max_file_size" value="'.$conf->maxfilesize.'">';
-		print '<input class="flat" type="file" name="userfile"><br>';
-		print '</td></tr>';*/
 		print '</table><br>';
 		print '<div class="center"><input type="submit" class="button" value="'.dol_escape_htmltag($langs->trans("SetToStatusSent")).'"></div>';
 		print '</form>';
