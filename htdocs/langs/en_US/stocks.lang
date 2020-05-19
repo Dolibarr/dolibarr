@@ -218,3 +218,4 @@ InventoryForASpecificWarehouse=Inventory for a specific warehouse
 InventoryForASpecificProduct=Inventory for a specific product
 StockIsRequiredToChooseWhichLotToUse=Stock is required to choose which lot to use
 ForceTo=Force to
+AlwaysShowFullArbo=Always display full tree on card link
