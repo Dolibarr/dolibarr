@@ -462,7 +462,7 @@ if (count($amount)) {
     print '<tr class="liste_total">';
     print '<td>'.$langs->trans("Total").'</td>';
     if ($modecompta != 'CREANCES-DETTES') {
-        print '<td colspan="1"></td>';
+        print '<td></td>';
     } else {
         print '<td class="right">'.price($catotal_ht).'</td>';
     }

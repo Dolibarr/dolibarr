@@ -1,4 +1,6 @@
 <?php
+use Sabre\VObject\Recur\EventIterator\HandleRDateExpandTest;
+
 /* Copyright (C) 2005       Marc Barilley / Ocebo   <marc@ocebo.com>
  * Copyright (C) 2005-2018  Laurent Destailleur     <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2011  Regis Houssin           <regis.houssin@inodbox.com>
@@ -498,7 +500,7 @@ if (!GETPOST('action', 'aZ09') || preg_match('/upgrade/i', GETPOST('action', 'aZ
 		migrate_reload_modules($db, $langs, $conf, $listofmodule);
 
 		// Reload menus (this must be always and only into last targeted version)
-		migrate_reload_menu($db, $langs, $conf, $versionto);
+		migrate_reload_menu($db, $langs, $conf);
 	}
 
     // Can force activation of some module during migration with parameter 'enablemodules=MAIN_MODULE_XXX,MAIN_MODULE_YYY,...'
@@ -1185,8 +1187,13 @@ function migrate_contracts_date1($db, $langs, $conf)
     print '</td></tr>';
 }
 
-/*
- * Mise a jour date contrat avec date min effective mise en service si inferieur
+/**
+ * Update contracts with date min real if service date is lower
+ *
+ * @param	DoliDB		$db		Database handler
+ * @param	Translate	$langs	Language
+ * @param	Conf		$conf	Conf
+ * @return	void
  */
 function migrate_contracts_date2($db, $langs, $conf)
 {
@@ -3624,10 +3631,9 @@ function migrate_mode_reglement($db, $langs, $conf)
  * @param	DoliDB		$db			Database handler
  * @param	Translate	$langs		Object langs
  * @param	Conf		$conf		Object conf
- * @param	string		$versionto	Version target
  * @return	void
  */
-function migrate_clean_association($db, $langs, $conf, $versionto)
+function migrate_clean_association($db, $langs, $conf)
 {
     $result = $db->DDLDescTable(MAIN_DB_PREFIX."categorie_association");
     if ($result)	// result defined for version 3.2 or -
@@ -4834,10 +4840,9 @@ function migrate_reload_modules($db, $langs, $conf, $listofmodule = array(), $fo
  * @param	DoliDB		$db			Database handler
  * @param	Translate	$langs		Object langs
  * @param	Conf		$conf		Object conf
- * @param	string		$versionto	Version target
  * @return	void
  */
-function migrate_reload_menu($db, $langs, $conf, $versionto)
+function migrate_reload_menu($db, $langs, $conf)
 {
     global $conf;
     dolibarr_install_syslog("upgrade2::migrate_reload_menu");

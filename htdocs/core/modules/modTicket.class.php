@@ -122,7 +122,12 @@ class modTicket extends DolibarrModules
             'langs' => 'ticket',
         	'tabname' => array(MAIN_DB_PREFIX."c_ticket_type", MAIN_DB_PREFIX."c_ticket_severity", MAIN_DB_PREFIX."c_ticket_category", MAIN_DB_PREFIX."c_ticket_resolution"),
         	'tablib' => array("TicketDictType", "TicketDictSeverity", "TicketDictCategory", "TicketDictResolution"),
-        	'tabsql' => array('SELECT f.rowid as rowid, f.code, f.pos, f.label, f.active, f.use_default FROM '.MAIN_DB_PREFIX.'c_ticket_type as f', 'SELECT f.rowid as rowid, f.code, f.pos, f.label, f.active, f.use_default FROM '.MAIN_DB_PREFIX.'c_ticket_severity as f', 'SELECT f.rowid as rowid, f.code, f.pos, f.label, f.active, f.use_default FROM '.MAIN_DB_PREFIX.'c_ticket_category as f', 'SELECT f.rowid as rowid, f.code, f.pos, f.label, f.active, f.use_default FROM '.MAIN_DB_PREFIX.'c_ticket_resolution as f'),
+        	'tabsql' => array(
+        		'SELECT f.rowid as rowid, f.code, f.pos, f.label, f.active, f.use_default FROM '.MAIN_DB_PREFIX.'c_ticket_type as f',
+        		'SELECT f.rowid as rowid, f.code, f.pos, f.label, f.active, f.use_default FROM '.MAIN_DB_PREFIX.'c_ticket_severity as f',
+        		'SELECT f.rowid as rowid, f.code, f.pos, f.label, f.active, f.use_default FROM '.MAIN_DB_PREFIX.'c_ticket_category as f',
+        		'SELECT f.rowid as rowid, f.code, f.pos, f.label, f.active, f.use_default FROM '.MAIN_DB_PREFIX.'c_ticket_resolution as f'
+        	),
         	'tabsqlsort' => array("pos ASC", "pos ASC", "pos ASC", "pos ASC"),
         	'tabfield' => array("pos,code,label,use_default", "pos,code,label,use_default", "pos,code,label,use_default", "pos,code,label,use_default"),
         	'tabfieldvalue' => array("pos,code,label,use_default", "pos,code,label,use_default", "pos,code,label,use_default", "pos,code,label,use_default"),

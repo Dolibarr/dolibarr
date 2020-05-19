@@ -51,17 +51,7 @@ $type = 'project';
 
 include DOL_DOCUMENT_ROOT.'/core/actions_setmoduleoptions.inc.php';
 
-if ($action == 'setmainoptions')
-{
-	if (GETPOST('PROJECT_USE_OPPORTUNITIES')) dolibarr_set_const($db, "PROJECT_USE_OPPORTUNITIES", GETPOST('PROJECT_USE_OPPORTUNITIES'), 'chaine', 0, '', $conf->entity);
-	else dolibarr_del_const($db, "PROJECT_USE_OPPORTUNITIES", $conf->entity);
-
-	// Warning, the constant saved and used in code is PROJECT_HIDE_TASKS
-	if (GETPOST('PROJECT_USE_TASKS')) dolibarr_del_const($db, "PROJECT_HIDE_TASKS", $conf->entity);
-	else dolibarr_set_const($db, "PROJECT_HIDE_TASKS", 1, 'chaine', 0, '', $conf->entity);
-}
-
-elseif ($action == 'updateMask')
+if ($action == 'updateMask')
 {
 	$maskconstproject = GETPOST('maskconstproject', 'alpha');
 	$maskproject = GETPOST('maskproject', 'alpha');
@@ -315,12 +305,8 @@ print '<td width="80">&nbsp;</td></tr>'."\n";
 print '<tr class="oddeven">';
 print '<td width="80%">'.$langs->trans("ManageOpportunitiesStatus").'</td>';
 print '<td width="60" class="right">';
-$arrval = array('0'=>$langs->trans("No"),
-	'1'=>$langs->trans("Yes"),
-);
-print $form->selectyesno('PROJECT_USE_OPPORTUNITIES', $conf->global->PROJECT_USE_OPPORTUNITIES, 1);
+print ajax_constantonoff("PROJECT_USE_OPPORTUNITIES");
 print '</td><td class="right">';
-print '<input type="submit" class="button" name="modifyPROJECT_USE_OPPORTUNITIES" value="'.$langs->trans("Modify").'">';
 print "</td>";
 print '</tr>';
 
@@ -328,12 +314,8 @@ print '</tr>';
 print '<tr class="oddeven">';
 print '<td width="80%">'.$langs->trans("ManageTasks").'</td>';
 print '<td width="60" class="right">';
-$arrval = array('0'=>$langs->trans("No"),
-	'1'=>$langs->trans("Yes"),
-);
-print $form->selectyesno('PROJECT_USE_TASKS', empty($conf->global->PROJECT_HIDE_TASKS) ? 1 : 0, 1);
+print ajax_constantonoff("PROJECT_HIDE_TASKS", array(), null, 1);
 print '</td><td class="right">';
-print '<input type="submit" class="button" name="modifyPROJECT_USE_TASKS" value="'.$langs->trans("Modify").'">';
 print "</td>";
 print '</tr>';
 

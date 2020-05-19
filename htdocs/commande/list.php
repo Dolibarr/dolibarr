@@ -502,7 +502,7 @@ if ($resql)
 	print '<input type="hidden" name="search_status" value="'.$search_status.'">';
 	print '<input type="hidden" name="socid" value="'.$socid.'">';
 
-	print_barre_liste($title, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, $massactionbutton, $num, $nbtotalofrecords, 'commercial', 0, $newcardbutton, '', $limit, 0, 0, 1);
+	print_barre_liste($title, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, $massactionbutton, $num, $nbtotalofrecords, 'order', 0, $newcardbutton, '', $limit, 0, 0, 1);
 
 	$topicmail = "SendOrderRef";
 	$modelmail = "order_send";
@@ -1226,7 +1226,7 @@ if ($resql)
 		// Extra fields
 		include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_print_fields.tpl.php';
 		// Fields from hook
-		$parameters = array('arrayfields'=>$arrayfields, 'obj'=>$obj, 'i'=>$i);
+		$parameters = array('arrayfields'=>$arrayfields, 'obj'=>$obj, 'i'=>$i, 'totalarray'=>&$totalarray);
 		$reshook = $hookmanager->executeHooks('printFieldListValue', $parameters); // Note that $action and $object may have been modified by hook
 		print $hookmanager->resPrint;
 		// Date creation

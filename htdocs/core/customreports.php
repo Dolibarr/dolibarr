@@ -275,7 +275,7 @@ if (is_array($search_groupby) && count($search_groupby)) {
 				if (class_exists($classname)) {
 					$tmpobject = new $classname($db);
 					$tmpobject->fetch($obj->val);
-					foreach($tmpobject->fields as $fieldkey => $field) {
+					foreach ($tmpobject->fields as $fieldkey => $field) {
 						if ($field['showoncombobox']) {
 							$valuetranslated = $tmpobject->$fieldkey;
 							//if ($valuetranslated == '-') $valuetranslated = $langs->transnoentitiesnoconv("Unknown")
@@ -747,7 +747,7 @@ if ($mode == 'graph') {
     	$px1->draw($filenamenb, $fileurlnb);
 
     	$texttoshow = $langs->trans("NoRecordFound");
-    	if (! GETPOSTISSET('search_measures') || ! GETPOSTISSET('search_xaxis')) {
+    	if (!GETPOSTISSET('search_measures') || !GETPOSTISSET('search_xaxis')) {
     		$texttoshow = $langs->trans("SelectYourGraphOptionsFirst");
     	}
 

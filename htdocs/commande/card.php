@@ -1493,7 +1493,7 @@ if (!empty($conf->projet->enabled)) { $formproject = new FormProjets($db); }
 // Mode creation
 if ($action == 'create' && $usercancreate)
 {
-	print load_fiche_titre($langs->trans('CreateOrder'), '', 'commercial');
+	print load_fiche_titre($langs->trans('CreateOrder'), '', 'order');
 
 	$soc = new Societe($db);
 	if ($socid > 0)

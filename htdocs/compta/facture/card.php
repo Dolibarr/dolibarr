@@ -140,8 +140,8 @@ $isdraft = (($object->statut == Facture::STATUS_DRAFT) ? 1 : 0);
 $result = restrictedArea($user, 'facture', $id, '', '', 'fk_soc', $fieldid, $isdraft);
 
 // retained warranty invoice available type
-$retainedWarrantyInvoiceAvailableType=array();
-if(!empty($conf->global->INVOICE_USE_RETAINED_WARRANTY)) {
+$retainedWarrantyInvoiceAvailableType = array();
+if (!empty($conf->global->INVOICE_USE_RETAINED_WARRANTY)) {
 	$retainedWarrantyInvoiceAvailableType = explode('+', $conf->global->INVOICE_USE_RETAINED_WARRANTY);
 }
 
@@ -952,7 +952,7 @@ if (empty($reshook))
 					}
 
 					$discount->tva_tx = abs($tva_tx);
-					$discount->vat_src_code =$vat_src_code;
+					$discount->vat_src_code = $vat_src_code;
 
 					$result = $discount->create($user);
 					if ($result < 0)
@@ -1362,11 +1362,11 @@ if (empty($reshook))
 					$object->situation_cycle_ref = $object->newCycle();
 				}
 
-				if(in_array($object->type, $retainedWarrantyInvoiceAvailableType)){
+				if (in_array($object->type, $retainedWarrantyInvoiceAvailableType)) {
 					$object->retained_warranty = GETPOST('retained_warranty', 'int');
 					$object->retained_warranty_fk_cond_reglement = GETPOST('retained_warranty_fk_cond_reglement', 'int');
 				}
-				else{
+				else {
 					$object->retained_warranty = 0;
 					$object->retained_warranty_fk_cond_reglement = 0;
 				}
@@ -1768,19 +1768,21 @@ if (empty($reshook))
 
 				if (!empty($origin) && !empty($originid))
 				{
+					include_once DOL_DOCUMENT_ROOT.'/core/lib/price.lib.php';
+
 					$object->origin = $origin;
 					$object->origin_id = $originid;
 
 					// retained warranty
-					if(!empty($conf->global->INVOICE_USE_RETAINED_WARRANTY))
+					if (!empty($conf->global->INVOICE_USE_RETAINED_WARRANTY))
 					{
 					    $retained_warranty = GETPOST('retained_warranty', 'int');
-					    if(price2num($retained_warranty) > 0)
+					    if (price2num($retained_warranty) > 0)
 					    {
-					        $object->retained_warranty  = price2num($retained_warranty);
+					        $object->retained_warranty = price2num($retained_warranty);
 					    }
 
-					    if(GETPOST('retained_warranty_fk_cond_reglement', 'int') > 0)
+					    if (GETPOST('retained_warranty_fk_cond_reglement', 'int') > 0)
 					    {
                 			$object->retained_warranty_fk_cond_reglement = GETPOST('retained_warranty_fk_cond_reglement', 'int');
 					    }
@@ -1799,6 +1801,17 @@ if (empty($reshook))
 						$line->fk_prev_id = $line->id;
 						$line->fetch_optionals();
 						$line->situation_percent = $line->get_prev_progress($object->id); // get good progress including credit note
+
+						// The $line->situation_percent has been modified, so we must recalculate all amounts
+						$tabprice = calcul_price_total($line->qty, $line->subprice, $line->remise_percent, $line->tva_tx, $line->localtax1_tx, $line->localtax2_tx, 0, 'HT', 0, $line->product_type, $mysoc, '', $line->situation_percent);
+						$line->total_ht = $tabprice[0];
+						$line->total_tva = $tabprice[1];
+						$line->total_ttc = $tabprice[2];
+						$line->total_localtax1 = $tabprice[9];
+						$line->total_localtax2 = $tabprice[10];
+						$line->multicurrency_total_ht  = $tabprice[16];
+						$line->multicurrency_total_tva = $tabprice[17];
+						$line->multicurrency_total_ttc = $tabprice[18];
 
 						// Si fk_remise_except defini on vérifie si la réduction à déjà été appliquée
 						if ($line->fk_remise_except)
@@ -1844,6 +1857,7 @@ if (empty($reshook))
 				{
 					$nextSituationInvoice = new Facture($db);
 					$nextSituationInvoice->fetch($id);
+
 					// create extrafields with data from create form
 					$extrafields->fetch_name_optionals_label($nextSituationInvoice->table_element);
 					$ret = $extrafields->setOptionalsFromPost(null, $nextSituationInvoice);
@@ -2629,10 +2643,10 @@ if (empty($reshook))
                     $pa_ht = $originLine->pa_ht;
                     $label = $originLine->label;
                     $array_options = $originLine->array_options;
-                    if($object->type == Facture::TYPE_SITUATION){
+                    if ($object->type == Facture::TYPE_SITUATION) {
                         $situation_percent = 0;
                     }
-                    else{
+                    else {
                         $situation_percent = 100;
                     }
                     $fk_prev_id = '';
@@ -2770,7 +2784,7 @@ if ($action == 'create')
 	$facturestatic = new Facture($db);
 	$extrafields->fetch_name_optionals_label($facturestatic->table_element);
 
-	print load_fiche_titre($langs->trans('NewBill'), '', 'invoicing');
+	print load_fiche_titre($langs->trans('NewBill'), '', 'bill');
 
 	if ($socid > 0)
 		$res = $soc->fetch($socid);
@@ -3393,19 +3407,19 @@ if ($action == 'create')
 	print '</td></tr>';
 
 
-	if($conf->global->INVOICE_USE_RETAINED_WARRANTY){
+	if ($conf->global->INVOICE_USE_RETAINED_WARRANTY) {
 		$rwStyle = 'display:none;';
-		if(in_array(GETPOST('type', 'int'), $retainedWarrantyInvoiceAvailableType)){
+		if (in_array(GETPOST('type', 'int'), $retainedWarrantyInvoiceAvailableType)) {
 			$rwStyle = '';
 		}
 
 		$retained_warranty = GETPOST('retained_warranty', 'int');
-		if(empty($retained_warranty)){
-			if(!empty($objectsrc->retained_warranty)){ // use previous situation value
+		if (empty($retained_warranty)) {
+			if (!empty($objectsrc->retained_warranty)) { // use previous situation value
 				$retained_warranty = $objectsrc->retained_warranty;
 			}
 		}
-		$retained_warranty_js_default = !empty($retained_warranty)?$retained_warranty:$conf->global->INVOICE_SITUATION_DEFAULT_RETAINED_WARRANTY_PERCENT;
+		$retained_warranty_js_default = !empty($retained_warranty) ? $retained_warranty : $conf->global->INVOICE_SITUATION_DEFAULT_RETAINED_WARRANTY_PERCENT;
 
 		print '<tr class="retained-warranty-line" style="'.$rwStyle.'" ><td class="nowrap">'.$langs->trans('RetainedWarranty').'</td><td colspan="2">';
 		print '<input id="new-situation-invoice-retained-warranty" name="retained_warranty" type="number" value="'.$retained_warranty.'" step="0.01" min="0" max="100" />%';
@@ -3413,11 +3427,11 @@ if ($action == 'create')
 		// Retained warranty payment term
 		print '<tr class="retained-warranty-line" style="'.$rwStyle.'" ><td class="nowrap">'.$langs->trans('PaymentConditionsShortRetainedWarranty').'</td><td colspan="2">';
 		$retained_warranty_fk_cond_reglement = GETPOST('retained_warranty_fk_cond_reglement', 'int');
-		if(empty($retained_warranty_fk_cond_reglement)){
+		if (empty($retained_warranty_fk_cond_reglement)) {
 			$retained_warranty_fk_cond_reglement = $conf->global->INVOICE_SITUATION_DEFAULT_RETAINED_WARRANTY_COND_ID;
-			if(!empty($objectsrc->retained_warranty_fk_cond_reglement)){ // use previous situation value
+			if (!empty($objectsrc->retained_warranty_fk_cond_reglement)) { // use previous situation value
 				$retained_warranty_fk_cond_reglement = $objectsrc->retained_warranty_fk_cond_reglement;
-			}else{
+			} else {
 				$retained_warranty_fk_cond_reglement = $conf->global->INVOICE_SITUATION_DEFAULT_RETAINED_WARRANTY_COND_ID;
 			}
 		}
@@ -4619,7 +4633,7 @@ elseif ($id > 0 || !empty($ref))
 
 	        $current_situation_counter = array();
 	        foreach ($object->tab_previous_situation_invoice as $prev_invoice) {
-	            $totalpaye_prev = $prev_invoice->getSommePaiement();
+	            $tmptotalpaidforthisinvoice = $prev_invoice->getSommePaiement();
 	            $total_prev_ht += $prev_invoice->total_ht;
 	            $total_prev_ttc += $prev_invoice->total_ttc;
 	            $current_situation_counter[] = (($prev_invoice->type == Facture::TYPE_CREDIT_NOTE) ?-1 : 1) * $prev_invoice->situation_counter;
@@ -4630,7 +4644,7 @@ elseif ($id > 0 || !empty($ref))
 	            if (!empty($conf->banque->enabled)) print '<td class="right"></td>';
 	            print '<td class="right">'.price($prev_invoice->total_ht).'</td>';
 	            print '<td class="right">'.price($prev_invoice->total_ttc).'</td>';
-	            print '<td class="right">'.$prev_invoice->getLibStatut(3, $totalpaye_prev).'</td>';
+	            print '<td class="right">'.$prev_invoice->getLibStatut(3, $tmptotalpaidforthisinvoice).'</td>';
 	            print '</tr>';
 	        }
 	    }
@@ -5268,7 +5282,7 @@ elseif ($id > 0 || !empty($ref))
 			{
 				if (!$objectidnext)
 				{
-					print '<a class="butAction" href="'.$_SERVER['PHP_SELF'].'?socid='.$object->socid.'&amp;fac_avoir='.$object->id.'&amp;action=create&amp;type=2'.($object->fk_project > 0 ? '&amp;projectid='.$object->fk_project : '').''.$object->id.'&amp;action=create&amp;type=2'.($object->entity > 0 ? '&amp;originentity='.$object->entity : '').'">'.$langs->trans("CreateCreditNote").'</a>';
+					print '<a class="butAction" href="'.$_SERVER['PHP_SELF'].'?socid='.$object->socid.'&amp;fac_avoir='.$object->id.'&amp;action=create&amp;type=2'.($object->fk_project > 0 ? '&amp;projectid='.$object->fk_project : '').''.($object->entity > 0 ? '&amp;originentity='.$object->entity : '').'">'.$langs->trans("CreateCreditNote").'</a>';
 				}
 			}
 

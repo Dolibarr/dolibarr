@@ -70,7 +70,7 @@ $now = dol_now();
 
 llxHeader();
 
-print load_fiche_titre($langs->trans("ContractsArea"), '', 'commercial');
+print load_fiche_titre($langs->trans("ContractsArea"), '', 'contract');
 
 
 //print '<table border="0" width="100%" class="notopnoleftnoright">';
@@ -360,7 +360,7 @@ if ($result)
 		$obj = $db->fetch_object($result);
 
 		print '<tr class="oddeven">';
-		print '<td width="110" class="nowrap">';
+		print '<td class="nowraponall">';
 		$staticcontrat->ref = ($obj->ref ? $obj->ref : $obj->cid);
 		$staticcontrat->id = $obj->cid;
 		print $staticcontrat->getNomUrl(1, 16);
@@ -425,7 +425,7 @@ if ($resql)
 		$obj = $db->fetch_object($resql);
 
 		print '<tr class="oddeven">';
-		print '<td width="110" class="nowrap">';
+		print '<td class="nowraponall">';
 		$staticcontrat->ref = ($obj->ref ? $obj->ref : $obj->fk_contrat);
 		$staticcontrat->id = $obj->fk_contrat;
 		print $staticcontrat->getNomUrl(1, 16);
@@ -506,7 +506,7 @@ if ($resql)
 
 		print '<tr class="oddeven">';
 
-		print '<td width="110" class="nowrap">';
+		print '<td class="nowraponall">';
 		$staticcontrat->ref = ($obj->ref ? $obj->ref : $obj->fk_contrat);
 		$staticcontrat->id = $obj->fk_contrat;
 		print $staticcontrat->getNomUrl(1, 16);
@@ -586,7 +586,7 @@ if ($resql)
 
 		print '<tr class="oddeven">';
 
-		print '<td width="110" class="nowrap">';
+		print '<td class="nowraponall">';
 		$staticcontrat->ref = ($obj->ref ? $obj->ref : $obj->fk_contrat);
 		$staticcontrat->id = $obj->fk_contrat;
 		print $staticcontrat->getNomUrl(1, 16);

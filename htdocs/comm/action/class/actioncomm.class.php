@@ -380,7 +380,7 @@ class ActionComm extends CommonObject
         // Clean parameters
         $this->label = dol_trunc(trim($this->label), 128);
         $this->location = dol_trunc(trim($this->location), 128);
-        $this->note = dol_htmlcleanlastbr(trim($this->note));
+        $this->note_private = dol_htmlcleanlastbr(trim(empty($this->note_private) ? $this->note : $this->note_private));
         if (empty($this->percentage))   $this->percentage = 0;
         if (empty($this->priority) || !is_numeric($this->priority)) $this->priority = 0;
         if (empty($this->fulldayevent)) $this->fulldayevent = 0;
@@ -404,7 +404,6 @@ class ActionComm extends CommonObject
         	$this->userassigned = array();
         	$this->userassigned[$tmpid] = array('id'=>$tmpid, 'transparency'=>$this->transparency);
         }
-
 
         $userownerid = $this->userownerid;
         $userdoneid = $this->userdoneid;
@@ -484,11 +483,11 @@ class ActionComm extends CommonObject
         $sql .= (strval($this->datef) != '' ? "'".$this->db->idate($this->datef)."'" : "null").", ";
         $sql .= ((isset($this->durationp) && $this->durationp >= 0 && $this->durationp != '') ? "'".$this->db->escape($this->durationp)."'" : "null").", "; // deprecated
         $sql .= (isset($this->type_id) ? $this->type_id : "null").",";
-        $sql .= ($code ? ("'".$code."'") : "null").", ";
+        $sql .= ($code ? ("'".$this->db->escape($code)."'") : "null").", ";
         $sql .= ($this->ref_ext ? ("'".$this->db->idate($this->ref_ext)."'") : "null").", ";
         $sql .= ((isset($this->socid) && $this->socid > 0) ? $this->socid : "null").", ";
         $sql .= ((isset($this->fk_project) && $this->fk_project > 0) ? $this->fk_project : "null").", ";
-        $sql .= " '".$this->db->escape($this->note_private ? $this->note_private : $this->note)."', ";
+        $sql .= " '".$this->db->escape($this->note_private)."', ";
         $sql .= ((isset($this->contactid) && $this->contactid > 0) ? $this->contactid : "null").", ";
         $sql .= (isset($user->id) && $user->id > 0 ? $user->id : "null").", ";
         $sql .= ($userownerid > 0 ? $userownerid : "null").", ";
@@ -680,6 +679,7 @@ class ActionComm extends CommonObject
 
         $sql = "SELECT a.id,";
         $sql .= " a.id as ref,";
+        $sql .= " a.entity,";
         $sql .= " a.ref_ext,";
         $sql .= " a.datep,";
         $sql .= " a.datep2,";
@@ -716,6 +716,7 @@ class ActionComm extends CommonObject
                 $obj = $this->db->fetch_object($resql);
 
                 $this->id         = $obj->id;
+				$this->entity     = $obj->entity;
                 $this->ref        = $obj->ref;
                 $this->ref_ext    = $obj->ref_ext;
 
@@ -730,14 +731,14 @@ class ActionComm extends CommonObject
                 $this->type_short = (($transcode != "Action".$obj->type_code.'Short') ? $transcode : '');
 
 				$this->code = $obj->code;
-                $this->label				= $obj->label;
-                $this->datep				= $this->db->jdate($obj->datep);
-                $this->datef				= $this->db->jdate($obj->datep2);
+                $this->label = $obj->label;
+                $this->datep = $this->db->jdate($obj->datep);
+                $this->datef = $this->db->jdate($obj->datep2);
 
-                $this->datec   				= $this->db->jdate($obj->datec);
-                $this->datem   				= $this->db->jdate($obj->datem);
+                $this->datec = $this->db->jdate($obj->datec);
+                $this->datem = $this->db->jdate($obj->datem);
 
-                $this->note = $obj->note;
+                $this->note = $obj->note; // deprecated
                 $this->note_private = $obj->note;
                 $this->percentage = $obj->percentage;
 
@@ -990,7 +991,7 @@ class ActionComm extends CommonObject
 
         // Clean parameters
         $this->label = trim($this->label);
-        $this->note = trim($this->note);
+        $this->note_private = dol_htmlcleanlastbr(trim(empty($this->note_private) ? $this->note : $this->note_private));
         if (empty($this->percentage))    $this->percentage = 0;
         if (empty($this->priority) || !is_numeric($this->priority)) $this->priority = 0;
         if (empty($this->transparency))  $this->transparency = 0;
@@ -1024,7 +1025,7 @@ class ActionComm extends CommonObject
         $sql .= ", datep = ".(strval($this->datep) != '' ? "'".$this->db->idate($this->datep)."'" : 'null');
         $sql .= ", datep2 = ".(strval($this->datef) != '' ? "'".$this->db->idate($this->datef)."'" : 'null');
         $sql .= ", durationp = ".(isset($this->durationp) && $this->durationp >= 0 && $this->durationp != '' ? "'".$this->db->escape($this->durationp)."'" : "null"); // deprecated
-        $sql .= ", note = '".$this->db->escape($this->note_private ? $this->note_private : $this->note)."'";
+        $sql .= ", note = '".$this->db->escape($this->note_private)."'";
         $sql .= ", fk_project =".($this->fk_project > 0 ? $this->fk_project : "null");
         $sql .= ", fk_soc =".($socid > 0 ? $socid : "null");
         $sql .= ", fk_contact =".($contactid > 0 ? $contactid : "null");
@@ -1403,8 +1404,8 @@ class ActionComm extends CommonObject
 			$tooltip .= '<br><b>'.$langs->trans('Type').':</b> '.$labeltype;
 		if (!empty($this->location))
 			$tooltip .= '<br><b>'.$langs->trans('Location').':</b> '.$this->location;
-		if (!empty($this->note))
-		    $tooltip .= '<br><b>'.$langs->trans('Note').':</b> '.(dol_textishtml($this->note) ? str_replace(array("\r", "\n"), "", $this->note) : str_replace(array("\r", "\n"), '<br>', $this->note));
+		if (!empty($this->note_private))
+		    $tooltip .= '<br><b>'.$langs->trans('Note').':</b> '.(dol_textishtml($this->note_private) ? str_replace(array("\r", "\n"), "", $this->note_private) : str_replace(array("\r", "\n"), '<br>', $this->note_private));
 		$linkclose = '';
 		if (!empty($conf->global->AGENDA_USE_EVENT_TYPE) && $this->type_color)
 			$linkclose = ' style="background-color:#'.$this->type_color.'"';
@@ -1937,8 +1938,7 @@ class ActionComm extends CommonObject
         $this->location = 'Location';
         $this->transparency = 1; // 1 means opaque
         $this->priority = 1;
-        $this->note = "This is a 'public' note";
-		$this->note_public = "This is a 'public' note.";
+        //$this->note_public = "This is a 'public' note.";
 		$this->note_private = "This is a 'private' note.";
 
         $this->userownerid = $user->id;

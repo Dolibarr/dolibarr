@@ -1048,14 +1048,12 @@ if ($resql)
         {
 	        // Inventory code
 	        print '<td><a href="'
-								.DOL_URL_ROOT.'/product/stock/movement_card.php'
-								.'?id='.$objp->entrepot_id
-								.'&amp;search_inventorycode='.$objp->inventorycode
-							    .'&amp;search_type_mouvement='.$objp->type_mouvement
+						.DOL_URL_ROOT.'/product/stock/movement_card.php?id='.urlencode($objp->entrepot_id)
+						.'&search_inventorycode='.urlencode($objp->inventorycode)
+						.'&search_type_mouvement='.urlencode($objp->type_mouvement)
 						.'">'
-							.$objp->inventorycode
-						.'</a>'
-					.'</td>';
+						.$objp->inventorycode
+						.'</a></td>';
         }
         if (!empty($arrayfields['m.label']['checked']))
         {

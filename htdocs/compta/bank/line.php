@@ -257,7 +257,7 @@ foreach ($cats as $cat) {
 $tabs = array(
     array(
         DOL_URL_ROOT.'/compta/bank/line.php?rowid='.$rowid,
-        $langs->trans('Card')
+        $langs->trans('BankTransaction')
     ),
     array(
         DOL_URL_ROOT.'/compta/bank/info.php?rowid='.$rowid,
@@ -346,7 +346,7 @@ if ($result)
                     $paymenttmp->fetch($links[$key]['url_id']);
                     $paymenttmp->ref = $langs->trans("Payment").' '.$paymenttmp->ref;
                     /*print '<a href="'.DOL_URL_ROOT.'/compta/paiement/card.php?id='.$links[$key]['url_id'].'">';
-                    print img_object($langs->trans('ShowPayment'),'payment').' ';
+                    print img_object($langs->trans('Payment'),'payment').' ';
                     print $langs->trans("Payment");
                     print '</a>';*/
                     print $paymenttmp->getNomUrl(1);
@@ -357,7 +357,7 @@ if ($result)
                     $paymenttmp->fetch($links[$key]['url_id']);
                     $paymenttmp->ref = $langs->trans("Payment").' '.$paymenttmp->ref;
                     /*print '<a href="'.DOL_URL_ROOT.'/fourn/paiement/card.php?id='.$links[$key]['url_id'].'">';
-                    print img_object($langs->trans('ShowPayment'),'payment').' ';
+                    print img_object($langs->trans('Payment'),'payment').' ';
                     print $langs->trans("Payment");
                     print '</a>';*/
                     print $paymenttmp->getNomUrl(1);
@@ -369,67 +369,67 @@ if ($result)
                 }
                 elseif ($links[$key]['type'] == 'sc') {
                     print '<a href="'.DOL_URL_ROOT.'/compta/sociales/card.php?id='.$links[$key]['url_id'].'">';
-                    print img_object($langs->trans('ShowSocialContribution'), 'bill').' ';
+                    print img_object($langs->trans('SocialContribution'), 'bill').' ';
                     print $langs->trans("SocialContribution").($links[$key]['label'] ? ' - '.$links[$key]['label'] : '');
                     print '</a>';
                 }
                 elseif ($links[$key]['type'] == 'payment_sc') {
                     print '<a href="'.DOL_URL_ROOT.'/compta/payment_sc/card.php?id='.$links[$key]['url_id'].'">';
-                    print img_object($langs->trans('ShowPayment'), 'payment').' ';
+                    print img_object($langs->trans('Payment'), 'payment').' ';
                     print $langs->trans("SocialContributionPayment");
                     print '</a>';
                 }
                 elseif ($links[$key]['type'] == 'payment_vat') {
                     print '<a href="'.DOL_URL_ROOT.'/compta/tva/card.php?id='.$links[$key]['url_id'].'">';
-                    print img_object($langs->trans('ShowVAT'), 'payment').' ';
+                    print img_object($langs->trans('VAT'), 'payment').' ';
                     print $langs->trans("VATPayment");
                     print '</a>';
                 }
                 elseif ($links[$key]['type'] == 'payment_salary') {
                     print '<a href="'.DOL_URL_ROOT.'/salaries/card.php?id='.$links[$key]['url_id'].'">';
-                    print img_object($langs->trans('ShowPaymentSalary'), 'payment').' ';
+                    print img_object($langs->trans('PaymentSalary'), 'payment').' ';
                     print $langs->trans("SalaryPayment");
                     print '</a>';
                 }
                 elseif ($links[$key]['type'] == 'payment_loan') {
                     print '<a href="'.DOL_URL_ROOT.'/loan/payment/card.php?id='.$links[$key]['url_id'].'">';
-                    print img_object($langs->trans('ShowLoanPayment'), 'payment').' ';
+                    print img_object($langs->trans('LoanPayment'), 'payment').' ';
                     print $langs->trans("PaymentLoan");
                     print '</a>';
                 }
                 elseif ($links[$key]['type'] == 'loan') {
                     print '<a href="'.DOL_URL_ROOT.'/loan/card.php?id='.$links[$key]['url_id'].'">';
-                    print img_object($langs->trans('ShowLoan'), 'bill').' ';
+                    print img_object($langs->trans('Loan'), 'bill').' ';
                     print $langs->trans("Loan");
                     print '</a>';
                 }
                 elseif ($links[$key]['type'] == 'member') {
                     print '<a href="'.DOL_URL_ROOT.'/adherents/card.php?rowid='.$links[$key]['url_id'].'">';
-                    print img_object($langs->trans('ShowMember'), 'user').' ';
+                    print img_object($langs->trans('Member'), 'user').' ';
                     print $links[$key]['label'];
                     print '</a>';
                 }
 				elseif ($links[$key]['type'] == 'payment_donation') {
                     print '<a href="'.DOL_URL_ROOT.'/don/payment/card.php?id='.$links[$key]['url_id'].'">';
-                    print img_object($langs->trans('ShowDonation'), 'payment').' ';
+                    print img_object($langs->trans('Donation'), 'payment').' ';
                     print $langs->trans("DonationPayment");
                     print '</a>';
                 }
                 elseif ($links[$key]['type'] == 'banktransfert') {
                     print '<a href="'.DOL_URL_ROOT.'/compta/bank/line.php?rowid='.$links[$key]['url_id'].'">';
-                    print img_object($langs->trans('ShowTransaction'), 'payment').' ';
+                    print img_object($langs->trans('Transaction'), 'payment').' ';
                     print $langs->trans("TransactionOnTheOtherAccount");
                     print '</a>';
                 }
                 elseif ($links[$key]['type'] == 'user') {
                     print '<a href="'.DOL_URL_ROOT.'/user/card.php?id='.$links[$key]['url_id'].'">';
-                    print img_object($langs->trans('ShowUser'), 'user').' ';
+                    print img_object($langs->trans('User'), 'user').' ';
                     print $langs->trans("User");
                     print '</a>';
                 }
 				elseif ($links[$key]['type'] == 'payment_various') {
                     print '<a href="'.DOL_URL_ROOT.'/compta/bank/various_payment/card.php?id='.$links[$key]['url_id'].'">';
-                    print img_object($langs->trans('ShowVariousPayment'), 'payment').' ';
+                    print img_object($langs->trans('VariousPayment'), 'payment').' ';
                     print $langs->trans("VariousPayment");
                     print '</a>';
                 }

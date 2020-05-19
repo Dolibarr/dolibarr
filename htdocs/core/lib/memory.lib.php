@@ -42,24 +42,24 @@ $shmoffset = 1000; // Max number of entries found into a language file. If too l
 function dol_setcache($memoryid, $data)
 {
 	global $conf;
-	$result=0;
+	$result = 0;
 
 	// Using a memcached server
-	if (! empty($conf->memcached->enabled) && class_exists('Memcached'))
+	if (!empty($conf->memcached->enabled) && class_exists('Memcached'))
 	{
 	    global $dolmemcache;
-		if (empty($dolmemcache) || ! is_object($dolmemcache))
+		if (empty($dolmemcache) || !is_object($dolmemcache))
     	{
-       	    $dolmemcache=new Memcached();
-       		$tmparray=explode(':', $conf->global->MEMCACHED_SERVER);
-       		$result=$dolmemcache->addServer($tmparray[0], $tmparray[1]?$tmparray[1]:11211);
-       		if (! $result) return -1;
+       	    $dolmemcache = new Memcached();
+       		$tmparray = explode(':', $conf->global->MEMCACHED_SERVER);
+       		$result = $dolmemcache->addServer($tmparray[0], $tmparray[1] ? $tmparray[1] : 11211);
+       		if (!$result) return -1;
        	}
 
-	    $memoryid=session_name().'_'.$memoryid;
+	    $memoryid = session_name().'_'.$memoryid;
 		//$dolmemcache->setOption(Memcached::OPT_COMPRESSION, false);
-		$dolmemcache->add($memoryid, $data);    // This fails if key already exists
-		$rescode=$dolmemcache->getResultCode();
+		$dolmemcache->add($memoryid, $data); // This fails if key already exists
+		$rescode = $dolmemcache->getResultCode();
 		if ($rescode == 0)
 		{
 			return count($data);
@@ -69,20 +69,20 @@ function dol_setcache($memoryid, $data)
 			return -$rescode;
 		}
 	}
-	elseif (! empty($conf->memcached->enabled) && class_exists('Memcache'))
+	elseif (!empty($conf->memcached->enabled) && class_exists('Memcache'))
 	{
 		global $dolmemcache;
-		if (empty($dolmemcache) || ! is_object($dolmemcache))
+		if (empty($dolmemcache) || !is_object($dolmemcache))
     	{
-       	    $dolmemcache=new Memcache();
-       		$tmparray=explode(':', $conf->global->MEMCACHED_SERVER);
-       		$result=$dolmemcache->addServer($tmparray[0], $tmparray[1]?$tmparray[1]:11211);
-       		if (! $result) return -1;
+       	    $dolmemcache = new Memcache();
+       		$tmparray = explode(':', $conf->global->MEMCACHED_SERVER);
+       		$result = $dolmemcache->addServer($tmparray[0], $tmparray[1] ? $tmparray[1] : 11211);
+       		if (!$result) return -1;
        	}
 
-       	$memoryid=session_name().'_'.$memoryid;
+       	$memoryid = session_name().'_'.$memoryid;
 		//$dolmemcache->setOption(Memcached::OPT_COMPRESSION, false);
-		$result=$dolmemcache->add($memoryid, $data);    // This fails if key already exists
+		$result = $dolmemcache->add($memoryid, $data); // This fails if key already exists
 		if ($result)
 		{
 			return count($data);
@@ -112,22 +112,22 @@ function dol_getcache($memoryid)
 	global $conf;
 
 	// Using a memcached server
-	if (! empty($conf->memcached->enabled) && class_exists('Memcached'))
+	if (!empty($conf->memcached->enabled) && class_exists('Memcached'))
 	{
 		global $m;
-		if (empty($m) || ! is_object($m))
+		if (empty($m) || !is_object($m))
     	{
-            $m=new Memcached();
-       		$tmparray=explode(':', $conf->global->MEMCACHED_SERVER);
-       		$result=$m->addServer($tmparray[0], $tmparray[1]?$tmparray[1]:11211);
-       		if (! $result) return -1;
+            $m = new Memcached();
+       		$tmparray = explode(':', $conf->global->MEMCACHED_SERVER);
+       		$result = $m->addServer($tmparray[0], $tmparray[1] ? $tmparray[1] : 11211);
+       		if (!$result) return -1;
        	}
 
-		$memoryid=session_name().'_'.$memoryid;
+		$memoryid = session_name().'_'.$memoryid;
 		//$m->setOption(Memcached::OPT_COMPRESSION, false);
 		//print "Get memoryid=".$memoryid;
-		$data=$m->get($memoryid);
-		$rescode=$m->getResultCode();
+		$data = $m->get($memoryid);
+		$rescode = $m->getResultCode();
 		//print "memoryid=".$memoryid." - rescode=".$rescode." - data=".count($data)."\n<br>";
 		//var_dump($data);
 		if ($rescode == 0)
@@ -139,20 +139,20 @@ function dol_getcache($memoryid)
 			return -$rescode;
 		}
 	}
-	elseif (! empty($conf->memcached->enabled) && class_exists('Memcache'))
+	elseif (!empty($conf->memcached->enabled) && class_exists('Memcache'))
 	{
 		global $m;
-		if (empty($m) || ! is_object($m))
+		if (empty($m) || !is_object($m))
     	{
-       	    $m=new Memcache();
-       		$tmparray=explode(':', $conf->global->MEMCACHED_SERVER);
-       		$result=$m->addServer($tmparray[0], $tmparray[1]?$tmparray[1]:11211);
-       		if (! $result) return -1;
+       	    $m = new Memcache();
+       		$tmparray = explode(':', $conf->global->MEMCACHED_SERVER);
+       		$result = $m->addServer($tmparray[0], $tmparray[1] ? $tmparray[1] : 11211);
+       		if (!$result) return -1;
        	}
 
-       	$memoryid=session_name().'_'.$memoryid;
+       	$memoryid = session_name().'_'.$memoryid;
 		//$m->setOption(Memcached::OPT_COMPRESSION, false);
-		$data=$m->get($memoryid);
+		$data = $m->get($memoryid);
 		//print "memoryid=".$memoryid." - rescode=".$rescode." - data=".count($data)."\n<br>";
 		//var_dump($data);
 		if ($data)

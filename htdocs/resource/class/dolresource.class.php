@@ -871,10 +871,12 @@ class Dolresource extends CommonObject
 	    return $resources;
     }
 
-    /*
+    /**
      *  Return an int number of resources linked to the element
      *
-     *  @return     int
+     *  @param		string	$element		Element type
+     *  @param		int		$element_id		Element id
+     *  @return     int						Nb of resources loaded
      */
     public function fetchElementResources($element, $element_id)
     {

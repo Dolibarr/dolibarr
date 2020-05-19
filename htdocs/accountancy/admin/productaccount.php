@@ -362,7 +362,6 @@ if ($result)
     print '<input type="hidden" name="action" value="update">';
     print '<input type="hidden" name="sortfield" value="'.$sortfield.'">';
     print '<input type="hidden" name="sortorder" value="'.$sortorder.'">';
-    print '<input type="hidden" name="page" value="'.$page.'">';
 
     print load_fiche_titre($langs->trans("ProductsBinding"), '', 'title_accountancy');
 	print '<br>';
@@ -412,7 +411,7 @@ if ($result)
     //print '<br><div class="center">'.$buttonsave.'</div>';
 
 	$texte = $langs->trans("ListOfProductsServices");
-	print_barre_liste($texte, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, $buttonsave, $num, $nbtotalofrecords, '', 0, '', '', $limit);
+	print_barre_liste($texte, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, $buttonsave, $num, $nbtotalofrecords, '', 0, '', '', $limit, 0, 0, 1);
 
 	print '<div class="div-table-responsive">';
 	print '<table class="liste '.($moreforfilter ? "listwithfilterbefore" : "").'">';

@@ -176,11 +176,12 @@ if (is_array($qualifiedjobs) && (count($qualifiedjobs) > 0)) {
 		// Force reload of setup for the current entity
 		if ((empty($line->entity) ? 1 : $line->entity) != $conf->entity)
 		{
-			dol_syslog("cron_run_jobs.php we work on another entity conf than ".$conf->entity." so we reload user and conf", LOG_DEBUG);
-		    echo " -> we change entity so we reload user and conf";
+			dol_syslog("cron_run_jobs.php we work on another entity conf than ".$conf->entity." so we reload mysoc, langs, user and conf", LOG_DEBUG);
+			echo " -> we change entity so we reload mysoc, langs, user and conf";
 
 		    $conf->entity = (empty($line->entity) ? 1 : $line->entity);
 		    $conf->setValues($db); // This make also the $mc->setValues($conf); that reload $mc->sharings
+		    $mysoc->setMysoc($conf);
 
 		    // Force recheck that user is ok for the entity to process and reload permission for entity
 		    if ($conf->entity != $user->entity && $user->entity != 0)
@@ -203,6 +204,11 @@ if (is_array($qualifiedjobs) && (count($qualifiedjobs) > 0)) {
     		    }
     		    $user->getrights();
 		    }
+
+		    // Reload langs
+		    $langcode = (empty($conf->global->MAIN_LANG_DEFAULT)?'auto':$conf->global->MAIN_LANG_DEFAULT);
+		    if (! empty($user->conf->MAIN_LANG_DEFAULT)) $langcode = $user->conf->MAIN_LANG_DEFAULT;
+		    if ($langs->getDefaultLang() != $langcode) $langs->setDefaultLang($langcode);
 		}
 
 		//If date_next_jobs is less of current date, execute the program, and store the execution time of the next execution in database
@@ -227,11 +233,13 @@ if (is_array($qualifiedjobs) && (count($qualifiedjobs) > 0)) {
 				echo "You can also enable module Log if not yet enabled, run again and take a look into dolibarr.log file\n";
 				dol_syslog("cron_run_jobs.php::run_jobs Error ".$cronjob->error, LOG_ERR);
 				$nbofjobslaunchedko++;
+				$resultstring = 'KO';
 			} else {
 				$nbofjobslaunchedok++;
+				$resultstring = 'OK';
 			}
 
-			echo " - result of run_jobs = ".$result;
+			echo " - run_jobs ".$resultstring." result = ".$result;
 
 			// We re-program the next execution and stores the last execution time for this job
 			$result = $cronjob->reprogram_jobs($userlogin, $now);

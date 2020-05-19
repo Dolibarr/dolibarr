@@ -73,7 +73,11 @@ class ActionCommTest extends PHPUnit\Framework\TestCase
         print "\n";
     }
 
-    // Static methods
+    /**
+     * setUpBeforeClass
+     *
+     * @return void
+     */
     public static function setUpBeforeClass()
     {
         global $conf,$user,$langs,$db;
@@ -84,7 +88,11 @@ class ActionCommTest extends PHPUnit\Framework\TestCase
         print __METHOD__."\n";
     }
 
-    // tear down after class
+    /**
+     * tearDownAfterClass
+     *
+     * @return	void
+     */
     public static function tearDownAfterClass()
     {
         global $conf,$user,$langs,$db;
@@ -140,7 +148,7 @@ class ActionCommTest extends PHPUnit\Framework\TestCase
         $localobject->type_code   = 'AC_OTH_AUTO';		// Type of event ('AC_OTH', 'AC_OTH_AUTO', 'AC_XXX'...)
         $localobject->code        = 'AC_PHPUNITTEST';
         $localobject->label       = 'This is a description';
-        $localobject->note        = 'This is note';
+        $localobject->note_private = 'This is note';
         $localobject->fk_project  = 0;
         $localobject->datep       = $now;
         $localobject->datef       = $now;

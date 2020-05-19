@@ -249,6 +249,13 @@ class Website extends CommonObject
             // }
         }
 
+	    if (! $error) {
+	    	$stringtodolibarrfile = "# Some properties for Dolibarr web site CMS\n";
+	    	$stringtodolibarrfile .= "param=value\n";
+	    	//print $conf->website->dir_output.'/'.$this->ref.'/.dolibarr';exit;
+	    	file_put_contents($conf->website->dir_output.'/'.$this->ref.'/.dolibarr', $stringtodolibarrfile);
+        }
+
 		// Commit or rollback
 		if ($error) {
 			$this->db->rollback();
@@ -668,7 +675,7 @@ class Website extends CommonObject
 
 		if (!$error)
 		{
-			dolCopyDir($pathofwebsiteold, $pathofwebsitenew, $conf->global->MAIN_UMASK, 0);
+			dolCopyDir($pathofwebsiteold, $pathofwebsitenew, $conf->global->MAIN_UMASK, 0, null, 2);
 
 			// Check symlink to medias and restore it if ko
 			$pathtomedias = DOL_DATA_ROOT.'/medias'; // Target
@@ -927,30 +934,34 @@ class Website extends CommonObject
 		    $arrayreplacementincss['file=logos%2Fthumbs%2F'.$mysoc->logo] = "file=logos%2Fthumbs%2F__LOGO_KEY__";
 		}
 
+		// Create output directories
+		dol_syslog("Create containers dir");
+		dol_mkdir($conf->website->dir_temp.'/'.$website->ref.'/containers');
+		dol_mkdir($conf->website->dir_temp.'/'.$website->ref.'/medias/image/websitekey');
+		dol_mkdir($conf->website->dir_temp.'/'.$website->ref.'/medias/js/websitekey');
+
+		// Copy files into 'containers'
 		$srcdir = $conf->website->dir_output.'/'.$website->ref;
 		$destdir = $conf->website->dir_temp.'/'.$website->ref.'/containers';
 
-		// Create containers dir
-		dol_syslog("Create containers dir");
-		dol_mkdir($conf->website->dir_temp.'/'.$website->ref.'/containers');
-
-		// Copy files into medias
 		dol_syslog("Copy content from ".$srcdir." into ".$destdir);
-		dolCopyDir($srcdir, $destdir, 0, 1, $arrayreplacementinfilename);
+		dolCopyDir($srcdir, $destdir, 0, 1, $arrayreplacementinfilename, 2);
 
+		// Copy files into medias/image
 		$srcdir = DOL_DATA_ROOT.'/medias/image/'.$website->ref;
 		$destdir = $conf->website->dir_temp.'/'.$website->ref.'/medias/image/websitekey';
 
 		dol_syslog("Copy content from ".$srcdir." into ".$destdir);
 		dolCopyDir($srcdir, $destdir, 0, 1, $arrayreplacementinfilename);
 
+		// Copy files into medias/js
 		$srcdir = DOL_DATA_ROOT.'/medias/js/'.$website->ref;
 		$destdir = $conf->website->dir_temp.'/'.$website->ref.'/medias/js/websitekey';
 
-		// Copy containers files
 		dol_syslog("Copy content from ".$srcdir." into ".$destdir);
 		dolCopyDir($srcdir, $destdir, 0, 1, $arrayreplacementinfilename);
 
+		// Make some replacement into some files
 		$cssindestdir = $conf->website->dir_temp.'/'.$website->ref.'/containers/styles.css.php';
 		dolReplaceInFile($cssindestdir, $arrayreplacementincss);
 

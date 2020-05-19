@@ -227,14 +227,14 @@ class pdf_sepamandate extends ModeleBankAccountDoc
 				$posY += 2;
 
 				$pdf->SetXY($this->marge_gauche, $posY);
-				$pdf->MultiCell($this->page_largeur - $this->marge_gauche - $this->marge_droite, 3, $outputlangs->transnoentitiesnoconv("RUMLong").' ('.$outputlangs->transnoentitiesnoconv("RUM").')'.' : '.$object->rum, 0, 'L');
+				$pdf->MultiCell($this->page_largeur - $this->marge_gauche - $this->marge_droite, 3, $outputlangs->transnoentitiesnoconv("RUMLong").' ('.$outputlangs->transnoentitiesnoconv("RUM").') : '.$object->rum, 0, 'L');
 
 				$posY = $pdf->GetY();
 				$posY += 2;
 				$pdf->SetXY($this->marge_gauche, $posY);
 				$ics = '';
 				if (!empty($conf->global->PRELEVEMENT_ICS)) $ics = $conf->global->PRELEVEMENT_ICS;
-				$pdf->MultiCell($this->page_largeur - $this->marge_gauche - $this->marge_droite, 3, $outputlangs->transnoentitiesnoconv("CreditorIdentifier").' ('.$outputlangs->transnoentitiesnoconv("ICS").')'.' : '.$ics, 0, 'L');
+				$pdf->MultiCell($this->page_largeur - $this->marge_gauche - $this->marge_droite, 3, $outputlangs->transnoentitiesnoconv("CreditorIdentifier").' ('.$outputlangs->transnoentitiesnoconv("ICS").') : '.$ics, 0, 'L');
 
 				$posY = $pdf->GetY();
 				$posY += 1;

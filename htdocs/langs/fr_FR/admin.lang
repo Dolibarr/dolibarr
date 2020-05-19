@@ -1272,6 +1272,7 @@ RuleForGeneratedPasswords=Règle pour la génération des mots de passe proposé
 DisableForgetPasswordLinkOnLogonPage=Cacher le lien "Mot de passe oublié" sur la page de connexion
 UsersSetup=Configuration du module utilisateurs
 UserMailRequired=Email requis pour créer un nouvel utilisateur
+UserHideInactive=Cacher les utilisateurs inactifs
 UsersDocModules=Modèles de documents pour les documents générés à partir de la fiche utilisateur
 GroupsDocModules=Modèles de documents pour les documents générés à partir de la fiche d'un groupe
 ##### HRM setup #####
@@ -1803,6 +1804,7 @@ TopMenuDisableImages=Cacher les images du menu principal
 LeftMenuBackgroundColor=Couleur de fond pour le menu Gauche
 BackgroundTableTitleColor=Couleur de fond pour la ligne de titres des liste/tableaux
 BackgroundTableTitleTextColor=Couleur du texte pour la ligne de titre des tableaux
+BackgroundTableTitleTextlinkColor=Couleur du texte pour la ligne de titre lien des tableaux
 BackgroundTableLineOddColor=Couleur de fond pour les lignes impaires des tables
 BackgroundTableLineEvenColor=Couleur de fond pour les lignes paires des tales
 MinimumNoticePeriod=Période de préavis minimum (Votre demande de congé doit être faite avant ce délai)

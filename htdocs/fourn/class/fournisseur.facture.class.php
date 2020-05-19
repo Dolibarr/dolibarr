@@ -66,7 +66,7 @@ class FactureFournisseur extends CommonInvoice
     /**
      * @var string String with name of icon for myobject. Must be the part after the 'object_' into object_myobject.png
      */
-    public $picto = 'bill';
+    public $picto = 'supplier_invoice';
 
     /**
      * 0=No test on entity, 1=Test with field entity, 2=Test with link by societe
@@ -977,9 +977,9 @@ class FactureFournisseur extends CommonInvoice
             }
         }
 
-		if (! $error)
+		if (!$error)
 		{
-			$result=$this->insertExtraFields();
+			$result = $this->insertExtraFields();
 			if ($result < 0)
 			{
 				$error++;
@@ -1180,10 +1180,14 @@ class FactureFournisseur extends CommonInvoice
 
         if (!$error)
         {
+            $main = MAIN_DB_PREFIX.'facture_fourn_det';
+            $ef = $main."_extrafields";
+            $sqlef = "DELETE FROM $ef WHERE fk_object IN (SELECT rowid FROM $main WHERE fk_facture_fourn = $rowid)";
+            $resqlef = $this->db->query($sqlef);
             $sql = 'DELETE FROM '.MAIN_DB_PREFIX.'facture_fourn_det WHERE fk_facture_fourn = '.$rowid.';';
             dol_syslog(get_class($this)."::delete", LOG_DEBUG);
             $resql = $this->db->query($sql);
-            if ($resql)
+            if ($resqlef && $resql)
             {
                 $sql = 'DELETE FROM '.MAIN_DB_PREFIX.'facture_fourn WHERE rowid = '.$rowid;
                 dol_syslog(get_class($this)."::delete", LOG_DEBUG);
@@ -2034,7 +2038,7 @@ class FactureFournisseur extends CommonInvoice
 		    $this->errors[] = $line->error;
 	    } else {
 		    // Update total price into invoice record
-		    $res = $this->update_price('', 'auto');
+		    $res = $this->update_price('', 'auto', 0, $this->thirdparty);
 	    }
 
 	    return $res;
@@ -2351,7 +2355,7 @@ class FactureFournisseur extends CommonInvoice
         if ($this->type == self::TYPE_CREDIT_NOTE) $picto .= 'a'; // Credit note
         if ($this->type == self::TYPE_DEPOSIT)     $picto .= 'd'; // Deposit invoice
 
-        $label = '<u>'.$langs->trans("ShowSupplierInvoice").'</u>';
+        $label = '<u>'.$langs->trans("SupplierInvoice").'</u>';
         if (!empty($this->ref))
             $label .= '<br><b>'.$langs->trans('Ref').':</b> '.$this->ref;
         if (!empty($this->ref_supplier))
@@ -2674,6 +2678,7 @@ class FactureFournisseur extends CommonInvoice
         if ($result < 0)
         {
             $this->error = $object->error;
+            $this->errors = $object->errors;
             $error++;
         }
 
@@ -3145,9 +3150,9 @@ class SupplierInvoiceLine extends CommonObjectLine
 		$this->deleteObjectLinked();
 
 		// Remove extrafields
-        if (! $error)
+        if (!$error)
         {
-        	$result=$this->deleteExtraFields();
+        	$result = $this->deleteExtraFields();
         	if ($result < 0)
         	{
         		$error++;

@@ -38,7 +38,7 @@ function member_prepare_head(Adherent $object)
 	$head = array();
 
 	$head[$h][0] = DOL_URL_ROOT.'/adherents/card.php?rowid='.$object->id;
-	$head[$h][1] = $langs->trans("Card");
+	$head[$h][1] = $langs->trans("Member");
 	$head[$h][2] = 'general';
 	$h++;
 
@@ -124,7 +124,7 @@ function member_type_prepare_head(AdherentType $object)
 	$head = array();
 
 	$head[$h][0] = DOL_URL_ROOT.'/adherents/type.php?rowid='.$object->id;
-	$head[$h][1] = $langs->trans("Card");
+	$head[$h][1] = $langs->trans("MemberType");
 	$head[$h][2] = 'card';
 	$h++;
 
@@ -276,7 +276,7 @@ function subscription_prepare_head(Subscription $object)
 	$head = array();
 
 	$head[$h][0] = DOL_URL_ROOT.'/adherents/subscription/card.php?rowid='.$object->id;
-	$head[$h][1] = $langs->trans("Card");
+	$head[$h][1] = $langs->trans("Subscription");
 	$head[$h][2] = 'general';
 	$h++;
 

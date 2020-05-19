@@ -236,8 +236,11 @@ function GetRootPath()
     return substr($sRealPath, 0, $position);
 }
 
-// Emulate the asp Server.mapPath function.
-// given an url path return the physical directory that it corresponds to
+/**
+ *  Emulate the asp Server.mapPath function.
+ *  @param	string		$path		given an url path return the physical directory that it corresponds to
+ *  @return	string					Path
+ */
 function Server_MapPath($path)
 {
     // This function is available only for Apache
@@ -338,7 +341,12 @@ function GetCurrentFolder()
 	return $sCurrentFolder;
 }
 
-// Do a cleanup of the folder name to avoid possible problems
+/**
+ * Do a cleanup of the folder name to avoid possible problems
+ *
+ * @param	string	$sNewFolderName		Folder
+ * @return	string						Folder sanitized
+ */
 function SanitizeFolderName($sNewFolderName)
 {
 	$sNewFolderName = stripslashes($sNewFolderName);
@@ -349,7 +357,12 @@ function SanitizeFolderName($sNewFolderName)
 	return $sNewFolderName;
 }
 
-// Do a cleanup of the file name to avoid possible problems
+/**
+ * Do a cleanup of the file name to avoid possible problems
+ *
+ * @param	string	$sNewFileName		Folder
+ * @return	string						Folder sanitized
+ */
 function SanitizeFileName($sNewFileName)
 {
 	global $Config;
@@ -366,7 +379,15 @@ function SanitizeFileName($sNewFileName)
 	return $sNewFileName;
 }
 
-// This is the function that sends the results of the uploading process.
+/**
+ * This is the function that sends the results of the uploading process.
+ *
+ * @param	string		$errorNumber	errorNumber
+ * @param	string		$fileUrl		fileUrl
+ * @param	string		$fileName		fileName
+ * @param	string		$customMsg		customMsg
+ * @return	void
+ */
 function SendUploadResults($errorNumber, $fileUrl = '', $fileName = '', $customMsg = '')
 {
 	// Minified version of the document.domain automatic fix script (#1919).

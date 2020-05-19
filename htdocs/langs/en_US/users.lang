@@ -78,6 +78,7 @@ UserWillBeExternalUser=Created user will be an external user (because linked to 
 IdPhoneCaller=Id phone caller
 NewUserCreated=User %s created
 NewUserPassword=Password change for %s
+NewPasswordValidated=Your new password have been validated and must be used now to login. 
 EventUserModified=User %s modified
 UserDisabled=User %s disabled
 UserEnabled=User %s activated
