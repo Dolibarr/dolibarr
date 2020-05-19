@@ -8,7 +8,7 @@
  * Copyright (C) 2016      Florian Henry        <florian.henry@atm-consulting.fr>
  * Copyright (C) 2017      Ferran Marcet        <fmarcet@2byte.es>
  * Copyright (C) 2018      Frédéric France      <frederic.france@netlogic.fr>
- * Copyright (C) 2019      Christophe Battarel	<christophe@altairis.fr>
+ * Copyright (C) 2019-2020 Christophe Battarel	<christophe@altairis.fr>
  *
  * This	program	is free	software; you can redistribute it and/or modify
  * it under the	terms of the GNU General Public	License	as published by
@@ -53,6 +53,8 @@ $ref = GETPOST('ref');
 $lineid = GETPOST('lineid', 'int');
 $action = GETPOST('action', 'aZ09');
 $fk_default_warehouse = GETPOST('fk_default_warehouse', 'int');
+$cancel = GETPOST('cancel', 'alpha');
+$confirm = GETPOST('confirm', 'alpha');
 
 if ($user->socid)
 	$socid = $user->socid;
@@ -366,6 +368,34 @@ if ($action == 'dispatch' && $user->rights->fournisseur->commande->receptionner)
 	}
 }
 
+// Remove a dispatched line
+if ($action == 'confirm_deleteline' && $confirm == 'yes' && $user->rights->fournisseur->commande->receptionner)
+{
+	$supplierorderdispatch = new CommandeFournisseurDispatch($db);
+	$result = $supplierorderdispatch->fetch($lineid);
+	if ($result > 0) $result = $supplierorderdispatch->delete($user);
+	if ($result < 0)
+	{
+		setEventMessages($object->error, $object->errors, 'errors');
+	}
+}
+
+// Update a dispatched line
+if ($action == 'updateline' && $user->rights->fournisseur->commande->receptionner)
+{
+	$supplierorderdispatch = new CommandeFournisseurDispatch($db);
+	$result = $supplierorderdispatch->fetch($lineid);
+	if ($result > 0)
+	{
+		$supplierorderdispatch->qty = GETPOST('qty', 'int');
+		$supplierorderdispatch->fk_entrepot = GETPOST('fk_entrepot');
+		$result = $supplierorderdispatch->update($user);
+	}
+	if ($result < 0)
+	{
+		setEventMessages($object->error, $object->errors, 'errors');
+	}
+}
 
 /*
  * View
@@ -379,7 +409,7 @@ $warehouse_static = new Entrepot($db);
 $supplierorderdispatch = new CommandeFournisseurDispatch($db);
 
 $help_url = 'EN:Module_Suppliers_Orders|FR:CommandeFournisseur|ES:Módulo_Pedidos_a_proveedores';
-llxHeader('', $langs->trans("Order"), $help_url, '', 0, 0, array('/fourn/js/lib_dispatch.js.php'));
+llxHeader('', $langs->trans("OrderDispatch"), $help_url, '', 0, 0, array('/fourn/js/lib_dispatch.js.php'));
 
 if ($id > 0 || !empty($ref)) {
 	$soc = new Societe($db);
@@ -393,6 +423,23 @@ if ($id > 0 || !empty($ref)) {
 	$title = $langs->trans("SupplierOrder");
 	dol_fiche_head($head, 'dispatch', $title, -1, 'order');
 
+	$formconfirm='';
+
+	// Confirmation to delete line
+	if ($action == 'ask_deleteline')
+	{
+		$formconfirm=$form->formconfirm($_SERVER["PHP_SELF"].'?id='.$object->id.'&lineid='.$lineid, $langs->trans('DeleteLine'), $langs->trans('ConfirmDeleteLine'), 'confirm_deleteline', '', 0, 1);
+	}
+
+	// Call Hook formConfirm
+	$parameters = array('lineid' => $lineid);
+	// Note that $action and $object may be modified by hook
+	$reshook = $hookmanager->executeHooks('formConfirm', $parameters, $object, $action);
+	if (empty($reshook)) $formconfirm.=$hookmanager->resPrint;
+	elseif ($reshook > 0) $formconfirm=$hookmanager->resPrint;
+
+	// Print form confirm
+	print $formconfirm;
 
 	// Supplier order card
 
@@ -493,6 +540,9 @@ if ($id > 0 || !empty($ref)) {
 		require_once DOL_DOCUMENT_ROOT.'/product/class/html.formproduct.class.php';
 		$formproduct = new FormProduct($db);
 		$formproduct->loadWarehouses();
+		$entrepot = new Entrepot($db);
+		$listwarehouses=$entrepot->list_array(1);
+
 
 		if (empty($conf->reception->enabled))print '<form method="POST" action="dispatch.php?id='.$object->id.'">';
         else print '<form method="post" action="'.dol_buildpath('/reception/card.php', 1).'?originid='.$object->id.'&origin=supplierorder">';
@@ -567,8 +617,6 @@ if ($id > 0 || !empty($ref)) {
 			$i = 0;
 
 			if ($num) {
-				$entrepot = new Entrepot($db);
-				$listwarehouses = $entrepot->list_array(1);
 
 				print '<tr class="liste_titre">';
 
@@ -965,7 +1013,6 @@ if ($id > 0 || !empty($ref)) {
 				print '<td class="dispatch_dlc_title">'.$langs->trans("SellByDate").'</td>';
 			}
 			print '<td class="right">'.$langs->trans("QtyDispatched").'</td>';
-			print '<td></td>';
 			print '<td>'.$langs->trans("Warehouse").'</td>';
 			print '<td>'.$langs->trans("Comment").'</td>';
 
@@ -977,14 +1024,23 @@ if ($id > 0 || !empty($ref)) {
 				print '<td class="center"></td>';
 			}
 
-			print '<td class="center"></td>';
+			print '<td class="center" colspan="2"></td>';
 
 			print "</tr>\n";
 
 			while ($i < $num) {
 				$objp = $db->fetch_object($resql);
 
-				print "<tr ".$bc[$var].">";
+				if ($action == 'editline' && $lineid == $objp->dispatchlineid)
+				{
+					print '<form name="editdispatchedlines" id="editdispatchedlines" action="' . $_SERVER["PHP_SELF"] . '?id=' . $object->id . '#line_' . GETPOST('lineid') . '" method="POST">
+					<input type="hidden" name="token" value="' . $_SESSION ['newtoken'] . '">
+					<input type="hidden" name="action" value="updateline">
+					<input type="hidden" name="mode" value="">
+					<input type="hidden" name="lineid" value="' . $objp->dispatchlineid . '">';
+				}
+
+				print '<tr ' . $bc[$var] . ' id="line_'.$objp->dispatchlineid.'" >';
 
 				if (!empty($conf->reception->enabled)) {
 					print '<td>';
@@ -1011,14 +1067,34 @@ if ($id > 0 || !empty($ref)) {
 				}
 
 				// Qty
-				print '<td class="right">'.$objp->qty.'</td>';
-				print '<td>&nbsp;</td>';
+				if ($action == 'editline' && $lineid == $objp->dispatchlineid)
+				{
+					print '<td class="right"><input style="width: 50px;" type="number" min="1" name="qty" value="' . $objp->qty . '" /></td>';
+				}
+				else
+				{
+					print '<td class="right">'.$objp->qty.'</td>';
+				}
 
 				// Warehouse
 				print '<td>';
-				$warehouse_static->id = $objp->warehouse_id;
-				$warehouse_static->libelle = $objp->entrepot;
-				print $warehouse_static->getNomUrl(1);
+				if ($action == 'editline' && $lineid == $objp->dispatchlineid)
+				{
+					if (count($listwarehouses) > 1) {
+						print $formproduct->selectWarehouses(GETPOST("fk_entrepot")?GETPOST("fk_entrepot"):($objp->warehouse_id?$objp->warehouse_id:''), "fk_entrepot", '', 1, 0, $objp->fk_product, '', 1, 1, null, 'csswarehouse');
+					} elseif (count($listwarehouses) == 1) {
+						print $formproduct->selectWarehouses(GETPOST("fk_entrepot")?GETPOST("fk_entrepot"):($objp->warehouse_id?$objp->warehouse_id:''), "fk_entrepot", '', 0, 0, $objp->fk_product, '', 1, 1, null, 'csswarehouse');
+					} else {
+						$langs->load("errors");
+						print $langs->trans("ErrorNoWarehouseDefined");
+					}
+				}
+				else
+				{
+					$warehouse_static->id = $objp->warehouse_id;
+					$warehouse_static->libelle = $objp->entrepot;
+					print $warehouse_static->getNomUrl(1);
+				}
 				print '</td>';
 
 				// Comment
@@ -1069,9 +1145,33 @@ if ($id > 0 || !empty($ref)) {
 					print '</td>';
 				}
 
-				print '<td class="center"></td>';
+				if ($action != 'editline' ||  && $lineid != $objp->dispatchlineid)
+				{
+					print '<td class="linecoledit center">';
+					print '<a href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=editline&amp;lineid=' . $objp->dispatchlineid .'#line_'. $objp->dispatchlineid . '">';
+					print img_edit();
+					print '</a>';
+					print '</td>';
+
+					print '<td class="linecoldelete center">';
+					print '<a href="' . $_SERVER["PHP_SELF"] . '?id=' . $object->id . '&amp;action=ask_deleteline&amp;lineid=' . $objp->dispatchlineid . '#dispatch_received_products">';
+					print img_delete();
+					print '</a>';
+					print '</td>';
+				}
+				else
+				{
+					print '<td class="center valignmiddle">';
+					print '<input type="submit" class="button" id="savelinebutton" name="save" value="'.$langs->trans("Save").'" />';
+					print '</td>';
+					print '<td class="center valignmiddle">';
+					print '<input type="submit" class="button" id="cancellinebutton" name="cancel" value="'. $langs->trans("Cancel").'" />';
+					print '</td>';
+				}
+
 
 				print "</tr>\n";
+				if ($action == 'editline' && $lineid == $objp->dispatchlineid)  print '</form>';
 
 				$i++;
 			}
