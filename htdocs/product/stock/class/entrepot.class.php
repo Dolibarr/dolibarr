@@ -291,7 +291,7 @@ class Entrepot extends CommonObject
 
 		$this->label = trim(!empty($this->label) ? $this->label : $this->libelle);
 
-    $this->description = trim($this->description);
+		$this->description = trim($this->description);
 
 		$this->lieu = trim($this->lieu);
 
