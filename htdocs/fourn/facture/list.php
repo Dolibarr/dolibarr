@@ -955,6 +955,9 @@ if ($resql)
 			$multicurrency_remaintopay = price2num($facturestatic->multicurrency_total_ttc - $multicurrency_totalpay);
 
 			$facturestatic->alreadypaid = ($paiement ? $paiement : 0);
+			$facturestatic->paye = $obj->paye;
+			$facturestatic->statut = $obj->fk_statut;
+			$facturestatic->type = $obj->type;
 
 
             //If invoice has been converted and the conversion has been used, we dont have remain to pay on invoice
