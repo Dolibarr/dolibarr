@@ -244,7 +244,7 @@ class Entrepot extends CommonObject
 					dol_syslog(get_class($this)."::create return -3");
 					$this->db->rollback();
 					return -3;
-				}gateway-addon
+				}
 			}
 			else {
 				$this->error = "Failed to get insert id";
