@@ -328,7 +328,7 @@ class ProductCombination
 		$child->fetch($this->fk_product_child);
 
 		// Get the label of the child from the DB to preserve user changes
-        $childDataSqlQuery = 'SELECT label FROM ' . MAIN_DB_PREFIX . "product "
+        $childDataSqlQuery = 'SELECT label FROM ' . MAIN_DB_PREFIX . 'product '
                             .'WHERE rowid = ' . $this->fk_product_child;
         $childQuery = $this->db->query($childDataSqlQuery);
         $childLabel = $this->db->fetch_row($childQuery);
