@@ -74,8 +74,7 @@ function societe_prepare_head(Societe $object)
 		    $h++;
 		}
     }
-    else
-	{
+    else {
 		$head[$h][0] = DOL_URL_ROOT.'/societe/societecontact.php?socid='.$object->id;
 		$nbContact = count($object->liste_contact(-1, 'internal')) + count($object->liste_contact(-1, 'external'));
 		$head[$h][1] = $langs->trans("ContactsAddresses");
@@ -475,8 +474,7 @@ function getCountry($searchkey, $withcode = '', $dbtouse = 0, $outputlangs = '',
             elseif ($withcode === 'all') $result = array('id'=>$obj->rowid, 'code'=>$obj->code, 'label'=>$label);
             else $result = $label;
         }
-        else
-        {
+        else {
             $result = 'NotDefined';
         }
         $dbtouse->free($resql);
@@ -561,8 +559,7 @@ function getState($id, $withcode = '', $dbtouse = 0, $withregion = 0, $outputlan
                 }
             }
         }
-        else
-        {
+        else {
             return $langs->transnoentitiesnoconv("NotDefined");
         }
     }
@@ -607,8 +604,7 @@ function currency_name($code_iso, $withcode = '', $outputlangs = null)
             if ($withcode) return ($label == $code_iso) ? "$code_iso" : "$code_iso - $label";
             else return $label;
         }
-        else
-        {
+        else {
             return $code_iso;
         }
     }
@@ -642,8 +638,7 @@ function getFormeJuridiqueLabel($code)
             $label = ($obj->libelle != '-' ? $obj->libelle : '');
             return $label;
         }
-        else
-        {
+        else {
             return $langs->trans("NotDefined");
         }
     }
@@ -832,14 +827,12 @@ function show_projects($conf, $langs, $db, $object, $backtopage = '', $nocreatel
                     $i++;
                 }
             }
-            else
-			{
+            else {
             	print '<tr class="oddeven"><td colspan="8" class="opacitymedium">'.$langs->trans("None").'</td></tr>';
             }
             $db->free($result);
         }
-        else
-        {
+        else {
             dol_print_error($db);
         }
         print "</table>";
@@ -1239,8 +1232,7 @@ function show_contacts($conf, $langs, $db, $object, $backtopage = '')
             $i++;
         }
     }
-    else
-	{
+    else {
 		$colspan = 1;
 		foreach ($arrayfields as $key => $val) { if (!empty($val['checked'])) $colspan++; }
 		print '<tr><td colspan="'.$colspan.'" class="opacitymedium">'.$langs->trans("None").'</td></tr>';
@@ -1327,8 +1319,7 @@ function show_actions_done($conf, $langs, $db, $filterobj, $objcon = '', $noprin
         if (is_object($objcon) && $objcon->id > 0) {
             $sql = "SELECT DISTINCT a.id, a.label as label,";
         }
-        else
-        {
+        else {
             $sql = "SELECT a.id, a.label as label,";
         }
         $sql .= " a.datep as dp,";
@@ -1425,14 +1416,12 @@ function show_actions_done($conf, $langs, $db, $filterobj, $objcon = '', $noprin
             {
                 if ($actioncode == 'AC_NON_AUTO') $sql .= " AND c.type != 'systemauto'";
                 elseif ($actioncode == 'AC_ALL_AUTO') $sql .= " AND c.type = 'systemauto'";
-                else
-                {
+                else {
                     if ($actioncode == 'AC_OTH') $sql .= " AND c.type != 'systemauto'";
                     elseif ($actioncode == 'AC_OTH_AUTO') $sql .= " AND c.type = 'systemauto'";
                 }
             }
-            else
-            {
+            else {
                 if ($actioncode == 'AC_NON_AUTO') $sql .= " AND c.type != 'systemauto'";
                 elseif ($actioncode == 'AC_ALL_AUTO') $sql .= " AND c.type = 'systemauto'";
                 else $sql .= " AND c.code = '".$db->escape($actioncode)."'";
@@ -1550,8 +1539,7 @@ function show_actions_done($conf, $langs, $db, $filterobj, $objcon = '', $noprin
 	            $i++;
 	        }
 	    }
-	    else
-	    {
+	    else {
 	        dol_print_error($db);
 	    }
     }
@@ -1577,8 +1565,7 @@ function show_actions_done($conf, $langs, $db, $filterobj, $objcon = '', $noprin
         {
             $out .= '<input type="hidden" name="id" value="'.$objcon->id.'" />';
         }
-        else
-        {
+        else {
             $out .= '<input type="hidden" name="id" value="'.$filterobj->id.'" />';
         }
         if ($filterobj && get_class($filterobj) == 'Societe') $out .= '<input type="hidden" name="socid" value="'.$filterobj->id.'" />';

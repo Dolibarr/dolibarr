@@ -186,8 +186,7 @@ class pdf_soleil extends ModelePDFFicheinter
 				$dir = $conf->ficheinter->dir_output;
 				$file = $dir."/SPECIMEN.pdf";
 			}
-			else
-			{
+			else {
 				$objectref = dol_sanitizeFileName($object->ref);
 				$dir = $conf->ficheinter->dir_output."/".$objectref;
 				$file = $dir."/".$objectref.".pdf";
@@ -289,8 +288,7 @@ class pdf_soleil extends ModelePDFFicheinter
 					$tab_height = $tab_height - $height_note;
 					$tab_top = $nexY + 6;
 				}
-				else
-				{
+				else {
 					$height_note = 0;
 				}
 
@@ -378,7 +376,7 @@ class pdf_soleil extends ModelePDFFicheinter
 								}
 							}
 						}
-						else	// No pagebreak
+						else // No pagebreak
 						{
 							$pdf->commitTransaction();
 						}
@@ -404,8 +402,7 @@ class pdf_soleil extends ModelePDFFicheinter
 							{
 								$this->_tableau($pdf, $tab_top, $this->page_hauteur - $tab_top - $heightforfooter, 0, $outputlangs, 0, 1);
 							}
-							else
-							{
+							else {
 								$this->_tableau($pdf, $tab_top_newpage, $this->page_hauteur - $tab_top_newpage - $heightforfooter, 0, $outputlangs, 1, 1);
 							}
 							$this->_pagefoot($pdf, $object, $outputlangs, 1);
@@ -420,8 +417,7 @@ class pdf_soleil extends ModelePDFFicheinter
 							{
 								$this->_tableau($pdf, $tab_top, $this->page_hauteur - $tab_top - $heightforfooter, 0, $outputlangs, 0, 1);
 							}
-							else
-							{
+							else {
 								$this->_tableau($pdf, $tab_top_newpage, $this->page_hauteur - $tab_top_newpage - $heightforfooter, 0, $outputlangs, 1, 1);
 							}
 							$this->_pagefoot($pdf, $object, $outputlangs, 1);
@@ -440,8 +436,7 @@ class pdf_soleil extends ModelePDFFicheinter
 					$this->_tableau($pdf, $tab_top, $this->page_hauteur - $tab_top - $heightforinfotot - $heightforfreetext - $heightforfooter, 0, $outputlangs, 0, 0);
 					$bottomlasttab = $this->page_hauteur - $heightforinfotot - $heightforfreetext - $heightforfooter + 1;
 				}
-				else
-				{
+				else {
 					$this->_tableau($pdf, $tab_top_newpage, $this->page_hauteur - $tab_top_newpage - $heightforinfotot - $heightforfreetext - $heightforfooter, 0, $outputlangs, 1, 0);
 					$bottomlasttab = $this->page_hauteur - $heightforinfotot - $heightforfreetext - $heightforfooter + 1;
 				}
@@ -470,14 +465,12 @@ class pdf_soleil extends ModelePDFFicheinter
 
 				return 1;
 			}
-			else
-			{
+			else {
 				$this->error = $langs->trans("ErrorCanNotCreateDir", $dir);
 				return 0;
 			}
 		}
-		else
-		{
+		else {
 			$this->error = $langs->trans("ErrorConstantNotDefined", "FICHEINTER_OUTPUTDIR");
 			return 0;
 		}
@@ -591,16 +584,14 @@ class pdf_soleil extends ModelePDFFicheinter
 			    $height = pdf_getHeightForLogo($logo);
 			    $pdf->Image($logo, $this->marge_gauche, $posy, 0, $height); // width=0 (auto)
 			}
-			else
-			{
+			else {
 				$pdf->SetTextColor(200, 0, 0);
 				$pdf->SetFont('', 'B', $default_font_size - 2);
 				$pdf->MultiCell(100, 3, $outputlangs->transnoentities("ErrorLogoFileNotFound", $logo), 0, 'L');
 				$pdf->MultiCell(100, 3, $outputlangs->transnoentities("ErrorGoToGlobalSetup"), 0, 'L');
 			}
 		}
-		else
-		{
+		else {
 			$text = $this->emetteur->name;
 			$pdf->MultiCell(100, 4, $outputlangs->convToOutputCharset($text), 0, 'L');
 		}

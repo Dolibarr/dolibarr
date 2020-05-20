@@ -75,8 +75,7 @@ class CoreObject extends CommonObject
 
             return true;
         }
-        else
-        {
+        else {
             return false;
         }
     }
@@ -94,8 +93,7 @@ class CoreObject extends CommonObject
         {
             return $this->{'is_'.$type}($this->fields[$field]);
         }
-        else
-        {
+        else {
             return false;
         }
     }
@@ -200,8 +198,7 @@ class CoreObject extends CommonObject
                         $this->{$className}[] = $o;
                     }
                 }
-                else
-                {
+                else {
                     $this->errors[] = $this->db->lasterror();
                 }
             }
@@ -257,8 +254,7 @@ class CoreObject extends CommonObject
             if ($result < 0) $error++;
             else $this->saveChild($user);
         }
-        else
-        {
+        else {
             $error++;
             $this->error = $this->db->lasterror();
             $this->errors[] = $this->error;
@@ -269,8 +265,7 @@ class CoreObject extends CommonObject
             $this->db->commit();
             return $this->id;
         }
-        else
-        {
+        else {
             $this->db->rollback();
             return -1;
         }
@@ -298,8 +293,7 @@ class CoreObject extends CommonObject
             if ($result < 0) $error++;
             else $this->saveChild($user);
         }
-        else
-        {
+        else {
             $error++;
             $this->error = $this->db->lasterror();
             $this->errors[] = $this->error;
@@ -310,8 +304,7 @@ class CoreObject extends CommonObject
             $this->db->commit();
             return $this->id;
         }
-        else
-        {
+        else {
             $this->db->rollback();
             return -1;
         }
@@ -357,8 +350,7 @@ class CoreObject extends CommonObject
             $this->db->commit();
             return 1;
         }
-        else
-        {
+        else {
             $this->error = $this->db->lasterror();
             $this->errors[] = $this->error;
             $this->db->rollback();
@@ -377,8 +369,7 @@ class CoreObject extends CommonObject
     public function getDate($field, $format = '')
     {
         if (empty($this->{$field})) return '';
-        else
-        {
+        else {
             return dol_print_date($this->{$field}, $format);
         }
     }
@@ -396,8 +387,7 @@ class CoreObject extends CommonObject
         {
             $this->{$field} = 0;
         }
-        else
-        {
+        else {
             require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
             $this->{$field} = dol_stringtotime($date);
         }
@@ -427,8 +417,7 @@ class CoreObject extends CommonObject
             elseif ($this->checkFieldType($key, 'int')) {
                 $this->{$key} = (int) price2num($value);
             }
-            else
-            {
+            else {
             	$this->{$key} = dol_string_nohtmltag($value);
             }
         }

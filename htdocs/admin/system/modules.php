@@ -70,8 +70,7 @@ foreach ($modulesdir as $dir)
 						// File duplicate
 						print "Warning duplicate file found : ".$file." (Found ".$dir.$file.", already found ".$modules_fullpath[$file].")<br>";
 					}
-					else
-					{
+					else {
 						// File to load
 						$res = include_once $dir.$file;
 						if (class_exists($modName))
@@ -90,8 +89,7 @@ foreach ($modulesdir as $dir)
 								dol_syslog("Failed to load ".$dir.$file." ".$e->getMessage(), LOG_ERR);
 							}
 						}
-						else
-						{
+						else {
 							print "Warning bad descriptor file : ".$dir.$file." (Class ".$modName." not found into file)<br>";
 						}
 					}
@@ -125,8 +123,7 @@ foreach ($sortorder as $numero=>$name)
 	   	if (preg_match('/^\//', $picto[$numero])) print img_picto($alt, $picto[$numero], 'width="14px"', 1);
 	   	else print img_object($alt, $picto[$numero], 'width="14px"');
 	}
-	else
-	{
+	else {
 	  	print img_object($alt, $picto[$numero], 'width="14px"');
 	}
 	print ' '.$modules[$numero]->getName();

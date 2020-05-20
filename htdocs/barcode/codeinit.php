@@ -110,14 +110,12 @@ if ($action == 'initbarcodeproducts')
 			{
 				setEventMessages($langs->trans("AllBarcodeReset"), null, 'mesgs');
 			}
-			else
-			{
+			else {
 				$error++;
 				dol_print_error($db);
 			}
 		}
-		else
-		{
+		else {
 			$sql = "SELECT rowid, ref, fk_product_type";
 			$sql .= " FROM ".MAIN_DB_PREFIX."product";
 			$sql .= " WHERE barcode IS NULL or barcode = ''";
@@ -151,8 +149,7 @@ if ($action == 'initbarcodeproducts')
 					$i++;
 				}
 			}
-			else
-			{
+			else {
 				$error++;
 				dol_print_error($db);
 			}
@@ -168,8 +165,7 @@ if ($action == 'initbarcodeproducts')
 			//$db->rollback();
 			$db->commit();
 		}
-		else
-		{
+		else {
 			$db->rollback();
 		}
 	}
@@ -295,8 +291,7 @@ if ($conf->product->enabled || $conf->product->service)
 		print '<b>'.(isset($modBarCodeProduct->name) ? $modBarCodeProduct->name : $modBarCodeProduct->nom).'</b> - '.$langs->trans("NextValue").': <b>'.$modBarCodeProduct->getNextValue($objproduct).'</b><br>';
 		$disabled = 0;
 	}
-	else
-	{
+	else {
 		$disabled = 1;
 		$titleno = $langs->trans("NoBarcodeNumberingTemplateDefined");
 		print '<font class="warning">'.$langs->trans("NoBarcodeNumberingTemplateDefined").'</font> (<a href="'.DOL_URL_ROOT.'/admin/barcode.php">'.$langs->trans("ToGenerateCodeDefineAutomaticRuleFirst").'</a>)<br>';

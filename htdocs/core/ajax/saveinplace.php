@@ -158,14 +158,12 @@ if (!empty($field) && !empty($element) && !empty($table_element) && !empty($fk_e
 						$view = $loadview[$newvalue];
 					}
 				}
-				else
-				{
+				else {
 					$error++;
 					$return['error'] = $form->error;
 				}
 			}
-			else
-			{
+			else {
 				$module = $subelement = $ext_element;
 				if (preg_match('/^([^_]+)_([^_]+)/i', $ext_element, $regs))
 				{
@@ -188,8 +186,7 @@ if (!empty($field) && !empty($element) && !empty($table_element) && !empty($fk_e
 						$view = $loadview[$newvalue];
 					}
 				}
-				else
-				{
+				else {
 					$error++;
 					$return['error'] = $object->error;
 				}
@@ -216,16 +213,14 @@ if (!empty($field) && !empty($element) && !empty($table_element) && !empty($fk_e
 				$return['value'] = $value;
 				$return['view'] = (!empty($view) ? $view : $value);
 			}
-			else
-			{
+			else {
 				$return['error'] = $object->error;
 			}
 		}
 
 		echo json_encode($return);
 	}
-	else
-	{
+	else {
 		echo $langs->trans('NotEnoughPermissions');
 	}
 }

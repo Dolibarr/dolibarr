@@ -91,8 +91,7 @@ class DoliDBMssql extends DoliDB
 			$this->connected = true;
 			$this->ok = true;
 		}
-		else
-		{
+		else {
 			// host, login ou password incorrect
 			$this->connected = false;
 			$this->ok = false;
@@ -109,8 +108,7 @@ class DoliDBMssql extends DoliDB
 				$this->database_name = $name;
 				$this->ok = true;
 			}
-			else
-			{
+			else {
 				$this->database_selected = false;
 				$this->database_name = '';
 				$this->ok = false;
@@ -118,8 +116,7 @@ class DoliDBMssql extends DoliDB
 				dol_syslog(get_class($this)."::DoliDBMssql : Erreur Select_db ".$this->error, LOG_ERR);
 			}
 		}
-		else
-		{
+		else {
 			// Pas de selection de base demandee, ok ou ko
 			$this->database_selected = false;
 		}
@@ -250,8 +247,7 @@ class DoliDBMssql extends DoliDB
 			}
 			return $ret;
 		}
-		else
-		{
+		else {
 			return true;
 		}
 	}
@@ -276,8 +272,7 @@ class DoliDBMssql extends DoliDB
 				dol_syslog("COMMIT Transaction", LOG_DEBUG);
 				return true;
 			}
-			else
-			{
+			else {
 				return false;
 			}
 		}
@@ -368,8 +363,7 @@ class DoliDBMssql extends DoliDB
                         $query .= " WHERE ".implode(" AND ", $query_comp);
                 }
     		}
-    		else
-    		{
+    		else {
                 if (preg_match('/ALTER TABLE\h+(\w+?)\h+ADD\h+PRIMARY\h+KEY\h+(\w+?)\h*\((.+)\)/is', $query, $matches))
                 {
                     $original_query = $query;
@@ -432,8 +426,7 @@ class DoliDBMssql extends DoliDB
 			// Ordre SQL ne necessitant pas de connexion a une base (exemple: CREATE DATABASE)
 			$ret = mssql_query($query, $this->db);
 		}
-		else
-		{
+		else {
 			$ret = mssql_query($query, $this->db);
 		}
 
@@ -598,8 +591,7 @@ class DoliDBMssql extends DoliDB
 			// Si il y a eu echec de connexion, $this->db n'est pas valide.
 			return 'DB_ERROR_FAILED_TO_CONNECT';
 		}
-		else
-		{
+		else {
 			// Constants to convert a MSSql error code to a generic Dolibarr error code
 			$errorcode_map = array(
 			1004 => 'DB_ERROR_CANNOT_CREATE',
@@ -671,8 +663,7 @@ class DoliDBMssql extends DoliDB
 		{
 			return $data["id"];
 		}
-		else
-		{
+		else {
 			return -1;
 		}
 	}
@@ -849,8 +840,7 @@ class DoliDBMssql extends DoliDB
 			{
 				if (preg_match("/null/i", $field_desc['default']))
 				$sqlfields[$i]  .= " default ".$field_desc['default'];
-				else
-				$sqlfields[$i]  .= " default '".$field_desc['default']."'";
+				else $sqlfields[$i]  .= " default '".$field_desc['default']."'";
 			}
 			elseif (preg_match("/^[^\s]/i", $field_desc['null']))
 			    $sqlfields[$i] .= " ".$field_desc['null'];
@@ -892,8 +882,7 @@ class DoliDBMssql extends DoliDB
 		dol_syslog($sql);
 		if (!$this -> query($sql))
 		return -1;
-		else
-		return 1;
+		else return 1;
 	}
 
     // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
@@ -910,8 +899,7 @@ class DoliDBMssql extends DoliDB
 
 		if (!$this->query($sql))
 			return -1;
-		else
-			return 1;
+		else return 1;
 	}
 
     // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
@@ -958,16 +946,14 @@ class DoliDBMssql extends DoliDB
 		if (preg_match("/^[^\s]/i", $field_desc['default']))
 		if (preg_match("/null/i", $field_desc['default']))
 		$sql  .= " default ".$field_desc['default'];
-		else
-		$sql  .= " default '".$field_desc['default']."'";
+		else $sql  .= " default '".$field_desc['default']."'";
 		if (preg_match("/^[^\s]/i", $field_desc['extra']))
 		$sql  .= " ".$field_desc['extra'];
 		$sql .= " ".$field_position;
 
 		if (!$this -> query($sql))
 		return -1;
-		else
-		return 1;
+		else return 1;
 	}
 
     // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
@@ -991,8 +977,7 @@ class DoliDBMssql extends DoliDB
 		dol_syslog($sql, LOG_DEBUG);
 		if (!$this->query($sql))
 		return -1;
-		else
-		return 1;
+		else return 1;
 	}
 
     // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
@@ -1038,8 +1023,7 @@ class DoliDBMssql extends DoliDB
             {
 	            return -1;
             }
-            else
-			{
+            else {
             	// If user already exists, we continue to set permissions
             	dol_syslog(get_class($this)."::DDLCreateUser sql=".$sql, LOG_WARNING);
             }
@@ -1051,8 +1035,7 @@ class DoliDBMssql extends DoliDB
             dol_syslog(get_class($this)."::DDLCreateUser sql=".$sql, LOG_WARNING);
             return -1;
         }
-        else
-        {
+        else {
             if ($num)
             {
                 $this->select_db($dolibarr_main_db_name);
@@ -1207,8 +1190,7 @@ class DoliDBMssql extends DoliDB
 	    {
 	        $where = " IN ('".implode("','", $fields)."')";
 	    }
-	    else
-	    {
+	    else {
 	        $where = "='".$this->escape($fields)."'";
 	    }
 	    $result = array();
@@ -1220,8 +1202,7 @@ class DoliDBMssql extends DoliDB
 	            $result[] = $obj;
 	        }
 	    }
-	    else
-	        return false;
+	    else return false;
 
 	    return $result;
 	}

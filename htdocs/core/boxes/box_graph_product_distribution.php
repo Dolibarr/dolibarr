@@ -95,8 +95,7 @@ class box_graph_product_distribution extends ModeleBoxes
 			$showpropalnb = GETPOST($param_showpropalnb, 'alpha');
 			$showordernb = GETPOST($param_showordernb, 'alpha');
 		}
-		else
-		{
+		else {
 			$tmparray = json_decode($_COOKIE['DOLUSERCOOKIE_box_'.$this->boxcode], true);
 			$year = $tmparray['year'];
 			$showinvoicenb = $tmparray['showinvoicenb'];
@@ -394,8 +393,7 @@ class box_graph_product_distribution extends ModeleBoxes
                 'textnoformat'=>$stringtoshow,
             );
 		}
-		else
-		{
+		else {
 			$this->info_box_contents[0][0] = array(
 			    'td' => 'class="nohover opacitymedium left"',
 				'maxlength'=>500,

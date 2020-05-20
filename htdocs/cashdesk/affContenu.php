@@ -37,8 +37,7 @@ if (isset($_SESSION['serObjFacturation']))
     $obj_facturation = unserialize($_SESSION['serObjFacturation']);
     unset($_SESSION['serObjFacturation']);
 }
-else
-{
+else {
 	// ... sinon, c'est une nouvelle vente
 	$obj_facturation = new Facturation();
 }
@@ -73,8 +72,7 @@ if (in_array(
 {
 	include $page.'.php';
 }
-else
-{
+else {
 	dol_print_error('', 'menu param '.$page.' is not inside allowed list');
 }
 

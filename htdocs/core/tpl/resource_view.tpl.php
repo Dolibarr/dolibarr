@@ -50,8 +50,7 @@ if ((array) $linked_resources && count($linked_resources) > 0)
 			print '<div class="tagtd right"><input type="submit" class="button" value="'.$langs->trans("Update").'"></div>';
 			print '</div>';
 		}
-		else
-		{
+		else {
 			$class = '';
 			if ($linked_resource['rowid'] == GETPOST('lineid'))
 				$class = 'highlight';

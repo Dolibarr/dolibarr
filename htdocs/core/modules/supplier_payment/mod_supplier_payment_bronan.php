@@ -137,8 +137,7 @@ class mod_supplier_payment_bronan extends ModeleNumRefSupplierPayments
 			if ($obj) $max = intval($obj->max);
 			else $max = 0;
 		}
-		else
-		{
+		else {
 			dol_syslog(__METHOD__, LOG_DEBUG);
 			return -1;
 		}

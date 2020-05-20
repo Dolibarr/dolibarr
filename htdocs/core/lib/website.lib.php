@@ -94,8 +94,7 @@ function dolKeepOnlyPhpCode($str)
 			{
 				$newstr .= $partlings[0].'?>';
 			}
-			else
-			{
+			else {
 				$newstr .= $part.'?>';
 			}
 		}
@@ -300,7 +299,7 @@ function dolWebsiteOutput($content, $contenttype = 'html', $containerid = '')
 			$content = str_replace('!~!~!~', '', $content);
 		}
 	}
-	else									// REPLACEMENT OF LINKS When page called from virtual host
+	else // REPLACEMENT OF LINKS When page called from virtual host
 	{
 		$symlinktomediaexists = 1;
 		if ($website->virtualhost) {
@@ -336,8 +335,7 @@ function dolWebsiteOutput($content, $contenttype = 'html', $containerid = '')
 			$content = preg_replace('/(<img[^>]*src=")\/?viewimage\.php/', '\1/wrapper.php', $content, -1, $nbrep);
 			$content = preg_replace('/(<a[^>]*href=")\/?documents\.php/', '\1/wrapper.php', $content, -1, $nbrep);
 		}
-		else
-		{
+		else {
 			// <img src="image.png... => <img src="medias/image.png...
 			$content = preg_replace('/(<img[^>]*src=")\/?image\//', '\1/medias/image/', $content, -1, $nbrep);
 			$content = preg_replace('/(url\(["\']?)\/?image\//', '\1/medias/image/', $content, -1, $nbrep);
@@ -426,8 +424,7 @@ function redirectToContainer($containerref, $containeraliasalt = '', $containeri
 		{
 			$containerref = $tmpwebsitepage->pageurl;
 		}
-		else
-		{
+		else {
 			print "Error, page contains a redirect to the alternative alias '".$containeraliasalt."' that does not exists in web site (".$website->id." / ".$website->ref.")";
 			exit;
 		}
@@ -464,18 +461,16 @@ function redirectToContainer($containerref, $containeraliasalt = '', $containeri
 					print "Error, page with uri '.$currenturi.' try a redirect to the same alias page '".$containerref."' in web site '".$website->ref."'";
 					exit;
 				}
-				else
-				{
+				else {
 					$newurl = preg_replace('/&pageref=([^&]+)/', '&pageref='.$containerref, $currenturi);
 				}
 			}
-			else
-			{
+			else {
 				$newurl = $currenturi.'&pageref='.urlencode($containerref);
 			}
 		}
 	}
-	else								// When page called from virtual host server
+	else // When page called from virtual host server
 	{
 		$newurl = '/'.$containerref.'.php';
 	}
@@ -488,8 +483,7 @@ function redirectToContainer($containerref, $containeraliasalt = '', $containeri
 		header("Location: ".$newurl);
 		exit;
 	}
-	else
-	{
+	else {
 		print "Error, page contains a redirect to the alias page '".$containerref."' that does not exists in web site (".$website->id." / ".$website->ref.")";
 		exit;
 	}
@@ -601,7 +595,7 @@ function getStructuredData($type, $data = array())
 		if (is_array($mysoc->socialnetworks) && count($mysoc->socialnetworks) > 0) {
 			$ret .= '"sameAs": [';
 			$i = 0;
-			foreach($mysoc->socialnetworks as $key => $value) {
+			foreach ($mysoc->socialnetworks as $key => $value) {
 				if ($key == 'linkedin') {
 					$ret.= '"https://www.'.$key.'.com/company/'.dol_escape_json($value).'"';
 				} elseif ($key == 'youtube') {
@@ -670,7 +664,7 @@ function getStructuredData($type, $data = array())
 				$ret .= '"keywords": [';
 				$i = 0;
 				$arrayofkeywords = explode(',', $websitepage->keywords);
-				foreach($arrayofkeywords as $keyword) {
+				foreach ($arrayofkeywords as $keyword) {
 					$ret.= '"'.dol_escape_json($keyword).'"';
 					$i++;
 					if ($i < count($arrayofkeywords)) $ret .= ', ';
@@ -810,8 +804,7 @@ function getPagesFromSearchCriterias($type, $algo, $searchstring, $max = 25, $so
 		$arrayresult['code'] = 'KO';
 		$arrayresult['message'] = $weblangs->trans("ErrorSearchCriteriaTooSmall");
 	}
-	else
-	{
+	else {
 		$tmparrayoftype = explode(',', $type);
 		foreach ($tmparrayoftype as $tmptype) {
 			if (!in_array($tmptype, array('', 'page', 'blogpost'))) {
@@ -873,8 +866,7 @@ function getPagesFromSearchCriterias($type, $algo, $searchstring, $max = 25, $so
 				$i++;
 			}
 		}
-		else
-		{
+		else {
 			$error++;
 			$arrayresult['code'] = $db->lasterrno();
 			$arrayresult['message'] = $db->lasterror();
@@ -934,8 +926,7 @@ function getPagesFromSearchCriterias($type, $algo, $searchstring, $max = 25, $so
 				$arrayresult['message'] = $weblangs->trans("NoRecordFound");
 			}
 		}
-		else
-		{
+		else {
 			$error++;
 			$arrayresult['code'] = 'KO';
 			$arrayresult['message'] = 'No supported algorithm found';
@@ -985,8 +976,7 @@ function getAllImages($object, $objectpage, $urltograb, &$tmp, &$action, $modify
 			$urltograbdirrootwithoutslash = getRootURLFromURL($urltograb);
 			$urltograbbis = $urltograbdirrootwithoutslash.$regs[2][$key]; // We use dirroot
 		}
-		else
-		{
+		else {
 			$urltograbbis = $urltograb.'/'.$regs[2][$key]; // We use dir of grabbed file
 		}
 
@@ -1029,8 +1019,7 @@ function getAllImages($object, $objectpage, $urltograb, &$tmp, &$action, $modify
 					setEventMessages('Error getting '.$urltograbbis.': '.$tmpgeturl['http_code'], null, 'errors');
 					$action = 'create';
 				}
-				else
-				{
+				else {
 					$alreadygrabbed[$urltograbbis] = 1; // Track that file was alreay grabbed.
 
 					dol_mkdir(dirname($filetosave));
@@ -1062,8 +1051,7 @@ function getAllImages($object, $objectpage, $urltograb, &$tmp, &$action, $modify
 			$urltograbdirrootwithoutslash = getRootURLFromURL($urltograb);
 			$urltograbbis = $urltograbdirrootwithoutslash.$regs[2][$key]; // We use dirroot
 		}
-		else
-		{
+		else {
 			$urltograbbis = $urltograb.'/'.$regs[2][$key]; // We use dir of grabbed file
 		}
 
@@ -1108,8 +1096,7 @@ function getAllImages($object, $objectpage, $urltograb, &$tmp, &$action, $modify
 					setEventMessages('Error getting '.$urltograbbis.': '.$tmpgeturl['http_code'], null, 'errors');
 					$action = 'create';
 				}
-				else
-				{
+				else {
 					$alreadygrabbed[$urltograbbis] = 1; // Track that file was alreay grabbed.
 
 					dol_mkdir(dirname($filetosave));

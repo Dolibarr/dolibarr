@@ -105,8 +105,7 @@ class DoliDBPgsql extends DoliDB
 			$this->connected = true;
 			$this->ok = true;
 		}
-		else
-		{
+		else {
 			// host, login ou password incorrect
 			$this->connected = false;
 			$this->ok = false;
@@ -123,8 +122,7 @@ class DoliDBPgsql extends DoliDB
 				$this->database_name = $name;
 				$this->ok = true;
 			}
-			else
-			{
+			else {
 				$this->database_selected = false;
 				$this->database_name = '';
 				$this->ok = false;
@@ -132,8 +130,7 @@ class DoliDBPgsql extends DoliDB
 				dol_syslog(get_class($this)."::DoliDBPgsql : Erreur Select_db ".$this->error, LOG_ERR);
 			}
 		}
-		else
-		{
+		else {
 			// Pas de selection de base demandee, ok ou ko
 			$this->database_selected = false;
 		}
@@ -998,8 +995,7 @@ class DoliDBPgsql extends DoliDB
 			{
 				if (preg_match("/null/i", $field_desc['default']))
 				    $sqlfields[$i] .= " default ".$field_desc['default'];
-				else
-				    $sqlfields[$i] .= " default '".$field_desc['default']."'";
+				else $sqlfields[$i] .= " default '".$field_desc['default']."'";
 			}
 			elseif (preg_match("/^[^\s]/i", $field_desc['null']))
 			    $sqlfields[$i]  .= " ".$field_desc['null'];
@@ -1041,8 +1037,7 @@ class DoliDBPgsql extends DoliDB
 		dol_syslog($sql, LOG_DEBUG);
 		if (!$this->query($sql))
 		return -1;
-		else
-		return 1;
+		else return 1;
 	}
 
     // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
@@ -1059,8 +1054,7 @@ class DoliDBPgsql extends DoliDB
 
 		if (!$this->query($sql))
 			return -1;
-		else
-			return 1;
+		else return 1;
 	}
 
     // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
@@ -1313,8 +1307,7 @@ class DoliDBPgsql extends DoliDB
 		{
 		    $fullpathofdump = '/usr/bin/pg_dump';
 		}
-		else
-		{
+		else {
             // TODO L'utilisateur de la base doit etre un superadmin pour lancer cette commande
 		    $resql = $this->query('SHOW data_directory');
     		if ($resql)
@@ -1344,8 +1337,7 @@ class DoliDBPgsql extends DoliDB
         {
             $fullpathofdump = '/usr/bin/'.$tool;
         }
-        else
-        {
+        else {
             // TODO L'utilisateur de la base doit etre un superadmin pour lancer cette commande
             $resql = $this->query('SHOW data_directory');
             if ($resql)

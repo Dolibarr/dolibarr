@@ -81,8 +81,7 @@ if (GETPOST('filtre', 'alpha')) {
 		}
 		$db->free($resql);
 	}
-	else
-	{
+	else {
 		dol_print_error($db);
 	}
 	$tab_designations = $ret;
@@ -116,8 +115,7 @@ if (GETPOST('filtre', 'alpha')) {
 		}
 		$db->free($resql);
 	}
-	else
-	{
+	else {
 		dol_print_error($db);
 	}
 	$tab_designations = $ret;
@@ -131,8 +129,7 @@ if ($nbr_enreg > 1)
 	{
 		$top_liste_produits = '----- '.$conf_taille_listes.' '.$langs->transnoentitiesnoconv("CashDeskProducts").' '.$langs->trans("CashDeskOn").' '.$nbr_enreg.' -----';
 	}
-	else
-	{
+	else {
 		$top_liste_produits = '----- '.$nbr_enreg.' '.$langs->transnoentitiesnoconv("CashDeskProducts").' '.$langs->trans("CashDeskOn").' '.$nbr_enreg.' -----';
 	}
 }
@@ -140,8 +137,7 @@ elseif ($nbr_enreg == 1)
 {
 	$top_liste_produits = '----- 1 '.$langs->transnoentitiesnoconv("ProductFound").' -----';
 }
-else
-{
+else {
 	$top_liste_produits = '----- '.$langs->transnoentitiesnoconv("NoProductFound").' -----';
 }
 

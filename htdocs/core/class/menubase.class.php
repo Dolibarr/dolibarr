@@ -281,21 +281,18 @@ class Menubase
 
 		            return $this->id;
 		        }
-		        else
-		        {
+		        else {
 		            $this->error = "Error ".$this->db->lasterror();
 		            return -1;
 		        }
         	}
-        	else
-        	{
+        	else {
         		dol_syslog(get_class($this)."::create menu entry already exists", LOG_WARNING);
         		$this->error = 'Error Menu entry already exists';
         		return 0;
         	}
         }
-        else
-        {
+        else {
         	return -1;
         }
     }
@@ -432,8 +429,7 @@ class Menubase
 
             return 1;
         }
-        else
-        {
+        else {
             $this->error = "Error ".$this->db->lasterror();
             return -1;
         }
@@ -575,8 +571,7 @@ class Menubase
         			$this->newmenu->add($val['url'], $val['titre'], 0, $val['perms'], $val['target'], $val['mainmenu'], $val['leftmenu'], $val['position']);
         			//var_dump($this->newmenu->liste);
         		}
-        		else
-        		{
+        		else {
         			// Search first menu with this couple (mainmenu,leftmenu)=(fk_mainmenu,fk_leftmenu)
         			$searchlastsub = 0; $lastid = 0; $nextid = 0; $found = 0;
         			foreach ($this->newmenu->liste as $keyparent => $valparent)
@@ -702,8 +697,7 @@ class Menubase
                         	$title_enabled = verifCond($alt_title[1]);
                         	$title = ($title_enabled ? $langs->trans($alt_title[0]) : $langs->trans($tab_title[0]));
                         }
-                        else
-                        {
+                        else {
                             $title = $langs->trans($menu['titre']);
                         }
                     }
@@ -745,8 +739,7 @@ class Menubase
 
             return 1;
         }
-        else
-        {
+        else {
             dol_print_error($this->db);
             return -1;
         }

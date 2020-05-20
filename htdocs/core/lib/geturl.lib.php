@@ -88,8 +88,7 @@ function getURLContent($url, $postorget = 'GET', $param = '', $followlocation = 
         $array_param = null;
     	curl_setopt($ch, CURLOPT_CUSTOMREQUEST, 'PUT'); // HTTP request is 'PUT'
     	if (!is_array($param)) parse_str($param, $array_param);
-    	else
-    	{
+    	else {
     	    dol_syslog("parameter param must be a string", LOG_WARNING);
     	    $array_param = $param;
     	}
@@ -109,8 +108,7 @@ function getURLContent($url, $postorget = 'GET', $param = '', $followlocation = 
     {
     	curl_setopt($ch, CURLOPT_CUSTOMREQUEST, 'DELETE'); // POST
     }
-    else
-    {
+    else {
     	curl_setopt($ch, CURLOPT_POST, 0); // GET
     }
 
@@ -144,8 +142,7 @@ function getURLContent($url, $postorget = 'GET', $param = '', $followlocation = 
 
 		dol_syslog("getURLContent response array is ".join(',', $rep));
     }
-    else
-    {
+    else {
     	$info = curl_getinfo($ch);
 
     	// Ad keys to $rep
@@ -183,8 +180,7 @@ function getDomainFromURL($url, $mode = 0)
 	{
 		$tmpdomain = preg_replace('/^.*\.([^\.]+)\.([^\.]+)\.([^\.]+)$/', '\1.\2.\3', $tmpdomain); // Remove part 'www.' before 'abc.mydomain.com'
 	}
-	else
-	{
+	else {
 		$tmpdomain = preg_replace('/^.*\.([^\.]+)\.([^\.]+)$/', '\1.\2', $tmpdomain); // Remove part 'www.abc.' before 'mydomain.com'
 	}
 	if (empty($mode))

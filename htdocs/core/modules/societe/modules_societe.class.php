@@ -173,8 +173,7 @@ abstract class ModeleThirdPartyCode
 				$i++;
 			}
 		}
-		else
-		{
+		else {
 			return -1;
 		}
 		return $liste;

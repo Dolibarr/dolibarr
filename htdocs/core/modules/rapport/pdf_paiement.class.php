@@ -211,8 +211,7 @@ class pdf_paiement
 				// If global param PAYMENTS_REPORT_GROUP_BY_MOD is set, payement are ordered by paiement_code
 				if (!empty($conf->global->PAYMENTS_REPORT_GROUP_BY_MOD))
 					$sql .= " ORDER BY paiement_code ASC, p.datep ASC, pf.fk_paiement ASC";
-				else
-					$sql .= " ORDER BY p.datep ASC, pf.fk_paiement ASC";
+				else $sql .= " ORDER BY p.datep ASC, pf.fk_paiement ASC";
 				break;
 			case "fourn":
 				$sql = "SELECT p.datep as dp, f.ref as ref";
@@ -245,8 +244,7 @@ class pdf_paiement
                 // If global param PAYMENTS_FOURN_REPORT_GROUP_BY_MOD is set, payement fourn are ordered by paiement_code
 				if (!empty($conf->global->PAYMENTS_FOURN_REPORT_GROUP_BY_MOD))
 					$sql .= " ORDER BY paiement_code ASC, p.datep ASC, pf.fk_paiementfourn ASC";
-				else
-					$sql .= " ORDER BY p.datep ASC, pf.fk_paiementfourn ASC";
+				else $sql .= " ORDER BY p.datep ASC, pf.fk_paiementfourn ASC";
 				break;
 		}
 
@@ -274,8 +272,7 @@ class pdf_paiement
 				$i++;
 			}
 		}
-		else
-		{
+		else {
 			dol_print_error($this->db);
 		}
 

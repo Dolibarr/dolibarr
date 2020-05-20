@@ -161,8 +161,7 @@ if (GETPOST('exportcsv', 'int'))
 
 		exit;
 	}
-	else
-	{
+	else {
 		dol_print_error($db);
 	}
 	exit;
@@ -182,14 +181,12 @@ if ($action == 'delete')
 
 			setEventMessages($langs->trans("RecordDeleted"), null, 'mesgs');
 		}
-		else
-		{
+		else {
 			header("Location: list.php");
 			exit;
 		}
 	}
-	else
-	{
+	else {
 		dol_print_error($db);
 	}
 }
@@ -294,8 +291,7 @@ if ($object->fetch($id) >= 0)
 			{
 				$text .= $langs->trans('LimitSendingEmailing', $conf->global->MAILING_LIMIT_SENDBYWEB);
 			}
-			else
-			{
+			else {
 				$text .= $langs->trans('SendingFromWebInterfaceIsNotAllowed');
 			}
 		}
@@ -304,8 +300,7 @@ if ($object->fetch($id) >= 0)
 		{
 			print $form->textwithpicto($nbemail, $text, 1, 'warning');
 		}
-		else
-		{
+		else {
 			print $nbemail;
 		}
 	}
@@ -406,8 +401,7 @@ if ($object->fetch($id) >= 0)
 						print '<form '.$bctag[$var].' name="'.$modulename.'" action="'.$_SERVER['PHP_SELF'].'?action=add&id='.$object->id.'&module='.$modulename.'" method="POST" enctype="multipart/form-data">';
 						print '<input type="hidden" name="token" value="'.newToken().'">';
 					}
-					else
-					{
+					else {
 					    print '<div '.$bctag[$var].'>';
 					}
 
@@ -431,8 +425,7 @@ if ($object->fetch($id) >= 0)
 					{
 						print $nbofrecipient;
 					}
-					else
-					{
+					else {
 						print $langs->trans("Error").' '.img_error($obj->error);
 					}
 					print '</div>';
@@ -457,8 +450,7 @@ if ($object->fetch($id) >= 0)
 					{
 						print '<input type="submit" class="button" name="button_'.$modulename.'" value="'.$langs->trans("Add").'">';
 					}
-					else
-					{
+					else {
 					    print '<input type="submit" class="button disabled" disabled="disabled" name="button_'.$modulename.'" value="'.$langs->trans("Add").'">';
 						//print $langs->trans("MailNoChangePossible");
 						print "&nbsp;";
@@ -633,8 +625,7 @@ if ($object->fetch($id) >= 0)
                 {
                     print empty($obj->source_url) ? '' : $obj->source_url; // For backward compatibility
                 }
-                else
-                {
+                else {
                     if ($obj->source_type == 'member')
                     {
 						$objectstaticmember->fetch($obj->source_id);
@@ -655,8 +646,7 @@ if ($object->fetch($id) >= 0)
                     	$objectstaticcontact->fetch($obj->source_id);
                     	print $objectstaticcontact->getNomUrl(1);
                     }
-                    else
-                    {
+                    else {
                         print $obj->source_url;
                     }
                 }
@@ -677,8 +667,7 @@ if ($object->fetch($id) >= 0)
 					print $object::libStatutDest($obj->statut, 2, '');
 					print '</td>';
 				}
-				else
-				{
+				else {
 					// Date sent
 					print '<td class="center">'.$obj->date_envoi.'</td>';
 
@@ -705,8 +694,7 @@ if ($object->fetch($id) >= 0)
 				$i++;
 			}
 		}
-		else
-		{
+		else {
 			if ($object->statut < 2)
 			{
 			    print '<tr><td colspan="9" class="opacitymedium">';
@@ -721,8 +709,7 @@ if ($object->fetch($id) >= 0)
 
 		$db->free($resql);
 	}
-	else
-	{
+	else {
 		dol_print_error($db);
 	}
 

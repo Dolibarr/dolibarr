@@ -84,8 +84,7 @@ if ($action == 'create')
 		$error++;
 		setEventMessages($langs->trans('Error_OrderNotChecked'), null, 'errors');
 	}
-	else
-	{
+	else {
 		$origin = GETPOST('origin');
 		$originid = GETPOST('originid');
 	}
@@ -210,8 +209,7 @@ if (($action == 'create' || $action == 'add') && !$error)
 							{
 								$db->commit();
 							}
-							else
-							{
+							else {
 								$db->rollback();
 							}
 						}
@@ -257,15 +255,13 @@ if (($action == 'create' || $action == 'add') && !$error)
 											$result = $object->insert_discount($discountid);
 											//$result=$discount->link_to_invoice($lineid,$id);
 										}
-										else
-										{
+										else {
 											setEventMessages($discount->error, $discount->errors, 'errors');
 											$error++;
 											break;
 										}
 									}
-									else
-									{
+									else {
 										// Positive line
 										$product_type = ($lines[$i]->product_type ? $lines[$i]->product_type : 0);
 										// Date start
@@ -321,8 +317,7 @@ if (($action == 'create' || $action == 'add') && !$error)
 										{
 											$lineid = $result;
 										}
-										else
-										{
+										else {
 											$lineid = 0;
 											$error++;
 											break;
@@ -335,16 +330,14 @@ if (($action == 'create' || $action == 'add') && !$error)
 									}
 								}
 							}
-							else
-							{
+							else {
 								setEventMessages($objectsrc->error, $objectsrc->errors, 'errors');
 								$error++;
 							}
 							$ii++;
 						}
 					}
-					else
-					{
+					else {
 						setEventMessages($object->error, $object->errors, 'errors');
 						$error++;
 					}
@@ -359,8 +352,7 @@ if (($action == 'create' || $action == 'add') && !$error)
 			header('Location: '.DOL_URL_ROOT.'/compta/facture/card.php?facid='.$id);
 			exit;
 		}
-		else
-		{
+		else {
 			$db->rollback();
 			$action = 'create';
 			$_GET["origin"] = $_POST["origin"];
@@ -730,8 +722,7 @@ if (($action != 'create' && $action != 'add') || ($action == 'create' && $error)
 
 		$db->free($resql);
 	}
-	else
-	{
+	else {
 		dol_print_error($db);
 	}
 }

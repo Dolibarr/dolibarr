@@ -189,8 +189,7 @@ if ($object->id > 0)
     	}
     	$db->free($result);
     }
-    else
-    {
+    else {
     	dol_print_error($db);
     }
 
@@ -325,8 +324,7 @@ if ($object->id > 0)
             		print img_picto($langs->trans("Active"), 'tick');
             		print '</td>';
             	}
-            	else
-            	{
+            	else {
             		// Do not own permission
             		if ($caneditperms)
             		{
@@ -335,8 +333,7 @@ if ($object->id > 0)
             		print '<td>&nbsp</td>';
             	}
             }
-            else
-            {
+            else {
             	// Do not own permission
             	if ($caneditperms)
             	{

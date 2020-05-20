@@ -134,16 +134,14 @@ if (empty($reshook))
 		{
 			setEventMessages($langs->trans("NoCloneOptionsSpecified"), null, 'errors');
 		}
-		else
-		{
+		else {
 			if ($object->id > 0) {
 				$result = $object->createFromClone($user, $socid);
 				if ($result > 0) {
 					header("Location: ".$_SERVER['PHP_SELF'].'?id='.$result);
 					exit();
 				}
-				else
-				{
+				else {
 					setEventMessages($object->error, $object->errors, 'errors');
 					$action = '';
 				}
@@ -411,8 +409,7 @@ if (empty($reshook))
 						$error++;
 					}
 				} 			// Standard creation
-				else
-				{
+				else {
 					$id = $object->create($user);
 				}
 
@@ -443,14 +440,12 @@ if (empty($reshook))
 						header('Location: '.$_SERVER["PHP_SELF"].'?id='.$id);
 						exit();
 					}
-					else
-					{
+					else {
 						$db->rollback();
 						$action = 'create';
 					}
 				}
-				else
-				{
+				else {
 					setEventMessages($object->error, $object->errors, 'errors');
 					$db->rollback();
 					$action = 'create';
@@ -552,8 +547,7 @@ if (empty($reshook))
 			$price_ht = GETPOST('price_ht');
 			$tva_tx = (GETPOST('tva_tx') ? GETPOST('tva_tx') : 0);
 		}
-		else
-		{
+		else {
 			$idprod = GETPOST('idprod', 'int');
 			$price_ht = '';
 			$tva_tx = '';
@@ -622,8 +616,7 @@ if (empty($reshook))
 							$productsupplier->ref_supplier = '';
 						}
 					}
-					else
-					{
+					else {
 						$fksoctosearch = $object->thirdparty->id;
 						$productsupplier->get_buyprice(0, -1, $idprod, 'none', $fksoctosearch); // We force qty to -1 to be sure to find if a supplier price exist
 					}
@@ -738,8 +731,7 @@ if (empty($reshook))
 				{
 					$pu_ht = price2num($price_ht, 'MU'); // $pu_ht must be rounded according to settings
 				}
-				else
-				{
+				else {
 					$pu_ttc = price2num(GETPOST('price_ttc'), 'MU');
 					$pu_ht = price2num($pu_ttc / (1 + ($tva_tx / 100)), 'MU'); // $pu_ht must be rounded according to settings
 				}
@@ -835,8 +827,7 @@ if (empty($reshook))
 				unset($_POST['date_endmonth']);
 				unset($_POST['date_endyear']);
 			}
-			else
-			{
+			else {
 				$db->rollback();
 
 				setEventMessages($object->error, $object->errors, 'errors');
@@ -1139,8 +1130,7 @@ if ($action == 'create')
 			if (!empty($conf->global->MULTICURRENCY_USE_ORIGIN_TX) && !empty($objectsrc->multicurrency_tx))	$currency_tx = $objectsrc->multicurrency_tx;
 		}
 	}
-	else
-	{
+	else {
 		$cond_reglement_id 	= $soc->cond_reglement_supplier_id;
 		$mode_reglement_id 	= $soc->mode_reglement_supplier_id;
 		if (!empty($conf->multicurrency->enabled) && !empty($soc->multicurrency_code)) $currency_code = $soc->multicurrency_code;
@@ -1895,8 +1885,7 @@ if ($action == 'create')
 					if ($object->statut == SupplierProposal::STATUS_VALIDATED || $object->statut == SupplierProposal::STATUS_SIGNED) {
 						if (empty($conf->global->MAIN_USE_ADVANCED_PERMS) || $user->rights->supplier_proposal->send_advance) {
 							print '<div class="inline-block divButAction"><a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=presend&mode=init#formmailbeforetitle">'.$langs->trans('SendMail').'</a></div>';
-						} else
-							print '<div class="inline-block divButAction"><a class="butActionRefused classfortooltip" href="#">'.$langs->trans('SendMail').'</a></div>';
+						} else print '<div class="inline-block divButAction"><a class="butActionRefused classfortooltip" href="#">'.$langs->trans('SendMail').'</a></div>';
 					}
 				}
 

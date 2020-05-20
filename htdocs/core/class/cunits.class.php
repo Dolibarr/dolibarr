@@ -136,8 +136,7 @@ class CUnits // extends CommonObject
 			$this->db->rollback();
 			return -1 * $error;
 		}
-		else
-		{
+		else {
 			$this->db->commit();
             return $this->id;
 		}
@@ -196,8 +195,7 @@ class CUnits // extends CommonObject
 
             return 1;
         }
-        else
-        {
+        else {
       	    $this->error = "Error ".$this->db->lasterror();
             return -1;
         }
@@ -340,8 +338,7 @@ class CUnits // extends CommonObject
 			$this->db->rollback();
 			return -1 * $error;
 		}
-		else
-		{
+		else {
 			$this->db->commit();
 			return 1;
 		}
@@ -380,8 +377,7 @@ class CUnits // extends CommonObject
 			$this->db->rollback();
 			return -1 * $error;
 		}
-		else
-		{
+		else {
 			$this->db->commit();
 			return 1;
 		}
@@ -397,10 +393,10 @@ class CUnits // extends CommonObject
 	public function getUnitFromCode($code, $mode = 'code')
 	{
 
-		if($mode == 'short_label'){
+		if ($mode == 'short_label'){
 			return dol_getIdFromCode($this->db, $code, 'c_units', 'short_label', 'rowid');
 		}
-		elseif($mode == 'code'){
+		elseif ($mode == 'code'){
 			return dol_getIdFromCode($this->db, $code, 'c_units', 'code', 'rowid');
 		}
 
@@ -424,10 +420,10 @@ class CUnits // extends CommonObject
 
 		// convert to standard unit
 		$value  = $value * $scaleUnitPow;
-		if($fk_new_unit !=0 ){
+		if ($fk_new_unit !=0 ){
 			// Calcul en unité de base
 			$scaleUnitPow = $this->scaleOfUnitPow($fk_new_unit);
-			if(!empty($scaleUnitPow))
+			if (!empty($scaleUnitPow))
 			{
 				// convert to new unit
 				$value  = $value / $scaleUnitPow;
@@ -448,9 +444,9 @@ class CUnits // extends CommonObject
 		$base = 10;
 		// TODO : add base col into unit dictionary table
 		$unit = $this->db->getRow('SELECT scale, unit_type from '.MAIN_DB_PREFIX.'c_units WHERE rowid = '.intval($id));
-		if($unit){
+		if ($unit){
 			// TODO : if base exist in unit dictionary table remove this convertion exception and update convertion infos in database exemple time hour currently scale 3600 will become scale 2 base 60
-			if($unit->unit_type == 'time'){
+			if ($unit->unit_type == 'time'){
 				return doubleval($unit->scale);
 			}
 

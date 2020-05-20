@@ -63,8 +63,7 @@ print '<br>';
 print '<strong>'.$langs->trans("XDebug").'</strong>: ';
 $test = !function_exists('xdebug_is_enabled');
 if ($test) print img_picto('', 'tick.png').' '.$langs->trans("NotInstalled");
-else
-{
+else {
 	print img_picto('', 'warning').' '.$langs->trans("ModuleActivated", $langs->transnoentities("XDebug"));
 	print ' - '.$langs->trans("MoreInformation").' <a href="'.DOL_URL_ROOT.'/admin/system/xdebug.php">XDebug admin page</a>';
 }
@@ -75,8 +74,7 @@ print '<br>';
 print '<strong>'.$langs->trans("Syslog").'</strong>: ';
 $test = empty($conf->syslog->enabled);
 if ($test) print img_picto('', 'tick.png').' '.$langs->trans("NotInstalled");
-else
-{
+else {
 	print img_picto('', 'warning').' '.$langs->trans("ModuleActivated", $langs->transnoentities("Syslog"));
 	//print ' '.$langs->trans("MoreInformation").' <a href="'.DOL_URL_ROOT.'/admin/system/xdebug.php'.'">XDebug admin page</a>';
 }
@@ -87,8 +85,7 @@ print '<br>';
 print '<strong>'.$langs->trans("DebugBar").'</strong>: ';
 $test = empty($conf->debugbar->enabled);
 if ($test) print img_picto('', 'tick.png').' '.$langs->trans("NotInstalled");
-else
-{
+else {
 	print img_picto('', 'warning').' '.$langs->trans("ModuleActivated", $langs->transnoentities("DebugBar"));
     //print ' '.$langs->trans("MoreInformation").' <a href="'.DOL_URL_ROOT.'/admin/system/xdebug.php'.'">XDebug admin page</a>';
 }
@@ -105,8 +102,7 @@ if ($test)
 		print img_picto('', 'tick.png').' '.$langs->trans("MemcachedAvailableAndSetup");
 		print ' '.$langs->trans("MoreInformation").' <a href="'.dol_buildpath('/memcached/admin/memcached.php', 1).'">Memcached module admin page</a>';
 	}
-	else
-	{
+	else {
 		print img_picto('', 'warning').' '.$langs->trans("MemcachedModuleAvailableButNotSetup");
 		print ' <a href="'.dol_buildpath('/memcached/admin/memcached.php', 1).'">Memcached module admin page</a>';
 	}
@@ -148,8 +144,7 @@ if (!$foundcache && $test)
 		$foundcache++;
 		print img_picto('', 'tick.png').' '.$langs->trans("APCInstalled");
 	}
-	else
-	{
+	else {
 		print img_picto('', 'warning').' '.$langs->trans("APCCacheInstalledButDisabled");
 	}
 }
@@ -163,8 +158,7 @@ if (ini_get('opcache.preload'))
 	print '<strong>'.$langs->trans("PreloadOPCode").'</strong>: ';
 	print ini_get('opcache.preload');
 }
-else
-{
+else {
 	print '<br>';
 	print '<strong>'.$langs->trans("PreloadOPCode").'</strong>: ';
 	print $langs->trans("No");
@@ -469,8 +463,7 @@ if ($conf->db->type == 'mysql' || $conf->db->type == 'mysqli')
 	{
 		print img_picto('', 'tick.png').' '.$langs->trans("YouUseBestDriver", $conf->db->type);
 	}
-	else
-	{
+	else {
 		print img_picto('', 'warning.png').' '.$langs->trans("YouDoNotUseBestDriver", $conf->db->type, 'mysqli');
 	}
 	print '<br>';
@@ -496,13 +489,11 @@ if ($resql)
 		{
 			print img_picto('', 'warning.png').' '.$langs->trans("YouHaveXObjectUseSearchOptim", $nb, $langs->transnoentitiesnoconv("ProductsOrServices"), 'PRODUCT_DONOTSEARCH_ANYWHERE');
 		}
-		else
-		{
+		else {
 			print img_picto('', 'tick.png').' '.$langs->trans("YouHaveXObjectAndSearchOptimOn", $nb, $langs->transnoentitiesnoconv("ProductsOrServices"));
 		}
 	}
-	else
-	{
+	else {
 		print img_picto('', 'tick.png').' '.$langs->trans("NbOfObjectIsLowerThanNoPb", $nb, $langs->transnoentitiesnoconv("ProductsOrServices"));
 	}
 	print '<br>';
@@ -526,13 +517,11 @@ if ($resql)
 		{
 			print img_picto('', 'warning.png').' '.$langs->trans("YouHaveXObjectUseSearchOptim", $nb, $langs->transnoentitiesnoconv("ThirdParties"), 'COMPANY_DONOTSEARCH_ANYWHERE');
 		}
-		else
-		{
+		else {
 			print img_picto('', 'tick.png').' '.$langs->trans("YouHaveXObjectAndSearchOptimOn", $nb, $langs->transnoentitiesnoconv("ThirdParties"));
 		}
 	}
-	else
-	{
+	else {
 		print img_picto('', 'tick.png').' '.$langs->trans("NbOfObjectIsLowerThanNoPb", $nb, $langs->transnoentitiesnoconv("ThirdParties"));
 	}
 	print '<br>';
@@ -546,8 +535,7 @@ if (!in_array($conf->browser->name, array('chrome', 'opera', 'safari', 'firefox'
 {
 	print img_picto('', 'warning.png').' '.$langs->trans("BrowserIsKO", $conf->browser->name);
 }
-else
-{
+else {
 	print img_picto('', 'tick.png').' '.$langs->trans("BrowserIsOK", $conf->browser->name);
 }
 print '<br>';

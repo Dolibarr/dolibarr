@@ -136,8 +136,7 @@ else {
     	{
         	$maincategories[$key] = $categorycursor;
     	}
-    	else
-    	{
+    	else {
         	$subcategories[$key] = $categorycursor;
     	}
 	}

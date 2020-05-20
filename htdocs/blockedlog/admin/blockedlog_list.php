@@ -134,14 +134,12 @@ if ($action === 'downloadblockchain') {
 				$previoushash = $block_static->getPreviousHash(0, $obj->rowid);
 				$firstid = $obj->rowid;
 			}
-			else
-			{	// If not data found for filter, we do not need previoushash neither firstid
+			else {	// If not data found for filter, we do not need previoushash neither firstid
 				$previoushash = 'nodata';
 				$firstid = '';
 			}
 		}
-		else
-		{
+		else {
 			$error++;
 			setEventMessages($db->lasterror, null, 'errors');
 		}
@@ -212,8 +210,7 @@ if ($action === 'downloadblockchain') {
 					if ($loweridinerror > 0) $statusofrecordnote = 'ValidButFoundAPreviousKO';
 					else $statusofrecordnote = '';
 				}
-				else
-				{
+				else {
 					$statusofrecord = 'KO';
 					$statusofrecordnote = 'LineCorruptedOrNotMatchingPreviousOne';
 					$loweridinerror = $obj->rowid;
@@ -246,8 +243,7 @@ if ($action === 'downloadblockchain') {
 
 			exit;
 		}
-		else
-		{
+		else {
 			setEventMessages($db->lasterror, null, 'errors');
 		}
 	}
@@ -264,8 +260,7 @@ if (GETPOST('withtab', 'alpha'))
 {
 	$title = $langs->trans("ModuleSetup").' '.$langs->trans('BlockedLog');
 }
-else
-{
+else {
 	$title = $langs->trans("BrowseBlockedLog");
 }
 
@@ -280,8 +275,7 @@ if (!is_array($blocks))
 	{
 		setEventMessages($langs->trans("TooManyRecordToScanRestrictFilters", $MAXLINES), null, 'errors');
 	}
-	else
-	{
+	else {
 		dol_print_error($block_static->db, $block_static->error, $block_static->errors);
 		exit;
 	}
@@ -441,8 +435,7 @@ if (!empty($conf->global->BLOCKEDLOG_SCAN_ALL_FOR_LOWERIDINERROR)) {
 	// TODO Make a full scan of table in reverse order of id of $block, so we can use the parameter $previoushash into checkSignature to save requests
 	// to find the $loweridinerror.
 }
-else
-{
+else {
 	// This is version that optimize the memory (but will not report errors that are outside the filter range)
 	$loweridinerror = 0;
 	$checkresult = array();
@@ -511,8 +504,7 @@ if (is_array($blocks))
 		   		if ($checkresult[$block->id]) print img_picto($langs->trans('OkCheckFingerprintValidityButChainIsKo'), 'statut4');
 		   		else print img_picto($langs->trans('KoCheckFingerprintValidity'), 'statut8');
 		   	}
-		   	else
-		   	{
+		   	else {
 		   		print img_picto($langs->trans('OkCheckFingerprintValidity'), 'statut4');
 		   	}
 

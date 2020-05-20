@@ -73,8 +73,7 @@ if ($action == 'delete')
 		header("Location: ".$_SERVER["PHP_SELF"]);
 		exit;
 	}
-	else
-	{
+	else {
 		setEventMessages($object->error, $object->errors, 'errors');
 	}
 }
@@ -116,8 +115,7 @@ if (is_numeric($nbtotalofrecords) && $limit > $nbtotalofrecords)
 {
 	$num = $nbtotalofrecords;
 }
-else
-{
+else {
 	$sql .= $db->plimit($limit + 1, $offset);
 
 	$resql = $db->query($sql);
@@ -231,8 +229,7 @@ while ($i < min($num, $limit))
 		$tmpuser = $cacheOfUsers[$obj->fk_user];
 		print $tmpuser->getNomUrl(1);
 	}
-	else
-	{
+	else {
 		print $langs->trans("Public");
 	}
 	print "</td>\n";
@@ -253,8 +250,7 @@ while ($i < min($num, $limit))
 	{
 		print '<a class="marginleftonly" href="'.$_SERVER["PHP_SELF"].'?action=delete&id='.$obj->rowid.'">'.img_delete().'</a>';
 	}
-	else
-	{
+	else {
 		print "&nbsp;";
 	}
 	print "</td>";

@@ -127,8 +127,7 @@ if ($action == 'set')
 		$db->commit();
 		setEventMessages($langs->trans("SetupSaved"), null, 'mesgs');
 	}
-	else
-	{
+	else {
 		$db->rollback();
 		setEventMessages($error, $errors, 'errors');
 	}
@@ -156,8 +155,7 @@ if ($action == 'setlevel')
 	{
 		setEventMessages($langs->trans("SetupSaved"), null, 'mesgs');
 	}
-	else
-	{
+	else {
 		setEventMessages($langs->trans("Error"), null, 'errors');
 	}
 }

@@ -162,13 +162,11 @@ class ModeleBoxes // Can't be abtract as it is instantiated to build "empty" box
 				$this->fk_user = $obj->fk_user;
 				return 1;
 			}
-			else
-			{
+			else {
 				return -1;
 			}
 		}
-		else
-		{
+		else {
 			return -1;
 		}
 	}
@@ -439,8 +437,7 @@ class ModeleBoxes // Can't be abtract as it is instantiated to build "empty" box
 							$langs->load("errors");
 							print '<div class="error">'.$langs->trans("Error").' : '.$langs->trans("ErrorDuplicateWidget", $modName, "").'</div>';
 						}
-						else
-						{
+						else {
 							try {
 								include_once $newdir.'/'.$file;
 							}

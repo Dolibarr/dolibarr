@@ -122,8 +122,7 @@ class DoliDBMysqli extends DoliDB
 					if (!preg_match('/general/', $collation)) $this->db->query("SET collation_connection = ".$collation);
 				}
             }
-            else
-            {
+            else {
                 $this->database_selected = false;
                 $this->database_name = '';
                 $this->ok = false;
@@ -131,8 +130,7 @@ class DoliDBMysqli extends DoliDB
                 dol_syslog(get_class($this)."::DoliDBMysqli : Select_db error ".$this->error, LOG_ERR);
             }
         }
-        else
-        {
+        else {
             // Pas de selection de base demandee, ok ou ko
             $this->database_selected = false;
 
@@ -270,8 +268,7 @@ class DoliDBMysqli extends DoliDB
             // Ordre SQL ne necessitant pas de connexion a une base (exemple: CREATE DATABASE)
             $ret = $this->db->query($query);
         }
-        else
-        {
+        else {
             $ret = $this->db->query($query);
         }
 
@@ -342,8 +339,7 @@ class DoliDBMysqli extends DoliDB
             if (!is_object($resultset)) { $resultset = $this->_results; }
             return $resultset->fetch_row();
         }
-        else
-        {
+        else {
             // si le curseur est un booleen on retourne la valeur 0
             return 0;
         }
@@ -747,8 +743,7 @@ class DoliDBMysqli extends DoliDB
 
         if (!$this->query($sql))
         return -1;
-        else
-        return 1;
+        else return 1;
     }
 
     // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
@@ -765,8 +760,7 @@ class DoliDBMysqli extends DoliDB
 
 		if (!$this->query($sql))
  			return -1;
-    	else
-    		return 1;
+    	else return 1;
     }
 
     // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
@@ -823,8 +817,7 @@ class DoliDBMysqli extends DoliDB
         {
             if (preg_match("/null/i", $field_desc['default']))
             $sql .= " default ".$field_desc['default'];
-            else
-            $sql .= " default '".$field_desc['default']."'";
+            else $sql .= " default '".$field_desc['default']."'";
         }
         if (isset($field_desc['extra']) && preg_match("/^[^\s]/i", $field_desc['extra']))
         {
@@ -882,8 +875,7 @@ class DoliDBMysqli extends DoliDB
         dol_syslog(get_class($this)."::DDLUpdateField ".$sql, LOG_DEBUG);
         if (!$this->query($sql))
         return -1;
-        else
-        return 1;
+        else return 1;
     }
 
     // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
@@ -929,8 +921,7 @@ class DoliDBMysqli extends DoliDB
             {
             	return -1;
             }
-            else
-			{
+            else {
             	// If user already exists, we continue to set permissions
             	dol_syslog(get_class($this)."::DDLCreateUser sql=".$sql, LOG_WARNING);
             }

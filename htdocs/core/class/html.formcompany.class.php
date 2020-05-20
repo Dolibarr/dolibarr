@@ -257,8 +257,7 @@ class FormCompany extends Form
 						{
 							$out .= '<option value="'.$obj->rowid.'" selected>';
 						}
-						else
-						{
+						else {
 							$out .= '<option value="'.$obj->rowid.'">';
 						}
 
@@ -289,8 +288,7 @@ class FormCompany extends Form
 			if (!empty($htmlname)) $out .= '</select>';
 			if (!empty($htmlname) && $user->admin) $out .= ' '.info_admin($langs->trans("YouCanChangeValuesForThisListFromDictionarySetup"), 1);
 		}
-		else
-		{
+		else {
 			dol_print_error($this->db);
 		}
 
@@ -357,8 +355,7 @@ class FormCompany extends Form
 						{
 							print '<option value="'.$obj->code.'" selected>'.$obj->label.'</option>';
 						}
-						else
-						{
+						else {
 							print '<option value="'.$obj->code.'">'.$obj->label.'</option>';
 						}
 					}
@@ -367,8 +364,7 @@ class FormCompany extends Form
 			}
 			print '</select>';
 		}
-		else
-		{
+		else {
 			dol_print_error($this->db);
 		}
 	}
@@ -410,8 +406,7 @@ class FormCompany extends Form
 					{
 						$out .= '<option value="'.$obj->code.'" selected>';
 					}
-					else
-					{
+					else {
 						$out .= '<option value="'.$obj->code.'">';
 					}
 					// Si traduction existe, on l'utilise, sinon on prend le libelle par defaut
@@ -423,8 +418,7 @@ class FormCompany extends Form
 			$out .= '</select>';
 			if ($user->admin) $out .= info_admin($langs->trans("YouCanChangeValuesForThisListFromDictionarySetup"), 1);
 		}
-		else
-		{
+		else {
 			dol_print_error($this->db);
 		}
 
@@ -526,8 +520,7 @@ class FormCompany extends Form
 					{
 						$out .= '<option value="'.$val['code'].'" selected>';
 					}
-					else
-					{
+					else {
 						$out .= '<option value="'.$val['code'].'">';
 					}
 					// If translation exists, we use it, otherwise we use default label in database
@@ -544,8 +537,7 @@ class FormCompany extends Form
 
 			$out .= '</div>';
 		}
-		else
-		{
+		else {
 			dol_print_error($this->db);
 		}
 
@@ -653,8 +645,7 @@ class FormCompany extends Form
 			print ajax_autocompleter(($socid ? $socid : -1), $htmlname, DOL_URL_ROOT.'/societe/ajaxcompanies.php', '', $minLength, 0);
 			return $socid;
 		}
-		else
-		{
+		else {
 			// Search to list thirdparties
 			$sql = "SELECT s.rowid, s.nom as name FROM";
 			$sql .= " ".MAIN_DB_PREFIX."societe as s";
@@ -693,8 +684,7 @@ class FormCompany extends Form
 							print ' selected>'.dol_trunc($obj->name, 24).'</option>';
 							$firstCompany = $obj->rowid;
 						}
-						else
-						{
+						else {
 							print '<option value="'.$obj->rowid.'"';
 							if ($disabled) print ' disabled';
 							print '>'.dol_trunc($obj->name, 24).'</option>';
@@ -706,8 +696,7 @@ class FormCompany extends Form
 				print ajax_combobox($htmlname);
 				return $firstCompany;
 			}
-			else
-			{
+			else {
 				dol_print_error($this->db);
 				return 0;
 			}
@@ -914,8 +903,7 @@ class FormCompany extends Form
     				{
     					print '<option value="'.$valors[$i].'" selected>';
     				}
-    				else
-    				{
+    				else {
     					print '<option value="'.$valors[$i].'">';
     				}
     				print $valors[$i];

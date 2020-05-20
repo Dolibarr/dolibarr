@@ -107,8 +107,7 @@ class mod_pacific extends ModeleNumRefFicheinter
 		{
 			return true;
 		}
-		else
-		{
+		else {
 			$langs->load("errors");
 			$this->error = $langs->trans('ErrorNumRefModel', $max);
 			return false;

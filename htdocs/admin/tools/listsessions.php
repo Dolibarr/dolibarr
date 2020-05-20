@@ -172,8 +172,7 @@ if ($savehandler == 'files')
 	}
 	print "</table>";
 }
-else
-{
+else {
 	print $langs->trans("NoSessionListWithThisHandler");
 }
 
@@ -188,8 +187,7 @@ if (empty($conf->global->MAIN_ONLY_LOGIN_ALLOWED))
 {
 	print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?action=lock">'.$langs->trans("LockNewSessions").'</a>';
 }
-else
-{
+else {
 	print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?action=confirm_unlock">'.$langs->trans("UnlockNewSessions").'</a>';
 }
 

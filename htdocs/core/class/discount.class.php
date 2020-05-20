@@ -188,14 +188,12 @@ class DiscountAbsolute
                 $this->db->free($resql);
                 return 1;
             }
-            else
-            {
+            else {
                 $this->db->free($resql);
                 return 0;
             }
         }
-        else
-        {
+        else {
             $this->error = $this->db->error();
             return -1;
         }
@@ -265,8 +263,7 @@ class DiscountAbsolute
             $this->id = $this->db->last_insert_id(MAIN_DB_PREFIX."societe_remise_except");
             return $this->id;
         }
-        else
-        {
+        else {
             $this->error = $this->db->lasterror().' - sql='.$sql;
             return -1;
         }
@@ -304,8 +301,7 @@ class DiscountAbsolute
                     return -2;
                 }
             }
-            else
-            {
+            else {
                 dol_print_error($this->db);
                 return -1;
             }
@@ -332,8 +328,7 @@ class DiscountAbsolute
         			return -2;
         		}
         	}
-        	else
-        	{
+        	else {
         		dol_print_error($this->db);
         		return -1;
         	}
@@ -369,8 +364,7 @@ class DiscountAbsolute
                     $this->db->commit();
                     return 1;
                 }
-                else
-                {
+                else {
                     $this->error = $this->db->lasterror();
                     $this->db->rollback();
                     return -1;
@@ -388,21 +382,18 @@ class DiscountAbsolute
             		$this->db->commit();
             		return 1;
             	}
-            	else
-            	{
+            	else {
             		$this->error = $this->db->lasterror();
             		$this->db->rollback();
             		return -1;
             	}
             }
-            else
-            {
+            else {
                 $this->db->commit();
                 return 1;
             }
         }
-        else
-        {
+        else {
             $this->error = $this->db->lasterror();
             $this->db->rollback();
             return -1;
@@ -459,8 +450,7 @@ class DiscountAbsolute
         	}
             return 1;
         }
-        else
-        {
+        else {
             $this->error = $this->db->error();
             return -3;
         }
@@ -491,8 +481,7 @@ class DiscountAbsolute
         {
             return 1;
         }
-        else
-        {
+        else {
             $this->error = $this->db->error();
             return -3;
         }
@@ -576,8 +565,7 @@ class DiscountAbsolute
             $sql .= ' WHERE rc.fk_invoice_supplier_source=f.rowid AND rc.fk_invoice_supplier = '.$invoice->id;
             $sql .= ' AND f.type = 3';
         }
-        else
-        {
+        else {
             $this->error = get_class($this)."::getSumDepositsUsed was called with a bad object as a first parameter";
             dol_print_error($this->error);
             return -1;
@@ -590,8 +578,7 @@ class DiscountAbsolute
             if ($multicurrency == 1) return $obj->multicurrency_amount;
 			else return $obj->amount;
         }
-        else
-        {
+        else {
             $this->error = $this->db->lasterror();
             return -1;
         }
@@ -622,8 +609,7 @@ class DiscountAbsolute
             $sql .= ' WHERE rc.fk_invoice_supplier_source=f.rowid AND rc.fk_invoice_supplier = '.$invoice->id;
             $sql .= ' AND f.type IN ('.$invoice::TYPE_STANDARD.', '.$invoice::TYPE_CREDIT_NOTE.')'; // Find discount coming from credit note or excess paid
         }
-        else
-        {
+        else {
             $this->error = get_class($this)."::getSumCreditNotesUsed was called with a bad object as a first parameter";
             dol_print_error($this->error);
             return -1;
@@ -636,8 +622,7 @@ class DiscountAbsolute
             if ($multicurrency == 1) return $obj->multicurrency_amount;
 			else return $obj->amount;
         }
-        else
-        {
+        else {
             $this->error = $this->db->lasterror();
             return -1;
         }
@@ -665,8 +650,7 @@ class DiscountAbsolute
             $sql .= ' FROM '.MAIN_DB_PREFIX.'societe_remise_except as rc';
             $sql .= ' WHERE rc.fk_invoice_supplier IS NULL AND rc.fk_invoice_supplier_source = '.$invoice->id;
         }
-        else
-        {
+        else {
             $this->error = get_class($this)."::getSumCreditNotesUsed was called with a bad object as a first parameter";
             dol_print_error($this->error);
             return -1;
@@ -679,8 +663,7 @@ class DiscountAbsolute
             if ($multicurrency) return $obj->multicurrency_amount;
 			else return $obj->amount;
         }
-        else
-        {
+        else {
             $this->error = $this->db->lasterror();
             return -1;
         }

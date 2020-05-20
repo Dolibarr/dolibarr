@@ -553,8 +553,7 @@ function measuringUnitString($unit, $measuring_style = '', $scale = '', $use_sho
 				't.active' => 1
 			);
 		}
-		else
-		{
+		else {
 			$arrayforfilter = array(
 				't.rowid' => $unit,
 				't.unit_type' => $measuring_style,

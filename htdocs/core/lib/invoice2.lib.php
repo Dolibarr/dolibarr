@@ -262,15 +262,13 @@ function rebuild_merge_pdf($db, $langs, $conf, $diroutputpdf, $newlangid, $filte
 
 			$result = 1;
 		}
-		else
-		{
+		else {
 			if ($usestdout) print "No invoices found for criteria.\n";
 			else dol_syslog("No invoices found for criteria");
 			$result = 0;
 		}
 	}
-	else
-	{
+	else {
 		dol_print_error($db);
 		dol_syslog("scripts/invoices/rebuild_merge.php: Error");
 		$error++;

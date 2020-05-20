@@ -83,8 +83,7 @@ function rebuildObjectClass($destdir, $module, $objectname, $newmask, $readdir =
 	//$pathoffiletoedittmp=$destdir.'/class/'.strtolower($objectname).'.class.php.tmp';
 	//dol_delete_file($pathoffiletoedittmp, 0, 1, 1);
 
-	try
-	{
+	try {
 		include_once $pathoffiletoeditsrc;
 		if (class_exists($objectname)) $object = new $objectname($db);
 		else return -4;
@@ -234,8 +233,7 @@ function rebuildObjectSql($destdir, $module, $objectname, $newmask, $readdir = '
 	}
 
 	// Load object from myobject.class.php
-	try
-	{
+	try {
 		if (!is_object($object))
 		{
 			include_once $pathoffiletoclasssrc;
@@ -270,8 +268,7 @@ function rebuildObjectSql($destdir, $module, $objectname, $newmask, $readdir = '
 			$texttoinsert .= "\t".$key." ".$type;
 			if ($key == 'rowid')  $texttoinsert .= ' AUTO_INCREMENT PRIMARY KEY';
 			if ($key == 'entity') $texttoinsert .= ' DEFAULT 1';
-			else
-			{
+			else {
 				if ($val['default'] != '')
 				{
 					if (preg_match('/^null$/i', $val['default'])) $texttoinsert .= " DEFAULT NULL";
@@ -293,8 +290,7 @@ function rebuildObjectSql($destdir, $module, $objectname, $newmask, $readdir = '
 	{
 		@chmod($pathoffiletoedittarget, octdec($newmask));
 	}
-	else
-	{
+	else {
 		$error++;
 	}
 
@@ -338,8 +334,7 @@ function rebuildObjectSql($destdir, $module, $objectname, $newmask, $readdir = '
 	{
 		@chmod($pathoffiletoedittarget, octdec($newmask));
 	}
-	else
-	{
+	else {
 		$error++;
 	}
 

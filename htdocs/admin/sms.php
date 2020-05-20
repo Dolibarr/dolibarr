@@ -123,8 +123,7 @@ if ($action == 'send' && !$_POST['cancel'])
 			setEventMessages($langs->trans("SmsSuccessfulySent", $smsfrom, $sendto), null, 'mesgs');
 			setEventMessages($smsfile->error, $smsfile->errors, 'mesgs');
 		}
-		else
-		{
+		else {
 			setEventMessages($langs->trans("ResultKo"), null, 'errors');
 			setEventMessages($smsfile->error, $smsfile->errors, 'errors');
 		}
@@ -206,8 +205,7 @@ if ($action == 'edit')
 	print '</form>';
 	print '<br>';
 }
-else
-{
+else {
 	if (!count($listofmethods)) print '<div class="warning">'.$langs->trans("NoSmsEngine", '<a target="_blank" href="http://www.dolistore.com/search.php?orderby=position&orderway=desc&search_query=smsmanager">DoliStore</a>').'</div>';
 
 	print '<table class="noborder centpercent">';
@@ -265,8 +263,7 @@ else
 	{
 	    print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?action=test&amp;mode=init">'.$langs->trans("DoTestSend").'</a>';
 	}
-	else
-	{
+	else {
         print '<a class="butActionRefused classfortooltip" href="#">'.$langs->trans("DoTestSend").'</a>';
 	}
 	print '</div>';

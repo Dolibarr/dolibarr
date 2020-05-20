@@ -219,8 +219,7 @@ class RssParser
 
 				$this->_lastfetchdate = $filedate;
 			}
-			else
-			{
+			else {
 				dol_syslog(get_class($this)."::parser cache file ".$newpathofdestfile." is not found or older than now - cachedelay (".$nowgmt." - ".$cachedelay.") so we can't use it.");
 			}
 		}
@@ -230,8 +229,7 @@ class RssParser
 		{
 			$str = file_get_contents($newpathofdestfile);
 		}
-		else
-		{
+		else {
 			try {
 				ini_set("user_agent", "Dolibarr ERP-CRM RSS reader");
 				ini_set("max_execution_time", $conf->global->MAIN_USE_RESPONSE_TIMEOUT);
@@ -259,8 +257,7 @@ class RssParser
 				libxml_use_internal_errors(false);
 				$rss = simplexml_load_string($str, "SimpleXMLElement", LIBXML_NOCDATA);
 			}
-			else
-			{
+			else {
 				$xmlparser = xml_parser_create('');
 				if (!is_resource($xmlparser)) {
 					$this->error = "ErrorFailedToCreateParser"; return -1;
@@ -294,8 +291,7 @@ class RssParser
 
 					$this->_lastfetchdate = $nowgmt;
 				}
-				else
-				{
+				else {
 					print 'Error, failed to open file '.$newpathofdestfile.' for write';
 				}
 			}
@@ -325,8 +321,7 @@ class RssParser
 					if (!empty($rss->channel->title))         $this->_title = (string) $rss->channel->title;
 					if (!empty($rss->channel->description))	  $this->_description = (string) $rss->channel->description;
 				}
-				else
-				{
+				else {
 					//var_dump($rss->channel);
 					if (!empty($rss->channel['language']))      $this->_language = (string) $rss->channel['language'];
 					if (!empty($rss->channel['generator']))     $this->_generator = (string) $rss->channel['generator'];
@@ -353,8 +348,7 @@ class RssParser
 					if (!empty($rss->title))         $this->_title = (string) $rss->title;
 					if (!empty($rss->description))	 $this->_description = (string) $rss->description;
 				}
-				else
-				{
+				else {
 					//if (!empty($rss->channel['rss_language']))	$this->_language = (string) $rss->channel['rss_language'];
 					if (!empty($rss->channel['generator']))			$this->_generator = (string) $rss->channel['generator'];
 					//if (!empty($rss->channel['rss_copyright']))	$this->_copyright = (string) $rss->channel['rss_copyright'];
@@ -392,8 +386,7 @@ class RssParser
 							$itemId = '';
 							$itemAuthor = '';
 						}
-						else
-						{
+						else {
 							$itemLink = (string) $item['link'];
 							$itemTitle = (string) $item['title'];
 							$itemDescription = (string) $item['description'];
@@ -423,8 +416,7 @@ class RssParser
 							$itemId = (string) $item['id'];
 							$itemAuthor = (string) ($item['author'] ? $item['author'] : $item['author_name']);
 						}
-						else
-						{
+						else {
 							$itemLink = (isset($item['link']) ? (string) $item['link'] : '');
 							$itemTitle = (string) $item['title'];
 							$itemDescription = $this->getAtomItemDescription($item);
@@ -454,8 +446,7 @@ class RssParser
 
 			return 1;
 		}
-		else
-		{
+		else {
 			$this->error = 'ErrorFailedToLoadRSSFile';
 			return -1;
 		}
@@ -574,8 +565,7 @@ class RssParser
 			{
 				$link_el = 'link';
 			}
-			else
-			{
+			else {
 				$link_el = 'link_'.$attrs['rel'];
 			}
 
@@ -603,8 +593,7 @@ class RssParser
 		{
 			$this->append_content($text);
 		}
-		else
-		{
+		else {
 			$current_el = join('_', array_reverse($this->stack));
 			$this->append($current_el, $text);
 		}
@@ -851,8 +840,7 @@ function xml2php($xml)
 			//Add an element in an existing array
 			$array[$key][] = $child;
 		}
-		else
-		{
+		else {
 			//Add a simple element
 			$array[$key] = $child;
 		}

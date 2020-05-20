@@ -60,8 +60,7 @@ if (!$base)
 {
 	print $langs->trans("FeatureNotAvailableWithThisDatabaseDriver");
 }
-else
-{
+else {
 	$resql = $db->query($sql);
 	if ($resql)
 	{

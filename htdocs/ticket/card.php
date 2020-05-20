@@ -1207,8 +1207,7 @@ if (empty($action) || $action == 'view' || $action == 'addlink' || $action == 'd
 			}
 			print '</div>'."\n";
 		}
-		else
-		{
+		else {
 			print '<br>';
 		}
 

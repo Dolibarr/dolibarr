@@ -190,8 +190,7 @@ for ($i = 1; $i <= 6; $i++)
 		$pid = $langs->transcountry("ProfId".$i, $mysoc->country_code);
 		if ($pid == '-') $pid = false;
 	}
-	else
-	{
+	else {
 		$pid = img_warning().' <font class="error">'.$langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("CompanyCountry")).'</font>';
 	}
 	if ($pid)

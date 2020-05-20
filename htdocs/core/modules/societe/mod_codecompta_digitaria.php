@@ -170,8 +170,7 @@ class mod_codecompta_digitaria extends ModeleAccountancyCode
                 $prefix = $this->prefixcustomeraccountancycode;
                 $width = $this->customeraccountancycodecharacternumber;
             }
-            else
-            {
+            else {
                 $this->error = 'Bad value for parameter type';
                 return -1;
             }
@@ -221,8 +220,7 @@ class mod_codecompta_digitaria extends ModeleAccountancyCode
         {
             return 0; // return ok
         }
-        else
-        {
+        else {
             return -1; // return ko
         }
 	}
@@ -245,8 +243,7 @@ class mod_codecompta_digitaria extends ModeleAccountancyCode
         {
             $typethirdparty = 'code_compta';
         }
-        else
-        {
+        else {
             $this->error = 'Bad value for parameter type';
             return -1;
         }
@@ -262,14 +259,12 @@ class mod_codecompta_digitaria extends ModeleAccountancyCode
                 dol_syslog("mod_codecompta_digitaria::checkIfAccountancyCodeIsAlreadyUsed '".$code."' available");
                 return 0; // Available
             }
-            else
-            {
+            else {
                 dol_syslog("mod_codecompta_digitaria::checkIfAccountancyCodeIsAlreadyUsed '".$code."' not available");
                 return -1; // Not available
             }
         }
-        else
-        {
+        else {
             $this->error = $db->error()." sql=".$sql;
             return -2; // Error
         }

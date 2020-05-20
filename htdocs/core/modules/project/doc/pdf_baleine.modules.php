@@ -301,8 +301,7 @@ class pdf_baleine extends ModelePDFProjects
 					$tab_height = $tab_height - $height_note;
 					$tab_top = $nexY + 6;
 				}
-				else
-				{
+				else {
 					$height_note = 0;
 				}
 
@@ -359,15 +358,13 @@ class pdf_baleine extends ModelePDFProjects
 								$pdf->setPage($pageposafter + 1);
 							}
 						}
-						else
-						{
+						else {
 							// We found a page break
 
 							// Allows data in the first page if description is long enough to break in multiples pages
 							if (!empty($conf->global->MAIN_PDF_DATA_ON_FIRST_PAGE))
 								$showpricebeforepagebreak = 1;
-							else
-								$showpricebeforepagebreak = 0;
+							else $showpricebeforepagebreak = 0;
 
 							$forcedesconsamepage = 1;
 							if ($forcedesconsamepage)
@@ -397,7 +394,7 @@ class pdf_baleine extends ModelePDFProjects
 						}
 						//var_dump($i.' '.$posybefore.' '.$posyafter.' '.($this->page_hauteur -  ($heightforfooter + $heightforfreetext + $heightforinfotot)).' '.$showpricebeforepagebreak);
 					}
-					else	// No pagebreak
+					else // No pagebreak
 					{
 						$pdf->commitTransaction();
 					}
@@ -452,8 +449,7 @@ class pdf_baleine extends ModelePDFProjects
 						{
 							$this->_tableau($pdf, $tab_top, $this->page_hauteur - $tab_top - $heightforfooter, 0, $outputlangs, 0, 1);
 						}
-						else
-						{
+						else {
 							$this->_tableau($pdf, $tab_top_newpage, $this->page_hauteur - $tab_top_newpage - $heightforfooter, 0, $outputlangs, 1, 1);
 						}
 						$this->_pagefoot($pdf, $object, $outputlangs, 1);
@@ -468,8 +464,7 @@ class pdf_baleine extends ModelePDFProjects
 						{
 							$this->_tableau($pdf, $tab_top, $this->page_hauteur - $tab_top - $heightforfooter, 0, $outputlangs, 0, 1);
 						}
-						else
-						{
+						else {
 							$this->_tableau($pdf, $tab_top_newpage, $this->page_hauteur - $tab_top_newpage - $heightforfooter, 0, $outputlangs, 1, 1);
 						}
 						$this->_pagefoot($pdf, $object, $outputlangs, 1);
@@ -484,8 +479,7 @@ class pdf_baleine extends ModelePDFProjects
 				// Show square
 				if ($pagenb == 1)
 					$this->_tableau($pdf, $tab_top, $this->page_hauteur - $tab_top - $heightforinfotot - $heightforfreetext - $heightforfooter, 0, $outputlangs, 0, 0);
-				else
-					$this->_tableau($pdf, $tab_top_newpage, $this->page_hauteur - $tab_top_newpage - $heightforinfotot - $heightforfreetext - $heightforfooter, 0, $outputlangs, 1, 0);
+				else $this->_tableau($pdf, $tab_top_newpage, $this->page_hauteur - $tab_top_newpage - $heightforinfotot - $heightforfreetext - $heightforfooter, 0, $outputlangs, 1, 0);
 				$bottomlasttab = $this->page_hauteur - $heightforinfotot - $heightforfreetext - $heightforfooter + 1;
 
 				// Footer of the page
@@ -514,14 +508,12 @@ class pdf_baleine extends ModelePDFProjects
 
 				return 1; // No error
 			}
-			else
-			{
+			else {
 				$this->error = $langs->transnoentities("ErrorCanNotCreateDir", $dir);
 				return 0;
 			}
 		}
-		else
-		{
+		else {
 			$this->error = $langs->transnoentities("ErrorConstantNotDefined", "PROJECT_OUTPUTDIR");
 			return 0;
 		}
@@ -613,8 +605,7 @@ class pdf_baleine extends ModelePDFProjects
 			    $height = pdf_getHeightForLogo($logo);
 			    $pdf->Image($logo, $this->marge_gauche, $posy, 0, $height); // width=0 (auto)
 			}
-			else
-			{
+			else {
 				$pdf->SetTextColor(200, 0, 0);
 				$pdf->SetFont('', 'B', $default_font_size - 2);
 				$pdf->MultiCell(100, 3, $langs->transnoentities("ErrorLogoFileNotFound", $logo), 0, 'L');

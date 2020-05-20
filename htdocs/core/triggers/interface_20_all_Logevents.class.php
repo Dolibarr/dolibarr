@@ -203,8 +203,7 @@ class InterfaceLogevents extends DolibarrTriggers
         {
             return 1;
         }
-        else
-        {
+        else {
             $error = "Failed to insert security event: ".$event->error;
             $this->errors[] = $error;
             $this->error = $error;

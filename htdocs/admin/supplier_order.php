@@ -69,8 +69,7 @@ if ($action == 'updateMask')
 	{
 		setEventMessages($langs->trans("SetupSaved"), null, 'mesgs');
 	}
-	else
-	{
+	else {
 		setEventMessages($langs->trans("Error"), null, 'errors');
 	}
 }
@@ -108,14 +107,12 @@ elseif ($action == 'specimen')  // For orders
     		header("Location: ".DOL_URL_ROOT."/document.php?modulepart=commande_fournisseur&file=SPECIMEN.pdf");
     		return;
     	}
-    	else
-    	{
+    	else {
     		setEventMessages($module->error, $module->errors, 'errors');
     		dol_syslog($module->error, LOG_ERR);
     	}
     }
-    else
-    {
+    else {
     	setEventMessages($langs->trans("ErrorModuleNotFound"), null, 'errors');
     	dol_syslog($langs->trans("ErrorModuleNotFound"), LOG_ERR);
     }
@@ -197,8 +194,7 @@ elseif ($action == 'set_SUPPLIER_ORDER_OTHER')
     	// Insert
     	$newmodule->insert_permissions(1);
     }
-    else
-    {
+    else {
     	// Remove all rights with Permission1190
     	$newmodule->delete_permissions();
 
@@ -218,8 +214,7 @@ elseif ($action == 'set_BANK_ASK_PAYMENT_BANK_DURING_SUPPLIER_ORDER')
     {
         setEventMessages($langs->trans("SetupSaved"), null, 'mesgs');
     }
-    else
-    {
+    else {
         setEventMessages($langs->trans("Error"), null, 'errors');
     }
 }
@@ -305,8 +300,7 @@ foreach ($dirmodels as $reldir)
                         {
                             print img_picto($langs->trans("Activated"), 'switch_on');
                         }
-                        else
-                        {
+                        else {
                             print '<a class="reposition" href="'.$_SERVER["PHP_SELF"].'?action=setmod&amp;value='.$file.'" alt="'.$langs->trans("Default").'">'.img_picto($langs->trans("Disabled"), 'switch_off').'</a>';
                         }
                         print '</td>';
@@ -371,8 +365,7 @@ if ($resql)
         $i++;
     }
 }
-else
-{
+else {
     dol_print_error($db);
 }
 
@@ -430,14 +423,12 @@ foreach ($dirmodels as $reldir)
                             print img_picto($langs->trans("Enabled"), 'switch_on');
                             print '</a>';
                         }
-                        else
-                        {
+                        else {
                             print img_picto($langs->trans("Enabled"), 'switch_on');
                         }
                         print "</td>";
                     }
-                    else
-                    {
+                    else {
                         print '<td class="center">'."\n";
                         print '<a href="'.$_SERVER["PHP_SELF"].'?action=set&amp;value='.$name.'&amp;scan_dir='.$module->scandir.'&amp;label='.urlencode($module->name).'&amp;type=order_supplier">'.img_picto($langs->trans("Disabled"), 'switch_off').'</a>';
                         print "</td>";
@@ -449,8 +440,7 @@ foreach ($dirmodels as $reldir)
                     {
                         print img_picto($langs->trans("Default"), 'on');
                     }
-                    else
-                    {
+                    else {
                         print '<a href="'.$_SERVER["PHP_SELF"].'?action=setdoc&amp;value='.$name.'&amp;scan_dir='.$module->scandir.'&amp;label='.urlencode($module->name).'&amp;type=order_supplier"" alt="'.$langs->trans("Default").'">'.img_picto($langs->trans("Disabled"), 'off').'</a>';
                     }
                     print '</td>';
@@ -554,8 +544,7 @@ if (empty($conf->global->PDF_ALLOW_HTML_FOR_FREE_TEXT))
 {
     print '<textarea name="'.$variablename.'" class="flat" cols="120">'.$conf->global->$variablename.'</textarea>';
 }
-else
-{
+else {
     include_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
     $doleditor = new DolEditor($variablename, $conf->global->$variablename, '', 80, 'dolibarr_notes');
     print $doleditor->Create();
@@ -573,8 +562,7 @@ if ($conf->reception->enabled)
 {
 	print '<span class="opacitymedium">'.$langs->trans("FeatureNotAvailableWithReceptionModule").'</span>';
 }
-else
-{
+else {
 	if ($conf->use_javascript_ajax) {
 		print ajax_constantonoff('SUPPLIER_ORDER_USE_DISPATCH_STATUS');
 	} else {

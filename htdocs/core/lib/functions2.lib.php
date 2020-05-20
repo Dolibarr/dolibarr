@@ -233,8 +233,7 @@ function dol_print_object_info($object, $usetable = 0)
         	if ($object->user_creation->id) print $object->user_creation->getNomUrl(1, '', 0, 0, 0);
         	else print $langs->trans("Unknown");
         }
-        else
-        {
+        else {
             $userstatic = new User($db);
             $userstatic->fetch($object->user_creation_id ? $object->user_creation_id : $object->user_creation);
             if ($userstatic->id) print $userstatic->getNomUrl(1, '', 0, 0, 0);
@@ -269,8 +268,7 @@ function dol_print_object_info($object, $usetable = 0)
         	if ($object->user_modification->id) print $object->user_modification->getNomUrl(1, '', 0, 0, 0);
         	else print $langs->trans("Unknown");
         }
-        else
-        {
+        else {
             $userstatic = new User($db);
             $userstatic->fetch($object->user_modification_id ? $object->user_modification_id : $object->user_modification);
             if ($userstatic->id) print $userstatic->getNomUrl(1, '', 0, 0, 0);
@@ -305,8 +303,7 @@ function dol_print_object_info($object, $usetable = 0)
             if ($object->user_validation->id) print $object->user_validation->getNomUrl(1, '', 0, 0, 0);
         	else print $langs->trans("Unknown");
         }
-        else
-        {
+        else {
             $userstatic = new User($db);
             $userstatic->fetch($object->user_validation_id ? $object->user_validation_id : $object->user_validation);
 			if ($userstatic->id) print $userstatic->getNomUrl(1, '', 0, 0, 0);
@@ -341,8 +338,7 @@ function dol_print_object_info($object, $usetable = 0)
             if ($object->user_approve->id) print $object->user_approve->getNomUrl(1, '', 0, 0, 0);
         	else print $langs->trans("Unknown");
         }
-        else
-        {
+        else {
             $userstatic = new User($db);
             $userstatic->fetch($object->user_approve_id ? $object->user_approve_id : $object->user_approve);
 			if ($userstatic->id) print $userstatic->getNomUrl(1, '', 0, 0, 0);
@@ -405,8 +401,7 @@ function dol_print_object_info($object, $usetable = 0)
 			if ($object->user_cloture->id) print $object->user_cloture->getNomUrl(1, '', 0, 0, 0);
         	else print $langs->trans("Unknown");
         }
-        else
-        {
+        else {
             $userstatic = new User($db);
             $userstatic->fetch($object->user_cloture);
 			if ($userstatic->id) print $userstatic->getNomUrl(1, '', 0, 0, 0);
@@ -441,8 +436,7 @@ function dol_print_object_info($object, $usetable = 0)
 			if ($object->user_rappro->id) print $object->user_rappro->getNomUrl(1, '', 0, 0, 0);
         	else print $langs->trans("Unknown");
         }
-        else
-        {
+        else {
             $userstatic = new User($db);
             $userstatic->fetch($object->user_rappro);
 			if ($userstatic->id) print $userstatic->getNomUrl(1, '', 0, 0, 0);
@@ -760,8 +754,7 @@ function get_next_value($db, $mask, $table, $field, $where = '', $objsoc = '', $
         $maskcounter = $reg[1];
         $hasglobalcounter = true;
     }
-    else
-    {
+    else {
         // setting some defaults so the rest of the code won't fail if there is a third party counter
         $masktri = '00000';
         $maskcounter = '00000';
@@ -799,8 +792,7 @@ function get_next_value($db, $mask, $table, $field, $where = '', $objsoc = '', $
         $masktype_value = substr(preg_replace('/^TE_/', '', $objsoc->typent_code), 0, dol_strlen($regType[1])); // get n first characters of thirdpaty typent_code (where n is length in mask)
         $masktype_value = str_pad($masktype_value, dol_strlen($regType[1]), "#", STR_PAD_RIGHT); // we fill on right with # to have same number of char than into mask
     }
-    else
-    {
+    else {
     	$masktype = '';
     	$masktype_value = '';
     }
@@ -815,8 +807,7 @@ function get_next_value($db, $mask, $table, $field, $where = '', $objsoc = '', $
     	$maskuser_value = substr($lastname, 0, dol_strlen($regType[1])); // get n first characters of user firstname (where n is length in mask)
     	$maskuser_value = str_pad($maskuser_value, dol_strlen($regType[1]), "#", STR_PAD_RIGHT); // we fill on right with # to have same number of char than into mask
     }
-    else
-    {
+    else {
     	$maskuser = '';
     	$maskuser_value = '';
     }
@@ -961,7 +952,7 @@ function get_next_value($db, $mask, $table, $field, $where = '', $objsoc = '', $
 			$sqlwhere .= "(SUBSTRING(".$field.", ".$yearpos.", ".$yearlen.") = '".$yearcomp."'";
             $sqlwhere .= " AND SUBSTRING(".$field.", ".$monthpos.", ".$monthlen.") = '".str_pad($monthcomp, $monthlen, '0', STR_PAD_LEFT)."')";
 		}
-        else   // reset is done on january
+        else // reset is done on january
         {
             $sqlwhere .= '(SUBSTRING('.$field.', '.$yearpos.', '.$yearlen.") = '".$yearcomp."')";
         }
@@ -974,8 +965,7 @@ function get_next_value($db, $mask, $table, $field, $where = '', $objsoc = '', $
     	{
     	$posnumstart = mb_strrpos($maskwithnocode, $maskcounter, 'UTF-8');
 	}
-	else
-	{
+	else {
     	$posnumstart = strrpos($maskwithnocode, $maskcounter);
 	}	// Pos of counter in final string (from 0 to ...)
     if ($posnumstart < 0) return 'ErrorBadMaskFailedToLocatePosOfSequence';
@@ -1142,7 +1132,7 @@ function get_next_value($db, $mask, $table, $field, $where = '', $objsoc = '', $
         	$numFinal = preg_replace('/\{yy\}/i', date("y", $date) + $yearoffset, $numFinal);
         	$numFinal = preg_replace('/\{y\}/i', substr(date("y", $date), 1, 1) + $yearoffset, $numFinal);
 		}
-		else	// we want yyyy to be current year
+		else // we want yyyy to be current year
 		{
         	$numFinal = preg_replace('/\{yyyy\}/i', date("Y", $date), $numFinal);
         	$numFinal = preg_replace('/\{yy\}/i', date("y", $date), $numFinal);
@@ -1224,8 +1214,7 @@ function check_value($mask, $value)
         $maskcounter = $reg[1];
         $hasglobalcounter = true;
     }
-    else
-    {
+    else {
         // setting some defaults so the rest of the code won't fail if there is a third party counter
         $masktri = '00000';
         $maskcounter = '00000';
@@ -1422,8 +1411,7 @@ function numero_semaine($time)
         {
             $numeroSemaine = 53;
         }
-        else
-        {
+        else {
             $numeroSemaine = 1;
         }
     }
@@ -1528,8 +1516,7 @@ function dol_set_user_param($db, $conf, &$user, $tab)
             $user->conf->$key = $value;
             //print "key=".$key." user->conf->key=".$user->conf->$key;
         }
-        else
-        {
+        else {
             unset($user->conf->$key);
         }
     }
@@ -1552,8 +1539,7 @@ function dol_print_reduction($reduction, $langs)
     {
         $string = $langs->transnoentities("Offered");
     }
-    else
-    {
+    else {
     	$string = vatrate($reduction, true);
     }
 
@@ -1674,13 +1660,11 @@ function getListOfModels($db, $type, $maxfilenamelength = 0)
                         $liste[$obj->id.':'.$record['fullname']] = dol_trunc($record['name'], $max, 'middle');
                     }
                 }
-                else
-                {
+                else {
                     $liste[0] = $obj->label.': '.$langs->trans("None");
                 }
             }
-            else
-            {
+            else {
             	if ($type == 'member' && $obj->doc_template_name == 'standard')   // Special case, if member template, we add variant per format
                 {
                     global $_Avery_Labels;
@@ -1690,7 +1674,7 @@ function getListOfModels($db, $type, $maxfilenamelength = 0)
                     	$liste[$obj->id.':'.$key] = ($obj->label ? $obj->label : $obj->doc_template_name).' '.$val['name'];
                     }
                 }
-                else    // Common usage
+                else // Common usage
                 {
                 	$liste[$obj->id] = $obj->label ? $obj->label : $obj->doc_template_name;
                 }
@@ -1698,8 +1682,7 @@ function getListOfModels($db, $type, $maxfilenamelength = 0)
             $i++;
         }
     }
-    else
-    {
+    else {
         dol_print_error($db);
         return -1;
     }
@@ -1777,8 +1760,7 @@ function getSoapParams()
                       'trace'		   => 1
         );
     }
-    else
-    {
+    else {
         $params = array('connection_timeout'=>$timeout,
                       'response_timeout'=>$response_timeout,
                       'proxy_use'      => 0,
@@ -1968,8 +1950,7 @@ function cleanCorruptedTree($db, $tabletocleantree, $fieldfkparent)
 			$i++;
 		}
 	}
-	else
-	{
+	else {
 		dol_print_error($db);
 	}
 
@@ -2148,7 +2129,7 @@ function colorAgressiveness($hex, $ratio = -50, $brightness = 0)
 			if ($color > 127) $color += ((255 - $color) * ($ratio / 100));
 			if ($color < 128) $color -= ($color * ($ratio / 100));
 		}
-		else			// We decrease agressiveness
+		else // We decrease agressiveness
 		{
 			if ($color > 128) $color -= (($color - 128) * (abs($ratio) / 100));
 			if ($color < 127) $color += ((128 - $color) * (abs($ratio) / 100));
@@ -2157,8 +2138,7 @@ function colorAgressiveness($hex, $ratio = -50, $brightness = 0)
 		{
 			$color = ($color * (100 + abs($brightness)) / 100);
 		}
-		else
-		{
+		else {
 			$color = ($color * (100 - abs($brightness)) / 100);
 		}
 

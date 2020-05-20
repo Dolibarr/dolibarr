@@ -65,8 +65,7 @@ if (!empty($conf->stripe->enabled) && (empty($conf->global->STRIPE_LIVE) || GETP
 	$servicestatus = '0';
 	dol_htmloutput_mesg($langs->trans('YouAreCurrentlyInSandboxMode', 'Stripe'), '', 'warning');
 }
-else
-{
+else {
 	$service = 'StripeLive';
 	$servicestatus = '1';
 }
@@ -115,8 +114,7 @@ if (!$rowid) {
 	{
 		$payout = \Stripe\Payout::all(array("limit" => $limit), array("stripe_account" => $stripeacc));
 	}
-	else
-	{
+	else {
 		$payout = \Stripe\Payout::all(array("limit" => $limit));
 	}
 

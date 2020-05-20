@@ -72,8 +72,7 @@ if (!$bankid)
 {
 	$account->fetch(0, '', $id);
 }
-else
-{
+else {
 	$account->fetch($bankid);
 }
 if (empty($account->userid)) $account->userid = $object->id;
@@ -107,8 +106,7 @@ if ($action == 'add' && !$cancel)
 		setEventMessages($account->error, $account->errors, 'errors');
 		$action = 'edit'; // Force chargement page edition
 	}
-	else
-	{
+	else {
         setEventMessages($langs->trans('RecordSaved'), null, 'mesgs');
         $action = '';
 	}
@@ -138,8 +136,7 @@ if ($action == 'update' && !$cancel)
 		setEventMessages($account->error, $account->errors, 'errors');
 		$action = 'edit'; // Force chargement page edition
 	}
-	else
-	{
+	else {
         setEventMessages($langs->trans('RecordSaved'), null, 'mesgs');
         $action = '';
     }
@@ -284,8 +281,7 @@ if ($action != 'edit' && $action != 'create')		// If not bank account yet, $acco
 			if ($num <= 0) print '<td colspan="4" class="opacitymedium">'.$langs->trans("None").'</a>';
 			print "</table>";
 		}
-		else
-		{
+		else {
 			dol_print_error($db);
 		}
 	}
@@ -340,8 +336,7 @@ if ($action != 'edit' && $action != 'create')		// If not bank account yet, $acco
 			if ($num <= 0) print '<td colspan="4" class="opacitymedium">'.$langs->trans("None").'</a>';
 			print "</table>";
 		}
-		else
-		{
+		else {
 			dol_print_error($db);
 		}
 	}
@@ -395,8 +390,7 @@ if ($action != 'edit' && $action != 'create')		// If not bank account yet, $acco
 			if ($num <= 0) print '<td colspan="4" class="opacitymedium">'.$langs->trans("None").'</a>';
 			print "</table>";
 		}
-		else
-		{
+		else {
 			dol_print_error($db);
 		}
 	}

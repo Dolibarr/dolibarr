@@ -162,7 +162,7 @@ class ExtraLanguages
 			$help = $this->attributes[$extrafieldsobjectkey]['help'][$key];
 			$hidden = (empty($list) ? 1 : 0); // If empty, we are sure it is hidden, otherwise we show. If it depends on mode (view/create/edit form or list, this must be filtered by caller)
 		}
-		else	// Old usage
+		else // Old usage
 		{
 			$label = $this->attribute_label[$key];
 			$type = $this->attribute_type[$key];
@@ -211,8 +211,7 @@ class ExtraLanguages
 			{
 				$morecss = '';
 			}
-			else
-			{
+			else {
 				if (round($size) < 12)
 				{
 					$morecss = 'minwidth100';
@@ -221,8 +220,7 @@ class ExtraLanguages
 				{
 					$morecss = 'minwidth200';
 				}
-				else
-				{
+				else {
 					$morecss = 'minwidth400';
 				}
 			}
@@ -263,8 +261,7 @@ class ExtraLanguages
 				$doleditor = new DolEditor($keyprefix.$key.$keysuffix, $value, '', 200, 'dolibarr_notes', 'In', false, false, false, ROWS_5, '90%');
 				$out = $doleditor->Create(1);
 			}
-			else
-			{
+			else {
 				$out = '<input type="text" class="flat '.$morecss.' maxwidthonsmartphone" name="'.$keyprefix.$key.$keysuffix.'" id="'.$keyprefix.$key.$keysuffix.'" value="'.dol_escape_htmltag($value).'" '.($moreparam ? $moreparam : '').'>';
 			}
 		}
@@ -276,8 +273,7 @@ class ExtraLanguages
 				$doleditor = new DolEditor($keyprefix.$key.$keysuffix, $value, '', 200, 'dolibarr_notes', 'In', false, false, !empty($conf->fckeditor->enabled) && $conf->global->FCKEDITOR_ENABLE_SOCIETE, ROWS_5, '90%');
 				$out = $doleditor->Create(1);
 			}
-			else
-			{
+			else {
 				$out = '<input type="text" class="flat '.$morecss.' maxwidthonsmartphone" name="'.$keyprefix.$key.$keysuffix.'" id="'.$keyprefix.$key.$keysuffix.'" value="'.dol_escape_htmltag($value).'" '.($moreparam ? $moreparam : '').'>';
 			}
 		}
@@ -293,8 +289,7 @@ class ExtraLanguages
 				}
 				$out = '<input type="checkbox" class="flat '.$morecss.' maxwidthonsmartphone" name="'.$keyprefix.$key.$keysuffix.'" id="'.$keyprefix.$key.$keysuffix.'" '.$checked.' '.($moreparam ? $moreparam : '').'>';
 			}
-			else
-			{
+			else {
 				$out .= $form->selectyesno($keyprefix.$key.$keysuffix, $value, 1, false, 1);
 			}
 		}
@@ -773,7 +768,7 @@ class ExtraLanguages
 			$help = $this->attributes[$extrafieldsobjectkey]['help'][$key];
 			$hidden = (empty($list) ? 1 : 0); // If $list empty, we are sure it is hidden, otherwise we show. If it depends on mode (view/create/edit form or list, this must be filtered by caller)
 		}
-		else	// Old usage
+		else // Old usage
 		{
 			//dol_syslog("Warning: parameter 'extrafieldsobjectkey' is missing", LOG_WARNING);
 			$label = $this->attribute_label[$key];
@@ -910,8 +905,7 @@ class ExtraLanguages
 						}
 					}
 				}
-				else
-				{
+				else {
 					$translabel = '';
 					if (!empty($obj->{$InfoFieldList[1]})) {
 						$translabel = $langs->trans($obj->{$InfoFieldList[1]});
@@ -1032,8 +1026,7 @@ class ExtraLanguages
 						$value = $object->getNomUrl(3);
 					}
 				}
-				else
-				{
+				else {
 					dol_syslog('Error bad setup of extrafield', LOG_WARNING);
 					return 'Error bad setup of extrafield';
 				}
@@ -1051,8 +1044,7 @@ class ExtraLanguages
 		{
 			$value = dol_trunc(preg_replace('/./i', '*', $value), 8, 'right', 'UTF-8', 1);
 		}
-		else
-		{
+		else {
 			$showsize = round($size);
 			if ($showsize > 48) $showsize = 48;
 		}
@@ -1255,8 +1247,7 @@ class ExtraLanguages
 					$value_arr = GETPOST("options_".$key, 'alpha');
 					$value_key = price2num($value_arr);
 				}
-				else
-				{
+				else {
 					$value_key = GETPOST("options_".$key);
 					if (in_array($key_type, array('link')) && $value_key == '-1') $value_key = '';
 				}
@@ -1294,8 +1285,7 @@ class ExtraLanguages
 		{
 			$extralabels = $this->attributes[$extrafieldsobjectkey]['label'];
 		}
-		else
-		{
+		else {
 			$extralabels = $extrafieldsobjectkey;
 		}
 
@@ -1332,8 +1322,7 @@ class ExtraLanguages
 					$value_arr = GETPOST($keysuffix."options_".$key.$keyprefix);
 					$value_key = price2num($value_arr);
 				}
-				else
-				{
+				else {
 					if (!GETPOSTISSET($keysuffix."options_".$key.$keyprefix)) continue; // Value was not provided, we should not set it.
 					$value_key = GETPOST($keysuffix."options_".$key.$keyprefix);
 				}

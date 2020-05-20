@@ -178,8 +178,7 @@ class InterfaceStripe extends DolibarrTriggers
 										$customer->createTaxId($customer->id, array('type'=>'eu_vat', 'value'=>$vatcleaned));
 									}
 								}
-								else
-								{
+								else {
 									$taxids = $customer->allTaxIds($customer->id);
 									if (is_array($taxids->data))
 									{

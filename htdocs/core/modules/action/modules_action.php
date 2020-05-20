@@ -86,8 +86,7 @@ function action_create($db, $object, $modele, $outputlangs, $hidedetails = 0, $h
 		{
 			$modele = $conf->global->ACTION_EVENT_ADDON_PDF;
 		}
-		else
-		{
+		else {
 			$modele = 'soleil';
 		}
 	}
@@ -142,15 +141,13 @@ function action_create($db, $object, $modele, $outputlangs, $hidedetails = 0, $h
 
 			return 1;
 		}
-		else
-		{
+		else {
 			$outputlangs->charset_output = $sav_charset_output;
 			dol_print_error($db, "action_pdf_create Error: ".$obj->error);
 			return 0;
 		}
 	}
-	else
-	{
+	else {
 		print $langs->trans("Error")." ".$langs->trans("ErrorFileDoesNotExists", $file);
 		return 0;
 	}

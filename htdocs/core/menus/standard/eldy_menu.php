@@ -78,8 +78,7 @@ class MenuManager
         	$_SESSION["mainmenu"] = $mainmenu;
         	$_SESSION["leftmenuopened"] = "";
         }
-        else
-        {
+        else {
         	// On va le chercher en session si non defini par le lien
         	$mainmenu = isset($_SESSION["mainmenu"]) ? $_SESSION["mainmenu"] : '';
         }
@@ -96,8 +95,7 @@ class MenuManager
         		//$leftmenu="";
         		$_SESSION["leftmenuopened"] = "";
         	}
-        	else
-        	{
+        	else {
         		$_SESSION["leftmenuopened"] = $leftmenu;
         	}
         } else {
@@ -147,8 +145,7 @@ class MenuManager
         	if ($mode == 'top')  print_eldy_menu($this->db, $this->atarget, $this->type_user, $this->tabMenu, $this->menu, 0, $mode);
         	if ($mode == 'left') print_left_eldy_menu($this->db, $this->menu_array, $this->menu_array_after, $this->tabMenu, $this->menu, 0, '', '', $moredata);
         }
-        else
-		{
+        else {
         	$conf->global->MAIN_SHOW_LOGO = 0;
         	if ($mode == 'top')  print_left_eldy_menu($this->db, $this->menu_array, $this->menu_array_after, $this->tabMenu, $this->menu, 0);
         	if ($mode == 'left') print_eldy_menu($this->db, $this->atarget, $this->type_user, $this->tabMenu, $this->menu, 0, $mode);
@@ -231,8 +228,7 @@ class MenuManager
         			    {
         			        $lastlevel[0] = 'greyed';
         			    }
-        			    else
-        			    {
+        			    else {
         			        $lastlevel[0] = 'hidden';
         			    }
         			}
@@ -264,8 +260,7 @@ class MenuManager
        						{
        							$relurl2 = dol_buildpath($val2['url'], 1);
        						}
-       						else
-       						{
+       						else {
        							$relurl2 = $val2['url'];
        						}
 	        				$canonurl2 = preg_replace('/\?.*$/', '', $val2['url']);
@@ -291,20 +286,18 @@ class MenuManager
 		        					print '>';
 		        					$lastlevel2[$val2['level']] = 'enabled';
 	        					}
-	        					else					// Not allowed but visible (greyed)
+	        					else // Not allowed but visible (greyed)
 	        					{
 				        			print '<a href="#" class="vsmenudisabled">';
 				        			$lastlevel2[$val2['level']] = 'greyed';
 	        					}
 	        				}
-	        				else
-	        				{
+	        				else {
 	        				    if ($val2['enabled'])	// Allowed
 	        				    {
 	        				        $lastlevel2[$val2['level']] = 'enabled';
 	        				    }
-	        				    else
-	        				    {
+	        				    else {
 	        				        $lastlevel2[$val2['level']] = 'greyed';
 	        				    }
 	        				}
@@ -313,8 +306,7 @@ class MenuManager
 	        				{
 	        					if ($val2['enabled'])	// Allowed
 	        						print '</a>';
-	        					else
-	        						print '</a>';
+	        					else print '</a>';
 	        				}
 	        				print '</li>'."\n";
        					}

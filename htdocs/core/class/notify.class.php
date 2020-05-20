@@ -195,8 +195,7 @@ class Notify
 						$i++;
 					}
 				}
-				else
-				{
+				else {
 					$error++;
 					$this->error = $this->db->lasterror();
 				}
@@ -240,8 +239,7 @@ class Notify
 						$i++;
 					}
 				}
-				else
-				{
+				else {
 					$error++;
 					$this->error = $this->db->lasterror();
 				}
@@ -259,8 +257,7 @@ class Notify
 					{
 						if ($val == '' || !preg_match('/^NOTIFICATION_FIXEDEMAIL_'.$notifcode.'_THRESHOLD_HIGHER_(.*)$/', $key, $reg)) continue;
 					}
-					else
-					{
+					else {
 						if ($val == '' || !preg_match('/^NOTIFICATION_FIXEDEMAIL_.*_THRESHOLD_HIGHER_(.*)$/', $key, $reg)) continue;
 					}
 
@@ -523,8 +520,7 @@ class Notify
 							// We can't add PDF as it is not generated yet.
 							$filepdf = '';
 						}
-						else
-						{
+						else {
 							$filepdf = $pdf_path;
 						}
 
@@ -577,26 +573,22 @@ class Notify
 								dol_print_error($this->db);
 							}
 						}
-						else
-						{
+						else {
 							$error++;
 							$this->errors[] = $mailfile->error;
 						}
 					}
-					else
-				    {
+					else {
 						dol_syslog("No notification sent for ".$sendto." because email is empty");
 					}
 					$i++;
 				}
 			}
-			else
-			{
+			else {
 				dol_syslog("No notification to thirdparty sent, nothing into notification setup for the thirdparty socid = ".$object->socid);
 			}
 		}
-		else
-		{
+		else {
 	   		$error++;
 			$this->errors[] = $this->db->lasterror();
 			dol_syslog("Failed to get list of notification to send ".$this->db->lasterror(), LOG_ERR);
@@ -744,8 +736,7 @@ class Notify
 					// We can't add PDF as it is not generated yet.
 					$filepdf = '';
 				}
-				else
-				{
+				else {
 					$filepdf = $pdf_path;
 				}
 
@@ -809,8 +800,7 @@ class Notify
 							dol_print_error($this->db);
 						}
 					}
-					else
-					{
+					else {
 						$error++;
 						$this->errors[] = $mailfile->error;
 					}

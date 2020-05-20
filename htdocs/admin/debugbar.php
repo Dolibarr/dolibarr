@@ -59,8 +59,7 @@ if ($action == 'set')
 		$db->commit();
 		setEventMessages($langs->trans("SetupSaved"), null, 'mesgs');
 	}
-	else
-	{
+	else {
 		$db->rollback();
 		setEventMessages($error, null, 'errors');
 	}

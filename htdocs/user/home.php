@@ -170,8 +170,7 @@ if ($resql)
 		{
             print $companystatic->getNomUrl(1);
 		}
-		else
-		{
+		else {
 			print $langs->trans("InternalUser");
 		}
 		if ($obj->ldap_sid)
@@ -188,8 +187,7 @@ if ($resql)
 			{
 				$entitystring = $langs->trans("AllEntities");
 			}
-			else
-			{
+			else {
 				$mc->getInfo($entity);
 				$entitystring = $mc->label;
 			}
@@ -210,8 +208,7 @@ if ($resql)
 
 	$db->free($resql);
 }
-else
-{
+else {
 	dol_print_error($db);
 }
 
@@ -229,8 +226,7 @@ if ($canreadperms)
 	{
 		$sql .= " WHERE g.entity IS NOT NULL";
 	}
-	else
-	{
+	else {
 		$sql .= " WHERE g.entity IN (0,".$conf->entity.")";
 	}
 	$sql .= $db->order("g.datec", "DESC");
@@ -284,8 +280,7 @@ if ($canreadperms)
 
 		$db->free($resql);
 	}
-	else
-	{
+	else {
 		dol_print_error($db);
 	}
 }

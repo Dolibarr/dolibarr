@@ -80,8 +80,7 @@ class box_bookmarks extends ModeleBoxes
 			$this->info_box_head['subpicto'] = 'bookmark';
 			$this->info_box_head['subtext'] = $langs->trans("BookmarksManagement");
 		}
-		else
-		{
+		else {
 			$this->info_box_head['subpicto'] = 'bookmark';
 			$this->info_box_head['subtext'] = $langs->trans("ListOfBookmark");
 		}

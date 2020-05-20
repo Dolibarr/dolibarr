@@ -78,8 +78,7 @@ if ($permtoadd)
     print '<img class="toolbarbutton" border="0" src="'.DOL_URL_ROOT.'/theme/common/folder-new.png">';
     print '</a>';
 }
-else
-{
+else {
     print '<a href="#" class="inline-block valignmiddle toolbarbutton" title="'.$langs->trans("NotAllowed").'">';
     print '<img class="toolbarbutton disabled" border="0" src="'.DOL_URL_ROOT.'/theme/common/folder-new.png">';
     print '</a>';
@@ -178,7 +177,7 @@ if (empty($action) || $action == 'editfile' || $action == 'file_manager' || preg
 
 	    print '</td></tr>';
     }
-    else	// Show filtree when ajax is disabled (rare)
+    else // Show filtree when ajax is disabled (rare)
     {
         print '<tr><td style="padding-left: 20px">';
 

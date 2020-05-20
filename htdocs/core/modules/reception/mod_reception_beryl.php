@@ -114,8 +114,7 @@ class mod_reception_beryl extends ModelNumRefReception
 			if ($obj) $max = intval($obj->max);
 			else $max = 0;
 		}
-		else
-		{
+		else {
 			dol_syslog("mod_reception_beryl::getNextValue", LOG_DEBUG);
 			return -1;
 		}

@@ -158,8 +158,7 @@ class DolibarrApiAccess implements iAuthenticate
 				static::$role = 'admin';
             }
         }
-		else
-		{
+		else {
 		    throw new RestException(401, "Failed to login to API. No parameter 'HTTP_DOLAPIKEY' on HTTP header (and no parameter DOLAPIKEY in URL).");
 		}
 

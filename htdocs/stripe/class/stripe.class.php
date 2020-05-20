@@ -261,8 +261,7 @@ class Stripe extends CommonObject
 				}
 			}
 		}
-		else
-		{
+		else {
 			dol_print_error($this->db);
 		}
 
@@ -499,8 +498,7 @@ class Stripe extends CommonObject
 	    				}
     				}
     			}
-    			else
-    			{
+    			else {
     			    $_SESSION["stripe_payment_intent"] = $paymentintent;
     			}
     		}
@@ -532,8 +530,7 @@ class Stripe extends CommonObject
 		{
 			return $paymentintent;
 		}
-		else
-		{
+		else {
 			return null;
 		}
 	}
@@ -675,8 +672,7 @@ class Stripe extends CommonObject
 			dol_syslog("getSetupIntent ".(is_object($setupintent) ? $setupintent->id : ''), LOG_INFO, -1);
 			return $setupintent;
 		}
-		else
-		{
+		else {
 			dol_syslog("getSetupIntent return error=".$error, LOG_INFO, -1);
 			return null;
 		}
@@ -721,8 +717,7 @@ class Stripe extends CommonObject
 							{
 								$card = $cu->sources->retrieve($cardref);
 							}
-							else
-							{
+							else {
 								$card = \Stripe\PaymentMethod::retrieve($cardref);
 							}
 						} else {
@@ -769,8 +764,7 @@ class Stripe extends CommonObject
 									$this->error = 'Creation of card on Stripe has failed';
 								}
 							}
-							else
-							{
+							else {
 								$connect = '';
 								if (!empty($stripeacc)) $connect = $stripeacc.'/';
 								$url = 'https://dashboard.stripe.com/'.$connect.'test/customers/'.$cu->id;
@@ -793,8 +787,7 @@ class Stripe extends CommonObject
 									$this->error = 'Creation of card on Stripe has failed';
 								}
 							}
-							else
-							{
+							else {
 								$connect = '';
 								if (!empty($stripeacc)) $connect = $stripeacc.'/';
 								$url = 'https://dashboard.stripe.com/'.$connect.'test/customers/'.$cu->id;
@@ -832,8 +825,7 @@ class Stripe extends CommonObject
 				}
 			}
 		}
-		else
-		{
+		else {
 			dol_print_error($this->db);
 		}
 
@@ -944,8 +936,7 @@ class Stripe extends CommonObject
 					{
 						$charge->status = 'ok';
 					}
-					else
-					{
+					else {
 						$charge->status = 'failed';
 						$charge->failure_code = $stripe->code;
 						$charge->failure_message = $stripe->error;
@@ -1039,16 +1030,14 @@ class Stripe extends CommonObject
 						$charge->status = 'ok';
 						$charge->id = $paymentintent->id;
 					}
-					else
-					{
+					else {
 						$charge->status = 'failed';
 						$charge->failure_code = $stripe->code;
 						$charge->failure_message = $stripe->error;
 						$charge->failure_declinecode = $stripe->declinecode;
 					}
 				}
-				else
-				{
+				else {
 					$charge = \Stripe\Charge::create($paymentarray, array("idempotency_key" => "$description", "stripe_account" => "$account"));
 				}
 			}
@@ -1061,8 +1050,7 @@ class Stripe extends CommonObject
 			{
 				$return->message = 'Payment retreived by card status = '.$charge->status;
 			}
-			else
-			{
+			else {
 				if ($charge->source->type == 'card') {
 					$return->message = $charge->source->card->brand." ....".$charge->source->card->last4;
 				} elseif ($charge->source->type == 'three_d_secure') {

@@ -420,8 +420,7 @@ if (($action == 'send' || $action == 'relance') && !$_POST['addfile'] && !$_POST
 				setEventMessages($mailfile->error, $mailfile->errors, 'errors');
 				$action = 'presend';
 			}
-			else
-			{
+			else {
 				$result = $mailfile->sendfile();
 				if ($result)
 				{
@@ -480,8 +479,7 @@ if (($action == 'send' || $action == 'relance') && !$_POST['addfile'] && !$_POST
 		  			header('Location: '.$_SERVER["PHP_SELF"].'?'.($paramname ? $paramname : 'id').'='.(is_object($object) ? $object->id : '').$moreparam);
 			  		exit;
 				}
-				else
-				{
+				else {
 					$langs->load("other");
 					$mesg = '<div class="error">';
 					if ($mailfile->error)
@@ -489,8 +487,7 @@ if (($action == 'send' || $action == 'relance') && !$_POST['addfile'] && !$_POST
 						$mesg .= $langs->transnoentities('ErrorFailedToSendMail', dol_escape_htmltag($from), dol_escape_htmltag($sendto));
 						$mesg .= '<br>'.$mailfile->error;
 					}
-					else
-					{
+					else {
 						$mesg .= 'No mail sent. Feature is disabled by option MAIN_DISABLE_ALL_MAILS';
 					}
 					$mesg .= '</div>';
@@ -500,16 +497,14 @@ if (($action == 'send' || $action == 'relance') && !$_POST['addfile'] && !$_POST
 				}
 			}
 		}
-		else
-		{
+		else {
 			$langs->load("errors");
 			setEventMessages($langs->trans('ErrorFieldRequired', $langs->transnoentitiesnoconv("MailTo")), null, 'warnings');
 			dol_syslog('Try to send email with no recipient defined', LOG_WARNING);
 			$action = 'presend';
 		}
 	}
-	else
-	{
+	else {
 		$langs->load("other");
 		setEventMessages($langs->trans('ErrorFailedToReadObject', $object->element), null, 'errors');
 		dol_syslog('Failed to read data of object id='.$object->id.' element='.$object->element);

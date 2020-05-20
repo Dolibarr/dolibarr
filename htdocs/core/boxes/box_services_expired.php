@@ -171,8 +171,7 @@ class box_services_expired extends ModeleBoxes
 
 				$this->db->free($resql);
     		}
-    		else
-    		{
+    		else {
     			$this->info_box_contents[0][] = array(
                     'td' => '',
                     'maxlength'=>500,
@@ -180,8 +179,7 @@ class box_services_expired extends ModeleBoxes
                 );
     		}
     	}
-    	else
-    	{
+    	else {
     		$this->info_box_contents[0][0] = array(
     		    'td' => 'class="nohover opacitymedium left"',
     		    'text' => $langs->trans("ReadPermissionNotAllowed")

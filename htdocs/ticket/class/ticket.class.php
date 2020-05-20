@@ -542,8 +542,7 @@ class Ticket extends CommonObject
 				$this->db->free($resql);
 				return 1;
 			}
-			else
-			{
+			else {
 				return 0;
 			}
 		} else {
@@ -1354,8 +1353,7 @@ class Ticket extends CommonObject
 		{
 			$sql .= " SET fk_user_assign=".$id_assign_user.", fk_statut = ".Ticket::STATUS_ASSIGNED;
 		}
-		else
-		{
+		else {
 			$sql .= " SET fk_user_assign=null, fk_statut = ".Ticket::STATUS_READ;
 		}
 		$sql .= " WHERE rowid = ".$this->id;
@@ -2767,8 +2765,7 @@ class Ticket extends CommonObject
 			}
 			return $response;
 		}
-		else
-		{
+		else {
 			$this->error = $this->db->lasterror();
 			return -1;
 		}
@@ -2810,8 +2807,7 @@ class Ticket extends CommonObject
 			$this->db->free($resql);
 			return 1;
 		}
-		else
-		{
+		else {
 			dol_print_error($this->db);
 			$this->error = $this->db->lasterror();
 			return -1;

@@ -147,8 +147,7 @@ if ($action == 'confirm_purge' && $confirm == 'yes' && $user->admin)
 	    $db->commit();
 		dol_syslog($text, LOG_WARNING);
 	}
-	else
-	{
+	else {
 		$error++;
 		dol_syslog($securityevent->error, LOG_ERR);
 		$db->rollback();
@@ -380,8 +379,7 @@ if ($result)
 	print "</form>";
 	$db->free($result);
 }
-else
-{
+else {
 	dol_print_error($db);
 }
 

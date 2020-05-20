@@ -51,8 +51,7 @@ if (preg_match('/set_([a-z0-9_\-]+)/i', $action, $reg))
 		Header("Location: ".$_SERVER["PHP_SELF"]);
 		exit;
 	}
-	else
-	{
+	else {
 		dol_print_error($db);
 	}
 } elseif (preg_match('/del_([a-z0-9_\-]+)/i', $action, $reg)) {
@@ -62,8 +61,7 @@ if (preg_match('/set_([a-z0-9_\-]+)/i', $action, $reg))
 		Header("Location: ".$_SERVER["PHP_SELF"]);
 		exit;
 	}
-	else
-	{
+	else {
 		dol_print_error($db);
 	}
 }
@@ -119,20 +117,17 @@ if (function_exists("imagecreatefrompng"))
 	{
 		print ajax_constantonoff('MAIN_SECURITY_ENABLECAPTCHA');
 	}
-	else
-	{
+	else {
 		if (empty($conf->global->MAIN_SECURITY_ENABLECAPTCHA))
 		{
 			print '<a href="'.$_SERVER['PHP_SELF'].'?action=set_MAIN_SECURITY_ENABLECAPTCHA">'.img_picto($langs->trans("Disabled"), 'off').'</a>';
 		}
-		else
-		{
+		else {
 			print '<a href="'.$_SERVER['PHP_SELF'].'?action=del_MAIN_SECURITY_ENABLECAPTCHA">'.img_picto($langs->trans("Enabled"), 'on').'</a>';
 		}
 	}
 }
-else
-{
+else {
     $desc = $form->textwithpicto('', $langs->transnoentities("EnableGDLibraryDesc"), 1, 'warning');
     print $desc;
 }
@@ -146,14 +141,12 @@ if (!empty($conf->use_javascript_ajax))
 {
 	print ajax_constantonoff('MAIN_USE_ADVANCED_PERMS');
 }
-else
-{
+else {
 	if (empty($conf->global->MAIN_USE_ADVANCED_PERMS))
 	{
 		print '<a href="'.$_SERVER['PHP_SELF'].'?action=set_MAIN_USE_ADVANCED_PERMS">'.img_picto($langs->trans("Disabled"), 'off').'</a>';
 	}
-	else
-	{
+	else {
 		print '<a href="'.$_SERVER['PHP_SELF'].'?action=del_MAIN_USE_ADVANCED_PERMS">'.img_picto($langs->trans("Enabled"), 'on').'</a>';
 	}
 }

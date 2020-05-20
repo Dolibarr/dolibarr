@@ -146,8 +146,7 @@ elseif (in_array($compression, array('gz', 'bz')))
         dol_syslog("Documents tar retval after exec=".$retval, LOG_ERR);
         $errormsg = 'Error tar generation return '.$retval;
     }
-    else
-    {
+    else {
         if ($compression == 'gz')
         {
             $cmd = "gzip -f ".$outputdir."/".$file;

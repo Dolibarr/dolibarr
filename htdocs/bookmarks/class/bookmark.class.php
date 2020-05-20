@@ -128,8 +128,7 @@ class Bookmark extends CommonObject
             $this->db->free($resql);
             return $this->id;
         }
-        else
-        {
+        else {
             dol_print_error($this->db);
             return -1;
         }
@@ -175,16 +174,14 @@ class Bookmark extends CommonObject
                 $this->db->commit();
                 return $id;
             }
-            else
-            {
+            else {
                 $this->error = $this->db->lasterror();
                 $this->errno = $this->db->lasterrno();
                 $this->db->rollback();
                 return -2;
             }
         }
-        else
-        {
+        else {
             $this->error = $this->db->lasterror();
             $this->errno = $this->db->lasterrno();
             $this->db->rollback();
@@ -219,8 +216,7 @@ class Bookmark extends CommonObject
         {
             return 1;
         }
-        else
-        {
+        else {
             $this->error = $this->db->lasterror();
             return -1;
         }
@@ -243,8 +239,7 @@ class Bookmark extends CommonObject
         {
             return 1;
         }
-        else
-        {
+        else {
             $this->error = $this->db->lasterror();
             return -1;
         }

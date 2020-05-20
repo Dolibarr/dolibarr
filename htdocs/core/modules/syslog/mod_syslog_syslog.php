@@ -93,8 +93,7 @@ class mod_syslog_syslog extends LogHandler implements LogHandlerInterface
 
 			dol_syslog("admin/syslog: facility ".$facility);
 		}
-		else
-		{
+		else {
 		    $errors[] = $langs->trans("ErrorUnknownSyslogConstant", $facility);
 		}
 

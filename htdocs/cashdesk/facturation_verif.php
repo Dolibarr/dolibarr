@@ -124,8 +124,7 @@ switch ($action)
 					            if (empty($tva_tx)) $tva_npr = 0;
 					        }
 					    }
-					    else
-					    {
+					    else {
 					        setEventMessages($prodcustprice->error, $prodcustprice->errors, 'errors');
 					    }
 					}
@@ -170,27 +169,23 @@ switch ($action)
 
 					$redirection = DOL_URL_ROOT.'/cashdesk/affIndex.php?menutpl=facturation&filtre='.$filtre;
 				}
-				else
-				{
+				else {
 					$obj_facturation->raz();
 
 					if ($_POST['hdnSource'] == 'REF')
 					{
 						$redirection = DOL_URL_ROOT.'/cashdesk/affIndex.php?menutpl=facturation&filtre='.$_POST['txtRef'];
 					}
-					else
-					{
+					else {
 						$redirection = DOL_URL_ROOT.'/cashdesk/affIndex.php?menutpl=facturation';
 					}
 				}
 			}
-			else
-			{
+			else {
 				dol_print_error($db);
 			}
 		}
-		else
-		{
+		else {
 			$redirection = DOL_URL_ROOT.'/cashdesk/affIndex.php?menutpl=facturation';
 		}
 

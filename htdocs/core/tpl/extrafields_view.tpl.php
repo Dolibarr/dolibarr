@@ -87,8 +87,7 @@ if (empty($reshook) && is_array($extrafields->attributes[$object->table_element]
 		{
 			$value = (isset($_POST["options_".$key]) ? $_POST["options_".$key] : $object->array_options["options_".$key]);
 		}
-		else
-		{
+		else {
 			$value = $object->array_options["options_".$key];
 			//var_dump($key.' - '.$value);
 		}
@@ -114,8 +113,7 @@ if (empty($reshook) && is_array($extrafields->attributes[$object->table_element]
 
 			$lastseparatorkeyfound = $key;
 		}
-		else
-		{
+		else {
 			print '<tr class="trextrafields_collapse'.$extrafields_collapse_num;
 			/*if ($extrafields_collapse_num && $extrafields_collapse_num_old && $extrafields_collapse_num != $extrafields_collapse_num_old) {
 				print ' trextrafields_collapse_new';
@@ -192,8 +190,7 @@ if (empty($reshook) && is_array($extrafields->attributes[$object->table_element]
 
 				print '</form>';
 			}
-			else
-			{
+			else {
 				//var_dump($key.'-'.$value.'-'.$object->table_element);
 				print $extrafields->showOutputField($key, $value, '', $object->table_element);
 			}

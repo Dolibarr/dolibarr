@@ -162,8 +162,7 @@ if (empty($reshook))
 		{
 			setEventMessages($langs->trans("NoCloneOptionsSpecified"), null, 'errors');
 		}
-		else
-		{
+		else {
 			if ($object->id > 0) {
 				if (!empty($conf->global->PROPAL_CLONE_DATE_DELIVERY)) {
 					//Get difference between old and new delivery date and change lines according to difference
@@ -550,8 +549,7 @@ if (empty($reshook))
 						$error++;
 					}
 				} 			// Standard creation
-				else
-				{
+				else {
 					$id = $object->create($user);
 				}
 
@@ -603,14 +601,12 @@ if (empty($reshook))
 						header('Location: '.$_SERVER["PHP_SELF"].'?id='.$id);
 						exit();
 					}
-					else
-					{
+					else {
 						$db->rollback();
 						$action = 'create';
 					}
 				}
-				else
-				{
+				else {
 					setEventMessages($object->error, $object->errors, 'errors');
 					$db->rollback();
 					$action = 'create';
@@ -635,8 +631,7 @@ if (empty($reshook))
 		{
 			$db->commit();
 		}
-		else
-		{
+		else {
 			$db->rollback();
 		}
 	}
@@ -663,8 +658,7 @@ if (empty($reshook))
 				{
 					$db->commit();
 				}
-				else
-				{
+				else {
 					$db->rollback();
 				}
 			}
@@ -689,8 +683,7 @@ if (empty($reshook))
 			{
 				$db->commit();
 			}
-			else
-			{
+			else {
 				$db->rollback();
 			}
 		}
@@ -831,8 +824,7 @@ if (empty($reshook))
 			$idprod = 0;
 			$tva_tx = (GETPOST('tva_tx') ? GETPOST('tva_tx') : 0);
 		}
-		else
-		{
+		else {
 			$idprod = GETPOST('idprod', 'int');
 			$tva_tx = '';
 		}
@@ -965,8 +957,7 @@ if (empty($reshook))
 							{
 								$pu_ht = $priceforthequantityarray['unitprice'];
 							}
-							else
-							{
+							else {
 								$pu_ttc = $priceforthequantityarray['unitprice'];
 							}
 							// Note: the remise_percent or price by qty is used to set data on form, so we will use value from POST.
@@ -991,8 +982,7 @@ if (empty($reshook))
 							{
 								$pu_ht = $priceforthequantityarray['unitprice'];
 							}
-							else
-							{
+							else {
 								$pu_ttc = $priceforthequantityarray['unitprice'];
 							}
 							// Note: the remise_percent or price by qty is used to set data on form, so we will use value from POST.
@@ -1534,8 +1524,7 @@ if ($action == 'create')
 			}
 		}
 	}
-	else
-	{
+	else {
 		if (!empty($conf->multicurrency->enabled) && !empty($soc->multicurrency_code)) $currency_code = $soc->multicurrency_code;
 	}
 
@@ -2310,8 +2299,7 @@ if ($action == 'create')
 		{
 			print $form->textwithpicto($object->display_incoterms(), $object->label_incoterms, 1);
 		}
-		else
-		{
+		else {
 			print $form->select_incoterms((!empty($object->fk_incoterms) ? $object->fk_incoterms : ''), (!empty($object->location_incoterms) ? $object->location_incoterms : ''), $_SERVER['PHP_SELF'].'?id='.$object->id);
 		}
 		print '</td></tr>';
@@ -2479,8 +2467,7 @@ if ($action == 'create')
 					{
 						print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=validate">'.$langs->trans('Validate').'</a>';
 					}
-					else
-						print '<a class="butActionRefused classfortooltip" href="#">'.$langs->trans('Validate').'</a>';
+					else print '<a class="butActionRefused classfortooltip" href="#">'.$langs->trans('Validate').'</a>';
 				}
 				// Create event
 				/*if ($conf->agenda->enabled && ! empty($conf->global->MAIN_ADD_EVENT_ON_ELEMENT_CARD)) 	// Add hidden condition because this is not a "workflow" action so should appears somewhere else on page.
@@ -2503,8 +2490,7 @@ if ($action == 'create')
 					if ($object->statut == Propal::STATUS_VALIDATED || $object->statut == Propal::STATUS_SIGNED || !empty($conf->global->PROPOSAL_SENDBYEMAIL_FOR_ALL_STATUS)) {
 						if ($usercansend) {
 							print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=presend&mode=init#formmailbeforetitle">'.$langs->trans('SendMail').'</a>';
-						} else
-							print '<a class="butActionRefused classfortooltip" href="#" title="'.$langs->trans("NotEnoughPermissions").'">'.$langs->trans('SendMail').'</a>';
+						} else print '<a class="butActionRefused classfortooltip" href="#" title="'.$langs->trans("NotEnoughPermissions").'">'.$langs->trans('SendMail').'</a>';
 					}
 				}
 
@@ -2557,8 +2543,7 @@ if ($action == 'create')
 						{
 							print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=classifybilled&amp;socid='.$object->socid.'">'.$langs->trans("ClassifyBilled").'</a>';
 						}
-						else
-						{
+						else {
 							print '<a class="butActionRefused classfortooltip" href="#" title="'.$langs->trans("NotEnoughPermissions").'">'.$langs->trans("ClassifyBilled").'</a>';
 						}
 					}

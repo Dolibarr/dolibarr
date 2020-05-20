@@ -111,22 +111,19 @@ if (($line->info_bits & 2) == 2) {
 			$discount->fetch($line->fk_remise_except);
 			print ($txt ? ' - ' : '').$langs->transnoentities("DiscountFromExcessPaid", $discount->getNomUrl(0));
 		}
-		else
-		{
+		else {
 			print ($txt ? ' - ' : '').dol_htmlentitiesbr($line->description);
 		}
 	}
 }
-else
-{
+else {
 	$format = $conf->global->MAIN_USE_HOURMIN_IN_DATE_RANGE ? 'dayhour' : 'day';
 
     if ($line->fk_product > 0)
 	{
 		print $form->textwithtooltip($text, $description, 3, '', '', $i, 0, (!empty($line->fk_parent_line) ?img_picto('', 'rightarrow') : ''));
 	}
-	else
-	{
+	else {
 		$type = (!empty($line->product_type) ? $line->product_type : $line->fk_product_type);
 		if ($type == 1) $text = img_object($langs->trans('Service'), 'service');
 		else $text = img_object($langs->trans('Product'), 'product');
@@ -178,8 +175,7 @@ if ($user->rights->fournisseur->lire && $line->fk_fournprice > 0)
 	{
 		print $productfourn->getNomUrl();
 	}
-	else
-	{
+	else {
 		print $productfourn->ref_supplier;
 	}
 }

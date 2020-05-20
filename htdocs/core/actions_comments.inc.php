@@ -50,8 +50,7 @@ if ($action == 'addcomment')
 			header('Location: '.$varpage.'?id='.$id.($withproject ? '&withproject=1' : ''));
 			exit;
 		}
-		else
-		{
+		else {
 			setEventMessages($comment->error, $comment->errors, 'errors');
 			$action = '';
 		}
@@ -68,8 +67,7 @@ if ($action === 'updatecomment')
             header('Location: '.$varpage.'?id='.$id.($withproject ? '&withproject=1#comment' : ''));
             exit;
         }
-        else
-        {
+        else {
             setEventMessages($comment->error, $comment->errors, 'errors');
             $action = '';
         }
@@ -85,8 +83,7 @@ if ($action == 'deletecomment')
 			header('Location: '.$varpage.'?id='.$id.($withproject ? '&withproject=1' : ''));
 			exit;
 		}
-		else
-		{
+		else {
 			setEventMessages($comment->error, $comment->errors, 'errors');
 			$action = '';
 		}

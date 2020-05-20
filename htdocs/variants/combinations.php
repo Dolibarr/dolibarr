@@ -106,8 +106,7 @@ if ($_POST) {
 		if (!$features) {
 			setEventMessages($langs->trans('ErrorFieldsRequired'), null, 'errors');
 		}
-		else
-		{
+		else {
 			$reference = trim($reference);
 		    if (empty($reference)) {
 		        $reference = false;
@@ -361,8 +360,7 @@ if (!empty($id) || !empty($ref))
 	{
 		print $object->weight." ".measuringUnitString(0, "weight", $object->weight_units);
 	}
-	else
-	{
+	else {
 		print '&nbsp;';
 	}
 	print "</td></tr>\n";
@@ -628,8 +626,7 @@ if (!empty($id) || !empty($ref))
 
         print '</form>';
 	}
-	else
-	{
+	else {
 		if ($action === 'delete') {
 			if ($prodcomb->fetch($valueid) > 0) {
 				$prodstatic->fetch($prodcomb->fk_product_child);
@@ -801,8 +798,7 @@ if (!empty($id) || !empty($ref))
     			print '</tr>';
 		    }
 		}
-		else
-		{
+		else {
 		     print '<tr><td colspan="8"><span class="opacitymedium">'.$langs->trans("None").'</span></td></tr>';
 		}
 		print '</table>';

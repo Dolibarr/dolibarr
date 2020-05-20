@@ -218,8 +218,7 @@ class ExportCsv extends ModeleExports
 		{
 			$outputlangs->charset_output = $conf->global->EXPORT_CSV_FORCE_CHARSET;
 		}
-		else
-		{
+		else {
 			$outputlangs->charset_output = 'ISO-8859-1';
 		}
 
@@ -254,8 +253,7 @@ class ExportCsv extends ModeleExports
 		{
 			$outputlangs->charset_output = $conf->global->EXPORT_CSV_FORCE_CHARSET;
 		}
-		else
-		{
+		else {
 			$outputlangs->charset_output = 'ISO-8859-1';
 		}
 

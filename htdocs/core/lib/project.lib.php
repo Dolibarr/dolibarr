@@ -419,14 +419,12 @@ function projectLinesa(&$inc, $parent, &$lines, &$level, $var, $showproject, &$t
 					{
 						$showlineingray = 1; // We will show line but in gray
 					}
-					else
-					{
+					else {
 						$showline = 0; // No reason to show line
 					}
 				}
 			}
-			else
-			{
+			else {
 				// Caller did not ask to filter on tasks of a specific user (this probably means he want also tasks of all users, into public project
 				// or into all other projects if user has permission to).
 				if (empty($user->rights->projet->all->lire))
@@ -682,8 +680,7 @@ function projectLinesa(&$inc, $parent, &$lines, &$level, $var, $showproject, &$t
                 if ($lines[$i]->planned_workload) $total_projectlinesa_declared_if_planned += $lines[$i]->planned_workload * $lines[$i]->progress / 100;
 			}
 		}
-		else
-		{
+		else {
 			//$level--;
 		}
 	}
@@ -1380,8 +1377,7 @@ function projectLinesPerDay(&$inc, $parent, $fuser, $lines, &$level, &$projectsr
 			}
 			$level--;
 		}
-		else
-		{
+		else {
 			//$level--;
 		}
 	}
@@ -1745,8 +1741,7 @@ function projectLinesPerWeek(&$inc, $firstdaytoshow, $fuser, $parent, $lines, &$
 			}
 			$level--;
 		}
-		else
-		{
+		else {
 			//$level--;
 		}
 	}
@@ -2006,8 +2001,7 @@ function projectLinesPerMonth(&$inc, $firstdaytoshow, $fuser, $parent, $lines, &
 			}
 			$level--;
 		}
-		else
-		{
+		else {
 			//$level--;
 		}
 	}
@@ -2110,8 +2104,7 @@ function print_projecttasks_array($db, $form, $socid, $projectsListId, $mytasks 
 		$sql .= ", ".MAIN_DB_PREFIX."element_contact as ec";
 		$sql .= ", ".MAIN_DB_PREFIX."c_type_contact as ctc";
 	}
-	else
-	{
+	else {
 		$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."projet_task as t ON p.rowid = t.fk_projet";
 	}
 	$sql .= " WHERE p.entity IN (".getEntity('project').")";
@@ -2339,8 +2332,7 @@ function print_projecttasks_array($db, $form, $socid, $projectsListId, $mytasks 
 
 		$db->free($resql);
 	}
-	else
-	{
+	else {
 		dol_print_error($db);
 	}
 
@@ -2475,8 +2467,7 @@ function getTaskProgressView($task, $label = true, $progressNumber = true, $hide
 		}
     	$out .= '        </div>';
     }
-    else
-    {
+    else {
     	// bad
     	$out .= '        <div class="progress-bar progress-bar-consumed" style="width: '.doubleval($progressCalculated).'%" title="'.doubleval($progressCalculated).'%">';
     	$out .= '        <div class="progress-bar '.$progressBarClass.'" style="width: '.($task->progress ? doubleval($task->progress / $progressCalculated * 100).'%' : '1px').'" title="'.doubleval($task->progress).'%"></div>';

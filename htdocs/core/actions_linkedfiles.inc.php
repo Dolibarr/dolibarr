@@ -87,7 +87,7 @@ if ($action == 'confirm_deletefile' && $confirm == 'yes')
         // For a delete from the ECM module, upload_dir is ECM root dir and urlfile contains relative path from upload_dir
         $file = $upload_dir.(preg_match('/\/$/', $upload_dir) ? '' : '/').$urlfile;
     }
-    else								// For a delete from the file manager into another module, or from documents pages, upload_dir contains already path to file from module dir, so we clean path into urlfile.
+    else // For a delete from the file manager into another module, or from documents pages, upload_dir contains already path to file from module dir, so we clean path into urlfile.
 	{
        	$urlfile = basename($urlfile);
        	$file = $upload_dir.(preg_match('/\/$/', $upload_dir) ? '' : '/').$urlfile;
@@ -149,8 +149,7 @@ if ($action == 'confirm_deletefile' && $confirm == 'yes')
         	header('Location: '.$backtopage);
             exit;
         }
-        else
-        {
+        else {
         	$tmpurl = $_SERVER["PHP_SELF"].'?id='.$object->id.(GETPOST('section_dir', 'alpha') ? '&section_dir='.urlencode(GETPOST('section_dir', 'alpha')) : '').(!empty($withproject) ? '&withproject=1' : '');
         	header('Location: '.$tmpurl);
             exit;
@@ -177,8 +176,7 @@ elseif ($action == 'confirm_updateline' && GETPOST('save', 'alpha') && GETPOST('
             setEventMessages($langs->trans("ErrorFailedToUpdateLink", $link->label), null, 'mesgs');
         }
     }
-    else
-    {
+    else {
         //error fetching
     }
 }
@@ -236,14 +234,12 @@ elseif ($action == 'renamefile' && GETPOST('renamefilesave', 'alpha'))
 
 			                setEventMessages($langs->trans("FileRenamed"), null);
 			            }
-			            else
-			            {
+			            else {
 			                $langs->load("errors"); // key must be loaded because we can't rely on loading during output, we need var substitution to be done now.
 			                setEventMessages($langs->trans("ErrorFailToRenameFile", $filenamefrom, $filenameto), null, 'errors');
 			            }
 	            	}
-	            	else
-	            	{
+	            	else {
 	            		$langs->load("errors"); // key must be loaded because we can't rely on loading during output, we need var substitution to be done now.
 	            		setEventMessages($langs->trans("ErrorDestinationAlreadyExists", $filenameto), null, 'errors');
 	            	}
@@ -270,8 +266,7 @@ elseif ($action == 'renamefile' && GETPOST('renamefilesave', 'alpha'))
 		    		$ecmfile->share = getRandomPassword(true);
 		    	}
 		    }
-		    else
-		    {
+		    else {
 		    	$ecmfile->share = '';
 		    }
 		    $result = $ecmfile->update($user);

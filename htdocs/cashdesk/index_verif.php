@@ -117,13 +117,11 @@ if ($retour >= 0)
 		header('Location: '.DOL_URL_ROOT.'/cashdesk/affIndex.php?menutpl=facturation&id=NOUV');
 		exit;
 	}
-	else
-	{
+	else {
 		dol_print_error($db);
 	}
 }
-else
-{
+else {
 	// Load translation files required by the page
     $langs->loadLangs(array("other", "errors"));
 	$retour = $langs->trans("ErrorBadLoginPassword");

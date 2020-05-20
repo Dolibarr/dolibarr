@@ -136,8 +136,7 @@ if ($nolinesbefore) {
 				print '<td class="margininfos linecolmargin1 right">';
 				if ($conf->global->MARGIN_TYPE == "1")
 					echo $langs->trans('BuyingPrice');
-				else
-					echo $langs->trans('CostPrice');
+				else echo $langs->trans('CostPrice');
 				echo '</td>';
 				if (!empty($conf->global->DISPLAY_MARGIN_RATES)) echo '<td class="margininfos linecolmargin2 right"><span class="np_marginRate">'.$langs->trans('MarginRate').'</span></td>';
 				if (!empty($conf->global->DISPLAY_MARK_RATES)) echo '<td class="margininfos linecolmargin2 right"><span class="np_markRate">'.$langs->trans('MarkRate').'</span></td>';
@@ -187,8 +186,7 @@ if ($nolinesbefore) {
 				echo '</label>';
 				echo ' ';
 			}
-			else
-			{
+			else {
 				echo '<input type="hidden" id="prod_entry_mode_free" name="prod_entry_mode" value="free">';
 				// Show type selector
 				if ($forceall >= 0)
@@ -214,8 +212,7 @@ if ($nolinesbefore) {
 				elseif ((empty($conf->product->enabled) && !empty($conf->service->enabled)) || ($object->element == 'contrat' && empty($conf->global->CONTRACT_SUPPORT_PRODUCTS))) echo $langs->trans('PredefinedServicesToSell');
 				else echo $langs->trans('PredefinedProductsAndServicesToSell');
 			}
-			else
-			{
+			else {
 				if (!empty($conf->product->enabled) && empty($conf->service->enabled)) echo $langs->trans('PredefinedProductsToPurchase');
 				elseif (empty($conf->product->enabled) && !empty($conf->service->enabled)) echo $langs->trans('PredefinedServicesToPurchase');
 				else echo $langs->trans('PredefinedProductsAndServicesToPurchase');
@@ -232,8 +229,7 @@ if ($nolinesbefore) {
 					// hide products in closed warehouse, but show products for internal transfer
 					$form->select_produits(GETPOST('idprod'), 'idprod', $filtertype, $conf->product->limit_size, $buyer->price_level, $statustoshow, 2, '', 1, array(), $buyer->id, '1', 0, 'maxwidth500', 0, 'warehouseopen,warehouseinternal', GETPOST('combinations', 'array'));
 				}
-				else
-				{
+				else {
 					$form->select_produits(GETPOST('idprod'), 'idprod', $filtertype, $conf->product->limit_size, $buyer->price_level, $statustoshow, 2, '', 1, array(), $buyer->id, '1', 0, 'maxwidth500', 0, '', GETPOST('combinations', 'array'));
 				}
 				if (!empty($conf->global->MAIN_AUTO_OPEN_SELECT2_ON_FOCUS_FOR_CUSTOMER_PRODUCTS))
@@ -255,8 +251,7 @@ if ($nolinesbefore) {
 					<?php
 				}
 			}
-			else
-			{
+			else {
 				// $senderissupplier=2 is the same as 1 but disables test on minimum qty and disable autofill qty with minimum
 				if ($senderissupplier != 2)
 				{
@@ -267,8 +262,7 @@ if ($nolinesbefore) {
 					);
 					$alsoproductwithnosupplierprice = 0;
 				}
-				else
-				{
+				else {
 					$ajaxoptions = array(
 					'update' => array('remise_percent' => 'discount')			// html id tags that will be edited with each ajax json response key
 					);
@@ -449,8 +443,7 @@ if ((!empty($conf->service->enabled) || ($object->element == 'contrat')) && $dat
 		print ' &nbsp; '.$langs->trans("DateEndPlanned").' ';
 		print $form->selectDate($date_end, "date_end", $usehm, $usehm, 1, "addproduct");
 	}
-	else
-	{
+	else {
 		print $langs->trans('ServiceLimitedDuration').' '.$langs->trans('From').' ';
 		print $form->selectDate($date_start, 'date_start', empty($conf->global->MAIN_USE_HOURMIN_IN_DATE_RANGE) ? 0 : 1, empty($conf->global->MAIN_USE_HOURMIN_IN_DATE_RANGE) ? 0 : 1, 1, "addproduct", 1, 0);
 		print ' '.$langs->trans('to').' ';

@@ -193,8 +193,7 @@ class mod_facture_fournisseur_cactus extends ModeleNumRefSuppliersInvoices
         	if ($obj) $max = intval($obj->max);
         	else $max = 0;
         }
-        else
-        {
+        else {
         	return -1;
         }
 

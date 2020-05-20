@@ -331,8 +331,7 @@ if ($object->id > 0)
 	{
 		$form->form_conditions_reglement($_SERVER['PHP_SELF'].'?socid='.$object->id, $object->cond_reglement_id, 'cond_reglement_id', 1);
 	}
-	else
-	{
+	else {
 		$form->form_conditions_reglement($_SERVER['PHP_SELF'].'?socid='.$object->id, $object->cond_reglement_id, 'none');
 	}
 	print "</td>";
@@ -350,8 +349,7 @@ if ($object->id > 0)
 	{
 		$form->form_modes_reglement($_SERVER['PHP_SELF'].'?socid='.$object->id, $object->mode_reglement_id, 'mode_reglement_id', 'CRDT', 1, 1);
 	}
-	else
-	{
+	else {
 		$form->form_modes_reglement($_SERVER['PHP_SELF'].'?socid='.$object->id, $object->mode_reglement_id, 'none');
 	}
 	print "</td>";
@@ -371,8 +369,7 @@ if ($object->id > 0)
 		{
 			$form->formSelectAccount($_SERVER['PHP_SELF'].'?socid='.$object->id, $object->fk_account, 'fk_account', 1);
 		}
-		else
-		{
+		else {
 			$form->formSelectAccount($_SERVER['PHP_SELF'].'?socid='.$object->id, $object->fk_account, 'none');
 		}
 		print "</td>";
@@ -479,8 +476,7 @@ if ($object->id > 0)
         {
             $form->formSelectShippingMethod($_SERVER['PHP_SELF'].'?socid='.$object->id, $object->shipping_method_id, 'shipping_method_id', 1);
         }
-        else
-        {
+        else {
             $form->formSelectShippingMethod($_SERVER['PHP_SELF'].'?socid='.$object->id, $object->shipping_method_id, 'none');
         }
         print "</td>";
@@ -518,8 +514,7 @@ if ($object->id > 0)
             $adh->ref = $adh->getFullName($langs);
             print $adh->getNomUrl(1);
         }
-        else
-        {
+        else {
             print '<span class="opacitymedium">'.$langs->trans("ThirdpartyNotLinkedToMember").'</span>';
         }
         print '</td>';
@@ -547,8 +542,7 @@ if ($object->id > 0)
 	    {
 	        $formcompany->form_prospect_level($_SERVER['PHP_SELF'].'?socid='.$object->id, $object->fk_prospectlevel, 'prospect_level_id', 1);
 	    }
-	    else
-	    {
+	    else {
 	        print $object->getLibProspLevel();
 	    }
         print "</td>";
@@ -732,8 +726,7 @@ if ($object->id > 0)
 				print '</div>';
 			}
 		}
-		else
-		{
+		else {
 			dol_print_error($db);
 		}
 	}
@@ -818,8 +811,7 @@ if ($object->id > 0)
 				print '</div>';
 			}
 		}
-		else
-		{
+		else {
 			dol_print_error($db);
 		}
 	}
@@ -961,8 +953,7 @@ if ($object->id > 0)
 				print '</div>';
 			}
 		}
-		else
-		{
+		else {
 			dol_print_error($db);
 		}
 	}
@@ -1022,8 +1013,7 @@ if ($object->id > 0)
 				print '</div>';
 			}
 		}
-		else
-		{
+		else {
 			dol_print_error($db);
 		}
 	}
@@ -1093,14 +1083,12 @@ if ($object->id > 0)
 				{
 					print '<td class="right" width="80px">'.dol_print_date($db->jdate($objp->date_last_gen), 'day').'</td>';
 				}
-				else
-				{
+				else {
 					if ($objp->dc > 0)
 					{
 						print '<td class="right" width="80px">'.dol_print_date($db->jdate($objp->dc), 'day').'</td>';
 					}
-					else
-					{
+					else {
 						print '<td class="right"><b>!!!</b></td>';
 					}
 				}
@@ -1130,8 +1118,7 @@ if ($object->id > 0)
 				print '</div>';
 			}
 		}
-		else
-		{
+		else {
 			dol_print_error($db);
 		}
 	}
@@ -1195,8 +1182,7 @@ if ($object->id > 0)
 				{
 					print '<td class="right" width="80px">'.dol_print_date($db->jdate($objp->df), 'day').'</td>';
 				}
-				else
-				{
+				else {
 					print '<td class="right"><b>!!!</b></td>';
 				}
 				print '<td class="right" style="min-width: 60px">';
@@ -1222,8 +1208,7 @@ if ($object->id > 0)
 				print '</div>';
 			}
 		}
-		else
-		{
+		else {
 			dol_print_error($db);
 		}
 	}
@@ -1289,8 +1274,7 @@ if ($object->id > 0)
     			{
     			    print '<div class="inline-block divButAction"><a class="butActionRefused classfortooltip" title="'.dol_escape_js($langs->trans("NotAllowed")).'" href="#">'.$langs->trans("AddBill").'</a></div>';
     			}
-    			else
-    			{
+    			else {
     				$langs->load("bills");
     				$langs->load("orders");
 
@@ -1317,8 +1301,7 @@ if ($object->id > 0)
     		{
     			print '<div class="inline-block divButAction"><a class="butAction" href="'.DOL_URL_ROOT.'/comm/action/card.php?action=create&socid='.$object->id.'">'.$langs->trans("AddAction").'</a></div>';
     		}
-    		else
-    		{
+    		else {
     			print '<div class="inline-block divButAction"><a class="butAction" title="'.dol_escape_js($langs->trans("NotAllowed")).'" href="#">'.$langs->trans("AddAction").'</a></div>';
     		}
     	}
@@ -1343,8 +1326,7 @@ if ($object->id > 0)
 		show_actions_done($conf, $langs, $db, $object);
 	}
 }
-else
-{
+else {
 	$langs->load("errors");
 	print $langs->trans('ErrorRecordNotFound');
 }

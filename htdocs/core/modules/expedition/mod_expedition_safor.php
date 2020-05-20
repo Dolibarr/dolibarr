@@ -134,8 +134,7 @@ class mod_expedition_safor extends ModelNumRefExpedition
 			if ($obj) $max = intval($obj->max);
 			else $max = 0;
 		}
-		else
-		{
+		else {
 			dol_syslog("mod_expedition_safor::getNextValue", LOG_DEBUG);
 			return -1;
 		}

@@ -145,8 +145,7 @@ class Utils
 							$count++;
 							$countdeleted++;
 						}
-						else
-						{
+						else {
 							$counterror++;
 						}
 					}
@@ -266,10 +265,9 @@ class Utils
 			if (GETPOST("sql_structure", "alpha") || $usedefault)
 			{
 				if (GETPOST("drop", "alpha") || $usedefault)	$param .= " --add-drop-table=TRUE";
-				else 				       	         		    $param .= " --add-drop-table=FALSE";
+				else $param .= " --add-drop-table=FALSE";
 			}
-			else
-			{
+			else {
 				$param .= " -t";
 			}
 			if (GETPOST("disable-add-locks", "alpha")) $param .= " --add-locks=FALSE";
@@ -283,8 +281,7 @@ class Utils
 				if (GETPOST("sql_ignore", "alpha"))	 $param .= " --insert-ignore";
 				if (GETPOST("hexforbinary", "alpha") || $usedefault) $param .= " --hex-blob";
 			}
-			else
-			{
+			else {
 				$param .= " -d"; // No row information (no data)
 			}
 			$param .= " --default-character-set=utf8"; // We always save output into utf8 charset
@@ -326,8 +323,7 @@ class Utils
 						$errormsg = 'Error '.$retval;
 						$ok = 0;
 					}
-					else
-					{
+					else {
 						$i = 0;
 						if (!empty($output_arr))
 						{
@@ -367,8 +363,7 @@ class Utils
 				if (!empty($conf->global->MAIN_UMASK))
 					@chmod($outputfile, octdec($conf->global->MAIN_UMASK));
 			}
-			else
-			{
+			else {
 				$langs->load("errors");
 				dol_syslog("Failed to open file ".$outputfile, LOG_ERR);
 				$errormsg = $langs->trans("ErrorFailedToWriteInDir");
@@ -391,8 +386,7 @@ class Utils
 				if ($ok && preg_match('/^-- (MySql|MariaDB)/i', $errormsg)) {	// No error
 					$errormsg = '';
 				}
-				else
-				{
+				else {
 					// Renommer fichier sortie en fichier erreur
 					//print "$outputfile -> $outputerror";
 					@dol_delete_file($outputerror, 1, 0, 0, null, false, 0);
@@ -431,8 +425,7 @@ class Utils
 				dol_compress_file($outputfiletemp, $outputfile, $compression);
 				unlink($outputfiletemp);
 			}
-			else
-			{
+			else {
 				$this->backupTables($outputfile);
 			}
 
@@ -619,8 +612,7 @@ class Utils
 				dol_print_error($e->getMessage());
 			}
 		}
-		else
-		{
+		else {
 			$error++;
 			$langs->load("errors");
 			dol_print_error($langs->trans("ErrorFailedToLoadModuleDescriptorForXXX", $module));
@@ -690,8 +682,7 @@ class Utils
 						{
 							fwrite($fhandle, ($i ? "\n<<<\n\n" : "").$filecursor."\n");
 						}
-						else
-						{
+						else {
 							$this->error = 'Failed to concat content of file '.$spec['fullname'];
 							return -1;
 						}
@@ -760,8 +751,7 @@ class Utils
 
 				chdir($currentdir);
 			}
-			else
-			{
+			else {
 				$result = 0;
 			}
 
@@ -769,15 +759,13 @@ class Utils
 			{
 				return 1;
 			}
-			else
-			{
+			else {
 				$error++;
 				$langs->load("errors");
 				$this->error = $langs->trans("ErrorFailToGenerateFile", $outputfiledoc);
 			}
 		}
-		else
-		{
+		else {
 			$error++;
 			$langs->load("errors");
 			$this->error = $langs->trans("ErrorCheckVersionIsDefined");
@@ -935,8 +923,7 @@ class Utils
 				$tables[] = $row[0];
 			}
 		}
-		else
-		{
+		else {
 			$tables = is_array($tables) ? $tables : explode(',', $tables);
 		}
 
@@ -997,8 +984,7 @@ class Utils
 			{
 				fwrite($handle, "\n-- WARNING: Show create table ".$table." return empy string when it should not.\n");
 			}
-			else
-			{
+			else {
 				fwrite($handle, $row2[1].";\n");
 				//fwrite($handle,"/*!40101 SET character_set_client = @saved_cs_client */;\n\n");
 

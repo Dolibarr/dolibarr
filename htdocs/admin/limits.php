@@ -163,8 +163,7 @@ if ($action == 'edit')
     print '</form>';
     print '<br>';
 }
-else
-{
+else {
     print '<table class="noborder centpercent">';
     print '<tr class="liste_titre"><td>'.$langs->trans("Parameter").'</td><td>'.$langs->trans("Value").'</td></tr>';
 
@@ -204,8 +203,7 @@ if (empty($mysoc->country_code))
 	$warnpicto = img_warning($langs->trans("WarningMandatorySetupNotComplete"));
 	print '<br><a href="'.DOL_URL_ROOT.'/admin/company.php?mainmenu=home">'.$warnpicto.' '.$langs->trans("WarningMandatorySetupNotComplete").'</a>';
 }
-else
-{
+else {
 	// Show examples
 	print load_fiche_titre($langs->trans("ExamplesWithCurrentSetup"), '', '');
 
@@ -270,8 +268,7 @@ else
 	        }
 	    }
 	}
-	else
-	{
+	else {
 	    // More examples if not specific vat rate found
 	    // This example must be kept for test purpose with current value because value used (2/7, 10/3, and vat 0, 10)
 	    // were calculated to show all possible cases of rounding. If we change this, examples becomes useless or show the same rounding rule.

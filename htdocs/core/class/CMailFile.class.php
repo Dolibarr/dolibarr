@@ -216,8 +216,7 @@ class CMailFile
 			$this->msgishtml = 0;
 			if (dol_textishtml($msg)) $this->msgishtml = 1;
 		}
-		else
-		{
+		else {
 			$this->msgishtml = $msgishtml;
 		}
 
@@ -500,8 +499,7 @@ class CMailFile
 			//if (! empty($errors_to)) $this->message->setErrorsTo($this->getArrayAddress($errors_to);
 			if (isset($deliveryreceipt) && $deliveryreceipt == 1) $this->message->setReadReceiptTo($this->getArrayAddress($from));
 		}
-		else
-		{
+		else {
 			// Send mail method not correctly defined
 			// --------------------------------------
 			$this->error = 'Bad value for sendmode';
@@ -708,8 +706,7 @@ class CMailFile
 						$this->error .= $langs->trans("ErrorPhpMailDelivery");
 						dol_syslog("CMailFile::sendfile: mail end error=".$this->error, LOG_ERR);
 					}
-					else
-					{
+					else {
 						dol_syslog("CMailFile::sendfile: mail end success", LOG_DEBUG);
 					}
 				}
@@ -795,8 +792,7 @@ class CMailFile
 						dol_syslog("CMailFile::sendfile: mail end success", LOG_DEBUG);
 						$res = true;
 					}
-					else
-					{
+					else {
 						if (empty($this->error)) $this->error = $result;
 						dol_syslog("CMailFile::sendfile: mail end error with smtps lib to HOST=".$server.", PORT=".$conf->global->$keyforsmtpport."<br>".$this->error, LOG_ERR);
 						$res = false;
@@ -861,13 +857,11 @@ class CMailFile
 					dol_syslog("CMailFile::sendfile: mail end error=".$this->error, LOG_ERR);
 					$res = false;
 				}
-				else
-				{
+				else {
 					dol_syslog("CMailFile::sendfile: mail end success", LOG_DEBUG);
 				}
 			}
-			else
-			{
+			else {
 				// Send mail method not correctly defined
 				// --------------------------------------
 
@@ -884,8 +878,7 @@ class CMailFile
 				return $reshook;
 			}
 		}
-		else
-		{
+		else {
 			$this->error = 'No mail sent. Feature is disabled by option MAIN_DISABLE_ALL_MAILS';
 			dol_syslog("CMailFile::sendfile: ".$this->error, LOG_WARNING);
 		}
@@ -925,8 +918,7 @@ class CMailFile
 			$encoded = chunk_split(base64_encode($contents), 76, $this->eol); // 76 max is defined into http://tools.ietf.org/html/rfc2047
 			return $encoded;
 		}
-		else
-		{
+		else {
 			$this->error = "Error: Can't read file '".$sourcefile."' into _encode_file";
 			dol_syslog("CMailFile::encode_file: ".$this->error, LOG_ERR);
 			return -1;
@@ -992,8 +984,7 @@ class CMailFile
 			$out .= $msg;
 			$out .= "</body></html>";
 		}
-		else
-		{
+		else {
 			$out = $msg;
 		}
 
@@ -1075,8 +1066,7 @@ class CMailFile
 			$out .= 'References: <'.$this->msgid.">".$this->eol2;
 			$out .= 'X-Dolibarr-TRACKID: '.$trackid.'@'.$host.$this->eol2;
 		}
-		else
-		{
+		else {
 			$this->msgid = time().'.phpmail@'.$host;
 			$out .= 'Message-ID: <'.$this->msgid.">".$this->eol2;
 		}
@@ -1206,8 +1196,7 @@ class CMailFile
 				$out .= "--".$this->alternative_boundary."--".$this->eol;
 			}
 		}
-		else
-		{
+		else {
 			$out .= "Content-Type: text/plain; charset=".$conf->file->character_set_client.$this->eol;
 			//$out.= "Content-Transfer-Encoding: 7bit".$this->eol;
 			$out .= $this->eol.$strContent.$this->eol;
@@ -1266,8 +1255,7 @@ class CMailFile
 					$out .= $this->eol;
 					//$out.= $this->eol;
 				}
-				else
-				{
+				else {
 					return $encoded;
 				}
 			}
@@ -1366,8 +1354,7 @@ class CMailFile
 				// Check response from Server
 				if ($_retVal = $this->server_parse($socket, "220")) $_retVal = $socket;
 			}
-			else
-			{
+			else {
 				$this->error = utf8_check('Error '.$errno.' - '.$errstr) ? 'Error '.$errno.' - '.$errstr : utf8_encode('Error '.$errno.' - '.$errstr);
 			}
 		}
@@ -1488,15 +1475,13 @@ class CMailFile
 					$i++;
 				}
 			}
-			else
-			{
+			else {
 				return -1;
 			}
 
 			return 1;
 		}
-		else
-		{
+		else {
 			return 0;
 		}
 	}
@@ -1533,8 +1518,7 @@ class CMailFile
 				$name  = trim($regs[1]);
 				$email = trim($regs[2]);
 			}
-			else
-			{
+			else {
 				$name  = '';
 				$email = trim($val);
 			}
@@ -1604,8 +1588,7 @@ class CMailFile
 				$name  = trim($regs[1]);
 				$email = trim($regs[2]);
 			}
-			else
-			{
+			else {
 				$name  = null;
 				$email = trim($val);
 			}

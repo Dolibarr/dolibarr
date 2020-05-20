@@ -187,8 +187,7 @@ class mod_expensereport_jade extends ModeleNumRefExpenseReport
 			if ($obj) $max = intval($obj->max);
 			else $max = 0;
 		}
-		else
-		{
+		else {
 			dol_syslog("mod_expensereport_jade::getNextValue", LOG_DEBUG);
 			return 0;
 		}

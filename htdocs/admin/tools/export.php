@@ -204,8 +204,7 @@ if ($errormsg)
 
     $_SESSION["commandbackupresult"] = $resultstring;
 }
-else
-{
+else {
 	if ($what)
 	{
         setEventMessages($langs->trans("BackupFileSuccessfullyCreated").'.<br>'.$langs->trans("YouCanDownloadBackupFile"), null, 'mesgs');

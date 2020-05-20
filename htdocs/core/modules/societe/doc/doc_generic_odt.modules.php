@@ -117,8 +117,7 @@ class doc_generic_odt extends ModeleThirdPartyDoc
 			$tmpdir = preg_replace('/DOL_DATA_ROOT/', DOL_DATA_ROOT, $tmpdir);
 			if (!$tmpdir) { unset($listofdir[$key]); continue; }
 			if (!is_dir($tmpdir)) $texttitle .= img_warning($langs->trans("ErrorDirNotFound", $tmpdir), 0);
-			else
-			{
+			else {
 				$tmpfiles = dol_dir_list($tmpdir, 'files', 0, '\.od(s|t)$', '', 'name', SORT_ASC, 0, true); // Disable hook for the moment
 				if (count($tmpfiles)) $listoffiles = array_merge($listoffiles, $tmpfiles);
 			}
@@ -250,8 +249,7 @@ class doc_generic_odt extends ModeleThirdPartyDoc
 				    if ($format == '1') $format = '%Y%m%d%H%M%S';
 					$filename = $newfiletmp.'-'.dol_print_date(dol_now(), $format).'.'.$newfileformat;
 				}
-				else
-				{
+				else {
 					$filename = $newfiletmp.'.'.$newfileformat;
 				}
 				$file = $dir.'/'.$filename;
@@ -313,8 +311,7 @@ class doc_generic_odt extends ModeleThirdPartyDoc
                 }
                 if ((is_array($contact_arrray) && count($contact_arrray) > 0))
                 {
-                	try
-                	{
+                	try {
                 		$listlines = $odfHandler->setSegment('companycontacts');
 
                 		foreach ($contact_arrray as $array_key => $contact_id)
@@ -323,8 +320,7 @@ class doc_generic_odt extends ModeleThirdPartyDoc
                 			$tmparray = $this->get_substitutionarray_contact($contactstatic, $outputlangs, 'contact');
                 			foreach ($tmparray as $key => $val)
                 			{
-                				try
-                				{
+                				try {
                 					$listlines->setVars($key, $val, true, 'UTF-8');
                 				}
                 				catch (OdfException $e)
@@ -370,7 +366,7 @@ class doc_generic_odt extends ModeleThirdPartyDoc
 							if (file_exists($value)) $odfHandler->setImage($key, $value);
 							else $odfHandler->setVars($key, 'ErrorFileNotFound', true, 'UTF-8');
 						}
-						else	// Text
+						else // Text
 						{
 							$odfHandler->setVars($key, $value, true, 'UTF-8');
 						}
@@ -439,8 +435,7 @@ class doc_generic_odt extends ModeleThirdPartyDoc
 
 				return 1; // Success
 			}
-			else
-			{
+			else {
 				$this->error = $langs->transnoentities("ErrorCanNotCreateDir", $dir);
 				return -1;
 			}

@@ -57,8 +57,7 @@ function check_user_password_openid($usertotest, $passwordtotest, $entitytotest)
             $openid->SetApprovedURL($protocol.$_SERVER["HTTP_HOST"].$_SERVER["SCRIPT_NAME"]); // Send Response from OpenID server to this script
             $openid->Redirect(); // This will redirect user to OpenID Server
         }
-        else
-        {
+        else {
             $error = $openid->GetError();
             return false;
         }
@@ -96,8 +95,7 @@ function check_user_password_openid($usertotest, $passwordtotest, $entitytotest)
             $error = $openid->GetError();
             return false;
         }
-        else
-        {
+        else {
             // Signature Verification Failed
             //echo "INVALID AUTHORIZATION";
             return false;

@@ -145,8 +145,7 @@ class Mailing extends CommonObject
 			{
 				$this->db->commit();
 			}
-			else
-			{
+			else {
 				$this->error = $this->db->lasterror();
 				$this->db->rollback();
 				return -1;
@@ -154,8 +153,7 @@ class Mailing extends CommonObject
 
 			return $this->id;
 		}
-		else
-		{
+		else {
 			$this->error = $this->db->lasterror();
 			$this->db->rollback();
 			return -1;
@@ -187,8 +185,7 @@ class Mailing extends CommonObject
 		{
 			return 1;
 		}
-		else
-		{
+		else {
 			$this->error = $this->db->lasterror();
 			return -1;
 		}
@@ -254,14 +251,12 @@ class Mailing extends CommonObject
 
 				return 1;
 			}
-			else
-			{
+			else {
 				dol_syslog(get_class($this)."::fetch Erreur -1");
 				return -1;
 			}
 		}
-		else
-		{
+		else {
 			dol_syslog(get_class($this)."::fetch Erreur -2");
 			return -2;
 		}
@@ -369,8 +364,7 @@ class Mailing extends CommonObject
 						}
 					}
 				}
-				else
-				{
+				else {
 					$this->error = $this->db->lasterror();
 					return -1;
 				}
@@ -387,8 +381,7 @@ class Mailing extends CommonObject
 			$this->db->commit();
 			return $object->id;
 		}
-		else
-		{
+		else {
 			$this->db->rollback();
 			return -1;
 		}
@@ -413,8 +406,7 @@ class Mailing extends CommonObject
 		{
 			return 1;
 		}
-		else
-		{
+		else {
 			$this->error = $this->db->lasterror();
 			return -1;
 		}
@@ -438,8 +430,7 @@ class Mailing extends CommonObject
 		{
 			return $this->delete_targets();
 		}
-		else
-		{
+		else {
 			$this->error = $this->db->lasterror();
 			return -1;
 		}
@@ -463,8 +454,7 @@ class Mailing extends CommonObject
 		{
 			return 1;
 		}
-		else
-		{
+		else {
 			$this->error = $this->db->lasterror();
 			return 0;
 		}
@@ -491,8 +481,7 @@ class Mailing extends CommonObject
 		{
 			return 1;
 		}
-		else
-		{
+		else {
 			$this->error = $this->db->lasterror();
 			return -1;
 		}
@@ -512,8 +501,7 @@ class Mailing extends CommonObject
 	    if ($mode == 'alreadysent') $sql .= " AND statut <> 0";
 	    elseif ($mode == 'alreadysentok') $sql .= " AND statut > 0";
 	    elseif ($mode == 'alreadysentko') $sql .= " AND statut = -1";
-	    else
-	    {
+	    else {
 	        $this->error = 'BadValueForParameterMode';
 	        return -2;
 	    }
@@ -524,8 +512,7 @@ class Mailing extends CommonObject
 	        $obj = $this->db->fetch_object($resql);
 	        if ($obj) return $obj->nb;
 	    }
-	    else
-	    {
+	    else {
 	        $this->error = $this->db->lasterror();
 	        return -1;
 	    }

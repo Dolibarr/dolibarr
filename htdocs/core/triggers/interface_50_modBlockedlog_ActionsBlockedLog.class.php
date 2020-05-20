@@ -143,8 +143,7 @@ class InterfaceActionsBlockedLog extends DolibarrTriggers
 			$this->errors = $b->errors;
 			return -1;
 		}
-		else
-		{
+		else {
 			return 1;
 		}
     }

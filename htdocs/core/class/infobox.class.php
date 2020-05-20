@@ -44,8 +44,7 @@ class InfoBox
         		27 => 'Accountancy Home'
         	);
 		}
-		else
-		{
+		else {
 			return array(
 				0 => 'Home',
 				1 => 'userhome',
@@ -109,7 +108,7 @@ class InfoBox
             else $sql .= " AND b.fk_user = 0";
             $sql .= " ORDER BY b.box_order";
         }
-        else	// available
+        else // available
         {
             $sql = "SELECT d.rowid as box_id, d.file, d.note, d.tms";
             $sql .= " FROM ".MAIN_DB_PREFIX."boxes_def as d";
@@ -134,8 +133,7 @@ class InfoBox
                         $module = $regs[2];
                         $relsourcefile = "/".$module."/core/boxes/".$boxname.".php";
                     }
-                    else
-                    {
+                    else {
                         $boxname = preg_replace('/\.php$/i', '', $obj->file);
                         $relsourcefile = "/core/boxes/".$boxname.".php";
                     }
@@ -200,16 +198,14 @@ class InfoBox
                         if ($enabled && ($includehidden || empty($box->hidden))) $boxes[] = $box;
                         else unset($box);
                     }
-                    else
-                    {
+                    else {
                         dol_syslog("Failed to load box '".$boxname."' into file '".$relsourcefile."'", LOG_WARNING);
                     }
                 }
                 $j++;
             }
         }
-        else
-        {
+        else {
             dol_syslog($db->lasterror(), LOG_ERR);
             return array('error'=>$db->lasterror());
         }
@@ -308,14 +304,12 @@ class InfoBox
                 $db->rollback();
                 return -2;
             }
-            else
-            {
+            else {
                 $db->commit();
                 return 1;
             }
         }
-        else
-        {
+        else {
             $error = $db->lasterror();
             $db->rollback();
             dol_syslog(get_class()."::saveboxorder ".$error);

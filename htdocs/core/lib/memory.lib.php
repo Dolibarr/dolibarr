@@ -64,8 +64,7 @@ function dol_setcache($memoryid, $data)
 		{
 			return count($data);
 		}
-		else
-		{
+		else {
 			return -$rescode;
 		}
 	}
@@ -87,8 +86,7 @@ function dol_setcache($memoryid, $data)
 		{
 			return count($data);
 		}
-		else
-		{
+		else {
 			return -1;
 		}
 	}
@@ -134,8 +132,7 @@ function dol_getcache($memoryid)
 		{
 			return $data;
 		}
-		else
-		{
+		else {
 			return -$rescode;
 		}
 	}
@@ -159,8 +156,7 @@ function dol_getcache($memoryid)
 		{
 			return $data;
 		}
-		else
-		{
+		else {
 			return -1;
 		}
 	}
@@ -236,8 +232,7 @@ function dol_setshmop($memoryid, $data)
 		shmop_close($handle);
 		return ($shm_bytes_written1 + $shm_bytes_written2);
 	}
-	else
-	{
+	else {
 		print 'Error in shmop_open for memoryid='.$memoryid.' shmkey='.$shmkey.' 6+size=6+'.$size;
 		return -1;
 	}
@@ -264,8 +259,7 @@ function dol_getshmop($memoryid)
 		else return -1;
 		shmop_close($handle);
 	}
-	else
-	{
+	else {
 		return -2;
 	}
 	return $data;

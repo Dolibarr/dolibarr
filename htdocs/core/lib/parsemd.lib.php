@@ -46,8 +46,7 @@ function dolMd2Html($content, $parser = 'parsedown', $replaceimagepath = null)
         $Parsedown = new Parsedown();
         $content = $Parsedown->text($content);
     }
-    else
-    {
+    else {
         $content = nl2br($content);
     }
 

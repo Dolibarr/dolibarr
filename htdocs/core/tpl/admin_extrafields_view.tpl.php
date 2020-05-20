@@ -118,8 +118,7 @@ if (is_array($extrafields->attributes[$elementtype]['type']) && count($extrafiel
 		print "</tr>";
 	}
 }
-else
-{
+else {
 	$colspan = 13;
 	if (!empty($conf->multicompany->enabled))  $colspan++;
 

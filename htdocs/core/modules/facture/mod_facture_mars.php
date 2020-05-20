@@ -174,8 +174,7 @@ class mod_facture_mars extends ModeleNumRefFactures
 			if ($obj) $max = intval($obj->max);
 			else $max = 0;
 		}
-		else
-		{
+		else {
 			return -1;
 		}
 

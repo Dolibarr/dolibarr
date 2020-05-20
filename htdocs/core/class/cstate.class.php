@@ -133,8 +133,7 @@ class Cstate // extends CommonObject
 			$this->db->rollback();
 			return -1 * $error;
 		}
-		else
-		{
+		else {
 			$this->db->commit();
             return $this->id;
 		}
@@ -177,8 +176,7 @@ class Cstate // extends CommonObject
 
             return 1;
         }
-        else
-        {
+        else {
       	    $this->error = "Error ".$this->db->lasterror();
             return -1;
         }
@@ -265,8 +263,7 @@ class Cstate // extends CommonObject
 			$this->db->rollback();
 			return -1 * $error;
 		}
-		else
-		{
+		else {
 			$this->db->commit();
 			return 1;
 		}

@@ -80,8 +80,7 @@ if (!is_array($user_arbo) && $user_arbo < 0)
 {
     setEventMessages($userstatic->error, $userstatic->errors, 'warnings');
 }
-else
-{
+else {
     // Define fulltree array
     $fulltree = $user_arbo;
     //var_dump($fulltree);
@@ -113,8 +112,7 @@ else
     		{
     			$entitystring = $langs->trans("AllEntities");
     		}
-    		else
-    		{
+    		else {
     			$mc->getInfo($entity);
     			$entitystring = $mc->label;
     		}
@@ -197,8 +195,7 @@ else
     	print '<td></td>';
     	print '</tr>';
     }
-    else
-    {
+    else {
     	print '<tr '.$bc[true].'>';
     	print '<td colspan="3">';
     	print '<table class="nobordernopadding"><tr class="nobordernopadding"><td>'.img_picto_common('', 'treemenu/branchbottom.gif').'</td>';

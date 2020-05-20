@@ -173,8 +173,7 @@ if (empty($reshook) && $action == 'confirm_clone' && $confirm == 'yes')
 	{
 		setEventMessages($langs->trans("NoCloneOptionsSpecified"), null, 'errors');
 	}
-	else
-	{
+	else {
 		if ($id > 0) {
 			//$object->fetch($id);
             if (!empty($object->socpeopleassigned)) {
@@ -243,8 +242,7 @@ if (empty($reshook) && $action == 'add')
 		$action = 'create';
 		setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Type")), null, 'errors');
 	}
-	else
-	{
+	else {
 		$object->type_code = GETPOST('actioncode', 'aZ09');
 	}
 
@@ -263,8 +261,7 @@ if (empty($reshook) && $action == 'add')
 			{
 				$object->label = $langs->transnoentitiesnoconv("TaskRDVWith", $contact->getFullName($langs));
 			}
-			else
-			{
+			else {
 				if ($langs->trans("Action".$object->type_code) != "Action".$object->type_code)
 				{
 					$object->label = $langs->transnoentitiesnoconv("Action".$object->type_code)."\n";
@@ -394,14 +391,12 @@ if (empty($reshook) && $action == 'add')
 				{
 					header("Location: ".DOL_URL_ROOT.'/comm/action/card.php?id='.$idaction.($moreparam ? '&'.$moreparam : ''));
 				}
-				else
-				{
+				else {
 					header("Location: ".DOL_URL_ROOT.'/comm/action/index.php'.($moreparam ? '?'.$moreparam : ''));
 				}
 				exit;
 			}
-			else
-			{
+			else {
 				// If error
 				$db->rollback();
 				$langs->load("errors");
@@ -410,8 +405,7 @@ if (empty($reshook) && $action == 'add')
 				$action = 'create'; $donotclearsession = 1;
 			}
 		}
-		else
-		{
+		else {
 			$db->rollback();
 			setEventMessages($object->error, $object->errors, 'errors');
 			$action = 'create'; $donotclearsession = 1;
@@ -517,8 +511,7 @@ if (empty($reshook) && $action == 'update')
 			$action = 'edit';
 			setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Type")), null, 'errors');
 		}
-		else
-		{
+		else {
 			$result = $cactioncomm->fetch(GETPOST('actioncode', 'aZ09'));
 		}
 		if (empty($object->userownerid))
@@ -607,8 +600,7 @@ if (empty($reshook) && $action == 'update')
 
 				$db->commit();
 			}
-			else
-			{
+			else {
 				setEventMessages($object->error, $object->errors, 'errors');
 				$db->rollback();
 			}
@@ -646,8 +638,7 @@ if (empty($reshook) && $action == 'confirm_delete' && GETPOST("confirm") == 'yes
 			header("Location: index.php");
 			exit;
 		}
-		else
-		{
+		else {
 			setEventMessages($object->error, $object->errors, 'errors');
 		}
 	}
@@ -756,8 +747,7 @@ if (empty($reshook) && GETPOST('actionmove', 'alpha') == 'mupdate')
         header("Location: ".$backtopage);
         exit;
     }
-    else
-    {
+    else {
         $action = '';
     }
 }
@@ -957,8 +947,7 @@ if ($action == 'create')
 	$percent = -1;
 	if (isset($_GET['status']) || isset($_POST['status'])) $percent = GETPOST('status');
 	elseif (isset($_GET['percentage']) || isset($_POST['percentage'])) $percent = GETPOST('percentage');
-	else
-	{
+	else {
 		if (GETPOST('complete') == '0' || GETPOST("afaire") == 1) $percent = '0';
 		elseif (GETPOST('complete') == 100 || GETPOST("afaire") == 2) $percent = 100;
 	}
@@ -981,8 +970,7 @@ if ($action == 'create')
 		$listofuserid[$user->id]['transparency'] = GETPOSTISSET('transparency') ?GETPOST('transparency', 'alpha') : 1; // 1 by default at first init
 		$_SESSION['assignedtouser'] = json_encode($listofuserid);
 	}
-	else
-	{
+	else {
 		if (!empty($_SESSION['assignedtouser']))
 		{
 			$listofuserid = json_decode($_SESSION['assignedtouser'], true);
@@ -1035,8 +1023,7 @@ if ($action == 'create')
 			print $societe->getNomUrl(1);
 			print '<input type="hidden" id="socid" name="socid" value="'.GETPOST('socid', 'int').'">';
 		}
-		else
-		{
+		else {
 			$events = array();
 			$events[] = array('method' => 'getContacts', 'url' => dol_buildpath('/core/ajax/contacts.php?showempty=1', 1), 'htmlname' => 'contactid', 'params' => array('add-customer-contact' => 'disabled'));
 			//For external user force the company to user company
@@ -1266,8 +1253,7 @@ if ($id > 0)
 		    {
 		    	$formactions->select_type_actions(GETPOST("actioncode", 'aZ09') ?GETPOST("actioncode", 'aZ09') : $object->type_code, "actioncode", "systemauto");
 		    }
-		    else
-		    {
+		    else {
                 print '<input type="hidden" name="actioncode" value="'.$object->type_code.'">'.$langs->trans("Action".$object->type_code);
 		    }
 			print '</td></tr>';
@@ -1398,8 +1384,7 @@ if ($id > 0)
 	    	}
 	    	$_SESSION['assignedtouser'] = json_encode($listofuserid);
 	    }
-	    else
-	    {
+	    else {
 	    	if (!empty($_SESSION['assignedtouser']))
 	    	{
 	    		$listofuserid = json_decode($_SESSION['assignedtouser'], true);
@@ -1523,8 +1508,7 @@ if ($id > 0)
 
 			    print '</td>';
 			}
-			else
-			{
+			else {
 			    print '<td>';
 			    print dolGetElementUrl($object->fk_element, $object->elementtype, 1);
 			    print '<input type="hidden" name="fk_element" value="'.$object->fk_element.'">';
@@ -1564,8 +1548,7 @@ if ($id > 0)
 
 		print '</form>';
 	}
-	else
-	{
+	else {
 		dol_fiche_head($head, 'card', $langs->trans("Action"), -1, 'action');
 
 
@@ -1709,8 +1692,7 @@ if ($id > 0)
 			}
 			$_SESSION['assignedtouser'] = json_encode($listofuserid);
 		}
-		else
-		{
+		else {
 			if (!empty($_SESSION['assignedtouser']))
 			{
 				$listofuserid = json_decode($_SESSION['assignedtouser'], true);
@@ -1797,8 +1779,7 @@ if ($id > 0)
 					}
 				}
 			}
-			else
-			{
+			else {
 				print '<span class="opacitymedium">'.$langs->trans("None").'</span>';
 			}
 			print '</td></tr>';
@@ -1856,8 +1837,7 @@ if ($id > 0)
 			{
 				print '<div class="inline-block divButAction"><a class="butAction" href="card.php?action=edit&id='.$object->id.'">'.$langs->trans("Modify").'</a></div>';
 			}
-			else
-			{
+			else {
 				print '<div class="inline-block divButAction"><a class="butActionRefused classfortooltip" href="#" title="'.$langs->trans("NotAllowed").'">'.$langs->trans("Modify").'</a></div>';
 			}
 
@@ -1866,8 +1846,7 @@ if ($id > 0)
 			{
 				print '<div class="inline-block divButAction"><a class="butAction" href="card.php?action=clone&object='.$object->element.'&id='.$object->id.'">'.$langs->trans("ToClone").'</a></div>';
 			}
-			else
-			{
+			else {
 				print '<div class="inline-block divButAction"><a class="butActionRefused classfortooltip" href="#" title="'.$langs->trans("NotAllowed").'">'.$langs->trans("ToClone").'</a></div>';
 			}
 
@@ -1876,8 +1855,7 @@ if ($id > 0)
 			{
 				print '<div class="inline-block divButAction"><a class="butActionDelete" href="card.php?action=delete&id='.$object->id.'">'.$langs->trans("Delete").'</a></div>';
 			}
-			else
-			{
+			else {
 				print '<div class="inline-block divButAction"><a class="butActionRefused classfortooltip" href="#" title="'.$langs->trans("NotAllowed").'">'.$langs->trans("Delete").'</a></div>';
 			}
 		}

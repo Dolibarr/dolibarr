@@ -147,8 +147,7 @@ if ($nbofentries > 0)
 	}
 	print '</td></tr>';
 }
-else
-{
+else {
 	print '<tr class="pair">';
 	print '<td colspan="3"><table class="nobordernopadding"><tr class="nobordernopadding"><td>'.img_picto_common('', 'treemenu/branchbottom.gif').'</td>';
 	print '<td valign="middle">';
@@ -177,8 +176,7 @@ if ($nbofentries > 0)
 	}
 	print '</td></tr>';
 }
-else
-{
+else {
 	print '<tr class="pair">';
 	print '<td colspan="3"><table class="nobordernopadding"><tr class="nobordernopadding"><td>'.img_picto_common('', 'treemenu/branchbottom.gif').'</td>';
 	print '<td valign="middle">';

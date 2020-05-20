@@ -98,8 +98,7 @@ class FormPropal
                     }
                 }
             }
-            else
-            {
+            else {
                 dol_print_error($this->db);
             }
         }
@@ -121,8 +120,7 @@ class FormPropal
             {
                 print '<option value="'.$obj['id'].'" selected>';
             }
-            else
-            {
+            else {
                 print '<option value="'.$obj['id'].'">';
             }
             $key = $obj['code'];
@@ -130,8 +128,7 @@ class FormPropal
             {
                 print $langs->trans($prefix.$key.($short ? 'Short' : ''));
             }
-            else
-            {
+            else {
                 $conv_to_new_code = array('PR_DRAFT'=>'Draft', 'PR_OPEN'=>'Validated', 'PR_CLOSED'=>'Closed', 'PR_SIGNED'=>'Signed', 'PR_NOTSIGNED'=>'NotSigned', 'PR_FAC'=>'Billed');
                 if (!empty($conv_to_new_code[$obj['code']])) $key = $conv_to_new_code[$obj['code']];
 

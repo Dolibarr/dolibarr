@@ -166,8 +166,7 @@ class pdf_standard extends CommonStickerGenerator
 			// Output left area
 			if ($textleft == '__LOGO__' && $logo) $pdf->Image($logo, $_PosX + $xleft, $_PosY + $ytop, $widthtouse, $heighttouse);
 			elseif ($textleft == '__PHOTO__' && $photo) $pdf->Image($photo, $_PosX + $xleft, $_PosY + $ytop, $widthtouse, $heighttouse);
-			else
-			{
+			else {
 				$pdf->SetXY($_PosX + $xleft, $_PosY + $ytop);
 				$pdf->MultiCell($this->_Width, $this->_Line_Height, $outputlangs->convToOutputCharset($textleft), 0, 'L');
 			}
@@ -188,7 +187,7 @@ class pdf_standard extends CommonStickerGenerator
 				$pdf->SetXY($_PosX + $xleft, $_PosY + $ytop);
 				$pdf->MultiCell($this->_Width - $widthtouse - $xleft - $xleft - 1, $this->_Line_Height, $outputlangs->convToOutputCharset($textleft), 0, 'L');
 			}
-			else	// text on halft left and text on half right
+			else // text on halft left and text on half right
 			{
 				$pdf->SetXY($_PosX + $xleft, $_PosY + $ytop);
 				$pdf->MultiCell(round($this->_Width / 2), $this->_Line_Height, $outputlangs->convToOutputCharset($textleft), 0, 'L');
@@ -196,13 +195,12 @@ class pdf_standard extends CommonStickerGenerator
 				$pdf->MultiCell(round($this->_Width / 2) - 2, $this->_Line_Height, $outputlangs->convToOutputCharset($textright), 0, 'R');
 			}
 		}
-		else	// Only a right part
+		else // Only a right part
 		{
 			// Output right area
 			if ($textright == '__LOGO__' && $logo) $pdf->Image($logo, $_PosX + $this->_Width - $widthtouse - $xleft, $_PosY + $ytop, $widthtouse, $heighttouse);
 			elseif ($textright == '__PHOTO__' && $photo) $pdf->Image($photo, $_PosX + $this->_Width - $widthtouse - $xleft, $_PosY + $ytop, $widthtouse, $heighttouse);
-			else
-			{
+			else {
 				$pdf->SetXY($_PosX + $xleft, $_PosY + $ytop);
 				$pdf->MultiCell($this->_Width - $xleft, $this->_Line_Height, $outputlangs->convToOutputCharset($textright), 0, 'R');
 			}
@@ -306,8 +304,7 @@ class pdf_standard extends CommonStickerGenerator
 
     		$arrayofrecords = $arrayofmembers;
 		}
-		else
-		{
+		else {
 		    $arrayofrecords = $object;
 		}
 
@@ -337,8 +334,7 @@ class pdf_standard extends CommonStickerGenerator
 			$title = $outputlangs->transnoentities('MembersCards');
 			$keywords = $outputlangs->transnoentities('MembersCards')." ".$outputlangs->transnoentities("Foundation")." ".$outputlangs->convToOutputCharset($mysoc->name);
 		}
-		else
-		{
+		else {
 			dol_print_error('', 'Bad value for $mode');
 			return -1;
 		}
@@ -350,8 +346,7 @@ class pdf_standard extends CommonStickerGenerator
 		    $dir = $outputdir."/".get_exdir(0, 0, 0, 0, $object, 'member');
 		    $file = $dir.'/'.$filename;
 		}
-		else
-		{
+		else {
 		    $outputdir = $conf->adherent->dir_temp;
 		    $dir = $outputdir;
 		    $file = $dir.'/'.$filename;

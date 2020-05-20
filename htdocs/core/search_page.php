@@ -75,8 +75,7 @@ if ($conf->use_javascript_ajax && 1 == 2)   // select2 is ko with jmobile
 	$selected = -1;
 	$searchform .= '<br><br>'.$form->selectArrayAjax('searchselectcombo', DOL_URL_ROOT.'/core/ajax/selectsearchbox.php', $selected, '', '', 0, 1, 'minwidth300', 1, $langs->trans("Search"), 0);
 }
-else
-{
+else {
 	$usedbyinclude = 1; // Used into next include
 	$showtitlebefore = GETPOST('showtitlebefore', 'int');
 	include DOL_DOCUMENT_ROOT.'/core/ajax/selectsearchbox.php';

@@ -100,15 +100,13 @@ if (!empty($field) && !empty($element) && !empty($table_element) && !empty($fk_e
 				if ($ret > 0) echo json_encode($object->$cachename);
 			}
 		}
-		else
-		{
+		else {
 			$object = new GenericObject($db);
 			$value = $object->$loadmethod($table_element, $fk_element, $field);
 			echo $value;
 		}
 	}
-	else
-	{
+	else {
 		echo $langs->transnoentities('NotEnoughPermissions');
 	}
 }

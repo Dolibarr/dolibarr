@@ -289,8 +289,7 @@ class Users extends DolibarrApi
 		{
 			return $this->get($id);
 		}
-		else
-		{
+		else {
 			throw new RestException(500, $this->useraccount->error);
 		}
     }
@@ -364,8 +363,7 @@ class Users extends DolibarrApi
 		{
 			$entity = (!empty($entity) ? $entity : $conf->entity);
 		}
-		else
-		{
+		else {
 			// When using API, action is done on entity of logged user because a user of entity X with permission to create user should not be able to
 			// hack the security by giving himself permissions on another entity.
 			$entity = (DolibarrApiAccess::$user->entity > 0 ? DolibarrApiAccess::$user->entity : $conf->entity);

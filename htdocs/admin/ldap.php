@@ -77,8 +77,7 @@ if (empty($reshook))
 			$db->commit();
 			setEventMessages($langs->trans("SetupSaved"), null, 'mesgs');
 		}
-		else
-		{
+		else {
 			$db->rollback();
 			dol_print_error($db);
 		}
@@ -215,8 +214,7 @@ if (!empty($conf->global->LDAP_SERVER_PORT))
 {
 	print '<input size="25" type="text" name="port" value="'.$conf->global->LDAP_SERVER_PORT.'">';
 }
-else
-{
+else {
 	print '<input size="25" type="text" name="port" value="389">';
 }
 print '</td><td>'.$langs->trans("LDAPServerPortExample").'</td></tr>';
@@ -249,8 +247,7 @@ if (!empty($conf->global->LDAP_ADMIN_PASS))
 {
 	print '<input size="25" type="password" name="pass" value="'.$conf->global->LDAP_ADMIN_PASS.'">'; // je le met en visible pour test
 }
-else
-{
+else {
 	print '<input size="25" type="text" name="pass" value="'.$conf->global->LDAP_ADMIN_PASS.'">';
 }
 print '</td><td>'.$langs->trans('Password').' (ex: secret)</td></tr>';
@@ -296,8 +293,7 @@ if (function_exists("ldap_connect"))
 					print '<font class="ok">'.$langs->trans("LDAPBindOK", $conf->global->LDAP_SERVER_HOST, $conf->global->LDAP_SERVER_PORT, $conf->global->LDAP_ADMIN_DN, preg_replace('/./i', '*', $conf->global->LDAP_ADMIN_PASS)).'</font>';
 					print '<br>';
 				}
-				else
-				{
+				else {
 					print img_picto('', 'error').' ';
 					print '<font class="error">'.$langs->trans("LDAPBindKO", $conf->global->LDAP_SERVER_HOST, $conf->global->LDAP_SERVER_PORT, $conf->global->LDAP_ADMIN_DN, preg_replace('/./i', '*', $conf->global->LDAP_ADMIN_PASS)).'</font>';
 					print '<br>';
@@ -305,8 +301,7 @@ if (function_exists("ldap_connect"))
 					print '<br>';
 				}
 			}
-			else
-			{
+			else {
 				print img_picto('', 'warning').' ';
 				print '<font class="warning">'.$langs->trans("LDAPNoUserOrPasswordProvidedAccessIsReadOnly").'</font>';
 				print '<br>';
@@ -320,8 +315,7 @@ if (function_exists("ldap_connect"))
 				print '<font class="ok">'.$langs->trans("LDAPSetupForVersion3").'</font>';
 				print '<br>';
 			}
-			else
-			{
+			else {
 				print img_picto('', 'info').' ';
 				print '<font class="ok">'.$langs->trans("LDAPSetupForVersion2").'</font>';
 				print '<br>';
@@ -329,8 +323,7 @@ if (function_exists("ldap_connect"))
 
 			$unbind = $ldap->unbind();
 		}
-		else
-		{
+		else {
 			print img_picto('', 'error').' ';
 			print '<font class="error">'.$langs->trans("LDAPTCPConnectKO", $conf->global->LDAP_SERVER_HOST, $conf->global->LDAP_SERVER_PORT).'</font>';
 			print '<br>';

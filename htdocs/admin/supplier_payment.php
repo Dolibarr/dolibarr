@@ -58,8 +58,7 @@ if ($action == 'updateMask')
     {
         setEventMessages($langs->trans("SetupSaved"), null, 'mesgs');
     }
-    else
-    {
+    else {
         setEventMessages($langs->trans("Error"), null, 'errors');
     }
 }elseif ($action == 'setmod')
@@ -132,14 +131,12 @@ elseif ($action == 'specimen')
     		header("Location: ".DOL_URL_ROOT."/document.php?modulepart=supplier_payment&file=SPECIMEN.pdf");
     		return;
     	}
-    	else
-    	{
+    	else {
     		setEventMessages($module->error, $module->errors, 'errors');
     		dol_syslog($module->error, LOG_ERR);
     	}
     }
-    else
-    {
+    else {
     	setEventMessages($langs->trans("ErrorModuleNotFound"), null, 'errors');
     	dol_syslog($langs->trans("ErrorModuleNotFound"), LOG_ERR);
     }
@@ -207,8 +204,7 @@ if ($resql)
         $i++;
     }
 }
-else
-{
+else {
     dol_print_error($db);
 }
 
@@ -283,8 +279,7 @@ foreach ($dirmodels as $reldir)
                             {
                                 print img_picto($langs->trans("Activated"), 'switch_on');
                             }
-                            else
-                            {
+                            else {
                                 print '<a class="reposition" href="'.$_SERVER["PHP_SELF"].'?action=setmod&value='.preg_replace('/\.php$/', '', $file).'&scan_dir='.$module->scandir.'&label='.urlencode($module->name).'" alt="'.$langs->trans("Default").'">'.img_picto($langs->trans("Disabled"), 'switch_off').'</a>';
                             }
                             print '</td>';
@@ -399,8 +394,7 @@ foreach ($dirmodels as $reldir)
                         }*/
                         print "</td>";
                     }
-                    else
-                    {
+                    else {
                         print '<td class="center">'."\n";
                         print '<a href="'.$_SERVER["PHP_SELF"].'?action=set&amp;value='.$name.'&amp;scandir='.$module->scandir.'&amp;label='.urlencode($module->name).'&amp;type=SUPPLIER_PAYMENT">'.img_picto($langs->trans("Disabled"), 'switch_off').'</a>';
                         print "</td>";
@@ -414,8 +408,7 @@ foreach ($dirmodels as $reldir)
                         // Even if choice is the default value, we allow to disable it: For supplier invoice, we accept to have no doc generation at all
                         print '<a href="'.$_SERVER["PHP_SELF"].'?action=unsetdoc&amp;value='.$name.'&amp;scandir='.$module->scandir.'&amp;label='.urlencode($module->name).'&amp;type=SUPPLIER_PAYMENT"" alt="'.$langs->trans("Disable").'">'.img_picto($langs->trans("Enabled"), 'on').'</a>';
                     }
-                    else
-                    {
+                    else {
                         print '<a href="'.$_SERVER["PHP_SELF"].'?action=setdoc&amp;value='.$name.'&amp;scandir='.$module->scandir.'&amp;label='.urlencode($module->name).'&amp;type=SUPPLIER_PAYMENT"" alt="'.$langs->trans("Default").'">'.img_picto($langs->trans("Disabled"), 'off').'</a>';
                     }
                     print '</td>';

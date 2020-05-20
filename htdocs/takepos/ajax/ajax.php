@@ -65,8 +65,7 @@ if ($action == 'getProducts') {
 	    }
     	echo json_encode($prods);
     }
-    else
-    {
+    else {
     	echo 'Failed to load category with id='.$category;
     }
 }

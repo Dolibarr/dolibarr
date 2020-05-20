@@ -256,8 +256,7 @@ class ExtraFields
 			}
 			else return -2;
 		}
-		else
-		{
+		else {
 			return -1;
 		}
 	}
@@ -339,15 +338,13 @@ class ExtraFields
 				}
 				return 1;
 			}
-			else
-			{
+			else {
 				$this->error = $this->db->lasterror();
 				$this->errno = $this->db->lasterrno();
 				return -1;
 			}
 		}
-		else
-		{
+		else {
 			return 0;
 		}
 	}
@@ -406,8 +403,7 @@ class ExtraFields
 			{
 				$params = trim($param);
 			}
-			else
-			{
+			else {
 				$params = '';
 			}
 
@@ -466,8 +462,7 @@ class ExtraFields
 			{
 				return 1;
 			}
-			else
-			{
+			else {
 				$this->error = $this->db->lasterror();
 				$this->errno = $this->db->lasterrno();
 				return -1;
@@ -528,8 +523,7 @@ class ExtraFields
 
 			return $result;
 		}
-		else
-		{
+		else {
 			return 0;
 		}
 	}
@@ -563,14 +557,12 @@ class ExtraFields
 			{
 				return 1;
 			}
-			else
-			{
+			else {
 				dol_print_error($this->db);
 				return -1;
 			}
 		}
-		else
-		{
+		else {
 			return 0;
 		}
 	}
@@ -660,28 +652,24 @@ class ExtraFields
 					{
 						$sql = "ALTER TABLE ".MAIN_DB_PREFIX.$table." ADD UNIQUE INDEX uk_".$table."_".$attrname." (".$attrname.")";
 					}
-					else
-					{
+					else {
 						$sql = "ALTER TABLE ".MAIN_DB_PREFIX.$table." DROP INDEX uk_".$table."_".$attrname;
 					}
 					dol_syslog(get_class($this).'::update', LOG_DEBUG);
 					$resql = $this->db->query($sql, 1, 'dml');
 					return 1;
 				}
-				else
-				{
+				else {
 					$this->error = $this->db->lasterror();
 					return -1;
 				}
 			}
-			else
-			{
+			else {
 				$this->error = $this->db->lasterror();
 				return -1;
 			}
 		}
-		else
-		{
+		else {
 			return 0;
 		}
 	}
@@ -744,8 +732,7 @@ class ExtraFields
 			{
 				$params = trim($param);
 			}
-			else
-			{
+			else {
 				$params = '';
 			}
 
@@ -757,8 +744,7 @@ class ExtraFields
 				$sql_del .= " AND entity IN (0, ".($entity === '' ? $conf->entity : $entity).")";
 				$sql_del .= " AND elementtype = '".$elementtype."'";
 			}
-			else
-			{
+			else {
 				// We want on all entities ($entities = '0'), we delete on all only (we keep setup specific to each entity)
 				$sql_del = "DELETE FROM ".MAIN_DB_PREFIX."extrafields";
 				$sql_del .= " WHERE name = '".$attrname."'";
@@ -824,15 +810,13 @@ class ExtraFields
 				$this->db->commit();
 				return 1;
 			}
-			else
-			{
+			else {
 				$this->db->rollback();
 				dol_print_error($this->db);
 				return -1;
 			}
 		}
-		else
-		{
+		else {
 			return 0;
 		}
 	}
@@ -933,8 +917,7 @@ class ExtraFields
 			}
 			if ($elementtype) $this->attributes[$elementtype]['loaded'] = 1; // If nothing found, we also save tag 'loaded'
 		}
-		else
-		{
+		else {
 			$this->error = $this->db->lasterror();
 			dol_syslog(get_class($this)."::fetch_name_optionals_label ".$this->error, LOG_ERR);
 		}
@@ -992,7 +975,7 @@ class ExtraFields
 			$help = $this->attributes[$extrafieldsobjectkey]['help'][$key];
 			$hidden = (empty($list) ? 1 : 0); // If empty, we are sure it is hidden, otherwise we show. If it depends on mode (view/create/edit form or list, this must be filtered by caller)
 		}
-		else	// Old usage
+		else // Old usage
 		{
 			$label = $this->attribute_label[$key];
 			$type = $this->attribute_type[$key];
@@ -1041,8 +1024,7 @@ class ExtraFields
 			{
 				$morecss = '';
 			}
-			else
-			{
+			else {
 				if (round($size) < 12)
 				{
 					$morecss = 'minwidth100';
@@ -1051,8 +1033,7 @@ class ExtraFields
 				{
 					$morecss = 'minwidth200';
 				}
-				else
-				{
+				else {
 					$morecss = 'minwidth400';
 				}
 			}
@@ -1093,8 +1074,7 @@ class ExtraFields
 				$doleditor = new DolEditor($keyprefix.$key.$keysuffix, $value, '', 200, 'dolibarr_notes', 'In', false, false, false, ROWS_5, '90%');
 				$out = $doleditor->Create(1);
 			}
-			else
-			{
+			else {
 				$out = '<input type="text" class="flat '.$morecss.' maxwidthonsmartphone" name="'.$keyprefix.$key.$keysuffix.'" id="'.$keyprefix.$key.$keysuffix.'" value="'.dol_escape_htmltag($value).'" '.($moreparam ? $moreparam : '').'>';
 			}
 		}
@@ -1106,8 +1086,7 @@ class ExtraFields
 				$doleditor = new DolEditor($keyprefix.$key.$keysuffix, $value, '', 200, 'dolibarr_notes', 'In', false, false, !empty($conf->fckeditor->enabled) && $conf->global->FCKEDITOR_ENABLE_SOCIETE, ROWS_5, '90%');
 				$out = $doleditor->Create(1);
 			}
-			else
-			{
+			else {
 				$out = '<input type="text" class="flat '.$morecss.' maxwidthonsmartphone" name="'.$keyprefix.$key.$keysuffix.'" id="'.$keyprefix.$key.$keysuffix.'" value="'.dol_escape_htmltag($value).'" '.($moreparam ? $moreparam : '').'>';
 			}
 		}
@@ -1123,8 +1102,7 @@ class ExtraFields
 				}
 				$out = '<input type="checkbox" class="flat '.$morecss.' maxwidthonsmartphone" name="'.$keyprefix.$key.$keysuffix.'" id="'.$keyprefix.$key.$keysuffix.'" '.$checked.' '.($moreparam ? $moreparam : '').'>';
 			}
-			else
-			{
+			else {
 				$out .= $form->selectyesno($keyprefix.$key.$keysuffix, $value, 1, false, 1);
 			}
 		}
@@ -1603,7 +1581,7 @@ class ExtraFields
 			$help = $this->attributes[$extrafieldsobjectkey]['help'][$key];
 			$hidden = (empty($list) ? 1 : 0); // If $list empty, we are sure it is hidden, otherwise we show. If it depends on mode (view/create/edit form or list, this must be filtered by caller)
 		}
-		else	// Old usage
+		else // Old usage
 		{
 			//dol_syslog("Warning: parameter 'extrafieldsobjectkey' is missing", LOG_WARNING);
 			$label = $this->attribute_label[$key];
@@ -1741,8 +1719,7 @@ class ExtraFields
 						}
 					}
 				}
-				else
-				{
+				else {
 					$translabel = '';
 					if (!empty($obj->{$InfoFieldList[1]})) {
 						$translabel = $langs->trans($obj->{$InfoFieldList[1]});
@@ -1863,8 +1840,7 @@ class ExtraFields
 						$value = $object->getNomUrl(3);
 					}
 				}
-				else
-				{
+				else {
 					dol_syslog('Error bad setup of extrafield', LOG_WARNING);
 					return 'Error bad setup of extrafield';
 				}
@@ -1882,8 +1858,7 @@ class ExtraFields
 		{
 			$value = dol_trunc(preg_replace('/./i', '*', $value), 8, 'right', 'UTF-8', 1);
 		}
-		else
-		{
+		else {
 			$showsize = round($size);
 			if ($showsize > 48) $showsize = 48;
 		}
@@ -2086,8 +2061,7 @@ class ExtraFields
 					$value_arr = GETPOST("options_".$key, 'alpha');
 					$value_key = price2num($value_arr);
 				}
-				else
-				{
+				else {
 					$value_key = GETPOST("options_".$key);
 					if (in_array($key_type, array('link')) && $value_key == '-1') $value_key = '';
 				}
@@ -2125,8 +2099,7 @@ class ExtraFields
 		{
 			$extralabels = $this->attributes[$extrafieldsobjectkey]['label'];
 		}
-		else
-		{
+		else {
 			$extralabels = $extrafieldsobjectkey;
 		}
 
@@ -2163,8 +2136,7 @@ class ExtraFields
 					$value_arr = GETPOST($keysuffix."options_".$key.$keyprefix);
 					$value_key = price2num($value_arr);
 				}
-				else
-				{
+				else {
 					if (!GETPOSTISSET($keysuffix."options_".$key.$keyprefix)) continue; // Value was not provided, we should not set it.
 					$value_key = GETPOST($keysuffix."options_".$key.$keyprefix);
 				}

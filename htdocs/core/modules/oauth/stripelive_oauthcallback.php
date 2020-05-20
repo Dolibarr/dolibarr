@@ -157,8 +157,7 @@ else // If entry on page with no parameter, we arrive here
     {
         $url = $apiService->getAuthorizationUri(array('state'=>GETPOST('state')));
     }
-    else
-    {
+    else {
         //$url = $apiService->getAuthorizationUri();      // Parameter state will be randomly generated
     	//https://connect.stripe.com/oauth/authorize?response_type=code&client_id=ca_AX27ut70tJ1j6eyFCV3ObEXhNOo2jY6V&scope=read_write
     	$url = 'https://connect.stripe.com/oauth/authorize?response_type=code&client_id='.$conf->global->OAUTH_STRIPE_LIVE_ID.'&scope=read_write';

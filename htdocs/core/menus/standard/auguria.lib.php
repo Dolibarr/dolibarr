@@ -145,8 +145,7 @@ function print_auguria_menu($db, $atarget, $type_user, &$tabMenu, &$menu, $noout
 		 {
 		 $urllogo=DOL_URL_ROOT.'/viewimage.php?cache=1&amp;modulepart=mycompany&amp;file='.urlencode('logos/thumbs/'.$mysoc->logo_mini);
 		 }*/
-		else
-		{
+		else {
 			$urllogo = DOL_URL_ROOT.'/theme/dolibarr_logo_squarred_alpha.png';
 			$logoContainerAdditionalClass = '';
 		}
@@ -411,8 +410,7 @@ function print_left_auguria_menu($db, $menu_array_before, $menu_array_after, &$t
 					$i++;
 				}
 			}
-			else
-			{
+			else {
 				// Should not happend. Entries are added
 				$newmenu->add('', $langs->trans("NoJournalDefined"), 2, $user->rights->accounting->comptarapport->lire);
 			}
@@ -474,8 +472,7 @@ function print_left_auguria_menu($db, $menu_array_before, $menu_array_after, &$t
 				{
 					print '<div class="blockvmenu blockvmenuimpair'.$invert.($lastopened ? ' blockvmenulast' : '').($altok == 1 ? ' blockvmenufirst' : '').'">'."\n";
 				}
-				else
-				{
+				else {
 					print '<div class="blockvmenu blockvmenupair'.$invert.($lastopened ? ' blockvmenulast' : '').($altok == 1 ? ' blockvmenufirst' : '').'">'."\n";
 				}
 			}
@@ -539,8 +536,7 @@ function print_left_auguria_menu($db, $menu_array_before, $menu_array_after, &$t
 					print '<div class="menu_titre">'.$tabstring.'<font class="vmenudisabled">'.$menu_array[$i]['titre'].'</font></div>'."\n";
 					$lastlevel0 = 'greyed';
 				}
-				else
-				{
+				else {
 				    $lastlevel0 = 'hidden';
 				}
 				if ($showmenu)

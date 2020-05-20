@@ -58,8 +58,7 @@ if (GETPOST('action', 'alpha') == 'set')
         $db->commit();
 	    setEventMessages($langs->trans("SetupSaved"), null, 'mesgs');
     }
-    else
-    {
+    else {
         $db->rollback();
 	    setEventMessages($langs->trans("Error"), null, 'errors');
     }
@@ -105,8 +104,7 @@ if ($conf->global->TAKEPOS_PRINT_METHOD == "browser")
 {
     print img_picto($langs->trans("Activated"), 'switch_on');
 }
-else
-{
+else {
     print '<a class="reposition" href="'.$_SERVER["PHP_SELF"].'?action=setmethod&value=browser">'.img_picto($langs->trans("Disabled"), 'switch_off').'</a>';
 }
 print "</td></tr>\n";
@@ -122,8 +120,7 @@ if ($conf->receiptprinter->enabled) {
 	{
 		print img_picto($langs->trans("Activated"), 'switch_on');
 	}
-	else
-	{
+	else {
 		print '<a class="reposition" href="'.$_SERVER["PHP_SELF"].'?action=setmethod&value=receiptprinter">'.img_picto($langs->trans("Disabled"), 'switch_off').'</a>';
 	}
 	print "</td></tr>\n";
@@ -139,8 +136,7 @@ if ($conf->global->TAKEPOS_PRINT_METHOD == "takeposconnector")
 {
     print img_picto($langs->trans("Activated"), 'switch_on');
 }
-else
-{
+else {
     print '<a class="reposition" href="'.$_SERVER["PHP_SELF"].'?action=setmethod&value=takeposconnector">'.img_picto($langs->trans("Disabled"), 'switch_off').'</a>';
 }
 print "</td></tr>\n";
@@ -176,8 +172,7 @@ if ($conf->global->TAKEPOS_PRINT_METHOD == "browser" || $conf->global->TAKEPOS_P
 	{
 		print '<textarea name="'.$variablename.'" class="flat" cols="120">'.$conf->global->$variablename.'</textarea>';
 	}
-	else
-	{
+	else {
 		include_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
 		$doleditor = new DolEditor($variablename, $conf->global->$variablename, '', 80, 'dolibarr_notes');
 		print $doleditor->Create();
@@ -192,8 +187,7 @@ if ($conf->global->TAKEPOS_PRINT_METHOD == "browser" || $conf->global->TAKEPOS_P
 	{
 		print '<textarea name="'.$variablename.'" class="flat" cols="120">'.$conf->global->$variablename.'</textarea>';
 	}
-	else
-	{
+	else {
 		include_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
 		$doleditor = new DolEditor($variablename, $conf->global->$variablename, '', 80, 'dolibarr_notes');
 		print $doleditor->Create();

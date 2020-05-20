@@ -138,8 +138,7 @@ if ($resql)
 	}
 	$db->free($resql);
 }
-else
-{
+else {
 	dol_print_error($db, 'Error');
 	$found = 'Error';
 }
@@ -165,8 +164,7 @@ if (!empty($number))
             dol_syslog($txt, LOG_ERR);
             print '</body>'."\n";
         }
-        else
-        {
+        else {
             $txt = "Call Asterisk dialer for caller: ".$caller.", called: ".$called." clicktodiallogin: ".$login;
             dol_syslog($txt);
             print '<body onload="javascript:history.go(-1);">'."\n";

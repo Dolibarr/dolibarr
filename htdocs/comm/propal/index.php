@@ -164,8 +164,7 @@ if ($resql)
     print '<tr class="liste_total"><td>'.$langs->trans("Total").'</td><td class="right">'.$total.'</td></tr>';
     print "</table></div><br>";
 }
-else
-{
+else {
     dol_print_error($db);
 }
 
@@ -403,8 +402,7 @@ if (!empty($conf->propal->enabled) && $user->rights->propale->lire)
 			print "</div><br>";
 		}
 	}
-	else
-	{
+	else {
 		dol_print_error($db);
 	}
 }

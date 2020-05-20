@@ -117,8 +117,7 @@ class mod_commande_fournisseur_muguet extends ModeleNumRefSuppliersOrders
 		{
 			return true;
 		}
-		else
-		{
+		else {
 			$langs->load("errors");
 			$this->error = $langs->trans('ErrorNumRefModel', $max);
 			return false;

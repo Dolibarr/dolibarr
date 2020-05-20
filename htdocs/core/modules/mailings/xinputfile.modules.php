@@ -180,8 +180,7 @@ class mailing_xinputfile extends MailingTargets
 									$j++;
 								}
 					        }
-					        else
-					        {
+					        else {
 					        	$i++;
 					        	$langs->load("errors");
                                 $msg = $langs->trans("ErrorFoundBadEmailInFile", $i, $cpt, $email);
@@ -197,16 +196,14 @@ class mailing_xinputfile extends MailingTargets
 				    	return -$i;
 				    }
 				}
-				else
-				{
+				else {
 					$this->error = $langs->trans("ErrorFaildToOpenFile");
 					return -1;
 				}
 
 				dol_syslog(get_class($this)."::add_to_target mailing ".$cpt." targets found");
 			}
-			else
-			{
+			else {
 				$langs->load("errors");
 				if ($resupload < 0)	// Unknown error
 				{
@@ -216,7 +213,7 @@ class mailing_xinputfile extends MailingTargets
 				{
 					$this->error = '<div class="error">'.$langs->trans("ErrorFileIsInfectedWithAVirus").'</div>';
 				}
-				else	// Known error
+				else // Known error
 				{
 					$this->error = '<div class="error">'.$langs->trans($resupload).'</div>';
 				}

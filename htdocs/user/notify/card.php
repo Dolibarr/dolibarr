@@ -88,8 +88,7 @@ if ($action == 'add')
                 dol_print_error($db);
             }
         }
-        else
-        {
+        else {
             dol_print_error($db);
         }
 
@@ -97,8 +96,7 @@ if ($action == 'add')
         {
             $db->commit();
         }
-        else
-        {
+        else {
             $db->rollback();
         }
     }
@@ -152,8 +150,7 @@ if ($result > 0)
     {
         print '<td class="error">'.$langs->trans("LoginAccountDisableInDolibarr").'</td>';
     }
-    else
-    {
+    else {
         print '<td>'.$object->login.'</td>';
     }
     print '</tr>'."\n";
@@ -228,8 +225,7 @@ if ($result > 0)
         {
             print ' &lt;'.$object->email.'&gt;';
         }
-        else
-        {
+        else {
             $langs->load("errors");
             print ' &nbsp; '.img_warning().' '.$langs->trans("ErrorBadEMail", $object->email);
         }
@@ -244,8 +240,7 @@ if ($result > 0)
         print '<td class="right"><input type="submit" class="button" value="'.$langs->trans("Add").'"></td>';
         print '</tr>';
     }
-    else
-    {
+    else {
         print '<tr class="oddeven"><td colspan="4">';
         print $langs->trans("YouMustAssignUserMailFirst");
         print '</td></tr>';
@@ -272,8 +267,7 @@ if ($result > 0)
     {
         $num = $db->num_rows($resql);
     }
-    else
-    {
+    else {
         dol_print_error($db);
     }
 
@@ -312,8 +306,7 @@ if ($result > 0)
                 {
                     print ' &lt;'.$obj->email.'&gt;';
                 }
-                else
-                {
+                else {
                     $langs->load("errors");
                     print ' &nbsp; '.img_warning().' '.$langs->trans("ErrorBadEMail", $obj->email);
                 }
@@ -421,8 +414,7 @@ if ($result > 0)
     {
         $num = $db->num_rows($resql);
     }
-    else
-    {
+    else {
         dol_print_error($db);
     }
 
@@ -471,8 +463,7 @@ if ($result > 0)
 	            print $userstatic->getNomUrl(1);
 	            print $obj->email ? ' &lt;'.$obj->email.'&gt;' : $langs->trans("NoMail");
             }
-            else
-			{
+            else {
 				print $obj->email;
             }
             print '</td>';

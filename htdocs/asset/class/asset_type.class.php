@@ -155,15 +155,13 @@ class AssetType extends CommonObject
 				$this->db->commit();
 				return $this->id;
 			}
-			else
-			{
+			else {
 				dol_syslog(get_class($this)."::create ".$this->error, LOG_ERR);
 				$this->db->rollback();
 				return -2;
 			}
 		}
-		else
-		{
+		else {
 			$this->error = $this->db->lasterror();
 			$this->db->rollback();
 			return -1;
@@ -224,15 +222,13 @@ class AssetType extends CommonObject
 				$this->db->commit();
 				return 1;
 			}
-			else
-			{
+			else {
 				$this->db->rollback();
 				dol_syslog(get_class($this)."::update ".$this->error, LOG_ERR);
 				return -$error;
 			}
 		}
-		else
-		{
+		else {
 			$this->error = $this->db->lasterror();
 			$this->db->rollback();
 			return -1;
@@ -264,8 +260,7 @@ class AssetType extends CommonObject
 			$this->db->commit();
 			return 1;
 		}
-		else
-		{
+		else {
 			$this->db->rollback();
 			$this->error = $this->db->lasterror();
 			return -1;
@@ -304,8 +299,7 @@ class AssetType extends CommonObject
 
 			return 1;
 		}
-		else
-		{
+		else {
 			$this->error = $this->db->lasterror();
 			return -1;
 		}
@@ -345,8 +339,7 @@ class AssetType extends CommonObject
 				}
 			}
 		}
-		else
-		{
+		else {
 			print $this->db->error();
 		}
 		return $assettypes;
@@ -401,8 +394,7 @@ class AssetType extends CommonObject
 
 			return $ret;
 		}
-		else
-		{
+		else {
 			$this->error = $this->db->lasterror();
 			return -1;
 		}

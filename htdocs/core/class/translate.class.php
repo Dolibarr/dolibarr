@@ -516,8 +516,7 @@ class Translate
     				}
     			}
 		    }
-		    else
-		    {
+		    else {
 		        dol_print_error($db);
 		    }
 		}
@@ -637,7 +636,7 @@ class Translate
 
 			return $str;
 		}
-		else								// Translation is not available
+		else // Translation is not available
 		{
 		    //if ($key[0] == '$') { return dol_eval($key,1); }
 			return $this->getTradFromKey($key);
@@ -708,8 +707,7 @@ class Translate
 
             return $str;
 		}
-		else
-		{
+		else {
 		    if ($key[0] == '$') { return dol_eval($key, 1); }
 			return $this->getTradFromKey($key);
 		}
@@ -826,8 +824,7 @@ class Translate
 				{
 				    $langs_available[$dir] = $dir.': '.dol_trunc($this->trans('Language_'.$dir), $maxlength);
 				}
-				else
-				{
+				else {
 					$langs_available[$dir] = $this->trans('Language_'.$dir);
 				}
 				if ($mainlangonly) {
@@ -957,8 +954,7 @@ class Translate
 			$db->free($resql);
 			return $this->cache_labels[$tablename][$key];
 		}
-		else
-		{
+		else {
 			$this->error = $db->lasterror();
 			return -1;
 		}
@@ -1057,8 +1053,7 @@ class Translate
 			//var_dump($this->cache_currencies);	$this->cache_currencies is now sorted onto label
 			return $num;
 		}
-		else
-		{
+		else {
 			dol_print_error($db);
 			return -1;
 		}

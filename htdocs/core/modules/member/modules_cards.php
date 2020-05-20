@@ -100,8 +100,7 @@ function members_card_pdf_create($db, $arrayofmembers, $modele, $outputlangs, $o
 		{
 			$code = $conf->global->ADHERENT_CARDS_ADDON_PDF;
 		}
-		else
-		{
+		else {
 			$code = $modele;
 		}
 	}
@@ -154,16 +153,14 @@ function members_card_pdf_create($db, $arrayofmembers, $modele, $outputlangs, $o
 			$outputlangs->charset_output = $sav_charset_output;
 			return 1;
 		}
-		else
-		{
+		else {
 			$outputlangs->charset_output = $sav_charset_output;
 			dol_print_error($db, "members_card_pdf_create Error: ".$obj->error);
 			return -1;
 		}
 	}
 
-	else
-	{
+	else {
 		dol_print_error('', $langs->trans("Error")." ".$langs->trans("ErrorFileDoesNotExists", $file));
 		return -1;
 	}

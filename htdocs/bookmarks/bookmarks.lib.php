@@ -42,8 +42,7 @@ function printDropdownBookmarksList()
     {
         $url .= (dol_escape_htmltag($_SERVER["QUERY_STRING"]) ? '?'.dol_escape_htmltag($_SERVER["QUERY_STRING"]) : '');
     }
-    else
-    {
+    else {
         global $sortfield, $sortorder;
         $tmpurl = '';
         // No urlencode, all param $url will be urlencoded later
@@ -123,8 +122,7 @@ function printDropdownBookmarksList()
     		$searchForm .= '</select>';
     	}
     }
-    else
-    {
+    else {
     	dol_print_error($db);
     }
 

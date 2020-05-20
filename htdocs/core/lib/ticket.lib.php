@@ -163,16 +163,14 @@ function showDirectPublicLink($object)
 	{
 		$out .= '<span class="opacitymedium">'.$langs->trans("PublicInterfaceNotEnabled").'</span>';
 	}
-	else
-	{
+	else {
 		$out .= img_picto('', 'object_globe.png').' '.$langs->trans("TicketPublicAccess").':<br>';
 		if ($url)
 		{
 			$out .= '<input type="text" id="directpubliclink" class="quatrevingtpercent" value="'.$url.'">';
 			$out .= ajax_autoselect("directpubliclink", 0);
 		}
-		else
-		{
+		else {
 			$out .= '<span class="opacitymedium">'.$langs->trans("TicketNotCreatedFromPublicInterface").'</span>';
 		}
 	}
@@ -315,8 +313,7 @@ function show_ticket_messaging($conf, $langs, $db, $filterobj, $objcon = '', $no
         if (is_object($objcon) && $objcon->id > 0) {
             $sql = "SELECT DISTINCT a.id, a.label as label,";
         }
-        else
-        {
+        else {
             $sql = "SELECT a.id, a.label as label,";
         }
         $sql .= " a.datep as dp,";
@@ -402,14 +399,12 @@ function show_ticket_messaging($conf, $langs, $db, $filterobj, $objcon = '', $no
             {
                 if ($actioncode == 'AC_NON_AUTO') $sql .= " AND c.type != 'systemauto'";
                 elseif ($actioncode == 'AC_ALL_AUTO') $sql .= " AND c.type = 'systemauto'";
-                else
-                {
+                else {
                     if ($actioncode == 'AC_OTH') $sql .= " AND c.type != 'systemauto'";
                     elseif ($actioncode == 'AC_OTH_AUTO') $sql .= " AND c.type = 'systemauto'";
                 }
             }
-            else
-            {
+            else {
                 if ($actioncode == 'AC_NON_AUTO') $sql .= " AND c.type != 'systemauto'";
                 elseif ($actioncode == 'AC_ALL_AUTO') $sql .= " AND c.type = 'systemauto'";
                 else $sql .= " AND c.code = '".$db->escape($actioncode)."'";
@@ -527,8 +522,7 @@ function show_ticket_messaging($conf, $langs, $db, $filterobj, $objcon = '', $no
             $i++;
         }
     }
-    else
-    {
+    else {
         dol_print_error($db);
     }
 
@@ -555,8 +549,7 @@ function show_ticket_messaging($conf, $langs, $db, $filterobj, $objcon = '', $no
 		{
 			$out .= '<input type="hidden" name="id" value="'.$objcon->id.'" />';
 		}
-		else
-		{
+		else {
 			$out .= '<input type="hidden" name="id" value="'.$filterobj->id.'" />';
 		}
 		if ($filterobj && get_class($filterobj) == 'Societe') $out .= '<input type="hidden" name="socid" value="'.$filterobj->id.'" />';

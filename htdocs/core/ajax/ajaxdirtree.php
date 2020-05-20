@@ -50,7 +50,7 @@ if (!isset($mode) || $mode != 'noajax')    // For ajax call
 
 	if ($selecteddir != '/') $selecteddir = preg_replace('/\/$/', '', $selecteddir); // We removed last '/' except if it is '/'
 }
-else    // For no ajax call
+else // For no ajax call
 {
 	//if (GETPOST('preopened')) { $_GET['dir'] = $_POST['dir'] = GETPOST('preopened'); }
 

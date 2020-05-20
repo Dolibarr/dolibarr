@@ -126,8 +126,7 @@ if ($action == 'install')
 		setEventMessages($langs->trans("ErrorModuleFileRequired"), null, 'warnings');
 		$error++;
 	}
-	else
-	{
+	else {
 		if (!$error && !preg_match('/\.zip$/i', $original_file))
 		{
 			$langs->load("errors");
@@ -174,8 +173,7 @@ if ($action == 'install')
 				setEventMessages($langs->trans($result['error'], $original_file), null, 'errors');
 				$error++;
 			}
-			else
-			{
+			else {
 				// Now we move the dir of the module
 				$modulename = preg_replace('/module_/', '', $original_file);
 				$modulename = preg_replace('/\-([0-9][0-9\.]*)\.zip$/i', '', $modulename);
@@ -231,8 +229,7 @@ if ($action == 'install')
 				}
 			}
 		}
-		else
-		{
+		else {
 			setEventMessages($langs->trans("ErrorFailToRenameFile", $_FILES['fileinstall']['tmp_name'], $newfile), null, 'errors');
 			$error++;
 		}
@@ -248,8 +245,7 @@ if ($action == 'set' && $user->admin)
 {
 	$resarray = activateModule($value);
 	if (!empty($resarray['errors'])) setEventMessages('', $resarray['errors'], 'errors');
-	else
-	{
+	else {
 		//var_dump($resarray);exit;
 		if ($resarray['nbperms'] > 0)
 		{
@@ -341,8 +337,7 @@ foreach ($modulesdir as $dir)
 						continue;
 					}
 
-					try
-					{
+					try {
 						$res = include_once $dir.$file; // A class already exists in a different file will send a non catchable fatal error.
 						if (class_exists($modName))
 						{
@@ -376,8 +371,7 @@ foreach ($modulesdir as $dir)
 										{
 											$arrayofnatures['external_'.$publisher] = $langs->trans("External").' - '.$publisher;
 										}
-										else
-										{
+										else {
 											$arrayofnatures['external_'] = $langs->trans("External").' - '.$langs->trans("UnknownPublishers");
 										}
 									}
@@ -438,8 +432,7 @@ foreach ($modulesdir as $dir)
 								 dol_syslog("Failed to load ".$dir.$file." ".$e->getMessage(), LOG_ERR);
 							}
 						}
-						else
-						{
+						else {
 							print "Warning bad descriptor file : ".$dir.$file." (Class ".$modName." not found into file)<br>";
 						}
 					}
@@ -452,8 +445,7 @@ foreach ($modulesdir as $dir)
 		}
 		closedir($handle);
 	}
-	else
-	{
+	else {
 		dol_syslog("htdocs/admin/modules.php: Failed to open directory ".$dir.". See permission and open_basedir option.", LOG_WARNING);
 	}
 }
@@ -716,8 +708,7 @@ if ($mode == 'common' || $mode == 'commonkanban')
 				}
 				if (!empty($conf->multicompany->enabled) && $user->entity) $disableSetup++;
 			}
-			else
-			{
+			else {
 				if (!empty($objMod->warnings_unactivation[$mysoc->country_code]) && method_exists($objMod, 'alreadyUsed') && $objMod->alreadyUsed()) {
 					$codeenabledisable .= '<a class="reposition valignmiddle" href="'.$_SERVER["PHP_SELF"].'?id='.$objMod->numero.'&amp;module_position='.$module_position.'&amp;action=reset_confirm&amp;confirm_message_code='.$objMod->warnings_unactivation[$mysoc->country_code].'&amp;value='.$modName.'&amp;mode='.$mode.$param.'">';
 					$codeenabledisable .= img_picto($langs->trans("Activated"), 'switch_on');
@@ -752,15 +743,13 @@ if ($mode == 'common' || $mode == 'commonkanban')
 							$codetoconfig .= '<a href="'.$urlpage.'" title="'.$langs->trans($page).'">'.img_picto(ucfirst($page), "setup").'</a>';
 							//    print '<a href="'.$page.'">'.ucfirst($page).'</a>&nbsp;';
 						}
-						else
-						{
+						else {
 							if (preg_match('/^([^@]+)@([^@]+)$/i', $urlpage, $regs))
 							{
 								$urltouse = dol_buildpath('/'.$regs[2].'/admin/'.$regs[1], 1);
 								$codetoconfig .= '<a href="'.$urltouse.(preg_match('/\?/', $urltouse) ? '&' : '?').'save_lastsearch_values=1&backtopage='.urlencode($backtourl).'" title="'.$langs->trans("Setup").'">'.img_picto($langs->trans("Setup"), "setup", 'style="padding-right: 6px"', false, 0, 0, '', 'fa-15').'</a>';
 							}
-							else
-							{
+							else {
 								$urltouse = $urlpage;
 								$codetoconfig .= '<a href="'.$urltouse.(preg_match('/\?/', $urltouse) ? '&' : '?').'save_lastsearch_values=1&backtopage='.urlencode($backtourl).'" title="'.$langs->trans("Setup").'">'.img_picto($langs->trans("Setup"), "setup", 'style="padding-right: 6px"', false, 0, 0, '', 'fa-15').'</a>';
 							}
@@ -771,17 +760,15 @@ if ($mode == 'common' || $mode == 'commonkanban')
 				{
 					$codetoconfig .= '<a class="valignmiddle" href="'.dol_buildpath('/'.$regs[2].'/admin/'.$regs[1], 1).'?save_lastsearch_values=1&backtopage='.urlencode($backtourl).'" title="'.$langs->trans("Setup").'">'.img_picto($langs->trans("Setup"), "setup", 'style="padding-right: 6px"', false, 0, 0, '', 'fa-15').'</a>';
 				}
-				else
-				{
+				else {
 					$codetoconfig .= '<a class="valignmiddle" href="'.$objMod->config_page_url.'?save_lastsearch_values=1&backtopage='.urlencode($backtourl).'" title="'.$langs->trans("Setup").'">'.img_picto($langs->trans("Setup"), "setup", 'style="padding-right: 6px"', false, 0, 0, '', 'fa-15').'</a>';
 				}
 			}
-			else
-			{
+			else {
 				$codetoconfig .= img_picto($langs->trans("NothingToSetup"), "setup", 'class="opacitytransp" style="padding-right: 6px"', false, 0, 0, '', 'fa-15');
 			}
 		}
-		else	// Module not yet activated
+		else // Module not yet activated
 		{
 			// Set $codeenabledisable
 			if (!empty($objMod->always_enabled))
@@ -792,8 +779,7 @@ if ($mode == 'common' || $mode == 'commonkanban')
 			{
 				$codeenabledisable .= $langs->trans("Disabled");
 			}
-			else
-			{
+			else {
 				// Module qualified for activation
 				$warningmessage = '';
 				if (!empty($arrayofwarnings[$modName]))
@@ -857,8 +843,7 @@ if ($mode == 'common' || $mode == 'commonkanban')
 				if (preg_match('/^\//i', $objMod->picto)) print img_picto($alttext, $objMod->picto, 'class="valignmiddle pictomodule paddingrightonly"', 1);
 				else print img_object($alttext, $objMod->picto, 'class="valignmiddle pictomodule paddingrightonly"');
 			}
-			else
-			{
+			else {
 				print img_object($alttext, 'generic', 'class="valignmiddle paddingrightonly"');
 			}
 			print ' <span class="valignmiddle">'.$objMod->getName().'</span>';
@@ -1028,8 +1013,7 @@ if ($mode == 'deploy')
 			$message = info_admin($langs->trans("ConfFileMustContainCustom", DOL_DOCUMENT_ROOT.'/custom', DOL_DOCUMENT_ROOT));
 			$allowfromweb = -1;
 		}
-		else
-		{
+		else {
 			if ($dirins_ok)
 			{
 				if (!is_writable(dol_osencode($dirins)))
@@ -1039,15 +1023,13 @@ if ($mode == 'deploy')
 					$allowfromweb = 0;
 				}
 			}
-			else
-			{
+			else {
 				$message = info_admin($langs->trans("NotExistsDirect", $dirins).$langs->trans("InfDirAlt").$langs->trans("InfDirExample"));
 				$allowfromweb = 0;
 			}
 		}
 	}
-	else
-	{
+	else {
 		$message = info_admin($langs->trans("InstallModuleFromWebHasBeenDisabledByFile", $dolibarrdataroot.'/installmodules.lock'));
 		$allowfromweb = 0;
 	}
@@ -1068,8 +1050,7 @@ if ($mode == 'deploy')
 		{
 			//print $langs->trans("ThisIsProcessToFollow").'<br>';
 		}
-		else
-		{
+		else {
 			print $langs->trans("ThisIsAlternativeProcessToFollow").'<br>';
 			print '<b>'.$langs->trans("StepNb", 1).'</b>: ';
 			print $langs->trans("FindPackageFromWebSite", $fullurl).'<br>';
@@ -1150,8 +1131,7 @@ if ($mode == 'deploy')
 					print info_admin($langs->trans("ThisLimitIsDefinedInSetup", $max, $maxphptoshow, $maxphptoshowparam), 1);
 				}
 			}
-			else
-			{
+			else {
 				print ' ('.$langs->trans("UploadDisabled").')';
 			}
 
@@ -1162,8 +1142,7 @@ if ($mode == 'deploy')
 
 			print '<div class="center"><div class="logo_setup"></div></div>';
 		}
-		else
-		{
+		else {
 			print $langs->trans("UnpackPackageInModulesRoot", $dirins).'<br>';
 			print '<b>'.$langs->trans("StepNb", 4).'</b>: ';
 			print $langs->trans("SetupIsReadyForUse").'<br>';

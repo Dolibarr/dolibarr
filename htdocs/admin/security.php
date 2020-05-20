@@ -46,8 +46,7 @@ if ($action == 'setgeneraterule')
 	{
 		dol_print_error($db);
 	}
-	else
-	{
+	else {
 		header("Location: ".$_SERVER["PHP_SELF"]);
 		exit;
 	}
@@ -102,8 +101,7 @@ if ($action == 'activate_encrypt')
 		header("Location: security.php");
 	    exit;
 	}
-	else
-	{
+	else {
 		$db->rollback();
 		dol_print_error($db, '');
 	}
@@ -132,8 +130,7 @@ if ($action == 'activate_encryptdbpassconf')
 		header("Location: security.php");
 		exit;
 	}
-	else
-	{
+	else {
 		setEventMessages($langs->trans('InstrucToEncodePass', dol_encode($dolibarr_main_db_pass)), null, 'warnings');
 	}
 }
@@ -149,8 +146,7 @@ elseif ($action == 'disable_encryptdbpassconf')
 		header("Location: security.php");
 		exit;
 	}
-	else
-	{
+	else {
 		setEventMessages($langs->trans('InstrucToClearPass', $dolibarr_main_db_pass), null, 'warnings');
 	}
 }
@@ -278,8 +274,7 @@ foreach ($arrayhandler as $key => $module)
         {
             print img_picto('', 'tick');
         }
-        else
-        {
+        else {
             print '<a href="'.$_SERVER['PHP_SELF'].'?action=setgeneraterule&amp;value='.$key.'">'.$langs->trans("Activate").'</a>';
         }
         print "</td></tr>\n";
@@ -436,8 +431,7 @@ if (!empty($conf->global->DATABASE_PWD_ENCRYPTED))
 	  	//Do not allow "disable encryption" as passwords cannot be decrypted
 	  	print '<a href="security.php?action=disable_encrypt">'.$langs->trans("Disable").'</a>';
 	}
-	else
-	{
+	else {
 		print '-';
 	}
 	print "</td>";
@@ -463,8 +457,7 @@ if (empty($dolibarr_main_db_pass) && empty($dolibarr_main_db_encrypted_pass))
 	$langs->load("errors");
 	print img_warning($langs->trans("WarningPassIsEmpty"));
 }
-else
-{
+else {
 	if (empty($dolibarr_main_db_encrypted_pass))
 	{
 		print '<a href="security.php?action=activate_encryptdbpassconf">'.$langs->trans("Activate").'</a>';
@@ -516,8 +509,7 @@ if (GETPOST('info', 'int') > 0)
     {
         print $langs->trans("Note: The function password_hash exists on your PHP")."<br>\n";
     }
-    else
-    {
+    else {
         print $langs->trans("Note: The function password_hash does not exists on your PHP")."<br>\n";
     }
     print 'MAIN_SECURITY_HASH_ALGO = '.$conf->global->MAIN_SECURITY_HASH_ALGO."<br>\n";

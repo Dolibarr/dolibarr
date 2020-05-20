@@ -95,8 +95,7 @@ if (empty($conf->global->MAIN_MENU_HIDE_UNAUTHORIZED))
 {
 	print '<a href="'.$_SERVER["PHP_SELF"].'?action=activate_hidemenu">'.img_picto($langs->trans("Disabled"), 'switch_off').'</a>';
 }
-else
-{
+else {
 	print '<a href="'.$_SERVER["PHP_SELF"].'?action=disable_hidemenu">'.img_picto($langs->trans("Enabled"), 'switch_on').'</a>';
 }
 print "</td>";

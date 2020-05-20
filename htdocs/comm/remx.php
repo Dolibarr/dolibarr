@@ -106,8 +106,7 @@ if ($action == 'confirm_split' && GETPOST("confirm", "alpha") == 'yes')
 			$newdiscount1->description = $discount->description;
 			$newdiscount2->description = $discount->description;
 		}
-		else
-		{
+		else {
 			$newdiscount1->description = $discount->description.' (1)';
 			$newdiscount2->description = $discount->description.' (2)';
 		}
@@ -151,8 +150,7 @@ if ($action == 'confirm_split' && GETPOST("confirm", "alpha") == 'yes')
 			header("Location: ".$_SERVER["PHP_SELF"].'?id='.$id.($backtopage ? '&backtopage='.urlencode($backtopage) : '')); // To avoid pb whith back
 			exit;
 		}
-		else
-		{
+		else {
 			$db->rollback();
 		}
 	}
@@ -190,21 +188,18 @@ if ($action == 'setremise' && $user->rights->societe->creer)
 			        header("Location: ".$backtopage.'&discountid='.$discountid);
 			        exit;
 			    }
-				else
-				{
+				else {
 				    header("Location: remx.php?id=".$id);
 				    exit;
 				}
 			}
-			else
-			{
+			else {
 				$error++;
 				setEventMessages($soc->error, $soc->errors, 'errors');
 			}
 		}
 	}
-	else
-	{
+	else {
 		setEventMessages($langs->trans("ErrorFieldFormat", $langs->transnoentitiesnoconv("AmountHT")), null, 'errors');
 	}
 }
@@ -225,8 +220,7 @@ if (GETPOST('action', 'aZ09') == 'confirm_remove' && GETPOST("confirm") == 'yes'
 		header("Location: ".$_SERVER["PHP_SELF"].'?id='.$id); // To avoid pb whith back
 		exit;
 	}
-	else
-	{
+	else {
 		setEventMessages($discount->error, $discount->errors, 'errors');
 		$db->rollback();
 	}
@@ -301,8 +295,7 @@ if ($socid > 0)
 			$remise_all += $obj->amount;
 			if ($obj->fk_user == $user->id) $remise_user += $obj->amount;
 		}
-		else
-		{
+		else {
 			dol_print_error($db);
 		}
 
@@ -333,8 +326,7 @@ if ($socid > 0)
 			$remise_all += $obj->amount;
 			if ($obj->fk_user == $user->id) $remise_user += $obj->amount;
 		}
-		else
-		{
+		else {
 			dol_print_error($db);
 		}
 
@@ -508,8 +500,7 @@ if ($socid > 0)
 	    				print preg_replace('/\(EXCESS RECEIVED\)/', $langs->trans("ExcessReceived"), $obj->description).' '.$facturestatic->getNomURl(1);
 	    				print '</td>';
 	    			}
-	    			else
-	    			{
+	    			else {
 	    				print '<td class="minwidth100">';
 	    				print $obj->description;
 	    				print '</td>';
@@ -547,8 +538,7 @@ if ($socid > 0)
 	    			$i++;
 	    		}
 			}
-			else
-			{
+			else {
 				$colspan = 8;
 				if (!empty($conf->multicurrency->enabled)) $colspan += 2;
 			    print '<tr><td colspan="'.$colspan.'" class="opacitymedium">'.$langs->trans("None").'</td></tr>';
@@ -570,8 +560,7 @@ if ($socid > 0)
 				print $form->formconfirm($_SERVER["PHP_SELF"].'?id='.$object->id.'&remid='.$showconfirminfo['rowid'].($backtopage ? '&backtopage='.urlencode($backtopage) : ''), $langs->trans('SplitDiscount'), $langs->trans('ConfirmSplitDiscount', price($showconfirminfo['amount_ttc']), $langs->transnoentities("Currency".$conf->currency)), 'confirm_split', $formquestion, '', 0);
 			}
 		}
-		else
-		{
+		else {
 			dol_print_error($db);
 		}
 	}
@@ -665,8 +654,7 @@ if ($socid > 0)
 						print preg_replace('/\(EXCESS PAID\)/', $langs->trans("ExcessPaid"), $obj->description).' '.$facturefournstatic->getNomURl(1);
 						print '</td>';
 					}
-					else
-					{
+					else {
 						print '<td class="minwidth100">';
 						print $obj->description;
 						print '</td>';
@@ -704,8 +692,7 @@ if ($socid > 0)
 					$i++;
 				}
 			}
-			else
-			{
+			else {
 				$colspan = 8;
 				if (!empty($conf->multicurrency->enabled)) $colspan += 2;
 				print '<tr><td colspan="'.$colspan.'" class="opacitymedium">'.$langs->trans("None").'</td></tr>';
@@ -727,8 +714,7 @@ if ($socid > 0)
 				print $form->formconfirm($_SERVER["PHP_SELF"].'?id='.$object->id.'&remid='.$showconfirminfo['rowid'].($backtopage ? '&backtopage='.urlencode($backtopage) : ''), $langs->trans('SplitDiscount'), $langs->trans('ConfirmSplitDiscount', price($showconfirminfo['amount_ttc']), $langs->transnoentities("Currency".$conf->currency)), 'confirm_split', $formquestion, 0, 0);
 			}
 		}
-		else
-		{
+		else {
 			dol_print_error($db);
 		}
 
@@ -876,8 +862,7 @@ if ($socid > 0)
 	    				print preg_replace('/\(EXCESS RECEIVED\)/', $langs->trans("Invoice"), $obj->description).' '.$facturestatic->getNomURl(1);
 	    				print '</td>';
 	    			}
-	    			else
-	    			{
+	    			else {
 	    				print '<td class="minwidth100">';
 	    				print $obj->description;
 	    				print '</td>';
@@ -907,8 +892,7 @@ if ($socid > 0)
 	    			$i++;
 	    		}
 			}
-			else
-			{
+			else {
 				$colspan = 8;
 				if (!empty($conf->multicurrency->enabled)) $colspan += 2;
 			    print '<tr><td colspan="'.$colspan.'" class="opacitymedium">'.$langs->trans("None").'</td></tr>';
@@ -917,8 +901,7 @@ if ($socid > 0)
 			print "</table>";
 			print '</div>';
 		}
-		else
-		{
+		else {
 			dol_print_error($db);
 		}
 	}
@@ -1054,8 +1037,7 @@ if ($socid > 0)
 						print preg_replace('/\(EXCESS PAID\)/', $langs->trans("Invoice"), $obj->description).' '.$facturefournstatic->getNomURl(1);
 						print '</td>';
 					}
-					else
-					{
+					else {
 						print '<td class="minwidth100">';
 						print $obj->description;
 						print '</td>';
@@ -1084,8 +1066,7 @@ if ($socid > 0)
 					$i++;
 				}
 			}
-			else
-			{
+			else {
 				$colspan = 8;
 				if (!empty($conf->multicurrency->enabled)) $colspan += 2;
 				print '<tr><td colspan="'.$colspan.'" class="opacitymedium">'.$langs->trans("None").'</td></tr>';
@@ -1094,8 +1075,7 @@ if ($socid > 0)
 			print "</table>";
 			print '</div>';
 		}
-		else
-		{
+		else {
 			dol_print_error($db);
 		}
 

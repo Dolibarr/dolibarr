@@ -868,8 +868,7 @@ abstract class CommonObject
 		{
 			$linktoreturn = 'document.php'.($paramlink ? '?'.$paramlink : '');
 		}
-		else
-		{
+		else {
 			$linktoreturn = $urlwithroot.'/document.php'.($paramlink ? '?'.$paramlink : '');
 		}
 
@@ -917,8 +916,7 @@ abstract class CommonObject
 		{
 			$id_type_contact = $type_contact;
 		}
-		else
-		{
+		else {
 			// We look for id type_contact
 			$sql = "SELECT tc.rowid";
 			$sql .= " FROM ".MAIN_DB_PREFIX."c_type_contact as tc";
@@ -982,8 +980,7 @@ abstract class CommonObject
 				$this->db->commit();
 				return 1;
 			}
-			else
-			{
+			else {
 				if ($this->db->errno() == 'DB_ERROR_RECORD_ALREADY_EXISTS')
 				{
 					$this->error = $this->db->errno();
@@ -991,8 +988,7 @@ abstract class CommonObject
 					echo 'err rollback';
 					return -2;
 				}
-				else
-				{
+				else {
 					$this->error = $this->db->error();
 					$this->db->rollback();
 					return -1;
@@ -1048,8 +1044,7 @@ abstract class CommonObject
 		{
 			return 0;
 		}
-		else
-		{
+		else {
 			$this->error = $this->db->lasterror();
 			return -1;
 		}
@@ -1086,8 +1081,7 @@ abstract class CommonObject
 			$this->db->commit();
 			return 1;
 		}
-		else
-		{
+		else {
 			$this->error = $this->db->lasterror();
 			$this->db->rollback();
 			return -1;
@@ -1124,8 +1118,7 @@ abstract class CommonObject
 		{
 			return 1;
 		}
-		else
-		{
+		else {
 			$this->error = $this->db->lasterror();
 			return -1;
 		}
@@ -1186,8 +1179,7 @@ abstract class CommonObject
 								   'civility'=>$obj->civility, 'lastname'=>$obj->lastname, 'firstname'=>$obj->firstname, 'email'=>$obj->email, 'login'=>$obj->login, 'photo'=>$obj->photo, 'statuscontact'=>$obj->statuscontact,
 								   'rowid'=>$obj->rowid, 'code'=>$obj->code, 'libelle'=>$libelle_type, 'status'=>$obj->statuslink, 'fk_c_type_contact'=>$obj->fk_c_type_contact);
 				}
-				else
-				{
+				else {
 					$tab[$i] = $obj->id;
 				}
 
@@ -1196,8 +1188,7 @@ abstract class CommonObject
 
 			return $tab;
 		}
-		else
-		{
+		else {
 			$this->error = $this->db->lasterror();
 			dol_print_error($this->db);
 			return -1;
@@ -1232,8 +1223,7 @@ abstract class CommonObject
 			$this->db->free($resql);
 			return $result;
 		}
-		else
-		{
+		else {
 			$this->error = $this->db->error();
 			dol_print_error($this->db);
 			return -1;
@@ -1286,8 +1276,7 @@ abstract class CommonObject
 			}
 			return $tab;
 		}
-		else
-		{
+		else {
 			$this->error = $this->db->lasterror();
 			//dol_print_error($this->db);
 			return null;
@@ -1369,8 +1358,7 @@ abstract class CommonObject
 			}
 			return $tab;
 		}
-		else
-		{
+		else {
 			$this->error = $this->db->lasterror();
 			return null;
 		}
@@ -1431,8 +1419,7 @@ abstract class CommonObject
 				$i++;
 			}
 		}
-		else
-		{
+		else {
 			$this->error = $this->db->error();
 			return null;
 		}
@@ -1493,8 +1480,7 @@ abstract class CommonObject
 			}
 
 			return $result;
-		} else
-			return -1;
+		} else return -1;
 	}
 
 
@@ -1565,8 +1551,7 @@ abstract class CommonObject
 					$this->barcode_type_coder = $obj->coder;
 					return 1;
 				}
-				else
-				{
+				else {
 					dol_print_error($this->db);
 					return -1;
 				}
@@ -1774,8 +1759,7 @@ abstract class CommonObject
 				{
 					$result = $this->fetch($id);
 				}
-				else
-				{
+				else {
 					$result = $this->fetchCommon($id);
 				}
 				if ($result >= 0) $result = $this->call_trigger($trigkey, (!empty($fuser) && is_object($fuser)) ? $fuser : $user); // This may set this->errors
@@ -1788,14 +1772,12 @@ abstract class CommonObject
 				$this->db->commit();
 				return 1;
 			}
-			else
-			{
+			else {
 				$this->db->rollback();
 				return -2;
 			}
 		}
-		else
-		{
+		else {
 			$this->error = $this->db->lasterror();
 			$this->db->rollback();
 			return -1;
@@ -1954,7 +1936,7 @@ abstract class CommonObject
 		while ($i < $num)
 		{
 			if ($source == 'thirdparty') $contactAlreadySelected[$i] = $tab[$i]['socid'];
-			else  $contactAlreadySelected[$i] = $tab[$i]['id'];
+			else $contactAlreadySelected[$i] = $tab[$i]['id'];
 			$i++;
 		}
 		return $contactAlreadySelected;
@@ -1988,7 +1970,7 @@ abstract class CommonObject
 			else $sql .= ' SET fk_project = NULL';
 			$sql .= ' WHERE id = '.$this->id;
 		}
-		else											// Special case for old architecture objects
+		else // Special case for old architecture objects
 		{
 			if ($projectid) $sql .= ' SET fk_projet = '.$projectid;
 			else $sql .= ' SET fk_projet = NULL';
@@ -2001,8 +1983,7 @@ abstract class CommonObject
 			$this->fk_project = $projectid;
 			return 1;
 		}
-		else
-		{
+		else {
 			dol_print_error($this->db);
 			return -1;
 		}
@@ -2035,15 +2016,13 @@ abstract class CommonObject
 				if (get_class($this) == 'Fournisseur') $this->mode_reglement_supplier_id = $id;
 				return 1;
 			}
-			else
-			{
+			else {
 				dol_syslog(get_class($this).'::setPaymentMethods Erreur '.$sql.' - '.$this->db->error());
 				$this->error = $this->db->error();
 				return -1;
 			}
 		}
-		else
-		{
+		else {
 			dol_syslog(get_class($this).'::setPaymentMethods, status of the object is incompatible');
 			$this->error = 'Status of the object is incompatible '.$this->statut;
 			return -2;
@@ -2076,15 +2055,13 @@ abstract class CommonObject
 
 				return 1;
 			}
-			else
-			{
+			else {
 				dol_syslog(get_class($this).'::setMulticurrencyCode Erreur '.$sql.' - '.$this->db->error());
 				$this->error = $this->db->error();
 				return -1;
 			}
 		}
-		else
-		{
+		else {
 			dol_syslog(get_class($this).'::setMulticurrencyCode, status of the object is incompatible');
 			$this->error = 'Status of the object is incompatible '.$this->statut;
 			return -2;
@@ -2184,15 +2161,13 @@ abstract class CommonObject
 
 				return 1;
 			}
-			else
-			{
+			else {
 				dol_syslog(get_class($this).'::setMulticurrencyRate Erreur '.$sql.' - '.$this->db->error());
 				$this->error = $this->db->error();
 				return -1;
 			}
 		}
-		else
-		{
+		else {
 			dol_syslog(get_class($this).'::setMulticurrencyRate, status of the object is incompatible');
 			$this->error = 'Status of the object is incompatible '.$this->statut;
 			return -2;
@@ -2227,15 +2202,13 @@ abstract class CommonObject
 				$this->cond_reglement = $id; // for compatibility
 				return 1;
 			}
-			else
-			{
+			else {
 				dol_syslog(get_class($this).'::setPaymentTerms Erreur '.$sql.' - '.$this->db->error());
 				$this->error = $this->db->error();
 				return -1;
 			}
 		}
-		else
-		{
+		else {
 			dol_syslog(get_class($this).'::setPaymentTerms, status of the object is incompatible');
 			$this->error = 'Status of the object is incompatible '.$this->statut;
 			return -2;
@@ -2265,15 +2238,13 @@ abstract class CommonObject
 	            $this->retained_warranty_fk_cond_reglement = $id;
 	            return 1;
 	        }
-	        else
-	        {
+	        else {
 	            dol_syslog(get_class($this).'::setRetainedWarrantyPaymentTerms Erreur '.$sql.' - '.$this->db->error());
 	            $this->error = $this->db->error();
 	            return -1;
 	        }
 	    }
-	    else
-	    {
+	    else {
 	        dol_syslog(get_class($this).'::setRetainedWarrantyPaymentTerms, status of the object is incompatible');
 	        $this->error = 'Status of the object is incompatible '.$this->statut;
 	        return -2;
@@ -2300,8 +2271,7 @@ abstract class CommonObject
 			$this->fk_delivery_address = $id;
 			return 1;
 		}
-		else
-		{
+		else {
 			$this->error = $this->db->error();
 			dol_syslog(get_class($this).'::setDeliveryAddress Erreur '.$sql.' - '.$this->error);
 			return -1;
@@ -2426,8 +2396,7 @@ abstract class CommonObject
 			$this->modelpdf = $modelpdf;
 			return 1;
 		}
-		else
-		{
+		else {
 			dol_print_error($this->db);
 			return 0;
 		}
@@ -2470,8 +2439,7 @@ abstract class CommonObject
 			$this->error = $this->db->lasterror();
 			$error++;
 		}
-		else
-		{
+		else {
 			if (!$notrigger)
 			{
 				// Call trigger
@@ -2486,8 +2454,7 @@ abstract class CommonObject
 			$this->db->rollback();
 			return -1;
 		}
-		else
-		{
+		else {
 			$this->fk_account = ($fk_account == 'NULL') ?null:$fk_account;
 			$this->db->commit();
 			return 1;
@@ -2578,8 +2545,7 @@ abstract class CommonObject
 					}
 				}
 			}
-			else
-			{
+			else {
 				dol_print_error($this->db);
 			}
 		}
@@ -2726,8 +2692,7 @@ abstract class CommonObject
 					dol_print_error($this->db);
 				}
 			}
-			else
-			{
+			else {
 				dol_print_error($this->db);
 			}
 		}
@@ -2760,8 +2725,7 @@ abstract class CommonObject
 					dol_print_error($this->db);
 				}
 			}
-			else
-			{
+			else {
 				dol_print_error($this->db);
 			}
 		}
@@ -2835,15 +2799,13 @@ abstract class CommonObject
 				{
 					return $row[0];
 				}
-				else
-				{
+				else {
 					return $this->getRangOfLine($fk_parent_line);
 				}
 			}
 		}
 		// If not, search the last rang of element
-		else
-		{
+		else {
 			$sql = 'SELECT max('.$positionfield.') FROM '.MAIN_DB_PREFIX.$this->table_element_line;
 			$sql .= ' WHERE '.$this->fk_element.' = '.$this->id;
 
@@ -2883,8 +2845,7 @@ abstract class CommonObject
 			$this->ref_ext = $ref_ext;
 			return 1;
 		}
-		else
-		{
+		else {
 			$this->error = $this->db->error();
 			return -1;
 		}
@@ -2929,15 +2890,13 @@ abstract class CommonObject
 		{
 			if ($suffix == '_public') $this->note_public = $note;
 			elseif ($suffix == '_private') $this->note_private = $note;
-			else
-			{
+			else {
 				$this->note = $note; // deprecated
 				$this->note_private = $note;
 			}
 			return 1;
 		}
-		else
-		{
+		else {
 			$this->error = $this->db->lasterror();
 			return -1;
 		}
@@ -3198,13 +3157,11 @@ abstract class CommonObject
 			{
 				return 1;
 			}
-			else
-			{
+			else {
 				return -1;
 			}
 		}
-		else
-		{
+		else {
 			dol_print_error($this->db, 'Bad request in update_price');
 			return -1;
 		}
@@ -3250,8 +3207,7 @@ abstract class CommonObject
 			$this->db->commit();
 			return 1;
 		}
-		else
-		{
+		else {
 			$this->error = $this->db->lasterror();
 			$this->db->rollback();
 			return 0;
@@ -3331,8 +3287,7 @@ abstract class CommonObject
 				if ($withsourcetype) $sql .= " AND sourcetype = '".$sourcetype."'";
 			}
 		}
-		else
-		{
+		else {
 			$sql .= "(fk_source = ".$sourceid." AND sourcetype = '".$sourcetype."')";
 			$sql .= " ".$clause." (fk_target = ".$targetid." AND targettype = '".$targettype."')";
 		}
@@ -3358,8 +3313,7 @@ abstract class CommonObject
 						$this->linkedObjectsIds[$obj->sourcetype][$obj->rowid] = $obj->fk_source;
 					}
 				}
-				else
-				{
+				else {
 					if ($obj->fk_source == $sourceid && $obj->sourcetype == $sourcetype)
 					{
 						$this->linkedObjectsIds[$obj->targettype][$obj->rowid] = $obj->fk_target;
@@ -3465,16 +3419,14 @@ abstract class CommonObject
 							}
 						}
 					}
-					else
-					{
+					else {
 						unset($this->linkedObjectsIds[$objecttype]);
 					}
 				}
 			}
 			return 1;
 		}
-		else
-		{
+		else {
 			dol_print_error($this->db);
 			return -1;
 		}
@@ -3519,8 +3471,7 @@ abstract class CommonObject
 		{
 			return 1;
 		}
-		else
-		{
+		else {
 			$this->error = $this->db->lasterror();
 			return -1;
 		}
@@ -3556,8 +3507,7 @@ abstract class CommonObject
 		{
 			$sql .= " rowid = ".$rowid;
 		}
-		else
-		{
+		else {
 			if ($deletesource)
 			{
 				$sql .= " fk_source = ".$sourceid." AND sourcetype = '".$this->db->escape($sourcetype)."'";
@@ -3568,8 +3518,7 @@ abstract class CommonObject
 				$sql .= " fk_target = ".$targetid." AND targettype = '".$this->db->escape($targettype)."'";
 				$sql .= " AND fk_source = ".$this->id." AND sourcetype = '".$this->db->escape($this->element)."'";
 			}
-			else
-			{
+			else {
 				$sql .= " (fk_source = ".$this->id." AND sourcetype = '".$this->db->escape($this->element)."')";
 				$sql .= " OR";
 				$sql .= " (fk_target = ".$this->id." AND targettype = '".$this->db->escape($this->element)."')";
@@ -3581,8 +3530,7 @@ abstract class CommonObject
 		{
 			return 1;
 		}
-		else
-		{
+		else {
 			$this->error = $this->db->lasterror();
 			$this->errors[] = $this->error;
 			return -1;
@@ -3660,15 +3608,13 @@ abstract class CommonObject
 
 				return 1;
 			}
-			else
-			{
+			else {
 				$this->db->rollback();
 				dol_syslog(get_class($this)."::setStatut ".$this->error, LOG_ERR);
 				return -1;
 			}
 		}
-		else
-		{
+		else {
 			$this->error = $this->db->lasterror();
 			$this->db->rollback();
 			return -1;
@@ -3710,8 +3656,7 @@ abstract class CommonObject
 			}
 			else return 0;
 		}
-		else
-		{
+		else {
 			dol_print_error($this->db);
 			return -1;
 		}
@@ -3785,15 +3730,14 @@ abstract class CommonObject
 					{
 						$this->errors[] = $langs->trans("ErrorRecordHasAtLeastOneChildOfType", $table);
 					}
-					else	// new usage: $elementname=Translation key
+					else // new usage: $elementname=Translation key
 					{
 						$this->errors[] = $langs->trans("ErrorRecordHasAtLeastOneChildOfType", $langs->transnoentitiesnoconv($elementname));
 					}
 					break; // We found at least one, we stop here
 				}
 			}
-			else
-			{
+			else {
 				$this->errors[] = $this->db->lasterror();
 				return -1;
 			}
@@ -3956,8 +3900,7 @@ abstract class CommonObject
 				//print $line->volume;
 				$totalVolume += $volume * $qty * $trueVolumeUnit;
 			}
-			else
-			{
+			else {
 				$totalVolume += $volume * $qty; // This may be wrong if we mix different units
 			}
 		}
@@ -3989,8 +3932,7 @@ abstract class CommonObject
 			$this->db->rollback();
 			return -1;
 		}
-		else
-		{
+		else {
 			$this->db->commit();
 			return 1;
 		}
@@ -4042,13 +3984,11 @@ abstract class CommonObject
 				$res = $this->db->fetch_object($resql);
 				return 'Incoterm : '.$res->code.' - '.$this->location_incoterms;
 			}
-			else
-			{
+			else {
 				return '';
 			}
 		}
-		else
-		{
+		else {
 			$this->errors[] = $this->db->lasterror();
 			return false;
 		}
@@ -4085,8 +4025,7 @@ abstract class CommonObject
 				}
 				return 1;
 			}
-			else
-			{
+			else {
 				$this->errors[] = $this->db->lasterror();
 				return -1;
 			}
@@ -4133,8 +4072,7 @@ abstract class CommonObject
 			{
 				$tpl = dol_buildpath($reldir.'/objectline_create.tpl.php');
 			}
-			else
-			{
+			else {
 				$tpl = DOL_DOCUMENT_ROOT.$reldir.'/objectline_create.tpl.php';
 			}
 
@@ -4200,8 +4138,7 @@ abstract class CommonObject
 				{
 					$tpl = dol_buildpath($reldir.'/objectline_title.tpl.php');
 				}
-				else
-				{
+				else {
 					$tpl = DOL_DOCUMENT_ROOT.$reldir.'/objectline_title.tpl.php';
 				}
 				if (empty($conf->file->strict_mode)) {
@@ -4229,8 +4166,7 @@ abstract class CommonObject
 					$parameters = array('line'=>$line, 'num'=>$num, 'i'=>$i, 'dateSelector'=>$dateSelector, 'seller'=>$seller, 'buyer'=>$buyer, 'selected'=>$selected, 'table_element_line'=>$line->table_element);
 					$reshook = $hookmanager->executeHooks('printObjectLine', $parameters, $this, $action); // Note that $action and $object may have been modified by some hooks
 				}
-				else
-				{
+				else {
 					$parameters = array('line'=>$line, 'num'=>$num, 'i'=>$i, 'dateSelector'=>$dateSelector, 'seller'=>$seller, 'buyer'=>$buyer, 'selected'=>$selected, 'table_element_line'=>$line->table_element, 'fk_parent_line'=>$line->fk_parent_line);
 					$reshook = $hookmanager->executeHooks('printObjectSubLine', $parameters, $this, $action); // Note that $action and $object may have been modified by some hooks
 				}
@@ -4312,8 +4248,7 @@ abstract class CommonObject
 
 					$label = (!empty($prod->multilangs[$outputlangs->defaultlang]["label"])) ? $prod->multilangs[$outputlangs->defaultlang]["label"] : $line->product_label;
 				}
-				else
-				{
+				else {
 					$label = $line->product_label;
 				}
 
@@ -4333,8 +4268,7 @@ abstract class CommonObject
 				{
 					$tpl = dol_buildpath($reldir.'/objectline_view.tpl.php');
 				}
-				else
-				{
+				else {
 					$tpl = DOL_DOCUMENT_ROOT.$reldir.'/objectline_view.tpl.php';
 				}
 
@@ -4364,8 +4298,7 @@ abstract class CommonObject
 				{
 					$tpl = dol_buildpath($reldir.'/objectline_edit.tpl.php');
 				}
-				else
-				{
+				else {
 					$tpl = DOL_DOCUMENT_ROOT.$reldir.'/objectline_edit.tpl.php';
 				}
 
@@ -4426,8 +4359,7 @@ abstract class CommonObject
 						$hookmanager->executeHooks('printOriginObjectLine', $parameters, $this, $action); // Note that $action and $object may have been modified by some hooks
 					}
 				}
-				else
-				{
+				else {
 					$this->printOriginLine($line, '', $restrictlist, '/core/tpl', $selectedLines);
 				}
 
@@ -4458,8 +4390,7 @@ abstract class CommonObject
 		{
 			$date_start = $line->date_start;
 		}
-		else
-		{
+		else {
 			$date_start = $line->date_debut_prevue;
 			if ($line->date_debut_reel) $date_start = $line->date_debut_reel;
 		}
@@ -4467,8 +4398,7 @@ abstract class CommonObject
 		{
 			$date_end = $line->date_end;
 		}
-		else
-		{
+		else {
 			$date_end = $line->date_fin_prevue;
 			if ($line->date_fin_reel) $date_end = $line->date_fin_reel;
 		}
@@ -4503,8 +4433,7 @@ abstract class CommonObject
 				$this->tpl['label'] .= get_date_range($date_start, $date_end);
 			}
 		}
-		else
-		{
+		else {
 			$this->tpl['label'] .= ($line->product_type == -1 ? '&nbsp;' : ($line->product_type == 1 ? img_object($langs->trans(''), 'service') : img_object($langs->trans(''), 'product')));
 			if (!empty($line->desc)) {
 				$this->tpl['label'] .= $line->desc;
@@ -4545,13 +4474,11 @@ abstract class CommonObject
 				$discount->fetch($line->fk_remise_except);
 				$this->tpl['description'] = $langs->transnoentities("DiscountFromExcessPaid", $discount->getNomUrl(0));
 			}
-			else
-			{
+			else {
 				$this->tpl['description'] = dol_trunc($line->desc, 60);
 			}
 		}
-		else
-		{
+		else {
 			$this->tpl['description'] = '&nbsp;';
 		}
 
@@ -4579,8 +4506,7 @@ abstract class CommonObject
 			{
 				$tpl = dol_buildpath($reldir.'/originproductline.tpl.php');
 			}
-			else
-			{
+			else {
 				$tpl = DOL_DOCUMENT_ROOT.$reldir.'/originproductline.tpl.php';
 			}
 
@@ -4632,8 +4558,7 @@ abstract class CommonObject
 			$this->db->commit();
 			return 1;
 		}
-		else
-		{
+		else {
 			$this->error = $this->db->lasterror();
 			$this->db->rollback();
 			return  0;
@@ -4668,8 +4593,7 @@ abstract class CommonObject
 			$this->db->rollback();
 			return -1;
 		}
-		else
-		{
+		else {
 			if (!$notrigger)
 			{
 				$result = $this->call_trigger(strtoupper($element).'_DELETE_RESOURCE', $user);
@@ -4833,8 +4757,7 @@ abstract class CommonObject
 				    $arrayofrecords = array(); // The write_file of templates of adherent class need this var
 				    $resultwritefile = $obj->write_file($this, $outputlangs, $srctemplatepath, 'member', 1, $moreparams);
 			    }
-			    else
-			    {
+			    else {
 				     $resultwritefile = $obj->write_file($this, $outputlangs, $srctemplatepath, $hidedetails, $hidedesc, $hideref, $moreparams);
 			    }
 			    // After call of write_file $obj->result['fullpath'] is set with generated file. It will be used to update the ECM database index.
@@ -4903,8 +4826,7 @@ abstract class CommonObject
 								    setEventMessages($ecmfile->error, $ecmfile->errors, 'warnings');
 							    }
 						    }
-						    else
-						    {
+						    else {
 							    $ecmfile->entity = $conf->entity;
 							    $ecmfile->filepath = $rel_dir;
 							    $ecmfile->filename = $filename;
@@ -4944,8 +4866,7 @@ abstract class CommonObject
 						    }
 					    }
 				    }
-				    else
-				    {
+				    else {
 					    dol_syslog('Method ->write_file was called on object '.get_class($obj).' and return a success but the return array ->result["fullpath"] was not set.', LOG_WARNING);
 				    }
 
@@ -4954,15 +4875,13 @@ abstract class CommonObject
 
 				    return 1;
 			    }
-			    else
-			    {
+			    else {
 				    $outputlangs->charset_output = $sav_charset_output;
 				    dol_print_error($this->db, "Error generating document for ".__CLASS__.". Error: ".$obj->error, $obj->errors);
 				    return -1;
 			    }
 		    }
-		    else
-		    {
+		    else {
 			    $this->error = $langs->trans("Error")." ".$langs->trans("ErrorFileDoesNotExists", $file);
 			    dol_print_error('', $this->error);
 			    return -1;
@@ -5074,8 +4993,7 @@ abstract class CommonObject
 			{
 				$this->errors = array_unique(array_merge($this->errors, $interface->errors)); // We use array_unique because when a trigger call another trigger on same object, this->errors is added twice.
 			}
-			else
-			{
+			else {
 				$this->errors = $interface->errors;
 			}
 		}
@@ -5137,8 +5055,7 @@ abstract class CommonObject
 					{
 						$this->array_languages[$key][$codelang] = $this->db->jdate($value);
 					}
-					else
-					{
+					else {
 						$this->array_languages[$key][$codelang] = $value;
 					}
 
@@ -5151,8 +5068,7 @@ abstract class CommonObject
 			if ($numrows) return $numrows;
 			else return 0;
 		}
-		else
-		{
+		else {
 			dol_print_error($this->db);
 			return -1;
 		}
@@ -5222,8 +5138,7 @@ abstract class CommonObject
 				$value_arr = GETPOST($postfieldkey, 'alpha');
 				$value_key = price2num($value_arr);
 			}
-			else
-			{
+			else {
 				$value_key = GETPOST($postfieldkey);
 				if (in_array($key_type, array('link')) && $value_key == '-1') $value_key = '';
 			}
@@ -5304,8 +5219,7 @@ abstract class CommonObject
 			}
 			$optionsArray = (!empty($extrafields->attributes[$this->table_element]['label']) ? $extrafields->attributes[$this->table_element]['label'] : null);
 		}
-		else
-		{
+		else {
 			global $extrafields;
 			dol_syslog("Warning: fetch_optionals was called with param optionsArray defined when you should pass null now", LOG_WARNING);
 		}
@@ -5347,8 +5261,7 @@ abstract class CommonObject
 								//var_dump($extrafields->attributes[$this->table_element]['type'][$key]);
 								$this->array_options["options_".$key] = $this->db->jdate($value);
 							}
-							else
-							{
+							else {
 								$this->array_options["options_".$key] = $value;
 							}
 
@@ -5373,8 +5286,7 @@ abstract class CommonObject
 				if ($numrows) return $numrows;
 				else return 0;
 			}
-			else
-			{
+			else {
 				dol_print_error($this->db);
 				return -1;
 			}
@@ -5408,8 +5320,7 @@ abstract class CommonObject
 			$this->db->rollback();
 			return -1;
 		}
-		else
-		{
+		else {
 			$this->db->commit();
 			return 1;
 		}
@@ -5485,8 +5396,7 @@ abstract class CommonObject
 					    dol_syslog($langs->trans("Extrafieldcomputed")." sur ".$attributeLabel."(".$value.")", LOG_DEBUG);
 					    $new_array_options[$key] = $value;
 					}
-					else
-					{
+					else {
 						$new_array_options[$key] = null;
 					}
 				}
@@ -5544,20 +5454,18 @@ abstract class CommonObject
 				   					{
 				   						$new_array_options[$key] = $this->array_options[$key]; // Value is kept
 				   					}
-									else
-									{
+									else {
 										// var_dump($algo);
 										$newvalue = dol_hash($this->array_options[$key], $algo);
 										$new_array_options[$key] = $newvalue;
 									}
 			   					}
-			   					else
-			   					{
+			   					else {
 			   						$new_array_options[$key] = $this->array_options[$key]; // Value is kept
 			   					}
 			   				}
 			   			}
-			   			else	// Common usage
+			   			else // Common usage
 			   			{
 			   				$new_array_options[$key] = $this->array_options[$key];
 			   			}
@@ -5592,16 +5500,14 @@ abstract class CommonObject
 								else $res = $object->fetch('', $value);
 
 								if ($res > 0) $new_array_options[$key] = $object->id;
-								else
-								{
+								else {
 									$this->error = "Id/Ref '".$value."' for object '".$object->element."' not found";
 									$this->db->rollback();
 									return -1;
 								}
 							}
 						}
-						else
-						{
+						else {
 							dol_syslog('Error bad setup of extrafield', LOG_WARNING);
 						}
 						break;
@@ -5649,8 +5555,7 @@ abstract class CommonObject
 					{
 						$sql .= ",'".$this->db->escape($new_array_options[$key])."'";
 					}
-					else
-					{
+					else {
 						$sql .= ",null";
 					}
 				}
@@ -5692,8 +5597,7 @@ abstract class CommonObject
 				$this->db->rollback();
 				return -1;
 			}
-			else
-			{
+			else {
 				$this->db->commit();
 				return 1;
 			}
@@ -5815,8 +5719,7 @@ abstract class CommonObject
 				$this->db->rollback();
 				return -1;
 			}
-			else
-			{
+			else {
 				$this->db->commit();
 				return 1;
 			}
@@ -5945,8 +5848,7 @@ abstract class CommonObject
 				$this->db->rollback();
 				return -1;
 			}
-			else
-			{
+			else {
 				$this->db->commit();
 				return 1;
 			}
@@ -6084,8 +5986,7 @@ abstract class CommonObject
 			{
 				$morecss = '';
 			}
-			else
-			{
+			else {
 				if (round($size) < 12)
 				{
 					$morecss = 'minwidth100';
@@ -6094,8 +5995,7 @@ abstract class CommonObject
 				{
 					$morecss = 'minwidth200';
 				}
-				else
-				{
+				else {
 					$morecss = 'minwidth400';
 				}
 			}
@@ -6144,8 +6044,7 @@ abstract class CommonObject
 				$doleditor = new DolEditor($keyprefix.$key.$keysuffix, $value, '', 200, 'dolibarr_notes', 'In', false, false, false, ROWS_5, '90%');
 				$out = $doleditor->Create(1);
 			}
-			else
-			{
+			else {
 				$out = '<input type="text" class="flat '.$morecss.' maxwidthonsmartphone" name="'.$keyprefix.$key.$keysuffix.'" id="'.$keyprefix.$key.$keysuffix.'" value="'.dol_escape_htmltag($value).'" '.($moreparam ? $moreparam : '').'>';
 			}
 		}
@@ -6157,8 +6056,7 @@ abstract class CommonObject
 				$doleditor = new DolEditor($keyprefix.$key.$keysuffix, $value, '', 200, 'dolibarr_notes', 'In', false, false, !empty($conf->fckeditor->enabled) && $conf->global->FCKEDITOR_ENABLE_SOCIETE, ROWS_5, '90%');
 				$out = $doleditor->Create(1);
 			}
-			else
-			{
+			else {
 				$out = '<input type="text" class="flat '.$morecss.' maxwidthonsmartphone" name="'.$keyprefix.$key.$keysuffix.'" id="'.$keyprefix.$key.$keysuffix.'" value="'.dol_escape_htmltag($value).'" '.($moreparam ? $moreparam : '').'>';
 			}
 		}
@@ -6276,13 +6174,11 @@ abstract class CommonObject
 						$sql .= ' as main, '.MAIN_DB_PREFIX.$InfoFieldList[0].'_extrafields as extra';
 						$sqlwhere .= ' WHERE extra.fk_object=main.'.$InfoFieldList[2].' AND '.$InfoFieldList[4];
 					}
-					else
-					{
+					else {
 						$sqlwhere .= ' WHERE '.$InfoFieldList[4];
 					}
 				}
-				else
-				{
+				else {
 					$sqlwhere .= ' WHERE 1=1';
 				}
 				// Some tables may have field, some other not. For the moment we disable it.
@@ -6318,8 +6214,7 @@ abstract class CommonObject
 								$labeltoshow .= $obj->$field_toshow.' ';
 							}
 						}
-						else
-						{
+						else {
 							$labeltoshow = $obj->{$InfoFieldList[1]};
 						}
 						$labeltoshow = dol_trunc($labeltoshow, 45);
@@ -6337,8 +6232,7 @@ abstract class CommonObject
 							}
 							$out .= '<option value="'.$obj->rowid.'" selected>'.$labeltoshow.'</option>';
 						}
-						else
-						{
+						else {
 							if (!$notrans)
 							{
 								$translabel = $langs->trans($obj->{$InfoFieldList[1]});
@@ -6705,8 +6599,7 @@ abstract class CommonObject
 			{
 				$morecss = '';
 			}
-			else
-			{
+			else {
 				if (round($size) < 12)
 				{
 					$morecss = 'minwidth100';
@@ -6715,8 +6608,7 @@ abstract class CommonObject
 				{
 					$morecss = 'minwidth200';
 				}
-				else
-				{
+				else {
 					$morecss = 'minwidth400';
 				}
 			}
@@ -6846,8 +6738,7 @@ abstract class CommonObject
 						}
 					}
 				}
-				else
-				{
+				else {
 					$translabel = '';
 					if (!empty($obj->{$InfoFieldList[1]})) {
 						$translabel = $langs->trans($obj->{$InfoFieldList[1]});
@@ -6969,8 +6860,7 @@ abstract class CommonObject
 						$value = $object->getNomUrl($getnomurlparam);
 					}
 				}
-				else
-				{
+				else {
 					dol_syslog('Error bad setup of extrafield', LOG_WARNING);
 					return 'Error bad setup of extrafield';
 				}
@@ -7116,8 +7006,7 @@ abstract class CommonObject
 
 					$out .= $extrafields->showSeparator($key, $this, ($colspan + 1));
 				}
-				else
-				{
+				else {
 					$class = (!empty($extrafields->attributes[$this->table_element]['hidden'][$key]) ? 'hideobject ' : '');
 					$csstyle = '';
 					if (is_array($params) && count($params) > 0) {
@@ -7315,8 +7204,7 @@ abstract class CommonObject
 		{
 			$buyPrice = $unitPrice * (1 - $discountPercent / 100);
 		}
-		else
-		{
+		else {
 			// Get cost price for margin calculation
 			if (!empty($fk_product))
 			{
@@ -7509,14 +7397,12 @@ abstract class CommonObject
 									$return .= '<img class="photo photowithmargin" height="'.$maxHeight.'" src="'.DOL_URL_ROOT.'/viewimage.php?hashp='.urlencode($val['share']).'" title="'.dol_escape_htmltag($alt).'">';
 								}
 							}
-							else
-							{
+							else {
 								$return .= '<!-- Show nophoto file (because file is not shared) -->';
 								$return .= '<img class="photo photowithmargin" height="'.$maxHeight.'" src="'.DOL_URL_ROOT.'/public/theme/common/nophoto.png" title="'.dol_escape_htmltag($alt).'">';
 							}
 						}
-						else
-						{
+						else {
 							if (empty($maxHeight) || $photo_vignette && $imgarray['height'] > $maxHeight)
 							{
 								$return .= '<!-- Show thumb -->';
@@ -7769,8 +7655,7 @@ abstract class CommonObject
 				{
 					$queryarray[$field] = null;
 				}
-				else
-				{
+				else {
 					$queryarray[$field] = $this->db->idate($this->{$field});
 				}
 			}
@@ -7794,8 +7679,7 @@ abstract class CommonObject
 			elseif ($this->isInt($info) || $this->isFloat($info))
 			{
 				if ($field == 'entity' && is_null($this->{$field})) $queryarray[$field] = $conf->entity;
-				else
-				{
+				else {
 					// $this->{$field} may be null, '', 0, '0', 123, '123'
 					if ($this->{$field} != '' || !empty($info['notnull'])) {
 						if ($this->isInt($info)) $queryarray[$field] = (int) $this->{$field};	// If '0', it may be set to null later if $info['notnull'] == -1
@@ -7804,8 +7688,7 @@ abstract class CommonObject
 					else $queryarray[$field] = null;
 				}
 			}
-			else
-			{
+			else {
 				$queryarray[$field] = $this->{$field};
 			}
 
@@ -7844,15 +7727,13 @@ abstract class CommonObject
 			elseif ($this->isInt($info))
 			{
 				if ($field == 'rowid') $this->id = (int) $obj->{$field};
-				else
-				{
+				else {
 					if ($this->isForcedToNullIfZero($info))
 					{
 						if (empty($obj->{$field})) $this->{$field} = null;
 						else $this->{$field} = (double) $obj->{$field};
 					}
-					else
-					{
+					else {
 						if (!is_null($obj->{$field}) || (isset($info['notnull']) && $info['notnull'] == 1)) {
 							$this->{$field} = (int) $obj->{$field};
 						} else {
@@ -7868,8 +7749,7 @@ abstract class CommonObject
 					if (empty($obj->{$field})) $this->{$field} = null;
 					else $this->{$field} = (double) $obj->{$field};
 				}
-				else
-				{
+				else {
 					if (!is_null($obj->{$field}) || (isset($info['notnull']) && $info['notnull'] == 1)) {
 						$this->{$field} = (double) $obj->{$field};
 					} else {
@@ -7877,8 +7757,7 @@ abstract class CommonObject
 					}
 				}
 			}
-			else
-			{
+			else {
 				$this->{$field} = $obj->{$field};
 			}
 		}
@@ -8092,13 +7971,11 @@ abstract class CommonObject
 				$this->setVarsFromFetchObj($obj);
 				return $this->id;
 			}
-			else
-			{
+			else {
 				return 0;
 			}
 		}
-		else
-		{
+		else {
 			$this->error = $this->db->lasterror();
 			$this->errors[] = $this->error;
 			return -1;
@@ -8147,8 +8024,7 @@ abstract class CommonObject
 
 			return 1;
 		}
-		else
-		{
+		else {
 			$this->error = $this->db->lasterror();
 			$this->errors[] = $this->error;
 			return -1;
@@ -8443,8 +8319,7 @@ abstract class CommonObject
 				return -1;
 			}
 		}
-		else
-		{
+		else {
 			$this->error = $this->db->error();
 			$this->db->rollback();
 			return -1;

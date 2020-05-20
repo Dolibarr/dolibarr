@@ -169,8 +169,7 @@ class box_produits_alerte_stock extends ModeleBoxes
 							{
 								$price_base_type = $langs->trans("HT");
 							}
-							else
-							{
+							else {
 								$price_result = $price_result * (1 + ($productstatic->tva_tx / 100));
 								$price_base_type = $langs->trans("TTC");
 							}
@@ -216,8 +215,7 @@ class box_produits_alerte_stock extends ModeleBoxes
 
 				$this->db->free($result);
 			}
-			else
-			{
+			else {
 				$this->info_box_contents[0][0] = array(
                     'td' => '',
                     'maxlength'=>500,

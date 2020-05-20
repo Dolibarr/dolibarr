@@ -55,8 +55,7 @@ function pdf_getFormat(Translate $outputlangs = null, $mode = 'setup')
 		include_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
 		$pdfformat = dol_getDefaultFormat($outputlangs);
 	}
-	else
-	{
+	else {
 		$pdfformat = $conf->global->MAIN_PDF_FORMAT;
 	}
 
@@ -306,8 +305,7 @@ function pdfGetHeightForHtmlContent(&$pdf, $htmlcontent)
     if ($end_page == $start_page) {
         $height = $end_y - $start_y;
     }
-    else
-    {
+    else {
         for ($page = $start_page; $page <= $end_page; ++$page) {
         	$pdf->setPage($page);
         	$tmpm = $pdf->getMargins();
@@ -514,8 +512,7 @@ function pdf_build_address($outputlangs, $sourcecompany, $targetcompany = '', $t
     			    }
     			}
     		}
-    		else
-    		{
+    		else {
     			$stringaddress .= ($stringaddress ? "\n" : '').$outputlangs->convToOutputCharset(dol_format_address($targetcompany));
     			// Country
     			if (!empty($targetcompany->country_code) && $targetcompany->country_code != $sourcecompany->country_code) $stringaddress .= ($stringaddress ? "\n" : '').$outputlangs->convToOutputCharset($outputlangs->transnoentitiesnoconv("Country".$targetcompany->country_code));
@@ -804,8 +801,7 @@ function pdf_bank(&$pdf, $outputlangs, $curx, $cury, $account, $onlynumber = 0, 
     		$cury += 8;
 		}
 	}
-	else
-	{
+	else {
 		$pdf->SetFont('', 'B', $default_font_size - $diffsizecontent);
 		$pdf->SetXY($curx, $cury);
 		$pdf->MultiCell(100, 3, $outputlangs->transnoentities("Bank").': '.$outputlangs->convToOutputCharset($account->bank), 0, 'L', 0);
@@ -1059,8 +1055,7 @@ function pdf_pagefoot(&$pdf, $outputlangs, $paramfreetext, $fromcompany, $marge_
     		}
 		    $freetextheight = $pdf->getStringHeight($width, $line);
 		}
-		else
-		{
+		else {
             $freetextheight = pdfGetHeightForHtmlContent($pdf, dol_htmlentitiesbr($line, 1, 'UTF-8', 0)); // New method (works for HTML content)
             //print '<br>'.$freetextheight;exit;
 		}
@@ -1076,8 +1071,7 @@ function pdf_pagefoot(&$pdf, $outputlangs, $paramfreetext, $fromcompany, $marge_
 		{
             $pdf->MultiCell(0, 3, $line, 0, $align, 0);
 		}
-		else
-		{
+		else {
             $pdf->writeHTMLCell($pdf->page_largeur - $pdf->margin_left - $pdf->margin_right, $freetextheight, $dims['lm'], $dims['hk'] - $marginwithfooter, dol_htmlentitiesbr($line, 1, 'UTF-8', 0));
 		}
 		$posy -= $freetextheight;
@@ -1245,8 +1239,7 @@ function pdf_getlinedesc($object, $i, $outputlangs, $hideref = 0, $hidedesc = 0,
 		include_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.product.class.php';
 		$prodser = new ProductFournisseur($db);
 	}
-	else
-	{
+	else {
 		include_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
 		$prodser = new Product($db);
 	}
@@ -1328,8 +1321,7 @@ function pdf_getlinedesc($object, $i, $outputlangs, $hideref = 0, $hidedesc = 0,
 			$discount->fetch($object->lines[$i]->fk_remise_except);
 			$libelleproduitservice = $outputlangs->transnoentitiesnoconv("DiscountFromExcessPaid", $discount->ref_invoice_supplier_source);
 		}
-		else
-		{
+		else {
 			if ($idprod)
 			{
 				if (empty($hidedesc))
@@ -1338,14 +1330,12 @@ function pdf_getlinedesc($object, $i, $outputlangs, $hideref = 0, $hidedesc = 0,
 					{
 						$libelleproduitservice = $desc."\n".$libelleproduitservice;
 					}
-					else
-					{
+					else {
 						$libelleproduitservice .= $desc;
 					}
 				}
 			}
-			else
-			{
+			else {
 				$libelleproduitservice .= $desc;
 			}
 		}
@@ -1360,8 +1350,7 @@ function pdf_getlinedesc($object, $i, $outputlangs, $hideref = 0, $hidedesc = 0,
 		{
 			$prefix_prodserv = $outputlangs->transnoentitiesnoconv("Service")." ";
 		}
-		else
-		{
+		else {
 			$prefix_prodserv = $outputlangs->transnoentitiesnoconv("Product")." ";
 		}
 	}
@@ -1374,14 +1363,13 @@ function pdf_getlinedesc($object, $i, $outputlangs, $hideref = 0, $hidedesc = 0,
 				$ref_prodserv = $ref_supplier;
 			elseif ($conf->global->PDF_HIDE_PRODUCT_REF_IN_SUPPLIER_LINES == 2)
 				$ref_prodserv = $ref_supplier.' ('.$outputlangs->transnoentitiesnoconv("InternalRef").' '.$prodser->ref.')';
-			else	// Common case
+			else // Common case
 			{
 				$ref_prodserv = $prodser->ref; // Show local ref
 				if ($ref_supplier) $ref_prodserv .= ($prodser->ref ? ' (' : '').$outputlangs->transnoentitiesnoconv("SupplierRef").' '.$ref_supplier.($prodser->ref ? ')' : '');
 			}
 		}
-		else
-		{
+		else {
 			$ref_prodserv = $prodser->ref; // Show local ref only
 		}
 
@@ -1944,8 +1932,7 @@ function pdf_getlineprogress($object, $i, $outputlangs, $hidedetails = 0, $hookm
 				}
 			 	$result = ($object->lines[$i]->situation_percent - $prev_progress).'%';
 			}
-			else
-				$result = $object->lines[$i]->situation_percent.'%';
+			else $result = $object->lines[$i]->situation_percent.'%';
 	  	}
 	}
 	return $result;
@@ -2001,8 +1988,7 @@ function pdf_getlinetotalexcltax($object, $i, $outputlangs, $hidedetails = 0)
         		}
 				$result .= price($sign * ($total_ht / ($object->lines[$i]->situation_percent / 100)) * $progress, 0, $outputlangs);
         	}
-        	else
-        	{
+        	else {
                 $result .= price($sign * $total_ht, 0, $outputlangs);
         	}
         }
@@ -2187,8 +2173,7 @@ function pdf_getLinkedObjects($object, $outputlangs)
 			        //if (! empty($linkedobjects[$objecttype]['date_value'])) $linkedobjects[$objecttype]['date_value'].=' / ';
 			        //$linkedobjects[$objecttype]['date_value'].= dol_print_date($elementobject->date_delivery,'day','',$outputlangs);
 			    }
-			    else
-			    {
+			    else {
 			        $linkedobjects[$objecttype]['ref_title'] = $outputlangs->transnoentities("RefOrder").' / '.$outputlangs->transnoentities("RefSending");
 			        if (empty($linkedobjects[$objecttype]['ref_value'])) $linkedobjects[$objecttype]['ref_value'] = $outputlangs->convToOutputCharset($order->ref).($order->ref_client ? ' ('.$order->ref_client.')' : '');
 			        $linkedobjects[$objecttype]['ref_value'] .= ' / '.$outputlangs->transnoentities($elementobject->ref);
@@ -2235,7 +2220,7 @@ function pdf_getSizeForImage($realpath)
 			$width = $maxwidth;
 			$height = (int) round($maxwidth * $tmp['height'] / $tmp['width']);
 		}
-		else	// No pb with maxheight
+		else // No pb with maxheight
 		{
 			$height = $maxheight;
 		}
@@ -2261,8 +2246,7 @@ function pdfGetLineTotalDiscountAmount($object, $i, $outputlangs, $hidedetails =
 	{
 		return $outputlangs->transnoentities("Option");
 	}
-	else
-	{
+	else {
 		if (is_object($hookmanager))
 		{
 			$special_code = $object->lines[$i]->special_code;

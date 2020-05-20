@@ -56,8 +56,7 @@ if ($query == "cat")
 		{
 			$filename = $obj['photo_vignette'];
 		}
-		else
-		{
+		else {
 			$filename = $obj['photo'];
 		}
 		$file = DOL_URL_ROOT.'/viewimage.php?cache=1&modulepart=category&entity='.$object->entity.'&file='.urlencode($pdir.$filename);
@@ -79,8 +78,7 @@ elseif ($query == "pro")
 	if ($file == "") header('Location: ../../public/theme/common/nophoto.png');
 	else header('Location: '.$file.'&cache=1&publictakepos=1&modulepart=product');
 }
-else
-{
+else {
     // TODO We don't need this. Size of image must be defined on HTML page, image must NOT be resize when downloaded.
 
 	// The file

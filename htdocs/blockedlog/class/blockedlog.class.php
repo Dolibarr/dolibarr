@@ -303,8 +303,7 @@ class BlockedLog
 			if ($this->signature == '0000000000') {
 				return '<i class="opacitymedium">System to track events into unalterable logs were disabled after some recording were done. We saved a special Fingerprint to track the chain as broken.</i>';
 			}
-			else
-			{
+			else {
 				return '<i class="opacitymedium">System to track events into unalterable logs were disabled. This is possible because no record were done yet.</i>';
 			}
 		}
@@ -640,7 +639,7 @@ class BlockedLog
 
 			if (!empty($object->newref)) $this->object_data->ref = $object->newref;
 		}
-		else 	// Generic case
+		else // Generic case
 		{
 			foreach ($object as $key=>$value)
 			{
@@ -714,14 +713,12 @@ class BlockedLog
 
 				return 1;
 			}
-			else
-			{
+			else {
 				$this->error = $langs->trans("RecordNotFound");
 				return 0;
 			}
 		}
-		else
-		{
+		else {
 			$this->error = $this->db->error();
 			return -1;
 		}
@@ -865,14 +862,12 @@ class BlockedLog
 
 				return $this->id;
 			}
-			else
-			{
+			else {
 				$this->db->rollback();
 				return -2;
 			}
 		}
-		else
-		{
+		else {
 			$this->error = $this->db->error();
 			$this->db->rollback();
 			return -1;
@@ -954,8 +949,7 @@ class BlockedLog
 	 			$previoussignature = $obj->signature;
 	 		}
 	 	}
-	 	else
-	 	{
+	 	else {
 	 		dol_print_error($this->db);
 	 		exit;
 	 	}

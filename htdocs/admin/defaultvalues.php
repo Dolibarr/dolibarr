@@ -151,8 +151,7 @@ if (($action == 'add' || (GETPOST('add') && $action != 'update')) || GETPOST('ac
 			$defaultkey = '';
 			$defaultvalue = '';
 		}
-		else
-		{
+		else {
 	        $db->rollback();
 		    setEventMessages($db->lasterror(), null, 'errors');
 			$action = '';
@@ -170,8 +169,7 @@ if ($action == 'delete')
 	{
 		setEventMessages($langs->trans("RecordDeleted"), null, 'mesgs');
 	}
-	else
-	{
+	else {
 		dol_print_error($db);
 	}
 }
@@ -198,8 +196,7 @@ if (empty($conf->global->MAIN_ENABLE_DEFAULT_VALUES))
     $enabledisablehtml .= img_picto($langs->trans("Disabled"), 'switch_off');
     $enabledisablehtml .= '</a>';
 }
-else
-{
+else {
     // Button on, click to disable
     $enabledisablehtml .= '<a class="reposition valignmiddle" href="'.$_SERVER["PHP_SELF"].'?action=setMAIN_ENABLE_DEFAULT_VALUES&value=0'.$param.'">';
     $enabledisablehtml .= img_picto($langs->trans("Activated"), 'switch_on');
@@ -261,8 +258,7 @@ if ($mode != 'sortorder')
 {
     $textkey = $form->textwithpicto($langs->trans("Field"), $texthelp);
 }
-else
-{
+else {
     $texthelp = 'field or alias.field';
     $textkey = $form->textwithpicto($langs->trans("Field"), $texthelp);
 }
@@ -281,8 +277,7 @@ if ($mode != 'focus' && $mode != 'mandatory')
         }
         $textvalue = $form->textwithpicto($langs->trans("Value"), $texthelp, 1, 'help', '', 0, 2, 'subsitutiontooltip');
     }
-    else
-    {
+    else {
         $texthelp = 'ASC or DESC';
         $textvalue = $form->textwithpicto($langs->trans("SortOrder"), $texthelp);
     }
@@ -322,8 +317,7 @@ if (!empty($conf->multicompany->enabled) && !$user->entity)
 	print '<input type="text" class="flat" size="1" disabled name="entity" value="'.$conf->entity.'">'; // We see environment, but to change it we must switch on other entity
 	print '</td>';
 }
-else
-{
+else {
 	print '<td class="center">';
 	print '<input type="hidden" name="entity" value="'.$conf->entity.'">';
 	print '</td>';
@@ -394,8 +388,7 @@ if ($result)
     		print ' &nbsp; ';
     		print '<a href="'.$_SERVER['PHP_SELF'].'?rowid='.$obj->rowid.'&entity='.$obj->entity.'&mode='.$mode.'&action=delete'.((empty($user->entity) && $debug) ? '&debug=1' : '').'">'.img_delete().'</a>';
 		}
-		else
-		{
+		else {
 		    print '<input type="hidden" name="page" value="'.$page.'">';
 		    print '<input type="hidden" name="rowid" value="'.$id.'">';
 		    print '<div name="'.(!empty($obj->rowid) ? $obj->rowid : 'none').'"></div>';
@@ -409,8 +402,7 @@ if ($result)
 		$i++;
 	}
 }
-else
-{
+else {
     dol_print_error($db);
 }
 

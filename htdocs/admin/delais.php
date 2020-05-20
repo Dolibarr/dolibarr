@@ -250,8 +250,7 @@ if ($action == 'edit')
 
 	print '</table>';
 }
-else
-{
+else {
     /*
      * Show parameters
      */

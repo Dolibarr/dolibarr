@@ -85,8 +85,7 @@ function getEntity($element, $shared = 1, $currentobject = null)
 	{
 		return $mc->getEntity($element, $shared, $currentobject);
 	}
-	else
-	{
+	else {
 		$out = '';
 		$addzero = array('user', 'usergroup', 'c_email_templates', 'email_template', 'default_values');
 		if (in_array($element, $addzero)) $out .= '0,';
@@ -109,8 +108,7 @@ function setEntity($currentobject)
 	{
 		return $mc->setEntity($currentobject);
 	}
-	else
-	{
+	else {
 		return ((is_object($currentobject) && $currentobject->id > 0 && $currentobject->entity > 0) ? $currentobject->entity : $conf->entity);
 	}
 }
@@ -489,8 +487,7 @@ function GETPOST($paramname, $check = 'alphanohtml', $method = 0, $filter = null
 											$out = dol_string_nospecial($user->default_values[$relativepathstring]['filters'][$defkey][$paramname], '', $forbidden_chars_to_replace);
 										}
 									}
-									else
-									{
+									else {
 										$forbidden_chars_to_replace = array(" ", "'", "/", "\\", ":", "*", "?", "\"", "<", ">", "|", "[", "]", ";", "="); // we accept _, -, . and ,
 										$out = dol_string_nospecial($user->default_values[$relativepathstring]['filters'][$defkey][$paramname], '', $forbidden_chars_to_replace);
 									}
@@ -747,7 +744,7 @@ function dol_buildpath($path, $type = 0, $returnemptyifnotfound = 0)
 			if ($returnemptyifnotfound == 1 || !file_exists($res)) return '';
 		}
 	}
-	else				// For an url path
+	else // For an url path
 	{
 		// We try to get local path of file on filesystem from url
 		// Note that trying to know if a file on disk exist by forging path on disk from url
@@ -825,8 +822,7 @@ function dol_clone($object, $native = 0)
 	{
 		$myclone = unserialize(serialize($object));
 	}
-	else
-	{
+	else {
 		$myclone = clone $object; // PHP clone is a shallow copy only, not a real clone, so properties of references will keep references (refer to the same target/variable)
 	}
 
@@ -918,8 +914,7 @@ function dol_string_unaccent($str)
 		$string = strtr($string, $replacements);
 		return rawurldecode($string);
 	}
-	else
-	{
+	else {
 		// See http://www.ascii-code.com/
         $string = strtr(
 			$str,
@@ -1268,8 +1263,7 @@ function dol_get_fiche_head($links = array(), $active = '', $title = '', $notab 
 				{
 					$out .= '<a class="tabimage'.($morecss ? ' '.$morecss : '').'" href="'.$links[$i][0].'">'.$links[$i][1].'</a>'."\n";
 				}
-				else
-				{
+				else {
 					$out .= '<span class="tabspan">'.$links[$i][1].'</span>'."\n";
 				}
 			}
@@ -1282,8 +1276,7 @@ function dol_get_fiche_head($links = array(), $active = '', $title = '', $notab 
 					$out .= $links[$i][1];
 					$out .= '</a>'."\n";
 				}
-				else
-				{
+				else {
 					$out .= '<a'.(!empty($links[$i][2]) ? ' id="'.$links[$i][2].'"' : '').' class="tabunactive tab inline-block'.($morecss ? ' '.$morecss : '').'" href="'.$links[$i][0].'">';
 					$out .= $links[$i][1];
 					$out .= '</a>'."\n";
@@ -1291,8 +1284,7 @@ function dol_get_fiche_head($links = array(), $active = '', $title = '', $notab 
 			}
 			$out .= '</div>';
 		}
-		else
-		{
+		else {
 			// The popup with the other tabs
 			if (!$popuptab)
 			{
@@ -1304,8 +1296,7 @@ function dol_get_fiche_head($links = array(), $active = '', $title = '', $notab 
 			{
 				if (!empty($links[$i][0]))
 					$outmore .= '<a class="tabimage'.($morecss ? ' '.$morecss : '').'" href="'.$links[$i][0].'">'.$links[$i][1].'</a>'."\n";
-				else
-					$outmore .= '<span class="tabspan">'.$links[$i][1].'</span>'."\n";
+				else $outmore .= '<span class="tabspan">'.$links[$i][1].'</span>'."\n";
 			}
 			elseif (!empty($links[$i][1]))
 			{
@@ -1439,8 +1430,7 @@ function dol_banner_tab($object, $paramid, $morehtml = '', $shownav = 1, $fieldi
 		$maxvisiblephotos = (isset($conf->global->PRODUCT_MAX_VISIBLE_PHOTO) ? $conf->global->PRODUCT_MAX_VISIBLE_PHOTO : 5);
 		if ($conf->browser->layout == 'phone') $maxvisiblephotos = 1;
 		if ($showimage) $morehtmlleft .= '<div class="floatleft inline-block valignmiddle divphotoref">'.$object->show_photos('product', $conf->product->multidir_output[$entity], 'small', $maxvisiblephotos, 0, 0, 0, $width, 0).'</div>';
-		else
-		{
+		else {
 			if (!empty($conf->global->PRODUCT_NODISPLAYIFNOPHOTO)) {
 				$nophoto = '';
 				$morehtmlleft .= '<div class="floatleft inline-block valignmiddle divphotoref"></div>';
@@ -1464,8 +1454,7 @@ function dol_banner_tab($object, $paramid, $morehtml = '', $shownav = 1, $fieldi
 			{
 				$morehtmlleft .= '<div class="floatleft inline-block valignmiddle divphotoref">'.$showphoto.'</div>';
 			}
-			else
-			{
+			else {
 				$showimage = 0;
 			}
 		}
@@ -1481,8 +1470,7 @@ function dol_banner_tab($object, $paramid, $morehtml = '', $shownav = 1, $fieldi
 			}
 		}
 	}
-	else
-	{
+	else {
 		if ($showimage)
 		{
 			if ($modulepart != 'unknown')
@@ -1498,8 +1486,7 @@ function dol_banner_tab($object, $paramid, $morehtml = '', $shownav = 1, $fieldi
 						$subdir = get_exdir($object->id, 2, 0, 1, $object, $modulepart);
 						$subdir .= ((!empty($subdir) && !preg_match('/\/$/', $subdir)) ? '/' : '').$objectref; // the objectref dir is not included into get_exdir when used with level=2, so we add it at end
 					}
-					else
-					{
+					else {
 						$subdir = get_exdir($object->id, 0, 0, 1, $object, $modulepart);
 					}
 					if (empty($subdir)) $subdir = 'errorgettingsubdirofobject'; // Protection to avoid to return empty path
@@ -1565,8 +1552,7 @@ function dol_banner_tab($object, $paramid, $morehtml = '', $shownav = 1, $fieldi
 					$cssclass = 'photorefcenter';
 					$nophoto = img_picto('No photo', 'title_agenda');
 				}
-				else
-				{
+				else {
 					$width = 14; $cssclass = 'photorefcenter';
 					$picto = $object->picto;
 					if ($object->element == 'project' && !$object->public) $picto = 'project'; // instead of projectpub
@@ -1781,7 +1767,7 @@ function dol_format_address($object, $withcountry = 0, $sep = "\n", $outputlangs
 		$ret .= ($town ? (($object->zip ? ' ' : '').$town) : '');
 		$ret .= ($object->state_code ? (' '.($object->state_code)) : '');
 	}
-	else                                        		// Other: title firstname name \n address lines \n zip town \n country
+	else // Other: title firstname name \n address lines \n zip town \n country
 	{
 		$town = ($extralangcode ? $object->array_languages['town'][$extralangcode] : $object->town);
 		$ret .= $object->zip ? (($ret ? $sep : '').$object->zip) : '';
@@ -1941,8 +1927,7 @@ function dol_print_date($time, $format = '', $tzoutput = 'tzserver', $outputlang
 	    $time = dol_mktime($shour, $smin, $ssec, $smonth, $sday, $syear, true);
 	    $ret = adodb_strftime($format, $time + $offsettz + $offsetdst, $to_gmt);
 	}
-	else
-	{
+	else {
 		// Date is a timestamps
 		if ($time < 100000000000)	// Protection against bad date values
 		{
@@ -1965,8 +1950,7 @@ function dol_print_date($time, $format = '', $tzoutput = 'tzserver', $outputlang
 			$monthtext = $outputlangs->transnoentities('Month'.$month);
 			$monthtextshort = $outputlangs->transnoentities('MonthShort'.$month);
 		}
-		else
-		{
+		else {
 			$monthtext = $outputlangs->transnoentitiesnoconv('Month'.$month);
 			$monthtextshort = $outputlangs->transnoentitiesnoconv('MonthShort'.$month);
 		}
@@ -2035,8 +2019,7 @@ function dol_getdate($timestamp, $fast = false)
 	{
 		$arrayinfo = adodb_getdate($timestamp, $fast);
 	}
-	else
-	{
+	else {
 		$arrayinfo = getdate($timestamp);
 	}
 
@@ -2104,8 +2087,7 @@ function dol_mktime($hour, $minute, $second, $month, $day, $year, $gm = false, $
 	elseif (strrpos($gm, "tz,") !== false)
 	{
 		$timezone = str_replace("tz,", "", $gm); // Example 'tz,Europe/Berlin'
-		try
-		{
+		try {
 			$localtz = new DateTimeZone($timezone);
 		}
 		catch (Exception $e)
@@ -2188,8 +2170,7 @@ function dol_print_size($size, $shortvalue = 0, $shortunit = 0)
 		$textunitshort = $langs->trans("b");
 		$textunitlong = $langs->trans("Bytes");
 	}
-	else
-	{
+	else {
 		$ret = round($size / $level, 0);
 		$textunitshort = $langs->trans("Kb");
 		$textunitlong = $langs->trans("KiloBytes");
@@ -2269,8 +2250,7 @@ function dol_print_email($email, $cid = 0, $socid = 0, $addlink = 0, $max = 64, 
 			if ($link) $newemail = '<div>'.$newemail.' '.$link.'</div>';
 		}
 	}
-	else
-	{
+	else {
 		if ($showinvalid && !isValidEmail($email))
 		{
 			$langs->load("errors");
@@ -2363,8 +2343,7 @@ function dol_print_socialnetworks($value, $cid, $socid, $type)
 		}
 		$htmllink .= '</div>';
 	}
-	else
-	{
+	else {
 		$langs->load("errors");
 		$htmllink .= img_warning($langs->trans("ErrorBadSocialNetworkValue", $value));
 	}
@@ -2795,8 +2774,7 @@ function dol_print_ip($ip, $mode = 0)
 			}
 			else $ret .= ' ('.$countrycode.')';
 		}
-		else
-		{
+		else {
 			// Nothing
 		}
 	}
@@ -3019,19 +2997,16 @@ function dol_substr($string, $start, $length, $stringencoding = '', $trunconbyte
 		{
 			$ret = mb_substr($string, $start, $length, $stringencoding);
 		}
-		else
-		{
+		else {
 			$ret = substr($string, $start, $length);
 		}
 	}
-	else
-	{
+	else {
 		if (function_exists('mb_strcut'))
 		{
 			$ret = mb_strcut($string, $start, $length, $stringencoding);
 		}
-		else
-		{
+		else {
 			$ret = substr($string, $start, $length);
 		}
 	}
@@ -3068,8 +3043,7 @@ function dol_trunc($string, $size = 40, $trunc = 'right', $stringencoding = 'UTF
 		$newstring = dol_textishtml($string) ?dol_string_nohtmltag($string, 1) : $string;
 		if (dol_strlen($newstring, $stringencoding) > ($size + ($nodot ? 0 : 3)))    // If nodot is 0 and size is 1,2 or 3 chars more, we don't trunc and don't add ...
 		return dol_substr($newstring, 0, $size, $stringencoding).($nodot ? '' : '...');
-		else
-		//return 'u'.$size.'-'.$newstring.'-'.dol_strlen($newstring,$stringencoding).'-'.$string;
+		else //return 'u'.$size.'-'.$newstring.'-'.dol_strlen($newstring,$stringencoding).'-'.$string;
 		return $string;
 	}
 	elseif ($trunc == 'middle')
@@ -3081,24 +3055,21 @@ function dol_trunc($string, $size = 40, $trunc = 'right', $stringencoding = 'UTF
 			$size2 = round($size / 2);
 			return dol_substr($newstring, 0, $size1, $stringencoding).'...'.dol_substr($newstring, dol_strlen($newstring, $stringencoding) - $size2, $size2, $stringencoding);
 		}
-		else
-		return $string;
+		else return $string;
 	}
 	elseif ($trunc == 'left')
 	{
 		$newstring = dol_textishtml($string) ?dol_string_nohtmltag($string, 1) : $string;
 		if (dol_strlen($newstring, $stringencoding) > ($size + ($nodot ? 0 : 3)))    // If nodot is 0 and size is 1,2 or 3 chars more, we don't trunc and don't add ...
 		return '...'.dol_substr($newstring, dol_strlen($newstring, $stringencoding) - $size, $size, $stringencoding);
-		else
-		return $string;
+		else return $string;
 	}
 	elseif ($trunc == 'wrap')
 	{
 		$newstring = dol_textishtml($string) ?dol_string_nohtmltag($string, 1) : $string;
 		if (dol_strlen($newstring, $stringencoding) > ($size + 1))
 		return dol_substr($newstring, 0, $size, $stringencoding)."\n".dol_trunc(dol_substr($newstring, $size, dol_strlen($newstring, $stringencoding) - $size, $stringencoding), $size, $trunc);
-		else
-		return $string;
+		else return $string;
 	}
 	else return 'BadParam3CallingDolTrunc';
 }
@@ -3434,8 +3405,7 @@ function img_picto_common($titlealt, $picto, $moreatt = '', $pictoisfullpath = 0
 	if (!preg_match('/(\.png|\.gif)$/i', $picto)) $picto .= '.png';
 
 	if ($pictoisfullpath) $path = $picto;
-	else
-	{
+	else {
 		$path = DOL_URL_ROOT.'/theme/common/'.$picto;
 
 		if (!empty($conf->global->MAIN_MODULE_CAN_OVERWRITE_COMMONICONS))
@@ -3979,7 +3949,7 @@ function dol_print_error($db = '', $error = '', $errors = null)
 		$syslog .= "url=".dol_escape_htmltag($_SERVER["REQUEST_URI"]);
 		$syslog .= ", query_string=".dol_escape_htmltag($_SERVER["QUERY_STRING"]);
 	}
-	else                              // Mode CLI
+	else // Mode CLI
 	{
 		$out .= '> '.$langs->transnoentities("ErrorInternalErrorDetected").":\n".$argv[0]."\n";
 		$syslog .= "pid=".dol_getmypid();
@@ -4000,7 +3970,7 @@ function dol_print_error($db = '', $error = '', $errors = null)
 			$out .= "<b>".$langs->trans("InformationLastAccessInError").":</b> ".($db->lasterror() ?dol_escape_htmltag($db->lasterror()) : $langs->trans("ErrorNoRequestInError"))."<br>\n";
 			$out .= "<br>\n";
 		}
-		else                            // Mode CLI
+		else // Mode CLI
 		{
 			// No dol_escape_htmltag for output, we are in CLI mode
 			$out .= '> '.$langs->transnoentities("DatabaseTypeManager").":\n".$db->type."\n";
@@ -4029,7 +3999,7 @@ function dol_print_error($db = '', $error = '', $errors = null)
 			{
 				$out .= "<b>".$langs->trans("Message").":</b> ".dol_escape_htmltag($msg)."<br>\n";
 			}
-			else                        // Mode CLI
+			else // Mode CLI
 			{
 				$out .= '> '.$langs->transnoentities("Message").":\n".$msg."\n";
 			}
@@ -4178,19 +4148,18 @@ function getTitleFieldOfList($name, $thead = 0, $file = "", $field = "", $begin 
 			{
 				$sortordertouseinlink .= str_repeat('desc,', count(explode(',', $field)));
 			}
-			else		// We reverse the var $sortordertouseinlink
+			else // We reverse the var $sortordertouseinlink
 			{
 				$sortordertouseinlink .= str_repeat('asc,', count(explode(',', $field)));
 			}
 		}
-		else                        // We are on field that is the first current sorting criteria
+		else // We are on field that is the first current sorting criteria
 		{
 			if (preg_match('/^ASC/i', $sortorder))	// We reverse the var $sortordertouseinlink
 			{
 				$sortordertouseinlink .= str_repeat('desc,', count(explode(',', $field)));
 			}
-			else
-			{
+			else {
 				$sortordertouseinlink .= str_repeat('asc,', count(explode(',', $field)));
 			}
 		}
@@ -4220,8 +4189,7 @@ function getTitleFieldOfList($name, $thead = 0, $file = "", $field = "", $begin 
 			//$out.= '<a href="'.$file.'?sortfield='.$field.'&sortorder=asc&begin='.$begin.$options.'">'.img_down("A-Z",0).'</a>';
 			//$out.= '<a href="'.$file.'?sortfield='.$field.'&sortorder=desc&begin='.$begin.$options.'">'.img_up("Z-A",0).'</a>';
 		}
-		else
-		{
+		else {
 			if (preg_match('/^DESC/', $sortorder)) {
 				//$out.= '<a href="'.$file.'?sortfield='.$field.'&sortorder=asc&begin='.$begin.$options.'">'.img_down("A-Z",0).'</a>';
 				//$out.= '<a href="'.$file.'?sortfield='.$field.'&sortorder=desc&begin='.$begin.$options.'">'.img_up("Z-A",1).'</a>';
@@ -4351,8 +4319,7 @@ function print_barre_liste($titre, $page, $file, $options = '', $sortfield = '',
 	{
 		$nextpage = 1;
 	}
-	else
-	{
+	else {
 		$nextpage = 0;
 	}
 	//print 'totalnboflines='.$totalnboflines.'-savlimit='.$savlimit.'-limit='.$limit.'-num='.$num.'-nextpage='.$nextpage;
@@ -4402,8 +4369,7 @@ function print_barre_liste($titre, $page, $file, $options = '', $sortfield = '',
 				}
 			}
 
-			do
-			{
+			do {
 				if ($pagenavastextinput) {
 					if ($cpt == $page)
 					{
@@ -4416,8 +4382,7 @@ function print_barre_liste($titre, $page, $file, $options = '', $sortfield = '',
 					{
 						$pagelist .= '<li class="pagination"><span class="active">'.($page + 1).'</span></li>';
 					}
-					else
-					{
+					else {
 						$pagelist .= '<li class="pagination"><a href="'.$file.'?page='.$cpt.$options.'">'.($cpt + 1).'</a></li>';
 					}
 				}
@@ -4439,8 +4404,7 @@ function print_barre_liste($titre, $page, $file, $options = '', $sortfield = '',
 				//}
 			}
 		}
-		else
-		{
+		else {
 			$pagelist .= '<li class="pagination"><span class="active">'.($page + 1)."</li>";
 		}
 	}
@@ -4581,8 +4545,7 @@ function vatrate($rate, $addpercent = false, $info_bits = 0, $usestarfornpr = 0)
 
 	// If rate is '9/9/9' we don't change it.  If rate is '9.000' we apply price()
 	if (!preg_match('/\//', $rate)) $ret = price($rate, 0, '', 0, 0).($addpercent ? '%' : '');
-	else
-	{
+	else {
 		// TODO Split on / and output with a price2num to have clean numbers without ton of 000.
 		$ret = $rate.($addpercent ? '%' : '');
 	}
@@ -4673,8 +4636,7 @@ function price($amount, $form = 0, $outlangs = '', $trunc = 1, $rounding = -1, $
 		{
 		    $cursymbolbefore .= $outlangs->getCurrencySymbol($currency_code);
 		}
-		else
-		{
+		else {
 			$tmpcur = $outlangs->getCurrencySymbol($currency_code);
 			$cursymbolafter .= ($tmpcur == $currency_code ? ' '.$tmpcur : $tmpcur);
 		}
@@ -4875,8 +4837,7 @@ function get_localtax($vatrate, $local, $thirdparty_buyer = "", $thirdparty_sell
 			{
 				if (!$thirdparty_buyer->localtax1_assuj) return 0;
 			}
-			else
-			{
+			else {
 				if (!$thirdparty_seller->localtax1_assuj) return 0;
 			}
 		}
@@ -4889,14 +4850,12 @@ function get_localtax($vatrate, $local, $thirdparty_buyer = "", $thirdparty_sell
 			{
 				if (!$thirdparty_buyer->localtax2_assuj) return 0;
 			}
-			else
-			{
+			else {
 				if (!$thirdparty_seller->localtax2_assuj) return 0;
 			}
 		}
 	}
-	else
-	{
+	else {
 		if ($local == 1 && !$thirdparty_seller->localtax1_assuj) return 0;
 		if ($local == 2 && !$thirdparty_seller->localtax2_assuj) return 0;
 	}
@@ -4919,7 +4878,7 @@ function get_localtax($vatrate, $local, $thirdparty_buyer = "", $thirdparty_sell
 					return $thirdparty_seller->localtax1_value;
 				}
 			}
-			else  // i am the seller
+			else // i am the seller
 			{
 				if (!isOnlyOneLocalTax($local))  // TODO If seller is me, why not always returning this, even if there is only one locatax vat.
 				{
@@ -4937,14 +4896,13 @@ function get_localtax($vatrate, $local, $thirdparty_buyer = "", $thirdparty_sell
 					return $thirdparty_seller->localtax2_value;
 				}
 			}
-			else  // i am the seller
+			else // i am the seller
 			{
 				if (in_array($mysoc->country_code, array('ES')))
 				{
 					return $thirdparty_buyer->localtax2_value;
 				}
-				else
-				{
+				else {
 					return $conf->global->MAIN_INFO_VALUE_LOCALTAX2;
 				}
 			}
@@ -4990,8 +4948,7 @@ function isOnlyOneLocalTax($local)
 	{
 		return false;
 	}
-	else
-	{
+	else {
 		return true;
 	}
 }
@@ -5045,8 +5002,7 @@ function getTaxesFromId($vatrate, $buyer = null, $seller = null, $firstparamisid
 	$sql = "SELECT t.rowid, t.code, t.taux as rate, t.recuperableonly as npr, t.accountancy_code_sell, t.accountancy_code_buy";
 	$sql .= " FROM ".MAIN_DB_PREFIX."c_tva as t";
 	if ($firstparamisid) $sql .= " WHERE t.rowid = ".(int) $vatrate;
-	else
-	{
+	else {
 		$vatratecleaned = $vatrate;
 		$vatratecode = '';
 		if (preg_match('/^(.*)\s*\((.*)\)$/', $vatrate, $reg))      // If vat is "xx (yy)"
@@ -5101,8 +5057,7 @@ function getLocalTaxesFromRate($vatrate, $local, $buyer, $seller, $firstparamisi
 	$sql  = "SELECT t.taux as rate, t.code, t.localtax1, t.localtax1_type, t.localtax2, t.localtax2_type, t.accountancy_code_sell, t.accountancy_code_buy";
 	$sql .= " FROM ".MAIN_DB_PREFIX."c_tva as t";
 	if ($firstparamisid) $sql .= " WHERE t.rowid = ".(int) $vatrate;
-	else
-	{
+	else {
 		$vatratecleaned = $vatrate;
 		$vatratecode = '';
 		$reg = array();
@@ -5134,8 +5089,7 @@ function getLocalTaxesFromRate($vatrate, $local, $buyer, $seller, $firstparamisi
 		{
 			return array($obj->localtax2_type, get_localtax($vateratestring, $local, $buyer, $seller), $obj->accountancy_code_sell, $obj->accountancy_code_buy);
 		}
-		else
-		{
+		else {
 			return array($obj->localtax1_type, get_localtax($vateratestring, 1, $buyer, $seller), $obj->localtax2_type, get_localtax($vateratestring, 2, $buyer, $seller), $obj->accountancy_code_sell, $obj->accountancy_code_buy);
 		}
 	}
@@ -5176,15 +5130,13 @@ function get_product_vat_for_country($idprod, $thirdparty_seller, $idprodfournpr
 				$ret = $product->vatrate_supplier;
 				if ($product->default_vat_code) $ret .= ' ('.$product->default_vat_code.')';
 			}
-			else
-			{
+			else {
 				$ret = $product->tva_tx; // Default vat of product we defined
 				if ($product->default_vat_code) $ret .= ' ('.$product->default_vat_code.')';
 			}
 			$found = 1;
 		}
-		else
-		{
+		else {
 			// TODO Read default product vat according to countrycode and product. Vat for couple countrycode/product is a feature not implemeted yet.
 			// May be usefull/required if hidden option SERVICE_ARE_ECOMMERCE_200238EC is on
 		}
@@ -5255,8 +5207,7 @@ function get_product_localtax_for_country($idprod, $local, $thirdparty_seller)
 			$found=1;
 			*/
 		}
-		else
-		{
+		else {
 			// TODO Read default product vat according to countrycode and product
 		}
 	}
@@ -5361,8 +5312,7 @@ function get_default_tva(Societe $thirdparty_seller, Societe $thirdparty_buyer, 
 			//print 'VATRULE 3';
 			return 0;
 		}
-		else
-		{
+		else {
 			//print 'VATRULE 4';
 			return get_product_vat_for_country($idprod, $thirdparty_seller, $idprodfournprice);
 		}
@@ -5442,8 +5392,7 @@ function get_default_localtax($thirdparty_seller, $thirdparty_buyer, $local, $id
 		{
 			if (is_numeric($thirdparty_buyer->localtax1_assuj) && !$thirdparty_buyer->localtax1_assuj) return 0;
 		}
-		else
-		{
+		else {
 			// Si vendeur non assujeti a Localtax1, localtax1 par default=0
 			if (is_numeric($thirdparty_seller->localtax1_assuj) && !$thirdparty_seller->localtax1_assuj) return 0;
 			if (!is_numeric($thirdparty_seller->localtax1_assuj) && $thirdparty_seller->localtax1_assuj == 'localtax1off') return 0;
@@ -5532,8 +5481,7 @@ function get_exdir($num, $level, $alpha, $withoutslash, $object, $modulepart)
 		if ($level == 2) $path = substr($num, 1, 1).'/'.substr($num, 0, 1);
 		if ($level == 3) $path = substr($num, 2, 1).'/'.substr($num, 1, 1).'/'.substr($num, 0, 1);
 	}
-	else
-	{
+	else {
 		// TODO
 		// We will enhance here a common way of forging path for document storage
 		// Here, object->id, object->ref and modulepart are required.
@@ -5606,15 +5554,13 @@ function dol_mkdir($dir, $dataroot = '', $newmask = null)
 					dol_syslog("functions.lib::dol_mkdir: Fails to create directory '".$ccdir."' or directory already exists.", LOG_WARNING);
 					$nberr++;
 				}
-				else
-				{
+				else {
 					dol_syslog("functions.lib::dol_mkdir: Directory '".$ccdir."' created", LOG_DEBUG);
 					$nberr = 0; // On remet a zero car si on arrive ici, cela veut dire que les echecs precedents peuvent etre ignore
 					$nbcreated++;
 				}
 			}
-			else
-			{
+			else {
 				$nberr = 0; // On remet a zero car si on arrive ici, cela veut dire que les echecs precedents peuvent etre ignores
 			}
 		}
@@ -5755,14 +5701,12 @@ function dolGetFirstLineOfText($text, $nboflines = 1, $charset = 'UTF-8')
 			$firstline = preg_replace('/<br[^>]*>.*$/s', '', $text); // The s pattern modifier means the . can match newline characters
 			$firstline = preg_replace('/<div[^>]*>.*$/s', '', $firstline); // The s pattern modifier means the . can match newline characters
 		}
-		else
-		{
+		else {
 			$firstline = preg_replace('/[\n\r].*/', '', $text);
 		}
 		return $firstline.((strlen($firstline) != strlen($text)) ? '...' : '');
 	}
-	else
-	{
+	else {
 		$ishtml = 0;
 		if (dol_textishtml($text))
 		{
@@ -5770,8 +5714,7 @@ function dolGetFirstLineOfText($text, $nboflines = 1, $charset = 'UTF-8')
 			$ishtml = 1;
 			$repTable = array("\t" => " ", "\n" => " ", "\r" => " ", "\0" => " ", "\x0B" => " ");
 		}
-		else
-		{
+		else {
 			$repTable = array("\t" => " ", "\n" => "<br>", "\r" => " ", "\0" => " ", "\x0B" => " ");
 		}
 
@@ -5844,8 +5787,7 @@ function dol_htmlentitiesbr($stringtoencode, $nl2brmode = 0, $pagecodefrom = 'UT
 		$newstring = dol_htmlentities($newstring, ENT_COMPAT, $pagecodefrom); // Make entity encoding
 		$newstring = strtr($newstring, array('__and__'=>'&', '__lt__'=>'<', '__gt__'=>'>', '__dquot__'=>'"'));
 	}
-	else
-	{
+	else {
 		if ($removelasteolbr) $newstring = preg_replace('/(\r\n|\r|\n)$/i', '', $newstring); // Remove last \n (may remove several)
 		$newstring = dol_nl2br(dol_htmlentities($newstring, ENT_COMPAT, $pagecodefrom), $nl2brmode);
 	}
@@ -6022,8 +5964,7 @@ function dol_textishtml($msg, $option = 0)
 		elseif (preg_match('/<br/i', $msg))				return true;
 		return false;
 	}
-	else
-	{
+	else {
 		if (preg_match('/<html/i', $msg))				return true;
 		elseif (preg_match('/<body/i', $msg))			return true;
 		elseif (preg_match('/<\/textarea/i', $msg))	  return true;
@@ -6217,8 +6158,7 @@ function getCommonSubstitutionArray($outputlangs, $onlykey = 0, $exclude = null,
 				$substitutionarray['__SHIPPINGTRACKNUMURL__'] = 'Shipping tracking url';
 			}
 		}
-		else
-		{
+		else {
 			$substitutionarray['__ID__'] = $object->id;
 			$substitutionarray['__REF__'] = $object->ref;
 			$substitutionarray['__REF_CLIENT__'] = (isset($object->ref_client) ? $object->ref_client : (isset($object->ref_customer) ? $object->ref_customer : null));
@@ -6388,8 +6328,7 @@ function getCommonSubstitutionArray($outputlangs, $onlykey = 0, $exclude = null,
 			{
 				$paymenturl = '';
 			}
-			else
-			{
+			else {
 				// Set the online payment url link into __ONLINE_PAYMENT_URL__ key
 				require_once DOL_DOCUMENT_ROOT.'/core/lib/payments.lib.php';
 				$outputlangs->loadLangs(array('paypal', 'other'));
@@ -6704,8 +6643,7 @@ function dolGetFirstLastname($firstname, $lastname, $nameorder = -1)
 	    	$ret .= $lastname;
 	    }
 	}
-	else
-	{
+	else {
 		$ret .= $lastname;
 		if ($firstname && $lastname) $ret .= ' ';
 		$ret .= $firstname;
@@ -6731,7 +6669,7 @@ function setEventMessage($mesgs, $style = 'mesgs')
 	{
 		if ($mesgs) $_SESSION['dol_events'][$style][] = $mesgs;
 	}
-	else						// If mesgs is an array
+	else // If mesgs is an array
 	{
 		foreach ($mesgs as $mesg)
 		{
@@ -6757,8 +6695,7 @@ function setEventMessages($mesg, $mesgs, $style = 'mesgs', $messagekey = '')
 	{
 		dol_syslog("Try to add a message in stack with empty message", LOG_WARNING);
 	}
-	else
-	{
+	else {
 		if ($messagekey)
 		{
 			// Complete message with a js link to set a cookie "DOLHIDEMESSAGE".$messagekey;
@@ -6769,8 +6706,7 @@ function setEventMessages($mesg, $mesgs, $style = 'mesgs', $messagekey = '')
 		{
 			if (!in_array((string) $style, array('mesgs', 'warnings', 'errors'))) dol_print_error('', 'Bad parameter style='.$style.' for setEventMessages');
 			if (empty($mesgs)) setEventMessage($mesg, $style);
-			else
-			{
+			else {
 				if (!empty($mesg) && !in_array($mesg, $mesgs)) setEventMessage($mesg, $style); // Add message string if not already into array
 				setEventMessage($mesgs, $style);
 			}
@@ -6878,8 +6814,7 @@ function get_htmloutput_mesg($mesgstring = '', $mesgarray = '', $style = 'ok', $
 					});
 				</script>';
 		}
-		else
-		{
+		else {
 			$return = $out;
 		}
 	}
@@ -6954,8 +6889,7 @@ function dol_htmloutput_mesg($mesgstring = '', $mesgarray = array(), $style = 'o
 					$tmpmesgstring = preg_replace('/<\/div>/', '', $tmpmesgstring);
 					$newmesgarray[] = $tmpmesgstring;
 				}
-				else
-				{
+				else {
 					dol_syslog("Error call of dol_htmloutput_mesg with an array with a value that is not a string", LOG_WARNING);
 				}
 			}
@@ -7012,8 +6946,7 @@ function dol_sort_array(&$array, $index, $order = 'asc', $natsort = 0, $case_sen
 				{
 					$temp[$key] = $array[$key]->$index;
 				}
-				else
-				{
+				else {
 					$temp[$key] = $array[$key][$index];
 				}
 			}
@@ -7149,8 +7082,7 @@ function dol_getIdFromCode($db, $key, $tablename, $fieldkey = 'code', $fieldid =
 		$db->free($resql);
 		return $cache_codes[$tablename][$key][$fieldid];
 	}
-	else
-	{
+	else {
 		return -1;
 	}
 }
@@ -7204,8 +7136,7 @@ function dol_eval($s, $returnvalue = 0, $hideerrors = 1)
 		if ($hideerrors) return @eval('return '.$s.';');
 		else return eval('return '.$s.';');
 	}
-	else
-	{
+	else {
 		if ($hideerrors) @eval($s);
 		else eval($s);
 	}
@@ -7249,8 +7180,7 @@ function picto_from_langcode($codelang, $moreatt = '')
 	);
 
 	if (isset($langtocountryflag[$codelang])) $flagImage = $langtocountryflag[$codelang];
-	else
-	{
+	else {
 		$tmparray = explode('_', $codelang);
 		$flagImage = empty($tmparray[1]) ? $tmparray[0] : $tmparray[1];
 	}
@@ -7469,8 +7399,7 @@ function getLanguageCodeFromCountryCode($countrycode)
     		}
     	}
 	}
-	else
-	{
+	else {
         dol_syslog("Warning Exention php-intl is not available", LOG_WARNING);
 	}
 
@@ -7913,8 +7842,7 @@ function natural_search($fields, $value, $mode = 0, $nofirstand = 0)
 					{
 						$newres .= ($i2 > 0 ? ' OR ' : '').$field.' '.$operator.' '.$numnewcrit;
 					}
-					else
-					{
+					else {
 						$newres .= ($i2 > 0 ? ' OR ' : '').'1 = 2'; // force false
 					}
 					$i2++; // a criteria was added to string
@@ -7965,7 +7893,7 @@ function natural_search($fields, $value, $mode = 0, $nofirstand = 0)
 			        }
 			    }
 			}
-			else    // $mode=0
+			else // $mode=0
 			{
 				$tmpcrits = explode('|', $crit);
 				$i3 = 0;
@@ -7979,8 +7907,7 @@ function natural_search($fields, $value, $mode = 0, $nofirstand = 0)
 					{
 						$newres .= $field." = ".(is_numeric(trim($tmpcrit)) ?trim($tmpcrit) : '0');
 					}
-					else
-					{
+					else {
 						$newres .= $field." LIKE '";
 
 						$tmpcrit = trim($tmpcrit);
@@ -8271,8 +8198,7 @@ function getDictvalue($tablename, $field, $id, $checkentity = false, $rowidfield
 				$dictvalues[$tablename][$obj->{$rowidfield}] = $obj;
 			}
 		}
-		else
-		{
+		else {
 			dol_print_error($db);
 		}
 	}
@@ -8305,8 +8231,7 @@ function colorIsLight($stringcolor)
 			$g = $tmp[1];
 			$b = $tmp[2];
 		}
-		else
-		{
+		else {
 			$hexr = $stringcolor[0].$stringcolor[1];
 			$hexg = $stringcolor[2].$stringcolor[3];
 			$hexb = $stringcolor[4].$stringcolor[5];

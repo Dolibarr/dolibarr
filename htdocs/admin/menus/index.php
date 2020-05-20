@@ -192,8 +192,7 @@ elseif ($action == 'confirm_delete' && $confirm == 'yes')
 		header("Location: ".DOL_URL_ROOT.'/admin/menus/index.php?menu_handler='.$menu_handler);
 		exit;
 	}
-	else
-	{
+	else {
 		$db->rollback();
 
 		$reload = 0;
@@ -409,8 +408,7 @@ if ($conf->use_javascript_ajax)
 
 	print '</div>';
 }
-else
-{
+else {
 	$langs->load("errors");
 	setEventMessages($langs->trans("ErrorFeatureNeedJavascript"), null, 'errors');
 }

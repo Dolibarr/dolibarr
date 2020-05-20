@@ -131,8 +131,7 @@ if ($filteremail)
 	if (!$sortorder) $sortorder = "ASC";
 	if (!$sortfield) $sortfield = "m.rowid";
 }
-else
-{
+else {
 	$sql = "SELECT m.rowid, m.titre, m.nbemail, m.statut, m.date_creat as datec, m.date_envoi as date_envoi";
 	$sql .= " FROM ".MAIN_DB_PREFIX."mailing as m";
 	$sql .= " WHERE m.entity = ".$conf->entity;
@@ -275,8 +274,7 @@ if ($resql)
 		{
 			print $email::libStatutDest($obj->sendstatut, 2);
 		}
-		else
-		{
+		else {
 			print $email->LibStatut($obj->statut, 5);
 		}
 		print '</td>';
@@ -298,8 +296,7 @@ if ($resql)
 
 	$db->free($resql);
 }
-else
-{
+else {
 	dol_print_error($db);
 }
 

@@ -107,8 +107,7 @@ class mod_project_simple extends ModeleNumRefProjects
 		{
 			return true;
 		}
-		else
-		{
+		else {
 			$langs->load("errors");
 			$this->error = $langs->trans('ErrorNumRefModel', $max);
 			return false;
@@ -141,8 +140,7 @@ class mod_project_simple extends ModeleNumRefProjects
 			if ($obj) $max = intval($obj->max);
 			else $max = 0;
 		}
-		else
-		{
+		else {
 			dol_syslog("mod_project_simple::getNextValue", LOG_DEBUG);
 			return -1;
 		}

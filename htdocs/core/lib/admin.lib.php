@@ -186,7 +186,7 @@ function run_sql($sqlfile, $silent = 1, $entity = '', $usesavepoint = 1, $handle
 			                	$qualified = 0;
 			                }
             			}
-            			else						// This is a test on a constant. For example when we have -- VMYSQLUTF8UNICODE, we test constant $conf->global->UTF8UNICODE
+            			else // This is a test on a constant. For example when we have -- VMYSQLUTF8UNICODE, we test constant $conf->global->UTF8UNICODE
             			{
             				$dbcollation = strtoupper(preg_replace('/_/', '', $conf->db->dolibarr_main_db_collation));
             				//var_dump($reg[2]);
@@ -226,8 +226,7 @@ function run_sql($sqlfile, $silent = 1, $entity = '', $usesavepoint = 1, $handle
         if ($buffer) $arraysql[$i] = $buffer;
         fclose($fp);
     }
-    else
-    {
+    else {
         dol_syslog("Admin.lib::run_sql failed to open file ".$sqlfile, LOG_ERR);
     }
 
@@ -252,8 +251,7 @@ function run_sql($sqlfile, $silent = 1, $entity = '', $usesavepoint = 1, $handle
                     $listofmaxrowid[$table] = $obj->max;
                     if (empty($listofmaxrowid[$table])) $listofmaxrowid[$table] = 0;
                 }
-                else
-                {
+                else {
                     if (!$silent) print '<tr><td class="tdtop" colspan="2">';
                     if (!$silent) print '<div class="error">'.$langs->trans("Failed to get max rowid for ".$table)."</div></td>";
                     if (!$silent) print '</tr>';
@@ -370,8 +368,7 @@ function run_sql($sqlfile, $silent = 1, $entity = '', $usesavepoint = 1, $handle
                 }
                 // 	          print '<td class="right">OK</td>';
             }
-            else
-            {
+            else {
                 $errno = $db->errno();
                 if (!$silent) print '<!-- Result = '.$errno.' -->'."\n";
 
@@ -414,8 +411,7 @@ function run_sql($sqlfile, $silent = 1, $entity = '', $usesavepoint = 1, $handle
         if (!$silent) print '<td class="right">'.$langs->trans("OK").'</td></tr>'."\n";
         $ok = 1;
     }
-    else
-    {
+    else {
         if (!$silent) print '<tr><td>'.$langs->trans("ProcessMigrateScript").'</td>';
         if (!$silent) print '<td class="right"><font class="error">'.$langs->trans("KO").'</font></td></tr>'."\n";
         $ok = 0;
@@ -458,8 +454,7 @@ function dolibarr_del_const($db, $name, $entity = 1)
         $conf->global->$name = '';
         return 1;
     }
-    else
-    {
+    else {
         dol_print_error($db);
         return -1;
     }
@@ -555,8 +550,7 @@ function dolibarr_set_const($db, $name, $value, $type = 'chaine', $visible = 0, 
         $conf->global->$name = $value;
         return 1;
     }
-    else
-    {
+    else {
         $error = $db->lasterror();
         $db->rollback();
         return -1;
@@ -971,8 +965,7 @@ function activateModule($value, $withdeps = 1)
     {
         $ret['errors'][] = $objMod->error;
     }
-    else
-    {
+    else {
         if ($withdeps)
         {
             if (isset($objMod->depends) && is_array($objMod->depends) && !empty($objMod->depends))
@@ -1009,8 +1002,7 @@ function activateModule($value, $withdeps = 1)
     				    $ret['nbmodules'] += $resarray['nbmodules'];
     				    $ret['nbperms'] += $resarray['nbperms'];
     				}
-    				else
-    				{
+    				else {
     				    $ret['errors'][] = $langs->trans('activateModuleDependNotSatisfied', $objMod->name, $modulestring);
     				}
                 }
@@ -1082,7 +1074,7 @@ function unActivateModule($value, $requiredby = 1)
         $result = $objMod->remove();
         if ($result <= 0) $ret = $objMod->error;
     }
-    else    // We come here when we try to unactivate a module when module does not exists anymore in sources
+    else // We come here when we try to unactivate a module when module does not exists anymore in sources
     {
         //print $dir.$modFile;exit;
     	// TODO Replace this after DolibarrModules is moved as abstract class with a try catch to show module we try to disable has not been found or could not be loaded
@@ -1163,8 +1155,7 @@ function complete_dictionary_with_modules(&$taborder, &$tabname, &$tablib, &$tab
                         {
                             $j = $objMod->numero;
                         }
-                        else
-                        {
+                        else {
                             $j = 1000 + $i;
                         }
 
@@ -1210,8 +1201,7 @@ function complete_dictionary_with_modules(&$taborder, &$tabname, &$tablib, &$tab
                                     print 'Error in descriptor of module '.$const_name.'. Array ->dictionaries has not same number of record for key "tabname", "tablib", "tabsql" and "tabsqlsort"';
                                     //print "$const_name: $nbtabname=$nbtablib=$nbtabsql=$nbtabsqlsort=$nbtabfield=$nbtabfieldvalue=$nbtabfieldinsert=$nbtabrowid=$nbtabcond=$nbtabfieldcheck=$nbtabhelp\n";
                                 }
-                                else
-                                {
+                                else {
                                 	$taborder[] = 0; // Add an empty line
                                 }
                             }
@@ -1225,8 +1215,7 @@ function complete_dictionary_with_modules(&$taborder, &$tabname, &$tablib, &$tab
             }
             closedir($handle);
         }
-        else
-        {
+        else {
             dol_syslog("htdocs/admin/modules.php: Failed to open directory ".$dir.". See permission and open_basedir option.", LOG_WARNING);
         }
     }
@@ -1291,8 +1280,7 @@ function activateModulesRequiredByCountry($country_code)
 			}
 			closedir($handle);
 		}
-		else
-		{
+		else {
 			dol_syslog("htdocs/admin/modules.php: Failed to open directory ".$dir.". See permission and open_basedir option.", LOG_WARNING);
 		}
 	}
@@ -1348,8 +1336,7 @@ function complete_elementList_with_modules(&$elementList)
                         {
                             $j = $objMod->numero;
                         }
-                        else
-                        {
+                        else {
                             $j = 1000 + $i;
                         }
 
@@ -1393,8 +1380,7 @@ function complete_elementList_with_modules(&$elementList)
             }
             closedir($handle);
         }
-        else
-        {
+        else {
             dol_syslog("htdocs/admin/modules.php: Failed to open directory ".$dir.". See permission and open_basedir option.", LOG_WARNING);
         }
     }
@@ -1448,16 +1434,14 @@ function form_constantes($tableau, $strictw3c = 0, $helptext = '')
     	if (is_numeric($key)) {		// Very old behaviour
     		$type = 'string';
     	}
-    	else
-    	{
+    	else {
     		if (is_array($const))
     		{
     			$type = $const['type'];
 				$label = $const['label'];
     			$const = $key;
     		}
-    		else
-    		{
+    		else {
     			$type = $const;
     			$const = $key;
     		}
@@ -1549,8 +1533,7 @@ function form_constantes($tableau, $strictw3c = 0, $helptext = '')
                 print '<input type="hidden" name="constnote'.(empty($strictw3c) ? '' : '[]').'" value="'.nl2br(dol_escape_htmltag($obj->note)).'">';
                 print '</td>';
             }
-            else
-            {
+            else {
                 print '<td>';
                 print '<input type="hidden" name="consttype'.(empty($strictw3c) ? '' : '[]').'" value="'.($obj->type ? $obj->type : 'string').'">';
                 print '<input type="hidden" name="constnote'.(empty($strictw3c) ? '' : '[]').'" value="'.nl2br(dol_escape_htmltag($obj->note)).'">';
@@ -1595,7 +1578,7 @@ function form_constantes($tableau, $strictw3c = 0, $helptext = '')
                 	//var_dump($arrayofmessagename);
                 	print $form->selectarray('constvalue_'.$obj->name, $arrayofmessagename, $obj->value.':'.$tmp[1], 'None', 0, 0, '', 0, 0, 0, '', '', 1);
                 }
-                else	// type = 'string' ou 'chaine'
+                else // type = 'string' ou 'chaine'
                 {
                     print '<input type="text" class="flat" size="48" name="constvalue'.(empty($strictw3c) ? '' : '[]').'" value="'.dol_escape_htmltag($obj->value).'">';
                 }
@@ -1685,8 +1668,7 @@ function addDocumentModel($name, $type, $label = '', $description = '')
 		$db->commit();
 		return 1;
 	}
-	else
-	{
+	else {
 		dol_print_error($db);
 		$db->rollback();
 		return -1;
@@ -1718,8 +1700,7 @@ function delDocumentModel($name, $type)
 		$db->commit();
 		return 1;
 	}
-	else
-	{
+	else {
 		dol_print_error($db);
 		$db->rollback();
 		return -1;

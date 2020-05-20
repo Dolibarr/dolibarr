@@ -128,8 +128,7 @@ if ($actionsave)
         $db->commit();
         setEventMessages($langs->trans("SetupSaved"), null, 'mesgs');
     }
-    else
-    {
+    else {
         $db->rollback();
         if (empty($errorsaved))	setEventMessages($langs->trans("Error"), null, 'errors');
     }
@@ -359,8 +358,7 @@ foreach ($dirmodels as $reldir) {
                                 print "</td><td>\n";
                                 if (method_exists($module, 'info'))
                                     print $module->info($langs);
-                                else
-                                    print $module->description;
+                                else print $module->description;
                                 print '</td>';
 
                                 // Active
@@ -448,8 +446,7 @@ if ($conf->global->BANK_COLORIZE_MOVEMENT) {
     print '</a>';
     print '</td>';
 }
-else
-{
+else {
     print '<td class="center">'."\n";
     print '<a href="'.$_SERVER["PHP_SELF"].'?action=setbankcolorizemovement">'.img_picto($langs->trans("Disabled"), 'switch_off').'</a>';
     print "</td>";
@@ -509,8 +506,7 @@ if ($conf->global->BANK_REPORT_LAST_NUM_RELEVE) {
     print '</a>';
     print '</td>';
 }
-else
-{
+else {
     print '<td class="center">'."\n";
     print '<a href="'.$_SERVER["PHP_SELF"].'?action=setreportlastnumreleve">'.img_picto($langs->trans("Disabled"), 'switch_off').'</a>';
     print "</td>";

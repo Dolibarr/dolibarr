@@ -111,13 +111,11 @@ if (!defined('DONOTLOADCONF') && file_exists($conffile) && filesize($conffile) >
 				}
 			}
 		}
-		else
-		{
+		else {
 			$includeconferror = 'ErrorBadValueForDolibarrMainDocumentRoot';
 		}
 	}
-	else
-	{
+	else {
 		$includeconferror = 'ErrorBadFormatForConfFile';
 	}
 }

@@ -199,8 +199,7 @@ if (empty($reshook))
 					}
 					else $nbok++;
 				}
-				else
-				{
+				else {
 					setEventMessages($objecttmp->error, $objecttmp->errors, 'errors');
 					$error++;
 					break;
@@ -213,8 +212,7 @@ if (empty($reshook))
 				else setEventMessages($langs->trans("RecordsModified", $nbok), null, 'mesgs');
 				$db->commit();
 			}
-			else
-			{
+			else {
 				$db->rollback();
 			}
 			//var_dump($listofobjectthirdparties);exit;
@@ -254,8 +252,7 @@ if (empty($reshook))
 					}
 					else $nbok++;
 				}
-				else
-				{
+				else {
 					setEventMessages($objecttmp->error, $objecttmp->errors, 'errors');
 					$error++;
 					break;
@@ -268,8 +265,7 @@ if (empty($reshook))
 				else setEventMessages($langs->trans("RecordsModified", $nbok), null, 'mesgs');
 				$db->commit();
 			}
-			else
-			{
+			else {
 				$db->rollback();
 			}
 			//var_dump($listofobjectthirdparties);exit;
@@ -365,8 +361,7 @@ if (is_numeric($nbtotalofrecords) && ($limit > $nbtotalofrecords || empty($limit
 {
 	$num = $nbtotalofrecords;
 }
-else
-{
+else {
 	if ($limit) $sql .= $db->plimit($limit + 1, $offset);
 
 	$resql = $db->query($sql);

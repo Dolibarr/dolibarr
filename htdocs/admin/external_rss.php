@@ -61,8 +61,7 @@ if ($result)
         if ($reg[1] && $reg[1] > $lastexternalrss) $lastexternalrss = $reg[1];
     }
 }
-else
-{
+else {
     dol_print_error($db);
 }
 
@@ -93,8 +92,7 @@ if ($action == 'add' || GETPOST("modify"))
 	        }
             */
 		}
-		else
-		{
+		else {
 			// Ajoute boite box_external_rss dans definition des boites
 	        $sql = "INSERT INTO ".MAIN_DB_PREFIX."boxes_def (file, note)";
 			$sql .= " VALUES ('box_external_rss.php','".$db->escape(GETPOST("norss", 'int').' ('.GETPOST($external_rss_title, 'alpha')).")')";
@@ -114,8 +112,7 @@ if ($action == 'add' || GETPOST("modify"))
             header("Location: ".$_SERVER["PHP_SELF"]);
             exit;
         }
-        else
-        {
+        else {
             $db->rollback();
             dol_print_error($db);
         }
@@ -162,8 +159,7 @@ if ($_POST["delete"])
 
 			$db->commit();
 		}
-		else
-		{
+		else {
 			$db->rollback();
 			dol_print_error($db, "sql=".$sql);
 			exit;
@@ -179,8 +175,7 @@ if ($_POST["delete"])
             header("Location: external_rss.php");
             exit;
         }
-        else
-        {
+        else {
             $db->rollback();
             dol_print_error($db);
         }
@@ -293,8 +288,7 @@ if ($resql)
 	    {
 			print '<font class="ok">'.$langs->trans("Online").'</div>';
 		}
-		else
-		{
+		else {
 			print '<font class="error">'.$langs->trans("Offline");
 			$langs->load("errors");
 			if ($rssparser->error) print ' - '.$langs->trans($rssparser->error);
@@ -332,8 +326,7 @@ if ($resql)
 		$i++;
 	}
 }
-else
-{
+else {
 	dol_print_error($db);
 }
 

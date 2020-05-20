@@ -71,14 +71,12 @@ if (GETPOST('action', 'aZ09') == 'setremise')
     		header("Location: ".$backtopage);
     		exit;
 	    }
-	    else
-	    {
+	    else {
     		header("Location: remise.php?id=".$_GET["id"]);
     		exit;
 	    }
 	}
-	else
-	{
+	else {
 		setEventMessages($object->error, $object->errors, 'errors');
 	}
 }
@@ -253,15 +251,13 @@ if ($socid > 0)
 	    			$i++;
 	    		}
 			}
-			else
-			{
+			else {
 			    print '<tr><td colspan="8" class="opacitymedium">'.$langs->trans("None").'</td></tr>';
 			}
 			$db->free($resql);
 			print "</table>";
 		}
-		else
-		{
+		else {
 			dol_print_error($db);
 		}
 	}
@@ -312,15 +308,13 @@ if ($socid > 0)
 					$i++;
 				}
 			}
-			else
-			{
+			else {
 				print '<tr><td colspan="8" class="opacitymedium">'.$langs->trans("None").'</td></tr>';
 			}
 			$db->free($resql);
 			print "</table>";
 		}
-		else
-		{
+		else {
 			dol_print_error($db);
 		}
 

@@ -299,8 +299,7 @@ class FileUpload
 			if (preg_match('/error/i', $res)) return false;
 			return true;
 		}
-		else
-		{
+		else {
 			return false;
 		}
 	}
@@ -452,8 +451,7 @@ class FileUpload
 					dol_move_uploaded_file($uploaded_file, $file_path, 1, 0, 0, 0, 'userfile');
 				}
 			}
-			else
-			{
+			else {
 				// Non-multipart uploads (PUT method support)
 				file_put_contents($file_path, fopen('php://input', 'r'), $append_file ? FILE_APPEND : 0);
 			}
@@ -494,8 +492,7 @@ class FileUpload
 		{
 			$info = $this->getFileObject($file_name);
 		}
-		else
-		{
+		else {
 			$info = $this->getFileObjects();
 		}
 		header('Content-type: application/json');

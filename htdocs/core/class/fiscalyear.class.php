@@ -158,15 +158,13 @@ class Fiscalyear extends CommonObject
 				$this->db->commit();
 				return $this->id;
 			}
-			else
-			{
+			else {
 				$this->error = $this->db->lasterror();
 				$this->db->rollback();
 				return $result;
 			}
 		}
-		else
-		{
+		else {
 			$this->error = $this->db->lasterror()." sql=".$sql;
 			$this->db->rollback();
 			return -1;
@@ -207,8 +205,7 @@ class Fiscalyear extends CommonObject
 			$this->db->commit();
 			return 1;
 		}
-		else
-		{
+		else {
 			$this->error = $this->db->lasterror();
 			dol_syslog($this->error, LOG_ERR);
 			$this->db->rollback();
@@ -243,8 +240,7 @@ class Fiscalyear extends CommonObject
 
 			return 1;
 		}
-		else
-		{
+		else {
 			$this->error = $this->db->lasterror();
 			return -1;
 		}
@@ -269,8 +265,7 @@ class Fiscalyear extends CommonObject
 			$this->db->commit();
 			return 1;
 		}
-		else
-		{
+		else {
 			$this->error = $this->db->lasterror();
 			$this->db->rollback();
 			return -1;
@@ -370,8 +365,7 @@ class Fiscalyear extends CommonObject
 			}
 			$this->db->free($result);
 		}
-		else
-		{
+		else {
 			dol_print_error($this->db);
 		}
 	}

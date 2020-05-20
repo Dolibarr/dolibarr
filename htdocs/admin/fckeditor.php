@@ -127,8 +127,7 @@ if (GETPOST('save', 'alpha'))
     {
         setEventMessages($langs->trans("SetupSaved"), null, 'mesgs');
     }
-    else
-    {
+    else {
         setEventMessages($langs->trans("Error"), null, 'errors');
     }
 }
@@ -147,8 +146,7 @@ if (empty($conf->use_javascript_ajax))
 {
 	setEventMessages(array($langs->trans("NotAvailable"), $langs->trans("JavascriptDisabled")), null, 'errors');
 }
-else
-{
+else {
     print '<table class="noborder centpercent">';
     print '<tr class="liste_titre">';
     print '<td colspan="2">'.$langs->trans("ActivateFCKeditor").'</td>';
@@ -212,8 +210,7 @@ else
         $editor = new DolEditor('formtestfield', isset($conf->global->FCKEDITOR_TEST) ? $conf->global->FCKEDITOR_TEST : 'Test', '', 200, $mode, 'In', true, $uselocalbrowser, 1, 120, 8, $readonly);
         $editor->Create();
     }
-    else
-    {
+    else {
         print '<div style="border: 1px solid #888;" contenteditable="true">';
         print $conf->global->FCKEDITOR_TEST;
         print '</div>';

@@ -108,8 +108,7 @@ class mod_task_simple extends ModeleNumRefTask
 		{
 			return true;
 		}
-		else
-		{
+		else {
 			$langs->load("errors");
 			$this->error = $langs->trans('ErrorNumRefModel', $max);
 			return false;
@@ -141,8 +140,7 @@ class mod_task_simple extends ModeleNumRefTask
 			if ($obj) $max = intval($obj->max);
 			else $max = 0;
 		}
-		else
-		{
+		else {
 			dol_syslog("mod_task_simple::getNextValue", LOG_DEBUG);
 			return -1;
 		}

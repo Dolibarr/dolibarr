@@ -274,8 +274,7 @@ class ExportExcel2007new extends ModeleExports
     		{
     			$this->worksheet->write($this->row, $this->col, $outputlangs->transnoentities($alias), $formatheader);
     		}
-    		else
-    		{
+    		else {
                 $this->workbook->getActiveSheet()->SetCellValueByColumnAndRow($this->col, $this->row + 1, $outputlangs->transnoentities($alias));
     		    if (!empty($array_types[$code]) && in_array($array_types[$code], array('Date', 'Numeric', 'TextAuto')))		// Set autowidth for some types
                 {
@@ -333,8 +332,7 @@ class ExportExcel2007new extends ModeleExports
 			{
 				$newvalue = $outputlangs->transnoentities($reg[1]);
 			}
-			else
-			{
+			else {
 				$newvalue = $outputlangs->convToOutputCharset($newvalue);
 			}
 
@@ -352,8 +350,7 @@ class ExportExcel2007new extends ModeleExports
         	    $coord = $this->workbook->getActiveSheet()->getCellByColumnAndRow($this->col, $this->row + 1)->getCoordinate();
         	    $this->workbook->getActiveSheet()->getStyle($coord)->getNumberFormat()->setFormatCode('yyyy-mm-dd h:mm:ss');
 			}
-			else
-			{
+			else {
     	    	if ($typefield == 'Text' || $typefield == 'TextAuto')
     	    	{
     	    		//$this->workbook->getActiveSheet()->getCellByColumnAndRow($this->col, $this->row+1)->setValueExplicit($newvalue, PHPExcel_Cell_DataType::TYPE_STRING);
@@ -362,8 +359,7 @@ class ExportExcel2007new extends ModeleExports
     	    		$this->workbook->getActiveSheet()->getStyle($coord)->getNumberFormat()->setFormatCode('@');
     	    		$this->workbook->getActiveSheet()->getStyle($coord)->getAlignment()->setHorizontal(PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_LEFT);
     	    	}
-    	    	else
-    	    	{
+    	    	else {
     	    		$this->workbook->getActiveSheet()->SetCellValueByColumnAndRow($this->col, $this->row + 1, $newvalue);
     	    	}
 			}

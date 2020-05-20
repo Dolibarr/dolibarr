@@ -38,8 +38,7 @@ if ($action == 'builddoc' && $permissiontoadd)
     {
         $error = $langs->trans("ErrorFieldRequired", $langs->transnoentities("Model"));
     }
-    else
-    {
+    else {
    		// Reload to get all modified line records and be ready for hooks
         $ret = $object->fetch($id);
         $ret = $object->fetch_thirdparty();
@@ -90,8 +89,7 @@ if ($action == 'builddoc' && $permissiontoadd)
             setEventMessages($object->error, $object->errors, 'errors');
             $action = '';
         }
-        else
-        {
+        else {
         	if (empty($donotredirect))	// This is set when include is done by bulk action "Bill Orders"
         	{
 	            setEventMessages($langs->trans("FileGenerated"), null);

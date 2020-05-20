@@ -230,8 +230,7 @@ if ($result)
 			print img_picto($langs->trans("Active"), 'tick');
 			print '</td>';
 		}
-		else
-		{
+		else {
 			print '<td>';
 			print '<a class="reposition" href="perms.php?pid='.$obj->id.'&amp;action=add">'.img_edit_add().'</a>';
 			print '</td>';

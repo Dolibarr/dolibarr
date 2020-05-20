@@ -139,8 +139,7 @@ class Ccountry // extends CommonObject
 			$this->db->rollback();
 			return -1 * $error;
 		}
-		else
-		{
+		else {
 			$this->db->commit();
             return $this->id;
 		}
@@ -189,8 +188,7 @@ class Ccountry // extends CommonObject
                 return 0;
             }
         }
-        else
-        {
+        else {
       	    $this->error = "Error ".$this->db->lasterror();
             return -1;
         }
@@ -244,8 +242,7 @@ class Ccountry // extends CommonObject
 			$this->db->rollback();
 			return -1 * $error;
 		}
-		else
-		{
+		else {
 			$this->db->commit();
 			return 1;
 		}
@@ -284,8 +281,7 @@ class Ccountry // extends CommonObject
 			$this->db->rollback();
 			return -1 * $error;
 		}
-		else
-		{
+		else {
 			$this->db->commit();
 			return 1;
 		}

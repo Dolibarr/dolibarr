@@ -130,8 +130,7 @@ class mod_mo_standard extends ModeleNumRefMos
 			if ($obj) $max = intval($obj->max);
 			else $max = 0;
 		}
-		else
-		{
+		else {
 			dol_syslog("mod_mo_standard::getNextValue", LOG_DEBUG);
 			return -1;
 		}

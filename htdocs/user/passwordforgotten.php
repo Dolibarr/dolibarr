@@ -73,8 +73,7 @@ if ($action == 'validatenewpassword' && $username && $passwordhash)
     {
         $message = '<div class="error">'.$langs->trans("ErrorLoginDoesNotExists", $username).'</div>';
     }
-    else
-    {
+    else {
         if (dol_verifyHash($edituser->pass_temp, $passwordhash))
         {
         	// Clear session
@@ -86,8 +85,7 @@ if ($action == 'validatenewpassword' && $username && $passwordhash)
             header("Location: ".DOL_URL_ROOT.'/');
             exit;
         }
-        else
-        {
+        else {
         	$langs->load("errors");
             $message = '<div class="error">'.$langs->trans("ErrorFailedToValidatePasswordReset").'</div>';
         }
@@ -104,8 +102,7 @@ if ($action == 'buildnewpassword' && $username)
     {
         $message = '<div class="error">'.$langs->trans("ErrorBadValueForCode").'</div>';
     }
-    else
-    {
+    else {
         $edituser = new User($db);
         $result = $edituser->fetch('', $username, '', 1);
         if ($result == 0 && preg_match('/@/', $username))
@@ -118,30 +115,26 @@ if ($action == 'buildnewpassword' && $username)
             $message = '<div class="error">'.$langs->trans("ErrorLoginDoesNotExists", $username).'</div>';
             $username = '';
         }
-        else
-        {
+        else {
             if (!$edituser->email)
             {
                 $message = '<div class="error">'.$langs->trans("ErrorLoginHasNoEmail").'</div>';
             }
-            else
-            {
+            else {
                 $newpassword = $edituser->setPassword($user, '', 1);
                 if ($newpassword < 0)
                 {
                     // Failed
                     $message = '<div class="error">'.$langs->trans("ErrorFailedToChangePassword").'</div>';
                 }
-                else
-                {
+                else {
                     // Success
                     if ($edituser->send_password($user, $newpassword, 1) > 0)
                     {
                     	$message = '<div class="ok'.(empty($conf->global->MAIN_LOGIN_BACKGROUND) ? '' : ' backgroundsemitransparent').'">'.$langs->trans("PasswordChangeRequestSent", $edituser->login, dolObfuscateEmail($edituser->email)).'</div>';
                         $username = '';
                     }
-                    else
-                    {
+                    else {
                         $message .= '<div class="error">'.$edituser->error.'</div>';
                     }
                 }
@@ -166,8 +159,7 @@ if (file_exists(DOL_DOCUMENT_ROOT."/theme/".$conf->theme."/tpl/passwordforgotten
 {
     $template_dir = DOL_DOCUMENT_ROOT."/theme/".$conf->theme."/tpl/";
 }
-else
-{
+else {
     $template_dir = DOL_DOCUMENT_ROOT."/core/tpl/";
 }
 

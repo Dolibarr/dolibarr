@@ -286,8 +286,7 @@ class mod_codeclient_elephant extends ModeleThirdPartyCode
 		{
 			$result = -2;
 		}
-		else
-		{
+		else {
 			// Get Mask value
 			$mask = '';
 			if ($type == 0) $mask = empty($conf->global->COMPANY_ELEPHANT_MASK_CUSTOMER) ? '' : $conf->global->COMPANY_ELEPHANT_MASK_CUSTOMER;
@@ -336,13 +335,11 @@ class mod_codeclient_elephant extends ModeleThirdPartyCode
 			{
 				return 0;
 			}
-			else
-			{
+			else {
 				return -1;
 			}
 		}
-		else
-		{
+		else {
 			return -2;
 		}
 	}

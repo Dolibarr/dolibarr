@@ -98,8 +98,7 @@ class modAgenda extends DolibarrModules
 		        $this->const[] = array('MAIN_AGENDA_ACTIONAUTO_'.$obj->code, "chaine", "1", '', 0, 'current');
 		    }
 		}
-		else
-		{
+		else {
 		    dol_print_error($this->db->lasterror());
 		}
 

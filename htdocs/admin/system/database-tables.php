@@ -83,8 +83,7 @@ if (!$base)
 {
 	print $langs->trans("FeatureNotAvailableWithThisDatabaseDriver");
 }
-else
-{
+else {
 	if ($base == 1)
 	{
         print '<div class="div-table-responsive-no-min">';
@@ -121,8 +120,7 @@ else
 				{
 				    print '<td><a class="reposition" href="database-tables.php?action=convert&amp;table='.$obj->Name.'">'.$langs->trans("Convert").' InnoDB</a></td>';
 				}
-				else
-				{
+				else {
 					print '<td>&nbsp;</td>';
 				}
 				print '<td>'.$obj->Row_format.'</td>';

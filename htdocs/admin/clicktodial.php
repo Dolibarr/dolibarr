@@ -47,8 +47,7 @@ if ($action == 'setvalue' && $user->admin)
     {
 		setEventMessages($langs->trans("SetupSaved"), null, 'mesgs');
     }
-    else
-    {
+    else {
         setEventMessages($langs->trans("Error"), null, 'errors');
     }
 }
@@ -134,8 +133,7 @@ if (!empty($conf->global->CLICKTODIAL_URL))
 	{
 		print $langs->trans("LinkToTest", $user->login).': '.dol_print_phone($phonefortest, '', 0, 0, 'AC_TEL');
 	}
-	else
-	{
+	else {
 		$langs->load("errors");
 		print '<div class="warning">'.$langs->trans("WarningClickToDialUserSetupNotComplete").'</div>';
 	}

@@ -335,8 +335,7 @@ class Conf
 							// For backward compatibility
 							$this->$module->$dirname = $rootfordata."/".$name;
 						}
-						else
-						{
+						else {
 							// For multicompany sharings
 							$this->$module->$multidirname = array($this->entity => $rootfortemp."/".$name."/temp");
 

@@ -136,8 +136,7 @@ if (empty($conf->global->MAIN_SUBMODULE_LIVRAISON))
 {
 	print '<a href="confexped.php?action=activate_delivery">'.img_picto($langs->trans("Disabled"), 'switch_off').'</a>';
 }
-else
-{
+else {
 	print '<a href="confexped.php?action=disable_delivery">'.img_picto($langs->trans("Enabled"), 'switch_on').'</a>';
 }
 

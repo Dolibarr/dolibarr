@@ -145,8 +145,7 @@ class mod_codeclient_monkey extends ModeleThirdPartyCode
 			if ($obj) $max = intval($obj->max);
 			else $max = 0;
 		}
-		else
-		{
+		else {
 			return -1;
 		}
 
@@ -189,8 +188,7 @@ class mod_codeclient_monkey extends ModeleThirdPartyCode
 		{
 			$result = -2;
 		}
-		else
-		{
+		else {
 			if ($this->verif_syntax($code) >= 0)
 			{
 				$is_dispo = $this->verif_dispo($db, $code, $soc, $type);
@@ -198,19 +196,16 @@ class mod_codeclient_monkey extends ModeleThirdPartyCode
 				{
 					$result = -3;
 				}
-				else
-				{
+				else {
 					$result = 0;
 				}
 			}
-			else
-			{
+			else {
 				if (dol_strlen($code) == 0)
 				{
 					$result = -2;
 				}
-				else
-				{
+				else {
 					$result = -1;
 				}
 			}
@@ -250,13 +245,11 @@ class mod_codeclient_monkey extends ModeleThirdPartyCode
 			{
 				return 0;
 			}
-			else
-			{
+			else {
 				return -1;
 			}
 		}
-		else
-		{
+		else {
 			return -2;
 		}
 	}
@@ -278,8 +271,7 @@ class mod_codeclient_monkey extends ModeleThirdPartyCode
 		{
 			$res = -1;
 		}
-		else
-		{
+		else {
 			$res = 0;
 		}
 		return $res;

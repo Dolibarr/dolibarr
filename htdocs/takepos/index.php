@@ -135,8 +135,7 @@ foreach ($categories as $key => $categorycursor)
     {
         $maincategories[$key] = $categorycursor;
     }
-    else
-    {
+    else {
         $subcategories[$key] = $categorycursor;
     }
 }
@@ -858,8 +857,7 @@ if (empty($conf->global->TAKEPOS_BAR_RESTAURANT))
 {
     $menus[$r++] = array('title'=>'<span class="fa fa-layer-group paddingrightonly"></span><div class="trunc">'.$langs->trans("New").'</div>', 'action'=>'New();');
 }
-else
-{
+else {
     // BAR RESTAURANT specific menu
     $menus[$r++] = array('title'=>'<span class="fa fa-layer-group paddingrightonly"></span><div class="trunc">'.$langs->trans("Place").'</div>', 'action'=>'Floors();');
 }
@@ -988,8 +986,7 @@ if (!empty($conf->global->TAKEPOS_HIDE_HEAD_BAR)) {
 				    //echo '<img class="imgwrapper" src="img/arrow-next-top.png" height="100%" id="catimg'.$count.'" />';
 				    echo '<span class="fa fa-chevron-right centerinmiddle" style="font-size: 5em;"></span>';
 				}
-				else
-				{
+				else {
 				    echo '<img class="imgwrapper" height="100%" id="catimg'.$count.'" />';
 				}
 				?>
@@ -1023,8 +1020,7 @@ if (!empty($conf->global->TAKEPOS_HIDE_HEAD_BAR)) {
     				    //echo '<img class="imgwrapper" src="img/arrow-next-top.png" height="100%" id="proimg'.$count.'" />';
     					print '<span class="fa fa-chevron-right centerinmiddle" style="font-size: 5em;"></span>';
     				}
-    				else
-    				{
+    				else {
     					print '<div class="" id="proprice'.$count.'"></div>';
     					print '<img class="imgwrapper" height="100%" title="" id="proimg'.$count.'">';
     				}

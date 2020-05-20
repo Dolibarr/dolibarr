@@ -82,8 +82,7 @@ function ConvertToXmlAttribute($value)
 	{
 		$os = PHP_OS;
 	}
-	else
-	{
+	else {
 		$os = php_uname();
 	}
 
@@ -91,8 +90,7 @@ function ConvertToXmlAttribute($value)
 	{
 		return (utf8_encode(htmlspecialchars($value)));
 	}
-	else
-	{
+	else {
 		return (htmlspecialchars($value));
 	}
 }

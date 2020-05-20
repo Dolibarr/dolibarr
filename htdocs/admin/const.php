@@ -86,8 +86,7 @@ if ($action == 'add' || (GETPOST('add') && $action != 'update'))
 			$constvalue = "";
 			$constnote = "";
 		}
-		else
-		{
+		else {
 			dol_print_error($db);
 		}
 	}
@@ -105,8 +104,7 @@ if (!empty($consts) && $action == 'update')
 			{
 				$nbmodified++;
 			}
-			else
-			{
+			else {
 				dol_print_error($db);
 			}
 		}
@@ -127,8 +125,7 @@ if (!empty($consts) && $action == 'delete')
 			{
 				$nbdeleted++;
 			}
-			else
-			{
+			else {
 				dol_print_error($db);
 			}
 		}
@@ -144,8 +141,7 @@ if ($action == 'delete')
 	{
 		setEventMessages($langs->trans("RecordDeleted"), null, 'mesgs');
 	}
-	else
-	{
+	else {
 		dol_print_error($db);
 	}
 }
@@ -231,8 +227,7 @@ if (!empty($conf->multicompany->enabled) && !$user->entity)
 	print '</td>';
 	print '<td class="center">';
 }
-else
-{
+else {
 	print '<td class="center">';
 	print '<input type="hidden" name="entity" value="'.$conf->entity.'">';
 }
@@ -298,8 +293,7 @@ if ($result)
 			print '</td>';
 			print '<td class="center">';
 		}
-		else
-		{
+		else {
 			print '<td class="center">';
 			print '<input type="hidden" name="const['.$i.'][entity]" value="'.$obj->entity.'">';
 		}
@@ -308,8 +302,7 @@ if ($result)
 		{
 			print '<input type="checkbox" class="flat checkboxfordelete" id="check_'.$i.'" name="const['.$i.'][check]" value="1">';
 		}
-		else
-		{
+		else {
 			print '<a href="'.$_SERVER['PHP_SELF'].'?rowid='.$obj->rowid.'&entity='.$obj->entity.'&action=delete'.((empty($user->entity) && $debug) ? '&debug=1' : '').'">'.img_delete().'</a>';
 		}
 

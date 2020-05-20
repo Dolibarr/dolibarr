@@ -139,8 +139,7 @@ class mod_contract_serpis extends ModelNumRefContracts
 			if ($obj) $max = intval($obj->max);
 			else $max = 0;
 		}
-		else
-		{
+		else {
 			dol_syslog("mod_contract_serpis::getNextValue", LOG_DEBUG);
 			return -1;
 		}

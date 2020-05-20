@@ -80,8 +80,7 @@ class mailing_thirdparties extends MailingTargets
 		    $sql .= " AND s.entity IN (".getEntity('societe').")";
 		    $sql .= " AND s.email NOT IN (SELECT email FROM ".MAIN_DB_PREFIX."mailing_cibles WHERE fk_mailing=".$mailing_id.")";
 		}
-		else
-		{
+		else {
             $addFilter = "";
             if (isset($_POST["filter_client"]) && $_POST["filter_client"] <> '-1')
             {
@@ -103,8 +102,7 @@ class mailing_thirdparties extends MailingTargets
                 {
                     $addDescription .= $langs->trans('ProspectCustomer');
                 }
-                else
-                {
+                else {
                     $addDescription .= "Unknown status ".$_POST["filter_client"];
                 }
             }
@@ -120,8 +118,7 @@ class mailing_thirdparties extends MailingTargets
                     $addFilter .= " AND s.status=1";
                     $addDescription .= $langs->trans("Enabled");
                 }
-                else
-                {
+                else {
                     $addFilter .= " AND s.status=0";
                     $addDescription .= $langs->trans("Disabled");
                 }
@@ -187,8 +184,7 @@ class mailing_thirdparties extends MailingTargets
 				$i++;
 			}
 		}
-		else
-		{
+		else {
 			dol_syslog($this->db->error());
 			$this->error = $this->db->error();
 			return -1;
@@ -286,8 +282,7 @@ class mailing_thirdparties extends MailingTargets
 				$i++;
 			}
 		}
-		else
-		{
+		else {
 			dol_print_error($this->db);
 		}
 

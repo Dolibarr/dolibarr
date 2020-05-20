@@ -134,8 +134,7 @@ function barcode_encode($code, $encoding)
         dol_syslog("barcode.lib.php::barcode_encode Use genbarcode ".$genbarcode_loc." code=".$code." encoding=".$encoding);
         $bars = barcode_encode_genbarcode($code, $encoding);
     }
-    else
-    {
+    else {
         print "barcode_encode needs an external programm for encodings other then EAN/ISBN (code=".$code.", encoding=".$encoding.")<BR>\n";
         print "<UL>\n";
         print "<LI>download gnu-barcode from <A href=\"https://www.gnu.org/software/barcode/\">www.gnu.org/software/barcode/</A>\n";
@@ -264,8 +263,7 @@ function barcode_encode_genbarcode($code, $encoding)
         $encoding = fgets($fp, 1024);
         pclose($fp);
     }
-    else
-    {
+    else {
         dol_syslog("barcode.lib.php::barcode_encode_genbarcode failed to run popen ".$fullcommandclear, LOG_ERR);
         return false;
     }
@@ -406,8 +404,7 @@ function barcode_outimage($text, $bars, $scale = 1, $mode = "png", $total_y = 0,
     {
         imagepng($im, $filebarcode);
     }
-    else
-    {
+    else {
         header("Content-Type: image/png; name=\"barcode.png\"");
         imagepng($im);
     }

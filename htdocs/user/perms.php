@@ -209,8 +209,7 @@ if ($result)
 	}
 	$db->free($result);
 }
-else
-{
+else {
 	dol_print_error($db);
 }
 
@@ -240,8 +239,7 @@ if ($result)
 	}
 	$db->free($result);
 }
-else
-{
+else {
 	dol_print_error($db);
 }
 
@@ -411,8 +409,7 @@ if ($result)
 	        	print img_picto($langs->trans("Active"), 'tick');
 	        	print '</td>';
 	        }
-	        else
-	        {
+	        else {
 	        	// Do not own permission
 	        	if ($caneditperms)
 	        	{
@@ -421,8 +418,7 @@ if ($result)
 	        	print '<td>&nbsp</td>';
 	        }
         }
-        else
-        {
+        else {
         	// Do not own permission
         	if ($caneditperms)
         	{

@@ -254,8 +254,7 @@ if (isset($conf->file->main_authentication) && preg_match('/openid/', $conf->fil
 
 	$url = $conf->global->MAIN_AUTHENTICATION_OPENID_URL;
 	if (!empty($url)) print '<a class="alogin" href="'.$url.'">'.$langs->trans("LoginUsingOpenID").'</a>';
-	else
-	{
+	else {
 		$langs->load("errors");
 		print '<font class="warning">'.$langs->trans("ErrorOpenIDSetupNotComplete", 'MAIN_AUTHENTICATION_OPENID_URL').'</font>';
 	}

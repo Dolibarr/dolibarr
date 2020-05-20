@@ -698,8 +698,7 @@ if (GETPOST('actionadd') || GETPOST('actionmodify'))
     	{
     		$_POST["country"] = '';
     	}
-    	else
-    	{
+    	else {
         	$ok = 0;
         	setEventMessages($langs->transnoentities("ErrorFieldRequired", $langs->transnoentities("Country")), null, 'errors');
     	}
@@ -792,8 +791,7 @@ if (GETPOST('actionadd') || GETPOST('actionmodify'))
             setEventMessages($langs->transnoentities("RecordSaved"), null, 'mesgs');
         	$_POST = array('id'=>$id); // Clean $_POST array, we keep only
         }
-        else
-        {
+        else {
             if ($db->errno() == 'DB_ERROR_RECORD_ALREADY_EXISTS') {
                 setEventMessages($langs->transnoentities("ErrorRecordAlreadyExists"), null, 'errors');
             }
@@ -883,8 +881,7 @@ if ($action == 'confirm_delete' && $confirm == 'yes')       // delete
         {
             setEventMessages($langs->transnoentities("ErrorRecordIsUsedByChild"), null, 'errors');
         }
-        else
-        {
+        else {
             dol_print_error($db);
         }
     }
@@ -1302,8 +1299,7 @@ if ($id)
                     print '</td>';
                     $filterfound++;
                 }
-                else
-                {
+                else {
                     print '<td class="liste_titre">';
                     print '</td>';
                 }
@@ -1439,8 +1435,7 @@ if ($id)
                     print '<input type="submit" class="button" name="actioncancel" value="'.$langs->trans("Cancel").'">';
                     print '</td>';
                 }
-                else
-                {
+                else {
 	              	$tmpaction = 'view';
                     $parameters = array('fieldlist'=>$fieldlist, 'tabname'=>$tabname[$id]);
                     $reshook = $hookmanager->executeHooks('viewDictionaryFieldlist', $parameters, $obj, $tmpaction); // Note that $action and $object may have been modified by some hooks
@@ -1479,8 +1474,7 @@ if ($id)
                                 {
                                     $valuetoshow = '-';
                                 }
-                                else
-                                {
+                                else {
                                     $key = $langs->trans("Country".strtoupper($obj->country_code));
                                     $valuetoshow = ($key != "Country".strtoupper($obj->country_code) ? $obj->country_code." - ".$key : $obj->country);
                                 }
@@ -1605,15 +1599,13 @@ if ($id)
 							elseif ($fieldlist[$field] == 'localtax1_type') {
                                 if ($obj->localtax1 != 0)
 							        $valuetoshow = $localtax_typeList[$valuetoshow];
-							    else
-							        $valuetoshow = '';
+							    else $valuetoshow = '';
 							    $class = "center";
 							}
 							elseif ($fieldlist[$field] == 'localtax2_type') {
 							    if ($obj->localtax2 != 0)
 							        $valuetoshow = $localtax_typeList[$valuetoshow];
-							    else
-							        $valuetoshow = '';
+							    else $valuetoshow = '';
 							    $class = "center";
 							}
 							elseif ($fieldlist[$field] == 'taux') {
@@ -1709,8 +1701,7 @@ if ($id)
                     // Active
                     print '<td class="nowrap center">';
                     if ($canbedisabled) print '<a class="reposition" href="'.$url.'action='.$acts[$obj->active].'">'.$actl[$obj->active].'</a>';
-                    else
-                 	{
+                    else {
                  		if (in_array($obj->code, array('AC_OTH', 'AC_OTH_AUTO'))) print $langs->trans("AlwaysActive");
                  		elseif (isset($obj->type) && in_array($obj->type, array('systemauto')) && empty($obj->active)) print $langs->trans("Deprecated");
                   		elseif (isset($obj->type) && in_array($obj->type, array('system')) && !empty($obj->active) && $obj->code != 'AC_OTH') print $langs->trans("UsedOnlyWithTypeOption");
@@ -1747,8 +1738,7 @@ if ($id)
 
     print '</form>';
 }
-else
-{
+else {
     /*
      * Show list of dictionary to show
      */
@@ -1782,8 +1772,7 @@ else
             {
                 print '<a href="'.$_SERVER["PHP_SELF"].'?id='.$i.'">'.$langs->trans($tablib[$i]).'</a>';
             }
-            else
-            {
+            else {
                 print $langs->trans($tablib[$i]);
             }
             print '</td>';
@@ -1796,8 +1785,7 @@ else
             print '<td>'.$tabname[$i].'</td></tr>';
             $lastlineisempty = false;
         }
-        else
-        {
+        else {
             if (!$lastlineisempty)
             {
                 $showemptyline = 1;
@@ -2003,8 +1991,7 @@ function fieldList($fieldlist, $obj = '', $tabname = '', $context = '')
 				$accountancy_account = (!empty($obj->$fieldname) ? $obj->$fieldname : 0);
 				print $formaccounting->select_account($accountancy_account, '.'.$fieldlist[$field], 1, '', 1, 1, 'maxwidth200 maxwidthonsmartphone');
 			}
-			else
-			{
+			else {
 			    $fieldname = $fieldlist[$field];
 			    print '<input type="text" size="10" class="flat" value="'.(isset($obj->$fieldname) ? $obj->$fieldname : '').'" name="'.$fieldlist[$field].'">';
 			}
@@ -2028,8 +2015,7 @@ function fieldList($fieldlist, $obj = '', $tabname = '', $context = '')
 			print $form->selectExpenseRanges($obj->fk_range);
 			print '</td>';
 		}
-		else
-		{
+		else {
             $fieldValue = isset($obj->{$fieldlist[$field]}) ? $obj->{$fieldlist[$field]}:'';
 
 			if ($fieldlist[$field] == 'sortorder')

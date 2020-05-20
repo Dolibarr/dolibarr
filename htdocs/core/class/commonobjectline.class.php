@@ -83,8 +83,7 @@ abstract class CommonObjectLine extends CommonObject
 			$this->db->free($resql);
 			return $label;
 		}
-		else
-		{
+		else {
 			$this->error = $this->db->error().' sql='.$sql;
 			dol_syslog(get_class($this)."::getLabelOfUnit Error ".$this->error, LOG_ERR);
 			return -1;

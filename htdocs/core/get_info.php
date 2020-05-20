@@ -90,8 +90,7 @@ if (empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER))
 		$logouttext .= '<span class="fa fa-sign-out atoplogin"></span>';
 		$logouttext .= '</a>';
 	}
-	else
-	{
+	else {
 		$logouthtmltext .= $langs->trans("NoLogoutProcessWithAuthMode", $_SESSION["dol_authmode"]);
 		$logouttext .= img_picto($langs->trans('Logout').":".$langs->trans('Logout'), 'logout_top.png', 'class="login"', 0, 0, 1);
 	}
@@ -118,7 +117,7 @@ $result = $hookmanager->executeHooks('printTopRightMenu', $parameters); // Note 
 if (is_numeric($result))
 {
 	if (empty($result)) $toprightmenu .= $hookmanager->resPrint; // add
-	else  $toprightmenu = $hookmanager->resPrint; // replace
+	else $toprightmenu = $hookmanager->resPrint; // replace
 }
 else $toprightmenu .= $result; // For backward compatibility
 

@@ -105,8 +105,7 @@ foreach ($modulesdir as $dir)
 						continue;
 		        	}
 
-		            try
-		            {
+		            try {
 		                $res = include_once $dir.$file;
 		                if (class_exists($modName))
 						{
@@ -141,8 +140,7 @@ foreach ($modulesdir as $dir)
 		    					        {
 		    					            $arrayofnatures['external_'.$publisher] = $langs->trans("External").' - '.$publisher;
 		    					        }
-		    					        else
-		    					        {
+		    					        else {
 		    					            $arrayofnatures['external_'] = $langs->trans("External").' - '.$langs->trans("UnknownPublishers");
 		    					        }
 		    					    }
@@ -188,8 +186,7 @@ foreach ($modulesdir as $dir)
 		            		     dol_syslog("Failed to load ".$dir.$file." ".$e->getMessage(), LOG_ERR);
 		            		}
 						}
-		            	else
-						{
+		            	else {
 							print "Warning bad descriptor file : ".$dir.$file." (Class ".$modName." not found into file)<br>";
 						}
 					}
@@ -202,8 +199,7 @@ foreach ($modulesdir as $dir)
 		}
 		closedir($handle);
 	}
-	else
-	{
+	else {
 		dol_syslog("htdocs/admin/modulehelp.php: Failed to open directory ".$dir.". See permission and open_basedir option.", LOG_WARNING);
 	}
 }
@@ -332,8 +328,7 @@ if ($mode == 'desc')
         $text .= $textexternal;
         $text .= '<br>';
     }
-    else
-    {
+    else {
         $text .= '<br><span class="opacitymedium">'.$langs->trans("Origin").':</span> '.$langs->trans("Core").'<br>';
     }
 
@@ -450,8 +445,7 @@ if ($mode == 'feature')
     {
     	$yesno = 'Yes';
     }
-    else
-    {
+    else {
     	$yesno = 'No';
     }
     require_once DOL_DOCUMENT_ROOT.'/core/class/interfaces.class.php';

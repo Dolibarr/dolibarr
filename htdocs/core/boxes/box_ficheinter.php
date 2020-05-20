@@ -152,8 +152,7 @@ class box_ficheinter extends ModeleBoxes
 
 				$this->db->free($resql);
 			}
-			else
-			{
+			else {
 				$this->info_box_contents[0][0] = array(
                     'td' => '',
                     'maxlength'=>500,
@@ -161,8 +160,7 @@ class box_ficheinter extends ModeleBoxes
                 );
 			}
 		}
-		else
-		{
+		else {
 			$this->info_box_contents[0][0] = array(
 			    'td' => 'class="nohover opacitymedium left"',
 			    'text' => $langs->trans("ReadPermissionNotAllowed")

@@ -55,8 +55,7 @@ if (GETPOST('search_actioncode', 'array'))
     $actioncode = GETPOST('search_actioncode', 'array', 3);
     if (!count($actioncode)) $actioncode = '0';
 }
-else
-{
+else {
     $actioncode = GETPOST("search_actioncode", "alpha", 3) ?GETPOST("search_actioncode", "alpha", 3) : (GETPOST("search_actioncode") == '0' ? '0' : (empty($conf->global->AGENDA_DEFAULT_FILTER_TYPE) ? '' : $conf->global->AGENDA_DEFAULT_FILTER_TYPE));
 }
 if ($actioncode == '' && empty($actioncodearray)) $actioncode = (empty($conf->global->AGENDA_DEFAULT_FILTER_TYPE) ? '' : $conf->global->AGENDA_DEFAULT_FILTER_TYPE);
@@ -279,24 +278,20 @@ if (!empty($actioncode))
     {
         if ($actioncode == 'AC_NON_AUTO') $sql .= " AND c.type != 'systemauto'";
         elseif ($actioncode == 'AC_ALL_AUTO') $sql .= " AND c.type = 'systemauto'";
-        else
-        {
+        else {
             if ($actioncode == 'AC_OTH') $sql .= " AND c.type != 'systemauto'";
             if ($actioncode == 'AC_OTH_AUTO') $sql .= " AND c.type = 'systemauto'";
         }
     }
-    else
-    {
+    else {
         if ($actioncode == 'AC_NON_AUTO') $sql .= " AND c.type != 'systemauto'";
         elseif ($actioncode == 'AC_ALL_AUTO') $sql .= " AND c.type = 'systemauto'";
-        else
-        {
+        else {
             if (is_array($actioncode))
             {
                 $sql .= " AND c.code IN ('".implode("','", $actioncode)."')";
             }
-            else
-            {
+            else {
                 $sql .= " AND c.code IN ('".implode("','", explode(',', $actioncode))."')";
             }
         }
@@ -699,8 +694,7 @@ if ($resql)
 				$contactstatic->country_id = $obj->country_id;
 				print $contactstatic->getNomUrl(1, '', 0);
 			}
-			else
-			{
+			else {
 				print "&nbsp;";
 			}
 			print '</td>';
@@ -751,8 +745,7 @@ if ($resql)
 
 	$db->free($resql);
 }
-else
-{
+else {
 	dol_print_error($db);
 }
 

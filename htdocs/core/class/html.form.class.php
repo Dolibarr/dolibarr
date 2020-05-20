@@ -125,8 +125,7 @@ class Form
 				if ($fieldrequired) $ret .= '</span>';
 				$ret .= '</div>'."\n";
 			}
-			else
-			{
+			else {
 				if ($fieldrequired) $ret .= '<span class="fieldrequired">';
 				if ($help) {
 					$ret .= $this->textwithpicto($langs->trans($text), $help);
@@ -136,8 +135,7 @@ class Form
 				if ($fieldrequired) $ret .= '</span>';
 			}
 		}
-		else
-		{
+		else {
 			if (empty($notabletag) && GETPOST('action', 'aZ09') != 'edit'.$htmlname && $perm) $ret .= '<table class="nobordernopadding centpercent"><tr><td class="nowrap">';
 			if ($fieldrequired) $ret .= '<span class="fieldrequired">';
 			if ($help) {
@@ -191,8 +189,7 @@ class Form
 		{
 			$ret .= $this->editInPlace($object, $value, $htmlname, $perm, $typeofdata, $editvalue, $extObject, $custommsg);
 		}
-		else
-		{
+		else {
 			if (GETPOST('action', 'aZ09') == 'edit'.$htmlname)
 			{
 				$ret .= "\n";
@@ -271,8 +268,7 @@ class Form
 				if (empty($notabletag)) $ret .= '</tr></table>'."\n";
 				$ret .= '</form>'."\n";
 			}
-			else
-			{
+			else {
 				if (preg_match('/^(email)/', $typeofdata))              $ret .= dol_print_email($value, 0, 0, 0, 0, 1);
 				elseif (preg_match('/^(amount|numeric)/', $typeofdata)) $ret .= ($value != '' ? price($value, '', $langs, 0, -1, -1, $conf->currency) : '');
 				elseif (preg_match('/^text/', $typeofdata) || preg_match('/^note/', $typeofdata))  $ret .= dol_htmlentitiesbr($value);
@@ -475,8 +471,7 @@ class Form
 				{
 					$out .= '<input id="ckeditor_toolbar" value="'.$toolbar.'" type="hidden"/>'."\n";
 				}
-				else
-				{
+				else {
 					$inputType = 'textarea';
 				}
 			}
@@ -496,8 +491,7 @@ class Form
 						if (!empty($custommsg['error']))
 							$out .= '<input id="errormsg_'.$htmlname.'" value="'.$custommsg['error'].'" type="hidden"/>'."\n";
 				}
-				else
-					$out .= '<input id="successmsg_'.$htmlname.'" value="'.$custommsg.'" type="hidden"/>'."\n";
+				else $out .= '<input id="successmsg_'.$htmlname.'" value="'.$custommsg.'" type="hidden"/>'."\n";
 			}
 			if ($inputType == 'textarea') {
 				$out .= '<input id="textarea_'.$htmlname.'_rows" value="'.$rows.'" type="hidden"/>'."\n";
@@ -506,8 +500,7 @@ class Form
 			$out .= '<span id="viewval_'.$htmlname.'" class="viewval_'.$inputType.($button_only ? ' inactive' : ' active').'">'.$value.'</span>'."\n";
 			$out .= '<span id="editval_'.$htmlname.'" class="editval_'.$inputType.($button_only ? ' inactive' : ' active').' hideobject">'.(!empty($editvalue) ? $editvalue : $value).'</span>'."\n";
 		}
-		else
-		{
+		else {
 			$out = $value;
 		}
 
@@ -556,8 +549,7 @@ class Form
 		{
 			$htmltext = str_replace('"', '&quot;', $htmltext);
 		}
-		else
-		{
+		else {
 			$classfortooltip = 'classfortooltiponclick';
 			$textfordialog .= '<div style="display: none;" id="idfortooltiponclick_'.$tooltiptrigger.'" class="classfortooltiponclicktext">'.$htmltext.'</div>';
 		}
@@ -629,8 +621,7 @@ class Form
 		if (empty($conf->use_javascript_ajax))
 		{
 			if ($type == 'info' || $type == 'infoclickable' || $type == 'help' || $type == 'helpclickable')	return $text;
-			else
-			{
+			else {
 				$alt = $htmltext;
 				$htmltext = '';
 			}
@@ -857,8 +848,7 @@ class Form
 						$foundselected = true;
 						$out .= '<option value="'.($usecodeaskey ? ($usecodeaskey == 'code2' ? $row['code_iso'] : $row['code_iso3']) : $row['rowid']).'" selected>';
 					}
-					else
-					{
+					else {
 						$out .= '<option value="'.($usecodeaskey ? ($usecodeaskey == 'code2' ? $row['code_iso'] : $row['code_iso3']) : $row['rowid']).'">';
 					}
 					if ($row['label']) $out .= dol_trunc($row['label'], $maxlength, 'middle');
@@ -869,8 +859,7 @@ class Form
 			}
 			$out .= '</select>';
 		}
-		else
-		{
+		else {
 			dol_print_error($this->db);
 		}
 
@@ -948,8 +937,7 @@ class Form
 					{
 						$out .= '<option value="'.$row['rowid'].'" selected>';
 					}
-					else
-					{
+					else {
 						$out .= '<option value="'.$row['rowid'].'">';
 					}
 
@@ -967,8 +955,7 @@ class Form
 				$out .= '<input type="submit" class="button valignmiddle" value="'.$langs->trans("Modify").'"></form>';
 			}
 		}
-		else
-		{
+		else {
 			dol_print_error($this->db);
 		}
 
@@ -1074,8 +1061,7 @@ class Form
 
 			return $num;
 		}
-		else
-		{
+		else {
 			dol_print_error($this->db);
 			return -1;
 		}
@@ -1195,8 +1181,7 @@ class Form
 				$out .= img_picto($langs->trans("Search"), 'search');
 			}
 		}
-		else
-		{
+		else {
 			// Immediate load of all database
 			$out .= $this->select_thirdparty_list($selected, $htmlname, $filter, $showempty, $showtype, $forcecombo, $events, '', 0, $limit, $morecss, $moreparam, $multiple);
 		}
@@ -1327,8 +1312,7 @@ class Form
 						}
 						$label .= ' '.$obj->name;
 					}
-					else
-					{
+					else {
 						$label = $obj->name;
 					}
 
@@ -1358,13 +1342,11 @@ class Form
 						{
 							$out .= '<option value="'.$obj->rowid.'" selected>'.$label.'</option>';
 						}
-						else
-						{
+						else {
 							$out .= '<option value="'.$obj->rowid.'">'.$label.'</option>';
 						}
 					}
-					else
-					{
+					else {
 						array_push($outarray, array('key'=>$obj->rowid, 'value'=>$label, 'label'=>$label));
 					}
 
@@ -1374,8 +1356,7 @@ class Form
 			}
 			$out .= '</select>'."\n";
 		}
-		else
-		{
+		else {
 			dol_print_error($this->db);
 		}
 
@@ -1456,8 +1437,7 @@ class Form
 			print '</select>';
 			return $qualifiedlines;
 		}
-		else
-		{
+		else {
 			dol_print_error($this->db);
 			return -1;
 		}
@@ -1588,8 +1568,7 @@ class Form
 								if (($showsoc > 0) && $obj->company) $out .= ' - ('.$obj->company.')';
 								$out .= '</option>';
 							}
-							else
-							{
+							else {
 								$out .= '<option value="'.$obj->rowid.'"';
 								if ($disabled) $out .= ' disabled';
 								$out .= '>';
@@ -1599,8 +1578,7 @@ class Form
 								$out .= '</option>';
 							}
 						}
-						else
-						{
+						else {
 							if (in_array($obj->rowid, $selected))
 							{
 								$out .= $contactstatic->getFullName($langs);
@@ -1612,8 +1590,7 @@ class Form
 					$i++;
 				}
 			}
-			else
-			{
+			else {
 				$out .= '<option value="-1"'.(($showempty == 2 || $multiple) ? '' : ' selected').' disabled>';
 				$out .= ($socid != -1) ? ($langs->trans($socid ? "NoContactDefinedForThirdParty" : "NoContactDefined")) : $langs->trans('SelectAThirdPartyFirst');
 				$out .= '</option>';
@@ -1638,8 +1615,7 @@ class Form
 			$this->num = $num;
 			return $out;
 		}
-		else
-		{
+		else {
 			dol_print_error($this->db);
 			return -1;
 		}
@@ -1736,16 +1712,14 @@ class Form
 			if ($force_entity) $sql .= " WHERE u.entity IN (0,".$force_entity.")";
 			else $sql .= " WHERE u.entity IS NOT NULL";
 		}
-		else
-		{
+		else {
 			if (!empty($conf->global->MULTICOMPANY_TRANSVERSE_MODE))
 			{
 				$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."usergroup_user as ug";
 				$sql .= " ON ug.fk_user = u.rowid";
 				$sql .= " WHERE ug.entity = ".$conf->entity;
 			}
-			else
-			{
+			else {
 				$sql .= " WHERE u.entity IN (0,".$conf->entity.")";
 			}
 		}
@@ -1763,8 +1737,7 @@ class Form
 		{
 			$sql .= " ORDER BY u.firstname ASC";
 		}
-		else
-		{
+		else {
 			$sql .= " ORDER BY u.lastname ASC";
 		}
 
@@ -1804,8 +1777,7 @@ class Form
 						if ($disableline) $out .= ' disabled';
 						$out .= ' selected>';
 					}
-					else
-					{
+					else {
 						$out .= '<option value="'.$obj->rowid.'"';
 						if ($disableline) $out .= ' disabled';
 						$out .= '>';
@@ -1846,8 +1818,7 @@ class Form
 							$out .= ($moreinfo ? ' - ' : ' (').$langs->trans("AllEntities");
 							$moreinfo++;
 						}
-						else
-						{
+						else {
 							$out .= ($moreinfo ? ' - ' : ' (').($obj->label ? $obj->label : $langs->trans("EntityNameNotDefined"));
 							$moreinfo++;
 						}
@@ -1863,15 +1834,13 @@ class Form
 					$i++;
 				}
 			}
-			else
-			{
+			else {
 				$out .= '<select class="flat" id="'.$htmlname.'" name="'.$htmlname.'" disabled>';
 				$out .= '<option value="">'.$langs->trans("None").'</option>';
 			}
 			$out .= '</select>';
 		}
-		else
-		{
+		else {
 			dol_print_error($this->db);
 		}
 
@@ -1917,8 +1886,7 @@ class Form
 		{
 			$out .= '';
 		}
-		else
-		{
+		else {
 			$out .= '<input type="hidden" class="removedassignedhidden" name="removedassigned" value="">';
 			$out .= '<script type="text/javascript" language="javascript">jQuery(document).ready(function () {    jQuery(".removedassigned").click(function() {        jQuery(".removedassignedhidden").val(jQuery(this).val());    });})</script>';
 			$out .= $this->select_dolusers('', $htmlname, $show_empty, $exclude, $disabled, $include, $enableonly, $force_entity, $maxlength, $showstatus, $morefilter);
@@ -2129,8 +2097,7 @@ class Form
 				print img_picto($langs->trans("Search"), 'search');
 			}
 		}
-		else
-		{
+		else {
 			print $this->select_produits_list($selected, $htmlname, $filtertype, $limit, $price_level, '', $status, $finished, 0, $socid, $showempty, $forcecombo, $morecss, $hidepriceinlabel, $warehouseStatus);
 		}
 	}
@@ -2195,8 +2162,7 @@ class Form
 		{
 		    $selectFieldsGrouped = ", sum(".$db->ifsql("e.statut IS NULL", "0", "ps.reel").") as stock"; // e.statut is null if there is no record in stock
 		}
-		else
-		{
+		else {
 		    $selectFieldsGrouped = ", ".$db->ifsql("p.stock IS NULL", 0, "p.stock")." AS stock";
 		}
 
@@ -2343,8 +2309,7 @@ class Form
 			//ASC OR DESC order
 			($conf->global->PRODUCT_SORT_BY_CATEGORY == 1) ? $sql .= "ASC" : $sql .= "DESC";
 		}
-		else
-		{
+		else {
 			$sql .= $db->order("p.ref");
 		}
 
@@ -2379,8 +2344,7 @@ class Form
 				if ($showempty && !is_numeric($showempty)) $textifempty = $langs->trans($showempty);
 				else $textifempty .= $langs->trans("All");
 			}
-			else
-			{
+			else {
 			    if ($showempty && !is_numeric($showempty)) $textifempty = $langs->trans($showempty);
 			}
 			if ($showempty) $out .= '<option value="0" selected>'.$textifempty.'</option>';
@@ -2432,8 +2396,7 @@ class Form
 						}
 					}
 				}
-				else
-				{
+				else {
 					if (!empty($conf->dynamicprices->enabled) && !empty($objp->fk_price_expression)) {
 						$price_product = new Product($this->db);
 						$price_product->fetch($objp->rowid, '', '', 1);
@@ -2466,8 +2429,7 @@ class Form
 			if (empty($outputmode)) return $out;
 			return $outarray;
 		}
-		else
-		{
+		else {
 			dol_print_error($db);
 		}
 	}
@@ -2618,8 +2580,7 @@ class Form
 						$opt .= ' - '.price($objp2->price, 1, $langs, 0, 0, -1, $conf->currency).' '.$langs->trans("HT");
 						$outval .= ' - '.price($objp2->price, 0, $langs, 0, 0, -1, $conf->currency).' '.$langs->transnoentities("HT");
 					}
-					else
-					{
+					else {
 						$opt .= ' - '.price($objp2->price_ttc, 1, $langs, 0, 0, -1, $conf->currency).' '.$langs->trans("TTC");
 						$outval .= ' - '.price($objp2->price_ttc, 0, $langs, 0, 0, -1, $conf->currency).' '.$langs->transnoentities("TTC");
 					}
@@ -2629,8 +2590,7 @@ class Form
 					$outtva_tx = $objp2->tva_tx;
 				}
 			}
-			else
-			{
+			else {
 				dol_print_error($this->db);
 			}
 		}
@@ -2648,8 +2608,7 @@ class Form
 				$opt .= $langs->trans("Unit"); // Do not use strtolower because it breaks utf8 encoding
 				$outval .= $langs->transnoentities("Unit");
 			}
-			else
-			{
+			else {
 				$opt .= ' - '.price($objp->price, 1, $langs, 0, 0, -1, $conf->currency)."/".$objp->quantity;
 				$outval .= ' - '.price($objp->price, 0, $langs, 0, 0, -1, $conf->currency)."/".$objp->quantity;
 				$opt .= $langs->trans("Units"); // Do not use strtolower because it breaks utf8 encoding
@@ -2684,8 +2643,7 @@ class Form
 					$opt .= ' - '.price($objp->custprice, 1, $langs, 0, 0, -1, $conf->currency).' '.$langs->trans("HT");
 					$outval .= ' - '.price($objp->custprice, 0, $langs, 0, 0, -1, $conf->currency).' '.$langs->transnoentities("HT");
 				}
-				else
-				{
+				else {
 					$opt .= ' - '.price($objp->custprice_ttc, 1, $langs, 0, 0, -1, $conf->currency).' '.$langs->trans("TTC");
 					$outval .= ' - '.price($objp->custprice_ttc, 0, $langs, 0, 0, -1, $conf->currency).' '.$langs->transnoentities("TTC");
 				}
@@ -2705,8 +2663,7 @@ class Form
 				$opt .= ' - '.price($objp->price, 1, $langs, 0, 0, -1, $conf->currency).' '.$langs->trans("HT");
 				$outval .= ' - '.price($objp->price, 0, $langs, 0, 0, -1, $conf->currency).' '.$langs->transnoentities("HT");
 			}
-			else
-			{
+			else {
 				$opt .= ' - '.price($objp->price_ttc, 1, $langs, 0, 0, -1, $conf->currency).' '.$langs->trans("TTC");
 				$outval .= ' - '.price($objp->price_ttc, 0, $langs, 0, 0, -1, $conf->currency).' '.$langs->transnoentities("TTC");
 			}
@@ -2795,8 +2752,7 @@ class Form
 			print ajax_autocompleter($selected, $htmlname, DOL_URL_ROOT.'/product/ajax/products.php', $urloption, $conf->global->PRODUIT_USE_SEARCH_TO_SELECT, 0, $ajaxoptions);
 			print ($hidelabel ? '' : $langs->trans("RefOrLabel").' : ').'<input type="text" size="20" name="search_'.$htmlname.'" id="search_'.$htmlname.'" value="'.$selected_input_value.'">';
 		}
-		else
-		{
+		else {
 			print $this->select_produits_fournisseurs_list($socid, $selected, $htmlname, $filtertype, $filtre, '', -1, 0, 0, $alsoproductwithnosupplierprice, $morecss);
 		}
 	}
@@ -3006,8 +2962,7 @@ class Form
 						$optlabel .= $langs->trans("Unit"); // Do not use strtolower because it breaks utf8 encoding
 						$outvallabel .= $langs->transnoentities("Unit");
 					}
-					else
-					{
+					else {
 						$optlabel .= ' - '.price($objp->fprice * (!empty($conf->global->DISPLAY_DISCOUNTED_SUPPLIER_PRICE) ? (1 - $objp->remise_percent / 100) : 1), 1, $langs, 0, 0, -1, $conf->currency)."/".$objp->quantity;
 						$outvallabel .= ' - '.price($objp->fprice * (!empty($conf->global->DISPLAY_DISCOUNTED_SUPPLIER_PRICE) ? (1 - $objp->remise_percent / 100) : 1), 0, $langs, 0, 0, -1, $conf->currency)."/".$objp->quantity;
 						$optlabel .= ' '.$langs->trans("Units"); // Do not use strtolower because it breaks utf8 encoding
@@ -3043,14 +2998,13 @@ class Form
 						$outvallabel .= " - ".$reputations[$objp->supplier_reputation];
 					}
 				}
-				else
-				{
+				else {
 					if (empty($alsoproductwithnosupplierprice))     // No supplier price defined for couple product/supplier
 					{
 						$optlabel .= " - <span class='opacitymedium'>".$langs->trans("NoPriceDefinedForThisSupplier").'</span>';
 						$outvallabel .= ' - '.$langs->transnoentities("NoPriceDefinedForThisSupplier");
 					}
-					else                                            // No supplier price defined for product, even on other suppliers
+					else // No supplier price defined for product, even on other suppliers
 					{
 						$optlabel .= " - <span class='opacitymedium'>".$langs->trans("NoPriceDefinedForThisSupplier").'</span>';
 						$outvallabel .= ' - '.$langs->transnoentities("NoPriceDefinedForThisSupplier");
@@ -3099,8 +3053,7 @@ class Form
 			if (empty($outputmode)) return $out;
 			return $outarray;
 		}
-		else
-		{
+		else {
 			dol_print_error($this->db);
 		}
 	}
@@ -3146,8 +3099,7 @@ class Form
 			{
 				$form .= '<option value="0">-- '.$langs->trans("NoSupplierPriceDefinedForThisProduct").' --</option>';
 			}
-			else
-			{
+			else {
 				require_once DOL_DOCUMENT_ROOT.'/product/dynamic_price/class/price_parser.class.php';
 				$form .= '<option value="0">&nbsp;</option>';
 
@@ -3191,8 +3143,7 @@ class Form
 					{
 						$opt .= $langs->trans("Unit");
 					}
-					else
-					{
+					else {
 						$opt .= $langs->trans("Units");
 					}
 					if ($objp->quantity > 1)
@@ -3212,8 +3163,7 @@ class Form
 			$this->db->free($result);
 			return $form;
 		}
-		else
-		{
+		else {
 			dol_print_error($this->db);
 		}
 	}
@@ -3255,8 +3205,7 @@ class Form
 					{
 						print '<option value="'.$obj->rowid.'" selected>'.$obj->label.'</option>';
 					}
-					else
-					{
+					else {
 						print '<option value="'.$obj->rowid.'">'.$obj->label.'</option>';
 					}
 					$i++;
@@ -3265,8 +3214,7 @@ class Form
 			print '</select>';
 			return $num;
 		}
-		else
-		{
+		else {
 			dol_print_error($this->db);
 		}
 	}
@@ -3314,8 +3262,7 @@ class Form
 
 			return $num;
 		}
-		else
-		{
+		else {
 			dol_print_error($this->db);
 			return -1;
 		}
@@ -3363,8 +3310,7 @@ class Form
 
 			return $num;
 		}
-		else
-		{
+		else {
 			dol_print_error($this->db);
 			return -1;
 		}
@@ -3395,8 +3341,7 @@ class Form
 			{
 				print '<option value="'.$id.'" selected>';
 			}
-			else
-			{
+			else {
 				print '<option value="'.$id.'">';
 			}
 			print $arrayavailability['label'];
@@ -3448,8 +3393,7 @@ class Form
 			unset($tmparray);
 			return $num;
 		}
-		else
-		{
+		else {
 			dol_print_error($this->db);
 			return -1;
 		}
@@ -3481,8 +3425,7 @@ class Form
 			{
 				print '<option value="'.$arraydemandreason['id'].'" selected>';
 			}
-			else
-			{
+			else {
 				print '<option value="'.$arraydemandreason['id'].'">';
 			}
 			$label = $arraydemandreason['label']; // Translation of label was already done into the ->loadCacheInputReason
@@ -3539,8 +3482,7 @@ class Form
 
 			return $num;
 		}
-		else
-		{
+		else {
 			dol_print_error($this->db);
 			return -1;
 		}
@@ -3581,8 +3523,7 @@ class Form
 			{
 				print '<option value="'.$id.'" selected>';
 			}
-			else
-			{
+			else {
 				print '<option value="'.$id.'">';
 			}
 			print $arrayconditions['label'];
@@ -3686,8 +3627,7 @@ class Form
 			{
 				$return .= '<option value="'.$id.'" selected>'.$value;
 			}
-			else
-			{
+			else {
 				$return .= '<option value="'.$id.'">'.$value;
 			}
 			$return .= '</option>';
@@ -3829,8 +3769,7 @@ class Form
 				}
 			}
 		}
-		else
-		{
+		else {
 				dol_syslog("Error sql=".$sql.", error=".$this->error, LOG_ERR);
 		}
 		if ($opt == '<option value ="" selected></option>')
@@ -3876,8 +3815,7 @@ class Form
 				{
 				    $return .= '<option value="'.$res->rowid.'" selected>'.$unitLabel.'</option>';
 				}
-				else
-				{
+				else {
 				    $return .= '<option value="'.$res->rowid.'">'.$unitLabel.'</option>';
 				}
 			}
@@ -3936,8 +3874,7 @@ class Form
 					{
 						print '<option value="'.$obj->rowid.'" selected>';
 					}
-					else
-					{
+					else {
 						print '<option value="'.$obj->rowid.'">';
 					}
 					print trim($obj->label);
@@ -3948,8 +3885,7 @@ class Form
 				}
 				print "</select>";
 			}
-			else
-			{
+			else {
 				if ($status == 0) print '<span class="opacitymedium">'.$langs->trans("NoActiveBankAccountDefined").'</span>';
 				else print '<span class="opacitymedium">'.$langs->trans("NoBankAccountFound").'</span>';
 			}
@@ -4008,8 +3944,7 @@ class Form
 					{
 						print '<option value="'.$obj->rowid.'" selected>';
 					}
-					else
-					{
+					else {
 						print '<option value="'.$obj->rowid.'">';
 					}
 					print trim($obj->name);
@@ -4019,8 +3954,7 @@ class Form
 				}
 				print "</select>";
 			}
-			else
-			{
+			else {
 				if ($status == 0) print '<span class="opacitymedium">'.$langs->trans("NoActiveEstablishmentDefined").'</span>';
 				else print '<span class="opacitymedium">'.$langs->trans("NoEstablishmentFound").'</span>';
 			}
@@ -4119,8 +4053,7 @@ class Form
 			}
 			else dol_print_error($this->db);
 		}
-		else
-		{
+		else {
 			$cat = new Categorie($this->db);
             $cate_arbo = $cat->get_full_arbo($type, $markafterid, $include);
 		}
@@ -4130,8 +4063,7 @@ class Form
 		if (is_array($cate_arbo))
 		{
 			if (!count($cate_arbo)) $output .= '<option value="-1" disabled>'.$langs->trans("NoCategoriesDefined").'</option>';
-			else
-			{
+			else {
 				$output .= '<option value="-1">&nbsp;</option>';
 				foreach ($cate_arbo as $key => $value)
 				{
@@ -4139,8 +4071,7 @@ class Form
 					{
 						$add = 'selected ';
 					}
-					else
-					{
+					else {
 						$add = '';
 					}
 					$output .= '<option '.$add.'value="'.$cate_arbo[$key]['id'].'">'.dol_trunc($cate_arbo[$key]['fulllabel'], $maxlength, 'middle').'</option>';
@@ -4439,8 +4370,7 @@ class Form
             </script>';
 			$formconfirm .= "<!-- end ajax formconfirm -->\n";
 		}
-		else
-		{
+		else {
 			$formconfirm .= "\n<!-- begin formconfirm page=".$page." -->\n";
 
 			if (empty($disableformtag)) $formconfirm .= '<form method="POST" action="'.$page.'" class="notoptoleftroright">'."\n";
@@ -4524,8 +4454,7 @@ class Form
 			$out .= '<input type="submit" class="button" value="'.$langs->trans("Modify").'">';
 			$out .= '</form>';
 		}
-		else
-		{
+		else {
 			if ($selected)
 			{
 				$projet = new Project($this->db);
@@ -4533,8 +4462,7 @@ class Form
 				//print '<a href="'.DOL_URL_ROOT.'/projet/card.php?id='.$selected.'">'.$projet->title.'</a>';
 				$out .= $projet->getNomUrl(0, '', 1);
 			}
-			else
-			{
+			else {
 				$out .= "&nbsp;";
 			}
 		}
@@ -4570,8 +4498,7 @@ class Form
 			print '<input type="submit" class="button valignmiddle" value="'.$langs->trans("Modify").'">';
 			print '</form>';
 		}
-		else
-		{
+		else {
 			if ($selected)
 			{
 				$this->load_cache_conditions_paiements();
@@ -4605,8 +4532,7 @@ class Form
 			print '<input type="submit" class="button" value="'.$langs->trans("Modify").'">';
 			print '</form>';
 		}
-		else
-		{
+		else {
 			if ($selected)
 			{
 				$this->load_cache_availability();
@@ -4639,8 +4565,7 @@ class Form
 			print '<input type="submit" class="button" value="'.$langs->trans("Modify").'">';
 			print '</form>';
 		}
-		else
-		{
+		else {
 			if ($selected)
 			{
 				$this->loadCacheInputReason();
@@ -4690,8 +4615,7 @@ class Form
 			$ret .= '<td class="left"><input type="submit" class="button" value="'.$langs->trans("Modify").'"></td>';
 			$ret .= '</tr></table></form>';
 		}
-		else
-		{
+		else {
 			if ($displayhour) $ret .= dol_print_date($selected, 'dayhour');
 			else $ret .= dol_print_date($selected, 'day');
 		}
@@ -4726,8 +4650,7 @@ class Form
 			print '<input type="submit" class="button valignmiddle" value="'.$langs->trans("Modify").'">';
 			print '</form>';
 		}
-		else
-		{
+		else {
 			if ($selected)
 			{
 				require_once DOL_DOCUMENT_ROOT.'/user/class/user.class.php';
@@ -4766,8 +4689,7 @@ class Form
 			print '<input type="submit" class="button valignmiddle" value="'.$langs->trans("Modify").'">';
 			print '</form>';
 		}
-		else
-		{
+		else {
 			if ($selected)
 			{
 				$this->load_cache_types_paiements();
@@ -4800,8 +4722,7 @@ class Form
 			print '<input type="submit" class="button valignmiddle" value="'.$langs->trans("Modify").'">';
 			print '</form>';
 		}
-		else
-		{
+		else {
 			dol_include_once('/core/lib/company.lib.php');
 			print !empty($selected) ? currency_name($selected, 1) : '&nbsp;';
 		}
@@ -4835,15 +4756,13 @@ class Form
 			print '<input type="submit" class="button valignmiddle" value="'.$langs->trans("Modify").'">';
 			print '</form>';
 		}
-		else
-		{
+		else {
 			if (!empty($rate))
 			{
 				print price($rate, 1, $langs, 1, 0);
 				if ($currency && $rate != 1) print ' &nbsp; ('.price($rate, 1, $langs, 1, 0).' '.$currency.' = 1 '.$conf->currency.')';
 			}
-			else
-			{
+			else {
 				print 1;
 			}
 		}
@@ -4882,8 +4801,7 @@ class Form
 					if (!$filter || $filter == "fk_invoice_supplier_source IS NULL") $translationKey = 'HasAbsoluteDiscountFromSupplier'; // If we want deposit to be substracted to payments only and not to total of final invoice
 					else $translationKey = 'HasCreditNoteFromSupplier';
 				}
-				else
-				{
+				else {
 					if (!$filter || $filter == "fk_invoice_supplier_source IS NULL OR (description LIKE '(DEPOSIT)%' AND description NOT LIKE '(EXCESS PAID)%')") $translationKey = 'HasAbsoluteDiscountFromSupplier';
 					else $translationKey = 'HasCreditNoteFromSupplier';
 				}
@@ -4893,8 +4811,7 @@ class Form
 					if (!$filter || $filter == "fk_facture_source IS NULL") $translationKey = 'CompanyHasAbsoluteDiscount'; // If we want deposit to be substracted to payments only and not to total of final invoice
 					else $translationKey = 'CompanyHasCreditNote';
 				}
-				else
-				{
+				else {
 					if (!$filter || $filter == "fk_facture_source IS NULL OR (description LIKE '(DEPOSIT)%' AND description NOT LIKE '(EXCESS RECEIVED)%')") $translationKey = 'CompanyHasAbsoluteDiscount';
 					else $translationKey = 'CompanyHasCreditNote';
 				}
@@ -4933,14 +4850,12 @@ class Form
 			}
 			print '</form>';
 		}
-		else
-		{
+		else {
 			if ($selected)
 			{
 				print $selected;
 			}
-			else
-			{
+			else {
 				print "0";
 			}
 		}
@@ -4979,8 +4894,7 @@ class Form
 			print '<td class="left"><input type="submit" class="button" value="'.$langs->trans("Modify").'"></td>';
 			print '</tr></table></form>';
 		}
-		else
-		{
+		else {
 			if ($selected)
 			{
 				require_once DOL_DOCUMENT_ROOT.'/contact/class/contact.class.php';
@@ -5023,8 +4937,7 @@ class Form
 			$out .= '<input type="submit" class="button valignmiddle" value="'.$langs->trans("Modify").'">';
 			$out .= '</form>';
 		}
-		else
-		{
+		else {
 			if ($selected)
 			{
 				require_once DOL_DOCUMENT_ROOT.'/societe/class/societe.class.php';
@@ -5032,8 +4945,7 @@ class Form
 				$soc->fetch($selected);
 				$out .= $soc->getNomUrl($langs);
 			}
-			else
-			{
+			else {
 				$out .= "&nbsp;";
 			}
 		}
@@ -5082,8 +4994,7 @@ class Form
 			{
 				$out .= '<option value="'.$code_iso.'" selected>';
 			}
-			else
-			{
+			else {
 				$out .= '<option value="'.$code_iso.'">';
 			}
 			$out .= $currency['label'];
@@ -5091,8 +5002,7 @@ class Form
 			{
 			    $out .= ' ('.$code_iso.')';
 			}
-			else
-			{
+			else {
                 $out .= ' ('.$langs->getCurrencySymbol($code_iso).')';
 			}
 			$out .= '</option>';
@@ -5217,14 +5127,12 @@ class Form
 
 				return $num;
 			}
-			else
-			{
+			else {
 				$this->error = '<font class="error">'.$langs->trans("ErrorNoVATRateDefinedForSellerCountry", $country_code).'</font>';
 				return -1;
 			}
 		}
-		else
-		{
+		else {
 			$this->error = '<font class="error">'.$this->db->error().'</font>';
 			return -2;
 		}
@@ -5280,8 +5188,7 @@ class Form
 			{
 				$return .= '<font class="error">'.$langs->trans("ErrorYourCountryIsNotDefined").'</font>';
 			}
-			else
-			{
+			else {
 				$return .= '<font class="error">'.$langs->trans("ErrorSupplierCountryIsNotDefined").'</font>';
 			}
 			return $return;
@@ -5297,8 +5204,7 @@ class Form
 		{
 			$code_country = "'".$societe_vendeuse->country_code."'";
 		}
-		else
-		{
+		else {
 			$code_country = "'".$mysoc->country_code."'"; // Pour compatibilite ascendente
 		}
 		if (!empty($conf->global->SERVICE_ARE_ECOMMERCE_200238EC))    // If option to have vat for end customer for services is on
@@ -5318,8 +5224,7 @@ class Form
 				{
 					$code_country .= ",'".$societe_acheteuse->country_code."'";
 				}
-				else
-				{
+				else {
 					$prodstatic = new Product($this->db);
 					$prodstatic->fetch($idprod);
 					if ($prodstatic->type == Product::TYPE_SERVICE)   // We know product is a service
@@ -5406,8 +5311,7 @@ class Form
 				{
 					$return .= $rate['labelpositiverates'];
 				}
-				else
-				{
+				else {
 					$return .= vatrate($rate['label']);
 				}
 				//$return.=($rate['code']?' '.$rate['code']:'');
@@ -5418,8 +5322,7 @@ class Form
 
 			if (!$options_only) $return .= '</select>';
 		}
-		else
-		{
+		else {
 			$return .= $this->error;
 		}
 
@@ -5533,15 +5436,13 @@ class Form
 				$smin = dol_print_date($set_time, "%M");
 				$ssec = dol_print_date($set_time, "%S");
 			}
-			else
-			{
+			else {
 				$shour = '';
 				$smin = '';
 				$ssec = '';
 			}
 		}
-		else
-		{
+		else {
 			// Date est '' ou vaut -1
 			$syear = '';
 			$smonth = '';
@@ -5649,8 +5550,7 @@ class Form
                 		$retstring.='});';
                 		$retstring.="</script>";*/
 					}
-					else
-					{
+					else {
 						$retstring .= '<button id="'.$prefix.'Button" type="button" class="dpInvisibleButtons">'.img_object($langs->trans("Disabled"), 'calendarday', 'class="datecallink"').'</button>';
 					}
 
@@ -5659,14 +5559,12 @@ class Form
 					$retstring .= '<input type="hidden" id="'.$prefix.'month" name="'.$prefix.'month" value="'.$smonth.'">'."\n";
 					$retstring .= '<input type="hidden" id="'.$prefix.'year"  name="'.$prefix.'year"  value="'.$syear.'">'."\n";
 				}
-				else
-				{
+				else {
 					$retstring .= "Bad value of MAIN_POPUP_CALENDAR";
 				}
 			}
 			// Show date with combo selects
-			else
-			{
+			else {
 				//$retstring.='<div class="inline-block">';
 				// Day
 				$retstring .= '<select'.($disabled ? ' disabled' : '').' class="flat valignmiddle maxwidth50imp" id="'.$prefix.'day" name="'.$prefix.'day">';
@@ -5703,8 +5601,7 @@ class Form
 				{
 					$retstring .= '<input'.($disabled ? ' disabled' : '').' placeholder="'.dol_escape_htmltag($langs->trans("Year")).'" class="flat maxwidth50imp valignmiddle" type="number" min="0" max="3000" maxlength="4" id="'.$prefix.'year" name="'.$prefix.'year" value="'.$syear.'">';
 				}
-				else
-				{
+				else {
 					$retstring .= '<select'.($disabled ? ' disabled' : '').' class="flat valignmiddle maxwidth75imp" id="'.$prefix.'year" name="'.$prefix.'year">';
 
 					for ($year = $syear - 10; $year < $syear + 10; $year++)
@@ -6049,8 +5946,7 @@ class Form
 			if ($placeholder) $placeholder = ' placeholder="'.$placeholder.'"';
 			$out .= '<input type="text" class="'.$morecss.'"'.($disabled ? ' disabled="disabled"' : '').' name="search_'.$htmlname.'" id="search_'.$htmlname.'" value="'.$selected_input_value.'"'.$placeholder.' />';
 		}
-		else
-		{
+		else {
 			// Immediate load of table record. Note: filter is inside $objecttmp->filter
 			$out .= $this->selectForFormsList($objecttmp, $htmlname, $preselectedvalue, $showempty, $searchkey, $placeholder, $morecss, $moreparams, $forcecombo, 0, $disabled);
 		}
@@ -6079,8 +5975,7 @@ class Form
 		{
 			$tmpescaped = "'".$db->escape($regbis[1])."'";
 		}
-		else
-		{
+		else {
 			$tmpescaped = $db->escape($tmpescaped);
 		}
 		return $db->escape($tmp[0]).' '.strtoupper($db->escape($tmp[1]))." ".$tmpescaped;
@@ -6123,8 +6018,7 @@ class Form
 			}
 			if ($tmpfieldstoshow) $fieldstoshow = $tmpfieldstoshow;
 		}
-        else
-        {
+        else {
 			// For backward compatibility
 			$objecttmp->fields['ref'] = array('type'=>'varchar(30)', 'label'=>'Ref', 'showoncombobox'=>1);
         }
@@ -6134,8 +6028,7 @@ class Form
 			if (isset($objecttmp->fields['ref'])) {
 				$fieldstoshow = 't.ref';
 			}
-			else
-			{
+			else {
 				$langs->load("errors");
 				$this->error = $langs->trans("ErrorNoFieldWithAttributeShowoncombobox");
 				return $langs->trans('ErrorNoFieldWithAttributeShowoncombobox');
@@ -6224,13 +6117,11 @@ class Form
 						{
 							$out .= '<option value="'.$obj->rowid.'" selected>'.$label.'</option>';
 						}
-						else
-						{
+						else {
 							$out .= '<option value="'.$obj->rowid.'">'.$label.'</option>';
 						}
 					}
-					else
-					{
+					else {
 						array_push($outarray, array('key'=>$obj->rowid, 'value'=>$label, 'label'=>$label));
 					}
 
@@ -6241,8 +6132,7 @@ class Form
 
 			$out .= '</select>'."\n";
 		}
-		else
-		{
+		else {
 			dol_print_error($this->db);
 		}
 
@@ -6349,8 +6239,7 @@ class Form
 					if (empty($nohtmlescape)) $selectOptionValue = dol_escape_htmltag($key.' - '.($maxlen ?dol_trunc($value, $maxlen) : $value));
 					else $selectOptionValue = $key.' - '.($maxlen ?dol_trunc($value, $maxlen) : $value);
 				}
-				else
-				{
+				else {
 					if (empty($nohtmlescape)) $selectOptionValue = dol_escape_htmltag($maxlen ?dol_trunc($value, $maxlen) : $value);
 					else $selectOptionValue = $maxlen ?dol_trunc($value, $maxlen) : $value;
 					if ($value == '' || $value == '-') $selectOptionValue = '&nbsp;';
@@ -6479,8 +6368,7 @@ class Form
 		{
 			$delayedhtmlcontent .= $outdelayed;
 		}
-		else
-		{
+		else {
 			$out .= $outdelayed;
 		}
 		return $out;
@@ -6597,8 +6485,7 @@ class Form
 		{
 			$delayedhtmlcontent .= $outdelayed;
 		}
-		else
-		{
+		else {
 			$out .= $outdelayed;
 		}
 		return $out;
@@ -6646,8 +6533,7 @@ class Form
 				{
 					$out .= 'return \'<span><img src="'.DOL_URL_ROOT.'/theme/eldy/img/object_category.png"> \'+record.text+\'</span>\';';
 				}
-				else
-				{
+				else {
 					$out .= 'return record.text;';
 				}
 				$out .= '};'."\n";
@@ -6656,8 +6542,7 @@ class Form
 				{
 					$out .= 'return \'<span><img src="'.DOL_URL_ROOT.'/theme/eldy/img/object_category.png"> \'+record.text+\'</span>\';';
 				}
-				else
-				{
+				else {
 					$out .= 'return record.text;';
 				}
 				$out .= '};'."\n";
@@ -7161,8 +7046,7 @@ class Form
     		</dd>
     		</dl>';
 		}
-		else
-		{
+		else {
 			$linktoelem = '';
 		}
 
@@ -7213,8 +7097,7 @@ class Form
 			$resultyesno .= '<option value="'.$yes.'" selected>'.$langs->trans("Yes").'</option>'."\n";
 			$resultyesno .= '<option value="'.$no.'">'.$langs->trans("No").'</option>'."\n";
 		}
-		else
-	    {
+		else {
 	   		$selected = (($useempty && $value != '0' && $value != 'no') ? '' : ' selected');
 			$resultyesno .= '<option value="'.$yes.'">'.$langs->trans("Yes").'</option>'."\n";
 			$resultyesno .= '<option value="'.$no.'"'.$selected.'>'.$langs->trans("No").'</option>'."\n";
@@ -7258,8 +7141,7 @@ class Form
 				{
 					print '<option value="'.$obj->rowid.'" selected>';
 				}
-				else
-				{
+				else {
 					print '<option value="'.$obj->rowid.'">';
 				}
 				print $obj->label;
@@ -7334,8 +7216,7 @@ class Form
 			{
 				$stringforfirstkey .= ' ALT + SHIFT +';
 			}
-			else
-			{
+			else {
 				$stringforfirstkey .= ' CTL +';
 			}
 
@@ -7578,8 +7459,7 @@ class Form
 			$email = $object->email;
 			$capture = 'user';
 		}
-		else
-		{
+		else {
 			// Generic case to show photos
 			$dir = $conf->$modulepart->dir_output;
 			if (!empty($object->photo))
@@ -7619,8 +7499,7 @@ class Form
 				$ret .= '<img class="photo'.$modulepart.($cssclass ? ' '.$cssclass : '').'" alt="Photo alt" id="photologo'.(preg_replace('/[^a-z]/i', '_', $file)).'" class="'.$cssclass.'" '.($width ? ' width="'.$width.'"' : '').($height ? ' height="'.$height.'"' : '').' src="'.DOL_URL_ROOT.'/viewimage.php?modulepart='.$modulepart.'&entity='.$entity.'&file='.urlencode($altfile).'&cache='.$cache.'">';
 				if ($addlinktofullsize) $ret .= '</a>';
 			}
-			else
-			{
+			else {
 				$nophoto = '/public/theme/common/nophoto.png';
 				if (in_array($modulepart, array('userphoto', 'contact', 'memberphoto')))	// For module that are "physical" users
 				{
@@ -7645,8 +7524,7 @@ class Form
 					$defaultimg = 'mm';
 					$ret .= '<img class="photo'.$modulepart.($cssclass ? ' '.$cssclass : '').'" alt="Gravatar avatar" title="'.$email.' Gravatar avatar" '.($width ? ' width="'.$width.'"' : '').($height ? ' height="'.$height.'"' : '').' src="https://www.gravatar.com/avatar/'.md5(strtolower(trim($email))).'?s='.$width.'&d='.$defaultimg.'">'; // gravatar need md5 hash
 				}
-				else
-				{
+				else {
 					$ret .= '<img class="photo'.$modulepart.($cssclass ? ' '.$cssclass : '').'" alt="No photo" '.($width ? ' width="'.$width.'"' : '').($height ? ' height="'.$height.'"' : '').' src="'.DOL_URL_ROOT.$nophoto.'">';
 				}
 			}
@@ -7709,8 +7587,7 @@ class Form
 			if ($force_entity) $sql .= " WHERE ug.entity IN (0,".$force_entity.")";
 			else $sql .= " WHERE ug.entity IS NOT NULL";
 		}
-		else
-		{
+		else {
 			$sql .= " WHERE ug.entity IN (0,".$conf->entity.")";
 		}
 		if (is_array($exclude) && $excludeGroups) $sql .= " AND ug.rowid NOT IN ('".$excludeGroups."')";
@@ -7757,15 +7634,13 @@ class Form
 					$i++;
 				}
 			}
-			else
-			{
+			else {
 				if ($show_empty) $out .= '<option value="-1"'.(in_array(-1, $selected) ? ' selected' : '').'></option>'."\n";
 				$out .= '<option value="" disabled>'.$langs->trans("NoUserGroupDefined").'</option>';
 			}
 			$out .= '</select>';
 		}
-		else
-		{
+		else {
 			dol_print_error($this->db);
 		}
 
@@ -7933,8 +7808,7 @@ class Form
 				}
 			}
 		}
-		else
-		{
+		else {
 			dol_print_error($db);
 		}
 
@@ -7969,8 +7843,7 @@ class Form
 			}
 			$out .= '</select>';
 		}
-		else
-		{
+		else {
 			dol_print_error($db);
 		}
 
@@ -8012,8 +7885,7 @@ class Form
 			}
 			$out .= '</select>';
 		}
-		else
-		{
+		else {
 			dol_print_error($db);
 		}
 
@@ -8110,8 +7982,7 @@ class Form
 					{
 						// Do nothing
 					}
-					else
-					{
+					else {
 						if ($discard_closed == 1 && $obj->fk_statut == Project::STATUS_CLOSED)
 						{
 							$i++;
@@ -8149,14 +8020,12 @@ class Form
 							//if ($disabled) $out.=' disabled';						// with select2, field can't be preselected if disabled
 							$out .= '>'.$labeltoshow.'</option>';
 						}
-						else
-						{
+						else {
 							if ($hideunselectables && $disabled && ($selected != $obj->rowid))
 							{
 								$resultat = '';
 							}
-							else
-							{
+							else {
 								$resultat = '<option value="'.$obj->rowid.'"';
 								if ($disabled) $resultat .= ' disabled';
 								//if ($obj->public) $labeltoshow.=' ('.$langs->trans("Public").')';
@@ -8180,8 +8049,7 @@ class Form
 			$this->db->free($resql);
 			return $num;
 		}
-		else
-		{
+		else {
 			dol_print_error($this->db);
 			return -1;
 		}

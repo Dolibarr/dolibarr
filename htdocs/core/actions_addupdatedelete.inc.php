@@ -107,16 +107,14 @@ if ($action == 'add' && !empty($permissiontoadd))
 			header("Location: ".$urltogo);
 			exit;
 		}
-		else
-		{
+		else {
 			// Creation KO
 			if (!empty($object->errors)) setEventMessages(null, $object->errors, 'errors');
-			else  setEventMessages($object->error, null, 'errors');
+			else setEventMessages($object->error, null, 'errors');
 			$action = 'create';
 		}
 	}
-	else
-	{
+	else {
 		$action = 'create';
 	}
 }
@@ -181,15 +179,13 @@ if ($action == 'update' && !empty($permissiontoadd))
 		{
 			$action = 'view';
 		}
-		else
-		{
+		else {
 			// Creation KO
 			setEventMessages($object->error, $object->errors, 'errors');
 			$action = 'edit';
 		}
 	}
-	else
-	{
+	else {
 		$action = 'edit';
 	}
 }
@@ -209,8 +205,7 @@ if ($action == "update_extras" && !empty($permissiontoadd))
 		setEventMessages($langs->trans('RecordSaved'), null, 'mesgs');
 		$action = 'view';
 	}
-	else
-	{
+	else {
 		setEventMessages($object->error, $object->errors, 'errors');
 		$action = 'edit_extras';
 	}
@@ -233,8 +228,7 @@ if ($action == 'confirm_delete' && !empty($permissiontodelete))
 		header("Location: ".$backurlforlist);
 		exit;
 	}
-	else
-	{
+	else {
 		if (!empty($object->errors)) setEventMessages(null, $object->errors, 'errors');
 		else setEventMessages($object->error, null, 'errors');
 	}
@@ -270,8 +264,7 @@ if ($action == 'confirm_deleteline' && $confirm == 'yes' && !empty($permissionto
 		header('Location: '.$_SERVER["PHP_SELF"].'?id='.$object->id);
 		exit;
 	}
-	else
-	{
+	else {
 		setEventMessages($object->error, $object->errors, 'errors');
 	}
 }
@@ -299,8 +292,7 @@ if ($action == 'confirm_validate' && $confirm == 'yes' && $permissiontoadd)
 			$object->generateDocument($model, $outputlangs, $hidedetails, $hidedesc, $hideref);
 		}
 	}
-	else
-	{
+	else {
 		setEventMessages($object->error, $object->errors, 'errors');
 	}
 }
@@ -328,8 +320,7 @@ if ($action == 'confirm_close' && $confirm == 'yes' && $permissiontoadd)
 			$object->generateDocument($model, $outputlangs, $hidedetails, $hidedesc, $hideref);
 		}
 	}
-	else
-	{
+	else {
 		setEventMessages($object->error, $object->errors, 'errors');
 	}
 }
@@ -342,8 +333,7 @@ if ($action == 'confirm_setdraft' && $confirm == 'yes' && $permissiontoadd)
 	{
 		// Nothing else done
 	}
-	else
-	{
+	else {
 		setEventMessages($object->error, $object->errors, 'errors');
 	}
 }
@@ -371,8 +361,7 @@ if ($action == 'confirm_reopen' && $confirm == 'yes' && $permissiontoadd)
 			$object->generateDocument($model, $outputlangs, $hidedetails, $hidedesc, $hideref);
 		}
 	}
-	else
-	{
+	else {
 		setEventMessages($object->error, $object->errors, 'errors');
 	}
 }
@@ -384,8 +373,7 @@ if ($action == 'confirm_clone' && $confirm == 'yes' && !empty($permissiontoadd))
 	{
 		setEventMessages($langs->trans("NoCloneOptionsSpecified"), null, 'errors');
 	}
-	else
-	{
+	else {
 	    $objectutil = dol_clone($object, 1); // To avoid to denaturate loaded object when setting some properties for clone or if createFromClone modifies the object. We use native clone to keep this->db valid.
 		//$objectutil->date = dol_mktime(12, 0, 0, GETPOST('newdatemonth', 'int'), GETPOST('newdateday', 'int'), GETPOST('newdateyear', 'int'));
         // ...
@@ -398,8 +386,7 @@ if ($action == 'confirm_clone' && $confirm == 'yes' && !empty($permissiontoadd))
 			header("Location: ".$_SERVER['PHP_SELF'].'?id='.$newid); // Open record of new object
 			exit;
 		}
-		else
-		{
+		else {
 		    setEventMessages($objectutil->error, $objectutil->errors, 'errors');
 			$action = '';
 		}

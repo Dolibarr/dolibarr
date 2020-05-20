@@ -103,8 +103,7 @@ if (GETPOST('action', 'alpha') == 'set')
         $db->commit();
 	    setEventMessages($langs->trans("SetupSaved"), null, 'mesgs');
     }
-    else
-    {
+    else {
         $db->rollback();
 	    setEventMessages($langs->trans("Error"), null, 'errors');
     }
@@ -188,8 +187,7 @@ if (!empty($conf->stock->enabled))
 	if (empty($conf->productbatch->enabled) || !empty($conf->global->CASHDESK_FORCE_DECREASE_STOCK)) {
 	    print $form->selectyesno('CASHDESK_NO_DECREASE_STOCK'.$terminal, $conf->global->{'CASHDESK_NO_DECREASE_STOCK'.$terminal}, 1);
 	}
-	else
-	{
+	else {
 	    if (!$conf->global->{'CASHDESK_NO_DECREASE_STOCK'.$terminal}) {
 	        $res = dolibarr_set_const($db, "CASHDESK_NO_DECREASE_STOCK".$terminal, 1, 'chaine', 0, '', $conf->entity);
 	    }
@@ -208,8 +206,7 @@ if (!empty($conf->stock->enabled))
 		print $formproduct->selectWarehouses($conf->global->{'CASHDESK_ID_WAREHOUSE'.$terminal}, 'CASHDESK_ID_WAREHOUSE'.$terminal, '', 1, $disabled);
 		print ' <a href="'.DOL_URL_ROOT.'/product/stock/card.php?action=create&backtopage='.urlencode($_SERVER["PHP_SELF"]).'"><span class="fa fa-plus-circle valignmiddle"></span></a>';
 	}
-	else
-	{
+	else {
 		print '<span class="opacitymedium">'.$langs->trans("StockDecreaseForPointOfSaleDisabled").'</span>';
 	}
 	print '</td></tr>';

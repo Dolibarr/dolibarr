@@ -66,8 +66,7 @@ if ($action == 'update' || $action == 'add')
     {
         setEventMessages($langs->trans("SetupSaved"), null, 'mesgs');
     }
-    else
-    {
+    else {
         setEventMessages($langs->trans("Error"), null, 'errors');
     }
 }
@@ -100,8 +99,7 @@ if (($action == 'testsubscribe' || $action == 'testunsubscribe') && !empty($conf
         $langs->load("errors");
         setEventMessages($langs->trans("ErrorBadEMail", $email), null, 'errors');
     }
-    else
-    {
+    else {
         include_once DOL_DOCUMENT_ROOT.'/mailmanspip/class/mailmanspip.class.php';
         $mailmanspip = new MailmanSpip($db);
 
@@ -119,8 +117,7 @@ if (($action == 'testsubscribe' || $action == 'testunsubscribe') && !empty($conf
 				$error++;
 				setEventMessages($mailmanspip->error, $mailmanspip->errors, 'errors');
 			}
-			else
-			{
+			else {
 				setEventMessages($langs->trans("MailmanCreationSuccess"), null);
 			}
         }
@@ -132,8 +129,7 @@ if (($action == 'testsubscribe' || $action == 'testunsubscribe') && !empty($conf
 				$error++;
 				setEventMessages($mailmanspip->error, $mailmanspip->errors, 'errors');
 			}
-			else
-			{
+			else {
 				setEventMessages($langs->trans("MailmanDeletionSuccess"), null);
 			}
         }
@@ -212,8 +208,7 @@ if (!empty($conf->global->ADHERENT_USE_MAILMAN))
 
     print '</form>';
 }
-else
-{
+else {
     dol_fiche_head($head, 'mailman', $langs->trans("Setup"), 0, 'user');
 
     $link = '<a href="'.$_SERVER["PHP_SELF"].'?action=set&value=1&name=ADHERENT_USE_MAILMAN">';

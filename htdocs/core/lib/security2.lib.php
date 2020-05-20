@@ -102,8 +102,7 @@ function checkLoginPassEntity($usertotest, $passwordtotest, $entitytotest, $auth
     					$dol_screenheight = GETPOST('screenheight');
     				}
     			}
-    			else
-    			{
+    			else {
     				dol_syslog("Authentication KO - failed to load file '".$authfile."'", LOG_ERR);
     				sleep(1);
     				// Load translation files required by the page
@@ -180,8 +179,7 @@ if (!function_exists('dol_loginfunction'))
 				if (file_exists($tmp)) { $template_dir = preg_replace('/login\.tpl\.php$/', '', $tmp); break; }
 			}
 		}
-		else
-		{
+		else {
 			$template_dir = DOL_DOCUMENT_ROOT."/core/tpl/";
 		}
 
@@ -376,8 +374,7 @@ function encodedecode_dbpassconf($level = 0)
 					$val = dol_decode($val);
 					$passwd = $val;
 				}
-				else
-				{
+				else {
 					$passwd = $val;
 					$val = dol_encode($val);
 					$passwd_crypted = $val;
@@ -401,8 +398,7 @@ function encodedecode_dbpassconf($level = 0)
 				//print 'passwd = '.$passwd.' - passwd_crypted = '.$passwd_crypted;
 				//exit;
 			}
-			else
-			{
+			else {
 				$config .= $buffer;
 			}
 		}
@@ -423,14 +419,12 @@ function encodedecode_dbpassconf($level = 0)
 
 			return 1;
 		}
-		else
-		{
+		else {
 			dol_syslog("encodedecode_dbpassconf Failed to open conf.php file for writing", LOG_WARNING);
 			return -1;
 		}
 	}
-	else
-	{
+	else {
 		dol_syslog("encodedecode_dbpassconf Failed to read conf.php", LOG_ERR);
 		return -2;
 	}
@@ -476,7 +470,7 @@ function getRandomPassword($generic = false, $replaceambiguouschars = null, $len
 
 			$generated_password = str_shuffle($randomCode);
 		}
-		else	// Old platform, non cryptographic random
+		else // Old platform, non cryptographic random
 		{
 			$max = strlen($lowercase) - 1;
 			for ($x = 0; $x < $nbofchar; $x++) {
@@ -514,8 +508,7 @@ function getRandomPassword($generic = false, $replaceambiguouschars = null, $len
 		{
 			$generated_password = str_replace($replaceambiguouschars, $numbers{random_int(0, $max)}, $generated_password);
 		}
-		else
-		{
+		else {
 			$generated_password = str_replace($replaceambiguouschars, $numbers{mt_rand(0, $max)}, $generated_password);
 		}
 	}

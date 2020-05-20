@@ -109,16 +109,14 @@ xdebug.auto_trace=0
 	         Allow Remote debug=yes or prompt<br>'."\n";
 		print "<br>\n";
 	}
-	else
-	{
+	else {
 		print socket_strerror(socket_last_error());
 		echo "Failed to connect to address=".$address." port=".$port."<br>\n";
 		echo "There is no Remote debug server at this address.\n";
 	}
 	socket_close($socket);
 }
-else
-{
+else {
 	print "Can't test if PHPDebug is OK as PHP socket functions are not enabled.";
 }
 

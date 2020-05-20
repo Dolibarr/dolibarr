@@ -180,14 +180,12 @@ class BlockedLogAuthority
 
 				return 1;
 			}
-			else
-			{
+			else {
 				$this->error = $langs->trans("RecordNotFound");
 				return 0;
 			}
 		}
-		else
-		{
+		else {
 			$this->error = $this->db->error();
 			return -1;
 		}
@@ -233,14 +231,12 @@ class BlockedLogAuthority
 
 				return $this->id;
 			}
-			else
-			{
+			else {
 				$this->db->rollback();
 				return -2;
 			}
 		}
-		else
-		{
+		else {
 			$this->error = $this->db->error();
 			$this->db->rollback();
 			return -1;
@@ -277,8 +273,7 @@ class BlockedLogAuthority
 
 			return 1;
 		}
-		else
-		{
+		else {
 			$this->error = $this->db->error();
 			$this->db->rollback();
 			return -1;

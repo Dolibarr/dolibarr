@@ -38,8 +38,7 @@ if (($id > 0 || (!empty($ref) && !in_array($action, array('create', 'createtask'
 	        $object->fetch_thirdparty();
 	        $id = $object->id;
 	    }
-	    else
-	    {
+	    else {
 	    	if (empty($object->error) && !count($object->errors))
 	    	{
 	    		if ($ret < 0)	// if $ret == 0, it means not found.

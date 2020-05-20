@@ -80,8 +80,7 @@ class FormSocialContrib
             $sql .= " AND c.fk_pays = ".$mysoc->country_id;
             $sql .= " ORDER BY c.libelle ASC";
         }
-        else
-        {
+        else {
             $sql = "SELECT c.id, c.libelle as type";
             $sql .= " FROM ".MAIN_DB_PREFIX."c_chargesociales as c, ".MAIN_DB_PREFIX."c_country as co";
             $sql .= " WHERE c.active = 1 AND c.fk_pays = co.rowid";
@@ -112,13 +111,11 @@ class FormSocialContrib
                 if ($user->admin && $help) print info_admin($langs->trans("YouCanChangeValuesForThisListFromDictionarySetup"), 1);
                 if (!empty($conf->use_javascript_ajax)) print ajax_combobox($htmlname);
             }
-            else
-            {
+            else {
                 print $langs->trans("ErrorNoSocialContributionForSellerCountry", $mysoc->country_code);
             }
         }
-        else
-        {
+        else {
             dol_print_error($db, $db->lasterror());
         }
     }

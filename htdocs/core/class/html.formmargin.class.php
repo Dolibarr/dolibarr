@@ -228,8 +228,7 @@ class FormMargin
 		print '<td class="liste_titre right">'.$langs->trans('SellingPrice').'</td>';
 		if ($conf->global->MARGIN_TYPE == "1")
 			print '<td class="liste_titre right">'.$langs->trans('BuyingPrice').'</td>';
-		else
-			print '<td class="liste_titre right">'.$langs->trans('CostPrice').'</td>';
+		else print '<td class="liste_titre right">'.$langs->trans('CostPrice').'</td>';
 		print '<td class="liste_titre right">'.$langs->trans('Margin').'</td>';
 		if (!empty($conf->global->DISPLAY_MARGIN_RATES))
 			print '<td class="liste_titre right">'.$langs->trans('MarginRate').'</td>';

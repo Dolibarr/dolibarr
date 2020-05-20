@@ -43,8 +43,7 @@ if ($_POST) {
 			{
 				header('Location: '.$backtopage);
 			}
-			else
-			{
+			else {
 				header('Location: '.DOL_URL_ROOT.'/variants/card.php?id='.$resid.'&backtopage='.urlencode($backtopage));
 			}
 			exit;

@@ -812,8 +812,7 @@ class InterfaceActionsAuto extends DolibarrTriggers
 		        $tmpuser->fetch($object->oldcopy->fk_user_assign);
 		        $object->actionmsg .= "\n".$langs->transnoentities("OldUser").': '.$tmpuser->getFullName($langs);
 		    }
-		    else
-		    {
+		    else {
 		        $object->actionmsg .= "\n".$langs->transnoentities("OldUser").': '.$langs->trans("None");
 		    }
 		    if ($object->fk_user_assign > 0)
@@ -822,14 +821,13 @@ class InterfaceActionsAuto extends DolibarrTriggers
 		        $tmpuser->fetch($object->fk_user_assign);
 		        $object->actionmsg .= "\n".$langs->transnoentities("NewUser").': '.$tmpuser->getFullName($langs);
 		    }
-		    else
-		    {
+		    else {
 		        $object->actionmsg .= "\n".$langs->transnoentities("NewUser").': '.$langs->trans("None");
 		    }
 		    $object->sendtoid = 0;
 		}
 		// TODO Merge all previous cases into this generic one
-		else	// $action = BILL_DELETE, TICKET_CREATE, TICKET_MODIFY, TICKET_DELETE, ...
+		else // $action = BILL_DELETE, TICKET_CREATE, TICKET_MODIFY, TICKET_DELETE, ...
 		{
 		    // Note: We are here only if $conf->global->MAIN_AGENDA_ACTIONAUTO_action is on (tested at begining of this function).
 		    // Note that these key can be set in agenda setup, only if defined into c_action_trigger
@@ -867,8 +865,7 @@ class InterfaceActionsAuto extends DolibarrTriggers
         {
             if (count($object->sendtoid) == 1) $contactforaction->fetch(reset($object->sendtoid));
         }
-        else
-        {
+        else {
             if ($object->sendtoid > 0) $contactforaction->fetch($object->sendtoid);
         }
         // Set societeforaction.
@@ -952,8 +949,7 @@ class InterfaceActionsAuto extends DolibarrTriggers
 			$_SESSION['LAST_ACTION_CREATED'] = $ret;
 			return 1;
 		}
-		else
-		{
+		else {
             $this->error = "Failed to insert event : ".$actioncomm->error." ".join(',', $actioncomm->errors);
             $this->errors = $actioncomm->errors;
 

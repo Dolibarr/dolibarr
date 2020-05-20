@@ -127,8 +127,7 @@ if (GETPOST('addfilter', 'alpha'))
 	{
 		$object->fetchFilters();
 	}
-	else
-	{
+	else {
 		setEventMessages($emailcollectorfilter->errors, $emailcollectorfilter->error, 'errors');
 	}
 }
@@ -142,8 +141,7 @@ if ($action == 'deletefilter')
 	{
 		$object->fetchFilters();
 	}
-	else
-	{
+	else {
 		setEventMessages($emailcollectorfilter->errors, $emailcollectorfilter->error, 'errors');
 	}
 }
@@ -163,8 +161,7 @@ if (GETPOST('addoperation', 'alpha'))
 	{
 		$object->fetchActions();
 	}
-	else
-	{
+	else {
 		setEventMessages($emailcollectoroperation->errors, $emailcollectoroperation->error, 'errors');
 	}
 }
@@ -182,8 +179,7 @@ if ($action == 'updateoperation')
     {
         $object->fetchActions();
     }
-    else
-    {
+    else {
         setEventMessages($emailcollectoroperation->errors, $emailcollectoroperation->error, 'errors');
     }
 }
@@ -196,8 +192,7 @@ if ($action == 'deleteoperation')
 	{
 		$object->fetchActions();
 	}
-	else
-	{
+	else {
 		setEventMessages($emailcollectoroperation->errors, $emailcollectoroperation->error, 'errors');
 	}
 }
@@ -212,8 +207,7 @@ if ($action == 'confirm_collect')
 	    $debuginfo = $object->debuginfo;
 	    setEventMessages($object->lastresult, null, 'mesgs');
 	}
-	else
-	{
+	else {
 	    $debuginfo = $object->debuginfo;
 	    setEventMessages($object->error, null, 'errors');
 	}
@@ -440,8 +434,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 
 		$morehtml .= $form->textwithpicto('', 'connect string '.$connectstringserver);
 	}
-	else
-	{
+	else {
 		$morehtml .= 'IMAP functions not available on your PHP';
 	}
 
@@ -449,8 +442,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 	{
 		$morehtml .= 'Failed to open IMAP connection '.$connectstringsource;
 	}
-	else
-	{
+	else {
 		$morehtml .= imap_num_msg($connection);
 	}
 
@@ -582,8 +574,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 
 	if ($res)
 		$arrayoftypes = $hookmanager->resArray;
-	else
-		foreach ($hookmanager->resArray as $k=>$desc)
+	else foreach ($hookmanager->resArray as $k=>$desc)
 			$arrayoftypes[$k] = $desc;
 
 
@@ -626,8 +617,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 		    print '<input type="hidden" name="rowidoperation2" value="'.$ruleaction['id'].'"><br>';
 		    print '<input type="submit" class="button" name="saveoperation2" value="'.$langs->trans("Save").'"> <input type="submit" class="button" name="cancel" value="'.$langs->trans("Cancel").'">';
 		}
-		else
-		{
+		else {
 		    print $ruleaction['actionparam'];
 		}
 		print '</td>';

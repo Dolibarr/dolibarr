@@ -81,8 +81,7 @@ elseif ($action == 'update')
     {
         setEventMessages($langs->trans("SetupSaved"), null, 'mesgs');
     }
-    else
-    {
+    else {
         setEventMessages($langs->trans("Error"), null, 'errors');
     }
 }
@@ -265,19 +264,16 @@ if ($resql)
 						//print $url;
 						print '<img src="'.$url.'" title="'.$obj->example.'" border="0">';
 					}
-					else
-					{
+					else {
 						print $langs->trans("FormatNotSupportedByGenerator");
 					}
 				}
-				else
-				{
+				else {
 					print 'ErrorClassNotFoundInModule '.$classname.' '.$obj->coder;
 				}
 			}
 		}
-		else
-		{
+		else {
 			print $langs->trans("ChooseABarCode");
 		}
 		print '</td>';
@@ -412,8 +408,7 @@ if ($conf->product->enabled)
 	    				print img_picto($langs->trans("Activated"), 'switch_on');
 	    				print '</a></td>';
 	    			}
-	    			else
-	    			{
+	    			else {
 	    				print '<td class="center"><a class="reposition" href="'.$_SERVER['PHP_SELF'].'?action=setbarcodeproducton&amp;value='.$file.'">';
 	    				print img_picto($langs->trans("Disabled"), 'switch_off');
 	    				print '</a></td>';

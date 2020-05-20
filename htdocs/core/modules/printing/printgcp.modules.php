@@ -157,8 +157,7 @@ class printing_printgcp extends PrintingDriver
                     {
                         $expiredat = $langs->trans("Unknown");
                     }
-                    else
-                    {
+                    else {
                         $expiredat = dol_print_date($endoflife, "dayhour");
                     }
 
@@ -220,8 +219,7 @@ class printing_printgcp extends PrintingDriver
             {
                 $html .= img_picto($langs->trans("Default"), 'on');
             }
-            else
-                $html .= '<a href="'.$_SERVER["PHP_SELF"].'?action=setvalue&amp;mode=test&amp;varname=PRINTING_GCP_DEFAULT&amp;driver=printgcp&amp;value='.urlencode($printer_det['id']).'" alt="'.$langs->trans("Default").'">'.img_picto($langs->trans("Disabled"), 'off').'</a>';
+            else $html .= '<a href="'.$_SERVER["PHP_SELF"].'?action=setvalue&amp;mode=test&amp;varname=PRINTING_GCP_DEFAULT&amp;driver=printgcp&amp;value='.urlencode($printer_det['id']).'" alt="'.$langs->trans("Default").'">'.img_picto($langs->trans("Disabled"), 'off').'</a>';
             $html .= '</td>';
             $html .= '</tr>'."\n";
         }
@@ -326,14 +324,12 @@ class printing_printgcp extends PrintingDriver
             {
                 $printer_id = $obj->printer_id;
             }
-            else
-            {
+            else {
                 if (!empty($conf->global->PRINTING_GCP_DEFAULT))
                 {
                     $printer_id = $conf->global->PRINTING_GCP_DEFAULT;
                 }
-                else
-                {
+                else {
                     $this->errors[] = 'NoDefaultPrinterDefined';
                     $error++;
                     return $error;
@@ -507,8 +503,7 @@ class printing_printgcp extends PrintingDriver
                 $html .= '</tr>';
             }
         }
-        else
-        {
+        else {
                 $html .= '<tr class="oddeven">';
                 $html .= '<td colspan="7" class="opacitymedium">'.$langs->trans("None").'</td>';
                 $html .= '</tr>';

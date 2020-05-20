@@ -514,15 +514,13 @@ class BOM extends CommonObject
 	        {
 	            return $numref;
 	        }
-	        else
-	        {
+	        else {
 	            $this->error = $obj->error;
 	            //dol_print_error($this->db,get_class($this)."::getNextNumRef ".$obj->error);
 	            return "";
 	        }
 	    }
-	    else
-	    {
+	    else {
 	        print $langs->trans("Error")." ".$langs->trans("Error_BOM_ADDON_NotDefined");
 	        return "";
 	    }
@@ -568,8 +566,7 @@ class BOM extends CommonObject
 	        $this->fetch_product();
 	        $num = $this->getNextNumRef($this->product);
 	    }
-	    else
-	    {
+	    else {
 	        $num = $this->ref;
 	    }
 	    $this->newref = dol_sanitizeFileName($num);
@@ -651,8 +648,7 @@ class BOM extends CommonObject
 	        $this->db->commit();
 	        return 1;
 	    }
-	    else
-	    {
+	    else {
 	        $this->db->rollback();
 	        return -1;
 	    }
@@ -896,8 +892,7 @@ class BOM extends CommonObject
 
 			$this->db->free($result);
 		}
-		else
-		{
+		else {
 			dol_print_error($this->db);
 		}
 	}
@@ -920,8 +915,7 @@ class BOM extends CommonObject
 	        $this->errors = $this->errors;
 	        return $result;
 	    }
-	    else
-	    {
+	    else {
 	        $this->lines = $result;
 	        return $this->lines;
 	    }
@@ -1429,8 +1423,7 @@ class BOMLine extends CommonObjectLine
 
 			$this->db->free($result);
 		}
-		else
-		{
+		else {
 			dol_print_error($this->db);
 		}
 	}

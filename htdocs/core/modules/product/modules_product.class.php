@@ -170,8 +170,7 @@ abstract class ModeleProductCode
 				$i++;
 			}
 		}
-		else
-		{
+		else {
 			return -1;
 		}
 		return $liste;

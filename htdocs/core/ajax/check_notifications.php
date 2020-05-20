@@ -61,8 +61,7 @@ if ($time >= $_SESSION['auto_check_events_not_before'])
             $starttime = $time;
         }
     }
-    else
-    {
+    else {
         $starttime = $time;
     }
 
@@ -110,8 +109,7 @@ if ($time >= $_SESSION['auto_check_events_not_before'])
             $eventfound[] = $event;
         }
     }
-    else
-    {
+    else {
         dol_syslog("Error sql = ".$db->lasterror(), LOG_ERR);
     }
 }

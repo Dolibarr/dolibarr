@@ -101,8 +101,7 @@ function doc_label_pdf_create($db, $arrayofrecords, $modele, $outputlangs, $outp
 		{
 			$code = $conf->global->ADHERENT_ETIQUETTE_TYPE;
 		}
-		else
-		{
+		else {
 			$code = $modele;
 		}
 	}
@@ -156,15 +155,13 @@ function doc_label_pdf_create($db, $arrayofrecords, $modele, $outputlangs, $outp
 			$outputlangs->charset_output = $sav_charset_output;
 			return 1;
 		}
-		else
-		{
+		else {
 			$outputlangs->charset_output = $sav_charset_output;
 			dol_print_error($db, "doc_label_pdf_create Error: ".$obj->error);
 			return -1;
 		}
 	}
-	else
-	{
+	else {
 		dol_print_error('', $langs->trans("Error")." ".$langs->trans("ErrorFileDoesNotExists", $file));
 		return -1;
 	}

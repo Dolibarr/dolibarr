@@ -74,8 +74,7 @@ class mailing_thirdparties_services_expired extends MailingTargets
                 $this->arrayofproducts[$i] = $obj->ref;
             }
         }
-        else
-        {
+        else {
             dol_print_error($this->db);
         }
     }
@@ -154,8 +153,7 @@ class mailing_thirdparties_services_expired extends MailingTargets
                 $i++;
             }
         }
-        else
-        {
+        else {
             dol_syslog($this->db->lasterror());
             $this->error = $this->db->lasterror();
             return -1;

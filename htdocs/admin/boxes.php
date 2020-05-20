@@ -84,8 +84,7 @@ if ($action == 'add') {
                             $i++;
                         }
                     }
-                    else
-                    {
+                    else {
                         setEventMessages($db->lasterror(), null, 'errors');
                         $error++;
                     }
@@ -135,8 +134,7 @@ if ($action == 'add') {
         $db->commit();
         $action = '';
     }
-    else
-    {
+    else {
         $db->rollback();
     }
 }
@@ -205,8 +203,7 @@ if ($action == 'switch')
 	{
 		$db->commit();
 	}
-	else
-	{
+	else {
 		$db->rollback();
 	}
 }
@@ -346,8 +343,7 @@ foreach ($boxtoadd as $box)
     {
         $logo = $box->boximg;
     }
-    else
-    {
+    else {
         $logo = preg_replace("/^object_/i", "", $box->boximg);
     }
 
@@ -411,8 +407,7 @@ foreach ($boxactivated as $key => $box)
 	{
 		$logo = $box->boximg;
 	}
-	else
-	{
+	else {
 		$logo = preg_replace("/^object_/i", "", $box->boximg);
 	}
 

@@ -396,8 +396,7 @@ if ($resql)
 		$title = $langs->trans('ListOfOrders').' - '.$soc->name;
 		if (empty($search_company)) $search_company = $soc->name;
 	}
-	else
-	{
+	else {
 		$title = $langs->trans('ListOfOrders');
 	}
 	if (strval($search_status) == '0')
@@ -542,8 +541,7 @@ if ($resql)
 			print $form->selectyesno('validate_invoices', 0, 1, 1);
 			print ' ('.$langs->trans("AutoValidationNotPossibleWhenStockIsDecreasedOnInvoiceValidation").')';
 		}
-		else
-		{
+		else {
 			print $form->selectyesno('validate_invoices', 0, 1);
 		}
 		if (!empty($conf->workflow->enabled) && !empty($conf->global->WORKFLOW_INVOICE_AMOUNT_CLASSIFY_BILLED_ORDER)) print ' &nbsp; &nbsp; <span class="opacitymedium">'.$langs->trans("IfValidateInvoiceIsNoOrderStayUnbilled").'</span>';
@@ -1311,8 +1309,7 @@ if ($resql)
 
 	print $formfile->showdocuments('massfilesarea_orders', '', $filedir, $urlsource, 0, $delallowed, '', 1, 1, 0, 48, 1, $param, $title, '', '', '', null, $hidegeneratedfilelistifempty);
 }
-else
-{
+else {
 	dol_print_error($db);
 }
 

@@ -155,8 +155,7 @@ if (empty($reshook))
 		{
 			setEventMessages($langs->trans("NoCloneOptionsSpecified"), null, 'errors');
 		}
-		else
-		{
+		else {
 			if ($object->id > 0)
 			{
 				// Because createFromClone modifies the object, we must clone it so that we can restore it later
@@ -168,8 +167,7 @@ if (empty($reshook))
 					header("Location: ".$_SERVER['PHP_SELF'].'?id='.$result);
 					exit;
 				}
-				else
-				{
+				else {
 					setEventMessages($object->error, $object->errors, 'errors');
 					$object = $orig;
 					$action = '';
@@ -188,8 +186,7 @@ if (empty($reshook))
 			{
 				setEventMessages($langs->trans('OrderReopened', $object->ref), null);
 			}
-			else
-			{
+			else {
 				setEventMessages($object->error, $object->errors, 'errors');
 			}
 		}
@@ -204,8 +201,7 @@ if (empty($reshook))
 			header('Location: list.php?restore_lastsearch_values=1');
 			exit;
 		}
-		else
-		{
+		else {
 			setEventMessages($object->error, $object->errors, 'errors');
 		}
 	}
@@ -235,8 +231,7 @@ if (empty($reshook))
 			header('Location: '.$_SERVER["PHP_SELF"].'?id='.$object->id);
 			exit;
 		}
-		else
-		{
+		else {
 			setEventMessages($object->error, $object->errors, 'errors');
 		}
 	}
@@ -675,8 +670,7 @@ if (empty($reshook))
 			$idprod = 0;
 			$tva_tx = (GETPOST('tva_tx') ? GETPOST('tva_tx') : 0);
 		}
-		else
-		{
+		else {
 			$idprod = GETPOST('idprod', 'int');
 			$tva_tx = '';
 		}
@@ -725,8 +719,7 @@ if (empty($reshook))
 				if ($res = $prodcomb->fetchByProductCombination2ValuePairs($idprod, $combinations)) {
 					$idprod = $res->fk_product_child;
 				}
-				else
-				{
+				else {
 					setEventMessages($langs->trans('ErrorProductCombinationNotFound'), null, 'errors');
 					$error++;
 				}
@@ -795,8 +788,7 @@ if (empty($reshook))
 							if (empty($tva_tx)) $tva_npr = 0;
 						}
 					}
-					else
-					{
+					else {
 						setEventMessages($prodcustprice->error, $prodcustprice->errors, 'errors');
 					}
 				}
@@ -817,8 +809,7 @@ if (empty($reshook))
 							{
 								$pu_ht = $priceforthequantityarray['unitprice'];
 							}
-							else
-							{
+							else {
 								$pu_ttc = $priceforthequantityarray['unitprice'];
 							}
 							// Note: the remise_percent or price by qty is used to set data on form, so we will use value from POST.
@@ -842,8 +833,7 @@ if (empty($reshook))
 							{
 								$pu_ht = $priceforthequantityarray['unitprice'];
 							}
-							else
-							{
+							else {
 								$pu_ttc = $priceforthequantityarray['unitprice'];
 							}
 							// Note: the remise_percent or price by qty is used to set data on form, so we will use value from POST.
@@ -1167,8 +1157,7 @@ if (empty($reshook))
 		{
 		   	$qualified_for_stock_change = $object->hasProductsOrServices(2);
 		}
-		else
-		{
+		else {
 		   	$qualified_for_stock_change = $object->hasProductsOrServices(1);
 		}
 
@@ -1204,8 +1193,7 @@ if (empty($reshook))
 					$object->generateDocument($model, $outputlangs, $hidedetails, $hidedesc, $hideref);
 				}
 			}
-			else
-			{
+			else {
 				setEventMessages($object->error, $object->errors, 'errors');
 			}
 		}
@@ -1220,8 +1208,7 @@ if (empty($reshook))
 		{
 		   	$qualified_for_stock_change = $object->hasProductsOrServices(2);
 		}
-		else
-		{
+		else {
 		   	$qualified_for_stock_change = $object->hasProductsOrServices(1);
 		}
 
@@ -1276,8 +1263,7 @@ if (empty($reshook))
 		{
 		   	$qualified_for_stock_change = $object->hasProductsOrServices(2);
 		}
-		else
-		{
+		else {
 		   	$qualified_for_stock_change = $object->hasProductsOrServices(1);
 		}
 
@@ -1584,8 +1570,7 @@ if ($action == 'create' && $usercancreate)
 			$srccontactslist = $objectsrc->liste_contact(-1, 'external', 1);
 		}
 	}
-	else
-	{
+	else {
 		$cond_reglement_id  = $soc->cond_reglement_id;
 		$mode_reglement_id  = $soc->mode_reglement_id;
 		$fk_account         = $soc->fk_account;
@@ -1623,8 +1608,7 @@ if ($action == 'create' && $usercancreate)
 	print '<tr><td>'.$langs->trans('RefCustomer').'</td><td>';
 	if (!empty($conf->global->MAIN_USE_PROPAL_REFCLIENT_FOR_ORDER) && !empty($origin) && !empty($originid))
 		print '<input type="text" name="ref_client" value="'.$ref_client.'"></td>';
-	else
-		print '<input type="text" name="ref_client" value="'.GETPOST('ref_client').'"></td>';
+	else print '<input type="text" name="ref_client" value="'.GETPOST('ref_client').'"></td>';
 	print '</tr>';
 
 	// Thirdparty
@@ -1958,8 +1942,7 @@ if ($action == 'create' && $usercancreate)
 			{
 			   	$qualified_for_stock_change = $object->hasProductsOrServices(2);
 			}
-			else
-			{
+			else {
 			   	$qualified_for_stock_change = $object->hasProductsOrServices(1);
 			}
 
@@ -1990,8 +1973,7 @@ if ($action == 'create' && $usercancreate)
 			{
 			   	$qualified_for_stock_change = $object->hasProductsOrServices(2);
 			}
-			else
-			{
+			else {
 			   	$qualified_for_stock_change = $object->hasProductsOrServices(1);
 			}
 
@@ -2032,8 +2014,7 @@ if ($action == 'create' && $usercancreate)
 			{
 			   	$qualified_for_stock_change = $object->hasProductsOrServices(2);
 			}
-			else
-			{
+			else {
 			   	$qualified_for_stock_change = $object->hasProductsOrServices(1);
 			}
 
@@ -2388,8 +2369,7 @@ if ($action == 'create' && $usercancreate)
 			{
 				print $form->textwithpicto($object->display_incoterms(), $object->label_incoterms, 1);
 			}
-			else
-			{
+			else {
 				print $form->select_incoterms((!empty($object->fk_incoterms) ? $object->fk_incoterms : ''), (!empty($object->location_incoterms) ? $object->location_incoterms : ''), $_SERVER['PHP_SELF'].'?id='.$object->id);
 			}
 			print '</td></tr>';
@@ -2561,8 +2541,7 @@ if ($action == 'create' && $usercancreate)
 					if ($object->statut > Commande::STATUS_DRAFT || !empty($conf->global->COMMANDE_SENDBYEMAIL_FOR_ALL_STATUS)) {
 						if ($usercansend) {
 							print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=presend&mode=init#formmailbeforetitle">'.$langs->trans('SendMail').'</a>';
-						} else
-							print '<a class="butActionRefused classfortooltip" href="#">'.$langs->trans('SendMail').'</a>';
+						} else print '<a class="butActionRefused classfortooltip" href="#">'.$langs->trans('SendMail').'</a>';
 					}
 				}
 

@@ -55,8 +55,7 @@ if (preg_match('/set_([a-z0-9_\-]+)/i', $action, $reg))
 		Header("Location: ".$_SERVER["PHP_SELF"]);
 		exit;
 	}
-	else
-	{
+	else {
 		dol_print_error($db);
 	}
 }
@@ -69,8 +68,7 @@ if (preg_match('/del_([a-z0-9_\-]+)/i', $action, $reg))
 		Header("Location: ".$_SERVER["PHP_SELF"]);
 		exit;
 	}
-	else
-	{
+	else {
 		dol_print_error($db);
 	}
 }
@@ -114,14 +112,12 @@ elseif ($action == 'specimen')  // For orders
     		header("Location: ".DOL_URL_ROOT."/document.php?modulepart=action&file=SPECIMEN.pdf");
     		return;
     	}
-    	else
-    	{
+    	else {
     		setEventMessages($module->error, $module->errors, 'errors');
     		dol_syslog($module->error, LOG_ERR);
     	}
     }
-    else
-    {
+    else {
     	setEventMessages($langs->trans("ErrorModuleNotFound"), null, 'errors');
     	dol_syslog($langs->trans("ErrorModuleNotFound"), LOG_ERR);
     }

@@ -62,8 +62,7 @@ if ($resql)
 	}
 	$db->free($resql);
 }
-else
-{
+else {
 	dol_print_error($db);
 }
 
@@ -108,8 +107,7 @@ if ($action == "save" && empty($cancel))
         setEventMessages($langs->trans("SetupSaved"), null, 'mesgs');
         $db->commit();
     }
-    else
-    {
+    else {
         setEventMessages($langs->trans("Error"), null, 'errors');
         $db->rollback();
     }

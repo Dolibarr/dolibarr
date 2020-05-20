@@ -97,14 +97,12 @@ function doc_getlinedesc($line, $outputlangs, $hideref = 0, $hidedesc = 0, $issu
 			$discount->fetch($line->fk_remise_except);
 			$libelleproduitservice = $outputlangs->transnoentitiesnoconv("DiscountFromExcessPaid", $discount->ref_invoice_supplier_source);
 		}
-		else
-		{
+		else {
 			if ($idprod)
 			{
 				if (empty($hidedesc)) $libelleproduitservice = dol_concatdesc($libelleproduitservice, $desc);
 			}
-			else
-			{
+			else {
 				$libelleproduitservice = dol_concatdesc($libelleproduitservice, $desc);
 			}
 		}
@@ -124,8 +122,7 @@ function doc_getlinedesc($line, $outputlangs, $hideref = 0, $hidedesc = 0, $issu
 				{
 					$prefix_prodserv = $outputlangs->transnoentitiesnoconv("Service")." ";
 				}
-				else
-				{
+				else {
 					$prefix_prodserv = $outputlangs->transnoentitiesnoconv("Product")." ";
 				}
 			}

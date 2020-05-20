@@ -230,8 +230,7 @@ function build_calfile($format, $title, $desc, $events_array, $outputfile)
 						$enddate = dol_time_plus_duree($startdate, 1, "d");
 					}
 				}
-				else
-				{
+				else {
 					if (empty($enddate))
 					{
 						$enddate = $startdate + $duration;
@@ -316,8 +315,7 @@ function build_calfile($format, $title, $desc, $events_array, $outputfile)
 			@chmod($outputfile, octdec($conf->global->MAIN_UMASK));
 		}
 	}
-	else
-	{
+	else {
 		dol_syslog("xcal.lib.php::build_calfile Failed to open file ".$outputfile." for writing");
 		return -2;
 	}
@@ -526,8 +524,7 @@ function calEncode($line)
 
 		$out .= $newpara;
 	}
-	else
-	{
+	else {
 		$strlength = dol_strlen($line);
 
 		for ($j = 0; $j < $strlength; $j++)

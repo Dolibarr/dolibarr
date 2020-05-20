@@ -123,8 +123,7 @@ class Login
     			throw new RestException(500, 'Error when updating api_key for user :'.$this->db->lasterror());
     		}
 		}
-		else
-		{
+		else {
             $token = $tmpuser->api_key;
 		}
 

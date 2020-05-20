@@ -72,8 +72,7 @@ if ($action == 'updateMask')
     {
         setEventMessages($langs->trans("SetupSaved"), null, 'mesgs');
     }
-    else
-    {
+    else {
         setEventMessages($langs->trans("Error"), null, 'errors');
     }
 }
@@ -109,14 +108,12 @@ elseif ($action == 'specimen')
     		header("Location: ".DOL_URL_ROOT."/document.php?modulepart=facture&file=SPECIMEN.pdf");
     		return;
     	}
-    	else
-    	{
+    	else {
     		setEventMessages($module->error, $module->errors, 'errors');
     		dol_syslog($module->error, LOG_ERR);
     	}
     }
-    else
-    {
+    else {
     	setEventMessages($langs->trans("ErrorModuleNotFound"), null, 'errors');
     	dol_syslog($langs->trans("ErrorModuleNotFound"), LOG_ERR);
     }
@@ -173,8 +170,7 @@ elseif ($action == 'setribchq')
     {
         setEventMessages($langs->trans("SetupSaved"), null, 'mesgs');
     }
-    else
-    {
+    else {
         setEventMessages($langs->trans("Error"), null, 'errors');
     }
 }
@@ -190,8 +186,7 @@ elseif ($action == 'set_FACTURE_DRAFT_WATERMARK')
     {
         setEventMessages($langs->trans("SetupSaved"), null, 'mesgs');
     }
-    else
-    {
+    else {
         setEventMessages($langs->trans("Error"), null, 'errors');
     }
 }
@@ -208,8 +203,7 @@ elseif ($action == 'set_INVOICE_FREE_TEXT')
     {
         setEventMessages($langs->trans("SetupSaved"), null, 'mesgs');
     }
-    else
-    {
+    else {
         setEventMessages($langs->trans("Error"), null, 'errors');
     }
 }
@@ -225,8 +219,7 @@ elseif ($action == 'setforcedate')
     {
         setEventMessages($langs->trans("SetupSaved"), null, 'mesgs');
     }
-    else
-    {
+    else {
         setEventMessages($langs->trans("Error"), null, 'errors');
     }
 }
@@ -248,8 +241,7 @@ elseif ($action == 'setDefaultPDFModulesByType')
         {
             setEventMessages($langs->trans("SetupSaved"), null, 'mesgs');
         }
-        else
-        {
+        else {
             setEventMessages($langs->trans("Error"), null, 'errors');
         }
     }
@@ -350,8 +342,7 @@ foreach ($dirmodels as $reldir)
                             {
                                 print img_picto($langs->trans("Activated"), 'switch_on');
                             }
-                            else
-                            {
+                            else {
                                 print '<a class="reposition" href="'.$_SERVER["PHP_SELF"].'?action=setmod&value='.preg_replace('/\.php$/', '', $file).'&scan_dir='.$module->scandir.'&label='.urlencode($module->name).'" alt="'.$langs->trans("Default").'">'.img_picto($langs->trans("Disabled"), 'switch_off').'</a>';
                             }
                             print '</td>';
@@ -463,8 +454,7 @@ if ($resql)
         $i++;
     }
 }
-else
-{
+else {
     dol_print_error($db);
 }
 
@@ -535,8 +525,7 @@ foreach ($dirmodels as $reldir)
 	                            	print '</a>';
 	                            	print '</td>';
 	                            }
-	                            else
-	                            {
+	                            else {
 	                                print '<td class="center">'."\n";
 	                                print '<a href="'.$_SERVER["PHP_SELF"].'?action=set&value='.$name.'&scan_dir='.$module->scandir.'&label='.urlencode($module->name).'">'.img_picto($langs->trans("SetAsDefault"), 'switch_off').'</a>';
 	                                print "</td>";
@@ -548,8 +537,7 @@ foreach ($dirmodels as $reldir)
 	                            {
 	                                print img_picto($langs->trans("Default"), 'on');
 	                            }
-	                            else
-	                            {
+	                            else {
 	                                print '<a href="'.$_SERVER["PHP_SELF"].'?action=setdoc&value='.$name.'&scan_dir='.$module->scandir.'&label='.urlencode($module->name).'" alt="'.$langs->trans("Default").'">'.img_picto($langs->trans("SetAsDefault"), 'off').'</a>';
 	                            }
 	                            print '</td>';
@@ -583,8 +571,7 @@ foreach ($dirmodels as $reldir)
 	                            {
 	                                print '<a href="'.$_SERVER["PHP_SELF"].'?action=specimen&module='.$name.'">'.img_object($langs->trans("Preview"), 'bill').'</a>';
 	                            }
-	                            else
-	                            {
+	                            else {
 	                                print img_object($langs->trans("PreviewNotAvailable"), 'generic');
 	                            }
 	                            print '</td>';
@@ -691,14 +678,12 @@ if (!empty($conf->banque->enabled))
             }
             print "</select>";
         }
-        else
-        {
+        else {
         	print '<span class="opacitymedium">'.$langs->trans("NoActiveBankAccountDefined").'</span>';
         }
     }
 }
-else
-{
+else {
     print $langs->trans("BankModuleNotActive");
 }
 print "</td></tr>";
@@ -777,8 +762,7 @@ if (empty($conf->global->PDF_ALLOW_HTML_FOR_FREE_TEXT))
 {
     print '<textarea name="'.$variablename.'" class="flat" cols="120">'.$conf->global->$variablename.'</textarea>';
 }
-else
-{
+else {
     include_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
     $doleditor = new DolEditor($variablename, $conf->global->$variablename, '', 80, 'dolibarr_notes');
     print $doleditor->Create();

@@ -148,7 +148,6 @@ if (!empty($_SERVER['HTTP_REFERER']))
 	header("Location: ".$_SERVER['HTTP_REFERER']);
 	exit;
 }
-else
-{
+else {
 	print 'The wrapper search.php was called without any search criteria';
 }

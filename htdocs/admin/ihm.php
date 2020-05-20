@@ -197,14 +197,12 @@ if ($action == 'update')
 					$tmparray = explode(':', $result);
 					setEventMessages($langs->trans('ErrorFileIsInfectedWithAVirus', $tmparray[1]), null, 'errors');
 				}
-				else
-				{
+				else {
 					$error++;
 					setEventMessages($langs->trans("ErrorFailedToSaveFile"), null, 'errors');
 				}
 			}
-			else
-			{
+			else {
 				$error++;
 				$langs->load("errors");
 				setEventMessages($langs->trans("ErrorBadImageFormat"), null, 'errors');

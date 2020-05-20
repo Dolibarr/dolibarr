@@ -53,8 +53,7 @@ if (!empty($id) && !empty($action) && !empty($htmlname))
 		$seller = $mysoc;
 		$buyer = $soc;
 	}
-	else
-	{
+	else {
 		$buyer = $mysoc;
 		$seller = $soc;
 	}

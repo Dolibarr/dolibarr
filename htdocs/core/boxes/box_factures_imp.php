@@ -187,8 +187,7 @@ class box_factures_imp extends ModeleBoxes
 
 				$this->db->free($result);
 			}
-			else
-			{
+			else {
                 $this->info_box_contents[0][0] = array(
                     'td' => '',
                     'maxlength'=>500,

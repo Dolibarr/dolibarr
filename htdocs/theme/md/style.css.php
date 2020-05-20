@@ -2148,8 +2148,7 @@ div.mainmenu.website {
 	                    content: "\f249";
 	                }';
 		    }
-		    else
-		    {
+		    else {
 		    	print "/* A mainmenu entry was found but img file ".$val.".png not found (check /".$val."/img/".$val.".png), so we use a generic one. */\n";
 		    	print "/* Overwrite this definition in your own css with a different content to use your own font awesome icon. */\n";
 		        $url = dol_buildpath($path.'/theme/'.$theme.'/img/menus/generic'.(min($generic, 4))."_over.png", 1);
@@ -2159,8 +2158,7 @@ div.mainmenu.website {
 	    	}
 	    	$generic++;
 		}
-		else
-		{
+		else {
 			print "div.mainmenu.".$val." {\n";
 			print "	background-image: url(".$url.");\n";
 			print "}\n";

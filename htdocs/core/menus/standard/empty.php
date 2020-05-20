@@ -231,8 +231,7 @@ class MenuManager
 		                {
 		                    $lastlevel[0] = 'greyed';
 		                }
-		                else
-		                {
+		                else {
 		                    $lastlevel[0] = 'hidden';
 		                }
 		            }
@@ -282,20 +281,18 @@ class MenuManager
 		                            print '>';
 		                            $lastlevel2[$val2['level']] = 'enabled';
 		                        }
-		                        else					// Not allowed but visible (greyed)
+		                        else // Not allowed but visible (greyed)
 		                        {
 		                            print '<a href="#" class="vsmenudisabled">';
 		                            $lastlevel2[$val2['level']] = 'greyed';
 		                        }
 		                    }
-		                    else
-		                    {
+		                    else {
 		                        if ($val2['enabled'])	// Allowed
 		                        {
 		                            $lastlevel2[$val2['level']] = 'enabled';
 		                        }
-		                        else
-		                        {
+		                        else {
 		                            $lastlevel2[$val2['level']] = 'greyed';
 		                        }
 		                    }
@@ -376,8 +373,7 @@ class MenuManager
 						{
 							print '<div class="blockvmenub lockvmenuimpair blockvmenuunique'.($lastopened ? ' blockvmenulast' : '').($alt == 1 ? ' blockvmenufirst' : '').'">'."\n";
 						}
-						else
-						{
+						else {
 							print '<div class="blockvmenu blockvmenupair blockvmenuunique'.($lastopened ? ' blockvmenulast' : '').($alt == 1 ? ' blockvmenufirst' : '').'">'."\n";
 						}
 					}
@@ -398,8 +394,7 @@ class MenuManager
 						{
 							print '<div class="menu_titre">'.$tabstring.'<a class="vmenu" href="'.dol_buildpath($this->menu->liste[$i]['url'], 1).'"'.($this->menu->liste[$i]['target'] ? ' target="'.$this->menu->liste[$i]['target'].'"' : '').'>'.$this->menu->liste[$i]['titre'].'</a></div>'."\n";
 						}
-						else
-						{
+						else {
 							print '<div class="menu_titre">'.$tabstring.'<font class="vmenudisabled">'.$this->menu->liste[$i]['titre'].'</font></div>'."\n";
 						}
 						print '<div class="menu_top"></div>'."\n";
@@ -420,8 +415,7 @@ class MenuManager
 							if ($this->menu->liste[$i]['url']) print $this->menu->liste[$i]['titre'].'</a>';
 							else print '</span>';
 						}
-						else
-						{
+						else {
 							print $tabstring.'<font class="vsmenudisabled vsmenudisabledmargin">'.$this->menu->liste[$i]['titre'].'</font>';
 						}
 

@@ -122,8 +122,7 @@ if ($id > 0)
                 $langs->load("errors");
                 print '<font class="error">'.$langs->trans("ErrorModuleSetupNotComplete", $langs->transnoentitiesnoconv("ClickToDial")).'</font>';
             }
-            else
-            {
+            else {
                 print ' &nbsp; &nbsp; '.$form->textwithpicto($langs->trans("KeepEmptyToUseDefault").': '.$conf->global->CLICKTODIAL_URL, $langs->trans("ClickToDialUrlDesc"));
             }
             print '</td>';
@@ -147,7 +146,7 @@ if ($id > 0)
 
         print '</table>';
     }
-    else	// View mode
+    else // View mode
     {
         print '<table class="border centpercent tableforfield">';
 
@@ -162,8 +161,7 @@ if ($id > 0)
         	    $langs->load("errors");
         	    print '<font class="error">'.$langs->trans("ErrorModuleSetupNotComplete", $langs->transnoentitiesnoconv("ClickToDial")).'</font>';
         	}
-        	else
-        	{
+        	else {
         		print $form->textwithpicto((empty($object->clicktodial_url) ? $langs->trans("DefaultLink").': ' : '').$url, $langs->trans("ClickToDialUrlDesc"));
         	}
         	print '</td>';

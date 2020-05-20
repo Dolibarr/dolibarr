@@ -233,8 +233,7 @@ class pdf_eratosthene extends ModelePDFCommandes
 		            $pdir[0] = get_exdir($objphoto->id, 2, 0, 0, $objphoto, 'product').$objphoto->id."/photos/";
 		            $pdir[1] = get_exdir(0, 0, 0, 0, $objphoto, 'product').dol_sanitizeFileName($objphoto->ref).'/';
 		        }
-		        else
-		        {
+		        else {
 		            $pdir[0] = get_exdir(0, 0, 0, 0, $objphoto, 'product').dol_sanitizeFileName($objphoto->ref).'/'; // default
 		            $pdir[1] = get_exdir($objphoto->id, 2, 0, 0, $objphoto, 'product').$objphoto->id."/photos/"; // alternative
 		        }
@@ -254,13 +253,11 @@ class pdf_eratosthene extends ModelePDFCommandes
 		                        {
 		                            $filename = $obj['photo_vignette'];
 		                        }
-		                        else
-		                        {
+		                        else {
 		                            $filename = $obj['photo'];
 		                        }
 		                    }
-		                    else
-		                    {
+		                    else {
 		                        $filename = $obj['photo'];
 		                    }
 
@@ -289,8 +286,7 @@ class pdf_eratosthene extends ModelePDFCommandes
 				$dir = $conf->commande->multidir_output[$conf->entity];
 				$file = $dir."/SPECIMEN.pdf";
 			}
-			else
-			{
+			else {
 				$objectref = dol_sanitizeFileName($object->ref);
 				$dir = $conf->commande->multidir_output[$object->entity]."/".$objectref;
 				$file = $dir."/".$objectref.".pdf";
@@ -532,8 +528,7 @@ class pdf_eratosthene extends ModelePDFCommandes
 				    $tab_height = $tab_height - $height_note;
 				    $tab_top = $posyafter + 6;
 				}
-				else
-				{
+				else {
 					$height_note = 0;
 				}
 
@@ -583,8 +578,7 @@ class pdf_eratosthene extends ModelePDFCommandes
 							// Allows data in the first page if description is long enough to break in multiples pages
 							if (!empty($conf->global->MAIN_PDF_DATA_ON_FIRST_PAGE))
 								$showpricebeforepagebreak = 1;
-							else
-								$showpricebeforepagebreak = 0;
+							else $showpricebeforepagebreak = 0;
 					    }
 
 					    if (!empty($this->cols['photo']) && isset($imglinesize['width']) && isset($imglinesize['height']))
@@ -622,17 +616,15 @@ class pdf_eratosthene extends ModelePDFCommandes
     								$pdf->setPage($pageposafter + 1);
     							}
     						}
-    						else
-    						{
+    						else {
     							// We found a page break
 								// Allows data in the first page if description is long enough to break in multiples pages
 								if (!empty($conf->global->MAIN_PDF_DATA_ON_FIRST_PAGE))
 									$showpricebeforepagebreak = 1;
-								else
-									$showpricebeforepagebreak = 0;
+								else $showpricebeforepagebreak = 0;
     						}
     					}
-    					else	// No pagebreak
+    					else // No pagebreak
     					{
     						$pdf->commitTransaction();
     					}
@@ -785,8 +777,7 @@ class pdf_eratosthene extends ModelePDFCommandes
 						{
 						    $this->_tableau($pdf, $tab_top, $this->page_hauteur - $tab_top - $heightforfooter, 0, $outputlangs, $hidetop, 1, $object->multicurrency_code);
 						}
-						else
-						{
+						else {
 							$this->_tableau($pdf, $tab_top_newpage, $this->page_hauteur - $tab_top_newpage - $heightforfooter, 0, $outputlangs, 1, 1, $object->multicurrency_code);
 						}
 						$this->_pagefoot($pdf, $object, $outputlangs, 1);
@@ -801,8 +792,7 @@ class pdf_eratosthene extends ModelePDFCommandes
 						{
 						    $this->_tableau($pdf, $tab_top, $this->page_hauteur - $tab_top - $heightforfooter, 0, $outputlangs, $hidetop, 1, $object->multicurrency_code);
 					    }
-						else
-						{
+						else {
 							$this->_tableau($pdf, $tab_top_newpage, $this->page_hauteur - $tab_top_newpage - $heightforfooter, 0, $outputlangs, 1, 1, $object->multicurrency_code);
 						}
 						$this->_pagefoot($pdf, $object, $outputlangs, 1);
@@ -817,8 +807,7 @@ class pdf_eratosthene extends ModelePDFCommandes
 				// Show square
 				if ($pagenb == $pageposbeforeprintlines)
 				    $this->_tableau($pdf, $tab_top, $this->page_hauteur - $tab_top - $heightforinfotot - $heightforfreetext - $heightforfooter, 0, $outputlangs, $hidetop, 0, $object->multicurrency_code);
-				else
-					$this->_tableau($pdf, $tab_top_newpage, $this->page_hauteur - $tab_top_newpage - $heightforinfotot - $heightforfreetext - $heightforfooter, 0, $outputlangs, 1, 0, $object->multicurrency_code);
+				else $this->_tableau($pdf, $tab_top_newpage, $this->page_hauteur - $tab_top_newpage - $heightforinfotot - $heightforfreetext - $heightforfooter, 0, $outputlangs, 1, 0, $object->multicurrency_code);
 				$bottomlasttab = $this->page_hauteur - $heightforinfotot - $heightforfreetext - $heightforfooter + 1;
 
 				// Affiche zone infos
@@ -861,14 +850,12 @@ class pdf_eratosthene extends ModelePDFCommandes
 
 				return 1; // No error
 			}
-			else
-			{
+			else {
 				$this->error = $langs->transnoentities("ErrorCanNotCreateDir", $dir);
 				return 0;
 			}
 		}
-		else
-		{
+		else {
 			$this->error = $langs->transnoentities("ErrorConstantNotDefined", "COMMANDE_OUTPUTDIR");
 			return 0;
 		}
@@ -1130,8 +1117,7 @@ class pdf_eratosthene extends ModelePDFCommandes
 			{
 				// Nothing to do
 			}
-			else
-			{
+			else {
 				//Local tax 1 before VAT
 				//if (! empty($conf->global->FACTURE_LOCAL_TAX1_OPTION) && $conf->global->FACTURE_LOCAL_TAX1_OPTION=='localtax1on')
 				//{
@@ -1450,16 +1436,14 @@ class pdf_eratosthene extends ModelePDFCommandes
 				    $height = pdf_getHeightForLogo($logo);
 				    $pdf->Image($logo, $this->marge_gauche, $posy, 0, $height); // width=0 (auto)
 				}
-				else
-				{
+				else {
 					$pdf->SetTextColor(200, 0, 0);
 					$pdf->SetFont('', 'B', $default_font_size - 2);
 					$pdf->MultiCell(100, 3, $outputlangs->transnoentities("ErrorLogoFileNotFound", $logo), 0, 'L');
 					$pdf->MultiCell(100, 3, $outputlangs->transnoentities("ErrorGoToGlobalSetup"), 0, 'L');
 				}
 			}
-			else
-			{
+			else {
 				$text = $this->emetteur->name;
 				$pdf->MultiCell(100, 4, $outputlangs->convToOutputCharset($text), 0, 'L');
 			}
@@ -1853,8 +1837,7 @@ class pdf_eratosthene extends ModelePDFCommandes
 	    {
 	        $this->cols = array_replace($this->cols, $hookmanager->resArray); // array_replace is used to preserve keys
 	    }
-	    else
-	    {
+	    else {
 	        $this->cols = $hookmanager->resArray;
 	    }
     }

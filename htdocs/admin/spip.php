@@ -74,8 +74,7 @@ if ($action == 'update' || $action == 'add')
         {
             setEventMessages($langs->trans("SetupSaved"), null, 'mesgs');
         }
-        else
-        {
+        else {
             setEventMessages($langs->trans("Error"), null, 'errors');
         }
     }
@@ -154,8 +153,7 @@ if (!empty($conf->global->ADHERENT_USE_SPIP))
 
     print '</form>';
 }
-else
-{
+else {
     dol_fiche_head($head, 'spip', $langs->trans("Setup"), 0, 'user');
 
     $link = '<a class="reposition" href="'.$_SERVER["PHP_SELF"].'?action=set&value=1&name=ADHERENT_USE_SPIP">';

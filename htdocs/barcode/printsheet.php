@@ -162,8 +162,7 @@ if ($action == 'builddoc')
 					setEventMessages($module->error, null, 'errors');
 				}
 			}
-			else
-			{
+			else {
 				$error++;
 				setEventMessages("Error, encoding ".$encoding." is not supported by encoder ".$generator.'. You must choose another barcode type or install a barcode generation engine that support '.$encoding, null, 'errors');
 			}

@@ -153,8 +153,7 @@ else // If entry on page with no parameter, we arrive here
     {
         $url = $apiService->getAuthorizationUri(array('state'=>GETPOST('state')));
     }
-    else
-    {
+    else {
         $url = $apiService->getAuthorizationUri(); // Parameter state will be randomly generated
     }
 

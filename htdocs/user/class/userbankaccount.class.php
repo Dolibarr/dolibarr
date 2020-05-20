@@ -105,8 +105,7 @@ class UserBankAccount extends Account
                 return $this->update($user);
             }
         }
-        else
-        {
+        else {
             print $this->db->error();
             return 0;
         }
@@ -142,8 +141,7 @@ class UserBankAccount extends Account
 
         if (trim($this->label) != '')
             $sql .= ",label = '".$this->db->escape($this->label)."'";
-        else
-            $sql .= ",label = NULL";
+        else $sql .= ",label = NULL";
         $sql .= " WHERE rowid = ".$this->id;
 
         $result = $this->db->query($sql);
@@ -151,8 +149,7 @@ class UserBankAccount extends Account
         {
             return 1;
         }
-        else
-        {
+        else {
             dol_print_error($this->db);
             return 0;
         }
@@ -204,8 +201,7 @@ class UserBankAccount extends Account
 
             return 1;
         }
-        else
-        {
+        else {
             dol_print_error($this->db);
             return -1;
         }

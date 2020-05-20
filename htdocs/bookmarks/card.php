@@ -101,22 +101,19 @@ if ($action == 'add' || $action == 'addproduct' || $action == 'update')
 			header("Location: ".$backtopage);
 			exit;
 		}
-		else
-		{
+		else {
 			if ($object->errno == 'DB_ERROR_RECORD_ALREADY_EXISTS')
 			{
 				$langs->load("errors");
 				setEventMessages($langs->transnoentities("WarningBookmarkAlreadyExists"), null, 'warnings');
 			}
-			else
-			{
+			else {
 				setEventMessages($object->error, $object->errors, 'errors');
 			}
 			$action = $invertedaction;
 		}
 	}
-	else
-	{
+	else {
 		$action = $invertedaction;
 	}
 }
@@ -266,8 +263,7 @@ if ($id > 0 && !preg_match('/^add/i', $action))
 		$liste = array(1=>$langs->trans("OpenANewWindow"), 0=>$langs->trans("ReplaceWindow"));
 		print $form->selectarray('target', $liste, isset($_POST["target"]) ? $_POST["target"] : $object->target);
 	}
-	else
-	{
+	else {
 		if ($object->target == 0) print $langs->trans("ReplaceWindow");
 		if ($object->target == 1) print $langs->trans("OpenANewWindow");
 	}
@@ -278,16 +274,14 @@ if ($id > 0 && !preg_match('/^add/i', $action))
 	{
 		print img_picto('', 'user').' '.$form->select_dolusers(isset($_POST['userid']) ? $_POST['userid'] : ($object->fk_user ? $object->fk_user : ''), 'userid', 1, '', 0, '', '', 0, 0, 0, '', 0, '', 'maxwidth300');
 	}
-	else
-	{
+	else {
 		if ($object->fk_user > 0)
 		{
 			$fuser = new User($db);
 			$fuser->fetch($object->fk_user);
 			print $fuser->getNomUrl(1);
 		}
-		else
-		{
+		else {
 			print $langs->trans("Public");
 		}
 	}

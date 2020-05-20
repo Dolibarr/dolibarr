@@ -203,8 +203,7 @@ class mod_facture_terre extends ModeleNumRefFactures
 			if ($obj) $max = intval($obj->max);
 			else $max = 0;
 		}
-		else
-		{
+		else {
 			return -1;
 		}
 

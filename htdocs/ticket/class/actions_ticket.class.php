@@ -397,8 +397,7 @@ class ActionsTicket
 				{
 					$urlforbutton = $_SERVER['PHP_SELF'].'?track_id='.$object->track_id.'&action=mark_ticket_read'; // To set as read, we use a dedicated action
 				}
-				else
-				{
+				else {
 					$urlforbutton = $_SERVER['PHP_SELF'].'?track_id='.$object->track_id.'&action=set_status&new_status='.$status;
 				}
 

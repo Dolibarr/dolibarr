@@ -213,8 +213,7 @@ if (GETPOST('actionadd', 'alpha') || GETPOST('actionmodify', 'alpha'))
             setEventMessages($langs->transnoentities("RecordSaved"), null, 'mesgs');
         	unset($_POST); // Clean $_POST array, we keep only
         }
-        else
-        {
+        else {
             if ($db->errno() == 'DB_ERROR_RECORD_ALREADY_EXISTS') {
                 setEventMessages($langs->transnoentities("ErrorRecordAlreadyExists"), null, 'errors');
             }
@@ -274,8 +273,7 @@ if (GETPOST('actionadd', 'alpha') || GETPOST('actionmodify', 'alpha'))
             		$error++;
             		setEventMessages($langs->trans('ErrorDirAlreadyExists', $destfile), null, 'errors');
             	}
-            	else
-            	{
+            	else {
 	                @rename($srcfile, $destfile);
 
 		            // We must now rename $website->ref into $newname inside files
@@ -288,8 +286,7 @@ if (GETPOST('actionadd', 'alpha') || GETPOST('actionmodify', 'alpha'))
             	}
             }
         }
-        else
-        {
+        else {
         	$error++;
             setEventMessages($db->lasterror(), null, 'errors');
         }
@@ -298,8 +295,7 @@ if (GETPOST('actionadd', 'alpha') || GETPOST('actionmodify', 'alpha'))
         {
         	$db->commit();
         }
-        else
-        {
+        else {
         	$db->rollback();
         }
     }
@@ -338,8 +334,7 @@ if ($action == 'confirm_delete' && $confirm == 'yes')       // delete
 	        {
 	            setEventMessages($langs->transnoentities("ErrorRecordIsUsedByChild"), null, 'errors');
 	        }
-	        else
-	        {
+	        else {
 	            dol_print_error($db);
 	        }
 	    }
@@ -349,8 +344,7 @@ if ($action == 'confirm_delete' && $confirm == 'yes')       // delete
 	    	dol_delete_dir_recursive($conf->website->dir_output.'/'.$website->ref);
 	    }
     }
-    else
-    {
+    else {
     	dol_print_error($db, 'Failed to load website with id '.$rowid);
     }
 }
@@ -587,8 +581,7 @@ if ($id)
                     print '<td colspan="3" class="right"><a name="'.(!empty($obj->rowid) ? $obj->rowid : $obj->code).'">&nbsp;</a><input type="submit" class="button" name="actionmodify" value="'.$langs->trans("Modify").'">';
                     print '&nbsp;<input type="submit" class="button" name="actioncancel" value="'.$langs->trans("Cancel").'"></td>';
                 }
-                else
-                {
+                else {
 	              	$tmpaction = 'view';
                     $parameters = array('var'=>$var, 'fieldlist'=>$fieldlist, 'tabname'=>$tabname[$id]);
                     $reshook = $hookmanager->executeHooks('viewWebsiteFieldlist', $parameters, $obj, $tmpaction); // Note that $action and $object may have been modified by some hooks
@@ -680,8 +673,7 @@ function fieldListWebsites($fieldlist, $obj = '', $tabname = '', $context = '')
 		elseif ($fieldlist[$field] == 'code' && isset($obj->$fieldname)) {
 			print '<td><input type="text" class="flat" value="'.(!empty($obj->$fieldname) ? $obj->$fieldname : '').'" size="10" name="'.$fieldlist[$field].'"></td>';
 		}
-		else
-		{
+		else {
 			print '<td>';
 			$size = '';
 			if ($fieldlist[$field] == 'code') $size = 'size="8" ';

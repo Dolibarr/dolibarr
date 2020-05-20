@@ -79,8 +79,7 @@ if ($action == 'setconst' && $user->admin)
         $db->commit();
         setEventMessages($langs->trans("SetupSaved"), null);
     }
-    else
-    {
+    else {
         $db->rollback();
         dol_print_error($db);
     }
@@ -99,8 +98,7 @@ if ($action == 'setvalue' && $user->admin)
         $db->commit();
         setEventMessages($langs->trans("SetupSaved"), null);
     }
-    else
-    {
+    else {
         $db->rollback();
         dol_print_error($db);
     }
@@ -179,8 +177,7 @@ if ($mode == 'setup' && $user->admin)
         	$urltodelete = '';
         	$urltocheckperms = '';
         }
-        else
-		{
+        else {
 			$urltorenew = '';
 			$urltodelete = '';
 			$urltocheckperms = '';
@@ -194,8 +191,7 @@ if ($mode == 'setup' && $user->admin)
         require_once DOL_DOCUMENT_ROOT.'/includes/OAuth/bootstrap.php';
         // Dolibarr storage
         $storage = new DoliStorage($db, $conf);
-        try
-        {
+        try {
             $tokenobj = $storage->retrieveAccessToken($OAUTH_SERVICENAME);
         }
         catch (Exception $e)
@@ -226,8 +222,7 @@ if ($mode == 'setup' && $user->admin)
                 {
                     $expiredat = $langs->trans("Unknown");
                 }
-                else
-                {
+                else {
                     $expiredat = dol_print_date($endoflife, "dayhour");
                 }
             }

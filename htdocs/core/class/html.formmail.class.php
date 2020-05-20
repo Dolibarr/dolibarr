@@ -344,8 +344,7 @@ class FormMail extends Form
 		{
 			return $hookmanager->resPrint;
 		}
-		else
-		{
+		else {
 			$out = '';
 
 			$disablebademails = 1;
@@ -435,8 +434,7 @@ class FormMail extends Form
 					{
 						$modelmail_array[$line->id] = $langs->trans($reg[1]); // langs->trans when label is __(xxx)__
 					}
-					else
-					{
+					else {
 						$modelmail_array[$line->id] = $line->label;
 					}
 					if ($line->lang) $modelmail_array[$line->id] .= ' ('.$line->lang.')';
@@ -520,8 +518,7 @@ class FormMail extends Form
 						{
 							$out .= ' &lt;'.$this->frommail.'&gt;';
 						}
-						else
-						{
+						else {
 							if ($this->fromtype)
 							{
 								$langs->load('errors');
@@ -537,8 +534,7 @@ class FormMail extends Form
 							$langs->load('errors');
 							$liste['user'] = $user->getFullName($langs).' &lt;'.$langs->trans('ErrorNoMailDefinedForThisUser').'&gt;';
 						}
-						else
-						{
+						else {
 							$liste['user'] = $user->getFullName($langs).' &lt;'.$user->email.'&gt;';
 						}
 
@@ -616,8 +612,7 @@ class FormMail extends Form
 
 					$out .= "</td></tr>\n";
 				}
-				else
-				{
+				else {
 					$out .= '<tr><td class="fieldrequired width200">'.$langs->trans("MailFrom")."</td><td>";
 					$out .= $langs->trans("Name").':<input type="text" id="fromname" name="fromname" class="maxwidth200onsmartphone" value="'.$this->fromname.'" />';
 					$out .= '&nbsp; &nbsp; ';
@@ -651,8 +646,7 @@ class FormMail extends Form
 							$contact->fetch($this->toid);
 							$out .= $contact->getNomUrl(1);
 						}
-						else
-						{
+						else {
 							$out .= $this->toname;
 						}
 						$out .= ' &lt;'.$this->tomail.'&gt;';
@@ -661,14 +655,12 @@ class FormMail extends Form
 							$out .= '<br>'.$langs->trans("and").' <input class="minwidth200" id="sendto" name="sendto" value="'.(!is_array($this->withto) && !is_numeric($this->withto) ? (isset($_REQUEST["sendto"]) ? $_REQUEST["sendto"] : $this->withto) : "").'" />';
 						}
 					}
-					else
-					{
+					else {
 						// Note withto may be a text like 'AllRecipientSelected'
 						$out .= (!is_array($this->withto) && !is_numeric($this->withto)) ? $this->withto : "";
 					}
 				}
-				else
-				{
+				else {
 					// The free input of email
 					if (!empty($this->withtofree))
 					{
@@ -742,8 +734,7 @@ class FormMail extends Form
 				{
 					$out .= (!is_array($this->withtocc) && !is_numeric($this->withtocc)) ? $this->withtocc : "";
 				}
-				else
-				{
+				else {
 				    $out .= '<input class="minwidth200" id="sendtocc" name="sendtocc" value="'.(GETPOST("sendtocc", "alpha") ? GETPOST("sendtocc", "alpha") : ((!is_array($this->withtocc) && !is_numeric($this->withtocc)) ? $this->withtocc : '')).'" />';
 					if (!empty($this->withtocc) && is_array($this->withtocc))
 					{
@@ -886,8 +877,7 @@ class FormMail extends Form
 						$out .= '<input class="button" type="submit" id="'.$addfileaction.'" name="'.$addfileaction.'" value="'.$langs->trans("MailingAddFile").'" />';
 					}
 				}
-				else
-				{
+				else {
 					$out .= $this->withfile;
 				}
 
@@ -913,8 +903,7 @@ class FormMail extends Form
 				{
 					$paymenturl = '';
 				}
-				else
-				{
+				else {
 					// Set the online payment url link into __ONLINE_PAYMENT_URL__ key
 					require_once DOL_DOCUMENT_ROOT.'/core/lib/payments.lib.php';
 					$langs->loadLangs(array('paypal', 'other'));
@@ -934,8 +923,7 @@ class FormMail extends Form
 					$this->substit['__ONLINE_PAYMENT_TEXT_AND_URL__'] = str_replace('\n', "\n", $langs->transnoentities("PredefinedMailContentLink", $paymenturl));
 					$this->substit['__ONLINE_PAYMENT_URL__'] = $paymenturl;
 				}
-				else
-				{
+				else {
 					$this->substit['__ONLINE_PAYMENT_TEXT_AND_URL__'] = '';
 					$this->substit['__ONLINE_PAYMENT_URL__'] = '';
 				}
@@ -962,8 +950,7 @@ class FormMail extends Form
 				}
 
 				if (isset($_POST["message"]) && !$_POST['modelselected']) $defaultmessage = $_POST["message"];
-				else
-				{
+				else {
 					$defaultmessage = make_substitutions($defaultmessage, $this->substit);
 					// Clean first \n and br (to avoid empty line when CONTACTCIVNAME is empty)
 					$defaultmessage = preg_replace("/^(<br>)+/", "", $defaultmessage);
@@ -979,8 +966,7 @@ class FormMail extends Form
 					$out .= nl2br($defaultmessage);
 					$out .= '<input type="hidden" id="message" name="message" value="'.$defaultmessage.'" />';
 				}
-				else
-				{
+				else {
 					if (!isset($this->ckeditortoolbar)) $this->ckeditortoolbar = 'dolibarr_notes';
 
 					// Editor wysiwyg
@@ -1255,8 +1241,7 @@ class FormMail extends Form
 			$db->free($resql);
 			return $ret;
 		}
-		else
-		{
+		else {
 			dol_print_error($db);
 			return -1;
 		}
@@ -1291,8 +1276,7 @@ class FormMail extends Form
 			$this->db->free($resql);
 			return $num;
 		}
-		else
-		{
+		else {
 			$this->error = get_class($this).' '.__METHOD__.' ERROR:'.$this->db->lasterror();
 			return -1;
 		}
@@ -1345,8 +1329,7 @@ class FormMail extends Form
 			$this->db->free($resql);
 			return $num;
 		}
-		else
-		{
+		else {
 			$this->error = get_class($this).' '.__METHOD__.' ERROR:'.$this->db->lasterror();
 			return -1;
 		}
@@ -1477,8 +1460,7 @@ class FormMail extends Form
 					if ($conf->contrat->enabled)  $tmparray['__SECUREKEYPAYMENT_CONTRACTLINE__'] = 'SecureKeyPAYMENTUniquePerContractLine';
 				}
 			}
-			else
-			{
+			else {
 				/* No need to show into tooltip help, option is not enabled
 				$vars['__SECUREKEYPAYMENT__']='';
 				$vars['__SECUREKEYPAYMENT_MEMBER__']='';

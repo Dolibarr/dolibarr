@@ -580,8 +580,7 @@ while ($i < min($num, $limit))
 		{
 			print $langs->trans("DomainUser");
 		}
-		else
-	    {
+		else {
 			print $langs->trans("InternalUser");
 		}
 		print '</td>';
@@ -597,8 +596,7 @@ while ($i < min($num, $limit))
 			{
 				print $langs->trans("AllEntities");
 			}
-			else
-			{
+			else {
 				$mc->getInfo($obj->entity);
 				print $mc->label;
 			}

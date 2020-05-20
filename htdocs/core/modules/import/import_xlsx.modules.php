@@ -375,8 +375,7 @@ class ImportXlsx extends ModeleImports
 			$this->warnings[$warning]['type'] = 'EMPTY';
 			$warning++;
 		}
-		else
-		{
+		else {
 			$last_insert_id_array = array(); // store the last inserted auto_increment id for each table, so that dependent tables can be inserted with the appropriate id (eg: extrafields fk_object will be set with the last inserted object's id)
 			$updatedone = false;
 			$insertdone = false;
@@ -403,8 +402,7 @@ class ImportXlsx extends ModeleImports
 					}
 					else dol_print_error($this->db);
 				}
-				else
-				{
+				else {
 					//dol_syslog("Table ".$tablename." check for entity into cache is ".$tablewithentity_cache[$tablename]);
 				}
 
@@ -439,8 +437,7 @@ class ImportXlsx extends ModeleImports
 							$error++;
 						}
 						// Test format only if field is not a missing mandatory field (field may be a value or empty but not mandatory)
-						else
-						{
+						else {
 						    // We convert field if required
 						    if (!empty($objimport->array_import_convertvalue[0][$val]))
 						    {
@@ -465,8 +462,7 @@ class ImportXlsx extends ModeleImports
                                         {
                                         	$newval = $this->cacheconvert[$file.'_'.$class.'_'.$method.'_'][$newval];
                                         }
-                                        else
-										{
+                                        else {
                                             $resultload = dol_include_once($file);
                                             if (empty($resultload))
                                             {
@@ -505,8 +501,7 @@ class ImportXlsx extends ModeleImports
                                             {
                                                 $newval = $classinstance->id;
                                             }
-                                            else
-                                            {
+                                            else {
                                                 if (!empty($objimport->array_import_convertvalue[0][$val]['dict'])) $this->errors[$error]['lib'] = $langs->trans('ErrorFieldValueNotIn', $key, $newval, 'code', $langs->transnoentitiesnoconv($objimport->array_import_convertvalue[0][$val]['dict']));
                                                 elseif (!empty($objimport->array_import_convertvalue[0][$val]['element'])) $this->errors[$error]['lib'] = $langs->trans('ErrorFieldRefNotIn', $key, $newval, $langs->transnoentitiesnoconv($objimport->array_import_convertvalue[0][$val]['element']));
                                                 else $this->errors[$error]['lib'] = 'ErrorBadDefinitionOfImportProfile';
@@ -569,8 +564,7 @@ class ImportXlsx extends ModeleImports
                                 	{
                                 		$newval = $this->cacheconvert[$file.'_'.$class.'_'.$method.'_'.$units][$newval];
                                 	}
-                                	else
-                                	{
+                                	else {
                                 		$resultload = dol_include_once($file);
                                 		if (empty($resultload))
                                 		{
@@ -587,8 +581,7 @@ class ImportXlsx extends ModeleImports
                                         {
                                         	$newval = $scaleorid ? $scaleorid : 0;
                                         }
-                                        else
-                                        {
+                                        else {
                                         	if (!empty($objimport->array_import_convertvalue[0][$val]['dict'])) $this->errors[$error]['lib'] = $langs->trans('ErrorFieldValueNotIn', $key, $newval, 'scale', $langs->transnoentitiesnoconv($objimport->array_import_convertvalue[0][$val]['dict']));
                                         	else $this->errors[$error]['lib'] = 'ErrorFieldValueNotIn';
                                 			$this->errors[$error]['type'] = 'FOREIGNKEY';
@@ -715,8 +708,7 @@ class ImportXlsx extends ModeleImports
 												$i++;
 											}
 										}
-										else
-										{
+										else {
 											dol_print_error($this->db);
 										}
 									}
@@ -752,7 +744,7 @@ class ImportXlsx extends ModeleImports
 						// Note: arrayrecord (and 'type') is filled with ->import_read_record called by import.php page before calling import_insert
 						if (empty($newval) && $arrayrecord[($key - 1)]['type'] < 0)		 $listvalues[] = ($newval == '0' ? $newval : "null");
 						elseif (empty($newval) && $arrayrecord[($key - 1)]['type'] == 0)	 $listvalues[] = "''";
-						else															 $listvalues[] = "'".$this->db->escape($newval)."'";
+						else $listvalues[] = "'".$this->db->escape($newval)."'";
 					}
 					$i++;
 				}
@@ -784,8 +776,7 @@ class ImportXlsx extends ModeleImports
     				    	$listfields[] = preg_replace('/^'.preg_quote($alias, '/').'\./', '', $key);
     				    	$listvalues[] = "'".$tmp[1]."'";
     				    }
-    				    else
-    				    {
+    				    else {
     				    	$this->errors[$error]['lib'] = 'Bad value of profile setup '.$val.' for array_import_fieldshidden';
     				    	$this->errors[$error]['type'] = 'Import profile setup';
     				    	$error++;
@@ -834,8 +825,7 @@ class ImportXlsx extends ModeleImports
 										// No record found with filters, insert will be tried below
 									}
 								}
-								else
-								{
+								else {
 									//print 'E';
 									$this->errors[$error]['lib'] = $this->db->lasterror();
 									$this->errors[$error]['type'] = 'SQL';
@@ -863,8 +853,7 @@ class ImportXlsx extends ModeleImports
 										$lastinsertid = 0;
 									}
 								}
-								else
-								{
+								else {
 									//print 'E';
 									$this->errors[$error]['lib'] = $this->db->lasterror();
 									$this->errors[$error]['type'] = 'SQL';
@@ -894,8 +883,7 @@ class ImportXlsx extends ModeleImports
 									// No error, update has been done. $this->db->db->affected_rows can be 0 if data hasn't changed
 									$updatedone = true;
 								}
-								else
-								{
+								else {
 									//print 'E';
 									$this->errors[$error]['lib'] = $this->db->lasterror();
 									$this->errors[$error]['type'] = 'SQL';
@@ -929,8 +917,7 @@ class ImportXlsx extends ModeleImports
 								    $last_insert_id_array[$tablename] = $this->db->last_insert_id($tablename); // store the last inserted auto_increment id for each table, so that child tables can be inserted with the appropriate id. This must be done just after the INSERT request, else we risk losing the id (because another sql query will be issued somewhere in Dolibarr).
 								    $insertdone = true;
 								}
-								else
-								{
+								else {
 									//print 'E';
 									$this->errors[$error]['lib'] = $this->db->lasterror();
 									$this->errors[$error]['type'] = 'SQL';

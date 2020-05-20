@@ -104,8 +104,7 @@ class FormContract
 					{
 						// Do nothing
 					}
-					else
-					{
+					else {
 						$labeltoshow = dol_trunc($obj->ref, 18);
 						//if ($obj->public) $labeltoshow.=' ('.$langs->trans("SharedProject").')';
 						//else $labeltoshow.=' ('.$langs->trans("Private").')';
@@ -113,8 +112,7 @@ class FormContract
 						{
 							print '<option value="'.$obj->rowid.'" selected>'.$labeltoshow.'</option>';
 						}
-						else
-						{
+						else {
 							$disabled = 0;
 							if ($obj->statut == 0)
 							{
@@ -131,8 +129,7 @@ class FormContract
 							{
 								$resultat = '';
 							}
-							else
-							{
+							else {
 								$resultat = '<option value="'.$obj->rowid.'"';
 								if ($disabled) $resultat .= ' disabled';
 								//if ($obj->public) $labeltoshow.=' ('.$langs->trans("Public").')';
@@ -158,8 +155,7 @@ class FormContract
 
 			return $num;
 		}
-		else
-		{
+		else {
 			dol_print_error($db);
 			return -1;
 		}

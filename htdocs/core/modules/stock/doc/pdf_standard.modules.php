@@ -211,8 +211,7 @@ class pdf_standard extends ModelePDFStock
 				$dir = $conf->stock->dir_output;
 				$file = $dir."/SPECIMEN.pdf";
 			}
-			else
-			{
+			else {
 				$objectref = dol_sanitizeFileName($object->ref);
 				$dir = $conf->stock->dir_output."/".$objectref;
 				$file = $dir."/".$objectref.".pdf";
@@ -380,18 +379,16 @@ class pdf_standard extends ModelePDFStock
 									$pdf->setPage($pageposafter + 1);
 								}
 							}
-							else
-							{
+							else {
 								// We found a page break
 
 								// Allows data in the first page if description is long enough to break in multiples pages
 								if (!empty($conf->global->MAIN_PDF_DATA_ON_FIRST_PAGE))
 									$showpricebeforepagebreak = 1;
-								else
-									$showpricebeforepagebreak = 0;
+								else $showpricebeforepagebreak = 0;
 							}
 						}
-						else	// No pagebreak
+						else // No pagebreak
 						{
 							$pdf->commitTransaction();
 						}
@@ -476,8 +473,7 @@ class pdf_standard extends ModelePDFStock
 							{
 								$this->_tableau($pdf, $tab_top, $this->page_hauteur - $tab_top - $heightforfooter, 0, $outputlangs, 0, 1, $object->multicurrency_code);
 							}
-							else
-							{
+							else {
 								$this->_tableau($pdf, $tab_top_newpage, $this->page_hauteur - $tab_top_newpage - $heightforfooter, 0, $outputlangs, 1, 1, $object->multicurrency_code);
 							}
 							$this->_pagefoot($pdf, $object, $outputlangs, 1);
@@ -492,8 +488,7 @@ class pdf_standard extends ModelePDFStock
 							{
 								$this->_tableau($pdf, $tab_top, $this->page_hauteur - $tab_top - $heightforfooter, 0, $outputlangs, 0, 1, $object->multicurrency_code);
 							}
-							else
-							{
+							else {
 								$this->_tableau($pdf, $tab_top_newpage, $this->page_hauteur - $tab_top_newpage - $heightforfooter, 0, $outputlangs, 1, 1, $object->multicurrency_code);
 							}
 							$this->_pagefoot($pdf, $object, $outputlangs, 1);
@@ -544,8 +539,7 @@ class pdf_standard extends ModelePDFStock
 						$pdf->MultiCell($this->page_largeur - $this->marge_droite - $this->postotalht, 3, price(price2num($totalvaluesell, 'MT'), 0, $outputlangs), 0, 'R', 0);
 					}
 				}
-				else
-				{
+				else {
 					dol_print_error($db);
 				}
 
@@ -570,8 +564,7 @@ class pdf_standard extends ModelePDFStock
 					$tab_height = $tab_height - $height_note;
 					$tab_top = $nexY + 6;
 				}
-				else
-				{
+				else {
 					$height_note = 0;
 				}
 
@@ -705,8 +698,7 @@ class pdf_standard extends ModelePDFStock
 					$this->_tableau($pdf, $tab_top, $this->page_hauteur - $tab_top - $heightforinfotot - $heightforfreetext - $heightforfooter, 0, $outputlangs, 0, 0, $object->multicurrency_code);
 					$bottomlasttab = $this->page_hauteur - $heightforinfotot - $heightforfreetext - $heightforfooter + 1;
 				}
-				else
-				{
+				else {
 					$this->_tableau($pdf, $tab_top_newpage, $this->page_hauteur - $tab_top_newpage - $heightforinfotot - $heightforfreetext - $heightforfooter, 0, $outputlangs, 1, 0, $object->multicurrency_code);
 					$bottomlasttab = $this->page_hauteur - $heightforinfotot - $heightforfreetext - $heightforfooter + 1;
 				}
@@ -745,14 +737,12 @@ class pdf_standard extends ModelePDFStock
 
 				return 1; // No error
 			}
-			else
-			{
+			else {
 				$this->error = $langs->trans("ErrorCanNotCreateDir", $dir);
 				return 0;
 			}
 		}
-		else
-		{
+		else {
 			$this->error = $langs->trans("ErrorConstantNotDefined", "PRODUCT_OUTPUTDIR");
 			return 0;
 		}
@@ -913,16 +903,14 @@ class pdf_standard extends ModelePDFStock
 	            $height = pdf_getHeightForLogo($logo);
 	            $pdf->Image($logo, $this->marge_gauche, $posy, 0, $height); // width=0 (auto)
 	        }
-	        else
-	        {
+	        else {
 	            $pdf->SetTextColor(200, 0, 0);
 	            $pdf->SetFont('', 'B', $default_font_size - 2);
 	            $pdf->MultiCell(100, 3, $outputlangs->transnoentities("ErrorLogoFileNotFound", $logo), 0, 'L');
 	            $pdf->MultiCell(100, 3, $outputlangs->transnoentities("ErrorGoToGlobalSetup"), 0, 'L');
 	        }
 	    }
-	    else
-	    {
+	    else {
 	        $text = $this->emetteur->name;
 	        $pdf->MultiCell(100, 4, $outputlangs->convToOutputCharset($text), 0, 'L');
 	    }
@@ -965,8 +953,7 @@ class pdf_standard extends ModelePDFStock
 		{
 			$pdf->MultiCell(150, 3, $e->label, '', 'R');
 		}
-		else
-		{
+		else {
 			$pdf->MultiCell(150, 3, $outputlangs->transnoentities("None"), '', 'R');
 		}
 
@@ -1004,8 +991,7 @@ class pdf_standard extends ModelePDFStock
 			$obj = $db->fetch_object($resqlbis);
 			$lastmovementdate = $db->jdate($obj->datem);
 		}
-		else
-		{
+		else {
 			dol_print_error($db);
 		}
 
@@ -1013,8 +999,7 @@ class pdf_standard extends ModelePDFStock
 		{
 			$toWrite = dol_print_date($lastmovementdate, 'dayhour').' ';
 		}
-		else
-		{
+		else {
 			$toWrite = $outputlangs->transnoentities("None");
 		}
 

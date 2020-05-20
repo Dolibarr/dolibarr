@@ -504,8 +504,7 @@ function checkUserAccessToObject($user, $featuresarray, $objectid = 0, $tableand
 						$sql .= " WHERE dbt.".$dbt_select." IN (".$objectid.")";
 						$sql .= " AND dbt.entity IS NOT NULL";
 					}
-					else
-					{
+					else {
 						$sql .= ",".MAIN_DB_PREFIX."usergroup_user as ug";
 						$sql .= " WHERE dbt.".$dbt_select." IN (".$objectid.")";
 						$sql .= " AND ((ug.fk_user = dbt.rowid";
@@ -518,8 +517,7 @@ function checkUserAccessToObject($user, $featuresarray, $objectid = 0, $tableand
 					$sql .= " AND dbt.entity IN (".getEntity($sharedelement, 1).")";
 				}
 			}
-			else
-			{
+			else {
 				$sql .= " WHERE dbt.".$dbt_select." IN (".$objectid.")";
 				$sql .= " AND dbt.entity IN (".getEntity($sharedelement, 1).")";
 			}
@@ -590,8 +588,7 @@ function checkUserAccessToObject($user, $featuresarray, $objectid = 0, $tableand
 				$tmparray = explode(',', $tmps);
 				if (!in_array($objectid, $tmparray)) return false;
 			}
-			else
-			{
+			else {
 				$sql = "SELECT COUNT(dbt.".$dbt_select.") as nb";
 				$sql .= " FROM ".MAIN_DB_PREFIX.$dbtablename." as dbt";
 				$sql .= " WHERE dbt.".$dbt_select." IN (".$objectid.")";
@@ -611,8 +608,7 @@ function checkUserAccessToObject($user, $featuresarray, $objectid = 0, $tableand
 				$tmparray = explode(',', $tmps);
 				if (!in_array($task->fk_project, $tmparray)) return false;
 			}
-			else
-			{
+			else {
 				$sql = "SELECT COUNT(dbt.".$dbt_select.") as nb";
 				$sql .= " FROM ".MAIN_DB_PREFIX.$dbtablename." as dbt";
 				$sql .= " WHERE dbt.".$dbt_select." IN (".$objectid.")";
@@ -662,8 +658,7 @@ function checkUserAccessToObject($user, $featuresarray, $objectid = 0, $tableand
 				$obj = $db->fetch_object($resql);
 				if (!$obj || $obj->nb < count(explode(',', $objectid))) return false;
 			}
-			else
-			{
+			else {
 				return false;
 			}
 		}
@@ -723,8 +718,7 @@ function accessforbidden($message = '', $printheader = 1, $printfooter = 1, $sho
 				print $langs->trans("CurrentLogin").': <font class="error">'.$user->login.'</font><br>';
 				print $langs->trans("ErrorForbidden2", $langs->transnoentitiesnoconv("Home"), $langs->transnoentitiesnoconv("Users"));
 			}
-			else
-			{
+			else {
 				print $langs->trans("ErrorForbidden3");
 			}
 		}

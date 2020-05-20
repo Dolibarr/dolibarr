@@ -178,8 +178,7 @@ foreach (array('internal', 'external') as $source)
 	{
 		$contactlist = $objectsrc->liste_contact(-1, $source);
 	}
-	else
-	{
+	else {
 		$contactlist = $object->liste_contact(-1, $source);
 	}
 

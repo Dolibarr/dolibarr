@@ -95,8 +95,7 @@ function formatObject($objtoshow, $prefix)
 					var_dump($val);*/
 					$s .= dol_print_date($val, 'dayhour');
 				}
-				else
-				{
+				else {
 					$s .= $val;
 				}
 				$s .= '</td></tr>';

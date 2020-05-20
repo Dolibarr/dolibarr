@@ -141,8 +141,7 @@ abstract class CommonInvoice extends CommonObject
 			if ($multicurrency) return $obj->multicurrency_amount;
 			else return $obj->amount;
 		}
-		else
-		{
+		else {
 			$this->error = $this->db->lasterror();
 			return -1;
 		}
@@ -171,8 +170,7 @@ abstract class CommonInvoice extends CommonObject
 	    {
 	        return $result;
 	    }
-	    else
-	    {
+	    else {
 	        $this->error = $discountstatic->error;
 	        return -1;
 	    }
@@ -194,8 +192,7 @@ abstract class CommonInvoice extends CommonObject
 	    {
 	        return $result;
 	    }
-	    else
-	    {
+	    else {
 	        $this->error = $discountstatic->error;
 	        return -1;
 	    }
@@ -217,8 +214,7 @@ abstract class CommonInvoice extends CommonObject
 	    {
 	        return $result;
 	    }
-	    else
-	    {
+	    else {
 	        $this->error = $discountstatic->error;
 	        return -1;
 	    }
@@ -249,8 +245,7 @@ abstract class CommonInvoice extends CommonObject
 				$i++;
 			}
 		}
-		else
-		{
+		else {
 			dol_print_error($this->db);
 		}
 		return $idarray;
@@ -285,14 +280,12 @@ abstract class CommonInvoice extends CommonObject
 				// If there is any
 				return $obj->rowid;
 			}
-			else
-			{
+			else {
 				// If no invoice replaces it
 				return 0;
 			}
 		}
-		else
-		{
+		else {
 			return -1;
 		}
 	}
@@ -379,8 +372,7 @@ abstract class CommonInvoice extends CommonObject
 						$i++;
 					}
 				}
-				else
-				{
+				else {
 					$this->error = $this->db->lasterror();
 					dol_print_error($this->db);
 					return array();
@@ -390,8 +382,7 @@ abstract class CommonInvoice extends CommonObject
 
 			return $retarray;
 		}
-		else
-		{
+		else {
 			$this->error = $this->db->lasterror();
 			dol_print_error($this->db);
 			return array();
@@ -483,8 +474,7 @@ abstract class CommonInvoice extends CommonObject
 				$alreadydispatched = $obj->nb;
 			}
 		}
-		else
-		{
+		else {
 			$this->error = $this->db->lasterror();
 			return -1;
 		}
@@ -571,8 +561,7 @@ abstract class CommonInvoice extends CommonObject
 		        $statusType = 'status3';
 		    }
 		}
-		else
-		{
+		else {
 		    $statusType = 'status6';
 
 		    if ($type == self::TYPE_CREDIT_NOTE) {
@@ -630,8 +619,7 @@ abstract class CommonInvoice extends CommonObject
 				$cdr_decalage = $obj->decalage;
 			}
 		}
-		else
-		{
+		else {
 			$this->error = $this->db->error();
 			return -1;
 		}
@@ -658,8 +646,7 @@ abstract class CommonInvoice extends CommonObject
 				$mois = 1;
 				$annee += 1;
 			}
-			else
-			{
+			else {
 				$mois += 1;
 			}
 			// We move at the beginning of the next month, and we take a day off

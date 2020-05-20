@@ -168,8 +168,7 @@ class box_supplier_orders extends ModeleBoxes
                 );
             }
         }
-        else
-        {
+        else {
             $this->info_box_contents[0][] = array(
                 'td' => 'class="nohover opacitymedium left"',
                 'text' => $langs->trans("ReadPermissionNotAllowed")

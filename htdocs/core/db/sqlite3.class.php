@@ -112,8 +112,7 @@ class DoliDBSqlite3 extends DoliDB
             $this->addCustomFunction('date_format');
             //$this->db->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
         }
-        else
-        {
+        else {
             // host, login ou password incorrect
             $this->connected = false;
             $this->ok = false;
@@ -554,8 +553,7 @@ class DoliDBSqlite3 extends DoliDB
             if (!is_object($resultset)) { $resultset = $this->_results; }
             return $resultset->fetchArray(SQLITE3_NUM);
         }
-        else
-        {
+        else {
             // si le curseur est un booleen on retourne la valeur 0
             return false;
         }
@@ -931,8 +929,7 @@ class DoliDBSqlite3 extends DoliDB
             {
                 if (preg_match("/null/i", $field_desc['default']))
                     $sqlfields[$i] .= " default ".$field_desc['default'];
-                else
-                    $sqlfields[$i] .= " default '".$field_desc['default']."'";
+                else $sqlfields[$i] .= " default '".$field_desc['default']."'";
             }
             elseif (preg_match("/^[^\s]/i", $field_desc['null']))
                 $sqlfields[$i] .= " ".$field_desc['null'];
@@ -991,8 +988,7 @@ class DoliDBSqlite3 extends DoliDB
 
     	if (!$this->query($sql))
     		return -1;
-    	else
-    		return 1;
+    	else return 1;
     }
 
     // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
@@ -1043,8 +1039,7 @@ class DoliDBSqlite3 extends DoliDB
         {
             if (preg_match("/null/i", $field_desc['default']))
             $sql .= " default ".$field_desc['default'];
-            else
-            $sql .= " default '".$field_desc['default']."'";
+            else $sql .= " default '".$field_desc['default']."'";
         }
         if (preg_match("/^[^\s]/i", $field_desc['extra']))
         $sql .= " ".$field_desc['extra'];

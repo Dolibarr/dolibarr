@@ -215,16 +215,14 @@ if (!empty($conf->propal->enabled) && $user->rights->propal->lire)
 				print '<tr class="liste_total"><td colspan="2" class="right">'.$langs->trans("Total").'</td><td class="right">'.price($total)."</td></tr>";
 			}
 		}
-		else
-		{
+		else {
 			print '<tr class="oddeven"><td colspan="3" class="opacitymedium">'.$langs->trans("NoProposal").'</td></tr>';
 		}
 		print "</table></div><br>";
 
 		$db->free($resql);
 	}
-	else
-	{
+	else {
 		dol_print_error($db);
 	}
 }
@@ -303,16 +301,14 @@ if (!empty($conf->supplier_proposal->enabled) && $user->rights->supplier_proposa
                 print '<tr class="liste_total"><td class="right">'.$langs->trans("Total").'</td><td colspan="2" class="right">'.price($total)."</td></tr>";
             }
         }
-        else
-        {
+        else {
             print '<tr class="oddeven"><td colspan="3" class="opacitymedium">'.$langs->trans("NoProposal").'</td></tr>';
         }
         print "</table></div><br>";
 
         $db->free($resql);
     }
-    else
-    {
+    else {
         dol_print_error($db);
     }
 }
@@ -395,8 +391,7 @@ if (!empty($conf->commande->enabled) && $user->rights->commande->lire)
                 print '<tr class="liste_total"><td class="right">'.$langs->trans("Total").'</td><td colspan="2" class="right">'.price($total)."</td></tr>";
 			}
 		}
-		else
-		{
+		else {
 			print '<tr class="oddeven"><td colspan="3" class="opacitymedium">'.$langs->trans("NoOrder").'</td></tr>';
 		}
 		print "</table>";
@@ -404,8 +399,7 @@ if (!empty($conf->commande->enabled) && $user->rights->commande->lire)
 
 		$db->free($resql);
 	}
-	else
-	{
+	else {
 		dol_print_error($db);
 	}
 }
@@ -488,8 +482,7 @@ if ((!empty($conf->fournisseur->enabled) && empty($conf->global->MAIN_USE_NEW_SU
                 print '<tr class="liste_total"><td class="right">'.$langs->trans("Total").'</td><td colspan="2" class="right">'.price($total)."</td></tr>";
             }
         }
-        else
-        {
+        else {
             print '<tr class="oddeven"><td colspan="3" class="opacitymedium">'.$langs->trans("NoSupplierOrder").'</td></tr>';
         }
         print "</table>";
@@ -571,8 +564,7 @@ if (!empty($conf->societe->enabled) && $user->rights->societe->lire)
 
 			$db->free($resql);
 		}
-		else
-		{
+		else {
 			print '<tr class="oddeven"><td colspan="3" class="opacitymedium">'.$langs->trans("None").'</td></tr>';
 		}
 		print "</table>";
@@ -630,8 +622,7 @@ if ((!empty($conf->fournisseur->enabled) && empty($conf->global->MAIN_USE_NEW_SU
 				$i++;
 			}
 		}
-		else
-		{
+		else {
 			print '<tr class="oddeven"><td colspan="2" class="opacitymedium">'.$langs->trans("None").'</td></tr>';
 		}
 		print '</table>';
@@ -718,8 +709,7 @@ if (!empty($conf->contrat->enabled) && $user->rights->contrat->lire && 0) // TOD
 			print "</div><br>";
 		}
 	}
-	else
-	{
+	else {
 		dol_print_error($db);
 	}
 }
@@ -826,8 +816,7 @@ if (!empty($conf->propal->enabled) && $user->rights->propal->lire)
 			print "</div><br>";
 		}
 	}
-	else
-	{
+	else {
 		dol_print_error($db);
 	}
 }
@@ -934,8 +923,7 @@ if (!empty($conf->commande->enabled) && $user->rights->commande->lire)
 			print "</div><br>";
 		}
 	}
-	else
-	{
+	else {
 		dol_print_error($db);
 	}
 }

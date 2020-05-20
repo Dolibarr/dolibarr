@@ -87,7 +87,7 @@ elseif ($modulepart == 'bank')
 	if (!$user->rights->banque->lire) accessforbidden();
 	$accessallowed = 1;
 }
-else	// ticket, holiday, expensereport, societe...
+else // ticket, holiday, expensereport, societe...
 {
 	$result = restrictedArea($user, $modulepart, $id, $modulepart);
 	if (empty($user->rights->$modulepart->read) && empty($user->rights->$modulepart->lire)) accessforbidden();
@@ -286,8 +286,7 @@ if ($cancel)
 		header("Location: ".$backtourl);
 		exit;
 	}
-	else
-	{
+	else {
 	    dol_print_error('', 'Cancel on photo_resize with a not supported value of modulepart='.$modulepart);
 	    exit;
 	}
@@ -347,14 +346,12 @@ if ($action == 'confirm_resize' && GETPOSTISSET("file") && GETPOSTISSET("sizex")
 			header("Location: ".$backtourl);
 			exit;
 		}
-		else
-		{
+		else {
     	    dol_print_error('', 'confirm_resize on photo_resize without backtourl defined for modulepart='.$modulepart);
     	    exit;
 		}
 	}
-	else
-	{
+	else {
 		setEventMessages($result, null, 'errors');
 		$_GET['file'] = $_POST["file"];
 		$action = '';
@@ -417,14 +414,12 @@ if ($action == 'confirm_crop')
 			header("Location: ".$backtourl);
 			exit;
 		}
-		else
-		{
+		else {
     	    dol_print_error('', 'confirm_crop on photo_resize without backtourl defined for modulepart='.$modulepart);
     	    exit;
 		}
 	}
-	else
-	{
+	else {
 		setEventMessages($result, null, 'errors');
 		$_GET['file'] = $_POST["file"];
 		$action = '';

@@ -69,7 +69,7 @@ if (!isset($mode) || $mode != 'noajax')    // For ajax call
         //exit;
     }
 }
-else    // For no ajax call
+else // For no ajax call
 {
 	$rootdirfordoc = $conf->ecm->dir_output;
 
@@ -234,8 +234,7 @@ if ($type == 'directory')
         $formfile->list_of_autoecmfiles($upload_dir, $filearray, $module, $param, 1, '', $perm, 1, $textifempty, $maxlengthname, $url, 1);
     }
     // Manual list
-    else
-    {
+    else {
     	if ($module == 'medias')
     	{
     		/*
@@ -260,8 +259,7 @@ if ($type == 'directory')
 	    		//if (!preg_match('/backtopage=/',$param)) $param.='&backtopage='.urlencode($_SERVER["PHP_SELF"].'?file_manager=1&website='.$websitekey.'&pageid='.$pageid);
 	    	}
     	}
-    	else
-    	{
+    	else {
         	$relativepath = $ecmdir->getRelativePath();
         	$upload_dir = $conf->ecm->dir_output.'/'.$relativepath;
     	}
@@ -271,8 +269,7 @@ if ($type == 'directory')
         {
             $filearray = array();
         }
-        else
-        {
+        else {
         	$filearray = dol_dir_list($upload_dir, "files", 0, '', array('^\.', '(\.meta|_preview.*\.png)$', '^temp$', '^CVS$'), $sortfield, $sorting, 1);
         }
 
@@ -321,8 +318,7 @@ if ($type == 'directory')
             $modulepart = 'ecm';
             $title = ''; // Use default
         }
-        else
-        {
+        else {
             $useinecm = 5;
             $modulepart = 'ecm';
             $perm = $user->rights->ecm->upload;

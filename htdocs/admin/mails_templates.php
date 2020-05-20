@@ -123,8 +123,7 @@ if (empty($conf->global->MAIN_EMAIL_TEMPLATES_FOR_OBJECT_LINES))
     	$helpsubstitforlines .= $key.' -> '.$val.'<br>';
     }
 }
-else
-{
+else {
     $tmp = FormMail::getAvailableSubstitKey('formemailwithlines');
     $tmp['__(AnyTranslationKey)__'] = 'Translation';
     $helpsubstit = $langs->trans("AvailableVariables").':<br>';
@@ -297,8 +296,7 @@ if (empty($reshook))
                 setEventMessages($langs->transnoentities("RecordSaved"), null, 'mesgs');
             	$_POST = array('id'=>$id); // Clean $_POST array, we keep only id
             }
-            else
-            {
+            else {
                 if ($db->errno() == 'DB_ERROR_RECORD_ALREADY_EXISTS') {
                     setEventMessages($langs->transnoentities("ErrorRecordAlreadyExists"), null, 'errors');
                 }
@@ -356,8 +354,7 @@ if (empty($reshook))
             {
             	setEventMessages($langs->transnoentities("RecordSaved"), null, 'mesgs');
             }
-            else
-            {
+            else {
                 setEventMessages($db->error(), null, 'errors');
             }
         }
@@ -377,8 +374,7 @@ if (empty($reshook))
             {
                 setEventMessages($langs->transnoentities("ErrorRecordIsUsedByChild"), null, 'errors');
             }
-            else
-            {
+            else {
                 dol_print_error($db);
             }
         }
@@ -577,8 +573,7 @@ foreach ($fieldsforcontent as $tmpfieldlist)
 	elseif ($tmpfieldlist == 'joinfiles') {
 		print '<input type="text" class="flat maxwidth50" name="'.$tmpfieldlist.'" value="'.(isset($obj->{$tmpfieldlist}) ? $obj->{$tmpfieldlist} : '1').'">';
 	}
-	else
-	{
+	else {
 		if ($context != 'hide') {
 			// print '<textarea cols="3" rows="'.ROWS_2.'" class="flat" name="'.$fieldlist[$field].'">'.(! empty($obj->{$fieldlist[$field]})?$obj->{$fieldlist[$field]}:'').'</textarea>';
 			$okforextended = true;
@@ -587,8 +582,7 @@ foreach ($fieldsforcontent as $tmpfieldlist)
 			$doleditor = new DolEditor($tmpfieldlist, (!empty($obj->{$tmpfieldlist}) ? $obj->{$tmpfieldlist} : ''), '', 120, 'dolibarr_mailings', 'In', 0, false, $okforextended, ROWS_4, '90%');
 			print $doleditor->Create(1);
 		}
-		else
-			print '&nbsp;';
+		else print '&nbsp;';
 	}
 	print '</td>';
 	if ($tmpfieldlist == 'topic') {
@@ -802,8 +796,7 @@ if ($resql)
 
                 print "</tr>\n";
             }
-            else
-            {
+            else {
             	$keyforobj = 'type_template';
             	if (!in_array($obj->$keyforobj, array_keys($elementList)))
             	{
@@ -989,15 +982,13 @@ function fieldList($fieldlist, $obj = '', $tabname = '', $context = '')
 			{
 				print $form->select_dolusers($obj->{$fieldlist[$field]}, 'fk_user', 1, null, 0, '', null, 0, 0, 1, '', 0, '', 'maxwidth200');
 			}
-			else
-			{
+			else {
 				if ($context == 'add')	// I am not admin and we show the add form
 				{
 					print $user->getNomUrl(1); // Me
 					$forcedvalue = $user->id;
 				}
-				else
-				{
+				else {
 					if ($obj && !empty($obj->{$fieldlist[$field]}) && $obj->{$fieldlist[$field]} > 0)
 					{
 						$fuser = new User($db);
@@ -1005,8 +996,7 @@ function fieldList($fieldlist, $obj = '', $tabname = '', $context = '')
 						print $fuser->getNomUrl(1);
 						$forcedvalue = $fuser->id;
 					}
-					else
-					{
+					else {
 						$forcedvalue = $obj->{$fieldlist[$field]};
 					}
 				}
@@ -1024,8 +1014,7 @@ function fieldList($fieldlist, $obj = '', $tabname = '', $context = '')
 				if ($context == 'edit') $selectedlang = $obj->{$fieldlist[$field]};
 				print $formadmin->select_language($selectedlang, 'langcode', 0, null, 1, 0, 0, 'maxwidth150');
 			}
-			else
-			{
+			else {
 				if (!empty($obj->{$fieldlist[$field]}))
 				{
 					print $obj->{$fieldlist[$field]}.' - '.$langs->trans('Language_'.$obj->{$fieldlist[$field]});
@@ -1046,8 +1035,7 @@ function fieldList($fieldlist, $obj = '', $tabname = '', $context = '')
 				print '<input type="hidden" name="type_template" value="'.$obj->{$fieldlist[$field]}.'">';
 				print $obj->{$fieldlist[$field]};
 			}
-			else
-			{
+			else {
 				print $form->selectarray('type_template', $elementList, (!empty($obj->{$fieldlist[$field]}) ? $obj->{$fieldlist[$field]}:''), 1, 0, 0, '', 0, 0, 0, '', 'maxwidth150 maxwidth100onsmartphone');
 			}
 			print '</td>';
@@ -1055,8 +1043,7 @@ function fieldList($fieldlist, $obj = '', $tabname = '', $context = '')
 		elseif ($context == 'add' && in_array($fieldlist[$field], array('topic', 'joinfiles', 'content', 'content_lines'))) continue;
 		elseif ($context == 'edit' && in_array($fieldlist[$field], array('topic', 'joinfiles', 'content', 'content_lines'))) continue;
 		elseif ($context == 'hide' && in_array($fieldlist[$field], array('topic', 'joinfiles', 'content', 'content_lines'))) continue;
-		else
-		{
+		else {
 			$size = ''; $class = ''; $classtd = '';
 			if ($fieldlist[$field] == 'code') $class = 'maxwidth100';
 			if ($fieldlist[$field] == 'label') $class = 'maxwidth100';
@@ -1073,14 +1060,12 @@ function fieldList($fieldlist, $obj = '', $tabname = '', $context = '')
 				{
 					print $form->selectyesno($fieldlist[$field], '1', 1);
 				}
-				else
-				{
+				else {
 					//print '<input type="text" '.$size.'class="flat'.($class?' '.$class:'').'" value="1" name="'.$fieldlist[$field].'">';
 					print $form->selectyesno($fieldlist[$field], (isset($obj->{$fieldlist[$field]}) ? $obj->{$fieldlist[$field]}:''), 1);
 				}
 			}
-			else
-			{
+			else {
 				print '<input type="text" '.$size.'class="flat'.($class ? ' '.$class : '').'" value="'.(isset($obj->{$fieldlist[$field]}) ? $obj->{$fieldlist[$field]}:'').'" name="'.$fieldlist[$field].'">';
 			}
 			print '</td>';

@@ -218,8 +218,7 @@ if (in_array($type, array_keys($typewecanchangeinto)))
     }
     print '</select>';
 }
-else
-{
+else {
 	print $type2label[$type];
     print '<input type="hidden" name="type" id="type" value="'.$type.'">';
 }

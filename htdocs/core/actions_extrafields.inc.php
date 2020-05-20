@@ -123,8 +123,7 @@ if ($action == 'add')
 	    					$action = 'create';
 	    				}
 	    			}
-	    			else
-	    			{
+	    			else {
 	    				$error++;
 	    				$langs->load("errors");
 	    				$mesg[] = $langs->trans("ErrorBadFormatValueList", $param_ligne);
@@ -150,8 +149,7 @@ if ($action == 'add')
     					$params['options'] = array($parameters=>null);
     				}
     			}
-    			else
-    			{
+    			else {
     				//Esle it's separated key/value and coma list
     				foreach ($parameters_array as $param_ligne)
     				{
@@ -192,15 +190,13 @@ if ($action == 'add')
     				header("Location: ".$_SERVER["PHP_SELF"]);
     				exit;
     			}
-    			else
-    			{
+    			else {
                     $error++;
     			    $mesg = $extrafields->error;
                     setEventMessages($mesg, null, 'errors');
     			}
     		}
-    		else
-    		{
+    		else {
                 $error++;
     		    $langs->load("errors");
     			$mesg = $langs->trans("ErrorFieldCanNotContainSpecialNorUpperCharacters", $langs->transnoentities("AttributeCode"));
@@ -208,8 +204,7 @@ if ($action == 'add')
     			$action = 'create';
     		}
 	    }
-	    else
-	    {
+	    else {
 	    	setEventMessages($mesg, null, 'errors');
 	    }
 	}
@@ -294,8 +289,7 @@ if ($action == 'update')
 	        				$action = 'edit';
 	        			}
 	        		}
-	        		else
-	        		{
+	        		else {
 	        			$error++;
 	        			$langs->load("errors");
 	        			$mesg[] = $langs->trans("ErrorBadFormatValueList", $param_ligne);
@@ -320,8 +314,7 @@ if ($action == 'update')
     					$params['options'] = array($parameters=>null);
     				}
     			}
-    			else
-    			{
+    			else {
     				//Esle it's separated key/value and coma list
     				foreach ($parameters_array as $param_ligne)
     				{
@@ -362,23 +355,20 @@ if ($action == 'update')
     				header("Location: ".$_SERVER["PHP_SELF"]);
     				exit;
     			}
-    			else
-    			{
+    			else {
                     $error++;
     			    $mesg = $extrafields->error;
     			    setEventMessages($mesg, null, 'errors');
     			}
     		}
-    		else
-    		{
+    		else {
     		    $error++;
     			$langs->load("errors");
     			$mesg = $langs->trans("ErrorFieldCanNotContainSpecialCharacters", $langs->transnoentities("AttributeCode"));
     			setEventMessages($mesg, null, 'errors');
     		}
 	    }
-	    else
-	    {
+	    else {
 	    	setEventMessages($mesg, null, 'errors');
 	    }
 	}
@@ -397,8 +387,7 @@ if ($action == 'delete')
         }
         else $mesg = $extrafields->error;
 	}
-	else
-	{
+	else {
 	    $error++;
 		$langs->load("errors");
 		$mesg = $langs->trans("ErrorFieldCanNotContainSpecialCharacters", $langs->transnoentities("AttributeCode"));

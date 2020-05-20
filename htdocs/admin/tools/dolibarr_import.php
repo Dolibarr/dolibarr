@@ -115,8 +115,7 @@ print $langs->trans("RestoreDesc3", $dolibarr_main_db_name).'<br><br>';
     </div>
         <?php
     }
-    else
-    {
+    else {
         print 'No method available with database '.$label;
     }
     ?>

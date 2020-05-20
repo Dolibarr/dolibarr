@@ -199,8 +199,7 @@ class ImportCsv extends ModeleImports
 			$this->error = $langs->trans("ErrorFailToOpenFile", $file);
 			$ret = -1;
 		}
-		else
-		{
+		else {
 			$this->file = $file;
 		}
 
@@ -265,21 +264,19 @@ class ImportCsv extends ModeleImports
 						$newarrayres[$key]['val'] = $val;
 						$newarrayres[$key]['type'] = (dol_strlen($val) ? 1 : -1); // If empty we considere it's null
 					}
-					else
-					{
+					else {
 						$newarrayres[$key]['val'] = utf8_encode($val);
 						$newarrayres[$key]['type'] = (dol_strlen($val) ? 1 : -1); // If empty we considere it's null
 					}
 				}
-				else	// Autodetect format (UTF8 or ISO)
+				else // Autodetect format (UTF8 or ISO)
 				{
 					if (utf8_check($val))
 					{
 						$newarrayres[$key]['val'] = $val;
 						$newarrayres[$key]['type'] = (dol_strlen($val) ? 1 : -1); // If empty we considere it's null
 					}
-					else
-					{
+					else {
 						$newarrayres[$key]['val'] = utf8_encode($val);
 						$newarrayres[$key]['type'] = (dol_strlen($val) ? 1 : -1); // If empty we considere it's null
 					}
@@ -347,8 +344,7 @@ class ImportCsv extends ModeleImports
 			$this->warnings[$warning]['type'] = 'EMPTY';
 			$warning++;
 		}
-		else
-		{
+		else {
 			$last_insert_id_array = array(); // store the last inserted auto_increment id for each table, so that dependent tables can be inserted with the appropriate id (eg: extrafields fk_object will be set with the last inserted object's id)
 			$updatedone = false;
 			$insertdone = false;
@@ -375,8 +371,7 @@ class ImportCsv extends ModeleImports
 					}
 					else dol_print_error($this->db);
 				}
-				else
-				{
+				else {
 					//dol_syslog("Table ".$tablename." check for entity into cache is ".$tablewithentity_cache[$tablename]);
 				}
 
@@ -411,8 +406,7 @@ class ImportCsv extends ModeleImports
 							$error++;
 						}
 						// Test format only if field is not a missing mandatory field (field may be a value or empty but not mandatory)
-						else
-						{
+						else {
 						    // We convert field if required
 						    if (!empty($objimport->array_import_convertvalue[0][$val]))
 						    {
@@ -438,8 +432,7 @@ class ImportCsv extends ModeleImports
                                         {
                                         	$newval = $this->cacheconvert[$file.'_'.$class.'_'.$method.'_'][$newval];
                                         }
-                                        else
-										{
+                                        else {
                                             $resultload = dol_include_once($file);
                                             if (empty($resultload))
                                             {
@@ -478,8 +471,7 @@ class ImportCsv extends ModeleImports
                                             {
                                                 $newval = $classinstance->id;
                                             }
-                                            else
-                                            {
+                                            else {
                                                 if (!empty($objimport->array_import_convertvalue[0][$val]['dict'])) $this->errors[$error]['lib'] = $langs->trans('ErrorFieldValueNotIn', $key, $newval, 'code', $langs->transnoentitiesnoconv($objimport->array_import_convertvalue[0][$val]['dict']));
                                                 elseif (!empty($objimport->array_import_convertvalue[0][$val]['element'])) $this->errors[$error]['lib'] = $langs->trans('ErrorFieldRefNotIn', $key, $newval, $langs->transnoentitiesnoconv($objimport->array_import_convertvalue[0][$val]['element']));
                                                 else $this->errors[$error]['lib'] = 'ErrorBadDefinitionOfImportProfile';
@@ -542,8 +534,7 @@ class ImportCsv extends ModeleImports
                                 	{
                                 		$newval = $this->cacheconvert[$file.'_'.$class.'_'.$method.'_'.$units][$newval];
                                 	}
-                                	else
-                                	{
+                                	else {
                                 		$resultload = dol_include_once($file);
                                 		if (empty($resultload))
                                 		{
@@ -560,8 +551,7 @@ class ImportCsv extends ModeleImports
                                 		{
                                 			$newval = $scaleorid ? $scaleorid : 0;
                                 		}
-                                		else
-                                		{
+                                		else {
                                 			if (!empty($objimport->array_import_convertvalue[0][$val]['dict'])) $this->errors[$error]['lib'] = $langs->trans('ErrorFieldValueNotIn', $key, $newval, 'scale', $langs->transnoentitiesnoconv($objimport->array_import_convertvalue[0][$val]['dict']));
                                 			else $this->errors[$error]['lib'] = 'ErrorFieldValueNotIn';
                                 			$this->errors[$error]['type'] = 'FOREIGNKEY';
@@ -688,8 +678,7 @@ class ImportCsv extends ModeleImports
 												$i++;
 											}
 										}
-										else
-										{
+										else {
 											dol_print_error($this->db);
 										}
 									}
@@ -761,8 +750,7 @@ class ImportCsv extends ModeleImports
     				    	$listfields[] = preg_replace('/^'.preg_quote($alias, '/').'\./', '', $key);
     				    	$listvalues[] = "'".$tmp[1]."'";
     				    }
-    				    else
-    				    {
+    				    else {
     				    	$this->errors[$error]['lib'] = 'Bad value of profile setup '.$val.' for array_import_fieldshidden';
     				    	$this->errors[$error]['type'] = 'Import profile setup';
     				    	$error++;
@@ -812,8 +800,7 @@ class ImportCsv extends ModeleImports
 										// No record found with filters, insert will be tried below
 									}
 								}
-								else
-								{
+								else {
 									//print 'E';
 									$this->errors[$error]['lib'] = $this->db->lasterror();
 									$this->errors[$error]['type'] = 'SQL';
@@ -841,8 +828,7 @@ class ImportCsv extends ModeleImports
 										$lastinsertid = 0;
 									}
 								}
-								else
-								{
+								else {
 									//print 'E';
 									$this->errors[$error]['lib'] = $this->db->lasterror();
 									$this->errors[$error]['type'] = 'SQL';
@@ -872,8 +858,7 @@ class ImportCsv extends ModeleImports
 									// No error, update has been done. $this->db->db->affected_rows can be 0 if data hasn't changed
 									$updatedone = true;
 								}
-								else
-								{
+								else {
 									//print 'E';
 									$this->errors[$error]['lib'] = $this->db->lasterror();
 									$this->errors[$error]['type'] = 'SQL';
@@ -907,8 +892,7 @@ class ImportCsv extends ModeleImports
 								    $last_insert_id_array[$tablename] = $this->db->last_insert_id($tablename); // store the last inserted auto_increment id for each table, so that child tables can be inserted with the appropriate id. This must be done just after the INSERT request, else we risk losing the id (because another sql query will be issued somewhere in Dolibarr).
 								    $insertdone = true;
 								}
-								else
-								{
+								else {
 									//print 'E';
 									$this->errors[$error]['lib'] = $this->db->lasterror();
 									$this->errors[$error]['type'] = 'SQL';

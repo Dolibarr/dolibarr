@@ -179,8 +179,7 @@ function fichinter_create($db, $object, $modele, $outputlangs, $hidedetails = 0,
 		{
 			$modele = $conf->global->FICHEINTER_ADDON_PDF;
 		}
-		else
-		{
+		else {
 			$modele = 'soleil';
 		}
 	}
@@ -235,15 +234,13 @@ function fichinter_create($db, $object, $modele, $outputlangs, $hidedetails = 0,
 
 			return 1;
 		}
-		else
-		{
+		else {
 			$outputlangs->charset_output = $sav_charset_output;
 			dol_print_error($db, "fichinter_pdf_create Error: ".$obj->error);
 			return 0;
 		}
 	}
-	else
-	{
+	else {
 		print $langs->trans("Error")." ".$langs->trans("ErrorFileDoesNotExists", $file);
 		return 0;
 	}

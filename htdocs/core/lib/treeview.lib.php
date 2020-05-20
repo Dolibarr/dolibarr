@@ -80,8 +80,7 @@ function tree_showpad(&$fulltree, $key, $silent = 0)
     			if ($fulltree[$key]['level'] == $pos) print img_picto_common('', 'treemenu/branch.gif');
     			else print img_picto_common('', 'treemenu/line.gif');
     		}
-    		else
-    		{
+    		else {
     			if ($fulltree[$key]['level'] == $pos) print img_picto_common('', 'treemenu/branchbottom.gif');
     			else print img_picto_common('', 'treemenu/linebottom.gif');
     		}
@@ -175,8 +174,7 @@ function tree_recur($tab, $pere, $rang, $iddivjstree = 'iddivjstree', $donoreset
 			    print $tab[$x]['buttons'];
 			    print '</td></tr></table>';
 			}
-			else
-			{
+			else {
 			    print $tab[$x]['entry'];
 			}
 			//print ' -> A '.$tab[$x]['rowid'].' mainmenu='.$tab[$x]['mainmenu'].' leftmenu='.$tab[$x]['leftmenu'].' fk_mainmenu='.$tab[$x]['fk_mainmenu'].' fk_leftmenu='.$tab[$x]['fk_leftmenu'].'<br>'."\n";
@@ -211,8 +209,7 @@ function tree_recur($tab, $pere, $rang, $iddivjstree = 'iddivjstree', $donoreset
 			    print $tab[$x]['buttons'];
 			    print '</td></tr></table>';
 			}
-			else
-			{
+			else {
 			    print $tab[$x]['entry'];
 			}
 			//print ' -> B '.$tab[$x]['rowid'].' mainmenu='.$tab[$x]['mainmenu'].' leftmenu='.$tab[$x]['leftmenu'].' fk_mainmenu='.$tab[$x]['fk_mainmenu'].' fk_leftmenu='.$tab[$x]['fk_leftmenu'].'<br>'."\n";

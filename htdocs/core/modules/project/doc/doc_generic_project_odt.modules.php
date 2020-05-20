@@ -408,8 +408,7 @@ class doc_generic_project_odt extends ModelePDFProjects
 				unset($listofdir[$key]); continue;
 			}
 			if (!is_dir($tmpdir)) $texttitle .= img_warning($langs->trans("ErrorDirNotFound", $tmpdir), 0);
-			else
-			{
+			else {
 				$tmpfiles = dol_dir_list($tmpdir, 'files', 0, '\.(ods|odt)');
 				if (count($tmpfiles)) $listoffiles = array_merge($listoffiles, $tmpfiles);
 			}
@@ -544,8 +543,7 @@ class doc_generic_project_odt extends ModelePDFProjects
 				    if ($format == '1') $format = '%Y%m%d%H%M%S';
 					$filename = $newfiletmp.'-'.dol_print_date(dol_now(), $format).'.'.$newfileformat;
 				}
-				else
-				{
+				else {
 					$filename = $newfiletmp.'.'.$newfileformat;
 				}
 				$file = $dir.'/'.$filename;
@@ -636,7 +634,7 @@ class doc_generic_project_odt extends ModelePDFProjects
 							if (file_exists($value)) $odfHandler->setImage($key, $value);
 							else $odfHandler->setVars($key, 'ErrorFileNotFound', true, 'UTF-8');
 						}
-						else    // Text
+						else // Text
 						{
 							$odfHandler->setVars($key, $value, true, 'UTF-8');
 						}
@@ -648,8 +646,7 @@ class doc_generic_project_odt extends ModelePDFProjects
 				}
 
 				// Replace tags of lines for tasks
-				try
-				{
+				try {
 					$listlines = $odfHandler->setSegment('tasks');
 
 					$taskstatic = new Task($this->db);
@@ -667,8 +664,7 @@ class doc_generic_project_odt extends ModelePDFProjects
 						//complete_substitutions_array($tmparray, $outputlangs, $object, $task, "completesubstitutionarray_lines");
 						foreach ($tmparray as $key => $val)
 						{
-							try
-							{
+							try {
 								$listlines->setVars($key, $val, true, 'UTF-8');
 							}
 							catch (OdfException $e)
@@ -718,8 +714,7 @@ class doc_generic_project_odt extends ModelePDFProjects
 
 								foreach ($tmparray as $key => $val)
 								{
-									try
-									{
+									try {
 										$listlinestaskres->setVars($key, $val, true, 'UTF-8');
 									}
 									catch (OdfException $e)
@@ -768,8 +763,7 @@ class doc_generic_project_odt extends ModelePDFProjects
 								$tmparray = $this->get_substitutionarray_taskstime($row, $outputlangs);
 								foreach ($tmparray as $key => $val)
 								{
-									try
-									{
+									try {
 										$listlinestasktime->setVars($key, $val, true, 'UTF-8');
 									}
 									catch (OdfException $e)
@@ -808,8 +802,7 @@ class doc_generic_project_odt extends ModelePDFProjects
 
 								foreach ($tmparray as $key => $val)
 								{
-									try
-									{
+									try {
 										$listlinestasktime->setVars($key, $val, true, 'UTF-8');
 									}
 									catch (OdfException $e)
@@ -841,8 +834,7 @@ class doc_generic_project_odt extends ModelePDFProjects
 							//dol_syslog(get_class($this).'::main $tmparray'.var_export($tmparray,true));
 							foreach ($tmparray as $key => $val)
 							{
-								try
-								{
+								try {
 									$listtasksfiles->setVars($key, $val, true, 'UTF-8');
 								}
 								catch (OdfException $e)
@@ -873,8 +865,7 @@ class doc_generic_project_odt extends ModelePDFProjects
 				}
 
 				// Replace tags of project files
-				try
-				{
+				try {
 					$listlines = $odfHandler->setSegment('projectfiles');
 
 					$upload_dir = $conf->projet->dir_output.'/'.dol_sanitizeFileName($object->ref);
@@ -887,8 +878,7 @@ class doc_generic_project_odt extends ModelePDFProjects
 
 						foreach ($tmparray as $key => $val)
 						{
-							try
-							{
+							try {
 								$listlines->setVars($key, $val, true, 'UTF-8');
 							}
 							catch (OdfException $e)
@@ -923,8 +913,7 @@ class doc_generic_project_odt extends ModelePDFProjects
 				}
 				if ((is_array($contact_arrray) && count($contact_arrray) > 0))
 				{
-					try
-					{
+					try {
 						$listlines = $odfHandler->setSegment('projectcontacts');
 
 						foreach ($contact_arrray as $contact)
@@ -946,8 +935,7 @@ class doc_generic_project_odt extends ModelePDFProjects
 							$tmparray = $this->get_substitutionarray_project_contacts($contact, $outputlangs);
 							foreach ($tmparray as $key => $val)
 							{
-								try
-								{
+								try {
 									$listlines->setVars($key, $val, true, 'UTF-8');
 								}
 								catch (OdfException $e)
@@ -1084,8 +1072,7 @@ class doc_generic_project_odt extends ModelePDFProjects
 				);
 
 				//Insert reference
-				try
-				{
+				try {
 					$listlines = $odfHandler->setSegment('projectrefs');
 
 					foreach ($listofreferent as $keyref => $valueref)
@@ -1147,8 +1134,7 @@ class doc_generic_project_odt extends ModelePDFProjects
 
 									foreach ($tmparray as $key => $val)
 									{
-										try
-										{
+										try {
 											$listlines->setVars($key, $val, true, 'UTF-8');
 										}
 										catch (OdfException $e)
@@ -1217,8 +1203,7 @@ class doc_generic_project_odt extends ModelePDFProjects
 
 				return 1; // Success
 			}
-			else
-			{
+			else {
 				$this->error = $langs->transnoentities("ErrorCanNotCreateDir", $dir);
 				return -1;
 			}

@@ -284,8 +284,7 @@ if (!$error && $massaction == 'confirm_presend')
 							$sendto = implode(',', $emails_to_sends);
 						}
 					}
-					else
-					{
+					else {
 						$objectobj->fetch_thirdparty();
 						$sendto = $objectobj->thirdparty->email;
 					}
@@ -337,8 +336,7 @@ if (!$error && $massaction == 'confirm_presend')
 							'mimes'=>array($mime)
 						);
 					}
-					else
-					{
+					else {
 							$nbignored++;
 							$langs->load("errors");
 							$resaction .= '<div class="error">'.$langs->trans('ErrorCantReadFile', $file).'</div><br>';
@@ -413,8 +411,7 @@ if (!$error && $massaction == 'confirm_presend')
 					    $looparray[$key]->thirdparty = $thirdparty; // Force thirdparty on object
 					}
 				}
-				else
-				{
+				else {
 					$objectforloop = new $objectclass($db);
 					$objectforloop->thirdparty = $thirdparty; // Force thirdparty on object (even if object was not loaded)
 					$looparray[0] = $objectforloop;
@@ -482,8 +479,7 @@ if (!$error && $massaction == 'confirm_presend')
 					    if ($objecttmp->element == 'expensereport') $trackid = 'use'.$thirdparty->id;
 					    if ($objecttmp->element == 'holiday') $trackid = 'use'.$thirdparty->id;
 					}
-					else
-					{
+					else {
 					    $trackid = strtolower(get_class($objecttmp));
 					    if (get_class($objecttmp) == 'Contrat')  $trackid = 'con';
 					    if (get_class($objecttmp) == 'Propal')   $trackid = 'pro';
@@ -508,8 +504,7 @@ if (!$error && $massaction == 'confirm_presend')
 					{
 						$resaction .= '<div class="error">'.$mailfile->error.'</div>';
 					}
-					else
-					{
+					else {
 						$result = $mailfile->sendfile();
 						if ($result)
 						{
@@ -575,16 +570,14 @@ if (!$error && $massaction == 'confirm_presend')
 								$nbsent++; // Nb of object sent
 							}
 						}
-						else
-						{
+						else {
 							$langs->load("other");
 							if ($mailfile->error)
 							{
 								$resaction .= $langs->trans('ErrorFailedToSendMail', $from, $sendto);
 								$resaction .= '<br><div class="error">'.$mailfile->error.'</div>';
 							}
-							else
-							{
+							else {
 								$resaction .= '<div class="warning">No mail sent. Feature is disabled by option MAIN_DISABLE_ALL_MAILS</div>';
 							}
 						}
@@ -606,8 +599,7 @@ if (!$error && $massaction == 'confirm_presend')
 			setEventMessages($langs->trans("EMailSentForNElements", $nbsent.'/'.count($toselect)), null, 'mesgs');
 			setEventMessages($resaction, null, 'mesgs');
 		}
-		else
-		{
+		else {
 			//setEventMessages($langs->trans("EMailSentToNRecipients", 0), null, 'warnings');  // May be object has no generated PDF file
 			setEventMessages($resaction, null, 'warnings');
 		}
@@ -723,15 +715,13 @@ if ($massaction == 'confirm_createbills')   // Create bills from orders
 							$result = $objecttmp->insert_discount($discountid);
 							//$result=$discount->link_to_invoice($lineid,$id);
 						}
-						else
-						{
+						else {
 							setEventMessages($discount->error, $discount->errors, 'errors');
 							$error++;
 							break;
 						}
 					}
-					else
-					{
+					else {
 						// Positive line
 						$product_type = ($lines[$i]->product_type ? $lines[$i]->product_type : 0);
 						// Date start
@@ -790,8 +780,7 @@ if ($massaction == 'confirm_createbills')   // Create bills from orders
 						{
 							$lineid = $result;
 						}
-						else
-						{
+						else {
 							$lineid = 0;
 							$error++;
 							break;
@@ -882,8 +871,7 @@ if ($massaction == 'confirm_createbills')   // Create bills from orders
 		header("Location: ".$_SERVER['PHP_SELF'].'?'.$param);
 		exit;
 	}
-	else
-	{
+	else {
 		$db->rollback();
 		$action = 'create';
 		$_GET["origin"] = $_POST["origin"];
@@ -914,8 +902,7 @@ if (!$error && $massaction == 'cancelorders')
 			$error++;
 			break;
 		}
-		else
-			$result = $cmd->cancel();
+		else $result = $cmd->cancel();
 
 		if ($result < 0)
 		{
@@ -923,19 +910,16 @@ if (!$error && $massaction == 'cancelorders')
 			$error++;
 			break;
 		}
-		else
-			$nbok++;
+		else $nbok++;
 	}
 	if (!$error)
 	{
 		if ($nbok > 1)
 			setEventMessages($langs->trans("RecordsModified", $nbok), null, 'mesgs');
-		else
-			setEventMessages($langs->trans("RecordsModified", $nbok), null, 'mesgs');
+		else setEventMessages($langs->trans("RecordsModified", $nbok), null, 'mesgs');
 		$db->commit();
 	}
-	else
-	{
+	else {
 		$db->rollback();
 	}
 }
@@ -1037,8 +1021,7 @@ if (!$error && $massaction == "builddoc" && $permissiontoread && !GETPOST('butto
 			$langs->load("exports");
 			setEventMessages($langs->trans('FileSuccessfullyBuilt', $filename.'_'.dol_print_date($now, 'dayhourlog')), null, 'mesgs');
 		}
-		else
-		{
+		else {
 			setEventMessages($langs->trans('NoPDFAvailableForDocGenAmongChecked'), null, 'errors');
 		}
 	}
@@ -1100,8 +1083,7 @@ if (!$error && $massaction == "builddoc" && $permissiontoread && !GETPOST('butto
 			$langs->load("exports");
 			setEventMessages($langs->trans('FileSuccessfullyBuilt', $filename.'_'.dol_print_date($now, 'dayhourlog')), null, 'mesgs');
 		}
-		else
-		{
+		else {
             setEventMessages($langs->trans('NoPDFAvailableForDocGenAmongChecked'), null, 'errors');
 		}
 	}
@@ -1166,8 +1148,7 @@ if (!$error && $massaction == 'validate' && $permissiontoadd)
 				}
 				else $nbok++;
 			}
-			else
-			{
+			else {
 				setEventMessages($objecttmp->error, $objecttmp->errors, 'errors');
 				$error++;
 				break;
@@ -1180,8 +1161,7 @@ if (!$error && $massaction == 'validate' && $permissiontoadd)
 			else setEventMessages($langs->trans("RecordsModified", $nbok), null, 'mesgs');
 			$db->commit();
 		}
-		else
-		{
+		else {
 			$db->rollback();
 		}
 		//var_dump($listofobjectthirdparties);exit;
@@ -1202,8 +1182,7 @@ if (!$error && $massaction == 'closed' && $objectclass == "Propal" && $permissio
                 setEventMessages($objecttmp->error, $objecttmp->errors, 'errors');
                 $error++;
                 break;
-            } else
-                $nbok++;
+            } else $nbok++;
         }
         else {
             setEventMessages($objecttmp->error, $objecttmp->errors, 'errors');
@@ -1215,8 +1194,7 @@ if (!$error && $massaction == 'closed' && $objectclass == "Propal" && $permissio
     if (!$error) {
         if ($nbok > 1)
             setEventMessages($langs->trans("RecordsModified", $nbok), null, 'mesgs');
-        else
-            setEventMessages($langs->trans("RecordsModified", $nbok), null, 'mesgs');
+        else setEventMessages($langs->trans("RecordsModified", $nbok), null, 'mesgs');
         $db->commit();
     }
     else {
@@ -1269,8 +1247,7 @@ if (!$error && ($massaction == 'delete' || ($action == 'delete' && $confirm == '
 			}
 			else $nbok++;
 		}
-		else
-		{
+		else {
 			setEventMessages($objecttmp->error, $objecttmp->errors, 'errors');
 			$error++;
 			break;
@@ -1283,8 +1260,7 @@ if (!$error && ($massaction == 'delete' || ($action == 'delete' && $confirm == '
 		else setEventMessages($langs->trans("RecordDeleted", $nbok), null, 'mesgs');
 		$db->commit();
 	}
-	else
-	{
+	else {
 		$db->rollback();
 	}
 	//var_dump($listofobjectthirdparties);exit;
@@ -1331,8 +1307,7 @@ if (!$error && $massaction == 'generate_doc' && $permissiontoread)
             }
             else $nbok++;
         }
-        else
-        {
+        else {
             setEventMessages($objecttmp->error, $objecttmp->errors, 'errors');
             $error++;
             break;
@@ -1345,8 +1320,7 @@ if (!$error && $massaction == 'generate_doc' && $permissiontoread)
         else setEventMessages($langs->trans("RecordGenerated", $nbok), null, 'mesgs');
         $db->commit();
     }
-    else
-    {
+    else {
         $db->rollback();
     }
 }

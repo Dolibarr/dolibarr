@@ -130,8 +130,7 @@ if (is_resource($handle))
 
                             $db->free($result);
                         }
-                        else
-                        {
+                        else {
                             dol_print_error($db);
                         }
                         print '</tr>';
@@ -192,15 +191,13 @@ if ($result) {
 	        $i++;
 	    }
     }
-    else
-    {
+    else {
         print '<tr><td class="opacitymedium">'.$langs->trans("None").'</td></tr>';
     }
     print "</table></div><br>";
     $db->free($result);
 }
-else
-{
+else {
     dol_print_error($db);
 }
 

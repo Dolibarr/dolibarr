@@ -137,8 +137,7 @@ class Ctypent // extends CommonObject
 			$this->db->rollback();
 			return -1 * $error;
 		}
-		else
-		{
+		else {
 			$this->db->commit();
             return $this->id;
 		}
@@ -186,8 +185,7 @@ class Ctypent // extends CommonObject
 
             return 1;
         }
-        else
-        {
+        else {
       	    $this->error = "Error ".$this->db->lasterror();
             return -1;
         }
@@ -241,8 +239,7 @@ class Ctypent // extends CommonObject
 			$this->db->rollback();
 			return -1 * $error;
 		}
-		else
-		{
+		else {
 			$this->db->commit();
 			return 1;
 		}
@@ -281,8 +278,7 @@ class Ctypent // extends CommonObject
 			$this->db->rollback();
 			return -1 * $error;
         }
-        else
-        {
+        else {
             $this->db->commit();
             return 1;
         }

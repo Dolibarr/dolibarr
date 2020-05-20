@@ -109,8 +109,7 @@ class mod_propale_marbre extends ModeleNumRefPropales
 		{
 			return true;
 		}
-		else
-		{
+		else {
 			$langs->load("errors");
 			$this->error = $langs->trans('ErrorNumRefModel', $max);
 			return false;
@@ -142,8 +141,7 @@ class mod_propale_marbre extends ModeleNumRefPropales
 			if ($obj) $max = intval($obj->max);
 			else $max = 0;
 		}
-		else
-		{
+		else {
 			dol_syslog(get_class($this)."::getNextValue", LOG_DEBUG);
 			return -1;
 		}

@@ -160,8 +160,7 @@ class box_produits extends ModeleBoxes
 							{
 								$price_base_type = $langs->trans("HT");
 							}
-							else
-							{
+							else {
 								$price_result = $price_result * (1 + ($productstatic->tva_tx / 100));
 								$price_base_type = $langs->trans("TTC");
 							}

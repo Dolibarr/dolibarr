@@ -105,14 +105,12 @@ class CActionComm
                 $this->db->free($resql);
                 return 1;
             }
-            else
-			{
+            else {
                 $this->db->free($resql);
                 return 0;
             }
         }
-        else
-        {
+        else {
             $this->error = $this->db->error();
             return -1;
         }
@@ -209,8 +207,7 @@ class CActionComm
             if ($idorcode == 'code') $this->liste_array = $repcode;
             return $this->liste_array;
         }
-        else
-        {
+        else {
             $this->error = $this->db->lasterror();
             return -1;
         }

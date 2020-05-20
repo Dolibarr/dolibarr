@@ -72,8 +72,7 @@ class InterfaceMailmanSpipsynchro extends DolibarrTriggers
     			$this->errors = $object->context['linkto']->errors;
     			$return = -1;
     		}
-			else
-			{
+			else {
 				$return = 1;
 			}
 
@@ -90,8 +89,7 @@ class InterfaceMailmanSpipsynchro extends DolibarrTriggers
         		$this->errors = $object->context['unlinkoff']->errors;
         		$return = -1;
         	}
-        	else
-        	{
+        	else {
         		$return = 1;
         	}
 
@@ -110,8 +108,7 @@ class InterfaceMailmanSpipsynchro extends DolibarrTriggers
                 if (!empty($object->error)) $this->errors[] = $object->error;
                 $return = -1;
             }
-            else
-            {
+            else {
                 $return = 1;
             }
 
@@ -133,8 +130,7 @@ class InterfaceMailmanSpipsynchro extends DolibarrTriggers
                         if (!empty($object->oldcopy->error)) $this->errors[] = $object->oldcopy->error;
                         $return = -1;
                     }
-                    else
-                    {
+                    else {
                         $return = 1;
                     }
                 }
@@ -145,8 +141,7 @@ class InterfaceMailmanSpipsynchro extends DolibarrTriggers
                     if (!empty($object->error)) $this->errors[] = $object->error;
                     $return = -1;
                 }
-                else
-                {
+                else {
                     $return = 1;
                 }
             }
@@ -165,8 +160,7 @@ class InterfaceMailmanSpipsynchro extends DolibarrTriggers
 				if (!empty($object->error)) $this->errors[] = $object->error;
 				$return = -1;
 			}
-			else
-			{
+			else {
 				$return = 1;
 			}
 

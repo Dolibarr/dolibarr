@@ -54,8 +54,7 @@ if (preg_match('/set_([a-z0-9_\-]+)/i', $action, $reg))
 	{
         setEventMessages($langs->trans("SetupSaved"), null, 'mesgs');
 	}
-	else
-	{
+	else {
         setEventMessages($langs->trans("Error"), null, 'errors');
 	}
 }
@@ -67,8 +66,7 @@ if (preg_match('/del_([a-z0-9_\-]+)/i', $action, $reg))
 	{
         setEventMessages($langs->trans("SetupSaved"), null, 'mesgs');
 	}
-	else
-	{
+	else {
         setEventMessages($langs->trans("Error"), null, 'errors');
 	}
 }
@@ -146,8 +144,7 @@ elseif ($action == 'setapilayer')
         dolibarr_set_const($db, 'MULTICURRENCY_APP_SOURCE', GETPOST('MULTICURRENCY_APP_SOURCE', 'alpha'));
         //dolibarr_set_const($db, 'MULTICURRENCY_ALTERNATE_SOURCE', GETPOST('MULTICURRENCY_ALTERNATE_SOURCE', 'alpha'));
     }
-    else
-    {
+    else {
         $result = MultiCurrency::syncRates($conf->global->MULTICURRENCY_APP_ID);
         if ($result > 0) {
         	setEventMessages($langs->trans("CurrencyRateSyncSucceed"), null, "mesgs");

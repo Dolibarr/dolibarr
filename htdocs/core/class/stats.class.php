@@ -74,8 +74,7 @@ abstract class Stats
 
 				$this->lastfetchdate[get_class($this).'_'.__FUNCTION__] = $filedate;
 			}
-			else
-			{
+			else {
 				dol_syslog(get_class($this).'::'.__FUNCTION__." cache file ".$newpathofdestfile." is not found or older than now - cachedelay (".$nowgmt." - ".$cachedelay.") so we can't use it.");
 			}
 		}
@@ -85,8 +84,7 @@ abstract class Stats
 			dol_syslog(get_class($this).'::'.__FUNCTION__." read data from cache file ".$newpathofdestfile." ".$filedate.".");
 			$data = json_decode(file_get_contents($newpathofdestfile), true);
 		}
-		else
-		{
+		else {
 			$year = $startyear;
 			$sm = $startmonth - 1;
 			if ($sm != 0) $year = $year - 1;
@@ -171,8 +169,7 @@ abstract class Stats
 
         		$this->lastfetchdate[get_class($this).'_'.__FUNCTION__] = $filedate;
         	}
-        	else
-        	{
+        	else {
         		dol_syslog(get_class($this).'::'.__FUNCTION__." cache file ".$newpathofdestfile." is not found or older than now - cachedelay (".$nowgmt." - ".$cachedelay.") so we can't use it.");
         	}
         }
@@ -183,8 +180,7 @@ abstract class Stats
         	dol_syslog(get_class($this).'::'.__FUNCTION__." read data from cache file ".$newpathofdestfile." ".$filedate.".");
         	$data = json_decode(file_get_contents($newpathofdestfile), true);
         }
-        else
-		{
+        else {
 			$year = $startyear;
 			$sm = $startmonth - 1;
 			if ($sm != 0) $year = $year - 1;
@@ -300,8 +296,7 @@ abstract class Stats
 
         		$this->lastfetchdate[get_class($this).'_'.__FUNCTION__] = $filedate;
         	}
-        	else
-        	{
+        	else {
         		dol_syslog(get_class($this).'::'.__FUNCTION__." cache file ".$newpathofdestfile." is not found or older than now - cachedelay (".$nowgmt." - ".$cachedelay.") so we can't use it.");
         	}
         }
@@ -312,8 +307,7 @@ abstract class Stats
         	dol_syslog(get_class($this).'::'.__FUNCTION__." read data from cache file ".$newpathofdestfile." ".$filedate.".");
         	$data = json_decode(file_get_contents($newpathofdestfile), true);
         }
-        else
-		{
+        else {
 			$data = $this->getAllByProduct($year, $limit);
 			//					$data[$i][]=$datay[$year][$i][1];	// set yval for x=i
 		}
@@ -450,8 +444,7 @@ abstract class Stats
 			}
 			$this->db->free($resql);
 		}
-		else
-		{
+		else {
 			dol_print_error($this->db);
 		}
 

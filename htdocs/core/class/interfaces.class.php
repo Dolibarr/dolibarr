@@ -193,8 +193,7 @@ class Interfaces
                     dol_syslog(get_class($this)."::run_triggers action=".$action." Launch old method run_trigger (rename your trigger into runTrigger) for file '".$files[$key]."'", LOG_WARNING);
                     $result = $objMod->run_trigger($action, $object, $user, $langs, $conf);
                 }
-                else
-                {
+                else {
                     dol_syslog(get_class($this)."::run_triggers action=".$action." A trigger was declared for class ".get_class($objMod)." but method runTrigger was not found", LOG_ERR);
                 }
 
@@ -220,8 +219,7 @@ class Interfaces
                     //dol_syslog("Error in trigger ".$action." - Nb of error string returned = ".count($this->errors), LOG_ERR);
                 }
             }
-            else
-            {
+            else {
                 dol_syslog(get_class($this)."::run_triggers action=".$action." Failed to instantiate trigger for file '".$files[$key]."'", LOG_ERR);
             }
         }
@@ -231,8 +229,7 @@ class Interfaces
             dol_syslog(get_class($this)."::run_triggers action=".$action." Files found: ".$nbfile.", Files launched: ".$nbtotal.", Done: ".$nbok.", Failed: ".$nbko." - Nb of error string returned in this->errors = ".count($this->errors), LOG_ERR);
             return -$nbko;
         }
-        else
-        {
+        else {
             //dol_syslog(get_class($this)."::run_triggers Files found: ".$nbfile.", Files launched: ".$nbtotal.", Done: ".$nbok.", Failed: ".$nbko, LOG_DEBUG);
             return $nbok;
         }
@@ -292,8 +289,7 @@ class Interfaces
                             $langs->load("errors");
                             print '<div class="error">'.$langs->trans("Error").' : '.$langs->trans("ErrorDuplicateTrigger", $modName, "/htdocs/core/triggers/").'</div>';
                         }
-                        else
-                        {
+                        else {
                             include_once $newdir.'/'.$file;
                         }
 
@@ -370,8 +366,7 @@ class Interfaces
 		                $text .= $langs->trans("TriggerDisabledByName").'<br>';
 		                if ($disabledbymodule == 2) $text .= $langs->trans("TriggerDisabledAsModuleDisabled", $module).'<br>';
 		            }
-		            else
-		            {
+		            else {
 		                if ($disabledbymodule == 0) $text .= $langs->trans("TriggerAlwaysActive").'<br>';
 		                if ($disabledbymodule == 1) $text .= $langs->trans("TriggerActiveAsModuleActive", $module).'<br>';
 		                if ($disabledbymodule == 2) $text .= $langs->trans("TriggerDisabledAsModuleDisabled", $module).'<br>';

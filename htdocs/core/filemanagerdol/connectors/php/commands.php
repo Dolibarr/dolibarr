@@ -86,8 +86,7 @@ function GetFoldersAndFiles($resourceType, $currentFolder)
 			{
 				if (is_dir($sServerDir.$sFile))
 					$aFolders[] = '<Folder name="'.ConvertToXmlAttribute($sFile).'" />';
-				else
-				{
+				else {
 					$iFileSize = @filesize($sServerDir.$sFile);
 					if (!$iFileSize) {
 						$iFileSize = 0;
@@ -147,8 +146,7 @@ function CreateFolder($resourceType, $currentFolder)
 
 		if (strpos($sNewFolderName, '..') !== false)
 			$sErrorNumber = '102'; // Invalid folder name.
-		else
-		{
+		else {
 			// Map the virtual path to the local server path of the current folder.
 			$sServerDir = ServerMapFolder($resourceType, $currentFolder, 'CreateFolder');
 
@@ -172,12 +170,10 @@ function CreateFolder($resourceType, $currentFolder)
 						break;
 				}
 			}
-			else
-				$sErrorNumber = '103';
+			else $sErrorNumber = '103';
 		}
 	}
-	else
-		$sErrorNumber = '102';
+	else $sErrorNumber = '102';
 
 	// Create the "Error" node.
 	echo '<Error number="'.$sErrorNumber.'" />';
@@ -255,8 +251,7 @@ function FileUpload($resourceType, $currentFolder, $sCommand, $CKEcallback = '')
 					$sFileName = RemoveExtension($sOriginalFileName).'('.$iCounter.').'.$sExtension;
 					$sErrorNumber = '201';
 				}
-				else
-				{
+				else {
 					move_uploaded_file($oFile['tmp_name'], $sFilePath);
 
 					if (is_file($sFilePath))
@@ -297,11 +292,9 @@ function FileUpload($resourceType, $currentFolder, $sCommand, $CKEcallback = '')
 				}
 			}
 		}
-		else
-			$sErrorNumber = '202';
+		else $sErrorNumber = '202';
 	}
-	else
-		$sErrorNumber = '202';
+	else $sErrorNumber = '202';
 
 
 	$sFileUrl = CombinePaths(GetResourceTypePath($resourceType, $sCommand), $currentFolder);
@@ -315,8 +308,7 @@ function FileUpload($resourceType, $currentFolder, $sCommand, $CKEcallback = '')
         // this line already exists so wrap the if block around it
         SendUploadResults($sErrorNumber, $sFileUrl, $sFileName);
     }
-    else
-	{
+    else {
 	    //issue the CKEditor Callback
         SendCKEditorResults(
 			$CKEcallback,

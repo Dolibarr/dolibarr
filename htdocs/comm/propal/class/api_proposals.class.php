@@ -457,8 +457,7 @@ class Proposals extends DolibarrApi
 		if ($updateRes > 0) {
 			return $this->get($id);
 		}
-		else
-		{
+		else {
 			throw new RestException(405, $this->propal->error);
 		}
 	}
@@ -589,8 +588,7 @@ class Proposals extends DolibarrApi
 		{
 			return $this->get($id);
 		}
-		else
-		{
+		else {
 			throw new RestException(500, $this->propal->error);
 		}
 	}

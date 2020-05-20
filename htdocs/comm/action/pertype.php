@@ -94,8 +94,7 @@ if (GETPOST('actioncode', 'array'))
     $actioncode = GETPOST('actioncode', 'array', 3);
     if (!count($actioncode)) $actioncode = '0';
 }
-else
-{
+else {
     $actioncode = GETPOST("actioncode", "alpha", 3) ?GETPOST("actioncode", "alpha", 3) : (GETPOST("actioncode", "alpha") == '0' ? '0' : (empty($conf->global->AGENDA_DEFAULT_FILTER_TYPE) ? '' : $conf->global->AGENDA_DEFAULT_FILTER_TYPE));
 }
 if ($actioncode == '' && empty($actioncodearray)) $actioncode = (empty($conf->global->AGENDA_DEFAULT_FILTER_TYPE) ? '' : $conf->global->AGENDA_DEFAULT_FILTER_TYPE);
@@ -372,18 +371,15 @@ if (!empty($actioncode))
     {
         if ($actioncode == 'AC_NON_AUTO') $sql .= " AND ca.type != 'systemauto'";
         elseif ($actioncode == 'AC_ALL_AUTO') $sql .= " AND ca.type = 'systemauto'";
-        else
-        {
+        else {
             if ($actioncode == 'AC_OTH') $sql .= " AND ca.type != 'systemauto'";
             if ($actioncode == 'AC_OTH_AUTO') $sql .= " AND ca.type = 'systemauto'";
         }
     }
-    else
-    {
+    else {
         if ($actioncode == 'AC_NON_AUTO') $sql .= " AND ca.type != 'systemauto'";
         elseif ($actioncode == 'AC_ALL_AUTO') $sql .= " AND ca.type = 'systemauto'";
-        else
-        {
+        else {
             $sql .= " AND ca.code IN ('".implode("','", explode(',', $actioncode))."')";
         }
     }
@@ -407,8 +403,7 @@ if ($action == 'show_day')
     $sql .= " AND a.datep2 > '".$db->idate(dol_mktime(23, 59, 59, $month, $day, $year))."')";
     $sql .= ')';
 }
-else
-{
+else {
     // To limit array
     $sql .= " AND (";
     $sql .= " (a.datep BETWEEN '".$db->idate(dol_mktime(0, 0, 0, 1, 1, $year) - (60 * 60 * 24 * 7))."'"; // Start 7 days before
@@ -491,8 +486,7 @@ if ($resql)
         	if ($datep2 != '' && $datep2 >= $datep) $event->date_end_in_calendar = $datep2;
         	else $event->date_end_in_calendar = $datep;
         }
-        else
-        {
+        else {
         	$event->date_start_in_calendar = $datep;
         	if ($datep2 != '' && $datep2 >= $datep) $event->date_end_in_calendar = $datep2;
         	else $event->date_end_in_calendar = $datep;
@@ -510,8 +504,7 @@ if ($resql)
             // This record is out of visible range
         	unset($event);
         }
-        else
-		{
+        else {
 			//print $i.' - '.dol_print_date($this->date_start_in_calendar, 'dayhour').' - '.dol_print_date($this->date_end_in_calendar, 'dayhour').'<br>'."\n";
 			$event->fetch_userassigned(); // This load $event->userassigned
 
@@ -527,8 +520,7 @@ if ($resql)
             // Loop on each day covered by action to prepare an index to show on calendar
             $loop = true; $j = 0;
             $daykey = dol_mktime(0, 0, 0, $mois, $jour, $annee);
-            do
-			{
+            do {
                 //if ($event->id==408) print 'daykey='.$daykey.' '.$event->datep.' '.$event->datef.'<br>';
 
                 $eventarray[$daykey][] = $event;
@@ -545,8 +537,7 @@ if ($resql)
         $i++;
     }
 }
-else
-{
+else {
     dol_print_error($db);
 }
 
@@ -827,8 +818,7 @@ function show_day_events_pertype($username, $day, $month, $year, $monthshown, $s
 				{
 					$numbirthday++; $colorindex = 2; $cssclass = 'family_birthday unsortable'; $color = sprintf("%02x%02x%02x", $theme_datacolor[$colorindex][0], $theme_datacolor[$colorindex][1], $theme_datacolor[$colorindex][2]);
 				}
-				else
-				{
+				else {
 					$numother++; $cssclass = 'family_other';
 					if (!empty($conf->global->AGENDA_USE_EVENT_TYPE)) $color = $event->type_color;
 				}
@@ -841,8 +831,7 @@ function show_day_events_pertype($username, $day, $month, $year, $monthshown, $s
 					{
 						$colorindex = $colorindexused[$idusertouse]; // Color already assigned to this user
 					}
-					else
-					{
+					else {
 						$colorindex = $nextindextouse;
 						$colorindexused[$idusertouse] = $colorindex;
 						if (!empty($theme_datacolor[$nextindextouse + 1])) $nextindextouse++; // Prepare to use next color
@@ -961,8 +950,7 @@ function show_day_events_pertype($username, $day, $month, $year, $monthshown, $s
 							}
 						}
 					}
-					else
-					{
+					else {
 						$busy = $event->transparency;
 						$cases1[$h][$event->id]['busy'] = $busy;
 						$cases2[$h][$event->id]['busy'] = $busy;

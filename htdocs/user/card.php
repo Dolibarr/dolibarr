@@ -295,8 +295,7 @@ if (empty($reshook)) {
 				header("Location: ".$_SERVER['PHP_SELF'].'?id='.$id);
 				exit;
 			}
-			else
-			{
+			else {
 				$langs->load("errors");
 				$db->rollback();
 				setEventMessages($object->error, $object->errors, 'errors');
@@ -326,8 +325,7 @@ if (empty($reshook)) {
 				header("Location: ".$_SERVER['PHP_SELF'].'?id='.$id);
 				exit;
 			}
-			else
-			{
+			else {
 				setEventMessages($object->error, $object->errors, 'errors');
 			}
 		}
@@ -429,13 +427,11 @@ if (empty($reshook)) {
 					{
 						$object->entity = 1; // all users in master entity
 					}
-					else
-					{
+					else {
 						$object->entity = (!GETPOST('entity', 'int') ? 0 : GETPOST('entity', 'int'));
 					}
 				}
-				else
-				{
+				else {
 					$object->entity = (!GETPOST('entity', 'int') ? 0 : GETPOST('entity', 'int'));
 				}
 
@@ -455,8 +451,7 @@ if (empty($reshook)) {
 				    {
     					$object->photo = dol_sanitizeFileName($_FILES['photo']['name']);
 				    }
-				    else
-				    {
+				    else {
 				        $error++;
 				        $langs->load("errors");
 				        setEventMessages($langs->trans("ErrorBadImageFormat"), null, 'errors');
@@ -472,8 +467,7 @@ if (empty($reshook)) {
 							$langs->load("errors");
 							setEventMessages($langs->trans("ErrorLoginAlreadyExists", $object->login), null, 'errors');
 						}
-						else
-						{
+						else {
 							setEventMessages($object->error, $object->errors, 'errors');
 						}
 					}
@@ -565,8 +559,7 @@ if (empty($reshook)) {
 				}
 			}
 		}
-		else
-		{
+		else {
 			if ($caneditpassword)    // Case we can edit only password
 			{
 				dol_syslog("Not allowed to change fields, only password");
@@ -603,13 +596,11 @@ if (empty($reshook)) {
 				{
 					setEventMessages($langs->trans("PasswordChangedAndSentTo", $object->email), null, 'mesgs');
 				}
-				else
-				{
+				else {
 					setEventMessages($object->error, $object->errors, 'errors');
 				}
 			}
-			else
-			{
+			else {
 				setEventMessages($langs->trans("PasswordChangedTo", $newpassword), null, 'warnings');
 			}
 		}
@@ -666,8 +657,7 @@ if (empty($reshook)) {
 				}
 			}
 		}
-		else
-		{
+		else {
 			setEventMessages($ldap->error, $ldap->errors, 'errors');
 		}
 	}
@@ -765,13 +755,11 @@ if ($action == 'create' || $action == 'adduserldap')
 					$liste[$key] = $label;
 				}
 			}
-			else
-			{
+			else {
 				setEventMessages($ldap->error, $ldap->errors, 'errors');
 			}
 		}
-		else
-		{
+		else {
 			setEventMessages($ldap->error, $ldap->errors, 'errors');
 		}
 
@@ -822,8 +810,7 @@ if ($action == 'create' || $action == 'adduserldap')
 		print '<input type="hidden" id="lastname" name="lastname" value="'.dol_escape_htmltag($ldap_lastname).'">';
 		print $ldap_lastname;
 	}
-	else
-	{
+	else {
 		print '<input class="minwidth100" type="text" id="lastname" name="lastname" value="'.dol_escape_htmltag(GETPOST('lastname', 'alphanohtml')).'">';
 	}
 	print '</td></tr>';
@@ -836,8 +823,7 @@ if ($action == 'create' || $action == 'adduserldap')
 		print '<input type="hidden" name="firstname" value="'.dol_escape_htmltag($ldap_firstname).'">';
 		print $ldap_firstname;
 	}
-	else
-	{
+	else {
 		print '<input class="minwidth100" type="text" name="firstname" value="'.dol_escape_htmltag(GETPOST('firstname', 'alphanohtml')).'">';
 	}
 	print '</td></tr>';
@@ -855,8 +841,7 @@ if ($action == 'create' || $action == 'adduserldap')
 		print '<input type="hidden" name="login" value="'.dol_escape_htmltag($ldap_loginsmb).'">';
 		print $ldap_loginsmb;
 	}
-	else
-	{
+	else {
 		print '<input class="maxwidth200" maxsize="24" type="text" name="login" value="'.dol_escape_htmltag(GETPOST('login', 'alphanohtml')).'">';
 	}
 	print '</td></tr>';
@@ -887,8 +872,7 @@ if ($action == 'create' || $action == 'adduserldap')
 			$valuetoshow .= ($valuetoshow ? ', ' : '').'<input type="hidden" name="password" value="'.$ldap_pass.'">'; // Dolibarr password is preffiled with LDAP known password
 			$valuetoshow .= preg_replace('/./i', '*', $ldap_pass);
 		}
-		else
-		{
+		else {
 			// We do not use a field password but a field text to show new password to use.
 			$valuetoshow .= ($valuetoshow ? ', ' : '').'<input size="30" maxsize="32" type="text" name="password" value="'.$password.'" autocomplete="new-password">';
 		}
@@ -914,8 +898,7 @@ if ($action == 'create' || $action == 'adduserldap')
 			print '&nbsp;'.img_picto($langs->trans('Generate'), 'refresh', 'id="generate_api_key" class="linkobject"');
 		print '</td></tr>';
 	}
-	else
-	{
+	else {
 		// PARTIAL WORKAROUND
 		$generated_fake_api_key = getRandomPassword(false);
 		print '<input type="hidden" name="api_key" value="'.$generated_fake_api_key.'">';
@@ -1060,8 +1043,7 @@ if ($action == 'create' || $action == 'adduserldap')
 		print '<input type="hidden" name="office_phone" value="'.dol_escape_htmltag($ldap_phone).'">';
 		print $ldap_phone;
 	}
-	else
-	{
+	else {
 		print '<input size="20" type="text" name="office_phone" value="'.dol_escape_htmltag(GETPOST('office_phone', 'alphanohtml')).'">';
 	}
 	print '</td></tr>';
@@ -1074,8 +1056,7 @@ if ($action == 'create' || $action == 'adduserldap')
 		print '<input type="hidden" name="user_mobile" value="'.dol_escape_htmltag($ldap_mobile).'">';
 		print $ldap_mobile;
 	}
-	else
-	{
+	else {
 		print '<input size="20" type="text" name="user_mobile" value="'.dol_escape_htmltag(GETPOST('user_mobile', 'alphanohtml')).'">';
 	}
 	print '</td></tr>';
@@ -1088,8 +1069,7 @@ if ($action == 'create' || $action == 'adduserldap')
 		print '<input type="hidden" name="office_fax" value="'.dol_escape_htmltag($ldap_fax).'">';
 		print $ldap_fax;
 	}
-	else
-	{
+	else {
 		print '<input size="20" type="text" name="office_fax" value="'.dol_escape_htmltag(GETPOST('office_fax', 'alphanohtml')).'">';
 	}
 	print '</td></tr>';
@@ -1102,8 +1082,7 @@ if ($action == 'create' || $action == 'adduserldap')
 		print '<input type="hidden" name="email" value="'.dol_escape_htmltag($ldap_mail).'">';
 		print $ldap_mail;
 	}
-	else
-	{
+	else {
 		print '<input size="40" type="text" name="email" value="'.dol_escape_htmltag(GETPOST('email', 'alphanohtml')).'">';
 	}
 	print '</td></tr>';
@@ -1237,8 +1216,7 @@ if ($action == 'create' || $action == 'adduserldap')
 				 print "<td>".$mc->select_entities($conf->entity);
 				 print "</td></tr>\n";
 			}
-			else
-			{
+			else {
 				 print '<input type="hidden" name="entity" value="'.$conf->entity.'" />';
 			}
 		}
@@ -1358,8 +1336,7 @@ if ($action == 'create' || $action == 'adduserldap')
 
 	print "</form>";
 }
-else
-{
+else {
 	/* ************************************************************************** */
 	/*                                                                            */
 	/* View and edition                                                            */
@@ -1411,8 +1388,7 @@ else
 						}
 					}
 				}
-				else
-				{
+				else {
 					$userDisabled = 1;
 					$statutUACF = "ACCOUNTDISABLE";
 				}
@@ -1430,8 +1406,7 @@ else
 			$title = $langs->trans("Employee");
 			$linkback = '<a href="'.DOL_URL_ROOT.'/hrm/employee/list.php?restore_lastsearch_values=1">'.$langs->trans("BackToList").'</a>';
 		}
-		else
-		{
+		else {
 			$title = $langs->trans("User");
 			$linkback = '';
 
@@ -1503,8 +1478,7 @@ else
 			{
 				print '<td class="error">'.$langs->trans("LoginAccountDisableInDolibarr").'</td>';
 			}
-			else
-			{
+			else {
 				print '<td>'.$object->login.'</td>';
 			}
 			print '</tr>'."\n";
@@ -1530,13 +1504,11 @@ else
 					{
 						$valuetoshow .= ($valuetoshow ? (' '.$langs->trans("or").' ') : '').'<span class="warning">'.$langs->trans("LdapUacf_".$statutUACF, $ldap->domainFQDN).'</span>';
 					}
-					else
-					{
+					else {
 						$valuetoshow .= ($valuetoshow ? (' '.$langs->trans("or").' ') : '').$langs->trans("PasswordOfUserInLDAP");
 					}
 				}
-				else
-				{
+				else {
 					$valuetoshow .= ($valuetoshow ? (' '.$langs->trans("or").' ') : '').$langs->trans("PasswordOfUserInLDAP");
 				}
 			}
@@ -1547,8 +1519,7 @@ else
 			if (preg_match('/dolibarr/', $dolibarr_main_authentication))
 			{
 				if ($object->pass) $valuetoshow .= ($valuetoshow ? (' '.$langs->trans("or").' ') : '').preg_replace('/./i', '*', $object->pass);
-				else
-				{
+				else {
 					if ($user->admin) $valuetoshow .= ($valuetoshow ? (' '.$langs->trans("or").' ') : '').$langs->trans("Crypted").': '.$object->pass_indatabase_crypted;
 					else $valuetoshow .= ($valuetoshow ? (' '.$langs->trans("or").' ') : '').'<span class="opacitymedium">'.$langs->trans("Hidden").'</span>';
 				}
@@ -1582,8 +1553,7 @@ else
 			{
 				print $form->textwithpicto(yn($object->admin), $langs->trans("AdministratorDesc"), 1, "admin");
 			}
-			else
-			{
+			else {
 				print yn($object->admin);
 			}
 			print '</td></tr>'."\n";
@@ -1826,8 +1796,7 @@ else
 					$societe->fetch($object->socid);
 					print $societe->getNomUrl(1, '');
 				}
-				else
-				{
+				else {
 					print $langs->trans("ThisUserIsNot");
 				}
 				if (!empty($object->contactid))
@@ -1855,8 +1824,7 @@ else
 					$adh->ref = $adh->getFullname($langs); // Force to show login instead of id
 					print $adh->getNomUrl(1);
 				}
-				else
-				{
+				else {
 					print $langs->trans("UserNotLinkedToMember");
 				}
 				print '</td>';
@@ -1894,8 +1862,7 @@ else
 						$langs->load("mails");
 						print '<div class="inline-block divButAction"><a class="butAction" href="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'&action=presend&mode=init#formmailbeforetitle">'.$langs->trans('SendMail').'</a></div>';
 					}
-					else
-					{
+					else {
 						$langs->load("mails");
 						print '<div class="inline-block divButAction"><a class="butActionRefused classfortooltip" href="#" title="'.dol_escape_htmltag($langs->trans("NoEMail")).'">'.$langs->trans('SendMail').'</a></div>';
 					}
@@ -1907,8 +1874,7 @@ else
 					{
 						print '<div class="inline-block divButAction"><a class="butActionRefused classfortooltip" href="#" title="'.dol_escape_htmltag($langs->trans("DisabledInMonoUserMode")).'">'.$langs->trans("Modify").'</a></div>';
 					}
-					else
-					{
+					else {
 						print '<div class="inline-block divButAction"><a class="butAction" href="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'&amp;action=edit">'.$langs->trans("Modify").'</a></div>';
 					}
 				}
@@ -1955,8 +1921,7 @@ else
 				{
 					print '<div class="inline-block divButAction"><a class="butActionDelete" href="'.$_SERVER['PHP_SELF'].'?action=disable&amp;id='.$object->id.'">'.$langs->trans("DisableUser").'</a></div>';
 				}
-				else
-				{
+				else {
 				    if ($user->id == $id)
 				    {
 				        print '<div class="inline-block divButAction"><a class="butActionRefused classfortooltip" href="#" title="'.$langs->trans("CantDisableYourself").'">'.$langs->trans("DisableUser").'</a></div>';
@@ -1970,8 +1935,7 @@ else
 					{
 						print '<div class="inline-block divButAction"><a class="butActionDelete" href="'.$_SERVER['PHP_SELF'].'?action=delete&amp;id='.$object->id.'">'.$langs->trans("DeleteUser").'</a></div>';
 					}
-					else
-					{
+					else {
 						print '<div class="inline-block divButAction"><a class="butActionRefused classfortooltip" href="#" title="'.dol_escape_htmltag($langs->trans("MustBeAdminToDeleteOtherAdmin")).'">'.$langs->trans("DeleteUser").'</a></div>';
 					}
 				}
@@ -2055,8 +2019,7 @@ else
 								{
 									print $group->getNomUrl(1);
 								}
-								else
-								{
+								else {
 									print img_object($langs->trans("ShowGroup"), "group").' '.$group->name;
 								}
 								print '</td>';
@@ -2067,15 +2030,13 @@ else
 									print img_picto($langs->trans("RemoveFromGroup"), 'unlink');
 									print '</a>';
 								}
-								else
-								{
+								else {
 									print "&nbsp;";
 								}
 								print "</td></tr>\n";
 							}
 						}
-						else
-						{
+						else {
 							print '<tr class="oddeven"><td colspan="3" class="opacitymedium">'.$langs->trans("None").'</td></tr>';
 						}
 
@@ -2123,8 +2084,7 @@ else
 			{
 				print '<input class="minwidth100" type="text" class="flat" name="lastname" value="'.$object->lastname.'">';
 			}
-			else
-			{
+			else {
 				print '<input type="hidden" name="lastname" value="'.$object->lastname.'">';
 				print $object->lastname;
 			}
@@ -2138,8 +2098,7 @@ else
 			{
 				print '<input class="minwidth100" type="text" class="flat" name="firstname" value="'.$object->firstname.'">';
 			}
-			else
-			{
+			else {
 				print '<input type="hidden" name="firstname" value="'.$object->firstname.'">';
 				print $object->firstname;
 			}
@@ -2152,8 +2111,7 @@ else
 			{
 				print '<input maxlength="50" type="text" class="flat" name="login" value="'.$object->login.'">';
 			}
-			else
-			{
+			else {
 				print '<input type="hidden" name="login" value="'.$object->login.'">';
 				print $object->login;
 			}
@@ -2178,8 +2136,7 @@ else
 				{
 					$valuetoshow .= ($valuetoshow ? (' '.$langs->trans("or").' ') : '').'<input maxlength="32" type="password" class="flat" name="password" value="'.$object->pass.'" autocomplete="new-password">';
 				}
-				else
-				{
+				else {
 					$valuetoshow .= ($valuetoshow ? (' '.$langs->trans("or").' ') : '').preg_replace('/./i', '*', $object->pass);
 				}
 			}
@@ -2214,8 +2171,7 @@ else
 				print ' ('.$langs->trans("ExternalUser").')';
 				print '</td></tr>';
 			}
-			else
-			{
+			else {
 				print '<td>';
 				$nbAdmin = $user->getNbOfUsers('active', '', 1);
 				$nbSuperAdmin = $user->getNbOfUsers('active', 'superadmin', 1);
@@ -2276,8 +2232,7 @@ else
 						print '<input type="checkbox" name="superadmin" value="1"'.$checked.' /> '.$langs->trans("SuperAdministrator");
 					}
 				}
-				else
-				{
+				else {
 					$yn = yn($object->admin);
 					print '<input type="hidden" name="admin" value="'.$object->admin.'">';
 					print '<input type="hidden" name="superadmin" value="'.(empty($object->entity) ? 1 : 0).'">';
@@ -2298,8 +2253,7 @@ else
 			   	print $form->textwithpicto($type, $langs->trans("InternalExternalDesc"));
 			   	if ($object->ldap_sid) print ' ('.$langs->trans("DomainUser").')';
 		   	}
-		   	else
-			{
+		   	else {
 				// Select mode
 				$type = 0;
 				if ($object->contactid) $type = $object->contactid;
@@ -2351,8 +2305,7 @@ else
 		   	{
 		   		print $form->select_dolusers($object->fk_user, 'fk_user', 1, array($object->id), 0, '', 0, $object->entity, 0, 0, '', 0, '', 'maxwidth300');
 		   	}
-		   	else
-		   	{
+		   	else {
 		   		print '<input type="hidden" name="fk_user" value="'.$object->fk_user.'">';
 		   		$huser = new User($db);
 		   		$huser->fetch($object->fk_user);
@@ -2371,8 +2324,7 @@ else
 			{
 				print $form->select_dolusers($object->fk_user_expense_validator, 'fk_user_expense_validator', 1, array($object->id), 0, '', 0, $object->entity, 0, 0, '', 0, '', 'maxwidth300');
 			}
-			else
-			{
+			else {
 				print '<input type="hidden" name="fk_user_expense_validator" value="'.$object->fk_user_expense_validator.'">';
 				$evuser = new User($db);
 				$evuser->fetch($object->fk_user_expense_validator);
@@ -2391,8 +2343,7 @@ else
 			{
 				print $form->select_dolusers($object->fk_user_holiday_validator, 'fk_user_holiday_validator', 1, array($object->id), 0, '', 0, $object->entity, 0, 0, '', 0, '', 'maxwidth300');
 			}
-			else
-			{
+			else {
 				print '<input type="hidden" name="fk_user_holiday_validator" value="'.$object->fk_user_holiday_validator.'">';
 				$hvuser = new User($db);
 				$hvuser->fetch($object->fk_user_holiday_validator);
@@ -2461,8 +2412,7 @@ else
 			{
 				print '<input size="20" type="text" name="office_phone" class="flat" value="'.$object->office_phone.'">';
 			}
-			else
-			{
+			else {
 				print '<input type="hidden" name="office_phone" value="'.$object->office_phone.'">';
 				print $object->office_phone;
 			}
@@ -2475,8 +2425,7 @@ else
 			{
 				print '<input size="20" type="text" name="user_mobile" class="flat" value="'.$object->user_mobile.'">';
 			}
-			else
-			{
+			else {
 				print '<input type="hidden" name="user_mobile" value="'.$object->user_mobile.'">';
 				print $object->user_mobile;
 			}
@@ -2489,8 +2438,7 @@ else
 			{
 				print '<input size="20" type="text" name="office_fax" class="flat" value="'.$object->office_fax.'">';
 			}
-			else
-			{
+			else {
 				print '<input type="hidden" name="office_fax" value="'.$object->office_fax.'">';
 				print $object->office_fax;
 			}
@@ -2503,8 +2451,7 @@ else
 			{
 				print '<input class="minwidth100" type="text" name="email" class="flat" value="'.$object->email.'">';
 			}
-			else
-			{
+			else {
 				print '<input type="hidden" name="email" value="'.$object->email.'">';
 				print $object->email;
 			}
@@ -2538,8 +2485,7 @@ else
 				{
 					print '<input class="minwidth100" type="url" name="openid" class="flat" value="'.$object->openid.'">';
 				}
-				else
-				{
+				else {
 					print '<input type="hidden" name="openid" value="'.$object->openid.'">';
 					print $object->openid;
 				}
@@ -2558,8 +2504,7 @@ else
 				{
 					print '<input size="30" type="text" class="flat" name="accountancy_code" value="'.$object->accountancy_code.'">';
 				}
-				else
-				{
+				else {
 					print '<input type="hidden" name="accountancy_code" value="'.$object->accountancy_code.'">';
 					print $object->accountancy_code;
 				}
@@ -2632,8 +2577,7 @@ else
 						print ' / <a href="'.DOL_URL_ROOT.'/contact/card.php?id='.$object->contactid.'">'.img_object($langs->trans("ShowContact"), 'contact').' '.dol_trunc($contact->getFullName($langs), 32).'</a>';
 					}
 				}
-				else
-				{
+				else {
 					print $langs->trans("ThisUserIsNot");
 				}
 				print ' ('.$langs->trans("UseTypeFieldToChange").')';
@@ -2654,8 +2598,7 @@ else
 					$adh->ref = $adh->login; // Force to show login instead of id
 					print $adh->getNomUrl(1);
 				}
-				else
-				{
+				else {
 					print $langs->trans("UserNotLinkedToMember");
 				}
 				print '</td>';
@@ -2675,8 +2618,7 @@ else
 	            		print "<td>".$mc->select_entities($object->entity, 'entity', '', 0, 1, false, false, 1); // last parameter 1 means, show also a choice 0=>'all entities'
 	            		print "</td></tr>\n";
 	            	}
-	            	else
-	            	{
+	            	else {
 	            		print '<input type="hidden" name="entity" value="'.$conf->entity.'" />';
 	            	}
 	            }
@@ -2705,8 +2647,7 @@ else
 				$doleditor = new DolEditor('signature', $object->signature, '', 138, 'dolibarr_notes', 'In', false, true, empty($conf->global->FCKEDITOR_ENABLE_USERSIGN) ? 0 : 1, ROWS_4, '90%');
 				print $doleditor->Create(1);
 			}
-			else
-			{
+			else {
 				print dol_htmlentitiesbr($object->signature);
 			}
 			print '</td></tr>';
@@ -2733,8 +2674,7 @@ else
             {
             	print '<input size="30" type="text" name="job" value="'.$object->job.'">';
             }
-            else
-            {
+            else {
             	print '<input type="hidden" name="job" value="'.$object->job.'">';
             	print $object->job;
             }

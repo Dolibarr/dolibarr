@@ -818,8 +818,7 @@ abstract class CommonDocGenerator
 						$object->array_options['options_'.$key.'_locale'] = dol_print_date($date, 'day', 'tzserver', $outputlangs); // using output language format
 						$object->array_options['options_'.$key.'_rfc'] = dol_print_date($date, 'dayrfc'); // international format
 					}
-					else
-					{
+					else {
 						$object->array_options['options_'.$key] = '';
 						$object->array_options['options_'.$key.'_locale'] = '';
 						$object->array_options['options_'.$key.'_rfc'] = '';
@@ -1389,7 +1388,7 @@ abstract class CommonDocGenerator
         if (!empty($this->cols[$colKey]['status'])) {
             return true;
         }
-        else  return  false;
+        else return  false;
     }
 
     /**

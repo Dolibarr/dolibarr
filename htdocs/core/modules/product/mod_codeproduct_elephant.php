@@ -280,8 +280,7 @@ class mod_codeproduct_elephant extends ModeleProductCode
 		{
 			$result = -2;
 		}
-		else
-		{
+		else {
 			// Get Mask value
 			$mask = '';
 			if ($type == 0) $mask = empty($conf->global->PRODUCT_ELEPHANT_MASK_PRODUCT) ? '' : $conf->global->PRODUCT_ELEPHANT_MASK_PRODUCT;
@@ -328,13 +327,11 @@ class mod_codeproduct_elephant extends ModeleProductCode
 			{
 				return 0;
 			}
-			else
-			{
+			else {
 				return -1;
 			}
 		}
-		else
-		{
+		else {
 			return -2;
 		}
 	}

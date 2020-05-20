@@ -52,8 +52,7 @@ if ($action == 'presend')
 		{
 			$fileparams = dol_most_recent_file($diroutput.'/'.get_exdir($object->id, 2, 0, 0, $object, $object->element).$ref, preg_quote($ref, '/').'([^\-])+');
 		}
-		else
-		{
+		else {
 			$fileparams = dol_most_recent_file($diroutput.'/'.$ref, preg_quote($ref, '/').'[^\-]+');
 		}
 
@@ -104,8 +103,7 @@ if ($action == 'presend')
 			{
 				$fileparams = dol_most_recent_file($diroutput.'/'.get_exdir($object->id, 2, 0, 0, $object, $object->element).$ref, preg_quote($ref, '/').'([^\-])+');
 			}
-			else
-			{
+			else {
 				$fileparams = dol_most_recent_file($diroutput.'/'.$ref, preg_quote($ref, '/').'[^\-]+');
 			}
 
@@ -161,8 +159,7 @@ if ($action == 'presend')
 	{
 		$liste['thirdparty'] = $object->getFullName($outputlangs)." <".$object->email.">";
 	}
-	else
-	{
+	else {
 		if (is_object($object->thirdparty))
 		{
 			foreach ($object->thirdparty->thirdparty_and_contact_email_array(1) as $key => $value) {

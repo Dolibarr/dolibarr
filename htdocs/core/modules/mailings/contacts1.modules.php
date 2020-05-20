@@ -191,8 +191,7 @@ class mailing_contacts1 extends MailingTargets
 					$i++;
 				}
 			}
-			else
-			{
+			else {
 				$s .= '<option value="-1" disabled="disabled">'.$langs->trans("NoContactWithCategoryFound").'</option>';
 			}
 		}
@@ -266,8 +265,7 @@ class mailing_contacts1 extends MailingTargets
 					$i++;
 				}
 			}
-			else
-			{
+			else {
 				$s .= '<option value="-1" disabled="disabled">'.$langs->trans("NoContactLinkedToThirdpartieWithCategoryFound").'</option>';
 			}
 		}
@@ -308,8 +306,7 @@ class mailing_contacts1 extends MailingTargets
 					$i++;
 				}
 			}
-			else
-			{
+			else {
 				$s .= '<option value="-1" disabled="disabled">'.$langs->trans("NoContactLinkedToThirdpartieWithCategoryFound").'</option>';
 			}
 		}
@@ -448,8 +445,7 @@ class mailing_contacts1 extends MailingTargets
 				$i++;
 			}
 		}
-		else
-		{
+		else {
 			dol_syslog($this->db->error());
 			$this->error = $this->db->error();
 			return -1;

@@ -114,8 +114,7 @@ class mailing_advthirdparties extends MailingTargets
     					$i++;
     				}
     			}
-    			else
-    			{
+    			else {
     				dol_syslog($this->db->error());
     				$this->error = $this->db->error();
     				return -1;
@@ -169,8 +168,7 @@ class mailing_advthirdparties extends MailingTargets
     					$i++;
     				}
     			}
-    			else
-    			{
+    			else {
     				dol_syslog($this->db->error());
     				$this->error = $this->db->error();
     				return -1;
@@ -273,8 +271,7 @@ class mailing_advthirdparties extends MailingTargets
 				$i++;
 			}
 		}
-		else
-		{
+		else {
 			dol_print_error($this->db);
 		}
 

@@ -415,8 +415,7 @@ if ($resql)
 		$title = $langs->trans('ListOfProposals').' - '.$soc->name;
 		if (empty($search_societe)) $search_societe = $soc->name;
 	}
-	else
-	{
+	else {
 		$title = $langs->trans('ListOfProposals');
 	}
 
@@ -1029,8 +1028,7 @@ if ($resql)
 				print '<td class="center">'.dol_print_date($db->jdate($obj->dfv), 'day');
 				print '</td>';
 			}
-			else
-			{
+			else {
 				print '<td>&nbsp;</td>';
 			}
 			if (!$i) $totalarray['nbfield']++;
@@ -1043,8 +1041,7 @@ if ($resql)
 				print '<td class="center">'.dol_print_date($db->jdate($obj->ddelivery), 'day');
 				print '</td>';
 			}
-			else
-			{
+			else {
 				print '<td>&nbsp;</td>';
 			}
 			if (!$i) $totalarray['nbfield']++;
@@ -1193,8 +1190,7 @@ if ($resql)
 				}
 				//else print $langs->trans("NoSalesRepresentativeAffected");
 			}
-			else
-			{
+			else {
 				print '&nbsp';
 			}
 			print '</td>';
@@ -1280,8 +1276,7 @@ if ($resql)
 
 	print $formfile->showdocuments('massfilesarea_proposals', '', $filedir, $urlsource, 0, $delallowed, '', 1, 1, 0, 48, 1, $param, $title, '', '', '', null, $hidegeneratedfilelistifempty);
 }
-else
-{
+else {
 	dol_print_error($db);
 }
 

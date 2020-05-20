@@ -104,8 +104,7 @@ class html_cerfafr extends ModeleDon
 				$dir = $conf->don->dir_output;
 				$file = $dir."/SPECIMEN.html";
 			}
-			else
-			{
+			else {
 				$donref = dol_sanitizeFileName($don->ref);
 				$dir = $conf->don->dir_output."/".$donref;
 				$file = $dir."/".$donref.".html";
@@ -142,8 +141,7 @@ class html_cerfafr extends ModeleDon
 				elseif ($don->modepaymentcode == 'VIR' || $don->modepaymentcode == 'PRE' || $don->modepaymentcode == 'CB') {
 					$ModePaiement = '<td width="25%"><input type="checkbox"> Remise d\'espèces</td><td width="25%"><input type="checkbox"> Chèque</td><td width="50%"><input type="checkbox" checked="checked"> Virement, prélèvement, carte bancaire</td>';
 				}
-				else
-				{
+				else {
 					$ModePaiement = '<td width="25%"><input type="checkbox"> Remise d\'espèces</td><td width="25%"><input type="checkbox"> Chèque</td><td width="50%"><input type="checkbox"> Virement, prélèvement, carte bancaire</td>';
 				}
 
@@ -217,8 +215,7 @@ class html_cerfafr extends ModeleDon
 					{
 						$art200 = '<input type="checkbox" disabled="true" checked="checked" >200 du CGI';
 					}
-					else
-					{
+					else {
 						$art200 = '<input type="checkbox" disabled="true">200 du CGI';
 					}
 				}
@@ -230,8 +227,7 @@ class html_cerfafr extends ModeleDon
 					{
 						$art238 = '<input type="checkbox" disabled="true" checked="checked" >238 bis du CGI';
 					}
-					else
-					{
+					else {
 						$art238 = '<input type="checkbox" disabled="true">238 bis du CGI';
 					}
 				}
@@ -243,8 +239,7 @@ class html_cerfafr extends ModeleDon
 					{
 						$art978 = '<input type="checkbox" disabled="true" checked="checked" >978 du CGI';
 					}
-					else
-					{
+					else {
 						$art978 = '<input type="checkbox" disabled="true">978 du CGI';
 					}
 				}
@@ -262,14 +257,12 @@ class html_cerfafr extends ModeleDon
 
 				return 1;
 			}
-			else
-			{
+			else {
 				$this->error = $langs->trans("ErrorCanNotCreateDir", $dir);
 				return 0;
 			}
 		}
-		else
-		{
+		else {
 			$this->error = $langs->trans("ErrorConstantNotDefined", "DON_OUTPUTDIR");
 			return 0;
 		}
@@ -412,15 +405,13 @@ class html_cerfafr extends ModeleDon
 			$somme = $trio[3].'  '.$secon[3].' '.$prim[3].' million ';
 		elseif (($cent[3] != 0 && $cent[3] != '') || ($dix[3] != 0 && $dix[3] != '') || ($unite[3] != 0 && $unite[3] != ''))
 			$somme = $trio[3].' '.$secon[3].' '.$prim[3].' millions ';
-		else
-			$somme = $trio[3].' '.$secon[3].' '.$prim[3];
+		else $somme = $trio[3].' '.$secon[3].' '.$prim[3];
 
 		if (($cent[2] == 0 || $cent[2] == '') && ($dix[2] == 0 || $dix[2] == '') && ($unite[2] == 1))
 			$somme = $somme.' mille ';
 		elseif (($cent[2] != 0 && $cent[2] != '') || ($dix[2] != 0 && $dix[2] != '') || ($unite[2] != 0 && $unite[2] != ''))
 			$somme = $somme.$trio[2].' '.$secon[2].' '.$prim[2].' milles ';
-		else
-			$somme = $somme.$trio[2].' '.$secon[2].' '.$prim[2];
+		else $somme = $somme.$trio[2].' '.$secon[2].' '.$prim[2];
 
 		$somme = $somme.$trio[1].' '.$secon[1].' '.$prim[1];
 
@@ -428,7 +419,6 @@ class html_cerfafr extends ModeleDon
 
 		if (($cent_c == '0' || $cent_c == '') && ($dix_c == '0' || $dix_c == ''))
 			return $somme.' et z&eacute;ro '.$dev2;
-		else
-			return $somme.$trio_c.' '.$secon_c.' '.$dev2;
+		else return $somme.$trio_c.' '.$secon_c.' '.$dev2;
 	}
 }

@@ -299,8 +299,7 @@ class Facturation
         {
             $this->id = null;
         }
-        else
-        {
+        else {
             $this->id = $aId;
         }
     }
@@ -322,8 +321,7 @@ class Facturation
         {
             $this->ref = null;
         }
-        else
-        {
+        else {
             $this->ref = $aRef;
         }
     }
@@ -344,8 +342,7 @@ class Facturation
         {
             $this->qte = null;
         }
-        else
-        {
+        else {
             $this->qte = $aQte;
         }
     }
@@ -367,8 +364,7 @@ class Facturation
         {
             $this->stock = null;
         }
-        else
-        {
+        else {
             $this->stock = $aStock;
         }
     }
@@ -390,8 +386,7 @@ class Facturation
         {
             $this->remise_percent = null;
         }
-        else
-        {
+        else {
             $this->remise_percent = $aRemisePercent;
         }
     }
@@ -587,8 +582,7 @@ class Facturation
         {
             $this->prix_total_ttc = null;
         }
-        else
-        {
+        else {
             $this->prix_total_ttc = $aTotalTtc;
         }
     }

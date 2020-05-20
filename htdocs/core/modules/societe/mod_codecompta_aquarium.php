@@ -147,8 +147,7 @@ class mod_codecompta_aquarium extends ModeleAccountancyCode
 			$codetouse = (!empty($societe->code_fournisseur) ? $societe->code_fournisseur : 'SUPPCODE');
 			$prefix = $this->prefixsupplieraccountancycode;
 		}
-		else
-		{
+		else {
 			$this->error = 'Bad value for parameter type';
 			return -1;
 		}
@@ -172,8 +171,7 @@ class mod_codecompta_aquarium extends ModeleAccountancyCode
 		{
 			$this->code = $codetouse;
 		}
-		else
-		{
+		else {
 			// Pour retour
 			$this->code = $codetouse;
 		}
@@ -211,14 +209,12 @@ class mod_codecompta_aquarium extends ModeleAccountancyCode
 				dol_syslog("mod_codecompta_aquarium::verif code '".$code."' available");
 				return 1; // Dispo
 			}
-			else
-			{
+			else {
 				dol_syslog("mod_codecompta_aquarium::verif code '".$code."' not available");
 				return 0; // Non dispo
 			}
 		}
-		else
-		{
+		else {
 			$this->error = $db->error()." sql=".$sql;
 			return -1; // Erreur
 		}

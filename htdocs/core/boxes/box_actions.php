@@ -245,8 +245,7 @@ class box_actions extends ModeleBoxes
 				}
 				$out .= '</script>';
 			}
-			else
-			{
+			else {
 				$out .= '<script>';
 				$out .= '$("#dialogboxaction").dialog({ autoOpen: false });';
 				$out .= '</script>';

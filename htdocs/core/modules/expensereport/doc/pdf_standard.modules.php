@@ -227,8 +227,7 @@ class pdf_standard extends ModeleExpenseReport
 				$dir = $conf->expensereport->dir_output;
 				$file = $dir."/SPECIMEN.pdf";
 			}
-			else
-			{
+			else {
 				$objectref = dol_sanitizeFileName($object->ref);
 				$dir = $conf->expensereport->dir_output."/".$objectref;
 				$file = $dir."/".$objectref.".pdf";
@@ -340,8 +339,7 @@ class pdf_standard extends ModeleExpenseReport
 					$tab_height = $tab_height - $height_note;
 					$tab_top = $nexY + 6;
 				}
-				else
-				{
+				else {
 					$height_note = 0;
 				}
 
@@ -410,17 +408,15 @@ class pdf_standard extends ModeleExpenseReport
 								$pdf->setPage($pageposafter + 1);
 							}
 						}
-						else
-						{
+						else {
 							// We found a page break
 							// Allows data in the first page if description is long enough to break in multiples pages
 							if (!empty($conf->global->MAIN_PDF_DATA_ON_FIRST_PAGE))
 								$showpricebeforepagebreak = 1;
-							else
-								$showpricebeforepagebreak = 0;
+							else $showpricebeforepagebreak = 0;
 						}
 					}
-					else	// No pagebreak
+					else // No pagebreak
 					{
 						$pdf->commitTransaction();
 					}
@@ -459,8 +455,7 @@ class pdf_standard extends ModeleExpenseReport
 						{
 							$this->_tableau($pdf, $tab_top, $this->page_hauteur - $tab_top - $heightforfooter, 0, $outputlangs, 0, 1);
 						}
-						else
-						{
+						else {
 							$this->_tableau($pdf, $tab_top_newpage, $this->page_hauteur - $tab_top_newpage - $heightforfooter, 0, $outputlangs, 1, 1);
 						}
 						$this->_pagefoot($pdf, $object, $outputlangs, 1);
@@ -475,8 +470,7 @@ class pdf_standard extends ModeleExpenseReport
 						{
 							$this->_tableau($pdf, $tab_top, $this->page_hauteur - $tab_top - $heightforfooter, 0, $outputlangs, 0, 1);
 						}
-						else
-						{
+						else {
 							$this->_tableau($pdf, $tab_top_newpage, $this->page_hauteur - $tab_top_newpage - $heightforfooter, 0, $outputlangs, 1, 1);
 						}
 						$this->_pagefoot($pdf, $object, $outputlangs, 1);
@@ -493,8 +487,7 @@ class pdf_standard extends ModeleExpenseReport
 					$this->_tableau($pdf, $tab_top, $this->page_hauteur - $tab_top - $heightforinfotot - $heightforfreetext - $heightforfooter, 0, $outputlangs, 0, 0);
 					$bottomlasttab = $this->page_hauteur - $heightforinfotot - $heightforfreetext - $heightforfooter + 1;
 				}
-				else
-				{
+				else {
 					$this->_tableau($pdf, $tab_top_newpage, $this->page_hauteur - $tab_top_newpage - $heightforinfotot - $heightforfreetext - $heightforfooter, 0, $outputlangs, 1, 0);
 					$bottomlasttab = $this->page_hauteur - $heightforinfotot - $heightforfreetext - $heightforfooter + 1;
 				}
@@ -561,14 +554,12 @@ class pdf_standard extends ModeleExpenseReport
 
 				return 1; // No error
 			}
-			else
-			{
+			else {
 				$this->error = $langs->trans("ErrorCanNotCreateDir", $dir);
 				return 0;
 			}
 		}
-		else
-		{
+		else {
 			$this->error = $langs->trans("ErrorConstantNotDefined", "EXPENSEREPORT_OUTPUTDIR");
 			return 0;
 		}
@@ -710,8 +701,7 @@ class pdf_standard extends ModeleExpenseReport
 				$pdf->MultiCell(100, 3, $outputlangs->transnoentities("ErrorGoToGlobalSetup"), 0, 'L');
 			}
 		}
-		else
-		{
+		else {
 			$text = $this->emetteur->name;
 			$pdf->MultiCell(100, 4, $outputlangs->convToOutputCharset($text), 0, 'L');
 		}
@@ -858,8 +848,7 @@ class pdf_standard extends ModeleExpenseReport
 					$pdf->MultiCell(96, 4, $outputlangs->transnoentities("DATE_CANCEL")." : ".dol_print_date($object->date_cancel, "day", false, $outputlangs), 0, 'L');
 				}
 			}
-			else
-			{
+			else {
 				if ($object->fk_user_approve > 0) {
 					$userfee = new User($this->db);
 					$userfee->fetch($object->fk_user_approve); $posy += 6;
@@ -1106,8 +1095,7 @@ class pdf_standard extends ModeleExpenseReport
 				$pdf->MultiCell(30, 4, $outputlangs->transnoentitiesnoconv("RemainderToPay"), 0, 'L', 0);
 			}
 		}
-		else
-		{
+		else {
 			$this->error = $this->db->lasterror();
 			return -1;
 		}

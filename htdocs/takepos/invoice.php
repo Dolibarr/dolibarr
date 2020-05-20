@@ -57,8 +57,7 @@ if (($conf->global->TAKEPOS_PHONE_BASIC_LAYOUT == 1 && $conf->browser->layout ==
 	if ($_SESSION["takeposterminal"] == "")
 	{
 		if ($conf->global->TAKEPOS_NUM_TERMINALS == "1") $_SESSION["takeposterminal"] = 1;
-		else
-		{
+		else {
 			header("Location: ".DOL_URL_ROOT."/takepos/index.php");
 			exit;
 		}
@@ -118,8 +117,7 @@ if ($invoiceid > 0)
 {
     $ret = $invoice->fetch($invoiceid);
 }
-else
-{
+else {
     $ret = $invoice->fetch('', '(PROV-POS'.$_SESSION["takeposterminal"].'-'.$place.')');
 }
 if ($ret > 0)
@@ -143,8 +141,7 @@ if ($action == 'valid' && $user->rights->facture->creer)
     if ($pay == "cash") $bankaccount = $conf->global->{'CASHDESK_ID_BANKACCOUNT_CASH'.$_SESSION["takeposterminal"]};            // For backward compatibility
     elseif ($pay == "card") $bankaccount = $conf->global->{'CASHDESK_ID_BANKACCOUNT_CB'.$_SESSION["takeposterminal"]};          // For backward compatibility
     elseif ($pay == "cheque") $bankaccount = $conf->global->{'CASHDESK_ID_BANKACCOUNT_CHEQUE'.$_SESSION["takeposterminal"]};    // For backward compatibility
-    else
-    {
+    else {
         $accountname = "CASHDESK_ID_BANKACCOUNT_".$pay.$_SESSION["takeposterminal"];
     	$bankaccount = $conf->global->$accountname;
     }
@@ -211,8 +208,7 @@ if ($action == 'valid' && $user->rights->facture->creer)
 
 		$conf->global->STOCK_CALCULATE_ON_BILL = $savconst;
 	}
-	else
-	{
+	else {
 	    $res = $invoice->validate($user);
 	}
 
@@ -275,8 +271,7 @@ if (($action == "addline" || $action == "freezone") && $placeid == 0)
 		$langs->load('errors');
 		dol_htmloutput_errors($langs->trans("ErrorModuleSetupNotComplete", "TakePos"), null, 1);
 	}
-	else
-	{
+	else {
 		$placeid = $invoice->create($user);
 		if ($placeid < 0)
 		{
@@ -421,8 +416,7 @@ if ($action == "delete") {
             {
             	$db->commit();
             }
-            else
-            {
+            else {
             	$db->rollback();
             }
 
@@ -581,8 +575,7 @@ if ($action == "valid" || $action == "history")
     {
         $sectionwithinvoicelink .= $langs->trans('RemainToPay').': <span class="amountremaintopay" style="font-size: unset">'.price($remaintopay, 1, $langs, 1, -1, -1, $conf->currency).'</span>';
     }
-    else
-    {
+    else {
         if ($invoice->paye) $sectionwithinvoicelink .= '<span class="amountpaymentcomplete" style="font-size: unset">'.$langs->trans("Paid").'</span>';
         else $sectionwithinvoicelink .= $langs->trans('BillShortStatusValidated');
     }
@@ -814,14 +807,12 @@ $( document ).ready(function() {
 					$s .= " ".img_warning($langs->trans("Late"));
 				}
 			}
-			else
-			{
+			else {
 				$s .= '<br>'.$langs->trans("SubscriptionNotReceived");
 				if ($adh->statut > 0) $s .= " ".img_warning($langs->trans("Late")); // displays delay Pictogram only if not a draft and not terminated
 			}
 		}
-		else
-		{
+		else {
 			$s .= '<br>'.$langs->trans("ThirdpartyNotLinkedToMember");
 		}
 		$s .= '</span>';
@@ -968,8 +959,7 @@ if ($placeid > 0)
 					{
 						$htmlsupplements[$line->fk_parent_line] .= $form->textwithpicto(dolGetFirstLineOfText($line->desc), $line->desc);
 					}
-					else
-					{
+					else {
 						$htmlsupplements[$line->fk_parent_line] .= $line->desc;
 					}
 				}
@@ -1019,8 +1009,7 @@ if ($placeid > 0)
 	                {
 	                    $htmlforlines .= $form->textwithpicto(dolGetFirstLineOfText($line->desc), $line->desc);
 	                }
-	                else
-	                {
+	                else {
 	                    $htmlforlines .= $line->desc;
 	                }
 	            }
@@ -1048,8 +1037,7 @@ if ($placeid > 0)
             print $htmlforlines;
         }
     }
-    else
-    {
+    else {
         print '<tr class="drag drop oddeven"><td class="left"><span class="opacitymedium">'.$langs->trans("Empty").'</span></td><td></td><td></td><td></td></tr>';
     }
 }

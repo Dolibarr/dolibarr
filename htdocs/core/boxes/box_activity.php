@@ -142,8 +142,7 @@ class box_activity extends ModeleBoxes
         			dol_print_error($this->db);
         		}
         	}
-        	else
-        	{
+        	else {
         		$data = dol_readcachefile($cachedir, $filename);
         	}
 

@@ -90,8 +90,7 @@ elseif (versioncompare(versionphparray(), $arrayphpminversionwarning) < 0)
 {
 	print '<img src="'.$WarningPicturePath.'" alt="Warning"> '.$langs->trans("ErrorPHPVersionTooLow", versiontostring($arrayphpminversionwarning));
 }
-else
-{
+else {
 	print '<img src="'.$OkayPicturePath.'" alt="Ok"> '.versiontostring(versionphparray());
 }
 
@@ -103,8 +102,7 @@ if (!isset($_GET["testget"]) && !isset($_POST["testpost"]) && !isset($_GET["main
 	print '<img src="'.$WarningPicturePath.'" alt="Warning"> '.$langs->trans("PHPSupportPOSTGETKo");
 	print ' (<a href="'.$_SERVER["PHP_SELF"].'?testget=ok">'.$langs->trans("Recheck").'</a>)';
 }
-else
-{
+else {
 	print '<img src="'.$OkayPicturePath.'" alt="Ok"> '.$langs->trans("PHPSupportPOSTGETOk");
 }
 
@@ -115,8 +113,7 @@ if (!function_exists("session_id"))
 {
 	print '<img src="'.$ErrorPicturePath.'" alt="Error"> '.$langs->trans("ErrorPHPDoesNotSupportSessions");
 }
-else
-{
+else {
 	print '<img src="'.$OkayPicturePath.'" alt="Ok"> '.$langs->trans("PHPSupportSessions");
 }
 
@@ -127,8 +124,7 @@ if (!function_exists("utf8_encode"))
 {
 	print '<img src="'.$WarningPicturePath.'" alt="Warning"> '.$langs->trans("ErrorPHPDoesNotSupportUTF8");
 }
-else
-{
+else {
 	print '<img src="'.$OkayPicturePath.'" alt="Ok"> '.$langs->trans("PHPSupportUTF8");
 }
 
@@ -229,8 +225,7 @@ foreach ($phparray as $key => $value)
 			print '</td>';
 			print '</tr>';
 		}
-		else
-		{
+		else {
 			print '<tr class="oddeven">';
 			print '<td>'.$keyparam.'</td>';
 			$i = 0;
@@ -346,8 +341,7 @@ function getTableColumn($name, array $list)
 	{
 		$html .= '<img src="../../theme/eldy/img/tick.png" alt="Ok">';
 	}
-	else
-	{
+	else {
 		$html .= '<img src="../../theme/eldy/img/warning.png" alt="Warning">';
 	}
 
@@ -382,8 +376,7 @@ function getTableColumnFunction(array $functions)
 	{
 		$html .= '<img src="../../theme/eldy/img/tick.png" alt="Ok">';
 	}
-	else
-	{
+	else {
 		$html .= '<img src="../../theme/eldy/img/warning.png" alt="Warning">';
 	}
 

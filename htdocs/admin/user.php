@@ -93,8 +93,7 @@ elseif (preg_match('/set_([a-z0-9_\-]+)/i', $action, $reg))
         header("Location: ".$_SERVER["PHP_SELF"]);
         exit;
     }
-    else
-    {
+    else {
         dol_print_error($db);
     }
 }
@@ -107,8 +106,7 @@ elseif (preg_match('/del_([a-z0-9_\-]+)/i', $action, $reg))
         header("Location: ".$_SERVER["PHP_SELF"]);
         exit;
     }
-    else
-    {
+    else {
         dol_print_error($db);
     }
 }
@@ -122,8 +120,7 @@ elseif ($action == 'sethideinactiveuser')
 		header("Location: ".$_SERVER["PHP_SELF"]);
 		exit;
 	}
-	else
-	{
+	else {
 		dol_print_error($db);
 	}
 }
@@ -164,14 +161,12 @@ if ($conf->use_javascript_ajax)
 {
 	print ajax_constantonoff('USER_MAIL_REQUIRED');
 }
-else
-{
+else {
 	if (empty($conf->global->USER_MAIL_REQUIRED))
 	{
 		print '<a href="'.$_SERVER['PHP_SELF'].'?action=set_USER_MAIL_REQUIRED">'.img_picto($langs->trans("Disabled"), 'off').'</a>';
 	}
-	else
-	{
+	else {
 		print '<a href="'.$_SERVER['PHP_SELF'].'?action=del_USER_MAIL_REQUIRED">'.img_picto($langs->trans("Enabled"), 'on').'</a>';
 	}
 }
@@ -188,14 +183,12 @@ if ($conf->use_javascript_ajax)
 {
 	print ajax_constantonoff('USER_HIDE_INACTIVE_IN_COMBOBOX');
 }
-else
-{
+else {
 	if (empty($conf->global->USER_HIDE_INACTIVE_IN_COMBOBOX))
 	{
 		print '<a href="'.$_SERVER['PHP_SELF'].'?action=set_USER_HIDE_INACTIVE_IN_COMBOBOX">'.img_picto($langs->trans("Disabled"), 'off').'</a>';
 	}
-	else
-	{
+	else {
 		print '<a href="'.$_SERVER['PHP_SELF'].'?action=del_USER_HIDE_INACTIVE_IN_COMBOBOX">'.img_picto($langs->trans("Enabled"), 'on').'</a>';
 	}
 }
@@ -225,8 +218,7 @@ if ($resql)
 		$i++;
 	}
 }
-else
-{
+else {
 	dol_print_error($db);
 }
 
@@ -295,8 +287,7 @@ foreach ($dirmodels as $reldir)
 	                            	print '</a>';
 	                            	print '</td>';
 	                            }
-	                            else
-	                            {
+	                            else {
 	                                print '<td class="center">'."\n";
 	                                print '<a href="'.$_SERVER["PHP_SELF"].'?action=set_default&value='.$name.'&amp;scandir='.$module->scandir.'&amp;label='.urlencode($module->name).'">'.img_picto($langs->trans("Disabled"), 'switch_off').'</a>';
 	                                print "</td>";
@@ -308,8 +299,7 @@ foreach ($dirmodels as $reldir)
 	                            {
 	                                print img_picto($langs->trans("Default"), 'on');
 	                            }
-	                            else
-	                            {
+	                            else {
 	                                print '<a href="'.$_SERVER["PHP_SELF"].'?action=setdoc&value='.$name.'&amp;scandir='.$module->scandir.'&amp;label='.urlencode($module->name).'" alt="'.$langs->trans("Default").'">'.img_picto($langs->trans("Disabled"), 'off').'</a>';
 	                            }
 	                            print '</td>';
@@ -336,8 +326,7 @@ foreach ($dirmodels as $reldir)
 	                            {
 	                                print '<a href="'.$_SERVER["PHP_SELF"].'?action=specimen&module='.$name.'">'.img_object($langs->trans("Preview"), 'contract').'</a>';
 	                            }
-	                            else
-	                            {
+	                            else {
 	                                print img_object($langs->trans("PreviewNotAvailable"), 'generic');
 	                            }
 	                            print '</td>';

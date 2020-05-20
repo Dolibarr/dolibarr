@@ -221,8 +221,7 @@ function dol_imageResizeOrCrop($file, $mode, $newWidth, $newHeight, $src_x = 0, 
 		// Compatibilite image GIF
 		$imgThumb = imagecreate($newWidth, $newHeight);
 	}
-	else
-	{
+	else {
 		$imgThumb = imagecreatetruecolor($newWidth, $newHeight);
 	}
 
@@ -359,8 +358,7 @@ function correctExifImageOrientation($fileSource, $fileDest, $quality = 95)
 				if ($fileDest === false) {
 					return $img;
 				}
-				else
-				{
+				else {
 					// In fact there exif is only for JPG but just in case
 					// Create image on disk
 					$image = false;
@@ -597,8 +595,7 @@ function vignette($file, $maxWidth = 160, $maxHeight = 120, $extName = '_small',
 		$thumbWidth  = $maxWidth;
 		$thumbHeight = $thumbWidth / $imgWhFact;
 	}
-	else
-	{
+	else {
 		// Si hauteur determinante
 		$thumbHeight = $maxHeight;
 		$thumbWidth  = $thumbHeight * $imgWhFact;
@@ -615,8 +612,7 @@ function vignette($file, $maxWidth = 160, $maxHeight = 120, $extName = '_small',
 		// Compatibilite image GIF
 		$imgThumb = imagecreate($thumbWidth, $thumbHeight);
 	}
-	else
-	{
+	else {
 		$imgThumb = imagecreatetruecolor($thumbWidth, $thumbHeight);
 	}
 
