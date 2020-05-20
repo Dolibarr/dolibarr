@@ -131,17 +131,13 @@ function analyseVarsForSqlAndScriptsInjection(&$var, $type)
 			if (analyseVarsForSqlAndScriptsInjection($key, $type) && analyseVarsForSqlAndScriptsInjection($value, $type))
 			{
 				//$var[$key] = $value;	// This is useless
-			}
-			else
-			{
+			} else {
 				print 'Access refused by SQL/Script injection protection in main.inc.php (type='.htmlentities($type).' key='.htmlentities($key).' value='.htmlentities($value).' page='.htmlentities($_SERVER["REQUEST_URI"]).')';
 				exit;
 			}
 		}
 		return true;
-	}
-	else
-	{
+	} else {
 		return (testSqlAndScriptInject($var, $type) <= 0);
 	}
 }
@@ -271,13 +267,11 @@ if (!empty($conf->file->main_force_https) && (empty($_SERVER["HTTPS"]) || $_SERV
 				$newurl = preg_replace('/^http:/i', 'https:', $_SERVER["SCRIPT_URI"]);
 			}
 		}
-		else	// Check HTTPS environment variable (Apache/mod_ssl only)
-		{
+		else {
+			// Check HTTPS environment variable (Apache/mod_ssl only)
 			$newurl = preg_replace('/^http:/i', 'https:', DOL_MAIN_URL_ROOT).$_SERVER["REQUEST_URI"];
 		}
-	}
-	else
-	{
+	} else {
 		// Check HTTPS environment variable (Apache/mod_ssl only)
 		$newurl = $conf->file->main_force_https.$_SERVER["REQUEST_URI"];
 	}
@@ -288,9 +282,7 @@ if (!empty($conf->file->main_force_https) && (empty($_SERVER["HTTPS"]) || $_SERV
 		dol_syslog("main.inc: dolibarr_main_force_https is on, we make a redirect to ".$newurl);
 		header("Location: ".$newurl);
 		exit;
-	}
-	else
-	{
+	} else {
 		dol_syslog("main.inc: dolibarr_main_force_https is on but we failed to forge new https url so no redirect is done", LOG_WARNING);
 	}
 }
@@ -432,9 +424,7 @@ if (!defined('NOLOGIN'))
 	if (defined('MAIN_AUTHENTICATION_MODE'))
 	{
 		$dolibarr_main_authentication = constant('MAIN_AUTHENTICATION_MODE');
-	}
-	else
-	{
+	} else {
 		// Authentication mode
 		if (empty($dolibarr_main_authentication)) $dolibarr_main_authentication = 'http,dolibarr';
 		// Authentication mode: forceuser
@@ -658,9 +648,7 @@ if (!defined('NOLOGIN'))
 			header('Location: '.DOL_URL_ROOT.'/index.php'.(count($paramsurl) ? '?'.implode('&', $paramsurl) : ''));
 			exit;
 		}
-	}
-	else
-	{
+	} else {
 		// We are already into an authenticated session
 		$login = $_SESSION["dol_login"];
 		$entity = $_SESSION["dol_entity"];
@@ -710,9 +698,7 @@ if (!defined('NOLOGIN'))
 			if (GETPOST('lang', 'aZ09'))       $paramsurl[] = 'lang='.GETPOST('lang', 'aZ09');
 			header('Location: '.DOL_URL_ROOT.'/index.php'.(count($paramsurl) ? '?'.implode('&', $paramsurl) : ''));
 			exit;
-		}
-		else
-		{
+		} else {
 		    // Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
 		    $hookmanager->initHooks(array('main'));
 
@@ -814,9 +800,7 @@ if (!defined('NOLOGIN'))
 			session_destroy();
 			dol_print_error($db, 'Error in some triggers USER_LOGIN or in some hooks afterLogin');
 			exit;
-		}
-		else
-		{
+		} else {
 			$db->commit();
 		}
 
@@ -986,9 +970,7 @@ if (empty($conf->browser->firefox))
 	define('ROWS_7', 7);
 	define('ROWS_8', 8);
 	define('ROWS_9', 9);
-}
-else
-{
+} else {
 	define('ROWS_1', 0);
 	define('ROWS_2', 1);
 	define('ROWS_3', 2);
@@ -1008,9 +990,8 @@ if (!defined('NOREQUIREMENU'))
 	if (empty($user->socid))    // If internal user or not defined
 	{
 		$conf->standard_menu = (empty($conf->global->MAIN_MENU_STANDARD_FORCED) ? (empty($conf->global->MAIN_MENU_STANDARD) ? 'eldy_menu.php' : $conf->global->MAIN_MENU_STANDARD) : $conf->global->MAIN_MENU_STANDARD_FORCED);
-	}
-	else                        // If external user
-	{
+	} else {
+		// If external user
 		$conf->standard_menu = (empty($conf->global->MAIN_MENUFRONT_STANDARD_FORCED) ? (empty($conf->global->MAIN_MENUFRONT_STANDARD) ? 'eldy_menu.php' : $conf->global->MAIN_MENUFRONT_STANDARD) : $conf->global->MAIN_MENUFRONT_STANDARD_FORCED);
 	}
 
@@ -1333,9 +1314,7 @@ function top_htmlhead($head, $title = '', $disablejs = 0, $disablehead = 0, $arr
 			    if (preg_match('/^(http|\/\/)/i', $cssfile))
 			    {
 			        $urltofile = $cssfile;
-			    }
-			    else
-			    {
+			    } else {
 			        $urltofile = dol_buildpath($cssfile, 1);
 			    }
 				print '<!-- Includes CSS added by page -->'."\n".'<link rel="stylesheet" type="text/css" title="default" href="'.$urltofile;
@@ -1457,9 +1436,7 @@ function top_htmlhead($head, $title = '', $disablejs = 0, $disablehead = 0, $arr
                 if (GETPOST('mode', 'aZ09') == 'Full_inline')
                 {
                 	print 'CKEDITOR.disableAutoInline = false;'."\n";
-                }
-                else
-                {
+                } else {
                 	print 'CKEDITOR.disableAutoInline = true;'."\n";
                 }
                 print '</script>'."\n";
@@ -1505,9 +1482,7 @@ function top_htmlhead($head, $title = '', $disablejs = 0, $disablehead = 0, $arr
                     if (preg_match('/^(http|\/\/)/i', $jsfile))
                     {
                         print '<script src="'.$jsfile.'"></script>'."\n";
-                    }
-                    else
-                    {
+                    } else {
                         print '<script src="'.dol_buildpath($jsfile, 1).'"></script>'."\n";
                     }
                 }
@@ -1606,9 +1581,7 @@ function top_menu($head, $title = '', $target = '', $disablejs = 0, $disablehead
 				$logouttext .= '<a accesskey="l" href="'.DOL_URL_ROOT.'/user/logout.php">';
 				$logouttext .= img_picto($langs->trans('Logout'), 'sign-out', '', false, 0, 0, '', 'atoplogin');
 				$logouttext .= '</a>';
-			}
-			else
-			{
+			} else {
 				$logouthtmltext .= $langs->trans("NoLogoutProcessWithAuthMode", $_SESSION["dol_authmode"]);
 				$logouttext .= img_picto($langs->trans('Logout'), 'sign-out', '', false, 0, 0, '', 'atoplogin opacitymedium');
 			}
@@ -1625,11 +1598,10 @@ function top_menu($head, $title = '', $target = '', $disablejs = 0, $disablehead
 		{
 			if ($result == 0)
 				$toprightmenu .= $hookmanager->resPrint; // add
-			else
+			else {
 				$toprightmenu = $hookmanager->resPrint; // replace
-		}
-		else
-		{
+			}
+		} else {
 			$toprightmenu .= $result; // For backward compatibility
 		}
 
@@ -2362,8 +2334,9 @@ function main_area($title = '')
             print '<table class="centpercent div-table-responsive">'."\n";
             print '<tbody>';
             print '<tr><td rowspan="0" class="width20p">';
-            if ($conf->global->MAIN_SHOW_LOGO && empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER) && !empty($conf->global->MAIN_INFO_SOCIETE_LOGO))
+            if ($conf->global->MAIN_SHOW_LOGO && empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER) && !empty($conf->global->MAIN_INFO_SOCIETE_LOGO)) {
                 print '<img id="mysoc-info-header-logo" style="max-width:100%" alt="" src="'.DOL_URL_ROOT.'/viewimage.php?cache=1&amp;modulepart=mycompany&amp;file='.urlencode('logos/'.dol_escape_htmltag($conf->global->MAIN_INFO_SOCIETE_LOGO)).'">';
+            }
             print '</td><td  rowspan="0" class="width50p"></td></tr>'."\n";
             print '<tr><td class="titre bold">'.dol_escape_htmltag($conf->global->MAIN_INFO_SOCIETE_NOM).'</td></tr>'."\n";
             print '<tr><td>'.dol_escape_htmltag($conf->global->MAIN_INFO_SOCIETE_ADDRESS).'<br>'.dol_escape_htmltag($conf->global->MAIN_INFO_SOCIETE_ZIP).' '.dol_escape_htmltag($conf->global->MAIN_INFO_SOCIETE_TOWN).'</td></tr>'."\n";
@@ -2398,9 +2371,7 @@ function getHelpParamFor($helppagename, $langs)
 		$helpbaseurl = '%s';
 		$helppage = $helppagename;
 		$mode = 'local';
-	}
-	else
-	{
+	} else {
 		// If WIKI URL
 		$reg = array();
 		if (preg_match('/^es/i', $langs->defaultlang))
@@ -2538,10 +2509,8 @@ if (!function_exists("llxFooter"))
 			{
 				$title = img_warning().' '.$langs->trans('CoreErrorTitle');
 				print ajax_dialog($title, $langs->trans('CoreErrorMessage'));
-			}
-			// html version
-			else
-			{
+			} else {
+				// html version
 				$msg = img_warning().' '.$langs->trans('CoreErrorMessage');
 				print '<div class="error">'.$msg.'</div>';
 			}
@@ -2683,9 +2652,7 @@ if (!function_exists("llxFooter"))
 			    			</script>
 						<?php
 					}
-				}
-				else
-				{
+				} else {
 					$now = dol_now();
 					print "\n<!-- NO JS CODE TO ENABLE the anonymous Ping. It was disabled -->\n";
 					include_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';

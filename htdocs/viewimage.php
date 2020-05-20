@@ -155,20 +155,14 @@ if (!empty($hashp))
 				// We remove first level of directory
 				$original_file = (($tmp[1] ? $tmp[1].'/' : '').$ecmfile->filename); // this is relative to module dir
 				//var_dump($original_file); exit;
-			}
-			else
-			{
+			} else {
 				accessforbidden('Bad link. File is from another module part.', 0, 0, 1);
 			}
-		}
-		else
-		{
+		} else {
 			$modulepart = $moduleparttocheck;
 			$original_file = (($tmp[1] ? $tmp[1].'/' : '').$ecmfile->filename); // this is relative to module dir
 		}
-	}
-	else
-	{
+	} else {
 		$langs->load("errors");
 		accessforbidden($langs->trans("ErrorFileNotFoundWithSharedLink"), 0, 0, 1);
 	}
@@ -208,9 +202,7 @@ elseif (isset($_GET["publictakepos"]))
 	if (! empty($conf->global->TAKEPOS_AUTO_ORDER)) {
 		$accessallowed = 1; // Only if TakePOS Public Auto Order is enabled and received publictakepos variable
 	}
-}
-else
-{
+} else {
 	// Basic protection (against external users only)
 	if ($user->socid > 0)
 	{
@@ -290,9 +282,8 @@ if ($modulepart == 'barcode')
     {
         $result = $module->buildBarCode($code, $encoding, $readable);
     }
-}
-else					// Open and return file
-{
+} else {
+    // Open and return file
     clearstatcache();
 
     $filename = basename($fullpath_original_file);
@@ -314,9 +305,7 @@ else					// Open and return file
     {
         top_httphead($type);
         header('Content-Disposition: inline; filename="'.basename($fullpath_original_file).'"');
-    }
-    else
-    {
+    } else {
         top_httphead('image/png');
         header('Content-Disposition: inline; filename="'.basename($fullpath_original_file).'"');
     }
