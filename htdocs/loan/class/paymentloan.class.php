@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2014-2018  Alexandre Spangaro   <aspangaro@open-dsi.fr>
- * Copyright (C) 2015-2018  Frederic France      <frederic.france@netlogic.fr>
+ * Copyright (C) 2015-2020  Frederic France      <frederic.france@netlogic.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -39,6 +39,11 @@ class PaymentLoan extends CommonObject
 	 * @var string Name of table without prefix where object is stored
 	 */
 	public $table_element = 'payment_loan';
+
+    /**
+     * @var string String with name of icon for PaymentLoan
+     */
+    public $picto = 'money-bill-alt';
 
     /**
      * @var int Loan ID
