@@ -132,9 +132,7 @@ if ($object->id)
 	print '</div>';
 
 	dol_fiche_end();
-}
-else
-{
+} else {
 	accessforbidden('', 0, 0);
 }
 
