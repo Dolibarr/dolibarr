@@ -2226,7 +2226,7 @@ function print_projecttasks_array($db, $form, $socid, $projectsListId, $mytasks 
 				print '<tr class="oddeven">';
 
 				print '<td>';
-				print $projectstatic->getNomUrl(1, '', 0, '', '-', 0 , -1, 'nowraponall');
+				print $projectstatic->getNomUrl(1, '', 0, '', '-', 0, -1, 'nowraponall');
 				if (!in_array('projectlabel', $hiddenfields)) print '<br><span class="opacitymedium">'.dol_trunc($objp->title, 24).'</span>';
 				print '</td>';
 				print '<td class="nowraponall tdoverflowmax100">';
