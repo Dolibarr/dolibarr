@@ -2610,21 +2610,61 @@ class Form
 				$objp2 = $this->db->fetch_object($result2);
 				if ($objp2)
 				{
-					$found = 1;
-					if ($objp2->price_base_type == 'HT')
-					{
-						$opt .= ' - '.price($objp2->price, 1, $langs, 0, 0, -1, $conf->currency).' '.$langs->trans("HT");
-						$outval .= ' - '.price($objp2->price, 0, $langs, 0, 0, -1, $conf->currency).' '.$langs->transnoentities("HT");
+					if ($price_level != 1 && $objp2->price == 0 && !empty($conf->global->PRODUIT_MULTIPRICES_USELEVEL1_IFLEVELVALISNUL)){
+						$sql = "SELECT price, price_ttc, price_base_type, tva_tx";
+						$sql .= " FROM ".MAIN_DB_PREFIX."product_price";
+						$sql .= " WHERE fk_product='".$objp->rowid."'";
+						$sql .= " AND entity IN (".getEntity('productprice').")";
+						$sql .= " AND price_level=1";
+						$sql .= " ORDER BY date_price DESC, rowid DESC"; // Warning DESC must be both on date_price and rowid.
+						$sql .= " LIMIT 1";
+						dol_syslog(get_class($this).'::constructProductListOption search price for product '.$objp->rowid.' AND level '.$price_level.'', LOG_DEBUG);
+						$result2 = $this->db->query($sql);
+						if ($result2)
+						{
+							$objp2 = $this->db->fetch_object($result2);
+							if ($objp2)
+							{
+								$found = 1;
+								if ($objp2->price_base_type == 'HT')
+								{
+									//$opt .= ' - '.price($objp2->price, 1, $langs, 0, 0, -1, $conf->currency).' '.$langs->trans("HT");
+									//$outval .= ' - '.price($objp2->price, 0, $langs, 0, 0, -1, $conf->currency).' '.$langs->transnoentities("HT");
+								}
+								else
+								{
+									$opt .= ' - '.price($objp2->price_ttc, 1, $langs, 0, 0, -1, $conf->currency).' '.$langs->trans("TTC");
+									$outval .= ' - '.price($objp2->price_ttc, 0, $langs, 0, 0, -1, $conf->currency).' '.$langs->transnoentities("TTC");
+								}
+								$outprice_ht = price($objp2->price);
+								$outprice_ttc = price($objp2->price_ttc);
+								$outpricebasetype = $objp2->price_base_type;
+								$outtva_tx = $objp2->tva_tx;
+							}
+						}
+						else
+						{
+							dol_print_error($this->db);
+						}
 					}
 					else
 					{
-						$opt .= ' - '.price($objp2->price_ttc, 1, $langs, 0, 0, -1, $conf->currency).' '.$langs->trans("TTC");
-						$outval .= ' - '.price($objp2->price_ttc, 0, $langs, 0, 0, -1, $conf->currency).' '.$langs->transnoentities("TTC");
+						$found = 1;
+						if ($objp2->price_base_type == 'HT')
+						{
+							$opt .= ' - '.price($objp2->price, 1, $langs, 0, 0, -1, $conf->currency).' '.$langs->trans("HT");
+							$outval .= ' - '.price($objp2->price, 0, $langs, 0, 0, -1, $conf->currency).' '.$langs->transnoentities("HT");
+						}
+						else
+						{
+							$opt .= ' - '.price($objp2->price_ttc, 1, $langs, 0, 0, -1, $conf->currency).' '.$langs->trans("TTC");
+							$outval .= ' - '.price($objp2->price_ttc, 0, $langs, 0, 0, -1, $conf->currency).' '.$langs->transnoentities("TTC");
+						}
+						$outprice_ht = price($objp2->price);
+						$outprice_ttc = price($objp2->price_ttc);
+						$outpricebasetype = $objp2->price_base_type;
+						$outtva_tx = $objp2->tva_tx;
 					}
-					$outprice_ht = price($objp2->price);
-					$outprice_ttc = price($objp2->price_ttc);
-					$outpricebasetype = $objp2->price_base_type;
-					$outtva_tx = $objp2->tva_tx;
 				}
 			}
 			else
