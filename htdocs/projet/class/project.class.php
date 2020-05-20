@@ -1047,76 +1047,79 @@ class Project extends CommonObject
 		if ($option != 'nolink') $label = '<u>'.$langs->trans("ShowProject").'</u>';
 		$label .= ($label ? '<br>' : '').'<b>'.$langs->trans('Ref').': </b>'.$this->ref; // The space must be after the : to not being explode when showing the title in img_picto
 		$label .= ($label ? '<br>' : '').'<b>'.$langs->trans('Label').': </b>'.$this->title; // The space must be after the : to not being explode when showing the title in img_picto
-		if (!empty($this->thirdparty_name))
+		if (!empty($this->thirdparty_name)) {
 			$label .= ($label ? '<br>' : '').'<b>'.$langs->trans('ThirdParty').': </b>'.$this->thirdparty_name; // The space must be after the : to not being explode when showing the title in img_picto
-			if (!empty($this->dateo))
-				$label .= ($label ? '<br>' : '').'<b>'.$langs->trans('DateStart').': </b>'.dol_print_date($this->dateo, 'day'); // The space must be after the : to not being explode when showing the title in img_picto
-				if (!empty($this->datee))
-					$label .= ($label ? '<br>' : '').'<b>'.$langs->trans('DateEnd').': </b>'.dol_print_date($this->datee, 'day'); // The space must be after the : to not being explode when showing the title in img_picto
-					if ($moreinpopup) $label .= '<br>'.$moreinpopup;
+		}
+		if (!empty($this->dateo)) {
+			$label .= ($label ? '<br>' : '').'<b>'.$langs->trans('DateStart').': </b>'.dol_print_date($this->dateo, 'day'); // The space must be after the : to not being explode when showing the title in img_picto
+		}
+		if (!empty($this->datee)) {
+			$label .= ($label ? '<br>' : '').'<b>'.$langs->trans('DateEnd').': </b>'.dol_print_date($this->datee, 'day'); // The space must be after the : to not being explode when showing the title in img_picto
+		}
+		if ($moreinpopup) $label .= '<br>'.$moreinpopup;
 
-					$url = '';
-					if ($option != 'nolink')
-					{
-						if (preg_match('/\.php$/', $option)) {
-							$url = dol_buildpath($option, 1).'?id='.$this->id;
-						}
-						elseif ($option == 'task')
-						{
-							$url = DOL_URL_ROOT.'/projet/tasks.php?id='.$this->id;
-						}
-						else
-						{
-							$url = DOL_URL_ROOT.'/projet/card.php?id='.$this->id;
-						}
-						// Add param to save lastsearch_values or not
-						$add_save_lastsearch_values = ($save_lastsearch_value == 1 ? 1 : 0);
-						if ($save_lastsearch_value == -1 && preg_match('/list\.php/', $_SERVER["PHP_SELF"])) $add_save_lastsearch_values = 1;
-						if ($add_save_lastsearch_values) $url .= '&save_lastsearch_values=1';
-					}
+		$url = '';
+		if ($option != 'nolink')
+		{
+			if (preg_match('/\.php$/', $option)) {
+				$url = dol_buildpath($option, 1).'?id='.$this->id;
+			}
+			elseif ($option == 'task')
+			{
+				$url = DOL_URL_ROOT.'/projet/tasks.php?id='.$this->id;
+			}
+			else
+			{
+				$url = DOL_URL_ROOT.'/projet/card.php?id='.$this->id;
+			}
+			// Add param to save lastsearch_values or not
+			$add_save_lastsearch_values = ($save_lastsearch_value == 1 ? 1 : 0);
+			if ($save_lastsearch_value == -1 && preg_match('/list\.php/', $_SERVER["PHP_SELF"])) $add_save_lastsearch_values = 1;
+			if ($add_save_lastsearch_values) $url .= '&save_lastsearch_values=1';
+		}
 
-					$linkclose = '';
-					if (empty($notooltip) && $user->rights->projet->lire)
-					{
-						if (!empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER))
-						{
-							$label = $langs->trans("ShowProject");
-							$linkclose .= ' alt="'.dol_escape_htmltag($label, 1).'"';
-						}
-						$linkclose .= ' title="'.dol_escape_htmltag($label, 1).'"';
-						$linkclose .= ' class="classfortooltip"';
+		$linkclose = '';
+		if (empty($notooltip) && $user->rights->projet->lire)
+		{
+			if (!empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER))
+			{
+				$label = $langs->trans("ShowProject");
+				$linkclose .= ' alt="'.dol_escape_htmltag($label, 1).'"';
+			}
+			$linkclose .= ' title="'.dol_escape_htmltag($label, 1).'"';
+			$linkclose .= ' class="classfortooltip"';
 
-						/*
-						 $hookmanager->initHooks(array('projectdao'));
-						 $parameters=array('id'=>$this->id);
-						 // Note that $action and $object may have been modified by some hooks
-						 $reshook=$hookmanager->executeHooks('getnomurltooltip',$parameters,$this,$action);
-						 if ($reshook > 0)
-						 $linkclose = $hookmanager->resPrint;
-						 */
-					}
+			/*
+			 $hookmanager->initHooks(array('projectdao'));
+			 $parameters=array('id'=>$this->id);
+			 // Note that $action and $object may have been modified by some hooks
+			 $reshook=$hookmanager->executeHooks('getnomurltooltip',$parameters,$this,$action);
+			 if ($reshook > 0)
+			 $linkclose = $hookmanager->resPrint;
+			 */
+		}
 
-					$picto = 'projectpub';
-					if (!$this->public) $picto = 'project';
+		$picto = 'projectpub';
+		if (!$this->public) $picto = 'project';
 
-					$linkstart = '<a href="'.$url.'"';
-					$linkstart .= $linkclose.'>';
-					$linkend = '</a>';
+		$linkstart = '<a href="'.$url.'"';
+		$linkstart .= $linkclose.'>';
+		$linkend = '</a>';
 
-					$result .= $linkstart;
-					if ($withpicto) $result .= img_object(($notooltip ? '' : $label), $picto, ($notooltip ? (($withpicto != 2) ? 'class="paddingright"' : '') : 'class="'.(($withpicto != 2) ? 'paddingright ' : '').'classfortooltip"'), 0, 0, $notooltip ? 0 : 1);
-					if ($withpicto != 2) $result .= $this->ref;
-					$result .= $linkend;
-					if ($withpicto != 2) $result .= (($addlabel && $this->title) ? $sep.dol_trunc($this->title, ($addlabel > 1 ? $addlabel : 0)) : '');
+		$result .= $linkstart;
+		if ($withpicto) $result .= img_object(($notooltip ? '' : $label), $picto, ($notooltip ? (($withpicto != 2) ? 'class="paddingright"' : '') : 'class="'.(($withpicto != 2) ? 'paddingright ' : '').'classfortooltip"'), 0, 0, $notooltip ? 0 : 1);
+		if ($withpicto != 2) $result .= $this->ref;
+		$result .= $linkend;
+		if ($withpicto != 2) $result .= (($addlabel && $this->title) ? $sep.dol_trunc($this->title, ($addlabel > 1 ? $addlabel : 0)) : '');
 
-					global $action;
-					$hookmanager->initHooks(array('projectdao'));
-					$parameters = array('id'=>$this->id, 'getnomurl'=>$result);
-					$reshook = $hookmanager->executeHooks('getNomUrl', $parameters, $this, $action); // Note that $action and $object may have been modified by some hooks
-					if ($reshook > 0) $result = $hookmanager->resPrint;
-					else $result .= $hookmanager->resPrint;
+		global $action;
+		$hookmanager->initHooks(array('projectdao'));
+		$parameters = array('id'=>$this->id, 'getnomurl'=>$result);
+		$reshook = $hookmanager->executeHooks('getNomUrl', $parameters, $this, $action); // Note that $action and $object may have been modified by some hooks
+		if ($reshook > 0) $result = $hookmanager->resPrint;
+		else $result .= $hookmanager->resPrint;
 
-					return $result;
+		return $result;
 	}
 
 	/**
