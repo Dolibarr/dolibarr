@@ -331,9 +331,7 @@ if ($resql)
 				$staticmember->fk_soc = $obj->fk_soc;
 				$staticmember->fetch_thirdparty();
 				$staticmember->name = $staticmember->thirdparty->name;
-			}
-			else
-			{
+			} else {
 				$staticmember->name = $obj->company;
 			}
 			$staticmember->ref = $staticmember->getFullName($langs);
@@ -349,9 +347,7 @@ if ($resql)
 	}
 	print "</table></div>";
 	print "<br>";
-}
-else
-{
+} else {
 	dol_print_error($db);
 }
 
@@ -411,9 +407,7 @@ if ($resql)
 	}
 	print "</table></div>";
 	print "<br>";
-}
-else
-{
+} else {
 	dol_print_error($db);
 }
 

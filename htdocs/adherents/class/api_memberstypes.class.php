@@ -207,10 +207,8 @@ class MembersTypes extends DolibarrApi
         if ($membertype->update(DolibarrApiAccess::$user) >= 0)
         {
             return $this->get($id);
-        }
-        else
-        {
-        	throw new RestException(500, $membertype->error);
+        } else {
+            throw new RestException(500, $membertype->error);
         }
     }
 

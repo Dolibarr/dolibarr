@@ -176,9 +176,7 @@ if ($result > 0)
 	{
 	    $langs->load("errors");
 	    print '<tr class="oddeven"><td colspan="2"><font class="error">'.$langs->trans("ErrorModuleSetupNotComplete", $langs->transnoentitiesnoconv("Member")).'</font></td></tr>';
-	}
-    else
-    {
+	} else {
     	$records = $ldap->getAttribute($dn, $search);
 
     	//print_r($records);
@@ -189,23 +187,17 @@ if ($result > 0)
     		if (!is_array($records))
     		{
     			print '<tr class="oddeven"><td colspan="2"><font class="error">'.$langs->trans("ErrorFailedToReadLDAP").'</font></td></tr>';
-    		}
-    		else
-    		{
+    		} else {
     			$result = show_ldap_content($records, 0, $records['count'], true);
     		}
-    	}
-    	else
-    	{
+    	} else {
     		print '<tr class="oddeven"><td colspan="2">'.$langs->trans("LDAPRecordNotFound").' (dn='.$dn.' - search='.$search.')</td></tr>';
     	}
     }
 
 	$ldap->unbind();
 	$ldap->close();
-}
-else
-{
+} else {
 	setEventMessages($ldap->error, $ldap->errors, 'errors');
 }
 

@@ -1282,10 +1282,11 @@ class Adherent extends CommonObject
 
 				$this->country_id = $obj->country_id;
 				$this->country_code = $obj->country_code;
-				if ($langs->trans("Country".$obj->country_code) != "Country".$obj->country_code)
+				if ($langs->trans("Country".$obj->country_code) != "Country".$obj->country_code) {
 					$this->country = $langs->transnoentitiesnoconv("Country".$obj->country_code);
-				else
+				} else {
 					$this->country = $obj->country;
+				}
 
 				$this->phone = $obj->phone;
 				$this->phone_perso = $obj->phone_perso;
@@ -2037,12 +2038,13 @@ class Adherent extends CommonObject
 		if ($withpictoimg > -2 && $withpictoimg != 2) {
 			if (empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER)) $result .= '<span class="nopadding valignmiddle'.((!isset($this->statut) || $this->statut) ? '' : ' strikefordisabled').
 				($morecss ? ' usertext'.$morecss : '').'">';
-			if ($mode == 'login')
+			if ($mode == 'login') {
 				$result .= dol_trunc($this->login, $maxlen);
-			elseif ($mode == 'ref')
+			} elseif ($mode == 'ref') {
 				$result .= $this->id;
-			else
+			} else {
 				$result .= $this->getFullName($langs, '', ($mode == 'firstname' ? 2 : -1), $maxlen);
+			}
 			if (empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER)) $result .= '</span>';
 		}
 		if ($withpictoimg) $result .= '</div>';
@@ -2803,10 +2805,11 @@ class Adherent extends CommonObject
 						$listofids .= ', ...';
 						break;
 					}
-					if (empty($listofids))
+					if (empty($listofids)) {
 						$listofids .= ' [';
-					else
+					} else {
 						$listofids .= ', ';
+					}
 					$listofids .= $idmember;
 					$i++;
 				}
@@ -2823,10 +2826,11 @@ class Adherent extends CommonObject
 							$listofids .= ', ...';
 							break;
 						}
-						if (empty($listofids))
+						if (empty($listofids)) {
 							$listofids .= ' [';
-						else
+						} else {
 							$listofids .= ', ';
+						}
 						$listofids .= $idmember;
 						$i++;
 					}

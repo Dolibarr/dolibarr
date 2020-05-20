@@ -209,9 +209,7 @@ if (empty($reshook))
 				$langs->load("errors");
 				setEventMessages($langs->trans($nuser->error), null, 'errors');
 			}
-		}
-		else
-		{
+		} else {
 			setEventMessages($object->error, $object->errors, 'errors');
 		}
 	}
@@ -231,9 +229,7 @@ if (empty($reshook))
 				setEventMessages($langs->trans($company->error), null, 'errors');
 				setEventMessages($company->error, $company->errors, 'errors');
 			}
-		}
-		else
-		{
+		} else {
 			setEventMessages($object->error, $object->errors, 'errors');
 		}
 	}
@@ -376,21 +372,15 @@ if (empty($reshook))
 							if (!dol_move_uploaded_file($_FILES['photo']['tmp_name'], $newfile, 1, 0, $_FILES['photo']['error']) > 0)
 							{
 								setEventMessages($langs->trans("ErrorFailedToSaveFile"), null, 'errors');
-							}
-							else
-							{
+							} else {
 							    // Create thumbs
 							    $object->addThumbs($newfile);
 							}
 						}
-					}
-					else
-					{
+					} else {
 						setEventMessages("ErrorBadImageFormat", null, 'errors');
 					}
-				}
-				else
-				{
+				} else {
 					switch ($_FILES['photo']['error'])
 					{
 						case 1: //uploaded file exceeds the upload_max_filesize directive in php.ini
@@ -412,15 +402,11 @@ if (empty($reshook))
 					header("Location: ".$backtopage);
 					exit;
 				}
-			}
-			else
-			{
+			} else {
 				setEventMessages($object->error, $object->errors, 'errors');
 				$action = '';
 			}
-		}
-		else
-		{
+		} else {
 			$action = 'edit';
 		}
 	}
@@ -527,8 +513,7 @@ if (empty($reshook))
 			if (empty($login)) {
 				$error++;
 				setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Login")), null, 'errors');
-			}
-			else {
+			} else {
 				$sql = "SELECT login FROM ".MAIN_DB_PREFIX."adherent WHERE login='".$db->escape($login)."'";
 				$result = $db->query($sql);
 				if ($result) {
@@ -588,9 +573,7 @@ if (empty($reshook))
 				$rowid = $object->id;
 				$id = $object->id;
 				$action = '';
-			}
-			else
-			{
+			} else {
 				$db->rollback();
 
 				if ($object->error) {
@@ -616,15 +599,11 @@ if (empty($reshook))
 			{
 				header("Location: ".$backtopage);
 				exit;
-			}
-			else
-			{
+			} else {
 				header("Location: list.php");
 				exit;
 			}
-		}
-		else
-		{
+		} else {
 			$errmesg = $object->error;
 		}
 	}
@@ -689,9 +668,7 @@ if (empty($reshook))
 					}
 				}
 			}
-		}
-		else
-		{
+		} else {
 			$error++;
 			if ($object->error) {
 				setEventMessages($object->error, $object->errors, 'errors');
@@ -703,9 +680,7 @@ if (empty($reshook))
 		if (!$error)
 		{
 			$db->commit();
-		}
-		else
-		{
+		} else {
 			$db->rollback();
 		}
 		$action = '';
@@ -770,9 +745,7 @@ if (empty($reshook))
 						}
 					}
 				}
-			}
-			else
-			{
+			} else {
 				$error++;
 
 				if ($object->error) {
@@ -857,9 +830,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action))
 	}
    	$objcanvas->assign_values($action, $object->id, $object->ref); // Set value for templates
     $objcanvas->display_canvas($action); // Show template
-}
-else
-{
+} else {
 	// -----------------------------------------
 	// When used in standard mode
 	// -----------------------------------------
@@ -1027,9 +998,7 @@ else
 			if ($object->country_id)
 			{
 				print $formcompany->select_state(GETPOST('state_id', 'int') ?GETPOST('state_id', 'int') : $object->state_id, $object->country_code);
-			}
-			else
-			{
+			} else {
 				print $countrynotdefined;
 			}
 			print '</td></tr>';
@@ -1084,9 +1053,7 @@ else
 		if (!empty($backtopage))
 		{
 			print '<input type="submit" class="button" name="cancel" value="'.$langs->trans('Cancel').'">';
-		}
-		else
-		{
+		} else {
 			print '<input type="button" class="button" value="'.$langs->trans("Cancel").'" onClick="javascript:history.go(-1)">';
 		}
 		print '</div>';
@@ -1123,9 +1090,7 @@ else
 			if ($resql)
 			{
 				$obj = $db->fetch_object($resql);
-			}
-			else
-			{
+			} else {
 				dol_print_error($db);
 			}
 			$object->country_id = $obj->rowid;
@@ -1204,9 +1169,7 @@ else
 		if ($user->rights->adherent->creer)
 		{
 			print $form->selectarray("typeid", $adht->liste_array(), (GETPOSTISSET("typeid") ?GETPOST("typeid", 'int') : $object->typeid));
-		}
-		else
-		{
+		} else {
 			print $adht->getNomUrl(1);
 			print '<input type="hidden" name="typeid" value="'.$object->typeid.'">';
 		}
@@ -1334,9 +1297,7 @@ else
 				$company = new Societe($db);
 				$result = $company->fetch($object->socid);
 				print $company->getNomUrl(1);
-			}
-			else
-			{
+			} else {
 				print $langs->trans("NoThirdPartyAssociatedToMember");
 			}
 			print '</td></tr>';
@@ -1432,9 +1393,7 @@ else
 			{
 				$companyname = $object->company;
 				if (!empty($fullname)) $companyalias = $fullname;
-			}
-			else
-			{
+			} else {
 				$companyname = $fullname;
 				if (!empty($object->company)) $companyalias = $object->company;
 			}
@@ -1629,8 +1588,7 @@ else
 		{
 			print '<tr><td>'.$langs->trans("Password").'</td><td>'.preg_replace('/./i', '*', $object->pass);
 			if ($object->pass) print preg_replace('/./i', '*', $object->pass);
-			else
-			{
+			else {
 			    if ($user->admin) print $langs->trans("Crypted").': '.$object->pass_indatabase_crypted;
 			    else print $langs->trans("Hidden");
 			}
@@ -1651,9 +1609,7 @@ else
 			if ($object->hasDelay()) {
 				print " ".img_warning($langs->trans("Late"));
 			}
-		}
-		else
-		{
+		} else {
 			if ($object->need_subscription == 0)
             {
                 print $langs->trans("SubscriptionNotNeeded");
@@ -1662,9 +1618,7 @@ else
 			{
 				print $langs->trans("SubscriptionNotRecorded");
 				if ($object->statut > 0) print " ".img_warning($langs->trans("Late")); // displays delay Pictogram only if not a draft and not terminated
-			}
-			else
-			{
+			} else {
 				print $langs->trans("SubscriptionNotReceived");
 				if ($object->statut > 0) print " ".img_warning($langs->trans("Late")); // displays delay Pictogram only if not a draft and not terminated
 			}
@@ -1691,17 +1645,12 @@ else
 				print '</td>';
 				print '<td class="left"><input type="submit" class="button" value="'.$langs->trans("Modify").'"></td>';
 				print '</tr></table></form>';
-			}
-			else
-			{
-				if ($object->socid)
-				{
+			} else {
+				if ($object->socid) {
 					$company = new Societe($db);
 					$result = $company->fetch($object->socid);
 					print $company->getNomUrl(1);
-				}
-				else
-				{
+				} else {
 					print $langs->trans("NoThirdPartyAssociatedToMember");
 				}
 			}
@@ -1716,14 +1665,13 @@ else
 		if ($action == 'editlogin')
 		{
 			$form->form_users($_SERVER['PHP_SELF'].'?rowid='.$object->id, $object->user_id, 'userid', '');
-		}
-		else
-		{
+		} else {
 			if ($object->user_id)
 			{
 				$form->form_users($_SERVER['PHP_SELF'].'?rowid='.$object->id, $object->user_id, 'none');
+			} else {
+				print $langs->trans("NoDolibarrAccess");
 			}
-			else print $langs->trans("NoDolibarrAccess");
 		}
 		print '</td></tr>';
 
@@ -1803,9 +1751,7 @@ else
 				if ($user->rights->adherent->creer)
 				{
 					print '<div class="inline-block divButAction"><a class="butAction" href="card.php?rowid='.$id.'&action=edit">'.$langs->trans("Modify")."</a></div>";
-				}
-				else
-				{
+				} else {
 					print '<div class="inline-block divButAction"><font class="butActionRefused classfortooltip" href="#" title="'.dol_escape_htmltag($langs->trans("NotEnoughPermissions")).'">'.$langs->trans("Modify").'</font></div>';
 				}
 
@@ -1815,9 +1761,7 @@ else
 					if ($user->rights->adherent->creer)
 					{
 						print '<div class="inline-block divButAction"><a class="butAction" href="card.php?rowid='.$id.'&action=valid">'.$langs->trans("Validate")."</a></div>\n";
-					}
-					else
-					{
+					} else {
 						print '<div class="inline-block divButAction"><font class="butActionRefused classfortooltip" href="#" title="'.dol_escape_htmltag($langs->trans("NotEnoughPermissions")).'">'.$langs->trans("Validate").'</font></div>';
 					}
 				}
@@ -1828,9 +1772,7 @@ else
 					if ($user->rights->adherent->creer)
 					{
 						print '<div class="inline-block divButAction"><a class="butAction" href="card.php?rowid='.$id.'&action=valid">'.$langs->trans("Reenable")."</a></div>\n";
-					}
-					else
-					{
+					} else {
 						print '<div class="inline-block divButAction"><font class="butActionRefused classfortooltip" href="#" title="'.dol_escape_htmltag($langs->trans("NotEnoughPermissions")).'">'.$langs->trans("Reenable")."</font></div>";
 					}
 				}
@@ -1841,9 +1783,7 @@ else
 					if ($user->rights->adherent->supprimer)
 					{
 						print '<div class="inline-block divButAction"><a class="butAction" href="card.php?rowid='.$id.'&action=resign">'.$langs->trans("Resiliate")."</a></div>\n";
-					}
-					else
-					{
+					} else {
 						print '<div class="inline-block divButAction"><font class="butActionRefused classfortooltip" href="#" title="'.dol_escape_htmltag($langs->trans("NotEnoughPermissions")).'">'.$langs->trans("Resiliate")."</font></div>";
 					}
 				}
@@ -1855,9 +1795,7 @@ else
 					{
 						if ($object->statut != -1) print '<div class="inline-block divButAction"><a class="butAction" href="'.$_SERVER["PHP_SELF"].'?rowid='.$object->id.'&amp;action=create_thirdparty">'.$langs->trans("CreateDolibarrThirdParty").'</a></div>';
 						else print '<div class="inline-block divButAction"><a class="butActionRefused classfortooltip" href="#" title="'.dol_escape_htmltag($langs->trans("ValidateBefore")).'">'.$langs->trans("CreateDolibarrThirdParty").'</a></div>';
-					}
-					else
-					{
+					} else {
 						print '<div class="inline-block divButAction"><font class="butActionRefused classfortooltip" href="#" title="'.dol_escape_htmltag($langs->trans("NotEnoughPermissions")).'">'.$langs->trans("CreateDolibarrThirdParty")."</font></div>";
 					}
 				}
@@ -1869,9 +1807,7 @@ else
 					{
 						if ($object->statut != -1) print '<div class="inline-block divButAction"><a class="butAction" href="'.$_SERVER["PHP_SELF"].'?rowid='.$object->id.'&amp;action=create_user">'.$langs->trans("CreateDolibarrLogin").'</a></div>';
 						else print '<div class="inline-block divButAction"><a class="butActionRefused classfortooltip" href="#" title="'.dol_escape_htmltag($langs->trans("ValidateBefore")).'">'.$langs->trans("CreateDolibarrLogin").'</a></div>';
-					}
-					else
-					{
+					} else {
 						print '<div class="inline-block divButAction"><font class="butActionRefused classfortooltip" href="#" title="'.dol_escape_htmltag($langs->trans("NotEnoughPermissions")).'">'.$langs->trans("CreateDolibarrLogin")."</font></div>";
 					}
 				}
@@ -1880,9 +1816,7 @@ else
 				if ($user->rights->adherent->supprimer)
 				{
 					print '<div class="inline-block divButAction"><a class="butActionDelete" href="card.php?rowid='.$object->id.'&action=delete">'.$langs->trans("Delete")."</a></div>\n";
-				}
-				else
-				{
+				} else {
 					print '<div class="inline-block divButAction"><font class="butActionRefused classfortooltip" href="#" title="'.dol_escape_htmltag($langs->trans("NotEnoughPermissions")).'">'.$langs->trans("Delete")."</font></div>";
 				}
 

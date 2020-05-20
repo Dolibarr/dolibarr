@@ -71,9 +71,7 @@ if ($action == 'updateall')
     {
         setEventMessages('ErrorFailedToSaveDate', null, 'errors');
         $db->rollback();
-    }
-    else
-    {
+    } else {
         setEventMessages('RecordModifiedSuccessfully', null, 'mesgs');
         $db->commit();
     }
@@ -101,9 +99,7 @@ if ($action == 'update' || $action == 'add')
 	if (!$error)
 	{
 		setEventMessages($langs->trans("SetupSaved"), null, 'mesgs');
-	}
-	else
-	{
+	} else {
 		setEventMessages($langs->trans("Error"), null, 'errors');
 	}
 }
@@ -199,9 +195,7 @@ if ($conf->facture->enabled)
 		print '<td>';
 		print $form->selectarray('ADHERENT_VAT_FOR_SUBSCRIPTIONS', array('0'=>$langs->trans("NoVatOnSubscription"), 'defaultforfoundationcountry'=>$langs->trans("Default")), (empty($conf->global->ADHERENT_VAT_FOR_SUBSCRIPTIONS) ? '0' : $conf->global->ADHERENT_VAT_FOR_SUBSCRIPTIONS), 0);
 		print '</td>';
-	}
-	else
-	{
+	} else {
 		print '<td class="right">';
 		print $langs->trans("WarningModuleNotActive", $langs->transnoentities("Module85Name"));
 		print '</td>';
@@ -234,12 +228,12 @@ print '<br>';
  */
 $constantes = array(
 		'ADHERENT_CARD_TYPE',
-//		'ADHERENT_CARD_BACKGROUND',
+		//'ADHERENT_CARD_BACKGROUND',
 		'ADHERENT_CARD_HEADER_TEXT',
 		'ADHERENT_CARD_TEXT',
 		'ADHERENT_CARD_TEXT_RIGHT',
 		'ADHERENT_CARD_FOOTER_TEXT'
-		);
+);
 
 print load_fiche_titre($langs->trans("MembersCards"), '', '');
 

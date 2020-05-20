@@ -214,9 +214,7 @@ if (empty($reshook))
             if ($result < 0 && !count($tmpmember->errors))
     	    {
     	        setEventMessages($tmpmember->error, $tmpmember->errors, 'errors');
-    	    }
-    	    else
-    	    {
+    	    } else {
     	        if ($result > 0) $nbclose++;
     	    }
         }
@@ -226,9 +224,7 @@ if (empty($reshook))
             setEventMessages($langs->trans("XMembersClosed", $nbclose), null, 'mesgs');
 
             $db->commit();
-        }
-        else
-        {
+        } else {
             $db->rollback();
         }
 	}
@@ -858,17 +854,13 @@ while ($i < min($num, $limit))
 				print " ".img_warning($langs->trans("SubscriptionLate").$textlate);
 			}
 			print '</td>';
-		}
-		else
-		{
+		} else {
 			print '<td class="nowrap left">';
 			if ($obj->subscription == 'yes')
 			{
 				print $langs->trans("SubscriptionNotReceived");
 				if ($obj->statut > 0) print " ".img_warning();
-			}
-			else
-			{
+			} else {
 				print '&nbsp;';
 			}
 			print '</td>';

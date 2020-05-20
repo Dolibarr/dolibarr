@@ -118,9 +118,7 @@ abstract class ActionsAdherentCardCommon
         	{
         		$this->tpl['company'] = $objsoc->getNomUrl(1);
         		$this->tpl['company_id'] = $objsoc->id;
-        	}
-        	else
-        	{
+        	} else {
         		$this->tpl['company'] = $form->select_company($this->object->socid, 'socid', '', 1);
         	}
 
@@ -190,9 +188,7 @@ abstract class ActionsAdherentCardCommon
 
         		$objsoc->fetch($this->object->socid);
         		$this->tpl['company'] = $objsoc->getNomUrl(1);
-        	}
-        	else
-        	{
+        	} else {
         		$this->tpl['company'] = $langs->trans("AdherentNotLinkedToThirdParty");
         	}
 
@@ -273,9 +269,7 @@ abstract class ActionsAdherentCardCommon
 
                 $this->object->country_code = $obj->code;
                 $this->object->country = $langs->trans("Country".$obj->code) ? $langs->trans("Country".$obj->code) : $obj->libelle;
-            }
-            else
-            {
+            } else {
                 dol_print_error($this->db);
             }
         }

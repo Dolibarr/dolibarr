@@ -146,9 +146,7 @@ class AdherentType extends CommonObject
                 $this->multilangs["$obj->lang"]["email"] = $obj->email;
             }
             return 1;
-        }
-        else
-        {
+        } else {
             $this->error = "Error: ".$this->db->lasterror()." - ".$sql;
             return -1;
         }
@@ -184,9 +182,7 @@ class AdherentType extends CommonObject
                     $sql2 .= " label='".$this->db->escape($this->label)."',";
                     $sql2 .= " description='".$this->db->escape($this->description)."'";
                     $sql2 .= " WHERE fk_type=".$this->id." AND lang='".$this->db->escape($key)."'";
-                }
-                else
-                {
+                } else {
                     $sql2 = "INSERT INTO ".MAIN_DB_PREFIX."adherent_type_lang (fk_type, lang, label, description";
                     $sql2 .= ")";
                     $sql2 .= " VALUES(".$this->id.",'".$this->db->escape($key)."','".$this->db->escape($this->label)."',";
@@ -214,9 +210,7 @@ class AdherentType extends CommonObject
                     $sql2 .= " label='".$this->db->escape($this->multilangs["$key"]["label"])."',";
                     $sql2 .= " description='".$this->db->escape($this->multilangs["$key"]["description"])."'";
                     $sql2 .= " WHERE fk_type=".$this->id." AND lang='".$this->db->escape($key)."'";
-                }
-                else
-                {
+                } else {
                     $sql2 = "INSERT INTO ".MAIN_DB_PREFIX."adherent_type_lang (fk_type, lang, label, description";
                     $sql2 .= ")";
                     $sql2 .= " VALUES(".$this->id.",'".$this->db->escape($key)."','".$this->db->escape($this->multilangs["$key"]["label"])."',";
@@ -231,9 +225,7 @@ class AdherentType extends CommonObject
                         return -1;
                     }
                 }
-            }
-            else
-            {
+            } else {
                 // language is not current language and we didn't provide a multilang description for this language
             }
         }
@@ -274,9 +266,7 @@ class AdherentType extends CommonObject
             }
             // End call triggers
             return 1;
-        }
-        else
-        {
+        } else {
             $this->error = $this->db->lasterror();
             dol_syslog(get_class($this).'::delMultiLangs error='.$this->error, LOG_ERR);
             return -1;
@@ -336,16 +326,12 @@ class AdherentType extends CommonObject
 			{
 				$this->db->commit();
 				return $this->id;
-			}
-			else
-			{
+			} else {
 				dol_syslog(get_class($this)."::create ".$this->error, LOG_ERR);
 				$this->db->rollback();
 				return -2;
 			}
-		}
-		else
-		{
+		} else {
 			$this->error = $this->db->lasterror();
 			$this->db->rollback();
 			return -1;
@@ -418,16 +404,12 @@ class AdherentType extends CommonObject
 			{
 				$this->db->commit();
 				return 1;
-			}
-			else
-			{
+			} else {
 				$this->db->rollback();
 				dol_syslog(get_class($this)."::update ".$this->error, LOG_ERR);
 				return -$error;
 			}
-		}
-		else
-		{
+		} else {
 			$this->error = $this->db->lasterror();
 			$this->db->rollback();
 			return -1;
@@ -458,9 +440,7 @@ class AdherentType extends CommonObject
 
 			$this->db->commit();
 			return 1;
-		}
-		else
-		{
+		} else {
 			$this->db->rollback();
 			$this->error = $this->db->lasterror();
 			return -1;
@@ -511,9 +491,7 @@ class AdherentType extends CommonObject
 			}
 
 			return 1;
-		}
-		else
-		{
+		} else {
 			$this->error = $this->db->lasterror();
 			return -1;
 		}
@@ -552,9 +530,7 @@ class AdherentType extends CommonObject
 					$i++;
 				}
 			}
-		}
-		else
-		{
+		} else {
 			print $this->db->error();
 		}
 		return $adherenttypes;
@@ -608,9 +584,7 @@ class AdherentType extends CommonObject
 			$this->members = $ret;
 
 			return $ret;
-		}
-		else
-		{
+		} else {
 			$this->error = $this->db->lasterror();
 			return -1;
 		}

@@ -232,14 +232,10 @@ class Subscription extends CommonObject
                 $this->note           = $obj->note;
                 $this->fk_bank        = $obj->fk_bank;
                 return 1;
-            }
-            else
-            {
+            } else {
                 return 0;
             }
-        }
-        else
-        {
+        } else {
             $this->error = $this->db->lasterror();
             return -1;
         }
@@ -286,9 +282,7 @@ class Subscription extends CommonObject
                 if ($result < 0) { $error++; } //Do also here what you must do to rollback action if trigger fail
                 // End call triggers
             }
-        }
-        else
-        {
+        } else {
             $error++;
             $this->error = $this->db->lasterror();
         }
@@ -355,28 +349,20 @@ class Subscription extends CommonObject
                         {
                             $this->db->commit();
                             return 1;
-                        }
-                        else
-                        {
+                        } else {
                             $this->error = $accountline->error;
                             $this->db->rollback();
                             return -1;
                         }
-                    }
-                    else
-                    {
+                    } else {
                         $this->db->commit();
                         return 1;
                     }
-                }
-                else
-                {
+                } else {
                     $this->db->commit();
                     return 0;
                 }
-            }
-            else
-            {
+            } else {
                 $error++;
                 $this->error = $this->db->lasterror();
             }
@@ -488,9 +474,7 @@ class Subscription extends CommonObject
             }
 
             $this->db->free($result);
-        }
-        else
-        {
+        } else {
             dol_print_error($this->db);
         }
     }

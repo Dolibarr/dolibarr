@@ -74,9 +74,7 @@ if ($action == 'updateall')
     {
         setEventMessages('ErrorFailedToSaveDate', null, 'errors');
         $db->rollback();
-    }
-    else
-    {
+    } else {
         setEventMessages('RecordModifiedSuccessfully', null, 'mesgs');
         $db->commit();
     }
@@ -102,8 +100,7 @@ if ($action == 'update' || $action == 'add')
 	{
 		setEventMessages($langs->trans("SetupSaved"), null, 'mesgs');
 	}
-	else
-	{
+	else {
 		setEventMessages($langs->trans("Error"), null, 'errors');
 	}
 }

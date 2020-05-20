@@ -85,9 +85,7 @@ if ($user->rights->adherent->cotisation->creer && $action == 'update' && !$cance
 			if ($accountline->rappro)
 			{
 				$errmsg = $langs->trans("SubscriptionLinkedToConciliatedTransaction");
-			}
-			else
-			{
+			} else {
 				$accountline->datev = dol_mktime($_POST['datesubhour'], $_POST['datesubmin'], 0, $_POST['datesubmonth'], $_POST['datesubday'], $_POST['datesubyear']);
 				$accountline->dateo = dol_mktime($_POST['datesubhour'], $_POST['datesubmin'], 0, $_POST['datesubmonth'], $_POST['datesubday'], $_POST['datesubyear']);
 				$accountline->amount = $_POST["amount"];
@@ -116,17 +114,13 @@ if ($user->rights->adherent->cotisation->creer && $action == 'update' && !$cance
 
 				header("Location: card.php?rowid=".$object->id);
 				exit;
-			}
-			else
-			{
+			} else {
 				$db->rollback();
 
 			    if ($object->error)
 				{
 					$errmsg = $object->error;
-				}
-				else
-				{
+				} else {
 					foreach ($object->errors as $error)
 					{
 						if ($errmsg) $errmsg .= '<br>';
@@ -135,9 +129,7 @@ if ($user->rights->adherent->cotisation->creer && $action == 'update' && !$cance
 				}
 				$action = '';
 			}
-		}
-		else
-		{
+		} else {
 			$db->rollback();
 		}
 	}
@@ -151,9 +143,7 @@ if ($action == 'confirm_delete' && $confirm == 'yes' && $user->rights->adherent-
     {
     	header("Location: ".DOL_URL_ROOT."/adherents/card.php?rowid=".$object->fk_adherent);
     	exit;
-    }
-    else
-    {
+    } else {
     	$mesg = $adh->error;
     }
 }
@@ -248,9 +238,7 @@ if ($user->rights->adherent->cotisation->creer && $action == 'edit')
 				$bankline = new AccountLine($db);
 				$result = $bankline->fetch($object->fk_bank);
 				print $bankline->getNomUrl(1, 0, 'showall');
-			}
-			else
-			{
+			} else {
 				print $langs->trans("NoneF");
 			}
 			print '</td></tr>';
@@ -355,9 +343,7 @@ if ($rowid && $action != 'edit')
 				$bankline = new AccountLine($db);
 				$result = $bankline->fetch($object->fk_bank);
 				print $bankline->getNomUrl(1, 0, 'showall');
-			}
-			else
-			{
+			} else {
 				print $langs->trans("NoneF");
 			}
 			print '</td></tr>';
@@ -382,9 +368,7 @@ if ($rowid && $action != 'edit')
 		if (!$bankline->rappro)
 		{
 			print '<div class="inline-block divButAction"><a class="butAction" href="'.$_SERVER["PHP_SELF"]."?rowid=".$object->id."&action=edit\">".$langs->trans("Modify")."</a></div>";
-		}
-		else
-		{
+		} else {
 			print '<div class="inline-block divButAction"><a class="butActionRefused classfortooltip" title="'.$langs->trans("BankLineConciliated")."\" href=\"#\">".$langs->trans("Modify")."</a></div>";
 		}
 	}

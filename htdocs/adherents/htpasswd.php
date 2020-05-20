@@ -79,9 +79,7 @@ if ($resql)
 		$i++;
 	}
 	print "<hr>\n";
-}
-else
-{
+} else {
 	dol_print_error($db);
 }
 

@@ -196,10 +196,8 @@ class Subscriptions extends DolibarrApi
         if ($subscription->update(DolibarrApiAccess::$user) > 0)
         {
             return $this->get($id);
-        }
-        else
-        {
-        	throw new RestException(500, $subscription->error);
+        } else {
+            throw new RestException(500, $subscription->error);
         }
     }
 

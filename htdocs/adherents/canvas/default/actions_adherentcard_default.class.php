@@ -105,9 +105,7 @@ class ActionsAdherentCardDefault extends ActionsAdherentCardCommon
             $this->tpl['actionstodo'] = show_actions_todo($conf, $langs, $db, $objsoc, $this->object, 1);
 
             $this->tpl['actionsdone'] = show_actions_done($conf, $langs, $db, $objsoc, $this->object, 1);
-		}
-		else
-		{
+        } else {
 			// Confirm delete contact
         	if ($action == 'delete' && $user->rights->adherent->supprimer)
         	{

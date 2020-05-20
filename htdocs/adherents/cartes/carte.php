@@ -162,11 +162,9 @@ if ((!empty($foruserid) || !empty($foruserlogin) || !empty($mode)) && !$mesg)
                             'photo'=>$objp->photo
                         );
                     }
-                }
-                else
-                {
+                } else {
                     $arrayofmembers[] = array(
-                    	'textleft'=>$textleft,
+                        'textleft'=>$textleft,
                         'textheader'=>$textheader,
                         'textfooter'=>$textfooter,
                         'textright'=>$textright,
@@ -226,9 +224,7 @@ if ((!empty($foruserid) || !empty($foruserlogin) || !empty($mode)) && !$mesg)
     	{
     		dol_print_error('', $result);
     	}
-    }
-    else
-    {
+    } else {
     	dol_print_error($db);
     }
 

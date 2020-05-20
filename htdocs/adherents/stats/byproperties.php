@@ -93,9 +93,7 @@ if ($resql)
 		$i++;
 	}
 	$db->free($resql);
-}
-else
-{
+} else {
 	dol_print_error($db);
 }
 
@@ -106,13 +104,10 @@ dol_fiche_head($head, 'statsbyproperties', $langs->trans("Statistics"), -1, 'use
 
 
 // Print title
-if (!count($data))
-{
+if (!count($data)) {
 	print $langs->trans("NoValidatedMemberYet").'<br>';
 	print '<br>';
-}
-else
-{
+} else {
 	print $langs->trans("MembersByNature").'<br>';
 	print '<br>';
 }

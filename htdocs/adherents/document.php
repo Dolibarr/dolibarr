@@ -158,14 +158,10 @@ if ($id > 0)
 		$param = '&id='.$object->id;
 		include_once DOL_DOCUMENT_ROOT.'/core/tpl/document_actions_post_headers.tpl.php';
 		print "<br><br>";
-	}
-	else
-	{
+	} else {
 		dol_print_error($db);
 	}
-}
-else
-{
+} else {
     $langs->load("errors");
 	print $langs->trans("ErrorRecordNotFound");
 }

@@ -200,9 +200,7 @@ if ($mode)
             $i++;
         }
         $db->free($resql);
-    }
-    else
-    {
+    } else {
         dol_print_error($db);
     }
 }
@@ -218,15 +216,12 @@ if ($mode && !count($data))
 {
     print $langs->trans("NoValidatedMemberYet").'<br>';
     print '<br>';
-}
-else
-{
+} else {
     if ($mode == 'memberbycountry') print $langs->trans("MembersByCountryDesc").'<br>';
     elseif ($mode == 'memberbystate') print $langs->trans("MembersByStateDesc").'<br>';
     elseif ($mode == 'memberbytown') print $langs->trans("MembersByTownDesc").'<br>';
     elseif ($mode == 'memberbyregion') print $langs->trans("MembersByRegion").'<br>'; //+
-    else
-    {
+    else {
         print $langs->trans("MembersStatisticsDesc").'<br>';
         print '<br>';
         print '<a href="'.$_SERVER["PHP_SELF"].'?mode=memberbycountry">'.$langs->trans("MembersStatisticsByCountries").'</a><br>';
