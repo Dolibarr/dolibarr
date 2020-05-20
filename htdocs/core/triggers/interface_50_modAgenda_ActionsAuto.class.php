@@ -898,7 +898,6 @@ class InterfaceActionsAuto extends DolibarrTriggers
 		$actioncomm->datep       = $now;
 		$actioncomm->datef       = $now;
 		$actioncomm->durationp   = 0;
-		$actioncomm->punctual    = 1;
 		$actioncomm->percentage  = -1; // Not applicable
 		$actioncomm->socid       = $societeforaction->id;
 		$actioncomm->contactid   = $contactforaction->id;
