@@ -1049,17 +1049,20 @@ class Project extends CommonObject
 		if (isset($this->public)) {
 			$label .= '<br><b>'.$langs->trans("Visibility").":</b> ".($this->public ? $langs->trans("SharedProject") : $langs->trans("PrivateProject"));
 		}
-		if (!empty($this->thirdparty_name))
+		if (!empty($this->thirdparty_name)) {
 			$label .= ($label ? '<br>' : '').'<b>'.$langs->trans('ThirdParty').': </b>'.$this->thirdparty_name; // The space must be after the : to not being explode when showing the title in img_picto
-		if (!empty($this->dateo))
+		}
+		if (!empty($this->dateo)) {
 			$label .= ($label ? '<br>' : '').'<b>'.$langs->trans('DateStart').': </b>'.dol_print_date($this->dateo, 'day'); // The space must be after the : to not being explode when showing the title in img_picto
-		if (!empty($this->datee))
+		}
+		if (!empty($this->datee)) {
 			$label .= ($label ? '<br>' : '').'<b>'.$langs->trans('DateEnd').': </b>'.dol_print_date($this->datee, 'day'); // The space must be after the : to not being explode when showing the title in img_picto
+		}
 		if ($moreinpopup) $label .= '<br>'.$moreinpopup;
 		if (isset($this->status)) {
 			$label .= '<br><b>'.$langs->trans("Status").":</b> ".$this->getLibStatut(5);
 		}
-		
+
 		$url = '';
 		if ($option != 'nolink')
 		{
@@ -1837,12 +1840,12 @@ public function loadTimeSpent($datestart, $taskid = 0, $userid = 0)
 public function loadTimeSpentMonth($datestart, $taskid = 0, $userid = 0)
 {
 	$error = 0;
-	
+
 	$this->monthWorkLoad = array();
 	$this->monthWorkLoadPerTask = array();
-	
+
 	if (empty($datestart)) dol_print_error('', 'Error datestart parameter is empty');
-	
+
 	$sql = "SELECT ptt.rowid as taskid, ptt.task_duration, ptt.task_date, ptt.task_datehour, ptt.fk_task";
 	$sql .= " FROM ".MAIN_DB_PREFIX."projet_task_time AS ptt, ".MAIN_DB_PREFIX."projet_task as pt";
 	$sql .= " WHERE ptt.fk_task = pt.rowid";
@@ -1851,13 +1854,13 @@ public function loadTimeSpentMonth($datestart, $taskid = 0, $userid = 0)
 	$sql .= " AND ptt.task_date <= '".$this->db->idate(dol_time_plus_duree($datestart, 1, 'm') - 1)."')";
 	if ($task_id) $sql .= " AND ptt.fk_task=".$taskid;
 	if (is_numeric($userid)) $sql .= " AND ptt.fk_user=".$userid;
-	
+
 	//print $sql;
 	$resql = $this->db->query($sql);
 	if ($resql)
 	{
 		$weekalreadyfound = array();
-		
+
 		$num = $this->db->num_rows($resql);
 		$i = 0;
 		// Loop on each record found, so each couple (project id, task id)
