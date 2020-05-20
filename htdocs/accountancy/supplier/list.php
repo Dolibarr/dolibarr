@@ -164,8 +164,7 @@ if ($massaction == 'ventil') {
                 $msg .= '<div><font color="red">'.$langs->trans("Lineofinvoice").' '.$monId.' - '.$langs->trans("NoAccountSelected").'</font></div>';
                 $ko++;
             }
-            else
-            {
+            else {
                 $sql = " UPDATE ".MAIN_DB_PREFIX."facture_fourn_det";
                 $sql .= " SET fk_code_ventilation = ".$monCompte;
                 $sql .= " WHERE rowid = ".$monId;

@@ -352,8 +352,7 @@ if ($action == 'delbookkeepingyearconfirm' && $user->rights->accounting->mouveme
 		if ($result < 0) {
 			setEventMessages($object->error, $object->errors, 'errors');
 		}
-		else
-		{
+		else {
 			setEventMessages("RecordDeleted", null, 'mesgs');
 		}
 
@@ -361,8 +360,7 @@ if ($action == 'delbookkeepingyearconfirm' && $user->rights->accounting->mouveme
 		header("Location: list.php".($param ? '?'.$param : ''));
 		exit;
 	}
-	else
-	{
+	else {
 		setEventMessages("NoRecordDeleted", null, 'warnings');
 	}
 }
@@ -374,8 +372,7 @@ if ($action == 'delmouvconfirm' && $user->rights->accounting->mouvements->suppri
 		if ($result < 0) {
 			setEventMessages($object->error, $object->errors, 'errors');
 		}
-		else
-		{
+		else {
 			setEventMessages($langs->trans("RecordDeleted"), null, 'mesgs');
 		}
 
@@ -481,8 +478,7 @@ if ($action == 'export_file' && $user->rights->accounting->mouvements->export) {
 	{
 		setEventMessages($object->error, $object->errors, 'errors');
 	}
-	else
-	{
+	else {
 	    // Export files
 		$accountancyexport = new AccountancyExport($db);
 		$accountancyexport->export($object->lines, $formatexportset);
@@ -491,8 +487,7 @@ if ($action == 'export_file' && $user->rights->accounting->mouvements->export) {
         {
             setEventMessages('', $accountancyexport->errors, 'errors');
         }
-        else
-        {
+        else {
             // Specify as export : update field date_export
             $error = 0;
             $db->begin();
@@ -522,8 +517,7 @@ if ($action == 'export_file' && $user->rights->accounting->mouvements->export) {
             	$db->commit();
             	// setEventMessages($langs->trans("AllExportedMovementsWereRecordedAsExported"), null, 'mesgs');
             }
-            else
-            {
+            else {
             	$error++;
             	$db->rollback();
             	setEventMessages($langs->trans("NotAllExportedMovementsCouldBeRecordedAsExported"), null, 'errors');
@@ -560,8 +554,7 @@ if (is_numeric($nbtotalofrecords) && $limit > $nbtotalofrecords)
 {
 	$num = $nbtotalofrecords;
 }
-else
-{
+else {
 	$sql .= $db->plimit($limit + 1, $offset);
 
 	$resql = $db->query($sql);
@@ -722,8 +715,7 @@ if (!empty($arrayfields['t.subledger_account']['checked']))
 	{
 		print $formaccounting->select_auxaccount($search_accountancy_aux_code_start, 'search_accountancy_aux_code_start', 1);
 	}
-	else
-	{
+	else {
 		print '<input type="text" class="maxwidth100" name="search_accountancy_aux_code_start" value="'.$search_accountancy_aux_code_start.'">';
 	}
 	print '</div>';
@@ -735,8 +727,7 @@ if (!empty($arrayfields['t.subledger_account']['checked']))
 	{
 		print $formaccounting->select_auxaccount($search_accountancy_aux_code_end, 'search_accountancy_aux_code_end', 1);
 	}
-	else
-	{
+	else {
 		print '<input type="text" class="maxwidth100" name="search_accountancy_aux_code_end" value="'.$search_accountancy_aux_code_end.'">';
 	}
 	print '</div>';
@@ -958,8 +949,7 @@ while ($i < min($num, $limit))
             $urlsource = $_SERVER['PHP_SELF'].'?id='.$objectstatic->id;
             $documentlink = $formfile->getDocumentsLink($objectstatic->element, $filename, $filedir);
         }
-        else
-        {
+        else {
             // Other type
         }
 

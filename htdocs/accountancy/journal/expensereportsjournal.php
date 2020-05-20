@@ -232,8 +232,7 @@ if ($action == 'writebookkeeping') {
 							$errorforline++;
 							//setEventMessages('Transaction for ('.$bookkeeping->doc_type.', '.$bookkeeping->fk_doc.', '.$bookkeeping->fk_docdet.') were already recorded', null, 'warnings');
 						}
-						else
-						{
+						else {
 							$error++;
 							$errorforline++;
 							setEventMessages($bookkeeping->error, $bookkeeping->errors, 'errors');
@@ -282,8 +281,7 @@ if ($action == 'writebookkeeping') {
 								$errorforline++;
 								//setEventMessages('Transaction for ('.$bookkeeping->doc_type.', '.$bookkeeping->fk_doc.', '.$bookkeeping->fk_docdet.') were already recorded', null, 'warnings');
 							}
-							else
-							{
+							else {
 								$error++;
 								$errorforline++;
 								setEventMessages($bookkeeping->error, $bookkeeping->errors, 'errors');
@@ -342,8 +340,7 @@ if ($action == 'writebookkeeping') {
 								$errorforline++;
 								//setEventMessages('Transaction for ('.$bookkeeping->doc_type.', '.$bookkeeping->fk_doc.', '.$bookkeeping->fk_docdet.') were already recorded', null, 'warnings');
 							}
-							else
-							{
+							else {
 								$error++;
 								$errorforline++;
 								setEventMessages($bookkeeping->error, $bookkeeping->errors, 'errors');
@@ -366,8 +363,7 @@ if ($action == 'writebookkeeping') {
 		{
 			$db->commit();
 		}
-		else
-		{
+		else {
 			$db->rollback();
 
 			if ($error >= 10)
@@ -387,8 +383,7 @@ if ($action == 'writebookkeeping') {
 	{
 		setEventMessages($langs->trans("NoNewRecordSaved"), null, 'warnings');
 	}
-	else
-	{
+	else {
 		setEventMessages($langs->trans("GeneralLedgerSomeRecordWasNotRecorded"), null, 'warnings');
 	}
 

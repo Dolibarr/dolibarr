@@ -152,8 +152,9 @@ if ($result) {
 		if (empty($compta_prod)) {
 			if ($obj->product_type == 0)
 				$compta_prod = (!empty($conf->global->ACCOUNTING_PRODUCT_BUY_ACCOUNT)) ? $conf->global->ACCOUNTING_PRODUCT_BUY_ACCOUNT : 'NotDefined';
-			else
+			else {
 				$compta_prod = (!empty($conf->global->ACCOUNTING_SERVICE_BUY_ACCOUNT)) ? $conf->global->ACCOUNTING_SERVICE_BUY_ACCOUNT : 'NotDefined';
+			}
 		}
 
 		$vatdata = getTaxesFromId($obj->tva_tx.($obj->vat_src_code ? ' ('.$obj->vat_src_code.')' : ''), $mysoc, $mysoc, 0);
@@ -332,8 +333,7 @@ if ($action == 'writebookkeeping') {
 						$errorforinvoice[$key] = 'alreadyjournalized';
 						//setEventMessages('Transaction for ('.$bookkeeping->doc_type.', '.$bookkeeping->fk_doc.', '.$bookkeeping->fk_docdet.') were already recorded', null, 'warnings');
 					}
-					else
-					{
+					else {
 						$error++;
 						$errorforline++;
 						$errorforinvoice[$key] = 'other';
@@ -384,8 +384,7 @@ if ($action == 'writebookkeeping') {
 							$errorforinvoice[$key] = 'alreadyjournalized';
 							//setEventMessages('Transaction for ('.$bookkeeping->doc_type.', '.$bookkeeping->fk_doc.', '.$bookkeeping->fk_docdet.') were already recorded', null, 'warnings');
 						}
-						else
-						{
+						else {
 							$error++;
 							$errorforline++;
 							$errorforinvoice[$key] = 'other';
@@ -447,8 +446,7 @@ if ($action == 'writebookkeeping') {
 								$errorforinvoice[$key] = 'alreadyjournalized';
 								//setEventMessages('Transaction for ('.$bookkeeping->doc_type.', '.$bookkeeping->fk_doc.', '.$bookkeeping->fk_docdet.') were already recorded', null, 'warnings');
 							}
-							else
-							{
+							else {
 								$error++;
 								$errorforline++;
 								$errorforinvoice[$key] = 'other';
@@ -500,8 +498,7 @@ if ($action == 'writebookkeeping') {
 							$errorforinvoice[$key] = 'alreadyjournalized';
 							//setEventMessages('Transaction for ('.$bookkeeping->doc_type.', '.$bookkeeping->fk_doc.', '.$bookkeeping->fk_docdet.') were already recorded', null, 'warnings');
 						}
-						else
-						{
+						else {
 							$error++;
 							$errorforline++;
 							$errorforinvoice[$key] = 'other';
@@ -525,8 +522,7 @@ if ($action == 'writebookkeeping') {
 		{
 			$db->commit();
 		}
-		else
-		{
+		else {
 			$db->rollback();
 
 			if ($error >= 10)
@@ -546,8 +542,7 @@ if ($action == 'writebookkeeping') {
 	{
 		setEventMessages($langs->trans("NoNewRecordSaved"), null, 'warnings');
 	}
-	else
-	{
+	else {
 		setEventMessages($langs->trans("GeneralLedgerSomeRecordWasNotRecorded"), null, 'warnings');
 	}
 

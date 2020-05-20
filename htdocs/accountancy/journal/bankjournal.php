@@ -550,8 +550,7 @@ if (!$error && $action == 'writebookkeeping') {
 							$errorforline++;
 							setEventMessages('Transaction for ('.$bookkeeping->doc_type.', '.$bookkeeping->fk_doc.', '.$bookkeeping->fk_docdet.') were already recorded', null, 'warnings');
 						}
-						else
-						{
+						else {
 							$error++;
 							$errorforline++;
 							setEventMessages($bookkeeping->error, $bookkeeping->errors, 'errors');
@@ -576,8 +575,7 @@ if (!$error && $action == 'writebookkeeping') {
 						{
 							$reflabel .= dol_string_nohtmltag($langs->transnoentitiesnoconv('TransitionalAccount').' '.$account_transfer);
 						}
-						else
-						{
+						else {
 							$reflabel .= dol_string_nohtmltag($val['soclib']);
 						}
 
@@ -700,8 +698,7 @@ if (!$error && $action == 'writebookkeeping') {
 								$errorforline++;
 								setEventMessages('Transaction for ('.$bookkeeping->doc_type.', '.$bookkeeping->fk_doc.', '.$bookkeeping->fk_docdet.') were already recorded', null, 'warnings');
 							}
-							else
-							{
+							else {
 								$error++;
 								$errorforline++;
 								setEventMessages($bookkeeping->error, $bookkeeping->errors, 'errors');
@@ -748,8 +745,7 @@ if (!$error && $action == 'writebookkeeping') {
 								$errorforline++;
 								setEventMessages('Transaction for ('.$bookkeeping->doc_type.', '.$bookkeeping->fk_doc.', '.$bookkeeping->fk_docdet.') were already recorded', null, 'warnings');
 							}
-							else
-							{
+							else {
 								$error++;
 								$errorforline++;
 								setEventMessages($bookkeeping->error, $bookkeeping->errors, 'errors');
@@ -771,8 +767,7 @@ if (!$error && $action == 'writebookkeeping') {
 		{
 			$db->commit();
 		}
-		else
-		{
+		else {
 			//print 'KO for line '.$key.' '.$error.'<br>';
 			$db->rollback();
 
@@ -792,8 +787,7 @@ if (!$error && $action == 'writebookkeeping') {
 	{
 		setEventMessages($langs->trans("NoNewRecordSaved"), null, 'warnings');
 	}
-	else
-	{
+	else {
 		setEventMessages($langs->trans("GeneralLedgerSomeRecordWasNotRecorded"), null, 'warnings');
 	}
 
@@ -880,8 +874,7 @@ if ($action == 'exportcsv') {		// ISO and not UTF8 !
 					{
 						$reflabel .= dol_string_nohtmltag($langs->transnoentitiesnoconv('TransitionalAccount').' '.$account_transfer);
 					}
-					else
-					{
+					else {
 						$reflabel .= dol_string_nohtmltag($val['soclib']);
 					}
 
@@ -1105,8 +1098,7 @@ if (empty($action) || $action == 'view') {
 					{
 						$reflabel .= $langs->trans('TransitionalAccount').' '.$account_transfer;
 					}
-					else
-					{
+					else {
 						$reflabel .= $val['soclib'];
 					}
 
@@ -1135,13 +1127,11 @@ if (empty($action) || $action == 'view') {
 							{
 								print '<span class="error">'.$langs->trans('UnknownAccountForThirdpartyAndWaitingAccountNotDefinedBlocking').'</span>';
 							}
-							else
-							{
+							else {
 								print '<span class="warning">'.$langs->trans('UnknownAccountForThirdparty', length_accountg($conf->global->ACCOUNTING_ACCOUNT_SUSPENSE)).'</span>'; // We will use a waiting account
 							}
 						}
-						else
-						{
+						else {
 							// We will refuse writing
 							$errorstring = 'UnknownAccountForThirdpartyBlocking';
 							if ($tabtype[$key] == 'payment')				$errorstring = 'MainAccountForCustomersNotDefined';
@@ -1178,8 +1168,7 @@ if (empty($action) || $action == 'view') {
 										print '<span class="warning">'.$langs->trans("ThirdpartyAccountNotDefinedOrThirdPartyUnknown", $tabcompany[$key]['code_compta']).'</span>';
 									}
 								}
-								else
-								{
+								else {
 									print '<span class="error">'.$langs->trans("ThirdpartyAccountNotDefinedOrThirdPartyUnknownBlocking").'</span>';
 								}
 							}

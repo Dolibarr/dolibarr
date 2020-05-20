@@ -137,8 +137,7 @@ class AccountingJournal extends CommonObject
 					return 0;
 				}
 			}
-			else
-			{
+			else {
 				$this->error = "Error ".$this->db->lasterror();
 				$this->errors[] = "Error ".$this->db->lasterror();
 			}

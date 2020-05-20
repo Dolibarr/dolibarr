@@ -77,8 +77,7 @@ if ($action == 'vadd' && $cancel != $langs->trans("Cancel") && $user->rights->ad
 		$object->description = dol_htmlcleanlastbr($_POST["desc"]);
 		$object->other			= dol_htmlcleanlastbr($_POST["other"]);
 	}
-	else
-	{
+	else {
 		$object->multilangs[$_POST["forcelangprod"]]["label"]		= $_POST["libelle"];
 		$object->multilangs[$_POST["forcelangprod"]]["description"] = dol_htmlcleanlastbr($_POST["desc"]);
 		$object->multilangs[$_POST["forcelangprod"]]["other"]		= dol_htmlcleanlastbr($_POST["other"]);
@@ -89,8 +88,7 @@ if ($action == 'vadd' && $cancel != $langs->trans("Cancel") && $user->rights->ad
 	{
 		$action = '';
 	}
-	else
-	{
+	else {
 		$action = 'add';
 		setEventMessages($object->error, $object->errors, 'errors');
 	}
@@ -111,8 +109,7 @@ if ($action == 'vedit' && $cancel != $langs->trans("Cancel") && $user->rights->a
 			$object->description = dol_htmlcleanlastbr($_POST["desc-".$key]);
 			$object->other			= dol_htmlcleanlastbr($_POST["other-".$key]);
 		}
-		else
-		{
+		else {
 			$object->multilangs[$key]["label"]			= $_POST["libelle-".$key];
 			$object->multilangs[$key]["description"] = dol_htmlcleanlastbr($_POST["desc-".$key]);
 			$object->multilangs[$key]["other"]			= dol_htmlcleanlastbr($_POST["other-".$key]);
@@ -123,8 +120,7 @@ if ($action == 'vedit' && $cancel != $langs->trans("Cancel") && $user->rights->a
 	{
 		$action = '';
 	}
-	else
-	{
+	else {
 		$action = 'edit';
 		setEventMessages($object->error, $object->errors, 'errors');
 	}
@@ -142,8 +138,7 @@ if ($action == 'vdelete' && $cancel != $langs->trans("Cancel") && $user->rights-
 	{
 		$action = '';
 	}
-	else
-	{
+	else {
 		$action = 'edit';
 		setEventMessages($object->error, $object->errors, 'errors');
 	}

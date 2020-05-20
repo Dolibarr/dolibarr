@@ -546,8 +546,7 @@ class MyObject extends CommonObject
 		{
 			$num = $this->getNextNumRef();
 		}
-		else
-		{
+		else {
 			$num = $this->ref;
 		}
 		$this->newref = $num;
@@ -631,8 +630,7 @@ class MyObject extends CommonObject
 			$this->db->commit();
 			return 1;
 		}
-		else
-		{
+		else {
 			$this->db->rollback();
 			return -1;
 		}
@@ -900,8 +898,7 @@ class MyObject extends CommonObject
 
 			$this->db->free($result);
 		}
-		else
-		{
+		else {
 			dol_print_error($this->db);
 		}
 	}
@@ -935,8 +932,7 @@ class MyObject extends CommonObject
 			$this->errors = $this->errors;
 			return $result;
 		}
-		else
-		{
+		else {
 			$this->lines = $result;
 			return $this->lines;
 		}
@@ -987,8 +983,7 @@ class MyObject extends CommonObject
 				{
 					return $numref;
 				}
-				else
-				{
+				else {
 					$this->error = $obj->error;
 					//dol_print_error($this->db,get_class($this)."::getNextNumRef ".$obj->error);
 					return "";
@@ -998,8 +993,7 @@ class MyObject extends CommonObject
 				return "";
 			}
 		}
-		else
-		{
+		else {
 			print $langs->trans("ErrorNumberingModuleNotSetup", $this->element);
 			return "";
 		}

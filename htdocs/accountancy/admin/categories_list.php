@@ -236,8 +236,7 @@ if (GETPOST('actionadd', 'alpha') || GETPOST('actionmodify', 'alpha'))
             setEventMessages($langs->transnoentities("RecordSaved"), null, 'mesgs');
         	$_POST = array('id'=>$id); // Clean $_POST array, we keep only
         }
-        else
-        {
+        else {
             if ($db->errno() == 'DB_ERROR_RECORD_ALREADY_EXISTS') {
                 setEventMessages($langs->transnoentities("ErrorRecordAlreadyExists"), null, 'errors');
             }
@@ -309,8 +308,7 @@ if ($action == 'confirm_delete' && $confirm == 'yes')       // delete
         {
             setEventMessages($langs->transnoentities("ErrorRecordIsUsedByChild"), null, 'errors');
         }
-        else
-        {
+        else {
             dol_print_error($db);
         }
     }
@@ -598,8 +596,7 @@ if ($id)
                     print '</td>';
                     $filterfound++;
                 }
-                else
-                {
+                else {
                     print '<td class="liste_titre"></td>';
                 }
             }
@@ -727,9 +724,8 @@ if ($id)
                     print '</td>';
                     print '<td></td>';
                 }
-                else
-                {
-	              	$tmpaction = 'view';
+                else {
+                    $tmpaction = 'view';
                     $parameters = array('var'=>$var, 'fieldlist'=>$fieldlist, 'tabname'=>$tabname[$id]);
                     $reshook = $hookmanager->executeHooks('viewDictionaryFieldlist', $parameters, $obj, $tmpaction); // Note that $action and $object may have been modified by some hooks
 
@@ -754,8 +750,7 @@ if ($id)
                                 {
                                     $valuetoshow = '-';
                                 }
-                                else
-                                {
+                                else {
                                     $key = $langs->trans("Country".strtoupper($obj->country_code));
                                     $valuetoshow = ($key != "Country".strtoupper($obj->country_code) ? $obj->country_code." - ".$key : $obj->country);
                                 }
@@ -799,8 +794,7 @@ if ($id)
                     // Active
                     print '<td class="center" class="nowrap">';
                     if ($canbedisabled) print '<a href="'.$url.'action='.$acts[$obj->active].'">'.$actl[$obj->active].'</a>';
-                    else
-                 	{
+                    else {
                     	print $langs->trans("AlwaysActive");
                     }
                     print "</td>";
@@ -883,8 +877,7 @@ function fieldListAccountingCategories($fieldlist, $obj = '', $tabname = '', $co
 				$fieldname = 'country_id';
 				print $form->select_country(GETPOST('country_id', 'int'), $fieldname, '', 28, 'maxwidth200 maxwidthonsmartphone');
 			}
-			else
-			{
+			else {
 				print $form->select_country((!empty($obj->country_code) ? $obj->country_code : (!empty($obj->country) ? $obj->country : $mysoc->country_code)), $fieldname, '', 28, 'maxwidth200 maxwidthonsmartphone');
 			}
 			print '</td>';
@@ -907,8 +900,7 @@ function fieldListAccountingCategories($fieldlist, $obj = '', $tabname = '', $co
 		elseif ($fieldlist[$field] == 'code' && isset($obj->{$fieldlist[$field]})) {
 			print '<td><input type="text" class="flat minwidth100" value="'.(!empty($obj->{$fieldlist[$field]}) ? $obj->{$fieldlist[$field]}:'').'" name="'.$fieldlist[$field].'"></td>';
 		}
-		else
-		{
+		else {
 			print '<td>';
 			$size = ''; $class = '';
 			if ($fieldlist[$field] == 'code') $class = 'maxwidth100';

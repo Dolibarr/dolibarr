@@ -239,8 +239,7 @@ if (GETPOST('actionadd', 'alpha') || GETPOST('actionmodify', 'alpha'))
 			setEventMessages($langs->transnoentities("RecordSaved"), null, 'mesgs');
 			$_POST = array('id'=>$id); // Clean $_POST array, we keep only
 		}
-		else
-		{
+		else {
 			if ($db->errno() == 'DB_ERROR_RECORD_ALREADY_EXISTS') {
 				setEventMessages($langs->transnoentities("ErrorRecordAlreadyExists"), null, 'errors');
 			}
@@ -314,8 +313,7 @@ if ($action == 'confirm_delete' && $confirm == 'yes')       // delete
 		{
 			setEventMessages($langs->transnoentities("ErrorRecordIsUsedByChild"), null, 'errors');
 		}
-		else
-		{
+		else {
 			dol_print_error($db);
 		}
 	}
@@ -596,8 +594,7 @@ if ($id)
 					print '<div name="'.(!empty($obj->rowid) ? $obj->rowid : $obj->code).'"></div>';
 					print '</td>';
 				}
-				else
-				{
+				else {
 				  	$tmpaction = 'view';
 					$parameters = array('var'=>$var, 'fieldlist'=>$fieldlist, 'tabname'=>$tabname[$id]);
 					$reshook = $hookmanager->executeHooks('viewDictionaryFieldlist', $parameters, $obj, $tmpaction); // Note that $action and $object may have been modified by some hooks
@@ -728,8 +725,7 @@ function fieldListJournal($fieldlist, $obj = '', $tabname = '', $context = '')
 		elseif ($fieldlist[$field] == 'code' && isset($obj->{$fieldlist[$field]})) {
 			print '<td><input type="text" class="flat minwidth100" value="'.(!empty($obj->{$fieldlist[$field]}) ? $obj->{$fieldlist[$field]}:'').'" name="'.$fieldlist[$field].'"></td>';
 		}
-		else
-		{
+		else {
 			print '<td>';
 			$size = ''; $class = '';
 			if ($fieldlist[$field] == 'code')  $class = 'maxwidth100';

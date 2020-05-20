@@ -146,14 +146,12 @@ if ($action == 'add' && $user->rights->adherent->configurer) {
 			header("Location: ".$_SERVER["PHP_SELF"]);
 			exit;
 		}
-		else
-		{
+		else {
 			setEventMessages($object->error, $object->errors, 'errors');
 			$action = 'create';
 		}
 	}
-	else
-	{
+	else {
 		$action = 'create';
 	}
 }
@@ -184,8 +182,7 @@ if ($action == 'update' && $user->rights->adherent->configurer)
 	{
 		setEventMessages($langs->trans("MemberTypeModified"), null, 'mesgs');
 	}
-	else
-	{
+	else {
 		setEventMessages($object->error, $object->errors, 'errors');
 	}
 
@@ -204,8 +201,7 @@ if ($action == 'confirm_delete' && $user->rights->adherent->configurer)
 		header("Location: ".$_SERVER["PHP_SELF"]);
 		exit;
 	}
-	else
-	{
+	else {
 		setEventMessages($langs->trans("MemberTypeCanNotBeDeleted"), null, 'errors');
 		$action = '';
 	}
@@ -244,8 +240,7 @@ if (!$rowid && $action != 'create' && $action != 'edit')
 		if ($limit > 0 && $limit != $conf->liste_limit) $param .= '&limit='.$limit;
 
 		$newcardbutton = '';
-		if ($user->rights->adherent->configurer)
-		{
+		if ($user->rights->adherent->configurer) {
             $newcardbutton .= dolGetButtonTitle($langs->trans('NewMemberType'), '', 'fa fa-plus-circle', DOL_URL_ROOT.'/adherents/type.php?action=create');
         }
 
@@ -300,8 +295,9 @@ if (!$rowid && $action != 'create' && $action != 'edit')
 			print '<td class="center">'.$membertype->getLibStatut(5).'</td>';
 			if ($user->rights->adherent->configurer)
 				print '<td class="right"><a class="editfielda" href="'.$_SERVER["PHP_SELF"].'?action=edit&rowid='.$objp->rowid.'">'.img_edit().'</a></td>';
-			else
+			else {
 				print '<td class="right">&nbsp;</td>';
+			}
 			print "</tr>";
 			$i++;
 		}
@@ -310,8 +306,7 @@ if (!$rowid && $action != 'create' && $action != 'edit')
 
 		print '</form>';
 	}
-	else
-	{
+	else {
 		dol_print_error($db);
 	}
 }
@@ -665,8 +660,7 @@ if ($rowid > 0)
 		        {
 		            print '<td><a href="card.php?rowid='.$objp->rowid.'">'.img_object($langs->trans("ShowMember"), "user").' '.$adh->getFullName($langs, 0, -1, 20).' / '.dol_trunc($objp->societe, 12).'</a></td>'."\n";
 		        }
-		        else
-		        {
+		        else {
 		            print '<td><a href="card.php?rowid='.$objp->rowid.'">'.img_object($langs->trans("ShowMember"), "user").' '.$adh->getFullName($langs, 0, -1, 32).'</a></td>'."\n";
 		        }
 
@@ -700,22 +694,19 @@ if ($rowid > 0)
 		            {
 		                print dol_print_date($datefin, 'day')." ".img_warning($langs->trans("SubscriptionLate"));
 		            }
-		            else
-		            {
+		            else {
 		                print dol_print_date($datefin, 'day');
 		            }
 		            print '</td>';
 		        }
-		        else
-		        {
+		        else {
 			        print '<td class="nowrap left">';
 			        if ($objp->subscription == 'yes')
 			        {
 		                print $langs->trans("SubscriptionNotReceived");
 		                if ($objp->statut > 0) print " ".img_warning();
 			        }
-			        else
-			        {
+			        else {
 			            print '&nbsp;';
 			        }
 		            print '</td>';
@@ -747,8 +738,7 @@ if ($rowid > 0)
 			    print_barre_liste('', $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, '', $num, $nbtotalofrecords, '');
 			}
 		}
-		else
-		{
+		else {
 		    dol_print_error($db);
 		}
 	}

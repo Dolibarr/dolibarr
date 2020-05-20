@@ -256,7 +256,7 @@ class WebservicesInvoicesTest extends PHPUnit\Framework\TestCase
     	try {
     		$result = $this->soapclient->call($WS_METHOD, $parameters, $this->ns, '');
     	}
-    	catch(SoapFault $exception)
+    	catch (SoapFault $exception)
     	{
     		echo $exception;
     		$result=0;
@@ -314,7 +314,7 @@ class WebservicesInvoicesTest extends PHPUnit\Framework\TestCase
     	try {
     		$result = $this->soapclient->call($WS_METHOD, $parameters, $this->ns, '');
     	}
-    	catch(SoapFault $exception)
+    	catch (SoapFault $exception)
     	{
     		echo $exception;
     		$result=0;
@@ -414,7 +414,7 @@ class WebservicesInvoicesTest extends PHPUnit\Framework\TestCase
     	try {
     		$result = $this->soapclient->call($WS_METHOD, $parameters, $this->ns, '');
     	}
-    	catch(SoapFault $exception)
+    	catch (SoapFault $exception)
     	{
     		echo $exception;
     		$result=0;
@@ -432,7 +432,6 @@ class WebservicesInvoicesTest extends PHPUnit\Framework\TestCase
     	print __METHOD__." result=".$result['result']['result_code'].$result['result']['result_label']."\n";
     	$this->assertEquals('OK', $result['result']['result_code']);
     	$this->assertEquals('ref-phpunit-2', $result['ref_ext']);
-
 
     	return $result;
     }

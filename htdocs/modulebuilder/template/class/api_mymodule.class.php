@@ -159,6 +159,7 @@ class MyModuleApi extends DolibarrApi
 		}
 
 		$result = $db->query($sql);
+		$i = 0;
 		if ($result)
 		{
 			$num = $db->num_rows($result);
@@ -239,12 +240,11 @@ class MyModuleApi extends DolibarrApi
 			$this->myobject->$field = $value;
 		}
 
-		if ($this->myobject->update($id, DolibarrApiAccess::$user) > 0)
+		if ($this->myobject->update(DolibarrApiAccess::$user, false) > 0)
 		{
 			return $this->get($id);
 		}
-		else
-		{
+		else {
 			throw new RestException(500, $this->myobject->error);
 		}
 	}

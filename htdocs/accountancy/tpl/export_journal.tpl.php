@@ -59,8 +59,7 @@ if ($accountancyexport->getFormatCode($formatexportset) == $accountancyexport::$
 
 	$completefilename = $siren."FEC".$endaccountingperiod.".txt";
 }
-else
-{
+else {
 	$completefilename = ($code ? $code."_" : "").($prefix ? $prefix."_" : "").$filename.($nodateexport ? "" : $date_export).".".$format;
 }
 

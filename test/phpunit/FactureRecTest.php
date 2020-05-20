@@ -187,12 +187,11 @@ class FactureRecTest extends PHPUnit\Framework\TestCase
         {
             $retAr[]="Supplied objects are not of same class.";
         }
-        else
-        {
+        else {
             $oVarsA=get_object_vars($oA);
             $oVarsB=get_object_vars($oB);
             $aKeys=array_keys($oVarsA);
-            foreach($aKeys as $sKey)
+            foreach ($aKeys as $sKey)
             {
                 if (in_array($sKey, $fieldstoignorearray)) continue;
                 if (! $ignoretype && $oVarsA[$sKey] !== $oVarsB[$sKey])

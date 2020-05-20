@@ -158,8 +158,9 @@ if ($result) {
 		if (empty($compta_prod)) {
 			if ($obj->product_type == 0)
 				$compta_prod = (!empty($conf->global->ACCOUNTING_PRODUCT_SOLD_ACCOUNT)) ? $conf->global->ACCOUNTING_PRODUCT_SOLD_ACCOUNT : 'NotDefined';
-			else
+			else {
 				$compta_prod = (!empty($conf->global->ACCOUNTING_SERVICE_SOLD_ACCOUNT)) ? $conf->global->ACCOUNTING_SERVICE_SOLD_ACCOUNT : 'NotDefined';
+			}
 		}
 
 		$vatdata = getTaxesFromId($obj->tva_tx.($obj->vat_src_code ? ' ('.$obj->vat_src_code.')' : ''), $mysoc, $mysoc, 0);
@@ -343,8 +344,7 @@ if ($action == 'writebookkeeping') {
 						$errorforinvoice[$key] = 'alreadyjournalized';
 						//setEventMessages('Transaction for ('.$bookkeeping->doc_type.', '.$bookkeeping->fk_doc.', '.$bookkeeping->fk_docdet.') were already recorded', null, 'warnings');
 					}
-					else
-					{
+					else {
 						$error++;
 						$errorforline++;
 						$errorforinvoice[$key] = 'other';
@@ -395,8 +395,7 @@ if ($action == 'writebookkeeping') {
 							$errorforinvoice[$key] = 'alreadyjournalized';
 							//setEventMessages('Transaction for ('.$bookkeeping->doc_type.', '.$bookkeeping->fk_doc.', '.$bookkeeping->fk_docdet.') were already recorded', null, 'warnings');
 						}
-						else
-						{
+						else {
 							$error++;
 							$errorforline++;
 							$errorforinvoice[$key] = 'other';
@@ -457,8 +456,7 @@ if ($action == 'writebookkeeping') {
 								$errorforinvoice[$key] = 'alreadyjournalized';
 								//setEventMessages('Transaction for ('.$bookkeeping->doc_type.', '.$bookkeeping->fk_doc.', '.$bookkeeping->fk_docdet.') were already recorded', null, 'warnings');
 							}
-							else
-							{
+							else {
 								$error++;
 								$errorforline++;
 								$errorforinvoice[$key] = 'other';
@@ -483,8 +481,7 @@ if ($action == 'writebookkeeping') {
 		{
 			$db->commit();
 		}
-		else
-		{
+		else {
 			$db->rollback();
 
 			if ($error >= 10)
@@ -500,12 +497,10 @@ if ($action == 'writebookkeeping') {
 	if (empty($error) && count($tabpay) > 0) {
 		setEventMessages($langs->trans("GeneralLedgerIsWritten"), null, 'mesgs');
 	}
-	elseif (count($tabpay) == $error)
-	{
+	elseif (count($tabpay) == $error) {
 		setEventMessages($langs->trans("NoNewRecordSaved"), null, 'warnings');
 	}
-	else
-	{
+	else {
 		setEventMessages($langs->trans("GeneralLedgerSomeRecordWasNotRecorded"), null, 'warnings');
 	}
 
@@ -659,8 +654,9 @@ if (empty($action) || $action == 'view') {
 	$description .= $langs->trans("DescJournalOnlyBindedVisible").'<br>';
 	if (!empty($conf->global->FACTURE_DEPOSITS_ARE_JUST_PAYMENTS))
 		$description .= $langs->trans("DepositsAreNotIncluded");
-	else
+	else {
 		$description .= $langs->trans("DepositsAreIncluded");
+	}
 
 	$listofchoices = array('notyet'=>$langs->trans("NotYetInGeneralLedger"), 'already'=>$langs->trans("AlreadyInGeneralLedger"));
     $period = $form->selectDate($date_start ? $date_start : -1, 'date_start', 0, 0, 0, '', 1, 0).' - '.$form->selectDate($date_end ? $date_end : -1, 'date_end', 0, 0, 0, '', 1, 0);

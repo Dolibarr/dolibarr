@@ -629,8 +629,7 @@ if ($action == 'create')
 						{
 							print $formaccounting->select_auxaccount((GETPOSTISSET("subledger_account") ? GETPOST("subledger_account", "alpha") : $line->subledger_account), 'subledger_account', 1);
 						}
-						else
-						{
+						else {
 							print '<input type="text" class="maxwidth150" name="subledger_account" value="'.(GETPOSTISSET("subledger_account") ? GETPOST("subledger_account", "alpha") : $line->subledger_account).'">';
 						}
 						print '</td>';
@@ -686,8 +685,7 @@ if ($action == 'create')
 					{
 						print $formaccounting->select_auxaccount('', 'subledger_account', 1);
 					}
-					else
-					{
+					else {
 						print '<input type="text" class="maxwidth150" name="subledger_account" value="">';
 					}
 					print '</td>';
@@ -708,8 +706,7 @@ if ($action == 'create')
 					{
 						print '<a class="button" href="'.$_SERVER["PHP_SELF"].'?piece_num='.$object->piece_num.'&action=valid">'.$langs->trans("ValidTransaction").'</a>';
 					}
-					else
-					{
+					else {
 						print '<input type="submit" class="button" disabled="disabled" href="#" title="'.dol_escape_htmltag($langs->trans("MvtNotCorrectlyBalanced", $debit, $credit)).'" value="'.dol_escape_htmltag($langs->trans("ValidTransaction")).'">';
 					}
 

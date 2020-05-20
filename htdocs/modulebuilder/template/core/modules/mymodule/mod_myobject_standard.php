@@ -141,8 +141,7 @@ class mod_myobject_standard extends ModeleNumRefMyObject
 			if ($obj) $max = intval($obj->max);
 			else $max = 0;
 		}
-		else
-		{
+		else {
 			dol_syslog("mod_myobject_standard::getNextValue", LOG_DEBUG);
 			return -1;
 		}

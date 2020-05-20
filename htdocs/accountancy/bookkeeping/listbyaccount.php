@@ -255,8 +255,7 @@ if ($action == 'delbookkeepingyearconfirm' && $user->rights->accounting->mouveme
 		if ($result < 0) {
 			setEventMessages($object->error, $object->errors, 'errors');
 		}
-		else
-		{
+		else {
 			setEventMessages("RecordDeleted", null, 'mesgs');
 		}
 
@@ -264,8 +263,7 @@ if ($action == 'delbookkeepingyearconfirm' && $user->rights->accounting->mouveme
 		header("Location: listbyaccount.php".($param ? '?'.$param : ''));
 		exit;
 	}
-	else
-	{
+	else {
 		setEventMessages("NoRecordDeleted", null, 'warnings');
 	}
 }
@@ -277,8 +275,7 @@ if ($action == 'delmouvconfirm' && $user->rights->accounting->mouvements->suppri
 		if ($result < 0) {
 			setEventMessages($object->error, $object->errors, 'errors');
 		}
-		else
-		{
+		else {
 			setEventMessages($langs->trans("RecordDeleted"), null, 'mesgs');
 		}
 
@@ -538,8 +535,7 @@ while ($i < min($num, $limit))
 				print '</td>';
 				print '<td></td>';
 			}
-			else
-			{
+			else {
 				print '<td></td>';
 				print '<td class="nowraponall right">';
 				print price($sous_total_credit - $sous_total_debit);
@@ -640,8 +636,7 @@ while ($i < min($num, $limit))
 			$urlsource = $_SERVER['PHP_SELF'].'?id='.$objectstatic->id;
 			$documentlink = $formfile->getDocumentsLink($objectstatic->element, $filename, $filedir);
 		}
-		else
-		{
+		else {
 			// Other type
 		}
 
@@ -743,8 +738,7 @@ if ($balance > 0 )
 	print '</td>';
 	print '<td></td>';
 }
-else
-{
+else {
 	print '<td></td>';
 	print '<td class="nowraponall right">';
 	print price($sous_total_credit - $sous_total_debit);

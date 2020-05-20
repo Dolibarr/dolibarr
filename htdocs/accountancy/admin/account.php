@@ -144,8 +144,7 @@ if (empty($reshook))
 				{
 					setEventMessages($langs->trans("ChartLoaded"), null, 'mesgs');
 				}
-				else
-				{
+				else {
 					setEventMessages($langs->trans("ErrorDuringChartLoad"), null, 'warnings');
 				}
 			}
@@ -432,8 +431,7 @@ if ($resql)
 				print "</td>\n";
 				if (!$i) $totalarray['nbfield']++;
 			}
-			else
-			{
+			else {
 				print '<td>&nbsp;</td>';
 				if (!$i) $totalarray['nbfield']++;
 			}

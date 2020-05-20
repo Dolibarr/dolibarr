@@ -268,9 +268,7 @@ elseif ($accounting_product_mode == 'ACCOUNTANCY_SELL')
 elseif ($accounting_product_mode == 'ACCOUNTANCY_SELL_INTRA')
 {
     $sql .= " p.accountancy_code_sell_intra = aa.account_number AND aa.fk_pcg_version = '".$pcgvercode."'";
-}
-else
-{
+} else {
     $sql .= " p.accountancy_code_sell_export = aa.account_number AND aa.fk_pcg_version = '".$pcgvercode."'";
 }
 $sql .= ' WHERE p.entity IN ('.getEntity('product').')';

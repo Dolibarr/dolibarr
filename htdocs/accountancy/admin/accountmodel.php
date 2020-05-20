@@ -246,8 +246,7 @@ if (GETPOST('actionadd', 'alpha') || GETPOST('actionmodify', 'alpha'))
 			setEventMessages($langs->transnoentities("RecordSaved"), null, 'mesgs');
 			$_POST = array('id'=>$id); // Clean $_POST array, we keep only
 		}
-		else
-		{
+		else {
 			if ($db->errno() == 'DB_ERROR_RECORD_ALREADY_EXISTS') {
 				setEventMessages($langs->transnoentities("ErrorRecordAlreadyExists"), null, 'errors');
 			}
@@ -319,8 +318,7 @@ if ($action == 'confirm_delete' && $confirm == 'yes')       // delete
 		{
 			setEventMessages($langs->transnoentities("ErrorRecordIsUsedByChild"), null, 'errors');
 		}
-		else
-		{
+		else {
 			dol_print_error($db);
 		}
 	}
@@ -582,8 +580,7 @@ if ($id)
 					print $form->select_country($search_country_id, 'search_country_id', '', 28, 'maxwidth200 maxwidthonsmartphone');
 					print '</td>';
 				}
-				else
-				{
+				else {
 					print '<td class="liste_titre"></td>';
 				}
 			}
@@ -630,8 +627,7 @@ if ($id)
 					print '<td colspan="3" class="right"><a name="'.(!empty($obj->rowid) ? $obj->rowid : $obj->code).'">&nbsp;</a><input type="submit" class="button" name="actionmodify" value="'.$langs->trans("Modify").'">';
 					print '&nbsp;<input type="submit" class="button" name="actioncancel" value="'.$langs->trans("Cancel").'"></td>';
 				}
-				else
-				{
+				else {
 				  	$tmpaction = 'view';
 					$parameters = array('var'=>$var, 'fieldlist'=>$fieldlist, 'tabname'=>$tabname[$id]);
 					$reshook = $hookmanager->executeHooks('viewDictionaryFieldlist', $parameters, $obj, $tmpaction); // Note that $action and $object may have been modified by some hooks
@@ -665,8 +661,7 @@ if ($id)
 								{
 									$valuetoshow = '-';
 								}
-								else
-								{
+								else {
 									$key = $langs->trans("Country".strtoupper($obj->country_code));
 									$valuetoshow = ($key != "Country".strtoupper($obj->country_code) ? $obj->country_code." - ".$key : $obj->country);
 								}
@@ -785,8 +780,7 @@ function fieldListAccountModel($fieldlist, $obj = '', $tabname = '', $context = 
 		elseif ($fieldlist[$field] == 'code' && isset($obj->{$fieldlist[$field]})) {
 			print '<td><input type="text" class="flat" value="'.(!empty($obj->{$fieldlist[$field]}) ? $obj->{$fieldlist[$field]}:'').'" size="10" name="'.$fieldlist[$field].'"></td>';
 		}
-		else
-		{
+		else {
 			print '<td>';
 			$size = ''; $class = '';
 			if ($fieldlist[$field] == 'code') $size = 'size="8" ';

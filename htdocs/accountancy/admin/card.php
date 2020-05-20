@@ -76,8 +76,7 @@ if ($action == 'add' && $user->rights->accounting->chartofaccount)
 		{
 			$account_number = GETPOST('account_number', 'string');
 		}
-		else
-		{
+		else {
 			$account_number = clean_account(GETPOST('account_number', 'string'));
 		}
 
@@ -85,8 +84,7 @@ if ($action == 'add' && $user->rights->accounting->chartofaccount)
 		{
 			$account_parent = 0;
 		}
-		else
-		{
+		else {
 			$account_parent = GETPOST('account_parent', 'int');
 		}
 
@@ -141,8 +139,7 @@ if ($action == 'add' && $user->rights->accounting->chartofaccount)
 		{
 			$account_number = GETPOST('account_number', 'string');
 		}
-		else
-		{
+		else {
 			$account_number = clean_account(GETPOST('account_number', 'string'));
 		}
 
@@ -150,8 +147,7 @@ if ($action == 'add' && $user->rights->accounting->chartofaccount)
 		{
 			$account_parent = 0;
 		}
-		else
-		{
+		else {
 			$account_parent = GETPOST('account_parent', 'int');
 		}
 

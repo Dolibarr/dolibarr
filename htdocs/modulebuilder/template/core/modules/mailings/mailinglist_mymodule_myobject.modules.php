@@ -147,8 +147,7 @@ class mailing_mailinglist_mymodule_myobject extends MailingTargets
 				$i++;
 			}
 		}
-		else
-		{
+		else {
 			dol_syslog($this->db->error());
 			$this->error = $this->db->error();
 			return -1;
