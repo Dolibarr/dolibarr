@@ -200,8 +200,7 @@ class PaymentSocialContribution extends CommonObject
 					}
 				}
 			}
-			else
-			{
+			else {
 				$error++;
 			}
 		}
@@ -216,8 +215,7 @@ class PaymentSocialContribution extends CommonObject
 		    $this->db->commit();
 			return $this->id;
 		}
-		else
-		{
+		else {
 			$this->error = $this->db->error();
 			$this->db->rollback();
 			return -1;
@@ -287,8 +285,7 @@ class PaymentSocialContribution extends CommonObject
 
 			return 1;
 		}
-		else
-		{
+		else {
 			$this->error = "Error ".$this->db->lasterror();
 			return -1;
 		}
@@ -359,8 +356,7 @@ class PaymentSocialContribution extends CommonObject
 			$this->db->rollback();
 			return -1 * $error;
 		}
-		else
-		{
+		else {
 			$this->db->commit();
 			return 1;
 		}
@@ -415,8 +411,7 @@ class PaymentSocialContribution extends CommonObject
 			$this->db->rollback();
 			return -1 * $error;
 		}
-		else
-		{
+		else {
 			$this->db->commit();
 			return 1;
 		}
@@ -466,8 +461,7 @@ class PaymentSocialContribution extends CommonObject
 			$this->db->commit();
 			return $object->id;
 		}
-		else
-		{
+		else {
 			$this->db->rollback();
 			return -1;
 		}
@@ -578,8 +572,7 @@ class PaymentSocialContribution extends CommonObject
                     }
                 }
             }
-            else
-            {
+            else {
                 $this->error = $acc->error;
                 $error++;
             }
@@ -589,8 +582,7 @@ class PaymentSocialContribution extends CommonObject
         {
             return 1;
         }
-        else
-        {
+        else {
             return -1;
         }
     }
@@ -614,8 +606,7 @@ class PaymentSocialContribution extends CommonObject
 		{
 			return 1;
 		}
-		else
-		{
+		else {
 			$this->error = $this->db->error();
 			return 0;
 		}

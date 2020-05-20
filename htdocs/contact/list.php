@@ -327,8 +327,7 @@ if ($search_priv != '0' && $search_priv != '1')
 {
 	$sql .= " AND (p.priv='0' OR (p.priv='1' AND p.fk_user_creat=".$user->id."))";
 }
-else
-{
+else {
 	if ($search_priv == '0') $sql .= " AND p.priv='0'";
 	if ($search_priv == '1') $sql .= " AND (p.priv='1' AND p.fk_user_creat=".$user->id.")";
 }
@@ -404,8 +403,7 @@ if ($view == "recent")
 {
 	$sql .= $db->order("p.datec", "DESC");
 }
-else
-{
+else {
 	$sql .= $db->order($sortfield, $sortorder);
 }
 
@@ -923,8 +921,7 @@ while ($i < min($num, $limit))
 		    $objsoc->fetch($obj->socid);
 		    print $objsoc->getNomUrl(1);
 		}
-		else
-			print '&nbsp;';
+		else print '&nbsp;';
 		print '</td>';
 		if (!$i) $totalarray['nbfield']++;
 	}

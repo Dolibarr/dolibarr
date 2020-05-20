@@ -150,8 +150,7 @@ class ProductFournisseur extends Product
             $this->db->commit();
             return 1;
         }
-        else
-        {
+        else {
             $this->db->rollback();
             return -1;
         }
@@ -288,7 +287,7 @@ class ProductFournisseur extends Product
 			$localtaxtype2 = $localtaxes_array['2'];
 			$localtax2 = $localtaxes_array['3'];
 		}
-		else     // old method. deprecated because ot can't retreive type
+		else // old method. deprecated because ot can't retreive type
 		{
 			$localtaxtype1 = '0';
 			$localtax1 = get_localtax($newvat, 1);
@@ -385,21 +384,18 @@ class ProductFournisseur extends Product
 					$this->db->commit();
 					return $this->product_fourn_price_id;
 				}
-				else
-				{
+				else {
 					$this->db->rollback();
 					return -1;
 				}
 			}
-			else
-			{
+			else {
 				$this->error = $this->db->error()." sql=".$sql;
 				$this->db->rollback();
 				return -2;
 			}
         }
-        else
-        {
+        else {
             dol_syslog(get_class($this).'::update_buyprice without knowing id of line, so we delete from company, quantity and supplier_ref and insert again', LOG_DEBUG);
 
             // Delete price for this quantity
@@ -567,8 +563,7 @@ class ProductFournisseur extends Product
 	                    {
 	                        $this->fourn_unitprice = price2num($this->fourn_price / $this->fourn_qty, 'MU');
 	                    }
-	                    else
-	                    {
+	                    else {
 	                        $this->fourn_unitprice = "";
 	                    }
                     }
@@ -576,13 +571,11 @@ class ProductFournisseur extends Product
 
             	return 1;
             }
-            else
-            {
+            else {
                 return 0;
             }
         }
-        else
-        {
+        else {
             $this->error = $this->db->error();
             return -1;
         }
@@ -686,8 +679,7 @@ class ProductFournisseur extends Product
                     {
                         $prodfourn->fourn_unitprice = price2num($prodfourn->fourn_price / $prodfourn->fourn_qty, 'MU');
                     }
-                    else
-                    {
+                    else {
                         $prodfourn->fourn_unitprice = "";
                     }
                 }
@@ -698,8 +690,7 @@ class ProductFournisseur extends Product
             $this->db->free($resql);
             return $retarray;
         }
-        else
-        {
+        else {
             $this->error = $this->db->error();
             return -1;
         }
@@ -776,8 +767,7 @@ class ProductFournisseur extends Product
                 $this->db->free($resql);
                 return 0;
             }
-            else
-            {
+            else {
                 $min = -1;
                 foreach ($record_array as $record)
                 {
@@ -799,8 +789,7 @@ class ProductFournisseur extends Product
                             {
                                 $fourn_unitprice = price2num($fourn_price / $record["quantity"], 'MU');
                             }
-                            else
-                            {
+                            else {
                                 $fourn_unitprice = $fourn_price;
                             }
                         }
@@ -836,8 +825,7 @@ class ProductFournisseur extends Product
             $this->db->free($resql);
             return 1;
         }
-        else
-		{
+        else {
             $this->error = $this->db->error();
             return -1;
         }
@@ -869,8 +857,7 @@ class ProductFournisseur extends Product
             $this->db->commit();
             return 1;
         }
-        else
-        {
+        else {
             $this->error = $this->db->error()." sql=".$sql;
             $this->db->rollback();
             return -1;
@@ -998,8 +985,7 @@ class ProductFournisseur extends Product
             $this->db->free($resql);
             return $retarray;
         }
-        else
-        {
+        else {
             $this->error = $this->db->error();
             return -1;
         }

@@ -129,8 +129,7 @@ if ($action == 'confirm_delete' && $confirm == 'yes')
 		header("Location: list.php");
 		exit;
 	}
-	else
-	{
+	else {
 		setEventMessages($object->error, $object->errors, 'errors');
 	}
 }
@@ -166,8 +165,7 @@ if ($action == 'add' && $user->rights->tax->charges->creer)
 		setEventMessages($langs->trans("ErrorFieldMustBeANumeric", $langs->transnoentities("Amount")), null, 'errors');
 		$action = 'create';
 	}
-	else
-	{
+	else {
 		$object->type = $actioncode;
 		$object->label = GETPOST('label', 'alpha');
 		$object->date_ech = $dateech;
@@ -211,8 +209,7 @@ if ($action == 'update' && !$_POST["cancel"] && $user->rights->tax->charges->cre
 		setEventMessages($langs->trans("ErrorFieldMustBeANumeric", $langs->transnoentities("Amount")), null, 'errors');
 		$action = 'create';
 	}
-	else
-	{
+	else {
 		$result = $object->fetch($id);
 
 		$object->date_ech = $dateech;
@@ -272,8 +269,7 @@ if ($action == 'confirm_clone' && $confirm == 'yes' && ($user->rights->tax->char
 				header("Location: ".$_SERVER["PHP_SELF"]."?id=".$id);
 				exit;
 			}
-			else
-			{
+			else {
 				$id = $originalId;
 				$db->rollback();
 
@@ -281,8 +277,7 @@ if ($action == 'confirm_clone' && $confirm == 'yes' && ($user->rights->tax->char
 			}
 		}
 	}
-	else
-	{
+	else {
 		$db->rollback();
 		dol_print_error($db, $object->error);
 	}
@@ -432,8 +427,7 @@ if ($id > 0)
 			{
 				$formquestion[] = array('type' => 'checkbox', 'name' => 'clone_for_next_month', 'label' => $langs->trans("CloneTaxForNextMonth"), 'value' => 1);
 			}
-			else
-			{
+			else {
 				$formquestion[] = array('type' => 'date', 'name' => 'clone_date_ech', 'label' => $langs->trans("Date"), 'value' => -1);
 				$formquestion[] = array('type' => 'date', 'name' => 'clone_period', 'label' => $langs->trans("PeriodEndDate"), 'value' => -1);
 			}
@@ -536,8 +530,7 @@ if ($id > 0)
 		{
 			print $form->selectDate($object->periode, 'period', 0, 0, 0, 'charge', 1);
 		}
-		else
-		{
+		else {
 			print dol_print_date($object->periode, "day");
 		}
 		print "</td></tr>";
@@ -675,8 +668,7 @@ if ($id > 0)
 					$i++;
 				}
 			}
-			else
-			{
+			else {
 				print '<tr class="oddeven"><td><span class="opacitymedium">'.$langs->trans("None").'</span></td>';
 				print '<td></td><td></td><td></td><td></td>';
 				print '</tr>';
@@ -696,8 +688,7 @@ if ($id > 0)
 
 			$db->free($resql);
 		}
-		else
-		{
+		else {
 			dol_print_error($db);
 		}
 
@@ -768,8 +759,7 @@ if ($id > 0)
 			print "</div>";
 		}
 	}
-	else
-	{
+	else {
 		/* Social contribution not found */
 		dol_print_error('', $object->error);
 	}

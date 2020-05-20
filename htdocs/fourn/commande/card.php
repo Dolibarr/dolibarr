@@ -317,8 +317,7 @@ if (empty($reshook))
 				header('Location: '.$_SERVER["PHP_SELF"].'?id='.$object->id);
 				exit;
 			}
-			else
-			{
+			else {
 				$db->rollback();
 
 				setEventMessages($object->error, $object->errors, 'errors');
@@ -357,8 +356,7 @@ if (empty($reshook))
 			$price_ht = GETPOST('price_ht');
 			$tva_tx = (GETPOST('tva_tx') ? GETPOST('tva_tx') : 0);
 		}
-		else
-		{
+		else {
 			$idprod = GETPOST('idprod', 'int');
 			$price_ht = GETPOST('price_ht');
 			$tva_tx = '';
@@ -442,8 +440,7 @@ if (empty($reshook))
 						$productsupplier->ref_supplier = '';
 					}
 				}
-				else
-				{
+				else {
 					$fksoctosearch = $object->thirdparty->id;
 					$productsupplier->get_buyprice(0, -1, $idprod, 'none', $fksoctosearch); // We force qty to -1 to be sure to find if a supplier price exist
 				}
@@ -556,8 +553,7 @@ if (empty($reshook))
 			{
 				$pu_ht = price2num($price_ht, 'MU'); // $pu_ht must be rounded according to settings
 			}
-			else
-			{
+			else {
 				$pu_ttc = price2num(GETPOST('price_ttc'), 'MU');
 				$pu_ht = price2num($pu_ttc / (1 + ($tva_tx / 100)), 'MU'); // $pu_ht must be rounded according to settings
 			}
@@ -624,8 +620,7 @@ if (empty($reshook))
 			unset($_POST['date_endmonth']);
 			unset($_POST['date_endyear']);
 		}
-		else
-		{
+		else {
 			$db->rollback();
 			setEventMessages($object->error, $object->errors, 'errors');
 		}
@@ -675,8 +670,7 @@ if (empty($reshook))
 			$price_base_type = 'HT';
 			$ht = price2num(GETPOST('price_ht'));
 		}
-		else
-		{
+		else {
 			$vatratecleaned = $vat_rate;
 			if (preg_match('/^(.*)\s*\((.*)\)$/', $vat_rate, $reg))      // If vat is "xx (yy)"
 			{
@@ -769,8 +763,7 @@ if (empty($reshook))
 				if ($result < 0) dol_print_error($db, $result);
 			}
 		}
-		else
-		{
+		else {
 			dol_print_error($db, $object->error);
 			exit;
 		}
@@ -801,8 +794,7 @@ if (empty($reshook))
 			header('Location: '.$_SERVER["PHP_SELF"].'?id='.$object->id);
 			exit;
 		}
-		else
-		{
+		else {
 			setEventMessages($object->error, $object->errors, 'errors');
 			/* Fix bug 1485 : Reset action to avoid asking again confirmation on failure */
 			$action = '';
@@ -837,8 +829,7 @@ if (empty($reshook))
 				if ($result < 0) dol_print_error($db, $result);
 			}
 		}
-		else
-		{
+		else {
 			setEventMessages($object->error, $object->errors, 'errors');
 		}
 
@@ -858,8 +849,7 @@ if (empty($reshook))
 		{
 		   	$qualified_for_stock_change = $object->hasProductsOrServices(2);
 		}
-		else
-		{
+		else {
 		   	$qualified_for_stock_change = $object->hasProductsOrServices(1);
 		}
 
@@ -893,8 +883,7 @@ if (empty($reshook))
 				header("Location: ".$_SERVER["PHP_SELF"]."?id=".$object->id);
 				exit;
 			}
-			else
-			{
+			else {
 				setEventMessages($object->error, $object->errors, 'errors');
 			}
 		}
@@ -908,8 +897,7 @@ if (empty($reshook))
 			header("Location: ".$_SERVER["PHP_SELF"]."?id=".$object->id);
 			exit;
 		}
-		else
-		{
+		else {
 			setEventMessages($object->error, $object->errors, 'errors');
 		}
 	}
@@ -945,8 +933,7 @@ if (empty($reshook))
 			header("Location: ".$_SERVER["PHP_SELF"]."?id=".$object->id);
 			exit;
 		}
-		else
-		{
+		else {
 			setEventMessages($object->error, $object->errors, 'errors');
 		}
 	}
@@ -960,8 +947,7 @@ if (empty($reshook))
 			header("Location: ".DOL_URL_ROOT.'/fourn/commande/list.php?restore_lastsearch_values=1');
 			exit;
 		}
-		else
-		{
+		else {
 			setEventMessages($object->error, $object->errors, 'errors');
 		}
 	}
@@ -973,8 +959,7 @@ if (empty($reshook))
 		{
 			setEventMessages($langs->trans("NoCloneOptionsSpecified"), null, 'errors');
 		}
-		else
-		{
+		else {
 			if ($object->id > 0)
 			{
 				$orig = clone $object;
@@ -985,8 +970,7 @@ if (empty($reshook))
 					header("Location: ".$_SERVER['PHP_SELF'].'?id='.$result);
 					exit;
 				}
-				else
-				{
+				else {
 					setEventMessages($object->error, $object->errors, 'errors');
 					$object = $orig;
 					$action = '';
@@ -1013,13 +997,11 @@ if (empty($reshook))
 			{
 				setEventMessages($object->error, $object->errors, 'errors');
 			}
-			else
-			{
+			else {
 				setEventMessages($object->error, $object->errors, 'errors');
 			}
 		}
-		else
-		{
+		else {
 			setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentities("Delivery")), null, 'errors');
 		}
 	}
@@ -1032,8 +1014,7 @@ if (empty($reshook))
 			header("Location: ".$_SERVER["PHP_SELF"]."?id=".$object->id);
 			exit;
 		}
-		else
-		{
+		else {
 			setEventMessages($object->error, $object->errors, 'errors');
 		}
 	}
@@ -1134,8 +1115,7 @@ if (empty($reshook))
 						$classname = 'Commande';
 						$element = $subelement = 'commande';
 					}
-					else
-					{
+					else {
 						$classname = 'SupplierProposal';
 						$element = 'supplier_proposal';
 						$subelement = 'supplier_proposal';
@@ -1208,8 +1188,7 @@ if (empty($reshook))
 										$product_fourn_price_id = $productsupplier->product_fourn_price_id;
 									}
 								}
-								else
-								{
+								else {
 									$ref_supplier = $lines[$i]->ref_fourn;
 									$product_fourn_price_id = 0;
 								}
@@ -1277,8 +1256,7 @@ if (empty($reshook))
 						$error++;
 					}
 				}
-				else
-				{
+				else {
 			   		$id = $object->create($user);
 					if ($id < 0)
 					{
@@ -1295,8 +1273,7 @@ if (empty($reshook))
 				$action = 'create';
 				$_GET['socid'] = $_POST['socid'];
 			}
-			else
-			{
+			else {
 				$db->commit();
 				header("Location: ".$_SERVER['PHP_SELF']."?id=".$id);
 				exit;
@@ -1388,8 +1365,7 @@ if (empty($reshook))
 			{
 				setEventMessages($langs->trans("SOAPError")." '".$result_order["result"]["result_code"]."' - '".$result_order["result"]["result_label"]."'", null, 'errors');
 			}
-			else
-			{
+			else {
 				setEventMessages($langs->trans("RemoteOrderRef")." ".$result_order["ref"], null, 'mesgs');
 			}
 		}
@@ -1410,15 +1386,13 @@ if (empty($reshook))
 				header("Location: ".$_SERVER['PHP_SELF']."?id=".$object->id);
 				exit;
 			}
-			else
-			{
+			else {
 				if ($object->error == 'DB_ERROR_RECORD_ALREADY_EXISTS')
 				{
 					$langs->load("errors");
 					setEventMessages($langs->trans("ErrorThisContactIsAlreadyDefinedAsThisType"), null, 'errors');
 				}
-				else
-				{
+				else {
 					setEventMessages($object->error, $object->errors, 'errors');
 				}
 			}
@@ -1498,8 +1472,7 @@ if ($action == 'create')
 			$classname = 'Commande';
 			$element = $subelement = 'commande';
 		}
-		else
-		{
+		else {
 			$classname = 'SupplierProposal';
 			$element = 'supplier_proposal';
 			$subelement = 'supplier_proposal';
@@ -1545,8 +1518,7 @@ if ($action == 'create')
 		// Object source contacts list
 		$srccontactslist = $objectsrc->liste_contact(-1, 'external', 1);
 	}
-	else
-	{
+	else {
 		$cond_reglement_id 	= $societe->cond_reglement_supplier_id;
 		$mode_reglement_id 	= $societe->mode_reglement_supplier_id;
 
@@ -1585,8 +1557,7 @@ if ($action == 'create')
 		print $societe->getNomUrl(1);
 		print '<input type="hidden" name="socid" value="'.$socid.'">';
 	}
-	else
-	{
+	else {
 		print $form->select_company((empty($socid) ? '' : $socid), 'socid', 's.fournisseur=1', 'SelectThirdParty', 0, 0, null, 0, 'minwidth300');
 		// reload page to retrieve customer informations
 		if (!empty($conf->global->RELOAD_PAGE_ON_SUPPLIER_CHANGE))
@@ -1827,8 +1798,7 @@ elseif (!empty($object->id))
 			setEventMessages($object->error, $object->errors, 'errors');
 			$action = '';
 		}
-		else
-		{
+		else {
 			$text = $langs->trans('ConfirmValidateOrder', $newref);
 			if (!empty($conf->notification->enabled))
 			{
@@ -1850,8 +1820,7 @@ elseif (!empty($object->id))
 		{
 			$qualified_for_stock_change = $object->hasProductsOrServices(2);
 		}
-		else
-		{
+		else {
 			$qualified_for_stock_change = $object->hasProductsOrServices(1);
 		}
 
@@ -2045,8 +2014,7 @@ elseif (!empty($object->id))
 	{
 		$form->form_conditions_reglement($_SERVER['PHP_SELF'].'?id='.$object->id, $object->cond_reglement_id, 'cond_reglement_id');
 	}
-	else
-	{
+	else {
 		$form->form_conditions_reglement($_SERVER['PHP_SELF'].'?id='.$object->id, $object->cond_reglement_id, 'none');
 	}
 	print "</td>";
@@ -2065,8 +2033,7 @@ elseif (!empty($object->id))
 	{
 		$form->form_modes_reglement($_SERVER['PHP_SELF'].'?id='.$object->id, $object->mode_reglement_id, 'mode_reglement_id', 'DBIT', 1, 1);
 	}
-	else
-	{
+	else {
 		$form->form_modes_reglement($_SERVER['PHP_SELF'].'?id='.$object->id, $object->mode_reglement_id, 'none');
 	}
 	print '</td></tr>';
@@ -2160,8 +2127,7 @@ elseif (!empty($object->id))
 		print '<input type="submit" class="button" value="'.$langs->trans('Modify').'">';
 		print '</form>';
 	}
-	else
-	{
+	else {
 		$usehourmin = 'day';
 		if (!empty($conf->global->SUPPLIER_ORDER_USE_HOUR_FOR_DELIVERY_DATE)) $usehourmin = 'dayhour';
 		print $object->date_livraison ? dol_print_date($object->date_livraison, $usehourmin) : '&nbsp;';
@@ -2193,8 +2159,7 @@ elseif (!empty($object->id))
 		{
 			print $form->textwithpicto($object->display_incoterms(), $object->label_incoterms, 1);
 		}
-		else
-		{
+		else {
 			print $form->select_incoterms((!empty($object->fk_incoterms) ? $object->fk_incoterms : ''), (!empty($object->location_incoterms) ? $object->location_incoterms : ''), $_SERVER['PHP_SELF'].'?id='.$object->id);
 		}
 		print '</td></tr>';
@@ -2394,13 +2359,11 @@ elseif (!empty($object->id))
 					{
 						print '<a class="butActionRefused classfortooltip" href="#" title="'.dol_escape_htmltag($langs->trans("FirstApprovalAlreadyDone")).'">'.$langs->trans("ApproveOrder").'</a>';
 					}
-					else
-					{
+					else {
 						print '<a class="butAction"	href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=approve">'.$langs->trans("ApproveOrder").'</a>';
 					}
 				}
-				else
-				{
+				else {
 					print '<a class="butActionRefused classfortooltip" href="#" title="'.dol_escape_htmltag($langs->trans("NotAllowed")).'">'.$langs->trans("ApproveOrder").'</a>';
 				}
 			}
@@ -2416,13 +2379,11 @@ elseif (!empty($object->id))
 						{
 							print '<a class="butActionRefused classfortooltip" href="#" title="'.dol_escape_htmltag($langs->trans("SecondApprovalAlreadyDone")).'">'.$langs->trans("Approve2Order").'</a>';
 						}
-						else
-						{
+						else {
 							print '<a class="butAction"	href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=approve2">'.$langs->trans("Approve2Order").'</a>';
 						}
 					}
-					else
-					{
+					else {
 						print '<a class="butActionRefused classfortooltip" href="#" title="'.dol_escape_htmltag($langs->trans("NotAllowed")).'">'.$langs->trans("Approve2Order").'</a>';
 					}
 				}
@@ -2435,8 +2396,7 @@ elseif (!empty($object->id))
 				{
 					print '<a class="butAction"	href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=refuse">'.$langs->trans("RefuseOrder").'</a>';
 				}
-				else
-				{
+				else {
 					print '<a class="butActionRefused classfortooltip" href="#" title="'.dol_escape_htmltag($langs->trans("NotAllowed")).'">'.$langs->trans("RefuseOrder").'</a>';
 				}
 			}
@@ -2504,8 +2464,7 @@ elseif (!empty($object->id))
 				{
 					print '<div class="inline-block divButAction"><a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=makeorder#makeorder">'.$langs->trans("MakeOrder").'</a></div>';
 				}
-				else
-				{
+				else {
 					print '<div class="inline-block divButAction"><a class="butActionRefused classfortooltip" href="#">'.$langs->trans("MakeOrder").'</a></div>';
 				}
 			}
@@ -2538,8 +2497,7 @@ elseif (!empty($object->id))
 				{
 					print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=classifybilled">'.$langs->trans("ClassifyBilled").'</a>';
 				}
-				else
-				{
+				else {
 					if (!empty($object->linkedObjectsIds['invoice_supplier']))
 					{
 						if ($user->rights->fournisseur->facture->creer)
@@ -2547,8 +2505,7 @@ elseif (!empty($object->id))
 							print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=classifybilled">'.$langs->trans("ClassifyBilled").'</a>';
 						}
 					}
-					else
-					{
+					else {
 						print '<a class="butActionRefused" href="#" title="'.dol_escape_htmltag($langs->trans("NeedAtLeastOneInvoice")).'">'.$langs->trans("ClassifyBilled").'</a>';
 					}
 				}
@@ -2734,8 +2691,7 @@ elseif (!empty($object->id))
 					print "<br>".$langs->trans("ErrorOccurredReviseAndRetry")."<br>";
 					print '<input class="button" type="submit" id="cancel" name="cancel" value="'.$langs->trans("Cancel").'">';
 				}
-				else
-				{
+				else {
 					$textinput_size = "50";
 					// Webservice url
 					print '<tr><td>'.$langs->trans("WebServiceURL").'</td><td colspan="3">'.dol_print_url($ws_url).'</td></tr>';
@@ -2783,8 +2739,7 @@ elseif (!empty($object->id))
 						setEventMessages($langs->trans("RemoteUserMissingAssociatedSoc"), null, 'errors');
 						$error_occurred = true;
 					}
-					else
-					{
+					else {
 						//Create SOAP client and connect it to product/service
 						$soapclient_product = new nusoap_client($ws_url."/webservices/server_productorservice.php");
 						$soapclient_product->soap_defencoding = 'UTF-8';
@@ -2820,8 +2775,7 @@ elseif (!empty($object->id))
 								{
 									setEventMessages($line_id.$langs->trans("SupplierMissingRef")." '".$ref_supplier."'", null, 'warnings');
 								}
-								else
-								{
+								else {
 									setEventMessages($line_id.$langs->trans("ResponseNonOK")." '".$status_code."' - '".$result_product["result"]["result_label"]."'", null, 'errors');
 									$error_occurred = true;
 									break;
@@ -2867,8 +2821,7 @@ elseif (!empty($object->id))
 					setEventMessages($langs->trans("RemoteUserBadCredentials"), null, 'errors');
 					$error_occurred = true;
 				}
-				else
-				{
+				else {
 					setEventMessages($langs->trans("ResponseNonOK")." '".$user_status_code."'", null, 'errors');
 					$error_occurred = true;
 				}
@@ -2886,8 +2839,7 @@ elseif (!empty($object->id))
 				{
 					print "<br>".$langs->trans("ErrorOccurredReviseAndRetry")."<br>";
 				}
-				else
-				{
+				else {
 					print '<input class="button" type="submit" id="ws_submit" name="ws_submit" value="'.$langs->trans("Confirm").'">';
 					print ' &nbsp; &nbsp; ';
 				}

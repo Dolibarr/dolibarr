@@ -108,8 +108,7 @@ if (empty($date_start) || empty($date_end)) // We define date_start and date_end
 	if ($q == 3) { $date_start = dol_get_first_day($year_start, 7, false); $date_end = dol_get_last_day($year_start, 9, false); }
 	if ($q == 4) { $date_start = dol_get_first_day($year_start, 10, false); $date_end = dol_get_last_day($year_start, 12, false); }
 }
-else
-{
+else {
 	// TODO We define q
 }
 

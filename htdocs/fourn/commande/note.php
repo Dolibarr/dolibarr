@@ -146,8 +146,7 @@ if ($id > 0 || !empty($ref))
 
         dol_fiche_end();
     }
-    else
-    {
+    else {
         /* Order not found */
         $langs->load("errors");
         print $langs->trans("ErrorRecordNotFound");

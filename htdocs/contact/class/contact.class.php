@@ -288,8 +288,7 @@ class Contact extends CommonObject
 			$this->db->free($resql);
 			return 1;
 		}
-		else
-		{
+		else {
 			dol_print_error($this->db);
 			$this->error = $this->db->lasterror();
 			return -1;
@@ -389,15 +388,13 @@ class Contact extends CommonObject
                 $this->db->commit();
                 return $this->id;
             }
-            else
-            {
+            else {
                 $this->db->rollback();
                 dol_syslog(get_class($this)."::create ".$this->error, LOG_ERR);
                 return -2;
             }
 		}
-		else
-		{
+		else {
 			$this->error = $this->db->lasterror();
 
 			$this->db->rollback();
@@ -597,15 +594,13 @@ class Contact extends CommonObject
 				$this->db->commit();
 				return 1;
 			}
-			else
-			{
+			else {
 				dol_syslog(get_class($this)."::update Error ".$this->error, LOG_ERR);
 				$this->db->rollback();
 				return -$error;
 			}
 		}
-		else
-		{
+		else {
 			$this->error = $this->db->lasterror().' sql='.$sql;
             $this->db->rollback();
 			return -1;
@@ -762,13 +757,11 @@ class Contact extends CommonObject
                     $this->error = $this->db->lasterror();
 				}
 			}
-			else
-			{
+			else {
 				$result = true;
 			}
 		}
-		else
-		{
+		else {
 			$sql = "DELETE FROM ".MAIN_DB_PREFIX."user_alert ";
 			$sql .= "WHERE type=1 AND fk_contact=".$this->db->escape($id)." AND fk_user=".$user->id;
 			$result = $this->db->query($sql);
@@ -792,8 +785,7 @@ class Contact extends CommonObject
 		    $this->db->commit();
 		    return 1;
 		}
-		else
-		{
+		else {
 		    dol_syslog(get_class($this)."::update Error ".$this->error, LOG_ERR);
 		    $this->db->rollback();
 		    return -$error;
@@ -846,8 +838,7 @@ class Contact extends CommonObject
 		$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."user as u ON c.rowid = u.fk_socpeople";
 		$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s ON c.fk_soc = s.rowid";
 		if ($id) $sql .= " WHERE c.rowid = ".$id;
-		else
-		{
+		else {
 			$sql .= " WHERE c.entity IN (".getEntity($this->element).")";
 			if ($ref_ext) {
 				$sql .= " AND c.ref_ext = '".$this->db->escape($ref_ext)."'";
@@ -943,8 +934,7 @@ class Contact extends CommonObject
 					}
 					$this->db->free($resql);
 				}
-				else
-				{
+				else {
 					$this->error = $this->db->error();
 					return -1;
 				}
@@ -971,8 +961,7 @@ class Contact extends CommonObject
 						}
 						$this->db->free($resql);
 					}
-					else
-					{
+					else {
 						$this->error = $this->db->error();
 						return -1;
 					}
@@ -988,14 +977,12 @@ class Contact extends CommonObject
 
 				return 1;
 			}
-			else
-			{
+			else {
 				$this->error = $langs->trans("RecordNotFound");
 				return 0;
 			}
 		}
-		else
-		{
+		else {
 			$this->error = $this->db->error();
 			return -1;
 		}
@@ -1062,8 +1049,7 @@ class Contact extends CommonObject
 			$this->db->free($resql);
 			return 0;
 		}
-		else
-		{
+		else {
 			$this->error = $this->db->lasterror();
 			return -1;
 		}
@@ -1119,8 +1105,7 @@ class Contact extends CommonObject
 					$i++;
 				}
 			}
-			else
-			{
+			else {
 				$error++;
 				$this->error = $this->db->error().' sql='.$sql;
 			}
@@ -1187,8 +1172,7 @@ class Contact extends CommonObject
 			$this->db->commit();
 			return 1;
 		}
-		else
-		{
+		else {
 			$this->db->rollback();
 			dol_syslog("Error ".$this->error, LOG_ERR);
 			return -1;
@@ -1236,8 +1220,7 @@ class Contact extends CommonObject
 
 			$this->db->free($resql);
 		}
-		else
-		{
+		else {
 			print $this->db->error();
 		}
 	}
@@ -1263,8 +1246,7 @@ class Contact extends CommonObject
 			$this->db->free($resql);
 			return $nb;
 		}
-		else
-		{
+		else {
 			$this->error = $this->db->error();
 			return -1;
 		}
@@ -1526,8 +1508,7 @@ class Contact extends CommonObject
 			$this->db->rollback();
 			return -$error;
 		}
-		else
-		{
+		else {
 			$this->db->commit();
 			return 1;
 		}
@@ -1681,8 +1662,7 @@ class Contact extends CommonObject
 
 			return $tab;
 		}
-		else
-		{
+		else {
 			$this->error = $this->db->error();
 			dol_print_error($this->db);
 			return -1;

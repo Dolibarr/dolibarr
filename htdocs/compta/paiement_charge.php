@@ -142,8 +142,7 @@ if ($action == 'add_payment' || ($action == 'confirm_paiement' && $confirm == 'y
                 header('Location: '.$loc);
                 exit;
             }
-            else
-            {
+            else {
                 $db->rollback();
             }
         }
@@ -284,8 +283,7 @@ if ($action == 'create')
 		{
 			print '<td class="left">'.dol_print_date($objp->date_ech, 'day').'</td>'."\n";
 		}
-		else
-		{
+		else {
 			print "<td align=\"center\"><b>!!!</b></td>\n";
 		}
 
@@ -306,8 +304,7 @@ if ($action == 'create')
 			print '<input type=hidden class="sum_remain" name="'.$nameRemain.'" value="'.$remaintopay.'">';
 			print '<input type="text" size="8" name="'.$namef.'" id="'.$namef.'">';
 		}
-		else
-		{
+		else {
 			print '-';
 		}
 		print "</td>";

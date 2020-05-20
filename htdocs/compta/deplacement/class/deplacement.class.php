@@ -200,15 +200,13 @@ class Deplacement extends CommonObject
 				$this->db->commit();
 				return $this->id;
 			}
-			else
-			{
+			else {
 				$this->error = $this->db->error();
 				$this->db->rollback();
 				return $result;
 			}
 		}
-		else
-		{
+		else {
 			$this->error = $this->db->error()." sql=".$sql;
 			$this->db->rollback();
 			return -1;
@@ -268,8 +266,7 @@ class Deplacement extends CommonObject
 			$this->db->commit();
 			return 1;
 		}
-		else
-		{
+		else {
 			$this->error = $this->db->lasterror();
 			$this->db->rollback();
 			return -1;
@@ -313,8 +310,7 @@ class Deplacement extends CommonObject
 
 			return 1;
 		}
-		else
-		{
+		else {
 			$this->error = $this->db->error();
 			return -1;
 		}
@@ -339,8 +335,7 @@ class Deplacement extends CommonObject
 			$this->db->commit();
 			return 1;
 		}
-		else
-		{
+		else {
 			$this->error = $this->db->error();
 			$this->db->rollback();
 			return -1;
@@ -461,8 +456,7 @@ class Deplacement extends CommonObject
                 $i++;
             }
         }
-        else
-        {
+        else {
         	dol_print_error($this->db);
         }
 
@@ -508,8 +502,7 @@ class Deplacement extends CommonObject
 			}
 			$this->db->free($result);
 		}
-		else
-		{
+		else {
 			dol_print_error($this->db);
 		}
 	}

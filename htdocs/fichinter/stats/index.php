@@ -82,8 +82,7 @@ if (!$user->rights->societe->client->voir || $user->socid)
     $filenamenb = $dir.'/interventionsnbinyear-'.$user->id.'-'.$year.'.png';
     $fileurlnb = DOL_URL_ROOT.'/viewimage.php?modulepart=interventionstats&file=interventionsnbinyear-'.$user->id.'-'.$year.'.png';
 }
-else
-{
+else {
     $filenamenb = $dir.'/interventionsnbinyear-'.$year.'.png';
     $fileurlnb = DOL_URL_ROOT.'/viewimage.php?modulepart=interventionstats&file=interventionsnbinyear-'.$year.'.png';
 }
@@ -122,8 +121,7 @@ if (!$user->rights->societe->client->voir || $user->socid)
     $filenameamount = $dir.'/interventionsamountinyear-'.$user->id.'-'.$year.'.png';
     $fileurlamount = DOL_URL_ROOT.'/viewimage.php?modulepart=interventionstats&file=interventionsamountinyear-'.$user->id.'-'.$year.'.png';
 }
-else
-{
+else {
     $filenameamount = $dir.'/interventionsamountinyear-'.$year.'.png';
     $fileurlamount = DOL_URL_ROOT.'/viewimage.php?modulepart=interventionstats&file=interventionsamountinyear-'.$year.'.png';
 }
@@ -161,8 +159,7 @@ if (!$user->rights->societe->client->voir || $user->socid)
     $filename_avg = $dir.'/interventionsaverage-'.$user->id.'-'.$year.'.png';
     $fileurl_avg = DOL_URL_ROOT.'/viewimage.php?modulepart=interventionstats&file=interventionsaverage-'.$user->id.'-'.$year.'.png';
 }
-else
-{
+else {
     $filename_avg = $dir.'/interventionsaverage-'.$year.'.png';
     $fileurl_avg = DOL_URL_ROOT.'/viewimage.php?modulepart=interventionstats&file=interventionsaverage-'.$year.'.png';
 }

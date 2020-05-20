@@ -120,8 +120,7 @@ if ($resql)
 			print '</td></tr>';
 			$i++;
 		}
-	} else
-	{
+	} else {
 		print '<tr><td>'.$langs->trans("None").'</td><td></td><td></td></tr>';
 	}
 

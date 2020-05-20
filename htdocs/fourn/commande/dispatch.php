@@ -129,8 +129,7 @@ if ($action == 'checkdispatchline' && !((empty($conf->global->MAIN_USE_ADVANCED_
 	{
 		$db->commit();
 	}
-	else
-	{
+	else {
 		$db->rollback();
 	}
 }
@@ -172,8 +171,7 @@ if ($action == 'uncheckdispatchline' && !((empty($conf->global->MAIN_USE_ADVANCE
 	{
 		$db->commit();
 	}
-	else
-	{
+	else {
 		$db->rollback();
 	}
 }
@@ -215,8 +213,7 @@ if ($action == 'denydispatchline' && !((empty($conf->global->MAIN_USE_ADVANCED_P
 	{
 		$db->commit();
 	}
-	else
-	{
+	else {
 		$db->rollback();
 	}
 }
@@ -579,8 +576,7 @@ if ($id > 0 || !empty($ref)) {
 					print '<td class="dispatch_dluo_title">'.$langs->trans("EatByDate").'</td>';
 					print '<td class="dispatch_dlc_title">'.$langs->trans("SellByDate").'</td>';
 				}
-				else
-				{
+				else {
 					print '<td></td>';
 					print '<td></td>';
 					print '<td></td>';
@@ -735,8 +731,7 @@ if ($id > 0 || !empty($ref)) {
 							{
 							    print $langs->trans("BuyingPrice").': <input class="maxwidth75" name="pu'.$suffix.'" type="text" value="'.price2num($up_ht_disc, 'MU').'">';
 							}
-							else
-							{
+							else {
 							    print '<input class="maxwidth75" name="pu'.$suffix.'" type="hidden" value="'.price2num($up_ht_disc, 'MU').'">';
 							}
 
@@ -791,8 +786,7 @@ if ($id > 0 || !empty($ref)) {
 							{
 							    print $langs->trans("BuyingPrice").': <input class="maxwidth75" name="pu'.$suffix.'" type="text" value="'.price2num($up_ht_disc, 'MU').'">';
 							}
-							else
-							{
+							else {
 							    print '<input class="maxwidth75" name="pu'.$suffix.'" type="hidden" value="'.price2num($up_ht_disc, 'MU').'">';
 							}
 
@@ -809,8 +803,7 @@ if ($id > 0 || !empty($ref)) {
 						    $type = 'batch';
 						    print img_picto($langs->trans('AddStockLocationLine'), 'split.png', 'class="splitbutton" onClick="addDispatchLine('.$i.', \''.$type.'\')"');
 						}
-						else
-						{
+						else {
 						    $type = 'dispatch';
 						    print img_picto($langs->trans('AddStockLocationLine'), 'split.png', 'class="splitbutton" onClick="addDispatchLine('.$i.', \''.$type.'\')"');
 						}
@@ -908,8 +901,7 @@ if ($id > 0 || !empty($ref)) {
 		    print "<br>\n";
 		    if (empty($conf->global->SUPPLIER_ORDER_DISABLE_STOCK_DISPATCH_WHEN_TOTAL_REACHED))
 				print '<div class="opacitymedium">'.$langs->trans("NoPredefinedProductToDispatch").'</div>'; // No predefined line at all
-			else
-				print '<div class="opacitymedium">'.$langs->trans("NoMorePredefinedProductToDispatch").'</div>'; // No predefined line that remain to be dispatched.
+			else print '<div class="opacitymedium">'.$langs->trans("NoMorePredefinedProductToDispatch").'</div>'; // No predefined line that remain to be dispatched.
 		}
 
 		print '</form>';

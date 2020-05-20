@@ -115,14 +115,12 @@ if (isset($action) && !empty($action))
 						$fk_parent = $parentdirisindatabase;
 						//break;  // We found parent, we can stop the while loop
 					}
-					else
-					{
+					else {
 						dol_syslog("No");
 						//print "No<br>\n";
 					}
 				}
-				else
-				{
+				else {
 					dol_syslog("Parent is root");
 					$fk_parent = 0; // Parent is root
 				}
@@ -149,8 +147,7 @@ if (isset($action) && !empty($action))
 						//var_dump($sqltree);
 						$adirwascreated = 1;
 					}
-					else
-					{
+					else {
 						dol_syslog("Failed to create directory ".$ecmdirtmp->label, LOG_ERR);
 					}
 				}

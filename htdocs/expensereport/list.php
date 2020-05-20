@@ -227,8 +227,7 @@ if (empty($reshook))
     						$langs->load("errors");
     						setEventMessages($langs->trans("ErrorLoginAlreadyExists", $objectuser->login), null, 'errors');
     					}
-    					else
-    					{
+    					else {
     						setEventMessages($objectuser->error, $objectuser->errors, 'errors');
     					}
     				}
@@ -408,8 +407,7 @@ if ($resql)
 				print $form->selectarray('default_range', range(0, $maxRangeNum), $fuser->default_range);
 				print '</td></tr>';
 			}
-			else
-			{
+			else {
 				print '<tr><td class="titlefield">'.$langs->trans("DefaultCategoryCar").'</td>';
 				print '<td class="fk_c_exp_tax_cat">';
 				print dol_getIdFromCode($db, $fuser->default_c_exp_tax_cat, 'c_exp_tax_cat', 'rowid', 'label');
@@ -459,15 +457,13 @@ if ($resql)
 
 			print '</div>';
 		}
-		else
-		{
+		else {
 			print '<div class="center">';
 			print '<input type="submit" class="button" name="save" value="'.$langs->trans("Save").'">';
 			print '</div><br>';
 		}
 	}
-	else
-	{
+	else {
 		$title = $langs->trans("ListTripsAndExpenses");
 
 		$newcardbutton = '';
@@ -806,8 +802,7 @@ if ($resql)
 			$i++;
 		}
 	}
-	else
-	{
+	else {
 		$colspan = 1;
 		foreach ($arrayfields as $key => $val) { if (!empty($val['checked'])) $colspan++; }
 		print '<tr><td colspan="'.$colspan.'" class="opacitymedium">'.$langs->trans("NoRecordFound").'</td></tr>';
@@ -843,8 +838,7 @@ if ($resql)
 		print $formfile->showdocuments('massfilesarea_expensereport', '', $filedir, $urlsource, 0, $delallowed, '', 1, 1, 0, 48, 1, $param, $title, '', '', '', null, $hidegeneratedfilelistifempty);
 	}
 }
-else
-{
+else {
 	dol_print_error($db);
 }
 

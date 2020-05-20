@@ -488,8 +488,7 @@ foreach ($accounts as $key=>$type)
     		$accountingaccount->fetch('', $objecttmp->account_number, 1);
     		print $accountingaccount->getNomUrl(0, 1, 1, '', 1);
     	}
-    	else
-    	{
+    	else {
     		print $objecttmp->account_number;
     	}
     	print '</td>';
@@ -506,8 +505,7 @@ foreach ($accounts as $key=>$type)
     		$accountingjournal->fetch($objecttmp->fk_accountancy_journal);
     		print $accountingjournal->getNomUrl(0, 1, 1, '', 1);
     	}
-    	else
-    	{
+    	else {
     		print '';
     	}
     	print '</td>';

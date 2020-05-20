@@ -91,8 +91,7 @@ class ExpeditionLineBatch extends CommonObject
 
 			return 1;
 		}
-		else
-		{
+		else {
 			$this->error = "Error ".$this->db->lasterror();
 			return -1;
 		}
@@ -136,8 +135,7 @@ class ExpeditionLineBatch extends CommonObject
 			$this->fk_expeditiondet = $id_line_expdet;
 			return $this->id;
 		}
-		else
-		{
+		else {
 			foreach ($this->errors as $errmsg)
 			{
 	            dol_syslog(get_class($this)."::create ".$errmsg, LOG_ERR);
@@ -167,8 +165,7 @@ class ExpeditionLineBatch extends CommonObject
 		{
 			return 1;
 		}
-		else
-		{
+		else {
 			return -1;
 		}
 	}
@@ -231,8 +228,7 @@ class ExpeditionLineBatch extends CommonObject
 			$db->free($resql);
 			return $ret;
 		}
-		else
-		{
+		else {
 			dol_print_error($db);
 			return -1;
 		}

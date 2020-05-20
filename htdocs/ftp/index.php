@@ -112,14 +112,13 @@ if (GETPOST("sendit") && !empty($conf->global->MAIN_UPLOAD_DOC))
                 // Files infected by a virus
 				setEventMessages($langs->trans("ErrorFileIsInfectedWithAVirus"), null, 'errors');
 			}
-			else	// Known error
+			else // Known error
 			{
 				setEventMessages($langs->trans($resupload), null, 'errors');
 			}
 		}
 	}
-	else
-	{
+	else {
 		// Echec transfert (fichier depassant la limite ?)
 		$langs->load("errors");
 		setEventMessages($langs->trans("ErrorFailToCreateDir", $upload_dir), null, 'errors');
@@ -139,8 +138,7 @@ if ($action == 'add' && $user->rights->ftp->setup)
 		header("Location: ".$_SERVER["PHP_SELF"]);
 		exit;
 	}
-	else
-	{
+	else {
 		setEventMessages($langs->trans("ErrorFailToCreateDir"), null, 'errors');
 		$action = "create";
 	}
@@ -175,8 +173,7 @@ if ($action == 'confirm_deletefile' && $_REQUEST['confirm'] == 'yes')
 		{
 			setEventMessages($langs->trans("FileWasRemoved", $file), null, 'mesgs');
 		}
-		else
-		{
+		else {
 			dol_syslog("ftp/index.php ftp_delete", LOG_ERR);
 			setEventMessages($langs->trans("FTPFailedToRemoveFile", $file), null, 'errors');
 		}
@@ -185,8 +182,7 @@ if ($action == 'confirm_deletefile' && $_REQUEST['confirm'] == 'yes')
 
 		$action = '';
 	}
-	else
-	{
+	else {
 		dol_print_error('', $mesg);
 	}
 }
@@ -225,8 +221,7 @@ if ($_POST["const"] && $_POST["delete"] && $_POST["delete"] == $langs->trans("De
 				{
 					setEventMessages($langs->trans("FileWasRemoved", $file), null, 'mesgs');
 				}
-				else
-				{
+				else {
 					dol_syslog("ftp/index.php ftp_delete", LOG_ERR);
 					setEventMessages($langs->trans("FTPFailedToRemoveFile", $file), null, 'errors');
 				}
@@ -237,8 +232,7 @@ if ($_POST["const"] && $_POST["delete"] && $_POST["delete"] == $langs->trans("De
 			}
 		}
 	}
-	else
-	{
+	else {
 		dol_print_error('', $mesg);
 	}
 }
@@ -268,8 +262,7 @@ if ($action == 'confirm_deletesection' && $confirm == 'yes')
 		{
 			setEventMessages($langs->trans("DirWasRemoved", $file), null, 'mesgs');
 		}
-		else
-		{
+		else {
 			setEventMessages($langs->trans("FTPFailedToRemoveDir", $file), null, 'errors');
 		}
 
@@ -277,8 +270,7 @@ if ($action == 'confirm_deletesection' && $confirm == 'yes')
 
 		$action = '';
 	}
-	else
-	{
+	else {
 		dol_print_error('', $mesg);
 	}
 }
@@ -335,13 +327,11 @@ if ($action == 'download')
 
 			exit;
 		}
-		else
-		{
+		else {
 			setEventMessages($langs->transnoentitiesnoconv('FailedToGetFile', $remotefile), null, 'errors');
 		}
 	}
-	else
-	{
+	else {
 		dol_print_error('', $mesg);
 	}
 
@@ -399,8 +389,7 @@ if (!function_exists('ftp_connect'))
 {
 	print $langs->trans("FTPFeatureNotSupportedByYourPHP");
 }
-else
-{
+else {
     if (!empty($ftp_server))
 	{
 		// Confirm remove file
@@ -498,8 +487,7 @@ else
                     $buff[$i] = "---------- - root root 1234 Aug 01 2000 ".$key;
                 }
     		}
-    		else
-    		{
+    		else {
                 $buff = ftp_rawlist($conn_id, $newsectioniso);
                 $contents = ftp_nlist($conn_id, $newsectioniso); // Sometimes rawlist fails but never nlist
         		//var_dump($contents);
@@ -535,8 +523,7 @@ else
 					if (preg_match('/^d/', $vals[0])) $is_directory = 1;
 					if (preg_match('/^l/', $vals[0])) $is_link = 1;
 				}
-				else
-				{
+				else {
 					// Remote file
 					$filename = $file;
 					//print "section=".$section.' file='.$file.'X';
@@ -593,8 +580,7 @@ else
 					$newfile = preg_replace('/ ->.*/', '', $newfile);
 					print '<a href="'.$_SERVER["PHP_SELF"].'?action=delete&numero_ftp='.$numero_ftp.'&section='.urlencode($section).'&file='.urlencode($newfile).'">'.img_delete().'</a>';
 				}
-				else
-				{
+				else {
 					print '<a href="'.$_SERVER["PHP_SELF"].'?action=download&numero_ftp='.$numero_ftp.'&section='.urlencode($section).'&file='.urlencode($file).'">'.img_picto('', 'file').'</a>';
 					print ' &nbsp; ';
 					print '<input type="checkbox" class="flat checkboxfordelete" id="check_'.$i.'" name="const['.$i.'][check]" value="1">';
@@ -636,8 +622,7 @@ else
 
 		print "</form>";
 	}
-	else
-	{
+	else {
 		$foundsetup = false;
 		$MAXFTP = 20;
 		$i = 1;
@@ -656,8 +641,7 @@ else
 	    {
             print $langs->trans("SetupOfFTPClientModuleNotComplete");
 	    }
-	    else
-	    {
+	    else {
 	        print $langs->trans("ChooseAFTPEntryIntoMenu");
 	    }
 	}
@@ -675,8 +659,7 @@ if ($conn_id)
     {
         ftp_close($conn_id);
     }
-    else
-    {
+    else {
         ftp_close($conn_id);
     }
 }
@@ -724,8 +707,7 @@ function dol_ftp_connect($ftp_server, $ftp_port, $ftp_user, $ftp_password, $sect
 		    dol_syslog('Try to connect with ftp_ssl_connect');
 		    $conn_id = ftp_ssl_connect($ftp_server, $ftp_port, $connecttimeout);
 		}
-		else
-		{
+		else {
 		    dol_syslog('Try to connect with ftp_connect');
 		    $conn_id = ftp_connect($ftp_server, $ftp_port, $connecttimeout);
 		}
@@ -751,15 +733,13 @@ function dol_ftp_connect($ftp_server, $ftp_port, $ftp_user, $ftp_password, $sect
         				    $error++;
 		                }
     				}
-    				else
-    				{
+    				else {
     					$mesg = $langs->transnoentitiesnoconv("FailedToConnectToFTPServerWithCredentials");
 	   				    $ok = 0;
     				    $error++;
     				}
 				}
-				else
-				{
+				else {
 				    if (ftp_login($conn_id, $ftp_user, $ftp_password))
     				{
     					// Turn on passive mode transfers (must be after a successful login
@@ -769,8 +749,7 @@ function dol_ftp_connect($ftp_server, $ftp_port, $ftp_user, $ftp_password, $sect
     					$newsectioniso = utf8_decode($section);
     					ftp_chdir($conn_id, $newsectioniso);
     				}
-    				else
-    				{
+    				else {
     					$mesg = $langs->transnoentitiesnoconv("FailedToConnectToFTPServerWithCredentials");
 	   				    $ok = 0;
     				    $error++;
@@ -778,8 +757,7 @@ function dol_ftp_connect($ftp_server, $ftp_port, $ftp_user, $ftp_password, $sect
 				}
 			}
 		}
-		else
-		{
+		else {
 		    dol_syslog('FailedToConnectToFTPServer '.$ftp_server.' '.$ftp_port, LOG_ERR);
 			$mesg = $langs->transnoentitiesnoconv("FailedToConnectToFTPServer", $ftp_server, $ftp_port);
 			$ok = 0;
@@ -805,8 +783,7 @@ function ftp_isdir($connect_id, $dir)
 		ftp_cdup($connect_id);
 		return 1;
 	}
-	else
-	{
+	else {
 		return 0;
 	}
 }

@@ -266,8 +266,7 @@ if (empty($reshook))
 
     				$totalqty += $subtotalqty;
 			    }
-			    else
-			    {
+			    else {
 			        // No detail were provided for lots
 			        if (!empty($_POST[$qty]))
 			        {
@@ -296,8 +295,7 @@ if (empty($reshook))
 			        $qty = "qtyl".$i.'_'.$j;
 			    }
 			}
-			else
-			{
+			else {
 			    //var_dump(GETPOST($qty,'int')); var_dump($_POST); var_dump($batch);exit;
 				//shipment line for product with no batch management and no multiple stock location
 				if (GETPOST($qty, 'int') > 0) $totalqty += GETPOST($qty, 'int');
@@ -342,8 +340,7 @@ if (empty($reshook))
     					    }
     					}
 					}
-					else
-					{
+					else {
 						if (GETPOST($qty, 'int') > 0 || (GETPOST($qty, 'int') == 0 && $conf->global->SHIPMENT_GETS_ALL_ORDER_PRODUCTS))
 						{
 							$ent = "entl".$i;
@@ -361,8 +358,7 @@ if (empty($reshook))
 						}
 					}
 				}
-				else
-				{
+				else {
 					// batch mode
 					if ($batch_line[$i]['qty'] > 0)
 					{
@@ -389,8 +385,7 @@ if (empty($reshook))
 	            }
 	        }
 	    }
-	    else
-	    {
+	    else {
 	        setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("QtyToShip").'/'.$langs->transnoentitiesnoconv("Warehouse")), null, 'errors');
 	        $error++;
 	    }
@@ -401,8 +396,7 @@ if (empty($reshook))
 	        header("Location: card.php?id=".$object->id);
 	        exit;
 	    }
-	    else
-	    {
+	    else {
 	        $db->rollback();
 	        $_GET["commande_id"] = GETPOST('commande_id', 'int');
 	        $action = 'create';
@@ -420,8 +414,7 @@ if (empty($reshook))
 	        header("Location: ".DOL_URL_ROOT.'/livraison/card.php?action=create_delivery&id='.$result);
 	        exit;
 	    }
-	    else
-	    {
+	    else {
 	        setEventMessages($object->error, $object->errors, 'errors');
 	    }
 	}
@@ -440,8 +433,7 @@ if (empty($reshook))
 			$langs->load("errors");
 			setEventMessages($langs->trans($object->error), $object->errors, 'errors');
 	    }
-	    else
-	    {
+	    else {
 	    	// Define output language
 	    	if (empty($conf->global->MAIN_DISABLE_PDF_AUTOUPDATE))
 	    	{
@@ -470,8 +462,7 @@ if (empty($reshook))
 	    {
 	        $result = $object->setStatut(-1);
 	    }
-	    else
-		{
+	    else {
 			setEventMessages($object->error, $object->errors, 'errors');
 	    }
 	}
@@ -485,8 +476,7 @@ if (empty($reshook))
 	        header("Location: ".DOL_URL_ROOT.'/expedition/index.php');
 	        exit;
 	    }
-	    else
-		{
+	    else {
 			setEventMessages($object->error, $object->errors, 'errors');
 	    }
 	}
@@ -601,8 +591,7 @@ if (empty($reshook))
 						}
 					}
 				}
-				else
-				{
+				else {
 					// delete single warehouse line
 					$line->id = $line_id;
 					if (!$error && $line->delete($user) < 0)
@@ -618,8 +607,7 @@ if (empty($reshook))
 			header('Location: '.$_SERVER["PHP_SELF"].'?id='.$object->id);
 			exit();
 		}
-		else
-		{
+		else {
 			setEventMessages($line->error, $line->errors, 'errors');
 		}
 	}
@@ -684,8 +672,7 @@ if (empty($reshook))
 									$error++;
 								}
 							}
-							else
-							{
+							else {
 								setEventMessages($lotStock->error, $lotStock->errors, 'errors');
 								$error++;
 							}
@@ -738,14 +725,12 @@ if (empty($reshook))
 										$error++;
 									}
 								}
-								else
-								{
+								else {
 									setEventMessages($line->error, $line->errors, 'errors');
 									$error++;
 								}
 							}
-							else
-							{
+							else {
 								// create new line with new lot
 								$line->origin_line_id = $lines[$i]->origin_line_id;
 								$line->entrepot_id = $lotStock->warehouseid;
@@ -761,15 +746,13 @@ if (empty($reshook))
 								}
 							}
 						}
-						else
-						{
+						else {
 							setEventMessages($lotStock->error, $lotStock->errors, 'errors');
 							$error++;
 						}
 					}
 				}
-				else
-				{
+				else {
 					if ($lines[$i]->fk_product > 0)
 					{
 						// line without lot
@@ -813,8 +796,7 @@ if (empty($reshook))
 							}
 						}
 					}
-					else
-					{
+					else {
                         // Product no predefined
 						$qty = "qtyl".$line_id;
 						$line->id = $line_id;
@@ -850,8 +832,7 @@ if (empty($reshook))
 				$object->generateDocument($object->modelpdf, $outputlangs, $hidedetails, $hidedesc, $hideref);
 			}
 		}
-		else
-		{
+		else {
 			header('Location: '.$_SERVER['PHP_SELF'].'?id='.$object->id); // To redisplay the form being edited
 			exit();
 		}
@@ -1133,8 +1114,7 @@ if ($action == 'create')
 					{
                     	print '<td class="left">'.$langs->trans("Warehouse").' ('.$langs->trans("Stock").')</td>';
 					}
-					else
-					{
+					else {
 						print '<td class="left">'.$langs->trans("Warehouse").' / '.$langs->trans("Batch").' ('.$langs->trans("Stock").')</td>';
 					}
                 }
@@ -1195,8 +1175,7 @@ if ($action == 'create')
 
 	                    print '</td>';
 	                }
-	                else
-					{
+	                else {
 					    print "<td>";
 	                    if ($type == 1) $text = img_object($langs->trans('Service'), 'service');
 	                    else $text = img_object($langs->trans('Product'), 'product');
@@ -1232,8 +1211,7 @@ if ($action == 'create')
 					{
 						$quantityToBeDelivered = 0;
 					}
-					else
-					{
+					else {
 						$quantityToBeDelivered = $quantityAsked - $quantityDelivered;
 					}
 	                $warehouse_id = GETPOST('entrepot_id', 'int');
@@ -1289,8 +1267,7 @@ if ($action == 'create')
 										}
 									}
 								}
-								else
-								{
+								else {
 									print $langs->trans("Service");
 								}
 								print '</td>';
@@ -1321,8 +1298,7 @@ if ($action == 'create')
 								}
 							}
 						}
-						else
-						{
+						else {
 						    // Product need lot
 							print '<td></td><td></td></tr>'; // end line and start a new one for lot/serial
 							print '<!-- Case product need lot -->';
@@ -1377,8 +1353,7 @@ if ($action == 'create')
 									print '</td></tr>';
 								}
 							}
-							else
-							{
+							else {
 							    print '<!-- Case there is no details of lot at all -->';
 							    print '<tr class="oddeven"><td colspan="3"></td><td class="center">';
 							    print '<input name="qtyl'.$indiceAsked.'_'.$subj.'" id="qtyl'.$indiceAsked.'_'.$subj.'" type="text" size="4" value="0" disabled="disabled"> ';
@@ -1390,8 +1365,7 @@ if ($action == 'create')
 							}
 						}
 					}
-					else
-					{
+					else {
 						// ship from multiple locations
 						if (empty($conf->productbatch->enabled) || !$product->hasbatch())
 						{
@@ -1440,8 +1414,7 @@ if ($action == 'create')
 											print '<!-- Show details of stock -->';
 											print '('.$stock.')';
 										}
-										else
-										{
+										else {
 											print $langs->trans("Service");
 										}
 										print '</td>';
@@ -1480,8 +1453,7 @@ if ($action == 'create')
 								}
 							}
 						}
-						else
-						{
+						else {
 						    print '<!-- Case warehouse not already known and product need lot -->';
 						    print '<td></td><td></td></tr>'; // end line and start a new one for lot/serial
 
@@ -1553,8 +1525,7 @@ if ($action == 'create')
 							    }
 	    						print '<input name="qtyl'.$indiceAsked.'_'.$subj.'" id="qtyl'.$indiceAsked.'_'.$subj.'" type="text" size="4" value="0"'.($disabled ? ' '.$disabled : '').'> ';
 							}
-							else
-							{
+							else {
 							    print $langs->trans("NA");
 							}
 							print '</td>';
@@ -1569,14 +1540,12 @@ if ($action == 'create')
 	    							$warehouseObject->fetch($warehouse_selected_id);
 	    							print img_warning().' '.$langs->trans("NoProductToShipFoundIntoStock", $warehouseObject->label);
 	    						}
-	    						else
-	    						{
+	    						else {
 	    						    if ($line->fk_product) print img_warning().' '.$langs->trans("StockTooLow");
 	    						    else print '';
 	    						}
 							}
-							else
-							{
+							else {
 							    print $langs->trans("Service");
 							}
 							print '</td>';
@@ -1617,8 +1586,7 @@ if ($action == 'create')
 
             print '<br>';
         }
-        else
-		{
+        else {
             dol_print_error($db);
         }
     }
@@ -1687,8 +1655,7 @@ elseif ($id || $ref)
 			{
 				$numref = $object->getNextNumRef($soc);
 			}
-			else
-			{
+			else {
 				$numref = $object->ref;
 			}
 
@@ -1834,8 +1801,7 @@ elseif ($id || $ref)
 			print '<input type="submit" class="button" value="'.$langs->trans('Modify').'">';
 			print '</form>';
 		}
-		else
-		{
+		else {
 			print $object->date_delivery ? dol_print_date($object->date_delivery, 'dayhour') : '&nbsp;';
 		}
 		print '</td>';
@@ -1858,8 +1824,7 @@ elseif ($id || $ref)
 			print ' <input class="button" name="cancel" value="'.$langs->trans("Cancel").'" type="submit">';
 			print '</form>';
 		}
-		else
-		{
+		else {
 			print $object->trueWeight;
 			print ($object->trueWeight && $object->weight_units != '') ? ' '.measuringUnitString(0, "weight", $object->weight_units) : '';
 		}
@@ -1893,8 +1858,7 @@ elseif ($id || $ref)
 			print ' <input class="button" name="cancel" value="'.$langs->trans("Cancel").'" type="submit">';
 			print '</form>';
 		}
-		else
-		{
+		else {
 			print $object->trueHeight;
 			print ($object->trueHeight && $object->height_units != '') ? ' '.measuringUnitString(0, "size", $object->height_units) : '';
 		}
@@ -1971,8 +1935,7 @@ elseif ($id || $ref)
 			print '<input type="submit" class="button" value="'.$langs->trans('Modify').'">';
 			print '</form>';
 		}
-		else
-		{
+		else {
 			if ($object->shipping_method_id > 0)
 			{
 				// Get code using getLabelFromKey
@@ -2004,8 +1967,7 @@ elseif ($id || $ref)
 			{
 				print $form->textwithpicto($object->display_incoterms(), $object->label_incoterms, 1);
 			}
-			else
-			{
+			else {
 				print $form->select_incoterms((!empty($object->fk_incoterms) ? $object->fk_incoterms : ''), (!empty($object->location_incoterms) ? $object->location_incoterms : ''), $_SERVER['PHP_SELF'].'?id='.$object->id);
 			}
 	        print '</td></tr>';
@@ -2065,8 +2027,7 @@ elseif ($id || $ref)
 			{
 				print $langs->trans("QtyToShip").' - ';
 			}
-			else
-			{
+			else {
 				print $langs->trans("QtyShipped").' - ';
 			}
 			if (!empty($conf->stock->enabled))
@@ -2079,14 +2040,12 @@ elseif ($id || $ref)
 			}
 			print '</td>';
 		}
-		else
-		{
+		else {
 			if ($object->statut <= 1)
 			{
 				print '<td class="center linecolqtytoship">'.$langs->trans("QtyToShip").'</td>';
 			}
-			else
-			{
+			else {
 				print '<td class="center linecolqtyshipped">'.$langs->trans("QtyShipped").'</td>';
 			}
 			if (!empty($conf->stock->enabled))
@@ -2196,8 +2155,7 @@ elseif ($id || $ref)
 						$prod->fetch($lines[$i]->fk_product);
 						$label = (!empty($prod->multilangs[$outputlangs->defaultlang]["label"])) ? $prod->multilangs[$outputlangs->defaultlang]["label"] : $lines[$i]->product_label;
 					}
-					else
-						$label = (!empty($lines[$i]->label) ? $lines[$i]->label : $lines[$i]->product_label);
+					else $label = (!empty($lines[$i]->label) ? $lines[$i]->label : $lines[$i]->product_label);
 
 					print '<td class="linecoldescription">';
 
@@ -2231,8 +2189,7 @@ elseif ($id || $ref)
 					}
 					print "</td>\n";
 				}
-				else
-				{
+				else {
 					print '<td class="linecoldescription" >';
 					if ($lines[$i]->product_type == Product::TYPE_SERVICE) $text = img_object($langs->trans('Service'), 'service');
 					else $text = img_object($langs->trans('Product'), 'product');
@@ -2343,14 +2300,12 @@ elseif ($id || $ref)
 									print '</tr>';
 								}
 							}
-							else
-							{
+							else {
 								print '<!-- case edit 4 -->';
 								print '<tr><td colspan="3">'.$langs->trans("NotEnoughStock").'</td></tr>';
 							}
 						}
-						else
-						{
+						else {
 							print '<!-- case edit 5 -->';
 							print '<tr>';
 							// Qty to ship or shipped
@@ -2365,8 +2320,7 @@ elseif ($id || $ref)
 
 					print '</table></td>';
 				}
-				else
-				{
+				else {
 					// Qty to ship or shipped
 					print '<td class="linecolqtytoship center">'.$lines[$i]->qty_shipped.'</td>';
 
@@ -2417,8 +2371,7 @@ elseif ($id || $ref)
 								}
 								print $form->textwithtooltip(img_picto('', 'object_barcode').' '.$langs->trans("DetailBatchNumber"), $detail);
 							}
-							else
-							{
+							else {
 								print $langs->trans("NA");
 							}
 							print '</td>';
@@ -2484,8 +2437,7 @@ elseif ($id || $ref)
 					{
 						print $lines[$i]->showOptionals($extrafields, 'edit', array('colspan'=>$colspan), $indiceAsked);
 					}
-					else
-					{
+					else {
 						print $lines[$i]->showOptionals($extrafields, 'view', array('colspan'=>$colspan), $indiceAsked);
 					}
 				}
@@ -2526,8 +2478,7 @@ elseif ($id || $ref)
 				{
 					print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=valid">'.$langs->trans("Validate").'</a>';
 				}
-				else
-				{
+				else {
 					print '<a class="butActionRefused classfortooltip" href="#" title="'.$langs->trans("NotAllowed").'">'.$langs->trans("Validate").'</a>';
 				}
 			}
@@ -2540,8 +2491,7 @@ elseif ($id || $ref)
 				{
 					print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=reopen">'.$langs->trans("ClassifyUnbilled").'</a>';
 				}
-				else
-				{
+				else {
 			    	print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=reopen">'.$langs->trans("ReOpen").'</a>';
 				}
 			}

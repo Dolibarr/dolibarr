@@ -200,15 +200,13 @@ class EcmFiles extends CommonObject
 				$obj = $this->db->fetch_object($resql);
 				$maxposition = (int) $obj->maxposition;
 			}
-			else
-			{
+			else {
 				$this->errors[] = 'Error '.$this->db->lasterror();
 				return --$error;
 			}
 			$maxposition = $maxposition + 1;
 		}
-		else
-		{
+		else {
 			$maxposition = $this->position;
 		}
 

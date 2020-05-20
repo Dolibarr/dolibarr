@@ -222,8 +222,7 @@ if ($resql)
     		$i++;
     	}
     }
-    else
-    {
+    else {
    		print '<tr class="oddeven">';
    		print '<td colspan="7" class="opacitymedium">'.$langs->trans("None")."</td>";
    		print '</tr>';
@@ -232,8 +231,7 @@ if ($resql)
 	print "</div>";
 	print "</form>\n";
 }
-else
-{
+else {
 	dol_print_error($db);
 }
 

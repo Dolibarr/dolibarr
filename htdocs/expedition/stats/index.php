@@ -75,8 +75,7 @@ if (!$user->rights->societe->client->voir || $user->socid)
 {
     $filenamenb = $dir.'/shipmentsnbinyear-'.$user->id.'-'.$year.'.png';
 }
-else
-{
+else {
     $filenamenb = $dir.'/shipmentsnbinyear-'.$year.'.png';
 }
 

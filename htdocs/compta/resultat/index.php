@@ -131,7 +131,7 @@ if ($modecompta == 'CREANCES-DETTES')
 	$description = $langs->trans("RulesAmountWithTaxIncluded");
 	$description .= '<br>'.$langs->trans("RulesResultDue");
 	if (!empty($conf->global->FACTURE_DEPOSITS_ARE_JUST_PAYMENTS)) $description .= "<br>".$langs->trans("DepositsAreNotIncluded");
-	else  $description .= "<br>".$langs->trans("DepositsAreIncluded");
+	else $description .= "<br>".$langs->trans("DepositsAreIncluded");
 	$builddate = dol_now();
 	//$exportlink=$langs->trans("NotYetAvailable");
 }
@@ -724,8 +724,7 @@ if (!empty($conf->expensereport->enabled) && ($modecompta == 'CREANCES-DETTES' |
 			}
 		}
 	}
-	else
-	{
+	else {
 		dol_print_error($db);
 	}
 }
@@ -786,8 +785,7 @@ if (!empty($conf->don->enabled) && ($modecompta == 'CREANCES-DETTES' || $modecom
     		}
     	}
     }
-    else
-    {
+    else {
     	dol_print_error($db);
     }
 }
@@ -826,8 +824,7 @@ if (!empty($conf->global->ACCOUNTING_REPORTS_INCLUDE_VARPAY) && !empty($conf->ba
     		}
     	}
     }
-    else
-    {
+    else {
     	dol_print_error($db);
     }
 
@@ -856,8 +853,7 @@ if (!empty($conf->global->ACCOUNTING_REPORTS_INCLUDE_VARPAY) && !empty($conf->ba
     		}
     	}
     }
-    else
-    {
+    else {
     	dol_print_error($db);
     }
 }
@@ -894,8 +890,7 @@ if (!empty($conf->global->ACCOUNTING_REPORTS_INCLUDE_LOAN) && !empty($conf->loan
     		}
     	}
     }
-    else
-    {
+    else {
     	dol_print_error($db);
     }
 }
@@ -961,8 +956,7 @@ if (!empty($conf->accounting->enabled) && ($modecompta == 'BOOKKEEPING'))
 			}
 		}
 	}
-	else
-	{
+	else {
 		dol_print_error($db);
 	}
 }
@@ -1042,8 +1036,7 @@ for ($mois = 1 + $nb_mois_decalage; $mois <= 12 + $nb_mois_decalage; $mois++)
 				$totsorties[$annee] += $decaiss[$case];
 			}
 		}
-		else
-		{
+		else {
 			if (isset($decaiss_ttc[$case]) && $decaiss_ttc[$case] != 0)
 			{
 				print '<a href="clientfourn.php?year='.$annee_decalage.'&month='.$mois_modulo.($modecompta ? '&modecompta='.$modecompta : '').'">'.price(price2num($decaiss_ttc[$case], 'MT')).'</a>';
@@ -1063,8 +1056,7 @@ for ($mois = 1 + $nb_mois_decalage; $mois <= 12 + $nb_mois_decalage; $mois++)
 				$totentrees[$annee] += $encaiss[$case];
 			}
 		}
-		else
-		{
+		else {
 			if (isset($encaiss_ttc[$case]))
 			{
 				print '<a href="clientfourn.php?year='.$annee_decalage.'&month='.$mois_modulo.($modecompta ? '&modecompta='.$modecompta : '').'">'.price(price2num($encaiss_ttc[$case], 'MT')).'</a>';

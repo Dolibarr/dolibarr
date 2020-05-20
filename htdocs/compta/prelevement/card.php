@@ -409,8 +409,7 @@ if ($id > 0 || $ref)
 			{
 		  		print '<b>'.$langs->trans("StatusRefused").'</b>';
 			}
-			else
-			{
+			else {
 		  		print "&nbsp;";
 			}
 
@@ -443,8 +442,7 @@ if ($id > 0 || $ref)
 
 		$db->free($result);
 	}
-	else
-	{
+	else {
 		dol_print_error($db);
 	}
 }

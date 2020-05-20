@@ -73,8 +73,7 @@ if ($action == 'builddoc')
     {
         $outputlangs->charset_output = $sav_charset_output;
     }
-    else
-    {
+    else {
         $outputlangs->charset_output = $sav_charset_output;
         dol_print_error($db, $obj->error);
     }

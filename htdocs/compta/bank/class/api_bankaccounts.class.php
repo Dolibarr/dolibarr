@@ -226,8 +226,7 @@ class BankAccounts extends DolibarrApi
         {
             $amount_to = $amount;
         }
-        else
-        {
+        else {
             if (!$amount_to || empty($amount_to))
             {
                 throw new RestException(422, 'You must provide amount_to value since bankaccount_from and bankaccount_to does not share the same currency.');
@@ -304,8 +303,7 @@ class BankAccounts extends DolibarrApi
                 )
             );
         }
-        else
-        {
+        else {
             $this->db->rollback();
             throw new RestException(500, $accountfrom->error.' '.$accountto->error);
         }
@@ -339,8 +337,7 @@ class BankAccounts extends DolibarrApi
         {
             return $this->get($id);
         }
-        else
-        {
+        else {
             throw new RestException(500, $account->error);
         }
     }

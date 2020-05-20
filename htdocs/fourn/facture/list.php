@@ -415,8 +415,7 @@ if (!$search_all)
 		}
 	}
 }
-else
-{
+else {
 	$sql .= natural_search(array_keys($fieldstosearchall), $search_all);
 }
 
@@ -1302,8 +1301,7 @@ if ($resql)
 
     print $formfile->showdocuments('massfilesarea_supplier_invoice', '', $filedir, $urlsource, 0, $delallowed, '', 1, 1, 0, 48, 1, $param, $title, '', '', '', null, $hidegeneratedfilelistifempty);
 }
-else
-{
+else {
 	dol_print_error($db);
 }
 

@@ -130,8 +130,7 @@ if (GETPOST("orphelins", "alpha"))
 	$reshook = $hookmanager->executeHooks('printFieldListWhere', $parameters); // Note that $action and $object may have been modified by hook
 	$sql .= $hookmanager->resPrint;
 }
-else
-{
+else {
     $sql = "SELECT DISTINCT p.rowid, p.ref, p.datep as dp, p.amount,"; // DISTINCT is to avoid duplicate when there is a link to sales representatives
     $sql .= " p.statut, p.num_paiement as num_payment,";
     $sql .= " c.code as paiement_code,";
@@ -161,7 +160,7 @@ else
     if ($userid)
     {
         if ($userid == -1) $sql .= " AND f.fk_user_author IS NULL";
-        else  $sql .= " AND f.fk_user_author = ".$userid;
+        else $sql .= " AND f.fk_user_author = ".$userid;
     }
     // Search criteria
     $sql .= dolSqlDateFilter("p.datep", $day, $month, $year);
@@ -379,8 +378,7 @@ if ($resql)
     print "</div>";
     print "</form>\n";
 }
-else
-{
+else {
     dol_print_error($db);
 }
 

@@ -71,8 +71,7 @@ if ($action == 'validate' && $user->rights->deplacement->creer)
             header("Location: ".$_SERVER["PHP_SELF"]."?id=".$id);
             exit;
         }
-        else
-        {
+        else {
 	        setEventMessages($object->error, $object->errors, 'errors');
         }
     }
@@ -89,8 +88,7 @@ elseif ($action == 'classifyrefunded' && $user->rights->deplacement->creer)
             header("Location: ".$_SERVER["PHP_SELF"]."?id=".$id);
             exit;
         }
-        else
-        {
+        else {
 	        setEventMessages($object->error, $object->errors, 'errors');
         }
     }
@@ -104,8 +102,7 @@ elseif ($action == 'confirm_delete' && $confirm == "yes" && $user->rights->depla
         header("Location: index.php");
         exit;
     }
-    else
-    {
+    else {
 	    setEventMessages($object->error, $object->errors, 'errors');
     }
 }
@@ -150,19 +147,16 @@ elseif ($action == 'add' && $user->rights->deplacement->creer)
                 header("Location: ".$_SERVER["PHP_SELF"]."?id=".$id);
                 exit;
             }
-            else
-            {
+            else {
 	            setEventMessages($object->error, $object->errors, 'errors');
                 $action = 'create';
             }
         }
-        else
-        {
+        else {
             $action = 'create';
         }
     }
-    else
-    {
+    else {
         header("Location: index.php");
         exit;
     }
@@ -190,13 +184,11 @@ elseif ($action == 'update' && $user->rights->deplacement->creer)
             header("Location: ".$_SERVER["PHP_SELF"]."?id=".$id);
             exit;
         }
-        else
-        {
+        else {
 	        setEventMessages($object->error, $object->errors, 'errors');
         }
     }
-    else
-    {
+    else {
         header("Location: ".$_SERVER["PHP_SELF"]."?id=".$id);
         exit;
     }
@@ -413,8 +405,7 @@ elseif ($id)
 
             print '</div>';
         }
-        else
-        {
+        else {
             /*
              * Confirm delete trip
              */
@@ -493,8 +484,7 @@ elseif ($id)
                 {
                     $form->form_project($_SERVER['PHP_SELF'].'?id='.$object->id, $object->socid, $object->fk_project, 'projectid', 0, 0, 1);
                 }
-                else
-                {
+                else {
                     $form->form_project($_SERVER['PHP_SELF'].'?id='.$object->id, $object->socid, $object->fk_project, 'none', 0, 0);
                 }
                 print '</td>';
@@ -529,8 +519,7 @@ elseif ($id)
 	            {
 	                print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?action=edit&id='.$id.'">'.$langs->trans('Modify').'</a>';
 	            }
-	            else
-	            {
+	            else {
 	                print '<a class="butActionRefused classfortooltip" href="#" title="'.dol_escape_htmltag($langs->trans("NotAllowed")).'">'.$langs->trans('Modify').'</a>';
 	            }
             }
@@ -541,8 +530,7 @@ elseif ($id)
                 {
                     print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?action=validate&id='.$id.'">'.$langs->trans('Validate').'</a>';
                 }
-                else
-                {
+                else {
                     print '<a class="butActionRefused classfortooltip" href="#" title="'.dol_escape_htmltag($langs->trans("NotAllowed")).'">'.$langs->trans('Validate').'</a>';
                 }
             }
@@ -553,8 +541,7 @@ elseif ($id)
                 {
                     print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?action=classifyrefunded&id='.$id.'">'.$langs->trans('ClassifyRefunded').'</a>';
                 }
-                else
-                {
+                else {
                     print '<a class="butActionRefused classfortooltip" href="#" title="'.dol_escape_htmltag($langs->trans("NotAllowed")).'">'.$langs->trans('ClassifyRefunded').'</a>';
                 }
             }
@@ -563,16 +550,14 @@ elseif ($id)
             {
                 print '<a class="butActionDelete" href="'.$_SERVER["PHP_SELF"].'?action=delete&id='.$id.'">'.$langs->trans('Delete').'</a>';
             }
-            else
-            {
+            else {
                 print '<a class="butActionRefused classfortooltip" href="#" title="'.dol_escape_htmltag($langs->trans("NotAllowed")).'">'.$langs->trans('Delete').'</a>';
             }
 
             print '</div>';
         }
     }
-    else
-    {
+    else {
         dol_print_error($db);
     }
 }

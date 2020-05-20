@@ -296,16 +296,14 @@ if (empty($numref))
 			{
 				//
 			}
-			else
-			{
+			else {
 				print '<tr class="oddeven">';
 				print '<td>';
 				if ($action != 'editbankreceipt' || $objp->numr != $brref)
 				{
 					print '<a href="releve.php?num='.$objp->numr.'&account='.$object->id.'">'.$objp->numr.'</a>';
 				}
-				else
-				{
+				else {
 					print '<input type="hidden" name="oldbankreceipt" value="'.$objp->numr.'">';
 					print '<input type="text" name="newbankreceipt" value="'.$objp->numr.'">';
 					print '<input type="submit" class="button" name="actionnewbankreceipt" value="'.$langs->trans("Rename").'">';
@@ -356,13 +354,11 @@ if (empty($numref))
 
 		print "\n</div>\n";
 	}
-	else
-	{
+	else {
 		dol_print_error($db);
 	}
 }
-else
-{
+else {
 	/**
 	 *   Show list of record into a bank statement
 	 */
@@ -554,8 +550,7 @@ else
 						print $bankstatic->getNomUrl(1, '');
 						print ')';
 					}
-					else
-					{
+					else {
 						$bankstatic->id = $objp->bankid;
 						$bankstatic->label = $objp->bankref;
 						print ' ('.$langs->trans("from").' ';
@@ -626,8 +621,7 @@ else
 						$ii++;
 					}
 				}
-				else
-				{
+				else {
 					dol_print_error($db);
 				}
 			}
@@ -639,8 +633,7 @@ else
 				$totald = $totald + abs($objp->amount);
 				print '<td class="nowrap right">'.price($objp->amount * -1)."</td><td>&nbsp;</td>\n";
 			}
-			else
-			{
+			else {
 				$totalc = $totalc + abs($objp->amount);
 				print '<td>&nbsp;</td><td class="nowrap right">'.price($objp->amount)."</td>\n";
 			}
@@ -653,8 +646,7 @@ else
 				print img_edit();
 				print "</a></td>";
 			}
-			else
-			{
+			else {
 				print "<td class=\"center\">&nbsp;</td>";
 			}
 			print "</tr>";

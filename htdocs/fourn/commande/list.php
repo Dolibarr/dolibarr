@@ -336,15 +336,13 @@ if (empty($reshook))
 								$result = $object->insert_discount($discountid);
 								//$result=$discount->link_to_invoice($lineid,$id);
 							}
-							else
-							{
+							else {
 								setEventMessages($discount->error, $discount->errors, 'errors');
 								$error++;
 								break;
 							}
 						}
-						else
-						{
+						else {
 							// Positive line
 							$product_type = ($lines[$i]->product_type ? $lines[$i]->product_type : 0);
 							// Date start
@@ -392,8 +390,7 @@ if (empty($reshook))
 							{
 								$lineid = $result;
 							}
-							else
-							{
+							else {
 								$lineid = 0;
 								$error++;
 								break;
@@ -448,8 +445,7 @@ if (empty($reshook))
 			$db->commit();
 			setEventMessages($langs->trans('BillCreated', $nb_bills_created), null, 'mesgs');
 		}
-		else
-		{
+		else {
 			$db->rollback();
 			$action = 'create';
 			$_GET["origin"] = $_POST["origin"];
@@ -597,8 +593,7 @@ if ($resql)
 		$soc->fetch($socid);
 		$title = $langs->trans('ListOfSupplierOrders').' - '.$soc->name;
 	}
-	else
-	{
+	else {
 		$title = $langs->trans('ListOfSupplierOrders');
 	}
 
@@ -1262,8 +1257,7 @@ if ($resql)
 
 	print $formfile->showdocuments('massfilesarea_supplier_order', '', $filedir, $urlsource, 0, $delallowed, '', 1, 1, 0, 48, 1, $param, $title, '', '', '', null, $hidegeneratedfilelistifempty);
 }
-else
-{
+else {
 	dol_print_error($db);
 }
 

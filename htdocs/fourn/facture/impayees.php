@@ -291,8 +291,7 @@ if ($user->rights->fournisseur->facture->lire)
 
 		$db->free($resql);
 	}
-	else
-	{
+	else {
 		dol_print_error($db);
 	}
 }

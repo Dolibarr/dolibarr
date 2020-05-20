@@ -687,8 +687,7 @@ if ($resql)
 				print showDimensionInBestUnit($tmparray['weight'], 0, "weight", $langs, isset($conf->global->MAIN_WEIGHT_DEFAULT_ROUND) ? $conf->global->MAIN_WEIGHT_DEFAULT_ROUND : -1, isset($conf->global->MAIN_WEIGHT_DEFAULT_UNIT) ? $conf->global->MAIN_WEIGHT_DEFAULT_UNIT : 'no');
 				print $form->textwithpicto('', $langs->trans('EstimatedWeight'), 1);
 			}
-			else
-			{
+			else {
 				print $object->trueWeight;
 				print ($object->trueWeight && $object->weight_units != '') ? ' '.measuringUnitString(0, "weight", $object->weight_units) : '';
 			}
@@ -804,8 +803,7 @@ if ($resql)
 
 	print $formfile->showdocuments('massfilesarea_sendings', '', $filedir, $urlsource, 0, $delallowed, '', 1, 1, 0, 48, 1, $param, $title, '', '', '', null, $hidegeneratedfilelistifempty);
 }
-else
-{
+else {
 	dol_print_error($db);
 }
 

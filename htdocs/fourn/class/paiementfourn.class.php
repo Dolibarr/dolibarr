@@ -132,14 +132,12 @@ class PaiementFourn extends Paiement
 				$this->statut         = $obj->statut;
 				$error = 1;
 			}
-			else
-			{
+			else {
 				$error = -2; // TODO Use 0 instead
 			}
 			$this->db->free($resql);
 		}
-		else
-		{
+		else {
 			dol_print_error($this->db);
 			$error = -1;
 		}
@@ -172,8 +170,7 @@ class PaiementFourn extends Paiement
 			$amounts = &$this->amounts;
 			$amounts_to_update = &$this->multicurrency_amounts;
 		}
-		else
-		{
+		else {
 			$amounts = &$this->multicurrency_amounts;
 			$amounts_to_update = &$this->amounts;
 		}
@@ -203,8 +200,7 @@ class PaiementFourn extends Paiement
 				$total = $totalamount;
 				$mtotal = $totalamount_converted; // Maybe use price2num with MT for the converted value
 			}
-			else
-			{
+			else {
 				$total = $totalamount_converted; // Maybe use price2num with MT for the converted value
 				$mtotal = $totalamount;
 			}
@@ -269,14 +265,12 @@ class PaiementFourn extends Paiement
 								}
 							}
 						}
-						else
-						{
+						else {
 							$this->error = $this->db->lasterror();
 							$error++;
 						}
 					}
-					else
-					{
+					else {
 						dol_syslog(get_class($this).'::Create Amount line '.$key.' not a number. We discard it.');
 					}
 				}
@@ -289,14 +283,12 @@ class PaiementFourn extends Paiement
 					// End call triggers
 				}
 			}
-			else
-			{
+			else {
 				$this->error = $this->db->lasterror();
 				$error++;
 			}
 		}
-		else
-		{
+		else {
 			$this->error = "ErrorTotalIsNull";
 			dol_syslog('PaiementFourn::Create Error '.$this->error, LOG_ERR);
 			$error++;
@@ -311,8 +303,7 @@ class PaiementFourn extends Paiement
 			dol_syslog('PaiementFourn::Create Ok Total = '.$this->total);
 			return $this->id;
 		}
-		else
-		{
+		else {
 			$this->db->rollback();
 			return -1;
 		}
@@ -347,8 +338,7 @@ class PaiementFourn extends Paiement
 				return -1;
 			}
 		}
-		else
-		{
+		else {
 			$this->db->rollback();
 			return -2;
 		}
@@ -415,8 +405,7 @@ class PaiementFourn extends Paiement
 			$this->db->commit();
 			return 1;
 		}
-		else
-		{
+		else {
 			$this->error = $this->db->error;
 			$this->db->rollback();
 			return -5;
@@ -461,8 +450,7 @@ class PaiementFourn extends Paiement
 			}
 			$this->db->free($resql);
 		}
-		else
-		{
+		else {
 			dol_print_error($this->db);
 		}
 	}
@@ -497,8 +485,7 @@ class PaiementFourn extends Paiement
 
 			return $billsarray;
 		}
-		else
-		{
+		else {
 			$this->error = $this->db->error();
 			dol_syslog(get_class($this).'::getBillsArray Error '.$this->error);
 			return -1;
@@ -706,8 +693,7 @@ class PaiementFourn extends Paiement
 
 			return $numref;
 		}
-		else
-		{
+		else {
 			$langs->load("errors");
 			print $langs->trans("Error")." ".$langs->trans("ErrorModuleSetupNotComplete", $langs->transnoentitiesnoconv("Supplier"));
 			return "";
@@ -738,8 +724,7 @@ class PaiementFourn extends Paiement
 			{
 				$modele = $conf->global->SUPPLIER_PAYMENT_ADDON_PDF;
 			}
-			else
-			{
+			else {
 				$modele = ''; // No default value. For supplier invoice, we allow to disable all PDF generation
 			}
 		}
@@ -748,8 +733,7 @@ class PaiementFourn extends Paiement
 		{
 			return 0;
 		}
-		else
-		{
+		else {
 			$modelpath = "core/modules/supplier_payment/doc/";
 
 			return $this->commonGenerateDocument($modelpath, $modele, $outputlangs, $hidedetails, $hidedesc, $hideref, $moreparams);

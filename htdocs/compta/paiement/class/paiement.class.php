@@ -201,14 +201,12 @@ class Paiement extends CommonObject
 				$this->db->free($resql);
 				return 1;
 			}
-			else
-			{
+			else {
 				$this->db->free($resql);
 				return 0;
 			}
 		}
-		else
-		{
+		else {
 			dol_print_error($this->db);
 			return -1;
 		}
@@ -243,8 +241,7 @@ class Paiement extends CommonObject
 			$amounts = &$this->amounts;
 			$amounts_to_update = &$this->multicurrency_amounts;
 		}
-		else
-		{
+		else {
 			$amounts = &$this->multicurrency_amounts;
 			$amounts_to_update = &$this->amounts;
 		}
@@ -283,8 +280,7 @@ class Paiement extends CommonObject
 			$total = $totalamount;
 			$mtotal = $totalamount_converted; // Maybe use price2num with MT for the converted value
 		}
-		else
-		{
+		else {
 			$total = $totalamount_converted; // Maybe use price2num with MT for the converted value
 			$mtotal = $totalamount;
 		}
@@ -340,8 +336,7 @@ class Paiement extends CommonObject
                             if (!in_array($invoice->type, $affected_types)) dol_syslog("Invoice ".$facid." is not a standard, nor replacement invoice, nor credit note, nor deposit invoice, nor situation invoice. We do nothing more.");
                             elseif ($remaintopay) dol_syslog("Remain to pay for invoice ".$facid." not null. We do nothing more.");
                             //else if ($mustwait) dol_syslog("There is ".$mustwait." differed payment to process, we do nothing more.");
-                            else
-                            {
+                            else {
                                 // If invoice is a down payment, we also convert down payment to discount
                                 if ($invoice->type == Facture::TYPE_DEPOSIT)
                                 {
@@ -430,14 +425,12 @@ class Paiement extends CommonObject
                             }
                         }
 					}
-					else
-					{
+					else {
 						$this->error = $this->db->lasterror();
 						$error++;
 					}
 				}
-				else
-				{
+				else {
 					dol_syslog(get_class($this).'::Create Amount line '.$key.' not a number. We discard it.');
 				}
 			}
@@ -450,8 +443,7 @@ class Paiement extends CommonObject
 				// Fin appel triggers
 			}
 		}
-		else
-		{
+		else {
 			$this->error = $this->db->lasterror();
 			$error++;
 		}
@@ -464,8 +456,7 @@ class Paiement extends CommonObject
 			$this->db->commit();
 			return $this->id;
 		}
-		else
-		{
+		else {
 			$this->db->rollback();
 			return -1;
 		}
@@ -502,8 +493,7 @@ class Paiement extends CommonObject
 				return -1;
 			}
 		}
-		else
-		{
+		else {
 			$this->db->rollback();
 			return -2;
 		}
@@ -568,8 +558,7 @@ class Paiement extends CommonObject
 			$this->db->commit();
 			return 1;
 		}
-		else
-		{
+		else {
 			$this->error = $this->db->error;
 			$this->db->rollback();
 			return -5;
@@ -731,8 +720,7 @@ class Paiement extends CommonObject
 				    // Fin appel triggers
 				}
             }
-            else
-			{
+            else {
                 $this->error = $acc->error;
                 $error++;
             }
@@ -741,8 +729,7 @@ class Paiement extends CommonObject
             {
             	$this->db->commit();
             }
-            else
-			{
+            else {
             	$this->db->rollback();
             }
         }
@@ -751,8 +738,7 @@ class Paiement extends CommonObject
         {
             return $bank_line_id;
         }
-        else
-        {
+        else {
             return -1;
         }
     }
@@ -777,8 +763,7 @@ class Paiement extends CommonObject
 		{
 			return 1;
 		}
-		else
-		{
+		else {
             $this->error = $this->db->lasterror();
             dol_syslog(get_class($this).'::update_fk_bank '.$this->error);
 			return -1;
@@ -840,8 +825,7 @@ class Paiement extends CommonObject
                 $this->db->commit();
                 return 0;
             }
-            else
-            {
+            else {
                 $this->db->rollback();
                 return -2;
             }
@@ -871,8 +855,7 @@ class Paiement extends CommonObject
             	$this->num_payment = $this->db->escape($num);
                 return 0;
             }
-            else
-            {
+            else {
                 $this->error = 'Error -1 '.$this->db->error();
                 return -2;
             }
@@ -896,8 +879,7 @@ class Paiement extends CommonObject
 		{
 			return 1;
 		}
-		else
-		{
+		else {
 			$this->error = $this->db->lasterror();
 			dol_syslog(get_class($this).'::valide '.$this->error);
 			return -1;
@@ -920,8 +902,7 @@ class Paiement extends CommonObject
 		{
 			return 1;
 		}
-		else
-		{
+		else {
 			$this->error = $this->db->lasterror();
 			dol_syslog(get_class($this).'::reject '.$this->error);
 			return -1;
@@ -966,8 +947,7 @@ class Paiement extends CommonObject
 			}
 			$this->db->free($result);
 		}
-		else
-		{
+		else {
 			dol_print_error($this->db);
 		}
     }
@@ -1000,8 +980,7 @@ class Paiement extends CommonObject
 
 			return $billsarray;
 		}
-		else
-		{
+		else {
 			$this->error = $this->db->error();
 			dol_syslog(get_class($this).'::getBillsArray Error '.$this->error.' -', LOG_DEBUG);
 			return -1;
@@ -1034,8 +1013,7 @@ class Paiement extends CommonObject
 
     		return $amounts;
     	}
-    	else
-    	{
+    	else {
     		$this->error = $this->db->error();
     		dol_syslog(get_class($this).'::getAmountsArray Error '.$this->error.' -', LOG_DEBUG);
     		return -1;
@@ -1119,8 +1097,7 @@ class Paiement extends CommonObject
 
 			return $numref;
 		}
-		else
-		{
+		else {
 			$langs->load("errors");
 			print $langs->trans("Error")." ".$langs->trans("ErrorModuleSetupNotComplete", $langs->transnoentitiesnoconv("Invoice"));
 			return "";

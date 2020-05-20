@@ -100,8 +100,7 @@ if ($action == 'confirm_delete_categ' && $confirm == "yes" && $user->rights->ban
         	dol_print_error($db);
     	}
 	}
-	else
-	{
+	else {
 		setEventMessages($langs->trans("MissingIds"), null, 'errors');
 	}
 }
@@ -121,8 +120,7 @@ if ($user->rights->banque->modifier && $action == "update")
 	{
 		$actarget->fetch(GETPOST('accountid', 'int'));
 	}
-	else
-	{
+	else {
 		$actarget->fetch($id);
 	}
 
@@ -192,8 +190,7 @@ if ($user->rights->banque->modifier && $action == "update")
 			setEventMessages($langs->trans("RecordSaved"), null, 'mesgs');
 			$db->commit();
 		}
-		else
-		{
+		else {
 			$db->rollback();
 			dol_print_error($db);
 		}
@@ -230,8 +227,7 @@ if ($user->rights->banque->consolidate && ($action == 'num_releve' || $action ==
 	        setEventMessages($langs->trans("RecordSaved"), null, 'mesgs');
             $db->commit();
         }
-        else
-        {
+        else {
             $db->rollback();
             dol_print_error($db);
         }
@@ -325,8 +321,7 @@ if ($result)
         {
         	$form->select_comptes($acct->id, 'accountid', 0, '', 0);
         }
-        else
-        {
+        else {
         	print $acct->getNomUrl(1, 'transactions', 'reflabel');
         }
         print '</td>';
@@ -464,8 +459,7 @@ if ($result)
             }
             print '</td>';
         }
-        else
-        {
+        else {
             print '<td>'.$objp->fk_type.' '.$objp->num_chq.'</td>';
         }
         print "</tr>";
@@ -480,8 +474,7 @@ if ($result)
             print '<input type="text" class="flat minwidth200" name="emetteur" value="'.(empty($objp->emetteur) ? '' : stripslashes($objp->emetteur)).'">';
             print '</td>';
         }
-        else
-        {
+        else {
             print '<td>'.$objp->emetteur.'</td>';
         }
         print "</tr>";
@@ -496,8 +489,7 @@ if ($result)
         	print '<input type="text" class="flat minwidth200" name="banque" value="'.(empty($objp->banque) ? '' : $objp->banque).'">';
         	print '</td>';
         }
-        else
-        {
+        else {
         	print '<td>'.$objp->banque.'</td>';
         }
         print "</tr>";
@@ -518,8 +510,7 @@ if ($result)
             }
             print '</td>';
         }
-        else
-        {
+        else {
             print '<td>';
             print dol_print_date($db->jdate($objp->do), "day");
             print '</td>';
@@ -542,8 +533,7 @@ if ($result)
             }
             print '</td>';
         }
-        else
-        {
+        else {
             print '<td>';
             print dol_print_date($db->jdate($objp->dv), "day");
             print '</td>';
@@ -561,23 +551,20 @@ if ($result)
                 // Label generique car entre parentheses. On l'affiche en le traduisant
                 print $langs->trans($reg[1]);
             }
-            else
-            {
+            else {
                 print $objp->label;
             }
             print '">';
             print '</td>';
         }
-        else
-        {
+        else {
             print '<td>';
             if (preg_match('/^\((.*)\)$/i', $objp->label, $reg))
             {
                 // Label generique car entre parentheses. On l'affiche en le traduisant
                 print $langs->trans($reg[1]);
             }
-            else
-            {
+            else {
                 print $objp->label;
             }
             print '</td>';
@@ -592,8 +579,7 @@ if ($result)
             print '<input name="amount" class="flat maxwidth100" '.($objp->rappro ? ' disabled' : '').' value="'.price($objp->amount).'"> '.$langs->trans("Currency".$acct->currency_code);
             print '</td>';
         }
-        else
-        {
+        else {
             print '<td>';
             print price($objp->amount);
             print '</td>';
@@ -650,15 +636,13 @@ if ($result)
                     print $langs->trans("AccountStatement").' <input name="num_rel_bis" class="flat" value="'.$objp->num_releve.'"'.($objp->rappro ? ' disabled' : '').'>';
                     print '<input name="num_rel" type="hidden" value="'.$objp->num_releve.'">';
                 }
-                else
-                {
+                else {
                     print $langs->trans("AccountStatement").' <input name="num_rel" class="flat" value="'.$objp->num_releve.'"'.($objp->rappro ? ' disabled' : '').'>';
                 }
                 if ($objp->num_releve) print ' &nbsp; (<a href="'.DOL_URL_ROOT.'/compta/bank/releve.php?num='.$objp->num_releve.'&account='.$acct->id.'">'.$langs->trans("AccountStatement").' '.$objp->num_releve.')</a>';
                 print '</td>';
             }
-            else
-            {
+            else {
                 print '<td>'.$objp->num_releve.'&nbsp;</td>';
             }
             print '</tr>';
@@ -670,8 +654,7 @@ if ($result)
                 print '<input type="checkbox" name="reconciled" class="flat" '.(isset($_POST["reconciled"]) ? ($_POST["reconciled"] ? ' checked="checked"' : '') : ($objp->rappro ? ' checked="checked"' : '')).'">';
                 print '</td>';
             }
-            else
-            {
+            else {
                 print '<td>'.yn($objp->rappro).'</td>';
             }
             print '</tr>';

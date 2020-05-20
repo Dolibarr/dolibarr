@@ -135,8 +135,7 @@ if ($prev_id > 0 || $ref)
 
 		dol_fiche_end();
     }
-  	else
-    {
+  	else {
       	dol_print_error($db);
     }
 }
@@ -290,8 +289,7 @@ if ($result)
 
   	$db->free($result);
 }
-else
-{
+else {
 	dol_print_error($db);
 }
 

@@ -130,8 +130,7 @@ if (empty($reshook))
 		{
 			setEventMessages($langs->trans("NoCloneOptionsSpecified"), null, 'errors');
 		}
-		else
-		{
+		else {
 			if ($object->id > 0)
 			{
 				// Because createFromClone modifies the object, we must clone it so that we can restore it later
@@ -143,8 +142,7 @@ if (empty($reshook))
 					header("Location: ".$_SERVER['PHP_SELF'].'?id='.$result);
 					exit;
 				}
-				else
-				{
+				else {
 					setEventMessages($object->error, $object->errors, 'errors');
 					$object = $orig;
 					$action = '';
@@ -177,8 +175,7 @@ if (empty($reshook))
 			header('Location: '.$_SERVER["PHP_SELF"].'?id='.$object->id);
 			exit;
 		}
-		else
-		{
+		else {
 			$mesg = '<div class="error">'.$object->error.'</div>';
 		}
 	}
@@ -206,8 +203,7 @@ if (empty($reshook))
 			header('Location: '.$_SERVER["PHP_SELF"].'?id='.$object->id);
 			exit;
 		}
-		else
-		{
+		else {
 			$mesg = '<div class="error">'.$object->error.'</div>';
 		}
 	}
@@ -384,20 +380,17 @@ if (empty($reshook))
 							}
 						}
 		            }
-		            else
-		            {
+		            else {
 		                $mesg = $srcobject->error;
 		                $error++;
 		            }
 		        }
-		        else
-		        {
+		        else {
 		            $mesg = $object->error;
 		            $error++;
 		        }
 		    }
-		    else
-		    {
+		    else {
 		    	// Fill array 'array_options' with data from add form
 		    	$ret = $extrafields->setOptionalsFromPost(null, $object);
 		    	if ($ret < 0) {
@@ -417,8 +410,7 @@ if (empty($reshook))
 		    		{
 		    			$id = $result; // Force raffraichissement sur fiche venant d'etre cree
 		    		}
-		    		else
-		    		{
+		    		else {
 		    			$langs->load("errors");
 		    			setEventMessages($object->error, $object->errors, 'errors');
 		    			$action = 'create';
@@ -426,8 +418,7 @@ if (empty($reshook))
 		    	}
 	        }
 	    }
-	    else
-	    {
+	    else {
 	    	$mesg = '<div class="error">'.$langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("ThirdParty")).'</div>';
 	        $action = 'create';
 	    }
@@ -538,8 +529,7 @@ if (empty($reshook))
 				header('Location: '.$_SERVER["PHP_SELF"].'?id='.$object->id);
 				exit;
 			}
-			else
-			{
+			else {
 				$mesg = $object->error;
 				$db->rollback();
 			}
@@ -555,8 +545,7 @@ if (empty($reshook))
 			header('Location: '.$_SERVER["PHP_SELF"].'?id='.$object->id);
 			exit;
 		}
-		else
-		{
+		else {
 			setEventMessages($object->error, $object->errors, 'errors');
 		}
 	}
@@ -570,8 +559,7 @@ if (empty($reshook))
 			header('Location: '.$_SERVER["PHP_SELF"].'?id='.$object->id);
 			exit;
 		}
-		else
-		{
+		else {
 			$mesg = '<div class="error">'.$object->error.'</div>';
 		}
 	}
@@ -585,8 +573,7 @@ if (empty($reshook))
 	        header('Location: '.$_SERVER["PHP_SELF"].'?id='.$object->id);
 	        exit;
 	    }
-	    else
-	    {
+	    else {
 	        setEventMessages($object->error, $object->errors, 'errors');
 	    }
 	}
@@ -770,15 +757,13 @@ if (empty($reshook))
 				header("Location: ".$_SERVER['PHP_SELF']."?id=".$object->id);
 				exit;
 			}
-			else
-			{
+			else {
 				if ($object->error == 'DB_ERROR_RECORD_ALREADY_EXISTS')
 				{
 					$langs->load("errors");
 					$mesg = '<div class="error">'.$langs->trans("ErrorThisContactIsAlreadyDefinedAsThisType").'</div>';
 				}
-				else
-				{
+				else {
 					$mesg = '<div class="error">'.$object->error.'</div>';
 				}
 			}
@@ -846,8 +831,7 @@ if ($action == 'create')
         {
             $projectid = GETPOST('originid', 'int');
         }
-        else
-		{
+        else {
             // For compatibility
 			if ($element == 'order' || $element == 'commande') {
 				$element = $subelement = 'commande';
@@ -1062,8 +1046,7 @@ if ($action == 'create')
 			print '</table>';
 		}
 	}
-	else
-	{
+	else {
 		print '<form name="fichinter" action="'.$_SERVER['PHP_SELF'].'" method="POST">';
 		print '<input type="hidden" name="token" value="'.newToken().'">';
 
@@ -1135,8 +1118,7 @@ elseif ($id > 0 || !empty($ref))
 				setEventMessages($object->error, $object->errors, 'errors');
 			}
 		}
-		else
-		{
+		else {
 			$numref = $object->ref;
 		}
 		$text = $langs->trans('ConfirmValidateIntervention', $numref);
@@ -1291,8 +1273,7 @@ elseif ($id > 0 || !empty($ref))
 			$formcontract = new Formcontract($db);
 			$formcontract->formSelectContract($_SERVER["PHP_SELF"].'?id='.$object->id, $object->socid, $object->fk_contrat, 'contratid', 0, 1);
 		}
-		else
-		{
+		else {
 			if ($object->fk_contrat)
             {
                 $contratstatic = new Contrat($db);
@@ -1300,8 +1281,7 @@ elseif ($id > 0 || !empty($ref))
                 //print '<a href="'.DOL_URL_ROOT.'/projet/card.php?id='.$selected.'">'.$projet->title.'</a>';
                 print $contratstatic->getNomUrl(0, '', 1);
             }
-            else
-            {
+            else {
                 print "&nbsp;";
             }
 		}
@@ -1364,8 +1344,7 @@ elseif ($id > 0 || !empty($ref))
 			print '<input type="hidden" name="action" value="updateline">';
 			print '<input type="hidden" name="line_id" value="'.GETPOST('line_id', 'int').'">';
 		}
-		else
-		{
+		else {
 			print '<input type="hidden" name="action" value="addline">';
 		}
 
@@ -1447,8 +1426,7 @@ elseif ($id > 0 || !empty($ref))
 						}
 						print '</td>';
 					}
-					else
-					{
+					else {
 						print '<td colspan="2">&nbsp;</td>';
 					}
 
@@ -1585,8 +1563,7 @@ elseif ($id > 0 || !empty($ref))
 
 			if ($num) print '</table>';
 		}
-		else
-		{
+		else {
 			dol_print_error($db);
 		}
 
@@ -1675,8 +1652,7 @@ elseif ($id > 0 || !empty($ref))
 						{
 							print '<div class="inline-block divButAction"><a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=classifybilled">'.$langs->trans("InterventionClassifyBilled").'</a></div>';
 						}
-						else
-						{
+						else {
 							print '<div class="inline-block divButAction"><a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=classifyunbilled">'.$langs->trans("InterventionClassifyUnBilled").'</a></div>';
 						}
 					}

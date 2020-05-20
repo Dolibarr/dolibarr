@@ -178,8 +178,7 @@ if (empty($reshook))
         {
             setEventMessages($langs->trans("NoCloneOptionsSpecified"), null, 'errors');
         }
-        else
-        {
+        else {
             if ($object->id > 0)
             {
                 // Because createFromClone modifies the object, we must clone it so that we can restore it later if it fails
@@ -191,8 +190,7 @@ if (empty($reshook))
                     header("Location: ".$_SERVER['PHP_SELF'].'?id='.$result);
                     exit;
                 }
-                else
-                {
+                else {
                     setEventMessages($object->error, $object->errors, 'errors');
                     $object = $orig;
                     $action = '';
@@ -211,8 +209,7 @@ if (empty($reshook))
     		header("Location: index.php");
     		exit;
     	}
-    	else
-    	{
+    	else {
     		setEventMessages($object->error, $object->errors, 'errors');
     	}
     }
@@ -265,8 +262,7 @@ if (empty($reshook))
     			Header("Location: ".$_SERVER["PHP_SELF"]."?id=".$id);
     			exit;
     		}
-    		else
-    		{
+    		else {
     			setEventMessages($object->error, $object->errors, 'errors');
     			$db->rollback();
     			$action = 'create';
@@ -298,8 +294,7 @@ if (empty($reshook))
     		header("Location: ".$_SERVER["PHP_SELF"]."?id=".$_POST['id']);
     		exit;
     	}
-    	else
-    	{
+    	else {
     		setEventMessages($object->error, $object->errors, 'errors');
     	}
     }
@@ -357,8 +352,7 @@ if (empty($reshook))
     			$object->generateDocument($model, $outputlangs, $hidedetails, $hidedesc, $hideref);
     		}
     	}
-    	else
-    	{
+    	else {
     		setEventMessages($object->error, $object->errors, 'errors');
     		$error++;
     	}
@@ -416,8 +410,7 @@ if (empty($reshook))
     					$mesg = $langs->trans('MailSuccessfulySent', $mailfile->getValidAddress($emailFrom, 2), $mailfile->getValidAddress($emailTo, 2));
     					setEventMessages($mesg, null, 'mesgs');
     				}
-    				else
-    				{
+    				else {
     					$langs->load("other");
     					if ($mailfile->error)
     					{
@@ -426,20 +419,17 @@ if (empty($reshook))
     						$mesg .= '<br>'.$mailfile->error;
     						setEventMessages($mesg, null, 'errors');
     					}
-    					else
-    					{
+    					else {
     						setEventMessages('No mail sent. Feature is disabled by option MAIN_DISABLE_ALL_MAILS', null, 'warnings');
     					}
     				}
     			}
-    			else
-    			{
+    			else {
     				setEventMessages($mailfile->error, $mailfile->errors, 'errors');
     				$action = '';
     			}
     		}
-    		else
-    		{
+    		else {
     			setEventMessages($langs->trans("NoEmailSentBadSenderOrRecipientEmail"), null, 'warnings');
     			$action = '';
     		}
@@ -451,8 +441,7 @@ if (empty($reshook))
 			header("Location: ".$_SERVER["PHP_SELF"]."?id=".$id);
 			exit;
 		}
-		else
-		{
+		else {
 			$db->rollback();
 		}
     }
@@ -543,8 +532,7 @@ if (empty($reshook))
     					header("Location: ".$_SERVER["PHP_SELF"]."?id=".$id);
     					exit;
     				}
-    				else
-    				{
+    				else {
     					$langs->load("other");
     					if ($mailfile->error)
     					{
@@ -553,26 +541,22 @@ if (empty($reshook))
     						$mesg .= '<br>'.$mailfile->error;
     						setEventMessages($mesg, null, 'errors');
     					}
-    					else
-    					{
+    					else {
     						setEventMessages('No mail sent. Feature is disabled by option MAIN_DISABLE_ALL_MAILS', null, 'warnings');
     					}
     				}
     			}
-    			else
-    			{
+    			else {
     				setEventMessages($mailfile->error, $mailfile->errors, 'errors');
     				$action = '';
     			}
     		}
-    		else
-    		{
+    		else {
     			setEventMessages($langs->trans("NoEmailSentBadSenderOrRecipientEmail"), null, 'warnings');
     			$action = '';
     		}
     	}
-    	else
-    	{
+    	else {
     		setEventMessages($object->error, $object->errors, 'errors');
     	}
     }
@@ -666,8 +650,7 @@ if (empty($reshook))
        					header("Location: ".$_SERVER["PHP_SELF"]."?id=".$id);
        					exit;
        				}
-       				else
-       				{
+       				else {
        					$langs->load("other");
        					if ($mailfile->error)
        					{
@@ -676,26 +659,22 @@ if (empty($reshook))
        						$mesg .= '<br>'.$mailfile->error;
        						setEventMessages($mesg, null, 'errors');
        					}
-       					else
-       					{
+       					else {
        						setEventMessages('No mail sent. Feature is disabled by option MAIN_DISABLE_ALL_MAILS', null, 'warnings');
        					}
        				}
        			}
-       			else
-       			{
+       			else {
        				setEventMessages($mailfile->error, $mailfile->errors, 'errors');
        				$action = '';
        			}
    			}
-    		else
-    		{
+    		else {
     			setEventMessages($langs->trans("NoEmailSentBadSenderOrRecipientEmail"), null, 'warnings');
     			$action = '';
     		}
     	}
-   		else
-   		{
+   		else {
    			setEventMessages($langs->trans("FailedtoSetToApprove"), null, 'warnings');
    			$action = '';
    		}
@@ -787,8 +766,7 @@ if (empty($reshook))
         				header("Location: ".$_SERVER["PHP_SELF"]."?id=".$id);
         				exit;
         			}
-        			else
-        			{
+        			else {
         				$langs->load("other");
         				if ($mailfile->error)
         				{
@@ -797,26 +775,22 @@ if (empty($reshook))
         					$mesg .= '<br>'.$mailfile->error;
         					setEventMessages($mesg, null, 'errors');
         				}
-        				else
-        				{
+        				else {
         					setEventMessages('No mail sent. Feature is disabled by option MAIN_DISABLE_ALL_MAILS', null, 'warnings');
         				}
         			}
         		}
-        		else
-        		{
+        		else {
         			setEventMessages($mailfile->error, $mailfile->errors, 'errors');
         			$action = '';
         		}
         	}
-        	else
-        	{
+        	else {
         		setEventMessages($langs->trans("NoEmailSentBadSenderOrRecipientEmail"), null, 'warnings');
         		$action = '';
         	}
     	}
-    	else
-    	{
+    	else {
     	    setEventMessages($langs->trans("FailedtoSetToDeny"), null, 'warnings');
     	    $action = '';
     	}
@@ -829,8 +803,7 @@ if (empty($reshook))
     	{
     		setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Comment")), null, 'errors');
     	}
-    	else
-    	{
+    	else {
 	    	$object = new ExpenseReport($db);
 	    	$object->fetch($id);
 
@@ -917,8 +890,7 @@ if (empty($reshook))
 	        					header("Location: ".$_SERVER["PHP_SELF"]."?id=".$id);
 	        					exit;
 	        				}
-	        				else
-	        				{
+	        				else {
 	        					$langs->load("other");
 	        					if ($mailfile->error)
 	        					{
@@ -927,32 +899,27 @@ if (empty($reshook))
 	        						$mesg .= '<br>'.$mailfile->error;
 	        						setEventMessages($mesg, null, 'errors');
 	        					}
-	        					else
-	        					{
+	        					else {
 	        						setEventMessages('No mail sent. Feature is disabled by option MAIN_DISABLE_ALL_MAILS', null, 'warnings');
 	        					}
 	        				}
 	        			}
-	        			else
-	        			{
+	        			else {
 	        				setEventMessages($mailfile->error, $mailfile->errors, 'errors');
 	        				$action = '';
 	        			}
 	    			}
-	    			else
-	    			{
+	    			else {
 	    			    setEventMessages($langs->trans("NoEmailSentBadSenderOrRecipientEmail"), null, 'warnings');
 	    			    $action = '';
 	    			}
 	    		}
-	    		else
-	    		{
+	    		else {
 	    			setEventMessages($langs->trans("FailedToSetToCancel"), null, 'warnings');
 	    			$action = '';
 	    		}
 	    	}
-	    	else
-	    	{
+	    	else {
 	    		setEventMessages($object->error, $object->errors, 'errors');
 	    	}
     	}
@@ -991,13 +958,11 @@ if (empty($reshook))
     			header("Location: ".$_SERVER["PHP_SELF"]."?id=".$id);
     			exit;
     		}
-    		else
-    		{
+    		else {
     			setEventMessages($object->error, $object->errors, 'errors');
     		}
     	}
-    	else
-    	{
+    	else {
     		setEventMessages("NOT_AUTHOR", '', 'errors');
     	}
     }
@@ -1132,8 +1097,7 @@ if (empty($reshook))
         				header("Location: ".$_SERVER["PHP_SELF"]."?id=".$id);
         				exit;
         			}
-        			else
-        			{
+        			else {
     					$langs->load("other");
         				if ($mailfile->error)
         				{
@@ -1142,26 +1106,22 @@ if (empty($reshook))
         					$mesg .= '<br>'.$mailfile->error;
         					setEventMessages($mesg, null, 'errors');
         				}
-        				else
-        				{
+        				else {
         					setEventMessages('No mail sent. Feature is disabled by option MAIN_DISABLE_ALL_MAILS', null, 'warnings');
         				}
         			}
         		}
-        		else
-        		{
+        		else {
         			setEventMessages($mailfile->error, $mailfile->errors, 'errors');
         			$action = '';
         		}
     		}
-    		else
-    		{
+    		else {
     		    setEventMessages($langs->trans("NoEmailSentBadSenderOrRecipientEmail"), null, 'warnings');
     		    $action = '';
     		}
     	}
-    	else
-    	{
+    	else {
     		setEventMessages($langs->trans("FailedToSetPaid"), null, 'warnings');
     		$action = '';
     	}
@@ -1313,8 +1273,7 @@ if (empty($reshook))
     		header("Location: ".$_SERVER["PHP_SELF"]."?id=".$_GET['id']);
     		exit;
     	}
-    	else
-    	{
+    	else {
     		setEventMessages($object->error, $object->errors, 'errors');
     	}
     }
@@ -1408,8 +1367,7 @@ if (empty($reshook))
     			//header("Location: ".$_SERVER["PHP_SELF"]."?id=".$id);
     			//exit;
     		}
-    		else
-    		{
+    		else {
     			setEventMessages($object->error, $object->errors, 'errors');
     		}
     	}
@@ -1497,8 +1455,7 @@ if ($action == 'create')
 	$object = new ExpenseReport($db);
 	$include_users = $object->fetch_users_approver_expensereport();
 	if (empty($include_users)) print img_warning().' '.$langs->trans("NobodyHasPermissionToValidateExpenseReport");
-	else
-	{
+	else {
     	$defaultselectuser = (empty($user->fk_user_expense_validator) ? $user->fk_user : $user->fk_user_expense_validator); // Will work only if supervisor has permission to approve so is inside include_users
     	if (!empty($conf->global->EXPENSEREPORT_DEFAULT_VALIDATOR)) $defaultselectuser = $conf->global->EXPENSEREPORT_DEFAULT_VALIDATOR; // Can force default approver
     	if (GETPOST('fk_user_validator', 'int') > 0) $defaultselectuser = GETPOST('fk_user_validator', 'int');
@@ -1559,8 +1516,7 @@ if ($action == 'create')
 
 	print '</form>';
 }
-else
-{
+else {
 	if ($id > 0 || $ref)
 	{
 		$result = $object->fetch($id, $ref);
@@ -1602,8 +1558,7 @@ else
 				{
 					print '<input type="hidden" name="action" value="updateFromRefuse">';
 				}
-				else
-				{
+				else {
 					print '<input type="hidden" name="action" value="update">';
 				}
 
@@ -1661,8 +1616,7 @@ else
 					print '</td>';
 					print '</tr>';
 				}
-				else
-				{
+				else {
 					print '<tr>';
 					print '<td>'.$langs->trans("VALIDOR").'</td>';
 					print '<td>';
@@ -1698,8 +1652,7 @@ else
 
 				print '</form>';
 			}
-			else
-			{
+			else {
 				dol_fiche_head($head, 'card', $langs->trans("ExpenseReport"), -1, 'trip');
 
 				// Clone confirmation
@@ -1894,8 +1847,7 @@ else
 					print '<td>'.dol_print_date($object->date_cancel, 'dayhour').'</td></tr>';
 					print '</tr>';
 				}
-				else
-				{
+				else {
 					print '<tr>';
 					print '<td>'.$langs->trans("ApprovedBy").'</td>';
 					print '<td>';
@@ -2093,8 +2045,7 @@ else
 
 				    $db->free($resql);
 				}
-				else
-				{
+				else {
 				    dol_print_error($db);
 				}
 				print "</table>";
@@ -2201,8 +2152,7 @@ else
 							{
 							    print price($line->value_unit_ht);
 							}
-							else
-							{
+							else {
 							    $tmpvat = price2num(preg_replace('/\s*\(.*\)/', '', $line->vatrate));
 							    $pricenettoshow = price2num($line->value_unit / (1 + $tmpvat / 100), 'MU');
 							    print $pricenettoshow;
@@ -2246,8 +2196,7 @@ else
                                         print '<img class="photo" height="'.$maxheightmini.'" src="'.DOL_URL_ROOT.'/viewimage.php?modulepart='.$modulepart.'&entity='.(!empty($object->entity) ? $object->entity : $conf->entity).'&file='.urlencode($relativepath.'/'.$minifile).'" title="">';
                                         print '</a>';
                                     }
-                                    else
-                                    {
+                                    else {
                                         $modulepart = 'expensereport';
                                         $thumbshown = 0;
                                         if (preg_match('/\.pdf$/i', $ecmfilesstatic->filename))
@@ -2625,8 +2574,7 @@ else
 				dol_fiche_end();
 			} // end edit or not edit
 		}	// end of if result
-		else
-		{
+		else {
 			dol_print_error($db);
 		}
 	} //fin si id > 0
@@ -2749,8 +2697,7 @@ if ($action != 'create' && $action != 'edit')
 		{
 			print '<div class="inline-block divButAction"><span class="butActionRefused classfortooltip" title="'.$langs->trans("DisabledBecauseRemainderToPayIsZero").'">'.$langs->trans('DoPayment').'</span></div>';
 		}
-		else
-		{
+		else {
 			print '<div class="inline-block divButAction"><a class="butAction" href="'.DOL_URL_ROOT.'/expensereport/payment/payment.php?id='.$object->id.'&amp;action=create">'.$langs->trans('DoPayment').'</a></div>';
 		}
 	}

@@ -86,20 +86,17 @@ if ($action == 'update' && !$_POST["cancel"] && $user->rights->societe->contact-
 					{
 						setEventMessages($langs->trans("ErrorFailedToSaveFile"), null, 'errors');
 					}
-					else
-					{
+					else {
 					    // Create thumbs
 					    $object->addThumbs($newfile);
 					}
 				}
 			}
-			else
-			{
+			else {
 				setEventMessages("ErrorBadImageFormat", null, 'errors');
 			}
 		}
-		else
-		{
+		else {
 			switch ($_FILES['photo']['error'])
 			{
 				case 1: //uploaded file exceeds the upload_max_filesize directive in php.ini
@@ -112,8 +109,7 @@ if ($action == 'update' && !$_POST["cancel"] && $user->rights->societe->contact-
 			}
 		}
 	}
-	else
-	{
+	else {
 		$error = $object->error;
 	}
 }
@@ -184,8 +180,7 @@ if ($action == 'edit')
 
             print '<tr><td>'.$langs->trans("ThirdParty").'</td><td colspan="3">'.$objsoc->getNomUrl(1).'</td>';
         }
-        else
-        {
+        else {
             print '<tr><td>'.$langs->trans("ThirdParty").'</td><td colspan="3">';
             print $langs->trans("ContactNotLinkedToCompany");
             print '</td></tr>';
@@ -208,8 +203,7 @@ if ($action == 'edit')
     {
         print '<input type="checkbox" name="birthday_alert" checked></td>';
     }
-    else
-    {
+    else {
         print '<input type="checkbox" name="birthday_alert"></td>';
     }
     print '</tr>';
@@ -226,8 +220,7 @@ if ($action == 'edit')
 
     print "</form>";
 }
-else
-{
+else {
     // View mode
 
     dol_fiche_head($head, 'perso', $title, -1, 'contact');
@@ -302,8 +295,7 @@ else
         else print $langs->trans("BirthdayAlertOff");
         print '</td>';
     }
-    else
-    {
+    else {
         print '<td>'.$langs->trans("DateToBirth").'</td><td colspan="3"></td>';
     }
     print "</tr>";

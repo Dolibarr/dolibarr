@@ -103,8 +103,7 @@ if ($action == 'add' && $user->rights->ecm->setup)
 		header("Location: ".$_SERVER["PHP_SELF"]);
 		exit;
 	}
-	else
-	{
+	else {
 		setEventMessages('Error '.$langs->trans($ecmdir->error), null, 'errors');
 		$action = "create";
 	}
@@ -222,14 +221,12 @@ if ($action == 'refreshmanual')
                     $fk_parent = $parentdirisindatabase;
                     //break;  // We found parent, we can stop the while loop
                 }
-                else
-				{
+                else {
                     dol_syslog("No");
                     //print "No<br>\n";
                 }
             }
-            else
-            {
+            else {
                 dol_syslog("Parent is root");
                 $fk_parent = 0; // Parent is root
             }
@@ -256,8 +253,7 @@ if ($action == 'refreshmanual')
                     //var_dump($sqltree);
                     $adirwascreated = 1;
                 }
-                else
-                {
+                else {
                     dol_syslog("Failed to create directory ".$ecmdirtmp->label, LOG_ERR);
                 }
             }
@@ -419,8 +415,7 @@ if (empty($action) || $action == 'file_manager' || preg_match('/refresh/i', $act
 			    print $val['label'];
    			    print '</a>';
 			}
-			else
-			{
+			else {
 			    print '<a class="fmdirlia jqft ecmjqft" href="'.$_SERVER["PHP_SELF"].'?module='.$val['module'].'">';
 			    print $val['label'];
 			    print '</a>';

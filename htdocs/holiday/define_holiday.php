@@ -233,8 +233,7 @@ if (count($typeleaves) == 0)
     print $langs->trans("GoIntoDictionaryHolidayTypes");
     //print '</div>';
 }
-else
-{
+else {
     $canedit = 0;
     if (!empty($user->rights->holiday->define_holiday)) $canedit = 1;
 
@@ -261,8 +260,7 @@ else
             print '<td class="liste_titre" style="text-align:center"></td>';
         }
     }
-    else
-    {
+    else {
         print '<td class="liste_titre"></td>';
     }
     print '<td class="liste_titre"></td>';
@@ -286,8 +284,7 @@ else
         	print_liste_field_titre($labeltype, $_SERVER["PHP_SELF"], '', '', '', '', '', '', 'center ');
         }
     }
-    else
-    {
+    else {
         print_liste_field_titre('NoLeaveWithCounterDefined', $_SERVER["PHP_SELF"], '', '', '', '');
     }
     print_liste_field_titre((empty($user->rights->holiday->define_holiday) ? '' : 'Note'), $_SERVER["PHP_SELF"]);
@@ -343,8 +340,7 @@ else
             	print '</td>'."\n";
         	}
         }
-        else
-        {
+        else {
             print '<td></td>';
         }
 

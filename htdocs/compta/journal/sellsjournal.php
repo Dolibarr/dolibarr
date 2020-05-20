@@ -93,7 +93,7 @@ $exportlink = '';
 $builddate = dol_now();
 $description = $langs->trans("DescSellsJournal").'<br>';
 if (!empty($conf->global->FACTURE_DEPOSITS_ARE_JUST_PAYMENTS)) $description .= $langs->trans("DepositsAreNotIncluded");
-else  $description .= $langs->trans("DepositsAreIncluded");
+else $description .= $langs->trans("DepositsAreIncluded");
 $period = $form->selectDate($date_start, 'date_start', 0, 0, 0, '', 1, 0).' - '.$form->selectDate($date_end, 'date_end', 0, 0, 0, '', 1, 0);
 report_header($name, '', $period, $periodlink, $description, $builddate, $exportlink);
 
@@ -269,8 +269,7 @@ foreach ($tabfac as $key => $val)
 					print '<td class="right">'.($mt >= 0 ?price($mt) : '')."</td>";
 					print '<td class="right">'.($mt < 0 ?price(-$mt) : '')."</td>";
 				}
-				else
-				{
+				else {
 					print '<td class="right">'.($mt < 0 ?price(-$mt) : '')."</td>";
 	    			print '<td class="right">'.($mt >= 0 ?price($mt) : '')."</td>";
 				}

@@ -586,8 +586,7 @@ class EmailCollector extends CommonObject
 
             $this->db->free($result);
         }
-        else
-        {
+        else {
             dol_print_error($this->db);
         }
     }
@@ -773,8 +772,7 @@ class EmailCollector extends CommonObject
                 $tmpclass = $tmparray[0];
                 $tmpproperty = $tmparray[1];
             }
-            else
-            {
+            else {
                 $tmpproperty = $tmparray[0];
             }
             if ($tmpclass && ($tmpclass != $object->element)) continue; // Property is for another type of object
@@ -818,14 +816,12 @@ class EmailCollector extends CommonObject
                             // Overwrite param $tmpproperty
                             $object->$tmpproperty = isset($regforval[count($regforval) - 1]) ?trim($regforval[count($regforval) - 1]) : null;
                         }
-                        else
-                        {
+                        else {
                             // Regex not found
                             $object->$tmpproperty = null;
                         }
                     }
-                    else
-                    {
+                    else {
                         // Nothing can be done for this param
                         $errorforthisaction++;
                         $this->error = 'The extract rule to use has on an unknown source (must be HEADER, SUBJECT or BODY)';
@@ -863,8 +859,7 @@ class EmailCollector extends CommonObject
                         else $object->$tmpproperty = $valuetouse;
                     }
                 }
-                else
-                {
+                else {
                     $errorforthisaction++;
                     $this->error = 'Bad syntax for description of action parameters: '.$actionparam;
                     $this->errors[] = $this->error;
@@ -1239,8 +1234,7 @@ class EmailCollector extends CommonObject
                     $from = $reg[2];
                     $fromtext = $reg[1];
                 }
-                else
-                {
+                else {
                     $from = $fromstring;
                     $fromtext = '';
                 }
@@ -1313,8 +1307,7 @@ class EmailCollector extends CommonObject
                     {
                         $result = $projectstatic->fetch($projectid);
                         if ($result <= 0) $projectstatic->id = 0;
-                        else
-                        {
+                        else {
                             $projectid = $projectstatic->id;
                             $projectfoundby = 'trackid ('.$trackid.')';
                             if (empty($contactid)) $contactid = $projectstatic->fk_contact;
@@ -1326,8 +1319,7 @@ class EmailCollector extends CommonObject
                     {
                         $result = $contactstatic->fetch($contactid);
                         if ($result <= 0) $contactstatic->id = 0;
-                        else
-                        {
+                        else {
                             $contactid = $contactstatic->id;
                             $contactfoundby = 'trackid ('.$trackid.')';
                             if (empty($thirdpartyid)) $thirdpartyid = $contactstatic->fk_soc;
@@ -1338,8 +1330,7 @@ class EmailCollector extends CommonObject
                     {
                         $result = $thirdpartystatic->fetch($thirdpartyid);
                         if ($result <= 0) $thirdpartystatic->id = 0;
-                        else
-                        {
+                        else {
                             $thirdpartyid = $thirdpartystatic->id;
                             $thirdpartyfoundby = 'trackid ('.$trackid.')';
                         }
@@ -1409,8 +1400,7 @@ class EmailCollector extends CommonObject
                             $this->error = "Action loadthirdparty or loadandcreatethirdparty has empty parameter. Must be 'SET:xxx' or 'EXTRACT:(body|subject):regex' to define how to extract data";
                             $this->errors[] = $this->error;
                         }
-                        else
-                        {
+                        else {
                             $actionparam = $operation['actionparam'];
                             $nametouseforthirdparty = '';
 
@@ -1445,15 +1435,13 @@ class EmailCollector extends CommonObject
                                             // Overwrite param $tmpproperty
                                             $nametouseforthirdparty = isset($regforval[count($regforval) - 1]) ?trim($regforval[count($regforval) - 1]) : null;
                                         }
-                                        else
-                                        {
+                                        else {
                                             // Regex not found
                                             $nametouseforthirdparty = null;
                                         }
                                         //var_dump($object->$tmpproperty);exit;
                                     }
-                                    else
-                                    {
+                                    else {
                                         // Nothing can be done for this param
                                         $errorforactions++;
                                         $this->error = 'The extract rule to use to load thirdparty has on an unknown source (must be HEADER, SUBJECT or BODY)';
@@ -1466,8 +1454,7 @@ class EmailCollector extends CommonObject
                                     //else $object->$tmpproperty = $reg[1];
                                     $nametouseforthirdparty = $reg[2];
                                 }
-                                else
-                                {
+                                else {
                                     $errorforactions++;
                                     $this->error = 'Bad syntax for description of action parameters: '.$actionparam;
                                     $this->errors[] = $this->error;
@@ -1511,8 +1498,7 @@ class EmailCollector extends CommonObject
                                         {
                                             $errorforactions++;
                                         }
-                                        else
-                                        {
+                                        else {
                                             $result = $thirdpartystatic->create($user);
                                             if ($result <= 0)
                                             {
@@ -1598,8 +1584,7 @@ class EmailCollector extends CommonObject
 	                        {
 	                            $errorforactions++;
 	                        }
-	                        else
-	                        {
+	                        else {
 	                            $result = $actioncomm->create($user);
 	                            if ($result <= 0)
 	                            {
@@ -1701,15 +1686,13 @@ class EmailCollector extends CommonObject
                         {
                             $errorforactions++;
                         }
-                        else
-                        {
+                        else {
                             if (empty($projecttocreate->ref) || (is_numeric($projecttocreate->ref) && $projecttocreate->ref <= 0))
                             {
                                 $errorforactions++;
                                 $this->error = 'Failed to create project: Can\'t get a valid value for the field ref with numbering template = '.$modele.', thirdparty id = '.$thirdpartystatic->id;
                             }
-                            else
-                            {
+                            else {
                                 // Create project
                                 $result = $projecttocreate->create($user);
                                 if ($result <= 0)
@@ -1849,15 +1832,13 @@ class EmailCollector extends CommonObject
                         {
                             $errorforactions++;
                         }
-                        else
-                        {
+                        else {
                             if (is_numeric($tickettocreate->ref) && $tickettocreate->ref <= 0)
                             {
                                 $errorforactions++;
                                 $this->error = 'Failed to create ticket: Can\'t get a valid value for the field ref with numbering template = '.$modele.', thirdparty id = '.$thirdpartystatic->id;
                             }
-                            else
-                            {
+                            else {
                                 // Create project
                                 $result = $tickettocreate->create($user);
                                 if ($result <= 0)
@@ -1890,13 +1871,11 @@ class EmailCollector extends CommonObject
                             dol_syslog(imap_last_error());
                         }
                     }
-                    else
-                    {
+                    else {
                         dol_syslog("EmailCollector::doCollectOneCollector message ".$imapemail." to ".$connectstringtarget." was set to read", LOG_DEBUG);
                     }
                 }
-                else
-                {
+                else {
                     $errorforemail++;
                 }
 
@@ -1921,8 +1900,7 @@ class EmailCollector extends CommonObject
                         break;
                     }
                 }
-                else
-                {
+                else {
                     $error++;
 
                     $this->db->rollback();
@@ -1933,8 +1911,7 @@ class EmailCollector extends CommonObject
 
             dol_syslog("End of loop on emails", LOG_INFO, -1);
         }
-        else
-        {
+        else {
             $output = $langs->trans('NoNewEmailToProcess');
         }
 
@@ -2071,8 +2048,7 @@ class EmailCollector extends CommonObject
             // so append parts together with blank row.
             if (strtolower($p->subtype) == 'plain')
                 $plainmsg .= trim($data)."\n\n";
-            else
-                $htmlmsg .= $data."<br><br>";
+            else $htmlmsg .= $data."<br><br>";
             $charset = $params['charset']; // assume all parts are same charset
         }
 

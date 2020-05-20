@@ -71,8 +71,7 @@ if ($action == 'addcontact' && $user->rights->contrat->creer)
 		header("Location: ".$_SERVER['PHP_SELF']."?id=".$object->id);
 		exit;
 	}
-	else
-	{
+	else {
 		if ($object->error == 'DB_ERROR_RECORD_ALREADY_EXISTS') {
 			$langs->load("errors");
 			$msg = $langs->trans("ErrorThisContactIsAlreadyDefinedAsThisType");
@@ -91,8 +90,7 @@ if ($action == 'swapstatut' && $user->rights->contrat->creer)
 	{
 	    $result = $object->swapContactStatus(GETPOST('ligne'));
 	}
-	else
-	{
+	else {
 		dol_print_error($db, $object->error);
 	}
 }

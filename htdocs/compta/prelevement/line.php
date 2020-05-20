@@ -103,13 +103,11 @@ if ($action == 'confirm_rejet')
 				exit;
 			}
 		}
-		else
-		{
+		else {
 			$action = "rejet";
 		}
 	}
-	else
-	{
+	else {
 		header("Location: line.php?id=".$id);
 		exit;
 	}
@@ -162,15 +160,13 @@ if ($id)
 					/* Historique pour certaines install */
 					print $langs->trans("Unknown");
 				}
-				else
-				{
+				else {
 					print dol_print_date($rej->date_rejet, 'day');
 				}
 				print '</td></tr>';
 				print '<tr><td width="20%">'.$langs->trans("RefusedInvoicing").'</td><td>'.$rej->invoicing.'</td></tr>';
 			}
-			else
-			{
+			else {
 				print '<tr><td width="20%">'.$resf.'</td></tr>';
 			}
 		}
@@ -178,8 +174,7 @@ if ($id)
 		print '</table>';
 		dol_fiche_end();
 	}
-	else
-	{
+	else {
 		dol_print_error($db);
 	}
 
@@ -246,13 +241,11 @@ if ($id)
 			{
 	  			print "<a class=\"butAction\" href=\"line.php?action=rejet&amp;id=$lipre->id\">".$langs->trans("StandingOrderReject")."</a>";
 			}
-			else
-			{
+			else {
 				print "<a class=\"butActionRefused classfortooltip\" href=\"#\" title=\"".$langs->trans("NotAllowed")."\">".$langs->trans("StandingOrderReject")."</a>";
 			}
 		}
-		else
-		{
+		else {
 			print "<a class=\"butActionRefused classfortooltip\" href=\"#\" title=\"".$langs->trans("NotPossibleForThisStatusOfWithdrawReceiptORLine")."\">".$langs->trans("StandingOrderReject")."</a>";
 		}
 	}
@@ -330,8 +323,7 @@ if ($id)
 
 		$db->free($result);
 	}
-	else
-	{
+	else {
 		dol_print_error($db);
 	}
 }

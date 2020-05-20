@@ -215,15 +215,13 @@ if (!empty($conf->facture->enabled) && $user->rights->facture->lire)
 			print '<td colspan="2" class="right">'.price($tot_ttc).'</td>';
 			print '</tr>';
 		}
-		else
-		{
+		else {
 			print '<tr class="oddeven"><td colspan="3" class="opacitymedium">'.$langs->trans("NoInvoice").'</td></tr>';
 		}
 		print "</table></div><br>";
 		$db->free($resql);
 	}
-	else
-	{
+	else {
 		dol_print_error($db);
 	}
 }
@@ -303,15 +301,13 @@ if ((!empty($conf->fournisseur->enabled) && empty($conf->global->MAIN_USE_NEW_SU
 			print '<td colspan="2" class="right">'.price($tot_ttc).'</td>';
 			print '</tr>';
 		}
-		else
-		{
+		else {
 			print '<tr class="oddeven"><td colspan="3" class="opacitymedium">'.$langs->trans("NoInvoice").'</td></tr>';
 		}
 		print "</table></div><br>";
 		$db->free($resql);
 	}
-	else
-	{
+	else {
 		dol_print_error($db);
 	}
 }
@@ -429,8 +425,7 @@ if (!empty($conf->facture->enabled) && $user->rights->facture->lire)
 				$i++;
 			}
 		}
-		else
-		{
+		else {
 			$colspan = 5;
 			if (!empty($conf->global->MAIN_SHOW_HT_ON_SUMMARY)) $colspan++;
 			print '<tr class="oddeven"><td colspan="'.$colspan.'" class="opacitymedium">'.$langs->trans("NoInvoice").'</td></tr>';
@@ -438,8 +433,7 @@ if (!empty($conf->facture->enabled) && $user->rights->facture->lire)
 		print '</table></div><br>';
 		$db->free($resql);
 	}
-	else
-	{
+	else {
 		dol_print_error($db);
 	}
 }
@@ -530,16 +524,14 @@ if ((!empty($conf->fournisseur->enabled) && empty($conf->global->MAIN_USE_NEW_SU
 				$i++;
 			}
 		}
-		else
-		{
+		else {
 			$colspan = 5;
 			if (!empty($conf->global->MAIN_SHOW_HT_ON_SUMMARY)) $colspan++;
 			print '<tr class="oddeven"><td colspan="'.$colspan.'" class="opacitymedium">'.$langs->trans("NoInvoice").'</td></tr>';
 		}
 		print '</table></div><br>';
 	}
-	else
-	{
+	else {
 		dol_print_error($db);
 	}
 }
@@ -609,8 +601,7 @@ if (!empty($conf->don->enabled) && $user->rights->don->lire)
 				$i++;
 			}
 		}
-		else
-		{
+		else {
 			print '<tr class="oddeven"><td colspan="4" class="opacitymedium">'.$langs->trans("None").'</td></tr>';
 		}
 		print '</table></div><br>';
@@ -687,15 +678,13 @@ if (!empty($conf->tax->enabled) && $user->rights->tax->charges->lire)
 				print '<td class="right">&nbsp;</td>';
 				print '</tr>';
 			}
-			else
-			{
+			else {
 				print '<tr class="oddeven"><td colspan="5" class="opacitymedium">'.$langs->trans("None").'</td></tr>';
 			}
 			print "</table></div><br>";
 			$db->free($resql);
 		}
-		else
-		{
+		else {
 			dol_print_error($db);
 		}
 	}
@@ -816,8 +805,7 @@ if (!empty($conf->facture->enabled) && !empty($conf->commande->enabled) && $user
 		}
 		$db->free($resql);
 	}
-	else
-	{
+	else {
 		dol_print_error($db);
 	}
 }
@@ -940,8 +928,7 @@ if (!empty($conf->facture->enabled) && $user->rights->facture->lire)
 			print '<td>&nbsp;</td>';
 			print '</tr>';
 		}
-		else
-		{
+		else {
 			$colspan = 6;
 			if (!empty($conf->global->MAIN_SHOW_HT_ON_SUMMARY)) $colspan++;
 			print '<tr class="oddeven"><td colspan="'.$colspan.'" class="opacitymedium">'.$langs->trans("NoInvoice").'</td></tr>';
@@ -949,8 +936,7 @@ if (!empty($conf->facture->enabled) && $user->rights->facture->lire)
 		print '</table></div><br>';
 		$db->free($resql);
 	}
-	else
-	{
+	else {
 		dol_print_error($db);
 	}
 }
@@ -1050,16 +1036,14 @@ if ((!empty($conf->fournisseur->enabled) && empty($conf->global->MAIN_USE_NEW_SU
 			print '<td>&nbsp;</td>';
 			print '</tr>';
 		}
-		else
-		{
+		else {
 			$colspan = 6;
 			if (!empty($conf->global->MAIN_SHOW_HT_ON_SUMMARY)) $colspan++;
 			print '<tr class="oddeven"><td colspan="'.$colspan.'" class="opacitymedium">'.$langs->trans("NoInvoice").'</td></tr>';
 		}
 		print '</table></div><br>';
 	}
-	else
-	{
+	else {
 		dol_print_error($db);
 	}
 }

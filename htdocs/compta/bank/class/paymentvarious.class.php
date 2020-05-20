@@ -170,8 +170,7 @@ class PaymentVarious extends CommonObject
 			$this->db->commit();
 			return 1;
 		}
-		else
-		{
+		else {
 			$this->db->rollback();
 			return -1;
 		}
@@ -245,8 +244,7 @@ class PaymentVarious extends CommonObject
 
 			return 1;
 		}
-		else
-		{
+		else {
 			$this->error = "Error ".$this->db->lasterror();
 			return -1;
 		}
@@ -431,8 +429,7 @@ class PaymentVarious extends CommonObject
 					{
 						$this->update_fk_bank($bank_line_id);
 					}
-					else
-					{
+					else {
 						$this->error = $acc->error;
 						$error++;
 					}
@@ -469,14 +466,12 @@ class PaymentVarious extends CommonObject
 				$this->db->commit();
 				return $this->id;
 			}
-			else
-			{
+			else {
 				$this->db->rollback();
 				return -2;
 			}
 		}
-		else
-		{
+		else {
 			$this->error = $this->db->error();
 			$this->db->rollback();
 			return -1;
@@ -500,8 +495,7 @@ class PaymentVarious extends CommonObject
 		{
 			return 1;
 		}
-		else
-		{
+		else {
 			dol_print_error($this->db);
 			return -1;
 		}
@@ -677,8 +671,7 @@ class PaymentVarious extends CommonObject
 			}
 			$this->db->free($result);
 		}
-		else
-		{
+		else {
 			dol_print_error($this->db);
 		}
 	}
@@ -706,8 +699,7 @@ class PaymentVarious extends CommonObject
 				$alreadydispatched = $obj->nb;
 			}
 		}
-		else
-		{
+		else {
 			$this->error = $this->db->lasterror();
 			return -1;
 		}

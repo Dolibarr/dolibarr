@@ -87,8 +87,7 @@ if (empty($reshook))
 
                 setEventMessages($langs->trans("RecordSaved"), null, 'mesgs');
             }
-            else
-            {
+            else {
                 $db->rollback();
                 setEventMessages($object->error, $object->errors, 'errors');
             }
@@ -293,13 +292,11 @@ if ($object->id > 0)
 		{
 			$form->form_date($_SERVER['PHP_SELF'].'?id='.$object->id, $object->date, 'invoicedate');
 		}
-		else
-		{
+		else {
 			print dol_print_date($object->date, 'daytext');
 		}
 	}
-	else
-	{
+	else {
 		print dol_print_date($object->date, 'daytext');
 	}
 	print '</td>';
@@ -319,13 +316,11 @@ if ($object->id > 0)
 		{
 			$form->form_conditions_reglement($_SERVER['PHP_SELF'].'?id='.$object->id, $object->cond_reglement_id, 'cond_reglement_id');
 		}
-		else
-		{
+		else {
 			$form->form_conditions_reglement($_SERVER['PHP_SELF'].'?id='.$object->id, $object->cond_reglement_id, 'none');
 		}
 	}
-	else
-	{
+	else {
 		print '&nbsp;';
 	}
 	print '</td></tr>';
@@ -344,16 +339,14 @@ if ($object->id > 0)
 		{
 			$form->form_date($_SERVER['PHP_SELF'].'?id='.$object->id, $object->date_lim_reglement, 'paymentterm');
 		}
-		else
-		{
+		else {
 			print dol_print_date($object->date_lim_reglement, 'daytext');
 			if ($object->hasDelay()) {
 				print img_warning($langs->trans('Late'));
 			}
 		}
 	}
-	else
-	{
+	else {
 		print '&nbsp;';
 	}
 	print '</td></tr>';
@@ -370,8 +363,7 @@ if ($object->id > 0)
 	{
 		$form->form_modes_reglement($_SERVER['PHP_SELF'].'?id='.$object->id, $object->mode_reglement_id, 'mode_reglement_id');
 	}
-	else
-	{
+	else {
 		$form->form_modes_reglement($_SERVER['PHP_SELF'].'?id='.$object->id, $object->mode_reglement_id, 'none');
 	}
 	print '</td></tr>';
@@ -389,8 +381,7 @@ if ($object->id > 0)
 	{
 	    $form->formSelectAccount($_SERVER['PHP_SELF'].'?id='.$object->id, $object->fk_account, 'fk_account', 1);
 	}
-	else
-	{
+	else {
 	    $form->formSelectAccount($_SERVER['PHP_SELF'].'?id='.$object->id, $object->fk_account, 'none');
 	}
 	print "</td>";
@@ -503,8 +494,7 @@ if ($object->id > 0)
 		$num = $db->num_rows($result_sql);
 		$numopen = $num;
 	}
-	else
-	{
+	else {
 		dol_print_error($db);
 	}
 
@@ -521,8 +511,7 @@ if ($object->id > 0)
 		$obj = $db->fetch_object($result_sql);
 		if ($obj) $pending = $obj->amount;
 	}
-	else
-	{
+	else {
 		dol_print_error($db);
 	}
 
@@ -550,18 +539,15 @@ if ($object->id > 0)
     			print '<input type="submit" class="butAction" value="'.$langs->trans("MakeWithdrawRequest").'" />';
     			print '</form>';
     		}
-    		else
-    		{
+    		else {
     			print '<a class="butActionRefused classfortooltip" href="#" title="'.dol_escape_htmltag($langs->trans("NotEnoughPermissions")).'">'.$langs->trans("MakeWithdrawRequest").'</a>';
     		}
 	    }
-	    else
-        {
+	    else {
             print '<a class="butActionRefused classfortooltip" href="#" title="'.dol_escape_htmltag($langs->trans("AmountMustBePositive")).'">'.$langs->trans("MakeWithdrawRequest").'</a>';
         }
 	}
-	else
-	{
+	else {
 		if ($num == 0)
 		{
 			if ($object->statut > Facture::STATUS_DRAFT) print '<a class="butActionRefused classfortooltip" href="#" title="'.dol_escape_htmltag($langs->trans("AlreadyPaid")).'">'.$langs->trans("MakeWithdrawRequest").'</a>';
@@ -635,8 +621,7 @@ if ($object->id > 0)
 
 		$db->free($result_sql);
 	}
-	else
-	{
+	else {
 		dol_print_error($db);
 	}
 
@@ -697,8 +682,7 @@ if ($object->id > 0)
 
 		$db->free($result);
 	}
-	else
-	{
+	else {
 		dol_print_error($db);
 	}
 

@@ -299,15 +299,13 @@ class Contrat extends CommonObject
 			{
 				return $numref;
 			}
-			else
-			{
+			else {
 				$this->error = $obj->error;
 				dol_print_error($db, get_class($this)."::getNextValue ".$obj->error);
 				return "";
 			}
 		}
-		else
-		{
+		else {
 			$langs->load("errors");
 			print $langs->trans("Error")." ".$langs->trans("ErrorModuleSetupNotComplete", $langs->transnoentitiesnoconv("Contract"));
 			return "";
@@ -411,8 +409,7 @@ class Contrat extends CommonObject
 			$this->db->commit();
 			return 1;
 		}
-		else
-		{
+		else {
 			$this->db->rollback();
 			return -1;
 		}
@@ -468,8 +465,7 @@ class Contrat extends CommonObject
             $this->db->commit();
             return 1;
         }
-        else
-        {
+        else {
             $this->db->rollback();
             return -1;
         }
@@ -513,8 +509,7 @@ class Contrat extends CommonObject
 		{
 			$num = $this->getNextNumRef($this->thirdparty);
 		}
-		else
-		{
+		else {
 			$num = $this->ref;
 		}
         $this->newref = dol_sanitizeFileName($num);
@@ -592,8 +587,7 @@ class Contrat extends CommonObject
 				$this->date_validation = $now;
 			}
 		}
-		else
-		{
+		else {
 			$error++;
 		}
 
@@ -602,8 +596,7 @@ class Contrat extends CommonObject
 			$this->db->commit();
 			return 1;
 		}
-		else
-		{
+		else {
 			$this->db->rollback();
 			return -1;
 		}
@@ -667,8 +660,7 @@ class Contrat extends CommonObject
 			$this->db->commit();
 			return 1;
 		}
-		else
-		{
+		else {
 			$this->db->rollback();
 			return -1;
 		}
@@ -771,15 +763,13 @@ class Contrat extends CommonObject
 					return $this->id;
 				}
 			}
-			else
-			{
+			else {
 				dol_syslog(get_class($this)."::fetch Contract not found");
 				$this->error = "Contract not found";
 				return 0;
 			}
 		}
-		else
-		{
+		else {
 			dol_syslog(get_class($this)."::fetch Error searching contract");
 			$this->error = $this->db->error();
 			return -1;
@@ -940,8 +930,7 @@ class Contrat extends CommonObject
 			}
 			$this->db->free($result);
 		}
-		else
-		{
+		else {
 			dol_syslog(get_class($this)."::Fetch Error when reading lines of contracts linked to products");
 			return -3;
 		}
@@ -1082,7 +1071,7 @@ class Contrat extends CommonObject
     			                }
     			            }
     			        }
-    			        else                                // Old behaviour, if linked_object has only one link per type, so is something like array('contract'=>id1))
+    			        else // Old behaviour, if linked_object has only one link per type, so is something like array('contract'=>id1))
     			        {
     			            $origin_id = $tmp_origin_id;
     			            $ret = $this->add_object_linked($origin, $origin_id);
@@ -1146,23 +1135,20 @@ class Contrat extends CommonObject
 					$this->db->commit();
 					return $this->id;
 				}
-				else
-				{
+				else {
 					dol_syslog(get_class($this)."::create - 30 - ".$this->error, LOG_ERR);
 					$this->db->rollback();
 					return -3;
 				}
 			}
-			else
-			{
+			else {
 				$this->error = "Failed to add contract";
 				dol_syslog(get_class($this)."::create - 20 - ".$this->error, LOG_ERR);
 				$this->db->rollback();
 				return -2;
 			}
 		}
-		else
-		{
+		else {
 			$this->error = $langs->trans("UnknownError: ".$this->db->error()." -", LOG_DEBUG);
 
 			$this->db->rollback();
@@ -1332,8 +1318,7 @@ class Contrat extends CommonObject
 			$this->db->commit();
 			return 1;
 		}
-		else
-		{
+		else {
 			$this->error = $this->db->lasterror();
 			$this->db->rollback();
 			return -1;
@@ -1427,8 +1412,7 @@ class Contrat extends CommonObject
 			$this->db->rollback();
 			return -1 * $error;
 		}
-		else
-		{
+		else {
 			$this->db->commit();
 			return 1;
 		}
@@ -1506,8 +1490,7 @@ class Contrat extends CommonObject
 			{
 				$pu = $pu_ht;
 			}
-			else
-			{
+			else {
 				$pu = $pu_ttc;
 			}
 
@@ -1559,8 +1542,7 @@ class Contrat extends CommonObject
 				{
 					return $result;
 				}
-				else
-				{
+				else {
 					$pa_ht = $result;
 				}
 			}
@@ -1632,21 +1614,18 @@ class Contrat extends CommonObject
 					$this->db->rollback();
 					return -1;
 				}
-				else
-				{
+				else {
 					$this->db->commit();
 					return $contractlineid;
 				}
 			}
-			else
-			{
+			else {
 				$this->db->rollback();
 				$this->error = $this->db->error()." sql=".$sql;
 				return -1;
 			}
 		}
-		else
-		{
+		else {
 			dol_syslog(get_class($this)."::addline ErrorTryToAddLineOnValidatedContract", LOG_ERR);
 			return -2;
 		}
@@ -1699,8 +1678,7 @@ class Contrat extends CommonObject
 			$remise = round(($pu * $remise_percent / 100), 2);
 			$price = $pu - $remise;
 		}
-		else
-		{
+		else {
 			$remise_percent = 0;
 		}
 
@@ -1751,8 +1729,7 @@ class Contrat extends CommonObject
 			{
 				return $result;
 			}
-			else
-			{
+			else {
 				$pa_ht = $result;
 			}
 		}
@@ -1826,15 +1803,13 @@ class Contrat extends CommonObject
 					return 1;
 				}
 			}
-			else
-			{
+			else {
 				$this->db->rollback();
 				dol_syslog(get_class($this)."::updateline Erreur -2");
 				return -2;
 			}
 		}
-		else
-		{
+		else {
 			$this->db->rollback();
 			$this->error = $this->db->error();
 			dol_syslog(get_class($this)."::updateline Erreur -1");
@@ -1896,8 +1871,7 @@ class Contrat extends CommonObject
 				return -1;
 			}
 		}
-		else
-		{
+		else {
 			$this->error = 'ErrorDeleteLineNotAllowedByObjectStatus';
 			return -2;
 		}
@@ -1994,8 +1968,7 @@ class Contrat extends CommonObject
 			$text .= ($mode == 7 ? '</span>' : '');
 			return $text;
 		}
-		else
-		{
+		else {
 			return dolGetStatus($this->labelStatus[$status], $this->labelStatusShort[$status], '', $statusType, $mode);
 		}
 	}
@@ -2114,8 +2087,7 @@ class Contrat extends CommonObject
 
 			$this->db->free($result);
 		}
-		else
-		{
+		else {
 			dol_print_error($this->db);
 		}
 	}
@@ -2151,8 +2123,7 @@ class Contrat extends CommonObject
 			}
 			return $tab;
 		}
-		else
-		{
+		else {
 			$this->error = $this->db->error();
 			return -1;
 		}
@@ -2189,8 +2160,7 @@ class Contrat extends CommonObject
 			}
 			return $tab;
 		}
-		else
-		{
+		else {
 			$this->error = $this->db->error();
 			return -1;
 		}
@@ -2291,8 +2261,7 @@ class Contrat extends CommonObject
 
 			return $response;
 		}
-		else
-		{
+		else {
 			dol_print_error($this->db);
 			$this->error = $this->db->error();
 			return -1;
@@ -2334,8 +2303,7 @@ class Contrat extends CommonObject
             $this->db->free($resql);
 			return 1;
 		}
-		else
-		{
+		else {
 			dol_print_error($this->db);
 			$this->error = $this->db->error();
 			return -1;
@@ -2960,8 +2928,7 @@ class ContratLigne extends CommonObjectLine
 
 			return 1;
 		}
-		else
-		{
+		else {
 			$this->error = "Error ".$this->db->lasterror();
 			return -1;
 		}
@@ -3047,8 +3014,7 @@ class ContratLigne extends CommonObjectLine
 			{
 				return $result;
 			}
-			else
-			{
+			else {
 				$this->pa_ht = $result;
 			}
 		}
@@ -3196,8 +3162,7 @@ class ContratLigne extends CommonObjectLine
 			$this->db->commit();
 			return 1;
 		}
-		else
-		{
+		else {
 			$this->error = $this->db->error();
 			$this->db->rollback();
 			return -2;
@@ -3279,8 +3244,7 @@ class ContratLigne extends CommonObjectLine
 			$this->db->commit();
 			return 1;
 		}
-		else
-		{
+		else {
 			$this->db->rollback();
 			$this->error = $this->db->error()." sql=".$sql;
 			return -1;
@@ -3334,8 +3298,7 @@ class ContratLigne extends CommonObjectLine
 				$this->db->commit();
 				return 1;
 			}
-			else
-			{
+			else {
 				$this->db->rollback();
 				return -1;
 			}

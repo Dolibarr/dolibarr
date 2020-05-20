@@ -121,8 +121,7 @@ class RemiseCheque extends CommonObject
 				{
 					$this->ref = "(PROV".$this->id.")";
 				}
-				else
-				{
+				else {
 					$this->ref = $obj->ref;
 				}
 			}
@@ -130,8 +129,7 @@ class RemiseCheque extends CommonObject
 
 			return 1;
 		}
-		else
-		{
+		else {
 		    $this->error = $this->db->lasterror();
 			return -1;
 		}
@@ -228,8 +226,7 @@ class RemiseCheque extends CommonObject
 					}
 					$this->db->free($resql);
 				}
-				else
-				{
+				else {
 					$this->errno = -1026;
 					dol_syslog("RemiseCheque::Create Error ".$this->errno, LOG_ERR);
 				}
@@ -270,8 +267,7 @@ class RemiseCheque extends CommonObject
 				}
 			}
 		}
-		else
-		{
+		else {
 			$this->errno = -1;
 			$this->error = $this->db->lasterror();
 			$this->errno = $this->db->lasterrno();
@@ -289,8 +285,7 @@ class RemiseCheque extends CommonObject
             dol_syslog("RemiseCheque::Create end", LOG_DEBUG);
             return $this->id;
         }
-        else
-        {
+        else {
             $this->db->rollback();
             dol_syslog("RemiseCheque::Create end", LOG_DEBUG);
             return $this->errno;
@@ -342,8 +337,7 @@ class RemiseCheque extends CommonObject
 		{
 			$this->db->commit();
 		}
-		else
-		{
+		else {
 			$this->db->rollback();
 			dol_syslog("RemiseCheque::Delete ROLLBACK ($this->errno)");
 		}
@@ -386,14 +380,12 @@ class RemiseCheque extends CommonObject
 				    $this->ref = $numref;
 					$this->statut = 1;
 				}
-				else
-				{
+				else {
 					$this->errno = -1029;
 					dol_syslog("Remisecheque::Validate Error ".$this->errno, LOG_ERR);
 				}
 			}
-			else
-			{
+			else {
 				$this->errno = -1033;
 				dol_syslog("Remisecheque::Validate Error ".$this->errno, LOG_ERR);
 			}
@@ -405,8 +397,7 @@ class RemiseCheque extends CommonObject
 			$this->db->commit();
 			return 1;
 		}
-		else
-		{
+		else {
 			$this->db->rollback();
 			dol_syslog("RemiseCheque::Validate ".$this->errno, LOG_ERR);
             return $this->errno;
@@ -489,8 +480,7 @@ class RemiseCheque extends CommonObject
 
 			return $numref;
 		}
-		else
-		{
+		else {
 			$langs->load("errors");
 			print $langs->trans("Error")." ".$langs->trans("ErrorModuleSetupNotComplete", $langs->transnoentitiesnoconv("Bank"));
 			return "";
@@ -545,8 +535,7 @@ class RemiseCheque extends CommonObject
 
 			return $response;
 		}
-		else
-		{
+		else {
 			dol_print_error($this->db);
 			$this->error = $this->db->error();
 			return -1;
@@ -585,8 +574,7 @@ class RemiseCheque extends CommonObject
 			$this->db->free($resql);
 			return 1;
 		}
-		else
-		{
+		else {
 			dol_print_error($this->db);
 			$this->error = $this->db->error();
 			return -1;
@@ -665,16 +653,14 @@ class RemiseCheque extends CommonObject
 				//$outputlangs->charset_output=$sav_charset_output;
 				return 1;
 			}
-			else
-			{
+			else {
 				//$outputlangs->charset_output=$sav_charset_output;
 				dol_syslog("Error");
 				dol_print_error($this->db, $docmodel->error);
 				return 0;
 			}
 		}
-		else
-		{
+		else {
 			$this->error = $langs->trans("ErrorFileDoesNotExists", $dir.$file);
 			return -1;
 		}
@@ -721,8 +707,7 @@ class RemiseCheque extends CommonObject
 				dol_syslog("RemiseCheque::updateAmount ERREUR UPDATE ($this->errno)");
 			}
 		}
-		else
-		{
+		else {
 			$this->errno = -1031;
 			dol_syslog("RemiseCheque::updateAmount ERREUR SELECT ($this->errno)");
 		}
@@ -731,8 +716,7 @@ class RemiseCheque extends CommonObject
 		{
 			$this->db->commit();
 		}
-		else
-		{
+		else {
 			$this->db->rollback();
 			dol_syslog("RemiseCheque::updateAmount ROLLBACK ($this->errno)");
 		}
@@ -762,8 +746,7 @@ class RemiseCheque extends CommonObject
 			{
 				$this->updateAmount();
 			}
-			else
-			{
+			else {
 				$this->errno = -1032;
 				dol_syslog("RemiseCheque::removeCheck ERREUR UPDATE ($this->errno)");
 			}
@@ -839,30 +822,26 @@ class RemiseCheque extends CommonObject
     					$this->db->commit();
     					return $rejectedPayment->id;
 					}
-					else
-					{
+					else {
                         $this->db->rollback();
 					    return -1;
 					}
 				}
-				else
-				{
+				else {
 				    $this->error = $rejectedPayment->error;
 				    $this->errors = $rejectedPayment->errors;
 				    $this->db->rollback();
 					return -1;
 				}
 			}
-			else
-			{
+			else {
 				$this->error = $rejectedPayment->error;
 				$this->errors = $rejectedPayment->errors;
 			    $this->db->rollback();
 				return -1;
 			}
 		}
-		else
-		{
+		else {
 			$this->error = $this->db->lasterror();
 			$this->db->rollback();
 			return -1;
@@ -936,14 +915,12 @@ class RemiseCheque extends CommonObject
                 $this->date_bordereau = $date;
                 return 1;
             }
-            else
-            {
+            else {
                 $this->error = $this->db->error();
                 return -1;
             }
         }
-        else
-        {
+        else {
             return -2;
         }
     }
@@ -971,14 +948,12 @@ class RemiseCheque extends CommonObject
 			{
 				return 1;
 			}
-			else
-			{
+			else {
 				$this->error = $this->db->error();
 				return -1;
 			}
 		}
-		else
-		{
+		else {
 			return -2;
 		}
 	}

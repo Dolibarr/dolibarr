@@ -70,15 +70,13 @@ if ($action == 'addcontact' && $user->rights->facture->creer)
 		header("Location: ".$_SERVER['PHP_SELF']."?id=".$object->id);
 		exit;
 	}
-	else
-	{
+	else {
 		if ($object->error == 'DB_ERROR_RECORD_ALREADY_EXISTS')
 		{
 			$langs->load("errors");
 			setEventMessages($langs->trans("ErrorThisContactIsAlreadyDefinedAsThisType"), null, 'errors');
 		}
-		else
-		{
+		else {
 			setEventMessages($object->error, $object->errors, 'errors');
 		}
 	}
@@ -91,8 +89,7 @@ elseif ($action == 'swapstatut' && $user->rights->facture->creer)
 	{
 	    $result = $object->swapContactStatus(GETPOST('ligne'));
 	}
-	else
-	{
+	else {
 		dol_print_error($db);
 	}
 }
@@ -208,8 +205,7 @@ if ($id > 0 || !empty($ref))
 		    if ($res) break;
 		}
 	}
-	else
-	{
+	else {
 		// Record not found
 		print "ErrorRecordNotFound";
 	}

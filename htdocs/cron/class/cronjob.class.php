@@ -280,8 +280,7 @@ class Cronjob extends CommonObject
 			$this->db->rollback();
 			return -1 * $error;
 		}
-		else
-		{
+		else {
 			$this->db->commit();
             return $this->id;
 		}
@@ -378,8 +377,7 @@ class Cronjob extends CommonObject
 
             return 1;
         }
-        else
-        {
+        else {
       	    $this->error = "Error ".$this->db->lasterror();
             return -1;
         }
@@ -518,8 +516,7 @@ class Cronjob extends CommonObject
 
     		return 1;
     	}
-    	else
-    	{
+    	else {
     		$this->error = "Error ".$this->db->lasterror();
     		return -1;
     	}
@@ -655,8 +652,7 @@ class Cronjob extends CommonObject
 			$this->db->rollback();
 			return -1 * $error;
 		}
-		else
-		{
+		else {
 			$this->db->commit();
 			return 1;
 		}
@@ -697,8 +693,7 @@ class Cronjob extends CommonObject
 			$this->db->rollback();
 			return -1 * $error;
 		}
-		else
-		{
+		else {
 			$this->db->commit();
 			return 1;
 		}
@@ -753,8 +748,7 @@ class Cronjob extends CommonObject
 			$this->db->commit();
 			return $object->id;
 		}
-		else
-		{
+		else {
 			$this->db->rollback();
 			return -1;
 		}
@@ -895,8 +889,7 @@ class Cronjob extends CommonObject
 
 			return 1;
 		}
-		else
-		{
+		else {
 			$this->error = "Error ".$this->db->lasterror();
 			return -1;
 		}
@@ -952,8 +945,7 @@ class Cronjob extends CommonObject
 			$conf->entity = $savcurrententity;
 			return -1;
 		}
-		else
-		{
+		else {
 			if (empty($user->id))
 			{
 				$this->error = " User user login:".$userlogin." do not exists";
@@ -1057,8 +1049,7 @@ class Cronjob extends CommonObject
 				{
 					$result = call_user_func(array($object, $this->methodename), $this->params);
 				}
-				else
-				{
+				else {
 					$result = call_user_func_array(array($object, $this->methodename), $params_arr);
 				}
 
@@ -1079,8 +1070,7 @@ class Cronjob extends CommonObject
 		            $retval = $this->lastresult;
 		            $error++;
 				}
-				else
-				{
+				else {
 					dol_syslog(get_class($this)."::run_jobs END");
 				    $this->lastoutput = $object->output;
 					$this->lastresult = var_export($result, true);
@@ -1117,8 +1107,7 @@ class Cronjob extends CommonObject
 			{
 				$result = call_user_func($this->methodename, $this->params);
 			}
-			else
-			{
+			else {
 				$result = call_user_func_array($this->methodename, $params_arr);
 			}
 
@@ -1132,8 +1121,7 @@ class Cronjob extends CommonObject
 			    $retval = $this->lastresult;
 			    $error++;
 			}
-			else
-			{
+			else {
                 $this->lastoutput = var_export($result, true);
                 $this->lastresult = var_export($result, true); // Return code
                 $retval = $this->lastresult;
@@ -1202,8 +1190,7 @@ class Cronjob extends CommonObject
 			dol_syslog(get_class($this)."::reprogram_jobs ".$this->error, LOG_ERR);
 			return -1;
 		}
-		else
-		{
+		else {
 			if (empty($user->id))
 			{
 				$this->error = " User user login:".$userlogin." do not exists";
@@ -1230,8 +1217,7 @@ class Cronjob extends CommonObject
 		        // TODO For exact frequency (every month, every year, ...), use instead a dol_time_plus_duree($time, $duration_value, $duration_unit)
 		    }
 		}
-		else
-		{
+		else {
 			//$this->datenextrun=$this->datenextrun + ($this->frequency * $this->unitfrequency);
 		    dol_syslog(get_class($this)."::reprogram_jobs datenextrun is already in future, we do not change it");
 		}

@@ -151,7 +151,7 @@ if ($modecompta == "CREANCES-DETTES")
 	$periodlink = ($year_start ? "<a href='".$_SERVER["PHP_SELF"]."?year=".($tmps['year'] - 1)."&modecompta=".$modecompta."'>".img_previous()."</a> <a href='".$_SERVER["PHP_SELF"]."?year=".($tmps['year'] + 1)."&modecompta=".$modecompta."'>".img_next()."</a>" : "");
     $description = $langs->trans("RulesResultDue");
 	if (!empty($conf->global->FACTURE_DEPOSITS_ARE_JUST_PAYMENTS)) $description .= $langs->trans("DepositsAreNotIncluded");
-	else  $description .= $langs->trans("DepositsAreIncluded");
+	else $description .= $langs->trans("DepositsAreIncluded");
     $builddate = dol_now();
     //$exportlink=$langs->trans("NotYetAvailable");
 }
@@ -213,8 +213,7 @@ if ($modecompta == 'BOOKKEEPING')
 {
 	print_liste_field_titre("Amount", $_SERVER["PHP_SELF"], 'amount', '', $param, 'class="right"', $sortfield, $sortorder);
 }
-else
-{
+else {
 	if ($modecompta == 'CREANCES-DETTES')
 	{
 		print_liste_field_titre("AmountHT", $_SERVER["PHP_SELF"], 'amount_ht', '', $param, 'class="right"', $sortfield, $sortorder);
@@ -313,15 +312,13 @@ if ($modecompta == 'BOOKKEEPING')
 				$i++;
 			}
 		}
-		else
-		{
+		else {
 			print '<tr><td colspan="4" class="opacitymedium">'.$langs->trans("NoRecordFound").'</td></tr>';
 		}
 	}
 	else dol_print_error($db);
 }
-else
-{
+else {
 	/*
 	 * Factures clients
 	 */
@@ -336,8 +333,7 @@ else
 	    $sql .= " AND f.fk_statut IN (1,2)";
 	    if (!empty($conf->global->FACTURE_DEPOSITS_ARE_JUST_PAYMENTS))
 	    	$sql .= " AND f.type IN (0,1,2,5)";
-		else
-			$sql .= " AND f.type IN (0,1,2,3,5)";
+		else $sql .= " AND f.type IN (0,1,2,3,5)";
 	    if (!empty($date_start) && !empty($date_end))
 	    	$sql .= " AND f.datef >= '".$db->idate($date_start)."' AND f.datef <= '".$db->idate($date_end)."'";
 	}
@@ -463,8 +459,7 @@ else
 	    $sql .= " AND f.fk_statut IN (1,2)";
 	    if (!empty($conf->global->FACTURE_DEPOSITS_ARE_JUST_PAYMENTS))
 	    	$sql .= " AND f.type IN (0,1,2)";
-		else
-			$sql .= " AND f.type IN (0,1,2,3)";
+		else $sql .= " AND f.type IN (0,1,2,3)";
 	    if (!empty($date_start) && !empty($date_end))
 	    	$sql .= " AND f.datef >= '".$db->idate($date_start)."' AND f.datef <= '".$db->idate($date_end)."'";
 	}
@@ -518,8 +513,7 @@ else
 	            $i++;
 	        }
 	    }
-	    else
-	    {
+	    else {
 	        print '<tr class="oddeven"><td>&nbsp;</td>';
 	        print '<td colspan="3" class="opacitymedium">'.$langs->trans("None").'</td>';
 	        print '</tr>';
@@ -768,15 +762,13 @@ else
 		            $i++;
 		        }
 		    }
-		    else
-		    {
+		    else {
 		        print '<tr class="oddeven"><td>&nbsp;</td>';
 		        print '<td colspan="3" class="opacitymedium">'.$langs->trans("None").'</td>';
 		        print '</tr>';
 		    }
 		}
-		else
-		{
+		else {
 		    dol_print_error($db);
 		}
 		print '<tr class="liste_total">';
@@ -854,15 +846,13 @@ else
 					print '</tr>';
 				}
 			}
-			else
-			{
+			else {
 				print '<tr class="oddeven"><td>&nbsp;</td>';
 				print '<td colspan="3" class="opacitymedium">'.$langs->trans("None").'</td>';
 				print '</tr>';
 			}
 		}
-		else
-		{
+		else {
 			dol_print_error($db);
 		}
 		print '<tr class="liste_total">';
@@ -888,8 +878,7 @@ else
 		    	$sql .= " WHERE p.entity IN (".getEntity('donation').")";
 		    	$sql .= " AND fk_statut in (1,2)";
 			}
-			else
-			{
+			else {
 			    $sql = "SELECT p.societe as nom, p.firstname, p.lastname, date_format(p.datedon,'%Y-%m') as dm, sum(p.amount) as amount";
 			    $sql .= " FROM ".MAIN_DB_PREFIX."don as p";
 			    $sql .= " INNER JOIN ".MAIN_DB_PREFIX."payment_donation as pe ON pe.fk_donation = p.rowid";
@@ -936,15 +925,13 @@ else
 					$i++;
 				}
 			}
-			else
-			{
+			else {
 				print '<tr class="oddeven"><td>&nbsp;</td>';
 				print '<td colspan="3" class="opacitymedium">'.$langs->trans("None").'</td>';
 				print '</tr>';
 			}
 		}
-		else
-		{
+		else {
 			dol_print_error($db);
 		}
 		print '<tr class="liste_total">';
@@ -1083,8 +1070,7 @@ else
 		    $sql .= " WHERE f.fk_statut IN (1,2)";
 		    if (!empty($conf->global->FACTURE_DEPOSITS_ARE_JUST_PAYMENTS))
 		    	$sql .= " AND f.type IN (0,1,2,5)";
-			else
-				$sql .= " AND f.type IN (0,1,2,3,5)";
+			else $sql .= " AND f.type IN (0,1,2,3,5)";
 		    if (!empty($date_start) && !empty($date_end))
 		    	$sql .= " AND f.datef >= '".$db->idate($date_start)."' AND f.datef <= '".$db->idate($date_end)."'";
 		    $sql .= " AND f.entity IN (".getEntity('invoice').")";
@@ -1131,8 +1117,7 @@ else
 		    $sql .= " WHERE f.fk_statut IN (1,2)";
 		    if (!empty($conf->global->FACTURE_DEPOSITS_ARE_JUST_PAYMENTS))
 		    	$sql .= " AND f.type IN (0,1,2)";
-			else
-				$sql .= " AND f.type IN (0,1,2,3)";
+			else $sql .= " AND f.type IN (0,1,2,3)";
 		    if (!empty($date_start) && !empty($date_end))
 		    	$sql .= " AND f.datef >= '".$db->idate($date_start)."' AND f.datef <= '".$db->idate($date_end)."'";
 		    $sql .= " AND f.entity = ".$conf->entity;
@@ -1173,8 +1158,7 @@ else
 		    print '<td class="right">'.price($amount)."</td>\n";
 		    print "</tr>\n";
 		}
-		else
-		{
+		else {
 		    // VAT really already paid
 		    $amount = 0;
 		    $sql = "SELECT date_format(t.datev,'%Y-%m') as dm, sum(t.amount) as amount";
@@ -1254,8 +1238,7 @@ else
 		        }
 		        $db->free($result);
 		    }
-		    else
-		    {
+		    else {
 		        dol_print_error($db);
 		    }
 		    print '<tr class="oddeven"><td>&nbsp;</td>';

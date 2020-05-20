@@ -81,8 +81,7 @@ class FormEcm
 		if (is_array($cate_arbo))
 		{
 			if (!count($cate_arbo)) $output .= '<option value="-1" disabled>'.$langs->trans("NoDirectoriesFound").'</option>';
-			else
-			{
+			else {
 				$output .= '<option value="-1">&nbsp;</option>';
 				foreach ($cate_arbo as $key => $value)
 				{
@@ -91,8 +90,7 @@ class FormEcm
 					{
 						$add = 'selected ';
 					}
-					else
-					{
+					else {
 						$add = '';
 					}
 					$output .= '<option '.$add.'value="'.dol_escape_htmltag($valueforoption).'">'.(empty($cate_arbo[$key]['fulllabel']) ? $cate_arbo[$key]['relativename'] : $cate_arbo[$key]['fulllabel']).'</option>';

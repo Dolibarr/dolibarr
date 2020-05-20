@@ -430,8 +430,7 @@ if ($resql)
 
 		print '</div>';
 	}
-	else
-	{
+	else {
 		$title = $langs->trans("ListeCP");
 
 		$newcardbutton = '';
@@ -524,8 +523,7 @@ if ($resql)
 		    print $form->select_dolusers($search_valideur, "search_valideur", 1, "", 0, $valideurarray, '', 0, 0, 0, $morefilter, 0, '', 'maxwidth200');
 		    print '</td>';
 		}
-		else
-		{
+		else {
 		    print '<td class="liste_titre">&nbsp;</td>';
 		}
 	}
@@ -794,8 +792,7 @@ if ($resql)
 
 	print '</form>';
 }
-else
-{
+else {
 	dol_print_error($db);
 }
 

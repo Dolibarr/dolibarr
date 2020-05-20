@@ -178,8 +178,7 @@ elseif ($action == "add")
 			$db->commit();
 			$action = "view";
 		}
-		else
-		{
+		else {
 			$db->rollback;
 			$action = "view";
 		}
@@ -218,8 +217,7 @@ if ($action == "valid")	// validate = close
 		setEventMessages($object->error, $object->errors, 'errors');
 		$db->rollback();
 	}
-	else
-	{
+	else {
 		setEventMessages($langs->trans("CashFenceDone"), null);
 		$db->commit();
 	}
@@ -254,8 +252,7 @@ if ($action == 'confirm_delete' && !empty($permissiontodelete))
         header("Location: ".$backurlforlist);
         exit;
     }
-    else
-    {
+    else {
         if (!empty($object->errors)) setEventMessages(null, $object->errors, 'errors');
         else setEventMessages($object->error, null, 'errors');
     }
@@ -330,8 +327,7 @@ if ($action == "create" || $action == "start" || $action == 'close')
     			}
     			else dol_print_error($db);
 			}
-			else
-			{
+			else {
 				setEventMessages($langs->trans("SetupOfTerminalNotComplete", $terminaltouse), null, 'errors');
 			    $error++;
 			}
@@ -350,8 +346,7 @@ if ($action == "create" || $action == "start" || $action == 'close')
 			if ($key == 'cash')       $sql .= " AND cp.code = 'LIQ'";
 			elseif ($key == 'cheque') $sql .= " AND cp.code = 'CHQ'";
 			elseif ($key == 'card')   $sql .= " AND cp.code = 'CB'";
-			else
-			{
+			else {
 				dol_print_error('Value for key = '.$key.' not supported');
 				exit;
 			}
@@ -394,8 +389,7 @@ if ($action == "create" || $action == "start" || $action == 'close')
 	    	print '<input type="hidden" name="action" value="valid">';
 			print '<input type="hidden" name="id" value="'.$id.'">';
 	    }
-		else
-	    {
+		else {
 	    	print '<input type="hidden" name="action" value="start">';
 	    }
 
@@ -470,8 +464,7 @@ if ($action == "create" || $action == "start" || $action == 'close')
 		{
 			print '';
 		}
-		else
-		{
+		else {
 			print '<input type="submit" name="add" class="button" value="'.$langs->trans("Start").'">';
 		}
 		print '</td>';
@@ -712,8 +705,7 @@ if (empty($action) || $action == "view" || $action == "close")
 	    		print '<input type="hidden" name="action" value="valid">';
 	    		print '<input type="hidden" name="id" value="'.$id.'">';
 	    	}
-	    	else
-	    	{
+	    	else {
 	    		print '<input type="hidden" name="action" value="start">';
 	    	}
 

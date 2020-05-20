@@ -236,8 +236,7 @@ if ($object->id > 0)
 	{
 		$form->form_conditions_reglement($_SERVER['PHP_SELF'].'?socid='.$object->id, $object->cond_reglement_supplier_id, 'cond_reglement_supplier_id', -1, 1);
 	}
-	else
-	{
+	else {
 		$form->form_conditions_reglement($_SERVER['PHP_SELF'].'?socid='.$object->id, $object->cond_reglement_supplier_id, 'none');
 	}
 	print "</td>";
@@ -255,8 +254,7 @@ if ($object->id > 0)
 	{
 		$form->form_modes_reglement($_SERVER['PHP_SELF'].'?socid='.$object->id, $object->mode_reglement_supplier_id, 'mode_reglement_supplier_id', 'DBIT', 1, 1);
 	}
-	else
-	{
+	else {
 		$form->form_modes_reglement($_SERVER['PHP_SELF'].'?socid='.$object->id, $object->mode_reglement_supplier_id, 'none');
 	}
 	print "</td>";
@@ -335,8 +333,7 @@ if ($object->id > 0)
             $adh->ref = $adh->getFullName($langs);
             print $adh->getNomUrl(1);
         }
-        else
-        {
+        else {
             print $langs->trans("ThirdpartyNotLinkedToMember");
         }
         print '</td>';
@@ -567,8 +564,7 @@ if ($object->id > 0)
 	            {
 	                print dol_print_date($db->jdate($obj->dc), 'day');
 	            }
-	            else
-	            {
+	            else {
 	                print "-";
 	            }
 	            print '</td>';
@@ -580,8 +576,7 @@ if ($object->id > 0)
 
 	        if ($num > 0) print "</table>";
 	    }
-	    else
-	    {
+	    else {
 	        dol_print_error($db);
 	    }
 	}
@@ -607,8 +602,7 @@ if ($object->id > 0)
 		{
 			$sql2 .= " AND c.fk_statut IN (".CommandeFournisseur::STATUS_RECEIVED_COMPLETELY.")"; //  Must match filter in htdocs/fourn/orderstoinvoice.php
 		}
-		else
-		{
+		else {
 			// CommandeFournisseur::STATUS_ORDERSENT.", ".CommandeFournisseur::STATUS_RECEIVED_PARTIALLY.", ".CommandeFournisseur::STATUS_RECEIVED_COMPLETELY
 			$sql2 .= " AND c.fk_statut IN (".$db->escape($conf->global->SUPPLIER_ORDER_TO_INVOICE_STATUS).")";
 		}
@@ -678,8 +672,7 @@ if ($object->id > 0)
 				{
 					print dol_print_date($db->jdate($obj->dc), 'day');
 				}
-				else
-				{
+				else {
 					print "-";
 				}
 				print '</td>';
@@ -691,8 +684,7 @@ if ($object->id > 0)
 
 			if ($num > 0) print "</table>";
 		}
-		else
-		{
+		else {
 			dol_print_error($db);
 		}
 	}
@@ -762,8 +754,7 @@ if ($object->id > 0)
 			$db->free($resql);
 			if ($num > 0) print '</table>';
 		}
-		else
-		{
+		else {
 			dol_print_error($db);
 		}
 	}
@@ -818,8 +809,7 @@ if ($object->id > 0)
 					// Company is open
 					print '<div class="inline-block divButAction"><a class="butAction" href="'.DOL_URL_ROOT.'/fourn/commande/orderstoinvoice.php?socid='.$object->id.'">'.$langs->trans("CreateInvoiceForThisCustomer").'</a></div>';
 				}
-				else
-				{
+				else {
 					print '<div class="inline-block divButAction"><a class="butActionRefused classfortooltip" href="#">'.$langs->trans("CreateInvoiceForThisCustomer").'</a></div>';
 				}
 			}
@@ -843,8 +833,7 @@ if ($object->id > 0)
         	{
             	print '<a class="butAction" href="'.DOL_URL_ROOT.'/comm/action/card.php?action=create&socid='.$object->id.'">'.$langs->trans("AddAction").'</a>';
         	}
-        	else
-        	{
+        	else {
             	print '<a class="butAction" title="'.dol_escape_js($langs->trans("NotAllowed")).'" href="#">'.$langs->trans("AddAction").'</a>';
         	}
     	}
@@ -871,8 +860,7 @@ if ($object->id > 0)
     	show_actions_done($conf, $langs, $db, $object);
 	}
 }
-else
-{
+else {
 	dol_print_error($db);
 }
 

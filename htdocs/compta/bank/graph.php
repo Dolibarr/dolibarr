@@ -85,8 +85,7 @@ if ($result < 0)
 	$error++;
 	setEventMessages($langs->trans("ErrorFailedToCreateDir"), null, 'errors');
 }
-else
-{
+else {
 	// Calcul $min and $max
 	$sql = "SELECT MIN(b.datev) as min, MAX(b.datev) as max";
 	$sql .= " FROM ".MAIN_DB_PREFIX."bank as b";
@@ -103,8 +102,7 @@ else
 		$min = $db->jdate($obj->min);
 		$max = $db->jdate($obj->max);
 	}
-	else
-	{
+	else {
 		dol_print_error($db);
 	}
 	if (empty($min)) $min = dol_now() - 3600 * 24;
@@ -152,8 +150,7 @@ else
 			}
 			$db->free($resql);
 		}
-		else
-		{
+		else {
 			dol_print_error($db);
 		}
 
@@ -175,8 +172,7 @@ else
 			$solde = $row[0];
 			$db->free($resql);
 		}
-		else
-		{
+		else {
 			dol_print_error($db);
 		}
 
@@ -200,8 +196,7 @@ else
 			{
 				$datas[$i] = ''; // Valeur speciale permettant de ne pas tracer le graph
 			}
-			else
-			{
+			else {
 				$datas[$i] = $solde + $subtotal;
 			}
 			$datamin[$i] = $object->min_desired;
@@ -295,8 +290,7 @@ else
 			}
 			$db->free($resql);
 		}
-		else
-		{
+		else {
 			dol_print_error($db);
 		}
 
@@ -318,8 +312,7 @@ else
 			$solde = $row[0];
 			$db->free($resql);
 		}
-		else
-		{
+		else {
 			dol_print_error($db);
 		}
 
@@ -344,8 +337,7 @@ else
 			{
 				$datas[$i] = ''; // Valeur speciale permettant de ne pas tracer le graph
 			}
-			else
-			{
+			else {
 				$datas[$i] = $solde + $subtotal;
 			}
 			$datamin[$i] = $object->min_desired;
@@ -432,8 +424,7 @@ else
 				$i++;
 			}
 		}
-		else
-		{
+		else {
 			dol_print_error($db);
 		}
 
@@ -460,8 +451,7 @@ else
 			{
 				$datas[$i] = ''; // Valeur speciale permettant de ne pas tracer le graph
 			}
-			else
-			{
+			else {
 				$datas[$i] = 0 + $solde + $subtotal;
 			}
 			$datamin[$i] = $object->min_desired;
@@ -558,8 +548,7 @@ else
 			}
 			$db->free($resql);
 		}
-		else
-		{
+		else {
 			dol_print_error($db);
 		}
 
@@ -592,8 +581,7 @@ else
 			}
 			$db->free($resql);
 		}
-		else
-		{
+		else {
 			dol_print_error($db);
 		}
 
@@ -675,8 +663,7 @@ else
 			}
 			$db->free($resql);
 		}
-		else
-		{
+		else {
 			dol_print_error($db);
 		}
 		$sql = "SELECT date_format(b.datev,'%m')";
@@ -700,8 +687,7 @@ else
 			}
 			$db->free($resql);
 		}
-		else
-		{
+		else {
 			dol_print_error($db);
 		}
 
@@ -771,15 +757,13 @@ if ($account)
 			$morehtml = '<a href="'.$_SERVER["PHP_SELF"].'?account='.$account.'&option=all'.$moreparam.'">'.$langs->trans("ShowAllAccounts").'</a>';
     		dol_banner_tab($object, 'ref', $linkback, 1, 'ref', 'ref', '', $moreparam, 0, '', '', 1);
 		}
-		else
-		{
+		else {
 			$morehtml = '<a href="'.$_SERVER["PHP_SELF"].'?account='.$account.$moreparam.'">'.$langs->trans("BackToAccount").'</a>';
 			print $langs->trans("AllAccounts");
 			//print $morehtml;
 		}
 	}
-	else
-	{
+	else {
 	    $bankaccount = new Account($db);
 		$listid = explode(',', $account);
 		foreach ($listid as $key => $id)
@@ -791,8 +775,7 @@ if ($account)
 		}
 	}
 }
-else
-{
+else {
 	print $langs->trans("AllAccounts");
 }
 
@@ -809,8 +792,7 @@ if ($mode == 'showalltime')
 	print $langs->trans("GoBack");
 	print '</a>';
 }
-else
-{
+else {
 	print '<a href="'.$_SERVER["PHP_SELF"].'?mode=showalltime&account='.$account.'">';
 	print $langs->trans("ShowAllTimeBalance");
 	print '</a>';

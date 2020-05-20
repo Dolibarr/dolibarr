@@ -465,8 +465,7 @@ class Contracts extends DolibarrApi
         if ($updateRes > 0) {
             return $this->get($id);
         }
-        else
-        {
+        else {
               throw new RestException(405, $this->contract->error);
         }
     }
@@ -502,8 +501,7 @@ class Contracts extends DolibarrApi
         {
             return $this->get($id);
         }
-        else
-        {
+        else {
             throw new RestException(500, $this->contract->error);
         }
     }

@@ -207,8 +207,7 @@ class Fichinter extends CommonObject
 			$this->db->free($resql);
 			return 1;
 		}
-		else
-		{
+		else {
 			dol_print_error($this->db);
 			$this->error = $this->db->error();
 			return -1;
@@ -335,16 +334,14 @@ class Fichinter extends CommonObject
 				$this->db->commit();
 				return $this->id;
 			}
-			else
-			{
+			else {
 				$this->db->rollback();
 				$this->error = join(',', $this->errors);
 				dol_syslog(get_class($this)."::create ".$this->error, LOG_ERR);
 				return -1;
 			}
 		}
-		else
-		{
+		else {
 			$this->error = $this->db->error();
 			$this->db->rollback();
 			return -1;
@@ -405,8 +402,7 @@ class Fichinter extends CommonObject
 			$this->db->commit();
 			return 1;
 		}
-		else
-		{
+		else {
 			$this->error = $this->db->error();
 			$this->db->rollback();
 			return -1;
@@ -481,8 +477,7 @@ class Fichinter extends CommonObject
 				return 1;
 			}
 		}
-		else
-		{
+		else {
 			$this->error = $this->db->lasterror();
 			return -1;
 		}
@@ -536,8 +531,7 @@ class Fichinter extends CommonObject
 			    return -1;
 			}
 		}
-		else
-		{
+		else {
 			$this->db->rollback();
 			$this->error = $this->db->lasterror();
 			return -1;
@@ -569,8 +563,7 @@ class Fichinter extends CommonObject
 			{
 				$num = $this->getNextNumRef($this->thirdparty);
 			}
-			else
-			{
+			else {
 				$num = $this->ref;
 			}
 			$this->newref = dol_sanitizeFileName($num);
@@ -656,8 +649,7 @@ class Fichinter extends CommonObject
 				$this->db->commit();
 				return 1;
 			}
-			else
-			{
+			else {
 				$this->db->rollback();
 				dol_syslog(get_class($this)."::setValid ".$this->error, LOG_ERR);
 				return -1;
@@ -878,14 +870,12 @@ class Fichinter extends CommonObject
 			{
 				return $numref;
 			}
-			else
-			{
+			else {
 				dol_print_error($db, "Fichinter::getNextNumRef ".$obj->error);
 				return "";
 			}
 		}
-		else
-		{
+		else {
 			$langs->load("errors");
 			print $langs->trans("Error")." ".$langs->trans("Error_FICHEINTER_ADDON_NotDefined");
 			return "";
@@ -944,8 +934,7 @@ class Fichinter extends CommonObject
 			}
 			$this->db->free($resql);
 		}
-		else
-		{
+		else {
 			dol_print_error($this->db);
 		}
 	}
@@ -1065,8 +1054,7 @@ class Fichinter extends CommonObject
 			$this->db->commit();
 			return 1;
 		}
-		else
-		{
+		else {
 			$this->db->rollback();
 			return -1;
 		}
@@ -1097,8 +1085,7 @@ class Fichinter extends CommonObject
 				$this->date_delivery = $date_delivery;
 				return 1;
 			}
-			else
-			{
+			else {
 				$this->error = $this->db->error();
 				dol_syslog("Fichinter::set_date_delivery Erreur SQL");
 				return -1;
@@ -1131,8 +1118,7 @@ class Fichinter extends CommonObject
 				$this->description = $description;
 				return 1;
 			}
-			else
-			{
+			else {
 				$this->error = $this->db->error();
 				dol_syslog("Fichinter::set_description Erreur SQL");
 				return -1;
@@ -1165,8 +1151,7 @@ class Fichinter extends CommonObject
 				$this->fk_contrat = $contractid;
 				return 1;
 			}
-			else
-			{
+			else {
 				$this->error = $this->db->error();
 				return -1;
 			}
@@ -1257,8 +1242,7 @@ class Fichinter extends CommonObject
 			$this->db->commit();
 			return $this->id;
 		}
-		else
-		{
+		else {
 			$this->db->rollback();
 			return -1;
 		}
@@ -1303,8 +1287,7 @@ class Fichinter extends CommonObject
 				$this->db->commit();
 				return 1;
 			}
-			else
-			{
+			else {
 				$this->error = $this->db->error();
 				$this->db->rollback();
 				return -1;
@@ -1396,8 +1379,7 @@ class Fichinter extends CommonObject
 
 			return 1;
 		}
-		else
-		{
+		else {
 			$this->error = $this->db->error();
 			return -1;
 		}
@@ -1501,8 +1483,7 @@ class FichinterLigne extends CommonObjectLine
 			$this->db->free($result);
 			return 1;
 		}
-		else
-		{
+		else {
 			$this->error = $this->db->error().' sql='.$sql;
 			return -1;
 		}
@@ -1537,8 +1518,7 @@ class FichinterLigne extends CommonObjectLine
 				$obj = $this->db->fetch_object($resql);
 				$rangToUse = $obj->max + 1;
 			}
-			else
-			{
+			else {
 				dol_print_error($this->db);
 				$this->db->rollback();
 				return -1;
@@ -1591,14 +1571,12 @@ class FichinterLigne extends CommonObjectLine
 				$this->db->commit();
 				return $result;
 			}
-			else
-			{
+			else {
 				$this->db->rollback();
 				return -1;
 			}
 		}
-		else
-		{
+		else {
 			$this->error = $this->db->error()." sql=".$sql;
 			$this->db->rollback();
 			return -1;
@@ -1659,15 +1637,13 @@ class FichinterLigne extends CommonObjectLine
 				$this->db->commit();
 				return $result;
 			}
-			else
-			{
+			else {
 				$this->error = $this->db->lasterror();
 				$this->db->rollback();
 				return -1;
 			}
 		}
-		else
-		{
+		else {
 			$this->error = $this->db->lasterror();
 			$this->db->rollback();
 			return -1;
@@ -1712,15 +1688,13 @@ class FichinterLigne extends CommonObjectLine
 				$this->db->commit();
 				return 1;
 			}
-			else
-			{
+			else {
 				$this->error = $this->db->error();
 				$this->db->rollback();
 				return -2;
 			}
 		}
-		else
-		{
+		else {
 			$this->error = $this->db->error();
 			$this->db->rollback();
 			return -1;
@@ -1771,21 +1745,18 @@ class FichinterLigne extends CommonObjectLine
 					$this->db->commit();
 					return $result;
 				}
-				else
-				{
+				else {
 					$this->db->rollback();
 					return -1;
 				}
 			}
-			else
-			{
+			else {
 				$this->error = $this->db->error()." sql=".$sql;
 				$this->db->rollback();
 				return -1;
 			}
 		}
-		else
-		{
+		else {
 			return -2;
 		}
 	}

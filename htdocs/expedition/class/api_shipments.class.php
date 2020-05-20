@@ -399,8 +399,7 @@ class Shipments extends DolibarrApi
         if ($updateRes > 0) {
             return $this->get($id);
         }
-        else
-        {
+        else {
             throw new RestException(405, $this->shipment->error);
         }
     }
@@ -436,8 +435,7 @@ class Shipments extends DolibarrApi
         {
             return $this->get($id);
         }
-        else
-        {
+        else {
             throw new RestException(500, $this->shipment->error);
         }
     }

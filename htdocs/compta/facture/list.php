@@ -314,8 +314,7 @@ elseif ($massaction == 'withdrawrequest')
 		$error++;
 		setEventMessages($langs->trans("NotEnoughPermissions"), null, 'errors');
 	}
-	else
-	{
+	else {
 		//Checking error
 		$error = 0;
 
@@ -387,8 +386,7 @@ elseif ($massaction == 'withdrawrequest')
 					$db->commit();
 					$nbwithdrawrequestok++;
 				}
-				else
-				{
+				else {
 					$db->rollback();
 					setEventMessages($aBill->error, $aBill->errors, 'errors');
 				}
@@ -516,8 +514,7 @@ if ($search_status != '-1' && $search_status != '')
 		if ($search_status == '2') $sql .= " AND f.fk_statut = 2"; // payed     Not that some corrupted data may contains f.fk_statut = 1 AND f.paye = 1 (it means payed too but should not happend. If yes, reopen and reclassify billed)
 		if ($search_status == '3') $sql .= " AND f.fk_statut = 3"; // abandonned
 	}
-	else
-	{
+	else {
 		$sql .= " AND f.fk_statut IN (".$db->escape($search_status).")"; // When search_status is '1,2' for example
 	}
 }
@@ -564,8 +561,7 @@ if (!$sall)
 		foreach ($extrafields->attributes[$object->table_element]['label'] as $key => $val) $sql .= ($extrafields->attributes[$object->table_element]['type'][$key] != 'separate' ? ", ef.".$key : '');
 	}
 }
-else
-{
+else {
 	$sql .= natural_search(array_keys($fieldstosearchall), $sall);
 }
 
@@ -1220,8 +1216,7 @@ if ($resql)
                 {
                     print $obj->ref;
                 }
-                else
-                {
+                else {
                     print $facturestatic->getNomUrl(1, '', 200, 0, '', 0, 1);
                 }
 
@@ -1317,8 +1312,7 @@ if ($resql)
 				{
 				    print $thirdpartystatic->name;
 				}
-				else
-				{
+				else {
 				    print $thirdpartystatic->getNomUrl(1, 'customer');
 				}
 				print '</td>';
@@ -1620,8 +1614,7 @@ if ($resql)
 
 	print $formfile->showdocuments('massfilesarea_invoices', '', $filedir, $urlsource, 0, $delallowed, '', 1, 1, 0, 48, 1, $param, $title, '', '', '', null, $hidegeneratedfilelistifempty);
 }
-else
-{
+else {
 	dol_print_error($db);
 }
 

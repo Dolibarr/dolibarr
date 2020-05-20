@@ -236,8 +236,7 @@ if ($result)
 
     $db->free($result);
 }
-else
-{
+else {
     dol_print_error($db);
 }
 

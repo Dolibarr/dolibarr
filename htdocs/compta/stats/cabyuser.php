@@ -97,8 +97,7 @@ if (empty($date_start) || empty($date_end)) // We define date_start and date_end
 	if ($q == 3) { $date_start = dol_get_first_day($year_start, 7, false); $date_end = dol_get_last_day($year_start, 9, false); }
 	if ($q == 4) { $date_start = dol_get_first_day($year_start, 10, false); $date_end = dol_get_last_day($year_start, 12, false); }
 }
-else
-{
+else {
 	// TODO We define q
 }
 // $date_start and $date_end are defined. We force $year_start and $nbofyear
@@ -154,7 +153,7 @@ if ($modecompta == "CREANCES-DETTES") {
     //$calcmode.='<br>('.$langs->trans("SeeReportInInputOutputMode",'<a href="'.$_SERVER["PHP_SELF"].'?year='.$year_start.'&modecompta=RECETTES-DEPENSES">','</a>').')';
     $description = $langs->trans("RulesCADue");
 	if (!empty($conf->global->FACTURE_DEPOSITS_ARE_JUST_PAYMENTS)) $description .= $langs->trans("DepositsAreNotIncluded");
-	else  $description .= $langs->trans("DepositsAreIncluded");
+	else $description .= $langs->trans("DepositsAreIncluded");
     $builddate = dol_now();
     //$exportlink=$langs->trans("NotYetAvailable");
 }

@@ -136,8 +136,7 @@ if ($action == 'confirm_deletefile')
 			setEventMessages($langs->trans("FileWasRemoved", GETPOST('urlfile', 'alpha')), null, 'mesgs');
 			$result = $ecmdir->changeNbOfFiles('-');
 		}
-		else
-		{
+		else {
 			setEventMessages($langs->trans("ErrorFailToDeleteFile", GETPOST('urlfile', 'alpha')), null, 'errors');
 		}
 
@@ -159,8 +158,7 @@ if ($action == 'add' && $user->rights->ecm->setup)
 		header("Location: ".$_SERVER["PHP_SELF"]);
 		exit;
 	}
-	else
-	{
+	else {
 		setEventMessages('Error '.$langs->trans($ecmdir->error), null, 'errors');
 		$action = "create";
 	}
@@ -247,14 +245,12 @@ if ($action == 'refreshmanual')
                     $fk_parent = $parentdirisindatabase;
                     //break;  // We found parent, we can stop the while loop
                 }
-                else
-				{
+                else {
                     dol_syslog("No");
                     //print "No<br>\n";
                 }
             }
-            else
-            {
+            else {
                 dol_syslog("Parent is root");
                 $fk_parent = 0; // Parent is root
             }
@@ -281,8 +277,7 @@ if ($action == 'refreshmanual')
                     //var_dump($sqltree);
                     $adirwascreated = 1;
                 }
-                else
-                {
+                else {
                     dol_syslog("Failed to create directory ".$ecmdirtmp->label, LOG_ERR);
                 }
             }

@@ -732,8 +732,7 @@ while ($i < min($num, $limit))
 			}
 			//else print $langs->trans("NoSalesRepresentativeAffected");
 		}
-		else
-		{
+		else {
 			print '&nbsp';
 		}
 		print '</td>';

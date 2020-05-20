@@ -120,8 +120,7 @@ abstract class ActionsContactCardCommon
         		$this->tpl['company'] = $objsoc->getNomUrl(1);
         		$this->tpl['company_id'] = $objsoc->id;
         	}
-        	else
-        	{
+        	else {
         		$this->tpl['company'] = $form->select_company($this->object->socid, 'socid', '', 1);
         	}
 
@@ -223,8 +222,7 @@ abstract class ActionsContactCardCommon
         		$objsoc->fetch($this->object->socid);
         		$this->tpl['company'] = $objsoc->getNomUrl(1);
         	}
-        	else
-        	{
+        	else {
         		$this->tpl['company'] = $langs->trans("ContactNotLinkedToCompany");
         	}
 
@@ -310,8 +308,7 @@ abstract class ActionsContactCardCommon
             {
                 $obj = $this->db->fetch_object($resql);
             }
-            else
-            {
+            else {
                 dol_print_error($this->db);
             }
             $this->object->country_id = $langs->trans("Country".$obj->code) ? $langs->trans("Country".$obj->code) : $obj->label;

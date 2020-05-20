@@ -133,8 +133,7 @@ if (empty($reshook))
 	        setEventMessages('Security key '.$securitykey.' is wrong', null, 'errors');
 	        $action = '';
 	    }
-	    else
-	    {
+	    else {
 	        $object = new Cronjob($db);
 	    	$job = $object->fetch($id);
 
@@ -156,8 +155,7 @@ if (empty($reshook))
 	    		}
 	    		$action = '';
 	    	}
-	    	else
-	    	{
+	    	else {
 	    		setEventMessages($object->error, $object->errors, 'errors');
 	    		$action = '';
 	    	}
@@ -197,8 +195,7 @@ if (empty($reshook))
 				//else dol_print_error($db, 'Bad value for massaction');
 				if ($result < 0) setEventMessages($tmpcron->error, $tmpcron->errors, 'errors');
 			}
-			else
-			{
+			else {
 				$error++;
 			}
 		}
@@ -445,8 +442,7 @@ if ($num > 0)
 			print $object->getNomUrl(0, '', 1);
 			$object->ref = $obj->rowid;
 		}
-		else
-		{
+		else {
 			//print $langs->trans('CronNone');
 		}
 		print '</td>';
@@ -587,8 +583,7 @@ if ($num > 0)
 		$i++;
 	}
 }
-else
-{
+else {
 	print '<tr><td colspan="9" class="opacitymedium">'.$langs->trans('CronNoJobs').'</td></tr>';
 }
 

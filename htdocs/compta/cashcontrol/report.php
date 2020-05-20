@@ -173,8 +173,7 @@ if ($resql)
             $cachebankaccount[$objp->bankid] = $bankaccounttmp;
             $bankaccount = $bankaccounttmp;
         }
-        else
-        {
+        else {
             $bankaccount = $cachebankaccount[$objp->bankid];
         }
 
@@ -312,8 +311,7 @@ if ($resql)
 
 	$db->free($resql);
 }
-else
-{
+else {
 	dol_print_error($db);
 }
 

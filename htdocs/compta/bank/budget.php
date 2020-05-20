@@ -90,8 +90,7 @@ if ($result)
 	print '<td class="liste_total right">'.price($total).'</td>';
 	print '<td colspan="2" class="liste_total right">'.price($totalnb ?price2num($total / $totalnb, 'MT') : 0).'</td></tr>';
 }
-else
-{
+else {
 	dol_print_error($db);
 }
 print "</table>";

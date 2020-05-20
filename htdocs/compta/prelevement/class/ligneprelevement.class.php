@@ -97,16 +97,14 @@ class LignePrelevement
 				$this->bon_ref         = $obj->ref;
 				$this->bon_rowid       = $obj->bon_rowid;
 			}
-			else
-			{
+			else {
 				$result++;
 				dol_syslog("LignePrelevement::Fetch rowid=$rowid numrows=0");
 			}
 
 			$this->db->free($resql);
 		}
-		else
-		{
+		else {
 			$result++;
 			dol_syslog("LignePrelevement::Fetch rowid=$rowid");
 			dol_syslog($this->db->error());

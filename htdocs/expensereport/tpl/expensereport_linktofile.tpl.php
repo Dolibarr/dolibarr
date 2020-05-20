@@ -43,8 +43,7 @@ if (empty($conf->global->EXPENSEREPORT_DISABLE_ATTACHMENT_ON_LINES))
                 print '</div>';
                 print '</a>';
             }
-            else
-            {
+            else {
                 $error = 0;
                 $thumbshown = '';
 
@@ -133,8 +132,7 @@ if (empty($conf->global->EXPENSEREPORT_DISABLE_ATTACHMENT_ON_LINES))
 
         print '</td></tr>';
     }
-    else
-    {
+    else {
         print '<tr class="oddeven nohover trattachnewfilenow"'.(!GETPOSTISSET('sendit') && empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER) ? ' style="display: none"' : '').'>';
         print '<td colspan="'.$colspan.'">';
         print '<span class="opacitymedium">'.$langs->trans("NoFilesUploadedYet").'</span>';

@@ -104,8 +104,7 @@ if ($mode != 'sconly')
     $center = ($year ? '<a href="index.php?year='.($year - 1).$param.'">'.img_previous($langs->trans("Previous"), 'class="valignbottom"')."</a> ".$langs->trans("Year").' '.$year.' <a href="index.php?year='.($year + 1).$param.'">'.img_next($langs->trans("Next"), 'class="valignbottom"')."</a>" : "");
     print_barre_liste($title, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, $center, $num, $totalnboflines, 'object_payment', 0, '', '', $limit, 1);
 }
-else
-{
+else {
     print_barre_liste($title, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, $center, $num, $totalnboflines, 'object_payment', 0, '', '', $limit, 0);
 }
 
@@ -241,8 +240,7 @@ if (!empty($conf->tax->enabled) && $user->rights->tax->charges->lire)
 	    print '<td class="liste_total right">'.price($totalpaye)."</td>";
 		print "</tr>";
 	}
-	else
-	{
+	else {
 		dol_print_error($db);
 	}
 	print '</table>';
@@ -357,8 +355,7 @@ if (!empty($conf->tax->enabled) && $user->rights->tax->charges->lire)
 		    print "</table>";
 		    $db->free($result);
 		}
-		else
-		{
+		else {
 		    dol_print_error($db);
 		}
 	}
@@ -380,8 +377,7 @@ elseif ($mysoc->localtax2_assuj == "1")
 	$j = 2;
 	$numlt = 3;
 }
-else
-{
+else {
 	$j = 0;
 	$numlt = 0;
 }
@@ -452,8 +448,7 @@ while ($j < $numlt)
 			print "</table>";
 			$db->free($result);
 		}
-		else
-		{
+		else {
 			dol_print_error($db);
 		}
 	}
@@ -566,8 +561,7 @@ if (!empty($conf->salaries->enabled) && !empty($user->rights->salaries->read))
 
             print "<br>";
         }
-        else
-        {
+        else {
             dol_print_error($db);
         }
     }

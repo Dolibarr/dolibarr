@@ -239,8 +239,7 @@ if (empty($reshook))
 					$action = "create";
 				}
 			}
-			else
-			{
+			else {
 				$error++;
 				setEventMessages($object->error, $object->errors, 'errors');
 				$action = "create";
@@ -253,8 +252,7 @@ if (empty($reshook))
 				header("Location: ".$_SERVER['PHP_SELF'].'?facid='.$object->id);
 	   			exit;
 			}
-			else
-			{
+			else {
 				$db->rollback();
 
 				$error++;
@@ -357,8 +355,7 @@ if (empty($reshook))
 		{
 			$db->commit();
 		}
-		else
-		{
+		else {
 			$db->rollback();
 			setEventMessages($object->error, $object->errors, 'errors');
 		}
@@ -381,8 +378,7 @@ if (empty($reshook))
 		{
 			$db->commit();
 		}
-		else
-		{
+		else {
 			$db->rollback();
 			setEventMessages($object->error, $object->errors, 'errors');
 		}
@@ -419,14 +415,12 @@ if (empty($reshook))
 				$db->commit();
 				$object->fetch($object->id); // Reload lines
 			}
-			else
-			{
+			else {
 				$db->rollback();
 				setEventMessages($db->lasterror(), null, 'errors');
 			}
 		}
-		else
-		{
+		else {
 			$db->rollback();
 			setEventMessages($line->error, $line->errors, 'errors');
 		}
@@ -467,8 +461,7 @@ if (empty($reshook))
 			$idprod = 0;
 			$tva_tx = (GETPOST('tva_tx', 'alpha') ? GETPOST('tva_tx', 'alpha') : 0);
 		}
-		else
-		{
+		else {
 			$idprod = GETPOST('idprod', 'int');
 			$tva_tx = '';
 		}
@@ -579,8 +572,7 @@ if (empty($reshook))
 					{
 						$pu_ht = price2num($pu_ttc / (1 + ($tmpvat / 100)), 'MU');
 					}
-					else
-					{
+					else {
 						$pu_ttc = price2num($pu_ht * (1 + ($tmpvat / 100)), 'MU');
 					}
 				}
@@ -604,8 +596,7 @@ if (empty($reshook))
 
 					$desc = (!empty($prod->multilangs [$outputlangs->defaultlang] ["description"])) ? $prod->multilangs [$outputlangs->defaultlang] ["description"] : $prod->description;
 				}
-				else
-				{
+				else {
 					$desc = $prod->description;
 				}
 
@@ -641,8 +632,7 @@ if (empty($reshook))
 				$type = $prod->type;
 				$fk_unit = $prod->fk_unit;
 			}
-			else
-			{
+			else {
 				$pu_ht = price2num($price_ht, 'MU');
 				$pu_ttc = price2num(GETPOST('price_ttc'), 'MU');
 				$tva_npr = (preg_match('/\*/', $tva_tx) ? 1 : 0);
@@ -673,8 +663,7 @@ if (empty($reshook))
 				$mesg = $langs->trans("CantBeLessThanMinPrice", price(price2num($price_min, 'MU'), 0, $langs, 0, 0, - 1, $conf->currency));
 				setEventMessages($mesg, null, 'errors');
 			}
-			else
-			{
+			else {
 				// Insert line
 				$result = $object->addline($desc, $pu_ht, $qty, $tva_tx, $localtax1_tx, $localtax2_tx, $idprod, $remise_percent, $price_base_type, $info_bits, '', $pu_ttc, $type, - 1, $special_code, $label, $fk_unit, 0, $date_start_fill, $date_end_fill, $fournprice, $buyingprice);
 
@@ -739,8 +728,7 @@ if (empty($reshook))
 					unset($_POST['situations']);
 					unset($_POST['progress']);
 				}
-				else
-				{
+				else {
 					setEventMessages($object->error, $object->errors, 'errors');
 				}
 
@@ -948,8 +936,7 @@ if (empty($reshook))
 				unset($_POST['situations']);
 				unset($_POST['progress']);
 			}
-			else
-			{
+			else {
 				setEventMessages($object->error, $object->errors, 'errors');
 			}
 		}
@@ -1145,8 +1132,7 @@ if ($action == 'create')
 			print $form->selectarray('generate_pdf', $select, GETPOST('generate_pdf'));
 			print "</td></tr>";
 		}
-		else
-		{
+		else {
 			print '<input type="hidden" name="generate_pdf" value="1">';
 		}
 
@@ -1199,13 +1185,11 @@ if ($action == 'create')
 		print '</div>';
 		print "</form>\n";
 	}
-	else
-	{
+	else {
 		dol_print_error('', "Error, no invoice ".$object->id);
 	}
 }
-else
-{
+else {
 	/*
 	 * View mode
 	 */
@@ -1329,8 +1313,7 @@ else
 			{
 				$form->form_conditions_reglement($_SERVER['PHP_SELF'].'?facid='.$object->id, $object->cond_reglement_id, 'cond_reglement_id');
 			}
-			else
-			{
+			else {
 				$form->form_conditions_reglement($_SERVER['PHP_SELF'].'?facid='.$object->id, $object->cond_reglement_id, 'none');
 			}
 		} else {
@@ -1351,8 +1334,7 @@ else
 		{
 			$form->form_modes_reglement($_SERVER['PHP_SELF'].'?facid='.$object->id, $object->mode_reglement_id, 'mode_reglement_id', 'CRDT', 1, 1);
 		}
-		else
-		{
+		else {
 			$form->form_modes_reglement($_SERVER['PHP_SELF'].'?facid='.$object->id, $object->mode_reglement_id, 'none');
 		}
 		print '</td></tr>';
@@ -1460,8 +1442,7 @@ else
 		{
 			$form->formSelectAccount($_SERVER['PHP_SELF'].'?id='.$object->id, $object->fk_account, 'fk_account', 1);
 		}
-		else
-		{
+		else {
 			$form->formSelectAccount($_SERVER['PHP_SELF'].'?id='.$object->id, $object->fk_account, 'none');
 		}
 		print "</td>";
@@ -1487,8 +1468,7 @@ else
             $select = 'select;'.implode(',', $list);
             print $form->editfieldval($langs->trans("Model"), 'modelpdf', $object->modelpdf, $object, $user->rights->facture->creer, $select);
         }
-        else
-        {
+        else {
             print $object->modelpdf;
         }
         print "</td>";
@@ -1537,14 +1517,12 @@ else
 			print '<td class="left"><input type="submit" class="button" value="'.$langs->trans("Modify").'"></td>';
 			print '</tr></table></form>';
 		}
-		else
-		{
+		else {
 			if ($object->frequency > 0)
 			{
 				print $langs->trans('FrequencyPer_'.$object->unit_frequency, $object->frequency);
 			}
-			else
-			{
+			else {
 				print $langs->trans("NotARecurringInvoiceTemplate");
 			}
 		}
@@ -1556,8 +1534,7 @@ else
 		{
 			print $form->editfieldkey($langs->trans("NextDateToExecution"), 'date_when', $object->date_when, $object, $user->rights->facture->creer, 'day');
 		}
-		else
-		{
+		else {
 			print $langs->trans("NextDateToExecution");
 		}
 		print '</td><td>';
@@ -1570,8 +1547,7 @@ else
 		{
 			if (!$object->suspended && $action != 'editdate_when' && $object->frequency > 0 && $object->date_when && $object->date_when < $now) print img_warning($langs->trans("Late"));
 		}
-		else
-		{
+		else {
 			print img_info($langs->trans("MaxNumberOfGenerationReached"));
 		}
 		print '</td>';
@@ -1583,8 +1559,7 @@ else
 		{
 			print $form->editfieldkey($langs->trans("MaxPeriodNumber"), 'nb_gen_max', $object->nb_gen_max, $object, $user->rights->facture->creer);
 		}
-		else
-		{
+		else {
 			print $langs->trans("MaxPeriodNumber");
 		}
 		print '</td><td>';
@@ -1592,8 +1567,7 @@ else
 		{
 			  print $form->editfieldval($langs->trans("MaxPeriodNumber"), 'nb_gen_max', $object->nb_gen_max ? $object->nb_gen_max : '', $object, $user->rights->facture->creer);
 		}
-		else
-		{
+		else {
 			print '';
 		}
 		print '</td>';
@@ -1603,8 +1577,7 @@ else
 		print '<tr><td>';
 		if ($action == 'auto_validate' || $object->frequency > 0)
 			print $form->editfieldkey($langs->trans("StatusOfGeneratedInvoices"), 'auto_validate', $object->auto_validate, $object, $user->rights->facture->creer);
-		else
-			print $langs->trans("StatusOfGeneratedInvoices");
+		else print $langs->trans("StatusOfGeneratedInvoices");
 		print '</td><td>';
 		$select = 'select;0:'.$langs->trans('BillStatusDraft').',1:'.$langs->trans('BillStatusValidated');
 		if ($action == 'auto_validate' || $object->frequency > 0)
@@ -1619,8 +1592,7 @@ else
 			print '<td>';
 			if ($action == 'generate_pdf' || $object->frequency > 0)
 				print $form->editfieldkey($langs->trans("StatusOfGeneratedDocuments"), 'generate_pdf', $object->generate_pdf, $object, $user->rights->facture->creer);
-			else
-				print $langs->trans("StatusOfGeneratedDocuments");
+			else print $langs->trans("StatusOfGeneratedDocuments");
 			print '</td>';
 			print '<td>';
 			$select = 'select;0:'.$langs->trans('DoNotGenerateDoc').',1:'.$langs->trans('AutogenerateDoc');
@@ -1631,8 +1603,7 @@ else
 			print '</td>';
 			print '</tr>';
 		}
-		else
-		{
+		else {
 			print '<input type="hidden" name="generate_pdf" value="1">';
 		}
 
@@ -1734,20 +1705,17 @@ else
 				{
 					print '<div class="inline-block divButAction"><a class="butActionRefused classfortooltip" href="#" title="'.dol_escape_htmltag($langs->trans("MaxGenerationReached")).'">'.$langs->trans("CreateBill").'</a></div>';
 				}
-				else
-				{
+				else {
 					if (empty($object->frequency) || $object->date_when <= $today)
 					{
 						print '<div class="inline-block divButAction"><a class="butAction" href="'.DOL_URL_ROOT.'/compta/facture/card.php?action=create&socid='.$object->thirdparty->id.'&fac_rec='.$object->id.'">'.$langs->trans("CreateBill").'</a></div>';
 					}
-					else
-					{
+					else {
 						print '<div class="inline-block divButAction"><a class="butActionRefused classfortooltip" href="#" title="'.dol_escape_htmltag($langs->trans("DateIsNotEnough")).'">'.$langs->trans("CreateBill").'</a></div>';
 					}
 				}
 			}
-			else
-			{
+			else {
 				print '<div class="inline-block divButAction"><a class="butActionRefused classfortooltip" href="#">'.$langs->trans("CreateBill").'</a></div>';
 			}
 		}
@@ -1758,8 +1726,7 @@ else
 			{
 				print '<div class="inline-block divButAction"><a class="butActionDelete" href="'.DOL_URL_ROOT.'/compta/facture/card-rec.php?action=disable&id='.$object->id.'">'.$langs->trans("Disable").'</a></div>';
 			}
-			else
-			{
+			else {
 				print '<div class="inline-block divButAction"><a class="butAction" href="'.DOL_URL_ROOT.'/compta/facture/card-rec.php?action=enable&id='.$object->id.'">'.$langs->trans("Enable").'</a></div>';
 			}
 		}

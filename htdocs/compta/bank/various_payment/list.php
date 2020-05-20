@@ -76,8 +76,7 @@ if (!GETPOST('typeid'))
 		if ($part[0] == 'v.fk_typepayment') $typeid = $part[1];
 	}
 }
-else
-{
+else {
 	$typeid = GETPOST('typeid');
 }
 
@@ -374,8 +373,7 @@ if ($result)
 
 	$db->free($result);
 }
-else
-{
+else {
 	dol_print_error($db);
 }
 

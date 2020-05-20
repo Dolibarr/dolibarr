@@ -73,8 +73,7 @@ if ($_REQUEST["account"] || $_REQUEST["ref"])
 	{
 		$viewline = $vline;
 	}
-	else
-	{
+	else {
 		$viewline = 20;
 	}
 
@@ -305,8 +304,7 @@ if ($_REQUEST["account"] || $_REQUEST["ref"])
 			$i++;
 		}
 	}
-	else
-	{
+	else {
 		dol_print_error($db);
 	}
 
@@ -327,8 +325,7 @@ if ($_REQUEST["account"] || $_REQUEST["ref"])
 	print "</table>";
     print "</div>";
 }
-else
-{
+else {
 	print $langs->trans("ErrorBankAccountNotFound");
 }
 

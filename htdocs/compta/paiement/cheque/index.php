@@ -77,8 +77,7 @@ if ($resql) {
     print '</td></tr>';
     print "</table>\n";
 }
-else
-{
+else {
     dol_print_error($db);
 }
 
@@ -141,8 +140,7 @@ if ($resql)
 
 	$db->free($resql);
 }
-else
-{
+else {
     dol_print_error($db);
 }
 

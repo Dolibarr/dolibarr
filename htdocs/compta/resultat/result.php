@@ -178,7 +178,7 @@ if ($modecompta == "CREANCES-DETTES")
 	//$periodlink='<a href="'.$_SERVER["PHP_SELF"].'?year='.($year-1).'&modecompta='.$modecompta.'">'.img_previous().'</a> <a href="'.$_SERVER["PHP_SELF"].'?year='.($year+1).'&modecompta='.$modecompta.'">'.img_next().'</a>';
 	$description = $langs->trans("RulesResultDue");
 	if (!empty($conf->global->FACTURE_DEPOSITS_ARE_JUST_PAYMENTS)) $description .= $langs->trans("DepositsAreNotIncluded");
-	else  $description .= $langs->trans("DepositsAreIncluded");
+	else $description .= $langs->trans("DepositsAreIncluded");
 	$builddate = dol_now();
 	//$exportlink=$langs->trans("NotYetAvailable");
 }
@@ -375,7 +375,7 @@ elseif ($modecompta == "BOOKKEEPING")
 				print "</tr>\n";
 
 				//var_dump($sommes);
-			} else            // normal category
+			} else // normal category
 			{
 				$code = $cat['code']; // Category code we process
 

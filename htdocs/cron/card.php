@@ -66,15 +66,13 @@ if (!empty($cancel))
 	{
 		$action = '';
 	}
-	else
-	{
+	else {
 	    if ($backtourl)
 	    {
 	        header("Location: ".$backtourl);
 	        exit;
 	    }
-	    else
-	    {
+	    else {
 	        header("Location: ".DOL_URL_ROOT.'/cron/list.php');
 		    exit;
 	    }
@@ -91,8 +89,7 @@ if ($action == 'confirm_delete' && $confirm == "yes" && $user->rights->cron->del
 		setEventMessages($object->error, $object->errors, 'errors');
 		$action = 'edit';
 	}
-	else
-	{
+	else {
 		Header("Location: ".DOL_URL_ROOT.'/cron/list.php');
 		exit;
 	}
@@ -106,8 +103,7 @@ if ($action == 'confirm_execute' && $confirm == "yes" && $user->rights->cron->ex
         setEventMessages('Security key '.$securitykey.' is wrong', null, 'errors');
         $action = '';
     }
-    else
-    {
+    else {
         $now = dol_now(); // Date we start
 
     	$result = $object->run_jobs($user->login);
@@ -117,8 +113,7 @@ if ($action == 'confirm_execute' && $confirm == "yes" && $user->rights->cron->ex
     		setEventMessages($object->error, $object->errors, 'errors');
     		$action = '';
     	}
-    	else
-    	{
+    	else {
     		$res = $object->reprogram_jobs($user->login, $now);
     		if ($res > 0)
     		{
@@ -126,8 +121,7 @@ if ($action == 'confirm_execute' && $confirm == "yes" && $user->rights->cron->ex
     			else setEventMessages($langs->trans("JobFinished"), null, 'mesgs');
     			$action = '';
     		}
-    		else
-    		{
+    		else {
     			setEventMessages($object->error, $object->errors, 'errors');
     			$action = '';
     		}
@@ -416,8 +410,7 @@ if (($action == "create") || ($action == "edit"))
 	    {
 	        print "<option value='".$i."' selected>".$i."</option>";
 	    }
-	    else
-	    {
+	    else {
 	        print "<option value='".$i."'>".$i."</option>";
 	    }
 	}
@@ -473,8 +466,7 @@ if (($action == "create") || ($action == "edit"))
 	{
         print $form->selectDate($object->datestart, 'datestart', 1, 1, '', "cronform");
 	}
-	else
-	{
+	else {
         print $form->selectDate('', 'datestart', 1, 1, '', "cronform");
 	}
 	print "</td>";
@@ -527,8 +519,7 @@ if (($action == "create") || ($action == "edit"))
 	{
         print $form->selectDate($object->datenextrun, 'datenextrun', 1, 1, '', "cronform");
 	}
-	else
-	{
+	else {
         print $form->selectDate(-1, 'datenextrun', 1, 1, '', "cronform");
 	}
 	print "</td>";
@@ -548,8 +539,7 @@ if (($action == "create") || ($action == "edit"))
 
 	print "</form>\n";
 }
-else
-{
+else {
 	/*
 	 * view card
 	 */
@@ -622,8 +612,7 @@ else
 		{
 			print $langs->trans("AllEntities");
 		}
-		else
-		{
+		else {
 			$mc->getInfo($object->entity);
 			print $mc->label;
 		}

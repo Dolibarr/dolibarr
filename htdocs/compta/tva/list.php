@@ -73,8 +73,7 @@ if (empty($_REQUEST['typeid']))
 		if ($part[0] == 't.fk_typepayment') $typeid = $part[1];
 	}
 }
-else
-{
+else {
 	$typeid = $_REQUEST['typeid'];
 }
 
@@ -229,8 +228,7 @@ if ($result)
 		{
 			$type = '<td>'.$langs->trans("PaymentTypeShort".$obj->payment_code).' '.$obj->num_payment.'</td>';
 		}
-		else
-		{
+		else {
 			$type = '<td>&nbsp;</td>';
 		}
 
@@ -292,8 +290,7 @@ if ($result)
 
     $db->free($result);
 }
-else
-{
+else {
     dol_print_error($db);
 }
 

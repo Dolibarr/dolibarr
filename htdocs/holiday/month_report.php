@@ -121,8 +121,7 @@ if ($num == 0)
 {
     print '<tr><td colspan="10" class="opacitymedium">'.$langs->trans('None').'</td></tr>';
 }
-else
-{
+else {
     while ($obj = $db->fetch_object($resql))
     {
         $user = new User($db);

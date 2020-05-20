@@ -549,8 +549,7 @@ class Invoices extends DolibarrApi
     	if ($updateRes > 0) {
     		return $this->get($id);
     	}
-    	else
-    	{
+    	else {
     		throw new RestException(405, $this->invoice->error);
     	}
     }
@@ -1125,8 +1124,7 @@ class Invoices extends DolibarrApi
                     {
                         $this->db->commit();
                     }
-                    else
-                    {
+                    else {
                         $this->db->rollback();
                         throw new RestException(500, 'Could not set paid');
                     }
@@ -1134,8 +1132,7 @@ class Invoices extends DolibarrApi
                     $this->db->commit();
                 }
             }
-            else
-            {
+            else {
                 $this->db->rollback();
                 throw new RestException(500, 'Discount creation error');
             }

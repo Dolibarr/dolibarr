@@ -132,8 +132,7 @@ if ($action == 'add' && $_POST["cancel"] <> $langs->trans("Cancel"))
 			header("Location: list.php");
 			exit;
 		}
-		else
-		{
+		else {
 			$db->rollback();
 			setEventMessages($object->error, $object->errors, 'errors');
 			$action = "create";
@@ -167,21 +166,18 @@ if ($action == 'delete')
 				header("Location: ".DOL_URL_ROOT.'/compta/tva/list.php');
 				exit;
 			}
-			else
-			{
+			else {
 				$object->error = $accountline->error;
 				$db->rollback();
 				setEventMessages($object->error, $object->errors, 'errors');
 			}
 	    }
-	    else
-	    {
+	    else {
 	        $db->rollback();
 	        setEventMessages($object->error, $object->errors, 'errors');
 	    }
 	}
-	else
-	{
+	else {
 		$mesg = 'Error try do delete a line linked to a conciliated bank transaction';
 		setEventMessages($mesg, null, 'errors');
 	}
@@ -389,13 +385,11 @@ if ($id)
 		{
 			print '<div class="inline-block divButAction"><a class="butActionDelete" href="card.php?id='.$object->id.'&action=delete">'.$langs->trans("Delete").'</a></div>';
 		}
-		else
-		{
+		else {
 			print '<div class="inline-block divButAction"><a class="butActionRefused classfortooltip" href="#" title="'.(dol_escape_htmltag($langs->trans("NotAllowed"))).'">'.$langs->trans("Delete").'</a></div>';
 		}
 	}
-	else
-	{
+	else {
 		print '<div class="inline-block divButAction"><a class="butActionRefused classfortooltip" href="#" title="'.$langs->trans("LinkedToAConciliatedTransaction").'">'.$langs->trans("Delete").'</a></div>';
 	}
 	print "</div>";

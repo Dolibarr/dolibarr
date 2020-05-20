@@ -155,8 +155,7 @@ if (empty($reshook))
         	header("Location: ".$_SERVER['PHP_SELF'].'?id='.$result);
         	exit;
         }
-        else
-        {
+        else {
         	$langs->load("errors");
         	setEventMessages($objectutil->error, $objectutil->errors, 'errors');
         	$action = '';
@@ -178,8 +177,7 @@ if (empty($reshook))
 		{
 			$qualified_for_stock_change = $object->hasProductsOrServices(2);
 		}
-		else
-		{
+		else {
 			$qualified_for_stock_change = $object->hasProductsOrServices(1);
 		}
 
@@ -239,8 +237,7 @@ if (empty($reshook))
 				header('Location: list.php?restore_lastsearch_values=1');
 				exit;
 			}
-			else
-			{
+			else {
 				setEventMessages($object->error, $object->errors, 'errors');
 			}
 		}
@@ -271,8 +268,7 @@ if (empty($reshook))
 			header('Location: '.$_SERVER["PHP_SELF"].'?id='.$object->id);
 			exit;
 		}
-		else
-		{
+		else {
 			setEventMessages($object->error, $object->errors, 'errors');
 			/* Fix bug 1485 : Reset action to avoid asking again confirmation on failure */
 			$action = '';
@@ -305,8 +301,7 @@ if (empty($reshook))
 		if ($object->update($user) < 0) {
 			setEventMessages($object->error, $object->errors, 'errors');
 		}
-		else
-		{
+		else {
 			// Define output language
 			$outputlangs = $langs;
 			$newlang = '';
@@ -595,8 +590,7 @@ if (empty($reshook))
 					{
 						$db->commit();
 					}
-					else
-					{
+					else {
 						setEventMessages($object->error, $object->errors, 'errors');
 						$db->rollback();
 					}
@@ -604,8 +598,7 @@ if (empty($reshook))
 					$db->commit();
 				}
 			}
-			else
-			{
+			else {
 				setEventMessages($discount->error, $discount->errors, 'errors');
 				$db->rollback();
 			}
@@ -973,8 +966,7 @@ if (empty($reshook))
 									$pu = 0;
 									$pu_currency = $lines[$i]->multicurrency_subprice;
 								}
-								else
-								{
+								else {
 									$pu = $lines[$i]->subprice;
 									$pu_currency = 0;
 								}
@@ -1015,13 +1007,11 @@ if (empty($reshook))
 							// Now reload line
 							$object->fetch_lines();
 						}
-						else
-						{
+						else {
 							$error++;
 						}
 					}
-					else
-					{
+					else {
 						$error++;
 					}
 				}
@@ -1045,8 +1035,7 @@ if (empty($reshook))
 			$action = 'create';
 			$_GET['socid'] = $_POST['socid'];
 		}
-		else
-		{
+		else {
 			$db->commit();
 
 			if (empty($conf->global->MAIN_DISABLE_PDF_AUTOUPDATE)) {
@@ -1079,8 +1068,7 @@ if (empty($reshook))
 			$up = price2num(GETPOST('price_ht'));
 			$price_base_type = 'HT';
 		}
-		else
-		{
+		else {
 			$up = price2num(GETPOST('price_ttc'));
 			$price_base_type = 'TTC';
 		}
@@ -1103,8 +1091,7 @@ if (empty($reshook))
 
 			$type = $prod->type;
 		}
-		else
-		{
+		else {
 			$label = $_POST['product_desc'];
 			$type = $_POST["type"] ? $_POST["type"] : 0;
 		}
@@ -1155,8 +1142,7 @@ if (empty($reshook))
 
 			$db->commit();
 		}
-		else
-		{
+		else {
 			$db->rollback();
 			setEventMessages($object->error, $object->errors, 'errors');
 		}
@@ -1190,8 +1176,7 @@ if (empty($reshook))
 			$price_ht = GETPOST('price_ht');
 			$tva_tx = (GETPOST('tva_tx') ? GETPOST('tva_tx') : 0);
 		}
-		else
-		{
+		else {
 			$idprod = GETPOST('idprod', 'int');
 			$price_ht = GETPOST('price_ht');
 			$tva_tx = '';
@@ -1275,8 +1260,7 @@ if (empty($reshook))
 						$productsupplier->ref_supplier = '';
 					}
 				}
-				else
-				{
+				else {
 					$fksoctosearch = $object->thirdparty->id;
 					$productsupplier->get_buyprice(0, -1, $idprod, 'none', $fksoctosearch); // We force qty to -1 to be sure to find if a supplier price exist
 				}
@@ -1387,8 +1371,7 @@ if (empty($reshook))
 			{
 				$pu_ht = price2num($price_ht, 'MU'); // $pu_ht must be rounded according to settings
 			}
-			else
-			{
+			else {
 				$pu_ttc = price2num(GETPOST('price_ttc'), 'MU');
 				$pu_ht = price2num($pu_ttc / (1 + ($tva_tx / 100)), 'MU'); // $pu_ht must be rounded according to settings
 			}
@@ -1454,8 +1437,7 @@ if (empty($reshook))
 			unset($_POST['date_endmonth']);
 			unset($_POST['date_endyear']);
 		}
-		else
-		{
+		else {
 			$db->rollback();
 			setEventMessages($object->error, $object->errors, 'errors');
 		}
@@ -1495,8 +1477,7 @@ if (empty($reshook))
 	            {
 	                $qualified_for_stock_change = $object->hasProductsOrServices(2);
 	            }
-	            else
-	            {
+	            else {
 	                $qualified_for_stock_change = $object->hasProductsOrServices(1);
 	            }
 
@@ -1550,8 +1531,7 @@ if (empty($reshook))
 				header('Location: '.$_SERVER["PHP_SELF"].'?id='.$id);
 				exit;
 			}
-			else
-			{
+			else {
 				setEventMessages($object->error, $object->errors, 'errors');
 			}
 		}
@@ -1628,15 +1608,13 @@ if (empty($reshook))
 				header("Location: ".$_SERVER['PHP_SELF']."?id=".$object->id);
 				exit;
 			}
-			else
-			{
+			else {
 				if ($object->error == 'DB_ERROR_RECORD_ALREADY_EXISTS')
 				{
 					$langs->load("errors");
 					setEventMessages($langs->trans("ErrorThisContactIsAlreadyDefinedAsThisType"), null, 'errors');
 				}
-				else
-				{
+				else {
 					setEventMessages($object->error, $object->errors, 'errors');
 				}
 			}
@@ -1649,8 +1627,7 @@ if (empty($reshook))
 			{
 				$result = $object->swapContactStatus(GETPOST('ligne'));
 			}
-			else
-			{
+			else {
 				dol_print_error($db);
 			}
 		}
@@ -1767,8 +1744,7 @@ if ($action == 'create')
 		$objectsrc->fetch_optionals();
 		$object->array_options = $objectsrc->array_options;
 	}
-	else
-	{
+	else {
 		$cond_reglement_id 	= $societe->cond_reglement_supplier_id;
 		$mode_reglement_id 	= $societe->mode_reglement_supplier_id;
 		$fk_account         = $societe->fk_account;
@@ -1805,8 +1781,7 @@ if ($action == 'create')
 		print $societe->getNomUrl(1);
 		print '<input type="hidden" name="socid" value="'.$societe->id.'">';
 	}
-	else
-	{
+	else {
 		print $form->select_company($societe->id, 'socid', 's.fournisseur=1', 'SelectThirdParty', 0, 0, null, 0, 'minwidth300');
 		// reload page to retrieve supplier informations
 		if (!empty($conf->global->RELOAD_PAGE_ON_SUPPLIER_CHANGE))
@@ -2017,8 +1992,7 @@ if ($action == 'create')
 				print '</div></div>';
 			}
 		}
-		else
-		{
+		else {
 			print '<div class="tagtr listofinvoicetype"><div class="tagtd listofinvoicetype">';
 			$tmp = '<input type="radio" name="type" id="radio_creditnote" value="0" disabled> ';
 			$text = $tmp.$langs->trans("InvoiceAvoir").' ';
@@ -2222,8 +2196,7 @@ if ($action == 'create')
 		print '</table>';
 	}
 }
-else
-{
+else {
 	if ($id > 0 || !empty($ref))
 	{
 		/* *************************************************************************** */
@@ -2317,8 +2290,7 @@ else
 				$savdate = $object->date;
 				$numref = $object->getNextNumRef($societe);
 			}
-			else
-			{
+			else {
 				$numref = $object->ref;
 			}
 
@@ -2337,8 +2309,7 @@ else
 			{
 				$qualified_for_stock_change = $object->hasProductsOrServices(2);
 			}
-			else
-			{
+			else {
 				$qualified_for_stock_change = $object->hasProductsOrServices(1);
 			}
 
@@ -2374,8 +2345,7 @@ else
             {
                 $qualified_for_stock_change = $object->hasProductsOrServices(2);
             }
-            else
-            {
+            else {
                 $qualified_for_stock_change = $object->hasProductsOrServices(1);
             }
             if (!empty($conf->stock->enabled) && !empty($conf->global->STOCK_CALCULATE_ON_SUPPLIER_BILL) && $qualified_for_stock_change)
@@ -2583,8 +2553,7 @@ else
 		{
 			$form->form_conditions_reglement($_SERVER['PHP_SELF'].'?id='.$object->id, $object->cond_reglement_id, 'cond_reglement_id');
 		}
-		else
-		{
+		else {
 			$form->form_conditions_reglement($_SERVER['PHP_SELF'].'?id='.$object->id, $object->cond_reglement_id, 'none');
 		}
 		print "</td>";
@@ -2605,8 +2574,7 @@ else
 		{
 			$form->form_modes_reglement($_SERVER['PHP_SELF'].'?id='.$object->id, $object->mode_reglement_id, 'mode_reglement_id', 'DBIT', 1, 1);
 		}
-		else
-		{
+		else {
 			$form->form_modes_reglement($_SERVER['PHP_SELF'].'?id='.$object->id, $object->mode_reglement_id, 'none');
 		}
 		print '</td></tr>';
@@ -2693,8 +2661,7 @@ else
 			{
 				print $form->textwithpicto($object->display_incoterms(), $object->label_incoterms, 1);
 			}
-			else
-			{
+			else {
 				print $form->select_incoterms((!empty($object->fk_incoterms) ? $object->fk_incoterms : ''), (!empty($object->location_incoterms) ? $object->location_incoterms : ''), $_SERVER['PHP_SELF'].'?id='.$object->id);
 			}
 			print '</td></tr>';
@@ -2737,7 +2704,7 @@ else
 		if (GETPOST('calculationrule')) $calculationrule = GETPOST('calculationrule', 'alpha');
 		else $calculationrule = (empty($conf->global->MAIN_ROUNDOFTOTAL_NOT_TOTALOFROUND) ? 'totalofround' : 'roundoftotal');
 		if ($calculationrule == 'totalofround') $calculationrulenum = 1;
-		else  $calculationrulenum = 2;
+		else $calculationrulenum = 2;
 		// Show link for "recalculate"
 		if ($object->getVentilExportCompta() == 0) {
 			$s = $langs->trans("ReCalculate").' ';
@@ -2867,8 +2834,7 @@ else
 					$i++;
 				}
 			}
-			else
-			{
+			else {
 				print '<tr class="oddeven"><td colspan="'.$nbcols.'"><span class="opacitymedium">'.$langs->trans("None").'</span></td><td></td><td></td></tr>';
 			}
 
@@ -2887,8 +2853,7 @@ else
 
 			$db->free($result);
 		}
-		else
-		{
+		else {
 			dol_print_error($db);
 		}
 
@@ -2898,8 +2863,7 @@ else
 			print '<tr><td colspan="'.$nbcols.'" class="right">';
 			if ($object->type != FactureFournisseur::TYPE_DEPOSIT)
 				print $langs->trans('AlreadyPaidNoCreditNotesNoDeposits');
-			else
-				print $langs->trans('AlreadyPaid');
+			else print $langs->trans('AlreadyPaid');
 			print ' :</td><td class="right"'.(($totalpaye > 0) ? ' class="amountalreadypaid"' : '').'>'.price($totalpaye).'</td><td>&nbsp;</td></tr>';
 
 			//$resteapayer = $object->total_ttc - $totalpaye;
@@ -2988,8 +2952,7 @@ else
 			print '<tr><td colspan="'.$nbcols.'" class="right">';
 			if ($resteapayeraffiche >= 0)
 				print $langs->trans('RemainderToPay');
-			else
-				print $langs->trans('ExcessPaid');
+			else print $langs->trans('ExcessPaid');
 			print ' :</td>';
 			print '<td class="right'.($resteapayeraffiche ? ' amountremaintopay' : (' '.$cssforamountpaymentcomplete)).'">'.price($resteapayeraffiche).'</td>';
 			print '<td class="nowrap">&nbsp;</td></tr>';
@@ -3010,8 +2973,7 @@ else
 			print '<tr><td colspan="'.$nbcols.'" class="right">';
 			if ($resteapayeraffiche <= 0)
 				print $langs->trans('RemainderToPayBack');
-			else
-				print $langs->trans('ExcessPaid');
+			else print $langs->trans('ExcessPaid');
 			print ' :</td>';
 			print '<td class="right'.($resteapayeraffiche ? ' amountremaintopay' : (' '.$cssforamountpaymentcomplete)).'">'.price($sign * $resteapayeraffiche).'</td>';
 			print '<td class="nowrap">&nbsp;</td></tr>';
@@ -3119,8 +3081,7 @@ else
 					{
 						print '<div class="inline-block divButAction"><a class="butAction" href="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'&amp;action=edit">'.$langs->trans('Modify').'</a></div>';
 					}
-					else
-					{
+					else {
 						print '<div class="inline-block divButAction"><span class="butActionRefused classfortooltip" title="'.$langs->trans("DisabledBecauseDispatchedInBookkeeping").'">'.$langs->trans('Modify').'</span></div>';
 					}
 				}
@@ -3137,8 +3098,7 @@ else
 					{
 						print '<div class="inline-block divButAction"><a class="butAction" href="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'&amp;action=reopen">'.$langs->trans('ReOpen').'</a></div>';
 					}
-					else
-					{
+					else {
 						if ($user->rights->fournisseur->facture->creer) {
 							print '<div class="inline-block divButAction"><span class="butActionRefused classfortooltip" title="'.$langs->trans("DisabledBecauseReplacedInvoice").'">'.$langs->trans('ReOpen').'</span></div>';
 						} elseif (empty($conf->global->MAIN_BUTTON_HIDE_UNAUTHORIZED)) {
@@ -3183,8 +3143,7 @@ else
 						{
 							print '<div class="inline-block divButAction"><span class="butActionRefused classfortooltip" title="'.$langs->trans("DisabledBecauseRemainderToPayIsZero").'">'.$langs->trans('DoPaymentBack').'</span></div>';
 						}
-						else
-						{
+						else {
 							print '<div class="inline-block divButAction"><a class="butAction" href="paiement.php?facid='.$object->id.'&amp;action=create&amp;accountid='.$object->fk_account.'">'.$langs->trans('DoPaymentBack').'</a></div>';
 						}
 					}
@@ -3218,8 +3177,7 @@ else
 	                        print '<div class="inline-block divButAction"><a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=valid"';
 	                        print '>'.$langs->trans('Validate').'</a></div>';
 	                    }
-	                    else
-	                    {
+	                    else {
 	                        print '<div class="inline-block divButAction"><a class="butActionRefused classfortooltip" href="#" title="'.dol_escape_htmltag($langs->trans("NotAllowed")).'"';
 	                        print '>'.$langs->trans('Validate').'</a></div>';
 	                    }
@@ -3268,8 +3226,7 @@ else
 	            	{
 	            		print '<div class="inline-block divButAction"><a class="butActionRefused classfortooltip" href="#" title="'.$langs->trans("DisabledBecauseNotErasable").'">'.$langs->trans('Delete').'</a></div>';
 	            	}
-                    else
-                    {
+                    else {
     	                print '<div class="inline-block divButAction"><a class="butActionDelete" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=delete">'.$langs->trans('Delete').'</a></div>';
                     }
 	            }

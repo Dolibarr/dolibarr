@@ -84,8 +84,7 @@ if ($action == 'create')
 	{
 		$action = '';
 	}
-	else
-	{
+	else {
 		if (!is_array($selected))
 		{
 			//$error++;
@@ -449,8 +448,7 @@ if (($action != 'create' && $action != 'add') && !$error) {
 	{
 		$sql .= " AND c.fk_statut IN (".CommandeFournisseur::STATUS_RECEIVED_COMPLETELY.")"; // Must match filter in htdocs/fourn/card.php
 	}
-	else
-	{
+	else {
 		// CommandeFournisseur::STATUS_ORDERSENT.", ".CommandeFournisseur::STATUS_RECEIVED_PARTIALLY.", ".CommandeFournisseur::STATUS_RECEIVED_COMPLETELY
 		$sql .= " AND c.fk_statut IN (".$db->escape($conf->global->SUPPLIER_ORDER_TO_INVOICE_STATUS).")";
 	}

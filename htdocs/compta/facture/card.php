@@ -619,8 +619,7 @@ if (empty($reshook))
 					}
 				}
 			}
-			else
-			{
+			else {
 				//var_dump($conf->global->SOCIETE_EMAIL_MANDATORY);
 				if ($key == 'EMAIL')
 				{
@@ -696,8 +695,7 @@ if (empty($reshook))
 					if ($result < 0) setEventMessages($object->error, $object->errors, 'errors');
 				}
 			}
-			else
-			{
+			else {
 				if (count($object->errors)) setEventMessages(null, $object->errors, 'errors');
 				else setEventMessages($object->error, $object->errors, 'errors');
 			}
@@ -972,8 +970,7 @@ if (empty($reshook))
 					{
 						$db->commit();
 					}
-					else
-					{
+					else {
 						setEventMessages($object->error, $object->errors, 'errors');
 						$db->rollback();
 					}
@@ -981,8 +978,7 @@ if (empty($reshook))
 					$db->commit();
 				}
 			}
-			else
-			{
+			else {
 				setEventMessages($discount->error, $discount->errors, 'errors');
 				$db->rollback();
 			}
@@ -1176,8 +1172,7 @@ if (empty($reshook))
 							                $searchPreviousInvoice = false; // find, exit;
 							                break;
 							            }
-							            else
-							            {
+							            else {
 							                $lineIndex--; // go to previous invoice in cycle
 							            }
 							        }
@@ -1470,8 +1465,7 @@ if (empty($reshook))
 									$amountdeposit[$tva] += $am / (1 + $tva / 100); // Convert into HT for the addline
 								}
 							}
-							else
-							{
+							else {
 								if ($typeamount == 'amount')
 								{
 									$amountdeposit[0] = $valuedeposit;
@@ -1725,8 +1719,7 @@ if (empty($reshook))
 						$error++;
 					}
 				}
-				else
-				{   // If some invoice's lines coming from page
+				else {   // If some invoice's lines coming from page
 					$id = $object->create($user);
 
 					for ($i = 1; $i <= $NBLINES; $i++) {
@@ -1853,8 +1846,7 @@ if (empty($reshook))
 				{
 					$mesg = $object->error;
 				}
-				else
-				{
+				else {
 					$nextSituationInvoice = new Facture($db);
 					$nextSituationInvoice->fetch($id);
 
@@ -1895,8 +1887,7 @@ if (empty($reshook))
 			header('Location: '.$_SERVER["PHP_SELF"].'?facid='.$id);
 			exit();
 		}
-		else
-		{
+		else {
 			$db->rollback();
 			$action = 'create';
 			$_GET["origin"] = $_POST["origin"];
@@ -1922,8 +1913,7 @@ if (empty($reshook))
 			$idprod = 0;
 			$tva_tx = (GETPOST('tva_tx', 'alpha') ? GETPOST('tva_tx', 'alpha') : 0);
 		}
-		else
-		{
+		else {
 			$idprod = GETPOST('idprod', 'int');
 			$tva_tx = '';
 		}
@@ -1971,8 +1961,7 @@ if (empty($reshook))
 				}
 				$error++;
 			}
-			else
-			{
+			else {
 				setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("UnitPriceHT")), null, 'errors');
 				$error++;
 			}
@@ -1999,8 +1988,7 @@ if (empty($reshook))
 				if ($res = $prodcomb->fetchByProductCombination2ValuePairs($idprod, $combinations)) {
 					$idprod = $res->fk_product_child;
 				}
-				else
-				{
+				else {
 					setEventMessages($langs->trans('ErrorProductCombinationNotFound'), null, 'errors');
 					$error++;
 				}
@@ -2065,8 +2053,7 @@ if (empty($reshook))
 					{
 						$pu_ht = price2num($pu_ttc / (1 + ($tmpvat / 100)), 'MU');
 					}
-					else
-					{
+					else {
 						$pu_ttc = price2num($pu_ht * (1 + ($tmpvat / 100)), 'MU');
 					}
 				}
@@ -2357,8 +2344,7 @@ if (empty($reshook))
 				}
 				$error++;
 			}
-			else
-			{
+			else {
 				setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("UnitPriceHT")), null, 'errors');
 				$error++;
 			}
@@ -2458,8 +2444,7 @@ if (empty($reshook))
                     $mesg = $langs->trans("Line").' '.$i.' : '.$langs->trans("CantBeLessThanMinPercent");
                     setEventMessages($mesg, null, 'warnings');
 					$result = -1;
-				} else
-					$object->update_percent($line, $_POST['all_progress']);
+				} else $object->update_percent($line, $_POST['all_progress']);
 			}
 		}
 	}
@@ -2540,8 +2525,7 @@ if (empty($reshook))
                                         $searchPreviousInvoice = false; // find, exit;
                                         break;
                                     }
-                                    else
-                                    {
+                                    else {
                                         $lineIndex--; // go to previous invoice in cycle
                                     }
                                 }
@@ -2569,18 +2553,15 @@ if (empty($reshook))
                         setEventMessages($langs->trans('Updated'), '', 'mesgs');
                         header("Location: ".$_SERVER['PHP_SELF']."?id=".$id);
                     }
-                    else
-                    {
+                    else {
                         setEventMessages($langs->trans('ErrorOutingSituationInvoiceCreditNote'), array(), 'errors');
                     }
 	            }
-	            else
-	            {
+	            else {
 	                setEventMessages($langs->trans('ErrorOutingSituationInvoiceOnUpdate'), array(), 'errors');
 	            }
 	        }
-	        else
-	        {
+	        else {
 	            setEventMessages($langs->trans('ErrorFindNextSituationInvoice'), array(), 'errors');
 	        }
 	    }
@@ -2875,8 +2856,7 @@ if ($action == 'create')
 				$expesrc->fetch_optionals();
 				$object->array_options = $expesrc->array_options;
 			}
-			else
-			{
+			else {
 				$cond_reglement_id 	= (!empty($objectsrc->cond_reglement_id) ? $objectsrc->cond_reglement_id : (!empty($soc->cond_reglement_id) ? $soc->cond_reglement_id : 0));
 				$mode_reglement_id 	= (!empty($objectsrc->mode_reglement_id) ? $objectsrc->mode_reglement_id : (!empty($soc->mode_reglement_id) ? $soc->mode_reglement_id : 0));
 				$fk_account         = (!empty($objectsrc->fk_account) ? $objectsrc->fk_account : (!empty($soc->fk_account) ? $soc->fk_account : 0));
@@ -2895,8 +2875,7 @@ if ($action == 'create')
 			}
 		}
 	}
-	else
-	{
+	else {
 		$cond_reglement_id 	= $soc->cond_reglement_id;
 		$mode_reglement_id 	= $soc->mode_reglement_id;
 		$fk_account        	= $soc->fk_account;
@@ -2979,8 +2958,7 @@ if ($action == 'create')
 		print '</td>';
 		print '</tr>'."\n";
 	}
-	else
-	{
+	else {
 		print '<tr><td class="fieldrequired">'.$langs->trans('Customer').'</td>';
 		print '<td colspan="2">';
 		print $form->select_company($soc->id, 'socid', '((s.client = 1 OR s.client = 3) AND s.status=1)', 'SelectThirdParty', 0, 0, null, 0, 'minwidth300');
@@ -3204,8 +3182,7 @@ if ($action == 'create')
 			print '</div></div>';
 		}
 	}
-	else
-	{
+	else {
 	    if (!empty($conf->global->INVOICE_USE_SITUATION))
 	    {
     	    print '<div class="tagtr listofinvoicetype"><div class="tagtd listofinvoicetype">';
@@ -3311,8 +3288,7 @@ if ($action == 'create')
     			print '</div></div>';
     		}
 		}
-		else
-		{
+		else {
 			print '<div class="tagtr listofinvoicetype"><div class="tagtd listofinvoicetype">';
 			if (empty($conf->global->INVOICE_CREDIT_NOTE_STANDALONE)) $tmp = '<input type="radio" name="type" id="radio_creditnote" value="0" disabled> ';
 			else $tmp = '<input type="radio" name="type" id="radio_creditnote" value="2" > ';
@@ -3790,8 +3766,7 @@ elseif ($id > 0 || !empty($ref))
 				);
 				$formconfirm = $form->formconfirm($_SERVER['PHP_SELF'].'?facid='.$object->id, $langs->trans('DeleteBill'), $text, 'confirm_delete', $formquestion, "yes", 1);
 			}
-			else
-			{
+			else {
 				$formconfirm = $form->formconfirm($_SERVER['PHP_SELF'].'?facid='.$object->id, $langs->trans('DeleteBill'), $text, 'confirm_delete', '', 'no', 1);
 			}
 		} else {
@@ -4128,8 +4103,7 @@ elseif ($id > 0 || !empty($ref))
 		foreach ($facidavoir as $id) {
 			if ($i == 0)
 				print ' ';
-			else
-				print ',';
+			else print ',';
 			$facavoir = new Facture($db);
 			$facavoir->fetch($id);
 			print $facavoir->getNomUrl(1);
@@ -4274,8 +4248,7 @@ elseif ($id > 0 || !empty($ref))
 	{
 		$form->form_modes_reglement($_SERVER['PHP_SELF'].'?facid='.$object->id, $object->mode_reglement_id, 'mode_reglement_id', 'CRDT', 1, 1);
 	}
-	else
-	{
+	else {
 		$form->form_modes_reglement($_SERVER['PHP_SELF'].'?facid='.$object->id, $object->mode_reglement_id, 'none', 'CRDT');
 	}
 	print '</td></tr>';
@@ -4339,8 +4312,7 @@ elseif ($id > 0 || !empty($ref))
 	{
 		$form->formSelectAccount($_SERVER['PHP_SELF'].'?id='.$object->id, $object->fk_account, 'fk_account', 1);
 	}
-	else
-	{
+	else {
 		$form->formSelectAccount($_SERVER['PHP_SELF'].'?id='.$object->id, $object->fk_account, 'none');
 	}
 	print "</td>";
@@ -4362,8 +4334,7 @@ elseif ($id > 0 || !empty($ref))
 		{
 			print $form->textwithpicto($object->display_incoterms(), $object->label_incoterms, 1);
 		}
-		else
-		{
+		else {
 			print $form->select_incoterms((!empty($object->fk_incoterms) ? $object->fk_incoterms : ''), (!empty($object->location_incoterms) ? $object->location_incoterms : ''), $_SERVER['PHP_SELF'].'?id='.$object->id);
 		}
 		print '</td></tr>';
@@ -4377,7 +4348,7 @@ elseif ($id > 0 || !empty($ref))
 			$displayWarranty = false;
 		}
 
-		if($displayWarranty) {
+		if ($displayWarranty) {
 			// Retained Warranty
 			print '<tr class="retained-warranty-lines"  ><td>';
 			print '<table id="retained-warranty-table" class="nobordernopadding" width="100%"><tr><td>';
@@ -4398,8 +4369,7 @@ elseif ($id > 0 || !empty($ref))
 		        print '<input type="submit" class="button valignmiddle" value="'.$langs->trans("Modify").'">';
 		        print '</form>';
 		    }
-		    else
-		    {
+		    else {
 		        print price($object->retained_warranty).'%';
 		    }
 		    print '</td></tr>';
@@ -4433,8 +4403,7 @@ elseif ($id > 0 || !empty($ref))
 		        print '<input type="submit" class="button valignmiddle" value="'.$langs->trans("Modify").'">';
 		        print '</form>';
 		    }
-		    else
-		    {
+		    else {
 		        $form->form_conditions_reglement($_SERVER['PHP_SELF'].'?facid='.$object->id, $object->retained_warranty_fk_cond_reglement, 'none');
 		        if (!$displayWarranty) {
 		            print img_picto($langs->trans('RetainedWarrantyNeed100Percent'), 'warning.png', 'class="pictowarning valignmiddle" ');
@@ -4468,8 +4437,7 @@ elseif ($id > 0 || !empty($ref))
                 print '<input type="submit" class="button valignmiddle" value="'.$langs->trans("Modify").'">';
                 print '</form>';
             }
-            else
-            {
+            else {
                 print dol_print_date($object->retained_warranty_date_limit, 'day');
             }
             print '</td></tr>';
@@ -4831,8 +4799,7 @@ elseif ($id > 0 || !empty($ref))
 		print '<tr><td colspan="'.$nbcols.'" class="right">';
 		if ($object->type != Facture::TYPE_DEPOSIT)
 			print $langs->trans('AlreadyPaidNoCreditNotesNoDeposits');
-		else
-			print $langs->trans('AlreadyPaid');
+		else print $langs->trans('AlreadyPaid');
 		print ' :</td><td class="right'.(($totalpaye > 0) ? ' amountalreadypaid' : '').'">'.price($totalpaye).'</td><td>&nbsp;</td></tr>';
 
 		$resteapayeraffiche = $resteapayer;
@@ -4928,8 +4895,7 @@ elseif ($id > 0 || !empty($ref))
 		    {
 		        $retainedWarranty = $total_global_ttc * $object->retained_warranty / 100;
 		    }
-		    else
-		    {
+		    else {
 		        // Because one day retained warranty could be used on standard invoices
 		        $retainedWarranty = $object->total_ttc * $object->retained_warranty / 100;
 		    }
@@ -5119,8 +5085,7 @@ elseif ($id > 0 || !empty($ref))
 						}
 					}
 				}
-				else
-				{
+				else {
 					print '<span class="butActionRefused classfortooltip" title="'.$langs->trans("DisabledBecauseDispatchedInBookkeeping").'">'.$langs->trans('Modify').'</span>';
 				}
 			}
@@ -5159,8 +5124,7 @@ elseif ($id > 0 || !empty($ref))
 					} else {
 						if ($usercansend) {
 							print '<a class="butAction" href="'.$_SERVER['PHP_SELF'].'?facid='.$object->id.'&action=presend&mode=init#formmailbeforetitle">'.$langs->trans('SendMail').'</a>';
-						} else
-							print '<a class="butActionRefused classfortooltip" href="#">'.$langs->trans('SendMail').'</a>';
+						} else print '<a class="butActionRefused classfortooltip" href="#">'.$langs->trans('SendMail').'</a>';
 					}
 				}
 			}
@@ -5179,13 +5143,11 @@ elseif ($id > 0 || !empty($ref))
 							print '<span class="butActionRefused classfortooltip" title="'.$langs->trans("DisabledBecauseReplacedInvoice").'">'.$langs->trans('MakeWithdrawRequest').'</span>';
 						}
 					}
-					else
-					{
+					else {
 						//print '<a class="butActionRefused classfortooltip" href="#" title="'.dol_escape_htmltag($langs->trans("NotEnoughPermissions")).'">'.$langs->trans("MakeWithdrawRequest").'</a>';
 					}
 				}
-				else
-				{
+				else {
 					//print '<a class="butActionRefused classfortooltip" href="#" title="'.dol_escape_htmltag($langs->trans("AmountMustBePositive")).'">'.$langs->trans("MakeWithdrawRequest").'</a>';
 				}
 			}
@@ -5220,8 +5182,7 @@ elseif ($id > 0 || !empty($ref))
 					{
 						print '<span class="butActionRefused classfortooltip" title="'.$langs->trans("DisabledBecauseRemainderToPayIsZero").'">'.$langs->trans('DoPaymentBack').'</span>';
 					}
-					else
-					{
+					else {
 						print '<a class="butAction" href="'.DOL_URL_ROOT.'/compta/paiement.php?facid='.$object->id.'&amp;action=create&amp;accountid='.$object->fk_account.'">'.$langs->trans('DoPaymentBack').'</a>';
 					}
 				}
@@ -5261,16 +5222,14 @@ elseif ($id > 0 || !empty($ref))
 					// If one payment or one credit note was linked to this invoice
 					print '<a class="butAction'.($conf->use_javascript_ajax ? ' reposition' : '').'" href="'.$_SERVER['PHP_SELF'].'?facid='.$object->id.'&amp;action=paid">'.$langs->trans('ClassifyPaidPartially').'</a>';
 				}
-				else
-				{
+				else {
 					if (empty($conf->global->INVOICE_CAN_NEVER_BE_CANCELED))
 					{
 						if ($objectidnext)
 						{
 							print '<span class="butActionRefused classfortooltip" title="'.$langs->trans("DisabledBecauseReplacedInvoice").'">'.$langs->trans('ClassifyCanceled').'</span>';
 						}
-						else
-						{
+						else {
 							print '<a class="butAction'.($conf->use_javascript_ajax ? ' reposition' : '').'" href="'.$_SERVER['PHP_SELF'].'?facid='.$object->id.'&amp;action=canceled">'.$langs->trans('ClassifyCanceled').'</a>';
 						}
 					}
@@ -5333,8 +5292,7 @@ elseif ($id > 0 || !empty($ref))
 			    {
 			        print '<a id="butSituationOut" class="butAction" href="'.$_SERVER['PHP_SELF'].'?facid='.$object->id.'&amp;action=situationout">'.$langs->trans("RemoveSituationFromCycle").'</a>';
 			    }
-			    else
-			    {
+			    else {
 			        print '<a id="butSituationOutRefused" class="butActionRefused classfortooltip" href="#" title="'.$langs->trans("DisabledBecauseNotEnouthCreditNote").'" >'.$langs->trans("RemoveSituationFromCycle").'</a>';
 			    }
 			}
@@ -5375,8 +5333,7 @@ elseif ($id > 0 || !empty($ref))
 				{
 					print '<a class="butActionRefused classfortooltip" href="#" title="'.$langs->trans("DisabledBecauseReplacedInvoice").'">'.$langs->trans('Delete').'</a>';
 				}
-				else
-				{
+				else {
 					print '<a class="butActionDelete'.($conf->use_javascript_ajax ? ' reposition' : '').'" href="'.$_SERVER["PHP_SELF"].'?facid='.$object->id.'&amp;action=delete">'.$langs->trans('Delete').'</a>';
 				}
 			} else {

@@ -670,8 +670,7 @@ class SupplierInvoices extends DolibarrApi
     	if ($updateRes > 0) {
     		return $this->get($id);
     	}
-    	else
-    	{
+    	else {
     		throw new RestException(405, $this->invoice->error);
     	}
     }

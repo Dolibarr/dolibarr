@@ -88,8 +88,7 @@ if ($action == 'add')
 		{
 			$amountto = $amount;
 		}
-		else
-		{
+		else {
 			if (!$amountto)
 			{
 				$error++;
@@ -131,14 +130,12 @@ if ($action == 'add')
 				setEventMessages($mesgs, null, 'mesgs');
 				$db->commit();
 			}
-			else
-			{
+			else {
 				setEventMessages($accountfrom->error.' '.$accountto->error, null, 'errors');
 				$db->rollback();
 			}
 		}
-		else
-		{
+		else {
 		    $error++;
 			setEventMessages($langs->trans("ErrorFromToAccountsMustDiffers"), null, 'errors');
 		}

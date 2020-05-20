@@ -75,7 +75,7 @@ if ($module == 'ecm')
 	$relativepath = $ecmdir->getRelativePath();
 	$upload_dir = $conf->ecm->dir_output.'/'.$relativepath;
 }
-else	// For example $module == 'medias'
+else // For example $module == 'medias'
 {
 	$relativepath = $section;
 	$upload_dir = $conf->medias->multidir_output[$conf->entity].'/'.$relativepath;
@@ -111,8 +111,7 @@ if (GETPOST("sendit") && !empty($conf->global->MAIN_UPLOAD_DOC))
 		{
 			$result = $ecmdir->changeNbOfFiles('+');
 		}
-		else
-		{
+		else {
    			$langs->load("errors");
 			if ($resupload < 0)	// Unknown error
 			{
@@ -121,14 +120,13 @@ if (GETPOST("sendit") && !empty($conf->global->MAIN_UPLOAD_DOC))
 				// Files infected by a virus
 				setEventMessages($langs->trans("ErrorFileIsInfectedWithAVirus"), null, 'errors');
 			}
-			else	// Known error
+			else // Known error
 			{
 				setEventMessages($langs->trans($resupload), null, 'errors');
 			}
 		}
 	}
-	else
-	{
+	else {
 		// Failed transfer (exceeding the limit file?)
 		$langs->load("errors");
 		setEventMessages($langs->trans("ErrorFailToCreateDir", $upload_dir), null, 'errors');
@@ -168,19 +166,16 @@ if ($action == 'confirm_deletedir' && $confirm == 'yes')
 			setEventMessages($langs->trans($ecmdir->error, $ecmdir->label), null, 'errors');
 		}
 	}
-	else
-	{
+	else {
 		if ($deletedirrecursive)
 		{
 			$resbool = dol_delete_dir_recursive($upload_dir, 0, 1);
 		}
-		else
-		{
+		else {
 			$resbool = dol_delete_dir($upload_dir, 1);
 		}
 		if ($resbool) $result = 1;
-		else
-		{
+		else {
 			$langs->load('errors');
 			setEventMessages($langs->trans("ErrorFailToDeleteDir", $upload_dir), null, 'errors');
 			$result = 0;
@@ -204,8 +199,7 @@ if ($action == 'update' && !GETPOST('cancel', 'alpha'))
 		$olddir = $ecmdir->getRelativePath(0);
 		$olddir = $conf->ecm->dir_output.'/'.$olddir;
 	}
-	else
-	{
+	else {
 		$olddir = GETPOST('section', 'alpha');
 		$olddir = $conf->medias->multidir_output[$conf->entity].'/'.$relativepath;
 	}
@@ -243,19 +237,16 @@ if ($action == 'update' && !GETPOST('cancel', 'alpha'))
 				$relativepath = $ecmdir->getRelativePath();
 				$upload_dir = $conf->ecm->dir_output.'/'.$relativepath;
 			}
-			else
-			{
+			else {
 				$db->rollback();
 			}
 		}
-		else
-		{
+		else {
 			$db->rollback();
 			setEventMessages($ecmdir->error, $ecmdir->errors, 'errors');
 		}
 	}
-	else
-	{
+	else {
 		$newdir = $conf->medias->multidir_output[$conf->entity].'/'.GETPOST('oldrelparentdir', 'alpha').'/'.GETPOST('label', 'alpha');
 
 		$result = @rename($olddir, $newdir);
@@ -341,8 +332,7 @@ if ($module == 'ecm')
 			$s = ' -> '.$s;
 			$result = $tmpecmdir->fetch($tmpecmdir->fk_parent);
 		}
-		else
-		{
+		else {
 			$tmpecmdir = 0;
 		}
 		$i++;
@@ -412,8 +402,7 @@ if ($module == 'ecm')
 {
 	print dol_print_date($ecmdir->date_c, 'dayhour');
 }
-else
-{
+else {
 	//var_dump($upload_dir);
 	print dol_print_date(dol_filemtime($upload_dir), 'dayhour');
 }
@@ -423,8 +412,7 @@ if ($module == 'ecm')
 {
 	print '/ecm/'.$relativepath;
 }
-else
-{
+else {
 	print '/'.$module.'/'.$relativepath;
 }
 print '</td></tr>';
@@ -478,8 +466,7 @@ if ($action != 'edit' && $action != 'delete')
 	{
 		print '<a class="butAction" href="'.DOL_URL_ROOT.'/ecm/dir_add_card.php?action=create'.($module ? '&module='.$module : '').'&catParent='.$section.'">'.$langs->trans('ECMAddSection').'</a>';
 	}
-	else
-	{
+	else {
 		print '<a class="butActionRefused classfortooltip" href="#" title="'.$langs->trans("NotAllowed").'">'.$langs->trans('ECMAddSection').'</a>';
 	}
 
@@ -489,8 +476,7 @@ if ($action != 'edit' && $action != 'delete')
 	{
 		print '<a class="butActionDelete" href="'.$_SERVER['PHP_SELF'].'?action=delete_dir'.($module ? '&module='.$module : '').'&section='.$section.($backtopage ? '&backtopage='.urlencode($backtopage) : '').'">'.$langs->trans('Delete').'</a>';
 	}
-	else
-	{
+	else {
 		print '<a class="butActionDeleteRefused" href="#" title="'.$langs->trans("NotAllowed").'">'.$langs->trans('Delete').'</a>';
 	}
 	/*}
