@@ -916,11 +916,13 @@ class Don extends CommonObject
     /**
      *	Return clicable name (with picto eventually)
      *
-     *	@param	int		$withpicto		0=No picto, 1=Include picto into link, 2=Only picto
-     *	@param	int  	$notooltip		1=Disable tooltip
-     *	@return	string					Chaine avec URL
+     *	@param	int		$withpicto					0=No picto, 1=Include picto into link, 2=Only picto
+     *	@param	int  	$notooltip					1=Disable tooltip
+     *	@param	string	$moretitle					Add more text to title tooltip
+     *  @param  int     $save_lastsearch_value    	-1=Auto, 0=No save of lastsearch_values when clicking, 1=Save lastsearch_values whenclicking
+     *	@return	string								Chaine avec URL
      */
-    public function getNomUrl($withpicto = 0, $notooltip = 0)
+    public function getNomUrl($withpicto = 0, $notooltip = 0, $moretitle = '', $save_lastsearch_value = -1)
     {
         global $conf, $langs;
 
@@ -928,10 +930,18 @@ class Don extends CommonObject
 
         $result = '';
         $label = '<u>'.$langs->trans("Donation").'</u>';
-        if (!empty($this->id))
+        if (!empty($this->id)) {
         	$label .= '<br><b>'.$langs->trans('Ref').':</b> '.$this->id;
+        }
+        if ($moretitle) $label .= ' - '.$moretitle;
 
-        $linkstart = '<a href="'.DOL_URL_ROOT.'/don/card.php?id='.$this->id.'" title="'.dol_escape_htmltag($label, 1).'" class="classfortooltip">';
+        $url = DOL_URL_ROOT.'/don/card.php?id='.$this->id;
+
+       	$add_save_lastsearch_values = ($save_lastsearch_value == 1 ? 1 : 0);
+       	if ($save_lastsearch_value == -1 && preg_match('/list\.php/', $_SERVER["PHP_SELF"])) $add_save_lastsearch_values = 1;
+       	if ($add_save_lastsearch_values) $url .= '&save_lastsearch_values=1';
+
+        $linkstart = '<a href="'.$url.'" title="'.dol_escape_htmltag($label, 1).'" class="classfortooltip">';
         $linkend = '</a>';
 
         $result .= $linkstart;

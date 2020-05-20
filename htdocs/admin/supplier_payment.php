@@ -1,6 +1,7 @@
 <?php
 /* Copyright (C) 2015  Juanjo Menent				<jmenent@2byte.es>
  * Copyright (C) 2016  Laurent Destailleur          <eldy@users.sourceforge.net>
+ * Copyright (C) 2020  Maxime DEMAREST              <maxime@indelog.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -142,6 +143,23 @@ elseif ($action == 'specimen')
     	setEventMessages($langs->trans("ErrorModuleNotFound"), null, 'errors');
     	dol_syslog($langs->trans("ErrorModuleNotFound"), LOG_ERR);
     }
+}
+
+
+
+elseif ($action == 'setparams')
+{
+       $res = dolibarr_set_const($db, "PAYMENTS_FOURN_REPORT_GROUP_BY_MOD", GETPOST('PAYMENTS_FOURN_REPORT_GROUP_BY_MOD', 'int'), 'chaine', 0, '', $conf->entity);
+       if (!$res > 0) $error++;
+
+	if ($error)
+       {
+			setEventMessages($langs->trans("Error"), null, 'errors');
+	}
+	if (!$error)
+       {
+		setEventMessages($langs->trans("SetupSaved"), null, 'mesgs');
+	}
 }
 
 /*
@@ -428,7 +446,45 @@ foreach ($dirmodels as $reldir)
 
 print '</table>';
 
+/*
+ *  Other Options
+ */
+
+print "<br>";
+
+print load_fiche_titre($langs->trans("OtherOptions"), '', '');
+
+print '<form action="'.$_SERVER["PHP_SELF"].'" method="POST">';
+print '<input type="hidden" name="token" value="'.newToken().'" />';
+print '<input type="hidden" name="action" value="setparams" />';
+
+print '<div class="div-table-responsive-no-min">';
+print '<table class="noborder centpercent">';
+print '<tr class="liste_titre">';
+print '<td>'.$langs->trans("Parameter").'</td>';
+print '<td align="center" width="60">'.$langs->trans("Value").'</td>';
+print '<td width="80">&nbsp;</td>';
+print "</tr>\n";
+
+// Allow to group payments by mod in rapports
+print '<tr class="oddeven"><td>';
+print $langs->trans("GroupPaymentsByModOnReports");
+print '</td><td width="60" align="center">';
+print $form->selectyesno("PAYMENTS_FOURN_REPORT_GROUP_BY_MOD", $conf->global->PAYMENTS_FOURN_REPORT_GROUP_BY_MOD, 1);
+print '</td><td class="right">';
+print "</td></tr>\n";
+
+print '</table>';
+
 dol_fiche_end();
+
+print '<br>';
+print '<div class="center">';
+print '<input type="submit" class="button" value="'.$langs->trans("Modify").'" />';
+print '</div>';
+print '<br>';
+
+print '</form>';
 
 // End of page
 llxFooter();

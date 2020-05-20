@@ -180,7 +180,10 @@ class box_factures_imp extends ModeleBoxes
 					$line++;
 				}
 
-				if ($num == 0) $this->info_box_contents[$line][0] = array('td' => 'class="center"', 'text'=>$langs->trans("NoUnpaidCustomerBills"));
+				if ($num == 0) $this->info_box_contents[$line][0] = array(
+					'td' => 'class="center opacitymedium"',
+					'text'=>$langs->trans("NoUnpaidCustomerBills")
+				);
 
 				$this->db->free($result);
 			}

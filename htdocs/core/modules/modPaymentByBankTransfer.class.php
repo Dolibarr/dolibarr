@@ -19,20 +19,20 @@
  */
 
 /**
- *	\defgroup   	prelevement     Module prelevement
- *	\brief      	Module to manage Direct debit orders
- *	\file       	htdocs/core/modules/modPrelevement.class.php
- *	\ingroup    	prelevement
- *	\brief      	File to describe and enable the module Prelevement
+ *	\defgroup   	paymentbybanktransfer     Module paymentbybanktransfer
+ *	\brief      	Module to manage payment by bank transfer
+ *	\file       	htdocs/core/modules/modPaymentByBankTransfer.class.php
+ *	\ingroup    	paymentbybanktransfer
+ *	\brief      	File to describe and activate the module PaymentByBankTransfer
  */
 
 include_once DOL_DOCUMENT_ROOT.'/core/modules/DolibarrModules.class.php';
 
 
 /**
- *	Class to describe and enable module of payment by Direct Debit
+ *	Class to describe and enable module of payment by Bank transfer
  */
-class modPrelevement extends DolibarrModules
+class modPaymentByBankTransfer extends DolibarrModules
 {
 
 	/**
@@ -45,44 +45,44 @@ class modPrelevement extends DolibarrModules
 		global $conf;
 
 		$this->db = $db;
-		$this->numero = 57;
+		$this->numero = 56;
 
 		$this->family = "financial";
 		$this->module_position = '52';
 		// Module label (no space allowed), used if translation string 'ModuleXXXName' not found (where XXX is value of numeric property 'numero' of module)
 		$this->name = preg_replace('/^mod/i', '', get_class($this));
-		$this->description = "Management of Direct Debit orders";
+		$this->description = "Management of payment by bank transfer";
 
 		// Possible values for version are: 'development', 'experimental', 'dolibarr' or version
-		$this->version = 'dolibarr';
+		$this->version = 'development';
 
 		$this->const_name = 'MAIN_MODULE_'.strtoupper($this->name);
 		// Name of png file (without png) used for this module
 		$this->picto = 'payment';
 
 		// Data directories to create when module is enabled
-		$this->dirs = array("/prelevement/temp", "/prelevement/receipts");
+		$this->dirs = array("/paymentbybanktransfer/temp", "/paymentbybanktransfer/receipts");
 
 		// Dependencies
 		$this->hidden = false; // A condition to hide module
-		$this->depends = array("modFacture", "modBanque"); // List of module class names as string that must be enabled if this module is enabled
+		$this->depends = array("modFournisseur", "modBanque"); // List of module class names as string that must be enabled if this module is enabled
 		$this->requiredby = array(); // List of module ids to disable if this one is disabled
 		$this->conflictwith = array(); // List of module class names as string this module is in conflict with
 		$this->phpmin = array(5, 4); // Minimum version of PHP required by module
 
 		// Config pages
-		$this->config_page_url = array("prelevement.php");
+		$this->config_page_url = array("paymentbybanktransfer.php");
 
 		// Constants
 		$this->const = array();
 		$r = 0;
 
-		$this->const[$r][0] = "BANK_ADDON_PDF";
+		/*$this->const[$r][0] = "BANK_ADDON_PDF";
 		$this->const[$r][1] = "chaine";
 		$this->const[$r][2] = "sepamandate";
 		$this->const[$r][3] = 'Name of manager to generate SEPA mandate';
 		$this->const[$r][4] = 0;
-		$r++;
+		$r++;*/
 
 
 		// Boxes
@@ -90,39 +90,35 @@ class modPrelevement extends DolibarrModules
 
 		// Permissions
 		$this->rights = array();
-		$this->rights_class = 'prelevement';
+		$this->rights_class = 'paymentbybanktransfer';
 		$r = 0;
 		$r++;
-		$this->rights[$r][0] = 151;
-		$this->rights[$r][1] = 'Read direct debit payment orders';
+		$this->rights[$r][0] = 561;
+		$this->rights[$r][1] = 'Read bank transfer payment orders';
 		$this->rights[$r][2] = 'r';
 		$this->rights[$r][3] = 0;
-		$this->rights[$r][4] = 'bons';
-		$this->rights[$r][5] = 'lire';
+		$this->rights[$r][4] = 'read';
 
 		$r++;
-		$this->rights[$r][0] = 152;
-		$this->rights[$r][1] = 'Create/modify a direct debit payment order';
+		$this->rights[$r][0] = 562;
+		$this->rights[$r][1] = 'Create/modify a bank transfer payment order';
 		$this->rights[$r][2] = 'w';
 		$this->rights[$r][3] = 0;
-		$this->rights[$r][4] = 'bons';
-		$this->rights[$r][5] = 'creer';
+		$this->rights[$r][4] = 'create';
 
 		$r++;
-		$this->rights[$r][0] = 153;
-		$this->rights[$r][1] = 'Send/Transmit direct debit payment orders';
+		$this->rights[$r][0] = 563;
+		$this->rights[$r][1] = 'Send/Transmit bank transfer payment order';
 		$this->rights[$r][2] = 'a';
 		$this->rights[$r][3] = 0;
-		$this->rights[$r][4] = 'bons';
-		$this->rights[$r][5] = 'send';
+		$this->rights[$r][4] = 'send';
 
 		$r++;
-		$this->rights[$r][0] = 154;
-		$this->rights[$r][1] = 'Record Credits/Rejects of direct debit payment orders';
+		$this->rights[$r][0] = 564;
+		$this->rights[$r][1] = 'Record Debits/Rejects of bank transfer payment order';
 		$this->rights[$r][2] = 'a';
 		$this->rights[$r][3] = 0;
-		$this->rights[$r][4] = 'bons';
-		$this->rights[$r][5] = 'credit';
+		$this->rights[$r][4] = 'debit';
 
         // Menus
         //-------
@@ -145,10 +141,7 @@ class modPrelevement extends DolibarrModules
         // Permissions
         $this->remove($options);
 
-        $sql = array(
-            "DELETE FROM ".MAIN_DB_PREFIX."document_model WHERE nom = '".$this->db->escape($this->const[0][2])."' AND type = 'bankaccount' AND entity = ".$conf->entity,
-            "INSERT INTO ".MAIN_DB_PREFIX."document_model (nom, type, entity) VALUES('".$this->db->escape($this->const[0][2])."','bankaccount',".$conf->entity.")",
-        );
+        $sql = array();
 
         return $this->_init($sql, $options);
     }

@@ -168,7 +168,7 @@ function task_prepare_head($object)
 	$head = array();
 
 	$head[$h][0] = DOL_URL_ROOT.'/projet/tasks/task.php?id='.$object->id.(GETPOST('withproject') ? '&withproject=1' : '');
-	$head[$h][1] = $langs->trans("Card");
+	$head[$h][1] = $langs->trans("Project");
 	$head[$h][2] = 'task_task';
 	$h++;
 
@@ -2226,10 +2226,10 @@ function print_projecttasks_array($db, $form, $socid, $projectsListId, $mytasks 
 				print '<tr class="oddeven">';
 
 				print '<td>';
-				print $projectstatic->getNomUrl(1);
+				print $projectstatic->getNomUrl(1, '', 0, '', '-', 0 , -1, 'nowraponall');
 				if (!in_array('projectlabel', $hiddenfields)) print '<br><span class="opacitymedium">'.dol_trunc($objp->title, 24).'</span>';
 				print '</td>';
-				print '<td>';
+				print '<td class="nowraponall tdoverflowmax100">';
 				if ($objp->fk_soc > 0)
 				{
 					$thirdpartystatic->id = $objp->fk_soc;

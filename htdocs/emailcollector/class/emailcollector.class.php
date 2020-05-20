@@ -1092,7 +1092,7 @@ class EmailCollector extends CommonObject
                 $i++;
 
                 $header = imap_fetchheader($connection, $imapemail, 0);
-                $header = preg_replace('/\r\n\s+/m', ' ', $header);	// When a header line is on several lines, merge lines
+                $header = preg_replace('/\r\n\s+/m', ' ', $header); // When a header line is on several lines, merge lines
                 $matches = array();
                 preg_match_all('/([^: ]+): (.+?(?:\r\n\s(?:.+?))*)\r\n/m', $header, $matches);
                 $headers = array_combine($matches[1], $matches[2]);

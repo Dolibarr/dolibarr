@@ -27,6 +27,18 @@
 include_once DOL_DOCUMENT_ROOT.'/website/class/website.class.php';
 include_once DOL_DOCUMENT_ROOT.'/website/class/websitepage.class.php';
 
+// Detection browser (copy of code from main.inc.php)
+if (isset($_SERVER["HTTP_USER_AGENT"]) && is_object($conf) && empty($conf->browser->name))
+{
+	$tmp = getBrowserInfo($_SERVER["HTTP_USER_AGENT"]);
+	$conf->browser->name = $tmp['browsername'];
+	$conf->browser->os = $tmp['browseros'];
+	$conf->browser->version = $tmp['browserversion'];
+	$conf->browser->layout = $tmp['layout']; // 'classic', 'phone', 'tablet'
+	//var_dump($conf->browser);
+
+	if ($conf->browser->layout == 'phone') $conf->dol_no_mouse_hover = 1;
+}
 // Define $website
 if (!is_object($website))
 {
@@ -48,11 +60,16 @@ if (!is_object($weblangs))
 {
 	$weblangs = new Translate('', $conf);
 }
+if (!is_object($pagelangs))
+{
+	$pagelangs = new Translate('', $conf);
+}
 if ($pageid > 0)
 {
 	$websitepage->fetch($pageid);
 
-	$weblangs->setDefaultLang($websitepage->lang ? $websitepage->lang : 'auto');
+	$weblangs->setDefaultLang(GETPOSTISSET('lang') ? GETPOST('lang', 'aZ09') : (empty($_COOKIE['weblangs-shortcode']) ? 'auto' : $_COOKIE['weblangs-shortcode']));
+	$pagelangs->setDefaultLang($websitepage->lang ? $websitepage->lang : $weblangs->shortlang);
 
 	if (!defined('USEDOLIBARREDITOR') && in_array($websitepage->type_container, array('menu', 'other')))
 	{
