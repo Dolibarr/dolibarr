@@ -1946,7 +1946,23 @@ if ($action == 'exportsite')
 	else
 	{
 		setEventMessages($object->error, $object->errors, 'errors');
-		$action = '';
+		$action = 'preview';
+	}
+}
+
+// Regenerate site
+if ($action == 'regeneratesite')
+{
+	$result = $object->rebuildWebSiteFiles();
+	if ($result > 0)
+	{
+		setEventMessages($langs->trans("PagesRegenerated"), null, 'mesgs');
+		$action = 'preview';
+	}
+	else
+	{
+		setEventMessages($object->error, $object->errors, 'errors');
+		$action = 'preview';
 	}
 }
 
@@ -2254,6 +2270,9 @@ if (!GETPOST('hide_websitemenu'))
 		*/
 
 		print '<a href="'.$_SERVER["PHP_SEFL"].'?action=replacesite&website='.$website->ref.'" class="button bordertransp"'.$disabled.' title="'.dol_escape_htmltag($langs->trans("ReplaceWebsiteContent")).'"><span class="fa fa-search"><span></a>';
+		if (! empty($conf->global->WEBSITE_ADD_REGENERATE_BUTTON)) {
+			print '<a href="'.$_SERVER["PHP_SEFL"].'?action=regeneratesite&website='.$website->ref.'" class="button bordertransp"'.$disabled.' title="'.dol_escape_htmltag($langs->trans("RegenerateWebsiteContent")).'"><span class="fa fa-cogs"><span></a>';
+		}
 	}
 
 	print '</span>';

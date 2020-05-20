@@ -219,6 +219,7 @@ function dolWebsiteOutput($content, $contenttype = 'html', $containerid = '')
 {
 	global $db, $langs, $conf, $user;
 	global $dolibarr_main_url_root, $dolibarr_main_data_root;
+	global $website;
 	global $includehtmlcontentopened;
 
 	$nbrep = 0;
@@ -244,8 +245,6 @@ function dolWebsiteOutput($content, $contenttype = 'html', $containerid = '')
 	}
 	elseif (defined('USEDOLIBARRSERVER'))	// REPLACEMENT OF LINKS When page called from Dolibarr server
 	{
-		global $website;
-
 		$content = str_replace('<link rel="stylesheet" href="/styles.css', '<link rel="stylesheet" href="styles.css', $content);
 
 		// Protect the link styles.css.php to any replacement that we make after.
@@ -304,6 +303,11 @@ function dolWebsiteOutput($content, $contenttype = 'html', $containerid = '')
 	else									// REPLACEMENT OF LINKS When page called from virtual host
 	{
 		$symlinktomediaexists = 1;
+		if ($website->virtualhost) {
+			$content = preg_replace('/^(<link[^>]*rel="canonical" href=")\//m', '\1'.$website->virtualhost.'/', $content, -1, $nbrep);
+		}
+		//print 'rrrrrrrrr'.$website->virtualhost.$content;
+
 
 		// Make a change into HTML code to allow to include images from medias directory correct with direct link for virtual server
 		// <img alt="" src="/dolibarr_dev/htdocs/viewimage.php?modulepart=medias&amp;entity=1&amp;file=image/ldestailleur_166x166.jpg" style="height:166px; width:166px" />
