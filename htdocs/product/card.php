@@ -175,8 +175,7 @@ if (empty($reshook))
 	    	header("Location: ".$_SERVER['PHP_SELF']."?id=".$object->id);
 	    	exit;
 		}
-		else
-		{
+		else {
 			$langs->load("errors");
         	if ($result == -1) $errors[] = 'ErrorBadBarCodeSyntax';
         	elseif ($result == -2) $errors[] = 'ErrorBarCodeRequired';
@@ -222,12 +221,10 @@ if (empty($reshook))
 
             if ($object->price_base_type == 'TTC')
             	$object->price_ttc = GETPOST('price');
-            else
-            	$object->price = GETPOST('price');
+            else $object->price = GETPOST('price');
             if ($object->price_base_type == 'TTC')
             	$object->price_min_ttc = GETPOST('price_min');
-            else
-            	$object->price_min = GETPOST('price_min');
+            else $object->price_min = GETPOST('price_min');
 
 	        $tva_tx_txt = GETPOST('tva_tx', 'alpha'); // tva_tx can be '8.5'  or  '8.5*'  or  '8.5 (XXX)' or '8.5* (XXX)'
 
@@ -340,8 +337,7 @@ if (empty($reshook))
                         $object->multiprices["$i"] = price2num($_POST["price_".$i], 'MU');
                         $object->multiprices_base_type["$i"] = $_POST["multiprices_base_type_".$i];
                     }
-                    else
-                    {
+                    else {
                         $object->multiprices["$i"] = "";
                     }
                 }
@@ -369,14 +365,12 @@ if (empty($reshook))
 					header("Location: ".$backtopage);
 					exit;
 				}
-				else
-				{
+				else {
                 	header("Location: ".$_SERVER['PHP_SELF']."?id=".$id);
                 	exit;
 				}
             }
-            else
-			{
+            else {
             	if (count($object->errors)) setEventMessages($object->error, $object->errors, 'errors');
 				else setEventMessages($langs->trans($object->error), null, 'errors');
                 $action = "create";
@@ -391,8 +385,7 @@ if (empty($reshook))
         {
             $action = '';
         }
-        else
-        {
+        else {
             if ($object->id > 0)
             {
 				$object->oldcopy = clone $object;
@@ -489,15 +482,13 @@ if (empty($reshook))
 
                         $action = 'view';
                     }
-                    else
-					{
+                    else {
 						if (count($object->errors)) setEventMessages($object->error, $object->errors, 'errors');
                     	else setEventMessages($langs->trans($object->error), null, 'errors');
                         $action = 'edit';
                     }
                 }
-                else
-				{
+                else {
 					if (count($object->errors)) setEventMessages($object->error, $object->errors, 'errors');
                 	else setEventMessages($langs->trans("ErrorProductBadRefOrLabel"), null, 'errors');
                     $action = 'edit';
@@ -514,8 +505,7 @@ if (empty($reshook))
         {
         	setEventMessages($langs->trans("NoCloneOptionsSpecified"), null, 'errors');
         }
-        else
-        {
+        else {
             $db->begin();
 
             $originalId = $id;
@@ -578,8 +568,7 @@ if (empty($reshook))
                         header("Location: ".$_SERVER["PHP_SELF"]."?id=".$id);
                         exit;
                     }
-                    else
-                    {
+                    else {
                         $id = $originalId;
 
                         if ($object->error == 'ErrorProductAlreadyExists')
@@ -594,16 +583,14 @@ if (empty($reshook))
                             setEventMessages($mesg, null, 'errors');
                             $object->fetch($id);
                         }
-                        else
-                     	{
+                        else {
                             $db->rollback();
                             if (count($object->errors))
                             {
                             	setEventMessages($object->error, $object->errors, 'errors');
                             	dol_print_error($db, $object->errors);
                             }
-                            else
-                            {
+                            else {
                             	setEventMessages($langs->trans($object->error), null, 'errors');
                             	dol_print_error($db, $object->error);
                             }
@@ -613,8 +600,7 @@ if (empty($reshook))
                     unset($object->context['createfromclone']);
                 }
             }
-            else
-            {
+            else {
                 $db->rollback();
                 dol_print_error($db, $object->error);
             }
@@ -632,8 +618,7 @@ if (empty($reshook))
             header('Location: '.DOL_URL_ROOT.'/product/list.php?type='.$object->type.'&delprod='.urlencode($object->ref));
             exit;
         }
-        else
-        {
+        else {
         	setEventMessages($langs->trans($object->error), null, 'errors');
             $reload = 0;
             $action = '';
@@ -743,8 +728,7 @@ if (empty($reshook))
                     dol_syslog($langs->trans('FailedToGetCostPrice'));
                     setEventMessages($langs->trans('FailedToGetCostPrice'), null, 'errors');
                 }
-                else
-                {
+                else {
                     $buyprice = $result;
                 }
 
@@ -786,8 +770,7 @@ if (empty($reshook))
                     dol_syslog($langs->trans('FailedToGetCostPrice'));
                     setEventMessages($langs->trans('FailedToGetCostPrice'), null, 'errors');
                 }
-                else
-                {
+                else {
                     $buyprice = $result;
                 }
 
@@ -829,8 +812,7 @@ if (empty($reshook))
                     dol_syslog($langs->trans('FailedToGetCostPrice'));
                     setEventMessages($langs->trans('FailedToGetCostPrice'), null, 'errors');
                 }
-                else
-                {
+                else {
                     $buyprice = $result;
                 }
 
@@ -937,8 +919,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action))
 	$objcanvas->assign_values($action, $object->id, $object->ref); // Set value for templates
 	$objcanvas->display_canvas($action); // Show template
 }
-else
-{
+else {
     // -----------------------------------------
     // When used in standard mode
     // -----------------------------------------
@@ -1030,8 +1011,7 @@ else
 	        {
 	         	$fk_barcode_type = GETPOST('fk_barcode_type');
 	        }
-	        else
-	        {
+	        else {
 	        	if (empty($fk_barcode_type) && !empty($conf->global->PRODUIT_DEFAULT_BARCODE_TYPE)) $fk_barcode_type = $conf->global->PRODUIT_DEFAULT_BARCODE_TYPE;
 	        }
 	        require_once DOL_DOCUMENT_ROOT.'/core/class/html.formbarcode.class.php';
@@ -1080,8 +1060,7 @@ else
             print '<input name="desiredstock" class="maxwidth50" value="'.GETPOST('desiredstock').'">';
             print '</td></tr>';
         }
-        else
-        {
+        else {
             print '<input name="seuil_stock_alerte" type="hidden" value="0">';
             print '<input name="desiredstock" type="hidden" value="0">';
         }
@@ -1215,8 +1194,7 @@ else
 
             print '<br>';
         }
-        else
-		{
+        else {
             print '<table class="border centpercent">';
 
             // Price
@@ -1416,8 +1394,7 @@ else
                 print '<option value="1" selected>'.$langs->trans("OnSell").'</option>';
                 print '<option value="0">'.$langs->trans("NotOnSell").'</option>';
             }
-            else
-            {
+            else {
                 print '<option value="1">'.$langs->trans("OnSell").'</option>';
                 print '<option value="0" selected>'.$langs->trans("NotOnSell").'</option>';
             }
@@ -1432,8 +1409,7 @@ else
                 print '<option value="1" selected>'.$langs->trans("ProductStatusOnBuy").'</option>';
                 print '<option value="0">'.$langs->trans("ProductStatusNotOnBuy").'</option>';
             }
-            else
-            {
+            else {
                 print '<option value="1">'.$langs->trans("ProductStatusOnBuy").'</option>';
                 print '<option value="0" selected>'.$langs->trans("ProductStatusNotOnBuy").'</option>';
             }
@@ -1463,8 +1439,7 @@ else
 		        {
 		         	$fk_barcode_type = GETPOST('fk_barcode_type');
 		        }
-		        else
-		        {
+		        else {
 	        		$fk_barcode_type = $object->barcode_type;
 		        	if (empty($fk_barcode_type) && !empty($conf->global->PRODUIT_DEFAULT_BARCODE_TYPE)) $fk_barcode_type = $conf->global->PRODUIT_DEFAULT_BARCODE_TYPE;
 		        }
@@ -1526,8 +1501,7 @@ else
                 print $formproduct->selectMeasuringUnits("duration_unit", "time", $object->duration_unit, 0, 1);
                 print '</td></tr>';
             }
-            else
-            {
+            else {
                 // Nature
                 print '<tr><td>'.$langs->trans("Nature").'</td><td colspan="3">';
                 $statutarray = array('-1'=>'&nbsp;', '1' => $langs->trans("Finished"), '0' => $langs->trans("RowMaterial"));
@@ -1734,8 +1708,7 @@ else
 			print '</form>';
 		}
         // Fiche en mode visu
-        else
-		{
+        else {
             $showbarcode = empty($conf->barcode->enabled) ? 0 : 1;
             if (!empty($conf->global->MAIN_USE_ADVANCED_PERMS) && empty($user->rights->barcode->lire_advance)) $showbarcode = 0;
 
@@ -1791,8 +1764,7 @@ else
                 {
                     print $formbarcode->formBarcodeType($_SERVER['PHP_SELF'].'?id='.$object->id, $object->barcode_type, 'fk_barcode_type');
                 }
-                else
-                {
+                else {
                     $object->fetch_barcode();
                     print $object->barcode_type_label ? $object->barcode_type_label : ($object->barcode ? '<div class="warning">'.$langs->trans("SetDefaultBarcodeType").'<div>' : '');
                 }
@@ -1819,8 +1791,7 @@ else
 					print '&nbsp;<input type="submit" class="button" value="'.$langs->trans("Modify").'">';
 					print '</form>';
                 }
-                else
-                {
+                else {
 					print $object->barcode;
                 }
                 print '</td></tr>'."\n";
@@ -2012,8 +1983,7 @@ else
 
                 print '</td></tr>';
             }
-            else
-            {
+            else {
                 // Nature
                 print '<tr><td class="titlefield">'.$langs->trans("Nature").'</td><td colspan="2">';
                 print $object->getLibFinished();
@@ -2025,8 +1995,7 @@ else
                 {
                 	print $object->weight." ".measuringUnitString(0, "weight", $object->weight_units);
                 }
-                else
-                {
+                else {
                     print '&nbsp;';
                 }
                 print "</td></tr>\n";
@@ -2042,8 +2011,7 @@ else
                         if ($object->height) print " x ".$object->height;
                         print ' '.measuringUnitString(0, "size", $object->length_units);
                     }
-                    else
-                    {
+                    else {
                         print '&nbsp;';
                     }
                     print "</td></tr>\n";
@@ -2056,8 +2024,7 @@ else
                     {
                     	print $object->surface." ".measuringUnitString(0, "surface", $object->surface_units);
                     }
-                    else
-                    {
+                    else {
                         print '&nbsp;';
                     }
                     print "</td></tr>\n";
@@ -2070,8 +2037,7 @@ else
                     {
                     	print $object->volume." ".measuringUnitString(0, "volume", $object->volume_units);
                     }
-                    else
-                    {
+                    else {
                         print '&nbsp;';
                     }
                     print "</td></tr>\n";
@@ -2085,8 +2051,7 @@ else
                 	{
                 		print $object->net_measure." ".measuringUnitString($object->net_measure_units);
                 	}
-                	else
-                	{
+                	else {
                 		print '&nbsp;';
                 	}
                 }
@@ -2215,8 +2180,7 @@ if ($action != 'create' && $action != 'edit')
                 {
                     print '<span id="action-clone" class="butAction">'.$langs->trans('ToClone').'</span>'."\n";
                 }
-                else
-    			{
+                else {
                     print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?action=clone&amp;id='.$object->id.'">'.$langs->trans("ToClone").'</a>';
                 }
             }
@@ -2231,18 +2195,15 @@ if ($action != 'create' && $action != 'edit')
                 {
                     print '<span id="action-delete" class="butActionDelete">'.$langs->trans('Delete').'</span>'."\n";
                 }
-                else
-    			{
+                else {
                     print '<a class="butActionDelete" href="'.$_SERVER["PHP_SELF"].'?action=delete&amp;id='.$object->id.'">'.$langs->trans("Delete").'</a>';
                 }
             }
-            else
-    		{
+            else {
                 print '<a class="butActionRefused classfortooltip" href="#" title="'.$langs->trans("ProductIsUsed").'">'.$langs->trans("Delete").'</a>';
             }
         }
-        else
-    	{
+        else {
             print '<a class="butActionRefused classfortooltip" href="#" title="'.$langs->trans("NotEnoughPermissions").'">'.$langs->trans("Delete").'</a>';
         }
     }
@@ -2276,8 +2237,7 @@ if (!empty($conf->global->PRODUCT_ADD_FORM_ADD_TO) && $object->id && ($action ==
         	$html .= $form->selectarray("propalid", $otherprop, 0, 1);
         	$html .= '</td></tr>';
         }
-        else
-		{
+        else {
         	$html .= '<tr><td style="width: 200px;">';
         	$html .= $langs->trans("AddToDraftProposals").'</td><td>';
         	$html .= $langs->trans("NoDraftProposals");
@@ -2300,8 +2260,7 @@ if (!empty($conf->global->PRODUCT_ADD_FORM_ADD_TO) && $object->id && ($action ==
         	$html .= $form->selectarray("commandeid", $othercom, 0, 1);
         	$html .= '</td></tr>';
         }
-        else
-		{
+        else {
         	$html .= '<tr><td style="width: 200px;">';
         	$html .= $langs->trans("AddToDraftOrders").'</td><td>';
         	$html .= $langs->trans("NoDraftOrders");
@@ -2324,8 +2283,7 @@ if (!empty($conf->global->PRODUCT_ADD_FORM_ADD_TO) && $object->id && ($action ==
     		$html .= $form->selectarray("factureid", $otherinvoice, 0, 1);
     		$html .= '</td></tr>';
     	}
-    	else
-    	{
+    	else {
     		$html .= '<tr><td style="width: 200px;">';
     		$html .= $langs->trans("AddToDraftInvoices").'</td><td>';
     		$html .= $langs->trans("NoDraftInvoices");

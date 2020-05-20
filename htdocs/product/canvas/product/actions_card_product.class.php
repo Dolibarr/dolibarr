@@ -288,8 +288,7 @@ class ActionsCardProduct
 			}
 			$this->db->free($resql);
 		}
-		else
-		{
+		else {
 			dol_print_error($this->db, $sql);
 		}
 	}
@@ -428,8 +427,7 @@ class ActionsCardProduct
 			}
 			$this->db->free($resql);
 		}
-		else
-		{
+		else {
 			dol_print_error($this->db);
 		}
 	}

@@ -268,8 +268,7 @@ class ActionsCardService
 			}
 			$this->db->free($resql);
 		}
-		else
-		{
+		else {
 			dol_print_error($this->db, $sql);
 		}
 	}
@@ -361,8 +360,7 @@ class ActionsCardService
 			}
 			$this->db->free($resql);
 		}
-		else
-		{
+		else {
 			print $sql;
 		}
 	}

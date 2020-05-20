@@ -122,8 +122,7 @@ if ($result)
     print "</table>";
     print '</div>';
 }
-else
-{
+else {
     dol_print_error($db);
 }
 

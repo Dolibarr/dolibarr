@@ -183,8 +183,7 @@ if ($action != 'create_updater' && $action != 'edit_updater')
 	        print '</tr>';
 	    }
     }
-    else
-    {
+    else {
     	print '<tr colspan="7"><td class="opacitymedium">';
     	print $langs->trans("None");
     	print '</td></tr>';
@@ -276,8 +275,7 @@ if ($action != 'create_variable' && $action != 'edit_variable')
 	        print '</tr>';
 	    }
     }
-    else
-    {
+    else {
     	print '<tr><td colspan="7" class="opacitymedium">';
     	print $langs->trans("None");
     	print '</td></tr>';

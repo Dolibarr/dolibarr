@@ -208,8 +208,7 @@ if ($action == "correct_stock")
 	        	$origin_id
 	        ); // We do not change value of stock for a correction
         }
-        else
-		{
+        else {
 	        $result = $product->correct_stock(
 	            $user,
 	            $id,
@@ -228,8 +227,7 @@ if ($action == "correct_stock")
             header("Location: ".$_SERVER["PHP_SELF"]."?id=".$id);
             exit;
         }
-        else
-        {
+        else {
             $error++;
             setEventMessages($product->error, $product->errors, 'errors');
             $action = 'correction';
@@ -313,14 +311,12 @@ if ($action == "transfert_stock" && !$cancel)
                         $eatby = $pdluo->eatby;
                         $sellby = $pdluo->sellby;
                     }
-                    else
-                    {
+                    else {
                         setEventMessages($pdluo->error, $pdluo->errors, 'errors');
                         $error++;
                     }
                 }
-                else
-                {
+                else {
                     $srcwarehouseid = $id;
                     $batch = GETPOST('batch_number', 'alpha');
                     $eatby = $d_eatby;
@@ -357,8 +353,7 @@ if ($action == "transfert_stock" && !$cancel)
                     );
                 }
             }
-            else
-            {
+            else {
                 // Remove stock
                 $result1 = $product->correct_stock(
                     $user,
@@ -390,14 +385,12 @@ if ($action == "transfert_stock" && !$cancel)
                     header("Location: ".$backtopage);
                     exit;
                 }
-                else
-                {
+                else {
                     header("Location: movement_list.php?id=".$object->id);
                     exit;
                 }
             }
-            else
-            {
+            else {
                 setEventMessages($product->error, $product->errors, 'errors');
                 $db->rollback();
                 $action = 'transfert';
@@ -506,8 +499,7 @@ if (empty($search_inventorycode))
 {
 	$sql .= $db->plimit($limit + 1, $offset);
 }
-else
-{
+else {
 	$limit = 0;
 }
 
@@ -543,8 +535,7 @@ if ($resql)
     $i = 0;
     $help_url = 'EN:Module_Stocks_En|FR:Module_Stock|ES:M&oacute;dulo_Stocks';
     if ($msid) $texte = $langs->trans('StockMovementForId', $msid);
-	else
-	{
+	else {
 		$texte = $langs->trans("ListOfStockMovements");
 		if ($id) $texte .= ' ('.$langs->trans("ForThisWarehouse").')';
 	}
@@ -621,8 +612,7 @@ if ($resql)
             $obj = $db->fetch_object($resqlbis);
             $lastmovementdate = $db->jdate($obj->datem);
         }
-        else
-        {
+        else {
             dol_print_error($db);
         }
 
@@ -631,8 +621,7 @@ if ($resql)
         {
             print dol_print_date($lastmovementdate, 'dayhour');
         }
-        else
-        {
+        else {
             print $langs->trans("None");
         }
         print "</td></tr>";
@@ -1150,8 +1139,7 @@ if ($resql)
         //print '</td></tr>';
     }
 }
-else
-{
+else {
     dol_print_error($db);
 }
 

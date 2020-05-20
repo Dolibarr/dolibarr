@@ -214,15 +214,13 @@ if ($id > 0 || !empty($ref))
 			print '</div>';
 			print '</form>';
 		}
-		else
-		{
+		else {
 			dol_print_error($db);
 		}
 		$db->free($result);
 	}
 }
-else
-{
+else {
 	dol_print_error();
 }
 

@@ -314,8 +314,7 @@ if ($object->id)
     						$checked = ' checked ';
     					}
     				}
-    				else
-    				{
+    				else {
     					if (array_key_exists($filetoadd['name'], $filetomerge->lines))
     					{
     						$checked = ' checked ';
@@ -338,8 +337,7 @@ if ($object->id)
     	}
     }
 }
-else
-{
+else {
 	print $langs->trans("ErrorUnknown");
 }
 

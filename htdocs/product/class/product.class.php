@@ -457,8 +457,7 @@ class Product extends CommonObject
         if ($err > 0) {
             return 0;
         }
-        else
-        {
+        else {
             return 1;
         }
     }
@@ -683,34 +682,29 @@ class Product extends CommonObject
                                     $error++;
                                 }
                             }
-                            else
-                            {
+                            else {
                                 $error++;
                                 $this->error = $this->db->lasterror();
                             }
                         }
-                        else
-                        {
+                        else {
                             $error++;
                             $this->error = 'ErrorFailedToGetInsertedId';
                         }
                     }
-                    else
-                    {
+                    else {
                         $error++;
                         $this->error = $this->db->lasterror();
                     }
                 }
-                else
-                {
+                else {
                     // Product already exists with this ref
                     $langs->load("products");
                     $error++;
                     $this->error = "ErrorProductAlreadyExists";
                 }
             }
-            else
-            {
+            else {
                 $error++;
                 $this->error = $this->db->lasterror();
             }
@@ -727,14 +721,12 @@ class Product extends CommonObject
                 $this->db->commit();
                 return $this->id;
             }
-            else
-            {
+            else {
                 $this->db->rollback();
                 return -$error;
             }
         }
-        else
-          {
+        else {
             $this->db->rollback();
             dol_syslog(get_class($this)."::Create fails verify ".join(',', $this->errors), LOG_WARNING);
             return -3;
@@ -811,8 +803,7 @@ class Product extends CommonObject
             $result = $mod->verif($this->db, $valuetotest, $this, 0, $typefortest);
             return $result;
         }
-        else
-        {
+        else {
             return 0;
         }
     }
@@ -1104,14 +1095,12 @@ class Product extends CommonObject
                     $this->db->commit();
                     return 1;
                 }
-                else
-                {
+                else {
                     $this->db->rollback();
                     return -$error;
                 }
             }
-            else
-            {
+            else {
                 if ($this->db->errno() == 'DB_ERROR_RECORD_ALREADY_EXISTS') {
                     $langs->load("errors");
                     if (empty($conf->barcode->enabled) || empty($this->barcode)) {
@@ -1123,8 +1112,7 @@ class Product extends CommonObject
                     $this->db->rollback();
                     return -1;
                 }
-                else
-                {
+                else {
                     $this->error = $langs->trans("Error")." : ".$this->db->error()." - ".$sql;
                     $this->errors[] = $this->error;
                     $this->db->rollback();
@@ -1132,8 +1120,7 @@ class Product extends CommonObject
                 }
             }
         }
-        else
-          {
+        else {
             $this->db->rollback();
             dol_syslog(get_class($this)."::Update fails verify ".join(',', $this->errors), LOG_WARNING);
             return -3;
@@ -1281,8 +1268,7 @@ class Product extends CommonObject
                 $this->db->commit();
                 return 1;
             }
-            else
-            {
+            else {
                 foreach ($this->errors as $errmsg)
                 {
                     dol_syslog(get_class($this)."::delete ".$errmsg, LOG_ERR);
@@ -1292,8 +1278,7 @@ class Product extends CommonObject
                 return -$error;
             }
         }
-        else
-        {
+        else {
             $this->error = "ErrorRecordIsUsedCantDelete";
             return 0;
         }
@@ -1332,8 +1317,7 @@ class Product extends CommonObject
                     }
                     $sql2 .= " WHERE fk_product=".$this->id." AND lang='".$this->db->escape($key)."'";
                 }
-                else
-                {
+                else {
                     $sql2 = "INSERT INTO ".MAIN_DB_PREFIX."product_lang (fk_product, lang, label, description";
                     if (!empty($conf->global->PRODUCT_USE_OTHER_FIELD_IN_TRANSLATION)) { $sql2 .= ", note";
                     }
@@ -1370,8 +1354,7 @@ class Product extends CommonObject
                     }
                     $sql2 .= " WHERE fk_product=".$this->id." AND lang='".$this->db->escape($key)."'";
                 }
-                else
-                {
+                else {
                     $sql2 = "INSERT INTO ".MAIN_DB_PREFIX."product_lang (fk_product, lang, label, description";
                     if (!empty($conf->global->PRODUCT_USE_OTHER_FIELD_IN_TRANSLATION)) { $sql2 .= ", note";
                     }
@@ -1392,8 +1375,7 @@ class Product extends CommonObject
                     }
                 }
             }
-            else
-            {
+            else {
                 // language is not current language and we didn't provide a multilang description for this language
             }
         }
@@ -1435,8 +1417,7 @@ class Product extends CommonObject
             // End call triggers
             return 1;
         }
-        else
-        {
+        else {
             $this->error = $this->db->lasterror();
             dol_syslog(get_class($this).'::delMultiLangs error='.$this->error, LOG_ERR);
             return -1;
@@ -1498,8 +1479,7 @@ class Product extends CommonObject
             $this->db->commit();
             return 1;
         }
-        else
-        {
+        else {
             $this->error = $this->db->lasterror();
             $this->db->rollback();
             return -1;
@@ -1538,8 +1518,7 @@ class Product extends CommonObject
             }
             return 1;
         }
-        else
-        {
+        else {
             $this->error = "Error: ".$this->db->lasterror()." - ".$sql;
             return -1;
         }
@@ -1581,8 +1560,7 @@ class Product extends CommonObject
             dol_print_error($this->db);
             return -1;
         }
-        else
-        {
+        else {
             return 1;
         }
     }
@@ -1609,8 +1587,7 @@ class Product extends CommonObject
         if ($resql) {
             return 1;
         }
-        else
-        {
+        else {
             $this->error = $this->db->lasterror();
             return -1;
         }
@@ -1687,8 +1664,7 @@ class Product extends CommonObject
 					{
 						$pu_ht = $priceforthequantityarray['unitprice'];
 					}
-					else
-					{
+					else {
 						$pu_ttc = $priceforthequantityarray['unitprice'];
 					}
 					break;
@@ -1708,8 +1684,7 @@ class Product extends CommonObject
 					{
 						$pu_ht = $priceforthequantityarray['unitprice'];
 					}
-					else
-					{
+					else {
 						$pu_ttc = $priceforthequantityarray['unitprice'];
 					}
 					break;
@@ -1852,20 +1827,17 @@ class Product extends CommonObject
 						$result = $obj->fk_product;
                         return $result;
                     }
-                    else
-                    {
+                    else {
                         return -1; // Ce produit n'existe pas avec cet id tarif fournisseur ou existe mais qte insuffisante, ni pour le couple produit/ref fournisseur dans la quantité.
                     }
                 }
-                else
-                {
+                else {
                     $this->error = $this->db->lasterror();
                     return -3;
                 }
             }
         }
-        else
-        {
+        else {
             $this->error = $this->db->lasterror();
             return -2;
         }
@@ -1937,14 +1909,12 @@ class Product extends CommonObject
                     $price_min = price2num($newminprice) / (1 + ($newvat / 100));
                     $price_min = price2num($price_min, 'MU');
                 }
-                else
-                {
+                else {
                     $price_min = 0;
                     $price_min_ttc = 0;
                 }
             }
-            else
-            {
+            else {
                 $price = price2num($newprice, 'MU');
                 $price_ttc = ($newnpr != 1) ? price2num($newprice) * (1 + ($newvat / 100)) : $price;
                 $price_ttc = price2num($price_ttc, 'MU');
@@ -1955,8 +1925,7 @@ class Product extends CommonObject
                     $price_min_ttc = price2num($price_min_ttc, 'MU');
                     //print 'X'.$newminprice.'-'.$price_min;
                 }
-                else
-                {
+                else {
                     $price_min = 0;
                     $price_min_ttc = 0;
                 }
@@ -1969,7 +1938,7 @@ class Product extends CommonObject
                 $localtaxtype2 = $localtaxes_array['2'];
                 $localtax2 = $localtaxes_array['3'];
             }
-            else     // old method. deprecated because ot can't retreive type
+            else // old method. deprecated because ot can't retreive type
             {
                 $localtaxtype1 = '0';
                 $localtax1 = get_localtax($newvat, 1);
@@ -2045,8 +2014,7 @@ class Product extends CommonObject
 
                 $this->db->commit();
             }
-            else
-            {
+            else {
                 $this->db->rollback();
                 dol_print_error($this->db);
             }
@@ -2281,8 +2249,7 @@ class Product extends CommonObject
                             }
                             }*/
                         }
-                        else
-                        {
+                        else {
                             dol_print_error($this->db);
                             return -1;
                         }
@@ -2330,15 +2297,13 @@ class Product extends CommonObject
                                 }
                                 $this->prices_by_qty_list[0] = $resultat;
                             }
-                            else
-                            {
+                            else {
                                     dol_print_error($this->db);
                                     return -1;
                             }
                         }
                     }
-                    else
-                    {
+                    else {
                         dol_print_error($this->db);
                         return -1;
                     }
@@ -2394,15 +2359,13 @@ class Product extends CommonObject
                                     }
                                     $this->prices_by_qty_list[$i] = $resultat;
                                 }
-                                else
-                                         {
+                                else {
                                     dol_print_error($this->db);
                                     return -1;
                                 }
                             }
                         }
-                        else
-                        {
+                        else {
                             dol_print_error($this->db);
                             return -1;
                         }
@@ -2427,13 +2390,11 @@ class Product extends CommonObject
 
                 return 1;
             }
-            else
-            {
+            else {
                 return 0;
             }
         }
-        else
-        {
+        else {
             dol_print_error($this->db);
             return -1;
         }
@@ -2507,8 +2468,7 @@ class Product extends CommonObject
 
             return 1;
         }
-        else
-        {
+        else {
             $this->error = $this->db->error();
             return -1;
         }
@@ -2558,8 +2518,7 @@ class Product extends CommonObject
 
             return 1;
         }
-        else
-        {
+        else {
             $this->error = $this->db->error();
             return -1;
         }
@@ -2661,8 +2620,7 @@ class Product extends CommonObject
             if ($reshook > 0) $this->stats_commande = $hookmanager->resArray['stats_commande'];
             return 1;
         }
-        else
-        {
+        else {
             $this->error = $this->db->error();
             return -1;
         }
@@ -2718,8 +2676,7 @@ class Product extends CommonObject
 
             return 1;
         }
-        else
-        {
+        else {
             $this->error = $this->db->error().' sql='.$sql;
             return -1;
         }
@@ -2802,8 +2759,7 @@ class Product extends CommonObject
 
             return 1;
         }
-        else
-        {
+        else {
             $this->error = $this->db->error();
             return -1;
         }
@@ -2855,8 +2811,7 @@ class Product extends CommonObject
 
             return 1;
         }
-        else
-        {
+        else {
             $this->error = $this->db->error();
             return -1;
         }
@@ -2946,8 +2901,7 @@ class Product extends CommonObject
 
     		return 1;
     	}
-    	else
-    	{
+    	else {
     		$this->error = $this->db->error();
     		return -1;
     	}
@@ -3020,8 +2974,7 @@ class Product extends CommonObject
 
             return 1;
         }
-        else
-        {
+        else {
             $this->error = $this->db->error().' sql='.$sql;
             return -1;
         }
@@ -3094,8 +3047,7 @@ class Product extends CommonObject
 
             return 1;
         }
-        else
-        {
+        else {
             $this->error = $this->db->error();
             return -1;
         }
@@ -3147,8 +3099,7 @@ class Product extends CommonObject
 
             return 1;
         }
-        else
-        {
+        else {
             $this->error = $this->db->error();
             return -1;
         }
@@ -3182,8 +3133,7 @@ class Product extends CommonObject
                 $i++;
             }
         }
-        else
-        {
+        else {
             $this->error = $this->db->error().' sql='.$sql;
             return -1;
         }
@@ -3192,8 +3142,7 @@ class Product extends CommonObject
             $year = strftime('%Y', time());
             $month = strftime('%m', time());
         }
-        else
-        {
+        else {
             $month = 12; // We imagine we are at end of year, so we get last 12 month before, so all correct year.
         }
         $result = array();
@@ -3674,8 +3623,7 @@ class Product extends CommonObject
             dol_print_error($this->db);
             return -1;
         }
-        else
-        {
+        else {
             $result = $this->db->query($sql);
             if ($result) {
                 $num = $this->db->num_rows($result);
@@ -3683,16 +3631,14 @@ class Product extends CommonObject
                     $this->error = "isFatherOfThis";
                     return -1;
                 }
-                else
-                {
+                else {
                     $sql = 'INSERT INTO '.MAIN_DB_PREFIX.'product_association(fk_product_pere,fk_product_fils,qty,incdec)';
                     $sql .= ' VALUES ('.$id_pere.', '.$id_fils.', '.$qty.', '.$incdec.')';
                     if (!$this->db->query($sql)) {
                          dol_print_error($this->db);
                          return -1;
                     }
-                    else
-                    {
+                    else {
                          return 1;
                     }
                 }
@@ -3736,8 +3682,7 @@ class Product extends CommonObject
             dol_print_error($this->db);
             return -1;
         }
-        else
-        {
+        else {
             return 1;
         }
     }
@@ -3800,13 +3745,11 @@ class Product extends CommonObject
 
                 return true;
             }
-            else
-            {
+            else {
                 return false;
             }
         }
-        else
-        {
+        else {
             dol_print_error($this->db);
             return -1;
         }
@@ -3896,21 +3839,18 @@ class Product extends CommonObject
                     $this->product_fourn_price_id = $this->db->last_insert_id(MAIN_DB_PREFIX."product_fournisseur_price");
                     return 1;
                 }
-                else
-                {
+                else {
                     $this->error = $this->db->lasterror();
                     return -1;
                 }
             }
             // If the supplier price already exists for this product and quantity
-            else
-            {
+            else {
                 $this->product_fourn_price_id = $obj->rowid;
                 return 0;
             }
         }
-        else
-        {
+        else {
             $this->error = $this->db->lasterror();
             return -2;
         }
@@ -4106,8 +4046,7 @@ class Product extends CommonObject
             $this->db->rollback();
             return -1;
         }
-        else
-        {
+        else {
             $this->db->commit();
             return 1;
         }
@@ -4218,8 +4157,7 @@ class Product extends CommonObject
             if ($obj) { $nb = $obj->nb;
             }
         }
-        else
-        {
+        else {
             return -1;
         }
 
@@ -4304,8 +4242,7 @@ class Product extends CommonObject
             }
             return $prods;
         }
-        else
-        {
+        else {
             dol_print_error($this->db);
             return -1;
         }
@@ -4369,8 +4306,7 @@ class Product extends CommonObject
 
             return $prods;
         }
-        else
-        {
+        else {
             dol_print_error($this->db);
             return -1;
         }
@@ -4498,8 +4434,7 @@ class Product extends CommonObject
             $linkclose .= ' title="'.dol_escape_htmltag($label, 1, 1).'"';
             $linkclose .= ' class="nowraponall classfortooltip"';
         }
-        else
-        {
+        else {
         	$linkclose = ' class="nowraponall"';
         }
 
@@ -4574,8 +4509,7 @@ class Product extends CommonObject
             if (!empty($conf->global->PRODUCT_ADDON_PDF)) {
                 $modele = $conf->global->PRODUCT_ADDON_PDF;
             }
-            else
-            {
+            else {
                 $modele = 'strato';
             }
         }
@@ -4744,8 +4678,7 @@ class Product extends CommonObject
                 $this->db->commit();
                 return 1;
             }
-            else
-            {
+            else {
                 $this->error = $movementstock->error;
                 $this->errors = $movementstock->errors;
 
@@ -4792,8 +4725,7 @@ class Product extends CommonObject
                 $this->db->commit();
                 return 1;
             }
-            else
-            {
+            else {
                 $this->error = $movementstock->error;
                 $this->errors = $movementstock->errors;
 
@@ -4872,8 +4804,7 @@ class Product extends CommonObject
 
             return 1;
         }
-        else
-        {
+        else {
             $this->error = $this->db->lasterror();
             return -1;
         }
@@ -5019,8 +4950,7 @@ class Product extends CommonObject
             }
             return $result;
         }
-        else
-        {
+        else {
             dol_print_error($this->db);
             $this->db->rollback();
             return array();
@@ -5258,8 +5188,7 @@ class Product extends CommonObject
             $this->db->free($resql);
             return 1;
         }
-        else
-        {
+        else {
             dol_print_error($this->db);
             $this->error = $this->db->error();
             return -1;
@@ -5395,8 +5324,7 @@ class Product extends CommonObject
             $this->db->free($resql);
             return $label;
         }
-        else
-        {
+        else {
             $this->error = $this->db->error().' sql='.$sql;
             dol_syslog(get_class($this)."::getLabelOfUnit Error ".$this->error, LOG_ERR);
             return -1;
@@ -5629,8 +5557,7 @@ class Product extends CommonObject
 
             $this->db->free($result);
         }
-        else
-        {
+        else {
             dol_print_error($this->db);
         }
     }

@@ -166,8 +166,7 @@ class Entrepot extends CommonObject
 			$this->statuts[self::STATUS_OPEN_ALL] = 'OpenAll';
 			$this->statuts[self::STATUS_OPEN_INTERNAL] = 'OpenInternal';
 		}
-		else
-		{
+		else {
 			$this->statuts[self::STATUS_OPEN_ALL] = 'Opened';
 		}
 	}
@@ -236,8 +235,7 @@ class Entrepot extends CommonObject
 					$this->db->commit();
 					return $id;
 				}
-				else
-				{
+				else {
 					dol_syslog(get_class($this)."::create return -3");
 					$this->db->rollback();
 					return -3;
@@ -249,8 +247,7 @@ class Entrepot extends CommonObject
 				return -2;
 			}
 		}
-		else
-		{
+		else {
 			$this->error = $this->db->error();
 			dol_syslog(get_class($this)."::create Error ".$this->db->error());
 			$this->db->rollback();
@@ -426,8 +423,7 @@ class Entrepot extends CommonObject
 			$this->db->commit();
 			return 1;
 		}
-		else
-		{
+		else {
 			$this->db->rollback();
 			return -1;
 		}
@@ -461,8 +457,7 @@ class Entrepot extends CommonObject
 		{
 			$sql .= " WHERE rowid = '".$id."'";
 		}
-		else
-		{
+		else {
 			$sql .= " WHERE entity = ".$conf->entity;
 			if ($ref) $sql .= " AND ref = '".$this->db->escape($ref)."'";
 		}
@@ -500,14 +495,12 @@ class Entrepot extends CommonObject
 
 				return 1;
 			}
-			else
-			{
+			else {
                 $this->error = "Record Not Found";
 				return 0;
 			}
 		}
-		else
-		{
+		else {
 			$this->error = $this->db->error();
 			return -1;
 		}
@@ -554,8 +547,7 @@ class Entrepot extends CommonObject
 
 			$this->db->free($result);
 		}
-		else
-		{
+		else {
 	        dol_print_error($this->db);
 		}
 	}
@@ -619,8 +611,7 @@ class Entrepot extends CommonObject
 			$ret['nb'] = $obj->nb;
 			$this->db->free($result);
 		}
-		else
-		{
+		else {
 			$this->error = $this->db->lasterror();
 			return -1;
 		}
@@ -654,8 +645,7 @@ class Entrepot extends CommonObject
 			$ret['value'] = $obj->value;
 			$this->db->free($result);
 		}
-		else
-		{
+		else {
 			$this->error = $this->db->lasterror();
 			return -1;
 		}

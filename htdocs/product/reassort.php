@@ -137,8 +137,7 @@ if (dol_strlen($type))
     {
         $sql .= " AND p.fk_product_type = '1'";
     }
-    else
-    {
+    else {
         $sql .= " AND p.fk_product_type <> '1'";
     }
 }
@@ -404,8 +403,7 @@ if ($resql)
 
 	$db->free($resql);
 }
-else
-{
+else {
 	dol_print_error($db);
 }
 

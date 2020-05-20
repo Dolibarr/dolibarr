@@ -77,8 +77,7 @@ if (empty($conf->global->MAIN_USE_ADVANCED_PERMS))
 {
 	$result = restrictedArea($user, 'stock', $objectid);
 }
-else
-{
+else {
 	$result = restrictedArea($user, 'stock', $objectid, '', 'inventory_advance');
 }
 
@@ -256,8 +255,7 @@ if (is_numeric($nbtotalofrecords) && ($limit > $nbtotalofrecords || empty($limit
 {
 	$num = $nbtotalofrecords;
 }
-else
-{
+else {
 	if ($limit) $sql .= $db->plimit($limit + 1, $offset);
 
 	$resql = $db->query($sql);

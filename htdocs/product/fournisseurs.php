@@ -128,8 +128,7 @@ if (empty($reshook))
 				setEventMessages($langs->trans("RecordSaved"), null, 'mesgs');
 		        $action = '';
 			}
-			else
-			{
+			else {
 				$error++;
 				setEventMessages($object->error, $object->errors, 'errors');
 			}
@@ -211,8 +210,7 @@ if (empty($reshook))
 				$langs->load("errors");
 				setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentities("Price")), null, 'errors');
 			}
-			else
-			{
+			else {
 				$_POST["price"] = 0;
 			}
 		}
@@ -316,8 +314,7 @@ if (empty($reshook))
 					$error++;
 					setEventMessages($object->error, $object->errors, 'errors');
 				}
-				else
-				{
+				else {
 					if (!empty($conf->dynamicprices->enabled) && $price_expression !== '')
 					{
 						//Check the expression validity by parsing it
@@ -347,13 +344,11 @@ if (empty($reshook))
 				$db->commit();
 				$action = '';
 			}
-			else
-			{
+			else {
 				$db->rollback();
 			}
 		}
-		else
-		{
+		else {
 			$action = 'add_price';
 		}
 	}
@@ -453,8 +448,7 @@ if ($id > 0 || $ref)
 					$object->fetch_product_fournisseur_price($rowid, 1); //Ignore the math expression when getting the price
 					print load_fiche_titre($langs->trans("ChangeSupplierPrice"));
 				}
-				else
-				{
+				else {
 					print load_fiche_titre($langs->trans("AddSupplierPrice"));
 				}
 
@@ -478,8 +472,7 @@ if ($id > 0 || $ref)
 					print '<input type="hidden" name="rowid" value="'.$rowid.'">';
 					print '<input type="hidden" name="socid" value="'.$socid.'">';
 				}
-				else
-				{
+				else {
 					$events = array();
 					$events[] = array('method' => 'getVatRates', 'url' => dol_buildpath('/core/ajax/vatrates.php', 1), 'htmlname' => 'tva_tx', 'params' => array());
 					print $form->select_company(GETPOST("id_fourn", 'alpha'), 'id_fourn', 'fournisseur=1', 'SelectThirdParty', 0, 0, $events);
@@ -503,8 +496,7 @@ if ($id > 0 || $ref)
                     print '<input type="hidden" name="ref_fourn_old" value="'.$object->ref_supplier.'">';
                     print '<input class="flat" name="ref_fourn" size="12" value="'.$object->ref_supplier.'">';
 				}
-				else
-				{
+				else {
 					print '<input class="flat" name="ref_fourn" size="12" value="'.(GETPOST("ref_fourn") ?GETPOST("ref_fourn") : '').'">';
 				}
 				print '</td>';
@@ -529,8 +521,7 @@ if ($id > 0 || $ref)
 					print '<input type="hidden" name="qty" value="'.$object->fourn_qty.'">';
 					print $object->fourn_qty;
 				}
-				else
-				{
+				else {
 					print '<input class="flat" name="qty" size="5" value="'.$quantity.'">';
 				}
                 // Units
@@ -564,8 +555,7 @@ if ($id > 0 || $ref)
 					$default_vat = $tmpproductsupplier->fourn_tva_tx;
 					$default_npr = $tmpproductsupplier->fourn_tva_npr;
 				}
-				else
-				{
+				else {
                     if (empty($default_vat))
                     {
                         $default_vat = $object->tva_tx;
@@ -945,8 +935,7 @@ SCRIPT;
 						{
 							print '<td class="left">'.$productfourn->getNomUrl().'</td>';
 						}
-						else
-						{
+						else {
 							print '<td class="left">'.$productfourn->fourn_ref.'</td>';
 						}
 
@@ -1099,8 +1088,7 @@ SCRIPT;
 						print '</tr>';
 					}
 				}
-				else
-				{
+				else {
 				    dol_print_error($db);
 				}
 
@@ -1110,8 +1098,7 @@ SCRIPT;
 		}
 	}
 }
-else
-{
+else {
 	print $langs->trans("ErrorUnknown");
 }
 

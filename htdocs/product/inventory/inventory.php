@@ -42,8 +42,7 @@ if (empty($conf->global->MAIN_USE_ADVANCED_PERMS))
 {
 	$result = restrictedArea($user, 'stock', $id);
 }
-else
-{
+else {
 	$result = restrictedArea($user, 'stock', $id, '', 'inventory_advance');
 }
 
@@ -81,8 +80,7 @@ if (empty($conf->global->MAIN_USE_ADVANCED_PERMS))
 	$permissiontoadd = $user->rights->stock->creer;
 	$permissiontodelete = $user->rights->stock->supprimer;
 }
-else
-{
+else {
 	$permissiontoadd = $user->rights->stock->inventory_advance->write;
 	$permissiontodelete = $user->rights->stock->inventory_advance->write;
 }
@@ -283,8 +281,7 @@ if ($object->id > 0)
     			{
     				print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=edit">'.$langs->trans("Edit").'</a>'."\n";
     			}
-    			else
-    			{
+    			else {
     				print '<a class="butActionRefused classfortooltip" href="#" title="'.dol_escape_htmltag($langs->trans("NotEnoughPermissions")).'">'.$langs->trans('Edit').'</a>'."\n";
     			}
     		}
@@ -295,8 +292,7 @@ if ($object->id > 0)
 	    		{
 	    			print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=validate">'.$langs->trans("Validate").'</a>'."\n";
 	    		}
-	    		else
-	    		{
+	    		else {
 	    			print '<a class="butActionRefused classfortooltip" href="#" title="'.dol_escape_htmltag($langs->trans("NotEnoughPermissions")).'">'.$langs->trans('Validate').'</a>'."\n";
 	    		}
     		}

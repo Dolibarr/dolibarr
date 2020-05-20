@@ -145,8 +145,7 @@ class PriceGlobalVariableUpdater
             $this->db->rollback();
             return -1 * $error;
         }
-        else
-        {
+        else {
             $this->db->commit();
             return $this->id;
         }
@@ -183,13 +182,11 @@ class PriceGlobalVariableUpdater
                 $this->checkParameters();
                 return 1;
             }
-            else
-            {
+            else {
                 return 0;
             }
         }
-        else
-        {
+        else {
             $this->error = "Error ".$this->db->lasterror();
             return -1;
         }
@@ -250,8 +247,7 @@ class PriceGlobalVariableUpdater
             $this->db->rollback();
             return -1 * $error;
         }
-        else
-        {
+        else {
             $this->db->commit();
             return 1;
         }
@@ -306,8 +302,7 @@ class PriceGlobalVariableUpdater
             $this->db->rollback();
             return -1 * $error;
         }
-        else
-        {
+        else {
             $this->db->commit();
             return 1;
         }
@@ -400,8 +395,7 @@ class PriceGlobalVariableUpdater
             $this->db->free($resql);
             return $retarray;
         }
-        else
-        {
+        else {
             $this->error = $this->db->error();
             return -1;
         }
@@ -442,8 +436,7 @@ class PriceGlobalVariableUpdater
             $this->db->free($resql);
             return $retarray;
         }
-        else
-        {
+        else {
             $this->error = $this->db->error();
             return -1;
         }
@@ -599,8 +592,7 @@ class PriceGlobalVariableUpdater
             $this->db->rollback();
             return -1 * $error;
         }
-        else
-        {
+        else {
             $this->db->commit();
             return 1;
         }
@@ -645,8 +637,7 @@ class PriceGlobalVariableUpdater
             $this->db->rollback();
             return -1 * $error;
         }
-        else
-        {
+        else {
             $this->db->commit();
             return 1;
         }

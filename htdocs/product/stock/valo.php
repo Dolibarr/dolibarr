@@ -150,8 +150,7 @@ if ($result)
         print '<br><img src="'.$url.'">';
     }
 }
-else
-{
+else {
     dol_print_error($db);
 }
 

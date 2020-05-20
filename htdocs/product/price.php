@@ -170,8 +170,7 @@ if (empty($reshook))
 	    {
 	        $db->commit();
 	    }
-	    else
-	    {
+	    else {
 	        $db->rollback();
 	    }
 
@@ -767,8 +766,7 @@ if (!empty($conf->global->PRODUIT_MULTIPRICES) || !empty($conf->global->PRODUIT_
 			//print vatrate($object->multiprices_tva_tx[$soc->price_level], true);
 			print '</td></tr>';
 		}
-		else
-		{
+		else {
         	// TVA
         	print '<tr><td>'.$langs->trans("DefaultTaxRate").'</td><td>';
 
@@ -787,8 +785,7 @@ if (!empty($conf->global->PRODUIT_MULTIPRICES) || !empty($conf->global->PRODUIT_
         	print '</td></tr>';
 		}
 	}
-	else
-	{
+	else {
 		if (!empty($conf->global->PRODUIT_MULTIPRICES_USE_VAT_PER_LEVEL))  // using this option is a bug. kept for backward compatibility
 		{
 			// We show only vat for level 1
@@ -796,8 +793,7 @@ if (!empty($conf->global->PRODUIT_MULTIPRICES) || !empty($conf->global->PRODUIT_
 			print '<td colspan="2">'.vatrate($object->multiprices_tva_tx[1], true).'</td>';
 			print '</tr>';
 		}
-		else
-		{
+		else {
             // TVA
 	        print '<tr><td class="titlefield">'.$langs->trans("DefaultTaxRate").'</td><td>';
 
@@ -846,8 +842,7 @@ if (!empty($conf->global->PRODUIT_MULTIPRICES) || !empty($conf->global->PRODUIT_
 			    print '&nbsp;<input type="submit" class="button" value="'.$langs->trans("Modify").'">';
 			    print '</form>';
 			}
-			else
-			{
+			else {
 			    print $langs->trans("SellingPrice").' '.$i;
 			    if (!empty($conf->global->$keyforlabel)) print ' - '.$langs->trans($conf->global->$keyforlabel);
 			}
@@ -872,8 +867,7 @@ if (!empty($conf->global->PRODUIT_MULTIPRICES) || !empty($conf->global->PRODUIT_
 			{
 				print price($object->multiprices_min_ttc[$i]).' '.$langs->trans($object->multiprices_base_type[$i]);
 			}
-			else
-			{
+			else {
 				print price($object->multiprices_min[$i]).' '.$langs->trans($object->multiprices_base_type[$i]);
 			}
 			print '</td></tr>';
@@ -954,8 +948,7 @@ if (!empty($conf->global->PRODUIT_MULTIPRICES) || !empty($conf->global->PRODUIT_
 		}
 	}
 }
-else
-{
+else {
 	// TVA
 	print '<tr><td class="titlefield">'.$langs->trans("DefaultTaxRate").'</td><td>';
 
@@ -998,8 +991,7 @@ else
 		if ($object->prices_by_qty[0] == 0) {
 			print '&nbsp; <a href="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'&action=activate_price_by_qty&level=1">('.$langs->trans("Activate").')';
 		}
-		else
-		{
+		else {
 			print '&nbsp; <a href="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'&action=disable_price_by_qty&level=1">('.$langs->trans("DisablePriceByQty").')';
 		}
 		print '</td><td>';
@@ -1289,8 +1281,7 @@ if ($action == 'edit_price' && $object->getRights()->creer)
 
 		print '<br></form>';
 	}
-	else
-	{
+	else {
 	    print '<!-- Edit price per level -->'."\n";
 	    ?>
 		<script>
@@ -1551,8 +1542,7 @@ if ((empty($conf->global->PRODUIT_CUSTOMER_PRICES) || $action == 'showlog_defaul
     				print '<td class="right"></td>';
     				print '<td class="right">'.$title."</td>";
     			}
-    			else
-    			{
+    			else {
     				print '<td class="right">';
     				if (empty($objp->price_by_qty)) {
     					print price($objp->price);
@@ -1606,8 +1596,7 @@ if ((empty($conf->global->PRODUIT_CUSTOMER_PRICES) || $action == 'showlog_defaul
     					print '<a href="'.$_SERVER["PHP_SELF"].'?action=delete&amp;id='.$object->id.'&amp;lineid='.$objp->rowid.'">';
     					print img_delete();
     					print '</a>';
-    				} else
-    					print '&nbsp;'; // Can not delete last price (it's current price)
+    				} else print '&nbsp;'; // Can not delete last price (it's current price)
     				print '</td>';
     			}
 
@@ -1877,8 +1866,7 @@ if (!empty($conf->global->PRODUIT_CUSTOMER_PRICES))
 				//print '<td class="right">' . $langs->trans("INCVATONLY") . '</td>';
 				print '<td class="right">'.$langs->trans("INCT").'</td>';
 			}
-			else
-			{
+			else {
 				print '<td class="right">'.$langs->trans("TTC").'</td>';
 			}
 			print '<td class="right">'.$langs->trans("MinPrice").' '.$langs->trans("HT").'</td>';
@@ -1900,8 +1888,7 @@ if (!empty($conf->global->PRODUIT_CUSTOMER_PRICES))
 				{
 				    $pu = $line->price;
 				}
-				else
-				{
+				else {
 				    $pu = $line->price_ttc;
 				}
 
@@ -1940,8 +1927,7 @@ if (!empty($conf->global->PRODUIT_CUSTOMER_PRICES))
 					//print '<td class="right">' . price($line->price_ttc) . "</td>";
 					print '<td class="right">'.price($resultarray[2]).'</td>';
 				}
-				else
-				{
+				else {
 					print '<td class="right">'.price($line->price_ttc)."</td>";
 				}
 
@@ -2014,8 +2000,7 @@ if (!empty($conf->global->PRODUIT_CUSTOMER_PRICES))
 			//print '<td class="right">' . $langs->trans("INCVATONLY") . '</td>';
 			print '<td class="right">'.$langs->trans("INCT").'</td>';
 		}
-		else
-		{
+		else {
 			print '<td class="right">'.$langs->trans("TTC").'</td>';
 		}
 
@@ -2030,8 +2015,7 @@ if (!empty($conf->global->PRODUIT_CUSTOMER_PRICES))
 		{
 		    $pu = $object->price;
 		}
-		else
-		{
+		else {
 		    $pu = $object->price_ttc;
 		}
 
@@ -2071,8 +2055,7 @@ if (!empty($conf->global->PRODUIT_CUSTOMER_PRICES))
 			//print '<td class="right">' . price($object->price_ttc) . "</td>";
 			print '<td class="right">'.price($resultarray[2]).'</td>';
 		}
-		else
-		{
+		else {
 			print '<td class="right">'.price($object->price_ttc)."</td>";
 		}
 
@@ -2111,8 +2094,7 @@ if (!empty($conf->global->PRODUIT_CUSTOMER_PRICES))
 				{
 				    $pu = $line->price;
 				}
-				else
-				{
+				else {
 				    $pu = $line->price_ttc;
 				}
 
@@ -2150,8 +2132,7 @@ if (!empty($conf->global->PRODUIT_CUSTOMER_PRICES))
 					//print '<td class="right">' . price($line->price_ttc) . "</td>";
 					print '<td class="right">'.price($resultarray[2]).'</td>';
 				}
-				else
-				{
+				else {
 					print '<td class="right">'.price($line->price_ttc)."</td>";
 				}
 

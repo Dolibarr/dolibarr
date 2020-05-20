@@ -131,8 +131,7 @@ if ($_GET["id"])
 			print '<br><img src="'.$url.'" alt="Valorisation du stock annee '.($year - 1).'">';
 		}
 	}
-	else
-	{
+	else {
 		$langs->load("errors");
 		print $langs->trans("FeatureNotYetAvailable");
 	}

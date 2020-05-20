@@ -315,8 +315,7 @@ if ($resql)
 
     dol_fiche_end();
 }
-else
-{
+else {
     dol_print_error($db);
 }
 

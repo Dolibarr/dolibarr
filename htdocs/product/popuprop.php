@@ -67,8 +67,7 @@ elseif ($type == '1')
 {
 	$helpurl = 'EN:Module_Services_En|FR:Module_Services|ES:M&oacute;dulo_Servicios';
 }
-else
-{
+else {
 	$helpurl = 'EN:Module_Services_En|FR:Module_Services|ES:M&oacute;dulo_Servicios';
 }
 $title = $langs->trans("Statistics");
@@ -153,8 +152,7 @@ if ($resql)
 	}
 	$db->free($resql);
 }
-else
-{
+else {
 	dol_print_error($db);
 }
 //var_dump($infoprod);

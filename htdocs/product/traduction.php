@@ -79,8 +79,7 @@ $cancel != $langs->trans("Cancel") &&
 		$object->description = dol_htmlcleanlastbr($_POST["desc"]);
 		$object->other			= dol_htmlcleanlastbr($_POST["other"]);
 	}
-	else
-	{
+	else {
 		$object->multilangs[$_POST["forcelangprod"]]["label"]		= $_POST["libelle"];
 		$object->multilangs[$_POST["forcelangprod"]]["description"] = dol_htmlcleanlastbr($_POST["desc"]);
 		$object->multilangs[$_POST["forcelangprod"]]["other"]		= dol_htmlcleanlastbr($_POST["other"]);
@@ -91,8 +90,7 @@ $cancel != $langs->trans("Cancel") &&
 	{
 		$action = '';
 	}
-	else
-	{
+	else {
 		$action = 'add';
 		setEventMessages($object->error, $object->errors, 'errors');
 	}
@@ -115,8 +113,7 @@ $cancel != $langs->trans("Cancel") &&
 			$object->description = dol_htmlcleanlastbr($_POST["desc-".$key]);
 			$object->other			= dol_htmlcleanlastbr($_POST["other-".$key]);
 		}
-		else
-		{
+		else {
 			$object->multilangs[$key]["label"]			= $_POST["libelle-".$key];
 			$object->multilangs[$key]["description"] = dol_htmlcleanlastbr($_POST["desc-".$key]);
 			$object->multilangs[$key]["other"]			= dol_htmlcleanlastbr($_POST["other-".$key]);
@@ -127,8 +124,7 @@ $cancel != $langs->trans("Cancel") &&
 	{
 		$action = '';
 	}
-	else
-	{
+	else {
 		$action = 'edit';
 		setEventMessages($object->error, $object->errors, 'errors');
 	}
@@ -148,8 +144,7 @@ $cancel != $langs->trans("Cancel") &&
 	{
 		$action = '';
 	}
-	else
-	{
+	else {
 		$action = 'edit';
 		setEventMessages($object->error, $object->errors, 'errors');
 	}

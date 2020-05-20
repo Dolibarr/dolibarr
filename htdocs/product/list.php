@@ -292,13 +292,11 @@ if ($search_type != '' && $search_type != '-1')
 	{
 		$texte = $langs->trans("Services");
 	}
-	else
-	{
+	else {
 		$texte = $langs->trans("Products");
 	}
 }
-else
-{
+else {
 	$texte = $langs->trans("ProductsAndServices");
 }
 
@@ -1411,8 +1409,7 @@ if ($resql)
 	print "</div>";
 	print '</form>';
 }
-else
-{
+else {
 	dol_print_error($db);
 }
 

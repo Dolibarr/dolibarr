@@ -182,8 +182,7 @@ if ($action == 'order' && isset($_POST['valid']))
 				{
 					$errorQty++;
 				}
-                else
-				{
+                else {
                     $error = $db->lasterror();
                     dol_print_error($db);
                 }
@@ -273,8 +272,7 @@ if ($action == 'order' && isset($_POST['valid']))
             header('Location: replenishorders.php');
             exit;
         }
-        else
-        {
+        else {
         	$db->rollback();
         }
     }
@@ -420,8 +418,7 @@ if ($usevirtualstock)
 		$sqlProductionToProduce .= " AND mp5.fk_product = p.rowid";
 		$sqlProductionToProduce .= " AND mp5.role IN ('toproduce', 'produced')";
 		$sqlProductionToProduce .= " AND mm5.status IN (1,2))";
-	} else
-	{
+	} else {
 		$sqlProductionToConsume = '0';
 		$sqlProductionToProduce = '0';
 	}
@@ -673,8 +670,7 @@ while ($i < ($limit ? min($num, $limit) : $num))
 			// If option to increase/decrease is not on an object validation, virtual stock may differs from physical stock.
 			$stock = $prod->stock_theorique;
 		}
-		else
-		{
+		else {
 			$stock = $prod->stock_reel;
 		}
 

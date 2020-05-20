@@ -21,8 +21,7 @@ switch ($put)
 
 			echo $det->qty_view;
 		}
-		else
-		{
+		else {
 			echo -2;
 		}
 
@@ -41,8 +40,7 @@ switch ($put)
 
 			echo $det->new_pmp;
 		}
-		else
-		{
+		else {
 			echo -2;
 		}
 

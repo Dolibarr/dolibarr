@@ -78,8 +78,7 @@ if ($action == 'add')
 			if ($price_result < 0) { //Expression is not valid
 				setEventMessages($priceparser->translatedError(), null, 'errors');
 			}
-			else
-			{
+			else {
 				$price_expression->title = $title;
 				$price_expression->expression = $expression;
 				$result = $price_expression->create($user);
@@ -88,8 +87,7 @@ if ($action == 'add')
 					$eid = $price_expression->id;
 					setEventMessages($langs->trans("RecordSaved"), null, 'mesgs');
 				}
-				else
-				{
+				else {
 					setEventMessages("add: ".$price_expression->error, $price_expression->errors, 'errors');
 				}
 			}
@@ -98,8 +96,7 @@ if ($action == 'add')
 		{
 			setEventMessages("add find: ".$price_expression->error, $price_expression->errors, 'errors');
 		}
-		else
-		{
+		else {
 			setEventMessages($langs->trans("ErrorRecordAlreadyExists"), null, 'errors');
 		}
 	}
@@ -118,8 +115,7 @@ if ($action == 'update')
 			if ($price_result < 0) { //Expression is not valid
 				setEventMessages($priceparser->translatedError(), null, 'errors');
 			}
-			else
-			{
+			else {
 				$price_expression->id = $eid;
 				$price_expression->title = $title;
 				$price_expression->expression = $expression;
@@ -128,8 +124,7 @@ if ($action == 'update')
 				{
 					setEventMessages("update: ".$price_expression->error, $price_expression->errors, 'errors');
 				}
-				else
-				{
+				else {
 					setEventMessages($langs->trans("RecordSaved"), null, 'mesgs');
 				}
 			}
@@ -138,8 +133,7 @@ if ($action == 'update')
 		{
 			setEventMessages("update find: ".$price_expression->error, $price_expression->errors, 'errors');
 		}
-		else
-		{
+		else {
 			setEventMessages($langs->trans("ErrorRecordAlreadyExists"), null, 'errors');
 		}
 	}
@@ -221,8 +215,7 @@ if ($eid == 0)
 {
 	print '<div class="inline-block divButAction"><span id="action-delete" class="butActionRefused classfortooltip">'.$langs->trans('Delete').'</span></div>'."\n";
 }
-else
-{
+else {
 	print '<div class="inline-block divButAction"><a class="butActionDelete" href="'.$_SERVER["PHP_SELF"].'?id='.$id.'&amp;tab='.$tab.'&amp;eid='.$eid.'&amp;action=delete">'.$langs->trans("Delete").'</a></div>';
 }
 print '</div>';
