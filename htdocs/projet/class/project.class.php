@@ -764,7 +764,7 @@ class Project extends CommonObject
 	        $resql = $this->db->query($sql);
 	        if (!$resql)
 	        {
-	        	$this->errors[] = $langs->trans("CantRemoveProject");
+	        	$this->errors[] = $langs->trans("CantRemoveProject", $langs->transnoentitiesnoconv("ProjectOverview"));
 	        	$error++;
 	        }
         }
