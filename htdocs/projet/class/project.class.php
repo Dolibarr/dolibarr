@@ -1019,16 +1019,16 @@ class Project extends CommonObject
 	}
 
 	/**
-     * 	Return clickable name (with picto eventually)
+	 * 	Return clickable name (with picto eventually)
 	 *
 	 * 	@param	int		$withpicto		          0=No picto, 1=Include picto into link, 2=Only picto
-     * 	@param	string	$option			          Variant where the link point to ('', 'nolink')
+	 * 	@param	string	$option			          Variant where the link point to ('', 'nolink')
 	 * 	@param	int		$addlabel		          0=Default, 1=Add label into string, >1=Add first chars into string
 	 *  @param	string	$moreinpopup	          Text to add into popup
 	 *  @param	string	$sep			          Separator between ref and label if option addlabel is set
 	 *  @param	int   	$notooltip		          1=Disable tooltip
 	 *  @param  int     $save_lastsearch_value    -1=Auto, 0=No save of lastsearch_values when clicking, 1=Save lastsearch_values whenclicking
-     *  @param	string	$morecss				  More css on a link
+	 *  @param	string	$morecss				  More css on a link
 	 * 	@return	string					          String with URL
 	 */
 	public function getNomUrl($withpicto = 0, $option = '', $addlabel = 0, $moreinpopup = '', $sep = ' - ', $notooltip = 0, $save_lastsearch_value = -1, $morecss = '')
@@ -1049,17 +1049,20 @@ class Project extends CommonObject
 		if (isset($this->public)) {
 			$label .= '<br><b>'.$langs->trans("Visibility").":</b> ".($this->public ? $langs->trans("SharedProject") : $langs->trans("PrivateProject"));
 		}
-		if (!empty($this->thirdparty_name))
+		if (!empty($this->thirdparty_name)) {
 			$label .= ($label ? '<br>' : '').'<b>'.$langs->trans('ThirdParty').': </b>'.$this->thirdparty_name; // The space must be after the : to not being explode when showing the title in img_picto
-		if (!empty($this->dateo))
+		}
+		if (!empty($this->dateo)) {
 			$label .= ($label ? '<br>' : '').'<b>'.$langs->trans('DateStart').': </b>'.dol_print_date($this->dateo, 'day'); // The space must be after the : to not being explode when showing the title in img_picto
-		if (!empty($this->datee))
+		}
+		if (!empty($this->datee)) {
 			$label .= ($label ? '<br>' : '').'<b>'.$langs->trans('DateEnd').': </b>'.dol_print_date($this->datee, 'day'); // The space must be after the : to not being explode when showing the title in img_picto
+		}
 		if ($moreinpopup) $label .= '<br>'.$moreinpopup;
 		if (isset($this->status)) {
 			$label .= '<br><b>'.$langs->trans("Status").":</b> ".$this->getLibStatut(5);
 		}
-		
+
 		$url = '';
 		if ($option != 'nolink')
 		{
@@ -1222,942 +1225,942 @@ class Project extends CommonObject
 			//		$userAccess = 1;
 			//	}
 			//}
-	}
-
-	return ($userAccess ? $userAccess : -1);
-}
-
-/**
- * Return array of projects a user has permission on, is affected to, or all projects
- *
- * @param 	User	$user			User object
- * @param 	int		$mode			0=All project I have permission on (assigned to me or public), 1=Projects assigned to me only, 2=Will return list of all projects with no test on contacts
- * @param 	int		$list			0=Return array, 1=Return string list
- * @param	int		$socid			0=No filter on third party, id of third party
- * @param	string	$filter			additionnal filter on project (statut, ref, ...)
- * @return 	array or string			Array of projects id, or string with projects id separated with "," if list is 1
- */
-public function getProjectsAuthorizedForUser($user, $mode = 0, $list = 0, $socid = 0, $filter = '')
-{
-	$projects = array();
-	$temp = array();
-
-	$sql = "SELECT ".(($mode == 0 || $mode == 1) ? "DISTINCT " : "")."p.rowid, p.ref";
-	$sql.= " FROM " . MAIN_DB_PREFIX . "projet as p";
-	if ($mode == 0)
-	{
-		$sql.= " LEFT JOIN " . MAIN_DB_PREFIX . "element_contact as ec ON ec.element_id = p.rowid";
-	}
-	elseif ($mode == 1)
-	{
-		$sql.= ", " . MAIN_DB_PREFIX . "element_contact as ec";
-	}
-	elseif ($mode == 2)
-	{
-		// No filter. Use this if user has permission to see all project
-	}
-	$sql.= " WHERE p.entity IN (".getEntity('project').")";
-	// Internal users must see project he is contact to even if project linked to a third party he can't see.
-	//if ($socid || ! $user->rights->societe->client->voir)	$sql.= " AND (p.fk_soc IS NULL OR p.fk_soc = 0 OR p.fk_soc = ".$socid.")";
-	if ($socid > 0) $sql.= " AND (p.fk_soc IS NULL OR p.fk_soc = 0 OR p.fk_soc = " . $socid . ")";
-
-	// Get id of types of contacts for projects (This list never contains a lot of elements)
-	$listofprojectcontacttype=array();
-	$sql2 = "SELECT ctc.rowid, ctc.code FROM ".MAIN_DB_PREFIX."c_type_contact as ctc";
-	$sql2.= " WHERE ctc.element = '" . $this->db->escape($this->element) . "'";
-	$sql2.= " AND ctc.source = 'internal'";
-	$resql = $this->db->query($sql2);
-	if ($resql)
-	{
-		while($obj = $this->db->fetch_object($resql))
-		{
-			$listofprojectcontacttype[$obj->rowid]=$obj->code;
-		}
-	}
-	else dol_print_error($this->db);
-	if (count($listofprojectcontacttype) == 0) $listofprojectcontacttype[0]='0';    // To avoid syntax error if not found
-
-	if ($mode == 0)
-	{
-		$sql.= " AND ( p.public = 1";
-		$sql.= " OR ( ec.fk_c_type_contact IN (".join(',', array_keys($listofprojectcontacttype)).")";
-		$sql.= " AND ec.fk_socpeople = ".$user->id.")";
-		$sql.= " )";
-	}
-	elseif ($mode == 1)
-	{
-		$sql.= " AND ec.element_id = p.rowid";
-		$sql.= " AND (";
-		$sql.= "  ( ec.fk_c_type_contact IN (".join(',', array_keys($listofprojectcontacttype)).")";
-		$sql.= " AND ec.fk_socpeople = ".$user->id.")";
-		$sql.= " )";
-	}
-	elseif ($mode == 2)
-	{
-		// No filter. Use this if user has permission to see all project
-	}
-
-	$sql.= $filter;
-	//print $sql;
-
-	$resql = $this->db->query($sql);
-	if ($resql)
-	{
-		$num = $this->db->num_rows($resql);
-		$i = 0;
-		while ($i < $num)
-		{
-			$row = $this->db->fetch_row($resql);
-			$projects[$row[0]] = $row[1];
-			$temp[] = $row[0];
-			$i++;
 		}
 
-		$this->db->free($resql);
+		return ($userAccess ? $userAccess : -1);
+	}
 
-		if ($list)
+	/**
+	 * Return array of projects a user has permission on, is affected to, or all projects
+	 *
+	 * @param 	User	$user			User object
+	 * @param 	int		$mode			0=All project I have permission on (assigned to me or public), 1=Projects assigned to me only, 2=Will return list of all projects with no test on contacts
+	 * @param 	int		$list			0=Return array, 1=Return string list
+	 * @param	int		$socid			0=No filter on third party, id of third party
+	 * @param	string	$filter			additionnal filter on project (statut, ref, ...)
+	 * @return 	array or string			Array of projects id, or string with projects id separated with "," if list is 1
+	 */
+	public function getProjectsAuthorizedForUser($user, $mode = 0, $list = 0, $socid = 0, $filter = '')
+	{
+		$projects = array();
+		$temp = array();
+
+		$sql = "SELECT ".(($mode == 0 || $mode == 1) ? "DISTINCT " : "")."p.rowid, p.ref";
+		$sql.= " FROM " . MAIN_DB_PREFIX . "projet as p";
+		if ($mode == 0)
 		{
-			if (empty($temp)) return '0';
-			$result = implode(',', $temp);
-			return $result;
+			$sql.= " LEFT JOIN " . MAIN_DB_PREFIX . "element_contact as ec ON ec.element_id = p.rowid";
 		}
-	}
-	else
-	{
-		dol_print_error($this->db);
-	}
-
-	return $projects;
-}
-
-/**
- * Load an object from its id and create a new one in database
- *
- *  @param	User	$user		          User making the clone
- *  @param	int		$fromid     	      Id of object to clone
- *  @param	bool	$clone_contact	      Clone contact of project
- *  @param	bool	$clone_task		      Clone task of project
- *  @param	bool	$clone_project_file	  Clone file of project
- *  @param	bool	$clone_task_file	  Clone file of task (if task are copied)
- *  @param	bool	$clone_note		      Clone note of project
- *  @param	bool	$move_date		      Move task date on clone
- *  @param	integer	$notrigger		      No trigger flag
- *  @param  int     $newthirdpartyid      New thirdparty id
- *  @return	int						      New id of clone
- */
-public function createFromClone(User $user, $fromid, $clone_contact = false, $clone_task = true, $clone_project_file = false, $clone_task_file = false, $clone_note = true, $move_date = true, $notrigger = 0, $newthirdpartyid = 0)
-{
-	global $langs, $conf;
-
-	$error = 0;
-
-	dol_syslog("createFromClone clone_contact=".$clone_contact." clone_task=".$clone_task." clone_project_file=".$clone_project_file." clone_note=".$clone_note." move_date=".$move_date, LOG_DEBUG);
-
-	$now = dol_mktime(0, 0, 0, idate('m', dol_now()), idate('d', dol_now()), idate('Y', dol_now()));
-
-	$clone_project = new Project($this->db);
-
-	$clone_project->context['createfromclone'] = 'createfromclone';
-
-	$this->db->begin();
-
-	// Load source object
-	$clone_project->fetch($fromid);
-	$clone_project->fetch_optionals();
-	if ($newthirdpartyid > 0) $clone_project->socid = $newthirdpartyid;
-	$clone_project->fetch_thirdparty();
-
-	$orign_dt_start = $clone_project->date_start;
-	$orign_project_ref = $clone_project->ref;
-
-	$clone_project->id = 0;
-	if ($move_date) {
-		$clone_project->date_start = $now;
-		if (!(empty($clone_project->date_end)))
+		elseif ($mode == 1)
 		{
-			$clone_project->date_end = $clone_project->date_end + ($now - $orign_dt_start);
+			$sql.= ", " . MAIN_DB_PREFIX . "element_contact as ec";
 		}
-	}
-
-	$clone_project->datec = $now;
-
-	if (!$clone_note)
-	{
-		$clone_project->note_private = '';
-		$clone_project->note_public = '';
-	}
-
-	//Generate next ref
-	$defaultref = '';
-	$obj = empty($conf->global->PROJECT_ADDON) ? 'mod_project_simple' : $conf->global->PROJECT_ADDON;
-	// Search template files
-	$file = ''; $classname = ''; $filefound = 0;
-	$dirmodels = array_merge(array('/'), (array) $conf->modules_parts['models']);
-	foreach ($dirmodels as $reldir)
-	{
-		$file = dol_buildpath($reldir."core/modules/project/".$obj.'.php', 0);
-		if (file_exists($file))
+		elseif ($mode == 2)
 		{
-			$filefound = 1;
-			dol_include_once($reldir."core/modules/project/".$obj.'.php');
-			$modProject = new $obj;
-			$defaultref = $modProject->getNextValue(is_object($clone_project->thirdparty) ? $clone_project->thirdparty : null, $clone_project);
-			break;
+			// No filter. Use this if user has permission to see all project
 		}
+		$sql.= " WHERE p.entity IN (".getEntity('project').")";
+		// Internal users must see project he is contact to even if project linked to a third party he can't see.
+		//if ($socid || ! $user->rights->societe->client->voir)	$sql.= " AND (p.fk_soc IS NULL OR p.fk_soc = 0 OR p.fk_soc = ".$socid.")";
+		if ($socid > 0) $sql.= " AND (p.fk_soc IS NULL OR p.fk_soc = 0 OR p.fk_soc = " . $socid . ")";
+
+		// Get id of types of contacts for projects (This list never contains a lot of elements)
+		$listofprojectcontacttype=array();
+		$sql2 = "SELECT ctc.rowid, ctc.code FROM ".MAIN_DB_PREFIX."c_type_contact as ctc";
+		$sql2.= " WHERE ctc.element = '" . $this->db->escape($this->element) . "'";
+		$sql2.= " AND ctc.source = 'internal'";
+		$resql = $this->db->query($sql2);
+		if ($resql)
+		{
+			while($obj = $this->db->fetch_object($resql))
+			{
+				$listofprojectcontacttype[$obj->rowid]=$obj->code;
+			}
+		}
+		else dol_print_error($this->db);
+		if (count($listofprojectcontacttype) == 0) $listofprojectcontacttype[0]='0';    // To avoid syntax error if not found
+
+		if ($mode == 0)
+		{
+			$sql.= " AND ( p.public = 1";
+			$sql.= " OR ( ec.fk_c_type_contact IN (".join(',', array_keys($listofprojectcontacttype)).")";
+			$sql.= " AND ec.fk_socpeople = ".$user->id.")";
+			$sql.= " )";
+		}
+		elseif ($mode == 1)
+		{
+			$sql.= " AND ec.element_id = p.rowid";
+			$sql.= " AND (";
+			$sql.= "  ( ec.fk_c_type_contact IN (".join(',', array_keys($listofprojectcontacttype)).")";
+			$sql.= " AND ec.fk_socpeople = ".$user->id.")";
+			$sql.= " )";
+		}
+		elseif ($mode == 2)
+		{
+			// No filter. Use this if user has permission to see all project
+		}
+
+		$sql.= $filter;
+		//print $sql;
+
+		$resql = $this->db->query($sql);
+		if ($resql)
+		{
+			$num = $this->db->num_rows($resql);
+			$i = 0;
+			while ($i < $num)
+			{
+				$row = $this->db->fetch_row($resql);
+				$projects[$row[0]] = $row[1];
+				$temp[] = $row[0];
+				$i++;
+			}
+
+			$this->db->free($resql);
+
+			if ($list)
+			{
+				if (empty($temp)) return '0';
+				$result = implode(',', $temp);
+				return $result;
+			}
+		}
+		else
+		{
+			dol_print_error($this->db);
+		}
+
+		return $projects;
 	}
-	if (is_numeric($defaultref) && $defaultref <= 0) $defaultref = '';
 
-	$clone_project->ref = $defaultref;
-	$clone_project->title = $langs->trans("CopyOf").' '.$clone_project->title;
-
-	// Create clone
-	$result = $clone_project->create($user, $notrigger);
-
-	// Other options
-	if ($result < 0)
+	/**
+	 * Load an object from its id and create a new one in database
+	 *
+	 *  @param	User	$user		          User making the clone
+	 *  @param	int		$fromid     	      Id of object to clone
+	 *  @param	bool	$clone_contact	      Clone contact of project
+	 *  @param	bool	$clone_task		      Clone task of project
+	 *  @param	bool	$clone_project_file	  Clone file of project
+	 *  @param	bool	$clone_task_file	  Clone file of task (if task are copied)
+	 *  @param	bool	$clone_note		      Clone note of project
+	 *  @param	bool	$move_date		      Move task date on clone
+	 *  @param	integer	$notrigger		      No trigger flag
+	 *  @param  int     $newthirdpartyid      New thirdparty id
+	 *  @return	int						      New id of clone
+	 */
+	public function createFromClone(User $user, $fromid, $clone_contact = false, $clone_task = true, $clone_project_file = false, $clone_task_file = false, $clone_note = true, $move_date = true, $notrigger = 0, $newthirdpartyid = 0)
 	{
-		$this->error .= $clone_project->error;
-		$error++;
-	}
+		global $langs, $conf;
 
-	if (!$error)
-	{
-		//Get the new project id
-		$clone_project_id = $clone_project->id;
+		$error = 0;
 
-		//Note Update
+		dol_syslog("createFromClone clone_contact=".$clone_contact." clone_task=".$clone_task." clone_project_file=".$clone_project_file." clone_note=".$clone_note." move_date=".$move_date, LOG_DEBUG);
+
+		$now = dol_mktime(0, 0, 0, idate('m', dol_now()), idate('d', dol_now()), idate('Y', dol_now()));
+
+		$clone_project = new Project($this->db);
+
+		$clone_project->context['createfromclone'] = 'createfromclone';
+
+		$this->db->begin();
+
+		// Load source object
+		$clone_project->fetch($fromid);
+		$clone_project->fetch_optionals();
+		if ($newthirdpartyid > 0) $clone_project->socid = $newthirdpartyid;
+		$clone_project->fetch_thirdparty();
+
+		$orign_dt_start = $clone_project->date_start;
+		$orign_project_ref = $clone_project->ref;
+
+		$clone_project->id = 0;
+		if ($move_date) {
+			$clone_project->date_start = $now;
+			if (!(empty($clone_project->date_end)))
+			{
+				$clone_project->date_end = $clone_project->date_end + ($now - $orign_dt_start);
+			}
+		}
+
+		$clone_project->datec = $now;
+
 		if (!$clone_note)
 		{
 			$clone_project->note_private = '';
 			$clone_project->note_public = '';
 		}
-		else
-		{
-			$this->db->begin();
-			$res = $clone_project->update_note(dol_html_entity_decode($clone_project->note_public, ENT_QUOTES), '_public');
-			if ($res < 0)
-			{
-				$this->error .= $clone_project->error;
-				$error++;
-				$this->db->rollback();
-			}
-			else
-			{
-				$this->db->commit();
-			}
 
-			$this->db->begin();
-			$res = $clone_project->update_note(dol_html_entity_decode($clone_project->note_private, ENT_QUOTES), '_private');
-			if ($res < 0)
+		//Generate next ref
+		$defaultref = '';
+		$obj = empty($conf->global->PROJECT_ADDON) ? 'mod_project_simple' : $conf->global->PROJECT_ADDON;
+		// Search template files
+		$file = ''; $classname = ''; $filefound = 0;
+		$dirmodels = array_merge(array('/'), (array) $conf->modules_parts['models']);
+		foreach ($dirmodels as $reldir)
+		{
+			$file = dol_buildpath($reldir."core/modules/project/".$obj.'.php', 0);
+			if (file_exists($file))
 			{
-				$this->error .= $clone_project->error;
-				$error++;
-				$this->db->rollback();
-			}
-			else
-			{
-				$this->db->commit();
+				$filefound = 1;
+				dol_include_once($reldir."core/modules/project/".$obj.'.php');
+				$modProject = new $obj;
+				$defaultref = $modProject->getNextValue(is_object($clone_project->thirdparty) ? $clone_project->thirdparty : null, $clone_project);
+				break;
 			}
 		}
+		if (is_numeric($defaultref) && $defaultref <= 0) $defaultref = '';
 
-		//Duplicate contact
-		if ($clone_contact)
+		$clone_project->ref = $defaultref;
+		$clone_project->title = $langs->trans("CopyOf").' '.$clone_project->title;
+
+		// Create clone
+		$result = $clone_project->create($user, $notrigger);
+
+		// Other options
+		if ($result < 0)
 		{
-			$origin_project = new Project($this->db);
-			$origin_project->fetch($fromid);
+			$this->error .= $clone_project->error;
+			$error++;
+		}
 
-			foreach (array('internal', 'external') as $source)
+		if (!$error)
+		{
+			//Get the new project id
+			$clone_project_id = $clone_project->id;
+
+			//Note Update
+			if (!$clone_note)
 			{
-				$tab = $origin_project->liste_contact(-1, $source);
-
-				foreach ($tab as $contacttoadd)
+				$clone_project->note_private = '';
+				$clone_project->note_public = '';
+			}
+			else
+			{
+				$this->db->begin();
+				$res = $clone_project->update_note(dol_html_entity_decode($clone_project->note_public, ENT_QUOTES), '_public');
+				if ($res < 0)
 				{
-					$clone_project->add_contact($contacttoadd['id'], $contacttoadd['code'], $contacttoadd['source'], $notrigger);
-					if ($clone_project->error == 'DB_ERROR_RECORD_ALREADY_EXISTS')
+					$this->error .= $clone_project->error;
+					$error++;
+					$this->db->rollback();
+				}
+				else
+				{
+					$this->db->commit();
+				}
+
+				$this->db->begin();
+				$res = $clone_project->update_note(dol_html_entity_decode($clone_project->note_private, ENT_QUOTES), '_private');
+				if ($res < 0)
+				{
+					$this->error .= $clone_project->error;
+					$error++;
+					$this->db->rollback();
+				}
+				else
+				{
+					$this->db->commit();
+				}
+			}
+
+			//Duplicate contact
+			if ($clone_contact)
+			{
+				$origin_project = new Project($this->db);
+				$origin_project->fetch($fromid);
+
+				foreach (array('internal', 'external') as $source)
+				{
+					$tab = $origin_project->liste_contact(-1, $source);
+
+					foreach ($tab as $contacttoadd)
 					{
-						$langs->load("errors");
-						$this->error .= $langs->trans("ErrorThisContactIsAlreadyDefinedAsThisType");
-						$error++;
-					}
-					else
-					{
-						if ($clone_project->error != '')
+						$clone_project->add_contact($contacttoadd['id'], $contacttoadd['code'], $contacttoadd['source'], $notrigger);
+						if ($clone_project->error == 'DB_ERROR_RECORD_ALREADY_EXISTS')
 						{
-							$this->error .= $clone_project->error;
+							$langs->load("errors");
+							$this->error .= $langs->trans("ErrorThisContactIsAlreadyDefinedAsThisType");
 							$error++;
+						}
+						else
+						{
+							if ($clone_project->error != '')
+							{
+								$this->error .= $clone_project->error;
+								$error++;
+							}
 						}
 					}
 				}
 			}
-		}
 
-		//Duplicate file
-		if ($clone_project_file)
-		{
-			require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
-
-			$clone_project_dir = $conf->projet->dir_output."/".dol_sanitizeFileName($defaultref);
-			$ori_project_dir = $conf->projet->dir_output."/".dol_sanitizeFileName($orign_project_ref);
-
-			if (dol_mkdir($clone_project_dir) >= 0)
+			//Duplicate file
+			if ($clone_project_file)
 			{
-				$filearray = dol_dir_list($ori_project_dir, "files", 0, '', '(\.meta|_preview.*\.png)$', '', SORT_ASC, 1);
-				foreach ($filearray as $key => $file)
+				require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
+
+				$clone_project_dir = $conf->projet->dir_output."/".dol_sanitizeFileName($defaultref);
+				$ori_project_dir = $conf->projet->dir_output."/".dol_sanitizeFileName($orign_project_ref);
+
+				if (dol_mkdir($clone_project_dir) >= 0)
 				{
-					$rescopy = dol_copy($ori_project_dir.'/'.$file['name'], $clone_project_dir.'/'.$file['name'], 0, 1);
-					if (is_numeric($rescopy) && $rescopy < 0)
+					$filearray = dol_dir_list($ori_project_dir, "files", 0, '', '(\.meta|_preview.*\.png)$', '', SORT_ASC, 1);
+					foreach ($filearray as $key => $file)
 					{
-						$this->error .= $langs->trans("ErrorFailToCopyFile", $ori_project_dir.'/'.$file['name'], $clone_project_dir.'/'.$file['name']);
+						$rescopy = dol_copy($ori_project_dir.'/'.$file['name'], $clone_project_dir.'/'.$file['name'], 0, 1);
+						if (is_numeric($rescopy) && $rescopy < 0)
+						{
+							$this->error .= $langs->trans("ErrorFailToCopyFile", $ori_project_dir.'/'.$file['name'], $clone_project_dir.'/'.$file['name']);
+							$error++;
+						}
+					}
+				}
+				else
+				{
+					$this->error .= $langs->trans('ErrorInternalErrorDetected').':dol_mkdir';
+					$error++;
+				}
+			}
+
+			//Duplicate task
+			if ($clone_task)
+			{
+				require_once DOL_DOCUMENT_ROOT . '/projet/class/task.class.php';
+
+				$taskstatic = new Task($this->db);
+
+				// Security check
+				$socid=0;
+				if ($user->socid > 0) $socid = $user->socid;
+
+				$tasksarray=$taskstatic->getTasksArray(0, 0, $fromid, $socid, 0);
+
+				$tab_conv_child_parent=array();
+
+				// Loop on each task, to clone it
+				foreach ($tasksarray as $tasktoclone)
+				{
+					$result_clone = $taskstatic->createFromClone($user, $tasktoclone->id, $clone_project_id, $tasktoclone->fk_parent, $move_date, true, false, $clone_task_file, true, false);
+					if ($result_clone <= 0)
+					{
+						$this->error .= $result_clone->error;
+						$error++;
+					}
+					else
+					{
+						$new_task_id = $result_clone;
+						$taskstatic->fetch($tasktoclone->id);
+
+						//manage new parent clone task id
+						// if the current task has child we store the original task id and the equivalent clone task id
+						if (($taskstatic->hasChildren()) && !array_key_exists($tasktoclone->id, $tab_conv_child_parent))
+						{
+							$tab_conv_child_parent[$tasktoclone->id] = $new_task_id;
+						}
+					}
+				}
+
+				//Parse all clone node to be sure to update new parent
+				$tasksarray = $taskstatic->getTasksArray(0, 0, $clone_project_id, $socid, 0);
+				foreach ($tasksarray as $task_cloned)
+				{
+					$taskstatic->fetch($task_cloned->id);
+					if ($taskstatic->fk_task_parent != 0)
+					{
+						$taskstatic->fk_task_parent = $tab_conv_child_parent[$taskstatic->fk_task_parent];
+					}
+					$res = $taskstatic->update($user, $notrigger);
+					if ($result_clone <= 0)
+					{
+						$this->error .= $taskstatic->error;
 						$error++;
 					}
 				}
 			}
-			else
+		}
+
+		unset($clone_project->context['createfromclone']);
+
+		if (!$error)
+		{
+			$this->db->commit();
+			return $clone_project_id;
+		}
+		else
+		{
+			$this->db->rollback();
+			dol_syslog(get_class($this)."::createFromClone nbError: ".$error." error : ".$this->error, LOG_ERR);
+			return -1;
+		}
+	}
+
+
+	/**
+	 *    Shift project task date from current date to delta
+	 *
+	 *    @param	integer		$old_project_dt_start	Old project start date
+	 *    @return	int				                    1 if OK or < 0 if KO
+	 */
+	public function shiftTaskDate($old_project_dt_start)
+	{
+		global $user, $langs, $conf;
+
+		$error=0;
+
+		$taskstatic = new Task($this->db);
+
+		// Security check
+		$socid=0;
+		if ($user->socid > 0) $socid = $user->socid;
+
+		$tasksarray=$taskstatic->getTasksArray(0, 0, $this->id, $socid, 0);
+
+		foreach ($tasksarray as $tasktoshiftdate)
+		{
+			$to_update=false;
+			// Fetch only if update of date will be made
+			if ((!empty($tasktoshiftdate->date_start)) || (!empty($tasktoshiftdate->date_end)))
 			{
-				$this->error .= $langs->trans('ErrorInternalErrorDetected').':dol_mkdir';
-				$error++;
+				//dol_syslog(get_class($this)."::shiftTaskDate to_update", LOG_DEBUG);
+				$to_update=true;
+				$task = new Task($this->db);
+				$result = $task->fetch($tasktoshiftdate->id);
+				if (!$result)
+				{
+					$error++;
+					$this->error.=$task->error;
+				}
+			}
+			//print "$this->date_start + $tasktoshiftdate->date_start - $old_project_dt_start";exit;
+
+			//Calcultate new task start date with difference between old proj start date and origin task start date
+			if (!empty($tasktoshiftdate->date_start))
+			{
+				$task->date_start = $this->date_start + ($tasktoshiftdate->date_start - $old_project_dt_start);
+			}
+
+			//Calcultate new task end date with difference between origin proj end date and origin task end date
+			if (!empty($tasktoshiftdate->date_end))
+			{
+				$task->date_end = $this->date_start + ($tasktoshiftdate->date_end - $old_project_dt_start);
+			}
+
+			if ($to_update)
+			{
+				$result = $task->update($user);
+				if (!$result)
+				{
+					$error++;
+					$this->error .= $task->error;
+				}
+			}
+		}
+		if ($error != 0)
+		{
+			return -1;
+		}
+		return $result;
+	}
+
+
+	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
+	/**
+	 *    Associate element to a project
+	 *
+	 *    @param	string	$tableName			Table of the element to update
+	 *    @param	int		$elementSelectId	Key-rowid of the line of the element to update
+	 *    @return	int							1 if OK or < 0 if KO
+	 */
+	public function update_element($tableName, $elementSelectId)
+	{
+		// phpcs:enable
+		$sql = "UPDATE ".MAIN_DB_PREFIX.$tableName;
+
+		if ($tableName == "actioncomm")
+		{
+			$sql .= " SET fk_project=".$this->id;
+			$sql .= " WHERE id=".$elementSelectId;
+		}
+		else
+		{
+			$sql .= " SET fk_projet=".$this->id;
+			$sql .= " WHERE rowid=".$elementSelectId;
+		}
+
+		dol_syslog(get_class($this)."::update_element", LOG_DEBUG);
+		$resql = $this->db->query($sql);
+		if (!$resql) {
+			$this->error = $this->db->lasterror();
+			return -1;
+		} else {
+			return 1;
+		}
+	}
+
+	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
+	/**
+	 *    Associate element to a project
+	 *
+	 *    @param	string	$tableName			Table of the element to update
+	 *    @param	int		$elementSelectId	Key-rowid of the line of the element to update
+	 *    @param	string	$projectfield	    The column name that stores the link with the project
+	 *
+	 *    @return	int							1 if OK or < 0 if KO
+	 */
+	public function remove_element($tableName, $elementSelectId, $projectfield = 'fk_projet')
+	{
+		// phpcs:enable
+		$sql = "UPDATE ".MAIN_DB_PREFIX.$tableName;
+
+		if ($tableName == "actioncomm")
+		{
+			$sql .= " SET fk_project=NULL";
+			$sql .= " WHERE id=".$elementSelectId;
+		} else
+		{
+			$sql .= " SET ".$projectfield."=NULL";
+			$sql .= " WHERE rowid=".$elementSelectId;
+		}
+
+		dol_syslog(get_class($this)."::remove_element", LOG_DEBUG);
+		$resql = $this->db->query($sql);
+		if (!$resql) {
+			$this->error = $this->db->lasterror();
+			return -1;
+		} else {
+			return 1;
+		}
+	}
+
+	/**
+	 *  Create an intervention document on disk using template defined into PROJECT_ADDON_PDF
+	 *
+	 *  @param	string		$modele			Force template to use ('' by default)
+	 *  @param	Translate	$outputlangs	Objet lang to use for translation
+	 *  @param  int			$hidedetails    Hide details of lines
+	 *  @param  int			$hidedesc       Hide description
+	 *  @param  int			$hideref        Hide ref
+	 *  @return int         				0 if KO, 1 if OK
+	 */
+	public function generateDocument($modele, $outputlangs, $hidedetails = 0, $hidedesc = 0, $hideref = 0)
+	{
+		global $conf,$langs;
+
+		$langs->load("projects");
+
+		if (! dol_strlen($modele)) {
+			$modele = 'baleine';
+
+			if ($this->modelpdf) {
+				$modele = $this->modelpdf;
+			} elseif (! empty($conf->global->PROJECT_ADDON_PDF)) {
+				$modele = $conf->global->PROJECT_ADDON_PDF;
 			}
 		}
 
-		//Duplicate task
-		if ($clone_task)
+		$modelpath = "core/modules/project/doc/";
+
+		return $this->commonGenerateDocument($modelpath, $modele, $outputlangs, $hidedetails, $hidedesc, $hideref);
+	}
+
+
+	/**
+	 * Load time spent into this->weekWorkLoad and this->weekWorkLoadPerTask for all day of a week of project.
+	 * Note: array weekWorkLoad and weekWorkLoadPerTask are reset and filled at each call.
+	 *
+	 * @param 	int		$datestart		First day of week (use dol_get_first_day to find this date)
+	 * @param 	int		$taskid			Filter on a task id
+	 * @param 	int		$userid			Time spent by a particular user
+	 * @return 	int						<0 if OK, >0 if KO
+	 */
+	public function loadTimeSpent($datestart, $taskid = 0, $userid = 0)
+	{
+		$error=0;
+
+		$this->weekWorkLoad=array();
+		$this->weekWorkLoadPerTask=array();
+
+		if (empty($datestart)) dol_print_error('', 'Error datestart parameter is empty');
+
+		$sql = "SELECT ptt.rowid as taskid, ptt.task_duration, ptt.task_date, ptt.task_datehour, ptt.fk_task";
+		$sql.= " FROM ".MAIN_DB_PREFIX."projet_task_time AS ptt, ".MAIN_DB_PREFIX."projet_task as pt";
+		$sql.= " WHERE ptt.fk_task = pt.rowid";
+		$sql.= " AND pt.fk_projet = ".$this->id;
+		$sql.= " AND (ptt.task_date >= '".$this->db->idate($datestart)."' ";
+		$sql.= " AND ptt.task_date <= '".$this->db->idate(dol_time_plus_duree($datestart, 1, 'w') - 1)."')";
+		if ($taskid) $sql.= " AND ptt.fk_task=".$taskid;
+		if (is_numeric($userid)) $sql.= " AND ptt.fk_user=".$userid;
+
+		//print $sql;
+		$resql=$this->db->query($sql);
+		if ($resql)
 		{
-			require_once DOL_DOCUMENT_ROOT . '/projet/class/task.class.php';
+			$daylareadyfound=array();
 
-			$taskstatic = new Task($this->db);
-
-			// Security check
-			$socid=0;
-			if ($user->socid > 0) $socid = $user->socid;
-
-			$tasksarray=$taskstatic->getTasksArray(0, 0, $fromid, $socid, 0);
-
-			$tab_conv_child_parent=array();
-
-			// Loop on each task, to clone it
-			foreach ($tasksarray as $tasktoclone)
+			$num = $this->db->num_rows($resql);
+			$i = 0;
+			// Loop on each record found, so each couple (project id, task id)
+			while ($i < $num)
 			{
-				$result_clone = $taskstatic->createFromClone($user, $tasktoclone->id, $clone_project_id, $tasktoclone->fk_parent, $move_date, true, false, $clone_task_file, true, false);
-				if ($result_clone <= 0)
+				$obj=$this->db->fetch_object($resql);
+				$day=$this->db->jdate($obj->task_date);		// task_date is date without hours
+				if (empty($daylareadyfound[$day]))
 				{
-					$this->error .= $result_clone->error;
-					$error++;
+					$this->weekWorkLoad[$day] = $obj->task_duration;
+					$this->weekWorkLoadPerTask[$day][$obj->fk_task] = $obj->task_duration;
 				}
 				else
 				{
-					$new_task_id = $result_clone;
-					$taskstatic->fetch($tasktoclone->id);
-
-					//manage new parent clone task id
-					// if the current task has child we store the original task id and the equivalent clone task id
-					if (($taskstatic->hasChildren()) && !array_key_exists($tasktoclone->id, $tab_conv_child_parent))
-					{
-						$tab_conv_child_parent[$tasktoclone->id] = $new_task_id;
-					}
+					$this->weekWorkLoad[$day] += $obj->task_duration;
+					$this->weekWorkLoadPerTask[$day][$obj->fk_task] += $obj->task_duration;
 				}
+				$daylareadyfound[$day]=1;
+				$i++;
 			}
+			$this->db->free($resql);
+			return 1;
+		}
+		else
+		{
+			$this->error = "Error ".$this->db->lasterror();
+			dol_syslog(get_class($this)."::fetch ".$this->error, LOG_ERR);
+			return -1;
+		}
+	}
 
-			//Parse all clone node to be sure to update new parent
-			$tasksarray = $taskstatic->getTasksArray(0, 0, $clone_project_id, $socid, 0);
-			foreach ($tasksarray as $task_cloned)
+	/**
+	 * Load time spent into this->weekWorkLoad and this->weekWorkLoadPerTask for all day of a week of project.
+	 * Note: array weekWorkLoad and weekWorkLoadPerTask are reset and filled at each call.
+	 *
+	 * @param 	int		$datestart		First day of week (use dol_get_first_day to find this date)
+	 * @param 	int		$taskid			Filter on a task id
+	 * @param 	int		$userid			Time spent by a particular user
+	 * @return 	int						<0 if OK, >0 if KO
+	 */
+	public function loadTimeSpentMonth($datestart, $taskid = 0, $userid = 0)
+	{
+		$error = 0;
+
+		$this->monthWorkLoad = array();
+		$this->monthWorkLoadPerTask = array();
+
+		if (empty($datestart)) dol_print_error('', 'Error datestart parameter is empty');
+
+		$sql = "SELECT ptt.rowid as taskid, ptt.task_duration, ptt.task_date, ptt.task_datehour, ptt.fk_task";
+		$sql .= " FROM ".MAIN_DB_PREFIX."projet_task_time AS ptt, ".MAIN_DB_PREFIX."projet_task as pt";
+		$sql .= " WHERE ptt.fk_task = pt.rowid";
+		$sql .= " AND pt.fk_projet = ".$this->id;
+		$sql .= " AND (ptt.task_date >= '".$this->db->idate($datestart)."' ";
+		$sql .= " AND ptt.task_date <= '".$this->db->idate(dol_time_plus_duree($datestart, 1, 'm') - 1)."')";
+		if ($task_id) $sql .= " AND ptt.fk_task=".$taskid;
+		if (is_numeric($userid)) $sql .= " AND ptt.fk_user=".$userid;
+
+		//print $sql;
+		$resql = $this->db->query($sql);
+		if ($resql)
+		{
+			$weekalreadyfound = array();
+
+			$num = $this->db->num_rows($resql);
+			$i = 0;
+			// Loop on each record found, so each couple (project id, task id)
+			while ($i < $num)
 			{
-				$taskstatic->fetch($task_cloned->id);
-				if ($taskstatic->fk_task_parent != 0)
+				$obj = $this->db->fetch_object($resql);
+				if (!empty($obj->task_date)) {
+					$date = explode('-', $obj->task_date);
+					$week_number = getWeekNumber($date[2], $date[1], $date[0]);
+				}
+				if (empty($weekalreadyfound[$week_number]))
 				{
-					$taskstatic->fk_task_parent = $tab_conv_child_parent[$taskstatic->fk_task_parent];
+					$this->monthWorkLoad[$week_number] = $obj->task_duration;
+					$this->monthWorkLoadPerTask[$week_number][$obj->fk_task] = $obj->task_duration;
 				}
-				$res = $taskstatic->update($user, $notrigger);
-				if ($result_clone <= 0)
+				else
 				{
-					$this->error .= $taskstatic->error;
-					$error++;
+					$this->monthWorkLoad[$week_number] += $obj->task_duration;
+					$this->monthWorkLoadPerTask[$week_number][$obj->fk_task] += $obj->task_duration;
+				}
+				$weekalreadyfound[$week_number] = 1;
+				$i++;
+			}
+			$this->db->free($resql);
+			return 1;
+		}
+		else
+		{
+			$this->error = "Error ".$this->db->lasterror();
+			dol_syslog(get_class($this)."::fetch ".$this->error, LOG_ERR);
+			return -1;
+		}
+	}
+
+
+	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
+	/**
+	 * Load indicators for dashboard (this->nbtodo and this->nbtodolate)
+	 *
+	 * @param	User	$user   Objet user
+	 * @return WorkboardResponse|int <0 if KO, WorkboardResponse if OK
+	 */
+	public function load_board($user)
+	{
+		// phpcs:enable
+		global $conf, $langs;
+
+		// For external user, no check is done on company because readability is managed by public status of project and assignement.
+		//$socid=$user->socid;
+
+		$projectsListId = null;
+		if (!$user->rights->projet->all->lire) $projectsListId = $this->getProjectsAuthorizedForUser($user, 0, 1);
+
+		$sql = "SELECT p.rowid, p.fk_statut as status, p.fk_opp_status, p.datee as datee";
+		$sql .= " FROM (".MAIN_DB_PREFIX."projet as p";
+		$sql .= ")";
+		$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s on p.fk_soc = s.rowid";
+		// For external user, no check is done on company permission because readability is managed by public status of project and assignement.
+		//if (! $user->rights->societe->client->voir && ! $socid) $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."societe_commerciaux as sc ON sc.fk_soc = s.rowid";
+		$sql .= " WHERE p.fk_statut = 1";
+		$sql .= " AND p.entity IN (".getEntity('project').')';
+		if (!empty($projectsListId)) $sql .= " AND p.rowid IN (".$projectsListId.")";
+		// No need to check company, as filtering of projects must be done by getProjectsAuthorizedForUser
+		//if ($socid || ! $user->rights->societe->client->voir)	$sql.= "  AND (p.fk_soc IS NULL OR p.fk_soc = 0 OR p.fk_soc = ".$socid.")";
+		// For external user, no check is done on company permission because readability is managed by public status of project and assignement.
+		//if (! $user->rights->societe->client->voir && ! $socid) $sql.= " AND ((s.rowid = sc.fk_soc AND sc.fk_user = " .$user->id.") OR (s.rowid IS NULL))";
+
+		//print $sql;
+		$resql = $this->db->query($sql);
+		if ($resql)
+		{
+			$project_static = new Project($this->db);
+
+			$response = new WorkboardResponse();
+			$response->warning_delay = $conf->projet->warning_delay / 60 / 60 / 24;
+			$response->label = $langs->trans("OpenedProjects");
+			$response->labelShort = $langs->trans("Opened");
+			if ($user->rights->projet->all->lire) $response->url = DOL_URL_ROOT.'/projet/list.php?search_status=1&mainmenu=project';
+			else $response->url = DOL_URL_ROOT.'/projet/list.php?search_project_user=-1&search_status=1&mainmenu=project';
+			$response->img = img_object('', "projectpub");
+
+			// This assignment in condition is not a bug. It allows walking the results.
+			while ($obj = $this->db->fetch_object($resql))
+			{
+				$response->nbtodo++;
+
+				$project_static->statut = $obj->status;
+				$project_static->opp_status = $obj->opp_status;
+				$project_static->datee = $this->db->jdate($obj->datee);
+
+				if ($project_static->hasDelay()) {
+					$response->nbtodolate++;
+				}
+			}
+
+			return $response;
+		}
+		else
+		{
+			$this->error = $this->db->error();
+			return -1;
+		}
+	}
+
+
+	/**
+	 * Function used to replace a thirdparty id with another one.
+	 *
+	 * @param DoliDB $db Database handler
+	 * @param int $origin_id Old thirdparty id
+	 * @param int $dest_id New thirdparty id
+	 * @return bool
+	 */
+	public static function replaceThirdparty(DoliDB $db, $origin_id, $dest_id)
+	{
+		$tables = array(
+			'projet'
+		);
+
+		return CommonObject::commonReplaceThirdparty($db, $origin_id, $dest_id, $tables);
+	}
+
+
+	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
+	/**
+	 * Charge indicateurs this->nb pour le tableau de bord
+	 *
+	 * @return     int         <0 if KO, >0 if OK
+	 */
+	public function load_state_board()
+	{
+		// phpcs:enable
+		global $user;
+
+		$this->nb = array();
+
+		$sql = "SELECT count(p.rowid) as nb";
+		$sql .= " FROM ".MAIN_DB_PREFIX."projet as p";
+		$sql .= " WHERE";
+		$sql .= " p.entity IN (".getEntity('project').")";
+		if (!$user->rights->projet->all->lire)
+		{
+			$projectsListId = $this->getProjectsAuthorizedForUser($user, 0, 1);
+			$sql .= "AND p.rowid IN (".$projectsListId.")";
+		}
+
+		$resql = $this->db->query($sql);
+		if ($resql)
+		{
+			while ($obj = $this->db->fetch_object($resql))
+			{
+				$this->nb["projects"] = $obj->nb;
+			}
+			$this->db->free($resql);
+			return 1;
+		}
+		else
+		{
+			dol_print_error($this->db);
+			$this->error = $this->db->error();
+			return -1;
+		}
+	}
+
+
+	/**
+	 * Is the project delayed?
+	 *
+	 * @return bool
+	 */
+	public function hasDelay()
+	{
+		global $conf;
+
+		if (!($this->statut == self::STATUS_VALIDATED)) return false;
+		if (!$this->datee && !$this->date_end) return false;
+
+		$now = dol_now();
+
+		return ($this->datee ? $this->datee : $this->date_end) < ($now - $conf->projet->warning_delay);
+	}
+
+
+	/**
+	 *	Charge les informations d'ordre info dans l'objet commande
+	 *
+	 *	@param  int		$id       Id of order
+	 *	@return	void
+	 */
+	public function info($id)
+	{
+		$sql = 'SELECT c.rowid, datec as datec, tms as datem,';
+		$sql .= ' date_close as datecloture,';
+		$sql .= ' fk_user_creat as fk_user_author, fk_user_close as fk_use_cloture';
+		$sql .= ' FROM '.MAIN_DB_PREFIX.'projet as c';
+		$sql .= ' WHERE c.rowid = '.$id;
+		$result = $this->db->query($sql);
+		if ($result)
+		{
+			if ($this->db->num_rows($result))
+			{
+				$obj = $this->db->fetch_object($result);
+				$this->id = $obj->rowid;
+				if ($obj->fk_user_author)
+				{
+					$cuser = new User($this->db);
+					$cuser->fetch($obj->fk_user_author);
+					$this->user_creation = $cuser;
+				}
+
+				if ($obj->fk_user_cloture)
+				{
+					$cluser = new User($this->db);
+					$cluser->fetch($obj->fk_user_cloture);
+					$this->user_cloture = $cluser;
+				}
+
+				$this->date_creation     = $this->db->jdate($obj->datec);
+				$this->date_modification = $this->db->jdate($obj->datem);
+				$this->date_cloture      = $this->db->jdate($obj->datecloture);
+			}
+
+			$this->db->free($result);
+		}
+		else
+		{
+			dol_print_error($this->db);
+		}
+	}
+
+	/**
+	 * Sets object to supplied categories.
+	 *
+	 * Deletes object from existing categories not supplied.
+	 * Adds it to non existing supplied categories.
+	 * Existing categories are left untouch.
+	 *
+	 * @param int[]|int $categories Category or categories IDs
+	 * @return void
+	 */
+	public function setCategories($categories)
+	{
+		$type_categ = Categorie::TYPE_PROJECT;
+
+		// Handle single category
+		if (!is_array($categories)) {
+			$categories = array($categories);
+		}
+
+		// Get current categories
+		require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
+		$c = new Categorie($this->db);
+		$existing = $c->containing($this->id, $type_categ, 'id');
+
+		// Diff
+		if (is_array($existing)) {
+			$to_del = array_diff($existing, $categories);
+			$to_add = array_diff($categories, $existing);
+		} else {
+			$to_del = array(); // Nothing to delete
+			$to_add = $categories;
+		}
+
+		// Process
+		foreach ($to_del as $del) {
+			if ($c->fetch($del) > 0) {
+				$result = $c->del_type($this, $type_categ);
+				if ($result < 0) {
+					$this->errors = $c->errors;
+					$this->error = $c->error;
+					return -1;
 				}
 			}
 		}
-	}
-
-	unset($clone_project->context['createfromclone']);
-
-	if (!$error)
-	{
-		$this->db->commit();
-		return $clone_project_id;
-	}
-	else
-	{
-		$this->db->rollback();
-		dol_syslog(get_class($this)."::createFromClone nbError: ".$error." error : ".$this->error, LOG_ERR);
-		return -1;
-	}
-}
-
-
-/**
- *    Shift project task date from current date to delta
- *
- *    @param	integer		$old_project_dt_start	Old project start date
- *    @return	int				                    1 if OK or < 0 if KO
- */
-public function shiftTaskDate($old_project_dt_start)
-{
-	global $user, $langs, $conf;
-
-	$error=0;
-
-	$taskstatic = new Task($this->db);
-
-	// Security check
-	$socid=0;
-	if ($user->socid > 0) $socid = $user->socid;
-
-	$tasksarray=$taskstatic->getTasksArray(0, 0, $this->id, $socid, 0);
-
-	foreach ($tasksarray as $tasktoshiftdate)
-	{
-		$to_update=false;
-		// Fetch only if update of date will be made
-		if ((!empty($tasktoshiftdate->date_start)) || (!empty($tasktoshiftdate->date_end)))
-		{
-			//dol_syslog(get_class($this)."::shiftTaskDate to_update", LOG_DEBUG);
-			$to_update=true;
-			$task = new Task($this->db);
-			$result = $task->fetch($tasktoshiftdate->id);
-			if (!$result)
-			{
-				$error++;
-				$this->error.=$task->error;
+		foreach ($to_add as $add) {
+			if ($c->fetch($add) > 0) {
+				$result = $c->add_type($this, $type_categ);
+				if ($result < 0) {
+					$this->errors = $c->errors;
+					$this->error = $c->error;
+					return -1;
+				}
 			}
 		}
-		//print "$this->date_start + $tasktoshiftdate->date_start - $old_project_dt_start";exit;
 
-		//Calcultate new task start date with difference between old proj start date and origin task start date
-		if (!empty($tasktoshiftdate->date_start))
-		{
-			$task->date_start = $this->date_start + ($tasktoshiftdate->date_start - $old_project_dt_start);
-		}
-
-		//Calcultate new task end date with difference between origin proj end date and origin task end date
-		if (!empty($tasktoshiftdate->date_end))
-		{
-			$task->date_end = $this->date_start + ($tasktoshiftdate->date_end - $old_project_dt_start);
-		}
-
-		if ($to_update)
-		{
-			$result = $task->update($user);
-			if (!$result)
-			{
-				$error++;
-				$this->error .= $task->error;
-			}
-		}
-	}
-	if ($error != 0)
-	{
-		return -1;
-	}
-	return $result;
-}
-
-
-// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
-/**
- *    Associate element to a project
- *
- *    @param	string	$tableName			Table of the element to update
- *    @param	int		$elementSelectId	Key-rowid of the line of the element to update
- *    @return	int							1 if OK or < 0 if KO
- */
-public function update_element($tableName, $elementSelectId)
-{
-	// phpcs:enable
-	$sql = "UPDATE ".MAIN_DB_PREFIX.$tableName;
-
-	if ($tableName == "actioncomm")
-	{
-		$sql .= " SET fk_project=".$this->id;
-		$sql .= " WHERE id=".$elementSelectId;
-	}
-	else
-	{
-		$sql .= " SET fk_projet=".$this->id;
-		$sql .= " WHERE rowid=".$elementSelectId;
-	}
-
-	dol_syslog(get_class($this)."::update_element", LOG_DEBUG);
-	$resql = $this->db->query($sql);
-	if (!$resql) {
-		$this->error = $this->db->lasterror();
-		return -1;
-	} else {
 		return 1;
 	}
-}
 
-// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
-/**
- *    Associate element to a project
- *
- *    @param	string	$tableName			Table of the element to update
- *    @param	int		$elementSelectId	Key-rowid of the line of the element to update
- *    @param	string	$projectfield	    The column name that stores the link with the project
- *
- *    @return	int							1 if OK or < 0 if KO
- */
-public function remove_element($tableName, $elementSelectId, $projectfield = 'fk_projet')
-{
-	// phpcs:enable
-	$sql = "UPDATE ".MAIN_DB_PREFIX.$tableName;
 
-	if ($tableName == "actioncomm")
+	/**
+	 * 	Create an array of tasks of current project
+	 *
+	 *  @param  User   $user       Object user we want project allowed to
+	 * 	@return int		           >0 if OK, <0 if KO
+	 */
+	public function getLinesArray($user)
 	{
-		$sql .= " SET fk_project=NULL";
-		$sql .= " WHERE id=".$elementSelectId;
-	} else
-	{
-		$sql .= " SET ".$projectfield."=NULL";
-		$sql .= " WHERE rowid=".$elementSelectId;
+		require_once DOL_DOCUMENT_ROOT.'/projet/class/task.class.php';
+		$taskstatic = new Task($this->db);
+
+		$this->lines = $taskstatic->getTasksArray(0, $user, $this->id, 0, 0);
 	}
-
-	dol_syslog(get_class($this)."::remove_element", LOG_DEBUG);
-	$resql = $this->db->query($sql);
-	if (!$resql) {
-		$this->error = $this->db->lasterror();
-		return -1;
-	} else {
-		return 1;
-	}
-}
-
-/**
- *  Create an intervention document on disk using template defined into PROJECT_ADDON_PDF
- *
- *  @param	string		$modele			Force template to use ('' by default)
- *  @param	Translate	$outputlangs	Objet lang to use for translation
- *  @param  int			$hidedetails    Hide details of lines
- *  @param  int			$hidedesc       Hide description
- *  @param  int			$hideref        Hide ref
- *  @return int         				0 if KO, 1 if OK
- */
-public function generateDocument($modele, $outputlangs, $hidedetails = 0, $hidedesc = 0, $hideref = 0)
-{
-	global $conf,$langs;
-
-	$langs->load("projects");
-
-	if (! dol_strlen($modele)) {
-		$modele = 'baleine';
-
-		if ($this->modelpdf) {
-			$modele = $this->modelpdf;
-		} elseif (! empty($conf->global->PROJECT_ADDON_PDF)) {
-			$modele = $conf->global->PROJECT_ADDON_PDF;
-		}
-	}
-
-	$modelpath = "core/modules/project/doc/";
-
-	return $this->commonGenerateDocument($modelpath, $modele, $outputlangs, $hidedetails, $hidedesc, $hideref);
-}
-
-
-/**
- * Load time spent into this->weekWorkLoad and this->weekWorkLoadPerTask for all day of a week of project.
- * Note: array weekWorkLoad and weekWorkLoadPerTask are reset and filled at each call.
- *
- * @param 	int		$datestart		First day of week (use dol_get_first_day to find this date)
- * @param 	int		$taskid			Filter on a task id
- * @param 	int		$userid			Time spent by a particular user
- * @return 	int						<0 if OK, >0 if KO
- */
-public function loadTimeSpent($datestart, $taskid = 0, $userid = 0)
-{
-	$error=0;
-
-	$this->weekWorkLoad=array();
-	$this->weekWorkLoadPerTask=array();
-
-	if (empty($datestart)) dol_print_error('', 'Error datestart parameter is empty');
-
-	$sql = "SELECT ptt.rowid as taskid, ptt.task_duration, ptt.task_date, ptt.task_datehour, ptt.fk_task";
-	$sql.= " FROM ".MAIN_DB_PREFIX."projet_task_time AS ptt, ".MAIN_DB_PREFIX."projet_task as pt";
-	$sql.= " WHERE ptt.fk_task = pt.rowid";
-	$sql.= " AND pt.fk_projet = ".$this->id;
-	$sql.= " AND (ptt.task_date >= '".$this->db->idate($datestart)."' ";
-	$sql.= " AND ptt.task_date <= '".$this->db->idate(dol_time_plus_duree($datestart, 1, 'w') - 1)."')";
-	if ($taskid) $sql.= " AND ptt.fk_task=".$taskid;
-	if (is_numeric($userid)) $sql.= " AND ptt.fk_user=".$userid;
-
-	//print $sql;
-	$resql=$this->db->query($sql);
-	if ($resql)
-	{
-		$daylareadyfound=array();
-
-		$num = $this->db->num_rows($resql);
-		$i = 0;
-		// Loop on each record found, so each couple (project id, task id)
-		while ($i < $num)
-		{
-			$obj=$this->db->fetch_object($resql);
-			$day=$this->db->jdate($obj->task_date);		// task_date is date without hours
-			if (empty($daylareadyfound[$day]))
-			{
-				$this->weekWorkLoad[$day] = $obj->task_duration;
-				$this->weekWorkLoadPerTask[$day][$obj->fk_task] = $obj->task_duration;
-			}
-			else
-			{
-				$this->weekWorkLoad[$day] += $obj->task_duration;
-				$this->weekWorkLoadPerTask[$day][$obj->fk_task] += $obj->task_duration;
-			}
-			$daylareadyfound[$day]=1;
-			$i++;
-		}
-		$this->db->free($resql);
-		return 1;
-	}
-	else
-	{
-		$this->error = "Error ".$this->db->lasterror();
-		dol_syslog(get_class($this)."::fetch ".$this->error, LOG_ERR);
-		return -1;
-	}
-}
-
-/**
- * Load time spent into this->weekWorkLoad and this->weekWorkLoadPerTask for all day of a week of project.
- * Note: array weekWorkLoad and weekWorkLoadPerTask are reset and filled at each call.
- *
- * @param 	int		$datestart		First day of week (use dol_get_first_day to find this date)
- * @param 	int		$taskid			Filter on a task id
- * @param 	int		$userid			Time spent by a particular user
- * @return 	int						<0 if OK, >0 if KO
- */
-public function loadTimeSpentMonth($datestart, $taskid = 0, $userid = 0)
-{
-	$error = 0;
-	
-	$this->monthWorkLoad = array();
-	$this->monthWorkLoadPerTask = array();
-	
-	if (empty($datestart)) dol_print_error('', 'Error datestart parameter is empty');
-	
-	$sql = "SELECT ptt.rowid as taskid, ptt.task_duration, ptt.task_date, ptt.task_datehour, ptt.fk_task";
-	$sql .= " FROM ".MAIN_DB_PREFIX."projet_task_time AS ptt, ".MAIN_DB_PREFIX."projet_task as pt";
-	$sql .= " WHERE ptt.fk_task = pt.rowid";
-	$sql .= " AND pt.fk_projet = ".$this->id;
-	$sql .= " AND (ptt.task_date >= '".$this->db->idate($datestart)."' ";
-	$sql .= " AND ptt.task_date <= '".$this->db->idate(dol_time_plus_duree($datestart, 1, 'm') - 1)."')";
-	if ($task_id) $sql .= " AND ptt.fk_task=".$taskid;
-	if (is_numeric($userid)) $sql .= " AND ptt.fk_user=".$userid;
-	
-	//print $sql;
-	$resql = $this->db->query($sql);
-	if ($resql)
-	{
-		$weekalreadyfound = array();
-		
-		$num = $this->db->num_rows($resql);
-		$i = 0;
-		// Loop on each record found, so each couple (project id, task id)
-		while ($i < $num)
-		{
-			$obj = $this->db->fetch_object($resql);
-			if (!empty($obj->task_date)) {
-				$date = explode('-', $obj->task_date);
-				$week_number = getWeekNumber($date[2], $date[1], $date[0]);
-			}
-			if (empty($weekalreadyfound[$week_number]))
-			{
-				$this->monthWorkLoad[$week_number] = $obj->task_duration;
-				$this->monthWorkLoadPerTask[$week_number][$obj->fk_task] = $obj->task_duration;
-			}
-			else
-			{
-				$this->monthWorkLoad[$week_number] += $obj->task_duration;
-				$this->monthWorkLoadPerTask[$week_number][$obj->fk_task] += $obj->task_duration;
-			}
-			$weekalreadyfound[$week_number] = 1;
-			$i++;
-		}
-		$this->db->free($resql);
-		return 1;
-	}
-	else
-	{
-		$this->error = "Error ".$this->db->lasterror();
-		dol_syslog(get_class($this)."::fetch ".$this->error, LOG_ERR);
-		return -1;
-	}
-}
-
-
-// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
-/**
- * Load indicators for dashboard (this->nbtodo and this->nbtodolate)
- *
- * @param	User	$user   Objet user
- * @return WorkboardResponse|int <0 if KO, WorkboardResponse if OK
- */
-public function load_board($user)
-{
-	// phpcs:enable
-	global $conf, $langs;
-
-	// For external user, no check is done on company because readability is managed by public status of project and assignement.
-	//$socid=$user->socid;
-
-	$projectsListId = null;
-	if (!$user->rights->projet->all->lire) $projectsListId = $this->getProjectsAuthorizedForUser($user, 0, 1);
-
-	$sql = "SELECT p.rowid, p.fk_statut as status, p.fk_opp_status, p.datee as datee";
-	$sql .= " FROM (".MAIN_DB_PREFIX."projet as p";
-	$sql .= ")";
-	$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s on p.fk_soc = s.rowid";
-	// For external user, no check is done on company permission because readability is managed by public status of project and assignement.
-	//if (! $user->rights->societe->client->voir && ! $socid) $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."societe_commerciaux as sc ON sc.fk_soc = s.rowid";
-	$sql .= " WHERE p.fk_statut = 1";
-	$sql .= " AND p.entity IN (".getEntity('project').')';
-	if (!empty($projectsListId)) $sql .= " AND p.rowid IN (".$projectsListId.")";
-	// No need to check company, as filtering of projects must be done by getProjectsAuthorizedForUser
-	//if ($socid || ! $user->rights->societe->client->voir)	$sql.= "  AND (p.fk_soc IS NULL OR p.fk_soc = 0 OR p.fk_soc = ".$socid.")";
-	// For external user, no check is done on company permission because readability is managed by public status of project and assignement.
-	//if (! $user->rights->societe->client->voir && ! $socid) $sql.= " AND ((s.rowid = sc.fk_soc AND sc.fk_user = " .$user->id.") OR (s.rowid IS NULL))";
-
-	//print $sql;
-	$resql = $this->db->query($sql);
-	if ($resql)
-	{
-		$project_static = new Project($this->db);
-
-		$response = new WorkboardResponse();
-		$response->warning_delay = $conf->projet->warning_delay / 60 / 60 / 24;
-		$response->label = $langs->trans("OpenedProjects");
-		$response->labelShort = $langs->trans("Opened");
-		if ($user->rights->projet->all->lire) $response->url = DOL_URL_ROOT.'/projet/list.php?search_status=1&mainmenu=project';
-		else $response->url = DOL_URL_ROOT.'/projet/list.php?search_project_user=-1&search_status=1&mainmenu=project';
-		$response->img = img_object('', "projectpub");
-
-		// This assignment in condition is not a bug. It allows walking the results.
-		while ($obj = $this->db->fetch_object($resql))
-		{
-			$response->nbtodo++;
-
-			$project_static->statut = $obj->status;
-			$project_static->opp_status = $obj->opp_status;
-			$project_static->datee = $this->db->jdate($obj->datee);
-
-			if ($project_static->hasDelay()) {
-				$response->nbtodolate++;
-			}
-		}
-
-		return $response;
-	}
-	else
-	{
-		$this->error = $this->db->error();
-		return -1;
-	}
-}
-
-
-/**
- * Function used to replace a thirdparty id with another one.
- *
- * @param DoliDB $db Database handler
- * @param int $origin_id Old thirdparty id
- * @param int $dest_id New thirdparty id
- * @return bool
- */
-public static function replaceThirdparty(DoliDB $db, $origin_id, $dest_id)
-{
-	$tables = array(
-		'projet'
-	);
-
-	return CommonObject::commonReplaceThirdparty($db, $origin_id, $dest_id, $tables);
-}
-
-
-// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
-/**
- * Charge indicateurs this->nb pour le tableau de bord
- *
- * @return     int         <0 if KO, >0 if OK
- */
-public function load_state_board()
-{
-	// phpcs:enable
-	global $user;
-
-	$this->nb = array();
-
-	$sql = "SELECT count(p.rowid) as nb";
-	$sql .= " FROM ".MAIN_DB_PREFIX."projet as p";
-	$sql .= " WHERE";
-	$sql .= " p.entity IN (".getEntity('project').")";
-	if (!$user->rights->projet->all->lire)
-	{
-		$projectsListId = $this->getProjectsAuthorizedForUser($user, 0, 1);
-		$sql .= "AND p.rowid IN (".$projectsListId.")";
-	}
-
-	$resql = $this->db->query($sql);
-	if ($resql)
-	{
-		while ($obj = $this->db->fetch_object($resql))
-		{
-			$this->nb["projects"] = $obj->nb;
-		}
-		$this->db->free($resql);
-		return 1;
-	}
-	else
-	{
-		dol_print_error($this->db);
-		$this->error = $this->db->error();
-		return -1;
-	}
-}
-
-
-/**
- * Is the project delayed?
- *
- * @return bool
- */
-public function hasDelay()
-{
-	global $conf;
-
-	if (!($this->statut == self::STATUS_VALIDATED)) return false;
-	if (!$this->datee && !$this->date_end) return false;
-
-	$now = dol_now();
-
-	return ($this->datee ? $this->datee : $this->date_end) < ($now - $conf->projet->warning_delay);
-}
-
-
-/**
- *	Charge les informations d'ordre info dans l'objet commande
- *
- *	@param  int		$id       Id of order
- *	@return	void
- */
-public function info($id)
-{
-	$sql = 'SELECT c.rowid, datec as datec, tms as datem,';
-	$sql .= ' date_close as datecloture,';
-	$sql .= ' fk_user_creat as fk_user_author, fk_user_close as fk_use_cloture';
-	$sql .= ' FROM '.MAIN_DB_PREFIX.'projet as c';
-	$sql .= ' WHERE c.rowid = '.$id;
-	$result = $this->db->query($sql);
-	if ($result)
-	{
-		if ($this->db->num_rows($result))
-		{
-			$obj = $this->db->fetch_object($result);
-			$this->id = $obj->rowid;
-			if ($obj->fk_user_author)
-			{
-				$cuser = new User($this->db);
-				$cuser->fetch($obj->fk_user_author);
-				$this->user_creation = $cuser;
-			}
-
-			if ($obj->fk_user_cloture)
-			{
-				$cluser = new User($this->db);
-				$cluser->fetch($obj->fk_user_cloture);
-				$this->user_cloture = $cluser;
-			}
-
-			$this->date_creation     = $this->db->jdate($obj->datec);
-			$this->date_modification = $this->db->jdate($obj->datem);
-			$this->date_cloture      = $this->db->jdate($obj->datecloture);
-		}
-
-		$this->db->free($result);
-	}
-	else
-	{
-		dol_print_error($this->db);
-	}
-}
-
-/**
- * Sets object to supplied categories.
- *
- * Deletes object from existing categories not supplied.
- * Adds it to non existing supplied categories.
- * Existing categories are left untouch.
- *
- * @param int[]|int $categories Category or categories IDs
- * @return void
- */
-public function setCategories($categories)
-{
-	$type_categ = Categorie::TYPE_PROJECT;
-
-	// Handle single category
-	if (!is_array($categories)) {
-		$categories = array($categories);
-	}
-
-	// Get current categories
-	require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
-	$c = new Categorie($this->db);
-	$existing = $c->containing($this->id, $type_categ, 'id');
-
-	// Diff
-	if (is_array($existing)) {
-		$to_del = array_diff($existing, $categories);
-		$to_add = array_diff($categories, $existing);
-	} else {
-		$to_del = array(); // Nothing to delete
-		$to_add = $categories;
-	}
-
-	// Process
-	foreach ($to_del as $del) {
-		if ($c->fetch($del) > 0) {
-			$result = $c->del_type($this, $type_categ);
-			if ($result < 0) {
-				$this->errors = $c->errors;
-				$this->error = $c->error;
-				return -1;
-			}
-		}
-	}
-	foreach ($to_add as $add) {
-		if ($c->fetch($add) > 0) {
-			$result = $c->add_type($this, $type_categ);
-			if ($result < 0) {
-				$this->errors = $c->errors;
-				$this->error = $c->error;
-				return -1;
-			}
-		}
-	}
-
-	return 1;
-}
-
-
-/**
- * 	Create an array of tasks of current project
- *
- *  @param  User   $user       Object user we want project allowed to
- * 	@return int		           >0 if OK, <0 if KO
- */
-public function getLinesArray($user)
-{
-	require_once DOL_DOCUMENT_ROOT.'/projet/class/task.class.php';
-	$taskstatic = new Task($this->db);
-
-	$this->lines = $taskstatic->getTasksArray(0, $user, $this->id, 0, 0);
-}
 }

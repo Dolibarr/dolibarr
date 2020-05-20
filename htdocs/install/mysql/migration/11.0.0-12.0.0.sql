@@ -74,6 +74,8 @@ delete from llx_const where name = 'PROJECT_HIDE_TASKS' and entity = 0;
 -- VMYSQL4.1 DROP INDEX ix_fk_product_stock on llx_product_batch;
 -- VPGSQL8.2 DROP INDEX ix_fk_product_stock
 
+ALTER TABLE llx_actioncomm DROP COLUMN punctual;
+
 DELETE FROM llx_menu where module='supplier_proposal';
 
 UPDATE llx_website SET lang = 'en' WHERE lang like 'en_%';
