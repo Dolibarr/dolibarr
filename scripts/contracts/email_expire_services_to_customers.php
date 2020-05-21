@@ -137,8 +137,7 @@ if ($resql) {
 					if ($oldemail != 'none') {
 						if (empty($trackthirdpartiessent[$oldsid.'|'.$oldemail]))
 							print "- No email sent for '".$oldtarget."', total: ".$total."\n";
-						else
-							print "- No email sent for '".$oldtarget."', total: ".$total." (already sent to ".$trackthirdpartiessent[$oldsid.'|'.$oldemail].")\n";
+						else print "- No email sent for '".$oldtarget."', total: ".$total." (already sent to ".$trackthirdpartiessent[$oldsid.'|'.$oldemail].")\n";
 					}
 				}
 				$oldemail = $newemail;
@@ -168,8 +167,7 @@ if ($resql) {
 			print "Service to expire ".$obj->ref.", label ".dol_concatdesc($obj->plabel, $obj->description).", due date ".dol_print_date($db->jdate($obj->date_fin_validite), 'day').", customer id ".$obj->sid." ".$obj->name.", ".($obj->cid ? "contact id ".$obj->cid." ".$obj->clastname." ".$obj->cfirstname.", " : "")."email ".$newemail.", lang ".$outputlangs->defaultlang.": ";
 			if (dol_strlen($newemail))
 				print "qualified.";
-			else
-				print "disqualified (no email).";
+			else print "disqualified (no email).";
 			print "\n";
 
 			unset($outputlangs);
@@ -189,8 +187,7 @@ if ($resql) {
 				if ($oldemail != 'none') {
 					if (empty($trackthirdpartiessent[$oldsid.'|'.$oldemail]))
 						print "- No email sent for '".$oldtarget."', total: ".$total."\n";
-					else
-						print "- No email sent for '".$oldtarget."', total: ".$total." (already sent to ".$trackthirdpartiessent[$oldsid.'|'.$oldemail].")\n";
+					else print "- No email sent for '".$oldtarget."', total: ".$total." (already sent to ".$trackthirdpartiessent[$oldsid.'|'.$oldemail].")\n";
 				}
 			}
 		}
@@ -233,10 +230,8 @@ function envoi_mail($mode, $oldemail, $message, $total, $userlang, $oldtarget, $
 	if ($duration_value) {
 		if ($duration_value > 0)
 			$title = $newlangs->transnoentities("ListOfServicesToExpireWithDuration", $duration_value);
-		else
-			$title = $newlangs->transnoentities("ListOfServicesToExpireWithDurationNeg", $duration_value);
-	} else
-		$title = $newlangs->transnoentities("ListOfServicesToExpire");
+		else $title = $newlangs->transnoentities("ListOfServicesToExpireWithDurationNeg", $duration_value);
+	} else $title = $newlangs->transnoentities("ListOfServicesToExpire");
 
 	$subject = (empty($conf->global->SCRIPT_EMAIL_EXPIRE_SERVICES_CUSTOMERS_SUBJECT) ? $title : $conf->global->SCRIPT_EMAIL_EXPIRE_SERVICES_CUSTOMERS_SUBJECT);
 	$sendto = $oldemail;

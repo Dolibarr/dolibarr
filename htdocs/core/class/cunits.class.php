@@ -432,11 +432,9 @@ class CUnits // extends CommonObject
 		return round($value, 2);
 	}
 
-
-
 	/**
 	 * get scale of unit factor
-	 * @param $id int id of unit in dictionary
+	 * @param int $id id of unit in dictionary
 	 * @return float|int
 	 */
 	public function scaleOfUnitPow($id)
@@ -444,9 +442,9 @@ class CUnits // extends CommonObject
 		$base = 10;
 		// TODO : add base col into unit dictionary table
 		$unit = $this->db->getRow('SELECT scale, unit_type from '.MAIN_DB_PREFIX.'c_units WHERE rowid = '.intval($id));
-		if ($unit){
+		if ($unit) {
 			// TODO : if base exist in unit dictionary table remove this convertion exception and update convertion infos in database exemple time hour currently scale 3600 will become scale 2 base 60
-			if ($unit->unit_type == 'time'){
+			if ($unit->unit_type == 'time') {
 				return doubleval($unit->scale);
 			}
 
