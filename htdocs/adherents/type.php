@@ -525,8 +525,20 @@ if ($rowid > 0) {
 		    $i = 0;
 
 		    $titre = $langs->trans("MembersList");
-		    if ($status != '') {
-		        if ($status == '-1,1') { $titre = $langs->trans("MembersListQualified"); } elseif ($status == '-1') { $titre = $langs->trans("MembersListToValid"); } elseif ($status == '1' && !$filter) { $titre = $langs->trans("MembersListValid"); } elseif ($status == '1' && $filter == 'uptodate') { $titre = $langs->trans("MembersListUpToDate"); } elseif ($status == '1' && $filter == 'outofdate') { $titre = $langs->trans("MembersListNotUpToDate"); } elseif ($status == '0') { $titre = $langs->trans("MembersListResiliated"); }
+            if ($status != '') {
+                if ($status == '-1,1') {
+                    $titre = $langs->trans("MembersListQualified");
+                } elseif ($status == '-1') {
+                    $titre = $langs->trans("MembersListToValid");
+                } elseif ($status == '1' && !$filter) {
+                    $titre = $langs->trans("MembersListValid");
+                } elseif ($status == '1' && $filter == 'uptodate') {
+                    $titre = $langs->trans("MembersListUpToDate");
+                } elseif ($status == '1' && $filter == 'outofdate') {
+                    $titre = $langs->trans("MembersListNotUpToDate");
+                } elseif ($status == '0') {
+                    $titre = $langs->trans("MembersListResiliated");
+                }
 		    } elseif ($action == 'search') {
 		        $titre = $langs->trans("MembersListQualified");
 		    }
