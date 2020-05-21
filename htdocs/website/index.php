@@ -1863,35 +1863,29 @@ if (($action == 'updatesource' || $action == 'updatecontent' || $action == 'conf
 							header("Location: ".$_SERVER["PHP_SELF"].'?website='.$websitekey.'&pageid='.$pageid);
 							exit;
 						}
-					}
-					else {
+					} else {
 						if ($action == 'updatesource') $action = 'editsource';
 						if ($action == 'updatecontent') $action = 'editcontent';
 					}
-				}
-				else {
+				} else {
 					setEventMessages('Failed to write file '.$filetpl, null, 'errors');
 					header("Location: ".$_SERVER["PHP_SELF"].'?website='.$websitekey.'&pageid='.$pageid);
 	   				exit;
 				}
-			}
-			else {
+			} else {
 				$db->rollback();
 			}
-		}
-		else {
+		} else {
 			header("Location: ".$_SERVER["PHP_SELF"].'?website='.$websitekey.'&pageid='.$pageid);
 			exit;
 		}
-	}
-	else {
+	} else {
 		if (!$error)
 		{
 			if (empty($websitekey) || $websitekey == '-1')
 			{
 				setEventMessages($langs->trans("NoWebSiteCreateOneFirst"), null, 'warnings');
-			}
-			else {
+			} else {
 				setEventMessages($langs->trans("NoPageYet"), null, 'warnings');
 				setEventMessages($langs->trans("YouCanCreatePageOrImportTemplate"), null, 'warnings');
 			}
@@ -1929,8 +1923,7 @@ if ($action == 'regeneratesite')
 	{
 		setEventMessages($langs->trans("PagesRegenerated"), null, 'mesgs');
 		$action = 'preview';
-	}
-	else {
+	} else {
 		setEventMessages($object->error, $object->errors, 'errors');
 		$action = 'preview';
 	}
