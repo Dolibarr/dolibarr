@@ -314,8 +314,8 @@ if (GETPOSTISSET('THEME_AGRESSIVENESS_RATIO')) $conf->global->THEME_AGRESSIVENES
 	display: flex; /* or inline-flex */
 	flex-direction: row;
 	flex-wrap: wrap;
-	width: 100%;
-	margin: 0 0 0 -8px;
+	width: calc(100% + 14px);
+	margin: 0 -8px 0 -8px;
 	/*justify-content: space-between;*/
 }
 
@@ -348,7 +348,8 @@ if (GETPOSTISSET('THEME_AGRESSIVENESS_RATIO')) $conf->global->THEME_AGRESSIVENES
 @media only screen and (max-width: 767px)
 {
 	.box-flex-container {
-	    margin: 0 0 0 0 !important;
+	    margin: 0 0 0 0px !important;
+	    width: 100% !important;
 	}
 
 	.info-box-module {
