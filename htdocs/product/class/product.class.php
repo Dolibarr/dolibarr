@@ -818,7 +818,7 @@ class Product extends CommonObject
     }
 
     /**
-     *    Update a record into database.
+     *  Update a record into database.
      *  If batch flag is set to on, we create records into llx_product_batch
      *
      * @param  int     $id          Id of product

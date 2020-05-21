@@ -3629,6 +3629,7 @@ if ($action == 'replacesite' || $action == 'replacesiteconfirm' || $massaction =
 			print getTitleFieldOfList("Page", 0, $_SERVER['PHP_SELF'], 'pageurl', '', $param, '', $sortfield, $sortorder, '')."\n";
 			//print getTitleFieldOfList("Description", 0, $_SERVER['PHP_SELF'], '', '', $param, '', $sortfield, $sortorder, '')."\n";
 			print getTitleFieldOfList("", 0, $_SERVER['PHP_SELF']);
+			print getTitleFieldOfList("", 0, $_SERVER['PHP_SELF']);
 			print getTitleFieldOfList($selectedfields, 0, $_SERVER["PHP_SELF"], '', '', '', '', $sortfield, $sortorder, 'center maxwidthsearch ')."\n";
 			print '</tr>';
 
@@ -3651,6 +3652,24 @@ if ($action == 'replacesite' || $action == 'replacesiteconfirm' || $massaction =
 					print '<span class="opacitymedium">'.$answerrecord->description.'</span>';
 					print '</td>';
 
+					// Edit properties
+					print '<td>';
+					$param = '?action=replacesiteconfirm';
+					$param .= '&websiteid='.$website->id;
+					$param .= '&optioncontent='.GETPOST('optioncontent');
+					$param .= '&optionmeta='.GETPOST('optionmeta');
+					$param .= '&optionsitefiles='.GETPOST('optionsitefiles');
+					$param .= '&searchstring='.$searchkey;
+					$disabled = '';
+					$urltoedithtmlsource = $_SERVER["PHP_SELF"].'?action=editmeta&websiteid='.$website->id.'&pageid='.$answerrecord->id.'&backtopage='.urlencode($_SERVER["PHP_SELF"].$param);
+					if (empty($user->rights->website->write)) {
+						$disabled = ' disabled';
+						$urltoedithtmlsource = '';
+					}
+					print '<a class="editfielda '.$disabled.'" href="'.$urltoedithtmlsource.'" title="'.$langs->trans("EditPageMeta").'">'.img_picto($langs->trans("EditPageMeta"), 'pencil-ruler').'</a>';
+					print '</td>';
+
+					// Edit HTML source
 					print '<td>';
 					$param = '?action=replacesiteconfirm';
 					$param .= '&websiteid='.$website->id;
