@@ -687,7 +687,7 @@ if (empty($conf->global->MAIN_DISABLE_GLOBAL_WORKBOARD)) {
                     }
                 }
 
-                $openedDashBoard .= '<div class="box-flex-item">'."\n";
+                $openedDashBoard .= '<div class="box-flex-item"><div class="box-flex-item-with-margin">'."\n";
                 $openedDashBoard .= '	<div class="info-box '.$openedDashBoardSize.'">'."\n";
                 $openedDashBoard .= '		<span class="info-box-icon bg-infobox-'.$groupKeyLowerCase.'">'."\n";
                 $openedDashBoard .= '		<i class="fa fa-dol-'.$groupKeyLowerCase.'"></i>'."\n";
@@ -734,6 +734,7 @@ if (empty($conf->global->MAIN_DISABLE_GLOBAL_WORKBOARD)) {
 
                 $openedDashBoard .= '		</div><!-- /.info-box-content -->'."\n";
                 $openedDashBoard .= '	</div><!-- /.info-box -->'."\n";
+                $openedDashBoard .= '</div><!-- /.box-flex-item-with-margin -->'."\n";
                 $openedDashBoard .= '</div><!-- /.box-flex-item -->'."\n";
                 $openedDashBoard .= "\n";
             }
@@ -752,7 +753,7 @@ if (empty($conf->global->MAIN_DISABLE_GLOBAL_WORKBOARD)) {
             }
             $text .= '. '.$langs->transnoentitiesnoconv("LateDesc");
 
-            $weatherDashBoard = '<div class="box-flex-item '.$appendClass.'">'."\n";
+            $weatherDashBoard = '<div class="box-flex-item '.$appendClass.'"><div class="box-flex-item-with-margin">'."\n";
             $weatherDashBoard .= '	<div class="info-box '.$openedDashBoardSize.' info-box-weather info-box-weather-level'.$weather->level.'">'."\n";
             $weatherDashBoard .= '		<span class="info-box-icon">';
             $weatherDashBoard .= img_weather('', $weather->level, '', 0, 'valignmiddle width50');
@@ -776,6 +777,7 @@ if (empty($conf->global->MAIN_DISABLE_GLOBAL_WORKBOARD)) {
 
             $weatherDashBoard .= '		</div><!-- /.info-box-content -->'."\n";
             $weatherDashBoard .= '	</div><!-- /.info-box -->'."\n";
+            $weatherDashBoard .= '</div><!-- /.box-flex-item-with-margin -->'."\n";
             $weatherDashBoard .= '</div><!-- /.box-flex-item -->'."\n";
             $weatherDashBoard .= "\n";
 

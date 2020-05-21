@@ -364,6 +364,8 @@ class Form
 
 				$s = picto_from_langcode($langcode, 'class="pictoforlang paddingright"');
 				$resultforextrlang .= $s;
+
+				// TODO Use the showInputField() method of ExtraLanguages object
 				if ($typeofdata == 'textarea') {
 					$resultforextrlang .= '<textarea name="field-'.$object->element."-".$fieldname."-".$langcode.'" id="'.$fieldname."-".$langcode.'" class="'.$morecss.'" rows="'.ROWS_2.'" wrap="soft">';
 					$resultforextrlang .= $valuetoshow;

@@ -43,7 +43,7 @@ class ExtraFields
     public $db;
 
 	/**
-     * @var string type of element (for what object is the extrafield)
+     * @var array Array with type of element (for what object is the extrafield)
 	 * @deprecated
      */
     public $attribute_elementtype;
