@@ -49,8 +49,7 @@ $pagenext = $page + 1;
 if (!$sortfield) $sortfield = 'a.datep,a.id';
 if (!$sortorder) $sortorder = 'DESC';
 
-if (GETPOST('actioncode', 'array'))
-{
+if (GETPOST('actioncode', 'array')) {
 	$actioncode = GETPOST('actioncode', 'array', 3);
 	if (!count($actioncode)) $actioncode = '0';
 } else {
@@ -63,8 +62,7 @@ $result = restrictedArea($user, 'adherent', $id);
 
 $object = new Adherent($db);
 $result = $object->fetch($id);
-if ($result > 0)
-{
+if ($result > 0) {
 	$object->fetch_thirdparty();
 
     $adht = new AdherentType($db);
@@ -80,19 +78,16 @@ $parameters = array('id'=>$id, 'objcanvas'=>$objcanvas);
 $reshook = $hookmanager->executeHooks('doActions', $parameters, $object, $action); // Note that $action and $object may have been modified by some hooks
 if ($reshook < 0) setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
 
-if (empty($reshook))
-{
+if (empty($reshook)) {
     // Cancel
-    if (GETPOST('cancel', 'alpha') && !empty($backtopage))
-    {
+    if (GETPOST('cancel', 'alpha') && !empty($backtopage)) {
         header("Location: ".$backtopage);
         exit;
     }
 
     // Purge search criteria
-    if (GETPOST('button_removefilter_x', 'alpha') || GETPOST('button_removefilter.x', 'alpha') || GETPOST('button_removefilter', 'alpha')) // All test are required to be compatible with all browsers
-    {
-        $actioncode = '';
+    if (GETPOST('button_removefilter_x', 'alpha') || GETPOST('button_removefilter.x', 'alpha') || GETPOST('button_removefilter', 'alpha')) { // All test are required to be compatible with all browsers
+		$actioncode = '';
         $search_agenda_label = '';
     }
 }
@@ -110,8 +105,7 @@ $form = new Form($db);
 /*
  * Customer and/or supplier category sheet
  */
-if ($object->id > 0)
-{
+if ($object->id > 0) {
 	require_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
 	require_once DOL_DOCUMENT_ROOT.'/societe/class/societe.class.php';
 
@@ -147,13 +141,11 @@ if ($object->id > 0)
 
 
 	$newcardbutton = '';
-    if (!empty($conf->agenda->enabled))
-    {
+    if (!empty($conf->agenda->enabled)) {
         $newcardbutton .= dolGetButtonTitle($langs->trans('AddAction'), '', 'fa fa-plus-circle', DOL_URL_ROOT.'/comm/action/card.php?action=create&backtopage=1&origin=member&originid='.$id);
     }
 
-    if (!empty($conf->agenda->enabled) && (!empty($user->rights->agenda->myactions->read) || !empty($user->rights->agenda->allactions->read)))
-    {
+    if (!empty($conf->agenda->enabled) && (!empty($user->rights->agenda->myactions->read) || !empty($user->rights->agenda->allactions->read))) {
     	print '<br>';
 
     	$param = '&id='.$id;

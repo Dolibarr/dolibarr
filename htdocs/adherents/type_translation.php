@@ -51,28 +51,24 @@ $result = restrictedArea($user, 'adherent', $id, 'adherent_type');
  */
 
 // return to translation display if cancellation
-if ($cancel == $langs->trans("Cancel"))
-{
+if ($cancel == $langs->trans("Cancel")) {
 	$action = '';
 }
 
-if ($action == 'delete' && GETPOST('langtodelete', 'alpha'))
-{
+if ($action == 'delete' && GETPOST('langtodelete', 'alpha')) {
 	$object = new AdherentType($db);
 	$object->fetch($id);
 	$object->delMultiLangs(GETPOST('langtodelete', 'alpha'), $user);
 }
 
 // Add translation
-if ($action == 'vadd' && $cancel != $langs->trans("Cancel") && $user->rights->adherent->configurer)
-{
+if ($action == 'vadd' && $cancel != $langs->trans("Cancel") && $user->rights->adherent->configurer) {
 	$object = new AdherentType($db);
 	$object->fetch($id);
 	$current_lang = $langs->getDefaultLang();
 
 	// update of object
-	if ($_POST["forcelangprod"] == $current_lang)
-	{
+	if ($_POST["forcelangprod"] == $current_lang) {
 		$object->label			= $_POST["libelle"];
 		$object->description = dol_htmlcleanlastbr($_POST["desc"]);
 		$object->other			= dol_htmlcleanlastbr($_POST["other"]);
@@ -84,8 +80,7 @@ if ($action == 'vadd' && $cancel != $langs->trans("Cancel") && $user->rights->ad
 	}
 
 	// backup into database
-	if ($object->setMultiLangs($user) > 0)
-	{
+	if ($object->setMultiLangs($user) > 0) {
 		$action = '';
 	}
 	else {
@@ -95,16 +90,13 @@ if ($action == 'vadd' && $cancel != $langs->trans("Cancel") && $user->rights->ad
 }
 
 // Edit translation
-if ($action == 'vedit' && $cancel != $langs->trans("Cancel") && $user->rights->adherent->configurer)
-{
+if ($action == 'vedit' && $cancel != $langs->trans("Cancel") && $user->rights->adherent->configurer) {
 	$object = new AdherentType($db);
 	$object->fetch($id);
 	$current_lang = $langs->getDefaultLang();
 
-	foreach ($object->multilangs as $key => $value) // saving new values in the object
-	{
-		if ($key == $current_lang)
-		{
+	foreach ($object->multilangs as $key => $value) { // saving new values in the object
+		if ($key == $current_lang) {
 			$object->label			= $_POST["libelle-".$key];
 			$object->description = dol_htmlcleanlastbr($_POST["desc-".$key]);
 			$object->other			= dol_htmlcleanlastbr($_POST["other-".$key]);
@@ -116,8 +108,7 @@ if ($action == 'vedit' && $cancel != $langs->trans("Cancel") && $user->rights->a
 		}
 	}
 
-	if ($object->setMultiLangs($user) > 0)
-	{
+	if ($object->setMultiLangs($user) > 0) {
 		$action = '';
 	}
 	else {
@@ -127,15 +118,13 @@ if ($action == 'vedit' && $cancel != $langs->trans("Cancel") && $user->rights->a
 }
 
 // Delete translation
-if ($action == 'vdelete' && $cancel != $langs->trans("Cancel") && $user->rights->adherent->configurer)
-{
+if ($action == 'vdelete' && $cancel != $langs->trans("Cancel") && $user->rights->adherent->configurer) {
 	$object = new AdherentType($db);
 	$object->fetch($id);
 	$langtodelete = GETPOST('langdel', 'alpha');
 
 
-	if ($object->delMultiLangs($langtodelete, $user) > 0)
-	{
+	if ($object->delMultiLangs($langtodelete, $user) > 0) {
 		$action = '';
 	}
 	else {
@@ -169,10 +158,8 @@ $titre = $langs->trans("MemberType".$object->type);
 
 // Calculate $cnt_trans
 $cnt_trans = 0;
-if (!empty($object->multilangs))
-{
-    foreach ($object->multilangs as $key => $value)
-    {
+if (!empty($object->multilangs)) {
+    foreach ($object->multilangs as $key => $value) {
         $cnt_trans++;
     }
 }
@@ -196,10 +183,8 @@ dol_fiche_end();
 
 print "\n<div class=\"tabsAction\">\n";
 
-if ($action == '')
-{
-    if ($user->rights->produit->creer || $user->rights->service->creer)
-    {
+if ($action == '') {
+    if ($user->rights->produit->creer || $user->rights->service->creer) {
         print '<a class="butAction" href="'.DOL_URL_ROOT.'/adherents/type_translation.php?action=add&rowid='.$object->id.'">'.$langs->trans("Add").'</a>';
         if ($cnt_trans > 0) print '<a class="butAction" href="'.DOL_URL_ROOT.'/adherents/type_translation.php?action=edit&rowid='.$object->id.'">'.$langs->trans("Update").'</a>';
     }
@@ -209,8 +194,7 @@ print "\n</div>\n";
 
 
 
-if ($action == 'edit')
-{
+if ($action == 'edit') {
 	//WYSIWYG Editor
 	require_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
 
@@ -219,10 +203,8 @@ if ($action == 'edit')
 	print '<input type="hidden" name="action" value="vedit">';
 	print '<input type="hidden" name="rowid" value="'.$object->id.'">';
 
-	if (!empty($object->multilangs))
-	{
-		foreach ($object->multilangs as $key => $value)
-		{
+	if (!empty($object->multilangs)) {
+		foreach ($object->multilangs as $key => $value) {
 			$s = picto_from_langcode($key);
 			print "<br>".($s ? $s.' ' : '')." <b>".$langs->trans('Language_'.$key).":</b> ".'<a href="'.$_SERVER["PHP_SELF"].'?rowid='.$object->id.'&action=delete&langtodelete='.$key.'">'.img_delete('', 'class="valigntextbottom"')."</a><br>";
 
@@ -248,12 +230,9 @@ if ($action == 'edit')
 
 	print '</form>';
 }
-elseif ($action != 'add')
-{
-	if (!empty($object->multilangs))
-	{
-		foreach ($object->multilangs as $key => $value)
-		{
+elseif ($action != 'add') {
+	if (!empty($object->multilangs)) {
+		foreach ($object->multilangs as $key => $value) {
 			$s = picto_from_langcode($key);
 			print ($s ? $s.' ' : '')." <b>".$langs->trans('Language_'.$key).":</b> ".'<a href="'.$_SERVER["PHP_SELF"].'?rowid='.$object->id.'&action=delete&langtodelete='.$key.'">'.img_delete('', 'class="valigntextbottom"').'</a>';
 
@@ -275,8 +254,7 @@ elseif ($action != 'add')
  * Form to add a new translation
  */
 
-if ($action == 'add' && $user->rights->adherent->configurer)
-{
+if ($action == 'add' && $user->rights->adherent->configurer) {
 	//WYSIWYG Editor
 	require_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
 

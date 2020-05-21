@@ -635,8 +635,7 @@ class Hook extends CommonObject
         // phpcs:enable
     	global $langs;
 
-    	if (empty($this->labelStatus) || empty($this->labelStatusShort))
-    	{
+    	if (empty($this->labelStatus) || empty($this->labelStatusShort)) {
     		global $langs;
     		//$langs->load("mymodule");
     		$this->labelStatus[self::STATUS_DRAFT] = $langs->trans('Disabled');

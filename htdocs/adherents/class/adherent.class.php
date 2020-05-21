@@ -660,8 +660,7 @@ class Adherent extends CommonObject
 			$action = 'update';
 
 			// Actions on extra fields
-			if (!$error)
-			{
+			if (!$error) {
 				$result = $this->insertExtraFields();
 				if ($result < 0) {
 					$error++;
@@ -704,8 +703,7 @@ class Adherent extends CommonObject
 				}
 			}
 
-			if (!$error && $nbrowsaffected) // If something has change in main data
-			{
+			if (!$error && $nbrowsaffected) { // If something has change in main data
 				// Update information on linked user if it is an update
 				if (!$error && $this->user_id > 0 && !$nosyncuser) {
 					require_once DOL_DOCUMENT_ROOT.'/user/class/user.class.php';
@@ -1555,8 +1553,7 @@ class Adherent extends CommonObject
 			$customer = new Societe($this->db);
 
 			if (!$error) {
-				if (!($this->fk_soc > 0)) // If not yet linked to a company
-				{
+				if (!($this->fk_soc > 0)) { // If not yet linked to a company
 					if ($autocreatethirdparty) {
 						// Create a linked thirdparty to member
 						$companyalias = '';
@@ -2420,8 +2417,7 @@ class Adherent extends CommonObject
 			if (!empty($conf->global->LDAP_MEMBER_FIELD_PASSWORD)) $info[$conf->global->LDAP_MEMBER_FIELD_PASSWORD] = $this->pass; // this->pass = mot de passe non crypte
 			if (!empty($conf->global->LDAP_MEMBER_FIELD_PASSWORD_CRYPTED)) $info[$conf->global->LDAP_MEMBER_FIELD_PASSWORD_CRYPTED] = dol_hash($this->pass, 4); // Create OpenLDAP MD5 password (TODO add type of encryption)
 		} // Set LDAP password if possible
-		elseif ($conf->global->LDAP_SERVER_PROTOCOLVERSION !== '3') // If ldap key is modified and LDAPv3 we use ldap_rename function for avoid lose encrypt password
-		{
+		elseif ($conf->global->LDAP_SERVER_PROTOCOLVERSION !== '3') { // If ldap key is modified and LDAPv3 we use ldap_rename function for avoid lose encrypt password
 			if (!empty($conf->global->DATABASE_PWD_ENCRYPTED)) {
 				// Just for the default MD5 !
 				if (empty($conf->global->MAIN_SECURITY_HASH_ALGO)) {
@@ -2620,8 +2616,7 @@ class Adherent extends CommonObject
 
 		$blockingerrormsg = '';
 
-		if (empty($conf->adherent->enabled)) // Should not happen. If module disabled, cron job should not be visible.
-		{
+		if (empty($conf->adherent->enabled)) { // Should not happen. If module disabled, cron job should not be visible.
 			$langs->load("agenda");
 			$this->output = $langs->trans('ModuleNotEnabled', $langs->transnoentitiesnoconv("Adherent"));
 			return 0;
@@ -2640,8 +2635,7 @@ class Adherent extends CommonObject
 		$listofmembersko = array();
 
 		$arraydaysbeforeend = explode(';', $daysbeforeendlist);
-		foreach ($arraydaysbeforeend as $daysbeforeend) // Loop on each delay
-		{
+		foreach ($arraydaysbeforeend as $daysbeforeend) { // Loop on each delay
 			dol_syslog(__METHOD__.' - Process delta = '.$daysbeforeend, LOG_DEBUG);
 
 			if (!is_numeric($daysbeforeend)) {

@@ -55,8 +55,7 @@ $typeid = GETPOST('typeid', 'int');
 $userid = GETPOST('userid', 'int');
 $socid = GETPOST('socid', 'int');
 
-if (!empty($conf->mailmanspip->enabled))
-{
+if (!empty($conf->mailmanspip->enabled)) {
 	include_once DOL_DOCUMENT_ROOT.'/mailmanspip/class/mailmanspip.class.php';
 
 	$langs->load('mailmanspip');
@@ -76,8 +75,7 @@ $socialnetworks = getArrayOfSocialNetworks();
 $object->getCanvas($id);
 $canvas = $object->canvas ? $object->canvas : GETPOST("canvas");
 $objcanvas = null;
-if (!empty($canvas))
-{
+if (!empty($canvas)) {
 	require_once DOL_DOCUMENT_ROOT.'/core/class/canvas.class.php';
 	$objcanvas = new Canvas($db, $action);
 	$objcanvas->getCanvas('adherent', 'membercard', $canvas);
@@ -86,16 +84,14 @@ if (!empty($canvas))
 // Security check
 $result = restrictedArea($user, 'adherent', $id, '', '', 'socid', 'rowid', $objcanvas);
 
-if ($id > 0)
-{
+if ($id > 0) {
 	// Load member
 	$result = $object->fetch($id);
 
 	// Define variables to know what current user can do on users
 	$canadduser = ($user->admin || $user->rights->user->user->creer);
 	// Define variables to know what current user can do on properties of user linked to edited member
-	if ($object->user_id)
-	{
+	if ($object->user_id) {
 		// $User is the user who edits, $object->user_id is the id of the related user in the edited member
 		$caneditfielduser = ((($user->id == $object->user_id) && $user->rights->user->self->creer)
 				|| (($user->id != $object->user_id) && $user->rights->user->user->creer));
@@ -107,8 +103,7 @@ if ($id > 0)
 // Define variables to determine what the current user can do on the members
 $canaddmember = $user->rights->adherent->creer;
 // Define variables to determine what the current user can do on the properties of a member
-if ($id)
-{
+if ($id) {
 	$caneditfieldmember = $user->rights->adherent->creer;
 }
 
@@ -125,34 +120,26 @@ $parameters = array('id'=>$id, 'rowid'=>$id, 'objcanvas'=>$objcanvas, 'confirm'=
 $reshook = $hookmanager->executeHooks('doActions', $parameters, $object, $action); // Note that $action and $object may have been modified by some hooks
 if ($reshook < 0) setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
 
-if (empty($reshook))
-{
-	if ($cancel)
-	{
-		if (!empty($backtopage))
-		{
+if (empty($reshook)) {
+	if ($cancel) {
+		if (!empty($backtopage)) {
 			header("Location: ".$backtopage);
 			exit;
 		}
 		$action = '';
 	}
 
-	if ($action == 'setuserid' && ($user->rights->user->self->creer || $user->rights->user->user->creer))
-	{
+	if ($action == 'setuserid' && ($user->rights->user->self->creer || $user->rights->user->user->creer)) {
 		$error = 0;
-		if (empty($user->rights->user->user->creer))	// If can edit only itself user, we can link to itself only
-		{
-			if ($userid != $user->id && $userid != $object->user_id)
-			{
+		if (empty($user->rights->user->user->creer)) {	// If can edit only itself user, we can link to itself only
+			if ($userid != $user->id && $userid != $object->user_id) {
 				$error++;
 				setEventMessages($langs->trans("ErrorUserPermissionAllowsToLinksToItselfOnly"), null, 'errors');
 			}
 		}
 
-		if (!$error)
-		{
-			if ($userid != $object->user_id)	// If link differs from currently in database
-			{
+		if (!$error) {
+			if ($userid != $object->user_id) {	// If link differs from currently in database
 				$result = $object->setUserId($userid);
 				if ($result < 0) dol_print_error($object->db, $object->error);
 				$action = '';
@@ -160,22 +147,17 @@ if (empty($reshook))
 		}
 	}
 
-	if ($action == 'setsocid')
-	{
+	if ($action == 'setsocid') {
 		$error = 0;
-		if (!$error)
-		{
-			if ($socid != $object->socid)	// If link differs from currently in database
-			{
+		if (!$error) {
+			if ($socid != $object->socid) {	// If link differs from currently in database
 				$sql = "SELECT rowid FROM ".MAIN_DB_PREFIX."adherent";
 				$sql .= " WHERE socid = '".$socid."'";
 				$sql .= " AND entity = ".$conf->entity;
 				$resql = $db->query($sql);
-				if ($resql)
-				{
+				if ($resql) {
 					$obj = $db->fetch_object($resql);
-					if ($obj && $obj->rowid > 0)
-					{
+					if ($obj && $obj->rowid > 0) {
 						$othermember = new Adherent($db);
 						$othermember->fetch($obj->rowid);
 						$thirdparty = new Societe($db);
@@ -185,8 +167,7 @@ if (empty($reshook))
 					}
 				}
 
-				if (!$error)
-				{
+				if (!$error) {
 					$result = $object->setThirdPartyId($socid);
 					if ($result < 0) dol_print_error($object->db, $object->error);
 					$action = '';
@@ -196,16 +177,13 @@ if (empty($reshook))
 	}
 
 	// Create user from a member
-	if ($action == 'confirm_create_user' && $confirm == 'yes' && $user->rights->user->user->creer)
-	{
-		if ($result > 0)
-		{
+	if ($action == 'confirm_create_user' && $confirm == 'yes' && $user->rights->user->user->creer) {
+		if ($result > 0) {
 			// Creation user
 			$nuser = new User($db);
 			$result = $nuser->create_from_member($object, GETPOST('login', 'alphanohtml'));
 
-			if ($result < 0)
-			{
+			if ($result < 0) {
 				$langs->load("errors");
 				setEventMessages($langs->trans($nuser->error), null, 'errors');
 			}
@@ -215,16 +193,13 @@ if (empty($reshook))
 	}
 
 	// Create third party from a member
-	if ($action == 'confirm_create_thirdparty' && $confirm == 'yes' && $user->rights->societe->creer)
-	{
-		if ($result > 0)
-		{
+	if ($action == 'confirm_create_thirdparty' && $confirm == 'yes' && $user->rights->societe->creer) {
+		if ($result > 0) {
 			// User creation
 			$company = new Societe($db);
 			$result = $company->create_from_member($object, GETPOST('companyname', 'alpha'), GETPOST('companyalias', 'alpha'));
 
-			if ($result < 0)
-			{
+			if ($result < 0) {
 				$langs->load("errors");
 				setEventMessages($langs->trans($company->error), null, 'errors');
 				setEventMessages($company->error, $company->errors, 'errors');
@@ -234,15 +209,13 @@ if (empty($reshook))
 		}
 	}
 
-	if ($action == 'update' && !$cancel && $user->rights->adherent->creer)
-	{
+	if ($action == 'update' && !$cancel && $user->rights->adherent->creer) {
 		require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 
 		$birthdate = '';
 		if (isset($_POST["birthday"]) && $_POST["birthday"]
 				&& isset($_POST["birthmonth"]) && $_POST["birthmonth"]
-				&& isset($_POST["birthyear"]) && $_POST["birthyear"])
-		{
+				&& isset($_POST["birthyear"]) && $_POST["birthyear"]) {
 			$birthdate = dol_mktime(12, 0, 0, $_POST["birthmonth"], $_POST["birthday"], $_POST["birthyear"]);
 		}
 		$lastname = $_POST["lastname"];
@@ -267,16 +240,14 @@ if (empty($reshook))
 			setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentities("Company")), null, 'errors');
 		}
 		// Check if the login already exists
-		if (empty($conf->global->ADHERENT_LOGIN_NOT_REQUIRED))
-		{
+		if (empty($conf->global->ADHERENT_LOGIN_NOT_REQUIRED)) {
 			if (empty($login)) {
 				$error++;
 				setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Login")), null, 'errors');
 			}
 		}
 		// Create new object
-		if ($result > 0 && !$error)
-		{
+		if ($result > 0 && !$error) {
 			$object->oldcopy = clone $object;
 
 			// Change values
@@ -329,32 +300,27 @@ if (empty($reshook))
 
 			// Check if we need to also synchronize user information
 			$nosyncuser = 0;
-			if ($object->user_id)	// If linked to a user
-			{
+			if ($object->user_id) {	// If linked to a user
 				if ($user->id != $object->user_id && empty($user->rights->user->user->creer)) $nosyncuser = 1; // Disable synchronizing
 			}
 
 			// Check if we need to also synchronize password information
 			$nosyncuserpass = 0;
-			if ($object->user_id)	// If linked to a user
-			{
+			if ($object->user_id) {	// If linked to a user
 				if ($user->id != $object->user_id && empty($user->rights->user->user->password)) $nosyncuserpass = 1; // Disable synchronizing
 			}
 
 			$result = $object->update($user, 0, $nosyncuser, $nosyncuserpass);
 
-			if ($result >= 0 && !count($object->errors))
-			{
+			if ($result >= 0 && !count($object->errors)) {
 				$categories = GETPOST('memcats', 'array');
 				$object->setCategories($categories);
 
 				// Logo/Photo save
 				$dir = $conf->adherent->dir_output.'/'.get_exdir(0, 0, 0, 1, $object, 'member').'/photos';
 				$file_OK = is_uploaded_file($_FILES['photo']['tmp_name']);
-				if ($file_OK)
-				{
-					if (GETPOST('deletephoto'))
-					{
+				if ($file_OK) {
+					if (GETPOST('deletephoto')) {
 						require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 						$fileimg = $conf->adherent->dir_output.'/'.get_exdir(0, 0, 0, 1, $object, 'member').'/photos/'.$object->photo;
 						$dirthumbs = $conf->adherent->dir_output.'/'.get_exdir(0, 0, 0, 1, $object, 'member').'/photos/thumbs';
@@ -362,15 +328,12 @@ if (empty($reshook))
 						dol_delete_dir_recursive($dirthumbs);
 					}
 
-					if (image_format_supported($_FILES['photo']['name']) > 0)
-					{
+					if (image_format_supported($_FILES['photo']['name']) > 0) {
 						dol_mkdir($dir);
 
-						if (@is_dir($dir))
-						{
+						if (@is_dir($dir)) {
 							$newfile = $dir.'/'.dol_sanitizeFileName($_FILES['photo']['name']);
-							if (!dol_move_uploaded_file($_FILES['photo']['tmp_name'], $newfile, 1, 0, $_FILES['photo']['error']) > 0)
-							{
+							if (!dol_move_uploaded_file($_FILES['photo']['tmp_name'], $newfile, 1, 0, $_FILES['photo']['error']) > 0) {
 								setEventMessages($langs->trans("ErrorFailedToSaveFile"), null, 'errors');
 							} else {
 							    // Create thumbs
@@ -381,8 +344,7 @@ if (empty($reshook))
 						setEventMessages("ErrorBadImageFormat", null, 'errors');
 					}
 				} else {
-					switch ($_FILES['photo']['error'])
-					{
+					switch ($_FILES['photo']['error']) {
 						case 1: //uploaded file exceeds the upload_max_filesize directive in php.ini
 						case 2: //uploaded file exceeds the MAX_FILE_SIZE directive that was specified in the html form
 							$errors[] = "ErrorFileSizeTooLarge";
@@ -397,8 +359,7 @@ if (empty($reshook))
 	            $id = $object->id;
 				$action = '';
 
-				if (!empty($backtopage))
-				{
+				if (!empty($backtopage)) {
 					header("Location: ".$backtopage);
 					exit;
 				}
@@ -411,19 +372,16 @@ if (empty($reshook))
 		}
 	}
 
-	if ($action == 'add' && $user->rights->adherent->creer)
-	{
+	if ($action == 'add' && $user->rights->adherent->creer) {
 		if ($canvas) $object->canvas = $canvas;
 		$birthdate = '';
 		if (isset($_POST["birthday"]) && $_POST["birthday"]
 				&& isset($_POST["birthmonth"]) && $_POST["birthmonth"]
-				&& isset($_POST["birthyear"]) && $_POST["birthyear"])
-		{
+				&& isset($_POST["birthyear"]) && $_POST["birthyear"]) {
 			$birthdate = dol_mktime(12, 0, 0, $_POST["birthmonth"], $_POST["birthday"], $_POST["birthyear"]);
 		}
 		$datesubscription = '';
-		if (isset($_POST["reday"]) && isset($_POST["remonth"]) && isset($_POST["reyear"]))
-		{
+		if (isset($_POST["reday"]) && isset($_POST["remonth"]) && isset($_POST["reyear"])) {
 			$datesubscription = dol_mktime(12, 0, 0, $_POST["remonth"], $_POST["reday"], $_POST["reyear"]);
 		}
 
@@ -508,8 +466,7 @@ if (empty($reshook))
 			setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("MemberNature")), null, 'errors');
 		}
 		// Tests if the login already exists
-		if (empty($conf->global->ADHERENT_LOGIN_NOT_REQUIRED))
-		{
+		if (empty($conf->global->ADHERENT_LOGIN_NOT_REQUIRED)) {
 			if (empty($login)) {
 				$error++;
 				setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Login")), null, 'errors');
@@ -557,14 +514,12 @@ if (empty($reshook))
 		$public = 0;
 		if (isset($public)) $public = 1;
 
-		if (!$error)
-		{
+		if (!$error) {
 			$db->begin();
 
 			// Email about right and login does not exist
 			$result = $object->create($user);
-			if ($result > 0)
-			{
+			if ($result > 0) {
 				// Foundation categories
 				$memcats = GETPOST('memcats', 'array');
 				$object->setCategories($memcats);
@@ -590,13 +545,10 @@ if (empty($reshook))
 		}
 	}
 
-	if ($user->rights->adherent->supprimer && $action == 'confirm_delete' && $confirm == 'yes')
-	{
+	if ($user->rights->adherent->supprimer && $action == 'confirm_delete' && $confirm == 'yes') {
 		$result = $object->delete($id, $user);
-		if ($result > 0)
-		{
-			if (!empty($backtopage))
-			{
+		if ($result > 0) {
+			if (!empty($backtopage)) {
 				header("Location: ".$backtopage);
 				exit;
 			} else {
@@ -608,8 +560,7 @@ if (empty($reshook))
 		}
 	}
 
-	if ($user->rights->adherent->creer && $action == 'confirm_valid' && $confirm == 'yes')
-	{
+	if ($user->rights->adherent->creer && $action == 'confirm_valid' && $confirm == 'yes') {
 		$error = 0;
 
 		$db->begin();
@@ -619,11 +570,9 @@ if (empty($reshook))
 
 		$result = $object->validate($user);
 
-		if ($result >= 0 && !count($object->errors))
-		{
+		if ($result >= 0 && !count($object->errors)) {
 			// Send confirmation email (according to parameters of member type. Otherwise generic)
-			if ($object->email && GETPOST("send_mail"))
-			{
+			if ($object->email && GETPOST("send_mail")) {
 				$subject = '';
 				$msg = '';
 
@@ -641,8 +590,7 @@ if (empty($reshook))
 
 				if (!empty($labeltouse)) $arraydefaultmessage = $formmail->getEMailTemplate($db, 'member', $user, $outputlangs, 0, 1, $labeltouse);
 
-				if (!empty($labeltouse) && is_object($arraydefaultmessage) && $arraydefaultmessage->id > 0)
-				{
+				if (!empty($labeltouse) && is_object($arraydefaultmessage) && $arraydefaultmessage->id > 0) {
 					$subject = $arraydefaultmessage->topic;
 					$msg     = $arraydefaultmessage->content;
 				}
@@ -661,8 +609,7 @@ if (empty($reshook))
 					$moreinheader = 'X-Dolibarr-Info: send_an_email by adherents/card.php'."\r\n";
 
 					$result = $object->send_an_email($texttosend, $subjecttosend, array(), array(), array(), "", "", 0, -1, '', $moreinheader);
-					if ($result < 0)
-					{
+					if ($result < 0) {
 						$error++;
 						setEventMessages($object->error, $object->errors, 'errors');
 					}
@@ -677,8 +624,7 @@ if (empty($reshook))
 			}
 		}
 
-		if (!$error)
-		{
+		if (!$error) {
 			$db->commit();
 		} else {
 			$db->rollback();
@@ -686,21 +632,17 @@ if (empty($reshook))
 		$action = '';
 	}
 
-	if ($user->rights->adherent->supprimer && $action == 'confirm_resign')
-	{
+	if ($user->rights->adherent->supprimer && $action == 'confirm_resign') {
 		$error = 0;
 
-		if ($confirm == 'yes')
-		{
+		if ($confirm == 'yes') {
 			$adht = new AdherentType($db);
 			$adht->fetch($object->typeid);
 
 			$result = $object->resiliate($user);
 
-			if ($result >= 0 && !count($object->errors))
-			{
-				if ($object->email && GETPOST("send_mail"))
-				{
+			if ($result >= 0 && !count($object->errors)) {
+				if ($object->email && GETPOST("send_mail")) {
 					$subject = '';
 					$msg = '';
 
@@ -718,8 +660,7 @@ if (empty($reshook))
 
 					if (!empty($labeltouse)) $arraydefaultmessage = $formmail->getEMailTemplate($db, 'member', $user, $outputlangs, 0, 1, $labeltouse);
 
-					if (!empty($labeltouse) && is_object($arraydefaultmessage) && $arraydefaultmessage->id > 0)
-					{
+					if (!empty($labeltouse) && is_object($arraydefaultmessage) && $arraydefaultmessage->id > 0) {
 						$subject = $arraydefaultmessage->topic;
 						$msg     = $arraydefaultmessage->content;
 					}
@@ -738,8 +679,7 @@ if (empty($reshook))
 						$moreinheader = 'X-Dolibarr-Info: send_an_email by adherents/card.php'."\r\n";
 
 						$result = $object->send_an_email($texttosend, $subjecttosend, array(), array(), array(), "", "", 0, -1, '', $moreinheader);
-						if ($result < 0)
-						{
+						if ($result < 0) {
 							$error++;
 							setEventMessages($object->error, $object->errors, 'errors');
 						}
@@ -756,31 +696,24 @@ if (empty($reshook))
 				$action = '';
 			}
 		}
-		if (!empty($backtopage) && !$error)
-		{
+		if (!empty($backtopage) && !$error) {
 			header("Location: ".$backtopage);
 			exit;
 		}
 	}
 
 	// SPIP Management
-	if ($user->rights->adherent->supprimer && $action == 'confirm_del_spip' && $confirm == 'yes')
-	{
-		if (!count($object->errors))
-		{
-			if (!$mailmanspip->del_to_spip($object))
-			{
+	if ($user->rights->adherent->supprimer && $action == 'confirm_del_spip' && $confirm == 'yes') {
+		if (!count($object->errors)) {
+			if (!$mailmanspip->del_to_spip($object)) {
 				setEventMessages($langs->trans('DeleteIntoSpipError').': '.$mailmanspip->error, null, 'errors');
 			}
 		}
 	}
 
-	if ($user->rights->adherent->creer && $action == 'confirm_add_spip' && $confirm == 'yes')
-	{
-		if (!count($object->errors))
-		{
-			if (!$mailmanspip->add_to_spip($object))
-			{
+	if ($user->rights->adherent->creer && $action == 'confirm_add_spip' && $confirm == 'yes') {
+		if (!count($object->errors)) {
+			if (!$mailmanspip->add_to_spip($object)) {
 				setEventMessages($langs->trans('AddIntoSpipError').': '.$mailmanspip->error, null, 'errors');
 			}
 		}
@@ -817,13 +750,11 @@ llxHeader('', $title, $help_url);
 
 $countrynotdefined = $langs->trans("ErrorSetACountryFirst").' ('.$langs->trans("SeeAbove").')';
 
-if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action))
-{
+if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 	// -----------------------------------------
 	// When used with CANVAS
 	// -----------------------------------------
-	if (empty($object->error) && $id)
-	{
+	if (empty($object->error) && $id) {
 		$object = new Adherent($db);
 		$result = $object->fetch($id);
 		if ($result <= 0) dol_print_error('', $object->error);
@@ -835,8 +766,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action))
 	// When used in standard mode
 	// -----------------------------------------
 
-	if ($action == 'create')
-	{
+	if ($action == 'create') {
 		/* ************************************************************************** */
 		/*                                                                            */
 		/* Creation mode                                                              */
@@ -847,8 +777,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action))
 
 		// We set country_id, country_code and country for the selected country
 		$object->country_id = GETPOST('country_id', 'int') ?GETPOST('country_id', 'int') : $mysoc->country_id;
-		if ($object->country_id)
-		{
+		if ($object->country_id) {
 			$tmparray = getCountry($object->country_id, 'all');
 			$object->country_code = $tmparray['code'];
 			$object->country = $tmparray['label'];
@@ -858,8 +787,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action))
             $object = new Societe($db);
             if ($socid > 0) $object->fetch($socid);
 
-            if (!($object->id > 0))
-            {
+            if (!($object->id > 0)) {
                 $langs->load("errors");
                 print($langs->trans('ErrorRecordNotFound'));
                 exit;
@@ -870,8 +798,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action))
 
 		print load_fiche_titre($langs->trans("NewMember"), '', 'members');
 
-		if ($conf->use_javascript_ajax)
-		{
+		if ($conf->use_javascript_ajax) {
 			print "\n".'<script type="text/javascript" language="javascript">';
 			print 'jQuery(document).ready(function () {
 						jQuery("#selectcountry_id").change(function() {
@@ -913,14 +840,12 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action))
 		print '<tbody>';
 
 		// Login
-		if (empty($conf->global->ADHERENT_LOGIN_NOT_REQUIRED))
-		{
+		if (empty($conf->global->ADHERENT_LOGIN_NOT_REQUIRED)) {
 			print '<tr><td><span class="fieldrequired">'.$langs->trans("Login").' / '.$langs->trans("Id").'</span></td><td><input type="text" name="member_login" class="minwidth300" maxlength="50" value="'.(isset($_POST["member_login"]) ?GETPOST("member_login", 'alpha', 2) : $object->login).'" autofocus="autofocus"></td></tr>';
 		}
 
 		// Password
-		if (empty($conf->global->ADHERENT_LOGIN_NOT_REQUIRED))
-		{
+		if (empty($conf->global->ADHERENT_LOGIN_NOT_REQUIRED)) {
 			require_once DOL_DOCUMENT_ROOT.'/core/lib/security2.lib.php';
 			$generated_password = getRandomPassword(false);
 			print '<tr><td><span class="fieldrequired">'.$langs->trans("Password").'</span></td><td>';
@@ -931,8 +856,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action))
 		// Type
 		print '<tr><td class="fieldrequired">'.$langs->trans("MemberType").'</td><td>';
 		$listetype = $adht->liste_array();
-		if (count($listetype))
-		{
+		if (count($listetype)) {
 			print $form->selectarray("typeid", $listetype, GETPOST('typeid', 'int') ?GETPOST('typeid', 'int') : $typeid, count($listetype) > 1 ? 1 : 0);
 		} else {
 			print '<font class="error">'.$langs->trans("NoTypeDefinedGoToSetup").'</font>';
@@ -992,11 +916,9 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action))
 		print '</td></tr>';
 
 		// State
-		if (empty($conf->global->MEMBER_DISABLE_STATE))
-		{
+		if (empty($conf->global->MEMBER_DISABLE_STATE)) {
 			print '<tr><td>'.$langs->trans('State').'</td><td>';
-			if ($object->country_id)
-			{
+			if ($object->country_id) {
 				print $formcompany->select_state(GETPOST('state_id', 'int') ?GETPOST('state_id', 'int') : $object->state_id, $object->country_code);
 			} else {
 				print $countrynotdefined;
@@ -1031,8 +953,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action))
 		print "</td></tr>\n";
 
 		// Categories
-		if (!empty($conf->categorie->enabled) && !empty($user->rights->categorie->lire))
-		{
+		if (!empty($conf->categorie->enabled) && !empty($user->rights->categorie->lire)) {
 			print '<tr><td>'.$form->editfieldkey("Categories", 'memcats', '', $object, 0).'</td><td>';
 			$cate_arbo = $form->select_all_categories(Categorie::TYPE_MEMBER, null, 'parent', null, null, 1);
 			print $form->multiselectarray('memcats', $cate_arbo, GETPOST('memcats', 'array'), null, null, null, null, '100%');
@@ -1050,8 +971,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action))
 		print '<div class="center">';
 		print '<input type="submit" name="button" class="button" value="'.$langs->trans("AddMember").'">';
 		print '&nbsp;&nbsp;';
-		if (!empty($backtopage))
-		{
+		if (!empty($backtopage)) {
 			print '<input type="submit" class="button" name="cancel" value="'.$langs->trans('Cancel').'">';
 		} else {
 			print '<input type="button" class="button" value="'.$langs->trans("Cancel").'" onClick="javascript:history.go(-1)">';
@@ -1061,8 +981,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action))
 		print "</form>\n";
 	}
 
-	if ($action == 'edit')
-	{
+	if ($action == 'edit') {
 		/********************************************
 		*
 		* Edition mode
@@ -1083,12 +1002,10 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action))
 
 		// We set country_id, and country_code, country of the chosen country
 		$country = GETPOST('country', 'int');
-		if (!empty($country) || $object->country_id)
-		{
+		if (!empty($country) || $object->country_id) {
 			$sql = "SELECT rowid, code, label from ".MAIN_DB_PREFIX."c_country where rowid = ".(!empty($country) ? $country : $object->country_id);
 			$resql = $db->query($sql);
-			if ($resql)
-			{
+			if ($resql) {
 				$obj = $db->fetch_object($resql);
 			} else {
 				dol_print_error($db);
@@ -1101,8 +1018,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action))
 		$head = member_prepare_head($object);
 
 
-		if ($conf->use_javascript_ajax)
-		{
+		if ($conf->use_javascript_ajax) {
 			print "\n".'<script type="text/javascript" language="javascript">';
 			print 'jQuery(document).ready(function () {
 				jQuery("#selectcountry_id").change(function() {
@@ -1147,14 +1063,12 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action))
 		print '<tr><td class="titlefieldcreate">'.$langs->trans("Ref").'</td><td class="valeur">'.$object->id.'</td></tr>';
 
 		// Login
-		if (empty($conf->global->ADHERENT_LOGIN_NOT_REQUIRED))
-		{
+		if (empty($conf->global->ADHERENT_LOGIN_NOT_REQUIRED)) {
 			print '<tr><td><span class="fieldrequired">'.$langs->trans("Login").' / '.$langs->trans("Id").'</span></td><td><input type="text" name="login" class="minwidth300" maxlength="50" value="'.(isset($_POST["login"]) ?GETPOST("login", 'alpha', 2) : $object->login).'"></td></tr>';
 		}
 
 		// Password
-		if (empty($conf->global->ADHERENT_LOGIN_NOT_REQUIRED))
-		{
+		if (empty($conf->global->ADHERENT_LOGIN_NOT_REQUIRED)) {
 			print '<tr><td class="fieldrequired">'.$langs->trans("Password").'</td><td><input type="password" name="pass" class="minwidth300" maxlength="50" value="'.(isset($_POST["pass"]) ?GETPOST("pass", '', 2) : $object->pass).'"></td></tr>';
 		}
 		// Morphy
@@ -1166,8 +1080,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action))
 
 		// Type
 		print '<tr><td class="fieldrequired">'.$langs->trans("Type").'</td><td>';
-		if ($user->rights->adherent->creer)
-		{
+		if ($user->rights->adherent->creer) {
 			print $form->selectarray("typeid", $adht->liste_array(), (GETPOSTISSET("typeid") ?GETPOST("typeid", 'int') : $object->typeid));
 		} else {
 			print $adht->getNomUrl(1);
@@ -1203,8 +1116,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action))
 		print '<tr><td>'.$langs->trans("Photo").'</td>';
 		print '<td class="hideonsmartphone" valign="middle">';
 		print $form->showphoto('memberphoto', $object)."\n";
-		if ($caneditfieldmember)
-		{
+		if ($caneditfieldmember) {
 			if ($object->photo) print "<br>\n";
 			print '<table class="nobordernopadding">';
 			if ($object->photo) print '<tr><td><input type="checkbox" class="flat photodelete" name="deletephoto" id="photodelete"> '.$langs->trans("Delete").'<br><br></td></tr>';
@@ -1237,8 +1149,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action))
 		print '</td></tr>';
 
 		// State
-		if (empty($conf->global->MEMBER_DISABLE_STATE))
-		{
+		if (empty($conf->global->MEMBER_DISABLE_STATE)) {
 			print '<tr><td>'.$langs->trans('State').'</td><td>';
 			print $formcompany->select_state($object->state_id, isset($_POST["country_id"]) ?GETPOST("country_id") : $object->country_id);
 			print '</td></tr>';
@@ -1271,8 +1182,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action))
 		print "</td></tr>\n";
 
 		// Categories
-		if (!empty($conf->categorie->enabled) && !empty($user->rights->categorie->lire))
-		{
+		if (!empty($conf->categorie->enabled) && !empty($user->rights->categorie->lire)) {
 			print '<tr><td>'.$form->editfieldkey("Categories", 'memcats', '', $object, 0).'</td>';
 			print '<td>';
 			$cate_arbo = $form->select_all_categories(Categorie::TYPE_MEMBER, null, null, null, null, 1);
@@ -1289,11 +1199,9 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action))
 		}
 
 		// Third party Dolibarr
-		if (!empty($conf->societe->enabled))
-		{
+		if (!empty($conf->societe->enabled)) {
 			print '<tr><td>'.$langs->trans("LinkedToDolibarrThirdParty").'</td><td colspan="2" class="valeur">';
-			if ($object->socid)
-			{
+			if ($object->socid) {
 				$company = new Societe($db);
 				$result = $company->fetch($object->socid);
 				print $company->getNomUrl(1);
@@ -1305,8 +1213,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action))
 
 		// Login Dolibarr
 		print '<tr><td>'.$langs->trans("LinkedToDolibarrUser").'</td><td colspan="2" class="valeur">';
-		if ($object->user_id)
-		{
+		if ($object->user_id) {
 			$form->form_users($_SERVER['PHP_SELF'].'?rowid='.$object->id, $object->user_id, 'none');
 		}
 		else print $langs->trans("NoDolibarrAccess");
@@ -1327,8 +1234,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action))
 		print '</form>';
 	}
 
-	if ($id > 0 && $action != 'edit')
-	{
+	if ($id > 0 && $action != 'edit') {
 		/* ************************************************************************** */
 		/*                                                                            */
 		/* View mode                                                                  */
@@ -1359,11 +1265,9 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action))
 		dol_fiche_head($head, 'general', $langs->trans("Member"), -1, 'user');
 
 		// Confirm create user
-		if ($action == 'create_user')
-		{
+		if ($action == 'create_user') {
 			$login = $object->login;
-			if (empty($login))
-			{
+			if (empty($login)) {
 				// Full firstname and name separated with a dot : firstname.name
 				include_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
 				$login = dol_buildlogin($object->lastname, $object->firstname);
@@ -1375,8 +1279,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action))
 					array('label' => $langs->trans("LoginToCreate"), 'type' => 'text', 'name' => 'login', 'value' => $login)
 			);
 			$text = $langs->trans("ConfirmCreateLogin").'<br>';
-			if (!empty($conf->societe->enabled))
-			{
+			if (!empty($conf->societe->enabled)) {
 				if ($object->socid > 0) $text .= $langs->trans("UserWillBeExternalUser");
 				else $text .= $langs->trans("UserWillBeInternalUser");
 			}
@@ -1384,13 +1287,11 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action))
 		}
 
 		// Confirm create third party
-		if ($action == 'create_thirdparty')
-		{
+		if ($action == 'create_thirdparty') {
 			$companyalias = '';
 			$fullname = $object->getFullName($langs);
 
-			if ($object->morphy == 'mor')
-			{
+			if ($object->morphy == 'mor') {
 				$companyname = $object->company;
 				if (!empty($fullname)) $companyalias = $fullname;
 			} else {
@@ -1408,8 +1309,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action))
 		}
 
 		// Confirm validate member
-		if ($action == 'valid')
-		{
+		if ($action == 'valid') {
 			$langs->load("mails");
 
 			$adht = new AdherentType($db);
@@ -1432,8 +1332,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action))
 
 			if (!empty($labeltouse)) $arraydefaultmessage = $formmail->getEMailTemplate($db, 'member', $user, $outputlangs, 0, 1, $labeltouse);
 
-			if (!empty($labeltouse) && is_object($arraydefaultmessage) && $arraydefaultmessage->id > 0)
-			{
+			if (!empty($labeltouse) && is_object($arraydefaultmessage) && $arraydefaultmessage->id > 0) {
 				$subject = $arraydefaultmessage->topic;
 				$msg     = $arraydefaultmessage->content;
 			}
@@ -1469,8 +1368,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action))
 		}
 
 		// Confirm terminate
-		if ($action == 'resign')
-		{
+		if ($action == 'resign') {
 			$langs->load("mails");
 
 			$adht = new AdherentType($db);
@@ -1493,8 +1391,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action))
 
 			if (!empty($labeltouse)) $arraydefaultmessage = $formmail->getEMailTemplate($db, 'member', $user, $outputlangs, 0, 1, $labeltouse);
 
-			if (!empty($labeltouse) && is_object($arraydefaultmessage) && $arraydefaultmessage->id > 0)
-			{
+			if (!empty($labeltouse) && is_object($arraydefaultmessage) && $arraydefaultmessage->id > 0) {
 				$subject = $arraydefaultmessage->topic;
 				$msg     = $arraydefaultmessage->content;
 			}
@@ -1525,21 +1422,18 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action))
 		}
 
 		// Confirm remove member
-		if ($action == 'delete')
-		{
+		if ($action == 'delete') {
 			$formquestion = array();
 			if ($backtopage) $formquestion[] = array('type' => 'hidden', 'name' => 'backtopage', 'value' => ($backtopage != '1' ? $backtopage : $_SERVER["HTTP_REFERER"]));
 			print $form->formconfirm("card.php?rowid=".$id, $langs->trans("DeleteMember"), $langs->trans("ConfirmDeleteMember"), "confirm_delete", $formquestion, 'no', 1);
 		}
 
 		// Confirm add in spip
-		if ($action == 'add_spip')
-		{
+		if ($action == 'add_spip') {
 			print $form->formconfirm("card.php?rowid=".$id, $langs->trans('AddIntoSpip'), $langs->trans('AddIntoSpipConfirmation'), 'confirm_add_spip');
 		}
 		// Confirm removed from spip
-		if ($action == 'del_spip')
-		{
+		if ($action == 'del_spip') {
 			print $form->formconfirm("card.php?rowid=$id", $langs->trans('DeleteIntoSpip'), $langs->trans('DeleteIntoSpipConfirmation'), 'confirm_del_spip');
 		}
 
@@ -1558,8 +1452,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action))
 		print '<table class="border tableforfield centpercent">';
 
 		// Login
-		if (empty($conf->global->ADHERENT_LOGIN_NOT_REQUIRED))
-		{
+		if (empty($conf->global->ADHERENT_LOGIN_NOT_REQUIRED)) {
 			print '<tr><td class="titlefield">'.$langs->trans("Login").' / '.$langs->trans("Id").'</td><td class="valeur">'.$object->login.'&nbsp;</td></tr>';
 		}
 
@@ -1584,16 +1477,14 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action))
 		print '</tr>';
 
 		// Password
-		if (empty($conf->global->ADHERENT_LOGIN_NOT_REQUIRED))
-		{
+		if (empty($conf->global->ADHERENT_LOGIN_NOT_REQUIRED)) {
 			print '<tr><td>'.$langs->trans("Password").'</td><td>'.preg_replace('/./i', '*', $object->pass);
 			if ($object->pass) print preg_replace('/./i', '*', $object->pass);
 			else {
 			    if ($user->admin) print $langs->trans("Crypted").': '.$object->pass_indatabase_crypted;
 			    else print $langs->trans("Hidden");
 			}
-			if ((!empty($object->pass) || !empty($object->pass_crypted)) && empty($object->user_id))
-			{
+			if ((!empty($object->pass) || !empty($object->pass_crypted)) && empty($object->user_id)) {
 			    $langs->load("errors");
 			    $htmltext = $langs->trans("WarningPasswordSetWithNoAccount");
 			    print ' '.$form->textwithpicto('', $htmltext, 1, 'warning');
@@ -1603,19 +1494,16 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action))
 
 		// Date end subscription
 		print '<tr><td>'.$langs->trans("SubscriptionEndDate").'</td><td class="valeur">';
-		if ($object->datefin)
-		{
+		if ($object->datefin) {
 			print dol_print_date($object->datefin, 'day');
 			if ($object->hasDelay()) {
 				print " ".img_warning($langs->trans("Late"));
 			}
 		} else {
-			if ($object->need_subscription == 0)
-            {
+			if ($object->need_subscription == 0) {
                 print $langs->trans("SubscriptionNotNeeded");
             }
-            elseif (!$adht->subscription)
-			{
+            elseif (!$adht->subscription) {
 				print $langs->trans("SubscriptionNotRecorded");
 				if ($object->statut > 0) print " ".img_warning($langs->trans("Late")); // displays delay Pictogram only if not a draft and not terminated
 			} else {
@@ -1626,14 +1514,12 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action))
 		print '</td></tr>';
 
 		// Third party Dolibarr
-		if (!empty($conf->societe->enabled))
-		{
+		if (!empty($conf->societe->enabled)) {
 			print '<tr><td>';
 			$editenable = $user->rights->adherent->creer;
 			print $form->editfieldkey('LinkedToDolibarrThirdParty', 'thirdparty', '', $object, $editenable);
 			print '</td><td colspan="2" class="valeur">';
-			if ($action == 'editthirdparty')
-			{
+			if ($action == 'editthirdparty') {
 				$htmlname = 'socid';
 				print '<form method="POST" action="'.$_SERVER['PHP_SELF'].'" name="form'.$htmlname.'">';
 				print '<input type="hidden" name="rowid" value="'.$object->id.'">';
@@ -1662,12 +1548,10 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action))
 		$editenable = $user->rights->adherent->creer && $user->rights->user->user->creer;
 		print $form->editfieldkey('LinkedToDolibarrUser', 'login', '', $object, $editenable);
 		print '</td><td colspan="2" class="valeur">';
-		if ($action == 'editlogin')
-		{
+		if ($action == 'editlogin') {
 			$form->form_users($_SERVER['PHP_SELF'].'?rowid='.$object->id, $object->user_id, 'userid', '');
 		} else {
-			if ($object->user_id)
-			{
+			if ($object->user_id) {
 				$form->form_users($_SERVER['PHP_SELF'].'?rowid='.$object->id, $object->user_id, 'none');
 			} else {
 				print $langs->trans("NoDolibarrAccess");
@@ -1691,8 +1575,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action))
 		print '<tr><td>'.$langs->trans("Public").'</td><td class="valeur">'.yn($object->public).'</td></tr>';
 
 		// Categories
-		if (!empty($conf->categorie->enabled) && !empty($user->rights->categorie->lire))
-		{
+		if (!empty($conf->categorie->enabled) && !empty($user->rights->categorie->lire)) {
 			print '<tr><td>'.$langs->trans("Categories").'</td>';
 			print '<td colspan="2">';
 			print $form->showCategories($object->id, Categorie::TYPE_MEMBER, 1);
@@ -1718,8 +1601,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action))
 		$parameters = array();
 		$reshook = $hookmanager->executeHooks('addMoreActionsButtons', $parameters, $object, $action); // Note that $action and $object may have been
 		if (empty($reshook)) {
-			if ($action != 'editlogin' && $action != 'editthirdparty')
-			{
+			if ($action != 'editlogin' && $action != 'editthirdparty') {
 				// Send
 				if (empty($user->socid)) {
 					if ($object->statut == 1) {
@@ -1748,18 +1630,15 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action))
 				}*/
 
 				// Modify
-				if ($user->rights->adherent->creer)
-				{
+				if ($user->rights->adherent->creer) {
 					print '<div class="inline-block divButAction"><a class="butAction" href="card.php?rowid='.$id.'&action=edit">'.$langs->trans("Modify")."</a></div>";
 				} else {
 					print '<div class="inline-block divButAction"><font class="butActionRefused classfortooltip" href="#" title="'.dol_escape_htmltag($langs->trans("NotEnoughPermissions")).'">'.$langs->trans("Modify").'</font></div>';
 				}
 
 				// Validate
-				if ($object->statut == -1)
-				{
-					if ($user->rights->adherent->creer)
-					{
+				if ($object->statut == -1) {
+					if ($user->rights->adherent->creer) {
 						print '<div class="inline-block divButAction"><a class="butAction" href="card.php?rowid='.$id.'&action=valid">'.$langs->trans("Validate")."</a></div>\n";
 					} else {
 						print '<div class="inline-block divButAction"><font class="butActionRefused classfortooltip" href="#" title="'.dol_escape_htmltag($langs->trans("NotEnoughPermissions")).'">'.$langs->trans("Validate").'</font></div>';
@@ -1767,10 +1646,8 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action))
 				}
 
 				// Reactivate
-				if ($object->statut == 0)
-				{
-					if ($user->rights->adherent->creer)
-					{
+				if ($object->statut == 0) {
+					if ($user->rights->adherent->creer) {
 						print '<div class="inline-block divButAction"><a class="butAction" href="card.php?rowid='.$id.'&action=valid">'.$langs->trans("Reenable")."</a></div>\n";
 					} else {
 						print '<div class="inline-block divButAction"><font class="butActionRefused classfortooltip" href="#" title="'.dol_escape_htmltag($langs->trans("NotEnoughPermissions")).'">'.$langs->trans("Reenable")."</font></div>";
@@ -1778,10 +1655,8 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action))
 				}
 
 				// Terminate
-				if ($object->statut >= 1)
-				{
-					if ($user->rights->adherent->supprimer)
-					{
+				if ($object->statut >= 1) {
+					if ($user->rights->adherent->supprimer) {
 						print '<div class="inline-block divButAction"><a class="butAction" href="card.php?rowid='.$id.'&action=resign">'.$langs->trans("Resiliate")."</a></div>\n";
 					} else {
 						print '<div class="inline-block divButAction"><font class="butActionRefused classfortooltip" href="#" title="'.dol_escape_htmltag($langs->trans("NotEnoughPermissions")).'">'.$langs->trans("Resiliate")."</font></div>";
@@ -1789,10 +1664,8 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action))
 				}
 
 				// Create third party
-				if (!empty($conf->societe->enabled) && !$object->socid)
-				{
-					if ($user->rights->societe->creer)
-					{
+				if (!empty($conf->societe->enabled) && !$object->socid) {
+					if ($user->rights->societe->creer) {
 						if ($object->statut != -1) print '<div class="inline-block divButAction"><a class="butAction" href="'.$_SERVER["PHP_SELF"].'?rowid='.$object->id.'&amp;action=create_thirdparty">'.$langs->trans("CreateDolibarrThirdParty").'</a></div>';
 						else print '<div class="inline-block divButAction"><a class="butActionRefused classfortooltip" href="#" title="'.dol_escape_htmltag($langs->trans("ValidateBefore")).'">'.$langs->trans("CreateDolibarrThirdParty").'</a></div>';
 					} else {
@@ -1801,10 +1674,8 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action))
 				}
 
 				// Create user
-				if (!$user->socid && !$object->user_id)
-				{
-					if ($user->rights->user->user->creer)
-					{
+				if (!$user->socid && !$object->user_id) {
+					if ($user->rights->user->user->creer) {
 						if ($object->statut != -1) print '<div class="inline-block divButAction"><a class="butAction" href="'.$_SERVER["PHP_SELF"].'?rowid='.$object->id.'&amp;action=create_user">'.$langs->trans("CreateDolibarrLogin").'</a></div>';
 						else print '<div class="inline-block divButAction"><a class="butActionRefused classfortooltip" href="#" title="'.dol_escape_htmltag($langs->trans("ValidateBefore")).'">'.$langs->trans("CreateDolibarrLogin").'</a></div>';
 					} else {
@@ -1813,24 +1684,20 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action))
 				}
 
 				// Delete
-				if ($user->rights->adherent->supprimer)
-				{
+				if ($user->rights->adherent->supprimer) {
 					print '<div class="inline-block divButAction"><a class="butActionDelete" href="card.php?rowid='.$object->id.'&action=delete">'.$langs->trans("Delete")."</a></div>\n";
 				} else {
 					print '<div class="inline-block divButAction"><font class="butActionRefused classfortooltip" href="#" title="'.dol_escape_htmltag($langs->trans("NotEnoughPermissions")).'">'.$langs->trans("Delete")."</font></div>";
 				}
 
 				// Action SPIP
-				if (!empty($conf->mailmanspip->enabled) && !empty($conf->global->ADHERENT_USE_SPIP))
-				{
+				if (!empty($conf->mailmanspip->enabled) && !empty($conf->global->ADHERENT_USE_SPIP)) {
 					$isinspip = $mailmanspip->is_in_spip($object);
 
-					if ($isinspip == 1)
-					{
+					if ($isinspip == 1) {
 						print '<div class="inline-block divButAction"><a class="butAction" href="card.php?rowid='.$object->id.'&action=del_spip">'.$langs->trans("DeleteIntoSpip")."</a></div>\n";
 					}
-					if ($isinspip == 0)
-					{
+					if ($isinspip == 0) {
 						print '<div class="inline-block divButAction"><a class="butAction" href="card.php?rowid='.$object->id.'&action=add_spip">'.$langs->trans("AddIntoSpip")."</a></div>\n";
 					}
 				}
@@ -1838,8 +1705,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action))
 		}
 		print '</div>';
 
-		if ($isinspip == -1)
-		{
+		if ($isinspip == -1) {
 			print '<br><br><font class="error">'.$langs->trans('SPIPConnectionFailed').': '.$mailmanspip->error.'</font>';
 		}
 
@@ -1849,8 +1715,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action))
 			$action = 'presend';
 		}
 
-		if ($action != 'presend')
-		{
+		if ($action != 'presend') {
 			print '<div class="fichecenter"><div class="fichehalfleft">';
 			print '<a name="builddoc"></a>'; // ancre
 
@@ -1878,8 +1743,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action))
 			// Shon online payment link
 			$useonlinepayment = (!empty($conf->paypal->enabled) || !empty($conf->stripe->enabled) || !empty($conf->paybox->enabled));
 
-			if ($useonlinepayment)
-			{
+			if ($useonlinepayment) {
 				print '<br>';
 
 				require_once DOL_DOCUMENT_ROOT.'/core/lib/payments.lib.php';
